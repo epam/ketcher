@@ -14,7 +14,7 @@ Object {
           tabindex="-1"
         >
           <icon-open.svg
-            fill="#525252"
+            fill="#333333"
             role="img"
           />
           <span
@@ -31,7 +31,7 @@ Object {
           tabindex="-1"
         >
           <icon-erase.svg
-            fill="#525252"
+            fill="#333333"
             role="img"
           />
           <span
@@ -50,7 +50,7 @@ Object {
               tabindex="-1"
             >
               <icon-select-lasso.svg
-                fill="#525252"
+                fill="#333333"
                 role="img"
               />
               <span
@@ -61,7 +61,7 @@ Object {
               class="css-clax1l"
             >
               <icon-dropdown.svg
-                fill="#525252"
+                fill="#333333"
                 role="img"
               />
             </div>
@@ -78,10 +78,6 @@ Object {
               role="menuitem"
               tabindex="-1"
             >
-              <icon-rectangle.svg
-                fill="#525252"
-                role="img"
-              />
               <span
                 class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
               />
@@ -90,7 +86,7 @@ Object {
               class="css-clax1l"
             >
               <icon-dropdown.svg
-                fill="#525252"
+                fill="#333333"
                 role="img"
               />
             </div>
@@ -107,10 +103,6 @@ Object {
               role="menuitem"
               tabindex="-1"
             >
-              <icon-rotate.svg
-                fill="#525252"
-                role="img"
-              />
               <span
                 class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
               />
@@ -119,7 +111,7 @@ Object {
               class="css-clax1l"
             >
               <icon-dropdown.svg
-                fill="#525252"
+                fill="#333333"
                 role="img"
               />
             </div>
@@ -138,7 +130,7 @@ Object {
         tabindex="-1"
       >
         <icon-open.svg
-          fill="#525252"
+          fill="#333333"
           role="img"
         />
         <span
@@ -155,7 +147,7 @@ Object {
         tabindex="-1"
       >
         <icon-erase.svg
-          fill="#525252"
+          fill="#333333"
           role="img"
         />
         <span
@@ -174,7 +166,7 @@ Object {
             tabindex="-1"
           >
             <icon-select-lasso.svg
-              fill="#525252"
+              fill="#333333"
               role="img"
             />
             <span
@@ -185,7 +177,7 @@ Object {
             class="css-clax1l"
           >
             <icon-dropdown.svg
-              fill="#525252"
+              fill="#333333"
               role="img"
             />
           </div>
@@ -202,10 +194,6 @@ Object {
             role="menuitem"
             tabindex="-1"
           >
-            <icon-rectangle.svg
-              fill="#525252"
-              role="img"
-            />
             <span
               class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
             />
@@ -214,7 +202,7 @@ Object {
             class="css-clax1l"
           >
             <icon-dropdown.svg
-              fill="#525252"
+              fill="#333333"
               role="img"
             />
           </div>
@@ -231,10 +219,6 @@ Object {
             role="menuitem"
             tabindex="-1"
           >
-            <icon-rotate.svg
-              fill="#525252"
-              role="img"
-            />
             <span
               class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
             />
@@ -243,7 +227,7 @@ Object {
             class="css-clax1l"
           >
             <icon-dropdown.svg
-              fill="#525252"
+              fill="#333333"
               role="img"
             />
           </div>

@@ -24,7 +24,7 @@ Object {
             />
           </button>
           <icon-capital-t.svg
-            fill="#525252"
+            fill="#333333"
             role="img"
           />
         </div>
@@ -61,10 +61,6 @@ Object {
                 or drag file here
               </span>
             </div>
-            <icon-arrow-upward.svg
-              fill="#525252"
-              role="img"
-            />
           </div>
         </div>
       </div>
@@ -90,7 +86,7 @@ Object {
           />
         </button>
         <icon-capital-t.svg
-          fill="#525252"
+          fill="#333333"
           role="img"
         />
       </div>
@@ -127,10 +123,6 @@ Object {
               or drag file here
             </span>
           </div>
-          <icon-arrow-upward.svg
-            fill="#525252"
-            role="img"
-          />
         </div>
       </div>
     </div>

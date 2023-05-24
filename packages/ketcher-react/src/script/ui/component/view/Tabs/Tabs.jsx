@@ -28,6 +28,7 @@ class Tabs extends Component {
 
   // TODO: refactor the component
   changeTab(ev, index) {
+    console.log('changeTab -->', index)
     this.setState({ tabIndex: index })
     if (this.props.changeTab) this.props.changeTab(index)
   }
@@ -40,6 +41,7 @@ class Tabs extends Component {
 
   render() {
     const { tabs, contentClassName, className, tabIndex } = this.props
+    console.log('tabs -->', tabs)
     const tabPanel = tabs[this.state.tabIndex]
     const Component = tabPanel?.component
     const componentProps = tabPanel?.props

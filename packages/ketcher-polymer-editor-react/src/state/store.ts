@@ -30,7 +30,8 @@ export function configureAppStore(preloadedState = {}) {
     },
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware({
-        thunk: false
+        thunk: false,
+        serializableCheck: false
       }).concat(sagaMiddleware),
     preloadedState
   })

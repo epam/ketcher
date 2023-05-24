@@ -35,10 +35,6 @@ Object {
             or drag file here
           </span>
         </div>
-        <icon-arrow-upward.svg
-          fill="#525252"
-          role="img"
-        />
       </div>
     </div>
   </body>,
@@ -73,10 +69,6 @@ Object {
           or drag file here
         </span>
       </div>
-      <icon-arrow-upward.svg
-        fill="#525252"
-        role="img"
-      />
     </div>
   </div>,
   "debug": [Function],

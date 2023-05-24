@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-
 import { Provider } from 'react-redux'
 import { useEffect, useRef } from 'react'
 import { Global, ThemeProvider } from '@emotion/react'
@@ -30,17 +29,20 @@ import {
 import { getGlobalStyles } from 'theming/globalStyles'
 import { Layout } from 'components/Layout'
 import { MonomerLibrary } from 'components/monomerLibrary'
-import { NotationInput } from 'components/notationInput'
 import { Menu } from 'components/menu'
-import { selectEditorActiveTool, selectTool } from 'state/common'
+import {
+  selectEditorActiveTool,
+  selectTool,
+  loadMonomerLibrary
+} from 'state/common'
 import { useAppDispatch, useAppSelector } from 'hooks'
-import { Logo } from 'components/Logo'
 import { openModal } from 'state/modal'
 import {
   modalComponentList,
   ModalContainer
 } from 'components/modal/modalContainer'
 import { FullscreenButton } from 'components/FullscreenButton'
+import { parseSdf } from 'helpers/formats/sdfParser'
 
 const muiTheme = createTheme(muiOverrides)
 
@@ -53,9 +55,8 @@ interface EditorProps {
   theme?: DeepPartial<EditorTheme>
 }
 
-function Editor({ onInit, theme }: EditorProps) {
+function EditorContainer({ onInit, theme }: EditorProps) {
   const rootElRef = useRef<HTMLDivElement>(null)
-
   const editorTheme: EditorTheme = theme
     ? merge(defaultTheme, theme)
     : defaultTheme
@@ -70,31 +71,40 @@ function Editor({ onInit, theme }: EditorProps) {
     <Provider store={store}>
       <ThemeProvider theme={mergedTheme}>
         <Global styles={getGlobalStyles} />
-
         <div ref={rootElRef} className="Ketcher-polymer-editor-root">
-          <Layout>
-            <Layout.Left>
-              <MenuComponent />
-            </Layout.Left>
-
-            <Layout.Top>
-              <NotationInput />
-            </Layout.Top>
-
-            <Layout.Main></Layout.Main>
-
-            <Layout.Right>
-              <MonomerLibrary />
-            </Layout.Right>
-          </Layout>
-
-          <Logo />
-          <FullscreenButton />
-
-          <ModalContainer />
+          <Editor />
         </div>
       </ThemeProvider>
     </Provider>
+  )
+}
+
+function Editor() {
+  const dispatch = useAppDispatch()
+
+  useEffect(() => {
+    const library = parseSdf()
+    dispatch(loadMonomerLibrary(library))
+  }, [dispatch])
+
+  return (
+    <>
+      <Layout>
+        <Layout.Left>
+          <MenuComponent />
+        </Layout.Left>
+
+        <Layout.Main></Layout.Main>
+
+        <Layout.Right>
+          <MonomerLibrary />
+        </Layout.Right>
+      </Layout>
+
+      <FullscreenButton />
+
+      <ModalContainer />
+    </>
   )
 }
 
@@ -152,4 +162,4 @@ function MenuComponent() {
   )
 }
 
-export { Editor }
+export { EditorContainer as Editor }

@@ -17,8 +17,6 @@ env:
 jobs:
   playwright_tests:
     timeout-minutes: 60
-    strategy:
-      fail-fast: false
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3
@@ -34,7 +32,7 @@ jobs:
       - name: Build frontend and autotests for docker
         run: npm run docker:build
       - name: Run playwright tests in docker
-        run: cd ketcher-autotests && nohup npm run docker:test &
+        run: cd ketcher-autotests && npm run docker:test:ci
       - uses: actions/upload-artifact@v3
         # run even if previous steps fails
         if: always()

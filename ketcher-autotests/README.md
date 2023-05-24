@@ -113,7 +113,7 @@ Run this command in the directory "ketcher-autotests"
 - `npm run docker:autotest:start name_test_file` run a specific test (point out filename)
 
 - if your command doesn't exist in package.json and you want to run it in the docker container: `npm run docker:autotest any_command`
-- if you want to **delete** the docker build, run the next command in the directory "ketcher-autotest": `npm run docker:down`
+- if you want to **delete** the docker build, run the next command in the directory "ketcher-autotest": `npn run docker:autotest:delete`
 
 #### Autotest + frontend
 

@@ -48,6 +48,7 @@ import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems'
 import { updateSelectedAtoms } from 'src/script/ui/state/modal/atoms'
 import { updateSelectedBonds } from 'src/script/ui/state/modal/bonds'
 import { hasAtomsOutsideCanvas } from './helper/isAtomOutSideCanvas'
+import { filterNotInCollapsedSGroup } from './helper/filterNotInCollapsedSGroup'
 
 class SelectTool {
   #mode: string
@@ -207,7 +208,11 @@ class SelectTool {
         editor.render.page2obj(event).sub(dragCtx.xy0)
       )
 
-      dragCtx.mergeItems = getItemsToFuse(editor, expSel)
+      const visibleSelectedItems = filterNotInCollapsedSGroup(
+        expSel,
+        this.editor.struct()
+      )
+      dragCtx.mergeItems = getItemsToFuse(editor, visibleSelectedItems)
       editor.hover(getHoverToFuse(dragCtx.mergeItems))
 
       resizeCanvas(rnd, event)

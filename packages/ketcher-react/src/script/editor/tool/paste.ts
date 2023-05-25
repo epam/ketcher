@@ -29,8 +29,8 @@ import {
 import Editor from '../Editor'
 import { dropAndMerge } from './helper/dropAndMerge'
 import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems'
-import { getMergeItems } from './helper/getMergeItems'
 import utils from '../shared/utils'
+import { filterNotInCollapsedSGroup } from './helper/filterNotInCollapsedSGroup'
 import { Tool } from './Tool'
 
 class PasteTool implements Tool {
@@ -180,8 +180,12 @@ class PasteTool implements Tool {
       )
       this.action = action
       this.editor.update(this.action, true, { resizeCanvas: false })
+      const visiblePasteItems = filterNotInCollapsedSGroup(
+        pasteItems,
+        this.editor.struct()
+      )
 
-      this.mergeItems = getMergeItems(this.editor, pasteItems)
+      this.mergeItems = getItemsToFuse(this.editor, visiblePasteItems)
       this.editor.hover(getHoverToFuse(this.mergeItems))
     }
   }

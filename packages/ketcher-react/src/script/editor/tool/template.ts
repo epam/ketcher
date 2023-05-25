@@ -151,7 +151,7 @@ class TemplateTool implements Tool {
       })
   }
 
-  async mousedown(event) {
+  async mousedown(event: MouseEvent) {
     this.event = event
 
     if (this.functionalGroups.size) {
@@ -185,7 +185,7 @@ class TemplateTool implements Tool {
     this.editor.hover(null)
 
     this.dragCtx = {
-      xy0: this.editor.render.page2obj(this.event),
+      xy0: this.editor.render.page2obj(event),
       item: this.editor.findItem(this.event, this.findItems)
     }
 

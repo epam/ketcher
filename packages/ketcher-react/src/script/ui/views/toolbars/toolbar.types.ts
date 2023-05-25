@@ -154,11 +154,14 @@ type RightToolbarItemVariant =
   | 'extended-table'
   | 'any-atom'
 
+type FloatingToolItemVariant = 'transform-flip-h' | 'transform-flip-v' | 'erase'
+
 type ToolbarItemVariant =
   | TopToolbarItemVariant
   | LeftToolbarItemVariant
   | BottomToolbarItemVariant
   | RightToolbarItemVariant
+  | FloatingToolItemVariant
 
 interface ToolbarItem {
   id: ToolbarItemVariant
@@ -172,6 +175,7 @@ export type {
   LeftToolbarItemVariant,
   RightToolbarItemVariant,
   TopToolbarItemVariant,
+  FloatingToolItemVariant,
   ToolbarItemVariant
 }
 

@@ -18,7 +18,8 @@ import {
   BottomToolbarContainer,
   LeftToolbarContainer,
   RightToolbarContainer,
-  TopToolbarContainer
+  TopToolbarContainer,
+  FloatingToolContainer
 } from '../views/toolbars'
 import { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
@@ -71,6 +72,7 @@ const App = (props: Props) => {
         <LeftToolbarContainer className={classes.left} />
         <BottomToolbarContainer className={classes.bottom} />
         <RightToolbarContainer className={classes.right} />
+        <FloatingToolContainer />
 
         <AppClipArea />
         <AppModalContainer />

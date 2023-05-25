@@ -178,7 +178,7 @@ describe('Rotate controller', () => {
     const updateRender = jest.spyOn(editor.render, 'update')
 
     editor.rotateController.revert()
-    const selectTool = new SelectTool(editor, '')
+    const selectTool = new SelectTool(editor, 'rectangle')
     selectTool.mouseup(new MouseEvent('mouseup'))
 
     expect(updateRender).toBeCalled()

@@ -31,15 +31,15 @@ import { dropAndMerge } from './helper/dropAndMerge'
 import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems'
 import utils from '../shared/utils'
 import { filterNotInCollapsedSGroup } from './helper/filterNotInCollapsedSGroup'
+import { Tool } from './Tool'
 
-class PasteTool {
-  editor: Editor
-  struct: Struct
-  action: any
-  dragCtx: any
-  findItems: string[]
-  mergeItems: any
-  isSingleContractedGroup: boolean
+class PasteTool implements Tool {
+  private readonly editor: Editor
+  private readonly struct: Struct
+  private action: any
+  private dragCtx: any
+  private mergeItems: any
+  private readonly isSingleContractedGroup: boolean
 
   constructor(editor, struct) {
     this.editor = editor
@@ -68,7 +68,6 @@ class PasteTool {
 
     this.editor.update(this.action, true)
 
-    this.findItems = ['functionalGroups']
     this.mergeItems = getItemsToFuse(this.editor, pasteItems)
     this.editor.hover(getHoverToFuse(this.mergeItems), this)
   }

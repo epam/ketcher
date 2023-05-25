@@ -36,8 +36,9 @@ import SelectTool from './select'
 import SimpleObjectTool from './simpleobject'
 import TemplateTool from './template'
 import TextTool from './text'
+import { ToolConstructorInterface } from './Tool'
 
-const tools = {
+export const toolsMap: Record<string, ToolConstructorInterface> = {
   hand: HandTool,
   rgroupatom: RGroupAtomTool,
   select: SelectTool,
@@ -61,5 +62,3 @@ const tools = {
   simpleobject: SimpleObjectTool,
   text: TextTool
 }
-
-export default tools

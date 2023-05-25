@@ -49,15 +49,18 @@ import { updateSelectedAtoms } from 'src/script/ui/state/modal/atoms'
 import { updateSelectedBonds } from 'src/script/ui/state/modal/bonds'
 import { hasAtomsOutsideCanvas } from './helper/isAtomOutSideCanvas'
 import { filterNotInCollapsedSGroup } from './helper/filterNotInCollapsedSGroup'
+import { Tool } from './Tool'
 
-class SelectTool {
-  #mode: string
-  #lassoHelper: LassoHelper
-  editor: Editor
-  dragCtx: any
+type SelectMode = 'lasso' | 'fragment' | 'rectangle'
+
+class SelectTool implements Tool {
+  readonly #mode: SelectMode
+  readonly #lassoHelper: LassoHelper
+  private readonly editor: Editor
+  private dragCtx: any
   isMousedDown = false
 
-  constructor(editor, mode) {
+  constructor(editor: Editor, mode: SelectMode) {
     this.editor = editor
     this.#mode = mode
     this.#lassoHelper = new LassoHelper(
@@ -448,7 +451,7 @@ class SelectTool {
     this.editor.hover(null)
   }
 
-  selectElementsOnCanvas(
+  private selectElementsOnCanvas(
     elements: { atoms: number[]; bonds: number[] },
     editor: Editor,
     event
@@ -462,7 +465,10 @@ class SelectTool {
     )
   }
 
-  isDraggingStructureOnSaltOrSolvent(dragCtx, sgroups: Map<number, ReSGroup>) {
+  private isDraggingStructureOnSaltOrSolvent(
+    dragCtx,
+    sgroups: Map<number, ReSGroup>
+  ) {
     let isDraggingOnSaltOrSolventAtom
     let isDraggingOnSaltOrSolventBond
     if (dragCtx?.mergeItems) {

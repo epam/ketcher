@@ -35,19 +35,17 @@ import utils from '../shared/utils'
 import Editor from '../Editor'
 import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems'
 import { MODES } from 'src/constants'
+import { Tool } from './Tool'
 
-type MergeItems = Record<string, Map<unknown, unknown>> | null
-
-class TemplateTool {
-  editor: Editor
-  mode: any
-  template: any
-  findItems: Array<string>
-  mergeItems: MergeItems = null
-  dragCtx: any
-  targetGroupsIds: Array<number> = []
-  isSaltOrSolvent: boolean
-  event: Event | undefined
+class TemplateTool implements Tool {
+  private readonly editor: Editor
+  private readonly mode: any
+  private readonly template: any
+  private readonly findItems: Array<string>
+  private dragCtx: any
+  private targetGroupsIds: Array<number> = []
+  private readonly isSaltOrSolvent: boolean
+  private event: Event | undefined
 
   constructor(editor: Editor, tmpl) {
     this.editor = editor
@@ -96,19 +94,19 @@ class TemplateTool {
     editor.hoverIcon.updatePosition()
   }
 
-  get struct() {
+  private get struct() {
     return this.editor.render.ctab.molecule
   }
 
-  get functionalGroups() {
+  private get functionalGroups() {
     return this.struct.functionalGroups
   }
 
-  get isModeFunctionalGroup(): boolean {
+  private get isModeFunctionalGroup(): boolean {
     return this.mode === MODES.FG
   }
 
-  get closestItem() {
+  private get closestItem() {
     return this.editor.findItem(this.event, [
       'atoms',
       'bonds',
@@ -117,7 +115,7 @@ class TemplateTool {
     ])
   }
 
-  get isNeedToShowRemoveAbbreviationPopup(): boolean {
+  private get isNeedToShowRemoveAbbreviationPopup(): boolean {
     const targetId = this.findKeyOfRelatedGroupId(this.closestItem?.id)
     const isTargetExpanded = this.functionalGroups.get(targetId!)?.isExpanded
     const isTargetAtomOrBond =
@@ -126,7 +124,7 @@ class TemplateTool {
     return Boolean(isTargetExpanded || isTargetAtomOrBond)
   }
 
-  findKeyOfRelatedGroupId(clickedClosestItemId: number): number {
+  private findKeyOfRelatedGroupId(clickedClosestItemId: number): number {
     let targetId
 
     const relatedGroupId = FunctionalGroup.findFunctionalGroupByAtom(
@@ -143,7 +141,7 @@ class TemplateTool {
     return targetId
   }
 
-  showRemoveAbbreviationPopup(): Promise<void> {
+  private showRemoveAbbreviationPopup(): Promise<void> {
     return this.editor.event.removeFG
       .dispatch({ fgIds: this.targetGroupsIds })
       .then(() => {
@@ -399,7 +397,7 @@ class TemplateTool {
     return true
   }
 
-  mouseup(event) {
+  mouseup(event?) {
     const dragCtx = this.dragCtx
 
     if (!dragCtx) {
@@ -579,8 +577,8 @@ class TemplateTool {
     return true
   }
 
-  cancel(e) {
-    this.mouseup(e)
+  cancel() {
+    this.mouseup()
   }
 
   mouseleave(e) {

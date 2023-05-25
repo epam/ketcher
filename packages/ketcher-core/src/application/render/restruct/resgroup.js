@@ -55,6 +55,7 @@ class ReSGroup extends ReObject {
         if (FunctionalGroup.isAttachmentPointAtom(aid, remol.molecule)) {
           sgroup.firstSgroupAtom = remol.molecule.atoms.get(aid)
           sgroup.functionalGroup = true
+          sgroup.firstSgroupAtomId = aid
         }
       })
     } else {
@@ -138,10 +139,9 @@ class ReSGroup extends ReObject {
       sGroupItem.firstSgroupAtom
     if (sGroupHasFirstAtom) {
       const firstAtomPosition = sGroupItem.firstSgroupAtom.pp
-      const [firstAtomId] = sGroupItem.atoms
-      const reSGroupAtom = render.ctab.atoms.get(firstAtomId)
+      const reSGroupAtom = render.ctab.atoms.get(sGroupItem.firstSgroupAtomId)
       const sGroupTextBoundingBox =
-        reSGroupAtom.visel.boundingBox || reSGroupAtom.visel.oldBoundingBox
+        reSGroupAtom?.visel.boundingBox || reSGroupAtom?.visel.oldBoundingBox
       if (sGroupTextBoundingBox) {
         const { x, y } = Scale.obj2scaled(firstAtomPosition, render.options)
         const { p0, p1 } = sGroupTextBoundingBox

@@ -577,9 +577,6 @@ function arrowEquilibriumOpenAngle(
   const arrowLen = 9
   const lineOffset = 3.5
 
-  // TODO check if this variable `arrowOffset` is required or not
-  // const arrowOffset = 7
-
   const b0x = point1.x + arrowLength
 
   const path: string[] = []
@@ -663,9 +660,6 @@ function arrowUnbalancedEquilibriumOpenHalfAngle(
   const arrowLen = 9
   const lineOffset = 3.5
   const unbalanceVal = 15
-
-  // TODO check if this variable `arrowOffset` is required or not
-  // const arrowOffset = 7
 
   const b0x = point1.x + arrowLength
 
@@ -1258,13 +1252,12 @@ function aromaticBondPaths(
   a3: Vec2,
   b2: Vec2,
   b3: Vec2,
-  mask: number | null,
+  mask: number,
   dash: number[] | null
 ) {
   // eslint-disable-line max-params
-  // TODO mask might be null, remove not null assertion and fix it in a better way.
-  const l1 = dash && mask! & 1 ? dashedPath(a2, b2, dash) : makeStroke(a2, b2)
-  const l2 = dash && mask! & 2 ? dashedPath(a3, b3, dash) : makeStroke(a3, b3)
+  const l1 = dash && mask & 1 ? dashedPath(a2, b2, dash) : makeStroke(a2, b2)
+  const l2 = dash && mask & 2 ? dashedPath(a3, b3, dash) : makeStroke(a3, b3)
 
   return [l1, l2]
 }

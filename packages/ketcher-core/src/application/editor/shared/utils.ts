@@ -59,6 +59,7 @@ function mergeBondsParams(
   bond2: BondAtoms
 ) {
   // TODO find a solution to remove not-null assertion from result atoms below
+  // https://github.com/epam/ketcher/issues/2652
   const begin1 = struct1.atoms.get(bond1.begin)!
   const begin2 = struct2.atoms.get(bond2.begin)!
   const end1 = struct1.atoms.get(bond1.end)!

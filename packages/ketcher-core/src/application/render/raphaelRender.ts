@@ -25,7 +25,6 @@ import draw from './draw'
 import { RenderOptions } from './render.types'
 
 export class Render {
-  // TODO refactor to use getters instead of public properties
   public readonly clientArea: HTMLElement
   public readonly paper: RaphaelPaper
   // TODO https://github.com/epam/ketcher/issues/2631

@@ -51,7 +51,6 @@ export type RenderOptions = {
   fontRLogic: number
 
   /* styles */
-  // TODO check style properties types, how they work with numbers
   lineattr: RenderOptionStyles
   selectionStyle: RenderOptionStyles
   hoverStyle: RenderOptionStyles
@@ -71,7 +70,6 @@ export interface RelativeBox {
   height: number
 }
 
-// TODO check types if it's compatible with RxnArrowAttributes
 export interface ArrowItem {
   mode?: RxnArrowMode
   pos: Vec2[]

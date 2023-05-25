@@ -55,6 +55,7 @@ class SelectTool {
   #lassoHelper: LassoHelper
   editor: Editor
   dragCtx: any
+  isMousedDown = false
 
   constructor(editor, mode) {
     this.editor = editor
@@ -71,6 +72,7 @@ class SelectTool {
   }
 
   mousedown(event) {
+    this.isMousedDown = true
     const rnd = this.editor.render
     const ctab = rnd.ctab
     const molecule = ctab.molecule
@@ -237,6 +239,11 @@ class SelectTool {
   }
 
   mouseup(event) {
+    if (!this.isMousedDown) {
+      return
+    }
+    this.isMousedDown = false
+
     const editor = this.editor
     const selected = editor.selection()
     const struct = editor.render.ctab

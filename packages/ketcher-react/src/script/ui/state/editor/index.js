@@ -26,7 +26,7 @@ import {
   toStereoLabel
 } from '../../data/convert/structconv'
 
-import { Elements } from 'ketcher-core'
+import { Elements, Vec2 } from 'ketcher-core'
 import acts from '../../action'
 import { debounce } from 'lodash/fp'
 import { openDialog } from '../modal'
@@ -35,6 +35,7 @@ import { serverCall } from '../server'
 import { isAtomsArray } from '../modal/atoms'
 import { generateCommonProperties } from './utils'
 import { saveSettings } from '../options'
+import { updateFloatingTools } from '../floatingTools'
 
 export default function initEditor(dispatch, getState) {
   const updateAction = debounce(100, () => dispatch({ type: 'UPDATE' }))
@@ -217,6 +218,13 @@ export default function initEditor(dispatch, getState) {
         highlightFG(dispatch, { groupStruct: null, sGroup: null })
       }
     },
-    onApiSettings: (payload) => dispatch(saveSettings(payload))
+    onApiSettings: (payload) => dispatch(saveSettings(payload)),
+
+    /**
+     * @param {import('../floatingTools').FloatingToolsPayload} payload
+     */
+    onUpdateFloatingTools: (payload) => {
+      dispatch(updateFloatingTools(payload))
+    }
   }
 }

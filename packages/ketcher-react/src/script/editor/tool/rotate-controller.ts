@@ -1,5 +1,7 @@
 import { Action, Scale, Vec2 } from 'ketcher-core'
 import { throttle } from 'lodash'
+import { FloatingToolsPayload } from 'src/script/ui/state/floatingTools'
+import { memoizedDebounce } from 'src/script/ui/utils'
 import Editor from '../Editor'
 import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems'
 import RotateTool from './rotate'
@@ -71,6 +73,10 @@ class RotateController {
       .add(this.render.options.offset)
   }
 
+  private dispatch = memoizedDebounce((payload: FloatingToolsPayload) => {
+    this.editor.event.updateFloatingTools.dispatch(payload)
+  })
+
   rerender() {
     this.clean()
     this.init()
@@ -84,6 +90,10 @@ class RotateController {
   }
 
   clean() {
+    this.dispatch({
+      visible: false
+    })
+
     this.handle?.unhover(this.hoverIn, this.hoverOut)
     this.handle?.unmousedown(this.dragStart)
     this.handle?.unmouseup(this.dragEnd)
@@ -154,6 +164,10 @@ class RotateController {
       this.center.x,
       rectStartY - STYLE.HANDLE_MARGIN - STYLE.HANDLE_RADIUS
     )
+    this.dispatch({
+      handlePos: this.handleCenter,
+      visible: true
+    })
 
     this.drawLink()
     this.drawCross()
@@ -583,6 +597,9 @@ class RotateController {
     }
 
     this.isRotating = true
+    this.dispatch({
+      visible: false
+    })
 
     this.boundingRect?.remove()
     delete this.boundingRect

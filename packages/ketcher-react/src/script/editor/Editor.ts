@@ -37,6 +37,7 @@ import { toolsMap } from './tool'
 import { Highlighter } from './highlighter'
 import { setFunctionalGroupsTooltip } from './utils/functionalGroupsTooltip'
 import { contextMenuInfo } from '../ui/views/components/ContextMenu/contextMenu.types'
+import { FloatingToolsPayload } from '../ui/state/floatingTools'
 import { HoverIcon } from './HoverIcon'
 import RotateController from './tool/rotate-controller'
 import {
@@ -141,6 +142,7 @@ class Editor implements KetcherEditor {
     showInfo: PipelineSubscription
     apiSettings: PipelineSubscription
     cursor: Subscription
+    updateFloatingTools: Subscription<FloatingToolsPayload>
   }
 
   lastEvent: any
@@ -194,7 +196,8 @@ class Editor implements KetcherEditor {
       confirm: new PipelineSubscription(),
       cursor: new PipelineSubscription(),
       showInfo: new PipelineSubscription(),
-      apiSettings: new PipelineSubscription()
+      apiSettings: new PipelineSubscription(),
+      updateFloatingTools: new Subscription()
     }
 
     domEventSetup(this, clientArea)

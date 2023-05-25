@@ -201,6 +201,7 @@ class StructEditor extends Component {
       onShowInfo,
       onApiSettings,
       showAttachmentPoints = true,
+      onUpdateFloatingTools,
       ...props
     } = this.props
 

@@ -38,9 +38,6 @@ export const FloatingTools: React.FC<Props> = ({
   if (!visible) return null
 
   // @yuleicul todo
-  // 0. position
-  // 1. disappear after erasing
-  // 2. rerender controller after flipping
   // 3. delete icon
 
   return (

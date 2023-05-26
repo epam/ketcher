@@ -10,24 +10,50 @@ const initialState: FloatingToolsState = {
   handlePos: new Vec2()
 }
 
-export type FloatingToolsPayload = Partial<FloatingToolsState>
-export const updateFloatingTools = (payload: FloatingToolsPayload) => {
+export const showFloatingTools = (handlePos: Vec2) => {
   return {
-    type: 'UPDATE_FLOATING_TOOLS',
-    payload
+    type: 'SHOW_FLOATING_TOOLS' as const,
+    payload: {
+      visible: true,
+      handlePos
+    }
   }
 }
 
-interface FloatingToolsAction {
-  type: 'UPDATE_FLOATING_TOOLS'
-  payload: FloatingToolsState
+export const hideFloatingTools = () => {
+  return {
+    type: 'HIDE_FLOATING_TOOLS' as const,
+    payload: {
+      visible: false
+    }
+  }
 }
-const floatingToolsReducer: Reducer<
-  FloatingToolsPayload,
-  FloatingToolsAction
-> = (state = initialState, { type, payload }) => {
+
+export const updateFloatingToolsPos = (handlePos: Vec2) => {
+  return {
+    type: 'UPDATE_FLOATING_TOOLS_POS' as const,
+    payload: {
+      handlePos
+    }
+  }
+}
+
+export interface FloatingToolsAction {
+  type:
+    | 'SHOW_FLOATING_TOOLS'
+    | 'HIDE_FLOATING_TOOLS'
+    | 'UPDATE_FLOATING_TOOLS_POS'
+  payload: Partial<FloatingToolsState>
+}
+
+const floatingToolsReducer: Reducer<FloatingToolsState, FloatingToolsAction> = (
+  state = initialState,
+  { type, payload }
+) => {
   switch (type) {
-    case 'UPDATE_FLOATING_TOOLS':
+    case 'SHOW_FLOATING_TOOLS':
+    case 'HIDE_FLOATING_TOOLS':
+    case 'UPDATE_FLOATING_TOOLS_POS':
       return { ...state, ...payload }
     default:
       return state

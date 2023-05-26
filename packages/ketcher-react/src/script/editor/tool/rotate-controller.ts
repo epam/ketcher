@@ -1,7 +1,9 @@
 import { Action, Scale, Vec2 } from 'ketcher-core'
 import { throttle } from 'lodash'
-import { FloatingToolsPayload } from 'src/script/ui/state/floatingTools'
-import { memoizedDebounce } from 'src/script/ui/utils'
+import {
+  hideFloatingTools,
+  showFloatingTools
+} from 'src/script/ui/state/floatingTools'
 import Editor from '../Editor'
 import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems'
 import RotateTool from './rotate'
@@ -29,15 +31,15 @@ const RIGHT_ARROW_PATH =
 
 class RotateController {
   isRotating!: boolean
+  handleCenter!: Vec2
   private editor: Editor
   private rotateTool: RotateTool
   private originalCenter!: Vec2
   private normalizedCenterInitialHandleVec!: Vec2
-  private handleCenter!: Vec2
   private initialRadius!: number
   private isMovingCenter!: boolean
 
-  private handle?: RaphaelElement
+  handle?: RaphaelElement
   private boundingRect?: RaphaelElement
   private cross?: RaphaelElement
   private link?: RaphaelElement
@@ -73,15 +75,6 @@ class RotateController {
       .add(this.render.options.offset)
   }
 
-  private dispatch = memoizedDebounce((payload: FloatingToolsPayload) => {
-    const handleCenterInViewport =
-      payload.handlePos && this.render.raphael2View(payload.handlePos)
-    this.editor.event.updateFloatingTools.dispatch({
-      visible: payload.visible,
-      handlePos: handleCenterInViewport
-    })
-  })
-
   rerender() {
     this.clean()
     this.init()
@@ -95,9 +88,7 @@ class RotateController {
   }
 
   clean() {
-    this.dispatch({
-      visible: false
-    })
+    this.editor.event.updateFloatingTools.dispatch(hideFloatingTools())
 
     this.handle?.unhover(this.hoverIn, this.hoverOut)
     this.handle?.unmousedown(this.dragStart)
@@ -169,10 +160,10 @@ class RotateController {
       this.center.x,
       rectStartY - STYLE.HANDLE_MARGIN - STYLE.HANDLE_RADIUS
     )
-    this.dispatch({
-      handlePos: this.handleCenter,
-      visible: true
-    })
+
+    this.editor.event.updateFloatingTools.dispatch(
+      showFloatingTools(this.render.raphael2View(this.handleCenter))
+    )
 
     this.drawLink()
     this.drawCross()
@@ -602,9 +593,8 @@ class RotateController {
     }
 
     this.isRotating = true
-    this.dispatch({
-      visible: false
-    })
+
+    this.editor.event.updateFloatingTools.dispatch(hideFloatingTools())
 
     this.boundingRect?.remove()
     delete this.boundingRect

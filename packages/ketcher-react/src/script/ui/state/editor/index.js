@@ -35,7 +35,7 @@ import { serverCall } from '../server'
 import { isAtomsArray } from '../modal/atoms'
 import { generateCommonProperties } from './utils'
 import { saveSettings } from '../options'
-import { updateFloatingTools } from '../floatingTools'
+import { memoizedDebounce } from '../../utils'
 
 export default function initEditor(dispatch, getState) {
   const updateAction = debounce(100, () => dispatch({ type: 'UPDATE' }))
@@ -221,10 +221,10 @@ export default function initEditor(dispatch, getState) {
     onApiSettings: (payload) => dispatch(saveSettings(payload)),
 
     /**
-     * @param {import('../floatingTools').FloatingToolsPayload} payload
+     * @param {import('../floatingTools').FloatingToolsAction} action
      */
-    onUpdateFloatingTools: (payload) => {
-      dispatch(updateFloatingTools(payload))
-    }
+    onUpdateFloatingTools: memoizedDebounce((action) => {
+      dispatch(action)
+    })
   }
 }

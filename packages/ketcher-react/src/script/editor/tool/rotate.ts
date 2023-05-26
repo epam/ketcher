@@ -34,7 +34,7 @@ class RotateTool implements Tool {
   dragCtx: any
   isNotActiveTool: boolean | undefined
 
-  constructor(editor, dir, isNotActiveTool?: boolean) {
+  constructor(editor: Editor, dir, isNotActiveTool?: boolean) {
     this.editor = editor
 
     if (dir) {
@@ -47,8 +47,9 @@ class RotateTool implements Tool {
         selection.bonds.length === 1
       const action = !singleBond
         ? fromFlip(restruct, selection, dir, null)
-        : fromBondAlign(restruct, selection.bonds[0], dir)
+        : fromBondAlign(restruct, selection.bonds?.[0], dir)
       editor.update(action)
+      editor.rotateController.rerender()
       this.isNotActiveTool = true
       return
     }

@@ -74,7 +74,12 @@ class RotateController {
   }
 
   private dispatch = memoizedDebounce((payload: FloatingToolsPayload) => {
-    this.editor.event.updateFloatingTools.dispatch(payload)
+    const handleCenterOnPage =
+      payload.handlePos && this.render.view2Page(payload.handlePos)
+    this.editor.event.updateFloatingTools.dispatch({
+      visible: payload.visible,
+      handlePos: handleCenterOnPage
+    })
   })
 
   rerender() {

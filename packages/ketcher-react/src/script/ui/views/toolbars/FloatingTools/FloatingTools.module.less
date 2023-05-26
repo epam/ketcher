@@ -4,8 +4,21 @@
   .toolbar();
 
   position: absolute;
+  translate: -50% calc(-50% - 40px);
 
   .item {
-    margin: 2px 0;
+    box-shadow: 0 6px 10px @color-select-box-shadow;
+    border-radius: 4px;
+    width: 28px;
+    height: 28px;
+    background-color: @color-background-primary;
+
+    > svg {
+      width: 20px;
+      height: 20px;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
   }
 }

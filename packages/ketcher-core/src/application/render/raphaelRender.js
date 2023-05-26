@@ -96,6 +96,18 @@ Render.prototype.page2obj = function (event) {
   return this.view2obj(pp)
 }
 
+/**
+ * @param {Vec2} view Scaled position with offset on paper
+ * @returns {Vec2} position relative to whole ketcher app (including toolbar)
+ */
+Render.prototype.view2Page = function (view) {
+  const { top, left } = this.clientArea.getBoundingClientRect()
+  return view
+    .sub(this.scrollPos())
+    .scaled(this.options.zoom)
+    .add(new Vec2(left, top))
+}
+
 Render.prototype.setPaperSize = function (sz) {
   this.sz = sz
   this.paper.setSize(sz.x * this.options.zoom, sz.y * this.options.zoom)

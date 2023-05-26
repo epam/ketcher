@@ -97,15 +97,14 @@ Render.prototype.page2obj = function (event) {
 }
 
 /**
- * @param {Vec2} view Scaled position with offset on paper
- * @returns {Vec2} position relative to whole ketcher app (including toolbar)
+ * @param {Vec2} coord Vector in Raphael coordinate system,
+ *                     scaled atom's position with offset
+ * @returns {Vec2} Vector in View coordinate system,
+ *                 coordinate relative to viewport (excluding toolbar)
  */
-Render.prototype.view2Page = function (view) {
-  const { top, left } = this.clientArea.getBoundingClientRect()
-  return view
-    .sub(this.scrollPos())
-    .scaled(this.options.zoom)
-    .add(new Vec2(left, top))
+Render.prototype.raphael2View = function (coord) {
+  const obj = coord.sub(this.options.offset).scaled(1 / this.options.scale)
+  return this.obj2view(obj)
 }
 
 Render.prototype.setPaperSize = function (sz) {

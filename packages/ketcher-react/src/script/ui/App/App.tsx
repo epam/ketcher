@@ -72,7 +72,6 @@ const App = (props: Props) => {
         <LeftToolbarContainer className={classes.left} />
         <BottomToolbarContainer className={classes.bottom} />
         <RightToolbarContainer className={classes.right} />
-        <FloatingToolContainer />
 
         <AppClipArea />
         <AppModalContainer />

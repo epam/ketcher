@@ -23,6 +23,7 @@ import clsx from 'clsx'
 import { upperFirst } from 'lodash/fp'
 import handIcon from '../../../../../icons/files/hand.svg'
 import compressedHandIcon from '../../../../../icons/files/compressed-hand.svg'
+import { FloatingToolContainer } from '../../toolbars'
 import Cursor from '../Cursor'
 import { ContextMenu, ContextMenuTrigger } from '../ContextMenu'
 
@@ -239,6 +240,8 @@ class StructEditor extends Component {
           groupStruct={this.props.groupStruct}
           sGroup={this.props.sGroup}
         />
+
+        <FloatingToolContainer />
 
         <ContextMenu />
       </Tag>

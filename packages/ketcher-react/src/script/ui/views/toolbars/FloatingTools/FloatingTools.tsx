@@ -38,7 +38,7 @@ export const FloatingTools: React.FC<Props> = ({
   if (!visible) return null
 
   // @yuleicul todo
-  // 3. delete icon
+  // 4. remove unused code in rotateTool & lefttoolbar
 
   return (
     <div
@@ -48,7 +48,8 @@ export const FloatingTools: React.FC<Props> = ({
       {FLOATING_TOOLS.map((id) => (
         <ActionButton
           className={classes.item}
-          name={id}
+          // Note: erase button's icon is 'delete'
+          name={id === 'erase' ? 'delete' : id}
           action={action[id]}
           status={status[id] as ActionButtonProps['status']}
           selected={false}

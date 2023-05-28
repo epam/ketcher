@@ -94,11 +94,6 @@ type LeftToolbarItemVariant =
   // charge group
   | 'charge-plus'
   | 'charge-minus'
-  // transform group
-  | 'transforms'
-  | 'transform-rotate'
-  | 'transform-flip-h'
-  | 'transform-flip-v'
   // sgroup group
   | 'sgroup'
   // reaction

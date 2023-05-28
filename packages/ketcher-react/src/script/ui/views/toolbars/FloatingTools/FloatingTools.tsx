@@ -21,7 +21,6 @@ export type FloatingToolsCallProps = {
 }
 type Props = FloatingToolsProps & FloatingToolsCallProps
 
-// @yuleicul try FloatingToolItemVariant
 const FLOATING_TOOLS: ToolbarItemVariant[] = [
   'transform-flip-h',
   'transform-flip-v',
@@ -36,9 +35,6 @@ export const FloatingTools: React.FC<Props> = ({
   onAction
 }) => {
   if (!visible) return null
-
-  // @yuleicul todo
-  // 4. remove unused code in rotateTool & lefttoolbar
 
   return (
     <div

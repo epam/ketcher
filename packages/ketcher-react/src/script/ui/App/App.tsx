@@ -18,8 +18,7 @@ import {
   BottomToolbarContainer,
   LeftToolbarContainer,
   RightToolbarContainer,
-  TopToolbarContainer,
-  FloatingToolContainer
+  TopToolbarContainer
 } from '../views/toolbars'
 import { useEffect } from 'react'
 import { useDispatch } from 'react-redux'

@@ -79,11 +79,7 @@ const toolActions = {
     action: { tool: 'charge', opts: -1 },
     hidden: (options) => isHidden(options, 'charge-minus')
   },
-  transforms: {
-    hidden: (options) => isHidden(options, 'transforms')
-  },
   'transform-rotate': {
-    shortcut: 'Alt+r',
     title: 'Rotate Tool',
     action: { tool: 'rotate' },
     hidden: (options) => isHidden(options, 'transform-rotate')

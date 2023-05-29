@@ -16,7 +16,7 @@
 import { Switcher } from 'components/rna/Switcher'
 import { useEffect, useState } from 'react'
 import { Group, MonomerList } from '../../monomerLibrary/monomerLibraryList'
-import { MONOMER_TYPES } from 'src/constants'
+import { MONOMER_TYPES } from '../../../constants'
 
 type selectedMonomersType = {
   Sugar: string

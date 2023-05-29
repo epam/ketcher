@@ -42,7 +42,6 @@ export class RenderStruct {
         ...options
       })
       rnd.setMolecule(preparedStruct)
-      rnd.update(true, options.viewSz)
       if (needCache) {
         renderCache.set(cacheKey, rnd.clientArea.innerHTML)
       }

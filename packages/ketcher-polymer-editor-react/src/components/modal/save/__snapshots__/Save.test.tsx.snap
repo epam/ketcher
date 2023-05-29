@@ -50,7 +50,7 @@ Object {
               type="button"
             >
               <icon-close.svg
-                fill="#525252"
+                fill="#333333"
                 role="img"
               />
               <span
@@ -116,7 +116,7 @@ Object {
                       />
                       <icon-chevron.svg
                         classname="MuiSelect-icon MuiSelect-iconOutlined css-1bn8sss-MuiSelect-icon"
-                        fill="#525252"
+                        fill="#333333"
                         role="img"
                       />
                       <fieldset
@@ -188,10 +188,6 @@ Object {
               title="Errors"
               type="button"
             >
-              <icon-error.svg
-                fill="#525252"
-                role="img"
-              />
               Errors
               <span
                 class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"

@@ -6,84 +6,156 @@ Object {
   "baseElement": <body>
     <div>
       <div
-        class="css-1ecllxh"
-      >
-        <span>
-          Mock title
-        </span>
-        <div
-          class="css-19yk7oj"
-        />
-      </div>
-      <div
-        class="css-cfahjx"
+        style="display: flex; flex-direction: row; margin: 0px 12px 12px;"
       >
         <div
-          class="css-m1s2pe"
+          class="css-1l7f088"
         >
-          R
+          <span>
+            Mock title
+          </span>
         </div>
         <div
-          class="css-m1s2pe"
+          class="css-yd6q9z"
         >
-          m
-        </div>
-        <div
-          class="css-m1s2pe"
-        >
-          d
-        </div>
-        <div
-          class="css-m1s2pe"
-        >
-          ar
-        </div>
-        <div
-          class="css-m1s2pe"
-        >
-          Ld
+          <div
+            class="css-vs0i3p"
+          >
+            <span>
+              R
+            </span>
+            <div
+              class="star"
+            >
+              ★
+            </div>
+          </div>
+          <div
+            class="css-vs0i3p"
+          >
+            <span>
+              m
+            </span>
+            <div
+              class="star"
+            >
+              ★
+            </div>
+          </div>
+          <div
+            class="css-vs0i3p"
+          >
+            <span>
+              d
+            </span>
+            <div
+              class="star"
+            >
+              ★
+            </div>
+          </div>
+          <div
+            class="css-vs0i3p"
+          >
+            <span>
+              ar
+            </span>
+            <div
+              class="star"
+            >
+              ★
+            </div>
+          </div>
+          <div
+            class="css-vs0i3p"
+          >
+            <span>
+              Ld
+            </span>
+            <div
+              class="star"
+            >
+              ★
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </body>,
   "container": <div>
     <div
-      class="css-1ecllxh"
-    >
-      <span>
-        Mock title
-      </span>
-      <div
-        class="css-19yk7oj"
-      />
-    </div>
-    <div
-      class="css-cfahjx"
+      style="display: flex; flex-direction: row; margin: 0px 12px 12px;"
     >
       <div
-        class="css-m1s2pe"
+        class="css-1l7f088"
       >
-        R
+        <span>
+          Mock title
+        </span>
       </div>
       <div
-        class="css-m1s2pe"
+        class="css-yd6q9z"
       >
-        m
-      </div>
-      <div
-        class="css-m1s2pe"
-      >
-        d
-      </div>
-      <div
-        class="css-m1s2pe"
-      >
-        ar
-      </div>
-      <div
-        class="css-m1s2pe"
-      >
-        Ld
+        <div
+          class="css-vs0i3p"
+        >
+          <span>
+            R
+          </span>
+          <div
+            class="star"
+          >
+            ★
+          </div>
+        </div>
+        <div
+          class="css-vs0i3p"
+        >
+          <span>
+            m
+          </span>
+          <div
+            class="star"
+          >
+            ★
+          </div>
+        </div>
+        <div
+          class="css-vs0i3p"
+        >
+          <span>
+            d
+          </span>
+          <div
+            class="star"
+          >
+            ★
+          </div>
+        </div>
+        <div
+          class="css-vs0i3p"
+        >
+          <span>
+            ar
+          </span>
+          <div
+            class="star"
+          >
+            ★
+          </div>
+        </div>
+        <div
+          class="css-vs0i3p"
+        >
+          <span>
+            Ld
+          </span>
+          <div
+            class="star"
+          >
+            ★
+          </div>
+        </div>
       </div>
     </div>
   </div>,
@@ -147,64 +219,142 @@ Object {
   "baseElement": <body>
     <div>
       <div
-        class="css-cfahjx"
+        style="display: flex; flex-direction: row; margin: 0px 12px 12px;"
       >
         <div
-          class="css-m1s2pe"
+          class="css-yd6q9z"
         >
-          R
-        </div>
-        <div
-          class="css-m1s2pe"
-        >
-          m
-        </div>
-        <div
-          class="css-m1s2pe"
-        >
-          d
-        </div>
-        <div
-          class="css-m1s2pe"
-        >
-          ar
-        </div>
-        <div
-          class="css-m1s2pe"
-        >
-          Ld
+          <div
+            class="css-vs0i3p"
+          >
+            <span>
+              R
+            </span>
+            <div
+              class="star"
+            >
+              ★
+            </div>
+          </div>
+          <div
+            class="css-vs0i3p"
+          >
+            <span>
+              m
+            </span>
+            <div
+              class="star"
+            >
+              ★
+            </div>
+          </div>
+          <div
+            class="css-vs0i3p"
+          >
+            <span>
+              d
+            </span>
+            <div
+              class="star"
+            >
+              ★
+            </div>
+          </div>
+          <div
+            class="css-vs0i3p"
+          >
+            <span>
+              ar
+            </span>
+            <div
+              class="star"
+            >
+              ★
+            </div>
+          </div>
+          <div
+            class="css-vs0i3p"
+          >
+            <span>
+              Ld
+            </span>
+            <div
+              class="star"
+            >
+              ★
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </body>,
   "container": <div>
     <div
-      class="css-cfahjx"
+      style="display: flex; flex-direction: row; margin: 0px 12px 12px;"
     >
       <div
-        class="css-m1s2pe"
+        class="css-yd6q9z"
       >
-        R
-      </div>
-      <div
-        class="css-m1s2pe"
-      >
-        m
-      </div>
-      <div
-        class="css-m1s2pe"
-      >
-        d
-      </div>
-      <div
-        class="css-m1s2pe"
-      >
-        ar
-      </div>
-      <div
-        class="css-m1s2pe"
-      >
-        Ld
+        <div
+          class="css-vs0i3p"
+        >
+          <span>
+            R
+          </span>
+          <div
+            class="star"
+          >
+            ★
+          </div>
+        </div>
+        <div
+          class="css-vs0i3p"
+        >
+          <span>
+            m
+          </span>
+          <div
+            class="star"
+          >
+            ★
+          </div>
+        </div>
+        <div
+          class="css-vs0i3p"
+        >
+          <span>
+            d
+          </span>
+          <div
+            class="star"
+          >
+            ★
+          </div>
+        </div>
+        <div
+          class="css-vs0i3p"
+        >
+          <span>
+            ar
+          </span>
+          <div
+            class="star"
+          >
+            ★
+          </div>
+        </div>
+        <div
+          class="css-vs0i3p"
+        >
+          <span>
+            Ld
+          </span>
+          <div
+            class="star"
+          >
+            ★
+          </div>
+        </div>
       </div>
     </div>
   </div>,

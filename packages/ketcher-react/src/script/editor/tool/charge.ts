@@ -16,10 +16,11 @@
 
 import { Elements, fromAtomsAttrs, FunctionalGroup } from 'ketcher-core'
 import Editor from '../Editor'
+import { Tool } from './Tool'
 
-class ChargeTool {
-  editor: Editor
-  charge: any
+class ChargeTool implements Tool {
+  private readonly editor: Editor
+  private readonly charge: any
 
   constructor(editor, charge) {
     this.editor = editor

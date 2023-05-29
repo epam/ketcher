@@ -3,10 +3,11 @@ import { Vec2 } from 'ketcher-core'
 import Editor from '../Editor'
 import RotateTool from './rotate'
 import RotateController, { getDifference } from './rotate-controller'
+import SelectTool from './select'
 
 describe('Rotate controller', () => {
   /**
-   * Steps to check:
+   * Steps to check manually:
    * Select one atom/functional group using Select Tool
    */
   it(`hides for one visible atom`, () => {
@@ -27,7 +28,7 @@ describe('Rotate controller', () => {
   })
 
   /**
-   * Steps to check:
+   * Steps to check manually:
    * 1. Select at least two atoms (then controller shows)
    * 2. click Rotate Tool
    */
@@ -50,7 +51,7 @@ describe('Rotate controller', () => {
   })
 
   /**
-   * Steps to check:
+   * Steps to check manually:
    * Click `zoom in` or press `Ctrl+=`
    */
   it('rerenders while zooming', () => {
@@ -63,7 +64,7 @@ describe('Rotate controller', () => {
   })
 
   /**
-   * Steps to check:
+   * Steps to check manually:
    * Drag handle by right mouse button
    */
   it('can be only dragged by left mouse button', () => {
@@ -84,7 +85,7 @@ describe('Rotate controller', () => {
   })
 
   /**
-   * Steps to check:
+   * Steps to check manually:
    * Select and move a big structure to edge of canvas,
    * then rotate it by the handle
    */
@@ -160,5 +161,29 @@ describe('Rotate controller', () => {
     expect(
       getDifference(predefinedDegree4, structRotateDegree)
     ).toBeGreaterThan(90)
+  })
+
+  /**
+   * Steps to check manually:
+   * 1. Press 'Escape' while rotating
+   * 2. Undo
+   */
+  it(`cancels rotation without modifying history stack`, () => {
+    const editor = new Editor(document, {})
+    // @ts-ignore
+    editor.rotateController.rotateTool.dragCtx = {
+      action: { operations: [], perform: () => undefined }
+    }
+    editor.rotateController.isRotating = true
+    const updateRender = jest.spyOn(editor.render, 'update')
+
+    editor.rotateController.revert()
+    const selectTool = new SelectTool(editor, 'rectangle')
+    selectTool.mouseup(new MouseEvent('mouseup'))
+
+    expect(updateRender).toBeCalled()
+    expect(selectTool.isMousedDown).toBe(false)
+
+    expect(editor.historyStack).toHaveLength(0)
   })
 })

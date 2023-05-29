@@ -29,10 +29,11 @@ import {
 import { atomLongtapEvent } from './atom'
 import utils from '../shared/utils'
 import Editor from '../Editor'
+import { Tool } from './Tool'
 
-class ChainTool {
-  editor: Editor
-  dragCtx: any
+class ChainTool implements Tool {
+  private readonly editor: Editor
+  private dragCtx: any
 
   constructor(editor) {
     this.editor = editor

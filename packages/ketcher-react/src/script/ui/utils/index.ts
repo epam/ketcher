@@ -112,5 +112,4 @@ export function memoizedDebounce(
   }
 }
 
-export { RenderStruct } from './renderStruct'
 export { fileOpener } from './fileOpener'

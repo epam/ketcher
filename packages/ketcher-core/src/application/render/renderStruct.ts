@@ -1,4 +1,5 @@
-import { Render, Struct } from 'ketcher-core'
+import { Struct } from 'domain/entities'
+import { Render } from './raphaelRender'
 
 /**
  * Is used to improve search and opening tab performance in Template Dialog
@@ -42,7 +43,6 @@ export class RenderStruct {
         ...options
       })
       rnd.setMolecule(preparedStruct)
-      rnd.update(true, options.viewSz)
       if (needCache) {
         renderCache.set(cacheKey, rnd.clientArea.innerHTML)
       }

@@ -85,6 +85,8 @@ function keyHandle(dispatch, state, hotKeys, event) {
     }
 
     event.preventDefault()
+  } else if (editor.rotateController.isRotating && key === 'Escape') {
+    editor.rotateController.revert()
   } else if ((group = keyNorm.lookup(hotKeys, event)) !== undefined) {
     const index = checkGroupOnTool(group, actionTool) // index currentTool in group || -1
     const groupLength = group !== null ? group.length : 1

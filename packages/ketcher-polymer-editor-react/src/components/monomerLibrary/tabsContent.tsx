@@ -1,4 +1,4 @@
-import { MONOMER_TYPES, MONOMER_LIBRARY_FAVORITES } from 'src/constants'
+import { MONOMER_TYPES, MONOMER_LIBRARY_FAVORITES } from '../../constants'
 import { MonomerList } from './monomerLibraryList'
 
 export const tabsContent = [

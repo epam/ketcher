@@ -106,8 +106,9 @@ function keyHandle(dispatch, state, hotKeys, event) {
       // in this case we do not want to activate the corresponding tool
       // and just insert the atom directly
       const selected = editor.selection()
-      if (selected) {
+      if (selected && newAction.tool === 'atom') {
         handleHotkeyOverSGroup({ selected, atomProps: newAction?.opts, editor })
+        editor.selection(null)
       } else if (
         hoveredItem &&
         newAction.tool !== 'select' &&

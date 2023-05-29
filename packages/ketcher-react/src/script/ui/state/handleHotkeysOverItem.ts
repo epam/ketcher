@@ -285,9 +285,13 @@ export function handleHotkeyOverSGroup({
   const action = new Action()
   const atomsInSGroups: number[] = []
   const sgroups = struct.sgroups
+  const functionalGroups = struct.molecule.functionalGroups
+
   selectedSGroupsId.forEach((sGroupId) => {
-    if (SGroup.isContractedSGroup(sGroupId, sgroups)) {
-      const sGroupItem = sgroups.get(sGroupId)?.item
+    const sGroupItem = sgroups.get(sGroupId)?.item
+    if (
+      FunctionalGroup.isContractedFunctionalGroup(sGroupId, functionalGroups)
+    ) {
       const atomsWithoutAttachmentPoint =
         SGroup.getAtomsSGroupWithoutAttachmentPoint(sGroupItem, struct.molecule)
       atomsInSGroups.push(...atomsWithoutAttachmentPoint)

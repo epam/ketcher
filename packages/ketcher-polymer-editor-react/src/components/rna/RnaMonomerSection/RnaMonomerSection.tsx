@@ -16,6 +16,7 @@
 import { Switcher } from 'components/rna/Switcher'
 import { useEffect, useState } from 'react'
 import { Group, MonomerList } from '../../monomerLibrary/monomerLibraryList'
+import { MONOMER_TYPES } from 'src/constants'
 
 type selectedMonomersType = {
   Sugar: string
@@ -78,7 +79,7 @@ const RnaMonomerSection = ({ selectItem, items }: MonomerSectionProps) => {
         setActiveMonomerType={selectMonomerType}
       />
       <MonomerList
-        list={items[activeMonomerType]}
+        libraryName={MONOMER_TYPES.RNA}
         onItemClick={selectMonomer}
       />
     </>

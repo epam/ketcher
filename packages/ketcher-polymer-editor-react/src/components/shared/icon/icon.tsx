@@ -25,6 +25,8 @@ import ChevronIcon from 'assets/icons/files/chevron.svg'
 import CloseIcon from 'assets/icons/files/close.svg'
 import CopyIcon from 'assets/icons/files/copy.svg'
 import DividerIcon from 'assets/icons/files/divider.svg'
+import DoubleArrowLeftIcon from 'assets/icons/files/arrows-left.svg'
+import DoubleArrowRightIcon from 'assets/icons/files/arrows-right.svg'
 import DropDownIcon from 'assets/icons/files/dropdown.svg'
 import EraseIcon from 'assets/icons/files/erase.svg'
 import EllipseIcon from 'assets/icons/files/ellipse.svg'
@@ -37,6 +39,7 @@ import RapMiddleLinkIcon from 'assets/icons/files/rap-middle-link.svg'
 import RapRightLinkIcon from 'assets/icons/files/rap-right-link.svg'
 import RotateIcon from 'assets/icons/files/rotate.svg'
 import RectangleIcon from 'assets/icons/files/rectangle.svg'
+import SearchIcon from 'assets/icons/files/search.svg'
 import SelectLassoIcon from 'assets/icons/files/select-lasso.svg'
 import SelectRectangleIcon from 'assets/icons/files/select-rectangle.svg'
 import SelectFragmentIcon from 'assets/icons/files/select-fragment.svg'
@@ -59,6 +62,8 @@ const iconMap = {
   close: CloseIcon,
   copy: CopyIcon,
   divider: DividerIcon,
+  'double-arrow-left': DoubleArrowLeftIcon,
+  'double-arrow-right': DoubleArrowRightIcon,
   dropdown: DropDownIcon,
   erase: EraseIcon,
   ellipse: EllipseIcon,
@@ -72,6 +77,7 @@ const iconMap = {
   'rap-right-link': RapRightLinkIcon,
   rotate: RotateIcon,
   rectangle: RectangleIcon,
+  search: SearchIcon,
   'select-lasso': SelectLassoIcon,
   'select-rectangle': SelectRectangleIcon,
   'select-fragment': SelectFragmentIcon,

@@ -1,5 +1,13 @@
 import { MonomerGroup } from '../monomerLibraryGroup'
 import { MonomerItemType } from '../monomerLibraryItem'
+import {
+  selectFilteredMonomers,
+  selectMonomersInCategory,
+  selectMonomerGroups,
+  selectMonomersInFavorites
+} from 'state/library'
+import { useAppSelector } from 'hooks'
+import { MONOMER_LIBRARY_FAVORITES } from 'src/constants'
 
 export type Group = {
   groupItems: Array<MonomerItemType>
@@ -7,17 +15,24 @@ export type Group = {
 }
 
 export interface MonomerListProps {
-  list: Array<Group>
+  libraryName: string
   onItemClick: (item) => void
 }
 
-export const MonomerList = ({ list, onItemClick }: MonomerListProps) => {
+const MonomerList = ({ libraryName, onItemClick }: MonomerListProps) => {
+  const monomers = useAppSelector(selectFilteredMonomers)
+  const items =
+    libraryName !== MONOMER_LIBRARY_FAVORITES
+      ? selectMonomersInCategory(monomers, libraryName)
+      : selectMonomersInFavorites(monomers)
+  const groups = selectMonomerGroups(items)
+
   return (
     <>
-      {list.map(({ groupTitle, groupItems }, key) => {
+      {groups.map(({ groupTitle, groupItems }) => {
         return (
           <MonomerGroup
-            key={key}
+            key={groupTitle}
             title={groupTitle}
             items={groupItems}
             onItemClick={onItemClick}
@@ -27,3 +42,5 @@ export const MonomerList = ({ list, onItemClick }: MonomerListProps) => {
     </>
   )
 }
+
+export { MonomerList }

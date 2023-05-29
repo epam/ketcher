@@ -14,6 +14,4 @@
  * limitations under the License.
  ***************************************************************************/
 
-export * from './formatProperties'
-export * from './supportedFormatProperties'
-export * from './sdfParser'
+export * from './librarySlice'

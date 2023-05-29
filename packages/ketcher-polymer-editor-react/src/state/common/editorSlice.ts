@@ -20,11 +20,17 @@ import { RootState } from 'state'
 interface EditorState {
   isReady: boolean | null
   activeTool: string
+  peptides: any[]
+  favorites: any[]
+  searchFilter: string
 }
 
 const initialState: EditorState = {
   isReady: null,
-  activeTool: 'select'
+  activeTool: 'select',
+  peptides: [],
+  favorites: [],
+  searchFilter: ''
 }
 
 export const editorSlice: any = createSlice({

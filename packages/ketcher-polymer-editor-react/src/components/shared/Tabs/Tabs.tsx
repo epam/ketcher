@@ -14,16 +14,28 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Tabs from '@mui/material/Tabs'
-import Tab from '@mui/material/Tab'
+import { Tabs, Tab } from '@mui/material'
 import { ReactElement, useState } from 'react'
 import Box from '@mui/material/Box'
 import styled from '@emotion/styled'
+import { CSSObject } from '@emotion/core'
 import { scrollbarThin } from 'theming/mixins'
 
 function TabPanel({ children, value, index, ...other }) {
+  const style: Record<string, CSSObject> = {
+    backgroundColor: '#eef2f5',
+    flexGrow: 1,
+    padding: '16px 12px',
+    overflowY: 'scroll'
+  }
   return (
-    <div role="tabpanel" hidden={value !== index} id={index} {...other}>
+    <div
+      role="tabpanel"
+      style={style}
+      hidden={value !== index}
+      id={index}
+      {...other}
+    >
       {value === index && <Box>{children}</Box>}
     </div>
   )
@@ -37,7 +49,7 @@ function a11yProps(index: number) {
 }
 
 function CustomTabs(props): ReactElement {
-  const [tabIndex, setTabIndex] = useState(0)
+  const [tabIndex, setTabIndex] = useState(1)
   const { tabs } = props
   const tabPanel = tabs[tabIndex]
   const Component = tabPanel?.component
@@ -61,26 +73,43 @@ function CustomTabs(props): ReactElement {
 
   const StyledTab = styled(Tab)(({ theme }) => ({
     minHeight: 24,
-    minWidth: 60,
+    minWidth: 0,
     height: 1,
-    width: 65,
     padding: 0,
-    fontSize: theme.ketcher.font.size.small,
+    fontSize: theme.ketcher.font.size.regular,
+    textTransform: 'none',
     cursor: 'pointer',
     textAlign: 'center',
     backgroundColor: theme.ketcher.color.tab.regular,
-    color: theme.ketcher.color.text.primary,
+    color: theme.ketcher.color.text.light,
     listStyleType: 'none',
     margin: 0,
+    flex: '1 1 auto',
+    border: `1px solid transparent`,
+    borderBottom: `1px solid ${theme.ketcher.color.border.primary}`,
+    borderRadius: '4px 4px 0 0',
+
+    '&:first-of-type': {
+      borderLeftColor: 'transparent !important',
+      borderRadius: '0 4px 0 0 '
+    },
+
+    '&:last-of-type': {
+      borderRightColor: 'transparent !important',
+      borderRadius: '4px 0 0 0'
+    },
 
     '&:hover': {
-      backgroundColor: theme.ketcher.color.tab.hover,
-      color: theme.ketcher.color.text.light
+      backgroundColor: theme.ketcher.color.tab.regular,
+      color: theme.ketcher.color.text.primary,
+      border: `1px solid ${theme.ketcher.color.border.primary}`
     },
 
     '&.Mui-selected': {
-      color: theme.ketcher.color.text.light,
-      backgroundColor: theme.ketcher.color.tab.active
+      backgroundColor: theme.ketcher.color.tab.active,
+      color: theme.ketcher.color.text.primary,
+      border: `1px solid ${theme.ketcher.color.border.primary}`,
+      borderBottom: '1px solid transparent'
     }
   }))
 

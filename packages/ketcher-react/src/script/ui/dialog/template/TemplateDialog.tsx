@@ -189,6 +189,7 @@ const TemplateDialog: FC<Props> = (props) => {
     if (initialTab !== null) {
       onTabChange(initialTab)
     }
+    console.log('test')
   }, [initialTab, onTabChange])
 
   const handleAccordionChange = (accordion) => (_, isExpanded) => {

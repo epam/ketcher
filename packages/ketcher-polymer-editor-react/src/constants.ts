@@ -14,6 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-export * from './formatProperties'
-export * from './supportedFormatProperties'
-export * from './sdfParser'
+export const MONOMER_LIBRARY_FAVORITES = 'FAVORITES'
+
+export const MONOMER_TYPES = {
+  PEPTIDE: 'PEPTIDE',
+  CHEM: 'CHEM',
+  RNA: 'RNA'
+}

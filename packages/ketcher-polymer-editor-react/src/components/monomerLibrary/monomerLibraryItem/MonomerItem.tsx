@@ -14,23 +14,29 @@
  * limitations under the License.
  ***************************************************************************/
 import styled from '@emotion/styled'
+import { useAppDispatch } from 'hooks'
+import { useState } from 'react'
+import { addMonomerFavorites, removeMonomerFavorites } from 'state/library'
+import { MonomerColorScheme } from 'theming/defaultTheme'
 
 export type MonomerItemType = {
   label: string
-  colorScheme?: string
+  colorScheme?: MonomerColorScheme
   monomers?: object
+  favorite?: boolean
+  props?: any
 }
 
 interface MonomerItemProps {
   item: MonomerItemType
   onClick: () => void
+  onStarClick?: any
 }
 
-const Card = styled.div<{ colorScheme?: string }>`
-  background: ${({ colorScheme, theme }) =>
-    colorScheme || theme.ketcher.color.monomer.default};
+const Card = styled.div<{ code: string }>`
+  background: white;
   border-radius: 2px;
-  width: 48px;
+  width: 58px;
   height: 48px;
   text-align: center;
   cursor: pointer;
@@ -38,14 +44,94 @@ const Card = styled.div<{ colorScheme?: string }>`
   justify-content: center;
   align-items: center;
   font-size: ${({ theme }) => theme.ketcher.font.size.small};
+  color: ${({ theme }) => theme.ketcher.color.text.primary};
+  position: relative;
+  overflow: hidden;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  margin: 0;
+  user-select: none;
+
+  .hidden & .star {
+    visibility: hidden !important;
+  }
+
+  &:hover {
+    outline: 1px solid #b4b9d6;
+    &::after {
+      content: '';
+      background: ${({ code, theme }) =>
+        theme.ketcher.monomer.color[code].hover};
+    }
+    > .star {
+      visibility: visible;
+      opacity: 1;
+    }
+  }
+  &::after {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 8px;
+    background: ${({ code, theme }) =>
+      theme.ketcher.monomer.color[code].regular};
+  }
+  > span {
+    position: absolute;
+    bottom: 6px;
+    left: 6px;
+    text-overflow: ellipsis;
+    max-width: calc(100% - 12px);
+    overflow: hidden;
+  }
+  > .star {
+    color: #e1e5ea;
+    position: absolute;
+    top: 12px;
+    right: 4px;
+    font-size: 15px;
+    opacity: 0;
+    transition: 0.2s ease;
+    &.visible {
+      visibility: visible;
+      opacity: 1;
+    }
+    &:active {
+      transform: scale(1.4);
+    }
+    &:hover,
+    &.visible {
+      color: #faa500;
+    }
+  }
 `
 
 const MonomerItem = (props: MonomerItemProps) => {
   const { item, onClick } = props
+  const [favorite, setFavorite] = useState(item.favorite)
+
+  const dispatch = useAppDispatch()
 
   return (
-    <Card onClick={onClick} colorScheme={item.colorScheme}>
-      {item.label}
+    <Card onClick={onClick} code={item.props.MonomerNaturalAnalogCode}>
+      <span>{item.label}</span>
+      <div
+        onClick={(event) => {
+          event.stopPropagation()
+          setFavorite(!favorite)
+          if (!favorite) {
+            dispatch(addMonomerFavorites(item))
+          } else {
+            dispatch(removeMonomerFavorites(item))
+          }
+        }}
+        className={`star ${favorite ? 'visible' : ''}`}
+      >
+        ★
+      </div>
     </Card>
   )
 }

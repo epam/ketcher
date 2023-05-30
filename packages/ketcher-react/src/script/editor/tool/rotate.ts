@@ -59,7 +59,10 @@ class RotateTool {
   }
 
   mousedown(event, handleCenter?: Vec2, center?: Vec2) {
-    const xy0 = center || this.getCenter(this.editor, event)[0]
+    const xy0 =
+      center ||
+      this.getCenter(this.editor)[0] ||
+      this.editor.render.page2obj(event)
     this.dragCtx = {
       xy0,
       angle1: utils.calcAngle(
@@ -76,10 +79,13 @@ class RotateTool {
    *                - atoms in contracted functional groups
    *                + functional groups's attachment atoms
    */
-  getCenter(editor: Editor, event?) {
+  getCenter(editor: Editor) {
+    const selection = editor.selection()
+    const struct = editor.render.ctab.molecule
+    const { texts, rxnArrows, rxnPluses } = selection || {}
+
     const visibleAtoms =
-      this.editor.selection()?.atoms?.filter((atomId) => {
-        const struct = this.editor.render.ctab.molecule
+      selection?.atoms?.filter((atomId) => {
         const atom = struct.atoms.get(atomId)!
         return (
           !FunctionalGroup.isAtomInContractedFunctionalGroup(
@@ -91,51 +97,47 @@ class RotateTool {
         )
       }) || []
 
-    let xy0 = new Vec2()
-    const struct = editor.render.ctab.molecule
+    let xy0: Vec2 | undefined
 
-    if (visibleAtoms.length > 0) {
-      let rotId: number | null = null
-      let rotAll = false
+    let attachAtomId: number | null = null
+    let isMoreThanOneAttachAtom = false
+    visibleAtoms.forEach((aid) => {
+      const atom = struct.atoms.get(aid)
 
-      visibleAtoms.forEach((aid) => {
-        const atom = struct.atoms.get(aid)
+      if (isMoreThanOneAttachAtom) return
 
-        if (rotAll) return
+      atom?.neighbors.find((nei) => {
+        const hb = struct.halfBonds.get(nei)
 
-        atom?.neighbors.find((nei) => {
-          const hb = struct.halfBonds.get(nei)
-
-          if (hb) {
-            if (editor.selection()?.atoms?.indexOf(hb.end as number) === -1) {
-              if (rotId == null) {
-                rotId = aid
-              } else if (rotId !== aid) {
-                rotAll = true
-                return true
-              }
+        if (hb) {
+          if (editor.selection()?.atoms?.indexOf(hb.end as number) === -1) {
+            if (attachAtomId === null) {
+              attachAtomId = aid
+            } else if (attachAtomId !== aid) {
+              isMoreThanOneAttachAtom = true
+              return true
             }
           }
-          return false
-        })
+        }
+        return false
       })
+    })
 
-      if (!rotAll && rotId !== null) {
-        xy0 = struct.atoms.get(rotId)?.pp as Vec2
-      } else {
-        const selectionBoundingBox = editor.render.ctab.getVBoxObj({
-          atoms: visibleAtoms
-        })!
-        xy0 = selectionBoundingBox.centre()
-      }
-    } else if (struct.atoms?.size) {
-      struct.atoms.forEach((atom) => {
-        xy0.add_(atom.pp)
-      }) // eslint-disable-line no-underscore-dangle, max-len
-      // poor man struct center (without sdata, etc)
-      xy0 = xy0.scaled(1 / struct.atoms.size)
-    } else if (event) {
-      xy0 = editor.render.page2obj(event)
+    if (!isMoreThanOneAttachAtom && attachAtomId !== null) {
+      xy0 = struct.atoms.get(attachAtomId)?.pp as Vec2
+    } else if (
+      visibleAtoms.length ||
+      texts?.length ||
+      rxnArrows?.length ||
+      rxnPluses?.length
+    ) {
+      const selectionBoundingBox = editor.render.ctab.getVBoxObj({
+        atoms: visibleAtoms,
+        texts,
+        rxnArrows,
+        rxnPluses
+      })
+      xy0 = selectionBoundingBox?.centre()
     }
 
     return [xy0, visibleAtoms] as const

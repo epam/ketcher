@@ -2,28 +2,81 @@
 import { Vec2 } from 'ketcher-core'
 import Editor from '../Editor'
 import RotateTool from './rotate'
+import SelectTool from './select'
 import RotateController, { getDifference } from './rotate-controller'
 
 describe('Rotate controller', () => {
   /**
    * Steps to check:
-   * Select one atom/functional group using Select Tool
+   * Select one atom / functional group using Select Tool
    */
-  it(`hides for one visible atom`, () => {
+  it(`hides for only one visible atom`, () => {
+    const tool = () => new SelectTool(undefined, undefined)
     const paper = jest.fn()
+    const selection = () => null
     const controller = new RotateController({
-      selection: () => null,
-      render: {
-        paper
-      }
+      selection,
+      tool,
+      render: { paper }
     } as any)
-
-    const visibleAtoms = [0]
+    let visibleAtoms = [1]
     // @ts-ignore
-    controller.show(visibleAtoms)
-
+    controller.rotateTool.getCenter = () => [new Vec2(), visibleAtoms]
     expect(visibleAtoms.length).toBe(1)
+    expect(tool()).toBeInstanceOf(SelectTool)
+    expect(selection()).toBe(null)
+
+    controller.rerender()
+
     expect(paper).toBeCalledTimes(0)
+
+    visibleAtoms = [1, 2]
+    // @ts-ignore
+    controller.rotateTool.getCenter = () => [new Vec2(), visibleAtoms]
+
+    expect(controller.rerender).toThrow()
+  })
+
+  /**
+   * Steps to check:
+   * Select one text / rxnPlus / rxnArrow using Select Tool
+   */
+  it(`hides for only one text / rxnPlus, but shows for one rnxArrow`, () => {
+    const tool = () => new SelectTool(undefined, undefined)
+    const paper = jest.fn()
+    let selection = () => ({
+      texts: [1],
+      rxnPlus: [] as Array<any>,
+      rxnArrow: [] as Array<any>
+    })
+    const controller = new RotateController({
+      selection,
+      tool,
+      render: { paper }
+    } as any)
+    // @ts-ignore
+    controller.rotateTool.getCenter = () => [new Vec2(), []]
+    expect(tool()).toBeInstanceOf(SelectTool)
+
+    controller.rerender()
+
+    expect(paper).toBeCalledTimes(0)
+
+    selection = () => ({ texts: [], rxnPlus: [1], rxnArrow: [] })
+    // @ts-ignore
+    controller.rotateTool.getCenter = () => [new Vec2(), []]
+
+    controller.rerender()
+
+    expect(paper).toBeCalledTimes(0)
+
+    selection = () => ({ texts: [1], rxnPlus: [1], rxnArrow: [] })
+
+    expect(controller.rerender).toThrow()
+
+    selection = () => ({ texts: [], rxnPlus: [], rxnArrow: [1] })
+
+    expect(controller.rerender).toThrow()
   })
 
   /**
@@ -40,12 +93,13 @@ describe('Rotate controller', () => {
       tool: () => NonSelectTool,
       render: { paper }
     } as any)
-
     const visibleAtoms = [0, 1]
     // @ts-ignore
-    controller.show(visibleAtoms)
-
+    controller.rotateTool.getCenter = () => [new Vec2(), visibleAtoms]
     expect(visibleAtoms.length).toBeGreaterThan(1)
+
+    controller.rerender()
+
     expect(paper).toBeCalledTimes(0)
   })
 
@@ -86,7 +140,7 @@ describe('Rotate controller', () => {
   /**
    * Steps to check:
    * Select and move a big structure to edge of canvas,
-   * then rotate it by the handle
+   * then rotate it by the handle, see if center position is correct
    */
   test('center changes with `scale` and `offset`', () => {
     const controller = new RotateController({ selection: () => null } as any)

@@ -22,7 +22,9 @@ class Visel {
   constructor(type) {
     this.type = type
     this.paths = []
+    /** @type {Box2Abs[]} */
     this.boxes = []
+    /** @type {Box2Abs | null} */
     this.boundingBox = null
     this.oldBoundingBox = null
     this.exts = []
@@ -69,6 +71,27 @@ class Visel {
       if (this.boundingBox !== null) {
         this.boundingBox = this.boundingBox.translate(delta)
       }
+    }
+  }
+
+  /**
+   * @param {number} degree
+   * @param {Vec2} center
+   */
+  rotate(degree, center) {
+    for (let i = 0; i < this.paths.length; ++i) {
+      this.paths[i].rotate(degree, center.x, center.y)
+    }
+
+    for (let j = 0; j < this.boxes.length; ++j) {
+      this.boxes[j] = this.boxes[j].transform((point) =>
+        point.rotateAroundOrigin(degree, center)
+      )
+    }
+    if (this.boundingBox !== null) {
+      this.boundingBox = this.boundingBox.transform((point) =>
+        point.rotateAroundOrigin(degree, center)
+      )
     }
   }
 }

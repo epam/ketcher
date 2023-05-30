@@ -10,12 +10,12 @@ import {
 } from 'ketcher-core'
 import { STRUCT_TYPE } from 'src/constants'
 import { openDialog } from './modal'
-import Tools from '../../editor/tool'
 import { getSelectedAtoms } from '../../editor/tool/select'
 import { onAction } from './shared'
 import { Editor } from '../../editor'
 import { updateSelectedAtoms } from 'src/script/ui/state/modal/atoms'
 import { fromAtom, toAtom, fromBond, toBond } from '../data/convert/structconv'
+import SGroupTool from '../../editor/tool/sgroup'
 
 type TNewAction = {
   tool?: string
@@ -226,7 +226,7 @@ function getToolHandler(itemType: string, toolName = '') {
       charge: (props: HandlersProps) => handleChargeTool(props),
       rgroupatom: (props: HandlersProps) => handleRGroupAtomTool(props),
       sgroup: ({ editor, hoveredItemId }: HandlersProps) => {
-        Tools.sgroup.sgroupDialog(editor, hoveredItemId)
+        SGroupTool.sgroupDialog(editor, hoveredItemId)
       },
       hand: ({ dispatch }: HandlersProps) =>
         dispatch(onAction({ tool: 'hand' }))

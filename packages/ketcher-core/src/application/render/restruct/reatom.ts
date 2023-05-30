@@ -252,7 +252,6 @@ class ReAtom extends ReObject {
       draw.recenterText(index.path, index.rbb)
       restruct.addReObjectPath(LayerMap.indices, this.visel, index.path, ps)
     }
-    this.setHover(this.hover, render)
 
     if (this.showLabel && (!this.a.pseudo || isHydrogenIsotope)) {
       let hydroIndex: any = null
@@ -367,6 +366,9 @@ class ReAtom extends ReObject {
         /* eslint-enable no-mixed-operators */
       }
     }
+
+    // draw hover after label is calculated
+    this.setHover(this.hover, render)
 
     if (this.a.attpnt) {
       const lsb = bisectLargestSector(this, restruct.molecule)

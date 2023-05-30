@@ -28,12 +28,13 @@ import {
 
 import utils from '../shared/utils'
 import Editor from '../Editor'
+import { Tool } from './Tool'
 
-class BondTool {
-  editor: Editor
-  atomProps: { label: string }
-  bondProps: any
-  dragCtx: any
+class BondTool implements Tool {
+  private readonly editor: Editor
+  private readonly atomProps: { label: string }
+  private readonly bondProps: any
+  private dragCtx: any
   isNotActiveTool: boolean | undefined
 
   constructor(editor, bondProps) {

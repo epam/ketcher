@@ -186,7 +186,7 @@ function drawCIPLabel({
   cipValuePath.path.translateAbs(0.5 * box.width, -0.5 * box.height)
   path.push(cipValuePath.path.toFront())
 
-  restruct.addReObjectPath(LayerMap.data, visel, path, null, true)
+  restruct.addReObjectPath(LayerMap.additionalInfo, visel, path, null, true)
 
   return cipValuePath
 }

@@ -102,6 +102,7 @@ export interface Selection {
   enhancedFlags?: Array<number>
   rxnPluses?: Array<number>
   rxnArrows?: Array<number>
+  texts?: Array<number>
 }
 
 class Editor implements KetcherEditor {

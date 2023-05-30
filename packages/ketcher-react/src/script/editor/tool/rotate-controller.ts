@@ -74,13 +74,7 @@ class RotateController {
   rerender() {
     this.clean()
     this.init()
-
-    const [originalCenter, visibleAtoms] = this.rotateTool.getCenter(
-      this.editor
-    )
-
-    this.originalCenter = originalCenter
-    this.show(visibleAtoms)
+    this.show()
   }
 
   clean() {
@@ -127,14 +121,34 @@ class RotateController {
     )
   }
 
-  private show(visibleAtoms: number[]) {
+  private show() {
+    const [originalCenter, visibleAtoms] = this.rotateTool.getCenter(
+      this.editor
+    )
+
+    const { texts, rxnArrows, rxnPluses } = this.editor.selection() || {}
+
+    const isMoreThanOneItemBeingSelected =
+      visibleAtoms.concat(texts || [], rxnArrows || [], rxnPluses || [])
+        .length > 1
+
     const enable =
-      visibleAtoms.length > 1 && this.editor.tool() instanceof SelectTool
+      (isMoreThanOneItemBeingSelected || rxnArrows?.length) &&
+      this.editor.tool() instanceof SelectTool &&
+      originalCenter
+
     if (!enable) {
       return
     }
 
-    const rectStartY = this.drawBoundingRect(visibleAtoms)
+    this.originalCenter = originalCenter
+
+    const rectStartY = this.drawBoundingRect(
+      visibleAtoms,
+      texts,
+      rxnArrows,
+      rxnPluses
+    )
 
     this.handleCenter = new Vec2(
       this.center.x,
@@ -213,13 +227,21 @@ class RotateController {
     }
   }
 
-  private drawBoundingRect(visibleAtoms: number[]) {
+  private drawBoundingRect(
+    visibleAtoms: number[],
+    texts?: number[],
+    rxnArrows?: number[],
+    rxnPluses?: number[]
+  ) {
     const RECT_RADIUS = 20
     const RECT_PADDING = 10
 
     const rectBox = this.render.ctab
       .getVBoxObj({
         atoms: visibleAtoms,
+        texts,
+        rxnArrows,
+        rxnPluses,
         sgroups: getGroupIdsFromItemArrays(this.render.ctab.molecule, {
           atoms: visibleAtoms
         })

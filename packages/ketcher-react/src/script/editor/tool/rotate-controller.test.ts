@@ -4,7 +4,6 @@ import Editor from '../Editor'
 import RotateTool from './rotate'
 import SelectTool from './select'
 import RotateController, { getDifference } from './rotate-controller'
-import SelectTool from './select'
 
 describe('Rotate controller', () => {
   /**

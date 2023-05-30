@@ -11,6 +11,7 @@ describe('Rotate controller', () => {
    * Select one atom / functional group using Select Tool
    */
   it(`hides for only one visible atom`, () => {
+    // @ts-ignore
     const tool = () => new SelectTool(undefined, undefined)
     const paper = jest.fn()
     const selection = () => null
@@ -42,6 +43,7 @@ describe('Rotate controller', () => {
    * Select one text / rxnPlus / rxnArrow using Select Tool
    */
   it(`hides for only one text / rxnPlus, but shows for one rnxArrow`, () => {
+    // @ts-ignore
     const tool = () => new SelectTool(undefined, undefined)
     const paper = jest.fn()
     let selection = () => ({

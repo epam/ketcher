@@ -6,20 +6,15 @@ import {
   ReStruct,
   setExpandSGroup,
   SGroup,
-  ReBond
+  ReBond,
+  MergeItems
 } from 'ketcher-core'
 import Editor from '../../Editor'
 import { getGroupIdsFromItemMaps } from './getGroupIdsFromItems'
 
-type MergeItems = {
-  atoms: Map<number, number>
-  bonds: Map<number, number>
-  atomToFunctionalGroup?: Map<number, number>
-}
-
 export function dropAndMerge(
   editor: Editor,
-  mergeItems: any,
+  mergeItems?: MergeItems | null,
   action?: Action,
   resizeCanvas?: boolean
 ): Action {
@@ -27,7 +22,7 @@ export function dropAndMerge(
   const isMerging = !!mergeItems
   let dropItemAction = new Action()
 
-  if (isMerging) {
+  if (isMerging && mergeItems) {
     const expandGroupsAction = getExpandGroupsInMergeAction(
       editor.render.ctab,
       mergeItems

@@ -18,13 +18,16 @@ import { Action } from './action'
 import { checkAtomValence, fromAtomMerge } from './atom'
 import { fromBondsMerge } from './bond'
 import utils from '../shared/utils'
+import { MergeItems } from 'application/editor'
+import Restruct from 'application/render/restruct/restruct'
+import { Struct } from 'domain/entities'
 
-export function fromItemsFuse(restruct, items) {
+export function fromItemsFuse(restruct: Restruct, items?: MergeItems | null) {
   let action = new Action()
 
   if (!items) return action
 
-  const usedAtoms = new Set()
+  const usedAtoms = new Set<number>()
 
   const connectedAtomIds = getAllConnectedAtomsIds(
     restruct,
@@ -48,7 +51,7 @@ export function fromItemsFuse(restruct, items) {
   return action
 }
 
-export function getItemsToFuse(editor, items) {
+export function getItemsToFuse(editor, items): MergeItems | null {
   const struct = editor.render.ctab.molecule
 
   const mergeItems = items || {
@@ -87,20 +90,10 @@ export function mergeMapOfItemsToSet(items: Map<number, number>): Set<number> {
   return itemsSet
 }
 
-/**
- * @param struct
- * @param closestMap {{
- * 		atoms: Map<number, number>,
- * 		bonds: Map<number, number>,
- *    atomToFunctionalGroup: Map<number, number>
- * }}
- * @return {{
- * 		atoms: Map<number, number>,
- * 		bonds: Map<number, number>,
- *    atomToFunctionalGroup: Map<number, number>
- * }}
- */
-function closestToMerge(struct, closestMap) {
+function closestToMerge(
+  struct: Struct,
+  closestMap: MergeItems
+): MergeItems | null {
   const mergeMap = {
     atoms: new Map(closestMap.atoms),
     bonds: new Map(closestMap.bonds),
@@ -111,7 +104,7 @@ function closestToMerge(struct, closestMap) {
     const bond = struct.bonds.get(srcId)
     const bondCI = struct.bonds.get(dstId)
 
-    if (utils.mergeBondsParams(struct, bond, struct, bondCI).merged) {
+    if (bond && utils.mergeBondsParams(struct, bond, struct, bondCI).merged) {
       mergeMap.atoms.delete(bond.begin)
       mergeMap.atoms.delete(bond.end)
     } else {
@@ -130,9 +123,9 @@ function closestToMerge(struct, closestMap) {
   return mergeMap
 }
 
-function getAllConnectedAtomsIds(restruct, atomsIds, bondsIds) {
-  const initialAtoms = new Set(atomsIds)
-  const connectedAtoms = new Set()
+function getAllConnectedAtomsIds(restruct, atomsIds, bondsIds): Set<number> {
+  const initialAtoms = new Set<number>(atomsIds)
+  const connectedAtoms = new Set<number>()
 
   for (const bondId of bondsIds) {
     const bond = restruct.bonds.get(bondId)

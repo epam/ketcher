@@ -240,7 +240,7 @@ export class SGroup {
     return Vec2.diff(sgroup.pp, sgroup.bracketBox.p1)
   }
 
-  static isSaltOrSolvent(moleculeName: string): boolean {
+  static isSaltOrSolvent(moleculeName?: string): boolean {
     const saltsAndSolventsProvider = SaltsAndSolventsProvider.getInstance()
     const saltsAndSolvents = saltsAndSolventsProvider.getSaltsAndSolventsList()
     return saltsAndSolvents.some(

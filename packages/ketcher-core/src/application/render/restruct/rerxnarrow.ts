@@ -123,12 +123,9 @@ class ReRxnArrow extends ReObject {
     return refPoints
   }
 
-  makeSelectionPlate(restruct: ReStruct, _paper, styles) {
-    const render = restruct.render
-    const options = restruct.render.options
-
+  makeAdditionalInfo(restruct: ReStruct) {
+    const scaleFactor = restruct.render.options.scale
     const refPoints = this.getReferencePoints()
-    const scaleFactor = options.scale
     const selectionSet = restruct.render.paper.set()
 
     refPoints.forEach((rp) => {
@@ -139,6 +136,14 @@ class ReRxnArrow extends ReObject {
           .attr({ fill: 'black' })
       )
     })
+
+    return selectionSet
+  }
+
+  makeSelectionPlate(restruct: ReStruct, _paper, styles) {
+    const render = restruct.render
+    const options = restruct.render.options
+    const selectionSet = restruct.render.paper.set()
 
     selectionSet.push(
       render.paper

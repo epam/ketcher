@@ -243,7 +243,7 @@ export function fromBondsMerge(
 ): Action {
   const struct = restruct.molecule
 
-  const atomPairs = new Map()
+  const atomPairs = new Map<number, number>()
   let action = new Action()
 
   mergeMap.forEach((dstId, srcId) => {
@@ -281,10 +281,13 @@ function fromBondFlipping(restruct: ReStruct, id: number): Action {
 
 export function fromBondStereoUpdate(
   restruct: ReStruct,
-  bond: Bond,
+  bond?: Bond,
   withReverse?: boolean
 ): Action {
   const action = new Action()
+  if (!bond) {
+    return action
+  }
   const struct = restruct.molecule
 
   const beginFrId = struct.atoms.get(bond?.begin)?.fragment

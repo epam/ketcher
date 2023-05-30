@@ -6,12 +6,13 @@ export function filterSlatAndSolventFromMerge(
 ): MergeItems {
   const resultItems = {
     atoms: new Map<number, number>(),
-    bonds: new Map<number, number>()
+    bonds: new Map<number, number>(),
+    atomToFunctionalGroup: new Map<number, number>()
   }
   if (!mergeItems) {
     return resultItems
   }
-  const { atoms, bonds } = mergeItems
+  const { atoms, bonds, atomToFunctionalGroup } = mergeItems
   atoms.forEach((value, key) => {
     const groupIds = [key, value].map((atomId) =>
       struct.getGroupIdFromAtomId(atomId)
@@ -28,6 +29,12 @@ export function filterSlatAndSolventFromMerge(
     const isNotSalt = !someIdAreSaltOrSolvent(groupIds, struct)
     if (isNotSalt) {
       resultItems.bonds.set(key, value)
+    }
+  })
+  atomToFunctionalGroup?.forEach((groupId, atomId) => {
+    const isNotSalt = !someIdAreSaltOrSolvent([groupId], struct)
+    if (isNotSalt) {
+      resultItems.atomToFunctionalGroup.set(atomId, groupId)
     }
   })
   return resultItems

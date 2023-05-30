@@ -130,11 +130,6 @@ class ReRxnArrow extends ReObject {
     const refPoints = this.getReferencePoints()
     const scaleFactor = options.scale
     const selectionSet = restruct.render.paper.set()
-    selectionSet.push(
-      render.paper
-        .path(this.generatePath(render, options, 'selection'))
-        .attr(styles.selectionStyle)
-    )
 
     refPoints.forEach((rp) => {
       const scaledRP = Scale.obj2scaled(rp, restruct.render.options)
@@ -144,6 +139,12 @@ class ReRxnArrow extends ReObject {
           .attr({ fill: 'black' })
       )
     })
+
+    selectionSet.push(
+      render.paper
+        .path(this.generatePath(render, options, 'selection'))
+        .attr(styles.selectionStyle)
+    )
     return selectionSet
   }
 

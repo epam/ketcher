@@ -41,6 +41,7 @@ export class RenderStruct {
         autoScale: true,
         ...options
       })
+      preparedStruct.rescale()
       rnd.setMolecule(preparedStruct)
       if (needCache) {
         renderCache.set(cacheKey, rnd.clientArea.innerHTML)

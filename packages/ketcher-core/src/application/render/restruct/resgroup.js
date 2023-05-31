@@ -22,8 +22,7 @@ import ReObject from './reobject'
 import { Scale } from 'domain/helpers'
 import draw from '../draw'
 import util from '../util'
-
-const tfx = util.tfx
+import { tfx } from 'utilities'
 
 class ReSGroup extends ReObject {
   constructor(sgroup) {

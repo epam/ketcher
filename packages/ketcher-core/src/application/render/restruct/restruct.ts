@@ -309,7 +309,7 @@ class ReStruct {
     })
   }
 
-  getVBoxObj(selection?): Box2Abs | null {
+  getVBoxObj(selection?): Box2Abs {
     selection = selection || {}
 
     if (isSelectionEmpty(selection)) {

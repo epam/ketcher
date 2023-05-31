@@ -924,17 +924,17 @@ function getBondAromaticPath(
 ) {
   // eslint-disable-line max-params
   const dashdotPattern = [0.125, 0.125, 0.005, 0.125]
-  let mark: number | null = null
+  let mask = 0
   let dash: number[] | null = null
   const options = render.options
   const bondShift = bond.doubleBondShift
 
   if (bond.b.type === Bond.PATTERN.TYPE.SINGLE_OR_AROMATIC) {
-    mark = bondShift > 0 ? 1 : 2
+    mask = bondShift > 0 ? 1 : 2
     dash = dashdotPattern.map((v) => v * options.scale)
   }
   if (bond.b.type === Bond.PATTERN.TYPE.DOUBLE_OR_AROMATIC) {
-    mark = 3
+    mask = 3
     dash = dashdotPattern.map((v) => v * options.scale)
   }
   const paths = getAromaticBondPaths(
@@ -944,7 +944,7 @@ function getBondAromaticPath(
     shiftA,
     shiftB,
     options.bondSpace,
-    mark,
+    mask,
     dash
   )
   return draw.bondAromatic(render.paper, paths, bondShift, options)
@@ -957,7 +957,7 @@ function getAromaticBondPaths(
   shiftA: boolean,
   shiftB: boolean,
   bondSpace: number,
-  mask: number | null,
+  mask: number,
   dash: number[] | null
 ) {
   // eslint-disable-line max-params, max-statements

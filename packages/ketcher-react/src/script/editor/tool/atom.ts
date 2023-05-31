@@ -31,6 +31,7 @@ import {
 import Editor from '../Editor'
 import utils from '../shared/utils'
 import { Tool } from './Tool'
+import { deleteSelectedFunctionalGroups } from './helper/deleteSelectedFunctionalGroups'
 
 class AtomTool implements Tool {
   private readonly editor: Editor
@@ -48,11 +49,22 @@ class AtomTool implements Tool {
 
     if (editorSelection) {
       if (editorSelection.atoms) {
-        const action = fromAtomsAttrs(
-          editor.render.ctab,
-          editorSelection.atoms,
-          atomProps,
-          true
+        const struct = editor.render.ctab
+        const action = new Action()
+        const atomsInSGroups = deleteSelectedFunctionalGroups(
+          editorSelection,
+          struct,
+          action
+        )
+        action.mergeWith(
+          fromAtomsAttrs(
+            struct,
+            editorSelection?.atoms?.filter(
+              (selectAtomId) => !atomsInSGroups?.includes(selectAtomId)
+            ),
+            atomProps,
+            true
+          )
         )
         editor.update(action)
         editor.selection(null)

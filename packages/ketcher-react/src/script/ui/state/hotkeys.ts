@@ -29,10 +29,7 @@ import actions from '../action'
 import keyNorm from '../data/convert/keynorm'
 import { isIE } from 'react-device-detect'
 import { SettingsManager } from '../utils/settingsManager'
-import {
-  handleHotkeyOverItem,
-  handleHotkeyOverSGroup
-} from './handleHotkeysOverItem'
+import { handleHotkeyOverItem } from './handleHotkeysOverItem'
 
 export function initKeydownListener(element) {
   return function (dispatch, getState) {
@@ -107,11 +104,7 @@ function keyHandle(dispatch, state, hotKeys, event) {
       // check if atom is currently hovered over
       // in this case we do not want to activate the corresponding tool
       // and just insert the atom directly
-      const selected = editor.selection()
-      if (selected && newAction.tool === 'atom') {
-        handleHotkeyOverSGroup({ selected, atomProps: newAction?.opts, editor })
-        editor.selection(null)
-      } else if (
+      if (
         hoveredItem &&
         newAction.tool !== 'select' &&
         newAction.dialog !== 'templates'

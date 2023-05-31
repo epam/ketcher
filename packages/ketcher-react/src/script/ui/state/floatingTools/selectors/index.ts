@@ -5,7 +5,7 @@ export const getFloatingToolsVisible = (state) => {
   return floatingTools.visible
 }
 
-export const getFloatingToolsHandlePos = (state) => {
+export const getFloatingToolsRotateHandlePosition = (state) => {
   const floatingTools: FloatingToolsState = state.floatingTools
-  return floatingTools.handlePos
+  return floatingTools.rotateHandlePosition
 }

@@ -9,7 +9,7 @@ import classes from './FloatingTools.module.less'
 
 export type FloatingToolsProps = {
   visible: boolean
-  HandlePos: Vec2
+  rotateHandlePosition: Vec2
   status: {
     disabled?: boolean
     hidden?: boolean
@@ -29,7 +29,7 @@ const FLOATING_TOOLS: ToolbarItemVariant[] = [
 
 export const FloatingTools: React.FC<Props> = ({
   visible,
-  HandlePos,
+  rotateHandlePosition,
   status,
   indigoVerification,
   onAction
@@ -39,20 +39,20 @@ export const FloatingTools: React.FC<Props> = ({
   return (
     <div
       className={classes.wrapper}
-      style={{ left: HandlePos.x, top: HandlePos.y }}
+      style={{ left: rotateHandlePosition.x, top: rotateHandlePosition.y }}
     >
-      {FLOATING_TOOLS.map((id) => (
+      {FLOATING_TOOLS.map((name) => (
         <ActionButton
           className={classes.item}
           // Note: erase button's icon is 'delete'
-          name={id === 'erase' ? 'delete' : id}
-          action={action[id]}
-          status={status[id] as ActionButtonProps['status']}
+          name={name === 'erase' ? 'delete' : name}
+          action={action[name]}
+          status={status[name] as ActionButtonProps['status']}
           selected={false}
           indigoVerification={indigoVerification}
           onAction={onAction}
           disableableButtons={[]}
-          key={id}
+          key={name}
         />
       ))}
     </div>

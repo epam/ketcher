@@ -1,7 +1,7 @@
 import { connect } from 'react-redux'
 import { Dispatch } from 'redux'
 import {
-  getFloatingToolsHandlePos,
+  getFloatingToolsRotateHandlePosition,
   getFloatingToolsVisible
 } from 'src/script/ui/state/floatingTools/selectors'
 import { onAction } from '../../../state'
@@ -14,7 +14,7 @@ import {
 const mapStateToProps = (state: any): FloatingToolsProps => {
   return {
     visible: getFloatingToolsVisible(state),
-    HandlePos: getFloatingToolsHandlePos(state),
+    rotateHandlePosition: getFloatingToolsRotateHandlePosition(state),
     status: state.actionState || {},
     indigoVerification: state.requestsStatuses.indigoVerification
   }

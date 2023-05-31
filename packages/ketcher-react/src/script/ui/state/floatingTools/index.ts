@@ -3,19 +3,19 @@ import { Vec2 } from 'ketcher-core'
 
 export interface FloatingToolsState {
   visible: boolean
-  handlePos: Vec2
+  rotateHandlePosition: Vec2
 }
 const initialState: FloatingToolsState = {
   visible: false,
-  handlePos: new Vec2()
+  rotateHandlePosition: new Vec2()
 }
 
-export const showFloatingTools = (handlePos: Vec2) => {
+export const showFloatingTools = (rotateHandlePosition: Vec2) => {
   return {
     type: 'SHOW_FLOATING_TOOLS' as const,
     payload: {
       visible: true,
-      handlePos
+      rotateHandlePosition
     }
   }
 }
@@ -29,11 +29,11 @@ export const hideFloatingTools = () => {
   }
 }
 
-export const updateFloatingToolsPos = (handlePos: Vec2) => {
+export const updateFloatingToolsPos = (rotateHandlePosition: Vec2) => {
   return {
     type: 'UPDATE_FLOATING_TOOLS_POS' as const,
     payload: {
-      handlePos
+      rotateHandlePosition
     }
   }
 }

@@ -165,7 +165,8 @@ class RotateController {
     const handleCenterInViewport = this.render.obj2view(
       this.handleCenter
         .sub(this.render.options.offset)
-        .scaled(1 / this.render.options.scale)
+        .scaled(1 / this.render.options.scale),
+      false
     )
     this.editor.event.updateFloatingTools.dispatch(
       showFloatingTools(handleCenterInViewport)
@@ -760,7 +761,8 @@ class RotateController {
     const handleCenterInViewport = this.render.obj2view(
       this.handleCenter
         .sub(this.render.options.offset)
-        .scaled(1 / this.render.options.scale)
+        .scaled(1 / this.render.options.scale),
+      false
     )
     this.editor.event.updateFloatingTools.dispatch(
       updateFloatingToolsPosition(handleCenterInViewport)

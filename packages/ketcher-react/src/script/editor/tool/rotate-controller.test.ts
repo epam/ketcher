@@ -7,12 +7,12 @@ import RotateController, { getDifference } from './rotate-controller'
 
 describe('Rotate controller', () => {
   /**
-   * Steps to check:
+   * Steps to check manually:
    * Select one atom / functional group using Select Tool
    */
   it(`hides for only one visible atom`, () => {
     // @ts-ignore
-    const tool = () => new SelectTool(undefined, undefined)
+    const tool = () => new SelectTool()
     const paper = jest.fn()
     const selection = () => null
     const controller = new RotateController({
@@ -39,12 +39,12 @@ describe('Rotate controller', () => {
   })
 
   /**
-   * Steps to check:
+   * Steps to check manually:
    * Select one text / rxnPlus / rxnArrow using Select Tool
    */
   it(`hides for only one text / rxnPlus, but shows for one rnxArrow`, () => {
     // @ts-ignore
-    const tool = () => new SelectTool(undefined, undefined)
+    const tool = () => new SelectTool()
     const paper = jest.fn()
     let selection = () => ({
       texts: [1],

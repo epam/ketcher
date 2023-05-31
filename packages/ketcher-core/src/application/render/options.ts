@@ -98,7 +98,7 @@ function defaultOptions(options: RenderOptions): RenderOptions {
       'stroke-width': '1px'
     },
     hoverStyleSimpleObject: {
-      stroke: '#0c0',
+      stroke: '#57FF8F',
       'stroke-width': scaleFactor / 4,
       'stroke-linecap': 'round',
       'stroke-opacity': 0.6

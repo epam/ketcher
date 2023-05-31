@@ -107,5 +107,6 @@ class RxnArrowDelete extends Base {
 
 export { RxnArrowAdd, RxnArrowDelete }
 export * from './RxnArrowMove'
+export * from './RxnArrowRotate'
 export * from './RxnArrowResize'
 export * from './plus'

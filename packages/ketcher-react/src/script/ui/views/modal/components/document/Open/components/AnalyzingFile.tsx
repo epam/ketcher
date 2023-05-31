@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Icon from 'src/script/ui/component/view/icon'
+import { Icon } from '../../../../../../../../components'
 import styles from './AnalyzingFile.module.less'
 import { LoadingCircles } from 'src/script/ui/views/components/Spinner'
 

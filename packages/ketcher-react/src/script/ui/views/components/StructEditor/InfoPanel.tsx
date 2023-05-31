@@ -95,7 +95,7 @@ const InfoPanel: FC<InfoPanelProps> = (props) => {
   const groupName = sGroup?.data?.name
 
   useEffect(() => {
-    if (!groupStruct && sGroup?.type === 'DAT') {
+    if (SGroup.isDataSGroup(sGroup)) {
       setSGroupData(`${sGroup.data?.fieldName}=${sGroup.data?.fieldValue}`)
     } else {
       setSGroupData(null)
@@ -119,7 +119,9 @@ const InfoPanel: FC<InfoPanelProps> = (props) => {
   const width = size.x
   const height = size.y
 
-  return molecule ? (
+  const showMolecule = molecule && !SGroup.isDataSGroup(sGroup)
+
+  return showMolecule ? (
     <div
       style={{
         left: x + 'px',

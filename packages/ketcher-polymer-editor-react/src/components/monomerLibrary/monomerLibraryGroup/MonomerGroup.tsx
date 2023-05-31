@@ -23,14 +23,11 @@ interface MonomerGroupProps {
 }
 
 const ItemsContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  flex-flow: row wrap;
-  gap: 8px;
-  flex: 1;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 33% 33% 33%;
+  grid-template-rows: auto;
   margin-bottom: 24px;
+  flex-grow: 1;
 
   &::after {
     content: '';

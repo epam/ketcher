@@ -50,6 +50,7 @@ const Card = styled.div<{ code: string }>`
   border-radius: 4px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
   margin: 0;
+  margin-bottom: 8px;
   user-select: none;
 
   .hidden & .star {

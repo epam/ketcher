@@ -632,13 +632,10 @@ export class SGroup {
     if (!sGroup) {
       return false
     }
-    return sGroup.type === SGroup.TYPES.SUP
+    return sGroup?.type === SGroup.TYPES.SUP
   }
 
   static isDataSGroup(sGroup: SGroup): boolean {
-    if (!sGroup) {
-      return false
-    }
     return sGroup.type === SGroup.TYPES.DAT
   }
 

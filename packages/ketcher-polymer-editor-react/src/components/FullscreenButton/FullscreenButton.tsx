@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Icon } from 'components/shared/icon'
+import { Icon } from 'ketcher-react'
 import { StyledMenuButton } from 'components/menu/menuItem'
 import styled from '@emotion/styled'
 

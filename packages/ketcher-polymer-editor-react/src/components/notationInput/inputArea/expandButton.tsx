@@ -17,7 +17,7 @@
 import { IconButton } from '@mui/material'
 import styled from '@emotion/styled'
 
-import { Icon } from 'components/shared/icon'
+import { Icon } from 'ketcher-react'
 
 type ExpandButtonProps = {
   expandHandler: () => void

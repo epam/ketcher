@@ -16,7 +16,7 @@
 
 import styled from '@emotion/styled'
 
-import { Icon } from 'components/shared/icon'
+import { Icon } from 'ketcher-react'
 
 const CheckMarkStyled = styled(Icon)`
   fill: #343434;

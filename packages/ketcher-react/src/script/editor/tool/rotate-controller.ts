@@ -162,8 +162,13 @@ class RotateController {
       rectStartY - STYLE.HANDLE_MARGIN - STYLE.HANDLE_RADIUS
     )
 
+    const handleCenterInViewport = this.render.obj2view(
+      this.handleCenter
+        .sub(this.render.options.offset)
+        .scaled(1 / this.render.options.scale)
+    )
     this.editor.event.updateFloatingTools.dispatch(
-      showFloatingTools(this.render.raphael2View(this.handleCenter))
+      showFloatingTools(handleCenterInViewport)
     )
 
     this.drawLink()
@@ -752,8 +757,13 @@ class RotateController {
       return
     }
 
+    const handleCenterInViewport = this.render.obj2view(
+      this.handleCenter
+        .sub(this.render.options.offset)
+        .scaled(1 / this.render.options.scale)
+    )
     this.editor.event.updateFloatingTools.dispatch(
-      updateFloatingToolsPosition(this.render.raphael2View(this.handleCenter))
+      updateFloatingToolsPosition(handleCenterInViewport)
     )
   }, 40)
 }

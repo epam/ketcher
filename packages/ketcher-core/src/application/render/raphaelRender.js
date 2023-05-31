@@ -96,17 +96,6 @@ Render.prototype.page2obj = function (event) {
   return this.view2obj(pp)
 }
 
-/**
- * @param {Vec2} coord Vector in Raphael coordinate system,
- *                     scaled atom's position with offset
- * @returns {Vec2} Vector in View coordinate system,
- *                 coordinate relative to viewport (excluding toolbar)
- */
-Render.prototype.raphael2View = function (coord) {
-  const obj = coord.sub(this.options.offset).scaled(1 / this.options.scale)
-  return this.obj2view(obj)
-}
-
 Render.prototype.setPaperSize = function (sz) {
   this.sz = sz
   this.paper.setSize(sz.x * this.options.zoom, sz.y * this.options.zoom)

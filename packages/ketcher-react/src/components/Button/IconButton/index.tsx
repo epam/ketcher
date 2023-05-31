@@ -14,74 +14,17 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { IconButton as MuiButton } from '@mui/material'
-import styled from '@emotion/styled'
+import { Icon } from '../../../components'
+import { StyledIconButton } from './styles'
 
-import Icon from 'src/script/ui/component/view/icon'
-
-const Button = styled(MuiButton)`
-  display: block;
-  color: #333;
-  border: 0;
-  position: relative;
-  background: inherit;
-
-  flex-shrink: 0;
-
-  border-radius: 4px;
-  margin: 0px;
-  padding: 2px;
-  height: 28px;
-  width: 28px;
-
-  &:hover {
-    color: #006775;
-    transform: none;
-    box-shadow: none;
-    transition: none;
-    background: none;
-  }
-
-  &:active {
-    background-color: #006775;
-    color: white;
-    &:hover {
-      background-color: #188794;
-    }
-  }
-
-  & svg {
-    width: 100%;
-    height: 100%;
-  }
-
-  &.Mui-disabled {
-    cursor: not-allowed;
-    opacity: 0.5;
-    background-color: initial;
-    color: #333;
-    pointer-events: auto;
-  }
-
-  @media only screen and (min-width: 1024px) {
-    height: 32px;
-    width: 32px;
-    padding: 4px;
-  }
-
-  @media only screen and (min-width: 1920px) {
-    height: 40px;
-    width: 40px;
-    padding: 5px;
-  }
-`
-
-interface ButtonProps {
+export interface ButtonProps {
   iconName: string
   onClick: () => void
   title: string
+  className?: string
   isHidden?: boolean
   disabled?: boolean
+  isActive?: boolean
   shortcut?: string
 }
 
@@ -90,6 +33,8 @@ export const IconButton = ({
   iconName,
   title,
   shortcut,
+  className,
+  isActive = false,
   isHidden = false,
   disabled = false
 }: ButtonProps) => {
@@ -100,8 +45,14 @@ export const IconButton = ({
   }
 
   return (
-    <Button title={combinedTitle} onClick={onClick} disabled={disabled}>
+    <StyledIconButton
+      className={className}
+      title={combinedTitle}
+      onClick={onClick}
+      disabled={disabled}
+      isActive={isActive}
+    >
       <Icon name={iconName} />
-    </Button>
+    </StyledIconButton>
   )
 }

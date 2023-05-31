@@ -16,10 +16,10 @@
 
 import { UiAction, UiActionAction } from '../../../../action'
 
-import Icon from '../../../../component/view/icon'
 import classes from './ActionButton.module.less'
 import clsx from 'clsx'
 import { shortcutStr } from '../../shortcutStr'
+import { Icon } from '../../../../../../components'
 
 interface ActionButtonProps {
   name: string

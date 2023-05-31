@@ -1,7 +1,6 @@
 import { FC } from 'react'
 import { Item, Submenu } from 'react-contexify'
 import tools from 'src/script/ui/action/tools'
-import Icon from 'src/script/ui/component/view/icon'
 import styles from '../ContextMenu.module.less'
 import useBondEdit from '../hooks/useBondEdit'
 import useBondSGroupAttach from '../hooks/useBondSGroupAttach'
@@ -10,6 +9,7 @@ import useBondTypeChange from '../hooks/useBondTypeChange'
 import useDelete from '../hooks/useDelete'
 import { formatTitle, getNonQueryBondNames, queryBondNames } from '../utils'
 import { MenuItemsProps } from '../contextMenu.types'
+import { Icon } from '../../../../../../components'
 
 const nonQueryBondNames = getNonQueryBondNames(tools)
 

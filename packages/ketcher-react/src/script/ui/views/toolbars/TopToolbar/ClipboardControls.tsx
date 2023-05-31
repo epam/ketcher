@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { IconButton } from './IconButton'
+import { IconButton } from '../../../../../components'
 import { ElementWithDropdown } from './ElementWithDropdown'
 
 interface ClipboardControlsProps {

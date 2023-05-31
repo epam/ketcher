@@ -24,9 +24,9 @@ import {
   useRef
 } from 'react'
 
-import Icon from '../../../component/view/icon'
 import clsx from 'clsx'
 import styles from './Dialog.module.less'
+import { Icon } from '../../../../../components'
 
 interface DialogParamsCallProps {
   onCancel: () => void

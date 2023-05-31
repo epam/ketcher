@@ -19,7 +19,7 @@ import { Struct } from 'ketcher-core'
 import StructRender from '../../component/structrender'
 import classes from './TemplateTable.module.less'
 import { greekify } from '../../utils'
-import Icon from 'src/script/ui/component/view/icon'
+import { Icon } from '../../../../components'
 
 export interface Template {
   struct: Struct

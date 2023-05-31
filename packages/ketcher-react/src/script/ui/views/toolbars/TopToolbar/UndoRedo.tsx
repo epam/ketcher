@@ -14,8 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { IconButton } from '../../../../../components'
 import { Divider } from './Divider'
-import { IconButton } from './IconButton'
 
 interface UndoRedoProps {
   disabledButtons: string[]

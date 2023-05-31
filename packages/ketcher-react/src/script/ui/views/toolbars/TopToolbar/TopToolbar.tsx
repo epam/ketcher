@@ -23,9 +23,9 @@ import { UndoRedo } from './UndoRedo'
 import { ZoomControls } from './ZoomControls'
 
 import { SystemControls } from './SystemControls'
-import { IconButton } from './IconButton'
 import { ExternalFuncControls } from './ExternalFuncControls'
 import { Divider } from './Divider'
+import { IconButton } from '../../../../../components'
 
 type VoidFunction = () => void
 

@@ -15,8 +15,8 @@
  ***************************************************************************/
 
 import styled from '@emotion/styled'
+import { IconButton } from '../../../../../components'
 import { shortcutStr } from '../shortcutStr'
-import { IconButton } from './IconButton'
 
 interface SystemControlsProps {
   disabledButtons: string[]

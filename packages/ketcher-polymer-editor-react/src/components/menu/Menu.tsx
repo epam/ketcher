@@ -32,7 +32,6 @@ const StyledGroup = styled.div`
   flex-direction: column;
   flex-wrap: nowrap;
   align-items: center;
-  background-color: ${({ theme }) => theme.ketcher.color.background.primary};
   border-radius: 2px;
   width: 32px;
   margin-bottom: 8px;

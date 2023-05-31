@@ -27,8 +27,8 @@ import { capitalize } from 'lodash/fp'
 import classes from './Atom.module.less'
 import Select from '../../../../../component/form/Select'
 import { getSelectOptionsFromSchema } from '../../../../../utils'
-import Icon from '../../../../../component/view/icon'
 import clsx from 'clsx'
+import { Icon } from '../../../../../../../components'
 
 interface AtomProps extends BaseCallProps, BaseProps {
   alias: string

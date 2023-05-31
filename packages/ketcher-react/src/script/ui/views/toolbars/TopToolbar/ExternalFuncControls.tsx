@@ -14,8 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { IconButton } from '../../../../../components'
 import { ElementWithDropdown } from './ElementWithDropdown'
-import { IconButton } from './IconButton'
 
 interface ExternalFuncProps {
   isCollapsed: boolean

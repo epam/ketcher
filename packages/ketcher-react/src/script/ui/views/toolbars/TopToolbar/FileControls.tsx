@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { IconButton } from './IconButton'
+import { IconButton } from '../../../../../components'
 
 interface FileControlsProps {
   onFileOpen: () => void

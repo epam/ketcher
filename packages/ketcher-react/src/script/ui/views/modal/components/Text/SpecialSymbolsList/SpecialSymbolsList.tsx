@@ -14,8 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { Icon } from '../../../../../../../components'
 import classes from './SpecialSymbolsList.module.less'
-import Icon from 'src/script/ui/component/view/icon'
 
 const SpecialSymbolsList = ({ select }) => {
   const symbols = [

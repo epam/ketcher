@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { Icon } from 'components/shared/icon'
 import { MenuItem as MuiMenuItem } from '@mui/material'
 import { css, useTheme } from '@emotion/react'
 import { useMenuContext } from '../../../hooks/useMenuContext'
 import { useCallback } from 'react'
+import { StyledMenuItem } from './styles'
 
 const StyledMenuButton = ({ isActive, onClick, children }) => {
   const theme = useTheme()
@@ -64,9 +64,12 @@ const MenuItem = ({ itemId }: MenuItemProp) => {
   }, [activate, itemId])
 
   return (
-    <StyledMenuButton isActive={isActive(itemId)} onClick={onClickCallback}>
-      <Icon name={itemId} />
-    </StyledMenuButton>
+    <StyledMenuItem
+      iconName={itemId}
+      title={itemId}
+      onClick={onClickCallback}
+      isActive={isActive(itemId)}
+    />
   )
 }
 

@@ -20,13 +20,13 @@ import { fromElement, toElement } from '../../../../data/convert/structconv'
 import { Component } from 'react'
 import { Dialog } from '../../../components'
 import { Elements } from 'ketcher-core'
-import Icon from '../../../../component/view/icon'
 import Tabs from '../../../../component/view/Tabs'
 import { addAtoms } from '../../../../state/toolbar'
 import classes from './PeriodTable.module.less'
 import { connect } from 'react-redux'
 import { onAction } from '../../../../state'
 import { xor } from 'lodash/fp'
+import { Icon } from '../../../../../../components'
 
 class Table extends Component {
   constructor(props) {

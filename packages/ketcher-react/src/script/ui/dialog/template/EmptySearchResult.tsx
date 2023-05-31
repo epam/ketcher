@@ -14,8 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { Icon } from '../../../../components'
+
 import classes from './emptySearchResult.module.less'
-import Icon from '../../component/view/icon'
 
 const EmptySearchResult = ({ textInfo }) => {
   return (

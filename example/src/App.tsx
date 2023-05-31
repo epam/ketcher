@@ -34,7 +34,7 @@ if (process.env.MODE === 'standalone') {
     new StandaloneStructServiceProvider() as StructServiceProvider
 }
 
-const enablePolymerEditor = process.env.ENABLE_POLYMER_EDITOR === 'true'
+const enablePolymerEditor = true // process.env.ENABLE_POLYMER_EDITOR === 'true'
 
 type PolymerType = () => JSX.Element | null
 
@@ -49,7 +49,7 @@ const App = () => {
   const hiddenButtonsConfig = getHiddenButtonsConfig()
   const [hasError, setHasError] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
-  const [showPolymerEditor, setShowPolymerEditor] = useState(false)
+  const [showPolymerEditor, setShowPolymerEditor] = useState(true)
 
   return showPolymerEditor ? (
     <>

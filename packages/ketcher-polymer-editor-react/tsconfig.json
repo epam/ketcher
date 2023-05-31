@@ -29,6 +29,7 @@
     "baseUrl": ".",
     "noFallthroughCasesInSwitch": true,
     "paths": {
+      "ketcher-react": ["../ketcher-react/src/components"],
       "components/*": ["src/components/*"],
       "state/*": ["src/state/*"],
       "state": ["src/state"],

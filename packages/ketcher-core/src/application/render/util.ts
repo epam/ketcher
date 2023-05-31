@@ -33,9 +33,6 @@ function relBox(box: RaphaelAxisAlignedBoundingBox): RelativeBox {
 /**
  * Finds intersection of a ray and a box and
  * Returns the shift magnitude to avoid it
- * @param p { Vec2 }
- * @param d { Vec2 }
- * @param bb { Box2Abs }
  */
 function shiftRayBox(p: Vec2, d: Vec2, bb: Box2Abs) {
   assert(!!p)

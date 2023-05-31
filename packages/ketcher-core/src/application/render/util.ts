@@ -14,16 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Atom, Bond, Vec2 } from 'domain/entities'
+import { RaphaelAxisAlignedBoundingBox, RaphaelPaper } from 'raphael'
+import { Atom, Bond, Box2Abs, Vec2 } from 'domain/entities'
 import assert from 'assert'
 import { ReStruct, LayerMap } from './restruct'
 import Visel from './restruct/visel'
+import { RelativeBox, RenderOptions } from './render.types'
 
-function tfx(v) {
-  return parseFloat(v).toFixed(8)
-}
-
-function relBox(box) {
+function relBox(box: RaphaelAxisAlignedBoundingBox): RelativeBox {
   return {
     x: box.x,
     y: box.y,
@@ -35,11 +33,8 @@ function relBox(box) {
 /**
  * Finds intersection of a ray and a box and
  * Returns the shift magnitude to avoid it
- * @param p { Vec2 }
- * @param d { Vec2 }
- * @param bb { Box2Abs }
  */
-function shiftRayBox(p, d, bb) {
+function shiftRayBox(p: Vec2, d: Vec2, bb: Box2Abs) {
   assert(!!p)
   assert(!!d)
   assert(!!bb)
@@ -88,7 +83,7 @@ function shiftRayBox(p, d, bb) {
       (Math.abs(rc[id0]) + Math.abs(rc[id1]))
   )
 }
-function calcCoordinates(aPoint, bPoint, lengthHyp) {
+function calcCoordinates(aPoint: Vec2, bPoint: Vec2, lengthHyp: number) {
   const obj: {
     pos1: null | { x: number; y: number }
     pos2: null | { x: number; y: number }
@@ -135,10 +130,10 @@ function getCIPValuePath({
   atomOrBond,
   options
 }: {
-  paper
+  paper: RaphaelPaper
   cipLabelPosition: Vec2
   atomOrBond: Atom | Bond
-  options
+  options: RenderOptions
 }) {
   const text = paper
     .text(cipLabelPosition.x, cipLabelPosition.y, `(${atomOrBond.cip})`)
@@ -186,13 +181,12 @@ function drawCIPLabel({
   cipValuePath.path.translateAbs(0.5 * box.width, -0.5 * box.height)
   path.push(cipValuePath.path.toFront())
 
-  restruct.addReObjectPath(LayerMap.data, visel, path, null, true)
+  restruct.addReObjectPath(LayerMap.additionalInfo, visel, path, null, true)
 
   return cipValuePath
 }
 
 const util = {
-  tfx,
   relBox,
   shiftRayBox,
   calcCoordinates,

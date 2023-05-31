@@ -37,6 +37,7 @@ import { Render } from '../raphaelRender'
 import { Scale } from 'domain/helpers'
 import draw from '../draw'
 import util from '../util'
+import { tfx } from 'utilities'
 
 interface ElemAttr {
   text: string
@@ -967,7 +968,6 @@ function showWarning(
 ): { rbb: DOMRect; path: any } {
   const ps = Scale.obj2scaled(atom.a.pp, render.options)
   const delta = 0.5 * render.options.lineWidth
-  const tfx = util.tfx
   const warning: any = {}
   const y = ps.y + atom.label.rbb.height / 2 + delta
   warning.path = render.paper
@@ -989,7 +989,6 @@ function showAttpnt(atom, render, lsb, addReObjectPath) {
   const asterisk = '∗'
   const ps = Scale.obj2scaled(atom.a.pp, render.options)
   const options = render.options
-  const tfx = util.tfx
   let i, j
   for (i = 0; i < 4; ++i) {
     let attpntText = ''

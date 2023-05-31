@@ -18,9 +18,10 @@ import {
   AtomMove,
   BondAttr,
   EnhancedFlagMove,
-  RxnArrowMove,
+  RxnArrowRotate,
   RxnPlusMove,
-  SGroupDataMove
+  SGroupDataMove,
+  TextMove
 } from '../operations'
 import { Bond, Fragment, Pile, Vec2 } from 'domain/entities'
 import {
@@ -250,11 +251,8 @@ export function fromRotate(restruct, selection, center, angle) {
   }
 
   if (selection.rxnArrows) {
-    selection.rxnArrows.forEach((aid) => {
-      const arrow = struct.rxnArrows.get(aid)
-      action.addOp(
-        new RxnArrowMove(aid, rotateDelta(arrow.center(), center, angle))
-      )
+    selection.rxnArrows.forEach((arrowId) => {
+      action.addOp(new RxnArrowRotate(arrowId, angle, center))
     })
   }
 
@@ -262,6 +260,15 @@ export function fromRotate(restruct, selection, center, angle) {
     selection.rxnPluses.forEach((pid) => {
       const plus = struct.rxnPluses.get(pid)
       action.addOp(new RxnPlusMove(pid, rotateDelta(plus.pp, center, angle)))
+    })
+  }
+
+  if (selection.texts) {
+    selection.texts.forEach((textId) => {
+      const text = struct.texts.get(textId)
+      action.addOp(
+        new TextMove(textId, rotateDelta(text.position, center, angle))
+      )
     })
   }
 

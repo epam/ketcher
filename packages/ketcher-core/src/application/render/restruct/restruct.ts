@@ -309,7 +309,7 @@ class ReStruct {
     })
   }
 
-  getVBoxObj(selection?): Box2Abs | null {
+  getVBoxObj(selection?): Box2Abs {
     selection = selection || {}
 
     if (isSelectionEmpty(selection)) {
@@ -638,9 +638,19 @@ class ReStruct {
           item.visel,
           item.selectionPlate
         )
+
+        if (typeof item.makeAdditionalInfo === 'function') {
+          item.additionalInfo = item.makeAdditionalInfo(this)
+          this.addReObjectPath(
+            LayerMap.additionalInfo,
+            item.visel,
+            item.additionalInfo
+          )
+        }
       }
       if (item.selectionPlate) {
         item.selectionPlate.show()
+        item.additionalInfo?.show()
         item.cip?.rectangle.attr({
           fill: '#7f7',
           stroke: '#7f7'
@@ -648,6 +658,7 @@ class ReStruct {
       }
     } else if (exists && item.selectionPlate) {
       item.selectionPlate.hide()
+      item.additionalInfo?.hide()
       item.cip?.rectangle.attr({
         fill: '#fff',
         stroke: '#fff'

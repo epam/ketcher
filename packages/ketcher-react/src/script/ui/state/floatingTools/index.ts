@@ -1,16 +1,18 @@
 import { Reducer } from 'react'
-import { Vec2 } from 'ketcher-core'
 
 export interface FloatingToolsState {
   visible: boolean
-  rotateHandlePosition: Vec2
+  rotateHandlePosition: { x: number; y: number }
 }
 const initialState: FloatingToolsState = {
   visible: false,
-  rotateHandlePosition: new Vec2()
+  rotateHandlePosition: { x: 0, y: 0 }
 }
 
-export const showFloatingTools = (rotateHandlePosition: Vec2) => {
+export const showFloatingTools = (rotateHandlePosition: {
+  x: number
+  y: number
+}) => {
   return {
     type: 'SHOW_FLOATING_TOOLS' as const,
     payload: {
@@ -29,7 +31,10 @@ export const hideFloatingTools = () => {
   }
 }
 
-export const updateFloatingToolsPosition = (rotateHandlePosition: Vec2) => {
+export const updateFloatingToolsPosition = (rotateHandlePosition: {
+  x: number
+  y: number
+}) => {
   return {
     type: 'UPDATE_FLOATING_TOOLS_POSITION' as const,
     payload: {

@@ -1,4 +1,3 @@
-import { Vec2 } from 'ketcher-core'
 import action, { UiActionAction } from '../../../action'
 import {
   ActionButton,
@@ -9,7 +8,7 @@ import classes from './FloatingTools.module.less'
 
 export type FloatingToolsProps = {
   visible: boolean
-  rotateHandlePosition: Vec2
+  rotateHandlePosition: { x: number; y: number }
   status: {
     disabled?: boolean
     hidden?: boolean

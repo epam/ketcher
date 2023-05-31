@@ -29,9 +29,9 @@ export const hideFloatingTools = () => {
   }
 }
 
-export const updateFloatingToolsPos = (rotateHandlePosition: Vec2) => {
+export const updateFloatingToolsPosition = (rotateHandlePosition: Vec2) => {
   return {
-    type: 'UPDATE_FLOATING_TOOLS_POS' as const,
+    type: 'UPDATE_FLOATING_TOOLS_POSITION' as const,
     payload: {
       rotateHandlePosition
     }
@@ -42,7 +42,7 @@ export interface FloatingToolsAction {
   type:
     | 'SHOW_FLOATING_TOOLS'
     | 'HIDE_FLOATING_TOOLS'
-    | 'UPDATE_FLOATING_TOOLS_POS'
+    | 'UPDATE_FLOATING_TOOLS_POSITION'
   payload: Partial<FloatingToolsState>
 }
 
@@ -53,7 +53,7 @@ const floatingToolsReducer: Reducer<FloatingToolsState, FloatingToolsAction> = (
   switch (type) {
     case 'SHOW_FLOATING_TOOLS':
     case 'HIDE_FLOATING_TOOLS':
-    case 'UPDATE_FLOATING_TOOLS_POS':
+    case 'UPDATE_FLOATING_TOOLS_POSITION':
       return { ...state, ...payload }
     default:
       return state

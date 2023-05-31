@@ -20,10 +20,9 @@ import Editor from '../../../../editor'
 import { LoadingCircles } from '../Spinner/LoadingCircles'
 import classes from './StructEditor.module.less'
 import clsx from 'clsx'
-import { upperFirst, throttle } from 'lodash/fp'
+import { upperFirst } from 'lodash/fp'
 import handIcon from '../../../../../icons/files/hand.svg'
 import compressedHandIcon from '../../../../../icons/files/compressed-hand.svg'
-import { updateFloatingToolsPos } from 'src/script/ui/state/floatingTools'
 import { FloatingToolContainer } from '../../toolbars'
 import Cursor from '../Cursor'
 import { ContextMenu, ContextMenuTrigger } from '../ContextMenu'
@@ -78,6 +77,8 @@ class StructEditor extends Component {
     }
     this.editorRef = createRef()
     this.logRef = createRef()
+    this.updateFloatingToolsPositionOnScroll =
+      this.updateFloatingToolsPositionOnScroll.bind(this)
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -176,6 +177,10 @@ class StructEditor extends Component {
     removeEditorHandlers(this.editor, this.props)
   }
 
+  updateFloatingToolsPositionOnScroll() {
+    this.editor.rotateController.updateFloatingToolsPosition()
+  }
+
   render() {
     const {
       Tag = 'div',
@@ -215,17 +220,7 @@ class StructEditor extends Component {
           <div
             ref={this.editorRef}
             className={clsx(classes.intermediateCanvas)}
-            onScroll={throttle(40, () => {
-              if (!this.editor.rotateController.handle) {
-                return
-              }
-              const handleCenter = this.editor.rotateController.handleCenter
-              const handleCenterInViewport =
-                this.editor.render.raphael2View(handleCenter)
-              this.editor.event.updateFloatingTools.dispatch(
-                updateFloatingToolsPos(handleCenterInViewport)
-              )
-            })}
+            onScroll={this.updateFloatingToolsPositionOnScroll}
           >
             {/* svg here */}
           </div>

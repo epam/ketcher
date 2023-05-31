@@ -2,7 +2,8 @@ import { Action, Scale, Vec2 } from 'ketcher-core'
 import { throttle } from 'lodash'
 import {
   hideFloatingTools,
-  showFloatingTools
+  showFloatingTools,
+  updateFloatingToolsPosition
 } from 'src/script/ui/state/floatingTools'
 import Editor from '../Editor'
 import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems'
@@ -39,7 +40,7 @@ class RotateController {
   private initialRadius!: number
   private isMovingCenter!: boolean
 
-  handle?: RaphaelElement
+  private handle?: RaphaelElement
   private boundingRect?: RaphaelElement
   private cross?: RaphaelElement
   private link?: RaphaelElement
@@ -745,6 +746,16 @@ class RotateController {
     this.isMovingCenter = false
     this.rerender()
   }
+
+  updateFloatingToolsPosition = throttle(() => {
+    if (!this.handle) {
+      return
+    }
+
+    this.editor.event.updateFloatingTools.dispatch(
+      updateFloatingToolsPosition(this.render.raphael2View(this.handleCenter))
+    )
+  }, 40)
 }
 
 export default RotateController

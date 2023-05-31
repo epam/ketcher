@@ -632,7 +632,14 @@ export class SGroup {
     if (!sGroup) {
       return false
     }
-    return sGroup.type === 'SUP'
+    return sGroup.type === SGroup.TYPES.SUP
+  }
+
+  static isDataSGroup(sGroup) {
+    if (!sGroup) {
+      return false
+    }
+    return sGroup.type === SGroup.TYPES.DAT
   }
 
   static isExpandedSGroup(sGroup) {

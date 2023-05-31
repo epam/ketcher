@@ -95,7 +95,7 @@ const InfoPanel: FC<InfoPanelProps> = (props) => {
   const groupName = sGroup?.data?.name
 
   useEffect(() => {
-    if (SGroup.isDataSGroup(sGroup)) {
+    if (sGroup && SGroup.isDataSGroup(sGroup)) {
       setSGroupData(`${sGroup.data?.fieldName}=${sGroup.data?.fieldValue}`)
     } else {
       setSGroupData(null)

@@ -628,14 +628,14 @@ export class SGroup {
     })
   }
 
-  static isSuperAtom(sGroup) {
+  static isSuperAtom(sGroup: SGroup): boolean {
     if (!sGroup) {
       return false
     }
     return sGroup.type === SGroup.TYPES.SUP
   }
 
-  static isDataSGroup(sGroup) {
+  static isDataSGroup(sGroup: SGroup): boolean {
     if (!sGroup) {
       return false
     }

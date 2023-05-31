@@ -32,11 +32,11 @@ const RIGHT_ARROW_PATH =
 
 class RotateController {
   isRotating!: boolean
-  handleCenter!: Vec2
   private editor: Editor
   private rotateTool: RotateTool
   private originalCenter!: Vec2
   private normalizedCenterInitialHandleVec!: Vec2
+  private handleCenter!: Vec2
   private initialRadius!: number
   private isMovingCenter!: boolean
 

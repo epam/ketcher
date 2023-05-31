@@ -119,7 +119,7 @@ const InfoPanel: FC<InfoPanelProps> = (props) => {
   const width = size.x
   const height = size.y
 
-  const showMolecule = molecule && !SGroup.isDataSGroup(sGroup)
+  const showMolecule = molecule && sGroup && !SGroup.isDataSGroup(sGroup)
 
   return showMolecule ? (
     <div

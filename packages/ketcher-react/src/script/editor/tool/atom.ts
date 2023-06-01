@@ -60,16 +60,12 @@ class AtomTool implements Tool {
           struct,
           action
         )
-        action.mergeWith(
-          fromAtomsAttrs(
-            struct,
-            editorSelection?.atoms?.filter(
-              (selectAtomId) => !deletedAtomsInSGroups?.includes(selectAtomId)
-            ),
-            atomProps,
-            true
-          )
+        const updatedAtoms = editorSelection?.atoms?.filter(
+          (selectAtomId) =>
+            !deletedAtomsInSGroups?.includes(selectAtomId) &&
+            struct.atoms.has(selectAtomId)
         )
+        action.mergeWith(fromAtomsAttrs(struct, updatedAtoms, atomProps, true))
         editor.update(action)
         editor.selection(null)
         this.editor.hoverIcon.hide()

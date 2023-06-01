@@ -639,6 +639,14 @@ export class SGroup {
     return sGroup.type === SGroup.TYPES.DAT
   }
 
+  static isSRUSGroup(sGroup: SGroup): boolean {
+    return sGroup.type === SGroup.TYPES.SRU
+  }
+
+  static isMulSGroup(sGroup: SGroup): boolean {
+    return sGroup.type === SGroup.TYPES.MUL
+  }
+
   static isExpandedSGroup(sGroup) {
     return 'item' in sGroup ? sGroup?.item.data.expanded : sGroup.data.expanded
   }

@@ -37,6 +37,7 @@ import { Action } from './action'
 import { fromBondStereoUpdate } from './bond'
 import { without } from 'lodash/fp'
 import { ReStruct } from 'application/render'
+import assert from 'assert'
 
 export function fromAtomAddition(restruct, pos, atom) {
   atom = Object.assign({}, atom)
@@ -176,9 +177,7 @@ export function fromAtomMerge(
   const atomNeighbors = restruct.molecule.atomGetNeighbors(srcId)
   atomNeighbors.forEach((nei) => {
     const bond = restruct.molecule.bonds.get(nei.bid)
-    if (!bond) {
-      throw new Error(`Unexpected error, bond "${nei.bid}" is undefined`)
-    }
+    assert(bond != null, `Unexpected error, bond "${nei.bid}" is undefined`)
 
     if (dstId === bond.begin || dstId === bond.end) {
       // src & dst have one nei
@@ -205,9 +204,7 @@ export function fromAtomMerge(
   })
 
   const atom = restruct.molecule.atoms.get(srcId)
-  if (!atom) {
-    throw new Error(`Unexpected error, atom "${srcId}" is undefined"`)
-  }
+  assert(atom != null, `Unexpected error, atom "${srcId}" is undefined`)
   const attrs = Atom.getAttrHash(atom)
 
   if (atomGetDegree(restruct, srcId) === 1 && attrs.label === '*') {

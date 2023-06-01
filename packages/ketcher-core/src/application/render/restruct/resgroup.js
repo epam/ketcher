@@ -343,9 +343,12 @@ function drawAbsoluteDat(restruct, sgroup) {
 
   const ps = sgroup.pp.scaled(options.scale)
   const name = showValue(paper, ps, sgroup, options)
-  const box = util.relBox(name.getBBox())
 
-  name.translateAbs(0.5 * box.width, -0.5 * box.height)
+  if (sgroup.data.context !== 'Bond') {
+    const box = util.relBox(name.getBBox())
+    name.translateAbs(0.5 * box.width, -0.5 * box.height)
+  }
+
   set.push(name)
 
   const sbox = Box2Abs.fromRelBox(util.relBox(name.getBBox()))

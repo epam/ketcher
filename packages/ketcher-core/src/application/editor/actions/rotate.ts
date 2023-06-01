@@ -279,10 +279,8 @@ export function fromRotate(restruct, selection, center, angle) {
     })
   }
 
-  const stereoFlags =
-    selection.enhancedFlags || Array.from(restruct.enhancedFlags.keys())
-  if (stereoFlags) {
-    stereoFlags.forEach((flagId) => {
+  if (selection.enhancedFlags) {
+    selection.enhancedFlags.forEach((flagId) => {
       const frId = flagId
       const frag = restruct.molecule.frags.get(frId)
       action.addOp(

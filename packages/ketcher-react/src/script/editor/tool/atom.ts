@@ -31,7 +31,8 @@ import {
 import Editor from '../Editor'
 import utils from '../shared/utils'
 import { Tool } from './Tool'
-import { deleteSelectedFunctionalGroups } from './helper/deleteSelectedFunctionalGroups'
+import { deleteFunctionalGroups } from './helper/deleteFunctionalGroups'
+import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems'
 
 class AtomTool implements Tool {
   private readonly editor: Editor
@@ -51,8 +52,11 @@ class AtomTool implements Tool {
       if (editorSelection.atoms) {
         const struct = editor.render.ctab
         const action = new Action()
-        const atomsInSGroups = deleteSelectedFunctionalGroups(
-          editorSelection,
+        const selectedSGroupsId =
+          editorSelection &&
+          getGroupIdsFromItemArrays(struct.molecule, editorSelection)
+        const deletedAtomsInSGroups = deleteFunctionalGroups(
+          selectedSGroupsId,
           struct,
           action
         )
@@ -60,7 +64,7 @@ class AtomTool implements Tool {
           fromAtomsAttrs(
             struct,
             editorSelection?.atoms?.filter(
-              (selectAtomId) => !atomsInSGroups?.includes(selectAtomId)
+              (selectAtomId) => !deletedAtomsInSGroups?.includes(selectAtomId)
             ),
             atomProps,
             true

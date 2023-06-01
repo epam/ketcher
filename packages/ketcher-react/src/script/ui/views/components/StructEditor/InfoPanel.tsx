@@ -106,7 +106,11 @@ const InfoPanel: FC<InfoPanelProps> = (props) => {
     setMolecule(groupStruct ? groupStruct.clone() : null)
   }, [groupName, groupStruct])
 
+  const nonTooltipSGroup =
+    !sGroup || SGroup.isMulSGroup(sGroup) || SGroup.isSRUSGroup(sGroup)
+
   if (
+    nonTooltipSGroup ||
     (!molecule && !sGroupData) ||
     clientX === undefined ||
     clientY === undefined

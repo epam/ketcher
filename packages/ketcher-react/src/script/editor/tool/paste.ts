@@ -29,7 +29,7 @@ import { dropAndMerge } from './helper/dropAndMerge'
 import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems'
 import { filterNotInCollapsedSGroup } from './helper/filterNotInCollapsedSGroup'
 import { Tool } from './Tool'
-import { filterSlatAndSolventFromMerge } from './helper/filterSlatAndSolventFromMerge'
+import { filterSaltAndSolventFromMerge } from './helper/filterSaltAndSolventFromMerge'
 
 class PasteTool implements Tool {
   private readonly editor: Editor
@@ -93,7 +93,7 @@ class PasteTool implements Tool {
       this.editor.struct()
     )
 
-    this.mergeItems = filterSlatAndSolventFromMerge(
+    this.mergeItems = filterSaltAndSolventFromMerge(
       getItemsToFuse(this.editor, visiblePasteItems),
       this.editor.struct()
     )

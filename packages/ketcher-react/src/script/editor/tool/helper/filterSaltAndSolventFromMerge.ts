@@ -1,6 +1,6 @@
 import { MergeItems, SGroup, Struct } from 'ketcher-core'
 
-export function filterSlatAndSolventFromMerge(
+export function filterSaltAndSolventFromMerge(
   mergeItems: MergeItems | null,
   struct: Struct
 ): MergeItems {

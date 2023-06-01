@@ -104,7 +104,11 @@ function closestToMerge(
     const bond = struct.bonds.get(srcId)
     const bondCI = struct.bonds.get(dstId)
 
-    if (bond && utils.mergeBondsParams(struct, bond, struct, bondCI).merged) {
+    if (
+      bond &&
+      bondCI &&
+      utils.mergeBondsParams(struct, bond, struct, bondCI).merged
+    ) {
       mergeMap.atoms.delete(bond.begin)
       mergeMap.atoms.delete(bond.end)
     } else {

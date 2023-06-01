@@ -24,6 +24,7 @@ import { Render } from '../raphaelRender'
 import { Scale } from 'domain/helpers'
 import draw from '../draw'
 import util from '../util'
+import { tfx } from 'utilities'
 
 type Arrow = {
   pos: Array<Vec2>
@@ -123,18 +124,10 @@ class ReRxnArrow extends ReObject {
     return refPoints
   }
 
-  makeSelectionPlate(restruct: ReStruct, _paper, styles) {
-    const render = restruct.render
-    const options = restruct.render.options
-
+  makeAdditionalInfo(restruct: ReStruct) {
+    const scaleFactor = restruct.render.options.scale
     const refPoints = this.getReferencePoints()
-    const scaleFactor = options.scale
     const selectionSet = restruct.render.paper.set()
-    selectionSet.push(
-      render.paper
-        .path(this.generatePath(render, options, 'selection'))
-        .attr(styles.selectionStyle)
-    )
 
     refPoints.forEach((rp) => {
       const scaledRP = Scale.obj2scaled(rp, restruct.render.options)
@@ -144,13 +137,30 @@ class ReRxnArrow extends ReObject {
           .attr({ fill: 'black' })
       )
     })
+
+    return selectionSet
+  }
+
+  makeSelectionPlate(restruct: ReStruct, _paper, styles) {
+    const render = restruct.render
+    const options = restruct.render.options
+    const selectionSet = restruct.render.paper.set()
+
+    selectionSet.push(
+      render.paper
+        .path(this.generatePath(render, options, 'selection'))
+        .attr(styles.selectionStyle)
+    )
     return selectionSet
   }
 
   generatePath(render: Render, options, type) {
     let path
     const item = this.item
-    const height = RxnArrow.isElliptical(item) && item.height! * options.scale
+    const height =
+      RxnArrow.isElliptical(item) && item.height
+        ? item.height * options.scale
+        : 0
     const pos = item.pos.map((p) => {
       return Scale.obj2scaled(p, options) || new Vec2()
     })
@@ -167,8 +177,7 @@ class ReRxnArrow extends ReObject {
           render.paper,
           { pos, height },
           length,
-          angle,
-          options
+          angle
         )
         break
       case 'arrow':
@@ -221,7 +230,7 @@ function calculateDistanceToLine(pos: Array<Vec2>, point: Vec2): number {
   return dist
 }
 function findMiddlePoint(height: number, a: Vec2, b: Vec2) {
-  if (+util.tfx(height) === 0) {
+  if (+tfx(height) === 0) {
     const minX = Math.min(a.x, b.x)
     const minY = Math.min(a.y, b.y)
     const x = minX + Math.abs(a.x - b.x) / 2

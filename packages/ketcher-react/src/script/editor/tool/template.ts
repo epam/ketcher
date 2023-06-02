@@ -29,7 +29,8 @@ import {
   fromFragmentDeletion,
   fromSgroupDeletion,
   Action,
-  MergeItems
+  MergeItems,
+  PasteItems
 } from 'ketcher-core'
 
 import utils from '../shared/utils'
@@ -457,7 +458,7 @@ class TemplateTool implements Tool {
     /* end */
 
     let action, functionalGroupRemoveAction
-    let pasteItems = null
+    let pasteItems: PasteItems | null = null
 
     if (
       ci?.map === 'functionalGroups' &&

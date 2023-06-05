@@ -32,7 +32,6 @@ import {
   isAttachmentBond
 } from './utils'
 import { Action } from './action'
-import utils from '../shared/utils'
 import { Selection } from '../editor.types'
 
 export type FlipDirection = 'horizontal' | 'vertical'
@@ -420,26 +419,6 @@ export function fromRotate(restruct, selection, center, angle) {
   }
 
   return action.perform(restruct)
-}
-
-export function fromBondAlign(restruct, bid, dir) {
-  const struct = restruct.molecule
-  const bond = struct.bonds.get(bid)
-  const begin = struct.atoms.get(bond.begin)
-  const end = struct.atoms.get(bond.end)
-
-  const center = begin.pp.add(end.pp).scaled(0.5)
-  let angle = utils.calcAngle(begin.pp, end.pp)
-  const atoms = Array.from(struct.getFragmentIds(begin.fragment))
-
-  // TODO: choose minimal angle
-  angle = dir === 'horizontal' ? -angle : Math.PI / 2 - angle
-
-  if (angle === 0 || Math.abs(angle) === Math.PI) {
-    return fromFlip(restruct, { atoms }, dir, center)
-  }
-
-  return fromRotate(restruct, { atoms }, center, angle)
 }
 
 function rotateDelta(v, center, angle) {

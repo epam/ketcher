@@ -38,6 +38,7 @@ import { Scale } from 'domain/helpers'
 import draw from '../draw'
 import util from '../util'
 import { tfx } from 'utilities'
+import svgPath from 'svgpath'
 
 interface ElemAttr {
   text: string
@@ -371,8 +372,23 @@ class ReAtom extends ReObject {
     this.setHover(this.hover, render)
 
     if (this.a.attpnt) {
-      const lsb = bisectLargestSector(this, restruct.molecule)
-      showAttpnt(this, render, lsb, restruct.addReObjectPath.bind(restruct))
+      const bisectrix = bisectLargestSector(this, restruct.molecule)
+      showAttachmentPointShape(
+        this,
+        render,
+        bisectrix,
+        restruct.addReObjectPath.bind(restruct)
+      )
+
+      const isLabelRequired = isCountOfAttachmentPointsMoreThanOne(restruct)
+      if (isLabelRequired) {
+        showAttachmentPointLabel(
+          this,
+          render,
+          bisectrix,
+          restruct.addReObjectPath.bind(restruct)
+        )
+      }
     }
 
     const stereoLabel = this.a.stereoLabel // Enhanced Stereo
@@ -984,78 +1000,6 @@ function showWarning(
   return warning
 }
 
-function showAttpnt(atom, render, lsb, addReObjectPath) {
-  // eslint-disable-line max-statements
-  const asterisk = '∗'
-  const ps = Scale.obj2scaled(atom.a.pp, render.options)
-  const options = render.options
-  let i, j
-  for (i = 0; i < 4; ++i) {
-    let attpntText = ''
-    if (atom.a.attpnt & (1 << i)) {
-      if (attpntText.length > 0) attpntText += ' '
-      attpntText += asterisk
-      for (j = 0; j < (i === 0 ? 0 : i + 1); ++j) attpntText += "'"
-      let pos0 = new Vec2(ps)
-      let pos1 = ps.addScaled(lsb, 0.7 * options.scale)
-
-      const attpntPath1 = render.paper.text(pos1.x, pos1.y, attpntText).attr({
-        font: options.font,
-        'font-size': options.fontsz,
-        fill: atom.color
-      })
-      const attpntRbb = util.relBox(attpntPath1.getBBox())
-      draw.recenterText(attpntPath1, attpntRbb)
-
-      const lsbn = lsb.negated()
-      /* eslint-disable no-mixed-operators */
-      pos1 = pos1.addScaled(
-        lsbn,
-        util.shiftRayBox(pos1, lsbn, Box2Abs.fromRelBox(attpntRbb)) +
-          options.lineWidth / 2
-      )
-      /* eslint-enable no-mixed-operators */
-      pos0 = shiftBondEnd(atom, pos0, lsb, options.lineWidth)
-      const n = lsb.rotateSC(1, 0)
-      const arrowLeft = pos1
-        .addScaled(n, 0.05 * options.scale)
-        .addScaled(lsbn, 0.09 * options.scale)
-      const arrowRight = pos1
-        .addScaled(n, -0.05 * options.scale)
-        .addScaled(lsbn, 0.09 * options.scale)
-      const attpntPath = render.paper.set()
-      attpntPath.push(
-        attpntPath1,
-        render.paper
-          .path(
-            'M{0},{1}L{2},{3}M{4},{5}L{2},{3}L{6},{7}',
-            tfx(pos0.x),
-            tfx(pos0.y),
-            tfx(pos1.x),
-            tfx(pos1.y),
-            tfx(arrowLeft.x),
-            tfx(arrowLeft.y),
-            tfx(arrowRight.x),
-            tfx(arrowRight.y)
-          )
-          .attr(render.options.lineattr)
-          .attr({ 'stroke-width': options.lineWidth / 2 })
-      )
-      addReObjectPath(LayerMap.indices, atom.visel, attpntPath, ps)
-      lsb = lsb.rotate(Math.PI / 6)
-    }
-  }
-}
-
-// function getStereoLabelText(atom, aid, render) {
-// 	const struct = render.ctab.molecule;
-// 	const frag = struct.frags.get(atom.a.fragment);
-// 	const stereo = frag.getStereoAtomMark(aid);
-// 	if (!stereo.type) return null;
-//
-// 	return stereo.type + (stereo.number || '');
-// }
-
 function getAamText(atom) {
   let aamText = ''
   if (atom.a.aam > 0) aamText += atom.a.aam
@@ -1131,15 +1075,90 @@ function bisectLargestSector(atom: ReAtom, struct: Struct) {
   return new Vec2(Math.cos(ang), Math.sin(ang))
 }
 
-function shiftBondEnd(atom, pos0, dir, margin) {
-  let t = 0
-  const visel = atom.visel
-  for (let k = 0; k < visel.exts.length; ++k) {
-    const box = visel.exts[k].translate(pos0)
-    t = Math.max(t, util.shiftRayBox(pos0, dir, box))
-  }
-  if (t > 0) pos0 = pos0.addScaled(dir, t + margin)
-  return pos0
+function getSvgShapeAttachmentPoint(
+  atomPosition: Vec2,
+  directionVector: Vec2,
+  basicHeight: number
+): string {
+  // declared here https://github.com/epam/ketcher/issues/2165
+  // this path has (0,0) in the position of attachment point atom
+  const attachmentPointSvgPathString = `M0 0l0-34m-13-1.5l1.5-3.7c0.3-0.8 1.5-0.8 1.9 0l1.7 4.4c0.3 0.8 1.5 0.8 1.9 0l1.7-4.4c0.3-0.8 1.5-0.8 1.8 0l1.8 4.4c0.3 0.8 1.5 0.8 1.8 0l1.7-4.4c0.3-0.8 1.5-0.8 1.9 0l1.7 4.4c0.3 0.8 1.5 0.8 1.9 0l1.6-4.2c0.3-0.9 1.6-0.8 1.9 0l1.2 3.5`
+  const attachmentPointSvgPathHeight = 39.8
+
+  const shapeScale = basicHeight / attachmentPointSvgPathHeight
+  const angleDegrees =
+    (Math.atan2(directionVector.y, directionVector.x) * 180) / Math.PI + 90
+
+  return svgPath(attachmentPointSvgPathString)
+    .rotate(angleDegrees)
+    .scale(shapeScale)
+    .translate(atomPosition.x, atomPosition.y)
+    .toString()
+}
+
+function showAttachmentPointShape(
+  atom: ReAtom,
+  { options, paper }: Render,
+  directionVector: Vec2,
+  addReObjectPath: InstanceType<typeof ReStruct>['addReObjectPath']
+) {
+  const atomPositionVector = Scale.obj2scaled(atom.a.pp, options)
+  const shapeSvg = getSvgShapeAttachmentPoint(
+    atomPositionVector,
+    directionVector,
+    options.scale
+  )
+  const shapePath = paper
+    .path(shapeSvg)
+    .attr(options.lineattr)
+    .attr({ 'stroke-width': options.lineWidth })
+
+  addReObjectPath(LayerMap.indices, atom.visel, shapePath, atomPositionVector)
+}
+
+function getLabelPositionForAttachmentPoint(
+  atomPositionVector: Vec2,
+  directionVector: Vec2,
+  shapeHeight: number
+): Vec2 {
+  const normal = directionVector.rotateSC(1, 0)
+  return atomPositionVector
+    .addScaled(normal, 0.17 * shapeHeight)
+    .addScaled(directionVector, shapeHeight * 0.7)
+}
+
+function showAttachmentPointLabel(
+  atom: ReAtom,
+  { options, paper }: Render,
+  directionVector: Vec2,
+  addReObjectPath: InstanceType<typeof ReStruct>['addReObjectPath']
+): void {
+  const atomPositionVector = Scale.obj2scaled(atom.a.pp, options)
+  const labelText = atom.a.attpnt === 2 ? 2 : 1
+  const labelPosition = getLabelPositionForAttachmentPoint(
+    atomPositionVector,
+    directionVector,
+    options.scale
+  )
+  const labelPath = paper
+    .text(labelPosition.x, labelPosition.y, labelText)
+    .attr({
+      font: options.font,
+      'font-size': options.fontsz * 0.9,
+      fill: atom.color
+    })
+
+  addReObjectPath(LayerMap.indices, atom.visel, labelPath, atomPositionVector)
+}
+
+function isCountOfAttachmentPointsMoreThanOne(restruct: ReStruct) {
+  let attachmentPointsCount = 0
+  restruct.molecule.atoms.forEach((atom) => {
+    if (atom.attpnt) {
+      attachmentPointsCount++
+    }
+  })
+  return attachmentPointsCount > 1
 }
 
 export default ReAtom

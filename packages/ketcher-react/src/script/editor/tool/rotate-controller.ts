@@ -50,7 +50,7 @@ class RotateController {
   constructor(editor: Editor) {
     this.editor = editor
     this.init()
-    this.rotateTool = new RotateTool(this.editor, undefined, true)
+    this.rotateTool = new RotateTool(this.editor, undefined)
   }
 
   private init() {
@@ -647,7 +647,7 @@ class RotateController {
     const originalHandleCenter = this.handleCenter
       .sub(this.render.options.offset)
       .scaled(1 / this.render.options.scale)
-    this.rotateTool.mousedown(event, originalHandleCenter, this.originalCenter)
+    this.rotateTool.mousedownHandle(originalHandleCenter, this.originalCenter)
   }
 
   private dragMove = () => {

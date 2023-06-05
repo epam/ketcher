@@ -32,14 +32,9 @@ import { Tool } from './Tool'
 class RotateTool implements Tool {
   private readonly editor: Editor
   dragCtx: any
-  // @yuleicul ? remove it
-  isNotActiveTool: boolean | undefined
+  isNotActiveTool = true
 
-  constructor(
-    editor: Editor,
-    flipDirection?: FlipDirection,
-    isNotActiveTool?: boolean
-  ) {
+  constructor(editor: Editor, flipDirection?: FlipDirection) {
     this.editor = editor
 
     if (flipDirection) {
@@ -56,29 +51,14 @@ class RotateTool implements Tool {
       )
       editor.update(action)
       editor.rotateController.rerender()
-      this.isNotActiveTool = true
-      return
-    }
-
-    this.isNotActiveTool = isNotActiveTool
-    if (!editor.selection()?.atoms) {
-      !isNotActiveTool && this.editor.selection(null)
     }
   }
 
-  mousedown(event, handleCenter?: Vec2, center?: Vec2) {
-    const xy0 =
-      center ||
-      this.getCenter(this.editor)[0] ||
-      this.editor.render.page2obj(event)
+  mousedownHandle(handleCenter: Vec2, center: Vec2) {
     this.dragCtx = {
-      xy0,
-      angle1: utils.calcAngle(
-        xy0,
-        handleCenter || this.editor.render.page2obj(event)
-      )
+      xy0: center,
+      angle1: utils.calcAngle(center, handleCenter)
     }
-    return true
   }
 
   /**

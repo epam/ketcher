@@ -52,14 +52,28 @@ export function fromFlip(
 
   if (structToFlip.rxnArrows) {
     action.mergeWith(
-      fromArrowFlip(reStruct, structToFlip.rxnArrows, flipDirection, center)
+      fromRxnArrowFlip(reStruct, structToFlip.rxnArrows, flipDirection, center)
+    )
+  }
+
+  if (structToFlip.rxnPluses) {
+    action.mergeWith(
+      fromRxnPlusFlip(reStruct, structToFlip.rxnPluses, flipDirection, center)
+    )
+  }
+
+  if (structToFlip.texts) {
+    action.mergeWith(
+      fromTextFlip(reStruct, structToFlip.texts, flipDirection, center)
     )
   }
 
   return action
 }
 
-function fromArrowFlip(
+// @yuleicul to fix text move when flipping
+
+function fromRxnArrowFlip(
   reStruct: ReStruct,
   rxnArrowIds: number[],
   flipDirection: FlipDirection,
@@ -82,6 +96,48 @@ function fromArrowFlip(
 
     const offset = flipItemByCenter(rxnArrow.center(), center, flipDirection)
     action.addOp(new RxnArrowMove(arrowId, offset))
+  })
+
+  return action.perform(reStruct)
+}
+
+function fromRxnPlusFlip(
+  reStruct: ReStruct,
+  rxnPlusIds: number[],
+  flipDirection: FlipDirection,
+  center: Vec2
+) {
+  const action = new Action()
+
+  rxnPlusIds.forEach((plusId) => {
+    const rxnPlus = reStruct.molecule.rxnPluses.get(plusId)
+    if (!rxnPlus) {
+      return
+    }
+
+    const offset = flipItemByCenter(rxnPlus.pp, center, flipDirection)
+    action.addOp(new RxnPlusMove(plusId, offset))
+  })
+
+  return action.perform(reStruct)
+}
+
+function fromTextFlip(
+  reStruct: ReStruct,
+  textIds: number[],
+  flipDirection: FlipDirection,
+  center: Vec2
+) {
+  const action = new Action()
+
+  textIds.forEach((textId) => {
+    const text = reStruct.molecule.texts.get(textId)
+    if (!text) {
+      return
+    }
+
+    const offset = flipItemByCenter(text.position, center, flipDirection)
+    action.addOp(new TextMove(textId, offset))
   })
 
   return action.perform(reStruct)

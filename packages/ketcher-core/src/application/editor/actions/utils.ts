@@ -20,6 +20,7 @@ import closest from '../shared/closest'
 import { difference } from 'lodash'
 import { ReStruct } from 'application/render'
 import { selectionKeys } from '../shared/constants'
+import { Selection } from '../editor.types'
 
 type AtomAttributeName = keyof AtomAttributes
 
@@ -53,7 +54,7 @@ export function findStereoAtoms(struct, aids: number[] | undefined): number[] {
   return aids.filter((aid) => struct.atoms.get(aid).stereoLabel !== null)
 }
 
-export function structSelection(struct) {
+export function structSelection(struct): Selection {
   return selectionKeys.reduce((res, key) => {
     res[key] = Array.from(struct[key].keys())
     return res

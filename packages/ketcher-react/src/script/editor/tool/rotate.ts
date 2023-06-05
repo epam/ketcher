@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import {
+  FlipDirection,
   FunctionalGroup,
   Vec2,
   fromBondAlign,
@@ -32,12 +33,17 @@ import { Tool } from './Tool'
 class RotateTool implements Tool {
   private readonly editor: Editor
   dragCtx: any
+  // @yuleicul ? remove it
   isNotActiveTool: boolean | undefined
 
-  constructor(editor: Editor, dir, isNotActiveTool?: boolean) {
+  constructor(
+    editor: Editor,
+    flipDirection?: FlipDirection,
+    isNotActiveTool?: boolean
+  ) {
     this.editor = editor
 
-    if (dir) {
+    if (flipDirection) {
       const restruct = editor.render.ctab
       const selection = editor.selection()
       const singleBond =
@@ -46,8 +52,15 @@ class RotateTool implements Tool {
         Object.keys(selection).length === 1 &&
         selection.bonds.length === 1
       const action = !singleBond
-        ? fromFlip(restruct, selection, dir, this.getCenter(this.editor)[0])
-        : fromBondAlign(restruct, selection.bonds?.[0], dir)
+        ? fromFlip(
+            restruct,
+            selection,
+            flipDirection,
+            // @yuleicul set it to a variable
+            this.getCenter(this.editor)[0] || restruct.getVBoxObj().centre()
+          )
+        : // remove it @yuleicul
+          fromBondAlign(restruct, selection.bonds?.[0], flipDirection)
       editor.update(action)
       editor.rotateController.rerender()
       this.isNotActiveTool = true

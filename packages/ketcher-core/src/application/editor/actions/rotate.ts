@@ -18,23 +18,81 @@ import {
   AtomMove,
   BondAttr,
   EnhancedFlagMove,
+  RxnArrowMove,
   RxnArrowRotate,
   RxnPlusMove,
   SGroupDataMove,
   TextMove
 } from '../operations'
 import { Bond, Fragment, Pile, Vec2 } from 'domain/entities'
+import { ReStruct } from 'application/render'
 import {
   getRelSgroupsBySelection,
   structSelection,
   isAttachmentBond
 } from './utils'
-
 import { Action } from './action'
 import utils from '../shared/utils'
+import { Selection } from '../editor.types'
 
-export function fromFlip(restruct, selection, dir, center) {
-  // eslint-disable-line max-statements
+export type FlipDirection = 'horizontal' | 'vertical'
+
+export function fromFlip(
+  reStruct: ReStruct,
+  selection: Selection | null,
+  flipDirection: FlipDirection,
+  center: Vec2
+) {
+  const action = new Action()
+  const structToFlip = selection || structSelection(reStruct.molecule)
+
+  action.mergeWith(
+    fromStructureFlip(reStruct, structToFlip, flipDirection, center)
+  )
+
+  if (structToFlip.rxnArrows) {
+    action.mergeWith(
+      fromArrowFlip(reStruct, structToFlip.rxnArrows, flipDirection, center)
+    )
+  }
+
+  return action
+}
+
+function fromArrowFlip(
+  reStruct: ReStruct,
+  rxnArrowIds: number[],
+  flipDirection: FlipDirection,
+  center: Vec2
+) {
+  const action = new Action()
+
+  rxnArrowIds.forEach((arrowId) => {
+    const rxnArrow = reStruct.molecule.rxnArrows.get(arrowId)
+    if (!rxnArrow) {
+      return
+    }
+
+    const [start, end] = rxnArrow.pos
+    const oxAngle = end.sub(start).oxAngle()
+    const oyAngle = oxAngle - Math.PI / 2
+    const rotateAngle =
+      flipDirection === 'vertical' ? -2 * oxAngle : -2 * oyAngle
+    action.addOp(new RxnArrowRotate(arrowId, rotateAngle, rxnArrow.center()))
+
+    const offset = flipItemByCenter(rxnArrow.center(), center, flipDirection)
+    action.addOp(new RxnArrowMove(arrowId, offset))
+  })
+
+  return action.perform(reStruct)
+}
+
+function fromStructureFlip(
+  restruct: ReStruct,
+  selection: Selection | null,
+  dir: FlipDirection,
+  center: Vec2
+) {
   const struct = restruct.molecule
 
   const action = new Action()
@@ -49,6 +107,10 @@ export function fromFlip(restruct, selection, dir, center) {
 
   const fids = selection.atoms.reduce((acc, aid) => {
     const atom = struct.atoms.get(aid)
+
+    if (!atom) {
+      return acc
+    }
 
     if (!acc[atom.fragment]) {
       acc[atom.fragment] = []
@@ -153,13 +215,13 @@ function flipPartOfStructure({
 
     fragment.forEach((aid) => {
       const atom = struct.atoms.get(aid)
-      const d = flipItemByCenter(atom, rotationPoint, dir)
+      const d = flipItemByCenter(atom.pp, rotationPoint, dir)
       action.addOp(new AtomMove(aid, d))
     })
 
     const sgroups = getRelSgroupsBySelection(restruct, Array.from(fragment))
     sgroups.forEach((sg) => {
-      const d = flipItemByCenter(sg, rotationPoint, dir)
+      const d = flipItemByCenter(sg.pp, rotationPoint, dir)
       action.addOp(new SGroupDataMove(sg.id, d))
     })
   })
@@ -188,13 +250,13 @@ function flipStandaloneStructure({
 
     fragment.forEach((aid) => {
       const atom = struct.atoms.get(aid)
-      const d = flipItemByCenter(atom, calcCenter, dir)
+      const d = flipItemByCenter(atom.pp, calcCenter, dir)
       action.addOp(new AtomMove(aid, d))
     })
 
     const sgroups = getRelSgroupsBySelection(restruct, Array.from(fragment))
     sgroups.forEach((sg) => {
-      const d = flipItemByCenter(sg, calcCenter, dir)
+      const d = flipItemByCenter(sg.pp, calcCenter, dir)
       action.addOp(new SGroupDataMove(sg.id, d))
     })
   })
@@ -204,22 +266,24 @@ function flipStandaloneStructure({
   return action.perform(restruct)
 }
 
-function flipItemByCenter(item, center, dir) {
+function flipItemByCenter(
+  itemPos: Vec2,
+  center: Vec2,
+  flipDirection: FlipDirection
+) {
   const d = new Vec2()
-  /* eslint-disable no-mixed-operators */
-  if (dir === 'horizontal') {
+  if (flipDirection === 'horizontal') {
     d.x =
-      center.x > item.pp.x
-        ? 2 * (center.x - item.pp.x)
-        : -2 * (item.pp.x - center.x)
+      center.x > itemPos.x
+        ? 2 * (center.x - itemPos.x)
+        : -2 * (itemPos.x - center.x)
   } else {
     // 'vertical'
     d.y =
-      center.y > item.pp.y
-        ? 2 * (center.y - item.pp.y)
-        : -2 * (item.pp.y - center.y)
+      center.y > itemPos.y
+        ? 2 * (center.y - itemPos.y)
+        : -2 * (itemPos.y - center.y)
   }
-  /* eslint-enable no-mixed-operators */
   return d
 }
 

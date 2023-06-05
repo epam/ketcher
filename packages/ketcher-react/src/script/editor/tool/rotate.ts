@@ -46,7 +46,7 @@ class RotateTool implements Tool {
         Object.keys(selection).length === 1 &&
         selection.bonds.length === 1
       const action = !singleBond
-        ? fromFlip(restruct, selection, dir, null)
+        ? fromFlip(restruct, selection, dir, this.getCenter(this.editor)[0])
         : fromBondAlign(restruct, selection.bonds?.[0], dir)
       editor.update(action)
       editor.rotateController.rerender()

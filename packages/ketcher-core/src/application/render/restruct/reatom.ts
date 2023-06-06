@@ -372,23 +372,7 @@ class ReAtom extends ReObject {
     this.setHover(this.hover, render)
 
     if (this.a.attpnt) {
-      const bisectrix = bisectLargestSector(this, restruct.molecule)
-      showAttachmentPointShape(
-        this,
-        render,
-        bisectrix,
-        restruct.addReObjectPath.bind(restruct)
-      )
-
-      const isLabelRequired = isCountOfAttachmentPointsMoreThanOne(restruct)
-      if (isLabelRequired) {
-        showAttachmentPointLabel(
-          this,
-          render,
-          bisectrix,
-          restruct.addReObjectPath.bind(restruct)
-        )
-      }
+      showAttachmentPoint(this, render, restruct)
     }
 
     const stereoLabel = this.a.stereoLabel // Enhanced Stereo
@@ -1053,6 +1037,36 @@ function pathAndRBoxTranslate(path, rbb, x, y) {
 }
 
 function bisectLargestSector(atom: ReAtom, struct: Struct) {
+  const { largestAngle, neighborAngle } = getLargestSectorFromNeighbors(
+    atom,
+    struct
+  )
+  const bisectAngle = neighborAngle + largestAngle / 2
+  return newVectorFromAngle(bisectAngle)
+}
+
+function trisectionLargestSector(atom: ReAtom, struct: Struct) {
+  const { largestAngle, neighborAngle } = getLargestSectorFromNeighbors(
+    atom,
+    struct
+  )
+  const firstTrisectorAngle = neighborAngle + largestAngle / 3
+  const secondTrisectorAngle = neighborAngle + (largestAngle * 2) / 3
+
+  return [
+    newVectorFromAngle(firstTrisectorAngle),
+    newVectorFromAngle(secondTrisectorAngle)
+  ]
+}
+
+function newVectorFromAngle(angle: number): Vec2 {
+  return new Vec2(Math.cos(angle), Math.sin(angle))
+}
+
+function getLargestSectorFromNeighbors(
+  atom: ReAtom,
+  struct: Struct
+): { neighborAngle; largestAngle } {
   let angles: Array<number> = []
   atom.a.neighbors.forEach((hbid) => {
     const hb = struct.halfBonds.get(hbid)
@@ -1069,10 +1083,11 @@ function bisectLargestSector(atom: ReAtom, struct: Struct) {
   for (let i = 0; i < angles.length; ++i) {
     if (da[i] > daMax) {
       daMax = da[i]
-      ang = angles[i] + da[i] / 2
+      ang = angles[i]
     }
   }
-  return new Vec2(Math.cos(ang), Math.sin(ang))
+
+  return { neighborAngle: ang, largestAngle: daMax }
 }
 
 function getSvgShapeAttachmentPoint(
@@ -1127,14 +1142,44 @@ function getLabelPositionForAttachmentPoint(
     .addScaled(directionVector, shapeHeight * 0.7)
 }
 
+function showAttachmentPoint(atom: ReAtom, render: Render, restruct: ReStruct) {
+  const isTrisectionRequired = atom.a.attpnt === 3
+  const directionVectors = isTrisectionRequired
+    ? trisectionLargestSector(atom, restruct.molecule)
+    : [bisectLargestSector(atom, restruct.molecule)]
+
+  directionVectors.forEach((directionVector, index) => {
+    showAttachmentPointShape(
+      atom,
+      render,
+      directionVector,
+      restruct.addReObjectPath.bind(restruct)
+    )
+
+    const isLabelRequired = isCountOfAttachmentPointsMoreThanOne(restruct)
+    if (isLabelRequired) {
+      // if trisection (attpnt === 3) - we split the attachment point to two vectors,
+      // and should show labels '1' and '2' for those separated vectors
+      const labelText = String(isTrisectionRequired ? index + 1 : atom.a.attpnt)
+      showAttachmentPointLabel(
+        atom,
+        render,
+        directionVector,
+        restruct.addReObjectPath.bind(restruct),
+        labelText
+      )
+    }
+  })
+}
+
 function showAttachmentPointLabel(
   atom: ReAtom,
   { options, paper }: Render,
   directionVector: Vec2,
-  addReObjectPath: InstanceType<typeof ReStruct>['addReObjectPath']
+  addReObjectPath: InstanceType<typeof ReStruct>['addReObjectPath'],
+  labelText: string
 ): void {
   const atomPositionVector = Scale.obj2scaled(atom.a.pp, options)
-  const labelText = atom.a.attpnt === 2 ? 2 : 1
   const labelPosition = getLabelPositionForAttachmentPoint(
     atomPositionVector,
     directionVector,
@@ -1153,12 +1198,23 @@ function showAttachmentPointLabel(
 
 function isCountOfAttachmentPointsMoreThanOne(restruct: ReStruct) {
   let attachmentPointsCount = 0
-  restruct.molecule.atoms.forEach((atom) => {
+  for (const [, atom] of restruct.molecule.atoms) {
     if (atom.attpnt) {
       attachmentPointsCount++
+
+      // Why such condition?
+      //
+      // atom.attpnt possible values:
+      // 0 | null - no attachment point
+      // 1 - Primary type
+      // 2 - Secondary type
+      // 3 - Both Primary and Secondary - should be considered as two Attachment points
+      if (atom.attpnt === 3 || attachmentPointsCount > 1) {
+        return true
+      }
     }
-  })
-  return attachmentPointsCount > 1
+  }
+  return false
 }
 
 export default ReAtom

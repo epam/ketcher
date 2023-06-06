@@ -70,8 +70,6 @@ export function fromFlip(
   return action
 }
 
-// @yuleicul to fix text move when flipping
-
 function fromRxnArrowFlip(
   reStruct: ReStruct,
   rxnArrowIds: number[],
@@ -93,8 +91,12 @@ function fromRxnArrowFlip(
       flipDirection === 'vertical' ? -2 * oxAngle : -2 * oyAngle
     action.addOp(new RxnArrowRotate(arrowId, rotateAngle, rxnArrow.center()))
 
-    const offset = flipItemByCenter(rxnArrow.center(), center, flipDirection)
-    action.addOp(new RxnArrowMove(arrowId, offset))
+    const difference = flipPointByCenter(
+      rxnArrow.center(),
+      center,
+      flipDirection
+    )
+    action.addOp(new RxnArrowMove(arrowId, difference))
   })
 
   return action.perform(reStruct)
@@ -114,8 +116,8 @@ function fromRxnPlusFlip(
       return
     }
 
-    const offset = flipItemByCenter(rxnPlus.pp, center, flipDirection)
-    action.addOp(new RxnPlusMove(plusId, offset))
+    const difference = flipPointByCenter(rxnPlus.pp, center, flipDirection)
+    action.addOp(new RxnPlusMove(plusId, difference))
   })
 
   return action.perform(reStruct)
@@ -135,8 +137,16 @@ function fromTextFlip(
       return
     }
 
-    const offset = flipItemByCenter(text.position, center, flipDirection)
-    action.addOp(new TextMove(textId, offset))
+    // Note: text has two position properties
+    //      `position`: the middle left point
+    //      `pos`: a box (not bounding box)
+    // `TextMove` is to move `position`, so we have to calculate the flipped `position`
+    const textMiddleLeft = text.pos[0]
+    const textMiddleRight = text.pos[3]
+    const textCenter = Vec2.centre(textMiddleLeft, textMiddleRight)
+
+    const difference = flipPointByCenter(textCenter, center, flipDirection)
+    action.addOp(new TextMove(textId, difference))
   })
 
   return action.perform(reStruct)
@@ -270,13 +280,13 @@ function flipPartOfStructure({
 
     fragment.forEach((aid) => {
       const atom = struct.atoms.get(aid)
-      const d = flipItemByCenter(atom.pp, rotationPoint, dir)
+      const d = flipPointByCenter(atom.pp, rotationPoint, dir)
       action.addOp(new AtomMove(aid, d))
     })
 
     const sgroups = getRelSgroupsBySelection(restruct, Array.from(fragment))
     sgroups.forEach((sg) => {
-      const d = flipItemByCenter(sg.pp, rotationPoint, dir)
+      const d = flipPointByCenter(sg.pp, rotationPoint, dir)
       action.addOp(new SGroupDataMove(sg.id, d))
     })
   })
@@ -305,13 +315,13 @@ function flipStandaloneStructure({
 
     fragment.forEach((aid) => {
       const atom = struct.atoms.get(aid)
-      const d = flipItemByCenter(atom.pp, calcCenter, dir)
+      const d = flipPointByCenter(atom.pp, calcCenter, dir)
       action.addOp(new AtomMove(aid, d))
     })
 
     const sgroups = getRelSgroupsBySelection(restruct, Array.from(fragment))
     sgroups.forEach((sg) => {
-      const d = flipItemByCenter(sg.pp, calcCenter, dir)
+      const d = flipPointByCenter(sg.pp, calcCenter, dir)
       action.addOp(new SGroupDataMove(sg.id, d))
     })
   })
@@ -321,23 +331,23 @@ function flipStandaloneStructure({
   return action.perform(restruct)
 }
 
-function flipItemByCenter(
-  itemPos: Vec2,
+function flipPointByCenter(
+  pointToFlip: Vec2,
   center: Vec2,
   flipDirection: FlipDirection
 ) {
   const d = new Vec2()
   if (flipDirection === 'horizontal') {
     d.x =
-      center.x > itemPos.x
-        ? 2 * (center.x - itemPos.x)
-        : -2 * (itemPos.x - center.x)
+      center.x > pointToFlip.x
+        ? 2 * (center.x - pointToFlip.x)
+        : -2 * (pointToFlip.x - center.x)
   } else {
     // 'vertical'
     d.y =
-      center.y > itemPos.y
-        ? 2 * (center.y - itemPos.y)
-        : -2 * (itemPos.y - center.y)
+      center.y > pointToFlip.y
+        ? 2 * (center.y - pointToFlip.y)
+        : -2 * (pointToFlip.y - center.y)
   }
   return d
 }

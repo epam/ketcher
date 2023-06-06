@@ -39,6 +39,7 @@ import draw from '../draw'
 import util from '../util'
 import { tfx } from 'utilities'
 import svgPath from 'svgpath'
+import { RenderOptions } from 'application/render/render.types'
 
 interface ElemAttr {
   text: string
@@ -178,6 +179,35 @@ class ReAtom extends ReObject {
     }
 
     return this.getSelectionContour(render).attr(options.selectionStyle)
+  }
+
+  /**
+   * if atom is rendered as Abbreviation: O, NH, ...
+   * In this case we need to shift the bond render start position to free space for Atom,
+   * same for the Attachment point
+   */
+  getShiftedSegmentPosition(
+    renderOptions: RenderOptions,
+    direction: Vec2
+  ): Vec2 {
+    const atomPosition = Scale.obj2scaled(this.a.pp, renderOptions)
+    let atomSymbolShift = 0
+    const exts = this.visel.exts
+    for (let k = 0; k < exts.length; ++k) {
+      const box = exts[k].translate(atomPosition)
+      atomSymbolShift = Math.max(
+        atomSymbolShift,
+        util.shiftRayBox(atomPosition, direction, box)
+      )
+    }
+    if (atomSymbolShift > 0) {
+      return atomPosition.addScaled(
+        direction,
+        atomSymbolShift + 2 * renderOptions.lineWidth
+      )
+    } else {
+      return atomPosition
+    }
   }
 
   show(restruct: ReStruct, aid: number, options: any): void {
@@ -1090,24 +1120,24 @@ function getLargestSectorFromNeighbors(
   return { neighborAngle: ang, largestAngle: daMax }
 }
 
-function getSvgShapeAttachmentPoint(
-  atomPosition: Vec2,
+function getSvgCurveShapeAttachmentPoint(
+  centerPosition: Vec2,
   directionVector: Vec2,
-  basicHeight: number
+  basicSize: number
 ): string {
   // declared here https://github.com/epam/ketcher/issues/2165
   // this path has (0,0) in the position of attachment point atom
-  const attachmentPointSvgPathString = `M0 0l0-34m-13-1.5l1.5-3.7c0.3-0.8 1.5-0.8 1.9 0l1.7 4.4c0.3 0.8 1.5 0.8 1.9 0l1.7-4.4c0.3-0.8 1.5-0.8 1.8 0l1.8 4.4c0.3 0.8 1.5 0.8 1.8 0l1.7-4.4c0.3-0.8 1.5-0.8 1.9 0l1.7 4.4c0.3 0.8 1.5 0.8 1.9 0l1.6-4.2c0.3-0.9 1.6-0.8 1.9 0l1.2 3.5`
-  const attachmentPointSvgPathHeight = 39.8
+  const attachmentPointSvgPathString = `M13 1.5l-1.5 3.7c-0.3 0.8-1.5 0.8-1.9 0l-1.7-4.4c-0.3-0.8-1.5-0.8-1.9 0l-1.7 4.4c-0.3 0.8-1.5 0.8-1.8 0l-1.8-4.4c-0.3-0.8-1.5-0.8-1.8 0l-1.7 4.4c-0.3 0.8-1.5 0.8-1.9 0l-1.7-4.4c-0.3-0.8-1.5-0.8-1.9 0l-1.6 4.2c-0.3 0.9-1.6 0.8-1.9 0l-1.2-3.5`
+  const attachmentPointSvgPathSize = 39.8
 
-  const shapeScale = basicHeight / attachmentPointSvgPathHeight
+  const shapeScale = basicSize / attachmentPointSvgPathSize
   const angleDegrees =
-    (Math.atan2(directionVector.y, directionVector.x) * 180) / Math.PI + 90
+    (Math.atan2(directionVector.y, directionVector.x) * 180) / Math.PI - 90
 
   return svgPath(attachmentPointSvgPathString)
     .rotate(angleDegrees)
     .scale(shapeScale)
-    .translate(atomPosition.x, atomPosition.y)
+    .translate(centerPosition.x, centerPosition.y)
     .toString()
 }
 
@@ -1118,17 +1148,37 @@ function showAttachmentPointShape(
   addReObjectPath: InstanceType<typeof ReStruct>['addReObjectPath']
 ) {
   const atomPositionVector = Scale.obj2scaled(atom.a.pp, options)
-  const shapeSvg = getSvgShapeAttachmentPoint(
-    atomPositionVector,
-    directionVector,
-    options.scale
+  const shiftedAtomPositionVector = atom.getShiftedSegmentPosition(
+    options,
+    directionVector
   )
-  const shapePath = paper
-    .path(shapeSvg)
+  const attachmentPointEnd = atomPositionVector.addScaled(
+    directionVector,
+    options.scale * 0.9
+  )
+
+  const linePath = paper.path(
+    'M{0},{1}L{2},{3}',
+    tfx(shiftedAtomPositionVector.x),
+    tfx(shiftedAtomPositionVector.y),
+    tfx(attachmentPointEnd.x),
+    tfx(attachmentPointEnd.y)
+  )
+
+  const curvePath = paper.path(
+    getSvgCurveShapeAttachmentPoint(
+      attachmentPointEnd,
+      directionVector,
+      options.scale
+    )
+  )
+
+  const resultShape = paper
+    .set([curvePath, linePath])
     .attr(options.lineattr)
     .attr({ 'stroke-width': options.lineWidth })
 
-  addReObjectPath(LayerMap.indices, atom.visel, shapePath, atomPositionVector)
+  addReObjectPath(LayerMap.indices, atom.visel, resultShape, atomPositionVector)
 }
 
 function getLabelPositionForAttachmentPoint(

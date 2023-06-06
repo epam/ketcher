@@ -23,7 +23,7 @@ import {
   Vec2
 } from 'domain/entities'
 import { LayerMap, StereoColoringType } from './generalEnumTypes'
-import ReAtom, { getColorFromStereoLabel } from './reatom'
+import { getColorFromStereoLabel } from './reatom'
 
 import ReObject from './reobject'
 import ReStruct from './restruct'
@@ -78,8 +78,8 @@ class ReBond extends ReObject {
 
     if (!hb1?.dir || !hb2?.dir) return
 
-    hb1.p = shiftBondEnd(atom1, p1, hb1.dir, 2 * options.lineWidth)
-    hb2.p = shiftBondEnd(atom2, p2, hb2.dir, 2 * options.lineWidth)
+    hb1.p = atom1.getShiftedSegmentPosition(options, hb1.dir)
+    hb2.p = atom2.getShiftedSegmentPosition(options, hb2.dir)
     bond.b.center = Vec2.lc2(atom1.a.pp, 0.5, atom2.a.pp, 0.5)
     bond.b.len = Vec2.dist(p1, p2)
     bond.b.sb = options.lineWidth * 5
@@ -1160,22 +1160,6 @@ function setDoubleBondShift(bond: ReBond, struct: Struct): void {
   } else {
     bond.doubleBondShift = selectDoubleBondShiftChain(struct, bond)
   }
-}
-
-function shiftBondEnd(
-  atom: ReAtom,
-  pos0: Vec2,
-  dir: Vec2,
-  margin: number
-): Vec2 {
-  let t = 0
-  const visel = atom.visel
-  for (let k = 0; k < visel.exts.length; ++k) {
-    const box = visel.exts[k].translate(pos0)
-    t = Math.max(t, util.shiftRayBox(pos0, dir, box))
-  }
-  if (t > 0) pos0 = pos0.addScaled(dir, t + margin)
-  return pos0
 }
 
 function selectDoubleBondShift(

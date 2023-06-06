@@ -30,12 +30,21 @@ import keyNorm from '../data/convert/keynorm'
 import { isIE } from 'react-device-detect'
 import { handleHotkeyOverItem } from './handleHotkeysOverItem'
 import { SettingsManager } from '../utils/settingsManager'
+import {
+  selectAbbreviationLookupValue,
+  selectIsAbbreviationLookupOpen
+} from './abbreviationLookup/selectors/selectors'
+import {
+  closeAbbreviationLookup,
+  initAbbreviationLookup,
+  showAbbreviationLookup
+} from './abbreviationLookup'
 
 export function initKeydownListener(element) {
   return function (dispatch, getState) {
     const hotKeys = initHotKeys()
     element.addEventListener('keydown', (event) =>
-      keyHandle(dispatch, getState(), hotKeys, event)
+      keyHandle(dispatch, getState, hotKeys, event)
     )
   }
 }
@@ -47,9 +56,13 @@ function removeNotRenderedStruct(actionTool, group, dispatch) {
   }
 }
 
+let abbreviationLookupTimeoutId: number | undefined
+
 /* HotKeys */
-function keyHandle(dispatch, state, hotKeys, event) {
-  if (state.modal) return
+function keyHandle(dispatch, getState, hotKeys, event, skipAbbrLookup = false) {
+  const state = getState()
+
+  if (state.modal || selectIsAbbreviationLookupOpen(state)) return
 
   const { editor } = state
   const { render } = editor
@@ -59,6 +72,23 @@ function keyHandle(dispatch, state, hotKeys, event) {
   const key = keyNorm(event)
 
   let group: any = null
+
+  if (!skipAbbrLookup && key && key.length === 1) {
+    if (selectAbbreviationLookupValue(state)) {
+      dispatch(showAbbreviationLookup(event.key))
+      clearTimeout(abbreviationLookupTimeoutId)
+    } else {
+      abbreviationLookupTimeoutId = window.setTimeout(() => {
+        dispatch(closeAbbreviationLookup())
+        keyHandle(dispatch, getState, hotKeys, event, true)
+      }, 300)
+
+      dispatch(initAbbreviationLookup(event.key))
+    }
+
+    event.preventDefault()
+    return
+  }
 
   if (key && key.length === 1 && key.match('/')) {
     const hotkeyDialogTypes = {

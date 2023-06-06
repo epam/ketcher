@@ -14,9 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-export const supportedSGroupTypes = {
-  MUL: 'MUL',
-  SRU: 'SRU',
-  SUP: 'SUP',
-  DAT: 'DAT'
+export const templatesLibSelector = (state) => {
+  return state.templates.lib
 }

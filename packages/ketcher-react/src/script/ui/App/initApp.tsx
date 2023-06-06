@@ -23,6 +23,7 @@ import { createRoot } from 'react-dom/client'
 import createStore from '../state'
 import { initKeydownListener } from '../state/hotkeys'
 import { initResize } from '../state/toolbar'
+import { initMouseListener } from '../state/mouse'
 
 function initApp(
   element: HTMLDivElement | null,
@@ -33,6 +34,7 @@ function initApp(
 ) {
   const store = createStore(options, server, setEditor)
   store.dispatch(initKeydownListener(element))
+  store.dispatch(initMouseListener(element))
   store.dispatch(initResize())
 
   const root = createRoot(element!)

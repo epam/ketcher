@@ -1,10 +1,5 @@
 import { Action, Scale, Vec2 } from 'ketcher-core'
 import { throttle } from 'lodash'
-import {
-  hideFloatingTools,
-  showFloatingTools,
-  updateFloatingToolsPosition
-} from 'src/script/ui/state/floatingTools'
 import Editor from '../Editor'
 import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems'
 import RotateTool from './rotate'
@@ -83,7 +78,10 @@ class RotateController {
   }
 
   clean() {
-    this.editor.event.updateFloatingTools.dispatch(hideFloatingTools())
+    this.editor.event.updateFloatingTools.dispatch({
+      visible: false,
+      rotateHandlePosition: new Vec2()
+    })
 
     this.handle?.unhover(this.hoverIn, this.hoverOut)
     this.handle?.unmousedown(this.dragStart)
@@ -181,9 +179,10 @@ class RotateController {
         .sub(this.render.options.offset)
         .scaled(1 / this.render.options.scale)
     )
-    this.editor.event.updateFloatingTools.dispatch(
-      showFloatingTools(handleCenterInViewport)
-    )
+    this.editor.event.updateFloatingTools.dispatch({
+      visible: true,
+      rotateHandlePosition: handleCenterInViewport
+    })
 
     this.drawLink()
     this.drawCross()
@@ -622,7 +621,10 @@ class RotateController {
 
     this.isRotating = true
 
-    this.editor.event.updateFloatingTools.dispatch(hideFloatingTools())
+    this.editor.event.updateFloatingTools.dispatch({
+      visible: false,
+      rotateHandlePosition: new Vec2()
+    })
 
     this.boundingRect?.remove()
     delete this.boundingRect
@@ -784,9 +786,9 @@ class RotateController {
         .sub(this.render.options.offset)
         .scaled(1 / this.render.options.scale)
     )
-    this.editor.event.updateFloatingTools.dispatch(
-      updateFloatingToolsPosition(handleCenterInViewport)
-    )
+    this.editor.event.updateFloatingTools.dispatch({
+      rotateHandlePosition: handleCenterInViewport
+    })
   }, 40)
 }
 

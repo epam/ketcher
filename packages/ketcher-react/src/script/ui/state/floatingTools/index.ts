@@ -4,51 +4,25 @@ export interface FloatingToolsState {
   visible: boolean
   rotateHandlePosition: { x: number; y: number }
 }
+
+export type FloatingToolsPayload = Partial<FloatingToolsState>
+
+export interface FloatingToolsAction {
+  type: 'UPDATE_FLOATING_TOOLS'
+  payload: Partial<FloatingToolsState>
+}
+
 const initialState: FloatingToolsState = {
   visible: false,
   rotateHandlePosition: { x: 0, y: 0 }
 }
 
-export const showFloatingTools = (rotateHandlePosition: {
-  x: number
-  y: number
-}) => {
-  return {
-    type: 'SHOW_FLOATING_TOOLS' as const,
-    payload: {
-      visible: true,
-      rotateHandlePosition
-    }
+export const updateFloatingTools = (payload: FloatingToolsPayload) => {
+  const action: FloatingToolsAction = {
+    type: 'UPDATE_FLOATING_TOOLS',
+    payload
   }
-}
-
-export const hideFloatingTools = () => {
-  return {
-    type: 'HIDE_FLOATING_TOOLS' as const,
-    payload: {
-      visible: false
-    }
-  }
-}
-
-export const updateFloatingToolsPosition = (rotateHandlePosition: {
-  x: number
-  y: number
-}) => {
-  return {
-    type: 'UPDATE_FLOATING_TOOLS_POSITION' as const,
-    payload: {
-      rotateHandlePosition
-    }
-  }
-}
-
-export interface FloatingToolsAction {
-  type:
-    | 'SHOW_FLOATING_TOOLS'
-    | 'HIDE_FLOATING_TOOLS'
-    | 'UPDATE_FLOATING_TOOLS_POSITION'
-  payload: Partial<FloatingToolsState>
+  return action
 }
 
 const floatingToolsReducer: Reducer<FloatingToolsState, FloatingToolsAction> = (
@@ -56,9 +30,7 @@ const floatingToolsReducer: Reducer<FloatingToolsState, FloatingToolsAction> = (
   { type, payload }
 ) => {
   switch (type) {
-    case 'SHOW_FLOATING_TOOLS':
-    case 'HIDE_FLOATING_TOOLS':
-    case 'UPDATE_FLOATING_TOOLS_POSITION':
+    case 'UPDATE_FLOATING_TOOLS':
       return { ...state, ...payload }
     default:
       return state

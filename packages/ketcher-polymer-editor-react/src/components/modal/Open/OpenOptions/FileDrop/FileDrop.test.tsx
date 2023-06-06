@@ -15,13 +15,14 @@
  ***************************************************************************/
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { IconName } from 'ketcher-react'
 
 import { FileDrop } from './FileDrop'
 
 const mockProps = {
   buttonLabel: 'Open from file',
   textLabel: 'or drag file here',
-  iconName: 'arrow-up',
+  iconName: 'arrow-upward' as IconName,
   onDropAccepted: jest.fn()
 }
 
@@ -48,7 +49,6 @@ describe('FileDrop component', () => {
       screen.getByRole('button', { name: mockProps.buttonLabel })
     ).toBeInTheDocument()
     expect(screen.getByText(mockProps.textLabel)).toBeInTheDocument()
-    expect(screen.getByRole('img')).toBeInTheDocument()
   })
 
   it('should render correctly with optional props', () => {

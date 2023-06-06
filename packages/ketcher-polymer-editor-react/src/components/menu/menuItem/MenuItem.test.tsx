@@ -40,11 +40,11 @@ describe('Test MenuItem component', () => {
   })
   it('should render menu icon element when props are provided', () => {
     render(mockMenuItem())
-    expect(screen.getByRole('menuitem')).toBeInTheDocument()
+    expect(screen.getByRole('button')).toBeInTheDocument()
   })
   it('should call provided callback when menu icon is clicked', () => {
     render(mockMenuItem())
-    const button = screen.getByRole('menuitem')
+    const button = screen.getByRole('button')
     userEvent.click(button)
     expect(mockClickHandler).toHaveBeenCalledTimes(1)
   })

@@ -39,7 +39,6 @@ describe('OpenOptions component', () => {
     expect(
       screen.getByRole('button', { name: 'Open from file' })
     ).toBeInTheDocument()
-    expect(screen.getAllByRole('img').length).toEqual(2)
   })
   it('callback for Paste from Clipboard button should be called after click', () => {
     render(withThemeProvider(<OpenOptions {...mockProps} />))

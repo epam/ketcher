@@ -49,10 +49,18 @@ Object {
               title="Close window"
               type="button"
             >
-              <icon-close.svg
-                fill="#525252"
-                role="img"
-              />
+              <svg
+                fill="none"
+                height="24"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M13.462 12.046l6.37 6.37-1.413 1.415-6.371-6.371-6.327 6.326-1.414-1.414 6.327-6.326-6.372-6.372L5.676 4.26l6.372 6.372 6.417-6.418 1.414 1.414-6.417 6.418z"
+                  fill="#333"
+                />
+              </svg>
               <span
                 class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
               />
@@ -114,11 +122,19 @@ Object {
                         tabindex="-1"
                         value="mol"
                       />
-                      <icon-chevron.svg
-                        classname="MuiSelect-icon MuiSelect-iconOutlined css-1bn8sss-MuiSelect-icon"
-                        fill="#525252"
-                        role="img"
-                      />
+                      <svg
+                        class="MuiSelect-icon MuiSelect-iconOutlined css-1bn8sss-MuiSelect-icon"
+                        fill="none"
+                        height="48"
+                        viewBox="0 0 48 48"
+                        width="48"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M24 33.23L9.782 19.012l2.828-2.828L24 27.574l11.388-11.39 2.83 2.828L24 33.23z"
+                          fill="#231F20"
+                        />
+                      </svg>
                       <fieldset
                         aria-hidden="true"
                         class="MuiOutlinedInput-notchedOutline css-1d3z3hw-MuiOutlinedInput-notchedOutline"
@@ -188,10 +204,18 @@ Object {
               title="Errors"
               type="button"
             >
-              <icon-error.svg
-                fill="#525252"
-                role="img"
-              />
+              <svg
+                fill="none"
+                height="16"
+                viewBox="0 0 16 16"
+                width="16"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M8.001 14a1.333 1.333 0 100-2.667 1.333 1.333 0 000 2.667zM6.668 2h2.667v8H6.668V2z"
+                  fill="#FF4A4A"
+                />
+              </svg>
               Errors
               <span
                 class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"

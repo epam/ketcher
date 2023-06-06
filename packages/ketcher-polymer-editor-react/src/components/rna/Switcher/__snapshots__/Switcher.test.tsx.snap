@@ -21,21 +21,42 @@ Object {
         <div
           class="css-11l5obs"
         >
-          <icon-rap-left-link.svg
-            classname="css-1vr3czz"
-            fill="#525252"
-            role="img"
-          />
-          <icon-rap-middle-link.svg
-            classname="css-1vr3czz"
-            fill="#525252"
-            role="img"
-          />
-          <icon-rap-right-link.svg
-            classname="css-1vr3czz"
-            fill="#525252"
-            role="img"
-          />
+          <svg
+            class="css-1vr3czz"
+            fill="none"
+            height="18"
+            viewBox="0 0 27 18"
+            width="27"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M26 0v4.229a4 4 0 01-4 4H5a4 4 0 00-4 4V18"
+            />
+          </svg>
+          <svg
+            class="css-1vr3czz"
+            fill="none"
+            height="16"
+            viewBox="0 0 2 16"
+            width="2"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M1 0v16"
+            />
+          </svg>
+          <svg
+            class="css-1vr3czz"
+            fill="none"
+            height="18"
+            viewBox="0 0 27 18"
+            width="27"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M1 0v4.229a4 4 0 004 4h17a4 4 0 014 4V18"
+            />
+          </svg>
         </div>
         <div
           class="css-11ydt2g"
@@ -101,21 +122,42 @@ Object {
       <div
         class="css-11l5obs"
       >
-        <icon-rap-left-link.svg
-          classname="css-1vr3czz"
-          fill="#525252"
-          role="img"
-        />
-        <icon-rap-middle-link.svg
-          classname="css-1vr3czz"
-          fill="#525252"
-          role="img"
-        />
-        <icon-rap-right-link.svg
-          classname="css-1vr3czz"
-          fill="#525252"
-          role="img"
-        />
+        <svg
+          class="css-1vr3czz"
+          fill="none"
+          height="18"
+          viewBox="0 0 27 18"
+          width="27"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M26 0v4.229a4 4 0 01-4 4H5a4 4 0 00-4 4V18"
+          />
+        </svg>
+        <svg
+          class="css-1vr3czz"
+          fill="none"
+          height="16"
+          viewBox="0 0 2 16"
+          width="2"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M1 0v16"
+          />
+        </svg>
+        <svg
+          class="css-1vr3czz"
+          fill="none"
+          height="18"
+          viewBox="0 0 27 18"
+          width="27"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M1 0v4.229a4 4 0 004 4h17a4 4 0 014 4V18"
+          />
+        </svg>
       </div>
       <div
         class="css-11ydt2g"
@@ -238,21 +280,42 @@ Object {
         <div
           class="css-11l5obs"
         >
-          <icon-rap-left-link.svg
-            classname="css-1eyukqs"
-            fill="#525252"
-            role="img"
-          />
-          <icon-rap-middle-link.svg
-            classname="css-1vr3czz"
-            fill="#525252"
-            role="img"
-          />
-          <icon-rap-right-link.svg
-            classname="css-1vr3czz"
-            fill="#525252"
-            role="img"
-          />
+          <svg
+            class="css-1eyukqs"
+            fill="none"
+            height="18"
+            viewBox="0 0 27 18"
+            width="27"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M26 0v4.229a4 4 0 01-4 4H5a4 4 0 00-4 4V18"
+            />
+          </svg>
+          <svg
+            class="css-1vr3czz"
+            fill="none"
+            height="16"
+            viewBox="0 0 2 16"
+            width="2"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M1 0v16"
+            />
+          </svg>
+          <svg
+            class="css-1vr3czz"
+            fill="none"
+            height="18"
+            viewBox="0 0 27 18"
+            width="27"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M1 0v4.229a4 4 0 004 4h17a4 4 0 014 4V18"
+            />
+          </svg>
         </div>
         <div
           class="css-11ydt2g"
@@ -318,21 +381,42 @@ Object {
       <div
         class="css-11l5obs"
       >
-        <icon-rap-left-link.svg
-          classname="css-1eyukqs"
-          fill="#525252"
-          role="img"
-        />
-        <icon-rap-middle-link.svg
-          classname="css-1vr3czz"
-          fill="#525252"
-          role="img"
-        />
-        <icon-rap-right-link.svg
-          classname="css-1vr3czz"
-          fill="#525252"
-          role="img"
-        />
+        <svg
+          class="css-1eyukqs"
+          fill="none"
+          height="18"
+          viewBox="0 0 27 18"
+          width="27"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M26 0v4.229a4 4 0 01-4 4H5a4 4 0 00-4 4V18"
+          />
+        </svg>
+        <svg
+          class="css-1vr3czz"
+          fill="none"
+          height="16"
+          viewBox="0 0 2 16"
+          width="2"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M1 0v16"
+          />
+        </svg>
+        <svg
+          class="css-1vr3czz"
+          fill="none"
+          height="18"
+          viewBox="0 0 27 18"
+          width="27"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M1 0v4.229a4 4 0 004 4h17a4 4 0 014 4V18"
+          />
+        </svg>
       </div>
       <div
         class="css-11ydt2g"
@@ -455,21 +539,42 @@ Object {
         <div
           class="css-11l5obs"
         >
-          <icon-rap-left-link.svg
-            classname="css-1vr3czz"
-            fill="#525252"
-            role="img"
-          />
-          <icon-rap-middle-link.svg
-            classname="css-1eyukqs"
-            fill="#525252"
-            role="img"
-          />
-          <icon-rap-right-link.svg
-            classname="css-1vr3czz"
-            fill="#525252"
-            role="img"
-          />
+          <svg
+            class="css-1vr3czz"
+            fill="none"
+            height="18"
+            viewBox="0 0 27 18"
+            width="27"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M26 0v4.229a4 4 0 01-4 4H5a4 4 0 00-4 4V18"
+            />
+          </svg>
+          <svg
+            class="css-1eyukqs"
+            fill="none"
+            height="16"
+            viewBox="0 0 2 16"
+            width="2"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M1 0v16"
+            />
+          </svg>
+          <svg
+            class="css-1vr3czz"
+            fill="none"
+            height="18"
+            viewBox="0 0 27 18"
+            width="27"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M1 0v4.229a4 4 0 004 4h17a4 4 0 014 4V18"
+            />
+          </svg>
         </div>
         <div
           class="css-11ydt2g"
@@ -535,21 +640,42 @@ Object {
       <div
         class="css-11l5obs"
       >
-        <icon-rap-left-link.svg
-          classname="css-1vr3czz"
-          fill="#525252"
-          role="img"
-        />
-        <icon-rap-middle-link.svg
-          classname="css-1eyukqs"
-          fill="#525252"
-          role="img"
-        />
-        <icon-rap-right-link.svg
-          classname="css-1vr3czz"
-          fill="#525252"
-          role="img"
-        />
+        <svg
+          class="css-1vr3czz"
+          fill="none"
+          height="18"
+          viewBox="0 0 27 18"
+          width="27"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M26 0v4.229a4 4 0 01-4 4H5a4 4 0 00-4 4V18"
+          />
+        </svg>
+        <svg
+          class="css-1eyukqs"
+          fill="none"
+          height="16"
+          viewBox="0 0 2 16"
+          width="2"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M1 0v16"
+          />
+        </svg>
+        <svg
+          class="css-1vr3czz"
+          fill="none"
+          height="18"
+          viewBox="0 0 27 18"
+          width="27"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M1 0v4.229a4 4 0 004 4h17a4 4 0 014 4V18"
+          />
+        </svg>
       </div>
       <div
         class="css-11ydt2g"
@@ -672,21 +798,42 @@ Object {
         <div
           class="css-11l5obs"
         >
-          <icon-rap-left-link.svg
-            classname="css-1vr3czz"
-            fill="#525252"
-            role="img"
-          />
-          <icon-rap-middle-link.svg
-            classname="css-1vr3czz"
-            fill="#525252"
-            role="img"
-          />
-          <icon-rap-right-link.svg
-            classname="css-1eyukqs"
-            fill="#525252"
-            role="img"
-          />
+          <svg
+            class="css-1vr3czz"
+            fill="none"
+            height="18"
+            viewBox="0 0 27 18"
+            width="27"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M26 0v4.229a4 4 0 01-4 4H5a4 4 0 00-4 4V18"
+            />
+          </svg>
+          <svg
+            class="css-1vr3czz"
+            fill="none"
+            height="16"
+            viewBox="0 0 2 16"
+            width="2"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M1 0v16"
+            />
+          </svg>
+          <svg
+            class="css-1eyukqs"
+            fill="none"
+            height="18"
+            viewBox="0 0 27 18"
+            width="27"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M1 0v4.229a4 4 0 004 4h17a4 4 0 014 4V18"
+            />
+          </svg>
         </div>
         <div
           class="css-11ydt2g"
@@ -752,21 +899,42 @@ Object {
       <div
         class="css-11l5obs"
       >
-        <icon-rap-left-link.svg
-          classname="css-1vr3czz"
-          fill="#525252"
-          role="img"
-        />
-        <icon-rap-middle-link.svg
-          classname="css-1vr3czz"
-          fill="#525252"
-          role="img"
-        />
-        <icon-rap-right-link.svg
-          classname="css-1eyukqs"
-          fill="#525252"
-          role="img"
-        />
+        <svg
+          class="css-1vr3czz"
+          fill="none"
+          height="18"
+          viewBox="0 0 27 18"
+          width="27"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M26 0v4.229a4 4 0 01-4 4H5a4 4 0 00-4 4V18"
+          />
+        </svg>
+        <svg
+          class="css-1vr3czz"
+          fill="none"
+          height="16"
+          viewBox="0 0 2 16"
+          width="2"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M1 0v16"
+          />
+        </svg>
+        <svg
+          class="css-1eyukqs"
+          fill="none"
+          height="18"
+          viewBox="0 0 27 18"
+          width="27"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M1 0v4.229a4 4 0 004 4h17a4 4 0 014 4V18"
+          />
+        </svg>
       </div>
       <div
         class="css-11ydt2g"

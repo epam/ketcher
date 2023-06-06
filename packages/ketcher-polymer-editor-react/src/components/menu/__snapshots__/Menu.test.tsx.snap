@@ -6,122 +6,179 @@ Object {
   "baseElement": <body>
     <div>
       <div
-        class="css-10qeqvw"
+        class="css-1t7fvih"
       >
-        <li
-          class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
-          role="menuitem"
-          tabindex="-1"
-        >
-          <icon-open.svg
-            fill="#525252"
-            role="img"
-          />
-          <span
-            class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-          />
-        </li>
-      </div>
-      <div
-        class="css-10qeqvw"
-      >
-        <li
-          class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
-          role="menuitem"
-          tabindex="-1"
-        >
-          <icon-erase.svg
-            fill="#525252"
-            role="img"
-          />
-          <span
-            class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-          />
-        </li>
         <div
-          class="css-12wx08y"
+          class="css-10qeqvw"
         >
-          <div
-            class="css-5su45f"
+          <button
+            class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-3ky20b-MuiButtonBase-root-MuiIconButton-root"
+            tabindex="0"
+            type="button"
           >
-            <li
-              class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
-              role="menuitem"
-              tabindex="-1"
+            <svg
+              fill="none"
+              height="24"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
             >
-              <icon-select-lasso.svg
-                fill="#525252"
-                role="img"
+              <path
+                d="M7.575 10.5L6 16.5V9h12.75a1.5 1.5 0 00-1.5-1.5H12L10.5 6H6a1.5 1.5 0 00-1.5 1.5v9A1.5 1.5 0 006 18h11.25c.675 0 1.275-.45 1.425-1.125L20.4 10.5H7.575zm9.675 6H7.5L8.7 12h9.75l-1.2 4.5z"
+                fill="currentcolor"
               />
-              <span
-                class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-              />
-            </li>
-            <div
-              class="css-clax1l"
-            >
-              <icon-dropdown.svg
-                fill="#525252"
-                role="img"
-              />
-            </div>
-          </div>
+            </svg>
+            <span
+              class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+            />
+          </button>
         </div>
         <div
-          class="css-12wx08y"
+          class="css-10qeqvw"
         >
-          <div
-            class="css-5su45f"
+          <button
+            class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-3ky20b-MuiButtonBase-root-MuiIconButton-root"
+            tabindex="0"
+            type="button"
           >
-            <li
-              class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
-              role="menuitem"
-              tabindex="-1"
+            <svg
+              fill="none"
+              height="48"
+              viewBox="0 0 48 48"
+              width="48"
+              xmlns="http://www.w3.org/2000/svg"
             >
-              <icon-rectangle.svg
-                fill="#525252"
-                role="img"
+              <path
+                d="M40.284 18.458L30.37 8.546a2 2 0 00-2.828 0L7.716 28.372a2 2 0 000 2.828l7.084 7.082a6.001 6.001 0 008.488 0l17-17a2 2 0 000-2.828l-.004.004zm-19.824 17a2 2 0 01-2.832 0l-5.67-5.672 7.824-7.824 7.084 7.086-6.406 6.41z"
+                fill="#231F20"
               />
-              <span
-                class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-              />
-            </li>
+            </svg>
+            <span
+              class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+            />
+          </button>
+          <div
+            class="css-12wx08y"
+          >
             <div
-              class="css-clax1l"
+              class="css-5su45f"
             >
-              <icon-dropdown.svg
-                fill="#525252"
-                role="img"
-              />
+              <button
+                class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-3ky20b-MuiButtonBase-root-MuiIconButton-root"
+                tabindex="0"
+                type="button"
+              >
+                <svg
+                  fill="none"
+                  height="48"
+                  viewBox="0 0 48 48"
+                  width="48"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M36.209 42.244a.85.85 0 01-1.182-.456l-1.938-4.6-2.23 1.962a.81.81 0 01-.552.214.849.849 0 01-.628-.284 1.023 1.023 0 01-.26-.688v-14.58a1.028 1.028 0 01.26-.688.851.851 0 01.628-.284c.21.003.414.082.57.224l10.212 9.366a1.036 1.036 0 01.116 1.37.87.87 0 01-.506.33l-2.8.6 1.956 4.6a.976.976 0 01-.426 1.282l-3.22 1.632zM30.673 8.504a2 2 0 00-1.174-.982 22.044 22.044 0 00-4.96-.942 2.012 2.012 0 00-2.14 1.848v.154a2 2 0 001.854 1.988 17.996 17.996 0 014.058.77 2 2 0 002.372-2.836h-.01zm-12.08.4a2 2 0 00-1.878-1.314c-.234 0-.466.042-.686.124a16.25 16.25 0 00-4.568 2.522 2 2 0 002.492 3.128 12.261 12.261 0 013.446-1.9 1.997 1.997 0 001.2-2.566l-.006.006zm21.51 7.252a14.249 14.249 0 00-3.118-4.306 2.001 2.001 0 10-2.77 2.884c.939.881 1.703 1.93 2.254 3.094a2 2 0 003.634-1.672zm-28.74 5.964a7.384 7.384 0 01-.546-2.748c0-.263.015-.526.044-.788a2 2 0 10-3.972-.456c-.048.413-.072.828-.072 1.244.005 1.45.288 2.885.834 4.228a2 2 0 003.712-1.488v.008zm27.866.6a2 2 0 00-2.634 1.032 7.638 7.638 0 01-.922 1.564l2.956 2.712a11.663 11.663 0 001.632-2.676 2 2 0 00-1.032-2.632zm-21.756 5.4a14.372 14.372 0 01-3.36-2.214 2 2 0 10-2.664 2.982 18.365 18.365 0 004.292 2.838 1.966 1.966 0 001.927-.11 2.01 2.01 0 00.937-1.692 2.014 2.014 0 00-1.132-1.806v.002z"
+                    fill="#231F20"
+                  />
+                  <path
+                    d="M27.691 29.61v7.244c-1.33 1.234-3.494 2.026-5.69 1.888-1.088-.068-2.292-.458-3.564-.87-1.272-.412-2.726-.886-3.572-.818-1.5.116-3.054 1.366-3.524 1.836a2 2 0 01-2.83-2.828c.282-.28 2.834-2.748 6.046-3 1.634-.126 3.4.446 5.112 1 .982.318 2 .648 2.582.684 1.372.086 2.426-.51 2.762-.854 0-.026 0-.054-.014-.084-.318 0-.644-.01-.968-.026a2 2 0 01.098-3.998h.096c.288.012.574.02.85.02a16.92 16.92 0 002.616-.194z"
+                    fill="#231F20"
+                  />
+                </svg>
+                <span
+                  class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+                />
+              </button>
+              <svg
+                class="css-1e1sh25"
+                height="1000"
+                viewBox="0 0 1000 1000"
+                width="1000"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M876.337 751.055c0 70.936-57.736 128.672-128.672 128.672H201.297c-70.936 0-128.557-57.736-128.557-128.672L747.55 76.36c70.936 0 128.672 57.506 128.672 128.557v546.138z"
+                />
+              </svg>
             </div>
           </div>
-        </div>
-        <div
-          class="css-12wx08y"
-        >
           <div
-            class="css-5su45f"
+            class="css-12wx08y"
           >
-            <li
-              class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
-              role="menuitem"
-              tabindex="-1"
-            >
-              <icon-rotate.svg
-                fill="#525252"
-                role="img"
-              />
-              <span
-                class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-              />
-            </li>
             <div
-              class="css-clax1l"
+              class="css-5su45f"
             >
-              <icon-dropdown.svg
-                fill="#525252"
-                role="img"
-              />
+              <button
+                class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-3ky20b-MuiButtonBase-root-MuiIconButton-root"
+                tabindex="0"
+                type="button"
+              >
+                <svg
+                  fill="none"
+                  height="48"
+                  viewBox="0 0 48 48"
+                  width="48"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M43.961 12.61v4h-4.818v4.818h-4V16.61h-4.818v-4h4.818V7.792h4v4.818h4.818zM35.14 25.43v5.97H12.86V16.61h13.462v-4H8.86V35.4h30.28v-9.96l-4-.01z"
+                    fill="#231F20"
+                  />
+                </svg>
+                <span
+                  class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+                />
+              </button>
+              <svg
+                class="css-1e1sh25"
+                height="1000"
+                viewBox="0 0 1000 1000"
+                width="1000"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M876.337 751.055c0 70.936-57.736 128.672-128.672 128.672H201.297c-70.936 0-128.557-57.736-128.557-128.672L747.55 76.36c70.936 0 128.672 57.506 128.672 128.557v546.138z"
+                />
+              </svg>
+            </div>
+          </div>
+          <div
+            class="css-12wx08y"
+          >
+            <div
+              class="css-5su45f"
+            >
+              <button
+                class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-3ky20b-MuiButtonBase-root-MuiIconButton-root"
+                tabindex="0"
+                type="button"
+              >
+                <svg
+                  fill="none"
+                  height="48"
+                  viewBox="0 0 48 48"
+                  width="48"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M30.49 35.566l-7.938 6.727-.623-3.439A15 15 0 0110.92 16.66l3.031 1.704a11.523 11.523 0 007.315 16.828l-.569-3.13 9.793 3.504zM37.082 31.341l-3.031-1.704a11.523 11.523 0 00-7.315-16.828l.569 3.14-9.793-3.514 7.937-6.727.623 3.439a15 15 0 0111.01 22.194z"
+                    fill="#231F20"
+                  />
+                </svg>
+                <span
+                  class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+                />
+              </button>
+              <svg
+                class="css-1e1sh25"
+                height="1000"
+                viewBox="0 0 1000 1000"
+                width="1000"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M876.337 751.055c0 70.936-57.736 128.672-128.672 128.672H201.297c-70.936 0-128.557-57.736-128.557-128.672L747.55 76.36c70.936 0 128.672 57.506 128.672 128.557v546.138z"
+                />
+              </svg>
             </div>
           </div>
         </div>
@@ -130,122 +187,179 @@ Object {
   </body>,
   "container": <div>
     <div
-      class="css-10qeqvw"
+      class="css-1t7fvih"
     >
-      <li
-        class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
-        role="menuitem"
-        tabindex="-1"
-      >
-        <icon-open.svg
-          fill="#525252"
-          role="img"
-        />
-        <span
-          class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-        />
-      </li>
-    </div>
-    <div
-      class="css-10qeqvw"
-    >
-      <li
-        class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
-        role="menuitem"
-        tabindex="-1"
-      >
-        <icon-erase.svg
-          fill="#525252"
-          role="img"
-        />
-        <span
-          class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-        />
-      </li>
       <div
-        class="css-12wx08y"
+        class="css-10qeqvw"
       >
-        <div
-          class="css-5su45f"
+        <button
+          class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-3ky20b-MuiButtonBase-root-MuiIconButton-root"
+          tabindex="0"
+          type="button"
         >
-          <li
-            class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
-            role="menuitem"
-            tabindex="-1"
+          <svg
+            fill="none"
+            height="24"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
           >
-            <icon-select-lasso.svg
-              fill="#525252"
-              role="img"
+            <path
+              d="M7.575 10.5L6 16.5V9h12.75a1.5 1.5 0 00-1.5-1.5H12L10.5 6H6a1.5 1.5 0 00-1.5 1.5v9A1.5 1.5 0 006 18h11.25c.675 0 1.275-.45 1.425-1.125L20.4 10.5H7.575zm9.675 6H7.5L8.7 12h9.75l-1.2 4.5z"
+              fill="currentcolor"
             />
-            <span
-              class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-            />
-          </li>
-          <div
-            class="css-clax1l"
-          >
-            <icon-dropdown.svg
-              fill="#525252"
-              role="img"
-            />
-          </div>
-        </div>
+          </svg>
+          <span
+            class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+          />
+        </button>
       </div>
       <div
-        class="css-12wx08y"
+        class="css-10qeqvw"
       >
-        <div
-          class="css-5su45f"
+        <button
+          class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-3ky20b-MuiButtonBase-root-MuiIconButton-root"
+          tabindex="0"
+          type="button"
         >
-          <li
-            class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
-            role="menuitem"
-            tabindex="-1"
+          <svg
+            fill="none"
+            height="48"
+            viewBox="0 0 48 48"
+            width="48"
+            xmlns="http://www.w3.org/2000/svg"
           >
-            <icon-rectangle.svg
-              fill="#525252"
-              role="img"
+            <path
+              d="M40.284 18.458L30.37 8.546a2 2 0 00-2.828 0L7.716 28.372a2 2 0 000 2.828l7.084 7.082a6.001 6.001 0 008.488 0l17-17a2 2 0 000-2.828l-.004.004zm-19.824 17a2 2 0 01-2.832 0l-5.67-5.672 7.824-7.824 7.084 7.086-6.406 6.41z"
+              fill="#231F20"
             />
-            <span
-              class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-            />
-          </li>
+          </svg>
+          <span
+            class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+          />
+        </button>
+        <div
+          class="css-12wx08y"
+        >
           <div
-            class="css-clax1l"
+            class="css-5su45f"
           >
-            <icon-dropdown.svg
-              fill="#525252"
-              role="img"
-            />
+            <button
+              class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-3ky20b-MuiButtonBase-root-MuiIconButton-root"
+              tabindex="0"
+              type="button"
+            >
+              <svg
+                fill="none"
+                height="48"
+                viewBox="0 0 48 48"
+                width="48"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M36.209 42.244a.85.85 0 01-1.182-.456l-1.938-4.6-2.23 1.962a.81.81 0 01-.552.214.849.849 0 01-.628-.284 1.023 1.023 0 01-.26-.688v-14.58a1.028 1.028 0 01.26-.688.851.851 0 01.628-.284c.21.003.414.082.57.224l10.212 9.366a1.036 1.036 0 01.116 1.37.87.87 0 01-.506.33l-2.8.6 1.956 4.6a.976.976 0 01-.426 1.282l-3.22 1.632zM30.673 8.504a2 2 0 00-1.174-.982 22.044 22.044 0 00-4.96-.942 2.012 2.012 0 00-2.14 1.848v.154a2 2 0 001.854 1.988 17.996 17.996 0 014.058.77 2 2 0 002.372-2.836h-.01zm-12.08.4a2 2 0 00-1.878-1.314c-.234 0-.466.042-.686.124a16.25 16.25 0 00-4.568 2.522 2 2 0 002.492 3.128 12.261 12.261 0 013.446-1.9 1.997 1.997 0 001.2-2.566l-.006.006zm21.51 7.252a14.249 14.249 0 00-3.118-4.306 2.001 2.001 0 10-2.77 2.884c.939.881 1.703 1.93 2.254 3.094a2 2 0 003.634-1.672zm-28.74 5.964a7.384 7.384 0 01-.546-2.748c0-.263.015-.526.044-.788a2 2 0 10-3.972-.456c-.048.413-.072.828-.072 1.244.005 1.45.288 2.885.834 4.228a2 2 0 003.712-1.488v.008zm27.866.6a2 2 0 00-2.634 1.032 7.638 7.638 0 01-.922 1.564l2.956 2.712a11.663 11.663 0 001.632-2.676 2 2 0 00-1.032-2.632zm-21.756 5.4a14.372 14.372 0 01-3.36-2.214 2 2 0 10-2.664 2.982 18.365 18.365 0 004.292 2.838 1.966 1.966 0 001.927-.11 2.01 2.01 0 00.937-1.692 2.014 2.014 0 00-1.132-1.806v.002z"
+                  fill="#231F20"
+                />
+                <path
+                  d="M27.691 29.61v7.244c-1.33 1.234-3.494 2.026-5.69 1.888-1.088-.068-2.292-.458-3.564-.87-1.272-.412-2.726-.886-3.572-.818-1.5.116-3.054 1.366-3.524 1.836a2 2 0 01-2.83-2.828c.282-.28 2.834-2.748 6.046-3 1.634-.126 3.4.446 5.112 1 .982.318 2 .648 2.582.684 1.372.086 2.426-.51 2.762-.854 0-.026 0-.054-.014-.084-.318 0-.644-.01-.968-.026a2 2 0 01.098-3.998h.096c.288.012.574.02.85.02a16.92 16.92 0 002.616-.194z"
+                  fill="#231F20"
+                />
+              </svg>
+              <span
+                class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+              />
+            </button>
+            <svg
+              class="css-1e1sh25"
+              height="1000"
+              viewBox="0 0 1000 1000"
+              width="1000"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M876.337 751.055c0 70.936-57.736 128.672-128.672 128.672H201.297c-70.936 0-128.557-57.736-128.557-128.672L747.55 76.36c70.936 0 128.672 57.506 128.672 128.557v546.138z"
+              />
+            </svg>
           </div>
         </div>
-      </div>
-      <div
-        class="css-12wx08y"
-      >
         <div
-          class="css-5su45f"
+          class="css-12wx08y"
         >
-          <li
-            class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
-            role="menuitem"
-            tabindex="-1"
-          >
-            <icon-rotate.svg
-              fill="#525252"
-              role="img"
-            />
-            <span
-              class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-            />
-          </li>
           <div
-            class="css-clax1l"
+            class="css-5su45f"
           >
-            <icon-dropdown.svg
-              fill="#525252"
-              role="img"
-            />
+            <button
+              class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-3ky20b-MuiButtonBase-root-MuiIconButton-root"
+              tabindex="0"
+              type="button"
+            >
+              <svg
+                fill="none"
+                height="48"
+                viewBox="0 0 48 48"
+                width="48"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M43.961 12.61v4h-4.818v4.818h-4V16.61h-4.818v-4h4.818V7.792h4v4.818h4.818zM35.14 25.43v5.97H12.86V16.61h13.462v-4H8.86V35.4h30.28v-9.96l-4-.01z"
+                  fill="#231F20"
+                />
+              </svg>
+              <span
+                class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+              />
+            </button>
+            <svg
+              class="css-1e1sh25"
+              height="1000"
+              viewBox="0 0 1000 1000"
+              width="1000"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M876.337 751.055c0 70.936-57.736 128.672-128.672 128.672H201.297c-70.936 0-128.557-57.736-128.557-128.672L747.55 76.36c70.936 0 128.672 57.506 128.672 128.557v546.138z"
+              />
+            </svg>
+          </div>
+        </div>
+        <div
+          class="css-12wx08y"
+        >
+          <div
+            class="css-5su45f"
+          >
+            <button
+              class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-3ky20b-MuiButtonBase-root-MuiIconButton-root"
+              tabindex="0"
+              type="button"
+            >
+              <svg
+                fill="none"
+                height="48"
+                viewBox="0 0 48 48"
+                width="48"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M30.49 35.566l-7.938 6.727-.623-3.439A15 15 0 0110.92 16.66l3.031 1.704a11.523 11.523 0 007.315 16.828l-.569-3.13 9.793 3.504zM37.082 31.341l-3.031-1.704a11.523 11.523 0 00-7.315-16.828l.569 3.14-9.793-3.514 7.937-6.727.623 3.439a15 15 0 0111.01 22.194z"
+                  fill="#231F20"
+                />
+              </svg>
+              <span
+                class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+              />
+            </button>
+            <svg
+              class="css-1e1sh25"
+              height="1000"
+              viewBox="0 0 1000 1000"
+              width="1000"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M876.337 751.055c0 70.936-57.736 128.672-128.672 128.672H201.297c-70.936 0-128.557-57.736-128.557-128.672L747.55 76.36c70.936 0 128.672 57.506 128.672 128.557v546.138z"
+              />
+            </svg>
           </div>
         </div>
       </div>

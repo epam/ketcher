@@ -13,29 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { type IconName } from 'ketcher-react'
-import { useMenuContext } from '../../../hooks/useMenuContext'
-import { useCallback } from 'react'
-import { StyledIconButton } from './styles'
 
-type MenuItemProp = {
-  itemId: IconName
-}
+import styled from '@emotion/styled'
 
-const MenuItem = ({ itemId }: MenuItemProp) => {
-  const { isActive, activate } = useMenuContext()
+import { IconButton } from 'ketcher-react'
 
-  const onClickCallback = useCallback(() => {
-    activate(itemId)
-  }, [activate, itemId])
-
-  return (
-    <StyledIconButton
-      isActive={isActive(itemId)}
-      onClick={onClickCallback}
-      iconName={itemId}
-    />
-  )
-}
-
-export { MenuItem }
+export const StyledIconButton = styled(IconButton)`
+  margin: 2px;
+`

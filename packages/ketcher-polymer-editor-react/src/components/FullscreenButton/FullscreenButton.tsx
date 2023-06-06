@@ -14,8 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Icon } from 'ketcher-react'
-import { StyledMenuButton } from 'components/menu/menuItem'
+import { IconButton } from 'ketcher-react'
 import styled from '@emotion/styled'
 import { useState } from 'react'
 
@@ -60,9 +59,10 @@ export const FullscreenButton = (props) => {
   }
   return (
     <ButtonContainer className={props.className}>
-      <StyledMenuButton onClick={toggleFullscreen} isActive={false}>
-        <Icon name={fullScreenMode ? 'fullscreen-exit' : 'fullscreen-enter'} />
-      </StyledMenuButton>
+      <IconButton
+        onClick={toggleFullscreen}
+        iconName={fullScreenMode ? 'fullscreen-exit' : 'fullscreen-enter'}
+      />
     </ButtonContainer>
   )
 }

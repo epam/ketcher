@@ -13,29 +13,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { type IconName } from 'ketcher-react'
-import { useMenuContext } from '../../../hooks/useMenuContext'
-import { useCallback } from 'react'
-import { StyledIconButton } from './styles'
 
-type MenuItemProp = {
-  itemId: IconName
-}
+import styled from '@emotion/styled'
 
-const MenuItem = ({ itemId }: MenuItemProp) => {
-  const { isActive, activate } = useMenuContext()
+export const MenuLayout = styled.div`
+  background-color: ${({ theme }) => theme.ketcher.color.background.primary};
+`
 
-  const onClickCallback = useCallback(() => {
-    activate(itemId)
-  }, [activate, itemId])
+export const Divider = styled.span`
+  display: block;
+  height: 8px;
+  width: 32px;
+  border-top: 1px solid;
+  border-color: ${({ theme }) => theme.ketcher.color.divider};
+`
 
-  return (
-    <StyledIconButton
-      isActive={isActive(itemId)}
-      onClick={onClickCallback}
-      iconName={itemId}
-    />
-  )
-}
+export const StyledGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-items: center;
+  background-color: ${({ theme }) => theme.ketcher.color.background.primary};
+  border-radius: 2px;
+  width: 32px;
+  margin-bottom: 8px;
 
-export { MenuItem }
+  > * {
+    margin-bottom: 8px;
+  }
+
+  > :last-child {
+    margin-bottom: 0;
+  }
+`

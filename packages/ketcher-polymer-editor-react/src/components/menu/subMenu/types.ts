@@ -13,29 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { type IconName } from 'ketcher-react'
-import { useMenuContext } from '../../../hooks/useMenuContext'
-import { useCallback } from 'react'
-import { StyledIconButton } from './styles'
 
-type MenuItemProp = {
-  itemId: IconName
+export interface IStyledDropdownIconProps {
+  isActive: boolean
 }
 
-const MenuItem = ({ itemId }: MenuItemProp) => {
-  const { isActive, activate } = useMenuContext()
-
-  const onClickCallback = useCallback(() => {
-    activate(itemId)
-  }, [activate, itemId])
-
-  return (
-    <StyledIconButton
-      isActive={isActive(itemId)}
-      onClick={onClickCallback}
-      iconName={itemId}
-    />
-  )
-}
-
-export { MenuItem }
+export type OptionsContainerProps = {
+  isVertical?: boolean
+} & React.HTMLAttributes<HTMLDivElement>

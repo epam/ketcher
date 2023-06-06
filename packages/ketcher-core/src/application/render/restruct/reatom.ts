@@ -1154,7 +1154,7 @@ function showAttachmentPointShape(
   )
   const attachmentPointEnd = atomPositionVector.addScaled(
     directionVector,
-    options.scale * 0.9
+    options.scale * 0.85
   )
 
   const linePath = paper.path(

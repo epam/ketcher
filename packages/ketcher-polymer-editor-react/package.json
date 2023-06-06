@@ -55,6 +55,7 @@
     "clsx": "^1.1.1",
     "file-saver": "^2.0.5",
     "lodash": "^4.17.21",
+    "ketcher-react": "*",
     "react-dropzone": "^11.7.1",
     "react-redux": "^7.2.1",
     "redux": "^4.0.5",

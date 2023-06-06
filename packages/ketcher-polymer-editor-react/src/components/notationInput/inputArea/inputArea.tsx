@@ -42,7 +42,7 @@ type FormulaInputProps = {
 export const InputArea = ({ inputValue, inputHandler }: FormulaInputProps) => {
   const [focused, setFocused] = useState(false)
   const [expanded, setExpanded] = useState(false)
-  const [isMultiLine, setMultiLine] = useState(false)
+  const [isMultiLine, setMultiLine] = useState(true)
 
   const inputClickHandler = () => {
     if (!expanded) {

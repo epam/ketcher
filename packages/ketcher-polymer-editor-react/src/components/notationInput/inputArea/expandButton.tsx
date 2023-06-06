@@ -17,7 +17,7 @@
 import { IconButton } from '@mui/material'
 import styled from '@emotion/styled'
 
-import { Icon } from 'components/shared/icon'
+import { Icon } from 'ketcher-react'
 
 type ExpandButtonProps = {
   expandHandler: () => void
@@ -25,6 +25,8 @@ type ExpandButtonProps = {
 }
 
 const ArrowIcon = styled(Icon)<{ isFlipped: boolean }>`
+  height: 10px;
+  width: 10px;
   fill: ${({ theme }) => theme.ketcher.color.icon.active};
   ${({ isFlipped }) => isFlipped && 'transform: rotate(0.5turn);'}
 `
@@ -36,7 +38,7 @@ export const ExpandButton = ({
 
   return (
     <IconButton onClick={expandHandler} title={buttonTitle}>
-      <ArrowIcon name="arrow-down" isFlipped={expanded} />
+      <ArrowIcon name="arrow-upward" isFlipped={!expanded} />
     </IconButton>
   )
 }

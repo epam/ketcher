@@ -14,9 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Icon } from 'components/shared/icon'
+import { Icon } from 'ketcher-react'
 import { StyledMenuButton } from 'components/menu/menuItem'
 import styled from '@emotion/styled'
+import { useState } from 'react'
 
 const requestFullscreen = (element: HTMLElement) => {
   ;(element.requestFullscreen && element.requestFullscreen()) ||
@@ -41,14 +42,6 @@ const isFullScreen = () => {
   )
 }
 
-const toggleFullscreen = () => {
-  // TODO: add selector / ref prop when will be shared component
-  const fullscreenElement: HTMLElement =
-    document.querySelector('.Ketcher-polymer-editor-root') ||
-    document.documentElement
-  isFullScreen() ? exitFullscreen() : requestFullscreen(fullscreenElement)
-}
-
 const ButtonContainer = styled.div`
   position: absolute;
   right: 47px;
@@ -56,10 +49,19 @@ const ButtonContainer = styled.div`
 `
 
 export const FullscreenButton = (props) => {
+  const [fullScreenMode, setFullScreenMode] = useState(isFullScreen())
+  const toggleFullscreen = () => {
+    // TODO: add selector / ref prop when will be shared component
+    const fullscreenElement: HTMLElement =
+      document.querySelector('.Ketcher-polymer-editor-root') ||
+      document.documentElement
+    fullScreenMode ? exitFullscreen() : requestFullscreen(fullscreenElement)
+    setFullScreenMode(!fullScreenMode)
+  }
   return (
     <ButtonContainer className={props.className}>
       <StyledMenuButton onClick={toggleFullscreen} isActive={false}>
-        <Icon name="fullscreen" />
+        <Icon name={fullScreenMode ? 'fullscreen-exit' : 'fullscreen-enter'} />
       </StyledMenuButton>
     </ButtonContainer>
   )

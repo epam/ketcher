@@ -16,7 +16,7 @@
 
 import styled from '@emotion/styled'
 
-import { Icon } from 'components/shared/icon'
+import { Icon } from 'ketcher-react'
 
 const CheckMarkStyled = styled(Icon)`
   fill: #343434;
@@ -46,7 +46,7 @@ const CheckMarkIcon = ({ isSelected }: { isSelected: boolean }) => {
     return null
   }
 
-  return <CheckMarkStyled name="checkmark" />
+  return <CheckMarkStyled name="check" />
 }
 
 export { ChevronIcon, CheckMarkIcon }

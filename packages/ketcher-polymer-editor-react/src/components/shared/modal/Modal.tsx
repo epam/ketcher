@@ -8,7 +8,7 @@ import {
 import React, { useMemo } from 'react'
 import { useTheme } from '@emotion/react'
 import styled from '@emotion/styled'
-import { Icon } from 'components/shared/icon'
+import { Icon } from 'ketcher-react'
 import { scrollbarThin } from 'theming/mixins'
 
 interface ModalProps {

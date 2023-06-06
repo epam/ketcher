@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { Icon } from 'components/shared/icon'
+import { Icon, type IconName } from 'ketcher-react'
 import { MenuItem as MuiMenuItem } from '@mui/material'
 import { css, useTheme } from '@emotion/react'
 import { useMenuContext } from '../../../hooks/useMenuContext'
@@ -53,7 +53,7 @@ const StyledMenuButton = ({ isActive, onClick, children }) => {
 }
 
 type MenuItemProp = {
-  itemId: string
+  itemId: IconName
 }
 
 const MenuItem = ({ itemId }: MenuItemProp) => {

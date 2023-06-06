@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 import { useDropzone, DropzoneOptions } from 'react-dropzone'
-import { Icon } from 'components/shared/icon'
+import { Icon, IconName } from 'ketcher-react'
 import React, { useMemo } from 'react'
 import { ActionButton } from 'components/shared/actionButton'
 import styled from '@emotion/styled'
@@ -22,7 +22,7 @@ import styled from '@emotion/styled'
 type FileDropProps = {
   buttonLabel: string
   textLabel: string
-  iconName: string
+  iconName: IconName
   disabled?: boolean
   disabledText?: string
 } & DropzoneOptions

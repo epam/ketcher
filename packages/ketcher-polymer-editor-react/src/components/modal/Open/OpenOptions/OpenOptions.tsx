@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { Icon } from 'components/shared/icon'
+import { Icon, IconName } from 'ketcher-react'
 import styled from '@emotion/styled'
 import { FileDrop } from './FileDrop'
 import { ActionButton } from 'components/shared/actionButton'
 
-const ICON_NAMES = {
+const ICON_NAMES: Record<string, IconName> = {
   PASTE: 'capital-t',
-  FILE: 'arrow-up'
+  FILE: 'arrow-upward'
 }
 
 export type OpenOptionsProps = {

@@ -1,0 +1,9 @@
+services:
+  autotests:
+    build:
+      context: .
+    container_name: ketcher-autotest
+    network_mode: "host"
+    volumes:
+      - ./:/app
+      - /app/node_modules

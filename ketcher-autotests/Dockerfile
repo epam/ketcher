@@ -6,4 +6,4 @@ WORKDIR /app
 
 COPY . .
 
-RUN npm ci && npx playwright install
+RUN npm i && npx playwright install

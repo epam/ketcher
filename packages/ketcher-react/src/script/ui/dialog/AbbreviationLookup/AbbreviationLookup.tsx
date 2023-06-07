@@ -48,6 +48,7 @@ export const AbbreviationLookup = () => {
       [...functionGroups, ...templates, ...saltsAndSolvents],
       (template) => template.struct.name
     )
+
     return sortBy(uniqTemplates, (template) => template.struct.name)
   }, [functionGroups, saltsAndSolvents, templates])
 

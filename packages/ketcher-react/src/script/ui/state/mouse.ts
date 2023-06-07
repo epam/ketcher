@@ -15,11 +15,19 @@
  ***************************************************************************/
 
 import { updateCursorPosition } from './common'
+import { throttle } from 'lodash'
+
+const MOUSE_MOVE_THROTTLE_TIMEOUT = 300
 
 export function initMouseListener(element) {
   return function (dispatch) {
+    const throttledHandleMouseMove = throttle(
+      handleMouseMove,
+      MOUSE_MOVE_THROTTLE_TIMEOUT
+    )
+
     element.addEventListener('pointermove', (event: MouseEvent) =>
-      handleMouseMove(dispatch, event)
+      throttledHandleMouseMove(dispatch, event)
     )
   }
 }

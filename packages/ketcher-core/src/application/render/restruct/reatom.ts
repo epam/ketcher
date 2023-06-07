@@ -210,6 +210,38 @@ class ReAtom extends ReObject {
     }
   }
 
+  showAttachmentPoints(restruct: ReStruct): void {
+    // if trisection (attpnt === 3) - we split the attachment point vector to two vectors
+    const isTrisectionRequired = this.a.attpnt === 3
+    const directionVectors = isTrisectionRequired
+      ? trisectionLargestSector(this, restruct.molecule)
+      : [bisectLargestSector(this, restruct.molecule)]
+
+    directionVectors.forEach((directionVector, index) => {
+      showAttachmentPointShape(
+        this,
+        restruct.render,
+        directionVector,
+        restruct.addReObjectPath.bind(restruct)
+      )
+
+      const showLabel = isAttachmentPointLabelRequired(restruct)
+      if (showLabel) {
+        // in case of isTrisectionRequired (trisection case) we should show labels '1' and '2' for those separated vectors
+        const labelText = String(
+          isTrisectionRequired ? index + 1 : this.a.attpnt
+        )
+        showAttachmentPointLabel(
+          this,
+          restruct.render,
+          directionVector,
+          restruct.addReObjectPath.bind(restruct),
+          labelText
+        )
+      }
+    })
+  }
+
   show(restruct: ReStruct, aid: number, options: any): void {
     // eslint-disable-line max-statements
     const atom = restruct.molecule.atoms.get(aid)!
@@ -400,10 +432,6 @@ class ReAtom extends ReObject {
 
     // draw hover after label is calculated
     this.setHover(this.hover, render)
-
-    if (this.a.attpnt) {
-      showAttachmentPoint(this, render, restruct)
-    }
 
     const stereoLabel = this.a.stereoLabel // Enhanced Stereo
     const aamText = getAamText(this)
@@ -1192,33 +1220,6 @@ function getLabelPositionForAttachmentPoint(
     .addScaled(directionVector, shapeHeight * 0.7)
 }
 
-function showAttachmentPoint(atom: ReAtom, render: Render, restruct: ReStruct) {
-  // if trisection (attpnt === 3) - we split the attachment point vector to two vectors
-  const isTrisectionRequired = atom.a.attpnt === 3
-  const directionVectors = isTrisectionRequired
-    ? trisectionLargestSector(atom, restruct.molecule)
-    : [bisectLargestSector(atom, restruct.molecule)]
-
-  directionVectors.forEach((directionVector, index) => {
-    showAttachmentPointShape(
-      atom,
-      render,
-      directionVector,
-      restruct.addReObjectPath.bind(restruct)
-    )
-
-    // in case of isTrisectionRequired (trisection case) we should show labels '1' and '2' for those separated vectors
-    const labelText = String(isTrisectionRequired ? index + 1 : atom.a.attpnt)
-    showAttachmentPointLabel(
-      atom,
-      render,
-      directionVector,
-      restruct.addReObjectPath.bind(restruct),
-      labelText
-    )
-  })
-}
-
 function showAttachmentPointLabel(
   atom: ReAtom,
   { options, paper }: Render,
@@ -1241,6 +1242,13 @@ function showAttachmentPointLabel(
     })
 
   addReObjectPath(LayerMap.indices, atom.visel, labelPath, atomPositionVector)
+}
+
+export function isAttachmentPointLabelRequired(restruct: ReStruct) {
+  // in case of having 2 or 3 attachment point type we have to render
+  // 2 - Secondary type
+  // 3 - Both Primary and Secondary - should be considered as two Attachment points
+  return restruct.molecule.atoms.some(({ attpnt }) => [2, 3].includes(attpnt))
 }
 
 export default ReAtom

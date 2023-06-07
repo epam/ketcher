@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Action } from 'application/actions'
+import { Action } from '../editor/actions'
 import { Render } from 'application/render'
 import { Struct } from 'domain/entities'
 

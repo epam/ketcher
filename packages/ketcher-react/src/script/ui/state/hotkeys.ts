@@ -158,7 +158,7 @@ function moveSelectedItems(editor: Editor, key: ArrowKey) {
   )
 
   editor.rotateController.rerender()
-  editor.update(action, true, { resizeCanvas: true })
+  editor.update(action, false, { resizeCanvas: true })
 }
 
 function getCurrentAction(prevActName) {

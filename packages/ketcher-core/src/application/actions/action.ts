@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { ReStruct } from 'application/render'
 import { Operation, PerformOperationResult } from '../operations'
 
 import assert from 'assert'
@@ -33,7 +34,7 @@ export class Action {
     return this
   }
 
-  perform(restruct: any): Action {
+  perform(restruct: ReStruct): Action {
     const results: Array<PerformOperationResult> = []
 
     const sortedOperations = [...this.#operations].sort(

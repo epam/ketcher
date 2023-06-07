@@ -14,11 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { ReStruct } from 'application/render'
+
 // import { Operation } from "application/operations"
 // import { ReStruct } from "application/render"
 
 export interface Action {
-  perform: () => void
+  perform: (restruct: ReStruct) => Action
   // operations: Array<Operation>
   // mergeWith(action: Action): Action
   // addOp(operation: Operation, restruct?: ReStruct): Operation

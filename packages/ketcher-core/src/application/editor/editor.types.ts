@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import { Action } from 'application/actions'
+import { Render } from 'application/render'
 import { Struct } from 'domain/entities'
 
 export interface EditorHistory {
@@ -52,5 +53,13 @@ export interface Editor {
   setOptions: (opts: string) => any
   zoom: (value?: any) => any
   structSelected: () => Struct
-  // update: (action: Action | true, ignoreHistory?: boolean) => void
+  explicitSelected: () => Selection
+  update: (
+    action: Action | true,
+    ignoreHistory?: boolean,
+    options?: { resizeCanvas: boolean }
+  ) => void
+  render: Render
+  // supposed to be RotateController from 'ketcher-react' package
+  rotateController: any
 }

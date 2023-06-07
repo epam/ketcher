@@ -20,7 +20,10 @@ import {
   KetSerializer,
   MolSerializer,
   formatProperties,
-  ChemicalMimeType
+  ChemicalMimeType,
+  Editor,
+  fromMultipleMove,
+  Vec2
 } from 'ketcher-core'
 import { debounce, isEqual } from 'lodash/fp'
 import { load, onAction, removeStructAction } from './shared'
@@ -57,6 +60,11 @@ function keyHandle(dispatch, state, hotKeys, event) {
   const actionTool = actionState.activeTool
 
   const key = keyNorm(event)
+  const isArrowKey =
+    key === 'ArrowUp' ||
+    key === 'ArrowDown' ||
+    key === 'ArrowLeft' ||
+    key === 'ArrowRight'
 
   let group: any = null
 
@@ -128,7 +136,29 @@ function keyHandle(dispatch, state, hotKeys, event) {
     } else if (isIE) {
       clipArea.exec(event)
     }
+  } else if (isArrowKey) {
+    moveSelectedItems(editor, key)
   }
+}
+
+type ArrowKey = 'ArrowUp' | 'ArrowDown' | 'ArrowRight' | 'ArrowLeft'
+
+function moveSelectedItems(editor: Editor, key: ArrowKey) {
+  const selectedItems = editor.explicitSelected()
+  const distinationVectorMapping: { [key in ArrowKey]: Vec2 } = {
+    ArrowUp: new Vec2(0, -1),
+    ArrowDown: new Vec2(0, 1),
+    ArrowRight: new Vec2(1, 0),
+    ArrowLeft: new Vec2(-1, 0)
+  }
+  const action = fromMultipleMove(
+    editor.render.ctab,
+    selectedItems,
+    distinationVectorMapping[key].scaled(0.1)
+  )
+
+  editor.rotateController.rerender()
+  editor.update(action, true, { resizeCanvas: true })
 }
 
 function getCurrentAction(prevActName) {

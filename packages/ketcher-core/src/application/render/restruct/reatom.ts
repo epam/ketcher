@@ -1193,6 +1193,7 @@ function getLabelPositionForAttachmentPoint(
 }
 
 function showAttachmentPoint(atom: ReAtom, render: Render, restruct: ReStruct) {
+  // if trisection (attpnt === 3) - we split the attachment point vector to two vectors
   const isTrisectionRequired = atom.a.attpnt === 3
   const directionVectors = isTrisectionRequired
     ? trisectionLargestSector(atom, restruct.molecule)
@@ -1206,19 +1207,15 @@ function showAttachmentPoint(atom: ReAtom, render: Render, restruct: ReStruct) {
       restruct.addReObjectPath.bind(restruct)
     )
 
-    const isLabelRequired = isCountOfAttachmentPointsMoreThanOne(restruct)
-    if (isLabelRequired) {
-      // if trisection (attpnt === 3) - we split the attachment point to two vectors,
-      // and should show labels '1' and '2' for those separated vectors
-      const labelText = String(isTrisectionRequired ? index + 1 : atom.a.attpnt)
-      showAttachmentPointLabel(
-        atom,
-        render,
-        directionVector,
-        restruct.addReObjectPath.bind(restruct),
-        labelText
-      )
-    }
+    // in case of isTrisectionRequired (trisection case) we should show labels '1' and '2' for those separated vectors
+    const labelText = String(isTrisectionRequired ? index + 1 : atom.a.attpnt)
+    showAttachmentPointLabel(
+      atom,
+      render,
+      directionVector,
+      restruct.addReObjectPath.bind(restruct),
+      labelText
+    )
   })
 }
 
@@ -1244,27 +1241,6 @@ function showAttachmentPointLabel(
     })
 
   addReObjectPath(LayerMap.indices, atom.visel, labelPath, atomPositionVector)
-}
-
-function isCountOfAttachmentPointsMoreThanOne(restruct: ReStruct) {
-  let attachmentPointsCount = 0
-  for (const [, atom] of restruct.molecule.atoms) {
-    if (atom.attpnt) {
-      attachmentPointsCount++
-
-      // Why such condition?
-      //
-      // atom.attpnt possible values:
-      // 0 | null - no attachment point
-      // 1 - Primary type
-      // 2 - Secondary type
-      // 3 - Both Primary and Secondary - should be considered as two Attachment points
-      if (atom.attpnt === 3 || attachmentPointsCount > 1) {
-        return true
-      }
-    }
-  }
-  return false
 }
 
 export default ReAtom

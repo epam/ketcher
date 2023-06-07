@@ -42,7 +42,6 @@ function commonReducer(
 ): CommonState {
   switch (action.type) {
     case COMMON_ACTIONS.COMMON_UPDATE_CURSOR_POSITION: {
-      console.log('Update ', action.data)
       return {
         ...state,
         cursorPosition: {

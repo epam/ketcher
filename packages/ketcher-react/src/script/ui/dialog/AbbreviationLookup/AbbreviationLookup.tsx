@@ -93,34 +93,33 @@ export const AbbreviationLookup = () => {
 
   return (
     <Portal isOpen={true} className="none" style={portalStyle}>
-      <div onKeyDown={handleKeyDown}>
-        <MuiAutocomplete<Template, false, true>
-          disableClearable
-          fullWidth
-          options={allTemplates}
-          getOptionLabel={getOptionLabel}
-          onChange={handleOnChange}
-          onBlur={handleBlur}
-          inputValue={lookupValue}
-          renderInput={(params) => {
-            return (
-              <TextField
-                {...params}
-                inputRef={inputRef}
-                InputProps={{
-                  ...params.InputProps,
-                  // type: 'search',
-                  autoComplete: 'new-password',
-                  endAdornment: null,
-                  onChange: (event: ChangeEvent<HTMLInputElement>) => {
-                    setLookupValue(event.target.value)
-                  }
-                }}
-              />
-            )
-          }}
-        />
-      </div>
+      <MuiAutocomplete<Template, false, true>
+        disableClearable
+        fullWidth
+        options={allTemplates}
+        getOptionLabel={getOptionLabel}
+        onChange={handleOnChange}
+        onBlur={handleBlur}
+        inputValue={lookupValue}
+        onKeyDown={handleKeyDown}
+        renderInput={(params) => {
+          return (
+            <TextField
+              {...params}
+              inputRef={inputRef}
+              InputProps={{
+                ...params.InputProps,
+                // type: 'search',
+                autoComplete: 'new-password',
+                endAdornment: null,
+                onChange: (event: ChangeEvent<HTMLInputElement>) => {
+                  setLookupValue(event.target.value)
+                }
+              }}
+            />
+          )
+        }}
+      />
     </Portal>
   )
 }

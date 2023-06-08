@@ -37,7 +37,6 @@ import { toolsMap } from './tool'
 import { Highlighter } from './highlighter'
 import { setFunctionalGroupsTooltip } from './utils/functionalGroupsTooltip'
 import { contextMenuInfo } from '../ui/views/components/ContextMenu/contextMenu.types'
-import { FloatingToolsPayload } from '../ui/state/floatingTools'
 import { HoverIcon } from './HoverIcon'
 import RotateController from './tool/rotate-controller'
 import {
@@ -102,6 +101,11 @@ function selectStereoFlagsIfNecessary(
   return stereoFlags
 }
 
+export type FloatingToolsParams = {
+  visible?: boolean
+  rotateHandlePosition?: { x: number; y: number }
+}
+
 export interface Selection {
   atoms?: Array<number>
   bonds?: Array<number>
@@ -143,7 +147,7 @@ class Editor implements KetcherEditor {
     showInfo: PipelineSubscription
     apiSettings: PipelineSubscription
     cursor: Subscription
-    updateFloatingTools: Subscription<FloatingToolsPayload>
+    updateFloatingTools: Subscription<FloatingToolsParams>
   }
 
   lastEvent: any

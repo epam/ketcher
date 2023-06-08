@@ -223,7 +223,7 @@ export default function initEditor(dispatch, getState) {
 
     onUpdateFloatingTools: memoizedDebounce(
       /**
-       * @param {import('../floatingTools').FloatingToolsPayload} payload
+       * @param {import('src/script/editor/Editor').FloatingToolsParams} payload
        */
       (payload) => {
         dispatch(updateFloatingTools(payload))

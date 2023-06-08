@@ -37,6 +37,11 @@ const config = {
       banner: license
     }
   ],
+  resolve: {
+    alias: {
+      url: 'native-url'
+    }
+  },
   plugins: [
     del({
       targets: 'dist/*',

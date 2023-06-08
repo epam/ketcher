@@ -145,7 +145,7 @@ class RotateController {
       this.editor
     )
 
-    const { texts, rxnArrows, rxnPluses } = this.editor.selection() || {}
+    const { texts, rxnArrows, rxnPluses, bonds } = this.editor.selection() || {}
 
     const isMoreThanOneItemBeingSelected =
       visibleAtoms.concat(texts || [], rxnArrows || [], rxnPluses || [])
@@ -166,7 +166,8 @@ class RotateController {
       visibleAtoms,
       texts,
       rxnArrows,
-      rxnPluses
+      rxnPluses,
+      bonds
     )
 
     this.handleCenter = new Vec2(
@@ -260,7 +261,8 @@ class RotateController {
     visibleAtoms: number[],
     texts?: number[],
     rxnArrows?: number[],
-    rxnPluses?: number[]
+    rxnPluses?: number[],
+    bonds?: number[]
   ) {
     const RECT_RADIUS = 20
     const RECT_PADDING = 10
@@ -271,10 +273,12 @@ class RotateController {
         texts,
         rxnArrows,
         rxnPluses,
+
         sgroups: getGroupIdsFromItemArrays(this.render.ctab.molecule, {
           atoms: visibleAtoms
-        })
-      })!
+        }),
+        bonds
+      })
       .transform(Scale.obj2scaled, this.render.options)
       .translate(this.render.options.offset || new Vec2())
 

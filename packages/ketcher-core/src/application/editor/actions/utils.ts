@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { AtomAttributes, Bond, Vec2 } from 'domain/entities'
+import { AtomAttributes, Bond, Struct, Vec2 } from 'domain/entities'
 
 import closest from '../shared/closest'
 import { difference } from 'lodash'
@@ -189,8 +189,11 @@ export function atomForNewBond(restruct, id, bond?) {
   return { atom: a, pos: v }
 }
 
-export function getRelSgroupsBySelection(restruct, selectedAtoms) {
-  return restruct.molecule.sgroups.filter(
+export function getRelSGroupsBySelection(
+  struct: Struct,
+  selectedAtoms: number[]
+) {
+  return struct.sgroups.filter(
     (_sgid, sg) =>
       !sg.data.attached &&
       !sg.data.absolute &&
@@ -198,7 +201,7 @@ export function getRelSgroupsBySelection(restruct, selectedAtoms) {
   )
 }
 
-export function isAttachmentBond({ begin, end }: Bond, selection): boolean {
+export function isAttachmentBond({ begin, end }: Bond, selection: Selection) {
   if (!selection.atoms) {
     return false
   }

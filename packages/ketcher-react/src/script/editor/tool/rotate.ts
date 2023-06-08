@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import {
+  Bond,
   FlipDirection,
   FunctionalGroup,
   Vec2,
@@ -22,12 +23,14 @@ import {
   fromItemsFuse,
   fromRotate,
   getHoverToFuse,
-  getItemsToFuse
+  getItemsToFuse,
+  isAttachmentBond
 } from 'ketcher-core'
 
 import utils from '../shared/utils'
 import Editor from '../Editor'
 import { Tool } from './Tool'
+import { intersection } from 'lodash'
 
 class RotateTool implements Tool {
   private readonly editor: Editor
@@ -69,12 +72,19 @@ class RotateTool implements Tool {
    */
   getCenter(editor: Editor) {
     const selection = editor.selection()
+    if (!selection) {
+      return [undefined, [] as number[]] as const
+    }
+
     const struct = editor.render.ctab.molecule
-    const { texts, rxnArrows, rxnPluses } = selection || {}
+    const { texts, rxnArrows, rxnPluses } = selection
 
     const visibleAtoms =
-      selection?.atoms?.filter((atomId) => {
-        const atom = struct.atoms.get(atomId)!
+      selection.atoms?.filter((atomId) => {
+        const atom = struct.atoms.get(atomId)
+        if (!atom) {
+          return false
+        }
         return (
           !FunctionalGroup.isAtomInContractedFunctionalGroup(
             atom,
@@ -85,39 +95,58 @@ class RotateTool implements Tool {
         )
       }) || []
 
-    let xy0: Vec2 | undefined
+    let center: Vec2 | undefined
 
-    let attachAtomId: number | null = null
-    let isMoreThanOneAttachAtom = false
-    visibleAtoms.forEach((aid) => {
-      const atom = struct.atoms.get(aid)
+    const attachmentBonds = struct.bonds.filter((_bondId, bond) =>
+      isAttachmentBond(bond, selection)
+    )
 
-      if (isMoreThanOneAttachAtom) return
-
-      atom?.neighbors.find((nei) => {
-        const hb = struct.halfBonds.get(nei)
-
-        if (hb) {
-          if (editor.selection()?.atoms?.indexOf(hb.end as number) === -1) {
-            if (attachAtomId === null) {
-              attachAtomId = aid
-            } else if (attachAtomId !== aid) {
-              isMoreThanOneAttachAtom = true
-              return true
-            }
-          }
-        }
-        return false
+    if (attachmentBonds.size > 1) {
+      /**
+       *  Handle multiple attachment bonds with one intersection:
+       *               0    (selected atom)
+       *             / | \  (bonds)
+       */
+      const bondPoints: [number, number][] = []
+      attachmentBonds.forEach((bond) => {
+        bondPoints.push([bond.begin, bond.end])
       })
-    })
+      const intersectionAtoms = intersection(...bondPoints)
+      if (
+        intersectionAtoms.length === 1 &&
+        visibleAtoms.includes(intersectionAtoms[0])
+      ) {
+        center = struct.atoms.get(intersectionAtoms[0])?.pp
+      }
+    } else if (attachmentBonds.size === 1) {
+      /**
+       * Handle one attachment bond:
+       * 1. the bond is unselected
+       *          0  (selected atom) --> center
+       *          |  (unselected bond)
+       *          o  (unselected atom)
+       * 2. the bond is selected
+       *          0  (selected atom)
+       *          |  (selected bond)
+       *          o  (unselected atom) --> center
+       */
+      const attachmentBondId = attachmentBonds.keys().next().value as number
+      const attachmentBond = attachmentBonds.get(attachmentBondId) as Bond
+      const rotatePoint = [attachmentBond.begin, attachmentBond.end].find(
+        (atomId) =>
+          selection.bonds?.includes(attachmentBondId)
+            ? !visibleAtoms.includes(atomId)
+            : visibleAtoms.includes(atomId)
+      ) as number
+      center = struct.atoms.get(rotatePoint)?.pp
+    }
 
-    if (!isMoreThanOneAttachAtom && attachAtomId !== null) {
-      xy0 = struct.atoms.get(attachAtomId)?.pp as Vec2
-    } else if (
-      visibleAtoms.length ||
-      texts?.length ||
-      rxnArrows?.length ||
-      rxnPluses?.length
+    if (
+      !center &&
+      (visibleAtoms.length ||
+        texts?.length ||
+        rxnArrows?.length ||
+        rxnPluses?.length)
     ) {
       const selectionBoundingBox = editor.render.ctab.getVBoxObj({
         atoms: visibleAtoms,
@@ -125,10 +154,10 @@ class RotateTool implements Tool {
         rxnArrows,
         rxnPluses
       })
-      xy0 = selectionBoundingBox?.centre()
+      center = selectionBoundingBox?.centre()
     }
 
-    return [xy0, visibleAtoms] as const
+    return [center, visibleAtoms] as const
   }
 
   mousemove(event) {

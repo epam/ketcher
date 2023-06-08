@@ -34,7 +34,7 @@ import { fromRGroupFragment, fromUpdateIfThen } from './rgroup'
 
 import { Action } from './action'
 import { fromAtomsFragmentAttr } from './atom'
-import { getRelSgroupsBySelection } from './utils'
+import { getRelSGroupsBySelection } from './utils'
 
 export function fromMultipleMove(restruct, lists, d) {
   d = new Vec2(d)
@@ -84,7 +84,7 @@ export function fromMultipleMove(restruct, lists, d) {
     })
 
     if (lists.sgroupData && lists.sgroupData.length === 0) {
-      const sgroups = getRelSgroupsBySelection(restruct, lists.atoms)
+      const sgroups = getRelSGroupsBySelection(struct, lists.atoms)
       sgroups.forEach((sg) => {
         action.addOp(new SGroupDataMove(sg.id, d))
       })

@@ -30,7 +30,7 @@ export interface LoadOptions {
   fragment: boolean
 }
 
-interface Selection {
+export interface EditorSelection {
   atoms?: Array<number>
   bonds?: Array<number>
   enhancedFlags?: Array<number>
@@ -45,7 +45,7 @@ export interface Editor {
   structToAddFragment: (struct: Struct) => Struct
   subscribe: (eventName: string, handler: (data?: any) => any) => any
   unsubscribe: (eventName: string, subscriber: any) => void
-  selection: (arg?: Selection | 'all' | null) => Selection | null
+  selection: (arg?: EditorSelection | 'all' | null) => EditorSelection | null
   undo: () => void
   redo: () => void
   clear: () => void
@@ -53,7 +53,7 @@ export interface Editor {
   setOptions: (opts: string) => any
   zoom: (value?: any) => any
   structSelected: () => Struct
-  explicitSelected: () => Selection
+  explicitSelected: () => EditorSelection
   update: (
     action: Action | true,
     ignoreHistory?: boolean,

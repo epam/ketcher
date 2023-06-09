@@ -20,10 +20,7 @@ import {
   KetSerializer,
   MolSerializer,
   formatProperties,
-  ChemicalMimeType,
-  Editor,
-  fromMultipleMove,
-  Vec2
+  ChemicalMimeType
 } from 'ketcher-core'
 import { debounce, isEqual } from 'lodash/fp'
 import { load, onAction, removeStructAction } from './shared'
@@ -33,6 +30,7 @@ import keyNorm from '../data/convert/keynorm'
 import { isIE } from 'react-device-detect'
 import { handleHotkeyOverItem } from './handleHotkeysOverItem'
 import { SettingsManager } from '../utils/settingsManager'
+import { isArrowKey, moveSelectedItems } from './moveSelectedItems'
 
 export function initKeydownListener(element) {
   return function (dispatch, getState) {
@@ -60,11 +58,6 @@ function keyHandle(dispatch, state, hotKeys, event) {
   const actionTool = actionState.activeTool
 
   const key = keyNorm(event)
-  const isArrowKey =
-    key === 'ArrowUp' ||
-    key === 'ArrowDown' ||
-    key === 'ArrowLeft' ||
-    key === 'ArrowRight'
 
   let group: any = null
 
@@ -136,29 +129,9 @@ function keyHandle(dispatch, state, hotKeys, event) {
     } else if (isIE) {
       clipArea.exec(event)
     }
-  } else if (isArrowKey) {
-    moveSelectedItems(editor, key)
+  } else if (isArrowKey(event.key)) {
+    moveSelectedItems(editor, event.key, event.shiftKey)
   }
-}
-
-type ArrowKey = 'ArrowUp' | 'ArrowDown' | 'ArrowRight' | 'ArrowLeft'
-
-function moveSelectedItems(editor: Editor, key: ArrowKey) {
-  const selectedItems = editor.explicitSelected()
-  const distinationVectorMapping: { [key in ArrowKey]: Vec2 } = {
-    ArrowUp: new Vec2(0, -1),
-    ArrowDown: new Vec2(0, 1),
-    ArrowRight: new Vec2(1, 0),
-    ArrowLeft: new Vec2(-1, 0)
-  }
-  const action = fromMultipleMove(
-    editor.render.ctab,
-    selectedItems,
-    distinationVectorMapping[key].scaled(0.1)
-  )
-
-  editor.rotateController.rerender()
-  editor.update(action, false, { resizeCanvas: true })
 }
 
 function getCurrentAction(prevActName) {

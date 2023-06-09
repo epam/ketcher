@@ -9,7 +9,7 @@
     "test:debug": "npx playwright test --debug",
     "test:ci": "npx playwright test --reporter=line",
     "test:update": "npx playwright test --update-snapshots",
-    "docker": "DOCKER=true docker-compose run --rm autotests",
+    "docker": "docker-compose run --rm autotests",
     "docker:build": "docker-compose build autotests",
     "docker:test": "npm run docker npx playwright test",
     "docker:test:ci": "npm run docker npm run test:ci",

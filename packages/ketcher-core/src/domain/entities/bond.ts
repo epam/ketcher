@@ -146,26 +146,99 @@ export class Bond {
     return { beginBondIds, endBondIds }
   }
 
+  static getFusingConditions(bond: Bond, bondBegin: Bond, bondEnd: Bond) {
+    const { DOUBLE, SINGLE } = this.PATTERN.TYPE
+    const isFusingToDoubleBond =
+      bondBegin.type === SINGLE &&
+      bond.type === DOUBLE &&
+      bondEnd.type === SINGLE
+    const isFusingToSingleBond =
+      bondBegin.type === DOUBLE &&
+      bond.type === SINGLE &&
+      bondEnd.type === DOUBLE
+    const isFusingDoubleSingleSingle =
+      bondBegin.type === DOUBLE &&
+      bond.type === SINGLE &&
+      bondEnd.type === SINGLE
+    const isFusingSingleSingleDouble =
+      bondBegin.type === SINGLE &&
+      bond.type === SINGLE &&
+      bondEnd.type === DOUBLE
+    const isAllSingle =
+      bondBegin.type === SINGLE &&
+      bond.type === SINGLE &&
+      bondEnd.type === SINGLE
+    return {
+      isFusingToSingleBond,
+      isFusingToDoubleBond,
+      isFusingDoubleSingleSingle,
+      isFusingSingleSingleDouble,
+      isAllSingle
+    }
+  }
+
   static getBenzeneConnectingBondType(
     bond: Bond,
     bondBegin: Bond,
     bondEnd: Bond
   ): number | null {
     const { DOUBLE, SINGLE } = this.PATTERN.TYPE
-    const isFusingToDoubleBond =
-      bondBegin.type === SINGLE &&
-      bond.type === DOUBLE &&
-      bondEnd.type === SINGLE
-    const isFusingToSignleBond =
-      bondBegin.type === DOUBLE &&
-      bond.type === SINGLE &&
-      bondEnd.type === DOUBLE
+    const { isFusingToSingleBond, isFusingToDoubleBond } =
+      Bond.getFusingConditions(bond, bondBegin, bondEnd)
+
     if (isFusingToDoubleBond) {
       return DOUBLE
-    } else if (isFusingToSignleBond) {
+    } else if (isFusingToSingleBond) {
       return SINGLE
     }
     return null
+  }
+
+  static getCyclopentadieneFusingBondType(
+    bond: Bond,
+    bondBegin: Bond,
+    bondEnd: Bond
+  ): number | null {
+    const { DOUBLE, SINGLE } = this.PATTERN.TYPE
+    const {
+      isFusingToSingleBond,
+      isFusingToDoubleBond,
+      isFusingDoubleSingleSingle,
+      isAllSingle
+    } = Bond.getFusingConditions(bond, bondBegin, bondEnd)
+
+    if (isFusingToDoubleBond) {
+      return DOUBLE
+    } else if (
+      isFusingToSingleBond ||
+      isAllSingle ||
+      isFusingDoubleSingleSingle
+    ) {
+      return SINGLE
+    }
+    return null
+  }
+
+  static getCyclopentadieneDoubleBondIndexes(
+    bond: Bond,
+    bondBegin: Bond,
+    bondEnd: Bond
+  ) {
+    const {
+      isFusingToSingleBond,
+      isFusingToDoubleBond,
+      isFusingDoubleSingleSingle
+    } = Bond.getFusingConditions(bond, bondBegin, bondEnd)
+
+    if (isFusingToSingleBond || isFusingToDoubleBond) {
+      return [1]
+    }
+
+    if (isFusingDoubleSingleSingle) {
+      return [2, 3]
+    }
+
+    return [1, 4]
   }
 
   static attrGetDefault(attr: string) {

@@ -1094,7 +1094,7 @@ function pathAndRBoxTranslate(path, rbb, x, y) {
   rbb.y += y
 }
 
-function bisectLargestSector(atom: ReAtom, struct: Struct) {
+function bisectLargestSector(atom: ReAtom, struct: Struct): Vec2 {
   const { largestAngle, neighborAngle } = getLargestSectorFromNeighbors(
     atom,
     struct
@@ -1103,7 +1103,7 @@ function bisectLargestSector(atom: ReAtom, struct: Struct) {
   return newVectorFromAngle(bisectAngle)
 }
 
-function trisectionLargestSector(atom: ReAtom, struct: Struct) {
+function trisectionLargestSector(atom: ReAtom, struct: Struct): [Vec2, Vec2] {
   const { largestAngle, neighborAngle } = getLargestSectorFromNeighbors(
     atom,
     struct
@@ -1124,7 +1124,7 @@ function newVectorFromAngle(angle: number): Vec2 {
 function getLargestSectorFromNeighbors(
   atom: ReAtom,
   struct: Struct
-): { neighborAngle; largestAngle } {
+): { neighborAngle: number; largestAngle: number } {
   let angles: Array<number> = []
   atom.a.neighbors.forEach((hbid) => {
     const hb = struct.halfBonds.get(hbid)
@@ -1174,7 +1174,7 @@ function showAttachmentPointShape(
   { options, paper }: Render,
   directionVector: Vec2,
   addReObjectPath: InstanceType<typeof ReStruct>['addReObjectPath']
-) {
+): void {
   const atomPositionVector = Scale.obj2scaled(atom.a.pp, options)
   const shiftedAtomPositionVector = atom.getShiftedSegmentPosition(
     options,

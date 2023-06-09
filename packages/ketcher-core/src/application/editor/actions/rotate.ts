@@ -18,208 +18,212 @@ import {
   AtomMove,
   BondAttr,
   EnhancedFlagMove,
+  RxnArrowMove,
   RxnArrowRotate,
   RxnPlusMove,
   SGroupDataMove,
   TextMove
 } from '../operations'
-import { Bond, Fragment, Pile, Vec2 } from 'domain/entities'
-import {
-  getRelSgroupsBySelection,
-  structSelection,
-  isAttachmentBond
-} from './utils'
-
+import { Bond, Fragment, Struct, Vec2 } from 'domain/entities'
+import { ReStruct } from 'application/render'
+import { getRelSGroupsBySelection, structSelection } from './utils'
 import { Action } from './action'
-import utils from '../shared/utils'
+import { Selection } from '../editor.types'
 
-export function fromFlip(restruct, selection, dir, center) {
-  // eslint-disable-line max-statements
-  const struct = restruct.molecule
+export type FlipDirection = 'horizontal' | 'vertical'
 
+export function fromFlip(
+  reStruct: ReStruct,
+  selection: Selection | null,
+  flipDirection: FlipDirection,
+  center: Vec2
+) {
+  const action = new Action()
+  const structToFlip = selection || structSelection(reStruct.molecule)
+
+  action.mergeWith(
+    fromStructureFlip(reStruct, structToFlip, flipDirection, center)
+  )
+
+  if (structToFlip.rxnArrows) {
+    action.mergeWith(
+      fromRxnArrowFlip(reStruct, structToFlip.rxnArrows, flipDirection, center)
+    )
+  }
+
+  if (structToFlip.rxnPluses) {
+    action.mergeWith(
+      fromRxnPlusFlip(reStruct, structToFlip.rxnPluses, flipDirection, center)
+    )
+  }
+
+  if (structToFlip.texts) {
+    action.mergeWith(
+      fromTextFlip(reStruct, structToFlip.texts, flipDirection, center)
+    )
+  }
+
+  return action
+}
+
+function fromRxnArrowFlip(
+  reStruct: ReStruct,
+  rxnArrowIds: number[],
+  flipDirection: FlipDirection,
+  center: Vec2
+) {
   const action = new Action()
 
-  if (!selection) {
-    selection = structSelection(struct)
-  }
-
-  if (!selection.atoms) {
-    return action.perform(restruct)
-  }
-
-  const fids = selection.atoms.reduce((acc, aid) => {
-    const atom = struct.atoms.get(aid)
-
-    if (!acc[atom.fragment]) {
-      acc[atom.fragment] = []
+  rxnArrowIds.forEach((arrowId) => {
+    const rxnArrow = reStruct.molecule.rxnArrows.get(arrowId)
+    if (!rxnArrow) {
+      return
     }
 
-    acc[atom.fragment].push(aid)
-    return acc
-  }, {})
+    const [start, end] = rxnArrow.pos
+    const oxAngle = end.sub(start).oxAngle()
+    const oyAngle = oxAngle - Math.PI / 2
+    const rotateAngle =
+      flipDirection === 'vertical' ? -2 * oxAngle : -2 * oyAngle
+    action.addOp(new RxnArrowRotate(arrowId, rotateAngle, rxnArrow.center()))
 
-  const fidsNumberKeys = Object.keys(fids).map((frag) => parseInt(frag, 10))
-
-  const isFragFound = fidsNumberKeys.find((frag) => {
-    const allFragmentsOfStructure = struct.getFragmentIds(frag)
-    const selectedFragmentsOfStructure = new Pile(fids[frag])
-    const res = allFragmentsOfStructure.equals(selectedFragmentsOfStructure)
-    return !res
+    const difference = flipPointByCenter(
+      rxnArrow.center(),
+      center,
+      flipDirection
+    )
+    action.addOp(new RxnArrowMove(arrowId, difference))
   })
 
-  if (typeof isFragFound === 'number') {
-    return flipPartOfStructure({
-      fids,
-      struct,
-      restruct,
-      dir,
-      action,
-      selection
-    })
-  }
-
-  return flipStandaloneStructure({
-    fids,
-    struct,
-    restruct,
-    center,
-    dir,
-    action,
-    selection
-  })
+  return action.perform(reStruct)
 }
 
-function getRotationPoint(struct, selection) {
-  const { bonds } = struct
-  const isSelectedAtom = (atomId) => selection.atoms.includes(atomId)
-  const getAttachmentBond = () => {
-    for (const [bondId, bond] of bonds.entries()) {
-      if (isAttachmentBond(bond, selection)) {
-        return [bondId, bond]
-      }
+function fromRxnPlusFlip(
+  reStruct: ReStruct,
+  rxnPlusIds: number[],
+  flipDirection: FlipDirection,
+  center: Vec2
+) {
+  const action = new Action()
+
+  rxnPlusIds.forEach((plusId) => {
+    const rxnPlus = reStruct.molecule.rxnPluses.get(plusId)
+    if (!rxnPlus) {
+      return
     }
-    return [null, null]
-  }
-  const getRotationPointAtomId = (attachmentBondId, attachmentBond) => {
-    if (selection.bonds.includes(attachmentBondId)) {
-      return [attachmentBond.begin, attachmentBond.end].find(
-        (atomId) => !isSelectedAtom(atomId)
-      )
+
+    const difference = flipPointByCenter(rxnPlus.pp, center, flipDirection)
+    action.addOp(new RxnPlusMove(plusId, difference))
+  })
+
+  return action.perform(reStruct)
+}
+
+function fromTextFlip(
+  reStruct: ReStruct,
+  textIds: number[],
+  flipDirection: FlipDirection,
+  center: Vec2
+) {
+  const action = new Action()
+
+  textIds.forEach((textId) => {
+    const text = reStruct.molecule.texts.get(textId)
+    if (!text) {
+      return
     }
-    return [attachmentBond.begin, attachmentBond.end].find(isSelectedAtom)
-  }
 
-  const [attachmentBondId, attachmentBond] = getAttachmentBond()
-  const rotationPointAtomId = getRotationPointAtomId(
-    attachmentBondId,
-    attachmentBond
-  )
-  return struct.atoms.get(rotationPointAtomId).pp
-}
+    // Note: text has two position properties
+    //      `position`: the middle left point
+    //      `pos`: a box (not bounding box)
+    // `TextMove` is to move `position`, so we have to calculate the flipped `position`
+    const textMiddleLeft = text.pos[0]
+    const textMiddleRight = text.pos[3]
+    const textCenter = Vec2.centre(textMiddleLeft, textMiddleRight)
 
-function flipBonds(selection, struct, action) {
-  if (selection.bonds) {
-    selection.bonds.forEach((bid) => {
-      const bond = struct.bonds.get(bid)
-
-      if (bond.type !== Bond.PATTERN.TYPE.SINGLE) {
-        return
-      }
-
-      if (bond.stereo === Bond.PATTERN.STEREO.UP) {
-        action.addOp(new BondAttr(bid, 'stereo', Bond.PATTERN.STEREO.DOWN))
-        return
-      }
-
-      if (bond.stereo === Bond.PATTERN.STEREO.DOWN) {
-        action.addOp(new BondAttr(bid, 'stereo', Bond.PATTERN.STEREO.UP))
-      }
-    })
-  }
-}
-
-function flipPartOfStructure({
-  fids,
-  struct,
-  restruct,
-  dir,
-  action,
-  selection
-}) {
-  const rotationPoint = getRotationPoint(struct, selection)
-
-  Object.keys(fids).forEach((frag) => {
-    const fragment = new Pile(fids[frag])
-
-    fragment.forEach((aid) => {
-      const atom = struct.atoms.get(aid)
-      const d = flipItemByCenter(atom, rotationPoint, dir)
-      action.addOp(new AtomMove(aid, d))
-    })
-
-    const sgroups = getRelSgroupsBySelection(restruct, Array.from(fragment))
-    sgroups.forEach((sg) => {
-      const d = flipItemByCenter(sg, rotationPoint, dir)
-      action.addOp(new SGroupDataMove(sg.id, d))
-    })
+    const difference = flipPointByCenter(textCenter, center, flipDirection)
+    action.addOp(new TextMove(textId, difference))
   })
 
-  flipBonds(selection, struct, action)
-
-  return action.perform(restruct)
+  return action.perform(reStruct)
 }
 
-function flipStandaloneStructure({
-  fids,
-  struct,
-  restruct,
-  center,
-  dir,
-  action,
-  selection
-}) {
-  Object.keys(fids).forEach((frag) => {
-    const fragment = new Pile(fids[frag])
+function fromStructureFlip(
+  reStruct: ReStruct,
+  selection: Selection | null,
+  flipDirection: FlipDirection,
+  center: Vec2
+) {
+  const struct = reStruct.molecule
+  const action = new Action()
 
-    const bbox = struct.getCoordBoundingBox(fragment)
-    const calcCenter =
-      center ||
-      new Vec2((bbox.max.x + bbox.min.x) / 2, (bbox.max.y + bbox.min.y) / 2)
+  selection?.atoms?.forEach((atomId) => {
+    const atom = struct.atoms.get(atomId)
+    if (!atom) {
+      return
+    }
 
-    fragment.forEach((aid) => {
-      const atom = struct.atoms.get(aid)
-      const d = flipItemByCenter(atom, calcCenter, dir)
-      action.addOp(new AtomMove(aid, d))
-    })
-
-    const sgroups = getRelSgroupsBySelection(restruct, Array.from(fragment))
-    sgroups.forEach((sg) => {
-      const d = flipItemByCenter(sg, calcCenter, dir)
-      action.addOp(new SGroupDataMove(sg.id, d))
-    })
+    const difference = flipPointByCenter(atom.pp, center, flipDirection)
+    action.addOp(new AtomMove(atomId, difference))
   })
 
-  flipBonds(selection, struct, action)
+  const sGroups = getRelSGroupsBySelection(struct, selection?.atoms || [])
+  sGroups.forEach((sGroup) => {
+    if (!sGroup.pp) {
+      return
+    }
+    const difference = flipPointByCenter(sGroup.pp, center, flipDirection)
+    action.addOp(new SGroupDataMove(sGroup.id, difference))
+  })
 
-  return action.perform(restruct)
+  if (selection?.bonds) {
+    flipBonds(selection.bonds, struct, action)
+  }
+
+  return action.perform(reStruct)
 }
 
-function flipItemByCenter(item, center, dir) {
+function flipBonds(bondIds: number[], struct: Struct, action: Action) {
+  bondIds.forEach((bondId) => {
+    const bond = struct.bonds.get(bondId)
+
+    if (!bond) {
+      return
+    }
+
+    if (bond.type !== Bond.PATTERN.TYPE.SINGLE) {
+      return
+    }
+
+    if (bond.stereo === Bond.PATTERN.STEREO.UP) {
+      action.addOp(new BondAttr(bondId, 'stereo', Bond.PATTERN.STEREO.DOWN))
+      return
+    }
+
+    if (bond.stereo === Bond.PATTERN.STEREO.DOWN) {
+      action.addOp(new BondAttr(bondId, 'stereo', Bond.PATTERN.STEREO.UP))
+    }
+  })
+}
+
+function flipPointByCenter(
+  pointToFlip: Vec2,
+  center: Vec2,
+  flipDirection: FlipDirection
+) {
   const d = new Vec2()
-  /* eslint-disable no-mixed-operators */
-  if (dir === 'horizontal') {
+  if (flipDirection === 'horizontal') {
     d.x =
-      center.x > item.pp.x
-        ? 2 * (center.x - item.pp.x)
-        : -2 * (item.pp.x - center.x)
+      center.x > pointToFlip.x
+        ? 2 * (center.x - pointToFlip.x)
+        : -2 * (pointToFlip.x - center.x)
   } else {
     // 'vertical'
     d.y =
-      center.y > item.pp.y
-        ? 2 * (center.y - item.pp.y)
-        : -2 * (item.pp.y - center.y)
+      center.y > pointToFlip.y
+        ? 2 * (center.y - pointToFlip.y)
+        : -2 * (pointToFlip.y - center.y)
   }
-  /* eslint-enable no-mixed-operators */
   return d
 }
 
@@ -240,7 +244,7 @@ export function fromRotate(restruct, selection, center, angle) {
     })
 
     if (!selection.sgroupData) {
-      const sgroups = getRelSgroupsBySelection(restruct, selection.atoms)
+      const sgroups = getRelSGroupsBySelection(struct, selection.atoms)
 
       sgroups.forEach((sg) => {
         action.addOp(
@@ -300,26 +304,6 @@ export function fromRotate(restruct, selection, center, angle) {
   }
 
   return action.perform(restruct)
-}
-
-export function fromBondAlign(restruct, bid, dir) {
-  const struct = restruct.molecule
-  const bond = struct.bonds.get(bid)
-  const begin = struct.atoms.get(bond.begin)
-  const end = struct.atoms.get(bond.end)
-
-  const center = begin.pp.add(end.pp).scaled(0.5)
-  let angle = utils.calcAngle(begin.pp, end.pp)
-  const atoms = Array.from(struct.getFragmentIds(begin.fragment))
-
-  // TODO: choose minimal angle
-  angle = dir === 'horizontal' ? -angle : Math.PI / 2 - angle
-
-  if (angle === 0 || Math.abs(angle) === Math.PI) {
-    return fromFlip(restruct, { atoms }, dir, center)
-  }
-
-  return fromRotate(restruct, { atoms }, center, angle)
 }
 
 function rotateDelta(v, center, angle) {

@@ -85,7 +85,7 @@ export class Render {
     return Scale.scaled2obj(point, this.options)
   }
 
-  obj2view(vector: Vec2, isRelative: true) {
+  obj2view(vector: Vec2, isRelative?: boolean) {
     let p = Scale.obj2scaled(vector, this.options)
     p = isRelative
       ? p

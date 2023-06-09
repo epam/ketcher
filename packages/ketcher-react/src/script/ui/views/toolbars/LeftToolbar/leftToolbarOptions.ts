@@ -14,12 +14,6 @@ const shapeOptions: ToolbarItem[] = makeItems([
   'shape-line'
 ])
 
-const transformOptions: ToolbarItem[] = makeItems([
-  'transform-rotate',
-  'transform-flip-h',
-  'transform-flip-v'
-])
-
 const selectOptions: ToolbarItem[] = makeItems([
   'select-rectangle',
   'select-lasso',
@@ -59,7 +53,6 @@ export {
   bondSpecial,
   bondStereo,
   shapeOptions,
-  transformOptions,
   selectOptions,
   arrowsOptions,
   mappingOptions

@@ -6,7 +6,8 @@ import {
   fromBondsAttrs,
   fromFragmentDeletion,
   FunctionalGroup,
-  Atom
+  Atom,
+  Action
 } from 'ketcher-core'
 import { STRUCT_TYPE } from 'src/constants'
 import { openDialog } from './modal'
@@ -16,6 +17,7 @@ import { Editor } from '../../editor'
 import { updateSelectedAtoms } from 'src/script/ui/state/modal/atoms'
 import { fromAtom, toAtom, fromBond, toBond } from '../data/convert/structconv'
 import SGroupTool from '../../editor/tool/sgroup'
+import { deleteFunctionalGroups } from '../../editor/tool/helper/deleteFunctionalGroups'
 
 type TNewAction = {
   tool?: string
@@ -215,6 +217,7 @@ async function isFunctionalGroupChange(
   props: HandlersProps,
   type: string
 ): Promise<boolean> {
+  if (type === 'sgroups') return true
   return await isChangingFunctionalGroup(props, type)
 }
 
@@ -230,6 +233,9 @@ function getToolHandler(itemType: string, toolName = '') {
       },
       hand: ({ dispatch }: HandlersProps) =>
         dispatch(onAction({ tool: 'hand' }))
+    },
+    sgroups: {
+      atom: (props: HandlersProps) => handleSgroupsTool(props)
     },
     _default: {}
   }
@@ -251,6 +257,23 @@ function handleAtomTool({ hoveredItemId, newAction, editor }: HandlersProps) {
     true
   )
   editor.update(updatedAtoms)
+}
+
+function handleSgroupsTool({
+  hoveredItemId,
+  newAction,
+  editor
+}: HandlersProps) {
+  const atomProps = { ...newAction.opts }
+  const action = new Action()
+  const ctab = editor.render.ctab
+  const sGroup = ctab.molecule.sgroups.get(hoveredItemId)
+  const attachmentPoint = sGroup?.getAttAtomId(ctab.molecule)
+  deleteFunctionalGroups([hoveredItemId], ctab, action)
+  action.mergeWith(
+    fromAtomsAttrs(editor.render.ctab, attachmentPoint, atomProps, true)
+  )
+  editor.update(action)
 }
 
 function handleBondTool({ hoveredItemId, newAction, editor }: HandlersProps) {

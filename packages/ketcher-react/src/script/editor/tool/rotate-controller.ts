@@ -45,7 +45,7 @@ class RotateController {
   constructor(editor: Editor) {
     this.editor = editor
     this.init()
-    this.rotateTool = new RotateTool(this.editor, undefined, true)
+    this.rotateTool = new RotateTool(this.editor, undefined)
   }
 
   private init() {
@@ -78,6 +78,11 @@ class RotateController {
   }
 
   clean() {
+    this.editor.event.updateFloatingTools.dispatch({
+      visible: false,
+      rotateHandlePosition: new Vec2()
+    })
+
     this.handle?.unhover(this.hoverIn, this.hoverOut)
     this.handle?.unmousedown(this.dragStart)
     this.handle?.unmouseup(this.dragEnd)
@@ -140,7 +145,7 @@ class RotateController {
       this.editor
     )
 
-    const { texts, rxnArrows, rxnPluses } = this.editor.selection() || {}
+    const { texts, rxnArrows, rxnPluses, bonds } = this.editor.selection() || {}
 
     const isMoreThanOneItemBeingSelected =
       visibleAtoms.concat(texts || [], rxnArrows || [], rxnPluses || [])
@@ -161,13 +166,24 @@ class RotateController {
       visibleAtoms,
       texts,
       rxnArrows,
-      rxnPluses
+      rxnPluses,
+      bonds
     )
 
     this.handleCenter = new Vec2(
       this.center.x,
       rectStartY - STYLE.HANDLE_MARGIN - STYLE.HANDLE_RADIUS
     )
+
+    const handleCenterInViewport = this.render.obj2view(
+      this.handleCenter
+        .sub(this.render.options.offset)
+        .scaled(1 / this.render.options.scale)
+    )
+    this.editor.event.updateFloatingTools.dispatch({
+      visible: true,
+      rotateHandlePosition: handleCenterInViewport
+    })
 
     this.drawLink()
     this.drawCross()
@@ -245,7 +261,8 @@ class RotateController {
     visibleAtoms: number[],
     texts?: number[],
     rxnArrows?: number[],
-    rxnPluses?: number[]
+    rxnPluses?: number[],
+    bonds?: number[]
   ) {
     const RECT_RADIUS = 20
     const RECT_PADDING = 10
@@ -256,10 +273,12 @@ class RotateController {
         texts,
         rxnArrows,
         rxnPluses,
+
         sgroups: getGroupIdsFromItemArrays(this.render.ctab.molecule, {
           atoms: visibleAtoms
-        })
-      })!
+        }),
+        bonds
+      })
       .transform(Scale.obj2scaled, this.render.options)
       .translate(this.render.options.offset || new Vec2())
 
@@ -606,6 +625,11 @@ class RotateController {
 
     this.isRotating = true
 
+    this.editor.event.updateFloatingTools.dispatch({
+      visible: false,
+      rotateHandlePosition: new Vec2()
+    })
+
     this.boundingRect?.remove()
     delete this.boundingRect
 
@@ -629,7 +653,7 @@ class RotateController {
     const originalHandleCenter = this.handleCenter
       .sub(this.render.options.offset)
       .scaled(1 / this.render.options.scale)
-    this.rotateTool.mousedown(event, originalHandleCenter, this.originalCenter)
+    this.rotateTool.mousedownHandle(originalHandleCenter, this.originalCenter)
   }
 
   private dragMove = () => {
@@ -755,6 +779,21 @@ class RotateController {
     this.isMovingCenter = false
     this.rerender()
   }
+
+  updateFloatingToolsPosition = throttle(() => {
+    if (!this.handle) {
+      return
+    }
+
+    const handleCenterInViewport = this.render.obj2view(
+      this.handleCenter
+        .sub(this.render.options.offset)
+        .scaled(1 / this.render.options.scale)
+    )
+    this.editor.event.updateFloatingTools.dispatch({
+      rotateHandlePosition: handleCenterInViewport
+    })
+  }, 40)
 }
 
 export default RotateController

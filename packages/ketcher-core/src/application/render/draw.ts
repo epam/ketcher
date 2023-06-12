@@ -81,35 +81,103 @@ function arrow(
   item: ArrowItem,
   length: number,
   angle: number,
-  options: RenderOptions
+  options: RenderOptions,
+  isResizing: boolean
 ) {
+  const shouldApplySnappingStyle =
+    isResizing &&
+    ['0', '-0', '90', '-90', '180', '-180'].includes(angle.toFixed())
+
   switch (item.mode) {
     case RxnArrowMode.OpenAngle: {
-      return arrowOpenAngle(paper, item, length, angle, options)
+      return arrowOpenAngle(
+        paper,
+        item,
+        length,
+        angle,
+        options,
+        shouldApplySnappingStyle
+      )
     }
     case RxnArrowMode.FilledTriangle: {
-      return arrowFilledTriangle(paper, item, length, angle, options)
+      return arrowFilledTriangle(
+        paper,
+        item,
+        length,
+        angle,
+        options,
+        shouldApplySnappingStyle
+      )
     }
     case RxnArrowMode.FilledBow: {
-      return arrowFilledBow(paper, item, length, angle, options)
+      return arrowFilledBow(
+        paper,
+        item,
+        length,
+        angle,
+        options,
+        shouldApplySnappingStyle
+      )
     }
     case RxnArrowMode.DashedOpenAngle: {
-      return arrowDashedOpenAngle(paper, item, length, angle, options)
+      return arrowDashedOpenAngle(
+        paper,
+        item,
+        length,
+        angle,
+        options,
+        shouldApplySnappingStyle
+      )
     }
     case RxnArrowMode.Failed: {
-      return arrowFailed(paper, item, length, angle, options)
+      return arrowFailed(
+        paper,
+        item,
+        length,
+        angle,
+        options,
+        shouldApplySnappingStyle
+      )
     }
     case RxnArrowMode.BothEndsFilledTriangle: {
-      return arrowBothEndsFilledTriangle(paper, item, length, angle, options)
+      return arrowBothEndsFilledTriangle(
+        paper,
+        item,
+        length,
+        angle,
+        options,
+        shouldApplySnappingStyle
+      )
     }
     case RxnArrowMode.EquilibriumFilledHalfBow: {
-      return arrowEquilibriumFilledHalfBow(paper, item, length, angle, options)
+      return arrowEquilibriumFilledHalfBow(
+        paper,
+        item,
+        length,
+        angle,
+        options,
+        shouldApplySnappingStyle
+      )
     }
     case RxnArrowMode.EquilibriumFilledTriangle: {
-      return arrowEquilibriumFilledTriangle(paper, item, length, angle, options)
+      return arrowEquilibriumFilledTriangle(
+        paper,
+        item,
+        length,
+        angle,
+        options,
+        shouldApplySnappingStyle
+      )
     }
     case RxnArrowMode.EquilibriumOpenAngle: {
-      return arrowEquilibriumOpenAngle(paper, item, length, angle, options)
+      return arrowEquilibriumOpenAngle(
+        paper,
+        item,
+        length,
+        angle,
+        options,
+        shouldApplySnappingStyle
+      )
     }
     case RxnArrowMode.UnbalancedEquilibriumFilledHalfBow: {
       return arrowUnbalancedEquilibriumFilledHalfBow(
@@ -117,7 +185,8 @@ function arrow(
         item,
         length,
         angle,
-        options
+        options,
+        shouldApplySnappingStyle
       )
     }
     case RxnArrowMode.UnbalancedEquilibriumOpenHalfAngle: {
@@ -126,7 +195,8 @@ function arrow(
         item,
         length,
         angle,
-        options
+        options,
+        shouldApplySnappingStyle
       )
     }
     case RxnArrowMode.UnbalancedEquilibriumLargeFilledHalfBow: {
@@ -135,7 +205,8 @@ function arrow(
         item,
         length,
         angle,
-        options
+        options,
+        shouldApplySnappingStyle
       )
     }
     case RxnArrowMode.UnbalancedEquilibriumFilledHalfTriangle: {
@@ -144,11 +215,19 @@ function arrow(
         item,
         length,
         angle,
-        options
+        options,
+        shouldApplySnappingStyle
       )
     }
     case RxnArrowMode.EllipticalArcFilledBow: {
-      return arrowEllipticalArcFilledBow(paper, item, length, angle, options)
+      return arrowEllipticalArcFilledBow(
+        paper,
+        item,
+        length,
+        angle,
+        options,
+        shouldApplySnappingStyle
+      )
     }
     case RxnArrowMode.EllipticalArcFilledTriangle: {
       return arrowEllipticalArcFilledTriangle(
@@ -156,11 +235,19 @@ function arrow(
         item,
         length,
         angle,
-        options
+        options,
+        shouldApplySnappingStyle
       )
     }
     case RxnArrowMode.EllipticalArcOpenAngle: {
-      return arrowEllipticalArcOpenAngle(paper, item, length, angle, options)
+      return arrowEllipticalArcOpenAngle(
+        paper,
+        item,
+        length,
+        angle,
+        options,
+        shouldApplySnappingStyle
+      )
     }
     case RxnArrowMode.EllipticalArcOpenHalfAngle: {
       return arrowEllipticalArcOpenHalfAngle(
@@ -168,7 +255,8 @@ function arrow(
         item,
         length,
         angle,
-        options
+        options,
+        shouldApplySnappingStyle
       )
     }
   }
@@ -179,7 +267,8 @@ function arrowEllipticalArcFilledBow(
   { pos: [point1], height }: ArrowItem,
   arrowLength: number,
   arrowAngle: number,
-  options: RenderOptions
+  options: RenderOptions,
+  shouldApplySnappingStyle: boolean
 ) {
   const direction = height >= 0 ? 1 : -1
   const arrowHeadLength = direction * 10
@@ -201,7 +290,12 @@ function arrowEllipticalArcFilledBow(
     .rotate(arrowAngle, point1.x, point1.y)
     .toString()
 
-  return paper.path(transformedPath).attr({ ...options.lineattr })
+  return paper.path(transformedPath).attr({
+    ...options.lineattr,
+    ...(shouldApplySnappingStyle && {
+      stroke: options.arrowSnappingStyle.stroke
+    })
+  })
 }
 
 function arrowEllipticalArcFilledTriangle(
@@ -209,7 +303,8 @@ function arrowEllipticalArcFilledTriangle(
   { pos: [point1], height }: ArrowItem,
   arrowLength: number,
   arrowAngle: number,
-  options: RenderOptions
+  options: RenderOptions,
+  shouldApplySnappingStyle: boolean
 ) {
   const direction = height >= 0 ? 1 : -1
   const triangleLength = direction * 10
@@ -230,7 +325,12 @@ function arrowEllipticalArcFilledTriangle(
     .rotate(arrowAngle, point1.x, point1.y)
     .toString()
 
-  return paper.path(transformedPath).attr({ ...options.lineattr })
+  return paper.path(transformedPath).attr({
+    ...options.lineattr,
+    ...(shouldApplySnappingStyle && {
+      stroke: options.arrowSnappingStyle.stroke
+    })
+  })
 }
 
 function arrowEllipticalArcOpenAngle(
@@ -238,7 +338,8 @@ function arrowEllipticalArcOpenAngle(
   { pos: [point1], height }: ArrowItem,
   arrowLength: number,
   arrowAngle: number,
-  options: RenderOptions
+  options: RenderOptions,
+  shouldApplySnappingStyle: boolean
 ) {
   const direction = height >= 0 ? 1 : -1
   const width = direction * 5
@@ -258,7 +359,12 @@ function arrowEllipticalArcOpenAngle(
     .rotate(arrowAngle, point1.x, point1.y)
     .toString()
 
-  return paper.path(transformedPath).attr(options.lineattr)
+  return paper.path(transformedPath).attr({
+    ...options.lineattr,
+    ...(shouldApplySnappingStyle && {
+      stroke: options.arrowSnappingStyle.stroke
+    })
+  })
 }
 
 function arrowEllipticalArcOpenHalfAngle(
@@ -266,7 +372,8 @@ function arrowEllipticalArcOpenHalfAngle(
   { pos: [point1], height }: ArrowItem,
   arrowLength: number,
   arrowAngle: number,
-  options: RenderOptions
+  options: RenderOptions,
+  shouldApplySnappingStyle: boolean
 ) {
   const direction = height >= 0 ? 1 : -1
   const width = direction * 5
@@ -284,7 +391,12 @@ function arrowEllipticalArcOpenHalfAngle(
     .rotate(arrowAngle, point1.x, point1.y)
     .toString()
 
-  return paper.path(transformedPath).attr(options.lineattr)
+  return paper.path(transformedPath).attr({
+    ...options.lineattr,
+    ...(shouldApplySnappingStyle && {
+      stroke: options.arrowSnappingStyle.stroke
+    })
+  })
 }
 
 function arrowOpenAngle(
@@ -292,7 +404,8 @@ function arrowOpenAngle(
   { pos: [point1] }: ArrowItem,
   arrowLength: number,
   arrowAngle: number,
-  options: RenderOptions
+  options: RenderOptions,
+  shouldApplySnappingStyle: boolean
 ) {
   const width = 5
   const length = 7
@@ -310,7 +423,12 @@ function arrowOpenAngle(
     .rotate(arrowAngle, point1.x, point1.y)
     .toString()
 
-  return paper.path(transformedPath).attr(options.lineattr)
+  return paper.path(transformedPath).attr({
+    ...options.lineattr,
+    ...(shouldApplySnappingStyle && {
+      stroke: options.arrowSnappingStyle.stroke
+    })
+  })
 }
 
 function arrowFilledTriangle(
@@ -318,7 +436,8 @@ function arrowFilledTriangle(
   { pos: [point1] }: ArrowItem,
   arrowLength: number,
   arrowAngle: number,
-  options: RenderOptions
+  options: RenderOptions,
+  shouldApplySnappingStyle: boolean
 ) {
   const triangleLength = 10
   const triangleWidth = 5
@@ -336,7 +455,11 @@ function arrowFilledTriangle(
     .rotate(arrowAngle, point1.x, point1.y)
     .toString()
 
-  return paper.path(transformedPath).attr({ ...options.lineattr, fill: '#000' })
+  return paper.path(transformedPath).attr({
+    ...options.lineattr,
+    fill: '#000',
+    ...(shouldApplySnappingStyle && options.arrowSnappingStyle)
+  })
 }
 
 function arrowFilledBow(
@@ -344,7 +467,8 @@ function arrowFilledBow(
   { pos: [point1] }: ArrowItem,
   arrowLength: number,
   arrowAngle: number,
-  options: RenderOptions
+  options: RenderOptions,
+  shouldApplySnappingStyle: boolean
 ) {
   const arrowHeadLength = 10
   const arrowHeadWidth = 5
@@ -364,7 +488,11 @@ function arrowFilledBow(
     .rotate(arrowAngle, point1.x, point1.y)
     .toString()
 
-  return paper.path(transformedPath).attr({ ...options.lineattr, fill: '#000' })
+  return paper.path(transformedPath).attr({
+    ...options.lineattr,
+    fill: '#000',
+    ...(shouldApplySnappingStyle && options.arrowSnappingStyle)
+  })
 }
 
 function arrowDashedOpenAngle(
@@ -372,7 +500,8 @@ function arrowDashedOpenAngle(
   { pos: [point1] }: ArrowItem,
   arrowLength: number,
   arrowAngle: number,
-  options: RenderOptions
+  options: RenderOptions,
+  shouldApplySnappingStyle: boolean
 ) {
   const triangleLength = 10
   const triangleWidth = 5
@@ -403,7 +532,11 @@ function arrowDashedOpenAngle(
     .rotate(arrowAngle, point1.x, point1.y)
     .toString()
 
-  return paper.path(transformedPath).attr({ ...options.lineattr, fill: '#000' })
+  return paper.path(transformedPath).attr({
+    ...options.lineattr,
+    fill: '#000',
+    ...(shouldApplySnappingStyle && options.arrowSnappingStyle)
+  })
 }
 
 function arrowFailed(
@@ -411,7 +544,8 @@ function arrowFailed(
   { pos: [point1] }: ArrowItem,
   arrowLength: number,
   arrowAngle: number,
-  options: RenderOptions
+  options: RenderOptions,
+  shouldApplySnappingStyle: boolean
 ) {
   const arrowHeadLength = 10
   const arrowHeadWidth = 5
@@ -450,7 +584,11 @@ function arrowFailed(
     .rotate(arrowAngle, point1.x, point1.y)
     .toString()
 
-  return paper.path(transformedPath).attr({ ...options.lineattr, fill: '#000' })
+  return paper.path(transformedPath).attr({
+    ...options.lineattr,
+    fill: '#000',
+    ...(shouldApplySnappingStyle && options.arrowSnappingStyle)
+  })
 }
 
 function arrowBothEndsFilledTriangle(
@@ -458,7 +596,8 @@ function arrowBothEndsFilledTriangle(
   { pos: [point1] }: ArrowItem,
   arrowLength: number,
   arrowAngle: number,
-  options: RenderOptions
+  options: RenderOptions,
+  shouldApplySnappingStyle: boolean
 ) {
   const triangleLength = 10
   const triangleWidth = 5
@@ -480,7 +619,11 @@ function arrowBothEndsFilledTriangle(
     .rotate(arrowAngle, point1.x, point1.y)
     .toString()
 
-  return paper.path(transformedPath).attr({ ...options.lineattr, fill: '#000' })
+  return paper.path(transformedPath).attr({
+    ...options.lineattr,
+    fill: '#000',
+    ...(shouldApplySnappingStyle && options.arrowSnappingStyle)
+  })
 }
 
 function arrowEquilibriumFilledHalfBow(
@@ -488,7 +631,8 @@ function arrowEquilibriumFilledHalfBow(
   { pos: [point1] }: ArrowItem,
   arrowLength: number,
   arrowAngle: number,
-  options: RenderOptions
+  options: RenderOptions,
+  shouldApplySnappingStyle: boolean
 ) {
   const arrowLen = 9
   const lineOffset = 3.5
@@ -519,7 +663,11 @@ function arrowEquilibriumFilledHalfBow(
     .rotate(arrowAngle, point1.x, point1.y)
     .toString()
 
-  return paper.path(transformedPath).attr({ ...options.lineattr, fill: '#000' })
+  return paper.path(transformedPath).attr({
+    ...options.lineattr,
+    fill: '#000',
+    ...(shouldApplySnappingStyle && options.arrowSnappingStyle)
+  })
 }
 
 function arrowEquilibriumFilledTriangle(
@@ -527,7 +675,8 @@ function arrowEquilibriumFilledTriangle(
   { pos: [point1] }: ArrowItem,
   arrowLength: number,
   arrowAngle: number,
-  options: RenderOptions
+  options: RenderOptions,
+  shouldApplySnappingStyle: boolean
 ) {
   const arrowLen = 9
   const lineOffset = 3.5
@@ -562,7 +711,11 @@ function arrowEquilibriumFilledTriangle(
     .rotate(arrowAngle, point1.x, point1.y)
     .toString()
 
-  return paper.path(transformedPath).attr({ ...options.lineattr, fill: '#000' })
+  return paper.path(transformedPath).attr({
+    ...options.lineattr,
+    fill: '#000',
+    ...(shouldApplySnappingStyle && options.arrowSnappingStyle)
+  })
 }
 
 function arrowEquilibriumOpenAngle(
@@ -570,7 +723,8 @@ function arrowEquilibriumOpenAngle(
   { pos: [point1] }: ArrowItem,
   arrowLength: number,
   arrowAngle: number,
-  options: RenderOptions
+  options: RenderOptions,
+  shouldApplySnappingStyle: boolean
 ) {
   const width = 5
   const length = 7
@@ -600,7 +754,12 @@ function arrowEquilibriumOpenAngle(
     .rotate(arrowAngle, point1.x, point1.y)
     .toString()
 
-  return paper.path(transformedPath).attr(options.lineattr)
+  return paper.path(transformedPath).attr({
+    ...options.lineattr,
+    ...(shouldApplySnappingStyle && {
+      stroke: options.arrowSnappingStyle.stroke
+    })
+  })
 }
 
 function arrowUnbalancedEquilibriumFilledHalfBow(
@@ -608,7 +767,8 @@ function arrowUnbalancedEquilibriumFilledHalfBow(
   { pos: [point1] }: ArrowItem,
   arrowLength: number,
   arrowAngle: number,
-  options: RenderOptions
+  options: RenderOptions,
+  shouldApplySnappingStyle: boolean
 ) {
   const arrowLen = 9
   const lineOffset = 3.5
@@ -645,7 +805,11 @@ function arrowUnbalancedEquilibriumFilledHalfBow(
     .rotate(arrowAngle, point1.x, point1.y)
     .toString()
 
-  return paper.path(transformedPath).attr({ ...options.lineattr, fill: '#000' })
+  return paper.path(transformedPath).attr({
+    ...options.lineattr,
+    fill: '#000',
+    ...(shouldApplySnappingStyle && options.arrowSnappingStyle)
+  })
 }
 
 function arrowUnbalancedEquilibriumOpenHalfAngle(
@@ -653,7 +817,8 @@ function arrowUnbalancedEquilibriumOpenHalfAngle(
   { pos: [point1] }: ArrowItem,
   arrowLength: number,
   arrowAngle: number,
-  options: RenderOptions
+  options: RenderOptions,
+  shouldApplySnappingStyle: boolean
 ) {
   const width = 5
   const length = 7
@@ -686,7 +851,12 @@ function arrowUnbalancedEquilibriumOpenHalfAngle(
     .rotate(arrowAngle, point1.x, point1.y)
     .toString()
 
-  return paper.path(transformedPath).attr(options.lineattr)
+  return paper.path(transformedPath).attr({
+    ...options.lineattr,
+    ...(shouldApplySnappingStyle && {
+      stroke: options.arrowSnappingStyle.stroke
+    })
+  })
 }
 
 function arrowUnbalancedEquilibriumLargeFilledHalfBow(
@@ -694,7 +864,8 @@ function arrowUnbalancedEquilibriumLargeFilledHalfBow(
   { pos: [point1] }: ArrowItem,
   arrowLength: number,
   arrowAngle: number,
-  options: RenderOptions
+  options: RenderOptions,
+  shouldApplySnappingStyle: boolean
 ) {
   const arrowLen = 9
   const lineOffset = 3.5
@@ -731,7 +902,11 @@ function arrowUnbalancedEquilibriumLargeFilledHalfBow(
     .rotate(arrowAngle, point1.x, point1.y)
     .toString()
 
-  return paper.path(transformedPath).attr({ ...options.lineattr, fill: '#000' })
+  return paper.path(transformedPath).attr({
+    ...options.lineattr,
+    fill: '#000',
+    ...(shouldApplySnappingStyle && options.arrowSnappingStyle)
+  })
 }
 
 function arrowUnbalancedEquilibriumFilledHalfTriangle(
@@ -739,7 +914,8 @@ function arrowUnbalancedEquilibriumFilledHalfTriangle(
   { pos: [point1] }: ArrowItem,
   arrowLength: number,
   arrowAngle: number,
-  options: RenderOptions
+  options: RenderOptions,
+  shouldApplySnappingStyle: boolean
 ) {
   const arrowLen = 9
   const lineOffset = 3.5
@@ -773,7 +949,11 @@ function arrowUnbalancedEquilibriumFilledHalfTriangle(
     .rotate(arrowAngle, point1.x, point1.y)
     .toString()
 
-  return paper.path(transformedPath).attr({ ...options.lineattr, fill: '#000' })
+  return paper.path(transformedPath).attr({
+    ...options.lineattr,
+    fill: '#000',
+    ...(shouldApplySnappingStyle && options.arrowSnappingStyle)
+  })
 }
 
 function plus(paper: RaphaelPaper, point: Vec2, options: RenderOptions) {

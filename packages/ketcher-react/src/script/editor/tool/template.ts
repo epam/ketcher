@@ -28,7 +28,9 @@ import {
   Struct,
   fromFragmentDeletion,
   fromSgroupDeletion,
-  Action
+  Action,
+  MergeItems,
+  PasteItems
 } from 'ketcher-core'
 
 import utils from '../shared/utils'
@@ -37,12 +39,24 @@ import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems'
 import { MODES } from 'src/constants'
 import { Tool } from './Tool'
 
+interface TemplateToolDragContext {
+  xy0: Vec2
+  item: any
+  v0?: Vec2
+  sign1?: number
+  sign2?: number
+  mergeItems?: MergeItems | null
+  action?: Action | null
+  angle?: number
+  extra_bond?: boolean | null
+}
+
 class TemplateTool implements Tool {
   private readonly editor: Editor
   private readonly mode: any
   private readonly template: any
-  private readonly findItems: Array<string>
-  private dragCtx: any
+  private readonly findItems: Array<'functionalGroups' | 'bonds' | 'atoms'>
+  private dragCtx?: TemplateToolDragContext
   private targetGroupsIds: Array<number> = []
   private readonly isSaltOrSolvent: boolean
   private event: Event | undefined
@@ -270,7 +284,12 @@ class TemplateTool implements Tool {
     const eventPos = this.editor.render.page2obj(event)
 
     /* moving when attached to bond */
-    if (ci && ci.map === 'bonds' && !this.isModeFunctionalGroup) {
+    if (
+      ci &&
+      dragCtx.sign1 &&
+      ci.map === 'bonds' &&
+      !this.isModeFunctionalGroup
+    ) {
       const bond = this.struct.bonds.get(ci.id)
       let sign = getSign(this.struct, bond, eventPos)
 
@@ -293,7 +312,7 @@ class TemplateTool implements Tool {
           false
         ) as Array<any>
 
-        dragCtx.action = action
+        dragCtx.action = action as Action
         this.editor.update(dragCtx.action, true)
 
         dragCtx.mergeItems = getItemsToFuse(this.editor, pasteItems)
@@ -356,7 +375,7 @@ class TemplateTool implements Tool {
 
     // create new action
     dragCtx.angle = degrees
-    let action = null
+    let action: Action | null = null
     let pasteItems
 
     if (!ci) {
@@ -382,7 +401,7 @@ class TemplateTool implements Tool {
       )
       dragCtx.extra_bond = extraBond
     }
-    dragCtx.action = action
+    dragCtx.action = action as Action
 
     this.editor.update(dragCtx.action, true)
 
@@ -412,6 +431,8 @@ class TemplateTool implements Tool {
     /* after moving around bond */
     if (
       dragCtx.action &&
+      dragCtx.sign1 &&
+      dragCtx.sign2 &&
       ci &&
       ci.map === 'bonds' &&
       !this.isModeFunctionalGroup
@@ -437,7 +458,7 @@ class TemplateTool implements Tool {
     /* end */
 
     let action, functionalGroupRemoveAction
-    let pasteItems = null
+    let pasteItems: PasteItems | null = null
 
     if (
       ci?.map === 'functionalGroups' &&
@@ -535,7 +556,12 @@ class TemplateTool implements Tool {
           action = functionalGroupRemoveAction.mergeWith(action)
         }
         dragCtx.action = action
-      } else if (ci.map === 'bonds' && !this.isModeFunctionalGroup) {
+      } else if (
+        ci.map === 'bonds' &&
+        dragCtx.sign1 &&
+        dragCtx.sign2 &&
+        !this.isModeFunctionalGroup
+      ) {
         const promise = fromTemplateOnBondAction(
           restruct,
           this.template,

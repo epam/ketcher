@@ -984,14 +984,16 @@ export class Struct {
     }
   }
 
-  atomGetNeighbors(aid: number): Array<Neighbor> | undefined {
-    return this.atoms.get(aid)?.neighbors.map((nei) => {
-      const hb = this.halfBonds.get(nei)!
-      return {
-        aid: hb.end,
-        bid: hb.bid
-      }
-    })
+  atomGetNeighbors(aid: number): Array<Neighbor> {
+    return (
+      this.atoms.get(aid)?.neighbors.map((nei) => {
+        const hb = this.halfBonds.get(nei)!
+        return {
+          aid: hb.end,
+          bid: hb.bid
+        }
+      }) ?? []
+    )
   }
 
   getComponents() {

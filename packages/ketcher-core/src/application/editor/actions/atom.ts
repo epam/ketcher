@@ -36,6 +36,8 @@ import { removeAtomFromSgroupIfNeeded, removeSgroupIfNeeded } from './sgroup'
 import { Action } from './action'
 import { fromBondStereoUpdate } from './bond'
 import { without } from 'lodash/fp'
+import { ReStruct } from 'application/render'
+import assert from 'assert'
 
 export function fromAtomAddition(restruct, pos, atom) {
   atom = Object.assign({}, atom)
@@ -160,13 +162,11 @@ export function fromAtomsFragmentAttr(restruct, aids, newfrid) {
   return action.perform(restruct)
 }
 
-/**
- * @param restruct { ReStruct }
- * @param srcId { number }
- * @param dstId { number }
- * @return { Action }
- */
-export function fromAtomMerge(restruct, srcId, dstId) {
+export function fromAtomMerge(
+  restruct: ReStruct,
+  srcId: number,
+  dstId: number
+): Action {
   if (srcId === dstId) return new Action()
 
   const fragAction = new Action()
@@ -177,6 +177,7 @@ export function fromAtomMerge(restruct, srcId, dstId) {
   const atomNeighbors = restruct.molecule.atomGetNeighbors(srcId)
   atomNeighbors.forEach((nei) => {
     const bond = restruct.molecule.bonds.get(nei.bid)
+    assert(bond != null, `Unexpected error, bond "${nei.bid}" is undefined`)
 
     if (dstId === bond.begin || dstId === bond.end) {
       // src & dst have one nei
@@ -202,7 +203,9 @@ export function fromAtomMerge(restruct, srcId, dstId) {
     action.addOp(new BondDelete(nei.bid))
   })
 
-  const attrs = Atom.getAttrHash(restruct.molecule.atoms.get(srcId))
+  const atom = restruct.molecule.atoms.get(srcId)
+  assert(atom != null, `Unexpected error, atom "${srcId}" is undefined`)
+  const attrs = Atom.getAttrHash(atom)
 
   if (atomGetDegree(restruct, srcId) === 1 && attrs.label === '*') {
     attrs.label = 'C'
@@ -220,9 +223,8 @@ export function fromAtomMerge(restruct, srcId, dstId) {
 
   action.addOp(new AtomDelete(srcId))
   const dstAtomNeighbors = restruct.molecule.atomGetNeighbors(dstId)
-  const bond = restruct.molecule.bonds.get(
-    dstAtomNeighbors[0]?.bid || atomNeighbors[0]?.bid
-  )
+  const bondId = dstAtomNeighbors[0]?.bid || atomNeighbors[0]?.bid
+  const bond = restruct.molecule.bonds.get(bondId)
 
   return action
     .perform(restruct)

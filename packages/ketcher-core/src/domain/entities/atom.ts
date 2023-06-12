@@ -250,7 +250,7 @@ export class Atom {
   }
 
   static getAttrHash(atom: Atom) {
-    const attrs: any = {}
+    const attrs: Record<string, any> = {}
     for (const attr in Atom.attrlist) {
       if (typeof atom[attr] !== 'undefined') attrs[attr] = atom[attr]
     }

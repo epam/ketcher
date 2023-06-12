@@ -32,16 +32,26 @@ import { Action } from './action'
 import { Vec2 } from 'domain/entities'
 import { fromSgroupAddition } from './sgroup'
 
-export function fromPaste(restruct, pstruct, point, angle = 0) {
+export interface PasteItems {
+  atoms: number[]
+  bonds: number[]
+}
+
+export function fromPaste(
+  restruct,
+  pstruct,
+  point,
+  angle = 0
+): [Action, PasteItems] {
   const xy0 = getStructCenter(pstruct)
   const offset = Vec2.diff(point, xy0)
 
   const action = new Action()
 
-  const aidMap = new Map()
-  const fridMap = new Map()
+  const aidMap = new Map<number, number>()
+  const fridMap = new Map<number, number>()
 
-  const pasteItems: any = {
+  const pasteItems: PasteItems = {
     // only atoms and bonds now
     atoms: [],
     bonds: []

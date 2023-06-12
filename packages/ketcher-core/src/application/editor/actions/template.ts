@@ -23,7 +23,7 @@ import { fromBondStereoUpdate, fromBondsAttrs, fromBondAddition } from './bond'
 import { Action } from './action'
 import closest from '../shared/closest'
 import { fromAromaticTemplateOnBond } from './aromaticFusing'
-import { fromPaste } from './paste'
+import { fromPaste, PasteItems } from './paste'
 import utils from '../shared/utils'
 import { fromSgroupAddition } from './sgroup'
 
@@ -31,7 +31,12 @@ const benzeneMoleculeName = 'Benzene'
 const cyclopentadieneMoleculeName = 'Cyclopentadiene'
 const benzeneDoubleBondIndexes = [1, 4]
 
-export function fromTemplateOnCanvas(restruct, template, pos, angle) {
+export function fromTemplateOnCanvas(
+  restruct,
+  template,
+  pos,
+  angle
+): [Action, PasteItems] {
   const [action, pasteItems] = fromPaste(
     restruct,
     template.molecule,

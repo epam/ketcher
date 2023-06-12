@@ -14,6 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { ReStruct } from 'application/render'
+import { Vec2 } from 'domain/entities'
 import {
   RxnArrowAdd,
   RxnArrowDelete,
@@ -30,7 +32,13 @@ export function fromArrowAddition(restruct, pos, mode) {
   return action.perform(restruct)
 }
 
-export function fromArrowResizing(restruct, id, d, current, anchor) {
+export function fromArrowResizing(
+  restruct: ReStruct,
+  id: number,
+  d: Vec2,
+  current: Vec2,
+  anchor: Vec2 | null
+) {
   const action = new Action()
   action.addOp(new RxnArrowResize(id, d, current, anchor, false))
   return action.perform(restruct)

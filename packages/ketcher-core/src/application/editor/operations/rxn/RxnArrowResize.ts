@@ -14,16 +14,21 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Base from '../base'
-import { OperationType } from '../OperationType'
-import { Scale } from 'domain/helpers'
+import { ReStruct } from 'application/render'
+import assert from 'assert'
 import { RxnArrow, Vec2 } from 'domain/entities'
+import { Scale } from 'domain/helpers'
 import { tfx } from 'utilities'
+import { OperationType } from '../OperationType'
+import Base from '../base'
+
+export const ARROW_MAX_SNAPPING_ANGLE = Math.PI / 12 // 15°
+
 interface RxnArrowResizeData {
   id: number
-  d: any
+  d: Vec2
   current: Vec2
-  anchor: Vec2
+  anchor: Vec2 | null
   noinvalidate: boolean
 }
 export class RxnArrowResize extends Base {
@@ -31,21 +36,22 @@ export class RxnArrowResize extends Base {
 
   constructor(
     id: number,
-    d: any,
+    d: Vec2,
     current: Vec2,
-    anchor: any,
+    anchor: Vec2 | null,
     noinvalidate: boolean
   ) {
     super(OperationType.RXN_ARROW_RESIZE)
     this.data = { id, d, current, anchor, noinvalidate }
   }
 
-  execute(restruct: any): void {
+  execute(restruct: ReStruct): void {
     const struct = restruct.molecule
     const id = this.data.id
     const d = this.data.d
-    const current = this.data.current
+    let current = this.data.current
     const item = struct.rxnArrows.get(id)
+    assert(item != null)
     const anchor = this.data.anchor
     if (anchor) {
       const previousPos0 = item.pos[0].get_xy0()
@@ -59,9 +65,19 @@ export class RxnArrowResize extends Base {
       }
 
       if (
+        /**
+         *          (anchor)
+         *   (pos[1])   ^
+         *              |  ↘ (d)
+         *   (pos[0])   o —— > (current)
+         *
+         */
         tfx(anchor.x) === tfx(item.pos[1].x) &&
         tfx(anchor.y) === tfx(item.pos[1].y)
       ) {
+        const currentArrowVector = current.sub(previousPos0)
+        const snappedArrowVector = getSnappedArrowVector(currentArrowVector)
+        current = previousPos0.add(snappedArrowVector)
         item.pos[1].x = anchor.x = current.x
         current.x = previousPos1.x
         item.pos[1].y = anchor.y = current.y
@@ -69,9 +85,19 @@ export class RxnArrowResize extends Base {
       }
 
       if (
+        /**
+         *          (anchor)
+         *   (pos[0])   o
+         *              |  ↘ (d)
+         *   (pos[1])   x —— o  (current)
+         *
+         */
         tfx(anchor.x) === tfx(item.pos[0].x) &&
         tfx(anchor.y) === tfx(item.pos[0].y)
       ) {
+        const currentArrowVector = current.sub(previousPos1)
+        const snappedArrowVector = getSnappedArrowVector(currentArrowVector)
+        current = previousPos1.add(snappedArrowVector)
         item.pos[0].x = anchor.x = current.x
         current.x = previousPos0.x
         item.pos[0].y = anchor.y = current.y
@@ -95,7 +121,9 @@ export class RxnArrowResize extends Base {
         const diffY = current.y - anchor.y
 
         const diff = diffY * cosAngle - diffX * sinAngle
-        item.height -= diff
+        if (item.height !== undefined) {
+          item.height -= diff
+        }
 
         const [, , newMiddlePoint] = reItem.getReferencePoints()
 
@@ -106,9 +134,9 @@ export class RxnArrowResize extends Base {
       item.pos[1].add_(d)
     }
 
-    restruct.rxnArrows
-      .get(id)
-      .visel.translate(Scale.obj2scaled(d, restruct.render.options))
+    const reItem = restruct.rxnArrows.get(id)
+    assert(reItem != null)
+    reItem.visel.translate(Scale.obj2scaled(d, restruct.render.options))
     this.data.d = d.negated()
 
     if (!this.data.noinvalidate) {
@@ -125,4 +153,37 @@ export class RxnArrowResize extends Base {
       this.data.noinvalidate
     )
   }
+}
+
+export function getSnappedArrowVector(arrow: Vec2) {
+  const AXIS = {
+    POSITIVE_X: 0,
+    POSITIVE_Y: Math.PI / 2,
+    NEGATIVE_X: [Math.PI, -Math.PI],
+    NEGATIVE_Y: -Math.PI / 2
+  }
+  const oxAngle = arrow.oxAngle()
+  const arrowLength = arrow.length()
+  const isSnappingToPositiveXAxis =
+    Math.abs(oxAngle - AXIS.POSITIVE_X) <= ARROW_MAX_SNAPPING_ANGLE
+  if (isSnappingToPositiveXAxis) {
+    return new Vec2(arrowLength, 0)
+  }
+  const isSnappingToPositiveYAxis =
+    Math.abs(oxAngle - AXIS.POSITIVE_Y) <= ARROW_MAX_SNAPPING_ANGLE
+  if (isSnappingToPositiveYAxis) {
+    return new Vec2(0, arrowLength)
+  }
+  const isSnappingToNegativeXAxis =
+    Math.abs(oxAngle - AXIS.NEGATIVE_X[0]) <= ARROW_MAX_SNAPPING_ANGLE ||
+    Math.abs(oxAngle - AXIS.NEGATIVE_X[1]) <= ARROW_MAX_SNAPPING_ANGLE
+  if (isSnappingToNegativeXAxis) {
+    return new Vec2(-arrowLength, 0)
+  }
+  const isSnappingToNegativeYAxis =
+    Math.abs(oxAngle - AXIS.NEGATIVE_Y) <= ARROW_MAX_SNAPPING_ANGLE
+  if (isSnappingToNegativeYAxis) {
+    return new Vec2(0, -arrowLength)
+  }
+  return arrow
 }

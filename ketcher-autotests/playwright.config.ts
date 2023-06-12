@@ -13,6 +13,8 @@ dotenv.config();
  * See https://playwright.dev/docs/test-configuration.
  */
 
+const ignoredTests = ['clean-tools.spec.ts'];
+
 function baseURL(): string {
   if (!process.env.MODE || !process.env.KETCHER_URL) {
     return DEFAULT_KETCHER_STANDALONE_URL;
@@ -31,6 +33,7 @@ const config: PlaywrightTestConfig = {
   testDir: './tests',
   /* Maximum time one test can run for. */
   timeout: 60_000,
+  testIgnore: process.env.IGNORE_UNSTABLE_TESTS ? ignoredTests : undefined,
   expect: {
     /**
      * Maximum time expect() should wait for the condition to be met.

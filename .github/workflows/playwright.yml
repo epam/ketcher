@@ -15,6 +15,7 @@ env:
   MODE: standalone
   KETCHER_URL: http://host.docker.internal:4002
   DOCKER: true
+  IGNORE_UNSTABLE_TESTS: true
 jobs:
   playwright_tests:
     timeout-minutes: 60

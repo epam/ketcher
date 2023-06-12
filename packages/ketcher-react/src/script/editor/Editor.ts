@@ -101,6 +101,11 @@ function selectStereoFlagsIfNecessary(
   return stereoFlags
 }
 
+export type FloatingToolsParams = {
+  visible?: boolean
+  rotateHandlePosition?: { x: number; y: number }
+}
+
 export interface Selection {
   atoms?: Array<number>
   bonds?: Array<number>
@@ -142,6 +147,7 @@ class Editor implements KetcherEditor {
     showInfo: PipelineSubscription
     apiSettings: PipelineSubscription
     cursor: Subscription
+    updateFloatingTools: Subscription<FloatingToolsParams>
   }
 
   lastEvent: any
@@ -195,7 +201,8 @@ class Editor implements KetcherEditor {
       confirm: new PipelineSubscription(),
       cursor: new PipelineSubscription(),
       showInfo: new PipelineSubscription(),
-      apiSettings: new PipelineSubscription()
+      apiSettings: new PipelineSubscription(),
+      updateFloatingTools: new Subscription()
     }
 
     domEventSetup(this, clientArea)
@@ -234,13 +241,13 @@ class Editor implements KetcherEditor {
       this.hoverIcon.hide(true)
     }
 
+    if (!tool || tool.isNotActiveTool) {
+      return null
+    }
+
     const isSelectToolChosen = name === 'select'
     if (!isSelectToolChosen) {
       this.rotateController.clean()
-    }
-
-    if (!tool || tool.isNotActiveTool) {
-      return null
     }
 
     this._tool = tool

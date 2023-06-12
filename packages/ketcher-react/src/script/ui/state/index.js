@@ -30,6 +30,7 @@ import { pick } from 'lodash/fp'
 import requestReducer from './request'
 import thunk from 'redux-thunk'
 import toolbarReducer from './toolbar'
+import floatingToolsReducer from './floatingTools'
 
 export { onAction, load }
 
@@ -45,7 +46,8 @@ const shared = combineReducers({
   templates: templatesReducer,
   functionalGroups: functionalGroupsReducer,
   saltsAndSolvents: saltsAndSolventsReducer,
-  requestsStatuses: requestReducer
+  requestsStatuses: requestReducer,
+  floatingTools: floatingToolsReducer
 })
 
 function getRootReducer(setEditor) {

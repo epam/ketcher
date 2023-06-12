@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Atom, Bond, Vec2 } from 'domain/entities'
+import { Atom, Bond, Struct, Vec2 } from 'domain/entities'
 import { AtomAdd, BondAdd, BondAttr, CalcImplicitH } from '../operations'
 import { atomForNewBond, atomGetAttr } from './utils'
 import { fromAtomsAttrs, mergeSgroups } from './atom'
@@ -28,6 +28,7 @@ import utils from '../shared/utils'
 import { fromSgroupAddition } from './sgroup'
 
 const benzeneMoleculeName = 'Benzene'
+const cyclopentadieneMoleculeName = 'Cyclopentadiene'
 const benzeneDoubleBondIndexes = [1, 4]
 
 export function fromTemplateOnCanvas(restruct, template, pos, angle) {
@@ -207,6 +208,44 @@ export function fromTemplateOnBondAction(
   )
 }
 
+function getConnectingBond(
+  template: Struct,
+  struct: Struct,
+  bondId: number,
+  bond: Bond
+) {
+  const isBenzeneTemplate = template.name === benzeneMoleculeName
+  const isCyclopentadieneTemplate =
+    template.name === cyclopentadieneMoleculeName
+  if (template.bonds.size && (isBenzeneTemplate || isCyclopentadieneTemplate)) {
+    const { beginBondIds, endBondIds } = Bond.getBondNeighbourIds(
+      struct,
+      bondId
+    )
+    const isOnlyTwoConnectingBonds =
+      beginBondIds.length === 1 && endBondIds.length === 1
+
+    if (!isOnlyTwoConnectingBonds) {
+      return null
+    }
+    const beginBond = struct.bonds.get(beginBondIds[0])
+    const endBond = struct.bonds.get(endBondIds[0])
+
+    if (!beginBond || !endBond) {
+      throw new Error('Incorrect bond id was provided')
+    }
+
+    if (isBenzeneTemplate) {
+      return Bond.getBenzeneConnectingBondType(bond, beginBond, endBond)
+    }
+
+    if (isCyclopentadieneTemplate) {
+      return Bond.getCyclopentadieneFusingBondType(bond, beginBond, endBond)
+    }
+  }
+  return null
+}
+
 function fromTemplateOnBond(restruct, template, bid, flip) {
   // TODO: refactor function !!
   const action = new Action()
@@ -273,25 +312,8 @@ function fromTemplateOnBond(restruct, template, bid, flip) {
   // uses specific fusing rules when attaching to a bond
   // that is connected exactly to one bond on each side.
   // For more info please refer to: https://github.com/epam/ketcher/issues/1855
-  let isFusingBenzeneBySpecialRules = false
-  let benzeneConnectingBondType: any = null
-
-  const isBenzeneTemplate = tmpl.name === benzeneMoleculeName
-  if (tmpl.bonds.size && isBenzeneTemplate) {
-    const { beginBondIds, endBondIds } = Bond.getBondNeighbourIds(struct, bid)
-    const isOnlyTwoConnectingBonds =
-      beginBondIds.length === 1 && endBondIds.length === 1
-    if (isOnlyTwoConnectingBonds) {
-      const beginBond = struct.bonds.get(beginBondIds[0])
-      const endBond = struct.bonds.get(endBondIds[0])
-      benzeneConnectingBondType = Bond.getBenzeneConnectingBondType(
-        bond,
-        beginBond,
-        endBond
-      )
-      isFusingBenzeneBySpecialRules = benzeneConnectingBondType !== null
-    }
-  }
+  const fusingBondType = getConnectingBond(tmpl, struct, bid, bond)
+  const isFusingBenzeneBySpecialRules = fusingBondType !== null
 
   tmpl.bonds.forEach((tBond, tBondIndex) => {
     const existId = struct.findBondId(
@@ -308,12 +330,35 @@ function fromTemplateOnBond(restruct, template, bid, flip) {
       const newBondId = operation.data.bid
 
       if (isFusingBenzeneBySpecialRules) {
-        const newBondType = benzeneDoubleBondIndexes.includes(tBondIndex)
-          ? Bond.PATTERN.TYPE.DOUBLE
-          : Bond.PATTERN.TYPE.SINGLE
-        action.addOp(
-          new BondAttr(newBondId, 'type', newBondType).perform(restruct)
-        )
+        const isBenzeneTemplate = tmpl.name === benzeneMoleculeName
+        const isCyclopentadieneTemplate =
+          tmpl.name === cyclopentadieneMoleculeName
+        if (isBenzeneTemplate) {
+          const newBondType = benzeneDoubleBondIndexes.includes(tBondIndex)
+            ? Bond.PATTERN.TYPE.DOUBLE
+            : Bond.PATTERN.TYPE.SINGLE
+          action.addOp(
+            new BondAttr(newBondId, 'type', newBondType).perform(restruct)
+          )
+        }
+        if (isCyclopentadieneTemplate) {
+          const { beginBondIds, endBondIds } = Bond.getBondNeighbourIds(
+            struct,
+            bid
+          )
+          const bondBegin = struct.bonds.get(beginBondIds[0])!
+          const bondEnd = struct.bonds.get(endBondIds[0])!
+          const newBondType = Bond.getCyclopentadieneDoubleBondIndexes(
+            bond,
+            bondBegin,
+            bondEnd
+          ).includes(tBondIndex)
+            ? Bond.PATTERN.TYPE.DOUBLE
+            : Bond.PATTERN.TYPE.SINGLE
+          action.addOp(
+            new BondAttr(newBondId, 'type', newBondType).perform(restruct)
+          )
+        }
       }
 
       pasteItems.bonds.push(newBondId)
@@ -321,9 +366,9 @@ function fromTemplateOnBond(restruct, template, bid, flip) {
       const commonBond = bond.type > tmplBond.type ? bond : tmplBond
       action.mergeWith(fromBondsAttrs(restruct, existId, commonBond, true))
 
-      if (isFusingBenzeneBySpecialRules && benzeneConnectingBondType) {
+      if (isFusingBenzeneBySpecialRules && fusingBondType) {
         action.addOp(
-          new BondAttr(bid, 'type', benzeneConnectingBondType).perform(restruct)
+          new BondAttr(bid, 'type', fusingBondType).perform(restruct)
         )
       }
     }

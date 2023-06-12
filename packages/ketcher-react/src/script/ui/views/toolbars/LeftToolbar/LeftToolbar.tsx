@@ -30,15 +30,13 @@ import {
   mappingOptions,
   rGroupOptions,
   selectOptions,
-  shapeOptions,
-  transformOptions
+  shapeOptions
 } from './leftToolbarOptions'
 
 import { ArrowScroll } from '../ArrowScroll'
 import { Bond } from './Bond'
 import { RGroup } from './RGroup'
 import { Shape } from './Shape'
-import { Transform } from './Transform'
 import classes from './LeftToolbar.module.less'
 import clsx from 'clsx'
 import { useInView } from 'react-intersection-observer'
@@ -102,8 +100,6 @@ const LeftToolbar = (props: Props) => {
           switch (item.id) {
             case 'bond-common':
               return <Bond {...rest} height={height} key={item.id} />
-            case 'transform-rotate':
-              return <Transform {...rest} height={height} key={item.id} />
             case 'rgroup':
               return <RGroup {...rest} key={item.id} />
             case 'shapes':
@@ -154,16 +150,6 @@ const LeftToolbar = (props: Props) => {
         <Group
           className={classes.groupItem}
           items={[{ id: 'charge-plus' }, { id: 'charge-minus' }]}
-        />
-
-        <Group
-          className={classes.groupItem}
-          items={[
-            {
-              id: 'transforms',
-              options: transformOptions
-            }
-          ]}
         />
 
         <Group className={classes.groupItem} items={[{ id: 'sgroup' }]} />

@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 import styled from '@emotion/styled'
+import { EmptyFunction } from 'helpers'
 import { useAppDispatch } from 'hooks'
 import { useState } from 'react'
 import { toggleMonomerFavorites } from 'state/library'
@@ -29,7 +30,7 @@ export type MonomerItemType = {
 
 interface MonomerItemProps {
   item: MonomerItemType
-  onClick: () => void
+  onClick?: () => void
   onStarClick?: any
 }
 
@@ -110,14 +111,17 @@ const Card = styled.div<{ code: string }>`
   }
 `
 
-const MonomerItem = (props: MonomerItemProps) => {
-  const { item, onClick } = props
+const MonomerItem = ({ item, onClick = EmptyFunction }: MonomerItemProps) => {
   const [favorite, setFavorite] = useState(item.favorite)
 
   const dispatch = useAppDispatch()
 
   return (
-    <Card onClick={onClick} code={item.props.MonomerNaturalAnalogCode}>
+    <Card
+      onClick={onClick}
+      code={item.props.MonomerNaturalAnalogCode}
+      data-testid={item.props.MonomerNaturalAnalogCode}
+    >
       <span>{item.label}</span>
       <div
         onClick={(event) => {

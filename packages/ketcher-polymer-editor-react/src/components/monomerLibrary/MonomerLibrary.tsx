@@ -13,17 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { createContext, useState } from 'react'
+import { useState } from 'react'
 import { Tabs } from 'components/shared/Tabs'
 import { Icon } from 'components/shared/icon'
 import styled from '@emotion/styled'
 import { tabsContent } from 'components/monomerLibrary/tabsContent'
 import { useAppDispatch } from 'hooks'
 import { setSearchFilter } from 'state/library'
-
-export const LibraryContext = createContext({
-  filterText: ''
-})
 
 const MonomerLibraryContainer = styled.div(({ theme }) => ({
   width: '254px',

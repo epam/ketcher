@@ -16,14 +16,14 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
-import { FileDrop } from './FileDrop'
+import { FileDrop, FileDropProps } from './FileDrop'
 
 const mockProps = {
   buttonLabel: 'Open from file',
   textLabel: 'or drag file here',
   iconName: 'arrow-up',
   onDropAccepted: jest.fn()
-}
+} as FileDropProps
 
 const mockOptionalProps = {
   disabled: true,

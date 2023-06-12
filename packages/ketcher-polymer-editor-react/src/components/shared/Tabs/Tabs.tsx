@@ -18,26 +18,26 @@ import { Tabs, Tab } from '@mui/material'
 import { ReactElement, useState } from 'react'
 import Box from '@mui/material/Box'
 import styled from '@emotion/styled'
-import { CSSObject } from '@emotion/core'
 import { scrollbarThin } from 'theming/mixins'
 
-function TabPanel({ children, value, index, ...other }) {
-  const style: Record<string, CSSObject> = {
-    backgroundColor: '#eef2f5',
-    flexGrow: 1,
-    padding: '16px 12px',
-    overflowY: 'scroll'
-  }
+interface TabPanelProps {
+  index: number
+  value: number
+  children: JSX.Element | Array<JSX.Element>
+}
+
+const TabPanelDiv = styled.div(() => ({
+  backgroundColor: '#eef2f5',
+  flexGrow: 1,
+  padding: '16px 12px',
+  overflowY: 'scroll'
+}))
+
+function TabPanel({ children, value, index }: TabPanelProps) {
   return (
-    <div
-      role="tabpanel"
-      style={style}
-      hidden={value !== index}
-      id={index}
-      {...other}
-    >
+    <TabPanelDiv role="tabpanel" hidden={value !== index} id={index.toString()}>
       {value === index && <Box>{children}</Box>}
-    </div>
+    </TabPanelDiv>
   )
 }
 

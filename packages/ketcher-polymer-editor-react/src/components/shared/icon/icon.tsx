@@ -93,7 +93,7 @@ const iconMap = {
 type IconNameType = keyof typeof iconMap
 
 type IconPropsType = {
-  name: string
+  name: IconNameType
   className?: string
 }
 

@@ -9,10 +9,10 @@ Object {
         class="css-9brf46"
       >
         <div
-          class="css-2jv7sj"
+          class="css-d0xj19"
         >
           <button
-            class="MuiButtonBase-root css-1u2dyik-MuiButtonBase-root"
+            class="MuiButtonBase-root css-19hmuzh-MuiButtonBase-root"
             role="button"
             tabindex="0"
             title="Paste from Clipboard"
@@ -24,12 +24,12 @@ Object {
             />
           </button>
           <icon-capital-t.svg
-            fill="#333333"
+            fill="#525252"
             role="img"
           />
         </div>
         <div
-          class="css-2jv7sj"
+          class="css-d0xj19"
         >
           <div
             role="button"
@@ -46,7 +46,7 @@ Object {
               class="css-1gnig72"
             >
               <button
-                class="MuiButtonBase-root css-1u2dyik-MuiButtonBase-root"
+                class="MuiButtonBase-root css-19hmuzh-MuiButtonBase-root"
                 role="button"
                 tabindex="0"
                 title="Open from file"
@@ -61,6 +61,10 @@ Object {
                 or drag file here
               </span>
             </div>
+            <icon-arrow-upward.svg
+              fill="#525252"
+              role="img"
+            />
           </div>
         </div>
       </div>
@@ -71,10 +75,10 @@ Object {
       class="css-9brf46"
     >
       <div
-        class="css-2jv7sj"
+        class="css-d0xj19"
       >
         <button
-          class="MuiButtonBase-root css-1u2dyik-MuiButtonBase-root"
+          class="MuiButtonBase-root css-19hmuzh-MuiButtonBase-root"
           role="button"
           tabindex="0"
           title="Paste from Clipboard"
@@ -86,12 +90,12 @@ Object {
           />
         </button>
         <icon-capital-t.svg
-          fill="#333333"
+          fill="#525252"
           role="img"
         />
       </div>
       <div
-        class="css-2jv7sj"
+        class="css-d0xj19"
       >
         <div
           role="button"
@@ -108,7 +112,7 @@ Object {
             class="css-1gnig72"
           >
             <button
-              class="MuiButtonBase-root css-1u2dyik-MuiButtonBase-root"
+              class="MuiButtonBase-root css-19hmuzh-MuiButtonBase-root"
               role="button"
               tabindex="0"
               title="Open from file"
@@ -123,6 +127,10 @@ Object {
               or drag file here
             </span>
           </div>
+          <icon-arrow-upward.svg
+            fill="#525252"
+            role="img"
+          />
         </div>
       </div>
     </div>

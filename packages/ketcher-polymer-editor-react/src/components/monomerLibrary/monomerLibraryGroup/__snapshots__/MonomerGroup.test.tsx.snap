@@ -6,74 +6,79 @@ Object {
   "baseElement": <body>
     <div>
       <div
-        style="display: flex; flex-direction: row; margin: 0px 12px 12px;"
+        class="css-tt4wq6"
       >
         <div
-          class="css-1l7f088"
+          class="css-a0lsh8"
         >
           <span>
             Mock title
           </span>
         </div>
         <div
-          class="css-yd6q9z"
+          class="css-mr91bl"
         >
           <div
-            class="css-vs0i3p"
+            class="css-yh8w4g"
+            data-testid="R"
           >
             <span>
               R
             </span>
             <div
-              class="star"
+              class="star "
             >
               ★
             </div>
           </div>
           <div
-            class="css-vs0i3p"
+            class="css-116k1d1"
+            data-testid="A"
           >
             <span>
               m
             </span>
             <div
-              class="star"
+              class="star "
             >
               ★
             </div>
           </div>
           <div
-            class="css-vs0i3p"
+            class="css-2w2dpv"
+            data-testid="D"
           >
             <span>
               d
             </span>
             <div
-              class="star"
+              class="star "
             >
               ★
             </div>
           </div>
           <div
-            class="css-vs0i3p"
+            class="css-yh8w4g"
+            data-testid="R"
           >
             <span>
               ar
             </span>
             <div
-              class="star"
+              class="star "
             >
               ★
             </div>
           </div>
           <div
-            class="css-vs0i3p"
+            class="css-7p46hw"
+            data-testid="L"
           >
             <span>
               Ld
             </span>
             <div
-              class="star"
+              class="star "
             >
               ★
             </div>
@@ -84,74 +89,79 @@ Object {
   </body>,
   "container": <div>
     <div
-      style="display: flex; flex-direction: row; margin: 0px 12px 12px;"
+      class="css-tt4wq6"
     >
       <div
-        class="css-1l7f088"
+        class="css-a0lsh8"
       >
         <span>
           Mock title
         </span>
       </div>
       <div
-        class="css-yd6q9z"
+        class="css-mr91bl"
       >
         <div
-          class="css-vs0i3p"
+          class="css-yh8w4g"
+          data-testid="R"
         >
           <span>
             R
           </span>
           <div
-            class="star"
+            class="star "
           >
             ★
           </div>
         </div>
         <div
-          class="css-vs0i3p"
+          class="css-116k1d1"
+          data-testid="A"
         >
           <span>
             m
           </span>
           <div
-            class="star"
+            class="star "
           >
             ★
           </div>
         </div>
         <div
-          class="css-vs0i3p"
+          class="css-2w2dpv"
+          data-testid="D"
         >
           <span>
             d
           </span>
           <div
-            class="star"
+            class="star "
           >
             ★
           </div>
         </div>
         <div
-          class="css-vs0i3p"
+          class="css-yh8w4g"
+          data-testid="R"
         >
           <span>
             ar
           </span>
           <div
-            class="star"
+            class="star "
           >
             ★
           </div>
         </div>
         <div
-          class="css-vs0i3p"
+          class="css-7p46hw"
+          data-testid="L"
         >
           <span>
             Ld
           </span>
           <div
-            class="star"
+            class="star "
           >
             ★
           </div>
@@ -219,67 +229,72 @@ Object {
   "baseElement": <body>
     <div>
       <div
-        style="display: flex; flex-direction: row; margin: 0px 12px 12px;"
+        class="css-tt4wq6"
       >
         <div
-          class="css-yd6q9z"
+          class="css-mr91bl"
         >
           <div
-            class="css-vs0i3p"
+            class="css-yh8w4g"
+            data-testid="R"
           >
             <span>
               R
             </span>
             <div
-              class="star"
+              class="star "
             >
               ★
             </div>
           </div>
           <div
-            class="css-vs0i3p"
+            class="css-116k1d1"
+            data-testid="A"
           >
             <span>
               m
             </span>
             <div
-              class="star"
+              class="star "
             >
               ★
             </div>
           </div>
           <div
-            class="css-vs0i3p"
+            class="css-2w2dpv"
+            data-testid="D"
           >
             <span>
               d
             </span>
             <div
-              class="star"
+              class="star "
             >
               ★
             </div>
           </div>
           <div
-            class="css-vs0i3p"
+            class="css-yh8w4g"
+            data-testid="R"
           >
             <span>
               ar
             </span>
             <div
-              class="star"
+              class="star "
             >
               ★
             </div>
           </div>
           <div
-            class="css-vs0i3p"
+            class="css-7p46hw"
+            data-testid="L"
           >
             <span>
               Ld
             </span>
             <div
-              class="star"
+              class="star "
             >
               ★
             </div>
@@ -290,67 +305,72 @@ Object {
   </body>,
   "container": <div>
     <div
-      style="display: flex; flex-direction: row; margin: 0px 12px 12px;"
+      class="css-tt4wq6"
     >
       <div
-        class="css-yd6q9z"
+        class="css-mr91bl"
       >
         <div
-          class="css-vs0i3p"
+          class="css-yh8w4g"
+          data-testid="R"
         >
           <span>
             R
           </span>
           <div
-            class="star"
+            class="star "
           >
             ★
           </div>
         </div>
         <div
-          class="css-vs0i3p"
+          class="css-116k1d1"
+          data-testid="A"
         >
           <span>
             m
           </span>
           <div
-            class="star"
+            class="star "
           >
             ★
           </div>
         </div>
         <div
-          class="css-vs0i3p"
+          class="css-2w2dpv"
+          data-testid="D"
         >
           <span>
             d
           </span>
           <div
-            class="star"
+            class="star "
           >
             ★
           </div>
         </div>
         <div
-          class="css-vs0i3p"
+          class="css-yh8w4g"
+          data-testid="R"
         >
           <span>
             ar
           </span>
           <div
-            class="star"
+            class="star "
           >
             ★
           </div>
         </div>
         <div
-          class="css-vs0i3p"
+          class="css-7p46hw"
+          data-testid="L"
         >
           <span>
             Ld
           </span>
           <div
-            class="star"
+            class="star "
           >
             ★
           </div>

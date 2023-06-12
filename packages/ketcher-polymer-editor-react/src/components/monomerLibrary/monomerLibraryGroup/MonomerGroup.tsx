@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+import { EmptyFunction } from 'helpers'
 import { MonomerItem, MonomerItemType } from '../monomerLibraryItem'
 import styled from '@emotion/styled'
 
 interface MonomerGroupProps {
   items: MonomerItemType[]
-  onItemClick: (item: MonomerItemType) => void
+  onItemClick?: (item: MonomerItemType) => void
   title?: string
 }
 
@@ -61,9 +62,11 @@ const GroupTitle = styled.div`
   margin: 0;
 `
 
-const MonomerGroup = (props: MonomerGroupProps) => {
-  const { items, title, onItemClick } = props
-
+const MonomerGroup = ({
+  items,
+  title,
+  onItemClick = EmptyFunction
+}: MonomerGroupProps) => {
   return (
     <GroupContainer>
       {title && (

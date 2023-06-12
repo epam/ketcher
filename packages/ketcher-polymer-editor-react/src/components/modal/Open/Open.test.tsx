@@ -15,8 +15,7 @@
  ***************************************************************************/
 
 import React from 'react'
-import { render, screen } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { fireEvent, render, screen } from '@testing-library/react'
 
 import { Open } from './Open'
 
@@ -38,17 +37,17 @@ describe('Open component', () => {
     const clipboardButton = screen.getByRole('button', {
       name: 'Paste from Clipboard'
     })
-    userEvent.click(clipboardButton)
+    fireEvent.click(clipboardButton)
 
     const clipboardTextarea = screen.getByRole('textbox')
-    userEvent.type(clipboardTextarea, mockTypedText)
+    fireEvent.change(clipboardTextarea, { target: { value: mockTypedText } })
     expect(clipboardTextarea).toBeInTheDocument()
     expect(clipboardTextarea).toHaveValue(mockTypedText)
 
     const newProjectButton = screen.getByRole('button', {
       name: 'Open as New Project'
     })
-    userEvent.click(newProjectButton)
+    fireEvent.click(newProjectButton)
     expect(mockProps.onClose).toHaveBeenCalled()
   })
 })

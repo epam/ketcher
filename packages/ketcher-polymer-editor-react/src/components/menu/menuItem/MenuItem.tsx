@@ -18,6 +18,7 @@ import { MenuItem as MuiMenuItem } from '@mui/material'
 import { css, useTheme } from '@emotion/react'
 import { useMenuContext } from '../../../hooks/useMenuContext'
 import { useCallback } from 'react'
+import { IconNameType } from 'components/shared/icon/icon'
 
 const StyledMenuButton = ({ isActive, onClick, children }) => {
   const theme = useTheme()
@@ -53,7 +54,7 @@ const StyledMenuButton = ({ isActive, onClick, children }) => {
 }
 
 type MenuItemProp = {
-  itemId: string
+  itemId: IconNameType
 }
 
 const MenuItem = ({ itemId }: MenuItemProp) => {

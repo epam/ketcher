@@ -15,9 +15,9 @@
  ***************************************************************************/
 
 import { ThemeOptions as MuiThemeOptions } from '@mui/material/styles'
-import { EditorTheme } from '.'
+import { EditorTheme, MonomerColorScheme } from '.'
 
-const monomerColors = {
+const monomerColors: Record<string, MonomerColorScheme> = {
   colorA: { regular: '#CCCBD6', hover: '#B8BBCC' },
   colorCM: { regular: '#FFE34C', hover: '#FFD700' },
   colorDQ: { regular: '#AD4551', hover: '#AB0014' },

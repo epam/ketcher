@@ -21,11 +21,46 @@ import { MonomerGroup } from './MonomerGroup'
 describe('Monomer Group', () => {
   const mockGroupProps = {
     groupItems: [
-      { label: 'R' },
-      { label: 'm' },
-      { label: 'd' },
-      { label: 'ar' },
-      { label: 'Ld' }
+      {
+        label: 'R',
+        props: {
+          MonomerNaturalAnalogCode: 'R',
+          MonomerName: 'RRMonomerName',
+          Name: 'RRName'
+        }
+      },
+      {
+        label: 'm',
+        props: {
+          MonomerNaturalAnalogCode: 'A',
+          MonomerName: 'mAMonomerName',
+          Name: 'mAName'
+        }
+      },
+      {
+        label: 'd',
+        props: {
+          MonomerNaturalAnalogCode: 'D',
+          MonomerName: 'dDMonomerName',
+          Name: 'dDName'
+        }
+      },
+      {
+        label: 'ar',
+        props: {
+          MonomerNaturalAnalogCode: 'R',
+          MonomerName: 'arRMonomerName',
+          Name: 'arRName'
+        }
+      },
+      {
+        label: 'Ld',
+        props: {
+          MonomerNaturalAnalogCode: 'L',
+          MonomerName: 'LdLMonomerName',
+          Name: 'LdLRName'
+        }
+      }
     ],
     groupTitle: 'Mock title'
   }
@@ -33,7 +68,7 @@ describe('Monomer Group', () => {
 
   it('should render correct without title prop', () => {
     const view = render(
-      withThemeProvider(
+      withThemeAndStoreProvider(
         <MonomerGroup
           items={mockGroupProps.groupItems}
           onItemClick={onItemClick}
@@ -50,7 +85,7 @@ describe('Monomer Group', () => {
   })
   it('should render correct with title prop', () => {
     const view = render(
-      withThemeProvider(
+      withThemeAndStoreProvider(
         <MonomerGroup
           items={mockGroupProps.groupItems}
           title={mockGroupProps.groupTitle}
@@ -66,7 +101,7 @@ describe('Monomer Group', () => {
   })
   it('callback for monomer item should be called for group items', () => {
     render(
-      withThemeProvider(
+      withThemeAndStoreProvider(
         <MonomerGroup
           items={mockGroupProps.groupItems}
           title={mockGroupProps.groupTitle}

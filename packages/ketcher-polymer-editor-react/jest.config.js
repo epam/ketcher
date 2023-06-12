@@ -5,7 +5,8 @@ module.exports = {
   transform: {
     '\\.(js|jsx)$': 'babel-jest',
     '^.+\\.(ts|tsx)$': 'ts-jest',
-    '\\.svg$': '<rootDir>/testFileTransformer.js'
+    '\\.svg$': '<rootDir>/testFileTransformer.js',
+    '\\.sdf$': '<rootDir>/textFileTransformer.js'
   },
   moduleNameMapper: {
     '\\.(css|less)$': 'identity-obj-proxy',
@@ -14,7 +15,8 @@ module.exports = {
     '^theming(.*)$': '<rootDir>/src/theming/$1',
     '^hooks(.*)$': '<rootDir>/src/hooks/$1',
     '^assets(.*)$': '<rootDir>/src/assets/$1',
-    '^helpers(.*)$': '<rootDir>/src/helpers/$1'
+    '^helpers(.*)$': '<rootDir>/src/helpers/$1',
+    '\\.sdf$': '<rootDir>/textFileTransformer.js'
   },
   setupFilesAfterEnv: ['<rootDir>/src/setupTests.tsx']
 }

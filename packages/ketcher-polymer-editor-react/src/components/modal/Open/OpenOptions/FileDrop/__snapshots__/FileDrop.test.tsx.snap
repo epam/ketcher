@@ -20,7 +20,7 @@ Object {
           class="css-1gnig72"
         >
           <button
-            class="MuiButtonBase-root css-1u2dyik-MuiButtonBase-root"
+            class="MuiButtonBase-root css-19hmuzh-MuiButtonBase-root"
             role="button"
             tabindex="0"
             title="Open from file"
@@ -35,6 +35,10 @@ Object {
             or drag file here
           </span>
         </div>
+        <icon-arrow-upward.svg
+          fill="#525252"
+          role="img"
+        />
       </div>
     </div>
   </body>,
@@ -54,7 +58,7 @@ Object {
         class="css-1gnig72"
       >
         <button
-          class="MuiButtonBase-root css-1u2dyik-MuiButtonBase-root"
+          class="MuiButtonBase-root css-19hmuzh-MuiButtonBase-root"
           role="button"
           tabindex="0"
           title="Open from file"
@@ -69,6 +73,10 @@ Object {
           or drag file here
         </span>
       </div>
+      <icon-arrow-upward.svg
+        fill="#525252"
+        role="img"
+      />
     </div>
   </div>,
   "debug": [Function],

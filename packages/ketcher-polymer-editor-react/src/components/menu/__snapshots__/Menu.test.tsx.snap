@@ -9,12 +9,12 @@ Object {
         class="css-10qeqvw"
       >
         <li
-          class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
+          class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
           role="menuitem"
           tabindex="-1"
         >
           <icon-open.svg
-            fill="#333333"
+            fill="#525252"
             role="img"
           />
           <span
@@ -26,12 +26,12 @@ Object {
         class="css-10qeqvw"
       >
         <li
-          class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
+          class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
           role="menuitem"
           tabindex="-1"
         >
           <icon-erase.svg
-            fill="#333333"
+            fill="#525252"
             role="img"
           />
           <span
@@ -45,12 +45,12 @@ Object {
             class="css-5su45f"
           >
             <li
-              class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
+              class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
               role="menuitem"
               tabindex="-1"
             >
               <icon-select-lasso.svg
-                fill="#333333"
+                fill="#525252"
                 role="img"
               />
               <span
@@ -61,32 +61,7 @@ Object {
               class="css-clax1l"
             >
               <icon-dropdown.svg
-                fill="#333333"
-                role="img"
-              />
-            </div>
-          </div>
-        </div>
-        <div
-          class="css-12wx08y"
-        >
-          <div
-            class="css-5su45f"
-          >
-            <li
-              class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
-              role="menuitem"
-              tabindex="-1"
-            >
-              <span
-                class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-              />
-            </li>
-            <div
-              class="css-clax1l"
-            >
-              <icon-dropdown.svg
-                fill="#333333"
+                fill="#525252"
                 role="img"
               />
             </div>
@@ -99,10 +74,14 @@ Object {
             class="css-5su45f"
           >
             <li
-              class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
+              class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
               role="menuitem"
               tabindex="-1"
             >
+              <icon-rectangle.svg
+                fill="#525252"
+                role="img"
+              />
               <span
                 class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
               />
@@ -111,7 +90,36 @@ Object {
               class="css-clax1l"
             >
               <icon-dropdown.svg
-                fill="#333333"
+                fill="#525252"
+                role="img"
+              />
+            </div>
+          </div>
+        </div>
+        <div
+          class="css-12wx08y"
+        >
+          <div
+            class="css-5su45f"
+          >
+            <li
+              class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
+              role="menuitem"
+              tabindex="-1"
+            >
+              <icon-rotate.svg
+                fill="#525252"
+                role="img"
+              />
+              <span
+                class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+              />
+            </li>
+            <div
+              class="css-clax1l"
+            >
+              <icon-dropdown.svg
+                fill="#525252"
                 role="img"
               />
             </div>
@@ -125,12 +133,12 @@ Object {
       class="css-10qeqvw"
     >
       <li
-        class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
+        class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
         role="menuitem"
         tabindex="-1"
       >
         <icon-open.svg
-          fill="#333333"
+          fill="#525252"
           role="img"
         />
         <span
@@ -142,12 +150,12 @@ Object {
       class="css-10qeqvw"
     >
       <li
-        class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
+        class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
         role="menuitem"
         tabindex="-1"
       >
         <icon-erase.svg
-          fill="#333333"
+          fill="#525252"
           role="img"
         />
         <span
@@ -161,12 +169,12 @@ Object {
           class="css-5su45f"
         >
           <li
-            class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
+            class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
             role="menuitem"
             tabindex="-1"
           >
             <icon-select-lasso.svg
-              fill="#333333"
+              fill="#525252"
               role="img"
             />
             <span
@@ -177,32 +185,7 @@ Object {
             class="css-clax1l"
           >
             <icon-dropdown.svg
-              fill="#333333"
-              role="img"
-            />
-          </div>
-        </div>
-      </div>
-      <div
-        class="css-12wx08y"
-      >
-        <div
-          class="css-5su45f"
-        >
-          <li
-            class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
-            role="menuitem"
-            tabindex="-1"
-          >
-            <span
-              class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-            />
-          </li>
-          <div
-            class="css-clax1l"
-          >
-            <icon-dropdown.svg
-              fill="#333333"
+              fill="#525252"
               role="img"
             />
           </div>
@@ -215,10 +198,14 @@ Object {
           class="css-5su45f"
         >
           <li
-            class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
+            class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
             role="menuitem"
             tabindex="-1"
           >
+            <icon-rectangle.svg
+              fill="#525252"
+              role="img"
+            />
             <span
               class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
             />
@@ -227,7 +214,36 @@ Object {
             class="css-clax1l"
           >
             <icon-dropdown.svg
-              fill="#333333"
+              fill="#525252"
+              role="img"
+            />
+          </div>
+        </div>
+      </div>
+      <div
+        class="css-12wx08y"
+      >
+        <div
+          class="css-5su45f"
+        >
+          <li
+            class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
+            role="menuitem"
+            tabindex="-1"
+          >
+            <icon-rotate.svg
+              fill="#525252"
+              role="img"
+            />
+            <span
+              class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+            />
+          </li>
+          <div
+            class="css-clax1l"
+          >
+            <icon-dropdown.svg
+              fill="#525252"
               role="img"
             />
           </div>

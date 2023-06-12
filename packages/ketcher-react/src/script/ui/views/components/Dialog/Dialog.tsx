@@ -27,6 +27,7 @@ import {
 import Icon from '../../../component/view/icon'
 import clsx from 'clsx'
 import styles from './Dialog.module.less'
+import { KETCHER_ROOT_NODE_CSS_SELECTOR } from 'src/constants'
 
 interface DialogParamsCallProps {
   onCancel: () => void
@@ -86,7 +87,7 @@ const Dialog: FC<PropsWithChildren & Props> = (props) => {
     return () => {
       ;(
         dialogRef.current
-          ?.closest('.Ketcher-root')
+          ?.closest(KETCHER_ROOT_NODE_CSS_SELECTOR)
           ?.getElementsByClassName('cliparea')[0] as HTMLElement
       ).focus()
     }

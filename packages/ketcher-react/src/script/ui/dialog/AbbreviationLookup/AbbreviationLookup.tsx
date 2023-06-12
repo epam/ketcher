@@ -1,15 +1,17 @@
 import { Portal } from '../../Portal'
 import {
-  CSSProperties,
   SyntheticEvent,
   useEffect,
   useMemo,
   useState,
   KeyboardEvent,
   ChangeEvent,
-  useRef
+  useRef,
+  useLayoutEffect
 } from 'react'
+import classes from './AbbreviationLookup.module.less'
 import { useDispatch, useSelector } from 'react-redux'
+import assert from 'assert'
 import { functionalGroupsSelector } from '../../state/functionalGroups/selectors'
 import { onAction } from '../../state'
 import { templatesLibSelector } from '../../state/templates/selectors'
@@ -26,11 +28,11 @@ import {
 } from '../../state/abbreviationLookup/selectors/selectors'
 import { closeAbbreviationLookup } from '../../state/abbreviationLookup'
 import { selectCursorPosition } from '../../state/common/selectors/selectors'
-
-const ABBREVIATION_PANEL_WIDTH = 250
+import { KETCHER_ROOT_NODE_CSS_SELECTOR } from 'src/constants'
 
 export const AbbreviationLookup = () => {
   const inputRef = useRef<HTMLInputElement | null>()
+  const autocompleteRef = useRef<HTMLInputElement | null>()
   const dispatch = useDispatch()
   const functionGroups = useSelector(functionalGroupsSelector)
   const templates = useSelector(templatesLibSelector)
@@ -39,11 +41,11 @@ export const AbbreviationLookup = () => {
   const initialLookupValue = useSelector(selectAbbreviationLookupValue)
   const cursorPosition = useSelector(selectCursorPosition)
   const usedCursorPositionRef = useRef(cursorPosition)
+  const [containerSize, setContainerSize] = useState({ width: 0, height: 0 })
 
   const [lookupValue, setLookupValue] = useState(initialLookupValue)
 
   const allTemplates = useMemo<Template[]>(() => {
-    // TODO check if this filtration is correct or not
     const uniqTemplates = uniqBy<Template>(
       [...functionGroups, ...templates, ...saltsAndSolvents],
       (template) => template.struct.name
@@ -56,12 +58,38 @@ export const AbbreviationLookup = () => {
     inputRef.current?.focus()
   }, [])
 
-  const portalStyle: CSSProperties = {
-    position: 'absolute',
-    left: `${usedCursorPositionRef.current.x - ABBREVIATION_PANEL_WIDTH / 2}px`,
-    top: `${usedCursorPositionRef.current.y}px`,
-    width: `${ABBREVIATION_PANEL_WIDTH}px`
-  }
+  useLayoutEffect(() => {
+    setContainerSize({
+      height: autocompleteRef.current?.offsetHeight ?? 0,
+      width: autocompleteRef.current?.offsetWidth ?? 0
+    })
+  }, [])
+
+  const portalStyle = useMemo(() => {
+    const parentNode = document.querySelector(KETCHER_ROOT_NODE_CSS_SELECTOR)
+    assert(parentNode !== null, 'Ketcher root node is required')
+    const parentRect = parentNode.getBoundingClientRect()
+
+    const maxLeft = parentRect.width - containerSize.width
+    const maxTop = parentRect.height - containerSize.height
+
+    const calculatedLeft =
+      usedCursorPositionRef.current.x -
+      parentRect.left -
+      containerSize.width / 2
+    const calculatedTop =
+      usedCursorPositionRef.current.y -
+      parentRect.top -
+      containerSize.height / 2
+
+    const left = Math.min(Math.max(0, calculatedLeft), maxLeft)
+    const top = Math.min(Math.max(0, calculatedTop), maxTop)
+
+    return {
+      left: `${left}px`,
+      top: `${top}px`
+    }
+  }, [containerSize])
 
   const handleOnChange = (
     _event: SyntheticEvent,
@@ -88,20 +116,26 @@ export const AbbreviationLookup = () => {
   }
 
   const handleBlur = () => {
-    closePanel()
+    // closePanel()
   }
 
   return (
-    <Portal isOpen={true} className="none" style={portalStyle}>
+    <Portal
+      isOpen={true}
+      className={classes.lookupContainer}
+      style={portalStyle}
+    >
       <MuiAutocomplete<Template, false, true>
-        disableClearable
-        fullWidth
+        ref={autocompleteRef}
         options={allTemplates}
+        inputValue={lookupValue}
         getOptionLabel={getOptionLabel}
         onChange={handleOnChange}
         onBlur={handleBlur}
-        inputValue={lookupValue}
         onKeyDown={handleKeyDown}
+        fullWidth
+        disableClearable
+        openOnFocus
         renderInput={(params) => {
           return (
             <TextField
@@ -109,7 +143,6 @@ export const AbbreviationLookup = () => {
               inputRef={inputRef}
               InputProps={{
                 ...params.InputProps,
-                // type: 'search',
                 autoComplete: 'new-password',
                 endAdornment: null,
                 onChange: (event: ChangeEvent<HTMLInputElement>) => {

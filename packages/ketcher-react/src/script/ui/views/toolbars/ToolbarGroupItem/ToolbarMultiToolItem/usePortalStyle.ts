@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import { CSSProperties, RefObject, useEffect, useState } from 'react'
+import { KETCHER_ROOT_NODE_CSS_SELECTOR } from 'src/constants'
 
 type HookParams = [RefObject<HTMLDivElement>, boolean]
 
@@ -27,7 +28,7 @@ function usePortalStyle([ref, isOpen]: HookParams): [CSSProperties] {
     }
 
     const editorRect = document
-      .querySelector('.Ketcher-root')
+      .querySelector(KETCHER_ROOT_NODE_CSS_SELECTOR)
       ?.getBoundingClientRect() || { top: 0, left: 0 }
     const menuItemRect = ref.current.getBoundingClientRect()
 

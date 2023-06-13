@@ -138,9 +138,6 @@ export const AbbreviationLookup = ({ options }: Props) => {
           input: classes.input,
           noOptions: classes.noOptions
         }}
-        // onClose={() => {
-        //   debugger
-        // }}
         renderInput={(params) => {
           return (
             <div className={classes.inputContainer} ref={params.InputProps.ref}>

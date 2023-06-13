@@ -273,7 +273,7 @@ function handleSgroupsTool({
       `unexpected error, sgroup with id "${hoveredItemId}" is not found`
     )
   }
-  const attachmentPoint = sGroup?.getAttAtomId(ctab.molecule)
+  const attachmentPoint = sGroup.getAttAtomId(ctab.molecule)
   deleteFunctionalGroups([hoveredItemId], ctab, action)
   action.mergeWith(
     fromAtomsAttrs(editor.render.ctab, attachmentPoint, atomProps, true)

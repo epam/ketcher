@@ -14,8 +14,76 @@
  * limitations under the License.
  ***************************************************************************/
 
+// stylelint-disable selector-pseudo-class-no-unknown
+@import '../../../../style/variables';
+
 .lookupContainer {
   position: absolute;
-  width: 250px;
+  width: 200px;
   background-color: white;
+}
+
+.inputContainer {
+  position: relative;
+}
+
+.input {
+  width: 100%;
+
+  &.input[type=text] {
+    border: 1.5px solid @color-primary-green;
+    padding: 5px 8px 5px 24px;
+    font-size: 12px;
+    line-height: 14px;
+
+    &:hover {
+      border: 1.5px solid @color-primary-green;
+    }
+  }
+}
+
+.searchIcon {
+  width: 17px;
+  height: 17px;
+  color: @color-primary;
+  position: absolute;
+  top: 50%;
+  left: 6px;
+  transform: translate(0, -50%);
+}
+
+.optionItem {
+  li& {
+    padding: 7px 8px 7px 6px;
+    border-left: 2px solid transparent;
+    font-size: 12px;
+    line-height: 14px;
+    font-weight: 400;
+  }
+
+  mark {
+    background-color: transparent;
+    font-weight: 700;
+  }
+}
+
+.noOptions {
+  font-size: 12px;
+  line-height: 14px;
+
+  &:global(.MuiAutocomplete-noOptions) {
+    padding: 8px;
+  }
+}
+
+.listBox {
+  ul& {
+    padding-top: 4px;
+    padding-bottom: 4px;
+  }
+
+  :global(li.MuiAutocomplete-option.Mui-focused), :global(li.MuiAutocomplete-option.Mui-focusVisible) {
+    border-left: 2px solid @color-primary-green;
+    background-color: #F3F5F7;
+  }
 }

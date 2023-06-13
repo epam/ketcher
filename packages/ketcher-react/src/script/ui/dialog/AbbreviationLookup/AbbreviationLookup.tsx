@@ -1,64 +1,57 @@
-import { Portal } from '../../Portal'
 import {
+  ChangeEvent,
+  KeyboardEvent,
+  MutableRefObject,
   SyntheticEvent,
   useEffect,
   useMemo,
-  useState,
-  KeyboardEvent,
-  ChangeEvent,
   useRef,
-  useLayoutEffect
+  useState
 } from 'react'
-import classes from './AbbreviationLookup.module.less'
 import { useDispatch, useSelector } from 'react-redux'
 import assert from 'assert'
-import { functionalGroupsSelector } from '../../state/functionalGroups/selectors'
-import { onAction } from '../../state'
-import { templatesLibSelector } from '../../state/templates/selectors'
-import { saltsAndSolventsSelector } from '../../state/saltsAndSolvents/selectors'
-import { Template } from '../template/TemplateTable'
-import { uniqBy, sortBy } from 'lodash'
 import MuiAutocomplete, {
   AutocompleteChangeReason
 } from '@mui/material/Autocomplete'
-import { TextField } from '@mui/material'
-import {
-  selectIsAbbreviationLookupOpen,
-  selectAbbreviationLookupValue
-} from '../../state/abbreviationLookup/selectors/selectors'
+import { KETCHER_ROOT_NODE_CSS_SELECTOR } from 'src/constants'
+import classes from './AbbreviationLookup.module.less'
+import { Portal } from '../../Portal'
+import { onAction } from '../../state'
+import { selectAbbreviationLookupValue } from '../../state/abbreviationLookup/selectors/selectors'
 import { closeAbbreviationLookup } from '../../state/abbreviationLookup'
 import { selectCursorPosition } from '../../state/common/selectors/selectors'
-import { KETCHER_ROOT_NODE_CSS_SELECTOR } from 'src/constants'
+import Icon from '../../component/view/icon'
+import {
+  getOptionLabel,
+  highlightMatchedText
+} from './AbbreviationLookup.utils'
+import {
+  AbbreviationOption,
+  AbbreviationType
+} from './AbbreviationLookup.types'
+import { useOptions } from './hooks/useOptions'
 
 export const AbbreviationLookup = () => {
   const inputRef = useRef<HTMLInputElement | null>()
   const autocompleteRef = useRef<HTMLInputElement | null>()
-  const dispatch = useDispatch()
-  const functionGroups = useSelector(functionalGroupsSelector)
-  const templates = useSelector(templatesLibSelector)
-  const saltsAndSolvents = useSelector(saltsAndSolventsSelector)
 
-  const initialLookupValue = useSelector(selectAbbreviationLookupValue)
+  const dispatch = useDispatch()
+
   const cursorPosition = useSelector(selectCursorPosition)
   const usedCursorPositionRef = useRef(cursorPosition)
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 })
 
+  const initialLookupValue = useSelector(selectAbbreviationLookupValue)
   const [lookupValue, setLookupValue] = useState(initialLookupValue)
+  const [loweredLookupValue, setLoweredLookupValue] = useState(() =>
+    initialLookupValue.toLowerCase()
+  )
 
-  const allTemplates = useMemo<Template[]>(() => {
-    const uniqTemplates = uniqBy<Template>(
-      [...functionGroups, ...templates, ...saltsAndSolvents],
-      (template) => template.struct.name
-    )
-
-    return sortBy(uniqTemplates, (template) => template.struct.name)
-  }, [functionGroups, saltsAndSolvents, templates])
+  const abbreviationOptions = useOptions()
 
   useEffect(() => {
     inputRef.current?.focus()
-  }, [])
 
-  useLayoutEffect(() => {
     setContainerSize({
       height: autocompleteRef.current?.offsetHeight ?? 0,
       width: autocompleteRef.current?.offsetWidth ?? 0
@@ -73,14 +66,8 @@ export const AbbreviationLookup = () => {
     const maxLeft = parentRect.width - containerSize.width
     const maxTop = parentRect.height - containerSize.height
 
-    const calculatedLeft =
-      usedCursorPositionRef.current.x -
-      parentRect.left -
-      containerSize.width / 2
-    const calculatedTop =
-      usedCursorPositionRef.current.y -
-      parentRect.top -
-      containerSize.height / 2
+    const calculatedLeft = usedCursorPositionRef.current.x - parentRect.left
+    const calculatedTop = usedCursorPositionRef.current.y - parentRect.top
 
     const left = Math.min(Math.max(0, calculatedLeft), maxLeft)
     const top = Math.min(Math.max(0, calculatedTop), maxTop)
@@ -93,17 +80,23 @@ export const AbbreviationLookup = () => {
 
   const handleOnChange = (
     _event: SyntheticEvent,
-    template: Template,
+    option: AbbreviationOption,
     reason: AutocompleteChangeReason
   ) => {
-    if (reason === 'selectOption') {
-      dispatch(closeAbbreviationLookup())
-      dispatch(onAction({ tool: 'template', opts: template }))
+    if (reason !== 'selectOption') {
+      return
+    }
+
+    closePanel()
+
+    if (option.type === AbbreviationType.Template) {
+      dispatch(onAction({ tool: 'template', opts: option.template }))
+    } else {
+      // TODO do something with atom tool here
     }
   }
 
   const closePanel = () => {
-    setLookupValue('')
     dispatch(closeAbbreviationLookup())
   }
 
@@ -116,7 +109,7 @@ export const AbbreviationLookup = () => {
   }
 
   const handleBlur = () => {
-    // closePanel()
+    closePanel()
   }
 
   return (
@@ -125,9 +118,9 @@ export const AbbreviationLookup = () => {
       className={classes.lookupContainer}
       style={portalStyle}
     >
-      <MuiAutocomplete<Template, false, true>
+      <MuiAutocomplete<AbbreviationOption, false, true>
         ref={autocompleteRef}
-        options={allTemplates}
+        options={abbreviationOptions}
         inputValue={lookupValue}
         getOptionLabel={getOptionLabel}
         onChange={handleOnChange}
@@ -136,36 +129,52 @@ export const AbbreviationLookup = () => {
         fullWidth
         disableClearable
         openOnFocus
+        forcePopupIcon={false}
+        noOptionsText="No matching abbreviations"
+        classes={{
+          option: classes.optionItem,
+          listbox: classes.listBox,
+          input: classes.input,
+          noOptions: classes.noOptions
+        }}
+        // disableCloseOnSelect
+        // onClose={() => {
+        //   debugger
+        // }}
         renderInput={(params) => {
           return (
-            <TextField
-              {...params}
-              inputRef={inputRef}
-              InputProps={{
-                ...params.InputProps,
-                autoComplete: 'new-password',
-                endAdornment: null,
-                onChange: (event: ChangeEvent<HTMLInputElement>) => {
+            <div className={classes.inputContainer} ref={params.InputProps.ref}>
+              <Icon name="search" className={classes.searchIcon} />
+              <input
+                type="text"
+                {...params.inputProps}
+                ref={(ref) => {
+                  inputRef.current = ref
+
+                  // this workaround is required to have access to `ref` field of inputProps that isn't provided
+                  // by types, but present in the field
+                  ;(
+                    params.inputProps as {
+                      ref: MutableRefObject<HTMLInputElement | null>
+                    }
+                  ).ref.current = ref
+                }}
+                onChange={(event: ChangeEvent<HTMLInputElement>) => {
                   setLookupValue(event.target.value)
-                }
-              }}
-            />
+                  setLoweredLookupValue(event.target.value.toLowerCase())
+                }}
+              />
+            </div>
+          )
+        }}
+        renderOption={(props, option) => {
+          return (
+            <li {...props}>
+              {highlightMatchedText(option.loweredName, loweredLookupValue)}
+            </li>
           )
         }}
       />
     </Portal>
   )
-}
-
-export const AbbreviationLookupContainer = () => {
-  const isOpen = useSelector(selectIsAbbreviationLookupOpen)
-  if (!isOpen) {
-    return null
-  }
-
-  return <AbbreviationLookup />
-}
-
-const getOptionLabel = (option: Template) => {
-  return option.struct.name
 }

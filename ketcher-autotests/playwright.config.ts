@@ -29,6 +29,10 @@ function baseURL(): string {
 
 const MAX_NUMBER_OF_RETRIES = 2;
 
+console.log(
+  'IGNORE_UNSTABLE_TESTS',
+  process.env.IGNORE_UNSTABLE_TESTS ? ignoredTests : undefined
+);
 const config: PlaywrightTestConfig = {
   testDir: './tests',
   /* Maximum time one test can run for. */

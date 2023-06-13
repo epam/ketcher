@@ -18,8 +18,6 @@ env:
 jobs:
   playwright_tests:
     timeout-minutes: 60
-    env:
-      IGNORE_UNSTABLE_TESTS: true
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3
@@ -36,8 +34,12 @@ jobs:
         run: cd example/ && nohup npm run serve:standalone &
       - name: Build autotests for docker
         run: cd ketcher-autotests && npm run docker:build
+        env:
+          IGNORE_UNSTABLE_TESTS: true
       - name: Run playwright tests in docker
         run: cd ketcher-autotests && npm run docker:test:ci
+        env:
+          IGNORE_UNSTABLE_TESTS: true
       - uses: actions/upload-artifact@v3
         # run even if previous steps fails
         if: always()

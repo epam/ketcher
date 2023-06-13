@@ -1,7 +1,8 @@
 import {
   filterOptions,
   getOptionLabel,
-  getSimilarity
+  getSimilarity,
+  highlightMatchedText
 } from './AbbreviationLookup.utils'
 import {
   AbbreviationGenericOption,
@@ -29,6 +30,22 @@ const createOption = (name: string, abbreviation?: string) =>
   createGenericOption(name, abbreviation) as AbbreviationOption
 
 describe('AbbreviationLookup Utils', () => {
+  describe('highlightMatchedText', () => {
+    const option = createGenericOption('Very long test name', 'SHORTABBR')
+
+    it('Should return the label if there is not match with lookup value', () => {
+      expect(highlightMatchedText(option, 'no-match-string')).toBe(option.label)
+    })
+
+    it('Should return marked name', () => {
+      expect(highlightMatchedText(option, 'long')).toMatchSnapshot()
+    })
+
+    it('Should return marked abbreviation', () => {
+      expect(highlightMatchedText(option, 'abbr')).toMatchSnapshot()
+    })
+  })
+
   describe('getOptionLabel', () => {
     it('Should return the label field value from an option', () => {
       const option = createGenericOption('testName')

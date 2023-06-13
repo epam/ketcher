@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AbbreviationLookup Utils highlightMatchedText Should return marked abbreviation 1`] = `
+<React.Fragment>
+  SHORT
+  <mark>
+    ABBR
+  </mark>
+   (Very short test name)
+</React.Fragment>
+`;
+
+exports[`AbbreviationLookup Utils highlightMatchedText Should return marked name 1`] = `
+<React.Fragment>
+  SHORTABBR (Very 
+  <mark>
+    long
+  </mark>
+   test name)
+</React.Fragment>
+`;

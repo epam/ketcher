@@ -32,3 +32,33 @@ interface HTMLElement {
   mozRequestFullScreen?: () => void
   webkitRequestFullscreen?: () => void
 }
+
+declare module 'subscription' {
+  export class Subscription<TDispatchValue = any> {
+    handlers: Array<any>
+    handlersForDispatch: () => typeof this.handlers
+    add: (f: any, priority?: number) => void
+    addOnce: (f: any, priority?: number) => void
+    remove: (f: any) => void
+    hasHandler: () => boolean
+    dispatch: (value?: TDispatchValue) => void
+  }
+
+  export class PipelineSubscription<
+    TDispatchValue = any
+  > extends Subscription<TDispatchValue> {
+    dispatch: (value: TDispatchValue) => any
+  }
+
+  export class StoppableSubscription<
+    TDispatchValue = any
+  > extends Subscription<TDispatchValue> {
+    dispatch: (value?: TDispatchValue) => any
+  }
+
+  export class DOMSubscription<
+    TDispatchEvent = any
+  > extends Subscription<TDispatchEvent> {
+    dispatch: (event: TDispatchEvent) => boolean
+  }
+}

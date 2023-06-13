@@ -94,11 +94,6 @@ type LeftToolbarItemVariant =
   // charge group
   | 'charge-plus'
   | 'charge-minus'
-  // transform group
-  | 'transforms'
-  | 'transform-rotate'
-  | 'transform-flip-h'
-  | 'transform-flip-v'
   // sgroup group
   | 'sgroup'
   // reaction
@@ -154,11 +149,14 @@ type RightToolbarItemVariant =
   | 'extended-table'
   | 'any-atom'
 
+type FloatingToolItemVariant = 'transform-flip-h' | 'transform-flip-v' | 'erase'
+
 type ToolbarItemVariant =
   | TopToolbarItemVariant
   | LeftToolbarItemVariant
   | BottomToolbarItemVariant
   | RightToolbarItemVariant
+  | FloatingToolItemVariant
 
 interface ToolbarItem {
   id: ToolbarItemVariant
@@ -172,6 +170,7 @@ export type {
   LeftToolbarItemVariant,
   RightToolbarItemVariant,
   TopToolbarItemVariant,
+  FloatingToolItemVariant,
   ToolbarItemVariant
 }
 

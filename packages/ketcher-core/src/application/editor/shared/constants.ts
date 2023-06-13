@@ -32,4 +32,4 @@ export const selectionKeys = [
   'rxnPluses',
   'simpleObjects',
   'texts'
-]
+] as const

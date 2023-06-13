@@ -27,7 +27,8 @@ describe('Rotate controller', () => {
     expect(tool()).toBeInstanceOf(SelectTool)
     expect(selection()).toBe(null)
 
-    controller.rerender()
+    // @ts-ignore
+    controller.show()
 
     expect(paper).toBeCalledTimes(0)
 
@@ -35,7 +36,8 @@ describe('Rotate controller', () => {
     // @ts-ignore
     controller.rotateTool.getCenter = () => [new Vec2(), visibleAtoms]
 
-    expect(controller.rerender).toThrow()
+    // @ts-ignore
+    expect(controller.show).toThrow()
   })
 
   /**
@@ -60,7 +62,8 @@ describe('Rotate controller', () => {
     controller.rotateTool.getCenter = () => [new Vec2(), []]
     expect(tool()).toBeInstanceOf(SelectTool)
 
-    controller.rerender()
+    // @ts-ignore
+    controller.show()
 
     expect(paper).toBeCalledTimes(0)
 
@@ -68,17 +71,20 @@ describe('Rotate controller', () => {
     // @ts-ignore
     controller.rotateTool.getCenter = () => [new Vec2(), []]
 
-    controller.rerender()
+    // @ts-ignore
+    controller.show()
 
     expect(paper).toBeCalledTimes(0)
 
     selection = () => ({ texts: [1], rxnPlus: [1], rxnArrow: [] })
 
-    expect(controller.rerender).toThrow()
+    // @ts-ignore
+    expect(controller.show).toThrow()
 
     selection = () => ({ texts: [], rxnPlus: [], rxnArrow: [1] })
 
-    expect(controller.rerender).toThrow()
+    // @ts-ignore
+    expect(controller.show).toThrow()
   })
 
   /**
@@ -100,7 +106,8 @@ describe('Rotate controller', () => {
     controller.rotateTool.getCenter = () => [new Vec2(), visibleAtoms]
     expect(visibleAtoms.length).toBeGreaterThan(1)
 
-    controller.rerender()
+    // @ts-ignore
+    controller.show()
 
     expect(paper).toBeCalledTimes(0)
   })

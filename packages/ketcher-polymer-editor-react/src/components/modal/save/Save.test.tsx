@@ -47,7 +47,6 @@ describe('Save modal', () => {
 
     const fileFormat = screen.getByRole('button', { name: 'MDL Molfile V3000' })
 
-    console.log(fileFormat)
     fireEvent.click(fileFormat)
     const fileFormatDropdown = screen.getByTestId('dropdown-select')
     const option1 = screen.getByRole('option', { name: 'MDL Molfile V3000' })

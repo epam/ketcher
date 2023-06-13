@@ -4,7 +4,6 @@ const fs = require('fs')
 
 module.exports = {
   process(src, filename) {
-    console.log(filename)
     const fileContents = fs.readFileSync(path.resolve(filename), 'utf8')
     return `module.exports = ${JSON.stringify(fileContents)};`
   }

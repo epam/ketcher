@@ -18,6 +18,7 @@ import { createSlice, PayloadAction, Slice } from '@reduxjs/toolkit'
 import { MonomerItemType } from 'components/monomerLibrary/monomerLibraryItem'
 import { Group } from 'components/monomerLibrary/monomerLibraryList'
 import { SdfItem } from 'ketcher-core'
+import { LibraryNameType } from 'src/constants'
 
 interface LibraryState {
   monomers: Group[]
@@ -62,16 +63,18 @@ export const librarySlice: Slice = createSlice({
   }
 })
 
-export const selectMonomersInCategory = (items, category) =>
-  items.filter((item) => item.props?.MonomerType === category)
+export const selectMonomersInCategory = (
+  items: MonomerItemType[],
+  category: LibraryNameType
+) => items.filter((item) => item.props?.MonomerType === category)
 
-export const selectMonomersInFavorites = (items) =>
+export const selectMonomersInFavorites = (items: MonomerItemType[]) =>
   items.filter((item) => item.favorite)
 
 export const selectFilteredMonomers = (state) => {
   const { searchFilter, monomers } = state.library
   return monomers
-    .filter((item) => {
+    .filter((item: MonomerItemType) => {
       const { Name = '', MonomerName = '' } = item.props
       const monomerName = Name.toLowerCase()
       const monomerNameFull = MonomerName.toLowerCase()
@@ -81,7 +84,7 @@ export const selectFilteredMonomers = (state) => {
         monomerNameFull.includes(normalizedSearchFilter)
       return cond
     })
-    .map((item) => {
+    .map((item: MonomerItemType) => {
       return {
         ...item,
         favorite: !!state.library.favorites[getMonomerUniqueKey(item)]
@@ -89,7 +92,7 @@ export const selectFilteredMonomers = (state) => {
     })
 }
 
-export const selectMonomerGroups = (monomers) => {
+export const selectMonomerGroups = (monomers: MonomerItemType[]) => {
   const preparedData = monomers.reduce((result, monomerItem) => {
     // separate monomers by NaturalAnalogCode
     const code = monomerItem.props.MonomerNaturalAnalogCode

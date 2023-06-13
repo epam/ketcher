@@ -7,7 +7,7 @@ import {
   selectMonomersInFavorites
 } from 'state/library'
 import { useAppSelector } from 'hooks'
-import { MONOMER_LIBRARY_FAVORITES } from '../../../constants'
+import { LibraryNameType, MONOMER_LIBRARY_FAVORITES } from '../../../constants'
 
 export type Group = {
   groupItems: Array<MonomerItemType>
@@ -15,7 +15,7 @@ export type Group = {
 }
 
 export interface MonomerListProps {
-  libraryName: string
+  libraryName: LibraryNameType
   onItemClick: (item) => void
 }
 

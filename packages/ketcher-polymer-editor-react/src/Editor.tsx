@@ -41,12 +41,10 @@ import {
   ModalContainer
 } from 'components/modal/modalContainer'
 import { FullscreenButton } from 'components/FullscreenButton'
+import { DeepPartial } from './types'
+import { EditorClassName } from './constants'
 
 const muiTheme = createTheme(muiOverrides)
-
-type DeepPartial<T> = {
-  [P in keyof T]?: DeepPartial<T[P]>
-}
 
 interface EditorProps {
   onInit?: () => void
@@ -69,7 +67,7 @@ function EditorContainer({ onInit, theme }: EditorProps) {
     <Provider store={store}>
       <ThemeProvider theme={mergedTheme}>
         <Global styles={getGlobalStyles} />
-        <div ref={rootElRef} className="Ketcher-polymer-editor-root">
+        <div ref={rootElRef} className={EditorClassName}>
           <Editor />
         </div>
       </ThemeProvider>

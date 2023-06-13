@@ -141,7 +141,7 @@ const MonomerLibrary = () => {
               <Icon name="double-arrow-right" />
             )}
           </span>
-          <span onClick={() => toggleSidebar()}>
+          <span onClick={toggleSidebar}>
             {isHidden ? 'Show Library' : 'Hide'}
           </span>
         </MonomerLibraryToggle>

@@ -20,4 +20,9 @@ export const MONOMER_TYPES = {
   PEPTIDE: 'PEPTIDE',
   CHEM: 'CHEM',
   RNA: 'RNA'
-}
+} as const
+export type LibraryNameType =
+  | typeof MONOMER_LIBRARY_FAVORITES
+  | keyof typeof MONOMER_TYPES
+
+export const EditorClassName = 'Ketcher-polymer-editor-root'

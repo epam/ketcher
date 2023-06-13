@@ -23,14 +23,13 @@ import { MonomerColorScheme } from 'theming/defaultTheme'
 export type MonomerItemType = {
   label: string
   colorScheme?: MonomerColorScheme
-  monomers?: object
   favorite?: boolean
   props?: any
 }
 
 interface MonomerItemProps {
   item: MonomerItemType
-  onClick?: () => void
+  onClick?: VoidFunction
   onStarClick?: any
 }
 

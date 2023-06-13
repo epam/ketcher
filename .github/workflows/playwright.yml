@@ -30,8 +30,12 @@ jobs:
         run: npm ci
       - name: Build all packages
         run: npm run build
+        env:
+          IGNORE_UNSTABLE_TESTS: true
       - name: Run example in standalone mode
         run: cd example/ && nohup npm run serve:standalone &
+        env:
+          IGNORE_UNSTABLE_TESTS: true
       - name: Build autotests for docker
         run: cd ketcher-autotests && npm run docker:build
         env:

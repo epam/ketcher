@@ -37,9 +37,16 @@ class ReactionArrowTool implements Tool {
     this.editor.selection(null)
   }
 
+  get render() {
+    return this.editor.render
+  }
+
+  get reStruct() {
+    return this.render.ctab
+  }
+
   mousedown(event) {
-    const rnd = this.editor.render
-    const p0 = rnd.page2obj(event)
+    const p0 = this.render.page2obj(event)
     this.dragCtx = { p0 }
 
     const ci = this.editor.findItem(event, ['rxnArrows'])
@@ -55,28 +62,28 @@ class ReactionArrowTool implements Tool {
   }
 
   mousemove(event: PointerEvent) {
-    const rnd = this.editor.render
-
     if (this.dragCtx) {
-      const current = rnd.page2obj(event)
+      const current = this.render.page2obj(event)
       const diff = current.sub(this.dragCtx.p0)
 
       if (this.dragCtx.ci) {
+        this.dragCtx.itemId = this.dragCtx.ci.id
         if (this.dragCtx.action) {
-          this.dragCtx.action.perform(rnd.ctab)
+          this.dragCtx.action.perform(this.reStruct)
         }
 
         if (!this.dragCtx.ci.ref) {
           this.dragCtx.action = fromMultipleMove(
-            rnd.ctab,
+            this.reStruct,
             this.editor.selection() || {},
             diff
           )
         } else {
+          this.updateResizingState(this.dragCtx.itemId, true)
           const isSnappingEnabled = !event.ctrlKey
           this.dragCtx.action = fromArrowResizing(
-            rnd.ctab,
-            this.dragCtx.ci.id,
+            this.reStruct,
+            this.dragCtx.itemId,
             diff,
             current,
             this.dragCtx.ci.ref,
@@ -87,7 +94,7 @@ class ReactionArrowTool implements Tool {
       } else {
         if (!this.dragCtx.action) {
           const action = fromArrowAddition(
-            rnd.ctab,
+            this.reStruct,
             [this.dragCtx.p0, this.dragCtx.p0],
             this.mode
           )
@@ -97,12 +104,13 @@ class ReactionArrowTool implements Tool {
           this.dragCtx.action = action
           this.editor.update(this.dragCtx.action, true)
         } else {
-          this.dragCtx.action.perform(rnd.ctab)
+          this.dragCtx.action.perform(this.reStruct)
         }
 
+        this.updateResizingState(this.dragCtx.itemId, true)
         const isSnappingEnabled = !event.ctrlKey
         this.dragCtx.action = fromArrowResizing(
-          rnd.ctab,
+          this.reStruct,
           this.dragCtx.itemId,
           diff,
           current,
@@ -125,6 +133,9 @@ class ReactionArrowTool implements Tool {
     if (this.dragCtx.action) {
       if (this.dragCtx.isNew) {
         this.addNewArrowWithDragging()
+      } else {
+        this.updateResizingState(this.dragCtx.itemId, false)
+        this.editor.update(true)
       }
       this.editor.update(this.dragCtx.action)
     } else {
@@ -135,24 +146,31 @@ class ReactionArrowTool implements Tool {
   }
 
   addNewArrowWithDragging() {
-    const reStruct = this.editor.render.ctab
-    const item = reStruct.molecule.rxnArrows.get(this.dragCtx.itemId)
+    const item = this.reStruct.molecule.rxnArrows.get(this.dragCtx.itemId)
     assert(item != null)
     let [p0, p1] = item.pos
     p1 = getDefaultLengthPos(p0, p1)
-    this.editor.update(fromArrowDeletion(reStruct, this.dragCtx.itemId), true)
-    this.dragCtx.action = fromArrowAddition(reStruct, [p0, p1], this.mode)
+    this.editor.update(
+      fromArrowDeletion(this.reStruct, this.dragCtx.itemId),
+      true
+    )
+    this.dragCtx.action = fromArrowAddition(this.reStruct, [p0, p1], this.mode)
   }
 
   addNewArrowWithClicking(event) {
-    const rnd = this.editor.render
     const ci = this.editor.findItem(event, ['rxnArrows'])
-    const p0 = rnd.page2obj(event)
+    const p0 = this.render.page2obj(event)
 
     if (!ci) {
       const pos = [p0, getDefaultLengthPos(p0, null)]
-      this.editor.update(fromArrowAddition(rnd.ctab, pos, this.mode))
+      this.editor.update(fromArrowAddition(this.reStruct, pos, this.mode))
     }
+  }
+
+  updateResizingState(arrowId: number, isResizing: boolean) {
+    const reArrow = this.reStruct.rxnArrows.get(arrowId)
+    assert(reArrow != null)
+    reArrow.isResizing = isResizing
   }
 }
 

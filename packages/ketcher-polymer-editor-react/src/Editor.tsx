@@ -133,7 +133,6 @@ function MenuComponent() {
           <Menu.Item itemId="shape-ellipse" />
         </Menu.Submenu>
         <Menu.Submenu>
-          <Menu.Item itemId="transform-rotate" />
           <Menu.Item itemId="transform-flip-h" />
           <Menu.Item itemId="transform-flip-v" />
         </Menu.Submenu>

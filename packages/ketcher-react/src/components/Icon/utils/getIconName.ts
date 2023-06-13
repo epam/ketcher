@@ -14,10 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import findIconByName from './../../../../icons'
+import { IconName } from '../types'
+import { iconNameToIcon } from './iconNameToIcon'
 
-function Icon({ name, ...props }) {
-  const Component = findIconByName(name)
-  return <Component {...props} />
+export const getIconName = (name: string): IconName | null => {
+  return Object.hasOwn(iconNameToIcon, name) ? (name as IconName) : null
 }
-export default Icon

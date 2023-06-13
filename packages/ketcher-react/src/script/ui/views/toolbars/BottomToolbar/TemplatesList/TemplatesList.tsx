@@ -18,6 +18,7 @@ import action, { UiAction, UiActionAction } from '../../../../action'
 
 import { ActionButton } from '../../ToolbarGroupItem/ActionButton'
 import templates from '../../../../data/templates'
+import { getIconName } from 'src/components'
 
 interface TemplatesListProps {
   active?: {
@@ -49,18 +50,23 @@ const TemplatesList = (props: Props) => {
 
   return (
     <>
-      {templates.map((struct, index) => (
-        <ActionButton
-          key={`template-${index}`}
-          name={`template-${index}`}
-          action={makeAction(struct, index)}
-          onAction={onAction}
-          selected={isTemplate && active && active.opts.struct === struct}
-          status={action[`template-${index}`]}
-          disableableButtons={disableableButtons}
-          indigoVerification={indigoVerification}
-        />
-      ))}
+      {templates.map((struct, index) => {
+        const iconName = getIconName(`template-${index}`)
+        return (
+          iconName && (
+            <ActionButton
+              key={iconName}
+              name={iconName}
+              action={makeAction(struct, index)}
+              onAction={onAction}
+              selected={isTemplate && active && active.opts.struct === struct}
+              status={action[`template-${index}`]}
+              disableableButtons={disableableButtons}
+              indigoVerification={indigoVerification}
+            />
+          )
+        )
+      })}
     </>
   )
 }

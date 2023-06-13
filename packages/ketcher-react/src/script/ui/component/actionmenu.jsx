@@ -16,11 +16,11 @@
 
 import { useRef } from 'react'
 
-import Icon from './view/icon'
 import action from '../action'
 import clsx from 'clsx'
 import { hiddenAncestor } from '../state/toolbar'
 import { shortcutStr } from '../views/toolbars/shortcutStr'
+import { Icon } from 'src/components'
 
 function isMenuOpened(currentNode) {
   const parentNode = hiddenAncestor(currentNode)

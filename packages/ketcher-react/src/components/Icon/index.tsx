@@ -16,5 +16,6 @@
 
 import Icon from './Icon'
 import { IconName } from './types'
+import { getIconName } from './utils/getIconName'
 
-export { Icon, type IconName }
+export { Icon, getIconName, type IconName }

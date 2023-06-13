@@ -19,12 +19,12 @@ import { useDropzone, DropzoneOptions } from 'react-dropzone'
 
 import parentStyles from './OpenOptions.module.less'
 import styles from './FileDrop.module.less'
-import Icon from 'src/script/ui/component/view/icon'
+import { Icon, IconName } from 'src/components'
 
 type FileDropProps = {
   buttonLabel: string
   textLabel: string
-  iconName: string
+  iconName: IconName
   disabled?: boolean
   disabledText?: string
 } & DropzoneOptions

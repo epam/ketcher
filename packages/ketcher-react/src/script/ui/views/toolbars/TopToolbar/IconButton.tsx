@@ -16,8 +16,7 @@
 
 import { IconButton as MuiButton } from '@mui/material'
 import styled from '@emotion/styled'
-
-import Icon from 'src/script/ui/component/view/icon'
+import { Icon, IconName } from 'src/components'
 
 const Button = styled(MuiButton)`
   display: block;
@@ -77,7 +76,7 @@ const Button = styled(MuiButton)`
 `
 
 interface ButtonProps {
-  iconName: string
+  iconName: IconName
   onClick: () => void
   title: string
   isHidden?: boolean

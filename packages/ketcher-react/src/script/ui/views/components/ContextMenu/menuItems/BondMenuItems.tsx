@@ -1,7 +1,6 @@
 import { FC } from 'react'
 import { Item, Submenu } from 'react-contexify'
 import tools from 'src/script/ui/action/tools'
-import Icon from 'src/script/ui/component/view/icon'
 import styles from '../ContextMenu.module.less'
 import useBondEdit from '../hooks/useBondEdit'
 import useBondSGroupAttach from '../hooks/useBondSGroupAttach'
@@ -10,6 +9,7 @@ import useBondTypeChange from '../hooks/useBondTypeChange'
 import useDelete from '../hooks/useDelete'
 import { formatTitle, getNonQueryBondNames, queryBondNames } from '../utils'
 import { MenuItemsProps } from '../contextMenu.types'
+import { getIconName, Icon } from 'src/components'
 
 const nonQueryBondNames = getNonQueryBondNames(tools)
 
@@ -29,20 +29,26 @@ const BondMenuItems: FC<MenuItemsProps> = (props) => {
           : 'Edit...'}
       </Item>
 
-      {nonQueryBondNames.map((name) => (
-        <Item {...props} id={name} onClick={handleTypeChange} key={name}>
-          <Icon name={name} className={styles.icon} />
-          <span>{formatTitle(tools[name].title)}</span>
-        </Item>
-      ))}
-
-      <Submenu {...props} label="Query bonds" className={styles.subMenu}>
-        {queryBondNames.map((name) => (
-          <Item id={name} onClick={handleTypeChange} key={name}>
-            <Icon name={name} className={styles.icon} />
+      {nonQueryBondNames.map((name) => {
+        const iconName = getIconName(name)
+        return (
+          <Item {...props} id={name} onClick={handleTypeChange} key={name}>
+            {iconName && <Icon name={iconName} className={styles.icon} />}
             <span>{formatTitle(tools[name].title)}</span>
           </Item>
-        ))}
+        )
+      })}
+
+      <Submenu {...props} label="Query bonds" className={styles.subMenu}>
+        {queryBondNames.map((name) => {
+          const iconName = getIconName(name)
+          return (
+            <Item id={name} onClick={handleTypeChange} key={name}>
+              {iconName && <Icon name={iconName} className={styles.icon} />}
+              <span>{formatTitle(tools[name].title)}</span>
+            </Item>
+          )
+        })}
       </Submenu>
 
       <Item {...props} hidden={sGroupAttachHidden} onClick={handleSGroupAttach}>

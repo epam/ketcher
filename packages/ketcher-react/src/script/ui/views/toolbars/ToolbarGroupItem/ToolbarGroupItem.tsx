@@ -19,6 +19,7 @@ import action, { UiAction, UiActionAction } from '../../../action'
 import { ActionButton, ActionButtonProps } from './ActionButton'
 import { ToolbarItem } from '../toolbar.types'
 import { ToolbarMultiToolItem } from './ToolbarMultiToolItem'
+import { getIconName } from 'src/components'
 
 interface ToolbarGroupItemProps extends ToolbarItem {
   status: {
@@ -53,17 +54,20 @@ const ToolbarGroupItem = (props: Props) => {
   } = props
 
   if (!options?.length) {
+    const iconName = getIconName(id)
     return (
-      <ActionButton
-        className={className}
-        name={id}
-        action={action[id]}
-        status={status[id] as ActionButtonProps['status']}
-        selected={!!status[id]?.selected}
-        indigoVerification={indigoVerification}
-        disableableButtons={disableableButtons}
-        onAction={onAction}
-      />
+      iconName && (
+        <ActionButton
+          className={className}
+          name={iconName}
+          action={action[id]}
+          status={status[id] as ActionButtonProps['status']}
+          selected={!!status[id]?.selected}
+          indigoVerification={indigoVerification}
+          disableableButtons={disableableButtons}
+          onAction={onAction}
+        />
+      )
     )
   }
 

@@ -1,7 +1,6 @@
 import { FC } from 'react'
 import { Item, Submenu } from 'react-contexify'
 import tools from 'src/script/ui/action/tools'
-import Icon from 'src/script/ui/component/view/icon'
 import styles from '../ContextMenu.module.less'
 import useAtomEdit from '../hooks/useAtomEdit'
 import useAtomStereo from '../hooks/useAtomStereo'
@@ -10,6 +9,7 @@ import useBondTypeChange from '../hooks/useBondTypeChange'
 import useDelete from '../hooks/useDelete'
 import { formatTitle, getBondNames } from '../utils'
 import { MenuItemsProps } from '../contextMenu.types'
+import { getIconName, Icon } from 'src/components'
 
 const bondNames = getBondNames(tools)
 
@@ -36,12 +36,15 @@ const SelectionMenuItems: FC<MenuItemsProps> = (props) => {
         disabled={bondTypeChangeDisabled}
         className={styles.subMenu}
       >
-        {bondNames.map((name) => (
-          <Item id={name} onClick={handleTypeChange} key={name}>
-            <Icon name={name} className={styles.icon} />
-            <span>{formatTitle(tools[name].title)}</span>
-          </Item>
-        ))}
+        {bondNames.map((name) => {
+          const iconName = getIconName(name)
+          return (
+            <Item id={name} onClick={handleTypeChange} key={name}>
+              {iconName && <Icon name={iconName} className={styles.icon} />}
+              <span>{formatTitle(tools[name].title)}</span>
+            </Item>
+          )
+        })}
       </Submenu>
 
       <Item {...props} disabled={atomStereoDisabled} onClick={handleAtomStereo}>

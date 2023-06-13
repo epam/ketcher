@@ -45,7 +45,7 @@ import EmptySearchResult from '../../../ui/dialog/template/EmptySearchResult'
 import Tabs from '@mui/material/Tabs'
 import Tab from '@mui/material/Tab'
 import useSaltsAndSolvents from './useSaltsAndSolvets'
-import { Icon } from 'src/components'
+import { Icon } from 'components'
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props

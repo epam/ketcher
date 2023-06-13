@@ -18,7 +18,7 @@ import { useState } from 'react'
 import { connect } from 'react-redux'
 import { ClickAwayListener, Collapse, IconButton } from '@mui/material'
 import styled from '@emotion/styled'
-import { Icon } from 'src/components'
+import { Icon } from 'components'
 
 const ElementAndDropdown = styled('div')`
   position: relative;

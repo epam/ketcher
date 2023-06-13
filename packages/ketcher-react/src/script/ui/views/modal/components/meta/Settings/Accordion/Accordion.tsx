@@ -17,7 +17,7 @@
 import React, { useState } from 'react'
 import classes from './Accordion.module.less'
 import clsx from 'clsx'
-import { Icon } from 'src/components'
+import { Icon } from 'components'
 
 const Accordion = ({ tabs, className, changedGroups }): React.ReactElement => {
   const [expandedAccordions, setExpandedAccordions] = useState<string[]>([

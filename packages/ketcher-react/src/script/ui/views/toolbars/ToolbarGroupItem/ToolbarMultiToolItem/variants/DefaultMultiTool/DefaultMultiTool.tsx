@@ -18,7 +18,7 @@ import { MultiToolCallProps, MultiToolProps } from '../variants.types'
 
 import { ActionButton, ActionButtonProps } from '../../../ActionButton'
 import action from '../../../../../../action'
-import { getIconName } from 'src/components'
+import { getIconName } from 'components'
 
 type DefaultMultiToolProps = MultiToolProps
 type DefaultMultiToolCallProps = MultiToolCallProps

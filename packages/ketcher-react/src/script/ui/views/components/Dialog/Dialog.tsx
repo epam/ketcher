@@ -26,7 +26,7 @@ import {
 
 import clsx from 'clsx'
 import styles from './Dialog.module.less'
-import { Icon } from 'src/components'
+import { Icon } from 'components'
 
 interface DialogParamsCallProps {
   onCancel: () => void

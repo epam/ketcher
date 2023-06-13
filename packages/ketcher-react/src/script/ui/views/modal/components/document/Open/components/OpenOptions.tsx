@@ -18,7 +18,7 @@ import { FC } from 'react'
 
 import styles from './OpenOptions.module.less'
 import { FileDrop } from './FileDrop'
-import { Icon } from 'src/components'
+import { Icon } from 'components'
 
 const ICON_NAMES = {
   PASTE: 'open-window-paste-icon',

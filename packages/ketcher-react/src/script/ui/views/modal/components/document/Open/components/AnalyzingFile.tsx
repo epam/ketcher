@@ -16,7 +16,7 @@
 
 import styles from './AnalyzingFile.module.less'
 import { LoadingCircles } from 'src/script/ui/views/components/Spinner'
-import { Icon } from 'src/components'
+import { Icon } from 'components'
 
 export type AnalyzingFileProps = {
   fileName?: string

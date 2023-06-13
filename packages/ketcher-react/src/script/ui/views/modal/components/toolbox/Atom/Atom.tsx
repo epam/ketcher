@@ -28,7 +28,7 @@ import classes from './Atom.module.less'
 import Select from '../../../../../component/form/Select'
 import { getSelectOptionsFromSchema } from '../../../../../utils'
 import clsx from 'clsx'
-import { Icon } from 'src/components'
+import { Icon } from 'components'
 
 interface AtomProps extends BaseCallProps, BaseProps {
   alias: string

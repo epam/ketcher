@@ -20,7 +20,7 @@ import MenuItem from '@mui/material/MenuItem'
 import { useEffect, useState } from 'react'
 import clsx from 'clsx'
 import styles from './Select.module.less'
-import { Icon } from 'src/components'
+import { Icon } from 'components'
 
 export interface Option {
   value: string

@@ -20,7 +20,7 @@ import { Button, Popover } from '@mui/material'
 
 import { zoomList } from 'src/script/ui/action/zoom'
 import { ZoomInput, updateInputString } from './ZoomInput'
-import { Icon } from 'src/components'
+import { Icon } from 'components'
 
 const ElementAndDropdown = styled('div')`
   position: relative;

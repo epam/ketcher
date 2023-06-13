@@ -19,7 +19,7 @@ import { MultiToolCallProps, MultiToolProps } from '../variants.types'
 import { ActionButton, ActionButtonProps } from '../../../ActionButton'
 import action from '../../../../../../action'
 import classes from './GroupedMultiTool.module.less'
-import { getIconName } from 'src/components'
+import { getIconName } from 'components'
 
 type GroupedMultiToolProps = MultiToolProps
 type GroupedMultiToolCallProps = MultiToolCallProps

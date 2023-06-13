@@ -5,7 +5,7 @@ import {
 } from '../ToolbarGroupItem/ActionButton'
 import { type ToolbarItemVariant } from '../toolbar.types'
 import classes from './FloatingTools.module.less'
-import { getIconName } from 'src/components'
+import { getIconName } from 'components'
 
 export type FloatingToolsProps = {
   visible: boolean

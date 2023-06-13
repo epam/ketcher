@@ -32,7 +32,7 @@ import { load } from '../../../../../state'
 import { range } from 'lodash/fp'
 import { recognize } from '../../../../../state/server'
 import { DialogActionButton } from 'src/script/ui/views/modal/components/document/Open/components/DialogActionButton'
-import { Icon } from 'src/components'
+import { Icon } from 'components'
 
 function isImage(file) {
   return file?.type?.includes('image')

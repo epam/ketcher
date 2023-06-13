@@ -20,7 +20,7 @@ import action from '../action'
 import clsx from 'clsx'
 import { hiddenAncestor } from '../state/toolbar'
 import { shortcutStr } from '../views/toolbars/shortcutStr'
-import { Icon } from 'src/components'
+import { Icon } from 'components'
 
 function isMenuOpened(currentNode) {
   const parentNode = hiddenAncestor(currentNode)

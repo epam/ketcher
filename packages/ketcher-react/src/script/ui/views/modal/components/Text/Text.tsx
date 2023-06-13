@@ -43,7 +43,7 @@ import { TextCommand } from 'ketcher-core'
 import classes from './Text.module.less'
 import { connect } from 'react-redux'
 import createStyles from 'draft-js-custom-styles'
-import { IconName } from 'src/components'
+import { IconName } from 'components'
 
 const { styles, customStyleFn } = createStyles(['font-size'])
 

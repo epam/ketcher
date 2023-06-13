@@ -16,7 +16,7 @@
 
 import { IconButton as MuiButton } from '@mui/material'
 import styled from '@emotion/styled'
-import { Icon, IconName } from 'src/components'
+import { Icon, IconName } from 'components'
 
 const Button = styled(MuiButton)`
   display: block;

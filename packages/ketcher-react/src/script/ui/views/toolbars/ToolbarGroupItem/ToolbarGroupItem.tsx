@@ -19,7 +19,7 @@ import action, { UiAction, UiActionAction } from '../../../action'
 import { ActionButton, ActionButtonProps } from './ActionButton'
 import { ToolbarItem } from '../toolbar.types'
 import { ToolbarMultiToolItem } from './ToolbarMultiToolItem'
-import { getIconName } from 'src/components'
+import { getIconName } from 'components'
 
 interface ToolbarGroupItemProps extends ToolbarItem {
   status: {

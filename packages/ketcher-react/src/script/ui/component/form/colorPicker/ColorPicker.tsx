@@ -19,7 +19,7 @@ import { useCallback, useState } from 'react'
 import { HexColorPicker, HexColorInput } from 'react-colorful'
 import classes from './ColorPicker.module.less'
 import clsx from 'clsx'
-import { Icon } from 'src/components'
+import { Icon } from 'components'
 
 interface ColorPickerProps {
   value: string

@@ -26,7 +26,7 @@ import classes from './PeriodTable.module.less'
 import { connect } from 'react-redux'
 import { onAction } from '../../../../state'
 import { xor } from 'lodash/fp'
-import { Icon } from 'src/components'
+import { Icon } from 'components'
 
 class Table extends Component {
   constructor(props) {

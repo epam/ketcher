@@ -31,7 +31,7 @@ import classes from './ToolbarMultiToolItem.module.less'
 import { usePortalOpening } from './usePortalOpening'
 import { usePortalStyle } from './usePortalStyle'
 import { SettingsManager } from '../../../../utils/settingsManager'
-import { getIconName, Icon } from 'src/components'
+import { getIconName, Icon } from 'components'
 
 interface ToolbarMultiToolItemProps {
   id: ToolbarItemVariant

@@ -40,7 +40,7 @@ import settingsSchema, {
 } from '../../../../../data/schema/options-schema'
 import fieldGroups from './fieldGroups'
 import { isEqual } from 'lodash'
-import { Icon } from 'src/components'
+import { Icon } from 'components'
 
 interface SettingsProps extends BaseProps {
   initState: any

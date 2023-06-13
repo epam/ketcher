@@ -18,7 +18,7 @@ import action, { UiAction, UiActionAction } from '../../../../action'
 
 import { ActionButton } from '../../ToolbarGroupItem/ActionButton'
 import templates from '../../../../data/templates'
-import { getIconName } from 'src/components'
+import { getIconName } from 'components'
 
 interface TemplatesListProps {
   active?: {

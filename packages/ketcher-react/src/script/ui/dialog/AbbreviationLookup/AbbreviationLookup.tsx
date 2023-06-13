@@ -167,7 +167,7 @@ export const AbbreviationLookup = () => {
         renderOption={(props, option) => {
           return (
             <li {...props}>
-              {highlightMatchedText(option.loweredName, loweredLookupValue)}
+              {highlightMatchedText(option, loweredLookupValue)}
             </li>
           )
         }}

@@ -1,15 +1,18 @@
 import { AbbreviationOption } from './AbbreviationLookup.types'
 
-export const highlightMatchedText = (text: string, inputValue: string) => {
-  const startPos = text.toLowerCase().indexOf(inputValue.toLowerCase())
+export const highlightMatchedText = (
+  option: AbbreviationOption,
+  loweredInputValue: string
+) => {
+  const startPos = option.loweredName.indexOf(loweredInputValue)
   if (startPos === -1) {
-    return text
+    return option.name
   }
 
-  const endPos = startPos + inputValue.length
-  const startPart = text.substring(0, startPos)
-  const middlePart = text.substring(startPos, endPos)
-  const endPart = text.substring(endPos)
+  const endPos = startPos + loweredInputValue.length
+  const startPart = option.name.substring(0, startPos)
+  const middlePart = option.name.substring(startPos, endPos)
+  const endPart = option.name.substring(endPos)
 
   return (
     <>

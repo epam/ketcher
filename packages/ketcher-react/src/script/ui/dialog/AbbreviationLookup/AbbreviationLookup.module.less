@@ -52,8 +52,14 @@
   transform: translate(0, -50%);
 }
 
+.optionItemContent {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
 .optionItem {
-  li& {
+  li&:global(.MuiAutocomplete-option) {
     padding: 7px 8px 7px 6px;
     border-left: 2px solid transparent;
     font-size: 12px;

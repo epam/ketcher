@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
-import { sortBy, uniqBy } from 'lodash'
+import { uniqBy } from 'lodash'
 import { useSelector } from 'react-redux'
+import { Elements } from 'ketcher-core'
 
 import { Template } from '../../template/TemplateTable'
 import { functionalGroupsSelector } from '../../../state/functionalGroups/selectors'
@@ -23,19 +24,38 @@ export const useOptions = (): AbbreviationOption[] => {
       (template) => template.struct.name
     )
 
-    // TODO add atoms into the options list somehow
+    const mappedElementOptions: AbbreviationOption[] = Elements.filter(
+      Boolean
+    ).map((element) => {
+      const label = `${element.label} (${element.title})`
+      return {
+        type: AbbreviationType.Element,
+        element,
+        label,
+        loweredLabel: label.toLowerCase(),
+        loweredName: element.title.toLowerCase(),
+        loweredAbbreviation: element.label.toLowerCase()
+      }
+    })
 
-    const mappedOptions: AbbreviationOption[] = uniqTemplates.map(
+    const mappedTemplateOptions: AbbreviationOption[] = uniqTemplates.map(
       (template) => {
+        const label =
+          template.struct.abbreviation &&
+          template.struct.abbreviation !== template.struct.name
+            ? `${template.struct.abbreviation} (${template.struct.name})`
+            : template.struct.name
         return {
           type: AbbreviationType.Template,
           template,
-          name: template.struct.name,
-          loweredName: template.struct.name.toLowerCase()
+          label,
+          loweredLabel: label.toLowerCase(),
+          loweredName: template.struct.name.toLowerCase(),
+          loweredAbbreviation: template.struct.abbreviation?.toLowerCase()
         }
       }
     )
 
-    return sortBy(mappedOptions, (option) => option.loweredName)
+    return [...mappedElementOptions, ...mappedTemplateOptions]
   }, [functionGroups, saltsAndSolvents, templates])
 }

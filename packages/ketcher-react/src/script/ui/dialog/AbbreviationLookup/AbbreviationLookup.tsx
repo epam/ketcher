@@ -22,6 +22,7 @@ import { closeAbbreviationLookup } from '../../state/abbreviationLookup'
 import { selectCursorPosition } from '../../state/common/selectors/selectors'
 import Icon from '../../component/view/icon'
 import {
+  filterOptions,
   getOptionLabel,
   highlightMatchedText
 } from './AbbreviationLookup.utils'
@@ -92,7 +93,7 @@ export const AbbreviationLookup = () => {
     if (option.type === AbbreviationType.Template) {
       dispatch(onAction({ tool: 'template', opts: option.template }))
     } else {
-      // TODO do something with atom tool here
+      dispatch(onAction({ tool: 'atom', opts: option.element }))
     }
   }
 
@@ -123,6 +124,7 @@ export const AbbreviationLookup = () => {
         options={abbreviationOptions}
         inputValue={lookupValue}
         getOptionLabel={getOptionLabel}
+        filterOptions={filterOptions}
         onChange={handleOnChange}
         onBlur={handleBlur}
         onKeyDown={handleKeyDown}
@@ -166,8 +168,10 @@ export const AbbreviationLookup = () => {
         }}
         renderOption={(props, option) => {
           return (
-            <li {...props}>
-              {highlightMatchedText(option, loweredLookupValue)}
+            <li {...props} title={option.label}>
+              <div className={classes.optionItemContent}>
+                {highlightMatchedText(option, loweredLookupValue)}
+              </div>
             </li>
           )
         }}

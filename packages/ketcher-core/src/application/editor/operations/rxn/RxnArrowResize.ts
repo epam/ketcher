@@ -33,16 +33,19 @@ interface RxnArrowResizeData {
 }
 export class RxnArrowResize extends Base {
   data: RxnArrowResizeData
+  isSnappingEnabled: boolean
 
   constructor(
     id: number,
     d: Vec2,
     current: Vec2,
     anchor: Vec2 | null,
-    noinvalidate: boolean
+    noinvalidate: boolean,
+    isSnappingEnabled: boolean
   ) {
     super(OperationType.RXN_ARROW_RESIZE)
     this.data = { id, d, current, anchor, noinvalidate }
+    this.isSnappingEnabled = isSnappingEnabled
   }
 
   execute(restruct: ReStruct): void {
@@ -74,12 +77,16 @@ export class RxnArrowResize extends Base {
         tfx(anchor.x) === tfx(item.pos[1].x) &&
         tfx(anchor.y) === tfx(item.pos[1].y)
       ) {
-        const currentArrowVector = current.sub(item.pos[0])
-        const snappedArrowVector = getSnappedArrowVector(currentArrowVector)
-        const snappedCurrent = item.pos[0].add(snappedArrowVector)
-        item.pos[1].x = anchor.x = snappedCurrent.x
+        if (this.isSnappingEnabled) {
+          const currentArrowVector = current.sub(item.pos[0])
+          const snappedArrowVector = getSnappedArrowVector(currentArrowVector)
+          const snappedCurrent = item.pos[0].add(snappedArrowVector)
+          current.x = snappedCurrent.x
+          current.y = snappedCurrent.y
+        }
+        item.pos[1].x = anchor.x = current.x
         current.x = previousPos1.x
-        item.pos[1].y = anchor.y = snappedCurrent.y
+        item.pos[1].y = anchor.y = current.y
         current.y = previousPos1.y
       }
 
@@ -94,12 +101,16 @@ export class RxnArrowResize extends Base {
         tfx(anchor.x) === tfx(item.pos[0].x) &&
         tfx(anchor.y) === tfx(item.pos[0].y)
       ) {
-        const currentArrowVector = current.sub(item.pos[1])
-        const snappedArrowVector = getSnappedArrowVector(currentArrowVector)
-        const snappedCurrent = item.pos[1].add(snappedArrowVector)
-        item.pos[0].x = anchor.x = snappedCurrent.x
+        if (this.isSnappingEnabled) {
+          const currentArrowVector = current.sub(item.pos[1])
+          const snappedArrowVector = getSnappedArrowVector(currentArrowVector)
+          const snappedCurrent = item.pos[1].add(snappedArrowVector)
+          current.x = snappedCurrent.x
+          current.y = snappedCurrent.y
+        }
+        item.pos[0].x = anchor.x = current.x
         current.x = previousPos0.x
-        item.pos[0].y = anchor.y = snappedCurrent.y
+        item.pos[0].y = anchor.y = current.y
         current.y = previousPos0.y
       }
 
@@ -131,7 +142,9 @@ export class RxnArrowResize extends Base {
         anchor.x = newMiddlePoint.x
       }
     } else {
-      d = getSnappedArrowVector(d)
+      if (this.isSnappingEnabled) {
+        d = getSnappedArrowVector(d)
+      }
       item.pos[1].add_(d)
     }
 
@@ -149,7 +162,8 @@ export class RxnArrowResize extends Base {
       this.data.d,
       this.data.current,
       this.data.anchor,
-      this.data.noinvalidate
+      this.data.noinvalidate,
+      this.isSnappingEnabled
     )
   }
 }

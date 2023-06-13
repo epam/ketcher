@@ -54,7 +54,7 @@ class ReactionArrowTool implements Tool {
     }
   }
 
-  mousemove(event) {
+  mousemove(event: PointerEvent) {
     const rnd = this.editor.render
 
     if (this.dragCtx) {
@@ -73,12 +73,14 @@ class ReactionArrowTool implements Tool {
             diff
           )
         } else {
+          const isSnappingEnabled = !event.ctrlKey
           this.dragCtx.action = fromArrowResizing(
             rnd.ctab,
             this.dragCtx.ci.id,
             diff,
             current,
-            this.dragCtx.ci.ref
+            this.dragCtx.ci.ref,
+            isSnappingEnabled
           )
         }
         this.editor.update(this.dragCtx.action, true)
@@ -98,12 +100,14 @@ class ReactionArrowTool implements Tool {
           this.dragCtx.action.perform(rnd.ctab)
         }
 
+        const isSnappingEnabled = !event.ctrlKey
         this.dragCtx.action = fromArrowResizing(
           rnd.ctab,
           this.dragCtx.itemId,
           diff,
           current,
-          null
+          null,
+          isSnappingEnabled
         )
         this.editor.update(this.dragCtx.action, true)
       }

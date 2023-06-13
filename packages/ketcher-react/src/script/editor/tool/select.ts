@@ -190,7 +190,8 @@ class SelectTool implements Tool {
       if (dragCtx.item.map === 'rxnArrows' && dragCtx.item.ref) {
         if (dragCtx?.action) dragCtx.action.perform(rnd.ctab)
         const props = getResizingProps(editor, dragCtx, event)
-        dragCtx.action = fromArrowResizing(...props)
+        const isSnappingEnabled = !event.ctrlKey
+        dragCtx.action = fromArrowResizing(...props, isSnappingEnabled)
         editor.update(dragCtx.action, true)
         return true
       }

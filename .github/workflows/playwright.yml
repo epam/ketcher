@@ -15,10 +15,11 @@ env:
   MODE: standalone
   KETCHER_URL: http://host.docker.internal:4002
   DOCKER: true
-  IGNORE_UNSTABLE_TESTS: true
 jobs:
   playwright_tests:
     timeout-minutes: 60
+    env:
+      IGNORE_UNSTABLE_TESTS: true
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3

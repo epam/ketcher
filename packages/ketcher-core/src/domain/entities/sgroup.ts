@@ -24,6 +24,7 @@ import { Vec2 } from './vec2'
 import { ReStruct } from '../../application/render'
 import { Pool } from 'domain/entities/pool'
 import { ReSGroup } from 'application/render'
+import { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint'
 
 export class SGroupBracketParams {
   readonly c: Vec2
@@ -82,6 +83,7 @@ export class SGroup {
   data: any
   firstSgroupAtom: any
   firstSgroupAtomId: number
+  private attachmentPoints: SGroupAttachmentPoint[]
 
   constructor(type: string) {
     this.type = type
@@ -101,6 +103,7 @@ export class SGroup {
     this.bonds = []
     this.xBonds = []
     this.neiAtoms = []
+    this.attachmentPoints = []
     this.pp = null
     this.firstSgroupAtomId = -1
     this.data = {
@@ -233,6 +236,39 @@ export class SGroup {
     const neighbours = struct.atomGetNeighbors(attachPointId)
 
     return !neighbours?.every(({ aid }) => this.atoms.includes(aid))
+  }
+
+  addAttachmentPoint(attachmentPoint: SGroupAttachmentPoint): void {
+    const isAttachmentPointAlreadyExist = this.attachmentPoints.some(
+      ({ atomId }) => attachmentPoint.atomId === atomId
+    )
+
+    if (isAttachmentPointAlreadyExist) {
+      throw new Error(
+        'The same attachment point cannot be added to an S-group more than once'
+      )
+    }
+
+    this.attachmentPoints.push(attachmentPoint)
+  }
+
+  removeAttachmentPoint(attachmentPointAtomId: number): void {
+    const index = this.attachmentPoints.findIndex(
+      ({ atomId }) => attachmentPointAtomId === atomId
+    )
+    const isAttachmentPointDoesntExist = index === -1
+
+    if (isAttachmentPointDoesntExist) {
+      throw new Error(
+        `The attachment point "${attachmentPointAtomId}" doesn't exist in the group`
+      )
+    }
+
+    this.attachmentPoints.splice(index, 1)
+  }
+
+  getAttachmentPoints(): ReadonlyArray<SGroupAttachmentPoint> {
+    return this.attachmentPoints
   }
 
   static getOffset(sgroup: SGroup): null | Vec2 {

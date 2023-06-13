@@ -1,5 +1,4 @@
 import { MonomerGroup } from '../monomerLibraryGroup'
-import { MonomerItemType } from '../monomerLibraryItem'
 import {
   selectFilteredMonomers,
   selectMonomersInCategory,
@@ -8,6 +7,7 @@ import {
 } from 'state/library'
 import { useAppSelector } from 'hooks'
 import { LibraryNameType, MONOMER_LIBRARY_FAVORITES } from '../../../constants'
+import { MonomerItemType } from '../monomerLibraryItem/types'
 
 export type Group = {
   groupItems: Array<MonomerItemType>

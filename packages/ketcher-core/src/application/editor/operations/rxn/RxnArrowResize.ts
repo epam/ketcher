@@ -48,19 +48,18 @@ export class RxnArrowResize extends Base {
   execute(restruct: ReStruct): void {
     const struct = restruct.molecule
     const id = this.data.id
-    const d = this.data.d
-    let current = this.data.current
+    let d = this.data.d
+    const current = this.data.current
     const item = struct.rxnArrows.get(id)
-    assert(item != null)
+    const reItem = restruct.rxnArrows.get(id)
+    assert(item != null && reItem != null)
     const anchor = this.data.anchor
     if (anchor) {
       const previousPos0 = item.pos[0].get_xy0()
       const previousPos1 = item.pos[1].get_xy0()
       let middlePoint
-      let reItem
 
       if (RxnArrow.isElliptical(item)) {
-        reItem = restruct.rxnArrows.get(id)
         ;[, , middlePoint] = reItem.getReferencePoints()
       }
 
@@ -75,12 +74,12 @@ export class RxnArrowResize extends Base {
         tfx(anchor.x) === tfx(item.pos[1].x) &&
         tfx(anchor.y) === tfx(item.pos[1].y)
       ) {
-        const currentArrowVector = current.sub(previousPos0)
+        const currentArrowVector = current.sub(item.pos[0])
         const snappedArrowVector = getSnappedArrowVector(currentArrowVector)
-        current = previousPos0.add(snappedArrowVector)
-        item.pos[1].x = anchor.x = current.x
+        const snappedCurrent = item.pos[0].add(snappedArrowVector)
+        item.pos[1].x = anchor.x = snappedCurrent.x
         current.x = previousPos1.x
-        item.pos[1].y = anchor.y = current.y
+        item.pos[1].y = anchor.y = snappedCurrent.y
         current.y = previousPos1.y
       }
 
@@ -95,14 +94,15 @@ export class RxnArrowResize extends Base {
         tfx(anchor.x) === tfx(item.pos[0].x) &&
         tfx(anchor.y) === tfx(item.pos[0].y)
       ) {
-        const currentArrowVector = current.sub(previousPos1)
+        const currentArrowVector = current.sub(item.pos[1])
         const snappedArrowVector = getSnappedArrowVector(currentArrowVector)
-        current = previousPos1.add(snappedArrowVector)
-        item.pos[0].x = anchor.x = current.x
+        const snappedCurrent = item.pos[1].add(snappedArrowVector)
+        item.pos[0].x = anchor.x = snappedCurrent.x
         current.x = previousPos0.x
-        item.pos[0].y = anchor.y = current.y
+        item.pos[0].y = anchor.y = snappedCurrent.y
         current.y = previousPos0.y
       }
+
       if (
         tfx(anchor.x) === tfx(middlePoint?.x) &&
         tfx(anchor.y) === tfx(middlePoint?.y)
@@ -131,11 +131,10 @@ export class RxnArrowResize extends Base {
         anchor.x = newMiddlePoint.x
       }
     } else {
+      d = getSnappedArrowVector(d)
       item.pos[1].add_(d)
     }
 
-    const reItem = restruct.rxnArrows.get(id)
-    assert(reItem != null)
     reItem.visel.translate(Scale.obj2scaled(d, restruct.render.options))
     this.data.d = d.negated()
 

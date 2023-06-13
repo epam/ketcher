@@ -22,6 +22,7 @@ import {
   RxnArrowMode,
   Vec2
 } from 'ketcher-core'
+import assert from 'assert'
 import Editor from '../Editor'
 import { Tool } from './Tool'
 
@@ -59,7 +60,6 @@ class ReactionArrowTool implements Tool {
     if (this.dragCtx) {
       const current = rnd.page2obj(event)
       const diff = current.sub(this.dragCtx.p0)
-      this.dragCtx.previous = current
 
       if (this.dragCtx.ci) {
         if (this.dragCtx.action) {
@@ -113,32 +113,34 @@ class ReactionArrowTool implements Tool {
     }
   }
 
-  mouseup() {
+  mouseup(event) {
     if (!this.dragCtx) {
       return true
     }
 
-    const rnd = this.editor.render
-
-    const p0 = this.dragCtx.p0
-    const p1 = getDefaultLengthPos(p0, this.dragCtx.previous)
-
     if (this.dragCtx.action) {
       if (this.dragCtx.isNew) {
-        this.editor.update(
-          fromArrowDeletion(rnd.ctab, this.dragCtx.itemId),
-          true
-        )
-        this.dragCtx.action = fromArrowAddition(rnd.ctab, [p0, p1], this.mode)
+        this.addNewArrowWithDragging()
       }
-
       this.editor.update(this.dragCtx.action)
+    } else {
+      this.addNewArrowWithClicking(event)
     }
     delete this.dragCtx
     return true
   }
 
-  click(event) {
+  addNewArrowWithDragging() {
+    const reStruct = this.editor.render.ctab
+    const item = reStruct.molecule.rxnArrows.get(this.dragCtx.itemId)
+    assert(item != null)
+    let [p0, p1] = item.pos
+    p1 = getDefaultLengthPos(p0, p1)
+    this.editor.update(fromArrowDeletion(reStruct, this.dragCtx.itemId), true)
+    this.dragCtx.action = fromArrowAddition(reStruct, [p0, p1], this.mode)
+  }
+
+  addNewArrowWithClicking(event) {
     const rnd = this.editor.render
     const ci = this.editor.findItem(event, ['rxnArrows'])
     const p0 = rnd.page2obj(event)

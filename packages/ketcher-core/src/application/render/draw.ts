@@ -34,21 +34,21 @@ function rectangle(paper: RaphaelPaper, points: [Vec2, Vec2]) {
 
 function rectangleArrowHighlightAndSelection(
   _paper: RaphaelPaper,
-  { pos: [point1], height }: ArrowItem,
+  { pos: [start], height }: ArrowItem,
   length: number,
   angle: number
 ) {
-  const b0x = point1.x + length
+  const endX = start.x + length
   const [wOffset, hOffset] = [5, height || 8]
 
   const path =
-    `M${tfx(point1.x - wOffset)},${tfx(point1.y)}` +
-    `L${tfx(point1.x - wOffset)},${tfx(point1.y - hOffset)}` +
-    `L${tfx(b0x + wOffset)},${tfx(point1.y - hOffset)}` +
-    `L${tfx(b0x + wOffset)},${tfx(point1.y + (!height ? hOffset : 0))}` +
-    `L${tfx(point1.x - wOffset)},${tfx(point1.y + (!height ? hOffset : 0))}Z`
+    `M${tfx(start.x - wOffset)},${tfx(start.y)}` +
+    `L${tfx(start.x - wOffset)},${tfx(start.y - hOffset)}` +
+    `L${tfx(endX + wOffset)},${tfx(start.y - hOffset)}` +
+    `L${tfx(endX + wOffset)},${tfx(start.y + (!height ? hOffset : 0))}` +
+    `L${tfx(start.x - wOffset)},${tfx(start.y + (!height ? hOffset : 0))}Z`
 
-  return svgPath(path).rotate(angle, point1.x, point1.y).toString()
+  return svgPath(path).rotate(angle, start.x, start.y).toString()
 }
 
 function ellipse(paper: RaphaelPaper, points: [Vec2, Vec2]) {
@@ -176,7 +176,7 @@ function arrow(
 
 function arrowEllipticalArcFilledBow(
   paper: RaphaelPaper,
-  { pos: [point1], height }: ArrowItem,
+  { pos: [start], height }: ArrowItem,
   arrowLength: number,
   arrowAngle: number,
   options: RenderOptions
@@ -186,19 +186,19 @@ function arrowEllipticalArcFilledBow(
   const arrowHeadWidth = direction * 5
   const arrowHeadAttr = direction * 4
 
-  const b0x = point1.x + arrowLength
+  const endX = start.x + arrowLength
   const path =
-    `M${tfx(point1.x)},${tfx(point1.y)}` +
+    `M${tfx(start.x)},${tfx(start.y)}` +
     `A${arrowLength / 2},${height},${0},${0},${direction > 0 ? 1 : 0},${tfx(
-      b0x
-    )},${tfx(point1.y)}` +
-    `L${tfx(b0x - arrowHeadWidth)},${tfx(point1.y - arrowHeadLength)}` +
+      endX
+    )},${tfx(start.y)}` +
+    `L${tfx(endX - arrowHeadWidth)},${tfx(start.y - arrowHeadLength)}` +
     `l${tfx(arrowHeadWidth)},${tfx(arrowHeadAttr)}` +
     `l${tfx(arrowHeadWidth)},${tfx(-arrowHeadAttr)}` +
     `l${tfx(-arrowHeadWidth)},${arrowHeadLength}`
 
   const transformedPath = svgPath(path)
-    .rotate(arrowAngle, point1.x, point1.y)
+    .rotate(arrowAngle, start.x, start.y)
     .toString()
 
   return paper.path(transformedPath).attr({ ...options.lineattr })
@@ -206,7 +206,7 @@ function arrowEllipticalArcFilledBow(
 
 function arrowEllipticalArcFilledTriangle(
   paper: RaphaelPaper,
-  { pos: [point1], height }: ArrowItem,
+  { pos: [start], height }: ArrowItem,
   arrowLength: number,
   arrowAngle: number,
   options: RenderOptions
@@ -215,19 +215,19 @@ function arrowEllipticalArcFilledTriangle(
   const triangleLength = direction * 10
   const triangleWidth = direction * 5
 
-  const b0x = point1.x + arrowLength
+  const endX = start.x + arrowLength
 
   const path =
-    `M${tfx(point1.x)},${tfx(point1.y)}` +
+    `M${tfx(start.x)},${tfx(start.y)}` +
     `A${arrowLength / 2},${height},${0},${0},${direction > 0 ? 1 : 0},${tfx(
-      b0x
-    )},${tfx(point1.y)}` +
-    `L${tfx(b0x - triangleWidth)},${tfx(point1.y - triangleLength)}` +
+      endX
+    )},${tfx(start.y)}` +
+    `L${tfx(endX - triangleWidth)},${tfx(start.y - triangleLength)}` +
     `l${tfx(triangleLength)},${tfx(0)}` +
     `l${tfx(-triangleWidth)},${tfx(triangleLength)}`
 
   const transformedPath = svgPath(path)
-    .rotate(arrowAngle, point1.x, point1.y)
+    .rotate(arrowAngle, start.x, start.y)
     .toString()
 
   return paper.path(transformedPath).attr({ ...options.lineattr })
@@ -235,7 +235,7 @@ function arrowEllipticalArcFilledTriangle(
 
 function arrowEllipticalArcOpenAngle(
   paper: RaphaelPaper,
-  { pos: [point1], height }: ArrowItem,
+  { pos: [start], height }: ArrowItem,
   arrowLength: number,
   arrowAngle: number,
   options: RenderOptions
@@ -243,19 +243,19 @@ function arrowEllipticalArcOpenAngle(
   const direction = height >= 0 ? 1 : -1
   const width = direction * 5
   const length = direction * 7
-  const b0x = point1.x + arrowLength
+  const endX = start.x + arrowLength
 
   const path =
-    `M${tfx(point1.x)},${tfx(point1.y)}` +
+    `M${tfx(start.x)},${tfx(start.y)}` +
     `A${arrowLength / 2},${height},${0},${0},${direction > 0 ? 1 : 0},${tfx(
-      b0x
-    )},${tfx(point1.y)}` +
-    `L${tfx(b0x - width)},${tfx(point1.y - length)}` +
-    `M${tfx(b0x)},${tfx(point1.y)}` +
-    `L${tfx(b0x + width)}, ${tfx(point1.y - length)}`
+      endX
+    )},${tfx(start.y)}` +
+    `L${tfx(endX - width)},${tfx(start.y - length)}` +
+    `M${tfx(endX)},${tfx(start.y)}` +
+    `L${tfx(endX + width)}, ${tfx(start.y - length)}`
 
   const transformedPath = svgPath(path)
-    .rotate(arrowAngle, point1.x, point1.y)
+    .rotate(arrowAngle, start.x, start.y)
     .toString()
 
   return paper.path(transformedPath).attr(options.lineattr)
@@ -263,7 +263,7 @@ function arrowEllipticalArcOpenAngle(
 
 function arrowEllipticalArcOpenHalfAngle(
   paper: RaphaelPaper,
-  { pos: [point1], height }: ArrowItem,
+  { pos: [start], height }: ArrowItem,
   arrowLength: number,
   arrowAngle: number,
   options: RenderOptions
@@ -271,17 +271,17 @@ function arrowEllipticalArcOpenHalfAngle(
   const direction = height >= 0 ? 1 : -1
   const width = direction * 5
   const length = direction * 7
-  const b0x = point1.x + arrowLength
+  const endX = start.x + arrowLength
 
   const path =
-    `M${tfx(point1.x)},${tfx(point1.y)}` +
+    `M${tfx(start.x)},${tfx(start.y)}` +
     `A${arrowLength / 2},${height},${0},${0},${direction > 0 ? 1 : 0}, ${tfx(
-      b0x
-    )},${tfx(point1.y)}` +
-    `L${tfx(b0x + width)}, ${tfx(point1.y - length)}`
+      endX
+    )},${tfx(start.y)}` +
+    `L${tfx(endX + width)}, ${tfx(start.y - length)}`
 
   const transformedPath = svgPath(path)
-    .rotate(arrowAngle, point1.x, point1.y)
+    .rotate(arrowAngle, start.x, start.y)
     .toString()
 
   return paper.path(transformedPath).attr(options.lineattr)
@@ -289,7 +289,7 @@ function arrowEllipticalArcOpenHalfAngle(
 
 function arrowOpenAngle(
   paper: RaphaelPaper,
-  { pos: [point1] }: ArrowItem,
+  { pos: [start] }: ArrowItem,
   arrowLength: number,
   arrowAngle: number,
   options: RenderOptions
@@ -297,17 +297,17 @@ function arrowOpenAngle(
   const width = 5
   const length = 7
 
-  const b0x = point1.x + arrowLength
+  const endX = start.x + arrowLength
 
   const path =
-    `M${tfx(point1.x)},${tfx(point1.y)}` +
-    `L${tfx(b0x)},${tfx(point1.y)}` +
-    `L${tfx(b0x - length)},${tfx(point1.y - width)}` +
-    `M${tfx(b0x)},${tfx(point1.y)}` +
-    `L${tfx(b0x - length)}, ${tfx(point1.y + width)}`
+    `M${tfx(start.x)},${tfx(start.y)}` +
+    `L${tfx(endX)},${tfx(start.y)}` +
+    `L${tfx(endX - length)},${tfx(start.y - width)}` +
+    `M${tfx(endX)},${tfx(start.y)}` +
+    `L${tfx(endX - length)}, ${tfx(start.y + width)}`
 
   const transformedPath = svgPath(path)
-    .rotate(arrowAngle, point1.x, point1.y)
+    .rotate(arrowAngle, start.x, start.y)
     .toString()
 
   return paper.path(transformedPath).attr(options.lineattr)
@@ -315,7 +315,7 @@ function arrowOpenAngle(
 
 function arrowFilledTriangle(
   paper: RaphaelPaper,
-  { pos: [point1] }: ArrowItem,
+  { pos: [start] }: ArrowItem,
   arrowLength: number,
   arrowAngle: number,
   options: RenderOptions
@@ -323,17 +323,17 @@ function arrowFilledTriangle(
   const triangleLength = 10
   const triangleWidth = 5
 
-  const b0x = point1.x + arrowLength
+  const endX = start.x + arrowLength
 
   const path =
-    `M${tfx(point1.x)},${tfx(point1.y)}` +
-    `L${tfx(b0x)},${tfx(point1.y)}` +
-    `L${tfx(b0x - triangleLength)},${tfx(point1.y + triangleWidth)}` +
-    `L${tfx(b0x - triangleLength)},${tfx(point1.y - triangleWidth)}` +
-    `L${tfx(b0x)},${tfx(point1.y)}Z`
+    `M${tfx(start.x)},${tfx(start.y)}` +
+    `L${tfx(endX)},${tfx(start.y)}` +
+    `L${tfx(endX - triangleLength)},${tfx(start.y + triangleWidth)}` +
+    `L${tfx(endX - triangleLength)},${tfx(start.y - triangleWidth)}` +
+    `L${tfx(endX)},${tfx(start.y)}Z`
 
   const transformedPath = svgPath(path)
-    .rotate(arrowAngle, point1.x, point1.y)
+    .rotate(arrowAngle, start.x, start.y)
     .toString()
 
   return paper.path(transformedPath).attr({ ...options.lineattr, fill: '#000' })
@@ -341,7 +341,7 @@ function arrowFilledTriangle(
 
 function arrowFilledBow(
   paper: RaphaelPaper,
-  { pos: [point1] }: ArrowItem,
+  { pos: [start] }: ArrowItem,
   arrowLength: number,
   arrowAngle: number,
   options: RenderOptions
@@ -350,18 +350,18 @@ function arrowFilledBow(
   const arrowHeadWidth = 5
   const arrowHeadAttr = 4
 
-  const b0x = point1.x + arrowLength
+  const endX = start.x + arrowLength
 
   const path =
-    `M${tfx(point1.x)},${tfx(point1.y)}` +
-    `L${tfx(b0x)},${tfx(point1.y)}` +
-    `L${tfx(b0x - arrowHeadLength)},${tfx(point1.y + arrowHeadWidth)}` +
-    `L${tfx(b0x - arrowHeadLength + arrowHeadAttr)},${tfx(point1.y)}` +
-    `L${tfx(b0x - arrowHeadLength)},${tfx(point1.y - arrowHeadWidth)}` +
-    `L${tfx(b0x)},${tfx(point1.y)}Z`
+    `M${tfx(start.x)},${tfx(start.y)}` +
+    `L${tfx(endX)},${tfx(start.y)}` +
+    `L${tfx(endX - arrowHeadLength)},${tfx(start.y + arrowHeadWidth)}` +
+    `L${tfx(endX - arrowHeadLength + arrowHeadAttr)},${tfx(start.y)}` +
+    `L${tfx(endX - arrowHeadLength)},${tfx(start.y - arrowHeadWidth)}` +
+    `L${tfx(endX)},${tfx(start.y)}Z`
 
   const transformedPath = svgPath(path)
-    .rotate(arrowAngle, point1.x, point1.y)
+    .rotate(arrowAngle, start.x, start.y)
     .toString()
 
   return paper.path(transformedPath).attr({ ...options.lineattr, fill: '#000' })
@@ -369,7 +369,7 @@ function arrowFilledBow(
 
 function arrowDashedOpenAngle(
   paper: RaphaelPaper,
-  { pos: [point1] }: ArrowItem,
+  { pos: [start] }: ArrowItem,
   arrowLength: number,
   arrowAngle: number,
   options: RenderOptions
@@ -380,27 +380,27 @@ function arrowDashedOpenAngle(
 
   const path: string[] = []
 
-  const b0x = point1.x + arrowLength
+  const endX = start.x + arrowLength
 
   // Dashed arrow
   for (let i = 0; i < arrowLength / dashInterval; i++) {
     if (i % 2) {
-      path.push(`L${tfx(point1.x + i * dashInterval)},${tfx(point1.y)}`)
+      path.push(`L${tfx(start.x + i * dashInterval)},${tfx(start.y)}`)
     } else {
-      path.push(`M${tfx(point1.x + i * dashInterval)},${tfx(point1.y)}`)
+      path.push(`M${tfx(start.x + i * dashInterval)},${tfx(start.y)}`)
     }
   }
 
   // Arrowhead
   path.push(
-    `M${tfx(b0x)},${tfx(point1.y)}` +
-      `L${tfx(b0x - triangleLength)},${tfx(point1.y + triangleWidth)}` +
-      `M${tfx(b0x)},${tfx(point1.y)}` +
-      `L${tfx(b0x - triangleLength)},${tfx(point1.y - triangleWidth)}`
+    `M${tfx(endX)},${tfx(start.y)}` +
+      `L${tfx(endX - triangleLength)},${tfx(start.y + triangleWidth)}` +
+      `M${tfx(endX)},${tfx(start.y)}` +
+      `L${tfx(endX - triangleLength)},${tfx(start.y - triangleWidth)}`
   )
 
   const transformedPath = svgPath(path.join(''))
-    .rotate(arrowAngle, point1.x, point1.y)
+    .rotate(arrowAngle, start.x, start.y)
     .toString()
 
   return paper.path(transformedPath).attr({ ...options.lineattr, fill: '#000' })
@@ -408,7 +408,7 @@ function arrowDashedOpenAngle(
 
 function arrowFailed(
   paper: RaphaelPaper,
-  { pos: [point1] }: ArrowItem,
+  { pos: [start] }: ArrowItem,
   arrowLength: number,
   arrowAngle: number,
   options: RenderOptions
@@ -418,36 +418,36 @@ function arrowFailed(
   const arrowHeadAttr = 4
   const failSignWidth = 8
 
-  const b0x = point1.x + arrowLength
+  const endX = start.x + arrowLength
 
-  const arrowCenter = b0x - (b0x - point1.x) / 2
+  const arrowCenter = endX - (endX - start.x) / 2
 
   const path: string[] = []
 
   // Arrow with arrowhead
   path.push(
-    `M${tfx(point1.x)},${tfx(point1.y)}` +
-      `L${tfx(b0x)},${tfx(point1.y)}` +
-      `L${tfx(b0x - arrowHeadLength)},${tfx(point1.y + arrowHeadWidth)}` +
-      `L${tfx(b0x - arrowHeadLength + arrowHeadAttr)},${tfx(point1.y)}` +
-      `L${tfx(b0x - arrowHeadLength)},${tfx(point1.y - arrowHeadWidth)}` +
-      `L${tfx(b0x)},${tfx(point1.y)}Z`
+    `M${tfx(start.x)},${tfx(start.y)}` +
+      `L${tfx(endX)},${tfx(start.y)}` +
+      `L${tfx(endX - arrowHeadLength)},${tfx(start.y + arrowHeadWidth)}` +
+      `L${tfx(endX - arrowHeadLength + arrowHeadAttr)},${tfx(start.y)}` +
+      `L${tfx(endX - arrowHeadLength)},${tfx(start.y - arrowHeadWidth)}` +
+      `L${tfx(endX)},${tfx(start.y)}Z`
   )
 
   // Failed sign line 1
   path.push(
-    `M${tfx(arrowCenter + failSignWidth)},${tfx(point1.y + failSignWidth)}` +
-      `L${tfx(arrowCenter - failSignWidth)},${tfx(point1.y - failSignWidth)}`
+    `M${tfx(arrowCenter + failSignWidth)},${tfx(start.y + failSignWidth)}` +
+      `L${tfx(arrowCenter - failSignWidth)},${tfx(start.y - failSignWidth)}`
   )
 
   // Failed sign line 2
   path.push(
-    `M${tfx(arrowCenter + failSignWidth)},${tfx(point1.y - failSignWidth)}` +
-      `L${tfx(arrowCenter - failSignWidth)},${tfx(point1.y + failSignWidth)}`
+    `M${tfx(arrowCenter + failSignWidth)},${tfx(start.y - failSignWidth)}` +
+      `L${tfx(arrowCenter - failSignWidth)},${tfx(start.y + failSignWidth)}`
   )
 
   const transformedPath = svgPath(path.join(''))
-    .rotate(arrowAngle, point1.x, point1.y)
+    .rotate(arrowAngle, start.x, start.y)
     .toString()
 
   return paper.path(transformedPath).attr({ ...options.lineattr, fill: '#000' })
@@ -455,7 +455,7 @@ function arrowFailed(
 
 function arrowBothEndsFilledTriangle(
   paper: RaphaelPaper,
-  { pos: [point1] }: ArrowItem,
+  { pos: [start] }: ArrowItem,
   arrowLength: number,
   arrowAngle: number,
   options: RenderOptions
@@ -463,21 +463,21 @@ function arrowBothEndsFilledTriangle(
   const triangleLength = 10
   const triangleWidth = 5
 
-  const b0x = point1.x + arrowLength
+  const endX = start.x + arrowLength
 
   const path =
-    `M${tfx(point1.x)},${tfx(point1.y)}` +
-    `L${tfx(b0x)},${tfx(point1.y)}` +
-    `L${tfx(b0x - triangleLength)},${tfx(point1.y + triangleWidth)}` +
-    `L${tfx(b0x - triangleLength)},${tfx(point1.y - triangleWidth)}` +
-    `L${tfx(b0x)},${tfx(point1.y)}` +
-    `M${tfx(point1.x)},${tfx(point1.y)}` +
-    `L${tfx(point1.x + triangleLength)},${tfx(point1.y - triangleWidth)}` +
-    `L${tfx(point1.x + triangleLength)},${tfx(point1.y + triangleWidth)}` +
-    `L${tfx(point1.x)},${tfx(point1.y)}`
+    `M${tfx(start.x)},${tfx(start.y)}` +
+    `L${tfx(endX)},${tfx(start.y)}` +
+    `L${tfx(endX - triangleLength)},${tfx(start.y + triangleWidth)}` +
+    `L${tfx(endX - triangleLength)},${tfx(start.y - triangleWidth)}` +
+    `L${tfx(endX)},${tfx(start.y)}` +
+    `M${tfx(start.x)},${tfx(start.y)}` +
+    `L${tfx(start.x + triangleLength)},${tfx(start.y - triangleWidth)}` +
+    `L${tfx(start.x + triangleLength)},${tfx(start.y + triangleWidth)}` +
+    `L${tfx(start.x)},${tfx(start.y)}`
 
   const transformedPath = svgPath(path)
-    .rotate(arrowAngle, point1.x, point1.y)
+    .rotate(arrowAngle, start.x, start.y)
     .toString()
 
   return paper.path(transformedPath).attr({ ...options.lineattr, fill: '#000' })
@@ -485,7 +485,7 @@ function arrowBothEndsFilledTriangle(
 
 function arrowEquilibriumFilledHalfBow(
   paper: RaphaelPaper,
-  { pos: [point1] }: ArrowItem,
+  { pos: [start] }: ArrowItem,
   arrowLength: number,
   arrowAngle: number,
   options: RenderOptions
@@ -495,28 +495,28 @@ function arrowEquilibriumFilledHalfBow(
   const arrowOffset = 7
   const arrowHeadAttr = 2
 
-  const b0x = point1.x + arrowLength
+  const endX = start.x + arrowLength
 
   const path: string[] = []
 
   // Arrow
   path.push(
-    `M${tfx(point1.x)},${tfx(point1.y - lineOffset)}` +
-      `L${tfx(b0x)},${tfx(point1.y - lineOffset)}` +
-      `L${tfx(b0x - arrowLen)},${tfx(point1.y - arrowOffset)}` +
-      `L${tfx(b0x - arrowLen + arrowHeadAttr)},${tfx(point1.y - lineOffset)}Z`
+    `M${tfx(start.x)},${tfx(start.y - lineOffset)}` +
+      `L${tfx(endX)},${tfx(start.y - lineOffset)}` +
+      `L${tfx(endX - arrowLen)},${tfx(start.y - arrowOffset)}` +
+      `L${tfx(endX - arrowLen + arrowHeadAttr)},${tfx(start.y - lineOffset)}Z`
   )
 
   // Arrowhead
   path.push(
-    `M${tfx(b0x)},${tfx(point1.y + lineOffset)}` +
-      `L${tfx(point1.x)},${tfx(point1.y + lineOffset)}` +
-      `L${tfx(point1.x + arrowLen)},${tfx(point1.y + arrowOffset)}` +
-      `L${tfx(point1.x + arrowLen - arrowHeadAttr)},${point1.y + lineOffset}Z`
+    `M${tfx(endX)},${tfx(start.y + lineOffset)}` +
+      `L${tfx(start.x)},${tfx(start.y + lineOffset)}` +
+      `L${tfx(start.x + arrowLen)},${tfx(start.y + arrowOffset)}` +
+      `L${tfx(start.x + arrowLen - arrowHeadAttr)},${start.y + lineOffset}Z`
   )
 
   const transformedPath = svgPath(path.join(''))
-    .rotate(arrowAngle, point1.x, point1.y)
+    .rotate(arrowAngle, start.x, start.y)
     .toString()
 
   return paper.path(transformedPath).attr({ ...options.lineattr, fill: '#000' })
@@ -524,7 +524,7 @@ function arrowEquilibriumFilledHalfBow(
 
 function arrowEquilibriumFilledTriangle(
   paper: RaphaelPaper,
-  { pos: [point1] }: ArrowItem,
+  { pos: [start] }: ArrowItem,
   arrowLength: number,
   arrowAngle: number,
   options: RenderOptions
@@ -533,33 +533,33 @@ function arrowEquilibriumFilledTriangle(
   const lineOffset = 3.5
   const arrowOffset = 7
 
-  const b0x = point1.x + arrowLength
+  const endX = start.x + arrowLength
 
   const path: string[] = []
 
   // First arrow
   path.push(
-    `M${tfx(point1.x)},${tfx(point1.y - lineOffset)}` +
-      `L${tfx(b0x)},${tfx(point1.y - lineOffset)}` +
-      `L${tfx(b0x - arrowLen)},${tfx(point1.y - arrowOffset)}` +
-      `L${tfx(b0x - arrowLen)},${tfx(point1.y - lineOffset)}` +
-      `L${tfx(b0x - arrowLen)},${tfx(point1.y)}` +
-      `L${tfx(b0x)},${tfx(point1.y - lineOffset)}Z`
+    `M${tfx(start.x)},${tfx(start.y - lineOffset)}` +
+      `L${tfx(endX)},${tfx(start.y - lineOffset)}` +
+      `L${tfx(endX - arrowLen)},${tfx(start.y - arrowOffset)}` +
+      `L${tfx(endX - arrowLen)},${tfx(start.y - lineOffset)}` +
+      `L${tfx(endX - arrowLen)},${tfx(start.y)}` +
+      `L${tfx(endX)},${tfx(start.y - lineOffset)}Z`
   )
 
   // Second arrow
   path.push(
-    `M${tfx(point1.x)},${tfx(point1.y + lineOffset)}` +
-      `L${tfx(b0x)},${tfx(point1.y + lineOffset)}` +
-      `M${tfx(point1.x)},${tfx(point1.y + lineOffset)}` +
-      `L${tfx(point1.x + arrowLen)},${tfx(point1.y + arrowOffset)}` +
-      `L${tfx(point1.x + arrowLen)},${point1.y + lineOffset}Z` +
-      `L${tfx(point1.x + arrowLen)},${tfx(point1.y)}` +
-      `L${tfx(point1.x + arrowLen)},${point1.y + lineOffset}Z`
+    `M${tfx(start.x)},${tfx(start.y + lineOffset)}` +
+      `L${tfx(endX)},${tfx(start.y + lineOffset)}` +
+      `M${tfx(start.x)},${tfx(start.y + lineOffset)}` +
+      `L${tfx(start.x + arrowLen)},${tfx(start.y + arrowOffset)}` +
+      `L${tfx(start.x + arrowLen)},${start.y + lineOffset}Z` +
+      `L${tfx(start.x + arrowLen)},${tfx(start.y)}` +
+      `L${tfx(start.x + arrowLen)},${start.y + lineOffset}Z`
   )
 
   const transformedPath = svgPath(path.join(''))
-    .rotate(arrowAngle, point1.x, point1.y)
+    .rotate(arrowAngle, start.x, start.y)
     .toString()
 
   return paper.path(transformedPath).attr({ ...options.lineattr, fill: '#000' })
@@ -567,7 +567,7 @@ function arrowEquilibriumFilledTriangle(
 
 function arrowEquilibriumOpenAngle(
   paper: RaphaelPaper,
-  { pos: [point1] }: ArrowItem,
+  { pos: [start] }: ArrowItem,
   arrowLength: number,
   arrowAngle: number,
   options: RenderOptions
@@ -577,27 +577,27 @@ function arrowEquilibriumOpenAngle(
   const arrowLen = 9
   const lineOffset = 3.5
 
-  const b0x = point1.x + arrowLength
+  const endX = start.x + arrowLength
 
   const path: string[] = []
 
   // First arrow
   path.push(
-    `M${tfx(point1.x)},${tfx(point1.y - lineOffset)}` +
-      `L${tfx(b0x)},${tfx(point1.y - lineOffset)}` +
-      `L${tfx(b0x - length)},${tfx(point1.y - width - lineOffset)}`
+    `M${tfx(start.x)},${tfx(start.y - lineOffset)}` +
+      `L${tfx(endX)},${tfx(start.y - lineOffset)}` +
+      `L${tfx(endX - length)},${tfx(start.y - width - lineOffset)}`
   )
 
   // Second arrow
   path.push(
-    `M${tfx(point1.x)},${tfx(point1.y + lineOffset)}` +
-      `L${tfx(b0x)},${tfx(point1.y + lineOffset)}` +
-      `M${tfx(point1.x)},${tfx(point1.y + lineOffset)}` +
-      `L${tfx(point1.x + arrowLen)},${tfx(point1.y + lineOffset + width)}`
+    `M${tfx(start.x)},${tfx(start.y + lineOffset)}` +
+      `L${tfx(endX)},${tfx(start.y + lineOffset)}` +
+      `M${tfx(start.x)},${tfx(start.y + lineOffset)}` +
+      `L${tfx(start.x + arrowLen)},${tfx(start.y + lineOffset + width)}`
   )
 
   const transformedPath = svgPath(path.join(''))
-    .rotate(arrowAngle, point1.x, point1.y)
+    .rotate(arrowAngle, start.x, start.y)
     .toString()
 
   return paper.path(transformedPath).attr(options.lineattr)
@@ -605,7 +605,7 @@ function arrowEquilibriumOpenAngle(
 
 function arrowUnbalancedEquilibriumFilledHalfBow(
   paper: RaphaelPaper,
-  { pos: [point1] }: ArrowItem,
+  { pos: [start] }: ArrowItem,
   arrowLength: number,
   arrowAngle: number,
   options: RenderOptions
@@ -616,33 +616,33 @@ function arrowUnbalancedEquilibriumFilledHalfBow(
   const arrowHeadAttr = 2
   const unbalanceVal = 15
 
-  const b0x = point1.x + arrowLength
+  const endX = start.x + arrowLength
 
   const path: string[] = []
 
   // First arrow
   path.push(
-    `M${tfx(point1.x)},${tfx(point1.y - lineOffset)}` +
-      `L${tfx(b0x)},${tfx(point1.y - lineOffset)}` +
-      `L${tfx(b0x - arrowLen)},${tfx(point1.y - arrowOffset)}` +
-      `L${tfx(b0x - arrowLen + arrowHeadAttr)},${tfx(point1.y - lineOffset)}Z`
+    `M${tfx(start.x)},${tfx(start.y - lineOffset)}` +
+      `L${tfx(endX)},${tfx(start.y - lineOffset)}` +
+      `L${tfx(endX - arrowLen)},${tfx(start.y - arrowOffset)}` +
+      `L${tfx(endX - arrowLen + arrowHeadAttr)},${tfx(start.y - lineOffset)}Z`
   )
 
   // Second (Unbalanced) arrow
   path.push(
-    `M${tfx(point1.x + unbalanceVal)},${tfx(point1.y + lineOffset)}` +
-      `L${tfx(b0x - unbalanceVal)},${tfx(point1.y + lineOffset)}` +
-      `M${tfx(point1.x + unbalanceVal)},${tfx(point1.y + lineOffset)}` +
-      `L${tfx(point1.x + arrowLen + unbalanceVal)},${tfx(
-        point1.y + arrowOffset
+    `M${tfx(start.x + unbalanceVal)},${tfx(start.y + lineOffset)}` +
+      `L${tfx(endX - unbalanceVal)},${tfx(start.y + lineOffset)}` +
+      `M${tfx(start.x + unbalanceVal)},${tfx(start.y + lineOffset)}` +
+      `L${tfx(start.x + arrowLen + unbalanceVal)},${tfx(
+        start.y + arrowOffset
       )}` +
-      `L${tfx(point1.x + arrowLen - arrowHeadAttr + unbalanceVal)},${
-        point1.y + lineOffset
+      `L${tfx(start.x + arrowLen - arrowHeadAttr + unbalanceVal)},${
+        start.y + lineOffset
       }Z`
   )
 
   const transformedPath = svgPath(path.join(''))
-    .rotate(arrowAngle, point1.x, point1.y)
+    .rotate(arrowAngle, start.x, start.y)
     .toString()
 
   return paper.path(transformedPath).attr({ ...options.lineattr, fill: '#000' })
@@ -650,7 +650,7 @@ function arrowUnbalancedEquilibriumFilledHalfBow(
 
 function arrowUnbalancedEquilibriumOpenHalfAngle(
   paper: RaphaelPaper,
-  { pos: [point1] }: ArrowItem,
+  { pos: [start] }: ArrowItem,
   arrowLength: number,
   arrowAngle: number,
   options: RenderOptions
@@ -661,29 +661,29 @@ function arrowUnbalancedEquilibriumOpenHalfAngle(
   const lineOffset = 3.5
   const unbalanceVal = 15
 
-  const b0x = point1.x + arrowLength
+  const endX = start.x + arrowLength
 
   const path: string[] = []
 
   // First arrow
   path.push(
-    `M${tfx(point1.x)},${tfx(point1.y - lineOffset)}` +
-      `L${tfx(b0x)},${tfx(point1.y - lineOffset)}` +
-      `L${tfx(b0x - length)},${tfx(point1.y - width - lineOffset)}`
+    `M${tfx(start.x)},${tfx(start.y - lineOffset)}` +
+      `L${tfx(endX)},${tfx(start.y - lineOffset)}` +
+      `L${tfx(endX - length)},${tfx(start.y - width - lineOffset)}`
   )
 
   // Second (Unbalanced) arrow
   path.push(
-    `M${tfx(point1.x + unbalanceVal)},${tfx(point1.y + lineOffset)}` +
-      `L${tfx(b0x - unbalanceVal)},${tfx(point1.y + lineOffset)}` +
-      `M${tfx(point1.x + unbalanceVal)},${tfx(point1.y + lineOffset)}` +
-      `L${tfx(point1.x + arrowLen + unbalanceVal)},${tfx(
-        point1.y + lineOffset + width
+    `M${tfx(start.x + unbalanceVal)},${tfx(start.y + lineOffset)}` +
+      `L${tfx(endX - unbalanceVal)},${tfx(start.y + lineOffset)}` +
+      `M${tfx(start.x + unbalanceVal)},${tfx(start.y + lineOffset)}` +
+      `L${tfx(start.x + arrowLen + unbalanceVal)},${tfx(
+        start.y + lineOffset + width
       )}`
   )
 
   const transformedPath = svgPath(path.join(''))
-    .rotate(arrowAngle, point1.x, point1.y)
+    .rotate(arrowAngle, start.x, start.y)
     .toString()
 
   return paper.path(transformedPath).attr(options.lineattr)
@@ -691,7 +691,7 @@ function arrowUnbalancedEquilibriumOpenHalfAngle(
 
 function arrowUnbalancedEquilibriumLargeFilledHalfBow(
   paper: RaphaelPaper,
-  { pos: [point1] }: ArrowItem,
+  { pos: [start] }: ArrowItem,
   arrowLength: number,
   arrowAngle: number,
   options: RenderOptions
@@ -702,33 +702,33 @@ function arrowUnbalancedEquilibriumLargeFilledHalfBow(
   const arrowHeadAttr = 2
   const unbalanceVal = 15
 
-  const b0x = point1.x + arrowLength
+  const endX = start.x + arrowLength
 
   const path: string[] = []
 
   // First arrow
   path.push(
-    `M${tfx(point1.x)},${tfx(point1.y - lineOffset)}` +
-      `L${tfx(b0x)},${tfx(point1.y - lineOffset)}` +
-      `L${tfx(b0x - arrowLen)},${tfx(point1.y - arrowOffset)}` +
-      `L${tfx(b0x - arrowLen + arrowHeadAttr)},${tfx(point1.y - lineOffset)}Z`
+    `M${tfx(start.x)},${tfx(start.y - lineOffset)}` +
+      `L${tfx(endX)},${tfx(start.y - lineOffset)}` +
+      `L${tfx(endX - arrowLen)},${tfx(start.y - arrowOffset)}` +
+      `L${tfx(endX - arrowLen + arrowHeadAttr)},${tfx(start.y - lineOffset)}Z`
   )
 
   // Second (Unbalanced) arrow
   path.push(
-    `M${tfx(point1.x + unbalanceVal)},${tfx(point1.y + lineOffset)}` +
-      `L${tfx(b0x - unbalanceVal)},${tfx(point1.y + lineOffset)}` +
-      `M${tfx(point1.x + unbalanceVal)},${tfx(point1.y + lineOffset)}` +
-      `L${tfx(point1.x + arrowLen + unbalanceVal)},${tfx(
-        point1.y + arrowOffset
+    `M${tfx(start.x + unbalanceVal)},${tfx(start.y + lineOffset)}` +
+      `L${tfx(endX - unbalanceVal)},${tfx(start.y + lineOffset)}` +
+      `M${tfx(start.x + unbalanceVal)},${tfx(start.y + lineOffset)}` +
+      `L${tfx(start.x + arrowLen + unbalanceVal)},${tfx(
+        start.y + arrowOffset
       )}` +
-      `L${tfx(point1.x + arrowLen - arrowHeadAttr + unbalanceVal)},${
-        point1.y + lineOffset
+      `L${tfx(start.x + arrowLen - arrowHeadAttr + unbalanceVal)},${
+        start.y + lineOffset
       }Z`
   )
 
   const transformedPath = svgPath(path.join(''))
-    .rotate(arrowAngle, point1.x, point1.y)
+    .rotate(arrowAngle, start.x, start.y)
     .toString()
 
   return paper.path(transformedPath).attr({ ...options.lineattr, fill: '#000' })
@@ -736,7 +736,7 @@ function arrowUnbalancedEquilibriumLargeFilledHalfBow(
 
 function arrowUnbalancedEquilibriumFilledHalfTriangle(
   paper: RaphaelPaper,
-  { pos: [point1] }: ArrowItem,
+  { pos: [start] }: ArrowItem,
   arrowLength: number,
   arrowAngle: number,
   options: RenderOptions
@@ -746,31 +746,31 @@ function arrowUnbalancedEquilibriumFilledHalfTriangle(
   const arrowOffset = 7
   const unbalanceVal = 15
 
-  const b0x = point1.x + arrowLength
+  const endX = start.x + arrowLength
 
   const path: string[] = []
 
   // First arrow
   path.push(
-    `M${tfx(point1.x)},${tfx(point1.y - lineOffset)}` +
-      `L${tfx(b0x)},${tfx(point1.y - lineOffset)}` +
-      `L${tfx(b0x - arrowLen)},${tfx(point1.y - arrowOffset)}` +
-      `L${tfx(b0x - arrowLen)},${tfx(point1.y - lineOffset)}Z`
+    `M${tfx(start.x)},${tfx(start.y - lineOffset)}` +
+      `L${tfx(endX)},${tfx(start.y - lineOffset)}` +
+      `L${tfx(endX - arrowLen)},${tfx(start.y - arrowOffset)}` +
+      `L${tfx(endX - arrowLen)},${tfx(start.y - lineOffset)}Z`
   )
 
   // Second (Unbalanced) arrow
   path.push(
-    `M${tfx(point1.x + unbalanceVal)},${tfx(point1.y + lineOffset)}` +
-      `L${tfx(b0x - unbalanceVal)},${tfx(point1.y + lineOffset)}` +
-      `M${tfx(point1.x + unbalanceVal)},${tfx(point1.y + lineOffset)}` +
-      `L${tfx(point1.x + arrowLen + unbalanceVal)},${tfx(
-        point1.y + arrowOffset
+    `M${tfx(start.x + unbalanceVal)},${tfx(start.y + lineOffset)}` +
+      `L${tfx(endX - unbalanceVal)},${tfx(start.y + lineOffset)}` +
+      `M${tfx(start.x + unbalanceVal)},${tfx(start.y + lineOffset)}` +
+      `L${tfx(start.x + arrowLen + unbalanceVal)},${tfx(
+        start.y + arrowOffset
       )}` +
-      `L${tfx(point1.x + arrowLen + unbalanceVal)},${point1.y + lineOffset}Z`
+      `L${tfx(start.x + arrowLen + unbalanceVal)},${start.y + lineOffset}Z`
   )
 
   const transformedPath = svgPath(path.join(''))
-    .rotate(arrowAngle, point1.x, point1.y)
+    .rotate(arrowAngle, start.x, start.y)
     .toString()
 
   return paper.path(transformedPath).attr({ ...options.lineattr, fill: '#000' })

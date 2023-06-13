@@ -18,7 +18,7 @@ export const useOptions = (): AbbreviationOption[] => {
   const saltsAndSolvents = useSelector(saltsAndSolventsSelector)
 
   return useMemo<AbbreviationOption[]>(() => {
-    // TODO uniqBy is required due to duplicates. https://github.com/epam/ketcher/issues/2749
+    // TODO uniqBy is required to remove duplicates. https://github.com/epam/ketcher/issues/2749
     const uniqTemplates = uniqBy<Template>(
       [...functionGroups, ...templates, ...saltsAndSolvents],
       (template) => template.struct.name

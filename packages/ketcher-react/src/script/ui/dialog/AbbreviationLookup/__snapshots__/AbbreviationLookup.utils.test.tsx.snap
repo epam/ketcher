@@ -6,7 +6,7 @@ exports[`AbbreviationLookup Utils highlightMatchedText Should return marked abbr
   <mark>
     ABBR
   </mark>
-   (Very short test name)
+   (Very long test name)
 </React.Fragment>
 `;
 

@@ -30,9 +30,12 @@ import {
   AbbreviationOption,
   AbbreviationType
 } from './AbbreviationLookup.types'
-import { useOptions } from './hooks/useOptions'
 
-export const AbbreviationLookup = () => {
+interface Props {
+  options: AbbreviationOption[]
+}
+
+export const AbbreviationLookup = ({ options }: Props) => {
   const inputRef = useRef<HTMLInputElement | null>()
   const autocompleteRef = useRef<HTMLInputElement | null>()
 
@@ -47,8 +50,6 @@ export const AbbreviationLookup = () => {
   const [loweredLookupValue, setLoweredLookupValue] = useState(() =>
     initialLookupValue.toLowerCase()
   )
-
-  const abbreviationOptions = useOptions()
 
   useEffect(() => {
     inputRef.current?.focus()
@@ -121,7 +122,7 @@ export const AbbreviationLookup = () => {
     >
       <MuiAutocomplete<AbbreviationOption, false, true>
         ref={autocompleteRef}
-        options={abbreviationOptions}
+        options={options}
         inputValue={lookupValue}
         getOptionLabel={getOptionLabel}
         filterOptions={filterOptions}

@@ -57,6 +57,5 @@ export const usePreview = (
     }
   }
 
-  console.log(previewMonomer)
   return [previewMonomer, previewStyle, setPreview]
 }

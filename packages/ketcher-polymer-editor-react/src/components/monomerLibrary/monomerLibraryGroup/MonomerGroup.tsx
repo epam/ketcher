@@ -58,8 +58,6 @@ const MonomerGroup = ({
     debouncedSetPreviewItem(monomer, rect)
   }
 
-  console.log(previewItem)
-
   return (
     <GroupContainer ref={ref}>
       {title && (

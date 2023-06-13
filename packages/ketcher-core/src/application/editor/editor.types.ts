@@ -16,6 +16,7 @@
 
 import { Action } from 'application/actions'
 import { Struct } from 'domain/entities'
+import { selectionKeys } from './shared/constants'
 
 export interface EditorHistory {
   readonly current?: number
@@ -29,12 +30,8 @@ export interface LoadOptions {
   fragment: boolean
 }
 
-interface Selection {
-  atoms?: Array<number>
-  bonds?: Array<number>
-  enhancedFlags?: Array<number>
-  rxnPluses?: Array<number>
-  rxnArrows?: Array<number>
+export type Selection = {
+  [key in typeof selectionKeys[number]]?: number[]
 }
 
 export interface Editor {

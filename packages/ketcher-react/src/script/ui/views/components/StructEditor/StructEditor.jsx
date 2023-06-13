@@ -23,6 +23,7 @@ import clsx from 'clsx'
 import { upperFirst } from 'lodash/fp'
 import handIcon from '../../../../../assets/icons/files/hand.svg'
 import compressedHandIcon from '../../../../../assets/icons/files/compressed-hand.svg'
+import { FloatingToolContainer } from '../../toolbars'
 import Cursor from '../Cursor'
 import { ContextMenu, ContextMenuTrigger } from '../ContextMenu'
 
@@ -76,6 +77,8 @@ class StructEditor extends Component {
     }
     this.editorRef = createRef()
     this.logRef = createRef()
+    this.updateFloatingToolsPositionOnScroll =
+      this.updateFloatingToolsPositionOnScroll.bind(this)
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -174,6 +177,10 @@ class StructEditor extends Component {
     removeEditorHandlers(this.editor, this.props)
   }
 
+  updateFloatingToolsPositionOnScroll() {
+    this.editor.rotateController.updateFloatingToolsPosition()
+  }
+
   render() {
     const {
       Tag = 'div',
@@ -201,6 +208,7 @@ class StructEditor extends Component {
       onShowInfo,
       onApiSettings,
       showAttachmentPoints = true,
+      onUpdateFloatingTools,
       ...props
     } = this.props
 
@@ -212,6 +220,7 @@ class StructEditor extends Component {
           <div
             ref={this.editorRef}
             className={clsx(classes.intermediateCanvas)}
+            onScroll={this.updateFloatingToolsPositionOnScroll}
           >
             {/* svg here */}
           </div>
@@ -238,6 +247,8 @@ class StructEditor extends Component {
           groupStruct={this.props.groupStruct}
           sGroup={this.props.sGroup}
         />
+
+        <FloatingToolContainer />
 
         <ContextMenu />
       </Tag>

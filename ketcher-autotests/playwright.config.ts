@@ -31,6 +31,8 @@ const MAX_NUMBER_OF_RETRIES = 2;
 
 console.log(
   'IGNORE_UNSTABLE_TESTS',
+  process.env,
+  process.env.IGNORE_UNSTABLE_TESTS,
   process.env.IGNORE_UNSTABLE_TESTS ? ignoredTests : undefined
 );
 const config: PlaywrightTestConfig = {

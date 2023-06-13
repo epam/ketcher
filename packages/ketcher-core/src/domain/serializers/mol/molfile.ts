@@ -19,6 +19,7 @@ import { StereoFlag, Struct } from 'domain/entities'
 import { Elements } from 'domain/constants'
 import common from './common'
 import utils from './utils'
+import { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint'
 
 const END_V2000 = '2D 1   1.00000     0.00000     0'
 
@@ -484,6 +485,12 @@ export class Molfile {
         this.write(sgroup.data.subscript || 'n')
         this.writeCR()
       }
+      if (sgroup.hasAttachmentPoints()) {
+        const attachmentPoints = sgroup.getAttachmentPoints()
+        attachmentPoints.forEach((attachmentPoint) => {
+          this.writeSGroupAttachmentPointLine(q, attachmentPoint)
+        })
+      }
 
       this.writeCR(
         common.saveToMolfile[sgroup.type](
@@ -621,5 +628,24 @@ export class Molfile {
 
       this.writeCR()
     }
+  }
+
+  private writeSGroupAttachmentPointLine(
+    sgroupId: number,
+    attachmentPoint: SGroupAttachmentPoint
+  ) {
+    this.write(`M  SAP`)
+    this.writeWhiteSpace(1)
+    this.writePaddedNumber(sgroupId, 3)
+    this.writePaddedNumber(1, 3)
+    this.writeWhiteSpace(1)
+    const atomId = this.mapping[attachmentPoint.atomId]
+    this.writePaddedNumber(atomId, 3)
+    this.writeWhiteSpace(1)
+    const leaveAtomId = this.mapping[attachmentPoint.leaveAtomId] ?? 0
+    this.writePaddedNumber(leaveAtomId, 3)
+    this.writeWhiteSpace(1)
+    this.writePadded(attachmentPoint.additionalData, 2)
+    this.writeCR()
   }
 }

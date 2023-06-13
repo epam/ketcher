@@ -10,6 +10,7 @@ export class SGroupAttachmentPoint {
   ) {
     this.atomId = atomId
     this.leaveAtomId = leaveAtomId ?? -1
-    this.additionalData = additionalData ?? '  '
+    this.additionalData =
+      additionalData != null ? String(additionalData).slice(0, 2) : '  '
   }
 }

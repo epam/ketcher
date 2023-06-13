@@ -31,8 +31,6 @@ import { fromRGroupAttrs, fromUpdateIfThen } from './rgroup'
 import { Action } from './action'
 import { Vec2 } from 'domain/entities'
 import { fromSgroupAddition } from './sgroup'
-import { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint'
-import assert from 'assert'
 
 export function fromPaste(restruct, pstruct, point, angle = 0) {
   const xy0 = getStructCenter(pstruct)
@@ -99,10 +97,7 @@ export function fromPaste(restruct, pstruct, point, angle = 0) {
   pstruct.sgroups.forEach((sg) => {
     const newsgid = restruct.molecule.sgroups.newId()
     const sgAtoms = sg.atoms.map((aid) => aidMap.get(aid))
-    const attachmentPoints = reMapAttachmentPoints(
-      sg.getAttachmentPoints(),
-      aidMap
-    )
+    const attachmentPoints = sg.reMapAttachmentPoints(aidMap)
     const sgAction = fromSgroupAddition(
       restruct,
       sg.type,
@@ -166,25 +161,6 @@ export function fromPaste(restruct, pstruct, point, angle = 0) {
 
   action.operations.reverse()
   return [action, pasteItems]
-}
-
-function reMapAttachmentPoints(
-  attachmentPoints: SGroupAttachmentPoint[],
-  atomIdMap: Map<number, number>
-) {
-  const attachmentPointsRes: SGroupAttachmentPoint[] = []
-  attachmentPoints.forEach((attachmentPoint) => {
-    const newAtomId = atomIdMap.get(attachmentPoint.atomId)
-    assert(newAtomId != null)
-    const newLeaveAtomId = atomIdMap.get(attachmentPoint.leaveAtomId)
-    const newAttachmentPoint = new SGroupAttachmentPoint(
-      newAtomId,
-      newLeaveAtomId,
-      attachmentPoint.additionalData
-    )
-    attachmentPointsRes.push(newAttachmentPoint)
-  })
-  return attachmentPointsRes
 }
 
 function getStructCenter(struct) {

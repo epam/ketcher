@@ -25,6 +25,7 @@ import { ReStruct } from '../../application/render'
 import { Pool } from 'domain/entities/pool'
 import { ReSGroup } from 'application/render'
 import { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint'
+import assert from 'assert'
 
 export class SGroupBracketParams {
   readonly c: Vec2
@@ -83,7 +84,7 @@ export class SGroup {
   data: any
   firstSgroupAtom: any
   firstSgroupAtomId: number
-  private attachmentPoints: SGroupAttachmentPoint[]
+  private readonly attachmentPoints: SGroupAttachmentPoint[]
 
   constructor(type: string) {
     this.type = type
@@ -252,6 +253,16 @@ export class SGroup {
     this.attachmentPoints.push(attachmentPoint)
   }
 
+  addAttachmentPoints(
+    attachmentPoints:
+      | ReadonlyArray<SGroupAttachmentPoint>
+      | SGroupAttachmentPoint[]
+  ): void {
+    for (const attachmentPoint of attachmentPoints) {
+      this.addAttachmentPoint(attachmentPoint)
+    }
+  }
+
   removeAttachmentPoint(attachmentPointAtomId: number): void {
     const index = this.attachmentPoints.findIndex(
       ({ atomId }) => attachmentPointAtomId === atomId
@@ -269,6 +280,27 @@ export class SGroup {
 
   getAttachmentPoints(): ReadonlyArray<SGroupAttachmentPoint> {
     return this.attachmentPoints
+  }
+
+  reMapAttachmentPoints(
+    atomIdMap: Map<number, number>
+  ): ReadonlyArray<SGroupAttachmentPoint> {
+    return this.attachmentPoints.map(
+      ({ atomId, leaveAtomId, additionalData }) => {
+        const newAtomId = atomIdMap.get(atomId)
+        assert(newAtomId != null)
+        const newLeaveAtomId = atomIdMap.get(leaveAtomId)
+        return new SGroupAttachmentPoint(
+          newAtomId,
+          newLeaveAtomId,
+          additionalData
+        )
+      }
+    )
+  }
+
+  hasAttachmentPoints(): boolean {
+    return this.attachmentPoints.length > 0
   }
 
   static getOffset(sgroup: SGroup): null | Vec2 {
@@ -346,6 +378,7 @@ export class SGroup {
     cp.bonds = null
     cp.allAtoms = sgroup.allAtoms
     cp.data.expanded = sgroup.data.expanded
+    cp.addAttachmentPoints(sgroup.reMapAttachmentPoints(aidMap))
     return cp
   }
 

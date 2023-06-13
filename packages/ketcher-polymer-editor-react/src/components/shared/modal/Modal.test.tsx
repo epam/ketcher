@@ -14,8 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { render, screen } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { render, screen, fireEvent } from '@testing-library/react'
 
 import { Modal } from '.'
 
@@ -48,7 +47,7 @@ describe('Modal component', () => {
     render(withThemeProvider(mockModal()))
 
     const closeIcon = screen.getByTitle('Close window')
-    userEvent.click(closeIcon)
+    fireEvent.click(closeIcon)
 
     expect(mockOnCloseHandler).toHaveBeenCalledTimes(1)
   })

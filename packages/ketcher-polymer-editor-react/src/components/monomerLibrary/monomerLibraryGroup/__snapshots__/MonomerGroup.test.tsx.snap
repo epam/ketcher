@@ -6,84 +6,166 @@ Object {
   "baseElement": <body>
     <div>
       <div
-        class="css-1ecllxh"
-      >
-        <span>
-          Mock title
-        </span>
-        <div
-          class="css-19yk7oj"
-        />
-      </div>
-      <div
-        class="css-cfahjx"
+        class="css-tt4wq6"
       >
         <div
-          class="css-m1s2pe"
+          class="css-a0lsh8"
         >
-          R
+          <span>
+            Mock title
+          </span>
         </div>
         <div
-          class="css-m1s2pe"
+          class="css-mr91bl"
         >
-          m
-        </div>
-        <div
-          class="css-m1s2pe"
-        >
-          d
-        </div>
-        <div
-          class="css-m1s2pe"
-        >
-          ar
-        </div>
-        <div
-          class="css-m1s2pe"
-        >
-          Ld
+          <div
+            class="css-yh8w4g"
+            data-testid="R"
+          >
+            <span>
+              R
+            </span>
+            <div
+              class="star "
+            >
+              ★
+            </div>
+          </div>
+          <div
+            class="css-116k1d1"
+            data-testid="A"
+          >
+            <span>
+              m
+            </span>
+            <div
+              class="star "
+            >
+              ★
+            </div>
+          </div>
+          <div
+            class="css-2w2dpv"
+            data-testid="D"
+          >
+            <span>
+              d
+            </span>
+            <div
+              class="star "
+            >
+              ★
+            </div>
+          </div>
+          <div
+            class="css-yh8w4g"
+            data-testid="R"
+          >
+            <span>
+              ar
+            </span>
+            <div
+              class="star "
+            >
+              ★
+            </div>
+          </div>
+          <div
+            class="css-7p46hw"
+            data-testid="L"
+          >
+            <span>
+              Ld
+            </span>
+            <div
+              class="star "
+            >
+              ★
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </body>,
   "container": <div>
     <div
-      class="css-1ecllxh"
-    >
-      <span>
-        Mock title
-      </span>
-      <div
-        class="css-19yk7oj"
-      />
-    </div>
-    <div
-      class="css-cfahjx"
+      class="css-tt4wq6"
     >
       <div
-        class="css-m1s2pe"
+        class="css-a0lsh8"
       >
-        R
+        <span>
+          Mock title
+        </span>
       </div>
       <div
-        class="css-m1s2pe"
+        class="css-mr91bl"
       >
-        m
-      </div>
-      <div
-        class="css-m1s2pe"
-      >
-        d
-      </div>
-      <div
-        class="css-m1s2pe"
-      >
-        ar
-      </div>
-      <div
-        class="css-m1s2pe"
-      >
-        Ld
+        <div
+          class="css-yh8w4g"
+          data-testid="R"
+        >
+          <span>
+            R
+          </span>
+          <div
+            class="star "
+          >
+            ★
+          </div>
+        </div>
+        <div
+          class="css-116k1d1"
+          data-testid="A"
+        >
+          <span>
+            m
+          </span>
+          <div
+            class="star "
+          >
+            ★
+          </div>
+        </div>
+        <div
+          class="css-2w2dpv"
+          data-testid="D"
+        >
+          <span>
+            d
+          </span>
+          <div
+            class="star "
+          >
+            ★
+          </div>
+        </div>
+        <div
+          class="css-yh8w4g"
+          data-testid="R"
+        >
+          <span>
+            ar
+          </span>
+          <div
+            class="star "
+          >
+            ★
+          </div>
+        </div>
+        <div
+          class="css-7p46hw"
+          data-testid="L"
+        >
+          <span>
+            Ld
+          </span>
+          <div
+            class="star "
+          >
+            ★
+          </div>
+        </div>
       </div>
     </div>
   </div>,
@@ -147,64 +229,152 @@ Object {
   "baseElement": <body>
     <div>
       <div
-        class="css-cfahjx"
+        class="css-tt4wq6"
       >
         <div
-          class="css-m1s2pe"
+          class="css-mr91bl"
         >
-          R
-        </div>
-        <div
-          class="css-m1s2pe"
-        >
-          m
-        </div>
-        <div
-          class="css-m1s2pe"
-        >
-          d
-        </div>
-        <div
-          class="css-m1s2pe"
-        >
-          ar
-        </div>
-        <div
-          class="css-m1s2pe"
-        >
-          Ld
+          <div
+            class="css-yh8w4g"
+            data-testid="R"
+          >
+            <span>
+              R
+            </span>
+            <div
+              class="star "
+            >
+              ★
+            </div>
+          </div>
+          <div
+            class="css-116k1d1"
+            data-testid="A"
+          >
+            <span>
+              m
+            </span>
+            <div
+              class="star "
+            >
+              ★
+            </div>
+          </div>
+          <div
+            class="css-2w2dpv"
+            data-testid="D"
+          >
+            <span>
+              d
+            </span>
+            <div
+              class="star "
+            >
+              ★
+            </div>
+          </div>
+          <div
+            class="css-yh8w4g"
+            data-testid="R"
+          >
+            <span>
+              ar
+            </span>
+            <div
+              class="star "
+            >
+              ★
+            </div>
+          </div>
+          <div
+            class="css-7p46hw"
+            data-testid="L"
+          >
+            <span>
+              Ld
+            </span>
+            <div
+              class="star "
+            >
+              ★
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </body>,
   "container": <div>
     <div
-      class="css-cfahjx"
+      class="css-tt4wq6"
     >
       <div
-        class="css-m1s2pe"
+        class="css-mr91bl"
       >
-        R
-      </div>
-      <div
-        class="css-m1s2pe"
-      >
-        m
-      </div>
-      <div
-        class="css-m1s2pe"
-      >
-        d
-      </div>
-      <div
-        class="css-m1s2pe"
-      >
-        ar
-      </div>
-      <div
-        class="css-m1s2pe"
-      >
-        Ld
+        <div
+          class="css-yh8w4g"
+          data-testid="R"
+        >
+          <span>
+            R
+          </span>
+          <div
+            class="star "
+          >
+            ★
+          </div>
+        </div>
+        <div
+          class="css-116k1d1"
+          data-testid="A"
+        >
+          <span>
+            m
+          </span>
+          <div
+            class="star "
+          >
+            ★
+          </div>
+        </div>
+        <div
+          class="css-2w2dpv"
+          data-testid="D"
+        >
+          <span>
+            d
+          </span>
+          <div
+            class="star "
+          >
+            ★
+          </div>
+        </div>
+        <div
+          class="css-yh8w4g"
+          data-testid="R"
+        >
+          <span>
+            ar
+          </span>
+          <div
+            class="star "
+          >
+            ★
+          </div>
+        </div>
+        <div
+          class="css-7p46hw"
+          data-testid="L"
+        >
+          <span>
+            Ld
+          </span>
+          <div
+            class="star "
+          >
+            ★
+          </div>
+        </div>
       </div>
     </div>
   </div>,

@@ -18,6 +18,11 @@
 import '@emotion/react'
 import { ThemeOptions as MuiThemeOptions } from '@mui/material/styles'
 
+export type MonomerColorScheme = {
+  regular: string
+  hover: string
+}
+
 export type EditorTheme = {
   color: {
     background: {
@@ -25,6 +30,9 @@ export type EditorTheme = {
       primary: string
       secondary: string
       overlay: string
+    }
+    border: {
+      primary: string
     }
     text: {
       primary: string
@@ -37,6 +45,7 @@ export type EditorTheme = {
       regular: string
       active: string
       hover: string
+      content: string
     }
     scroll: {
       regular: string
@@ -95,6 +104,7 @@ export type EditorTheme = {
         active: string
         hover: string
         error: string
+        focus: string
       }
     }
     icon: {
@@ -124,6 +134,11 @@ export type EditorTheme = {
       light: number
       regular: number
       bold: number
+    }
+  }
+  monomer: {
+    color: {
+      [key: string]: MonomerColorScheme
     }
   }
 }

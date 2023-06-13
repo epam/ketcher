@@ -16,6 +16,7 @@
 
 import { configureStore, Store } from '@reduxjs/toolkit'
 import { editorReducer } from 'state/common'
+import { libraryReducer } from 'state/library'
 import createSagaMiddleware from 'redux-saga'
 import { rootSaga } from 'state/rootSaga'
 import { modalReducer } from 'state/modal'
@@ -26,11 +27,13 @@ export function configureAppStore(preloadedState = {}) {
   const store: Store = configureStore({
     reducer: {
       editor: editorReducer,
-      modal: modalReducer
+      modal: modalReducer,
+      library: libraryReducer
     },
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware({
-        thunk: false
+        thunk: false,
+        serializableCheck: false
       }).concat(sagaMiddleware),
     preloadedState
   })

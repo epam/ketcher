@@ -18,11 +18,12 @@ import { Icon } from 'components/shared/icon'
 import React, { useMemo } from 'react'
 import { ActionButton } from 'components/shared/actionButton'
 import styled from '@emotion/styled'
+import { IconNameType } from 'components/shared/icon/icon'
 
-type FileDropProps = {
+export type FileDropProps = {
   buttonLabel: string
   textLabel: string
-  iconName: string
+  iconName: IconNameType
   disabled?: boolean
   disabledText?: string
 } & DropzoneOptions

@@ -17,6 +17,7 @@
 import { Icon } from 'components/shared/icon'
 import { StyledMenuButton } from 'components/menu/menuItem'
 import styled from '@emotion/styled'
+import { EditorClassName } from 'src/constants'
 
 const requestFullscreen = (element: HTMLElement) => {
   ;(element.requestFullscreen && element.requestFullscreen()) ||
@@ -44,8 +45,7 @@ const isFullScreen = () => {
 const toggleFullscreen = () => {
   // TODO: add selector / ref prop when will be shared component
   const fullscreenElement: HTMLElement =
-    document.querySelector('.Ketcher-polymer-editor-root') ||
-    document.documentElement
+    document.querySelector(`.${EditorClassName}`) || document.documentElement
   isFullScreen() ? exitFullscreen() : requestFullscreen(fullscreenElement)
 }
 

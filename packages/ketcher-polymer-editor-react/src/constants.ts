@@ -14,27 +14,15 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { render, screen } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+export const MONOMER_LIBRARY_FAVORITES = 'FAVORITES'
 
-import { ExpandButton } from './expandButton'
+export const MONOMER_TYPES = {
+  PEPTIDE: 'PEPTIDE',
+  CHEM: 'CHEM',
+  RNA: 'RNA'
+} as const
+export type LibraryNameType =
+  | typeof MONOMER_LIBRARY_FAVORITES
+  | keyof typeof MONOMER_TYPES
 
-describe('ExpandButton component', () => {
-  it('should call expand handler when clicked', () => {
-    const mockExpandHandler = jest.fn()
-    const mockExpanded = false
-
-    render(
-      withThemeProvider(
-        <ExpandButton
-          expanded={mockExpanded}
-          expandHandler={mockExpandHandler}
-        />
-      )
-    )
-    const button = screen.getByRole('button')
-
-    userEvent.click(button)
-    expect(mockExpandHandler).toHaveBeenCalledTimes(1)
-  })
-})
+export const EditorClassName = 'Ketcher-polymer-editor-root'

@@ -126,10 +126,8 @@ export const AbbreviationLookup = () => {
         onChange={handleOnChange}
         onBlur={handleBlur}
         onKeyDown={handleKeyDown}
-        fullWidth
-        disableClearable
         openOnFocus
-        forcePopupIcon={false}
+        autoHighlight
         noOptionsText="No matching abbreviations"
         classes={{
           option: classes.optionItem,
@@ -137,7 +135,6 @@ export const AbbreviationLookup = () => {
           input: classes.input,
           noOptions: classes.noOptions
         }}
-        // disableCloseOnSelect
         // onClose={() => {
         //   debugger
         // }}

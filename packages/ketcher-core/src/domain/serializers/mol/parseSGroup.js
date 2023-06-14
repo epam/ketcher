@@ -17,6 +17,8 @@
 import { Pool, SGroup, Vec2 } from 'domain/entities'
 
 import utils from './utils'
+import { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint'
+import assert from 'assert'
 
 /**
  * @param str { string }
@@ -363,6 +365,42 @@ function identityMap(array) {
   return map
 }
 
+/**
+ * Superatom attachment point parsing for 'ctab' v2000
+ * @param ctabString {string} example '   1  1   2   0   '
+ *        M SAP sssnn6 iii ooo cc
+ *             ^
+ *             start position for ctabString content
+ * @returns {{sGroupId: number, attachmentPoints: SGroupAttachmentPoint[]}}
+ */
+function parseSGroupSAPLineV2000(ctabString) {
+  const [, sss, nn6] = utils.partitionLine(
+    ctabString.slice(0, 7),
+    [1, 3, 3],
+    false
+  )
+  const chunksNumberInLine = utils.parseDecimalInt(nn6)
+  assert(chunksNumberInLine <= 6)
+  const sGroupId = utils.parseDecimalInt(sss) - 1
+  const attachmentPointsStr = ctabString.slice(7)
+  const attachmentPoints = []
+  for (let i = 0; i < chunksNumberInLine; i++) {
+    // length of ' iii ooo cc'
+    const CHUNK_SIZE = 11
+    const stringForParse = attachmentPointsStr.slice(i * CHUNK_SIZE)
+    const CHUNK_PARTS_LENGTHS = [1, 3, 1, 3, 1, 2]
+    const [, iii, , ooo, , cc] = utils.partitionLine(
+      stringForParse,
+      CHUNK_PARTS_LENGTHS,
+      false
+    )
+    const atomId = utils.parseDecimalInt(iii) - 1
+    const leaveAtomId = utils.parseDecimalInt(ooo) - 1
+    attachmentPoints.push(new SGroupAttachmentPoint(atomId, leaveAtomId, cc))
+  }
+  return { sGroupId, attachmentPoints }
+}
+
 export default {
   readKeyValuePairs,
   readKeyMultiValuePairs,
@@ -378,5 +416,6 @@ export default {
   applyDataSGroupData,
   applyDataSGroupInfoLine,
   applyDataSGroupDataLine,
-  applyDataSGroupExpand
+  applyDataSGroupExpand,
+  parseSGroupSAPLineV2000
 }

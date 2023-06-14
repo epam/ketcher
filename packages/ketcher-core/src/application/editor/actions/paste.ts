@@ -97,12 +97,14 @@ export function fromPaste(restruct, pstruct, point, angle = 0) {
   pstruct.sgroups.forEach((sg) => {
     const newsgid = restruct.molecule.sgroups.newId()
     const sgAtoms = sg.atoms.map((aid) => aidMap.get(aid))
+    const attachmentPoints = sg.reMapAttachmentPoints(aidMap)
     const sgAction = fromSgroupAddition(
       restruct,
       sg.type,
       sgAtoms,
       sg.data,
       newsgid,
+      attachmentPoints,
       sg.pp ? sg.pp.add(offset) : null,
       sg.type === 'SUP' ? sg.data.expanded : null,
       sg.data.name

@@ -31,6 +31,7 @@ import { Action } from './action'
 import { SgContexts } from '..'
 import { uniq } from 'lodash/fp'
 import { fromAtomsAttrs } from './atom'
+import { SGroupAttachmentPointAdd } from 'application/editor/operations/sgroup/sgroupAttachmentPoints'
 
 export function fromSeveralSgroupAddition(restruct, type, atoms, attrs) {
   const descriptors = attrs.fieldValue
@@ -41,7 +42,8 @@ export function fromSeveralSgroupAddition(restruct, type, atoms, attrs) {
       type,
       atoms,
       attrs,
-      restruct.molecule.sgroups.newId()
+      restruct.molecule.sgroups.newId(),
+      []
     )
   }
 
@@ -55,7 +57,8 @@ export function fromSeveralSgroupAddition(restruct, type, atoms, attrs) {
         type,
         atoms,
         localAttrs,
-        restruct.molecule.sgroups.newId()
+        restruct.molecule.sgroups.newId(),
+        []
       )
     )
   }, new Action())
@@ -168,6 +171,7 @@ export function fromSgroupAddition(
   atoms,
   attrs,
   sgid,
+  attachmentPoints,
   pp?,
   expanded?,
   name?
@@ -187,6 +191,10 @@ export function fromSgroupAddition(
 
   atoms.forEach((atom) => {
     action.addOp(new SGroupAtomAdd(sgid, atom))
+  })
+
+  attachmentPoints.forEach((attachmentPoint) => {
+    action.addOp(new SGroupAttachmentPointAdd(sgid, attachmentPoint))
   })
 
   action.addOp(

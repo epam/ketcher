@@ -24,6 +24,8 @@ import { Vec2 } from './vec2'
 import { ReStruct } from '../../application/render'
 import { Pool } from 'domain/entities/pool'
 import { ReSGroup } from 'application/render'
+import { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint'
+import assert from 'assert'
 
 export class SGroupBracketParams {
   readonly c: Vec2
@@ -82,6 +84,7 @@ export class SGroup {
   data: any
   firstSgroupAtom: any
   firstSgroupAtomId: number
+  private readonly attachmentPoints: SGroupAttachmentPoint[]
 
   constructor(type: string) {
     this.type = type
@@ -101,6 +104,7 @@ export class SGroup {
     this.bonds = []
     this.xBonds = []
     this.neiAtoms = []
+    this.attachmentPoints = []
     this.pp = null
     this.firstSgroupAtomId = -1
     this.data = {
@@ -235,6 +239,70 @@ export class SGroup {
     return !neighbours?.every(({ aid }) => this.atoms.includes(aid))
   }
 
+  addAttachmentPoint(attachmentPoint: SGroupAttachmentPoint): void {
+    const isAttachmentPointAlreadyExist = this.attachmentPoints.some(
+      ({ atomId }) => attachmentPoint.atomId === atomId
+    )
+
+    if (isAttachmentPointAlreadyExist) {
+      throw new Error(
+        'The same attachment point cannot be added to an S-group more than once'
+      )
+    }
+
+    this.attachmentPoints.push(attachmentPoint)
+  }
+
+  addAttachmentPoints(
+    attachmentPoints:
+      | ReadonlyArray<SGroupAttachmentPoint>
+      | SGroupAttachmentPoint[]
+  ): void {
+    for (const attachmentPoint of attachmentPoints) {
+      this.addAttachmentPoint(attachmentPoint)
+    }
+  }
+
+  removeAttachmentPoint(attachmentPointAtomId: number): void {
+    const index = this.attachmentPoints.findIndex(
+      ({ atomId }) => attachmentPointAtomId === atomId
+    )
+    const isAttachmentPointDoesntExist = index === -1
+
+    if (isAttachmentPointDoesntExist) {
+      throw new Error(
+        `The attachment point "${attachmentPointAtomId}" doesn't exist in the group`
+      )
+    }
+
+    this.attachmentPoints.splice(index, 1)
+  }
+
+  getAttachmentPoints(): ReadonlyArray<SGroupAttachmentPoint> {
+    return this.attachmentPoints
+  }
+
+  reMapAttachmentPoints(
+    atomIdMap: Map<number, number>
+  ): ReadonlyArray<SGroupAttachmentPoint> {
+    return this.attachmentPoints.map(
+      ({ atomId, leaveAtomId, additionalData }) => {
+        const newAtomId = atomIdMap.get(atomId)
+        assert(newAtomId != null)
+        const newLeaveAtomId = atomIdMap.get(leaveAtomId)
+        return new SGroupAttachmentPoint(
+          newAtomId,
+          newLeaveAtomId,
+          additionalData
+        )
+      }
+    )
+  }
+
+  hasAttachmentPoints(): boolean {
+    return this.attachmentPoints.length > 0
+  }
+
   static getOffset(sgroup: SGroup): null | Vec2 {
     if (!sgroup?.pp) return null
     return Vec2.diff(sgroup.pp, sgroup.bracketBox.p1)
@@ -310,6 +378,7 @@ export class SGroup {
     cp.bonds = null
     cp.allAtoms = sgroup.allAtoms
     cp.data.expanded = sgroup.data.expanded
+    cp.addAttachmentPoints(sgroup.reMapAttachmentPoints(aidMap))
     return cp
   }
 

@@ -256,6 +256,12 @@ function parsePropertyLines(ctab, ctabLines, shift, end, sGroups, rLogic) {
           const sGroupId = Number(eg) - 1
           sGroups[sGroupId].data.expanded = true
         })
+      } else if (type === 'SAP') {
+        const { sGroupId, attachmentPoints } =
+          sGroup.parseSGroupSAPLineV2000(propertyData)
+        attachmentPoints.forEach((attachmentPoint) => {
+          sGroups[sGroupId].addAttachmentPoint(attachmentPoint)
+        })
       }
     }
     ++shift

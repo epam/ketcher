@@ -10,7 +10,7 @@
   "parser": "@typescript-eslint/parser",
   "rules": {
     "@typescript-eslint/no-unused-vars": [
-      "off",
+      "warn",
       {
         "argsIgnorePattern": "^_",
         "varsIgnorePattern": "^_",

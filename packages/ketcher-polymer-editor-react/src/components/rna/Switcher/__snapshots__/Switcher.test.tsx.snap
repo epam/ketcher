@@ -6,10 +6,10 @@ Object {
   "baseElement": <body>
     <div>
       <div
-        class="css-1m326po"
+        class="css-mxf4j3"
       >
         <button
-          class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-1ii4wrn-MuiButtonBase-root-MuiButton-root-RAPButton"
+          class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-15uzma4-MuiButtonBase-root-MuiButton-root-RAPButton"
           tabindex="0"
           type="button"
         >
@@ -62,7 +62,7 @@ Object {
           class="css-11ydt2g"
         >
           <button
-            class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-71ofci-MuiButtonBase-root-MuiButton-root-RAPButton"
+            class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-192p6qh-MuiButtonBase-root-MuiButton-root-RAPButton"
             tabindex="0"
             type="button"
           >
@@ -72,7 +72,7 @@ Object {
             />
           </button>
           <button
-            class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-71ofci-MuiButtonBase-root-MuiButton-root-RAPButton"
+            class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-192p6qh-MuiButtonBase-root-MuiButton-root-RAPButton"
             tabindex="0"
             type="button"
           >
@@ -82,7 +82,7 @@ Object {
             />
           </button>
           <button
-            class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-71ofci-MuiButtonBase-root-MuiButton-root-RAPButton"
+            class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-192p6qh-MuiButtonBase-root-MuiButton-root-RAPButton"
             tabindex="0"
             type="button"
           >
@@ -107,10 +107,10 @@ Object {
   </body>,
   "container": <div>
     <div
-      class="css-1m326po"
+      class="css-mxf4j3"
     >
       <button
-        class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-1ii4wrn-MuiButtonBase-root-MuiButton-root-RAPButton"
+        class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-15uzma4-MuiButtonBase-root-MuiButton-root-RAPButton"
         tabindex="0"
         type="button"
       >
@@ -163,7 +163,7 @@ Object {
         class="css-11ydt2g"
       >
         <button
-          class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-71ofci-MuiButtonBase-root-MuiButton-root-RAPButton"
+          class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-192p6qh-MuiButtonBase-root-MuiButton-root-RAPButton"
           tabindex="0"
           type="button"
         >
@@ -173,7 +173,7 @@ Object {
           />
         </button>
         <button
-          class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-71ofci-MuiButtonBase-root-MuiButton-root-RAPButton"
+          class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-192p6qh-MuiButtonBase-root-MuiButton-root-RAPButton"
           tabindex="0"
           type="button"
         >
@@ -183,7 +183,7 @@ Object {
           />
         </button>
         <button
-          class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-71ofci-MuiButtonBase-root-MuiButton-root-RAPButton"
+          class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-192p6qh-MuiButtonBase-root-MuiButton-root-RAPButton"
           tabindex="0"
           type="button"
         >
@@ -265,10 +265,10 @@ Object {
   "baseElement": <body>
     <div>
       <div
-        class="css-1m326po"
+        class="css-mxf4j3"
       >
         <button
-          class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-71ofci-MuiButtonBase-root-MuiButton-root-RAPButton"
+          class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-192p6qh-MuiButtonBase-root-MuiButton-root-RAPButton"
           tabindex="0"
           type="button"
         >
@@ -280,48 +280,27 @@ Object {
         <div
           class="css-11l5obs"
         >
-          <svg
-            class="css-1eyukqs"
-            fill="none"
-            height="18"
-            viewBox="0 0 27 18"
-            width="27"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M26 0v4.229a4 4 0 01-4 4H5a4 4 0 00-4 4V18"
-            />
-          </svg>
-          <svg
-            class="css-1vr3czz"
-            fill="none"
-            height="16"
-            viewBox="0 0 2 16"
-            width="2"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M1 0v16"
-            />
-          </svg>
-          <svg
-            class="css-1vr3czz"
-            fill="none"
-            height="18"
-            viewBox="0 0 27 18"
-            width="27"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M1 0v4.229a4 4 0 004 4h17a4 4 0 014 4V18"
-            />
-          </svg>
+          <icon-rap-left-link.svg
+            classname="css-1v5gmf4"
+            fill="#525252"
+            role="img"
+          />
+          <icon-rap-middle-link.svg
+            classname="css-1vr3czz"
+            fill="#525252"
+            role="img"
+          />
+          <icon-rap-right-link.svg
+            classname="css-1vr3czz"
+            fill="#525252"
+            role="img"
+          />
         </div>
         <div
           class="css-11ydt2g"
         >
           <button
-            class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-1ii4wrn-MuiButtonBase-root-MuiButton-root-RAPButton"
+            class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-15uzma4-MuiButtonBase-root-MuiButton-root-RAPButton"
             tabindex="0"
             type="button"
           >
@@ -331,7 +310,7 @@ Object {
             />
           </button>
           <button
-            class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-71ofci-MuiButtonBase-root-MuiButton-root-RAPButton"
+            class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-192p6qh-MuiButtonBase-root-MuiButton-root-RAPButton"
             tabindex="0"
             type="button"
           >
@@ -341,7 +320,7 @@ Object {
             />
           </button>
           <button
-            class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-71ofci-MuiButtonBase-root-MuiButton-root-RAPButton"
+            class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-192p6qh-MuiButtonBase-root-MuiButton-root-RAPButton"
             tabindex="0"
             type="button"
           >
@@ -366,10 +345,10 @@ Object {
   </body>,
   "container": <div>
     <div
-      class="css-1m326po"
+      class="css-mxf4j3"
     >
       <button
-        class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-71ofci-MuiButtonBase-root-MuiButton-root-RAPButton"
+        class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-192p6qh-MuiButtonBase-root-MuiButton-root-RAPButton"
         tabindex="0"
         type="button"
       >
@@ -381,48 +360,27 @@ Object {
       <div
         class="css-11l5obs"
       >
-        <svg
-          class="css-1eyukqs"
-          fill="none"
-          height="18"
-          viewBox="0 0 27 18"
-          width="27"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M26 0v4.229a4 4 0 01-4 4H5a4 4 0 00-4 4V18"
-          />
-        </svg>
-        <svg
-          class="css-1vr3czz"
-          fill="none"
-          height="16"
-          viewBox="0 0 2 16"
-          width="2"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M1 0v16"
-          />
-        </svg>
-        <svg
-          class="css-1vr3czz"
-          fill="none"
-          height="18"
-          viewBox="0 0 27 18"
-          width="27"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M1 0v4.229a4 4 0 004 4h17a4 4 0 014 4V18"
-          />
-        </svg>
+        <icon-rap-left-link.svg
+          classname="css-1v5gmf4"
+          fill="#525252"
+          role="img"
+        />
+        <icon-rap-middle-link.svg
+          classname="css-1vr3czz"
+          fill="#525252"
+          role="img"
+        />
+        <icon-rap-right-link.svg
+          classname="css-1vr3czz"
+          fill="#525252"
+          role="img"
+        />
       </div>
       <div
         class="css-11ydt2g"
       >
         <button
-          class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-1ii4wrn-MuiButtonBase-root-MuiButton-root-RAPButton"
+          class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-15uzma4-MuiButtonBase-root-MuiButton-root-RAPButton"
           tabindex="0"
           type="button"
         >
@@ -432,7 +390,7 @@ Object {
           />
         </button>
         <button
-          class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-71ofci-MuiButtonBase-root-MuiButton-root-RAPButton"
+          class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-192p6qh-MuiButtonBase-root-MuiButton-root-RAPButton"
           tabindex="0"
           type="button"
         >
@@ -442,7 +400,7 @@ Object {
           />
         </button>
         <button
-          class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-71ofci-MuiButtonBase-root-MuiButton-root-RAPButton"
+          class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-192p6qh-MuiButtonBase-root-MuiButton-root-RAPButton"
           tabindex="0"
           type="button"
         >
@@ -524,10 +482,10 @@ Object {
   "baseElement": <body>
     <div>
       <div
-        class="css-1m326po"
+        class="css-mxf4j3"
       >
         <button
-          class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-71ofci-MuiButtonBase-root-MuiButton-root-RAPButton"
+          class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-192p6qh-MuiButtonBase-root-MuiButton-root-RAPButton"
           tabindex="0"
           type="button"
         >
@@ -539,48 +497,27 @@ Object {
         <div
           class="css-11l5obs"
         >
-          <svg
-            class="css-1vr3czz"
-            fill="none"
-            height="18"
-            viewBox="0 0 27 18"
-            width="27"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M26 0v4.229a4 4 0 01-4 4H5a4 4 0 00-4 4V18"
-            />
-          </svg>
-          <svg
-            class="css-1eyukqs"
-            fill="none"
-            height="16"
-            viewBox="0 0 2 16"
-            width="2"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M1 0v16"
-            />
-          </svg>
-          <svg
-            class="css-1vr3czz"
-            fill="none"
-            height="18"
-            viewBox="0 0 27 18"
-            width="27"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M1 0v4.229a4 4 0 004 4h17a4 4 0 014 4V18"
-            />
-          </svg>
+          <icon-rap-left-link.svg
+            classname="css-1vr3czz"
+            fill="#525252"
+            role="img"
+          />
+          <icon-rap-middle-link.svg
+            classname="css-1v5gmf4"
+            fill="#525252"
+            role="img"
+          />
+          <icon-rap-right-link.svg
+            classname="css-1vr3czz"
+            fill="#525252"
+            role="img"
+          />
         </div>
         <div
           class="css-11ydt2g"
         >
           <button
-            class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-71ofci-MuiButtonBase-root-MuiButton-root-RAPButton"
+            class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-192p6qh-MuiButtonBase-root-MuiButton-root-RAPButton"
             tabindex="0"
             type="button"
           >
@@ -590,7 +527,7 @@ Object {
             />
           </button>
           <button
-            class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-1ii4wrn-MuiButtonBase-root-MuiButton-root-RAPButton"
+            class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-15uzma4-MuiButtonBase-root-MuiButton-root-RAPButton"
             tabindex="0"
             type="button"
           >
@@ -600,7 +537,7 @@ Object {
             />
           </button>
           <button
-            class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-71ofci-MuiButtonBase-root-MuiButton-root-RAPButton"
+            class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-192p6qh-MuiButtonBase-root-MuiButton-root-RAPButton"
             tabindex="0"
             type="button"
           >
@@ -625,10 +562,10 @@ Object {
   </body>,
   "container": <div>
     <div
-      class="css-1m326po"
+      class="css-mxf4j3"
     >
       <button
-        class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-71ofci-MuiButtonBase-root-MuiButton-root-RAPButton"
+        class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-192p6qh-MuiButtonBase-root-MuiButton-root-RAPButton"
         tabindex="0"
         type="button"
       >
@@ -640,48 +577,27 @@ Object {
       <div
         class="css-11l5obs"
       >
-        <svg
-          class="css-1vr3czz"
-          fill="none"
-          height="18"
-          viewBox="0 0 27 18"
-          width="27"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M26 0v4.229a4 4 0 01-4 4H5a4 4 0 00-4 4V18"
-          />
-        </svg>
-        <svg
-          class="css-1eyukqs"
-          fill="none"
-          height="16"
-          viewBox="0 0 2 16"
-          width="2"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M1 0v16"
-          />
-        </svg>
-        <svg
-          class="css-1vr3czz"
-          fill="none"
-          height="18"
-          viewBox="0 0 27 18"
-          width="27"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M1 0v4.229a4 4 0 004 4h17a4 4 0 014 4V18"
-          />
-        </svg>
+        <icon-rap-left-link.svg
+          classname="css-1vr3czz"
+          fill="#525252"
+          role="img"
+        />
+        <icon-rap-middle-link.svg
+          classname="css-1v5gmf4"
+          fill="#525252"
+          role="img"
+        />
+        <icon-rap-right-link.svg
+          classname="css-1vr3czz"
+          fill="#525252"
+          role="img"
+        />
       </div>
       <div
         class="css-11ydt2g"
       >
         <button
-          class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-71ofci-MuiButtonBase-root-MuiButton-root-RAPButton"
+          class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-192p6qh-MuiButtonBase-root-MuiButton-root-RAPButton"
           tabindex="0"
           type="button"
         >
@@ -691,7 +607,7 @@ Object {
           />
         </button>
         <button
-          class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-1ii4wrn-MuiButtonBase-root-MuiButton-root-RAPButton"
+          class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-15uzma4-MuiButtonBase-root-MuiButton-root-RAPButton"
           tabindex="0"
           type="button"
         >
@@ -701,7 +617,7 @@ Object {
           />
         </button>
         <button
-          class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-71ofci-MuiButtonBase-root-MuiButton-root-RAPButton"
+          class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-192p6qh-MuiButtonBase-root-MuiButton-root-RAPButton"
           tabindex="0"
           type="button"
         >
@@ -783,10 +699,10 @@ Object {
   "baseElement": <body>
     <div>
       <div
-        class="css-1m326po"
+        class="css-mxf4j3"
       >
         <button
-          class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-71ofci-MuiButtonBase-root-MuiButton-root-RAPButton"
+          class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-192p6qh-MuiButtonBase-root-MuiButton-root-RAPButton"
           tabindex="0"
           type="button"
         >
@@ -798,48 +714,27 @@ Object {
         <div
           class="css-11l5obs"
         >
-          <svg
-            class="css-1vr3czz"
-            fill="none"
-            height="18"
-            viewBox="0 0 27 18"
-            width="27"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M26 0v4.229a4 4 0 01-4 4H5a4 4 0 00-4 4V18"
-            />
-          </svg>
-          <svg
-            class="css-1vr3czz"
-            fill="none"
-            height="16"
-            viewBox="0 0 2 16"
-            width="2"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M1 0v16"
-            />
-          </svg>
-          <svg
-            class="css-1eyukqs"
-            fill="none"
-            height="18"
-            viewBox="0 0 27 18"
-            width="27"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M1 0v4.229a4 4 0 004 4h17a4 4 0 014 4V18"
-            />
-          </svg>
+          <icon-rap-left-link.svg
+            classname="css-1vr3czz"
+            fill="#525252"
+            role="img"
+          />
+          <icon-rap-middle-link.svg
+            classname="css-1vr3czz"
+            fill="#525252"
+            role="img"
+          />
+          <icon-rap-right-link.svg
+            classname="css-1v5gmf4"
+            fill="#525252"
+            role="img"
+          />
         </div>
         <div
           class="css-11ydt2g"
         >
           <button
-            class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-71ofci-MuiButtonBase-root-MuiButton-root-RAPButton"
+            class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-192p6qh-MuiButtonBase-root-MuiButton-root-RAPButton"
             tabindex="0"
             type="button"
           >
@@ -849,7 +744,7 @@ Object {
             />
           </button>
           <button
-            class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-71ofci-MuiButtonBase-root-MuiButton-root-RAPButton"
+            class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-192p6qh-MuiButtonBase-root-MuiButton-root-RAPButton"
             tabindex="0"
             type="button"
           >
@@ -859,7 +754,7 @@ Object {
             />
           </button>
           <button
-            class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-1ii4wrn-MuiButtonBase-root-MuiButton-root-RAPButton"
+            class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-15uzma4-MuiButtonBase-root-MuiButton-root-RAPButton"
             tabindex="0"
             type="button"
           >
@@ -884,10 +779,10 @@ Object {
   </body>,
   "container": <div>
     <div
-      class="css-1m326po"
+      class="css-mxf4j3"
     >
       <button
-        class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-71ofci-MuiButtonBase-root-MuiButton-root-RAPButton"
+        class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-192p6qh-MuiButtonBase-root-MuiButton-root-RAPButton"
         tabindex="0"
         type="button"
       >
@@ -899,48 +794,27 @@ Object {
       <div
         class="css-11l5obs"
       >
-        <svg
-          class="css-1vr3czz"
-          fill="none"
-          height="18"
-          viewBox="0 0 27 18"
-          width="27"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M26 0v4.229a4 4 0 01-4 4H5a4 4 0 00-4 4V18"
-          />
-        </svg>
-        <svg
-          class="css-1vr3czz"
-          fill="none"
-          height="16"
-          viewBox="0 0 2 16"
-          width="2"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M1 0v16"
-          />
-        </svg>
-        <svg
-          class="css-1eyukqs"
-          fill="none"
-          height="18"
-          viewBox="0 0 27 18"
-          width="27"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M1 0v4.229a4 4 0 004 4h17a4 4 0 014 4V18"
-          />
-        </svg>
+        <icon-rap-left-link.svg
+          classname="css-1vr3czz"
+          fill="#525252"
+          role="img"
+        />
+        <icon-rap-middle-link.svg
+          classname="css-1vr3czz"
+          fill="#525252"
+          role="img"
+        />
+        <icon-rap-right-link.svg
+          classname="css-1v5gmf4"
+          fill="#525252"
+          role="img"
+        />
       </div>
       <div
         class="css-11ydt2g"
       >
         <button
-          class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-71ofci-MuiButtonBase-root-MuiButton-root-RAPButton"
+          class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-192p6qh-MuiButtonBase-root-MuiButton-root-RAPButton"
           tabindex="0"
           type="button"
         >
@@ -950,7 +824,7 @@ Object {
           />
         </button>
         <button
-          class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-71ofci-MuiButtonBase-root-MuiButton-root-RAPButton"
+          class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-192p6qh-MuiButtonBase-root-MuiButton-root-RAPButton"
           tabindex="0"
           type="button"
         >
@@ -960,7 +834,7 @@ Object {
           />
         </button>
         <button
-          class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-1ii4wrn-MuiButtonBase-root-MuiButton-root-RAPButton"
+          class="MuiButtonBase-root MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium MuiButton-root MuiButton-text MuiButton-textPrimary MuiButton-sizeMedium MuiButton-textSizeMedium css-15uzma4-MuiButtonBase-root-MuiButton-root-RAPButton"
           tabindex="0"
           type="button"
         >

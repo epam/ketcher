@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { render, screen } from '@testing-library/react'
+import { render, screen, fireEvent } from '@testing-library/react'
 import { Menu, MenuContext } from 'components/menu'
-import userEvent from '@testing-library/user-event'
 
 const mockClickHandler = jest.fn()
 const MOCK_NAME = 'select-lasso'
@@ -46,8 +45,8 @@ describe('Test SubMenu component', () => {
   })
   it('should call provided callback when header icon is clicked', () => {
     render(withThemeProvider(mockSubMenu()))
-    const button = screen.getByRole('button')
-    userEvent.click(button)
+    const button = screen.getByRole('menuitem')
+    fireEvent.click(button)
     expect(mockClickHandler).toHaveBeenCalled()
   })
 })

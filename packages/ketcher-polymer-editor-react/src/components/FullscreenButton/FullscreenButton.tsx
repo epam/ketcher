@@ -16,6 +16,7 @@
 
 import { IconButton } from 'ketcher-react'
 import styled from '@emotion/styled'
+import { EditorClassName } from 'src/constants'
 import { useState } from 'react'
 
 const requestFullscreen = (element: HTMLElement) => {
@@ -39,6 +40,13 @@ const isFullScreen = () => {
     document.webkitFullscreenElement ||
     document.msFullscreenElement
   )
+}
+
+const toggleFullscreen = () => {
+  // TODO: add selector / ref prop when will be shared component
+  const fullscreenElement: HTMLElement =
+    document.querySelector(`.${EditorClassName}`) || document.documentElement
+  isFullScreen() ? exitFullscreen() : requestFullscreen(fullscreenElement)
 }
 
 const ButtonContainer = styled.div`

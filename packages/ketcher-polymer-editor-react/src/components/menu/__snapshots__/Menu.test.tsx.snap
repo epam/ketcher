@@ -8,6 +8,36 @@ Object {
       <div
         class="css-1t7fvih"
       >
+        <li
+          class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
+          role="menuitem"
+          tabindex="-1"
+        >
+          <icon-open.svg
+            fill="#525252"
+            role="img"
+          />
+          <span
+            class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+          />
+        </li>
+      </div>
+      <div
+        class="css-10qeqvw"
+      >
+        <li
+          class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
+          role="menuitem"
+          tabindex="-1"
+        >
+          <icon-erase.svg
+            fill="#525252"
+            role="img"
+          />
+          <span
+            class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+          />
+        </li>
         <div
           class="css-10qeqvw"
         >
@@ -16,12 +46,10 @@ Object {
             tabindex="0"
             type="button"
           >
-            <svg
-              fill="none"
-              height="24"
-              viewBox="0 0 24 24"
-              width="24"
-              xmlns="http://www.w3.org/2000/svg"
+            <li
+              class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
+              role="menuitem"
+              tabindex="-1"
             >
               <path
                 d="M7.075 9.5l-1.575 8V8h12.75a1.5 1.5 0 00-1.5-1.5H11.5L10 5H5.5A1.5 1.5 0 004 6.5v11A1.5 1.5 0 005.5 19h11.25c.675 0 1.275-.45 1.425-1.125L19.9 9.5H7.075zm9.675 8H7L8.2 11h9.75l-1.2 6.5z"
@@ -41,12 +69,10 @@ Object {
             tabindex="0"
             type="button"
           >
-            <svg
-              fill="none"
-              height="48"
-              viewBox="0 0 48 48"
-              width="48"
-              xmlns="http://www.w3.org/2000/svg"
+            <li
+              class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
+              role="menuitem"
+              tabindex="-1"
             >
               <path
                 d="M40.284 18.458L30.37 8.546a2 2 0 00-2.828 0L7.716 28.372a2 2 0 000 2.828l7.084 7.082a6.001 6.001 0 008.488 0l17-17a2 2 0 000-2.828l-.004.004zm-19.824 17a2 2 0 01-2.832 0l-5.67-5.672 7.824-7.824 7.084 7.086-6.406 6.41z"
@@ -104,6 +130,19 @@ Object {
           <div
             class="css-12wx08y"
           >
+            <li
+              class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
+              role="menuitem"
+              tabindex="-1"
+            >
+              <icon-rotate.svg
+                fill="#525252"
+                role="img"
+              />
+              <span
+                class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+              />
+            </li>
             <div
               class="css-5su45f"
             >
@@ -189,6 +228,36 @@ Object {
     <div
       class="css-1t7fvih"
     >
+      <li
+        class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
+        role="menuitem"
+        tabindex="-1"
+      >
+        <icon-open.svg
+          fill="#525252"
+          role="img"
+        />
+        <span
+          class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+        />
+      </li>
+    </div>
+    <div
+      class="css-10qeqvw"
+    >
+      <li
+        class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
+        role="menuitem"
+        tabindex="-1"
+      >
+        <icon-erase.svg
+          fill="#525252"
+          role="img"
+        />
+        <span
+          class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+        />
+      </li>
       <div
         class="css-10qeqvw"
       >
@@ -197,12 +266,10 @@ Object {
           tabindex="0"
           type="button"
         >
-          <svg
-            fill="none"
-            height="24"
-            viewBox="0 0 24 24"
-            width="24"
-            xmlns="http://www.w3.org/2000/svg"
+          <li
+            class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
+            role="menuitem"
+            tabindex="-1"
           >
             <path
               d="M7.075 9.5l-1.575 8V8h12.75a1.5 1.5 0 00-1.5-1.5H11.5L10 5H5.5A1.5 1.5 0 004 6.5v11A1.5 1.5 0 005.5 19h11.25c.675 0 1.275-.45 1.425-1.125L19.9 9.5H7.075zm9.675 8H7L8.2 11h9.75l-1.2 6.5z"
@@ -222,12 +289,10 @@ Object {
           tabindex="0"
           type="button"
         >
-          <svg
-            fill="none"
-            height="48"
-            viewBox="0 0 48 48"
-            width="48"
-            xmlns="http://www.w3.org/2000/svg"
+          <li
+            class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
+            role="menuitem"
+            tabindex="-1"
           >
             <path
               d="M40.284 18.458L30.37 8.546a2 2 0 00-2.828 0L7.716 28.372a2 2 0 000 2.828l7.084 7.082a6.001 6.001 0 008.488 0l17-17a2 2 0 000-2.828l-.004.004zm-19.824 17a2 2 0 01-2.832 0l-5.67-5.672 7.824-7.824 7.084 7.086-6.406 6.41z"
@@ -285,6 +350,19 @@ Object {
         <div
           class="css-12wx08y"
         >
+          <li
+            class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
+            role="menuitem"
+            tabindex="-1"
+          >
+            <icon-rotate.svg
+              fill="#525252"
+              role="img"
+            />
+            <span
+              class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+            />
+          </li>
           <div
             class="css-5su45f"
           >

@@ -32,7 +32,7 @@ Object {
           aria-labelledby=":r0:"
           class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation24 MuiDialog-paper MuiDialog-paperScrollPaper MuiDialog-paperWidthMd css-12rl710-MuiPaper-root-MuiDialog-paper"
           role="dialog"
-          style="min-width: 20vw; background: rgb(242, 242, 242); border-radius: 8px; color: rgb(51, 51, 51);"
+          style="min-width: 20vw; background: rgb(245, 245, 245); border-radius: 8px; color: rgb(51, 51, 51);"
         >
           <h2
             class="MuiTypography-root MuiTypography-h6 MuiDialogTitle-root css-1x5ms5d-MuiTypography-root-MuiDialogTitle-root"
@@ -78,13 +78,13 @@ Object {
               >
                 <div>
                   <label
-                    class="css-14c8znx"
+                    class="css-1surj6c"
                     for="filename"
                   >
                     File name:
                   </label>
                   <input
-                    class="css-yab8h5"
+                    class="css-18vwwx9"
                     id="filename"
                     type="text"
                     value="ketcher"
@@ -94,7 +94,7 @@ Object {
                   style="line-height: 24px;"
                 >
                   <label
-                    class="css-14c8znx"
+                    class="css-1surj6c"
                     for="fileformat"
                   >
                     File format:
@@ -104,6 +104,7 @@ Object {
                   >
                     <div
                       class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-fullWidth MuiInputBase-formControl css-objd0-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root"
+                      data-testid="dropdown-select"
                     >
                       <div
                         aria-expanded="false"
@@ -199,7 +200,7 @@ Object {
             class="MuiDialogActions-root MuiDialogActions-spacing css-1codpvf-MuiDialogActions-root"
           >
             <button
-              class="MuiButtonBase-root css-1uk7g1a-MuiButtonBase-root"
+              class="MuiButtonBase-root css-1nveueb-MuiButtonBase-root"
               role="button"
               tabindex="0"
               title="Errors"
@@ -223,7 +224,7 @@ Object {
               />
             </button>
             <button
-              class="MuiButtonBase-root css-1u2dyik-MuiButtonBase-root"
+              class="MuiButtonBase-root css-19hmuzh-MuiButtonBase-root"
               role="button"
               tabindex="0"
               title="Save as file"

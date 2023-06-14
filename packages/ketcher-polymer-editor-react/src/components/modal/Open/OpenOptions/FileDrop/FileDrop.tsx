@@ -19,7 +19,7 @@ import React, { useMemo } from 'react'
 import { ActionButton } from 'components/shared/actionButton'
 import styled from '@emotion/styled'
 
-type FileDropProps = {
+export type FileDropProps = {
   buttonLabel: string
   textLabel: string
   iconName: IconName

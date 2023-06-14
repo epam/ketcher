@@ -14,6 +14,7 @@ import strip from '@rollup/plugin-strip'
 import svgr from '@svgr/rollup'
 import typescript from 'rollup-plugin-typescript2'
 import ttypescript from 'ttypescript'
+import { string } from 'rollup-plugin-string'
 
 const mode = {
   PRODUCTION: 'production',
@@ -86,6 +87,9 @@ const config = {
       extensions: extensions.map((ext) => ext.trimStart('.')),
       comments: 'none',
       include: includePattern
+    }),
+    string({
+      include: '**/*.sdf'
     }),
     ...(isProduction ? [strip({ include: includePattern })] : [])
   ]

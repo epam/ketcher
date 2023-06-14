@@ -15,7 +15,7 @@
  ***************************************************************************/
 import { EmptyFunction } from 'helpers'
 import { useAppDispatch } from 'hooks'
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 import { toggleMonomerFavorites } from 'state/library'
 import { Card } from './styles'
 import { IMonomerItemProps } from './types'
@@ -27,7 +27,6 @@ const MonomerItem = ({
   onClick = EmptyFunction
 }: IMonomerItemProps) => {
   const [favorite, setFavorite] = useState(item.favorite)
-  const portalRef = useRef<HTMLDivElement>(null)
   const dispatch = useAppDispatch()
 
   return (
@@ -37,7 +36,6 @@ const MonomerItem = ({
       data-testid={item.props.MonomerNaturalAnalogCode}
       onMouseLeave={onMouseLeave}
       onMouseMove={onMouseMove}
-      ref={portalRef}
     >
       <span>{item.label}</span>
       <div

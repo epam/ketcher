@@ -17,13 +17,19 @@ const ignoredTests = ['clean-tools.spec.ts'];
 
 function baseURL(): string {
   if (!process.env.MODE || !process.env.KETCHER_URL) {
+    console.log(
+      'DEFAULT_KETCHER_STANDALONE_URL',
+      DEFAULT_KETCHER_STANDALONE_URL
+    );
     return DEFAULT_KETCHER_STANDALONE_URL;
   }
 
   if (process.env.MODE === MODES.STANDALONE) {
+    console.log('STANDALONE', `${process.env.KETCHER_URL}${STANDALONE_URL}`);
     return `${process.env.KETCHER_URL}${STANDALONE_URL}`;
   }
 
+  console.log(`${process.env.KETCHER_URL}${REMOTE_URL}`);
   return `${process.env.KETCHER_URL}${REMOTE_URL}`;
 }
 

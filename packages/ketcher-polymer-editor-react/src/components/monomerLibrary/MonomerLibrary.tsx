@@ -15,11 +15,11 @@
  ***************************************************************************/
 import { useState } from 'react'
 import { Tabs } from 'components/shared/Tabs'
-import { Icon } from 'components/shared/icon'
 import styled from '@emotion/styled'
 import { tabsContent } from 'components/monomerLibrary/tabsContent'
 import { useAppDispatch } from 'hooks'
 import { setSearchFilter } from 'state/library'
+import { Icon } from 'ketcher-react'
 
 const MonomerLibraryContainer = styled.div(({ theme }) => ({
   width: '254px',
@@ -136,9 +136,9 @@ const MonomerLibrary = () => {
         <MonomerLibraryToggle>
           <span className="icon">
             {isHidden ? (
-              <Icon name="double-arrow-left" />
+              <Icon name="arrows-left" />
             ) : (
-              <Icon name="double-arrow-right" />
+              <Icon name="arrows-right" />
             )}
           </span>
           <span onClick={toggleSidebar}>

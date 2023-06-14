@@ -42,13 +42,6 @@ const isFullScreen = () => {
   )
 }
 
-const toggleFullscreen = () => {
-  // TODO: add selector / ref prop when will be shared component
-  const fullscreenElement: HTMLElement =
-    document.querySelector(`.${EditorClassName}`) || document.documentElement
-  isFullScreen() ? exitFullscreen() : requestFullscreen(fullscreenElement)
-}
-
 const ButtonContainer = styled.div`
   position: absolute;
   right: 47px;
@@ -60,8 +53,7 @@ export const FullscreenButton = (props) => {
   const toggleFullscreen = () => {
     // TODO: add selector / ref prop when will be shared component
     const fullscreenElement: HTMLElement =
-      document.querySelector('.Ketcher-polymer-editor-root') ||
-      document.documentElement
+      document.querySelector(EditorClassName) || document.documentElement
     fullScreenMode ? exitFullscreen() : requestFullscreen(fullscreenElement)
     setFullScreenMode(!fullScreenMode)
   }

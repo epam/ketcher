@@ -203,6 +203,8 @@ import Error from '../../../assets/icons/files/error.svg'
 import RapLeftLink from '../../../assets/icons/files/rap-left-link.svg'
 import RapMiddleLink from '../../../assets/icons/files/rap-middle-link.svg'
 import RapRightLink from '../../../assets/icons/files/rap-right-link.svg'
+import ArrowsLeft from '../../../assets/icons/files/arrows-left.svg'
+import ArrowsRight from '../../../assets/icons/files/arrows-right.svg'
 
 export const iconNameToIcon = {
   α,
@@ -405,5 +407,7 @@ export const iconNameToIcon = {
   error: Error,
   'rap-left-link': RapLeftLink,
   'rap-middle-link': RapMiddleLink,
-  'rap-right-link': RapRightLink
+  'rap-right-link': RapRightLink,
+  'arrows-left': ArrowsLeft,
+  'arrows-right': ArrowsRight
 } as const

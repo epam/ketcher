@@ -20,7 +20,3 @@ export interface IMonomerGroupProps {
   onItemClick?: (item: MonomerItemType) => void
   title?: string
 }
-
-export type PreviewStyle = {
-  top: string
-}

@@ -16,7 +16,7 @@
 import { RefObject, useState } from 'react'
 import { EditorClassName, preview } from '../constants'
 import { MonomerItemType } from '../components/monomerLibrary/monomerLibraryItem/types'
-import { PreviewStyle } from '../components/monomerLibrary/monomerLibraryGroup/types'
+import { PreviewStyle } from '../types'
 
 export const usePreview = (
   ref: RefObject<HTMLDivElement>

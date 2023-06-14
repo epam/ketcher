@@ -38,15 +38,15 @@ jobs:
       - name: Build autotests for docker
         run: cd ketcher-autotests && npm run docker:build
         with:
-          build-args:
-            - IGNORE_UNSTABLE_TESTS: true,
-            - KETCHER_URL: http://host.docker.internal:4002
+          build-args: |
+            IGNORE_UNSTABLE_TESTS=true
+            KETCHER_URL=http://host.docker.internal:4002
       - name: Run playwright tests in docker
         run: cd ketcher-autotests && npm run docker:test:ci
         with:
-          build-args:
-            - IGNORE_UNSTABLE_TESTS: true,
-            - KETCHER_URL: http://host.docker.internal:4002
+          build-args: |
+            IGNORE_UNSTABLE_TESTS=true
+            KETCHER_URL=http://host.docker.internal:4002
       - uses: actions/upload-artifact@v3
         # run even if previous steps fails
         if: always()

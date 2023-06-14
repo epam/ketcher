@@ -34,11 +34,7 @@ jobs:
       - name: Run example in standalone mode
         run: cd example/ && nohup npm run serve:standalone &
       - name: check env
-        run: echo "KETCHER_URL $KETCHER_URL, IGNORE_UNSTABLE_TESTS = $IGNORE_UNSTABLE_TESTS"
-      - name: create env file
-        run: |
-          touch .env
-          echo IGNORE_UNSTABLE_TESTS=$IGNORE_UNSTABLE_TESTS >> .env
+        run: echo ${{ env }}
       - name: Build autotests for docker
         run: cd ketcher-autotests && npm run docker:build
 #        run: cd ketcher-autotests && docker-compose build --build-arg IGNORE_UNSTABLE_TESTS=$IGNORE_UNSTABLE_TESTS autotests

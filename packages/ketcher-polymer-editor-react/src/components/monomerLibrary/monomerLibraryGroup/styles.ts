@@ -15,7 +15,7 @@
  ***************************************************************************/
 import styled from '@emotion/styled'
 import { MonomerPreview } from 'components/shared/MonomerPreview'
-import { preview } from './consts'
+import { preview } from '../../../constants'
 import { PreviewStyle } from './types'
 
 export const ItemsContainer = styled.div`

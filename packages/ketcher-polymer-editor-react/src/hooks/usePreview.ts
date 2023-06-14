@@ -14,9 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 import { RefObject, useState } from 'react'
-import { EditorClassName } from '../constants'
+import { EditorClassName, preview } from '../constants'
 import { MonomerItemType } from '../components/monomerLibrary/monomerLibraryItem/types'
-import { preview } from '../components/monomerLibrary/monomerLibraryGroup/consts'
 import { PreviewStyle } from '../components/monomerLibrary/monomerLibraryGroup/types'
 
 export const usePreview = (

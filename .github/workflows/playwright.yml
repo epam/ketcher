@@ -27,8 +27,6 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 18.12.0
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
       - name: Install dependencies
         run: npm ci
       - name: Build all packages
@@ -37,10 +35,12 @@ jobs:
         run: cd example/ && nohup npm run serve:standalone &
       - name: check env
         run: echo "KETCHER_URL $KETCHER_URL, IGNORE_UNSTABLE_TESTS = $IGNORE_UNSTABLE_TESTS"
+      - name: create env file
+        run: |
+          touch .env
+          echo IGNORE_UNSTABLE_TESTS=$IGNORE_UNSTABLE_TESTS >> .env
       - name: Build autotests for docker
-        run: docker/build-push-action@v4
-        with:
-          context: "./ketcher-autotests"
+        run: cd ketcher-autotests && npm run docker:build
 #        run: cd ketcher-autotests && docker-compose build --build-arg IGNORE_UNSTABLE_TESTS=$IGNORE_UNSTABLE_TESTS autotests
       - name: Run playwright tests in docker
         run: cd ketcher-autotests && npm run docker:test:ci

@@ -1,5 +1,7 @@
 services:
   autotests:
+    env_file:
+      - .env
     build:
       context: .
     container_name: ketcher-autotest

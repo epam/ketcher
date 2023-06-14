@@ -16,6 +16,7 @@ dotenv.config();
 const ignoredTests = ['clean-tools.spec.ts'];
 
 function baseURL(): string {
+  console.log('KETCHER_URL', process.env.KETCHER_URL);
   if (!process.env.MODE || !process.env.KETCHER_URL) {
     console.log(
       'DEFAULT_KETCHER_STANDALONE_URL',

@@ -17,8 +17,5 @@
 import { IconName, SvgComponent } from '../types'
 import { iconNameToIcon } from './iconNameToIcon'
 
-export const getIconByName = (name: IconName): SvgComponent => {
-  const Icon = iconNameToIcon[name]
-
-  return Icon
-}
+export const getIconByName = (name: IconName): SvgComponent =>
+  iconNameToIcon[name]

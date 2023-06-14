@@ -410,4 +410,4 @@ export const iconNameToIcon = {
   'rap-right-link': RapRightLink,
   'arrows-left': ArrowsLeft,
   'arrows-right': ArrowsRight
-} as const
+}

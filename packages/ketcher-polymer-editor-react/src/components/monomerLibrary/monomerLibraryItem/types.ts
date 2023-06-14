@@ -27,7 +27,7 @@ export type MonomerItemType = {
 export interface IMonomerItemProps {
   item: MonomerItemType
   onClick?: VoidFunction
-  onMouseLeave: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void
-  onMouseMove: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void
+  onMouseLeave?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void
+  onMouseMove?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void
   onStarClick?: any
 }

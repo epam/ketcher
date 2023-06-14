@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Icon from 'src/components/Icon/Icon'
+import { Icon } from '../../Icon'
 import { StyledIconButton } from './styles'
 import { IIconButtonProps } from './types'
 

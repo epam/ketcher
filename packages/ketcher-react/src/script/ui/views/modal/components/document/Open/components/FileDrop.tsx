@@ -19,7 +19,7 @@ import { useDropzone, DropzoneOptions } from 'react-dropzone'
 
 import parentStyles from './OpenOptions.module.less'
 import styles from './FileDrop.module.less'
-import { Icon, IconName } from 'src/components'
+import { Icon, IconName } from 'components'
 
 type FileDropProps = {
   buttonLabel: string

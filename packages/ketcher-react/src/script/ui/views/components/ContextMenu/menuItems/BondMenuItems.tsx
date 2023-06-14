@@ -9,7 +9,7 @@ import useBondTypeChange from '../hooks/useBondTypeChange'
 import useDelete from '../hooks/useDelete'
 import { formatTitle, getNonQueryBondNames, queryBondNames } from '../utils'
 import { MenuItemsProps } from '../contextMenu.types'
-import { getIconName, Icon } from 'src/components'
+import { getIconName, Icon } from 'components'
 
 const nonQueryBondNames = getNonQueryBondNames(tools)
 

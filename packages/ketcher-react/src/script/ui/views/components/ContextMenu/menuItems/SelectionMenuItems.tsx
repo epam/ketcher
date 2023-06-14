@@ -9,7 +9,7 @@ import useBondTypeChange from '../hooks/useBondTypeChange'
 import useDelete from '../hooks/useDelete'
 import { formatTitle, getBondNames } from '../utils'
 import { MenuItemsProps } from '../contextMenu.types'
-import { getIconName, Icon } from 'src/components'
+import { getIconName, Icon } from 'components'
 
 const bondNames = getBondNames(tools)
 

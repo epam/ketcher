@@ -35,14 +35,8 @@ jobs:
         run: cd example/ && nohup npm run serve:standalone &
       - name: check env
         run: echo "KETCHER_URL $KETCHER_URL, IGNORE_UNSTABLE_TESTS = $IGNORE_UNSTABLE_TESTS"
-      - name: Build and push
-        uses: docker/build-push-action@v3
-        with:
-          context: .
-          build-args: |
-            "IGNORE_UNSTABLE_TESTS=true"
       - name: Build autotests for docker
-        run: cd ketcher-autotests && npm run docker:build
+        run: cd ketcher-autotests && docker-compose build --build-arg IGNORE_UNSTABLE_TESTS=$IGNORE_UNSTABLE_TESTS autotests
       - name: Run playwright tests in docker
         run: cd ketcher-autotests && npm run docker:test:ci
       - uses: actions/upload-artifact@v3

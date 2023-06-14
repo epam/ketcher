@@ -75,7 +75,7 @@ export interface Operation {
   readonly _inverted: OperationType | undefined
   data: any
   // eslint-disable-next-line no-use-before-define
-  perform: (struct: Struct) => PerformOperationResult
+  perform: (struct: ReStruct) => PerformOperationResult
   invert(): Operation
   isDummy(_restruct: ReStruct): boolean
   execute(_restruct: ReStruct): void

@@ -14,9 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 import { RefObject, useState } from 'react'
-import { MonomerItemType } from '../monomerLibraryItem/types'
-import { preview } from './consts'
-import { PreviewStyle } from './types'
+import { EditorClassName } from '../constants'
+import { MonomerItemType } from '../components/monomerLibrary/monomerLibraryItem/types'
+import { preview } from '../components/monomerLibrary/monomerLibraryGroup/consts'
+import { PreviewStyle } from '../components/monomerLibrary/monomerLibraryGroup/types'
 
 export const usePreview = (
   ref: RefObject<HTMLDivElement>
@@ -33,7 +34,7 @@ export const usePreview = (
   const setPreview = (monomer?: MonomerItemType, rect?: DOMRect) => {
     if (monomer && rect && ref.current) {
       const editorRect = document
-        .querySelector('.Ketcher-polymer-editor-root')
+        .querySelector(`.${EditorClassName}`)
         ?.getBoundingClientRect()
 
       if (!editorRect || !rect) {

@@ -13,27 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { Render } from 'ketcher-core'
+import { RenderStruct } from 'ketcher-core'
 import { useEffect, useRef } from 'react'
-import { renderOptions } from './consts'
 import { Container } from './styles'
 import { IStructRender } from './types'
-import { prepareStruct } from './utils'
 
 export const StructRender = ({ struct, className }: IStructRender) => {
   const renderRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (renderRef.current) {
-      const preparedStruct = prepareStruct(struct)
-      preparedStruct.initHalfBonds()
-      preparedStruct.initNeighbors()
-      preparedStruct.setImplicitHydrogen()
-      preparedStruct.markFragments()
-      renderRef.current.innerHTML = ''
-      const rnd = new Render(renderRef.current, renderOptions)
-      rnd.setMolecule(preparedStruct)
-      rnd.update(true)
+      RenderStruct.render(renderRef.current, struct)
     }
   }, [struct])
 

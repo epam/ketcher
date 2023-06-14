@@ -25,7 +25,7 @@ import {
   StyledPreview
 } from './styles'
 import { IMonomerGroupProps } from './types'
-import { usePreview } from './usePreview'
+import { usePreview } from '../../../hooks/usePreview'
 
 const MonomerGroup = ({
   items,

@@ -27,12 +27,12 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 18.12.0
-#      - name: Install dependencies
-#        run: npm ci
-#      - name: Build all packages
-#        run: npm run build
-#      - name: Run example in standalone mode
-#        run: cd example/ && nohup npm run serve:standalone &
+      - name: Install dependencies
+        run: npm ci
+      - name: Build all packages
+        run: npm run build
+      - name: Run example in standalone mode
+        run: cd example/ && nohup npm run serve:standalone &
       - name: 'Create env file'
         run: |
           cd ketcher-autotests
@@ -40,13 +40,8 @@ jobs:
           echo "KETCHER_URL=$KETCHER_URL" >> .env
           echo "MODE=$MODE" >> .env
           echo "IGNORE_UNSTABLE_TESTS=$IGNORE_UNSTABLE_TESTS" >> .env
-          echo "AAAAA" && cat .env
-          ls -la
-          pwd
-      - name: check env
-        run: echo "$env"
       - name: Build autotests for docker
-        run: cd ketcher-autotests && pwd && cat .env && docker-compose build autotests
+        run: cd ketcher-autotests && docker-compose build autotests
 #        run: cd ketcher-autotests && docker-compose build --build-arg IGNORE_UNSTABLE_TESTS=$IGNORE_UNSTABLE_TESTS autotests
       - name: Run playwright tests in docker
         run: cd ketcher-autotests && npm run docker:test:ci

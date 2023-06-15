@@ -1,4 +1,5 @@
 module.exports = {
+  clearMocks: true,
   testMatch: ['**/src/**/?(*.)+(spec|test).[jt]s?(x)'],
   testPathIgnorePatterns: ['fixtures', 'dist', 'node_modules'],
   testEnvironment: 'jsdom',
@@ -8,8 +9,8 @@ module.exports = {
     '\\.svg$': '<rootDir>/testFileTransformer.js'
   },
   moduleNameMapper: {
-    '\\.(css|less)$': 'identity-obj-proxy',
-    'src(.*)$': '<rootDir>/src/$1'
+    '\\.(css|less|sdf)$': 'identity-obj-proxy',
+    '^src(.*)$': '<rootDir>/src/$1'
   },
   setupFilesAfterEnv: ['<rootDir>/src/setupTests.ts']
 }

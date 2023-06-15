@@ -1,6 +1,26 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`AbbreviationLookup Utils highlightMatchedText Should return marked abbreviation 1`] = `
+exports[`AbbreviationLookup Utils highlightOptionLabel Should mark abbreviation because it shorter (bigger similarity) 1`] = `
+<React.Fragment>
+  
+  <mark>
+    SHORT
+  </mark>
+  ABBR (ShortNameForTemplate)
+</React.Fragment>
+`;
+
+exports[`AbbreviationLookup Utils highlightOptionLabel Should mark name because substring at the beginning 1`] = `
+<React.Fragment>
+  ASHORTABBR (
+  <mark>
+    Short
+  </mark>
+  NameForTemplate)
+</React.Fragment>
+`;
+
+exports[`AbbreviationLookup Utils highlightOptionLabel Should return marked abbreviation 1`] = `
 <React.Fragment>
   SHORT
   <mark>
@@ -10,7 +30,7 @@ exports[`AbbreviationLookup Utils highlightMatchedText Should return marked abbr
 </React.Fragment>
 `;
 
-exports[`AbbreviationLookup Utils highlightMatchedText Should return marked name 1`] = `
+exports[`AbbreviationLookup Utils highlightOptionLabel Should return marked name 1`] = `
 <React.Fragment>
   SHORTABBR (Very 
   <mark>

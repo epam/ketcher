@@ -20,16 +20,58 @@ import {
 } from './AbbreviationLookup.types'
 import { FilterOptionsState } from '@mui/base/AutocompleteUnstyled/useAutocomplete'
 
-export const highlightMatchedText = (
+const getHighlightSearchStartIndex = (
   option: AbbreviationGenericOption,
-  loweredInputValue: string
+  loweredLookupValue: string
+): number => {
+  if (
+    !option.loweredAbbreviation ||
+    option.loweredAbbreviation === option.loweredName
+  ) {
+    return 0
+  }
+
+  const nameStartsWith = option.loweredName.startsWith(loweredLookupValue)
+  const abbreviationStartsWith =
+    option.loweredAbbreviation.startsWith(loweredLookupValue)
+
+  if (nameStartsWith && !abbreviationStartsWith) {
+    return option.loweredAbbreviation.length
+  } else if (!nameStartsWith && abbreviationStartsWith) {
+    return 0
+  }
+
+  const nameSimilarity = getStringsSimilarity(
+    option.loweredName,
+    loweredLookupValue
+  )
+  const abbreviationSimilarity = getStringsSimilarity(
+    option.loweredAbbreviation,
+    loweredLookupValue
+  )
+
+  return abbreviationSimilarity >= nameSimilarity
+    ? 0
+    : option.loweredAbbreviation.length
+}
+
+export const highlightOptionLabel = (
+  option: AbbreviationGenericOption,
+  loweredLookupValue: string
 ) => {
-  const startPos = option.loweredLabel.indexOf(loweredInputValue)
+  const searchFromIndex = getHighlightSearchStartIndex(
+    option,
+    loweredLookupValue
+  )
+  const startPos = option.loweredLabel.indexOf(
+    loweredLookupValue,
+    searchFromIndex
+  )
   if (startPos === -1) {
     return option.label
   }
 
-  const endPos = startPos + loweredInputValue.length
+  const endPos = startPos + loweredLookupValue.length
   const startPart = option.label.substring(0, startPos)
   const middlePart = option.label.substring(startPos, endPos)
   const endPart = option.label.substring(endPos)
@@ -47,24 +89,35 @@ export const getOptionLabel = (option: AbbreviationGenericOption): string => {
   return option.label
 }
 
+export const getStringsSimilarity = (
+  loweredText?: string,
+  loweredSubString?: string
+): number => {
+  if (!loweredText || !loweredSubString) {
+    return 0
+  }
+
+  return loweredText.includes(loweredSubString)
+    ? loweredSubString.length / loweredText.length
+    : 0
+}
+
 export const getSimilarity = (
   option: AbbreviationGenericOption,
   loweredLookupValue: string
 ): number => {
-  const lookupValueLength = loweredLookupValue.length
-
-  if (!lookupValueLength) {
+  if (!loweredLookupValue) {
     return 0
   }
 
-  const nameSimilarity = option.loweredName.includes(loweredLookupValue)
-    ? lookupValueLength / option.loweredName.length
-    : 0
-  const abbreviationSimilarity = option.loweredAbbreviation?.includes(
+  const nameSimilarity = getStringsSimilarity(
+    option.loweredName,
     loweredLookupValue
   )
-    ? lookupValueLength / option.loweredAbbreviation.length
-    : 0
+  const abbreviationSimilarity = getStringsSimilarity(
+    option.loweredAbbreviation,
+    loweredLookupValue
+  )
 
   return Math.max(nameSimilarity, abbreviationSimilarity)
 }
@@ -73,6 +126,10 @@ export const filterOptions = (
   options: AbbreviationOption[],
   state: FilterOptionsState<AbbreviationOption>
 ): AbbreviationOption[] => {
+  if (!state.inputValue) {
+    return []
+  }
+
   const loweredLookupValue = state.inputValue.toLowerCase()
 
   const filteredOptions = options.filter((option) => {
@@ -101,6 +158,8 @@ export const filterOptions = (
 
       if (optionASimilarity > optionBSimilarity) {
         return -1
+      } else if (optionASimilarity < optionBSimilarity) {
+        return 1
       } else {
         return optionA.loweredLabel < optionB.loweredLabel ? -1 : 1
       }

@@ -32,7 +32,7 @@ import { SettingsManager } from '../utils/settingsManager'
 import {
   selectAbbreviationLookupValue,
   selectIsAbbreviationLookupOpen
-} from './abbreviationLookup/selectors/selectors'
+} from './abbreviationLookup/selectors'
 import {
   closeAbbreviationLookup,
   initAbbreviationLookup,
@@ -57,6 +57,7 @@ function removeNotRenderedStruct(actionTool, group, dispatch) {
 }
 
 let abbreviationLookupTimeoutId: number | undefined
+const ABBREVIATION_LOOKUP_TYPING_TIMEOUT = 300
 
 /* HotKeys */
 function keyHandle(dispatch, getState, hotKeys, event, skipAbbrLookup = false) {
@@ -77,11 +78,13 @@ function keyHandle(dispatch, getState, hotKeys, event, skipAbbrLookup = false) {
     if (selectAbbreviationLookupValue(state)) {
       dispatch(showAbbreviationLookup(event.key))
       clearTimeout(abbreviationLookupTimeoutId)
+      abbreviationLookupTimeoutId = undefined
     } else {
       abbreviationLookupTimeoutId = window.setTimeout(() => {
         dispatch(closeAbbreviationLookup())
         keyHandle(dispatch, getState, hotKeys, event, true)
-      }, 300)
+        abbreviationLookupTimeoutId = undefined
+      }, ABBREVIATION_LOOKUP_TYPING_TIMEOUT)
 
       dispatch(initAbbreviationLookup(event.key))
     }

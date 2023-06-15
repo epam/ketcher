@@ -18,47 +18,42 @@ import {
   filterOptions,
   getOptionLabel,
   getSimilarity,
-  highlightMatchedText
+  highlightOptionLabel
 } from './AbbreviationLookup.utils'
-import {
-  AbbreviationGenericOption,
-  AbbreviationOption,
-  AbbreviationType
-} from './AbbreviationLookup.types'
+import { AbbreviationOption } from './AbbreviationLookup.types'
 import { FilterOptionsState } from '@mui/base/AutocompleteUnstyled/useAutocomplete'
-
-const createGenericOption = (
-  name: string,
-  abbreviation?: string
-): AbbreviationGenericOption => {
-  const label = abbreviation ? `${abbreviation} (${name})` : name
-
-  return {
-    type: AbbreviationType.Element,
-    label,
-    loweredLabel: label.toLowerCase(),
-    loweredName: name.toLowerCase(),
-    loweredAbbreviation: abbreviation?.toLowerCase()
-  }
-}
-
-const createOption = (name: string, abbreviation?: string) =>
-  createGenericOption(name, abbreviation) as AbbreviationOption
+import {
+  createGenericOption,
+  createOption
+} from './AbbreviationLookup.test.utils'
 
 describe('AbbreviationLookup Utils', () => {
-  describe('highlightMatchedText', () => {
+  describe('highlightOptionLabel', () => {
     const option = createGenericOption('Very long test name', 'SHORTABBR')
 
     it('Should return the label if there is not match with lookup value', () => {
-      expect(highlightMatchedText(option, 'no-match-string')).toBe(option.label)
+      expect(highlightOptionLabel(option, 'no-match-string')).toBe(option.label)
     })
 
     it('Should return marked name', () => {
-      expect(highlightMatchedText(option, 'long')).toMatchSnapshot()
+      expect(highlightOptionLabel(option, 'long')).toMatchSnapshot()
     })
 
     it('Should return marked abbreviation', () => {
-      expect(highlightMatchedText(option, 'abbr')).toMatchSnapshot()
+      expect(highlightOptionLabel(option, 'abbr')).toMatchSnapshot()
+    })
+
+    it('Should mark abbreviation because it shorter (bigger similarity)', () => {
+      const newOption = createGenericOption('ShortNameForTemplate', 'SHORTABBR')
+      expect(highlightOptionLabel(newOption, 'short')).toMatchSnapshot()
+    })
+
+    it('Should mark name because substring at the beginning', () => {
+      const newOption = createGenericOption(
+        'ShortNameForTemplate',
+        'ASHORTABBR'
+      )
+      expect(highlightOptionLabel(newOption, 'short')).toMatchSnapshot()
     })
   })
 
@@ -95,6 +90,12 @@ describe('AbbreviationLookup Utils', () => {
     const optionA = createOption('Argon', 'Ar')
     const optionB = createOption('Gold', 'Au')
 
+    const optionD = createOption('Copernicium', 'Cn')
+    const optionC = createOption('Cobalt', 'Co')
+    const optionE = createOption('CO2H')
+    const optionF = createOption('Silicon', 'Si')
+    const optionG = createOption('benzyl alcohol')
+
     it('Should filter out Gold Element', () => {
       const lookupValue = 'Argon'
       const inputArray = [optionA, optionB]
@@ -106,10 +107,10 @@ describe('AbbreviationLookup Utils', () => {
       ).toEqual(resultArray)
     })
 
-    it('Should only sort by name with empty lookup field', () => {
+    it('Should return an empty array for empty lookup value', () => {
       const lookupValue = ''
       const inputArray = [optionB, optionA]
-      const resultArray = [optionA, optionB]
+      const resultArray = []
       expect(
         filterOptions(inputArray, {
           inputValue: lookupValue
@@ -121,6 +122,17 @@ describe('AbbreviationLookup Utils', () => {
       const lookupValue = 'go'
       const inputArray = [optionB, optionA]
       const resultArray = [optionB, optionA]
+      expect(
+        filterOptions(inputArray, {
+          inputValue: lookupValue
+        } as FilterOptionsState<AbbreviationOption>)
+      ).toEqual(resultArray)
+    })
+
+    it('Should correctly consider name or abbreviation while sorting', () => {
+      const lookupValue = 'co'
+      const inputArray = [optionF, optionG, optionD, optionC, optionE]
+      const resultArray = [optionC, optionE, optionD, optionF, optionG]
       expect(
         filterOptions(inputArray, {
           inputValue: lookupValue

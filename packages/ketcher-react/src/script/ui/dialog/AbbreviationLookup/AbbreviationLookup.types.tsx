@@ -35,11 +35,11 @@ export interface AbbreviationTemplateOption extends AbbreviationGenericOption {
   template: Template
 }
 
-export interface AbbreviationAtomOption extends AbbreviationGenericOption {
+export interface AbbreviationElementOption extends AbbreviationGenericOption {
   type: AbbreviationType.Element
   element: Element
 }
 
 export type AbbreviationOption =
   | AbbreviationTemplateOption
-  | AbbreviationAtomOption
+  | AbbreviationElementOption

@@ -40,19 +40,19 @@ export const useOptions = (): AbbreviationOption[] => {
       (template) => template.struct.name
     )
 
-    const mappedElementOptions: AbbreviationOption[] = Elements.filter(
-      Boolean
-    ).map((element) => {
-      const label = `${element.label} (${element.title})`
-      return {
-        type: AbbreviationType.Element,
-        element,
-        label,
-        loweredLabel: label.toLowerCase(),
-        loweredName: element.title.toLowerCase(),
-        loweredAbbreviation: element.label.toLowerCase()
+    const mappedElementOptions: AbbreviationOption[] = Elements.getAll().map(
+      (element) => {
+        const label = `${element.label} (${element.title})`
+        return {
+          type: AbbreviationType.Element,
+          element,
+          label,
+          loweredLabel: label.toLowerCase(),
+          loweredName: element.title.toLowerCase(),
+          loweredAbbreviation: element.label.toLowerCase()
+        }
       }
-    })
+    )
 
     const mappedTemplateOptions: AbbreviationOption[] = uniqTemplates.map(
       (template) => {

@@ -16,11 +16,11 @@
 
 import {
   ChangeEvent,
+  CSSProperties,
   KeyboardEvent,
   MutableRefObject,
   SyntheticEvent,
   useEffect,
-  useMemo,
   useRef,
   useState
 } from 'react'
@@ -40,12 +40,17 @@ import Icon from '../../component/view/icon'
 import {
   filterOptions,
   getOptionLabel,
-  highlightMatchedText
+  highlightOptionLabel
 } from './AbbreviationLookup.utils'
 import {
   AbbreviationOption,
   AbbreviationType
 } from './AbbreviationLookup.types'
+import {
+  ABBREVIATION_LOOKUP_TEST_ID,
+  NO_MATCHING_RESULTS_LABEL,
+  START_TYPING_NOTIFICATION_LABEL
+} from './AbbreviationLookup.constants'
 
 interface Props {
   options: AbbreviationOption[]
@@ -59,7 +64,7 @@ export const AbbreviationLookup = ({ options }: Props) => {
 
   const cursorPosition = useSelector(selectCursorPosition)
   const usedCursorPositionRef = useRef(cursorPosition)
-  const [containerSize, setContainerSize] = useState({ width: 0, height: 0 })
+  const [portalStyle, setPortalSize] = useState({} as CSSProperties)
 
   const initialLookupValue = useSelector(selectAbbreviationLookupValue)
   const [lookupValue, setLookupValue] = useState(initialLookupValue)
@@ -70,19 +75,15 @@ export const AbbreviationLookup = ({ options }: Props) => {
   useEffect(() => {
     inputRef.current?.focus()
 
-    setContainerSize({
-      height: autocompleteRef.current?.offsetHeight ?? 0,
-      width: autocompleteRef.current?.offsetWidth ?? 0
-    })
-  }, [])
+    const containerHeight = autocompleteRef.current?.offsetHeight ?? 0
+    const containerWidth = autocompleteRef.current?.offsetWidth ?? 0
 
-  const portalStyle = useMemo(() => {
     const parentNode = document.querySelector(KETCHER_ROOT_NODE_CSS_SELECTOR)
     assert(parentNode !== null, 'Ketcher root node is required')
     const parentRect = parentNode.getBoundingClientRect()
 
-    const maxLeft = parentRect.width - containerSize.width
-    const maxTop = parentRect.height - containerSize.height
+    const maxLeft = parentRect.width - containerWidth
+    const maxTop = parentRect.height - containerHeight
 
     const calculatedLeft = usedCursorPositionRef.current.x - parentRect.left
     const calculatedTop = usedCursorPositionRef.current.y - parentRect.top
@@ -90,11 +91,11 @@ export const AbbreviationLookup = ({ options }: Props) => {
     const left = Math.min(Math.max(0, calculatedLeft), maxLeft)
     const top = Math.min(Math.max(0, calculatedTop), maxTop)
 
-    return {
+    setPortalSize({
       left: `${left}px`,
       top: `${top}px`
-    }
-  }, [containerSize])
+    })
+  }, [])
 
   const handleOnChange = (
     _event: SyntheticEvent,
@@ -147,7 +148,11 @@ export const AbbreviationLookup = ({ options }: Props) => {
         onKeyDown={handleKeyDown}
         openOnFocus
         autoHighlight
-        noOptionsText="No matching abbreviations"
+        noOptionsText={
+          loweredLookupValue
+            ? NO_MATCHING_RESULTS_LABEL
+            : START_TYPING_NOTIFICATION_LABEL
+        }
         classes={{
           option: classes.optionItem,
           listbox: classes.listBox,
@@ -184,11 +189,12 @@ export const AbbreviationLookup = ({ options }: Props) => {
           return (
             <li {...props} title={option.label}>
               <div className={classes.optionItemContent}>
-                {highlightMatchedText(option, loweredLookupValue)}
+                {highlightOptionLabel(option, loweredLookupValue)}
               </div>
             </li>
           )
         }}
+        data-testid={ABBREVIATION_LOOKUP_TEST_ID}
       />
     </Portal>
   )

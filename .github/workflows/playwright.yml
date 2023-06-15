@@ -33,9 +33,6 @@ jobs:
         run: npm run build
       - name: Run example in standalone mode
         run: cd example/ && nohup npm run serve:standalone &
-      - name: check host
-        run: |
-          echo "curl 1" && curl localhost:4002
       - name: Create env file
         run: |
           cd ketcher-autotests
@@ -44,7 +41,7 @@ jobs:
           echo "MODE=$MODE" >> .env
           echo "IGNORE_UNSTABLE_TESTS=$IGNORE_UNSTABLE_TESTS" >> .env
       - name: Build autotests for docker
-        run: cd ketcher-autotests && docker-compose build autotests
+        run: cd ketcher-autotests && npm run docker:build
       - name: Run playwright tests in docker
         run: cd ketcher-autotests && npm run docker:test:ci
       - uses: actions/upload-artifact@v3

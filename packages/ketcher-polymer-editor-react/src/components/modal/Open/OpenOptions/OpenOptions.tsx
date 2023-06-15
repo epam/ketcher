@@ -17,8 +17,9 @@ import { Icon } from 'components/shared/icon'
 import styled from '@emotion/styled'
 import { FileDrop } from './FileDrop'
 import { ActionButton } from 'components/shared/actionButton'
+import { IconNameType } from 'components/shared/icon/icon'
 
-const ICON_NAMES = {
+const ICON_NAMES: Record<string, IconNameType> = {
   PASTE: 'capital-t',
   FILE: 'arrow-up'
 }

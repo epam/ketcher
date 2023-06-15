@@ -14,4 +14,4 @@
  * limitations under the License.
  ***************************************************************************/
 
-export { InputArea } from './inputArea'
+export * from './librarySlice'

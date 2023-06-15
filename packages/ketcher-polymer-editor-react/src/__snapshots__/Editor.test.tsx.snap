@@ -9,7 +9,7 @@ Object {
         class="Ketcher-polymer-editor-root"
       >
         <div
-          class="css-1t581ze"
+          class="css-ecupfg"
         >
           <div
             class="css-1vi3qlv"
@@ -27,7 +27,7 @@ Object {
                     class="css-5su45f"
                   >
                     <li
-                      class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
+                      class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
                       role="menuitem"
                       tabindex="-1"
                     >
@@ -54,7 +54,7 @@ Object {
                 class="css-10qeqvw"
               >
                 <li
-                  class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
+                  class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
                   role="menuitem"
                   tabindex="-1"
                 >
@@ -71,7 +71,7 @@ Object {
                 class="css-10qeqvw"
               >
                 <li
-                  class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
+                  class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
                   role="menuitem"
                   tabindex="-1"
                 >
@@ -90,7 +90,7 @@ Object {
                     class="css-5su45f"
                   >
                     <li
-                      class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
+                      class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
                       role="menuitem"
                       tabindex="-1"
                     >
@@ -119,7 +119,7 @@ Object {
                     class="css-5su45f"
                   >
                     <li
-                      class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
+                      class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
                       role="menuitem"
                       tabindex="-1"
                     >
@@ -148,7 +148,7 @@ Object {
                     class="css-5su45f"
                   >
                     <li
-                      class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
+                      class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
                       role="menuitem"
                       tabindex="-1"
                     >
@@ -175,7 +175,7 @@ Object {
                 class="css-10qeqvw"
               >
                 <li
-                  class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
+                  class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
                   role="menuitem"
                   tabindex="-1"
                 >
@@ -192,7 +192,7 @@ Object {
                 class="css-10qeqvw"
               >
                 <li
-                  class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
+                  class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
                   role="menuitem"
                   tabindex="-1"
                 >
@@ -212,7 +212,7 @@ Object {
                 class="css-10qeqvw"
               >
                 <li
-                  class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
+                  class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
                   role="menuitem"
                   tabindex="-1"
                 >
@@ -225,7 +225,7 @@ Object {
                   />
                 </li>
                 <li
-                  class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
+                  class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
                   role="menuitem"
                   tabindex="-1"
                 >
@@ -253,89 +253,6 @@ Object {
                 class="css-1pnoyrz"
               />
               <div
-                class="css-u514l3"
-              >
-                <div
-                  class="css-rjvpm5"
-                >
-                  <div
-                    class="MuiFormControl-root css-1nrlq1o-MuiFormControl-root"
-                  >
-                    <div
-                      class="MuiOutlinedInput-root MuiInputBase-root MuiInputBase-colorPrimary MuiInputBase-fullWidth MuiInputBase-formControl css-objd0-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root"
-                    >
-                      <div
-                        aria-expanded="false"
-                        aria-haspopup="listbox"
-                        class="MuiSelect-select MuiSelect-outlined MuiOutlinedInput-input MuiInputBase-input css-11u53oe-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input"
-                        role="button"
-                        tabindex="0"
-                      >
-                        <span>
-                          HELM Notation
-                        </span>
-                      </div>
-                      <input
-                        aria-hidden="true"
-                        class="MuiSelect-nativeInput css-yf8vq0-MuiSelect-nativeInput"
-                        tabindex="-1"
-                        value="1"
-                      />
-                      <icon-chevron.svg
-                        classname="MuiSelect-icon MuiSelect-iconOutlined css-1bn8sss-MuiSelect-icon"
-                        fill="#525252"
-                        role="img"
-                      />
-                      <fieldset
-                        aria-hidden="true"
-                        class="MuiOutlinedInput-notchedOutline css-1d3z3hw-MuiOutlinedInput-notchedOutline"
-                      >
-                        <legend
-                          class="css-hdw1oc"
-                        >
-                          <span
-                            class="notranslate"
-                          >
-                            ​
-                          </span>
-                        </legend>
-                      </fieldset>
-                    </div>
-                  </div>
-                  <div
-                    class="css-1f5gut4"
-                  >
-                    <div
-                      class="css-1il5ut8"
-                    >
-                      <textarea
-                        class="css-7w0kcs"
-                        style="height: 0px;"
-                      />
-                      <span
-                        class="css-1yn5le4"
-                      >
-                        ...
-                      </span>
-                      <textarea
-                        aria-hidden="true"
-                        class="css-bxh8x7"
-                      />
-                    </div>
-                  </div>
-                  <button
-                    class="MuiButtonBase-root Mui-disabled css-1u2dyik-MuiButtonBase-root"
-                    disabled=""
-                    role="button"
-                    tabindex="-1"
-                    title="Add to Canvas"
-                    type="button"
-                  >
-                    Add to Canvas
-                  </button>
-                </div>
-              </div>
-              <div
                 class="css-1pnoyrz"
               />
             </div>
@@ -350,8 +267,48 @@ Object {
               class="css-2df9n"
             >
               <div
-                class="css-1022zy"
+                class="shown css-rchq34"
               >
+                <div
+                  class="css-genkkc"
+                >
+                  <h3
+                    class="css-huri9n"
+                  >
+                    Library
+                  </h3>
+                  <div
+                    class="css-1x5v5sa"
+                  >
+                    <span
+                      class="icon"
+                    >
+                      <icon-arrows-right.svg
+                        fill="#525252"
+                        role="img"
+                      />
+                    </span>
+                    <span>
+                      Hide
+                    </span>
+                  </div>
+                  <div
+                    class="css-vwm4u8"
+                  >
+                    <div>
+                      <span>
+                        <icon-search.svg
+                          fill="#525252"
+                          role="img"
+                        />
+                      </span>
+                      <input
+                        placeholder="Search by name..."
+                        type="text"
+                      />
+                    </div>
+                  </div>
+                </div>
                 <div
                   class="MuiTabs-root css-o3c7w6-MuiTabs-root"
                 >
@@ -365,25 +322,25 @@ Object {
                     >
                       <button
                         aria-controls="simple-tabpanel-0"
-                        aria-selected="true"
-                        class="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary Mui-selected css-30eg2o-MuiButtonBase-root-MuiTab-root"
+                        aria-selected="false"
+                        class="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary css-bw7kld-MuiButtonBase-root-MuiTab-root"
                         id="simple-tab-0"
                         role="tab"
-                        tabindex="0"
+                        tabindex="-1"
                         type="button"
                       >
-                        ✩
+                        Favorites
                         <span
                           class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
                         />
                       </button>
                       <button
                         aria-controls="simple-tabpanel-1"
-                        aria-selected="false"
-                        class="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary css-30eg2o-MuiButtonBase-root-MuiTab-root"
+                        aria-selected="true"
+                        class="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary Mui-selected css-bw7kld-MuiButtonBase-root-MuiTab-root"
                         id="simple-tab-1"
                         role="tab"
-                        tabindex="-1"
+                        tabindex="0"
                         type="button"
                       >
                         Peptides
@@ -394,7 +351,7 @@ Object {
                       <button
                         aria-controls="simple-tabpanel-2"
                         aria-selected="false"
-                        class="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary css-30eg2o-MuiButtonBase-root-MuiTab-root"
+                        class="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary css-bw7kld-MuiButtonBase-root-MuiTab-root"
                         id="simple-tab-2"
                         role="tab"
                         tabindex="-1"
@@ -408,7 +365,7 @@ Object {
                       <button
                         aria-controls="simple-tabpanel-3"
                         aria-selected="false"
-                        class="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary css-30eg2o-MuiButtonBase-root-MuiTab-root"
+                        class="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary css-bw7kld-MuiButtonBase-root-MuiTab-root"
                         id="simple-tab-3"
                         role="tab"
                         tabindex="-1"
@@ -427,7 +384,8 @@ Object {
                   </div>
                 </div>
                 <div
-                  id="0"
+                  class="css-zvyu39"
+                  id="1"
                   role="tabpanel"
                 >
                   <div
@@ -443,23 +401,10 @@ Object {
           </div>
         </div>
         <div
-          class="css-1040i3o"
-        >
-          <span>
-            Polymer Editor
-          </span>
-          <span>
-            Ketcher
-          </span>
-          <span>
-            EPAM
-          </span>
-        </div>
-        <div
           class="css-1b8kr7z"
         >
           <li
-            class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
+            class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
             role="menuitem"
             tabindex="-1"
           >
@@ -480,7 +425,7 @@ Object {
       class="Ketcher-polymer-editor-root"
     >
       <div
-        class="css-1t581ze"
+        class="css-ecupfg"
       >
         <div
           class="css-1vi3qlv"
@@ -498,7 +443,7 @@ Object {
                   class="css-5su45f"
                 >
                   <li
-                    class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
+                    class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
                     role="menuitem"
                     tabindex="-1"
                   >
@@ -525,7 +470,7 @@ Object {
               class="css-10qeqvw"
             >
               <li
-                class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
+                class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
                 role="menuitem"
                 tabindex="-1"
               >
@@ -542,7 +487,7 @@ Object {
               class="css-10qeqvw"
             >
               <li
-                class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
+                class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
                 role="menuitem"
                 tabindex="-1"
               >
@@ -561,7 +506,7 @@ Object {
                   class="css-5su45f"
                 >
                   <li
-                    class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
+                    class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
                     role="menuitem"
                     tabindex="-1"
                   >
@@ -590,7 +535,7 @@ Object {
                   class="css-5su45f"
                 >
                   <li
-                    class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
+                    class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
                     role="menuitem"
                     tabindex="-1"
                   >
@@ -619,7 +564,7 @@ Object {
                   class="css-5su45f"
                 >
                   <li
-                    class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
+                    class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
                     role="menuitem"
                     tabindex="-1"
                   >
@@ -646,7 +591,7 @@ Object {
               class="css-10qeqvw"
             >
               <li
-                class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
+                class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
                 role="menuitem"
                 tabindex="-1"
               >
@@ -663,7 +608,7 @@ Object {
               class="css-10qeqvw"
             >
               <li
-                class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
+                class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
                 role="menuitem"
                 tabindex="-1"
               >
@@ -683,7 +628,7 @@ Object {
               class="css-10qeqvw"
             >
               <li
-                class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
+                class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
                 role="menuitem"
                 tabindex="-1"
               >
@@ -696,7 +641,7 @@ Object {
                 />
               </li>
               <li
-                class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
+                class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
                 role="menuitem"
                 tabindex="-1"
               >
@@ -724,89 +669,6 @@ Object {
               class="css-1pnoyrz"
             />
             <div
-              class="css-u514l3"
-            >
-              <div
-                class="css-rjvpm5"
-              >
-                <div
-                  class="MuiFormControl-root css-1nrlq1o-MuiFormControl-root"
-                >
-                  <div
-                    class="MuiOutlinedInput-root MuiInputBase-root MuiInputBase-colorPrimary MuiInputBase-fullWidth MuiInputBase-formControl css-objd0-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root"
-                  >
-                    <div
-                      aria-expanded="false"
-                      aria-haspopup="listbox"
-                      class="MuiSelect-select MuiSelect-outlined MuiOutlinedInput-input MuiInputBase-input css-11u53oe-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input"
-                      role="button"
-                      tabindex="0"
-                    >
-                      <span>
-                        HELM Notation
-                      </span>
-                    </div>
-                    <input
-                      aria-hidden="true"
-                      class="MuiSelect-nativeInput css-yf8vq0-MuiSelect-nativeInput"
-                      tabindex="-1"
-                      value="1"
-                    />
-                    <icon-chevron.svg
-                      classname="MuiSelect-icon MuiSelect-iconOutlined css-1bn8sss-MuiSelect-icon"
-                      fill="#525252"
-                      role="img"
-                    />
-                    <fieldset
-                      aria-hidden="true"
-                      class="MuiOutlinedInput-notchedOutline css-1d3z3hw-MuiOutlinedInput-notchedOutline"
-                    >
-                      <legend
-                        class="css-hdw1oc"
-                      >
-                        <span
-                          class="notranslate"
-                        >
-                          ​
-                        </span>
-                      </legend>
-                    </fieldset>
-                  </div>
-                </div>
-                <div
-                  class="css-1f5gut4"
-                >
-                  <div
-                    class="css-1il5ut8"
-                  >
-                    <textarea
-                      class="css-7w0kcs"
-                      style="height: 0px;"
-                    />
-                    <span
-                      class="css-1yn5le4"
-                    >
-                      ...
-                    </span>
-                    <textarea
-                      aria-hidden="true"
-                      class="css-bxh8x7"
-                    />
-                  </div>
-                </div>
-                <button
-                  class="MuiButtonBase-root Mui-disabled css-1u2dyik-MuiButtonBase-root"
-                  disabled=""
-                  role="button"
-                  tabindex="-1"
-                  title="Add to Canvas"
-                  type="button"
-                >
-                  Add to Canvas
-                </button>
-              </div>
-            </div>
-            <div
               class="css-1pnoyrz"
             />
           </div>
@@ -821,8 +683,48 @@ Object {
             class="css-2df9n"
           >
             <div
-              class="css-1022zy"
+              class="shown css-rchq34"
             >
+              <div
+                class="css-genkkc"
+              >
+                <h3
+                  class="css-huri9n"
+                >
+                  Library
+                </h3>
+                <div
+                  class="css-1x5v5sa"
+                >
+                  <span
+                    class="icon"
+                  >
+                    <icon-arrows-right.svg
+                      fill="#525252"
+                      role="img"
+                    />
+                  </span>
+                  <span>
+                    Hide
+                  </span>
+                </div>
+                <div
+                  class="css-vwm4u8"
+                >
+                  <div>
+                    <span>
+                      <icon-search.svg
+                        fill="#525252"
+                        role="img"
+                      />
+                    </span>
+                    <input
+                      placeholder="Search by name..."
+                      type="text"
+                    />
+                  </div>
+                </div>
+              </div>
               <div
                 class="MuiTabs-root css-o3c7w6-MuiTabs-root"
               >
@@ -836,25 +738,25 @@ Object {
                   >
                     <button
                       aria-controls="simple-tabpanel-0"
-                      aria-selected="true"
-                      class="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary Mui-selected css-30eg2o-MuiButtonBase-root-MuiTab-root"
+                      aria-selected="false"
+                      class="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary css-bw7kld-MuiButtonBase-root-MuiTab-root"
                       id="simple-tab-0"
                       role="tab"
-                      tabindex="0"
+                      tabindex="-1"
                       type="button"
                     >
-                      ✩
+                      Favorites
                       <span
                         class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
                       />
                     </button>
                     <button
                       aria-controls="simple-tabpanel-1"
-                      aria-selected="false"
-                      class="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary css-30eg2o-MuiButtonBase-root-MuiTab-root"
+                      aria-selected="true"
+                      class="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary Mui-selected css-bw7kld-MuiButtonBase-root-MuiTab-root"
                       id="simple-tab-1"
                       role="tab"
-                      tabindex="-1"
+                      tabindex="0"
                       type="button"
                     >
                       Peptides
@@ -865,7 +767,7 @@ Object {
                     <button
                       aria-controls="simple-tabpanel-2"
                       aria-selected="false"
-                      class="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary css-30eg2o-MuiButtonBase-root-MuiTab-root"
+                      class="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary css-bw7kld-MuiButtonBase-root-MuiTab-root"
                       id="simple-tab-2"
                       role="tab"
                       tabindex="-1"
@@ -879,7 +781,7 @@ Object {
                     <button
                       aria-controls="simple-tabpanel-3"
                       aria-selected="false"
-                      class="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary css-30eg2o-MuiButtonBase-root-MuiTab-root"
+                      class="MuiButtonBase-root MuiTab-root MuiTab-textColorPrimary css-bw7kld-MuiButtonBase-root-MuiTab-root"
                       id="simple-tab-3"
                       role="tab"
                       tabindex="-1"
@@ -898,7 +800,8 @@ Object {
                 </div>
               </div>
               <div
-                id="0"
+                class="css-zvyu39"
+                id="1"
                 role="tabpanel"
               >
                 <div
@@ -914,23 +817,10 @@ Object {
         </div>
       </div>
       <div
-        class="css-1040i3o"
-      >
-        <span>
-          Polymer Editor
-        </span>
-        <span>
-          Ketcher
-        </span>
-        <span>
-          EPAM
-        </span>
-      </div>
-      <div
         class="css-1b8kr7z"
       >
         <li
-          class="MuiMenuItem-root MuiMenuItem-gutters MuiButtonBase-root css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
+          class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-sxwttn-MuiButtonBase-root-MuiMenuItem-root-StyledMenuButton"
           role="menuitem"
           tabindex="-1"
         >

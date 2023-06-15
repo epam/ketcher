@@ -28,13 +28,13 @@ import { Bond, Fragment, Struct, Vec2 } from 'domain/entities'
 import { ReStruct } from 'application/render'
 import { getRelSGroupsBySelection, structSelection } from './utils'
 import { Action } from './action'
-import { Selection } from '../editor.types'
+import { EditorSelection } from '../editor.types'
 
 export type FlipDirection = 'horizontal' | 'vertical'
 
 export function fromFlip(
   reStruct: ReStruct,
-  selection: Selection | null,
+  selection: EditorSelection | null,
   flipDirection: FlipDirection,
   center: Vec2
 ) {
@@ -150,7 +150,7 @@ function fromTextFlip(
 
 function fromStructureFlip(
   reStruct: ReStruct,
-  selection: Selection | null,
+  selection: EditorSelection | null,
   flipDirection: FlipDirection,
   center: Vec2
 ) {

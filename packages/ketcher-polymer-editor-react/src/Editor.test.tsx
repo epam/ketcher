@@ -25,8 +25,6 @@ describe('Editor', () => {
   it('renders the logo', () => {
     render(<Editor />)
 
-    expect(screen.getByText('Polymer Editor')).toBeVisible()
-    expect(screen.getByText('Ketcher')).toBeVisible()
-    expect(screen.getByText('EPAM')).toBeVisible()
+    expect(screen.getByText('Library')).toBeVisible()
   })
 })

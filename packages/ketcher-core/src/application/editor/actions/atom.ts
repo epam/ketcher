@@ -36,6 +36,8 @@ import { removeAtomFromSgroupIfNeeded, removeSgroupIfNeeded } from './sgroup'
 import { Action } from './action'
 import { fromBondStereoUpdate } from './bond'
 import { without } from 'lodash/fp'
+import ReStruct from 'application/render/restruct/restruct'
+import assert from 'assert'
 
 export function fromAtomAddition(restruct, pos, atom) {
   atom = Object.assign({}, atom)
@@ -52,13 +54,12 @@ export function fromAtomAddition(restruct, pos, atom) {
   return action
 }
 
-/**
- * @param restruct { ReStruct }
- * @param ids { Array<number>|number }
- * @param attrs { object }
- * @param reset { boolean? }
- */
-export function fromAtomsAttrs(restruct, ids, attrs, reset) {
+export function fromAtomsAttrs(
+  restruct: ReStruct,
+  ids: Array<number> | number,
+  attrs: any,
+  reset: boolean | null
+) {
   const action = new Action()
   const aids = Array.isArray(ids) ? ids : [ids]
 
@@ -99,13 +100,15 @@ export function fromAtomsAttrs(restruct, ids, attrs, reset) {
     action.addOp(new CalcImplicitH([atomId]).perform(restruct))
 
     const atomNeighbors = restruct.molecule.atomGetNeighbors(atomId)
-    const bond = restruct.molecule.bonds.get(atomNeighbors[0]?.bid)
+    const bond = restruct.molecule.bonds.get(atomNeighbors?.[0]?.bid as number)
     if (bond) {
       action.mergeWith(fromBondStereoUpdate(restruct, bond))
     }
     // when a heteroatom connects to an aromatic ring it's necessary to add a ImplicitHCount
     // property to this atom to specify the number of hydrogens on it.
     const atom = restruct.molecule.atoms.get(atomId)
+    assert(atom != null)
+
     if (Atom.isInAromatizedRing(restruct.molecule, atomId)) {
       action.addOp(
         new AtomAttr(atomId, 'implicitHCount', atom.implicitH).perform(restruct)

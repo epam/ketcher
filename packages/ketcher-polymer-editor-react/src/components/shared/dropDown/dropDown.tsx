@@ -121,6 +121,7 @@ export const DropDown = ({
         renderValue={renderLabelById}
         IconComponent={ChevronIcon}
         fullWidth
+        data-testid="dropdown-select"
         MenuProps={{
           PaperProps: {
             style: { ...stylesForExpanded, ...customStylesForExpanded }

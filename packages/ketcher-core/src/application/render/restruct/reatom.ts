@@ -38,6 +38,8 @@ import { Scale } from 'domain/helpers'
 import draw from '../draw'
 import util from '../util'
 import { tfx } from 'utilities'
+import svgPath from 'svgpath'
+import { RenderOptions } from 'application/render/render.types'
 
 interface ElemAttr {
   text: string
@@ -177,6 +179,67 @@ class ReAtom extends ReObject {
     }
 
     return this.getSelectionContour(render).attr(options.selectionStyle)
+  }
+
+  /**
+   * if atom is rendered as Abbreviation: O, NH, ...
+   * In this case we need to shift the bond render start position to free space for Atom,
+   * same for the Attachment point
+   */
+  getShiftedSegmentPosition(
+    renderOptions: RenderOptions,
+    direction: Vec2
+  ): Vec2 {
+    const atomPosition = Scale.obj2scaled(this.a.pp, renderOptions)
+    let atomSymbolShift = 0
+    const exts = this.visel.exts
+    for (let k = 0; k < exts.length; ++k) {
+      const box = exts[k].translate(atomPosition)
+      atomSymbolShift = Math.max(
+        atomSymbolShift,
+        util.shiftRayBox(atomPosition, direction, box)
+      )
+    }
+    if (atomSymbolShift > 0) {
+      return atomPosition.addScaled(
+        direction,
+        atomSymbolShift + 2 * renderOptions.lineWidth
+      )
+    } else {
+      return atomPosition
+    }
+  }
+
+  showAttachmentPoints(restruct: ReStruct): void {
+    // if trisection (attpnt === 3) - we split the attachment point vector to two vectors
+    const isTrisectionRequired = this.a.attpnt === 3
+    const directionVectors = isTrisectionRequired
+      ? trisectionLargestSector(this, restruct.molecule)
+      : [bisectLargestSector(this, restruct.molecule)]
+
+    directionVectors.forEach((directionVector, index) => {
+      showAttachmentPointShape(
+        this,
+        restruct.render,
+        directionVector,
+        restruct.addReObjectPath.bind(restruct)
+      )
+
+      const showLabel = isAttachmentPointLabelRequired(restruct)
+      if (showLabel) {
+        // in case of isTrisectionRequired (trisection case) we should show labels '1' and '2' for those separated vectors
+        const labelText = String(
+          isTrisectionRequired ? index + 1 : this.a.attpnt
+        )
+        showAttachmentPointLabel(
+          this,
+          restruct.render,
+          directionVector,
+          restruct.addReObjectPath.bind(restruct),
+          labelText
+        )
+      }
+    })
   }
 
   show(restruct: ReStruct, aid: number, options: any): void {
@@ -369,11 +432,6 @@ class ReAtom extends ReObject {
 
     // draw hover after label is calculated
     this.setHover(this.hover, render)
-
-    if (this.a.attpnt) {
-      const lsb = bisectLargestSector(this, restruct.molecule)
-      showAttpnt(this, render, lsb, restruct.addReObjectPath.bind(restruct))
-    }
 
     const stereoLabel = this.a.stereoLabel // Enhanced Stereo
     const aamText = getAamText(this)
@@ -984,78 +1042,6 @@ function showWarning(
   return warning
 }
 
-function showAttpnt(atom, render, lsb, addReObjectPath) {
-  // eslint-disable-line max-statements
-  const asterisk = '∗'
-  const ps = Scale.obj2scaled(atom.a.pp, render.options)
-  const options = render.options
-  let i, j
-  for (i = 0; i < 4; ++i) {
-    let attpntText = ''
-    if (atom.a.attpnt & (1 << i)) {
-      if (attpntText.length > 0) attpntText += ' '
-      attpntText += asterisk
-      for (j = 0; j < (i === 0 ? 0 : i + 1); ++j) attpntText += "'"
-      let pos0 = new Vec2(ps)
-      let pos1 = ps.addScaled(lsb, 0.7 * options.scale)
-
-      const attpntPath1 = render.paper.text(pos1.x, pos1.y, attpntText).attr({
-        font: options.font,
-        'font-size': options.fontsz,
-        fill: atom.color
-      })
-      const attpntRbb = util.relBox(attpntPath1.getBBox())
-      draw.recenterText(attpntPath1, attpntRbb)
-
-      const lsbn = lsb.negated()
-      /* eslint-disable no-mixed-operators */
-      pos1 = pos1.addScaled(
-        lsbn,
-        util.shiftRayBox(pos1, lsbn, Box2Abs.fromRelBox(attpntRbb)) +
-          options.lineWidth / 2
-      )
-      /* eslint-enable no-mixed-operators */
-      pos0 = shiftBondEnd(atom, pos0, lsb, options.lineWidth)
-      const n = lsb.rotateSC(1, 0)
-      const arrowLeft = pos1
-        .addScaled(n, 0.05 * options.scale)
-        .addScaled(lsbn, 0.09 * options.scale)
-      const arrowRight = pos1
-        .addScaled(n, -0.05 * options.scale)
-        .addScaled(lsbn, 0.09 * options.scale)
-      const attpntPath = render.paper.set()
-      attpntPath.push(
-        attpntPath1,
-        render.paper
-          .path(
-            'M{0},{1}L{2},{3}M{4},{5}L{2},{3}L{6},{7}',
-            tfx(pos0.x),
-            tfx(pos0.y),
-            tfx(pos1.x),
-            tfx(pos1.y),
-            tfx(arrowLeft.x),
-            tfx(arrowLeft.y),
-            tfx(arrowRight.x),
-            tfx(arrowRight.y)
-          )
-          .attr(render.options.lineattr)
-          .attr({ 'stroke-width': options.lineWidth / 2 })
-      )
-      addReObjectPath(LayerMap.indices, atom.visel, attpntPath, ps)
-      lsb = lsb.rotate(Math.PI / 6)
-    }
-  }
-}
-
-// function getStereoLabelText(atom, aid, render) {
-// 	const struct = render.ctab.molecule;
-// 	const frag = struct.frags.get(atom.a.fragment);
-// 	const stereo = frag.getStereoAtomMark(aid);
-// 	if (!stereo.type) return null;
-//
-// 	return stereo.type + (stereo.number || '');
-// }
-
 function getAamText(atom) {
   let aamText = ''
   if (atom.a.aam > 0) aamText += atom.a.aam
@@ -1108,7 +1094,37 @@ function pathAndRBoxTranslate(path, rbb, x, y) {
   rbb.y += y
 }
 
-function bisectLargestSector(atom: ReAtom, struct: Struct) {
+function bisectLargestSector(atom: ReAtom, struct: Struct): Vec2 {
+  const { largestAngle, neighborAngle } = getLargestSectorFromNeighbors(
+    atom,
+    struct
+  )
+  const bisectAngle = neighborAngle + largestAngle / 2
+  return newVectorFromAngle(bisectAngle)
+}
+
+function trisectionLargestSector(atom: ReAtom, struct: Struct): [Vec2, Vec2] {
+  const { largestAngle, neighborAngle } = getLargestSectorFromNeighbors(
+    atom,
+    struct
+  )
+  const firstTrisectorAngle = neighborAngle + largestAngle / 3
+  const secondTrisectorAngle = neighborAngle + (largestAngle * 2) / 3
+
+  return [
+    newVectorFromAngle(firstTrisectorAngle),
+    newVectorFromAngle(secondTrisectorAngle)
+  ]
+}
+
+function newVectorFromAngle(angle: number): Vec2 {
+  return new Vec2(Math.cos(angle), Math.sin(angle))
+}
+
+function getLargestSectorFromNeighbors(
+  atom: ReAtom,
+  struct: Struct
+): { neighborAngle: number; largestAngle: number } {
   let angles: Array<number> = []
   atom.a.neighbors.forEach((hbid) => {
     const hb = struct.halfBonds.get(hbid)
@@ -1125,21 +1141,114 @@ function bisectLargestSector(atom: ReAtom, struct: Struct) {
   for (let i = 0; i < angles.length; ++i) {
     if (da[i] > daMax) {
       daMax = da[i]
-      ang = angles[i] + da[i] / 2
+      ang = angles[i]
     }
   }
-  return new Vec2(Math.cos(ang), Math.sin(ang))
+
+  return { neighborAngle: ang, largestAngle: daMax }
 }
 
-function shiftBondEnd(atom, pos0, dir, margin) {
-  let t = 0
-  const visel = atom.visel
-  for (let k = 0; k < visel.exts.length; ++k) {
-    const box = visel.exts[k].translate(pos0)
-    t = Math.max(t, util.shiftRayBox(pos0, dir, box))
-  }
-  if (t > 0) pos0 = pos0.addScaled(dir, t + margin)
-  return pos0
+function getSvgCurveShapeAttachmentPoint(
+  centerPosition: Vec2,
+  directionVector: Vec2,
+  basicSize: number
+): string {
+  // declared here https://github.com/epam/ketcher/issues/2165
+  // this path has (0,0) in the position of attachment point atom
+  const attachmentPointSvgPathString = `M13 1.5l-1.5 3.7c-0.3 0.8-1.5 0.8-1.9 0l-1.7-4.4c-0.3-0.8-1.5-0.8-1.9 0l-1.7 4.4c-0.3 0.8-1.5 0.8-1.8 0l-1.8-4.4c-0.3-0.8-1.5-0.8-1.8 0l-1.7 4.4c-0.3 0.8-1.5 0.8-1.9 0l-1.7-4.4c-0.3-0.8-1.5-0.8-1.9 0l-1.6 4.2c-0.3 0.9-1.6 0.8-1.9 0l-1.2-3.5`
+  const attachmentPointSvgPathSize = 39.8
+
+  const shapeScale = basicSize / attachmentPointSvgPathSize
+  const angleDegrees =
+    (Math.atan2(directionVector.y, directionVector.x) * 180) / Math.PI - 90
+
+  return svgPath(attachmentPointSvgPathString)
+    .rotate(angleDegrees)
+    .scale(shapeScale)
+    .translate(centerPosition.x, centerPosition.y)
+    .toString()
+}
+
+function showAttachmentPointShape(
+  atom: ReAtom,
+  { options, paper }: Render,
+  directionVector: Vec2,
+  addReObjectPath: InstanceType<typeof ReStruct>['addReObjectPath']
+): void {
+  const atomPositionVector = Scale.obj2scaled(atom.a.pp, options)
+  const shiftedAtomPositionVector = atom.getShiftedSegmentPosition(
+    options,
+    directionVector
+  )
+  const attachmentPointEnd = atomPositionVector.addScaled(
+    directionVector,
+    options.scale * 0.85
+  )
+
+  const linePath = paper.path(
+    'M{0},{1}L{2},{3}',
+    tfx(shiftedAtomPositionVector.x),
+    tfx(shiftedAtomPositionVector.y),
+    tfx(attachmentPointEnd.x),
+    tfx(attachmentPointEnd.y)
+  )
+
+  const curvePath = paper.path(
+    getSvgCurveShapeAttachmentPoint(
+      attachmentPointEnd,
+      directionVector,
+      options.scale
+    )
+  )
+
+  const resultShape = paper
+    .set([curvePath, linePath])
+    .attr(options.lineattr)
+    .attr({ 'stroke-width': options.lineWidth })
+
+  addReObjectPath(LayerMap.indices, atom.visel, resultShape, atomPositionVector)
+}
+
+function getLabelPositionForAttachmentPoint(
+  atomPositionVector: Vec2,
+  directionVector: Vec2,
+  shapeHeight: number
+): Vec2 {
+  const normal = directionVector.rotateSC(1, 0)
+  return atomPositionVector
+    .addScaled(normal, 0.17 * shapeHeight)
+    .addScaled(directionVector, shapeHeight * 0.7)
+}
+
+function showAttachmentPointLabel(
+  atom: ReAtom,
+  { options, paper }: Render,
+  directionVector: Vec2,
+  addReObjectPath: InstanceType<typeof ReStruct>['addReObjectPath'],
+  labelText: string
+): void {
+  const atomPositionVector = Scale.obj2scaled(atom.a.pp, options)
+  const labelPosition = getLabelPositionForAttachmentPoint(
+    atomPositionVector,
+    directionVector,
+    options.scale
+  )
+  const labelPath = paper
+    .text(labelPosition.x, labelPosition.y, labelText)
+    .attr({
+      font: options.font,
+      'font-size': options.fontsz * 0.9,
+      fill: atom.color
+    })
+
+  addReObjectPath(LayerMap.indices, atom.visel, labelPath, atomPositionVector)
+}
+
+export function isAttachmentPointLabelRequired(restruct: ReStruct) {
+  // in case of having 2 or 3 attachment point type we have to render
+  // 2 - Secondary type
+  // 3 - Both Primary and Secondary - should be considered as two Attachment points
+  return restruct.molecule.atoms.some(({ attpnt }) => [2, 3].includes(attpnt))
 }
 
 export default ReAtom

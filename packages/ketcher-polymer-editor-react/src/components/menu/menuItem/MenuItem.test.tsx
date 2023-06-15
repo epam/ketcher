@@ -13,8 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { render, screen } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { render, screen, fireEvent } from '@testing-library/react'
 import { Menu, MenuContext } from 'components/menu'
 
 const mockClickHandler = jest.fn()
@@ -45,7 +44,7 @@ describe('Test MenuItem component', () => {
   it('should call provided callback when menu icon is clicked', () => {
     render(mockMenuItem())
     const button = screen.getByRole('menuitem')
-    userEvent.click(button)
+    fireEvent.click(button)
     expect(mockClickHandler).toHaveBeenCalledTimes(1)
   })
 })

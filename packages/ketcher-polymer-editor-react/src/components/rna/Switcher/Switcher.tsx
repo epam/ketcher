@@ -59,7 +59,7 @@ const SwitcherContainer = styled('div')`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 8px 0;
+  margin: 0;
 `
 const SvgContainer = styled('div')`
   display: flex;

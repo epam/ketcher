@@ -9,7 +9,7 @@ describe('parseSGroup', () => {
 
     expect(sGroupId).toBe(0)
     expect(attachmentPoints[0].atomId).toBe(1)
-    expect(attachmentPoints[0].leaveAtomId).toBe(-1)
+    expect(attachmentPoints[0].leaveAtomId).toBeUndefined()
     expect(attachmentPoints[0].additionalData).toBe('  ')
   })
 

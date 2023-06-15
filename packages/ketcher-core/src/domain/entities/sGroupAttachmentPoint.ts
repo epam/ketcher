@@ -1,6 +1,6 @@
 export class SGroupAttachmentPoint {
   public readonly atomId: number
-  public readonly leaveAtomId: number
+  public readonly leaveAtomId: number | undefined
   public readonly additionalData: string
 
   constructor(
@@ -9,7 +9,7 @@ export class SGroupAttachmentPoint {
     additionalData: string | undefined
   ) {
     this.atomId = atomId
-    this.leaveAtomId = leaveAtomId ?? -1
+    this.leaveAtomId = leaveAtomId
     this.additionalData =
       additionalData != null ? String(additionalData).slice(0, 2) : '  '
   }

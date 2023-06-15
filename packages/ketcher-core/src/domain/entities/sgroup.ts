@@ -289,7 +289,7 @@ export class SGroup {
       ({ atomId, leaveAtomId, additionalData }) => {
         const newAtomId = atomIdMap.get(atomId)
         assert(newAtomId != null)
-        const newLeaveAtomId = atomIdMap.get(leaveAtomId)
+        const newLeaveAtomId = atomIdMap.get(leaveAtomId as number)
         return new SGroupAttachmentPoint(
           newAtomId,
           newLeaveAtomId,

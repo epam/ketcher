@@ -13,7 +13,7 @@ env:
   # See: https://github.com/orgs/community/discussions/25228#discussioncomment-3246960
   CI: false
   MODE: standalone
-  KETCHER_URL: http://host.docker.internal:4002:host-gateway
+  KETCHER_URL: localhost:4002
   DOCKER: true
   IGNORE_UNSTABLE_TESTS: true
 jobs:
@@ -36,8 +36,6 @@ jobs:
       - name: check host
         run: |
           echo "curl 1" && curl localhost:4002
-          echo "curl 2" && curl http://host.docker.internal:4002
-          echo "curl 3" && curl http://host.docker.internal:4002:host-gateway
       - name: Create env file
         run: |
           cd ketcher-autotests

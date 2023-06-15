@@ -45,6 +45,11 @@ jobs:
           echo "IGNORE_UNSTABLE_TESTS=$IGNORE_UNSTABLE_TESTS" >> .env
       - name: Build autotests for docker
         run: cd ketcher-autotests && docker-compose build autotests
+      - name: check
+        run: |
+          npm run docker curl localhost:4002
+          npm run docker curl http://host.docker.internal:4002
+          npm run docker curl http://host.docker.internal:4002:host-gateway
       - name: Run playwright tests in docker
         run: cd ketcher-autotests && npm run docker:test:ci
       - uses: actions/upload-artifact@v3

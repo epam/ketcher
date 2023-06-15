@@ -38,6 +38,7 @@ jobs:
           cd ketcher-autotests
           echo "DOCKER=true" > .env
           echo "KETCHER_URL=$KETCHER_URL" >> .env
+          echo "MODE=$MODE" >> .env
           echo "IGNORE_UNSTABLE_TESTS=$IGNORE_UNSTABLE_TESTS" >> .env
           echo "AAAAA" && cat .env
           ls -la

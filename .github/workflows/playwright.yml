@@ -35,6 +35,7 @@ jobs:
 #        run: cd example/ && nohup npm run serve:standalone &
       - name: 'Create env file'
         run: |
+          cd ketcher-autotests
           echo "$DOCKER" > .env
           echo "$IGNORE_UNSTABLE_TESTS" > .env
       - name: check env

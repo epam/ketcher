@@ -6,6 +6,10 @@ services:
     env_file:
       .env
     network_mode: "host"
+    extra_hosts:
+      - http://host:docker:internal:4002
+      - http://host.docker.internal:host-gateway
+      - http://host.docker.internal:4002:host-gateway
     volumes:
       - ./:/app
       - /app/node_modules

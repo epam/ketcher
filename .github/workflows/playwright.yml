@@ -38,6 +38,8 @@ jobs:
           cd ketcher-autotests
           echo "$DOCKER" > .env
           echo "$IGNORE_UNSTABLE_TESTS" > .env
+          ls -la
+          pwd
       - name: check env
         run: echo "$env"
       - name: Build autotests for docker

@@ -16,32 +16,19 @@ dotenv.config();
 const ignoredTests = ['clean-tools.spec.ts'];
 
 function baseURL(): string {
-  console.log('KETCHER_URL', process.env.KETCHER_URL);
   if (!process.env.MODE || !process.env.KETCHER_URL) {
-    console.log(
-      'DEFAULT_KETCHER_STANDALONE_URL',
-      DEFAULT_KETCHER_STANDALONE_URL
-    );
     return DEFAULT_KETCHER_STANDALONE_URL;
   }
 
   if (process.env.MODE === MODES.STANDALONE) {
-    console.log('STANDALONE', `${process.env.KETCHER_URL}${STANDALONE_URL}`);
     return `${process.env.KETCHER_URL}${STANDALONE_URL}`;
   }
 
-  console.log(`${process.env.KETCHER_URL}${REMOTE_URL}`);
   return `${process.env.KETCHER_URL}${REMOTE_URL}`;
 }
 
 const MAX_NUMBER_OF_RETRIES = 2;
 
-console.log(
-  'IGNORE_UNSTABLE_TESTS',
-  process.env,
-  process.env.IGNORE_UNSTABLE_TESTS,
-  process.env.IGNORE_UNSTABLE_TESTS ? ignoredTests : undefined
-);
 const config: PlaywrightTestConfig = {
   testDir: './tests',
   /* Maximum time one test can run for. */

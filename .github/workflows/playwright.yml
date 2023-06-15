@@ -34,7 +34,7 @@ jobs:
 #      - name: Run example in standalone mode
 #        run: cd example/ && nohup npm run serve:standalone &
       - name: 'run tests'
-        run: cd ketcher-autotests && npm run test:ci
+        run: cd ketcher-autotests && npm i && npm run test:ci
       - name: 'Create env file'
         run: |
           echo "$DOCKER" > .env

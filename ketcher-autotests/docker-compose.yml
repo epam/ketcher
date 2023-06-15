@@ -7,9 +7,9 @@ services:
       .env
     network_mode: "host"
     extra_hosts:
-      - "http://host.docker:internal:4002"
-      - "http://host.docker.internal:host-gateway"
-      - "http://host.docker.internal:4002:host-gateway"
+      - "host.docker:internal:4002"
+      - "host.docker.internal:host-gateway"
+      - "host.docker.internal:4002:host-gateway"
     volumes:
       - ./:/app
       - /app/node_modules

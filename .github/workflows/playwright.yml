@@ -38,9 +38,9 @@ jobs:
           echo "$DOCKER" > .env
           echo "$IGNORE_UNSTABLE_TESTS" > .env
       - name: check env
-        run: echo "$env $.env env"
+        run: echo "$env"
       - name: Build autotests for docker
-        run: cd ketcher-autotests && docker-compose -e "$IGNORE_UNSTABLE_TESTS" build autotests
+        run: cd ketcher-autotests && docker-compose build autotests
 #        run: cd ketcher-autotests && docker-compose build --build-arg IGNORE_UNSTABLE_TESTS=$IGNORE_UNSTABLE_TESTS autotests
       - name: Run playwright tests in docker
         run: cd ketcher-autotests && npm run docker:test:ci

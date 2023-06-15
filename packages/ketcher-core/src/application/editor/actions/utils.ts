@@ -20,7 +20,7 @@ import closest from '../shared/closest'
 import { difference } from 'lodash'
 import { ReStruct } from 'application/render'
 import { selectionKeys } from '../shared/constants'
-import { Selection } from '../editor.types'
+import { EditorSelection } from '../editor.types'
 
 type AtomAttributeName = keyof AtomAttributes
 
@@ -54,7 +54,7 @@ export function findStereoAtoms(struct, aids: number[] | undefined): number[] {
   return aids.filter((aid) => struct.atoms.get(aid).stereoLabel !== null)
 }
 
-export function structSelection(struct): Selection {
+export function structSelection(struct): EditorSelection {
   return selectionKeys.reduce((res, key) => {
     res[key] = Array.from(struct[key].keys())
     return res
@@ -201,7 +201,10 @@ export function getRelSGroupsBySelection(
   )
 }
 
-export function isAttachmentBond({ begin, end }: Bond, selection: Selection) {
+export function isAttachmentBond(
+  { begin, end }: Bond,
+  selection: EditorSelection
+) {
   if (!selection.atoms) {
     return false
   }

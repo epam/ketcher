@@ -68,6 +68,6 @@ describe('RNA Switcher component', () => {
     const resetBtn = screen.getByText('Reset')
     fireEvent.click(resetBtn)
     const nucleotideBtn = screen.getByText(buttons[0])
-    expect(nucleotideBtn).toHaveStyle(`background-color: #005662`)
+    expect(nucleotideBtn).toHaveStyle(`background-color: rgb(22, 119, 130)`)
   })
 })

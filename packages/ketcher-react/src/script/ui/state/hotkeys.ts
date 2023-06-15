@@ -38,6 +38,7 @@ import {
   initAbbreviationLookup,
   showAbbreviationLookup
 } from './abbreviationLookup'
+import { isArrowKey, moveSelectedItems } from './moveSelectedItems'
 import { handleHotkeyOverItem } from './handleHotkeysOverItem'
 
 export function initKeydownListener(element) {
@@ -161,6 +162,8 @@ function keyHandle(dispatch, getState, hotKeys, event, skipAbbrLookup = false) {
     } else if (isIE) {
       clipArea.exec(event)
     }
+  } else if (isArrowKey(event.key)) {
+    moveSelectedItems(editor, event.key, event.shiftKey)
   }
 }
 

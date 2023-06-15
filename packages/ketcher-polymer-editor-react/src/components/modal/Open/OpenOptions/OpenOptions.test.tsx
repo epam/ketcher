@@ -13,8 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { render, screen } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { render, screen, fireEvent } from '@testing-library/react'
 
 import { OpenOptions } from './OpenOptions'
 
@@ -45,7 +44,7 @@ describe('OpenOptions component', () => {
     render(withThemeProvider(<OpenOptions {...mockProps} />))
     const button = screen.getByRole('button', { name: 'Paste from Clipboard' })
 
-    userEvent.click(button)
+    fireEvent.click(button)
 
     expect(mockProps.selectClipboard).toBeCalled()
   })

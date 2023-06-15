@@ -14,8 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { render, screen } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { render, screen, fireEvent } from '@testing-library/react'
 
 import { ChemicalMimeType } from 'helpers/formats'
 import { saveAs } from 'file-saver'
@@ -36,7 +35,7 @@ describe('save button', () => {
     render(withThemeProvider(<SaveButton {...mockProps} />))
 
     const button = screen.getByRole('button', { name: 'save' })
-    userEvent.click(button)
+    fireEvent.click(button)
 
     expect(saveAs).toHaveBeenCalled()
   })

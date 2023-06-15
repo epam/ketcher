@@ -10,16 +10,16 @@ Object {
       aria-hidden="true"
     />
     <div
-      class="MuiModal-root MuiDialog-root css-zw3mfo-MuiModal-root-MuiDialog-root"
+      class="MuiDialog-root MuiModal-root css-zw3mfo-MuiModal-root-MuiDialog-root"
       role="presentation"
     >
       <div
         aria-hidden="true"
-        class="MuiBackdrop-root css-yiavyu-MuiBackdrop-root-MuiDialog-backdrop"
+        class="MuiBackdrop-root MuiModal-backdrop css-yiavyu-MuiBackdrop-root-MuiDialog-backdrop"
         style="opacity: 0.4; background: rgb(0, 86, 98); webkit-transition: opacity 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms; transition: opacity 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;"
       />
       <div
-        data-test="sentinelStart"
+        data-testid="sentinelStart"
         tabindex="0"
       />
       <div
@@ -32,7 +32,7 @@ Object {
           aria-labelledby=":r0:"
           class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation24 MuiDialog-paper MuiDialog-paperScrollPaper MuiDialog-paperWidthMd css-12rl710-MuiPaper-root-MuiDialog-paper"
           role="dialog"
-          style="min-width: 20vw; background: rgb(242, 242, 242); border-radius: 8px; color: rgb(51, 51, 51);"
+          style="min-width: 20vw; background: rgb(245, 245, 245); border-radius: 8px; color: rgb(51, 51, 51);"
         >
           <h2
             class="MuiTypography-root MuiTypography-h6 MuiDialogTitle-root css-1x5ms5d-MuiTypography-root-MuiDialogTitle-root"
@@ -66,7 +66,7 @@ Object {
         </div>
       </div>
       <div
-        data-test="sentinelEnd"
+        data-testid="sentinelEnd"
         tabindex="0"
       />
     </div>

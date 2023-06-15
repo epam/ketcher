@@ -410,6 +410,19 @@ class ReStruct {
       this.molecule.initNeighbors()
     }
 
+    // dependency on attachment points
+    // must be removed once attachment points will be dedicated Visel
+    // must be refactored in https://github.com/epam/ketcher/issues/2742 (#2742)
+    this.atoms.forEach((_, aid) => {
+      const atom = this.atoms.get(aid)
+      // in case of atom has attachment point we have to clear path that connected with this atom
+      // because we need to recalculate the labels for the Attachment point,
+      // they depend on the changes outside the connected atoms
+      if (atom && atom.a.attpnt) {
+        this.clearVisel(atom.visel)
+      }
+    })
+
     // only update half-bonds adjacent to atoms that have moved
     const atomsChangedArray = Array.from(this.atomsChanged.keys())
     this.molecule.updateHalfBonds(atomsChangedArray)
@@ -421,7 +434,8 @@ class ReStruct {
     this.verifyLoops()
     const updLoops = force || this.structChanged
     if (updLoops) this.updateLoops()
-    this.showLabels()
+    this.showAttachmentPoints()
+    this.showAtoms()
     this.showBonds()
     if (updLoops) this.showLoops()
     this.showReactionSymbols()
@@ -545,7 +559,16 @@ class ReStruct {
     })
   }
 
-  showLabels(): void {
+  private showAttachmentPoints() {
+    this.atoms.forEach((_value, aid) => {
+      const atom = this.atoms.get(aid)
+      if (atom && atom.a.attpnt) {
+        atom.showAttachmentPoints(this)
+      }
+    })
+  }
+
+  private showAtoms(): void {
     // eslint-disable-line max-statements
     const options = this.render.options
 

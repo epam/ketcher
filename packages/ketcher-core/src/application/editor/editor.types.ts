@@ -14,7 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Action } from 'application/actions'
+import { Action } from '../editor/actions'
+import { Render } from 'application/render'
 import { Struct } from 'domain/entities'
 import { selectionKeys } from './shared/constants'
 
@@ -30,7 +31,7 @@ export interface LoadOptions {
   fragment: boolean
 }
 
-export type Selection = {
+export type EditorSelection = {
   [key in typeof selectionKeys[number]]?: number[]
 }
 
@@ -41,7 +42,7 @@ export interface Editor {
   structToAddFragment: (struct: Struct) => Struct
   subscribe: (eventName: string, handler: (data?: any) => any) => any
   unsubscribe: (eventName: string, subscriber: any) => void
-  selection: (arg?: Selection | 'all' | null) => Selection | null
+  selection: (arg?: EditorSelection | 'all' | null) => EditorSelection | null
   undo: () => void
   redo: () => void
   clear: () => void
@@ -49,5 +50,13 @@ export interface Editor {
   setOptions: (opts: string) => any
   zoom: (value?: any) => any
   structSelected: () => Struct
-  // update: (action: Action | true, ignoreHistory?: boolean) => void
+  explicitSelected: () => EditorSelection
+  update: (
+    action: Action | true,
+    ignoreHistory?: boolean,
+    options?: { resizeCanvas: boolean }
+  ) => void
+  render: Render
+  // supposed to be RotateController from 'ketcher-react' package
+  rotateController: any
 }

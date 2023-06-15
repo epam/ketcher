@@ -479,7 +479,6 @@
           }
         },
         "then": {
-          "required": ["fieldName"],
           "properties": {
             "context": {
               "enum": ["Fragment", "Multifragment", "Bond", "Atom", "Group"]

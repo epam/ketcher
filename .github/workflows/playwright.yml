@@ -37,7 +37,7 @@ jobs:
         run: |
           cd ketcher-autotests
           echo "DOCKER=true" > .env
-          echo "IGNORE_UNSTABLE_TESTS=true" >> .env
+          echo "$IGNORE_UNSTABLE_TESTS" >> .env
           echo "AAAAA" && cat .env
           ls -la
           pwd

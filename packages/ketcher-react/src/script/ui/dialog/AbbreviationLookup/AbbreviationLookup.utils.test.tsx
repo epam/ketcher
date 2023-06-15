@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { FilterOptionsState } from '@mui/material'
 import {
   filterOptions,
   getOptionLabel,
@@ -21,7 +22,6 @@ import {
   highlightOptionLabel
 } from './AbbreviationLookup.utils'
 import { AbbreviationOption } from './AbbreviationLookup.types'
-import { FilterOptionsState } from '@mui/base/AutocompleteUnstyled/useAutocomplete'
 import {
   createGenericOption,
   createOption

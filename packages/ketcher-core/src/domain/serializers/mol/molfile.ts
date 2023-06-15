@@ -642,7 +642,7 @@ export class Molfile {
     const atomId = this.mapping[attachmentPoint.atomId]
     this.writePaddedNumber(atomId, 3)
     this.writeWhiteSpace(1)
-    const leaveAtomId = this.mapping[attachmentPoint.leaveAtomId] ?? 0
+    const leaveAtomId = this.mapping[attachmentPoint.leaveAtomId as number] ?? 0
     this.writePaddedNumber(leaveAtomId, 3)
     this.writeWhiteSpace(1)
     this.writePadded(attachmentPoint.additionalData, 2)

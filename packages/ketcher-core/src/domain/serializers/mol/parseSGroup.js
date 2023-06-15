@@ -395,7 +395,9 @@ function parseSGroupSAPLineV2000(ctabString) {
       false
     )
     const atomId = utils.parseDecimalInt(iii) - 1
-    const leaveAtomId = utils.parseDecimalInt(ooo) - 1
+    assert(atomId >= 0)
+    const leaveAtomParsedId = utils.parseDecimalInt(ooo)
+    const leaveAtomId = leaveAtomParsedId > 0 ? leaveAtomParsedId - 1 : undefined
     attachmentPoints.push(new SGroupAttachmentPoint(atomId, leaveAtomId, cc))
   }
   return { sGroupId, attachmentPoints }

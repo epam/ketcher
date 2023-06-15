@@ -33,6 +33,11 @@ jobs:
         run: npm run build
       - name: Run example in standalone mode
         run: cd example/ && nohup npm run serve:standalone &
+      - name: check host
+        run: |
+          echo "curl 1" && curl localhost:4002
+          echo "curl 2" && curl http://host.docker.internal:4002
+          echo "curl 3" && curl http://host.docker.internal:4002:host-gateway
       - name: Create env file
         run: |
           cd ketcher-autotests

@@ -18,7 +18,7 @@ import {
   AbbreviationGenericOption,
   AbbreviationOption
 } from './AbbreviationLookup.types'
-import { FilterOptionsState } from '@mui/base/AutocompleteUnstyled/useAutocomplete'
+import { FilterOptionsState } from '@mui/material'
 
 const getHighlightSearchStartIndex = (
   option: AbbreviationGenericOption,

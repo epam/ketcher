@@ -3,6 +3,8 @@ services:
     build:
       context: .
     container_name: ketcher-autotest
+    env_file:
+      .env
     network_mode: "host"
     volumes:
       - ./:/app

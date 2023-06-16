@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 import { ReAtom, ReBond } from 'application/render'
 
 import { Pool } from 'domain/entities'

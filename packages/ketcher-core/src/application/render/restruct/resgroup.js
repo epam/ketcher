@@ -169,7 +169,6 @@ class ReSGroup extends ReObject {
   makeSelectionPlate(restruct, paper, options) {
     const sgroup = this.item
     const functionalGroups = restruct.molecule.functionalGroups
-    const sGroups = restruct.molecule.sgroups
     const render = restruct.render
     if (
       FunctionalGroup.isContractedFunctionalGroup(sgroup.id, functionalGroups)
@@ -188,7 +187,6 @@ class ReSGroup extends ReObject {
     const { a0, a1, b0, b1 } = getHighlighPathInfo(sGroupItem, options)
 
     const functionalGroups = render.ctab.molecule.functionalGroups
-    const sGroups = render.ctab.molecule.sgroups
     const set = paper.set()
     if (
       FunctionalGroup.isContractedFunctionalGroup(

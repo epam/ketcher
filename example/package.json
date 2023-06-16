@@ -23,6 +23,7 @@
     "test": "run-s test:prettier test:stylelint test:eslint:quiet test:types test:unit",
     "test:eslint": "eslint . --ext .ts,.js,.jsx,.tsx",
     "test:eslint:quiet": "npm run test:eslint -- --quiet",
+    "test:eslint:fix": "npm run test:eslint -- --fix",
     "test:types": "tsc --noEmit",
     "test:unit": "react-app-rewired test --passWithNoTests --watchAll=false",
     "test:stylelint": "stylelint \"./**/*.{css,less}\" --formatter verbose",

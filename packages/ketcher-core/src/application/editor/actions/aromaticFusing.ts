@@ -47,6 +47,8 @@ export function fromAromaticTemplateOnBond(
 
   let action = new Action()
 
+  // TODO need to fix the hack below if the conde after this condition is not required anymore
+  // eslint-disable-next-line no-constant-condition
   if (true) {
     action = simpleFusing(restruct, template, bid)
     return Promise.resolve(action)

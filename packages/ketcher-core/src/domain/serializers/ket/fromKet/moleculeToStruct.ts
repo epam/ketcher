@@ -30,11 +30,13 @@ export function toRlabel(values) {
 
 export function moleculeToStruct(ketItem: any): Struct {
   const struct = new Struct()
-  ketItem.atoms.forEach((atom) => {
-    if (atom.type === 'rg-label') struct.atoms.add(rglabelToStruct(atom))
-    if (atom.type === 'atom-list') struct.atoms.add(atomListToStruct(atom))
-    if (!atom.type) struct.atoms.add(atomToStruct(atom))
-  })
+  if (ketItem.atoms) {
+    ketItem.atoms.forEach((atom) => {
+      if (atom.type === 'rg-label') struct.atoms.add(rglabelToStruct(atom))
+      if (atom.type === 'atom-list') struct.atoms.add(atomListToStruct(atom))
+      if (!atom.type) struct.atoms.add(atomToStruct(atom))
+    })
+  }
 
   if (ketItem.bonds) {
     ketItem.bonds.forEach((bond) => struct.bonds.add(bondToStruct(bond)))

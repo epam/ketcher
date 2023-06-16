@@ -18,7 +18,7 @@
     "build:standalone": "npm run build -w ketcher-standalone",
     "build:react": "npm run build -w ketcher-react",
     "build:polymer-editor": "npm run build -w ketcher-polymer-editor-react",
-    "build:packages": "npm run build:core && run-p 'build:standalone' 'build:polymer-editor' 'build:react'",
+    "build:packages": "npm run build:core && run-p 'build:standalone' 'build:react' && npm run build:polymer-editor",
     "build:example": "npm run build -w example",
     "build:demo": "npm run build:packages && npm run build -w demo",
     "test": "npm run test --workspaces --if-present",

@@ -25,7 +25,7 @@ import { TextInputField } from 'components/shared/textInputField'
 import { SaveButton } from 'components/modal/save/saveButton'
 import { getPropertiesByFormat, SupportedFormats } from 'helpers/formats'
 import { ActionButton } from 'components/shared/actionButton'
-import { Icon } from 'components/shared/icon'
+import { Icon } from 'ketcher-react'
 
 interface Props {
   onClose: () => void

@@ -43,6 +43,7 @@ import { TextCommand } from 'ketcher-core'
 import classes from './Text.module.less'
 import { connect } from 'react-redux'
 import createStyles from 'draft-js-custom-styles'
+import { IconName } from 'components'
 
 const { styles, customStyleFn } = createStyles(['font-size'])
 
@@ -53,7 +54,7 @@ interface TextProps extends DialogParams {
   position?: string
 }
 
-const buttons: Array<{ command: TextCommand; name: string }> = [
+const buttons: Array<{ command: TextCommand; name: IconName }> = [
   {
     command: TextCommand.Bold,
     name: 'text-bold'

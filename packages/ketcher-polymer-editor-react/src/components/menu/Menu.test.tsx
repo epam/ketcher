@@ -32,13 +32,12 @@ const MenuContainer = () => {
           <Menu.Item itemId="select-fragment" />
         </Menu.Submenu>
         <Menu.Submenu>
-          <Menu.Item itemId="rectangle" />
-          <Menu.Item itemId="ellipse" />
+          <Menu.Item itemId="shape-rectangle" />
+          <Menu.Item itemId="shape-ellipse" />
         </Menu.Submenu>
         <Menu.Submenu>
-          <Menu.Item itemId="rotate" />
-          <Menu.Item itemId="horizontal-flip" />
-          <Menu.Item itemId="vertical-flip" />
+          <Menu.Item itemId="transform-flip-h" />
+          <Menu.Item itemId="transform-flip-v" />
         </Menu.Submenu>
       </Menu.Group>
     </Menu>

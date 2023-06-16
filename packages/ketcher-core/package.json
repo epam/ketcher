@@ -1,6 +1,6 @@
 {
   "name": "ketcher-core",
-  "version": "2.11.0-rc.1-unc4",
+  "version": "2.11.0-rc.1-unc5",
   "description": "Web-based molecule sketcher",
   "license": "Apache-2.0",
   "homepage": "http://lifescience.opensource.epam.com/ketcher",
@@ -43,6 +43,7 @@
     "@babel/runtime": "^7.17.9",
     "assert": "^2.0.0",
     "lodash": "^4.17.21",
+    "querystring": "^0.2.0",
     "raphael": "^2.3.0",
     "svgpath": "^2.3.1"
   },

@@ -1,8 +1,7 @@
 import { Button } from '@mui/material'
 import styled from '@emotion/styled'
 import { ReactNode, useState } from 'react'
-import { Icon } from 'components/shared/icon'
-import { IconNameType } from 'components/shared/icon/icon'
+import { Icon, type IconName } from 'ketcher-react'
 import { css, useTheme } from '@emotion/react'
 
 type SwitcherProps = {
@@ -23,7 +22,7 @@ enum Monomers {
   Phosphate
 }
 
-const svgNames: IconNameType[] = [
+const svgNames: IconName[] = [
   'rap-left-link',
   'rap-middle-link',
   'rap-right-link'
@@ -100,7 +99,6 @@ export const Switcher = ({
   }
   const [nucleobase, sugar, phosphate] = selectedMonomers
   const nucleotide = `${nucleobase}(${sugar})${phosphate}`
-
   const onReset = () => {
     setActiveMonomerType('reset')
     setActiveIndex(0)

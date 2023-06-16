@@ -40,7 +40,7 @@ export class Action {
   }
 
   // Perform action and return inverted one
-  perform(restruct: ReStruct) {
+  perform(restruct: ReStruct): Action {
     const action = new Action()
     const sortedOperations = [...this.operations].sort(
       (a, b) => a.priority - b.priority

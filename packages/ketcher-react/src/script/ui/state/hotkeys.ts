@@ -29,6 +29,7 @@ import actions from '../action'
 import keyNorm from '../data/convert/keynorm'
 import { isIE } from 'react-device-detect'
 import { SettingsManager } from '../utils/settingsManager'
+import { isArrowKey, moveSelectedItems } from './moveSelectedItems'
 import { handleHotkeyOverItem } from './handleHotkeysOverItem'
 
 export function initKeydownListener(element) {
@@ -128,6 +129,8 @@ function keyHandle(dispatch, state, hotKeys, event) {
     } else if (isIE) {
       clipArea.exec(event)
     }
+  } else if (isArrowKey(event.key)) {
+    moveSelectedItems(editor, event.key, event.shiftKey)
   }
 }
 

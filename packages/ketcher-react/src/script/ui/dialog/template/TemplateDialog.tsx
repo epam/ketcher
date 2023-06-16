@@ -28,7 +28,6 @@ import { filterLib, filterFGLib, greekify } from '../../utils'
 import Accordion from '@mui/material/Accordion'
 import AccordionSummary from '@mui/material/AccordionSummary'
 import AccordionDetails from '@mui/material/AccordionDetails'
-import Icon from '../../component/view/icon'
 
 import { Dialog } from '../../views/components'
 import Input from '../../component/form/Input/Input'
@@ -46,6 +45,7 @@ import EmptySearchResult from '../../../ui/dialog/template/EmptySearchResult'
 import Tabs from '@mui/material/Tabs'
 import Tab from '@mui/material/Tab'
 import useSaltsAndSolvents from './useSaltsAndSolvets'
+import { Icon } from 'components'
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props
@@ -113,7 +113,7 @@ const FUNCTIONAL_GROUPS = 'Functional Groups'
 const HeaderContent = () => (
   <div className={classes.dialogHeader}>
     <Icon name="template-dialog" />
-    <span>Templates</span>
+    <span>Structure Library</span>
   </div>
 )
 

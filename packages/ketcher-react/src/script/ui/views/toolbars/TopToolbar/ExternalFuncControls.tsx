@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { ElementWithDropdown } from './ElementWithDropdown'
-import { IconButton } from './IconButton'
+import { TopToolbarIconButton } from './TopToolbarIconButton'
 
 interface ExternalFuncProps {
   isCollapsed: boolean
@@ -92,7 +92,7 @@ export const ExternalFuncControls = ({
   ]
 
   const getButtonElement = (button) => (
-    <IconButton
+    <TopToolbarIconButton
       title={button.title}
       onClick={button.handler}
       iconName={button.name}

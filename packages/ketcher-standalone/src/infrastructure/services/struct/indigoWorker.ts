@@ -31,7 +31,8 @@ import {
   GenerateInchIKeyCommandData,
   InputMessage,
   LayoutCommandData,
-  OutputMessage
+  OutputMessage,
+  IndigoStandalone
 } from './indigoWorker.types'
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -42,14 +43,19 @@ interface IndigoOptions {
   set: (key: string, value: string) => void
 }
 
-type handlerType = (indigo: any, indigoOptions: IndigoOptions) => string
+type HandlerType = (
+  indigo: IndigoStandalone,
+  indigoOptions: IndigoOptions
+) => string
+
+const module = indigoModuleFn()
 
 function handle(
-  handler: handlerType,
+  handler: HandlerType,
   options?: CommandOptions,
   messageType?: Command
 ) {
-  module.then((indigo) => {
+  module.then((indigo: IndigoStandalone) => {
     const indigoOptions = new indigo.MapStringString()
     setOptions(indigoOptions, options || {})
     let msg: OutputMessage<string>
@@ -60,16 +66,14 @@ function handle(
         payload,
         hasError: false
       }
-    } catch (error: any) {
+    } catch (error) {
       msg = {
         type: messageType,
         hasError: true,
-        error: error
+        error: error as string
       }
     }
 
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     self.postMessage(msg)
   })
 }
@@ -77,11 +81,9 @@ function handle(
 function setOptions(indigoOptions: IndigoOptions, options: CommandOptions) {
   for (const [key, value] of Object.entries(options)) {
     if (value == null) continue
-    indigoOptions.set(key, (value as any).toString())
+    indigoOptions.set(key, value.toString())
   }
 }
-
-const module = indigoModuleFn()
 
 self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
   const message = e.data

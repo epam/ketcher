@@ -18,9 +18,7 @@
     "jsx-a11y/alt-text": "warn",
     "jsx-a11y/click-events-have-key-events": "warn",
     "@typescript-eslint/no-explicit-any": "error",
-    "no-fallthrough": "warn",
-    "no-case-declarations": "warn",
-    "no-prototype-builtins": "warn"
+    "no-case-declarations": "warn"
   },
   "overrides": [
     {

@@ -14,8 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { IconButton } from 'components'
 import { ElementWithDropdown } from './ElementWithDropdown'
+import { TopToolbarIconButton } from './TopToolbarIconButton'
 
 interface ExternalFuncProps {
   isCollapsed: boolean
@@ -92,7 +92,7 @@ export const ExternalFuncControls = ({
   ]
 
   const getButtonElement = (button) => (
-    <IconButton
+    <TopToolbarIconButton
       title={button.title}
       onClick={button.handler}
       iconName={button.name}

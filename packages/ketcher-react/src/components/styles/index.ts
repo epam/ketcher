@@ -14,36 +14,4 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { StyledButton, StyledIcon } from './styles'
-import { IIconButtonProps } from './types'
-
-export const IconButton = ({
-  onClick,
-  iconName,
-  shortcut,
-  title,
-  className,
-  isActive = false,
-  isHidden = false,
-  disabled = false
-}: IIconButtonProps) => {
-  const combinedTitle = shortcut ? `${title} (${shortcut})` : title
-
-  if (isHidden) {
-    return null
-  }
-
-  return (
-    <StyledButton
-      className={className}
-      title={combinedTitle}
-      onClick={onClick}
-      disabled={disabled}
-      isActive={isActive}
-    >
-      <StyledIcon name={iconName} />
-    </StyledButton>
-  )
-}
-
-export default IconButton
+export { default as style } from './consts'

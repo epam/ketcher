@@ -27,6 +27,6 @@ export interface IIconButtonProps {
   shortcut?: string
 }
 
-export interface IStyledIconButtonProps {
+export interface IStyledButtonProps {
   isActive: boolean
 }

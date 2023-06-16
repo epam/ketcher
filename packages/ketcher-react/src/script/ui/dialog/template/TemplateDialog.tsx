@@ -113,7 +113,7 @@ const FUNCTIONAL_GROUPS = 'Functional Groups'
 const HeaderContent = () => (
   <div className={classes.dialogHeader}>
     <Icon name="template-dialog" />
-    <span>Templates</span>
+    <span>Structure Library</span>
   </div>
 )
 

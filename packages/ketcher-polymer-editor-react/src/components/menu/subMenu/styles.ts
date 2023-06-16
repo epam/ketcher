@@ -38,6 +38,12 @@ export const StyledDropdownIcon = styled(Icon, {
 export const RootContainer = styled.div`
   display: flex;
   position: relative;
+
+  &:active {
+    .dropdown {
+      fill: white;
+    }
+  }
 `
 
 export const OptionsContainer = styled.div<OptionsContainerProps>`

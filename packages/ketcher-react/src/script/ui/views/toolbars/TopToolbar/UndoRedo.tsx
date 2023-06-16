@@ -14,8 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { IconButton } from 'components'
 import { Divider } from './Divider'
+import { TopToolbarIconButton } from './TopToolbarIconButton'
 
 interface UndoRedoProps {
   disabledButtons: string[]
@@ -35,7 +35,7 @@ export const UndoRedo = ({
   return (
     <>
       <Divider />
-      <IconButton
+      <TopToolbarIconButton
         title="Undo"
         onClick={onUndo}
         iconName="undo"
@@ -43,7 +43,7 @@ export const UndoRedo = ({
         isHidden={hiddenButtons.includes('undo')}
         shortcut={shortcuts.undo}
       />
-      <IconButton
+      <TopToolbarIconButton
         title="Redo"
         onClick={onRedo}
         iconName="redo"

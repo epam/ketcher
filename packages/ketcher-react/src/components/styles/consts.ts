@@ -13,37 +13,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { TopToolbarIconButton } from './TopToolbarIconButton'
 
-interface FileControlsProps {
-  onFileOpen: () => void
-  onSave: () => void
-  shortcuts: { [key in string]: string }
-  hiddenButtons: string[]
-}
+const color = {
+  white: '#FFFFFF',
+  green: '#167782',
+  lightGreen: '#188794',
+  graphite: '#333333'
+} as const
 
-export const FileControls = ({
-  onFileOpen,
-  onSave,
-  shortcuts,
-  hiddenButtons
-}: FileControlsProps) => {
-  return (
-    <>
-      <TopToolbarIconButton
-        title="Open..."
-        onClick={onFileOpen}
-        iconName="open"
-        shortcut={shortcuts.open}
-        isHidden={hiddenButtons.includes('open')}
-      />
-      <TopToolbarIconButton
-        title="Save as..."
-        onClick={onSave}
-        iconName="save"
-        shortcut={shortcuts.save}
-        isHidden={hiddenButtons.includes('save')}
-      />
-    </>
-  )
+const text = {
+  color: {
+    primary: color.graphite,
+    secondary: color.white,
+    hover: color.green
+  }
+} as const
+
+const background = {
+  color: {
+    primary: color.white,
+    secondary: color.green,
+    hover: color.lightGreen
+  }
+} as const
+
+const border = {
+  radius: {
+    regular: '2px'
+  }
+} as const
+
+export default {
+  background,
+  border,
+  text
 }

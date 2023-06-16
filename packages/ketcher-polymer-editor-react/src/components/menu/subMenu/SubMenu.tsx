@@ -63,6 +63,7 @@ const SubMenu = ({
         <MenuItem itemId={visibleItemId} />
         {open || (
           <StyledDropdownIcon
+            className="dropdown"
             name="dropdown"
             onClick={handleDropDownClick}
             isActive={isActive(visibleItemId)}

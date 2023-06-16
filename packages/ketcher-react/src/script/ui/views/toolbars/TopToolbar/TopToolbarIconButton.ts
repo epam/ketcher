@@ -13,37 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { TopToolbarIconButton } from './TopToolbarIconButton'
 
-interface FileControlsProps {
-  onFileOpen: () => void
-  onSave: () => void
-  shortcuts: { [key in string]: string }
-  hiddenButtons: string[]
-}
+import styled from '@emotion/styled'
+import { IconButton } from 'components'
 
-export const FileControls = ({
-  onFileOpen,
-  onSave,
-  shortcuts,
-  hiddenButtons
-}: FileControlsProps) => {
-  return (
-    <>
-      <TopToolbarIconButton
-        title="Open..."
-        onClick={onFileOpen}
-        iconName="open"
-        shortcut={shortcuts.open}
-        isHidden={hiddenButtons.includes('open')}
-      />
-      <TopToolbarIconButton
-        title="Save as..."
-        onClick={onSave}
-        iconName="save"
-        shortcut={shortcuts.save}
-        isHidden={hiddenButtons.includes('save')}
-      />
-    </>
-  )
-}
+export const TopToolbarIconButton = styled(IconButton)`
+  border-radius: 4px;
+  padding: 2px;
+
+  @media only screen and (min-width: 1024px) {
+    height: 32px;
+    width: 32px;
+    padding: 4px;
+  }
+  @media only screen and (min-width: 1920px) {
+    height: 40px;
+    width: 40px;
+    padding: 5px;
+  }
+`

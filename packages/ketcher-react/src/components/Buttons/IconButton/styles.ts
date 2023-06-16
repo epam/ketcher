@@ -15,64 +15,45 @@
  ***************************************************************************/
 
 import styled from '@emotion/styled'
-import { IconButton } from '@mui/material'
+import { Icon } from 'components'
+import { style } from 'src/components/styles'
+import { IStyledButtonProps } from './types'
 
-interface IStyledIconButtonProps {
-  isActive: boolean
-}
-
-export const StyledIconButton = styled(IconButton, {
+export const StyledButton = styled('button', {
   shouldForwardProp: (prop) => prop !== 'isActive'
-})<IStyledIconButtonProps>`
-  display: block;
-  color: #333;
-  border: 0;
-  position: relative;
-  background: inherit;
+})<IStyledButtonProps>((props) => ({
+  boxShadow: 'none',
+  transition: 'none',
+  background: 'none',
+  display: 'block',
+  border: '0',
+  borderRadius: style.border.radius.regular,
+  padding: '1px',
+  height: '28px',
+  width: '28px',
+  cursor: 'pointer',
+  color: props.isActive ? style.text.color.secondary : style.text.color.primary,
+  backgroundColor: props.isActive
+    ? style.background.color.secondary
+    : undefined,
 
-  flex-shrink: 0;
+  ':hover': {
+    color: props.isActive ? undefined : style.text.color.hover,
+    backgroundColor: props.isActive ? style.background.color.hover : undefined
+  },
 
-  border-radius: 2px;
-  margin: 0px;
-  padding: 1px;
-  height: 28px;
-  width: 28px;
+  ':active': {
+    color: style.text.color.secondary,
+    backgroundColor: style.background.color.secondary
+  },
 
-  &:hover {
-    color: #006775;
-    transform: none;
-    box-shadow: none;
-    transition: none;
-    background: none;
+  ':disabled': {
+    opacity: '0.4',
+    cursor: 'not-allowed'
   }
+}))
 
-  &:active {
-    background-color: #006775;
-    color: white;
-    &:hover {
-      background-color: #188794;
-    }
-  }
-
-  ${({ isActive }) =>
-    isActive
-      ? 'background-color: #006775; color: white; &:hover {background-color: #188794;}'
-      : undefined}
-
-  & svg {
-    width: 100%;
-    height: 100%;
-
-    path {
-      fill: ${({ isActive }) => (isActive ? 'white' : undefined)};
-    }
-  }
-
-  &.Mui-disabled {
-    cursor: not-allowed;
-    opacity: 0.5;
-    background-color: initial;
-    color: #333;
-    pointer-events: auto;
-  }
-`
+export const StyledIcon = styled(Icon)({
+  width: '100%',
+  height: '100%'
+})

@@ -25,7 +25,7 @@ import { ZoomControls } from './ZoomControls'
 import { SystemControls } from './SystemControls'
 import { ExternalFuncControls } from './ExternalFuncControls'
 import { Divider } from './Divider'
-import { IconButton } from 'components'
+import { TopToolbarIconButton } from './TopToolbarIconButton'
 
 type VoidFunction = () => void
 
@@ -137,7 +137,7 @@ export const TopToolbar = ({
 
   return (
     <ControlsPanel className={className} ref={resizeRef}>
-      <IconButton
+      <TopToolbarIconButton
         title="Clear Canvas"
         onClick={onClear}
         iconName="clear"

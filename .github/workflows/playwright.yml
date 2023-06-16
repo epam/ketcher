@@ -1,0 +1,53 @@
+name: Playwright Tests
+on:
+  push:
+    branches:
+      - master
+      - 'release/**'
+  pull_request:
+    branches:
+      - master
+      - 'release/**'
+env:
+  # Warnings breaks build on CI
+  # See: https://github.com/orgs/community/discussions/25228#discussioncomment-3246960
+  CI: false
+  MODE: standalone
+  KETCHER_URL: http://host.docker.internal:4002
+  DOCKER: true
+  IGNORE_UNSTABLE_TESTS: true
+jobs:
+  playwright_tests:
+    timeout-minutes: 60
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18.12.0
+      - name: Install dependencies
+        run: npm ci
+      - name: Build all packages
+        run: npm run build
+      - name: Run example in standalone mode
+        run: cd example/ && nohup npm run serve:standalone &
+      - name: Create env file
+        run: |
+          cd ketcher-autotests
+          echo "DOCKER=true" > .env
+          echo "KETCHER_URL=$KETCHER_URL" >> .env
+          echo "MODE=$MODE" >> .env
+          echo "IGNORE_UNSTABLE_TESTS=$IGNORE_UNSTABLE_TESTS" >> .env
+      - name: Build autotests for docker
+        run: cd ketcher-autotests && npm run docker:build
+      - name: Run playwright tests in docker
+        run: cd ketcher-autotests && npm run docker:test:ci
+      - uses: actions/upload-artifact@v3
+        # run even if previous steps fails
+        if: always()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30

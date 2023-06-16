@@ -14,8 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { IconButton } from './IconButton'
 import { ElementWithDropdown } from './ElementWithDropdown'
+import { TopToolbarIconButton } from './TopToolbarIconButton'
 
 interface ClipboardControlsProps {
   onCopy: () => void
@@ -64,7 +64,7 @@ export const ClipboardControls = ({
   ]
 
   const getButtonElement = (button) => (
-    <IconButton
+    <TopToolbarIconButton
       title={button.title}
       onClick={button.handler}
       iconName={button.name}
@@ -90,7 +90,7 @@ export const ClipboardControls = ({
           dropDownElements={collapsibleElements}
         />
       )}
-      <IconButton
+      <TopToolbarIconButton
         title="Paste"
         onClick={onPaste}
         iconName="paste"
@@ -98,7 +98,7 @@ export const ClipboardControls = ({
         disabled={disabledButtons.includes('paste')}
         isHidden={hiddenButtons.includes('paste')}
       />
-      <IconButton
+      <TopToolbarIconButton
         title="Cut"
         onClick={onCut}
         iconName="cut"

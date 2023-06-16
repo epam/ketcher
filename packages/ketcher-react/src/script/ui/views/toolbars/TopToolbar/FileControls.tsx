@@ -13,8 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-
-import { IconButton } from './IconButton'
+import { TopToolbarIconButton } from './TopToolbarIconButton'
 
 interface FileControlsProps {
   onFileOpen: () => void
@@ -31,14 +30,14 @@ export const FileControls = ({
 }: FileControlsProps) => {
   return (
     <>
-      <IconButton
+      <TopToolbarIconButton
         title="Open..."
         onClick={onFileOpen}
         iconName="open"
         shortcut={shortcuts.open}
         isHidden={hiddenButtons.includes('open')}
       />
-      <IconButton
+      <TopToolbarIconButton
         title="Save as..."
         onClick={onSave}
         iconName="save"

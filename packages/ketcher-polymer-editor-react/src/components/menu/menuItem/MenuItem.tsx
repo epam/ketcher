@@ -13,48 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { Icon } from 'components/shared/icon'
-import { MenuItem as MuiMenuItem } from '@mui/material'
-import { css, useTheme } from '@emotion/react'
+import { type IconName } from 'ketcher-react'
 import { useMenuContext } from '../../../hooks/useMenuContext'
 import { useCallback } from 'react'
-import { IconNameType } from 'components/shared/icon/icon'
-
-const StyledMenuButton = ({ isActive, onClick, children }) => {
-  const theme = useTheme()
-  const styles = css`
-    display: flex;
-    align-items: center;
-    width: 32px;
-    height: 32px;
-    padding: 0;
-    justify-content: center;
-    border-radius: 2px;
-    background-color: ${isActive
-      ? theme.ketcher.color.icon.activeMenu
-      : theme.ketcher.color.background.primary};
-
-    &:hover {
-      background: ${isActive
-        ? theme.ketcher.color.icon.activeMenu
-        : theme.ketcher.color.background.primary};
-    }
-
-    & > svg path {
-      fill: ${isActive
-        ? theme.ketcher.color.icon.clicked
-        : theme.ketcher.color.icon.activeMenu};
-    }
-  `
-  return (
-    <MuiMenuItem css={styles} onClick={onClick}>
-      {children}
-    </MuiMenuItem>
-  )
-}
+import { StyledIconButton } from './styles'
 
 type MenuItemProp = {
-  itemId: IconNameType
+  itemId: IconName
 }
 
 const MenuItem = ({ itemId }: MenuItemProp) => {
@@ -65,10 +30,12 @@ const MenuItem = ({ itemId }: MenuItemProp) => {
   }, [activate, itemId])
 
   return (
-    <StyledMenuButton isActive={isActive(itemId)} onClick={onClickCallback}>
-      <Icon name={itemId} />
-    </StyledMenuButton>
+    <StyledIconButton
+      isActive={isActive(itemId)}
+      onClick={onClickCallback}
+      iconName={itemId}
+    />
   )
 }
 
-export { MenuItem, StyledMenuButton }
+export { MenuItem }

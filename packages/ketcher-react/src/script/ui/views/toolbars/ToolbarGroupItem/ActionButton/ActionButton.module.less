@@ -39,10 +39,7 @@
   }
 
   &:hover {
-    & path {
-      fill: @color-primary-hover;
-    }
-
+    color: @color-spec-button-primary-hover;
     background-image: none;
   }
 
@@ -57,14 +54,7 @@
 
 .button.selected, .button:active {
   background: @color-primary-active;
-
-  & path {
-    fill: #fff;
-  }
-
-  & span {
-    color: #fff;
-  }
+  color: #fff;
 
   &:hover {
     background-color: @color-spec-button-primary-hover;
@@ -85,6 +75,5 @@
     font-size: @icon-size;
     width: @icon-size;
     height: @icon-size;
-    fill: currentColor;
   }
 }

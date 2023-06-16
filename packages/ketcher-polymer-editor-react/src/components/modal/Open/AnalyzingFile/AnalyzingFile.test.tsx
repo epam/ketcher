@@ -28,6 +28,5 @@ describe('AnalyzingFile component', () => {
     render(withThemeProvider(<AnalyzingFile fileName={mockFileName} />))
 
     expect(screen.getByText(mockFileName)).toBeInTheDocument()
-    expect(screen.getByRole('img')).toBeInTheDocument()
   })
 })

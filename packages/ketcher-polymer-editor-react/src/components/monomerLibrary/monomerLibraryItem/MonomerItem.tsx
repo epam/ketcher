@@ -26,8 +26,8 @@ export type MonomerItemType = {
   favorite?: boolean
   props: {
     MonomerNaturalAnalogCode: string
-    MonomerName?: string
-    Name?: string
+    MonomerName: string
+    Name: string
     BranchMonomer?: string
     MonomerCaps?: string
     MonomerCode?: string

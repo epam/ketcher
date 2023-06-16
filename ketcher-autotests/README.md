@@ -78,6 +78,7 @@ selectNestedTool - select specific tool that has sub / nested levels.
 
 - Docker runs automatically in the pipeline after pushing changes to the repository.
 - When you want to run tests in Docker on your computer, Docker should be run
+- Docker allows creating snapshots independent of the operating system
 
 ### Prerequisites:
 
@@ -92,11 +93,19 @@ selectNestedTool - select specific tool that has sub / nested levels.
   - DOCKER=true
   - KETCHER_URL
     - Rc: KETCHER_URL=link_to_rc
-    - Local frontend: KETCHER_URL=http://host.docker.internal:4002
+    - Local frontend: KETCHER_URL=http://host.docker.internal:port (port where you run application)
+  - OPTIONAL: IGNORE_UNSTABLE_TESTS=true (if you want to ignore unstable tests)
 - **OPTIONAL: Build frontend**:
   if you want to run tests based on the localhost:4002, build and run frontend:
 
   Directory "ketcher": - `npm ci` - `npm run build:example` - `npm run serve:standalone`
+
+### How to use?
+
+1. Write a test and make sure, that it works on your local machine.
+2. Run command npm run docker:test
+3. Docker will generate a snapshot for Linux. Make `commit, push` your test and snapshot for Linux in the repository.  
+   (snapshot for mac OS and windows will be ignored and won't be in GitHub)
 
 ### Commands
 

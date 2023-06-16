@@ -17,7 +17,7 @@ import { Modal } from 'components/shared/modal'
 import { useCallback, useEffect, useState } from 'react'
 import { ViewSwitcher } from './ViewSwitcher'
 import { ActionButton } from 'components/shared/actionButton'
-import { fileOpener } from './fileOpener'
+import { FileOpener, fileOpener } from './fileOpener'
 
 export interface Props {
   onClose: () => void
@@ -40,15 +40,11 @@ const isAnalyzingFile = false
 const errorHandler = (error) => console.log(error)
 
 const Open = ({ isModalOpen, onClose }: Props) => {
-  const onCloseCallback = useCallback(() => {
-    setCurrentState(MODAL_STATES.openOptions)
-    setStructStr('')
-    onClose()
-  }, [onClose])
-
   const [structStr, setStructStr] = useState<string>('')
   const [fileName, setFileName] = useState<string>('')
-  const [opener, setOpener] = useState<any>()
+  const [opener, setOpener] = useState<
+    { chosenOpener: FileOpener } | undefined
+  >()
   const [currentState, setCurrentState] = useState(MODAL_STATES.openOptions)
 
   useEffect(() => {
@@ -57,7 +53,13 @@ const Open = ({ isModalOpen, onClose }: Props) => {
     })
   }, [])
 
-  const onFileLoad = (files) => {
+  const onCloseCallback = useCallback(() => {
+    setCurrentState(MODAL_STATES.openOptions)
+    setStructStr('')
+    onClose()
+  }, [onClose])
+
+  const onFileLoad = (files: File[]) => {
     const onLoad = (fileContent) => {
       setStructStr(fileContent)
       setCurrentState(MODAL_STATES.textEditor)
@@ -65,7 +67,7 @@ const Open = ({ isModalOpen, onClose }: Props) => {
     const onError = () => errorHandler('Error processing file')
 
     setFileName(files[0].name)
-    opener.chosenOpener(files[0]).then(onLoad, onError)
+    opener?.chosenOpener(files[0]).then(onLoad, onError)
   }
 
   const copyHandler = () => {

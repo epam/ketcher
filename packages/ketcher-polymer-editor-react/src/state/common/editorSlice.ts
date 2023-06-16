@@ -27,7 +27,7 @@ const initialState: EditorState = {
   activeTool: 'select'
 }
 
-export const editorSlice: any = createSlice({
+export const editorSlice = createSlice({
   name: 'editor',
   initialState,
   reducers: {

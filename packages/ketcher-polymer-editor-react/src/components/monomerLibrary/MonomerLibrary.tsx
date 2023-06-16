@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { useState } from 'react'
+import { ChangeEvent, useState } from 'react'
 import { Tabs } from 'components/shared/Tabs'
 import styled from '@emotion/styled'
 import { tabsContent } from 'components/monomerLibrary/tabsContent'
@@ -125,7 +125,7 @@ const MonomerLibrary = () => {
     setIsHidden(!isHidden)
   }
 
-  const filterResults = (event: any) => {
+  const filterResults = (event: ChangeEvent<HTMLInputElement>) => {
     dispatch(setSearchFilter(event.target.value))
   }
 

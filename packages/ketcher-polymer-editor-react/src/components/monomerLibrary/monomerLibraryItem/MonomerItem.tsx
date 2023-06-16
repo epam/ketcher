@@ -24,18 +24,25 @@ export type MonomerItemType = {
   label: string
   colorScheme?: MonomerColorScheme
   favorite?: boolean
-  props?: any
+  props: {
+    MonomerNaturalAnalogCode: string
+    MonomerName?: string
+    Name?: string
+    BranchMonomer?: string
+    MonomerCaps?: string
+    MonomerCode?: string
+    MonomerType?: string
+  }
 }
 
 interface MonomerItemProps {
   item: MonomerItemType
   onClick?: VoidFunction
-  onStarClick?: any
+  onStarClick?: VoidFunction
 }
 
 const Card = styled.div<{ code: string }>`
   background: white;
-  border-radius: 2px;
   width: 58px;
   height: 48px;
   text-align: center;

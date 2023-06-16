@@ -639,10 +639,10 @@ const frags = new Map()
 mockFrags.forEach((frag, key) => frags.set(key, frag))
 
 const molecule = {
-  atoms: atoms,
-  bonds: bonds,
-  frags: frags,
-  halfBonds: halfBonds,
+  atoms,
+  bonds,
+  frags,
+  halfBonds,
   isReaction: false,
   loops: { nextId: 0 },
   name: '',
@@ -684,7 +684,7 @@ const molecule = {
 export const restruct = {
   atoms: new Map(),
   bonds: new Map(),
-  molecule: molecule,
+  molecule,
   connectedComponents: new Set(),
   render: {
     options: {

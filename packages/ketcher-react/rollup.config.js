@@ -4,6 +4,7 @@ import { execSync } from 'child_process'
 import cleanup from 'rollup-plugin-cleanup'
 import commonjs from '@rollup/plugin-commonjs'
 import copy from 'rollup-plugin-copy'
+import alias from '@rollup/plugin-alias'
 import del from 'rollup-plugin-delete'
 import json from '@rollup/plugin-json'
 import nodeResolve from '@rollup/plugin-node-resolve'
@@ -65,12 +66,10 @@ const config = {
       banner: license
     }
   ],
-  resolve: {
-    alias: {
-      url: 'native-url'
-    }
-  },
   plugins: [
+    alias({
+      entries: [{ find: 'url', replacement: 'native-url' }]
+    }),
     del({
       targets: 'dist/*',
       runOnce: true

@@ -13,12 +13,5 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import styled from '@emotion/styled'
 
-export const Container = styled.div`
-  &,
-  svg {
-    height: 100%;
-    width: 100%;
-  }
-`
+export { default as StructRender } from './StructRender'

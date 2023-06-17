@@ -13,9 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { Struct } from 'ketcher-core'
 
-export interface IStructRender {
-  struct: Struct
-  className?: string
+import { RenderStruct } from 'ketcher-core'
+import { useEffect, useRef } from 'react'
+import { Container } from './styles'
+import { IStructRenderProps } from './types'
+
+const StructRender = ({ struct, options, className }: IStructRenderProps) => {
+  const renderRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (renderRef.current) {
+      RenderStruct.render(renderRef.current, struct, options)
+    }
+  }, [struct, options])
+
+  return <Container ref={renderRef} className={className}></Container>
 }
+
+export default StructRender

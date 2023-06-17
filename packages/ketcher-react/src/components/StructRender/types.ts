@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { MonomerName, Container, StyledStructRender } from './styles'
-import { IPreviewProps } from './types'
 
-export const MonomerPreview = ({ monomer, className }: IPreviewProps) => (
-  <Container className={className}>
-    <MonomerName>{monomer.struct.name}</MonomerName>
-    <StyledStructRender struct={monomer.struct} />
-  </Container>
-)
+import { RenderOptions } from 'application/render/render.types'
+import { Struct } from 'ketcher-core'
+
+export interface IStructRenderProps {
+  struct: Struct
+  options?: RenderOptions
+  className?: string
+}

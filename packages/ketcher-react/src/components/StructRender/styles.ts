@@ -13,19 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { RenderStruct } from 'ketcher-core'
-import { useEffect, useRef } from 'react'
-import { Container } from './styles'
-import { IStructRender } from './types'
 
-export const StructRender = ({ struct, className }: IStructRender) => {
-  const renderRef = useRef<HTMLDivElement>(null)
+import styled from '@emotion/styled'
 
-  useEffect(() => {
-    if (renderRef.current) {
-      RenderStruct.render(renderRef.current, struct)
-    }
-  }, [struct])
-
-  return <Container ref={renderRef} className={className}></Container>
-}
+export const Container = styled.div`
+  > svg {
+    height: 100%;
+    width: 100%;
+  }
+`

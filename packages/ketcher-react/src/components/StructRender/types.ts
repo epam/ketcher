@@ -19,6 +19,6 @@ import { Struct } from 'ketcher-core'
 
 export interface IStructRenderProps {
   struct: Struct
-  options?: RenderOptions
+  options?: RenderOptions & { cachePrefix?: string; needCache?: boolean }
   className?: string
 }

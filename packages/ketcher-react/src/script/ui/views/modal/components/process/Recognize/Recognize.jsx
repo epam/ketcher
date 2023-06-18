@@ -25,14 +25,13 @@ import { Dialog } from '../../../../components'
 import Input from '../../../../../component/form/Input/Input'
 import OpenButton from '../../../../../component/view/openbutton'
 import { LoadingCircles } from 'src/script/ui/views/components/Spinner'
-import StructRender from '../../../../../component/structrender'
 import classes from './Recognize.module.less'
 import { connect } from 'react-redux'
 import { load } from '../../../../../state'
 import { range } from 'lodash/fp'
 import { recognize } from '../../../../../state/server'
 import { DialogActionButton } from 'src/script/ui/views/modal/components/document/Open/components/DialogActionButton'
-import { Icon } from 'components'
+import { Icon, StructRender } from 'components'
 
 function isImage(file) {
   return file?.type?.includes('image')

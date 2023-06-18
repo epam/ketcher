@@ -23,8 +23,11 @@ const StructRender = ({ struct, options, className }: IStructRenderProps) => {
   const renderRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if (renderRef.current) {
-      RenderStruct.render(renderRef.current, struct, options)
+    const container = renderRef.current
+
+    if (container) {
+      container.innerHTML = ''
+      RenderStruct.render(container, struct, options)
     }
   }, [struct, options])
 

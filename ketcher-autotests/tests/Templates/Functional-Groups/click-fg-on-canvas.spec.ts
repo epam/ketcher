@@ -65,7 +65,7 @@ test.describe('Click Functional Group on canvas', () => {
 
     await pressButton(page, 'Custom Templates');
     await page.getByRole('tab', { name: 'Functional Groups' }).click();
-    await selectFunctionalGroups(FunctionalGroups.CF3, page);
+    await selectFunctionalGroups(FunctionalGroups.CCl3, page);
     await clickInTheMiddleOfTheScreen(page);
   });
 

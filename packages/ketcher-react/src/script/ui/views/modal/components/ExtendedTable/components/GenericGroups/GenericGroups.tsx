@@ -41,6 +41,8 @@ const getGenericsGroupsMap = (tree) => {
   return newGroups
 }
 
+const groupsMap = getGenericsGroupsMap(Generics)
+
 const renderGenGroupComponent = (
   group,
   selected,
@@ -54,8 +56,6 @@ const renderGenGroupComponent = (
     disabledQueryElements={disabledQueryElements}
   />
 )
-
-const groupsMap = getGenericsGroupsMap(Generics)
 
 function GenericGroups({
   selected,

@@ -27,15 +27,6 @@ export function initLib(lib) {
   }
 }
 
-export default function initTmplLib(dispatch, baseUrl, cacheEl) {
-  const fileName = 'library.sdf'
-  return deserializeSdfTemplates(baseUrl, cacheEl, fileName).then((res) => {
-    const lib = res.concat(userTmpls())
-    dispatch(initLib(lib))
-    dispatch(appUpdate({ templates: true }))
-  })
-}
-
 const deserializeSdfTemplates = (baseUrl, cacheEl, _fileName) => {
   const sdfSerializer = new SdfSerializer()
   const tmpls = sdfSerializer.deserialize(templatesRawData)
@@ -51,6 +42,15 @@ const deserializeSdfTemplates = (baseUrl, cacheEl, _fileName) => {
       return tmpl
     })
   )
+}
+
+export default function initTmplLib(dispatch, baseUrl, cacheEl) {
+  const fileName = 'library.sdf'
+  return deserializeSdfTemplates(baseUrl, cacheEl, fileName).then((res) => {
+    const lib = res.concat(userTmpls())
+    dispatch(initLib(lib))
+    dispatch(appUpdate({ templates: true }))
+  })
 }
 
 function userTmpls() {

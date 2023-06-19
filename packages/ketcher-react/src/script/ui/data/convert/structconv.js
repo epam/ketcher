@@ -220,21 +220,6 @@ export function toBond(bond) {
   }
 }
 
-export function toBondType(caption) {
-  return Object.assign({}, bondCaptionMap[caption])
-}
-
-function fromBondType(type, stereo) {
-  for (const caption in bondCaptionMap) {
-    if (
-      bondCaptionMap[caption].type === type &&
-      bondCaptionMap[caption].stereo === stereo
-    )
-      return caption
-  }
-  return ''
-}
-
 const bondCaptionMap = {
   single: {
     type: Bond.PATTERN.TYPE.SINGLE,
@@ -292,6 +277,21 @@ const bondCaptionMap = {
     type: Bond.PATTERN.TYPE.DATIVE,
     stereo: Bond.PATTERN.STEREO.NONE
   }
+}
+
+export function toBondType(caption) {
+  return Object.assign({}, bondCaptionMap[caption])
+}
+
+function fromBondType(type, stereo) {
+  for (const caption in bondCaptionMap) {
+    if (
+      bondCaptionMap[caption].type === type &&
+      bondCaptionMap[caption].stereo === stereo
+    )
+      return caption
+  }
+  return ''
 }
 
 export function fromSgroup(ssgroup) {

@@ -26,6 +26,7 @@ import {
 } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import assert from 'assert'
+import { Icon } from 'components'
 import MuiAutocomplete, {
   AutocompleteChangeReason
 } from '@mui/material/Autocomplete'
@@ -36,7 +37,6 @@ import { onAction } from '../../state'
 import { selectAbbreviationLookupValue } from '../../state/abbreviationLookup/selectors'
 import { closeAbbreviationLookup } from '../../state/abbreviationLookup'
 import { selectCursorPosition } from '../../state/common/selectors'
-import Icon from '../../component/view/icon'
 import {
   filterOptions,
   getOptionLabel,

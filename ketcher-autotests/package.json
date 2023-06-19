@@ -7,12 +7,10 @@
     "report": "npx playwright show-report",
     "test": "npx playwright test",
     "test:debug": "npx playwright test --debug",
-    "test:ci": "npx playwright test --reporter=line",
     "test:update": "npx playwright test --update-snapshots",
     "docker": "docker-compose run --rm autotests",
     "docker:build": "docker-compose build autotests",
     "docker:test": "npm run docker npx playwright test",
-    "docker:test:ci": "npm run docker npm run test:ci",
     "docker:update": "npm run docker npm run test:update",
     "docker:update:test": "npm run docker -- npx playwright test --update-snapshots -g"
   },

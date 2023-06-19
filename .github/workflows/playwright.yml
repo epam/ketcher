@@ -43,11 +43,11 @@ jobs:
       - name: Build autotests for docker
         run: cd ketcher-autotests && npm run docker:build
       - name: Run playwright tests in docker
-        run: cd ketcher-autotests && npm run docker:test:ci
+        run: cd ketcher-autotests && npm run docker:test
       - uses: actions/upload-artifact@v3
         # run even if previous steps fails
         if: always()
         with:
           name: playwright-report
-          path: ketcher-autotests/playwright-report/
+          path: playwright-report/
           retention-days: 30

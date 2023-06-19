@@ -16,7 +16,7 @@
 
 import styled from '@emotion/styled'
 import { shortcutStr } from '../shortcutStr'
-import { IconButton } from './IconButton'
+import { TopToolbarIconButton } from './TopToolbarIconButton'
 
 interface SystemControlsProps {
   disabledButtons: string[]
@@ -65,14 +65,14 @@ export const SystemControls = ({
         disabled={disabledButtons.includes('history')}
         isHidden={hiddenButtons.includes('history')}
       /> */}
-      <IconButton
+      <TopToolbarIconButton
         title="Settings"
         onClick={onSettingsOpen}
         iconName="settings"
         disabled={disabledButtons.includes('settings')}
         isHidden={hiddenButtons.includes('settings')}
       />
-      <IconButton
+      <TopToolbarIconButton
         title={`Help (${shortcutStr(['?', '&', 'Shift+/'])})`}
         onClick={onHelp}
         iconName="help"
@@ -80,14 +80,14 @@ export const SystemControls = ({
         isHidden={hiddenButtons.includes('help')}
       />
       {/* @TODO Temporary About button, when design is ready, reimplement */}
-      <IconButton
+      <TopToolbarIconButton
         title="About"
         onClick={onAboutOpen}
         iconName="about"
         disabled={disabledButtons.includes('about')}
         isHidden={hiddenButtons.includes('about')}
       />
-      <IconButton
+      <TopToolbarIconButton
         title="Fullscreen mode"
         onClick={onFullscreen}
         iconName={getIfFullScreen() ? 'fullscreen-exit' : 'fullscreen-enter'}

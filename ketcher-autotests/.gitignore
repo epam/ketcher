@@ -1,0 +1,9 @@
+node_modules/
+/test-results/
+/playwright-report/
+/playwright/.cache/
+.DS_Store
+.vscode
+.env
+*win32.png
+*darwin.png

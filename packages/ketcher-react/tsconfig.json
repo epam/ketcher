@@ -2,6 +2,7 @@
   "extends": "./tsconfig.build.json",
   "compilerOptions": {
     "paths": {
+      "components": ["src/components"],
       "ketcher-core": ["../ketcher-core/src"],
       "domain/*": ["../ketcher-core/src/domain/*"],
       "infrastructure/*": ["../ketcher-core/src/infrastructure/*"],

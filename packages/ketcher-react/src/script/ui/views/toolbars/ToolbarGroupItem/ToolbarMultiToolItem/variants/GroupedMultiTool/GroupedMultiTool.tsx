@@ -19,6 +19,7 @@ import { MultiToolCallProps, MultiToolProps } from '../variants.types'
 import { ActionButton, ActionButtonProps } from '../../../ActionButton'
 import action from '../../../../../../action'
 import classes from './GroupedMultiTool.module.less'
+import { getIconName } from 'components'
 
 type GroupedMultiToolProps = MultiToolProps
 type GroupedMultiToolCallProps = MultiToolCallProps
@@ -47,17 +48,20 @@ const GroupedMultiTool = (props: Props) => {
             .slice(descriptor.start, descriptor.end)
             .map((toolbarItem) => {
               const currentStatus = status[toolbarItem.id]
+              const iconName = getIconName(toolbarItem.id)
               return (
-                <ActionButton
-                  key={toolbarItem.id}
-                  name={toolbarItem.id}
-                  action={action[toolbarItem.id]}
-                  status={currentStatus as ActionButtonProps['status']}
-                  selected={!!currentStatus?.selected}
-                  disableableButtons={disableableButtons}
-                  indigoVerification={indigoVerification}
-                  onAction={onAction}
-                />
+                iconName && (
+                  <ActionButton
+                    key={toolbarItem.id}
+                    name={iconName}
+                    action={action[toolbarItem.id]}
+                    status={currentStatus as ActionButtonProps['status']}
+                    selected={!!currentStatus?.selected}
+                    disableableButtons={disableableButtons}
+                    indigoVerification={indigoVerification}
+                    onAction={onAction}
+                  />
+                )
               )
             })}
         </div>

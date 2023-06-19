@@ -16,10 +16,10 @@
 
 import { EditorState, Modifier } from 'draft-js'
 
-import Icon from '../../../../../component/view/icon'
 import { SpecialSymbolsList } from '../SpecialSymbolsList/SpecialSymbolsList'
 import classes from './SpecialSymbolsButton.module.less'
 import { useState } from 'react'
+import { Icon } from 'components'
 
 const SpecialSymbolsButton = ({ editorState, setEditorState, styles }) => {
   const [showSpecialSymbols, setShowSpecialSymbols] = useState(false)

@@ -24,8 +24,8 @@ import {
   useRef
 } from 'react'
 
-import Icon from '../../../component/view/icon'
 import clsx from 'clsx'
+import { Icon } from 'components'
 import styles from './Dialog.module.less'
 import { KETCHER_ROOT_NODE_CSS_SELECTOR } from 'src/constants'
 

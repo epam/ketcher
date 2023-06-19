@@ -10,7 +10,8 @@ module.exports = {
   },
   moduleNameMapper: {
     '\\.(css|less|sdf)$': 'identity-obj-proxy',
-    '^src(.*)$': '<rootDir>/src/$1'
+    '^src(.*)$': '<rootDir>/src/$1',
+    '^components$': '<rootDir>/src/components'
   },
   setupFilesAfterEnv: ['<rootDir>/src/setupTests.ts']
 }

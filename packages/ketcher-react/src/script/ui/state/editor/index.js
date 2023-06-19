@@ -26,7 +26,7 @@ import {
   toStereoLabel
 } from '../../data/convert/structconv'
 
-import { Elements, Vec2 } from 'ketcher-core'
+import { Elements } from 'ketcher-core'
 import acts from '../../action'
 import { debounce } from 'lodash/fp'
 import { openDialog } from '../modal'

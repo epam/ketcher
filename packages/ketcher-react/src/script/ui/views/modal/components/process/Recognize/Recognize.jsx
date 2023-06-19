@@ -81,8 +81,15 @@ function RecognizeDialog(prop) {
     onOk,
     ...partProps
   } = prop
-  const { onRecognize, isFragment, onImage, onChangeImago, ...props } =
-    partProps
+  const {
+    onRecognize,
+    /* eslint-disable @typescript-eslint/no-unused-vars */
+    isFragment,
+    /* eslint-enable @typescript-eslint/no-unused-vars */
+    onImage,
+    onChangeImago,
+    ...props
+  } = partProps
   const [canPreviewImage, setCanPreviewImage] = useState(true)
   const result = () =>
     structStr && !(structStr instanceof Promise)

@@ -184,6 +184,9 @@ class StructEditor extends Component {
   render() {
     const {
       Tag = 'div',
+      className,
+      indigoVerification,
+      /* eslint-disable @typescript-eslint/no-unused-vars */
       struct,
       tool,
       toolOpts,
@@ -201,14 +204,13 @@ class StructEditor extends Component {
       onAromatizeStruct,
       onDearomatizeStruct,
       onAttachEdit,
-      indigoVerification,
       onCipChange,
-      className,
       onConfirm,
       onShowInfo,
       onApiSettings,
       showAttachmentPoints = true,
       onUpdateFloatingTools,
+      /* eslint-enable @typescript-eslint/no-unused-vars */
       ...props
     } = this.props
 

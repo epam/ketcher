@@ -53,7 +53,12 @@ function getRootReducer(setEditor) {
         setEditor(action.editor)
 
       case 'UPDATE':
-        const { type, ...data } = action
+        const {
+          /* eslint-disable @typescript-eslint/no-unused-vars */
+          type,
+          /* eslint-enable @typescript-eslint/no-unused-vars */
+          ...data
+        } = action
         if (data) state = { ...state, ...data }
     }
 

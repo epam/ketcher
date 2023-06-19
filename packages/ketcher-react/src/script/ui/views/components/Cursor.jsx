@@ -9,7 +9,7 @@ const Cursor = ({ Icon, PressedIcon, enableHandTool }) => {
   const [mousedown, setMouseDown] = useState(false)
 
   const updatePosition = (event) => {
-    const { pageX, pageY, clientX, clientY } = event
+    const { clientX, clientY } = event
 
     setPosition({
       clientX,
@@ -23,14 +23,6 @@ const Cursor = ({ Icon, PressedIcon, enableHandTool }) => {
     setMouseDown(false)
   }
 
-  const handleMouseOver = (event) => {
-    const { pageX, pageY, clientX, clientY } = event
-
-    setPosition({
-      clientX,
-      clientY
-    })
-  }
   useEffect(() => {
     document.addEventListener('mousemove', updatePosition, false)
     document.addEventListener('mouseenter', updatePosition, false)

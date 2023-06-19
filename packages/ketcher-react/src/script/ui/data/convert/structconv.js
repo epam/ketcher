@@ -141,7 +141,7 @@ export function fromStereoLabel(stereoLabel) {
 
   if (type === StereoLabel.And) {
     return {
-      type: type,
+      type,
       orNumber: DefaultStereoGroupNumber,
       andNumber: number
     }
@@ -149,7 +149,7 @@ export function fromStereoLabel(stereoLabel) {
 
   if (type === StereoLabel.Or) {
     return {
-      type: type,
+      type,
       orNumber: number,
       andNumber: DefaultStereoGroupNumber
     }

@@ -36,7 +36,7 @@ export default function initTmplLib(dispatch, baseUrl, cacheEl) {
   })
 }
 
-const deserializeSdfTemplates = (baseUrl, cacheEl, fileName) => {
+const deserializeSdfTemplates = (baseUrl, cacheEl, _fileName) => {
   const sdfSerializer = new SdfSerializer()
   const tmpls = sdfSerializer.deserialize(templatesRawData)
   const prefetch = prefetchRender(tmpls, baseUrl + '/templates/', cacheEl)

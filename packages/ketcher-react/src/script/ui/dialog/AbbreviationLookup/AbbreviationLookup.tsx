@@ -20,7 +20,7 @@ import {
   KeyboardEvent,
   MutableRefObject,
   SyntheticEvent,
-  useEffect,
+  useLayoutEffect,
   useRef,
   useState
 } from 'react'
@@ -72,7 +72,7 @@ export const AbbreviationLookup = ({ options }: Props) => {
     initialLookupValue.toLowerCase()
   )
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     inputRef.current?.focus()
 
     const containerHeight = autocompleteRef.current?.offsetHeight ?? 0

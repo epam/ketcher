@@ -49,5 +49,5 @@ jobs:
         if: always()
         with:
           name: playwright-report
-          path: playwright-report/
+          path: ketcher-autotests/playwright-report/
           retention-days: 30

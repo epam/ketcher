@@ -28,6 +28,7 @@ export type MonomerItemType = {
     MonomerNaturalAnalogCode: string
     MonomerName: string
     Name: string
+    // TODO determine whenever these props are optional or not
     BranchMonomer?: string
     MonomerCaps?: string
     MonomerCode?: string

@@ -39,7 +39,7 @@
     "test:unit": "jest --passWithNoTests",
     "test:unit:update": "jest -u",
     "test:prettier": "prettier --check \"./**/*.{js,jsx,json,ts,tsx}\"",
-    "test:stylelint": "stylelint \"./**/*.{css,less}\" --formatter verbose",
+    "test:stylelint": "stylelint \"./**/*.{css,less}\" --formatter",
     "prettier:write": "prettier --write \"./**/*.{js,jsx,json,ts,tsx}\"",
     "stylelint:fix": "stylelint \"./**/*.{css,less}\" --formatter verbose --fix"
   },

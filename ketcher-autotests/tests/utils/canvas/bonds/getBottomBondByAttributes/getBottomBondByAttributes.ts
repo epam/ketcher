@@ -1,7 +1,6 @@
 import { Page } from '@playwright/test';
-import { getBondsCoordinatesByAttributes } from '@utils/canvas/bonds/getBondsCoordinatesByAttributes/getBondsCoordinatesByAttributes';
-import { BondAttributes, SORT_TYPE } from '@utils/canvas/types';
-import { BondXy } from '@utils/canvas/types';
+import { getBondsCoordinatesByAttributes } from '@utils/canvas/bonds';
+import { BondAttributes, SORT_TYPE, BondXy } from '@utils/canvas/types';
 
 /**
  * Get bottom bond by attributes.

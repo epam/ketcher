@@ -5,12 +5,12 @@ export function findIntersectionFields(
   attributes: AtomAttributes | BondAttributes,
   structure: (Atom | Bond)[]
 ): (Atom | Bond)[] {
-  let targets: (Atom | Bond)[] = [];
-  let attributesLength = Object.keys(attributes).length;
+  const targets: (Atom | Bond)[] = [];
+  const attributesLength = Object.keys(attributes).length;
 
-  for (let item of structure) {
+  for (const item of structure) {
     let keysCounter = 0;
-    for (let attr of Object.keys(attributes)) {
+    for (const attr of Object.keys(attributes)) {
       if (item[attr] === attributes[attr]) {
         keysCounter++;
       }

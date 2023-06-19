@@ -75,6 +75,14 @@ export enum FunctionalGroups {
   PO3H2 = 'PO3H2',
   PO4 = 'PO4',
   PO4H2 = 'PO4H2',
+  Pr = 'Pr',
+  SBu = 'sBu',
+  SCN = 'SCN',
+  SO2 = 'SO2',
+  SO2Cl = 'SO2Cl',
+  SO2H = 'SO2H',
+  SO3 = 'SO3',
+  SO3H = 'SO3H',
 }
 
 export async function selectSaltsAndSolvents(
@@ -139,14 +147,30 @@ export async function selectLeftPanelToolClickAndScreenshot(
   await clickInTheMiddleOfTheScreen(page, 'right');
   await takeEditorScreenshot(page);
 }
+
+const COORDS_CLICK = {
+  x1: 560,
+  y1: 330,
+  x2: 650,
+  y2: 280,
+  x3: 720,
+  y3: 320,
+  x4: 720,
+  y4: 400,
+  x5: 650,
+  y5: 450,
+  x6: 560,
+  y6: 400,
+};
+
 /*
   Function for attaching structures on top of bonds attached on Benzene ring
   */
 export async function attachOnTopOfBenzeneBonds(page: Page) {
-  await page.mouse.click(560, 330);
-  await page.mouse.click(650, 280);
-  await page.mouse.click(720, 320);
-  await page.mouse.click(720, 400);
-  await page.mouse.click(650, 450);
-  await page.mouse.click(560, 400);
+  await page.mouse.click(COORDS_CLICK.x1, COORDS_CLICK.y1);
+  await page.mouse.click(COORDS_CLICK.x2, COORDS_CLICK.y2);
+  await page.mouse.click(COORDS_CLICK.x3, COORDS_CLICK.y3);
+  await page.mouse.click(COORDS_CLICK.x4, COORDS_CLICK.y4);
+  await page.mouse.click(COORDS_CLICK.x5, COORDS_CLICK.y5);
+  await page.mouse.click(COORDS_CLICK.x6, COORDS_CLICK.y6);
 }

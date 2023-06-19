@@ -16,7 +16,7 @@ export const selectNestedTool = async (
   page: Page,
   toolElementId: [presses: number, domElementId: string]
 ): Promise<void> => {
-  let toolType = getToolType(toolElementId[1]);
+  const toolType = getToolType(toolElementId[1]);
 
   const toolTypeValues = Object.values(toolType);
 

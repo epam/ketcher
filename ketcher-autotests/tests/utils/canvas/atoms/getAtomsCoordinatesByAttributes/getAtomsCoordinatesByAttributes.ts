@@ -1,10 +1,9 @@
 import { Page } from '@playwright/test';
 import { getLeftTopBarSize } from '@utils/canvas/common/getLeftTopBarSize';
 import { Atom } from 'ketcher-core';
-import { AtomAttributes, SORT_TYPE } from '@utils/canvas/types';
+import { AtomAttributes, SORT_TYPE, AtomXy } from '@utils/canvas/types';
 import { findIntersectionFields } from '@utils/canvas/common/findIntersectionFields';
 import { sortItems } from '@utils/canvas/common/sortItems';
-import { AtomXy } from '@utils/canvas/types';
 import {
   NO_STRUCTURE_AT_THE_CANVAS_ERROR,
   STRUCTURE_NOT_FOUND_ERROR,
@@ -28,6 +27,7 @@ export async function getAtomsCoordinatesByAttributes(
 ): Promise<AtomXy[] | []> {
   const { atoms, scale } = await page.evaluate(() => {
     return {
+      // eslint-disable-next-line no-unsafe-optional-chaining
       atoms: [...window.ketcher?.editor?.struct()?.atoms?.values()],
       scale: window.ketcher?.editor?.options()?.scale,
     };

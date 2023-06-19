@@ -3,6 +3,7 @@ import { getTopBondByAttributes } from './getTopBondByAttributes/getTopBondByAtt
 import { getRightBondByAttributes } from './getRightBondByAttributes/getRightBondByAttributes';
 import { getBottomBondByAttributes } from './getBottomBondByAttributes/getBottomBondByAttributes';
 import { getLeftBondByAttributes } from './getLeftBondByAttributes/getLeftBondByAttributes';
+import { getBondsCoordinatesByAttributes } from './getBondsCoordinatesByAttributes/getBondsCoordinatesByAttributes';
 
 export {
   getBondByIndex,
@@ -10,4 +11,5 @@ export {
   getRightBondByAttributes,
   getBottomBondByAttributes,
   getLeftBondByAttributes,
+  getBondsCoordinatesByAttributes,
 };

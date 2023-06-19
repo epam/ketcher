@@ -10,8 +10,8 @@ export async function drawBenzeneRing(page: Page) {
 export async function drawElementByTitle(
   page: Page,
   elementTitle: string = ELEMENT_TITLE.HYDROGEN,
-  offsetX: number = 0,
-  offsetY: number = 0
+  offsetX = 0,
+  offsetY = 0
 ) {
   const leftBarWidth = await getLeftToolBarWidth(page);
   const topBarHeight = await getTopToolBarHeight(page);
@@ -57,7 +57,7 @@ export async function getCoordinatesTopAtomOfBenzeneRing(page: Page) {
     x: Infinity,
     y: Infinity,
   };
-  for (let carbonAtom of carbonAtoms) {
+  for (const carbonAtom of carbonAtoms) {
     if (carbonAtom.pp.y < min.y) {
       min = carbonAtom.pp;
     }
@@ -96,7 +96,8 @@ export async function getEditorScreenshot(
 }
 
 export async function delay(seconds = 1) {
+  const msInSecond = 1000;
   return new Promise((resolve) =>
-    setTimeout(() => resolve(true), seconds * 1000)
+    setTimeout(() => resolve(true), seconds * msInSecond)
   );
 }

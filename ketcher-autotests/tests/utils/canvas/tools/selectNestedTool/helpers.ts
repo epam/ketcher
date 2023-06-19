@@ -7,8 +7,6 @@ import {
   TYPE_REACTION,
   TYPE_R_GROUP,
   TYPE_SHAPE,
-} from './types';
-import {
   BondTool,
   SelectTool,
   RotateTool,
@@ -17,6 +15,7 @@ import {
   RgroupTool,
   ShapeTool,
 } from './types';
+import { delay, DELAY_IN_SECONDS } from '@tests/utils';
 
 export const openTool = async (
   page: Page,
@@ -24,15 +23,17 @@ export const openTool = async (
   currentType: string
 ) => {
   // Selection tool is preselected by default so we do not need to click 2 times
+  const defaultTool = await page.getByTestId(defaultToolId);
   if (currentType !== TYPE_SELECT) {
-    await page.locator(`data-testid=${defaultToolId}`).click();
+    await defaultTool.click();
+    await delay(DELAY_IN_SECONDS.ONE);
   }
 
-  await page.locator(`data-testid=${defaultToolId}`).click();
+  await defaultTool.click();
 };
 
 export const getToolType = (toolName: string) => {
-  let toolTypes: string[] = toolName.split('-');
+  const toolTypes: string[] = toolName.split('-');
   let toolType = null;
 
   if (`${toolTypes[0]}${toolTypes[1]}` === TYPE_REACTION_ARROW) {

@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 export const TYPE_BOND = 'bond';
 export const TYPE_SELECT = 'select';
 export const TYPE_TRANSFORM = 'transform';

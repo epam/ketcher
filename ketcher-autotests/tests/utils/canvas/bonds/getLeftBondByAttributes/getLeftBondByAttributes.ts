@@ -1,7 +1,6 @@
 import { Page } from '@playwright/test';
-import { getBondsCoordinatesByAttributes } from '@utils/canvas/bonds/getBondsCoordinatesByAttributes/getBondsCoordinatesByAttributes';
-import { BondAttributes } from '@utils/canvas/types';
-import { BondXy } from '@utils/canvas/types';
+import { getBondsCoordinatesByAttributes } from '@utils/canvas/bonds';
+import { BondAttributes, BondXy } from '@utils/canvas/types';
 
 /**
  * Get left bond by attributes.

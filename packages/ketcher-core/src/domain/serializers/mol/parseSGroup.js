@@ -367,6 +367,7 @@ function identityMap(array) {
 
 /**
  * Superatom attachment point parsing for 'ctab' v2000
+ * Implemented based on: https://github.com/epam/ketcher/issues/2467
  * @param ctabString {string} example '   1  1   2   0   '
  *        M SAP sssnn6 iii ooo cc
  *             ^

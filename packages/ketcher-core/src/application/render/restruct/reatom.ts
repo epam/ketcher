@@ -258,12 +258,9 @@ class ReAtom extends ReObject {
         false
       )
     ) {
-      if (FunctionalGroup.isAttachmentPointAtom(aid, restruct.molecule)) {
-        let sgroupName
-        for (const sg of sgroups.values()) {
-          if (sg.atoms.includes(aid)) sgroupName = sg.data.name
-        }
-        const path = render.paper.text(ps.x, ps.y, sgroupName).attr({
+      const sgroup = restruct.molecule.getGroupFromAtomId(aid)
+      if (sgroup?.isContractedGroupMasterAtom(aid)) {
+        const path = render.paper.text(ps.x, ps.y, sgroup.data.name).attr({
           'font-weight': 700,
           'font-size': 14
         })

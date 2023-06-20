@@ -515,7 +515,7 @@ class Editor implements KetcherEditor {
     this.event[eventName].remove(subscriber.handler)
   }
 
-  findItem(event: any, maps: any, skip: any = null) {
+  findItem(event: any, maps: Array<string>, skip: any = null) {
     const pos = new Vec2(this.render.page2obj(event))
 
     return closest.item(this.render.ctab, pos, maps, skip, this.render.options)

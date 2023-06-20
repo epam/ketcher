@@ -387,7 +387,7 @@ function findClosestSGroup(restruct, pos) {
   let minDist = SELECTION_DISTANCE_COEFFICIENT
 
   restruct.molecule.sgroups.forEach((sg, sgid) => {
-    if (sg.functionalGroup && !sg.expanded && sg.firstSgroupAtom) return null
+    if (sg.isContracted()) return null
 
     const d = sg.bracketDir
     const n = d.rotateSC(1, 0)
@@ -558,8 +558,16 @@ function mergeAtomToAtom(atomId, restruct, atomPosition, selected, result) {
   return false
 }
 
+/**
+ * @param atomId { number }
+ * @param restruct { ReStruct }
+ * @param atomPosition { Vec2 }
+ * @param result { Object } Mutating arguments!!!
+ * @return {boolean}
+ */
 function mergeAtomToFunctionalGroup(atomId, restruct, atomPosition, result) {
-  if (FunctionalGroup.isAttachmentPointAtom(atomId, restruct.molecule)) {
+  const sgroup = restruct.molecule.getGroupFromAtomId(atomId)
+  if (sgroup?.isContractedGroupMasterAtom(atomId)) {
     return false
   }
 

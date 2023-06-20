@@ -43,11 +43,11 @@ export class SGroupAttachmentPointAdd extends BaseOperation {
   }
 }
 
-class SGroupAttachmentPointRemove extends BaseOperation {
+export class SGroupAttachmentPointRemove extends BaseOperation {
   data: Data
 
   constructor(sGroupId: number, attachmentPoint: SGroupAttachmentPoint) {
-    super(OperationType.S_GROUP_ATTACHMENT_POINT_REMOVE, 3)
+    super(OperationType.S_GROUP_ATTACHMENT_POINT_REMOVE, 4)
     this.data = { sGroupId, attachmentPoint }
   }
 
@@ -55,9 +55,7 @@ class SGroupAttachmentPointRemove extends BaseOperation {
     const { sGroupId, attachmentPoint } = this.data
     const struct = restruct.molecule
     const sgroup = struct.sgroups.get(sGroupId)
-    assert(sgroup != null)
-
-    sgroup.removeAttachmentPoint(attachmentPoint.atomId)
+    sgroup?.removeAttachmentPoint(attachmentPoint.atomId)
   }
 
   invert() {

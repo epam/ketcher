@@ -52,9 +52,14 @@ class TemplateTool implements Tool {
     this.mode = getTemplateMode(tmpl)
     this.editor.selection(null)
     this.isSaltOrSolvent = SGroup.isSaltOrSolvent(tmpl.struct.name)
-
+    const sGroup = tmpl.struct.sgroups.values().next().value as
+      | SGroup
+      | undefined
     this.template = {
-      aid: parseInt(tmpl.aid) || 0,
+      aid:
+        parseInt(tmpl.aid) ||
+        sGroup?.getNextVacancyAttachmentAtomId(editor.struct()) ||
+        0,
       bid: parseInt(tmpl.bid) || 0
     }
 
@@ -83,8 +88,8 @@ class TemplateTool implements Tool {
       this.findItems.push('bonds')
     }
 
-    const sgroup = frag.sgroups.size
-    if (sgroup) {
+    const sGroupSize = frag.sgroups.size
+    if (sGroupSize) {
       this.findItems.push('functionalGroups')
     }
 
@@ -356,7 +361,7 @@ class TemplateTool implements Tool {
 
     // create new action
     dragCtx.angle = degrees
-    let action = null
+    let action: Action | null = null
     let pasteItems
 
     if (!ci) {
@@ -437,7 +442,7 @@ class TemplateTool implements Tool {
     /* end */
 
     let action, functionalGroupRemoveAction
-    let pasteItems = null
+    let pasteItems: null | { atoms: number[]; bonds: number[] } = null
 
     if (
       ci?.map === 'functionalGroups' &&
@@ -465,9 +470,8 @@ class TemplateTool implements Tool {
       }
 
       functionalGroupRemoveAction = new Action()
-      const attachmentAtomId = functionalGroupToReplace.getAttAtomId(
-        this.struct
-      )
+      const attachmentAtomId =
+        functionalGroupToReplace.getAttachedAttachmentAtomIds(this.struct)[0]
       const atomsWithoutAttachmentAtom = SGroup.getAtoms(
         this.struct,
         functionalGroupToReplace
@@ -637,7 +641,7 @@ function getTargetAtomId(struct: Struct, ci): number | void {
 
   if (ci.map === 'functionalGroups') {
     const group = struct.sgroups.get(ci.id)
-    return group?.getAttAtomId(struct)
+    return group?.getNextVacancyAttachmentAtomId(struct)
   }
 }
 

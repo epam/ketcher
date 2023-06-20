@@ -29,10 +29,15 @@ import {
 import { fromRGroupAttrs, fromUpdateIfThen } from './rgroup'
 
 import { Action } from './action'
-import { Vec2 } from 'domain/entities'
+import { SGroup, Struct, Vec2 } from 'domain/entities'
 import { fromSgroupAddition } from './sgroup'
 
-export function fromPaste(restruct, pstruct, point, angle = 0) {
+export function fromPaste(
+  restruct,
+  pstruct,
+  point,
+  angle = 0
+): [Action, { atoms: number[]; bonds: number[] }] {
   const xy0 = getStructCenter(pstruct)
   const offset = Vec2.diff(point, xy0)
 
@@ -41,10 +46,10 @@ export function fromPaste(restruct, pstruct, point, angle = 0) {
   const aidMap = new Map()
   const fridMap = new Map()
 
-  const pasteItems: any = {
+  const pasteItems = {
     // only atoms and bonds now
-    atoms: [],
-    bonds: []
+    atoms: [] as number[],
+    bonds: [] as number[]
   }
 
   pstruct.atoms.forEach((atom, aid) => {
@@ -94,7 +99,7 @@ export function fromPaste(restruct, pstruct, point, angle = 0) {
     action.addOp(new CalcImplicitH([aid]).perform(restruct))
   })
 
-  pstruct.sgroups.forEach((sg) => {
+  pstruct.sgroups.forEach((sg: SGroup) => {
     const newsgid = restruct.molecule.sgroups.newId()
     const sgAtoms = sg.atoms.map((aid) => aidMap.get(aid))
     const attachmentPoints = sg.reMapAttachmentPoints(aidMap)
@@ -106,7 +111,7 @@ export function fromPaste(restruct, pstruct, point, angle = 0) {
       newsgid,
       attachmentPoints,
       sg.pp ? sg.pp.add(offset) : null,
-      sg.type === 'SUP' ? sg.data.expanded : null,
+      sg.type === 'SUP' ? sg.isExpanded() : null,
       sg.data.name
     )
     sgAction.operations.reverse().forEach((oper) => {
@@ -163,14 +168,15 @@ export function fromPaste(restruct, pstruct, point, angle = 0) {
   return [action, pasteItems]
 }
 
-function getStructCenter(struct) {
-  // TODO: Review, function may not work sometimes
-  const onlyOneStructsSgroupId = struct.sgroups.keys().next().value
-  if (
-    struct.sgroups.size === 1 &&
-    !struct.sgroups.get(onlyOneStructsSgroupId).data.expanded
-  ) {
-    return struct.atoms.get(0).pp
+function getStructCenter(struct: Struct): Vec2 {
+  const isOnlyOneSGroup = struct.sgroups.size === 1
+  if (isOnlyOneSGroup) {
+    const onlyOneStructsSgroupId = struct.sgroups.keys().next().value
+    const sgroup = struct.sgroups.get(onlyOneStructsSgroupId) as SGroup
+    if (sgroup.isContracted()) {
+      const masterAtomId = sgroup.getContractedGroupMasterAtomId()
+      return struct.atoms.get(masterAtomId)!.pp
+    }
   }
   if (struct.atoms.size > 0) {
     let xmin = 1e50
@@ -186,10 +192,11 @@ function getStructCenter(struct) {
     })
     return new Vec2((xmin + xmax) / 2, (ymin + ymax) / 2) // TODO: check
   }
-  if (struct.rxnArrows.size > 0) return struct.rxnArrows.get(0).center()
-  if (struct.rxnPluses.size > 0) return struct.rxnPluses.get(0).pp
-  if (struct.simpleObjects.size > 0) return struct.simpleObjects.get(0).center()
-  if (struct.texts.size > 0) return struct.texts.get(0).position
+  if (struct.rxnArrows.size > 0) return struct.rxnArrows.get(0)!.center()
+  if (struct.rxnPluses.size > 0) return struct.rxnPluses.get(0)!.pp
+  if (struct.simpleObjects.size > 0)
+    return struct.simpleObjects.get(0)!.center()
+  if (struct.texts.size > 0) return struct.texts.get(0)!.position
 
-  return null
+  return new Vec2(0, 0)
 }

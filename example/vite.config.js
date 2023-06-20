@@ -22,7 +22,7 @@ Object.assign(process.env, dotEnv, exampleEnv)
  * see: https://github.com/rollup/plugins/blob/master/packages/alias/src/index.ts
  */
 function resolver(source, importer, options) {
-  const packageName = importer.match(/packages\/(.*?)\//)[1]
+  const packageName = importer.match(/packages[\\/](.*?)[\\/]/)[1]
   const updatedId = source.replace('%packageName%', packageName)
 
   return this.resolve(

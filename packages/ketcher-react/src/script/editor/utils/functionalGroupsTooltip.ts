@@ -56,7 +56,7 @@ function makeStruct(editor: Editor, sGroup: SGroup) {
     atomsIdMapping
   )
 
-  return existingStruct
+  return struct
 }
 
 function hideTooltip(editor: Editor) {

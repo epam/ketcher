@@ -295,7 +295,9 @@ export class SGroup {
    */
   getContractedPosition(struct: Struct): { atomId: number; position: Vec2 } {
     const atomId = this.attachmentPoints[0]?.atomId ?? this.atoms[0]
-    return { atomId, position: struct.atoms.get(atomId)!.pp }
+    const representAtom = struct.atoms.get(atomId)
+    assert(representAtom != null)
+    return { atomId, position: representAtom.pp }
   }
 
   reMapAttachmentPoints(

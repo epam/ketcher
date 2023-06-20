@@ -439,7 +439,6 @@ class ReStruct {
     this.verifyLoops()
     const updLoops = force || this.structChanged
     if (updLoops) this.updateLoops()
-    this.showAttachmentPoints()
     this.showAtoms()
     this.showBonds()
     if (updLoops) this.showLoops()
@@ -576,7 +575,7 @@ class ReStruct {
     return result
   }
 
-  private showAttachmentPoints() {
+  private showRgoupAttachmentPoints() {
     this.atoms.forEach((_value, aid) => {
       const atom = this.atoms.get(aid)
       atom?.showAttachmentPoints(this)
@@ -584,6 +583,7 @@ class ReStruct {
   }
 
   private showAtoms(): void {
+    this.showRgoupAttachmentPoints()
     // eslint-disable-line max-statements
     const options = this.render.options
 

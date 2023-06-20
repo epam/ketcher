@@ -440,6 +440,7 @@ class ReStruct {
     if (updLoops) this.updateLoops()
     this.showAtoms()
     this.showBonds()
+    this.showRgoupAttachmentPoints()
     if (updLoops) this.showLoops()
     this.showReactionSymbols()
     this.showSGroups()
@@ -582,7 +583,6 @@ class ReStruct {
   }
 
   private showAtoms(): void {
-    this.showRgoupAttachmentPoints()
     // eslint-disable-line max-statements
     const options = this.render.options
 

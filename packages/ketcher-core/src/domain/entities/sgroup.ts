@@ -82,7 +82,7 @@ export class SGroup {
   neiAtoms: any
   pp: Vec2 | null
   data: any
-  readonly #attachmentPoints: SGroupAttachmentPoint[]
+  private readonly attachmentPoints: SGroupAttachmentPoint[]
 
   constructor(type: string) {
     this.type = type
@@ -102,7 +102,7 @@ export class SGroup {
     this.bonds = []
     this.xBonds = []
     this.neiAtoms = []
-    this.#attachmentPoints = []
+    this.attachmentPoints = []
     this.pp = null
     this.data = {
       mul: 1, // multiplication count for MUL group
@@ -228,13 +228,13 @@ export class SGroup {
   }
 
   isGroupAttached(struct: Struct): boolean {
-    return this.#attachmentPoints.some((attachPoint) =>
+    return this.attachmentPoints.some((attachPoint) =>
       this.isAttachmentPointAttached(struct, attachPoint)
     )
   }
 
   addAttachmentPoint(attachmentPoint: SGroupAttachmentPoint): void {
-    const isAttachmentPointAlreadyExist = this.#attachmentPoints.some(
+    const isAttachmentPointAlreadyExist = this.attachmentPoints.some(
       ({ atomId }) => attachmentPoint.atomId === atomId
     )
 
@@ -244,7 +244,7 @@ export class SGroup {
       )
     }
 
-    this.#attachmentPoints.push(attachmentPoint)
+    this.attachmentPoints.push(attachmentPoint)
   }
 
   addAttachmentPoints(
@@ -258,30 +258,30 @@ export class SGroup {
   }
 
   removeAttachmentPoint(attachmentPointAtomId: number): boolean {
-    const index = this.#attachmentPoints.findIndex(
+    const index = this.attachmentPoints.findIndex(
       ({ atomId }) => attachmentPointAtomId === atomId
     )
     if (index !== -1) {
-      this.#attachmentPoints.splice(index, 1)
+      this.attachmentPoints.splice(index, 1)
       return true
     }
     return false
   }
 
   getAttachmentPoints(): ReadonlyArray<SGroupAttachmentPoint> {
-    return this.#attachmentPoints
+    return this.attachmentPoints
   }
 
   getAttachmentPointCount(): number {
-    return this.#attachmentPoints.length
+    return this.attachmentPoints.length
   }
 
   getNextVacancyAttachmentAtomId(_: Struct): number | undefined {
-    return this.#attachmentPoints[0]?.atomId
+    return this.attachmentPoints[0]?.atomId
   }
 
   getAttachedAttachmentAtomIds(struct: Struct): number[] {
-    return this.#attachmentPoints
+    return this.attachmentPoints
       .filter((attachmentPoint) =>
         this.isAttachmentPointAttached(struct, attachmentPoint)
       )
@@ -293,13 +293,13 @@ export class SGroup {
   }
 
   getContractedGroupMasterAtomId(): number {
-    return this.#attachmentPoints[0]?.atomId ?? this.atoms[0]
+    return this.attachmentPoints[0]?.atomId ?? this.atoms[0]
   }
 
   reMapAttachmentPoints(
     atomIdMap: Map<number, number>
   ): ReadonlyArray<SGroupAttachmentPoint> {
-    return this.#attachmentPoints.map(
+    return this.attachmentPoints.map(
       ({ atomId, leaveAtomId, additionalData }) => {
         const newAtomId = atomIdMap.get(atomId)
         assert(newAtomId != null)

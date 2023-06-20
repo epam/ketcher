@@ -27,6 +27,7 @@ import { tfx } from 'utilities'
 class ReSGroup extends ReObject {
   constructor(sgroup) {
     super('sgroup')
+    /** @type {SGroup} */
     this.item = sgroup
   }
 
@@ -122,7 +123,6 @@ class ReSGroup extends ReObject {
     let startY = 0
     let width = 0
     let height = 0
-    /** @type {SGroup} */
     const sGroup = this.item
     const { atomId, position } = sGroup.getContractedPosition(
       render.ctab.molecule

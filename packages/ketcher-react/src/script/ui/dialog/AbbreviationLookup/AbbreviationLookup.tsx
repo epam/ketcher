@@ -95,6 +95,15 @@ export const AbbreviationLookup = ({ options }: Props) => {
       left: `${left}px`,
       top: `${top}px`
     })
+
+    // TODO extract to a separate hook or utils
+    return () => {
+      ;(
+        inputRef.current
+          ?.closest(KETCHER_ROOT_NODE_CSS_SELECTOR)
+          ?.getElementsByClassName('cliparea')[0] as HTMLElement
+      ).focus()
+    }
   }, [])
 
   const closePanel = () => {
@@ -110,13 +119,13 @@ export const AbbreviationLookup = ({ options }: Props) => {
       return
     }
 
-    closePanel()
-
     if (option.type === AbbreviationType.Template) {
       dispatch(onAction({ tool: 'template', opts: option.template }))
     } else {
       dispatch(onAction({ tool: 'atom', opts: option.element }))
     }
+
+    closePanel()
   }
 
   const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
@@ -189,7 +198,7 @@ export const AbbreviationLookup = ({ options }: Props) => {
           return (
             <li {...props} title={option.label}>
               <div className={classes.optionItemContent}>
-                {highlightOptionLabel(option, loweredLookupValue)}
+                {highlightOptionLabel(option, loweredLookupValue.trim())}
               </div>
             </li>
           )

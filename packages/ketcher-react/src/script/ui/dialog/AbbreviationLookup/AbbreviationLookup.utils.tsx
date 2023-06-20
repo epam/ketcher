@@ -19,6 +19,7 @@ import {
   AbbreviationOption
 } from './AbbreviationLookup.types'
 import { FilterOptionsState } from '@mui/material'
+import { MIN_LOOKUP_VALUE_LENGTH_FOR_HIGHLIGHT } from './AbbreviationLookup.constants'
 
 export const getStringsSimilarity = (
   loweredText?: string,
@@ -72,6 +73,10 @@ export const highlightOptionLabel = (
   option: AbbreviationGenericOption,
   loweredLookupValue: string
 ) => {
+  if (loweredLookupValue.length < MIN_LOOKUP_VALUE_LENGTH_FOR_HIGHLIGHT) {
+    return option.label
+  }
+
   const searchFromIndex = getHighlightSearchStartIndex(
     option,
     loweredLookupValue
@@ -130,7 +135,7 @@ export const filterOptions = (
     return []
   }
 
-  const loweredLookupValue = state.inputValue.toLowerCase()
+  const loweredLookupValue = state.inputValue.toLowerCase().trim()
 
   const filteredOptions = options.filter((option) => {
     return (

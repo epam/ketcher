@@ -101,6 +101,19 @@ class ReAtom extends ReObject {
     return new Box2Abs(this.a.pp, this.a.pp)
   }
 
+  getVBoxObjOfAttachmentPoint(render: Render): Box2Abs | null {
+    let result: Box2Abs | null = null
+    const directionVectors = this.getAttachmentPointDirectionVectors(
+      render.ctab.molecule
+    )
+    directionVectors.forEach((directionVector) => {
+      const _vector = this.a.pp.add(directionVector)
+      const bbox = new Box2Abs(_vector, _vector)
+      result = result ? Box2Abs.union(result, bbox) : bbox
+    })
+    return result
+  }
+
   drawHover(render: Render) {
     const ret = this.makeHoverPlate(render)
     render.ctab.addReObjectPath(LayerMap.hovering, this.visel, ret)
@@ -210,13 +223,29 @@ class ReAtom extends ReObject {
     }
   }
 
-  showAttachmentPoints(restruct: ReStruct): void {
-    // if trisection (attpnt === 3) - we split the attachment point vector to two vectors
-    const isTrisectionRequired = this.a.attpnt === 3
-    const directionVectors = isTrisectionRequired
-      ? trisectionLargestSector(this, restruct.molecule)
-      : [bisectLargestSector(this, restruct.molecule)]
+  hasAttachmentPoint(): boolean {
+    return Boolean(this.a.attpnt)
+  }
 
+  private isTrisectionAttachmentPoint(): boolean {
+    // if trisection (attpnt === 3) - we split the attachment point vector to two vectors
+    return this.a.attpnt === 3
+  }
+
+  private getAttachmentPointDirectionVectors(struct: Struct): Vec2[] {
+    if (!this.hasAttachmentPoint()) {
+      return []
+    }
+    const isTrisectionRequired = this.isTrisectionAttachmentPoint()
+    return isTrisectionRequired
+      ? trisectionLargestSector(this, struct)
+      : [bisectLargestSector(this, struct)]
+  }
+
+  showAttachmentPoints(restruct: ReStruct): void {
+    const directionVectors = this.getAttachmentPointDirectionVectors(
+      restruct.molecule
+    )
     directionVectors.forEach((directionVector, index) => {
       showAttachmentPointShape(
         this,
@@ -229,7 +258,7 @@ class ReAtom extends ReObject {
       if (showLabel) {
         // in case of isTrisectionRequired (trisection case) we should show labels '1' and '2' for those separated vectors
         const labelText = String(
-          isTrisectionRequired ? index + 1 : this.a.attpnt
+          this.isTrisectionAttachmentPoint() ? index + 1 : this.a.attpnt
         )
         showAttachmentPointLabel(
           this,

@@ -15,6 +15,7 @@ export class RenderStruct {
   static prepareStruct(struct: Struct) {
     if (struct.sgroups.size > 0) {
       const newStruct = struct.clone()
+      convertAllSGroupAttachmentPointsToRGroupAttachmentPoints(newStruct)
       newStruct.sgroups.delete(0)
       return newStruct
     }
@@ -49,4 +50,21 @@ export class RenderStruct {
       }
     }
   }
+}
+
+/**
+ * Why?
+ * We need somehow display sgroup attachment points (tooltips, preview, templates),
+ * But due to current rendering approach for sgroups (ungrouping sgroups)
+ * - we have to use RGroup attachment points on atoms for this purposes
+ */
+function convertAllSGroupAttachmentPointsToRGroupAttachmentPoints(
+  struct: Struct
+) {
+  struct.sgroups.forEach((sgroup) => {
+    sgroup.getAttachmentPoints().forEach((attachmentPoint) => {
+      const attachmentPointAtom = struct.atoms.get(attachmentPoint.atomId)!
+      attachmentPointAtom.setRGAttachmentPointForDisplayPurpose()
+    })
+  })
 }

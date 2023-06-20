@@ -11,13 +11,33 @@ type InfoPanelData = {
   event: PointerEvent
 }
 
+/**
+ * Why?
+ * We need somehow display sgroup attachment points (tooltips, preview, templates),
+ * But due to current rendering approach for sgroups (ungrouping sgroups)
+ * - we have to use RGroup attachment points on atoms for this purposes
+ */
+function convertSGroupAttachmentPointsToRGroupAttachmentPoints(
+  struct: Struct,
+  sGroup: SGroup,
+  atomsIdMapping: Map<number, number>
+) {
+  sGroup.getAttachmentPoints().forEach((attachmentPoint) => {
+    const attachmentPointAtom = struct.atoms.get(
+      atomsIdMapping.get(attachmentPoint.atomId)!
+    )!
+    attachmentPointAtom.setRGAttachmentPointForDisplayPurpose()
+  })
+}
+
 function makeStruct(editor: Editor, sGroup: SGroup) {
   const existingStruct = editor.struct()
   const struct = new Struct()
   const atomsIdMapping = new Map()
 
   sGroup.atoms.forEach((atomId) => {
-    const atomIdInTooltip = struct.atoms.add(existingStruct.atoms.get(atomId)!)
+    const atom = existingStruct.atoms.get(atomId)!
+    const atomIdInTooltip = struct.atoms.add(atom.clone())
     atomsIdMapping.set(atomId, atomIdInTooltip)
   })
   Array.from(existingStruct.bonds).forEach((value) => {
@@ -30,7 +50,13 @@ function makeStruct(editor: Editor, sGroup: SGroup) {
     }
   })
 
-  return struct
+  convertSGroupAttachmentPointsToRGroupAttachmentPoints(
+    struct,
+    sGroup,
+    atomsIdMapping
+  )
+
+  return existingStruct
 }
 
 function hideTooltip(editor: Editor) {

@@ -328,6 +328,11 @@ class ReStruct {
       })
     })
 
+    const attachmentPointsVBox = this.getAttachmentsPointsVBox()
+    if (vbox != null && attachmentPointsVBox) {
+      vbox = Box2Abs.union(vbox, attachmentPointsVBox)
+    }
+
     vbox = vbox || new Box2Abs(0, 0, 0, 0)
     return vbox
   }
@@ -418,7 +423,7 @@ class ReStruct {
       // in case of atom has attachment point we have to clear path that connected with this atom
       // because we need to recalculate the labels for the Attachment point,
       // they depend on the changes outside the connected atoms
-      if (atom && atom.a.attpnt) {
+      if (atom?.hasAttachmentPoint()) {
         this.clearVisel(atom.visel)
       }
     })
@@ -559,12 +564,22 @@ class ReStruct {
     })
   }
 
+  private getAttachmentsPointsVBox(): Box2Abs | null {
+    let result: Box2Abs | null = null
+    for (const reAtom of this.atoms.values()) {
+      // const attachmentPointBoundingBox = reAtom.getVBoxObjForRGAttachmentPoint(this.render);
+      const bbox = reAtom.getVBoxObjOfAttachmentPoint(this.render)
+      if (bbox) {
+        result = result ? Box2Abs.union(result, bbox) : bbox
+      }
+    }
+    return result
+  }
+
   private showAttachmentPoints() {
     this.atoms.forEach((_value, aid) => {
       const atom = this.atoms.get(aid)
-      if (atom && atom.a.attpnt) {
-        atom.showAttachmentPoints(this)
-      }
+      atom?.showAttachmentPoints(this)
     })
   }
 

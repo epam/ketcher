@@ -724,7 +724,7 @@ export class SGroup {
     })
   }
 
-  static isSuperAtom(sGroup: SGroup): boolean {
+  static isSuperAtom(sGroup?: SGroup): boolean {
     if (!sGroup) {
       return false
     }

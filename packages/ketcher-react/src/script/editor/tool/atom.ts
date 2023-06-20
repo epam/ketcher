@@ -170,8 +170,7 @@ class AtomTool implements Tool {
       atomId = dragCtx.item.id
     } else if (dragCtx.item.map === 'functionalGroups') {
       const sGroup = molecule.sgroups.get(dragCtx.item.id)
-      const attachmentAtomId = sGroup?.getAttAtomId(molecule)
-      atomId = attachmentAtomId
+      atomId = sGroup?.getAttachmentAtomId()
     }
 
     if (atomId !== undefined) {
@@ -234,7 +233,7 @@ class AtomTool implements Tool {
           FunctionalGroup.isContractedFunctionalGroup(ci.id, functionalGroups)
         ) {
           const sGroup = molecule.sgroups.get(ci.id)
-          const attachmentAtomId = sGroup?.getAttAtomId(molecule)
+          const attachmentAtomId = sGroup?.getAttachmentAtomId()
 
           if (attachmentAtomId !== undefined) {
             const atomsToDelete = [...SGroup.getAtoms(molecule, sGroup)].filter(

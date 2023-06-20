@@ -28,12 +28,6 @@ import classes from './InfoPanel.module.less'
 
 const HOVER_PANEL_PADDING = 20
 
-function getSGroupFirstAtom(sGroup: SGroup, render: Render): Vec2 {
-  const { firstSgroupAtom, firstSgroupAtomId } = sGroup
-  if (firstSgroupAtom) return firstSgroupAtom.pp
-  return render.ctab.atoms?.get(firstSgroupAtomId)?.a.pp || new Vec2(0, 0)
-}
-
 function getPanelPosition(
   clientX: number,
   clientY: number,
@@ -53,8 +47,8 @@ function getPanelPosition(
     width = end.x - start.x
     height = end.y - start.y
     // calculate initial position
-    const firstAtomPosition = getSGroupFirstAtom(sGroup, render)
-    const panelPosition = Scale.obj2scaled(firstAtomPosition, {
+    const { position } = sGroup.getContractedPosition(render.ctab.molecule)
+    const panelPosition = Scale.obj2scaled(position, {
       scale: render.options.scale * render.options.zoom
     })
     x = panelPosition.x - width / 2 - HOVER_PANEL_PADDING

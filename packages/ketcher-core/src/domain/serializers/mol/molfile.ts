@@ -485,12 +485,9 @@ export class Molfile {
         this.write(sgroup.data.subscript || 'n')
         this.writeCR()
       }
-      if (sgroup.hasAttachmentPoints()) {
-        const attachmentPoints = sgroup.getAttachmentPoints()
-        attachmentPoints.forEach((attachmentPoint) => {
-          this.writeSGroupAttachmentPointLine(q, attachmentPoint)
-        })
-      }
+      sgroup.getAttachmentPoints().forEach((attachmentPoint) => {
+        this.writeSGroupAttachmentPointLine(q, attachmentPoint)
+      })
 
       this.writeCR(
         common.saveToMolfile[sgroup.type](
@@ -510,7 +507,7 @@ export class Molfile {
 
     const expandedGroups: number[] = []
     this.molecule!.sgroups.forEach((sg) => {
-      if (sg.data.expanded) expandedGroups.push(sg.id + 1)
+      if (sg.isExpanded()) expandedGroups.push(sg.id + 1)
     })
 
     if (expandedGroups.length) {

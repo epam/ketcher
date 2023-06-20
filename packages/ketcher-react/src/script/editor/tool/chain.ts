@@ -124,8 +124,7 @@ class ChainTool implements Tool {
       if (!SGroup.isSaltOrSolvent(functionalGroup?.name || '')) {
         const sGroupId = ci.id
         const sGroup = molecule.sgroups.get(sGroupId)
-        const attachmentAtomId =
-          sGroup?.getNextVacancyAttachmentAtomId(molecule)
+        const attachmentAtomId = sGroup?.getAttachmentAtomId()
         this.dragCtx.item = {
           map: 'atoms',
           id: attachmentAtomId

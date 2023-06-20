@@ -272,28 +272,30 @@ export class SGroup {
     return this.attachmentPoints
   }
 
-  getAttachmentPointCount(): number {
+  getAttachmentPointsCount(): number {
     return this.attachmentPoints.length
   }
 
-  getNextVacancyAttachmentAtomId(_: Struct): number | undefined {
+  /**
+   * Why only one?
+   * Currently other parts of application doesn't support several attachment points for sgroup.
+   * So to support it - it's require to refactor almost every peace of code with sgroups.
+   *
+   *
+   * Why return 'undefined' without rollback?
+   * If sgroup doesn't have attachment points it can't be attached, (salt and solvents for example).
+   */
+  getAttachmentAtomId(): number | undefined {
     return this.attachmentPoints[0]?.atomId
   }
 
-  getAttachedAttachmentAtomIds(struct: Struct): number[] {
-    return this.attachmentPoints
-      .filter((attachmentPoint) =>
-        this.isAttachmentPointAttached(struct, attachmentPoint)
-      )
-      .map(({ atomId }) => atomId)
-  }
-
-  isContractedGroupMasterAtom(atomId: number): boolean {
-    return this.getContractedGroupMasterAtomId() === atomId
-  }
-
-  getContractedGroupMasterAtomId(): number {
-    return this.attachmentPoints[0]?.atomId ?? this.atoms[0]
+  /**
+   * WHY? When group is contracted we need to understand the represent atom to calculate position.
+   * It is not always the attachmentPoint!! if no attachment point - use the first atom
+   */
+  getContractedPosition(struct: Struct): { atomId: number; position: Vec2 } {
+    const atomId = this.attachmentPoints[0]?.atomId ?? this.atoms[0]
+    return { atomId, position: struct.atoms.get(atomId)!.pp }
   }
 
   reMapAttachmentPoints(

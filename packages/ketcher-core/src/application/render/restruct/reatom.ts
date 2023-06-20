@@ -259,7 +259,9 @@ class ReAtom extends ReObject {
       )
     ) {
       const sgroup = restruct.molecule.getGroupFromAtomId(aid)
-      if (sgroup?.isContractedGroupMasterAtom(aid)) {
+      const isPositionAtom =
+        sgroup?.getContractedPosition(restruct.molecule).atomId === aid
+      if (isPositionAtom) {
         const path = render.paper.text(ps.x, ps.y, sgroup.data.name).attr({
           'font-weight': 700,
           'font-size': 14

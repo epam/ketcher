@@ -47,11 +47,8 @@ function getPanelPosition(
     width = end.x - start.x
     height = end.y - start.y
     // calculate initial position
-
-    const masterAtomId = sGroup.getContractedGroupMasterAtomId()
-    const firstAtomPosition =
-      render.ctab.atoms?.get(masterAtomId)?.a.pp ?? new Vec2(0, 0)
-    const panelPosition = Scale.obj2scaled(firstAtomPosition, {
+    const { position } = sGroup.getContractedPosition(render.ctab.molecule)
+    const panelPosition = Scale.obj2scaled(position, {
       scale: render.options.scale * render.options.zoom
     })
     x = panelPosition.x - width / 2 - HOVER_PANEL_PADDING

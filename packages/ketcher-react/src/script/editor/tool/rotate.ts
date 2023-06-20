@@ -97,7 +97,7 @@ class RotateTool implements Tool {
         }
         const groupId = struct.getGroupIdFromAtomId(atomId)
         const sgroup = struct.sgroups.get(groupId as number)
-        return Boolean(sgroup?.isContractedGroupMasterAtom(atomId))
+        return sgroup?.getAttachmentAtomId() === atomId
       }) || []
 
     let center: Vec2 | undefined

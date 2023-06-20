@@ -3,7 +3,7 @@ import { Struct } from 'ketcher-core'
 /**
  * return only such elements ids that not part of collapsed group
  * Addition: if an atom in the contracted SGroup,
- * but is an AttachmentPoint Master atom (that used to calculate sgroup position) it will be returned as well.
+ * but is an AttachmentPoint -> will be returned as well.
  */
 export function filterNotInContractedSGroup(
   itemsToFilter: { atoms?: number[]; bonds?: number[] },
@@ -17,7 +17,7 @@ export function filterNotInContractedSGroup(
           return true
         } else {
           const sGroup = struct.sgroups.get(groupId as number)
-          return Boolean(sGroup?.isContractedGroupMasterAtom(atomId))
+          return sGroup?.getAttachmentAtomId() === atomId
         }
       }) ?? [],
     bonds:

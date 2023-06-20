@@ -122,16 +122,17 @@ class ReSGroup extends ReObject {
     let startY = 0
     let width = 0
     let height = 0
+    /** @type {SGroup} */
     const sGroup = this.item
-    const masterAtomId = sGroup.getContractedGroupMasterAtomId()
-    const masterAtom = render.ctab.molecule.atoms.get(masterAtomId)
-    if (sGroup.isContracted() && masterAtom) {
-      const masterAtomPosition = masterAtom.pp
-      const reSGroupAtom = render.ctab.atoms.get(masterAtomId)
+    const { atomId, position } = sGroup.getContractedPosition(
+      render.ctab.molecule
+    )
+    if (sGroup.isContracted() && position) {
+      const reSGroupAtom = render.ctab.atoms.get(atomId)
       const sGroupTextBoundingBox =
         reSGroupAtom?.visel.boundingBox || reSGroupAtom?.visel.oldBoundingBox
       if (sGroupTextBoundingBox) {
-        const { x, y } = Scale.obj2scaled(masterAtomPosition, render.options)
+        const { x, y } = Scale.obj2scaled(position, render.options)
         const { p0, p1 } = sGroupTextBoundingBox
         width = p1.x - p0.x + padding * 2
         height = p1.y - p0.y + padding * 2
@@ -501,11 +502,10 @@ function getHighlighPathInfo(sgroup, render) {
   const size = options.contractedFunctionalGroupSize
   let startX = (b0.x + a0.x) / 2 - size / 2
   let startY = (a1.y + a0.y) / 2 - size / 2
-  const masterAtomId = sgroup.getContractedGroupMasterAtomId()
-  const masterAtom = render.ctab.molecule.atoms.get(masterAtomId)
-  if (masterAtom) {
+  const { position } = sgroup.getContractedPosition(render.ctab.molecule)
+  if (position) {
     const shift = new Vec2(size / 2, size / 2, 0)
-    const hoverPp = Vec2.diff(masterAtom.pp.scaled(40), shift)
+    const hoverPp = Vec2.diff(position.scaled(40), shift)
     startX = hoverPp.x
     startY = hoverPp.y
   }

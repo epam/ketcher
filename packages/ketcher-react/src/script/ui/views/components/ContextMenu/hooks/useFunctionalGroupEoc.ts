@@ -49,7 +49,7 @@ const useFunctionalGroupEoc = () => {
     return Boolean(
       props?.functionalGroups?.every(
         (functionalGroup) =>
-          functionalGroup?.relatedSGroup.getAttachmentPointCount() > 1
+          functionalGroup?.relatedSGroup.getAttachmentPointsCount() > 1
       )
     )
   }, [])

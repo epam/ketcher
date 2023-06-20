@@ -56,10 +56,7 @@ class TemplateTool implements Tool {
       | SGroup
       | undefined
     this.template = {
-      aid:
-        parseInt(tmpl.aid) ||
-        sGroup?.getNextVacancyAttachmentAtomId(editor.struct()) ||
-        0,
+      aid: parseInt(tmpl.aid) || sGroup?.getAttachmentAtomId() || 0,
       bid: parseInt(tmpl.bid) || 0
     }
 
@@ -470,8 +467,7 @@ class TemplateTool implements Tool {
       }
 
       functionalGroupRemoveAction = new Action()
-      const attachmentAtomId =
-        functionalGroupToReplace.getAttachedAttachmentAtomIds(this.struct)[0]
+      const attachmentAtomId = functionalGroupToReplace.getAttachmentAtomId()
       const atomsWithoutAttachmentAtom = SGroup.getAtoms(
         this.struct,
         functionalGroupToReplace
@@ -641,7 +637,7 @@ function getTargetAtomId(struct: Struct, ci): number | void {
 
   if (ci.map === 'functionalGroups') {
     const group = struct.sgroups.get(ci.id)
-    return group?.getNextVacancyAttachmentAtomId(struct)
+    return group?.getAttachmentAtomId()
   }
 }
 

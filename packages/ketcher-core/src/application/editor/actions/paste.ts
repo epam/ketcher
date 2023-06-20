@@ -174,8 +174,7 @@ function getStructCenter(struct: Struct): Vec2 {
     const onlyOneStructsSgroupId = struct.sgroups.keys().next().value
     const sgroup = struct.sgroups.get(onlyOneStructsSgroupId) as SGroup
     if (sgroup.isContracted()) {
-      const masterAtomId = sgroup.getContractedGroupMasterAtomId()
-      return struct.atoms.get(masterAtomId)!.pp
+      return sgroup.getContractedPosition(struct).position
     }
   }
   if (struct.atoms.size > 0) {

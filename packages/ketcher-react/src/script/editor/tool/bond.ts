@@ -111,7 +111,7 @@ class BondTool implements Tool {
     let attachmentAtomId: number | undefined
     if (ci?.map === 'functionalGroups') {
       const sgroup = molecule.sgroups.get(ci.id)
-      attachmentAtomId = sgroup?.getNextVacancyAttachmentAtomId(molecule)
+      attachmentAtomId = sgroup?.getAttachmentAtomId()
     }
 
     const rnd = this.editor.render
@@ -163,8 +163,7 @@ class BondTool implements Tool {
           const sgroup = molecule.sgroups.get(closestSGroup?.id)
 
           if (sgroup) {
-            const closestAttachmentAtomId =
-              sgroup.getNextVacancyAttachmentAtomId(molecule)
+            const closestAttachmentAtomId = sgroup.getAttachmentAtomId()
 
             if (sgroup.isContracted()) {
               const isSaltOrSolvent = closestAttachmentAtomId === undefined
@@ -207,9 +206,7 @@ class BondTool implements Tool {
             const functionalGroup = molecule.functionalGroups.get(endAtom.id)
             if (!SGroup.isSaltOrSolvent(functionalGroup?.name || '')) {
               const attachmentAtomId =
-                functionalGroup?.relatedSGroup.getNextVacancyAttachmentAtomId(
-                  molecule
-                )
+                functionalGroup?.relatedSGroup.getAttachmentAtomId()
               endAtom =
                 attachmentAtomId === undefined
                   ? null

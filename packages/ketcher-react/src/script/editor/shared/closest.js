@@ -567,7 +567,8 @@ function mergeAtomToAtom(atomId, restruct, atomPosition, selected, result) {
  */
 function mergeAtomToFunctionalGroup(atomId, restruct, atomPosition, result) {
   const sgroup = restruct.molecule.getGroupFromAtomId(atomId)
-  if (sgroup?.isContractedGroupMasterAtom(atomId)) {
+  const isAttachmentAtom = atomId === sgroup?.getAttachmentAtomId()
+  if (isAttachmentAtom) {
     return false
   }
 

@@ -106,7 +106,7 @@ function extractAttachmentAtom(mergeItems: MergeItems, editor: Editor) {
   mergeItems.atomToFunctionalGroup?.forEach((functionalGroupId, srcAtomId) => {
     const sGroup = struct.sgroups.get(functionalGroupId)
 
-    const attachmentAtomId = sGroup?.getNextVacancyAttachmentAtomId(struct)
+    const attachmentAtomId = sGroup?.getAttachmentAtomId()
 
     if (attachmentAtomId !== undefined) {
       const atomsToDelete = [...SGroup.getAtoms(struct, sGroup)].filter(

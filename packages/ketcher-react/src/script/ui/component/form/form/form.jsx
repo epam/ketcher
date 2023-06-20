@@ -45,7 +45,14 @@ class Form extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { schema, result, customValid, ...rest } = this.props
+    const {
+      schema,
+      result,
+      /* eslint-disable @typescript-eslint/no-unused-vars */
+      customValid,
+      /* eslint-enable @typescript-eslint/no-unused-vars */
+      ...rest
+    } = this.props
     if (schema.key && schema.key !== prevProps.schema.key) {
       this.schema = propSchema(schema, rest)
       this.schema.serialize(result) // hack: valid first state
@@ -196,10 +203,12 @@ function propSchema(schema, { customValid, serialize = {}, deserialize = {} }) {
     Object.entries(customValid).forEach(([formatName, formatValidator]) => {
       ajv.addFormat(formatName, formatValidator)
       const {
+        /* eslint-disable @typescript-eslint/no-unused-vars */
         pattern,
         maxLength,
         enum: enumIsReservedWord,
         enumNames,
+        /* eslint-enable @typescript-eslint/no-unused-vars */
         ...rest
       } = schemaCopy.properties[formatName]
       schemaCopy.properties[formatName] = {

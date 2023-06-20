@@ -41,8 +41,8 @@ export class BondAttr extends BaseOperation {
 
       if (!this.data2) {
         this.data2 = {
-          bid: bid,
-          attribute: attribute,
+          bid,
+          attribute,
           value: bond[attribute]
         }
       }

@@ -292,7 +292,7 @@ export class Ketcher {
   }
 
   recognize(image: Blob, version?: string): Promise<Struct> {
-    return this.#indigo.recognize(image, { version: version })
+    return this.#indigo.recognize(image, { version })
   }
 
   async generateImage(

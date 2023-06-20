@@ -154,7 +154,9 @@ const TemplateDialog: FC<Props> = (props) => {
     onFilter,
     onTabChange,
     onChangeGroup,
+    /* eslint-disable @typescript-eslint/no-unused-vars */
     mode,
+    /* eslint-enable @typescript-eslint/no-unused-vars */
     tab,
     initialTab = null,
     functionalGroups,

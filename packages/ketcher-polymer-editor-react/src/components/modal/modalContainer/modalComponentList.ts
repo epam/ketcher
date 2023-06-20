@@ -16,7 +16,7 @@
 import { Open } from 'components/modal/Open'
 import { Save } from 'components/modal/save'
 
-export const modalComponentList: Record<string, any> = {
+export const modalComponentList: Record<string, typeof Open | typeof Save> = {
   open: Open,
   save: Save
 }

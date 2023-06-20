@@ -34,7 +34,9 @@ type Props = {
 }
 
 export function GenericInput({
+  /* eslint-disable @typescript-eslint/no-unused-vars */
   schema,
+  /* eslint-enable @typescript-eslint/no-unused-vars */
   value,
   onChange,
   innerRef,
@@ -84,13 +86,29 @@ GenericInput.val = function (ev, schema) {
   return isNumber && !isNaN(value - 0) ? value - 0 : value // eslint-disable-line
 }
 
-function TextArea({ schema, value, onChange, innerRef, ...rest }) {
+function TextArea({
+  /* eslint-disable @typescript-eslint/no-unused-vars */
+  schema,
+  /* eslint-enable @typescript-eslint/no-unused-vars */
+  value,
+  onChange,
+  innerRef,
+  ...rest
+}) {
   return <textarea value={value} ref={innerRef} onInput={onChange} {...rest} />
 }
 
 TextArea.val = (ev) => ev.target.value
 
-function CheckBox({ schema, value = '', onChange, innerRef, ...rest }) {
+function CheckBox({
+  /* eslint-disable @typescript-eslint/no-unused-vars */
+  schema,
+  /* eslint-enable @typescript-eslint/no-unused-vars */
+  value = '',
+  onChange,
+  innerRef,
+  ...rest
+}) {
   return (
     <div className={classes.fieldSetItem}>
       <input
@@ -357,7 +375,14 @@ class Input extends PureComponent<
   }
 
   render() {
-    const { children, onChange, innerRef, ...restProps } = this.props
+    const {
+      /* eslint-disable @typescript-eslint/no-unused-vars */
+      children,
+      onChange,
+      /* eslint-enable @typescript-eslint/no-unused-vars */
+      innerRef,
+      ...restProps
+    } = this.props
     return (
       <AnyComponentWithRef
         Component={this.component}

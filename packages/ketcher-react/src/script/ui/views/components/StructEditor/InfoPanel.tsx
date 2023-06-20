@@ -145,8 +145,8 @@ const InfoPanel: FC<InfoPanelProps> = (props) => {
           cachePrefix: 'infoPanel',
           needCache: false,
           viewSz: new Vec2(width, height),
-          width: width,
-          height: height
+          width,
+          height
         }}
       />
     </div>

@@ -104,6 +104,8 @@ function prepareSruForSaving(sgroup, mol) {
     }
   }, sgroup)
   if (xBonds.length !== 0 && xBonds.length !== 2) {
+    // TODO fix this eslint error
+    // eslint-disable-next-line no-throw-literal
     throw {
       id: sgroup.id,
       'error-type': 'cross-bond-number',
@@ -132,7 +134,7 @@ function prepareSupForSaving(sgroup, mol) {
   sgroup.bonds = xBonds
 }
 
-function prepareGenForSaving(sgroup, mol) {
+function prepareGenForSaving(_sgroup, _mol) {
   // eslint-disable-line no-unused-vars
 }
 

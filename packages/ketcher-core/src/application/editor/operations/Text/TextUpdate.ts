@@ -29,7 +29,7 @@ export class TextUpdate extends BaseOperation {
 
   constructor(id: number, content: string) {
     super(OperationType.TEXT_UPDATE)
-    this.data = { id, content: content }
+    this.data = { id, content }
   }
 
   execute(restruct: ReStruct) {

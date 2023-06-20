@@ -18,7 +18,9 @@ import { RnaMonomerSection } from './RnaMonomerSection'
 
 // will be completely rewored in the nearest tasks
 describe.skip('RNA Monomer Section', () => {
-  const rnaMonomersMock = {
+  // TODO Fixing a type issue with any as a temporary solution
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const rnaMonomersMock: any = {
     Nucleotide: [
       {
         groupItems: [

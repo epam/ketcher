@@ -42,8 +42,16 @@ class AnalyseDialog extends Component {
   }
 
   render() {
-    const { values, round, loading, onAnalyse, onChangeRound, ...props } =
-      this.props
+    const {
+      values,
+      round,
+      loading,
+      /* eslint-disable @typescript-eslint/no-unused-vars */
+      onAnalyse,
+      /* eslint-enable @typescript-eslint/no-unused-vars */
+      onChangeRound,
+      ...props
+    } = this.props
     return (
       <Dialog
         title="Calculated Values"

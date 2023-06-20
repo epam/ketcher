@@ -140,6 +140,8 @@ class PasteTool implements Tool {
 
       // check if anything changed since last time
       if (
+        // TODO fix the ignored rule
+        // eslint-disable-next-line no-prototype-builtins
         this.dragCtx.hasOwnProperty('angle') &&
         this.dragCtx.angle === degrees
       )

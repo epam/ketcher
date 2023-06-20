@@ -407,6 +407,12 @@ function getStereoParity(stereo: number): number | null {
   return newAtomParity
 }
 
+const plainBondTypes = [
+  Bond.PATTERN.TYPE.SINGLE,
+  Bond.PATTERN.TYPE.DOUBLE,
+  Bond.PATTERN.TYPE.TRIPLE
+]
+
 export function bondChangingAction(
   restruct: ReStruct,
   itemID: number,
@@ -440,9 +446,3 @@ export function bondChangingAction(
 
   return fromBondsAttrs(restruct, newItemId, bondProps).mergeWith(action)
 }
-
-const plainBondTypes = [
-  Bond.PATTERN.TYPE.SINGLE,
-  Bond.PATTERN.TYPE.DOUBLE,
-  Bond.PATTERN.TYPE.TRIPLE
-]

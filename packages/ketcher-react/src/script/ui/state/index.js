@@ -52,14 +52,25 @@ const shared = combineReducers({
 
 function getRootReducer(setEditor) {
   return function root(state, action) {
+    // TODO need a refactoring for this reducer since it uses (probably unintentionally falling through switch-case)
+    // F.e. when it gets action: INIT it will call all cases below - INIT+UPDATE
+    /* eslint-disable no-fallthrough */
     switch (action.type) {
-      case 'INIT':
+      case 'INIT': {
         setEditor(action.editor)
+      }
 
-      case 'UPDATE':
-        const { type, ...data } = action
+      case 'UPDATE': {
+        const {
+          /* eslint-disable @typescript-eslint/no-unused-vars */
+          type,
+          /* eslint-enable @typescript-eslint/no-unused-vars */
+          ...data
+        } = action
         if (data) state = { ...state, ...data }
+      }
     }
+    /* eslint-enable no-fallthrough */
 
     const sh = shared(state, {
       ...action,

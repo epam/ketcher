@@ -20,7 +20,6 @@ import { fromElement, toElement } from '../../../../data/convert/structconv'
 import { Component } from 'react'
 import { Dialog } from '../../../components'
 import { Elements } from 'ketcher-core'
-import Tabs from '../../../../component/view/Tabs'
 import { addAtoms } from '../../../../state/toolbar'
 import classes from './PeriodTable.module.less'
 import { connect } from 'react-redux'
@@ -103,7 +102,7 @@ class Table extends Component {
   }
 
   render() {
-    const { type, value } = this.state
+    const { value } = this.state
     const HeaderContent = this.headerContent
 
     return (

@@ -116,6 +116,10 @@ const ToolbarMultiToolItem = (props: Props) => {
         options[0].id
     }
   }
+  const onOpenOptions = () => {
+    // TODO: same as #type above
+    onOpen(id, Boolean(currentStatus?.selected))
+  }
 
   const actionButtonProps: Omit<
     ActionButtonProps & ActionButtonCallProps,
@@ -124,11 +128,6 @@ const ToolbarMultiToolItem = (props: Props) => {
     disableableButtons,
     indigoVerification,
     onAction: selected ? () => onOpenOptions() : onAction
-  }
-
-  const onOpenOptions = () => {
-    // todo: same as #type above
-    onOpen(id, Boolean(currentStatus?.selected))
   }
 
   const [Component, portalClassName] = chooseMultiTool(variant)

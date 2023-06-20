@@ -16,7 +16,7 @@ interface ModalProps {
   title: string
   isOpen: boolean
   showCloseButton?: boolean
-  onClose: () => void
+  onClose: VoidFunction
   className?: string
 }
 

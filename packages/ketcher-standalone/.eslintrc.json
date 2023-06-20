@@ -2,6 +2,6 @@
   "root": false,
   "extends": "plugin:jest/recommended",
   "rules": {
-    "camelcase": "warn"
+    "@typescript-eslint/no-explicit-any": "error"
   }
 }

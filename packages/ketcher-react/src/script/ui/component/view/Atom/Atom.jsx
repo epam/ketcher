@@ -22,7 +22,7 @@ function Atom({ el, shortcut, selected, ...props }) {
     <button
       title={shortcut ? `${el.title} (${shortcut})` : el.title}
       className={clsx(classes.atom, {
-        selected: selected
+        selected
       })}
       value={el.number}
       {...props}

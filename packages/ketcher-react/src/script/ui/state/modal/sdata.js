@@ -47,35 +47,6 @@ export const initSdata = (schema) => {
   }
 }
 
-export function sdataReducer(state, action) {
-  if (action.data.result.init) {
-    return correctErrors(
-      {
-        ...state,
-        result: Object.assign({}, state.result, action.data.result)
-      },
-      action.data
-    )
-  }
-
-  const actionContext = action.data.result.context
-  const actionFieldName = action.data.result.fieldName
-
-  let newstate = null
-
-  if (actionContext !== state.result.context)
-    newstate = onContextChange(state, action.data.result)
-  else if (actionFieldName !== state.result.fieldName)
-    newstate = onFieldNameChange(state, action.data.result)
-
-  newstate = newstate || {
-    ...state,
-    result: Object.assign({}, state.result, action.data.result)
-  }
-
-  return correctErrors(newstate, action.data)
-}
-
 const correctErrors = (state, payload) => {
   const { valid, errors } = payload
   const { fieldName, fieldValue } = state.result
@@ -129,4 +100,33 @@ const onFieldNameChange = (state, payload) => {
       fieldValue
     }
   }
+}
+
+export function sdataReducer(state, action) {
+  if (action.data.result.init) {
+    return correctErrors(
+      {
+        ...state,
+        result: Object.assign({}, state.result, action.data.result)
+      },
+      action.data
+    )
+  }
+
+  const actionContext = action.data.result.context
+  const actionFieldName = action.data.result.fieldName
+
+  let newstate = null
+
+  if (actionContext !== state.result.context)
+    newstate = onContextChange(state, action.data.result)
+  else if (actionFieldName !== state.result.fieldName)
+    newstate = onFieldNameChange(state, action.data.result)
+
+  newstate = newstate || {
+    ...state,
+    result: Object.assign({}, state.result, action.data.result)
+  }
+
+  return correctErrors(newstate, action.data)
 }

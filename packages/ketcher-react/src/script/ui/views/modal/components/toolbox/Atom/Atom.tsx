@@ -53,7 +53,14 @@ type Props = AtomProps & {
 const atomProps = atomSchema.properties
 
 const Atom: FC<Props> = (props: Props) => {
-  const { formState, stereoParity, isMultipleAtoms = false, ...rest } = props
+  const {
+    formState,
+    /* eslint-disable @typescript-eslint/no-unused-vars */
+    stereoParity,
+    /* eslint-enable @typescript-eslint/no-unused-vars */
+    isMultipleAtoms = false,
+    ...rest
+  } = props
   const [currentLabel, setCurrentLabel] = useState<string>(rest.label)
   const [expandedAccordions, setExpandedAccordions] = useState<string[]>([
     'General'

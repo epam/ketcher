@@ -14,6 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
+// TODO add typings for Indigo standalone object
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type IndigoStandalone = any
+
 export const enum Command {
   Info,
   Convert,
@@ -141,13 +145,30 @@ export interface AutomapCommandData
   mode: string
 }
 
-export interface OutputMessage<T> {
+interface OutputMessageBase {
   type?: Command
   hasError?: boolean
-  payload?: T
-  error?: string
 }
+
+interface OutputMessageWithError extends OutputMessageBase {
+  hasError: true
+  error: string
+}
+
+interface OutputMessageWithoutError<T> extends OutputMessageBase {
+  hasError?: false
+  payload: T
+}
+
+export type OutputMessage<T> =
+  | OutputMessageWithError
+  | OutputMessageWithoutError<T>
+
 export interface InputMessage<T> {
   type: Command
   data: T
+}
+
+export interface OutputMessageWrapper<T = string> {
+  data: OutputMessage<T>
 }

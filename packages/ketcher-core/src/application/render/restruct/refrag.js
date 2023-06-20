@@ -86,12 +86,12 @@ class ReFrag extends ReObject {
     // TODO abnormal situation, empty fragments must be destroyed by tools
   }
 
-  draw(render) {
+  draw(_render) {
     // eslint-disable-line no-unused-vars
     return null // this._draw(render, fid, { 'stroke' : 'lightgray' }); // [RB] for debugging only
   }
 
-  drawHover(render) {
+  drawHover(_render) {
     // eslint-disable-line no-unused-vars
     // Do nothing. This method shouldn't actually be called.
   }

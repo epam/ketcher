@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+/* eslint-disable @typescript-eslint/no-use-before-define */
 
 import { ReEnhancedFlag, ReFrag, ReStruct } from '../../render'
 

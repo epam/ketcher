@@ -44,7 +44,15 @@ class OpenButton extends Component {
   }
 
   render() {
-    const { children, type, server, className, ...props } = this.props
+    const {
+      children,
+      type,
+      /* eslint-disable @typescript-eslint/no-unused-vars */
+      server,
+      /* eslint-enable @typescript-eslint/no-unused-vars */
+      className,
+      ...props
+    } = this.props
 
     return (
       <button

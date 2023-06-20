@@ -14,7 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { forwardRef } from 'react'
 import { Popover } from '@mui/material'
 import styled from '@emotion/styled'
 

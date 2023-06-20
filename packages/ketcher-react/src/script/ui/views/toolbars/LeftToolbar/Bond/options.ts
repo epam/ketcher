@@ -44,7 +44,7 @@ const groupDescriptors = groups.reduce((accum, group, index) => {
   const start = accum[index - 1]?.end || 0
 
   accum.push({
-    start: start,
+    start,
     end: start + group.length
   })
 

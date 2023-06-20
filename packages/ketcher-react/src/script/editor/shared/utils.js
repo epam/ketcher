@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Vec2, fracAngle, Struct, FunctionalGroup } from 'ketcher-core'
+import { Vec2, fracAngle, FunctionalGroup } from 'ketcher-core'
 
 import { inRange } from 'lodash'
 

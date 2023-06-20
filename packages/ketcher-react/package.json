@@ -31,13 +31,15 @@
   "scripts": {
     "build": "cross-env NODE_ENV=production rollup -c -m true",
     "start": "cross-env NODE_ENV=development rollup -c -m true -w",
-    "test": "run-s test:prettier test:stylelint test:eslint test:unit",
+    "test": "run-s test:prettier test:stylelint test:eslint:quiet test:types test:unit",
     "test:eslint": "eslint . --ext .ts,.tsx,.js,.jsx",
+    "test:eslint:quiet": "npm run test:eslint -- --quiet",
+    "test:eslint:fix": "npm run test:eslint -- --fix",
     "test:types": "tsc --noEmit",
     "test:unit": "jest --passWithNoTests",
     "test:unit:update": "jest -u",
     "test:prettier": "prettier --check \"./**/*.{js,jsx,json,ts,tsx}\"",
-    "test:stylelint": "stylelint \"./**/*.{css,less}\" --formatter verbose",
+    "test:stylelint": "stylelint \"./**/*.{css,less}\" --formatter",
     "prettier:write": "prettier --write \"./**/*.{js,jsx,json,ts,tsx}\"",
     "stylelint:fix": "stylelint \"./**/*.{css,less}\" --formatter verbose --fix"
   },

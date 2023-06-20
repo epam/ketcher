@@ -43,10 +43,10 @@ export const librarySlice: Slice = createSlice({
     loadMonomerLibrary: (state, action: PayloadAction<SdfItem[]>) => {
       state.monomers = action.payload
     },
-    addMonomerFavorites: (state, action: PayloadAction<any>) => {
+    addMonomerFavorites: (state, action: PayloadAction<MonomerItemType>) => {
       state.favorites[getMonomerUniqueKey(action.payload)] = action.payload
     },
-    removeMonomerFavorites: (state, action: PayloadAction<any>) => {
+    removeMonomerFavorites: (state, action: PayloadAction<MonomerItemType>) => {
       delete state.favorites[getMonomerUniqueKey(action.payload)]
     },
     toggleMonomerFavorites: (state, action: PayloadAction<MonomerItemType>) => {

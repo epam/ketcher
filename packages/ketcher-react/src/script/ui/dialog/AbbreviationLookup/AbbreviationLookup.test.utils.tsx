@@ -7,6 +7,7 @@ import {
 } from './AbbreviationLookup.types'
 import { Template } from '../template/TemplateTable'
 import { Element } from 'ketcher-core'
+import { KETCHER_ROOT_NODE_CLASS_NAME } from 'src/constants'
 
 export const createGenericOption = (
   name: string,
@@ -43,3 +44,12 @@ export const createOption = (
     } as AbbreviationElementOption
   }
 }
+
+export const CLIP_AREA_TEST_ID = 'cliparea'
+
+export const KetcherWrapper = ({ children }) => (
+  <div className={KETCHER_ROOT_NODE_CLASS_NAME}>
+    {children}
+    <textarea className="cliparea" data-testid={CLIP_AREA_TEST_ID} />
+  </div>
+)

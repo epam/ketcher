@@ -35,8 +35,16 @@ describe('AbbreviationLookup Utils', () => {
       expect(highlightOptionLabel(option, 'no-match-string')).toBe(option.label)
     })
 
+    it('Should not highlight if lookup value length is short', () => {
+      expect(highlightOptionLabel(option, 'l')).toMatchSnapshot()
+    })
+
     it('Should return marked name', () => {
       expect(highlightOptionLabel(option, 'long')).toMatchSnapshot()
+    })
+
+    it('Should ignore space at the beginning and the end', () => {
+      expect(highlightOptionLabel(option, '   HORT  ')).toMatchSnapshot()
     })
 
     it('Should return marked abbreviation', () => {
@@ -98,6 +106,17 @@ describe('AbbreviationLookup Utils', () => {
 
     it('Should filter out Gold Element', () => {
       const lookupValue = 'Argon'
+      const inputArray = [optionA, optionB]
+      const resultArray = [optionA]
+      expect(
+        filterOptions(inputArray, {
+          inputValue: lookupValue
+        } as FilterOptionsState<AbbreviationOption>)
+      ).toEqual(resultArray)
+    })
+
+    it('Should ignore spaces at the beginning and the end', () => {
+      const lookupValue = '   Argon   '
       const inputArray = [optionA, optionB]
       const resultArray = [optionA]
       expect(

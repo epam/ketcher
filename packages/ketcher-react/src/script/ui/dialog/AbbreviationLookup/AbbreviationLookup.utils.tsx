@@ -71,25 +71,27 @@ const getHighlightSearchStartIndex = (
 
 export const highlightOptionLabel = (
   option: AbbreviationGenericOption,
-  loweredLookupValue: string
+  initialLoweredValue: string
 ) => {
-  if (loweredLookupValue.length < MIN_LOOKUP_VALUE_LENGTH_FOR_HIGHLIGHT) {
+  const trimmedLoweredValue = initialLoweredValue.trim()
+
+  if (trimmedLoweredValue.length < MIN_LOOKUP_VALUE_LENGTH_FOR_HIGHLIGHT) {
     return option.label
   }
 
   const searchFromIndex = getHighlightSearchStartIndex(
     option,
-    loweredLookupValue
+    trimmedLoweredValue
   )
   const startPos = option.loweredLabel.indexOf(
-    loweredLookupValue,
+    trimmedLoweredValue,
     searchFromIndex
   )
   if (startPos === -1) {
     return option.label
   }
 
-  const endPos = startPos + loweredLookupValue.length
+  const endPos = startPos + trimmedLoweredValue.length
   const startPart = option.label.substring(0, startPos)
   const middlePart = option.label.substring(startPos, endPos)
   const endPart = option.label.substring(endPos)

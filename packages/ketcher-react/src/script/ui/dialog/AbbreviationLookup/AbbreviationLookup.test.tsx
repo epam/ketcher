@@ -1,4 +1,3 @@
-import { KETCHER_ROOT_NODE_CLASS_NAME } from 'src/constants'
 import { fireEvent, render, screen } from '@testing-library/react'
 
 import { AbbreviationLookup } from './AbbreviationLookup'
@@ -7,7 +6,11 @@ import {
   NO_MATCHING_RESULTS_LABEL,
   START_TYPING_NOTIFICATION_LABEL
 } from './AbbreviationLookup.constants'
-import { createOption } from './AbbreviationLookup.test.utils'
+import {
+  CLIP_AREA_TEST_ID,
+  createOption,
+  KetcherWrapper
+} from './AbbreviationLookup.test.utils'
 import { closeAbbreviationLookup } from '../../state/abbreviationLookup'
 import { onAction } from '../../state'
 import {
@@ -36,10 +39,6 @@ jest.mock('../../state/common/selectors', () => {
     selectCursorPosition: () => ({ x: 100, y: 100 })
   }
 })
-
-const KetcherWrapper = ({ children }) => (
-  <div className={KETCHER_ROOT_NODE_CLASS_NAME}>{children}</div>
-)
 
 describe('AbbreviationLookup', () => {
   const optionA = createOption('Argon', 'Ar') as AbbreviationElementOption
@@ -109,6 +108,20 @@ describe('AbbreviationLookup', () => {
     expect(mockedDispatch).toHaveBeenCalledWith(closeAbbreviationLookup())
   })
 
+  it('Should focus on cliparea after closing', async () => {
+    mockedAbbreviationLookupValue = 'a'
+    const { rerender } = render(
+      <AbbreviationLookup options={[optionA, optionB]} />,
+      {
+        wrapper: KetcherWrapper
+      }
+    )
+
+    rerender(<></>)
+    const cliparea = screen.getByTestId(CLIP_AREA_TEST_ID)
+    expect(cliparea).toHaveFocus()
+  })
+
   it('Should dispatch atom tool action after option with an element is selected', () => {
     mockedAbbreviationLookupValue = 'a'
     render(<AbbreviationLookup options={[optionA, optionB]} />, {
@@ -119,11 +132,11 @@ describe('AbbreviationLookup', () => {
       keyCode: 13
     })
 
-    expect(mockedDispatch).toHaveBeenNthCalledWith(1, closeAbbreviationLookup())
     expect(mockedDispatch).toHaveBeenNthCalledWith(
-      2,
+      1,
       onAction({ tool: 'atom', opts: optionA.element })
     )
+    expect(mockedDispatch).toHaveBeenNthCalledWith(2, closeAbbreviationLookup())
   })
 
   it('Should dispatch template tool action after option with a tempalte is selected', () => {
@@ -136,10 +149,10 @@ describe('AbbreviationLookup', () => {
       keyCode: 13
     })
 
-    expect(mockedDispatch).toHaveBeenNthCalledWith(1, closeAbbreviationLookup())
     expect(mockedDispatch).toHaveBeenNthCalledWith(
-      2,
+      1,
       onAction({ tool: 'template', opts: optionC.template })
     )
+    expect(mockedDispatch).toHaveBeenNthCalledWith(2, closeAbbreviationLookup())
   })
 })

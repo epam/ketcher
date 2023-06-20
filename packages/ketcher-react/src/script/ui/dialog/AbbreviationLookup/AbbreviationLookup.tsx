@@ -51,6 +51,7 @@ import {
   NO_MATCHING_RESULTS_LABEL,
   START_TYPING_NOTIFICATION_LABEL
 } from './AbbreviationLookup.constants'
+import { CLIP_AREA_BASE_CLASS } from '../../component/cliparea/cliparea'
 
 interface Props {
   options: AbbreviationOption[]
@@ -101,7 +102,7 @@ export const AbbreviationLookup = ({ options }: Props) => {
       ;(
         inputRef.current
           ?.closest(KETCHER_ROOT_NODE_CSS_SELECTOR)
-          ?.getElementsByClassName('cliparea')[0] as HTMLElement
+          ?.getElementsByClassName(CLIP_AREA_BASE_CLASS)[0] as HTMLElement
       ).focus()
     }
   }, [])
@@ -198,7 +199,7 @@ export const AbbreviationLookup = ({ options }: Props) => {
           return (
             <li {...props} title={option.label}>
               <div className={classes.optionItemContent}>
-                {highlightOptionLabel(option, loweredLookupValue.trim())}
+                {highlightOptionLabel(option, loweredLookupValue)}
               </div>
             </li>
           )

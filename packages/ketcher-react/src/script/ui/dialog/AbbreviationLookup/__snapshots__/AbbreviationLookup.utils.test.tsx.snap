@@ -1,5 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`AbbreviationLookup Utils highlightOptionLabel Should ignore space at the beginning and the end 1`] = `"SHORTABBR (Very long test name)"`;
+
 exports[`AbbreviationLookup Utils highlightOptionLabel Should mark abbreviation because it shorter (bigger similarity) 1`] = `
 <React.Fragment>
   
@@ -19,6 +21,8 @@ exports[`AbbreviationLookup Utils highlightOptionLabel Should mark name because 
   NameForTemplate)
 </React.Fragment>
 `;
+
+exports[`AbbreviationLookup Utils highlightOptionLabel Should not highlight if lookup value length is short 1`] = `"SHORTABBR (Very long test name)"`;
 
 exports[`AbbreviationLookup Utils highlightOptionLabel Should return marked abbreviation 1`] = `
 <React.Fragment>

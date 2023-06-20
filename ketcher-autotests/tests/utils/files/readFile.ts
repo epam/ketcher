@@ -24,19 +24,6 @@ export async function openFile(filename: string, page: Page) {
   await fileChooser.setFiles(`tests/test-data/${filename}`);
 }
 
-async function isFileLoadedOnKetcherSide(filename: string) {
-  const fileContents = await readFileContents(`tests/test-data/${filename}`);
-  try {
-    if (JSON.parse(fileContents)) {
-      return true;
-    }
-  } catch (er) {}
-  if (fileContents.includes('V2000')) {
-    return true;
-  }
-  return false;
-}
-
 /**
  * Open file and put in center of canvas
  * Should be used to prevent extra delay() calls in test cases
@@ -44,15 +31,9 @@ async function isFileLoadedOnKetcherSide(filename: string) {
 export async function openFileAndAddToCanvas(filename: string, page: Page) {
   await selectTopPanelButton(TopPanelButton.Open, page);
   await openFile(filename, page);
-  const isLoadedOnKetcherSide = await isFileLoadedOnKetcherSide(filename);
-
-  if (isLoadedOnKetcherSide) {
+  await waitForLoad(page, () => {
     pressButton(page, 'Add to Canvas');
-  } else {
-    await waitForLoad(page, () => {
-      pressButton(page, 'Add to Canvas');
-    });
-  }
+  });
 
   await clickInTheMiddleOfTheScreen(page);
 }

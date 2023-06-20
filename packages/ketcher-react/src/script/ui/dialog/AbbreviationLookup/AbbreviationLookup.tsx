@@ -97,6 +97,10 @@ export const AbbreviationLookup = ({ options }: Props) => {
     })
   }, [])
 
+  const closePanel = () => {
+    dispatch(closeAbbreviationLookup())
+  }
+
   const handleOnChange = (
     _event: SyntheticEvent,
     option: AbbreviationOption,
@@ -113,10 +117,6 @@ export const AbbreviationLookup = ({ options }: Props) => {
     } else {
       dispatch(onAction({ tool: 'atom', opts: option.element }))
     }
-  }
-
-  const closePanel = () => {
-    dispatch(closeAbbreviationLookup())
   }
 
   const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {

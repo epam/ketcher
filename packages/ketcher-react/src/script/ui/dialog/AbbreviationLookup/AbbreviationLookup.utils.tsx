@@ -20,6 +20,19 @@ import {
 } from './AbbreviationLookup.types'
 import { FilterOptionsState } from '@mui/material'
 
+export const getStringsSimilarity = (
+  loweredText?: string,
+  loweredSubString?: string
+): number => {
+  if (!loweredText || !loweredSubString) {
+    return 0
+  }
+
+  return loweredText.includes(loweredSubString)
+    ? loweredSubString.length / loweredText.length
+    : 0
+}
+
 const getHighlightSearchStartIndex = (
   option: AbbreviationGenericOption,
   loweredLookupValue: string
@@ -87,19 +100,6 @@ export const highlightOptionLabel = (
 
 export const getOptionLabel = (option: AbbreviationGenericOption): string => {
   return option.label
-}
-
-export const getStringsSimilarity = (
-  loweredText?: string,
-  loweredSubString?: string
-): number => {
-  if (!loweredText || !loweredSubString) {
-    return 0
-  }
-
-  return loweredText.includes(loweredSubString)
-    ? loweredSubString.length / loweredText.length
-    : 0
 }
 
 export const getSimilarity = (

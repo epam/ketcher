@@ -36,6 +36,7 @@ export class SGroupAttachmentPointAdd extends BaseOperation {
   }
 
   invert() {
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
     return new SGroupAttachmentPointRemove(
       this.data.sGroupId,
       this.data.attachmentPoint

@@ -32,7 +32,7 @@ import { load } from '../../../../../state'
 import { range } from 'lodash/fp'
 import { recognize } from '../../../../../state/server'
 import { DialogActionButton } from 'src/script/ui/views/modal/components/document/Open/components/DialogActionButton'
-import Icon from 'src/script/ui/component/view/icon'
+import { Icon } from 'components'
 
 function isImage(file) {
   return file?.type?.includes('image')
@@ -81,8 +81,15 @@ function RecognizeDialog(prop) {
     onOk,
     ...partProps
   } = prop
-  const { onRecognize, isFragment, onImage, onChangeImago, ...props } =
-    partProps
+  const {
+    onRecognize,
+    /* eslint-disable @typescript-eslint/no-unused-vars */
+    isFragment,
+    /* eslint-enable @typescript-eslint/no-unused-vars */
+    onImage,
+    onChangeImago,
+    ...props
+  } = partProps
   const [canPreviewImage, setCanPreviewImage] = useState(true)
   const result = () =>
     structStr && !(structStr instanceof Promise)

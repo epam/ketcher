@@ -60,6 +60,9 @@ function status(actionName, activeTool, params) {
   })
 }
 
+// TODO need a refactoring for this reducer since it uses (probably unintentionally falling through switch-case)
+// F.e. when it gets action: INIT it will call all cases below - INIT+ACTION+UPDATE
+/* eslint-disable no-fallthrough */
 export default function (state = null, { type, action, ...params }) {
   let activeTool
   switch (type) {
@@ -67,7 +70,8 @@ export default function (state = null, { type, action, ...params }) {
       const savedSelectedTool = SettingsManager.selectionTool
       action = savedSelectedTool || actions['select-rectangle'].action
     }
-    case 'ACTION':
+
+    case 'ACTION': {
       activeTool = execute(state && state.activeTool, {
         ...params,
         action
@@ -75,6 +79,8 @@ export default function (state = null, { type, action, ...params }) {
       if (activeTool.tool === 'select') {
         SettingsManager.selectionTool = activeTool
       }
+    }
+
     case 'UPDATE':
       return Object.keys(actions).reduce(
         (res, actionName) => {
@@ -84,7 +90,9 @@ export default function (state = null, { type, action, ...params }) {
         },
         { activeTool: activeTool || state.activeTool }
       )
+
     default:
       return state
   }
 }
+/* eslint-enable no-fallthrough */

@@ -3,12 +3,6 @@
   "extends": "plugin:jest/recommended",
   "rules": {
     "@typescript-eslint/no-non-null-assertion": "warn",
-    "no-throw-literal": "warn",
-    "@typescript-eslint/no-empty-function": "warn",
-    "no-constant-condition": "warn",
-    "@typescript-eslint/no-use-before-define": [
-      "warn",
-      { "functions": false, "typedefs": false }
-    ]
+    "@typescript-eslint/no-explicit-any": "warn"
   }
 }

@@ -14,10 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 import { OutputFormatType } from 'ketcher-core'
-
 import { saveAs } from 'file-saver'
+
 import React, { PropsWithChildren } from 'react'
 import { useAppContext } from '../../../../hooks'
+import { fileSaver } from './saveButton.utils'
+import { SaverType } from './saveButton.types'
 
 type Props = {
   server?: any
@@ -33,11 +35,6 @@ type Props = {
   disabled?: boolean
 }
 
-type FileSaverReturnType = Promise<
-  (data: Blob | string, fn, type: string | undefined) => void | never
->
-
-type SaverType = Awaited<FileSaverReturnType>
 type SaveButtonProps = PropsWithChildren<Props>
 
 const SaveButton = (props: SaveButtonProps) => {
@@ -56,18 +53,6 @@ const SaveButton = (props: SaveButtonProps) => {
     disabled
   } = props
   const { getKetcherInstance } = useAppContext()
-
-  const save = (event: React.KeyboardEvent | React.MouseEvent) => {
-    event.preventDefault()
-    switch (mode) {
-      case 'saveImage':
-        saveImage()
-        break
-      case 'saveFile':
-      default:
-        saveFile()
-    }
-  }
 
   const saveFile = () => {
     if (data) {
@@ -97,6 +82,18 @@ const SaveButton = (props: SaveButtonProps) => {
     }
   }
 
+  const save = (event: React.KeyboardEvent | React.MouseEvent) => {
+    event.preventDefault()
+    switch (mode) {
+      case 'saveImage':
+        saveImage()
+        break
+      case 'saveFile':
+      default:
+        saveFile()
+    }
+  }
+
   return (
     <button
       title={title}
@@ -109,25 +106,6 @@ const SaveButton = (props: SaveButtonProps) => {
       {props.children}
     </button>
   )
-}
-
-const fileSaver = (server): FileSaverReturnType => {
-  return new Promise((resolve, reject) => {
-    if (global.Blob && saveAs) {
-      resolve((data, fn, type) => {
-        const blob = new Blob([data], { type }) // eslint-disable-line no-undef
-        saveAs(blob, fn)
-      })
-    } else if (server) {
-      resolve(
-        server.then(() => {
-          throw Error("Server doesn't still support echo method")
-        })
-      )
-    } else {
-      reject(new Error('Your browser does not support opening files locally'))
-    }
-  })
 }
 
 export { SaveButton }

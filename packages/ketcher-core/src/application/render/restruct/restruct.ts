@@ -627,7 +627,7 @@ class ReStruct {
             }
             atoms.push({
               selected: item.selected,
-              sgroup: sgroup
+              sgroup
             })
           }
           if (

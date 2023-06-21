@@ -27,8 +27,8 @@ import { capitalize } from 'lodash/fp'
 import classes from './Atom.module.less'
 import Select from '../../../../../component/form/Select'
 import { getSelectOptionsFromSchema } from '../../../../../utils'
-import Icon from '../../../../../component/view/icon'
 import clsx from 'clsx'
+import { Icon } from 'components'
 
 interface AtomProps extends BaseCallProps, BaseProps {
   alias: string
@@ -53,7 +53,14 @@ type Props = AtomProps & {
 const atomProps = atomSchema.properties
 
 const Atom: FC<Props> = (props: Props) => {
-  const { formState, stereoParity, isMultipleAtoms = false, ...rest } = props
+  const {
+    formState,
+    /* eslint-disable @typescript-eslint/no-unused-vars */
+    stereoParity,
+    /* eslint-enable @typescript-eslint/no-unused-vars */
+    isMultipleAtoms = false,
+    ...rest
+  } = props
   const [currentLabel, setCurrentLabel] = useState<string>(rest.label)
   const [expandedAccordions, setExpandedAccordions] = useState<string[]>([
     'General'

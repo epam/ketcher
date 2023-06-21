@@ -25,13 +25,13 @@ import action, { UiAction, UiActionAction } from '../../../../action'
 
 import { useRef } from 'react'
 import clsx from 'clsx'
-import Icon from '../../../../component/view/icon'
 import { Portal } from '../../../../Portal'
 import { chooseMultiTool } from './variants/chooseMultiTool'
 import classes from './ToolbarMultiToolItem.module.less'
 import { usePortalOpening } from './usePortalOpening'
 import { usePortalStyle } from './usePortalStyle'
 import { SettingsManager } from '../../../../utils/settingsManager'
+import { getIconName, Icon } from 'components'
 
 interface ToolbarMultiToolItemProps {
   id: ToolbarItemVariant
@@ -116,6 +116,10 @@ const ToolbarMultiToolItem = (props: Props) => {
         options[0].id
     }
   }
+  const onOpenOptions = () => {
+    // TODO: same as #type above
+    onOpen(id, Boolean(currentStatus?.selected))
+  }
 
   const actionButtonProps: Omit<
     ActionButtonProps & ActionButtonCallProps,
@@ -126,19 +130,14 @@ const ToolbarMultiToolItem = (props: Props) => {
     onAction: selected ? () => onOpenOptions() : onAction
   }
 
-  const onOpenOptions = () => {
-    // todo: same as #type above
-    onOpen(id, Boolean(currentStatus?.selected))
-  }
-
   const [Component, portalClassName] = chooseMultiTool(variant)
-
-  return displayMultiToolItem ? (
+  const iconName = getIconName(currentId)
+  return displayMultiToolItem && iconName ? (
     <div ref={ref} className={classes.root}>
       <ActionButton
         {...actionButtonProps}
         className={className}
-        name={currentId}
+        name={iconName}
         action={action[currentId]}
         status={currentStatus as ActionButtonProps['status']}
         selected={selected}

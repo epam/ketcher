@@ -128,8 +128,8 @@ function postLoadSup(sgroup) {
   sgroup.data.subscript = ''
 }
 
-function postLoadGen(sgroup, mol, atomMap) {
-  // eslint-disable-line no-unused-vars
+function postLoadGen(_sgroup, _mol, _atomMap) {
+  // empty function
 }
 
 function postLoadDat(sgroup, mol) {
@@ -138,43 +138,43 @@ function postLoadDat(sgroup, mol) {
   }
 }
 
-function postLoadMon(sgroup) {
+function postLoadMon(_sgroup) {
   // TODO: Implement after adding MON type support
 }
 
-function postLoadMer(sgroup) {
+function postLoadMer(_sgroup) {
   // TODO: Implement after adding MER type support
 }
 
-function postLoadCop(sgroup) {
+function postLoadCop(_sgroup) {
   // TODO: Implement after adding COP type support
 }
 
-function postLoadCro(sgroup) {
+function postLoadCro(_sgroup) {
   // TODO: Implement after adding CRO type support
 }
 
-function postLoadMod(sgroup) {
+function postLoadMod(_sgroup) {
   // TODO: Implement after adding MOD type support
 }
 
-function postLoadGra(sgroup) {
+function postLoadGra(_sgroup) {
   // TODO: Implement after adding GRA type support
 }
 
-function postLoadCom(sgroup) {
+function postLoadCom(_sgroup) {
   // TODO: Implement after adding COM type support
 }
 
-function postLoadMix(sgroup) {
+function postLoadMix(_sgroup) {
   // TODO: Implement after adding MIX type support
 }
 
-function postLoadFor(sgroup) {
+function postLoadFor(_sgroup) {
   // TODO: Implement after adding FOR type support
 }
 
-function postLoadAny(sgroup) {
+function postLoadAny(_sgroup) {
   // TODO: Implement after adding ANY type support
 }
 
@@ -398,7 +398,8 @@ function parseSGroupSAPLineV2000(ctabString) {
     const atomId = utils.parseDecimalInt(iii) - 1
     assert(atomId >= 0)
     const leaveAtomParsedId = utils.parseDecimalInt(ooo)
-    const leaveAtomId = leaveAtomParsedId > 0 ? leaveAtomParsedId - 1 : undefined
+    const leaveAtomId =
+      leaveAtomParsedId > 0 ? leaveAtomParsedId - 1 : undefined
     attachmentPoints.push(new SGroupAttachmentPoint(atomId, leaveAtomId, cc))
   }
   return { sGroupId, attachmentPoints }

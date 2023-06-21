@@ -21,33 +21,6 @@ import { Elements } from 'domain/constants'
 import { Pile } from './pile'
 import { Struct } from './struct'
 
-function getValueOrDefault<T>(value: T | undefined, defaultValue: T): T {
-  return typeof value !== 'undefined' ? value : defaultValue
-}
-
-function isCorrectPseudo(label) {
-  return (
-    !Elements.get(label) && label !== 'L' && label !== 'L#' && label !== 'R#'
-  )
-}
-
-function getPseudo(label: string) {
-  return isCorrectPseudo(label) ? label : ''
-}
-
-export function radicalElectrons(radical: any) {
-  radical -= 0
-  if (radical === Atom.PATTERN.RADICAL.DOUPLET) return 1
-  else if (
-    radical === Atom.PATTERN.RADICAL.SINGLET ||
-    radical === Atom.PATTERN.RADICAL.TRIPLET
-  ) {
-    return 2
-  } else {
-    return 0
-  }
-}
-
 export enum StereoLabel {
   Abs = 'abs',
   And = '&',
@@ -636,4 +609,31 @@ export class Atom {
 
     return rad + conn + Math.abs(charge)
   }
+}
+
+export function radicalElectrons(radical: any) {
+  radical -= 0
+  if (radical === Atom.PATTERN.RADICAL.DOUPLET) return 1
+  else if (
+    radical === Atom.PATTERN.RADICAL.SINGLET ||
+    radical === Atom.PATTERN.RADICAL.TRIPLET
+  ) {
+    return 2
+  } else {
+    return 0
+  }
+}
+
+function getValueOrDefault<T>(value: T | undefined, defaultValue: T): T {
+  return typeof value !== 'undefined' ? value : defaultValue
+}
+
+function isCorrectPseudo(label) {
+  return (
+    !Elements.get(label) && label !== 'L' && label !== 'L#' && label !== 'R#'
+  )
+}
+
+function getPseudo(label: string) {
+  return isCorrectPseudo(label) ? label : ''
 }

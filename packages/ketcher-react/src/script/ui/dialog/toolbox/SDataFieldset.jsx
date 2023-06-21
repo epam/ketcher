@@ -19,29 +19,6 @@ import { getSelectOptionsFromSchema } from '../../utils'
 import Select from '../../component/form/Select'
 import { sdataCustomSchema } from '../../data/schema/sdata-schema'
 
-function SDataFieldset({ formState }) {
-  const { result } = formState
-  const formSchema = sdataCustomSchema
-
-  return (
-    <fieldset className="sdata">
-      <Field
-        name="context"
-        options={getSelectOptionsFromSchema(formSchema.properties.context)}
-        component={Select}
-      />
-      <Field name="fieldName" placeholder="Enter name" />
-      {content(
-        formSchema,
-        result.context,
-        result.fieldName,
-        result.fieldValue,
-        result.radiobuttons
-      )}
-    </fieldset>
-  )
-}
-
 const content = (schema, context, fieldName, fieldValue, checked) =>
   Object.keys(schema.properties)
     .filter(
@@ -76,5 +53,28 @@ const content = (schema, context, fieldName, fieldValue, checked) =>
         )
       }
     })
+
+function SDataFieldset({ formState }) {
+  const { result } = formState
+  const formSchema = sdataCustomSchema
+
+  return (
+    <fieldset className="sdata">
+      <Field
+        name="context"
+        options={getSelectOptionsFromSchema(formSchema.properties.context)}
+        component={Select}
+      />
+      <Field name="fieldName" placeholder="Enter name" />
+      {content(
+        formSchema,
+        result.context,
+        result.fieldName,
+        result.fieldValue,
+        result.radiobuttons
+      )}
+    </fieldset>
+  )
+}
 
 export default SDataFieldset

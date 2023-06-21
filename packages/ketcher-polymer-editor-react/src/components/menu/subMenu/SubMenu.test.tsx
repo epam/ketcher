@@ -45,7 +45,7 @@ describe('Test SubMenu component', () => {
   })
   it('should call provided callback when header icon is clicked', () => {
     render(withThemeProvider(mockSubMenu()))
-    const button = screen.getByRole('menuitem')
+    const button = screen.getByRole('button')
     fireEvent.click(button)
     expect(mockClickHandler).toHaveBeenCalled()
   })

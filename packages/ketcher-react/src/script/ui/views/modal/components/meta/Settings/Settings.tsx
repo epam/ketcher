@@ -24,7 +24,6 @@ import { useEffect, useState } from 'react'
 
 import ColorPicker from '../../../../../component/form/colorPicker/ColorPicker'
 import { Dialog } from '../../../../components'
-import Icon from '../../../../../component/view/icon'
 import MeasureInput from '../../../../../component/form/MeasureInput/measure-input'
 import OpenButton from '../../../../../component/view/openbutton'
 import { SaveButton } from '../../../../../component/view/savebutton'
@@ -41,6 +40,7 @@ import settingsSchema, {
 } from '../../../../../data/schema/options-schema'
 import fieldGroups from './fieldGroups'
 import { isEqual } from 'lodash'
+import { Icon } from 'components'
 
 interface SettingsProps extends BaseProps {
   initState: any

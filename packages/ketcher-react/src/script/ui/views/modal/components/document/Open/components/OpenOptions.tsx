@@ -16,15 +16,15 @@
 
 import { FC } from 'react'
 
-import Icon from 'src/script/ui/component/view/icon'
 import styles from './OpenOptions.module.less'
 import { FileDrop } from './FileDrop'
+import { Icon } from 'components'
 
 const ICON_NAMES = {
   PASTE: 'open-window-paste-icon',
   FILE: 'open-window-upload-icon',
   IMAGE: 'image-frame'
-}
+} as const
 
 export type OpenOptionsProps = {
   selectClipboard: () => void

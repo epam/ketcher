@@ -15,63 +15,15 @@
  ***************************************************************************/
 import React, { useState } from 'react'
 import { ClickAwayListener } from '@mui/material'
-import styled from '@emotion/styled'
-import Collapse from '@mui/material/Collapse'
-import { Icon } from 'components/shared/icon'
 import { MenuItem } from '../menuItem'
 import { useMenuContext } from '../../../hooks/useMenuContext'
-
-const RootContainer = styled.div`
-  display: flex;
-  position: relative;
-`
-
-type OptionsContainerProps = {
-  isVertical?: boolean
-} & React.HTMLAttributes<HTMLDivElement>
-
-const OptionsContainer = styled.div<OptionsContainerProps>`
-  display: flex;
-  position: absolute;
-  left: 5px;
-  border-radius: 2px;
-  flex-direction: ${({ isVertical }) => (isVertical ? 'column' : 'row')};
-`
-
-type DropDownProps = {
-  isActive: boolean
-} & React.HTMLAttributes<HTMLDivElement>
-
-const DropDown = styled.div<DropDownProps>`
-  display: flex;
-  width: 6px;
-  height: 6px;
-  position: absolute;
-  bottom: 0;
-  right: 0;
-
-  > svg path {
-    fill: ${({ isActive, theme }) =>
-      isActive
-        ? theme.ketcher.color.icon.clicked
-        : theme.ketcher.color.icon.activeMenu};
-  }
-`
-
-const OptionsItemsCollapse = styled(Collapse)`
-  position: relative;
-`
-
-const VisibleItem = styled.div`
-  display: flex;
-  align-items: center;
-  position: relative;
-  width: 32px;
-  height: 32px;
-  padding: 0;
-  justify-content: center;
-  border-radius: 2px;
-`
+import {
+  OptionsContainer,
+  OptionsItemsCollapse,
+  RootContainer,
+  StyledDropdownIcon,
+  VisibleItem
+} from './styles'
 
 type SubMenuProps = {
   vertical?: boolean
@@ -109,12 +61,14 @@ const SubMenu = ({
     <RootContainer>
       <VisibleItem>
         <MenuItem itemId={visibleItemId} />
-        <DropDown
-          isActive={isActive(visibleItemId)}
-          onClick={handleDropDownClick}
-        >
-          <Icon name="dropdown" />
-        </DropDown>
+        {open || (
+          <StyledDropdownIcon
+            className="dropdown"
+            name="dropdown"
+            onClick={handleDropDownClick}
+            isActive={isActive(visibleItemId)}
+          />
+        )}
       </VisibleItem>
       <OptionsItemsCollapse
         in={open}

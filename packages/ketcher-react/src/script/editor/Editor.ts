@@ -496,12 +496,13 @@ class Editor implements KetcherEditor {
     }
 
     switch (eventName) {
-      case 'change':
+      case 'change': {
         const subscribeFuncWrapper = (action) =>
           customOnChangeHandler(action, handler)
         subscriber.handler = subscribeFuncWrapper
         this.event[eventName].add(subscribeFuncWrapper)
         break
+      }
 
       default:
         this.event[eventName].add(handler)

@@ -1,5 +1,3 @@
-/// <reference types="react-scripts" />
-
 declare module '*.less' {
   const classes: { [className: string]: string }
   export default classes
@@ -8,6 +6,15 @@ declare module '*.less' {
 declare module '*.sdf' {
   const content: string
   export default content
+}
+
+declare module '*.svg' {
+  export const ReactComponent: React.FunctionComponent<
+    React.SVGProps<SVGSVGElement> & { title?: string }
+  >
+
+  const src: ReactComponent
+  export default src
 }
 
 declare namespace NodeJS {

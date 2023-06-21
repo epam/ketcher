@@ -18,9 +18,9 @@ import { useState, useRef, useCallback } from 'react'
 import styled from '@emotion/styled'
 import { Button, Popover } from '@mui/material'
 
-import Icon from 'src/script/ui/component/view/icon'
 import { zoomList } from 'src/script/ui/action/zoom'
 import { ZoomInput, updateInputString } from './ZoomInput'
+import { Icon } from 'components'
 
 const ElementAndDropdown = styled('div')`
   position: relative;

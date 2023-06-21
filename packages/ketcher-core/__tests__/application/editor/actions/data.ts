@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 import { ReAtom, ReBond } from 'application/render'
 
 import { Pool } from 'domain/entities'
@@ -639,10 +640,10 @@ const frags = new Map()
 mockFrags.forEach((frag, key) => frags.set(key, frag))
 
 const molecule = {
-  atoms: atoms,
-  bonds: bonds,
-  frags: frags,
-  halfBonds: halfBonds,
+  atoms,
+  bonds,
+  frags,
+  halfBonds,
   isReaction: false,
   loops: { nextId: 0 },
   name: '',
@@ -684,7 +685,7 @@ const molecule = {
 export const restruct = {
   atoms: new Map(),
   bonds: new Map(),
-  molecule: molecule,
+  molecule,
   connectedComponents: new Set(),
   render: {
     options: {

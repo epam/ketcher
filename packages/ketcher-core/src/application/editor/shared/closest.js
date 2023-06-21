@@ -424,8 +424,8 @@ function findClosestItem(restruct, pos, maps, skip, scale) {
       const { id, dist, ...other } = item
       return {
         map: mp,
-        id: id,
-        dist: dist,
+        id,
+        dist,
         ...other
       }
     }

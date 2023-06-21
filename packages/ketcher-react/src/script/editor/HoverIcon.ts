@@ -108,7 +108,7 @@ export class HoverIcon {
     element.attr('opacity', HOVER_ICON_OPACITY)
 
     return {
-      element: element,
+      element,
       fill: fillColor,
       label: this?.label || ''
     }

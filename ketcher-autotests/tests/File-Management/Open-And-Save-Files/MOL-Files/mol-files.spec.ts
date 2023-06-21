@@ -30,6 +30,8 @@ test('Open and Save files - Open/Save structure with atom properties 2/2 - save'
 
   await openFileAndAddToCanvas('mol_1855_to_open.mol', page);
 
+  page.on('console', msg => console.log(msg.text()));
+
   const METADATA_STRING_INDEX = [1];
   const { fileExpected: molFileExpected, file: molFile } =
     await receiveFileComparisonData({

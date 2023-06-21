@@ -1,4 +1,5 @@
 import * as fs from 'fs';
+import * as path from 'path';
 import { Page } from '@playwright/test';
 import {
   selectTopPanelButton,
@@ -73,18 +74,30 @@ export async function receiveCmlFileComparisonData(
   page: Page,
   expectedCmlFileName: string
 ) {
+  const filePath = path.resolve(process.cwd(), expectedCmlFileName);
   const cmlFileExpected = fs
-    .readFileSync(expectedCmlFileName, 'utf8')
+    .readFileSync(filePath, 'utf8')
     .split('\n');
-  const cmlFile = (await page.evaluate(() => window.ketcher.getCml())).split(
+  const data = await page.evaluate(async () => {
+      return {
+        cml: await window.ketcher.getCml(),
+        struct: window.ketcher.editor.struct()
+      }
+    })
+  const cmlFile = data.cml.split(
     '\n'
   );
+  console.log('data struct', data.struct)
 
   return { cmlFile, cmlFileExpected };
 }
 
 export async function openFromFileViaClipboard(filename: string, page: Page) {
-  const fileContent = fs.readFileSync(filename, 'utf8');
+  console.log('base directory', __dirname);
+  console.log('current working directory', process.cwd());
+  const filePath = path.resolve(process.cwd(), filename);
+  console.log(filePath);
+  const fileContent = fs.readFileSync(filePath, 'utf8');
   await page.getByText('Paste from clipboard').click();
   await page.getByRole('dialog').getByRole('textbox').fill(fileContent);
   await waitForLoad(page, () => {

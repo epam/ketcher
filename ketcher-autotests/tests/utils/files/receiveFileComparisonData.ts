@@ -45,6 +45,9 @@ async function receiveFile({
     method: methodName,
   };
 
+  await page.waitForFunction(() => window.ketcher);
+  console.log('fileName', fileName);
+  console.log('pageData', JSON.stringify(pageData));
   const file = await page.evaluate(
     ({ method, format }) =>
       (window.ketcher[method] as ketcherApiFunction)(format),

@@ -210,6 +210,7 @@ export class Ketcher {
   }
 
   getCml(): Promise<string> {
+    console.log('in getCml')
     return getStructure(
       SupportedFormat.cml,
       this.#formatterFactory,

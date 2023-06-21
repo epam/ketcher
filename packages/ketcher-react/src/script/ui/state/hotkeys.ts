@@ -61,7 +61,7 @@ let abbreviationLookupTimeoutId: number | undefined
 const ABBREVIATION_LOOKUP_TYPING_TIMEOUT = 1000
 
 /* HotKeys */
-function keyHandle(dispatch, getState, hotKeys, event, skipAbbrLookup = false) {
+function keyHandle(dispatch, getState, hotKeys, event) {
   const state = getState()
 
   if (state.modal || selectIsAbbreviationLookupOpen(state)) return
@@ -75,23 +75,25 @@ function keyHandle(dispatch, getState, hotKeys, event, skipAbbrLookup = false) {
 
   let group: any = null
 
-  if (!skipAbbrLookup && key && key.length === 1) {
+  if (key && key.length === 1) {
     if (selectAbbreviationLookupValue(state)) {
       dispatch(showAbbreviationLookup(event.key))
       clearTimeout(abbreviationLookupTimeoutId)
       abbreviationLookupTimeoutId = undefined
+
+      const resetAction = SettingsManager.getSettings().selectionTool
+      dispatch(onAction(resetAction))
+
+      event.preventDefault()
+      return
     } else {
       abbreviationLookupTimeoutId = window.setTimeout(() => {
         dispatch(closeAbbreviationLookup())
-        keyHandle(dispatch, getState, hotKeys, event, true)
         abbreviationLookupTimeoutId = undefined
       }, ABBREVIATION_LOOKUP_TYPING_TIMEOUT)
 
       dispatch(initAbbreviationLookup(event.key))
     }
-
-    event.preventDefault()
-    return
   }
 
   if (key && key.length === 1 && key.match('/')) {

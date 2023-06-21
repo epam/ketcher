@@ -73,7 +73,7 @@ const config = {
       comments: 'none',
       include: includePattern
     }),
-    ...(isProduction ? [strip({ include: includePattern })] : [])
+    // ...(isProduction ? [strip({ include: includePattern })] : [])
   ]
 }
 

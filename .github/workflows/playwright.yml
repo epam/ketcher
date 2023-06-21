@@ -40,6 +40,7 @@ jobs:
           echo "KETCHER_URL=$KETCHER_URL" >> .env
           echo "MODE=$MODE" >> .env
           echo "IGNORE_UNSTABLE_TESTS=$IGNORE_UNSTABLE_TESTS" >> .env
+          echo "DEBUG=pw:api" >> .env
       - name: Build autotests for docker
         run: cd ketcher-autotests && npm run docker:build
       - name: Run playwright tests in docker

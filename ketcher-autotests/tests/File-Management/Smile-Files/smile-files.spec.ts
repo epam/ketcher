@@ -44,6 +44,9 @@ async function clearCanvasAndPasteSmiles(page: Page, smiles: string) {
 
 test.describe('SMILES files', () => {
   test.beforeEach(async ({ page }) => {
+    page.on('console', (message) => {
+      console.log(`[${message.type()}] ${message.text()}`);
+    });
     await page.goto('');
   });
 

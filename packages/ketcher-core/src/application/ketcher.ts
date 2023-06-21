@@ -98,6 +98,7 @@ export class Ketcher {
     structService: StructService,
     formatterFactory: FormatterFactory
   ) {
+    console.log('Ketcher constructor');
     assert(editor != null)
     assert(structService != null)
     assert(formatterFactory != null)
@@ -150,6 +151,7 @@ export class Ketcher {
   }
 
   getSmiles(isExtended = false): Promise<string> {
+    console.log('getSmiles');
     const format = isExtended
       ? SupportedFormat.smilesExt
       : SupportedFormat.smiles
@@ -210,6 +212,7 @@ export class Ketcher {
   }
 
   getCml(): Promise<string> {
+    console.log('in getCml')
     return getStructure(
       SupportedFormat.cml,
       this.#formatterFactory,

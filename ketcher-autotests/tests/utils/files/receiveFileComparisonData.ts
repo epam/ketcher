@@ -1,6 +1,6 @@
-import * as fs from 'fs';
 import { Page } from '@playwright/test';
 import { MolfileFormat } from 'ketcher-core';
+import { readFileContents } from './readFile';
 
 enum GetFileMethod {
   'mol' = 'getMolfile',
@@ -45,6 +45,9 @@ async function receiveFile({
     method: methodName,
   };
 
+  await page.waitForFunction(() => window.ketcher);
+  console.log('fileName', fileName);
+  console.log('pageData', JSON.stringify(pageData));
   const file = await page.evaluate(
     ({ method, format }) =>
       (window.ketcher[method] as ketcherApiFunction)(format),
@@ -81,7 +84,7 @@ export async function receiveFileComparisonData({
   file: string[];
   fileExpected: string[];
 }> {
-  const fileExpected = fs.readFileSync(expectedFileName, 'utf8').split('\n');
+  const fileExpected = (await readFileContents(expectedFileName)).split('\n');
 
   const file = await receiveFile({
     page,

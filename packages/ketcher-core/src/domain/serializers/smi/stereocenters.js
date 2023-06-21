@@ -509,7 +509,7 @@ Stereocenters.prototype.buildOneCenter = function (
       stereocenter.pyramid[3] = -1
     } else {
       // 3-connected P, N or S; no implicit hydrogens
-      var dir
+      let dir
 
       if (nDown > 0 && nUp > 0) {
         throw new Error('one bond up, one bond down -- indefinite case')

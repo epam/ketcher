@@ -21,8 +21,10 @@ function SelectList({
   value,
   onSelect,
   splitIndexes,
+  /* eslint-disable @typescript-eslint/no-unused-vars */
   selected,
   component,
+  /* eslint-enable @typescript-eslint/no-unused-vars */
   classes,
   ...props
 }) {

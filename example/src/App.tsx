@@ -25,7 +25,7 @@ const getHiddenButtonsConfig = (): ButtonsConfig => {
 
 let structServiceProvider: StructServiceProvider =
   new RemoteStructServiceProvider(
-    process.env.API_PATH || process.env.REACT_APP_API_PATH!
+    process.env.API_PATH || process.env.REACT_APP_API_PATH
   )
 if (process.env.MODE === 'standalone') {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -64,10 +64,10 @@ const App = () => {
           setErrorMessage(message.toString())
         }}
         buttons={hiddenButtonsConfig}
-        staticResourcesUrl={process.env.PUBLIC_URL!}
+        staticResourcesUrl={process.env.PUBLIC_URL}
         structServiceProvider={structServiceProvider}
         onInit={(ketcher: Ketcher) => {
-          ;(global as any).ketcher = ketcher
+          window.ketcher = ketcher
           window.parent.postMessage(
             {
               eventType: 'init'
@@ -84,7 +84,8 @@ const App = () => {
             setHasError(false)
 
             // Focus on editor after modal is closed
-            const cliparea: HTMLElement = document.querySelector('.cliparea')!
+            const cliparea: HTMLElement | null =
+              document.querySelector('.cliparea')
             cliparea?.focus()
           }}
         />

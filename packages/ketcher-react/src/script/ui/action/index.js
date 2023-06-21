@@ -27,7 +27,6 @@ import zoom from './zoom'
 import help from './help'
 import functionalGroups from './functionalGroups'
 import fullscreen from './fullscreen'
-import { SettingsManager } from '../utils/settingsManager'
 import { removeStructAction } from '../state/shared'
 
 export * from './action.types'

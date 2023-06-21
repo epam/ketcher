@@ -228,7 +228,14 @@ class Attach extends Component {
   }
 
   render() {
-    const { name, onNameEdit, onAttachEdit, ...prop } = this.props
+    const {
+      name,
+      /* eslint-disable @typescript-eslint/no-unused-vars */
+      onNameEdit,
+      /* eslint-enable @typescript-eslint/no-unused-vars */
+      onAttachEdit,
+      ...prop
+    } = this.props
     const struct = this.tmpl.struct
     const { atomid, bondid } =
       struct.atoms.get(this.props.atomid) && struct.bonds.get(this.props.bondid)

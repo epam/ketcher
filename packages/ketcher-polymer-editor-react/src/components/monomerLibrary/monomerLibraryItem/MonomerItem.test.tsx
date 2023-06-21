@@ -9,7 +9,13 @@ describe('Test Monomer Item component', () => {
     const monomer: MonomerItemType = {
       label: 'for test',
       props: {
-        MonomerNaturalAnalogCode: 'L'
+        BranchMonomer: 'false',
+        MonomerCaps: '[R1]H',
+        MonomerCode: '',
+        MonomerName: 'Cya',
+        MonomerNaturalAnalogCode: 'A',
+        MonomerType: 'PEPTIDE',
+        Name: '3-sulfoalanine'
       },
       struct: new Struct()
     }

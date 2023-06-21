@@ -75,7 +75,9 @@ const Open: FC<Props> = (props) => {
     errorHandler,
     isAnalyzingFile,
     isRecognizeDisabled,
+    /* eslint-disable @typescript-eslint/no-unused-vars */
     ignoreChiralFlag,
+    /* eslint-enable @typescript-eslint/no-unused-vars */
     ...rest
   } = props
 

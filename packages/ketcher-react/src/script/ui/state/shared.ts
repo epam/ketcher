@@ -61,7 +61,13 @@ function parseStruct(
 ): Promise<Struct> {
   if (typeof struct === 'string') {
     options = options || {}
-    const { rescale, fragment, ...formatterOptions } = options
+    const {
+      /* eslint-disable @typescript-eslint/no-unused-vars */
+      rescale,
+      fragment,
+      /* eslint-enable @typescript-eslint/no-unused-vars */
+      ...formatterOptions
+    } = options
 
     const format = identifyStructFormat(struct)
     if (format === SupportedFormat.cdx) {

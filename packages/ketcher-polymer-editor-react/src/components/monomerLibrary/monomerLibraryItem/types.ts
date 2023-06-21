@@ -18,10 +18,19 @@ import { MonomerColorScheme } from 'theming/defaultTheme'
 
 export type MonomerItemType = {
   label: string
-  struct: Struct
   colorScheme?: MonomerColorScheme
   favorite?: boolean
-  props?: any
+  struct: Struct
+  props: {
+    MonomerNaturalAnalogCode: string
+    MonomerName: string
+    Name: string
+    // TODO determine whenever these props are optional or not
+    BranchMonomer?: string
+    MonomerCaps?: string
+    MonomerCode?: string
+    MonomerType?: string
+  }
 }
 
 export interface IMonomerItemProps {
@@ -29,5 +38,5 @@ export interface IMonomerItemProps {
   onClick?: VoidFunction
   onMouseLeave?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void
   onMouseMove?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void
-  onStarClick?: any
+  onStarClick?: VoidFunction
 }

@@ -104,7 +104,7 @@ export function deleteUserTmpl(tmpl) {
   return {
     type: 'TMPL_DELETE',
     data: {
-      tmpl: tmpl
+      tmpl
     }
   }
 }
@@ -181,7 +181,7 @@ function templatesReducer(state = initTmplsState, action) {
   if (action.type === 'TMPL_DELETE') {
     const currentState = Object.assign({}, state)
     const lib = currentState.lib.filter((value) => value !== action.data.tmpl)
-    return { ...currentState, lib: lib }
+    return { ...currentState, lib }
   }
 
   return state

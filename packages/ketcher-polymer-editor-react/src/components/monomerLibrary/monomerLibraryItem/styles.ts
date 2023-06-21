@@ -17,7 +17,6 @@ import styled from '@emotion/styled'
 
 export const Card = styled.div<{ code: string }>`
   background: white;
-  border-radius: 2px;
   width: 58px;
   height: 48px;
   text-align: center;
@@ -28,6 +27,7 @@ export const Card = styled.div<{ code: string }>`
   font-size: ${({ theme }) => theme.ketcher.font.size.small};
   color: ${({ theme }) => theme.ketcher.color.text.primary};
   position: relative;
+  overflow: hidden;
   border-radius: 4px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
   margin: 0;

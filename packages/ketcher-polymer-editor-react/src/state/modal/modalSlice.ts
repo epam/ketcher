@@ -26,7 +26,7 @@ const initialState: ModalState = {
   isOpen: false
 }
 
-export const modalSlice: any = createSlice({
+export const modalSlice = createSlice({
   name: 'modal',
   initialState,
   reducers: {

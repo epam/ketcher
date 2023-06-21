@@ -280,7 +280,7 @@ class SaveDialog extends Component {
   renderSaveFile = () => {
     const formState = Object.assign({}, this.props.formState)
     delete formState.moleculeErrors
-    const { filename, format } = formState.result
+    const { format } = formState.result
     const { structStr, imageSrc, isLoading } = this.state
     const isCleanStruct = this.props.struct.isBlank()
 
@@ -336,7 +336,7 @@ class SaveDialog extends Component {
 
   renderWarnings = () => {
     const formState = Object.assign({}, this.props.formState)
-    const { filename, format } = formState.result
+    const { format } = formState.result
     const warnings = this.getWarnings(format)
 
     return warnings.length ? (

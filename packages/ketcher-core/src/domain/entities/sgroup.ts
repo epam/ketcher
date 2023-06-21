@@ -300,21 +300,10 @@ export class SGroup {
     return { atomId, position: representAtom.pp }
   }
 
-  reMapAttachmentPoints(
+  cloneAttachmentPoints(
     atomIdMap: Map<number, number>
   ): ReadonlyArray<SGroupAttachmentPoint> {
-    return this.attachmentPoints.map(
-      ({ atomId, leaveAtomId, additionalData }) => {
-        const newAtomId = atomIdMap.get(atomId)
-        assert(newAtomId != null)
-        const newLeaveAtomId = atomIdMap.get(leaveAtomId as number)
-        return new SGroupAttachmentPoint(
-          newAtomId,
-          newLeaveAtomId,
-          additionalData
-        )
-      }
-    )
+    return this.attachmentPoints.map((point) => point.clone(atomIdMap))
   }
 
   private isAttachmentPointAttached(
@@ -403,7 +392,7 @@ export class SGroup {
     cp.bonds = null
     cp.allAtoms = sgroup.allAtoms
     cp.data.expanded = sgroup.data.expanded
-    cp.addAttachmentPoints(sgroup.reMapAttachmentPoints(aidMap))
+    cp.addAttachmentPoints(sgroup.cloneAttachmentPoints(aidMap))
     return cp
   }
 

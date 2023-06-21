@@ -169,7 +169,7 @@ export function fromTemplateOnAtom(
   tmpl.sgroups.forEach((sg: SGroup) => {
     const newsgid = restruct.molecule.sgroups.newId()
     const sgAtoms = sg.atoms.map((aid) => map.get(aid))
-    const attachmentPoints = sg.reMapAttachmentPoints(map)
+    const attachmentPoints = sg.cloneAttachmentPoints(map)
     const sgAction = fromSgroupAddition(
       restruct,
       sg.type,

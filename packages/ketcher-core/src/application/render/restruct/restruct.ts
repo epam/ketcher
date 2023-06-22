@@ -578,6 +578,11 @@ class ReStruct {
   private showRgoupAttachmentPoints() {
     this.atoms.forEach((_value, aid) => {
       const atom = this.atoms.get(aid)
+      const sgroup = this.molecule.getGroupFromAtomId(aid)
+      const isInsideContractedSGroup = Boolean(sgroup?.isContracted())
+      if (isInsideContractedSGroup) {
+        return
+      }
       atom?.showAttachmentPoints(this)
     })
   }

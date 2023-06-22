@@ -60,7 +60,7 @@ test.describe('SMILES files', () => {
     await openFileAndAddToCanvas('all-type-bonds.ket', page);
     await getAndCompareSmiles(
       page,
-      'tests/test-data/smiles-all-bonds-expected.json'
+      'tests/test-data/smiles-all-bonds-expected.txt'
     );
 
     await getPreviewForSmiles(page, 'MDL Molfile V2000', 'Daylight SMILES');

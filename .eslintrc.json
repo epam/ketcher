@@ -9,6 +9,8 @@
   ],
   "parser": "@typescript-eslint/parser",
   "rules": {
+    "@typescript-eslint/no-non-null-assertion": "error",
+    "@typescript-eslint/no-explicit-any": "error",
     "object-shorthand": "error",
     "@typescript-eslint/no-empty-function": "error",
     "@typescript-eslint/no-unused-vars": [

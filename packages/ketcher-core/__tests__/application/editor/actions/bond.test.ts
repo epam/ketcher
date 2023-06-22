@@ -3,6 +3,7 @@ import * as utils from 'application/editor/actions/utils'
 import { restruct, singleBond } from './data'
 import { fromBondAddition } from 'application/editor/actions'
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const reStruct = Object.assign({}, restruct) as any
 reStruct.molecule.sgroups = []
 const [action, begin, end] = fromBondAddition(reStruct, singleBond, 1, {

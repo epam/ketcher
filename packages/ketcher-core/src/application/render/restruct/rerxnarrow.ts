@@ -43,6 +43,7 @@ interface MinDistanceWithReferencePoint {
 
 class ReRxnArrow extends ReObject {
   item: Arrow
+  isResizing = false
 
   constructor(/* chem.RxnArrow */ arrow: Arrow) {
     super('rxnArrow')
@@ -186,7 +187,8 @@ class ReRxnArrow extends ReObject {
           { ...item, pos, height },
           length,
           angle,
-          options
+          options,
+          this.isResizing
         )
         break
     }

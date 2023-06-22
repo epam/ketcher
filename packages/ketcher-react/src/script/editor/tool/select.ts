@@ -190,7 +190,9 @@ class SelectTool implements Tool {
       if (dragCtx.item.map === 'rxnArrows' && dragCtx.item.ref) {
         if (dragCtx?.action) dragCtx.action.perform(rnd.ctab)
         const props = getResizingProps(editor, dragCtx, event)
-        dragCtx.action = fromArrowResizing(...props)
+        this.updateArrowResizingState(dragCtx.item.id, true)
+        const isSnappingEnabled = !event.ctrlKey
+        dragCtx.action = fromArrowResizing(...props, isSnappingEnabled)
         editor.update(dragCtx.action, true)
         return true
       }
@@ -288,6 +290,8 @@ class SelectTool implements Tool {
         editor.render,
         editor.options().scale
       )
+      this.updateArrowResizingState(this.dragCtx.item.id, false)
+      this.editor.update(true)
       dropAndMerge(
         editor,
         this.dragCtx.mergeItems,
@@ -485,6 +489,13 @@ class SelectTool implements Tool {
       )
     }
     return isDraggingOnSaltOrSolventAtom || isDraggingOnSaltOrSolventBond
+  }
+
+  private updateArrowResizingState(itemId: number, isResizing: boolean) {
+    const reArrow = this.editor.render.ctab.rxnArrows.get(itemId)
+    if (reArrow) {
+      reArrow.isResizing = isResizing
+    }
   }
 }
 

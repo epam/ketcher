@@ -1,5 +1,6 @@
 import { Page } from '@playwright/test';
 import { REQUEST_IS_FINISHED } from '@constants';
+import { delay, DELAY_IN_SECONDS } from '@tests/utils';
 
 const evaluateCallback = (REQUEST_IS_FINISHED: string) => {
   const MAX_TIME_TO_WAIT = 10000;
@@ -29,7 +30,9 @@ export const waitForLoad = async (page: Page, callback: Function) => {
   await page.waitForFunction(() => window.ketcher);
   // const promise = page.evaluate(evaluateCallback, REQUEST_IS_FINISHED);
   callback();
-  await page.waitForSelector('.loading-spinner', { state: 'detached' });
+  await delay(DELAY_IN_SECONDS.FIVE);
+
+  // await page.waitForSelector('.loading-spinner', { state: 'detached' });
 
   // return promise;
 };

@@ -27,9 +27,8 @@ async function getPreviewForSmiles(
 async function getAndCompareSmiles(page: Page, smilesFilePath: string) {
   const smilesFileExpected = await readFileContents(smilesFilePath);
   console.log('smilesFileExpected', smilesFileExpected);
-  // const smilesFile = await getSmiles(page);
-  // console.log('smilesFile', smilesFile);
-  expect(smilesFileExpected).toEqual(smilesFileExpected);
+  const smilesFile = await getSmiles(page);
+  expect(smilesFile).toEqual(smilesFileExpected);
 }
 
 async function clearCanvasAndPasteSmiles(page: Page, smiles: string) {
@@ -68,7 +67,7 @@ test.describe('SMILES files', () => {
       'tests/test-data/smiles-all-bonds-expected.txt'
     );
 
-    // await getPreviewForSmiles(page, 'MDL Molfile V2000', 'Daylight SMILES');
+    await getPreviewForSmiles(page, 'MDL Molfile V2000', 'Daylight SMILES');
     await takeEditorScreenshot(page);
 
     await clearCanvasAndPasteSmiles(page, 'CCCCC/CC/C:CC.C(C)CCCCCCCCCC');

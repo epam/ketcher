@@ -10,15 +10,7 @@ export async function getCml(page: Page) {
 }
 
 export async function getSmiles(page: Page) {
-  await page.waitForFunction(() => window.ketcher);
-  return await page.evaluate(async () => {
-    const res = await window.ketcher.getSmiles();
-    page.on('console', (message) => {
-      console.log('RESULT', res);
-      console.log(`[${message.type()}] ${message.text()}`);
-    });
-    return res;
-  });
+  return await page.evaluate(() => window.ketcher.getSmiles());
 }
 
 export async function getExtendedSmiles(page: Page) {

@@ -13,7 +13,8 @@ export async function getSmiles(page: Page) {
   return await page.evaluate(async () => {
     await page.waitForFunction(() => window.ketcher);
     console.log('window.ketcher', window.ketcher);
-    return await window.ketcher.getSmiles();
+    const res = await window.ketcher.getSmiles();
+    return res;
   });
 }
 

@@ -25,13 +25,11 @@ const evaluateCallback = (REQUEST_IS_FINISHED: string) => {
  * @param callback - any function that uses Locator.click, see playwright docs for Locator
  * @returns Promise<string>
  */
-export const waitForLoad = async (
-  page: Page,
-  callback: Function
-): Promise<unknown> => {
+export const waitForLoad = async (page: Page, callback: Function) => {
   await page.waitForFunction(() => window.ketcher);
-  const promise = page.evaluate(evaluateCallback, REQUEST_IS_FINISHED);
+  // const promise = page.evaluate(evaluateCallback, REQUEST_IS_FINISHED);
   callback();
+  await page.waitForSelector('.loading-spinner', { state: 'detached' });
 
-  return promise;
+  // return promise;
 };

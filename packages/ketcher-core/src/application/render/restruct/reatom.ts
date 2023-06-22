@@ -236,6 +236,10 @@ class ReAtom extends ReObject {
     if (!this.hasAttachmentPoint()) {
       return []
     }
+    const hasOnlyOneBond = this.a.neighbors.length === 1
+    if (hasOnlyOneBond) {
+      return getAttachmentDirectionForOnlyOneBond(this, struct)
+    }
     const isTrisectionRequired = this.isTrisectionAttachmentPoint()
     return isTrisectionRequired
       ? trisectionLargestSector(this, struct)
@@ -1129,6 +1133,18 @@ function bisectLargestSector(atom: ReAtom, struct: Struct): Vec2 {
   )
   const bisectAngle = neighborAngle + largestAngle / 2
   return newVectorFromAngle(bisectAngle)
+}
+
+function getAttachmentDirectionForOnlyOneBond(
+  atom: ReAtom,
+  struct: Struct
+): Vec2[] {
+  const DEGREE_120_FOR_ONE_BOND = (2 * Math.PI) / 3
+  const onlyNeighbor = atom.a.neighbors[0]
+  // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
+  const angle = struct.halfBonds.get(onlyNeighbor)!.ang
+  const directionVector = newVectorFromAngle(angle + DEGREE_120_FOR_ONE_BOND)
+  return [directionVector]
 }
 
 function trisectionLargestSector(atom: ReAtom, struct: Struct): [Vec2, Vec2] {

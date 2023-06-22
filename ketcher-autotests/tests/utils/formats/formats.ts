@@ -14,6 +14,7 @@ export async function getSmiles(page: Page) {
   return await page.evaluate(async () => {
     console.log('window.ketcher', window.ketcher);
     const res = await window.ketcher.getSmiles();
+    console.log('REEES ==', res);
     return res;
   });
 }

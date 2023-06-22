@@ -66,7 +66,7 @@ test.describe('SMILES files', () => {
       page,
       'tests/test-data/smiles-all-bonds-expected.txt'
     );
-
+    await page.waitForFunction(() => window.ketcher);
     await getPreviewForSmiles(page, 'MDL Molfile V2000', 'Daylight SMILES');
     await takeEditorScreenshot(page);
 

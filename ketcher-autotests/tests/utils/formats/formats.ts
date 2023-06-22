@@ -12,9 +12,11 @@ export async function getCml(page: Page) {
 export async function getSmiles(page: Page) {
   await page.waitForFunction(() => window.ketcher);
   return await page.evaluate(async () => {
-    console.log('window.ketcher', window.ketcher);
     const res = await window.ketcher.getSmiles();
-    console.log('REEES ==', res);
+    page.on('console', (message) => {
+      console.log('RESULT', res);
+      console.log(`[${message.type()}] ${message.text()}`);
+    });
     return res;
   });
 }

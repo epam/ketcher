@@ -467,18 +467,19 @@ class TemplateTool implements Tool {
       }
 
       functionalGroupRemoveAction = new Action()
-      const attachmentAtomId = functionalGroupToReplace.getAttachmentAtomId()
+      const { atomId: sGroupPositionAtomId } =
+        functionalGroupToReplace.getContractedPosition(restruct.molecule)
       const atomsWithoutAttachmentAtom = SGroup.getAtoms(
         this.struct,
         functionalGroupToReplace
-      ).filter((id) => id !== attachmentAtomId)
+      ).filter((id) => id !== sGroupPositionAtomId)
 
       functionalGroupRemoveAction.mergeWith(fromSgroupDeletion(restruct, ci.id))
       functionalGroupRemoveAction.mergeWith(
         fromFragmentDeletion(restruct, { atoms: atomsWithoutAttachmentAtom })
       )
 
-      ci = { map: 'atoms', id: attachmentAtomId }
+      ci = { map: 'atoms', id: sGroupPositionAtomId }
     }
 
     if (!dragCtx.action) {

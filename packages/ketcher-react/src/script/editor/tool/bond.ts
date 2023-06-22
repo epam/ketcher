@@ -166,10 +166,10 @@ class BondTool implements Tool {
             const closestAttachmentAtomId = sgroup.getAttachmentAtomId()
 
             if (sgroup.isContracted()) {
-              const isSaltOrSolvent = closestAttachmentAtomId === undefined
+              const hasAttachmentPoint = closestAttachmentAtomId === undefined
               const isBeginFunctionalGroupItself =
                 closestAttachmentAtomId === beginAtom
-              if (!isSaltOrSolvent && !isBeginFunctionalGroupItself) {
+              if (!hasAttachmentPoint && !isBeginFunctionalGroupItself) {
                 endAtom = {
                   id: closestAttachmentAtomId,
                   map: 'atoms'

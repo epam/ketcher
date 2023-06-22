@@ -21,9 +21,11 @@ export function deleteFunctionalGroups(
       FunctionalGroup.isContractedFunctionalGroup(sGroupId, functionalGroups)
     ) {
       const sGroupAtoms = SGroup.getAtoms(struct.molecule, sGroupItem)
-      const attachmentPointId = sGroupItem?.getAttachmentAtomId()
+      const { atomId: positionAtomId } = sGroupItem.getContractedPosition(
+        struct.molecule
+      )
       const atomsWithoutAttachmentPoint = sGroupAtoms.filter(
-        (atomId) => atomId !== attachmentPointId
+        (atomId) => atomId !== positionAtomId
       )
 
       deletedAtoms.push(...atomsWithoutAttachmentPoint)

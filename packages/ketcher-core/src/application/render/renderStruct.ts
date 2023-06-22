@@ -63,6 +63,7 @@ function convertAllSGroupAttachmentPointsToRGroupAttachmentPoints(
 ) {
   struct.sgroups.forEach((sgroup) => {
     sgroup.getAttachmentPoints().forEach((attachmentPoint) => {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const attachmentPointAtom = struct.atoms.get(attachmentPoint.atomId)!
       attachmentPointAtom.setRGAttachmentPointForDisplayPurpose()
     })

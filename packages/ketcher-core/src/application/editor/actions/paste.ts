@@ -196,7 +196,7 @@ function getStructCenter(struct: Struct): Vec2 {
   // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
   if (struct.rxnPluses.size > 0) return struct.rxnPluses.get(0)!.pp
   if (struct.simpleObjects.size > 0)
-      // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
+    // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
     return struct.simpleObjects.get(0)!.center()
   // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
   if (struct.texts.size > 0) return struct.texts.get(0)!.position

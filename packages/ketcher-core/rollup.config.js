@@ -72,7 +72,7 @@ const config = {
       extensions: extensions.map((ext) => ext.trimStart('.')),
       comments: 'none',
       include: includePattern
-    }),
+    })
     // ...(isProduction ? [strip({ include: includePattern })] : [])
   ]
 }

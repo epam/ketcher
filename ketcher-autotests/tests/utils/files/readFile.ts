@@ -15,8 +15,8 @@ export async function readFileContents(filePath: string) {
   const resolvedFilePath = path.resolve(process.cwd(), filePath);
   console.log('resolvedFilePath', resolvedFilePath);
   const fileContent = await fs.promises.readFile(resolvedFilePath, 'utf8');
-  console.log('fileContent', fileContent)
-  return fileContent
+  console.log('fileContent', fileContent);
+  return fileContent;
 }
 
 export async function openFile(filename: string, page: Page) {
@@ -38,9 +38,10 @@ export async function openFile(filename: string, page: Page) {
 export async function openFileAndAddToCanvas(filename: string, page: Page) {
   await selectTopPanelButton(TopPanelButton.Open, page);
   await openFile(filename, page);
-  await waitForLoad(page, () => {
-    pressButton(page, 'Add to Canvas');
-  });
+  // await waitForLoad(page, () => {
+  //
+  // });
+  await pressButton(page, 'Add to Canvas');
 
   await clickInTheMiddleOfTheScreen(page);
 }
@@ -81,18 +82,15 @@ export async function receiveCmlFileComparisonData(
   expectedCmlFileName: string
 ) {
   const filePath = path.resolve(process.cwd(), expectedCmlFileName);
-  const cmlFileExpected = (await readFileContents(filePath))
-    .split('\n');
+  const cmlFileExpected = (await readFileContents(filePath)).split('\n');
   const data = await page.evaluate(async () => {
-      return {
-        // cml: await window.ketcher.getCml(),
-        struct: window.ketcher.editor.struct()
-      }
-    })
-  const cmlFile = '1\n2\n3'.split(
-    '\n'
-  );
-  console.log('data struct', data.struct)
+    return {
+      // cml: await window.ketcher.getCml(),
+      struct: window.ketcher.editor.struct(),
+    };
+  });
+  const cmlFile = '1\n2\n3'.split('\n');
+  console.log('data struct', data.struct);
 
   return { cmlFile, cmlFileExpected };
 }

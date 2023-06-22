@@ -43,7 +43,7 @@ test.describe('CML files', () => {
     await openFileAddToCanvasTakeScreenshot(page, 'cml-1945.cml');
     // check that structure opened from file is displayed correctly
 
-    page.on('console', msg => console.log(msg.text()));
+    page.on('console', (msg) => console.log(msg.text()));
 
     const { cmlFile, cmlFileExpected } = await receiveCmlFileComparisonData(
       page,

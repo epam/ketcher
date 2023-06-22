@@ -191,10 +191,14 @@ function getStructCenter(struct: Struct): Vec2 {
     })
     return new Vec2((xmin + xmax) / 2, (ymin + ymax) / 2) // TODO: check
   }
+  // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
   if (struct.rxnArrows.size > 0) return struct.rxnArrows.get(0)!.center()
+  // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
   if (struct.rxnPluses.size > 0) return struct.rxnPluses.get(0)!.pp
   if (struct.simpleObjects.size > 0)
+      // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
     return struct.simpleObjects.get(0)!.center()
+  // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
   if (struct.texts.size > 0) return struct.texts.get(0)!.position
 
   return new Vec2(0, 0)

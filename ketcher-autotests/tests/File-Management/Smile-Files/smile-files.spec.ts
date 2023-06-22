@@ -37,9 +37,10 @@ async function clearCanvasAndPasteSmiles(page: Page, smiles: string) {
   await selectTopPanelButton(TopPanelButton.Open, page);
   await page.getByText('Paste from clipboard').click();
   await pasteFromClipboard(page, smiles);
-  await waitForLoad(page, () => {
-    pressButton(page, 'Add to Canvas');
-  });
+  // await waitForLoad(page, () => {
+  //   pressButton(page, 'Add to Canvas');
+  // });
+  await pressButton(page, 'Add to Canvas');
   await clickInTheMiddleOfTheScreen(page);
 }
 

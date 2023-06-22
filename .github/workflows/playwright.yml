@@ -13,7 +13,7 @@ env:
   # See: https://github.com/orgs/community/discussions/25228#discussioncomment-3246960
   CI: false
   MODE: standalone
-  KETCHER_URL: http://host.docker.internal:4002
+  KETCHER_URL: https://rc.test.lifescience.opensource.epam.com
   DOCKER: true
   IGNORE_UNSTABLE_TESTS: true
 jobs:

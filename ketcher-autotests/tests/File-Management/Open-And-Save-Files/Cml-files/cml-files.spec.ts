@@ -43,7 +43,7 @@ test.describe('CML files', () => {
     await openFileAddToCanvasTakeScreenshot(page, 'cml-1945.cml');
     // check that structure opened from file is displayed correctly
 
-    page.on('console', msg => console.log(msg.text()));
+    page.on('console', (msg) => console.log(msg.text()));
 
     const { cmlFile, cmlFileExpected } = await receiveCmlFileComparisonData(
       page,
@@ -83,7 +83,7 @@ test.describe('CML files', () => {
 
     const { cmlFile, cmlFileExpected } = await receiveCmlFileComparisonData(
       page,
-      'tests/test-data/Cml-1947.cml'
+      'tests/test-data/cml-1947.cml'
     );
     // comparing cml file with golden cml file
 
@@ -103,7 +103,7 @@ test.describe('CML files', () => {
 
     const { cmlFile, cmlFileExpected } = await receiveCmlFileComparisonData(
       page,
-      'tests/test-data/Cml-1948.cml'
+      'tests/test-data/cml-1948.cml'
     );
     // comparing cml file with golden cml file
 

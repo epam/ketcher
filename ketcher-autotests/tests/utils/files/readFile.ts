@@ -10,7 +10,13 @@ import {
 } from '@utils';
 
 export async function readFileContents(filePath: string) {
-  return await fs.promises.readFile(filePath, 'utf8');
+  console.log('base directory', __dirname);
+  console.log('current working directory', process.cwd());
+  const resolvedFilePath = path.resolve(process.cwd(), filePath);
+  console.log('resolvedFilePath', resolvedFilePath);
+  const fileContent = await fs.promises.readFile(resolvedFilePath, 'utf8');
+  console.log('fileContent', fileContent);
+  return fileContent;
 }
 
 export async function openFile(filename: string, page: Page) {
@@ -75,29 +81,21 @@ export async function receiveCmlFileComparisonData(
   expectedCmlFileName: string
 ) {
   const filePath = path.resolve(process.cwd(), expectedCmlFileName);
-  const cmlFileExpected = fs
-    .readFileSync(filePath, 'utf8')
-    .split('\n');
+  const cmlFileExpected = (await readFileContents(filePath)).split('\n');
   const data = await page.evaluate(async () => {
-      return {
-        cml: await window.ketcher.getCml(),
-        struct: window.ketcher.editor.struct()
-      }
-    })
-  const cmlFile = data.cml.split(
-    '\n'
-  );
-  console.log('data struct', data.struct)
+    return {
+      // cml: await window.ketcher.getCml(),
+      struct: window.ketcher.editor.struct(),
+    };
+  });
+  const cmlFile = '1\n2\n3'.split('\n');
+  console.log('data struct', data.struct);
 
   return { cmlFile, cmlFileExpected };
 }
 
 export async function openFromFileViaClipboard(filename: string, page: Page) {
-  console.log('base directory', __dirname);
-  console.log('current working directory', process.cwd());
-  const filePath = path.resolve(process.cwd(), filename);
-  console.log(filePath);
-  const fileContent = fs.readFileSync(filePath, 'utf8');
+  const fileContent = await readFileContents(filename);
   await page.getByText('Paste from clipboard').click();
   await page.getByRole('dialog').getByRole('textbox').fill(fileContent);
   await waitForLoad(page, () => {

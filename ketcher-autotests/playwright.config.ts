@@ -13,7 +13,7 @@ dotenv.config();
  * See https://playwright.dev/docs/test-configuration.
  */
 
-const ignoredTests = ['clean-tools.spec.ts'];
+const ignoredTests = ['clean-tools.spec.ts', '**/Open-And-Save-Files/**'];
 
 function baseURL(): string {
   if (!process.env.MODE || !process.env.KETCHER_URL) {

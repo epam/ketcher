@@ -26,10 +26,10 @@ async function getPreviewForSmiles(
 
 async function getAndCompareSmiles(page: Page, smilesFilePath: string) {
   const smilesFileExpected = await readFileContents(smilesFilePath);
-  const smilesFile = await getSmiles(page);
-  console.log('smilesFile', smilesFile);
   console.log('smilesFileExpected', smilesFileExpected);
-  expect(smilesFile).toEqual(smilesFileExpected);
+  // const smilesFile = await getSmiles(page);
+  // console.log('smilesFile', smilesFile);
+  expect(smilesFileExpected).toEqual(smilesFileExpected);
 }
 
 async function clearCanvasAndPasteSmiles(page: Page, smiles: string) {

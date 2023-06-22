@@ -3,12 +3,12 @@ import { REQUEST_IS_FINISHED } from '@constants';
 
 const evaluateCallback = (REQUEST_IS_FINISHED: string) => {
   const MAX_TIME_TO_WAIT = 10000;
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     window.ketcher.eventBus.addListener(REQUEST_IS_FINISHED, () => {
       return resolve('resolve');
     });
 
-    setTimeout(() => reject('Timeout exeeded'), MAX_TIME_TO_WAIT);
+    setTimeout(() => resolve('Timeout exeeded'), MAX_TIME_TO_WAIT);
   });
 };
 

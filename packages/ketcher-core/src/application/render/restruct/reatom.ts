@@ -236,13 +236,14 @@ class ReAtom extends ReObject {
     if (!this.hasAttachmentPoint()) {
       return []
     }
-    const hasOnlyOneBond = this.a.neighbors.length === 1
     if (this.isTrisectionAttachmentPoint()) {
       return trisectionLargestSector(this, struct)
-    } else if (hasOnlyOneBond) {
-      return [getAttachmentDirectionForOnlyOneBond(this, struct)]
     } else {
-      return [bisectLargestSector(this, struct)]
+      const hasOnlyOneBond = this.a.neighbors.length === 1
+      const singleDirection = hasOnlyOneBond
+        ? getAttachmentDirectionForOnlyOneBond(this, struct)
+        : bisectLargestSector(this, struct)
+      return [singleDirection]
     }
   }
 

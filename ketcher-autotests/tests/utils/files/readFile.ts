@@ -41,7 +41,6 @@ export async function openFileAndAddToCanvas(filename: string, page: Page) {
   await waitForLoad(page, () => {
     pressButton(page, 'Add to Canvas');
   });
-  await pressButton(page, 'Add to Canvas');
 
   await clickInTheMiddleOfTheScreen(page);
 }

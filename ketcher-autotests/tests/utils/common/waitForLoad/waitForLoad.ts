@@ -29,9 +29,8 @@ export const waitForLoad = async (
   page: Page,
   callback: Function
 ): Promise<string> => {
-  callback();
-
   await page.waitForFunction(() => window.ketcher);
+  callback();
   const promise = (await page.evaluate(
     evaluateCallback,
     REQUEST_IS_FINISHED

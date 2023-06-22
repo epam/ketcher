@@ -30,7 +30,10 @@ export const waitForLoad = async (page: Page, callback: Function) => {
   await page.waitForFunction(() => window.ketcher);
   // const promise = page.evaluate(evaluateCallback, REQUEST_IS_FINISHED);
   callback();
-  await delay(DELAY_IN_SECONDS.FIVE);
+
+  await page.waitForSelector('.loading-spinner', { state: 'attached' });
+  // Wait for the loading overlay to disappear
+  await page.waitForSelector('.loading-spinner', { state: 'detached' });
 
   // await page.waitForSelector('.loading-spinner', { state: 'detached' });
 

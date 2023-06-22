@@ -14,18 +14,24 @@
  * limitations under the License.
  ***************************************************************************/
 
-export const KETCHER_INIT_EVENT_NAME = 'ketcher-init'
+import { updateCursorPosition } from './common'
+import { throttle } from 'lodash'
 
-export const KETCHER_SAVED_SETTINGS_KEY = 'ketcher_editor_saved_settings'
+const MOUSE_MOVE_THROTTLE_TIMEOUT = 300
 
-export const MODES = {
-  FG: 'fg'
+const handleMouseMove = (dispatch, event: MouseEvent) => {
+  dispatch(updateCursorPosition(event.clientX, event.clientY))
 }
 
-export const STRUCT_TYPE = {
-  atoms: 'atoms',
-  bonds: 'bonds'
-}
+export function initMouseListener(element) {
+  return function (dispatch) {
+    const throttledHandleMouseMove = throttle(
+      handleMouseMove,
+      MOUSE_MOVE_THROTTLE_TIMEOUT
+    )
 
-export const KETCHER_ROOT_NODE_CLASS_NAME = 'Ketcher-root'
-export const KETCHER_ROOT_NODE_CSS_SELECTOR = `.${KETCHER_ROOT_NODE_CLASS_NAME}`
+    element.addEventListener('pointermove', (event: MouseEvent) =>
+      throttledHandleMouseMove(dispatch, event)
+    )
+  }
+}

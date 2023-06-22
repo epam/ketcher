@@ -14,18 +14,20 @@
  * limitations under the License.
  ***************************************************************************/
 
-export const KETCHER_INIT_EVENT_NAME = 'ketcher-init'
+import { useSelector } from 'react-redux'
 
-export const KETCHER_SAVED_SETTINGS_KEY = 'ketcher_editor_saved_settings'
+import { AbbreviationLookup } from './AbbreviationLookup'
+import { useOptions } from './hooks/useOptions'
 
-export const MODES = {
-  FG: 'fg'
+import { selectIsAbbreviationLookupOpen } from '../../state/abbreviationLookup/selectors'
+
+export const AbbreviationLookupContainer = () => {
+  const isOpen = useSelector(selectIsAbbreviationLookupOpen)
+  const abbreviationOptions = useOptions()
+
+  if (!isOpen) {
+    return null
+  }
+
+  return <AbbreviationLookup options={abbreviationOptions} />
 }
-
-export const STRUCT_TYPE = {
-  atoms: 'atoms',
-  bonds: 'bonds'
-}
-
-export const KETCHER_ROOT_NODE_CLASS_NAME = 'Ketcher-root'
-export const KETCHER_ROOT_NODE_CSS_SELECTOR = `.${KETCHER_ROOT_NODE_CLASS_NAME}`

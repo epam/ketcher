@@ -14,18 +14,32 @@
  * limitations under the License.
  ***************************************************************************/
 
-export const KETCHER_INIT_EVENT_NAME = 'ketcher-init'
+import { Template } from '../template/TemplateTable'
+import { Element } from 'ketcher-core'
 
-export const KETCHER_SAVED_SETTINGS_KEY = 'ketcher_editor_saved_settings'
-
-export const MODES = {
-  FG: 'fg'
+export enum AbbreviationType {
+  Template = 'Template',
+  Element = 'Element'
 }
 
-export const STRUCT_TYPE = {
-  atoms: 'atoms',
-  bonds: 'bonds'
+export interface AbbreviationGenericOption {
+  type: AbbreviationType
+  loweredName: string
+  loweredAbbreviation?: string
+  label: string
+  loweredLabel: string
 }
 
-export const KETCHER_ROOT_NODE_CLASS_NAME = 'Ketcher-root'
-export const KETCHER_ROOT_NODE_CSS_SELECTOR = `.${KETCHER_ROOT_NODE_CLASS_NAME}`
+export interface AbbreviationTemplateOption extends AbbreviationGenericOption {
+  type: AbbreviationType.Template
+  template: Template
+}
+
+export interface AbbreviationElementOption extends AbbreviationGenericOption {
+  type: AbbreviationType.Element
+  element: Element
+}
+
+export type AbbreviationOption =
+  | AbbreviationTemplateOption
+  | AbbreviationElementOption

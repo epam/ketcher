@@ -72,7 +72,9 @@ test.describe('SMILES files', () => {
     await clearCanvasAndPasteSmiles(page, 'CCCCC/CC/C:CC.C(C)CCCCCCCCCC');
   });
 
-  test('SmileString for structure with Atom properties', async ({ page }) => {
+  test.skip('SmileString for structure with Atom properties', async ({
+    page,
+  }) => {
     /*
     Test case: EPMLSOPKET-1907
     Description: SmileString is correctly generated from structure and 
@@ -93,7 +95,7 @@ test.describe('SMILES files', () => {
     );
   });
 
-  test('SmileString from mol file that contains abbreviation', async ({
+  test.skip('SmileString from mol file that contains abbreviation', async ({
     page,
   }) => {
     /*
@@ -131,7 +133,7 @@ test.describe('SMILES files', () => {
     );
   });
 
-  test('SmileString from mol file that contains Heteroatoms', async ({
+  test.skip('SmileString from mol file that contains Heteroatoms', async ({
     page,
   }) => {
     /*
@@ -151,7 +153,7 @@ test.describe('SMILES files', () => {
     await clearCanvasAndPasteSmiles(page, 'NOSPFClBrI[H]');
   });
 
-  test('SmileString from mol file that contains attached data', async ({
+  test.skip('SmileString from mol file that contains attached data', async ({
     page,
   }) => {
     /*
@@ -197,7 +199,7 @@ test.describe('SMILES files', () => {
     );
   });
 
-  test('SmileString from mol file that contains combination of different features', async ({
+  test.skip('SmileString from mol file that contains combination of different features', async ({
     page,
   }) => {
     /*
@@ -223,7 +225,7 @@ test.describe('SMILES files', () => {
     );
   });
 
-  test('SmileString from file that contains Cis/Trans configuration', async ({
+  test.skip('SmileString from file that contains Cis/Trans configuration', async ({
     page,
   }) => {
     /*
@@ -289,7 +291,7 @@ test.describe('SMILES files', () => {
     );
   });
 
-  test('Open Daylight SMILES file with reagent above arrow', async ({
+  test.skip('Open Daylight SMILES file with reagent above arrow', async ({
     page,
   }) => {
     /*

@@ -28,14 +28,10 @@ const evaluateCallback = (REQUEST_IS_FINISHED: string) => {
 export const waitForLoad = async (
   page: Page,
   callback: Function
-): Promise<string> => {
-  callback();
-
+): Promise<unknown> => {
   await page.waitForFunction(() => window.ketcher);
-  const promise = (await page.evaluate(
-    evaluateCallback,
-    REQUEST_IS_FINISHED
-  )) as Promise<string>;
+  const promise = page.evaluate(evaluateCallback, REQUEST_IS_FINISHED);
+  callback();
 
   return promise;
 };

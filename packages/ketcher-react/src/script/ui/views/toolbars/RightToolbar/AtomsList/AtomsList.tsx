@@ -22,7 +22,6 @@ import { UiActionAction } from '../../../../action'
 import { forwardRef } from 'react'
 import { shortcutStr } from '../../shortcutStr'
 import styled from '@emotion/styled'
-import α from 'color-alpha'
 
 interface AtomsListProps {
   atoms: string[]

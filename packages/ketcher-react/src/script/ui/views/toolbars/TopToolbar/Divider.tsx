@@ -15,15 +15,31 @@
  ***************************************************************************/
 
 import styled from '@emotion/styled'
+import style from '../../../../../components/styles/consts'
 
 const VerticalDivider = styled('hr')`
-  margin: 0px 3px;
+  margin: 0px 6px;
   flex-shrink: 0;
   height: 45%;
   align-self: center;
   border-width: 0px thin 0px 0px;
   border-style: solid;
-  border-color: #b4b9d6; // TODO: use variable
+  border-color: ${style.color['grey-5']};
+`
+
+const HorizontalDividerElement = styled('hr')`
+  margin: 0px 6px;
+  -webkit-flex-shrink: 0;
+  -ms-flex-negative: 0;
+  flex-shrink: 0;
+  width: 70%;
+  -webkit-align-self: center;
+  -ms-flex-item-align: center;
+  align-self: center;
+  border: 1px solid;
+  border-color: ${style.color['grey-4']};
 `
 
 export const Divider = () => <VerticalDivider />
+
+export const HorizontalDivider = () => <HorizontalDividerElement />

@@ -44,11 +44,12 @@ const StyledAtom = styled(Atom)((props: any) => {
   const atomColor = props?.el?.label ? ElementColor[props.el.label] : '#000'
   return `
        color: ${atomColor};
-       border: 1px solid ${atomColor};
+       border: 1px solid transparent;
        background-color: transparent;
        cursor: pointer;
        &:hover {
          background-color: ${α(atomColor, 0.2)};
+         border-color: ${atomColor};
        }
        &:active {
          color: #fff;

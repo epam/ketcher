@@ -18,7 +18,9 @@ const color = {
   white: '#FFFFFF',
   green: '#167782',
   lightGreen: '#188794',
-  graphite: '#333333'
+  graphite: '#333333',
+  'grey-4': '#cad3dd',
+  'grey-5': '#b4b9d6'
 } as const
 
 const text = {
@@ -46,5 +48,6 @@ const border = {
 export default {
   background,
   border,
+  color,
   text
 }

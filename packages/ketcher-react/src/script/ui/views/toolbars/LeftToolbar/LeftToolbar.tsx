@@ -121,7 +121,8 @@ const LeftToolbar = (props: Props) => {
             items={[
               { id: 'hand' },
               { id: 'select', options: selectOptions },
-              { id: 'erase' }
+              { id: 'erase' },
+              { id: 'shapes', options: shapeOptions }
             ]}
           />
         </div>
@@ -138,21 +139,18 @@ const LeftToolbar = (props: Props) => {
                 ...bondStereo
               ]
             },
-            { id: 'chain' }
+            { id: 'chain' },
+            { id: 'charge-plus' },
+            { id: 'charge-minus' },
+            { id: 'enhanced-stereo' }
           ]}
         />
-
-        <Group
-          className={classes.groupItem}
-          items={[{ id: 'enhanced-stereo' }]}
-        />
-
-        <Group
-          className={classes.groupItem}
-          items={[{ id: 'charge-plus' }, { id: 'charge-minus' }]}
-        />
-
-        <Group className={classes.groupItem} items={[{ id: 'sgroup' }]} />
+        <div className={classes.listener} ref={sizeRef}>
+          <Group
+            className={classes.groupItem}
+            items={[{ id: 'sgroup' }, { id: 'rgroup', options: rGroupOptions }]}
+          />
+        </div>
 
         <Group
           className={classes.groupItem}
@@ -164,17 +162,6 @@ const LeftToolbar = (props: Props) => {
               options: mappingOptions
             }
           ]}
-        />
-        <div className={classes.listener} ref={sizeRef}>
-          <Group
-            className={classes.groupItem}
-            items={[{ id: 'rgroup', options: rGroupOptions }]}
-          />
-        </div>
-
-        <Group
-          className={classes.groupItem}
-          items={[{ id: 'shapes', options: shapeOptions }]}
         />
 
         <div ref={endRef}>

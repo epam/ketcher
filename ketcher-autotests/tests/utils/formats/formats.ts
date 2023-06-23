@@ -10,7 +10,10 @@ export async function getCml(page: Page) {
 }
 
 export async function getSmiles(page: Page) {
-  return await page.evaluate(() => window.ketcher.getSmiles());
+  await page.waitForFunction(() => window.ketcher);
+  return await page.evaluate(() => {
+    window.ketcher.getSmiles();
+  });
 }
 
 export async function getExtendedSmiles(page: Page) {

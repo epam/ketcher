@@ -20,12 +20,12 @@ describe('Rotate controller', () => {
       tool,
       render: { paper }
     } as any)
+    let visibleAtoms = [1]
     // @ts-ignore
     controller.rotateTool.getCenter = () => [new Vec2(), visibleAtoms]
     expect(tool()).toBeInstanceOf(SelectTool)
     expect(selection()).toBe(null)
 
-    let visibleAtoms = [1]
     // @ts-ignore
     controller.show()
     expect(paper).toBeCalledTimes(0)

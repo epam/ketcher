@@ -121,8 +121,7 @@ const LeftToolbar = (props: Props) => {
             items={[
               { id: 'hand' },
               { id: 'select', options: selectOptions },
-              { id: 'erase' },
-              { id: 'shapes', options: shapeOptions }
+              { id: 'erase' }
             ]}
           />
         </div>
@@ -165,7 +164,10 @@ const LeftToolbar = (props: Props) => {
         />
 
         <div ref={endRef}>
-          <Group className={classes.groupItem} items={[{ id: 'text' }]} />
+          <Group
+            className={classes.groupItem}
+            items={[{ id: 'shapes', options: shapeOptions }, { id: 'text' }]}
+          />
         </div>
       </div>
       {height && scrollRef?.current?.scrollHeight > height && (

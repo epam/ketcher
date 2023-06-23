@@ -28,7 +28,7 @@ const VerticalDivider = styled('hr')`
 `
 
 const HorizontalDividerElement = styled('hr')`
-  margin: 0px 6px;
+  margin: 6px 0px;
   -webkit-flex-shrink: 0;
   -ms-flex-negative: 0;
   flex-shrink: 0;

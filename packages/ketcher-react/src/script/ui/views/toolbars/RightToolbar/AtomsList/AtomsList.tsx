@@ -48,18 +48,17 @@ const StyledAtom = styled(Atom)((props: any) => {
        background-color: transparent;
        cursor: pointer;
        &:hover {
-         background-color: ${α(atomColor, 0.2)};
-         border-color: ${atomColor};
+         background-color: #EFF2F5;
        }
        &:active {
-         color: #fff;
-         background-color: ${α(atomColor, 0.8)};
+        border-color: ${atomColor};
+        background-color: #EFF2F5;
        }
        &.selected {
-         color: #fff;
-         background-color: ${α(atomColor, 0.8)};
+        background-color: #EFF2F5;
+        border-color: #167782;
          &:hover {
-           background-color: ${atomColor};
+          background-color: #EFF2F5;
          }
        }
    `

@@ -24,7 +24,7 @@ const VerticalDivider = styled('hr')`
   align-self: center;
   border-width: 0px thin 0px 0px;
   border-style: solid;
-  border-color: ${style.color['grey-5']};
+  border-color: ${style.color.darkGrey};
 `
 
 const HorizontalDividerElement = styled('hr')`
@@ -37,7 +37,7 @@ const HorizontalDividerElement = styled('hr')`
   -ms-flex-item-align: center;
   align-self: center;
   border: 1px solid;
-  border-color: ${style.color['grey-4']};
+  border-color: ${style.color.grey};
 `
 
 export const Divider = () => <VerticalDivider />

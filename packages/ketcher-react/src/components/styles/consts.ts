@@ -16,11 +16,12 @@
 
 const color = {
   white: '#FFFFFF',
+  primaryWhite: 'EFF2F5',
   green: '#167782',
   lightGreen: '#188794',
   graphite: '#333333',
-  'grey-4': '#cad3dd',
-  'grey-5': '#b4b9d6'
+  grey: '#cad3dd',
+  darkGrey: '#b4b9d6'
 } as const
 
 const text = {

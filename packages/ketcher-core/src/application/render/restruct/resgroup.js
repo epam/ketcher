@@ -500,10 +500,12 @@ function getHighlighPathInfo(sgroup, render) {
   const size = options.contractedFunctionalGroupSize
   let startX = (b0.x + a0.x) / 2 - size / 2
   let startY = (a1.y + a0.y) / 2 - size / 2
-  const { position } = sgroup.getContractedPosition(render.ctab.molecule)
-  if (position) {
+  const { position: contractedPosition } = sgroup.getContractedPosition(
+    render.ctab.molecule
+  )
+  if (contractedPosition) {
     const shift = new Vec2(size / 2, size / 2, 0)
-    const hoverPp = Vec2.diff(position.scaled(40), shift)
+    const hoverPp = Vec2.diff(contractedPosition.scaled(40), shift)
     startX = hoverPp.x
     startY = hoverPp.y
   }

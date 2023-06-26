@@ -160,11 +160,16 @@ export class SGroup {
   }
 
   isExpanded(): boolean {
-    return this.data.expanded
+    // flag ".data.expanded" exists only for the SuperAtom
+    if (SGroup.isSuperAtom()) {
+      return Boolean(this.data.expanded)
+    } else {
+      return true
+    }
   }
 
   isContracted(): boolean {
-    return !this.data.expanded
+    return !this.isExpanded()
   }
 
   calculatePP(struct: Struct): void {

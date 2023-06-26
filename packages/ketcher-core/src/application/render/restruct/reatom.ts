@@ -101,17 +101,27 @@ class ReAtom extends ReObject {
     return new Box2Abs(this.a.pp, this.a.pp)
   }
 
+  /**
+   * Why?
+   * We need to return Bounding box for the attachment points for this atom,
+   * to be able to correctly calculate boundaries for autoscaling and positioning
+   */
   getVBoxObjOfAttachmentPoint(render: Render): Box2Abs | null {
-    let result: Box2Abs | null = null
+    let accumulatedBBox: Box2Abs | null = null
     const directionVectors = this.getAttachmentPointDirectionVectors(
       render.ctab.molecule
     )
     directionVectors.forEach((directionVector) => {
-      const _vector = this.a.pp.add(directionVector)
-      const bbox = new Box2Abs(_vector, _vector)
-      result = result ? Box2Abs.union(result, bbox) : bbox
+      const attachmentPointEndPosition = this.a.pp.add(directionVector)
+      const attachmentPointEndBoundingBox = new Box2Abs(
+        attachmentPointEndPosition,
+        attachmentPointEndPosition
+      )
+      accumulatedBBox = accumulatedBBox
+        ? Box2Abs.union(accumulatedBBox, attachmentPointEndBoundingBox)
+        : attachmentPointEndBoundingBox
     })
-    return result
+    return accumulatedBBox
   }
 
   drawHover(render: Render) {
@@ -228,7 +238,7 @@ class ReAtom extends ReObject {
   }
 
   private isTrisectionAttachmentPoint(): boolean {
-    // if trisection (attpnt === 3) - we split the attachment point vector to two vectors
+    // in this case we should split the attachment point vector to two vectors
     return this.a.attpnt === 3
   }
 
@@ -240,10 +250,10 @@ class ReAtom extends ReObject {
       return trisectionLargestSector(this, struct)
     } else {
       const hasOnlyOneBond = this.a.neighbors.length === 1
-      const singleDirection = hasOnlyOneBond
+      const directionVector = hasOnlyOneBond
         ? getAttachmentDirectionForOnlyOneBond(this, struct)
         : bisectLargestSector(this, struct)
-      return [singleDirection]
+      return [directionVector]
     }
   }
 

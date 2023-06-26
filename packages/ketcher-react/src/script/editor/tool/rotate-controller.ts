@@ -146,14 +146,14 @@ class RotateController {
       this.editor
     )
 
-    const { texts, rxnArrows, rxnPluses, bonds } = this.editor.selection() || {}
+    const { texts, rxnArrows, rxnPluses } = this.editor.selection() || {}
 
     const isMoreThanOneItemBeingSelected =
       visibleAtoms.concat(texts || [], rxnArrows || [], rxnPluses || [])
         .length > 1
 
     const enable =
-      (isMoreThanOneItemBeingSelected || rxnArrows?.length) &&
+      isMoreThanOneItemBeingSelected &&
       this.editor.tool() instanceof SelectTool &&
       originalCenter
 
@@ -168,7 +168,7 @@ class RotateController {
       texts,
       rxnArrows,
       rxnPluses,
-      bonds
+      this.editor.selection()?.bonds
     )
 
     this.handleCenter = new Vec2(

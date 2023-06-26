@@ -14,9 +14,5 @@
  * limitations under the License.
  ***************************************************************************/
 
-export const supportedSGroupTypes = {
-  MUL: 'MUL',
-  SRU: 'SRU',
-  SUP: 'SUP',
-  DAT: 'DAT'
-}
+export * from './AbbreviationLookup'
+export * from './AbbreviationLookup.container'

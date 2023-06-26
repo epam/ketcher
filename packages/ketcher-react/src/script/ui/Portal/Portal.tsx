@@ -17,6 +17,7 @@
 import { CSSProperties, Component, ReactNode } from 'react'
 
 import ReactDOM from 'react-dom'
+import { KETCHER_ROOT_NODE_CSS_SELECTOR } from 'src/constants'
 
 const CLASSNAME_SEPARATOR = ' '
 
@@ -82,12 +83,16 @@ class Portal extends Component<Props> {
   }
 
   private addElementInDOM() {
-    document.querySelector('.Ketcher-root')?.appendChild(this.element)
+    document
+      .querySelector(KETCHER_ROOT_NODE_CSS_SELECTOR)
+      ?.appendChild(this.element)
     this.isElementInDom = true
   }
 
   private removeElementFromDOM() {
-    document.querySelector('.Ketcher-root')?.removeChild(this.element)
+    document
+      .querySelector(KETCHER_ROOT_NODE_CSS_SELECTOR)
+      ?.removeChild(this.element)
     this.isElementInDom = false
   }
 

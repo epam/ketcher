@@ -20,6 +20,8 @@ import classes from './cliparea.module.less'
 
 const ieCb = window.clipboardData
 
+export const CLIP_AREA_BASE_CLASS = 'cliparea'
+
 class ClipArea extends Component {
   constructor(props) {
     super(props)
@@ -91,7 +93,7 @@ class ClipArea extends Component {
     return (
       <textarea
         ref={this.textAreaRef}
-        className={clsx('cliparea', classes.cliparea)}
+        className={clsx(CLIP_AREA_BASE_CLASS, classes.cliparea)}
         contentEditable
         autoFocus // eslint-disable-line jsx-a11y/no-autofocus
         suppressContentEditableWarning={true}

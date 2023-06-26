@@ -1,7 +1,5 @@
 {
   "root": false,
   "extends": "plugin:jest/recommended",
-  "rules": {
-    "@typescript-eslint/no-explicit-any": "error"
-  }
+  "rules": {}
 }

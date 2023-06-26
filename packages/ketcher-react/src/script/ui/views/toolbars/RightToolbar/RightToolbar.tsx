@@ -28,6 +28,7 @@ import classes from './RightToolbar.module.less'
 import clsx from 'clsx'
 import { useInView } from 'react-intersection-observer'
 import { useResizeObserver } from '../../../../../hooks'
+import { HorizontalDivider } from '../TopToolbar/Divider'
 
 const Group: FC<{ className?: string } & PropsWithChildren> = ({
   children,
@@ -67,8 +68,15 @@ const RightToolbar = (props: Props) => {
 
   return (
     <div className={clsx(classes.root, className)} ref={ref}>
-      <div className={classes.buttons} ref={scrollRef}>
-        <Group className={classes.atomsList}>
+      <div ref={scrollRef}>
+        <Group
+          className={clsx(
+            classes.atomsList,
+            classes.buttons,
+            classes.groupItem
+          )}
+        >
+          <ToolbarGroupItem id="period-table" {...rest} />
           <AtomsList
             ref={startRef}
             atoms={basicAtoms.slice(0, 1)}
@@ -76,20 +84,25 @@ const RightToolbar = (props: Props) => {
             onAction={onAction}
           />
           <AtomsList
-            atoms={basicAtoms.slice(1)}
+            atoms={basicAtoms.slice(1, 5)}
+            active={active}
+            onAction={onAction}
+          />
+          <HorizontalDivider></HorizontalDivider>
+          <AtomsList
+            atoms={basicAtoms.slice(5)}
             active={active}
             onAction={onAction}
           />
           <AtomsList atoms={freqAtoms} active={active} onAction={onAction} />
-          <ToolbarGroupItem id="period-table" {...rest} />
         </Group>
 
-        <Group>
+        <Group className={clsx(classes.buttons, classes.groupItem)}>
           <div ref={sizeRef}>
-            <ToolbarGroupItem id="any-atom" {...rest} />
-            <div ref={endRef}>
+            <div ref={endRef} className={classes.button}>
               <ToolbarGroupItem id="extended-table" {...rest} />
             </div>
+            <ToolbarGroupItem id="any-atom" {...rest} />
           </div>
         </Group>
       </div>

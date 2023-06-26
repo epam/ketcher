@@ -324,7 +324,7 @@
   color: @main-color;
   background-color: @color-background-primary;
   border-color: @border-color;
-  border-radius: 2px;
+  border-radius: 4px;
   user-select: none;
 
   &:active {
@@ -386,35 +386,37 @@
 
 .button-primary() {
   .button-common-styles();
-    color: @color-text-light;
-    background-color: @color-primary;
-    border: 1px solid transparent;
+  color: @color-text-light;
+  background-color: @color-primary;
+  border: 1px solid transparent;
 
-    &:hover, &:active {
-      background-color: @color-button-primary-clicked;
-    }
+  &:hover,
+  &:active {
+    background-color: @color-button-primary-clicked;
+  }
 
-    &:disabled {
-      color: @color-button-secondary-hover;
-      background-color: @color-grey-3;
-    }
+  &:disabled {
+    color: @color-button-secondary-hover;
+    background-color: @color-grey-3;
+  }
 }
 
 .button-secondary() {
   .button-common-styles();
-    color: @color-text-secondary;
-    border: 1px solid @color-text-secondary;
-    background-color: @color-background-primary;
+  color: @color-text-secondary;
+  border: 1px solid @color-text-secondary;
+  background-color: @color-background-primary;
 
-    &:hover, &:active {
-      color: @color-button-secondary-hover;
-      border: 1px solid @color-button-secondary-hover;
-    }
+  &:hover,
+  &:active {
+    color: @color-button-secondary-hover;
+    border: 1px solid @color-button-secondary-hover;
+  }
 
-    &:disabled {
-      color: fade(@color-text-secondary, 70%);
-      border: 1px solid fade(@color-text-secondary, 70%);
-    }
+  &:disabled {
+    color: fade(@color-text-secondary, 70%);
+    border: 1px solid fade(@color-text-secondary, 70%);
+  }
 }
 
 .warning() {

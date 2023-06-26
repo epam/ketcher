@@ -72,7 +72,9 @@ const ControlsPanel = styled('div')`
   align-items: center;
   gap: 0px;
   height: 36px;
-  padding: 0px 8px;
+  padding: 0px 22px;
+  background-color: #ffffff;
+  box-shadow: 0px 2px 5px rgba(103, 104, 132, 0.15);
 
   .group {
     display: flex;
@@ -86,8 +88,8 @@ const ControlsPanel = styled('div')`
 
   @media only screen and (min-width: 1024px) {
     height: 40px;
-    gap: 4px;
-
+    gap: 0px;
+    padding-bottom: 10px;
     .group {
       gap: 4px;
     }

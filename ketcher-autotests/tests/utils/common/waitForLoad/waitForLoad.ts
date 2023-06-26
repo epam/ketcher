@@ -30,7 +30,7 @@ export const waitForLoad = async (page: Page, callback: Function) => {
   await page.waitForFunction(() => window.ketcher);
   // const promise = page.evaluate(evaluateCallback, REQUEST_IS_FINISHED);
   callback();
-  await delay(DELAY_IN_SECONDS.ONE);
+
   if (await page.locator('.loading-spinner').isVisible()) {
     await page.waitForSelector('.loading-spinner', { state: 'detached' });
   }

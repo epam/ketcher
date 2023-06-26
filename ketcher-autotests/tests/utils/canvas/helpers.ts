@@ -70,6 +70,8 @@ export async function getCoordinatesTopAtomOfBenzeneRing(page: Page) {
 }
 
 export async function takeEditorScreenshot(page: Page) {
+  await page.waitForSelector('.StructEditor-module_intermediateCanvas');
+
   const editor = page.locator(
     '[class*="StructEditor-module_intermediateCanvas"]'
   );

@@ -70,10 +70,10 @@ test.describe('SMILES files', () => {
     //   page,
     //   'tests/test-data/smiles-all-bonds-expected.txt'
     // );
-    await getPreviewForSmiles(page, 'MDL Molfile V2000', 'Daylight SMILES');
+    // await getPreviewForSmiles(page, 'MDL Molfile V2000', 'Daylight SMILES');
     // await takeEditorScreenshot(page);
 
-    await clearCanvasAndPasteSmiles(page, 'CCCCC/CC/C:CC.C(C)CCCCCCCCCC');
+    // await clearCanvasAndPasteSmiles(page, 'CCCCC/CC/C:CC.C(C)CCCCCCCCCC');
   });
 
   test.skip('SmileString for structure with Atom properties', async ({

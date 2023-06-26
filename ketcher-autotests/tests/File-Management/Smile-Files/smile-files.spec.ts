@@ -20,6 +20,7 @@ async function getPreviewForSmiles(
   smileType: string
 ) {
   await selectTopPanelButton(TopPanelButton.Save, page);
+  await page.waitForSelector('.StructEditor-module_intermediateCanvas');
   await waitForLoad(page, () => {
     page.getByRole('button', { name: formatName }).click();
   });

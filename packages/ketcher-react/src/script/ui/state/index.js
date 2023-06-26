@@ -18,6 +18,8 @@ import { applyMiddleware, combineReducers, createStore } from 'redux'
 import { load, onAction } from './shared'
 import optionsReducer, { initOptionsState } from './options'
 import templatesReducer, { initTmplsState } from './templates'
+import abbreviationLookupReducer from './abbreviationLookup'
+import commonReducer from './common'
 
 import actionStateReducer from './action'
 import functionalGroupsReducer from './functionalGroups'
@@ -33,9 +35,11 @@ import floatingToolsReducer from './floatingTools'
 export { onAction, load }
 
 const shared = combineReducers({
+  common: commonReducer,
   actionState: actionStateReducer,
   toolbar: toolbarReducer,
   modal: modalReducer,
+  abbreviationLookup: abbreviationLookupReducer,
   server: (store = null) => store,
   editor: (store = null) => store,
   options: optionsReducer,

@@ -14,18 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-export const KETCHER_INIT_EVENT_NAME = 'ketcher-init'
-
-export const KETCHER_SAVED_SETTINGS_KEY = 'ketcher_editor_saved_settings'
-
-export const MODES = {
-  FG: 'fg'
+export interface AbbreviationLookupState {
+  isOpen: boolean
+  lookupValue?: string
 }
-
-export const STRUCT_TYPE = {
-  atoms: 'atoms',
-  bonds: 'bonds'
-}
-
-export const KETCHER_ROOT_NODE_CLASS_NAME = 'Ketcher-root'
-export const KETCHER_ROOT_NODE_CSS_SELECTOR = `.${KETCHER_ROOT_NODE_CLASS_NAME}`

@@ -1315,5 +1315,6 @@ export const Elements = {
   get: (key: number | string): Element | undefined => elementsMap.get(key),
   filter: (predicate: (element: Element) => boolean): Array<Element> => {
     return elementsArray.filter(predicate)
-  }
+  },
+  getAll: () => [...elementsArray]
 }

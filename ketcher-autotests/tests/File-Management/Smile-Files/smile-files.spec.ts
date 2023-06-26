@@ -22,6 +22,8 @@ async function getPreviewForSmiles(
   await selectTopPanelButton(TopPanelButton.Save, page);
   await waitForLoad(page, () => {
     page.getByRole('button', { name: formatName }).click();
+  });
+  await waitForLoad(page, () => {
     page.getByRole('option', { name: smileType }).click();
   });
 }

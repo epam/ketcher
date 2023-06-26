@@ -166,8 +166,7 @@ class PasteTool implements Tool {
     } else {
       // todo delete after supporting expand - collapse for 2 attachment points
       this.struct.sgroups.forEach((sgroup) => {
-        const countOfAttachmentPoints = sgroup.getAttachmentPointsCount()
-        if (countOfAttachmentPoints > 1) {
+        if (sgroup.isNotContractible()) {
           sgroup.setAttr('expanded', true)
         }
       })

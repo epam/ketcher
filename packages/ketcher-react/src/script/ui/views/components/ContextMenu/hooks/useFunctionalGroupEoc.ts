@@ -47,9 +47,8 @@ const useFunctionalGroupEoc = () => {
   )
   const disabled = useCallback(({ props }: ItemEventParams) => {
     return Boolean(
-      props?.functionalGroups?.every(
-        (functionalGroup) =>
-          functionalGroup?.relatedSGroup.getAttachmentPointsCount() > 1
+      props?.functionalGroups?.every((functionalGroup) =>
+        functionalGroup?.relatedSGroup.isNotContractible()
       )
     )
   }, [])

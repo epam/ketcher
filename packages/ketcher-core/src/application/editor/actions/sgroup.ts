@@ -110,8 +110,7 @@ export function expandSGroupWithMultipleAttachmentPoint(restruct) {
   const struct = restruct.molecule
 
   struct.sgroups.forEach((sgroup: SGroup) => {
-    const countOfAttachmentPoints = sgroup.getAttachmentPointsCount()
-    if (countOfAttachmentPoints > 1) {
+    if (sgroup.isNotContractible()) {
       action.mergeWith(
         setExpandSGroup(restruct, sgroup.id, {
           expanded: true

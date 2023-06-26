@@ -277,8 +277,9 @@ export class SGroup {
     return this.attachmentPoints
   }
 
-  getAttachmentPointsCount(): number {
-    return this.attachmentPoints.length
+  isNotContractible(): boolean {
+    // it case of attachments more than one - sgroup should be expanded (and not be able to be contracted)
+    return this.attachmentPoints.length > 1
   }
 
   /**

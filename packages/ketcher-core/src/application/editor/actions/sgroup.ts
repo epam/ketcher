@@ -24,7 +24,7 @@ import {
   SGroupDelete,
   SGroupRemoveFromHierarchy
 } from '../operations'
-import { Pile, SGroup } from 'domain/entities'
+import { Pile, SGroup, Struct } from 'domain/entities'
 import { atomGetAttr, atomGetDegree, atomGetSGroups } from './utils'
 
 import { Action } from './action'
@@ -37,10 +37,35 @@ import {
 } from 'application/editor/operations/sgroup/sgroupAttachmentPoints'
 import Restruct from 'application/render/restruct/restruct'
 import assert from 'assert'
+import { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint'
 
-export function fromSeveralSgroupAddition(restruct, type, atoms, attrs) {
+function getPossibleAttachmentPointsFromSelectedAtoms(
+  struct: Struct,
+  atomsIds: number[]
+) {
+  const result: SGroupAttachmentPoint[] = []
+  for (const atomId of atomsIds) {
+    const neighbors = struct.atomGetNeighbors(atomId) ?? []
+    for (const { aid } of neighbors) {
+      if (!atomsIds.includes(aid)) {
+        result.push(new SGroupAttachmentPoint(atomId, aid, undefined))
+      }
+    }
+  }
+  return result
+}
+
+export function fromSeveralSgroupAddition(
+  restruct: Restruct,
+  type,
+  atoms,
+  attrs
+) {
   const descriptors = attrs.fieldValue
-
+  const possibleAttachmentPoints = getPossibleAttachmentPointsFromSelectedAtoms(
+    restruct.molecule,
+    atoms
+  )
   if (typeof descriptors === 'string' || type !== 'DAT') {
     return fromSgroupAddition(
       restruct,
@@ -48,7 +73,7 @@ export function fromSeveralSgroupAddition(restruct, type, atoms, attrs) {
       atoms,
       attrs,
       restruct.molecule.sgroups.newId(),
-      []
+      possibleAttachmentPoints
     )
   }
 
@@ -63,7 +88,7 @@ export function fromSeveralSgroupAddition(restruct, type, atoms, attrs) {
         atoms,
         localAttrs,
         restruct.molecule.sgroups.newId(),
-        []
+        possibleAttachmentPoints
       )
     )
   }, new Action())
@@ -199,9 +224,11 @@ export function fromSgroupAddition(
     action.addOp(new SGroupAtomAdd(sgid, atom))
   })
 
-  attachmentPoints.forEach((attachmentPoint) => {
-    action.addOp(new SGroupAttachmentPointAdd(sgid, attachmentPoint))
-  })
+  if (type === 'SUP') {
+    attachmentPoints.forEach((attachmentPoint) => {
+      action.addOp(new SGroupAttachmentPointAdd(sgid, attachmentPoint))
+    })
+  }
 
   action.addOp(
     type !== 'DAT'

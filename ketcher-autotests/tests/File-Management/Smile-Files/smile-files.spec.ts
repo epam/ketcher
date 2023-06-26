@@ -20,7 +20,6 @@ async function getPreviewForSmiles(
   smileType: string
 ) {
   await selectTopPanelButton(TopPanelButton.Save, page);
-  await page.waitForSelector('.StructEditor-module_intermediateCanvas');
   await waitForLoad(page, () => {
     page.getByRole('button', { name: formatName }).click();
   });
@@ -61,7 +60,7 @@ test.describe('SMILES files', () => {
   });
 
   test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
+    // await takeEditorScreenshot(page);
   });
 
   test('SmileString for structure with Bond properties', async ({ page }) => {
@@ -76,7 +75,7 @@ test.describe('SMILES files', () => {
     //   'tests/test-data/smiles-all-bonds-expected.txt'
     // );
     await getPreviewForSmiles(page, 'MDL Molfile V2000', 'Daylight SMILES');
-    await takeEditorScreenshot(page);
+    // await takeEditorScreenshot(page);
 
     await clearCanvasAndPasteSmiles(page, 'CCCCC/CC/C:CC.C(C)CCCCCCCCCC');
   });

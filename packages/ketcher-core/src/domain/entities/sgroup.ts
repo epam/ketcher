@@ -161,7 +161,7 @@ export class SGroup {
 
   isExpanded(): boolean {
     // flag ".data.expanded" exists only for the SuperAtom
-    if (SGroup.isSuperAtom()) {
+    if (SGroup.isSuperAtom(this)) {
       return Boolean(this.data.expanded)
     } else {
       return true

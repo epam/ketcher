@@ -297,7 +297,7 @@ export function fromSgroupAction(
     action: fromSeveralSgroupAddition(
       restruct,
       newSg.type,
-      sourceAtoms,
+      newSourceAtoms,
       newSg.attrs
     )
   }

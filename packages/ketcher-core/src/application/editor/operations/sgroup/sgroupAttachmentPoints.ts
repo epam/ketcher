@@ -13,7 +13,7 @@ export class SGroupAttachmentPointAdd extends BaseOperation {
   data: Data
 
   constructor(sGroupId: number, attachmentPoint: SGroupAttachmentPoint) {
-    super(OperationType.S_GROUP_ATOM_ADD, 3)
+    super(OperationType.S_GROUP_ATTACHMENT_POINT_ADD, 3)
     this.data = { sGroupId, attachmentPoint }
   }
 

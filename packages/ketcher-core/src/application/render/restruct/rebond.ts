@@ -298,7 +298,8 @@ class ReBond extends ReObject {
     ReBond.bondRecalc(this, restruct, options);
     setDoubleBondShift(this, struct);
     if (!hb1 || !hb2) return;
-    this.path = getBondPath(restruct, this, hb1, hb2);
+    const isSnapping = restruct.isSnappingBond(bid);
+    this.path = getBondPath(restruct, this, hb1, hb2, isSnapping);
     this.rbb = util.relBox(this.path.getBBox());
     restruct.addReObjectPath(LayerMap.data, this.visel, this.path, null, true);
     const reactingCenter: any = {};
@@ -507,6 +508,7 @@ function getBondPath(
   bond: ReBond,
   hb1: HalfBond,
   hb2: HalfBond,
+  isSnapping: boolean,
 ) {
   let path = null;
   const render = restruct.render;
@@ -520,14 +522,43 @@ function getBondPath(
         case Bond.PATTERN.STEREO.UP:
           findIncomingUpBonds(hb1.bid, bond, restruct);
           if (bond.boldStereo && bond.neihbid1 >= 0 && bond.neihbid2 >= 0) {
-            path = getBondSingleStereoBoldPath(render, hb1, hb2, bond, struct);
-          } else path = getBondSingleUpPath(render, hb1, hb2, bond, struct);
+            path = getBondSingleStereoBoldPath(
+              render,
+              hb1,
+              hb2,
+              bond,
+              struct,
+              isSnapping,
+            );
+          } else
+            path = getBondSingleUpPath(
+              render,
+              hb1,
+              hb2,
+              bond,
+              struct,
+              isSnapping,
+            );
           break;
         case Bond.PATTERN.STEREO.DOWN:
-          path = getBondSingleDownPath(render, hb1, hb2, bond, struct);
+          path = getBondSingleDownPath(
+            render,
+            hb1,
+            hb2,
+            bond,
+            struct,
+            isSnapping,
+          );
           break;
         case Bond.PATTERN.STEREO.EITHER:
-          path = getBondSingleEitherPath(render, hb1, hb2, bond, struct);
+          path = getBondSingleEitherPath(
+            render,
+            hb1,
+            hb2,
+            bond,
+            struct,
+            isSnapping,
+          );
           break;
         default:
           path = draw.bondSingle(
@@ -535,6 +566,7 @@ function getBondPath(
             hb1,
             hb2,
             render.options,
+            isSnapping,
             getStereoBondColor(render.options, bond, struct),
           );
           break;
@@ -556,38 +588,90 @@ function getBondPath(
           struct,
           shiftA,
           shiftB,
+          isSnapping,
         );
-      } else path = getBondDoublePath(render, hb1, hb2, bond, shiftA, shiftB);
+      } else
+        path = getBondDoublePath(
+          render,
+          hb1,
+          hb2,
+          bond,
+          shiftA,
+          shiftB,
+          isSnapping,
+        );
       break;
     case Bond.PATTERN.TYPE.TRIPLE:
-      path = draw.bondTriple(render.paper, hb1, hb2, render.options);
+      path = draw.bondTriple(
+        render.paper,
+        hb1,
+        hb2,
+        render.options,
+        isSnapping,
+      );
       break;
     case Bond.PATTERN.TYPE.AROMATIC: {
       const inAromaticLoop =
         (hb1.loop >= 0 && struct.loops.get(hb1.loop)?.aromatic) ||
         (hb2.loop >= 0 && struct.loops.get(hb2.loop)?.aromatic);
       path = inAromaticLoop
-        ? draw.bondSingle(render.paper, hb1, hb2, render.options)
-        : getBondAromaticPath(render, hb1, hb2, bond, shiftA, shiftB);
+        ? draw.bondSingle(render.paper, hb1, hb2, render.options, isSnapping)
+        : getBondAromaticPath(
+            render,
+            hb1,
+            hb2,
+            bond,
+            shiftA,
+            shiftB,
+            isSnapping,
+          );
       break;
     }
     case Bond.PATTERN.TYPE.SINGLE_OR_DOUBLE:
-      path = getSingleOrDoublePath(render, hb1, hb2);
+      path = getSingleOrDoublePath(render, hb1, hb2, isSnapping);
       break;
     case Bond.PATTERN.TYPE.SINGLE_OR_AROMATIC:
-      path = getBondAromaticPath(render, hb1, hb2, bond, shiftA, shiftB);
+      path = getBondAromaticPath(
+        render,
+        hb1,
+        hb2,
+        bond,
+        shiftA,
+        shiftB,
+        isSnapping,
+      );
       break;
     case Bond.PATTERN.TYPE.DOUBLE_OR_AROMATIC:
-      path = getBondAromaticPath(render, hb1, hb2, bond, shiftA, shiftB);
+      path = getBondAromaticPath(
+        render,
+        hb1,
+        hb2,
+        bond,
+        shiftA,
+        shiftB,
+        isSnapping,
+      );
       break;
     case Bond.PATTERN.TYPE.ANY:
-      path = draw.bondAny(render.paper, hb1, hb2, render.options);
+      path = draw.bondAny(render.paper, hb1, hb2, render.options, isSnapping);
       break;
     case Bond.PATTERN.TYPE.HYDROGEN:
-      path = draw.bondHydrogen(render.paper, hb1, hb2, render.options);
+      path = draw.bondHydrogen(
+        render.paper,
+        hb1,
+        hb2,
+        render.options,
+        isSnapping,
+      );
       break;
     case Bond.PATTERN.TYPE.DATIVE:
-      path = draw.bondDative(render.paper, hb1, hb2, render.options);
+      path = draw.bondDative(
+        render.paper,
+        hb1,
+        hb2,
+        render.options,
+        isSnapping,
+      );
       break;
     default:
       throw new Error('Bond type ' + bond.b.type + ' not supported');
@@ -602,6 +686,7 @@ function getBondSingleUpPath(
   hb2: HalfBond,
   bond: ReBond,
   struct: Struct,
+  isSnapping: boolean,
 ) {
   // eslint-disable-line max-params
   const a = hb1.p;
@@ -628,6 +713,7 @@ function getBondSingleUpPath(
     b2,
     b3,
     options,
+    isSnapping,
     getStereoBondColor(options, bond, struct),
   );
 }
@@ -669,6 +755,7 @@ function getBondSingleStereoBoldPath(
   hb2: HalfBond,
   bond: ReBond,
   struct: Struct,
+  isSnapping: boolean,
 ) {
   // eslint-disable-line max-params
   const options = render.options;
@@ -695,6 +782,7 @@ function getBondSingleStereoBoldPath(
     a3,
     a4,
     options,
+    isSnapping,
     getStereoBondColor(options, bond, struct),
   );
 }
@@ -707,6 +795,7 @@ function getBondDoubleStereoBoldPath(
   struct: Struct,
   shiftA: boolean,
   shiftB: boolean,
+  isSnapping: boolean,
 ) {
   // eslint-disable-line max-params
   const a = hb1.p;
@@ -749,6 +838,7 @@ function getBondDoubleStereoBoldPath(
     hb2,
     bond,
     struct,
+    isSnapping,
   );
   return draw.bondDoubleStereoBold(
     render.paper,
@@ -756,6 +846,7 @@ function getBondDoubleStereoBoldPath(
     b1,
     b2,
     render.options,
+    isSnapping,
     getStereoBondColor(render.options, bond, struct),
   );
 }
@@ -796,6 +887,7 @@ function getBondSingleDownPath(
   hb2: HalfBond,
   bond: ReBond,
   struct: Struct,
+  isSnapping: boolean,
 ) {
   const a = hb1.p;
   const b = hb2.p;
@@ -817,6 +909,7 @@ function getBondSingleDownPath(
     nlines,
     step,
     options,
+    isSnapping,
     getStereoBondColor(options, bond, struct),
   );
 }
@@ -827,6 +920,7 @@ function getBondSingleEitherPath(
   hb2: HalfBond,
   bond: ReBond,
   struct: Struct,
+  isSnapping: boolean,
 ) {
   const a = hb1.p;
   const b = hb2.p;
@@ -848,6 +942,7 @@ function getBondSingleEitherPath(
     nlines,
     step,
     options,
+    isSnapping,
     getStereoBondColor(options, bond, struct),
   );
 }
@@ -859,6 +954,7 @@ function getBondDoublePath(
   bond: ReBond,
   shiftA: boolean,
   shiftB: boolean,
+  isSnapping: boolean,
 ) {
   // eslint-disable-line max-params, max-statements
   const cisTrans = bond.b.stereo === Bond.PATTERN.STEREO.CIS_TRANS;
@@ -906,10 +1002,24 @@ function getBondDoublePath(
     }
   }
 
-  return draw.bondDouble(render.paper, a1, a2, b1, b2, cisTrans, options);
+  return draw.bondDouble(
+    render.paper,
+    a1,
+    a2,
+    b1,
+    b2,
+    cisTrans,
+    options,
+    isSnapping,
+  );
 }
 
-function getSingleOrDoublePath(render: Render, hb1: HalfBond, hb2: HalfBond) {
+function getSingleOrDoublePath(
+  render: Render,
+  hb1: HalfBond,
+  hb2: HalfBond,
+  isSnapping: boolean,
+) {
   const a = hb1.p;
   const b = hb2.p;
   const options = render.options;
@@ -917,7 +1027,14 @@ function getSingleOrDoublePath(render: Render, hb1: HalfBond, hb2: HalfBond) {
   let nSect =
     Vec2.dist(a, b) / Number((options.bondSpace + options.lineWidth).toFixed());
   if (!(nSect & 1)) nSect += 1;
-  return draw.bondSingleOrDouble(render.paper, hb1, hb2, nSect, options);
+  return draw.bondSingleOrDouble(
+    render.paper,
+    hb1,
+    hb2,
+    nSect,
+    options,
+    isSnapping,
+  );
 }
 
 function getBondAromaticPath(
@@ -927,6 +1044,7 @@ function getBondAromaticPath(
   bond: ReBond,
   shiftA: boolean,
   shiftB: boolean,
+  isSnapping: boolean,
 ) {
   // eslint-disable-line max-params
   const dashdotPattern = [0.125, 0.125, 0.005, 0.125];
@@ -953,7 +1071,7 @@ function getBondAromaticPath(
     mask,
     dash,
   );
-  return draw.bondAromatic(render.paper, paths, bondShift, options);
+  return draw.bondAromatic(render.paper, paths, bondShift, options, isSnapping);
 }
 
 function getAromaticBondPaths(

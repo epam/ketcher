@@ -84,6 +84,7 @@ class ReStruct {
   private enhancedFlagsChanged: Map<number, ReEnhancedFlag> = new Map();
   private bondsChanged: Map<number, ReEnhancedFlag> = new Map();
   private textsChanged: Map<number, ReText> = new Map();
+  private snappingBonds: number[] = [];
   constructor(molecule, render: Render) {
     // eslint-disable-line max-statements
     this.render = render;
@@ -760,6 +761,18 @@ class ReStruct {
         stroke: '#fff',
       });
     }
+  }
+
+  addSnappingBonds(bondId: number) {
+    this.snappingBonds.push(bondId);
+  }
+
+  clearSnappingBonds() {
+    this.snappingBonds = [];
+  }
+
+  isSnappingBond(bondId: number) {
+    return this.snappingBonds.includes(bondId);
   }
 }
 

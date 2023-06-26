@@ -1,6 +1,7 @@
 import { Action, Scale, Vec2 } from 'ketcher-core';
 import { throttle } from 'lodash';
 import Editor from '../Editor';
+import utils from '../shared/utils';
 import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems';
 import RotateTool from './rotate';
 import SelectTool from './select';
@@ -13,6 +14,7 @@ type RaphaelElement = {
 type LinkState = 'long' | 'short' | 'moveCenter' | 'moveHandle';
 type CrossState = 'active' | 'inactive' | 'offset' | 'move';
 type HandleState = 'hoverIn' | 'hoverOut' | 'active' | 'move';
+type SnapAngleIndicatorState = 'noLine' | 'noText' | 'default';
 
 const STYLE = {
   HANDLE_MARGIN: 15,
@@ -42,6 +44,7 @@ class RotateController {
   private link?: RaphaelElement;
   private protractor?: RaphaelElement;
   private rotateArc?: RaphaelElement;
+  private snapAngleIndicator?: RaphaelElement;
 
   constructor(editor: Editor) {
     this.editor = editor;
@@ -107,6 +110,8 @@ class RotateController {
     delete this.protractor;
     this.rotateArc?.remove();
     delete this.rotateArc;
+    this.snapAngleIndicator?.remove();
+    delete this.snapAngleIndicator;
   }
 
   /**
@@ -714,13 +719,15 @@ class RotateController {
           rotateArcStart,
           textPos,
         );
-        // NOTE: draw protractor last
+        // NOTE: draw protractor behind arc
         this.drawProtractor(
           this.rotateTool.dragCtx?.angle || 0,
           newRadius,
           degree0Line,
           degree0TextPos,
         );
+
+        this.updateSnapAngleIndicator();
       },
       40, // 25fps
     );
@@ -804,6 +811,99 @@ class RotateController {
       rotateHandlePosition: handleCenterInViewport,
     });
   }, 40);
+
+  private updateSnapAngleIndicator() {
+    const snapAngleDrawingProps = this.rotateTool.snapAngleDrawingProps;
+    if (
+      snapAngleDrawingProps === null ||
+      (snapAngleDrawingProps.snapMode === 'multiple-bonds' &&
+        snapAngleDrawingProps.isSnapping)
+    ) {
+      this.snapAngleIndicator?.remove();
+    } else {
+      const { isSnapping, absoluteAngle, relativeAngle, snapMode } =
+        snapAngleDrawingProps;
+      const drawingState: SnapAngleIndicatorState = isSnapping
+        ? 'noLine'
+        : snapMode === 'multiple-bonds'
+        ? 'noText'
+        : 'default';
+      this.drawSnapAngleIndicator(drawingState, absoluteAngle, relativeAngle);
+    }
+  }
+
+  private drawSnapAngleIndicator(
+    state: SnapAngleIndicatorState,
+    absoluteSnapAngle: number,
+    relativeSnapAngle: number,
+  ) {
+    this.snapAngleIndicator?.remove();
+    this.snapAngleIndicator = this.paper.set() as RaphaelElement;
+    const LINE_LENGTH = 30;
+    const TEXT_FONT_SIZE = 12;
+    const relativeSnapAngleInDegrees = utils.degrees(relativeSnapAngle);
+
+    switch (state) {
+      case 'noLine': {
+        const textAngle = utils.normalizeAngle(
+          absoluteSnapAngle - relativeSnapAngle / 2,
+        );
+        const textPosition = new Vec2(20, 0).rotate(textAngle);
+        const text = this.paper
+          .text(
+            textPosition.x,
+            textPosition.y,
+            `${Math.abs(relativeSnapAngleInDegrees)}°`,
+          )
+          .attr({
+            'font-size': TEXT_FONT_SIZE,
+            fill: STYLE.ACTIVE_COLOR,
+          });
+        this.snapAngleIndicator.push(text);
+        break;
+      }
+
+      case 'noText': {
+        const lineVector = new Vec2(LINE_LENGTH, 0).rotate(absoluteSnapAngle);
+        const line = this.paper
+          .path(`M0,0` + `l${lineVector.x},${lineVector.y}`)
+          .attr({
+            'stroke-dasharray': '-',
+            stroke: STYLE.INITIAL_COLOR,
+          });
+        this.snapAngleIndicator.push(line);
+        break;
+      }
+
+      default: {
+        const lineVector = new Vec2(LINE_LENGTH, 0).rotate(absoluteSnapAngle);
+        const line = this.paper
+          .path(`M0,0` + `l${lineVector.x},${lineVector.y}`)
+          .attr({
+            'stroke-dasharray': '-',
+            stroke: STYLE.INITIAL_COLOR,
+          });
+        const textPosition = new Vec2(LINE_LENGTH + 15, 0).rotate(
+          absoluteSnapAngle,
+        );
+        const text = this.paper
+          .text(
+            textPosition.x,
+            textPosition.y,
+            `${Math.abs(relativeSnapAngleInDegrees)}°`,
+          )
+          .attr({
+            'font-size': TEXT_FONT_SIZE,
+            fill: STYLE.INITIAL_COLOR,
+          });
+        this.snapAngleIndicator.push(line);
+        this.snapAngleIndicator.push(text);
+        break;
+      }
+    }
+
+    this.snapAngleIndicator.translate(this.center.x, this.center.y);
+  }
 }
 
 export default RotateController;

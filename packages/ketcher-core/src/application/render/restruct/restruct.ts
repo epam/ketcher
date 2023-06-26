@@ -440,7 +440,7 @@ class ReStruct {
     if (updLoops) this.updateLoops()
     this.showAtoms()
     this.showBonds()
-    this.showRgoupAttachmentPoints()
+    this.showRgroupAttachmentPoints()
     if (updLoops) this.showLoops()
     this.showReactionSymbols()
     this.showSGroups()
@@ -566,7 +566,6 @@ class ReStruct {
   private getAttachmentsPointsVBox(): Box2Abs | null {
     let result: Box2Abs | null = null
     for (const reAtom of this.atoms.values()) {
-      // const attachmentPointBoundingBox = reAtom.getVBoxObjForRGAttachmentPoint(this.render);
       const bbox = reAtom.getVBoxObjOfAttachmentPoint(this.render)
       if (bbox) {
         result = result ? Box2Abs.union(result, bbox) : bbox
@@ -575,7 +574,7 @@ class ReStruct {
     return result
   }
 
-  private showRgoupAttachmentPoints() {
+  private showRgroupAttachmentPoints() {
     this.atoms.forEach((_value, aid) => {
       const atom = this.atoms.get(aid)
       const sgroup = this.molecule.getGroupFromAtomId(aid)

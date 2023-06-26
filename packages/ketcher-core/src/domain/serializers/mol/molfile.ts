@@ -433,14 +433,14 @@ export class Molfile {
       sgmapback[cnt] = id
       sgmap[id] = cnt++
     })
-    for (let q = 1; q < cnt; ++q) {
+    for (let sGroupIdInCTab = 1; sGroupIdInCTab < cnt; ++sGroupIdInCTab) {
       // each group on its own
-      const id = sgmapback[q]
+      const id = sgmapback[sGroupIdInCTab]
       const sgroup = this.molecule!.sgroups.get(id)!
       this.write('M  STY')
       this.writePaddedNumber(1, 3)
       this.writeWhiteSpace(1)
-      this.writePaddedNumber(q, 3)
+      this.writePaddedNumber(sGroupIdInCTab, 3)
       this.writeWhiteSpace(1)
       this.writePadded(sgroup.type, 3)
       this.writeCR()
@@ -450,9 +450,9 @@ export class Molfile {
       this.write('M  SLB')
       this.writePaddedNumber(1, 3)
       this.writeWhiteSpace(1)
-      this.writePaddedNumber(q, 3)
+      this.writePaddedNumber(sGroupIdInCTab, 3)
       this.writeWhiteSpace(1)
-      this.writePaddedNumber(q, 3)
+      this.writePaddedNumber(sGroupIdInCTab, 3)
       this.writeCR()
 
       const parentId = this.molecule!.sGroupForest.parent.get(id)!
@@ -460,7 +460,7 @@ export class Molfile {
         this.write('M  SPL')
         this.writePaddedNumber(1, 3)
         this.writeWhiteSpace(1)
-        this.writePaddedNumber(q, 3)
+        this.writePaddedNumber(sGroupIdInCTab, 3)
         this.writeWhiteSpace(1)
         this.writePaddedNumber(sgmap[parentId], 3)
         this.writeCR()
@@ -468,7 +468,7 @@ export class Molfile {
 
       // connectivity
       if (sgroup.type === 'SRU' && sgroup.data.connectivity) {
-        const connectivity = ` ${q.toString().padStart(3)} ${(
+        const connectivity = ` ${sGroupIdInCTab.toString().padStart(3)} ${(
           sgroup.data.connectivity || ''
         ).padEnd(3)}`
 
@@ -480,13 +480,13 @@ export class Molfile {
 
       if (sgroup.type === 'SRU') {
         this.write('M  SMT ')
-        this.writePaddedNumber(q, 3)
+        this.writePaddedNumber(sGroupIdInCTab, 3)
         this.writeWhiteSpace()
         this.write(sgroup.data.subscript || 'n')
         this.writeCR()
       }
       sgroup.getAttachmentPoints().forEach((attachmentPoint) => {
-        this.writeSGroupAttachmentPointLine(q, attachmentPoint)
+        this.writeSGroupAttachmentPointLine(sGroupIdInCTab, attachmentPoint)
       })
 
       this.writeCR(

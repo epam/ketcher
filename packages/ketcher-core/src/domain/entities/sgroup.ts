@@ -284,11 +284,11 @@ export class SGroup {
 
   /**
    * Why only one?
-   * Currently other parts of application doesn't support several attachment points for sgroup.
-   * So to support it - it's require to refactor almost every peace of code with sgroups.
+   * Currently other parts of application don't support several attachment points for sgroup.
+   * So to support it - it's required to refactor almost every peace of code with sgroups.
    *
    *
-   * Why return 'undefined' without rollback?
+   * Why return 'undefined' without fallback?
    * If sgroup doesn't have attachment points it can't be attached, (salt and solvents for example).
    */
   getAttachmentAtomId(): number | undefined {

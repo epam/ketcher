@@ -142,8 +142,9 @@ class RotateController {
   }
 
   private show() {
-    const [originalCenter, visibleAtoms] = this.rotateTool.getCenter(
-      this.editor,
+    const originalCenter = this.rotateTool.getCenter();
+    const visibleAtoms = this.render.ctab.molecule.getSelectedVisibleAtoms(
+      this.editor.selection(),
     );
 
     const { texts, rxnArrows, rxnPluses } = this.editor.selection() || {};

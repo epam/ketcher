@@ -25,12 +25,12 @@ import { connect } from 'react-redux'
 import { onAction } from '../../../state'
 
 type StateProps = Omit<LeftToolbarProps, 'className'>
-
+const disableableButtons = []
 const mapStateToProps = (state: any): StateProps => ({
   status: state.actionState || {},
   opened: state.toolbar.opened,
   indigoVerification: state.requestsStatuses.indigoVerification,
-  disableableButtons: []
+  disableableButtons
 })
 
 const mapDispatchToProps = (dispatch: Dispatch): LeftToolbarCallProps => ({

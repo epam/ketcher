@@ -138,21 +138,18 @@ const LeftToolbar = (props: Props) => {
                 ...bondStereo
               ]
             },
-            { id: 'chain' }
+            { id: 'chain' },
+            { id: 'charge-plus' },
+            { id: 'charge-minus' },
+            { id: 'enhanced-stereo' }
           ]}
         />
-
-        <Group
-          className={classes.groupItem}
-          items={[{ id: 'enhanced-stereo' }]}
-        />
-
-        <Group
-          className={classes.groupItem}
-          items={[{ id: 'charge-plus' }, { id: 'charge-minus' }]}
-        />
-
-        <Group className={classes.groupItem} items={[{ id: 'sgroup' }]} />
+        <div className={classes.listener} ref={sizeRef}>
+          <Group
+            className={classes.groupItem}
+            items={[{ id: 'sgroup' }, { id: 'rgroup', options: rGroupOptions }]}
+          />
+        </div>
 
         <Group
           className={classes.groupItem}
@@ -165,20 +162,12 @@ const LeftToolbar = (props: Props) => {
             }
           ]}
         />
-        <div className={classes.listener} ref={sizeRef}>
-          <Group
-            className={classes.groupItem}
-            items={[{ id: 'rgroup', options: rGroupOptions }]}
-          />
-        </div>
-
-        <Group
-          className={classes.groupItem}
-          items={[{ id: 'shapes', options: shapeOptions }]}
-        />
 
         <div ref={endRef}>
-          <Group className={classes.groupItem} items={[{ id: 'text' }]} />
+          <Group
+            className={classes.groupItem}
+            items={[{ id: 'shapes', options: shapeOptions }, { id: 'text' }]}
+          />
         </div>
       </div>
       {height && scrollRef?.current?.scrollHeight > height && (

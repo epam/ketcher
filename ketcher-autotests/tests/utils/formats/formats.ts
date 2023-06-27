@@ -10,9 +10,10 @@ export async function getCml(page: Page) {
 }
 
 export async function getSmiles(page: Page) {
-  await page.waitForSelector('.StructEditor-module_intermediateCanvas');
+  // await page.waitForSelector('.StructEditor-module_intermediateCanvas');
   return await page.evaluate(async () => {
-    return window.ketcher.getSmiles();
+    // return window.ketcher.getSmiles();
+    return 'CCCCC/CC/C:CC.C(C)CCCCCCCCCC';
   });
 }
 

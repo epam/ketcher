@@ -24,7 +24,7 @@ import {
   SGroupDelete,
   SGroupRemoveFromHierarchy
 } from '../operations'
-import { Pile, SGroup, Struct } from 'domain/entities'
+import { Pile, SGroup } from 'domain/entities'
 import { atomGetAttr, atomGetDegree, atomGetSGroups } from './utils'
 
 import { Action } from './action'
@@ -37,24 +37,6 @@ import {
 } from 'application/editor/operations/sgroup/sgroupAttachmentPoints'
 import Restruct from 'application/render/restruct/restruct'
 import assert from 'assert'
-import { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint'
-
-function getPossibleAttachmentPointsFromSelectedAtoms(
-  struct: Struct,
-  atomsIds: number[]
-) {
-  const result: SGroupAttachmentPoint[] = []
-  for (const atomId of atomsIds) {
-    const neighbors = struct.atomGetNeighbors(atomId) ?? []
-    for (const { aid } of neighbors) {
-      if (!atomsIds.includes(aid)) {
-        result.push(new SGroupAttachmentPoint(atomId, undefined, undefined))
-        break
-      }
-    }
-  }
-  return result
-}
 
 export function fromSeveralSgroupAddition(
   restruct: Restruct,
@@ -63,10 +45,6 @@ export function fromSeveralSgroupAddition(
   attrs
 ) {
   const descriptors = attrs.fieldValue
-  const possibleAttachmentPoints = getPossibleAttachmentPointsFromSelectedAtoms(
-    restruct.molecule,
-    atoms
-  )
   if (typeof descriptors === 'string' || type !== 'DAT') {
     return fromSgroupAddition(
       restruct,
@@ -74,7 +52,7 @@ export function fromSeveralSgroupAddition(
       atoms,
       attrs,
       restruct.molecule.sgroups.newId(),
-      possibleAttachmentPoints
+      []
     )
   }
 
@@ -89,7 +67,7 @@ export function fromSeveralSgroupAddition(
         atoms,
         localAttrs,
         restruct.molecule.sgroups.newId(),
-        possibleAttachmentPoints
+        []
       )
     )
   }, new Action())
@@ -136,7 +114,7 @@ export function expandSGroupWithMultipleAttachmentPoint(restruct) {
   const struct = restruct.molecule
 
   struct.sgroups.forEach((sgroup: SGroup) => {
-    if (sgroup.isNotContractible()) {
+    if (sgroup.isNotContractible(struct)) {
       action.mergeWith(
         setExpandSGroup(restruct, sgroup.id, {
           expanded: true

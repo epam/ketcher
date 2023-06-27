@@ -165,8 +165,9 @@ class PasteTool implements Tool {
       this.editor.update(this.dragCtx.action, true)
     } else {
       // todo delete after supporting expand - collapse for 2 attachment points
+      const struct = this.editor.struct()
       this.struct.sgroups.forEach((sgroup) => {
-        if (sgroup.isNotContractible()) {
+        if (sgroup.isNotContractible(struct)) {
           sgroup.setAttr('expanded', true)
         }
       })

@@ -46,9 +46,11 @@ const useFunctionalGroupEoc = () => {
     []
   )
   const disabled = useCallback(({ props }: ItemEventParams) => {
+    const editor = getKetcherInstance().editor as Editor
+    const molecule = editor.render.ctab.molecule
     return Boolean(
       props?.functionalGroups?.every((functionalGroup) =>
-        functionalGroup?.relatedSGroup.isNotContractible()
+        functionalGroup?.relatedSGroup.isNotContractible(molecule)
       )
     )
   }, [])

@@ -233,9 +233,7 @@ export class SGroup {
   }
 
   isGroupAttached(struct: Struct): boolean {
-    return this.attachmentPoints.some((attachPoint) =>
-      this.isAttachmentPointAttached(struct, attachPoint)
-    )
+    return this.getConnectionPointsCount(struct) >= 1
   }
 
   addAttachmentPoint(attachmentPoint: SGroupAttachmentPoint): void {
@@ -277,9 +275,29 @@ export class SGroup {
     return this.attachmentPoints
   }
 
-  isNotContractible(): boolean {
-    // it case of attachments more than one - sgroup should be expanded (and not be able to be contracted)
-    return this.attachmentPoints.length > 1
+  /**
+   * Connection point - is not! the same as Attachment point.
+   * Connection point is a fact for the sgroup - is the atom that has connected bond to an external atom.
+   * So it doesn't matter how it happens (connection atom).
+   * When we talk about "Attachment point" it is a hypothetical, suitable place to connect to sgroup.
+   * But there are cases when sgroup doesn't have attachment points but have connection (read from external file)
+   */
+  private getConnectionPointsCount(struct: Struct): number {
+    const connectionAtoms = new Set<number>()
+    for (const atomId of this.atoms) {
+      const neighbors = struct.atomGetNeighbors(atomId) ?? []
+      for (const { aid } of neighbors) {
+        if (!this.atoms.includes(aid)) {
+          connectionAtoms.add(atomId)
+          break
+        }
+      }
+    }
+    return connectionAtoms.size
+  }
+
+  isNotContractible(struct: Struct): boolean {
+    return this.getConnectionPointsCount(struct) > 1
   }
 
   /**
@@ -310,17 +328,6 @@ export class SGroup {
     atomIdMap: Map<number, number>
   ): ReadonlyArray<SGroupAttachmentPoint> {
     return this.attachmentPoints.map((point) => point.clone(atomIdMap))
-  }
-
-  private isAttachmentPointAttached(
-    struct: Struct,
-    attachmentPoint: SGroupAttachmentPoint
-  ) {
-    const neighbours = struct.atomGetNeighbors(attachmentPoint.atomId) ?? []
-    const hasOutsideConnections = neighbours.some(
-      ({ aid }) => !this.atoms.includes(aid)
-    )
-    return hasOutsideConnections
   }
 
   static getOffset(sgroup: SGroup): null | Vec2 {
@@ -402,8 +409,11 @@ export class SGroup {
     return cp
   }
 
-  static addAtom(sgroup: SGroup, aid: number): void {
+  static addAtom(sgroup: SGroup, aid: number, struct: Struct): void {
     sgroup.atoms.push(aid)
+    if (sgroup.isNotContractible(struct)) {
+      sgroup.setAttr('expanded', true)
+    }
   }
 
   static removeAtom(sgroup: SGroup, aid: number): void {

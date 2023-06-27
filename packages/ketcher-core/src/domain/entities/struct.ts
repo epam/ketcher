@@ -313,7 +313,7 @@ export class Struct {
 
   atomAddToSGroup(sgid, aid) {
     // TODO: [MK] make sure the addition does not break the hierarchy?
-    SGroup.addAtom(this.sgroups.get(sgid)!, aid)
+    SGroup.addAtom(this.sgroups.get(sgid)!, aid, this)
     this.atoms.get(aid)!.sgs.add(sgid)
   }
 

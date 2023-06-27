@@ -290,8 +290,10 @@ class SelectTool implements Tool {
         editor.render,
         editor.options().scale
       )
-      this.updateArrowResizingState(this.dragCtx.item.id, false)
-      this.editor.update(true)
+      if (this.dragCtx.item.map === 'rxnArrows') {
+        this.updateArrowResizingState(this.dragCtx.item.id, false)
+        this.editor.update(true)
+      }
       dropAndMerge(
         editor,
         this.dragCtx.mergeItems,

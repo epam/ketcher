@@ -48,7 +48,8 @@ function getPossibleAttachmentPointsFromSelectedAtoms(
     const neighbors = struct.atomGetNeighbors(atomId) ?? []
     for (const { aid } of neighbors) {
       if (!atomsIds.includes(aid)) {
-        result.push(new SGroupAttachmentPoint(atomId, aid, undefined))
+        result.push(new SGroupAttachmentPoint(atomId, undefined, undefined))
+        break
       }
     }
   }

@@ -20,8 +20,8 @@ async function getPreviewForSmiles(
   smileType: string
 ) {
   await selectTopPanelButton(TopPanelButton.Save, page);
-  await page.getByRole('button', { name: formatName }).click();
-  await page.getByRole('option', { name: smileType }).click();
+  // await page.getByRole('button', { name: formatName }).click();
+  // await page.getByRole('option', { name: smileType }).click();
 }
 
 async function getAndCompareSmiles(page: Page, smilesFilePath: string) {

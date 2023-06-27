@@ -77,7 +77,7 @@ class ReStruct {
   private ccFragmentType: Pool = new Pool()
   private structChanged = false
 
-  private atomsChanged: Map<number, ReAtom> = new Map()
+  private atomsChanged: Map<number, 1> = new Map()
   private simpleObjectsChanged: Map<number, ReSimpleObject> = new Map()
   private rxnArrowsChanged: Map<number, ReRxnArrow> = new Map()
   private rxnPlusesChanged: Map<number, ReRxnPlus> = new Map()
@@ -328,6 +328,11 @@ class ReStruct {
       })
     })
 
+    const attachmentPointsVBox = this.getAttachmentsPointsVBox()
+    if (vbox != null && attachmentPointsVBox) {
+      vbox = Box2Abs.union(vbox, attachmentPointsVBox)
+    }
+
     vbox = vbox || new Box2Abs(0, 0, 0, 0)
     return vbox
   }
@@ -378,6 +383,18 @@ class ReStruct {
       this.molecule.frags.delete(fid)
     })
 
+    // dependency on attachment points
+    // must be removed once attachment points will be dedicated Visel
+    // must be refactored in https://github.com/epam/ketcher/issues/2742 (#2742)
+    this.atoms.forEach((_, aid) => {
+      const atom = this.atoms.get(aid)
+      // in case of atom has attachment point we have to mark it as changed,
+      // so the labels for attachment point will be recalculated
+      if (atom?.hasAttachmentPoint()) {
+        this.atomsChanged.set(aid, 1)
+      }
+    })
+
     Object.keys(ReStruct.maps).forEach((map) => {
       const mapChanged = this[map + 'Changed']
 
@@ -410,19 +427,6 @@ class ReStruct {
       this.molecule.initNeighbors()
     }
 
-    // dependency on attachment points
-    // must be removed once attachment points will be dedicated Visel
-    // must be refactored in https://github.com/epam/ketcher/issues/2742 (#2742)
-    this.atoms.forEach((_, aid) => {
-      const atom = this.atoms.get(aid)
-      // in case of atom has attachment point we have to clear path that connected with this atom
-      // because we need to recalculate the labels for the Attachment point,
-      // they depend on the changes outside the connected atoms
-      if (atom && atom.a.attpnt) {
-        this.clearVisel(atom.visel)
-      }
-    })
-
     // only update half-bonds adjacent to atoms that have moved
     const atomsChangedArray = Array.from(this.atomsChanged.keys())
     this.molecule.updateHalfBonds(atomsChangedArray)
@@ -434,9 +438,9 @@ class ReStruct {
     this.verifyLoops()
     const updLoops = force || this.structChanged
     if (updLoops) this.updateLoops()
-    this.showAttachmentPoints()
     this.showAtoms()
     this.showBonds()
+    this.showRgroupAttachmentPoints()
     if (updLoops) this.showLoops()
     this.showReactionSymbols()
     this.showSGroups()
@@ -559,12 +563,26 @@ class ReStruct {
     })
   }
 
-  private showAttachmentPoints() {
+  private getAttachmentsPointsVBox(): Box2Abs | null {
+    let result: Box2Abs | null = null
+    for (const reAtom of this.atoms.values()) {
+      const bbox = reAtom.getVBoxObjOfAttachmentPoint(this.render)
+      if (bbox) {
+        result = result ? Box2Abs.union(result, bbox) : bbox
+      }
+    }
+    return result
+  }
+
+  private showRgroupAttachmentPoints() {
     this.atoms.forEach((_value, aid) => {
       const atom = this.atoms.get(aid)
-      if (atom && atom.a.attpnt) {
-        atom.showAttachmentPoints(this)
+      const sgroup = this.molecule.getGroupFromAtomId(aid)
+      const isInsideContractedSGroup = Boolean(sgroup?.isContracted())
+      if (isInsideContractedSGroup) {
+        return
       }
+      atom?.showAttachmentPoints(this)
     })
   }
 

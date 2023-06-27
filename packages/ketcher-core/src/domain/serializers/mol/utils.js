@@ -32,6 +32,10 @@ function paddedNum(number, width, precision) {
   return numStr.padStart(width)
 }
 
+/**
+ * @param str {string}
+ * @returns {number}
+ */
 function parseDecimalInt(str) {
   /* reader */
   const val = parseInt(str, 10)

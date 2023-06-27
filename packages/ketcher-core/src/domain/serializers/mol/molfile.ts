@@ -19,6 +19,7 @@ import { StereoFlag, Struct } from 'domain/entities'
 import { Elements } from 'domain/constants'
 import common from './common'
 import utils from './utils'
+import { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint'
 
 const END_V2000 = '2D 1   1.00000     0.00000     0'
 
@@ -432,14 +433,14 @@ export class Molfile {
       sgmapback[cnt] = id
       sgmap[id] = cnt++
     })
-    for (let q = 1; q < cnt; ++q) {
+    for (let sGroupIdInCTab = 1; sGroupIdInCTab < cnt; ++sGroupIdInCTab) {
       // each group on its own
-      const id = sgmapback[q]
+      const id = sgmapback[sGroupIdInCTab]
       const sgroup = this.molecule!.sgroups.get(id)!
       this.write('M  STY')
       this.writePaddedNumber(1, 3)
       this.writeWhiteSpace(1)
-      this.writePaddedNumber(q, 3)
+      this.writePaddedNumber(sGroupIdInCTab, 3)
       this.writeWhiteSpace(1)
       this.writePadded(sgroup.type, 3)
       this.writeCR()
@@ -449,9 +450,9 @@ export class Molfile {
       this.write('M  SLB')
       this.writePaddedNumber(1, 3)
       this.writeWhiteSpace(1)
-      this.writePaddedNumber(q, 3)
+      this.writePaddedNumber(sGroupIdInCTab, 3)
       this.writeWhiteSpace(1)
-      this.writePaddedNumber(q, 3)
+      this.writePaddedNumber(sGroupIdInCTab, 3)
       this.writeCR()
 
       const parentId = this.molecule!.sGroupForest.parent.get(id)!
@@ -459,7 +460,7 @@ export class Molfile {
         this.write('M  SPL')
         this.writePaddedNumber(1, 3)
         this.writeWhiteSpace(1)
-        this.writePaddedNumber(q, 3)
+        this.writePaddedNumber(sGroupIdInCTab, 3)
         this.writeWhiteSpace(1)
         this.writePaddedNumber(sgmap[parentId], 3)
         this.writeCR()
@@ -467,7 +468,7 @@ export class Molfile {
 
       // connectivity
       if (sgroup.type === 'SRU' && sgroup.data.connectivity) {
-        const connectivity = ` ${q.toString().padStart(3)} ${(
+        const connectivity = ` ${sGroupIdInCTab.toString().padStart(3)} ${(
           sgroup.data.connectivity || ''
         ).padEnd(3)}`
 
@@ -479,11 +480,14 @@ export class Molfile {
 
       if (sgroup.type === 'SRU') {
         this.write('M  SMT ')
-        this.writePaddedNumber(q, 3)
+        this.writePaddedNumber(sGroupIdInCTab, 3)
         this.writeWhiteSpace()
         this.write(sgroup.data.subscript || 'n')
         this.writeCR()
       }
+      sgroup.getAttachmentPoints().forEach((attachmentPoint) => {
+        this.writeSGroupAttachmentPointLine(sGroupIdInCTab, attachmentPoint)
+      })
 
       this.writeCR(
         common.saveToMolfile[sgroup.type](
@@ -503,7 +507,7 @@ export class Molfile {
 
     const expandedGroups: number[] = []
     this.molecule!.sgroups.forEach((sg) => {
-      if (sg.data.expanded) expandedGroups.push(sg.id + 1)
+      if (sg.isExpanded()) expandedGroups.push(sg.id + 1)
     })
 
     if (expandedGroups.length) {
@@ -621,5 +625,24 @@ export class Molfile {
 
       this.writeCR()
     }
+  }
+
+  private writeSGroupAttachmentPointLine(
+    sgroupId: number,
+    attachmentPoint: SGroupAttachmentPoint
+  ) {
+    this.write(`M  SAP`)
+    this.writeWhiteSpace(1)
+    this.writePaddedNumber(sgroupId, 3)
+    this.writePaddedNumber(1, 3)
+    this.writeWhiteSpace(1)
+    const atomId = this.mapping[attachmentPoint.atomId]
+    this.writePaddedNumber(atomId, 3)
+    this.writeWhiteSpace(1)
+    const leaveAtomId = this.mapping[attachmentPoint.leaveAtomId as number] ?? 0
+    this.writePaddedNumber(leaveAtomId, 3)
+    this.writeWhiteSpace(1)
+    this.writePadded(attachmentPoint.additionalData, 2)
+    this.writeCR()
   }
 }

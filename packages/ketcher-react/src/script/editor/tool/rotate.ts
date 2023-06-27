@@ -85,14 +85,19 @@ class RotateTool implements Tool {
         if (!atom) {
           return false
         }
-        return (
+        const isAtomNotInContractedGroup =
           !FunctionalGroup.isAtomInContractedFunctionalGroup(
             atom,
             struct.sgroups,
             struct.functionalGroups,
             false
-          ) || FunctionalGroup.isAttachmentPointAtom(atomId, struct)
-        )
+          )
+        if (isAtomNotInContractedGroup) {
+          return true
+        }
+        const groupId = struct.getGroupIdFromAtomId(atomId)
+        const sgroup = struct.sgroups.get(groupId as number)
+        return sgroup?.getAttachmentAtomId() === atomId
       }) || []
 
     let center: Vec2 | undefined

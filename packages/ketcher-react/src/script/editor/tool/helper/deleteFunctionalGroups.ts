@@ -16,12 +16,18 @@ export function deleteFunctionalGroups(
   const functionalGroups = struct.molecule.functionalGroups
   const sgroups = struct.sgroups
   sGroupsId.forEach((sGroupId) => {
-    const sGroupItem = sgroups.get(sGroupId)?.item
+    const sGroupItem = sgroups.get(sGroupId)?.item as SGroup
     if (
       FunctionalGroup.isContractedFunctionalGroup(sGroupId, functionalGroups)
     ) {
-      const atomsWithoutAttachmentPoint =
-        SGroup.getAtomsSGroupWithoutAttachmentPoint(sGroupItem, struct.molecule)
+      const sGroupAtoms = SGroup.getAtoms(struct.molecule, sGroupItem)
+      const { atomId: positionAtomId } = sGroupItem.getContractedPosition(
+        struct.molecule
+      )
+      const atomsWithoutAttachmentPoint = sGroupAtoms.filter(
+        (atomId) => atomId !== positionAtomId
+      )
+
       deletedAtoms.push(...atomsWithoutAttachmentPoint)
       action.mergeWith(fromSgroupDeletion(struct, sGroupId))
       action.mergeWith(

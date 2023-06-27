@@ -48,7 +48,7 @@ import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems'
 import { updateSelectedAtoms } from 'src/script/ui/state/modal/atoms'
 import { updateSelectedBonds } from 'src/script/ui/state/modal/bonds'
 import { hasAtomsOutsideCanvas } from './helper/isAtomOutSideCanvas'
-import { filterNotInCollapsedSGroup } from './helper/filterNotInCollapsedSGroup'
+import { filterNotInContractedSGroup } from './helper/filterNotInCollapsedSGroup'
 import { Tool } from './Tool'
 
 type SelectMode = 'lasso' | 'fragment' | 'rectangle'
@@ -215,7 +215,7 @@ class SelectTool implements Tool {
         editor.render.page2obj(event).sub(dragCtx.xy0)
       )
 
-      const visibleSelectedItems = filterNotInCollapsedSGroup(
+      const visibleSelectedItems = filterNotInContractedSGroup(
         expSel,
         this.editor.struct()
       )

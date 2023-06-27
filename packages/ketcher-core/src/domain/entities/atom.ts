@@ -212,6 +212,20 @@ export class Atom {
     })
   }
 
+  /**
+   * Trick: used for cloned struct for tooltips, for preview, for templates
+   *
+   * Why?
+   * Currently, tooltips are implemented with removing sgroups (wrong implementation)
+   * That's why we need to mark atoms as sgroup attachment points.
+   *
+   * If we change preview approach to flagged (option for showing sgroups without abbreviation),
+   * then we will be able to remove this hack.
+   */
+  setRGAttachmentPointForDisplayPurpose() {
+    this.attpnt = 1
+  }
+
   static getConnectedBondIds(struct: Struct, atomId: number): number[] {
     const result: number[] = []
     for (const [bondId, bond] of struct.bonds.entries()) {
@@ -260,7 +274,7 @@ export class Atom {
     return false
   }
 
-  clone(fidMap: Map<number, number>): Atom {
+  clone(fidMap?: Map<number, number>): Atom {
     const ret = new Atom(this)
     if (fidMap && fidMap.has(this.fragment)) {
       ret.fragment = fidMap.get(this.fragment)!

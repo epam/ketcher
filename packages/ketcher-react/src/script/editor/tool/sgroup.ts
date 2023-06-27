@@ -526,7 +526,9 @@ class SGroupTool implements Tool {
           editor.selection(null)
         }
       })
-      .catch(() => null)
+      .catch((error) => {
+        console.error(error)
+      })
   }
 }
 

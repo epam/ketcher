@@ -24,6 +24,8 @@ import { Vec2 } from './vec2'
 import { ReStruct } from '../../application/render'
 import { Pool } from 'domain/entities/pool'
 import { ReSGroup } from 'application/render'
+import { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint'
+import assert from 'assert'
 
 export class SGroupBracketParams {
   readonly c: Vec2
@@ -80,8 +82,7 @@ export class SGroup {
   neiAtoms: any
   pp: Vec2 | null
   data: any
-  firstSgroupAtom: any
-  firstSgroupAtomId: number
+  private readonly attachmentPoints: SGroupAttachmentPoint[]
 
   constructor(type: string) {
     this.type = type
@@ -101,8 +102,8 @@ export class SGroup {
     this.bonds = []
     this.xBonds = []
     this.neiAtoms = []
+    this.attachmentPoints = []
     this.pp = null
-    this.firstSgroupAtomId = -1
     this.data = {
       mul: 1, // multiplication count for MUL group
       connectivity: 'ht', // head-to-head, head-to-tail or either-unknown
@@ -156,6 +157,19 @@ export class SGroup {
 
   updateOffset(offset: Vec2): void {
     this.pp = Vec2.sum(this.bracketBox.p1, offset)
+  }
+
+  isExpanded(): boolean {
+    // flag ".data.expanded" exists only for the SuperAtom
+    if (SGroup.isSuperAtom(this)) {
+      return Boolean(this.data.expanded)
+    } else {
+      return true
+    }
+  }
+
+  isContracted(): boolean {
+    return !this.isExpanded()
   }
 
   calculatePP(struct: Struct): void {
@@ -218,21 +232,102 @@ export class SGroup {
     this.pp = topLeftPoint
   }
 
-  getAttAtomId(struct: Struct): number {
-    for (const atomId of this.atoms) {
-      const atom = struct.atoms.get(atomId)
-      if (!atom) continue
-      if (Number.isInteger(atom.attpnt)) return atomId
-    }
-    // in normal circumstances this should never be invoked
-    return this.atoms[0]
+  isGroupAttached(struct: Struct): boolean {
+    return this.getConnectionPointsCount(struct) >= 1
   }
 
-  isGroupAttached(struct: Struct): boolean {
-    const attachPointId = this.getAttAtomId(struct)
-    const neighbours = struct.atomGetNeighbors(attachPointId)
+  addAttachmentPoint(attachmentPoint: SGroupAttachmentPoint): void {
+    const isAttachmentPointAlreadyExist = this.attachmentPoints.some(
+      ({ atomId }) => attachmentPoint.atomId === atomId
+    )
 
-    return !neighbours?.every(({ aid }) => this.atoms.includes(aid))
+    if (isAttachmentPointAlreadyExist) {
+      throw new Error(
+        'The same attachment point cannot be added to an S-group more than once'
+      )
+    }
+
+    this.attachmentPoints.push(attachmentPoint)
+  }
+
+  addAttachmentPoints(
+    attachmentPoints:
+      | ReadonlyArray<SGroupAttachmentPoint>
+      | SGroupAttachmentPoint[]
+  ): void {
+    for (const attachmentPoint of attachmentPoints) {
+      this.addAttachmentPoint(attachmentPoint)
+    }
+  }
+
+  removeAttachmentPoint(attachmentPointAtomId: number): boolean {
+    const index = this.attachmentPoints.findIndex(
+      ({ atomId }) => attachmentPointAtomId === atomId
+    )
+    if (index !== -1) {
+      this.attachmentPoints.splice(index, 1)
+      return true
+    }
+    return false
+  }
+
+  getAttachmentPoints(): ReadonlyArray<SGroupAttachmentPoint> {
+    return this.attachmentPoints
+  }
+
+  /**
+   * Connection point - is not! the same as Attachment point.
+   * Connection point is a fact for the sgroup - is the atom that has connected bond to an external atom.
+   * So it doesn't matter how it happens (connection atom).
+   * When we talk about "Attachment point" it is a hypothetical, suitable place to connect to sgroup.
+   * But there are cases when sgroup doesn't have attachment points but have connection (read from external file)
+   */
+  private getConnectionPointsCount(struct: Struct): number {
+    const connectionAtoms = new Set<number>()
+    for (const atomId of this.atoms) {
+      const neighbors = struct.atomGetNeighbors(atomId) ?? []
+      for (const { aid } of neighbors) {
+        if (!this.atoms.includes(aid)) {
+          connectionAtoms.add(atomId)
+          break
+        }
+      }
+    }
+    return connectionAtoms.size
+  }
+
+  isNotContractible(struct: Struct): boolean {
+    return this.getConnectionPointsCount(struct) > 1
+  }
+
+  /**
+   * Why only one?
+   * Currently other parts of application don't support several attachment points for sgroup.
+   * So to support it - it's required to refactor almost every peace of code with sgroups.
+   *
+   *
+   * Why return 'undefined' without fallback?
+   * If sgroup doesn't have attachment points it can't be attached, (salt and solvents for example).
+   */
+  getAttachmentAtomId(): number | undefined {
+    return this.attachmentPoints[0]?.atomId
+  }
+
+  /**
+   * WHY? When group is contracted we need to understand the represent atom to calculate position.
+   * It is not always the attachmentPoint!! if no attachment point - use the first atom
+   */
+  getContractedPosition(struct: Struct): { atomId: number; position: Vec2 } {
+    const atomId = this.attachmentPoints[0]?.atomId ?? this.atoms[0]
+    const representAtom = struct.atoms.get(atomId)
+    assert(representAtom != null)
+    return { atomId, position: representAtom.pp }
+  }
+
+  cloneAttachmentPoints(
+    atomIdMap: Map<number, number>
+  ): ReadonlyArray<SGroupAttachmentPoint> {
+    return this.attachmentPoints.map((point) => point.clone(atomIdMap))
   }
 
   static getOffset(sgroup: SGroup): null | Vec2 {
@@ -310,11 +405,15 @@ export class SGroup {
     cp.bonds = null
     cp.allAtoms = sgroup.allAtoms
     cp.data.expanded = sgroup.data.expanded
+    cp.addAttachmentPoints(sgroup.cloneAttachmentPoints(aidMap))
     return cp
   }
 
-  static addAtom(sgroup: SGroup, aid: number): void {
+  static addAtom(sgroup: SGroup, aid: number, struct: Struct): void {
     sgroup.atoms.push(aid)
+    if (sgroup.isNotContractible(struct)) {
+      sgroup.setAttr('expanded', true)
+    }
   }
 
   static removeAtom(sgroup: SGroup, aid: number): void {
@@ -604,10 +703,11 @@ export class SGroup {
   static isAtomInContractedSGroup = (atom, sGroups) => {
     const contractedSGroup: number[] = []
 
-    sGroups.forEach((sGroup) => {
-      const id = 'item' in sGroup ? sGroup.item.id : sGroup.id
-      if (this.isContractedSGroup(id, sGroups)) {
-        contractedSGroup.push(id)
+    sGroups.forEach((sGroupOrReSGroup) => {
+      const sGroup =
+        'item' in sGroupOrReSGroup ? sGroupOrReSGroup.item : sGroupOrReSGroup
+      if (sGroup.isContracted()) {
+        contractedSGroup.push(sGroup.id)
       }
     })
     return contractedSGroup.some((sg) => atom.sgs.has(sg))
@@ -617,18 +717,19 @@ export class SGroup {
     bond: Bond,
     sGroups: Map<number, ReSGroup> | Pool<SGroup>
   ) {
-    return [...sGroups.values()].some((sGroup) => {
-      const atomsInSGroup = 'item' in sGroup ? sGroup.item.atoms : sGroup.atoms
-      const isContracted = !this.isExpandedSGroup(sGroup)
+    return [...sGroups.values()].some((sGroupOrReSGroup) => {
+      const sGroup: SGroup =
+        'item' in sGroupOrReSGroup ? sGroupOrReSGroup.item : sGroupOrReSGroup
+      const atomsInSGroup = sGroup.atoms
       return (
-        isContracted &&
+        sGroup.isContracted() &&
         atomsInSGroup.includes(bond?.begin) &&
         atomsInSGroup.includes(bond?.end)
       )
     })
   }
 
-  static isSuperAtom(sGroup: SGroup): boolean {
+  static isSuperAtom(sGroup?: SGroup): boolean {
     if (!sGroup) {
       return false
     }
@@ -645,42 +746,6 @@ export class SGroup {
 
   static isMulSGroup(sGroup: SGroup): boolean {
     return sGroup.type === SGroup.TYPES.MUL
-  }
-
-  static isExpandedSGroup(sGroup) {
-    return 'item' in sGroup ? sGroup?.item.data.expanded : sGroup.data.expanded
-  }
-
-  static isContractedSGroup(sGroupId, sGroups): boolean {
-    let isSGroup = false
-    let expanded = false
-    sGroups.forEach((sGroupItem) => {
-      const sGroupItemId =
-        'item' in sGroupItem ? sGroupItem?.item.id : sGroupItem.id
-      if (sGroupItemId === sGroupId) {
-        isSGroup = true
-        expanded = this.isExpandedSGroup(sGroupItem)
-      }
-    })
-    return !expanded && isSGroup
-  }
-
-  static getAtomsSGroupWithoutAttachmentPoint(sGroup: SGroup, struct: Struct) {
-    const atomsSGroup = SGroup.getAtoms(struct, sGroup)
-    const attachmentPointId = sGroup?.getAttAtomId(struct)
-    return atomsSGroup.filter((atomId) => atomId !== attachmentPointId)
-  }
-
-  /**
-   * @returns `undefined`: if it's salt or solvent
-   */
-  static getAttachmentAtomIdBySGroupId(sGroupId: number, struct: Struct) {
-    const functionalGroup = struct.functionalGroups.get(sGroupId)
-    if (!SGroup.isSaltOrSolvent(functionalGroup?.name || '')) {
-      const sGroup = struct.sgroups.get(sGroupId)
-      return sGroup?.getAttAtomId(struct)
-    }
-    return undefined
   }
 }
 

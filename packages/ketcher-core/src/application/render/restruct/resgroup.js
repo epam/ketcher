@@ -27,6 +27,7 @@ import { tfx } from 'utilities'
 class ReSGroup extends ReObject {
   constructor(sgroup) {
     super('sgroup')
+    /** @type {SGroup} */
     this.item = sgroup
   }
 
@@ -34,6 +35,11 @@ class ReSGroup extends ReObject {
     return false
   }
 
+  /**
+   * @param remol {ReStruct}
+   * @param sgroup {SGroup}
+   * @returns {*}
+   */
   draw(remol, sgroup) {
     this.render = remol.render
     let set = this.render.paper.set()
@@ -43,22 +49,7 @@ class ReSGroup extends ReObject {
     const bracketBox = sgroup.bracketBox
     const d = sgroup.bracketDir
     sgroup.areas = [bracketBox]
-    const functionalGroups = remol.molecule.functionalGroups
-    if (
-      FunctionalGroup.isContractedFunctionalGroup(
-        sgroup.id,
-        functionalGroups
-      ) ||
-      (SGroup.isSuperAtom(sgroup) && !sgroup.data.expanded)
-    ) {
-      sgroup.atoms.forEach((aid) => {
-        if (FunctionalGroup.isAttachmentPointAtom(aid, remol.molecule)) {
-          sgroup.firstSgroupAtom = remol.molecule.atoms.get(aid)
-          sgroup.functionalGroup = true
-          sgroup.firstSgroupAtomId = aid
-        }
-      })
-    } else {
+    if (sgroup.isExpanded()) {
       switch (sgroup.type) {
         case 'MUL':
           SGroupdrawBrackets(
@@ -132,18 +123,16 @@ class ReSGroup extends ReObject {
     let startY = 0
     let width = 0
     let height = 0
-    const sGroupItem = this.item
-    const sGroupHasFirstAtom =
-      sGroupItem.functionalGroup &&
-      !sGroupItem.data.expanded &&
-      sGroupItem.firstSgroupAtom
-    if (sGroupHasFirstAtom) {
-      const firstAtomPosition = sGroupItem.firstSgroupAtom.pp
-      const reSGroupAtom = render.ctab.atoms.get(sGroupItem.firstSgroupAtomId)
+    const sGroup = this.item
+    const { atomId, position } = sGroup.getContractedPosition(
+      render.ctab.molecule
+    )
+    if (sGroup.isContracted() && position) {
+      const reSGroupAtom = render.ctab.atoms.get(atomId)
       const sGroupTextBoundingBox =
         reSGroupAtom?.visel.boundingBox || reSGroupAtom?.visel.oldBoundingBox
       if (sGroupTextBoundingBox) {
-        const { x, y } = Scale.obj2scaled(firstAtomPosition, render.options)
+        const { x, y } = Scale.obj2scaled(position, render.options)
         const { p0, p1 } = sGroupTextBoundingBox
         width = p1.x - p0.x + padding * 2
         height = p1.y - p0.y + padding * 2
@@ -184,7 +173,7 @@ class ReSGroup extends ReObject {
     const options = render.options
     const paper = render.paper
     const sGroupItem = this.item
-    const { a0, a1, b0, b1 } = getHighlighPathInfo(sGroupItem, options)
+    const { a0, a1, b0, b1 } = getHighlighPathInfo(sGroupItem, render)
 
     const functionalGroups = render.ctab.molecule.functionalGroups
     const set = paper.set()
@@ -491,7 +480,13 @@ function getBracketParameters(
   return brackets
 }
 
-function getHighlighPathInfo(sgroup, options) {
+/**
+ * @param sgroup {SGroup}
+ * @param render {Render}
+ * @returns {{a1: Vec2, size: number | number, startY: number, startX: number, b0: Vec2, a0: Vec2, b1: Vec2}}
+ */
+function getHighlighPathInfo(sgroup, render) {
+  const options = render.options
   let bracketBox = sgroup.bracketBox.transform(Scale.obj2scaled, options)
   const lineWidth = options.lineWidth
   const vext = new Vec2(lineWidth * 4, lineWidth * 6)
@@ -505,9 +500,12 @@ function getHighlighPathInfo(sgroup, options) {
   const size = options.contractedFunctionalGroupSize
   let startX = (b0.x + a0.x) / 2 - size / 2
   let startY = (a1.y + a0.y) / 2 - size / 2
-  if (sgroup.firstSgroupAtom) {
+  const { position: contractedPosition } = sgroup.getContractedPosition(
+    render.ctab.molecule
+  )
+  if (contractedPosition) {
     const shift = new Vec2(size / 2, size / 2, 0)
-    const hoverPp = Vec2.diff(sgroup.firstSgroupAtom.pp.scaled(40), shift)
+    const hoverPp = Vec2.diff(contractedPosition.scaled(40), shift)
     startX = hoverPp.x
     startY = hoverPp.y
   }

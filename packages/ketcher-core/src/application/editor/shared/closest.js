@@ -356,15 +356,15 @@ function findClosestSGroup(restruct, pos) {
   let minDist = SELECTION_DISTANCE_COEFFICIENT
 
   restruct.molecule.sgroups.forEach((sg, sgid) => {
-    if (sg.functionalGroup && !sg.expanded) {
-      const firstAtomPp = sg.firstSgroupAtom.pp
+    if (sg.isContracted()) {
+      const { position } = sg.getContractedPosition(restruct.molecule)
       const d = sg.bracketDir
       const n = d.rotateSC(1, 0)
       const pg = new Vec2(Vec2.dot(pos, d), Vec2.dot(pos, n))
       const shift = new Vec2(0.625, 0.625)
       const box = {
-        p0: Vec2.diff(firstAtomPp, shift),
-        p1: Vec2.sum(firstAtomPp, shift)
+        p0: Vec2.diff(position, shift),
+        p1: Vec2.sum(position, shift)
       }
 
       const inBox =

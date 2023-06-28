@@ -843,59 +843,52 @@ class RotateController {
     const TEXT_FONT_SIZE = 12;
     const relativeSnapAngleInDegrees = utils.degrees(relativeSnapAngle);
 
+    const drawText = (textPosition: Vec2) =>
+      this.paper
+        .text(
+          textPosition.x,
+          textPosition.y,
+          `${Math.abs(relativeSnapAngleInDegrees)}°`,
+        )
+        .attr({
+          'font-size': TEXT_FONT_SIZE,
+        });
+
+    const drawLine = () => {
+      const lineVector = new Vec2(LINE_LENGTH, 0).rotate(absoluteSnapAngle);
+      return this.paper.path(`M0,0` + `l${lineVector.x},${lineVector.y}`).attr({
+        'stroke-dasharray': '-',
+        stroke: STYLE.INITIAL_COLOR,
+      });
+    };
+
     switch (state) {
       case 'noLine': {
         const textAngle = utils.normalizeAngle(
           absoluteSnapAngle - relativeSnapAngle / 2,
         );
         const textPosition = new Vec2(20, 0).rotate(textAngle);
-        const text = this.paper
-          .text(
-            textPosition.x,
-            textPosition.y,
-            `${Math.abs(relativeSnapAngleInDegrees)}°`,
-          )
-          .attr({
-            'font-size': TEXT_FONT_SIZE,
-            fill: STYLE.ACTIVE_COLOR,
-          });
+        const text = drawText(textPosition).attr({
+          fill: STYLE.ACTIVE_COLOR,
+        });
         this.snapAngleIndicator.push(text);
         break;
       }
 
       case 'noText': {
-        const lineVector = new Vec2(LINE_LENGTH, 0).rotate(absoluteSnapAngle);
-        const line = this.paper
-          .path(`M0,0` + `l${lineVector.x},${lineVector.y}`)
-          .attr({
-            'stroke-dasharray': '-',
-            stroke: STYLE.INITIAL_COLOR,
-          });
+        const line = drawLine();
         this.snapAngleIndicator.push(line);
         break;
       }
 
       default: {
-        const lineVector = new Vec2(LINE_LENGTH, 0).rotate(absoluteSnapAngle);
-        const line = this.paper
-          .path(`M0,0` + `l${lineVector.x},${lineVector.y}`)
-          .attr({
-            'stroke-dasharray': '-',
-            stroke: STYLE.INITIAL_COLOR,
-          });
+        const line = drawLine();
         const textPosition = new Vec2(LINE_LENGTH + 15, 0).rotate(
           absoluteSnapAngle,
         );
-        const text = this.paper
-          .text(
-            textPosition.x,
-            textPosition.y,
-            `${Math.abs(relativeSnapAngleInDegrees)}°`,
-          )
-          .attr({
-            'font-size': TEXT_FONT_SIZE,
-            fill: STYLE.INITIAL_COLOR,
-          });
+        const text = drawText(textPosition).attr({
+          fill: STYLE.INITIAL_COLOR,
+        });
         this.snapAngleIndicator.push(line);
         this.snapAngleIndicator.push(text);
         break;

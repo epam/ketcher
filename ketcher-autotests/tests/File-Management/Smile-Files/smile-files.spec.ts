@@ -28,7 +28,7 @@ async function getPreviewForSmiles(
 
   const element = page.getByRole('button', { name: formatName });
   console.log('element', element);
-  await element.click();
+  await element.click({ force: true });
 
   // page.locator('.MuiMenuItem-root').nth(6).click();
   // console.log('option', option);

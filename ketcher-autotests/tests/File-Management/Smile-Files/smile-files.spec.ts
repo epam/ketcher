@@ -32,6 +32,7 @@ async function getPreviewForSmiles(
   const option = page.getByRole('option', { name: smileType });
   console.log('option!', option);
   await page.waitForSelector('li');
+  await option.isVisible();
   await option.click({ force: true });
   // page.locator('.MuiMenuItem-root').nth(6).click();
   // console.log('option', option);

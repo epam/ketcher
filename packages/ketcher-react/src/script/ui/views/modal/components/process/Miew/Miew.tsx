@@ -28,6 +28,7 @@ import { connect } from 'react-redux'
 import { load } from '../../../../../state'
 import { pick } from 'lodash/fp'
 import { Miew as MiewAsType } from 'miew'
+import { createSelector } from 'reselect'
 
 const Viewer = lazy(() => import('miew-react'))
 
@@ -188,8 +189,13 @@ const MiewDialog = ({
   )
 }
 
+const getOptionsSettings = (state) => state.options.settings
+const miewOptionsSelector = createSelector([getOptionsSettings], (settings) =>
+  createMiewOptions(pick(MIEW_OPTIONS, settings))
+)
+
 const mapStateToProps = (state) => ({
-  miewOpts: createMiewOptions(pick(MIEW_OPTIONS, state.options.settings)),
+  miewOpts: miewOptionsSelector(state),
   server: state.options.app.server ? state.server : null,
   struct: state.editor.struct(),
   miewTheme: state.options.settings.miewTheme

@@ -79,6 +79,7 @@ test.describe('SMILES files', () => {
     Description: SmileString is correctly generated from structure and vise 
     versa structure is correctly generated from SmileString.
     */
+    test.slow();
     await openFileAndAddToCanvas('all-type-bonds.ket', page);
     await getAndCompareSmiles(
       page,

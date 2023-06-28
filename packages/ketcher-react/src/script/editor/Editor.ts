@@ -629,9 +629,12 @@ function resetSelectionOnCanvasClick(
 function updateLastCursorPosition(editor: Editor, event) {
   const events = ['mousemove', 'click', 'mousedown', 'mouseup', 'mouseover']
   if (events.includes(event.type)) {
+    const clientAreaBoundingBox =
+      editor.render.clientArea.getBoundingClientRect()
+
     editor.lastCursorPosition = {
-      x: event.layerX,
-      y: event.layerY
+      x: event.pageX - clientAreaBoundingBox.x,
+      y: event.pageY - clientAreaBoundingBox.y
     }
   }
 }

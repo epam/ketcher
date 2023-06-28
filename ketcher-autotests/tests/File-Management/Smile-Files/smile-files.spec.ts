@@ -21,7 +21,18 @@ async function getPreviewForSmiles(
 ) {
   await selectTopPanelButton(TopPanelButton.Save, page);
   await delay(DELAY_IN_SECONDS.FIVE);
-  await page.locator(`div:has-text(${formatName})`).click();
+
+  // await page.locator(`div:has-text(${formatName})`).click();
+  // const button = page.locator(`div:has-text(${formatName})`);
+  // console.log("btn", button);
+
+  const element = page.getByRole('button', { name: formatName });
+  console.log('element', element);
+  await element.click();
+
+  // page.locator('.MuiMenuItem-root').nth(6).click();
+  // console.log('option', option);
+  // await option.click();
 }
 
 async function getAndCompareSmiles(page: Page, smilesFilePath: string) {

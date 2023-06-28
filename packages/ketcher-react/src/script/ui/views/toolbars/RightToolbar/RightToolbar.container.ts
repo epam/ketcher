@@ -27,6 +27,7 @@ import { onAction } from '../../../state'
 
 type StateProps = Omit<RightToolbarProps, 'className'>
 type OwnProps = Pick<RightToolbarProps, 'className'>
+const disableableButtons = []
 
 const mapStateToProps = (state): StateProps => ({
   active: state.actionState && state.actionState.activeTool,
@@ -34,7 +35,7 @@ const mapStateToProps = (state): StateProps => ({
   freqAtoms: state.toolbar.freqAtoms,
   opened: state.toolbar.opened,
   indigoVerification: state.requestsStatuses.indigoVerification,
-  disableableButtons: []
+  disableableButtons
 })
 
 const mapDispatchToProps = (dispatch: Dispatch): RightToolbarCallProps => ({

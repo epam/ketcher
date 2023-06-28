@@ -17,6 +17,7 @@
 import * as structFormat from '../../../../../data/convert/structConverter'
 
 import { Component, createRef } from 'react'
+import { createSelector } from 'reselect'
 import Form, { Field } from '../../../../../component/form/form/form'
 import {
   FormatterFactory,
@@ -443,10 +444,15 @@ class SaveDialog extends Component {
   }
 }
 
+const getOptions = (state) => state.options
+const serverSettingsSelector = createSelector([getOptions], (options) =>
+  options.getServerSettings()
+)
+
 const mapStateToProps = (state) => ({
   server: state.options.app.server ? state.server : null,
   struct: state.editor.struct(),
-  options: state.options.getServerSettings(),
+  options: serverSettingsSelector(state),
   formState: state.modal.form,
   moleculeErrors: state.modal.form.moleculeErrors,
   checkState: state.options.check,

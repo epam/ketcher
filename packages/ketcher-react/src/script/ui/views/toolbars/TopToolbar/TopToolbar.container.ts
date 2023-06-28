@@ -22,6 +22,37 @@ import { onAction } from '../../../state'
 import action from 'src/script/ui/action/index.js'
 import { shortcutStr } from '../shortcutStr'
 import { removeStructAction } from 'src/script/ui/state/shared'
+import { createSelector } from 'reselect'
+
+const getActionState = (state) => state.actionState || {}
+
+const disabledButtonsSelector = createSelector(
+  [getActionState],
+  (actionState) =>
+    Object.keys(actionState).reduce((acc: string[], item) => {
+      if (actionState[item]?.disabled) {
+        acc.push(item)
+      }
+      return acc
+    }, [])
+)
+const hiddenButtonsSelector = createSelector([getActionState], (actionState) =>
+  Object.keys(actionState).reduce((acc: string[], item) => {
+    if (actionState[item]?.hidden) {
+      acc.push(item)
+    }
+    return acc
+  }, [])
+)
+
+const disableableButtons = [
+  'layout',
+  'clean',
+  'arom',
+  'dearom',
+  'cip',
+  'enhanced-stereo'
+]
 
 const shortcuts = Object.keys(action).reduce((acc, key) => {
   if (action[key]?.shortcut) {
@@ -33,44 +64,15 @@ const shortcuts = Object.keys(action).reduce((acc, key) => {
 }, {})
 
 const mapStateToProps = (state: any) => {
-  const actionState = state.actionState || {}
-
-  const disabledButtons = Object.keys(actionState).reduce(
-    (acc: string[], item) => {
-      if (actionState[item]?.disabled) {
-        acc.push(item)
-      }
-      return acc
-    },
-    []
-  )
-
-  const hiddenButtons = Object.keys(actionState).reduce(
-    (acc: string[], item) => {
-      if (actionState[item]?.hidden) {
-        acc.push(item)
-      }
-      return acc
-    },
-    []
-  )
-
   return {
     currentZoom: Math.round(state.actionState?.zoom?.selected * 100),
-    disabledButtons,
-    hiddenButtons,
+    disabledButtons: disabledButtonsSelector(state),
+    hiddenButtons: hiddenButtonsSelector(state),
     shortcuts,
     status: state.actionState || {},
     opened: state.toolbar.opened,
     indigoVerification: state.requestsStatuses.indigoVerification,
-    disableableButtons: [
-      'layout',
-      'clean',
-      'arom',
-      'dearom',
-      'cip',
-      'enhanced-stereo'
-    ]
+    disableableButtons
   }
 }
 

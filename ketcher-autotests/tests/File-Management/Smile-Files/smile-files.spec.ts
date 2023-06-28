@@ -31,10 +31,13 @@ async function getPreviewForSmiles(
 
   const option = page.getByRole('option', { name: smileType });
   console.log('option!', option);
+  await page.waitForSelector('li');
   await option.click({ force: true });
   // page.locator('.MuiMenuItem-root').nth(6).click();
   // console.log('option', option);
   // await option.click();
+
+  // await page.waitForEvent('popup');
 }
 
 async function getAndCompareSmiles(page: Page, smilesFilePath: string) {

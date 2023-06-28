@@ -16,7 +16,7 @@
 
 const color = {
   white: '#FFFFFF',
-  primaryWhite: 'EFF2F5',
+  primaryWhite: '#EFF2F5',
   green: '#167782',
   lightGreen: '#188794',
   graphite: '#333333',

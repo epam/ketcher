@@ -1,4 +1,4 @@
-import { Page, expect, test } from '@playwright/test';
+import { Page, expect, test, Locator } from '@playwright/test';
 import {
   selectTopPanelButton,
   TopPanelButton,
@@ -20,12 +20,8 @@ async function getPreviewForSmiles(
   smileType: string
 ) {
   await selectTopPanelButton(TopPanelButton.Save, page);
-  await page
-    .getByRole('button', { name: formatName })
-    .click({ force: true, delay: 6000 });
-  await page
-    .getByRole('option', { name: smileType })
-    .click({ force: true, delay: 6000 });
+  await page.getByRole('button', { name: formatName }).click({ force: true });
+  await page.getByRole('option', { name: smileType }).click({ force: true });
 }
 
 async function getAndCompareSmiles(page: Page, smilesFilePath: string) {

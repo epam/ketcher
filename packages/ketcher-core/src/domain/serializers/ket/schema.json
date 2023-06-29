@@ -473,7 +473,7 @@
               "type": "array",
               "items": {
                 "type": "object",
-                "required": ["attachmentAtom", "attachmentId"],
+                "required": ["attachmentAtom"],
                 "properties": {
                   "attachmentAtom": {
                     "type": "integer",

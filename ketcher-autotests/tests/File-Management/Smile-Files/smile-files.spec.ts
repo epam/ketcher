@@ -20,8 +20,12 @@ async function getPreviewForSmiles(
   smileType: string
 ) {
   await selectTopPanelButton(TopPanelButton.Save, page);
-  await page.getByRole('button', { name: formatName }).click({ force: true });
-  await page.getByRole('option', { name: smileType }).click({ force: true });
+  await page
+    .getByRole('button', { name: formatName })
+    .click({ force: true, delay: 60000 });
+  await page
+    .getByRole('option', { name: smileType })
+    .click({ force: true, delay: 60000 });
   // page.locator('.MuiMenuItem-root').nth(6).click();
   // console.log('option', option);
   // await option.click();

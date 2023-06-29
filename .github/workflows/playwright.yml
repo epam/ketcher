@@ -42,7 +42,7 @@ jobs:
           echo "IGNORE_UNSTABLE_TESTS=$IGNORE_UNSTABLE_TESTS" >> .env
           echo "DEBUG=pw:api" >> .env
       - name: run test
-        run: cd ketcher-autotests && && npx playwright install && npm install -D @playwright/test && npm run test
+        run: cd ketcher-autotests && npx playwright install && npm install -D @playwright/test && npm run test
 #      - name: Build autotests for docker
 #        run: cd ketcher-autotests && npm run docker:build
 #      - name: Run playwright tests in docker

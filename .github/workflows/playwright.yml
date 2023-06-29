@@ -13,7 +13,7 @@ env:
   # See: https://github.com/orgs/community/discussions/25228#discussioncomment-3246960
   CI: false
   MODE: standalone
-  KETCHER_URL: http://host.docker.internal:4002
+  KETCHER_URL: http://localhost:4002
   DOCKER: true
   IGNORE_UNSTABLE_TESTS: true
 jobs:
@@ -41,10 +41,12 @@ jobs:
           echo "MODE=$MODE" >> .env
           echo "IGNORE_UNSTABLE_TESTS=$IGNORE_UNSTABLE_TESTS" >> .env
           echo "DEBUG=pw:api" >> .env
-      - name: Build autotests for docker
-        run: cd ketcher-autotests && npm run docker:build
-      - name: Run playwright tests in docker
-        run: cd ketcher-autotests && npm run docker:test
+      - name: run test
+        run: cd ketcher-autotests && && npx playwright install && npm install -D @playwright/test && npm run test
+#      - name: Build autotests for docker
+#        run: cd ketcher-autotests && npm run docker:build
+#      - name: Run playwright tests in docker
+#        run: cd ketcher-autotests && npm run docker:test
       - uses: actions/upload-artifact@v3
         # run even if previous steps fails
         if: always()

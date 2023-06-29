@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "report": "npx playwright show-report",
-    "test": "npx playwright test",
+    "test": "npx playwright test --trace on",
     "test:debug": "npx playwright test --debug",
     "test:update": "npx playwright test --update-snapshots",
     "docker": "docker-compose run --rm autotests",

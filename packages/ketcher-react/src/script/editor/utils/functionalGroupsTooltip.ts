@@ -98,7 +98,10 @@ export function setFunctionalGroupsTooltip({
   )
   if (closestCollapsibleStructures && event) {
     const sGroup = editor.struct()?.sgroups.get(closestCollapsibleStructures.id)
-    if (sGroup && !sGroup.data.expanded && sGroup.hovering) {
+    const isSGroupPresent = sGroup?.hovering
+    const isShowingTooltip =
+      !sGroup?.data.expanded || SGroup.isDataSGroup(sGroup)
+    if (isSGroupPresent && isShowingTooltip) {
       const groupName = sGroup.data.name
       const groupStruct = makeStruct(editor, sGroup)
       groupStruct.name = groupName

@@ -20,7 +20,7 @@ import {
   RawDraftContentState,
   RawDraftInlineStyleRange
 } from 'draft-js'
-import { Text, TextCommand, Vec2 } from 'domain/entities'
+import { Box2Abs, Text, TextCommand, Vec2 } from 'domain/entities'
 import { flatten, isEqual } from 'lodash/fp'
 
 import { LayerMap } from './generalEnumTypes'
@@ -72,6 +72,11 @@ class ReText extends ReObject {
     )
 
     return refPoints
+  }
+
+  getVBoxObj(): Box2Abs {
+    const [p0, _, p2] = this.getReferencePoints()
+    return new Box2Abs(p0, p2)
   }
 
   hoverPath(render: any): any {

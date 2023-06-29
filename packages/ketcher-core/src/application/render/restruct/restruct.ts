@@ -55,7 +55,7 @@ class ReStruct {
     reloops: ReLoop,
     simpleObjects: ReSimpleObject,
     texts: ReText
-  }
+  } as const
 
   public render: Render
   public molecule: Struct
@@ -307,6 +307,33 @@ class ReStruct {
     Object.keys(ReStruct.maps).forEach((map) => {
       this[map].forEach(func)
     })
+  }
+
+  getSelectionRotationCenter(
+    selection: Partial<Record<keyof typeof ReStruct.maps, number[] | undefined>>
+  ): Vec2 {
+    let vbox: Box2Abs | null = null
+    // we can't use just getVBoxObj from atom!
+    // because this will lead incorrect center position for the move atom around it
+    // because of atom's vBox contain text label with is not constant after flip/rotate
+    for (const atomId of selection.atoms ?? []) {
+      const atomPP = this.atoms.get(atomId)!.a.pp
+      const atomBox = new Box2Abs(atomPP, atomPP)
+      vbox = vbox == null ? atomBox : Box2Abs.union(vbox, atomBox)
+    }
+    const selectionExceptAtoms = { ...selection }
+    delete selectionExceptAtoms.atoms
+
+    Object.keys(ReStruct.maps).forEach((map) => {
+      if (!selectionExceptAtoms[map]) return
+
+      selectionExceptAtoms[map].forEach((id) => {
+        const box = this[map].get(id).getVBoxObj(this.render)
+        if (box) vbox = vbox ? Box2Abs.union(vbox, box) : box.clone()
+      })
+    })
+
+    return vbox?.centre() ?? new Vec2()
   }
 
   getVBoxObj(selection?): Box2Abs {

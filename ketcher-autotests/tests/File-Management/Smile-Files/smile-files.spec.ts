@@ -29,7 +29,7 @@ async function getPreviewForSmiles(
   const element = page.getByRole('button', { name: formatName });
   await element.click({ force: true });
 
-  const option = page.getByRole('option', { name: smileType });
+  const option = await page.getByRole('option', { name: smileType });
   console.log('option!', option);
   await page.waitForSelector('li');
   await option.isVisible();

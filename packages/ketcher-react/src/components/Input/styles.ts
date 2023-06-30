@@ -14,8 +14,27 @@
  * limitations under the License.
  ***************************************************************************/
 
-export * from './Icon'
-export * from './Buttons'
-export * from './StructRender'
-export * from './Input'
-export * from './Accordion'
+import styled from '@emotion/styled'
+import { style } from '../styles'
+
+export const StyledInput = styled.input({
+  border: 'none',
+  borderRadius: style.border.radius.medium,
+  outline: style.border.primary,
+  padding: '4px 8px',
+  caretColor: style.color.green,
+
+  ':hover': {
+    outline: style.border.medium
+  },
+
+  ':active, :focus,:focus-visible': {
+    outline: style.border.secondary
+  },
+
+  ':disabled': {
+    color: 'blue',
+    outline: style.border.primary,
+    backgroundColor: '#e1e5ea'
+  }
+})

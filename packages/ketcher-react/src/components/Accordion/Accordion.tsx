@@ -13,9 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+import { Container, DetailsContainer, SummaryContainer } from './styles'
+import { IAccordionProps } from './types'
 
-export * from './Icon'
-export * from './Buttons'
-export * from './StructRender'
-export * from './Input'
-export * from './Accordion'
+export const Accordion = ({
+  summary,
+  details,
+  expanded,
+  className,
+  onSummaryClick
+}: IAccordionProps) => {
+  return (
+    <Container className={className}>
+      <SummaryContainer onClick={onSummaryClick}>{summary}</SummaryContainer>
+      <DetailsContainer expanded={expanded}>{details}</DetailsContainer>
+    </Container>
+  )
+}

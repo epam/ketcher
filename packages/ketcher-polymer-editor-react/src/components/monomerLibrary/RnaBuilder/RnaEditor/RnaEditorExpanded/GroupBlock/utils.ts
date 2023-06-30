@@ -14,8 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-export * from './Icon'
-export * from './Buttons'
-export * from './StructRender'
-export * from './Input'
-export * from './Accordion'
+import { MonomerGroups } from 'src/constants'
+
+export const groupNameToLabel = {
+  [MonomerGroups.SUGARS]: 'Select sugar',
+  [MonomerGroups.BASES]: 'Select base',
+  [MonomerGroups.PHOSPHATES]: 'Select phosphate'
+}

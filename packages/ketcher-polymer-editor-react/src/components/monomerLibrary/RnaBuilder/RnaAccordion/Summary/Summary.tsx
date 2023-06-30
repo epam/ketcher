@@ -14,8 +14,22 @@
  * limitations under the License.
  ***************************************************************************/
 
-export * from './Icon'
-export * from './Buttons'
-export * from './StructRender'
-export * from './Input'
-export * from './Accordion'
+import { StyledIcon, SummaryContainer, SummaryText } from './styles'
+import { ISummaryProps } from './types'
+
+export const Summary = ({
+  groupName,
+  quantity,
+  expanded,
+  iconName
+}: ISummaryProps) => {
+  return (
+    <SummaryContainer>
+      <StyledIcon name={iconName} />
+      <SummaryText>
+        {groupName} ({quantity})
+      </SummaryText>
+      <StyledIcon name="chevron" expanded={expanded} />
+    </SummaryContainer>
+  )
+}

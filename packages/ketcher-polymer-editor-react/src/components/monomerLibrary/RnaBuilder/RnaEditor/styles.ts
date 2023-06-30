@@ -14,8 +14,35 @@
  * limitations under the License.
  ***************************************************************************/
 
-export * from './Icon'
-export * from './Buttons'
-export * from './StructRender'
-export * from './Input'
-export * from './Accordion'
+import styled from '@emotion/styled'
+import { Button, Icon } from 'ketcher-react'
+
+export const RnaEditorContainer = styled.div((props) => ({
+  borderRadius: props.theme.ketcher.border.radius.regular,
+  backgroundColor: '#F7F9FA',
+  boxShadow: props.theme.ketcher.shadow.regular,
+  overflow: 'hidden',
+  margin: '12px',
+  flexShrink: 0
+}))
+
+export const ExpandButton = styled(Button)({
+  width: '100%',
+  outline: 'none',
+  borderRadius: '0',
+  padding: '0',
+
+  ':hover': {
+    backgroundColor: '#E1E5EA'
+  }
+})
+
+export const ExpandIcon = styled(Icon)<{ expanded?: boolean }>(
+  {
+    height: '16px',
+    width: '16px'
+  },
+  ({ expanded }) => ({
+    transform: expanded ? 'rotate(180deg)' : 'none'
+  })
+)

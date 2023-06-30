@@ -14,8 +14,15 @@
  * limitations under the License.
  ***************************************************************************/
 
-export * from './Icon'
-export * from './Buttons'
-export * from './StructRender'
-export * from './Input'
-export * from './Accordion'
+import { IconName } from 'ketcher-react'
+
+export interface ISummaryProps {
+  groupName: string
+  quantity: number
+  expanded: boolean
+  iconName: IconName
+}
+
+export interface IStyledIconProps {
+  expanded?: boolean
+}

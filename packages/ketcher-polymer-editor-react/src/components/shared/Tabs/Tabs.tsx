@@ -18,7 +18,6 @@ import { Tabs, Tab } from '@mui/material'
 import { ReactElement, useState } from 'react'
 import Box from '@mui/material/Box'
 import styled from '@emotion/styled'
-import { scrollbarThin } from 'theming/mixins'
 
 interface TabPanelProps {
   index: number
@@ -29,14 +28,19 @@ interface TabPanelProps {
 const TabPanelDiv = styled.div(() => ({
   backgroundColor: '#eef2f5',
   flexGrow: 1,
-  padding: '16px 12px',
   overflowY: 'scroll'
 }))
+
+const TabPanelBox = styled(Box)({
+  height: '100%',
+  width: '100%',
+  alignItems: 'start'
+})
 
 function TabPanel({ children, value, index }: TabPanelProps) {
   return (
     <TabPanelDiv role="tabpanel" hidden={value !== index} id={index.toString()}>
-      {value === index && <Box>{children}</Box>}
+      {value === index && <TabPanelBox>{children}</TabPanelBox>}
     </TabPanelDiv>
   )
 }
@@ -113,15 +117,14 @@ function CustomTabs(props): ReactElement {
     }
   }))
 
-  const TabPanelContent = styled.div(({ theme }) => ({
+  const TabPanelContent = styled.div(() => ({
     display: 'flex',
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'flex-start',
     overflowY: 'auto',
     width: '100%',
-
-    ...scrollbarThin(theme)
+    height: '100%'
   }))
 
   return (

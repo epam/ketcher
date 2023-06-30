@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+import { StyledInput } from './styles'
 
-export * from './Icon'
-export * from './Buttons'
-export * from './StructRender'
-export * from './Input'
-export * from './Accordion'
+export const Input = (props: React.InputHTMLAttributes<HTMLInputElement>) => {
+  return <StyledInput {...props} />
+}

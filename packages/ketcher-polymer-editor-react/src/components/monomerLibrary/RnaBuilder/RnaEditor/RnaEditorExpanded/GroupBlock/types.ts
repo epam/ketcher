@@ -14,8 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 
-export * from './Icon'
-export * from './Buttons'
-export * from './StructRender'
-export * from './Input'
-export * from './Accordion'
+import { IconName } from 'ketcher-react'
+import { MonomerGroups } from 'src/constants'
+
+export interface IGroupBlockProps {
+  groupName: MonomerGroups
+  iconName: IconName
+  monomerName?: string
+  selected?: boolean
+  disabled?: boolean
+  onClick?: () => void
+}

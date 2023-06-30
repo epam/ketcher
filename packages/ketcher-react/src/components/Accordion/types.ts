@@ -14,8 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 
-export * from './Icon'
-export * from './Buttons'
-export * from './StructRender'
-export * from './Input'
-export * from './Accordion'
+export interface IAccordionProps {
+  summary: React.ReactNode
+  details: React.ReactNode
+  expanded: boolean
+  onSummaryClick: React.MouseEventHandler<HTMLDivElement>
+  className?: string
+}
+
+export interface IDetailsContainerProps {
+  expanded: boolean
+}

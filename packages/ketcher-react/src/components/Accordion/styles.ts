@@ -14,8 +14,32 @@
  * limitations under the License.
  ***************************************************************************/
 
-export * from './Icon'
-export * from './Buttons'
-export * from './StructRender'
-export * from './Input'
-export * from './Accordion'
+import styled from '@emotion/styled'
+import { IDetailsContainerProps } from './types'
+
+export const Container = styled.div({
+  overflow: 'hidden',
+  display: 'flex',
+  flexDirection: 'column',
+  flexBasis: 'content',
+  height: '100%'
+})
+
+export const SummaryContainer = styled.div({
+  backgroundColor: 'white',
+  cursor: 'pointer',
+
+  '&:hover': {
+    backgroundColor: '#f3f8f9'
+  }
+})
+
+export const DetailsContainer = styled.div<IDetailsContainerProps>(
+  {
+    overflow: 'scroll',
+    transition: 'all .3s'
+  },
+  ({ expanded }) => ({
+    maxHeight: expanded ? '9999px' : '0'
+  })
+)

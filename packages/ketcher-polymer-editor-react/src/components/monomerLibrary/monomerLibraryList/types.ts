@@ -14,8 +14,15 @@
  * limitations under the License.
  ***************************************************************************/
 
-export * from './Icon'
-export * from './Buttons'
-export * from './StructRender'
-export * from './Input'
-export * from './Accordion'
+import { LibraryNameType } from 'src/constants'
+import { MonomerItemType } from '../monomerLibraryItem'
+
+export type Group = {
+  groupItems: Array<MonomerItemType>
+  groupTitle?: string
+}
+
+export interface IMonomerListProps {
+  libraryName: LibraryNameType
+  onItemClick: (item) => void
+}

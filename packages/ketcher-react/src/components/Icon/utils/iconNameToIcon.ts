@@ -205,6 +205,11 @@ import RapMiddleLink from '../../../assets/icons/files/rap-middle-link.svg'
 import RapRightLink from '../../../assets/icons/files/rap-right-link.svg'
 import ArrowsLeft from '../../../assets/icons/files/arrows-left.svg'
 import ArrowsRight from '../../../assets/icons/files/arrows-right.svg'
+import Sugar from '../../../assets/icons/files/sugar.svg'
+import Base from '../../../assets/icons/files/base.svg'
+import Phosphate from '../../../assets/icons/files/phosphate.svg'
+import Preset from '../../../assets/icons/files/preset.svg'
+import EditFilled from '../../../assets/icons/files/edit-filled.svg'
 
 export const iconNameToIcon = {
   α,
@@ -409,5 +414,10 @@ export const iconNameToIcon = {
   'rap-middle-link': RapMiddleLink,
   'rap-right-link': RapRightLink,
   'arrows-left': ArrowsLeft,
-  'arrows-right': ArrowsRight
+  'arrows-right': ArrowsRight,
+  sugar: Sugar,
+  base: Base,
+  phosphate: Phosphate,
+  preset: Preset,
+  'edit-filled': EditFilled
 } as const

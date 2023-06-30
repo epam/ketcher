@@ -14,8 +14,28 @@
  * limitations under the License.
  ***************************************************************************/
 
-export * from './Icon'
-export * from './Buttons'
-export * from './StructRender'
-export * from './Input'
-export * from './Accordion'
+import styled from '@emotion/styled'
+import { Icon } from 'ketcher-react'
+import { IStyledIconProps } from './types'
+
+export const SummaryContainer = styled.div((props) => ({
+  minHeight: '32px',
+  display: 'flex',
+  alignItems: 'center',
+  padding: '8px 12px',
+  gap: '8px',
+  borderBottom: props.theme.ketcher.border.small
+}))
+
+export const SummaryText = styled.span((props) => ({
+  flexGrow: 1,
+  fontSize: props.theme.ketcher.font.size.regular
+}))
+
+export const StyledIcon = styled(Icon)<IStyledIconProps>((props) => ({
+  width: '16px',
+  height: '16px',
+  color: props.theme.ketcher.color.icon.grey,
+  transition: props.theme.ketcher.transition.regular,
+  transform: props.expanded ? 'none' : 'rotate(180deg)'
+}))

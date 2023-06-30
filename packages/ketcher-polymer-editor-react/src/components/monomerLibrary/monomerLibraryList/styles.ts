@@ -14,8 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
-export * from './Icon'
-export * from './Buttons'
-export * from './StructRender'
-export * from './Input'
-export * from './Accordion'
+import styled from '@emotion/styled'
+
+export const MonomerListContainer = styled.div({
+  width: '100%',
+  display: 'flex',
+  flexDirection: 'column',
+  justifyItems: 'center',
+  gap: '24px',
+  padding: '16px 12px'
+})

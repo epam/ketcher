@@ -14,8 +14,26 @@
  * limitations under the License.
  ***************************************************************************/
 
-export * from './Icon'
-export * from './Buttons'
-export * from './StructRender'
-export * from './Input'
-export * from './Accordion'
+import {
+  MonomerName,
+  RnaEditorCollapsedContainer,
+  MonomerFullName,
+  TextContainer,
+  EditIcon
+} from './styles'
+import { IRnaEditorCollapsedProps } from './types'
+
+export const RnaEditorCollapsed = ({
+  name,
+  fullName
+}: IRnaEditorCollapsedProps) => {
+  return (
+    <RnaEditorCollapsedContainer>
+      <TextContainer>
+        <MonomerName>{name || 'Not selected'}</MonomerName>
+        <MonomerFullName>{fullName}</MonomerFullName>
+      </TextContainer>
+      <EditIcon name="edit-filled" onClick={() => console.log('kek')} />
+    </RnaEditorCollapsedContainer>
+  )
+}

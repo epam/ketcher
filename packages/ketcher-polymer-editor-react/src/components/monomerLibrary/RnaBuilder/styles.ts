@@ -14,8 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-export * from './Icon'
-export * from './Buttons'
-export * from './StructRender'
-export * from './Input'
-export * from './Accordion'
+import styled from '@emotion/styled'
+
+export const RnaBuilderContainer = styled.div({
+  height: '100%',
+  width: '100%',
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'space-between'
+})

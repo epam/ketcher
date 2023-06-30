@@ -14,8 +14,29 @@
  * limitations under the License.
  ***************************************************************************/
 
-export * from './Icon'
-export * from './Buttons'
-export * from './StructRender'
-export * from './Input'
-export * from './Accordion'
+import { useState } from 'react'
+import { RnaEditorCollapsed } from './RnaEditorCollapsed'
+import { RnaEditorExpanded } from './RnaEditorExpanded'
+import { ExpandButton, ExpandIcon, RnaEditorContainer } from './styles'
+
+export const RnaEditor = () => {
+  const [expanded, setExpanded] = useState(false)
+
+  const handleExpandButtonClick = () => {
+    setExpanded(!expanded)
+  }
+
+  return (
+    <RnaEditorContainer>
+      {expanded ? (
+        <RnaEditorExpanded />
+      ) : (
+        <RnaEditorCollapsed name="My Rna" fullName="ALtrina2(m2nen)c7io7n2A" />
+      )}
+
+      <ExpandButton onClick={handleExpandButtonClick}>
+        <ExpandIcon expanded={expanded} name="chevron" />
+      </ExpandButton>
+    </RnaEditorContainer>
+  )
+}

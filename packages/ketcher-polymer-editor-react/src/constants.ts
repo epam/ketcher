@@ -33,3 +33,31 @@ export const preview = {
   height: 230,
   gap: 5
 } as const
+
+export enum MonomerGroups {
+  SUGARS = 'Sugars',
+  BASES = 'Bases',
+  PHOSPHATES = 'Phosphates'
+}
+
+export enum MonomerGroupCodes {
+  R = 'R',
+  A = 'A',
+  C = 'C',
+  G = 'G',
+  T = 'T',
+  U = 'U',
+  X = 'X',
+  P = 'P'
+}
+
+export const MonomerCodeToGroup: Record<MonomerGroupCodes, MonomerGroups> = {
+  R: MonomerGroups.SUGARS,
+  A: MonomerGroups.BASES,
+  C: MonomerGroups.BASES,
+  G: MonomerGroups.BASES,
+  T: MonomerGroups.BASES,
+  U: MonomerGroups.BASES,
+  X: MonomerGroups.BASES,
+  P: MonomerGroups.PHOSPHATES
+} as const

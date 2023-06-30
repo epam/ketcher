@@ -14,8 +14,25 @@
  * limitations under the License.
  ***************************************************************************/
 
-export * from './Icon'
-export * from './Buttons'
-export * from './StructRender'
-export * from './Input'
-export * from './Accordion'
+import styled from '@emotion/styled'
+import { Accordion } from 'ketcher-react'
+
+export const RnaAccordionContainer = styled.div({
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'flex-end',
+  overflow: 'hidden'
+})
+
+export const StyledAccordion = styled(Accordion)({
+  minHeight: '32px'
+})
+
+export const DetailsContainer = styled.div({
+  width: '100%',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '24px',
+  justifyContent: 'start',
+  padding: '16px 12px'
+})

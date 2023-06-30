@@ -14,8 +14,15 @@
  * limitations under the License.
  ***************************************************************************/
 
-export * from './Icon'
-export * from './Buttons'
-export * from './StructRender'
-export * from './Input'
-export * from './Accordion'
+import { RnaAccordion } from './RnaAccordion'
+import { RnaEditor } from './RnaEditor'
+import { RnaBuilderContainer } from './styles'
+
+export const RnaBuilder = () => {
+  return (
+    <RnaBuilderContainer>
+      <RnaEditor />
+      <RnaAccordion />
+    </RnaBuilderContainer>
+  )
+}

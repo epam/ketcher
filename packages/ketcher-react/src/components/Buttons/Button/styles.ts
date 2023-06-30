@@ -13,9 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+import styled from '@emotion/styled'
+import { style } from 'src/components/styles'
 
-export * from './Icon'
-export * from './Buttons'
-export * from './StructRender'
-export * from './Input'
-export * from './Accordion'
+export const StyledButton = styled.button({
+  boxShadow: 'none',
+  transition: 'none',
+  border: '0',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  cursor: 'pointer',
+  padding: '4px 8px',
+  outline: '1px solid #585858',
+  background: style.background.color.primary,
+  borderRadius: style.border.radius.regular,
+  textTransform: 'none',
+  fontSize: style.font.size.regular,
+  fontWeight: style.font.weight.regular,
+
+  ':disabled': {
+    cursor: 'auto',
+    background: '#e1e5ea',
+    outline: 'none'
+  }
+})

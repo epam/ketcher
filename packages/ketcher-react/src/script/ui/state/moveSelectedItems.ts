@@ -67,19 +67,19 @@ function isCloseToTheEdgeOfCanvas(
     const position = atom?.a.pp
     if (position && theMostTopAtom) {
       theMostTopAtom =
-        position.y > theMostTopAtom.a.pp.y ? atom : theMostTopAtom
+        position.y < theMostTopAtom.a.pp.y ? atom : theMostTopAtom
     }
     if (position && theMostBottomAtom) {
       theMostBottomAtom =
-        position.y < theMostBottomAtom.a.pp.y ? atom : theMostBottomAtom
+        position.y > theMostBottomAtom.a.pp.y ? atom : theMostBottomAtom
     }
     if (position && theMostRightAtom) {
       theMostRightAtom =
-        position.x > theMostRightAtom.a.pp.y ? atom : theMostRightAtom
+        position.x > theMostRightAtom.a.pp.x ? atom : theMostRightAtom
     }
     if (position && theMostLeftAtom) {
       theMostLeftAtom =
-        position.x < theMostLeftAtom.a.pp.y ? atom : theMostLeftAtom
+        position.x < theMostLeftAtom.a.pp.x ? atom : theMostLeftAtom
     }
   })
   if (

@@ -74,7 +74,7 @@ export enum RingButton {
   Cyclooctane = 'Cyclooctane',
 }
 
-export const CustomTemplatesButton = 'Custom Templates';
+export const CustomTemplatesButton = 'Structure Library';
 
 export type ToolbarButton =
   | AtomButton

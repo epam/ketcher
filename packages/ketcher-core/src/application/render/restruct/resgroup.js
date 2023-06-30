@@ -186,7 +186,7 @@ class ReSGroup extends ReObject {
       sGroupItem.hovering = this.getContractedSelectionContour(render).attr(
         options.hoverStyle
       )
-    } else {
+    } else if (!this.selected) {
       sGroupItem.hovering = paper
         .path(
           'M{0},{1}L{2},{3}L{4},{5}L{6},{7}L{0},{1}',

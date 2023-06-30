@@ -733,7 +733,7 @@ _NOTE: `Mod` key is `Command` on OSX and `Ctrl` on PC systems_
 **Templates**
 | Shortcut  | Action                                                                                                                    |
 | --------- | ------------------------------------------------------------------------------------------------------------------------- |
-| `Shift+t` | Custom Templates                                                                                                          |
+| `Shift+t` | Structure Library                                                                                                         |
 | `t`       | Rotate between: Benzene, Cyclopentadiene, Cyclohexane, Cyclopentane, Cyclopropane, Cyclobutane, Cycloheptane, Cyclooctane |
 
 **FunctionalGroups**

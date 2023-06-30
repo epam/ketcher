@@ -1,9 +1,4 @@
-import {
-  Page,
-  expect,
-  test as testPlaywright,
-  Locator,
-} from '@playwright/test';
+import { Page, expect, test } from '@playwright/test';
 import {
   selectTopPanelButton,
   TopPanelButton,
@@ -19,60 +14,19 @@ import {
 } from '@utils';
 import { getSmiles } from '@utils/formats';
 
-export function extendLocator(locator: Locator): Locator {
-  const { click: _click } = locator;
-  locator.click = async (options) => {
-    try {
-      await _click.apply(locator, [options]);
-    } catch (err: any) {
-      const msg = `${err.message}`;
-      if (
-        err instanceof Error &&
-        msg.startsWith('locator.click: Target closed')
-      ) {
-        console.warn(msg);
-      } else {
-        throw err;
-      }
-    }
-  };
-  return locator;
-}
-function extendPage(page: Page) {
-  const { locator: _locator } = page;
-  page.locator = (selector, options): Locator => {
-    const loc = _locator.apply(page, [selector, options]);
-    const locEx = extendLocator(loc);
-    return locEx;
-  };
-  return page;
-}
-export const test = testPlaywright.extend({
-  page: async ({ page }, use): Promise<void> => {
-    const _page = extendPage(page);
-    await use(_page);
-  },
-});
-
 async function getPreviewForSmiles(
   page: Page,
   formatName: string,
   smileType: string
 ) {
-  // await selectTopPanelButton(TopPanelButton.Save, page);
-  await page
-    .getByRole('button', { name: 'Save as... (Ctrl+S)' })
-    .click({ force: true });
-  await page.getByRole('button', { name: formatName }).click({ force: true });
-  const option = await page.getByRole('option', { name: smileType });
-  await option.click({ force: true });
+  await selectTopPanelButton(TopPanelButton.Save, page);
+  await page.getByRole('button', { name: formatName }).click();
+  await page.getByRole('option', { name: smileType }).click();
 }
 
 async function getAndCompareSmiles(page: Page, smilesFilePath: string) {
   const smilesFileExpected = await readFileContents(smilesFilePath);
-  console.log('smilesFileExpected', smilesFileExpected);
   const smilesFile = await getSmiles(page);
-  console.log('smilesFile', smilesFile);
   expect(smilesFile).toEqual(smilesFileExpected);
 }
 
@@ -97,7 +51,7 @@ test.describe('SMILES files', () => {
   });
 
   test.afterEach(async ({ page }) => {
-    // await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page);
   });
 
   test('SmileString for structure with Bond properties', async ({ page }) => {
@@ -106,16 +60,15 @@ test.describe('SMILES files', () => {
     Description: SmileString is correctly generated from structure and vise 
     versa structure is correctly generated from SmileString.
     */
-    test.slow();
     await openFileAndAddToCanvas('all-type-bonds.ket', page);
     await getAndCompareSmiles(
       page,
       'tests/test-data/smiles-all-bonds-expected.txt'
     );
     await getPreviewForSmiles(page, 'MDL Molfile V2000', 'Daylight SMILES');
-    // await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page);
 
-    // await clearCanvasAndPasteSmiles(page, 'CCCCC/CC/C:CC.C(C)CCCCCCCCCC');
+    await clearCanvasAndPasteSmiles(page, 'CCCCC/CC/C:CC.C(C)CCCCCCCCCC');
   });
 
   test.skip('SmileString for structure with Atom properties', async ({

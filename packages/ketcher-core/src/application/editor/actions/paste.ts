@@ -103,6 +103,9 @@ export function fromPaste(
     const newsgid = restruct.molecule.sgroups.newId()
     const sgAtoms = sg.atoms.map((aid) => aidMap.get(aid))
     const attachmentPoints = sg.cloneAttachmentPoints(aidMap)
+    if (sg.isNotContractible(pstruct)) {
+      sg.setAttr('expanded', true)
+    }
     const sgAction = fromSgroupAddition(
       restruct,
       sg.type,

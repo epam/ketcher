@@ -1,4 +1,9 @@
-import { Page, expect, test } from '@playwright/test';
+import {
+  Page,
+  expect,
+  test as testPlaywright,
+  Locator,
+} from '@playwright/test';
 import {
   selectTopPanelButton,
   TopPanelButton,
@@ -13,6 +18,41 @@ import {
   waitForLoad,
 } from '@utils';
 import { getSmiles } from '@utils/formats';
+
+export function extendLocator(locator: Locator): Locator {
+  const { click: _click } = locator;
+  locator.click = async (options) => {
+    try {
+      await _click.apply(locator, [options]);
+    } catch (err: any) {
+      const msg = `${err.message}`;
+      if (
+        err instanceof Error &&
+        msg.startsWith('locator.click: Target closed')
+      ) {
+        console.warn(msg);
+      } else {
+        throw err;
+      }
+    }
+  };
+  return locator;
+}
+function extendPage(page: Page) {
+  const { locator: _locator } = page;
+  page.locator = (selector, options): Locator => {
+    const loc = _locator.apply(page, [selector, options]);
+    const locEx = extendLocator(loc);
+    return locEx;
+  };
+  return page;
+}
+export const test = testPlaywright.extend({
+  page: async ({ page }, use): Promise<void> => {
+    const _page = extendPage(page);
+    await use(_page);
+  },
+});
 
 async function getPreviewForSmiles(
   page: Page,

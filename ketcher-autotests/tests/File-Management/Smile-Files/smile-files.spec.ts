@@ -59,7 +59,10 @@ async function getPreviewForSmiles(
   formatName: string,
   smileType: string
 ) {
-  await selectTopPanelButton(TopPanelButton.Save, page);
+  // await selectTopPanelButton(TopPanelButton.Save, page);
+  await page
+    .getByRole('button', { name: 'Save as... (Ctrl+S)' })
+    .click({ force: true });
   await page.getByRole('button', { name: formatName }).click({ force: true });
   const option = await page.getByRole('option', { name: smileType });
   await option.click({ force: true });

@@ -138,7 +138,7 @@ function fromTextFlip(
     //      `pos`: a box (not bounding box)
     // `TextMove` is to move `position`, so we have to calculate the flipped `position`
     const textMiddleLeft = text.pos[0]
-    const textMiddleRight = text.pos[3]
+    const textMiddleRight = text.pos[2]
     const textCenter = Vec2.centre(textMiddleLeft, textMiddleRight)
 
     const difference = flipPointByCenter(textCenter, center, flipDirection)

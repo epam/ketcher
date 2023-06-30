@@ -20,7 +20,6 @@ async function getPreviewForSmiles(
   smileType: string
 ) {
   await selectTopPanelButton(TopPanelButton.Save, page);
-  await page.getByRole('banner').isVisible();
   await page.getByRole('button', { name: formatName }).click({ force: true });
   const option = await page.getByRole('option', { name: smileType });
   await option.click({ force: true });

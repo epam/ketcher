@@ -75,8 +75,8 @@ class ReText extends ReObject {
   }
 
   getVBoxObj(): Box2Abs {
-    const [p0, _, p2] = this.getReferencePoints()
-    return new Box2Abs(p0, p2)
+    const [leftTopPoint, _, rightBottomPoint] = this.getReferencePoints()
+    return new Box2Abs(leftTopPoint, rightBottomPoint)
   }
 
   hoverPath(render: any): any {

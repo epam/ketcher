@@ -20,10 +20,11 @@
   .toolbar();
   .vertical-toolbar();
 
-  overflow: visible;
-  width: 32px;
+  width: 41px;
   margin-top: 12px;
   margin-left: 14px;
+  padding-right: 5px;
+  align-items: flex-start;
 
   // TODO: change group style, if will decide to get rid of delimiter everywhere
   .group:not(:last-of-type) {
@@ -32,7 +33,8 @@
 }
 
 .buttons {
-  overflow: visible;
+  overflow: hidden;
+  padding-right: 5px;
   scroll-behavior: smooth;
 }
 

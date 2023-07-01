@@ -153,13 +153,12 @@ class RotateTool implements Tool {
         rxnArrows?.length ||
         rxnPluses?.length)
     ) {
-      const selectionBoundingBox = editor.render.ctab.getVBoxObj({
+      center = editor.render.ctab.getSelectionRotationCenter({
         atoms: visibleAtoms,
         texts,
         rxnArrows,
         rxnPluses
       })
-      center = selectionBoundingBox?.centre()
     }
 
     return [center, visibleAtoms] as const

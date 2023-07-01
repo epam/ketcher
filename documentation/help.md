@@ -11,7 +11,7 @@ reactions. The application operates in two modes - Standalone and Remote:
 - Remote version requires Indigo Service as a backend server to perform complex calculations (When the server is not responding you can continue to work in the application although some of the functions will be unavailable).
 
 **Ketcher** consists of the following elements:
-<img src = images/1_overviewn.png width = "100%"/>
+<img src = images/1_overview.png width = "100%"/>
 
 **Note** : Depending on the screen size, some tools on the _Tool
 palette_ can be displayed in expanded or collapsed forms.
@@ -63,6 +63,7 @@ selects several structures.
 You can use the buttons of the _Main_ toolbar:
 
 ![](images/4_main_toolbarn.png 'Main Toolbar')
+<img src = images/4_main_toolbar.png width = "100%"/>
 
 - **Clear Canvas** (1) button to start drawing a new molecule; this
   command clears the drawing area;
@@ -101,31 +102,29 @@ You can use the buttons of the _Main_ toolbar:
 
   <img src = images/6_calc_values.png width = "280" />
 
-- **Stereochemistry** button (16) to assign and display enhanced stereochemistry properties of the structure
+- **3D Viewer** button (16) to open the structure in the three-dimensional
 
-- **3D Viewer** button (17) to open the structure in the
-  three-dimensional Viewer;
 
-- **Settings** button (18) to make some settings for molecular
+- **Settings** button (17) to make some settings for molecular
   files:
 
   <img src = images/7_settingsn.png width = "360" />
 
-- **Help** button (19) to view Help;
+- **Help** button (18) to view Help;
 
-- **About** button (20) to display version and copyright information
+- **About** button (19) to display version and copyright information
   of the program.
 
-- **Fullscreen mode** button (21) allows to initiate displaying Ketcher window in the fullscreen mode.
+- **Fullscreen mode** button (20) allows to initiate displaying Ketcher window in the fullscreen mode.
 
-- **Zoom panel** (22) displays the current zoom percentage. Click to expand the Zoom panel and use the following actions: **Zoom percentage** (23) to set the view manually, **Zoom in** (24) / **Zoom out** (25) to scale the view gradually, **Zoom 100%** (26) to enable the default zoom setting.
+- **Zoom panel** (21) displays the current zoom percentage. Click to expand the Zoom panel and use the following actions: **Zoom percentage** (22) to set the view manually, **Zoom in** (23) / **Zoom out** (24) to scale the view gradually, **Zoom 100%** (25) to enable the default zoom setting.
 
- <img src = images/4.png width = "180" />
+ <img src = images/8_zoom.png width = "180" />
 
 # 3D Viewer
 
 The structure appears in a modal window after clicking on the **3D
-Viewer** button <img src = images/8_1_miew_icon.png width = "42" /> on the top panel:
+Viewer** button <img src = images/9_3D_viewer.png width = "42" /> on the top panel:
 
 <img src = images/8_miew1.png width = "800" />
 
@@ -377,12 +376,14 @@ type of selected elements:
 
 # Changing Structure Display
 
-Use the _Rotate_ tool <img src = images/32_rotate_icon.png width = "42" /> to change the structure
+Use the _Rotate_ tool <img src = images/32_rotate_tool_icon.png width = "42" /> to change the structure
 display:
 
-<img src = images/33_rotate_menu.png width = "130" />
+<img src = images/32_rotate_tool.png width = "130" />
+<img src = images/32_rotate_tool_2.png width = "230" />
 
 _Rotate Tool_ (1)
+_Erase (Del)_ (4)
 
 This tool allows rotating objects.
 
@@ -447,7 +448,7 @@ You can add templates (rings or other predefined structures) to the
 structure using the _Templates_ toolbar together with the _Custom
 Templates_ button located at the bottom:
 
-<img src = images/43_templates_toolbarn.png align = left width = "360" /> <br/>
+<img src = images/43_templates_toolbar.png align = left width = "360" /> <br/>
 <br/>
 
 To add a ring to the molecule, select a ring from the toolbar and
@@ -491,7 +492,7 @@ atom or bond preset in the program.
 **Note** : User is able to define the attachment atom and bond by clicking
 the Edit button for template structure in the Template Library.
 
-The _Custom Templates_ button <img src = images/43.png width = "42" /> allows to view the list of templates available; both built-in and created
+The _Custom Templates_ button <img src = images/43_custom_templates_icon.png width = "42" /> allows to view the list of templates available; both built-in and created
 by user:
 
 <img src = images/43-1.png  width = "520" />
@@ -516,7 +517,7 @@ Ketcher allows you to select and use Functional Groups to properly represent you
 Set of functional groups available is predefined and can't be changed right now.
 
 Explore the list of the Functional Groups available in the Templates library. Open it using the icon in the bottom toolbar: <br>
-<img src = images/43.png width = "42" /> <br>
+<img src = images/43_custom_templates_icon.png width = "42" /> <br>
 Navigate to the Functional Groups tab to explore the FGs available:
 
 ![](images/FG_tab.png)
@@ -636,114 +637,114 @@ it will appear in brackets after the description of the button.
 _NOTE: `Mod` key is `Command` on OSX and `Ctrl` on PC systems_
 
 **General**
-| Shortcut| Action |
-| --- | --- |
-| `Mod+Delete` | Clear Canvas |
-| `Mod+o` | Open… |
-| `Mod+s` | Save As… |
-| `Mod+z` | Undo |
-| `Mod+Shift+z, Mod+y` | Redo |
-| `Mod+x` | Cut |
-| `Mod+c` | Copy |
-| `Mod+Shift+f` | Copy Image |
-| `Mod+m` | Copy as MOL |
-| `Mod+Shift+k` | Copy as KET |
-| `Mod+v` | Paste |
-| `Mod+a` | Select All |
-| `Mod+Shift+a` | Deselect All |
-| `Mod+d` | Select descriptors |
+| Shortcut             | Action             |
+| -------------------- | ------------------ |
+| `Mod+Delete`         | Clear Canvas       |
+| `Mod+o`              | Open…              |
+| `Mod+s`              | Save As…           |
+| `Mod+z`              | Undo               |
+| `Mod+Shift+z, Mod+y` | Redo               |
+| `Mod+x`              | Cut                |
+| `Mod+c`              | Copy               |
+| `Mod+Shift+f`        | Copy Image         |
+| `Mod+m`              | Copy as MOL        |
+| `Mod+Shift+k`        | Copy as KET        |
+| `Mod+v`              | Paste              |
+| `Mod+a`              | Select All         |
+| `Mod+Shift+a`        | Deselect All       |
+| `Mod+d`              | Select descriptors |
 
 **Server**
-| Shortcut| Action |
-| --- | --- |
-| `Alt+a` | Aromatize |
-| `Ctrl+Alt+a` | Dearomatize |
-| `Mod+l` | Layout |
-| `Mod+Shift+l` | Clean Up |
-| `Mod+p` | Calculate CIP |
-| `Alt+s` | Check structure |
-| `Alt+c` | Calculate values |
+| Shortcut      | Action           |
+| ------------- | ---------------- |
+| `Alt+a`       | Aromatize        |
+| `Ctrl+Alt+a`  | Dearomatize      |
+| `Mod+l`       | Layout           |
+| `Mod+Shift+l` | Clean Up         |
+| `Mod+p`       | Calculate CIP    |
+| `Alt+s`       | Check structure  |
+| `Alt+c`       | Calculate values |
 
 **Debug**
-| Shortcut| Action |
-| --- | --- |
+| Shortcut      | Action       |
+| ------------- | ------------ |
 | `Mod+Shift+r` | force-update |
 | `Alt+Shift+r` | qs-serialize |
 
 **Tools**
-| Shortcut| Action |
-| --- | --- |
-| `Mod+h` | Hand tool |
-| `Escape` | Rotate between: Lasso Selection, Rectangle Selection, Fragment Selection |
-| `Delete, Backspace` | Erase |
-| `Alt+e` | Stereochemistry |
-| `+` | Charge Plus |
-| `-` | Charge Minus |
-| `Alt+r` | Rotate Tool |
-| `Alt+h` | Horizontal Flip |
-| `Alt+v` | Vertical Flip |
-| `Mod+g` | Rotate between: S-Group, Data S-Group |
-| `Mod+r` | Rotate between: R-Group Label Tool, Attachment Point Tool |
-| `Mod+Shift+r, Mod+r` | R-Group Fragment Tool |
-| `1` | Rotate between: Single Bond, Single Up Bond, Single Down Bond, Single Up/Down Bond |
-| `2` | Rotate between: Double Bond, Double Cis/Trans Bond |
-| `3` | Triple Bond |
-| `4` | Aromatic Bond |
-| `0` | Any Bond |
-| `Alt+t` | Add text |
+| Shortcut             | Action                                                                             |
+| -------------------- | ---------------------------------------------------------------------------------- |
+| `Mod+h`              | Hand tool                                                                          |
+| `Escape`             | Rotate between: Lasso Selection, Rectangle Selection, Fragment Selection           |
+| `Delete, Backspace`  | Erase                                                                              |
+| `Alt+e`              | Stereochemistry                                                                    |
+| `+`                  | Charge Plus                                                                        |
+| `-`                  | Charge Minus                                                                       |
+| `Alt+r`              | Rotate Tool                                                                        |
+| `Alt+h`              | Horizontal Flip                                                                    |
+| `Alt+v`              | Vertical Flip                                                                      |
+| `Mod+g`              | Rotate between: S-Group, Data S-Group                                              |
+| `Mod+r`              | Rotate between: R-Group Label Tool, Attachment Point Tool                          |
+| `Mod+Shift+r, Mod+r` | R-Group Fragment Tool                                                              |
+| `1`                  | Rotate between: Single Bond, Single Up Bond, Single Down Bond, Single Up/Down Bond |
+| `2`                  | Rotate between: Double Bond, Double Cis/Trans Bond                                 |
+| `3`                  | Triple Bond                                                                        |
+| `4`                  | Aromatic Bond                                                                      |
+| `0`                  | Any Bond                                                                           |
+| `Alt+t`              | Add text                                                                           |
 
 **Atoms**
-| Shortcut| Action |
-| --- | --- |
-| `h` | Atom H |
-| `c` | Atom C |
-| `n` | Atom N |
-| `o` | Atom O |
-| `s` | Atom S |
-| `p` | Atom P |
-| `f` | Atom F |
-| `b` | Atom Br |
-| `i` | Atom I |
-| `k` | Atom K |
-| `Shift+c` | Atom Cl |
-| `Shift+s` | Atom Si |
-| `Shift+n` | Atom Na |
-| `Shift+b` | Atom B |
-| `r` | Pseudoatom |
-| `d` | Deuterium |
-| `a` | Any atom |
-| `q` | Any heteroatom |
-| `m` | Any metal |
-| `x` | Any halogen |
-| `/` | Display the Atom Properties dialog box |
+| Shortcut  | Action                                 |
+| --------- | -------------------------------------- |
+| `h`       | Atom H                                 |
+| `c`       | Atom C                                 |
+| `n`       | Atom N                                 |
+| `o`       | Atom O                                 |
+| `s`       | Atom S                                 |
+| `p`       | Atom P                                 |
+| `f`       | Atom F                                 |
+| `b`       | Atom Br                                |
+| `i`       | Atom I                                 |
+| `k`       | Atom K                                 |
+| `Shift+c` | Atom Cl                                |
+| `Shift+s` | Atom Si                                |
+| `Shift+n` | Atom Na                                |
+| `Shift+b` | Atom B                                 |
+| `r`       | Pseudoatom                             |
+| `d`       | Deuterium                              |
+| `a`       | Any atom                               |
+| `q`       | Any heteroatom                         |
+| `m`       | Any metal                              |
+| `x`       | Any halogen                            |
+| `/`       | Display the Atom Properties dialog box |
 
 **Bonds**
-| Shortcut| Action |
-| --- | --- |
-| `/` | Open bond properties |
+| Shortcut | Action               |
+| -------- | -------------------- |
+| `/`      | Open bond properties |
 
 **Zoom**
-| Shortcut| Action |
-| --- | --- |
-| `Mod+_, Mod+-` | Zoom Out |
-| `Mod+=, Mod++` | Zoom In |
-| `Mod+Shift+0` | Zoom 100% |
+| Shortcut       | Action    |
+| -------------- | --------- |
+| `Mod+_, Mod+-` | Zoom Out  |
+| `Mod+=, Mod++` | Zoom In   |
+| `Mod+Shift+0`  | Zoom 100% |
 
 **Templates**
-| Shortcut| Action |
-| --- | --- |
-| `Shift+t` | Custom Templates |
-| `t` | Rotate between: Benzene, Cyclopentadiene, Cyclohexane, Cyclopentane, Cyclopropane, Cyclobutane, Cycloheptane, Cyclooctane |
+| Shortcut  | Action                                                                                                                    |
+| --------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `Shift+t` | Structure Library                                                                                                         |
+| `t`       | Rotate between: Benzene, Cyclopentadiene, Cyclohexane, Cyclopentane, Cyclopropane, Cyclobutane, Cycloheptane, Cyclooctane |
 
 **FunctionalGroups**
-| Shortcut| Action |
-| --- | --- |
+| Shortcut  | Action            |
+| --------- | ----------------- |
 | `Shift+f` | Functional Groups |
 
 **Help**
-| Shortcut| Action |
-| --- | --- |
-| `?, &, Shift+/` | Help |
+| Shortcut        | Action |
+| --------------- | ------ |
+| `?, &, Shift+/` | Help   |
 
 **Note** : Please, use`Ctrl+V`to paste the selected object in
 Google Chrome and Mozilla Firefox browsers.

@@ -66,13 +66,6 @@ const RightToolbar = (props: Props) => {
     scrollRef.current.scrollTop += sizeRef.current.offsetHeight
   }
 
-  console.log(
-    height && scrollRef?.current?.scrollHeight > height,
-    scrollRef?.current?.scrollHeight,
-    height
-  )
-  console.log(startInView, endInView)
-
   return (
     <div className={clsx(classes.root, className)} ref={ref}>
       <div ref={scrollRef} className={classes.buttons}>

@@ -78,6 +78,23 @@
             "type": "number"
           }
         },
+        "attachmentOrder": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["attachmentAtom"],
+            "properties": {
+              "attachmentAtom": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "attachmentId": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          }
+        },
         "$refs": {
           "type": "array",
           "items": {
@@ -280,9 +297,24 @@
           }
         }
       },
-      "allOf": [
+      "oneOf": [
         {
-          "$ref": "#/definitions/structure"
+          "properties": {
+            "fragments": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/structure"
+              }
+            }
+          },
+          "required": ["fragments"]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/definitions/structure"
+            }
+          ]
         }
       ]
     },

@@ -89,7 +89,7 @@ const ControlsPanel = styled('div')`
   @media only screen and (min-width: 1024px) {
     height: 40px;
     gap: 0px;
-    padding-bottom: 10px;
+    padding-bottom: 0;
     .group {
       gap: 4px;
     }

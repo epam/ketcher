@@ -76,7 +76,6 @@ const RightToolbar = (props: Props) => {
             classes.groupItem
           )}
         >
-          <ToolbarGroupItem id="period-table" {...rest} />
           <AtomsList
             ref={startRef}
             atoms={basicAtoms.slice(0, 1)}
@@ -95,14 +94,15 @@ const RightToolbar = (props: Props) => {
             onAction={onAction}
           />
           <AtomsList atoms={freqAtoms} active={active} onAction={onAction} />
+          <ToolbarGroupItem id="period-table" {...rest} />
         </Group>
 
         <Group className={clsx(classes.buttons, classes.groupItem)}>
           <div ref={sizeRef}>
+            <ToolbarGroupItem id="any-atom" {...rest} />
             <div ref={endRef} className={classes.button}>
               <ToolbarGroupItem id="extended-table" {...rest} />
             </div>
-            <ToolbarGroupItem id="any-atom" {...rest} />
           </div>
         </Group>
       </div>

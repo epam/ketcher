@@ -50,13 +50,13 @@ const BottomToolbar = (props: Props) => {
   return (
     <div className={clsx(classes.root, className)}>
       <Group>
-        <ToolbarGroupItem id="template-lib" {...rest} />
         <TemplatesList
           active={active}
           indigoVerification={indigoVerification}
           disableableButtons={disableableButtons}
           onAction={onAction}
         />
+        <ToolbarGroupItem id="template-lib" {...rest} />
       </Group>
     </div>
   )

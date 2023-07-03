@@ -139,9 +139,9 @@ const LeftToolbar = (props: Props) => {
               ]
             },
             { id: 'chain' },
+            { id: 'enhanced-stereo' },
             { id: 'charge-plus' },
-            { id: 'charge-minus' },
-            { id: 'enhanced-stereo' }
+            { id: 'charge-minus' }
           ]}
         />
         <div className={classes.listener} ref={sizeRef}>

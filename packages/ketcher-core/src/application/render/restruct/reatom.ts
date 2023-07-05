@@ -1157,10 +1157,17 @@ function getAttachmentDirectionForOnlyOneBond(
   struct: Struct
 ): Vec2 {
   const DEGREE_120_FOR_ONE_BOND = (2 * Math.PI) / 3
+  const DEGREE_180_FOR_TRIPLE_BOND = Math.PI
   const onlyNeighbor = atom.a.neighbors[0]
   // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
-  const angle = struct.halfBonds.get(onlyNeighbor)!.ang
-  return newVectorFromAngle(angle + DEGREE_120_FOR_ONE_BOND)
+  const neighbour = struct.halfBonds.get(onlyNeighbor)!
+  const angle = neighbour.ang
+  const isTripleBond =
+    struct.bonds.get(neighbour.bid)?.type === Bond.PATTERN.TYPE.TRIPLE
+  const finalAngle =
+    angle +
+    (isTripleBond ? DEGREE_180_FOR_TRIPLE_BOND : DEGREE_120_FOR_ONE_BOND)
+  return newVectorFromAngle(finalAngle)
 }
 
 function trisectionLargestSector(atom: ReAtom, struct: Struct): [Vec2, Vec2] {

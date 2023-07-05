@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import { render, screen, fireEvent } from '@testing-library/react'
+import { Struct } from 'ketcher-core'
 
 import { MonomerGroup } from './MonomerGroup'
 
@@ -27,7 +28,8 @@ describe('Monomer Group', () => {
           MonomerNaturalAnalogCode: 'R',
           MonomerName: 'RRMonomerName',
           Name: 'RRName'
-        }
+        },
+        struct: new Struct()
       },
       {
         label: 'm',
@@ -35,7 +37,8 @@ describe('Monomer Group', () => {
           MonomerNaturalAnalogCode: 'A',
           MonomerName: 'mAMonomerName',
           Name: 'mAName'
-        }
+        },
+        struct: new Struct()
       },
       {
         label: 'd',
@@ -43,7 +46,8 @@ describe('Monomer Group', () => {
           MonomerNaturalAnalogCode: 'D',
           MonomerName: 'dDMonomerName',
           Name: 'dDName'
-        }
+        },
+        struct: new Struct()
       },
       {
         label: 'ar',
@@ -51,7 +55,8 @@ describe('Monomer Group', () => {
           MonomerNaturalAnalogCode: 'R',
           MonomerName: 'arRMonomerName',
           Name: 'arRName'
-        }
+        },
+        struct: new Struct()
       },
       {
         label: 'Ld',
@@ -59,7 +64,8 @@ describe('Monomer Group', () => {
           MonomerNaturalAnalogCode: 'L',
           MonomerName: 'LdLMonomerName',
           Name: 'LdLRName'
-        }
+        },
+        struct: new Struct()
       }
     ],
     groupTitle: 'Mock title'

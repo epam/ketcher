@@ -13,23 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+import { MonomerItemType } from '../monomerLibraryItem/types'
 
-export const MONOMER_LIBRARY_FAVORITES = 'FAVORITES'
-
-export const MONOMER_TYPES = {
-  PEPTIDE: 'PEPTIDE',
-  CHEM: 'CHEM',
-  RNA: 'RNA'
-} as const
-export type LibraryNameType =
-  | typeof MONOMER_LIBRARY_FAVORITES
-  | keyof typeof MONOMER_TYPES
-
-export const EditorClassName = 'Ketcher-polymer-editor-root'
-export const EditorQuerySelector = `.${EditorClassName}`
-
-export const preview = {
-  width: 230,
-  height: 230,
-  gap: 5
-} as const
+export interface IMonomerGroupProps {
+  items: MonomerItemType[]
+  onItemClick?: (item: MonomerItemType) => void
+  title?: string
+}

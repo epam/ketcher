@@ -14,22 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-export const MONOMER_LIBRARY_FAVORITES = 'FAVORITES'
+import { RenderOptions } from 'application/render/render.types'
+import { Struct } from 'ketcher-core'
 
-export const MONOMER_TYPES = {
-  PEPTIDE: 'PEPTIDE',
-  CHEM: 'CHEM',
-  RNA: 'RNA'
-} as const
-export type LibraryNameType =
-  | typeof MONOMER_LIBRARY_FAVORITES
-  | keyof typeof MONOMER_TYPES
-
-export const EditorClassName = 'Ketcher-polymer-editor-root'
-export const EditorQuerySelector = `.${EditorClassName}`
-
-export const preview = {
-  width: 230,
-  height: 230,
-  gap: 5
-} as const
+export interface IStructRenderProps {
+  struct: Struct
+  options?: RenderOptions & { cachePrefix?: string; needCache?: boolean }
+  className?: string
+}

@@ -14,15 +14,15 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useState, useEffect, useRef, FC } from 'react'
+import { useState, useEffect, FC } from 'react'
 import { Scale, Vec2, Render, Struct, SGroup } from 'ketcher-core'
 
-import StructRender from '../../../component/structrender'
 import SGroupDataRender from './SGroupDataRender'
 import { calculateScrollOffsetX, calculateScrollOffsetY } from './helpers'
 import { functionGroupInfoSelector } from '../../../state/functionalGroups/selectors'
 import { connect } from 'react-redux'
 import clsx from 'clsx'
+import { StructRender } from 'components'
 
 import classes from './InfoPanel.module.less'
 
@@ -85,7 +85,6 @@ const InfoPanel: FC<InfoPanelProps> = (props) => {
   const { clientX, clientY, render, className, groupStruct, sGroup } = props
   const [molecule, setMolecule] = useState<Struct | null>(null)
   const [sGroupData, setSGroupData] = useState<string | null>(null)
-  const childRef = useRef(null)
   const groupName = sGroup?.data?.name
 
   useEffect(() => {
@@ -129,8 +128,6 @@ const InfoPanel: FC<InfoPanelProps> = (props) => {
     >
       <StructRender
         struct={molecule}
-        id={groupName}
-        ref={childRef}
         options={{
           ...render.options,
           autoScale: true,
@@ -138,7 +135,6 @@ const InfoPanel: FC<InfoPanelProps> = (props) => {
           rescaleAmount: 1,
           cachePrefix: 'infoPanel',
           needCache: false,
-          viewSz: new Vec2(width, height),
           width,
           height
         }}

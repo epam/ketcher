@@ -1,5 +1,7 @@
 import { render, screen, fireEvent } from '@testing-library/react'
-import { MonomerItem, MonomerItemType } from './MonomerItem'
+import { Struct } from 'ketcher-core'
+import { MonomerItem } from './MonomerItem'
+import { MonomerItemType } from './types'
 
 describe('Test Monomer Item component', () => {
   it('Test click event', () => {
@@ -14,7 +16,8 @@ describe('Test Monomer Item component', () => {
         MonomerNaturalAnalogCode: 'A',
         MonomerType: 'PEPTIDE',
         Name: '3-sulfoalanine'
-      }
+      },
+      struct: new Struct()
     }
     render(
       withThemeAndStoreProvider(

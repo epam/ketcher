@@ -14,22 +14,24 @@
  * limitations under the License.
  ***************************************************************************/
 
-export const MONOMER_LIBRARY_FAVORITES = 'FAVORITES'
+import { RenderStruct } from 'ketcher-core'
+import { useEffect, useRef } from 'react'
+import { Container } from './styles'
+import { IStructRenderProps } from './types'
 
-export const MONOMER_TYPES = {
-  PEPTIDE: 'PEPTIDE',
-  CHEM: 'CHEM',
-  RNA: 'RNA'
-} as const
-export type LibraryNameType =
-  | typeof MONOMER_LIBRARY_FAVORITES
-  | keyof typeof MONOMER_TYPES
+const StructRender = ({ struct, options, className }: IStructRenderProps) => {
+  const renderRef = useRef<HTMLDivElement>(null)
 
-export const EditorClassName = 'Ketcher-polymer-editor-root'
-export const EditorQuerySelector = `.${EditorClassName}`
+  useEffect(() => {
+    const container = renderRef.current
 
-export const preview = {
-  width: 230,
-  height: 230,
-  gap: 5
-} as const
+    if (container) {
+      container.innerHTML = ''
+      RenderStruct.render(container, struct, options)
+    }
+  }, [struct, options])
+
+  return <Container ref={renderRef} className={className}></Container>
+}
+
+export default StructRender

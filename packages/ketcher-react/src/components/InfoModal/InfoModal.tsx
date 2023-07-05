@@ -18,28 +18,28 @@ import { PasteErrorModalBody } from './PasteErrorModalBody'
 import config from 'src/script/ui/action'
 import { error } from './constants'
 
-import styles from './ErrorModal.module.less'
+import styles from './InfoModal.module.less'
 
-interface ErrorModalProps {
-  message: string;
-  close: () => void;
+interface InfoModalProps {
+  message: string
+  close: () => void
 }
 
-const ErrorModal = ({ message, close }: ErrorModalProps): JSX.Element => {
+const InfoModal = ({ message, close }: InfoModalProps): JSX.Element => {
   const paste = config.paste.title ?? 'Paste'
   const isPasteError = message?.includes(paste)
 
   return (
-    <div className={styles.errorModalOverlay}>
+    <div className={styles.infoModalOverlay}>
       <div
-        className={styles.errorModalWindow}
+        className={styles.infoModalWindow}
         role="dialog"
         aria-modal="true"
         aria-labelledby="dialog-label"
         aria-describedby="dialog-content"
       >
         <header id="dialog-label">{error.message}</header>
-        <div className={styles.errorModalBody} id="dialog-content">
+        <div className={styles.infoModalBody} id="dialog-content">
           {isPasteError ? <PasteErrorModalBody /> : message}
         </div>
         <footer>
@@ -57,4 +57,4 @@ const ErrorModal = ({ message, close }: ErrorModalProps): JSX.Element => {
   );
 };
 
-export default ErrorModal
+export default InfoModal

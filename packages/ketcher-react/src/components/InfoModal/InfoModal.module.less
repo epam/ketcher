@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-.errorModalOverlay {
+.infoModalOverlay {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -27,7 +27,7 @@
     background: rgba(119, 119, 119, 0.2);
   }
   
-  .errorModalOverlay .errorModalWindow {
+  .infoModalOverlay .infoModalWindow {
     outline: 0;
     position: relative;
     vertical-align: middle;
@@ -46,7 +46,7 @@
       Arial, sans-serif;
   }
   
-  .errorModalWindow header {
+  .infoModalWindow header {
     display: flex;
     align-items: center;
     font-size: 14px;
@@ -57,7 +57,7 @@
     padding: 12px;
   }
   
-  .errorModalBody {
+  .infoModalBody {
     font-size: 12px;
     line-height: 14px;
     overflow: auto;
@@ -65,29 +65,29 @@
     padding: 12px;
   }
   
-  .errorModalBody::-webkit-scrollbar {
+  .infoModalBody::-webkit-scrollbar {
     background-color: #eff2f5;
     width: 6px;
     height: 6px;
   }
   
-  .errorModalBody::-webkit-scrollbar-thumb {
+  .infoModalBody::-webkit-scrollbar-thumb {
     background-color:rgba(165,175,185,.85);
     border-radius: 10px;
     -webkit-border-radius: 10px;
   }
   
-  .errorModalBody::-webkit-scrollbar-track {
+  .infoModalBody::-webkit-scrollbar-track {
     background-color: transparent;
     scrollbar-width: thin;
   }
   
-  .errorModalBody::-webkit-scrollbar-thumb:active,
+  .infoModalBody::-webkit-scrollbar-thumb:active,
   &::-webkit-scrollbar-thumb:hover {
     background-color: #A5AFB9;
   }
   
-  .errorModalWindow footer {
+  .infoModalWindow footer {
     display: flex;
     justify-content: flex-end;
     padding: 16px 12px 12px;

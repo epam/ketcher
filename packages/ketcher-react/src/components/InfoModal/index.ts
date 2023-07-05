@@ -14,6 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-import ErrorModal from './ErrorModal'
+import InfoModal from './InfoModal'
 
-export { ErrorModal }
+export { InfoModal }

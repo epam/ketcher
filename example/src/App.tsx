@@ -1,8 +1,7 @@
 import 'ketcher-react/dist/index.css';
 
 import { useState } from 'react';
-import { ErrorModal } from './ErrorModal';
-import { ButtonsConfig, Editor } from 'ketcher-react'
+import { ButtonsConfig, Editor, InfoModal } from 'ketcher-react'
 import {
   Ketcher,
   RemoteStructServiceProvider,
@@ -78,7 +77,7 @@ const App = () => {
       />
       {enablePolymerEditor && <PolymerToggler toggle={setShowPolymerEditor} />}
       {hasError && (
-        <ErrorModal
+        <InfoModal
           message={errorMessage}
           close={() => {
             setHasError(false);

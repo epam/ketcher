@@ -645,6 +645,8 @@ function shouldDisplayStereoLabel(
 }
 
 function isLabelVisible(restruct, options, atom) {
+  const isAttachmentPointAtom = atom.a.attpnt != null
+  const isCarbon = atom.a.label.toLowerCase() === 'c'
   const visibleTerminal =
     options.showHydrogenLabels !== ShowHydrogenLabels.Off &&
     options.showHydrogenLabels !== ShowHydrogenLabels.Hetero
@@ -652,6 +654,10 @@ function isLabelVisible(restruct, options, atom) {
   const neighborsLength =
     atom.a.neighbors.length === 0 ||
     (atom.a.neighbors.length < 2 && visibleTerminal)
+
+  if (isAttachmentPointAtom && atom.a.neighbors.length > 0 && isCarbon) {
+    return false
+  }
 
   const shouldBeVisible =
     neighborsLength ||

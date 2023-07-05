@@ -1,4 +1,7 @@
 import { Page } from '@playwright/test';
+import { getAtomByIndex } from '@utils/canvas/atoms';
+import { getBondByIndex } from '@utils/canvas/bonds';
+import { BondType } from '..';
 
 type BoundingBox = {
   width: number;
@@ -72,4 +75,58 @@ export async function clickOnTheCanvas(
 
 export async function clickByLink(page: Page, url: string) {
   await page.locator(`a[href="${url}"]`).first().click();
+}
+
+export async function clickOnBond(
+  page: Page,
+  bondType: BondType,
+  bondNumber: number
+) {
+  const point = await getBondByIndex(page, { type: bondType }, bondNumber);
+  await page.mouse.click(point.x, point.y);
+}
+
+export async function clickOnAtom(
+  page: Page,
+  atomLabel: string,
+  atomNumber: number
+) {
+  const point = await getAtomByIndex(page, { label: atomLabel }, atomNumber);
+  await page.mouse.click(point.x, point.y);
+}
+
+export async function doubleClickOnAtom(
+  page: Page,
+  atomLabel: string,
+  atomNumber: number
+) {
+  const point = await getAtomByIndex(page, { label: atomLabel }, atomNumber);
+  await page.mouse.dblclick(point.x, point.y);
+}
+
+export async function doubleClickOnBond(
+  page: Page,
+  bondType: BondType,
+  bondNumber: number
+) {
+  const point = await getBondByIndex(page, { type: bondType }, bondNumber);
+  await page.mouse.dblclick(point.x, point.y);
+}
+
+export async function moveOnAtom(
+  page: Page,
+  atomLabel: string,
+  atomNumber: number
+) {
+  const point = await getAtomByIndex(page, { label: atomLabel }, atomNumber);
+  await page.mouse.move(point.x, point.y);
+}
+
+export async function moveOnBond(
+  page: Page,
+  bondType: BondType,
+  bondNumber: number
+) {
+  const point = await getBondByIndex(page, { type: bondType }, bondNumber);
+  await page.mouse.move(point.x, point.y);
 }

@@ -1,6 +1,5 @@
 import * as dotenv from 'dotenv';
-import type { PlaywrightTestConfig } from '@playwright/test';
-import { devices } from '@playwright/test';
+import { PlaywrightTestConfig, devices } from '@playwright/test';
 import {
   REMOTE_URL,
   STANDALONE_URL,

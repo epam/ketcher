@@ -8,6 +8,7 @@ import {
   pressButton,
   selectLeftPanelButton,
   takeEditorScreenshot,
+  STRUCTURE_LIBRARY_BUTTON_NAME,
 } from '@utils';
 
 export enum SaltsAndSolvents {
@@ -85,6 +86,11 @@ export enum FunctionalGroups {
   SO3H = 'SO3H',
 }
 
+export enum TemplateLibrary {
+  Azulene = 'Azulene',
+  Naphtalene = 'Naphtalene',
+}
+
 export async function selectSaltsAndSolvents(
   saltsName: SaltsAndSolvents,
   page: Page
@@ -102,6 +108,17 @@ export async function selectFunctionalGroups(
     .first();
   await functionalGroupButton.click();
 }
+
+export async function selectUserTemplate(
+  userTemplateName: TemplateLibrary,
+  page: Page
+) {
+  const userTemplateButton = page
+    .locator(`div[title*="${userTemplateName}"] > div`)
+    .first();
+  await userTemplateButton.click();
+}
+
 /*
   Function for selecting Functional Groups and dragging it to a new location on the canvas
   */
@@ -110,7 +127,7 @@ export async function drawFGAndDrag(
   shift: number,
   page: Page
 ) {
-  await pressButton(page, 'Custom Templates');
+  await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
   await page.getByRole('tab', { name: 'Functional Groups' }).click();
   await selectFunctionalGroups(itemToChoose, page);
   await moveMouseToTheMiddleOfTheScreen(page);
@@ -127,13 +144,27 @@ export async function drawSaltAndDrag(
   shift: number,
   page: Page
 ) {
-  await pressButton(page, 'Custom Templates');
+  await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
   await page.getByRole('tab', { name: 'Salts and Solvents' }).click();
   await selectSaltsAndSolvents(itemToChoose, page);
   await moveMouseToTheMiddleOfTheScreen(page);
   const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
   const coordinatesWithShift = x + shift;
   await dragMouseTo(coordinatesWithShift, y, page);
+}
+
+/*
+  Function for selecting User Templates and dragging it to a new location on the canvas
+  */
+export async function selectUserTemplatesAndPlaceInTheMiddle(
+  itemToChoose: TemplateLibrary,
+  page: Page
+) {
+  await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+  await page.getByRole('tab', { name: 'Template Library' }).click();
+  await page.getByRole('button', { name: 'Aromatics (17)' }).click();
+  await selectUserTemplate(itemToChoose, page);
+  await clickInTheMiddleOfTheScreen(page);
 }
 /*
   Function for selecting tool from left panel, click right mouse in the middle of canvas and take
@@ -173,4 +204,22 @@ export async function attachOnTopOfBenzeneBonds(page: Page) {
   await page.mouse.click(COORDS_CLICK.x4, COORDS_CLICK.y4);
   await page.mouse.click(COORDS_CLICK.x5, COORDS_CLICK.y5);
   await page.mouse.click(COORDS_CLICK.x6, COORDS_CLICK.y6);
+}
+
+export async function fillFieldByLabel(
+  page: Page,
+  fieldLabel: string,
+  testValue: string
+) {
+  await page.getByLabel(fieldLabel).click();
+  await page.getByLabel(fieldLabel).fill(testValue);
+}
+
+export async function fillFieldByPlaceholder(
+  page: Page,
+  fieldLabel: string,
+  testValue: string
+) {
+  await page.getByPlaceholder(fieldLabel).click();
+  await page.getByPlaceholder(fieldLabel).fill(testValue);
 }

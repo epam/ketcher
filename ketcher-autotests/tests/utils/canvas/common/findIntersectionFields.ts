@@ -11,6 +11,9 @@ export function findIntersectionFields(
   for (const item of structure) {
     let keysCounter = 0;
     for (const attr of Object.keys(attributes)) {
+      // TODO find a solution for typing properly the next line
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       if (item[attr] === attributes[attr]) {
         keysCounter++;
       }

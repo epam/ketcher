@@ -1,9 +1,12 @@
+/* eslint-disable no-magic-numbers */
 import { expect, test } from '@playwright/test';
 import {
   takeEditorScreenshot,
   receiveFileComparisonData,
   openFileAndAddToCanvas,
+  saveToFile,
 } from '@utils';
+import { getMolfile } from '@utils/formats';
 
 test('Open and Save files - Open/Save structure with atom properties 1/2 - open', async ({
   page,
@@ -29,14 +32,15 @@ test('Open and Save files - Open/Save structure with atom properties 2/2 - save'
   await page.goto('');
 
   await openFileAndAddToCanvas('mol_1855_to_open.mol', page);
-
-  page.on('console', msg => console.log(msg.text()));
+  const expectedFile = await getMolfile(page, 'v2000');
+  await saveToFile('mol_1855_to_open-expected.mol', expectedFile);
 
   const METADATA_STRING_INDEX = [1];
   const { fileExpected: molFileExpected, file: molFile } =
     await receiveFileComparisonData({
       page,
-      expectedFileName: 'tests/test-data/mol_1855_to_compare.mol',
+      expectedFileName: 'tests/test-data/mol_1855_to_open-expected.mol',
+      fileFormat: 'v2000',
       metaDataIndexes: METADATA_STRING_INDEX,
     });
 
@@ -67,33 +71,35 @@ test('Open and Save file - Open/Save V3000 file with atom and bond properties 2/
   await page.goto('');
 
   await openFileAndAddToCanvas('Marvin_Atom_properties_V3000.mol', page);
+  const expectedFile = await getMolfile(page, 'v3000');
+  await saveToFile('atom-properties-V3000-expected.mol', expectedFile);
 
   const METADATA_STRING_INDEX = [1];
 
   const { fileExpected: molFileExpected, file: molFile } =
     await receiveFileComparisonData({
       page,
-      expectedFileName: 'tests/test-data/mol_1857_to_compare.mol',
+      expectedFileName: 'tests/test-data/atom-properties-V3000-expected.mol',
+      fileFormat: 'v3000',
       metaDataIndexes: METADATA_STRING_INDEX,
     });
 
   expect(molFile).toEqual(molFileExpected);
 });
 
-test.fixme(
-  'Open and Save file - Open/Save Markush files 1/2 - open',
-  async ({ page }) => {
-    /**
-     * Test case: EPMLSOPKET-1894(1)
-     * Description: Markush structure is displayed as an RGroup structure.
-     */
-    await page.goto('');
+test('Open and Save file - Open/Save Markush files 1/2 - open', async ({
+  page,
+}) => {
+  /**
+   * Test case: EPMLSOPKET-1894(1)
+   * Description: Markush structure is displayed as an RGroup structure.
+   */
+  await page.goto('');
 
-    await openFileAndAddToCanvas('Markush.mol', page);
-    // check that structure opened from file is displayed correctly
-    await takeEditorScreenshot(page);
-  }
-);
+  await openFileAndAddToCanvas('Markush.mol', page);
+  // check that structure opened from file is displayed correctly
+  await takeEditorScreenshot(page);
+});
 
 test('Open and Save file - Open/Save Markush files 2/2 - save', async ({
   page,
@@ -105,13 +111,16 @@ test('Open and Save file - Open/Save Markush files 2/2 - save', async ({
   await page.goto('');
 
   await openFileAndAddToCanvas('Markush.mol', page);
-  // eslint-disable-next-line no-magic-numbers
+  const expectedFile = await getMolfile(page, 'v2000');
+  await saveToFile('markush-expected.mol', expectedFile);
+
   const METADATA_STRINGS_INDEXES = [0, 4];
 
   const { fileExpected: molFileExpected, file: molFile } =
     await receiveFileComparisonData({
       page,
-      expectedFileName: 'tests/test-data/mol_1894_to_compare.mol',
+      expectedFileName: 'tests/test-data/markush-expected.mol',
+      fileFormat: 'v2000',
       metaDataIndexes: METADATA_STRINGS_INDEXES,
     });
 
@@ -142,13 +151,16 @@ test('Open and Save file - Open/Save V2000 *.mol file contains abbreviation 2/2 
   await page.goto('');
 
   await openFileAndAddToCanvas('sec_butyl_abr.mol', page);
+  const expectedFile = await getMolfile(page, 'v2000');
+  await saveToFile('sec_butyl_abr-expected.mol', expectedFile);
 
   const METADATA_STRING_INDEX = [1];
 
   const { fileExpected: molFileExpected, file: molFile } =
     await receiveFileComparisonData({
       page,
-      expectedFileName: 'tests/test-data/mol_1858_to_compare.mol',
+      expectedFileName: 'tests/test-data/sec_butyl_abr-expected.mol',
+      fileFormat: 'v2000',
       metaDataIndexes: METADATA_STRING_INDEX,
     });
 
@@ -179,12 +191,15 @@ test('Open and Save file - Open/Save V3000 *.mol file contains abbreviation 2/2 
   await page.goto('');
 
   await openFileAndAddToCanvas('sec_butyl_abr_V3000.mol', page);
+  const expectedFile = await getMolfile(page, 'v3000');
+  await saveToFile('sec_butyl_abr_V3000-expected.mol', expectedFile);
   const METADATA_STRING_INDEX = [1];
 
   const { fileExpected: molFileExpected, file: molFile } =
     await receiveFileComparisonData({
       page,
-      expectedFileName: 'tests/test-data/mol_1859_to_compare.mol',
+      expectedFileName: 'tests/test-data/sec_butyl_abr_V3000-expected.mol',
+      fileFormat: 'v3000',
       metaDataIndexes: METADATA_STRING_INDEX,
     });
 
@@ -215,13 +230,16 @@ test('Open and Save file - Open/Save file with R-Groups 2/2 - save', async ({
   await page.goto('');
 
   await openFileAndAddToCanvas('Rgroup.mol', page);
-  // eslint-disable-next-line no-magic-numbers
+  const expectedFile = await getMolfile(page, 'v2000');
+  await saveToFile('r-group-expected.mol', expectedFile);
+
   const METADATA_STRINGS_INDEXES = [0, 4];
 
   const { fileExpected: molFileExpected, file: molFile } =
     await receiveFileComparisonData({
       page,
-      expectedFileName: 'tests/test-data/mol_1873_to_compare.mol',
+      expectedFileName: 'tests/test-data/r-group-expected.mol',
+      fileFormat: 'v2000',
       metaDataIndexes: METADATA_STRINGS_INDEXES,
     });
 
@@ -252,12 +270,14 @@ test('Open and Save file - Open/Save file contains Heteroatoms 2/2 - save', asyn
   await page.goto('');
 
   await openFileAndAddToCanvas('Heteroatoms.mol', page);
+  const expectedFile = await getMolfile(page, 'v2000');
+  await saveToFile('heteroatoms-expected.mol', expectedFile);
   const METADATA_STRING_INDEX = [1];
 
   const { fileExpected: molFileExpected, file: molFile } =
     await receiveFileComparisonData({
       page,
-      expectedFileName: 'tests/test-data/mol_1878_to_compare.mol',
+      expectedFileName: 'tests/test-data/heteroatoms-expected.mol',
       metaDataIndexes: METADATA_STRING_INDEX,
     });
 
@@ -288,12 +308,15 @@ test('Open and Save file - Open/Save V3000 mol file contains attached data 2/2 -
   await page.goto('');
 
   await openFileAndAddToCanvas('Attached data_V3000.mol', page);
+  const expectedFile = await getMolfile(page, 'v3000');
+  await saveToFile('Attached data_V3000-expected.mol', expectedFile);
   const METADATA_STRING_INDEX = [1];
 
   const { fileExpected: molFileExpected, file: molFile } =
     await receiveFileComparisonData({
       page,
-      expectedFileName: 'tests/test-data/mol_1882_to_compare.mol',
+      expectedFileName: 'tests/test-data/Attached data_V3000-expected.mol',
+      fileFormat: 'v3000',
       metaDataIndexes: METADATA_STRING_INDEX,
     });
 
@@ -324,12 +347,15 @@ test('Open and Save file - V3000 *.mol file contains Heteroatoms 2/2 - save', as
   await page.goto('');
 
   await openFileAndAddToCanvas('Heteroatoms_V3000.mol', page);
+  const expectedFile = await getMolfile(page, 'v3000');
+  await saveToFile('heteroatoms-V3000-expected.mol', expectedFile);
   const METADATA_STRING_INDEX = [1];
 
   const { fileExpected: molFileExpected, file: molFile } =
     await receiveFileComparisonData({
       page,
-      expectedFileName: 'tests/test-data/mol_1879_to_compare.mol',
+      expectedFileName: 'tests/test-data/heteroatoms-V3000-expected.mol',
+      fileFormat: 'v3000',
       metaDataIndexes: METADATA_STRING_INDEX,
     });
 
@@ -360,12 +386,15 @@ test('Open and Save file - Open/Save file with Attached data 2/2 - save', async 
   await page.goto('');
 
   await openFileAndAddToCanvas('Attached data.mol', page);
+  const expectedFile = await getMolfile(page, 'v2000');
+  await saveToFile('Attached data-expected.mol', expectedFile);
   const METADATA_STRING_INDEX = [1];
 
   const { fileExpected: molFileExpected, file: molFile } =
     await receiveFileComparisonData({
       page,
-      expectedFileName: 'tests/test-data/mol_1880_to_compare.mol',
+      expectedFileName: 'tests/test-data/Attached data-expected.mol',
+      fileFormat: 'v2000',
       metaDataIndexes: METADATA_STRING_INDEX,
     });
 
@@ -396,12 +425,15 @@ test('Open and Save file - Open/Save file contains abs stereochemistry 2/2 - sav
   await page.goto('');
 
   await openFileAndAddToCanvas('V2000_abs.mol', page);
+  const expectedFile = await getMolfile(page, 'v2000');
+  await saveToFile('V2000-abs-expected.mol', expectedFile);
   const METADATA_STRING_INDEX = [1];
 
   const { fileExpected: molFileExpected, file: molFile } =
     await receiveFileComparisonData({
       page,
-      expectedFileName: 'tests/test-data/mol_1883_to_compare.mol',
+      expectedFileName: 'tests/test-data/V2000-abs-expected.mol',
+      fileFormat: 'v2000',
       metaDataIndexes: METADATA_STRING_INDEX,
     });
 
@@ -432,12 +464,15 @@ test('Open and Save file - Open/Save V3000 mol file contains abs stereochemistry
   await page.goto('');
 
   await openFileAndAddToCanvas('V3000_abs.mol', page);
+  const expectedFile = await getMolfile(page, 'v3000');
+  await saveToFile('V3000-abs-expected.mol', expectedFile);
   const METADATA_STRING_INDEX = [1];
 
   const { fileExpected: molFileExpected, file: molFile } =
     await receiveFileComparisonData({
       page,
-      expectedFileName: 'tests/test-data/mol_1884_to_compare.mol',
+      expectedFileName: 'tests/test-data/V3000-abs-expected.mol',
+      fileFormat: 'v3000',
       metaDataIndexes: METADATA_STRING_INDEX,
     });
 
@@ -454,13 +489,15 @@ test('Open and Save file - Save V2000 molfile as V3000 molfile', async ({
   await page.goto('');
 
   await openFileAndAddToCanvas('spiro.mol', page);
-  // eslint-disable-next-line no-magic-numbers
+  const expectedFile = await getMolfile(page, 'v3000');
+  await saveToFile('spiro-expected.mol', expectedFile);
+
   const METADATA_STRINGS_INDEXES = [1, 3];
 
   const { fileExpected: molFileExpected, file: molFile } =
     await receiveFileComparisonData({
       page,
-      expectedFileName: 'tests/test-data/mol_1885_to_compare.mol',
+      expectedFileName: 'tests/test-data/spiro-expected.mol',
       metaDataIndexes: METADATA_STRINGS_INDEXES,
       fileFormat: 'v3000',
     });
@@ -478,12 +515,14 @@ test('Open and Save file - Save V3000 molfile as V2000 molfile', async ({
   await page.goto('');
 
   await openFileAndAddToCanvas('ketcher (4).mol', page);
+  const expectedFile = await getMolfile(page, 'v2000');
+  await saveToFile('ketcher (4)-expected.mol', expectedFile);
   const METADATA_STRINGS_INDEXES = [1];
 
   const { fileExpected: molFileExpected, file: molFile } =
     await receiveFileComparisonData({
       page,
-      expectedFileName: 'tests/test-data/mol_1886_to_compare.mol',
+      expectedFileName: 'tests/test-data/ketcher (4)-expected.mol',
       metaDataIndexes: METADATA_STRINGS_INDEXES,
       fileFormat: 'v2000',
     });

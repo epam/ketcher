@@ -10,11 +10,11 @@ export async function getCml(page: Page) {
 }
 
 export async function getSmiles(page: Page) {
-  // await page.waitForSelector('.StructEditor-module_intermediateCanvas');
-  return await page.evaluate(async () => {
-    // return window.ketcher.getSmiles();
-    return 'CCCCC/CC/C:CC.C(C)CCCCCCCCCC';
-  });
+  return await page.evaluate(() => window.ketcher.getSmiles());
+}
+
+export async function getInchi(page: Page) {
+  return await page.evaluate(() => window.ketcher.getInchi());
 }
 
 export async function getExtendedSmiles(page: Page) {
@@ -62,6 +62,9 @@ export async function enableDearomatizeOnLoad(page: Page) {
 export async function disableQueryElements(page: Page) {
   return await page.evaluate(() => {
     return window.ketcher.setSettings({
+      // TODO fix types for setSettings in Ketcher-core
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       disableQueryElements: ['Pol', 'CYH', 'CXH'],
     });
   });

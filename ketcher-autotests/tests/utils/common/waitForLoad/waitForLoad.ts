@@ -1,15 +1,14 @@
 import { Page } from '@playwright/test';
 import { REQUEST_IS_FINISHED } from '@constants';
-import { delay, DELAY_IN_SECONDS } from '@tests/utils';
 
 const evaluateCallback = (REQUEST_IS_FINISHED: string) => {
   const MAX_TIME_TO_WAIT = 10000;
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     window.ketcher.eventBus.addListener(REQUEST_IS_FINISHED, () => {
       return resolve('resolve');
     });
 
-    setTimeout(() => resolve('Timeout exeeded'), MAX_TIME_TO_WAIT);
+    setTimeout(() => reject(new Error('Timeout exceeded')), MAX_TIME_TO_WAIT);
   });
 };
 
@@ -26,14 +25,17 @@ const evaluateCallback = (REQUEST_IS_FINISHED: string) => {
  * @param callback - any function that uses Locator.click, see playwright docs for Locator
  * @returns Promise<string>
  */
-export const waitForLoad = async (page: Page, callback: Function) => {
-  await page.waitForFunction(() => window.ketcher);
-  // const promise = page.evaluate(evaluateCallback, REQUEST_IS_FINISHED);
+export const waitForLoad = async (
+  page: Page,
+  callback: VoidFunction
+): Promise<string> => {
   callback();
 
-  if (await page.locator('.loading-spinner').isVisible()) {
-    await page.waitForSelector('.loading-spinner', { state: 'detached' });
-  }
+  await page.waitForFunction(() => window.ketcher);
+  const promise = (await page.evaluate(
+    evaluateCallback,
+    REQUEST_IS_FINISHED
+  )) as Promise<string>;
 
-  // return promise;
+  return promise;
 };

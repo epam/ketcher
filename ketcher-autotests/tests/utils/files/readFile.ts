@@ -1,22 +1,19 @@
 import * as fs from 'fs';
-import * as path from 'path';
-import { Page } from '@playwright/test';
+import { Page, expect } from '@playwright/test';
 import {
   selectTopPanelButton,
   pressButton,
   TopPanelButton,
   clickInTheMiddleOfTheScreen,
   waitForLoad,
+  delay,
+  takeEditorScreenshot,
 } from '@utils';
+import { MolfileFormat } from 'ketcher-core';
+import { getSmiles, getInchi } from '@utils/formats';
 
 export async function readFileContents(filePath: string) {
-  console.log('base directory', __dirname);
-  console.log('current working directory', process.cwd());
-  const resolvedFilePath = path.resolve(process.cwd(), filePath);
-  console.log('resolvedFilePath', resolvedFilePath);
-  const fileContent = await fs.promises.readFile(resolvedFilePath, 'utf8');
-  console.log('fileContent', fileContent);
-  return fileContent;
+  return await fs.promises.readFile(filePath, 'utf8');
 }
 
 export async function openFile(filename: string, page: Page) {
@@ -38,7 +35,9 @@ export async function openFile(filename: string, page: Page) {
 export async function openFileAndAddToCanvas(filename: string, page: Page) {
   await selectTopPanelButton(TopPanelButton.Open, page);
   await openFile(filename, page);
-  await pressButton(page, 'Add to Canvas');
+  await waitForLoad(page, () => {
+    pressButton(page, 'Add to Canvas');
+  });
   await clickInTheMiddleOfTheScreen(page);
 }
 
@@ -50,6 +49,70 @@ export async function pasteFromClipboardAndAddToCanvas(
   await page.getByText('Paste from clipboard').click();
   await page.getByRole('dialog').getByRole('textbox').fill(fillStructure);
   await pressButton(page, 'Add to Canvas');
+}
+
+export async function receiveMolFileComparisonData(
+  page: Page,
+  metaDataIndexes: number[],
+  expectedMolFileName: string,
+  molFileType?: MolfileFormat
+) {
+  const molFileExpected = fs
+    .readFileSync(expectedMolFileName, 'utf8')
+    .split('\n')
+    .filter((_str, index) => !metaDataIndexes.includes(index));
+  const molFile = (
+    await page.evaluate(
+      (fileType) => window.ketcher.getMolfile(fileType),
+      molFileType
+    )
+  )
+    .split('\n')
+    .filter((_str, index) => !metaDataIndexes.includes(index));
+
+  return { molFileExpected, molFile };
+}
+
+export async function receiveRxnFileComparisonData(
+  page: Page,
+  metaDataIndexes: number[],
+  expectedRxnFileName: string,
+  rxnFileType?: MolfileFormat
+) {
+  const rxnFileExpected = fs
+    .readFileSync(expectedRxnFileName, 'utf8')
+    .split('\n')
+    .filter((_str, index) => !metaDataIndexes.includes(index));
+  const rxnFile = (
+    await page.evaluate(
+      (fileType) => window.ketcher.getRxn(fileType),
+      rxnFileType
+    )
+  )
+    .split('\n')
+    .filter((_str, index) => !metaDataIndexes.includes(index));
+
+  return { rxnFileExpected, rxnFile };
+}
+
+export async function receiveKetFileComparisonData(
+  page: Page,
+  expectedKetFileName: string
+) {
+  const ketFileExpected = fs
+    .readFileSync(expectedKetFileName, 'utf8')
+    .split('\n');
+  const ketFile = (await page.evaluate(() => window.ketcher.getKet())).split(
+    '\n'
+  );
+
+  return { ketFileExpected, ketFile };
+}
+
+export async function getAndCompareSmiles(page: Page, smilesFilePath: string) {
+  const smilesFileExpected = await readFileContents(smilesFilePath);
+  const smilesFile = await getSmiles(page);
+  expect(smilesFile).toEqual(smilesFileExpected);
 }
 
 // The function is used to save the structure that is placed in the center
@@ -64,7 +127,7 @@ export async function saveToFile(filename: string, data: string) {
     );
   }
 }
-/* 
+/*
 Example of usage:
 await openFileAndAddToCanvas('benzene-arrow-benzene-reagent-hcl.ket', page);
 const rxnFile = await getRxn(page, 'v3000');
@@ -73,29 +136,34 @@ export async function pasteFromClipboard(page: Page, fillValue: string) {
   await page.getByRole('dialog').getByRole('textbox').fill(fillValue);
 }
 
-export async function receiveCmlFileComparisonData(
+export async function placeFileInTheMiddle(
+  filename: string,
   page: Page,
-  expectedCmlFileName: string
+  delayInSeconds: number
 ) {
-  const filePath = path.resolve(process.cwd(), expectedCmlFileName);
-  const cmlFileExpected = (await readFileContents(filePath)).split('\n');
-  const data = await page.evaluate(async () => {
-    return {
-      // cml: await window.ketcher.getCml(),
-      struct: window.ketcher.editor.struct(),
-    };
-  });
-  const cmlFile = '1\n2\n3'.split('\n');
-  console.log('data struct', data.struct);
-
-  return { cmlFile, cmlFileExpected };
+  await selectTopPanelButton(TopPanelButton.Open, page);
+  await openFile(filename, page);
+  await pressButton(page, 'AddToCanvas');
+  await clickInTheMiddleOfTheScreen(page);
+  await delay(delayInSeconds);
+  await takeEditorScreenshot(page);
+  const cmlFile = (await page.evaluate(() => window.ketcher.getCml())).split(
+    '/n'
+  );
+  return { cmlFile };
 }
 
 export async function openFromFileViaClipboard(filename: string, page: Page) {
-  const fileContent = await readFileContents(filename);
+  const fileContent = fs.readFileSync(filename, 'utf8');
   await page.getByText('Paste from clipboard').click();
   await page.getByRole('dialog').getByRole('textbox').fill(fileContent);
   await waitForLoad(page, () => {
     pressButton(page, 'Add to Canvas');
   });
+}
+
+export async function getAndCompareInchi(page: Page, inchiFilePath: string) {
+  const inchiFileExpected = await readFileContents(inchiFilePath);
+  const inchiFile = await getInchi(page);
+  expect(inchiFile).toEqual(inchiFileExpected);
 }

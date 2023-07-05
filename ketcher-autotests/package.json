@@ -31,7 +31,7 @@
     "ketcher-core": "^2.7.2"
   },
   "lint-staged": {
-    "*.{js,css,md,ts}": "prettier --write"
+    "*.{js,md,ts}": ["prettier --write", "eslint ."]
   },
   "types": "./tests/typings.d.ts"
 }

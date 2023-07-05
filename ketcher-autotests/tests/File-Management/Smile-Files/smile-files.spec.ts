@@ -10,7 +10,6 @@ import {
   pressButton,
   clickInTheMiddleOfTheScreen,
   DELAY_IN_SECONDS,
-  waitForLoad,
 } from '@utils';
 import { getSmiles } from '@utils/formats';
 
@@ -36,17 +35,12 @@ async function clearCanvasAndPasteSmiles(page: Page, smiles: string) {
   await selectTopPanelButton(TopPanelButton.Open, page);
   await page.getByText('Paste from clipboard').click();
   await pasteFromClipboard(page, smiles);
-  await waitForLoad(page, () => {
-    pressButton(page, 'Add to Canvas');
-  });
+  await pressButton(page, 'Add to Canvas');
   await clickInTheMiddleOfTheScreen(page);
 }
 
 test.describe('SMILES files', () => {
   test.beforeEach(async ({ page }) => {
-    page.on('console', (message) => {
-      console.log(`[${message.type()}] ${message.text()}`);
-    });
     await page.goto('');
   });
 
@@ -63,17 +57,16 @@ test.describe('SMILES files', () => {
     await openFileAndAddToCanvas('all-type-bonds.ket', page);
     await getAndCompareSmiles(
       page,
-      'tests/test-data/smiles-all-bonds-expected.txt'
+      'tests/test-data/smiles-all-bonds-expected.json'
     );
+
     await getPreviewForSmiles(page, 'MDL Molfile V2000', 'Daylight SMILES');
     await takeEditorScreenshot(page);
 
     await clearCanvasAndPasteSmiles(page, 'CCCCC/CC/C:CC.C(C)CCCCCCCCCC');
   });
 
-  test.skip('SmileString for structure with Atom properties', async ({
-    page,
-  }) => {
+  test('SmileString for structure with Atom properties', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1907
     Description: SmileString is correctly generated from structure and 
@@ -94,7 +87,7 @@ test.describe('SMILES files', () => {
     );
   });
 
-  test.skip('SmileString from mol file that contains abbreviation', async ({
+  test('SmileString from mol file that contains abbreviation', async ({
     page,
   }) => {
     /*
@@ -132,7 +125,7 @@ test.describe('SMILES files', () => {
     );
   });
 
-  test.skip('SmileString from mol file that contains Heteroatoms', async ({
+  test('SmileString from mol file that contains Heteroatoms', async ({
     page,
   }) => {
     /*
@@ -152,7 +145,7 @@ test.describe('SMILES files', () => {
     await clearCanvasAndPasteSmiles(page, 'NOSPFClBrI[H]');
   });
 
-  test.skip('SmileString from mol file that contains attached data', async ({
+  test('SmileString from mol file that contains attached data', async ({
     page,
   }) => {
     /*
@@ -173,7 +166,7 @@ test.describe('SMILES files', () => {
     await clearCanvasAndPasteSmiles(page, 'CCCC[C@@H](C)[C@@H](C)CC');
   });
 
-  test.skip('SmileString  from V2000 mol file contains abs stereochemistry', async ({
+  test('SmileString  from V2000 mol file contains abs stereochemistry', async ({
     page,
   }) => {
     /*
@@ -198,7 +191,7 @@ test.describe('SMILES files', () => {
     );
   });
 
-  test.skip('SmileString from mol file that contains combination of different features', async ({
+  test('SmileString from mol file that contains combination of different features', async ({
     page,
   }) => {
     /*
@@ -222,9 +215,10 @@ test.describe('SMILES files', () => {
       // eslint-disable-next-line max-len
       'S=CC(F)CCCCC[C@@](CCO)/C=C/[C@@](N)CCC[C]C([13C]CC([C+2]CC(CC%91)CC(C)CCC)CCC)CC%92.[*:2]%92.[*:1]%91 |$;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;_R2;_R1$,rb:32:*,u:3|'
     );
+    await delay(DELAY_IN_SECONDS.THREE);
   });
 
-  test.skip('SmileString from file that contains Cis/Trans configuration', async ({
+  test('SmileString from file that contains Cis/Trans configuration', async ({
     page,
   }) => {
     /*
@@ -267,7 +261,7 @@ test.describe('SMILES files', () => {
     await clearCanvasAndPasteSmiles(page, '');
   });
 
-  test.skip('SmileString from reaction consists of two or more reaction arrows and structures', async ({
+  test('SmileString from reaction consists of two or more reaction arrows and structures', async ({
     page,
   }) => {
     /*
@@ -290,7 +284,7 @@ test.describe('SMILES files', () => {
     );
   });
 
-  test.skip('Open Daylight SMILES file with reagent above arrow', async ({
+  test('Open Daylight SMILES file with reagent above arrow', async ({
     page,
   }) => {
     /*

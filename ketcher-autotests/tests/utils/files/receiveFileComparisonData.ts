@@ -1,20 +1,23 @@
+import * as fs from 'fs';
 import { Page } from '@playwright/test';
-import { MolfileFormat } from 'ketcher-core';
-import { readFileContents } from './readFile';
+import { Ketcher, MolfileFormat } from 'ketcher-core';
 
-enum GetFileMethod {
-  'mol' = 'getMolfile',
-  'rxn' = 'getRxn',
-  'ket' = 'getKet',
-  'smi' = 'getSmiles',
-  'smarts' = 'getSmarts',
-  'cdx' = 'getCDX',
-  'cdxml' = 'getCDXml',
-  'cml' = 'getCml',
-  'inchi' = 'getInchi',
-}
+const GetFileMethod: Record<string, keyof Ketcher> = {
+  mol: 'getMolfile',
+  rxn: 'getRxn',
+  ket: 'getKet',
+  smi: 'getSmiles',
+  smarts: 'getSmarts',
+  // TODO fix types of Ketcher. There are no getCDX and getCDXml functions
+  // dirty hack to make it works
+  cdx: 'getCDX' as keyof Ketcher,
+  // dirty hack to make it works
+  cdxml: 'getCDXml' as keyof Ketcher,
+  cml: 'getCml',
+  inchi: 'getInchi',
+} as const;
 
-type ketcherApiFunction = (format?: string) => Promise<string>;
+type KetcherApiFunction = (format?: string) => Promise<string>;
 
 function filterByIndexes(file: string[], indexes?: number[]): string[] {
   if (!indexes) {
@@ -33,11 +36,11 @@ async function receiveFile({
   fileName: string;
   fileFormat?: MolfileFormat;
 }): Promise<string[]> {
-  const fileExtention = fileName.split('.').pop();
+  const fileExtension = fileName.split('.').pop();
 
   const methodName =
-    fileExtention && fileExtention in GetFileMethod
-      ? GetFileMethod[fileExtention as keyof typeof GetFileMethod]
+    fileExtension && fileExtension in GetFileMethod
+      ? GetFileMethod[fileExtension as keyof typeof GetFileMethod]
       : GetFileMethod.ket;
 
   const pageData = {
@@ -46,11 +49,9 @@ async function receiveFile({
   };
 
   await page.waitForFunction(() => window.ketcher);
-  console.log('fileName', fileName);
-  console.log('pageData', JSON.stringify(pageData));
   const file = await page.evaluate(
     ({ method, format }) =>
-      (window.ketcher[method] as ketcherApiFunction)(format),
+      (window.ketcher[method] as KetcherApiFunction)(format),
     pageData
   );
 
@@ -84,7 +85,7 @@ export async function receiveFileComparisonData({
   file: string[];
   fileExpected: string[];
 }> {
-  const fileExpected = (await readFileContents(expectedFileName)).split('\n');
+  const fileExpected = fs.readFileSync(expectedFileName, 'utf8').split('\n');
 
   const file = await receiveFile({
     page,

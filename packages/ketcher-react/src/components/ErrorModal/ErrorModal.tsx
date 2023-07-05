@@ -13,7 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import styles from './ErrorModal.module.css';
+
+import { PasteErrorModalBody } from './PasteErrorModalBody'
+import config from 'src/script/ui/action'
+import { error } from './constants'
+
+import styles from './ErrorModal.module.less'
 
 interface ErrorModalProps {
   message: string;
@@ -21,11 +26,22 @@ interface ErrorModalProps {
 }
 
 const ErrorModal = ({ message, close }: ErrorModalProps): JSX.Element => {
+  const paste = config.paste.title ?? 'Paste'
+  const isPasteError = message?.includes(paste)
+
   return (
-    <div className={styles.modalOverlay}>
-      <div className={styles.modalWindow}>
-        <header>Error Message</header>
-        <div className={styles.modalBody}>{message}</div>
+    <div className={styles.errorModalOverlay}>
+      <div
+        className={styles.errorModalWindow}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="dialog-label"
+        aria-describedby="dialog-content"
+      >
+        <header id="dialog-label">{error.message}</header>
+        <div className={styles.errorModalBody} id="dialog-content">
+          {isPasteError ? <PasteErrorModalBody /> : message}
+        </div>
         <footer>
           <button
             className={styles.ok}
@@ -33,7 +49,7 @@ const ErrorModal = ({ message, close }: ErrorModalProps): JSX.Element => {
               close();
             }}
           >
-            Close
+            {error.close}
           </button>
         </footer>
       </div>
@@ -41,4 +57,4 @@ const ErrorModal = ({ message, close }: ErrorModalProps): JSX.Element => {
   );
 };
 
-export { ErrorModal };
+export default ErrorModal

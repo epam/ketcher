@@ -1,14 +1,14 @@
 import 'ketcher-react/dist/index.css';
 
-import { ButtonsConfig, Editor } from 'ketcher-react';
+import { useState } from 'react';
+import { ErrorModal } from './ErrorModal';
+import { ButtonsConfig, Editor } from 'ketcher-react'
 import {
   Ketcher,
   RemoteStructServiceProvider,
-  StructServiceProvider,
-} from 'ketcher-core';
-import { ErrorModal } from './ErrorModal';
-import { PolymerToggler } from './PolymerToggler';
-import { useState } from 'react';
+  StructServiceProvider
+} from 'ketcher-core'
+import { PolymerToggler } from './PolymerToggler'
 
 const getHiddenButtonsConfig = (): ButtonsConfig => {
   const searchParams = new URLSearchParams(window.location.search);

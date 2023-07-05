@@ -60,7 +60,6 @@ export class ServerFormatter implements StructFormatter {
     const formatProperties = getPropertiesByFormat(this.#format)
 
     try {
-      console.log('from getStructureFromStructAsync')
       const stringifiedStruct = this.#ketSerializer.serialize(struct)
       const convertResult = await this.#structService.convert(
         {
@@ -78,8 +77,6 @@ export class ServerFormatter implements StructFormatter {
       } else {
         message = `Convert error!\n${error.message || error}`
       }
-      console.log('Error in getStructureFromStructAsync', JSON.stringify(error))
-      console.log(JSON.stringify(struct))
       throw new Error(message)
     }
   }
@@ -104,7 +101,6 @@ export class ServerFormatter implements StructFormatter {
     }
 
     try {
-      console.log('from getStructureFromStringAsync')
       const result = await promise(data, this.#options)
       const parsedStruct = this.#ketSerializer.deserialize(result.struct)
       if (!withCoords) {
@@ -113,11 +109,6 @@ export class ServerFormatter implements StructFormatter {
       return parsedStruct
     } catch (error: any) {
       if (error.message !== 'Server is not compatible') {
-        console.log(
-          'Error in getStructureFromStringAsync',
-          JSON.stringify(error)
-        )
-        console.log(stringifiedStruct)
         throw Error(`Convert error!\n${error.message || error}`)
       }
 

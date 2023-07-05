@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+/* eslint-disable @typescript-eslint/no-use-before-define */
 
 import { Highlight } from 'domain/entities'
 import { ReStruct } from '../../render'
@@ -38,10 +39,10 @@ export class HighlightAdd extends BaseOperation {
   ) {
     super(OperationType.ADD_HIGHLIGHT)
     this.data = {
-      atoms: atoms,
-      bonds: bonds,
-      color: color,
-      highlightId: highlightId
+      atoms,
+      bonds,
+      color,
+      highlightId
     }
   }
 
@@ -86,7 +87,7 @@ export class HighlightDelete extends BaseOperation {
   ) {
     super(OperationType.REMOVE_HIGHLIGHT, 5)
     this.data = {
-      highlightId: highlightId,
+      highlightId,
       atoms: atoms || [],
       bonds: bonds || [],
       color: color || 'white'
@@ -134,18 +135,18 @@ export class HighlightUpdate extends BaseOperation {
   ) {
     super(OperationType.UPDATE_HIGHLIGHT)
     this.newData = {
-      atoms: atoms,
-      bonds: bonds,
-      color: color,
-      highlightId: highlightId
+      atoms,
+      bonds,
+      color,
+      highlightId
     }
 
     // pre-filling with new data. Upon execution this will be replaced
     this.oldData = {
-      atoms: atoms,
-      bonds: bonds,
-      color: color,
-      highlightId: highlightId
+      atoms,
+      bonds,
+      color,
+      highlightId
     }
   }
 

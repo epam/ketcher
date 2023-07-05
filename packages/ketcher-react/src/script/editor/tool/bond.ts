@@ -110,7 +110,8 @@ class BondTool implements Tool {
 
     let attachmentAtomId: number | undefined
     if (ci?.map === 'functionalGroups') {
-      attachmentAtomId = SGroup.getAttachmentAtomIdBySGroupId(ci.id, molecule)
+      const sgroup = molecule.sgroups.get(ci.id)
+      attachmentAtomId = sgroup?.getAttachmentAtomId()
     }
 
     const rnd = this.editor.render
@@ -134,7 +135,6 @@ class BondTool implements Tool {
 
   mousemove(event) {
     const struct = this.editor.render.ctab
-    const sgroups = struct.sgroups
     const molecule = struct.molecule
     const functionalGroups = molecule.functionalGroups
     const editor = this.editor
@@ -160,37 +160,29 @@ class BondTool implements Tool {
           beginAtom = dragCtx.item.id
           endAtom = editor.findItem(event, ['atoms'], dragCtx.item)
           const closestSGroup = editor.findItem(event, ['functionalGroups'])
-          if (
-            closestSGroup &&
-            FunctionalGroup.isContractedFunctionalGroup(
-              closestSGroup.id,
-              functionalGroups
-            )
-          ) {
-            const closestAttachmentAtomId =
-              SGroup.getAttachmentAtomIdBySGroupId(closestSGroup.id, molecule)
-            const isSaltOrSolvent = closestAttachmentAtomId === undefined
-            const isBeginFunctionalGroupItself =
-              closestAttachmentAtomId === beginAtom
-            if (!isSaltOrSolvent && !isBeginFunctionalGroupItself) {
-              endAtom = {
-                id: closestAttachmentAtomId,
-                map: 'atoms'
+          const sgroup = molecule.sgroups.get(closestSGroup?.id)
+
+          if (sgroup) {
+            const closestAttachmentAtomId = sgroup.getAttachmentAtomId()
+
+            if (sgroup.isContracted()) {
+              const hasAttachmentPoint = closestAttachmentAtomId === undefined
+              const isBeginFunctionalGroupItself =
+                closestAttachmentAtomId === beginAtom
+              if (!hasAttachmentPoint && !isBeginFunctionalGroupItself) {
+                endAtom = {
+                  id: closestAttachmentAtomId,
+                  map: 'atoms'
+                }
               }
             }
-          }
-          const fGroupId =
-            endAtom &&
-            FunctionalGroup.findFunctionalGroupByAtom(
-              functionalGroups,
-              endAtom.id
-            )
-          const fGroup = typeof fGroupId === 'number' && sgroups.get(fGroupId)
-          const fGroupAtoms =
-            fGroup && (SGroup.getAtoms(molecule, fGroup.item) as any)
-          if (endAtom && fGroup && endAtom.id !== fGroupAtoms?.[0]) {
-            this.editor.event.removeFG.dispatch({ fgIds: [fGroupId] })
-            endAtom = null
+
+            if (endAtom) {
+              if (endAtom.id !== closestAttachmentAtomId) {
+                this.editor.event.removeFG.dispatch({ fgIds: [sgroup.id] })
+                endAtom = null
+              }
+            }
           }
         } else {
           // first mousedown event intersect with any canvas
@@ -213,10 +205,8 @@ class BondTool implements Tool {
           } else if (endAtom?.map === 'functionalGroups') {
             const functionalGroup = molecule.functionalGroups.get(endAtom.id)
             if (!SGroup.isSaltOrSolvent(functionalGroup?.name || '')) {
-              const attachmentAtomId = SGroup.getAttachmentAtomIdBySGroupId(
-                endAtom.id,
-                molecule
-              )
+              const attachmentAtomId =
+                functionalGroup?.relatedSGroup.getAttachmentAtomId()
               endAtom =
                 attachmentAtomId === undefined
                   ? null

@@ -118,7 +118,7 @@ class StructEditor extends Component {
       let clientX, clientY
 
       switch (csr.status) {
-        case 'enable':
+        case 'enable': {
           this.editorRef.current.classList.add(classes.enableCursor)
           const { left, top, right, bottom } =
             this.editorRef.current.getBoundingClientRect()
@@ -137,7 +137,9 @@ class StructEditor extends Component {
             })
           }
           break
-        case 'move':
+        }
+
+        case 'move': {
           this.editorRef.current.classList.add(classes.enableCursor)
           this.setState({
             enableCursor: true,
@@ -145,24 +147,32 @@ class StructEditor extends Component {
             clientY
           })
           break
-        case 'disable':
+        }
+
+        case 'disable': {
           this.editorRef.current.classList.remove(classes.enableCursor)
           this.setState({
             enableCursor: false
           })
           break
-        case 'leave':
+        }
+
+        case 'leave': {
           this.editorRef.current.classList.remove(classes.enableCursor)
           this.setState({
             enableCursor: false
           })
           break
-        case 'mouseover':
+        }
+
+        case 'mouseover': {
           this.editorRef.current.classList.add(classes.enableCursor)
           this.setState({
             enableCursor: true
           })
           break
+        }
+
         default:
           break
       }
@@ -184,6 +194,9 @@ class StructEditor extends Component {
   render() {
     const {
       Tag = 'div',
+      className,
+      indigoVerification,
+      /* eslint-disable @typescript-eslint/no-unused-vars */
       struct,
       tool,
       toolOpts,
@@ -201,14 +214,13 @@ class StructEditor extends Component {
       onAromatizeStruct,
       onDearomatizeStruct,
       onAttachEdit,
-      indigoVerification,
       onCipChange,
-      className,
       onConfirm,
       onShowInfo,
       onApiSettings,
       showAttachmentPoints = true,
       onUpdateFloatingTools,
+      /* eslint-enable @typescript-eslint/no-unused-vars */
       ...props
     } = this.props
 

@@ -496,12 +496,13 @@ class Editor implements KetcherEditor {
     }
 
     switch (eventName) {
-      case 'change':
+      case 'change': {
         const subscribeFuncWrapper = (action) =>
           customOnChangeHandler(action, handler)
         subscriber.handler = subscribeFuncWrapper
         this.event[eventName].add(subscribeFuncWrapper)
         break
+      }
 
       default:
         this.event[eventName].add(handler)
@@ -515,7 +516,7 @@ class Editor implements KetcherEditor {
     this.event[eventName].remove(subscriber.handler)
   }
 
-  findItem(event: any, maps: any, skip: any = null) {
+  findItem(event: any, maps: Array<string> | null, skip: any = null) {
     const pos = new Vec2(this.render.page2obj(event))
 
     return closest.item(this.render.ctab, pos, maps, skip, this.render.options)
@@ -628,9 +629,12 @@ function resetSelectionOnCanvasClick(
 function updateLastCursorPosition(editor: Editor, event) {
   const events = ['mousemove', 'click', 'mousedown', 'mouseup', 'mouseover']
   if (events.includes(event.type)) {
+    const clientAreaBoundingBox =
+      editor.render.clientArea.getBoundingClientRect()
+
     editor.lastCursorPosition = {
-      x: event.layerX,
-      y: event.layerY
+      x: event.pageX - clientAreaBoundingBox.x,
+      y: event.pageY - clientAreaBoundingBox.y
     }
   }
 }

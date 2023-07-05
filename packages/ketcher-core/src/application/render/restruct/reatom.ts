@@ -101,6 +101,29 @@ class ReAtom extends ReObject {
     return new Box2Abs(this.a.pp, this.a.pp)
   }
 
+  /**
+   * Why?
+   * We need to return Bounding box for the attachment points for this atom,
+   * to be able to correctly calculate boundaries for autoscaling and positioning
+   */
+  getVBoxObjOfAttachmentPoint(render: Render): Box2Abs | null {
+    let accumulatedBBox: Box2Abs | null = null
+    const directionVectors = this.getAttachmentPointDirectionVectors(
+      render.ctab.molecule
+    )
+    directionVectors.forEach((directionVector) => {
+      const attachmentPointEndPosition = this.a.pp.add(directionVector)
+      const attachmentPointEndBoundingBox = new Box2Abs(
+        attachmentPointEndPosition,
+        attachmentPointEndPosition
+      )
+      accumulatedBBox = accumulatedBBox
+        ? Box2Abs.union(accumulatedBBox, attachmentPointEndBoundingBox)
+        : attachmentPointEndBoundingBox
+    })
+    return accumulatedBBox
+  }
+
   drawHover(render: Render) {
     const ret = this.makeHoverPlate(render)
     render.ctab.addReObjectPath(LayerMap.hovering, this.visel, ret)
@@ -210,13 +233,34 @@ class ReAtom extends ReObject {
     }
   }
 
-  showAttachmentPoints(restruct: ReStruct): void {
-    // if trisection (attpnt === 3) - we split the attachment point vector to two vectors
-    const isTrisectionRequired = this.a.attpnt === 3
-    const directionVectors = isTrisectionRequired
-      ? trisectionLargestSector(this, restruct.molecule)
-      : [bisectLargestSector(this, restruct.molecule)]
+  hasAttachmentPoint(): boolean {
+    return Boolean(this.a.attpnt)
+  }
 
+  private isTrisectionAttachmentPoint(): boolean {
+    // in this case we should split the attachment point vector to two vectors
+    return this.a.attpnt === 3
+  }
+
+  private getAttachmentPointDirectionVectors(struct: Struct): Vec2[] {
+    if (!this.hasAttachmentPoint()) {
+      return []
+    }
+    if (this.isTrisectionAttachmentPoint()) {
+      return trisectionLargestSector(this, struct)
+    } else {
+      const hasOnlyOneBond = this.a.neighbors.length === 1
+      const directionVector = hasOnlyOneBond
+        ? getAttachmentDirectionForOnlyOneBond(this, struct)
+        : bisectLargestSector(this, struct)
+      return [directionVector]
+    }
+  }
+
+  showAttachmentPoints(restruct: ReStruct): void {
+    const directionVectors = this.getAttachmentPointDirectionVectors(
+      restruct.molecule
+    )
     directionVectors.forEach((directionVector, index) => {
       showAttachmentPointShape(
         this,
@@ -229,7 +273,7 @@ class ReAtom extends ReObject {
       if (showLabel) {
         // in case of isTrisectionRequired (trisection case) we should show labels '1' and '2' for those separated vectors
         const labelText = String(
-          isTrisectionRequired ? index + 1 : this.a.attpnt
+          this.isTrisectionAttachmentPoint() ? index + 1 : this.a.attpnt
         )
         showAttachmentPointLabel(
           this,
@@ -258,12 +302,11 @@ class ReAtom extends ReObject {
         false
       )
     ) {
-      if (FunctionalGroup.isAttachmentPointAtom(aid, restruct.molecule)) {
-        let sgroupName
-        for (const sg of sgroups.values()) {
-          if (sg.atoms.includes(aid)) sgroupName = sg.data.name
-        }
-        const path = render.paper.text(ps.x, ps.y, sgroupName).attr({
+      const sgroup = restruct.molecule.getGroupFromAtomId(aid)
+      const isPositionAtom =
+        sgroup?.getContractedPosition(restruct.molecule).atomId === aid
+      if (isPositionAtom) {
+        const path = render.paper.text(ps.x, ps.y, sgroup.data.name).attr({
           'font-weight': 700,
           'font-size': 14
         })
@@ -602,6 +645,8 @@ function shouldDisplayStereoLabel(
 }
 
 function isLabelVisible(restruct, options, atom) {
+  const isAttachmentPointAtom = atom.a.attpnt != null
+  const isCarbon = atom.a.label.toLowerCase() === 'c'
   const visibleTerminal =
     options.showHydrogenLabels !== ShowHydrogenLabels.Off &&
     options.showHydrogenLabels !== ShowHydrogenLabels.Hetero
@@ -609,6 +654,10 @@ function isLabelVisible(restruct, options, atom) {
   const neighborsLength =
     atom.a.neighbors.length === 0 ||
     (atom.a.neighbors.length < 2 && visibleTerminal)
+
+  if (isAttachmentPointAtom && atom.a.neighbors.length > 0 && isCarbon) {
+    return false
+  }
 
   const shouldBeVisible =
     neighborsLength ||
@@ -1101,6 +1150,24 @@ function bisectLargestSector(atom: ReAtom, struct: Struct): Vec2 {
   )
   const bisectAngle = neighborAngle + largestAngle / 2
   return newVectorFromAngle(bisectAngle)
+}
+
+function getAttachmentDirectionForOnlyOneBond(
+  atom: ReAtom,
+  struct: Struct
+): Vec2 {
+  const DEGREE_120_FOR_ONE_BOND = (2 * Math.PI) / 3
+  const DEGREE_180_FOR_TRIPLE_BOND = Math.PI
+  const onlyNeighbor = atom.a.neighbors[0]
+  // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
+  const neighbour = struct.halfBonds.get(onlyNeighbor)!
+  const angle = neighbour.ang
+  const isTripleBond =
+    struct.bonds.get(neighbour.bid)?.type === Bond.PATTERN.TYPE.TRIPLE
+  const finalAngle =
+    angle +
+    (isTripleBond ? DEGREE_180_FOR_TRIPLE_BOND : DEGREE_120_FOR_ONE_BOND)
+  return newVectorFromAngle(finalAngle)
 }
 
 function trisectionLargestSector(atom: ReAtom, struct: Struct): [Vec2, Vec2] {

@@ -55,7 +55,7 @@ class ReStruct {
     reloops: ReLoop,
     simpleObjects: ReSimpleObject,
     texts: ReText
-  }
+  } as const
 
   public render: Render
   public molecule: Struct
@@ -77,7 +77,7 @@ class ReStruct {
   private ccFragmentType: Pool = new Pool()
   private structChanged = false
 
-  private atomsChanged: Map<number, ReAtom> = new Map()
+  private atomsChanged: Map<number, 1> = new Map()
   private simpleObjectsChanged: Map<number, ReSimpleObject> = new Map()
   private rxnArrowsChanged: Map<number, ReRxnArrow> = new Map()
   private rxnPlusesChanged: Map<number, ReRxnPlus> = new Map()
@@ -309,27 +309,84 @@ class ReStruct {
     })
   }
 
-  getVBoxObj(selection?): Box2Abs {
-    selection = selection || {}
+  /**
+   * Why?
+   * we can't use just getVBoxObj and the center for atoms
+   * because this will lead incorrect center position for the move atom around it
+   * because of atom's vBox contain text label with is not constant after flip/rotate
+   * and this lead to unstable flip tool work
+   */
+  // eslint-disable-next-line no-use-before-define
+  getSelectionRotationCenter(selection: SelectionMap): Vec2 | undefined {
+    let boundingBox: Box2Abs | null = null
 
-    if (isSelectionEmpty(selection)) {
-      Object.keys(ReStruct.maps).forEach((map) => {
-        selection[map] = Array.from(this[map].keys())
-      })
+    for (const atomId of selection.atoms ?? []) {
+      const atomPositionPoint = this.atoms.get(atomId)!.a.pp
+      const atomBox = new Box2Abs(atomPositionPoint, atomPositionPoint)
+      boundingBox =
+        boundingBox == null ? atomBox : Box2Abs.union(boundingBox, atomBox)
+    }
+    const selectionExceptAtoms = { ...selection }
+    delete selectionExceptAtoms.atoms
+
+    const selectionExceptAtomsBoundingBox =
+      this.getBoundingBoxForSelection(selectionExceptAtoms)
+    if (selectionExceptAtomsBoundingBox) {
+      boundingBox = boundingBox
+        ? Box2Abs.union(boundingBox, selectionExceptAtomsBoundingBox)
+        : selectionExceptAtomsBoundingBox
     }
 
-    let vbox: Box2Abs | null = null
-    Object.keys(ReStruct.maps).forEach((map) => {
-      if (!selection[map]) return
+    return boundingBox?.centre()
+  }
 
-      selection[map].forEach((id) => {
-        const box = this[map].get(id).getVBoxObj(this.render)
-        if (box) vbox = vbox ? Box2Abs.union(vbox, box) : box.clone()
+  // eslint-disable-next-line no-use-before-define
+  getVBoxObj(selection?: SelectionMap): Box2Abs {
+    if (isSelectionEmpty(selection)) {
+      selection = this.getAllElementsAsSelectionMap()
+    }
+
+    let boundingBox = this.getBoundingBoxForSelection(selection)
+
+    if (boundingBox) {
+      const atomsIdsSelected: number[] = selection.atoms ?? [
+        ...this.atoms.keys()
+      ]
+      const attachmentPointsVBox =
+        this.getAttachmentsPointsVBox(atomsIdsSelected)
+      if (attachmentPointsVBox) {
+        boundingBox = Box2Abs.union(boundingBox, attachmentPointsVBox)
+      }
+    }
+
+    boundingBox = boundingBox || new Box2Abs(0, 0, 0, 0)
+    return boundingBox
+  }
+
+  // eslint-disable-next-line no-use-before-define
+  private getAllElementsAsSelectionMap(): SelectionMap {
+    // eslint-disable-next-line no-use-before-define
+    const selection: SelectionMap = {}
+    Object.keys(ReStruct.maps).forEach((map) => {
+      selection[map] = Array.from(this[map].keys())
+    })
+    return selection
+  }
+
+  // eslint-disable-next-line no-use-before-define
+  private getBoundingBoxForSelection(selection: SelectionMap): Box2Abs | null {
+    let boundingBox: Box2Abs | null = null
+    Object.keys(ReStruct.maps).forEach((elementKey) => {
+      selection[elementKey]?.forEach((elementId) => {
+        const box = this[elementKey].get(elementId).getVBoxObj(this.render)
+        if (box) {
+          boundingBox = boundingBox
+            ? Box2Abs.union(boundingBox, box)
+            : box.clone()
+        }
       })
     })
-
-    vbox = vbox || new Box2Abs(0, 0, 0, 0)
-    return vbox
+    return boundingBox
   }
 
   translate(d): void {
@@ -378,6 +435,18 @@ class ReStruct {
       this.molecule.frags.delete(fid)
     })
 
+    // dependency on attachment points
+    // must be removed once attachment points will be dedicated Visel
+    // must be refactored in https://github.com/epam/ketcher/issues/2742 (#2742)
+    this.atoms.forEach((_, aid) => {
+      const atom = this.atoms.get(aid)
+      // in case of atom has attachment point we have to mark it as changed,
+      // so the labels for attachment point will be recalculated
+      if (atom?.hasAttachmentPoint()) {
+        this.atomsChanged.set(aid, 1)
+      }
+    })
+
     Object.keys(ReStruct.maps).forEach((map) => {
       const mapChanged = this[map + 'Changed']
 
@@ -410,19 +479,6 @@ class ReStruct {
       this.molecule.initNeighbors()
     }
 
-    // dependency on attachment points
-    // must be removed once attachment points will be dedicated Visel
-    // must be refactored in https://github.com/epam/ketcher/issues/2742 (#2742)
-    this.atoms.forEach((_, aid) => {
-      const atom = this.atoms.get(aid)
-      // in case of atom has attachment point we have to clear path that connected with this atom
-      // because we need to recalculate the labels for the Attachment point,
-      // they depend on the changes outside the connected atoms
-      if (atom && atom.a.attpnt) {
-        this.clearVisel(atom.visel)
-      }
-    })
-
     // only update half-bonds adjacent to atoms that have moved
     const atomsChangedArray = Array.from(this.atomsChanged.keys())
     this.molecule.updateHalfBonds(atomsChangedArray)
@@ -434,9 +490,9 @@ class ReStruct {
     this.verifyLoops()
     const updLoops = force || this.structChanged
     if (updLoops) this.updateLoops()
-    this.showAttachmentPoints()
     this.showAtoms()
     this.showBonds()
+    this.showRgroupAttachmentPoints()
     if (updLoops) this.showLoops()
     this.showReactionSymbols()
     this.showSGroups()
@@ -559,12 +615,27 @@ class ReStruct {
     })
   }
 
-  private showAttachmentPoints() {
+  private getAttachmentsPointsVBox(atomsIds: number[]): Box2Abs | null {
+    let result: Box2Abs | null = null
+    for (const atomId of atomsIds) {
+      const reAtom = this.atoms.get(atomId)!
+      const bbox = reAtom.getVBoxObjOfAttachmentPoint(this.render)
+      if (bbox) {
+        result = result ? Box2Abs.union(result, bbox) : bbox
+      }
+    }
+    return result
+  }
+
+  private showRgroupAttachmentPoints() {
     this.atoms.forEach((_value, aid) => {
       const atom = this.atoms.get(aid)
-      if (atom && atom.a.attpnt) {
-        atom.showAttachmentPoints(this)
+      const sgroup = this.molecule.getGroupFromAtomId(aid)
+      const isInsideContractedSGroup = Boolean(sgroup?.isContracted())
+      if (isInsideContractedSGroup) {
+        return
       }
+      atom?.showAttachmentPoints(this)
     })
   }
 
@@ -613,7 +684,7 @@ class ReStruct {
             }
             atoms.push({
               selected: item.selected,
-              sgroup: sgroup
+              sgroup
             })
           }
           if (
@@ -690,7 +761,8 @@ class ReStruct {
   }
 }
 
-function isSelectionEmpty(selection) {
+// eslint-disable-next-line no-use-before-define
+function isSelectionEmpty(selection?: SelectionMap): selection is undefined {
   if (!selection) return true
 
   const anySelection = Object.keys(ReStruct.maps).some(
@@ -735,5 +807,9 @@ function isSelectionSvgObjectExists(item) {
         !item.selectionPlate[0]?.removed))
   )
 }
+
+type SelectionMap = Partial<
+  Record<keyof typeof ReStruct.maps, number[] | undefined>
+>
 
 export default ReStruct

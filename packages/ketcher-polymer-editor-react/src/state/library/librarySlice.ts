@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { createSlice, PayloadAction, Slice } from '@reduxjs/toolkit'
-import { MonomerItemType } from 'components/monomerLibrary/monomerLibraryItem'
+import { MonomerItemType } from 'components/monomerLibrary/monomerLibraryItem/types'
 import { Group } from 'components/monomerLibrary/monomerLibraryList'
 import { SdfItem } from 'ketcher-core'
 import { LibraryNameType } from 'src/constants'
@@ -43,10 +43,10 @@ export const librarySlice: Slice = createSlice({
     loadMonomerLibrary: (state, action: PayloadAction<SdfItem[]>) => {
       state.monomers = action.payload
     },
-    addMonomerFavorites: (state, action: PayloadAction<any>) => {
+    addMonomerFavorites: (state, action: PayloadAction<MonomerItemType>) => {
       state.favorites[getMonomerUniqueKey(action.payload)] = action.payload
     },
-    removeMonomerFavorites: (state, action: PayloadAction<any>) => {
+    removeMonomerFavorites: (state, action: PayloadAction<MonomerItemType>) => {
       delete state.favorites[getMonomerUniqueKey(action.payload)]
     },
     toggleMonomerFavorites: (state, action: PayloadAction<MonomerItemType>) => {

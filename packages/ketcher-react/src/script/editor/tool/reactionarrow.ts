@@ -22,6 +22,7 @@ import {
   RxnArrowMode,
   Vec2
 } from 'ketcher-core'
+import assert from 'assert'
 import Editor from '../Editor'
 import { Tool } from './Tool'
 
@@ -36,9 +37,16 @@ class ReactionArrowTool implements Tool {
     this.editor.selection(null)
   }
 
+  private get render() {
+    return this.editor.render
+  }
+
+  private get reStruct() {
+    return this.render.ctab
+  }
+
   mousedown(event) {
-    const rnd = this.editor.render
-    const p0 = rnd.page2obj(event)
+    const p0 = this.render.page2obj(event)
     this.dragCtx = { p0 }
 
     const ci = this.editor.findItem(event, ['rxnArrows'])
@@ -53,39 +61,40 @@ class ReactionArrowTool implements Tool {
     }
   }
 
-  mousemove(event) {
-    const rnd = this.editor.render
-
+  mousemove(event: PointerEvent) {
     if (this.dragCtx) {
-      const current = rnd.page2obj(event)
+      const current = this.render.page2obj(event)
       const diff = current.sub(this.dragCtx.p0)
-      this.dragCtx.previous = current
 
       if (this.dragCtx.ci) {
+        this.dragCtx.itemId = this.dragCtx.ci.id
         if (this.dragCtx.action) {
-          this.dragCtx.action.perform(rnd.ctab)
+          this.dragCtx.action.perform(this.reStruct)
         }
 
         if (!this.dragCtx.ci.ref) {
           this.dragCtx.action = fromMultipleMove(
-            rnd.ctab,
+            this.reStruct,
             this.editor.selection() || {},
             diff
           )
         } else {
+          this.updateResizingState(this.dragCtx.itemId, true)
+          const isSnappingEnabled = !event.ctrlKey
           this.dragCtx.action = fromArrowResizing(
-            rnd.ctab,
-            this.dragCtx.ci.id,
+            this.reStruct,
+            this.dragCtx.itemId,
             diff,
             current,
-            this.dragCtx.ci.ref
+            this.dragCtx.ci.ref,
+            isSnappingEnabled
           )
         }
         this.editor.update(this.dragCtx.action, true)
       } else {
         if (!this.dragCtx.action) {
           const action = fromArrowAddition(
-            rnd.ctab,
+            this.reStruct,
             [this.dragCtx.p0, this.dragCtx.p0],
             this.mode
           )
@@ -95,15 +104,18 @@ class ReactionArrowTool implements Tool {
           this.dragCtx.action = action
           this.editor.update(this.dragCtx.action, true)
         } else {
-          this.dragCtx.action.perform(rnd.ctab)
+          this.dragCtx.action.perform(this.reStruct)
         }
 
+        this.updateResizingState(this.dragCtx.itemId, true)
+        const isSnappingEnabled = !event.ctrlKey
         this.dragCtx.action = fromArrowResizing(
-          rnd.ctab,
+          this.reStruct,
           this.dragCtx.itemId,
           diff,
           current,
-          null
+          null,
+          isSnappingEnabled
         )
         this.editor.update(this.dragCtx.action, true)
       }
@@ -113,40 +125,52 @@ class ReactionArrowTool implements Tool {
     }
   }
 
-  mouseup() {
+  mouseup(event) {
     if (!this.dragCtx) {
       return true
     }
 
-    const rnd = this.editor.render
-
-    const p0 = this.dragCtx.p0
-    const p1 = getDefaultLengthPos(p0, this.dragCtx.previous)
-
     if (this.dragCtx.action) {
       if (this.dragCtx.isNew) {
-        this.editor.update(
-          fromArrowDeletion(rnd.ctab, this.dragCtx.itemId),
-          true
-        )
-        this.dragCtx.action = fromArrowAddition(rnd.ctab, [p0, p1], this.mode)
+        this.addNewArrowWithDragging()
+      } else {
+        this.updateResizingState(this.dragCtx.itemId, false)
+        this.editor.update(true)
       }
-
       this.editor.update(this.dragCtx.action)
+    } else {
+      this.addNewArrowWithClicking(event)
     }
     delete this.dragCtx
     return true
   }
 
-  click(event) {
-    const rnd = this.editor.render
+  private addNewArrowWithDragging() {
+    const item = this.reStruct.molecule.rxnArrows.get(this.dragCtx.itemId)
+    assert(item != null)
+    let [p0, p1] = item.pos
+    p1 = getDefaultLengthPos(p0, p1)
+    this.editor.update(
+      fromArrowDeletion(this.reStruct, this.dragCtx.itemId),
+      true
+    )
+    this.dragCtx.action = fromArrowAddition(this.reStruct, [p0, p1], this.mode)
+  }
+
+  private addNewArrowWithClicking(event) {
     const ci = this.editor.findItem(event, ['rxnArrows'])
-    const p0 = rnd.page2obj(event)
+    const p0 = this.render.page2obj(event)
 
     if (!ci) {
       const pos = [p0, getDefaultLengthPos(p0, null)]
-      this.editor.update(fromArrowAddition(rnd.ctab, pos, this.mode))
+      this.editor.update(fromArrowAddition(this.reStruct, pos, this.mode))
     }
+  }
+
+  private updateResizingState(arrowId: number, isResizing: boolean) {
+    const reArrow = this.reStruct.rxnArrows.get(arrowId)
+    assert(reArrow != null)
+    reArrow.isResizing = isResizing
   }
 }
 

@@ -104,13 +104,15 @@ function extractAttachmentAtom(mergeItems: MergeItems, editor: Editor) {
   const action = new Action()
 
   mergeItems.atomToFunctionalGroup?.forEach((functionalGroupId, srcAtomId) => {
-    const sGroup = struct.sgroups.get(functionalGroupId)
+    const sGroup = struct.sgroups.get(functionalGroupId) as SGroup
 
-    const attachmentAtomId = sGroup?.getAttAtomId(struct)
+    const { atomId: positionAtomId } = sGroup.getContractedPosition(
+      reStruct.molecule
+    )
 
-    if (attachmentAtomId !== undefined) {
+    if (positionAtomId !== undefined) {
       const atomsToDelete = [...SGroup.getAtoms(struct, sGroup)].filter(
-        (atomId) => atomId !== attachmentAtomId
+        (atomId) => atomId !== positionAtomId
       )
       const bondsToDelete = [...SGroup.getBonds(struct, sGroup)]
       action.mergeWith(fromSgroupDeletion(reStruct, functionalGroupId))
@@ -120,7 +122,7 @@ function extractAttachmentAtom(mergeItems: MergeItems, editor: Editor) {
           bonds: bondsToDelete
         })
       )
-      newMergeItems.atoms.set(srcAtomId, attachmentAtomId)
+      newMergeItems.atoms.set(srcAtomId, positionAtomId)
     }
   })
 

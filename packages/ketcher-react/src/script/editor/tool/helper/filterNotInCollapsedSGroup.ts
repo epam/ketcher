@@ -1,10 +1,11 @@
-import { Struct, FunctionalGroup } from 'ketcher-core'
+import { Struct } from 'ketcher-core'
 
 /**
  * return only such elements ids that not part of collapsed group
- * Addition: if an atom in the collapsed SGroup, but is an AttachmentPoint it will be returned as well.
+ * Addition: if an atom in the contracted SGroup,
+ * but is an AttachmentPoint -> will be returned as well.
  */
-export function filterNotInCollapsedSGroup(
+export function filterNotInContractedSGroup(
   itemsToFilter: { atoms?: number[]; bonds?: number[] },
   struct: Struct
 ) {
@@ -15,7 +16,8 @@ export function filterNotInCollapsedSGroup(
         if (isNotCollapsedSGroup(groupId, struct)) {
           return true
         } else {
-          return FunctionalGroup.isAttachmentPointAtom(atomId, struct)
+          const sGroup = struct.sgroups.get(groupId as number)
+          return sGroup?.getAttachmentAtomId() === atomId
         }
       }) ?? [],
     bonds:

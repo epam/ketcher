@@ -16,10 +16,9 @@
 
 import { FC } from 'react'
 import { Struct } from 'ketcher-core'
-import StructRender from '../../component/structrender'
 import classes from './TemplateTable.module.less'
 import { greekify } from '../../utils'
-import { Icon } from 'components'
+import { Icon, StructRender } from 'components'
 
 export interface Template {
   struct: Struct
@@ -62,25 +61,6 @@ function tmplName(tmpl: Template, i: number): string {
   return tmpl.struct.name || `${tmpl.props.group} template ${i + 1}`
 }
 
-const RenderTmpl: FC<{
-  tmpl: Template
-  options: any
-  className: string
-}> = ({ tmpl, options, ...props }) => {
-  return (
-    <StructRender
-      struct={tmpl.struct}
-      {...props}
-      options={{
-        ...options,
-        autoScaleMargin: 10,
-        cachePrefix: 'templates',
-        downScale: true
-      }}
-    />
-  )
-}
-
 const TemplateTable: FC<TemplateTableProps> = (props) => {
   const {
     templates,
@@ -114,10 +94,15 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
             }
             onClick={() => onSelect(tmpl)}
           >
-            <RenderTmpl
-              tmpl={tmpl}
-              options={renderOptions}
+            <StructRender
+              struct={tmpl.struct}
               className={classes.struct}
+              options={{
+                ...renderOptions,
+                autoScaleMargin: 10,
+                cachePrefix: 'templates',
+                downScale: true
+              }}
             />
             <div
               className={`${classes.structTitle} ${

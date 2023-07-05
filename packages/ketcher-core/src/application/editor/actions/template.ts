@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Atom, Bond, Struct, Vec2 } from 'domain/entities'
+import { Atom, Bond, SGroup, Struct, Vec2 } from 'domain/entities'
 import { AtomAdd, BondAdd, BondAttr, CalcImplicitH } from '../operations'
 import { atomForNewBond, atomGetAttr } from './utils'
 import { fromAtomsAttrs, mergeSgroups } from './atom'
@@ -31,7 +31,12 @@ const benzeneMoleculeName = 'Benzene'
 const cyclopentadieneMoleculeName = 'Cyclopentadiene'
 const benzeneDoubleBondIndexes = [1, 4]
 
-export function fromTemplateOnCanvas(restruct, template, pos, angle) {
+export function fromTemplateOnCanvas(
+  restruct,
+  template,
+  pos,
+  angle
+): [Action, { atoms: number[]; bonds: number[] }] {
   const [action, pasteItems] = fromPaste(
     restruct,
     template.molecule,
@@ -82,7 +87,13 @@ function extraBondAction(restruct, aid, angle) {
   return { action, aid1: additionalAtom }
 }
 
-export function fromTemplateOnAtom(restruct, template, aid, angle, extraBond) {
+export function fromTemplateOnAtom(
+  restruct,
+  template,
+  aid,
+  angle,
+  extraBond
+): [Action, { atoms: number[]; bonds: number[] }] {
   let action = new Action()
 
   const tmpl = template.molecule
@@ -115,10 +126,10 @@ export function fromTemplateOnAtom(restruct, template, aid, angle, extraBond) {
   const frid = atomGetAttr(restruct, aid, 'fragment')
 
   /* For merge */
-  const pasteItems: any = {
+  const pasteItems = {
     // only atoms and bonds now
-    atoms: [],
-    bonds: []
+    atoms: [] as number[],
+    bonds: [] as number[]
   }
   /* ----- */
 
@@ -155,17 +166,19 @@ export function fromTemplateOnAtom(restruct, template, aid, angle, extraBond) {
     pasteItems.bonds.push(operation.data.bid)
   })
 
-  tmpl.sgroups.forEach((sg) => {
+  tmpl.sgroups.forEach((sg: SGroup) => {
     const newsgid = restruct.molecule.sgroups.newId()
     const sgAtoms = sg.atoms.map((aid) => map.get(aid))
+    const attachmentPoints = sg.cloneAttachmentPoints(map)
     const sgAction = fromSgroupAddition(
       restruct,
       sg.type,
       sgAtoms,
       sg.data,
       newsgid,
+      attachmentPoints,
       atom.pp,
-      sg.type === 'SUP' ? sg.expanded : null,
+      sg.type === 'SUP' ? sg.isExpanded() : null,
       sg.data.name
     )
     sgAction.operations.reverse().forEach((oper) => {

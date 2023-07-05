@@ -27,13 +27,14 @@ import { onAction } from '../../../state'
 
 type StateProps = Omit<BottomToolbarProps, 'className'>
 type OwnProps = Pick<BottomToolbarProps, 'className'>
+const disableableButtons = []
 
 const mapStateToProps = (state): StateProps => ({
   active: state.actionState && state.actionState.activeTool,
   status: state.actionState || {},
   opened: state.toolbar.opened,
   indigoVerification: state.requestsStatuses.indigoVerification,
-  disableableButtons: []
+  disableableButtons
 })
 
 const mapDispatchToProps = (dispatch: Dispatch): BottomToolbarCallProps => ({

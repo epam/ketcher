@@ -17,6 +17,8 @@
 import { Pool, SGroup, Vec2 } from 'domain/entities'
 
 import utils from './utils'
+import { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint'
+import assert from 'assert'
 
 /**
  * @param str { string }
@@ -126,8 +128,8 @@ function postLoadSup(sgroup) {
   sgroup.data.subscript = ''
 }
 
-function postLoadGen(sgroup, mol, atomMap) {
-  // eslint-disable-line no-unused-vars
+function postLoadGen(_sgroup, _mol, _atomMap) {
+  // empty function
 }
 
 function postLoadDat(sgroup, mol) {
@@ -136,43 +138,43 @@ function postLoadDat(sgroup, mol) {
   }
 }
 
-function postLoadMon(sgroup) {
+function postLoadMon(_sgroup) {
   // TODO: Implement after adding MON type support
 }
 
-function postLoadMer(sgroup) {
+function postLoadMer(_sgroup) {
   // TODO: Implement after adding MER type support
 }
 
-function postLoadCop(sgroup) {
+function postLoadCop(_sgroup) {
   // TODO: Implement after adding COP type support
 }
 
-function postLoadCro(sgroup) {
+function postLoadCro(_sgroup) {
   // TODO: Implement after adding CRO type support
 }
 
-function postLoadMod(sgroup) {
+function postLoadMod(_sgroup) {
   // TODO: Implement after adding MOD type support
 }
 
-function postLoadGra(sgroup) {
+function postLoadGra(_sgroup) {
   // TODO: Implement after adding GRA type support
 }
 
-function postLoadCom(sgroup) {
+function postLoadCom(_sgroup) {
   // TODO: Implement after adding COM type support
 }
 
-function postLoadMix(sgroup) {
+function postLoadMix(_sgroup) {
   // TODO: Implement after adding MIX type support
 }
 
-function postLoadFor(sgroup) {
+function postLoadFor(_sgroup) {
   // TODO: Implement after adding FOR type support
 }
 
-function postLoadAny(sgroup) {
+function postLoadAny(_sgroup) {
   // TODO: Implement after adding ANY type support
 }
 
@@ -363,6 +365,46 @@ function identityMap(array) {
   return map
 }
 
+/**
+ * Superatom attachment point parsing for 'ctab' v2000
+ * Implemented based on: https://github.com/epam/ketcher/issues/2467
+ * @param ctabString {string} example '   1  1   2   0   '
+ *        M SAP sssnn6 iii ooo cc
+ *             ^
+ *             start position for ctabString content
+ * @returns {{sGroupId: number, attachmentPoints: SGroupAttachmentPoint[]}}
+ */
+function parseSGroupSAPLineV2000(ctabString) {
+  const [, sss, nn6] = utils.partitionLine(
+    ctabString.slice(0, 7),
+    [1, 3, 3],
+    false
+  )
+  const chunksNumberInLine = utils.parseDecimalInt(nn6)
+  assert(chunksNumberInLine <= 6)
+  const sGroupId = utils.parseDecimalInt(sss) - 1
+  const attachmentPointsStr = ctabString.slice(7)
+  const attachmentPoints = []
+  for (let i = 0; i < chunksNumberInLine; i++) {
+    // length of ' iii ooo cc'
+    const CHUNK_SIZE = 11
+    const stringForParse = attachmentPointsStr.slice(i * CHUNK_SIZE)
+    const CHUNK_PARTS_LENGTHS = [1, 3, 1, 3, 1, 2]
+    const [, iii, , ooo, , cc] = utils.partitionLine(
+      stringForParse,
+      CHUNK_PARTS_LENGTHS,
+      false
+    )
+    const atomId = utils.parseDecimalInt(iii) - 1
+    assert(atomId >= 0)
+    const leaveAtomParsedId = utils.parseDecimalInt(ooo)
+    const leaveAtomId =
+      leaveAtomParsedId > 0 ? leaveAtomParsedId - 1 : undefined
+    attachmentPoints.push(new SGroupAttachmentPoint(atomId, leaveAtomId, cc))
+  }
+  return { sGroupId, attachmentPoints }
+}
+
 export default {
   readKeyValuePairs,
   readKeyMultiValuePairs,
@@ -378,5 +420,6 @@ export default {
   applyDataSGroupData,
   applyDataSGroupInfoLine,
   applyDataSGroupDataLine,
-  applyDataSGroupExpand
+  applyDataSGroupExpand,
+  parseSGroupSAPLineV2000
 }

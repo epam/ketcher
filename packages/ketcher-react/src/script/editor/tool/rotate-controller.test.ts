@@ -23,68 +23,20 @@ describe('Rotate controller', () => {
     let visibleAtoms = [1]
     // @ts-ignore
     controller.rotateTool.getCenter = () => [new Vec2(), visibleAtoms]
-    expect(visibleAtoms.length).toBe(1)
     expect(tool()).toBeInstanceOf(SelectTool)
     expect(selection()).toBe(null)
 
     // @ts-ignore
     controller.show()
-
     expect(paper).toBeCalledTimes(0)
 
     visibleAtoms = [1, 2]
     // @ts-ignore
     controller.rotateTool.getCenter = () => [new Vec2(), visibleAtoms]
-
-    // @ts-ignore
-    expect(controller.show).toThrow()
-  })
-
-  /**
-   * Steps to check manually:
-   * Select one text / rxnPlus / rxnArrow using Select Tool
-   */
-  it(`hides for only one text / rxnPlus, but shows for one rnxArrow`, () => {
-    // @ts-ignore
-    const tool = () => new SelectTool()
-    const paper = jest.fn()
-    let selection = () => ({
-      texts: [1],
-      rxnPlus: [] as Array<any>,
-      rxnArrow: [] as Array<any>
-    })
-    const controller = new RotateController({
-      selection,
-      tool,
-      render: { paper }
-    } as any)
-    // @ts-ignore
-    controller.rotateTool.getCenter = () => [new Vec2(), []]
-    expect(tool()).toBeInstanceOf(SelectTool)
-
-    // @ts-ignore
-    controller.show()
-
-    expect(paper).toBeCalledTimes(0)
-
-    selection = () => ({ texts: [], rxnPlus: [1], rxnArrow: [] })
-    // @ts-ignore
-    controller.rotateTool.getCenter = () => [new Vec2(), []]
-
-    // @ts-ignore
-    controller.show()
-
-    expect(paper).toBeCalledTimes(0)
-
-    selection = () => ({ texts: [1], rxnPlus: [1], rxnArrow: [] })
-
-    // @ts-ignore
-    expect(controller.show).toThrow()
-
-    selection = () => ({ texts: [], rxnPlus: [], rxnArrow: [1] })
-
-    // @ts-ignore
-    expect(controller.show).toThrow()
+    expect(() => {
+      // @ts-ignore
+      controller.show()
+    }).toThrow()
   })
 
   /**

@@ -18,6 +18,8 @@ import { applyMiddleware, combineReducers, createStore } from 'redux'
 import { load, onAction } from './shared'
 import optionsReducer, { initOptionsState } from './options'
 import templatesReducer, { initTmplsState } from './templates'
+import abbreviationLookupReducer from './abbreviationLookup'
+import commonReducer from './common'
 
 import actionStateReducer from './action'
 import functionalGroupsReducer from './functionalGroups'
@@ -33,9 +35,11 @@ import floatingToolsReducer from './floatingTools'
 export { onAction, load }
 
 const shared = combineReducers({
+  common: commonReducer,
   actionState: actionStateReducer,
   toolbar: toolbarReducer,
   modal: modalReducer,
+  abbreviationLookup: abbreviationLookupReducer,
   server: (store = null) => store,
   editor: (store = null) => store,
   options: optionsReducer,
@@ -48,14 +52,25 @@ const shared = combineReducers({
 
 function getRootReducer(setEditor) {
   return function root(state, action) {
+    // TODO need a refactoring for this reducer since it uses (probably unintentionally falling through switch-case)
+    // F.e. when it gets action: INIT it will call all cases below - INIT+UPDATE
+    /* eslint-disable no-fallthrough */
     switch (action.type) {
-      case 'INIT':
+      case 'INIT': {
         setEditor(action.editor)
+      }
 
-      case 'UPDATE':
-        const { type, ...data } = action
+      case 'UPDATE': {
+        const {
+          /* eslint-disable @typescript-eslint/no-unused-vars */
+          type,
+          /* eslint-enable @typescript-eslint/no-unused-vars */
+          ...data
+        } = action
         if (data) state = { ...state, ...data }
+      }
     }
+    /* eslint-enable no-fallthrough */
 
     const sh = shared(state, {
       ...action,

@@ -5,10 +5,11 @@ import {
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
   moveMouseToTheMiddleOfTheScreen,
-  pressButton,
   selectLeftPanelButton,
   takeEditorScreenshot,
+  selectTemplate,
   STRUCTURE_LIBRARY_BUTTON_NAME,
+  pressButton,
 } from '@utils';
 
 export enum SaltsAndSolvents {
@@ -127,7 +128,7 @@ export async function drawFGAndDrag(
   shift: number,
   page: Page
 ) {
-  await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+  await selectTemplate(page);
   await page.getByRole('tab', { name: 'Functional Groups' }).click();
   await selectFunctionalGroups(itemToChoose, page);
   await moveMouseToTheMiddleOfTheScreen(page);
@@ -144,7 +145,7 @@ export async function drawSaltAndDrag(
   shift: number,
   page: Page
 ) {
-  await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+  await selectTemplate(page);
   await page.getByRole('tab', { name: 'Salts and Solvents' }).click();
   await selectSaltsAndSolvents(itemToChoose, page);
   await moveMouseToTheMiddleOfTheScreen(page);

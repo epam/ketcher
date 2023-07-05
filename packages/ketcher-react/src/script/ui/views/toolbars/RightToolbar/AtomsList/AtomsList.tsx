@@ -21,8 +21,8 @@ import Atom from '../../../../component/view/Atom'
 import { UiActionAction } from '../../../../action'
 import { forwardRef } from 'react'
 import { shortcutStr } from '../../shortcutStr'
+import style from '../../../../../../components/styles/consts'
 import styled from '@emotion/styled'
-import α from 'color-alpha'
 
 interface AtomsListProps {
   atoms: string[]
@@ -44,21 +44,21 @@ const StyledAtom = styled(Atom)((props: any) => {
   const atomColor = props?.el?.label ? ElementColor[props.el.label] : '#000'
   return `
        color: ${atomColor};
-       border: 1px solid ${atomColor};
+       border: 1px solid transparent;
        background-color: transparent;
        cursor: pointer;
        &:hover {
-         background-color: ${α(atomColor, 0.2)};
+         background-color: ${style.color.primaryWhite};
        }
        &:active {
-         color: #fff;
-         background-color: ${α(atomColor, 0.8)};
+        border-color: ${atomColor};
+        background-color: ${style.color.primaryWhite};
        }
        &.selected {
-         color: #fff;
-         background-color: ${α(atomColor, 0.8)};
+        background-color: ${style.color.primaryWhite};
+        border-color: ${style.color.green};
          &:hover {
-           background-color: ${atomColor};
+          background-color: ${style.color.primaryWhite};
          }
        }
    `

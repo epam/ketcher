@@ -28,7 +28,10 @@ import { Ketcher } from 'ketcher-core'
 import classes from './Editor.module.less'
 import clsx from 'clsx'
 import { useResizeObserver } from './hooks'
-import { KETCHER_INIT_EVENT_NAME } from './constants'
+import {
+  KETCHER_INIT_EVENT_NAME,
+  KETCHER_ROOT_NODE_CLASS_NAME
+} from './constants'
 
 const mediaSizes = {
   smallWidth: 1040,
@@ -64,7 +67,7 @@ function Editor(props: EditorProps) {
   return (
     <div
       ref={rootElRef}
-      className={clsx('Ketcher-root', classes.editor, {
+      className={clsx(KETCHER_ROOT_NODE_CLASS_NAME, classes.editor, {
         [classes.small]:
           (height && height <= mediaSizes.smallHeight) ||
           (width && width <= mediaSizes.smallWidth)

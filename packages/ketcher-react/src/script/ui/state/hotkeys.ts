@@ -29,6 +29,15 @@ import actions from '../action'
 import keyNorm from '../data/convert/keynorm'
 import { isIE } from 'react-device-detect'
 import { SettingsManager } from '../utils/settingsManager'
+import {
+  selectAbbreviationLookupValue,
+  selectIsAbbreviationLookupOpen
+} from './abbreviationLookup/selectors'
+import {
+  closeAbbreviationLookup,
+  initAbbreviationLookup,
+  showAbbreviationLookup
+} from './abbreviationLookup'
 import { isArrowKey, moveSelectedItems } from './moveSelectedItems'
 import { handleHotkeyOverItem } from './handleHotkeysOverItem'
 
@@ -36,7 +45,7 @@ export function initKeydownListener(element) {
   return function (dispatch, getState) {
     const hotKeys = initHotKeys()
     element.addEventListener('keydown', (event) =>
-      keyHandle(dispatch, getState(), hotKeys, event)
+      keyHandle(dispatch, getState, hotKeys, event)
     )
   }
 }
@@ -48,9 +57,14 @@ function removeNotRenderedStruct(actionTool, group, dispatch) {
   }
 }
 
+let abbreviationLookupTimeoutId: number | undefined
+const ABBREVIATION_LOOKUP_TYPING_TIMEOUT = 1000
+
 /* HotKeys */
-function keyHandle(dispatch, state, hotKeys, event) {
-  if (state.modal) return
+function keyHandle(dispatch, getState, hotKeys, event) {
+  const state = getState()
+
+  if (state.modal || selectIsAbbreviationLookupOpen(state)) return
 
   const { editor } = state
   const { render } = editor
@@ -60,6 +74,27 @@ function keyHandle(dispatch, state, hotKeys, event) {
   const key = keyNorm(event)
 
   let group: any = null
+
+  if (key && key.length === 1) {
+    if (selectAbbreviationLookupValue(state)) {
+      dispatch(showAbbreviationLookup(event.key))
+      clearTimeout(abbreviationLookupTimeoutId)
+      abbreviationLookupTimeoutId = undefined
+
+      const resetAction = SettingsManager.getSettings().selectionTool
+      dispatch(onAction(resetAction))
+
+      event.preventDefault()
+      return
+    } else {
+      abbreviationLookupTimeoutId = window.setTimeout(() => {
+        dispatch(closeAbbreviationLookup())
+        abbreviationLookupTimeoutId = undefined
+      }, ABBREVIATION_LOOKUP_TYPING_TIMEOUT)
+
+      dispatch(initAbbreviationLookup(event.key))
+    }
+  }
 
   if (key && key.length === 1 && key.match('/')) {
     const hotkeyDialogTypes = {

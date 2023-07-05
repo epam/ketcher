@@ -48,7 +48,7 @@ import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems'
 import { updateSelectedAtoms } from 'src/script/ui/state/modal/atoms'
 import { updateSelectedBonds } from 'src/script/ui/state/modal/bonds'
 import { hasAtomsOutsideCanvas } from './helper/isAtomOutSideCanvas'
-import { filterNotInCollapsedSGroup } from './helper/filterNotInCollapsedSGroup'
+import { filterNotInContractedSGroup } from './helper/filterNotInCollapsedSGroup'
 import { Tool } from './Tool'
 
 type SelectMode = 'lasso' | 'fragment' | 'rectangle'
@@ -190,7 +190,9 @@ class SelectTool implements Tool {
       if (dragCtx.item.map === 'rxnArrows' && dragCtx.item.ref) {
         if (dragCtx?.action) dragCtx.action.perform(rnd.ctab)
         const props = getResizingProps(editor, dragCtx, event)
-        dragCtx.action = fromArrowResizing(...props)
+        this.updateArrowResizingState(dragCtx.item.id, true)
+        const isSnappingEnabled = !event.ctrlKey
+        dragCtx.action = fromArrowResizing(...props, isSnappingEnabled)
         editor.update(dragCtx.action, true)
         return true
       }
@@ -213,7 +215,7 @@ class SelectTool implements Tool {
         editor.render.page2obj(event).sub(dragCtx.xy0)
       )
 
-      const visibleSelectedItems = filterNotInCollapsedSGroup(
+      const visibleSelectedItems = filterNotInContractedSGroup(
         expSel,
         this.editor.struct()
       )
@@ -288,6 +290,10 @@ class SelectTool implements Tool {
         editor.render,
         editor.options().scale
       )
+      if (this.dragCtx.item.map === 'rxnArrows') {
+        this.updateArrowResizingState(this.dragCtx.item.id, false)
+        this.editor.update(true)
+      }
       dropAndMerge(
         editor,
         this.dragCtx.mergeItems,
@@ -485,6 +491,13 @@ class SelectTool implements Tool {
       )
     }
     return isDraggingOnSaltOrSolventAtom || isDraggingOnSaltOrSolventBond
+  }
+
+  private updateArrowResizingState(itemId: number, isResizing: boolean) {
+    const reArrow = this.editor.render.ctab.rxnArrows.get(itemId)
+    if (reArrow) {
+      reArrow.isResizing = isResizing
+    }
   }
 }
 

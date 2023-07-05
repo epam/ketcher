@@ -172,6 +172,15 @@ export const defaultTheme: EditorTheme = {
       T: monomerColors.colorST,
       W: monomerColors.colorW
     }
+  },
+  border: {
+    regular: '1px solid #CAD3DD',
+    radius: {
+      regular: '4px'
+    }
+  },
+  shadow: {
+    regular: '0px 6px 10px rgba(103, 104, 132, 0.15)'
   }
 }
 

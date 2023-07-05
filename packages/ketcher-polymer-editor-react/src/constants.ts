@@ -27,3 +27,9 @@ export type LibraryNameType =
 
 export const EditorClassName = 'Ketcher-polymer-editor-root'
 export const EditorQuerySelector = `.${EditorClassName}`
+
+export const preview = {
+  width: 230,
+  height: 230,
+  gap: 5
+} as const

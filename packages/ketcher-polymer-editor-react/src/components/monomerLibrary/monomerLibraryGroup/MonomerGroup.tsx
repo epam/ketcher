@@ -14,61 +14,52 @@
  * limitations under the License.
  ***************************************************************************/
 import { EmptyFunction } from 'helpers'
-import { MonomerItem, MonomerItemType } from '../monomerLibraryItem'
-import styled from '@emotion/styled'
-
-interface MonomerGroupProps {
-  items: MonomerItemType[]
-  onItemClick?: (item: MonomerItemType) => void
-  title?: string
-}
-
-const ItemsContainer = styled.div`
-  display: grid;
-  grid-template-columns: 33% 33% 33%;
-  grid-template-rows: auto;
-  margin-bottom: 24px;
-  flex-grow: 1;
-
-  &::after {
-    content: '';
-    flex: auto;
-  }
-`
-
-const GroupContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: flex-start;
-  font-size: ${({ theme }) => theme.ketcher.font.size.small};
-  font-family: ${({ theme }) => theme.ketcher.font.family.roboto};
-  color: ${({ theme }) => theme.ketcher.color.divider};
-  margin: 0;
-  gap: 8px;
-`
-
-const GroupTitle = styled.div`
-  height: 100%;
-  display: flex;
-  flex-grow: 0;
-  flex-basis: 14px;
-  flex-direction: column;
-  flex-wrap: wrap;
-  justify-content: flex-start;
-  font-size: ${({ theme }) => theme.ketcher.font.size.medium};
-  font-family: ${({ theme }) => theme.ketcher.font.family.roboto};
-  color: ${({ theme }) => theme.ketcher.color.text.primary};
-  margin: 0;
-`
+import { debounce } from 'lodash'
+import { useMemo, useRef } from 'react'
+import { MonomerItem } from '../monomerLibraryItem'
+import { MonomerItemType } from '../monomerLibraryItem/types'
+import {
+  GroupContainer,
+  GroupTitle,
+  ItemsContainer,
+  StyledPreview
+} from './styles'
+import { IMonomerGroupProps } from './types'
+import { usePreview } from '../../../hooks/usePreview'
 
 const MonomerGroup = ({
   items,
   title,
   onItemClick = EmptyFunction
-}: MonomerGroupProps) => {
+}: IMonomerGroupProps) => {
+  const ref = useRef<HTMLDivElement>(null)
+  const [previewItem, previewStyle, setPreviewItem] = usePreview(ref)
+
+  const debouncedSetPreviewItem = useMemo(
+    () => debounce(setPreviewItem, 500),
+    [setPreviewItem]
+  )
+
+  const handleItemMouseLeave = () => {
+    debouncedSetPreviewItem.cancel()
+    setPreviewItem()
+  }
+
+  const handleItemMouseMove = (
+    monomer: MonomerItemType,
+    e: React.MouseEvent<HTMLDivElement, MouseEvent>
+  ) => {
+    if (previewItem) {
+      setPreviewItem()
+      return
+    }
+
+    const rect = e.currentTarget.getBoundingClientRect()
+    debouncedSetPreviewItem(monomer, rect)
+  }
+
   return (
-    <GroupContainer>
+    <GroupContainer ref={ref}>
       {title && (
         <GroupTitle>
           <span>{title}</span>
@@ -83,11 +74,16 @@ const MonomerGroup = ({
             <MonomerItem
               key={key}
               item={monomer}
+              onMouseLeave={handleItemMouseLeave}
+              onMouseMove={(e) => handleItemMouseMove(monomer, e)}
               onClick={() => onItemClick(monomer)}
             />
           )
         })}
       </ItemsContainer>
+      {previewItem && (
+        <StyledPreview monomer={previewItem} top={previewStyle?.top || ''} />
+      )}
     </GroupContainer>
   )
 }

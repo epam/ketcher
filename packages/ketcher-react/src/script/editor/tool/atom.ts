@@ -170,8 +170,7 @@ class AtomTool implements Tool {
       atomId = dragCtx.item.id
     } else if (dragCtx.item.map === 'functionalGroups') {
       const sGroup = molecule.sgroups.get(dragCtx.item.id)
-      const attachmentAtomId = sGroup?.getAttAtomId(molecule)
-      atomId = attachmentAtomId
+      atomId = sGroup?.getAttachmentAtomId()
     }
 
     if (atomId !== undefined) {
@@ -233,12 +232,13 @@ class AtomTool implements Tool {
           ci.map === 'functionalGroups' &&
           FunctionalGroup.isContractedFunctionalGroup(ci.id, functionalGroups)
         ) {
-          const sGroup = molecule.sgroups.get(ci.id)
-          const attachmentAtomId = sGroup?.getAttAtomId(molecule)
+          const sGroup = molecule.sgroups.get(ci.id) as SGroup
+          const { atomId: sGroupPositionAtomId } =
+            sGroup.getContractedPosition(molecule)
 
-          if (attachmentAtomId !== undefined) {
+          if (sGroupPositionAtomId !== undefined) {
             const atomsToDelete = [...SGroup.getAtoms(molecule, sGroup)].filter(
-              (atomId) => atomId !== attachmentAtomId
+              (atomId) => atomId !== sGroupPositionAtomId
             )
             const bondsToDelete = [...SGroup.getBonds(molecule, sGroup)]
             action.mergeWith(fromSgroupDeletion(reStruct, ci.id))
@@ -249,7 +249,7 @@ class AtomTool implements Tool {
               })
             )
             action.mergeWith(
-              fromAtomsAttrs(reStruct, attachmentAtomId, atomProps, true)
+              fromAtomsAttrs(reStruct, sGroupPositionAtomId, atomProps, true)
             )
           }
         } else if (ci.map === 'atoms') {

@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+/* eslint-disable @typescript-eslint/no-use-before-define */
 
 import { ReStruct, ReText } from '../../../render'
 import { Text, Vec2 } from 'domain/entities'
@@ -32,7 +33,7 @@ export class TextCreate extends BaseOperation {
 
   constructor(content: string, position: Vec2, pos: Array<Vec2>, id?: number) {
     super(OperationType.TEXT_CREATE)
-    this.data = { content: content, position, pos, id }
+    this.data = { content, position, pos, id }
   }
 
   execute(restruct: ReStruct): void {

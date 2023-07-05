@@ -78,6 +78,10 @@ function defaultOptions(options: RenderOptions): RenderOptions {
       'stroke-linecap': 'round',
       'stroke-linejoin': 'round'
     },
+    arrowSnappingStyle: {
+      fill: '#365CFF',
+      stroke: '#365CFF'
+    },
     /* eslint-enable quote-props */
     selectionStyle: {
       fill: '#57FF8F',

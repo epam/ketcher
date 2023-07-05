@@ -141,6 +141,15 @@ export type EditorTheme = {
       [key: string]: MonomerColorScheme
     }
   }
+  border: {
+    regular: string
+    radius: {
+      regular: string
+    }
+  }
+  shadow: {
+    regular: string
+  }
 }
 
 export type ThemeType = { ketcher: EditorTheme }

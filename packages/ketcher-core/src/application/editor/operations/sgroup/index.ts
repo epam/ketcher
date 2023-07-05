@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+/* eslint-disable @typescript-eslint/no-use-before-define */
 
 import { FunctionalGroup, SGroup, Vec2 } from 'domain/entities'
 import { ReSGroup, ReStruct } from '../../../render'
@@ -120,7 +121,7 @@ class SGroupDelete extends BaseOperation {
     ) {
       let relatedFGroupId
       this.data.name = sgroup.item.data.name
-      this.data.expanded = sgroup.item.expanded
+      this.data.expanded = (sgroup.item as SGroup).isExpanded()
       restruct.molecule.functionalGroups.forEach((fg, fgid) => {
         if (fg.relatedSGroupId === sgid) {
           relatedFGroupId = fgid

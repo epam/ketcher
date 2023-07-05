@@ -24,24 +24,35 @@ import {
   SGroupDelete,
   SGroupRemoveFromHierarchy
 } from '../operations'
-import { FunctionalGroup, Pile, SGroup } from 'domain/entities'
+import { Pile, SGroup } from 'domain/entities'
 import { atomGetAttr, atomGetDegree, atomGetSGroups } from './utils'
 
 import { Action } from './action'
 import { SgContexts } from '..'
 import { uniq } from 'lodash/fp'
 import { fromAtomsAttrs } from './atom'
+import {
+  SGroupAttachmentPointAdd,
+  SGroupAttachmentPointRemove
+} from 'application/editor/operations/sgroup/sgroupAttachmentPoints'
+import Restruct from 'application/render/restruct/restruct'
+import assert from 'assert'
 
-export function fromSeveralSgroupAddition(restruct, type, atoms, attrs) {
+export function fromSeveralSgroupAddition(
+  restruct: Restruct,
+  type,
+  atoms,
+  attrs
+) {
   const descriptors = attrs.fieldValue
-
   if (typeof descriptors === 'string' || type !== 'DAT') {
     return fromSgroupAddition(
       restruct,
       type,
       atoms,
       attrs,
-      restruct.molecule.sgroups.newId()
+      restruct.molecule.sgroups.newId(),
+      []
     )
   }
 
@@ -55,7 +66,8 @@ export function fromSeveralSgroupAddition(restruct, type, atoms, attrs) {
         type,
         atoms,
         localAttrs,
-        restruct.molecule.sgroups.newId()
+        restruct.molecule.sgroups.newId(),
+        []
       )
     )
   }, new Action())
@@ -71,7 +83,11 @@ export function fromSgroupAttrs(restruct, id, attrs) {
   return action.perform(restruct)
 }
 
-export function setExpandSGroup(restruct, sgid, attrs) {
+export function setExpandSGroup(
+  restruct: Restruct,
+  sgid: number,
+  attrs: { expanded: boolean }
+) {
   const action = new Action()
 
   Object.keys(attrs).forEach((key) => {
@@ -79,15 +95,12 @@ export function setExpandSGroup(restruct, sgid, attrs) {
   })
 
   const sgroup = restruct.molecule.sgroups.get(sgid)
-  if (sgroup.firstSgroupAtom) {
-    delete sgroup.firstSgroupAtom
-    delete sgroup.firstSgroupAtomId
-  }
+  assert(sgroup != null)
   const atoms = SGroup.getAtoms(restruct, sgroup)
 
   atoms.forEach((aid) => {
     action.mergeWith(
-      fromAtomsAttrs(restruct, aid, restruct.atoms.get(aid).a, false)
+      fromAtomsAttrs(restruct, aid, restruct.atoms.get(aid)?.a, false)
     )
   })
 
@@ -100,12 +113,8 @@ export function expandSGroupWithMultipleAttachmentPoint(restruct) {
 
   const struct = restruct.molecule
 
-  struct.sgroups.forEach((sgroup) => {
-    const countAttachmentPoint = FunctionalGroup.getAttachmentPointCount(
-      sgroup,
-      struct
-    )
-    if (countAttachmentPoint > 1) {
+  struct.sgroups.forEach((sgroup: SGroup) => {
+    if (sgroup.isNotContractible(struct)) {
       action.mergeWith(
         setExpandSGroup(restruct, sgroup.id, {
           expanded: true
@@ -143,7 +152,7 @@ export function fromSgroupDeletion(restruct, id) {
     })
   }
 
-  const sg = struct.sgroups.get(id)
+  const sg = struct.sgroups.get(id) as SGroup
   const atoms = SGroup.getAtoms(struct, sg)
   const attrs = sg.getAttrs()
 
@@ -151,6 +160,10 @@ export function fromSgroupDeletion(restruct, id) {
 
   atoms.forEach((atom) => {
     action.addOp(new SGroupAtomRemove(id, atom))
+  })
+
+  sg.getAttachmentPoints().forEach((attachmentPoint) => {
+    action.addOp(new SGroupAttachmentPointRemove(id, attachmentPoint))
   })
 
   action.addOp(new SGroupDelete(id))
@@ -168,6 +181,7 @@ export function fromSgroupAddition(
   atoms,
   attrs,
   sgid,
+  attachmentPoints,
   pp?,
   expanded?,
   name?
@@ -188,6 +202,12 @@ export function fromSgroupAddition(
   atoms.forEach((atom) => {
     action.addOp(new SGroupAtomAdd(sgid, atom))
   })
+
+  if (type === 'SUP') {
+    attachmentPoints.forEach((attachmentPoint) => {
+      action.addOp(new SGroupAttachmentPointAdd(sgid, attachmentPoint))
+    })
+  }
 
   action.addOp(
     type !== 'DAT'
@@ -256,7 +276,7 @@ export function fromSgroupAction(
     action: fromSeveralSgroupAddition(
       restruct,
       newSg.type,
-      sourceAtoms,
+      newSourceAtoms,
       newSg.attrs
     )
   }
@@ -393,9 +413,12 @@ export function removeSgroupIfNeeded(action, restruct, atoms) {
 
     if (sgAtoms.length === count) {
       // delete whole s-group
-      const sgroup = struct.sgroups.get(sid)
+      const sgroup = struct.sgroups.get(sid) as SGroup
       action.mergeWith(sGroupAttributeAction(sid, sgroup.getAttrs()))
       action.addOp(new SGroupRemoveFromHierarchy(sid))
+      sgroup.getAttachmentPoints().forEach((attachmentPoint) => {
+        action.addOp(new SGroupAttachmentPointRemove(sid, attachmentPoint))
+      })
       action.addOp(new SGroupDelete(sid))
     }
   })

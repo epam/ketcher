@@ -52,6 +52,7 @@ export type RenderOptions = {
 
   /* styles */
   lineattr: RenderOptionStyles
+  arrowSnappingStyle: RenderOptionStyles
   selectionStyle: RenderOptionStyles
   hoverStyle: RenderOptionStyles
   sgroupBracketStyle: RenderOptionStyles

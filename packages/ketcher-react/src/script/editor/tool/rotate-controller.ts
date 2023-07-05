@@ -4,6 +4,7 @@ import Editor from '../Editor'
 import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems'
 import RotateTool from './rotate'
 import SelectTool from './select'
+import { getDifference, rotatePoint } from './rotate-controller.utils'
 
 type RaphaelElement = {
   [key: string]: any
@@ -145,14 +146,14 @@ class RotateController {
       this.editor
     )
 
-    const { texts, rxnArrows, rxnPluses, bonds } = this.editor.selection() || {}
+    const { texts, rxnArrows, rxnPluses } = this.editor.selection() || {}
 
     const isMoreThanOneItemBeingSelected =
       visibleAtoms.concat(texts || [], rxnArrows || [], rxnPluses || [])
         .length > 1
 
     const enable =
-      (isMoreThanOneItemBeingSelected || rxnArrows?.length) &&
+      isMoreThanOneItemBeingSelected &&
       this.editor.tool() instanceof SelectTool &&
       originalCenter
 
@@ -167,7 +168,7 @@ class RotateController {
       texts,
       rxnArrows,
       rxnPluses,
-      bonds
+      this.editor.selection()?.bonds
     )
 
     this.handleCenter = new Vec2(
@@ -797,36 +798,4 @@ class RotateController {
 }
 
 export default RotateController
-
-const rotatePoint = (centerPoint: Vec2, startPoint: Vec2, angle: number) => {
-  const oCenter = centerPoint
-  const oStart = startPoint
-
-  const centerStart = oStart.sub(oCenter)
-  const centerEnd = centerStart.rotate(angle)
-
-  const oEnd = oCenter.add(centerEnd)
-  return oEnd
-}
-
-export const getDifference = (
-  currentDegree: number,
-  structRotateDegree: number
-) => {
-  let abs = 0
-
-  // HACK: https://github.com/epam/ketcher/pull/2574#issuecomment-1539509046
-  if (structRotateDegree > 90) {
-    const positiveCurrentDegree =
-      currentDegree < 0 ? currentDegree + 360 : currentDegree
-    abs = Math.abs(positiveCurrentDegree - structRotateDegree)
-  } else if (structRotateDegree < -90) {
-    const negativeCurrentDegree =
-      currentDegree > 0 ? currentDegree - 360 : currentDegree
-    abs = Math.abs(negativeCurrentDegree - structRotateDegree)
-  } else {
-    abs = Math.abs(currentDegree - structRotateDegree)
-  }
-
-  return abs
-}
+export { getDifference }

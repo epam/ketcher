@@ -1,6 +1,6 @@
 {
   "name": "ketcher-standalone",
-  "version": "2.11.0-rc.1",
+  "version": "2.12.0-rc.2",
   "description": "Web-based molecule sketcher",
   "license": "Apache-2.0",
   "homepage": "http://lifescience.opensource.epam.com/ketcher",
@@ -31,8 +31,10 @@
   "scripts": {
     "build": "cross-env NODE_ENV=production rollup -c -m true",
     "start": "cross-env NODE_ENV=development rollup -c -m true -w",
-    "test": "run-s test:prettier test:eslint test:unit",
+    "test": "run-s test:prettier test:eslint:quiet test:types test:unit",
     "test:eslint": "eslint . --ext .ts,.js",
+    "test:eslint:quiet": "npm run test:eslint -- --quiet",
+    "test:eslint:fix": "npm run test:eslint -- --fix",
     "test:types": "tsc --noEmit",
     "test:unit": "jest --passWithNoTests",
     "test:prettier": "prettier --check \"./**/*.{js,ts,json}\"",
@@ -40,7 +42,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.17.9",
-    "indigo-ketcher": "1.12.0-rc.1",
+    "indigo-ketcher": "1.12.0-rc.2",
     "ketcher-core": "*"
   },
   "devDependencies": {

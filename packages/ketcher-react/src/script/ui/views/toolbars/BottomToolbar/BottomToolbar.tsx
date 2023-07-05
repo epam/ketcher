@@ -56,9 +56,6 @@ const BottomToolbar = (props: Props) => {
           disableableButtons={disableableButtons}
           onAction={onAction}
         />
-      </Group>
-
-      <Group>
         <ToolbarGroupItem id="template-lib" {...rest} />
       </Group>
     </div>

@@ -1,7 +1,5 @@
 {
   "root": false,
   "extends": "plugin:jest/recommended",
-  "rules": {
-    "camelcase": "warn"
-  }
+  "rules": {}
 }

@@ -313,7 +313,7 @@ export class Struct {
 
   atomAddToSGroup(sgid, aid) {
     // TODO: [MK] make sure the addition does not break the hierarchy?
-    SGroup.addAtom(this.sgroups.get(sgid)!, aid)
+    SGroup.addAtom(this.sgroups.get(sgid)!, aid, this)
     this.atoms.get(aid)!.sgs.add(sgid)
   }
 
@@ -1079,6 +1079,11 @@ export class Struct {
       if (sgroup.atoms.includes(atomId)) return groupId
     }
     return null
+  }
+
+  getGroupFromAtomId(atomId: number | undefined): SGroup | undefined {
+    const sgroupId = this.getGroupIdFromAtomId(atomId as number)
+    return this.sgroups?.get(sgroupId as number)
   }
 
   // TODO: simplify if bonds ids ever appear in sgroup

@@ -14,11 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 import { render, screen, fireEvent } from '@testing-library/react'
+import { Struct } from 'ketcher-core'
 import { RnaMonomerSection } from './RnaMonomerSection'
 
 // will be completely rewored in the nearest tasks
 describe.skip('RNA Monomer Section', () => {
-  const rnaMonomersMock = {
+  // TODO Fixing a type issue with any as a temporary solution
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const rnaMonomersMock: any = {
     Nucleotide: [
       {
         groupItems: [
@@ -28,7 +31,8 @@ describe.skip('RNA Monomer Section', () => {
               Sugar: 'R',
               Nucleobase: 'A',
               Phosphate: 'P'
-            }
+            },
+            struct: new Struct()
           },
           {
             label: 'U',
@@ -36,7 +40,8 @@ describe.skip('RNA Monomer Section', () => {
               Sugar: 'R',
               Nucleobase: 'U',
               Phosphate: 'P'
-            }
+            },
+            struct: new Struct()
           }
         ],
         groupTitle: 'Nucleotides'
@@ -44,19 +49,28 @@ describe.skip('RNA Monomer Section', () => {
     ],
     Nucleobase: [
       {
-        groupItems: [{ label: 'A' }, { label: '2ldg' }],
+        groupItems: [
+          { label: 'A', struct: new Struct() },
+          { label: '2ldg', struct: new Struct() }
+        ],
         groupTitle: 'Nucleobase'
       }
     ],
     Sugar: [
       {
-        groupItems: [{ label: 'R' }, { label: 'm' }],
+        groupItems: [
+          { label: 'R', struct: new Struct() },
+          { label: 'm', struct: new Struct() }
+        ],
         groupTitle: 'Sugar'
       }
     ],
     Phosphate: [
       {
-        groupItems: [{ label: 'p' }, { label: '36dcd' }],
+        groupItems: [
+          { label: 'p', struct: new Struct() },
+          { label: '36dcd', struct: new Struct() }
+        ],
         groupTitle: 'Phosphate'
       }
     ]

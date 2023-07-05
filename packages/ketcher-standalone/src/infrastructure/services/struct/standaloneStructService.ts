@@ -32,7 +32,8 @@ import {
   InputMessage,
   LayoutCommandData,
   OutputMessage,
-  SupportedFormat
+  SupportedFormat,
+  OutputMessageWrapper
 } from './indigoWorker.types'
 import {
   AromatizeData,
@@ -191,7 +192,7 @@ class IndigoService implements StructService {
 
   async generateInchIKey(struct: string): Promise<string> {
     return new Promise((resolve, reject) => {
-      const action = ({ data }) => {
+      const action = ({ data }: OutputMessageWrapper) => {
         const msg: OutputMessage<string> = data
         if (!msg.hasError) {
           resolve(msg.payload || '')
@@ -214,13 +215,12 @@ class IndigoService implements StructService {
 
   info(): Promise<InfoResult> {
     return new Promise((resolve, reject) => {
-      const action = ({ data }) => {
+      const action = ({ data }: OutputMessageWrapper) => {
         console.log('info action', data)
         const msg: OutputMessage<string> = data
         if (!msg.hasError) {
           const result: InfoResult = {
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            indigoVersion: msg.payload!,
+            indigoVersion: msg.payload,
             imagoVersions: [],
             isAvailable: true
           }
@@ -241,17 +241,17 @@ class IndigoService implements StructService {
     data: ConvertData,
     options?: StructServiceOptions
   ): Promise<ConvertResult> {
-    const { output_format, struct } = data
-    const format = convertMimeTypeToOutputFormat(output_format)
+    const { output_format: outputFormat, struct } = data
+    const format = convertMimeTypeToOutputFormat(outputFormat)
 
     return new Promise((resolve, reject) => {
-      const action = ({ data }) => {
+      const action = ({ data }: OutputMessageWrapper) => {
         console.log('convert action', data)
         const msg: OutputMessage<string> = data
         if (!msg.hasError) {
           const result: ConvertResult = {
-            struct: msg.payload!,
-            format: output_format
+            struct: msg.payload,
+            format: outputFormat
           }
           resolve(result)
         } else {
@@ -286,16 +286,16 @@ class IndigoService implements StructService {
     data: LayoutData,
     options?: StructServiceOptions
   ): Promise<LayoutResult> {
-    const { struct, output_format } = data
-    const format = convertMimeTypeToOutputFormat(output_format)
+    const { struct, output_format: outputFormat } = data
+    const format = convertMimeTypeToOutputFormat(outputFormat)
 
     return new Promise((resolve, reject) => {
-      const action = ({ data }) => {
+      const action = ({ data }: OutputMessageWrapper) => {
         console.log('layout action', data)
         const msg: OutputMessage<string> = data
         if (!msg.hasError) {
           const result: LayoutResult = {
-            struct: msg.payload!,
+            struct: msg.payload,
             format: ChemicalMimeType.Mol
           }
           resolve(result)
@@ -328,15 +328,15 @@ class IndigoService implements StructService {
   }
 
   clean(data: CleanData, options?: StructServiceOptions): Promise<CleanResult> {
-    const { struct, selected, output_format } = data
-    const format = convertMimeTypeToOutputFormat(output_format)
+    const { struct, selected, output_format: outputFormat } = data
+    const format = convertMimeTypeToOutputFormat(outputFormat)
 
     return new Promise((resolve, reject) => {
-      const action = ({ data }) => {
+      const action = ({ data }: OutputMessageWrapper) => {
         const msg: OutputMessage<string> = data
         if (!msg.hasError) {
           const result: CleanResult = {
-            struct: msg.payload!,
+            struct: msg.payload,
             format: ChemicalMimeType.Mol
           }
           resolve(result)
@@ -373,15 +373,15 @@ class IndigoService implements StructService {
     data: AromatizeData,
     options?: StructServiceOptions
   ): Promise<AromatizeResult> {
-    const { struct, output_format } = data
-    const format = convertMimeTypeToOutputFormat(output_format)
+    const { struct, output_format: outputFormat } = data
+    const format = convertMimeTypeToOutputFormat(outputFormat)
 
     return new Promise((resolve, reject) => {
-      const action = ({ data }) => {
+      const action = ({ data }: OutputMessageWrapper) => {
         const msg: OutputMessage<string> = data
         if (!msg.hasError) {
           const result: AromatizeResult = {
-            struct: msg.payload!,
+            struct: msg.payload,
             format: ChemicalMimeType.Mol
           }
           resolve(result)
@@ -417,15 +417,15 @@ class IndigoService implements StructService {
     data: DearomatizeData,
     options?: StructServiceOptions
   ): Promise<DearomatizeResult> {
-    const { struct, output_format } = data
-    const format = convertMimeTypeToOutputFormat(output_format)
+    const { struct, output_format: outputFormat } = data
+    const format = convertMimeTypeToOutputFormat(outputFormat)
 
     return new Promise((resolve, reject) => {
-      const action = ({ data }) => {
+      const action = ({ data }: OutputMessageWrapper) => {
         const msg: OutputMessage<string> = data
         if (!msg.hasError) {
           const result: AromatizeResult = {
-            struct: msg.payload!,
+            struct: msg.payload,
             format: ChemicalMimeType.Mol
           }
           resolve(result)
@@ -461,15 +461,15 @@ class IndigoService implements StructService {
     data: CalculateCipData,
     options?: StructServiceOptions
   ): Promise<CalculateCipResult> {
-    const { struct, output_format } = data
-    const format = convertMimeTypeToOutputFormat(output_format)
+    const { struct, output_format: outputFormat } = data
+    const format = convertMimeTypeToOutputFormat(outputFormat)
 
     return new Promise((resolve, reject) => {
-      const action = ({ data }) => {
+      const action = ({ data }: OutputMessageWrapper) => {
         const msg: OutputMessage<string> = data
         if (!msg.hasError) {
           const result: CalculateCipResult = {
-            struct: msg.payload!,
+            struct: msg.payload,
             format: ChemicalMimeType.Mol
           }
           resolve(result)
@@ -505,15 +505,15 @@ class IndigoService implements StructService {
     data: AutomapData,
     options?: StructServiceOptions
   ): Promise<AutomapResult> {
-    const { mode, struct, output_format } = data
-    const format = convertMimeTypeToOutputFormat(output_format)
+    const { mode, struct, output_format: outputFormat } = data
+    const format = convertMimeTypeToOutputFormat(outputFormat)
 
     return new Promise((resolve, reject) => {
-      const action = ({ data }) => {
+      const action = ({ data }: OutputMessageWrapper) => {
         const msg: OutputMessage<string> = data
         if (!msg.hasError) {
           const result: AutomapResult = {
-            struct: msg.payload!,
+            struct: msg.payload,
             format: ChemicalMimeType.Mol
           }
           resolve(result)
@@ -550,10 +550,10 @@ class IndigoService implements StructService {
     const { types, struct } = data
 
     return new Promise((resolve, reject) => {
-      const action = ({ data }) => {
+      const action = ({ data }: OutputMessageWrapper) => {
         const msg: OutputMessage<string> = data
         if (!msg.hasError) {
-          const warnings = JSON.parse(msg.payload!) as KeyValuePair
+          const warnings = JSON.parse(msg.payload) as KeyValuePair
 
           const result: CheckResult = Object.entries(warnings).reduce(
             (acc, curr) => {
@@ -600,10 +600,10 @@ class IndigoService implements StructService {
   ): Promise<CalculateResult> {
     const { properties, struct, selected } = data
     return new Promise((resolve, reject) => {
-      const action = ({ data }) => {
+      const action = ({ data }: OutputMessageWrapper) => {
         const msg: OutputMessage<string> = data
         if (!msg.hasError) {
-          const calculatedProperties: CalculateResult = JSON.parse(msg.payload!)
+          const calculatedProperties: CalculateResult = JSON.parse(msg.payload)
           const result: CalculateResult = Object.entries(
             calculatedProperties
           ).reduce((acc, curr) => {
@@ -657,10 +657,10 @@ class IndigoService implements StructService {
   ): Promise<string> {
     const { outputFormat, backgroundColor, ...restOptions } = options
     return new Promise((resolve, reject) => {
-      const action = ({ data }) => {
+      const action = ({ data }: OutputMessageWrapper) => {
         const msg: OutputMessage<string> = data
         if (!msg.hasError) {
-          resolve(msg.payload!)
+          resolve(msg.payload)
         } else {
           reject(msg.error)
         }
@@ -674,7 +674,7 @@ class IndigoService implements StructService {
       const commandData: GenerateImageCommandData = {
         struct: data,
         outputFormat: outputFormat || 'png',
-        backgroundColor: backgroundColor,
+        backgroundColor,
         options: commandOptions
       }
 

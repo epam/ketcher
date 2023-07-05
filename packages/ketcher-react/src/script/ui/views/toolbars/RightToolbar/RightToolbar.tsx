@@ -28,6 +28,7 @@ import classes from './RightToolbar.module.less'
 import clsx from 'clsx'
 import { useInView } from 'react-intersection-observer'
 import { useResizeObserver } from '../../../../../hooks'
+import { HorizontalDivider } from '../TopToolbar/Divider'
 
 const Group: FC<{ className?: string } & PropsWithChildren> = ({
   children,
@@ -67,31 +68,46 @@ const RightToolbar = (props: Props) => {
 
   return (
     <div className={clsx(classes.root, className)} ref={ref}>
-      <div className={classes.buttons} ref={scrollRef}>
-        <Group className={classes.atomsList}>
-          <AtomsList
-            ref={startRef}
-            atoms={basicAtoms.slice(0, 1)}
-            active={active}
-            onAction={onAction}
-          />
-          <AtomsList
-            atoms={basicAtoms.slice(1)}
-            active={active}
-            onAction={onAction}
-          />
-          <AtomsList atoms={freqAtoms} active={active} onAction={onAction} />
-          <ToolbarGroupItem id="period-table" {...rest} />
-        </Group>
+      <div ref={scrollRef} className={classes.buttons}>
+        <div ref={startRef}>
+          <Group
+            className={clsx(
+              classes.atomsList,
+              classes.buttons,
+              classes.groupItem
+            )}
+          >
+            <AtomsList
+              atoms={basicAtoms.slice(0, 1)}
+              active={active}
+              onAction={onAction}
+            />
+            <AtomsList
+              atoms={basicAtoms.slice(1, 5)}
+              active={active}
+              onAction={onAction}
+            />
+            <HorizontalDivider></HorizontalDivider>
+            <AtomsList
+              atoms={basicAtoms.slice(5)}
+              active={active}
+              onAction={onAction}
+            />
+            <AtomsList atoms={freqAtoms} active={active} onAction={onAction} />
+            <ToolbarGroupItem id="period-table" {...rest} />
+          </Group>
+        </div>
 
-        <Group>
-          <div ref={sizeRef}>
-            <ToolbarGroupItem id="any-atom" {...rest} />
-            <div ref={endRef}>
-              <ToolbarGroupItem id="extended-table" {...rest} />
+        <div ref={endRef}>
+          <Group className={classes.groupItem}>
+            <div ref={sizeRef}>
+              <ToolbarGroupItem id="any-atom" {...rest} />
+              <div className={classes.button}>
+                <ToolbarGroupItem id="extended-table" {...rest} />
+              </div>
             </div>
-          </div>
-        </Group>
+          </Group>
+        </div>
       </div>
       {height && scrollRef?.current?.scrollHeight > height && (
         <ArrowScroll

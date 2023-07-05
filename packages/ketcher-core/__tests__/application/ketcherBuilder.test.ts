@@ -17,6 +17,7 @@ describe('build()', () => {
 
   it('should throw exception when Editor is null', () => {
     const provider: StructServiceProvider = mock<StructServiceProvider>()
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const editor: Editor = null as any as Editor
     const builder: KetcherBuilder =
       new KetcherBuilder().withStructServiceProvider(provider)

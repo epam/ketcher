@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { KETCHER_SAVED_SETTINGS_KEY } from '../../../constants'
+import { KETCHER_SAVED_SETTINGS_KEY } from 'src/constants'
 
 interface SavedSettings {
   selectionTool?: any

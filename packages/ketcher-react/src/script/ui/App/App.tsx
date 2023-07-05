@@ -31,6 +31,7 @@ import classes from './App.module.less'
 import { initFGTemplates } from '../state/functionalGroups'
 import { initSaltsAndSolventsTemplates } from '../state/saltsAndSolvents'
 import { useSubscriptionOnEvents } from '../../../hooks'
+import { AbbreviationLookupContainer } from '../dialog/AbbreviationLookup'
 
 interface AppCallProps {
   checkServer: () => void
@@ -74,6 +75,7 @@ const App = (props: Props) => {
 
         <AppClipArea />
         <AppModalContainer />
+        <AbbreviationLookupContainer />
       </div>
     </ThemeProvider>
   )

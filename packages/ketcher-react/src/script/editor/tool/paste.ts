@@ -19,7 +19,6 @@ import {
   fromItemsFuse,
   fromPaste,
   fromTemplateOnAtom,
-  FunctionalGroup,
   getHoverToFuse,
   getItemsToFuse,
   SGroup,
@@ -30,7 +29,7 @@ import Editor from '../Editor'
 import { dropAndMerge } from './helper/dropAndMerge'
 import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems'
 import utils from '../shared/utils'
-import { filterNotInCollapsedSGroup } from './helper/filterNotInCollapsedSGroup'
+import { filterNotInContractedSGroup } from './helper/filterNotInCollapsedSGroup'
 import { Tool } from './Tool'
 
 class PasteTool implements Tool {
@@ -121,8 +120,9 @@ class PasteTool implements Tool {
 
       const extraBond = true
 
-      const targetGroup = this.editor.struct().sgroups.get(this.dragCtx.item.id)
-      const atomId = targetGroup?.getAttAtomId(this.editor.struct())
+      const struct = this.editor.struct()
+      const targetGroup = struct.sgroups.get(this.dragCtx.item.id)
+      const atomId = targetGroup?.getAttachmentAtomId()
 
       if (atomId !== undefined) {
         const atom = this.editor.struct().atoms.get(atomId)
@@ -140,6 +140,8 @@ class PasteTool implements Tool {
 
       // check if anything changed since last time
       if (
+        // TODO fix the ignored rule
+        // eslint-disable-next-line no-prototype-builtins
         this.dragCtx.hasOwnProperty('angle') &&
         this.dragCtx.angle === degrees
       )
@@ -163,12 +165,9 @@ class PasteTool implements Tool {
       this.editor.update(this.dragCtx.action, true)
     } else {
       // todo delete after supporting expand - collapse for 2 attachment points
+      const struct = this.editor.struct()
       this.struct.sgroups.forEach((sgroup) => {
-        const countAttachmentPoint = FunctionalGroup.getAttachmentPointCount(
-          sgroup,
-          this.struct
-        )
-        if (countAttachmentPoint > 1) {
+        if (sgroup.isNotContractible(struct)) {
           sgroup.setAttr('expanded', true)
         }
       })
@@ -180,7 +179,7 @@ class PasteTool implements Tool {
       )
       this.action = action
       this.editor.update(this.action, true, { resizeCanvas: false })
-      const visiblePasteItems = filterNotInCollapsedSGroup(
+      const visiblePasteItems = filterNotInContractedSGroup(
         pasteItems,
         this.editor.struct()
       )
@@ -268,7 +267,7 @@ function prepareTemplateFromSingleGroup(molecule: Struct): Template | null {
     xy0.add_(atom.pp) // eslint-disable-line no-underscore-dangle
   })
 
-  template.aid = sgroup?.getAttAtomId(molecule) || 0
+  template.aid = sgroup?.getAttachmentAtomId() || 0
   template.molecule = molecule
   template.xy0 = xy0.scaled(1 / (molecule.atoms.size || 1)) // template center
 

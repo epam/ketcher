@@ -84,17 +84,19 @@ export const MonomerName = styled.span((props) => ({
   fontSize: props.theme.ketcher.font.size.medium
 }))
 
-export const GroupIcon = styled(Icon)<{ selected?: boolean }>((props) => ({
-  color: props.empty
-    ? 'transparent'
-    : props.selected
-    ? props.theme.ketcher.color.background.primary
-    : props.theme.ketcher.color.icon.grey,
-  width: '20px',
-  height: '20px',
-  stroke: props.empty
-    ? props.selected
+export const GroupIcon = styled(Icon)<{ selected?: boolean; empty?: boolean }>(
+  (props) => ({
+    color: props.empty
+      ? 'transparent'
+      : props.selected
       ? props.theme.ketcher.color.background.primary
-      : props.theme.ketcher.color.icon.grey
-    : 'none'
-}))
+      : props.theme.ketcher.color.icon.grey,
+    width: '20px',
+    height: '20px',
+    stroke: props.empty
+      ? props.selected
+        ? props.theme.ketcher.color.background.primary
+        : props.theme.ketcher.color.icon.grey
+      : 'none'
+  })
+)

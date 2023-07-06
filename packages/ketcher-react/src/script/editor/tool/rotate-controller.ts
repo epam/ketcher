@@ -110,7 +110,7 @@ class RotateController {
   }
 
   /**
-   * Revert rotation by pressing "Escape" key
+   * Revert rotation by pressing "Escape" key or "Right click" button
    */
   revert() {
     if (!this.rotateTool.dragCtx?.action || !this.isRotating) {

@@ -24,7 +24,7 @@ const handleMouseMove = (dispatch, event: MouseEvent) => {
 }
 
 export function initMouseListener(element) {
-  return function (dispatch) {
+  return function (dispatch, getState) {
     const throttledHandleMouseMove = throttle(
       handleMouseMove,
       MOUSE_MOVE_THROTTLE_TIMEOUT
@@ -33,5 +33,24 @@ export function initMouseListener(element) {
     element.addEventListener('pointermove', (event: MouseEvent) =>
       throttledHandleMouseMove(dispatch, event)
     )
+    element.addEventListener(
+      'mousedown',
+      function (event: MouseEvent) {
+        const isBothLeftAndRightClick = event.buttons === 3
+        if (isBothLeftAndRightClick) {
+          rightClickHandle(getState)
+        }
+      },
+      true
+    )
+  }
+}
+
+function rightClickHandle(getState) {
+  const state = getState()
+  const { editor } = state
+
+  if (editor.rotateController.isRotating) {
+    editor.rotateController.revert()
   }
 }

@@ -21,3 +21,9 @@ export const groupNameToLabel = {
   [MonomerGroups.BASES]: 'Select base',
   [MonomerGroups.PHOSPHATES]: 'Select phosphate'
 }
+
+export const groupNameToRnaEditorItemLabel = {
+  [MonomerGroups.SUGARS]: 'Sugar',
+  [MonomerGroups.BASES]: 'Base',
+  [MonomerGroups.PHOSPHATES]: 'Phosphate'
+}

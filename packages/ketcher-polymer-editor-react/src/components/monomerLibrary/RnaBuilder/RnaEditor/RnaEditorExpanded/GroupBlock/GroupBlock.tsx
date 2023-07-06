@@ -22,7 +22,7 @@ import {
   TextContainer
 } from './styles'
 import { IGroupBlockProps } from './types'
-import { groupNameToLabel } from './utils'
+import { groupNameToLabel, groupNameToRnaEditorItemLabel } from './utils'
 
 export const GroupBlock = ({
   groupName,
@@ -41,7 +41,7 @@ export const GroupBlock = ({
     >
       <GroupIcon empty={!monomerName} selected={selected} name={iconName} />
       <TextContainer>
-        <GroupName>{groupName}</GroupName>
+        <GroupName>{groupNameToRnaEditorItemLabel[groupName]}</GroupName>
         <MonomerName>
           {monomerName ||
             (selected ? groupNameToLabel[groupName] : 'Not selected')}

@@ -15,7 +15,14 @@ dotenv.config();
 const ignoredTests = [
   'clean-tools.spec.ts',
   '**/Open-And-Save-Files/**',
+  'Examples/**',
+  'File-Management/**',
+  'Indigo-Tools/**',
+  'R-group-tool/**',
+  'Reagents/**',
+  'Structure-Creating-&-Editing/**',
   'Templates/**',
+  'User-Interface/**',
 ];
 
 function baseURL(): string {

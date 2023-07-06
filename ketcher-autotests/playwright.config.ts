@@ -13,16 +13,20 @@ dotenv.config();
  */
 
 const ignoredTests = [
-  'clean-tools.spec.ts',
-  // '**/Open-And-Save-Files/**',
+  'API/**',
   'Examples/**',
   'File-Management/**',
   'Indigo-Tools/**',
   'R-group-tool/**',
   'Reagents/**',
   'Structure-Creating-&-Editing/**',
-  'Templates/**',
+  'Templates/Functional-Groups/click-and-drag-fg-on-canvas.spec.ts',
+  'Templates/Functional-Groups/functional-groups.spec.ts',
+  'Templates/Functional-Groups/Functional-Group-Tools/functional-group-tools.spec.ts',
+  'Templates/Salts-and-Solvents/**',
+  'Templates/User-Templates/**',
   'User-Interface/**',
+  'utils/**',
 ];
 
 function baseURL(): string {

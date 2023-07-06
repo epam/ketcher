@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { LibraryNameType } from 'src/constants'
-import { MonomerItemType } from '../monomerLibraryItem'
+import { MonomerItemType } from '../monomerLibraryItem/types'
 
 export type Group = {
   groupItems: Array<MonomerItemType>

@@ -12,7 +12,7 @@
   "scripts": {
     "postinstall": "husky install",
     "precommit": "lint-staged --allow-empty && npm run prettier:write --workspaces --if-present",
-    "prepush": "npm run test --workspaces --if-present",
+    "prepush": "npm run test --workspaces --if-present && check:autotests",
     "build": "npm run build:packages && npm run build:example",
     "build:core": "npm run build -w ketcher-core",
     "build:standalone": "npm run build -w ketcher-standalone",
@@ -22,6 +22,7 @@
     "build:example": "npm run build -w example",
     "build:demo": "npm run build:packages && npm run build -w demo",
     "test": "npm run test --workspaces --if-present",
+    "check:autotests": "cd ketcher-autotests && npm run check:code",
     "serve:remote": "cd example && npm run serve:remote",
     "serve:standalone": "cd example && npm run serve:standalone",
     "serve": "run-p serve:remote serve:standalone",

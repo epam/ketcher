@@ -46,7 +46,7 @@ const MAX_NUMBER_OF_RETRIES = 2;
 const config: PlaywrightTestConfig = {
   testDir: './tests',
   /* Maximum time one test can run for. */
-  timeout: 120_000,
+  timeout: 60_000,
   testIgnore: process.env.IGNORE_UNSTABLE_TESTS ? ignoredTests : undefined,
   expect: {
     /**

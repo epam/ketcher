@@ -169,6 +169,9 @@ export function load(struct: Struct, options?) {
       } else {
         editor.struct(parsedStruct)
       }
+
+      editor.zoomAccordingContent()
+
       dispatch(setAnalyzingFile(false))
       dispatch({ type: 'MODAL_CLOSE' })
     } catch (err: any) {

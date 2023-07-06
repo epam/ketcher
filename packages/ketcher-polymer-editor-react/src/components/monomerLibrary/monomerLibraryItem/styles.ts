@@ -15,7 +15,7 @@
  ***************************************************************************/
 import styled from '@emotion/styled'
 
-export const Card = styled.div<{ code: string; isSelected: boolean }>`
+export const Card = styled.div<{ code: string; isSelected?: boolean }>`
   background: white;
   width: 58px;
   height: 48px;

@@ -64,7 +64,3 @@ export enum ELEMENT_TITLE {
   HYDROGEN = 'Hydrogen (H)',
   BENZENE = 'Benzene (T)',
 }
-
-export default {
-  BondType,
-};

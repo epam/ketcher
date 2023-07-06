@@ -77,7 +77,6 @@ export class ServerFormatter implements StructFormatter {
       } else {
         message = `Convert error!\n${error.message || error}`
       }
-
       throw new Error(message)
     }
   }

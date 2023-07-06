@@ -8,6 +8,11 @@
     "test": "npx playwright test",
     "test:debug": "npx playwright test --debug",
     "test:update": "npx playwright test --update-snapshots",
+    "check:code": "npm run check:types && npm run check:lint",
+    "check:types": "tsc --noEmit",
+    "check:lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "prettier": "prettier --write \"./**/*.{ts,spec.ts}\" ",
     "docker": "docker-compose run --rm autotests",
     "docker:build": "docker-compose build autotests",
     "docker:test": "npm run docker npx playwright test",
@@ -26,7 +31,7 @@
     "ketcher-core": "^2.7.2"
   },
   "lint-staged": {
-    "*.{js,css,md,ts}": "prettier --write"
+    "*.{js,md,ts}": ["prettier --write", "eslint ."]
   },
   "types": "./tests/typings.d.ts"
 }

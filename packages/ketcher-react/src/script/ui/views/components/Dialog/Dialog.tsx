@@ -162,6 +162,7 @@ const Dialog: FC<PropsWithChildren & Props> = (props) => {
                   }
                   disabled={isButtonOk(button) && !valid()}
                   onClick={() => exit(button)}
+                  data-testid={button}
                 />
               )
             )}

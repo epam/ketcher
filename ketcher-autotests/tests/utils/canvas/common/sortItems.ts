@@ -1,5 +1,4 @@
-import { SORT_TYPE } from '@utils/canvas/types';
-import { AtomXy, BondXy } from '@utils/canvas/types';
+import { SORT_TYPE, AtomXy, BondXy } from '@utils/canvas/types';
 
 export function sortItems(
   sortBy: SORT_TYPE,

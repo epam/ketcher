@@ -8,6 +8,8 @@ import {
   selectLeftPanelButton,
   takeEditorScreenshot,
   selectTemplate,
+  STRUCTURE_LIBRARY_BUTTON_NAME,
+  pressButton,
 } from '@utils';
 
 export enum SaltsAndSolvents {
@@ -75,6 +77,19 @@ export enum FunctionalGroups {
   PO3H2 = 'PO3H2',
   PO4 = 'PO4',
   PO4H2 = 'PO4H2',
+  Pr = 'Pr',
+  SBu = 'sBu',
+  SCN = 'SCN',
+  SO2 = 'SO2',
+  SO2Cl = 'SO2Cl',
+  SO2H = 'SO2H',
+  SO3 = 'SO3',
+  SO3H = 'SO3H',
+}
+
+export enum TemplateLibrary {
+  Azulene = 'Azulene',
+  Naphtalene = 'Naphtalene',
 }
 
 export async function selectSaltsAndSolvents(
@@ -94,6 +109,17 @@ export async function selectFunctionalGroups(
     .first();
   await functionalGroupButton.click();
 }
+
+export async function selectUserTemplate(
+  userTemplateName: TemplateLibrary,
+  page: Page
+) {
+  const userTemplateButton = page
+    .locator(`div[title*="${userTemplateName}"] > div`)
+    .first();
+  await userTemplateButton.click();
+}
+
 /*
   Function for selecting Functional Groups and dragging it to a new location on the canvas
   */
@@ -127,6 +153,20 @@ export async function drawSaltAndDrag(
   const coordinatesWithShift = x + shift;
   await dragMouseTo(coordinatesWithShift, y, page);
 }
+
+/*
+  Function for selecting User Templates and dragging it to a new location on the canvas
+  */
+export async function selectUserTemplatesAndPlaceInTheMiddle(
+  itemToChoose: TemplateLibrary,
+  page: Page
+) {
+  await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+  await page.getByRole('tab', { name: 'Template Library' }).click();
+  await page.getByRole('button', { name: 'Aromatics (17)' }).click();
+  await selectUserTemplate(itemToChoose, page);
+  await clickInTheMiddleOfTheScreen(page);
+}
 /*
   Function for selecting tool from left panel, click right mouse in the middle of canvas and take
   screenshot
@@ -139,14 +179,48 @@ export async function selectLeftPanelToolClickAndScreenshot(
   await clickInTheMiddleOfTheScreen(page, 'right');
   await takeEditorScreenshot(page);
 }
+
+const COORDS_CLICK = {
+  x1: 560,
+  y1: 330,
+  x2: 650,
+  y2: 280,
+  x3: 720,
+  y3: 320,
+  x4: 720,
+  y4: 400,
+  x5: 650,
+  y5: 450,
+  x6: 560,
+  y6: 400,
+};
+
 /*
   Function for attaching structures on top of bonds attached on Benzene ring
   */
 export async function attachOnTopOfBenzeneBonds(page: Page) {
-  await page.mouse.click(560, 330);
-  await page.mouse.click(650, 280);
-  await page.mouse.click(720, 320);
-  await page.mouse.click(720, 400);
-  await page.mouse.click(650, 450);
-  await page.mouse.click(560, 400);
+  await page.mouse.click(COORDS_CLICK.x1, COORDS_CLICK.y1);
+  await page.mouse.click(COORDS_CLICK.x2, COORDS_CLICK.y2);
+  await page.mouse.click(COORDS_CLICK.x3, COORDS_CLICK.y3);
+  await page.mouse.click(COORDS_CLICK.x4, COORDS_CLICK.y4);
+  await page.mouse.click(COORDS_CLICK.x5, COORDS_CLICK.y5);
+  await page.mouse.click(COORDS_CLICK.x6, COORDS_CLICK.y6);
+}
+
+export async function fillFieldByLabel(
+  page: Page,
+  fieldLabel: string,
+  testValue: string
+) {
+  await page.getByLabel(fieldLabel).click();
+  await page.getByLabel(fieldLabel).fill(testValue);
+}
+
+export async function fillFieldByPlaceholder(
+  page: Page,
+  fieldLabel: string,
+  testValue: string
+) {
+  await page.getByPlaceholder(fieldLabel).click();
+  await page.getByPlaceholder(fieldLabel).fill(testValue);
 }

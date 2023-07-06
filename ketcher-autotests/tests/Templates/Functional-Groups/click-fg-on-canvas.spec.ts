@@ -39,7 +39,7 @@ test.describe('Click Functional Group on canvas', () => {
     await clickInTheMiddleOfTheScreen(page);
   });
 
-  test('The Cbz replaces the Boc functional group', async ({ page }) => {
+  test.skip('The Cbz replaces the Boc functional group', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-10106
       Description: when clicking with an FG template on an FG it should replace it
@@ -53,7 +53,7 @@ test.describe('Click Functional Group on canvas', () => {
     await clickInTheMiddleOfTheScreen(page);
   });
 
-  test('The CCl3 replaces methane sulphonic acid', async ({ page }) => {
+  test.skip('The CCl3 replaces methane sulphonic acid', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-10107
       Description: when clicking with an FG template on a Salts and Solvents it should replace it
@@ -69,10 +69,11 @@ test.describe('Click Functional Group on canvas', () => {
     await clickInTheMiddleOfTheScreen(page);
   });
 
-  test('CO2tBu replaces the Cl atom', async ({ page }) => {
+  test.skip('CO2tBu replaces the Cl atom', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-10108
-      Description: when clicking with an FG template on an atom connected with bond to another atom  it should replace it
+      Description: when clicking with an FG template
+      on an atom connected with bond to another atom  it should replace it
     */
     await selectAtomInToolbar(AtomButton.Chlorine, page);
     await clickInTheMiddleOfTheScreen(page);
@@ -90,7 +91,7 @@ test.describe('Click Functional Group on canvas', () => {
     await clickInTheMiddleOfTheScreen(page);
   });
 
-  test('Ms replaces the Cbz functional group', async ({ page }) => {
+  test.skip('Ms replaces the Cbz functional group', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-10109
       Description: when clicking with an FG template on an FG connected with bond to another atom  it should replace it

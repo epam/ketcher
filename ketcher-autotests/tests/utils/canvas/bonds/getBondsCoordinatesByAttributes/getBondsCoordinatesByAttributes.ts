@@ -1,10 +1,9 @@
 import { Page } from '@playwright/test';
 import { Bond } from 'ketcher-core';
-import { BondAttributes, SORT_TYPE } from '@utils/canvas/types';
+import { BondAttributes, SORT_TYPE, BondXy } from '@utils/canvas/types';
 import { getLeftTopBarSize } from '@utils/canvas/common/getLeftTopBarSize';
 import { findIntersectionFields } from '@utils/canvas/common/findIntersectionFields';
 import { sortItems } from '@utils/canvas/common/sortItems';
-import { BondXy } from '@utils/canvas/types';
 import {
   NO_STRUCTURE_AT_THE_CANVAS_ERROR,
   STRUCTURE_NOT_FOUND_ERROR,
@@ -28,6 +27,7 @@ export async function getBondsCoordinatesByAttributes(
 ): Promise<BondXy[] | []> {
   const { bonds, scale } = await page.evaluate(() => {
     return {
+      // eslint-disable-next-line no-unsafe-optional-chaining
       bonds: [...window.ketcher?.editor?.struct()?.bonds?.values()],
       scale: window.ketcher?.editor?.options()?.scale,
     };

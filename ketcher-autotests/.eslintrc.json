@@ -1,0 +1,78 @@
+{
+    "root": false,
+    "env": {
+        "browser": true,
+        "es2021": true
+    },
+    "extends": [
+        "eslint:recommended",
+        "standard",
+        "plugin:@typescript-eslint/eslint-recommended",
+        "plugin:@typescript-eslint/recommended",
+        "prettier"
+    ],
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        "ecmaVersion": "latest"
+    },
+    "plugins": [
+        "@typescript-eslint"
+    ],
+    "rules": {
+        "@typescript-eslint/no-unused-vars": "error",
+        "linebreak-style": [
+            "error",
+            "unix"
+        ],
+        "quotes": [
+            "error",
+            "single",
+            { "allowTemplateLiterals": true }
+        ],
+        "semi": [
+            "error",
+            "always"
+        ],
+        // max number of inner blocks per function
+        "max-depth": ["error", 3],
+        "no-else-return": [
+            "error",
+            {
+                "allowElseIf": true
+            }
+        ],
+//        "no-magic-numbers": [
+//            "error",
+//            {
+//                "ignore": [0, 1],
+//                "ignoreArrayIndexes": true,
+//                "ignoreDefaultValues": true,
+//                "ignoreClassFieldInitialValues": true
+//            }
+//        ],
+        "no-nested-ternary": "error",
+        "prefer-template": "error",
+        // max number of symbols per line
+        "max-len": ["error", 180],
+        "no-multiple-empty-lines": ["error", { "max": 1 }],
+        "no-duplicate-imports": "error", // TODO add to common eslint file
+        "no-alert": "error",
+        "no-eval": "error",
+        "no-implicit-coercion": "error",
+        "no-inline-comments": "error",
+        "no-lonely-if": "error",
+        "no-lone-blocks": "error",
+        "no-multi-assign": "error",
+        "no-sequences": "error",
+        "no-undef-init": "error",
+        // prevent default exports
+//        "no-restricted-exports": [
+//            "error", {
+//                "restrictDefaultExports": { "direct": true }
+//            }
+//        ],
+        "curly": "error",
+        // must use === and !==
+        "eqeqeq": "error"
+    }
+}

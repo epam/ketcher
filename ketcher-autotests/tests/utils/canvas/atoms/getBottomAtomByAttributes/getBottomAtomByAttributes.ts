@@ -1,7 +1,6 @@
 import { Page } from '@playwright/test';
-import { getAtomsCoordinatesByAttributes } from '@utils/canvas/atoms/getAtomsCoordinatesByAttributes/getAtomsCoordinatesByAttributes';
-import { AtomAttributes, SORT_TYPE } from '@utils/canvas/types';
-import { AtomXy } from '@utils/canvas/types';
+import { getAtomsCoordinatesByAttributes } from '@utils/canvas/atoms';
+import { AtomAttributes, SORT_TYPE, AtomXy } from '@utils/canvas/types';
 
 /**
  * Get bottom atom by attributes.

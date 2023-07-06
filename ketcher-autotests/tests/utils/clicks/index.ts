@@ -80,19 +80,21 @@ export async function clickByLink(page: Page, url: string) {
 export async function clickOnBond(
   page: Page,
   bondType: BondType,
-  bondNumber: number
+  bondNumber: number,
+  buttonSelect?: 'left' | 'right' | 'middle'
 ) {
   const point = await getBondByIndex(page, { type: bondType }, bondNumber);
-  await page.mouse.click(point.x, point.y);
+  await page.mouse.click(point.x, point.y, { button: buttonSelect });
 }
 
 export async function clickOnAtom(
   page: Page,
   atomLabel: string,
-  atomNumber: number
+  atomNumber: number,
+  buttonSelect?: 'left' | 'right' | 'middle'
 ) {
   const point = await getAtomByIndex(page, { label: atomLabel }, atomNumber);
-  await page.mouse.click(point.x, point.y);
+  await page.mouse.click(point.x, point.y, { button: buttonSelect });
 }
 
 export async function doubleClickOnAtom(

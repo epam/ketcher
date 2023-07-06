@@ -23,7 +23,17 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+.vscode
 /.idea
 
 .pnp.*
 .yarn/*
+
+# autotests
+.env
+/ketcher-autotests/.env
+/ketcher-autotests/test-results/
+/ketcher-autotests/playwright-report/
+/ketcher-autotests/playwright/.cache/
+/ketcher-autotests/**/*win32.png
+/ketcher-autotests/**/*darwin.png

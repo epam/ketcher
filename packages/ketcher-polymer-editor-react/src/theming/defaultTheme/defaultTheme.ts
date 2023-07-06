@@ -117,6 +117,7 @@ export const defaultTheme: EditorTheme = {
       }
     },
     icon: {
+      grey: '#B4B9D6',
       hover: '#005662',
       active: '#525252',
       activeMenu: '#005662',
@@ -175,12 +176,25 @@ export const defaultTheme: EditorTheme = {
   },
   border: {
     regular: '1px solid #CAD3DD',
+    small: '1px solid #E1E5EA',
     radius: {
       regular: '4px'
     }
   },
   shadow: {
-    regular: '0px 6px 10px rgba(103, 104, 132, 0.15)'
+    regular: '0px 1px 1px rgba(197, 203, 207, 0.7)'
+  },
+  outline: {
+    small: '1px solid #B4B9D6',
+    medium: '2px solid #B4B9D6',
+    color: '#B4B9D6',
+    selected: {
+      color: '#167782',
+      medium: '2px solid #167782'
+    }
+  },
+  transition: {
+    regular: 'all .3s'
   }
 }
 

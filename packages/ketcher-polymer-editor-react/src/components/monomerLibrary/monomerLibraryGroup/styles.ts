@@ -20,10 +20,12 @@ import { PreviewStyle } from '../../../types'
 
 export const ItemsContainer = styled.div`
   display: grid;
-  grid-template-columns: 33% 33% 33%;
+  grid-template-columns: repeat(3, auto);
   grid-template-rows: auto;
+  gap: 8px;
   margin-bottom: 24px;
-  flex-grow: 1;
+  margin-left: auto;
+  margin-right: auto;
 
   &::after {
     content: '';

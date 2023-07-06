@@ -16,7 +16,7 @@
 
 import { createSlice, PayloadAction, Slice } from '@reduxjs/toolkit'
 import { MonomerItemType } from 'components/monomerLibrary/monomerLibraryItem/types'
-import { Group } from 'components/monomerLibrary/monomerLibraryList'
+import { Group } from 'components/monomerLibrary/monomerLibraryList/types'
 import { SdfItem } from 'ketcher-core'
 import { LibraryNameType } from 'src/constants'
 

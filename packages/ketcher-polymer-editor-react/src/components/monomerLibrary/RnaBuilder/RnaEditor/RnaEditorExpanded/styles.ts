@@ -52,10 +52,12 @@ export const NameContainer = styled.div<{ selected?: boolean }>((props) => ({
   boxShadow: props.theme.ketcher.shadow.regular,
   overflow: 'hidden',
   padding: '28px 6px 6px 6px',
-  outline: props.selected ? '2px solid #167782' : 'none',
+  outline: props.selected
+    ? props.theme.ketcher.outline.selected.medium
+    : 'none',
 
   ':hover': {
-    outline: props.selected ? undefined : '1px solid #B4B9D6'
+    outline: props.selected ? undefined : props.theme.ketcher.outline.small
   }
 }))
 
@@ -65,7 +67,9 @@ export const NameLine = styled.span<{ selected?: boolean }>((props) => ({
   left: '0',
   width: '100%',
   height: '8px',
-  backgroundColor: props.selected ? '#167782' : '#B4B9D6'
+  backgroundColor: props.selected
+    ? props.theme.ketcher.outline.selected.color
+    : props.theme.ketcher.outline.color
 }))
 
 export const NameInput = styled(Input)({

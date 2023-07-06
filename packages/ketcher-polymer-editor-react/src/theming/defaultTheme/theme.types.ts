@@ -154,6 +154,12 @@ export type EditorTheme = {
   }
   outline: {
     small: string
+    medium: string
+    color: string
+    selected: {
+      color: string
+      medium: string
+    }
   }
   transition: {
     regular: string

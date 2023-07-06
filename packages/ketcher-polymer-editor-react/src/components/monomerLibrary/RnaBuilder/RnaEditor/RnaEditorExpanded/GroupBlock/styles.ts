@@ -28,7 +28,7 @@ export const GroupBlockContainer = styled.div<{
   display: 'flex',
   alignItems: 'center',
   backgroundColor: props.selected
-    ? '#167782'
+    ? props.theme.ketcher.color.button.primary.active
     : props.theme.ketcher.color.background.primary,
   borderRadius: props.theme.ketcher.border.radius.regular,
   boxShadow: props.theme.ketcher.shadow.regular,
@@ -39,7 +39,7 @@ export const GroupBlockContainer = styled.div<{
   outlineOffset: '1px',
 
   ':hover': {
-    outline: '1px solid #B4B9D6'
+    outline: props.theme.ketcher.outline.small
   },
 
   ':not(:last-child)': {
@@ -48,8 +48,8 @@ export const GroupBlockContainer = styled.div<{
       position: 'absolute',
       right: '100%',
       bottom: 'calc(50% - 1px)',
-      borderLeft: '2px solid #B4B9D6',
-      borderBottom: '2px solid #B4B9D6',
+      borderLeft: props.theme.ketcher.outline.medium,
+      borderBottom: props.theme.ketcher.outline.medium,
       height: '2px',
       width: '17px'
     }
@@ -61,8 +61,8 @@ export const GroupBlockContainer = styled.div<{
       position: 'absolute',
       right: '100%',
       bottom: 'calc(50% - 1px)',
-      borderLeft: '2px solid #B4B9D6',
-      borderBottom: '2px solid #B4B9D6',
+      borderLeft: props.theme.ketcher.outline.medium,
+      borderBottom: props.theme.ketcher.outline.medium,
       borderRadius: '0 0 0 4px',
       height: '130px',
       width: '17px'

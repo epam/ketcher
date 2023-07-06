@@ -185,7 +185,13 @@ export const defaultTheme: EditorTheme = {
     regular: '0px 1px 1px rgba(197, 203, 207, 0.7)'
   },
   outline: {
-    small: '1px solid #B4B9D6'
+    small: '1px solid #B4B9D6',
+    medium: '2px solid #B4B9D6',
+    color: '#B4B9D6',
+    selected: {
+      color: '#167782',
+      medium: '2px solid #167782'
+    }
   },
   transition: {
     regular: 'all .3s'

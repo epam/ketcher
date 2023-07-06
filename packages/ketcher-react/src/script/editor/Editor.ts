@@ -330,6 +330,27 @@ class Editor implements KetcherEditor {
     return this.render.options.zoom
   }
 
+  zoomAccordingContent() {
+    this.zoom(1)
+    const clientAreaBoundingBox = this.render.clientArea.getBoundingClientRect()
+    const paper = this.render.paper
+    const MIN_ZOOM_VALUE = 0.1
+    const MAX_ZOOM_VALUE = 1
+    const newZoomValue =
+      paper.height - clientAreaBoundingBox.height >
+      paper.width - clientAreaBoundingBox.width
+        ? clientAreaBoundingBox.height / paper.height
+        : clientAreaBoundingBox.width / paper.width
+
+    if (newZoomValue < MAX_ZOOM_VALUE) {
+      this.zoom(
+        newZoomValue < MIN_ZOOM_VALUE
+          ? MIN_ZOOM_VALUE
+          : Number(newZoomValue.toFixed(2))
+      )
+    }
+  }
+
   selection(ci?: any) {
     if (arguments.length === 0) {
       return this._selection // eslint-disable-line

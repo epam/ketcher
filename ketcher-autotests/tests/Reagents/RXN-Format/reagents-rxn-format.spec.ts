@@ -18,14 +18,14 @@ import { getRxn } from '@utils/formats';
 function getComparableDataFromRxn(
   rxnData: string,
   start: number,
-  end?: number
+  end?: number,
 ) {
   return rxnData.split('\n').slice(start, end).join('\n');
 }
 
 function getRxnFileFilteredBySymbols(
   rxnFile: string,
-  metaDataIndexes: number[]
+  metaDataIndexes: number[],
 ) {
   return rxnFile
     .split('\n')
@@ -64,7 +64,7 @@ test.describe('Reagents RXN format', () => {
     await saveToFile('mdl-rxnfile-v2000-expected.rxn', expectedFile);
 
     const rxnFileExpected = await readFileContents(
-      'tests/test-data/mdl-rxnfile-v2000-expected.rxn'
+      'tests/test-data/mdl-rxnfile-v2000-expected.rxn',
     );
     const COMPARABLE_DATA_START = 46;
     const COMPARABLE_DATA_END = 48;
@@ -72,12 +72,12 @@ test.describe('Reagents RXN format', () => {
     const actualComparableData = getComparableDataFromRxn(
       rxnFile,
       COMPARABLE_DATA_START,
-      COMPARABLE_DATA_END
+      COMPARABLE_DATA_END,
     );
     const expectedComparableData = getComparableDataFromRxn(
       rxnFileExpected,
       COMPARABLE_DATA_START,
-      COMPARABLE_DATA_END
+      COMPARABLE_DATA_END,
     );
 
     expect(actualComparableData).toEqual(expectedComparableData);
@@ -95,7 +95,7 @@ test.describe('Reagents RXN format', () => {
     await saveToFile('mdl-rxnfile-v3000-expected.rxn', expectedFile);
 
     const rxnFileExpected = await readFileContents(
-      'tests/test-data/mdl-rxnfile-v3000-expected.rxn'
+      'tests/test-data/mdl-rxnfile-v3000-expected.rxn',
     );
     const COMPARABLE_DATA_START = 5;
     const COMPARABLE_DATA_END = 58;
@@ -104,12 +104,12 @@ test.describe('Reagents RXN format', () => {
     const actualComparableData = getComparableDataFromRxn(
       rxnFile,
       COMPARABLE_DATA_START,
-      COMPARABLE_DATA_END
+      COMPARABLE_DATA_END,
     );
     const expectedComparableData = getComparableDataFromRxn(
       rxnFileExpected,
       COMPARABLE_DATA_START,
-      COMPARABLE_DATA_END
+      COMPARABLE_DATA_END,
     );
     expect(actualComparableData).toEqual(expectedComparableData);
   });
@@ -124,19 +124,19 @@ test.describe('Reagents RXN format', () => {
     await saveToFile('mdl-rxnfile-v2000-expected.rxn', expectedFile);
 
     const rxnFileExpected = await readFileContents(
-      'tests/test-data/mdl-rxnfile-v2000-expected.rxn'
+      'tests/test-data/mdl-rxnfile-v2000-expected.rxn',
     );
     const rxnFile = await getRxn(page, 'v2000');
     const METADATA_STRING_INDEXES = [2, 7, 25, 43];
 
     const filteredRxnFileExpected = getRxnFileFilteredBySymbols(
       rxnFileExpected,
-      METADATA_STRING_INDEXES
+      METADATA_STRING_INDEXES,
     );
 
     const filteredRxnFile = getRxnFileFilteredBySymbols(
       rxnFile,
-      METADATA_STRING_INDEXES
+      METADATA_STRING_INDEXES,
     );
 
     expect(filteredRxnFile).toEqual(filteredRxnFileExpected);
@@ -154,11 +154,11 @@ test.describe('Reagents RXN format', () => {
     const expectedFile = await getRxn(page, 'v3000');
     await saveToFile(
       'benzene-arrow-benzene-reagent-nh3-expected.rxn',
-      expectedFile
+      expectedFile,
     );
 
     const rxnFileExpected = await readFileContents(
-      'tests/test-data/benzene-arrow-benzene-reagent-nh3-expected.rxn'
+      'tests/test-data/benzene-arrow-benzene-reagent-nh3-expected.rxn',
     );
     const rxnFile = await getRxn(page, 'v3000');
     // eslint-disable-next-line no-magic-numbers
@@ -166,11 +166,11 @@ test.describe('Reagents RXN format', () => {
 
     const filteredRxnFileExpected = getRxnFileFilteredBySymbols(
       rxnFileExpected,
-      METADATA_STRINGS_INDEXES
+      METADATA_STRINGS_INDEXES,
     );
     const filteredRxnFile = getRxnFileFilteredBySymbols(
       rxnFile,
-      METADATA_STRINGS_INDEXES
+      METADATA_STRINGS_INDEXES,
     );
     expect(filteredRxnFile).toEqual(filteredRxnFileExpected);
 
@@ -213,7 +213,7 @@ test.describe('Reagents RXN format', () => {
       */
     await pasteFromClipboard(
       page,
-      FILE_TEST_DATA.benzeneArrowBenzeneReagentHclV2000
+      FILE_TEST_DATA.benzeneArrowBenzeneReagentHclV2000,
     );
     await clickInTheMiddleOfTheScreen(page);
   });
@@ -225,7 +225,7 @@ test.describe('Reagents RXN format', () => {
       */
     await pasteFromClipboard(
       page,
-      FILE_TEST_DATA.benzeneArrowBenzeneReagentHclV3000
+      FILE_TEST_DATA.benzeneArrowBenzeneReagentHclV3000,
     );
     await clickInTheMiddleOfTheScreen(page);
   });

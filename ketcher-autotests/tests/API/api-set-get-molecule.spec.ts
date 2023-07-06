@@ -125,7 +125,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     */
     const ignoredLineIndigo = 1;
     const orEnantiomer = await readFileContents(
-      'tests/test-data/or-enantiomer.mol'
+      'tests/test-data/or-enantiomer.mol',
     );
     await setMolecule(page, orEnantiomer);
 
@@ -151,31 +151,31 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await delay(DELAY_IN_SECONDS.THREE);
 
     const molV2000FileExpected = await readFileContents(
-      'tests/test-data/test-data-for-chiral-centersv2000.json'
+      'tests/test-data/test-data-for-chiral-centersv2000.json',
     );
     const molV2000File = await getMolfile(page, 'v2000');
     const filteredmolV2000FileExpected = filteredFile(
       molV2000FileExpected,
-      indexOfLineWithKetcher
+      indexOfLineWithKetcher,
     );
     const filteredmolV2000File = filteredFile(
       molV2000File,
-      indexOfLineWithKetcher
+      indexOfLineWithKetcher,
     );
 
     expect(filteredmolV2000File).toEqual(filteredmolV2000FileExpected);
 
     const molV3000FileExpected = await readFileContents(
-      'tests/test-data/test-data-for-chiral-centersv3000.json'
+      'tests/test-data/test-data-for-chiral-centersv3000.json',
     );
     const molV3000File = await getMolfile(page, 'v3000');
     const filteredmolV3000FileExpected = filteredFile(
       molV3000FileExpected,
-      indexOfLineWithIndigo
+      indexOfLineWithIndigo,
     );
     const filteredmolV3000File = filteredFile(
       molV3000File,
-      indexOfLineWithIndigo
+      indexOfLineWithIndigo,
     );
 
     expect(filteredmolV3000File).toEqual(filteredmolV3000FileExpected);
@@ -199,7 +199,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     */
     await setMolecule(
       page,
-      FILE_TEST_DATA.functionalGroupsExpandedContractedV2000
+      FILE_TEST_DATA.functionalGroupsExpandedContractedV2000,
     );
   });
 
@@ -212,7 +212,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     */
     await setMolecule(
       page,
-      FILE_TEST_DATA.unknownSuperatomExpandedContractedV2000
+      FILE_TEST_DATA.unknownSuperatomExpandedContractedV2000,
     );
   });
 
@@ -289,7 +289,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     */
     await setMolecule(
       page,
-      FILE_TEST_DATA.functionalGroupsExpandedContractedV3000
+      FILE_TEST_DATA.functionalGroupsExpandedContractedV3000,
     );
   });
 
@@ -302,7 +302,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     */
     await setMolecule(
       page,
-      FILE_TEST_DATA.unknownSuperatomExpandedContractedV3000
+      FILE_TEST_DATA.unknownSuperatomExpandedContractedV3000,
     );
   });
 
@@ -379,7 +379,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     */
     await setMolecule(
       page,
-      FILE_TEST_DATA.functionalGroupsExpandedContractedKet
+      FILE_TEST_DATA.functionalGroupsExpandedContractedKet,
     );
   });
 
@@ -392,7 +392,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     */
     await setMolecule(
       page,
-      FILE_TEST_DATA.unknownSuperatomExpandedContractedKet
+      FILE_TEST_DATA.unknownSuperatomExpandedContractedKet,
     );
   });
 
@@ -469,7 +469,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     */
     await setMolecule(
       page,
-      FILE_TEST_DATA.functionalGroupsExpandedContractedCml
+      FILE_TEST_DATA.functionalGroupsExpandedContractedCml,
     );
   });
 
@@ -498,7 +498,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     */
     await setMolecule(
       page,
-      FILE_TEST_DATA.unknownSuperatomExpandedContractedCml
+      FILE_TEST_DATA.unknownSuperatomExpandedContractedCml,
     );
   });
 

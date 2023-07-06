@@ -94,7 +94,7 @@ export enum TemplateLibrary {
 
 export async function selectSaltsAndSolvents(
   saltsName: SaltsAndSolvents,
-  page: Page
+  page: Page,
 ) {
   const saltsButton = page.locator(`div[title*="${saltsName}"] > div`).first();
   await saltsButton.click();
@@ -102,7 +102,7 @@ export async function selectSaltsAndSolvents(
 
 export async function selectFunctionalGroups(
   functionalGroupName: FunctionalGroups,
-  page: Page
+  page: Page,
 ) {
   const functionalGroupButton = page
     .locator(`div[title*="${functionalGroupName}"] > div`)
@@ -112,7 +112,7 @@ export async function selectFunctionalGroups(
 
 export async function selectUserTemplate(
   userTemplateName: TemplateLibrary,
-  page: Page
+  page: Page,
 ) {
   const userTemplateButton = page
     .locator(`div[title*="${userTemplateName}"] > div`)
@@ -126,7 +126,7 @@ export async function selectUserTemplate(
 export async function drawFGAndDrag(
   itemToChoose: FunctionalGroups,
   shift: number,
-  page: Page
+  page: Page,
 ) {
   await selectTemplate(page);
   await page.getByRole('tab', { name: 'Functional Groups' }).click();
@@ -143,7 +143,7 @@ export async function drawFGAndDrag(
 export async function drawSaltAndDrag(
   itemToChoose: SaltsAndSolvents,
   shift: number,
-  page: Page
+  page: Page,
 ) {
   await selectTemplate(page);
   await page.getByRole('tab', { name: 'Salts and Solvents' }).click();
@@ -159,7 +159,7 @@ export async function drawSaltAndDrag(
   */
 export async function selectUserTemplatesAndPlaceInTheMiddle(
   itemToChoose: TemplateLibrary,
-  page: Page
+  page: Page,
 ) {
   await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
   await page.getByRole('tab', { name: 'Template Library' }).click();
@@ -173,7 +173,7 @@ export async function selectUserTemplatesAndPlaceInTheMiddle(
   */
 export async function selectLeftPanelToolClickAndScreenshot(
   leftbutton: LeftPanelButton,
-  page: Page
+  page: Page,
 ) {
   await selectLeftPanelButton(leftbutton, page);
   await clickInTheMiddleOfTheScreen(page, 'right');
@@ -210,7 +210,7 @@ export async function attachOnTopOfBenzeneBonds(page: Page) {
 export async function fillFieldByLabel(
   page: Page,
   fieldLabel: string,
-  testValue: string
+  testValue: string,
 ) {
   await page.getByLabel(fieldLabel).click();
   await page.getByLabel(fieldLabel).fill(testValue);
@@ -219,7 +219,7 @@ export async function fillFieldByLabel(
 export async function fillFieldByPlaceholder(
   page: Page,
   fieldLabel: string,
-  testValue: string
+  testValue: string,
 ) {
   await page.getByPlaceholder(fieldLabel).click();
   await page.getByPlaceholder(fieldLabel).fill(testValue);

@@ -49,7 +49,7 @@ test.describe('Reagents SMARTS format', () => {
     await openFileAndAddToCanvas('benzene-arrow-benzene-reagent-nh3.ket', page);
 
     const smartsFileExpected = await readFileContents(
-      'tests/test-data/expected-smarts-file.smarts'
+      'tests/test-data/expected-smarts-file.smarts',
     );
     const smartsFile = await getSmarts(page);
     expect(smartsFile).toEqual(smartsFileExpected);
@@ -71,7 +71,7 @@ test.describe('Reagents SMARTS format', () => {
     await openFileAndAddToCanvas('benzene-arrow-benzene-reagent-hcl.ket', page);
 
     const smartsFileExpected = await readFileContents(
-      'tests/test-data/expected-smarts-below.smarts'
+      'tests/test-data/expected-smarts-below.smarts',
     );
     const smartsFile = await getSmarts(page);
     expect(smartsFile).toEqual(smartsFileExpected);
@@ -88,7 +88,7 @@ test.describe('Reagents SMARTS format', () => {
     await page.getByText('Paste from clipboard').click();
     await pasteFromClipboard(
       page,
-      '[#6]-[#6]-1=[#6]-[#6](-[#7])=[#6](-[#16])-[#6]=[#6]-1-[#8]>Cl>[#6]-[#6]-1=[#6]-[#6](I)=[#6](-[#8])-[#6]=[#6]-1Br'
+      '[#6]-[#6]-1=[#6]-[#6](-[#7])=[#6](-[#16])-[#6]=[#6]-1-[#8]>Cl>[#6]-[#6]-1=[#6]-[#6](I)=[#6](-[#8])-[#6]=[#6]-1Br',
     );
     await waitForLoad(page, () => {
       pressButton(page, 'Add to Canvas');
@@ -128,7 +128,7 @@ test.describe('Reagents SMARTS format', () => {
     await openFileAndAddToCanvas('benzene-arrow-benzene-reagent-nh3.ket', page);
 
     const smartsFileExpected = await readFileContents(
-      'tests/test-data/expected-smarts-file.smarts'
+      'tests/test-data/expected-smarts-file.smarts',
     );
     const smartsFile = await getSmarts(page);
     expect(smartsFile).toEqual(smartsFileExpected);

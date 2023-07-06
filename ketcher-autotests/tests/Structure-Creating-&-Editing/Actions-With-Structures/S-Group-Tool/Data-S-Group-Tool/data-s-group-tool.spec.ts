@@ -38,7 +38,7 @@ async function editSGroupProperties(
   text: string,
   type: string,
   context: string,
-  testValue: string
+  testValue: string,
 ) {
   await page.getByText(text).dblclick();
   await pressButton(page, type);
@@ -54,7 +54,7 @@ async function selectSGroupProperties(
   optionName: string,
   fieldName: string,
   fieldValue: string,
-  radioButton: string
+  radioButton: string,
 ) {
   await page.keyboard.press('Control+a');
   await selectLeftPanelButton(LeftPanelButton.S_Group, page);
@@ -190,7 +190,7 @@ test.describe('Data S-Group tool', () => {
       'Atom',
       'Test',
       '8',
-      'Absolute'
+      'Absolute',
     );
   });
 
@@ -206,7 +206,7 @@ test.describe('Data S-Group tool', () => {
       'Atom',
       'Test',
       '8',
-      'Absolute'
+      'Absolute',
     );
   });
 
@@ -222,7 +222,7 @@ test.describe('Data S-Group tool', () => {
       'Group',
       'T@#qwer123',
       'Qw@!23#$%',
-      'Absolute'
+      'Absolute',
     );
   });
 
@@ -238,7 +238,7 @@ test.describe('Data S-Group tool', () => {
       'Multifragment',
       'T@#qwer123',
       'Qw@!23#$%',
-      'Relative'
+      'Relative',
     );
   });
 
@@ -254,7 +254,7 @@ test.describe('Data S-Group tool', () => {
       'Multifragment',
       'T@#qwer123',
       'Qw@!23#$%',
-      'Absolute'
+      'Absolute',
     );
     await moveMouseToTheMiddleOfTheScreen(page);
   });
@@ -273,7 +273,7 @@ test.describe('Data S-Group tool', () => {
       'Multifragment',
       'T@#qwer123',
       '8',
-      'Attached'
+      'Attached',
     );
     await moveMouseToTheMiddleOfTheScreen(page);
   });
@@ -290,7 +290,7 @@ test.describe('Data S-Group tool', () => {
       'Multifragment',
       'T@#qwer123',
       '8',
-      'Attached'
+      'Attached',
     );
   });
 
@@ -378,12 +378,12 @@ test.describe('Data S-Group tool', () => {
     */
     await openFileAndAddToCanvas(
       'chain-with-data-s-group-partstructure.mol',
-      page
+      page,
     );
     const expectedFile = await getCml(page);
     await saveToFile(
       'chain-with-data-s-group-partstructure-expected.cml',
-      expectedFile
+      expectedFile,
     );
     const { fileExpected: cmlFileExpected, file: cmlFile } =
       await receiveFileComparisonData({

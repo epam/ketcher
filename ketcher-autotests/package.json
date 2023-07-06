@@ -12,7 +12,7 @@
     "check:types": "tsc --noEmit",
     "check:lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "prettier": "prettier --write \"./**/*.{ts,spec.ts}\" ",
+    "prettier:write": "prettier --write \"./**/*.{js,ts}\" ",
     "docker": "docker-compose run --rm autotests",
     "docker:build": "docker-compose build autotests",
     "docker:test": "npm run docker npx playwright test",
@@ -32,7 +32,10 @@
     "ketcher-core": "^2.7.2"
   },
   "lint-staged": {
-    "*.{js,md,ts}": ["prettier --write", "eslint ."]
+    "*.{js,md,ts}": [
+      "prettier --write",
+      "eslint ."
+    ]
   },
   "types": "./tests/typings.d.ts"
 }

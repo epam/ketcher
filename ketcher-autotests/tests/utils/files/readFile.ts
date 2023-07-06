@@ -1,4 +1,5 @@
 import * as fs from 'fs';
+import * as path from 'path';
 import { Page, expect } from '@playwright/test';
 import {
   selectTopPanelButton,
@@ -13,7 +14,8 @@ import { MolfileFormat } from 'ketcher-core';
 import { getSmiles, getInchi } from '@utils/formats';
 
 export async function readFileContents(filePath: string) {
-  return await fs.promises.readFile(filePath, 'utf8');
+  const resolvedFilePath = path.resolve(process.cwd(), filePath);
+  return await fs.promises.readFile(resolvedFilePath, 'utf8');
 }
 
 export async function openFile(filename: string, page: Page) {
@@ -35,9 +37,7 @@ export async function openFile(filename: string, page: Page) {
 export async function openFileAndAddToCanvas(filename: string, page: Page) {
   await selectTopPanelButton(TopPanelButton.Open, page);
   await openFile(filename, page);
-  await waitForLoad(page, () => {
-    pressButton(page, 'Add to Canvas');
-  });
+  await pressButton(page, 'Add to Canvas');
   await clickInTheMiddleOfTheScreen(page);
 }
 
@@ -154,7 +154,7 @@ export async function placeFileInTheMiddle(
 }
 
 export async function openFromFileViaClipboard(filename: string, page: Page) {
-  const fileContent = fs.readFileSync(filename, 'utf8');
+  const fileContent = await readFileContents(filename);
   await page.getByText('Paste from clipboard').click();
   await page.getByRole('dialog').getByRole('textbox').fill(fileContent);
   await waitForLoad(page, () => {

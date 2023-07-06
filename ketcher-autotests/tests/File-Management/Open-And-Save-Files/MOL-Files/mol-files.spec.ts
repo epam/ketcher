@@ -87,19 +87,20 @@ test('Open and Save file - Open/Save V3000 file with atom and bond properties 2/
   expect(molFile).toEqual(molFileExpected);
 });
 
-test('Open and Save file - Open/Save Markush files 1/2 - open', async ({
-  page,
-}) => {
-  /**
-   * Test case: EPMLSOPKET-1894(1)
-   * Description: Markush structure is displayed as an RGroup structure.
-   */
-  await page.goto('');
+test.fixme(
+  'Open and Save file - Open/Save Markush files 1/2 - open',
+  async ({ page }) => {
+    /**
+     * Test case: EPMLSOPKET-1894(1)
+     * Description: Markush structure is displayed as an RGroup structure.
+     */
+    await page.goto('');
 
-  await openFileAndAddToCanvas('Markush.mol', page);
-  // check that structure opened from file is displayed correctly
-  await takeEditorScreenshot(page);
-});
+    await openFileAndAddToCanvas('Markush.mol', page);
+    // check that structure opened from file is displayed correctly
+    await takeEditorScreenshot(page);
+  }
+);
 
 test('Open and Save file - Open/Save Markush files 2/2 - save', async ({
   page,

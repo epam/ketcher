@@ -14,7 +14,7 @@ dotenv.config();
 
 const ignoredTests = [
   'clean-tools.spec.ts',
-  '**/Open-And-Save-Files/**',
+  // '**/Open-And-Save-Files/**',
   'Examples/**',
   'File-Management/**',
   'Indigo-Tools/**',

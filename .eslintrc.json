@@ -7,8 +7,10 @@
     "plugin:@typescript-eslint/recommended",
     "prettier"
   ],
+  "plugins": ["prettier"],
   "parser": "@typescript-eslint/parser",
   "rules": {
+    "prettier/prettier": "error",
     "@typescript-eslint/no-non-null-assertion": "error",
     "@typescript-eslint/no-explicit-any": "error",
     "object-shorthand": "error",

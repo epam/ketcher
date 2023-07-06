@@ -241,7 +241,8 @@ const sgroup = {
           title: 'Repeat count',
           type: 'integer',
           default: 1,
-          minimum: 1
+          minimum: 1,
+          maximum: 99
         }
       },
       required: ['mul']

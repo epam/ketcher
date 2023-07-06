@@ -14,27 +14,40 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useState } from 'react'
+import { ChangeEvent, useState } from 'react'
 import { RnaEditorCollapsed } from './RnaEditorCollapsed'
 import { RnaEditorExpanded } from './RnaEditorExpanded'
 import { ExpandButton, ExpandIcon, RnaEditorContainer } from './styles'
 
 export const RnaEditor = () => {
   const [expanded, setExpanded] = useState(false)
+  const [name, setName] = useState('My Rna')
 
-  const handleExpandButtonClick = () => {
+  const expandEditor = () => {
     setExpanded(!expanded)
+  }
+
+  const changeName = (event: ChangeEvent<HTMLInputElement>) => {
+    setName(event.target.value)
   }
 
   return (
     <RnaEditorContainer>
       {expanded ? (
-        <RnaEditorExpanded />
+        <RnaEditorExpanded
+          name={name}
+          onChangeName={changeName}
+          onCancel={expandEditor}
+        />
       ) : (
-        <RnaEditorCollapsed name="My Rna" fullName="ALtrina2(m2nen)c7io7n2A" />
+        <RnaEditorCollapsed
+          name={name}
+          fullName="ALtrina2(m2nen)c7io7n2A"
+          onEdit={expandEditor}
+        />
       )}
 
-      <ExpandButton onClick={handleExpandButtonClick}>
+      <ExpandButton onClick={expandEditor}>
         <ExpandIcon expanded={expanded} name="chevron" />
       </ExpandButton>
     </RnaEditorContainer>

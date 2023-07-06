@@ -25,7 +25,8 @@ import { IRnaEditorCollapsedProps } from './types'
 
 export const RnaEditorCollapsed = ({
   name,
-  fullName
+  fullName,
+  onEdit
 }: IRnaEditorCollapsedProps) => {
   return (
     <RnaEditorCollapsedContainer>
@@ -33,7 +34,7 @@ export const RnaEditorCollapsed = ({
         <MonomerName>{name || 'Not selected'}</MonomerName>
         <MonomerFullName>{fullName}</MonomerFullName>
       </TextContainer>
-      <EditIcon name="edit-filled" onClick={() => console.log('kek')} />
+      <EditIcon name="edit-filled" onClick={onEdit} />
     </RnaEditorCollapsedContainer>
   )
 }

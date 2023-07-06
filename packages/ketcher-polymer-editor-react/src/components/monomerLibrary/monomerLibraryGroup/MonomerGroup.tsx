@@ -30,6 +30,7 @@ import { usePreview } from '../../../hooks/usePreview'
 const MonomerGroup = ({
   items,
   title,
+  selectedMonomerLabel,
   onItemClick = EmptyFunction
 }: IMonomerGroupProps) => {
   const ref = useRef<HTMLDivElement>(null)
@@ -74,6 +75,7 @@ const MonomerGroup = ({
             <MonomerItem
               key={key}
               item={monomer}
+              isSelected={selectedMonomerLabel === monomer.label}
               onMouseLeave={handleItemMouseLeave}
               onMouseMove={(e) => handleItemMouseMove(monomer, e)}
               onClick={() => onItemClick(monomer)}

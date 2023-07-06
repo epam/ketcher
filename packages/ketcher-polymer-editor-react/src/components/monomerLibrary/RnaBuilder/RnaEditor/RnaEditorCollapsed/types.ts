@@ -17,4 +17,5 @@
 export interface IRnaEditorCollapsedProps {
   name?: string
   fullName?: string
+  onEdit: () => void
 }

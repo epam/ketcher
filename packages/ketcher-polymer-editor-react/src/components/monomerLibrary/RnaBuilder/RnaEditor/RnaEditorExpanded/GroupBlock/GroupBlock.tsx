@@ -39,7 +39,7 @@ export const GroupBlock = ({
       disabled={disabled}
       empty
     >
-      <GroupIcon selected={selected} name={iconName} />
+      <GroupIcon empty={!monomerName} selected={selected} name={iconName} />
       <TextContainer>
         <GroupName>{groupName}</GroupName>
         <MonomerName>

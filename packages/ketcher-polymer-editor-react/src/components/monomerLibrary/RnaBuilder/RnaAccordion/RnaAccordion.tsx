@@ -81,32 +81,44 @@ export const RnaAccordion = () => {
       )
     }
   ]
+  const [selectedMonomers, setSelectedMonomers] = useState({})
+
+  const selectItem = (monomer, groupName) => {
+    setSelectedMonomers({
+      ...selectedMonomers,
+      [groupName]: monomer.label
+    })
+  }
 
   return (
     <RnaAccordionContainer>
-      {groupsData.map((u, i) => {
+      {groupsData.map((groupData, i) => {
         const expanded = expandedAccordion === i
-        const quantity = u.groups.reduce(
+        const quantity = groupData.groups.reduce(
           (acc, group) => acc + group.groupItems.length,
           0
         )
         const summary = (
           <Summary
-            iconName={u.iconName as IconName}
-            groupName={u.groupName}
+            iconName={groupData.iconName as IconName}
+            groupName={groupData.groupName}
             quantity={quantity}
             expanded={expanded}
           />
         )
         const details = (
           <DetailsContainer>
-            {u.children}
-            {u.groups.map(({ groupItems, groupTitle }) => {
+            {groupData.children}
+            {groupData.groups.map(({ groupItems, groupTitle }) => {
               return (
                 <MonomerGroup
                   key={groupTitle}
-                  title={u.groups.length > 1 ? groupTitle : undefined}
+                  title={groupData.groups.length > 1 ? groupTitle : undefined}
                   items={groupItems}
+                  selectedMonomerLabel={selectedMonomers[groupData.groupName]}
+                  onItemClick={(monomer) =>
+                    selectItem(monomer, groupData.groupName)
+                  }
                 />
               )
             })}
@@ -114,7 +126,7 @@ export const RnaAccordion = () => {
         )
         return (
           <StyledAccordion
-            key={u.groupName}
+            key={groupData.groupName}
             summary={summary}
             details={details}
             expanded={expanded}

@@ -14,7 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { EmptyFunction } from 'helpers'
 import { MonomerGroups } from 'src/constants'
 import { GroupBlock } from './GroupBlock'
 import {
@@ -26,8 +25,14 @@ import {
   RnaEditorExpandedContainer,
   StyledButton
 } from './styles'
+import { IRnaEditorExpandedProps } from 'components/monomerLibrary/RnaBuilder/RnaEditor/RnaEditorExpanded/types'
+import { useState } from 'react'
 
-export const RnaEditorExpanded = () => {
+export const RnaEditorExpanded = ({
+  name,
+  onCancel,
+  onChangeName
+}: IRnaEditorExpandedProps) => {
   const groupsData = [
     {
       groupName: MonomerGroups.SUGARS,
@@ -43,10 +48,20 @@ export const RnaEditorExpanded = () => {
     }
   ] as const
 
+  const [selectedGroup, setSelectedGroup] = useState<MonomerGroups>()
+
+  const selectGroup = (selectedGroup) => {
+    setSelectedGroup(selectedGroup)
+  }
+
   return (
     <RnaEditorExpandedContainer>
       <NameContainer>
-        <NameInput placeholder="Name your structure" />
+        <NameInput
+          value={name}
+          placeholder="Name your structure"
+          onChange={onChangeName}
+        />
         <NameLine selected />
       </NameContainer>
       <GroupsContainer>
@@ -54,15 +69,16 @@ export const RnaEditorExpanded = () => {
           return (
             <GroupBlock
               key={groupName}
+              selected={selectedGroup === groupName}
               groupName={groupName}
               iconName={iconName}
-              onClick={EmptyFunction}
+              onClick={() => selectGroup(groupName)}
             />
           )
         })}
       </GroupsContainer>
       <ButtonsContainer>
-        <StyledButton>Cancel</StyledButton>
+        <StyledButton onClick={onCancel}>Cancel</StyledButton>
         <StyledButton disabled>Add to Presets</StyledButton>
       </ButtonsContainer>
     </RnaEditorExpandedContainer>

@@ -182,8 +182,7 @@ export const defaultTheme: EditorTheme = {
     }
   },
   shadow: {
-    regular: '0px 1px 1px rgba(197, 203, 207, 0.7)',
-    regular: '0px 6px 10px rgba(103, 104, 132, 0.15)'
+    regular: '0px 1px 1px rgba(197, 203, 207, 0.7)'
   },
   outline: {
     small: '1px solid #B4B9D6'

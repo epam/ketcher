@@ -43,7 +43,7 @@ export const Card = styled.div<{ code: string }>`
     &::after {
       content: '';
       background: ${({ code, theme }) =>
-        theme.ketcher.monomer.color[code].hover};
+        theme.ketcher.monomer.color[code]?.hover};
     }
     > .star {
       visibility: visible;
@@ -59,7 +59,7 @@ export const Card = styled.div<{ code: string }>`
     width: 100%;
     height: 8px;
     background: ${({ code, theme }) =>
-      theme.ketcher.monomer.color[code].regular};
+      theme.ketcher.monomer.color[code]?.regular};
   }
   > span {
     position: absolute;

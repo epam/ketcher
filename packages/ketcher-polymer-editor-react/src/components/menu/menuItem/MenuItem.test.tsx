@@ -28,7 +28,7 @@ const mockMenuItem = () => {
   return withThemeProvider(
     <MenuContext.Provider value={mockValue}>
       <Menu.Item itemId="open" />
-    </MenuContext.Provider>
+    </MenuContext.Provider>,
   );
 };
 

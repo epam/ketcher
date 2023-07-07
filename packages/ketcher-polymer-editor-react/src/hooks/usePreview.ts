@@ -19,11 +19,11 @@ import { MonomerItemType } from '../components/monomerLibrary/monomerLibraryItem
 import { PreviewStyle } from '../types';
 
 export const usePreview = (
-  ref: RefObject<HTMLDivElement>
+  ref: RefObject<HTMLDivElement>,
 ): [
   monomer: MonomerItemType | undefined,
   previewStyle: PreviewStyle | undefined,
-  setPreview: (item?: MonomerItemType, rect?: DOMRect) => void
+  setPreview: (item?: MonomerItemType, rect?: DOMRect) => void,
 ] => {
   const [previewMonomer, setPreviewMonomer] = useState<
     MonomerItemType | undefined

@@ -30,7 +30,7 @@ jest.spyOn(React, 'useEffect').mockImplementation(() => {});
 describe('Open component', () => {
   it('should render correctly', () => {
     expect(
-      render(withThemeProvider(<Open {...mockProps} />))
+      render(withThemeProvider(<Open {...mockProps} />)),
     ).toMatchSnapshot();
   });
   it('paste from clipboard', () => {

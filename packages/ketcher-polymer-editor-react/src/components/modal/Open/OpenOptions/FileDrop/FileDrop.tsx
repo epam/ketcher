@@ -75,7 +75,7 @@ const FileDrop = ({
       ...baseStyle,
       ...(isDragActive ? activeStyle : {}),
     }),
-    [isDragActive]
+    [isDragActive],
   ) as React.CSSProperties;
 
   return (

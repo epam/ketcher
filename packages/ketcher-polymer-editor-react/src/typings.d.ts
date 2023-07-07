@@ -66,10 +66,10 @@ declare namespace jestHelpers {
   function withThemeProvider(arg: JSX.Element): React.Element;
   function withStoreProvider(
     arg: JSX.Element,
-    initialState?: RootState
+    initialState?: RootState,
   ): React.Element;
   function withThemeAndStoreProvider(
     arg: JSX.Element,
-    initialState?: RootState
+    initialState?: RootState,
   ): React.Element;
 }

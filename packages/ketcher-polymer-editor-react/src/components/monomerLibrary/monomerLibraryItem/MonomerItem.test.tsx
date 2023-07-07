@@ -21,8 +21,8 @@ describe('Test Monomer Item component', () => {
     };
     render(
       withThemeAndStoreProvider(
-        <MonomerItem key={1} item={monomer} onClick={monomerItemHandleClick} />
-      )
+        <MonomerItem key={1} item={monomer} onClick={monomerItemHandleClick} />,
+      ),
     );
 
     const div = screen.getByTestId(monomer.props.MonomerNaturalAnalogCode);

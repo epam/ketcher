@@ -48,7 +48,7 @@ const SubMenu = ({
     children as JSX.Element[],
     (child) => {
       return child.type === MenuItem ? child : null;
-    }
+    },
   );
 
   const options = subComponents

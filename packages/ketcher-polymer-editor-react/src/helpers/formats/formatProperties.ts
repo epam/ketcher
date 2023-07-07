@@ -31,7 +31,7 @@ const formatProperties: FormatProperties = {
     ChemicalMimeType.Mol,
     ['.mol'],
     true,
-    { 'molfile-saving-mode': '3000' }
+    { 'molfile-saving-mode': '3000' },
   ),
   helm: new SupportedFormatProperties('HELM', ChemicalMimeType.Helm, ['.helm']),
 };

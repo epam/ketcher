@@ -26,17 +26,17 @@ const mockProps = {
 describe('OpenOptions component', () => {
   it('should render correctly', () => {
     expect(
-      render(withThemeProvider(<OpenOptions {...mockProps} />))
+      render(withThemeProvider(<OpenOptions {...mockProps} />)),
     ).toMatchSnapshot();
   });
   it('should render correctly with passed props', () => {
     render(withThemeProvider(<OpenOptions {...mockProps} />));
 
     expect(
-      screen.getByRole('button', { name: 'Paste from Clipboard' })
+      screen.getByRole('button', { name: 'Paste from Clipboard' }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole('button', { name: 'Open from file' })
+      screen.getByRole('button', { name: 'Open from file' }),
     ).toBeInTheDocument();
   });
   it('callback for Paste from Clipboard button should be called after click', () => {

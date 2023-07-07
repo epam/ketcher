@@ -36,7 +36,7 @@ export class SupportedFormatProperties {
     mime: ChemicalMimeType,
     extensions: string[],
     supportsCoords?: boolean,
-    options?: SupportedFormatPropertiesOptions
+    options?: SupportedFormatPropertiesOptions,
   ) {
     this.name = name;
     this.mime = mime;

@@ -78,8 +78,8 @@ describe('Monomer Group', () => {
         <MonomerGroup
           items={mockGroupProps.groupItems}
           onItemClick={onItemClick}
-        />
-      )
+        />,
+      ),
     );
 
     mockGroupProps.groupItems.forEach((item) => {
@@ -96,8 +96,8 @@ describe('Monomer Group', () => {
           items={mockGroupProps.groupItems}
           title={mockGroupProps.groupTitle}
           onItemClick={onItemClick}
-        />
-      )
+        />,
+      ),
     );
 
     const title = screen.getByText(mockGroupProps.groupTitle);
@@ -112,8 +112,8 @@ describe('Monomer Group', () => {
           items={mockGroupProps.groupItems}
           title={mockGroupProps.groupTitle}
           onItemClick={onItemClick}
-        />
-      )
+        />,
+      ),
     );
     const item = screen.getByText('Ld');
     fireEvent.click(item);

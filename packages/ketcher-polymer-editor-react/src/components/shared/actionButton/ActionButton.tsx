@@ -43,7 +43,7 @@ const PrimaryButton = styled(MuiButton)(
       opacity: 0.4,
     },
   }),
-  baseButtonStyle
+  baseButtonStyle,
 );
 
 const SecondaryButton = styled(MuiButton)(
@@ -68,7 +68,7 @@ const SecondaryButton = styled(MuiButton)(
       color: theme.ketcher.color.button.secondary.clicked,
     },
   }),
-  baseButtonStyle
+  baseButtonStyle,
 );
 
 type ActionButtonProps = {

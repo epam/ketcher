@@ -28,7 +28,7 @@ const Group = ({
     children as JSX.Element[],
     (child) => {
       return child.type === MenuItem || child.type === SubMenu ? child : null;
-    }
+    },
   );
 
   return (
@@ -51,14 +51,14 @@ const Menu = ({
         onItemClick(itemKey);
       },
     }),
-    [activeMenuItem, onItemClick]
+    [activeMenuItem, onItemClick],
   );
 
   const subComponents = React.Children.map(
     children as JSX.Element[],
     (child) => {
       return child.type === Group ? child : null;
-    }
+    },
   );
 
   return (

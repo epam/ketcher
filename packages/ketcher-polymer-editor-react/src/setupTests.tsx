@@ -18,7 +18,7 @@ global.withThemeProvider = function (component: JSX.Element) {
 
 global.withStoreProvider = function (
   component: JSX.Element,
-  initialState: RootState = {}
+  initialState: RootState = {},
 ) {
   const store = configureAppStore(initialState);
   return <StoreProvider store={store}>{component}</StoreProvider>;
@@ -26,7 +26,7 @@ global.withStoreProvider = function (
 
 global.withThemeAndStoreProvider = function (
   component: JSX.Element,
-  initialState: RootState = {}
+  initialState: RootState = {},
 ) {
   const store = configureAppStore(initialState);
   return (

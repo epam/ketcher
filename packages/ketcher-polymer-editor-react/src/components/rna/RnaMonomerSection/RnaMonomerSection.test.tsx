@@ -84,8 +84,8 @@ describe.skip('RNA Monomer Section', () => {
         <RnaMonomerSection
           items={rnaMonomersMock}
           selectItem={selectItemMock}
-        />
-      )
+        />,
+      ),
     );
     const switcherButtons = screen.getAllByRole('button');
     const tabTitle = screen.getByText('Nucleotides');
@@ -102,8 +102,8 @@ describe.skip('RNA Monomer Section', () => {
         <RnaMonomerSection
           items={rnaMonomersMock}
           selectItem={selectItemMock}
-        />
-      )
+        />,
+      ),
     );
     const switcherButton = screen.getByText('R(A)P');
     expect(switcherButton).toBeInTheDocument();
@@ -115,8 +115,8 @@ describe.skip('RNA Monomer Section', () => {
         <RnaMonomerSection
           items={rnaMonomersMock}
           selectItem={selectItemMock}
-        />
-      )
+        />,
+      ),
     );
 
     const sugarButton = screen.getByText('R');
@@ -141,8 +141,8 @@ describe.skip('RNA Monomer Section', () => {
         <RnaMonomerSection
           items={rnaMonomersMock}
           selectItem={selectItemMock}
-        />
-      )
+        />,
+      ),
     );
 
     expect(selectItemMock).toHaveBeenCalledWith({
@@ -163,8 +163,8 @@ describe.skip('RNA Monomer Section', () => {
         <RnaMonomerSection
           items={rnaMonomersMock}
           selectItem={selectItemMock}
-        />
-      )
+        />,
+      ),
     );
 
     // nucleotides

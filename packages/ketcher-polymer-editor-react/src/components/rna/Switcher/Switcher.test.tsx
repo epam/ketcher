@@ -28,8 +28,8 @@ describe('RNA Switcher component', () => {
         <Switcher
           selectedMonomers={['R', 'A', 'P']}
           setActiveMonomerType={mockSetActiveMonomerType}
-        />
-      )
+        />,
+      ),
     );
     buttons.forEach((button, index) => {
       const buttonR = screen.getByText(button);
@@ -44,8 +44,8 @@ describe('RNA Switcher component', () => {
         <Switcher
           selectedMonomers={['R', 'A', 'P']}
           setActiveMonomerType={mockSetActiveMonomerType}
-        />
-      )
+        />,
+      ),
     );
     buttons.forEach((button) => {
       const buttonR = screen.getByText(button);
@@ -60,8 +60,8 @@ describe('RNA Switcher component', () => {
         <Switcher
           selectedMonomers={['R', 'A', 'P']}
           setActiveMonomerType={mockSetActiveMonomerType}
-        />
-      )
+        />,
+      ),
     );
     const sugarBtn = screen.getByText(buttons[1]);
     fireEvent.click(sugarBtn);

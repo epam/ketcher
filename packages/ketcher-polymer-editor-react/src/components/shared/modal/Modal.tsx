@@ -69,7 +69,7 @@ export const Modal = ({
         color: theme.ketcher.color.text.primary,
       },
     }),
-    [theme.ketcher.color.text.primary, theme.ketcher.color.background.canvas]
+    [theme.ketcher.color.text.primary, theme.ketcher.color.background.canvas],
   );
 
   const backdropProps = useMemo(
@@ -79,7 +79,7 @@ export const Modal = ({
         opacity: 0.4,
       },
     }),
-    [theme.ketcher.color.background.overlay]
+    [theme.ketcher.color.background.overlay],
   );
 
   const subcomponents: Record<ModalSubcomponent, JSX.Element | null> = {

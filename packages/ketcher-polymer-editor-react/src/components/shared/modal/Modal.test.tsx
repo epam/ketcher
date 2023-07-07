@@ -62,8 +62,8 @@ describe('Modal component', () => {
           onClose={mockOnCloseHandler}
         >
           <Modal.Content>Content</Modal.Content>
-        </Modal>
-      )
+        </Modal>,
+      ),
     );
 
     expect(screen.queryByTitle('Close window')).not.toBeInTheDocument();

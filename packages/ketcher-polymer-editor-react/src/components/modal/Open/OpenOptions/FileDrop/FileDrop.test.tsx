@@ -38,7 +38,7 @@ const mockFile = new File(['ketcher mol file'], 'ketcher.mol', {
 describe('FileDrop component', () => {
   it('should render correctly', () => {
     expect(
-      render(withThemeProvider(<FileDrop {...mockProps} />))
+      render(withThemeProvider(<FileDrop {...mockProps} />)),
     ).toMatchSnapshot();
   });
 
@@ -46,31 +46,31 @@ describe('FileDrop component', () => {
     render(withThemeProvider(<FileDrop {...mockProps} />));
 
     expect(
-      screen.getByRole('button', { name: mockProps.buttonLabel })
+      screen.getByRole('button', { name: mockProps.buttonLabel }),
     ).toBeInTheDocument();
     expect(screen.getByText(mockProps.textLabel)).toBeInTheDocument();
   });
 
   it('should render correctly with optional props', () => {
     render(
-      withThemeProvider(<FileDrop {...mockProps} {...mockOptionalProps} />)
+      withThemeProvider(<FileDrop {...mockProps} {...mockOptionalProps} />),
     );
 
     expect(
-      screen.getByRole('button', { name: mockProps.buttonLabel })
+      screen.getByRole('button', { name: mockProps.buttonLabel }),
     ).toBeInTheDocument();
     expect(screen.getByText(mockProps.textLabel)).toBeInTheDocument();
     expect(
-      screen.getByText(mockOptionalProps.disabledText)
+      screen.getByText(mockOptionalProps.disabledText),
     ).toBeInTheDocument();
   });
 
   it('should upload file', async () => {
     const { container } = render(
-      withThemeProvider(<FileDrop {...mockProps} />)
+      withThemeProvider(<FileDrop {...mockProps} />),
     );
     const input = container.querySelector(
-      'input[type=file]'
+      'input[type=file]',
     ) as HTMLInputElement;
 
     userEvent.upload(input, mockFile);
@@ -88,10 +88,10 @@ describe('FileDrop component', () => {
 
   it('accepted file callback should be called after file is uploaded', async () => {
     const { container } = render(
-      withThemeProvider(<FileDrop {...mockProps} />)
+      withThemeProvider(<FileDrop {...mockProps} />),
     );
     const input = container.querySelector(
-      'input[type=file]'
+      'input[type=file]',
     ) as HTMLInputElement;
 
     userEvent.upload(input, mockFile);

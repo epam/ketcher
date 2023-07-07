@@ -92,7 +92,7 @@ export const DropDown = ({
 
   const renderLabelById = (value: unknown) => {
     const selectedOption = options.filter(
-      (option) => option.id === (value as typeof currentSelection)
+      (option) => option.id === (value as typeof currentSelection),
     )[0];
 
     return <span>{selectedOption.label}</span>;

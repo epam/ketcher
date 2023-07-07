@@ -37,7 +37,7 @@ const MonomerGroup = ({
 
   const debouncedSetPreviewItem = useMemo(
     () => debounce(setPreviewItem, 500),
-    [setPreviewItem]
+    [setPreviewItem],
   );
 
   const handleItemMouseLeave = () => {
@@ -47,7 +47,7 @@ const MonomerGroup = ({
 
   const handleItemMouseMove = (
     monomer: MonomerItemType,
-    e: React.MouseEvent<HTMLDivElement, MouseEvent>
+    e: React.MouseEvent<HTMLDivElement, MouseEvent>,
   ) => {
     if (previewItem) {
       setPreviewItem();

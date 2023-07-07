@@ -65,7 +65,7 @@ export const librarySlice: Slice = createSlice({
 
 export const selectMonomersInCategory = (
   items: MonomerItemType[],
-  category: LibraryNameType
+  category: LibraryNameType,
 ) => items.filter((item) => item.props?.MonomerType === category);
 
 export const selectMonomersInFavorites = (items: MonomerItemType[]) =>

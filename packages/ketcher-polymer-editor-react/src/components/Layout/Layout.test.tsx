@@ -47,8 +47,8 @@ describe('Layout', () => {
           <Layout.Main>
             <MainElementMock />
           </Layout.Main>
-        </Layout>
-      )
+        </Layout>,
+      ),
     );
 
     const topElement = screen.getByText('top element');
@@ -76,8 +76,8 @@ describe('Layout', () => {
           <Layout.Right>
             <RightElementMock />
           </Layout.Right>
-        </Layout>
-      )
+        </Layout>,
+      ),
     );
 
     const topElement = screen.getByText('top element');

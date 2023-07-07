@@ -23,6 +23,7 @@ import draw from '../draw'
 import util from '../util'
 
 const BORDER_EXT = new Vec2(0.05 * 3, 0.05 * 3)
+const PADDING_VECTOR = new Vec2(0.2, 0.4)
 class ReRGroup extends ReObject {
   constructor(/* RGroup */ rgroup) {
     super('rgroup')
@@ -55,26 +56,35 @@ class ReRGroup extends ReObject {
   }
 
   calcBBox(render) {
-    let ret = null
+    let rGroupBoundingBox = null
     this.item.frags.forEach((fid) => {
-      const bbf = render.ctab.frags.get(fid).calcBBox(render.ctab, fid, render)
-      if (bbf) ret = ret ? Box2Abs.union(ret, bbf) : bbf
+      const fragBox = render.ctab.frags
+        .get(fid)
+        .calcBBox(render.ctab, fid, render)
+      if (fragBox) {
+        rGroupBoundingBox = rGroupBoundingBox
+          ? Box2Abs.union(rGroupBoundingBox, fragBox)
+          : fragBox
+      }
     })
 
-    if (ret) ret = ret.extend(BORDER_EXT, BORDER_EXT)
+    rGroupBoundingBox = rGroupBoundingBox
+      ? rGroupBoundingBox.extend(BORDER_EXT, BORDER_EXT)
+      : rGroupBoundingBox
 
     let attachmentPointsVBox = render.ctab.getAttachmentsPointsVBox(
       this.getAtoms(render)
     )
-    if (attachmentPointsVBox)
-      attachmentPointsVBox = attachmentPointsVBox.extend(BORDER_EXT, BORDER_EXT)
+    attachmentPointsVBox = attachmentPointsVBox
+      ? attachmentPointsVBox.extend(BORDER_EXT, BORDER_EXT)
+      : attachmentPointsVBox
 
-    ret =
-      attachmentPointsVBox && ret
-        ? Box2Abs.union(attachmentPointsVBox, ret)
-        : ret
+    rGroupBoundingBox =
+      attachmentPointsVBox && rGroupBoundingBox
+        ? Box2Abs.union(attachmentPointsVBox, rGroupBoundingBox)
+        : rGroupBoundingBox
 
-    return ret
+    return rGroupBoundingBox
   }
 
   // TODO need to review parameter list
@@ -89,8 +99,7 @@ class ReRGroup extends ReObject {
       return {}
     } else {
       // add a little space between the attachment points and brackets
-      const vext = new Vec2(0.2, 0.4)
-      bb = bb.extend(vext, vext)
+      bb = bb.extend(PADDING_VECTOR, PADDING_VECTOR)
     }
 
     const ret = { data: [] }

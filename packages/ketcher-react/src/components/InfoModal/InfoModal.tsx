@@ -43,12 +43,7 @@ const InfoModal = ({ message, close }: InfoModalProps): JSX.Element => {
           {isPasteError ? <PasteErrorModalBody /> : message}
         </div>
         <footer>
-          <button
-            className={styles.ok}
-            onClick={() => {
-              close();
-            }}
-          >
+          <button className={styles.ok} onClick={close}>
             {error.close}
           </button>
         </footer>

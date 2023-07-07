@@ -8,4 +8,4 @@ export const MODES = {
   REMOTE: 'remote',
 };
 export const MAX_BOND_LENGTH = 50;
-export const REQUEST_IS_FINISHED = 'REQUEST_IS_FINISHED';
+export const REQUEST_IS_FINISHED = 'REQUEST_IS_FINISHE';

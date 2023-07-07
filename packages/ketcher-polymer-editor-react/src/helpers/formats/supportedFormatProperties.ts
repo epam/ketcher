@@ -16,20 +16,20 @@
 
 export enum ChemicalMimeType {
   Mol = 'chemical/x-mdl-molfile',
-  Helm = 'chemical/x-helm'
+  Helm = 'chemical/x-helm',
 }
 
 interface SupportedFormatPropertiesOptions {
-  'molfile-saving-mode'?: '3000'
+  'molfile-saving-mode'?: '3000';
 }
 
 // TODO this is a duplicated class from packages/ketcher-core/src/application/formatters/supportedFormatProperties.ts
 export class SupportedFormatProperties {
-  name: string
-  mime: ChemicalMimeType
-  extensions: string[]
-  supportsCoords?: boolean
-  options?: SupportedFormatPropertiesOptions
+  name: string;
+  mime: ChemicalMimeType;
+  extensions: string[];
+  supportsCoords?: boolean;
+  options?: SupportedFormatPropertiesOptions;
 
   constructor(
     name: string,
@@ -38,10 +38,10 @@ export class SupportedFormatProperties {
     supportsCoords?: boolean,
     options?: SupportedFormatPropertiesOptions
   ) {
-    this.name = name
-    this.mime = mime
-    this.extensions = extensions
-    this.supportsCoords = supportsCoords || false
-    this.options = options || {}
+    this.name = name;
+    this.mime = mime;
+    this.extensions = extensions;
+    this.supportsCoords = supportsCoords || false;
+    this.options = options || {};
   }
 }

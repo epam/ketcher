@@ -16,13 +16,13 @@ import { AtomAttributes, AtomXy } from '@utils/canvas/types';
 export async function getAtomByIndex(
   page: Page,
   attributes: AtomAttributes,
-  index: number,
+  index: number
 ): Promise<AtomXy> {
   const result = await getAtomsCoordinatesByAttributes(page, attributes);
 
   if (index > result.length - 1 || index < 0) {
     throw Error(
-      'Incorrect index, please be sure that you index is less than the length of the atoms',
+      'Incorrect index, please be sure that you index is less than the length of the atoms'
     );
   }
 

@@ -1,112 +1,112 @@
-import { Action, Scale, Vec2 } from 'ketcher-core'
-import { throttle } from 'lodash'
-import Editor from '../Editor'
-import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems'
-import RotateTool from './rotate'
-import SelectTool from './select'
-import { getDifference, rotatePoint } from './rotate-controller.utils'
+import { Action, Scale, Vec2 } from 'ketcher-core';
+import { throttle } from 'lodash';
+import Editor from '../Editor';
+import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems';
+import RotateTool from './rotate';
+import SelectTool from './select';
+import { getDifference, rotatePoint } from './rotate-controller.utils';
 
 type RaphaelElement = {
-  [key: string]: any
-}
+  [key: string]: any;
+};
 
-type LinkState = 'long' | 'short' | 'moveCenter' | 'moveHandle'
-type CrossState = 'active' | 'inactive' | 'offset' | 'move'
-type HandleState = 'hoverIn' | 'hoverOut' | 'active' | 'move'
+type LinkState = 'long' | 'short' | 'moveCenter' | 'moveHandle';
+type CrossState = 'active' | 'inactive' | 'offset' | 'move';
+type HandleState = 'hoverIn' | 'hoverOut' | 'active' | 'move';
 
 const STYLE = {
   HANDLE_MARGIN: 15,
   HANDLE_RADIUS: 10,
   INITIAL_COLOR: '#B4B9D6',
-  ACTIVE_COLOR: '#365CFF'
-}
+  ACTIVE_COLOR: '#365CFF',
+};
 
 const LEFT_ARROW_PATH =
-  'M12.7034 14.8189L9.39616 17.6218L9.13674 16.1892C8.12927 16.0487 7.17132 15.6644 6.34605 15.0697C5.52078 14.475 4.85314 13.6878 4.40108 12.7766C3.94903 11.8653 3.72622 10.8575 3.75201 9.84062C3.7778 8.82373 4.0514 7.8285 4.54906 6.94133L5.8121 7.65148C5.45018 8.29719 5.24246 9.01784 5.20516 9.75712C5.16786 10.4964 5.302 11.2343 5.59709 11.9132C5.89218 12.592 6.34023 13.1935 6.90624 13.6705C7.47225 14.1475 8.1409 14.4872 8.85993 14.6631L8.62297 13.3587L12.7034 14.8189Z'
+  'M12.7034 14.8189L9.39616 17.6218L9.13674 16.1892C8.12927 16.0487 7.17132 15.6644 6.34605 15.0697C5.52078 14.475 4.85314 13.6878 4.40108 12.7766C3.94903 11.8653 3.72622 10.8575 3.75201 9.84062C3.7778 8.82373 4.0514 7.8285 4.54906 6.94133L5.8121 7.65148C5.45018 8.29719 5.24246 9.01784 5.20516 9.75712C5.16786 10.4964 5.302 11.2343 5.59709 11.9132C5.89218 12.592 6.34023 13.1935 6.90624 13.6705C7.47225 14.1475 8.1409 14.4872 8.85993 14.6631L8.62297 13.3587L12.7034 14.8189Z';
 const RIGHT_ARROW_PATH =
-  'M15.4493 13.0588L14.1862 12.3486C14.5482 11.7029 14.7559 10.9823 14.7932 10.243C14.8305 9.50371 14.6963 8.76582 14.4012 8.08695C14.1062 7.40809 13.6581 6.80665 13.0921 6.32962C12.5261 5.85259 11.8574 5.51288 11.1384 5.33704L11.3754 6.64501L7.29492 5.18124L10.6022 2.37834L10.8616 3.81095C11.8691 3.95145 12.827 4.33573 13.6523 4.93043C14.4776 5.52513 15.1452 6.31227 15.5973 7.22353C16.0493 8.13478 16.2721 9.1426 16.2463 10.1595C16.2205 11.1764 15.9469 12.1716 15.4493 13.0588Z'
+  'M15.4493 13.0588L14.1862 12.3486C14.5482 11.7029 14.7559 10.9823 14.7932 10.243C14.8305 9.50371 14.6963 8.76582 14.4012 8.08695C14.1062 7.40809 13.6581 6.80665 13.0921 6.32962C12.5261 5.85259 11.8574 5.51288 11.1384 5.33704L11.3754 6.64501L7.29492 5.18124L10.6022 2.37834L10.8616 3.81095C11.8691 3.95145 12.827 4.33573 13.6523 4.93043C14.4776 5.52513 15.1452 6.31227 15.5973 7.22353C16.0493 8.13478 16.2721 9.1426 16.2463 10.1595C16.2205 11.1764 15.9469 12.1716 15.4493 13.0588Z';
 
 class RotateController {
-  isRotating!: boolean
-  private editor: Editor
-  private rotateTool: RotateTool
-  private originalCenter!: Vec2
-  private normalizedCenterInitialHandleVec!: Vec2
-  private handleCenter!: Vec2
-  private initialRadius!: number
-  private isMovingCenter!: boolean
+  isRotating!: boolean;
+  private editor: Editor;
+  private rotateTool: RotateTool;
+  private originalCenter!: Vec2;
+  private normalizedCenterInitialHandleVec!: Vec2;
+  private handleCenter!: Vec2;
+  private initialRadius!: number;
+  private isMovingCenter!: boolean;
 
-  private handle?: RaphaelElement
-  private boundingRect?: RaphaelElement
-  private cross?: RaphaelElement
-  private link?: RaphaelElement
-  private protractor?: RaphaelElement
-  private rotateArc?: RaphaelElement
+  private handle?: RaphaelElement;
+  private boundingRect?: RaphaelElement;
+  private cross?: RaphaelElement;
+  private link?: RaphaelElement;
+  private protractor?: RaphaelElement;
+  private rotateArc?: RaphaelElement;
 
   constructor(editor: Editor) {
-    this.editor = editor
-    this.init()
-    this.rotateTool = new RotateTool(this.editor, undefined)
+    this.editor = editor;
+    this.init();
+    this.rotateTool = new RotateTool(this.editor, undefined);
   }
 
   private init() {
-    this.originalCenter = new Vec2()
-    this.normalizedCenterInitialHandleVec = new Vec2()
-    this.handleCenter = new Vec2()
-    this.initialRadius = 0
-    this.isRotating = false
-    this.isMovingCenter = false
+    this.originalCenter = new Vec2();
+    this.normalizedCenterInitialHandleVec = new Vec2();
+    this.handleCenter = new Vec2();
+    this.initialRadius = 0;
+    this.isRotating = false;
+    this.isMovingCenter = false;
   }
 
   private get render() {
-    return this.editor.render
+    return this.editor.render;
   }
 
   private get paper() {
-    return this.render.paper
+    return this.render.paper;
   }
 
   private get center() {
     return this.originalCenter
       .scaled(this.render.options.scale)
-      .add(this.render.options.offset)
+      .add(this.render.options.offset);
   }
 
   rerender() {
-    this.clean()
-    this.init()
-    this.show()
+    this.clean();
+    this.init();
+    this.show();
   }
 
   clean() {
     this.editor.event.updateFloatingTools.dispatch({
       visible: false,
-      rotateHandlePosition: new Vec2()
-    })
+      rotateHandlePosition: new Vec2(),
+    });
 
-    this.handle?.unhover(this.hoverIn, this.hoverOut)
-    this.handle?.unmousedown(this.dragStart)
-    this.handle?.unmouseup(this.dragEnd)
-    this.handle?.undrag()
+    this.handle?.unhover(this.hoverIn, this.hoverOut);
+    this.handle?.unmousedown(this.dragStart);
+    this.handle?.unmouseup(this.dragEnd);
+    this.handle?.undrag();
 
-    const crossArea = this.cross?.[1]
-    crossArea?.unhover(this.hoverCrossIn, this.hoverCrossOut)
-    crossArea?.unmousedown(this.dragCrossStart)
-    crossArea?.unmouseup(this.dragCrossEnd)
-    crossArea?.undrag()
+    const crossArea = this.cross?.[1];
+    crossArea?.unhover(this.hoverCrossIn, this.hoverCrossOut);
+    crossArea?.unmousedown(this.dragCrossStart);
+    crossArea?.unmouseup(this.dragCrossEnd);
+    crossArea?.undrag();
 
-    this.cross?.remove()
-    delete this.cross
-    this.boundingRect?.remove()
-    delete this.boundingRect
-    this.link?.remove()
-    delete this.link
-    this.handle?.remove()
-    delete this.handle
-    this.protractor?.remove()
-    delete this.protractor
-    this.rotateArc?.remove()
-    delete this.rotateArc
+    this.cross?.remove();
+    delete this.cross;
+    this.boundingRect?.remove();
+    delete this.boundingRect;
+    this.link?.remove();
+    delete this.link;
+    this.handle?.remove();
+    delete this.handle;
+    this.protractor?.remove();
+    delete this.protractor;
+    this.rotateArc?.remove();
+    delete this.rotateArc;
   }
 
   /**
@@ -114,54 +114,54 @@ class RotateController {
    */
   revert() {
     if (!this.rotateTool.dragCtx?.action || !this.isRotating) {
-      return
+      return;
     }
 
-    const action: Action = this.rotateTool.dragCtx.action
-    action.perform(this.render.ctab)
-    this.render.update()
-    this.rerender()
+    const action: Action = this.rotateTool.dragCtx.action;
+    action.perform(this.render.ctab);
+    this.render.update();
+    this.rerender();
   }
 
   private isPartOfFragmentSelected() {
-    const allAtoms = this.render.ctab.molecule.atoms
-    const selectedAtomIds = this.editor.selection()?.atoms || []
-    const selectedFragmentIdSet = new Set()
+    const allAtoms = this.render.ctab.molecule.atoms;
+    const selectedAtomIds = this.editor.selection()?.atoms || [];
+    const selectedFragmentIdSet = new Set();
 
     selectedAtomIds.forEach((atomId) => {
-      const fragmentId = allAtoms.get(atomId)?.fragment
-      selectedFragmentIdSet.add(fragmentId)
-    })
+      const fragmentId = allAtoms.get(atomId)?.fragment;
+      selectedFragmentIdSet.add(fragmentId);
+    });
 
     const nonSelectedAtoms = allAtoms.filter(
       (id) => !selectedAtomIds.includes(id)
-    )
+    );
     return nonSelectedAtoms.some((atom) =>
       selectedFragmentIdSet.has(atom.fragment)
-    )
+    );
   }
 
   private show() {
     const [originalCenter, visibleAtoms] = this.rotateTool.getCenter(
       this.editor
-    )
+    );
 
-    const { texts, rxnArrows, rxnPluses } = this.editor.selection() || {}
+    const { texts, rxnArrows, rxnPluses } = this.editor.selection() || {};
 
     const isMoreThanOneItemBeingSelected =
       visibleAtoms.concat(texts || [], rxnArrows || [], rxnPluses || [])
-        .length > 1
+        .length > 1;
 
     const enable =
       isMoreThanOneItemBeingSelected &&
       this.editor.tool() instanceof SelectTool &&
-      originalCenter
+      originalCenter;
 
     if (!enable) {
-      return
+      return;
     }
 
-    this.originalCenter = originalCenter
+    this.originalCenter = originalCenter;
 
     const rectStartY = this.drawBoundingRect(
       visibleAtoms,
@@ -169,71 +169,71 @@ class RotateController {
       rxnArrows,
       rxnPluses,
       this.editor.selection()?.bonds
-    )
+    );
 
     this.handleCenter = new Vec2(
       this.center.x,
       rectStartY - STYLE.HANDLE_MARGIN - STYLE.HANDLE_RADIUS
-    )
+    );
 
     const handleCenterInViewport = this.render.obj2view(
       this.handleCenter
         .sub(this.render.options.offset)
         .scaled(1 / this.render.options.scale)
-    )
+    );
     this.editor.event.updateFloatingTools.dispatch({
       visible: true,
-      rotateHandlePosition: handleCenterInViewport
-    })
+      rotateHandlePosition: handleCenterInViewport,
+    });
 
-    this.drawLink()
-    this.drawCross()
-    this.drawHandle()
+    this.drawLink();
+    this.drawCross();
+    this.drawHandle();
 
-    this.handle?.hover(this.hoverIn, this.hoverOut)
-    this.handle?.mousedown(this.dragStart)
-    this.handle?.mouseup(this.dragEnd)
+    this.handle?.hover(this.hoverIn, this.hoverOut);
+    this.handle?.mousedown(this.dragStart);
+    this.handle?.mouseup(this.dragEnd);
     this.handle?.drag(
       this.dragMove(),
       undefined,
       this.dragEnd // Fix rotation getting stuck when mouseup outside window
-    )
+    );
 
     if (this.isPartOfFragmentSelected()) {
-      return
+      return;
     }
 
-    const crossArea = this.cross?.[1]
-    crossArea?.hover(this.hoverCrossIn, this.hoverCrossOut)
-    crossArea?.mousedown(this.dragCrossStart)
-    crossArea?.mouseup(this.dragCrossEnd)
+    const crossArea = this.cross?.[1];
+    crossArea?.hover(this.hoverCrossIn, this.hoverCrossOut);
+    crossArea?.mousedown(this.dragCrossStart);
+    crossArea?.mouseup(this.dragCrossEnd);
     crossArea?.drag(
       this.dragCrossMove,
       undefined,
       this.dragCrossEndOUtOfBounding
-    )
+    );
   }
 
   private drawCross(state?: CrossState) {
     switch (state) {
       case 'active': {
         this.cross?.attr({
-          stroke: STYLE.ACTIVE_COLOR
-        })
-        break
+          stroke: STYLE.ACTIVE_COLOR,
+        });
+        break;
       }
 
       case 'inactive': {
         this.cross?.attr({
-          stroke: STYLE.INITIAL_COLOR
-        })
-        break
+          stroke: STYLE.INITIAL_COLOR,
+        });
+        break;
       }
 
       case 'move': {
-        this.cross?.transform('')
-        this.cross?.translate(this.center.x, this.center.y)
-        break
+        this.cross?.transform('');
+        this.cross?.translate(this.center.x, this.center.y);
+        break;
       }
 
       default: {
@@ -242,18 +242,18 @@ class RotateController {
           .attr({
             stroke: STYLE.INITIAL_COLOR,
             'stroke-width': 2,
-            'stroke-linecap': 'round'
-          })
+            'stroke-linecap': 'round',
+          });
         // HACK: increase hover/drag area
         const circle = this.paper.circle(0, 0, 10).attr({
           fill: 'red',
-          opacity: 0
-        })
-        this.cross = this.paper.set()
-        this.cross?.push(cross, circle)
-        this.cross?.translate(this.center.x, this.center.y)
+          opacity: 0,
+        });
+        this.cross = this.paper.set();
+        this.cross?.push(cross, circle);
+        this.cross?.translate(this.center.x, this.center.y);
 
-        break
+        break;
       }
     }
   }
@@ -265,8 +265,8 @@ class RotateController {
     rxnPluses?: number[],
     bonds?: number[]
   ) {
-    const RECT_RADIUS = 20
-    const RECT_PADDING = 10
+    const RECT_RADIUS = 20;
+    const RECT_PADDING = 10;
 
     const rectBox = this.render.ctab
       .getVBoxObj({
@@ -276,21 +276,29 @@ class RotateController {
         rxnPluses,
 
         sgroups: getGroupIdsFromItemArrays(this.render.ctab.molecule, {
-          atoms: visibleAtoms
+          atoms: visibleAtoms,
         }),
-        bonds
+        bonds,
       })
       .transform(Scale.obj2scaled, this.render.options)
-      .translate(this.render.options.offset || new Vec2())
+      .translate(this.render.options.offset || new Vec2());
 
     const rectStartX =
-      rectBox.p0.x - RECT_PADDING - this.render.options.atomSelectionPlateRadius
+      rectBox.p0.x -
+      RECT_PADDING -
+      this.render.options.atomSelectionPlateRadius;
     const rectStartY =
-      rectBox.p0.y - RECT_PADDING - this.render.options.atomSelectionPlateRadius
+      rectBox.p0.y -
+      RECT_PADDING -
+      this.render.options.atomSelectionPlateRadius;
     const rectEndX =
-      rectBox.p1.x + RECT_PADDING + this.render.options.atomSelectionPlateRadius
+      rectBox.p1.x +
+      RECT_PADDING +
+      this.render.options.atomSelectionPlateRadius;
     const rectEndY =
-      rectBox.p1.y + RECT_PADDING + this.render.options.atomSelectionPlateRadius
+      rectBox.p1.y +
+      RECT_PADDING +
+      this.render.options.atomSelectionPlateRadius;
 
     this.boundingRect = this.paper
       .rect(
@@ -302,70 +310,70 @@ class RotateController {
       )
       .attr({
         'stroke-dasharray': '-',
-        stroke: STYLE.INITIAL_COLOR
-      })
+        stroke: STYLE.INITIAL_COLOR,
+      });
 
-    return rectStartY
+    return rectStartY;
   }
 
   private drawHandle(state?: HandleState) {
     switch (state) {
       case 'hoverIn': {
         this.handle?.attr({
-          cursor: 'grab'
-        })
-        const circle = this.handle?.[0]
+          cursor: 'grab',
+        });
+        const circle = this.handle?.[0];
         circle.attr({
-          fill: STYLE.ACTIVE_COLOR
-        })
-        break
+          fill: STYLE.ACTIVE_COLOR,
+        });
+        break;
       }
 
       case 'hoverOut': {
-        const circle = this.handle?.[0]
+        const circle = this.handle?.[0];
         circle.attr({
-          fill: STYLE.INITIAL_COLOR
-        })
-        break
+          fill: STYLE.INITIAL_COLOR,
+        });
+        break;
       }
 
       case 'active': {
         this.handle?.attr({
-          cursor: 'grabbing'
-        })
-        const arrowSet = this.handle?.[1]
-        arrowSet?.attr({ fill: 'none' })
-        break
+          cursor: 'grabbing',
+        });
+        const arrowSet = this.handle?.[1];
+        arrowSet?.attr({ fill: 'none' });
+        break;
       }
 
       case 'move': {
         this.handle
           ?.transform('')
-          .translate(this.handleCenter.x, this.handleCenter.y)
-        break
+          .translate(this.handleCenter.x, this.handleCenter.y);
+        break;
       }
 
       default: {
         const circle = this.paper.circle(0, 0, STYLE.HANDLE_RADIUS).attr({
           fill: STYLE.INITIAL_COLOR,
-          stroke: 'none'
-        })
+          stroke: 'none',
+        });
 
         const leftArrow = this.paper
           .path(LEFT_ARROW_PATH)
-          .attr({ fill: 'white', stroke: 'none' })
+          .attr({ fill: 'white', stroke: 'none' });
         const rightArrow = this.paper
           .path(RIGHT_ARROW_PATH)
-          .attr({ fill: 'white', stroke: 'none' })
-        const arrowSet: RaphaelElement = this.paper.set()
-        arrowSet.push(leftArrow, rightArrow)
-        const { x, y, width, height } = arrowSet.getBBox()
-        arrowSet.translate(-(x + width / 2), -(y + height / 2))
+          .attr({ fill: 'white', stroke: 'none' });
+        const arrowSet: RaphaelElement = this.paper.set();
+        arrowSet.push(leftArrow, rightArrow);
+        const { x, y, width, height } = arrowSet.getBBox();
+        arrowSet.translate(-(x + width / 2), -(y + height / 2));
 
-        this.handle = this.paper.set() as RaphaelElement
-        this.handle.push(circle, arrowSet)
-        this.handle.translate(this.handleCenter.x, this.handleCenter.y)
-        break
+        this.handle = this.paper.set() as RaphaelElement;
+        this.handle.push(circle, arrowSet);
+        this.handle.translate(this.handleCenter.x, this.handleCenter.y);
+        break;
       }
     }
   }
@@ -377,9 +385,9 @@ class RotateController {
           path:
             `M${this.center.x},${this.center.y}` +
             `L${this.handleCenter.x},${this.handleCenter.y}`,
-          stroke: STYLE.ACTIVE_COLOR
-        })
-        break
+          stroke: STYLE.ACTIVE_COLOR,
+        });
+        break;
       }
 
       case 'short': {
@@ -387,27 +395,27 @@ class RotateController {
           path:
             `M${this.handleCenter.x},${this.handleCenter.y}` +
             `l0,${STYLE.HANDLE_RADIUS + STYLE.HANDLE_MARGIN}`,
-          stroke: STYLE.INITIAL_COLOR
-        })
-        break
+          stroke: STYLE.INITIAL_COLOR,
+        });
+        break;
       }
 
       case 'moveCenter': {
         this.link?.attr({
           path:
             `M${this.center.x},${this.center.y}` +
-            `L${this.handleCenter.x},${this.handleCenter.y}`
-        })
-        break
+            `L${this.handleCenter.x},${this.handleCenter.y}`,
+        });
+        break;
       }
 
       case 'moveHandle': {
         this.link?.attr({
           path:
             `M${this.center.x},${this.center.y}` +
-            `L${this.handleCenter.x},${this.handleCenter.y}`
-        })
-        break
+            `L${this.handleCenter.x},${this.handleCenter.y}`,
+        });
+        break;
       }
 
       default: {
@@ -418,9 +426,9 @@ class RotateController {
           )
           .attr({
             'stroke-dasharray': '-',
-            stroke: STYLE.INITIAL_COLOR
-          })
-        break
+            stroke: STYLE.INITIAL_COLOR,
+          });
+        break;
       }
     }
   }
@@ -431,46 +439,46 @@ class RotateController {
     degreeLine: RaphaelElement,
     textPos: Vec2
   ) {
-    this.protractor?.remove()
+    this.protractor?.remove();
 
-    const PROTRACTOR_COLOR = '#E1E5EA'
-    const DEGREE_FONT_SIZE = 12
+    const PROTRACTOR_COLOR = '#E1E5EA';
+    const DEGREE_FONT_SIZE = 12;
 
     const circle = this.paper
       .circle(this.center.x, this.center.y, radius)
       .attr({
         'stroke-dasharray': '-',
-        stroke: PROTRACTOR_COLOR
-      })
+        stroke: PROTRACTOR_COLOR,
+      });
 
-    this.protractor = this.paper.set() as RaphaelElement
-    this.protractor.push(circle)
+    this.protractor = this.paper.set() as RaphaelElement;
+    this.protractor.push(circle);
 
     const predefinedDegrees = [
       0, 30, 45, 60, 90, 120, 135, 150, 180, -150, -135, -120, -90, -60, -45,
-      -30
-    ]
+      -30,
+    ];
     predefinedDegrees.reduce((previousDegree, currentDegree, currentIndex) => {
-      const isDrawingDegree0 = currentIndex === 0
-      const gap = currentDegree - previousDegree
-      const diff = getDifference(currentDegree, structRotateDegree)
+      const isDrawingDegree0 = currentIndex === 0;
+      const gap = currentDegree - previousDegree;
+      const diff = getDifference(currentDegree, structRotateDegree);
 
       if (!isDrawingDegree0) {
         degreeLine = degreeLine
           .clone()
-          .rotate(gap, this.center.x, this.center.y)
+          .rotate(gap, this.center.x, this.center.y);
       }
 
       degreeLine.attr({
-        stroke: diff > 90 ? 'none' : PROTRACTOR_COLOR
-      })
-      this.protractor?.push(degreeLine)
+        stroke: diff > 90 ? 'none' : PROTRACTOR_COLOR,
+      });
+      this.protractor?.push(degreeLine);
 
       if (radius < 65) {
-        return currentDegree
+        return currentDegree;
       }
 
-      textPos = rotatePoint(this.center, textPos, (gap / 180) * Math.PI)
+      textPos = rotatePoint(this.center, textPos, (gap / 180) * Math.PI);
       const degreeText = this.paper
         .text(textPos.x, textPos.y, `${currentDegree}°`)
         .attr({
@@ -480,15 +488,15 @@ class RotateController {
               : currentDegree !== 0 && currentDegree === structRotateDegree
               ? STYLE.ACTIVE_COLOR
               : STYLE.INITIAL_COLOR,
-          'font-size': DEGREE_FONT_SIZE
-        })
+          'font-size': DEGREE_FONT_SIZE,
+        });
 
-      this.protractor?.push(degreeText)
+      this.protractor?.push(degreeText);
 
-      return currentDegree
-    }, 0)
+      return currentDegree;
+    }, 0);
 
-    this.protractor.toBack()
+    this.protractor.toBack();
   }
 
   private drawRotateArc(
@@ -498,23 +506,23 @@ class RotateController {
     textPos: Vec2
   ) {
     if (!this.rotateArc) {
-      const arc = this.paper.path()
-      const text = this.paper.text(0, 0, '')
+      const arc = this.paper.path();
+      const text = this.paper.text(0, 0, '');
 
-      this.rotateArc = this.paper.set().push(arc, text) as RaphaelElement
+      this.rotateArc = this.paper.set().push(arc, text) as RaphaelElement;
     }
 
     const rotateArcEnd = rotatePoint(
       this.center,
       rotateArcStart,
       (structRotateDegree / 180) * Math.PI
-    )
+    );
 
-    const arc = this.rotateArc[0]
-    const text = this.rotateArc[1]
+    const arc = this.rotateArc[0];
+    const text = this.rotateArc[1];
 
-    const TEXT_FONT_SIZE = 16
-    const TEXT_COLOR = '#333333'
+    const TEXT_FONT_SIZE = 16;
+    const TEXT_COLOR = '#333333';
 
     // Doc: https://www.w3.org/TR/SVG/paths.html#PathDataEllipticalArcCommands
     arc
@@ -524,59 +532,59 @@ class RotateController {
           `A${radius},${radius} ` +
           `0 0,${structRotateDegree < 0 ? '0' : '1'} ` +
           `${rotateArcEnd.x},${rotateArcEnd.y}`,
-        stroke: STYLE.ACTIVE_COLOR
+        stroke: STYLE.ACTIVE_COLOR,
       })
-      .toBack()
+      .toBack();
 
     text.attr({
       text: `${structRotateDegree}°`,
       x: textPos.x,
       y: textPos.y,
       'font-size': TEXT_FONT_SIZE,
-      fill: TEXT_COLOR
-    })
+      fill: TEXT_COLOR,
+    });
   }
 
   // NOTE: When handle is non-arrow function, `this` is element itself
   private hoverIn = (event: MouseEvent) => {
-    const isSomeButtonPressed = event.buttons !== 0
+    const isSomeButtonPressed = event.buttons !== 0;
     if (isSomeButtonPressed) {
-      return
+      return;
     }
 
-    this.drawHandle('hoverIn')
-  }
+    this.drawHandle('hoverIn');
+  };
 
   private hoverOut = (event: MouseEvent) => {
-    const isSomeButtonPressed = event.buttons !== 0
+    const isSomeButtonPressed = event.buttons !== 0;
     if (isSomeButtonPressed) {
-      return
+      return;
     }
 
-    this.drawHandle('hoverOut')
-  }
+    this.drawHandle('hoverOut');
+  };
 
   private getProtractorBaseInfo(radius: number) {
-    const DEGREE_TEXT_MARGIN = 10
+    const DEGREE_TEXT_MARGIN = 10;
 
     const distBetweenDegree0TextAndCenter =
       radius +
       STYLE.HANDLE_MARGIN +
       STYLE.HANDLE_RADIUS * 2 +
-      DEGREE_TEXT_MARGIN
+      DEGREE_TEXT_MARGIN;
     const centerDegree0TextVec = this.normalizedCenterInitialHandleVec.scaled(
       distBetweenDegree0TextAndCenter
-    )
-    const degree0TextPos = this.center.add(centerDegree0TextVec)
+    );
+    const degree0TextPos = this.center.add(centerDegree0TextVec);
 
     const lineLength =
-      radius >= 65 ? STYLE.HANDLE_MARGIN : STYLE.HANDLE_MARGIN / 2
+      radius >= 65 ? STYLE.HANDLE_MARGIN : STYLE.HANDLE_MARGIN / 2;
     const centerLineStartVec =
-      this.normalizedCenterInitialHandleVec.scaled(radius)
-    const lineVec = this.normalizedCenterInitialHandleVec.scaled(lineLength)
-    const lineStart = this.center.add(centerLineStartVec)
-    const lineEnd = lineStart.add(lineVec)
-    const lineEndHalf = lineStart.addScaled(lineVec, 1 / 2)
+      this.normalizedCenterInitialHandleVec.scaled(radius);
+    const lineVec = this.normalizedCenterInitialHandleVec.scaled(lineLength);
+    const lineStart = this.center.add(centerLineStartVec);
+    const lineEnd = lineStart.add(lineVec);
+    const lineEndHalf = lineStart.addScaled(lineVec, 1 / 2);
     const degree0Line = this.paper
       .path(
         `M${lineStart.x},${lineStart.y}` +
@@ -585,80 +593,80 @@ class RotateController {
             : `L${lineEndHalf.x}, ${lineEndHalf.y}`)
       )
       .attr({
-        'stroke-dasharray': '-'
-      })
+        'stroke-dasharray': '-',
+      });
 
     const arcStartPos = this.center.add(
       this.normalizedCenterInitialHandleVec.scaled(radius)
-    )
+    );
 
-    const TEXT_MARGIN_LEFT = 20
-    const l1 = centerLineStartVec.add(lineVec)
+    const TEXT_MARGIN_LEFT = 20;
+    const l1 = centerLineStartVec.add(lineVec);
     const l2 = l1
       .rotate(Math.PI / 2)
       .normalized()
-      .scaled(TEXT_MARGIN_LEFT)
-    const currentDegreeMarkPos = this.center.add(l1).add(l2)
+      .scaled(TEXT_MARGIN_LEFT);
+    const currentDegreeMarkPos = this.center.add(l1).add(l2);
 
     return [
       degree0Line,
       degree0TextPos,
       arcStartPos,
-      currentDegreeMarkPos
-    ] as const
+      currentDegreeMarkPos,
+    ] as const;
   }
 
   private dragStart = (event: MouseEvent) => {
-    event.stopPropagation() // Avoid triggering SelectTool's mousedown
+    event.stopPropagation(); // Avoid triggering SelectTool's mousedown
 
-    const isLeftButtonPressed = event.buttons === 1
+    const isLeftButtonPressed = event.buttons === 1;
     if (!isLeftButtonPressed) {
-      return
+      return;
     }
 
-    const isDragPaused = this.isRotating
+    const isDragPaused = this.isRotating;
     if (isDragPaused) {
       // Fix protractor staying after screenshot/being paused
       // see https://github.com/epam/ketcher/pull/2574#issuecomment-1539201020
-      this.clean()
-      return
+      this.clean();
+      return;
     }
 
-    this.isRotating = true
+    this.isRotating = true;
 
     this.editor.event.updateFloatingTools.dispatch({
       visible: false,
-      rotateHandlePosition: new Vec2()
-    })
+      rotateHandlePosition: new Vec2(),
+    });
 
-    this.boundingRect?.remove()
-    delete this.boundingRect
+    this.boundingRect?.remove();
+    delete this.boundingRect;
 
-    const centerHandleVec = this.handleCenter.sub(this.center)
-    this.normalizedCenterInitialHandleVec = centerHandleVec.normalized()
+    const centerHandleVec = this.handleCenter.sub(this.center);
+    this.normalizedCenterInitialHandleVec = centerHandleVec.normalized();
 
     const newProtractorRadius =
       Vec2.dist(this.handleCenter, this.center) -
       STYLE.HANDLE_MARGIN -
-      STYLE.HANDLE_RADIUS
-    this.initialRadius = newProtractorRadius >= 0 ? newProtractorRadius : 0
+      STYLE.HANDLE_RADIUS;
+    this.initialRadius = newProtractorRadius >= 0 ? newProtractorRadius : 0;
     const [degree0Line, degree0TextPos] = this.getProtractorBaseInfo(
       this.initialRadius
-    )
-    this.drawProtractor(0, this.initialRadius, degree0Line, degree0TextPos)
+    );
+    this.drawProtractor(0, this.initialRadius, degree0Line, degree0TextPos);
 
-    this.drawCross('active')
-    this.drawLink('long')
-    this.drawHandle('active')
+    this.drawCross('active');
+    this.drawLink('long');
+    this.drawHandle('active');
 
     const originalHandleCenter = this.handleCenter
       .sub(this.render.options.offset)
-      .scaled(1 / this.render.options.scale)
-    this.rotateTool.mousedownHandle(originalHandleCenter, this.originalCenter)
-  }
+      .scaled(1 / this.render.options.scale);
+    this.rotateTool.mousedownHandle(originalHandleCenter, this.originalCenter);
+  };
 
   private dragMove = () => {
-    let lastSnappingRadius: number | undefined
+    let lastSnappingRadius: number | undefined;
     return throttle(
       (
         _dxFromStart: number,
@@ -668,86 +676,86 @@ class RotateController {
         event: MouseEvent
       ) => {
         if (!this.isRotating) {
-          return
+          return;
         }
 
         this.handleCenter = this.render
           .page2obj(event)
           .scaled(this.render.options.scale)
-          .add(this.render.options.offset)
+          .add(this.render.options.offset);
 
-        this.drawLink('moveHandle')
-        this.drawHandle('move')
-        this.drawCross('move')
+        this.drawLink('moveHandle');
+        this.drawHandle('move');
+        this.drawCross('move');
 
-        this.rotateTool.mousemove(event)
+        this.rotateTool.mousemove(event);
 
         const newProtractorRadius =
           Vec2.dist(this.handleCenter, this.center) -
           STYLE.HANDLE_MARGIN -
-          STYLE.HANDLE_RADIUS
-        let newRadius = newProtractorRadius >= 0 ? newProtractorRadius : 0
-        lastSnappingRadius = lastSnappingRadius ?? this.initialRadius
+          STYLE.HANDLE_RADIUS;
+        let newRadius = newProtractorRadius >= 0 ? newProtractorRadius : 0;
+        lastSnappingRadius = lastSnappingRadius ?? this.initialRadius;
         if (
           newRadius >= lastSnappingRadius * 1.4 ||
           newRadius <= lastSnappingRadius / 1.4
         ) {
-          lastSnappingRadius = newRadius
+          lastSnappingRadius = newRadius;
         } else {
-          newRadius = lastSnappingRadius
+          newRadius = lastSnappingRadius;
         }
 
         const [degree0Line, degree0TextPos, rotateArcStart, textPos] =
-          this.getProtractorBaseInfo(newRadius)
+          this.getProtractorBaseInfo(newRadius);
         this.drawRotateArc(
           this.rotateTool.dragCtx?.angle || 0,
           newRadius,
           rotateArcStart,
           textPos
-        )
+        );
         // NOTE: draw protractor last
         this.drawProtractor(
           this.rotateTool.dragCtx?.angle || 0,
           newRadius,
           degree0Line,
           degree0TextPos
-        )
+        );
       },
       40 // 25fps
-    )
-  }
+    );
+  };
 
   private dragEnd = (event: MouseEvent) => {
-    event.stopPropagation() // Avoid triggering SelectTool's mouseup
+    event.stopPropagation(); // Avoid triggering SelectTool's mouseup
 
-    this.rotateTool.mouseup()
-    this.rerender()
-  }
+    this.rotateTool.mouseup();
+    this.rerender();
+  };
 
   private hoverCrossIn = (event: MouseEvent) => {
-    const isSomeButtonPressed = event.buttons !== 0
+    const isSomeButtonPressed = event.buttons !== 0;
     if (isSomeButtonPressed) {
-      return
+      return;
     }
 
-    this.drawCross('active')
-    this.drawLink('long')
-  }
+    this.drawCross('active');
+    this.drawLink('long');
+  };
 
   private hoverCrossOut = (event: MouseEvent) => {
-    const isSomeButtonPressed = event.buttons !== 0
+    const isSomeButtonPressed = event.buttons !== 0;
     if (isSomeButtonPressed) {
-      return
+      return;
     }
 
-    this.drawCross('inactive')
-    this.drawLink('short')
-  }
+    this.drawCross('inactive');
+    this.drawLink('short');
+  };
 
   private dragCrossStart = (event: MouseEvent) => {
-    event.stopPropagation()
-    this.isMovingCenter = true
-  }
+    event.stopPropagation();
+    this.isMovingCenter = true;
+  };
 
   private dragCrossMove = throttle(
     (
@@ -758,44 +766,44 @@ class RotateController {
       event: MouseEvent
     ) => {
       if (!this.isMovingCenter) {
-        return
+        return;
       }
 
-      this.originalCenter = this.render.page2obj(event)
+      this.originalCenter = this.render.page2obj(event);
 
-      this.drawCross('move')
-      this.drawLink('moveCenter')
+      this.drawCross('move');
+      this.drawLink('moveCenter');
     },
     40
-  )
+  );
 
   private dragCrossEnd = (event: MouseEvent) => {
-    event.stopPropagation()
+    event.stopPropagation();
 
-    this.isMovingCenter = false
-    this.originalCenter = this.render.page2obj(event)
-  }
+    this.isMovingCenter = false;
+    this.originalCenter = this.render.page2obj(event);
+  };
 
   private dragCrossEndOUtOfBounding = (_event: MouseEvent) => {
-    this.isMovingCenter = false
-    this.rerender()
-  }
+    this.isMovingCenter = false;
+    this.rerender();
+  };
 
   updateFloatingToolsPosition = throttle(() => {
     if (!this.handle) {
-      return
+      return;
     }
 
     const handleCenterInViewport = this.render.obj2view(
       this.handleCenter
         .sub(this.render.options.offset)
         .scaled(1 / this.render.options.scale)
-    )
+    );
     this.editor.event.updateFloatingTools.dispatch({
-      rotateHandlePosition: handleCenterInViewport
-    })
-  }, 40)
+      rotateHandlePosition: handleCenterInViewport,
+    });
+  }, 40);
 }
 
-export default RotateController
-export { getDifference }
+export default RotateController;
+export { getDifference };

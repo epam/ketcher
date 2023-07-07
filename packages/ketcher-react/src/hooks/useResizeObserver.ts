@@ -14,40 +14,40 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { RefCallback, RefObject, useMemo, useState } from 'react'
+import { RefCallback, RefObject, useMemo, useState } from 'react';
 
-import { throttle } from 'lodash'
-import useResizeObserver from 'use-resize-observer/polyfilled'
+import { throttle } from 'lodash';
+import useResizeObserver from 'use-resize-observer/polyfilled';
 
-const throttleMilliseconds = 100
+const throttleMilliseconds = 100;
 
 type Size = {
-  width: number | undefined
-  height: number | undefined
-}
+  width: number | undefined;
+  height: number | undefined;
+};
 
 type Options<THTMLElement extends HTMLElement> = {
-  ref?: RefObject<THTMLElement> | THTMLElement | null | undefined
-}
+  ref?: RefObject<THTMLElement> | THTMLElement | null | undefined;
+};
 
 type HookResponse<THTMLElement extends HTMLElement> = {
-  ref: RefCallback<THTMLElement>
-  width: number | undefined
-  height: number | undefined
-}
+  ref: RefCallback<THTMLElement>;
+  width: number | undefined;
+  height: number | undefined;
+};
 
 function useThrottleResizeObserver<THTMLElement extends HTMLElement>(
   options: Options<THTMLElement> = {}
 ): HookResponse<THTMLElement> {
   const [size, setSize] = useState<Size>({
     height: undefined,
-    width: undefined
-  })
+    width: undefined,
+  });
 
-  const onResize = useMemo(() => throttle(setSize, throttleMilliseconds), [])
+  const onResize = useMemo(() => throttle(setSize, throttleMilliseconds), []);
 
-  const { ref } = useResizeObserver<THTMLElement>({ onResize, ...options })
-  return { ref, ...size }
+  const { ref } = useResizeObserver<THTMLElement>({ onResize, ...options });
+  return { ref, ...size };
 }
 
-export { useThrottleResizeObserver as useResizeObserver }
+export { useThrottleResizeObserver as useResizeObserver };

@@ -30,7 +30,7 @@ async function selectMultipleGroup(
   page: Page,
   text: string,
   dataName: string,
-  valueRepeatCount: string,
+  valueRepeatCount: string
 ) {
   await page.locator('span').filter({ hasText: text }).click();
   await page.getByRole('option', { name: dataName }).click();

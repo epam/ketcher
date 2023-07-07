@@ -26,23 +26,23 @@ export enum ChemicalMimeType {
   CDXML = 'chemical/x-cdxml',
   CML = 'chemical/x-cml',
   KET = 'chemical/x-indigo-ket',
-  UNKNOWN = 'chemical/x-unknown'
+  UNKNOWN = 'chemical/x-unknown',
 }
 
 export interface WithStruct {
-  struct: string
+  struct: string;
 }
 
 export interface WithFormat {
-  format: ChemicalMimeType
+  format: ChemicalMimeType;
 }
 
 export interface WithOutputFormat {
-  output_format: ChemicalMimeType
+  output_format: ChemicalMimeType;
 }
 
 export interface WithSelection {
-  selected?: Array<number>
+  selected?: Array<number>;
 }
 
 export type CheckTypes =
@@ -56,14 +56,14 @@ export type CheckTypes =
   | 'chiral'
   | '3d'
   | 'chiral_flag'
-  | 'valence'
+  | 'valence';
 
 export interface CheckData extends WithStruct {
-  types: Array<CheckTypes>
+  types: Array<CheckTypes>;
 }
 
 export interface CheckResult {
-  [key: string]: string
+  [key: string]: string;
 }
 
 export interface ConvertData extends WithStruct, WithOutputFormat {}
@@ -98,82 +98,82 @@ export type CalculateProps =
   | 'most-abundant-mass'
   | 'monoisotopic-mass'
   | 'gross'
-  | 'mass-composition'
+  | 'mass-composition';
 
 export interface CalculateData extends WithStruct, WithSelection {
-  properties: Array<CalculateProps>
+  properties: Array<CalculateProps>;
 }
 
-export type CalculateResult = Record<CalculateProps, string | number | boolean>
+export type CalculateResult = Record<CalculateProps, string | number | boolean>;
 
-export type AutomapMode = 'discard' | 'keep' | 'alter' | 'clear'
+export type AutomapMode = 'discard' | 'keep' | 'alter' | 'clear';
 
 export interface AutomapData extends WithStruct, WithOutputFormat {
-  mode: AutomapMode
+  mode: AutomapMode;
 }
 
 export interface AutomapResult extends WithStruct, WithFormat {}
 
 export interface InfoResult {
-  indigoVersion: string
-  imagoVersions: Array<string>
-  isAvailable: boolean
+  indigoVersion: string;
+  imagoVersions: Array<string>;
+  isAvailable: boolean;
 }
 
 export interface RecognizeResult extends WithStruct, WithOutputFormat {}
 
 export interface StructServiceOptions {
-  [key: string]: string | number | boolean | undefined
+  [key: string]: string | number | boolean | undefined;
 }
 
-export type OutputFormatType = 'png' | 'svg'
+export type OutputFormatType = 'png' | 'svg';
 export interface GenerateImageOptions extends StructServiceOptions {
-  outputFormat: OutputFormatType
-  backgroundColor?: string
+  outputFormat: OutputFormatType;
+  backgroundColor?: string;
 }
 
 export interface StructService {
-  info: () => Promise<InfoResult>
+  info: () => Promise<InfoResult>;
   convert: (
     data: ConvertData,
     options?: StructServiceOptions
-  ) => Promise<ConvertResult>
+  ) => Promise<ConvertResult>;
   layout: (
     data: LayoutData,
     options?: StructServiceOptions
-  ) => Promise<LayoutResult>
+  ) => Promise<LayoutResult>;
   clean: (
     data: CleanData,
     options?: StructServiceOptions
-  ) => Promise<CleanResult>
+  ) => Promise<CleanResult>;
   aromatize: (
     data: AromatizeData,
     options?: StructServiceOptions
-  ) => Promise<AromatizeResult>
+  ) => Promise<AromatizeResult>;
   dearomatize: (
     data: DearomatizeData,
     options?: StructServiceOptions
-  ) => Promise<DearomatizeResult>
+  ) => Promise<DearomatizeResult>;
   calculateCip: (
     data: CalculateCipData,
     options?: StructServiceOptions
-  ) => Promise<CalculateCipResult>
+  ) => Promise<CalculateCipResult>;
   automap: (
     data: AutomapData,
     options?: StructServiceOptions
-  ) => Promise<AutomapResult>
+  ) => Promise<AutomapResult>;
   check: (
     data: CheckData,
     options?: StructServiceOptions
-  ) => Promise<CheckResult>
+  ) => Promise<CheckResult>;
   calculate: (
     data: CalculateData,
     options?: StructServiceOptions
-  ) => Promise<CalculateResult>
-  recognize: (blob: Blob, version: string) => Promise<RecognizeResult>
-  generateInchIKey: (struct: string) => Promise<string>
+  ) => Promise<CalculateResult>;
+  recognize: (blob: Blob, version: string) => Promise<RecognizeResult>;
+  generateInchIKey: (struct: string) => Promise<string>;
   generateImageAsBase64: (
     data: string,
     options?: GenerateImageOptions
-  ) => Promise<string>
+  ) => Promise<string>;
 }

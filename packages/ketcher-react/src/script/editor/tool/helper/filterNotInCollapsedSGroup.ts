@@ -1,4 +1,4 @@
-import { Struct } from 'ketcher-core'
+import { Struct } from 'ketcher-core';
 
 /**
  * return only such elements ids that not part of collapsed group
@@ -12,31 +12,31 @@ export function filterNotInContractedSGroup(
   return {
     atoms:
       itemsToFilter.atoms?.filter((atomId) => {
-        const groupId = struct.getGroupIdFromAtomId(atomId)
+        const groupId = struct.getGroupIdFromAtomId(atomId);
         if (isNotCollapsedSGroup(groupId, struct)) {
-          return true
+          return true;
         } else {
-          const sGroup = struct.sgroups.get(groupId as number)
-          return sGroup?.getAttachmentAtomId() === atomId
+          const sGroup = struct.sgroups.get(groupId as number);
+          return sGroup?.getAttachmentAtomId() === atomId;
         }
       }) ?? [],
     bonds:
       itemsToFilter.bonds?.filter((bondId) => {
-        const groupId = struct.getGroupIdFromBondId(bondId)
-        return isNotCollapsedSGroup(groupId, struct)
-      }) ?? []
-  }
+        const groupId = struct.getGroupIdFromBondId(bondId);
+        return isNotCollapsedSGroup(groupId, struct);
+      }) ?? [],
+  };
 }
 
 function isNotCollapsedSGroup(groupId: number | null, struct: Struct): boolean {
   if (groupId === null) {
-    return true
+    return true;
   }
-  const sGroup = struct.sgroups.get(groupId)
+  const sGroup = struct.sgroups.get(groupId);
   if (!sGroup) {
     throw new Error(
       `sGroup with id = "${groupId}" must be defined, unexpected behaviour`
-    )
+    );
   }
-  return sGroup.checkAttr('expanded', true)
+  return sGroup.checkAttr('expanded', true);
 }

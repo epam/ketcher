@@ -14,34 +14,34 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { HorizontalBoxWithLines, VerticalBoxWithLines } from './BoxWithLines'
+import { HorizontalBoxWithLines, VerticalBoxWithLines } from './BoxWithLines';
 
-import { GenGroup } from './GenGroup'
-import { Generics } from 'ketcher-core'
-import classes from './GenericGroups.module.less'
-import { groupNames } from './'
+import { GenGroup } from './GenGroup';
+import { Generics } from 'ketcher-core';
+import classes from './GenericGroups.module.less';
+import { groupNames } from './';
 
 type GenericGroupsProps = {
-  selected: (label: string) => boolean
-  onAtomSelect: (label: string, activateImmediately: boolean) => void
-  disabledQueryElements: Array<string> | null
-}
+  selected: (label: string) => boolean;
+  onAtomSelect: (label: string, activateImmediately: boolean) => void;
+  disabledQueryElements: Array<string> | null;
+};
 
 const getGenericsGroupsMap = (tree) => {
-  let newGroups = {}
+  let newGroups = {};
   for (const groupName of Object.keys(tree)) {
-    newGroups[groupName] = { ...tree[groupName] }
+    newGroups[groupName] = { ...tree[groupName] };
     if (newGroups[groupName]?.subGroups) {
       newGroups = {
         ...newGroups,
-        ...getGenericsGroupsMap(newGroups[groupName].subGroups)
-      }
+        ...getGenericsGroupsMap(newGroups[groupName].subGroups),
+      };
     }
   }
-  return newGroups
-}
+  return newGroups;
+};
 
-const groupsMap = getGenericsGroupsMap(Generics)
+const groupsMap = getGenericsGroupsMap(Generics);
 
 const renderGenGroupComponent = (
   group,
@@ -55,12 +55,12 @@ const renderGenGroupComponent = (
     onAtomSelect={onAtomSelect}
     disabledQueryElements={disabledQueryElements}
   />
-)
+);
 
 function GenericGroups({
   selected,
   onAtomSelect,
-  disabledQueryElements
+  disabledQueryElements,
 }: GenericGroupsProps) {
   return (
     <div className={classes.genericGroups}>
@@ -138,7 +138,7 @@ function GenericGroups({
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default GenericGroups
+export default GenericGroups;

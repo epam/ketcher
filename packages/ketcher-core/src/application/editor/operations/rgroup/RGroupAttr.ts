@@ -14,63 +14,63 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { BaseOperation } from '../base'
-import { OperationType } from '../OperationType'
-import { ReStruct } from '../../../render'
+import { BaseOperation } from '../base';
+import { OperationType } from '../OperationType';
+import { ReStruct } from '../../../render';
 
 type Data = {
-  rgid: any
-  attribute: any
-  value: any
-}
+  rgid: any;
+  attribute: any;
+  value: any;
+};
 
 export class RGroupAttr extends BaseOperation {
-  data: Data | null
-  data2: Data | null
+  data: Data | null;
+  data2: Data | null;
 
   constructor(rgroupId?: any, attribute?: any, value?: any) {
-    super(OperationType.R_GROUP_ATTR)
-    this.data = { rgid: rgroupId, attribute, value }
-    this.data2 = null
+    super(OperationType.R_GROUP_ATTR);
+    this.data = { rgid: rgroupId, attribute, value };
+    this.data2 = null;
   }
 
   execute(restruct: ReStruct) {
     if (this.data) {
-      const { rgid, attribute, value } = this.data
+      const { rgid, attribute, value } = this.data;
 
-      const rgp = restruct.molecule.rgroups.get(rgid)!
+      const rgp = restruct.molecule.rgroups.get(rgid)!;
 
       if (!rgp) {
-        return
+        return;
       }
 
       if (!this.data2) {
         this.data2 = {
           rgid,
           attribute,
-          value: rgp[attribute]
-        }
+          value: rgp[attribute],
+        };
       }
 
-      rgp[attribute] = value
+      rgp[attribute] = value;
 
-      BaseOperation.invalidateItem(restruct, 'rgroups', rgid)
+      BaseOperation.invalidateItem(restruct, 'rgroups', rgid);
     }
   }
 
   invert() {
-    const inverted = new RGroupAttr()
-    inverted.data = this.data2
-    inverted.data2 = this.data
-    return inverted
+    const inverted = new RGroupAttr();
+    inverted.data = this.data2;
+    inverted.data2 = this.data;
+    return inverted;
   }
 
   isDummy(restruct: ReStruct) {
     if (this.data) {
-      const { rgid, attribute, value } = this.data
-      const rgroup = restruct.molecule.rgroups.get(rgid)!
-      return rgroup[attribute] === value
+      const { rgid, attribute, value } = this.data;
+      const rgroup = restruct.molecule.rgroups.get(rgid)!;
+      return rgroup[attribute] === value;
     }
-    return false
+    return false;
   }
 }

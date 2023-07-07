@@ -14,10 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react';
 
-import FontFaceObserver from 'font-face-observer'
-import Select from './Select'
+import FontFaceObserver from 'font-face-observer';
+import Select from './Select';
 
 const commonFonts = [
   'Arial',
@@ -44,46 +44,46 @@ const commonFonts = [
   'Droid Sans',
   'Droid Serif',
   'Droid Sans Mono',
-  'Roboto'
-]
+  'Roboto',
+];
 
 function checkInSystem() {
   const availableFontsPromises = commonFonts.map((fontName) => {
-    const observer = new FontFaceObserver(fontName)
+    const observer = new FontFaceObserver(fontName);
     return observer.check().then(
       () => fontName,
       () => null
-    )
-  })
+    );
+  });
 
-  return Promise.all(availableFontsPromises)
+  return Promise.all(availableFontsPromises);
 }
 
 function SystemFonts(props) {
-  const [availableFonts, setAvailableFonts] = useState(null)
-  const { value, onChange } = props
+  const [availableFonts, setAvailableFonts] = useState(null);
+  const { value, onChange } = props;
   const onChangeCallback = useCallback(
     (value) => {
-      onChange(value)
+      onChange(value);
     },
     [onChange]
-  )
+  );
 
   useEffect(() => {
-    let mounted = true
+    let mounted = true;
     checkInSystem().then((results) => {
       const fonts = results
         .filter((i) => i !== null)
         .map((font) => {
-          return { value: `30px ${font}`, label: font }
-        })
+          return { value: `30px ${font}`, label: font };
+        });
       if (mounted) {
-        setAvailableFonts(fonts)
+        setAvailableFonts(fonts);
       }
-    })
+    });
 
-    return () => (mounted = false)
-  }, [])
+    return () => (mounted = false);
+  }, []);
 
   return (
     <Select
@@ -92,7 +92,7 @@ function SystemFonts(props) {
       disabled={availableFonts === null}
       options={availableFonts}
     />
-  )
+  );
 }
 
-export default SystemFonts
+export default SystemFonts;

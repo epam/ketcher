@@ -14,26 +14,26 @@
  * limitations under the License.
  ***************************************************************************/
 
-import clsx from 'clsx'
-import { GenItem } from 'ketcher-core'
-import classes from './ButtonGenSet.module.less'
+import clsx from 'clsx';
+import { GenItem } from 'ketcher-core';
+import classes from './ButtonGenSet.module.less';
 
 type ButtonGenSetProps = {
-  button: GenItem
-  onAtomSelect: (label: string, activateImmediately: boolean) => void
-  selected: (label: string) => boolean
-  disabled: boolean
-}
+  button: GenItem;
+  onAtomSelect: (label: string, activateImmediately: boolean) => void;
+  selected: (label: string) => boolean;
+  disabled: boolean;
+};
 
 const ButtonGenSet = ({
   button,
   onAtomSelect,
   selected,
-  disabled
+  disabled,
 }: ButtonGenSetProps) => {
   const titleText = disabled
     ? `${button.label} is disabled`
-    : button.description || button.label
+    : button.description || button.label;
 
   return (
     <button
@@ -43,14 +43,14 @@ const ButtonGenSet = ({
       disabled={disabled}
       className={clsx(
         {
-          [classes.selected]: selected(button.label)
+          [classes.selected]: selected(button.label),
         },
         classes.button
       )}
     >
       {button.label}
     </button>
-  )
-}
+  );
+};
 
-export default ButtonGenSet
+export default ButtonGenSet;

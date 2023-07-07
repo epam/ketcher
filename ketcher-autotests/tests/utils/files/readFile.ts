@@ -43,7 +43,7 @@ export async function openFileAndAddToCanvas(filename: string, page: Page) {
 
 export async function pasteFromClipboardAndAddToCanvas(
   page: Page,
-  fillStructure: string,
+  fillStructure: string
 ) {
   await selectTopPanelButton(TopPanelButton.Open, page);
   await page.getByText('Paste from clipboard').click();
@@ -55,7 +55,7 @@ export async function receiveMolFileComparisonData(
   page: Page,
   metaDataIndexes: number[],
   expectedMolFileName: string,
-  molFileType?: MolfileFormat,
+  molFileType?: MolfileFormat
 ) {
   const molFileExpected = fs
     .readFileSync(expectedMolFileName, 'utf8')
@@ -64,7 +64,7 @@ export async function receiveMolFileComparisonData(
   const molFile = (
     await page.evaluate(
       (fileType) => window.ketcher.getMolfile(fileType),
-      molFileType,
+      molFileType
     )
   )
     .split('\n')
@@ -77,7 +77,7 @@ export async function receiveRxnFileComparisonData(
   page: Page,
   metaDataIndexes: number[],
   expectedRxnFileName: string,
-  rxnFileType?: MolfileFormat,
+  rxnFileType?: MolfileFormat
 ) {
   const rxnFileExpected = fs
     .readFileSync(expectedRxnFileName, 'utf8')
@@ -86,7 +86,7 @@ export async function receiveRxnFileComparisonData(
   const rxnFile = (
     await page.evaluate(
       (fileType) => window.ketcher.getRxn(fileType),
-      rxnFileType,
+      rxnFileType
     )
   )
     .split('\n')
@@ -97,13 +97,13 @@ export async function receiveRxnFileComparisonData(
 
 export async function receiveKetFileComparisonData(
   page: Page,
-  expectedKetFileName: string,
+  expectedKetFileName: string
 ) {
   const ketFileExpected = fs
     .readFileSync(expectedKetFileName, 'utf8')
     .split('\n');
   const ketFile = (await page.evaluate(() => window.ketcher.getKet())).split(
-    '\n',
+    '\n'
   );
 
   return { ketFileExpected, ketFile };
@@ -123,7 +123,7 @@ export async function saveToFile(filename: string, data: string) {
     return await fs.promises.writeFile(
       `tests/test-data/${filename}`,
       data,
-      'utf-8',
+      'utf-8'
     );
   }
 }
@@ -139,7 +139,7 @@ export async function pasteFromClipboard(page: Page, fillValue: string) {
 export async function placeFileInTheMiddle(
   filename: string,
   page: Page,
-  delayInSeconds: number,
+  delayInSeconds: number
 ) {
   await selectTopPanelButton(TopPanelButton.Open, page);
   await openFile(filename, page);
@@ -148,7 +148,7 @@ export async function placeFileInTheMiddle(
   await delay(delayInSeconds);
   await takeEditorScreenshot(page);
   const cmlFile = (await page.evaluate(() => window.ketcher.getCml())).split(
-    '/n',
+    '/n'
   );
   return { cmlFile };
 }

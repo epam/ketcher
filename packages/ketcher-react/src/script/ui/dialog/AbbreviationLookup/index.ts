@@ -14,5 +14,5 @@
  * limitations under the License.
  ***************************************************************************/
 
-export * from './AbbreviationLookup'
-export * from './AbbreviationLookup.container'
+export * from './AbbreviationLookup';
+export * from './AbbreviationLookup.container';

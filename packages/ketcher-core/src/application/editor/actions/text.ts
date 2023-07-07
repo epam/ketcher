@@ -14,11 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { TextCreate, TextDelete, TextUpdate } from '../operations'
+import { TextCreate, TextDelete, TextUpdate } from '../operations';
 
-import { Action } from './action'
-import { ReStruct } from '../../render'
-import { Vec2 } from 'domain/entities'
+import { Action } from './action';
+import { ReStruct } from '../../render';
+import { Vec2 } from 'domain/entities';
 
 export function fromTextCreation(
   restruct: ReStruct,
@@ -26,9 +26,9 @@ export function fromTextCreation(
   position: Vec2,
   pos: Array<Vec2>
 ) {
-  const action = new Action()
-  action.addOp(new TextCreate(content, position, pos))
-  return action.perform(restruct)
+  const action = new Action();
+  action.addOp(new TextCreate(content, position, pos));
+  return action.perform(restruct);
 }
 
 export function fromTextUpdating(
@@ -36,15 +36,15 @@ export function fromTextUpdating(
   id: number,
   content: string
 ) {
-  const action = new Action()
-  action.addOp(new TextUpdate(id, content))
-  return action.perform(restruct)
+  const action = new Action();
+  action.addOp(new TextUpdate(id, content));
+  return action.perform(restruct);
 }
 
 export function fromTextDeletion(restruct: ReStruct, id: number) {
-  const action = new Action()
+  const action = new Action();
 
-  action.addOp(new TextDelete(id))
+  action.addOp(new TextDelete(id));
 
-  return action.perform(restruct)
+  return action.perform(restruct);
 }

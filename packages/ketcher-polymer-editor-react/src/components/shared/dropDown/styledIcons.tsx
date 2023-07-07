@@ -14,13 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
-import styled from '@emotion/styled'
+import styled from '@emotion/styled';
 
-import { Icon } from 'ketcher-react'
+import { Icon } from 'ketcher-react';
 
 const CheckMarkStyled = styled(Icon)`
   fill: #343434;
-`
+`;
 
 const ChevronStyled = styled(Icon)`
   user-select: none;
@@ -35,18 +35,18 @@ const ChevronStyled = styled(Icon)`
   top: calc(50% - 0.5em);
   pointer-events: none;
   fill: #5b6077;
-`
+`;
 
 const ChevronIcon = ({ className }) => (
   <ChevronStyled name="chevron" className={className} />
-)
+);
 
 const CheckMarkIcon = ({ isSelected }: { isSelected: boolean }) => {
   if (!isSelected) {
-    return null
+    return null;
   }
 
-  return <CheckMarkStyled name="check" />
-}
+  return <CheckMarkStyled name="check" />;
+};
 
-export { ChevronIcon, CheckMarkIcon }
+export { ChevronIcon, CheckMarkIcon };

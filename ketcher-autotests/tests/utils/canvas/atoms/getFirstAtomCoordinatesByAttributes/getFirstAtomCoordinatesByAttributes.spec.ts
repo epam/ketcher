@@ -34,7 +34,7 @@ test.skip(`
     page,
     ELEMENT_TITLE.HYDROGEN,
     offsetAtomX,
-    offsetAtomY,
+    offsetAtomY
   );
 
   const { x, y } = await getFirstAtomCoordinatesByAttributes(page, {
@@ -64,7 +64,7 @@ test.skip(`
     page,
     ELEMENT_TITLE.HYDROGEN,
     offsetAtomX,
-    offsetAtomY,
+    offsetAtomY
   );
 
   const { x, y } = await getFirstAtomCoordinatesByAttributes(page, {
@@ -88,7 +88,7 @@ test.skip(`should find first available atom for complex structures (with multipl
     page,
     ELEMENT_TITLE.BENZENE,
     offsetAtomX,
-    offsetAtomY,
+    offsetAtomY
   );
 
   const result = await getFirstAtomCoordinatesByAttributes(page, {
@@ -111,7 +111,7 @@ test.skip(`should find atom by custom attributes`, async ({ page }) => {
     page,
     ELEMENT_TITLE.HYDROGEN,
     offsetAtomX,
-    offsetAtomY,
+    offsetAtomY
   );
 
   const { x, y } = await getFirstAtomCoordinatesByAttributes(page, {
@@ -140,7 +140,7 @@ test.skip(`should throw an error STRUCTURE_NOT_FOUND_ERROR in case we pass empty
     page,
     ELEMENT_TITLE.HYDROGEN,
     offsetAtomX,
-    offsetAtomY,
+    offsetAtomY
   );
 
   await expect(async () => {
@@ -173,7 +173,7 @@ test.skip(`should throw an error when the position of the atom below / above top
     page,
     ELEMENT_TITLE.HYDROGEN,
     offsetAtomX,
-    offsetAtomY,
+    offsetAtomY
   );
 
   await expect(async () => {
@@ -202,7 +202,7 @@ test.skip(`should throw an error in case we pass incorrect attributes`, async ({
     page,
     ELEMENT_TITLE.HYDROGEN,
     offsetAtomX,
-    offsetAtomY,
+    offsetAtomY
   );
 
   await expect(async () => {

@@ -28,7 +28,7 @@ let point: { x: number; y: number };
 async function addNameToSuperatom(
   page: Page,
   fieldLabel: string,
-  superatomName: string,
+  superatomName: string
 ) {
   await page.locator('span').filter({ hasText: 'Data' }).click();
   await page.getByRole('option', { name: 'Superatom' }).click();
@@ -39,7 +39,7 @@ async function addNameToSuperatom(
 async function fillFieldByLabel(
   page: Page,
   fieldLabel: string,
-  superatomName: string,
+  superatomName: string
 ) {
   await page.getByLabel(fieldLabel).click();
   await page.getByLabel(fieldLabel).fill(superatomName);
@@ -47,7 +47,7 @@ async function fillFieldByLabel(
 
 async function contractExpandRemoveAbbreviation(
   page: Page,
-  superatomName: string,
+  superatomName: string
 ) {
   point = await getAtomByIndex(page, { label: 'C' }, 3);
   await page.mouse.click(point.x, point.y, { button: 'right' });

@@ -14,7 +14,7 @@ const HALF_DIVIDER = 2;
 
 export async function clickInTheMiddleOfTheScreen(
   page: Page,
-  button: 'left' | 'right' = 'left',
+  button: 'left' | 'right' = 'left'
 ) {
   const body = (await page.locator('body').boundingBox()) as BoundingBox;
   await page.mouse.click(
@@ -22,7 +22,7 @@ export async function clickInTheMiddleOfTheScreen(
     body.y + body?.height / HALF_DIVIDER,
     {
       button,
-    },
+    }
   );
 }
 
@@ -62,14 +62,14 @@ export async function dragMouseTo(x: number, y: number, page: Page) {
 export async function clickOnTheCanvas(
   page: Page,
   xOffsetFromCenter: number,
-  yOffsetFromCenter: number,
+  yOffsetFromCenter: number
 ) {
   const secondStructureCoordinates = await getCoordinatesOfTheMiddleOfTheScreen(
-    page,
+    page
   );
   await page.mouse.click(
     secondStructureCoordinates.x + xOffsetFromCenter,
-    secondStructureCoordinates.y + yOffsetFromCenter,
+    secondStructureCoordinates.y + yOffsetFromCenter
   );
 }
 
@@ -80,7 +80,7 @@ export async function clickByLink(page: Page, url: string) {
 export async function clickOnBond(
   page: Page,
   bondType: BondType,
-  bondNumber: number,
+  bondNumber: number
 ) {
   const point = await getBondByIndex(page, { type: bondType }, bondNumber);
   await page.mouse.click(point.x, point.y);
@@ -89,7 +89,7 @@ export async function clickOnBond(
 export async function clickOnAtom(
   page: Page,
   atomLabel: string,
-  atomNumber: number,
+  atomNumber: number
 ) {
   const point = await getAtomByIndex(page, { label: atomLabel }, atomNumber);
   await page.mouse.click(point.x, point.y);
@@ -98,7 +98,7 @@ export async function clickOnAtom(
 export async function doubleClickOnAtom(
   page: Page,
   atomLabel: string,
-  atomNumber: number,
+  atomNumber: number
 ) {
   const point = await getAtomByIndex(page, { label: atomLabel }, atomNumber);
   await page.mouse.dblclick(point.x, point.y);
@@ -107,7 +107,7 @@ export async function doubleClickOnAtom(
 export async function doubleClickOnBond(
   page: Page,
   bondType: BondType,
-  bondNumber: number,
+  bondNumber: number
 ) {
   const point = await getBondByIndex(page, { type: bondType }, bondNumber);
   await page.mouse.dblclick(point.x, point.y);
@@ -116,7 +116,7 @@ export async function doubleClickOnBond(
 export async function moveOnAtom(
   page: Page,
   atomLabel: string,
-  atomNumber: number,
+  atomNumber: number
 ) {
   const point = await getAtomByIndex(page, { label: atomLabel }, atomNumber);
   await page.mouse.move(point.x, point.y);
@@ -125,7 +125,7 @@ export async function moveOnAtom(
 export async function moveOnBond(
   page: Page,
   bondType: BondType,
-  bondNumber: number,
+  bondNumber: number
 ) {
   const point = await getBondByIndex(page, { type: bondType }, bondNumber);
   await page.mouse.move(point.x, point.y);

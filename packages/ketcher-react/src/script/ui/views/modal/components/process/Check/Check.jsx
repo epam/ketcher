@@ -14,15 +14,15 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Form, { Field } from '../../../../../component/form/form/form'
-import { Dialog } from '../../../../components'
-import ErrorsCheck from './components'
-import { check } from '../../../../../state/server'
-import { checkOpts } from '../../../../../state/options'
-import { connect } from 'react-redux'
-import style from './Check.module.less'
-import { useEffect, useState } from 'react'
-import { LoadingCircles } from 'src/script/ui/views/components/Spinner'
+import Form, { Field } from '../../../../../component/form/form/form';
+import { Dialog } from '../../../../components';
+import ErrorsCheck from './components';
+import { check } from '../../../../../state/server';
+import { checkOpts } from '../../../../../state/options';
+import { connect } from 'react-redux';
+import style from './Check.module.less';
+import { useEffect, useState } from 'react';
+import { LoadingCircles } from 'src/script/ui/views/components/Spinner';
 
 const checkSchema = {
   title: 'Check',
@@ -44,7 +44,7 @@ const checkSchema = {
           'rgroups',
           'chiral',
           '3d',
-          'chiral_flag'
+          'chiral_flag',
         ],
         enumNames: [
           'Valence',
@@ -57,30 +57,30 @@ const checkSchema = {
           'R-Groups',
           'Chirality',
           '3D Structure',
-          'Chiral flag'
-        ]
-      }
-    }
-  }
-}
+          'Chiral flag',
+        ],
+      },
+    },
+  },
+};
 
 const getFormattedDateString = (date) => {
-  const getFixedString = (num) => (num + '').padStart(2, 0)
+  const getFixedString = (num) => (num + '').padStart(2, 0);
   return `${getFixedString(date.getHours())}:${getFixedString(
     date.getMinutes()
   )}:${getFixedString(date.getSeconds())}  ${getFixedString(
     date.getDate()
   )}.${getFixedString(date.getMonth() + 1)}.${getFixedString(
     date.getFullYear()
-  )}`
-}
+  )}`;
+};
 
 const FooterContent = ({
   handleCheck,
   handleApply,
   onCancel,
   isStuctureChecking,
-  isCheckedWithNewSettings
+  isCheckedWithNewSettings,
 }) => {
   return (
     <div className={style.buttons}>
@@ -110,34 +110,34 @@ const FooterContent = ({
         </button>
       </div>
     </div>
-  )
-}
+  );
+};
 
 function CheckDialog(props) {
   const { formState, checkState, onCheck, onApply, onCancel, ...restProps } =
-    props
-  const { result = checkState, moleculeErrors } = formState
-  const [isStuctureChecking, setIsStructureChecking] = useState(false)
-  const [lastCheckDate, setLastCheckDate] = useState(null)
+    props;
+  const { result = checkState, moleculeErrors } = formState;
+  const [isStuctureChecking, setIsStructureChecking] = useState(false);
+  const [lastCheckDate, setLastCheckDate] = useState(null);
   const [isCheckedWithNewSettings, setIsCheckedWithNewSettings] =
-    useState(false)
+    useState(false);
 
-  const handleApply = () => onApply(result)
+  const handleApply = () => onApply(result);
 
   const handleCheck = () => {
-    setIsStructureChecking(false)
+    setIsStructureChecking(false);
     onCheck(result.checkOptions).then(() => {
-      setIsStructureChecking(true)
-      setLastCheckDate(new Date())
-      setIsCheckedWithNewSettings(true)
-    })
-  }
+      setIsStructureChecking(true);
+      setLastCheckDate(new Date());
+      setIsCheckedWithNewSettings(true);
+    });
+  };
 
-  const handleSettingsChange = () => setIsCheckedWithNewSettings(false)
+  const handleSettingsChange = () => setIsCheckedWithNewSettings(false);
 
   useEffect(() => {
-    handleCheck()
-  }, [])
+    handleCheck();
+  }, []);
 
   return (
     <Dialog
@@ -211,22 +211,22 @@ function CheckDialog(props) {
         </div>
       </Form>
     </Dialog>
-  )
+  );
 }
 
 const mapStateToProps = (state) => ({
   formState: state.modal.form,
-  checkState: state.options.check
-})
+  checkState: state.options.check,
+});
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
   onCheck: (opts) => dispatch(check(opts)).catch(ownProps.onCancel),
   onApply: (res) => {
-    dispatch(checkOpts(res))
-    ownProps.onOk(res)
-  }
-})
+    dispatch(checkOpts(res));
+    ownProps.onOk(res);
+  },
+});
 
-const Check = connect(mapStateToProps, mapDispatchToProps)(CheckDialog)
+const Check = connect(mapStateToProps, mapDispatchToProps)(CheckDialog);
 
-export default Check
+export default Check;

@@ -14,79 +14,79 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Editor from '../Editor'
-import { Vec2 } from 'ketcher-core'
-import { Tool } from './Tool'
+import Editor from '../Editor';
+import { Vec2 } from 'ketcher-core';
+import { Tool } from './Tool';
 
 class HandTool implements Tool {
-  private readonly editor: Editor
-  private begPos: Vec2 | null = null
-  private endPos: Vec2 | null = null
+  private readonly editor: Editor;
+  private begPos: Vec2 | null = null;
+  private endPos: Vec2 | null = null;
 
   constructor(editor) {
-    this.editor = editor
+    this.editor = editor;
     const { clientX, clientY } = this.editor.lastEvent || {
       clientX: 0,
-      clientY: 0
-    }
+      clientY: 0,
+    };
     this.editor.event.cursor.dispatch({
       status: 'enable',
-      cursorPosition: { clientX, clientY }
-    })
+      cursorPosition: { clientX, clientY },
+    });
   }
 
   mousedown(event) {
-    const { clientX, clientY } = event
-    this.begPos = new Vec2(clientX, clientY)
+    const { clientX, clientY } = event;
+    this.begPos = new Vec2(clientX, clientY);
   }
 
   mousemove(event) {
-    this.editor.event.cursor.dispatch({ status: 'move' })
+    this.editor.event.cursor.dispatch({ status: 'move' });
     this.editor.hover(
       this.editor.findItem(event, ['atoms', 'bonds'], null),
       null,
       event
-    )
+    );
 
     if (this.begPos == null) {
-      return
+      return;
     }
-    const { clientX, clientY } = event
-    this.endPos = new Vec2(clientX, clientY)
+    const { clientX, clientY } = event;
+    this.endPos = new Vec2(clientX, clientY);
 
-    const rnd = this.editor.render
+    const rnd = this.editor.render;
     const diff = Vec2.diff(this.endPos, this.begPos).scaled(
       1 / this.editor.zoom()
-    )
-    this.begPos = this.endPos
+    );
+    this.begPos = this.endPos;
 
-    rnd.ctab.translate(diff)
-    rnd.options.offset = rnd.options.offset.add(diff)
-    rnd.update(false)
+    rnd.ctab.translate(diff);
+    rnd.options.offset = rnd.options.offset.add(diff);
+    rnd.update(false);
   }
 
   mouseup(event) {
-    if (this.begPos === null) return
-    const rnd = this.editor.render
-    this.endPos = rnd.page2obj(event)
-    this.begPos = null
-    this.endPos = null
-    rnd.update(false)
+    if (this.begPos === null) return;
+    const rnd = this.editor.render;
+    this.endPos = rnd.page2obj(event);
+    this.begPos = null;
+    this.endPos = null;
+    rnd.update(false);
   }
 
   mouseover() {
-    this.editor.event.cursor.dispatch({ status: 'mouseover' })
+    this.editor.event.cursor.dispatch({ status: 'mouseover' });
   }
 
   mouseLeaveClientArea() {
-    this.begPos = null
-    this.endPos = null
-    this.editor.event.cursor.dispatch({ status: 'leave' })
+    this.begPos = null;
+    this.endPos = null;
+    this.editor.event.cursor.dispatch({ status: 'leave' });
   }
 
   cancel() {
-    this.editor.event.cursor.dispatch({ status: 'disable' })
+    this.editor.event.cursor.dispatch({ status: 'disable' });
   }
 }
 
-export default HandTool
+export default HandTool;

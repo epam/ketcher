@@ -14,43 +14,48 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { zoomList } from 'src/script/ui/action/zoom'
+import { zoomList } from 'src/script/ui/action/zoom';
 
 export class ScaleTransformer {
-  a: number
-  b: number
-  zoomList: number[]
+  a: number;
+  b: number;
+  zoomList: number[];
 
   constructor(inputMax: number) {
     // Exponential formula is y = a * (b ** x)
     // Where y is zoom, and x is position of input slider. Calculating a and b for our scale below
 
-    this.zoomList = zoomList
+    this.zoomList = zoomList;
 
     // Assuming input range min is 0 (it should be), x ** 0 is 1, so y = a * 1 at the beginning of scale
-    this.a = Math.min(...this.zoomList)
+    this.a = Math.min(...this.zoomList);
 
     // b is nth root of (y / a)
-    this.b = Math.pow(Math.max(...this.zoomList) / this.a, 1 / inputMax)
+    this.b = Math.pow(Math.max(...this.zoomList) / this.a, 1 / inputMax);
   }
 
   getSliderValue(zoom: number) {
     // Calculating x as logarighm of (y/a) to base b
-    const sliderValue = Math.round(Math.log2(zoom / this.a) / Math.log2(this.b))
-    return sliderValue
+    const sliderValue = Math.round(
+      Math.log2(zoom / this.a) / Math.log2(this.b)
+    );
+    return sliderValue;
   }
 
   getZoomValue(sliderValue: number) {
     // Exponential formula is y = a * (b ** x)
-    const computedZoomValue = this.a * this.b ** sliderValue
-    const zoomValue = this.pickNearestFromList(computedZoomValue, this.zoomList)
-    return zoomValue
+    const computedZoomValue = this.a * this.b ** sliderValue;
+    const zoomValue = this.pickNearestFromList(
+      computedZoomValue,
+      this.zoomList
+    );
+    return zoomValue;
   }
 
   private pickNearestFromList(value: number, list) {
     const nearest = list.reduce((prev, curr) =>
       Math.abs(curr - value) < Math.abs(prev - value) ? curr : prev
-    )
-    return nearest
+    );
+    return nearest;
   }
 }

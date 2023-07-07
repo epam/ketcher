@@ -14,11 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import styled from '@emotion/styled'
+import styled from '@emotion/styled';
 
 export const Container = styled.div`
   > svg {
     height: 100%;
     width: 100%;
   }
-`
+`;

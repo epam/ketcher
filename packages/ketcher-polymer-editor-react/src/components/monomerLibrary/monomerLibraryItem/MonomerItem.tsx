@@ -13,21 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { EmptyFunction } from 'helpers'
-import { useAppDispatch } from 'hooks'
-import { useState } from 'react'
-import { toggleMonomerFavorites } from 'state/library'
-import { Card } from './styles'
-import { IMonomerItemProps } from './types'
+import { EmptyFunction } from 'helpers';
+import { useAppDispatch } from 'hooks';
+import { useState } from 'react';
+import { toggleMonomerFavorites } from 'state/library';
+import { Card } from './styles';
+import { IMonomerItemProps } from './types';
 
 const MonomerItem = ({
   item,
   onMouseLeave,
   onMouseMove,
-  onClick = EmptyFunction
+  onClick = EmptyFunction,
 }: IMonomerItemProps) => {
-  const [favorite, setFavorite] = useState(item.favorite)
-  const dispatch = useAppDispatch()
+  const [favorite, setFavorite] = useState(item.favorite);
+  const dispatch = useAppDispatch();
 
   return (
     <Card
@@ -40,16 +40,16 @@ const MonomerItem = ({
       <span>{item.label}</span>
       <div
         onClick={(event) => {
-          event.stopPropagation()
-          setFavorite(!favorite)
-          dispatch(toggleMonomerFavorites(item))
+          event.stopPropagation();
+          setFavorite(!favorite);
+          dispatch(toggleMonomerFavorites(item));
         }}
         className={`star ${favorite ? 'visible' : ''}`}
       >
         ★
       </div>
     </Card>
-  )
-}
+  );
+};
 
-export { MonomerItem }
+export { MonomerItem };

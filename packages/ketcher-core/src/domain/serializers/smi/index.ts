@@ -14,5 +14,5 @@
  * limitations under the License.
  ***************************************************************************/
 
-export * from './smi.types'
-export * from './smiSerializer'
+export * from './smi.types';
+export * from './smiSerializer';

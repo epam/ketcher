@@ -26,7 +26,7 @@ import { getKet, getMolfile } from '@utils/formats';
 
 async function selectLabelDisplayAtStereogenicCenters(
   page: Page,
-  label: string,
+  label: string
 ) {
   await selectTopPanelButton(TopPanelButton.Settings, page);
   await page.getByText('Stereochemistry', { exact: true }).click();
@@ -76,7 +76,7 @@ async function editAbsoluteFlagText(page: Page, text: string) {
 async function selectRadioButtonForNewGroup(
   page: Page,
   selectRadioButton: string,
-  cancelChanges = false,
+  cancelChanges = false
 ) {
   await selectLeftPanelButton(LeftPanelButton.Stereochemistry, page);
   await page.getByLabel(selectRadioButton).check();

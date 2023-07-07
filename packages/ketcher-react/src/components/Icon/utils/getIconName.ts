@@ -14,9 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { IconName } from '../types'
-import { iconNameToIcon } from './iconNameToIcon'
+import { IconName } from '../types';
+import { iconNameToIcon } from './iconNameToIcon';
 
 export const getIconName = (name: string): IconName | null => {
-  return Object.hasOwn(iconNameToIcon, name) ? (name as IconName) : null
-}
+  return Object.hasOwn(iconNameToIcon, name) ? (name as IconName) : null;
+};

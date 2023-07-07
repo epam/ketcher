@@ -14,22 +14,22 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { ReStruct } from 'application/render'
-import { Vec2 } from 'domain/entities'
+import { ReStruct } from 'application/render';
+import { Vec2 } from 'domain/entities';
 import {
   RxnArrowAdd,
   RxnArrowDelete,
   RxnArrowResize,
   RxnPlusAdd,
-  RxnPlusDelete
-} from '../operations'
+  RxnPlusDelete,
+} from '../operations';
 
-import { Action } from './action'
+import { Action } from './action';
 
 export function fromArrowAddition(restruct, pos, mode) {
-  const action = new Action()
-  action.addOp(new RxnArrowAdd(pos, mode))
-  return action.perform(restruct)
+  const action = new Action();
+  action.addOp(new RxnArrowAdd(pos, mode));
+  return action.perform(restruct);
 }
 
 export function fromArrowResizing(
@@ -40,27 +40,27 @@ export function fromArrowResizing(
   anchor: Vec2 | null,
   isSnappingEnabled: boolean
 ) {
-  const action = new Action()
+  const action = new Action();
   action.addOp(
     new RxnArrowResize(id, d, current, anchor, false, isSnappingEnabled)
-  )
-  return action.perform(restruct)
+  );
+  return action.perform(restruct);
 }
 
 export function fromArrowDeletion(restruct, id) {
-  const action = new Action()
-  action.addOp(new RxnArrowDelete(id))
-  return action.perform(restruct)
+  const action = new Action();
+  action.addOp(new RxnArrowDelete(id));
+  return action.perform(restruct);
 }
 
 export function fromPlusAddition(restruct, pos) {
-  const action = new Action()
-  action.addOp(new RxnPlusAdd(pos).perform(restruct))
-  return action
+  const action = new Action();
+  action.addOp(new RxnPlusAdd(pos).perform(restruct));
+  return action;
 }
 
 export function fromPlusDeletion(restruct, id) {
-  const action = new Action()
-  action.addOp(new RxnPlusDelete(id))
-  return action.perform(restruct)
+  const action = new Action();
+  action.addOp(new RxnPlusDelete(id));
+  return action.perform(restruct);
 }

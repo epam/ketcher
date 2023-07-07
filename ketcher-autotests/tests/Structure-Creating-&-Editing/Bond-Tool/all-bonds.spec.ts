@@ -175,7 +175,7 @@ for (const bondType of Object.values(BondTypeName)) {
       point = await getAtomByIndex(
         page,
         { label: 'C' },
-        DELAY_IN_SECONDS.THREE,
+        DELAY_IN_SECONDS.THREE
       );
       await page.mouse.click(point.x, point.y);
 

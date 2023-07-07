@@ -14,95 +14,95 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Scale } from 'ketcher-core'
-import locate from './locate'
-import Editor from '../../Editor'
+import { Scale } from 'ketcher-core';
+import locate from './locate';
+import Editor from '../../Editor';
 
 class LassoHelper {
-  mode: any
-  editor: Editor
-  fragment: any
-  points: any
-  selection: any
+  mode: any;
+  editor: Editor;
+  fragment: any;
+  points: any;
+  selection: any;
 
   constructor(mode, editor, fragment) {
-    this.mode = mode
-    this.fragment = fragment
-    this.editor = editor
+    this.mode = mode;
+    this.fragment = fragment;
+    this.editor = editor;
   }
 
   getSelection() {
-    const rnd = this.editor.render
+    const rnd = this.editor.render;
 
     if (this.mode === 0) {
-      return locate.inPolygon(rnd.ctab, this.points)
+      return locate.inPolygon(rnd.ctab, this.points);
     }
 
     if (this.mode === 1) {
-      return locate.inRectangle(rnd.ctab, this.points[0], this.points[1])
+      return locate.inRectangle(rnd.ctab, this.points[0], this.points[1]);
     }
 
-    throw new Error('Selector mode unknown') // eslint-disable-line no-else-return
+    throw new Error('Selector mode unknown'); // eslint-disable-line no-else-return
   }
 
   begin(event) {
-    const rnd = this.editor.render
-    this.points = [rnd.page2obj(event)]
+    const rnd = this.editor.render;
+    this.points = [rnd.page2obj(event)];
     if (this.mode === 1) {
-      this.points.push(this.points[0])
+      this.points.push(this.points[0]);
     }
   }
 
   running() {
-    return !!this.points
+    return !!this.points;
   }
 
   addPoint(event) {
     if (!this.points) {
-      return null
+      return null;
     }
 
-    const rnd = this.editor.render
+    const rnd = this.editor.render;
 
     if (this.mode === 0) {
-      this.points.push(rnd.page2obj(event))
+      this.points.push(rnd.page2obj(event));
     } else if (this.mode === 1) {
-      this.points = [this.points[0], rnd.page2obj(event)]
+      this.points = [this.points[0], rnd.page2obj(event)];
     }
 
-    this.update()
-    return this.getSelection()
+    this.update();
+    return this.getSelection();
   }
 
   update() {
     if (this.selection) {
-      this.selection.remove()
-      this.selection = null
+      this.selection.remove();
+      this.selection = null;
     }
 
     if (this.points && this.points.length > 1) {
-      const rnd = this.editor.render
+      const rnd = this.editor.render;
       const dp = this.points.map((p) =>
         Scale.obj2scaled(p, rnd.options).add(rnd.options.offset)
-      )
+      );
       this.selection =
         this.mode === 0
           ? rnd.selectionPolygon(dp)
-          : rnd.selectionRectangle(dp[0], dp[1])
+          : rnd.selectionRectangle(dp[0], dp[1]);
     }
   }
 
   end() {
-    const ret = this.getSelection()
-    this.points = null
-    this.update()
-    return ret
+    const ret = this.getSelection();
+    this.points = null;
+    this.update();
+    return ret;
   }
 
   cancel() {
-    this.points = null
-    this.update()
+    this.points = null;
+    this.update();
   }
 }
 
-export default LassoHelper
+export default LassoHelper;

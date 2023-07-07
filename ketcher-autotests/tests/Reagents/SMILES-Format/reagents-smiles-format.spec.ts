@@ -20,7 +20,7 @@ import {
 async function getPreviewForSmiles(
   page: Page,
   formatName: string,
-  smileType: string,
+  smileType: string
 ) {
   await selectTopPanelButton(TopPanelButton.Save, page);
   await page.getByRole('button', { name: formatName }).click();
@@ -44,7 +44,7 @@ async function saveExtendedSmiles(page: Page) {
 test.describe('Reagents SMILES format', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(
-      'https://rc.test.lifescience.opensource.epam.com/KetcherDemo/index.html',
+      'https://rc.test.lifescience.opensource.epam.com/KetcherDemo/index.html'
     );
   });
 
@@ -65,7 +65,7 @@ test.describe('Reagents SMILES format', () => {
     await openFileAndAddToCanvas('benzene-arrow-benzene-reagent-nh3.ket', page);
 
     const smiFileExpected = await readFileContents(
-      'tests/test-data/daylight-smiles-expected.smi',
+      'tests/test-data/daylight-smiles-expected.smi'
     );
     const smiFile = await getSmiles(page);
     expect(smiFile).toEqual(smiFileExpected);
@@ -87,7 +87,7 @@ test.describe('Reagents SMILES format', () => {
     await openFileAndAddToCanvas('benzene-arrow-benzene-reagent-hcl.ket', page);
 
     const smiFileExpected = await readFileContents(
-      'tests/test-data/daylight-smiles-below-expected.smi',
+      'tests/test-data/daylight-smiles-below-expected.smi'
     );
     const smiFile = await getSmiles(page);
     expect(smiFile).toEqual(smiFileExpected);
@@ -150,7 +150,7 @@ test.describe('Reagents SMILES format', () => {
     */
     await pasteFromClipboardAndAddToCanvas(
       page,
-      'C1(C)C(O)=CC(S)=C(N)C=1>Cl>C1(Br)C(C)=CC(I)=C(O)C=1',
+      'C1(C)C(O)=CC(S)=C(N)C=1>Cl>C1(Br)C(C)=CC(I)=C(O)C=1'
     );
     await clickInTheMiddleOfTheScreen(page);
     await delay(DELAY_IN_SECONDS.ONE);
@@ -163,7 +163,7 @@ test.describe('Reagents SMILES format', () => {
     */
     await pasteFromClipboardAndAddToCanvas(
       page,
-      'CN(C(Cl)=O)C>Cl>c1ccc(OCCN(C(Cl)=O)C)cc1',
+      'CN(C(Cl)=O)C>Cl>c1ccc(OCCN(C(Cl)=O)C)cc1'
     );
     await clickInTheMiddleOfTheScreen(page);
     await delay(DELAY_IN_SECONDS.ONE);
@@ -182,7 +182,7 @@ test.describe('Reagents SMILES format', () => {
 test.describe('Reagents SMILES format', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(
-      'https://rc.test.lifescience.opensource.epam.com/KetcherDemo/index.html',
+      'https://rc.test.lifescience.opensource.epam.com/KetcherDemo/index.html'
     );
   });
 
@@ -194,7 +194,7 @@ test.describe('Reagents SMILES format', () => {
     await openFileAndAddToCanvas('benzene-arrow-benzene-reagent-nh3.ket', page);
 
     const smiFileExpected = await readFileContents(
-      'tests/test-data/daylight-smiles-expected.smi',
+      'tests/test-data/daylight-smiles-expected.smi'
     );
     const smiFile = await getSmiles(page);
     expect(smiFile).toEqual(smiFileExpected);
@@ -210,7 +210,7 @@ test.describe('Reagents SMILES format', () => {
     await openFileAndAddToCanvas('benzene-arrow-benzene-reagent-hcl.ket', page);
 
     const smiFileExpected = await readFileContents(
-      'tests/test-data/extended-smiles.cxsmi',
+      'tests/test-data/extended-smiles.cxsmi'
     );
     const smiFile = await getExtendedSmiles(page);
     expect(smiFile).toEqual(smiFileExpected);

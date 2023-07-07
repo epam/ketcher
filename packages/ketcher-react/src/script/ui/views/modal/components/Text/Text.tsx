@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import 'draft-js/dist/Draft.css'
+import 'draft-js/dist/Draft.css';
 
 import {
   DraftStyleMap,
@@ -24,144 +24,144 @@ import {
   RichUtils,
   convertFromRaw,
   convertToRaw,
-  getDefaultKeyBinding
-} from 'draft-js'
+  getDefaultKeyBinding,
+} from 'draft-js';
 import React, {
   useCallback,
   useState,
   useRef,
   MutableRefObject,
-  useEffect
-} from 'react'
+  useEffect,
+} from 'react';
 
-import { Dialog } from '../../../components'
-import { DialogParams } from '../../../components/Dialog/Dialog'
-import { FontControl } from './FontControl'
-import { SpecialSymbolsButton } from './SpecialSymbols/SpecialSymbolsButton'
-import { TextButton } from './TextButton'
-import { TextCommand } from 'ketcher-core'
-import classes from './Text.module.less'
-import { connect } from 'react-redux'
-import createStyles from 'draft-js-custom-styles'
-import { IconName } from 'components'
+import { Dialog } from '../../../components';
+import { DialogParams } from '../../../components/Dialog/Dialog';
+import { FontControl } from './FontControl';
+import { SpecialSymbolsButton } from './SpecialSymbols/SpecialSymbolsButton';
+import { TextButton } from './TextButton';
+import { TextCommand } from 'ketcher-core';
+import classes from './Text.module.less';
+import { connect } from 'react-redux';
+import createStyles from 'draft-js-custom-styles';
+import { IconName } from 'components';
 
-const { styles, customStyleFn } = createStyles(['font-size'])
+const { styles, customStyleFn } = createStyles(['font-size']);
 
 interface TextProps extends DialogParams {
-  formState: any
-  id?: any
-  content: string
-  position?: string
+  formState: any;
+  id?: any;
+  content: string;
+  position?: string;
 }
 
 const buttons: Array<{ command: TextCommand; name: IconName }> = [
   {
     command: TextCommand.Bold,
-    name: 'text-bold'
+    name: 'text-bold',
   },
   {
     command: TextCommand.Italic,
-    name: 'text-italic'
+    name: 'text-italic',
   },
   {
     command: TextCommand.Superscript,
-    name: 'text-superscript'
+    name: 'text-superscript',
   },
   {
     command: TextCommand.Subscript,
-    name: 'text-subscript'
-  }
-]
+    name: 'text-subscript',
+  },
+];
 
 const Text = (props: TextProps) => {
-  const { formState, position, id } = props
+  const { formState, position, id } = props;
   const rawContentState: RawDraftContentState | null = props.content
     ? (JSON.parse(props.content) as RawDraftContentState)
-    : null
+    : null;
   const [editorState, setEditorState] = useState<EditorState>(
     EditorState.moveFocusToEnd(
       EditorState.createWithContent(
         convertFromRaw(rawContentState || { blocks: [], entityMap: {} })
       )
     )
-  )
+  );
 
   const result = () => {
-    const content = editorState.getCurrentContent()
+    const content = editorState.getCurrentContent();
     return {
       content: content.hasText() ? JSON.stringify(convertToRaw(content)) : '',
       position,
-      id
-    }
-  }
+      id,
+    };
+  };
 
   const keyBindingFn = (e: React.KeyboardEvent): string | null => {
     if (e.key === 'Enter') {
-      e.stopPropagation()
+      e.stopPropagation();
     }
 
-    return getDefaultKeyBinding(e)
-  }
+    return getDefaultKeyBinding(e);
+  };
 
   const onContentChange = (state: EditorState): void => {
-    setEditorState(state)
-  }
+    setEditorState(state);
+  };
 
-  const currentStyle = editorState.getCurrentInlineStyle()
+  const currentStyle = editorState.getCurrentInlineStyle();
 
   const toggleStyle = useCallback(
     (command: TextCommand): void => {
-      let newEditorState: EditorState = editorState
+      let newEditorState: EditorState = editorState;
       switch (command) {
         case TextCommand.Subscript: {
           if (currentStyle.has(TextCommand.Superscript)) {
             newEditorState = RichUtils.toggleInlineStyle(
               newEditorState,
               TextCommand.Superscript
-            )
+            );
           }
-          break
+          break;
         }
         case TextCommand.Superscript: {
           if (currentStyle.has(TextCommand.Subscript)) {
             newEditorState = RichUtils.toggleInlineStyle(
               newEditorState,
               TextCommand.Subscript
-            )
+            );
           }
-          break
+          break;
         }
       }
-      newEditorState = RichUtils.toggleInlineStyle(newEditorState, command)
+      newEditorState = RichUtils.toggleInlineStyle(newEditorState, command);
 
-      setEditorState(newEditorState)
+      setEditorState(newEditorState);
     },
     [currentStyle, editorState]
-  )
+  );
 
   const customStyleMap: DraftStyleMap = {
     SUBSCRIPT: {
       verticalAlign: 'sub',
       transform: 'scale(0.7)',
-      transformOrigin: 'left'
+      transformOrigin: 'left',
     },
     SUPERSCRIPT: {
       verticalAlign: 'super',
       transform: 'scale(0.7)',
       transformOrigin: 'left',
-      lineHeight: 0
-    }
-  }
+      lineHeight: 0,
+    },
+  };
 
-  const refEditor = useRef() as MutableRefObject<Editor>
+  const refEditor = useRef() as MutableRefObject<Editor>;
   const setFocusInEditor = useCallback(() => {
-    refEditor.current.focus()
-  }, [refEditor])
+    refEditor.current.focus();
+  }, [refEditor]);
 
   // set focut on component mount
   useEffect(() => {
-    setFocusInEditor()
-  }, [setFocusInEditor])
+    setFocusInEditor();
+  }, [setFocusInEditor]);
 
   return (
     <Dialog
@@ -183,7 +183,7 @@ const Text = (props: TextProps) => {
               active={currentStyle.has(button.command)}
               toggleStyle={toggleStyle}
             />
-          )
+          );
         })}
         <SpecialSymbolsButton
           editorState={editorState}
@@ -207,7 +207,7 @@ const Text = (props: TextProps) => {
         ref={refEditor}
       />
     </Dialog>
-  )
-}
+  );
+};
 
-export default connect((store) => ({ formState: (store as any).modal }))(Text)
+export default connect((store) => ({ formState: (store as any).modal }))(Text);

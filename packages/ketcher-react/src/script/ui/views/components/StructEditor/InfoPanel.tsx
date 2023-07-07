@@ -14,19 +14,19 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useState, useEffect, FC } from 'react'
-import { Scale, Vec2, Render, Struct, SGroup } from 'ketcher-core'
+import { useState, useEffect, FC } from 'react';
+import { Scale, Vec2, Render, Struct, SGroup } from 'ketcher-core';
 
-import SGroupDataRender from './SGroupDataRender'
-import { calculateScrollOffsetX, calculateScrollOffsetY } from './helpers'
-import { functionGroupInfoSelector } from '../../../state/functionalGroups/selectors'
-import { connect } from 'react-redux'
-import clsx from 'clsx'
-import { StructRender } from 'components'
+import SGroupDataRender from './SGroupDataRender';
+import { calculateScrollOffsetX, calculateScrollOffsetY } from './helpers';
+import { functionGroupInfoSelector } from '../../../state/functionalGroups/selectors';
+import { connect } from 'react-redux';
+import clsx from 'clsx';
+import { StructRender } from 'components';
 
-import classes from './InfoPanel.module.less'
+import classes from './InfoPanel.module.less';
 
-const HOVER_PANEL_PADDING = 20
+const HOVER_PANEL_PADDING = 20;
 
 function getPanelPosition(
   clientX: number,
@@ -34,73 +34,73 @@ function getPanelPosition(
   render: Render,
   sGroup: SGroup
 ): [Vec2, Vec2] {
-  let width = 0
-  let height = 0
-  let x = 0
-  let y = 0
+  let width = 0;
+  let height = 0;
+  let x = 0;
+  let y = 0;
 
   if (sGroup) {
     // calculate width and height
-    const groupBoundingBox = sGroup.areas[0]
-    const start = Scale.obj2scaled(groupBoundingBox.p0, render.options)
-    const end = Scale.obj2scaled(groupBoundingBox.p1, render.options)
-    width = end.x - start.x
-    height = end.y - start.y
+    const groupBoundingBox = sGroup.areas[0];
+    const start = Scale.obj2scaled(groupBoundingBox.p0, render.options);
+    const end = Scale.obj2scaled(groupBoundingBox.p1, render.options);
+    width = end.x - start.x;
+    height = end.y - start.y;
     // calculate initial position
-    const { position } = sGroup.getContractedPosition(render.ctab.molecule)
+    const { position } = sGroup.getContractedPosition(render.ctab.molecule);
     const panelPosition = Scale.obj2scaled(position, {
-      scale: render.options.scale * render.options.zoom
-    })
-    x = panelPosition.x - width / 2 - HOVER_PANEL_PADDING
-    y = panelPosition.y + HOVER_PANEL_PADDING
+      scale: render.options.scale * render.options.zoom,
+    });
+    x = panelPosition.x - width / 2 - HOVER_PANEL_PADDING;
+    y = panelPosition.y + HOVER_PANEL_PADDING;
     // adjust position to keep inside viewport
-    const viewportRightLimit = render?.clientArea?.clientWidth - width / 2
-    const viewportLeftLimit = HOVER_PANEL_PADDING * 2 + width / 2
-    const viewportBottomLimit = render?.clientArea?.clientHeight - height
+    const viewportRightLimit = render?.clientArea?.clientWidth - width / 2;
+    const viewportLeftLimit = HOVER_PANEL_PADDING * 2 + width / 2;
+    const viewportBottomLimit = render?.clientArea?.clientHeight - height;
     if (clientX > viewportRightLimit) {
-      x = panelPosition.x - width - HOVER_PANEL_PADDING
+      x = panelPosition.x - width - HOVER_PANEL_PADDING;
     } else if (clientX < viewportLeftLimit) {
-      x = panelPosition.x - HOVER_PANEL_PADDING
+      x = panelPosition.x - HOVER_PANEL_PADDING;
     }
     if (clientY > viewportBottomLimit) {
-      y = panelPosition.y - height - HOVER_PANEL_PADDING * 3
+      y = panelPosition.y - height - HOVER_PANEL_PADDING * 3;
     }
     // adjust position to current scroll offset
-    x += calculateScrollOffsetX(render)
-    y += calculateScrollOffsetY(render)
+    x += calculateScrollOffsetX(render);
+    y += calculateScrollOffsetY(render);
   }
 
-  return [new Vec2(x, y), new Vec2(width, height)]
+  return [new Vec2(x, y), new Vec2(width, height)];
 }
 interface InfoPanelProps {
-  clientX: number | undefined
-  clientY: number | undefined
-  render: Render
-  groupStruct: Struct
-  sGroup: SGroup
-  className?: string
+  clientX: number | undefined;
+  clientY: number | undefined;
+  render: Render;
+  groupStruct: Struct;
+  sGroup: SGroup;
+  className?: string;
 }
 
 const InfoPanel: FC<InfoPanelProps> = (props) => {
-  const { clientX, clientY, render, className, groupStruct, sGroup } = props
-  const [molecule, setMolecule] = useState<Struct | null>(null)
-  const [sGroupData, setSGroupData] = useState<string | null>(null)
-  const groupName = sGroup?.data?.name
+  const { clientX, clientY, render, className, groupStruct, sGroup } = props;
+  const [molecule, setMolecule] = useState<Struct | null>(null);
+  const [sGroupData, setSGroupData] = useState<string | null>(null);
+  const groupName = sGroup?.data?.name;
 
   useEffect(() => {
     if (sGroup && SGroup.isDataSGroup(sGroup)) {
-      setSGroupData(`${sGroup.data?.fieldName}=${sGroup.data?.fieldValue}`)
+      setSGroupData(`${sGroup.data?.fieldName}=${sGroup.data?.fieldValue}`);
     } else {
-      setSGroupData(null)
+      setSGroupData(null);
     }
-  }, [groupStruct, sGroup])
+  }, [groupStruct, sGroup]);
 
   useEffect(() => {
-    setMolecule(groupStruct ? groupStruct.clone() : null)
-  }, [groupName, groupStruct])
+    setMolecule(groupStruct ? groupStruct.clone() : null);
+  }, [groupName, groupStruct]);
 
   const nonTooltipSGroup =
-    !sGroup || SGroup.isMulSGroup(sGroup) || SGroup.isSRUSGroup(sGroup)
+    !sGroup || SGroup.isMulSGroup(sGroup) || SGroup.isSRUSGroup(sGroup);
 
   if (
     nonTooltipSGroup ||
@@ -108,21 +108,21 @@ const InfoPanel: FC<InfoPanelProps> = (props) => {
     clientX === undefined ||
     clientY === undefined
   ) {
-    return null
+    return null;
   }
 
-  const [position, size] = getPanelPosition(clientX, clientY, render, sGroup)
-  const { x, y } = position
-  const width = size.x
-  const height = size.y
+  const [position, size] = getPanelPosition(clientX, clientY, render, sGroup);
+  const { x, y } = position;
+  const width = size.x;
+  const height = size.y;
 
-  const showMolecule = molecule && sGroup && !SGroup.isDataSGroup(sGroup)
+  const showMolecule = molecule && sGroup && !SGroup.isDataSGroup(sGroup);
 
   return showMolecule ? (
     <div
       style={{
         left: x + 'px',
-        top: y + 'px'
+        top: y + 'px',
       }}
       className={clsx(classes.infoPanel, className)}
     >
@@ -136,7 +136,7 @@ const InfoPanel: FC<InfoPanelProps> = (props) => {
           cachePrefix: 'infoPanel',
           needCache: false,
           width,
-          height
+          height,
         }}
       />
     </div>
@@ -150,13 +150,13 @@ const InfoPanel: FC<InfoPanelProps> = (props) => {
       sGroupData={sGroupData}
       className={className}
     />
-  )
-}
+  );
+};
 
 export default connect((store: any) => ({
   clientX: functionGroupInfoSelector(store)?.event?.clientX,
   clientY: functionGroupInfoSelector(store)?.event?.clientY,
   groupStruct: functionGroupInfoSelector(store)?.groupStruct || null,
   sGroup: functionGroupInfoSelector(store)?.sGroup || null,
-  render: store.editor?.render?.ctab?.render
-}))(InfoPanel)
+  render: store.editor?.render?.ctab?.render,
+}))(InfoPanel);

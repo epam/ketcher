@@ -14,12 +14,12 @@ import { AtomAttributes, SORT_TYPE, AtomXy } from '@utils/canvas/types';
  */
 export async function getBottomAtomByAttributes(
   page: Page,
-  attributes: AtomAttributes,
+  attributes: AtomAttributes
 ): Promise<AtomXy> {
   const result = await getAtomsCoordinatesByAttributes(
     page,
     attributes,
-    SORT_TYPE.DESC_Y,
+    SORT_TYPE.DESC_Y
   );
 
   return result[0];

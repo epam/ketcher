@@ -14,23 +14,23 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { ElementWithDropdown } from './ElementWithDropdown'
-import { TopToolbarIconButton } from './TopToolbarIconButton'
+import { ElementWithDropdown } from './ElementWithDropdown';
+import { TopToolbarIconButton } from './TopToolbarIconButton';
 
 interface ExternalFuncProps {
-  isCollapsed: boolean
-  onLayout: () => void
-  onClean: () => void
-  onAromatize: () => void
-  onDearomatize: () => void
-  onCalculate: () => void
-  onCheck: () => void
-  onAnalyse: () => void
-  onMiew: () => void
-  disabledButtons: string[]
-  hiddenButtons: string[]
-  indigoVerification: boolean
-  shortcuts: { [key in string]: string }
+  isCollapsed: boolean;
+  onLayout: () => void;
+  onClean: () => void;
+  onAromatize: () => void;
+  onDearomatize: () => void;
+  onCalculate: () => void;
+  onCheck: () => void;
+  onAnalyse: () => void;
+  onMiew: () => void;
+  disabledButtons: string[];
+  hiddenButtons: string[];
+  indigoVerification: boolean;
+  shortcuts: { [key in string]: string };
 }
 
 export const ExternalFuncControls = ({
@@ -46,50 +46,50 @@ export const ExternalFuncControls = ({
   disabledButtons,
   indigoVerification,
   hiddenButtons,
-  shortcuts
+  shortcuts,
 }: ExternalFuncProps) => {
   const externalFuncButtons = [
     {
       name: 'arom',
       title: 'Aromatize',
-      handler: onAromatize
+      handler: onAromatize,
     },
     {
       name: 'dearom',
       title: 'Dearomatize',
-      handler: onDearomatize
+      handler: onDearomatize,
     },
     {
       name: 'layout',
       title: 'Layout',
-      handler: onLayout
+      handler: onLayout,
     },
     {
       name: 'clean',
       title: 'Clean Up',
-      handler: onClean
+      handler: onClean,
     },
     {
       name: 'cip',
       title: 'Calculate CIP',
-      handler: onCalculate
+      handler: onCalculate,
     },
     {
       name: 'check',
       title: 'Check Structure',
-      handler: onCheck
+      handler: onCheck,
     },
     {
       name: 'analyse',
       title: 'Calculated Values',
-      handler: onAnalyse
+      handler: onAnalyse,
     },
     {
       name: 'miew',
       title: '3D Viewer',
-      handler: onMiew
-    }
-  ]
+      handler: onMiew,
+    },
+  ];
 
   const getButtonElement = (button) => (
     <TopToolbarIconButton
@@ -101,15 +101,15 @@ export const ExternalFuncControls = ({
       isHidden={hiddenButtons.includes(button.name)}
       key={button.name}
     />
-  )
+  );
 
   const firstButtonObj = externalFuncButtons.find(
     (button) => !hiddenButtons.includes(button.name)
-  )
+  );
 
   const collapsibleElements = externalFuncButtons
     .filter((button) => button !== firstButtonObj)
-    .map((button) => getButtonElement(button))
+    .map((button) => getButtonElement(button));
 
   if (isCollapsed) {
     return (
@@ -117,7 +117,7 @@ export const ExternalFuncControls = ({
         topElement={getButtonElement(firstButtonObj)}
         dropDownElements={collapsibleElements}
       />
-    )
+    );
   }
 
   return (
@@ -125,5 +125,5 @@ export const ExternalFuncControls = ({
       {firstButtonObj && getButtonElement(firstButtonObj)}
       {<>{collapsibleElements}</>}
     </>
-  )
-}
+  );
+};

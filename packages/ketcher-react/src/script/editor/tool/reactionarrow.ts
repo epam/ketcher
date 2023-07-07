@@ -20,56 +20,56 @@ import {
   fromArrowResizing,
   fromMultipleMove,
   RxnArrowMode,
-  Vec2
-} from 'ketcher-core'
-import assert from 'assert'
-import Editor from '../Editor'
-import { Tool } from './Tool'
+  Vec2,
+} from 'ketcher-core';
+import assert from 'assert';
+import Editor from '../Editor';
+import { Tool } from './Tool';
 
 class ReactionArrowTool implements Tool {
-  private readonly mode: RxnArrowMode
-  private readonly editor: Editor
-  private dragCtx: any
+  private readonly mode: RxnArrowMode;
+  private readonly editor: Editor;
+  private dragCtx: any;
 
   constructor(editor, mode) {
-    this.mode = mode
-    this.editor = editor
-    this.editor.selection(null)
+    this.mode = mode;
+    this.editor = editor;
+    this.editor.selection(null);
   }
 
   private get render() {
-    return this.editor.render
+    return this.editor.render;
   }
 
   private get reStruct() {
-    return this.render.ctab
+    return this.render.ctab;
   }
 
   mousedown(event) {
-    const p0 = this.render.page2obj(event)
-    this.dragCtx = { p0 }
+    const p0 = this.render.page2obj(event);
+    this.dragCtx = { p0 };
 
-    const ci = this.editor.findItem(event, ['rxnArrows'])
+    const ci = this.editor.findItem(event, ['rxnArrows']);
 
     if (ci && ci.map === 'rxnArrows') {
-      this.editor.hover(null)
-      this.editor.selection({ rxnArrows: [ci.id] })
-      this.dragCtx.ci = ci
+      this.editor.hover(null);
+      this.editor.selection({ rxnArrows: [ci.id] });
+      this.dragCtx.ci = ci;
     } else {
-      this.dragCtx.isNew = true
-      this.editor.selection(null)
+      this.dragCtx.isNew = true;
+      this.editor.selection(null);
     }
   }
 
   mousemove(event: PointerEvent) {
     if (this.dragCtx) {
-      const current = this.render.page2obj(event)
-      const diff = current.sub(this.dragCtx.p0)
+      const current = this.render.page2obj(event);
+      const diff = current.sub(this.dragCtx.p0);
 
       if (this.dragCtx.ci) {
-        this.dragCtx.itemId = this.dragCtx.ci.id
+        this.dragCtx.itemId = this.dragCtx.ci.id;
         if (this.dragCtx.action) {
-          this.dragCtx.action.perform(this.reStruct)
+          this.dragCtx.action.perform(this.reStruct);
         }
 
         if (!this.dragCtx.ci.ref) {
@@ -77,10 +77,10 @@ class ReactionArrowTool implements Tool {
             this.reStruct,
             this.editor.selection() || {},
             diff
-          )
+          );
         } else {
-          this.updateResizingState(this.dragCtx.itemId, true)
-          const isSnappingEnabled = !event.ctrlKey
+          this.updateResizingState(this.dragCtx.itemId, true);
+          const isSnappingEnabled = !event.ctrlKey;
           this.dragCtx.action = fromArrowResizing(
             this.reStruct,
             this.dragCtx.itemId,
@@ -88,27 +88,27 @@ class ReactionArrowTool implements Tool {
             current,
             this.dragCtx.ci.ref,
             isSnappingEnabled
-          )
+          );
         }
-        this.editor.update(this.dragCtx.action, true)
+        this.editor.update(this.dragCtx.action, true);
       } else {
         if (!this.dragCtx.action) {
           const action = fromArrowAddition(
             this.reStruct,
             [this.dragCtx.p0, this.dragCtx.p0],
             this.mode
-          )
+          );
           // TODO: need to rework  actions/operations logic
-          const addOperation = action.operations[0]
-          this.dragCtx.itemId = addOperation.data.id
-          this.dragCtx.action = action
-          this.editor.update(this.dragCtx.action, true)
+          const addOperation = action.operations[0];
+          this.dragCtx.itemId = addOperation.data.id;
+          this.dragCtx.action = action;
+          this.editor.update(this.dragCtx.action, true);
         } else {
-          this.dragCtx.action.perform(this.reStruct)
+          this.dragCtx.action.perform(this.reStruct);
         }
 
-        this.updateResizingState(this.dragCtx.itemId, true)
-        const isSnappingEnabled = !event.ctrlKey
+        this.updateResizingState(this.dragCtx.itemId, true);
+        const isSnappingEnabled = !event.ctrlKey;
         this.dragCtx.action = fromArrowResizing(
           this.reStruct,
           this.dragCtx.itemId,
@@ -116,95 +116,95 @@ class ReactionArrowTool implements Tool {
           current,
           null,
           isSnappingEnabled
-        )
-        this.editor.update(this.dragCtx.action, true)
+        );
+        this.editor.update(this.dragCtx.action, true);
       }
     } else {
-      const items = this.editor.findItem(event, ['rxnArrows'])
-      this.editor.hover(items, null, event)
+      const items = this.editor.findItem(event, ['rxnArrows']);
+      this.editor.hover(items, null, event);
     }
   }
 
   mouseup(event) {
     if (!this.dragCtx) {
-      return true
+      return true;
     }
 
     if (this.dragCtx.action) {
       if (this.dragCtx.isNew) {
-        this.addNewArrowWithDragging()
+        this.addNewArrowWithDragging();
       } else {
-        this.updateResizingState(this.dragCtx.itemId, false)
-        this.editor.update(true)
+        this.updateResizingState(this.dragCtx.itemId, false);
+        this.editor.update(true);
       }
-      this.editor.update(this.dragCtx.action)
+      this.editor.update(this.dragCtx.action);
     } else {
-      this.addNewArrowWithClicking(event)
+      this.addNewArrowWithClicking(event);
     }
-    delete this.dragCtx
-    return true
+    delete this.dragCtx;
+    return true;
   }
 
   private addNewArrowWithDragging() {
-    const item = this.reStruct.molecule.rxnArrows.get(this.dragCtx.itemId)
-    assert(item != null)
-    let [p0, p1] = item.pos
-    p1 = getDefaultLengthPos(p0, p1)
+    const item = this.reStruct.molecule.rxnArrows.get(this.dragCtx.itemId);
+    assert(item != null);
+    let [p0, p1] = item.pos;
+    p1 = getDefaultLengthPos(p0, p1);
     this.editor.update(
       fromArrowDeletion(this.reStruct, this.dragCtx.itemId),
       true
-    )
-    this.dragCtx.action = fromArrowAddition(this.reStruct, [p0, p1], this.mode)
+    );
+    this.dragCtx.action = fromArrowAddition(this.reStruct, [p0, p1], this.mode);
   }
 
   private addNewArrowWithClicking(event) {
-    const ci = this.editor.findItem(event, ['rxnArrows'])
-    const p0 = this.render.page2obj(event)
+    const ci = this.editor.findItem(event, ['rxnArrows']);
+    const p0 = this.render.page2obj(event);
 
     if (!ci) {
-      const pos = [p0, getDefaultLengthPos(p0, null)]
-      this.editor.update(fromArrowAddition(this.reStruct, pos, this.mode))
+      const pos = [p0, getDefaultLengthPos(p0, null)];
+      this.editor.update(fromArrowAddition(this.reStruct, pos, this.mode));
     }
   }
 
   private updateResizingState(arrowId: number, isResizing: boolean) {
-    const reArrow = this.reStruct.rxnArrows.get(arrowId)
-    assert(reArrow != null)
-    reArrow.isResizing = isResizing
+    const reArrow = this.reStruct.rxnArrows.get(arrowId);
+    assert(reArrow != null);
+    reArrow.isResizing = isResizing;
   }
 }
 
 function getArrowParams(x1, y1, x2, y2) {
-  const length = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
-  const angle = calcAngle(x2, y2, x1, y1)
-  return { length, angle }
+  const length = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
+  const angle = calcAngle(x2, y2, x1, y1);
+  return { length, angle };
 }
 
 function getDefaultLengthPos(pos1, pos2) {
-  const minLength = 1.5
-  const defaultLength = 2
+  const minLength = 1.5;
+  const defaultLength = 2;
   if (!pos2) {
-    return new Vec2(pos1.x + defaultLength, pos1.y)
+    return new Vec2(pos1.x + defaultLength, pos1.y);
   }
-  const arrowParams = getArrowParams(pos1.x, pos1.y, pos2.x, pos2.y)
+  const arrowParams = getArrowParams(pos1.x, pos1.y, pos2.x, pos2.y);
   if (arrowParams.length <= minLength) {
-    const newPos = new Vec2()
+    const newPos = new Vec2();
     newPos.x =
-      pos1.x + defaultLength * Math.cos((Math.PI * arrowParams.angle) / 180)
+      pos1.x + defaultLength * Math.cos((Math.PI * arrowParams.angle) / 180);
     newPos.y =
-      pos1.y + defaultLength * Math.sin((Math.PI * arrowParams.angle) / 180)
-    return newPos
+      pos1.y + defaultLength * Math.sin((Math.PI * arrowParams.angle) / 180);
+    return newPos;
   }
-  return pos2
+  return pos2;
 }
 
 function calcAngle(x1, y1, x2, y2) {
-  const x = x1 - x2
-  const y = y1 - y2
+  const x = x1 - x2;
+  const y = y1 - y2;
   if (!x && !y) {
-    return 0
+    return 0;
   }
-  return (180 + (Math.atan2(-y, -x) * 180) / Math.PI + 360) % 360
+  return (180 + (Math.atan2(-y, -x) * 180) / Math.PI + 360) % 360;
 }
 
-export default ReactionArrowTool
+export default ReactionArrowTool;

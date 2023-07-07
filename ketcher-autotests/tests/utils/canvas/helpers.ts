@@ -18,7 +18,7 @@ export async function drawElementByTitle(
   page: Page,
   elementTitle: string = ELEMENT_TITLE.HYDROGEN,
   offsetX = 0,
-  offsetY = 0,
+  offsetY = 0
 ) {
   const leftBarWidth = await getLeftToolBarWidth(page);
   const topBarHeight = await getTopToolBarHeight(page);
@@ -79,7 +79,7 @@ export async function getCoordinatesTopAtomOfBenzeneRing(page: Page) {
 
 export async function takeEditorScreenshot(
   page: Page,
-  options?: { masks?: Locator[] },
+  options?: { masks?: Locator[] }
 ) {
   const editor = page.locator('[class*="App-module_canvas"]');
   await expect(editor).toHaveScreenshot({ mask: options?.masks });
@@ -104,7 +104,7 @@ export async function takeLeftToolbarScreenshot(page: Page) {
  **/
 export async function getEditorScreenshot(
   page: Page,
-  options?: LocatorScreenshotOptions,
+  options?: LocatorScreenshotOptions
 ) {
   return await page.locator('[class*="App-module_canvas"]').screenshot(options);
 }
@@ -112,7 +112,7 @@ export async function getEditorScreenshot(
 export async function delay(seconds = 1) {
   const msInSecond = 1000;
   return new Promise((resolve) =>
-    setTimeout(() => resolve(true), seconds * msInSecond),
+    setTimeout(() => resolve(true), seconds * msInSecond)
   );
 }
 

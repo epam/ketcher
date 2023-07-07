@@ -7,7 +7,7 @@ test('getting molV3000 from Indigo', async ({ request }) => {
     `https://rc.test.lifescience.opensource.epam.com/v2/indigo/convert`,
     {
       data,
-    },
+    }
   );
   const molV3000RFromIndigo = await molV3000Result.json();
 

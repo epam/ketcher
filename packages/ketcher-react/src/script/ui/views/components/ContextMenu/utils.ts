@@ -1,4 +1,4 @@
-import { difference } from 'lodash'
+import { difference } from 'lodash';
 
 /**
  * Remove the word `bond` out of the title
@@ -7,8 +7,8 @@ import { difference } from 'lodash'
  * formatTitle('Single Bond') === 'Single'
  */
 export const formatTitle = (title: string) => {
-  return title.slice(0, -5)
-}
+  return title.slice(0, -5);
+};
 
 /**
  * Get bond names from default export of `src/script/ui/action/tools.js`
@@ -18,16 +18,16 @@ export const formatTitle = (title: string) => {
  * 'bond-singledouble', 'bond-singlearomatic', 'bond-doublearomatic', 'bond-dative']`
  */
 export const getBondNames = (tools) => {
-  return Object.keys(tools).filter((key) => key.startsWith('bond-'))
-}
+  return Object.keys(tools).filter((key) => key.startsWith('bond-'));
+};
 
 export const queryBondNames = [
   'bond-any',
   'bond-aromatic',
   'bond-singledouble',
   'bond-singlearomatic',
-  'bond-doublearomatic'
-]
+  'bond-doublearomatic',
+];
 
 /**
  * Get bond names except for query bonds
@@ -36,11 +36,11 @@ export const queryBondNames = [
  * 'bond-crossed', 'bond-triple', 'bond-aromatic', 'bond-hydrogen', 'bond-dative']`
  */
 export const getNonQueryBondNames = (tools) => {
-  const allBondNames = getBondNames(tools)
-  return difference(allBondNames, queryBondNames)
-}
+  const allBondNames = getBondNames(tools);
+  return difference(allBondNames, queryBondNames);
+};
 
-export const noOperation = () => null
+export const noOperation = () => null;
 
 export function onlyHasProperty<T extends object>(
   checkedObject: T,
@@ -49,8 +49,8 @@ export function onlyHasProperty<T extends object>(
 ) {
   const props = Object.keys(checkedObject).filter(
     (key) => !ignoredProps.includes(key)
-  )
+  );
 
-  const numberOfProps = props.length
-  return numberOfProps === 1 && key in checkedObject
+  const numberOfProps = props.length;
+  return numberOfProps === 1 && key in checkedObject;
 }

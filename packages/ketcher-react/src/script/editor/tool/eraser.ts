@@ -24,22 +24,22 @@ import {
   fromSimpleObjectDeletion,
   fromTextDeletion,
   FunctionalGroup,
-  SGroup
-} from 'ketcher-core'
+  SGroup,
+} from 'ketcher-core';
 
-import LassoHelper from './helper/lasso'
-import { selMerge } from './select'
-import Editor from '../Editor'
-import { Tool } from './Tool'
+import LassoHelper from './helper/lasso';
+import { selMerge } from './select';
+import Editor from '../Editor';
+import { Tool } from './Tool';
 
 class EraserTool implements Tool {
-  private readonly editor: Editor
-  private readonly maps: Array<string>
-  private readonly lassoHelper: LassoHelper
-  isNotActiveTool: boolean | undefined
+  private readonly editor: Editor;
+  private readonly maps: Array<string>;
+  private readonly lassoHelper: LassoHelper;
+  isNotActiveTool: boolean | undefined;
 
   constructor(editor, mode) {
-    this.editor = editor
+    this.editor = editor;
     this.maps = [
       'atoms',
       'bonds',
@@ -49,61 +49,61 @@ class EraserTool implements Tool {
       'functionalGroups',
       'sgroupData',
       'simpleObjects',
-      'texts'
-    ]
-    this.lassoHelper = new LassoHelper(mode || 0, editor, null)
+      'texts',
+    ];
+    this.lassoHelper = new LassoHelper(mode || 0, editor, null);
 
     if (editor.selection()) {
       const action = fromFragmentDeletion(
         editor.render.ctab,
         editor.selection()
-      )
-      editor.update(action)
-      editor.selection(null)
-      this.isNotActiveTool = true
+      );
+      editor.update(action);
+      editor.selection(null);
+      this.isNotActiveTool = true;
     }
   }
 
   mousedown(event) {
-    const ci = this.editor.findItem(event, this.maps)
+    const ci = this.editor.findItem(event, this.maps);
 
     if (!ci) {
       //  ci.type == 'Canvas'
-      this.lassoHelper.begin(event)
+      this.lassoHelper.begin(event);
     }
   }
 
   mousemove(event) {
     if (this.lassoHelper.running()) {
-      this.editor.selection(this.lassoHelper.addPoint(event))
+      this.editor.selection(this.lassoHelper.addPoint(event));
     } else {
-      this.editor.hover(this.editor.findItem(event, this.maps), null, event)
+      this.editor.hover(this.editor.findItem(event, this.maps), null, event);
     }
   }
 
   mouseup() {
-    const struct = this.editor.render.ctab
-    const sgroups = struct.sgroups
-    const molecule = struct.molecule
-    const functionalGroups = molecule.functionalGroups
-    const selected = this.editor.selection()
-    const newSelected: Record<string, any> = { atoms: [], bonds: [] }
-    let actualSgroupId
-    const atomsResult: Array<number> = []
-    const bondsResult: Array<number> = []
-    const preResult: Array<number> = []
+    const struct = this.editor.render.ctab;
+    const sgroups = struct.sgroups;
+    const molecule = struct.molecule;
+    const functionalGroups = molecule.functionalGroups;
+    const selected = this.editor.selection();
+    const newSelected: Record<string, any> = { atoms: [], bonds: [] };
+    let actualSgroupId;
+    const atomsResult: Array<number> = [];
+    const bondsResult: Array<number> = [];
+    const preResult: Array<number> = [];
 
     if (selected && functionalGroups.size && selected.atoms) {
       for (const atom of selected.atoms) {
         const atomId = FunctionalGroup.atomsInFunctionalGroup(
           functionalGroups,
           atom
-        )
-        const atomFromStruct = atomId !== null && struct.atoms.get(atomId)?.a
+        );
+        const atomFromStruct = atomId !== null && struct.atoms.get(atomId)?.a;
 
         if (atomFromStruct) {
           for (const sgId of atomFromStruct.sgs.values()) {
-            actualSgroupId = sgId
+            actualSgroupId = sgId;
           }
         }
 
@@ -118,13 +118,13 @@ class EraserTool implements Tool {
         ) {
           const sgroupAtoms =
             actualSgroupId !== undefined &&
-            SGroup.getAtoms(molecule, struct.sgroups.get(actualSgroupId)?.item)
+            SGroup.getAtoms(molecule, struct.sgroups.get(actualSgroupId)?.item);
           const sgroupBonds =
             actualSgroupId !== undefined &&
-            SGroup.getBonds(molecule, struct.sgroups.get(actualSgroupId)?.item)
+            SGroup.getBonds(molecule, struct.sgroups.get(actualSgroupId)?.item);
           atom === sgroupAtoms[0] &&
             newSelected.atoms.push(...(sgroupAtoms as Array<any>)) &&
-            newSelected.bonds.push(...(sgroupBonds as Array<any>))
+            newSelected.bonds.push(...(sgroupBonds as Array<any>));
         }
 
         if (
@@ -136,7 +136,7 @@ class EraserTool implements Tool {
             true
           )
         ) {
-          atomsResult.push(atomId)
+          atomsResult.push(atomId);
         }
       }
     }
@@ -147,8 +147,8 @@ class EraserTool implements Tool {
           molecule,
           functionalGroups,
           bond
-        )
-        const bondFromStruct = bondId !== null && struct.bonds.get(bondId)?.b
+        );
+        const bondFromStruct = bondId !== null && struct.bonds.get(bondId)?.b;
 
         if (
           bondFromStruct &&
@@ -158,7 +158,7 @@ class EraserTool implements Tool {
             functionalGroups
           )
         ) {
-          bondsResult.push(bondId)
+          bondsResult.push(bondId);
         }
       }
     }
@@ -168,8 +168,8 @@ class EraserTool implements Tool {
         const fgId = FunctionalGroup.findFunctionalGroupByAtom(
           functionalGroups,
           id
-        )
-        fgId !== null && !preResult.includes(fgId) && preResult.push(fgId)
+        );
+        fgId !== null && !preResult.includes(fgId) && preResult.push(fgId);
       }
     }
 
@@ -179,53 +179,53 @@ class EraserTool implements Tool {
           molecule,
           functionalGroups,
           id
-        )
-        fgId !== null && !preResult.includes(fgId) && preResult.push(fgId)
+        );
+        fgId !== null && !preResult.includes(fgId) && preResult.push(fgId);
       }
     }
 
     if (preResult.length > 0) {
-      const result: Array<number> = []
+      const result: Array<number> = [];
       preResult.forEach((fgId) => {
-        const sgAtoms = sgroups.get(fgId)?.item.atoms
+        const sgAtoms = sgroups.get(fgId)?.item.atoms;
         sgAtoms.forEach((atom) => {
           !atomsResult.includes(atom) &&
             !result.includes(fgId) &&
-            result.push(fgId)
-        })
-      })
+            result.push(fgId);
+        });
+      });
 
       if (result.length > 0) {
-        this.editor.selection(null)
-        this.editor.event.removeFG.dispatch({ fgIds: result })
-        this.lassoHelper.cancel()
+        this.editor.selection(null);
+        this.editor.event.removeFG.dispatch({ fgIds: result });
+        this.lassoHelper.cancel();
       }
     }
 
     // eslint-disable-line max-statements
-    const rnd = this.editor.render
+    const rnd = this.editor.render;
 
     if (this.lassoHelper.running()) {
       // TODO it catches more events than needed, to be re-factored
       const sel =
         newSelected.atoms.length > 0
           ? selMerge(this.lassoHelper.end(), newSelected, false)
-          : this.lassoHelper.end()
-      this.editor.update(fromFragmentDeletion(rnd.ctab, sel))
-      this.editor.selection(null)
+          : this.lassoHelper.end();
+      this.editor.update(fromFragmentDeletion(rnd.ctab, sel));
+      this.editor.selection(null);
     }
   }
 
   click(event) {
-    const rnd = this.editor.render
-    const restruct = rnd.ctab
-    const sgroups = restruct.sgroups
-    const molecule = restruct.molecule
-    const functionalGroups = molecule.functionalGroups
-    const ci = this.editor.findItem(event, this.maps)
-    const atomResult: Array<number> = []
-    const bondResult: Array<number> = []
-    const result: Array<number> = []
+    const rnd = this.editor.render;
+    const restruct = rnd.ctab;
+    const sgroups = restruct.sgroups;
+    const molecule = restruct.molecule;
+    const functionalGroups = molecule.functionalGroups;
+    const ci = this.editor.findItem(event, this.maps);
+    const atomResult: Array<number> = [];
+    const bondResult: Array<number> = [];
+    const result: Array<number> = [];
 
     if (
       ci &&
@@ -233,17 +233,17 @@ class EraserTool implements Tool {
       ci.map === 'functionalGroups' &&
       !FunctionalGroup.isContractedFunctionalGroup(ci.id, functionalGroups)
     ) {
-      const sGroup = sgroups.get(ci.id)
+      const sGroup = sgroups.get(ci.id);
 
       if (FunctionalGroup.isFunctionalGroup(sGroup?.item)) {
-        result.push(ci.id)
+        result.push(ci.id);
       }
     } else if (ci && functionalGroups && ci.map === 'atoms') {
       const atomId = FunctionalGroup.atomsInFunctionalGroup(
         functionalGroups,
         ci.id
-      )
-      const atomFromStruct = atomId !== null && restruct.atoms.get(atomId)?.a
+      );
+      const atomFromStruct = atomId !== null && restruct.atoms.get(atomId)?.a;
 
       if (
         atomFromStruct &&
@@ -254,15 +254,15 @@ class EraserTool implements Tool {
           true
         )
       ) {
-        atomResult.push(atomId)
+        atomResult.push(atomId);
       }
     } else if (ci && functionalGroups && ci.map === 'bonds') {
       const bondId = FunctionalGroup.bondsInFunctionalGroup(
         molecule,
         functionalGroups,
         ci.id
-      )
-      const bondFromStruct = bondId !== null && restruct.bonds.get(bondId)?.b
+      );
+      const bondFromStruct = bondId !== null && restruct.bonds.get(bondId)?.b;
 
       if (
         bondFromStruct &&
@@ -272,7 +272,7 @@ class EraserTool implements Tool {
           functionalGroups
         )
       ) {
-        bondResult.push(bondId)
+        bondResult.push(bondId);
       }
     }
 
@@ -281,10 +281,10 @@ class EraserTool implements Tool {
         const fgId = FunctionalGroup.findFunctionalGroupByAtom(
           functionalGroups,
           id
-        )
+        );
 
         if (fgId !== null && !result.includes(fgId)) {
-          result.push(fgId)
+          result.push(fgId);
         }
       }
     } else if (bondResult.length) {
@@ -293,75 +293,75 @@ class EraserTool implements Tool {
           molecule,
           functionalGroups,
           id
-        )
+        );
 
         if (fgId !== null && !result.includes(fgId)) {
-          result.push(fgId)
+          result.push(fgId);
         }
       }
     }
 
     if (result.length) {
-      this.editor.event.removeFG.dispatch({ fgIds: result })
-      return
+      this.editor.event.removeFG.dispatch({ fgIds: result });
+      return;
     }
 
-    if (!ci) return // ci.type == 'Canvas'
+    if (!ci) return; // ci.type == 'Canvas'
 
-    this.editor.hover(null)
+    this.editor.hover(null);
 
     if (ci.map === 'atoms') {
-      this.editor.update(fromOneAtomDeletion(restruct, ci.id))
+      this.editor.update(fromOneAtomDeletion(restruct, ci.id));
     } else if (ci.map === 'bonds') {
-      this.editor.update(fromOneBondDeletion(restruct, ci.id))
+      this.editor.update(fromOneBondDeletion(restruct, ci.id));
     } else if (
       ci.map === 'functionalGroups' &&
       FunctionalGroup.isContractedFunctionalGroup(ci.id, functionalGroups)
     ) {
-      const sGroup = sgroups.get(ci.id)
+      const sGroup = sgroups.get(ci.id);
       this.editor.update(
         fromFragmentDeletion(rnd.ctab, {
           atoms: [...SGroup.getAtoms(molecule, sGroup?.item)],
-          bonds: [...SGroup.getBonds(molecule, sGroup?.item)]
+          bonds: [...SGroup.getBonds(molecule, sGroup?.item)],
         })
-      )
+      );
     } else if (ci.map === 'sgroups' || ci.map === 'sgroupData') {
-      const sGroup = sgroups.get(ci.id)
+      const sGroup = sgroups.get(ci.id);
 
       if (FunctionalGroup.isFunctionalGroup(sGroup?.item)) {
-        this.editor.event.removeFG.dispatch({ fgIds: [ci.id] })
+        this.editor.event.removeFG.dispatch({ fgIds: [ci.id] });
       } else {
-        this.editor.update(fromSgroupDeletion(restruct, ci.id))
+        this.editor.update(fromSgroupDeletion(restruct, ci.id));
       }
     } else if (ci.map === 'rxnArrows') {
-      this.editor.update(fromArrowDeletion(restruct, ci.id))
+      this.editor.update(fromArrowDeletion(restruct, ci.id));
     } else if (ci.map === 'rxnPluses') {
-      this.editor.update(fromPlusDeletion(restruct, ci.id))
+      this.editor.update(fromPlusDeletion(restruct, ci.id));
     } else if (ci.map === 'simpleObjects') {
-      this.editor.update(fromSimpleObjectDeletion(restruct, ci.id))
+      this.editor.update(fromSimpleObjectDeletion(restruct, ci.id));
     } else if (ci.map === 'texts') {
-      this.editor.update(fromTextDeletion(restruct, ci.id))
+      this.editor.update(fromTextDeletion(restruct, ci.id));
     } else {
       // TODO re-factoring needed - should be "map-independent"
       console.error(
         'EraserTool: unable to delete the object ' + ci.map + '[' + ci.id + ']'
-      )
-      return
+      );
+      return;
     }
-    this.editor.selection(null)
+    this.editor.selection(null);
   }
 
   mouseleave() {
-    this.mouseup()
+    this.mouseup();
   }
 
   cancel() {
     if (this.lassoHelper.running()) {
-      this.lassoHelper.end()
+      this.lassoHelper.end();
     }
 
-    this.editor.selection(null)
+    this.editor.selection(null);
   }
 }
 
-export default EraserTool
+export default EraserTool;

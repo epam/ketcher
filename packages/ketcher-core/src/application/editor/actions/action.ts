@@ -14,43 +14,43 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { BaseOperation } from '../operations/base'
-import { ReStruct } from '../../render'
+import { BaseOperation } from '../operations/base';
+import { ReStruct } from '../../render';
 //
 // Undo/redo actions
 //
 export class Action {
-  operations: BaseOperation[]
+  operations: BaseOperation[];
 
   constructor(operations = []) {
-    this.operations = operations
+    this.operations = operations;
   }
 
   addOp(operation: BaseOperation, restruct?: ReStruct): BaseOperation {
     if (!restruct || !operation.isDummy(restruct)) {
-      this.operations.push(operation)
+      this.operations.push(operation);
     }
 
-    return operation
+    return operation;
   }
 
   mergeWith(action) {
-    this.operations = this.operations.concat(action.operations)
-    return this
+    this.operations = this.operations.concat(action.operations);
+    return this;
   }
 
   // Perform action and return inverted one
   perform(restruct: ReStruct): Action {
-    const action = new Action()
+    const action = new Action();
     const sortedOperations = [...this.operations].sort(
       (a, b) => a.priority - b.priority
-    )
+    );
     sortedOperations.forEach((operation) => {
-      const invertedOperation = operation.perform(restruct)
-      action.addOp(invertedOperation)
-    })
+      const invertedOperation = operation.perform(restruct);
+      action.addOp(invertedOperation);
+    });
 
-    return action
+    return action;
   }
 
   isDummy(restruct?: ReStruct) {
@@ -59,6 +59,6 @@ export class Action {
         // TODO [RB] the condition is always true for op.* operations
         (operation) => (restruct ? !operation.isDummy(restruct) : true)
       ) === undefined
-    )
+    );
   }
 }

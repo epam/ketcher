@@ -14,14 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { SimpleObject, SimpleObjectMode, Struct, Vec2 } from 'domain/entities'
-import { getNodeWithInvertedYCoord } from '../helpers'
+import { SimpleObject, SimpleObjectMode, Struct, Vec2 } from 'domain/entities';
+import { getNodeWithInvertedYCoord } from '../helpers';
 
 export function simpleObjectToStruct(ketItem: any, struct: Struct): Struct {
   const object =
-    ketItem.data.mode === 'circle' ? circleToEllipse(ketItem) : ketItem.data
-  struct.simpleObjects.add(new SimpleObject(getNodeWithInvertedYCoord(object)))
-  return struct
+    ketItem.data.mode === 'circle' ? circleToEllipse(ketItem) : ketItem.data;
+  struct.simpleObjects.add(new SimpleObject(getNodeWithInvertedYCoord(object)));
+  return struct;
 }
 
 /**
@@ -30,21 +30,21 @@ export function simpleObjectToStruct(ketItem: any, struct: Struct): Struct {
  * @param ketItem
  */
 function circleToEllipse(ketItem) {
-  const radius = Vec2.dist(ketItem.data.pos[1], ketItem.data.pos[0])
-  const pos0 = ketItem.data.pos[0]
+  const radius = Vec2.dist(ketItem.data.pos[1], ketItem.data.pos[0]);
+  const pos0 = ketItem.data.pos[0];
   return {
     mode: SimpleObjectMode.ellipse,
     pos: [
       {
         x: pos0.x - Math.abs(radius),
         y: pos0.y - Math.abs(radius),
-        z: pos0.z - Math.abs(radius)
+        z: pos0.z - Math.abs(radius),
       },
       {
         x: pos0.x + Math.abs(radius),
         y: pos0.y + Math.abs(radius),
-        z: pos0.z + Math.abs(radius)
-      }
-    ]
-  }
+        z: pos0.z + Math.abs(radius),
+      },
+    ],
+  };
 }

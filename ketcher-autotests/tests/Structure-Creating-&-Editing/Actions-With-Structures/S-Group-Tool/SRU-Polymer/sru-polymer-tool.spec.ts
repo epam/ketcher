@@ -33,7 +33,7 @@ async function selectSruPolymer(
   text: string,
   dataName: string,
   polymerLabel: string,
-  repeatPattern: SGroupRepeatPattern,
+  repeatPattern: SGroupRepeatPattern
 ) {
   await page.locator('span').filter({ hasText: text }).click();
   await page.getByRole('option', { name: dataName }).click();
@@ -50,7 +50,7 @@ async function selectSruPolymer(
 
 async function selectRepeatPattern(
   page: Page,
-  repeatPattern: SGroupRepeatPattern,
+  repeatPattern: SGroupRepeatPattern
 ) {
   await page
     .getByRole('button', { name: SGroupRepeatPattern.HeadToTail })
@@ -81,7 +81,7 @@ test.describe('SRU Polymer tool', () => {
       'Data',
       'SRU Polymer',
       'A',
-      SGroupRepeatPattern.HeadToTail,
+      SGroupRepeatPattern.HeadToTail
     );
   });
 
@@ -98,7 +98,7 @@ test.describe('SRU Polymer tool', () => {
       'Data',
       'SRU Polymer',
       'A',
-      SGroupRepeatPattern.HeadToTail,
+      SGroupRepeatPattern.HeadToTail
     );
   });
 
@@ -115,7 +115,7 @@ test.describe('SRU Polymer tool', () => {
       'Data',
       'SRU Polymer',
       'A',
-      SGroupRepeatPattern.HeadToTail,
+      SGroupRepeatPattern.HeadToTail
     );
   });
 

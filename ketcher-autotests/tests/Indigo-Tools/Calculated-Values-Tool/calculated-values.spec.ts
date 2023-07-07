@@ -629,7 +629,7 @@ test.describe('Calculated Values Tools', () => {
     */
     await openFileAndAddToCanvas(
       'ethane-with-valence-and-stereobond.mol',
-      page,
+      page
     );
     await selectTopPanelButton(TopPanelButton.Calculated, page);
   });

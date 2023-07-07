@@ -1,43 +1,43 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react';
 
 const Cursor = ({ Icon, PressedIcon, enableHandTool }) => {
   const [position, setPosition] = useState({
     clientX: 50,
-    clientY: 50
-  })
+    clientY: 50,
+  });
 
-  const [mousedown, setMouseDown] = useState(false)
+  const [mousedown, setMouseDown] = useState(false);
 
   const updatePosition = (event) => {
-    const { clientX, clientY } = event
+    const { clientX, clientY } = event;
 
     setPosition({
       clientX,
-      clientY
-    })
-  }
+      clientY,
+    });
+  };
   const handleMouseDown = () => {
-    setMouseDown(true)
-  }
+    setMouseDown(true);
+  };
   const handleMouseUp = () => {
-    setMouseDown(false)
-  }
+    setMouseDown(false);
+  };
 
   useEffect(() => {
-    document.addEventListener('mousemove', updatePosition, false)
-    document.addEventListener('mouseenter', updatePosition, false)
-    document.addEventListener('mousedown', handleMouseDown, false)
-    document.addEventListener('mouseup', handleMouseUp, false)
+    document.addEventListener('mousemove', updatePosition, false);
+    document.addEventListener('mouseenter', updatePosition, false);
+    document.addEventListener('mousedown', handleMouseDown, false);
+    document.addEventListener('mouseup', handleMouseUp, false);
 
     return () => {
-      document.removeEventListener('mousedown', handleMouseDown)
-      document.removeEventListener('mouseup', handleMouseUp)
-      document.removeEventListener('mousemove', updatePosition)
-      document.removeEventListener('mouseenter', updatePosition)
-    }
-  }, [])
+      document.removeEventListener('mousedown', handleMouseDown);
+      document.removeEventListener('mouseup', handleMouseUp);
+      document.removeEventListener('mousemove', updatePosition);
+      document.removeEventListener('mouseenter', updatePosition);
+    };
+  }, []);
 
-  if (!enableHandTool) return null
+  if (!enableHandTool) return null;
 
   return (
     <div
@@ -48,7 +48,7 @@ const Cursor = ({ Icon, PressedIcon, enableHandTool }) => {
         left: 0,
         right: 0,
         zIndex: 9999,
-        pointerEvents: 'none'
+        pointerEvents: 'none',
       }}
     >
       {mousedown ? (
@@ -56,7 +56,7 @@ const Cursor = ({ Icon, PressedIcon, enableHandTool }) => {
           style={{
             position: 'absolute',
             left: position.clientX,
-            top: position.clientY
+            top: position.clientY,
           }}
         />
       ) : (
@@ -64,12 +64,12 @@ const Cursor = ({ Icon, PressedIcon, enableHandTool }) => {
           style={{
             position: 'absolute',
             left: position.clientX,
-            top: position.clientY
+            top: position.clientY,
           }}
         />
       )}
     </div>
-  )
-}
+  );
+};
 
-export default Cursor
+export default Cursor;

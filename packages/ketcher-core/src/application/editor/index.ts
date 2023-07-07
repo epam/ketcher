@@ -14,11 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import utils from './shared/utils'
+import utils from './shared/utils';
 
 // TODO: delete it
-export const fracAngle = utils.fracAngle
-export * from './operations'
-export * from './actions'
-export * from './shared/constants'
-export * from './editor.types'
+export const fracAngle = utils.fracAngle;
+export * from './operations';
+export * from './actions';
+export * from './shared/constants';
+export * from './editor.types';

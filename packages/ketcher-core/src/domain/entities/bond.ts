@@ -14,27 +14,27 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Atom } from './atom'
-import { Pile } from './pile'
-import { Struct } from './struct'
-import { Vec2 } from './vec2'
+import { Atom } from './atom';
+import { Pile } from './pile';
+import { Struct } from './struct';
+import { Vec2 } from './vec2';
 
 enum CIP {
   E = 'E',
   Z = 'Z',
   M = 'M',
-  P = 'P'
+  P = 'P',
 }
 
 export interface BondAttributes {
-  reactingCenterStatus?: number
-  topology?: number
-  stereo?: number
-  xxx?: string
-  type: number
-  end: number
-  begin: number
-  cip?: CIP | null
+  reactingCenterStatus?: number;
+  topology?: number;
+  stereo?: number;
+  xxx?: string;
+  type: number;
+  end: number;
+  begin: number;
+  cip?: CIP | null;
 }
 
 export class Bond {
@@ -49,7 +49,7 @@ export class Bond {
       DOUBLE_OR_AROMATIC: 7,
       ANY: 8,
       DATIVE: 9,
-      HYDROGEN: 10
+      HYDROGEN: 10,
     },
 
     STEREO: {
@@ -57,13 +57,13 @@ export class Bond {
       UP: 1,
       EITHER: 4,
       DOWN: 6,
-      CIS_TRANS: 3
+      CIS_TRANS: 3,
     },
 
     TOPOLOGY: {
       EITHER: 0,
       RING: 1,
-      CHAIN: 2
+      CHAIN: 2,
     },
 
     REACTING_CENTER: {
@@ -73,108 +73,108 @@ export class Bond {
       UNCHANGED: 2,
       MADE_OR_BROKEN: 4,
       ORDER_CHANGED: 8,
-      MADE_OR_BROKEN_AND_CHANGED: 12
-    }
-  }
+      MADE_OR_BROKEN_AND_CHANGED: 12,
+    },
+  };
 
   static attrlist = {
     type: Bond.PATTERN.TYPE.SINGLE,
     stereo: Bond.PATTERN.STEREO.NONE,
     topology: Bond.PATTERN.TOPOLOGY.EITHER,
     reactingCenterStatus: Bond.PATTERN.REACTING_CENTER.UNMARKED,
-    cip: null
-  }
+    cip: null,
+  };
 
-  begin: number
-  end: number
-  readonly type: number
-  readonly xxx: string
-  readonly stereo: number
-  readonly topology: number
-  readonly reactingCenterStatus: number
-  len: number
-  sb: number
-  sa: number
-  cip?: CIP | null
-  hb1?: number
-  hb2?: number
-  angle: number
-  center: Vec2
+  begin: number;
+  end: number;
+  readonly type: number;
+  readonly xxx: string;
+  readonly stereo: number;
+  readonly topology: number;
+  readonly reactingCenterStatus: number;
+  len: number;
+  sb: number;
+  sa: number;
+  cip?: CIP | null;
+  hb1?: number;
+  hb2?: number;
+  angle: number;
+  center: Vec2;
 
   constructor(attributes: BondAttributes) {
-    this.begin = attributes.begin
-    this.end = attributes.end
-    this.type = attributes.type
-    this.xxx = attributes.xxx || ''
-    this.stereo = Bond.PATTERN.STEREO.NONE
-    this.topology = Bond.PATTERN.TOPOLOGY.EITHER
-    this.reactingCenterStatus = 0
-    this.cip = attributes.cip ?? null
-    this.len = 0
-    this.sb = 0
-    this.sa = 0
-    this.angle = 0
+    this.begin = attributes.begin;
+    this.end = attributes.end;
+    this.type = attributes.type;
+    this.xxx = attributes.xxx || '';
+    this.stereo = Bond.PATTERN.STEREO.NONE;
+    this.topology = Bond.PATTERN.TOPOLOGY.EITHER;
+    this.reactingCenterStatus = 0;
+    this.cip = attributes.cip ?? null;
+    this.len = 0;
+    this.sb = 0;
+    this.sa = 0;
+    this.angle = 0;
 
-    if (attributes.stereo) this.stereo = attributes.stereo
-    if (attributes.topology) this.topology = attributes.topology
+    if (attributes.stereo) this.stereo = attributes.stereo;
+    if (attributes.topology) this.topology = attributes.topology;
     if (attributes.reactingCenterStatus) {
-      this.reactingCenterStatus = attributes.reactingCenterStatus
+      this.reactingCenterStatus = attributes.reactingCenterStatus;
     }
 
-    this.center = new Vec2()
+    this.center = new Vec2();
   }
 
   static getAttrHash(bond: Bond) {
-    const attrs = {}
+    const attrs = {};
     for (const attr in Bond.attrlist) {
       if (bond[attr] || attr === 'stereo') {
-        attrs[attr] = bond[attr]
+        attrs[attr] = bond[attr];
       }
     }
-    return attrs
+    return attrs;
   }
 
   static getBondNeighbourIds(struct: Struct, bondId: number) {
-    const bond = struct.bonds.get(bondId)!
-    const { begin, end } = bond
+    const bond = struct.bonds.get(bondId)!;
+    const { begin, end } = bond;
     const beginBondIds = Atom.getConnectedBondIds(struct, begin).filter(
       (id) => id !== bondId
-    )
+    );
     const endBondIds = Atom.getConnectedBondIds(struct, end).filter(
       (id) => id !== bondId
-    )
-    return { beginBondIds, endBondIds }
+    );
+    return { beginBondIds, endBondIds };
   }
 
   static getFusingConditions(bond: Bond, bondBegin: Bond, bondEnd: Bond) {
-    const { DOUBLE, SINGLE } = this.PATTERN.TYPE
+    const { DOUBLE, SINGLE } = this.PATTERN.TYPE;
     const isFusingToDoubleBond =
       bondBegin.type === SINGLE &&
       bond.type === DOUBLE &&
-      bondEnd.type === SINGLE
+      bondEnd.type === SINGLE;
     const isFusingToSingleBond =
       bondBegin.type === DOUBLE &&
       bond.type === SINGLE &&
-      bondEnd.type === DOUBLE
+      bondEnd.type === DOUBLE;
     const isFusingDoubleSingleSingle =
       bondBegin.type === DOUBLE &&
       bond.type === SINGLE &&
-      bondEnd.type === SINGLE
+      bondEnd.type === SINGLE;
     const isFusingSingleSingleDouble =
       bondBegin.type === SINGLE &&
       bond.type === SINGLE &&
-      bondEnd.type === DOUBLE
+      bondEnd.type === DOUBLE;
     const isAllSingle =
       bondBegin.type === SINGLE &&
       bond.type === SINGLE &&
-      bondEnd.type === SINGLE
+      bondEnd.type === SINGLE;
     return {
       isFusingToSingleBond,
       isFusingToDoubleBond,
       isFusingDoubleSingleSingle,
       isFusingSingleSingleDouble,
-      isAllSingle
-    }
+      isAllSingle,
+    };
   }
 
   static getBenzeneConnectingBondType(
@@ -182,16 +182,16 @@ export class Bond {
     bondBegin: Bond,
     bondEnd: Bond
   ): number | null {
-    const { DOUBLE, SINGLE } = this.PATTERN.TYPE
+    const { DOUBLE, SINGLE } = this.PATTERN.TYPE;
     const { isFusingToSingleBond, isFusingToDoubleBond } =
-      Bond.getFusingConditions(bond, bondBegin, bondEnd)
+      Bond.getFusingConditions(bond, bondBegin, bondEnd);
 
     if (isFusingToDoubleBond) {
-      return DOUBLE
+      return DOUBLE;
     } else if (isFusingToSingleBond) {
-      return SINGLE
+      return SINGLE;
     }
-    return null
+    return null;
   }
 
   static getCyclopentadieneFusingBondType(
@@ -199,24 +199,24 @@ export class Bond {
     bondBegin: Bond,
     bondEnd: Bond
   ): number | null {
-    const { DOUBLE, SINGLE } = this.PATTERN.TYPE
+    const { DOUBLE, SINGLE } = this.PATTERN.TYPE;
     const {
       isFusingToSingleBond,
       isFusingToDoubleBond,
       isFusingDoubleSingleSingle,
-      isAllSingle
-    } = Bond.getFusingConditions(bond, bondBegin, bondEnd)
+      isAllSingle,
+    } = Bond.getFusingConditions(bond, bondBegin, bondEnd);
 
     if (isFusingToDoubleBond) {
-      return DOUBLE
+      return DOUBLE;
     } else if (
       isFusingToSingleBond ||
       isAllSingle ||
       isFusingDoubleSingleSingle
     ) {
-      return SINGLE
+      return SINGLE;
     }
-    return null
+    return null;
   }
 
   static getCyclopentadieneDoubleBondIndexes(
@@ -227,54 +227,55 @@ export class Bond {
     const {
       isFusingToSingleBond,
       isFusingToDoubleBond,
-      isFusingDoubleSingleSingle
-    } = Bond.getFusingConditions(bond, bondBegin, bondEnd)
+      isFusingDoubleSingleSingle,
+    } = Bond.getFusingConditions(bond, bondBegin, bondEnd);
 
     if (isFusingToSingleBond || isFusingToDoubleBond) {
-      return [1]
+      return [1];
     }
 
     if (isFusingDoubleSingleSingle) {
-      return [2, 3]
+      return [2, 3];
     }
 
-    return [1, 4]
+    return [1, 4];
   }
 
   static attrGetDefault(attr: string) {
     if (attr in Bond.attrlist) {
-      return Bond.attrlist[attr]
+      return Bond.attrlist[attr];
     }
   }
 
   hasRxnProps(): boolean {
-    return !!this.reactingCenterStatus
+    return !!this.reactingCenterStatus;
   }
 
   getCenter(struct: any): Vec2 {
-    const p1 = struct.atoms.get(this.begin).pp
-    const p2 = struct.atoms.get(this.end).pp
-    return Vec2.lc2(p1, 0.5, p2, 0.5)
+    const p1 = struct.atoms.get(this.begin).pp;
+    const p2 = struct.atoms.get(this.end).pp;
+    return Vec2.lc2(p1, 0.5, p2, 0.5);
   }
 
   getDir(struct: any): Vec2 {
-    const p1 = struct.atoms.get(this.begin)!.pp
-    const p2 = struct.atoms.get(this.end)!.pp
-    return p2.sub(p1).normalized()
+    const p1 = struct.atoms.get(this.begin)!.pp;
+    const p2 = struct.atoms.get(this.end)!.pp;
+    return p2.sub(p1).normalized();
   }
 
   clone(aidMap?: Map<number, number> | null): Bond {
-    const cp = new Bond(this)
+    const cp = new Bond(this);
     if (aidMap) {
-      cp.begin = aidMap.get(cp.begin)!
-      cp.end = aidMap.get(cp.end)!
+      cp.begin = aidMap.get(cp.begin)!;
+      cp.end = aidMap.get(cp.end)!;
     }
-    return cp
+    return cp;
   }
 
   getAttachedSGroups(struct: Struct) {
-    const sGroupsWithBeginAtom = struct.atoms.get(this.begin)?.sgs || new Pile()
-    const sGroupsWithEndAtom = struct.atoms.get(this.end)?.sgs || new Pile()
-    return sGroupsWithBeginAtom?.intersection(sGroupsWithEndAtom)
+    const sGroupsWithBeginAtom =
+      struct.atoms.get(this.begin)?.sgs || new Pile();
+    const sGroupsWithEndAtom = struct.atoms.get(this.end)?.sgs || new Pile();
+    return sGroupsWithBeginAtom?.intersection(sGroupsWithEndAtom);
   }
 }

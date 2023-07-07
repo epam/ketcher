@@ -23,7 +23,7 @@ import {
 export async function getBondsCoordinatesByAttributes(
   page: Page,
   attrs: BondAttributes,
-  sortBy: SORT_TYPE = SORT_TYPE.ASC_X,
+  sortBy: SORT_TYPE = SORT_TYPE.ASC_X
 ): Promise<BondXy[] | []> {
   const { bonds, scale } = await page.evaluate(() => {
     return {

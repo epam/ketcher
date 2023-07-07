@@ -14,9 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import MuiButton, { ButtonBaseProps } from '@mui/material/ButtonBase'
-import styled from '@emotion/styled'
-import { css } from '@emotion/react'
+import MuiButton, { ButtonBaseProps } from '@mui/material/ButtonBase';
+import styled from '@emotion/styled';
+import { css } from '@emotion/react';
 
 const baseButtonStyle = css({
   padding: '5px 8px',
@@ -24,8 +24,8 @@ const baseButtonStyle = css({
   textTransform: 'none',
   lineHeight: '14px',
   fontSize: '12px',
-  textAlign: 'center'
-})
+  textAlign: 'center',
+});
 
 const PrimaryButton = styled(MuiButton)(
   ({ theme }) => ({
@@ -35,16 +35,16 @@ const PrimaryButton = styled(MuiButton)(
     fontWeight: theme.ketcher.font.weight.regular,
 
     '&:hover': {
-      backgroundColor: theme.ketcher.color.button.primary.hover
+      backgroundColor: theme.ketcher.color.button.primary.hover,
     },
 
     '&:disabled': {
       background: theme.ketcher.color.button.primary.disabled,
-      opacity: 0.4
-    }
+      opacity: 0.4,
+    },
   }),
   baseButtonStyle
-)
+);
 
 const SecondaryButton = styled(MuiButton)(
   ({ theme }) => ({
@@ -55,27 +55,27 @@ const SecondaryButton = styled(MuiButton)(
 
     '&:hover': {
       border: `1px solid ${theme.ketcher.color.button.secondary.hover}`,
-      color: theme.ketcher.color.button.secondary.hover
+      color: theme.ketcher.color.button.secondary.hover,
     },
 
     '&:disabled': {
       border: `1px solid ${theme.ketcher.color.button.secondary.disabled}`,
-      color: theme.ketcher.color.button.secondary.disabled
+      color: theme.ketcher.color.button.secondary.disabled,
     },
 
     '&:clicked': {
       border: `1px solid ${theme.ketcher.color.button.secondary.clicked}`,
-      color: theme.ketcher.color.button.secondary.clicked
-    }
+      color: theme.ketcher.color.button.secondary.clicked,
+    },
   }),
   baseButtonStyle
-)
+);
 
 type ActionButtonProps = {
-  label: string
-  clickHandler: () => void
-  styleType?: string
-} & ButtonBaseProps
+  label: string;
+  clickHandler: () => void;
+  styleType?: string;
+} & ButtonBaseProps;
 
 export const ActionButton = ({
   label,
@@ -102,5 +102,5 @@ export const ActionButton = ({
     >
       {children || label}
     </PrimaryButton>
-  )
-}
+  );
+};

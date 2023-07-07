@@ -21,34 +21,34 @@ const color = {
   lightGreen: '#188794',
   graphite: '#333333',
   grey: '#cad3dd',
-  darkGrey: '#b4b9d6'
-} as const
+  darkGrey: '#b4b9d6',
+} as const;
 
 const text = {
   color: {
     primary: color.graphite,
     secondary: color.white,
-    hover: color.green
-  }
-} as const
+    hover: color.green,
+  },
+} as const;
 
 const background = {
   color: {
     primary: color.white,
     secondary: color.green,
-    hover: color.lightGreen
-  }
-} as const
+    hover: color.lightGreen,
+  },
+} as const;
 
 const border = {
   radius: {
-    regular: '2px'
-  }
-} as const
+    regular: '2px',
+  },
+} as const;
 
 export default {
   background,
   border,
   color,
-  text
-}
+  text,
+};

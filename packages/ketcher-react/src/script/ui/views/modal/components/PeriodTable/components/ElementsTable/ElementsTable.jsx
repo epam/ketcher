@@ -14,34 +14,34 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Header, MainRow, OutinerRow } from './components'
-import { Component } from 'react'
+import { Header, MainRow, OutinerRow } from './components';
+import { Component } from 'react';
 
-import { Elements } from 'ketcher-core'
-import styles from './ElementsTable.module.less'
+import { Elements } from 'ketcher-core';
+import styles from './ElementsTable.module.less';
 
 const metalPrefix = [
   'alkali',
   'alkaline-earth',
   'transition',
-  'post-transition'
-] // 'lanthanide', 'actinide'
+  'post-transition',
+]; // 'lanthanide', 'actinide'
 const atomClassNames = {
   metal: 'metal',
   unknownProps: 'unknown-props',
   unknownState: 'unknown-state',
   button: 'button',
-  selected: 'selected'
-}
+  selected: 'selected',
+};
 const beforeSpan = {
   He: 16,
   B: 10,
   Al: 10,
   Hf: 1,
-  Rf: 1
-}
-const ACTINIDE = 'actinide'
-const LANTHANIDE = 'lanthanide'
+  Rf: 1,
+};
+const ACTINIDE = 'actinide';
+const LANTHANIDE = 'lanthanide';
 const main = rowPartition(
   Elements.filter(
     (item) =>
@@ -51,56 +51,56 @@ const main = rowPartition(
       item.number !== 89 &&
       item.number !== 57
   )
-)
+);
 const lanthanides = Elements.filter(
   (item) => item && (item.type === LANTHANIDE || item.number === 57)
-)
+);
 const actinides = Elements.filter(
   (item) => item && (item.type === ACTINIDE || item.number === 89)
-)
+);
 
 function rowPartition(elements) {
   return elements.reduce((result, item) => {
-    const row = result[item.period - 1]
+    const row = result[item.period - 1];
     if (!row) {
-      result.push([item])
+      result.push([item]);
     } else {
-      if (beforeSpan[item.label]) row.push(beforeSpan[item.label])
-      row.push(item)
+      if (beforeSpan[item.label]) row.push(beforeSpan[item.label]);
+      row.push(item);
     }
-    return result
-  }, [])
+    return result;
+  }, []);
 }
 
 class ElementsTable extends Component {
   // eslint-disable-line
   shouldComponentUpdate(nextProps) {
-    return nextProps.value !== this.props.value
+    return nextProps.value !== this.props.value;
   }
 
   getAtomClassNames = (item) => {
-    const { selected } = this.props
+    const { selected } = this.props;
 
     const type = metalPrefix.includes(item.type)
       ? `${item.type} ${atomClassNames.metal}`
-      : item.type || atomClassNames.unknownProps
+      : item.type || atomClassNames.unknownProps;
 
     const classes = [
       ...type.split(' '),
       item.state || atomClassNames.unknownState,
       item.origin,
       atomClassNames.button,
-      selected(item.label) && atomClassNames.selected
-    ]
+      selected(item.label) && atomClassNames.selected,
+    ];
 
     return classes.map((className) => {
-      return styles[className]
-    })
-  }
+      return styles[className];
+    });
+  };
 
   render() {
-    const { currentEvents, onAtomSelect, onDoubleClick } = this.props
-    const callbacks = { currentEvents, onAtomSelect, onDoubleClick }
+    const { currentEvents, onAtomSelect, onDoubleClick } = this.props;
+    const callbacks = { currentEvents, onAtomSelect, onDoubleClick };
     return (
       <table
         className={styles.table}
@@ -133,8 +133,8 @@ class ElementsTable extends Component {
           {...callbacks}
         />
       </table>
-    )
+    );
   }
 }
 
-export default ElementsTable
+export default ElementsTable;

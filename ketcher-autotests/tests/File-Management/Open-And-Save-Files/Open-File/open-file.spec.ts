@@ -76,7 +76,7 @@ the first one disappears. Couldn't reproduct manually.
     await selectTopPanelButton(TopPanelButton.Open, page);
     await openFromFileViaClipboard(
       'tests/test-data/1879938_rxn_1[1].txt',
-      page,
+      page
     );
     // add second structure from file to canvas
     await selectTopPanelButton(TopPanelButton.Open, page);

@@ -14,22 +14,22 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { RxnArrow, RxnPlus, Struct } from 'domain/entities'
-import { getNodeWithInvertedYCoord } from '../helpers'
+import { RxnArrow, RxnPlus, Struct } from 'domain/entities';
+import { getNodeWithInvertedYCoord } from '../helpers';
 
 export function rxnToStruct(ketItem: any, struct: Struct): Struct {
   if (ketItem.type === 'arrow') {
-    struct.rxnArrows.add(new RxnArrow(getNodeWithInvertedYCoord(ketItem.data)))
+    struct.rxnArrows.add(new RxnArrow(getNodeWithInvertedYCoord(ketItem.data)));
   } else {
     struct.rxnPluses.add(
       new RxnPlus({
         pp: {
           x: ketItem.location[0],
           y: -ketItem.location[1],
-          z: ketItem.location[2]
-        }
+          z: ketItem.location[2],
+        },
       })
-    )
+    );
   }
-  return struct
+  return struct;
 }

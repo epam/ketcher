@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import styled from '@emotion/styled'
-import { MonomerPreview } from 'components/shared/MonomerPreview'
-import { preview } from '../../../constants'
-import { PreviewStyle } from '../../../types'
+import styled from '@emotion/styled';
+import { MonomerPreview } from 'components/shared/MonomerPreview';
+import { preview } from '../../../constants';
+import { PreviewStyle } from '../../../types';
 
 export const ItemsContainer = styled.div`
   display: grid;
@@ -29,7 +29,7 @@ export const ItemsContainer = styled.div`
     content: '';
     flex: auto;
   }
-`
+`;
 
 export const GroupContainer = styled.div`
   position: relative;
@@ -42,7 +42,7 @@ export const GroupContainer = styled.div`
   color: ${({ theme }) => theme.ketcher.color.divider};
   margin: 0;
   gap: 8px;
-`
+`;
 
 export const GroupTitle = styled.div`
   height: 100%;
@@ -56,7 +56,7 @@ export const GroupTitle = styled.div`
   font-family: ${({ theme }) => theme.ketcher.font.family.roboto};
   color: ${({ theme }) => theme.ketcher.color.text.primary};
   margin: 0;
-`
+`;
 
 export const StyledPreview = styled(MonomerPreview)<PreviewStyle>`
   z-index: 1;
@@ -66,4 +66,4 @@ export const StyledPreview = styled(MonomerPreview)<PreviewStyle>`
   top: ${(props) => props.top};
   width: ${preview.width}px;
   height: ${preview.height}px;
-`
+`;

@@ -15,9 +15,9 @@
  ***************************************************************************/
 
 export interface IStyledDropdownIconProps {
-  isActive: boolean
+  isActive: boolean;
 }
 
 export type OptionsContainerProps = {
-  isVertical?: boolean
-} & React.HTMLAttributes<HTMLDivElement>
+  isVertical?: boolean;
+} & React.HTMLAttributes<HTMLDivElement>;

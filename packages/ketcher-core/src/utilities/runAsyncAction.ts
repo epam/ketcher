@@ -14,25 +14,25 @@
  * limitations under the License.
  ***************************************************************************/
 
-import EventEmitter from 'events'
+import EventEmitter from 'events';
 
 export enum KetcherAsyncEvents {
   LOADING = 'LOADING',
   SUCCESS = 'SUCCESS',
-  FAILURE = 'FAILURE'
+  FAILURE = 'FAILURE',
 }
 
 export const runAsyncAction = async <T = any>(
   action: () => Promise<T>,
   eventEmitter: EventEmitter
 ): Promise<T | undefined> => {
-  eventEmitter.emit(KetcherAsyncEvents.LOADING)
+  eventEmitter.emit(KetcherAsyncEvents.LOADING);
   try {
-    const res = await action()
-    eventEmitter.emit(KetcherAsyncEvents.SUCCESS)
-    return res
+    const res = await action();
+    eventEmitter.emit(KetcherAsyncEvents.SUCCESS);
+    return res;
   } catch {
-    eventEmitter.emit(KetcherAsyncEvents.FAILURE)
-    return undefined
+    eventEmitter.emit(KetcherAsyncEvents.FAILURE);
+    return undefined;
   }
-}
+};

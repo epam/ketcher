@@ -14,48 +14,48 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Component } from 'react'
+import { Component } from 'react';
 
-import classes from './combobox.module.less'
+import classes from './combobox.module.less';
 
 class ComboBox extends Component {
   constructor(props) {
-    super(props)
+    super(props);
     this.state = {
-      suggestsHidden: true
-    }
+      suggestsHidden: true,
+    };
 
-    this.click = this.click.bind(this)
-    this.blur = this.blur.bind(this)
-    this.updateInput = this.updateInput.bind(this)
+    this.click = this.click.bind(this);
+    this.blur = this.blur.bind(this);
+    this.updateInput = this.updateInput.bind(this);
   }
 
   updateInput(event) {
-    const value = event.target.value || event.target.textContent
-    this.setState({ suggestsHidden: true })
-    this.props.onChange(value)
+    const value = event.target.value || event.target.textContent;
+    this.setState({ suggestsHidden: true });
+    this.props.onChange(value);
   }
 
   click() {
-    this.setState({ suggestsHidden: false })
+    this.setState({ suggestsHidden: false });
   }
 
   blur() {
-    this.setState({ suggestsHidden: true })
+    this.setState({ suggestsHidden: true });
   }
 
   render() {
-    const { value, type = 'text', schema } = this.props
+    const { value, type = 'text', schema } = this.props;
     const suggestList = schema.enumNames
       .filter((item) => item !== value)
       .map((item) => (
         <li key={item} onMouseDown={this.updateInput}>
           {item}
         </li>
-      ))
+      ));
     const suggestListStyles = {
-      display: this.state.suggestsHidden ? 'none' : 'block'
-    }
+      display: this.state.suggestsHidden ? 'none' : 'block',
+    };
     return (
       <div>
         <input
@@ -74,8 +74,8 @@ class ComboBox extends Component {
           ''
         )}
       </div>
-    )
+    );
   }
 }
 
-export default ComboBox
+export default ComboBox;

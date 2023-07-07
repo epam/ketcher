@@ -14,71 +14,71 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { fromMultipleMove, fromPlusAddition } from 'ketcher-core'
-import Editor from '../Editor'
-import { Tool } from './Tool'
+import { fromMultipleMove, fromPlusAddition } from 'ketcher-core';
+import Editor from '../Editor';
+import { Tool } from './Tool';
 
 class ReactionPlusTool implements Tool {
-  private readonly editor: Editor
-  private dragCtx: any
+  private readonly editor: Editor;
+  private dragCtx: any;
 
   constructor(editor) {
-    this.editor = editor
-    this.editor.selection(null)
+    this.editor = editor;
+    this.editor.selection(null);
   }
 
   mousedown(event) {
-    const rnd = this.editor.render
-    const ci = this.editor.findItem(event, ['rxnPluses'])
+    const rnd = this.editor.render;
+    const ci = this.editor.findItem(event, ['rxnPluses']);
 
     if (ci && ci.map === 'rxnPluses') {
-      this.editor.hover(null)
-      this.editor.selection({ rxnPluses: [ci.id] })
-      this.dragCtx = { xy0: rnd.page2obj(event) }
+      this.editor.hover(null);
+      this.editor.selection({ rxnPluses: [ci.id] });
+      this.dragCtx = { xy0: rnd.page2obj(event) };
     }
   }
 
   mousemove(event) {
-    const editor = this.editor
-    const rnd = editor.render
+    const editor = this.editor;
+    const rnd = editor.render;
 
     if ('dragCtx' in this) {
       if (this.dragCtx.action) {
-        this.dragCtx.action.perform(rnd.ctab)
+        this.dragCtx.action.perform(rnd.ctab);
       }
 
       this.dragCtx.action = fromMultipleMove(
         rnd.ctab,
         this.editor.selection() || {},
         rnd.page2obj(event).sub(this.dragCtx.xy0)
-      )
-      editor.update(this.dragCtx.action, true)
+      );
+      editor.update(this.dragCtx.action, true);
     } else {
-      editor.hover(editor.findItem(event, ['rxnPluses']), null, event)
+      editor.hover(editor.findItem(event, ['rxnPluses']), null, event);
     }
   }
 
   mouseup() {
     if (!this.dragCtx) {
-      return true
+      return true;
     }
 
     if (this.dragCtx.action) {
-      this.editor.update(this.dragCtx.action) // TODO investigate, subsequent undo/redo fails
+      this.editor.update(this.dragCtx.action); // TODO investigate, subsequent undo/redo fails
     }
 
-    delete this.dragCtx
-    return true
+    delete this.dragCtx;
+    return true;
   }
 
   click(event) {
-    const rnd = this.editor.render
-    const ci = this.editor.findItem(event, ['rxnPluses'])
+    const rnd = this.editor.render;
+    const ci = this.editor.findItem(event, ['rxnPluses']);
 
     if (!ci) {
-      this.editor.update(fromPlusAddition(rnd.ctab, rnd.page2obj(event)))
+      this.editor.update(fromPlusAddition(rnd.ctab, rnd.page2obj(event)));
     }
   }
 }
 
-export default ReactionPlusTool
+export default ReactionPlusTool;

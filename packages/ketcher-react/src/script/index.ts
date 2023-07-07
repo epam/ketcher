@@ -14,16 +14,16 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { ButtonsConfig, KetcherBuilder } from './builders'
+import { ButtonsConfig, KetcherBuilder } from './builders';
 
-import { StructServiceProvider } from 'ketcher-core'
+import { StructServiceProvider } from 'ketcher-core';
 
 interface Config {
-  element: HTMLDivElement | null
-  staticResourcesUrl: string
-  structServiceProvider: StructServiceProvider
-  buttons?: ButtonsConfig
-  errorHandler: (message: string) => void
+  element: HTMLDivElement | null;
+  staticResourcesUrl: string;
+  structServiceProvider: StructServiceProvider;
+  buttons?: ButtonsConfig;
+  errorHandler: (message: string) => void;
 }
 
 async function buildKetcherAsync({
@@ -31,21 +31,21 @@ async function buildKetcherAsync({
   staticResourcesUrl,
   structServiceProvider,
   buttons,
-  errorHandler
+  errorHandler,
 }: Config) {
-  const builder = new KetcherBuilder()
+  const builder = new KetcherBuilder();
 
-  await builder.appendApiAsync(structServiceProvider)
-  builder.appendServiceMode(structServiceProvider.mode)
+  await builder.appendApiAsync(structServiceProvider);
+  builder.appendServiceMode(structServiceProvider.mode);
   await builder.appendUiAsync(
     element,
     staticResourcesUrl,
     errorHandler,
     buttons
-  )
+  );
 
-  return builder.build()
+  return builder.build();
 }
 
-export type { Config, ButtonsConfig }
-export default buildKetcherAsync
+export type { Config, ButtonsConfig };
+export default buildKetcherAsync;

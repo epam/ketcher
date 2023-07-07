@@ -13,85 +13,91 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { render, screen, waitFor } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
-import { IconName } from 'ketcher-react'
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { IconName } from 'ketcher-react';
 
-import { FileDrop, FileDropProps } from './FileDrop'
+import { FileDrop, FileDropProps } from './FileDrop';
 
 const mockProps = {
   buttonLabel: 'Open from file',
   textLabel: 'or drag file here',
   iconName: 'arrow-upward' as IconName,
-  onDropAccepted: jest.fn()
-} as FileDropProps
+  onDropAccepted: jest.fn(),
+} as FileDropProps;
 
 const mockOptionalProps = {
   disabled: true,
-  disabledText: 'Mock disabled text'
-}
+  disabledText: 'Mock disabled text',
+};
 
 const mockFile = new File(['ketcher mol file'], 'ketcher.mol', {
-  type: 'chem/mol'
-})
+  type: 'chem/mol',
+});
 
 describe('FileDrop component', () => {
   it('should render correctly', () => {
     expect(
       render(withThemeProvider(<FileDrop {...mockProps} />))
-    ).toMatchSnapshot()
-  })
+    ).toMatchSnapshot();
+  });
 
   it('should render correctly with required props', () => {
-    render(withThemeProvider(<FileDrop {...mockProps} />))
+    render(withThemeProvider(<FileDrop {...mockProps} />));
 
     expect(
       screen.getByRole('button', { name: mockProps.buttonLabel })
-    ).toBeInTheDocument()
-    expect(screen.getByText(mockProps.textLabel)).toBeInTheDocument()
-  })
+    ).toBeInTheDocument();
+    expect(screen.getByText(mockProps.textLabel)).toBeInTheDocument();
+  });
 
   it('should render correctly with optional props', () => {
     render(
       withThemeProvider(<FileDrop {...mockProps} {...mockOptionalProps} />)
-    )
+    );
 
     expect(
       screen.getByRole('button', { name: mockProps.buttonLabel })
-    ).toBeInTheDocument()
-    expect(screen.getByText(mockProps.textLabel)).toBeInTheDocument()
-    expect(screen.getByText(mockOptionalProps.disabledText)).toBeInTheDocument()
-  })
+    ).toBeInTheDocument();
+    expect(screen.getByText(mockProps.textLabel)).toBeInTheDocument();
+    expect(
+      screen.getByText(mockOptionalProps.disabledText)
+    ).toBeInTheDocument();
+  });
 
   it('should upload file', async () => {
-    const { container } = render(withThemeProvider(<FileDrop {...mockProps} />))
+    const { container } = render(
+      withThemeProvider(<FileDrop {...mockProps} />)
+    );
     const input = container.querySelector(
       'input[type=file]'
-    ) as HTMLInputElement
+    ) as HTMLInputElement;
 
-    userEvent.upload(input, mockFile)
+    userEvent.upload(input, mockFile);
 
     await waitFor(() => {
-      expect(input.files && input.files[0]).toBe(mockFile)
-    })
+      expect(input.files && input.files[0]).toBe(mockFile);
+    });
     await waitFor(() => {
-      expect(input.files && input.files.item(0)).toBe(mockFile)
-    })
+      expect(input.files && input.files.item(0)).toBe(mockFile);
+    });
     await waitFor(() => {
-      expect(input.files && input.files).toHaveLength(1)
-    })
-  })
+      expect(input.files && input.files).toHaveLength(1);
+    });
+  });
 
   it('accepted file callback should be called after file is uploaded', async () => {
-    const { container } = render(withThemeProvider(<FileDrop {...mockProps} />))
+    const { container } = render(
+      withThemeProvider(<FileDrop {...mockProps} />)
+    );
     const input = container.querySelector(
       'input[type=file]'
-    ) as HTMLInputElement
+    ) as HTMLInputElement;
 
-    userEvent.upload(input, mockFile)
+    userEvent.upload(input, mockFile);
 
     await waitFor(() => {
-      expect(mockProps.onDropAccepted).toBeCalled()
-    })
-  })
-})
+      expect(mockProps.onDropAccepted).toBeCalled();
+    });
+  });
+});

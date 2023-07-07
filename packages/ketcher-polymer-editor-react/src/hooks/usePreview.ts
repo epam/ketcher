@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { RefObject, useState } from 'react'
-import { EditorClassName, preview } from '../constants'
-import { MonomerItemType } from '../components/monomerLibrary/monomerLibraryItem/types'
-import { PreviewStyle } from '../types'
+import { RefObject, useState } from 'react';
+import { EditorClassName, preview } from '../constants';
+import { MonomerItemType } from '../components/monomerLibrary/monomerLibraryItem/types';
+import { PreviewStyle } from '../types';
 
 export const usePreview = (
   ref: RefObject<HTMLDivElement>
@@ -27,17 +27,17 @@ export const usePreview = (
 ] => {
   const [previewMonomer, setPreviewMonomer] = useState<
     MonomerItemType | undefined
-  >()
-  const [previewStyle, setPreviewStyle] = useState<PreviewStyle | undefined>()
+  >();
+  const [previewStyle, setPreviewStyle] = useState<PreviewStyle | undefined>();
 
   const setPreview = (monomer?: MonomerItemType, rect?: DOMRect) => {
     if (monomer && rect && ref.current) {
       const editorRect = document
         .querySelector(`.${EditorClassName}`)
-        ?.getBoundingClientRect()
+        ?.getBoundingClientRect();
 
       if (!editorRect || !rect) {
-        return
+        return;
       }
 
       const top =
@@ -46,16 +46,16 @@ export const usePreview = (
           : rect.top -
             ref.current.getBoundingClientRect().top -
             preview.height -
-            preview.gap
+            preview.gap;
 
-      const newStyle = { top: `${top}px` }
-      setPreviewMonomer(monomer)
-      setPreviewStyle(newStyle)
+      const newStyle = { top: `${top}px` };
+      setPreviewMonomer(monomer);
+      setPreviewStyle(newStyle);
     } else {
-      setPreviewMonomer(undefined)
-      setPreviewStyle(undefined)
+      setPreviewMonomer(undefined);
+      setPreviewStyle(undefined);
     }
-  }
+  };
 
-  return [previewMonomer, previewStyle, setPreview]
-}
+  return [previewMonomer, previewStyle, setPreview];
+};

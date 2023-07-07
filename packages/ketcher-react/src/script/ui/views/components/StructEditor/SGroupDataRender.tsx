@@ -1,15 +1,15 @@
-import { useEffect, useRef, useState, FC } from 'react'
-import { Vec2, Render, SGroup, Struct } from 'ketcher-core'
-import clsx from 'clsx'
-import classes from './InfoPanel.module.less'
+import { useEffect, useRef, useState, FC } from 'react';
+import { Vec2, Render, SGroup, Struct } from 'ketcher-core';
+import clsx from 'clsx';
+import classes from './InfoPanel.module.less';
 import {
   calculateMiddleCoordsForRect,
   calculateScrollOffsetX,
-  calculateScrollOffsetY
-} from './helpers'
+  calculateScrollOffsetY,
+} from './helpers';
 
-const BAR_PANEL_SIZE = 32
-const LEFT_PADDING_MULTIPLIER = 3
+const BAR_PANEL_SIZE = 32;
+const LEFT_PADDING_MULTIPLIER = 3;
 
 function getPanelPositionRelativeToRect(
   clientX: number,
@@ -19,23 +19,23 @@ function getPanelPositionRelativeToRect(
   width: number,
   height: number
 ): Vec2 | null {
-  const viewportLeftLimit = BAR_PANEL_SIZE * LEFT_PADDING_MULTIPLIER + width
+  const viewportLeftLimit = BAR_PANEL_SIZE * LEFT_PADDING_MULTIPLIER + width;
   const viewportBottomLimit =
-    render?.clientArea?.clientHeight - BAR_PANEL_SIZE - height
+    render?.clientArea?.clientHeight - BAR_PANEL_SIZE - height;
   const viewportRightLimit =
-    render?.clientArea?.clientWidth - BAR_PANEL_SIZE - width
+    render?.clientArea?.clientWidth - BAR_PANEL_SIZE - width;
 
   if (!sGroup.hovering) {
-    return null
+    return null;
   }
 
   // [['M', 23, 43], ['L', 23, 24]] we should remove first elements => [[23,43], [23,24]]
   const rectCoords: Array<Array<number>> = sGroup.hovering.attrs?.path?.map(
     (line) => line.slice(1)
-  )
+  );
 
   const [middleLeftSide, middleBottomSide, middleRightSide, middleTopSide] =
-    calculateMiddleCoordsForRect(rectCoords)
+    calculateMiddleCoordsForRect(rectCoords);
 
   if (
     !middleBottomSide?.x ||
@@ -46,55 +46,55 @@ function getPanelPositionRelativeToRect(
     !middleRightSide?.x ||
     !middleRightSide?.y
   ) {
-    return null
+    return null;
   }
 
   // Default position for panel is in the bottom;
-  let x = middleBottomSide.x - width / 2
-  let y = middleBottomSide.y
+  let x = middleBottomSide.x - width / 2;
+  let y = middleBottomSide.y;
 
   if (clientY > viewportBottomLimit) {
-    y = middleTopSide.y - height
+    y = middleTopSide.y - height;
   }
 
   if (clientX > viewportRightLimit) {
-    x = middleLeftSide.x - width
-    y = middleLeftSide.y - height / 2
+    x = middleLeftSide.x - width;
+    y = middleLeftSide.y - height / 2;
   }
 
   if (clientX < viewportLeftLimit) {
-    x = middleRightSide.x
-    y = middleRightSide.y - height / 2
+    x = middleRightSide.x;
+    y = middleRightSide.y - height / 2;
   }
 
-  x += calculateScrollOffsetX(render)
-  y += calculateScrollOffsetY(render)
+  x += calculateScrollOffsetX(render);
+  y += calculateScrollOffsetY(render);
 
-  return new Vec2(x, y)
+  return new Vec2(x, y);
 }
 
 interface SGroupDataRenderProps {
-  clientX: number
-  clientY: number
-  render: Render
-  groupStruct: Struct
-  sGroup: SGroup
-  sGroupData: string | null
-  className?: string
+  clientX: number;
+  clientY: number;
+  render: Render;
+  groupStruct: Struct;
+  sGroup: SGroup;
+  sGroupData: string | null;
+  className?: string;
 }
 
 const SGroupDataRender: FC<SGroupDataRenderProps> = (props) => {
-  const { clientX, clientY, render, className, sGroup, sGroupData } = props
-  const [wrapperHeight, setWrapperHeight] = useState(0)
-  const [wrapperWidth, setWrapperWidth] = useState(0)
-  const wrapperRef = useRef<HTMLDivElement>(null)
+  const { clientX, clientY, render, className, sGroup, sGroupData } = props;
+  const [wrapperHeight, setWrapperHeight] = useState(0);
+  const [wrapperWidth, setWrapperWidth] = useState(0);
+  const wrapperRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (wrapperRef.current) {
-      setWrapperHeight(wrapperRef.current.clientHeight)
-      setWrapperWidth(wrapperRef.current.clientWidth)
+      setWrapperHeight(wrapperRef.current.clientHeight);
+      setWrapperWidth(wrapperRef.current.clientWidth);
     }
-  })
+  });
 
   const panelCoordinate = getPanelPositionRelativeToRect(
     clientX,
@@ -103,7 +103,7 @@ const SGroupDataRender: FC<SGroupDataRenderProps> = (props) => {
     render,
     wrapperWidth,
     wrapperHeight
-  )
+  );
 
   return panelCoordinate ? (
     <div
@@ -113,7 +113,7 @@ const SGroupDataRender: FC<SGroupDataRenderProps> = (props) => {
     >
       {sGroupData}
     </div>
-  ) : null
-}
+  ) : null;
+};
 
-export default SGroupDataRender
+export default SGroupDataRender;

@@ -26,6 +26,6 @@ export function ifDef<TValue = any>(
     value !== defaultValue &&
     !(Array.isArray(value) && value.length === 0)
   ) {
-    target[key] = value
+    target[key] = value;
   }
 }

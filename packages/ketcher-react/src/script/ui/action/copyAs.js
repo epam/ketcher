@@ -14,49 +14,49 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { KetSerializer, MolSerializer } from 'ketcher-core'
+import { KetSerializer, MolSerializer } from 'ketcher-core';
 
 export default function copyAs(type) {
-  const state = global.currentState
-  const editor = state.editor
-  const struct = editor.structSelected()
-  const errorHandler = editor.errorHandler
-  let serializer
+  const state = global.currentState;
+  const editor = state.editor;
+  const struct = editor.structSelected();
+  const errorHandler = editor.errorHandler;
+  let serializer;
   try {
     switch (type) {
       case 'mol': {
-        serializer = new MolSerializer()
-        break
+        serializer = new MolSerializer();
+        break;
       }
       case 'ket': {
-        serializer = new KetSerializer()
-        break
+        serializer = new KetSerializer();
+        break;
       }
       default: {
-        serializer = new KetSerializer()
-        break
+        serializer = new KetSerializer();
+        break;
       }
     }
 
     const simpleObjectOrText = Boolean(
       struct.simpleObjects.size || struct.texts.size
-    )
+    );
 
     if (simpleObjectOrText && serializer instanceof MolSerializer) {
       errorHandler(
         'This feature is not available for Simple objects and Text objects'
-      )
-      return null
+      );
+      return null;
     }
 
-    const structData = serializer.serialize(struct)
+    const structData = serializer.serialize(struct);
 
     if (window.clipboardData) {
-      window.clipboardData.setData('text', structData)
+      window.clipboardData.setData('text', structData);
     } else {
-      navigator.clipboard.writeText(structData)
+      navigator.clipboard.writeText(structData);
     }
   } catch {
-    errorHandler('This feature is not available in your browser')
+    errorHandler('This feature is not available in your browser');
   }
 }

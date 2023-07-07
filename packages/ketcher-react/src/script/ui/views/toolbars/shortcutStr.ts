@@ -13,22 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { isMacOs } from 'react-device-detect'
+import { isMacOs } from 'react-device-detect';
 
 const shortcutAliasMap = {
   Escape: 'Esc',
   Delete: 'Del',
-  Mod: isMacOs ? '⌘' : 'Ctrl'
-}
+  Mod: isMacOs ? '⌘' : 'Ctrl',
+};
 
 export function shortcutStr(shortcut?: string | string[]) {
   if (!shortcut) {
-    return ''
+    return '';
   }
 
-  const shortcutKey = Array.isArray(shortcut) ? shortcut[0] : shortcut
+  const shortcutKey = Array.isArray(shortcut) ? shortcut[0] : shortcut;
   return shortcutKey.replace(
     /(\b[a-z]\b$|Mod|Escape|Delete)/g,
     (key) => shortcutAliasMap[key] || key.toUpperCase()
-  )
+  );
 }

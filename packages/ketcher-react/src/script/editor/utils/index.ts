@@ -14,5 +14,5 @@
  * limitations under the License.
  ***************************************************************************/
 
-export * from './customOnChangeHandler'
-export * from './elementOffset'
+export * from './customOnChangeHandler';
+export * from './elementOffset';

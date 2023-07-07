@@ -14,31 +14,31 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useEffect, useRef } from 'react'
-import { useSettingsContext } from '../../../../hooks'
+import { useEffect, useRef } from 'react';
+import { useSettingsContext } from '../../../../hooks';
 
 interface AppHiddenCallProps {
-  onInitTmpls: (cacheEl, url) => void
+  onInitTmpls: (cacheEl, url) => void;
 }
 
-type Props = AppHiddenCallProps
+type Props = AppHiddenCallProps;
 // todo: come up with better name
 const AppHidden = (props: Props) => {
-  const { onInitTmpls } = props
+  const { onInitTmpls } = props;
 
-  const ref = useRef(null)
-  const { staticResourcesUrl } = useSettingsContext()
+  const ref = useRef(null);
+  const { staticResourcesUrl } = useSettingsContext();
 
   useEffect(() => {
     if (typeof requestIdleCallback === 'function') {
-      requestIdleCallback(() => onInitTmpls(ref.current, staticResourcesUrl))
+      requestIdleCallback(() => onInitTmpls(ref.current, staticResourcesUrl));
     } else {
-      onInitTmpls(ref.current, staticResourcesUrl)
+      onInitTmpls(ref.current, staticResourcesUrl);
     }
-  }, [])
+  }, []);
 
-  return <div style={{ display: 'none' }} ref={ref} />
-}
+  return <div style={{ display: 'none' }} ref={ref} />;
+};
 
-export type { AppHiddenCallProps }
-export { AppHidden }
+export type { AppHiddenCallProps };
+export { AppHidden };

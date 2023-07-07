@@ -19,18 +19,18 @@ import {
   fromRGroupAttrs,
   fromRGroupFragment,
   fromUpdateIfThen,
-  FunctionalGroup
-} from 'ketcher-core'
-import Editor from '../Editor'
-import { Tool } from './Tool'
+  FunctionalGroup,
+} from 'ketcher-core';
+import Editor from '../Editor';
+import { Tool } from './Tool';
 
 class RGroupFragmentTool implements Tool {
-  private readonly editor: Editor
+  private readonly editor: Editor;
 
   constructor(editor) {
     // TODO: check if it's a fragments already
-    editor.selection(null)
-    this.editor = editor
+    editor.selection(null);
+    this.editor = editor;
   }
 
   mousemove(event) {
@@ -38,28 +38,28 @@ class RGroupFragmentTool implements Tool {
       this.editor.findItem(event, ['frags', 'rgroups']),
       null,
       event
-    )
+    );
   }
 
   click(event) {
-    const struct = this.editor.render.ctab
-    const molecule = struct.molecule
-    const functionalGroups = molecule.functionalGroups
-    const editor = this.editor
-    const ci = editor.findItem(event, ['frags', 'rgroups'])
-    const ce = editor.findItem(event, ['atoms', 'bonds'])
-    const atomResult: Array<number> = []
-    const bondResult: Array<number> = []
-    const result: Array<number> = []
+    const struct = this.editor.render.ctab;
+    const molecule = struct.molecule;
+    const functionalGroups = molecule.functionalGroups;
+    const editor = this.editor;
+    const ci = editor.findItem(event, ['frags', 'rgroups']);
+    const ce = editor.findItem(event, ['atoms', 'bonds']);
+    const atomResult: Array<number> = [];
+    const bondResult: Array<number> = [];
+    const result: Array<number> = [];
 
     if (ce && functionalGroups && ce.map === 'atoms') {
       const atomId = FunctionalGroup.atomsInFunctionalGroup(
         functionalGroups,
         ce.id
-      )
+      );
 
       if (atomId !== null) {
-        atomResult.push(atomId)
+        atomResult.push(atomId);
       }
     }
 
@@ -68,10 +68,10 @@ class RGroupFragmentTool implements Tool {
         molecule,
         functionalGroups,
         ce.id
-      )
+      );
 
       if (bondId !== null) {
-        bondResult.push(bondId)
+        bondResult.push(bondId);
       }
     }
 
@@ -80,74 +80,74 @@ class RGroupFragmentTool implements Tool {
         const fgId = FunctionalGroup.findFunctionalGroupByAtom(
           functionalGroups,
           id
-        )
+        );
 
         if (fgId !== null && !result.includes(fgId)) {
-          result.push(fgId)
+          result.push(fgId);
         }
       }
-      this.editor.event.removeFG.dispatch({ fgIds: result })
-      return
+      this.editor.event.removeFG.dispatch({ fgIds: result });
+      return;
     } else if (bondResult.length > 0) {
       for (const id of bondResult) {
         const fgId = FunctionalGroup.findFunctionalGroupByBond(
           molecule,
           functionalGroups,
           id
-        )
+        );
 
         if (fgId !== null && !result.includes(fgId)) {
-          result.push(fgId)
+          result.push(fgId);
         }
       }
-      this.editor.event.removeFG.dispatch({ fgIds: result })
-      return
+      this.editor.event.removeFG.dispatch({ fgIds: result });
+      return;
     }
 
     if (!ci) {
-      return true
+      return true;
     }
 
-    this.editor.hover(null)
+    this.editor.hover(null);
 
     const label =
       ci.map === 'rgroups'
         ? ci.id
-        : RGroup.findRGroupByFragment(molecule.rgroups, ci.id)
+        : RGroup.findRGroupByFragment(molecule.rgroups, ci.id);
 
     const rg = Object.assign(
       { label },
       ci.map === 'frags' ? { fragId: ci.id } : molecule.rgroups.get(ci.id)
-    )
+    );
 
-    const res = editor.event.rgroupEdit.dispatch(rg)
+    const res = editor.event.rgroupEdit.dispatch(rg);
 
     Promise.resolve(res)
       .then((newRg) => {
-        let action
+        let action;
 
         if (ci.map !== 'rgroups') {
           const rgidOld = RGroup.findRGroupByFragment(
             struct.molecule.rgroups,
             ci.id
-          )
+          );
           action = fromRGroupFragment(struct, newRg.label, ci.id).mergeWith(
             fromUpdateIfThen(struct, newRg.label, rgidOld)
-          )
+          );
         } else {
-          action = fromRGroupAttrs(struct, ci.id, newRg)
+          action = fromRGroupAttrs(struct, ci.id, newRg);
         }
 
-        editor.update(action)
+        editor.update(action);
       })
-      .catch(() => null) // w/o changes
+      .catch(() => null); // w/o changes
 
-    return true
+    return true;
   }
 
   cancel() {
-    this.editor.hover(null)
+    this.editor.hover(null);
   }
 }
 
-export default RGroupFragmentTool
+export default RGroupFragmentTool;

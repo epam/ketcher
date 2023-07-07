@@ -47,7 +47,7 @@ export async function selectSingleBondTool(page: Page) {
 
 export async function selectTopPanelButton(
   buttonName: TopPanelButton,
-  page: Page,
+  page: Page
 ) {
   const topPanelButton = page.locator(`button[title*="${buttonName}"]`);
   await topPanelButton.click();
@@ -60,7 +60,7 @@ export async function selectRingButton(buttonName: RingButton, page: Page) {
 
 export async function selectLeftPanelButton(
   buttonName: LeftPanelButton,
-  page: Page,
+  page: Page
 ) {
   const leftPanelButton = page.locator(`button[title*="${buttonName}"]`);
   await leftPanelButton.click();

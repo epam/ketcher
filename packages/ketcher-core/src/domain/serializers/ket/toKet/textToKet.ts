@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { getNodeWithInvertedYCoord } from '../helpers'
+import { getNodeWithInvertedYCoord } from '../helpers';
 
 export function textToKet(textNode) {
   return {
     type: 'text',
-    data: getNodeWithInvertedYCoord(textNode.data)
-  }
+    data: getNodeWithInvertedYCoord(textNode.data),
+  };
 }

@@ -30,7 +30,7 @@ test.describe('Reagents molecule above arrow', () => {
     */
     await openFileAndAddToCanvas(
       'benzene-arrow-benzene-reagent-nh3.cdxml',
-      page,
+      page
     );
   });
 

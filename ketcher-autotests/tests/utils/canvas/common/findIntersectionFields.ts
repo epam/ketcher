@@ -3,7 +3,7 @@ import { Atom, Bond } from 'ketcher-core';
 
 export function findIntersectionFields(
   attributes: AtomAttributes | BondAttributes,
-  structure: (Atom | Bond)[],
+  structure: (Atom | Bond)[]
 ): (Atom | Bond)[] {
   const targets: (Atom | Bond)[] = [];
   const attributesLength = Object.keys(attributes).length;

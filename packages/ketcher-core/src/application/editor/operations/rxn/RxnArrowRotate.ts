@@ -1,46 +1,46 @@
-import utils from 'application/editor/shared/utils'
-import { ReStruct } from 'application/render'
-import { Vec2 } from 'domain/entities'
-import { OperationType } from '../OperationType'
-import Base from '../base'
+import utils from 'application/editor/shared/utils';
+import { ReStruct } from 'application/render';
+import { Vec2 } from 'domain/entities';
+import { OperationType } from '../OperationType';
+import Base from '../base';
 
 interface RxnArrowRotateData {
-  id: number
-  angle: number
-  center: Vec2
-  noinvalidate?: boolean
+  id: number;
+  angle: number;
+  center: Vec2;
+  noinvalidate?: boolean;
 }
 
 export class RxnArrowRotate extends Base {
-  data: RxnArrowRotateData
+  data: RxnArrowRotateData;
 
   constructor(id: number, angle: number, center: Vec2, noinvalidate?: boolean) {
-    super(OperationType.RXN_ARROW_ROTATE)
-    this.data = { id, angle, center, noinvalidate }
+    super(OperationType.RXN_ARROW_ROTATE);
+    this.data = { id, angle, center, noinvalidate };
   }
 
   execute(reStruct: ReStruct) {
-    const degree = utils.degrees(this.data.angle)
+    const degree = utils.degrees(this.data.angle);
 
-    const arrowId = this.data.id
-    const arrow = reStruct.molecule.rxnArrows.get(arrowId)
+    const arrowId = this.data.id;
+    const arrow = reStruct.molecule.rxnArrows.get(arrowId);
     if (arrow) {
       // Note: Struct and ReStruct are in two different systems,
       //       must manually update struct's position
       arrow.pos = arrow.pos.map((p) =>
         p.rotateAroundOrigin(degree, this.data.center)
-      )
+      );
     }
 
-    const options = reStruct.render.options
+    const options = reStruct.render.options;
     const drawingCenter = this.data.center
       .scaled(options.scale)
-      .add(options.offset)
+      .add(options.offset);
 
-    reStruct.rxnArrows.get(arrowId)?.visel.rotate(degree, drawingCenter)
+    reStruct.rxnArrows.get(arrowId)?.visel.rotate(degree, drawingCenter);
 
     if (!this.data.noinvalidate) {
-      Base.invalidateItem(reStruct, 'rxnArrows', arrowId, 1)
+      Base.invalidateItem(reStruct, 'rxnArrows', arrowId, 1);
     }
   }
 
@@ -50,7 +50,7 @@ export class RxnArrowRotate extends Base {
       -this.data.angle,
       this.data.center,
       this.data.noinvalidate
-    )
-    return move
+    );
+    return move;
   }
 }

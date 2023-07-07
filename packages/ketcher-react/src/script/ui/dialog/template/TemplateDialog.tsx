@@ -14,41 +14,41 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Dispatch, FC, useState, useEffect, useRef } from 'react'
-import TemplateTable, { Template } from './TemplateTable'
+import { Dispatch, FC, useState, useEffect, useRef } from 'react';
+import TemplateTable, { Template } from './TemplateTable';
 import {
   changeFilter,
   changeGroup,
   deleteTmpl,
   editTmpl,
   selectTmpl,
-  changeTab
-} from '../../state/templates'
-import { filterLib, filterFGLib, greekify } from '../../utils'
-import Accordion from '@mui/material/Accordion'
-import AccordionSummary from '@mui/material/AccordionSummary'
-import AccordionDetails from '@mui/material/AccordionDetails'
+  changeTab,
+} from '../../state/templates';
+import { filterLib, filterFGLib, greekify } from '../../utils';
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
 
-import { Dialog } from '../../views/components'
-import Input from '../../component/form/Input/Input'
-import { SaveButton } from '../../component/view/savebutton'
-import { SdfSerializer } from 'ketcher-core'
-import classes from './template-lib.module.less'
-import { connect } from 'react-redux'
-import { createSelector } from 'reselect'
-import { omit } from 'lodash/fp'
-import { onAction } from '../../state'
-import { functionalGroupsSelector } from '../../state/functionalGroups/selectors'
-import { saltsAndSolventsSelector } from '../../state/saltsAndSolvents/selectors'
-import EmptySearchResult from '../../../ui/dialog/template/EmptySearchResult'
+import { Dialog } from '../../views/components';
+import Input from '../../component/form/Input/Input';
+import { SaveButton } from '../../component/view/savebutton';
+import { SdfSerializer } from 'ketcher-core';
+import classes from './template-lib.module.less';
+import { connect } from 'react-redux';
+import { createSelector } from 'reselect';
+import { omit } from 'lodash/fp';
+import { onAction } from '../../state';
+import { functionalGroupsSelector } from '../../state/functionalGroups/selectors';
+import { saltsAndSolventsSelector } from '../../state/saltsAndSolvents/selectors';
+import EmptySearchResult from '../../../ui/dialog/template/EmptySearchResult';
 
-import Tabs from '@mui/material/Tabs'
-import Tab from '@mui/material/Tab'
-import useSaltsAndSolvents from './useSaltsAndSolvets'
-import { Icon } from 'components'
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import useSaltsAndSolvents from './useSaltsAndSolvets';
+import { Icon } from 'components';
 
 function TabPanel(props) {
-  const { children, value, index, ...other } = props
+  const { children, value, index, ...other } = props;
   return (
     <div
       className={classes.tabPanel}
@@ -60,67 +60,67 @@ function TabPanel(props) {
     >
       {value === index && children}
     </div>
-  )
+  );
 }
 
 function a11yProps(index) {
   return {
     id: `scrollable-auto-tab-${index}`,
-    'aria-controls': `scrollable-auto-tabpanel-${index}`
-  }
+    'aria-controls': `scrollable-auto-tabpanel-${index}`,
+  };
 }
 
 interface TemplateLibProps {
-  filter: string
-  group: string
-  lib: Array<Template>
-  selected: Template | null
-  mode: string
-  tab: number
-  initialTab: number
-  saltsAndSolvents: Template[]
-  renderOptions?: any
+  filter: string;
+  group: string;
+  lib: Array<Template>;
+  selected: Template | null;
+  mode: string;
+  tab: number;
+  initialTab: number;
+  saltsAndSolvents: Template[];
+  renderOptions?: any;
 }
 
 interface TemplateLibCallProps {
-  onAttach: (tmpl: Template) => void
-  onCancel: () => void
-  onChangeGroup: (group: string) => void
-  onDelete: (tmpl: Template) => void
-  onFilter: (filter: string) => void
-  onOk: (res: any) => void
-  onSelect: (res: any) => void
-  onTabChange: (tab: number) => void
-  functionalGroups: Template[]
+  onAttach: (tmpl: Template) => void;
+  onCancel: () => void;
+  onChangeGroup: (group: string) => void;
+  onDelete: (tmpl: Template) => void;
+  onFilter: (filter: string) => void;
+  onOk: (res: any) => void;
+  onSelect: (res: any) => void;
+  onTabChange: (tab: number) => void;
+  functionalGroups: Template[];
 }
 
-type Props = TemplateLibProps & TemplateLibCallProps
+type Props = TemplateLibProps & TemplateLibCallProps;
 
 enum TemplateTabs {
   TemplateLibrary = 0,
   FunctionalGroupLibrary = 1,
-  SaltsAndSolvents = 2
+  SaltsAndSolvents = 2,
 }
 
 const filterLibSelector = createSelector(
   (props: Props) => props.lib,
   (props: Props) => props.filter,
   filterLib
-)
+);
 
-const FUNCTIONAL_GROUPS = 'Functional Groups'
+const FUNCTIONAL_GROUPS = 'Functional Groups';
 
 const HeaderContent = () => (
   <div className={classes.dialogHeader}>
     <Icon name="template-dialog" />
     <span>Structure Library</span>
   </div>
-)
+);
 
 const FooterContent = ({ data, tab }) => {
-  const clickToAddToCanvas = <span>Click to add to canvas</span>
+  const clickToAddToCanvas = <span>Click to add to canvas</span>;
   if (tab === TemplateTabs.SaltsAndSolvents) {
-    return clickToAddToCanvas
+    return clickToAddToCanvas;
   }
   return (
     <div
@@ -128,7 +128,7 @@ const FooterContent = ({ data, tab }) => {
         flexGrow: 1,
         display: 'flex',
         justifyContent: 'space-between',
-        alignItems: 'center'
+        alignItems: 'center',
       }}
     >
       <SaveButton
@@ -145,8 +145,8 @@ const FooterContent = ({ data, tab }) => {
       </SaveButton>
       {clickToAddToCanvas}
     </div>
-  )
-}
+  );
+};
 
 const TemplateDialog: FC<Props> = (props) => {
   const {
@@ -164,34 +164,37 @@ const TemplateDialog: FC<Props> = (props) => {
     saltsAndSolvents,
     onSelect,
     ...rest
-  } = props
+  } = props;
 
-  const searchInputRef = useRef<HTMLInputElement>(null)
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
   const [expandedAccordions, setExpandedAccordions] = useState<string[]>([
-    props.group
-  ])
-  const filteredSaltsAndSolvents = useSaltsAndSolvents(saltsAndSolvents, filter)
+    props.group,
+  ]);
+  const filteredSaltsAndSolvents = useSaltsAndSolvents(
+    saltsAndSolvents,
+    filter
+  );
   const [filteredFG, setFilteredFG] = useState(
     functionalGroups[FUNCTIONAL_GROUPS]
-  )
+  );
 
-  const filteredTemplateLib = filterLibSelector(props)
-
-  useEffect(() => {
-    setFilteredFG(filterFGLib(functionalGroups, filter)[FUNCTIONAL_GROUPS])
-  }, [functionalGroups, filter])
+  const filteredTemplateLib = filterLibSelector(props);
 
   useEffect(() => {
-    searchInputRef.current?.focus()
-    onSelect(null)
-  }, [tab, onSelect])
+    setFilteredFG(filterFGLib(functionalGroups, filter)[FUNCTIONAL_GROUPS]);
+  }, [functionalGroups, filter]);
+
+  useEffect(() => {
+    searchInputRef.current?.focus();
+    onSelect(null);
+  }, [tab, onSelect]);
 
   useEffect(() => {
     if (initialTab !== null) {
-      onTabChange(initialTab)
+      onTabChange(initialTab);
     }
-  }, [initialTab, onTabChange])
+  }, [initialTab, onTabChange]);
 
   const handleAccordionChange = (accordion) => (_, isExpanded) => {
     setExpandedAccordions(
@@ -200,25 +203,25 @@ const TemplateDialog: FC<Props> = (props) => {
         : [...expandedAccordions].filter(
             (expandedAccordion) => expandedAccordion !== accordion
           )
-    )
-  }
+    );
+  };
 
   const handleTabChange = (value) => {
-    onTabChange(value)
-  }
+    onTabChange(value);
+  };
 
-  const sdfSerializer = new SdfSerializer()
+  const sdfSerializer = new SdfSerializer();
   const serializerMapper = {
     [TemplateTabs.TemplateLibrary]: templateLib,
     [TemplateTabs.FunctionalGroupLibrary]: functionalGroups,
-    [TemplateTabs.SaltsAndSolvents]: saltsAndSolvents
-  }
-  const data = sdfSerializer.serialize(serializerMapper[tab])
+    [TemplateTabs.SaltsAndSolvents]: saltsAndSolvents,
+  };
+  const data = sdfSerializer.serialize(serializerMapper[tab]);
 
   const select = (tmpl: Template): void => {
-    onChangeGroup(tmpl.props.group)
-    props.onSelect(tmpl)
-  }
+    onChangeGroup(tmpl.props.group);
+    props.onSelect(tmpl);
+  };
 
   return (
     <Dialog
@@ -265,7 +268,7 @@ const TemplateDialog: FC<Props> = (props) => {
             {Object.keys(filteredTemplateLib).length ? (
               Object.keys(filteredTemplateLib).map((groupName) => {
                 const shouldGroupBeRended =
-                  expandedAccordions.includes(groupName)
+                  expandedAccordions.includes(groupName);
                 return (
                   <Accordion
                     square={true}
@@ -302,7 +305,7 @@ const TemplateDialog: FC<Props> = (props) => {
                       />
                     </AccordionDetails>
                   </Accordion>
-                )
+                );
               })
             ) : (
               <div className={classes.resultsContainer}>
@@ -347,22 +350,22 @@ const TemplateDialog: FC<Props> = (props) => {
         </TabPanel>
       </div>
     </Dialog>
-  )
-}
+  );
+};
 
 const selectTemplate = (template, props, dispatch) => {
-  dispatch(selectTmpl(null))
-  if (!template) return
-  dispatch(changeFilter(''))
-  dispatch(selectTmpl(template))
-  dispatch(onAction({ tool: 'template', opts: template }))
-  props.onOk(template)
-}
+  dispatch(selectTmpl(null));
+  if (!template) return;
+  dispatch(changeFilter(''));
+  dispatch(selectTmpl(template));
+  dispatch(onAction({ tool: 'template', opts: template }));
+  props.onOk(template);
+};
 
 const onModalClose = (props, dispatch) => {
-  dispatch(changeFilter(''))
-  props.onCancel()
-}
+  dispatch(changeFilter(''));
+  props.onCancel();
+};
 
 export default connect(
   (store) => ({
@@ -370,7 +373,7 @@ export default connect(
     initialTab: (store as any).modal?.prop?.tab,
     renderOptions: (store as any).editor?.render?.options,
     functionalGroups: functionalGroupsSelector(store),
-    saltsAndSolvents: saltsAndSolventsSelector(store)
+    saltsAndSolvents: saltsAndSolventsSelector(store),
   }),
   (dispatch: Dispatch<any>, props: Props) => ({
     onFilter: (filter) => dispatch(changeFilter(filter)),
@@ -379,6 +382,6 @@ export default connect(
     onChangeGroup: (group) => dispatch(changeGroup(group)),
     onAttach: (tmpl) => dispatch(editTmpl(tmpl)),
     onCancel: () => onModalClose(props, dispatch),
-    onDelete: (tmpl) => dispatch(deleteTmpl(tmpl))
+    onDelete: (tmpl) => dispatch(deleteTmpl(tmpl)),
   })
-)(TemplateDialog)
+)(TemplateDialog);

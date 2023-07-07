@@ -14,7 +14,7 @@ import { AtomAttributes, AtomXy } from '@utils/canvas/types';
  */
 export async function getLeftAtomByAttributes(
   page: Page,
-  attributes: AtomAttributes,
+  attributes: AtomAttributes
 ): Promise<AtomXy> {
   const result = await getAtomsCoordinatesByAttributes(page, attributes);
 

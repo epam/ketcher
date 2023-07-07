@@ -14,22 +14,22 @@
  * limitations under the License.
  ***************************************************************************/
 
-import atoms from './atoms'
-import copyAs from './copyAs'
-import copyImageToClipboard from './copyImageToClipboard'
-import debug from './debug'
-import { exec } from '../component/cliparea/cliparea'
-import isHidden from './isHidden'
-import server from './server'
-import templates from './templates'
-import tools from './tools'
-import zoom from './zoom'
-import help from './help'
-import functionalGroups from './functionalGroups'
-import fullscreen from './fullscreen'
-import { removeStructAction } from '../state/shared'
+import atoms from './atoms';
+import copyAs from './copyAs';
+import copyImageToClipboard from './copyImageToClipboard';
+import debug from './debug';
+import { exec } from '../component/cliparea/cliparea';
+import isHidden from './isHidden';
+import server from './server';
+import templates from './templates';
+import tools from './tools';
+import zoom from './zoom';
+import help from './help';
+import functionalGroups from './functionalGroups';
+import fullscreen from './fullscreen';
+import { removeStructAction } from '../state/shared';
 
-export * from './action.types'
+export * from './action.types';
 
 const config = {
   clear: {
@@ -37,176 +37,176 @@ const config = {
     title: 'Clear Canvas',
     action: {
       thunk: (dispatch, getState) => {
-        const editor = getState().editor
+        const editor = getState().editor;
 
-        dispatch(removeStructAction())
+        dispatch(removeStructAction());
 
-        if (!editor.struct().isBlank()) editor.struct(null)
-      }
+        if (!editor.struct().isBlank()) editor.struct(null);
+      },
     },
-    hidden: (options) => isHidden(options, 'clear')
+    hidden: (options) => isHidden(options, 'clear'),
   },
   open: {
     shortcut: 'Mod+o',
     title: 'Open…',
     action: { dialog: 'open' },
-    hidden: (options) => isHidden(options, 'open')
+    hidden: (options) => isHidden(options, 'open'),
   },
   save: {
     shortcut: 'Mod+s',
     title: 'Save As…',
     action: { dialog: 'save' },
-    hidden: (options) => isHidden(options, 'save')
+    hidden: (options) => isHidden(options, 'save'),
   },
   'atom-props': {
     title: 'Atom Properties',
     action: { dialog: 'atomProps' },
-    hidden: (options) => isHidden(options, 'atom-props')
+    hidden: (options) => isHidden(options, 'atom-props'),
   },
   'bond-props': {
     title: 'Bond Properties',
     action: { dialog: 'bondProps' },
-    hidden: (options) => isHidden(options, 'bond-props')
+    hidden: (options) => isHidden(options, 'bond-props'),
   },
   undo: {
     shortcut: 'Mod+z',
     title: 'Undo',
     action: (editor) => {
-      editor.undo()
+      editor.undo();
     },
     disabled: (editor) => editor.historySize().undo === 0,
-    hidden: (options) => isHidden(options, 'undo')
+    hidden: (options) => isHidden(options, 'undo'),
   },
   redo: {
     shortcut: ['Mod+Shift+z', 'Mod+y'],
     title: 'Redo',
     action: (editor) => {
-      editor.redo()
+      editor.redo();
     },
     disabled: (editor) => editor.historySize().redo === 0,
-    hidden: (options) => isHidden(options, 'redo')
+    hidden: (options) => isHidden(options, 'redo'),
   },
   cut: {
     shortcut: 'Mod+x',
     title: 'Cut',
     action: (editor) => {
-      exec('cut') || dontClipMessage('Cut', editor.errorHandler) // eslint-disable-line no-unused-expressions
+      exec('cut') || dontClipMessage('Cut', editor.errorHandler); // eslint-disable-line no-unused-expressions
     },
     disabled: (editor) => !hasSelection(editor),
-    hidden: (options) => isHidden(options, 'cut')
+    hidden: (options) => isHidden(options, 'cut'),
   },
   copies: {
     disabled: (editor) => !hasSelection(editor),
-    hidden: (options) => isHidden(options, 'copies')
+    hidden: (options) => isHidden(options, 'copies'),
   },
   copy: {
     shortcut: 'Mod+c',
     title: 'Copy',
     action: (editor) => {
-      exec('copy') || dontClipMessage('Copy', editor.errorHandler) // eslint-disable-line no-unused-expressions
+      exec('copy') || dontClipMessage('Copy', editor.errorHandler); // eslint-disable-line no-unused-expressions
     },
     disabled: (editor) => !hasSelection(editor),
-    hidden: (options) => isHidden(options, 'copy')
+    hidden: (options) => isHidden(options, 'copy'),
   },
   'copy-image': {
     shortcut: 'Mod+Shift+f',
     title: 'Copy Image',
     action: () => {
-      copyImageToClipboard()
+      copyImageToClipboard();
     },
     disabled: (editor) => !hasSelection(editor),
-    hidden: (options) => isHidden(options, 'copy-image')
+    hidden: (options) => isHidden(options, 'copy-image'),
   },
   'copy-mol': {
     shortcut: 'Mod+m',
     title: 'Copy as MOL',
     action: () => {
-      copyAs('mol')
+      copyAs('mol');
     },
     disabled: (editor) => !hasSelection(editor),
-    hidden: (options) => isHidden(options, 'copy-mol')
+    hidden: (options) => isHidden(options, 'copy-mol'),
   },
   'copy-ket': {
     shortcut: 'Mod+Shift+k',
     title: 'Copy as KET',
     action: () => {
-      copyAs('ket')
+      copyAs('ket');
     },
     disabled: (editor) => !hasSelection(editor),
-    hidden: (options) => isHidden(options, 'copy-ket')
+    hidden: (options) => isHidden(options, 'copy-ket'),
   },
   paste: {
     shortcut: 'Mod+v',
     title: 'Paste',
     action: (editor) => {
-      exec('paste') || dontClipMessage('Paste', editor.errorHandler) // eslint-disable-line no-unused-expressions
+      exec('paste') || dontClipMessage('Paste', editor.errorHandler); // eslint-disable-line no-unused-expressions
     },
     selected: ({ actions }) =>
       actions && // TMP
       actions.active &&
       actions.active.tool === 'paste',
-    hidden: (options) => isHidden(options, 'paste')
+    hidden: (options) => isHidden(options, 'paste'),
   },
   settings: {
     title: 'Settings',
     action: { dialog: 'settings' },
-    hidden: (options) => isHidden(options, 'settings')
+    hidden: (options) => isHidden(options, 'settings'),
   },
   about: {
     title: 'About',
     action: { dialog: 'about' },
-    hidden: (options) => isHidden(options, 'about')
+    hidden: (options) => isHidden(options, 'about'),
   },
   'reaction-automap': {
     title: 'Reaction Auto-Mapping Tool',
     action: { dialog: 'automap' },
     hidden: (options) => isHidden(options, 'reaction-automap'),
     disabled: (editor, server, options) =>
-      !options.app.server || !editor.struct().hasRxnArrow()
+      !options.app.server || !editor.struct().hasRxnArrow(),
   },
   'period-table': {
     title: 'Periodic Table',
     action: { dialog: 'period-table' },
-    hidden: (options) => isHidden(options, 'period-table')
+    hidden: (options) => isHidden(options, 'period-table'),
   },
   'extended-table': {
     title: 'Extended Table',
     action: { dialog: 'extended-table' },
-    hidden: (options) => isHidden(options, 'extended-table')
+    hidden: (options) => isHidden(options, 'extended-table'),
   },
   'select-all': {
     title: 'Select All',
     shortcut: 'Mod+a',
     action: {
       thunk: (dispatch, getState) => {
-        const selectionTool = getState().toolbar.visibleTools.select
-        dispatch({ type: 'ACTION', action: tools[selectionTool].action })
-        getState().editor.selection('all')
-      }
+        const selectionTool = getState().toolbar.visibleTools.select;
+        dispatch({ type: 'ACTION', action: tools[selectionTool].action });
+        getState().editor.selection('all');
+      },
     },
-    hidden: (options) => isHidden(options, 'select-all')
+    hidden: (options) => isHidden(options, 'select-all'),
   },
   'deselect-all': {
     title: 'Deselect All',
     shortcut: 'Mod+Shift+a',
     action: (editor) => {
-      editor.selection(null)
+      editor.selection(null);
     },
-    hidden: (options) => isHidden(options, 'deselect-all')
+    hidden: (options) => isHidden(options, 'deselect-all'),
   },
   'select-descriptors': {
     title: 'Select descriptors',
     shortcut: 'Mod+d',
     action: {
       thunk: (dispatch, getState) => {
-        const selectionTool = getState().toolbar.visibleTools.select
-        const editor = getState().editor
-        editor.alignDescriptors()
-        editor.selection('descriptors')
-        dispatch({ type: 'ACTION', action: tools[selectionTool].action })
-      }
+        const selectionTool = getState().toolbar.visibleTools.select;
+        const editor = getState().editor;
+        editor.alignDescriptors();
+        editor.selection('descriptors');
+        dispatch({ type: 'ACTION', action: tools[selectionTool].action });
+      },
     },
-    hidden: (options) => isHidden(options, 'select-descriptors')
+    hidden: (options) => isHidden(options, 'select-descriptors'),
   },
   'any-atom': {
     title: 'Any atom',
@@ -215,10 +215,10 @@ const config = {
       opts: {
         label: 'A',
         pseudo: 'A',
-        type: 'gen'
-      }
+        type: 'gen',
+      },
     },
-    hidden: (options) => isHidden(options, 'any-atom')
+    hidden: (options) => isHidden(options, 'any-atom'),
   },
   ...server,
   ...debug,
@@ -228,16 +228,16 @@ const config = {
   ...templates,
   ...functionalGroups,
   ...fullscreen,
-  ...help
-}
+  ...help,
+};
 
 function hasSelection(editor) {
-  const selection = editor.selection()
+  const selection = editor.selection();
   return (
     selection && // if not only sgroupData selected
     Object.keys(selection).filter((key) => !['sgroupData'].includes(key))
       .length > 0
-  )
+  );
 }
 
 function dontClipMessage(title, errorHandler) {
@@ -246,7 +246,7 @@ function dontClipMessage(title, errorHandler) {
       'Instead, use shortcut to ' +
       title +
       '.'
-  )
+  );
 }
 
-export default config
+export default config;

@@ -24,44 +24,44 @@ import {
   fromRotate,
   getHoverToFuse,
   getItemsToFuse,
-  isAttachmentBond
-} from 'ketcher-core'
+  isAttachmentBond,
+} from 'ketcher-core';
 
-import utils from '../shared/utils'
-import Editor from '../Editor'
-import { Tool } from './Tool'
-import { intersection } from 'lodash'
+import utils from '../shared/utils';
+import Editor from '../Editor';
+import { Tool } from './Tool';
+import { intersection } from 'lodash';
 
 class RotateTool implements Tool {
-  private readonly editor: Editor
-  dragCtx: any
-  isNotActiveTool = true
+  private readonly editor: Editor;
+  dragCtx: any;
+  isNotActiveTool = true;
 
   constructor(editor: Editor, flipDirection?: FlipDirection) {
-    this.editor = editor
+    this.editor = editor;
 
     if (flipDirection) {
-      const restruct = editor.render.ctab
-      const selection = editor.selection()
+      const restruct = editor.render.ctab;
+      const selection = editor.selection();
 
-      const selectionCenter = this.getCenter(this.editor)[0]
-      const canvasCenter = restruct.getVBoxObj().centre()
+      const selectionCenter = this.getCenter(this.editor)[0];
+      const canvasCenter = restruct.getVBoxObj().centre();
       const action = fromFlip(
         restruct,
         selection,
         flipDirection,
         selectionCenter || canvasCenter
-      )
-      editor.update(action)
-      editor.rotateController.rerender()
+      );
+      editor.update(action);
+      editor.rotateController.rerender();
     }
   }
 
   mousedownHandle(handleCenter: Vec2, center: Vec2) {
     this.dragCtx = {
       xy0: center,
-      angle1: utils.calcAngle(center, handleCenter)
-    }
+      angle1: utils.calcAngle(center, handleCenter),
+    };
   }
 
   /**
@@ -71,19 +71,19 @@ class RotateTool implements Tool {
    *                + functional groups's attachment atoms
    */
   getCenter(editor: Editor) {
-    const selection = editor.selection()
+    const selection = editor.selection();
     if (!selection) {
-      return [undefined, [] as number[]] as const
+      return [undefined, [] as number[]] as const;
     }
 
-    const struct = editor.render.ctab.molecule
-    const { texts, rxnArrows, rxnPluses } = selection
+    const struct = editor.render.ctab.molecule;
+    const { texts, rxnArrows, rxnPluses } = selection;
 
     const visibleAtoms =
       selection.atoms?.filter((atomId) => {
-        const atom = struct.atoms.get(atomId)
+        const atom = struct.atoms.get(atomId);
         if (!atom) {
-          return false
+          return false;
         }
         const isAtomNotInContractedGroup =
           !FunctionalGroup.isAtomInContractedFunctionalGroup(
@@ -91,20 +91,20 @@ class RotateTool implements Tool {
             struct.sgroups,
             struct.functionalGroups,
             false
-          )
+          );
         if (isAtomNotInContractedGroup) {
-          return true
+          return true;
         }
-        const groupId = struct.getGroupIdFromAtomId(atomId)
-        const sgroup = struct.sgroups.get(groupId as number)
-        return sgroup?.getAttachmentAtomId() === atomId
-      }) || []
+        const groupId = struct.getGroupIdFromAtomId(atomId);
+        const sgroup = struct.sgroups.get(groupId as number);
+        return sgroup?.getAttachmentAtomId() === atomId;
+      }) || [];
 
-    let center: Vec2 | undefined
+    let center: Vec2 | undefined;
 
     const attachmentBonds = struct.bonds.filter((_bondId, bond) =>
       isAttachmentBond(bond, selection)
-    )
+    );
 
     if (attachmentBonds.size > 1) {
       /**
@@ -112,16 +112,16 @@ class RotateTool implements Tool {
        *               0    (selected atom)
        *             / | \  (bonds)
        */
-      const bondPoints: [number, number][] = []
+      const bondPoints: [number, number][] = [];
       attachmentBonds.forEach((bond) => {
-        bondPoints.push([bond.begin, bond.end])
-      })
-      const intersectionAtoms = intersection(...bondPoints)
+        bondPoints.push([bond.begin, bond.end]);
+      });
+      const intersectionAtoms = intersection(...bondPoints);
       if (
         intersectionAtoms.length === 1 &&
         visibleAtoms.includes(intersectionAtoms[0])
       ) {
-        center = struct.atoms.get(intersectionAtoms[0])?.pp
+        center = struct.atoms.get(intersectionAtoms[0])?.pp;
       }
     } else if (attachmentBonds.size === 1) {
       /**
@@ -135,15 +135,15 @@ class RotateTool implements Tool {
        *          |  (selected bond)
        *          o  (unselected atom) --> center
        */
-      const attachmentBondId = attachmentBonds.keys().next().value as number
-      const attachmentBond = attachmentBonds.get(attachmentBondId) as Bond
+      const attachmentBondId = attachmentBonds.keys().next().value as number;
+      const attachmentBond = attachmentBonds.get(attachmentBondId) as Bond;
       const rotatePoint = [attachmentBond.begin, attachmentBond.end].find(
         (atomId) =>
           selection.bonds?.includes(attachmentBondId)
             ? !visibleAtoms.includes(atomId)
             : visibleAtoms.includes(atomId)
-      ) as number
-      center = struct.atoms.get(rotatePoint)?.pp
+      ) as number;
+      center = struct.atoms.get(rotatePoint)?.pp;
     }
 
     if (
@@ -157,89 +157,89 @@ class RotateTool implements Tool {
         atoms: visibleAtoms,
         texts,
         rxnArrows,
-        rxnPluses
-      })
+        rxnPluses,
+      });
     }
 
-    return [center, visibleAtoms] as const
+    return [center, visibleAtoms] as const;
   }
 
   mousemove(event) {
     if (!this.dragCtx) {
-      this.editor.hover(null, null, event)
-      return true
+      this.editor.hover(null, null, event);
+      return true;
     }
 
-    const rnd = this.editor.render
-    const dragCtx = this.dragCtx
+    const rnd = this.editor.render;
+    const dragCtx = this.dragCtx;
 
-    const pos = rnd.page2obj(event)
-    let angle = utils.calcAngle(dragCtx.xy0, pos) - dragCtx.angle1
+    const pos = rnd.page2obj(event);
+    let angle = utils.calcAngle(dragCtx.xy0, pos) - dragCtx.angle1;
 
     if (!event.ctrlKey) {
-      angle = utils.fracAngle(angle, null)
+      angle = utils.fracAngle(angle, null);
     }
 
-    const degrees = utils.degrees(angle)
+    const degrees = utils.degrees(angle);
 
     if ('angle' in dragCtx && dragCtx.angle === degrees) {
-      return true
+      return true;
     }
 
     if ('action' in dragCtx) {
-      dragCtx.action.perform(rnd.ctab)
+      dragCtx.action.perform(rnd.ctab);
     }
 
-    dragCtx.angle = degrees
+    dragCtx.angle = degrees;
     dragCtx.action = fromRotate(
       rnd.ctab,
       this.editor.selection(),
       dragCtx.xy0,
       angle
-    )
+    );
 
-    this.editor.event.message.dispatch({ info: degrees + 'º' })
+    this.editor.event.message.dispatch({ info: degrees + 'º' });
 
-    const expSel = this.editor.explicitSelected()
-    dragCtx.mergeItems = getItemsToFuse(this.editor, expSel)
-    this.editor.hover(getHoverToFuse(dragCtx.mergeItems), null, event)
+    const expSel = this.editor.explicitSelected();
+    dragCtx.mergeItems = getItemsToFuse(this.editor, expSel);
+    this.editor.hover(getHoverToFuse(dragCtx.mergeItems), null, event);
 
-    this.editor.update(dragCtx.action, true)
-    return true
+    this.editor.update(dragCtx.action, true);
+    return true;
   }
 
   mouseup() {
     if (!this.dragCtx) {
-      return true
+      return true;
     }
 
-    const dragCtx = this.dragCtx
-    const restruct = this.editor.render.ctab
+    const dragCtx = this.dragCtx;
+    const restruct = this.editor.render.ctab;
 
     const action = dragCtx.action
       ? fromItemsFuse(restruct, dragCtx.mergeItems).mergeWith(dragCtx.action)
-      : fromItemsFuse(restruct, dragCtx.mergeItems)
-    delete this.dragCtx
+      : fromItemsFuse(restruct, dragCtx.mergeItems);
+    delete this.dragCtx;
 
-    this.editor.update(action)
+    this.editor.update(action);
 
     if (dragCtx.mergeItems) {
-      this.editor.selection(null)
+      this.editor.selection(null);
     }
 
     this.editor.event.message.dispatch({
-      info: false
-    })
-    return true
+      info: false,
+    });
+    return true;
   }
 
   cancel() {
-    this.mouseup()
+    this.mouseup();
   }
 
   mouseleave() {
-    this.mouseup()
+    this.mouseup();
   }
 }
 
-export default RotateTool
+export default RotateTool;

@@ -13,63 +13,63 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import React from 'react'
-import { MenuItem } from './menuItem'
-import { SubMenu } from './subMenu'
-import { IMenuContext, MenuContext } from '../../contexts'
-import { Divider, MenuLayout, StyledGroup } from './styles'
-import { GroupProps, MenuProps } from './types'
+import React from 'react';
+import { MenuItem } from './menuItem';
+import { SubMenu } from './subMenu';
+import { IMenuContext, MenuContext } from '../../contexts';
+import { Divider, MenuLayout, StyledGroup } from './styles';
+import { GroupProps, MenuProps } from './types';
 
 const Group = ({
   children,
-  divider = false
+  divider = false,
 }: React.PropsWithChildren<GroupProps>) => {
   const subComponents = React.Children.map(
     children as JSX.Element[],
     (child) => {
-      return child.type === MenuItem || child.type === SubMenu ? child : null
+      return child.type === MenuItem || child.type === SubMenu ? child : null;
     }
-  )
+  );
 
   return (
     <>
       <StyledGroup>{subComponents.map((component) => component)}</StyledGroup>
       {divider && <Divider />}
     </>
-  )
-}
+  );
+};
 
 const Menu = ({
   children,
   onItemClick,
-  activeMenuItem
+  activeMenuItem,
 }: React.PropsWithChildren<MenuProps>) => {
   const context = React.useMemo<IMenuContext>(
     () => ({
       isActive: (itemKey) => activeMenuItem === itemKey,
       activate: (itemKey) => {
-        onItemClick(itemKey)
-      }
+        onItemClick(itemKey);
+      },
     }),
     [activeMenuItem, onItemClick]
-  )
+  );
 
   const subComponents = React.Children.map(
     children as JSX.Element[],
     (child) => {
-      return child.type === Group ? child : null
+      return child.type === Group ? child : null;
     }
-  )
+  );
 
   return (
     <MenuContext.Provider value={context}>
       <MenuLayout>{subComponents.map((component) => component)}</MenuLayout>
     </MenuContext.Provider>
-  )
-}
+  );
+};
 
-Menu.Group = Group
-Menu.Item = MenuItem
-Menu.Submenu = SubMenu
+Menu.Group = Group;
+Menu.Item = MenuItem;
+Menu.Submenu = SubMenu;
 
-export { Menu, MenuContext }
+export { Menu, MenuContext };

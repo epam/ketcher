@@ -30,13 +30,13 @@ test.describe('Open Ketcher', () => {
 
     await clickByLink(
       page,
-      'https://lifescience.opensource.epam.com/ketcher/index.html',
+      'https://lifescience.opensource.epam.com/ketcher/index.html'
     );
     await page.bringToFront();
 
     await clickByLink(
       page,
-      'http://lifescience.opensource.epam.com/ketcher/#feedback',
+      'http://lifescience.opensource.epam.com/ketcher/#feedback'
     );
     await page.bringToFront();
 

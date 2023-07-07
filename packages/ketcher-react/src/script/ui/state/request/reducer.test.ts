@@ -17,72 +17,72 @@
 import {
   INDIGO_VERIFICATION,
   ANALYZING_FILE,
-  RequestActionTypes
-} from './request.types'
+  RequestActionTypes,
+} from './request.types';
 
-import reducer from '.'
+import reducer from '.';
 
 describe('requests reducer', () => {
   it('should return the initial state when action payload is empty', () => {
     expect(reducer(undefined, {} as RequestActionTypes)).toEqual({
       indigoVerification: false,
-      isAnalyzingFile: false
-    })
-  })
+      isAnalyzingFile: false,
+    });
+  });
 
   it('should set indigoVerification to value provided in INDIGO_VERIFICATION action', () => {
     expect(
       reducer(undefined, {
         type: INDIGO_VERIFICATION,
-        data: true
+        data: true,
       })
     ).toEqual({
       indigoVerification: true,
-      isAnalyzingFile: false
-    })
+      isAnalyzingFile: false,
+    });
 
     expect(
       reducer(
         {
           indigoVerification: true,
-          isAnalyzingFile: false
+          isAnalyzingFile: false,
         },
         {
           type: INDIGO_VERIFICATION,
-          data: false
+          data: false,
         }
       )
     ).toEqual({
       indigoVerification: false,
-      isAnalyzingFile: false
-    })
-  })
+      isAnalyzingFile: false,
+    });
+  });
 
   it('should set isAnalyzingFile to value provided in ANALYZING_FILE action', () => {
     expect(
       reducer(undefined, {
         type: ANALYZING_FILE,
-        data: true
+        data: true,
       })
     ).toEqual({
       indigoVerification: false,
-      isAnalyzingFile: true
-    })
+      isAnalyzingFile: true,
+    });
 
     expect(
       reducer(
         {
           indigoVerification: false,
-          isAnalyzingFile: true
+          isAnalyzingFile: true,
         },
         {
           type: ANALYZING_FILE,
-          data: false
+          data: false,
         }
       )
     ).toEqual({
       indigoVerification: false,
-      isAnalyzingFile: false
-    })
-  })
-})
+      isAnalyzingFile: false,
+    });
+  });
+});

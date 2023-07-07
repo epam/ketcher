@@ -20,30 +20,30 @@ export const storage = {
     'Your changes will be lost after the tab closing. See Help (Note 2).',
   isAvailable() {
     try {
-      const storage = global.localStorage
-      return storage
+      const storage = global.localStorage;
+      return storage;
     } catch (ex) {
-      return false
+      return false;
     }
   },
   getItem(key) {
-    let item = null
+    let item = null;
     try {
-      item = JSON.parse(localStorage.getItem(key))
+      item = JSON.parse(localStorage.getItem(key));
     } catch (ex) {
-      console.info('LocalStorage:', ex.name)
+      console.info('LocalStorage:', ex.name);
     }
-    return item
+    return item;
   },
   setItem(key, data) {
-    let isSet = null
+    let isSet = null;
     try {
-      localStorage.setItem(key, JSON.stringify(data))
-      isSet = true
+      localStorage.setItem(key, JSON.stringify(data));
+      isSet = true;
     } catch (ex) {
-      console.info('LocalStorage:', ex.name)
-      isSet = false
+      console.info('LocalStorage:', ex.name);
+      isSet = false;
     }
-    return isSet
-  }
-}
+    return isSet;
+  },
+};

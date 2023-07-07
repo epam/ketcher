@@ -21,81 +21,81 @@ import {
   fromMultipleMove,
   fromTextCreation,
   fromTextDeletion,
-  fromTextUpdating
-} from 'ketcher-core'
-import { Tool } from './Tool'
+  fromTextUpdating,
+} from 'ketcher-core';
+import { Tool } from './Tool';
 
 interface Result {
-  content: string
+  content: string;
 }
 
 class TextTool implements Tool {
-  private readonly editor: any
-  private dragCtx: any
+  private readonly editor: any;
+  private dragCtx: any;
 
   constructor(editor) {
-    this.editor = editor
-    this.editor.selection(null)
+    this.editor = editor;
+    this.editor.selection(null);
   }
 
   mousedown(event) {
-    const render = this.editor.render
-    const closestItem = this.editor.findItem(event, ['texts'])
+    const render = this.editor.render;
+    const closestItem = this.editor.findItem(event, ['texts']);
 
-    this.editor.selection(null)
+    this.editor.selection(null);
 
     if (closestItem && closestItem.map === 'texts') {
-      this.editor.hover(null)
-      this.editor.selection({ texts: [closestItem.id] })
+      this.editor.hover(null);
+      this.editor.selection({ texts: [closestItem.id] });
       this.dragCtx = {
         xy0: render.page2obj(event),
-        action: new Action()
-      }
+        action: new Action(),
+      };
     }
   }
 
   mousemove(event) {
-    const render = this.editor.render
+    const render = this.editor.render;
 
     if (this.dragCtx) {
       if (this.dragCtx.action) {
-        this.dragCtx.action.perform(render.ctab)
+        this.dragCtx.action.perform(render.ctab);
       }
 
       this.dragCtx.action = fromMultipleMove(
         render.ctab,
         this.editor.selection() || {},
         render.page2obj(event).sub(this.dragCtx.xy0)
-      )
-      this.editor.update(this.dragCtx.action, true)
+      );
+      this.editor.update(this.dragCtx.action, true);
     } else {
-      this.editor.hover(this.editor.findItem(event, ['texts']), null, event)
+      this.editor.hover(this.editor.findItem(event, ['texts']), null, event);
     }
   }
 
   mouseup() {
     if (this.dragCtx) {
-      this.editor.update(this.dragCtx.action)
-      delete this.dragCtx
+      this.editor.update(this.dragCtx.action);
+      delete this.dragCtx;
     }
-    return true
+    return true;
   }
 
   click(event) {
-    const render = this.editor.render
-    const closestItem = this.editor.findItem(event, ['texts'])
-    this.editor.hover(null)
+    const render = this.editor.render;
+    const closestItem = this.editor.findItem(event, ['texts']);
+    this.editor.hover(null);
 
     if (!closestItem) {
-      propsDialog(this.editor, null, render.page2obj(event), [])
+      propsDialog(this.editor, null, render.page2obj(event), []);
     }
 
-    return true
+    return true;
   }
 
   dblclick(event) {
-    const closestItem = this.editor.findItem(event, ['texts'])
-    this.editor.hover(null)
+    const closestItem = this.editor.findItem(event, ['texts']);
+    this.editor.hover(null);
 
     if (closestItem.map === 'texts') {
       propsDialog(
@@ -103,10 +103,10 @@ class TextTool implements Tool {
         closestItem.id,
         closestItem.position,
         closestItem.pos
-      )
+      );
     }
 
-    return true
+    return true;
   }
 }
 
@@ -116,31 +116,31 @@ function propsDialog(
   position: Vec2,
   pos: Array<Vec2>
 ) {
-  const struct = editor.render.ctab.molecule
-  const text: Text | null = id || id === 0 ? struct.texts.get(id) : null
-  const origilContent = text ? text.content : ''
+  const struct = editor.render.ctab.molecule;
+  const text: Text | null = id || id === 0 ? struct.texts.get(id) : null;
+  const origilContent = text ? text.content : '';
 
   const res = editor.event.elementEdit.dispatch({
     content: origilContent,
     id,
     position,
     pos,
-    type: 'text'
-  })
+    type: 'text',
+  });
 
   res
     .then(({ content }: Result) => {
       if (!id && id !== 0 && content) {
         editor.update(
           fromTextCreation(editor.render.ctab, content, position, pos)
-        )
+        );
       } else if (!content) {
-        editor.update(fromTextDeletion(editor.render.ctab, id!))
+        editor.update(fromTextDeletion(editor.render.ctab, id!));
       } else if (content !== origilContent) {
-        editor.update(fromTextUpdating(editor.render.ctab, id!, content))
+        editor.update(fromTextUpdating(editor.render.ctab, id!, content));
       }
     })
-    .catch(() => null)
+    .catch(() => null);
 }
 
-export default TextTool
+export default TextTool;

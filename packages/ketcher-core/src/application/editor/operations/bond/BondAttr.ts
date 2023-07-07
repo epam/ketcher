@@ -14,61 +14,61 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { BaseOperation } from '../base'
-import { OperationType } from '../OperationType'
-import { ReStruct } from '../../../render'
+import { BaseOperation } from '../base';
+import { OperationType } from '../OperationType';
+import { ReStruct } from '../../../render';
 
 type Data = {
-  bid: any
-  attribute: any
-  value: any
-}
+  bid: any;
+  attribute: any;
+  value: any;
+};
 
 export class BondAttr extends BaseOperation {
-  data: Data | null
-  data2: Data | null
+  data: Data | null;
+  data2: Data | null;
 
   constructor(bondId?: any, attribute?: any, value?: any) {
-    super(OperationType.BOND_ATTR, 2)
-    this.data = { bid: bondId, attribute, value }
-    this.data2 = null
+    super(OperationType.BOND_ATTR, 2);
+    this.data = { bid: bondId, attribute, value };
+    this.data2 = null;
   }
 
   execute(restruct: ReStruct) {
     if (this.data) {
-      const { attribute, bid, value } = this.data
-      const bond = restruct.molecule.bonds.get(bid)!
+      const { attribute, bid, value } = this.data;
+      const bond = restruct.molecule.bonds.get(bid)!;
 
       if (!this.data2) {
         this.data2 = {
           bid,
           attribute,
-          value: bond[attribute]
-        }
+          value: bond[attribute],
+        };
       }
 
-      bond[attribute] = value
+      bond[attribute] = value;
 
-      BaseOperation.invalidateBond(restruct, bid)
+      BaseOperation.invalidateBond(restruct, bid);
       if (attribute === 'type') {
-        BaseOperation.invalidateLoop(restruct, bid)
+        BaseOperation.invalidateLoop(restruct, bid);
       }
     }
   }
 
   isDummy(restruct: ReStruct) {
     if (this.data) {
-      const { attribute, bid, value } = this.data
-      const bond = restruct.molecule.bonds.get(bid)!
-      return bond[attribute] === value
+      const { attribute, bid, value } = this.data;
+      const bond = restruct.molecule.bonds.get(bid)!;
+      return bond[attribute] === value;
     }
-    return false
+    return false;
   }
 
   invert() {
-    const inverted = new BondAttr()
-    inverted.data = this.data2
-    inverted.data2 = this.data
-    return inverted
+    const inverted = new BondAttr();
+    inverted.data = this.data2;
+    inverted.data2 = this.data;
+    return inverted;
   }
 }

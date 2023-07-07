@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { ChangeEvent, useState } from 'react'
-import { Tabs } from 'components/shared/Tabs'
-import styled from '@emotion/styled'
-import { tabsContent } from 'components/monomerLibrary/tabsContent'
-import { useAppDispatch } from 'hooks'
-import { setSearchFilter } from 'state/library'
-import { Icon } from 'ketcher-react'
+import { ChangeEvent, useState } from 'react';
+import { Tabs } from 'components/shared/Tabs';
+import styled from '@emotion/styled';
+import { tabsContent } from 'components/monomerLibrary/tabsContent';
+import { useAppDispatch } from 'hooks';
+import { setSearchFilter } from 'state/library';
+import { Icon } from 'ketcher-react';
 
 const MonomerLibraryContainer = styled.div(({ theme }) => ({
   width: '254px',
@@ -30,21 +30,21 @@ const MonomerLibraryContainer = styled.div(({ theme }) => ({
   flexDirection: 'column',
 
   '&.hidden': {
-    visibility: 'hidden'
-  }
-}))
+    visibility: 'hidden',
+  },
+}));
 
 const MonomerLibraryTitle = styled.h3(({ theme }) => ({
   margin: 0,
   padding: 0,
   fontSize: theme.ketcher.font.size.regular,
-  fontWeight: theme.ketcher.font.weight.regular
-}))
+  fontWeight: theme.ketcher.font.weight.regular,
+}));
 
 const MonomerLibraryHeader = styled.div(() => ({
   padding: '12px',
-  position: 'relative'
-}))
+  position: 'relative',
+}));
 
 const MonomerLibrarySearch = styled.div(({ theme }) => ({
   padding: '12px 0',
@@ -61,11 +61,11 @@ const MonomerLibrarySearch = styled.div(({ theme }) => ({
     '& > span': {
       display: 'flex',
       alignItems: 'center',
-      justifyContent: 'center'
+      justifyContent: 'center',
     },
 
     '&:has(input:focus)': {
-      outline: `1px solid ${theme.ketcher.color.input.border.focus}`
+      outline: `1px solid ${theme.ketcher.color.input.border.focus}`,
     },
 
     '& > input': {
@@ -76,11 +76,11 @@ const MonomerLibrarySearch = styled.div(({ theme }) => ({
       flex: 1,
 
       '&:focus': {
-        outline: 'none'
-      }
-    }
-  }
-}))
+        outline: 'none',
+      },
+    },
+  },
+}));
 
 const MonomerLibraryToggle = styled.div(({ theme }) => {
   return {
@@ -106,28 +106,28 @@ const MonomerLibraryToggle = styled.div(({ theme }) => {
       alignItems: 'center',
 
       '&.icon': {
-        marginRight: '2px'
-      }
+        marginRight: '2px',
+      },
     },
 
     '.hidden &': {
       backgroundColor: theme.ketcher.color.button.primary.active,
-      color: theme.ketcher.color.button.text.primary
-    }
-  }
-})
+      color: theme.ketcher.color.button.text.primary,
+    },
+  };
+});
 
 const MonomerLibrary = () => {
-  const [isHidden, setIsHidden] = useState(false)
-  const dispatch = useAppDispatch()
+  const [isHidden, setIsHidden] = useState(false);
+  const dispatch = useAppDispatch();
 
   const toggleSidebar = () => {
-    setIsHidden(!isHidden)
-  }
+    setIsHidden(!isHidden);
+  };
 
   const filterResults = (event: ChangeEvent<HTMLInputElement>) => {
-    dispatch(setSearchFilter(event.target.value))
-  }
+    dispatch(setSearchFilter(event.target.value));
+  };
 
   return (
     <MonomerLibraryContainer className={isHidden ? 'hidden' : 'shown'}>
@@ -160,7 +160,7 @@ const MonomerLibrary = () => {
       </MonomerLibraryHeader>
       <Tabs tabs={tabsContent} />
     </MonomerLibraryContainer>
-  )
-}
+  );
+};
 
-export { MonomerLibrary }
+export { MonomerLibrary };

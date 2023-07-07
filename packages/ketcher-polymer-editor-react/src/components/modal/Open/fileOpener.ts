@@ -14,34 +14,34 @@
  * limitations under the License.
  ***************************************************************************/
 
-export type FileOpener = typeof throughFileReader
+export type FileOpener = typeof throughFileReader;
 
 export function fileOpener() {
   return new Promise<FileOpener>((resolve, reject) => {
     if (global.FileReader) {
-      resolve(throughFileReader)
+      resolve(throughFileReader);
     } else {
-      reject(new Error('Your browser does not support opening files locally'))
+      reject(new Error('Your browser does not support opening files locally'));
     }
-  })
+  });
 }
 
 function throughFileReader(file: File) {
   return new Promise((resolve, reject) => {
-    const rd = new FileReader()
+    const rd = new FileReader();
 
     rd.onload = () => {
-      const content = rd.result
+      const content = rd.result;
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore msClose doesn't exist in File type
-      if (file.msClose) file.msClose()
-      resolve(content)
-    }
+      if (file.msClose) file.msClose();
+      resolve(content);
+    };
 
     rd.onerror = (event) => {
-      reject(event)
-    }
+      reject(event);
+    };
 
-    rd.readAsText(file, 'UTF-8')
-  })
+    rd.readAsText(file, 'UTF-8');
+  });
 }

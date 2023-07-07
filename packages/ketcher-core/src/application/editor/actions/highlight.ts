@@ -14,42 +14,42 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { ReStruct } from '../../render'
+import { ReStruct } from '../../render';
 
-import { HighlightAdd, HighlightDelete } from '../operations/highlight'
+import { HighlightAdd, HighlightDelete } from '../operations/highlight';
 
-import { Action } from './action'
+import { Action } from './action';
 
 type HighlightType = {
-  atoms: number[]
-  bonds: number[]
-  color: string
-}
+  atoms: number[];
+  bonds: number[];
+  color: string;
+};
 
 export function fromHighlightCreate(
   restruct: ReStruct,
   highlights: HighlightType[]
 ): Action {
-  const action = new Action()
+  const action = new Action();
 
   highlights.forEach((highlight) => {
-    const { atoms, bonds, color } = highlight
+    const { atoms, bonds, color } = highlight;
 
-    action.addOp(new HighlightAdd(atoms, bonds, color))
-  })
-  return action.perform(restruct)
+    action.addOp(new HighlightAdd(atoms, bonds, color));
+  });
+  return action.perform(restruct);
 }
 
 export function fromHighlightClear(restruct: ReStruct): Action {
-  const action = new Action()
+  const action = new Action();
 
-  const highlights = restruct.molecule.highlights
+  const highlights = restruct.molecule.highlights;
 
   highlights.forEach((_, key) => {
-    action.addOp(new HighlightDelete(key))
-  })
+    action.addOp(new HighlightDelete(key));
+  });
 
-  return action.perform(restruct)
+  return action.perform(restruct);
 }
 
 /*

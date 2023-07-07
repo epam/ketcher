@@ -14,28 +14,28 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { CommonState } from './common.types'
+import { CommonState } from './common.types';
 
 const initialState: CommonState = {
   cursorPosition: {
     x: 0,
-    y: 0
-  }
-}
+    y: 0,
+  },
+};
 
 const COMMON_ACTIONS = {
-  COMMON_UPDATE_CURSOR_POSITION: 'COMMON_UPDATE_CURSOR_POSITION'
-} as const
+  COMMON_UPDATE_CURSOR_POSITION: 'COMMON_UPDATE_CURSOR_POSITION',
+} as const;
 
 export const updateCursorPosition = (x: number, y: number) => ({
   type: COMMON_ACTIONS.COMMON_UPDATE_CURSOR_POSITION,
   data: {
     x,
-    y
-  }
-})
+    y,
+  },
+});
 
-type CommonAction = ReturnType<typeof updateCursorPosition>
+type CommonAction = ReturnType<typeof updateCursorPosition>;
 
 function commonReducer(
   state: CommonState = initialState,
@@ -47,14 +47,14 @@ function commonReducer(
         ...state,
         cursorPosition: {
           x: action.data.x,
-          y: action.data.y
-        }
-      }
+          y: action.data.y,
+        },
+      };
     }
 
     default:
-      return state
+      return state;
   }
 }
 
-export default commonReducer
+export default commonReducer;

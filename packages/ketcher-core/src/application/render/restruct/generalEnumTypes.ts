@@ -25,19 +25,19 @@ export enum LayerMap {
   warnings = 'warnings',
   data = 'data',
   additionalInfo = 'additionalInfo',
-  indices = 'indices'
+  indices = 'indices',
 }
 
 export enum StereoColoringType {
   LabelsOnly = 'LabelsOnly',
   BondsOnly = 'BondsOnly',
   LabelsAndBonds = 'LabelsAndBonds',
-  Off = 'Off'
+  Off = 'Off',
 }
 
 export enum StereLabelStyleType {
   IUPAC = 'Iupac',
   Classic = 'Classic',
   On = 'On',
-  Off = 'Off'
+  Off = 'Off',
 }

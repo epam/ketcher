@@ -14,26 +14,26 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { BaseCallProps, BaseProps } from '../../../modal.types'
-import Form, { Field } from '../../../../../component/form/form/form'
+import { BaseCallProps, BaseProps } from '../../../modal.types';
+import Form, { Field } from '../../../../../component/form/form/form';
 
-import { Dialog } from '../../../../components'
-import Select from '../../../../../component/form/Select'
-import { getSelectOptionsFromSchema } from '../../../../../utils'
-import { bond as bondSchema } from '../../../../../data/schema/struct-schema'
-import classes from './Bond.module.less'
+import { Dialog } from '../../../../components';
+import Select from '../../../../../component/form/Select';
+import { getSelectOptionsFromSchema } from '../../../../../utils';
+import { bond as bondSchema } from '../../../../../data/schema/struct-schema';
+import classes from './Bond.module.less';
 
 interface BondProps extends BaseProps {
-  center: number
-  topology: number
-  type: string
+  center: number;
+  topology: number;
+  type: string;
 }
 
-type Props = BondProps & BaseCallProps
+type Props = BondProps & BaseCallProps;
 
 const Bond = (props: Props) => {
-  const { formState, ...rest } = props
-  const bondProps = bondSchema.properties
+  const { formState, ...rest } = props;
+  const bondProps = bondSchema.properties;
   return (
     <Dialog
       title="Bond Properties"
@@ -63,8 +63,8 @@ const Bond = (props: Props) => {
         />
       </Form>
     </Dialog>
-  )
-}
+  );
+};
 
-export type { BondProps }
-export default Bond
+export type { BondProps };
+export default Bond;

@@ -14,4 +14,4 @@
  * limitations under the License.
  ***************************************************************************/
 
-export { default } from './Bond.container'
+export { default } from './Bond.container';

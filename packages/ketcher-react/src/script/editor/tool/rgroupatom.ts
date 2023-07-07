@@ -18,49 +18,49 @@ import {
   Atom,
   fromAtomAddition,
   fromAtomsAttrs,
-  FunctionalGroup
-} from 'ketcher-core'
-import Editor from '../Editor'
-import { Tool } from './Tool'
+  FunctionalGroup,
+} from 'ketcher-core';
+import Editor from '../Editor';
+import { Tool } from './Tool';
 
 class RGroupAtomTool implements Tool {
-  private readonly editor: Editor
+  private readonly editor: Editor;
 
   constructor(editor) {
     // TODO: map atoms with labels
-    editor.selection(null)
-    this.editor = editor
+    editor.selection(null);
+    this.editor = editor;
   }
 
   mousemove(event) {
-    const struct = this.editor.render.ctab.molecule
-    const ci = this.editor.findItem(event, ['atoms'])
+    const struct = this.editor.render.ctab.molecule;
+    const ci = this.editor.findItem(event, ['atoms']);
 
     if (ci) {
-      const atom = struct.atoms.get(ci.id)
-      if (atom?.attpnt === null) this.editor.hover(ci, null, event)
+      const atom = struct.atoms.get(ci.id);
+      if (atom?.attpnt === null) this.editor.hover(ci, null, event);
     } else {
-      this.editor.hover(null)
+      this.editor.hover(null);
     }
   }
 
   click(event) {
-    const struct = this.editor.render.ctab
-    const molecule = struct.molecule
-    const functionalGroups = molecule.functionalGroups
-    const rnd = this.editor.render
-    const ci = this.editor.findItem(event, ['atoms'])
-    const atomResult: Array<number> = []
-    const result: Array<number> = []
+    const struct = this.editor.render.ctab;
+    const molecule = struct.molecule;
+    const functionalGroups = molecule.functionalGroups;
+    const rnd = this.editor.render;
+    const ci = this.editor.findItem(event, ['atoms']);
+    const atomResult: Array<number> = [];
+    const result: Array<number> = [];
 
     if (ci && functionalGroups && ci.map === 'atoms') {
       const atomId = FunctionalGroup.atomsInFunctionalGroup(
         functionalGroups,
         ci.id
-      )
+      );
 
       if (atomId !== null) {
-        atomResult.push(atomId)
+        atomResult.push(atomId);
       }
     }
 
@@ -69,66 +69,66 @@ class RGroupAtomTool implements Tool {
         const fgId = FunctionalGroup.findFunctionalGroupByAtom(
           functionalGroups,
           id
-        )
+        );
 
         if (fgId !== null && !result.includes(fgId)) {
-          result.push(fgId)
+          result.push(fgId);
         }
       }
-      this.editor.event.removeFG.dispatch({ fgIds: result })
-      return
+      this.editor.event.removeFG.dispatch({ fgIds: result });
+      return;
     }
 
     if (!ci) {
       //  ci.type == 'Canvas'
-      this.editor.hover(null)
-      propsDialog(this.editor, null, rnd.page2obj(event))
-      return true
+      this.editor.hover(null);
+      propsDialog(this.editor, null, rnd.page2obj(event));
+      return true;
     } else if (ci.map === 'atoms') {
-      const struct = this.editor.render.ctab.molecule
-      const atom = struct.atoms.get(ci.id)
-      this.editor.hover(this.editor.findItem(event, ['atoms']), null, event)
+      const struct = this.editor.render.ctab.molecule;
+      const atom = struct.atoms.get(ci.id);
+      this.editor.hover(this.editor.findItem(event, ['atoms']), null, event);
 
-      if (atom?.attpnt !== null) return
+      if (atom?.attpnt !== null) return;
 
-      propsDialog(this.editor, ci.id, null)
-      return true
+      propsDialog(this.editor, ci.id, null);
+      return true;
     }
-    return true
+    return true;
   }
 }
 
 function propsDialog(editor, id, pos) {
-  const struct = editor.render.ctab.molecule
-  const atom = id || id === 0 ? struct.atoms.get(id) : null
-  const rglabel = atom ? atom.rglabel : 0
-  const label = atom ? atom.label : 'R#'
+  const struct = editor.render.ctab.molecule;
+  const atom = id || id === 0 ? struct.atoms.get(id) : null;
+  const rglabel = atom ? atom.rglabel : 0;
+  const label = atom ? atom.label : 'R#';
 
   const res = editor.event.elementEdit.dispatch({
     label: 'R#',
     rglabel,
-    fragId: atom ? atom.fragment : null
-  })
+    fragId: atom ? atom.fragment : null,
+  });
 
   Promise.resolve(res)
     .then((elem) => {
       // TODO review: using Atom.attrlist as a source of default property values
-      elem = Object.assign({}, Atom.attrlist, elem)
+      elem = Object.assign({}, Atom.attrlist, elem);
 
       if (!id && id !== 0 && elem.rglabel) {
-        editor.update(fromAtomAddition(editor.render.ctab, pos, elem))
+        editor.update(fromAtomAddition(editor.render.ctab, pos, elem));
       } else if (rglabel !== elem.rglabel) {
-        elem.aam = atom.aam // WTF??
-        elem.attpnt = atom.attpnt
+        elem.aam = atom.aam; // WTF??
+        elem.attpnt = atom.attpnt;
 
         if (!elem.rglabel && label !== 'R#') {
-          elem.label = label
+          elem.label = label;
         }
 
-        editor.update(fromAtomsAttrs(editor.render.ctab, id, elem, false))
+        editor.update(fromAtomsAttrs(editor.render.ctab, id, elem, false));
       }
     })
-    .catch(() => null) // w/o changes
+    .catch(() => null); // w/o changes
 }
 
-export default RGroupAtomTool
+export default RGroupAtomTool;

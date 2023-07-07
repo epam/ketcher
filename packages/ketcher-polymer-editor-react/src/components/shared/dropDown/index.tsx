@@ -14,5 +14,5 @@
  * limitations under the License.
  ***************************************************************************/
 
-export { DropDown } from './dropDown'
-export type { DropDownProps } from './dropDown'
+export { DropDown } from './dropDown';
+export type { DropDownProps } from './dropDown';

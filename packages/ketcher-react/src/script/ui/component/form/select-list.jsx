@@ -43,11 +43,11 @@ function SelectList({
         </li>
       ))}
     </ul>
-  )
+  );
 }
 
 function isSplitIndex(index, splitIndexes) {
-  return index > 0 && splitIndexes && splitIndexes.includes(index)
+  return index > 0 && splitIndexes && splitIndexes.includes(index);
 }
 
-export default SelectList
+export default SelectList;

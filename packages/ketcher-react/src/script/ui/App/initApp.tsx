@@ -14,16 +14,20 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { AppContext, ErrorsContext, SettingsContext } from './../../../contexts'
-import { Ketcher, StructService } from 'ketcher-core'
+import {
+  AppContext,
+  ErrorsContext,
+  SettingsContext,
+} from './../../../contexts';
+import { Ketcher, StructService } from 'ketcher-core';
 
-import App from './App.container'
-import { Provider } from 'react-redux'
-import { createRoot } from 'react-dom/client'
-import createStore from '../state'
-import { initKeydownListener } from '../state/hotkeys'
-import { initResize } from '../state/toolbar'
-import { initMouseListener } from '../state/mouse'
+import App from './App.container';
+import { Provider } from 'react-redux';
+import { createRoot } from 'react-dom/client';
+import createStore from '../state';
+import { initKeydownListener } from '../state/hotkeys';
+import { initResize } from '../state/toolbar';
+import { initMouseListener } from '../state/mouse';
 
 function initApp(
   element: HTMLDivElement | null,
@@ -32,19 +36,19 @@ function initApp(
   server: StructService,
   setEditor: (editor: any) => void
 ) {
-  const store = createStore(options, server, setEditor)
-  store.dispatch(initKeydownListener(element))
-  store.dispatch(initMouseListener(element))
-  store.dispatch(initResize())
+  const store = createStore(options, server, setEditor);
+  store.dispatch(initKeydownListener(element));
+  store.dispatch(initMouseListener(element));
+  store.dispatch(initResize());
 
-  const root = createRoot(element!)
+  const root = createRoot(element!);
   root.render(
     <Provider store={store}>
       <SettingsContext.Provider value={{ staticResourcesUrl }}>
         <ErrorsContext.Provider value={{ errorHandler: options.errorHandler }}>
           <AppContext.Provider
             value={{
-              getKetcherInstance: () => (window as any).ketcher as Ketcher
+              getKetcherInstance: () => (window as any).ketcher as Ketcher,
             }}
           >
             <App />
@@ -52,7 +56,7 @@ function initApp(
         </ErrorsContext.Provider>
       </SettingsContext.Provider>
     </Provider>
-  )
+  );
 }
 
-export { initApp }
+export { initApp };

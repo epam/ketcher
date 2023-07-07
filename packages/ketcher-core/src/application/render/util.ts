@@ -14,20 +14,20 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { RaphaelAxisAlignedBoundingBox, RaphaelPaper } from 'raphael'
-import { Atom, Bond, Box2Abs, Vec2 } from 'domain/entities'
-import assert from 'assert'
-import { ReStruct, LayerMap } from './restruct'
-import Visel from './restruct/visel'
-import { RelativeBox, RenderOptions } from './render.types'
+import { RaphaelAxisAlignedBoundingBox, RaphaelPaper } from 'raphael';
+import { Atom, Bond, Box2Abs, Vec2 } from 'domain/entities';
+import assert from 'assert';
+import { ReStruct, LayerMap } from './restruct';
+import Visel from './restruct/visel';
+import { RelativeBox, RenderOptions } from './render.types';
 
 function relBox(box: RaphaelAxisAlignedBoundingBox): RelativeBox {
   return {
     x: box.x,
     y: box.y,
     width: box.width,
-    height: box.height
-  }
+    height: box.height,
+  };
 }
 
 /**
@@ -35,45 +35,45 @@ function relBox(box: RaphaelAxisAlignedBoundingBox): RelativeBox {
  * Returns the shift magnitude to avoid it
  */
 function shiftRayBox(p: Vec2, d: Vec2, bb: Box2Abs) {
-  assert(!!p)
-  assert(!!d)
-  assert(!!bb)
+  assert(!!p);
+  assert(!!d);
+  assert(!!bb);
 
   // four corner points of the box
   const b = [
     bb.p0,
     new Vec2(bb.p1.x, bb.p0.y),
     bb.p1,
-    new Vec2(bb.p0.x, bb.p1.y)
-  ]
+    new Vec2(bb.p0.x, bb.p1.y),
+  ];
 
-  const r = b.map((v) => v.sub(p)) // b relative to p
+  const r = b.map((v) => v.sub(p)); // b relative to p
 
-  d = d.normalized()
+  d = d.normalized();
 
-  const rc = r.map((v) => Vec2.cross(v, d)) // cross prods
-  const rd = r.map((v) => Vec2.dot(v, d)) // dot prods
+  const rc = r.map((v) => Vec2.cross(v, d)); // cross prods
+  const rd = r.map((v) => Vec2.dot(v, d)); // dot prods
 
   // find foremost points on the right and on the left of the ray
-  let pid = -1
-  let nid = -1
+  let pid = -1;
+  let nid = -1;
 
   for (let i = 0; i < 4; ++i) {
     if (rc[i] > 0) {
-      if (pid < 0 || rd[pid] < rd[i]) pid = i
+      if (pid < 0 || rd[pid] < rd[i]) pid = i;
     } else if (nid < 0 || rd[nid] < rd[i]) {
-      nid = i
+      nid = i;
     }
   }
 
   if (nid < 0 || pid < 0) {
     // no intersection, no shift
-    return 0
+    return 0;
   }
 
   // check the order
-  const id0 = rd[pid] > rd[nid] ? nid : pid
-  const id1 = rd[pid] > rd[nid] ? pid : nid
+  const id0 = rd[pid] > rd[nid] ? nid : pid;
+  const id1 = rd[pid] > rd[nid] ? pid : nid;
 
   // simple proportion to calculate the shift
   /* eslint-disable no-mixed-operators */
@@ -81,109 +81,109 @@ function shiftRayBox(p: Vec2, d: Vec2, bb: Box2Abs) {
     rd[id0] +
     (Math.abs(rc[id0]) * (rd[id1] - rd[id0])) /
       (Math.abs(rc[id0]) + Math.abs(rc[id1]))
-  )
+  );
 }
 function calcCoordinates(aPoint: Vec2, bPoint: Vec2, lengthHyp: number) {
   const obj: {
-    pos1: null | { x: number; y: number }
-    pos2: null | { x: number; y: number }
-  } = { pos1: null, pos2: null }
-  const oPos2 = { x: bPoint.x - aPoint.x, y: bPoint.y - aPoint.y }
+    pos1: null | { x: number; y: number };
+    pos2: null | { x: number; y: number };
+  } = { pos1: null, pos2: null };
+  const oPos2 = { x: bPoint.x - aPoint.x, y: bPoint.y - aPoint.y };
   const c =
     (lengthHyp ** 2 - oPos2.x * oPos2.x - oPos2.y * oPos2.y - lengthHyp ** 2) /
-    -2
-  const a = oPos2.x * oPos2.x + oPos2.y * oPos2.y
+    -2;
+  const a = oPos2.x * oPos2.x + oPos2.y * oPos2.y;
   if (oPos2.x !== 0) {
-    const b = -2 * oPos2.y * c
-    const e = c * c - lengthHyp * lengthHyp * oPos2.x * oPos2.x
-    const D = b * b - 4 * a * e
+    const b = -2 * oPos2.y * c;
+    const e = c * c - lengthHyp * lengthHyp * oPos2.x * oPos2.x;
+    const D = b * b - 4 * a * e;
     if (D > 0) {
-      obj.pos1 = { x: 0, y: 0 }
-      obj.pos2 = { x: 0, y: 0 }
-      obj.pos1.y = (-b + Math.sqrt(D)) / (2 * a)
-      obj.pos2.y = (-b - Math.sqrt(D)) / (2 * a)
-      obj.pos1.x = (c - obj.pos1.y * oPos2.y) / oPos2.x
-      obj.pos2.x = (c - obj.pos2.y * oPos2.y) / oPos2.x
+      obj.pos1 = { x: 0, y: 0 };
+      obj.pos2 = { x: 0, y: 0 };
+      obj.pos1.y = (-b + Math.sqrt(D)) / (2 * a);
+      obj.pos2.y = (-b - Math.sqrt(D)) / (2 * a);
+      obj.pos1.x = (c - obj.pos1.y * oPos2.y) / oPos2.x;
+      obj.pos2.x = (c - obj.pos2.y * oPos2.y) / oPos2.x;
     }
   } else {
-    obj.pos1 = { x: 0, y: 0 }
-    obj.pos2 = { x: 0, y: 0 }
-    obj.pos1.y = c / oPos2.y
-    obj.pos2.y = c / oPos2.y
-    obj.pos1.x = -Math.sqrt(lengthHyp ** 2 - c ** 2 / oPos2.y ** 2)
-    obj.pos2.x = Math.sqrt(lengthHyp ** 2 - c ** 2 / oPos2.y ** 2)
+    obj.pos1 = { x: 0, y: 0 };
+    obj.pos2 = { x: 0, y: 0 };
+    obj.pos1.y = c / oPos2.y;
+    obj.pos2.y = c / oPos2.y;
+    obj.pos1.x = -Math.sqrt(lengthHyp ** 2 - c ** 2 / oPos2.y ** 2);
+    obj.pos2.x = Math.sqrt(lengthHyp ** 2 - c ** 2 / oPos2.y ** 2);
   }
   if (obj.pos1 !== null) {
-    obj.pos1.x += aPoint.x
-    obj.pos1.y += aPoint.y
+    obj.pos1.x += aPoint.x;
+    obj.pos1.y += aPoint.y;
   }
   if (obj.pos2 !== null) {
-    obj.pos2.x += aPoint.x
-    obj.pos2.y += aPoint.y
+    obj.pos2.x += aPoint.x;
+    obj.pos2.y += aPoint.y;
   }
-  return obj
+  return obj;
 }
 
 function getCIPValuePath({
   paper,
   cipLabelPosition,
   atomOrBond,
-  options
+  options,
 }: {
-  paper: RaphaelPaper
-  cipLabelPosition: Vec2
-  atomOrBond: Atom | Bond
-  options: RenderOptions
+  paper: RaphaelPaper;
+  cipLabelPosition: Vec2;
+  atomOrBond: Atom | Bond;
+  options: RenderOptions;
 }) {
   const text = paper
     .text(cipLabelPosition.x, cipLabelPosition.y, `(${atomOrBond.cip})`)
     .attr({
       font: options.font,
-      'font-size': options.fontsz
-    })
-  const box = text.getBBox()
-  const path = paper.set()
+      'font-size': options.fontsz,
+    });
+  const box = text.getBBox();
+  const path = paper.set();
   const rect = paper
     .rect(box.x - 1, box.y - 1, box.width + 2, box.height + 2, 3, 3)
-    .attr({ fill: '#fff', stroke: '#fff' })
-  path.push(rect.toFront(), text.toFront())
+    .attr({ fill: '#fff', stroke: '#fff' });
+  path.push(rect.toFront(), text.toFront());
 
   return {
     path,
     text,
-    rectangle: rect
-  }
+    rectangle: rect,
+  };
 }
 
 function drawCIPLabel({
   atomOrBond,
   position,
   restruct,
-  visel
+  visel,
 }: {
-  atomOrBond: Bond | Atom
-  position: Vec2
-  restruct: ReStruct
-  visel: Visel
+  atomOrBond: Bond | Atom;
+  position: Vec2;
+  restruct: ReStruct;
+  visel: Visel;
 }) {
-  const { options, paper } = restruct.render
-  const path = paper.set()
+  const { options, paper } = restruct.render;
+  const path = paper.set();
 
-  const cipLabelPosition = position.scaled(options.scale)
+  const cipLabelPosition = position.scaled(options.scale);
   const cipValuePath = getCIPValuePath({
     paper,
     cipLabelPosition,
     atomOrBond,
-    options
-  })
-  const box = relBox(cipValuePath.path.getBBox())
+    options,
+  });
+  const box = relBox(cipValuePath.path.getBBox());
 
-  cipValuePath.path.translateAbs(0.5 * box.width, -0.5 * box.height)
-  path.push(cipValuePath.path.toFront())
+  cipValuePath.path.translateAbs(0.5 * box.width, -0.5 * box.height);
+  path.push(cipValuePath.path.toFront());
 
-  restruct.addReObjectPath(LayerMap.additionalInfo, visel, path, null, true)
+  restruct.addReObjectPath(LayerMap.additionalInfo, visel, path, null, true);
 
-  return cipValuePath
+  return cipValuePath;
 }
 
 const util = {
@@ -191,7 +191,7 @@ const util = {
   shiftRayBox,
   calcCoordinates,
   getCIPValuePath,
-  drawCIPLabel
-}
+  drawCIPLabel,
+};
 
-export default util
+export default util;

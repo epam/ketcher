@@ -105,7 +105,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       await selectTopPanelButton(TopPanelButton.Calculate, page);
       await copyAndPaste(page);
       await page.mouse.click(x, y);
-    },
+    }
   );
 
   test.fixme(
@@ -122,7 +122,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       await selectTopPanelButton(TopPanelButton.Calculate, page);
       await cutAndPaste(page);
       await page.mouse.click(x, y);
-    },
+    }
   );
 
   test('Operation with structure including stereo properties (E/Z labels)', async ({
@@ -364,7 +364,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     const expectedFile = await getMolfile(page, 'v2000');
     await saveToFile(
       'structure-with-stereo-bonds-expectedV2000.mol',
-      expectedFile,
+      expectedFile
     );
     await selectTopPanelButton(TopPanelButton.Calculate, page);
     const METADATA_STRING_INDEX = [1];
@@ -391,7 +391,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     const expectedFile = await getMolfile(page, 'v3000');
     await saveToFile(
       'structure-with-stereo-bonds-expectedV3000.mol',
-      expectedFile,
+      expectedFile
     );
     await selectTopPanelButton(TopPanelButton.Calculate, page);
     const METADATA_STRING_INDEX = [1];
@@ -416,7 +416,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await selectTopPanelButton(TopPanelButton.Calculate, page);
     await getAndCompareSmiles(
       page,
-      'tests/test-data/structure-with-stereo-bonds.smi',
+      'tests/test-data/structure-with-stereo-bonds.smi'
     );
   });
 
@@ -429,7 +429,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await selectTopPanelButton(TopPanelButton.Calculate, page);
     await getAndCompareInchi(
       page,
-      'tests/test-data/structure-with-stereo-bonds.inchi',
+      'tests/test-data/structure-with-stereo-bonds.inchi'
     );
   });
 });

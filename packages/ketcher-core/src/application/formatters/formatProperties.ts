@@ -14,13 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { ChemicalMimeType } from 'domain/services'
-import { SupportedFormat } from './structFormatter.types'
-import { SupportedFormatProperties } from './supportedFormatProperties'
+import { ChemicalMimeType } from 'domain/services';
+import { SupportedFormat } from './structFormatter.types';
+import { SupportedFormatProperties } from './supportedFormatProperties';
 
 type FormatPropertiesMap = {
-  [key in SupportedFormat]: SupportedFormatProperties
-}
+  [key in SupportedFormat]: SupportedFormatProperties;
+};
 
 const formatProperties: FormatPropertiesMap = {
   molAuto: new SupportedFormatProperties(
@@ -73,7 +73,7 @@ const formatProperties: FormatPropertiesMap = {
     ['.smarts']
   ),
   inChI: new SupportedFormatProperties('InChI', ChemicalMimeType.InChI, [
-    '.inchi'
+    '.inchi',
   ]),
   inChIAuxInfo: new SupportedFormatProperties(
     'InChI AuxInfo',
@@ -87,7 +87,7 @@ const formatProperties: FormatPropertiesMap = {
     true
   ),
   ket: new SupportedFormatProperties('Ket Format', ChemicalMimeType.KET, [
-    '.ket'
+    '.ket',
   ]),
   cdxml: new SupportedFormatProperties(
     'CDXML',
@@ -112,20 +112,20 @@ const formatProperties: FormatPropertiesMap = {
     ChemicalMimeType.UNKNOWN,
     ['.'],
     true
-  )
-}
+  ),
+};
 
 const imgFormatProperties = {
   svg: { extension: '.svg', name: 'SVG Document' },
-  png: { extension: '.png', name: 'PNG Image' }
-}
+  png: { extension: '.png', name: 'PNG Image' },
+};
 
 function getPropertiesByImgFormat(format) {
-  return imgFormatProperties[format]
+  return imgFormatProperties[format];
 }
 
 function getPropertiesByFormat(format: SupportedFormat) {
-  return formatProperties[format]
+  return formatProperties[format];
 }
 
-export { formatProperties, getPropertiesByFormat, getPropertiesByImgFormat }
+export { formatProperties, getPropertiesByFormat, getPropertiesByImgFormat };

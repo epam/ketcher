@@ -14,36 +14,36 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { AbbreviationLookupState } from './abbreviationLookup.types'
+import { AbbreviationLookupState } from './abbreviationLookup.types';
 
 const initialState: AbbreviationLookupState = {
-  isOpen: false
-}
+  isOpen: false,
+};
 
 const ABBREVIATION_LOOKUP_ACTIONS = {
   ABBR_LOOKUP_INIT: 'ABBR_LOOKUP_INIT',
   ABBR_LOOKUP_SHOW: 'ABBR_LOOKUP_SHOW',
-  ABBR_LOOKUP_CLOSE: 'ABBR_LOOKUP_CLOSE'
-} as const
+  ABBR_LOOKUP_CLOSE: 'ABBR_LOOKUP_CLOSE',
+} as const;
 
 export const initAbbreviationLookup = (key: string) => ({
   type: ABBREVIATION_LOOKUP_ACTIONS.ABBR_LOOKUP_INIT,
-  data: key
-})
+  data: key,
+});
 
 export const showAbbreviationLookup = (key: string) => ({
   type: ABBREVIATION_LOOKUP_ACTIONS.ABBR_LOOKUP_SHOW,
-  data: key
-})
+  data: key,
+});
 
 export const closeAbbreviationLookup = () => ({
-  type: ABBREVIATION_LOOKUP_ACTIONS.ABBR_LOOKUP_CLOSE
-})
+  type: ABBREVIATION_LOOKUP_ACTIONS.ABBR_LOOKUP_CLOSE,
+});
 
 type AbbrLookupAction =
   | ReturnType<typeof initAbbreviationLookup>
   | ReturnType<typeof showAbbreviationLookup>
-  | ReturnType<typeof closeAbbreviationLookup>
+  | ReturnType<typeof closeAbbreviationLookup>;
 
 function abbreviationLookupReducer(
   state: AbbreviationLookupState = initialState,
@@ -53,27 +53,27 @@ function abbreviationLookupReducer(
     case ABBREVIATION_LOOKUP_ACTIONS.ABBR_LOOKUP_INIT: {
       return {
         isOpen: false,
-        lookupValue: action.data
-      }
+        lookupValue: action.data,
+      };
     }
 
     case ABBREVIATION_LOOKUP_ACTIONS.ABBR_LOOKUP_SHOW: {
       return {
         isOpen: true,
-        lookupValue: `${state.lookupValue}${action.data}`
-      }
+        lookupValue: `${state.lookupValue}${action.data}`,
+      };
     }
 
     case ABBREVIATION_LOOKUP_ACTIONS.ABBR_LOOKUP_CLOSE: {
       return {
         isOpen: false,
-        lookupValue: undefined
-      }
+        lookupValue: undefined,
+      };
     }
 
     default:
-      return state
+      return state;
   }
 }
 
-export default abbreviationLookupReducer
+export default abbreviationLookupReducer;

@@ -14,62 +14,64 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { act, fireEvent, render, screen } from '@testing-library/react'
-import { Save } from 'components/modal/save'
-import userEvent from '@testing-library/user-event'
+import { act, fireEvent, render, screen } from '@testing-library/react';
+import { Save } from 'components/modal/save';
+import userEvent from '@testing-library/user-event';
 
-const mockOnClose = jest.fn()
+const mockOnClose = jest.fn();
 
 const mockProps = {
   onClose: mockOnClose,
-  isModalOpen: true
-}
+  isModalOpen: true,
+};
 
 describe('Save modal', () => {
   it('renders correctly', () => {
-    const view = render(withThemeProvider(<Save {...mockProps} />))
+    const view = render(withThemeProvider(<Save {...mockProps} />));
 
     const filenameInput = screen.getByRole('textbox', {
-      name: 'File name:'
-    })
+      name: 'File name:',
+    });
     const fileFormatInput = screen.getByRole('button', {
-      name: 'MDL Molfile V3000'
-    })
+      name: 'MDL Molfile V3000',
+    });
 
-    expect(view).toMatchSnapshot()
-    expect(filenameInput).toBeVisible()
-    expect(filenameInput).toHaveValue('ketcher')
-    expect(fileFormatInput).toBeVisible()
-  })
+    expect(view).toMatchSnapshot();
+    expect(filenameInput).toBeVisible();
+    expect(filenameInput).toHaveValue('ketcher');
+    expect(fileFormatInput).toBeVisible();
+  });
 
   it.skip('renders dropdown options correctly', () => {
-    render(withThemeProvider(<Save {...mockProps} />))
+    render(withThemeProvider(<Save {...mockProps} />));
 
-    const fileFormat = screen.getByRole('button', { name: 'MDL Molfile V3000' })
+    const fileFormat = screen.getByRole('button', {
+      name: 'MDL Molfile V3000',
+    });
 
-    fireEvent.click(fileFormat)
-    const fileFormatDropdown = screen.getByTestId('dropdown-select')
-    const option1 = screen.getByRole('option', { name: 'MDL Molfile V3000' })
-    const option2 = screen.getByRole('option', { name: 'HELM' })
+    fireEvent.click(fileFormat);
+    const fileFormatDropdown = screen.getByTestId('dropdown-select');
+    const option1 = screen.getByRole('option', { name: 'MDL Molfile V3000' });
+    const option2 = screen.getByRole('option', { name: 'HELM' });
 
-    expect(fileFormatDropdown).toBeVisible()
-    expect(option1).toBeVisible()
-    expect(option2).toBeVisible()
-  })
+    expect(fileFormatDropdown).toBeVisible();
+    expect(option1).toBeVisible();
+    expect(option2).toBeVisible();
+  });
 
   it.skip('renders buttons correctly', () => {
-    render(withThemeProvider(<Save {...mockProps} />))
+    render(withThemeProvider(<Save {...mockProps} />));
 
-    const saveButton = screen.getByRole('button', { name: 'Save as file' })
+    const saveButton = screen.getByRole('button', { name: 'Save as file' });
     const filenameInput = screen.getByRole('textbox', {
-      name: 'File name:'
-    })
+      name: 'File name:',
+    });
 
     // eslint-disable-next-line testing-library/no-unnecessary-act
     act(() => {
-      userEvent.clear(filenameInput)
-    })
+      userEvent.clear(filenameInput);
+    });
 
-    expect(saveButton).toBeDisabled()
-  })
-})
+    expect(saveButton).toBeDisabled();
+  });
+});

@@ -9,7 +9,7 @@ import {
 test.describe('Reagents molecule below arrow', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(
-      'https://rc.test.lifescience.opensource.epam.com/KetcherDemo/index.html',
+      'https://rc.test.lifescience.opensource.epam.com/KetcherDemo/index.html'
     );
   });
 
@@ -32,7 +32,7 @@ test.describe('Reagents molecule below arrow', () => {
     */
     await openFileAndAddToCanvas(
       'benzene-arrow-benzene-reagent-hcl.cdxml',
-      page,
+      page
     );
   });
 

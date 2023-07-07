@@ -14,13 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { MolSerializerOptions } from 'domain/serializers'
-import { Struct } from 'domain/entities'
-import { StructServiceOptions } from 'domain/services'
+import { MolSerializerOptions } from 'domain/serializers';
+import { Struct } from 'domain/entities';
+import { StructServiceOptions } from 'domain/services';
 
 export interface StructFormatter {
-  getStructureFromStructAsync: (struct: Struct) => Promise<string>
-  getStructureFromStringAsync: (stringifiedStruct: string) => Promise<Struct>
+  getStructureFromStructAsync: (struct: Struct) => Promise<string>;
+  getStructureFromStringAsync: (stringifiedStruct: string) => Promise<Struct>;
 }
 
 export enum SupportedFormat {
@@ -39,9 +39,9 @@ export enum SupportedFormat {
   cdxml = 'cdxml',
   cdx = 'cdx',
   binaryCdx = 'binaryCdx',
-  unknown = 'unknown'
+  unknown = 'unknown',
 }
 
 export type FormatterFactoryOptions = Partial<
   MolSerializerOptions & StructServiceOptions
->
+>;

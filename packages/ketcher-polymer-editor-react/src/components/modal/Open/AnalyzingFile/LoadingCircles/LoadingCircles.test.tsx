@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { LoadingCircles } from './LoadingCircles'
-import { render } from '@testing-library/react'
+import { LoadingCircles } from './LoadingCircles';
+import { render } from '@testing-library/react';
 
 describe('LoadingCircles component', () => {
   it('should render correctly', () => {
-    expect(render(withThemeProvider(<LoadingCircles />))).toMatchSnapshot()
-  })
-})
+    expect(render(withThemeProvider(<LoadingCircles />))).toMatchSnapshot();
+  });
+});

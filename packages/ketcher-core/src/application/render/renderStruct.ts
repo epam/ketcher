@@ -1,11 +1,11 @@
-import { Struct } from 'domain/entities'
-import { Render } from './raphaelRender'
+import { Struct } from 'domain/entities';
+import { Render } from './raphaelRender';
 
 /**
  * Is used to improve search and opening tab performance in Template Dialog
  * Rendering a lot of structures causes great delay
  */
-const renderCache = new Map()
+const renderCache = new Map();
 
 export class RenderStruct {
   /**
@@ -14,12 +14,12 @@ export class RenderStruct {
    */
   static prepareStruct(struct: Struct) {
     if (struct.sgroups.size > 0) {
-      const newStruct = struct.clone()
-      convertAllSGroupAttachmentPointsToRGroupAttachmentPoints(newStruct)
-      newStruct.sgroups.delete(0)
-      return newStruct
+      const newStruct = struct.clone();
+      convertAllSGroupAttachmentPointsToRGroupAttachmentPoints(newStruct);
+      newStruct.sgroups.delete(0);
+      return newStruct;
     }
-    return struct
+    return struct;
   }
 
   static render(
@@ -28,25 +28,25 @@ export class RenderStruct {
     options: any = {}
   ) {
     if (el && struct) {
-      const { cachePrefix = '', needCache = true } = options
-      const cacheKey = `${cachePrefix}${struct.name}`
+      const { cachePrefix = '', needCache = true } = options;
+      const cacheKey = `${cachePrefix}${struct.name}`;
       if (renderCache.has(cacheKey) && needCache) {
-        el.innerHTML = renderCache.get(cacheKey)
-        return
+        el.innerHTML = renderCache.get(cacheKey);
+        return;
       }
-      const preparedStruct = this.prepareStruct(struct)
-      preparedStruct.initHalfBonds()
-      preparedStruct.initNeighbors()
-      preparedStruct.setImplicitHydrogen()
-      preparedStruct.markFragments()
+      const preparedStruct = this.prepareStruct(struct);
+      preparedStruct.initHalfBonds();
+      preparedStruct.initNeighbors();
+      preparedStruct.setImplicitHydrogen();
+      preparedStruct.markFragments();
       const rnd = new Render(el, {
         autoScale: true,
-        ...options
-      })
-      preparedStruct.rescale()
-      rnd.setMolecule(preparedStruct)
+        ...options,
+      });
+      preparedStruct.rescale();
+      rnd.setMolecule(preparedStruct);
       if (needCache) {
-        renderCache.set(cacheKey, rnd.clientArea.innerHTML)
+        renderCache.set(cacheKey, rnd.clientArea.innerHTML);
       }
     }
   }
@@ -64,8 +64,8 @@ function convertAllSGroupAttachmentPointsToRGroupAttachmentPoints(
   struct.sgroups.forEach((sgroup) => {
     sgroup.getAttachmentPoints().forEach((attachmentPoint) => {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const attachmentPointAtom = struct.atoms.get(attachmentPoint.atomId)!
-      attachmentPointAtom.setRGAttachmentPointForDisplayPurpose()
-    })
-  })
+      const attachmentPointAtom = struct.atoms.get(attachmentPoint.atomId)!;
+      attachmentPointAtom.setRGAttachmentPointForDisplayPurpose();
+    });
+  });
 }

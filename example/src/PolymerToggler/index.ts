@@ -1,1 +1,1 @@
-export * from './PolymerToggler'
+export * from './PolymerToggler';

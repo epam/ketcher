@@ -21,6 +21,7 @@ import { Bond } from './bond';
 import { Pool } from './pool';
 import { SGroup } from './sgroup';
 import { Struct } from './struct';
+import { HalfBond } from './halfBond';
 
 export class FunctionalGroup {
   #sgroup: SGroup;
@@ -213,6 +214,19 @@ export class FunctionalGroup {
         atomsInSGroup.includes(bond.end)
       );
     });
+  }
+
+  static isHalfBondInContractedFunctionalGroup(
+    halfBond: HalfBond,
+    struct: Struct,
+  ) {
+    const bond = struct.bonds.get(halfBond.bid);
+    assert(bond != null);
+    return this.isBondInContractedFunctionalGroup(
+      bond,
+      struct.sgroups,
+      struct.functionalGroups,
+    );
   }
 
   static isContractedFunctionalGroup(sgroupId, functionalGroups): boolean {

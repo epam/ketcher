@@ -320,7 +320,7 @@ class ReStruct {
    * and this lead to unstable flip tool work
    */
   // eslint-disable-next-line no-use-before-define
-  getSelectionRotationCenter(selection: SelectionMap): Vec2 | undefined {
+  getSelectionBoxCenter(selection: SelectionMap): Vec2 | undefined {
     let boundingBox: Box2Abs | null = null;
 
     for (const atomId of selection.atoms ?? []) {

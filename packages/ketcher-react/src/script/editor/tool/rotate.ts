@@ -18,6 +18,7 @@ import {
   Atom,
   Bond,
   FlipDirection,
+  FunctionalGroup,
   Vec2,
   fromFlip,
   fromItemsFuse,
@@ -171,7 +172,7 @@ class RotateTool implements Tool {
         rxnArrows?.length ||
         rxnPluses?.length)
     ) {
-      center = this.reStruct.getSelectionRotationCenter({
+      center = this.reStruct.getSelectionBoxCenter({
         atoms: visibleAtoms,
         texts,
         rxnArrows,
@@ -277,6 +278,7 @@ class RotateTool implements Tool {
     }
 
     const centerAtom = this.struct.atoms.get(this.centerAtomId);
+    assert(centerAtom != null);
     const {
       rotatableHalfBondIds,
       rotatableHalfBondAngles,
@@ -390,20 +392,27 @@ class RotateTool implements Tool {
 
   private partitionNeighborsBySelection(
     selection: Selection | null,
-    atom?: Atom,
+    atom: Atom,
   ) {
     const rotatableHalfBondIds: number[] = [];
     const rotatableHalfBondAngles: number[] = [];
     const fixedHalfBondIds: number[] = [];
     const fixedHalfBondAngles: number[] = [];
 
-    atom?.neighbors.forEach((halfBondId) => {
+    atom.neighbors.forEach((halfBondId) => {
       const halfBond = this.struct.halfBonds.get(halfBondId);
       assert(halfBond != null);
       const neighborAtomId = halfBond.end;
       if (selection?.atoms?.includes(neighborAtomId)) {
-        rotatableHalfBondIds.push(halfBondId);
-        rotatableHalfBondAngles.push(halfBond.ang);
+        if (
+          !FunctionalGroup.isHalfBondInContractedFunctionalGroup(
+            halfBond,
+            this.struct,
+          )
+        ) {
+          rotatableHalfBondIds.push(halfBondId);
+          rotatableHalfBondAngles.push(halfBond.ang);
+        }
       } else {
         fixedHalfBondIds.push(halfBondId);
         fixedHalfBondAngles.push(halfBond.ang);

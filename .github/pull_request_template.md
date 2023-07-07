@@ -10,3 +10,4 @@
 - [ ] branch name doesn't contain '#'
 - [ ] PR is linked with the issue
 - [ ] base branch (master or release/xx) is correct
+- [ ] task status changed to "Code review"

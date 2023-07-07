@@ -14,35 +14,35 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Component } from 'react'
-import classes from './Tabs.module.less'
-import clsx from 'clsx'
+import { Component } from 'react';
+import classes from './Tabs.module.less';
+import clsx from 'clsx';
 
 class Tabs extends Component {
   constructor(props) {
-    super(props)
-    this.state = {}
-    this.state.tabIndex = props.tabIndex || 0
-    this.props.changeTab(this.state.tabIndex)
+    super(props);
+    this.state = {};
+    this.state.tabIndex = props.tabIndex || 0;
+    this.props.changeTab(this.state.tabIndex);
   }
 
   // TODO: refactor the component
   changeTab(ev, index) {
-    this.setState({ tabIndex: index })
-    if (this.props.changeTab) this.props.changeTab(index)
+    this.setState({ tabIndex: index });
+    if (this.props.changeTab) this.props.changeTab(index);
   }
 
   componentDidUpdate(prevProps) {
     if (this.props.tabIndex !== prevProps.tabIndex) {
-      this.setState({ tabIndex: this.props.tabIndex })
+      this.setState({ tabIndex: this.props.tabIndex });
     }
   }
 
   render() {
-    const { tabs, contentClassName, className, tabIndex } = this.props
-    const tabPanel = tabs[this.state.tabIndex]
-    const Component = tabPanel?.component
-    const componentProps = tabPanel?.props
+    const { tabs, contentClassName, className, tabIndex } = this.props;
+    const tabPanel = tabs[this.state.tabIndex];
+    const Component = tabPanel?.component;
+    const componentProps = tabPanel?.props;
     return (
       <div>
         <ul className={className} tabIndex={tabIndex}>
@@ -51,7 +51,7 @@ class Tabs extends Component {
               <a // eslint-disable-line
                 key={index}
                 className={clsx({
-                  [classes.active]: this.state.tabIndex === index
+                  [classes.active]: this.state.tabIndex === index,
                 })}
                 onClick={(ev) => this.changeTab(ev, index)}
               >
@@ -66,8 +66,8 @@ class Tabs extends Component {
           </div>
         )}
       </div>
-    )
+    );
   }
 }
 
-export default Tabs
+export default Tabs;

@@ -14,8 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import styled from '@emotion/styled'
-import style from '../../../../../components/styles/consts'
+import styled from '@emotion/styled';
+import style from '../../../../../components/styles/consts';
 
 const VerticalDivider = styled('hr')`
   margin: 0px 6px;
@@ -25,7 +25,7 @@ const VerticalDivider = styled('hr')`
   border-width: 0px thin 0px 0px;
   border-style: solid;
   border-color: ${style.color.darkGrey};
-`
+`;
 
 const HorizontalDividerElement = styled('hr')`
   margin: 6px 0px;
@@ -38,8 +38,8 @@ const HorizontalDividerElement = styled('hr')`
   align-self: center;
   border: 1px solid;
   border-color: ${style.color.grey};
-`
+`;
 
-export const Divider = () => <VerticalDivider />
+export const Divider = () => <VerticalDivider />;
 
-export const HorizontalDivider = () => <HorizontalDividerElement />
+export const HorizontalDivider = () => <HorizontalDividerElement />;

@@ -14,26 +14,26 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { RGroup, Struct } from 'domain/entities'
+import { RGroup, Struct } from 'domain/entities';
 
-import { ifDef } from 'utilities'
-import { moleculeToStruct } from './moleculeToStruct'
+import { ifDef } from 'utilities';
+import { moleculeToStruct } from './moleculeToStruct';
 
 export function rgroupToStruct(ketItem): Struct {
-  const struct = moleculeToStruct(ketItem)
-  const rgroup = rgroupLogicToStruct(ketItem.rlogic)
+  const struct = moleculeToStruct(ketItem);
+  const rgroup = rgroupLogicToStruct(ketItem.rlogic);
   struct.frags.forEach((_value: any, key) => {
-    rgroup.frags.add(key)
-  })
-  if (ketItem.rlogic) struct.rgroups.set(ketItem.rlogic.number, rgroup)
-  return struct
+    rgroup.frags.add(key);
+  });
+  if (ketItem.rlogic) struct.rgroups.set(ketItem.rlogic.number, rgroup);
+  return struct;
 }
 
 export function rgroupLogicToStruct(rglogic) {
-  const params = {}
-  ifDef(params, 'range', rglogic.range)
-  ifDef(params, 'resth', rglogic.resth)
-  ifDef(params, 'ifthen', rglogic.ifthen)
+  const params = {};
+  ifDef(params, 'range', rglogic.range);
+  ifDef(params, 'resth', rglogic.resth);
+  ifDef(params, 'ifthen', rglogic.ifthen);
 
-  return new RGroup(params)
+  return new RGroup(params);
 }

@@ -14,115 +14,115 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { FunctionalGroup } from 'ketcher-core'
-import { PropsWithChildren, useCallback } from 'react'
-import { useContextMenu } from 'react-contexify'
-import { useAppContext } from 'src/hooks'
-import Editor from 'src/script/editor'
+import { FunctionalGroup } from 'ketcher-core';
+import { PropsWithChildren, useCallback } from 'react';
+import { useContextMenu } from 'react-contexify';
+import { useAppContext } from 'src/hooks';
+import Editor from 'src/script/editor';
 import {
   ContextMenuShowProps,
-  ContextMenuTriggerType
-} from './contextMenu.types'
+  ContextMenuTriggerType,
+} from './contextMenu.types';
 import {
   getMenuPropsForClosestItem,
   getIsItemInSelection,
-  getMenuPropsForSelection
-} from './ContextMenuTrigger.utils'
+  getMenuPropsForSelection,
+} from './ContextMenuTrigger.utils';
 
 const ContextMenuTrigger: React.FC<PropsWithChildren> = ({ children }) => {
-  const { getKetcherInstance } = useAppContext()
-  const { show } = useContextMenu<ContextMenuShowProps>()
+  const { getKetcherInstance } = useAppContext();
+  const { show } = useContextMenu<ContextMenuShowProps>();
 
   const getSelectedGroupsInfo = useCallback(() => {
-    const editor = getKetcherInstance().editor as Editor
-    const struct = editor.struct()
-    const selectedAtomIds = editor.selection()?.atoms
+    const editor = getKetcherInstance().editor as Editor;
+    const struct = editor.struct();
+    const selectedAtomIds = editor.selection()?.atoms;
     // Map and Set can do deduplication
-    const selectedFunctionalGroups = new Map<number, FunctionalGroup>()
-    const selectedSGroupsIds: Set<number> = new Set()
+    const selectedFunctionalGroups = new Map<number, FunctionalGroup>();
+    const selectedSGroupsIds: Set<number> = new Set();
 
     selectedAtomIds?.forEach((atomId) => {
       const functionalGroup = FunctionalGroup.findFunctionalGroupByAtom(
         struct.functionalGroups,
         atomId,
-        true
-      )
+        true,
+      );
 
       functionalGroup !== null &&
         selectedFunctionalGroups.set(
           functionalGroup.relatedSGroupId,
-          functionalGroup
-        )
+          functionalGroup,
+        );
 
       const sGroupId = struct.sgroups.find((_, sGroup) =>
-        sGroup.atoms.includes(atomId)
-      )
+        sGroup.atoms.includes(atomId),
+      );
 
-      sGroupId !== null && selectedSGroupsIds.add(sGroupId)
-    })
+      sGroupId !== null && selectedSGroupsIds.add(sGroupId);
+    });
 
     return {
       selectedFunctionalGroups,
-      selectedSGroupsIds
-    }
-  }, [getKetcherInstance])
+      selectedSGroupsIds,
+    };
+  }, [getKetcherInstance]);
 
   const handleDisplay = useCallback<React.MouseEventHandler<HTMLDivElement>>(
     (event) => {
-      event.preventDefault()
+      event.preventDefault();
 
-      const editor = getKetcherInstance().editor as Editor
-      const closestItem = editor.findItem(event, null)
-      const selection = editor.selection()
+      const editor = getKetcherInstance().editor as Editor;
+      const closestItem = editor.findItem(event, null);
+      const selection = editor.selection();
       const { selectedFunctionalGroups, selectedSGroupsIds } =
-        getSelectedGroupsInfo()
+        getSelectedGroupsInfo();
 
-      let showProps: ContextMenuShowProps = null
-      let triggerType: ContextMenuTriggerType
+      let showProps: ContextMenuShowProps = null;
+      let triggerType: ContextMenuTriggerType;
 
       if (!closestItem) {
         if (selection) {
           // if it was a click outside of any item
-          editor.selection(null)
+          editor.selection(null);
         }
-        return
+        return;
       } else if (!selection) {
-        triggerType = ContextMenuTriggerType.ClosestItem
+        triggerType = ContextMenuTriggerType.ClosestItem;
       } else if (
         getIsItemInSelection({
           item: closestItem,
           selection,
           selectedFunctionalGroups,
-          selectedSGroupsIds
+          selectedSGroupsIds,
         })
       ) {
         if (!selection.bonds && !selection.atoms) {
-          triggerType = ContextMenuTriggerType.None
+          triggerType = ContextMenuTriggerType.None;
         } else {
-          triggerType = ContextMenuTriggerType.Selection
+          triggerType = ContextMenuTriggerType.Selection;
         }
       } else {
         // closestItem is outside of selection
-        editor.selection(null)
-        triggerType = ContextMenuTriggerType.ClosestItem
+        editor.selection(null);
+        triggerType = ContextMenuTriggerType.ClosestItem;
       }
 
       switch (triggerType) {
         case ContextMenuTriggerType.None: {
-          return
+          return;
         }
 
         case ContextMenuTriggerType.ClosestItem: {
-          showProps = getMenuPropsForClosestItem(editor, closestItem)
-          break
+          showProps = getMenuPropsForClosestItem(editor, closestItem);
+          break;
         }
 
         case ContextMenuTriggerType.Selection: {
           showProps = getMenuPropsForSelection(
             selection,
-            selectedFunctionalGroups
-          )
-          break
+            selectedFunctionalGroups,
+          );
+          break;
         }
       }
 
@@ -130,17 +130,17 @@ const ContextMenuTrigger: React.FC<PropsWithChildren> = ({ children }) => {
         show({
           id: showProps.id,
           event,
-          props: showProps
-        })
+          props: showProps,
+        });
     },
-    [getKetcherInstance, getSelectedGroupsInfo, show]
-  )
+    [getKetcherInstance, getSelectedGroupsInfo, show],
+  );
 
   return (
     <div style={{ height: '100%' }} onContextMenu={handleDisplay}>
       {children}
     </div>
-  )
-}
+  );
+};
 
-export default ContextMenuTrigger
+export default ContextMenuTrigger;

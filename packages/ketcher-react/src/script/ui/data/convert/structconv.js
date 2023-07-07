@@ -14,47 +14,48 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { AtomList, Bond, Elements, StereoLabel } from 'ketcher-core'
+import { AtomList, Bond, Elements, StereoLabel } from 'ketcher-core';
 
-import { atom as atomSchema } from '../schema/struct-schema'
-import { capitalize } from 'lodash/fp'
+import { atom as atomSchema } from '../schema/struct-schema';
+import { capitalize } from 'lodash/fp';
 import {
   sdataSchema,
   getSdataDefault,
-  sdataCustomSchema
-} from '../schema/sdata-schema'
+  sdataCustomSchema,
+} from '../schema/sdata-schema';
 
-const DefaultStereoGroupNumber = 1
+const DefaultStereoGroupNumber = 1;
 
 export function fromElement(selem) {
   if (selem.label === 'R#') {
     return {
       type: 'rlabel',
       values: fromRlabel(selem.rglabel),
-      ...selem
-    }
+      ...selem,
+    };
   }
-  if (selem.label === 'L#') return fromAtomList(selem)
+  if (selem.label === 'L#') return fromAtomList(selem);
 
-  if (Elements.get(selem.label)) return fromAtom(selem)
+  if (Elements.get(selem.label)) return fromAtom(selem);
 
-  if (!selem.label && 'attpnt' in selem) return { ap: fromApoint(selem.attpnt) }
+  if (!selem.label && 'attpnt' in selem)
+    return { ap: fromApoint(selem.attpnt) };
 
-  return selem // probably generic
+  return selem; // probably generic
 }
 
 export function toElement(elem) {
   if (elem.type === 'rlabel') {
     return {
       label: elem.values.length ? 'R#' : 'C',
-      rglabel: elem.values.length === 0 ? null : toRlabel(elem.values)
-    }
+      rglabel: elem.values.length === 0 ? null : toRlabel(elem.values),
+    };
   }
-  if (elem.type === 'list' || elem.type === 'not-list') return toAtomList(elem)
+  if (elem.type === 'list' || elem.type === 'not-list') return toAtomList(elem);
 
-  if (!elem.label && 'ap' in elem) return { attpnt: toApoint(elem.ap) }
+  if (!elem.label && 'ap' in elem) return { attpnt: toApoint(elem.ap) };
 
-  if (Elements.get(capitalize(elem.label))) return toAtom(elem)
+  if (Elements.get(capitalize(elem.label))) return toAtom(elem);
 
   if (
     elem.label === 'A' ||
@@ -63,16 +64,16 @@ export function toElement(elem) {
     elem.label === 'X' ||
     elem.label === 'R'
   ) {
-    elem.pseudo = elem.label
-    return toAtom(elem)
+    elem.pseudo = elem.label;
+    return toAtom(elem);
   }
 
-  return elem
+  return elem;
 }
 
 export function fromAtom(satom) {
-  const alias = satom.alias || ''
-  const charge = satom.charge.toString()
+  const alias = satom.alias || '';
+  const charge = satom.charge.toString();
 
   return {
     alias,
@@ -87,32 +88,32 @@ export function fromAtom(satom) {
     substitutionCount: satom.substitutionCount,
     unsaturatedAtom: !!satom.unsaturatedAtom,
     hCount: satom.hCount,
-    stereoParity: satom.stereoParity
-  }
+    stereoParity: satom.stereoParity,
+  };
 }
 
 export function toAtom(atom) {
   // TODO merge this to Atom.attrlist?
   //      see ratomtool
-  const chargeRegexp = new RegExp(atomSchema.properties.charge.pattern)
-  const pch = chargeRegexp.exec(atom.charge)
-  const charge = pch ? parseInt(pch[1] + pch[3] + pch[2]) : atom.charge
+  const chargeRegexp = new RegExp(atomSchema.properties.charge.pattern);
+  const pch = chargeRegexp.exec(atom.charge);
+  const charge = pch ? parseInt(pch[1] + pch[3] + pch[2]) : atom.charge;
 
   const conv = Object.assign({}, atom, {
     label: capitalize(atom.label),
     alias: atom.alias || null,
     exactChangeFlag: +(atom.exactChangeFlag ?? false),
-    unsaturatedAtom: +(atom.unsaturatedAtom ?? false)
-  })
-  if (charge !== undefined) conv.charge = charge
-  return conv
+    unsaturatedAtom: +(atom.unsaturatedAtom ?? false),
+  });
+  if (charge !== undefined) conv.charge = charge;
+  return conv;
 }
 
 function fromAtomList(satom) {
   return {
     type: satom.atomList.notList ? 'not-list' : 'list',
-    values: satom.atomList.ids.map((i) => Elements.get(i).label)
-  }
+    values: satom.atomList.ids.map((i) => Elements.get(i).label),
+  };
 }
 
 function toAtomList(atom) {
@@ -121,166 +122,166 @@ function toAtomList(atom) {
     label: 'L#',
     atomList: new AtomList({
       notList: atom.type === 'not-list',
-      ids: atom.values.map((el) => Elements.get(el).number)
-    })
-  }
+      ids: atom.values.map((el) => Elements.get(el).number),
+    }),
+  };
 }
 
 export function fromStereoLabel(stereoLabel) {
-  if (stereoLabel === null) return { type: null }
-  const type = stereoLabel.match(/\D+/g)[0]
-  const number = +stereoLabel.replace(type, '')
+  if (stereoLabel === null) return { type: null };
+  const type = stereoLabel.match(/\D+/g)[0];
+  const number = +stereoLabel.replace(type, '');
 
   if (type === StereoLabel.Abs) {
     return {
       type: stereoLabel,
       orNumber: DefaultStereoGroupNumber,
-      andNumber: DefaultStereoGroupNumber
-    }
+      andNumber: DefaultStereoGroupNumber,
+    };
   }
 
   if (type === StereoLabel.And) {
     return {
       type,
       orNumber: DefaultStereoGroupNumber,
-      andNumber: number
-    }
+      andNumber: number,
+    };
   }
 
   if (type === StereoLabel.Or) {
     return {
       type,
       orNumber: number,
-      andNumber: DefaultStereoGroupNumber
-    }
+      andNumber: DefaultStereoGroupNumber,
+    };
   }
 }
 
 export function toStereoLabel(stereoLabel) {
   switch (stereoLabel.type) {
     case StereoLabel.And:
-      return `${StereoLabel.And}${stereoLabel.andNumber || 1}`
+      return `${StereoLabel.And}${stereoLabel.andNumber || 1}`;
 
     case StereoLabel.Or:
-      return `${StereoLabel.Or}${stereoLabel.orNumber || 1}`
+      return `${StereoLabel.Or}${stereoLabel.orNumber || 1}`;
 
     default:
-      return stereoLabel.type
+      return stereoLabel.type;
   }
 }
 
 function fromApoint(sap) {
   return {
     primary: ((sap || 0) & 1) > 0,
-    secondary: ((sap || 0) & 2) > 0
-  }
+    secondary: ((sap || 0) & 2) > 0,
+  };
 }
 
 function toApoint(ap) {
-  return (ap.primary && 1) + (ap.secondary && 2)
+  return (ap.primary && 1) + (ap.secondary && 2);
 }
 
 function fromRlabel(rg) {
-  const res = []
-  let rgi
-  let val
+  const res = [];
+  let rgi;
+  let val;
   for (rgi = 0; rgi < 32; rgi++) {
     if (rg & (1 << rgi)) {
-      val = rgi + 1
-      res.push(val) // push the string
+      val = rgi + 1;
+      res.push(val); // push the string
     }
   }
-  return res
+  return res;
 }
 
 function toRlabel(values) {
-  let res = 0
+  let res = 0;
   values.forEach((val) => {
-    const rgi = val - 1
-    res |= 1 << rgi
-  })
-  return res
+    const rgi = val - 1;
+    res |= 1 << rgi;
+  });
+  return res;
 }
 
 export function fromBond(sbond) {
-  const type = sbond.type
-  const stereo = sbond.stereo
+  const type = sbond.type;
+  const stereo = sbond.stereo;
   return {
     type: fromBondType(type, stereo),
     topology: sbond.topology || 0,
-    center: sbond.reactingCenterStatus || 0
-  }
+    center: sbond.reactingCenterStatus || 0,
+  };
 }
 
 export function toBond(bond) {
   return {
     topology: bond.topology,
     reactingCenterStatus: bond.center,
-    ...toBondType(bond.type)
-  }
+    ...toBondType(bond.type),
+  };
 }
 
 const bondCaptionMap = {
   single: {
     type: Bond.PATTERN.TYPE.SINGLE,
-    stereo: Bond.PATTERN.STEREO.NONE
+    stereo: Bond.PATTERN.STEREO.NONE,
   },
   up: {
     type: Bond.PATTERN.TYPE.SINGLE,
-    stereo: Bond.PATTERN.STEREO.UP
+    stereo: Bond.PATTERN.STEREO.UP,
   },
   down: {
     type: Bond.PATTERN.TYPE.SINGLE,
-    stereo: Bond.PATTERN.STEREO.DOWN
+    stereo: Bond.PATTERN.STEREO.DOWN,
   },
   updown: {
     type: Bond.PATTERN.TYPE.SINGLE,
-    stereo: Bond.PATTERN.STEREO.EITHER
+    stereo: Bond.PATTERN.STEREO.EITHER,
   },
   double: {
     type: Bond.PATTERN.TYPE.DOUBLE,
-    stereo: Bond.PATTERN.STEREO.NONE
+    stereo: Bond.PATTERN.STEREO.NONE,
   },
   crossed: {
     type: Bond.PATTERN.TYPE.DOUBLE,
-    stereo: Bond.PATTERN.STEREO.CIS_TRANS
+    stereo: Bond.PATTERN.STEREO.CIS_TRANS,
   },
   triple: {
     type: Bond.PATTERN.TYPE.TRIPLE,
-    stereo: Bond.PATTERN.STEREO.NONE
+    stereo: Bond.PATTERN.STEREO.NONE,
   },
   aromatic: {
     type: Bond.PATTERN.TYPE.AROMATIC,
-    stereo: Bond.PATTERN.STEREO.NONE
+    stereo: Bond.PATTERN.STEREO.NONE,
   },
   singledouble: {
     type: Bond.PATTERN.TYPE.SINGLE_OR_DOUBLE,
-    stereo: Bond.PATTERN.STEREO.NONE
+    stereo: Bond.PATTERN.STEREO.NONE,
   },
   singlearomatic: {
     type: Bond.PATTERN.TYPE.SINGLE_OR_AROMATIC,
-    stereo: Bond.PATTERN.STEREO.NONE
+    stereo: Bond.PATTERN.STEREO.NONE,
   },
   doublearomatic: {
     type: Bond.PATTERN.TYPE.DOUBLE_OR_AROMATIC,
-    stereo: Bond.PATTERN.STEREO.NONE
+    stereo: Bond.PATTERN.STEREO.NONE,
   },
   any: {
     type: Bond.PATTERN.TYPE.ANY,
-    stereo: Bond.PATTERN.STEREO.NONE
+    stereo: Bond.PATTERN.STEREO.NONE,
   },
   hydrogen: {
     type: Bond.PATTERN.TYPE.HYDROGEN,
-    stereo: Bond.PATTERN.STEREO.NONE
+    stereo: Bond.PATTERN.STEREO.NONE,
   },
   dative: {
     type: Bond.PATTERN.TYPE.DATIVE,
-    stereo: Bond.PATTERN.STEREO.NONE
-  }
-}
+    stereo: Bond.PATTERN.STEREO.NONE,
+  },
+};
 
 export function toBondType(caption) {
-  return Object.assign({}, bondCaptionMap[caption])
+  return Object.assign({}, bondCaptionMap[caption]);
 }
 
 function fromBondType(type, stereo) {
@@ -289,24 +290,24 @@ function fromBondType(type, stereo) {
       bondCaptionMap[caption].type === type &&
       bondCaptionMap[caption].stereo === stereo
     )
-      return caption
+      return caption;
   }
-  return ''
+  return '';
 }
 
 export function fromSgroup(ssgroup) {
-  const type = ssgroup.type || 'DAT'
-  const { context, fieldName, fieldValue, absolute, attached } = ssgroup.attrs
+  const type = ssgroup.type || 'DAT';
+  const { context, fieldName, fieldValue, absolute, attached } = ssgroup.attrs;
 
   if (absolute === false && attached === false)
-    ssgroup.attrs.radiobuttons = 'Relative'
-  else ssgroup.attrs.radiobuttons = attached ? 'Attached' : 'Absolute'
+    ssgroup.attrs.radiobuttons = 'Relative';
+  else ssgroup.attrs.radiobuttons = attached ? 'Attached' : 'Absolute';
 
   if (
     sdataSchema[context][fieldName] &&
     sdataSchema[context][fieldName].properties.fieldValue.items
   )
-    ssgroup.attrs.fieldValue = fieldValue.split('\n')
+    ssgroup.attrs.fieldValue = fieldValue.split('\n');
 
   const sDataInitValue =
     type === 'DAT'
@@ -315,48 +316,48 @@ export function fromSgroup(ssgroup) {
           fieldName:
             fieldName || getSdataDefault(sdataCustomSchema, 'fieldName'),
           fieldValue:
-            fieldValue || getSdataDefault(sdataCustomSchema, 'fieldValue')
+            fieldValue || getSdataDefault(sdataCustomSchema, 'fieldValue'),
         }
-      : {}
+      : {};
 
-  return Object.assign({ type }, ssgroup.attrs, sDataInitValue)
+  return Object.assign({ type }, ssgroup.attrs, sDataInitValue);
 }
 
 export function toSgroup(sgroup) {
-  const { type, radiobuttons, ...props } = sgroup
-  const attrs = { ...props }
+  const { type, radiobuttons, ...props } = sgroup;
+  const attrs = { ...props };
 
-  const absolute = 'absolute'
-  const attached = 'attached'
+  const absolute = 'absolute';
+  const attached = 'attached';
 
   switch (radiobuttons) {
     case 'Absolute':
-      attrs[absolute] = true
-      attrs[attached] = false
-      break
+      attrs[absolute] = true;
+      attrs[attached] = false;
+      break;
     case 'Attached':
-      attrs[absolute] = false
-      attrs[attached] = true
-      break
+      attrs[absolute] = false;
+      attrs[attached] = true;
+      break;
     case 'Relative':
-      attrs[absolute] = false
-      attrs[attached] = false
-      break
+      attrs[absolute] = false;
+      attrs[attached] = false;
+      break;
     default:
-      break
+      break;
   }
 
-  if (attrs.fieldName) attrs.fieldName = attrs.fieldName.trim()
+  if (attrs.fieldName) attrs.fieldName = attrs.fieldName.trim();
 
   if (attrs.fieldValue) {
     attrs.fieldValue =
       typeof attrs.fieldValue === 'string'
         ? attrs.fieldValue.trim()
-        : attrs.fieldValue
+        : attrs.fieldValue;
   }
 
   return {
     type,
-    attrs
-  }
+    attrs,
+  };
 }

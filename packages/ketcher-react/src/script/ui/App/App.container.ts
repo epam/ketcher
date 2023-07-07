@@ -14,16 +14,16 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { App, AppCallProps } from './App'
+import { App, AppCallProps } from './App';
 
-import { checkServer } from '../state/server'
-import { connect } from 'react-redux'
+import { checkServer } from '../state/server';
+import { connect } from 'react-redux';
 
 const mapDispatchToProps: AppCallProps = {
-  checkServer
-}
+  checkServer,
+};
 
-const AppContainer = connect(null, mapDispatchToProps)(App)
+const AppContainer = connect(null, mapDispatchToProps)(App);
 
-export { AppContainer }
-export default AppContainer
+export { AppContainer };
+export default AppContainer;

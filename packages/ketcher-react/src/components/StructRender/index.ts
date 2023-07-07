@@ -14,4 +14,4 @@
  * limitations under the License.
  ***************************************************************************/
 
-export { default as StructRender } from './StructRender'
+export { default as StructRender } from './StructRender';

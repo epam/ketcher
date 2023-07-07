@@ -14,19 +14,19 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { IconName } from '../../Icon/types'
+import { IconName } from '../../Icon/types';
 
 export interface IIconButtonProps {
-  iconName: IconName
-  onClick: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void
-  title?: string
-  className?: string
-  isHidden?: boolean
-  disabled?: boolean
-  isActive?: boolean
-  shortcut?: string
+  iconName: IconName;
+  onClick: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+  title?: string;
+  className?: string;
+  isHidden?: boolean;
+  disabled?: boolean;
+  isActive?: boolean;
+  shortcut?: string;
 }
 
 export interface IStyledButtonProps {
-  isActive: boolean
+  isActive: boolean;
 }

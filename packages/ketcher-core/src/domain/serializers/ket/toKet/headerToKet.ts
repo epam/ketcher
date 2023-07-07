@@ -14,15 +14,15 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Struct } from 'domain/entities'
-import { ifDef } from 'utilities'
+import { Struct } from 'domain/entities';
+import { ifDef } from 'utilities';
 
 export function headerToKet(struct: Struct): any {
-  const header = {}
+  const header = {};
 
-  ifDef(header, 'moleculeName', struct.name, '')
-  ifDef(header, 'creatorProgram', null, '')
-  ifDef(header, 'comment', null, '')
+  ifDef(header, 'moleculeName', struct.name, '');
+  ifDef(header, 'creatorProgram', null, '');
+  ifDef(header, 'comment', null, '');
 
-  return Object.keys(header).length !== 0 ? header : null
+  return Object.keys(header).length !== 0 ? header : null;
 }

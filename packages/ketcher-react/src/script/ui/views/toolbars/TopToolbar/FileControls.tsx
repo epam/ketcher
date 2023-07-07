@@ -13,20 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { TopToolbarIconButton } from './TopToolbarIconButton'
+import { TopToolbarIconButton } from './TopToolbarIconButton';
 
 interface FileControlsProps {
-  onFileOpen: () => void
-  onSave: () => void
-  shortcuts: { [key in string]: string }
-  hiddenButtons: string[]
+  onFileOpen: () => void;
+  onSave: () => void;
+  shortcuts: { [key in string]: string };
+  hiddenButtons: string[];
 }
 
 export const FileControls = ({
   onFileOpen,
   onSave,
   shortcuts,
-  hiddenButtons
+  hiddenButtons,
 }: FileControlsProps) => {
   return (
     <>
@@ -45,5 +45,5 @@ export const FileControls = ({
         isHidden={hiddenButtons.includes('save')}
       />
     </>
-  )
-}
+  );
+};

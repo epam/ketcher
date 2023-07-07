@@ -14,47 +14,47 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { RxnArrowMode, SimpleObjectMode, findStereoAtoms } from 'ketcher-core'
+import { RxnArrowMode, SimpleObjectMode, findStereoAtoms } from 'ketcher-core';
 
-import { bond as bondSchema } from '../data/schema/struct-schema'
-import isHidden from './isHidden'
-import { toBondType } from '../data/convert/structconv'
-import { isFlipDisabled } from './flips'
+import { bond as bondSchema } from '../data/schema/struct-schema';
+import isHidden from './isHidden';
+import { toBondType } from '../data/convert/structconv';
+import { isFlipDisabled } from './flips';
 
 const toolActions = {
   hand: {
     title: 'Hand tool',
     shortcut: 'Mod+Alt+h',
     action: { tool: 'hand' },
-    hidden: (options) => isHidden(options, 'hand')
+    hidden: (options) => isHidden(options, 'hand'),
   },
   'select-lasso': {
     title: 'Lasso Selection',
     shortcut: 'Escape',
-    action: { tool: 'select', opts: 'lasso' }
+    action: { tool: 'select', opts: 'lasso' },
   },
   'select-rectangle': {
     title: 'Rectangle Selection',
     shortcut: 'Escape',
     action: { tool: 'select', opts: 'rectangle' },
-    hidden: (options) => isHidden(options, 'select-rectangle')
+    hidden: (options) => isHidden(options, 'select-rectangle'),
   },
   'select-fragment': {
     title: 'Fragment Selection',
     shortcut: 'Escape',
     action: { tool: 'select', opts: 'fragment' },
-    hidden: (options) => isHidden(options, 'select-fragment')
+    hidden: (options) => isHidden(options, 'select-fragment'),
   },
   erase: {
     title: 'Erase',
     shortcut: ['Delete', 'Backspace'],
     action: { tool: 'eraser', opts: 1 }, // TODO last selector mode is better
-    hidden: (options) => isHidden(options, 'erase')
+    hidden: (options) => isHidden(options, 'erase'),
   },
   chain: {
     title: 'Chain',
     action: { tool: 'chain' },
-    hidden: (options) => isHidden(options, 'chain')
+    hidden: (options) => isHidden(options, 'chain'),
   },
   'enhanced-stereo': {
     shortcut: 'Alt+e',
@@ -63,253 +63,259 @@ const toolActions = {
     disabled: (editor) =>
       findStereoAtoms(
         editor?.struct(),
-        Array.from(editor?.struct().atoms.keys())
+        Array.from(editor?.struct().atoms.keys()),
       ).length === 0,
-    hidden: (options) => isHidden(options, 'enhanced-stereo')
+    hidden: (options) => isHidden(options, 'enhanced-stereo'),
   },
   'charge-plus': {
     shortcut: '+',
     title: 'Charge Plus',
     action: { tool: 'charge', opts: 1 },
-    hidden: (options) => isHidden(options, 'charge-plus')
+    hidden: (options) => isHidden(options, 'charge-plus'),
   },
   'charge-minus': {
     shortcut: '-',
     title: 'Charge Minus',
     action: { tool: 'charge', opts: -1 },
-    hidden: (options) => isHidden(options, 'charge-minus')
+    hidden: (options) => isHidden(options, 'charge-minus'),
   },
   'transform-rotate': {
     title: 'Rotate Tool',
     action: { tool: 'rotate' },
-    hidden: (options) => isHidden(options, 'transform-rotate')
+    hidden: (options) => isHidden(options, 'transform-rotate'),
   },
   'transform-flip-h': {
     shortcut: 'Alt+h',
     title: 'Horizontal Flip',
     action: { tool: 'rotate', opts: 'horizontal' },
     disabled: isFlipDisabled,
-    hidden: (options) => isHidden(options, 'transform-flip-h')
+    hidden: (options) => isHidden(options, 'transform-flip-h'),
   },
   'transform-flip-v': {
     shortcut: 'Alt+v',
     title: 'Vertical Flip',
     action: { tool: 'rotate', opts: 'vertical' },
     disabled: isFlipDisabled,
-    hidden: (options) => isHidden(options, 'transform-flip-v')
+    hidden: (options) => isHidden(options, 'transform-flip-v'),
   },
   sgroup: {
     shortcut: 'Mod+g',
     title: 'S-Group',
     action: { tool: 'sgroup' },
-    hidden: (options) => isHidden(options, 'sgroup')
+    hidden: (options) => isHidden(options, 'sgroup'),
   },
   arrows: {
-    hidden: (options) => isHidden(options, 'arrows')
+    hidden: (options) => isHidden(options, 'arrows'),
   },
   'reaction-arrow-open-angle': {
     title: 'Arrow Open Angle Tool',
     action: { tool: 'reactionarrow', opts: RxnArrowMode.OpenAngle },
-    hidden: (options) => isHidden(options, 'reaction-arrow-open-angle')
+    hidden: (options) => isHidden(options, 'reaction-arrow-open-angle'),
   },
   'reaction-arrow-filled-triangle': {
     title: 'Arrow Filled Triangle',
     action: { tool: 'reactionarrow', opts: RxnArrowMode.FilledTriangle },
-    hidden: (options) => isHidden(options, 'reaction-arrow-filled-triangle')
+    hidden: (options) => isHidden(options, 'reaction-arrow-filled-triangle'),
   },
   'reaction-arrow-filled-bow': {
     title: 'Arrow Filled Bow Tool',
     action: { tool: 'reactionarrow', opts: RxnArrowMode.FilledBow },
-    hidden: (options) => isHidden(options, 'reaction-arrow-filled-bow')
+    hidden: (options) => isHidden(options, 'reaction-arrow-filled-bow'),
   },
   'reaction-arrow-dashed-open-angle': {
     title: 'Arrow Dashed Open Angle Tool',
     action: { tool: 'reactionarrow', opts: RxnArrowMode.DashedOpenAngle },
-    hidden: (options) => isHidden(options, 'reaction-arrow-dashed-open-angle')
+    hidden: (options) => isHidden(options, 'reaction-arrow-dashed-open-angle'),
   },
   'reaction-arrow-failed': {
     title: 'Failed Arrow Tool',
     action: { tool: 'reactionarrow', opts: RxnArrowMode.Failed },
-    hidden: (options) => isHidden(options, 'reaction-arrow-failed')
+    hidden: (options) => isHidden(options, 'reaction-arrow-failed'),
   },
   'reaction-arrow-both-ends-filled-triangle': {
     title: 'Arrow Both Ends Filled Triangle Tool',
     action: {
       tool: 'reactionarrow',
-      opts: RxnArrowMode.BothEndsFilledTriangle
+      opts: RxnArrowMode.BothEndsFilledTriangle,
     },
     hidden: (options) =>
-      isHidden(options, 'reaction-arrow-both-ends-filled-triangle')
+      isHidden(options, 'reaction-arrow-both-ends-filled-triangle'),
   },
   'reaction-arrow-equilibrium-filled-half-bow': {
     title: 'Arrow Equilibrium Filled Half Bow Tool',
     action: {
       tool: 'reactionarrow',
-      opts: RxnArrowMode.EquilibriumFilledHalfBow
+      opts: RxnArrowMode.EquilibriumFilledHalfBow,
     },
     hidden: (options) =>
-      isHidden(options, 'reaction-arrow-equilibrium-filled-half-bow')
+      isHidden(options, 'reaction-arrow-equilibrium-filled-half-bow'),
   },
   'reaction-arrow-equilibrium-filled-triangle': {
     title: 'Arrow Equilibrium Filled Triangle Tool',
     action: {
       tool: 'reactionarrow',
-      opts: RxnArrowMode.EquilibriumFilledTriangle
+      opts: RxnArrowMode.EquilibriumFilledTriangle,
     },
     hidden: (options) =>
-      isHidden(options, 'reaction-arrow-equilibrium-filled-triangle')
+      isHidden(options, 'reaction-arrow-equilibrium-filled-triangle'),
   },
   'reaction-arrow-equilibrium-open-angle': {
     title: 'Arrow Equilibrium Open Angle Tool',
     action: { tool: 'reactionarrow', opts: RxnArrowMode.EquilibriumOpenAngle },
     hidden: (options) =>
-      isHidden(options, 'reaction-arrow-equilibrium-open-angle')
+      isHidden(options, 'reaction-arrow-equilibrium-open-angle'),
   },
   'reaction-arrow-unbalanced-equilibrium-filled-half-bow': {
     title: 'Arrow Unbalanced Equilibrium Filled Half Bow Tool',
     action: {
       tool: 'reactionarrow',
-      opts: RxnArrowMode.UnbalancedEquilibriumFilledHalfBow
+      opts: RxnArrowMode.UnbalancedEquilibriumFilledHalfBow,
     },
     hidden: (options) =>
-      isHidden(options, 'reaction-arrow-unbalanced-equilibrium-filled-half-bow')
+      isHidden(
+        options,
+        'reaction-arrow-unbalanced-equilibrium-filled-half-bow',
+      ),
   },
   'reaction-arrow-unbalanced-equilibrium-open-half-angle': {
     title: 'Arrow Unbalanced Equilibrium Open Half Angle Tool',
     action: {
       tool: 'reactionarrow',
-      opts: RxnArrowMode.UnbalancedEquilibriumOpenHalfAngle
+      opts: RxnArrowMode.UnbalancedEquilibriumOpenHalfAngle,
     },
     hidden: (options) =>
-      isHidden(options, 'reaction-arrow-unbalanced-equilibrium-open-half-angle')
+      isHidden(
+        options,
+        'reaction-arrow-unbalanced-equilibrium-open-half-angle',
+      ),
   },
   'reaction-arrow-unbalanced-equilibrium-large-filled-half-bow': {
     title: 'Arrow Unbalanced Equilibrium Large Filled Half Bow Tool',
     action: {
       tool: 'reactionarrow',
-      opts: RxnArrowMode.UnbalancedEquilibriumLargeFilledHalfBow
+      opts: RxnArrowMode.UnbalancedEquilibriumLargeFilledHalfBow,
     },
     hidden: (options) =>
       isHidden(
         options,
-        'reaction-arrow-unbalanced-equilibrium-large-filled-half-bow'
-      )
+        'reaction-arrow-unbalanced-equilibrium-large-filled-half-bow',
+      ),
   },
   'reaction-arrow-unbalanced-equilibrium-filled-half-triangle': {
     title: 'Arrow Unbalanced Equilibrium Filled Half Triangle Tool',
     action: {
       tool: 'reactionarrow',
-      opts: RxnArrowMode.UnbalancedEquilibriumFilledHalfTriangle
+      opts: RxnArrowMode.UnbalancedEquilibriumFilledHalfTriangle,
     },
     hidden: (options) =>
       isHidden(
         options,
-        'reaction-arrow-unbalanced-equilibrium-filled-half-triangle'
-      )
+        'reaction-arrow-unbalanced-equilibrium-filled-half-triangle',
+      ),
   },
   'reaction-arrow-elliptical-arc-arrow-filled-bow': {
     title: 'Arrow Elliptical Arc Filled Bow Tool',
     action: {
       tool: 'reactionarrow',
-      opts: RxnArrowMode.EllipticalArcFilledBow
+      opts: RxnArrowMode.EllipticalArcFilledBow,
     },
     hidden: (options) =>
-      isHidden(options, 'reaction-arrow-elliptical-arc-arrow-filled-bow')
+      isHidden(options, 'reaction-arrow-elliptical-arc-arrow-filled-bow'),
   },
   'reaction-arrow-elliptical-arc-arrow-filled-triangle': {
     title: 'Arrow Elliptical Arc Filled Triangle Tool',
     action: {
       tool: 'reactionarrow',
-      opts: RxnArrowMode.EllipticalArcFilledTriangle
+      opts: RxnArrowMode.EllipticalArcFilledTriangle,
     },
     hidden: (options) =>
-      isHidden(options, 'reaction-arrow-elliptical-arc-arrow-filled-triangle')
+      isHidden(options, 'reaction-arrow-elliptical-arc-arrow-filled-triangle'),
   },
   'reaction-arrow-elliptical-arc-arrow-open-angle': {
     title: 'Arrow Elliptical Arc Open Angle Tool',
     action: {
       tool: 'reactionarrow',
-      opts: RxnArrowMode.EllipticalArcOpenAngle
+      opts: RxnArrowMode.EllipticalArcOpenAngle,
     },
     hidden: (options) =>
-      isHidden(options, 'reaction-arrow-elliptical-arc-arrow-open-angle')
+      isHidden(options, 'reaction-arrow-elliptical-arc-arrow-open-angle'),
   },
   'reaction-arrow-elliptical-arc-arrow-open-half-angle': {
     title: 'Arrow Elliptical Arc Open Half Angle Tool',
     action: {
       tool: 'reactionarrow',
-      opts: RxnArrowMode.EllipticalArcOpenHalfAngle
+      opts: RxnArrowMode.EllipticalArcOpenHalfAngle,
     },
     hidden: (options) =>
-      isHidden(options, 'reaction-arrow-elliptical-arc-arrow-open-half-angle')
+      isHidden(options, 'reaction-arrow-elliptical-arc-arrow-open-half-angle'),
   },
   'reaction-plus': {
     title: 'Reaction Plus Tool',
     action: { tool: 'reactionplus' },
-    hidden: (options) => isHidden(options, 'reaction-plus')
+    hidden: (options) => isHidden(options, 'reaction-plus'),
   },
   'reaction-mapping-tools': {
-    hidden: (options) => isHidden(options, 'reaction-mapping-tools')
+    hidden: (options) => isHidden(options, 'reaction-mapping-tools'),
   },
   'reaction-map': {
     title: 'Reaction Mapping Tool',
     action: { tool: 'reactionmap' },
-    hidden: (options) => isHidden(options, 'reaction-map')
+    hidden: (options) => isHidden(options, 'reaction-map'),
   },
   'reaction-unmap': {
     title: 'Reaction Unmapping Tool',
     action: { tool: 'reactionunmap' },
-    hidden: (options) => isHidden(options, 'reaction-unmap')
+    hidden: (options) => isHidden(options, 'reaction-unmap'),
   },
   rgroup: {
-    hidden: (options) => isHidden(options, 'rgroup')
+    hidden: (options) => isHidden(options, 'rgroup'),
   },
   'rgroup-label': {
     shortcut: 'Mod+r',
     title: 'R-Group Label Tool',
     action: { tool: 'rgroupatom' },
-    hidden: (options) => isHidden(options, 'rgroup-label')
+    hidden: (options) => isHidden(options, 'rgroup-label'),
   },
   'rgroup-fragment': {
     shortcut: ['Mod+Shift+r', 'Mod+r'],
     title: 'R-Group Fragment Tool',
     action: { tool: 'rgroupfragment' },
-    hidden: (options) => isHidden(options, 'rgroup-fragment')
+    hidden: (options) => isHidden(options, 'rgroup-fragment'),
   },
   'rgroup-attpoints': {
     shortcut: 'Mod+r',
     title: 'Attachment Point Tool',
     action: { tool: 'apoint' },
-    hidden: (options) => isHidden(options, 'rgroup-attpoints')
+    hidden: (options) => isHidden(options, 'rgroup-attpoints'),
   },
   shapes: {
-    hidden: (options) => isHidden(options, 'shapes')
+    hidden: (options) => isHidden(options, 'shapes'),
   },
   'shape-ellipse': {
     title: 'Shape Ellipse',
     action: { tool: 'simpleobject', opts: SimpleObjectMode.ellipse },
-    hidden: (options) => isHidden(options, 'shape-ellipse')
+    hidden: (options) => isHidden(options, 'shape-ellipse'),
   },
   'shape-rectangle': {
     title: 'Shape Rectangle',
     action: { tool: 'simpleobject', opts: SimpleObjectMode.rectangle },
-    hidden: (options) => isHidden(options, 'shape-rectangle')
+    hidden: (options) => isHidden(options, 'shape-rectangle'),
   },
   'shape-line': {
     title: 'Shape Line',
     action: { tool: 'simpleobject', opts: SimpleObjectMode.line },
-    hidden: (options) => isHidden(options, 'shape-line')
+    hidden: (options) => isHidden(options, 'shape-line'),
   },
   text: {
     shortcut: 'Alt+t',
     title: 'Add text',
     action: { tool: 'text' },
-    hidden: (options) => isHidden(options, 'text')
+    hidden: (options) => isHidden(options, 'text'),
   },
   bonds: {
-    hidden: (options) => isHidden(options, 'bonds')
-  }
-}
+    hidden: (options) => isHidden(options, 'bonds'),
+  },
+};
 
 const bondCuts = {
   single: '1',
@@ -320,10 +326,10 @@ const bondCuts = {
   updown: '1',
   crossed: '2',
   any: '0',
-  aromatic: '4'
-}
+  aromatic: '4',
+};
 
-const typeSchema = bondSchema.properties.type
+const typeSchema = bondSchema.properties.type;
 
 export default typeSchema.enum.reduce((res, type, i) => {
   res[`bond-${type}`] = {
@@ -331,9 +337,9 @@ export default typeSchema.enum.reduce((res, type, i) => {
     shortcut: bondCuts[type],
     action: {
       tool: 'bond',
-      opts: toBondType(type)
+      opts: toBondType(type),
     },
-    hidden: (options) => isHidden(options, `bond-${type}`)
-  }
-  return res
-}, toolActions)
+    hidden: (options) => isHidden(options, `bond-${type}`),
+  };
+  return res;
+}, toolActions);

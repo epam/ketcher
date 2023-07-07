@@ -14,22 +14,22 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react';
 
-import { ToolbarItem } from '../../toolbar.types'
+import { ToolbarItem } from '../../toolbar.types';
 
-type HookParams = [string, string | null, ToolbarItem[]]
+type HookParams = [string, string | null, ToolbarItem[]];
 
 function usePortalOpening([id, opened, options]: HookParams): [boolean] {
-  const [isOpen, setIsOpen] = useState<boolean>(false)
+  const [isOpen, setIsOpen] = useState<boolean>(false);
 
   useEffect(() => {
-    const currentId = (options.length && options![0].id) || ''
-    const newState = opened === id || opened === currentId
-    setIsOpen(newState)
-  }, [opened, options])
+    const currentId = (options.length && options![0].id) || '';
+    const newState = opened === id || opened === currentId;
+    setIsOpen(newState);
+  }, [opened, options]);
 
-  return [isOpen]
+  return [isOpen];
 }
 
-export { usePortalOpening }
+export { usePortalOpening };

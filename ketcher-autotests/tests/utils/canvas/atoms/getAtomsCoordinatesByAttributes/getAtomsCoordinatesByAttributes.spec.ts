@@ -34,7 +34,7 @@ test.skip(`should return only coordinates for benzene ring in ascending order`, 
       label: 'C',
       valence: 4,
     },
-    SORT_TYPE.ASC_Y
+    SORT_TYPE.ASC_Y,
   );
 
   expect(coords[0].y < coords[1].y).toBeTruthy();

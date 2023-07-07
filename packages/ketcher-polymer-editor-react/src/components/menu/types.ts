@@ -15,10 +15,10 @@
  ***************************************************************************/
 
 export interface GroupProps {
-  divider?: boolean
+  divider?: boolean;
 }
 
 export type MenuProps = {
-  onItemClick: (itemKey: string) => void
-  activeMenuItem?: string
-}
+  onItemClick: (itemKey: string) => void;
+  activeMenuItem?: string;
+};

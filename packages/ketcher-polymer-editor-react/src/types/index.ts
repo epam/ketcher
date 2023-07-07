@@ -1,5 +1,5 @@
-export * from './utilities'
+export * from './utilities';
 
 export type PreviewStyle = {
-  top: string
-}
+  top: string;
+};

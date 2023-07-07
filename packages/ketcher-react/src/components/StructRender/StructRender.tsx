@@ -14,24 +14,24 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { RenderStruct } from 'ketcher-core'
-import { useEffect, useRef } from 'react'
-import { Container } from './styles'
-import { IStructRenderProps } from './types'
+import { RenderStruct } from 'ketcher-core';
+import { useEffect, useRef } from 'react';
+import { Container } from './styles';
+import { IStructRenderProps } from './types';
 
 const StructRender = ({ struct, options, className }: IStructRenderProps) => {
-  const renderRef = useRef<HTMLDivElement>(null)
+  const renderRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const container = renderRef.current
+    const container = renderRef.current;
 
     if (container) {
-      container.innerHTML = ''
-      RenderStruct.render(container, struct, options)
+      container.innerHTML = '';
+      RenderStruct.render(container, struct, options);
     }
-  }, [struct, options])
+  }, [struct, options]);
 
-  return <Container ref={renderRef} className={className}></Container>
-}
+  return <Container ref={renderRef} className={className}></Container>;
+};
 
-export default StructRender
+export default StructRender;

@@ -52,7 +52,7 @@ async function fillIsotopeForAtom(page: Page, isotope: string, button: string) {
 async function selectValenceForAtom(
   page: Page,
   valence: string,
-  button: string
+  button: string,
 ) {
   await page.locator('label').filter({ hasText: 'Valence' }).click();
   await page.getByRole('option', { name: valence, exact: true }).click();
@@ -68,7 +68,7 @@ async function selectRadical(page: Page, radical: string, button: string) {
 async function selectRingBondCount(
   page: Page,
   ringbondcount: string,
-  button: string
+  button: string,
 ) {
   await page.getByText('Query specific').click();
   await page
@@ -94,7 +94,7 @@ async function selectHCount(page: Page, hcount: string, button: string) {
 async function selectSubstitutionCount(
   page: Page,
   substitutioncount: string,
-  button: string
+  button: string,
 ) {
   await page.getByText('Query specific').click();
   await page
@@ -115,7 +115,7 @@ async function selectUnsaturated(page: Page, button: string) {
 async function selectReactionFlagsInversion(
   page: Page,
   inversion: string,
-  finalizationButtonName?: 'Apply' | 'Cancel'
+  finalizationButtonName?: 'Apply' | 'Cancel',
 ) {
   await page.getByText('Reaction flags').click();
   await page
@@ -131,7 +131,7 @@ async function selectReactionFlagsInversion(
 
 async function selectExactChange(
   page: Page,
-  finalizationButtonName?: 'Apply' | 'Cancel'
+  finalizationButtonName?: 'Apply' | 'Cancel',
 ) {
   await page.getByText('Reaction flags').click();
   await page.getByLabel('Exact change').check();
@@ -146,7 +146,7 @@ async function selectThreeAtomsFromPeriodicTable(
   atom1: string,
   atom2: string,
   atom3: string,
-  button: string
+  button: string,
 ) {
   await selectAtomInToolbar(AtomButton.Periodic, page);
   await page.getByText(selectlisting, { exact: true }).click();
@@ -159,7 +159,7 @@ async function selectThreeAtomsFromPeriodicTable(
 async function selectElementFromExtendedTable(
   page: Page,
   element: string,
-  button: string
+  button: string,
 ) {
   await selectAtomInToolbar(AtomButton.Extended, page);
   await page.getByRole('button', { name: element, exact: true }).click();
@@ -1173,7 +1173,7 @@ test.describe('Atom Properties', () => {
     const expectedFile = await getMolfile(page, 'v2000');
     await saveToFile(
       'chain-with-substitution-count-expected.mol',
-      expectedFile
+      expectedFile,
     );
 
     const METADATA_STRING_INDEX = [1];
@@ -1337,7 +1337,7 @@ test.describe('Atom Properties', () => {
     const expectedFile = await getMolfile(page, 'v2000');
     await saveToFile(
       'all-possible-atoms-properties-expected.mol',
-      expectedFile
+      expectedFile,
     );
 
     const METADATA_STRING_INDEX = [1];
@@ -1364,7 +1364,7 @@ test.describe('Atom Properties', () => {
     const expectedFile = await getRxn(page, 'v3000');
     await saveToFile(
       'all-possible-atoms-properties-expected.rxn',
-      expectedFile
+      expectedFile,
     );
 
     const METADATA_STRING_INDEX = [2];
@@ -1458,7 +1458,7 @@ test.describe('Atom Properties', () => {
       'Ru 44',
       'Mo 42',
       'W 74',
-      'Add'
+      'Add',
     );
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
@@ -1475,7 +1475,7 @@ test.describe('Atom Properties', () => {
       'Ru 44',
       'Mo 42',
       'W 74',
-      'Add'
+      'Add',
     );
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);

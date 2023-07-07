@@ -14,26 +14,26 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { MultiToolCallProps, MultiToolProps } from '../variants.types'
+import { MultiToolCallProps, MultiToolProps } from '../variants.types';
 
-import { ActionButton, ActionButtonProps } from '../../../ActionButton'
-import action from '../../../../../../action'
-import { getIconName } from 'components'
+import { ActionButton, ActionButtonProps } from '../../../ActionButton';
+import action from '../../../../../../action';
+import { getIconName } from 'components';
 
-type DefaultMultiToolProps = MultiToolProps
-type DefaultMultiToolCallProps = MultiToolCallProps
+type DefaultMultiToolProps = MultiToolProps;
+type DefaultMultiToolCallProps = MultiToolCallProps;
 
-type Props = DefaultMultiToolProps & DefaultMultiToolCallProps
+type Props = DefaultMultiToolProps & DefaultMultiToolCallProps;
 
 const DefaultMultiTool = (props: Props) => {
   const { options, status, disableableButtons, indigoVerification, onAction } =
-    props
+    props;
 
   return (
     <>
       {options.map((toolbarItem) => {
-        const currentStatus = status[toolbarItem.id]
-        const iconName = getIconName(toolbarItem.id)
+        const currentStatus = status[toolbarItem.id];
+        const iconName = getIconName(toolbarItem.id);
         return (
           iconName && (
             <ActionButton
@@ -47,11 +47,11 @@ const DefaultMultiTool = (props: Props) => {
               onAction={onAction}
             />
           )
-        )
+        );
       })}
     </>
-  )
-}
+  );
+};
 
-export type { DefaultMultiToolProps, DefaultMultiToolCallProps }
-export { DefaultMultiTool }
+export type { DefaultMultiToolProps, DefaultMultiToolCallProps };
+export { DefaultMultiTool };

@@ -15,5 +15,5 @@
  ***************************************************************************/
 
 export const templatesLibSelector = (state) => {
-  return state.templates.lib
-}
+  return state.templates.lib;
+};

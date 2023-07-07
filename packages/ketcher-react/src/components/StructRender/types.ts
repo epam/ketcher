@@ -14,11 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { RenderOptions } from 'application/render/render.types'
-import { Struct } from 'ketcher-core'
+import { RenderOptions } from 'application/render/render.types';
+import { Struct } from 'ketcher-core';
 
 export interface IStructRenderProps {
-  struct: Struct
-  options?: RenderOptions & { cachePrefix?: string; needCache?: boolean }
-  className?: string
+  struct: Struct;
+  options?: RenderOptions & { cachePrefix?: string; needCache?: boolean };
+  className?: string;
 }

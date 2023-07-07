@@ -7,23 +7,23 @@ export async function drawReactionWithTwoBenzeneRings(
   page: Page,
   secondBenzeneRingOffset: number,
   arrowOffset: number,
-  arrowLenght: number
+  arrowLenght: number,
 ) {
   await drawBenzeneRing(page);
   await selectNestedTool(page, ArrowTool.ARROW_OPEN_ANGLE);
   const firstBenzineTopAtom = await getCoordinatesTopAtomOfBenzeneRing(page);
   await page.mouse.move(
     firstBenzineTopAtom.x,
-    firstBenzineTopAtom.y - arrowOffset
+    firstBenzineTopAtom.y - arrowOffset,
   );
   await dragMouseTo(
     firstBenzineTopAtom.x,
     firstBenzineTopAtom.y - arrowLenght,
-    page
+    page,
   );
   await page.getByRole('button', { name: 'Benzene (T)' }).click();
   await page.mouse.click(
     firstBenzineTopAtom.x,
-    firstBenzineTopAtom.y - secondBenzeneRingOffset
+    firstBenzineTopAtom.y - secondBenzeneRingOffset,
   );
 }

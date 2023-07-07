@@ -1,2 +1,2 @@
-import { ErrorModal } from './ErrorModal'
-export { ErrorModal }
+import { ErrorModal } from './ErrorModal';
+export { ErrorModal };

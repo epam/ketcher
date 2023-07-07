@@ -14,4 +14,4 @@
  * limitations under the License.
  ***************************************************************************/
 
-export { IconButton } from './IconButton'
+export { IconButton } from './IconButton';

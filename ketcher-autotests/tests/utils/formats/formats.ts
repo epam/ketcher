@@ -24,14 +24,14 @@ export async function getExtendedSmiles(page: Page) {
 export async function getMolfile(page: Page, fileFormat?: MolfileFormat) {
   return await page.evaluate(
     (fileFormat) => window.ketcher.getMolfile(fileFormat),
-    fileFormat
+    fileFormat,
   );
 }
 
 export async function getRxn(page: Page, fileFormat?: MolfileFormat) {
   return await page.evaluate(
     (fileFormat) => window.ketcher.getRxn(fileFormat),
-    fileFormat
+    fileFormat,
   );
 }
 
@@ -42,20 +42,20 @@ export async function getSmarts(page: Page) {
 export async function setMolecule(page: Page, structStr: string) {
   return await page.evaluate(
     (structStr) => window.ketcher.setMolecule(structStr),
-    structStr
+    structStr,
   );
 }
 
 export async function addFragment(page: Page, structStr: string) {
   return await page.evaluate(
     (structStr) => window.ketcher.setMolecule(structStr),
-    structStr
+    structStr,
   );
 }
 
 export async function enableDearomatizeOnLoad(page: Page) {
   return await page.evaluate(() =>
-    window.ketcher.setSettings({ 'general.dearomatize-on-load': 'true' })
+    window.ketcher.setSettings({ 'general.dearomatize-on-load': 'true' }),
   );
 }
 

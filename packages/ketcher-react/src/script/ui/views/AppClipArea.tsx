@@ -14,12 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-import ClipArea from '../component/cliparea/cliparea'
-import { connect } from 'react-redux'
-import { initClipboard } from '../state/hotkeys'
+import ClipArea from '../component/cliparea/cliparea';
+import { connect } from 'react-redux';
+import { initClipboard } from '../state/hotkeys';
 
 const AppClipArea = connect(null, (dispatch) => dispatch(initClipboard as any))(
-  ClipArea
-)
+  ClipArea,
+);
 
-export default AppClipArea
+export default AppClipArea;

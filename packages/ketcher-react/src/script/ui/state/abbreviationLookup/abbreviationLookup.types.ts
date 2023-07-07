@@ -15,6 +15,6 @@
  ***************************************************************************/
 
 export interface AbbreviationLookupState {
-  isOpen: boolean
-  lookupValue?: string
+  isOpen: boolean;
+  lookupValue?: string;
 }

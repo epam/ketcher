@@ -15,5 +15,5 @@
  ***************************************************************************/
 
 export const saltsAndSolventsSelector = (state) => {
-  return state.saltsAndSolvents.lib
-}
+  return state.saltsAndSolvents.lib;
+};

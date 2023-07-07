@@ -1,1 +1,1 @@
-export * from './FloatingTools.container'
+export * from './FloatingTools.container';

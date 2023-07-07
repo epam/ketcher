@@ -14,38 +14,38 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { FC, PropsWithChildren } from 'react'
+import { FC, PropsWithChildren } from 'react';
 import {
   ToolbarGroupItem,
   ToolbarGroupItemCallProps,
-  ToolbarGroupItemProps
-} from '../ToolbarGroupItem'
+  ToolbarGroupItemProps,
+} from '../ToolbarGroupItem';
 
-import { TemplatesList } from './TemplatesList'
-import classes from './BottomToolbar.module.less'
-import clsx from 'clsx'
+import { TemplatesList } from './TemplatesList';
+import classes from './BottomToolbar.module.less';
+import clsx from 'clsx';
 
 const Group: FC<{ className?: string } & PropsWithChildren> = ({
   children,
-  className
-}) => <div className={clsx(classes.group, className)}>{children}</div>
+  className,
+}) => <div className={clsx(classes.group, className)}>{children}</div>;
 
 interface BottomToolbarProps
   extends Omit<ToolbarGroupItemProps, 'id' | 'options'> {
-  className?: string
+  className?: string;
   active?: {
-    opts: any
-    tool: string
-  }
+    opts: any;
+    tool: string;
+  };
 }
 
-type BottomToolbarCallProps = ToolbarGroupItemCallProps
+type BottomToolbarCallProps = ToolbarGroupItemCallProps;
 
-type Props = BottomToolbarProps & BottomToolbarCallProps
+type Props = BottomToolbarProps & BottomToolbarCallProps;
 
 const BottomToolbar = (props: Props) => {
-  const { className, ...rest } = props
-  const { active, disableableButtons, indigoVerification, onAction } = rest
+  const { className, ...rest } = props;
+  const { active, disableableButtons, indigoVerification, onAction } = rest;
 
   return (
     <div className={clsx(classes.root, className)}>
@@ -59,8 +59,8 @@ const BottomToolbar = (props: Props) => {
         <ToolbarGroupItem id="template-lib" {...rest} />
       </Group>
     </div>
-  )
-}
+  );
+};
 
-export type { BottomToolbarProps, BottomToolbarCallProps }
-export { BottomToolbar }
+export type { BottomToolbarProps, BottomToolbarCallProps };
+export { BottomToolbar };

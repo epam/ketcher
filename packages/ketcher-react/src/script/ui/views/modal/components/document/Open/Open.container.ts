@@ -14,45 +14,45 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Open, { OpenProps } from './Open'
+import Open, { OpenProps } from './Open';
 
-import { BaseCallProps } from '../../../modal.types'
-import { connect } from 'react-redux'
-import { exec } from '../../../../../component/cliparea/cliparea'
-import { load } from '../../../../../state'
-import { changeImage } from '../../../../../state/options'
+import { BaseCallProps } from '../../../modal.types';
+import { connect } from 'react-redux';
+import { exec } from '../../../../../component/cliparea/cliparea';
+import { load } from '../../../../../state';
+import { changeImage } from '../../../../../state/options';
 
-type StateProps = OpenProps
+type StateProps = OpenProps;
 
 type DispatchProps = {
-  onOk: BaseCallProps['onOk']
-  onImageUpload: (file: File) => void
-}
+  onOk: BaseCallProps['onOk'];
+  onImageUpload: (file: File) => void;
+};
 
 const mapStateToProps = (state): StateProps => ({
   server: state.server,
   errorHandler: state.editor.errorHandler,
   isRecognizeDisabled: state.actionState.recognize?.disabled,
   isAnalyzingFile: state.requestsStatuses.isAnalyzingFile,
-  ignoreChiralFlag: state.editor.render.options.ignoreChiralFlag
-})
+  ignoreChiralFlag: state.editor.render.options.ignoreChiralFlag,
+});
 
 const mapDispatchToProps = (dispatch): DispatchProps => ({
   onOk: (result) => {
-    if (result.fragment) exec('copy')
+    if (result.fragment) exec('copy');
     dispatch(
       load(result.structStr, {
         badHeaderRecover: true,
-        fragment: result.fragment
-      })
+        fragment: result.fragment,
+      }),
       // TODO: Removed ownProps.onOk call. consider refactoring of load function in release 2.4
       // See PR #731 (https://github.com/epam/ketcher/pull/731)
-    )
+    );
   },
   onImageUpload: (file) => {
-    dispatch(changeImage(file))
-  }
-})
+    dispatch(changeImage(file));
+  },
+});
 
-const OpenContainer = connect(mapStateToProps, mapDispatchToProps)(Open)
-export default OpenContainer
+const OpenContainer = connect(mapStateToProps, mapDispatchToProps)(Open);
+export default OpenContainer;

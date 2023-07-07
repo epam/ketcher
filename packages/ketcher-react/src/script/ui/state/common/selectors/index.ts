@@ -14,4 +14,4 @@
  * limitations under the License.
  ***************************************************************************/
 
-export * from './selectors'
+export * from './selectors';

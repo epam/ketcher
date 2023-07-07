@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import styled from '@emotion/styled'
-import { StructRender } from 'ketcher-react'
+import styled from '@emotion/styled';
+import { StructRender } from 'ketcher-react';
 
 export const Container = styled.div`
   display: flex;
@@ -25,7 +25,7 @@ export const Container = styled.div`
   border: ${(props) => props.theme.ketcher.border.regular};
   border-radius: ${(props) => props.theme.ketcher.border.radius.regular};
   box-shadow: ${(props) => props.theme.ketcher.shadow.regular};
-`
+`;
 
 export const MonomerName = styled.p`
   color: ${(props) => props.theme.ketcher.color.text.primary};
@@ -33,9 +33,9 @@ export const MonomerName = styled.p`
   word-break: break-all;
   text-align: center;
   margin: 0 0 5px 0;
-`
+`;
 
 export const StyledStructRender = styled(StructRender)`
   height: 100%;
   width: 100%;
-`
+`;

@@ -14,55 +14,55 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { BaseOperation } from '../base'
-import { OperationType } from '../OperationType'
-import { ReStruct } from '../../../render'
+import { BaseOperation } from '../base';
+import { OperationType } from '../OperationType';
+import { ReStruct } from '../../../render';
 
 type Data = {
-  aid?: any
-  attribute?: any
-  value?: any
-}
+  aid?: any;
+  attribute?: any;
+  value?: any;
+};
 
 export class AtomAttr extends BaseOperation {
-  data: Data | null
-  data2: Data | null
+  data: Data | null;
+  data2: Data | null;
 
   constructor(atomId?: any, attribute?: any, value?: any) {
-    super(OperationType.ATOM_ATTR, 1)
-    this.data = { aid: atomId, attribute, value }
-    this.data2 = null
+    super(OperationType.ATOM_ATTR, 1);
+    this.data = { aid: atomId, attribute, value };
+    this.data2 = null;
   }
 
   execute(restruct: ReStruct) {
     if (this.data) {
-      const { aid, attribute, value } = this.data
+      const { aid, attribute, value } = this.data;
 
-      const atom = restruct.molecule.atoms.get(aid)!
+      const atom = restruct.molecule.atoms.get(aid)!;
       if (!this.data2) {
         this.data2 = {
           aid,
           attribute,
-          value: atom[attribute]
-        }
+          value: atom[attribute],
+        };
       }
 
-      atom[attribute] = value
-      BaseOperation.invalidateAtom(restruct, aid)
+      atom[attribute] = value;
+      BaseOperation.invalidateAtom(restruct, aid);
     }
   }
 
   invert() {
-    const inverted = new AtomAttr()
-    inverted.data = this.data2
-    inverted.data2 = this.data
-    return inverted
+    const inverted = new AtomAttr();
+    inverted.data = this.data2;
+    inverted.data2 = this.data;
+    return inverted;
   }
 
   isDummy(restruct: ReStruct) {
     return (
       restruct.molecule.atoms.get(this.data?.aid)![this.data?.attribute] ===
       this.data?.value
-    )
+    );
   }
 }

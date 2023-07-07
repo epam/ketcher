@@ -15,5 +15,5 @@
  ***************************************************************************/
 
 export interface IExpandIconProps {
-  expanded: boolean
+  expanded: boolean;
 }

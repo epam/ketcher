@@ -15,117 +15,117 @@
  ***************************************************************************/
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
-import { Atom, Pile, Vec2 } from 'domain/entities'
-import { ReAtom, ReStruct } from '../../../render'
+import { Atom, Pile, Vec2 } from 'domain/entities';
+import { ReAtom, ReStruct } from '../../../render';
 
-import { BaseOperation } from '../base'
-import { OperationType } from '../OperationType'
+import { BaseOperation } from '../base';
+import { OperationType } from '../OperationType';
 
 // todo: separate classes: now here is circular dependency in `invert` method
 
 type Data = {
-  aid: any
-  atom: any
-  pos: any
-}
+  aid: any;
+  atom: any;
+  pos: any;
+};
 
 class AtomAdd extends BaseOperation {
-  data: Data
+  data: Data;
 
   constructor(atom?: any, pos?: any) {
-    super(OperationType.ATOM_ADD)
-    this.data = { atom, pos, aid: null }
+    super(OperationType.ATOM_ADD);
+    this.data = { atom, pos, aid: null };
   }
 
   execute(restruct: ReStruct) {
-    const { atom, pos } = this.data
+    const { atom, pos } = this.data;
 
-    const struct = restruct.molecule
+    const struct = restruct.molecule;
 
-    const pp: { label: string } = { label: '' }
+    const pp: { label: string } = { label: '' };
     if (atom) {
       Object.keys(atom).forEach((p) => {
-        pp[p] = atom[p]
-      })
+        pp[p] = atom[p];
+      });
     }
 
-    pp.label = pp.label || 'C'
+    pp.label = pp.label || 'C';
     if (typeof this.data.aid !== 'number') {
-      this.data.aid = struct.atoms.add(new Atom(pp))
+      this.data.aid = struct.atoms.add(new Atom(pp));
     } else {
-      struct.atoms.set(this.data.aid, new Atom(pp))
+      struct.atoms.set(this.data.aid, new Atom(pp));
     }
 
-    const { aid } = this.data
+    const { aid } = this.data;
 
     // notifyAtomAdded
-    const atomData = new ReAtom(struct.atoms.get(aid)!)
+    const atomData = new ReAtom(struct.atoms.get(aid)!);
 
-    atomData.component = restruct.connectedComponents.add(new Pile([aid]))
-    restruct.atoms.set(aid, atomData)
-    restruct.markAtom(aid, 1)
+    atomData.component = restruct.connectedComponents.add(new Pile([aid]));
+    restruct.atoms.set(aid, atomData);
+    restruct.markAtom(aid, 1);
 
-    struct.atomSetPos(aid, new Vec2(pos))
+    struct.atomSetPos(aid, new Vec2(pos));
 
-    const arrow = struct.rxnArrows.get(0)
+    const arrow = struct.rxnArrows.get(0);
     if (arrow) {
-      const atom = struct.atoms.get(aid)!
+      const atom = struct.atoms.get(aid)!;
       atom.rxnFragmentType = struct.defineRxnFragmentTypeForAtomset(
         new Pile([aid]),
-        arrow.pos[0].x
-      )
+        arrow.pos[0].x,
+      );
     }
   }
 
   invert() {
-    const inverted = new AtomDelete()
-    inverted.data = this.data
-    return inverted
+    const inverted = new AtomDelete();
+    inverted.data = this.data;
+    return inverted;
   }
 }
 
 class AtomDelete extends BaseOperation {
-  data: Data
+  data: Data;
 
   constructor(atomId?: any) {
-    super(OperationType.ATOM_DELETE, 5)
-    this.data = { aid: atomId, atom: null, pos: null }
+    super(OperationType.ATOM_DELETE, 5);
+    this.data = { aid: atomId, atom: null, pos: null };
   }
 
   execute(restruct: ReStruct) {
-    const { aid } = this.data
+    const { aid } = this.data;
 
-    const struct = restruct.molecule
+    const struct = restruct.molecule;
     if (!this.data.atom) {
-      this.data.atom = struct.atoms.get(aid)
-      this.data.pos = this.data.atom.pp
+      this.data.atom = struct.atoms.get(aid);
+      this.data.pos = this.data.atom.pp;
     }
 
     // notifyAtomRemoved(aid);
-    const restructedAtom = restruct.atoms.get(aid)
+    const restructedAtom = restruct.atoms.get(aid);
     if (!restructedAtom) {
-      return
+      return;
     }
 
-    const set = restruct.connectedComponents.get(restructedAtom.component)
-    set.delete(aid)
+    const set = restruct.connectedComponents.get(restructedAtom.component);
+    set.delete(aid);
     if (set.size === 0) {
-      restruct.connectedComponents.delete(restructedAtom.component)
+      restruct.connectedComponents.delete(restructedAtom.component);
     }
 
-    restruct.clearVisel(restructedAtom.visel)
-    restruct.atoms.delete(aid)
-    restruct.markItemRemoved()
-    struct.atoms.delete(aid)
+    restruct.clearVisel(restructedAtom.visel);
+    restruct.atoms.delete(aid);
+    restruct.markItemRemoved();
+    struct.atoms.delete(aid);
   }
 
   invert() {
-    const inverted = new AtomAdd()
-    inverted.data = this.data
-    return inverted
+    const inverted = new AtomAdd();
+    inverted.data = this.data;
+    return inverted;
   }
 }
 
-export { AtomAdd, AtomDelete }
-export * from './AtomAttr'
-export * from './AtomMove'
+export { AtomAdd, AtomDelete };
+export * from './AtomAttr';
+export * from './AtomMove';

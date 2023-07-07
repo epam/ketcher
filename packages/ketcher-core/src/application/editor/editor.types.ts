@@ -14,49 +14,49 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Action } from '../editor/actions'
-import { Render } from 'application/render'
-import { Struct } from 'domain/entities'
-import { selectionKeys } from './shared/constants'
+import { Action } from '../editor/actions';
+import { Render } from 'application/render';
+import { Struct } from 'domain/entities';
+import { selectionKeys } from './shared/constants';
 
 export interface EditorHistory {
-  readonly current?: number
-  readonly length: number
-  push: (action: Action) => EditorHistory
-  pop: () => Action
+  readonly current?: number;
+  readonly length: number;
+  push: (action: Action) => EditorHistory;
+  pop: () => Action;
 }
 
 export interface LoadOptions {
-  rescale: boolean
-  fragment: boolean
+  rescale: boolean;
+  fragment: boolean;
 }
 
 export type EditorSelection = {
-  [key in typeof selectionKeys[number]]?: number[]
-}
+  [key in typeof selectionKeys[number]]?: number[];
+};
 
 export interface Editor {
-  isDitrty: () => boolean
-  setOrigin: () => void
-  struct: (struct?: Struct) => Struct
-  structToAddFragment: (struct: Struct) => Struct
-  subscribe: (eventName: string, handler: (data?: any) => any) => any
-  unsubscribe: (eventName: string, subscriber: any) => void
-  selection: (arg?: EditorSelection | 'all' | null) => EditorSelection | null
-  undo: () => void
-  redo: () => void
-  clear: () => void
-  options: (value?: any) => any
-  setOptions: (opts: string) => any
-  zoom: (value?: any) => any
-  structSelected: () => Struct
-  explicitSelected: () => EditorSelection
+  isDitrty: () => boolean;
+  setOrigin: () => void;
+  struct: (struct?: Struct) => Struct;
+  structToAddFragment: (struct: Struct) => Struct;
+  subscribe: (eventName: string, handler: (data?: any) => any) => any;
+  unsubscribe: (eventName: string, subscriber: any) => void;
+  selection: (arg?: EditorSelection | 'all' | null) => EditorSelection | null;
+  undo: () => void;
+  redo: () => void;
+  clear: () => void;
+  options: (value?: any) => any;
+  setOptions: (opts: string) => any;
+  zoom: (value?: any) => any;
+  structSelected: () => Struct;
+  explicitSelected: () => EditorSelection;
   update: (
     action: Action | true,
     ignoreHistory?: boolean,
-    options?: { resizeCanvas: boolean }
-  ) => void
-  render: Render
+    options?: { resizeCanvas: boolean },
+  ) => void;
+  render: Render;
   // supposed to be RotateController from 'ketcher-react' package
-  rotateController: any
+  rotateController: any;
 }

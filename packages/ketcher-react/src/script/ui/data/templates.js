@@ -14,9 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { MolSerializer } from 'ketcher-core'
+import { MolSerializer } from 'ketcher-core';
 
-const molSerializer = new MolSerializer()
+const molSerializer = new MolSerializer();
 
 export default [
   `Benzene
@@ -153,5 +153,5 @@ M  END`,
   6  7  1  0     0  0
   7  8  1  0     0  0
   8  3  1  0     0  0
-M  END`
-].map((structStr) => molSerializer.deserialize(structStr))
+M  END`,
+].map((structStr) => molSerializer.deserialize(structStr));

@@ -14,37 +14,37 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { KetSerializer, SmiSerializer } from 'domain/serializers'
-import { StructFormatter, SupportedFormat } from './structFormatter.types'
-import { StructService, StructServiceOptions } from 'domain/services'
+import { KetSerializer, SmiSerializer } from 'domain/serializers';
+import { StructFormatter, SupportedFormat } from './structFormatter.types';
+import { StructService, StructServiceOptions } from 'domain/services';
 
-import { ServerFormatter } from './serverFormatter'
-import { Struct } from 'domain/entities'
+import { ServerFormatter } from './serverFormatter';
+import { Struct } from 'domain/entities';
 
 export class SmilesFormatter implements StructFormatter {
-  #smiSerializer: SmiSerializer
-  #structService: StructService
-  #ketSerializer: KetSerializer
-  #format: SupportedFormat
-  #options?: StructServiceOptions
+  #smiSerializer: SmiSerializer;
+  #structService: StructService;
+  #ketSerializer: KetSerializer;
+  #format: SupportedFormat;
+  #options?: StructServiceOptions;
 
   constructor(
     smiSerializer: SmiSerializer,
     structService: StructService,
     ketSerializer: KetSerializer,
     format: SupportedFormat,
-    options?: StructServiceOptions
+    options?: StructServiceOptions,
   ) {
-    this.#smiSerializer = smiSerializer
-    this.#ketSerializer = ketSerializer
-    this.#structService = structService
-    this.#format = format
-    this.#options = options
+    this.#smiSerializer = smiSerializer;
+    this.#ketSerializer = ketSerializer;
+    this.#structService = structService;
+    this.#format = format;
+    this.#options = options;
   }
 
   async getStructureFromStructAsync(struct: Struct): Promise<string> {
-    const stringifiedMolfile = this.#smiSerializer.serialize(struct)
-    return stringifiedMolfile
+    const stringifiedMolfile = this.#smiSerializer.serialize(struct);
+    return stringifiedMolfile;
   }
 
   getStructureFromStringAsync(stringifiedStruct: string): Promise<Struct> {
@@ -52,9 +52,9 @@ export class SmilesFormatter implements StructFormatter {
       this.#structService,
       this.#ketSerializer,
       this.#format,
-      this.#options
-    )
+      this.#options,
+    );
 
-    return serverFormatter.getStructureFromStringAsync(stringifiedStruct)
+    return serverFormatter.getStructureFromStringAsync(stringifiedStruct);
   }
 }

@@ -14,42 +14,42 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { GroupDescriptor } from '../../ToolbarGroupItem/ToolbarMultiToolItem/variants/variants.types'
-import { ToolbarItem } from '../../toolbar.types'
-import { makeItems } from '../../ToolbarGroupItem/utils'
+import { GroupDescriptor } from '../../ToolbarGroupItem/ToolbarMultiToolItem/variants/variants.types';
+import { ToolbarItem } from '../../toolbar.types';
+import { makeItems } from '../../ToolbarGroupItem/utils';
 
 const bondCommon: ToolbarItem[] = makeItems([
   'bond-single',
   'bond-double',
-  'bond-triple'
-])
+  'bond-triple',
+]);
 const bondStereo: ToolbarItem[] = makeItems([
   'bond-up',
   'bond-down',
   'bond-updown',
-  'bond-crossed'
-])
+  'bond-crossed',
+]);
 const bondQuery: ToolbarItem[] = makeItems([
   'bond-any',
   'bond-aromatic',
   'bond-singledouble',
   'bond-singlearomatic',
-  'bond-doublearomatic'
-])
-const bondSpecial: ToolbarItem[] = makeItems(['bond-dative', 'bond-hydrogen'])
+  'bond-doublearomatic',
+]);
+const bondSpecial: ToolbarItem[] = makeItems(['bond-dative', 'bond-hydrogen']);
 
-const groups = [bondCommon, bondStereo, bondQuery, bondSpecial]
-const groupOptions = groups.flat()
+const groups = [bondCommon, bondStereo, bondQuery, bondSpecial];
+const groupOptions = groups.flat();
 const groupDescriptors = groups.reduce((accum, group, index) => {
-  const start = accum[index - 1]?.end || 0
+  const start = accum[index - 1]?.end || 0;
 
   accum.push({
     start,
-    end: start + group.length
-  })
+    end: start + group.length,
+  });
 
-  return accum
-}, [] as GroupDescriptor[])
+  return accum;
+}, [] as GroupDescriptor[]);
 
 export {
   bondCommon,
@@ -57,5 +57,5 @@ export {
   bondQuery,
   bondSpecial,
   groupOptions,
-  groupDescriptors
-}
+  groupDescriptors,
+};

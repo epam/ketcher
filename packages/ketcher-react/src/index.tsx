@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-export * from './Editor'
-export * from './script'
-export * from './constants'
-export * from './components'
+export * from './Editor';
+export * from './script';
+export * from './constants';
+export * from './components';

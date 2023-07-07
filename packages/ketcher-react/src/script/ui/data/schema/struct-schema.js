@@ -14,9 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { mapOf } from './schema-helper'
-import { range } from 'lodash/fp'
-import { sdataCustomSchema } from './sdata-schema'
+import { mapOf } from './schema-helper';
+import { range } from 'lodash/fp';
+import { sdataCustomSchema } from './sdata-schema';
 
 export const atom = {
   title: 'Atom',
@@ -27,12 +27,12 @@ export const atom = {
       title: 'Label',
       type: 'string', // TODO:should really be enum of elements
       maxLength: 3,
-      invalidMessage: 'Wrong label'
+      invalidMessage: 'Wrong label',
     },
     alias: {
       title: 'Alias',
       type: 'string',
-      invalidMessage: 'Leading and trailing spaces are not allowed'
+      invalidMessage: 'Leading and trailing spaces are not allowed',
     },
     charge: {
       title: 'Charge',
@@ -40,20 +40,20 @@ export const atom = {
       pattern: '^([+-]?)([0-9]{1,3}|1000)([+-]?)$',
       maxLength: 5,
       default: '0',
-      invalidMessage: 'Invalid charge value'
+      invalidMessage: 'Invalid charge value',
     },
     explicitValence: {
       title: 'Valence',
       enum: [-1, 0, 1, 2, 3, 4, 5, 6, 7, 8],
       enumNames: ['', '0', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII'],
-      default: -1
+      default: -1,
     },
     isotope: {
       title: 'Isotope',
       type: 'integer',
       minimum: 0,
       default: 0,
-      invalidMessage: 'There must be integer'
+      invalidMessage: 'There must be integer',
     },
     radical: {
       title: 'Radical',
@@ -62,51 +62,51 @@ export const atom = {
         '',
         'Monoradical',
         'Diradical (singlet)',
-        'Diradical (triplet)'
+        'Diradical (triplet)',
       ],
-      default: 0
+      default: 0,
     },
     cip: {
       title: 'CIP',
       type: 'string',
-      enum: ['R', 'S', 'r', 's']
+      enum: ['R', 'S', 'r', 's'],
     },
     ringBondCount: {
       title: 'Ring bond count',
       enum: [0, -2, -1, 2, 3, 4],
       enumNames: ['', 'As drawn', '0', '2', '3', '4'],
-      default: 0
+      default: 0,
     },
     hCount: {
       title: 'H count',
       enum: [0, 1, 2, 3, 4, 5],
       enumNames: ['', '0', '1', '2', '3', '4'],
-      default: 0
+      default: 0,
     },
     substitutionCount: {
       title: 'Substitution count',
       enum: [0, -2, -1, 1, 2, 3, 4, 5, 6],
       enumNames: ['', 'As drawn', '0', '1', '2', '3', '4', '5', '6'],
-      default: 0
+      default: 0,
     },
     unsaturatedAtom: {
       title: 'Unsaturated',
       type: 'boolean',
-      default: false
+      default: false,
     },
     invRet: {
       title: 'Inversion',
       enum: [0, 1, 2],
       enumNames: ['', 'Inverts', 'Retains'],
-      default: 0
+      default: 0,
     },
     exactChangeFlag: {
       title: 'Exact change',
       type: 'boolean',
-      default: false
-    }
-  }
-}
+      default: false,
+    },
+  },
+};
 
 export const rgroupSchema = {
   title: 'R-group',
@@ -117,11 +117,11 @@ export const rgroupSchema = {
       items: {
         type: 'string',
         enum: range(1, 33),
-        enumNames: range(1, 33).map((item) => 'R' + item)
-      }
-    }
-  }
-}
+        enumNames: range(1, 33).map((item) => 'R' + item),
+      },
+    },
+  },
+};
 
 export const labelEdit = {
   title: 'Label Edit',
@@ -132,10 +132,10 @@ export const labelEdit = {
       title: 'Atom',
       default: '',
       invalidMessage: 'Wrong atom symbol',
-      type: 'string'
-    }
-  }
-}
+      type: 'string',
+    },
+  },
+};
 
 export const attachmentPoints = {
   title: 'Attachment Points',
@@ -143,14 +143,14 @@ export const attachmentPoints = {
   properties: {
     primary: {
       title: 'Primary attachment point',
-      type: 'boolean'
+      type: 'boolean',
     },
     secondary: {
       title: 'Secondary attachment point',
-      type: 'boolean'
-    }
-  }
-}
+      type: 'boolean',
+    },
+  },
+};
 
 export const bond = {
   title: 'Bond',
@@ -174,7 +174,7 @@ export const bond = {
         'singledouble',
         'singlearomatic',
         'doublearomatic',
-        'dative'
+        'dative',
       ],
       enumNames: [
         '',
@@ -191,15 +191,15 @@ export const bond = {
         'Single/Double',
         'Single/Aromatic',
         'Double/Aromatic',
-        'Dative'
+        'Dative',
       ],
-      default: 'single'
+      default: 'single',
     },
     topology: {
       title: 'Topology',
       enum: [0, 1, 2],
       enumNames: ['Either', 'Ring', 'Chain'],
-      default: 0
+      default: 0,
     },
     center: {
       title: 'Reacting Center',
@@ -211,17 +211,17 @@ export const bond = {
         'No change',
         'Made/broken',
         'Order changes',
-        'Made/broken and changes'
+        'Made/broken and changes',
       ], // "Order changes" x 3
-      default: 0
+      default: 0,
     },
     cip: {
       title: 'CIP',
       type: 'string',
-      enum: ['E', 'Z', 'M', 'P']
-    }
-  }
-}
+      enum: ['E', 'Z', 'M', 'P'],
+    },
+  },
+};
 
 const sgroup = {
   title: 'SGroup',
@@ -229,7 +229,7 @@ const sgroup = {
   required: ['type'],
   oneOf: [
     {
-      ...sdataCustomSchema
+      ...sdataCustomSchema,
     },
     {
       key: 'MUL',
@@ -242,10 +242,10 @@ const sgroup = {
           type: 'integer',
           default: 1,
           minimum: 1,
-          maximum: 99
-        }
+          maximum: 99,
+        },
       },
-      required: ['mul']
+      required: ['mul'],
     },
     {
       key: 'SRU',
@@ -260,16 +260,16 @@ const sgroup = {
           // any string, except empty and including double quotes
           pattern: '^(?!\\s*$)[^"]+$',
           invalidMessage:
-            'SRU subscript should not be empty and contain double quotes'
+            'SRU subscript should not be empty and contain double quotes',
         },
         connectivity: {
           title: 'Repeat Pattern',
           enum: ['ht', 'hh', 'eu'],
           enumNames: ['Head-to-tail', 'Head-to-head', 'Either unknown'],
-          default: 'ht'
-        }
+          default: 'ht',
+        },
       },
-      required: ['subscript', 'connectivity']
+      required: ['subscript', 'connectivity'],
     },
     {
       key: 'SUP',
@@ -282,14 +282,14 @@ const sgroup = {
           type: 'string',
           default: '',
           minLength: 1,
-          invalidMessage: 'Please, provide a name for the superatom'
-        }
+          invalidMessage: 'Please, provide a name for the superatom',
+        },
       },
-      required: ['name']
-    }
-  ]
-}
-export const sgroupMap = mapOf(sgroup, 'type')
+      required: ['name'],
+    },
+  ],
+};
+export const sgroupMap = mapOf(sgroup, 'type');
 
 export const rgroupLogic = {
   title: 'R-Group',
@@ -299,19 +299,19 @@ export const rgroupLogic = {
       title: 'Occurrence',
       type: 'string',
       maxLength: 50,
-      invalidMessage: 'Wrong value'
+      invalidMessage: 'Wrong value',
     },
     resth: {
       title: 'RestH',
-      type: 'boolean'
+      type: 'boolean',
     },
     ifthen: {
       title: 'Condition',
       type: 'integer',
-      minium: 0
-    }
-  }
-}
+      minium: 0,
+    },
+  },
+};
 
 export const textSchema = {
   title: 'Text Edit',
@@ -320,10 +320,10 @@ export const textSchema = {
   properties: {
     label: {
       default: '',
-      type: 'string'
-    }
-  }
-}
+      type: 'string',
+    },
+  },
+};
 
 export const attachSchema = {
   title: 'Template edit',
@@ -336,7 +336,7 @@ export const attachSchema = {
       minLength: 1,
       maxLength: 128,
       invalidMessage:
-        'Template must have a unique name and no more than 128 symbols in length'
-    }
-  }
-}
+        'Template must have a unique name and no more than 128 symbols in length',
+    },
+  },
+};

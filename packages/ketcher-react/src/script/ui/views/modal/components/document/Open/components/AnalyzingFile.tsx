@@ -14,15 +14,15 @@
  * limitations under the License.
  ***************************************************************************/
 
-import styles from './AnalyzingFile.module.less'
-import { LoadingCircles } from 'src/script/ui/views/components/Spinner'
-import { Icon } from 'components'
+import styles from './AnalyzingFile.module.less';
+import { LoadingCircles } from 'src/script/ui/views/components/Spinner';
+import { Icon } from 'components';
 
 export type AnalyzingFileProps = {
-  fileName?: string
-}
+  fileName?: string;
+};
 
-const ICON_NAME = 'file-thumbnail'
+const ICON_NAME = 'file-thumbnail';
 
 export const AnalyzingFile = ({ fileName }: AnalyzingFileProps) => (
   <div className={styles.analyzingFileWrapper}>
@@ -34,4 +34,4 @@ export const AnalyzingFile = ({ fileName }: AnalyzingFileProps) => (
     )}
     <LoadingCircles />
   </div>
-)
+);

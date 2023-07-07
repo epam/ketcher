@@ -14,11 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { xor } from 'lodash/fp'
+import { xor } from 'lodash/fp';
 
 function oneOrMore(multipl, values, item) {
-  if (multipl) return xor(values, [item])
-  return xor(values, values.concat([item]))
+  if (multipl) return xor(values, [item]);
+  return xor(values, values.concat([item]));
 }
 
 function ButtonList({
@@ -27,14 +27,14 @@ function ButtonList({
   schema,
   disabledIds,
   multiple,
-  classes
+  classes,
 }) {
-  let className
-  const selected = classes.selected || 'selected'
+  let className;
+  const selected = classes.selected || 'selected';
   return (
     <ul>
       {schema.items.enum.map((item, i) => {
-        className = value.includes(item) ? selected : ''
+        className = value.includes(item) ? selected : '';
         return (
           <li key={item}>
             <button
@@ -46,10 +46,10 @@ function ButtonList({
               {schema.items.enumNames[i]}
             </button>
           </li>
-        )
+        );
       })}
     </ul>
-  )
+  );
 }
 
-export default ButtonList
+export default ButtonList;

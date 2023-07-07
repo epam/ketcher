@@ -14,19 +14,19 @@
  * limitations under the License.
  ***************************************************************************/
 
-import styled from '@emotion/styled'
-import { shortcutStr } from '../shortcutStr'
-import { TopToolbarIconButton } from './TopToolbarIconButton'
+import styled from '@emotion/styled';
+import { shortcutStr } from '../shortcutStr';
+import { TopToolbarIconButton } from './TopToolbarIconButton';
 
 interface SystemControlsProps {
-  disabledButtons: string[]
-  hiddenButtons: string[]
-  className?: string
-  onSettingsOpen: () => void
-  onAboutOpen: () => void
-  onHistoryClick: () => void
-  onFullscreen: () => void
-  onHelp: () => void
+  disabledButtons: string[];
+  hiddenButtons: string[];
+  className?: string;
+  onSettingsOpen: () => void;
+  onAboutOpen: () => void;
+  onHistoryClick: () => void;
+  onFullscreen: () => void;
+  onHelp: () => void;
 }
 
 const getIfFullScreen = () => {
@@ -35,15 +35,15 @@ const getIfFullScreen = () => {
     document.mozFullScreenElement ||
     document.webkitFullscreenElement ||
     document.msFullscreenElement
-  )
-}
+  );
+};
 
 const ControlsPanel = styled('div')`
   display: flex;
   align-items: center;
   flex-grow: 1;
   justify-content: flex-end;
-`
+`;
 
 export const SystemControls = ({
   disabledButtons,
@@ -53,7 +53,7 @@ export const SystemControls = ({
   onFullscreen,
   onHelp,
   onAboutOpen,
-  className
+  className,
 }: SystemControlsProps) => {
   return (
     <ControlsPanel className={className}>
@@ -95,5 +95,5 @@ export const SystemControls = ({
         isHidden={hiddenButtons.includes('fullscreen')}
       />
     </ControlsPanel>
-  )
-}
+  );
+};

@@ -14,4 +14,4 @@
  * limitations under the License.
  ***************************************************************************/
 
-export { Summary } from './Summary'
+export { Summary } from './Summary';

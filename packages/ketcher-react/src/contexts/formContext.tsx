@@ -14,8 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React from 'react'
+import React from 'react';
 
-const formContext = React.createContext(null)
+const formContext = React.createContext(null);
 
-export default formContext
+export default formContext;

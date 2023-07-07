@@ -14,63 +14,68 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { FilterOptionsState } from '@mui/material'
+import { FilterOptionsState } from '@mui/material';
 import {
   filterOptions,
   getOptionLabel,
   getSimilarity,
-  highlightOptionLabel
-} from './AbbreviationLookup.utils'
-import { AbbreviationOption } from './AbbreviationLookup.types'
+  highlightOptionLabel,
+} from './AbbreviationLookup.utils';
+import { AbbreviationOption } from './AbbreviationLookup.types';
 import {
   createGenericOption,
-  createOption
-} from './AbbreviationLookup.test.utils'
+  createOption,
+} from './AbbreviationLookup.test.utils';
 
 describe('AbbreviationLookup Utils', () => {
   describe('highlightOptionLabel', () => {
-    const option = createGenericOption('Very long test name', 'SHORTABBR')
+    const option = createGenericOption('Very long test name', 'SHORTABBR');
 
     it('Should return the label if there is not match with lookup value', () => {
-      expect(highlightOptionLabel(option, 'no-match-string')).toBe(option.label)
-    })
+      expect(highlightOptionLabel(option, 'no-match-string')).toBe(
+        option.label,
+      );
+    });
 
     it('Should not highlight if lookup value length is short', () => {
-      expect(highlightOptionLabel(option, 'l')).toMatchSnapshot()
-    })
+      expect(highlightOptionLabel(option, 'l')).toMatchSnapshot();
+    });
 
     it('Should return marked name', () => {
-      expect(highlightOptionLabel(option, 'long')).toMatchSnapshot()
-    })
+      expect(highlightOptionLabel(option, 'long')).toMatchSnapshot();
+    });
 
     it('Should ignore space at the beginning and the end', () => {
-      expect(highlightOptionLabel(option, '   HORT  ')).toMatchSnapshot()
-    })
+      expect(highlightOptionLabel(option, '   HORT  ')).toMatchSnapshot();
+    });
 
     it('Should return marked abbreviation', () => {
-      expect(highlightOptionLabel(option, 'abbr')).toMatchSnapshot()
-    })
+      expect(highlightOptionLabel(option, 'abbr')).toMatchSnapshot();
+    });
 
     it('Should mark abbreviation because it shorter (bigger similarity)', () => {
-      const newOption = createGenericOption('ShortNameForTemplate', 'SHORTABBR')
-      expect(highlightOptionLabel(newOption, 'short')).toMatchSnapshot()
-    })
+      const newOption = createGenericOption(
+        'ShortNameForTemplate',
+        'SHORTABBR',
+      );
+      expect(highlightOptionLabel(newOption, 'short')).toMatchSnapshot();
+    });
 
     it('Should mark name because substring at the beginning', () => {
       const newOption = createGenericOption(
         'ShortNameForTemplate',
-        'ASHORTABBR'
-      )
-      expect(highlightOptionLabel(newOption, 'short')).toMatchSnapshot()
-    })
-  })
+        'ASHORTABBR',
+      );
+      expect(highlightOptionLabel(newOption, 'short')).toMatchSnapshot();
+    });
+  });
 
   describe('getOptionLabel', () => {
     it('Should return the label field value from an option', () => {
-      const option = createGenericOption('testName')
-      expect(getOptionLabel(option)).toBe(option.label)
-    })
-  })
+      const option = createGenericOption('testName');
+      expect(getOptionLabel(option)).toBe(option.label);
+    });
+  });
 
   describe('getSimilarity', () => {
     const testData: [string, string | undefined, string, number][] = [
@@ -82,81 +87,81 @@ describe('AbbreviationLookup Utils', () => {
       ['testName', 'testAbbreviation', 'testa', 0.3125],
       ['testName', 'testAbbreviation', 'testn', 0.625],
       ['testAb', 'testAbbreviation', 'testa', 0.8333333333333334],
-      ['testAb', 'testAbbreviation', '', 0]
-    ]
+      ['testAb', 'testAbbreviation', '', 0],
+    ];
 
     it.each(testData)(
       'Should calculate similarity based on name (%s) and abbreviation (%s) by lookup value (%s) to similarity %i',
       (name, abbreviation, lookupValue, similarity) => {
-        const option = createGenericOption(name, abbreviation)
-        expect(getSimilarity(option, lookupValue)).toBe(similarity)
-      }
-    )
-  })
+        const option = createGenericOption(name, abbreviation);
+        expect(getSimilarity(option, lookupValue)).toBe(similarity);
+      },
+    );
+  });
 
   describe('filterOptions', () => {
-    const optionA = createOption('Argon', 'Ar')
-    const optionB = createOption('Gold', 'Au')
+    const optionA = createOption('Argon', 'Ar');
+    const optionB = createOption('Gold', 'Au');
 
-    const optionD = createOption('Copernicium', 'Cn')
-    const optionC = createOption('Cobalt', 'Co')
-    const optionE = createOption('CO2H')
-    const optionF = createOption('Silicon', 'Si')
-    const optionG = createOption('benzyl alcohol')
+    const optionD = createOption('Copernicium', 'Cn');
+    const optionC = createOption('Cobalt', 'Co');
+    const optionE = createOption('CO2H');
+    const optionF = createOption('Silicon', 'Si');
+    const optionG = createOption('benzyl alcohol');
 
     it('Should filter out Gold Element', () => {
-      const lookupValue = 'Argon'
-      const inputArray = [optionA, optionB]
-      const resultArray = [optionA]
+      const lookupValue = 'Argon';
+      const inputArray = [optionA, optionB];
+      const resultArray = [optionA];
       expect(
         filterOptions(inputArray, {
-          inputValue: lookupValue
-        } as FilterOptionsState<AbbreviationOption>)
-      ).toEqual(resultArray)
-    })
+          inputValue: lookupValue,
+        } as FilterOptionsState<AbbreviationOption>),
+      ).toEqual(resultArray);
+    });
 
     it('Should ignore spaces at the beginning and the end', () => {
-      const lookupValue = '   Argon   '
-      const inputArray = [optionA, optionB]
-      const resultArray = [optionA]
+      const lookupValue = '   Argon   ';
+      const inputArray = [optionA, optionB];
+      const resultArray = [optionA];
       expect(
         filterOptions(inputArray, {
-          inputValue: lookupValue
-        } as FilterOptionsState<AbbreviationOption>)
-      ).toEqual(resultArray)
-    })
+          inputValue: lookupValue,
+        } as FilterOptionsState<AbbreviationOption>),
+      ).toEqual(resultArray);
+    });
 
     it('Should return an empty array for empty lookup value', () => {
-      const lookupValue = ''
-      const inputArray = [optionB, optionA]
-      const resultArray = []
+      const lookupValue = '';
+      const inputArray = [optionB, optionA];
+      const resultArray = [];
       expect(
         filterOptions(inputArray, {
-          inputValue: lookupValue
-        } as FilterOptionsState<AbbreviationOption>)
-      ).toEqual(resultArray)
-    })
+          inputValue: lookupValue,
+        } as FilterOptionsState<AbbreviationOption>),
+      ).toEqual(resultArray);
+    });
 
     it('Should sort by checking if name or abbreviation is starts with lookup value', () => {
-      const lookupValue = 'go'
-      const inputArray = [optionB, optionA]
-      const resultArray = [optionB, optionA]
+      const lookupValue = 'go';
+      const inputArray = [optionB, optionA];
+      const resultArray = [optionB, optionA];
       expect(
         filterOptions(inputArray, {
-          inputValue: lookupValue
-        } as FilterOptionsState<AbbreviationOption>)
-      ).toEqual(resultArray)
-    })
+          inputValue: lookupValue,
+        } as FilterOptionsState<AbbreviationOption>),
+      ).toEqual(resultArray);
+    });
 
     it('Should correctly consider name or abbreviation while sorting', () => {
-      const lookupValue = 'co'
-      const inputArray = [optionF, optionG, optionD, optionC, optionE]
-      const resultArray = [optionC, optionE, optionD, optionF, optionG]
+      const lookupValue = 'co';
+      const inputArray = [optionF, optionG, optionD, optionC, optionE];
+      const resultArray = [optionC, optionE, optionD, optionF, optionG];
       expect(
         filterOptions(inputArray, {
-          inputValue: lookupValue
-        } as FilterOptionsState<AbbreviationOption>)
-      ).toEqual(resultArray)
-    })
-  })
-})
+          inputValue: lookupValue,
+        } as FilterOptionsState<AbbreviationOption>),
+      ).toEqual(resultArray);
+    });
+  });
+});

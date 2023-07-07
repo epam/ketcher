@@ -14,32 +14,32 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { MonomerGroup } from '../monomerLibraryGroup'
-import { useAppSelector } from 'hooks'
-import { MonomerListContainer } from './styles'
-import { IMonomerListProps } from './types'
+import { MonomerGroup } from '../monomerLibraryGroup';
+import { useAppSelector } from 'hooks';
+import { MonomerListContainer } from './styles';
+import { IMonomerListProps } from './types';
 import {
   selectFilteredMonomers,
   selectMonomerGroups,
   selectMonomersInCategory,
-  selectMonomersInFavorites
-} from 'state/library'
-import { MONOMER_LIBRARY_FAVORITES } from '../../../constants'
-import { MonomerItemType } from '../monomerLibraryItem/types'
+  selectMonomersInFavorites,
+} from 'state/library';
+import { MONOMER_LIBRARY_FAVORITES } from '../../../constants';
+import { MonomerItemType } from '../monomerLibraryItem/types';
 
 export type Group = {
-  groupItems: Array<MonomerItemType>
-  groupTitle?: string
-}
+  groupItems: Array<MonomerItemType>;
+  groupTitle?: string;
+};
 
 const MonomerList = ({ onItemClick, libraryName }: IMonomerListProps) => {
-  const monomers = useAppSelector(selectFilteredMonomers)
+  const monomers = useAppSelector(selectFilteredMonomers);
   const items =
     libraryName !== MONOMER_LIBRARY_FAVORITES
       ? selectMonomersInCategory(monomers, libraryName)
-      : selectMonomersInFavorites(monomers)
+      : selectMonomersInFavorites(monomers);
 
-  const groups = selectMonomerGroups(items)
+  const groups = selectMonomerGroups(items);
 
   return (
     <MonomerListContainer>
@@ -51,10 +51,10 @@ const MonomerList = ({ onItemClick, libraryName }: IMonomerListProps) => {
             items={groupItems}
             onItemClick={onItemClick}
           />
-        )
+        );
       })}
     </MonomerListContainer>
-  )
-}
+  );
+};
 
-export { MonomerList }
+export { MonomerList };

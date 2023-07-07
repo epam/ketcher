@@ -14,14 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { StyledIcon, SummaryContainer, SummaryText } from './styles'
-import { ISummaryProps } from './types'
+import { StyledIcon, SummaryContainer, SummaryText } from './styles';
+import { ISummaryProps } from './types';
 
 export const Summary = ({
   groupName,
   quantity,
   expanded,
-  iconName
+  iconName,
 }: ISummaryProps) => {
   return (
     <SummaryContainer>
@@ -31,5 +31,5 @@ export const Summary = ({
       </SummaryText>
       <StyledIcon name="chevron" expanded={expanded} />
     </SummaryContainer>
-  )
-}
+  );
+};

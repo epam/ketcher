@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { render } from '@testing-library/react'
-import { Menu } from 'components/menu/Menu'
+import { render } from '@testing-library/react';
+import { Menu } from 'components/menu/Menu';
 
-const menuItemChanged = jest.fn()
+const menuItemChanged = jest.fn();
 
 const MenuContainer = () => {
   return (
@@ -41,11 +41,11 @@ const MenuContainer = () => {
         </Menu.Submenu>
       </Menu.Group>
     </Menu>
-  )
-}
+  );
+};
 
 describe('Menu component', () => {
   it('should render menu component in a container', () => {
-    expect(render(withThemeProvider(<MenuContainer />))).toMatchSnapshot()
-  })
-})
+    expect(render(withThemeProvider(<MenuContainer />))).toMatchSnapshot();
+  });
+});

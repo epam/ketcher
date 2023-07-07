@@ -13,51 +13,51 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { EmptyFunction } from 'helpers'
-import { debounce } from 'lodash'
-import { useMemo, useRef } from 'react'
-import { MonomerItem } from '../monomerLibraryItem'
-import { MonomerItemType } from '../monomerLibraryItem/types'
+import { EmptyFunction } from 'helpers';
+import { debounce } from 'lodash';
+import { useMemo, useRef } from 'react';
+import { MonomerItem } from '../monomerLibraryItem';
+import { MonomerItemType } from '../monomerLibraryItem/types';
 import {
   GroupContainer,
   GroupTitle,
   ItemsContainer,
-  StyledPreview
-} from './styles'
-import { IMonomerGroupProps } from './types'
-import { usePreview } from '../../../hooks/usePreview'
+  StyledPreview,
+} from './styles';
+import { IMonomerGroupProps } from './types';
+import { usePreview } from '../../../hooks/usePreview';
 
 const MonomerGroup = ({
   items,
   title,
   selectedMonomerLabel,
-  onItemClick = EmptyFunction
+  onItemClick = EmptyFunction,
 }: IMonomerGroupProps) => {
-  const ref = useRef<HTMLDivElement>(null)
-  const [previewItem, previewStyle, setPreviewItem] = usePreview(ref)
+  const ref = useRef<HTMLDivElement>(null);
+  const [previewItem, previewStyle, setPreviewItem] = usePreview(ref);
 
   const debouncedSetPreviewItem = useMemo(
     () => debounce(setPreviewItem, 500),
-    [setPreviewItem]
-  )
+    [setPreviewItem],
+  );
 
   const handleItemMouseLeave = () => {
-    debouncedSetPreviewItem.cancel()
-    setPreviewItem()
-  }
+    debouncedSetPreviewItem.cancel();
+    setPreviewItem();
+  };
 
   const handleItemMouseMove = (
     monomer: MonomerItemType,
-    e: React.MouseEvent<HTMLDivElement, MouseEvent>
+    e: React.MouseEvent<HTMLDivElement, MouseEvent>,
   ) => {
     if (previewItem) {
-      setPreviewItem()
-      return
+      setPreviewItem();
+      return;
     }
 
-    const rect = e.currentTarget.getBoundingClientRect()
-    debouncedSetPreviewItem(monomer, rect)
-  }
+    const rect = e.currentTarget.getBoundingClientRect();
+    debouncedSetPreviewItem(monomer, rect);
+  };
 
   return (
     <GroupContainer ref={ref}>
@@ -70,7 +70,7 @@ const MonomerGroup = ({
         {items.map((monomer) => {
           const key = monomer.props
             ? `${monomer.props.MonomerName + monomer.props.Name}`
-            : monomer.label
+            : monomer.label;
           return (
             <MonomerItem
               key={key}
@@ -80,13 +80,13 @@ const MonomerGroup = ({
               onMouseMove={(e) => handleItemMouseMove(monomer, e)}
               onClick={() => onItemClick(monomer)}
             />
-          )
+          );
         })}
       </ItemsContainer>
       {previewItem && (
         <StyledPreview monomer={previewItem} top={previewStyle?.top || ''} />
       )}
     </GroupContainer>
-  )
-}
-export { MonomerGroup }
+  );
+};
+export { MonomerGroup };

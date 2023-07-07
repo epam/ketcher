@@ -14,18 +14,18 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { iconNameToIcon } from './utils/iconNameToIcon'
+import { iconNameToIcon } from './utils/iconNameToIcon';
 
 export type SvgComponent = React.FunctionComponent<
   React.SVGProps<SVGSVGElement> & {
-    title?: string | undefined
+    title?: string | undefined;
   }
->
+>;
 
-export type IconName = keyof typeof iconNameToIcon
+export type IconName = keyof typeof iconNameToIcon;
 
 export interface IIconProps {
-  name: IconName
-  className?: string
-  onClick?: (e: React.MouseEvent<HTMLOrSVGElement, MouseEvent>) => void
+  name: IconName;
+  className?: string;
+  onClick?: (e: React.MouseEvent<HTMLOrSVGElement, MouseEvent>) => void;
 }

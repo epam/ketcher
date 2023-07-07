@@ -14,8 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import styled from '@emotion/styled'
-import { IconButton } from 'components'
+import styled from '@emotion/styled';
+import { IconButton } from 'components';
 
 export const TopToolbarIconButton = styled(IconButton)`
   border-radius: 4px;
@@ -31,4 +31,4 @@ export const TopToolbarIconButton = styled(IconButton)`
     width: 40px;
     padding: 5px;
   }
-`
+`;

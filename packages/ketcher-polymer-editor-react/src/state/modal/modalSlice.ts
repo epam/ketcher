@@ -13,39 +13,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { RootState } from 'state'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { RootState } from 'state';
 
 interface ModalState {
-  name: string | null
-  isOpen: boolean
+  name: string | null;
+  isOpen: boolean;
 }
 
 const initialState: ModalState = {
   name: null,
-  isOpen: false
-}
+  isOpen: false,
+};
 
 export const modalSlice = createSlice({
   name: 'modal',
   initialState,
   reducers: {
     openModal: (state, action: PayloadAction<string>) => {
-      state.name = action.payload
-      state.isOpen = true
+      state.name = action.payload;
+      state.isOpen = true;
     },
     closeModal: (state) => {
-      state.name = null
-      state.isOpen = false
-    }
-  }
-})
+      state.name = null;
+      state.isOpen = false;
+    },
+  },
+});
 
-export const { openModal, closeModal } = modalSlice.actions
+export const { openModal, closeModal } = modalSlice.actions;
 
 export const selectModalName = (state: RootState): string | null =>
-  state.modal.name
+  state.modal.name;
 export const selectModalIsOpen = (state: RootState): boolean =>
-  state.modal.isOpen
+  state.modal.isOpen;
 
-export const modalReducer = modalSlice.reducer
+export const modalReducer = modalSlice.reducer;

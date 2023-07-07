@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-type TopGroup = 'document' | 'edit' | 'zoom' | 'process' | 'meta'
+type TopGroup = 'document' | 'edit' | 'zoom' | 'process' | 'meta';
 
 type LeftGroup =
   | 'hand'
@@ -25,13 +25,13 @@ type LeftGroup =
   | 'sgroup'
   | 'rgroup'
   | 'shape'
-  | 'text'
+  | 'text';
 
-type BottomGroup = 'template-common' | 'template-lib'
+type BottomGroup = 'template-common' | 'template-lib';
 
-type RightGroup = 'atom' | 'period-table'
+type RightGroup = 'atom' | 'period-table';
 
-type ToolbarGroupVariant = TopGroup | LeftGroup | BottomGroup | RightGroup
+type ToolbarGroupVariant = TopGroup | LeftGroup | BottomGroup | RightGroup;
 
 type TopToolbarItemVariant =
   | 'clear'
@@ -60,7 +60,7 @@ type TopToolbarItemVariant =
   | 'miew'
   | 'settings'
   | 'help'
-  | 'about'
+  | 'about';
 
 type LeftToolbarItemVariant =
   // select group
@@ -134,36 +134,39 @@ type LeftToolbarItemVariant =
   | 'shape-rectangle'
   | 'shape-line'
   // text group
-  | 'text'
+  | 'text';
 
 type BottomToolbarItemVariant =
   | 'template-common'
   | 'template-lib'
   | 'enhanced-stereo'
-  | 'fullscreen'
+  | 'fullscreen';
 
 type RightToolbarItemVariant =
   | 'atom'
   | 'freq-atoms'
   | 'period-table'
   | 'extended-table'
-  | 'any-atom'
+  | 'any-atom';
 
-type FloatingToolItemVariant = 'transform-flip-h' | 'transform-flip-v' | 'erase'
+type FloatingToolItemVariant =
+  | 'transform-flip-h'
+  | 'transform-flip-v'
+  | 'erase';
 
 type ToolbarItemVariant =
   | TopToolbarItemVariant
   | LeftToolbarItemVariant
   | BottomToolbarItemVariant
   | RightToolbarItemVariant
-  | FloatingToolItemVariant
+  | FloatingToolItemVariant;
 
 interface ToolbarItem {
-  id: ToolbarItemVariant
-  options?: ToolbarItem[]
+  id: ToolbarItemVariant;
+  options?: ToolbarItem[];
 }
 
-export type { ToolbarGroupVariant }
+export type { ToolbarGroupVariant };
 
 export type {
   BottomToolbarItemVariant,
@@ -171,7 +174,7 @@ export type {
   RightToolbarItemVariant,
   TopToolbarItemVariant,
   FloatingToolItemVariant,
-  ToolbarItemVariant
-}
+  ToolbarItemVariant,
+};
 
-export type { ToolbarItem }
+export type { ToolbarItem };

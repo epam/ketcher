@@ -14,8 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import styled from '@emotion/styled'
-import { Button, Icon } from 'ketcher-react'
+import styled from '@emotion/styled';
+import { Button, Icon } from 'ketcher-react';
 
 export const RnaEditorContainer = styled.div((props) => ({
   borderRadius: props.theme.ketcher.border.radius.regular,
@@ -23,8 +23,8 @@ export const RnaEditorContainer = styled.div((props) => ({
   boxShadow: props.theme.ketcher.shadow.regular,
   overflow: 'hidden',
   margin: '12px',
-  flexShrink: 0
-}))
+  flexShrink: 0,
+}));
 
 export const ExpandButton = styled(Button)({
   width: '100%',
@@ -33,16 +33,16 @@ export const ExpandButton = styled(Button)({
   padding: '0',
 
   ':hover': {
-    backgroundColor: '#E1E5EA'
-  }
-})
+    backgroundColor: '#E1E5EA',
+  },
+});
 
 export const ExpandIcon = styled(Icon)<{ expanded?: boolean }>(
   {
     height: '16px',
-    width: '16px'
+    width: '16px',
   },
   ({ expanded }) => ({
-    transform: expanded ? 'rotate(180deg)' : 'none'
-  })
-)
+    transform: expanded ? 'rotate(180deg)' : 'none',
+  }),
+);

@@ -14,8 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Dialog from './Dialog'
-import { LoadingCircles } from './Spinner'
-import StructEditor from './StructEditor'
+import Dialog from './Dialog';
+import { LoadingCircles } from './Spinner';
+import StructEditor from './StructEditor';
 
-export { Dialog, StructEditor, LoadingCircles }
+export { Dialog, StructEditor, LoadingCircles };

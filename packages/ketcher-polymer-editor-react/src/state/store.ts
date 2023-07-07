@@ -14,36 +14,36 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { configureStore, Store } from '@reduxjs/toolkit'
-import { editorReducer } from 'state/common'
-import { libraryReducer } from 'state/library'
-import createSagaMiddleware from 'redux-saga'
-import { rootSaga } from 'state/rootSaga'
-import { modalReducer } from 'state/modal'
+import { configureStore, Store } from '@reduxjs/toolkit';
+import { editorReducer } from 'state/common';
+import { libraryReducer } from 'state/library';
+import createSagaMiddleware from 'redux-saga';
+import { rootSaga } from 'state/rootSaga';
+import { modalReducer } from 'state/modal';
 
 export function configureAppStore(preloadedState = {}) {
-  const sagaMiddleware = createSagaMiddleware()
+  const sagaMiddleware = createSagaMiddleware();
 
   const store: Store = configureStore({
     reducer: {
       editor: editorReducer,
       modal: modalReducer,
-      library: libraryReducer
+      library: libraryReducer,
     },
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware({
         thunk: false,
-        serializableCheck: false
+        serializableCheck: false,
       }).concat(sagaMiddleware),
-    preloadedState
-  })
+    preloadedState,
+  });
 
-  sagaMiddleware.run(rootSaga)
+  sagaMiddleware.run(rootSaga);
 
-  return store
+  return store;
 }
 
-export const store = configureAppStore()
+export const store = configureAppStore();
 
-export type RootState = ReturnType<typeof store.getState>
-export type AppDispatch = typeof store.dispatch
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;

@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import styles from './ErrorModal.module.css'
+import styles from './ErrorModal.module.css';
 
 interface ErrorModalProps {
-  message: string
-  close: () => void
+  message: string;
+  close: () => void;
 }
 
 const ErrorModal = ({ message, close }: ErrorModalProps): JSX.Element => {
@@ -30,7 +30,7 @@ const ErrorModal = ({ message, close }: ErrorModalProps): JSX.Element => {
           <button
             className={styles.ok}
             onClick={() => {
-              close()
+              close();
             }}
           >
             Close
@@ -38,7 +38,7 @@ const ErrorModal = ({ message, close }: ErrorModalProps): JSX.Element => {
         </footer>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export { ErrorModal }
+export { ErrorModal };

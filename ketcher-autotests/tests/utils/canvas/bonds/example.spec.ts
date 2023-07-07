@@ -29,7 +29,7 @@ test.skip(`BOND`, async ({ page }) => {
   const bondByIndex = await getBondByIndex(
     page,
     { type: BondType.HYDROGEN },
-    searchedIndex
+    searchedIndex,
   );
   await page.mouse.click(bondByIndex.x, bondByIndex.y);
 

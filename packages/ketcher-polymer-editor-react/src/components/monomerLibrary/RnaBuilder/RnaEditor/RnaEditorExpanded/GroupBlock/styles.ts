@@ -14,13 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
-import styled from '@emotion/styled'
-import { Icon } from 'ketcher-react'
+import styled from '@emotion/styled';
+import { Icon } from 'ketcher-react';
 
 export const GroupBlockContainer = styled.div<{
-  disabled?: boolean
-  selected?: boolean
-  empty?: boolean
+  disabled?: boolean;
+  selected?: boolean;
+  empty?: boolean;
 }>((props) => ({
   height: '40px',
   position: 'relative',
@@ -39,7 +39,7 @@ export const GroupBlockContainer = styled.div<{
   outlineOffset: '1px',
 
   ':hover': {
-    outline: props.theme.ketcher.outline.small
+    outline: props.theme.ketcher.outline.small,
   },
 
   ':not(:last-child)': {
@@ -51,8 +51,8 @@ export const GroupBlockContainer = styled.div<{
       borderLeft: props.theme.ketcher.outline.medium,
       borderBottom: props.theme.ketcher.outline.medium,
       height: '2px',
-      width: '17px'
-    }
+      width: '17px',
+    },
   },
 
   ':last-child': {
@@ -65,24 +65,24 @@ export const GroupBlockContainer = styled.div<{
       borderBottom: props.theme.ketcher.outline.medium,
       borderRadius: '0 0 0 4px',
       height: '130px',
-      width: '17px'
-    }
-  }
-}))
+      width: '17px',
+    },
+  },
+}));
 
 export const TextContainer = styled.div({
   display: 'flex',
-  flexDirection: 'column'
-})
+  flexDirection: 'column',
+});
 
 export const GroupName = styled.span((props) => ({
-  fontSize: props.theme.ketcher.font.size.small
-}))
+  fontSize: props.theme.ketcher.font.size.small,
+}));
 
 export const MonomerName = styled.span((props) => ({
   marginTop: '1px',
-  fontSize: props.theme.ketcher.font.size.medium
-}))
+  fontSize: props.theme.ketcher.font.size.medium,
+}));
 
 export const GroupIcon = styled(Icon)<{ selected?: boolean; empty?: boolean }>(
   (props) => ({
@@ -97,6 +97,6 @@ export const GroupIcon = styled(Icon)<{ selected?: boolean; empty?: boolean }>(
       ? props.selected
         ? props.theme.ketcher.color.background.primary
         : props.theme.ketcher.color.icon.grey
-      : 'none'
-  })
-)
+      : 'none',
+  }),
+);

@@ -52,7 +52,7 @@ async function receiveFile({
   const file = await page.evaluate(
     ({ method, format }) =>
       (window.ketcher[method] as KetcherApiFunction)(format),
-    pageData
+    pageData,
   );
 
   return file.split('\n');

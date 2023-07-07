@@ -1,3 +1,3 @@
-import { Bond } from 'domain/entities'
+import { Bond } from 'domain/entities';
 
-export type BondAtoms = Pick<Bond, 'begin' | 'end'>
+export type BondAtoms = Pick<Bond, 'begin' | 'end'>;

@@ -14,50 +14,50 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Action, fromAtomsAttrs } from 'ketcher-core'
-import Editor from '../Editor'
-import { Tool } from './Tool'
+import { Action, fromAtomsAttrs } from 'ketcher-core';
+import Editor from '../Editor';
+import { Tool } from './Tool';
 
 class ReactionUnmapTool implements Tool {
-  private readonly editor: Editor
+  private readonly editor: Editor;
 
   constructor(editor) {
-    this.editor = editor
-    this.editor.selection(null)
+    this.editor = editor;
+    this.editor.selection(null);
   }
 
   mousemove(event) {
-    const ci = this.editor.findItem(event, ['atoms'])
+    const ci = this.editor.findItem(event, ['atoms']);
 
     if (ci && ci.map === 'atoms') {
       this.editor.hover(
         this.editor.render.ctab.molecule.atoms.get(ci.id)?.aam ? ci : null,
         null,
-        event
-      )
+        event,
+      );
     } else {
-      this.editor.hover(null)
+      this.editor.hover(null);
     }
   }
 
   mouseup(event) {
-    const ci = this.editor.findItem(event, ['atoms'])
-    const atoms = this.editor.render.ctab.molecule.atoms
+    const ci = this.editor.findItem(event, ['atoms']);
+    const atoms = this.editor.render.ctab.molecule.atoms;
 
     if (ci && ci.map === 'atoms' && atoms.get(ci.id)?.aam) {
-      const action = new Action()
-      const aam = atoms.get(ci.id)?.aam
+      const action = new Action();
+      const aam = atoms.get(ci.id)?.aam;
       atoms.forEach((atom, aid) => {
         if (atom.aam === aam) {
           action.mergeWith(
-            fromAtomsAttrs(this.editor.render.ctab, aid, { aam: 0 }, null)
-          )
+            fromAtomsAttrs(this.editor.render.ctab, aid, { aam: 0 }, null),
+          );
         }
-      })
-      this.editor.update(action)
+      });
+      this.editor.update(action);
     }
-    this.editor.hover(this.editor.findItem(event, ['atoms']), null, event)
+    this.editor.hover(this.editor.findItem(event, ['atoms']), null, event);
   }
 }
 
-export default ReactionUnmapTool
+export default ReactionUnmapTool;

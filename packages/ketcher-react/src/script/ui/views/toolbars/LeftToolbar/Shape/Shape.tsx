@@ -17,21 +17,21 @@
 import {
   ToolbarGroupItem,
   ToolbarGroupItemCallProps,
-  ToolbarGroupItemProps
-} from '../../ToolbarGroupItem'
+  ToolbarGroupItemProps,
+} from '../../ToolbarGroupItem';
 
-import { shapeOptions } from '../leftToolbarOptions'
+import { shapeOptions } from '../leftToolbarOptions';
 
 interface ShapeProps extends Omit<ToolbarGroupItemProps, 'id' | 'options'> {
-  height?: number
+  height?: number;
 }
-type ShapeCallProps = ToolbarGroupItemCallProps
+type ShapeCallProps = ToolbarGroupItemCallProps;
 
-type Props = ShapeProps & ShapeCallProps
+type Props = ShapeProps & ShapeCallProps;
 
 const Shape = (props: Props) => {
-  return <ToolbarGroupItem id="shapes" options={shapeOptions} {...props} />
-}
+  return <ToolbarGroupItem id="shapes" options={shapeOptions} {...props} />;
+};
 
-export type { ShapeProps, ShapeCallProps }
-export { Shape }
+export type { ShapeProps, ShapeCallProps };
+export { Shape };

@@ -14,31 +14,31 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Vec2, fracAngle } from 'ketcher-core'
+import { Vec2, fracAngle } from 'ketcher-core';
 
 function calcAngle(pos0, pos1) {
-  const v = Vec2.diff(pos1, pos0)
-  return Math.atan2(v.y, v.x)
+  const v = Vec2.diff(pos1, pos0);
+  return Math.atan2(v.y, v.x);
 }
 
 function calcNewAtomPos(pos0, pos1, ctrlKey) {
   const v = new Vec2(1, 0).rotate(
-    ctrlKey ? calcAngle(pos0, pos1) : fracAngle(pos0, pos1)
-  )
-  v.add_(pos0) // eslint-disable-line no-underscore-dangle
-  return v
+    ctrlKey ? calcAngle(pos0, pos1) : fracAngle(pos0, pos1),
+  );
+  v.add_(pos0); // eslint-disable-line no-underscore-dangle
+  return v;
 }
 
 function degrees(angle) {
-  let degree = Math.round((angle / Math.PI) * 180)
-  if (degree > 180) degree -= 360
-  else if (degree <= -180) degree += 360
-  return degree
+  let degree = Math.round((angle / Math.PI) * 180);
+  if (degree > 180) degree -= 360;
+  else if (degree <= -180) degree += 360;
+  return degree;
 }
 
 export default {
   calcAngle,
   fracAngle,
   calcNewAtomPos,
-  degrees
-}
+  degrees,
+};

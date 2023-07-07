@@ -14,8 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { ThemeType } from 'theming/defaultTheme'
-import { css } from '@emotion/react'
+import { ThemeType } from 'theming/defaultTheme';
+import { css } from '@emotion/react';
 
 export const scrollbarThin = ({ ketcher: theme }: ThemeType) => css`
   scrollbar-width: thin;
@@ -35,4 +35,4 @@ export const scrollbarThin = ({ ketcher: theme }: ThemeType) => css`
   &::-webkit-scrollbar-thumb:active {
     background-color: ${theme.color.scroll.regular};
   }
-`
+`;

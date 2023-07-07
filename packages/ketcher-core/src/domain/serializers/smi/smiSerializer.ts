@@ -14,27 +14,27 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Serializer } from '../serializers.types'
-import { SmiSerializerOptions } from './smi.types'
-import { Smiles } from './smiles'
-import { Struct } from 'domain/entities'
+import { Serializer } from '../serializers.types';
+import { SmiSerializerOptions } from './smi.types';
+import { Smiles } from './smiles';
+import { Struct } from 'domain/entities';
 
 export class SmiSerializer implements Serializer<Struct> {
   static DefaultOptions: SmiSerializerOptions = {
-    ignoreErrors: false
-  }
+    ignoreErrors: false,
+  };
 
-  private readonly options: SmiSerializerOptions
+  private readonly options: SmiSerializerOptions;
 
   constructor(options?: Partial<SmiSerializerOptions>) {
-    this.options = { ...SmiSerializer.DefaultOptions, ...options }
+    this.options = { ...SmiSerializer.DefaultOptions, ...options };
   }
 
   deserialize(_content: string): Struct {
-    throw new Error('Not implemented yet.')
+    throw new Error('Not implemented yet.');
   }
 
   serialize(struct: Struct): string {
-    return new Smiles().saveMolecule(struct, this.options.ignoreErrors)
+    return new Smiles().saveMolecule(struct, this.options.ignoreErrors);
   }
 }

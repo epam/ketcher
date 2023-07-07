@@ -14,8 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Icon } from 'components'
-import classes from './emptySearchResult.module.less'
+import { Icon } from 'components';
+import classes from './emptySearchResult.module.less';
 
 const EmptySearchResult = ({ textInfo }) => {
   return (
@@ -23,7 +23,7 @@ const EmptySearchResult = ({ textInfo }) => {
       <p>{textInfo}</p>
       <Icon name="not-found" />
     </div>
-  )
-}
+  );
+};
 
-export default EmptySearchResult
+export default EmptySearchResult;

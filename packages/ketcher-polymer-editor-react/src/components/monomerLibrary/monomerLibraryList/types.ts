@@ -14,15 +14,15 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { LibraryNameType } from 'src/constants'
-import { MonomerItemType } from '../monomerLibraryItem/types'
+import { LibraryNameType } from 'src/constants';
+import { MonomerItemType } from '../monomerLibraryItem/types';
 
 export type Group = {
-  groupItems: Array<MonomerItemType>
-  groupTitle?: string
-}
+  groupItems: Array<MonomerItemType>;
+  groupTitle?: string;
+};
 
 export interface IMonomerListProps {
-  libraryName: LibraryNameType
-  onItemClick: (item) => void
+  libraryName: LibraryNameType;
+  onItemClick: (item) => void;
 }

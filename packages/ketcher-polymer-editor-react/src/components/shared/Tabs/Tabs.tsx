@@ -14,54 +14,54 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Tabs, Tab } from '@mui/material'
-import { ReactElement, useState } from 'react'
-import Box from '@mui/material/Box'
-import styled from '@emotion/styled'
+import { Tabs, Tab } from '@mui/material';
+import { ReactElement, useState } from 'react';
+import Box from '@mui/material/Box';
+import styled from '@emotion/styled';
 
 interface TabPanelProps {
-  index: number
-  value: number
-  children: JSX.Element | Array<JSX.Element>
+  index: number;
+  value: number;
+  children: JSX.Element | Array<JSX.Element>;
 }
 
 const TabPanelDiv = styled.div(() => ({
   backgroundColor: '#eef2f5',
   flexGrow: 1,
-  overflowY: 'scroll'
-}))
+  overflowY: 'scroll',
+}));
 
 const TabPanelBox = styled(Box)({
   height: '100%',
   width: '100%',
-  alignItems: 'start'
-})
+  alignItems: 'start',
+});
 
 function TabPanel({ children, value, index }: TabPanelProps) {
   return (
     <TabPanelDiv role="tabpanel" hidden={value !== index} id={index.toString()}>
       {value === index && <TabPanelBox>{children}</TabPanelBox>}
     </TabPanelDiv>
-  )
+  );
 }
 
 function a11yProps(index: number) {
   return {
     id: `simple-tab-${index}`,
-    'aria-controls': `simple-tabpanel-${index}`
-  }
+    'aria-controls': `simple-tabpanel-${index}`,
+  };
 }
 
 function CustomTabs(props): ReactElement {
-  const [tabIndex, setTabIndex] = useState(1)
-  const { tabs } = props
-  const tabPanel = tabs[tabIndex]
-  const Component = tabPanel?.component
-  const componentProps = tabPanel?.props
+  const [tabIndex, setTabIndex] = useState(1);
+  const { tabs } = props;
+  const tabPanel = tabs[tabIndex];
+  const Component = tabPanel?.component;
+  const componentProps = tabPanel?.props;
 
   const handleChange = (_event, newTabIndex) => {
-    setTabIndex(newTabIndex)
-  }
+    setTabIndex(newTabIndex);
+  };
 
   const StyledTabs = styled(Tabs)({
     height: 24,
@@ -71,9 +71,9 @@ function CustomTabs(props): ReactElement {
     padding: 0,
 
     '& .MuiTabs-indicator': {
-      display: 'none'
-    }
-  })
+      display: 'none',
+    },
+  });
 
   const StyledTab = styled(Tab)(({ theme }) => ({
     minHeight: 24,
@@ -95,27 +95,27 @@ function CustomTabs(props): ReactElement {
 
     '&:first-of-type': {
       borderLeftColor: 'transparent !important',
-      borderRadius: '0 4px 0 0 '
+      borderRadius: '0 4px 0 0 ',
     },
 
     '&:last-of-type': {
       borderRightColor: 'transparent !important',
-      borderRadius: '4px 0 0 0'
+      borderRadius: '4px 0 0 0',
     },
 
     '&:hover': {
       backgroundColor: theme.ketcher.color.tab.regular,
       color: theme.ketcher.color.text.primary,
-      border: `1px solid ${theme.ketcher.color.border.primary}`
+      border: `1px solid ${theme.ketcher.color.border.primary}`,
     },
 
     '&.Mui-selected': {
       backgroundColor: theme.ketcher.color.tab.active,
       color: theme.ketcher.color.text.primary,
       border: `1px solid ${theme.ketcher.color.border.primary}`,
-      borderBottom: '1px solid transparent'
-    }
-  }))
+      borderBottom: '1px solid transparent',
+    },
+  }));
 
   const TabPanelContent = styled.div(() => ({
     display: 'flex',
@@ -124,8 +124,8 @@ function CustomTabs(props): ReactElement {
     justifyContent: 'flex-start',
     overflowY: 'auto',
     width: '100%',
-    height: '100%'
-  }))
+    height: '100%',
+  }));
 
   return (
     <>
@@ -146,7 +146,7 @@ function CustomTabs(props): ReactElement {
         </TabPanel>
       )}
     </>
-  )
+  );
 }
 
-export { CustomTabs as Tabs }
+export { CustomTabs as Tabs };

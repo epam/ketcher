@@ -16,14 +16,14 @@
 
 import {
   ChemicalMimeType,
-  SupportedFormatProperties
-} from './supportedFormatProperties'
+  SupportedFormatProperties,
+} from './supportedFormatProperties';
 
-export type SupportedFormats = 'mol' | 'helm'
+export type SupportedFormats = 'mol' | 'helm';
 
 type FormatProperties = {
-  [key in SupportedFormats]: SupportedFormatProperties
-}
+  [key in SupportedFormats]: SupportedFormatProperties;
+};
 
 const formatProperties: FormatProperties = {
   mol: new SupportedFormatProperties(
@@ -31,11 +31,11 @@ const formatProperties: FormatProperties = {
     ChemicalMimeType.Mol,
     ['.mol'],
     true,
-    { 'molfile-saving-mode': '3000' }
+    { 'molfile-saving-mode': '3000' },
   ),
-  helm: new SupportedFormatProperties('HELM', ChemicalMimeType.Helm, ['.helm'])
-}
+  helm: new SupportedFormatProperties('HELM', ChemicalMimeType.Helm, ['.helm']),
+};
 
 export const getPropertiesByFormat = (format: SupportedFormats) => {
-  return formatProperties[format]
-}
+  return formatProperties[format];
+};

@@ -106,7 +106,7 @@ test.describe('Templates - Functional Group Tools', () => {
    */
     await openFileAndAddToCanvas(
       'expand-functional-group-with-benzene.mol',
-      page
+      page,
     );
 
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
@@ -263,7 +263,7 @@ test.describe('Templates - Functional Group Tools2', () => {
    */
     await openFileAndAddToCanvas(
       'expand-functional-group-with-benzene.mol',
-      page
+      page,
     );
     await page.keyboard.press('Control+a');
     await pressButton(page, 'Vertical Flip (Alt+V)');
@@ -287,7 +287,7 @@ test.describe('Templates - Functional Group Tools2', () => {
    */
     await openFileAndAddToCanvas(
       'expand-functional-group-with-benzene.mol',
-      page
+      page,
     );
 
     await page.keyboard.press('Control+a');
@@ -555,43 +555,43 @@ test.describe('Templates - Functional Group Tools3', () => {
     await selectLeftPanelToolClickAndScreenshot(LeftPanelButton.HandTool, page);
     await selectLeftPanelToolClickAndScreenshot(
       LeftPanelButton.RectangleSelection,
-      page
+      page,
     );
     await selectLeftPanelToolClickAndScreenshot(LeftPanelButton.Erase, page);
     await selectLeftPanelToolClickAndScreenshot(
       LeftPanelButton.SingleBond,
-      page
+      page,
     );
     await selectLeftPanelToolClickAndScreenshot(LeftPanelButton.Chain, page);
     await selectLeftPanelToolClickAndScreenshot(
       LeftPanelButton.ChargePlus,
-      page
+      page,
     );
     await selectLeftPanelToolClickAndScreenshot(
       LeftPanelButton.ChargeMinus,
-      page
+      page,
     );
 
     await selectLeftPanelToolClickAndScreenshot(LeftPanelButton.S_Group, page);
     await selectLeftPanelToolClickAndScreenshot(
       LeftPanelButton.ReactionPlusTool,
-      page
+      page,
     );
     await selectLeftPanelToolClickAndScreenshot(
       LeftPanelButton.ArrowOpenAngleTool,
-      page
+      page,
     );
     await selectLeftPanelToolClickAndScreenshot(
       LeftPanelButton.ReactionMappingTool,
-      page
+      page,
     );
     await selectLeftPanelToolClickAndScreenshot(
       LeftPanelButton.R_GroupLabelTool,
-      page
+      page,
     );
     await selectLeftPanelToolClickAndScreenshot(
       LeftPanelButton.ShapeEllipse,
-      page
+      page,
     );
     await selectLeftPanelToolClickAndScreenshot(LeftPanelButton.AddText, page);
 

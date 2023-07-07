@@ -14,34 +14,34 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { ElementColor, Elements } from 'ketcher-core'
-import { atomCuts } from '../../../../action/atoms'
+import { ElementColor, Elements } from 'ketcher-core';
+import { atomCuts } from '../../../../action/atoms';
 
-import Atom from '../../../../component/view/Atom'
-import { UiActionAction } from '../../../../action'
-import { forwardRef } from 'react'
-import { shortcutStr } from '../../shortcutStr'
-import style from '../../../../../../components/styles/consts'
-import styled from '@emotion/styled'
+import Atom from '../../../../component/view/Atom';
+import { UiActionAction } from '../../../../action';
+import { forwardRef } from 'react';
+import { shortcutStr } from '../../shortcutStr';
+import style from '../../../../../../components/styles/consts';
+import styled from '@emotion/styled';
 
 interface AtomsListProps {
-  atoms: string[]
+  atoms: string[];
   active?: {
-    tool?: string
+    tool?: string;
     opts: {
-      label: string
-    }
-  }
+      label: string;
+    };
+  };
 }
 
 interface AtomsListCallProps {
-  onAction: (action: UiActionAction) => void
+  onAction: (action: UiActionAction) => void;
 }
 
-type Props = AtomsListProps & AtomsListCallProps
+type Props = AtomsListProps & AtomsListCallProps;
 
 const StyledAtom = styled(Atom)((props: any) => {
-  const atomColor = props?.el?.label ? ElementColor[props.el.label] : '#000'
+  const atomColor = props?.el?.label ? ElementColor[props.el.label] : '#000';
   return `
        color: ${atomColor};
        border: 1px solid transparent;
@@ -61,20 +61,20 @@ const StyledAtom = styled(Atom)((props: any) => {
           background-color: ${style.color.primaryWhite};
          }
        }
-   `
-})
+   `;
+});
 
 const AtomsList = forwardRef<HTMLDivElement, Props>((props: Props, ref) => {
-  const { atoms, active, onAction } = props
-  const isAtom = active && active.tool === 'atom'
+  const { atoms, active, onAction } = props;
+  const isAtom = active && active.tool === 'atom';
 
   return (
     <div ref={ref}>
       {atoms.map((label) => {
-        const element = Elements.get(label)
+        const element = Elements.get(label);
         const shortcut =
-          atoms.indexOf(label) > -1 ? shortcutStr(atomCuts[label]) : null
-        const isSelected = isAtom && active && active.opts.label === label
+          atoms.indexOf(label) > -1 ? shortcutStr(atomCuts[label]) : null;
+        const isSelected = isAtom && active && active.opts.label === label;
         return (
           <StyledAtom
             key={label}
@@ -84,11 +84,11 @@ const AtomsList = forwardRef<HTMLDivElement, Props>((props: Props, ref) => {
             selected={isSelected}
             onClick={() => onAction({ tool: 'atom', opts: { label } })}
           />
-        )
+        );
       })}
     </div>
-  )
-})
+  );
+});
 
-export type { AtomsListProps, AtomsListCallProps }
-export { AtomsList }
+export type { AtomsListProps, AtomsListCallProps };
+export { AtomsList };

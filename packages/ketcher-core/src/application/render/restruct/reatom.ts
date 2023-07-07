@@ -658,7 +658,7 @@ function isLabelVisible(restruct, options, atom) {
     atom.a.neighbors.length === 0 ||
     (atom.a.neighbors.length < 2 && visibleTerminal);
 
-  if (isAttachmentPointAtom && atom.a.neighbors.length > 0 && isCarbon) {
+  if (isAttachmentPointAtom && isCarbon) {
     return false;
   }
 

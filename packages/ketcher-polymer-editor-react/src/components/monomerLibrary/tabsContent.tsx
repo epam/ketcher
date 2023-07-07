@@ -1,5 +1,6 @@
 import { MONOMER_TYPES, MONOMER_LIBRARY_FAVORITES } from '../../constants';
 import { MonomerList } from './monomerLibraryList';
+import { RnaBuilder } from './RnaBuilder';
 
 export const tabsContent = [
   {
@@ -18,7 +19,7 @@ export const tabsContent = [
   },
   {
     caption: 'RNA',
-    component: () => <></>,
+    component: RnaBuilder,
   },
   {
     caption: 'CHEM',

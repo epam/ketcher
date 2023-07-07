@@ -175,6 +175,7 @@ function FieldSet({
   onSelect,
   type = 'radio',
   checked,
+  innerRef,
   ...rest
 }) {
   return (
@@ -183,6 +184,7 @@ function FieldSet({
         <li key={title} className={classes.fieldSetItem}>
           <label className={classes.fieldSetLabel}>
             <input
+              ref={innerRef}
               type={type}
               defaultChecked={
                 type === 'radio' ? selected(val, checked) : selected(val, value)

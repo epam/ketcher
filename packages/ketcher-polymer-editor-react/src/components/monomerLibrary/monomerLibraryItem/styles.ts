@@ -15,7 +15,7 @@
  ***************************************************************************/
 import styled from '@emotion/styled';
 
-export const Card = styled.div<{ code: string }>`
+export const Card = styled.div<{ code: string; isSelected?: boolean }>`
   background: white;
   width: 58px;
   height: 48px;
@@ -42,8 +42,10 @@ export const Card = styled.div<{ code: string }>`
     outline: 1px solid #b4b9d6;
     &::after {
       content: '';
-      background: ${({ code, theme }) =>
-        theme.ketcher.monomer.color[code].hover};
+      background: ${({ code, theme, isSelected }) =>
+        isSelected
+          ? theme.ketcher.color.button.primary.active
+          : theme.ketcher.monomer.color[code]?.hover};
     }
     > .star {
       visibility: visible;
@@ -58,8 +60,10 @@ export const Card = styled.div<{ code: string }>`
     left: 0;
     width: 100%;
     height: 8px;
-    background: ${({ code, theme }) =>
-      theme.ketcher.monomer.color[code].regular};
+    background: ${({ code, theme, isSelected }) =>
+      isSelected
+        ? theme.ketcher.color.button.primary.active
+        : theme.ketcher.monomer.color[code]?.regular};
   }
   > span {
     position: absolute;

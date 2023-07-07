@@ -24,6 +24,7 @@ const MonomerItem = ({
   item,
   onMouseLeave,
   onMouseMove,
+  isSelected,
   onClick = EmptyFunction,
 }: IMonomerItemProps) => {
   const [favorite, setFavorite] = useState(item.favorite);
@@ -32,6 +33,7 @@ const MonomerItem = ({
   return (
     <Card
       onClick={onClick}
+      isSelected={isSelected}
       code={item.props.MonomerNaturalAnalogCode}
       data-testid={item.props.MonomerNaturalAnalogCode}
       onMouseLeave={onMouseLeave}

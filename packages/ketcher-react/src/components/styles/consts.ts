@@ -32,6 +32,16 @@ const text = {
   },
 } as const;
 
+const font = {
+  size: {
+    small: '10px',
+    regular: '12px',
+  },
+  weight: {
+    regular: '400',
+  },
+} as const;
+
 const background = {
   color: {
     primary: color.white,
@@ -41,13 +51,18 @@ const background = {
 } as const;
 
 const border = {
+  primary: `1px solid ${color.grey}`,
+  secondary: `1px solid ${color.green}`,
+  medium: `1.5px solid ${color.lightGreen}`,
   radius: {
     regular: '2px',
+    medium: '4px',
   },
 } as const;
 
 export default {
   background,
+  font,
   border,
   color,
   text,

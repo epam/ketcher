@@ -108,6 +108,7 @@ export type EditorTheme = {
       };
     };
     icon: {
+      grey: string;
       hover: string;
       active: string;
       activeMenu: string;
@@ -143,11 +144,24 @@ export type EditorTheme = {
   };
   border: {
     regular: string;
+    small: string;
     radius: {
       regular: string;
     };
   };
   shadow: {
+    regular: string;
+  };
+  outline: {
+    small: string;
+    medium: string;
+    color: string;
+    selected: {
+      color: string;
+      medium: string;
+    };
+  };
+  transition: {
     regular: string;
   };
 };

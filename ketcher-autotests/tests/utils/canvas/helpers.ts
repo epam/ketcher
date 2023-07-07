@@ -8,6 +8,7 @@ import { clickInTheMiddleOfTheScreen, pressButton } from '@utils/clicks';
 import { ELEMENT_TITLE } from './types';
 import { TopPanelButton } from '..';
 import { selectTopPanelButton } from './tools';
+import { getLeftTopBarSize } from './common/getLeftTopBarSize';
 
 export async function drawBenzeneRing(page: Page) {
   await page.getByRole('button', { name: 'Benzene (T)' }).click();
@@ -52,12 +53,13 @@ export async function getTopToolBarHeight(page: Page): Promise<number> {
 }
 
 export async function getCoordinatesTopAtomOfBenzeneRing(page: Page) {
-  const { carbonAtoms, scale } = await page.evaluate(() => {
+  const { carbonAtoms, scale, offset } = await page.evaluate(() => {
     const allAtoms = [...window.ketcher.editor.struct().atoms.values()];
     const onlyCarbons = allAtoms.filter((a) => a.label === 'C');
     return {
       carbonAtoms: onlyCarbons,
       scale: window.ketcher.editor.options().scale,
+      offset: window.ketcher?.editor?.options()?.offset,
     };
   });
   let min = {
@@ -69,11 +71,10 @@ export async function getCoordinatesTopAtomOfBenzeneRing(page: Page) {
       min = carbonAtom.pp;
     }
   }
-  const topToolbarHeight = 50;
-  const leftToolBarWidth = 46;
+  const { leftBarWidth, topBarHeight } = await getLeftTopBarSize(page);
   return {
-    x: min.x * scale + leftToolBarWidth,
-    y: min.y * scale + topToolbarHeight,
+    x: min.x * scale + offset.x + leftBarWidth,
+    y: min.y * scale + offset.y + topBarHeight,
   };
 }
 

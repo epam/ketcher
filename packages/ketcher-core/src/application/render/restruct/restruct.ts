@@ -615,7 +615,7 @@ class ReStruct {
     })
   }
 
-  private getAttachmentsPointsVBox(atomsIds: number[]): Box2Abs | null {
+  getAttachmentsPointsVBox(atomsIds: number[]): Box2Abs | null {
     let result: Box2Abs | null = null
     for (const atomId of atomsIds) {
       const reAtom = this.atoms.get(atomId)!

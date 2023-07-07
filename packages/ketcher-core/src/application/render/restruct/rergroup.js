@@ -63,19 +63,34 @@ class ReRGroup extends ReObject {
 
     if (ret) ret = ret.extend(BORDER_EXT, BORDER_EXT)
 
+    let attachmentPointsVBox = render.ctab.getAttachmentsPointsVBox(
+      this.getAtoms(render)
+    )
+    if (attachmentPointsVBox)
+      attachmentPointsVBox = attachmentPointsVBox.extend(BORDER_EXT, BORDER_EXT)
+
+    ret =
+      attachmentPointsVBox && ret
+        ? Box2Abs.union(attachmentPointsVBox, ret)
+        : ret
+
     return ret
   }
 
   // TODO need to review parameter list
   draw(render, options) {
     // eslint-disable-line max-statements
-    const bb = this.calcBBox(render)
+    let bb = this.calcBBox(render)
 
     if (!bb) {
       console.error(
         'Abnormal situation, empty fragments must be destroyed by tools'
       )
       return {}
+    } else {
+      // add a little space between the attachment points and brackets
+      const vext = new Vec2(0.2, 0.4)
+      bb = bb.extend(vext, vext)
     }
 
     const ret = { data: [] }

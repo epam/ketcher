@@ -28,7 +28,7 @@ Stereocenters.prototype.each = function (func, context) {
 };
 
 Stereocenters.prototype.buildFromBonds = function (
-  /* const int *atom_types, const int *atom_groups, const int *bond_orientations, */ ignoreErrors
+  /* const int *atom_types, const int *atom_groups, const int *bond_orientations, */ ignoreErrors,
 ) {
   const atoms = this.molecule.atoms;
   const bonds = this.molecule.bonds;
@@ -49,7 +49,7 @@ Stereocenters.prototype.buildFromBonds = function (
     if (
       [aid, nei1.aid, nei2.aid].findIndex(
         (aid) => ['C', 'Si'].indexOf(atoms.get(aid).label) < 0,
-        this
+        this,
       ) >= 0
     ) {
       return false;
@@ -59,7 +59,7 @@ Stereocenters.prototype.buildFromBonds = function (
     if (
       [nei1.bid, nei2.bid].findIndex(
         (bid) => bonds.get(bid).type !== Bond.PATTERN.TYPE.DOUBLE,
-        this
+        this,
       ) >= 0
     ) {
       return false;
@@ -86,7 +86,7 @@ Stereocenters.prototype.buildFromBonds = function (
         .concat(nei2nei)
         .findIndex(
           (nei) => bonds.get(nei.bid).type !== Bond.PATTERN.TYPE.SINGLE,
-          this
+          this,
         ) >= 0
     ) {
       return false;
@@ -97,7 +97,7 @@ Stereocenters.prototype.buildFromBonds = function (
         .concat(nei2nei)
         .findIndex(
           (nei) => bonds.get(nei.bid).stereo === Bond.PATTERN.STEREO.EITHER,
-          this
+          this,
         ) >= 0
     ) {
       return false;
@@ -138,11 +138,11 @@ Stereocenters.prototype.buildFromBonds = function (
 
       if (ignoreErrors) {
         this.buildOneCenter(
-          aid /* , atom_groups[atom_idx], atom_types[atom_idx], bond_orientations */
+          aid /* , atom_groups[atom_idx], atom_types[atom_idx], bond_orientations */,
         );
       } else {
         this.buildOneCenter(
-          aid /* , atom_groups[atom_idx], atom_types[atom_idx], bond_orientations */
+          aid /* , atom_groups[atom_idx], atom_types[atom_idx], bond_orientations */,
         );
       }
     });
@@ -166,7 +166,7 @@ Stereocenters.allowed_stereocenters = [
 ];
 
 Stereocenters.prototype.buildOneCenter = function (
-  atomIdx /* , int group, int type, const int *bond_orientations */
+  atomIdx /* , int group, int type, const int *bond_orientations */,
 ) {
   // eslint-disable-line max-statements
   const atom = this.molecule.atoms.get(atomIdx);
@@ -246,7 +246,7 @@ Stereocenters.prototype.buildOneCenter = function (
         degree +
         ' bonds (' +
         nDoubleBonds +
-        ' double)'
+        ' double)',
     );
   }
 
@@ -256,7 +256,7 @@ Stereocenters.prototype.buildOneCenter = function (
 
   if (degree === 3 && implicitDegree === 4 && nPureHydrogens > 0) {
     throw new Error(
-      'have hydrogen(s) besides implicit hydrogen near stereocenter'
+      'have hydrogen(s) besides implicit hydrogen near stereocenter',
     );
   }
 
@@ -299,12 +299,12 @@ Stereocenters.prototype.buildOneCenter = function (
       xyz1 = Stereocenters.xyzzy(
         edgeIds[main1].vec,
         edgeIds[(main1 + 1) % 4].vec,
-        edgeIds[(main1 + 2) % 4].vec
+        edgeIds[(main1 + 2) % 4].vec,
       );
       xyz2 = Stereocenters.xyzzy(
         edgeIds[main1].vec,
         edgeIds[(main1 + 1) % 4].vec,
-        edgeIds[(main1 + 3) % 4].vec
+        edgeIds[(main1 + 3) % 4].vec,
       );
 
       if (xyz1 + xyz2 === 3 || xyz1 + xyz2 === 12) {
@@ -317,12 +317,12 @@ Stereocenters.prototype.buildOneCenter = function (
       xyz1 = Stereocenters.xyzzy(
         edgeIds[main1].vec,
         edgeIds[(main1 + 2) % 4].vec,
-        edgeIds[(main1 + 1) % 4].vec
+        edgeIds[(main1 + 1) % 4].vec,
       );
       xyz2 = Stereocenters.xyzzy(
         edgeIds[main1].vec,
         edgeIds[(main1 + 2) % 4].vec,
-        edgeIds[(main1 + 3) % 4].vec
+        edgeIds[(main1 + 3) % 4].vec,
       );
 
       if (xyz1 + xyz2 === 3 || xyz1 + xyz2 === 12) {
@@ -335,12 +335,12 @@ Stereocenters.prototype.buildOneCenter = function (
       xyz1 = Stereocenters.xyzzy(
         edgeIds[main1].vec,
         edgeIds[(main1 + 3) % 4].vec,
-        edgeIds[(main1 + 1) % 4].vec
+        edgeIds[(main1 + 1) % 4].vec,
       );
       xyz2 = Stereocenters.xyzzy(
         edgeIds[main1].vec,
         edgeIds[(main1 + 3) % 4].vec,
-        edgeIds[(main1 + 2) % 4].vec
+        edgeIds[(main1 + 2) % 4].vec,
       );
 
       if (xyz1 + xyz2 === 3 || xyz1 + xyz2 === 12) {
@@ -387,7 +387,7 @@ Stereocenters.prototype.buildOneCenter = function (
     const sign = Stereocenters.sign(
       edgeIds[0].vec,
       edgeIds[1].vec,
-      edgeIds[2].vec
+      edgeIds[2].vec,
     );
 
     if (
@@ -471,7 +471,7 @@ Stereocenters.prototype.buildOneCenter = function (
         const xyz = Stereocenters.xyzzy(
           edgeIds[side1].vec,
           edgeIds[side2].vec,
-          edgeIds[main1].vec
+          edgeIds[main1].vec,
         );
 
         if (xyz === 3 || xyz === 4) {
@@ -490,7 +490,7 @@ Stereocenters.prototype.buildOneCenter = function (
       const sign = Stereocenters.sign(
         edgeIds[0].vec,
         edgeIds[1].vec,
-        edgeIds[2].vec
+        edgeIds[2].vec,
       );
 
       if (
@@ -533,7 +533,7 @@ Stereocenters.prototype.buildOneCenter = function (
       const sign = Stereocenters.sign(
         edgeIds[0].vec,
         edgeIds[1].vec,
-        edgeIds[2].vec
+        edgeIds[2].vec,
       );
 
       if (sign === dir) {

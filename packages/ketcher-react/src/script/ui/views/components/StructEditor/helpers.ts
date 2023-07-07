@@ -4,7 +4,7 @@ const X_COORD_INDEX = 0;
 const Y_COORD_INDEX = 1;
 
 export const calculateMiddleCoordsForRect = (
-  rectCoords: Array<Array<number>>
+  rectCoords: Array<Array<number>>,
 ): Array<Point> | [] => {
   if (!rectCoords) {
     return [];

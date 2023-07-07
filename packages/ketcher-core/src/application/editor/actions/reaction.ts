@@ -38,11 +38,11 @@ export function fromArrowResizing(
   d: Vec2,
   current: Vec2,
   anchor: Vec2 | null,
-  isSnappingEnabled: boolean
+  isSnappingEnabled: boolean,
 ) {
   const action = new Action();
   action.addOp(
-    new RxnArrowResize(id, d, current, anchor, false, isSnappingEnabled)
+    new RxnArrowResize(id, d, current, anchor, false, isSnappingEnabled),
   );
   return action.perform(restruct);
 }

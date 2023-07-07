@@ -147,7 +147,7 @@ export class Atom {
     this.implicitHCount = getValueOrDefault(attributes.implicitHCount, null);
     this.explicitValence = getValueOrDefault(
       attributes.explicitValence,
-      Atom.attrlist.explicitValence
+      Atom.attrlist.explicitValence,
     );
 
     this.valence = 0;
@@ -162,15 +162,15 @@ export class Atom {
     // query
     this.ringBondCount = getValueOrDefault(
       attributes.ringBondCount,
-      Atom.attrlist.ringBondCount
+      Atom.attrlist.ringBondCount,
     );
     this.substitutionCount = getValueOrDefault(
       attributes.substitutionCount,
-      Atom.attrlist.substitutionCount
+      Atom.attrlist.substitutionCount,
     );
     this.unsaturatedAtom = getValueOrDefault(
       attributes.unsaturatedAtom,
-      Atom.attrlist.unsaturatedAtom
+      Atom.attrlist.unsaturatedAtom,
     );
     this.hCount = getValueOrDefault(attributes.hCount, Atom.attrlist.hCount);
 
@@ -179,18 +179,18 @@ export class Atom {
     this.invRet = getValueOrDefault(attributes.invRet, Atom.attrlist.invRet);
     this.exactChangeFlag = getValueOrDefault(
       attributes.exactChangeFlag,
-      Atom.attrlist.exactChangeFlag
+      Atom.attrlist.exactChangeFlag,
     );
     this.rxnFragmentType = getValueOrDefault(attributes.rxnFragmentType, -1);
 
     // stereo
     this.stereoLabel = getValueOrDefault(
       attributes.stereoLabel,
-      Atom.attrlist.stereoLabel
+      Atom.attrlist.stereoLabel,
     );
     this.stereoParity = getValueOrDefault(
       attributes.stereoParity,
-      Atom.attrlist.stereoParity
+      Atom.attrlist.stereoParity,
     );
 
     this.atomList = attributes.atomList

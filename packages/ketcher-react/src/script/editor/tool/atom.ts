@@ -58,12 +58,12 @@ class AtomTool implements Tool {
         const deletedAtomsInSGroups = deleteFunctionalGroups(
           selectedSGroupsId,
           struct,
-          action
+          action,
         );
         const updatedAtoms = editorSelection?.atoms?.filter(
           (selectAtomId) =>
             !deletedAtomsInSGroups?.includes(selectAtomId) &&
-            struct.atoms.has(selectAtomId)
+            struct.atoms.has(selectAtomId),
         );
         action.mergeWith(fromAtomsAttrs(struct, updatedAtoms, atomProps, true));
         editor.update(action);
@@ -103,7 +103,7 @@ class AtomTool implements Tool {
 
       const fgId = FunctionalGroup.findFunctionalGroupByAtom(
         functionalGroups,
-        atomId
+        atomId,
       );
 
       if (fgId !== null) {
@@ -182,7 +182,7 @@ class AtomTool implements Tool {
       const newAtomPos = utils.calcNewAtomPos(
         atom?.pp,
         rnd.page2obj(event),
-        event.ctrlKey
+        event.ctrlKey,
       );
 
       if (dragCtx.action) {
@@ -195,7 +195,7 @@ class AtomTool implements Tool {
         atomId,
         Object.assign({}, atomProps),
         undefined,
-        newAtomPos
+        newAtomPos,
       )[0];
 
       editor.update(dragCtx.action, true);
@@ -224,7 +224,7 @@ class AtomTool implements Tool {
 
     if ((!dragCtx.item || dragCtx?.isSaltOrSolvent) && !ci) {
       action.mergeWith(
-        fromAtomAddition(reStruct, rnd.page2obj(event), atomProps)
+        fromAtomAddition(reStruct, rnd.page2obj(event), atomProps),
       );
     } else if (dragCtx.item && ci) {
       if (dragCtx.item.id === ci.id) {
@@ -238,7 +238,7 @@ class AtomTool implements Tool {
 
           if (sGroupPositionAtomId !== undefined) {
             const atomsToDelete = [...SGroup.getAtoms(molecule, sGroup)].filter(
-              (atomId) => atomId !== sGroupPositionAtomId
+              (atomId) => atomId !== sGroupPositionAtomId,
             );
             const bondsToDelete = [...SGroup.getBonds(molecule, sGroup)];
             action.mergeWith(fromSgroupDeletion(reStruct, ci.id));
@@ -246,10 +246,10 @@ class AtomTool implements Tool {
               fromFragmentDeletion(reStruct, {
                 atoms: atomsToDelete,
                 bonds: bondsToDelete,
-              })
+              }),
             );
             action.mergeWith(
-              fromAtomsAttrs(reStruct, sGroupPositionAtomId, atomProps, true)
+              fromAtomsAttrs(reStruct, sGroupPositionAtomId, atomProps, true),
             );
           }
         } else if (ci.map === 'atoms') {
@@ -272,7 +272,7 @@ class AtomTool implements Tool {
     editor.hover(
       this.editor.findItem(event, ['atoms', 'functionalGroups']),
       null,
-      event
+      event,
     );
 
     delete this.dragCtx;

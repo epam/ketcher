@@ -28,7 +28,7 @@ describe('should toggle color picker dialog', () => {
     const { container } = render(<ColorPicker />);
     await openPreset();
     expect(
-      container.getElementsByClassName('classes.colorPickerWrap')
+      container.getElementsByClassName('classes.colorPickerWrap'),
     ).toBeDefined();
   });
 
@@ -53,7 +53,7 @@ describe('should toggle color picker dialog', () => {
     expect(await screen.findByTestId('color-picker-field')).toBeInTheDocument();
 
     expect(
-      container.getElementsByClassName('react-colorful')[0]
+      container.getElementsByClassName('react-colorful')[0],
     ).toBeUndefined();
   });
 });
@@ -72,7 +72,7 @@ describe('should pick color correctly', () => {
   it('should display picked color correctly', () => {
     render(<ColorPicker value="#000000" />);
     expect(
-      screen.getByTestId('color-picker-preview').style.backgroundColor
+      screen.getByTestId('color-picker-preview').style.backgroundColor,
     ).toBe('rgb(0, 0, 0)');
   });
 });

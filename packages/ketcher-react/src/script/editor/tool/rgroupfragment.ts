@@ -37,7 +37,7 @@ class RGroupFragmentTool implements Tool {
     this.editor.hover(
       this.editor.findItem(event, ['frags', 'rgroups']),
       null,
-      event
+      event,
     );
   }
 
@@ -55,7 +55,7 @@ class RGroupFragmentTool implements Tool {
     if (ce && functionalGroups && ce.map === 'atoms') {
       const atomId = FunctionalGroup.atomsInFunctionalGroup(
         functionalGroups,
-        ce.id
+        ce.id,
       );
 
       if (atomId !== null) {
@@ -67,7 +67,7 @@ class RGroupFragmentTool implements Tool {
       const bondId = FunctionalGroup.bondsInFunctionalGroup(
         molecule,
         functionalGroups,
-        ce.id
+        ce.id,
       );
 
       if (bondId !== null) {
@@ -79,7 +79,7 @@ class RGroupFragmentTool implements Tool {
       for (const id of atomResult) {
         const fgId = FunctionalGroup.findFunctionalGroupByAtom(
           functionalGroups,
-          id
+          id,
         );
 
         if (fgId !== null && !result.includes(fgId)) {
@@ -93,7 +93,7 @@ class RGroupFragmentTool implements Tool {
         const fgId = FunctionalGroup.findFunctionalGroupByBond(
           molecule,
           functionalGroups,
-          id
+          id,
         );
 
         if (fgId !== null && !result.includes(fgId)) {
@@ -117,7 +117,7 @@ class RGroupFragmentTool implements Tool {
 
     const rg = Object.assign(
       { label },
-      ci.map === 'frags' ? { fragId: ci.id } : molecule.rgroups.get(ci.id)
+      ci.map === 'frags' ? { fragId: ci.id } : molecule.rgroups.get(ci.id),
     );
 
     const res = editor.event.rgroupEdit.dispatch(rg);
@@ -129,10 +129,10 @@ class RGroupFragmentTool implements Tool {
         if (ci.map !== 'rgroups') {
           const rgidOld = RGroup.findRGroupByFragment(
             struct.molecule.rgroups,
-            ci.id
+            ci.id,
           );
           action = fromRGroupFragment(struct, newRg.label, ci.id).mergeWith(
-            fromUpdateIfThen(struct, newRg.label, rgidOld)
+            fromUpdateIfThen(struct, newRg.label, rgidOld),
           );
         } else {
           action = fromRGroupAttrs(struct, ci.id, newRg);

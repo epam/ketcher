@@ -105,7 +105,7 @@ class ClipArea extends Component {
 function isActiveElement(el) {
   if (el.tagName === 'INPUT' && el.type === 'button') return false;
   return ['INPUT', 'SELECT', 'TEXTAREA', 'OPTION', 'LABEL'].includes(
-    el.tagName
+    el.tagName,
   );
 }
 

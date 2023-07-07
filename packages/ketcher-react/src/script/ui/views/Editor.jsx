@@ -23,7 +23,7 @@ const Editor = connect(
     options: state.options.settings,
     indigoVerification: state.requestsStatuses.indigoVerification,
   }),
-  (dispatch) => dispatch(initEditor)
+  (dispatch) => dispatch(initEditor),
 )(StructEditor);
 
 export default Editor;

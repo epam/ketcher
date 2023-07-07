@@ -33,9 +33,9 @@ export function checkServer() {
             indigoVersion: res?.indigoVersion,
             imagoVersions: res?.imagoVersions,
             server: res?.isAvailable,
-          })
+          }),
         ),
-      (e) => editor.errorHandler(e)
+      (e) => editor.errorHandler(e),
     );
   };
 }
@@ -52,7 +52,7 @@ export function recognize(file, version) {
       (e) => {
         dispatch(setStruct(null));
         editor.errorHandler(e);
-      }
+      },
     );
     dispatch(setStruct(process));
   };
@@ -63,7 +63,7 @@ function ketcherCheck(struct, checkParams) {
 
   if (checkParams.includes('chiral_flag')) {
     const isAbs = Array.from(struct.frags.values()).some((fr) =>
-      fr ? fr.enhancedStereoFlag === 'abs' : false
+      fr ? fr.enhancedStereoFlag === 'abs' : false,
     );
     if (isAbs) errors.chiral_flag = 'Chiral flag is present on the canvas';
   }
@@ -126,7 +126,7 @@ export function analyse() {
         dispatch({
           type: 'CHANGE_ANALYSE',
           data: { values },
-        })
+        }),
       )
       .catch((e) => {
         editor.errorHandler(e);
@@ -150,7 +150,7 @@ export function serverTransform(method, data, struct) {
           load(loadedStruct, {
             rescale: method === 'layout',
             reactionRelayout: method === 'clean',
-          })
+          }),
         );
       })
       .catch((e) => {
@@ -172,7 +172,7 @@ export function serverCall(editor, server, method, options, struct) {
     null,
     null,
     false,
-    aidMap
+    aidMap,
   );
   if (selection) {
     selectedAtoms = (
@@ -196,9 +196,9 @@ export function serverCall(editor, server, method, options, struct) {
               selected: selectedAtoms,
             }
           : null,
-        options.data
+        options.data,
       ),
-      omit('data', options)
-    )
+      omit('data', options),
+    ),
   );
 }

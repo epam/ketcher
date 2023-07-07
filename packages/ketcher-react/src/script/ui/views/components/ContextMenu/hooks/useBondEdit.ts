@@ -22,7 +22,7 @@ const useBondEdit = () => {
         noOperation();
       }
     },
-    [getKetcherInstance]
+    [getKetcherInstance],
   );
 
   const disabled = useCallback(({ props }: ItemEventParams) => {

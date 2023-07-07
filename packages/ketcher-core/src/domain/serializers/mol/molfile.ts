@@ -57,7 +57,7 @@ export class Molfile {
       ret = common.parseRxn(
         molfileLines,
         shouldReactionRelayout,
-        ignoreChiralFlag
+        ignoreChiralFlag,
       );
     } else {
       ret = common.parseMol(molfileLines, ignoreChiralFlag);
@@ -104,7 +104,7 @@ export class Molfile {
       throw new Error(
         'Warning: ' +
           errors +
-          ' invalid S-groups were detected. They will be omitted.'
+          ' invalid S-groups were detected. They will be omitted.',
       );
     }
 
@@ -127,7 +127,7 @@ export class Molfile {
     skipSGroupErrors: boolean,
     norgroups?: boolean,
     preserveIndigoDesc?: boolean,
-    ignoreChiralFlag?: boolean
+    ignoreChiralFlag?: boolean,
   ) {
     // eslint-disable-line max-statements
     /* saver */
@@ -136,7 +136,7 @@ export class Molfile {
     if (this.reaction) {
       if (molecule.rgroups.size > 0) {
         throw new Error(
-          'Reactions with r-groups are not supported at the moment'
+          'Reactions with r-groups are not supported at the moment',
         );
       }
       const components = molecule.getComponents();
@@ -167,7 +167,7 @@ export class Molfile {
       } else {
         const scaffold = new Molfile().getCTab(
           molecule.getScaffold(),
-          molecule.rgroups
+          molecule.rgroups,
         );
         this.molfile =
           '$MDL  REV  1\n$MOL\n$HDR\n' + molecule.name + '\n\n\n$END HDR\n';
@@ -214,7 +214,7 @@ export class Molfile {
         ((date.getFullYear() % 100) + '').padStart(2) +
         (date.getHours() + '').padStart(2) +
         (date.getMinutes() + '').padStart(2) +
-        END_V2000
+        END_V2000,
     );
     this.writeCR();
   }
@@ -269,7 +269,7 @@ export class Molfile {
     this.writePaddedNumber(0, 3);
     this.writePaddedNumber(0, 3);
     const isAbsFlag = Array.from(this.molecule!.frags.values()).some((fr) =>
-      fr ? fr.enhancedStereoFlag === StereoFlag.Abs : false
+      fr ? fr.enhancedStereoFlag === StereoFlag.Abs : false,
     );
 
     this.writePaddedNumber(isAbsFlag || ignoreChiralFlag ? 1 : 0, 3);
@@ -495,8 +495,8 @@ export class Molfile {
           this.molecule,
           sgmap,
           this.mapping,
-          this.bondMapping
-        )
+          this.bondMapping,
+        ),
       );
     }
 
@@ -629,7 +629,7 @@ export class Molfile {
 
   private writeSGroupAttachmentPointLine(
     sgroupId: number,
-    attachmentPoint: SGroupAttachmentPoint
+    attachmentPoint: SGroupAttachmentPoint,
   ) {
     this.write(`M  SAP`);
     this.writeWhiteSpace(1);

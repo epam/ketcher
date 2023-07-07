@@ -30,7 +30,7 @@ export function fromAromaticTemplateOnBond(
   template,
   bid,
   _events,
-  simpleFusing
+  simpleFusing,
 ) {
   const action = simpleFusing(restruct, template, bid);
   return Promise.resolve(action);

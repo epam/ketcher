@@ -51,7 +51,7 @@ export class RxnArrowMove extends Base {
     const move = new RxnArrowMove(
       this.data.id,
       this.data.d,
-      this.data.noinvalidate
+      this.data.noinvalidate,
     );
     move.data = this.data;
     return move;

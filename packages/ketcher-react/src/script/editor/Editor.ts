@@ -80,7 +80,7 @@ const highlightTargets = [
 
 function selectStereoFlagsIfNecessary(
   atoms: any,
-  expAtoms: number[]
+  expAtoms: number[],
 ): number[] {
   const atomsOfFragments = {};
   atoms.forEach((atom, atomId) => {
@@ -159,8 +159,8 @@ class Editor implements KetcherEditor {
         {
           scale: SCALE,
         },
-        options
-      )
+        options,
+      ),
     );
 
     this._selection = null; // eslint-disable-line
@@ -306,7 +306,7 @@ class Editor implements KetcherEditor {
 
     this.render = new Render(
       this.render.clientArea,
-      Object.assign({ scale: SCALE }, value)
+      Object.assign({ scale: SCALE }, value),
     );
     this.struct(struct);
     this.render.setZoom(zoom);
@@ -347,7 +347,7 @@ class Editor implements KetcherEditor {
       this.zoom(
         newZoomValue < MIN_ZOOM_VALUE
           ? MIN_ZOOM_VALUE
-          : Number(newZoomValue.toFixed(2))
+          : Number(newZoomValue.toFixed(2)),
       );
     }
   }
@@ -388,12 +388,12 @@ class Editor implements KetcherEditor {
       }
       const stereoFlags = selectStereoFlagsIfNecessary(
         this.struct().atoms,
-        this.explicitSelected().atoms
+        this.explicitSelected().atoms,
       );
       if (stereoFlags.length !== 0) {
         this._selection && this._selection.enhancedFlags
           ? (this._selection.enhancedFlags = Array.from(
-              new Set([...this._selection.enhancedFlags, ...stereoFlags])
+              new Set([...this._selection.enhancedFlags, ...stereoFlags]),
             ))
           : (res.enhancedFlags = stereoFlags);
       }
@@ -437,7 +437,7 @@ class Editor implements KetcherEditor {
   update(
     action: Action | true,
     ignoreHistory?: boolean,
-    options = { resizeCanvas: true }
+    options = { resizeCanvas: true },
   ) {
     setFunctionalGroupsTooltip({
       editor: this,
@@ -598,7 +598,7 @@ class Editor implements KetcherEditor {
       true,
       null,
       new Pile(selection.simpleObjects),
-      new Pile(selection.texts)
+      new Pile(selection.texts),
     );
 
     // Copy by its own as Struct.clone doesn't support
@@ -637,7 +637,7 @@ function resetSelectionOnCanvasClick(
   editor: Editor,
   eventName: string,
   clientArea: HTMLElement,
-  event
+  event,
 ) {
   if (
     eventName === 'mouseup' &&
@@ -669,7 +669,7 @@ function useToolIfNeeded(
   editor: Editor,
   eventHandlerName: ToolEventHandlerName,
   clientArea: HTMLElement,
-  event
+  event,
 ) {
   const editorTool = editor.tool();
   if (!editorTool) {
@@ -769,7 +769,7 @@ function domEventSetup(editor: Editor, clientArea: HTMLElement) {
         editor,
         toolEventHandler,
         clientArea,
-        event
+        event,
       );
       if (isToolUsed) {
         return true;

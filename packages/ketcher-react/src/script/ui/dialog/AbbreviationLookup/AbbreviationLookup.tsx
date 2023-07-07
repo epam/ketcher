@@ -70,7 +70,7 @@ export const AbbreviationLookup = ({ options }: Props) => {
   const initialLookupValue = useSelector(selectAbbreviationLookupValue);
   const [lookupValue, setLookupValue] = useState(initialLookupValue);
   const [loweredLookupValue, setLoweredLookupValue] = useState(() =>
-    initialLookupValue.toLowerCase()
+    initialLookupValue.toLowerCase(),
   );
 
   useLayoutEffect(() => {
@@ -114,7 +114,7 @@ export const AbbreviationLookup = ({ options }: Props) => {
   const handleOnChange = (
     _event: SyntheticEvent,
     option: AbbreviationOption,
-    reason: AutocompleteChangeReason
+    reason: AutocompleteChangeReason,
   ) => {
     if (reason !== 'selectOption') {
       return;

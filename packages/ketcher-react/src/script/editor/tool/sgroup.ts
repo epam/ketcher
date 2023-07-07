@@ -72,14 +72,14 @@ class SGroupTool implements Tool {
       const result: Array<number> = [];
 
       const id = sgroups.find((_, sgroup) =>
-        isEqual(sgroup.atoms, selectedAtoms)
+        isEqual(sgroup.atoms, selectedAtoms),
       );
 
       if (selectedAtoms && functionalGroups.size) {
         for (const atom of selectedAtoms) {
           const atomId = FunctionalGroup.atomsInFunctionalGroup(
             functionalGroups,
-            atom
+            atom,
           );
 
           if (atomId == null) {
@@ -100,7 +100,7 @@ class SGroupTool implements Tool {
               atomFromStruct,
               sgroups,
               functionalGroups,
-              false
+              false,
             ) ||
               SGroup.isAtomInContractedSGroup(atomFromStruct, sgroups))
           ) {
@@ -129,7 +129,7 @@ class SGroupTool implements Tool {
         for (const id of atomsResult) {
           const fgId = FunctionalGroup.findFunctionalGroupByAtom(
             functionalGroups,
-            id
+            id,
           );
 
           if (fgId !== null && !result.includes(fgId)) {
@@ -162,7 +162,7 @@ class SGroupTool implements Tool {
     if (ci && functionalGroups.size && ci.map === 'atoms') {
       const atomId = FunctionalGroup.atomsInFunctionalGroup(
         functionalGroups,
-        ci.id
+        ci.id,
       );
       const atomFromStruct = atomId !== null && struct.atoms.get(atomId)?.a;
 
@@ -173,7 +173,7 @@ class SGroupTool implements Tool {
             atomFromStruct,
             sgroups,
             functionalGroups,
-            true
+            true,
           ) || SGroup.isAtomInContractedSGroup(atomFromStruct, sgroups)
         )
       ) {
@@ -185,7 +185,7 @@ class SGroupTool implements Tool {
       const bondId = FunctionalGroup.bondsInFunctionalGroup(
         molecule,
         functionalGroups,
-        ci.id
+        ci.id,
       );
       const bondFromStruct = bondId !== null && struct.bonds.get(bondId)?.b;
 
@@ -195,7 +195,7 @@ class SGroupTool implements Tool {
           FunctionalGroup.isBondInContractedFunctionalGroup(
             bondFromStruct,
             sgroups,
-            functionalGroups
+            functionalGroups,
           ) || SGroup.isBondInContractedSGroup(bondFromStruct, sgroups)
         )
       ) {
@@ -216,7 +216,7 @@ class SGroupTool implements Tool {
       for (const id of atomResult) {
         const fgId = FunctionalGroup.findFunctionalGroupByAtom(
           functionalGroups,
-          id
+          id,
         );
 
         if (fgId !== null && !result.includes(fgId)) {
@@ -231,7 +231,7 @@ class SGroupTool implements Tool {
         const fgId = FunctionalGroup.findFunctionalGroupByBond(
           molecule,
           functionalGroups,
-          id
+          id,
         );
 
         if (fgId !== null && !result.includes(fgId)) {
@@ -289,7 +289,7 @@ class SGroupTool implements Tool {
       for (const atom of selected.atoms) {
         const atomId = FunctionalGroup.atomsInFunctionalGroup(
           functionalGroups,
-          atom
+          atom,
         );
 
         if (atomId == null) {
@@ -310,7 +310,7 @@ class SGroupTool implements Tool {
             atomFromStruct,
             sgroups,
             functionalGroups,
-            true
+            true,
           ) ||
             SGroup.isAtomInContractedSGroup(atomFromStruct, sgroups))
         ) {
@@ -336,7 +336,7 @@ class SGroupTool implements Tool {
         const bondId = FunctionalGroup.bondsInFunctionalGroup(
           molecule,
           functionalGroups,
-          bond
+          bond,
         );
 
         if (bondId === null) {
@@ -354,11 +354,11 @@ class SGroupTool implements Tool {
       atomsResult.forEach((id) => {
         const fgId = FunctionalGroup.findFunctionalGroupByAtom(
           functionalGroups,
-          id
+          id,
         ) as number;
         const sgroupAtoms = SGroup.getAtoms(
           molecule,
-          struct.sgroups.get(fgId)?.item
+          struct.sgroups.get(fgId)?.item,
         );
         newSelected.atoms.push(...sgroupAtoms);
       });
@@ -369,11 +369,11 @@ class SGroupTool implements Tool {
         const fgId = FunctionalGroup.findFunctionalGroupByBond(
           molecule,
           functionalGroups,
-          id
+          id,
         ) as number;
         const sgroupBonds = SGroup.getBonds(
           molecule,
-          struct.sgroups.get(fgId)?.item
+          struct.sgroups.get(fgId)?.item,
         );
         newSelected.bonds.push(...sgroupBonds);
       });
@@ -388,7 +388,7 @@ class SGroupTool implements Tool {
       for (const id of atomsResult) {
         const fgId = FunctionalGroup.findFunctionalGroupByAtom(
           functionalGroups,
-          id
+          id,
         );
         if (fgId !== null && !result.includes(fgId)) {
           result.push(fgId);
@@ -401,7 +401,7 @@ class SGroupTool implements Tool {
         const fgId = FunctionalGroup.findFunctionalGroupByBond(
           molecule,
           functionalGroups,
-          id
+          id,
         );
         if (fgId !== null && !result.includes(fgId)) {
           result.push(fgId);
@@ -512,7 +512,7 @@ class SGroupTool implements Tool {
               restruct,
               newSg.type,
               sg.atoms,
-              newSg.attrs
+              newSg.attrs,
             ).mergeWith(fromSgroupDeletion(restruct, id));
 
             action.mergeWith(expandSGroupWithMultipleAttachmentPoint(restruct));
@@ -551,7 +551,7 @@ function getContextBySgroup(restruct, sgAtoms) {
   const atomSet = new Pile(sgAtoms);
 
   const sgBonds = Array.from(struct.bonds.values()).filter(
-    (bond: any) => atomSet.has(bond.begin) && atomSet.has(bond.end)
+    (bond: any) => atomSet.has(bond.begin) && atomSet.has(bond.end),
   );
 
   return anyChainedBonds(sgBonds) ? SgContexts.Group : SgContexts.Bond;
@@ -574,7 +574,7 @@ function getContextBySelection(restruct, selection) {
 
   const atomSet = new Pile(selection.atoms);
   const allBondsSelected = bonds.every(
-    (bond) => atomSet.has(bond.begin) && atomSet.has(bond.end)
+    (bond) => atomSet.has(bond.begin) && atomSet.has(bond.end),
   );
 
   if (singleComponentSelected(restruct, selection.atoms) && allBondsSelected) {
@@ -601,7 +601,7 @@ function fromContextType(id, editor, newSg, currSelection) {
     restruct,
     newSg,
     sourceAtoms,
-    currSelection
+    currSelection,
   );
 
   result.selection = result.selection || currSelection;
@@ -650,7 +650,7 @@ function countOfSelectedComponents(restruct, atoms): any {
   return Array.from(restruct.connectedComponents.values()).reduce(
     (acc: number, component) =>
       acc + (atomSet.isSuperset(component as Pile) ? 1 : 0),
-    0
+    0,
   );
 }
 

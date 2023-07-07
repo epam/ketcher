@@ -105,7 +105,7 @@ enum TemplateTabs {
 const filterLibSelector = createSelector(
   (props: Props) => props.lib,
   (props: Props) => props.filter,
-  filterLib
+  filterLib,
 );
 
 const FUNCTIONAL_GROUPS = 'Functional Groups';
@@ -173,10 +173,10 @@ const TemplateDialog: FC<Props> = (props) => {
   ]);
   const filteredSaltsAndSolvents = useSaltsAndSolvents(
     saltsAndSolvents,
-    filter
+    filter,
   );
   const [filteredFG, setFilteredFG] = useState(
-    functionalGroups[FUNCTIONAL_GROUPS]
+    functionalGroups[FUNCTIONAL_GROUPS],
   );
 
   const filteredTemplateLib = filterLibSelector(props);
@@ -201,8 +201,8 @@ const TemplateDialog: FC<Props> = (props) => {
       isExpanded
         ? [...expandedAccordions, accordion]
         : [...expandedAccordions].filter(
-            (expandedAccordion) => expandedAccordion !== accordion
-          )
+            (expandedAccordion) => expandedAccordion !== accordion,
+          ),
     );
   };
 
@@ -383,5 +383,5 @@ export default connect(
     onAttach: (tmpl) => dispatch(editTmpl(tmpl)),
     onCancel: () => onModalClose(props, dispatch),
     onDelete: (tmpl) => dispatch(deleteTmpl(tmpl)),
-  })
+  }),
 )(TemplateDialog);

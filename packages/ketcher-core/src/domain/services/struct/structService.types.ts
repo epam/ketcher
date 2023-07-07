@@ -136,44 +136,44 @@ export interface StructService {
   info: () => Promise<InfoResult>;
   convert: (
     data: ConvertData,
-    options?: StructServiceOptions
+    options?: StructServiceOptions,
   ) => Promise<ConvertResult>;
   layout: (
     data: LayoutData,
-    options?: StructServiceOptions
+    options?: StructServiceOptions,
   ) => Promise<LayoutResult>;
   clean: (
     data: CleanData,
-    options?: StructServiceOptions
+    options?: StructServiceOptions,
   ) => Promise<CleanResult>;
   aromatize: (
     data: AromatizeData,
-    options?: StructServiceOptions
+    options?: StructServiceOptions,
   ) => Promise<AromatizeResult>;
   dearomatize: (
     data: DearomatizeData,
-    options?: StructServiceOptions
+    options?: StructServiceOptions,
   ) => Promise<DearomatizeResult>;
   calculateCip: (
     data: CalculateCipData,
-    options?: StructServiceOptions
+    options?: StructServiceOptions,
   ) => Promise<CalculateCipResult>;
   automap: (
     data: AutomapData,
-    options?: StructServiceOptions
+    options?: StructServiceOptions,
   ) => Promise<AutomapResult>;
   check: (
     data: CheckData,
-    options?: StructServiceOptions
+    options?: StructServiceOptions,
   ) => Promise<CheckResult>;
   calculate: (
     data: CalculateData,
-    options?: StructServiceOptions
+    options?: StructServiceOptions,
   ) => Promise<CalculateResult>;
   recognize: (blob: Blob, version: string) => Promise<RecognizeResult>;
   generateInchIKey: (struct: string) => Promise<string>;
   generateImageAsBase64: (
     data: string,
-    options?: GenerateImageOptions
+    options?: GenerateImageOptions,
   ) => Promise<string>;
 }

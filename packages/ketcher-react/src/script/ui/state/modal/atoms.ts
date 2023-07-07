@@ -29,10 +29,10 @@ export function updateSelectedAtoms({
           const unchangedAtom = molecule.atoms.get(atomId);
           const atomWithChangedProperties = updateOnlyChangedProperties(
             unchangedAtom,
-            userChangedAtom
+            userChangedAtom,
           );
           action.mergeWith(
-            fromAtomsAttrs(struct, atomId, atomWithChangedProperties, false)
+            fromAtomsAttrs(struct, atomId, atomWithChangedProperties, false),
           );
         });
         editor.update(action);

@@ -38,7 +38,7 @@ class ReRGroup extends ReObject {
     let ret = [];
     this.item.frags.forEach((fid) => {
       ret = ret.concat(
-        render.ctab.frags.get(fid).fragGetAtoms(render.ctab, fid)
+        render.ctab.frags.get(fid).fragGetAtoms(render.ctab, fid),
       );
     });
     return ret;
@@ -48,7 +48,7 @@ class ReRGroup extends ReObject {
     let ret = [];
     this.item.frags.forEach((fid) => {
       ret = ret.concat(
-        render.ctab.frags.get(fid).fragGetBonds(render.ctab, fid)
+        render.ctab.frags.get(fid).fragGetBonds(render.ctab, fid),
       );
     });
     return ret;
@@ -73,7 +73,7 @@ class ReRGroup extends ReObject {
 
     if (!bb) {
       console.error(
-        'Abnormal situation, empty fragments must be destroyed by tools'
+        'Abnormal situation, empty fragments must be destroyed by tools',
       );
       return {};
     }
@@ -117,7 +117,7 @@ class ReRGroup extends ReObject {
       shift += logicBox.height / 2;
       logicPath.translateAbs(
         -logicBox.width / 2 - 6 * options.lineWidth,
-        shift
+        shift,
       );
       shift += logicBox.height / 2 + options.lineWidth / 2;
       ret.data.push(logicPath);
@@ -127,7 +127,7 @@ class ReRGroup extends ReObject {
     ret.data.push(label);
     this.labelBox = Box2Abs.fromRelBox(labelSet.getBBox()).transform(
       Scale.scaled2obj,
-      render.options
+      render.options,
     );
     return ret;
   }
@@ -152,7 +152,7 @@ class ReRGroup extends ReObject {
 
     if (!rgid) {
       console.error(
-        'Abnormal situation, fragment does not belong to the render'
+        'Abnormal situation, fragment does not belong to the render',
       );
       return null;
     }
@@ -160,7 +160,7 @@ class ReRGroup extends ReObject {
     const ret = this._draw(
       render,
       rgid,
-      render.options.hoverStyle /* { 'fill' : 'red' } */
+      render.options.hoverStyle /* { 'fill' : 'red' } */,
     ); // eslint-disable-line no-underscore-dangle
     render.ctab.addReObjectPath(LayerMap.hovering, this.visel, ret);
 
@@ -181,7 +181,7 @@ class ReRGroup extends ReObject {
           this.visel,
           drawing[group].shift(),
           null,
-          true
+          true,
         );
       }
     });
@@ -202,7 +202,7 @@ function rGroupdrawBrackets(set, render, bb, d) {
     Scale.obj2scaled(new Vec2(bb.p0.x, cy), render.options),
     bracketWidth,
     bracketHeight,
-    render.options
+    render.options,
   );
 
   const rightBracket = draw.bracket(
@@ -212,7 +212,7 @@ function rGroupdrawBrackets(set, render, bb, d) {
     Scale.obj2scaled(new Vec2(bb.p1.x, cy), render.options),
     bracketWidth,
     bracketHeight,
-    render.options
+    render.options,
   );
 
   return set.push(leftBracket, rightBracket);

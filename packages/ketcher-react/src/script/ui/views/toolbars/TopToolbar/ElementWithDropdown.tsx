@@ -133,5 +133,5 @@ const mapDispatchToProps = (dispatch) => ({
 
 export const ElementWithDropdown = connect(
   null,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(MenuItemWithDropdown);

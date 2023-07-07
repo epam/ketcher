@@ -29,7 +29,7 @@ export enum StereoFlag {
 
 function calcStereoFlag(
   struct: Struct,
-  stereoAids: Array<number>
+  stereoAids: Array<number>,
 ): StereoFlag | undefined {
   if (!stereoAids || stereoAids.length === 0) return undefined;
   const filteredStereoAtoms = stereoAids
@@ -41,7 +41,7 @@ function calcStereoFlag(
   const stereoLabel = atom.stereoLabel!; // {string | null} "<abs|and|or>-<group>"
 
   const hasAnotherLabel = filteredStereoAtoms.some(
-    (atom) => atom?.stereoLabel !== stereoLabel
+    (atom) => atom?.stereoLabel !== stereoLabel,
   );
 
   let stereoFlag: StereoFlag;
@@ -93,7 +93,7 @@ export class Fragment {
 
   static getDefaultStereoFlagPosition(
     struct: Struct,
-    fragmentId: number
+    fragmentId: number,
   ): Vec2 | undefined {
     const fragment = struct.getFragment(fragmentId);
     if (!fragment) return undefined;
@@ -121,7 +121,7 @@ export class Fragment {
       (struct.atoms.get(aid)?.fragment !== frId ||
         !Array.from(struct.bonds.values())
           .filter(
-            (bond) => bond.stereo && bond.type !== Bond.PATTERN.TYPE.DOUBLE
+            (bond) => bond.stereo && bond.type !== Bond.PATTERN.TYPE.DOUBLE,
           )
           .some((bond) => bond.begin === aid))
     ) {
@@ -142,7 +142,7 @@ export class Fragment {
   deleteStereoAtom(
     struct: Struct,
     fragmentId: number,
-    atomId: number
+    atomId: number,
   ): boolean {
     if (
       struct.atoms.get(atomId)?.fragment !== fragmentId ||

@@ -10,7 +10,7 @@ const dfs = new Dfs(
   struct,
   atomData,
   componentsAll,
-  components.reactants.length
+  components.reactants.length,
 );
 
 describe('Dfs', () => {

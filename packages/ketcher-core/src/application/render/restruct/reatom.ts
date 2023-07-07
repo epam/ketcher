@@ -109,13 +109,13 @@ class ReAtom extends ReObject {
   getVBoxObjOfAttachmentPoint(render: Render): Box2Abs | null {
     let accumulatedBBox: Box2Abs | null = null;
     const directionVectors = this.getAttachmentPointDirectionVectors(
-      render.ctab.molecule
+      render.ctab.molecule,
     );
     directionVectors.forEach((directionVector) => {
       const attachmentPointEndPosition = this.a.pp.add(directionVector);
       const attachmentPointEndBoundingBox = new Box2Abs(
         attachmentPointEndPosition,
-        attachmentPointEndPosition
+        attachmentPointEndPosition,
       );
       accumulatedBBox = accumulatedBBox
         ? Box2Abs.union(accumulatedBBox, attachmentPointEndBoundingBox)
@@ -145,7 +145,7 @@ class ReAtom extends ReObject {
       ps1.y - padding,
       width + padding * 2,
       height + padding * 2,
-      radius
+      radius,
     );
   }
 
@@ -175,7 +175,7 @@ class ReAtom extends ReObject {
         atom,
         sgroups,
         functionalGroups,
-        true
+        true,
       )
     ) {
       return null;
@@ -195,7 +195,7 @@ class ReAtom extends ReObject {
         atom,
         sgroups,
         functionalGroups,
-        true
+        true,
       )
     ) {
       return null;
@@ -211,7 +211,7 @@ class ReAtom extends ReObject {
    */
   getShiftedSegmentPosition(
     renderOptions: RenderOptions,
-    direction: Vec2
+    direction: Vec2,
   ): Vec2 {
     const atomPosition = Scale.obj2scaled(this.a.pp, renderOptions);
     let atomSymbolShift = 0;
@@ -220,13 +220,13 @@ class ReAtom extends ReObject {
       const box = exts[k].translate(atomPosition);
       atomSymbolShift = Math.max(
         atomSymbolShift,
-        util.shiftRayBox(atomPosition, direction, box)
+        util.shiftRayBox(atomPosition, direction, box),
       );
     }
     if (atomSymbolShift > 0) {
       return atomPosition.addScaled(
         direction,
-        atomSymbolShift + 2 * renderOptions.lineWidth
+        atomSymbolShift + 2 * renderOptions.lineWidth,
       );
     } else {
       return atomPosition;
@@ -259,28 +259,28 @@ class ReAtom extends ReObject {
 
   showAttachmentPoints(restruct: ReStruct): void {
     const directionVectors = this.getAttachmentPointDirectionVectors(
-      restruct.molecule
+      restruct.molecule,
     );
     directionVectors.forEach((directionVector, index) => {
       showAttachmentPointShape(
         this,
         restruct.render,
         directionVector,
-        restruct.addReObjectPath.bind(restruct)
+        restruct.addReObjectPath.bind(restruct),
       );
 
       const showLabel = isAttachmentPointLabelRequired(restruct);
       if (showLabel) {
         // in case of isTrisectionRequired (trisection case) we should show labels '1' and '2' for those separated vectors
         const labelText = String(
-          this.isTrisectionAttachmentPoint() ? index + 1 : this.a.attpnt
+          this.isTrisectionAttachmentPoint() ? index + 1 : this.a.attpnt,
         );
         showAttachmentPointLabel(
           this,
           restruct.render,
           directionVector,
           restruct.addReObjectPath.bind(restruct),
-          labelText
+          labelText,
         );
       }
     });
@@ -299,7 +299,7 @@ class ReAtom extends ReObject {
         atom,
         sgroups,
         functionalGroups,
-        false
+        false,
       )
     ) {
       const sgroup = restruct.molecule.getGroupFromAtomId(aid);
@@ -369,7 +369,7 @@ class ReAtom extends ReObject {
           this.visel,
           hydroIndex.path,
           ps,
-          true
+          true,
         );
       }
 
@@ -380,7 +380,7 @@ class ReAtom extends ReObject {
           this.visel,
           radical.path,
           ps,
-          true
+          true,
         );
       }
       if (this.a.isotope !== 0) {
@@ -391,7 +391,7 @@ class ReAtom extends ReObject {
           this.visel,
           isotope.path,
           ps,
-          true
+          true,
         );
       }
       if (
@@ -415,7 +415,7 @@ class ReAtom extends ReObject {
           this.visel,
           hydrogen.path,
           ps,
-          true
+          true,
         );
         if (hydroIndex != null) {
           restruct.addReObjectPath(
@@ -423,7 +423,7 @@ class ReAtom extends ReObject {
             this.visel,
             hydroIndex.path,
             ps,
-            true
+            true,
           );
         }
       }
@@ -436,7 +436,7 @@ class ReAtom extends ReObject {
           this.visel,
           charge.path,
           ps,
-          true
+          true,
         );
       }
       if (this.a.explicitValence >= 0 && options.showValence) {
@@ -447,7 +447,7 @@ class ReAtom extends ReObject {
           this.visel,
           valence.path,
           ps,
-          true
+          true,
         );
       }
 
@@ -458,7 +458,7 @@ class ReAtom extends ReObject {
           this.visel,
           warning.path,
           ps,
-          true
+          true,
         );
       }
       if (index) {
@@ -467,7 +467,7 @@ class ReAtom extends ReObject {
           index.path,
           index.rbb,
           -0.5 * label.rbb.width - 0.5 * index.rbb.width - delta,
-          0.3 * label.rbb.height
+          0.3 * label.rbb.height,
         );
         /* eslint-enable no-mixed-operators */
       }
@@ -491,7 +491,7 @@ class ReAtom extends ReObject {
         stereoLabel,
         options.stereoLabelStyle,
         options.ignoreChiralFlag,
-        fragment?.enhancedStereoFlag
+        fragment?.enhancedStereoFlag,
       )
         ? `${stereoLabel}\n`
         : '') +
@@ -611,7 +611,7 @@ function shouldDisplayStereoLabel(
   stereoLabel,
   labelStyle,
   ignoreChiralFlag,
-  flag: StereoFlag | undefined
+  flag: StereoFlag | undefined,
 ): boolean {
   if (!stereoLabel) {
     return false;
@@ -746,7 +746,7 @@ function buildLabel(
   atom: ReAtom,
   paper: any,
   ps: Vec2,
-  options: any
+  options: any,
 ): ElemAttr {
   // eslint-disable-line max-statements
   let label: any = {};
@@ -778,7 +778,7 @@ function buildLabel(
       ((atom.hydrogenOnTheLeft ? -1 : 1) *
         (label.rbb.width - label.rbb.height)) /
         2,
-      0
+      0,
     );
   }
 
@@ -827,7 +827,7 @@ function showHydroIndex(atom, render, implh, rightMargin): ElemAttr {
     hydroIndex.path,
     hydroIndex.rbb,
     rightMargin + 0.5 * hydroIndex.rbb.width + delta,
-    0.2 * atom.label.rbb.height
+    0.2 * atom.label.rbb.height,
   );
   /* eslint-enable no-mixed-operators */
   return hydroIndex;
@@ -845,7 +845,7 @@ function showRadical(atom: ReAtom, render: Render): Omit<ElemAttr, 'text'> {
       hshift = 1.6 * options.lineWidth;
       radical.path.push(
         draw.radicalBullet(paper, ps.add(new Vec2(-hshift, 0)), options),
-        draw.radicalBullet(paper, ps.add(new Vec2(hshift, 0)), options)
+        draw.radicalBullet(paper, ps.add(new Vec2(hshift, 0)), options),
       );
       radical.path.attr('fill', atom.color);
       break;
@@ -859,7 +859,7 @@ function showRadical(atom: ReAtom, render: Render): Omit<ElemAttr, 'text'> {
       hshift = 1.6 * options.lineWidth;
       radical.path.push(
         draw.radicalCap(paper, ps.add(new Vec2(-hshift, 0)), options),
-        draw.radicalCap(paper, ps.add(new Vec2(hshift, 0)), options)
+        draw.radicalCap(paper, ps.add(new Vec2(hshift, 0)), options),
       );
       radical.path.attr('stroke', atom.color);
       break;
@@ -876,7 +876,7 @@ function showRadical(atom: ReAtom, render: Render): Omit<ElemAttr, 'text'> {
 function showIsotope(
   atom: ReAtom,
   render: Render,
-  leftMargin: number
+  leftMargin: number,
 ): ElemAttr {
   const ps = Scale.obj2scaled(atom.a.pp, render.options);
   const options = render.options;
@@ -895,7 +895,7 @@ function showIsotope(
     isotope.path,
     isotope.rbb,
     leftMargin - 0.5 * isotope.rbb.width - delta,
-    -0.3 * atom.label!.rbb.height
+    -0.3 * atom.label!.rbb.height,
   );
   /* eslint-enable no-mixed-operators */
   return isotope;
@@ -904,7 +904,7 @@ function showIsotope(
 function showCharge(
   atom: ReAtom,
   render: Render,
-  rightMargin: number
+  rightMargin: number,
 ): ElemAttr {
   const ps = Scale.obj2scaled(atom.a.pp, render.options);
   const options = render.options;
@@ -928,7 +928,7 @@ function showCharge(
     charge.path,
     charge.rbb,
     rightMargin + 0.5 * charge.rbb.width + delta,
-    -0.3 * atom.label!.rbb.height
+    -0.3 * atom.label!.rbb.height,
   );
   /* eslint-enable no-mixed-operators */
   return charge;
@@ -937,7 +937,7 @@ function showCharge(
 function showExplicitValence(
   atom: ReAtom,
   render: Render,
-  rightMargin: number
+  rightMargin: number,
 ): ElemAttr {
   const mapValence = {
     0: '0',
@@ -977,7 +977,7 @@ function showExplicitValence(
     valence.path,
     valence.rbb,
     rightMargin + 0.5 * valence.rbb.width + delta,
-    -0.3 * atom.label!.rbb.height
+    -0.3 * atom.label!.rbb.height,
   );
   /* eslint-enable no-mixed-operators */
   return valence;
@@ -992,7 +992,7 @@ function showHydrogen(
     hydroIndex: number;
     rightMargin: number;
     leftMargin: number;
-  }
+  },
 ): {
   hydrogen: ElemAttr;
   hydroIndex: ElemAttr;
@@ -1019,7 +1019,7 @@ function showHydrogen(
       hydrogen.path,
       hydrogen.rbb,
       data.rightMargin + 0.5 * hydrogen.rbb.width + delta,
-      0
+      0,
     );
     data.rightMargin += hydrogen.rbb.width + delta;
   }
@@ -1040,7 +1040,7 @@ function showHydrogen(
         data.rightMargin +
           0.5 * hydroIndex.rbb.width * (options.zoom > 1 ? 1 : options.zoom) +
           delta,
-        0.2 * atom.label!.rbb.height
+        0.2 * atom.label!.rbb.height,
       );
       data.rightMargin += hydroIndex.rbb.width + delta;
     }
@@ -1051,7 +1051,7 @@ function showHydrogen(
         hydroIndex.path,
         hydroIndex.rbb,
         data.leftMargin - 0.5 * hydroIndex.rbb.width - delta,
-        0.2 * atom.label!.rbb.height
+        0.2 * atom.label!.rbb.height,
       );
       data.leftMargin -= hydroIndex.rbb.width + delta;
     }
@@ -1063,7 +1063,7 @@ function showHydrogen(
           hydrogen.rbb.width *
           (implh > 1 && options.zoom < 1 ? options.zoom : 1) -
         delta,
-      0
+      0,
     );
     data.leftMargin -= hydrogen.rbb.width + delta;
   }
@@ -1074,7 +1074,7 @@ function showWarning(
   atom,
   render,
   leftMargin,
-  rightMargin
+  rightMargin,
 ): { rbb: DOMRect; path: any } {
   const ps = Scale.obj2scaled(atom.a.pp, render.options);
   const delta = 0.5 * render.options.lineWidth;
@@ -1086,7 +1086,7 @@ function showWarning(
       tfx(ps.x + leftMargin),
       tfx(y),
       tfx(ps.x + rightMargin),
-      tfx(y)
+      tfx(y),
     )
     .attr(render.options.lineattr)
     .attr({ stroke: '#F00' });
@@ -1149,7 +1149,7 @@ function pathAndRBoxTranslate(path, rbb, x, y) {
 function bisectLargestSector(atom: ReAtom, struct: Struct): Vec2 {
   const { largestAngle, neighborAngle } = getLargestSectorFromNeighbors(
     atom,
-    struct
+    struct,
   );
   const bisectAngle = neighborAngle + largestAngle / 2;
   return newVectorFromAngle(bisectAngle);
@@ -1157,7 +1157,7 @@ function bisectLargestSector(atom: ReAtom, struct: Struct): Vec2 {
 
 function getAttachmentDirectionForOnlyOneBond(
   atom: ReAtom,
-  struct: Struct
+  struct: Struct,
 ): Vec2 {
   const DEGREE_120_FOR_ONE_BOND = (2 * Math.PI) / 3;
   const DEGREE_180_FOR_TRIPLE_BOND = Math.PI;
@@ -1176,7 +1176,7 @@ function getAttachmentDirectionForOnlyOneBond(
 function trisectionLargestSector(atom: ReAtom, struct: Struct): [Vec2, Vec2] {
   const { largestAngle, neighborAngle } = getLargestSectorFromNeighbors(
     atom,
-    struct
+    struct,
   );
   const firstTrisectorAngle = neighborAngle + largestAngle / 3;
   const secondTrisectorAngle = neighborAngle + (largestAngle * 2) / 3;
@@ -1193,7 +1193,7 @@ function newVectorFromAngle(angle: number): Vec2 {
 
 function getLargestSectorFromNeighbors(
   atom: ReAtom,
-  struct: Struct
+  struct: Struct,
 ): { neighborAngle: number; largestAngle: number } {
   let angles: Array<number> = [];
   atom.a.neighbors.forEach((hbid) => {
@@ -1221,7 +1221,7 @@ function getLargestSectorFromNeighbors(
 function getSvgCurveShapeAttachmentPoint(
   centerPosition: Vec2,
   directionVector: Vec2,
-  basicSize: number
+  basicSize: number,
 ): string {
   // declared here https://github.com/epam/ketcher/issues/2165
   // this path has (0,0) in the position of attachment point atom
@@ -1243,16 +1243,16 @@ function showAttachmentPointShape(
   atom: ReAtom,
   { options, paper }: Render,
   directionVector: Vec2,
-  addReObjectPath: InstanceType<typeof ReStruct>['addReObjectPath']
+  addReObjectPath: InstanceType<typeof ReStruct>['addReObjectPath'],
 ): void {
   const atomPositionVector = Scale.obj2scaled(atom.a.pp, options);
   const shiftedAtomPositionVector = atom.getShiftedSegmentPosition(
     options,
-    directionVector
+    directionVector,
   );
   const attachmentPointEnd = atomPositionVector.addScaled(
     directionVector,
-    options.scale * 0.85
+    options.scale * 0.85,
   );
 
   const linePath = paper.path(
@@ -1260,15 +1260,15 @@ function showAttachmentPointShape(
     tfx(shiftedAtomPositionVector.x),
     tfx(shiftedAtomPositionVector.y),
     tfx(attachmentPointEnd.x),
-    tfx(attachmentPointEnd.y)
+    tfx(attachmentPointEnd.y),
   );
 
   const curvePath = paper.path(
     getSvgCurveShapeAttachmentPoint(
       attachmentPointEnd,
       directionVector,
-      options.scale
-    )
+      options.scale,
+    ),
   );
 
   const resultShape = paper
@@ -1280,14 +1280,14 @@ function showAttachmentPointShape(
     LayerMap.indices,
     atom.visel,
     resultShape,
-    atomPositionVector
+    atomPositionVector,
   );
 }
 
 function getLabelPositionForAttachmentPoint(
   atomPositionVector: Vec2,
   directionVector: Vec2,
-  shapeHeight: number
+  shapeHeight: number,
 ): Vec2 {
   const normal = directionVector.rotateSC(1, 0);
   return atomPositionVector
@@ -1300,13 +1300,13 @@ function showAttachmentPointLabel(
   { options, paper }: Render,
   directionVector: Vec2,
   addReObjectPath: InstanceType<typeof ReStruct>['addReObjectPath'],
-  labelText: string
+  labelText: string,
 ): void {
   const atomPositionVector = Scale.obj2scaled(atom.a.pp, options);
   const labelPosition = getLabelPositionForAttachmentPoint(
     atomPositionVector,
     directionVector,
-    options.scale
+    options.scale,
   );
   const labelPath = paper
     .text(labelPosition.x, labelPosition.y, labelText)

@@ -57,7 +57,7 @@ class ChargeTool implements Tool {
     if (ci && functionalGroups.size && ci.map === 'atoms') {
       const atomId = FunctionalGroup.atomsInFunctionalGroup(
         functionalGroups,
-        ci.id
+        ci.id,
       );
 
       if (atomId !== null) {
@@ -69,7 +69,7 @@ class ChargeTool implements Tool {
       for (const id of atomResult) {
         const fgId = FunctionalGroup.findFunctionalGroupByAtom(
           functionalGroups,
-          id
+          id,
         );
 
         if (fgId !== null && !result.includes(fgId)) {
@@ -93,8 +93,8 @@ class ChargeTool implements Tool {
           {
             charge: molecule.atoms.get(ci.id)?.charge + this.charge,
           },
-          null
-        )
+          null,
+        ),
       );
     }
     return true;

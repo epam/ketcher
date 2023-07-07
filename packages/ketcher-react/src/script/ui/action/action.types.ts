@@ -118,7 +118,7 @@ type UiActionAction = ActionObj | ActionFn;
 type GetActionState = (
   editor: Editor,
   server?: Server,
-  options?: Options
+  options?: Options,
 ) => boolean;
 
 type IsActionState = boolean | GetActionState;

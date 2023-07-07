@@ -22,7 +22,7 @@ import { sdataCustomSchema } from '../../data/schema/sdata-schema';
 const content = (schema, context, fieldName, fieldValue, checked) =>
   Object.keys(schema.properties)
     .filter(
-      (prop) => prop !== 'type' && prop !== 'context' && prop !== 'fieldName'
+      (prop) => prop !== 'type' && prop !== 'context' && prop !== 'fieldName',
     )
     .map((prop) => {
       if (prop === 'radiobuttons') {
@@ -71,7 +71,7 @@ function SDataFieldset({ formState }) {
         result.context,
         result.fieldName,
         result.fieldValue,
-        result.radiobuttons
+        result.radiobuttons,
       )}
     </fieldset>
   );

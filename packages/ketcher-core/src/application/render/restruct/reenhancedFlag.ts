@@ -80,7 +80,7 @@ class ReEnhancedFlag extends ReObject {
           ps.y,
           fragment.enhancedStereoFlag
             ? stereoFlagMap[fragment.enhancedStereoFlag]
-            : ''
+            : '',
         )
         .attr({
           font: options.font,
@@ -93,7 +93,7 @@ class ReEnhancedFlag extends ReObject {
       this.visel,
       this.#path,
       null,
-      true
+      true,
     );
   }
 }

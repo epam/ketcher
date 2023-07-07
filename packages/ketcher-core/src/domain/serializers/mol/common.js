@@ -25,7 +25,7 @@ const loadRGroupFragments = true; // TODO: set to load the fragments
 /* Parse Mol */
 function parseMol(
   /* string */ ctabLines,
-  /* boolean */ ignoreChiralFlag
+  /* boolean */ ignoreChiralFlag,
 ) /* Struct */ {
   /* reader */
   if (ctabLines[0].search('\\$MDL') === 0) {
@@ -40,12 +40,12 @@ function parseMol(
 
 function parseCTab(
   /* string */ ctabLines,
-  /* boolean */ ignoreChiralFlag
+  /* boolean */ ignoreChiralFlag,
 ) /* Struct */ {
   /* reader */
   const countsSplit = partitionLine(
     ctabLines[0],
-    utils.fmtInfo.countsLinePartition
+    utils.fmtInfo.countsLinePartition,
   );
   const version = countsSplit[11].trim();
   ctabLines = ctabLines.slice(1);
@@ -63,7 +63,7 @@ function parseCTab(
 function parseRxn(
   /* string[] */ ctabLines,
   /* boolean */ shouldReactionRelayout,
-  /* boolean */ ignoreChiralFlag
+  /* boolean */ ignoreChiralFlag,
 ) /* Struct */ {
   /* reader */
   const split = ctabLines[0].trim().split(' ');
@@ -74,7 +74,7 @@ function parseRxn(
   const struct = v2000.parseRxn2000(
     ctabLines,
     shouldReactionRelayout,
-    ignoreChiralFlag
+    ignoreChiralFlag,
   );
   struct.name = ctabLines[1].trim();
   return struct;
@@ -161,16 +161,16 @@ function saveMulToMolfile(sgroup, mol, sgMap, atomMap, bondMap) {
       'SAL',
       idstr,
       Array.from(sgroup.atomSet.values()),
-      atomMap
-    )
+      atomMap,
+    ),
   ); // TODO: check atomSet
   lines = lines.concat(
     makeAtomBondLines(
       'SPA',
       idstr,
       Array.from(sgroup.parentAtomSet.values()),
-      atomMap
-    )
+      atomMap,
+    ),
   );
   lines = lines.concat(makeAtomBondLines('SBL', idstr, sgroup.bonds, bondMap));
   const smtLine = 'M  SMT ' + idstr + ' ' + sgroup.data.mul;
@@ -297,7 +297,7 @@ function bracketsToMolfile(mol, sg, idstr) {
     atomSet,
     bb,
     d,
-    n
+    n,
   );
   const lines = [];
   for (let i = 0; i < brackets.length; ++i) {
@@ -325,7 +325,7 @@ function normalizeNewlines(str) {
 function partitionLine(
   /* string */ str,
   /* array of int */ parts,
-  /* bool */ withspace
+  /* bool */ withspace,
 ) {
   /* reader */
   const res = [];

@@ -24,7 +24,7 @@ const useFunctionalGroupEoc = () => {
         action.mergeWith(
           setExpandSGroup(molecule, functionalGroup.relatedSGroupId, {
             expanded: toExpand,
-          })
+          }),
         );
       });
 
@@ -32,26 +32,26 @@ const useFunctionalGroupEoc = () => {
       editor.rotateController.rerender();
       highlightFG(dispatch, { group: null, id: null });
     },
-    [dispatch, getKetcherInstance]
+    [dispatch, getKetcherInstance],
   );
 
   const hidden = useCallback(
     ({ props }: ItemEventParams, toExpand: boolean) => {
       return Boolean(
         props?.functionalGroups?.every((functionalGroup) =>
-          toExpand ? functionalGroup.isExpanded : !functionalGroup.isExpanded
-        )
+          toExpand ? functionalGroup.isExpanded : !functionalGroup.isExpanded,
+        ),
       );
     },
-    []
+    [],
   );
   const disabled = useCallback(({ props }: ItemEventParams) => {
     const editor = getKetcherInstance().editor as Editor;
     const molecule = editor.render.ctab.molecule;
     return Boolean(
       props?.functionalGroups?.every((functionalGroup) =>
-        functionalGroup?.relatedSGroup.isNotContractible(molecule)
-      )
+        functionalGroup?.relatedSGroup.isNotContractible(molecule),
+      ),
     );
   }, []);
 

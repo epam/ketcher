@@ -54,14 +54,14 @@ export function fromBondAddition(
   begin: number | AtomAttributes,
   end: number | AtomAttributes,
   beginAtomPos?: Vec2,
-  endAtomPos?: Vec2
+  endAtomPos?: Vec2,
 ): [Action, number, number, number] {
   const action = new Action();
   const struct = reStruct.molecule;
 
   const mouseDownNothingAndUpNothing = (
     beginAtomAttr: AtomAttributes,
-    endAtomAttr: AtomAttributes
+    endAtomAttr: AtomAttributes,
   ) => {
     const newFragmentId = (
       action.addOp(new FragmentAdd().perform(reStruct)) as FragmentAdd
@@ -71,8 +71,8 @@ export function fromBondAddition(
       action.addOp(
         new AtomAdd(
           { ...beginAtomAttr, fragment: newFragmentId },
-          beginAtomPos
-        ).perform(reStruct)
+          beginAtomPos,
+        ).perform(reStruct),
       ) as AtomAdd
     ).data.aid;
 
@@ -80,8 +80,8 @@ export function fromBondAddition(
       action.addOp(
         new AtomAdd(
           { ...endAtomAttr, fragment: newFragmentId },
-          endAtomPos
-        ).perform(reStruct)
+          endAtomPos,
+        ).perform(reStruct),
       ) as AtomAdd
     ).data.aid;
 
@@ -90,7 +90,7 @@ export function fromBondAddition(
 
   const mouseDownNothingAndUpAtom = (
     beginAtomAttr: AtomAttributes,
-    endAtomId: number
+    endAtomId: number,
   ) => {
     const fragmentId = atomGetAttr(reStruct, endAtomId, 'fragment');
 
@@ -98,8 +98,8 @@ export function fromBondAddition(
       action.addOp(
         new AtomAdd(
           { ...beginAtomAttr, fragment: fragmentId },
-          beginAtomPos
-        ).perform(reStruct)
+          beginAtomPos,
+        ).perform(reStruct),
       ) as AtomAdd
     ).data.aid;
 
@@ -110,7 +110,7 @@ export function fromBondAddition(
         endAtom,
         struct.sgroups,
         struct.functionalGroups,
-        false
+        false,
       )
     ) {
       mergeSgroups(action, reStruct, [newBeginAtomId], endAtomId);
@@ -120,7 +120,7 @@ export function fromBondAddition(
 
   const mouseDownAtomAndUpNothing = (
     beginAtomId: number,
-    endAtomAttr: AtomAttributes
+    endAtomAttr: AtomAttributes,
   ) => {
     const fragmentId = atomGetAttr(reStruct, beginAtomId, 'fragment');
 
@@ -131,8 +131,8 @@ export function fromBondAddition(
             ...endAtomAttr,
             fragment: fragmentId,
           },
-          endAtomPos ?? atomForNewBond(reStruct, begin, bond).pos
-        ).perform(reStruct)
+          endAtomPos ?? atomForNewBond(reStruct, begin, bond).pos,
+        ).perform(reStruct),
       ) as AtomAdd
     ).data.aid;
 
@@ -143,7 +143,7 @@ export function fromBondAddition(
         beginAtom,
         struct.sgroups,
         struct.functionalGroups,
-        false
+        false,
       )
     ) {
       mergeSgroups(action, reStruct, [newEndAtomId], beginAtomId);
@@ -177,13 +177,13 @@ export function fromBondAddition(
 
   const newBondId = (
     action.addOp(
-      new BondAdd(beginAtomId, endAtomId, bond).perform(reStruct)
+      new BondAdd(beginAtomId, endAtomId, bond).perform(reStruct),
     ) as BondAdd
   ).data.bid;
   const newBond = struct.bonds.get(newBondId);
   if (newBond) {
     action.addOp(
-      new CalcImplicitH([newBond.begin, newBond.end]).perform(reStruct)
+      new CalcImplicitH([newBond.begin, newBond.end]).perform(reStruct),
     );
     action.mergeWith(fromBondStereoUpdate(reStruct, newBond));
   }
@@ -194,11 +194,11 @@ export function fromBondAddition(
     action,
     reStruct,
     beginAtomId,
-    endAtomId
+    endAtomId,
   );
   if (struct.frags.get(mergedFragmentId || 0)?.stereoAtoms && !bond.stereo) {
     action.addOp(
-      new FragmentStereoFlag(mergedFragmentId || 0).perform(reStruct)
+      new FragmentStereoFlag(mergedFragmentId || 0).perform(reStruct),
     );
   }
 
@@ -209,7 +209,7 @@ export function fromBondsAttrs(
   restruct: ReStruct,
   ids: Array<number> | number,
   attrs: Bond,
-  reset?: boolean
+  reset?: boolean,
 ): Action {
   const struct = restruct.molecule;
   const action = new Action();
@@ -226,7 +226,7 @@ export function fromBondsAttrs(
         const bond = struct.bonds.get(bid);
         if (bond) {
           action.addOp(
-            new CalcImplicitH([bond.begin, bond.end]).perform(restruct)
+            new CalcImplicitH([bond.begin, bond.end]).perform(restruct),
           );
           action.mergeWith(fromBondStereoUpdate(restruct, bond));
         }
@@ -239,7 +239,7 @@ export function fromBondsAttrs(
 
 export function fromBondsMerge(
   restruct: ReStruct,
-  mergeMap: Map<number, number>
+  mergeMap: Map<number, number>,
 ): Action {
   const struct = restruct.molecule;
 
@@ -282,7 +282,7 @@ function fromBondFlipping(restruct: ReStruct, id: number): Action {
 export function fromBondStereoUpdate(
   restruct: ReStruct,
   bond: Bond,
-  withReverse?: boolean
+  withReverse?: boolean,
 ): Action {
   const action = new Action();
   const struct = restruct.molecule;
@@ -310,7 +310,7 @@ export function fromBondStereoUpdate(
   stereoAtomsMap.forEach((stereoProp, aId) => {
     if (struct.atoms.get(aId)?.stereoLabel !== stereoProp.stereoLabel) {
       action.mergeWith(
-        fromStereoAtomAttrs(restruct, aId, stereoProp, withReverse)
+        fromStereoAtomAttrs(restruct, aId, stereoProp, withReverse),
       );
     }
   });
@@ -321,7 +321,7 @@ export function fromBondStereoUpdate(
 export function getStereoAtomsMap(
   struct: Struct,
   bonds: Array<Bond>,
-  bond?: Bond
+  bond?: Bond,
 ) {
   const stereoAtomsMap = new Map();
   const correctAtomIds: Array<number> = [];
@@ -329,10 +329,10 @@ export function getStereoAtomsMap(
   bonds.forEach((bond: Bond | undefined) => {
     if (bond) {
       const beginNeighs: Array<Neighbor> | undefined = struct.atomGetNeighbors(
-        bond.begin
+        bond.begin,
       );
       const endNeighs: Array<Neighbor> | undefined = struct.atomGetNeighbors(
-        bond.end
+        bond.end,
       );
 
       if (
@@ -340,7 +340,7 @@ export function getStereoAtomsMap(
           bond,
           beginNeighs,
           endNeighs,
-          struct
+          struct,
         )
       ) {
         const stereoLabel = struct.atoms.get(bond.begin)?.stereoLabel;
@@ -417,7 +417,7 @@ export function bondChangingAction(
   restruct: ReStruct,
   itemID: number,
   bond: Bond,
-  bondProps: any
+  bondProps: any,
 ): Action {
   const action = new Action();
   let newItemId = itemID;

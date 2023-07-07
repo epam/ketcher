@@ -53,7 +53,7 @@ function GenSet({
                   onAtomSelect={onAtomSelect}
                   selected={selected}
                   disabled={Boolean(
-                    disabledQueryElements?.includes(button.label)
+                    disabledQueryElements?.includes(button.label),
                   )}
                 />
               ))}

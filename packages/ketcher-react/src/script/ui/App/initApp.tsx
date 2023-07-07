@@ -34,7 +34,7 @@ function initApp(
   staticResourcesUrl: string,
   options: any,
   server: StructService,
-  setEditor: (editor: any) => void
+  setEditor: (editor: any) => void,
 ) {
   const store = createStore(options, server, setEditor);
   store.dispatch(initKeydownListener(element));
@@ -55,7 +55,7 @@ function initApp(
           </AppContext.Provider>
         </ErrorsContext.Provider>
       </SettingsContext.Provider>
-    </Provider>
+    </Provider>,
   );
 }
 

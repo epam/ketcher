@@ -42,7 +42,7 @@ const ContextMenu: React.FC = () => {
       }
       editor.contextMenu[id] = visible;
     },
-    [getKetcherInstance]
+    [getKetcherInstance],
   );
 
   return (

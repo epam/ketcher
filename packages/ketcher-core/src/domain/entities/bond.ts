@@ -138,10 +138,10 @@ export class Bond {
     const bond = struct.bonds.get(bondId)!;
     const { begin, end } = bond;
     const beginBondIds = Atom.getConnectedBondIds(struct, begin).filter(
-      (id) => id !== bondId
+      (id) => id !== bondId,
     );
     const endBondIds = Atom.getConnectedBondIds(struct, end).filter(
-      (id) => id !== bondId
+      (id) => id !== bondId,
     );
     return { beginBondIds, endBondIds };
   }
@@ -180,7 +180,7 @@ export class Bond {
   static getBenzeneConnectingBondType(
     bond: Bond,
     bondBegin: Bond,
-    bondEnd: Bond
+    bondEnd: Bond,
   ): number | null {
     const { DOUBLE, SINGLE } = this.PATTERN.TYPE;
     const { isFusingToSingleBond, isFusingToDoubleBond } =
@@ -197,7 +197,7 @@ export class Bond {
   static getCyclopentadieneFusingBondType(
     bond: Bond,
     bondBegin: Bond,
-    bondEnd: Bond
+    bondEnd: Bond,
   ): number | null {
     const { DOUBLE, SINGLE } = this.PATTERN.TYPE;
     const {
@@ -222,7 +222,7 @@ export class Bond {
   static getCyclopentadieneDoubleBondIndexes(
     bond: Bond,
     bondBegin: Bond,
-    bondEnd: Bond
+    bondEnd: Bond,
   ) {
     const {
       isFusingToSingleBond,

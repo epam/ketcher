@@ -7,7 +7,7 @@ import { Struct } from 'ketcher-core';
  */
 export function filterNotInContractedSGroup(
   itemsToFilter: { atoms?: number[]; bonds?: number[] },
-  struct: Struct
+  struct: Struct,
 ) {
   return {
     atoms:
@@ -35,7 +35,7 @@ function isNotCollapsedSGroup(groupId: number | null, struct: Struct): boolean {
   const sGroup = struct.sgroups.get(groupId);
   if (!sGroup) {
     throw new Error(
-      `sGroup with id = "${groupId}" must be defined, unexpected behaviour`
+      `sGroup with id = "${groupId}" must be defined, unexpected behaviour`,
     );
   }
   return sGroup.checkAttr('expanded', true);

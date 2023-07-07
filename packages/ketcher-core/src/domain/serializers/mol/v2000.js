@@ -38,14 +38,14 @@ function parseAtomLine(atomLine) {
   /* reader */
   const atomSplit = utils.partitionLine(
     atomLine,
-    utils.fmtInfo.atomLinePartition
+    utils.fmtInfo.atomLinePartition,
   );
   const params = {
     // generic
     pp: new Vec2(
       parseFloat(atomSplit[0]),
       -parseFloat(atomSplit[1]),
-      parseFloat(atomSplit[2])
+      parseFloat(atomSplit[2]),
     ),
     label: atomSplit[4].trim(),
     explicitValence:
@@ -73,7 +73,7 @@ function parseBondLine(bondLine) {
   /* reader */
   const bondSplit = utils.partitionLine(
     bondLine,
-    utils.fmtInfo.bondLinePartition
+    utils.fmtInfo.bondLinePartition,
   );
 
   const params = {
@@ -94,7 +94,7 @@ function parseAtomListLine(/* string */ atomListLine) {
   /* reader */
   const split = utils.partitionLine(
     atomListLine,
-    utils.fmtInfo.atomListHeaderPartition
+    utils.fmtInfo.atomListHeaderPartition,
   );
 
   const number = utils.parseDecimalInt(split[0]) - 1;
@@ -106,7 +106,7 @@ function parseAtomListLine(/* string */ atomListLine) {
   const itemLength = utils.fmtInfo.atomListHeaderItemLength;
   for (let i = 0; i < count; ++i) {
     list[i] = utils.parseDecimalInt(
-      ids.slice(i * itemLength, (i + 1) * itemLength - 1)
+      ids.slice(i * itemLength, (i + 1) * itemLength - 1),
     );
   }
 
@@ -175,7 +175,7 @@ function parsePropertyLines(ctab, ctabLines, shift, end, sGroups, rLogic) {
         if (!props.get('substitutionCount')) {
           props.set(
             'substitutionCount',
-            sGroup.readKeyValuePairs(propertyData)
+            sGroup.readKeyValuePairs(propertyData),
           );
         }
       } else if (type === 'UNS') {
@@ -192,7 +192,7 @@ function parsePropertyLines(ctab, ctabLines, shift, end, sGroups, rLogic) {
           const a2r = a2rs[a2ri];
           rglabels.set(
             a2r[0],
-            (rglabels.get(a2r[0]) || 0) | (1 << (a2r[1] - 1))
+            (rglabels.get(a2r[0]) || 0) | (1 << (a2r[1] - 1)),
           );
         }
       } else if (type === 'LOG') {
@@ -215,7 +215,7 @@ function parsePropertyLines(ctab, ctabLines, shift, end, sGroups, rLogic) {
         // atom list
         const pool = parsePropertyLineAtomList(
           utils.partitionLine(propertyData, [1, 3, 3, 1, 1, 1]),
-          utils.partitionLineFixed(propertyData.slice(10), 4, false)
+          utils.partitionLineFixed(propertyData.slice(10), 4, false),
         );
 
         if (!props.get('atomList')) props.set('atomList', new Pool());
@@ -287,7 +287,7 @@ function applyAtomProp(atoms, values, propId) {
 function parseCTabV2000(
   ctabLines,
   countsSplit,
-  /* boolean */ ignoreChiralFlag
+  /* boolean */ ignoreChiralFlag,
 ) {
   // eslint-disable-line max-statements
   /* reader */
@@ -337,7 +337,7 @@ function parseCTabV2000(
     shift,
     Math.min(ctabLines.length, shift + propertyLinesCount),
     sGroups,
-    rLogic
+    rLogic,
   );
   props.forEach((values, propId) => {
     applyAtomProp(ctab.atoms, values, propId);
@@ -377,7 +377,7 @@ function parseCTabV2000(
 
 function parseRg2000(
   /* string[] */ ctabLines,
-  /* boolean */ ignoreChiralFlag
+  /* boolean */ ignoreChiralFlag,
 ) /* Struct */ {
   // eslint-disable-line max-statements
   ctabLines = ctabLines.slice(7);
@@ -439,14 +439,14 @@ function parseRg2000(
 function parseRxn2000(
   /* string[] */ ctabLines,
   /* boolean */ shouldReactionRelayout,
-  /* boolean */ ignoreChiralFlag
+  /* boolean */ ignoreChiralFlag,
 ) /* Struct */ {
   // eslint-disable-line max-statements
   /* reader */
   ctabLines = ctabLines.slice(4);
   const countsSplit = utils.partitionLine(
     ctabLines[0],
-    utils.fmtInfo.rxnItemsPartition
+    utils.fmtInfo.rxnItemsPartition,
   );
   const nReactants = countsSplit[0] - 0;
   const nProducts = countsSplit[1] - 0;
@@ -474,18 +474,18 @@ function parseRxn2000(
     nReactants,
     nProducts,
     nAgents,
-    shouldReactionRelayout
+    shouldReactionRelayout,
   );
 }
 
 function parseCTab(
   /* string */ ctabLines,
-  /* boolean */ ignoreChiralFlag
+  /* boolean */ ignoreChiralFlag,
 ) /* Struct */ {
   /* reader */
   const countsSplit = utils.partitionLine(
     ctabLines[0],
-    utils.fmtInfo.countsLinePartition
+    utils.fmtInfo.countsLinePartition,
   );
   ctabLines = ctabLines.slice(1);
   return parseCTabV2000(ctabLines, countsSplit, ignoreChiralFlag);
@@ -521,7 +521,7 @@ function parsePropertyLineAtomList(hdr, lst) {
     new AtomList({
       notList,
       ids,
-    })
+    }),
   );
   return ret;
 }

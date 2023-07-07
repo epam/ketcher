@@ -60,7 +60,7 @@ class ReSGroup extends ReObject {
             atomSet,
             bracketBox,
             d,
-            sgroup.data.mul
+            sgroup.data.mul,
           );
           break;
         case 'SRU': {
@@ -76,7 +76,7 @@ class ReSGroup extends ReObject {
             bracketBox,
             d,
             subscript,
-            connectivity
+            connectivity,
           );
           break;
         }
@@ -91,7 +91,7 @@ class ReSGroup extends ReObject {
             d,
             sgroup.data.name,
             null,
-            { 'font-style': 'italic' }
+            { 'font-style': 'italic' },
           );
           break;
         }
@@ -103,7 +103,7 @@ class ReSGroup extends ReObject {
             crossBonds,
             atomSet,
             bracketBox,
-            d
+            d,
           );
           break;
         }
@@ -125,7 +125,7 @@ class ReSGroup extends ReObject {
     let height = 0;
     const sGroup = this.item;
     const { atomId, position } = sGroup.getContractedPosition(
-      render.ctab.molecule
+      render.ctab.molecule,
     );
     if (sGroup.isContracted() && position) {
       const reSGroupAtom = render.ctab.atoms.get(atomId);
@@ -150,7 +150,7 @@ class ReSGroup extends ReObject {
     const radius = fontsz * radiusScaleFactor * 2;
     const { startX, startY, width, height } = this.getTextHighlightDimensions(
       fontsz / 2,
-      render
+      render,
     );
     return paper.rect(startX, startY, width, height, radius);
   }
@@ -163,7 +163,7 @@ class ReSGroup extends ReObject {
       FunctionalGroup.isContractedFunctionalGroup(sgroup.id, functionalGroups)
     ) {
       return this.getContractedSelectionContour(render).attr(
-        options.selectionStyle
+        options.selectionStyle,
       );
     }
   }
@@ -180,11 +180,11 @@ class ReSGroup extends ReObject {
     if (
       FunctionalGroup.isContractedFunctionalGroup(
         sGroupItem.id,
-        functionalGroups
+        functionalGroups,
       )
     ) {
       sGroupItem.hovering = this.getContractedSelectionContour(render).attr(
-        options.hoverStyle
+        options.hoverStyle,
       );
     } else if (!this.selected) {
       sGroupItem.hovering = paper
@@ -197,7 +197,7 @@ class ReSGroup extends ReObject {
           tfx(b1.x),
           tfx(b1.y),
           tfx(b0.x),
-          tfx(b0.y)
+          tfx(b0.y),
         )
         .attr(options.hoverStyle);
     }
@@ -234,7 +234,7 @@ function SGroupdrawBrackets(
   d,
   lowerIndexText,
   upperIndexText,
-  indexAttribute
+  indexAttribute,
 ) {
   // eslint-disable-line max-params
   const brackets = getBracketParameters(
@@ -244,7 +244,7 @@ function SGroupdrawBrackets(
     bracketBox,
     d,
     render,
-    sg.id
+    sg.id,
   );
   let ir = -1;
   for (let i = 0; i < brackets.length; ++i) {
@@ -256,7 +256,7 @@ function SGroupdrawBrackets(
       Scale.obj2scaled(bracket.c, render.options),
       bracket.w,
       bracket.h,
-      render.options
+      render.options,
     );
     set.push(path);
     if (
@@ -271,7 +271,7 @@ function SGroupdrawBrackets(
   function renderIndex(text, shift) {
     const indexPos = Scale.obj2scaled(
       bracketR.c.addScaled(bracketR.n, shift * bracketR.h),
-      render.options
+      render.options,
     );
     const indexPath = render.paper.text(indexPos.x, indexPos.y, text).attr({
       font: render.options.font,
@@ -301,7 +301,7 @@ function showValue(paper, pos, sg, options) {
     box.width + 2,
     box.height + 2,
     3,
-    3
+    3,
   );
   rect = sg.selected
     ? rect.attr(options.selectionStyle)
@@ -381,7 +381,7 @@ function getBracketParameters(
   bracketBox,
   d,
   render,
-  id
+  id,
 ) {
   // eslint-disable-line max-params
   function BracketParams(c, d, w, h) {
@@ -405,19 +405,19 @@ function getBracketParameters(
         d,
         bracketBox.p0.x,
         n,
-        0.5 * (bracketBox.p0.y + bracketBox.p1.y)
+        0.5 * (bracketBox.p0.y + bracketBox.p1.y),
       );
       const cr = Vec2.lc2(
         d,
         bracketBox.p1.x,
         n,
-        0.5 * (bracketBox.p0.y + bracketBox.p1.y)
+        0.5 * (bracketBox.p0.y + bracketBox.p1.y),
       );
       const bracketHeight = bracketBox.sz().y;
 
       brackets.push(
         new BracketParams(cl, d.negated(), bracketWidth, bracketHeight),
-        new BracketParams(cr, d, bracketWidth, bracketHeight)
+        new BracketParams(cr, d, bracketWidth, bracketHeight),
       );
     })();
   } else if (crossBondsValues.length === 2 && crossBondsPerAtom.length === 2) {
@@ -457,14 +457,14 @@ function getBracketParameters(
           cl0.addScaled(dl, tl),
           dl,
           bracketWidth,
-          bracketHeight
+          bracketHeight,
         ),
         new BracketParams(
           cr0.addScaled(dr, tr),
           dr,
           bracketWidth,
-          bracketHeight
-        )
+          bracketHeight,
+        ),
       );
     })();
   } else {
@@ -503,7 +503,7 @@ function getHighlighPathInfo(sgroup, render) {
   let startX = (b0.x + a0.x) / 2 - size / 2;
   let startY = (a1.y + a0.y) / 2 - size / 2;
   const { position: contractedPosition } = sgroup.getContractedPosition(
-    render.ctab.molecule
+    render.ctab.molecule,
   );
   if (contractedPosition) {
     const shift = new Vec2(size / 2, size / 2, 0);

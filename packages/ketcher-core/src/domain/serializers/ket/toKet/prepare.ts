@@ -32,7 +32,7 @@ export function prepareStructForKet(struct: Struct) {
 
     const fragsAtoms = Array.from(rgroup.frags.values()).reduce(
       (res, frid) => res.union(struct.getFragmentIds(frid)),
-      new Pile()
+      new Pile(),
     );
 
     ketNodes.push({
@@ -44,7 +44,7 @@ export function prepareStructForKet(struct: Struct) {
   }
 
   const filteredFragmentIds = Array.from(struct.frags.keys()).filter(
-    (fid) => !rgFrags.has(fid)
+    (fid) => !rgFrags.has(fid),
   );
   addMolecules(ketNodes, filteredFragmentIds, struct);
 
@@ -95,7 +95,7 @@ export function prepareStructForKet(struct: Struct) {
     if (ketNode.fragment) {
       const sgroups: SGroup[] = Array.from(ketNode.fragment.sgroups.values());
       const filteredSGroups = sgroups.filter((sg: SGroup) =>
-        sg.atoms.every((atom) => atom !== undefined)
+        sg.atoms.every((atom) => atom !== undefined),
       );
       const filteredSGroupsMap = new Pool<SGroup>();
       filteredSGroups.forEach((sg, index) => {
@@ -123,15 +123,15 @@ function getFragmentCenter(struct, atomSet) {
 function addMolecules(
   ketNodes: KetNode[],
   fragmentIds: number[],
-  struct: Struct
+  struct: Struct,
 ) {
   const sGroupFragmentsMap = generateSGroupFragmentsMap(
     ketNodes,
     fragmentIds,
-    struct
+    struct,
   );
   const mergedFragments = Pile.unionIntersections(
-    Array.from(sGroupFragmentsMap.values())
+    Array.from(sGroupFragmentsMap.values()),
   );
 
   mergedFragments.forEach((fragments) => {
@@ -162,7 +162,7 @@ function addMolecules(
 function generateSGroupFragmentsMap(
   ketNodes: KetNode[],
   fragmentIds: number[],
-  struct: Struct
+  struct: Struct,
 ) {
   const sGroupFragmentsMap = new Map<number, Pile<number>>();
 

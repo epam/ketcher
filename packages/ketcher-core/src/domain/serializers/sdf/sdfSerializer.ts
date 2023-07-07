@@ -45,7 +45,7 @@ export class SdfSerializer implements Serializer<Array<SdfItem>> {
             }
             return acc;
           },
-          {} as StructAssociatedData
+          {} as StructAssociatedData,
         );
 
         result.push({ struct, props });

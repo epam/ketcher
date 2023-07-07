@@ -67,11 +67,11 @@ const checkSchema = {
 const getFormattedDateString = (date) => {
   const getFixedString = (num) => (num + '').padStart(2, 0);
   return `${getFixedString(date.getHours())}:${getFixedString(
-    date.getMinutes()
+    date.getMinutes(),
   )}:${getFixedString(date.getSeconds())}  ${getFixedString(
-    date.getDate()
+    date.getDate(),
   )}.${getFixedString(date.getMonth() + 1)}.${getFixedString(
-    date.getFullYear()
+    date.getFullYear(),
   )}`;
 };
 

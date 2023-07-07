@@ -43,7 +43,7 @@ export class Action {
   perform(restruct: ReStruct): Action {
     const action = new Action();
     const sortedOperations = [...this.operations].sort(
-      (a, b) => a.priority - b.priority
+      (a, b) => a.priority - b.priority,
     );
     sortedOperations.forEach((operation) => {
       const invertedOperation = operation.perform(restruct);
@@ -57,7 +57,7 @@ export class Action {
     return (
       this.operations.find(
         // TODO [RB] the condition is always true for op.* operations
-        (operation) => (restruct ? !operation.isDummy(restruct) : true)
+        (operation) => (restruct ? !operation.isDummy(restruct) : true),
       ) === undefined
     );
   }

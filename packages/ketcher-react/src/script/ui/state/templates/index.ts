@@ -94,7 +94,7 @@ export function editTmpl(tmpl) {
           if (tmpl.props.group === 'User Templates')
             updateLocalStore(getState().templates.lib);
         },
-        () => null
+        () => null,
       )
       .then(() => openDialog(dispatch, 'templates').catch(() => null));
   };

@@ -9,7 +9,7 @@ declare global {
     postMessage(
       message: IMessage,
       targetOrigin: string,
-      transfer?: Transferable[] | undefined
+      transfer?: Transferable[] | undefined,
     ): void;
 
     ketcher?: Ketcher;

@@ -79,7 +79,7 @@ const ToolbarMultiToolItem = (props: Props) => {
   let currentId = id;
 
   const selectedTool = options.find(
-    (toolbarItem) => status[toolbarItem.id]?.selected
+    (toolbarItem) => status[toolbarItem.id]?.selected,
   );
   if (selectedTool) {
     currentId = selectedTool.id;
@@ -92,7 +92,7 @@ const ToolbarMultiToolItem = (props: Props) => {
   selected = selected || Boolean(currentStatus?.selected);
 
   const allInnerItemsHidden: boolean = options.every(
-    (option) => status[option.id]?.hidden
+    (option) => status[option.id]?.hidden,
   );
 
   const displayMultiToolItem = !(allInnerItemsHidden || currentStatus?.hidden);
@@ -107,7 +107,7 @@ const ToolbarMultiToolItem = (props: Props) => {
       savedSelectionToolId &&
       options.filter(
         (option) =>
-          !status[option.id]?.hidden && option.id === savedSelectionToolId
+          !status[option.id]?.hidden && option.id === savedSelectionToolId,
       )[0]?.id;
 
     if (!currentId) {
@@ -158,7 +158,7 @@ const ToolbarMultiToolItem = (props: Props) => {
           className={clsx(
             classes.portal,
             vertical && classes['portal-vertical'],
-            portalClassName
+            portalClassName,
           )}
           style={portalStyle}
         >

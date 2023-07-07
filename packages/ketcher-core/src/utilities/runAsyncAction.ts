@@ -24,7 +24,7 @@ export enum KetcherAsyncEvents {
 
 export const runAsyncAction = async <T = any>(
   action: () => Promise<T>,
-  eventEmitter: EventEmitter
+  eventEmitter: EventEmitter,
 ): Promise<T | undefined> => {
   eventEmitter.emit(KetcherAsyncEvents.LOADING);
   try {

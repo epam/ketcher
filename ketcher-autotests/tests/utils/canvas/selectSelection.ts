@@ -17,7 +17,7 @@ export enum SelectionType {
 export async function selectSelection(type: SelectionType, page: Page) {
   await page
     .locator(
-      'div[class*="LeftToolbar-module_buttons"] button[title*="Selection"]'
+      'div[class*="LeftToolbar-module_buttons"] button[title*="Selection"]',
     )
     .dblclick();
 

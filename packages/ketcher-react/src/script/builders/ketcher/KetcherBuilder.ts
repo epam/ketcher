@@ -44,7 +44,7 @@ class KetcherBuilder {
   async appendApiAsync(structServiceProvider: StructServiceProvider) {
     this.structService = createApi(
       structServiceProvider,
-      DefaultStructServiceOptions
+      DefaultStructServiceOptions,
     );
   }
 
@@ -56,7 +56,7 @@ class KetcherBuilder {
     element: HTMLDivElement | null,
     staticResourcesUrl: string,
     errorHandler: (message: string) => void,
-    buttons?: ButtonsConfig
+    buttons?: ButtonsConfig,
   ): Promise<void> {
     const { structService } = this;
 
@@ -72,7 +72,7 @@ class KetcherBuilder {
           buildNumber: process.env.BUILD_NUMBER || '',
         },
         structService!,
-        resolve
+        resolve,
       );
     });
 
@@ -96,14 +96,14 @@ class KetcherBuilder {
 
     if (!this.formatterFactory) {
       throw new Error(
-        'You should append StructureServiceFactory before building'
+        'You should append StructureServiceFactory before building',
       );
     }
 
     const ketcher = new Ketcher(
       this.editor!,
       this.structService,
-      this.formatterFactory
+      this.formatterFactory,
     );
     ketcher[this.serviceMode] = true;
 

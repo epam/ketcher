@@ -38,11 +38,11 @@ const getTagName = () => {
 
 export const valuesToReplace = {
   'process.env.NODE_ENV': JSON.stringify(
-    isProduction ? mode.PRODUCTION : mode.DEVELOPMENT
+    isProduction ? mode.PRODUCTION : mode.DEVELOPMENT,
   ),
   'process.env.VERSION': JSON.stringify(pkg.version),
   'process.env.BUILD_DATE': JSON.stringify(
-    new Date().toISOString().slice(0, 19)
+    new Date().toISOString().slice(0, 19),
   ),
   // TODO: add logic to init BUILD_NUMBER
   'process.env.BUILD_NUMBER': JSON.stringify(undefined),

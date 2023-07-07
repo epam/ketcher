@@ -48,7 +48,7 @@ export default {
       const zoom = editor.zoom();
       const i = findIndex((z) => z >= zoom, zoomList);
       editor.zoom(
-        zoomList[zoomList[i] === zoom && i < zoomList.length - 1 ? i + 1 : i]
+        zoomList[zoomList[i] === zoom && i < zoomList.length - 1 ? i + 1 : i],
       );
     },
     hidden: (options) => isHidden(options, 'zoom-in'),

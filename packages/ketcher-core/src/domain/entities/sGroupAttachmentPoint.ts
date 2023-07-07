@@ -34,7 +34,7 @@ export class SGroupAttachmentPoint {
   constructor(
     atomId: number,
     leaveAtomId: number | undefined,
-    additionalData: string | undefined
+    additionalData: string | undefined,
   ) {
     this.atomId = atomId;
     this.leaveAtomId = leaveAtomId;
@@ -48,7 +48,7 @@ export class SGroupAttachmentPoint {
     return new SGroupAttachmentPoint(
       newAtomId,
       newLeaveAtomId,
-      this.additionalData
+      this.additionalData,
     );
   }
 

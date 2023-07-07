@@ -45,7 +45,7 @@ export class Pool<TValue = any> extends Map<number, TValue> {
 
   filter(predicate: (key: number, value: TValue) => boolean): Pool<TValue> {
     return new Pool<TValue>(
-      Array.from(this).filter(([key, value]) => predicate(key, value))
+      Array.from(this).filter(([key, value]) => predicate(key, value)),
     );
   }
 

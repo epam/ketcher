@@ -45,7 +45,7 @@ export function initKeydownListener(element) {
   return function (dispatch, getState) {
     const hotKeys = initHotKeys();
     element.addEventListener('keydown', (event) =>
-      keyHandle(dispatch, getState, hotKeys, event)
+      keyHandle(dispatch, getState, hotKeys, event),
     );
   };
 }
@@ -174,7 +174,7 @@ function getCurrentAction(prevActName) {
 }
 
 function getHoveredItem(
-  ctab: Record<string, Map<number, Record<string, unknown>>>
+  ctab: Record<string, Map<number, Record<string, unknown>>>,
 ): Record<string, number> | null {
   const hoveredItem = {};
 
@@ -237,12 +237,12 @@ const rxnTextPlain = /\$RXN\n+\s+0\s+0\s+0\n*/;
 /* ClipArea */
 export function initClipboard(dispatch) {
   const formats = Object.keys(formatProperties).map(
-    (format) => formatProperties[format].mime
+    (format) => formatProperties[format].mime,
   );
 
   const debAction = debounce(0, (action) => dispatch(onAction(action)));
   const loadStruct = debounce(0, (structStr, opts) =>
-    dispatch(load(structStr, opts))
+    dispatch(load(structStr, opts)),
   );
 
   return {
@@ -286,12 +286,12 @@ function clipData(editor) {
 
   if (struct.isBlank()) return null;
   const simpleObjectOrText = Boolean(
-    struct.simpleObjects.size || struct.texts.size
+    struct.simpleObjects.size || struct.texts.size,
   );
   if (simpleObjectOrText && isIE) {
     errorHandler(
       'The structure you are trying to copy contains Simple object or/and Text object.' +
-        'To copy Simple object or Text object in Internet Explorer try "Copy as KET" button'
+        'To copy Simple object or Text object in Internet Explorer try "Copy as KET" button',
     );
     return null;
   }

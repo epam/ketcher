@@ -35,7 +35,7 @@ function serialize(lc) {
 
 function deserialize(value) {
   const match = value.match(
-    /^(\d+)?([a-z*]{1,3})(\.|:|\^\^)?(\d+[-+]|[-+])?$/i
+    /^(\d+)?([a-z*]{1,3})(\.|:|\^\^)?(\d+[-+]|[-+])?$/i,
   ); // TODO: radical on last place
   if (match) {
     const label = match[2] === '*' ? 'A' : capitalize(match[2]);

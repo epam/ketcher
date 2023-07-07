@@ -32,7 +32,7 @@ function getElementsInRectangle(restruct, p0, p1) {
       restruct.atoms.get(bond.b.begin).a.pp,
       0.5,
       restruct.atoms.get(bond.b.end).a.pp,
-      0.5
+      0.5,
     );
     if (
       centre.x > x0 &&
@@ -42,7 +42,7 @@ function getElementsInRectangle(restruct, p0, p1) {
       !FunctionalGroup.isBondInContractedFunctionalGroup(
         bond.b,
         sGroups,
-        functionalGroups
+        functionalGroups,
       )
     ) {
       bondList.push(bid);
@@ -52,7 +52,7 @@ function getElementsInRectangle(restruct, p0, p1) {
   restruct.atoms.forEach((atom, aid) => {
     const relatedFGId = FunctionalGroup.findFunctionalGroupByAtom(
       functionalGroups,
-      aid
+      aid,
     );
     const sGroup = restruct.sgroups.get(relatedFGId);
     if (
@@ -64,7 +64,7 @@ function getElementsInRectangle(restruct, p0, p1) {
         atom.a,
         sGroups,
         functionalGroups,
-        true
+        true,
       ) ||
         aid === sGroup.item.atoms[0])
     ) {
@@ -101,7 +101,7 @@ function getElementsInRectangle(restruct, p0, p1) {
   restruct.simpleObjects.forEach((item, id) => {
     const referencePoints = item.getReferencePoints(true);
     const referencePointInRectangle = referencePoints.find(
-      (point) => point.x > x0 && point.x < x1 && point.y > y0 && point.y < y1
+      (point) => point.x > x0 && point.x < x1 && point.y > y0 && point.y < y1,
     );
     if (referencePointInRectangle) {
       simpleObjectsList.push(id);
@@ -169,14 +169,14 @@ function getElementsInPolygon(restruct, rr) {
       restruct.atoms.get(bond.b.begin).a.pp,
       0.5,
       restruct.atoms.get(bond.b.end).a.pp,
-      0.5
+      0.5,
     );
     if (
       isPointInPolygon(r, centre) &&
       !FunctionalGroup.isBondInContractedFunctionalGroup(
         bond.b,
         sGroups,
-        functionalGroups
+        functionalGroups,
       )
     ) {
       bondList.push(bid);
@@ -186,7 +186,7 @@ function getElementsInPolygon(restruct, rr) {
   restruct.atoms.forEach((atom, aid) => {
     const relatedFGId = FunctionalGroup.findFunctionalGroupByAtom(
       functionalGroups,
-      aid
+      aid,
     );
     const sGroup = restruct.sgroups.get(relatedFGId);
     if (
@@ -195,7 +195,7 @@ function getElementsInPolygon(restruct, rr) {
         atom.a,
         sGroups,
         functionalGroups,
-        true
+        true,
       ) ||
         aid === sGroup.item.atoms[0])
     ) {
@@ -211,7 +211,7 @@ function getElementsInPolygon(restruct, rr) {
   restruct.rxnArrows.forEach((item, id) => {
     const referencePoints = item.getReferencePoints(true);
     const referencePointInPolygon = referencePoints.find((point) =>
-      isPointInPolygon(r, point)
+      isPointInPolygon(r, point),
     );
     if (referencePointInPolygon) {
       rxnArrowsList.push(id);
@@ -227,7 +227,7 @@ function getElementsInPolygon(restruct, rr) {
   restruct.simpleObjects.forEach((item, id) => {
     const referencePoints = item.getReferencePoints(true);
     const referencePointInPolygon = referencePoints.find((point) =>
-      isPointInPolygon(r, point)
+      isPointInPolygon(r, point),
     );
     if (referencePointInPolygon) {
       simpleObjectsList.push(id);
@@ -237,7 +237,7 @@ function getElementsInPolygon(restruct, rr) {
   restruct.texts.forEach((item, id) => {
     const referencePoints = item.getReferencePoints();
     const referencePointInPolygon = referencePoints.find((point) =>
-      isPointInPolygon(r, point)
+      isPointInPolygon(r, point),
     );
 
     if (referencePointInPolygon) {

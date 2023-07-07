@@ -53,7 +53,7 @@ function pollDeferred(process, complete, timeGap, startTimeGap) {
             reject(e);
           }
         },
-        (err) => reject(err)
+        (err) => reject(err),
       );
     }
     setTimeout(iterate, startTimeGap || 0);
@@ -69,7 +69,7 @@ function request(
   url: string,
   data?: any,
   headers?: any,
-  responseHandler?: (promise: Promise<any>) => Promise<any>
+  responseHandler?: (promise: Promise<any>) => Promise<any>,
 ) {
   let requestUrl = url;
   if (data && method === 'GET') requestUrl = parametrizeUrl(url, data);
@@ -79,7 +79,7 @@ function request(
       {
         Accept: 'application/json',
       },
-      headers
+      headers,
     ),
     body: method !== 'GET' ? data : undefined,
     credentials: 'same-origin',
@@ -91,7 +91,7 @@ function request(
     response = response.then((response) =>
       response
         .json()
-        .then((res) => (response.ok ? res : Promise.reject(res.error)))
+        .then((res) => (response.ok ? res : Promise.reject(res.error))),
     );
   }
 
@@ -103,12 +103,12 @@ function indigoCall(
   url: string,
   baseUrl: string,
   defaultOptions: any,
-  customHeaders?: Record<string, string>
+  customHeaders?: Record<string, string>,
 ) {
   return function (
     data,
     options,
-    responseHandler?: (promise: Promise<any>) => Promise<any>
+    responseHandler?: (promise: Promise<any>) => Promise<any>,
   ) {
     const body = Object.assign({}, data);
     body.options = Object.assign(body.options || {}, defaultOptions, options);
@@ -120,7 +120,7 @@ function indigoCall(
         'Content-Type': 'application/json',
         ...customHeaders,
       },
-      responseHandler
+      responseHandler,
     );
   };
 }
@@ -133,7 +133,7 @@ export class RemoteStructService implements StructService {
   constructor(
     apiPath: string,
     defaultOptions: StructServiceOptions,
-    customHeaders?: Record<string, string>
+    customHeaders?: Record<string, string>,
   ) {
     this.apiPath = apiPath;
     this.defaultOptions = defaultOptions;
@@ -146,13 +146,13 @@ export class RemoteStructService implements StructService {
       'indigo/convert',
       this.apiPath,
       this.defaultOptions,
-      this.customHeaders
+      this.customHeaders,
     )(
       {
         struct,
         output_format: 'chemical/x-inchi',
       },
-      {}
+      {},
     );
   }
 
@@ -181,27 +181,27 @@ export class RemoteStructService implements StructService {
 
   convert(
     data: ConvertData,
-    options?: StructServiceOptions
+    options?: StructServiceOptions,
   ): Promise<ConvertResult> {
     return indigoCall(
       'POST',
       'indigo/convert',
       this.apiPath,
       this.defaultOptions,
-      this.customHeaders
+      this.customHeaders,
     )(data, options);
   }
 
   layout(
     data: LayoutData,
-    options?: StructServiceOptions
+    options?: StructServiceOptions,
   ): Promise<LayoutResult> {
     return indigoCall(
       'POST',
       'indigo/layout',
       this.apiPath,
       this.defaultOptions,
-      this.customHeaders
+      this.customHeaders,
     )(data, options);
   }
 
@@ -211,59 +211,59 @@ export class RemoteStructService implements StructService {
       'indigo/clean',
       this.apiPath,
       this.defaultOptions,
-      this.customHeaders
+      this.customHeaders,
     )(data, options);
   }
 
   aromatize(
     data: AromatizeData,
-    options?: StructServiceOptions
+    options?: StructServiceOptions,
   ): Promise<AromatizeResult> {
     return indigoCall(
       'POST',
       'indigo/aromatize',
       this.apiPath,
       this.defaultOptions,
-      this.customHeaders
+      this.customHeaders,
     )(data, options);
   }
 
   dearomatize(
     data: DearomatizeData,
-    options?: StructServiceOptions
+    options?: StructServiceOptions,
   ): Promise<DearomatizeResult> {
     return indigoCall(
       'POST',
       'indigo/dearomatize',
       this.apiPath,
       this.defaultOptions,
-      this.customHeaders
+      this.customHeaders,
     )(data, options);
   }
 
   calculateCip(
     data: CalculateCipData,
-    options?: StructServiceOptions
+    options?: StructServiceOptions,
   ): Promise<CalculateCipResult> {
     return indigoCall(
       'POST',
       'indigo/calculate_cip',
       this.apiPath,
       this.defaultOptions,
-      this.customHeaders
+      this.customHeaders,
     )(data, options);
   }
 
   automap(
     data: AutomapData,
-    options?: StructServiceOptions
+    options?: StructServiceOptions,
   ): Promise<AutomapResult> {
     return indigoCall(
       'POST',
       'indigo/automap',
       this.apiPath,
       this.defaultOptions,
-      this.customHeaders
+      this.customHeaders,
     )(data, options);
   }
 
@@ -273,20 +273,20 @@ export class RemoteStructService implements StructService {
       'indigo/check',
       this.apiPath,
       this.defaultOptions,
-      this.customHeaders
+      this.customHeaders,
     )(data, options);
   }
 
   calculate(
     data: CalculateData,
-    options?: StructServiceOptions
+    options?: StructServiceOptions,
   ): Promise<CalculateResult> {
     return indigoCall(
       'POST',
       'indigo/calculate',
       this.apiPath,
       this.defaultOptions,
-      this.customHeaders
+      this.customHeaders,
     )(data, options);
   }
 
@@ -298,12 +298,12 @@ export class RemoteStructService implements StructService {
       blob,
       {
         'Content-Type': blob.type || 'application/octet-stream',
-      }
+      },
     );
     const status = request.bind(
       null,
       'GET',
-      this.apiPath + 'imago/uploads/:id'
+      this.apiPath + 'imago/uploads/:id',
     );
     return req
       .then((data) =>
@@ -314,15 +314,15 @@ export class RemoteStructService implements StructService {
             return response.state === 'SUCCESS';
           },
           500,
-          300
-        )
+          300,
+        ),
       )
       .then((response: any) => ({ struct: response.metadata.mol_str }));
   }
 
   generateImageAsBase64(
     data: string,
-    options?: GenerateImageOptions
+    options?: GenerateImageOptions,
   ): Promise<string> {
     const outputFormat: OutputFormatType = options?.outputFormat || 'png';
     return indigoCall(
@@ -330,9 +330,9 @@ export class RemoteStructService implements StructService {
       'indigo/render',
       this.apiPath,
       this.defaultOptions,
-      this.customHeaders
+      this.customHeaders,
     )({ struct: data }, { 'render-output-format': outputFormat }, (response) =>
-      response.then((resp) => resp.text())
+      response.then((resp) => resp.text()),
     );
   }
 }

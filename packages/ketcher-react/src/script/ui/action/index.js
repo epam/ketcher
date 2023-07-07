@@ -245,7 +245,7 @@ function dontClipMessage(title, errorHandler) {
     'This action is unavailable via menu.\n' + // eslint-disable-line no-undef
       'Instead, use shortcut to ' +
       title +
-      '.'
+      '.',
   );
 }
 

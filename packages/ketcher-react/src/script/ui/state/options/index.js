@@ -59,7 +59,7 @@ export const initOptionsState = {
   },
   settings: Object.assign(
     getDefaultOptions(),
-    validation(storage.getItem('ketcher-opts'))
+    validation(storage.getItem('ketcher-opts')),
   ),
   getServerSettings() {
     return pick(SERVER_OPTIONS, this.settings);

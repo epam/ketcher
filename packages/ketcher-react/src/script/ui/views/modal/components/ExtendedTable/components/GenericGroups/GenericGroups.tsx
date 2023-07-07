@@ -47,7 +47,7 @@ const renderGenGroupComponent = (
   group,
   selected,
   onAtomSelect,
-  disabledQueryElements
+  disabledQueryElements,
 ) => (
   <GenGroup
     group={groupsMap[group]}
@@ -69,20 +69,20 @@ function GenericGroups({
           groupNames.atomsGen,
           selected,
           onAtomSelect,
-          disabledQueryElements
+          disabledQueryElements,
         )}
         {renderGenGroupComponent(
           groupNames.specialNodes,
           selected,
           onAtomSelect,
-          disabledQueryElements
+          disabledQueryElements,
         )}
       </div>
       {renderGenGroupComponent(
         groupNames.groupGen,
         selected,
         onAtomSelect,
-        disabledQueryElements
+        disabledQueryElements,
       )}
       <HorizontalBoxWithLines />
       <div className={classes.groupGenerics}>
@@ -91,7 +91,7 @@ function GenericGroups({
             groupNames.groupAcyclic,
             selected,
             onAtomSelect,
-            disabledQueryElements
+            disabledQueryElements,
           )}
           <div className={classes.subgroupContainer}>
             <VerticalBoxWithLines />
@@ -100,13 +100,13 @@ function GenericGroups({
                 groupNames.acyclicCarbo,
                 selected,
                 onAtomSelect,
-                disabledQueryElements
+                disabledQueryElements,
               )}
               {renderGenGroupComponent(
                 groupNames.acyclicHetero,
                 selected,
                 onAtomSelect,
-                disabledQueryElements
+                disabledQueryElements,
               )}
             </div>
           </div>
@@ -116,7 +116,7 @@ function GenericGroups({
             groupNames.groupCyclic,
             selected,
             onAtomSelect,
-            disabledQueryElements
+            disabledQueryElements,
           )}
           <div className={classes.subgroupContainer}>
             <VerticalBoxWithLines />
@@ -125,13 +125,13 @@ function GenericGroups({
                 groupNames.cyclicCarbo,
                 selected,
                 onAtomSelect,
-                disabledQueryElements
+                disabledQueryElements,
               )}
               {renderGenGroupComponent(
                 groupNames.cyclicHetero,
                 selected,
                 onAtomSelect,
-                disabledQueryElements
+                disabledQueryElements,
               )}
             </div>
           </div>

@@ -49,7 +49,7 @@ export function isCloseToEdgeOfCanvas(event, canvasSize) {
 export function calculateCanvasExtension(
   clientArea,
   currentCanvasSize,
-  extensionVector
+  extensionVector,
 ) {
   const newHorizontalScrollPosition = clientArea.scrollLeft + extensionVector.x;
   const newVerticalScrollPosition = clientArea.scrollTop + extensionVector.y;
@@ -75,7 +75,7 @@ export function shiftAndExtendCanvasByVector(vector: Vec2, render) {
   const extensionVector = calculateCanvasExtension(
     clientArea,
     render.sz.scaled(render.options.zoom),
-    vector
+    vector,
   ).scaled(1 / render.options.zoom);
 
   if (extensionVector.x > 0 || extensionVector.y > 0) {

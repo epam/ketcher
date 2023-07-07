@@ -164,7 +164,7 @@ Select.val = function (ev, schema) {
   return Array.from(options).reduce(
     (res, o: HTMLOptionElement, i) =>
       !o.selected ? res : [enumSchema(schema, i), ...res],
-    [] as HTMLOptionElement[]
+    [] as HTMLOptionElement[],
   );
 };
 
@@ -221,7 +221,7 @@ FieldSet.val = function (ev, schema) {
       (res, inp: HTMLInputElement, i) =>
         !inp.checked ? res : [enumSchema(schema, i), ...res],
 
-      [] as HTMLInputElement[]
+      [] as HTMLInputElement[],
     );
   }
 
@@ -261,7 +261,7 @@ function enumSchema(schema, cbOrIndex) {
         : schema.enumNames && schema.enumNames[i];
       return cbOrIndex(
         title !== undefined ? title : item,
-        item && item.value !== undefined ? item.value : item
+        item && item.value !== undefined ? item.value : item,
       );
     });
   }
@@ -353,7 +353,9 @@ function componentMap(props: Props) {
 }
 
 const AnyComponentWithRef = React.forwardRef(
-  ({ Component, ...props }: any, ref) => <Component {...props} innerRef={ref} />
+  ({ Component, ...props }: any, ref) => (
+    <Component {...props} innerRef={ref} />
+  ),
 );
 
 class Input extends PureComponent<
@@ -397,5 +399,5 @@ class Input extends PureComponent<
 export default React.forwardRef(
   (props: Props, ref: React.Ref<HTMLInputElement>) => {
     return <Input innerRef={ref} {...props} />;
-  }
+  },
 );

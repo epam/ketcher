@@ -37,7 +37,7 @@ export class ScaleTransformer {
   getSliderValue(zoom: number) {
     // Calculating x as logarighm of (y/a) to base b
     const sliderValue = Math.round(
-      Math.log2(zoom / this.a) / Math.log2(this.b)
+      Math.log2(zoom / this.a) / Math.log2(this.b),
     );
     return sliderValue;
   }
@@ -47,14 +47,14 @@ export class ScaleTransformer {
     const computedZoomValue = this.a * this.b ** sliderValue;
     const zoomValue = this.pickNearestFromList(
       computedZoomValue,
-      this.zoomList
+      this.zoomList,
     );
     return zoomValue;
   }
 
   private pickNearestFromList(value: number, list) {
     const nearest = list.reduce((prev, curr) =>
-      Math.abs(curr - value) < Math.abs(prev - value) ? curr : prev
+      Math.abs(curr - value) < Math.abs(prev - value) ? curr : prev,
     );
     return nearest;
   }

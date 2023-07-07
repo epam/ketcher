@@ -42,7 +42,7 @@ export function fromSeveralSgroupAddition(
   restruct: Restruct,
   type,
   atoms,
-  attrs
+  attrs,
 ) {
   const descriptors = attrs.fieldValue;
   if (typeof descriptors === 'string' || type !== 'DAT') {
@@ -52,7 +52,7 @@ export function fromSeveralSgroupAddition(
       atoms,
       attrs,
       restruct.molecule.sgroups.newId(),
-      []
+      [],
     );
   }
 
@@ -67,8 +67,8 @@ export function fromSeveralSgroupAddition(
         atoms,
         localAttrs,
         restruct.molecule.sgroups.newId(),
-        []
-      )
+        [],
+      ),
     );
   }, new Action());
 }
@@ -86,7 +86,7 @@ export function fromSgroupAttrs(restruct, id, attrs) {
 export function setExpandSGroup(
   restruct: Restruct,
   sgid: number,
-  attrs: { expanded: boolean }
+  attrs: { expanded: boolean },
 ) {
   const action = new Action();
 
@@ -100,7 +100,7 @@ export function setExpandSGroup(
 
   atoms.forEach((aid) => {
     action.mergeWith(
-      fromAtomsAttrs(restruct, aid, restruct.atoms.get(aid)?.a, false)
+      fromAtomsAttrs(restruct, aid, restruct.atoms.get(aid)?.a, false),
     );
   });
 
@@ -118,7 +118,7 @@ export function expandSGroupWithMultipleAttachmentPoint(restruct) {
       action.mergeWith(
         setExpandSGroup(restruct, sgroup.id, {
           expanded: true,
-        })
+        }),
       );
     }
   });
@@ -184,7 +184,7 @@ export function fromSgroupAddition(
   attachmentPoints,
   pp?,
   expanded?,
-  name?
+  name?,
 ) {
   // eslint-disable-line
   let action = new Action();
@@ -212,7 +212,7 @@ export function fromSgroupAddition(
   action.addOp(
     type !== 'DAT'
       ? new SGroupAddToHierarchy(sgid)
-      : new SGroupAddToHierarchy(sgid, -1, [])
+      : new SGroupAddToHierarchy(sgid, -1, []),
   );
 
   action = action.perform(restruct);
@@ -242,7 +242,7 @@ export function fromSgroupAction(
   restruct,
   newSg,
   sourceAtoms,
-  selection
+  selection,
 ) {
   if (context === SgContexts.Bond) {
     return fromBondAction(restruct, newSg, sourceAtoms, selection);
@@ -256,7 +256,7 @@ export function fromSgroupAction(
       restruct,
       newSg,
       newSourceAtoms,
-      Array.from(restruct.atoms.keys())
+      Array.from(restruct.atoms.keys()),
     );
   }
 
@@ -277,7 +277,7 @@ export function fromSgroupAction(
       restruct,
       newSg.type,
       newSourceAtoms,
-      newSg.attrs
+      newSg.attrs,
     ),
   };
 }
@@ -286,7 +286,7 @@ function fromAtomAction(restruct, newSg, sourceAtoms) {
   return sourceAtoms.reduce(
     (acc, atom) => {
       acc.action = acc.action.mergeWith(
-        fromSeveralSgroupAddition(restruct, newSg.type, [atom], newSg.attrs)
+        fromSeveralSgroupAddition(restruct, newSg.type, [atom], newSg.attrs),
       );
       return acc;
     },
@@ -296,13 +296,13 @@ function fromAtomAction(restruct, newSg, sourceAtoms) {
         atoms: sourceAtoms,
         bonds: [],
       },
-    }
+    },
   );
 }
 
 function fromGroupAction(restruct, newSg, sourceAtoms, targetAtoms) {
   const allFragments = new Pile(
-    sourceAtoms.map((aid) => restruct.atoms.get(aid).a.fragment)
+    sourceAtoms.map((aid) => restruct.atoms.get(aid).a.fragment),
   );
 
   return Array.from(allFragments).reduce(
@@ -317,7 +317,7 @@ function fromGroupAction(restruct, newSg, sourceAtoms, targetAtoms) {
       const bonds = getAtomsBondIds(restruct.molecule, atoms);
 
       acc.action = acc.action.mergeWith(
-        fromSeveralSgroupAddition(restruct, newSg.type, atoms, newSg.attrs)
+        fromSeveralSgroupAddition(restruct, newSg.type, atoms, newSg.attrs),
       );
 
       acc.selection.atoms = acc.selection.atoms.concat(atoms);
@@ -331,7 +331,7 @@ function fromGroupAction(restruct, newSg, sourceAtoms, targetAtoms) {
         atoms: [],
         bonds: [],
       },
-    }
+    },
   );
 }
 
@@ -350,8 +350,8 @@ function fromBondAction(restruct, newSg, sourceAtoms, currSelection) {
           restruct,
           newSg.type,
           [bond.begin, bond.end],
-          newSg.attrs
-        )
+          newSg.attrs,
+        ),
       );
 
       acc.selection.bonds.push(bondid);
@@ -364,7 +364,7 @@ function fromBondAction(restruct, newSg, sourceAtoms, currSelection) {
         atoms: sourceAtoms,
         bonds: [],
       },
-    }
+    },
   );
 }
 

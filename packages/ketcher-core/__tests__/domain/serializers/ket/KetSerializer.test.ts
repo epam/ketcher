@@ -75,15 +75,15 @@ describe('deserialize (ToStruct)', () => {
     expect(spy).toBeCalled();
     expect(spy.mock.results[0].value.rxnArrows).toBeDefined();
     expect(
-      spy.mock.results[0].value.rxnArrows.get(0) instanceof RxnArrow
+      spy.mock.results[0].value.rxnArrows.get(0) instanceof RxnArrow,
     ).toBeTruthy();
     expect(spy.mock.results[0].value.rxnArrows.size).toEqual(1);
     expect(spy.mock.results[0].value.rxnArrows.get(0).mode).toEqual(
-      'open-angle'
+      'open-angle',
     );
     expect(spy.mock.results[1].value.rxnPluses).toBeDefined();
     expect(
-      spy.mock.results[0].value.rxnPluses.get(0) instanceof RxnPlus
+      spy.mock.results[0].value.rxnPluses.get(0) instanceof RxnPlus,
     ).toBeTruthy();
     expect(spy.mock.results[1].value.rxnPluses.size).toEqual(2);
   });
@@ -94,10 +94,10 @@ describe('deserialize (ToStruct)', () => {
     expect(spy.mock.results[0].value.simpleObjects).toBeDefined();
     expect(spy.mock.results[0].value.simpleObjects.size).toEqual(1);
     expect(spy.mock.results[0].value.simpleObjects.get(0).mode).toEqual(
-      'ellipse'
+      'ellipse',
     );
     expect(
-      spy.mock.results[0].value.simpleObjects.get(0) instanceof SimpleObject
+      spy.mock.results[0].value.simpleObjects.get(0) instanceof SimpleObject,
     ).toBeTruthy();
   });
   it('textToStruct', () => {
@@ -116,7 +116,7 @@ describe('deserialize (ToStruct)', () => {
     expect(spy.mock.results[1].value.atoms.get(2).charge).toEqual(5);
     expect(spy.mock.results[1].value.atoms.get(4).label).toEqual('L#');
     expect(
-      spy.mock.results[1].value.atoms.get(4).atomList instanceof AtomList
+      spy.mock.results[1].value.atoms.get(4).atomList instanceof AtomList,
     ).toBeTruthy();
     expect(spy.mock.results[1].value.atoms.get(4).atomList.ids).toEqual([4, 3]);
     expect(spy.mock.results[1].value.atoms.size).toEqual(7);
@@ -132,10 +132,10 @@ describe('deserialize (ToStruct)', () => {
     expect(spy.mock.results[3].value.sgroups.get(0).data.mul).toEqual(1);
     expect(spy.mock.results[4].value.sgroups.get(0).type).toEqual('SRU');
     expect(spy.mock.results[4].value.sgroups.get(0).data.subscript).toEqual(
-      'n'
+      'n',
     );
     expect(spy.mock.results[4].value.sgroups.get(0).data.connectivity).toEqual(
-      'ht'
+      'ht',
     );
     expect(spy.mock.results[5].value.sgroups.get(0).type).toEqual('MUL');
     expect(spy.mock.results[5].value.sgroups.get(0).data.mul).toEqual(3);
@@ -143,10 +143,10 @@ describe('deserialize (ToStruct)', () => {
     expect(spy.mock.results[6].value.sgroups.get(0).data.name).toEqual('B');
     expect(spy.mock.results[7].value.sgroups.get(0).type).toEqual('SRU');
     expect(spy.mock.results[7].value.sgroups.get(0).data.subscript).toEqual(
-      'n'
+      'n',
     );
     expect(spy.mock.results[7].value.sgroups.get(0).data.connectivity).toEqual(
-      'hh'
+      'hh',
     );
   });
   it('rgroupToStruct', () => {
@@ -158,7 +158,7 @@ describe('deserialize (ToStruct)', () => {
     expect(spy.mock.results[0].value.bonds.size).toEqual(3);
     expect(spy.mock.results[0].value.rgroups.get(14)).toBeTruthy();
     expect(
-      spy.mock.results[0].value.rgroups.get(14) instanceof RGroup
+      spy.mock.results[0].value.rgroups.get(14) instanceof RGroup,
     ).toBeTruthy();
   });
   it('validation function', () => {
@@ -167,7 +167,7 @@ describe('deserialize (ToStruct)', () => {
     expect(spy).toBeCalled();
     expect(spy.mock.results[0].value).toBeTruthy();
     expect(() => ket.deserialize(errorKet)).toThrow(
-      'Cannot deserialize input JSON.'
+      'Cannot deserialize input JSON.',
     );
     expect(spy.mock.results[1].value).toBeFalsy();
   });
@@ -218,21 +218,21 @@ describe('serialize (ToKet)', () => {
     expect(spy.mock.results[1].value.atoms[2].charge).toEqual(5);
     expect(
       spy.mock.results[1].value.atoms.filter(
-        (item) => item.type === 'atom-list'
-      )
+        (item) => item.type === 'atom-list',
+      ),
     ).toBeTruthy();
     expect(spy.mock.results[1].value.atoms[4].elements).toEqual(['Be', 'Li']);
     expect(spy.mock.results[1].value.atoms.length).toEqual(7);
     // bonds
     expect(spy.mock.results[1].value.bonds.length).toEqual(7);
     expect(
-      spy.mock.results[1].value.bonds.filter((bond) => bond.stereo).length
+      spy.mock.results[1].value.bonds.filter((bond) => bond.stereo).length,
     ).toEqual(1);
     expect(
-      spy.mock.results[1].value.bonds.filter((bond) => bond.type === 1).length
+      spy.mock.results[1].value.bonds.filter((bond) => bond.type === 1).length,
     ).toEqual(4);
     expect(
-      spy.mock.results[1].value.bonds.filter((bond) => bond.type === 2).length
+      spy.mock.results[1].value.bonds.filter((bond) => bond.type === 2).length,
     ).toEqual(3);
     // sgroups
     ket.serialize(moleculeSgroupStruct);
@@ -275,37 +275,37 @@ describe('serialize (ToKet)', () => {
     expect(spy).toBeCalled();
     expect(
       spy.mock.results[0].value.filter((item) => item.type === 'molecule')
-        .length
+        .length,
     ).toEqual(1);
     expect(
       spy.mock.results[0].value.filter((item) => item.type === 'molecule')[0]
-        .fragment.atoms.size
+        .fragment.atoms.size,
     ).toEqual(6);
     expect(
       spy.mock.results[0].value.filter((item) => item.type === 'molecule')[0]
-        .fragment.bonds.size
+        .fragment.bonds.size,
     ).toEqual(6);
     expect(
-      spy.mock.results[0].value.filter((item) => item.type === 'arrow').length
+      spy.mock.results[0].value.filter((item) => item.type === 'arrow').length,
     ).toBeTruthy();
     expect(
       spy.mock.results[0].value.filter((item) => item.type === 'arrow')[0].data
-        .mode
+        .mode,
     ).toEqual('open-angle');
     expect(
-      spy.mock.results[0].value.filter((item) => item.type === 'plus').length
+      spy.mock.results[0].value.filter((item) => item.type === 'plus').length,
     ).toBeTruthy();
     expect(
       spy.mock.results[0].value.filter((item) => item.type === 'simpleObject')
-        .length
+        .length,
     ).toBeTruthy();
     expect(
       spy.mock.results[0].value.filter(
-        (item) => item.type === 'simpleObject'
-      )[0].data.mode
+        (item) => item.type === 'simpleObject',
+      )[0].data.mode,
     ).toEqual('rectangle');
     expect(
-      spy.mock.results[0].value.filter((item) => item.type === 'text').length
+      spy.mock.results[0].value.filter((item) => item.type === 'text').length,
     ).toBeTruthy();
   });
 });

@@ -3,7 +3,7 @@ import { Vec2 } from 'ketcher-core';
 export const rotatePoint = (
   centerPoint: Vec2,
   startPoint: Vec2,
-  angle: number
+  angle: number,
 ) => {
   const oCenter = centerPoint;
   const oStart = startPoint;
@@ -17,7 +17,7 @@ export const rotatePoint = (
 
 export const getDifference = (
   currentDegree: number,
-  structRotateDegree: number
+  structRotateDegree: number,
 ) => {
   let abs = 0;
 

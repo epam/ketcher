@@ -36,7 +36,7 @@ export function fromPaste(
   restruct,
   pstruct,
   point,
-  angle = 0
+  angle = 0,
 ): [Action, { atoms: number[]; bonds: number[] }] {
   const xy0 = getStructCenter(pstruct);
   const offset = Vec2.diff(point, xy0);
@@ -56,7 +56,7 @@ export function fromPaste(
     if (!fridMap.has(atom.fragment)) {
       fridMap.set(
         atom.fragment,
-        (action.addOp(new FragmentAdd().perform(restruct)) as FragmentAdd).frid
+        (action.addOp(new FragmentAdd().perform(restruct)) as FragmentAdd).frid,
       );
     }
 
@@ -65,7 +65,7 @@ export function fromPaste(
     });
     const operation = new AtomAdd(
       tmpAtom,
-      Vec2.diff(atom.pp, xy0).rotate(angle).add(point)
+      Vec2.diff(atom.pp, xy0).rotate(angle).add(point),
     ).perform(restruct) as AtomAdd;
     action.addOp(operation);
     aidMap.set(aid, operation.data.aid);
@@ -78,9 +78,9 @@ export function fromPaste(
     frag.stereoAtoms.forEach((aid) =>
       action.addOp(
         new FragmentAddStereoAtom(fridMap.get(frid), aidMap.get(aid)).perform(
-          restruct
-        )
-      )
+          restruct,
+        ),
+      ),
     );
   });
 
@@ -88,7 +88,7 @@ export function fromPaste(
     const operation = new BondAdd(
       aidMap.get(bond.begin),
       aidMap.get(bond.end),
-      bond
+      bond,
     ).perform(restruct) as BondAdd;
     action.addOp(operation);
 
@@ -115,7 +115,7 @@ export function fromPaste(
       attachmentPoints,
       sg.pp ? sg.pp.add(offset) : null,
       sg.type === 'SUP' ? sg.isExpanded() : null,
-      sg.data.name
+      sg.data.name,
     );
     sgAction.operations.reverse().forEach((oper) => {
       action.addOp(oper);
@@ -126,8 +126,8 @@ export function fromPaste(
     action.addOp(
       new RxnArrowAdd(
         rxnArrow.pos.map((p) => p.add(offset)),
-        rxnArrow.mode
-      ).perform(restruct)
+        rxnArrow.mode,
+      ).perform(restruct),
     );
   });
 
@@ -139,8 +139,8 @@ export function fromPaste(
     action.addOp(
       new SimpleObjectAdd(
         simpleObject.pos.map((p) => p.add(offset)),
-        simpleObject.mode
-      ).perform(restruct)
+        simpleObject.mode,
+      ).perform(restruct),
     );
   });
 
@@ -149,15 +149,15 @@ export function fromPaste(
       new TextCreate(
         text.content,
         text.position.add(offset),
-        text.pos.map((p) => p.add(offset))
-      ).perform(restruct)
+        text.pos.map((p) => p.add(offset)),
+      ).perform(restruct),
     );
   });
 
   pstruct.rgroups.forEach((rg, rgid) => {
     rg.frags.forEach((__frag, frid) => {
       action.addOp(
-        new RGroupFragment(rgid, fridMap.get(frid)).perform(restruct)
+        new RGroupFragment(rgid, fridMap.get(frid)).perform(restruct),
       );
     });
     const ifThen = pstruct.rgroups.get(rgid).ifthen;

@@ -30,8 +30,8 @@ const Accordion = ({ tabs, className, changedGroups }): React.ReactElement => {
       isExpand
         ? [...expandedAccordions, accordion]
         : [...expandedAccordions].filter(
-            (expandedAccordion) => expandedAccordion !== accordion
-          )
+            (expandedAccordion) => expandedAccordion !== accordion,
+          ),
     );
   };
 

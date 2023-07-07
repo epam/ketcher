@@ -20,7 +20,7 @@ import { delay, DELAY_IN_SECONDS } from '@tests/utils';
 export const openTool = async (
   page: Page,
   defaultToolId: string,
-  currentType: string
+  currentType: string,
 ) => {
   // Selection tool is preselected by default so we do not need to click 2 times
   const defaultTool = await page.getByTestId(defaultToolId);

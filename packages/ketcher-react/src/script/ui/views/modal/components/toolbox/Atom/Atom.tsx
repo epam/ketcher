@@ -72,8 +72,8 @@ const Atom: FC<Props> = (props: Props) => {
       isExpand
         ? [...expandedAccordions, accordion]
         : [...expandedAccordions].filter(
-            (expandedAccordion) => expandedAccordion !== accordion
-          )
+            (expandedAccordion) => expandedAccordion !== accordion,
+          ),
     );
   };
 

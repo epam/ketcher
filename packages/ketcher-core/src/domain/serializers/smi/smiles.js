@@ -60,7 +60,7 @@ Smiles.prototype.saveMolecule = function (struct, ignoreErrors) {
     !struct.hasRxnArrow(), // make it drop multiple reactions
     undefined,
     undefined,
-    undefined
+    undefined,
   );
   struct.initHalfBonds();
   struct.initNeighbors();
@@ -131,7 +131,7 @@ Smiles.prototype.saveMolecule = function (struct, ignoreErrors) {
     struct,
     this.atoms,
     componentsAll,
-    components.reactants.length
+    components.reactants.length,
   );
 
   walk.walk();
@@ -182,7 +182,7 @@ Smiles.prototype.saveMolecule = function (struct, ignoreErrors) {
       function (idx) {
         return this.atoms[idx].neighbours;
       },
-      this
+      this,
     );
     stereocenters.buildFromBonds(this.ignoreErrors);
 
@@ -389,7 +389,7 @@ Smiles.prototype.saveMolecule = function (struct, ignoreErrors) {
         vIdx,
         this.atoms[vIdx].aromatic,
         this.atoms[vIdx].lowercase,
-        this.atoms[vIdx].chirality
+        this.atoms[vIdx].chirality,
       );
       this.writtenAtoms.push(seqEl.idx);
     }
@@ -419,7 +419,7 @@ Smiles.prototype.writeAtom = function (
   idx,
   aromatic,
   lowercase,
-  chirality
+  chirality,
 ) {
   // eslint-disable-line max-params, max-statements
   const atom = mol.atoms.get(idx);
@@ -574,7 +574,7 @@ Smiles.prototype.markCisTrans = function (mol) {
     function (idx) {
       return this.atoms[idx].neighbours;
     },
-    this
+    this,
   );
   this.cis_trans.build();
   this.dbonds = new Array(mol.bonds.size);

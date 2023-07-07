@@ -23,7 +23,7 @@ const useBondSGroupAttach = () => {
       editor.selection(selection);
       SGroupTool.sgroupDialog(editor, null);
     },
-    [getKetcherInstance]
+    [getKetcherInstance],
   );
 
   const hidden = useCallback(
@@ -41,7 +41,7 @@ const useBondSGroupAttach = () => {
 
       return attachedSGroups.size > 0;
     },
-    [getKetcherInstance]
+    [getKetcherInstance],
   );
 
   return [handler, hidden] as const;

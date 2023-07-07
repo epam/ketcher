@@ -57,7 +57,7 @@ export function loadStruct(struct) {
 function parseStruct(
   struct: string | Struct,
   server,
-  options?
+  options?,
 ): Promise<Struct> {
   if (typeof struct === 'string') {
     options = options || {};
@@ -113,13 +113,13 @@ export function load(struct: Struct, options?) {
       const parsedStruct = await parseStruct(struct, server, options);
       const { fragment } = options;
       const hasUnsupportedGroups = parsedStruct.sgroups.some(
-        (sGroup) => !supportedSGroupTypes[sGroup.type]
+        (sGroup) => !supportedSGroupTypes[sGroup.type],
       );
 
       if (hasUnsupportedGroups) {
         await editor.event.confirm.dispatch();
         parsedStruct.sgroups = parsedStruct.sgroups.filter(
-          (_key, sGroup) => supportedSGroupTypes[sGroup.type]
+          (_key, sGroup) => supportedSGroupTypes[sGroup.type],
         );
       }
 
@@ -142,7 +142,7 @@ export function load(struct: Struct, options?) {
 
       const stereAtomsMap = getStereoAtomsMap(
         parsedStruct,
-        Array.from(parsedStruct.bonds.values())
+        Array.from(parsedStruct.bonds.values()),
       );
 
       parsedStruct.atoms.forEach((atom, id) => {

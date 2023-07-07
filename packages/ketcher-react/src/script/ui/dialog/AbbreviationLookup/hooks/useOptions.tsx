@@ -37,7 +37,7 @@ export const useOptions = (): AbbreviationOption[] => {
     // TODO uniqBy is required to remove duplicates. https://github.com/epam/ketcher/issues/2749
     const uniqTemplates = uniqBy<Template>(
       [...functionGroups, ...templates, ...saltsAndSolvents],
-      (template) => template.struct.name
+      (template) => template.struct.name,
     );
 
     const mappedElementOptions: AbbreviationOption[] = Elements.getAll().map(
@@ -51,7 +51,7 @@ export const useOptions = (): AbbreviationOption[] => {
           loweredName: element.title.toLowerCase(),
           loweredAbbreviation: element.label.toLowerCase(),
         };
-      }
+      },
     );
 
     const mappedTemplateOptions: AbbreviationOption[] = uniqTemplates.map(
@@ -69,7 +69,7 @@ export const useOptions = (): AbbreviationOption[] => {
           loweredName: template.struct.name.toLowerCase(),
           loweredAbbreviation: template.struct.abbreviation?.toLowerCase(),
         };
-      }
+      },
     );
 
     return [...mappedElementOptions, ...mappedTemplateOptions];

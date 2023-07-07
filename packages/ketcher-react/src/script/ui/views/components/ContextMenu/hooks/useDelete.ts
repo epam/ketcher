@@ -21,7 +21,7 @@ const useDelete = () => {
 
       editor.selection(null);
     },
-    [getKetcherInstance]
+    [getKetcherInstance],
   );
 
   return handler;

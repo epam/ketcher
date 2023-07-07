@@ -76,7 +76,7 @@ class ReactionArrowTool implements Tool {
           this.dragCtx.action = fromMultipleMove(
             this.reStruct,
             this.editor.selection() || {},
-            diff
+            diff,
           );
         } else {
           this.updateResizingState(this.dragCtx.itemId, true);
@@ -87,7 +87,7 @@ class ReactionArrowTool implements Tool {
             diff,
             current,
             this.dragCtx.ci.ref,
-            isSnappingEnabled
+            isSnappingEnabled,
           );
         }
         this.editor.update(this.dragCtx.action, true);
@@ -96,7 +96,7 @@ class ReactionArrowTool implements Tool {
           const action = fromArrowAddition(
             this.reStruct,
             [this.dragCtx.p0, this.dragCtx.p0],
-            this.mode
+            this.mode,
           );
           // TODO: need to rework  actions/operations logic
           const addOperation = action.operations[0];
@@ -115,7 +115,7 @@ class ReactionArrowTool implements Tool {
           diff,
           current,
           null,
-          isSnappingEnabled
+          isSnappingEnabled,
         );
         this.editor.update(this.dragCtx.action, true);
       }
@@ -152,7 +152,7 @@ class ReactionArrowTool implements Tool {
     p1 = getDefaultLengthPos(p0, p1);
     this.editor.update(
       fromArrowDeletion(this.reStruct, this.dragCtx.itemId),
-      true
+      true,
     );
     this.dragCtx.action = fromArrowAddition(this.reStruct, [p0, p1], this.mode);
   }

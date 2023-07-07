@@ -58,7 +58,7 @@ export function fromAtomsAttrs(
   restruct: ReStruct,
   ids: Array<number> | number,
   attrs: any,
-  reset: boolean | null
+  reset: boolean | null,
 ) {
   const action = new Action();
   const aids = Array.isArray(ids) ? ids : [ids];
@@ -111,7 +111,9 @@ export function fromAtomsAttrs(
 
     if (Atom.isInAromatizedRing(restruct.molecule, atomId)) {
       action.addOp(
-        new AtomAttr(atomId, 'implicitHCount', atom.implicitH).perform(restruct)
+        new AtomAttr(atomId, 'implicitHCount', atom.implicitH).perform(
+          restruct,
+        ),
       );
     }
   });
@@ -127,12 +129,12 @@ export function fromStereoAtomAttrs(restruct, aid, attrs, withReverse) {
 
     if ('stereoParity' in attrs) {
       action.addOp(
-        new AtomAttr(aid, 'stereoParity', attrs.stereoParity).perform(restruct)
+        new AtomAttr(aid, 'stereoParity', attrs.stereoParity).perform(restruct),
       );
     }
     if ('stereoLabel' in attrs) {
       action.addOp(
-        new AtomAttr(aid, 'stereoLabel', attrs.stereoLabel).perform(restruct)
+        new AtomAttr(aid, 'stereoLabel', attrs.stereoLabel).perform(restruct),
       );
       if (attrs.stereoLabel === null) {
         action.addOp(new FragmentDeleteStereoAtom(frid, aid).perform(restruct));
@@ -224,7 +226,7 @@ export function fromAtomMerge(restruct, srcId, dstId) {
   action.addOp(new AtomDelete(srcId));
   const dstAtomNeighbors = restruct.molecule.atomGetNeighbors(dstId);
   const bond = restruct.molecule.bonds.get(
-    dstAtomNeighbors[0]?.bid || atomNeighbors[0]?.bid
+    dstAtomNeighbors[0]?.bid || atomNeighbors[0]?.bid,
   );
 
   return action
@@ -278,7 +280,7 @@ export function mergeSgroups(action, restruct, srcAtoms, dstAtom) {
     }
     const atomsToSgroup: any = without(sgroup.atoms, srcAtoms);
     atomsToSgroup.forEach((aid) =>
-      action.addOp(new SGroupAtomAdd(sid, aid).perform(restruct))
+      action.addOp(new SGroupAtomAdd(sid, aid).perform(restruct)),
     );
   });
 }

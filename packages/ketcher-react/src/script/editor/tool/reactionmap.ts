@@ -50,7 +50,7 @@ class ReactionMapTool implements Tool {
       const closestItem = this.editor.findItem(
         event,
         ['atoms'],
-        this.dragCtx.item
+        this.dragCtx.item,
       );
       const atoms = rnd.ctab.molecule.atoms;
 
@@ -58,13 +58,13 @@ class ReactionMapTool implements Tool {
         editor.hover(closestItem);
         this.updateLine(
           atoms.get(this.dragCtx.item.id)?.pp,
-          atoms.get(closestItem.id)?.pp
+          atoms.get(closestItem.id)?.pp,
         );
       } else {
         editor.hover(null);
         this.updateLine(
           atoms.get(this.dragCtx.item.id)?.pp,
-          rnd.page2obj(event)
+          rnd.page2obj(event),
         );
       }
     } else {
@@ -82,7 +82,7 @@ class ReactionMapTool implements Tool {
       const rnd = this.editor.render;
       this.line = rnd.selectionLine(
         Scale.obj2scaled(p1, rnd.options).add(rnd.options.offset),
-        Scale.obj2scaled(p2, rnd.options).add(rnd.options.offset)
+        Scale.obj2scaled(p2, rnd.options).add(rnd.options.offset),
       );
     }
   }
@@ -109,14 +109,14 @@ class ReactionMapTool implements Tool {
                 ((aam1 && atom.aam === aam1) || (aam2 && atom.aam === aam2))
               )
                 action.mergeWith(
-                  fromAtomsAttrs(rnd.ctab, aid, { aam: 0 }, null)
+                  fromAtomsAttrs(rnd.ctab, aid, { aam: 0 }, null),
                 );
             });
           }
 
           if (aam1) {
             action.mergeWith(
-              fromAtomsAttrs(rnd.ctab, closestItem.id, { aam: aam1 }, null)
+              fromAtomsAttrs(rnd.ctab, closestItem.id, { aam: aam1 }, null),
             );
           } else {
             let aam = 0;
@@ -128,11 +128,11 @@ class ReactionMapTool implements Tool {
                 rnd.ctab,
                 this.dragCtx.item.id,
                 { aam: aam + 1 },
-                null
-              )
+                null,
+              ),
             );
             action.mergeWith(
-              fromAtomsAttrs(rnd.ctab, closestItem.id, { aam: aam + 1 }, null)
+              fromAtomsAttrs(rnd.ctab, closestItem.id, { aam: aam + 1 }, null),
             );
           }
           this.editor.update(action);

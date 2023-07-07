@@ -27,7 +27,7 @@ type AtomAttributeName = keyof AtomAttributes;
 export function atomGetAttr(
   restruct: ReStruct,
   aid: number,
-  name: AtomAttributeName
+  name: AtomAttributeName,
 ) {
   const atom = restruct.molecule.atoms.get(aid);
   if (!atom) return null;
@@ -78,7 +78,7 @@ export function atomForNewBond(restruct, id, bond?) {
 
   const prevBondId = restruct.molecule.findBondId(
     id,
-    atomNeighbours.length ? atomNeighbours[0]?.aid : undefined
+    atomNeighbours.length ? atomNeighbours[0]?.aid : undefined,
   );
   const prevBond = restruct.molecule.bonds.get(prevBondId);
   const prevBondType = prevBond ? prevBond.type : bond ? bond.type : 1;
@@ -93,7 +93,7 @@ export function atomForNewBond(restruct, id, bond?) {
 
   neighbours.sort(
     (nei1, nei2) =>
-      Math.atan2(nei1.v.y, nei1.v.x) - Math.atan2(nei2.v.y, nei2.v.x)
+      Math.atan2(nei1.v.y, nei1.v.x) - Math.atan2(nei2.v.y, nei2.v.x),
   );
 
   let i;
@@ -106,7 +106,7 @@ export function atomForNewBond(restruct, id, bond?) {
   for (i = 0; i < neighbours.length; i++) {
     angle = Vec2.angle(
       neighbours[i].v,
-      neighbours[(i + 1) % neighbours.length].v
+      neighbours[(i + 1) % neighbours.length].v,
     );
 
     if (angle < 0) angle += 2 * Math.PI;
@@ -191,19 +191,19 @@ export function atomForNewBond(restruct, id, bond?) {
 
 export function getRelSGroupsBySelection(
   struct: Struct,
-  selectedAtoms: number[]
+  selectedAtoms: number[],
 ) {
   return struct.sgroups.filter(
     (_sgid, sg) =>
       !sg.data.attached &&
       !sg.data.absolute &&
-      difference(sg.atoms, selectedAtoms).length === 0
+      difference(sg.atoms, selectedAtoms).length === 0,
   );
 }
 
 export function isAttachmentBond(
   { begin, end }: Bond,
-  selection: EditorSelection
+  selection: EditorSelection,
 ) {
   if (!selection.atoms) {
     return false;

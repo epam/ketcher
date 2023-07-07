@@ -20,15 +20,15 @@ export function updateSelectedBonds({
           const unchangedBond = molecule.bonds.get(bondId);
           const bondWithChangedProperties = updateOnlyChangedProperties(
             unchangedBond,
-            userChangedBond
+            userChangedBond,
           );
           action.mergeWith(
             fromBondsAttrs(
               struct,
               bondId,
               bondWithChangedProperties as Bond,
-              false
-            )
+              false,
+            ),
           );
         });
         editor.update(action);

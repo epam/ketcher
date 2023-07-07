@@ -56,7 +56,7 @@ class RGroupAtomTool implements Tool {
     if (ci && functionalGroups && ci.map === 'atoms') {
       const atomId = FunctionalGroup.atomsInFunctionalGroup(
         functionalGroups,
-        ci.id
+        ci.id,
       );
 
       if (atomId !== null) {
@@ -68,7 +68,7 @@ class RGroupAtomTool implements Tool {
       for (const id of atomResult) {
         const fgId = FunctionalGroup.findFunctionalGroupByAtom(
           functionalGroups,
-          id
+          id,
         );
 
         if (fgId !== null && !result.includes(fgId)) {

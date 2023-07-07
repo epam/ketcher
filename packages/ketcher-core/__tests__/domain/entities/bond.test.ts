@@ -76,7 +76,7 @@ describe('Bond', () => {
       const bondDir = new Vec2(
         0.4472135954999579,
         -0.8944271909999159,
-        -0.8944271909999159
+        -0.8944271909999159,
       );
 
       expect(bond.getDir(struct)).toStrictEqual(bondDir);

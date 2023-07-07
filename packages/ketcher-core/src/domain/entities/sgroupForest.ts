@@ -68,7 +68,7 @@ export class SGroupForest {
       isSubset.set(id, atomSet.isSuperset(atoms));
       isStrictSuperset.set(
         id,
-        atoms.isSuperset(atomSet) && !atomSet.equals(atoms)
+        atoms.isSuperset(atomSet) && !atomSet.equals(atoms),
       );
     });
 
@@ -82,7 +82,7 @@ export class SGroupForest {
 
     const children = Array.from(this.atomSets.keys()).filter(
       (id) =>
-        isStrictSuperset.get(id) && !isStrictSuperset.get(this.parent.get(id))
+        isStrictSuperset.get(id) && !isStrictSuperset.get(this.parent.get(id)),
     );
 
     return {
@@ -116,7 +116,7 @@ export class SGroupForest {
     });
     this.children.set(
       id,
-      children.filter((id) => this.parent.get(id))
+      children.filter((id) => this.parent.get(id)),
     );
     this.parent.set(id, parent);
     this.children.get(parent)?.push(id);

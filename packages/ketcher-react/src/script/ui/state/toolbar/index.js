@@ -42,7 +42,7 @@ function updateVisibleTools(visibleTool, activeTool) {
       if (!key.match(regExp) || menuHeight > 700) res[key] = visibleTool[key];
       return res;
     },
-    { ...activeTool }
+    { ...activeTool },
   );
 }
 
@@ -116,7 +116,7 @@ export function addAtoms(atomLabel) {
 
 function toolInMenu(action) {
   const tool = Object.keys(tools).find((toolName) =>
-    isEqual(action, tools[toolName].action)
+    isEqual(action, tools[toolName].action),
   );
 
   const sel = document.getElementById(tool);

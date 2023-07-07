@@ -78,7 +78,7 @@ const ActionButton = (props: Props) => {
         {
           [classes.selected]: selected,
         },
-        className
+        className,
       )}
     >
       <Icon name={name} />

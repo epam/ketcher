@@ -49,7 +49,7 @@ const mapDispatchToProps = (dispatch: Dispatch): RightToolbarCallProps => ({
 
 const RightToolbarContainer: ComponentType<OwnProps> = connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(RightToolbar);
 
 export { RightToolbarContainer };

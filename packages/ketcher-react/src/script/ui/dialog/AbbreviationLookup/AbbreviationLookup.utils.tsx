@@ -23,7 +23,7 @@ import { MIN_LOOKUP_VALUE_LENGTH_FOR_HIGHLIGHT } from './AbbreviationLookup.cons
 
 export const getStringsSimilarity = (
   loweredText?: string,
-  loweredSubString?: string
+  loweredSubString?: string,
 ): number => {
   if (!loweredText || !loweredSubString) {
     return 0;
@@ -36,7 +36,7 @@ export const getStringsSimilarity = (
 
 const getHighlightSearchStartIndex = (
   option: AbbreviationGenericOption,
-  loweredLookupValue: string
+  loweredLookupValue: string,
 ): number => {
   if (
     !option.loweredAbbreviation ||
@@ -57,11 +57,11 @@ const getHighlightSearchStartIndex = (
 
   const nameSimilarity = getStringsSimilarity(
     option.loweredName,
-    loweredLookupValue
+    loweredLookupValue,
   );
   const abbreviationSimilarity = getStringsSimilarity(
     option.loweredAbbreviation,
-    loweredLookupValue
+    loweredLookupValue,
   );
 
   return abbreviationSimilarity >= nameSimilarity
@@ -71,7 +71,7 @@ const getHighlightSearchStartIndex = (
 
 export const highlightOptionLabel = (
   option: AbbreviationGenericOption,
-  initialLoweredValue: string
+  initialLoweredValue: string,
 ) => {
   const trimmedLoweredValue = initialLoweredValue.trim();
 
@@ -81,11 +81,11 @@ export const highlightOptionLabel = (
 
   const searchFromIndex = getHighlightSearchStartIndex(
     option,
-    trimmedLoweredValue
+    trimmedLoweredValue,
   );
   const startPos = option.loweredLabel.indexOf(
     trimmedLoweredValue,
-    searchFromIndex
+    searchFromIndex,
   );
   if (startPos === -1) {
     return option.label;
@@ -111,7 +111,7 @@ export const getOptionLabel = (option: AbbreviationGenericOption): string => {
 
 export const getSimilarity = (
   option: AbbreviationGenericOption,
-  loweredLookupValue: string
+  loweredLookupValue: string,
 ): number => {
   if (!loweredLookupValue) {
     return 0;
@@ -119,11 +119,11 @@ export const getSimilarity = (
 
   const nameSimilarity = getStringsSimilarity(
     option.loweredName,
-    loweredLookupValue
+    loweredLookupValue,
   );
   const abbreviationSimilarity = getStringsSimilarity(
     option.loweredAbbreviation,
-    loweredLookupValue
+    loweredLookupValue,
   );
 
   return Math.max(nameSimilarity, abbreviationSimilarity);
@@ -131,7 +131,7 @@ export const getSimilarity = (
 
 export const filterOptions = (
   options: AbbreviationOption[],
-  state: FilterOptionsState<AbbreviationOption>
+  state: FilterOptionsState<AbbreviationOption>,
 ): AbbreviationOption[] => {
   if (!state.inputValue) {
     return [];

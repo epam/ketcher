@@ -46,7 +46,7 @@ function parseDecimalInt(str) {
 function partitionLine(
   /* string */ str,
   /* array of int */ parts,
-  /* bool */ withspace
+  /* bool */ withspace,
 ) {
   /* reader */
   const res = [];
@@ -61,7 +61,7 @@ function partitionLine(
 function partitionLineFixed(
   /* string */ str,
   /* int */ itemLength,
-  /* bool */ withspace
+  /* bool */ withspace,
 ) {
   /* reader */
   const res = [];
@@ -140,7 +140,7 @@ function rxnMerge(
   nReactants,
   nProducts,
   nAgents,
-  shouldReactionRelayout
+  shouldReactionRelayout,
 ) /* Struct */ {
   // eslint-disable-line max-statements
   /* reader */
@@ -202,7 +202,7 @@ function rxnMerge(
     // eslint-disable-line max-params
     const d = new Vec2(
       xorig - bb.min.x,
-      over ? 1 - bb.min.y : -(bb.min.y + bb.max.y) / 2
+      over ? 1 - bb.min.y : -(bb.min.y + bb.max.y) / 2,
     );
     mol.atoms.forEach((atom) => {
       atom.pp.add_(d); // eslint-disable-line no-underscore-dangle
@@ -291,7 +291,7 @@ function rxnMerge(
       new RxnArrow({
         mode: 'open-angle',
         pos: [new Vec2(0, 0), new Vec2(defaultArrowLength, 0)],
-      })
+      }),
     );
   } else {
     let v1 = bb1 ? new Vec2(bb1.max.x, (bb1.max.y + bb1.min.y) / 2) : null;
@@ -303,18 +303,18 @@ function rxnMerge(
     const arrowStart = new Vec2(
       arrowCenter.x - 0.5 * defaultArrowLength,
       arrowCenter.y,
-      arrowCenter.z
+      arrowCenter.z,
     );
     const arrowEnd = new Vec2(
       arrowCenter.x + 0.5 * defaultArrowLength,
       arrowCenter.y,
-      arrowCenter.z
+      arrowCenter.z,
     );
     ret.rxnArrows.add(
       new RxnArrow({
         mode: 'open-angle',
         pos: [arrowStart, arrowEnd],
-      })
+      }),
     );
   }
   ret.isReaction = true;

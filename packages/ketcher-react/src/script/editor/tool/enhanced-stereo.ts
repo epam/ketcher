@@ -37,7 +37,7 @@ class EnhancedStereoTool implements Tool {
       editor.struct(),
       selection
         ? selection.atoms || []
-        : Array.from(editor.struct().atoms.keys())
+        : Array.from(editor.struct().atoms.keys()),
     );
 
     if (this.stereoAtoms.length === 0) {
@@ -46,7 +46,7 @@ class EnhancedStereoTool implements Tool {
 
     EnhancedStereoTool.changeAtomsStereoAction(
       this.editor,
-      this.stereoAtoms
+      this.stereoAtoms,
     ).then((action) => action && editor.update(action));
   }
 
@@ -58,7 +58,7 @@ class EnhancedStereoTool implements Tool {
       return atom && atom.stereoLabel;
     });
     const hasAnotherLabel = stereoLabels.some(
-      (stereoLabel) => stereoLabel !== stereoLabels[0]
+      (stereoLabel) => stereoLabel !== stereoLabels[0],
     );
     const res = editor.event.enhancedStereoEdit.dispatch({
       stereoLabel: hasAnotherLabel ? null : stereoLabels[0],
@@ -74,8 +74,8 @@ class EnhancedStereoTool implements Tool {
           return acc.mergeWith(
             fromStereoFlagUpdate(
               restruct,
-              struct.atoms.get(stereoAtom)?.fragment
-            )
+              struct.atoms.get(stereoAtom)?.fragment,
+            ),
           );
         },
         fromAtomsAttrs(
@@ -84,8 +84,8 @@ class EnhancedStereoTool implements Tool {
           {
             stereoLabel,
           },
-          false
-        )
+          false,
+        ),
       );
       action.operations.reverse();
       return action;

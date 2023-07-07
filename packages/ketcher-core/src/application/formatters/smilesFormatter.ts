@@ -33,7 +33,7 @@ export class SmilesFormatter implements StructFormatter {
     structService: StructService,
     ketSerializer: KetSerializer,
     format: SupportedFormat,
-    options?: StructServiceOptions
+    options?: StructServiceOptions,
   ) {
     this.#smiSerializer = smiSerializer;
     this.#ketSerializer = ketSerializer;
@@ -52,7 +52,7 @@ export class SmilesFormatter implements StructFormatter {
       this.#structService,
       this.#ketSerializer,
       this.#format,
-      this.#options
+      this.#options,
     );
 
     return serverFormatter.getStructureFromStringAsync(stringifiedStruct);

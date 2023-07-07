@@ -20,15 +20,15 @@ const useFunctionalGroupRemove = () => {
         action.mergeWith(
           fromSgroupDeletion(
             editor.render.ctab,
-            functionalGroup.relatedSGroupId
-          )
+            functionalGroup.relatedSGroupId,
+          ),
         );
       });
 
       editor.update(action);
       highlightFG(dispatch, { group: null, id: null });
     },
-    [dispatch, getKetcherInstance]
+    [dispatch, getKetcherInstance],
   );
 
   return handler;

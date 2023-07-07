@@ -68,7 +68,7 @@ class ReText extends ReObject {
       this.item.position,
       new Vec2(p.x, p.y + height),
       new Vec2(p.x + width, p.y + height),
-      new Vec2(p.x + width, p.y)
+      new Vec2(p.x + width, p.y),
     );
 
     return refPoints;
@@ -93,7 +93,7 @@ class ReText extends ReObject {
 
     const firstRow: Array<RaphaelBaseElement> = paths[0];
     const topEdge: number = Math.min(
-      ...firstRow.map((path) => path.getBBox().y)
+      ...firstRow.map((path) => path.getBBox().y),
     );
 
     const widestRow: Array<RaphaelBaseElement> = paths.reduce(
@@ -101,7 +101,7 @@ class ReText extends ReObject {
         this.getRowWidth(nextRow) > this.getRowWidth(widestRow)
           ? nextRow
           : widestRow,
-      paths[0]
+      paths[0],
     );
     const lastElOfWidestRow: RaphaelBaseElement =
       widestRow[widestRow.length - 1];
@@ -110,7 +110,7 @@ class ReText extends ReObject {
 
     const lastRow: Array<RaphaelBaseElement> = paths[paths.length - 1];
     const bottomEdge: number = Math.max(
-      ...lastRow.map((path) => path.getBBox().y + path.getBBox().height)
+      ...lastRow.map((path) => path.getBBox().y + path.getBBox().height),
     );
 
     return {
@@ -164,7 +164,7 @@ class ReText extends ReObject {
           .text(
             paperScale.x,
             paperScale.y,
-            block.text.substring(start, end + 1) || '\u00a0'
+            block.text.substring(start, end + 1) || '\u00a0',
           )
           .attr({
             font: options.font,
@@ -191,13 +191,13 @@ class ReText extends ReObject {
       this.visel,
       flatten(this.paths),
       null,
-      true
+      true,
     );
   }
 
   getRanges(
     block: RawDraftContentBlock,
-    options: any
+    options: any,
   ): Array<[number, number, Record<string, any>]> {
     const ranges: Array<[number, number, Record<string, any>]> = [];
 
@@ -220,12 +220,12 @@ class ReText extends ReObject {
   getStyles(
     block: RawDraftContentBlock,
     index: number,
-    options: any
+    options: any,
   ): Record<string, string> {
     const ranges = block.inlineStyleRanges.filter(
       (inlineRange: CustomRawDraftInlineStyleRange) =>
         inlineRange.offset <= index &&
-        index < inlineRange.offset + inlineRange.length
+        index < inlineRange.offset + inlineRange.length,
     );
 
     const customFontSize: number | null = ranges.reduce(
@@ -235,7 +235,7 @@ class ReText extends ReObject {
         }
         return acc;
       },
-      null
+      null,
     );
 
     return ranges.reduce(
@@ -271,7 +271,7 @@ class ReText extends ReObject {
 
         return styles;
       },
-      {}
+      {},
     );
   }
 }

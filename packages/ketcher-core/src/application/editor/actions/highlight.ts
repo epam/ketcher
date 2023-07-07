@@ -28,7 +28,7 @@ type HighlightType = {
 
 export function fromHighlightCreate(
   restruct: ReStruct,
-  highlights: HighlightType[]
+  highlights: HighlightType[],
 ): Action {
   const action = new Action();
 

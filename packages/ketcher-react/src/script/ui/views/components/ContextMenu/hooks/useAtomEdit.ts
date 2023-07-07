@@ -23,7 +23,7 @@ const useAtomEdit = () => {
         editor,
       });
     },
-    [getKetcherInstance]
+    [getKetcherInstance],
   );
 
   const disabled = useCallback(({ props }: ItemEventParams) => {

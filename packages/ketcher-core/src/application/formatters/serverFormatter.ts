@@ -30,12 +30,12 @@ import { getPropertiesByFormat } from './formatProperties';
 
 type ConvertPromise = (
   data: ConvertData,
-  options?: StructServiceOptions
+  options?: StructServiceOptions,
 ) => Promise<ConvertResult>;
 
 type LayoutPromise = (
   data: LayoutData,
-  options?: StructServiceOptions
+  options?: StructServiceOptions,
 ) => Promise<LayoutResult>;
 
 export class ServerFormatter implements StructFormatter {
@@ -48,7 +48,7 @@ export class ServerFormatter implements StructFormatter {
     structService: StructService,
     ketSerializer: KetSerializer,
     format: SupportedFormat,
-    options?: StructServiceOptions
+    options?: StructServiceOptions,
   ) {
     this.#structService = structService;
     this.#ketSerializer = ketSerializer;
@@ -66,7 +66,7 @@ export class ServerFormatter implements StructFormatter {
           struct: stringifiedStruct,
           output_format: formatProperties.mime,
         },
-        { ...this.#options, ...formatProperties.options }
+        { ...this.#options, ...formatProperties.options },
       );
 
       return convertResult.struct;
@@ -82,7 +82,7 @@ export class ServerFormatter implements StructFormatter {
   }
 
   async getStructureFromStringAsync(
-    stringifiedStruct: string
+    stringifiedStruct: string,
   ): Promise<Struct> {
     let promise: LayoutPromise | ConvertPromise;
 

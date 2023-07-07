@@ -1461,39 +1461,39 @@ const initStruct = (structName) => {
         break;
       case 'frags':
         structData.frags.forEach((props) =>
-          struct.frags.add(new Fragment(props.stereoAtoms))
+          struct.frags.add(new Fragment(props.stereoAtoms)),
         );
         break;
       case 'halfBonds':
         structData.halfBonds.forEach((props) =>
-          struct.halfBonds.add(new HalfBond(props.begin, props.end, props.bid))
+          struct.halfBonds.add(new HalfBond(props.begin, props.end, props.bid)),
         );
         break;
       case 'loops':
         structData.loops.forEach((props) =>
-          struct.loops.add(new Loop(props.hbs, struct, props.convex))
+          struct.loops.add(new Loop(props.hbs, struct, props.convex)),
         );
         break;
       case 'rxnArrows':
         structData.rxnArrows.forEach((props) =>
-          struct.rxnArrows.add(new RxnArrow(getNodeWithInvertedYCoord(props)))
+          struct.rxnArrows.add(new RxnArrow(getNodeWithInvertedYCoord(props))),
         );
         break;
       case 'rxnPluses':
         structData.rxnPluses.forEach((props) =>
-          struct.rxnPluses.add(new RxnPlus(getNodeWithInvertedYCoord(props)))
+          struct.rxnPluses.add(new RxnPlus(getNodeWithInvertedYCoord(props))),
         );
         break;
       case 'simpleObjects':
         structData.simpleObjects.forEach((props) =>
           struct.simpleObjects.add(
-            new SimpleObject(getNodeWithInvertedYCoord(props))
-          )
+            new SimpleObject(getNodeWithInvertedYCoord(props)),
+          ),
         );
         break;
       case 'sgroups':
         structData.sgroups.forEach((props) =>
-          struct.sgroups.add(new SGroup(props.type))
+          struct.sgroups.add(new SGroup(props.type)),
         );
         break;
       case 'rgroups':
@@ -1505,7 +1505,7 @@ const initStruct = (structName) => {
         break;
       case 'texts':
         structData.texts.forEach((props) =>
-          struct.texts.add(new Text(getNodeWithInvertedYCoord(props)))
+          struct.texts.add(new Text(getNodeWithInvertedYCoord(props))),
         );
         break;
     }

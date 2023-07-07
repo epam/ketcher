@@ -104,7 +104,7 @@ export const ExternalFuncControls = ({
   );
 
   const firstButtonObj = externalFuncButtons.find(
-    (button) => !hiddenButtons.includes(button.name)
+    (button) => !hiddenButtons.includes(button.name),
   );
 
   const collapsibleElements = externalFuncButtons

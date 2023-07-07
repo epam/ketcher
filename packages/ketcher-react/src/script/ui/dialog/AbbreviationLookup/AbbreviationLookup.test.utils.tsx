@@ -12,7 +12,7 @@ import { KETCHER_ROOT_NODE_CLASS_NAME } from 'src/constants';
 export const createGenericOption = (
   name: string,
   abbreviation?: string,
-  type: AbbreviationType = AbbreviationType.Element
+  type: AbbreviationType = AbbreviationType.Element,
 ): AbbreviationGenericOption => {
   const label = abbreviation ? `${abbreviation} (${name})` : name;
 
@@ -28,7 +28,7 @@ export const createGenericOption = (
 export const createOption = (
   name: string,
   abbreviation?: string,
-  type: AbbreviationType = AbbreviationType.Element
+  type: AbbreviationType = AbbreviationType.Element,
 ): AbbreviationOption => {
   const genericOptions = createGenericOption(name, abbreviation, type);
 

@@ -68,8 +68,8 @@ describe('useOptions', () => {
     const { result } = renderHook(() => useOptions());
     expect(
       result.current.filter(
-        (option) => option.type === AbbreviationType.Element
-      )
+        (option) => option.type === AbbreviationType.Element,
+      ),
     ).toHaveLength(1);
   });
 
@@ -79,8 +79,8 @@ describe('useOptions', () => {
       result.current.filter(
         (option) =>
           option.type === AbbreviationType.Template &&
-          option.loweredName === FUNCTIONAL_GROUP.struct.name.toLowerCase()
-      )
+          option.loweredName === FUNCTIONAL_GROUP.struct.name.toLowerCase(),
+      ),
     ).toHaveLength(1);
   });
 
@@ -90,8 +90,8 @@ describe('useOptions', () => {
       result.current.filter(
         (option) =>
           option.type === AbbreviationType.Template &&
-          option.loweredName === TEMPLATE.struct.name.toLowerCase()
-      )
+          option.loweredName === TEMPLATE.struct.name.toLowerCase(),
+      ),
     ).toHaveLength(1);
   });
 
@@ -101,8 +101,8 @@ describe('useOptions', () => {
       result.current.filter(
         (option) =>
           option.type === AbbreviationType.Template &&
-          option.loweredName === SALT_AND_SOLVENT.struct.name.toLowerCase()
-      )
+          option.loweredName === SALT_AND_SOLVENT.struct.name.toLowerCase(),
+      ),
     ).toHaveLength(1);
   });
 });

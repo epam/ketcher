@@ -28,7 +28,7 @@ export class RxnArrowRotate extends Base {
       // Note: Struct and ReStruct are in two different systems,
       //       must manually update struct's position
       arrow.pos = arrow.pos.map((p) =>
-        p.rotateAroundOrigin(degree, this.data.center)
+        p.rotateAroundOrigin(degree, this.data.center),
       );
     }
 
@@ -49,7 +49,7 @@ export class RxnArrowRotate extends Base {
       this.data.id,
       -this.data.angle,
       this.data.center,
-      this.data.noinvalidate
+      this.data.noinvalidate,
     );
     return move;
   }

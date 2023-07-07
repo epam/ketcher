@@ -50,7 +50,7 @@ class RotateTool implements Tool {
         restruct,
         selection,
         flipDirection,
-        selectionCenter || canvasCenter
+        selectionCenter || canvasCenter,
       );
       editor.update(action);
       editor.rotateController.rerender();
@@ -90,7 +90,7 @@ class RotateTool implements Tool {
             atom,
             struct.sgroups,
             struct.functionalGroups,
-            false
+            false,
           );
         if (isAtomNotInContractedGroup) {
           return true;
@@ -103,7 +103,7 @@ class RotateTool implements Tool {
     let center: Vec2 | undefined;
 
     const attachmentBonds = struct.bonds.filter((_bondId, bond) =>
-      isAttachmentBond(bond, selection)
+      isAttachmentBond(bond, selection),
     );
 
     if (attachmentBonds.size > 1) {
@@ -141,7 +141,7 @@ class RotateTool implements Tool {
         (atomId) =>
           selection.bonds?.includes(attachmentBondId)
             ? !visibleAtoms.includes(atomId)
-            : visibleAtoms.includes(atomId)
+            : visibleAtoms.includes(atomId),
       ) as number;
       center = struct.atoms.get(rotatePoint)?.pp;
     }
@@ -195,7 +195,7 @@ class RotateTool implements Tool {
       rnd.ctab,
       this.editor.selection(),
       dragCtx.xy0,
-      angle
+      angle,
     );
 
     this.editor.event.message.dispatch({ info: degrees + 'º' });

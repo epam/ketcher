@@ -29,7 +29,7 @@ export function fromItemsFuse(restruct, items) {
   const connectedAtomIds = getAllConnectedAtomsIds(
     restruct,
     mergeMapOfItemsToSet(items.atoms),
-    mergeMapOfItemsToSet(items.bonds)
+    mergeMapOfItemsToSet(items.bonds),
   );
 
   // merge single atoms
@@ -58,7 +58,7 @@ export function getItemsToFuse(editor, items) {
 
   return closestToMerge(
     struct,
-    editor.findMerge(mergeItems, ['atoms', 'bonds'])
+    editor.findMerge(mergeItems, ['atoms', 'bonds']),
   );
 }
 

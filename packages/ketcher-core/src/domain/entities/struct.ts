@@ -128,7 +128,7 @@ export class Struct {
     dropRxnSymbols?: boolean,
     aidMap?: Map<number, number> | null,
     simpleObjectsSet?: Pile<number> | null,
-    textsSet?: Pile<number> | null
+    textsSet?: Pile<number> | null,
   ): Struct {
     return this.mergeInto(
       new Struct(),
@@ -138,7 +138,7 @@ export class Struct {
       false,
       aidMap,
       simpleObjectsSet,
-      textsSet
+      textsSet,
     );
   }
 
@@ -181,7 +181,7 @@ export class Struct {
     keepAllRGroups?: boolean,
     aidMap?: Map<number, number> | null,
     simpleObjectsSet?: Pile<number> | null,
-    textsSet?: Pile<number> | null
+    textsSet?: Pile<number> | null,
   ): Struct {
     atomSet = atomSet || new Pile<number>(this.atoms.keys());
     bondSet = bondSet || new Pile<number>(this.bonds.keys());
@@ -350,7 +350,7 @@ export class Struct {
     return this.bonds.find(
       (_bid, bond) =>
         (bond.begin === begin && bond.end === end) ||
-        (bond.begin === end && bond.end === begin)
+        (bond.begin === end && bond.end === begin),
     );
   }
 
@@ -622,7 +622,7 @@ export class Struct {
     this.bonds.forEach((bond) => {
       totalLength += Vec2.dist(
         this.atoms.get(bond.begin)!.pp,
-        this.atoms.get(bond.end)!.pp
+        this.atoms.get(bond.end)!.pp,
       );
       cnt++;
     });
@@ -647,7 +647,7 @@ export class Struct {
         if (j === k) continue; // eslint-disable-line no-continue
         dist = Vec2.dist(
           this.atoms.get(keys[j])!.pp,
-          this.atoms.get(keys[k])!.pp
+          this.atoms.get(keys[k])!.pp,
         );
         if (minDist < 0 || minDist > dist) minDist = dist;
       }
@@ -661,7 +661,7 @@ export class Struct {
     const key = this.bonds.find(
       (_bid, bond) =>
         (bond.begin === begin && bond.end === end) ||
-        (bond.end === begin && bond.begin === end)
+        (bond.end === begin && bond.begin === end),
     );
 
     return key !== undefined;
@@ -893,7 +893,7 @@ export class Struct {
             loopId = Math.min(...loop);
             this.loops.set(
               loopId,
-              new Loop(loop, this, this.loopIsConvex(loop))
+              new Loop(loop, this, this.loopIsConvex(loop)),
             );
           } else {
             loopId = -2;
@@ -1039,7 +1039,7 @@ export class Struct {
 
       const rxnFragmentType = this.defineRxnFragmentTypeForAtomset(
         component,
-        arrowPos || 0
+        arrowPos || 0,
       );
 
       if (rxnFragmentType === 1) reactants.push(component);

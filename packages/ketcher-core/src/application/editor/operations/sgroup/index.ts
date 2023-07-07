@@ -39,7 +39,7 @@ class SGroupCreate extends BaseOperation {
     type?: any,
     pp?: any,
     expanded?: boolean,
-    name?: string
+    name?: string,
   ) {
     super(OperationType.S_GROUP_CREATE);
     this.data = {

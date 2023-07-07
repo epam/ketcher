@@ -32,8 +32,8 @@ module.exports = override(
         pattern: '@@version',
         replacement: applicationVersion,
       },
-    ])
-  )
+    ]),
+  ),
 );
 
 module.exports.envVariables = envVariables;

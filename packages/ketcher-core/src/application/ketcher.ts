@@ -38,12 +38,12 @@ const allowedApiSettings = {
 async function prepareStructToRender(
   structStr: string,
   structService: StructService,
-  ketcherInstance: Ketcher
+  ketcherInstance: Ketcher,
 ): Promise<Struct> {
   const struct: Struct = await parseStruct(
     structStr,
     structService,
-    ketcherInstance
+    ketcherInstance,
   );
   struct.initHalfBonds();
   struct.initNeighbors();
@@ -56,7 +56,7 @@ async function prepareStructToRender(
 function parseStruct(
   structStr: string,
   structService: StructService,
-  ketcherInstance: Ketcher
+  ketcherInstance: Ketcher,
 ) {
   const format = identifyStructFormat(structStr);
   const factory = new FormatterFactory(structService);
@@ -72,7 +72,7 @@ function parseStruct(
 function getStructure(
   structureFormat = SupportedFormat.rxn,
   formatterFactory: FormatterFactory,
-  struct: Struct
+  struct: Struct,
 ): Promise<string> {
   const formatter = formatterFactory.create(structureFormat);
   return formatter.getStructureFromStructAsync(struct);
@@ -96,7 +96,7 @@ export class Ketcher {
   constructor(
     editor: Editor,
     structService: StructService,
-    formatterFactory: FormatterFactory
+    formatterFactory: FormatterFactory,
   ) {
     assert(editor != null);
     assert(structService != null);
@@ -123,7 +123,7 @@ export class Ketcher {
         }
         return acc;
       },
-      {}
+      {},
     );
 
     if (!Object.keys(result).length) {
@@ -141,7 +141,7 @@ export class Ketcher {
     }
     const options = {};
     for (const [apiSetting, clientSetting] of Object.entries(
-      allowedApiSettings
+      allowedApiSettings,
     )) {
       options[clientSetting] = settings[apiSetting];
     }
@@ -159,7 +159,7 @@ export class Ketcher {
   async getMolfile(molfileFormat?: MolfileFormat): Promise<string> {
     if (this.containsReaction()) {
       throw Error(
-        'The structure cannot be saved as *.MOL due to reaction arrrows.'
+        'The structure cannot be saved as *.MOL due to reaction arrrows.',
       );
     }
 
@@ -172,7 +172,7 @@ export class Ketcher {
     const molfile = await getStructure(
       format,
       this.#formatterFactory,
-      this.#editor.struct()
+      this.#editor.struct(),
     );
 
     return molfile;
@@ -181,7 +181,7 @@ export class Ketcher {
   async getRxn(molfileFormat: MolfileFormat = 'v2000'): Promise<string> {
     if (!this.containsReaction()) {
       throw Error(
-        'The structure cannot be saved as *.RXN: there is no reaction arrows.'
+        'The structure cannot be saved as *.RXN: there is no reaction arrows.',
       );
     }
     const format =
@@ -191,7 +191,7 @@ export class Ketcher {
     const rxnfile = await getStructure(
       format,
       this.#formatterFactory,
-      this.#editor.struct()
+      this.#editor.struct(),
     );
 
     return rxnfile;
@@ -201,7 +201,7 @@ export class Ketcher {
     return getStructure(
       SupportedFormat.ket,
       this.#formatterFactory,
-      this.#editor.struct()
+      this.#editor.struct(),
     );
   }
 
@@ -209,7 +209,7 @@ export class Ketcher {
     return getStructure(
       SupportedFormat.smarts,
       this.#formatterFactory,
-      this.#editor.struct()
+      this.#editor.struct(),
     );
   }
 
@@ -217,7 +217,7 @@ export class Ketcher {
     return getStructure(
       SupportedFormat.cml,
       this.#formatterFactory,
-      this.#editor.struct()
+      this.#editor.struct(),
     );
   }
 
@@ -225,7 +225,7 @@ export class Ketcher {
     return getStructure(
       SupportedFormat.cdxml,
       this.#formatterFactory,
-      this.#editor.struct()
+      this.#editor.struct(),
     );
   }
 
@@ -233,7 +233,7 @@ export class Ketcher {
     return getStructure(
       SupportedFormat.cdx,
       this.#formatterFactory,
-      this.#editor.struct()
+      this.#editor.struct(),
     );
   }
 
@@ -241,7 +241,7 @@ export class Ketcher {
     return getStructure(
       withAuxInfo ? SupportedFormat.inChIAuxInfo : SupportedFormat.inChI,
       this.#formatterFactory,
-      this.#editor.struct()
+      this.#editor.struct(),
     );
   }
 
@@ -249,7 +249,7 @@ export class Ketcher {
     const struct: string = await getStructure(
       SupportedFormat.ket,
       this.#formatterFactory,
-      this.#editor.struct()
+      this.#editor.struct(),
     );
 
     return this.#structService.generateInchIKey(struct);
@@ -266,7 +266,7 @@ export class Ketcher {
       const struct: Struct = await prepareStructToRender(
         structStr,
         this.#structService,
-        this
+        this,
       );
 
       this.#editor.struct(struct);
@@ -280,7 +280,7 @@ export class Ketcher {
       const struct: Struct = await prepareStructToRender(
         structStr,
         this.#structService,
-        this
+        this,
       );
 
       this.#editor.structToAddFragment(struct);
@@ -301,7 +301,7 @@ export class Ketcher {
 
   async generateImage(
     data: string,
-    options: GenerateImageOptions = { outputFormat: 'png' }
+    options: GenerateImageOptions = { outputFormat: 'png' },
   ): Promise<Blob> {
     let meta = '';
 
@@ -318,7 +318,7 @@ export class Ketcher {
 
     const base64 = await this.#structService.generateImageAsBase64(
       data,
-      options
+      options,
     );
     const byteCharacters = atob(base64);
     const byteNumbers = new Array(byteCharacters.length);

@@ -40,7 +40,7 @@ export function fromSimpleObjectResizing(
   d,
   current,
   anchor,
-  toCircle
+  toCircle,
 ) {
   const action = new Action();
   action.addOp(new SimpleObjectResize(id, d, current, anchor, false, toCircle));

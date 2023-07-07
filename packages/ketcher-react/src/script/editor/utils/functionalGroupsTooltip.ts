@@ -20,11 +20,11 @@ type InfoPanelData = {
 function convertSGroupAttachmentPointsToRGroupAttachmentPoints(
   struct: Struct,
   sGroup: SGroup,
-  atomsIdMapping: Map<number, number>
+  atomsIdMapping: Map<number, number>,
 ) {
   sGroup.getAttachmentPoints().forEach((attachmentPoint) => {
     const attachmentPointAtom = struct.atoms.get(
-      atomsIdMapping.get(attachmentPoint.atomId)!
+      atomsIdMapping.get(attachmentPoint.atomId)!,
     )!;
     attachmentPointAtom.setRGAttachmentPointForDisplayPurpose();
   });
@@ -53,7 +53,7 @@ function makeStruct(editor: Editor, sGroup: SGroup) {
   convertSGroupAttachmentPointsToRGroupAttachmentPoints(
     struct,
     sGroup,
-    atomsIdMapping
+    atomsIdMapping,
   );
 
   return struct;
@@ -94,7 +94,7 @@ export function setFunctionalGroupsTooltip({
   const checkFunctionGroupTypes = ['sgroups', 'functionalGroups'];
   const closestCollapsibleStructures = editor.findItem(
     event,
-    checkFunctionGroupTypes
+    checkFunctionGroupTypes,
   );
   if (closestCollapsibleStructures && event) {
     const sGroup = editor

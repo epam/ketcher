@@ -50,7 +50,7 @@ class ReactionPlusTool implements Tool {
       this.dragCtx.action = fromMultipleMove(
         rnd.ctab,
         this.editor.selection() || {},
-        rnd.page2obj(event).sub(this.dragCtx.xy0)
+        rnd.page2obj(event).sub(this.dragCtx.xy0),
       );
       editor.update(this.dragCtx.action, true);
     } else {

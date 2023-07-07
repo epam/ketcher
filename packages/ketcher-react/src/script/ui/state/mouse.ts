@@ -27,11 +27,11 @@ export function initMouseListener(element) {
   return function (dispatch) {
     const throttledHandleMouseMove = throttle(
       handleMouseMove,
-      MOUSE_MOVE_THROTTLE_TIMEOUT
+      MOUSE_MOVE_THROTTLE_TIMEOUT,
     );
 
     element.addEventListener('pointermove', (event: MouseEvent) =>
-      throttledHandleMouseMove(dispatch, event)
+      throttledHandleMouseMove(dispatch, event),
     );
   };
 }

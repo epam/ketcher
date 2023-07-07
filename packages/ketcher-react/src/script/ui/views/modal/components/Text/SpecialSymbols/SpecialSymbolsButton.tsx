@@ -44,12 +44,12 @@ const SpecialSymbolsButton = ({ editorState, setEditorState, styles }) => {
       contentState,
       selection,
       value,
-      styles
+      styles,
     );
     const nextEditorState = EditorState.push(
       editorState,
       nextContentState,
-      'insert-characters'
+      'insert-characters',
     );
     setEditorState(nextEditorState);
     setShowSpecialSymbols(false);

@@ -37,11 +37,11 @@ export const useSubscriptionOnEvents = () => {
     ketcher.eventBus.addListener(KetcherAsyncEvents.LOADING, loadingHandler);
     ketcher.eventBus.addListener(
       KetcherAsyncEvents.SUCCESS,
-      actionResultHandler
+      actionResultHandler,
     );
     ketcher.eventBus.addListener(
       KetcherAsyncEvents.FAILURE,
-      actionResultHandler
+      actionResultHandler,
     );
   };
 
@@ -49,11 +49,11 @@ export const useSubscriptionOnEvents = () => {
     ketcher.eventBus.removeListener(KetcherAsyncEvents.LOADING, loadingHandler);
     ketcher.eventBus.removeListener(
       KetcherAsyncEvents.SUCCESS,
-      actionResultHandler
+      actionResultHandler,
     );
     ketcher.eventBus.removeListener(
       KetcherAsyncEvents.FAILURE,
-      actionResultHandler
+      actionResultHandler,
     );
   };
 

@@ -32,7 +32,7 @@ function getPanelPosition(
   clientX: number,
   clientY: number,
   render: Render,
-  sGroup: SGroup
+  sGroup: SGroup,
 ): [Vec2, Vec2] {
   let width = 0;
   let height = 0;

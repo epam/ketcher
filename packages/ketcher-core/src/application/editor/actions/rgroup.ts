@@ -39,7 +39,7 @@ export function fromUpdateIfThen(
   restruct,
   rgidNew,
   rgidOld,
-  skipRgids: Array<number> = []
+  skipRgids: Array<number> = [],
 ) {
   const action = new Action();
   if (!restruct.molecule.rgroups.get(rgidOld)) {

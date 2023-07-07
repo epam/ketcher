@@ -72,7 +72,7 @@ class AtomAdd extends BaseOperation {
       const atom = struct.atoms.get(aid)!;
       atom.rxnFragmentType = struct.defineRxnFragmentTypeForAtomset(
         new Pile([aid]),
-        arrow.pos[0].x
+        arrow.pos[0].x,
       );
     }
   }

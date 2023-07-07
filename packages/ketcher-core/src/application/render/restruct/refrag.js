@@ -31,7 +31,7 @@ class ReFrag extends ReObject {
 
   fragGetAtoms(restruct, fid) {
     return Array.from(restruct.atoms.keys()).filter(
-      (aid) => restruct.atoms.get(aid).a.fragment === fid
+      (aid) => restruct.atoms.get(aid).a.fragment === fid,
     );
   }
 

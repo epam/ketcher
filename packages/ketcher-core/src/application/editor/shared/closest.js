@@ -248,7 +248,7 @@ function findClosestDataSGroupData(restruct, pos) {
         box.p1.x > pos.x;
       const xDist = Math.min(
         Math.abs(box.p0.x - pos.x),
-        Math.abs(box.p1.x - pos.x)
+        Math.abs(box.p1.x - pos.x),
       );
 
       if (inBox && (ret === null || xDist < minDist)) {
@@ -264,7 +264,7 @@ function findClosestDataSGroupData(restruct, pos) {
 function findClosestFrag(restruct, pos, skip, minDist, scale) {
   minDist = Math.min(
     minDist || SELECTION_DISTANCE_COEFFICIENT,
-    SELECTION_DISTANCE_COEFFICIENT
+    SELECTION_DISTANCE_COEFFICIENT,
   );
 
   const struct = restruct.molecule;
@@ -294,7 +294,7 @@ function findClosestFrag(restruct, pos, skip, minDist, scale) {
 function findClosestRGroup(restruct, pos, skip, minDist) {
   minDist = Math.min(
     minDist || SELECTION_DISTANCE_COEFFICIENT,
-    SELECTION_DISTANCE_COEFFICIENT
+    SELECTION_DISTANCE_COEFFICIENT,
   );
 
   let ret = null;
@@ -375,7 +375,7 @@ function findClosestSGroup(restruct, pos) {
         box.p1.x > pg.x;
       const xDist = Math.min(
         Math.abs(box.p0.x - pg.x),
-        Math.abs(box.p1.x - pg.x)
+        Math.abs(box.p1.x - pg.x),
       );
 
       if (inBox && (ret === null || xDist < minDist)) {
@@ -395,7 +395,7 @@ function findClosestSGroup(restruct, pos) {
           box.p1.x > pg.x;
         const xDist = Math.min(
           Math.abs(box.p0.x - pg.x),
-          Math.abs(box.p1.x - pg.x)
+          Math.abs(box.p1.x - pg.x),
         );
 
         if (inBox && (ret === null || xDist < minDist)) {
@@ -468,8 +468,8 @@ function findCloseMerge(restruct, selected, maps = ['atoms', 'bonds'], scale) {
         struct.atoms.get(bond.begin).pp,
         0.5,
         struct.atoms.get(bond.end).pp,
-        0.5
-      )
+        0.5,
+      ),
     );
   });
 
@@ -482,7 +482,7 @@ function findCloseMerge(restruct, selected, maps = ['atoms', 'bonds'], scale) {
         pos[mp].get(srcId),
         skip,
         null,
-        scale
+        scale,
       );
 
       if (item && !selected[mp].includes(item.id)) res.set(srcId, item.id);

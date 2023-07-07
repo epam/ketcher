@@ -35,7 +35,7 @@ class RxnArrowAdd extends Base {
   constructor(
     pos: Array<Vec2> = [],
     mode: RxnArrowMode = RxnArrowMode.OpenAngle,
-    id?: number
+    id?: number,
   ) {
     super(OperationType.RXN_ARROW_ADD);
     this.data = { pos, mode, id };
@@ -60,7 +60,7 @@ class RxnArrowAdd extends Base {
 
     struct.rxnArrowSetPos(
       itemId,
-      positions.map((p) => new Vec2(p))
+      positions.map((p) => new Vec2(p)),
     );
 
     Base.invalidateItem(restruct, 'rxnArrows', itemId, 1);

@@ -39,7 +39,7 @@ export class KetcherBuilder {
   #structServiceProvider?: StructServiceProvider;
 
   withStructServiceProvider(
-    structServiceProvider: StructServiceProvider
+    structServiceProvider: StructServiceProvider,
   ): KetcherBuilder {
     this.#structServiceProvider = structServiceProvider;
     return this;
@@ -58,7 +58,7 @@ export class KetcherBuilder {
     const ketcher = new Ketcher(
       editor,
       structService,
-      new FormatterFactory(structService)
+      new FormatterFactory(structService),
     );
     ketcher[this.#structServiceProvider.mode] = true;
 

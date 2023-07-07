@@ -37,7 +37,7 @@ export const getIsItemInSelection = ({
 
 export function getMenuPropsForClosestItem(
   editor: Editor,
-  closestItem: ClosestItem
+  closestItem: ClosestItem,
 ): ContextMenuShowProps | null {
   const struct = editor.struct();
 
@@ -47,7 +47,7 @@ export function getMenuPropsForClosestItem(
         struct,
         struct.functionalGroups,
         closestItem.id,
-        true
+        true,
       );
 
       return functionalGroup === null
@@ -65,7 +65,7 @@ export function getMenuPropsForClosestItem(
       const functionalGroup = FunctionalGroup.findFunctionalGroupByAtom(
         struct.functionalGroups,
         closestItem.id,
-        true
+        true,
       );
 
       return functionalGroup === null
@@ -84,7 +84,7 @@ export function getMenuPropsForClosestItem(
       const sGroup = struct.sgroups.get(closestItem.id);
       const functionalGroup = FunctionalGroup.findFunctionalGroupBySGroup(
         struct.functionalGroups,
-        sGroup
+        sGroup,
       );
 
       return functionalGroup
@@ -104,7 +104,7 @@ const IGNORED_MAPS_LIST = ['enhancedFlags'];
 
 export function getMenuPropsForSelection(
   selection: Selection | null,
-  selectedFunctionalGroups: Map<number, FunctionalGroup>
+  selectedFunctionalGroups: Map<number, FunctionalGroup>,
 ): ContextMenuShowProps | null {
   if (!selection) {
     return null;
@@ -126,7 +126,7 @@ export function getMenuPropsForSelection(
       extraItemsSelected: !onlyHasProperty(
         selection,
         'bonds',
-        IGNORED_MAPS_LIST
+        IGNORED_MAPS_LIST,
       ),
     };
   } else if (atomsInSelection && !bondsInSelection) {
@@ -136,7 +136,7 @@ export function getMenuPropsForSelection(
       extraItemsSelected: !onlyHasProperty(
         selection,
         'atoms',
-        IGNORED_MAPS_LIST
+        IGNORED_MAPS_LIST,
       ),
     };
   } else {

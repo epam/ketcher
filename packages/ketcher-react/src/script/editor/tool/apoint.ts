@@ -50,7 +50,7 @@ class APointTool implements Tool {
     if (ci && functionalGroups.size && ci.map === 'atoms') {
       const atomId = FunctionalGroup.atomsInFunctionalGroup(
         functionalGroups,
-        ci.id
+        ci.id,
       );
 
       if (atomId !== null) {
@@ -62,7 +62,7 @@ class APointTool implements Tool {
       for (const id of atomResult) {
         const fgId = FunctionalGroup.findFunctionalGroupByAtom(
           functionalGroups,
-          id
+          id,
         );
         if (fgId !== null && !result.includes(fgId)) {
           result.push(fgId);
@@ -88,7 +88,7 @@ class APointTool implements Tool {
               editor.render.ctab,
               ci.id,
               newatom,
-              null
+              null,
             );
             editor.update(action);
           }

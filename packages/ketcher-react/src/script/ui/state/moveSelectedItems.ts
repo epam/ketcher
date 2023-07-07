@@ -27,7 +27,7 @@ export function isArrowKey(key: string): key is ArrowKey {
 export function moveSelectedItems(
   editor: Editor,
   key: ArrowKey,
-  isShiftPressed: boolean
+  isShiftPressed: boolean,
 ) {
   const stepFactor = 1 / editor.options().scale;
   const fasterStepFactor = stepFactor * 10;
@@ -36,7 +36,7 @@ export function moveSelectedItems(
   const action = fromMultipleMove(
     editor.render.ctab,
     selectedItems,
-    distinationVector.scaled(isShiftPressed ? fasterStepFactor : stepFactor)
+    distinationVector.scaled(isShiftPressed ? fasterStepFactor : stepFactor),
   );
   editor.update(action, false, { resizeCanvas: true });
   const isClose = isCloseToTheEdgeOfCanvas(selectedItems, editor, key);
@@ -51,7 +51,7 @@ const edgeOffset = 150;
 function isCloseToTheEdgeOfCanvas(
   selectedItems: EditorSelection,
   editor: Editor,
-  key: ArrowKey
+  key: ArrowKey,
 ) {
   if (!selectedItems.atoms) {
     return false;

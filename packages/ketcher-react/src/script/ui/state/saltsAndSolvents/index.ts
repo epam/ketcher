@@ -38,7 +38,7 @@ const initialState: SaltsAndSolventsState = {
 
 const saltsAndSolventsReducer = (
   state = initialState,
-  { type, payload }: AnyAction
+  { type, payload }: AnyAction,
 ) => {
   switch (type) {
     case 'SALTS_AND_SOLVENTS_INIT':
@@ -66,7 +66,7 @@ export function initSaltsAndSolventsTemplates() {
         acc.push(struct);
         return acc;
       },
-      []
+      [],
     );
     saltsAndSolventsProvider.setSaltsAndSolventsList(saltsAndSolvents);
     functionalGroupsProvider.addToFunctionalGroupsList(saltsAndSolvents);

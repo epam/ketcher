@@ -34,7 +34,7 @@ type Props = TextButtonProps & TextButtonPropsCallProps;
 export const TextButton = (props: Props) => {
   const toggleStyle = (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-    command: TextCommand
+    command: TextCommand,
   ) => {
     event.preventDefault();
     props.toggleStyle(command);

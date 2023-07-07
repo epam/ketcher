@@ -17,7 +17,7 @@ const useBondTypeChange = () => {
 
       editor.update(fromBondsAttrs(molecule, bondIds, bondProps));
     },
-    [getKetcherInstance]
+    [getKetcherInstance],
   );
 
   const disabled = useCallback(({ props }: ItemEventParams) => {

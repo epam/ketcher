@@ -40,7 +40,7 @@ const deserializeSdfTemplates = (baseUrl, cacheEl, _fileName) => {
           cachedFiles.indexOf(pr.file) !== -1 ? `#${pr.id}` : '';
 
       return tmpl;
-    })
+    }),
   );
 };
 
@@ -100,7 +100,7 @@ function prefetchRender(tmpls, baseUrl, cacheEl) {
     return res;
   }, []);
   const fetch = Promise.all(
-    files.map((fn) => prefetchStatic(baseUrl + fn).catch(() => null))
+    files.map((fn) => prefetchStatic(baseUrl + fn).catch(() => null)),
   );
 
   return fetch.then((svgs) => {

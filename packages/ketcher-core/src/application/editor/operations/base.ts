@@ -129,7 +129,7 @@ class BaseOperation {
     restruct: ReStruct,
     map,
     id: number,
-    level?: any
+    level?: any,
   ) {
     if (map === 'atoms') {
       BaseOperation.invalidateAtom(restruct, id, level);
@@ -150,7 +150,7 @@ class BaseOperation {
 
   protected static invalidateEnhancedFlag(
     restruct: ReStruct,
-    fragmentId: number
+    fragmentId: number,
   ) {
     BaseOperation.invalidateItem(restruct, 'enhancedFlags', fragmentId, 1);
   }

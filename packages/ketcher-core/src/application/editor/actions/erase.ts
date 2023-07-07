@@ -126,7 +126,7 @@ export function fromFragmentDeletion(restruct, rawSelection) {
     if (frids.indexOf(frid) < 0) frids.push(frid);
 
     actionRemoveBonds.mergeWith(
-      fromBondDeletion(restruct, bid, selection.atoms)
+      fromBondDeletion(restruct, bid, selection.atoms),
     );
   });
 
@@ -163,12 +163,12 @@ export function fromFragmentDeletion(restruct, rawSelection) {
   action.mergeWith(actionRemoveBonds);
 
   const rgForRemove: Array<number> = frids.map(
-    (frid) => RGroup.findRGroupByFragment(restruct.molecule.rgroups, frid)!
+    (frid) => RGroup.findRGroupByFragment(restruct.molecule.rgroups, frid)!,
   );
 
   while (frids.length > 0) {
     action = fromFragmentSplit(restruct, frids.pop(), rgForRemove).mergeWith(
-      action
+      action,
     );
   }
 

@@ -185,7 +185,7 @@ function processAtom(restruct, aid, frid, newfrid) {
 export function fromFragmentSplit(
   restruct,
   frid,
-  rgForRemove: Array<number> = []
+  rgForRemove: Array<number> = [],
 ) {
   const action = new Action();
   const rgid = RGroup.findRGroupByFragment(restruct.molecule.rgroups, frid);

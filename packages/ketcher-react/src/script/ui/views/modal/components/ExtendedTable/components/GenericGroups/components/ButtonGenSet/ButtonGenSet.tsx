@@ -45,7 +45,7 @@ const ButtonGenSet = ({
         {
           [classes.selected]: selected(button.label),
         },
-        classes.button
+        classes.button,
       )}
     >
       {button.label}

@@ -45,7 +45,7 @@ class HandTool implements Tool {
     this.editor.hover(
       this.editor.findItem(event, ['atoms', 'bonds'], null),
       null,
-      event
+      event,
     );
 
     if (this.begPos == null) {
@@ -56,7 +56,7 @@ class HandTool implements Tool {
 
     const rnd = this.editor.render;
     const diff = Vec2.diff(this.endPos, this.begPos).scaled(
-      1 / this.editor.zoom()
+      1 / this.editor.zoom(),
     );
     this.begPos = this.endPos;
 

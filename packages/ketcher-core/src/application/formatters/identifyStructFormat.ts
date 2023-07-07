@@ -17,7 +17,7 @@
 import { SupportedFormat } from './structFormatter.types';
 
 export function identifyStructFormat(
-  stringifiedStruct: string
+  stringifiedStruct: string,
 ): SupportedFormat {
   // Mimic Indigo/molecule_auto_loader.cpp as much as possible
   const sanitizedString = stringifiedStruct.trim();

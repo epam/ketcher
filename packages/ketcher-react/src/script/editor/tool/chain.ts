@@ -58,7 +58,7 @@ class ChainTool implements Tool {
     if (ci && functionalGroups.size && ci.map === 'atoms') {
       const atomId = FunctionalGroup.atomsInFunctionalGroup(
         functionalGroups,
-        ci.id
+        ci.id,
       );
 
       if (atomId !== null) {
@@ -70,7 +70,7 @@ class ChainTool implements Tool {
       const bondId = FunctionalGroup.bondsInFunctionalGroup(
         molecule,
         functionalGroups,
-        ci.id
+        ci.id,
       );
 
       if (bondId !== null) {
@@ -82,7 +82,7 @@ class ChainTool implements Tool {
       for (const id of atomResult) {
         const fgId = FunctionalGroup.findFunctionalGroupByAtom(
           functionalGroups,
-          id
+          id,
         );
 
         if (fgId !== null && !result.includes(fgId)) {
@@ -96,7 +96,7 @@ class ChainTool implements Tool {
         const fgId = FunctionalGroup.findFunctionalGroupByBond(
           molecule,
           functionalGroups,
-          id
+          id,
         );
 
         if (fgId !== null && !result.includes(fgId)) {
@@ -146,7 +146,7 @@ class ChainTool implements Tool {
     editor.hover(
       this.editor.findItem(event, ['atoms', 'bonds', 'functionalGroups']),
       null,
-      event
+      event,
     );
     if (!dragCtx) {
       return true;
@@ -179,7 +179,7 @@ class ChainTool implements Tool {
         pos0,
         angle,
         sectCount,
-        dragCtx.item ? dragCtx.item.id : null
+        dragCtx.item ? dragCtx.item.id : null,
       );
 
       editor.event.message.dispatch({
@@ -212,7 +212,7 @@ class ChainTool implements Tool {
     if (atom) {
       const atomId = FunctionalGroup.atomsInFunctionalGroup(
         functionalGroups,
-        atom
+        atom,
       );
 
       if (atomId !== null) {
@@ -224,7 +224,7 @@ class ChainTool implements Tool {
       for (const id of atomResult) {
         const fgId = FunctionalGroup.findFunctionalGroupByAtom(
           functionalGroups,
-          id
+          id,
         );
 
         if (fgId !== null && !result.includes(fgId)) {

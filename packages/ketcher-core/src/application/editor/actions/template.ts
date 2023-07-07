@@ -35,13 +35,13 @@ export function fromTemplateOnCanvas(
   restruct,
   template,
   pos,
-  angle
+  angle,
 ): [Action, { atoms: number[]; bonds: number[] }] {
   const [action, pasteItems] = fromPaste(
     restruct,
     template.molecule,
     pos,
-    angle
+    angle,
   );
 
   action.addOp(new CalcImplicitH(pasteItems.atoms).perform(restruct));
@@ -62,7 +62,7 @@ function extraBondAction(restruct, aid, angle) {
       aid,
       middleAtom.atom,
       undefined,
-      middleAtom.pos.get_xy0()
+      middleAtom.pos.get_xy0(),
     );
     action = actionRes[0];
     action.operations.reverse();
@@ -73,12 +73,12 @@ function extraBondAction(restruct, aid, angle) {
       new Vec2(1, 0)
         .rotate(angle)
         .add(restruct.molecule.atoms.get(aid).pp)
-        .get_xy0()
+        .get_xy0(),
     ).perform(restruct) as AtomAdd;
 
     action.addOp(operation);
     action.addOp(
-      new BondAdd(aid, operation.data.aid, { type: 1 }).perform(restruct)
+      new BondAdd(aid, operation.data.aid, { type: 1 }).perform(restruct),
     );
 
     additionalAtom = operation.data.aid;
@@ -92,7 +92,7 @@ export function fromTemplateOnAtom(
   template,
   aid,
   angle,
-  extraBond
+  extraBond,
 ): [Action, { atoms: number[]; bonds: number[] }] {
   let action = new Action();
 
@@ -146,7 +146,7 @@ export function fromTemplateOnAtom(
       const v = Vec2.diff(a.pp, xy0).rotate(delta).add(atom.pp);
 
       const operation = new AtomAdd(attrs, v.get_xy0()).perform(
-        restruct
+        restruct,
       ) as AtomAdd;
       action.addOp(operation);
       map.set(id, operation.data.aid);
@@ -160,7 +160,7 @@ export function fromTemplateOnAtom(
     const operation = new BondAdd(
       map.get(bond.begin),
       map.get(bond.end),
-      bond
+      bond,
     ).perform(restruct) as BondAdd;
     action.addOp(operation);
 
@@ -180,7 +180,7 @@ export function fromTemplateOnAtom(
       attachmentPoints,
       atom.pp,
       sg.type === 'SUP' ? sg.isExpanded() : null,
-      sg.data.name
+      sg.data.name,
     );
     sgAction.operations.reverse().forEach((oper) => {
       action.addOp(oper);
@@ -193,8 +193,8 @@ export function fromTemplateOnAtom(
   action.mergeWith(
     fromBondStereoUpdate(
       restruct,
-      restruct.molecule.bonds.get(pasteItems.bonds[0])
-    )
+      restruct.molecule.bonds.get(pasteItems.bonds[0]),
+    ),
   );
 
   return [action, pasteItems];
@@ -206,7 +206,7 @@ export function fromTemplateOnBondAction(
   bid,
   events,
   flip,
-  force
+  force,
 ) {
   if (!force) return fromTemplateOnBond(restruct, template, bid, flip);
 
@@ -218,7 +218,7 @@ export function fromTemplateOnBondAction(
     template,
     bid,
     events,
-    simpleFusing
+    simpleFusing,
   );
 }
 
@@ -226,7 +226,7 @@ function getConnectingBond(
   template: Struct,
   struct: Struct,
   bondId: number,
-  bond: Bond
+  bond: Bond,
 ) {
   const isBenzeneTemplate = template.name === benzeneMoleculeName;
   const isCyclopentadieneTemplate =
@@ -234,7 +234,7 @@ function getConnectingBond(
   if (template.bonds.size && (isBenzeneTemplate || isCyclopentadieneTemplate)) {
     const { beginBondIds, endBondIds } = Bond.getBondNeighbourIds(
       struct,
-      bondId
+      bondId,
     );
     const isOnlyTwoConnectingBonds =
       beginBondIds.length === 1 && endBondIds.length === 1;
@@ -286,7 +286,7 @@ function fromTemplateOnBond(restruct, template, bid, flip) {
     struct,
     bond,
     tmpl,
-    bondAtoms
+    bondAtoms,
   );
 
   const frid = struct.getBondFragment(bid);
@@ -337,13 +337,13 @@ function fromTemplateOnBond(restruct, template, bid, flip) {
   tmpl.bonds.forEach((tBond, tBondIndex) => {
     const existId = struct.findBondId(
       atomsMap.get(tBond.begin),
-      atomsMap.get(tBond.end)
+      atomsMap.get(tBond.end),
     );
     if (existId === null) {
       const operation = new BondAdd(
         atomsMap.get(tBond.begin),
         atomsMap.get(tBond.end),
-        tBond
+        tBond,
       ).perform(restruct) as BondAdd;
       action.addOp(operation);
       const newBondId = operation.data.bid;
@@ -357,25 +357,25 @@ function fromTemplateOnBond(restruct, template, bid, flip) {
             ? Bond.PATTERN.TYPE.DOUBLE
             : Bond.PATTERN.TYPE.SINGLE;
           action.addOp(
-            new BondAttr(newBondId, 'type', newBondType).perform(restruct)
+            new BondAttr(newBondId, 'type', newBondType).perform(restruct),
           );
         }
         if (isCyclopentadieneTemplate) {
           const { beginBondIds, endBondIds } = Bond.getBondNeighbourIds(
             struct,
-            bid
+            bid,
           );
           const bondBegin = struct.bonds.get(beginBondIds[0])!;
           const bondEnd = struct.bonds.get(endBondIds[0])!;
           const newBondType = Bond.getCyclopentadieneDoubleBondIndexes(
             bond,
             bondBegin,
-            bondEnd
+            bondEnd,
           ).includes(tBondIndex)
             ? Bond.PATTERN.TYPE.DOUBLE
             : Bond.PATTERN.TYPE.SINGLE;
           action.addOp(
-            new BondAttr(newBondId, 'type', newBondType).perform(restruct)
+            new BondAttr(newBondId, 'type', newBondType).perform(restruct),
           );
         }
       }
@@ -387,7 +387,7 @@ function fromTemplateOnBond(restruct, template, bid, flip) {
 
       if (isFusingBenzeneBySpecialRules && fusingBondType) {
         action.addOp(
-          new BondAttr(bid, 'type', fusingBondType).perform(restruct)
+          new BondAttr(bid, 'type', fusingBondType).perform(restruct),
         );
       }
     }
@@ -396,8 +396,8 @@ function fromTemplateOnBond(restruct, template, bid, flip) {
   if (pasteItems.atoms.length) {
     action.addOp(
       new CalcImplicitH([bond.begin, bond.end, ...pasteItems.atoms]).perform(
-        restruct
-      )
+        restruct,
+      ),
     );
   }
 
@@ -405,8 +405,8 @@ function fromTemplateOnBond(restruct, template, bid, flip) {
     action.mergeWith(
       fromBondStereoUpdate(
         restruct,
-        restruct.molecule.bonds.get(pasteItems.bonds[0])
-      )
+        restruct.molecule.bonds.get(pasteItems.bonds[0]),
+      ),
     );
   }
 

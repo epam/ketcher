@@ -63,7 +63,7 @@ const toolActions = {
     disabled: (editor) =>
       findStereoAtoms(
         editor?.struct(),
-        Array.from(editor?.struct().atoms.keys())
+        Array.from(editor?.struct().atoms.keys()),
       ).length === 0,
     hidden: (options) => isHidden(options, 'enhanced-stereo'),
   },
@@ -174,7 +174,7 @@ const toolActions = {
     hidden: (options) =>
       isHidden(
         options,
-        'reaction-arrow-unbalanced-equilibrium-filled-half-bow'
+        'reaction-arrow-unbalanced-equilibrium-filled-half-bow',
       ),
   },
   'reaction-arrow-unbalanced-equilibrium-open-half-angle': {
@@ -186,7 +186,7 @@ const toolActions = {
     hidden: (options) =>
       isHidden(
         options,
-        'reaction-arrow-unbalanced-equilibrium-open-half-angle'
+        'reaction-arrow-unbalanced-equilibrium-open-half-angle',
       ),
   },
   'reaction-arrow-unbalanced-equilibrium-large-filled-half-bow': {
@@ -198,7 +198,7 @@ const toolActions = {
     hidden: (options) =>
       isHidden(
         options,
-        'reaction-arrow-unbalanced-equilibrium-large-filled-half-bow'
+        'reaction-arrow-unbalanced-equilibrium-large-filled-half-bow',
       ),
   },
   'reaction-arrow-unbalanced-equilibrium-filled-half-triangle': {
@@ -210,7 +210,7 @@ const toolActions = {
     hidden: (options) =>
       isHidden(
         options,
-        'reaction-arrow-unbalanced-equilibrium-filled-half-triangle'
+        'reaction-arrow-unbalanced-equilibrium-filled-half-triangle',
       ),
   },
   'reaction-arrow-elliptical-arc-arrow-filled-bow': {

@@ -42,7 +42,7 @@ const initialState = {
 
 export default function (
   state = initialState,
-  action: RequestActionTypes
+  action: RequestActionTypes,
 ): RequestState {
   const { type, data } = action;
 

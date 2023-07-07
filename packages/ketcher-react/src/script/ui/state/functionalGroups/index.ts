@@ -41,7 +41,7 @@ const initialState: FGState = {
 
 const functionalGroupsReducer = (
   state = initialState,
-  { type, payload }: AnyAction
+  { type, payload }: AnyAction,
 ) => {
   switch (type) {
     case 'FG_INIT':
@@ -68,7 +68,7 @@ function notDebouncedHighlightFG(dispatch, group: any) {
 export const highlightFG = memoizedDebounce(
   notDebouncedHighlightFG,
   TOOLTIP_DELAY / 3,
-  [0]
+  [0],
 );
 
 export function initFGTemplates() {
@@ -78,7 +78,7 @@ export function initFGTemplates() {
     const templates = sdfSerializer.deserialize(templatesRawData);
     const functionalGroups = templates.reduce(
       (acc: Struct[], { struct }) => [...acc, struct],
-      []
+      [],
     );
     provider.setFunctionalGroupsList(functionalGroups);
     dispatch(initFGroups(templates));

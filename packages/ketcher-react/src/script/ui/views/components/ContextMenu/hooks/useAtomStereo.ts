@@ -21,7 +21,7 @@ const useAtomStereo = () => {
       try {
         const action = await EnhancedStereoTool.changeAtomsStereoAction(
           editor,
-          stereoAtomIdsRef.current
+          stereoAtomIdsRef.current,
         );
 
         action && editor.update(action);
@@ -29,7 +29,7 @@ const useAtomStereo = () => {
         noOperation();
       }
     },
-    [getKetcherInstance]
+    [getKetcherInstance],
   );
 
   const disabled = useCallback(
@@ -37,7 +37,7 @@ const useAtomStereo = () => {
       const editor = getKetcherInstance().editor as Editor;
       const stereoAtomIds: number[] = findStereoAtoms(
         editor.struct(),
-        props?.atomIds
+        props?.atomIds,
       );
       stereoAtomIdsRef.current = stereoAtomIds;
 
@@ -47,7 +47,7 @@ const useAtomStereo = () => {
 
       return true;
     },
-    [getKetcherInstance]
+    [getKetcherInstance],
   );
 
   return [handler, disabled] as const;

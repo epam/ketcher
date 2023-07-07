@@ -83,7 +83,7 @@ function handleEraser({
   if ([STRUCT_TYPE.atoms, STRUCT_TYPE.bonds].includes(itemType)) {
     isFunctionalGroupChange(
       { editor, hoveredItemId: item[itemType][0], newAction, dispatch },
-      itemType
+      itemType,
     ).then((res) => {
       res && eraseItem({ editor, item });
     });
@@ -154,7 +154,7 @@ function handleAtomPropsDialog({
           restruct,
           hoveredItemId,
           toAtom(res),
-          false
+          false,
         );
 
         editor.update(updatedAtom);
@@ -179,7 +179,7 @@ function handleBondPropsDialog({
         restruct,
         hoveredItemId,
         toBond(res),
-        false
+        false,
       );
 
       editor.update(updatedBond);
@@ -215,7 +215,7 @@ function handleTool({
 
 async function isFunctionalGroupChange(
   props: HandlersProps,
-  type: string
+  type: string,
 ): Promise<boolean> {
   if (type === 'sgroups') return true;
   return await isChangingFunctionalGroup(props, type);
@@ -254,7 +254,7 @@ function handleAtomTool({ hoveredItemId, newAction, editor }: HandlersProps) {
     editor.render.ctab,
     hoveredItemId,
     atomProps,
-    true
+    true,
   );
   editor.update(updatedAtoms);
 }
@@ -270,15 +270,15 @@ function handleSgroupsTool({
   const sGroup = ctab.molecule.sgroups.get(hoveredItemId);
   if (sGroup == null) {
     throw new Error(
-      `unexpected error, sgroup with id "${hoveredItemId}" is not found`
+      `unexpected error, sgroup with id "${hoveredItemId}" is not found`,
     );
   }
   const { atomId: SGroupPositionAtomId } = sGroup.getContractedPosition(
-    ctab.molecule
+    ctab.molecule,
   );
   deleteFunctionalGroups([hoveredItemId], ctab, action);
   action.mergeWith(
-    fromAtomsAttrs(editor.render.ctab, SGroupPositionAtomId, atomProps, true)
+    fromAtomsAttrs(editor.render.ctab, SGroupPositionAtomId, atomProps, true),
   );
   editor.update(action);
 }
@@ -288,7 +288,7 @@ function handleBondTool({ hoveredItemId, newAction, editor }: HandlersProps) {
     editor.render.ctab,
     newAction.opts,
     hoveredItemId,
-    { label: 'C' }
+    { label: 'C' },
   )[0];
   editor.update(newBond);
 }
@@ -302,14 +302,14 @@ function handleChargeTool({ hoveredItemId, newAction, editor }: HandlersProps) {
       {
         charge: existingAtom.charge + newAction.opts,
       },
-      null
+      null,
     );
     editor.update(updatedAtom);
   }
 }
 
 function mapItemsToArrays(
-  items: Record<string, number>
+  items: Record<string, number>,
 ): Record<string, number[]> {
   const mappedItems = {};
   for (const item in items) {
@@ -343,7 +343,7 @@ async function handleRGroupAtomTool({ hoveredItemId, editor }: HandlersProps) {
       }
 
       editor.update(
-        fromAtomsAttrs(editor.render.ctab, hoveredItemId, element, false)
+        fromAtomsAttrs(editor.render.ctab, hoveredItemId, element, false),
       );
     }
   } catch (error) {} // w/o changes
@@ -352,7 +352,7 @@ async function handleRGroupAtomTool({ hoveredItemId, editor }: HandlersProps) {
 function getFunctionalGroupIdByItem(
   editor: Editor,
   hoveredItemId: number,
-  type: string
+  type: string,
 ): number | null {
   const molecule = editor.render.ctab.molecule;
   const functionalGroups = molecule.functionalGroups;
@@ -362,13 +362,13 @@ function getFunctionalGroupIdByItem(
     : FunctionalGroup.findFunctionalGroupByBond(
         molecule,
         functionalGroups,
-        hoveredItemId
+        hoveredItemId,
       );
 }
 
 async function isChangingFunctionalGroup(
   { hoveredItemId, editor }: HandlersProps,
-  type: string
+  type: string,
 ) {
   const fgId = getFunctionalGroupIdByItem(editor, hoveredItemId, type);
 

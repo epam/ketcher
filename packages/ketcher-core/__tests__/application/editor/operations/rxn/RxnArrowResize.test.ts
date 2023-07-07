@@ -9,18 +9,18 @@ describe('Snap arrows to horizontal or vertical orientation', () => {
     const arrow = new Vec2(1, 0);
     const oneDegreeInRadian = Math.PI / 180;
     const arrowToSnap1 = arrow.rotate(
-      ARROW_MAX_SNAPPING_ANGLE - oneDegreeInRadian
+      ARROW_MAX_SNAPPING_ANGLE - oneDegreeInRadian,
     );
     const arrowToSnap2 = arrow.rotate(
-      -(ARROW_MAX_SNAPPING_ANGLE - oneDegreeInRadian)
+      -(ARROW_MAX_SNAPPING_ANGLE - oneDegreeInRadian),
     );
     expect(getSnappedArrowVector(arrowToSnap1).y).toBe(0);
     expect(getSnappedArrowVector(arrowToSnap2).y).toBe(0);
     const arrowNotToSnap1 = arrow.rotate(
-      ARROW_MAX_SNAPPING_ANGLE + oneDegreeInRadian
+      ARROW_MAX_SNAPPING_ANGLE + oneDegreeInRadian,
     );
     const arrowNotToSnap2 = arrow.rotate(
-      ARROW_MAX_SNAPPING_ANGLE + oneDegreeInRadian
+      ARROW_MAX_SNAPPING_ANGLE + oneDegreeInRadian,
     );
     expect(getSnappedArrowVector(arrowNotToSnap1).y).not.toBe(0);
     expect(getSnappedArrowVector(arrowNotToSnap2).y).not.toBe(0);
@@ -30,18 +30,18 @@ describe('Snap arrows to horizontal or vertical orientation', () => {
     const arrow = new Vec2(0, 1);
     const oneDegreeInRadian = Math.PI / 180;
     const arrowToSnap1 = arrow.rotate(
-      ARROW_MAX_SNAPPING_ANGLE - oneDegreeInRadian
+      ARROW_MAX_SNAPPING_ANGLE - oneDegreeInRadian,
     );
     const arrowToSnap2 = arrow.rotate(
-      -(ARROW_MAX_SNAPPING_ANGLE - oneDegreeInRadian)
+      -(ARROW_MAX_SNAPPING_ANGLE - oneDegreeInRadian),
     );
     expect(getSnappedArrowVector(arrowToSnap1).x).toBe(0);
     expect(getSnappedArrowVector(arrowToSnap2).x).toBe(0);
     const arrowNotToSnap1 = arrow.rotate(
-      ARROW_MAX_SNAPPING_ANGLE + oneDegreeInRadian
+      ARROW_MAX_SNAPPING_ANGLE + oneDegreeInRadian,
     );
     const arrowNotToSnap2 = arrow.rotate(
-      ARROW_MAX_SNAPPING_ANGLE + oneDegreeInRadian
+      ARROW_MAX_SNAPPING_ANGLE + oneDegreeInRadian,
     );
     expect(getSnappedArrowVector(arrowNotToSnap1).x).not.toBe(0);
     expect(getSnappedArrowVector(arrowNotToSnap2).x).not.toBe(0);
@@ -51,18 +51,18 @@ describe('Snap arrows to horizontal or vertical orientation', () => {
     const arrow = new Vec2(-1, 0);
     const oneDegreeInRadian = Math.PI / 180;
     const arrowToSnap1 = arrow.rotate(
-      ARROW_MAX_SNAPPING_ANGLE - oneDegreeInRadian
+      ARROW_MAX_SNAPPING_ANGLE - oneDegreeInRadian,
     );
     const arrowToSnap2 = arrow.rotate(
-      -(ARROW_MAX_SNAPPING_ANGLE - oneDegreeInRadian)
+      -(ARROW_MAX_SNAPPING_ANGLE - oneDegreeInRadian),
     );
     expect(getSnappedArrowVector(arrowToSnap1).y).toBe(0);
     expect(getSnappedArrowVector(arrowToSnap2).y).toBe(0);
     const arrowNotToSnap1 = arrow.rotate(
-      ARROW_MAX_SNAPPING_ANGLE + oneDegreeInRadian
+      ARROW_MAX_SNAPPING_ANGLE + oneDegreeInRadian,
     );
     const arrowNotToSnap2 = arrow.rotate(
-      ARROW_MAX_SNAPPING_ANGLE + oneDegreeInRadian
+      ARROW_MAX_SNAPPING_ANGLE + oneDegreeInRadian,
     );
     expect(getSnappedArrowVector(arrowNotToSnap1).y).not.toBe(0);
     expect(getSnappedArrowVector(arrowNotToSnap2).y).not.toBe(0);
@@ -72,18 +72,18 @@ describe('Snap arrows to horizontal or vertical orientation', () => {
     const arrow = new Vec2(0, -1);
     const oneDegreeInRadian = Math.PI / 180;
     const arrowToSnap1 = arrow.rotate(
-      ARROW_MAX_SNAPPING_ANGLE - oneDegreeInRadian
+      ARROW_MAX_SNAPPING_ANGLE - oneDegreeInRadian,
     );
     const arrowToSnap2 = arrow.rotate(
-      -(ARROW_MAX_SNAPPING_ANGLE - oneDegreeInRadian)
+      -(ARROW_MAX_SNAPPING_ANGLE - oneDegreeInRadian),
     );
     expect(getSnappedArrowVector(arrowToSnap1).x).toBe(0);
     expect(getSnappedArrowVector(arrowToSnap2).x).toBe(0);
     const arrowNotToSnap1 = arrow.rotate(
-      ARROW_MAX_SNAPPING_ANGLE + oneDegreeInRadian
+      ARROW_MAX_SNAPPING_ANGLE + oneDegreeInRadian,
     );
     const arrowNotToSnap2 = arrow.rotate(
-      ARROW_MAX_SNAPPING_ANGLE + oneDegreeInRadian
+      ARROW_MAX_SNAPPING_ANGLE + oneDegreeInRadian,
     );
     expect(getSnappedArrowVector(arrowNotToSnap1).x).not.toBe(0);
     expect(getSnappedArrowVector(arrowNotToSnap2).x).not.toBe(0);

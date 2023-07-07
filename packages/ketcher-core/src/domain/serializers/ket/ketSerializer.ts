@@ -109,7 +109,7 @@ export class KetSerializer implements Serializer<Struct> {
           result.root.nodes.push({ $ref: `rg${item.data!.rgnumber}` });
           result[`rg${item.data!.rgnumber}`] = rgroupToKet(
             item.fragment!,
-            item.data
+            item.data,
           );
           break;
         }

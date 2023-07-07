@@ -130,7 +130,7 @@ const MiewDialog = ({
       service
         .getStructureFromStructAsync(struct)
         .then((res) =>
-          miew.load(res, { sourceType: 'immediate', fileType: 'cml' })
+          miew.load(res, { sourceType: 'immediate', fileType: 'cml' }),
         )
         .then(() => {
           miew.setOptions(miewOpts);
@@ -138,7 +138,7 @@ const MiewDialog = ({
         })
         .catch((ex) => console.error(ex.message));
     },
-    [miewOpts, server, struct]
+    [miewOpts, server, struct],
   );
 
   const exportCML = useCallback(() => {
@@ -191,7 +191,7 @@ const MiewDialog = ({
 
 const getOptionsSettings = (state) => state.options.settings;
 const miewOptionsSelector = createSelector([getOptionsSettings], (settings) =>
-  createMiewOptions(pick(MIEW_OPTIONS, settings))
+  createMiewOptions(pick(MIEW_OPTIONS, settings)),
 );
 
 const mapStateToProps = (state) => ({

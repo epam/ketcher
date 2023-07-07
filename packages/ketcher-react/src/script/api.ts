@@ -26,7 +26,7 @@ type Api = StructService & Promise<InfoResult>;
 // todo: remove - ?? should we? it's in use
 function createApi(
   structServiceProvider: StructServiceProvider,
-  defaultOptions: StructServiceOptions
+  defaultOptions: StructServiceOptions,
 ): Api {
   const structService =
     structServiceProvider.createStructService(defaultOptions);

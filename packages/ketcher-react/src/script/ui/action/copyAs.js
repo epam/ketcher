@@ -39,12 +39,12 @@ export default function copyAs(type) {
     }
 
     const simpleObjectOrText = Boolean(
-      struct.simpleObjects.size || struct.texts.size
+      struct.simpleObjects.size || struct.texts.size,
     );
 
     if (simpleObjectOrText && serializer instanceof MolSerializer) {
       errorHandler(
-        'This feature is not available for Simple objects and Text objects'
+        'This feature is not available for Simple objects and Text objects',
       );
       return null;
     }

@@ -79,7 +79,7 @@ export class MolSerializer implements Serializer<Struct> {
       this.options.ignoreErrors,
       this.options.noRgroups,
       this.options.preserveIndigoDesc,
-      this.options.ignoreChiralFlag
+      this.options.ignoreChiralFlag,
     );
   }
 }

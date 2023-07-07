@@ -104,7 +104,7 @@ Dfs.prototype.walk = function () {
     let seqElem = new Dfs.SeqElem(
       vIdx,
       parentVertex,
-      this.vertices[vIdx].parent_edge
+      this.vertices[vIdx].parent_edge,
     );
     this.v_seq.push(seqElem);
 

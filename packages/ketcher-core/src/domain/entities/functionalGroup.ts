@@ -88,7 +88,7 @@ export class FunctionalGroup {
   static bondsInFunctionalGroup(
     molecule,
     functionalGroups,
-    bond
+    bond,
   ): number | null {
     if (functionalGroups.size === 0) {
       return null;
@@ -102,19 +102,19 @@ export class FunctionalGroup {
 
   static findFunctionalGroupByAtom(
     functionalGroups: Pool<FunctionalGroup>,
-    atomId: number
+    atomId: number,
   ): number | null;
 
   static findFunctionalGroupByAtom(
     functionalGroups: Pool<FunctionalGroup>,
     atomId: number,
-    isFunctionalGroupReturned: true
+    isFunctionalGroupReturned: true,
   ): FunctionalGroup | null;
 
   static findFunctionalGroupByAtom(
     functionalGroups: Pool<FunctionalGroup>,
     atomId: number,
-    isFunctionalGroupReturned?: boolean
+    isFunctionalGroupReturned?: boolean,
   ): number | FunctionalGroup | null {
     for (const fg of functionalGroups.values()) {
       if (fg.relatedSGroup.atoms.includes(atomId))
@@ -126,21 +126,21 @@ export class FunctionalGroup {
   static findFunctionalGroupByBond(
     molecule: Struct,
     functionalGroups: Pool<FunctionalGroup>,
-    bondId: number | null
+    bondId: number | null,
   ): number | null;
 
   static findFunctionalGroupByBond(
     molecule: Struct,
     functionalGroups: Pool<FunctionalGroup>,
     bondId: number | null,
-    isFunctionalGroupReturned: true
+    isFunctionalGroupReturned: true,
   ): FunctionalGroup | null;
 
   static findFunctionalGroupByBond(
     molecule: Struct,
     functionalGroups: Pool<FunctionalGroup>,
     bondId: number | null,
-    isFunctionalGroupReturned?: boolean
+    isFunctionalGroupReturned?: boolean,
   ): FunctionalGroup | number | null {
     for (const fg of functionalGroups.values()) {
       const bonds = SGroup.getBonds(molecule, fg.relatedSGroup);
@@ -153,10 +153,10 @@ export class FunctionalGroup {
 
   static findFunctionalGroupBySGroup(
     functionalGroups: Pool<FunctionalGroup>,
-    sGroup?: SGroup
+    sGroup?: SGroup,
   ) {
     const key = functionalGroups.find(
-      (_, functionalGroup) => functionalGroup.relatedSGroupId === sGroup?.id
+      (_, functionalGroup) => functionalGroup.relatedSGroupId === sGroup?.id,
     );
     return key !== null ? functionalGroups.get(key) : undefined;
   }
@@ -169,7 +169,7 @@ export class FunctionalGroup {
     atom: Atom,
     sgroups,
     functionalGroups,
-    sgroupsFromReStruct: boolean
+    sgroupsFromReStruct: boolean,
   ): boolean {
     const contractedFunctionalGroups: number[] = [];
     if (sgroupsFromReStruct) {
@@ -177,7 +177,7 @@ export class FunctionalGroup {
         if (
           FunctionalGroup.isContractedFunctionalGroup(
             sg.item.id,
-            functionalGroups
+            functionalGroups,
           )
         ) {
           contractedFunctionalGroups.push(sg.item.id);
@@ -198,14 +198,14 @@ export class FunctionalGroup {
   static isBondInContractedFunctionalGroup(
     bond: Bond,
     sGroups: Map<number, ReSGroup> | Pool<SGroup>,
-    functionalGroups: Pool<FunctionalGroup>
+    functionalGroups: Pool<FunctionalGroup>,
   ) {
     return [...sGroups.values()].some((sGroup) => {
       const sGroupId = 'item' in sGroup ? sGroup.item.id : sGroup.id;
       const atomsInSGroup = 'item' in sGroup ? sGroup.item.atoms : sGroup.atoms;
       const isContracted = FunctionalGroup.isContractedFunctionalGroup(
         sGroupId,
-        functionalGroups
+        functionalGroups,
       );
       return (
         isContracted &&

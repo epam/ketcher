@@ -12,10 +12,10 @@ function castAtomPropToType(property, value) {
 
 export function updateOnlyChangedProperties(
   unchangedElement,
-  userChangedElement
+  userChangedElement,
 ) {
   const updatedKeys = Object.getOwnPropertyNames(userChangedElement).filter(
-    (key) => userChangedElement[key] !== ''
+    (key) => userChangedElement[key] !== '',
   );
   return Object.getOwnPropertyNames(unchangedElement).reduce(
     (updatedElement, key) => {
@@ -24,6 +24,6 @@ export function updateOnlyChangedProperties(
         : unchangedElement[key];
       return updatedElement;
     },
-    {}
+    {},
   );
 }

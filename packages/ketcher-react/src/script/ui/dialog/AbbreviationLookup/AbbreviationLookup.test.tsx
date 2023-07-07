@@ -46,7 +46,7 @@ describe('AbbreviationLookup', () => {
   const optionC = createOption(
     'Methyl Ethyl Ketone',
     'MEK',
-    AbbreviationType.Template
+    AbbreviationType.Template,
   ) as AbbreviationTemplateOption;
 
   it('Should render abbreviation lookup input', () => {
@@ -114,7 +114,7 @@ describe('AbbreviationLookup', () => {
       <AbbreviationLookup options={[optionA, optionB]} />,
       {
         wrapper: KetcherWrapper,
-      }
+      },
     );
 
     rerender(<></>);
@@ -134,11 +134,11 @@ describe('AbbreviationLookup', () => {
 
     expect(mockedDispatch).toHaveBeenNthCalledWith(
       1,
-      onAction({ tool: 'atom', opts: optionA.element })
+      onAction({ tool: 'atom', opts: optionA.element }),
     );
     expect(mockedDispatch).toHaveBeenNthCalledWith(
       2,
-      closeAbbreviationLookup()
+      closeAbbreviationLookup(),
     );
   });
 
@@ -154,11 +154,11 @@ describe('AbbreviationLookup', () => {
 
     expect(mockedDispatch).toHaveBeenNthCalledWith(
       1,
-      onAction({ tool: 'template', opts: optionC.template })
+      onAction({ tool: 'template', opts: optionC.template }),
     );
     expect(mockedDispatch).toHaveBeenNthCalledWith(
       2,
-      closeAbbreviationLookup()
+      closeAbbreviationLookup(),
     );
   });
 });

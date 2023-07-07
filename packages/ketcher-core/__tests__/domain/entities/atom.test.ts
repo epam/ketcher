@@ -14,7 +14,7 @@ describe('radicalElectrons', () => {
     'should return 0 if passed radical is different from 1 to 3 value range',
     (radical) => {
       expect(radicalElectrons(radical)).toBe(0);
-    }
+    },
   );
 });
 
@@ -452,7 +452,7 @@ describe('Atom', () => {
         const atom = new Atom(paramsWithALabel);
 
         expect(atom.calcValenceMinusHyd(3)).toBeLessThanOrEqual(4);
-      }
+      },
     );
 
     it.each([
@@ -492,7 +492,7 @@ describe('Atom', () => {
         const atom = new Atom(paramsWithALabel);
 
         expect(atom.calcValenceMinusHyd(2)).toBe(expected);
-      }
+      },
     );
   });
 });

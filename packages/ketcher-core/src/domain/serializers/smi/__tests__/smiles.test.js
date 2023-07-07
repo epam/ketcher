@@ -32,7 +32,7 @@ describe('Smiles.writeAtom method', () => {
       // const index = 0
       smiles.writeAtom(struct, index);
       expect(smiles.smiles).toBe(expected);
-    }
+    },
   );
   it('should add [*] to smiles if label is R(#)', () => {
     const index = 1;

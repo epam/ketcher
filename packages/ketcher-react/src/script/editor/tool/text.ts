@@ -65,7 +65,7 @@ class TextTool implements Tool {
       this.dragCtx.action = fromMultipleMove(
         render.ctab,
         this.editor.selection() || {},
-        render.page2obj(event).sub(this.dragCtx.xy0)
+        render.page2obj(event).sub(this.dragCtx.xy0),
       );
       this.editor.update(this.dragCtx.action, true);
     } else {
@@ -102,7 +102,7 @@ class TextTool implements Tool {
         this.editor,
         closestItem.id,
         closestItem.position,
-        closestItem.pos
+        closestItem.pos,
       );
     }
 
@@ -114,7 +114,7 @@ function propsDialog(
   editor: any,
   id: number | null,
   position: Vec2,
-  pos: Array<Vec2>
+  pos: Array<Vec2>,
 ) {
   const struct = editor.render.ctab.molecule;
   const text: Text | null = id || id === 0 ? struct.texts.get(id) : null;
@@ -132,7 +132,7 @@ function propsDialog(
     .then(({ content }: Result) => {
       if (!id && id !== 0 && content) {
         editor.update(
-          fromTextCreation(editor.render.ctab, content, position, pos)
+          fromTextCreation(editor.render.ctab, content, position, pos),
         );
       } else if (!content) {
         editor.update(fromTextDeletion(editor.render.ctab, id!));

@@ -225,7 +225,7 @@ class Attach extends Component {
       !!name &&
       !this.props.templateLib.some(
         (tmpl) =>
-          tmpl.struct.name === name && tmpl.props.group === 'User Templates'
+          tmpl.struct.name === name && tmpl.props.group === 'User Templates',
       ) &&
       name.length <= 128
     );
@@ -342,7 +342,7 @@ export default connect(
     onInit: (name, ap) => dispatch(initAttach(name, ap)),
     onAttachEdit: (ap) => dispatch(setAttachPoints(ap)),
     onNameEdit: (name) => dispatch(setTmplName(name)),
-  })
+  }),
 )(Attach);
 
 function initTmpl(tmpl) {

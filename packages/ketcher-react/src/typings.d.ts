@@ -52,19 +52,19 @@ declare module 'subscription' {
   }
 
   export class PipelineSubscription<
-    TDispatchValue = any
+    TDispatchValue = any,
   > extends Subscription<TDispatchValue> {
     dispatch: (value: TDispatchValue) => any;
   }
 
   export class StoppableSubscription<
-    TDispatchValue = any
+    TDispatchValue = any,
   > extends Subscription<TDispatchValue> {
     dispatch: (value?: TDispatchValue) => any;
   }
 
   export class DOMSubscription<
-    TDispatchEvent = any
+    TDispatchEvent = any,
   > extends Subscription<TDispatchEvent> {
     dispatch: (event: TDispatchEvent) => boolean;
   }

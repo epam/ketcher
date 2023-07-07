@@ -128,16 +128,16 @@ describe('Rotate controller', () => {
     let predefinedDegree3 = 89;
     let predefinedDegree4 = -89;
     expect(
-      getDifference(predefinedDegree1, structRotateDegree)
+      getDifference(predefinedDegree1, structRotateDegree),
     ).toBeLessThanOrEqual(90);
     expect(
-      getDifference(predefinedDegree2, structRotateDegree)
+      getDifference(predefinedDegree2, structRotateDegree),
     ).toBeLessThanOrEqual(90);
     expect(
-      getDifference(predefinedDegree3, structRotateDegree)
+      getDifference(predefinedDegree3, structRotateDegree),
     ).toBeGreaterThan(90);
     expect(
-      getDifference(predefinedDegree4, structRotateDegree)
+      getDifference(predefinedDegree4, structRotateDegree),
     ).toBeGreaterThan(90);
 
     structRotateDegree = 135;
@@ -146,16 +146,16 @@ describe('Rotate controller', () => {
     predefinedDegree3 = 44;
     predefinedDegree4 = -134;
     expect(
-      getDifference(predefinedDegree1, structRotateDegree)
+      getDifference(predefinedDegree1, structRotateDegree),
     ).toBeLessThanOrEqual(90);
     expect(
-      getDifference(predefinedDegree2, structRotateDegree)
+      getDifference(predefinedDegree2, structRotateDegree),
     ).toBeLessThanOrEqual(90);
     expect(
-      getDifference(predefinedDegree3, structRotateDegree)
+      getDifference(predefinedDegree3, structRotateDegree),
     ).toBeGreaterThan(90);
     expect(
-      getDifference(predefinedDegree4, structRotateDegree)
+      getDifference(predefinedDegree4, structRotateDegree),
     ).toBeGreaterThan(90);
 
     structRotateDegree = -135;
@@ -164,16 +164,16 @@ describe('Rotate controller', () => {
     predefinedDegree3 = -44;
     predefinedDegree4 = 134;
     expect(
-      getDifference(predefinedDegree1, structRotateDegree)
+      getDifference(predefinedDegree1, structRotateDegree),
     ).toBeLessThanOrEqual(90);
     expect(
-      getDifference(predefinedDegree2, structRotateDegree)
+      getDifference(predefinedDegree2, structRotateDegree),
     ).toBeLessThanOrEqual(90);
     expect(
-      getDifference(predefinedDegree3, structRotateDegree)
+      getDifference(predefinedDegree3, structRotateDegree),
     ).toBeGreaterThan(90);
     expect(
-      getDifference(predefinedDegree4, structRotateDegree)
+      getDifference(predefinedDegree4, structRotateDegree),
     ).toBeGreaterThan(90);
   });
 

@@ -27,7 +27,7 @@ export const updateFloatingTools = (payload: FloatingToolsPayload) => {
 
 const floatingToolsReducer: Reducer<FloatingToolsState, FloatingToolsAction> = (
   state = initialState,
-  { type, payload }
+  { type, payload },
 ) => {
   switch (type) {
     case 'UPDATE_FLOATING_TOOLS':

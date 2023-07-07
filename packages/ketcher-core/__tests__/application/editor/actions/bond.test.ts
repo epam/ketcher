@@ -23,13 +23,13 @@ describe('Bond Addition', () => {
   });
   it('should contain operation CalcImplicitH', () => {
     const CalcImplicitH = action.operations.find(
-      (operation) => operation.type === 'Calculate implicit hydrogen'
+      (operation) => operation.type === 'Calculate implicit hydrogen',
     );
     expect(CalcImplicitH).toBeDefined();
   });
   it('should contain operation Add fragment stereo flag', () => {
     const addFragment = action.operations.find(
-      (operation) => operation.type === 'Add fragment stereo flag'
+      (operation) => operation.type === 'Add fragment stereo flag',
     );
     expect(addFragment).toBeDefined();
   });

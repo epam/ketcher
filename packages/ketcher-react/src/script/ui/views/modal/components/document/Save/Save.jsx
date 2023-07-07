@@ -60,7 +60,7 @@ const saveSchema = {
       title: 'File format:',
       enum: Object.keys(formatProperties),
       enumNames: Object.keys(formatProperties).map(
-        (format) => formatProperties[format].name
+        (format) => formatProperties[format].name,
       ),
     },
   },
@@ -93,7 +93,7 @@ class SaveDialog extends Component {
         'png',
         'cdxml',
         'cdx',
-        'binaryCdx'
+        'binaryCdx',
       );
     // TODO: pass the necessary divider not like list element
 
@@ -107,7 +107,7 @@ class SaveDialog extends Component {
             getPropertiesByFormat(format) || getPropertiesByImgFormat(format);
           return formatProps?.name;
         }),
-      }
+      },
     );
   }
 
@@ -115,7 +115,7 @@ class SaveDialog extends Component {
     const { checkOptions } = this.props.checkState;
     this.props.onCheck(checkOptions);
     this.changeType(this.isRxn ? 'rxn' : 'mol').then(
-      (res) => res instanceof Error && this.setState({ disableControls: true })
+      (res) => res instanceof Error && this.setState({ disableControls: true }),
     );
   }
 
@@ -182,7 +182,7 @@ class SaveDialog extends Component {
             errorHandler(e.message);
             this.props.onResetForm(formState);
             return e;
-          }
+          },
         )
         .finally(() => {
           this.setState({
@@ -262,7 +262,7 @@ class SaveDialog extends Component {
             name="format"
             onChange={this.changeType}
             options={getSelectOptionsFromSchema(
-              this.saveSchema.properties.format
+              this.saveSchema.properties.format,
             )}
             component={Select}
           />
@@ -384,7 +384,7 @@ class SaveDialog extends Component {
         type="button"
       >
         Cancel
-      </button>
+      </button>,
     );
 
     if (this.isImageFormat(format)) {
@@ -406,7 +406,7 @@ class SaveDialog extends Component {
           className={classes.ok}
         >
           Save
-        </SaveButton>
+        </SaveButton>,
       );
     } else {
       buttons.push(
@@ -422,7 +422,7 @@ class SaveDialog extends Component {
           className={classes.ok}
         >
           Save
-        </SaveButton>
+        </SaveButton>,
       );
     }
     return buttons;
@@ -446,7 +446,7 @@ class SaveDialog extends Component {
 
 const getOptions = (state) => state.options;
 const serverSettingsSelector = createSelector([getOptions], (options) =>
-  options.getServerSettings()
+  options.getServerSettings(),
 );
 
 const mapStateToProps = (state) => ({

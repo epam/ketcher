@@ -71,7 +71,7 @@ export default function initEditor(dispatch, getState) {
       if (isAtomsArray(selem)) {
         const atomAttributes = generateCommonProperties(
           selem,
-          fromAtom(selem[0])
+          fromAtom(selem[0]),
         );
         return openDialog(dispatch, 'atomProps', {
           ...atomAttributes,
@@ -93,7 +93,7 @@ export default function initEditor(dispatch, getState) {
         dlg = openDialog(
           dispatch,
           !elem.pseudo ? 'period-table' : 'extended-table',
-          { ...elem, pseudo: elem.pseudo }
+          { ...elem, pseudo: elem.pseudo },
         );
       } else if (elem.type === 'rlabel') {
         const rgroups = getState().editor.struct().rgroups;
@@ -106,7 +106,7 @@ export default function initEditor(dispatch, getState) {
 
               return acc;
             },
-            []
+            [],
           ),
         };
         dlg = openDialog(dispatch, 'rgroup', params).then((res) => ({
@@ -117,7 +117,7 @@ export default function initEditor(dispatch, getState) {
         dlg = openDialog(
           dispatch,
           !elem.pseudo ? 'period-table' : 'extended-table',
-          { ...elem, pseudo: elem.pseudo }
+          { ...elem, pseudo: elem.pseudo },
         );
       }
       return dlg.then(toElement);
@@ -131,7 +131,7 @@ export default function initEditor(dispatch, getState) {
           init,
         }).then(
           (res) => toStereoLabel(res),
-          () => null
+          () => null,
         );
       }),
 
@@ -139,7 +139,7 @@ export default function initEditor(dispatch, getState) {
     onBondEdit: (bonds) => {
       const bondsAttributes = generateCommonProperties(bonds, bonds[0]);
       return openDialog(dispatch, 'bondProps', fromBond(bondsAttributes)).then(
-        toBond
+        toBond,
       );
     },
     onRgroupEdit: (rgroup) => {
@@ -152,7 +152,7 @@ export default function initEditor(dispatch, getState) {
         return openDialog(
           dispatch,
           'rgroupLogic',
-          Object.assign({ rgroupLabels }, rgroup)
+          Object.assign({ rgroupLabels }, rgroup),
         );
       }
 
@@ -163,7 +163,7 @@ export default function initEditor(dispatch, getState) {
 
           return acc;
         },
-        []
+        [],
       );
       const params = {
         type: 'fragment',
@@ -193,7 +193,7 @@ export default function initEditor(dispatch, getState) {
         state.server,
         'aromatize',
         serverOpts,
-        struct
+        struct,
       ).catch((e) => state.editor.errorHandler(e));
     },
     onDearomatizeStruct: (struct) => {
@@ -204,7 +204,7 @@ export default function initEditor(dispatch, getState) {
         state.server,
         'dearomatize',
         serverOpts,
-        struct
+        struct,
       ).catch((e) => state.editor.errorHandler(e));
     },
     onMouseDown: () => {
@@ -227,7 +227,7 @@ export default function initEditor(dispatch, getState) {
        */
       (payload) => {
         dispatch(updateFloatingTools(payload));
-      }
+      },
     ),
   };
 }

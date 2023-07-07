@@ -45,10 +45,10 @@ export const noOperation = () => null;
 export function onlyHasProperty<T extends object>(
   checkedObject: T,
   key: keyof T,
-  ignoredProps: string[] = []
+  ignoredProps: string[] = [],
 ) {
   const props = Object.keys(checkedObject).filter(
-    (key) => !ignoredProps.includes(key)
+    (key) => !ignoredProps.includes(key),
   );
 
   const numberOfProps = props.length;

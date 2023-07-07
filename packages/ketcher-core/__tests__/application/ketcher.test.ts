@@ -12,7 +12,7 @@ describe('contructor()', () => {
     const formatterFactory: FormatterFactory = mock<FormatterFactory>();
 
     expect(
-      () => new Ketcher(editor, structService, formatterFactory)
+      () => new Ketcher(editor, structService, formatterFactory),
     ).toThrowError(AssertionError);
   });
 
@@ -22,7 +22,7 @@ describe('contructor()', () => {
     const formatterFactory: FormatterFactory = mock<FormatterFactory>();
 
     expect(
-      () => new Ketcher(editor, structService, formatterFactory)
+      () => new Ketcher(editor, structService, formatterFactory),
     ).toThrowError(AssertionError);
   });
 
@@ -33,7 +33,7 @@ describe('contructor()', () => {
       null as unknown as FormatterFactory;
 
     expect(
-      () => new Ketcher(editor, structService, formatterFactory)
+      () => new Ketcher(editor, structService, formatterFactory),
     ).toThrowError(AssertionError);
   });
 });

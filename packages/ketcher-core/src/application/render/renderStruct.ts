@@ -25,7 +25,7 @@ export class RenderStruct {
   static render(
     el: HTMLElement | null,
     struct: Struct | null,
-    options: any = {}
+    options: any = {},
   ) {
     if (el && struct) {
       const { cachePrefix = '', needCache = true } = options;
@@ -59,7 +59,7 @@ export class RenderStruct {
  * - we have to use RGroup attachment points on atoms for this purposes
  */
 function convertAllSGroupAttachmentPointsToRGroupAttachmentPoints(
-  struct: Struct
+  struct: Struct,
 ) {
   struct.sgroups.forEach((sgroup) => {
     sgroup.getAttachmentPoints().forEach((attachmentPoint) => {

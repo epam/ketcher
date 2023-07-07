@@ -115,7 +115,7 @@ export class Render {
     this.sz = newSize;
     this.paper.setSize(
       newSize.x * this.options.zoom,
-      newSize.y * this.options.zoom
+      newSize.y * this.options.zoom,
     );
     this.setViewBox();
   }
@@ -123,7 +123,7 @@ export class Render {
   setOffset(newOffset: Vec2): void {
     const delta = new Vec2(
       newOffset.x - this.options.offset.x,
-      newOffset.y - this.options.offset.y
+      newOffset.y - this.options.offset.y,
     );
     this.clientArea.scrollLeft += delta.x;
     this.clientArea.scrollTop += delta.y;
@@ -147,12 +147,12 @@ export class Render {
       x,
       y,
       cx + Math.abs(x),
-      cy + Math.abs(y)
+      cy + Math.abs(y),
     ).scaled(1 / this.options.zoom);
     if (e.x > 0 || e.y > 0) {
       this.setPaperSize(this.sz.add(e));
       const d = new Vec2(x < 0 ? -x : 0, y < 0 ? -y : 0).scaled(
-        1 / this.options.zoom
+        1 / this.options.zoom,
       );
       if (d.x > 0 || d.y > 0) {
         this.ctab.translate(d);
@@ -172,7 +172,7 @@ export class Render {
   setViewBox() {
     this.paper.canvas.setAttribute(
       'viewBox',
-      '0 0 ' + this.sz.x + ' ' + this.sz.y
+      '0 0 ' + this.sz.x + ' ' + this.sz.y,
     );
   }
 
@@ -188,14 +188,14 @@ export class Render {
     viewSz: Vec2 | null = null,
     options = {
       resizeCanvas: true,
-    }
+    },
   ) {
     // eslint-disable-line max-statements
     viewSz =
       viewSz ||
       new Vec2(
         this.clientArea.clientWidth || 100,
-        this.clientArea.clientHeight || 100
+        this.clientArea.clientHeight || 100,
       );
 
     const changes = this.ctab.update(force);
@@ -217,7 +217,7 @@ export class Render {
         const eb = bb.sz().length() > 0 ? bb.extend(ext, ext) : bb;
         const vb = new Box2Abs(
           this.scrollPos(),
-          viewSz.scaled(1 / this.options.zoom).sub(Vec2.UNIT.scaled(20))
+          viewSz.scaled(1 / this.options.zoom).sub(Vec2.UNIT.scaled(20)),
         );
         const cb = Box2Abs.union(vb, eb);
         if (!this.oldCb) this.oldCb = new Box2Abs();
@@ -261,7 +261,7 @@ export class Render {
           bb.pos().x - marg * rescale - (csz.x * rescale - sz2.x) / 2,
           bb.pos().y - marg * rescale - (csz.y * rescale - sz2.y) / 2,
           csz.x * rescale,
-          csz.y * rescale
+          csz.y * rescale,
         );
         /* eslint-enable no-mixed-operators */
       }
@@ -274,7 +274,7 @@ function calcExtend(
   x0: number,
   y0: number,
   newXSize: number,
-  newYSize: number
+  newYSize: number,
 ): Vec2 {
   // eslint-disable-line max-params
   let ex = x0 < 0 ? -x0 : 0;

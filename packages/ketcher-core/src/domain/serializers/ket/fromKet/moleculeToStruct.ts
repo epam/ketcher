@@ -42,7 +42,7 @@ export function moleculeToStruct(ketItem: any): Struct {
 
   if (ketItem.sgroups) {
     ketItem.sgroups.forEach((sgroup) =>
-      struct.sgroups.add(sgroupToStruct(sgroup))
+      struct.sgroups.add(sgroupToStruct(sgroup)),
     );
   }
 

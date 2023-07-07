@@ -88,7 +88,7 @@ export default function (state = null, { type, action, ...params }) {
           if (!isEmpty(value)) res[actionName] = value;
           return res;
         },
-        { activeTool: activeTool || state.activeTool }
+        { activeTool: activeTool || state.activeTool },
       );
 
     default:

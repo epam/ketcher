@@ -7,12 +7,12 @@ const batchDelay = 300;
 
 export default function useSaltsAndSolvents(
   saltsAndSolvents: Template[],
-  filter: string
+  filter: string,
 ) {
   const [isFirstRender, setIsFirstRender] = useState(true);
   const timerId = useRef<null | ReturnType<typeof setTimeout>>(null);
   const [filteredSaltsAndSolvents, setFilteredSaltsAndSolvents] = useState(
-    saltsAndSolvents[SALTS_AND_SOLVENTS]
+    saltsAndSolvents[SALTS_AND_SOLVENTS],
   );
 
   const addToSaSWithBatches = useCallback((fullFilteredArray) => {
@@ -24,7 +24,7 @@ export default function useSaltsAndSolvents(
     if (fullFilteredArray.length > 0) {
       timerId.current = setTimeout(
         () => addToSaSWithBatches(fullFilteredArray),
-        batchDelay
+        batchDelay,
       );
     }
   }, []);

@@ -36,30 +36,30 @@ export function fromFlip(
   reStruct: ReStruct,
   selection: EditorSelection | null,
   flipDirection: FlipDirection,
-  center: Vec2
+  center: Vec2,
 ) {
   const action = new Action();
   const structToFlip = selection || structSelection(reStruct.molecule);
 
   action.mergeWith(
-    fromStructureFlip(reStruct, structToFlip, flipDirection, center)
+    fromStructureFlip(reStruct, structToFlip, flipDirection, center),
   );
 
   if (structToFlip.rxnArrows) {
     action.mergeWith(
-      fromRxnArrowFlip(reStruct, structToFlip.rxnArrows, flipDirection, center)
+      fromRxnArrowFlip(reStruct, structToFlip.rxnArrows, flipDirection, center),
     );
   }
 
   if (structToFlip.rxnPluses) {
     action.mergeWith(
-      fromRxnPlusFlip(reStruct, structToFlip.rxnPluses, flipDirection, center)
+      fromRxnPlusFlip(reStruct, structToFlip.rxnPluses, flipDirection, center),
     );
   }
 
   if (structToFlip.texts) {
     action.mergeWith(
-      fromTextFlip(reStruct, structToFlip.texts, flipDirection, center)
+      fromTextFlip(reStruct, structToFlip.texts, flipDirection, center),
     );
   }
 
@@ -70,7 +70,7 @@ function fromRxnArrowFlip(
   reStruct: ReStruct,
   rxnArrowIds: number[],
   flipDirection: FlipDirection,
-  center: Vec2
+  center: Vec2,
 ) {
   const action = new Action();
 
@@ -90,7 +90,7 @@ function fromRxnArrowFlip(
     const difference = flipPointByCenter(
       rxnArrow.center(),
       center,
-      flipDirection
+      flipDirection,
     );
     action.addOp(new RxnArrowMove(arrowId, difference));
   });
@@ -102,7 +102,7 @@ function fromRxnPlusFlip(
   reStruct: ReStruct,
   rxnPlusIds: number[],
   flipDirection: FlipDirection,
-  center: Vec2
+  center: Vec2,
 ) {
   const action = new Action();
 
@@ -123,7 +123,7 @@ function fromTextFlip(
   reStruct: ReStruct,
   textIds: number[],
   flipDirection: FlipDirection,
-  center: Vec2
+  center: Vec2,
 ) {
   const action = new Action();
 
@@ -152,7 +152,7 @@ function fromStructureFlip(
   reStruct: ReStruct,
   selection: EditorSelection | null,
   flipDirection: FlipDirection,
-  center: Vec2
+  center: Vec2,
 ) {
   const struct = reStruct.molecule;
   const action = new Action();
@@ -209,7 +209,7 @@ function flipBonds(bondIds: number[], struct: Struct, action: Action) {
 function flipPointByCenter(
   pointToFlip: Vec2,
   center: Vec2,
-  flipDirection: FlipDirection
+  flipDirection: FlipDirection,
 ) {
   const d = new Vec2();
   if (flipDirection === 'horizontal') {
@@ -248,7 +248,7 @@ export function fromRotate(restruct, selection, center, angle) {
 
       sgroups.forEach((sg) => {
         action.addOp(
-          new SGroupDataMove(sg.id, rotateDelta(sg.pp, center, angle))
+          new SGroupDataMove(sg.id, rotateDelta(sg.pp, center, angle)),
         );
       });
     }
@@ -271,7 +271,7 @@ export function fromRotate(restruct, selection, center, angle) {
     selection.texts.forEach((textId) => {
       const text = struct.texts.get(textId);
       action.addOp(
-        new TextMove(textId, rotateDelta(text.position, center, angle))
+        new TextMove(textId, rotateDelta(text.position, center, angle)),
       );
     });
   }
@@ -280,7 +280,7 @@ export function fromRotate(restruct, selection, center, angle) {
     selection.sgroupData.forEach((did) => {
       const data = struct.sgroups.get(did);
       action.addOp(
-        new SGroupDataMove(did, rotateDelta(data.pp, center, angle))
+        new SGroupDataMove(did, rotateDelta(data.pp, center, angle)),
       );
     });
   }
@@ -296,9 +296,9 @@ export function fromRotate(restruct, selection, center, angle) {
             frag.stereoFlagPosition ||
               Fragment.getDefaultStereoFlagPosition(restruct.molecule, frId),
             center,
-            angle
-          )
-        )
+            angle,
+          ),
+        ),
       );
     });
   }

@@ -81,9 +81,9 @@ const Text = (props: TextProps) => {
   const [editorState, setEditorState] = useState<EditorState>(
     EditorState.moveFocusToEnd(
       EditorState.createWithContent(
-        convertFromRaw(rawContentState || { blocks: [], entityMap: {} })
-      )
-    )
+        convertFromRaw(rawContentState || { blocks: [], entityMap: {} }),
+      ),
+    ),
   );
 
   const result = () => {
@@ -117,7 +117,7 @@ const Text = (props: TextProps) => {
           if (currentStyle.has(TextCommand.Superscript)) {
             newEditorState = RichUtils.toggleInlineStyle(
               newEditorState,
-              TextCommand.Superscript
+              TextCommand.Superscript,
             );
           }
           break;
@@ -126,7 +126,7 @@ const Text = (props: TextProps) => {
           if (currentStyle.has(TextCommand.Subscript)) {
             newEditorState = RichUtils.toggleInlineStyle(
               newEditorState,
-              TextCommand.Subscript
+              TextCommand.Subscript,
             );
           }
           break;
@@ -136,7 +136,7 @@ const Text = (props: TextProps) => {
 
       setEditorState(newEditorState);
     },
-    [currentStyle, editorState]
+    [currentStyle, editorState],
   );
 
   const customStyleMap: DraftStyleMap = {

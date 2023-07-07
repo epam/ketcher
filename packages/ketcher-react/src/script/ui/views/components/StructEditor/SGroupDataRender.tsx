@@ -17,7 +17,7 @@ function getPanelPositionRelativeToRect(
   sGroup: SGroup,
   render: Render,
   width: number,
-  height: number
+  height: number,
 ): Vec2 | null {
   const viewportLeftLimit = BAR_PANEL_SIZE * LEFT_PADDING_MULTIPLIER + width;
   const viewportBottomLimit =
@@ -31,7 +31,7 @@ function getPanelPositionRelativeToRect(
 
   // [['M', 23, 43], ['L', 23, 24]] we should remove first elements => [[23,43], [23,24]]
   const rectCoords: Array<Array<number>> = sGroup.hovering.attrs?.path?.map(
-    (line) => line.slice(1)
+    (line) => line.slice(1),
   );
 
   const [middleLeftSide, middleBottomSide, middleRightSide, middleTopSide] =
@@ -102,7 +102,7 @@ const SGroupDataRender: FC<SGroupDataRenderProps> = (props) => {
     sGroup,
     render,
     wrapperWidth,
-    wrapperHeight
+    wrapperHeight,
   );
 
   return panelCoordinate ? (

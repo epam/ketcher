@@ -18,7 +18,7 @@ export function ifDef<TValue = any>(
   target: any,
   key: string,
   value: TValue,
-  defaultValue?: TValue
+  defaultValue?: TValue,
 ) {
   if (
     value !== undefined &&

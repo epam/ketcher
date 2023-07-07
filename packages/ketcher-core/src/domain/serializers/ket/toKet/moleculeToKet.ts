@@ -46,7 +46,7 @@ export function moleculeToKet(struct: Struct): any {
 
   if (struct.sgroups.size !== 0) {
     body.sgroups = Array.from(struct.sgroups.values()).map((sGroup) =>
-      sgroupToKet(struct, sGroup)
+      sgroupToKet(struct, sGroup),
     );
   }
 
@@ -96,7 +96,7 @@ function rglabelToKet(source) {
   ifDef(result, 'attachmentPoints', source.attpnt, 0);
 
   const refsToRGroups = fromRlabel(source.rglabel).map(
-    (rgnumber) => `rg-${rgnumber}`
+    (rgnumber) => `rg-${rgnumber}`,
   );
   ifDef(result, '$refs', refsToRGroups);
 
@@ -145,7 +145,7 @@ function sgroupToKet(struct, source) {
       ifDef(
         result,
         'connectivity',
-        source.data.connectivity.toUpperCase() || 'ht'
+        source.data.connectivity.toUpperCase() || 'ht',
       );
       break;
     }

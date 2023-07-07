@@ -71,7 +71,7 @@ class ReRxnArrow extends ReObject {
       dist = Math.min(
         dist,
         calculateDistanceToLine([startPoint, middlePoint], point),
-        calculateDistanceToLine([middlePoint, endPoint], point)
+        calculateDistanceToLine([middlePoint, endPoint], point),
       );
     }
 
@@ -92,7 +92,7 @@ class ReRxnArrow extends ReObject {
     const minDist: MinDistanceWithReferencePoint = dist.reduce(
       (acc, current) =>
         !acc ? current : acc.minDist < current.minDist ? acc : current,
-      null
+      null,
     );
 
     return minDist;
@@ -135,7 +135,7 @@ class ReRxnArrow extends ReObject {
       selectionSet.push(
         restruct.render.paper
           .circle(scaledRP.x, scaledRP.y, scaleFactor / 8)
-          .attr({ fill: 'black' })
+          .attr({ fill: 'black' }),
       );
     });
 
@@ -150,7 +150,7 @@ class ReRxnArrow extends ReObject {
     selectionSet.push(
       render.paper
         .path(this.generatePath(render, options, 'selection'))
-        .attr(styles.selectionStyle)
+        .attr(styles.selectionStyle),
     );
     return selectionSet;
   }
@@ -169,7 +169,7 @@ class ReRxnArrow extends ReObject {
       pos[0].x,
       pos[0].y,
       pos[1].x,
-      pos[1].y
+      pos[1].y,
     );
 
     switch (type) {
@@ -178,7 +178,7 @@ class ReRxnArrow extends ReObject {
           render.paper,
           { pos, height },
           length,
-          angle
+          angle,
         );
         break;
       case 'arrow':
@@ -188,7 +188,7 @@ class ReRxnArrow extends ReObject {
           length,
           angle,
           options,
-          this.isResizing
+          this.isResizing,
         );
         break;
     }

@@ -21,7 +21,7 @@ export function dropAndMerge(
   editor: Editor,
   mergeItems: any,
   action?: Action,
-  resizeCanvas?: boolean
+  resizeCanvas?: boolean,
 ): Action {
   const restruct = editor.render.ctab;
   const isMerging = !!mergeItems;
@@ -30,7 +30,7 @@ export function dropAndMerge(
   if (isMerging) {
     const expandGroupsAction = getExpandGroupsInMergeAction(
       editor.render.ctab,
-      mergeItems
+      mergeItems,
     );
     dropItemAction = dropItemAction.mergeWith(expandGroupsAction);
     if (mergeItems.atomToFunctionalGroup) {
@@ -40,7 +40,7 @@ export function dropAndMerge(
       dropItemAction = dropItemAction.mergeWith(extractAttachmentAtomAction);
     }
     dropItemAction = fromItemsFuse(restruct, mergeItems).mergeWith(
-      dropItemAction
+      dropItemAction,
     );
   }
 
@@ -68,7 +68,7 @@ export function dropAndMerge(
 
 function getExpandGroupsInMergeAction(
   restruct: ReStruct,
-  mergeItems: MergeItems
+  mergeItems: MergeItems,
 ): Action {
   const action = new Action();
   const groupsInMerge = getGroupIdsFromItemMaps(restruct.molecule, mergeItems);
@@ -107,12 +107,12 @@ function extractAttachmentAtom(mergeItems: MergeItems, editor: Editor) {
     const sGroup = struct.sgroups.get(functionalGroupId) as SGroup;
 
     const { atomId: positionAtomId } = sGroup.getContractedPosition(
-      reStruct.molecule
+      reStruct.molecule,
     );
 
     if (positionAtomId !== undefined) {
       const atomsToDelete = [...SGroup.getAtoms(struct, sGroup)].filter(
-        (atomId) => atomId !== positionAtomId
+        (atomId) => atomId !== positionAtomId,
       );
       const bondsToDelete = [...SGroup.getBonds(struct, sGroup)];
       action.mergeWith(fromSgroupDeletion(reStruct, functionalGroupId));
@@ -120,7 +120,7 @@ function extractAttachmentAtom(mergeItems: MergeItems, editor: Editor) {
         fromFragmentDeletion(reStruct, {
           atoms: atomsToDelete,
           bonds: bondsToDelete,
-        })
+        }),
       );
       newMergeItems.atoms.set(srcAtomId, positionAtomId);
     }

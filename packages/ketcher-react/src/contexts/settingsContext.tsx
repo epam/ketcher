@@ -21,7 +21,7 @@ export interface ISettingsContext {
 }
 
 const settingsContext = React.createContext<ISettingsContext>(
-  {} as ISettingsContext
+  {} as ISettingsContext,
 );
 
 export default settingsContext;

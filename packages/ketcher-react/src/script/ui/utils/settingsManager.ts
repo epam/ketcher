@@ -24,7 +24,7 @@ export class SettingsManager {
   static getSettings(): SavedSettings {
     try {
       return JSON.parse(
-        localStorage.getItem(KETCHER_SAVED_SETTINGS_KEY) || '{}'
+        localStorage.getItem(KETCHER_SAVED_SETTINGS_KEY) || '{}',
       );
     } catch (e) {
       return {} as SavedSettings;

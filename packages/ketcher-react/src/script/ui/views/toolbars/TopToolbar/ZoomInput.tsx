@@ -56,7 +56,7 @@ const onFocusHandler = (event: FocusEvent<HTMLInputElement>) => {
 
 export const updateInputString = (
   zoom: number,
-  inputElement: HTMLInputElement | null
+  inputElement: HTMLInputElement | null,
 ) => {
   if (!inputElement) return;
   inputElement.value = `${zoom}%`;
@@ -101,7 +101,7 @@ export const ZoomInput = ({
         inputEl.select();
       }
     },
-    [onZoomSubmit, inputRef, shortcuts]
+    [onZoomSubmit, inputRef, shortcuts],
   );
 
   // Focus on input field upon mounting

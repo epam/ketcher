@@ -48,13 +48,13 @@ const config = {
     replace(
       {
         'process.env.NODE_ENV': JSON.stringify(
-          isProduction ? mode.PRODUCTION : mode.DEVELOPMENT
+          isProduction ? mode.PRODUCTION : mode.DEVELOPMENT,
         ),
         preventAssignment: true,
       },
       {
         include: includePattern,
-      }
+      },
     ),
     json({ include: includePattern }),
     typescript({

@@ -53,7 +53,7 @@ const ColorPicker = (props: Props) => {
     (color) => {
       onChange(color);
     },
-    [onChange]
+    [onChange],
   );
 
   const throttle = useCallback((func, limit) => {
@@ -73,7 +73,7 @@ const ColorPicker = (props: Props) => {
       setIsOpen((prev) => !prev);
       setIsPaletteOpen(false);
     }, 200),
-    []
+    [],
   );
 
   const handlePaletteOpen = () => {
@@ -120,7 +120,7 @@ const ColorPicker = (props: Props) => {
         <div
           className={clsx(
             classes.colorPickerWrap,
-            isPaletteOpen && classes.withPalette
+            isPaletteOpen && classes.withPalette,
           )}
           onBlur={handleBlur}
           data-testid="color-picker-preset"
@@ -129,7 +129,7 @@ const ColorPicker = (props: Props) => {
             <button
               className={clsx(
                 classes.chooseColor,
-                isPaletteOpen && classes.clicked
+                isPaletteOpen && classes.clicked,
               )}
               onClick={handlePaletteOpen}
               autoFocus

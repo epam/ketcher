@@ -134,16 +134,16 @@ class RotateController {
     });
 
     const nonSelectedAtoms = allAtoms.filter(
-      (id) => !selectedAtomIds.includes(id)
+      (id) => !selectedAtomIds.includes(id),
     );
     return nonSelectedAtoms.some((atom) =>
-      selectedFragmentIdSet.has(atom.fragment)
+      selectedFragmentIdSet.has(atom.fragment),
     );
   }
 
   private show() {
     const [originalCenter, visibleAtoms] = this.rotateTool.getCenter(
-      this.editor
+      this.editor,
     );
 
     const { texts, rxnArrows, rxnPluses } = this.editor.selection() || {};
@@ -168,18 +168,18 @@ class RotateController {
       texts,
       rxnArrows,
       rxnPluses,
-      this.editor.selection()?.bonds
+      this.editor.selection()?.bonds,
     );
 
     this.handleCenter = new Vec2(
       this.center.x,
-      rectStartY - STYLE.HANDLE_MARGIN - STYLE.HANDLE_RADIUS
+      rectStartY - STYLE.HANDLE_MARGIN - STYLE.HANDLE_RADIUS,
     );
 
     const handleCenterInViewport = this.render.obj2view(
       this.handleCenter
         .sub(this.render.options.offset)
-        .scaled(1 / this.render.options.scale)
+        .scaled(1 / this.render.options.scale),
     );
     this.editor.event.updateFloatingTools.dispatch({
       visible: true,
@@ -196,7 +196,7 @@ class RotateController {
     this.handle?.drag(
       this.dragMove(),
       undefined,
-      this.dragEnd // Fix rotation getting stuck when mouseup outside window
+      this.dragEnd, // Fix rotation getting stuck when mouseup outside window
     );
 
     if (this.isPartOfFragmentSelected()) {
@@ -210,7 +210,7 @@ class RotateController {
     crossArea?.drag(
       this.dragCrossMove,
       undefined,
-      this.dragCrossEndOUtOfBounding
+      this.dragCrossEndOUtOfBounding,
     );
   }
 
@@ -263,7 +263,7 @@ class RotateController {
     texts?: number[],
     rxnArrows?: number[],
     rxnPluses?: number[],
-    bonds?: number[]
+    bonds?: number[],
   ) {
     const RECT_RADIUS = 20;
     const RECT_PADDING = 10;
@@ -306,7 +306,7 @@ class RotateController {
         rectStartY,
         rectEndX - rectStartX,
         rectEndY - rectStartY,
-        RECT_RADIUS
+        RECT_RADIUS,
       )
       .attr({
         'stroke-dasharray': '-',
@@ -422,7 +422,7 @@ class RotateController {
         this.link = this.paper
           .path(
             `M${this.handleCenter.x},${this.handleCenter.y}` +
-              `l0,${STYLE.HANDLE_RADIUS + STYLE.HANDLE_MARGIN}`
+              `l0,${STYLE.HANDLE_RADIUS + STYLE.HANDLE_MARGIN}`,
           )
           .attr({
             'stroke-dasharray': '-',
@@ -437,7 +437,7 @@ class RotateController {
     structRotateDegree: number,
     radius: number,
     degreeLine: RaphaelElement,
-    textPos: Vec2
+    textPos: Vec2,
   ) {
     this.protractor?.remove();
 
@@ -503,7 +503,7 @@ class RotateController {
     structRotateDegree: number,
     radius: number,
     rotateArcStart: Vec2,
-    textPos: Vec2
+    textPos: Vec2,
   ) {
     if (!this.rotateArc) {
       const arc = this.paper.path();
@@ -515,7 +515,7 @@ class RotateController {
     const rotateArcEnd = rotatePoint(
       this.center,
       rotateArcStart,
-      (structRotateDegree / 180) * Math.PI
+      (structRotateDegree / 180) * Math.PI,
     );
 
     const arc = this.rotateArc[0];
@@ -573,7 +573,7 @@ class RotateController {
       STYLE.HANDLE_RADIUS * 2 +
       DEGREE_TEXT_MARGIN;
     const centerDegree0TextVec = this.normalizedCenterInitialHandleVec.scaled(
-      distBetweenDegree0TextAndCenter
+      distBetweenDegree0TextAndCenter,
     );
     const degree0TextPos = this.center.add(centerDegree0TextVec);
 
@@ -590,14 +590,14 @@ class RotateController {
         `M${lineStart.x},${lineStart.y}` +
           (radius >= 65
             ? `L${lineEnd.x}, ${lineEnd.y}`
-            : `L${lineEndHalf.x}, ${lineEndHalf.y}`)
+            : `L${lineEndHalf.x}, ${lineEndHalf.y}`),
       )
       .attr({
         'stroke-dasharray': '-',
       });
 
     const arcStartPos = this.center.add(
-      this.normalizedCenterInitialHandleVec.scaled(radius)
+      this.normalizedCenterInitialHandleVec.scaled(radius),
     );
 
     const TEXT_MARGIN_LEFT = 20;
@@ -651,7 +651,7 @@ class RotateController {
       STYLE.HANDLE_RADIUS;
     this.initialRadius = newProtractorRadius >= 0 ? newProtractorRadius : 0;
     const [degree0Line, degree0TextPos] = this.getProtractorBaseInfo(
-      this.initialRadius
+      this.initialRadius,
     );
     this.drawProtractor(0, this.initialRadius, degree0Line, degree0TextPos);
 
@@ -673,7 +673,7 @@ class RotateController {
         _dyFromStart: number,
         _clientX: number,
         _clientY: number,
-        event: MouseEvent
+        event: MouseEvent,
       ) => {
         if (!this.isRotating) {
           return;
@@ -711,17 +711,17 @@ class RotateController {
           this.rotateTool.dragCtx?.angle || 0,
           newRadius,
           rotateArcStart,
-          textPos
+          textPos,
         );
         // NOTE: draw protractor last
         this.drawProtractor(
           this.rotateTool.dragCtx?.angle || 0,
           newRadius,
           degree0Line,
-          degree0TextPos
+          degree0TextPos,
         );
       },
-      40 // 25fps
+      40, // 25fps
     );
   };
 
@@ -763,7 +763,7 @@ class RotateController {
       _dyFromStart: number,
       _clientX: number,
       _clientY: number,
-      event: MouseEvent
+      event: MouseEvent,
     ) => {
       if (!this.isMovingCenter) {
         return;
@@ -774,7 +774,7 @@ class RotateController {
       this.drawCross('move');
       this.drawLink('moveCenter');
     },
-    40
+    40,
   );
 
   private dragCrossEnd = (event: MouseEvent) => {
@@ -797,7 +797,7 @@ class RotateController {
     const handleCenterInViewport = this.render.obj2view(
       this.handleCenter
         .sub(this.render.options.offset)
-        .scaled(1 / this.render.options.scale)
+        .scaled(1 / this.render.options.scale),
     );
     this.editor.event.updateFloatingTools.dispatch({
       rotateHandlePosition: handleCenterInViewport,

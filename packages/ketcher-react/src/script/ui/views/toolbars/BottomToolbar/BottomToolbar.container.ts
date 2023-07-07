@@ -48,7 +48,7 @@ const mapDispatchToProps = (dispatch: Dispatch): BottomToolbarCallProps => ({
 
 const BottomToolbarContainer: ComponentType<OwnProps> = connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(BottomToolbar);
 
 export { BottomToolbarContainer };

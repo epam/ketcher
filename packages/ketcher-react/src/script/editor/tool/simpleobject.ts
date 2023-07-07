@@ -69,7 +69,7 @@ class SimpleObjectTool implements Tool {
           this.dragCtx.action = fromMultipleMove(
             rnd.ctab,
             this.editor.selection() || {},
-            diff
+            diff,
           );
         } else {
           this.dragCtx.action = fromSimpleObjectResizing(
@@ -78,7 +78,7 @@ class SimpleObjectTool implements Tool {
             diff,
             current,
             this.dragCtx.ci.ref,
-            event.shiftKey
+            event.shiftKey,
           );
         }
         this.editor.update(this.dragCtx.action, true);
@@ -88,7 +88,7 @@ class SimpleObjectTool implements Tool {
             rnd.ctab,
             [this.dragCtx.p0, this.dragCtx.p0],
             this.mode,
-            false
+            false,
           );
           // TODO: need to rework  actions/operations logic
           const addOperation = action.operations[0];
@@ -105,7 +105,7 @@ class SimpleObjectTool implements Tool {
           diff,
           current,
           null,
-          event.shiftKey
+          event.shiftKey,
         );
         this.editor.update(this.dragCtx.action, true);
       }
@@ -125,13 +125,13 @@ class SimpleObjectTool implements Tool {
         const rnd = this.editor.render;
         this.editor.update(
           fromSimpleObjectDeletion(rnd.ctab, this.dragCtx.itemId),
-          true
+          true,
         );
         this.dragCtx.action = fromSimpleObjectAddition(
           rnd.ctab,
           [this.dragCtx.p0, this.dragCtx.previous],
           this.mode,
-          event.shiftKey
+          event.shiftKey,
         );
       }
       this.editor.update(this.dragCtx.action);

@@ -19,7 +19,7 @@ test('Save file - Save *.rxn file', async ({ page }) => {
     page,
     RING_OFFSET,
     ARROW_OFFSET,
-    ARROW_LENGTH
+    ARROW_LENGTH,
   );
 
   const expectedFile = await getRxn(page, 'v2000');
@@ -74,7 +74,7 @@ test('Save file - Save *.ket file', async ({ page }) => {
     page,
     RING_OFFSET,
     ARROW_OFFSET,
-    ARROW_LENGTH
+    ARROW_LENGTH,
   );
 
   const expectedFile = await getKet(page);

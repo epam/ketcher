@@ -55,7 +55,7 @@ const EnhancedStereo: FC<Props> = (props) => {
 
   const stereoLabels: Array<string> = findStereLabels(
     struct,
-    Array.from(struct.atoms.keys())
+    Array.from(struct.atoms.keys()),
   );
 
   const maxAnd: number = maxOfAnds(stereoLabels);
@@ -167,7 +167,7 @@ const EnhancedStereo: FC<Props> = (props) => {
 // TODO: Move the function below to Struct class
 function findStereLabels(struct, aids): Array<string> {
   const stereoIds = aids.filter(
-    (aid) => struct.atoms.get(aid).stereoLabel !== null
+    (aid) => struct.atoms.get(aid).stereoLabel !== null,
   );
   return stereoIds.map((aid) => struct.atoms.get(aid).stereoLabel);
 }

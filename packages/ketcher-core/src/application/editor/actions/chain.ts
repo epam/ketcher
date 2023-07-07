@@ -43,7 +43,7 @@ export function fromChain(restruct, p0, v, nSect, atomId) {
       ? atomId
       : (
           action.addOp(
-            new AtomAdd({ label: 'C', fragment: frid }, p0).perform(restruct)
+            new AtomAdd({ label: 'C', fragment: frid }, p0).perform(restruct),
           ) as AtomAdd
         ).data.aid;
 
@@ -59,7 +59,7 @@ export function fromChain(restruct, p0, v, nSect, atomId) {
       id0,
       { label: 'C' },
       undefined,
-      pos
+      pos,
     );
     action = ret[0].mergeWith(action);
     id0 = ret[2];

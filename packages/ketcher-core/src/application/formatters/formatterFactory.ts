@@ -37,7 +37,7 @@ export class FormatterFactory {
   }
 
   private separateOptions(
-    options?: FormatterFactoryOptions
+    options?: FormatterFactoryOptions,
   ): [Partial<MolSerializerOptions>, Partial<StructServiceOptions>] {
     if (!options) {
       return [{}, {}];
@@ -69,7 +69,7 @@ export class FormatterFactory {
 
   create(
     format: SupportedFormat,
-    options?: FormatterFactoryOptions
+    options?: FormatterFactoryOptions,
   ): StructFormatter {
     const [molSerializerOptions, structServiceOptions] =
       this.separateOptions(options);
@@ -82,7 +82,7 @@ export class FormatterFactory {
 
       case SupportedFormat.mol:
         formatter = new MolfileV2000Formatter(
-          new MolSerializer(molSerializerOptions)
+          new MolSerializer(molSerializerOptions),
         );
         break;
 
@@ -104,7 +104,7 @@ export class FormatterFactory {
           this.#structService,
           new KetSerializer(),
           format,
-          structServiceOptions
+          structServiceOptions,
         );
     }
 

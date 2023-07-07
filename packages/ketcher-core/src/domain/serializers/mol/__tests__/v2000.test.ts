@@ -7,7 +7,7 @@ import utils from '../utils';
 const createCountsLine = (
   atomsCount = 0,
   bondsCount = 0,
-  atomListsCount = 0
+  atomListsCount = 0,
 ): string[] => {
   const atoms = String(atomsCount).padStart(3, ' ');
   const bonds = String(bondsCount).padStart(3, ' ');
@@ -55,10 +55,10 @@ describe('parseCTabV2000', () => {
 
       const struct = molParsers.parseCTabV2000(atomLines, createCountsLine(2));
       expect(struct.atoms.get(0)!.pp).toStrictEqual(
-        new Vec2({ x: 14, y: 3, z: 0 })
+        new Vec2({ x: 14, y: 3, z: 0 }),
       );
       expect(struct.atoms.get(1)!.pp).toStrictEqual(
-        new Vec2({ x: 14, y: -3, z: 0 })
+        new Vec2({ x: 14, y: -3, z: 0 }),
       );
     });
 
@@ -69,7 +69,7 @@ describe('parseCTabV2000', () => {
       ];
       const struct = molParsers.parseCTabV2000(
         incorrectAtomLine,
-        createCountsLine(1)
+        createCountsLine(1),
       );
       expect(struct.atoms.get(0)!.pp).not.toEqual({ x: 14, y: 3, z: 0 });
     });
@@ -80,7 +80,7 @@ describe('parseCTabV2000', () => {
       ];
       const struct = molParsers.parseCTabV2000(atomLine, createCountsLine(1));
       expect(struct.atoms.get(0)!.pp).toStrictEqual(
-        new Vec2({ x: 14.1234, y: 23.5678, z: 10.9876 })
+        new Vec2({ x: 14.1234, y: 23.5678, z: 10.9876 }),
       );
     });
 
@@ -105,7 +105,7 @@ describe('parseCTabV2000', () => {
       ];
       const struct = molParsers.parseCTabV2000(
         incorrectAtomLines,
-        createCountsLine(2)
+        createCountsLine(2),
       );
       expect(struct.atoms.get(0)!.label).not.toBe('Cl');
       expect(struct.atoms.get(1)!).not.toBe('Na');
@@ -207,7 +207,7 @@ describe('parseCTabV2000', () => {
       ];
       const struct = molParsers.parseCTabV2000(
         bondLines,
-        createCountsLine(0, 3)
+        createCountsLine(0, 3),
       );
 
       expect(struct.bonds.get(0)!.begin).toBe(0);
@@ -225,7 +225,7 @@ describe('parseCTabV2000', () => {
       const bondLine = ['123  21  2  0     0  0'];
       const struct = molParsers.parseCTabV2000(
         bondLine,
-        createCountsLine(0, 1)
+        createCountsLine(0, 1),
       );
 
       expect(struct.bonds.get(0)!.end).not.toBe(20);
@@ -247,7 +247,7 @@ describe('parseCTabV2000', () => {
 
       const struct = molParsers.parseCTabV2000(
         bondLines,
-        createCountsLine(0, 10)
+        createCountsLine(0, 10),
       );
 
       expect(struct.bonds.get(0)!.type).toBe(Bond.PATTERN.TYPE.SINGLE);
@@ -255,13 +255,13 @@ describe('parseCTabV2000', () => {
       expect(struct.bonds.get(2)!.type).toBe(Bond.PATTERN.TYPE.TRIPLE);
       expect(struct.bonds.get(3)!.type).toBe(Bond.PATTERN.TYPE.AROMATIC);
       expect(struct.bonds.get(4)!.type).toBe(
-        Bond.PATTERN.TYPE.SINGLE_OR_DOUBLE
+        Bond.PATTERN.TYPE.SINGLE_OR_DOUBLE,
       );
       expect(struct.bonds.get(5)!.type).toBe(
-        Bond.PATTERN.TYPE.SINGLE_OR_AROMATIC
+        Bond.PATTERN.TYPE.SINGLE_OR_AROMATIC,
       );
       expect(struct.bonds.get(6)!.type).toBe(
-        Bond.PATTERN.TYPE.DOUBLE_OR_AROMATIC
+        Bond.PATTERN.TYPE.DOUBLE_OR_AROMATIC,
       );
       expect(struct.bonds.get(7)!.type).toBe(Bond.PATTERN.TYPE.ANY);
       expect(struct.bonds.get(8)!.type).toBe(Bond.PATTERN.TYPE.DATIVE);
@@ -281,7 +281,7 @@ describe('parseCTabV2000', () => {
 
       const struct = molParsers.parseCTabV2000(
         bondLines,
-        createCountsLine(2, 5)
+        createCountsLine(2, 5),
       );
 
       expect(struct.bonds.get(0)!.stereo).toBe(Bond.PATTERN.STEREO.NONE);
@@ -295,7 +295,7 @@ describe('parseCTabV2000', () => {
       const bondLine = ['1  2  1  0     0  0'];
       const struct = molParsers.parseCTabV2000(
         bondLine,
-        createCountsLine(0, 1)
+        createCountsLine(0, 1),
       );
       expect(struct.bonds.get(0)!.xxx).toBe('   ');
     });
@@ -309,7 +309,7 @@ describe('parseCTabV2000', () => {
 
       const struct = molParsers.parseCTabV2000(
         bondLines,
-        createCountsLine(0, 3)
+        createCountsLine(0, 3),
       );
 
       expect(struct.bonds.get(0)!.topology).toBe(Bond.PATTERN.TOPOLOGY.EITHER);
@@ -321,7 +321,7 @@ describe('parseCTabV2000', () => {
       const bondLine = ['1  2  1  0     0  1'];
       const struct = molParsers.parseCTabV2000(
         bondLine,
-        createCountsLine(0, 1)
+        createCountsLine(0, 1),
       );
       expect(struct.bonds.get(0)!.reactingCenterStatus).toBe(1);
     });
@@ -339,7 +339,7 @@ describe('parseCTabV2000', () => {
 
       const struct = molParsers.parseCTabV2000(
         lines,
-        createCountsLine(2, 0, 2)
+        createCountsLine(2, 0, 2),
       );
 
       expect(struct.atoms.get(0)!.atomList instanceof AtomList).toBe(true);
@@ -356,7 +356,7 @@ describe('parseCTabV2000', () => {
       ];
 
       expect(() =>
-        molParsers.parseCTabV2000(lines, createCountsLine(3, 0, 1))
+        molParsers.parseCTabV2000(lines, createCountsLine(3, 0, 1)),
       ).toThrow();
     });
 
@@ -370,7 +370,7 @@ describe('parseCTabV2000', () => {
 
       const struct = molParsers.parseCTabV2000(
         lines,
-        createCountsLine(2, 0, 2)
+        createCountsLine(2, 0, 2),
       );
 
       expect(struct.atoms.get(0)!.atomList!.notList).toBe(true);
@@ -387,7 +387,7 @@ describe('parseCTabV2000', () => {
 
       const struct = molParsers.parseCTabV2000(
         lines,
-        createCountsLine(2, 0, 2)
+        createCountsLine(2, 0, 2),
       );
 
       expect(struct.atoms.get(0)!.atomList!.ids).toHaveLength(4);
@@ -619,7 +619,7 @@ describe('parseCTabV2000', () => {
 
     const struct = molParsers.parseCTabV2000(
       sgroupInitLine,
-      createCountsLine()
+      createCountsLine(),
     );
     expect(struct.sgroups.get(1)!.atoms).toEqual(struct.sgroups.get(0)!.atoms);
     expect(struct.sgroups.get(1)!.atoms).not.toBe(struct.sgroups.get(0)!.atoms);
@@ -633,7 +633,7 @@ describe('parseCTabV2000', () => {
 
     const struct = molParsers.parseCTabV2000(
       sgroupInitLine,
-      createCountsLine()
+      createCountsLine(),
     );
     expect(struct.sgroups.size).toBe(1);
   });

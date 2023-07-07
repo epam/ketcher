@@ -20,7 +20,7 @@ function isCorrectStereoCenter(
   bond: Bond,
   beginNeighs: Array<Neighbor> | undefined,
   endNeighs: Array<Neighbor> | undefined,
-  struct: Struct
+  struct: Struct,
 ) {
   const beginAtom = struct.atoms.get(bond.begin);
 

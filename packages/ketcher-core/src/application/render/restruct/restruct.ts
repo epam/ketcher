@@ -160,7 +160,7 @@ class ReStruct {
 
   getConnectedComponent(
     aid: Array<number> | number,
-    adjacentComponents: Pile
+    adjacentComponents: Pile,
   ): Pile {
     const list = Array.isArray(aid) ? Array.from(aid) : [aid];
     const ids = new Pile();
@@ -188,7 +188,7 @@ class ReStruct {
     const adjacentComponents = new Pile();
     const aidSet = this.getConnectedComponent(
       Array.from(idSet),
-      adjacentComponents
+      adjacentComponents,
     );
 
     adjacentComponents.delete(compId);
@@ -246,7 +246,7 @@ class ReStruct {
     visel: Visel,
     path,
     pos: Vec2 | null = null,
-    visible = false
+    visible = false,
   ): void {
     // eslint-disable-line max-params
     if (!path || !this.layers[group].node.parentNode) return;
@@ -422,13 +422,13 @@ class ReStruct {
     });
 
     this.atomsChanged.forEach((_value, aid) =>
-      this.connectedComponentRemoveAtom(aid)
+      this.connectedComponentRemoveAtom(aid),
     );
 
     // clean up empty fragments
     // TODO: fragment removal should be triggered by the action responsible for the fragment contents removal and form an operation of its own
     const emptyFrags = this.frags.filter(
-      (fid, frag) => !frag.calcBBox(this.render.ctab, fid, this.render)
+      (fid, frag) => !frag.calcBBox(this.render.ctab, fid, this.render),
     );
 
     emptyFrags.forEach((frag, fid) => {
@@ -693,11 +693,11 @@ class ReStruct {
             item instanceof ReSGroup &&
             FunctionalGroup.isContractedFunctionalGroup(
               item.item.id,
-              this.molecule.functionalGroups
+              this.molecule.functionalGroups,
             )
           ) {
             const sGroupAtoms = atoms.filter(
-              (atom) => atom.sgroup === item.item.id
+              (atom) => atom.sgroup === item.item.id,
             );
             item.selected = sGroupAtoms.length > 0 && sGroupAtoms[0].selected;
           }
@@ -732,7 +732,7 @@ class ReStruct {
         this.addReObjectPath(
           LayerMap.selectionPlate,
           item.visel,
-          item.selectionPlate
+          item.selectionPlate,
         );
 
         if (typeof item.makeAdditionalInfo === 'function') {
@@ -740,7 +740,7 @@ class ReStruct {
           this.addReObjectPath(
             LayerMap.additionalInfo,
             item.visel,
-            item.additionalInfo
+            item.additionalInfo,
           );
         }
       }
@@ -768,7 +768,7 @@ function isSelectionEmpty(selection?: SelectionMap): selection is undefined {
   if (!selection) return true;
 
   const anySelection = Object.keys(ReStruct.maps).some(
-    (map) => selection[map] && selection[map].length > 0
+    (map) => selection[map] && selection[map].length > 0,
   );
 
   return !anySelection;

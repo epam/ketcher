@@ -44,7 +44,7 @@ class SGroupAtomAdd extends BaseOperation {
 
     if (sgroup.atoms.indexOf(aid) >= 0) {
       throw new Error(
-        'The same atom cannot be added to an S-group more than once'
+        'The same atom cannot be added to an S-group more than once',
       );
     }
 

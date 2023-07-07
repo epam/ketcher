@@ -66,7 +66,7 @@ class SelectTool implements Tool {
     this.#lassoHelper = new LassoHelper(
       this.#mode === 'lasso' ? 0 : 1,
       editor,
-      this.#mode === 'fragment'
+      this.#mode === 'fragment',
     );
   }
 
@@ -81,7 +81,7 @@ class SelectTool implements Tool {
     const molecule = ctab.molecule;
 
     const map = getMapsForClosestItem(
-      this.#lassoHelper.fragment || event.ctrlKey
+      this.#lassoHelper.fragment || event.ctrlKey,
     );
     const ci = this.editor.findItem(event, map, null);
 
@@ -212,12 +212,12 @@ class SelectTool implements Tool {
       dragCtx.action = fromMultipleMove(
         restruct,
         expSel,
-        editor.render.page2obj(event).sub(dragCtx.xy0)
+        editor.render.page2obj(event).sub(dragCtx.xy0),
       );
 
       const visibleSelectedItems = filterNotInContractedSGroup(
         expSel,
-        this.editor.struct()
+        this.editor.struct(),
       );
       dragCtx.mergeItems = getItemsToFuse(editor, visibleSelectedItems);
       editor.hover(getHoverToFuse(dragCtx.mergeItems));
@@ -230,13 +230,13 @@ class SelectTool implements Tool {
     if (this.#lassoHelper.running()) {
       const sel = this.#lassoHelper.addPoint(event);
       editor.selection(
-        !event.shiftKey ? sel : selMerge(sel, editor.selection(), false)
+        !event.shiftKey ? sel : selMerge(sel, editor.selection(), false),
       );
       return true;
     }
 
     const maps = getMapsForClosestItem(
-      this.#lassoHelper.fragment || event.ctrlKey
+      this.#lassoHelper.fragment || event.ctrlKey,
     );
     editor.hover(editor.findItem(event, maps, null), null, event);
 
@@ -264,10 +264,10 @@ class SelectTool implements Tool {
 
     /* ignore salts and solvents */
     const possibleSaltOrSolvent = struct.sgroups.get(
-      selectedSgroups[selectedSgroups.length - 1]
+      selectedSgroups[selectedSgroups.length - 1],
     );
     const isDraggingSaltOrSolventOnStructure = SGroup.isSaltOrSolvent(
-      possibleSaltOrSolvent?.item.data.name
+      possibleSaltOrSolvent?.item.data.name,
     );
     const isDraggingCustomSgroupOnStructure =
       SGroup.isSuperAtom(possibleSaltOrSolvent?.item) &&
@@ -288,7 +288,7 @@ class SelectTool implements Tool {
       const shouldResizeCanvas = hasAtomsOutsideCanvas(
         atoms,
         editor.render,
-        editor.options().scale
+        editor.options().scale,
       );
       if (this.dragCtx.item.map === 'rxnArrows') {
         this.updateArrowResizingState(this.dragCtx.item.id, false);
@@ -298,7 +298,7 @@ class SelectTool implements Tool {
         editor,
         this.dragCtx.mergeItems,
         this.dragCtx.action,
-        shouldResizeCanvas
+        shouldResizeCanvas,
       );
       delete this.dragCtx;
     } else if (this.#lassoHelper.running()) {
@@ -326,7 +326,7 @@ class SelectTool implements Tool {
     const ci = editor.findItem(
       event,
       ['atoms', 'bonds', 'sgroups', 'functionalGroups', 'sgroupData', 'texts'],
-      null
+      null,
     );
 
     const atomResult: any[] = [];
@@ -335,7 +335,7 @@ class SelectTool implements Tool {
     if (ci && functionalGroups && ci.map === 'atoms') {
       const atomId = FunctionalGroup.atomsInFunctionalGroup(
         functionalGroups,
-        ci.id
+        ci.id,
       );
       const atomFromStruct = atomId !== null && struct.atoms.get(atomId)?.a;
       if (
@@ -345,7 +345,7 @@ class SelectTool implements Tool {
           atomFromStruct,
           sgroups,
           functionalGroups,
-          true
+          true,
         )
       )
         atomResult.push(atomId);
@@ -354,7 +354,7 @@ class SelectTool implements Tool {
       const bondId = FunctionalGroup.bondsInFunctionalGroup(
         molecule,
         functionalGroups,
-        ci.id
+        ci.id,
       );
       const bondFromStruct = bondId !== null && struct.bonds.get(bondId)?.b;
       if (
@@ -363,7 +363,7 @@ class SelectTool implements Tool {
           // TODO: examine if this code is really needed, seems like its a hack
           bondFromStruct,
           sgroups,
-          functionalGroups
+          functionalGroups,
         )
       )
         bondResult.push(bondId);
@@ -372,7 +372,7 @@ class SelectTool implements Tool {
       for (const id of atomResult) {
         const fgId = FunctionalGroup.findFunctionalGroupByAtom(
           functionalGroups,
-          id
+          id,
         );
         if (fgId !== null && !result.includes(fgId)) {
           result.push(fgId);
@@ -385,7 +385,7 @@ class SelectTool implements Tool {
         const fgId = FunctionalGroup.findFunctionalGroupByBond(
           molecule,
           functionalGroups,
-          id
+          id,
         );
         if (fgId !== null && !result.includes(fgId)) {
           result.push(fgId);
@@ -460,20 +460,20 @@ class SelectTool implements Tool {
   private selectElementsOnCanvas(
     elements: { atoms: number[]; bonds: number[] },
     editor: Editor,
-    event
+    event,
   ) {
     const sel =
       elements.atoms.length > 0
         ? selMerge(this.#lassoHelper.end(), elements, false)
         : this.#lassoHelper.end();
     editor.selection(
-      !event.shiftKey ? sel : selMerge(sel, editor.selection(), false)
+      !event.shiftKey ? sel : selMerge(sel, editor.selection(), false),
     );
   }
 
   private isDraggingStructureOnSaltOrSolvent(
     dragCtx,
-    sgroups: Map<number, ReSGroup>
+    sgroups: Map<number, ReSGroup>,
   ) {
     let isDraggingOnSaltOrSolventAtom;
     let isDraggingOnSaltOrSolventBond;
@@ -481,13 +481,13 @@ class SelectTool implements Tool {
       const mergeAtoms = Array.from(dragCtx.mergeItems.atoms.values());
       const mergeBonds = Array.from(dragCtx.mergeItems.bonds.values());
       const sgroupsOnCanvas = Array.from(sgroups.values()).map(
-        ({ item }) => item
+        ({ item }) => item,
       );
       isDraggingOnSaltOrSolventAtom = mergeAtoms.some((atomId) =>
-        SGroup.isAtomInSaltOrSolvent(atomId as number, sgroupsOnCanvas)
+        SGroup.isAtomInSaltOrSolvent(atomId as number, sgroupsOnCanvas),
       );
       isDraggingOnSaltOrSolventBond = mergeBonds.some((bondId) =>
-        SGroup.isBondInSaltOrSolvent(bondId as number, sgroupsOnCanvas)
+        SGroup.isBondInSaltOrSolvent(bondId as number, sgroupsOnCanvas),
       );
     }
     return isDraggingOnSaltOrSolventAtom || isDraggingOnSaltOrSolventBond;
@@ -624,7 +624,7 @@ function uniqArray(dest, add, reversible: boolean) {
 function preventSaltAndSolventsMerge(
   struct: ReStruct,
   dragCtx,
-  editor: Editor
+  editor: Editor,
 ) {
   const action = dragCtx.action
     ? fromItemsFuse(struct, null).mergeWith(dragCtx.action)
@@ -657,7 +657,7 @@ function getMapsForClosestItem(selectFragment: boolean) {
 function getResizingProps(
   editor: Editor,
   dragCtx,
-  event
+  event,
 ): [ReStruct, number, Vec2, Vec2, any] {
   const current = editor.render.page2obj(event);
   const diff = current.sub(dragCtx.xy0);
@@ -666,7 +666,7 @@ function getResizingProps(
 
 function getNewSelectedItems(
   editor: Editor,
-  selectedSgroups: number[]
+  selectedSgroups: number[],
 ): { atoms: number[]; bonds: number[] } {
   const newSelected: Record<'atoms' | 'bonds', number[]> = {
     atoms: [],

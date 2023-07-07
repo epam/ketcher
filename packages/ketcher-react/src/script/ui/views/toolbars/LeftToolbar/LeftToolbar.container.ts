@@ -44,7 +44,7 @@ const mapDispatchToProps = (dispatch: Dispatch): LeftToolbarCallProps => ({
 
 const LeftToolbarContainer = connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(LeftToolbar);
 
 export { LeftToolbarContainer };

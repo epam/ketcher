@@ -33,7 +33,7 @@ class ReactionUnmapTool implements Tool {
       this.editor.hover(
         this.editor.render.ctab.molecule.atoms.get(ci.id)?.aam ? ci : null,
         null,
-        event
+        event,
       );
     } else {
       this.editor.hover(null);
@@ -50,7 +50,7 @@ class ReactionUnmapTool implements Tool {
       atoms.forEach((atom, aid) => {
         if (atom.aam === aam) {
           action.mergeWith(
-            fromAtomsAttrs(this.editor.render.ctab, aid, { aam: 0 }, null)
+            fromAtomsAttrs(this.editor.render.ctab, aid, { aam: 0 }, null),
           );
         }
       });

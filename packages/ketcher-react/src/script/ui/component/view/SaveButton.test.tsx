@@ -45,7 +45,7 @@ describe('SaveButton', () => {
       render(
         <SaveButton {...defaultProps} disabled>
           Save
-        </SaveButton>
+        </SaveButton>,
       );
       const btn = screen.getByRole('button');
       expect(btn).toBeDisabled();

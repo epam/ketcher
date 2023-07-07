@@ -109,7 +109,7 @@ export function sdataReducer(state, action) {
         ...state,
         result: Object.assign({}, state.result, action.data.result),
       },
-      action.data
+      action.data,
     );
   }
 

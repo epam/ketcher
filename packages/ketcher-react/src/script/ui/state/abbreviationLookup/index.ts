@@ -47,7 +47,7 @@ type AbbrLookupAction =
 
 function abbreviationLookupReducer(
   state: AbbreviationLookupState = initialState,
-  action: AbbrLookupAction
+  action: AbbrLookupAction,
 ): AbbreviationLookupState {
   switch (action.type) {
     case ABBREVIATION_LOOKUP_ACTIONS.ABBR_LOOKUP_INIT: {

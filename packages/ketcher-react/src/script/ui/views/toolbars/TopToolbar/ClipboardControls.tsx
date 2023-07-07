@@ -76,7 +76,7 @@ export const ClipboardControls = ({
   );
 
   const firstButtonObj = copyButtons.find(
-    (button) => !hiddenButtons.includes(button.name)
+    (button) => !hiddenButtons.includes(button.name),
   );
   const collapsibleElements = copyButtons
     .filter((button) => button !== firstButtonObj)

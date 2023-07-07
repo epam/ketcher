@@ -45,7 +45,7 @@ class BondTool implements Tool {
       const action = fromBondsAttrs(
         editor.render.ctab,
         editor.selection().bonds,
-        bondProps
+        bondProps,
       );
       editor.update(action);
       editor.selection(null);
@@ -69,7 +69,7 @@ class BondTool implements Tool {
     if (ci && functionalGroups.size && ci.map === 'atoms') {
       const atomId = FunctionalGroup.atomsInFunctionalGroup(
         functionalGroups,
-        ci.id
+        ci.id,
       );
       if (atomId !== null) atomResult.push(atomId);
     }
@@ -77,7 +77,7 @@ class BondTool implements Tool {
       const bondId = FunctionalGroup.bondsInFunctionalGroup(
         molecule,
         functionalGroups,
-        ci.id
+        ci.id,
       );
       if (bondId !== null) bondResult.push(bondId);
     }
@@ -85,7 +85,7 @@ class BondTool implements Tool {
       for (const id of atomResult) {
         const fgId = FunctionalGroup.findFunctionalGroupByAtom(
           functionalGroups,
-          id
+          id,
         );
         if (fgId !== null && !result.includes(fgId)) {
           result.push(fgId);
@@ -98,7 +98,7 @@ class BondTool implements Tool {
         const fgId = FunctionalGroup.findFunctionalGroupByBond(
           molecule,
           functionalGroups,
-          id
+          id,
         );
         if (fgId !== null && !result.includes(fgId)) {
           result.push(fgId);
@@ -199,7 +199,7 @@ class BondTool implements Tool {
           ) {
             const atomId = FunctionalGroup.atomsInFunctionalGroup(
               functionalGroups,
-              endAtom.id
+              endAtom.id,
             );
             if (atomId !== null) atomResult.push(atomId);
           } else if (endAtom?.map === 'functionalGroups') {
@@ -220,7 +220,7 @@ class BondTool implements Tool {
             for (const id of atomResult) {
               const fgId = FunctionalGroup.findFunctionalGroupByAtom(
                 functionalGroups,
-                id
+                id,
               );
               fgId !== null && !result.includes(fgId) && result.push(fgId);
             }
@@ -249,7 +249,7 @@ class BondTool implements Tool {
             endPos = utils.calcNewAtomPos(
               atom?.pp.get_xy0(),
               xy1,
-              event.ctrlKey
+              event.ctrlKey,
             );
           }
         }
@@ -258,7 +258,7 @@ class BondTool implements Tool {
           const [existingBondId, bond] = this.getExistingBond(
             molecule,
             beginAtom,
-            endAtom
+            endAtom,
           );
           dragCtx.action = fromBondAddition(
             rnd.ctab,
@@ -266,12 +266,12 @@ class BondTool implements Tool {
             beginAtom,
             endAtom,
             beginPos,
-            endPos
+            endPos,
           )[0];
           if (existingBondId !== null) {
             this.dragCtx.existedBond = bond;
             this.dragCtx.action.mergeWith(
-              fromOneBondDeletion(rnd.ctab, existingBondId)
+              fromOneBondDeletion(rnd.ctab, existingBondId),
             );
           }
         } else {
@@ -285,7 +285,7 @@ class BondTool implements Tool {
     this.editor.hover(
       this.editor.findItem(event, ['atoms', 'bonds', 'functionalGroups']),
       null,
-      event
+      event,
     );
     return true;
   }
@@ -301,7 +301,7 @@ class BondTool implements Tool {
       } else if (!('item' in dragCtx)) {
         const xy = rnd.page2obj(event);
         const v = new Vec2(1.0 / 2, 0).rotate(
-          this.bondProps.type === Bond.PATTERN.TYPE.SINGLE ? -Math.PI / 6 : 0
+          this.bondProps.type === Bond.PATTERN.TYPE.SINGLE ? -Math.PI / 6 : 0,
         );
         const bondAddition = fromBondAddition(
           rnd.ctab,
@@ -309,7 +309,7 @@ class BondTool implements Tool {
           { label: 'C' },
           { label: 'C' },
           Vec2.diff(xy, v),
-          Vec2.sum(xy, v)
+          Vec2.sum(xy, v),
         );
 
         this.editor.update(bondAddition[0]);
@@ -318,7 +318,7 @@ class BondTool implements Tool {
         this.editor.update(
           fromBondAddition(rnd.ctab, this.bondProps, dragCtx.item.id, {
             label: 'C',
-          })[0]
+          })[0],
         );
         delete this.dragCtx.existedBond;
       } else if (dragCtx.item.map === 'bonds') {
@@ -326,7 +326,7 @@ class BondTool implements Tool {
         const bond = struct.bonds.get(dragCtx.item.id) as Bond;
 
         this.editor.update(
-          bondChangingAction(rnd.ctab, dragCtx.item.id, bond, bondProps)
+          bondChangingAction(rnd.ctab, dragCtx.item.id, bond, bondProps),
         );
       }
       delete this.dragCtx;
@@ -337,7 +337,7 @@ class BondTool implements Tool {
     this.editor.hover(
       this.editor.findItem(event, ['atoms', 'bonds']),
       null,
-      event
+      event,
     );
     return true;
   }
@@ -359,8 +359,8 @@ class BondTool implements Tool {
           this.editor.render.ctab,
           this.dragCtx.existedBond,
           this.dragCtx.item.id,
-          bondEnd
-        )[0]
+          bondEnd,
+        )[0],
       );
       delete this.dragCtx.existedBond;
     }

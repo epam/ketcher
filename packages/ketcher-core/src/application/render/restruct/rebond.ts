@@ -122,12 +122,12 @@ class ReBond extends ReObject {
     const contourStart = Vec2.getLinePoint(
       halfBondEnd,
       halfBondStart,
-      -bondThickness * 2.5 - addStereoPadding
+      -bondThickness * 2.5 - addStereoPadding,
     );
     const contourEnd = Vec2.getLinePoint(
       halfBondStart,
       halfBondEnd,
-      -bondThickness * 2.5
+      -bondThickness * 2.5,
     );
 
     const addStart = isStereoBond
@@ -140,12 +140,12 @@ class ReBond extends ReObject {
     const contourPaddedStart = Vec2.getLinePoint(
       contourStart,
       contourEnd,
-      addEnd
+      addEnd,
     );
     const contourPaddedEnd = Vec2.getLinePoint(
       contourEnd,
       contourStart,
-      addStart
+      addStart,
     );
 
     // we need four points for each bezier curve
@@ -165,29 +165,29 @@ class ReBond extends ReObject {
     // of selection contour on canvas
     const startTop = startPoint.rotateAroundOrigin(
       angle + 90,
-      new Vec2(contourStart.x, contourStart.y)
+      new Vec2(contourStart.x, contourStart.y),
     );
     const startBottom = startPoint.rotateAroundOrigin(
       angle - 90,
-      new Vec2(contourStart.x, contourStart.y)
+      new Vec2(contourStart.x, contourStart.y),
     );
     const startPadTop = padStartPoint.rotateAroundOrigin(
       angle + 90,
-      contourPaddedStart
+      contourPaddedStart,
     );
     const startPadBottom = padStartPoint.rotateAroundOrigin(
       angle - 90,
-      contourPaddedStart
+      contourPaddedStart,
     );
     const endTop = endPoint.rotateAroundOrigin(angle + 90, contourEnd);
     const endBottom = endPoint.rotateAroundOrigin(angle - 90, contourEnd);
     const endPadTop = padEndPoint.rotateAroundOrigin(
       angle + 90,
-      contourPaddedEnd
+      contourPaddedEnd,
     );
     const endPadBottom = padEndPoint.rotateAroundOrigin(
       angle - 90,
-      contourPaddedEnd
+      contourPaddedEnd,
     );
 
     return [
@@ -239,7 +239,7 @@ class ReBond extends ReObject {
       FunctionalGroup.isBondInContractedFunctionalGroup(
         bond,
         sgroups,
-        functionalGroups
+        functionalGroups,
       )
     ) {
       return null;
@@ -259,7 +259,7 @@ class ReBond extends ReObject {
       FunctionalGroup.isBondInContractedFunctionalGroup(
         bond,
         sgroups,
-        functionalGroups
+        functionalGroups,
       )
     ) {
       return null;
@@ -282,7 +282,7 @@ class ReBond extends ReObject {
       FunctionalGroup.isBondInContractedFunctionalGroup(
         bond,
         sgroups,
-        functionalGroups
+        functionalGroups,
       )
     ) {
       return;
@@ -310,7 +310,7 @@ class ReBond extends ReObject {
         this.visel,
         reactingCenter.path,
         null,
-        true
+        true,
       );
     }
     const topology: any = {};
@@ -322,7 +322,7 @@ class ReBond extends ReObject {
         this.visel,
         topology.path,
         null,
-        true
+        true,
       );
     }
     this.setHover(this.hover, render);
@@ -342,7 +342,7 @@ class ReBond extends ReObject {
         bondIdxOff,
         0.8,
         0.2,
-        hb1.norm
+        hb1.norm,
       );
       restruct.addReObjectPath(LayerMap.indices, this.visel, ipath);
       ipath = getIdsPath(
@@ -353,7 +353,7 @@ class ReBond extends ReObject {
         bondIdxOff,
         0.2,
         0.8,
-        hb2.norm
+        hb2.norm,
       );
       restruct.addReObjectPath(LayerMap.indices, this.visel, ipath);
     }
@@ -366,7 +366,7 @@ class ReBond extends ReObject {
         bondIdxOff,
         0.5,
         0.5,
-        hb2.norm
+        hb2.norm,
       );
       restruct.addReObjectPath(LayerMap.indices, this.visel, ipath);
       ipath = getIdsPath(
@@ -377,7 +377,7 @@ class ReBond extends ReObject {
         bondIdxOff,
         0.5,
         0.5,
-        hb1.norm
+        hb1.norm,
       );
       restruct.addReObjectPath(LayerMap.indices, this.visel, ipath);
     }
@@ -413,7 +413,7 @@ class ReBond extends ReObject {
         this.visel,
         highlightPath,
         c,
-        true
+        true,
       );
     }
 
@@ -445,7 +445,7 @@ function findIncomingStereoUpBond(
   atom: Atom,
   bid0: number,
   includeBoldStereoBond: boolean,
-  restruct: ReStruct
+  restruct: ReStruct,
 ): number {
   return atom.neighbors.findIndex((hbid) => {
     const hb = restruct.molecule.halfBonds.get(hbid);
@@ -478,7 +478,7 @@ function findIncomingStereoUpBond(
 function findIncomingUpBonds(
   bid0: number,
   bond: ReBond,
-  restruct: ReStruct
+  restruct: ReStruct,
 ): void {
   const halfbonds = [bond.b.begin, bond.b.end].map((aid) => {
     const atom = restruct.molecule.atoms.get(aid);
@@ -506,7 +506,7 @@ function getBondPath(
   restruct: ReStruct,
   bond: ReBond,
   hb1: HalfBond,
-  hb2: HalfBond
+  hb2: HalfBond,
 ) {
   let path = null;
   const render = restruct.render;
@@ -535,7 +535,7 @@ function getBondPath(
             hb1,
             hb2,
             render.options,
-            getStereoBondColor(render.options, bond, struct)
+            getStereoBondColor(render.options, bond, struct),
           );
           break;
       }
@@ -555,7 +555,7 @@ function getBondPath(
           bond,
           struct,
           shiftA,
-          shiftB
+          shiftB,
         );
       } else path = getBondDoublePath(render, hb1, hb2, bond, shiftA, shiftB);
       break;
@@ -601,7 +601,7 @@ function getBondSingleUpPath(
   hb1: HalfBond,
   hb2: HalfBond,
   bond: ReBond,
-  struct: Struct
+  struct: Struct,
 ) {
   // eslint-disable-line max-params
   const a = hb1.p;
@@ -617,7 +617,7 @@ function getBondSingleUpPath(
       hb2,
       bond.neihbid2,
       options.stereoBond,
-      struct
+      struct,
     );
     b2 = coords[0];
     b3 = coords[1];
@@ -628,14 +628,14 @@ function getBondSingleUpPath(
     b2,
     b3,
     options,
-    getStereoBondColor(options, bond, struct)
+    getStereoBondColor(options, bond, struct),
   );
 }
 
 function getStereoBondColor(
   options: any,
   bond: ReBond,
-  struct: Struct
+  struct: Struct,
 ): string {
   const defaultColor = '#000';
 
@@ -668,7 +668,7 @@ function getBondSingleStereoBoldPath(
   hb1: HalfBond,
   hb2: HalfBond,
   bond: ReBond,
-  struct: Struct
+  struct: Struct,
 ) {
   // eslint-disable-line max-params
   const options = render.options;
@@ -676,13 +676,13 @@ function getBondSingleStereoBoldPath(
     hb1,
     bond.neihbid1,
     options.stereoBond,
-    struct
+    struct,
   );
   const coords2 = stereoUpBondGetCoordinates(
     hb2,
     bond.neihbid2,
     options.stereoBond,
-    struct
+    struct,
   );
   const a1 = coords1[0];
   const a2 = coords1[1];
@@ -695,7 +695,7 @@ function getBondSingleStereoBoldPath(
     a3,
     a4,
     options,
-    getStereoBondColor(options, bond, struct)
+    getStereoBondColor(options, bond, struct),
   );
 }
 
@@ -706,7 +706,7 @@ function getBondDoubleStereoBoldPath(
   bond: ReBond,
   struct: Struct,
   shiftA: boolean,
-  shiftB: boolean
+  shiftB: boolean,
 ) {
   // eslint-disable-line max-params
   const a = hb1.p;
@@ -720,26 +720,26 @@ function getBondDoubleStereoBoldPath(
     if (shiftA) {
       b1 = b1.addScaled(
         hb1.dir,
-        bsp * getBondLineShift(hb1.rightCos, hb1.rightSin)
+        bsp * getBondLineShift(hb1.rightCos, hb1.rightSin),
       );
     }
     if (shiftB) {
       b2 = b2.addScaled(
         hb1.dir,
-        -bsp * getBondLineShift(hb2.leftCos, hb2.leftSin)
+        -bsp * getBondLineShift(hb2.leftCos, hb2.leftSin),
       );
     }
   } else if (shift < 0) {
     if (shiftA) {
       b1 = b1.addScaled(
         hb1.dir,
-        bsp * getBondLineShift(hb1.leftCos, hb1.leftSin)
+        bsp * getBondLineShift(hb1.leftCos, hb1.leftSin),
       );
     }
     if (shiftB) {
       b2 = b2.addScaled(
         hb1.dir,
-        -bsp * getBondLineShift(hb2.rightCos, hb2.rightSin)
+        -bsp * getBondLineShift(hb2.rightCos, hb2.rightSin),
       );
     }
   }
@@ -748,7 +748,7 @@ function getBondDoubleStereoBoldPath(
     hb1,
     hb2,
     bond,
-    struct
+    struct,
   );
   return draw.bondDoubleStereoBold(
     render.paper,
@@ -756,7 +756,7 @@ function getBondDoubleStereoBoldPath(
     b1,
     b2,
     render.options,
-    getStereoBondColor(render.options, bond, struct)
+    getStereoBondColor(render.options, bond, struct),
   );
 }
 
@@ -769,7 +769,7 @@ function stereoUpBondGetCoordinates(
   hb: HalfBond,
   neihbid: number,
   bondSpace: any,
-  struct: Struct
+  struct: Struct,
 ): [Vec2, Vec2] {
   const neihb = struct.halfBonds.get(neihbid);
   const cos = Vec2.dot(hb.dir, neihb!.dir);
@@ -777,7 +777,7 @@ function stereoUpBondGetCoordinates(
   const cosHalf = Math.sqrt(0.5 * (1 - cos));
   const biss = neihb!.dir.rotateSC(
     (sin >= 0 ? -1 : 1) * cosHalf,
-    Math.sqrt(0.5 * (1 + cos))
+    Math.sqrt(0.5 * (1 + cos)),
   );
 
   const denomAdd = 0.3;
@@ -785,7 +785,7 @@ function stereoUpBondGetCoordinates(
   const a1 = hb.p.addScaled(biss, (scale * bondSpace) / (cosHalf + denomAdd));
   const a2 = hb.p.addScaled(
     biss.negated(),
-    (scale * bondSpace) / (cosHalf + denomAdd)
+    (scale * bondSpace) / (cosHalf + denomAdd),
   );
   return sin > 0 ? [a1, a2] : [a2, a1];
 }
@@ -795,7 +795,7 @@ function getBondSingleDownPath(
   hb1: HalfBond,
   hb2: HalfBond,
   bond: ReBond,
-  struct: Struct
+  struct: Struct,
 ) {
   const a = hb1.p;
   const b = hb2.p;
@@ -807,7 +807,7 @@ function getBondSingleDownPath(
   const nlines =
     Math.max(
       Math.floor((len - options.lineWidth) / (options.lineWidth + interval)),
-      0
+      0,
     ) + 2;
   const step = len / (nlines - 1);
   return draw.bondSingleDown(
@@ -817,7 +817,7 @@ function getBondSingleDownPath(
     nlines,
     step,
     options,
-    getStereoBondColor(options, bond, struct)
+    getStereoBondColor(options, bond, struct),
   );
 }
 
@@ -826,7 +826,7 @@ function getBondSingleEitherPath(
   hb1: HalfBond,
   hb2: HalfBond,
   bond: ReBond,
-  struct: Struct
+  struct: Struct,
 ) {
   const a = hb1.p;
   const b = hb2.p;
@@ -838,7 +838,7 @@ function getBondSingleEitherPath(
   const nlines =
     Math.max(
       Math.floor((len - options.lineWidth) / (options.lineWidth + interval)),
-      0
+      0,
     ) + 2;
   const step = len / (nlines - 0.5);
   return draw.bondSingleEither(
@@ -848,7 +848,7 @@ function getBondSingleEitherPath(
     nlines,
     step,
     options,
-    getStereoBondColor(options, bond, struct)
+    getStereoBondColor(options, bond, struct),
   );
 }
 
@@ -858,7 +858,7 @@ function getBondDoublePath(
   hb2: HalfBond,
   bond: ReBond,
   shiftA: boolean,
-  shiftB: boolean
+  shiftB: boolean,
 ) {
   // eslint-disable-line max-params, max-statements
   const cisTrans = bond.b.stereo === Bond.PATTERN.STEREO.CIS_TRANS;
@@ -882,26 +882,26 @@ function getBondDoublePath(
     if (shiftA) {
       a1 = a1.addScaled(
         hb1.dir,
-        options.bondSpace * getBondLineShift(hb1.rightCos, hb1.rightSin)
+        options.bondSpace * getBondLineShift(hb1.rightCos, hb1.rightSin),
       );
     }
     if (shiftB) {
       b1 = b1.addScaled(
         hb1.dir,
-        -options.bondSpace * getBondLineShift(hb2.leftCos, hb2.leftSin)
+        -options.bondSpace * getBondLineShift(hb2.leftCos, hb2.leftSin),
       );
     }
   } else if (shift < 0) {
     if (shiftA) {
       a2 = a2.addScaled(
         hb1.dir,
-        options.bondSpace * getBondLineShift(hb1.leftCos, hb1.leftSin)
+        options.bondSpace * getBondLineShift(hb1.leftCos, hb1.leftSin),
       );
     }
     if (shiftB) {
       b2 = b2.addScaled(
         hb1.dir,
-        -options.bondSpace * getBondLineShift(hb2.rightCos, hb2.rightSin)
+        -options.bondSpace * getBondLineShift(hb2.rightCos, hb2.rightSin),
       );
     }
   }
@@ -926,7 +926,7 @@ function getBondAromaticPath(
   hb2: HalfBond,
   bond: ReBond,
   shiftA: boolean,
-  shiftB: boolean
+  shiftB: boolean,
 ) {
   // eslint-disable-line max-params
   const dashdotPattern = [0.125, 0.125, 0.005, 0.125];
@@ -951,7 +951,7 @@ function getBondAromaticPath(
     shiftB,
     options.bondSpace,
     mask,
-    dash
+    dash,
   );
   return draw.bondAromatic(render.paper, paths, bondShift, options);
 }
@@ -964,7 +964,7 @@ function getAromaticBondPaths(
   shiftB: boolean,
   bondSpace: number,
   mask: number,
-  dash: number[] | null
+  dash: number[] | null,
 ) {
   // eslint-disable-line max-params, max-statements
   const a = hb1.p;
@@ -981,26 +981,26 @@ function getAromaticBondPaths(
     if (shiftA) {
       a2 = a2.addScaled(
         hb1.dir,
-        bondSpace * getBondLineShift(hb1.rightCos, hb1.rightSin)
+        bondSpace * getBondLineShift(hb1.rightCos, hb1.rightSin),
       );
     }
     if (shiftB) {
       b2 = b2.addScaled(
         hb1.dir,
-        -bondSpace * getBondLineShift(hb2.leftCos, hb2.leftSin)
+        -bondSpace * getBondLineShift(hb2.leftCos, hb2.leftSin),
       );
     }
   } else if (shift < 0) {
     if (shiftA) {
       a3 = a3.addScaled(
         hb1.dir,
-        bondSpace * getBondLineShift(hb1.leftCos, hb1.leftSin)
+        bondSpace * getBondLineShift(hb1.leftCos, hb1.leftSin),
       );
     }
     if (shiftB) {
       b3 = b3.addScaled(
         hb1.dir,
-        -bondSpace * getBondLineShift(hb2.rightCos, hb2.rightSin)
+        -bondSpace * getBondLineShift(hb2.rightCos, hb2.rightSin),
       );
     }
   }
@@ -1011,7 +1011,7 @@ function getReactingCenterPath(
   render: Render,
   bond: ReBond,
   hb1: HalfBond,
-  hb2: HalfBond
+  hb2: HalfBond,
 ) {
   // eslint-disable-line max-statements
   const a = hb1.p;
@@ -1043,25 +1043,25 @@ function getReactingCenterPath(
         c
           .addScaled(n, acrossSz)
           .addScaled(d, tiltTan * acrossSz)
-          .addScaled(d, alongIntRc)
+          .addScaled(d, alongIntRc),
       );
       p.push(
         c
           .addScaled(n, -acrossSz)
           .addScaled(d, -tiltTan * acrossSz)
-          .addScaled(d, alongIntRc)
+          .addScaled(d, alongIntRc),
       );
       p.push(
         c
           .addScaled(n, acrossSz)
           .addScaled(d, tiltTan * acrossSz)
-          .addScaled(d, -alongIntRc)
+          .addScaled(d, -alongIntRc),
       );
       p.push(
         c
           .addScaled(n, -acrossSz)
           .addScaled(d, -tiltTan * acrossSz)
-          .addScaled(d, -alongIntRc)
+          .addScaled(d, -alongIntRc),
       );
       p.push(c.addScaled(d, alongSz).addScaled(n, acrossInt));
       p.push(c.addScaled(d, -alongSz).addScaled(n, acrossInt));
@@ -1097,7 +1097,7 @@ function getTopologyMark(
   render: Render,
   bond: ReBond,
   hb1: HalfBond,
-  hb2: HalfBond
+  hb2: HalfBond,
 ) {
   // eslint-disable-line max-statements
   const options = render.options;
@@ -1131,7 +1131,7 @@ function getIdsPath(
   bondIdxOff: number,
   param1: number,
   param2: number,
-  norm: Vec2
+  norm: Vec2,
 ) {
   // eslint-disable-line max-params
   const pb = Vec2.lc(hb1.p, param1, hb2.p, param2, norm, bondIdxOff);
@@ -1172,7 +1172,7 @@ function selectDoubleBondShift(
   n1: number,
   n2: number,
   d1: number,
-  d2: number
+  d2: number,
 ): number {
   if (n1 === 6 && n2 !== 6 && (d1 > 1 || d2 === 1)) return -1;
   if (n2 === 6 && n1 !== 6 && (d2 > 1 || d1 === 1)) return 1;

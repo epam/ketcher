@@ -56,7 +56,7 @@ class EraserTool implements Tool {
     if (editor.selection()) {
       const action = fromFragmentDeletion(
         editor.render.ctab,
-        editor.selection()
+        editor.selection(),
       );
       editor.update(action);
       editor.selection(null);
@@ -97,7 +97,7 @@ class EraserTool implements Tool {
       for (const atom of selected.atoms) {
         const atomId = FunctionalGroup.atomsInFunctionalGroup(
           functionalGroups,
-          atom
+          atom,
         );
         const atomFromStruct = atomId !== null && struct.atoms.get(atomId)?.a;
 
@@ -113,7 +113,7 @@ class EraserTool implements Tool {
             atomFromStruct,
             sgroups,
             functionalGroups,
-            true
+            true,
           )
         ) {
           const sgroupAtoms =
@@ -133,7 +133,7 @@ class EraserTool implements Tool {
             atomFromStruct,
             sgroups,
             functionalGroups,
-            true
+            true,
           )
         ) {
           atomsResult.push(atomId);
@@ -146,7 +146,7 @@ class EraserTool implements Tool {
         const bondId = FunctionalGroup.bondsInFunctionalGroup(
           molecule,
           functionalGroups,
-          bond
+          bond,
         );
         const bondFromStruct = bondId !== null && struct.bonds.get(bondId)?.b;
 
@@ -155,7 +155,7 @@ class EraserTool implements Tool {
           !FunctionalGroup.isBondInContractedFunctionalGroup(
             bondFromStruct,
             sgroups,
-            functionalGroups
+            functionalGroups,
           )
         ) {
           bondsResult.push(bondId);
@@ -167,7 +167,7 @@ class EraserTool implements Tool {
       for (const id of atomsResult) {
         const fgId = FunctionalGroup.findFunctionalGroupByAtom(
           functionalGroups,
-          id
+          id,
         );
         fgId !== null && !preResult.includes(fgId) && preResult.push(fgId);
       }
@@ -178,7 +178,7 @@ class EraserTool implements Tool {
         const fgId = FunctionalGroup.findFunctionalGroupByBond(
           molecule,
           functionalGroups,
-          id
+          id,
         );
         fgId !== null && !preResult.includes(fgId) && preResult.push(fgId);
       }
@@ -241,7 +241,7 @@ class EraserTool implements Tool {
     } else if (ci && functionalGroups && ci.map === 'atoms') {
       const atomId = FunctionalGroup.atomsInFunctionalGroup(
         functionalGroups,
-        ci.id
+        ci.id,
       );
       const atomFromStruct = atomId !== null && restruct.atoms.get(atomId)?.a;
 
@@ -251,7 +251,7 @@ class EraserTool implements Tool {
           atomFromStruct,
           sgroups,
           functionalGroups,
-          true
+          true,
         )
       ) {
         atomResult.push(atomId);
@@ -260,7 +260,7 @@ class EraserTool implements Tool {
       const bondId = FunctionalGroup.bondsInFunctionalGroup(
         molecule,
         functionalGroups,
-        ci.id
+        ci.id,
       );
       const bondFromStruct = bondId !== null && restruct.bonds.get(bondId)?.b;
 
@@ -269,7 +269,7 @@ class EraserTool implements Tool {
         !FunctionalGroup.isBondInContractedFunctionalGroup(
           bondFromStruct,
           sgroups,
-          functionalGroups
+          functionalGroups,
         )
       ) {
         bondResult.push(bondId);
@@ -280,7 +280,7 @@ class EraserTool implements Tool {
       for (const id of atomResult) {
         const fgId = FunctionalGroup.findFunctionalGroupByAtom(
           functionalGroups,
-          id
+          id,
         );
 
         if (fgId !== null && !result.includes(fgId)) {
@@ -292,7 +292,7 @@ class EraserTool implements Tool {
         const fgId = FunctionalGroup.findFunctionalGroupByBond(
           molecule,
           functionalGroups,
-          id
+          id,
         );
 
         if (fgId !== null && !result.includes(fgId)) {
@@ -323,7 +323,7 @@ class EraserTool implements Tool {
         fromFragmentDeletion(rnd.ctab, {
           atoms: [...SGroup.getAtoms(molecule, sGroup?.item)],
           bonds: [...SGroup.getBonds(molecule, sGroup?.item)],
-        })
+        }),
       );
     } else if (ci.map === 'sgroups' || ci.map === 'sgroupData') {
       const sGroup = sgroups.get(ci.id);
@@ -344,7 +344,7 @@ class EraserTool implements Tool {
     } else {
       // TODO re-factoring needed - should be "map-independent"
       console.error(
-        'EraserTool: unable to delete the object ' + ci.map + '[' + ci.id + ']'
+        'EraserTool: unable to delete the object ' + ci.map + '[' + ci.id + ']',
       );
       return;
     }

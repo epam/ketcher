@@ -8,7 +8,7 @@ type partialPropertiesOfElement = Partial<{
 // otherwise it is set to an empty string. Afterwards, empty string denotes that the value is not changed
 export function generateCommonProperties(
   selectedElements: Atom[] | Bond[],
-  normalizedElement
+  normalizedElement,
 ): partialPropertiesOfElement {
   const properties = Object.getOwnPropertyNames(normalizedElement);
   const resultElementAttributes: partialPropertiesOfElement = {};

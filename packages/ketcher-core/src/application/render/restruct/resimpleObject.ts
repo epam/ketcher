@@ -66,7 +66,7 @@ class ReSimpleObject extends ReObject {
           dist = Math.abs(
             1 -
               (pointToCenter.x * pointToCenter.x) / (rx * rx) -
-              (pointToCenter.y * pointToCenter.y) / (ry * ry)
+              (pointToCenter.y * pointToCenter.y) / (ry * ry),
           );
         } else {
           // in case rx or ry is equal to 0 we have a line as a trivial case of ellipse
@@ -143,7 +143,7 @@ class ReSimpleObject extends ReObject {
     const minDist: MinDistanceWithReferencePoint = dist.reduce(
       (acc, current) =>
         !acc ? current : acc.minDist < current.minDist ? acc : current,
-      null
+      null,
     );
 
     return minDist;
@@ -156,7 +156,7 @@ class ReSimpleObject extends ReObject {
       case SimpleObjectMode.rectangle: {
         const p0: Vec2 = new Vec2(
           Math.min(this.item.pos[0].x, this.item.pos[1].x),
-          Math.min(this.item.pos[0].y, this.item.pos[1].y)
+          Math.min(this.item.pos[0].y, this.item.pos[1].y),
         );
         const w = Math.abs(Vec2.diff(this.item.pos[0], this.item.pos[1]).x);
         const h = Math.abs(Vec2.diff(this.item.pos[0], this.item.pos[1]).y);
@@ -165,14 +165,14 @@ class ReSimpleObject extends ReObject {
           new Vec2(p0.x + 0.5 * w, p0.y),
           new Vec2(p0.x + w, p0.y + 0.5 * h),
           new Vec2(p0.x + 0.5 * w, p0.y + h),
-          new Vec2(p0.x, p0.y + 0.5 * h)
+          new Vec2(p0.x, p0.y + 0.5 * h),
         );
         if (!onlyOnObject || this.item.mode === SimpleObjectMode.rectangle) {
           refPoints.push(
             p0,
             new Vec2(p0.x, p0.y + h),
             new Vec2(p0.x + w, p0.y + h),
-            new Vec2(p0.x + w, p0.y)
+            new Vec2(p0.x + w, p0.y),
           );
         }
         break;
@@ -210,8 +210,8 @@ class ReSimpleObject extends ReObject {
             tfx(point[0].x + rx),
             tfx(point[0].y + ry),
             tfx(Math.abs(rx) + scaleFactor / 8),
-            tfx(Math.abs(ry) + scaleFactor / 8)
-          )
+            tfx(Math.abs(ry) + scaleFactor / 8),
+          ),
         );
         if (
           Math.abs(rx) - scaleFactor / 8 > 0 &&
@@ -222,8 +222,8 @@ class ReSimpleObject extends ReObject {
               tfx(point[0].x + rx),
               tfx(point[0].y + ry),
               tfx(Math.abs(rx) - scaleFactor / 8),
-              tfx(Math.abs(ry) - scaleFactor / 8)
-            )
+              tfx(Math.abs(ry) - scaleFactor / 8),
+            ),
           );
         }
         break;
@@ -237,14 +237,14 @@ class ReSimpleObject extends ReObject {
             tfx(
               Math.max(point[0].x, point[1].x) -
                 Math.min(point[0].x, point[1].x) +
-                scaleFactor / 4
+                scaleFactor / 4,
             ),
             tfx(
               Math.max(point[0].y, point[1].y) -
                 Math.min(point[0].y, point[1].y) +
-                scaleFactor / 4
-            )
-          )
+                scaleFactor / 4,
+            ),
+          ),
         );
 
         if (
@@ -264,14 +264,14 @@ class ReSimpleObject extends ReObject {
               tfx(
                 Math.max(point[0].x, point[1].x) -
                   Math.min(point[0].x, point[1].x) -
-                  scaleFactor / 4
+                  scaleFactor / 4,
               ),
               tfx(
                 Math.max(point[0].y, point[1].y) -
                   Math.min(point[0].y, point[1].y) -
-                  scaleFactor / 4
-              )
-            )
+                  scaleFactor / 4,
+              ),
+            ),
           );
         }
 
@@ -282,7 +282,7 @@ class ReSimpleObject extends ReObject {
         const poly: Array<string | number> = [];
 
         const angle = Math.atan(
-          (point[1].y - point[0].y) / (point[1].x - point[0].x)
+          (point[1].y - point[0].y) / (point[1].x - point[0].x),
         );
 
         const p0 = { x: 0, y: 0 };
@@ -298,27 +298,27 @@ class ReSimpleObject extends ReObject {
         poly.push(
           'M',
           p0.x + ((k * scaleFactor) / 8) * Math.sin(angle),
-          p0.y - ((k * scaleFactor) / 8) * Math.cos(angle)
+          p0.y - ((k * scaleFactor) / 8) * Math.cos(angle),
         );
         poly.push(
           'L',
           p1.x + ((k * scaleFactor) / 8) * Math.sin(angle),
-          p1.y - ((k * scaleFactor) / 8) * Math.cos(angle)
+          p1.y - ((k * scaleFactor) / 8) * Math.cos(angle),
         );
         poly.push(
           'L',
           p1.x - ((k * scaleFactor) / 8) * Math.sin(angle),
-          p1.y + ((k * scaleFactor) / 8) * Math.cos(angle)
+          p1.y + ((k * scaleFactor) / 8) * Math.cos(angle),
         );
         poly.push(
           'L',
           p0.x - ((k * scaleFactor) / 8) * Math.sin(angle),
-          p0.y + ((k * scaleFactor) / 8) * Math.cos(angle)
+          p0.y + ((k * scaleFactor) / 8) * Math.cos(angle),
         );
         poly.push(
           'L',
           p0.x + ((k * scaleFactor) / 8) * Math.sin(angle),
-          p0.y - ((k * scaleFactor) / 8) * Math.cos(angle)
+          p0.y - ((k * scaleFactor) / 8) * Math.cos(angle),
         );
 
         path.push(render.paper.path(poly));
@@ -358,15 +358,15 @@ class ReSimpleObject extends ReObject {
     const selectionSet = restruct.render.paper.set();
     selectionSet.push(
       generatePath(this.item.mode, paper, pos).attr(
-        styles.hoverStyleSimpleObject
-      )
+        styles.hoverStyleSimpleObject,
+      ),
     );
     refPoints.forEach((rp) => {
       const scaledRP = Scale.obj2scaled(rp, restruct.render.options);
       selectionSet.push(
         restruct.render.paper
           .circle(scaledRP.x, scaledRP.y, scaleFactor / 8)
-          .attr({ fill: 'black' })
+          .attr({ fill: 'black' }),
       );
     });
     return selectionSet;

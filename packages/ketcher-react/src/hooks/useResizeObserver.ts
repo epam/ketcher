@@ -37,7 +37,7 @@ type HookResponse<THTMLElement extends HTMLElement> = {
 };
 
 function useThrottleResizeObserver<THTMLElement extends HTMLElement>(
-  options: Options<THTMLElement> = {}
+  options: Options<THTMLElement> = {},
 ): HookResponse<THTMLElement> {
   const [size, setSize] = useState<Size>({
     height: undefined,

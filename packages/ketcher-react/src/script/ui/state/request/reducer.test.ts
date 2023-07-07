@@ -35,7 +35,7 @@ describe('requests reducer', () => {
       reducer(undefined, {
         type: INDIGO_VERIFICATION,
         data: true,
-      })
+      }),
     ).toEqual({
       indigoVerification: true,
       isAnalyzingFile: false,
@@ -50,8 +50,8 @@ describe('requests reducer', () => {
         {
           type: INDIGO_VERIFICATION,
           data: false,
-        }
-      )
+        },
+      ),
     ).toEqual({
       indigoVerification: false,
       isAnalyzingFile: false,
@@ -63,7 +63,7 @@ describe('requests reducer', () => {
       reducer(undefined, {
         type: ANALYZING_FILE,
         data: true,
-      })
+      }),
     ).toEqual({
       indigoVerification: false,
       isAnalyzingFile: true,
@@ -78,8 +78,8 @@ describe('requests reducer', () => {
         {
           type: ANALYZING_FILE,
           data: false,
-        }
-      )
+        },
+      ),
     ).toEqual({
       indigoVerification: false,
       isAnalyzingFile: false,

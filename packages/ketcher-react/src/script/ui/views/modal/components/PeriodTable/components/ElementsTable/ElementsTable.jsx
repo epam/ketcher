@@ -49,14 +49,14 @@ const main = rowPartition(
       item.type !== ACTINIDE &&
       item.type !== LANTHANIDE &&
       item.number !== 89 &&
-      item.number !== 57
-  )
+      item.number !== 57,
+  ),
 );
 const lanthanides = Elements.filter(
-  (item) => item && (item.type === LANTHANIDE || item.number === 57)
+  (item) => item && (item.type === LANTHANIDE || item.number === 57),
 );
 const actinides = Elements.filter(
-  (item) => item && (item.type === ACTINIDE || item.number === 89)
+  (item) => item && (item.type === ACTINIDE || item.number === 89),
 );
 
 function rowPartition(elements) {

@@ -24,7 +24,7 @@ export function fromTextCreation(
   restruct: ReStruct,
   content: string,
   position: Vec2,
-  pos: Array<Vec2>
+  pos: Array<Vec2>,
 ) {
   const action = new Action();
   action.addOp(new TextCreate(content, position, pos));
@@ -34,7 +34,7 @@ export function fromTextCreation(
 export function fromTextUpdating(
   restruct: ReStruct,
   id: number,
-  content: string
+  content: string,
 ) {
   const action = new Action();
   action.addOp(new TextUpdate(id, content));

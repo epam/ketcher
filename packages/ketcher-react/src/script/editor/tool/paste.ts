@@ -62,7 +62,7 @@ class PasteTool implements Tool {
     this.editor.update(this.action, true);
 
     action.mergeWith(
-      expandSGroupWithMultipleAttachmentPoint(this.editor.render.ctab)
+      expandSGroupWithMultipleAttachmentPoint(this.editor.render.ctab),
     );
 
     this.editor.update(this.action, true);
@@ -93,7 +93,7 @@ class PasteTool implements Tool {
       const [action] = fromPaste(
         this.editor.render.ctab,
         this.struct,
-        this.editor.render.page2obj(event)
+        this.editor.render.page2obj(event),
       );
       this.action = action;
       return;
@@ -158,7 +158,7 @@ class PasteTool implements Tool {
         prepareTemplateFromSingleGroup(this.struct),
         atomId,
         angle,
-        extraBond
+        extraBond,
       );
 
       this.dragCtx.action = action;
@@ -175,13 +175,13 @@ class PasteTool implements Tool {
       const [action, pasteItems] = fromPaste(
         this.editor.render.ctab,
         this.struct,
-        this.editor.render.page2obj(event)
+        this.editor.render.page2obj(event),
       );
       this.action = action;
       this.editor.update(this.action, true, { resizeCanvas: false });
       const visiblePasteItems = filterNotInContractedSGroup(
         pasteItems,
-        this.editor.struct()
+        this.editor.struct(),
       );
 
       this.mergeItems = getItemsToFuse(this.editor, visiblePasteItems);
@@ -201,7 +201,7 @@ class PasteTool implements Tool {
 
     const groupsIdsInvolvedInMerge = getGroupIdsFromItemArrays(
       this.editor.struct(),
-      idsOfItemsMerged
+      idsOfItemsMerged,
     );
 
     if (groupsIdsInvolvedInMerge.length) {
@@ -215,7 +215,7 @@ class PasteTool implements Tool {
 
       dragCtx.action = dragCtx.action
         ? fromItemsFuse(this.editor.render.ctab, dragCtx.mergeItems).mergeWith(
-            dragCtx.action
+            dragCtx.action,
           )
         : fromItemsFuse(this.editor.render.ctab, dragCtx.mergeItems);
 
@@ -228,7 +228,7 @@ class PasteTool implements Tool {
       delete this.action;
       if (!this.isSingleContractedGroup || !this.mergeItems) {
         this.editor.update(
-          dropAndMerge(this.editor, this.mergeItems, action, true)
+          dropAndMerge(this.editor, this.mergeItems, action, true),
         );
       }
     }

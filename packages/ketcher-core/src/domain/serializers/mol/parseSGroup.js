@@ -290,7 +290,7 @@ function applyDataSGroupInfo(sg, propData) {
       3 /* i */, 3 /* jjj */, 3 /* kkk */, 3 /* ll */, 2 /* m */, 3 /* n */,
       2 /* oo */,
     ],
-    false
+    false,
   );
 
   const x = parseFloat(split[0]);
@@ -331,7 +331,7 @@ function applyDataSGroupData(sg, data, finalize) {
     ) {
       sg.data.fieldValue = sg.data.fieldValue.substr(
         1,
-        sg.data.fieldValue.length - 2
+        sg.data.fieldValue.length - 2,
       );
     }
   }
@@ -378,7 +378,7 @@ function parseSGroupSAPLineV2000(ctabString) {
   const [, sss, nn6] = utils.partitionLine(
     ctabString.slice(0, 7),
     [1, 3, 3],
-    false
+    false,
   );
   const chunksNumberInLine = utils.parseDecimalInt(nn6);
   assert(chunksNumberInLine <= 6);
@@ -393,7 +393,7 @@ function parseSGroupSAPLineV2000(ctabString) {
     const [, iii, , ooo, , cc] = utils.partitionLine(
       stringForParse,
       CHUNK_PARTS_LENGTHS,
-      false
+      false,
     );
     const atomId = utils.parseDecimalInt(iii) - 1;
     assert(atomId >= 0);

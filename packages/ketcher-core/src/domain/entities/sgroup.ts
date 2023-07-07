@@ -194,7 +194,7 @@ export class SGroup {
             const v = new Vec2(x, y);
             const p = new Vec2(
               Vec2.dot(v, direction),
-              Vec2.dot(v, direction.rotateSC(1, 0))
+              Vec2.dot(v, direction.rotateSC(1, 0)),
             );
             bbb = !bbb ? new Box2Abs(p, p) : bbb!.include(p);
           });
@@ -238,12 +238,12 @@ export class SGroup {
 
   addAttachmentPoint(attachmentPoint: SGroupAttachmentPoint): void {
     const isAttachmentPointAlreadyExist = this.attachmentPoints.some(
-      ({ atomId }) => attachmentPoint.atomId === atomId
+      ({ atomId }) => attachmentPoint.atomId === atomId,
     );
 
     if (isAttachmentPointAlreadyExist) {
       throw new Error(
-        'The same attachment point cannot be added to an S-group more than once'
+        'The same attachment point cannot be added to an S-group more than once',
       );
     }
 
@@ -253,7 +253,7 @@ export class SGroup {
   addAttachmentPoints(
     attachmentPoints:
       | ReadonlyArray<SGroupAttachmentPoint>
-      | SGroupAttachmentPoint[]
+      | SGroupAttachmentPoint[],
   ): void {
     for (const attachmentPoint of attachmentPoints) {
       this.addAttachmentPoint(attachmentPoint);
@@ -262,7 +262,7 @@ export class SGroup {
 
   removeAttachmentPoint(attachmentPointAtomId: number): boolean {
     const index = this.attachmentPoints.findIndex(
-      ({ atomId }) => attachmentPointAtomId === atomId
+      ({ atomId }) => attachmentPointAtomId === atomId,
     );
     if (index !== -1) {
       this.attachmentPoints.splice(index, 1);
@@ -325,7 +325,7 @@ export class SGroup {
   }
 
   cloneAttachmentPoints(
-    atomIdMap: Map<number, number>
+    atomIdMap: Map<number, number>,
   ): ReadonlyArray<SGroupAttachmentPoint> {
     return this.attachmentPoints.map((point) => point.clone(atomIdMap));
   }
@@ -340,31 +340,31 @@ export class SGroup {
     const saltsAndSolvents = saltsAndSolventsProvider.getSaltsAndSolventsList();
     return saltsAndSolvents.some(
       ({ name, abbreviation }) =>
-        name === moleculeName || moleculeName === abbreviation
+        name === moleculeName || moleculeName === abbreviation,
     );
   }
 
   static isAtomInSaltOrSolvent(
     atomId: number,
-    sgroupsOnCanvas: SGroup[]
+    sgroupsOnCanvas: SGroup[],
   ): boolean {
     const onlySaltsOrSolvents = sgroupsOnCanvas.filter((sgroup) =>
-      this.isSaltOrSolvent(sgroup.data.name)
+      this.isSaltOrSolvent(sgroup.data.name),
     );
     return onlySaltsOrSolvents.some(({ atoms }) =>
-      atoms.some((atomIdInSaltOrSolvent) => atomIdInSaltOrSolvent === atomId)
+      atoms.some((atomIdInSaltOrSolvent) => atomIdInSaltOrSolvent === atomId),
     );
   }
 
   static isBondInSaltOrSolvent(
     bondId: number,
-    sgroupsOnCanvas: SGroup[]
+    sgroupsOnCanvas: SGroup[],
   ): boolean {
     const onlySaltsOrSolvents = sgroupsOnCanvas.filter((sgroup) =>
-      this.isSaltOrSolvent(sgroup.data.name)
+      this.isSaltOrSolvent(sgroup.data.name),
     );
     return onlySaltsOrSolvents.some(({ bonds }) =>
-      bonds.some((bondIdInSaltOrSolvent) => bondIdInSaltOrSolvent === bondId)
+      bonds.some((bondIdInSaltOrSolvent) => bondIdInSaltOrSolvent === bondId),
     );
   }
 
@@ -431,7 +431,7 @@ export class SGroup {
 
   static getCrossBonds(
     mol: any,
-    parentAtomSet: Pile<number>
+    parentAtomSet: Pile<number>,
   ): { [key: number]: Array<Bond> } {
     const crossBonds: { [key: number]: Array<Bond> } = {};
     mol.bonds.forEach((bond, bid) => {
@@ -458,7 +458,7 @@ export class SGroup {
     mol,
     crossBondsPerAtom: { [key: number]: Array<Bond> },
     remol?: ReStruct,
-    render?
+    render?,
   ): void {
     const atoms = sGroup.atoms;
     const crossBonds = crossBondsPerAtom
@@ -516,7 +516,7 @@ export class SGroup {
     atomSet: Pile<number>,
     bb,
     d,
-    n
+    n,
   ): Array<any> {
     const brackets: Array<any> = [];
     const crossBondsPerAtomValues = Object.values(crossBondsPerAtom);
@@ -532,7 +532,7 @@ export class SGroup {
 
         brackets.push(
           new SGroupBracketParams(cl, d.negated(), bracketWidth, bracketHeight),
-          new SGroupBracketParams(cr, d, bracketWidth, bracketHeight)
+          new SGroupBracketParams(cr, d, bracketWidth, bracketHeight),
         );
       })();
     } else if (
@@ -554,14 +554,14 @@ export class SGroup {
             cl0.addScaled(dl, 0),
             dl,
             bracketWidth,
-            bracketHeight
+            bracketHeight,
           ),
           new SGroupBracketParams(
             cr0.addScaled(dr, 0),
             dr,
             bracketWidth,
-            bracketHeight
-          )
+            bracketHeight,
+          ),
         );
       })();
     } else {
@@ -715,7 +715,7 @@ export class SGroup {
 
   static isBondInContractedSGroup(
     bond: Bond,
-    sGroups: Map<number, ReSGroup> | Pool<SGroup>
+    sGroups: Map<number, ReSGroup> | Pool<SGroup>,
   ) {
     return [...sGroups.values()].some((sGroupOrReSGroup) => {
       const sGroup: SGroup =
@@ -760,7 +760,7 @@ function descriptorIntersects(sgroups: [], topLeftPoint: Vec2): boolean {
       sg.pp,
       sgBottomRightPoint,
       topLeftPoint,
-      bottomRightPoint
+      bottomRightPoint,
     );
   });
 }

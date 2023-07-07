@@ -54,7 +54,7 @@ export interface Editor {
   update: (
     action: Action | true,
     ignoreHistory?: boolean,
-    options?: { resizeCanvas: boolean }
+    options?: { resizeCanvas: boolean },
   ) => void;
   render: Render;
   // supposed to be RotateController from 'ketcher-react' package

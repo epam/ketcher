@@ -28,7 +28,7 @@ import { ComponentType } from 'react';
 import { GroupedMultiTool } from './GroupedMultiTool';
 
 export function chooseMultiTool(
-  variant: MultiToolVariant = 'default'
+  variant: MultiToolVariant = 'default',
 ): [ComponentType<MultiToolProps & MultiToolCallProps>, string?] {
   switch (variant) {
     case 'default':

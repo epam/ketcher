@@ -44,7 +44,7 @@ const mapDispatchToProps = (dispatch): DispatchProps => ({
       load(result.structStr, {
         badHeaderRecover: true,
         fragment: result.fragment,
-      })
+      }),
       // TODO: Removed ownProps.onOk call. consider refactoring of load function in release 2.4
       // See PR #731 (https://github.com/epam/ketcher/pull/731)
     );

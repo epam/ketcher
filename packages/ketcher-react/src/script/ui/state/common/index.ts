@@ -39,7 +39,7 @@ type CommonAction = ReturnType<typeof updateCursorPosition>;
 
 function commonReducer(
   state: CommonState = initialState,
-  action: CommonAction
+  action: CommonAction,
 ): CommonState {
   switch (action.type) {
     case COMMON_ACTIONS.COMMON_UPDATE_CURSOR_POSITION: {

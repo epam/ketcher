@@ -24,7 +24,7 @@ import {
 
 export function couldBeSaved(
   struct: Struct,
-  format: SupportedFormat
+  format: SupportedFormat,
 ): string | null {
   const warnings: Array<string> = [];
   const formatName: string = getPropertiesByFormat(format).name;
@@ -34,7 +34,7 @@ export function couldBeSaved(
 
   if (format === 'smiles' || format === 'smarts') {
     warnings.push(
-      `Structure contains query properties of atoms and bonds that are not supported in the ${format?.toUpperCase()}. Query properties will not be reflected in the file saved.`
+      `Structure contains query properties of atoms and bonds that are not supported in the ${format?.toUpperCase()}. Query properties will not be reflected in the file saved.`,
     );
   }
 
@@ -43,7 +43,7 @@ export function couldBeSaved(
     const hasGenerics = arrayOfAtoms.some((atom) => atom.pseudo);
     if (hasGenerics) {
       warnings.push(
-        `Structure contains generic atoms. They will be saved as any atom (*).`
+        `Structure contains generic atoms. They will be saved as any atom (*).`,
       );
     }
   }
@@ -54,7 +54,7 @@ export function couldBeSaved(
       const rxnArrowMode: RxnArrowMode = arrayOfArrows[0].mode;
       if (rxnArrowMode !== RxnArrowMode.OpenAngle) {
         warnings.push(
-          `The ${formatName} format does not support drawn elements: the reaction ${rxnArrowMode} arrow will be replaced with the reaction arrow`
+          `The ${formatName} format does not support drawn elements: the reaction ${rxnArrowMode} arrow will be replaced with the reaction arrow`,
         );
       }
     }
@@ -62,7 +62,7 @@ export function couldBeSaved(
     // TODO: find better solution for case when Arrows > 1
     if (rxnArrowsSize > 1) {
       warnings.push(
-        `The ${formatName} format does not support drawn elements: reaction arrows will be lost.`
+        `The ${formatName} format does not support drawn elements: reaction arrows will be lost.`,
       );
     }
   }
@@ -74,23 +74,23 @@ export function couldBeSaved(
   ) {
     if (struct.rgroups.size !== 0)
       warnings.push(
-        `In ${formatName} the structure will be saved without R-group fragments`
+        `In ${formatName} the structure will be saved without R-group fragments`,
       );
 
     struct = struct.clone(); // need this: .getScaffold()
     const isRg = struct.atoms.find((_ind, atom) => atom.label === 'R#');
     if (isRg !== null)
       warnings.push(
-        `In ${formatName} the structure will be saved without R-group members`
+        `In ${formatName} the structure will be saved without R-group members`,
       );
 
     const isSg = struct.sgroups.find(
       (_ind, sg) =>
-        sg.type !== 'MUL' && !/^INDIGO_.+_DESC$/i.test(sg.data.fieldName)
+        sg.type !== 'MUL' && !/^INDIGO_.+_DESC$/i.test(sg.data.fieldName),
     );
     if (isSg !== null)
       warnings.push(
-        `In ${formatName} the structure will be saved without S-groups`
+        `In ${formatName} the structure will be saved without S-groups`,
       );
   }
 
@@ -121,7 +121,7 @@ export function couldBeSaved(
     })
   ) {
     warnings.push(
-      `Structure contains enhanced stereochemistry features. Information will be partly lost.`
+      `Structure contains enhanced stereochemistry features. Information will be partly lost.`,
     );
   }
 
@@ -132,14 +132,14 @@ export function couldBeSaved(
   ) {
     if (struct.functionalGroups.size !== 0)
       warnings.push(
-        `In ${formatName} the structure will be saved without functional groups.`
+        `In ${formatName} the structure will be saved without functional groups.`,
       );
   }
 
   if ((['cml'] as SupportedFormat[]).includes(format)) {
     if (struct.functionalGroups.size !== 0)
       warnings.push(
-        `Structure contains functional groups. In ${formatName} information will be partly lost.`
+        `Structure contains functional groups. In ${formatName} information will be partly lost.`,
       );
   }
 

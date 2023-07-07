@@ -36,7 +36,7 @@ export class SimpleObjectAdd extends Base {
     pos: Array<Vec2> = [],
     mode: SimpleObjectMode = SimpleObjectMode.line,
     toCircle = false,
-    id?: number
+    id?: number,
   ) {
     super(OperationType.SIMPLE_OBJECT_ADD);
     this.data = { pos, mode, toCircle, id };
@@ -63,7 +63,7 @@ export class SimpleObjectAdd extends Base {
     }
     struct.simpleObjectSetPos(
       itemId,
-      positions.map((p) => new Vec2(p))
+      positions.map((p) => new Vec2(p)),
     );
 
     Base.invalidateItem(restruct, 'simpleObjects', itemId, 1);
@@ -112,7 +112,7 @@ export class SimpleObjectDelete extends Base {
       this.data.pos,
       this.data.mode,
       this.data.toCircle,
-      this.data.id
+      this.data.id,
     );
   }
 }
@@ -150,7 +150,7 @@ export class SimpleObjectMove extends Base {
     const move = new SimpleObjectMove(
       this.data.id,
       this.data.d,
-      this.data.noinvalidate
+      this.data.noinvalidate,
     );
     // todo Need further investigation on why this is needed?
     move.data = this.data;
@@ -198,7 +198,7 @@ export class SimpleObjectResize extends Base {
     current: Vec2,
     anchor: any,
     noinvalidate: boolean,
-    toCircle: boolean
+    toCircle: boolean,
   ) {
     super(OperationType.SIMPLE_OBJECT_RESIZE);
     this.data = { id, d, current, anchor, noinvalidate, toCircle };
@@ -269,7 +269,7 @@ export class SimpleObjectResize extends Base {
       this.data.current,
       this.data.anchor,
       this.data.noinvalidate,
-      this.data.toCircle
+      this.data.toCircle,
     );
   }
 }
@@ -280,6 +280,6 @@ export function makeCircleFromEllipse(position0: Vec2, position1: Vec2): Vec2 {
   return new Vec2(
     position0.x + (diff.x > 0 ? 1 : -1) * Math.abs(min),
     position0.y + (diff.y > 0 ? 1 : -1) * Math.abs(min),
-    0
+    0,
   );
 }

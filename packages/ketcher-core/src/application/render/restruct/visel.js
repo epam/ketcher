@@ -85,12 +85,12 @@ class Visel {
 
     for (let j = 0; j < this.boxes.length; ++j) {
       this.boxes[j] = this.boxes[j].transform((point) =>
-        point.rotateAroundOrigin(degree, center)
+        point.rotateAroundOrigin(degree, center),
       );
     }
     if (this.boundingBox !== null) {
       this.boundingBox = this.boundingBox.transform((point) =>
-        point.rotateAroundOrigin(degree, center)
+        point.rotateAroundOrigin(degree, center),
       );
     }
   }

@@ -36,7 +36,7 @@ function fracAngle(angle, angle2): number {
 
 function calcNewAtomPos(pos0: Vec2, pos1: Vec2, ctrlKey: boolean): Vec2 {
   const vector = new Vec2(1, 0).rotate(
-    ctrlKey ? calcAngle(pos0, pos1) : fracAngle(pos0, pos1)
+    ctrlKey ? calcAngle(pos0, pos1) : fracAngle(pos0, pos1),
   );
   vector.add_(pos0); // eslint-disable-line no-underscore-dangle
   return vector;
@@ -56,7 +56,7 @@ function mergeBondsParams(
   struct1: Struct,
   bond1: BondAtoms,
   struct2: Struct,
-  bond2: BondAtoms
+  bond2: BondAtoms,
 ) {
   // TODO find a solution to remove not-null assertion from result atoms below
   // https://github.com/epam/ketcher/issues/2652

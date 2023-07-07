@@ -33,7 +33,7 @@ describe('AbbreviationLookup Utils', () => {
 
     it('Should return the label if there is not match with lookup value', () => {
       expect(highlightOptionLabel(option, 'no-match-string')).toBe(
-        option.label
+        option.label,
       );
     });
 
@@ -56,7 +56,7 @@ describe('AbbreviationLookup Utils', () => {
     it('Should mark abbreviation because it shorter (bigger similarity)', () => {
       const newOption = createGenericOption(
         'ShortNameForTemplate',
-        'SHORTABBR'
+        'SHORTABBR',
       );
       expect(highlightOptionLabel(newOption, 'short')).toMatchSnapshot();
     });
@@ -64,7 +64,7 @@ describe('AbbreviationLookup Utils', () => {
     it('Should mark name because substring at the beginning', () => {
       const newOption = createGenericOption(
         'ShortNameForTemplate',
-        'ASHORTABBR'
+        'ASHORTABBR',
       );
       expect(highlightOptionLabel(newOption, 'short')).toMatchSnapshot();
     });
@@ -95,7 +95,7 @@ describe('AbbreviationLookup Utils', () => {
       (name, abbreviation, lookupValue, similarity) => {
         const option = createGenericOption(name, abbreviation);
         expect(getSimilarity(option, lookupValue)).toBe(similarity);
-      }
+      },
     );
   });
 
@@ -116,7 +116,7 @@ describe('AbbreviationLookup Utils', () => {
       expect(
         filterOptions(inputArray, {
           inputValue: lookupValue,
-        } as FilterOptionsState<AbbreviationOption>)
+        } as FilterOptionsState<AbbreviationOption>),
       ).toEqual(resultArray);
     });
 
@@ -127,7 +127,7 @@ describe('AbbreviationLookup Utils', () => {
       expect(
         filterOptions(inputArray, {
           inputValue: lookupValue,
-        } as FilterOptionsState<AbbreviationOption>)
+        } as FilterOptionsState<AbbreviationOption>),
       ).toEqual(resultArray);
     });
 
@@ -138,7 +138,7 @@ describe('AbbreviationLookup Utils', () => {
       expect(
         filterOptions(inputArray, {
           inputValue: lookupValue,
-        } as FilterOptionsState<AbbreviationOption>)
+        } as FilterOptionsState<AbbreviationOption>),
       ).toEqual(resultArray);
     });
 
@@ -149,7 +149,7 @@ describe('AbbreviationLookup Utils', () => {
       expect(
         filterOptions(inputArray, {
           inputValue: lookupValue,
-        } as FilterOptionsState<AbbreviationOption>)
+        } as FilterOptionsState<AbbreviationOption>),
       ).toEqual(resultArray);
     });
 
@@ -160,7 +160,7 @@ describe('AbbreviationLookup Utils', () => {
       expect(
         filterOptions(inputArray, {
           inputValue: lookupValue,
-        } as FilterOptionsState<AbbreviationOption>)
+        } as FilterOptionsState<AbbreviationOption>),
       ).toEqual(resultArray);
     });
   });

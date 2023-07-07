@@ -10,7 +10,7 @@ import {
 export function deleteFunctionalGroups(
   sGroupsId: number[],
   struct: ReStruct,
-  action: Action
+  action: Action,
 ): number[] {
   const deletedAtoms: number[] = [];
   const functionalGroups = struct.molecule.functionalGroups;
@@ -22,10 +22,10 @@ export function deleteFunctionalGroups(
     ) {
       const sGroupAtoms = SGroup.getAtoms(struct.molecule, sGroupItem);
       const { atomId: positionAtomId } = sGroupItem.getContractedPosition(
-        struct.molecule
+        struct.molecule,
       );
       const atomsWithoutAttachmentPoint = sGroupAtoms.filter(
-        (atomId) => atomId !== positionAtomId
+        (atomId) => atomId !== positionAtomId,
       );
 
       deletedAtoms.push(...atomsWithoutAttachmentPoint);
@@ -34,7 +34,7 @@ export function deleteFunctionalGroups(
         fromFragmentDeletion(struct, {
           atoms: atomsWithoutAttachmentPoint,
           bonds: SGroup.getBonds(struct, sGroupItem),
-        })
+        }),
       );
     }
   });

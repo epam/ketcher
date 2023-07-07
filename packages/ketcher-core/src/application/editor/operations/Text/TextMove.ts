@@ -48,7 +48,7 @@ export class TextMove extends BaseOperation {
     item.setPos(renderItem.getReferencePoints());
 
     renderItem.visel.translate(
-      Scale.obj2scaled(difference, restruct.render.options)
+      Scale.obj2scaled(difference, restruct.render.options),
     );
 
     this.data.d = difference.negated();
@@ -62,7 +62,7 @@ export class TextMove extends BaseOperation {
     const move = new TextMove(
       this.data.id,
       this.data.d,
-      this.data.noinvalidate
+      this.data.noinvalidate,
     );
 
     move.data = this.data;

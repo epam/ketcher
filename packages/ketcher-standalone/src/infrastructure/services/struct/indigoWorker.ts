@@ -45,7 +45,7 @@ interface IndigoOptions {
 
 type HandlerType = (
   indigo: IndigoStandalone,
-  indigoOptions: IndigoOptions
+  indigoOptions: IndigoOptions,
 ) => string;
 
 const module = indigoModuleFn();
@@ -53,7 +53,7 @@ const module = indigoModuleFn();
 function handle(
   handler: HandlerType,
   options?: CommandOptions,
-  messageType?: Command
+  messageType?: Command,
 ) {
   module.then((indigo: IndigoStandalone) => {
     const indigoOptions = new indigo.MapStringString();
@@ -100,7 +100,7 @@ self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
           'render-background-color': data.backgroundColor,
           'render-coloring': true,
         },
-        Command.GenerateImageAsBase64
+        Command.GenerateImageAsBase64,
       );
       break;
     }
@@ -111,7 +111,7 @@ self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
         (indigo, indigoOptions) =>
           indigo.layout(data.struct, data.format, indigoOptions),
         data.options,
-        Command.Layout
+        Command.Layout,
       );
       break;
     }
@@ -123,7 +123,7 @@ self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
         (indigo, indigoOptions) =>
           indigo.dearomatize(data.struct, data.format, indigoOptions),
         data.options,
-        Command.Dearomatize
+        Command.Dearomatize,
       );
       break;
     }
@@ -135,10 +135,10 @@ self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
           indigo.check(
             data.struct,
             data.types?.length ? data.types.join(';') : '',
-            indigoOptions
+            indigoOptions,
           ),
         data.options,
-        Command.Check
+        Command.Check,
       );
       break;
     }
@@ -150,7 +150,7 @@ self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
         (indigo, indigoOptions) =>
           indigo.calculateCip(data.struct, data.format, indigoOptions),
         data.options,
-        Command.CalculateCip
+        Command.CalculateCip,
       );
       break;
     }
@@ -161,12 +161,12 @@ self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
         (indigo, indigoOptions) => {
           const selectedAtoms = new indigo.VectorInt();
           data.selectedAtoms.forEach((atomId) =>
-            selectedAtoms.push_back(atomId)
+            selectedAtoms.push_back(atomId),
           );
           return indigo.calculate(data.struct, indigoOptions, selectedAtoms);
         },
         data.options,
-        Command.Calculate
+        Command.Calculate,
       );
       break;
     }
@@ -177,7 +177,7 @@ self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
         (indigo, indigoOptions) =>
           indigo.automap(data.struct, data.mode, data.format, indigoOptions),
         data.options,
-        Command.Automap
+        Command.Automap,
       );
       break;
     }
@@ -188,7 +188,7 @@ self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
         (indigo, indigoOptions) =>
           indigo.aromatize(data.struct, data.format, indigoOptions),
         data.options,
-        Command.Aromatize
+        Command.Aromatize,
       );
       break;
     }
@@ -199,17 +199,17 @@ self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
         (indigo, indigoOptions) => {
           const selectedAtoms = new indigo.VectorInt();
           data.selectedAtoms.forEach((atomId) =>
-            selectedAtoms.push_back(atomId)
+            selectedAtoms.push_back(atomId),
           );
           return indigo.clean2d(
             data.struct,
             data.format,
             indigoOptions,
-            selectedAtoms
+            selectedAtoms,
           );
         },
         data.options,
-        Command.Clean
+        Command.Clean,
       );
       break;
     }
@@ -220,7 +220,7 @@ self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
         (indigo, indigoOptions) =>
           indigo.convert(data.struct, data.format, indigoOptions),
         data.options,
-        Command.Convert
+        Command.Convert,
       );
       break;
     }
@@ -237,7 +237,7 @@ self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
         (indigo, indigoOptions) =>
           indigo.convert(data.struct, 'inchi-key', indigoOptions),
         undefined,
-        Command.GenerateInchIKey
+        Command.GenerateInchIKey,
       );
       break;
     }

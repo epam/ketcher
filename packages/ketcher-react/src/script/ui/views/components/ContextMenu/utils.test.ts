@@ -48,10 +48,10 @@ describe('Utils', () => {
         const result = onlyHasProperty(
           testObject,
           requiredPropName,
-          ignoreList
+          ignoreList,
         );
         expect(result).toBe(expectedResult);
-      }
+      },
     );
   });
 });

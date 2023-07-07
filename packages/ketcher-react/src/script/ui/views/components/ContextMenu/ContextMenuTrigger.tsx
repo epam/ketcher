@@ -45,17 +45,17 @@ const ContextMenuTrigger: React.FC<PropsWithChildren> = ({ children }) => {
       const functionalGroup = FunctionalGroup.findFunctionalGroupByAtom(
         struct.functionalGroups,
         atomId,
-        true
+        true,
       );
 
       functionalGroup !== null &&
         selectedFunctionalGroups.set(
           functionalGroup.relatedSGroupId,
-          functionalGroup
+          functionalGroup,
         );
 
       const sGroupId = struct.sgroups.find((_, sGroup) =>
-        sGroup.atoms.includes(atomId)
+        sGroup.atoms.includes(atomId),
       );
 
       sGroupId !== null && selectedSGroupsIds.add(sGroupId);
@@ -120,7 +120,7 @@ const ContextMenuTrigger: React.FC<PropsWithChildren> = ({ children }) => {
         case ContextMenuTriggerType.Selection: {
           showProps = getMenuPropsForSelection(
             selection,
-            selectedFunctionalGroups
+            selectedFunctionalGroups,
           );
           break;
         }
@@ -133,7 +133,7 @@ const ContextMenuTrigger: React.FC<PropsWithChildren> = ({ children }) => {
           props: showProps,
         });
     },
-    [getKetcherInstance, getSelectedGroupsInfo, show]
+    [getKetcherInstance, getSelectedGroupsInfo, show],
   );
 
   return (

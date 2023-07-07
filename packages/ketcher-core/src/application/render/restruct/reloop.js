@@ -53,7 +53,7 @@ class ReLoop extends ReObject {
       const hbb = molecule.halfBonds.get(loop.hbs[(k + 1) % loop.hbs.length]);
       const angle = Math.atan2(
         Vec2.cross(hba.dir, hbb.dir),
-        Vec2.dot(hba.dir, hbb.dir)
+        Vec2.dot(hba.dir, hbb.dir),
       );
       if (angle > 0) loop.convex = false;
     }
@@ -83,13 +83,13 @@ class ReLoop extends ReObject {
         const hbb = molecule.halfBonds.get(loop.hbs[(k + 1) % loop.hbs.length]);
         const angle = Math.atan2(
           Vec2.cross(hba.dir, hbb.dir),
-          Vec2.dot(hba.dir, hbb.dir)
+          Vec2.dot(hba.dir, hbb.dir),
         );
         const halfAngle = (Math.PI - angle) / 2;
         const dir = hbb.dir.rotate(halfAngle);
         const pi = Scale.obj2scaled(
           restruct.atoms.get(hbb.begin).a.pp,
-          options
+          options,
         );
         let sin = Math.sin(halfAngle);
         const minSin = 0.1;
@@ -112,7 +112,7 @@ class ReLoop extends ReObject {
   isValid(struct, rlid) {
     const halfBonds = struct.halfBonds;
     return this.loop.hbs.every(
-      (hbid) => halfBonds.has(hbid) && halfBonds.get(hbid).loop === rlid
+      (hbid) => halfBonds.has(hbid) && halfBonds.get(hbid).loop === rlid,
     );
   }
 }

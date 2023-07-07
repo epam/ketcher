@@ -118,7 +118,7 @@ describe('normalized', () => {
     const v1 = new Vec2(
       0.8320502943378437,
       0.5547001962252291,
-      0.2773500981126146
+      0.2773500981126146,
     );
 
     expect(v0.normalized().equals(v1)).toBe(true);

@@ -30,7 +30,7 @@ type MergeItems = {
 
 function getGroupIdsFromItemMaps(
   struct: Struct,
-  mergeMaps: MergeItems | null
+  mergeMaps: MergeItems | null,
 ): number[] {
   const atoms =
     mergeMaps?.atoms && Array.from(mergeMapOfItemsToSet(mergeMaps.atoms));

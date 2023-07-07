@@ -58,7 +58,7 @@ export class Highlighter {
       const { validAtoms, validBonds } = getValidInputOnly(
         restruct.molecule,
         atoms,
-        bonds
+        bonds,
       );
 
       if (validAtoms.length === 0 && validBonds.length === 0) {
@@ -69,7 +69,7 @@ export class Highlighter {
     });
     const action = fromHighlightCreate(
       this.editor.render.ctab,
-      createdHighlights
+      createdHighlights,
     );
     this.editor.update(action);
   }

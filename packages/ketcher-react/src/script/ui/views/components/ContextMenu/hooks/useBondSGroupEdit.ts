@@ -31,7 +31,7 @@ const useBondSGroupEdit = () => {
 
       return sGroupsRef.current.size > 1;
     },
-    [getKetcherInstance]
+    [getKetcherInstance],
   );
 
   const hidden = useCallback(() => {

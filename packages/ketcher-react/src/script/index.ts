@@ -41,7 +41,7 @@ async function buildKetcherAsync({
     element,
     staticResourcesUrl,
     errorHandler,
-    buttons
+    buttons,
   );
 
   return builder.build();

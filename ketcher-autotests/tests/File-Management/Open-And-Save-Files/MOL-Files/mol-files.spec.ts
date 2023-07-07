@@ -99,7 +99,7 @@ test.fixme(
     await openFileAndAddToCanvas('Markush.mol', page);
     // check that structure opened from file is displayed correctly
     await takeEditorScreenshot(page);
-  }
+  },
 );
 
 test('Open and Save file - Open/Save Markush files 2/2 - save', async ({

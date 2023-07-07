@@ -153,7 +153,7 @@ const Dialog: FC<PropsWithChildren & Props> = (props) => {
                   type="button"
                   className={clsx(
                     isButtonOk(button) ? styles.ok : styles.cancel,
-                    button === 'Save' && styles.save
+                    button === 'Save' && styles.save,
                   )}
                   value={
                     buttonsNameMap && buttonsNameMap[button]
@@ -164,7 +164,7 @@ const Dialog: FC<PropsWithChildren & Props> = (props) => {
                   onClick={() => exit(button)}
                   data-testid={button}
                 />
-              )
+              ),
             )}
         </footer>
       )}

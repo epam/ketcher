@@ -25,7 +25,7 @@ const getHiddenButtonsConfig = (): ButtonsConfig => {
 
 let structServiceProvider: StructServiceProvider =
   new RemoteStructServiceProvider(
-    process.env.API_PATH || process.env.REACT_APP_API_PATH
+    process.env.API_PATH || process.env.REACT_APP_API_PATH,
   );
 if (process.env.MODE === 'standalone') {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -72,7 +72,7 @@ const App = () => {
             {
               eventType: 'init',
             },
-            '*'
+            '*',
           );
         }}
       />

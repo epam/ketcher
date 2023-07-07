@@ -74,7 +74,7 @@ const RightToolbar = (props: Props) => {
             className={clsx(
               classes.atomsList,
               classes.buttons,
-              classes.groupItem
+              classes.groupItem,
             )}
           >
             <AtomsList

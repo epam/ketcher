@@ -34,7 +34,7 @@ const disabledButtonsSelector = createSelector(
         acc.push(item);
       }
       return acc;
-    }, [])
+    }, []),
 );
 const hiddenButtonsSelector = createSelector([getActionState], (actionState) =>
   Object.keys(actionState).reduce((acc: string[], item) => {
@@ -42,7 +42,7 @@ const hiddenButtonsSelector = createSelector([getActionState], (actionState) =>
       acc.push(item);
     }
     return acc;
-  }, [])
+  }, []),
 );
 
 const disableableButtons = [
@@ -123,7 +123,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
 
 const TopToolbarContainer = connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(TopToolbar);
 
 export { TopToolbarContainer };

@@ -12,7 +12,7 @@ export const fileSaver = (server): FileSaverReturnType => {
       resolve(
         server.then(() => {
           throw Error("Server doesn't still support echo method");
-        })
+        }),
       );
     } else {
       reject(new Error('Your browser does not support opening files locally'));

@@ -42,7 +42,7 @@ export class Box2Abs {
       this.p1 = new Vec2();
     } else {
       throw new Error(
-        'Box2Abs constructor only accepts 4 numbers or 2 vectors or no args!'
+        'Box2Abs constructor only accepts 4 numbers or 2 vectors or no args!',
       );
     }
   }
@@ -104,7 +104,7 @@ export class Box2Abs {
       relBox.x,
       relBox.y,
       relBox.x + relBox.width,
-      relBox.y + relBox.height
+      relBox.y + relBox.height,
     );
   }
 

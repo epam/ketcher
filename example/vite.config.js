@@ -28,7 +28,7 @@ function resolver(source, importer, options) {
   return this.resolve(
     updatedId,
     importer,
-    Object.assign({ skipSelf: true }, options)
+    Object.assign({ skipSelf: true }, options),
   ).then((resolved) => resolved || { id: updatedId });
 }
 
@@ -62,8 +62,8 @@ const HtmlReplaceVitePlugin = () => {
         .replaceAll(
           '@@version',
           JSON.parse(ketcherReactValues['process.env.HELP_LINK']).split(
-            '-'
-          )[0] + ' (Vite)'
+            '-',
+          )[0] + ' (Vite)',
         );
     },
   };
@@ -150,35 +150,35 @@ export default defineConfig({
         find: 'ketcher-react/dist/index.css',
         replacement: resolve(
           __dirname,
-          '../packages/ketcher-react/src/index.less'
+          '../packages/ketcher-react/src/index.less',
         ),
       },
       {
         find: 'ketcher-react',
         replacement: resolve(
           __dirname,
-          '../packages/ketcher-react/src/index.tsx'
+          '../packages/ketcher-react/src/index.tsx',
         ),
       },
       {
         find: 'ketcher-core',
         replacement: resolve(
           __dirname,
-          '../packages/ketcher-core/src/index.ts'
+          '../packages/ketcher-core/src/index.ts',
         ),
       },
       {
         find: 'ketcher-standalone',
         replacement: resolve(
           __dirname,
-          '../packages/ketcher-standalone/src/index.ts'
+          '../packages/ketcher-standalone/src/index.ts',
         ),
       },
       {
         find: 'ketcher-polymer-editor-react',
         replacement: resolve(
           __dirname,
-          '../packages/ketcher-polymer-editor-react/src/index.tsx'
+          '../packages/ketcher-polymer-editor-react/src/index.tsx',
         ),
       },
 

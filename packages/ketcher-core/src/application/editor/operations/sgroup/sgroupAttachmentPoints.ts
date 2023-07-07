@@ -28,7 +28,7 @@ export class SGroupAttachmentPointAdd extends BaseOperation {
 
     if (!apAtom) {
       throw new Error(
-        `attachmentPoint for Atom with id "${attachmentPoint.atomId}" is not found`
+        `attachmentPoint for Atom with id "${attachmentPoint.atomId}" is not found`,
       );
     }
 
@@ -39,7 +39,7 @@ export class SGroupAttachmentPointAdd extends BaseOperation {
     // eslint-disable-next-line @typescript-eslint/no-use-before-define
     return new SGroupAttachmentPointRemove(
       this.data.sGroupId,
-      this.data.attachmentPoint
+      this.data.attachmentPoint,
     );
   }
 }
@@ -62,7 +62,7 @@ export class SGroupAttachmentPointRemove extends BaseOperation {
   invert() {
     return new SGroupAttachmentPointAdd(
       this.data.sGroupId,
-      this.data.attachmentPoint
+      this.data.attachmentPoint,
     );
   }
 }

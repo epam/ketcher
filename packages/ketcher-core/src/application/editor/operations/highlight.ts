@@ -35,7 +35,7 @@ export class HighlightAdd extends BaseOperation {
     atoms: Array<number>,
     bonds: Array<number>,
     color: string,
-    highlightId?: number
+    highlightId?: number,
   ) {
     super(OperationType.ADD_HIGHLIGHT);
     this.data = {
@@ -83,7 +83,7 @@ export class HighlightDelete extends BaseOperation {
     highlightId?: number,
     atoms?: Array<number>,
     bonds?: Array<number>,
-    color?: string
+    color?: string,
   ) {
     super(OperationType.REMOVE_HIGHLIGHT, 5);
     this.data = {
@@ -131,7 +131,7 @@ export class HighlightUpdate extends BaseOperation {
     highlightId: number,
     atoms: Array<number>,
     bonds: Array<number>,
-    color: string
+    color: string,
   ) {
     super(OperationType.UPDATE_HIGHLIGHT);
     this.newData = {
@@ -196,7 +196,7 @@ export class HighlightUpdate extends BaseOperation {
       this.newData.highlightId,
       atoms,
       bonds,
-      color
+      color,
     );
     return inverted;
   }

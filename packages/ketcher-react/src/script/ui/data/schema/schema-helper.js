@@ -42,6 +42,6 @@ export function selectListOf(schema, prop) {
       : {
           title: ds.title,
           value: constant(ds, prop),
-        }
+        },
   );
 }

@@ -71,7 +71,7 @@ type GenerateImageOptions = {
 
 function convertStructToString(
   struct: StructOrString,
-  serializer: KetSerializer
+  serializer: KetSerializer,
 ): string {
   if (typeof struct !== 'string') {
     const aidMap = new Map();
@@ -98,7 +98,7 @@ export class Indigo {
 
   convert(
     struct: StructOrString,
-    options?: ConvertOptions
+    options?: ConvertOptions,
   ): Promise<ConvertResult> {
     const outputFormat = options?.outputFormat || ChemicalMimeType.KET;
 
@@ -176,7 +176,7 @@ export class Indigo {
 
   calculate(
     struct: StructOrString,
-    options?: CalculateOptions
+    options?: CalculateOptions,
   ): Promise<CalculateResult> {
     const properties = options?.properties || defaultCalcProps;
 
@@ -196,7 +196,7 @@ export class Indigo {
 
   generateImageAsBase64(
     struct: StructOrString,
-    options?: GenerateImageOptions
+    options?: GenerateImageOptions,
   ): Promise<string> {
     const outputFormat = options?.outputFormat || 'png';
     const backgroundColor = options?.backgroundColor || '';
@@ -206,7 +206,7 @@ export class Indigo {
       {
         outputFormat,
         backgroundColor,
-      }
+      },
     );
   }
 }

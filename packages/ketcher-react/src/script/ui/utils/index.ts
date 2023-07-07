@@ -28,7 +28,7 @@ const GREEK_SIMBOLS = {
 
 const greekRe = new RegExp(
   '\\b' + Object.keys(GREEK_SIMBOLS).join('\\b|\\b') + '\\b',
-  'g'
+  'g',
 );
 
 export function greekify(str: string): string {
@@ -43,13 +43,13 @@ export function filterLib(lib, filter: string) {
       (item: any) =>
         !trimmedFilter ||
         re.test(greekify(item.struct.name)) ||
-        re.test(greekify(item.props.group))
+        re.test(greekify(item.props.group)),
     ),
     reduce((res, item) => {
       if (!res[item.props.group]) res[item.props.group] = [item];
       else res[item.props.group].push(item);
       return res;
-    }, {})
+    }, {}),
   )(lib);
 }
 
@@ -70,7 +70,7 @@ export function filterFGLib(lib, filter) {
       if (!res[item.props.group]) res[item.props.group] = [item];
       else res[item.props.group].push(item);
       return res;
-    }, {})
+    }, {}),
   )(lib);
 }
 
@@ -95,7 +95,7 @@ export const getSelectOptionsFromSchema = (schema): Array<Option> => {
 export function memoizedDebounce(
   func,
   delay = 0,
-  skipArguments: number[] = []
+  skipArguments: number[] = [],
 ) {
   let lastArgs;
   const debouncedFunction = _.debounce(func, delay);

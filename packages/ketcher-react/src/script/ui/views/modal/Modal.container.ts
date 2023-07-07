@@ -38,7 +38,7 @@ const mapDispatchToProps = (dispatch: Dispatch): BaseCallProps => ({
 
 const mergeProps = (
   stateProps: StateProps,
-  dispatchProps: BaseCallProps
+  dispatchProps: BaseCallProps,
 ): ModalProps => {
   const prop = stateProps.modal && stateProps.modal.prop;
   const initProps = prop ? omit(['onResult', 'onCancel'], prop) : {};
@@ -59,7 +59,7 @@ const mergeProps = (
 const ModalContainer = connect(
   mapStateToProps,
   mapDispatchToProps,
-  mergeProps
+  mergeProps,
 )(Modal);
 
 export default ModalContainer;

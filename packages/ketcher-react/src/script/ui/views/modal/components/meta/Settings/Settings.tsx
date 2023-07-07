@@ -175,7 +175,7 @@ const SettingsDialog = (props: Props) => {
           name="colorStereogenicCenters"
           component={Select}
           options={getSelectOptionsFromSchema(
-            settingsProps?.colorStereogenicCenters
+            settingsProps?.colorStereogenicCenters,
           )}
         />
         <Field name="autoFadeOfStereoLabels" />
@@ -202,7 +202,7 @@ const SettingsDialog = (props: Props) => {
           name="showHydrogenLabels"
           component={Select}
           options={getSelectOptionsFromSchema(
-            settingsProps?.showHydrogenLabels
+            settingsProps?.showHydrogenLabels,
           )}
         />
       </fieldset>

@@ -23,7 +23,7 @@ import {
 export async function getAtomsCoordinatesByAttributes(
   page: Page,
   attrs: AtomAttributes,
-  sortBy: SORT_TYPE = SORT_TYPE.ASC_X
+  sortBy: SORT_TYPE = SORT_TYPE.ASC_X,
 ): Promise<AtomXy[] | []> {
   const { atoms, scale } = await page.evaluate(() => {
     return {

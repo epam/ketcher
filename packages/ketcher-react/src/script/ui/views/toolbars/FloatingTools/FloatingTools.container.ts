@@ -26,7 +26,7 @@ const mapDispatchToProps = (dispatch: Dispatch): FloatingToolsCallProps => ({
 
 const FloatingToolContainer = connect(
   mapStateToProps,
-  mapDispatchToProps
+  mapDispatchToProps,
 )(FloatingTools);
 
 export { FloatingToolContainer };

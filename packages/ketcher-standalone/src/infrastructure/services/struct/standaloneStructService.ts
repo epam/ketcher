@@ -72,7 +72,7 @@ interface KeyValuePair {
 }
 
 function convertMimeTypeToOutputFormat(
-  mimeType: ChemicalMimeType
+  mimeType: ChemicalMimeType,
 ): SupportedFormat {
   let format: SupportedFormat;
   switch (mimeType) {
@@ -239,7 +239,7 @@ class IndigoService implements StructService {
 
   convert(
     data: ConvertData,
-    options?: StructServiceOptions
+    options?: StructServiceOptions,
   ): Promise<ConvertResult> {
     const { output_format: outputFormat, struct } = data;
     const format = convertMimeTypeToOutputFormat(outputFormat);
@@ -284,7 +284,7 @@ class IndigoService implements StructService {
 
   layout(
     data: LayoutData,
-    options?: StructServiceOptions
+    options?: StructServiceOptions,
   ): Promise<LayoutResult> {
     const { struct, output_format: outputFormat } = data;
     const format = convertMimeTypeToOutputFormat(outputFormat);
@@ -371,7 +371,7 @@ class IndigoService implements StructService {
 
   aromatize(
     data: AromatizeData,
-    options?: StructServiceOptions
+    options?: StructServiceOptions,
   ): Promise<AromatizeResult> {
     const { struct, output_format: outputFormat } = data;
     const format = convertMimeTypeToOutputFormat(outputFormat);
@@ -415,7 +415,7 @@ class IndigoService implements StructService {
 
   dearomatize(
     data: DearomatizeData,
-    options?: StructServiceOptions
+    options?: StructServiceOptions,
   ): Promise<DearomatizeResult> {
     const { struct, output_format: outputFormat } = data;
     const format = convertMimeTypeToOutputFormat(outputFormat);
@@ -459,7 +459,7 @@ class IndigoService implements StructService {
 
   calculateCip(
     data: CalculateCipData,
-    options?: StructServiceOptions
+    options?: StructServiceOptions,
   ): Promise<CalculateCipResult> {
     const { struct, output_format: outputFormat } = data;
     const format = convertMimeTypeToOutputFormat(outputFormat);
@@ -503,7 +503,7 @@ class IndigoService implements StructService {
 
   automap(
     data: AutomapData,
-    options?: StructServiceOptions
+    options?: StructServiceOptions,
   ): Promise<AutomapResult> {
     const { mode, struct, output_format: outputFormat } = data;
     const format = convertMimeTypeToOutputFormat(outputFormat);
@@ -563,7 +563,7 @@ class IndigoService implements StructService {
 
               return acc;
             },
-            {}
+            {},
           );
           resolve(result);
         } else {
@@ -596,7 +596,7 @@ class IndigoService implements StructService {
 
   calculate(
     data: CalculateData,
-    options?: StructServiceOptions
+    options?: StructServiceOptions,
   ): Promise<CalculateResult> {
     const { properties, struct, selected } = data;
     return new Promise((resolve, reject) => {
@@ -605,11 +605,11 @@ class IndigoService implements StructService {
         if (!msg.hasError) {
           const calculatedProperties: CalculateResult = JSON.parse(msg.payload);
           const result: CalculateResult = Object.entries(
-            calculatedProperties
+            calculatedProperties,
           ).reduce((acc, curr) => {
             const [key, value] = curr;
             const mappedPropertyName = mapCalculatedPropertyName(
-              key as CalculateProps
+              key as CalculateProps,
             );
             if (properties.includes(mappedPropertyName)) {
               acc[mappedPropertyName] = value;
@@ -653,7 +653,10 @@ class IndigoService implements StructService {
 
   generateImageAsBase64(
     data: string,
-    options: GenerateImageOptions = { outputFormat: 'png', backgroundColor: '' }
+    options: GenerateImageOptions = {
+      outputFormat: 'png',
+      backgroundColor: '',
+    },
   ): Promise<string> {
     const { outputFormat, backgroundColor, ...restOptions } = options;
     return new Promise((resolve, reject) => {

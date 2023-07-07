@@ -66,7 +66,7 @@ CisTrans.prototype.samesides = function (iBeg, iEnd, iNeiBeg, iNeiEnd) {
     this.molecule.atoms.get(iBeg).pp,
     this.molecule.atoms.get(iEnd).pp,
     this.molecule.atoms.get(iNeiBeg).pp,
-    this.molecule.atoms.get(iNeiEnd).pp
+    this.molecule.atoms.get(iNeiEnd).pp,
   );
 };
 
@@ -208,7 +208,7 @@ CisTrans.prototype.build = function (excludeBonds) {
       bond.begin,
       bond.end,
       ct.substituents[0],
-      ct.substituents[2]
+      ct.substituents[2],
     );
 
     if (sign === 1) ct.parity = CisTrans.PARITY.CIS;

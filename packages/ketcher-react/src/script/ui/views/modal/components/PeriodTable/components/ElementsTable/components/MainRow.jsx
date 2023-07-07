@@ -48,7 +48,7 @@ function MainRow({
             </td>
           ) : (
             <td key={index} colSpan={element} />
-          )
+          ),
         )}
       </tr>
     </tbody>

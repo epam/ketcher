@@ -28,7 +28,7 @@ export function rxnToStruct(ketItem: any, struct: Struct): Struct {
           y: -ketItem.location[1],
           z: ketItem.location[2],
         },
-      })
+      }),
     );
   }
   return struct;

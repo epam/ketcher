@@ -95,7 +95,7 @@ export class TextDelete extends BaseOperation {
       this.data.content!,
       this.data.position!,
       this.data.pos!,
-      this.data.id
+      this.data.id,
     );
   }
 }

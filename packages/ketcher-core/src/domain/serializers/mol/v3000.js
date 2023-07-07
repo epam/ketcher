@@ -36,7 +36,7 @@ function parseAtomLineV3000(line) {
     pp: new Vec2(
       parseFloat(split[2]),
       -parseFloat(split[3]),
-      parseFloat(split[4])
+      parseFloat(split[4]),
     ),
     aam: split[5].trim(),
   };
@@ -162,7 +162,7 @@ function v3000parseSGroup(ctab, ctabLines, sgroups, atomMap, shift) {
         throw new Error(
           "A record of form AAA=BBB or AAA=(...) expected, got '" +
             split[i] +
-            "'"
+            "'",
         );
       }
       const name = subsplit[0];
@@ -334,7 +334,7 @@ function readRGroups3000(ctab, /* string */ ctabLines) /* Struct */ {
 
 function parseRxn3000(
   /* string[] */ ctabLines,
-  shouldReactionRelayout
+  shouldReactionRelayout,
 ) /* Struct */ {
   // eslint-disable-line max-statements
   /* reader */
@@ -409,7 +409,7 @@ function parseRxn3000(
     nReactants,
     nProducts,
     nAgents,
-    shouldReactionRelayout
+    shouldReactionRelayout,
   );
 
   readRGroups3000(
@@ -418,7 +418,7 @@ function parseRxn3000(
       let res = [];
       for (let k = 0; k < array.length; ++k) res = res.concat(array[k]);
       return res;
-    })(rGroups)
+    })(rGroups),
   );
 
   return ctab;

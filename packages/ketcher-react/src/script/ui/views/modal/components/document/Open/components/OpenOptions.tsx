@@ -70,7 +70,7 @@ export const OpenOptions: FC<OpenOptionsProps> = ({
         onDropAccepted={imageLoadHandler}
         onDropRejected={() =>
           errorHandler(
-            'Unable to accept file(s). Make sure you upload 1 image.'
+            'Unable to accept file(s). Make sure you upload 1 image.',
           )
         }
         buttonLabel="Open from image"

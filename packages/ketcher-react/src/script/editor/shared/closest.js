@@ -133,7 +133,7 @@ function findClosestAtom(restruct, pos, skip, minDist) {
         atom.a,
         sGroups,
         functionalGroups,
-        true
+        true,
       )
     ) {
       return null;
@@ -182,7 +182,7 @@ function findClosestBond(restruct, pos, skip, minDist, options) {
       FunctionalGroup.isBondInContractedFunctionalGroup(
         bond.b,
         sGroups,
-        functionalGroups
+        functionalGroups,
       ) ||
       SGroup.isBondInContractedSGroup(bond.b, sGroups)
     ) {
@@ -279,7 +279,7 @@ function findClosestDataSGroupData(restruct, pos) {
         box.p1.x > pos.x;
       const xDist = Math.min(
         Math.abs(box.p0.x - pos.x),
-        Math.abs(box.p1.x - pos.x)
+        Math.abs(box.p1.x - pos.x),
       );
 
       if (inBox && (ret === null || xDist < minDist)) {
@@ -295,7 +295,7 @@ function findClosestDataSGroupData(restruct, pos) {
 function findClosestFrag(restruct, pos, skip, minDist, options) {
   minDist = Math.min(
     minDist || SELECTION_DISTANCE_COEFFICIENT,
-    SELECTION_DISTANCE_COEFFICIENT
+    SELECTION_DISTANCE_COEFFICIENT,
   );
 
   const struct = restruct.molecule;
@@ -325,7 +325,7 @@ function findClosestFrag(restruct, pos, skip, minDist, options) {
 function findClosestRGroup(restruct, pos, skip, minDist) {
   minDist = Math.min(
     minDist || SELECTION_DISTANCE_COEFFICIENT,
-    SELECTION_DISTANCE_COEFFICIENT
+    SELECTION_DISTANCE_COEFFICIENT,
   );
 
   let ret = null;
@@ -402,7 +402,7 @@ function findClosestSGroup(restruct, pos) {
         box.p1.x > pg.x;
       const xDist = Math.min(
         Math.abs(box.p0.x - pg.x),
-        Math.abs(box.p1.x - pg.x)
+        Math.abs(box.p1.x - pg.x),
       );
 
       if (inBox && (ret === null || xDist < minDist)) {
@@ -489,7 +489,7 @@ function findCloseMerge(
   restruct,
   selected,
   maps = ['atoms', 'bonds'],
-  options
+  options,
 ) {
   const pos = {
     atoms: new Map(), // aid -> position
@@ -510,8 +510,8 @@ function findCloseMerge(
         struct.atoms.get(bond.begin).pp,
         0.5,
         struct.atoms.get(bond.end).pp,
-        0.5
-      )
+        0.5,
+      ),
     );
   });
 
@@ -535,7 +535,7 @@ function findCloseMerge(
           pos[map].get(srcId),
           skip,
           null,
-          options
+          options,
         );
 
         if (item && !selected[map].includes(item.id)) {

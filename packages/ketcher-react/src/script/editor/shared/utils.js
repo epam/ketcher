@@ -23,7 +23,7 @@ function calcAngle(pos0, pos1) {
 
 function calcNewAtomPos(pos0, pos1, ctrlKey) {
   const v = new Vec2(1, 0).rotate(
-    ctrlKey ? calcAngle(pos0, pos1) : fracAngle(pos0, pos1)
+    ctrlKey ? calcAngle(pos0, pos1) : fracAngle(pos0, pos1),
   );
   v.add_(pos0); // eslint-disable-line no-underscore-dangle
   return v;

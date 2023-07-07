@@ -62,7 +62,7 @@ export class Vec2 {
     return new Vec2(
       Math.max(v1.x, v2.x),
       Math.max(v1.y, v2.y),
-      Math.max(v1.z, v2.z)
+      Math.max(v1.z, v2.z),
     );
   }
 
@@ -70,7 +70,7 @@ export class Vec2 {
     return new Vec2(
       Math.min(v1.x, v2.x),
       Math.min(v1.y, v2.y),
-      Math.min(v1.z, v2.z)
+      Math.min(v1.z, v2.z),
     );
   }
 
@@ -108,7 +108,7 @@ export class Vec2 {
     return new Vec2(
       v1.x * f1 + v2.x * f2,
       v1.y * f1 + v2.y * f2,
-      v1.z * f1 + v2.z * f2
+      v1.z * f1 + v2.z * f2,
     );
   }
 
@@ -122,7 +122,7 @@ export class Vec2 {
     const ratio = length / distance;
     return new Vec2(
       lineStart.x + difference.x * ratio,
-      lineStart.y + difference.y * ratio
+      lineStart.y + difference.y * ratio,
     );
   }
 
@@ -228,7 +228,7 @@ export class Vec2 {
     return new Vec2(
       this.x * cos - this.y * sin,
       this.x * sin + this.y * cos,
-      this.z
+      this.z,
     );
   }
 

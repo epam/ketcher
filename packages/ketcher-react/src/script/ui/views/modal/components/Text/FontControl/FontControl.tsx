@@ -59,7 +59,7 @@ export const FontControl = ({ editorState, setEditorState, styles }) => {
           {fontSize}
         </div>
       )),
-    [isShowingFontSizeMenu]
+    [isShowingFontSizeMenu],
   );
 
   return (

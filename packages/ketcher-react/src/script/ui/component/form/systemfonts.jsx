@@ -52,7 +52,7 @@ function checkInSystem() {
     const observer = new FontFaceObserver(fontName);
     return observer.check().then(
       () => fontName,
-      () => null
+      () => null,
     );
   });
 
@@ -66,7 +66,7 @@ function SystemFonts(props) {
     (value) => {
       onChange(value);
     },
-    [onChange]
+    [onChange],
   );
 
   useEffect(() => {

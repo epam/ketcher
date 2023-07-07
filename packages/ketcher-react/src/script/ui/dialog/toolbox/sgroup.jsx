@@ -40,7 +40,7 @@ function Sgroup({ formState, ...props }) {
                 : result.fieldValue,
           }
         : {},
-    [result.context, result.fieldName, result.fieldValue, type]
+    [result.context, result.fieldName, result.fieldValue, type],
   );
 
   return (

@@ -137,7 +137,7 @@ function RecognizeDialog(prop) {
             schema={{
               enum: imagoVersions,
               enumNames: range(1, imagoVersions.length + 1).map(
-                (i) => `Version ${i}`
+                (i) => `Version ${i}`,
               ),
             }}
             value={version}
@@ -215,7 +215,7 @@ const mapDispatchToProps = (dispatch) => ({
       load(res.structStr, {
         rescale: true,
         fragment: res.fragment,
-      })
+      }),
       // TODO: Removed ownProps.onOk call. consider refactoring of load function in release 2.4
       // See PR #731 (https://github.com/epam/ketcher/pull/731)
     );

@@ -41,7 +41,7 @@ export class RxnArrowResize extends Base {
     current: Vec2,
     anchor: Vec2 | null,
     noinvalidate: boolean,
-    isSnappingEnabled: boolean
+    isSnappingEnabled: boolean,
   ) {
     super(OperationType.RXN_ARROW_RESIZE);
     this.data = { id, d, current, anchor, noinvalidate };
@@ -124,7 +124,7 @@ export class RxnArrowResize extends Base {
           item.pos[0].x,
           item.pos[0].y,
           item.pos[1].x,
-          item.pos[1].y
+          item.pos[1].y,
         );
         const angleInRadians = (angle * Math.PI) / 180;
         const cosAngle = Math.cos(angleInRadians);
@@ -165,7 +165,7 @@ export class RxnArrowResize extends Base {
       this.data.current,
       this.data.anchor,
       this.data.noinvalidate,
-      this.isSnappingEnabled
+      this.isSnappingEnabled,
     );
   }
 }

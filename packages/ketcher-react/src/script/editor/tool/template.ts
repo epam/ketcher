@@ -131,7 +131,7 @@ class TemplateTool implements Tool {
 
     const relatedGroupId = FunctionalGroup.findFunctionalGroupByAtom(
       this.functionalGroups,
-      clickedClosestItemId
+      clickedClosestItemId,
     );
 
     this.functionalGroups.forEach((fg, key) => {
@@ -171,7 +171,7 @@ class TemplateTool implements Tool {
         this.closestItem?.map === 'functionalGroups' &&
         FunctionalGroup.isContractedFunctionalGroup(
           this.closestItem.id,
-          this.functionalGroups
+          this.functionalGroups,
         )
       ) {
         this.targetGroupsIds.push(this.closestItem.id);
@@ -256,7 +256,7 @@ class TemplateTool implements Tool {
       this.editor.hover(
         this.editor.findItem(event, this.findItems),
         null,
-        event
+        event,
       );
       return true;
     }
@@ -292,7 +292,7 @@ class TemplateTool implements Tool {
           ci.id,
           this.editor.event,
           dragCtx.sign1 * dragCtx.sign2 > 0,
-          false
+          false,
         ) as Array<any>;
 
         dragCtx.action = action;
@@ -371,7 +371,7 @@ class TemplateTool implements Tool {
         this.editor.render.ctab,
         this.template,
         targetPos,
-        angle
+        angle,
       );
     } else if (ci?.map === 'atoms' || ci?.map === 'functionalGroups') {
       const atomId = getTargetAtomId(this.struct, ci);
@@ -380,7 +380,7 @@ class TemplateTool implements Tool {
         this.template,
         atomId,
         angle,
-        extraBond
+        extraBond,
       );
       dragCtx.extra_bond = extraBond;
     }
@@ -426,7 +426,7 @@ class TemplateTool implements Tool {
         ci.id,
         this.editor.event,
         dragCtx.sign1 * dragCtx.sign2 > 0,
-        true
+        true,
       ) as Promise<any>;
 
       promise.then(([action, pasteItems]) => {
@@ -445,7 +445,7 @@ class TemplateTool implements Tool {
       ci?.map === 'functionalGroups' &&
       FunctionalGroup.isContractedFunctionalGroup(
         ci.id,
-        this.functionalGroups
+        this.functionalGroups,
       ) &&
       this.isModeFunctionalGroup &&
       this.targetGroupsIds.length
@@ -461,7 +461,7 @@ class TemplateTool implements Tool {
           restruct,
           this.template,
           dragCtx,
-          this.editor
+          this.editor,
         );
         return true;
       }
@@ -471,14 +471,14 @@ class TemplateTool implements Tool {
         functionalGroupToReplace.getContractedPosition(restruct.molecule);
       const atomsWithoutAttachmentAtom = SGroup.getAtoms(
         this.struct,
-        functionalGroupToReplace
+        functionalGroupToReplace,
       ).filter((id) => id !== sGroupPositionAtomId);
 
       functionalGroupRemoveAction.mergeWith(
-        fromSgroupDeletion(restruct, ci.id)
+        fromSgroupDeletion(restruct, ci.id),
       );
       functionalGroupRemoveAction.mergeWith(
-        fromFragmentDeletion(restruct, { atoms: atomsWithoutAttachmentAtom })
+        fromFragmentDeletion(restruct, { atoms: atomsWithoutAttachmentAtom }),
       );
 
       ci = { map: 'atoms', id: sGroupPositionAtomId };
@@ -491,7 +491,7 @@ class TemplateTool implements Tool {
           restruct,
           this.template,
           dragCtx.xy0,
-          0
+          0,
         );
         dragCtx.action = action;
       } else if (ci.map === 'atoms') {
@@ -502,7 +502,7 @@ class TemplateTool implements Tool {
             restruct,
             this.template,
             dragCtx,
-            this.editor
+            this.editor,
           );
           return true;
         }
@@ -532,7 +532,7 @@ class TemplateTool implements Tool {
           this.template,
           ci.id,
           angle,
-          false
+          false,
         );
         if (functionalGroupRemoveAction) {
           action = functionalGroupRemoveAction.mergeWith(action);
@@ -545,7 +545,7 @@ class TemplateTool implements Tool {
           ci.id,
           this.editor.event,
           dragCtx.sign1 * dragCtx.sign2 > 0,
-          true
+          true,
         ) as Promise<any>;
 
         promise.then(([action, pasteItems]) => {
@@ -593,7 +593,7 @@ function addSaltsAndSolventsOnCanvasWithoutMerge(
   restruct: ReStruct,
   template: Struct,
   dragCtx,
-  editor: Editor
+  editor: Editor,
 ) {
   const [action] = fromTemplateOnCanvas(restruct, template, dragCtx.xy0, 0);
   editor.update(action);

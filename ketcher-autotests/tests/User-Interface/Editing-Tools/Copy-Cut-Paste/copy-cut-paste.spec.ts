@@ -17,10 +17,14 @@ import {
   cutAndPaste,
   getCoordinatesOfTheMiddleOfTheScreen,
   clickOnBond,
+  copyAndPaste,
 } from '@utils';
 
 const CANVAS_CLICK_X = 300;
 const CANVAS_CLICK_Y = 300;
+
+const SECOND_CANVAS_CLICK_X = 700;
+const SECOND_CANVAS_CLICK_Y = 700;
 
 test.describe('Copy/Cut/Paste Actions', () => {
   test.beforeEach(async ({ page }) => {
@@ -101,6 +105,166 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickOnAtom(page, 'C', 12);
+  });
+
+  test.fixme('Cut the reaction', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-1714
+    Description: After the clicking the Cut button, the selected object disappears.
+    */
+    await openFileAndAddToCanvas('reaction-dif-prop.rxn', page);
+    await cutAndPaste(page);
+    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await screenshotBetweenUndoRedo(page);
+  });
+
+  test.fixme('Cut the Atom from reaction', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-1714
+    Description: After the clicking the Cut button, the selected object disappears.
+    */
+    await openFileAndAddToCanvas('reaction-dif-prop.rxn', page);
+    await clickOnAtom(page, 'C', 0);
+    await cutAndPaste(page);
+    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await screenshotBetweenUndoRedo(page);
+  });
+
+  test.fixme('Cut the Bond from reaction', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-1714
+    Description: After the clicking the Cut button, the selected object disappears.
+    */
+    await openFileAndAddToCanvas('reaction-dif-prop.rxn', page);
+    await clickOnBond(page, BondType.SINGLE, 0);
+    await cutAndPaste(page);
+    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await screenshotBetweenUndoRedo(page);
+  });
+
+  test.fixme('Cut the reaction with hotkey', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-1714
+    Description: After the clicking the Cut button, the selected object disappears.
+    */
+    await openFileAndAddToCanvas('reaction-dif-prop.rxn', page);
+    await page.keyboard.press('Control+a');
+    await page.keyboard.press('Control+x');
+    await screenshotBetweenUndoRedo(page);
+  });
+
+  test.fixme('Copy structure', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-1715
+    Description: After the clicking the Copy button, the selected object not disappears.
+    */
+    await openFileAndAddToCanvas('query-feat.mol', page);
+    await page.keyboard.press('Control+a');
+    await selectTopPanelButton(TopPanelButton.Copy, page);
+  });
+
+  test.fixme('Copy the Atom from reaction', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-1715
+    Description: After the clicking the Copy button, the selected object not disappears.
+    */
+    await openFileAndAddToCanvas('query-feat.mol', page);
+    await clickOnAtom(page, 'C', 0);
+    await selectTopPanelButton(TopPanelButton.Copy, page);
+  });
+
+  test.fixme('Copy the Bond from reaction', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-1715
+    Description: After the clicking the Copy button, the selected object not disappears.
+    */
+    await openFileAndAddToCanvas('query-feat.mol', page);
+    await clickOnBond(page, BondType.SINGLE, 0);
+    await selectTopPanelButton(TopPanelButton.Copy, page);
+  });
+
+  test.fixme('Copy the reaction with hotkey', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-1715
+    Description: After the clicking the Copy button, the selected object not disappears.
+    */
+    await openFileAndAddToCanvas('query-feat.mol', page);
+    await page.keyboard.press('Control+a');
+    await page.keyboard.press('Control+c');
+  });
+
+  test.fixme('Copy and Paste structure and edit', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-1716
+    Description: The correct structure is pasted on the canvas.
+    All query features are correctly rendered.
+    User is able to edit the pasted structure.
+    */
+    await openFileAndAddToCanvas('clean-diffproperties.mol', page);
+    await copyAndPaste(page);
+    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await selectAtomInToolbar(AtomButton.Nitrogen, page);
+    await clickOnAtom(page, 'C', 12);
+  });
+
+  test.fixme('Copy and paste the reaction', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-1717
+    Description: After the clicking the Copy button, the selected object not disappears.
+    After pasting two same structures located on canvas.
+    */
+    await openFileAndAddToCanvas('reaction-dif-prop.rxn', page);
+    await copyAndPaste(page);
+    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+  });
+
+  test.fixme('Copy and paste the Atom from reaction', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-1717
+    Description: After the clicking the Copy button, the selected object not disappears.
+    After pasting two same structures located on canvas.
+    */
+    await openFileAndAddToCanvas('reaction-dif-prop.rxn', page);
+    await clickOnAtom(page, 'C', 0);
+    await copyAndPaste(page);
+    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+  });
+
+  test.fixme('Copy and paste the Bond from reaction', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-1717
+    Description: After the clicking the Copy button, the selected object not disappears.
+    After pasting two same structures located on canvas.
+    */
+    await openFileAndAddToCanvas('reaction-dif-prop.rxn', page);
+    await clickOnBond(page, BondType.SINGLE, 0);
+    await copyAndPaste(page);
+    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+  });
+
+  test.fixme('Copy and paste the reaction with hotkey', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-1717
+    Description: After the clicking the Copy button, the selected object not disappears.
+    After pasting two same structures located on canvas.
+    */
+    await openFileAndAddToCanvas('reaction-dif-prop.rxn', page);
+    await page.keyboard.press('Control+a');
+    await page.keyboard.press('Control+c');
+    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+  });
+
+  test('Multiple Paste action', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-1718
+    Description: After the clicking the Copy button, the selected object not disappears.
+    After pasting two same structures located on canvas.
+    */
+    await openFileAndAddToCanvas('clean-diffproperties.mol', page);
+    await copyAndPaste(page);
+    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await page.keyboard.press('Control+v');
+    await page.mouse.click(SECOND_CANVAS_CLICK_X, SECOND_CANVAS_CLICK_Y);
   });
 });
 

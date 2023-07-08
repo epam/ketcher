@@ -14,14 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Dialog } from '../../../../components'
-import Logo from './logo.svg'
-import classes from './About.module.less'
-import { connect } from 'react-redux'
-import { Fragment } from 'react'
+import { Dialog } from '../../../../components';
+import Logo from './logo.svg';
+import classes from './About.module.less';
+import { connect } from 'react-redux';
+import { Fragment } from 'react';
 
 function AboutDialog(props) {
-  const indigoInfo = props.indigoVersion && props.indigoVersion.split('.r') // Indigo version and build info
+  const indigoInfo = props.indigoVersion && props.indigoVersion.split('.r'); // Indigo version and build info
 
   return (
     <Dialog
@@ -30,7 +30,7 @@ function AboutDialog(props) {
       buttons={[
         <button onClick={props.onOk} className={classes.okButton} key="ok">
           Ok
-        </button>
+        </button>,
       ]}
     >
       <div className={classes.headerContent}>
@@ -100,7 +100,7 @@ function AboutDialog(props) {
         </div>
       </div>
     </Dialog>
-  )
+  );
 }
 
 const mapStateToProps = (state) => ({
@@ -110,15 +110,15 @@ const mapStateToProps = (state) => ({
   feedbackLink: 'http://lifescience.opensource.epam.com/ketcher/#feedback',
   overviewLink: 'https://lifescience.opensource.epam.com/ketcher/index.html',
   lifeScienciesLink: 'http://lifescience.opensource.epam.com/',
-  version: state.options.app.version
-})
+  version: state.options.app.version,
+});
 
 const mapDispatchToProps = (dispatch) => ({
   onOk: (_result) => {
-    dispatch({ type: 'MODAL_CLOSE' })
-  }
-})
+    dispatch({ type: 'MODAL_CLOSE' });
+  },
+});
 
-const About = connect(mapStateToProps, mapDispatchToProps)(AboutDialog)
+const About = connect(mapStateToProps, mapDispatchToProps)(AboutDialog);
 
-export default About
+export default About;

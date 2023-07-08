@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import styled from '@emotion/styled'
+import styled from '@emotion/styled';
 
 const LoadContainer = styled.div`
   display: flex;
@@ -62,11 +62,11 @@ const LoadContainer = styled.div`
       transform: translateY(-100%);
     }
   }
-`
+`;
 export const LoadingCircles = () => (
   <LoadContainer>
     <span />
     <span />
     <span />
   </LoadContainer>
-)
+);

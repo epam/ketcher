@@ -14,24 +14,24 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { IconButton } from 'ketcher-react'
-import styled from '@emotion/styled'
-import { EditorQuerySelector } from '../../constants'
-import { useState } from 'react'
+import { IconButton } from 'ketcher-react';
+import styled from '@emotion/styled';
+import { EditorQuerySelector } from '../../constants';
+import { useState } from 'react';
 
 const requestFullscreen = (element: HTMLElement) => {
-  ;(element.requestFullscreen && element.requestFullscreen()) ||
+  (element.requestFullscreen && element.requestFullscreen()) ||
     (element.msRequestFullscreen && element.msRequestFullscreen()) ||
     (element.mozRequestFullScreen && element.mozRequestFullScreen()) ||
-    (element.webkitRequestFullscreen && element.webkitRequestFullscreen())
-}
+    (element.webkitRequestFullscreen && element.webkitRequestFullscreen());
+};
 
 const exitFullscreen = () => {
-  ;(document.exitFullscreen && document.exitFullscreen()) ||
+  (document.exitFullscreen && document.exitFullscreen()) ||
     (document.msExitFullscreen && document.msExitFullscreen()) ||
     (document.mozCancelFullScreen && document.mozCancelFullScreen()) ||
-    (document.webkitExitFullscreen && document.webkitExitFullscreen())
-}
+    (document.webkitExitFullscreen && document.webkitExitFullscreen());
+};
 
 const isFullScreen = () => {
   return !!(
@@ -39,24 +39,24 @@ const isFullScreen = () => {
     document.mozFullScreenElement ||
     document.webkitFullscreenElement ||
     document.msFullscreenElement
-  )
-}
+  );
+};
 
 const ButtonContainer = styled.div`
   position: absolute;
   right: 47px;
   bottom: 12px;
-`
+`;
 
 export const FullscreenButton = (props) => {
-  const [fullScreenMode, setFullScreenMode] = useState(isFullScreen())
+  const [fullScreenMode, setFullScreenMode] = useState(isFullScreen());
   const toggleFullscreen = () => {
     // TODO: add selector / ref prop when will be shared component
     const fullscreenElement: HTMLElement =
-      document.querySelector(EditorQuerySelector) || document.documentElement
-    fullScreenMode ? exitFullscreen() : requestFullscreen(fullscreenElement)
-    setFullScreenMode(!fullScreenMode)
-  }
+      document.querySelector(EditorQuerySelector) || document.documentElement;
+    fullScreenMode ? exitFullscreen() : requestFullscreen(fullscreenElement);
+    setFullScreenMode(!fullScreenMode);
+  };
   return (
     <ButtonContainer className={props.className}>
       <IconButton
@@ -64,5 +64,5 @@ export const FullscreenButton = (props) => {
         iconName={fullScreenMode ? 'fullscreen-exit' : 'fullscreen-enter'}
       />
     </ButtonContainer>
-  )
-}
+  );
+};

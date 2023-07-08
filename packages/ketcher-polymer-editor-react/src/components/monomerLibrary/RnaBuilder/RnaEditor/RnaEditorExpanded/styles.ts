@@ -14,36 +14,36 @@
  * limitations under the License.
  ***************************************************************************/
 
-import styled from '@emotion/styled'
-import { Button, Input } from 'ketcher-react'
+import styled from '@emotion/styled';
+import { Button, Input } from 'ketcher-react';
 
 export const RnaEditorExpandedContainer = styled.div({
   display: 'flex',
   flexDirection: 'column',
-  padding: '10px'
-})
+  padding: '10px',
+});
 
 export const GroupsContainer = styled.div({
   marginTop: '16px',
   width: '100%',
   display: 'flex',
   flexDirection: 'column',
-  gap: '8px'
-})
+  gap: '8px',
+});
 
 export const ButtonsContainer = styled.div({
   marginTop: '16px',
   display: 'flex',
   justifyContent: 'space-evenly',
   alignItems: 'center',
-  gap: '8px'
-})
+  gap: '8px',
+});
 
 export const StyledButton = styled(Button)((props) => ({
   width: '100%',
   whiteSpace: 'nowrap',
-  fontSize: props.theme.ketcher.font.size.regular
-}))
+  fontSize: props.theme.ketcher.font.size.regular,
+}));
 
 export const NameContainer = styled.div<{ selected?: boolean }>((props) => ({
   position: 'relative',
@@ -57,9 +57,9 @@ export const NameContainer = styled.div<{ selected?: boolean }>((props) => ({
     : 'none',
 
   ':hover': {
-    outline: props.selected ? undefined : props.theme.ketcher.outline.small
-  }
-}))
+    outline: props.selected ? undefined : props.theme.ketcher.outline.small,
+  },
+}));
 
 export const NameLine = styled.span<{ selected?: boolean }>((props) => ({
   position: 'absolute',
@@ -69,9 +69,9 @@ export const NameLine = styled.span<{ selected?: boolean }>((props) => ({
   height: '8px',
   backgroundColor: props.selected
     ? props.theme.ketcher.outline.selected.color
-    : props.theme.ketcher.outline.color
-}))
+    : props.theme.ketcher.outline.color,
+}));
 
 export const NameInput = styled(Input)({
-  width: '100%'
-})
+  width: '100%',
+});

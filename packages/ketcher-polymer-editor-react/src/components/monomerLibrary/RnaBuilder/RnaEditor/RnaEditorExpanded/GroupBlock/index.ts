@@ -14,4 +14,4 @@
  * limitations under the License.
  ***************************************************************************/
 
-export { GroupBlock } from './GroupBlock'
+export { GroupBlock } from './GroupBlock';

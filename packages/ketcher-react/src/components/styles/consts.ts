@@ -21,34 +21,34 @@ const color = {
   lightGreen: '#188794',
   graphite: '#333333',
   grey: '#cad3dd',
-  darkGrey: '#b4b9d6'
-} as const
+  darkGrey: '#b4b9d6',
+} as const;
 
 const text = {
   color: {
     primary: color.graphite,
     secondary: color.white,
-    hover: color.green
-  }
-} as const
+    hover: color.green,
+  },
+} as const;
 
 const font = {
   size: {
     small: '10px',
-    regular: '12px'
+    regular: '12px',
   },
   weight: {
-    regular: '400'
-  }
-} as const
+    regular: '400',
+  },
+} as const;
 
 const background = {
   color: {
     primary: color.white,
     secondary: color.green,
-    hover: color.lightGreen
-  }
-} as const
+    hover: color.lightGreen,
+  },
+} as const;
 
 const border = {
   primary: `1px solid ${color.grey}`,
@@ -56,14 +56,14 @@ const border = {
   medium: `1.5px solid ${color.lightGreen}`,
   radius: {
     regular: '2px',
-    medium: '4px'
-  }
-} as const
+    medium: '4px',
+  },
+} as const;
 
 export default {
   background,
   font,
   border,
   color,
-  text
-}
+  text,
+};

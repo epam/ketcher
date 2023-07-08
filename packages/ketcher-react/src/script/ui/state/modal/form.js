@@ -14,10 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { initSdata, sdataReducer } from './sdata'
+import { initSdata, sdataReducer } from './sdata';
 
-import { getDefaultOptions } from '../../data/schema/options-schema'
-import { sdataCustomSchema } from '../../data/schema/sdata-schema'
+import { getDefaultOptions } from '../../data/schema/options-schema';
+import { sdataCustomSchema } from '../../data/schema/sdata-schema';
 
 export const formsState = {
   // TODO: create from schema.{smth}.defaultValue
@@ -34,23 +34,23 @@ export const formsState = {
       isotope: 0,
       radical: 0,
       ringBondCount: 0,
-      substitutionCount: 0
-    }
+      substitutionCount: 0,
+    },
   },
   attachmentPoints: {
     errors: {},
     valid: true,
     result: {
       primary: false,
-      secondary: false
-    }
+      secondary: false,
+    },
   },
   automap: {
     errors: {},
     valid: true,
     result: {
-      mode: 'discard'
-    }
+      mode: 'discard',
+    },
   },
   bondProps: {
     errors: {},
@@ -58,26 +58,26 @@ export const formsState = {
     result: {
       type: 'single',
       topology: 0,
-      center: 0
-    }
+      center: 0,
+    },
   },
   check: {
     errors: {},
-    moleculeErrors: {}
+    moleculeErrors: {},
   },
   labelEdit: {
     errors: {},
     valid: true,
     result: {
-      label: ''
-    }
+      label: '',
+    },
   },
   rgroup: {
     errors: {},
     valid: true,
     result: {
-      values: []
-    }
+      values: [],
+    },
   },
   rgroupLogic: {
     errors: {},
@@ -85,47 +85,47 @@ export const formsState = {
     result: {
       ifthen: 0,
       range: '>0',
-      resth: false
-    }
+      resth: false,
+    },
   },
   save: {
     errors: {},
     valid: true,
     result: {
       filename: 'ketcher',
-      format: 'mol'
-    }
+      format: 'mol',
+    },
   },
   settings: {
     errors: {},
     valid: true,
-    result: getDefaultOptions()
+    result: getDefaultOptions(),
   },
   text: {
     errors: {},
     valid: true,
-    result: {}
+    result: {},
   },
   attach: {
     errors: {},
     valid: true,
-    result: {}
+    result: {},
   },
-  sgroup: initSdata(sdataCustomSchema)
-}
+  sgroup: initSdata(sdataCustomSchema),
+};
 
 export function updateFormState(data) {
   return {
     type: 'UPDATE_FORM',
-    data
-  }
+    data,
+  };
 }
 
 export function checkErrors(errors) {
   return {
     type: 'UPDATE_FORM',
-    data: { moleculeErrors: errors }
-  }
+    data: { moleculeErrors: errors },
+  };
 }
 
 export function setDefaultSettings() {
@@ -134,14 +134,14 @@ export function setDefaultSettings() {
     data: {
       result: getDefaultOptions(sdataCustomSchema),
       valid: true,
-      errors: {}
-    }
-  }
+      errors: {},
+    },
+  };
 }
 
 export function formReducer(state, action) {
-  const newType = action.data?.result?.type
-  if (newType === 'DAT') return sdataReducer(state, action)
+  const newType = action.data?.result?.type;
+  if (newType === 'DAT') return sdataReducer(state, action);
 
-  return Object.assign({}, state, action.data)
+  return Object.assign({}, state, action.data);
 }

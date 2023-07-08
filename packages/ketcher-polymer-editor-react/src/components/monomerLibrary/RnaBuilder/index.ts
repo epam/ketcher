@@ -14,4 +14,4 @@
  * limitations under the License.
  ***************************************************************************/
 
-export { RnaBuilder } from './RnaBuilder'
+export { RnaBuilder } from './RnaBuilder';

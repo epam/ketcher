@@ -15,13 +15,13 @@
  ***************************************************************************/
 
 export interface IAccordionProps {
-  summary: React.ReactNode
-  details: React.ReactNode
-  expanded: boolean
-  onSummaryClick: React.MouseEventHandler<HTMLDivElement>
-  className?: string
+  summary: React.ReactNode;
+  details: React.ReactNode;
+  expanded: boolean;
+  onSummaryClick: React.MouseEventHandler<HTMLDivElement>;
+  className?: string;
 }
 
 export interface IDetailsContainerProps {
-  expanded: boolean
+  expanded: boolean;
 }

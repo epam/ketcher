@@ -14,16 +14,16 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { MonomerGroups } from 'src/constants'
+import { MonomerGroups } from 'src/constants';
 
 export const groupNameToLabel = {
   [MonomerGroups.SUGARS]: 'Select sugar',
   [MonomerGroups.BASES]: 'Select base',
-  [MonomerGroups.PHOSPHATES]: 'Select phosphate'
-}
+  [MonomerGroups.PHOSPHATES]: 'Select phosphate',
+};
 
 export const groupNameToRnaEditorItemLabel = {
   [MonomerGroups.SUGARS]: 'Sugar',
   [MonomerGroups.BASES]: 'Base',
-  [MonomerGroups.PHOSPHATES]: 'Phosphate'
-}
+  [MonomerGroups.PHOSPHATES]: 'Phosphate',
+};

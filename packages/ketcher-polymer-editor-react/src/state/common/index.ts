@@ -14,5 +14,5 @@
  * limitations under the License.
  ***************************************************************************/
 
-export * from './editorSlice'
-export * from './editorSaga'
+export * from './editorSlice';
+export * from './editorSaga';

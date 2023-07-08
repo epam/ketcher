@@ -67,7 +67,7 @@ async function saveToTemplates(page: Page) {
 
 async function changeStatusOfAbbreviation(
   page: Page,
-  abbreviationStatus: string
+  abbreviationStatus: string,
 ) {
   await clickInTheMiddleOfTheScreen(page, 'right');
   await page.getByText(abbreviationStatus).click();
@@ -239,7 +239,7 @@ test.describe('Functional Groups', () => {
     */
     await pasteFromClipboardAndAddToCanvas(
       page,
-      FILE_TEST_DATA.expandedAndContractedFg
+      FILE_TEST_DATA.expandedAndContractedFg,
     );
     await clickInTheMiddleOfTheScreen(page);
   });
@@ -649,7 +649,7 @@ test.describe('Functional Groups', () => {
       await page.keyboard.press('Control+a');
       await clickInTheMiddleOfTheScreen(page, 'right');
       await page.getByText('Expand Abbreviation').click();
-    }
+    },
   );
 
   test.skip('After expand a Functional Group hotkeys not stop working', async ({

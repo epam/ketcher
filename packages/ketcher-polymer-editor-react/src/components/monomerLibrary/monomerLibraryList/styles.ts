@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import styled from '@emotion/styled'
+import styled from '@emotion/styled';
 
 export const MonomerListContainer = styled.div({
   width: '100%',
@@ -22,5 +22,5 @@ export const MonomerListContainer = styled.div({
   flexDirection: 'column',
   justifyItems: 'center',
   gap: '24px',
-  padding: '16px 12px'
-})
+  padding: '16px 12px',
+});

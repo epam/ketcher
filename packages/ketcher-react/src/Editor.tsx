@@ -14,55 +14,55 @@
  * limitations under the License.
  ***************************************************************************/
 
-import 'intersection-observer'
-import 'element-closest-polyfill'
-import 'regenerator-runtime/runtime'
-import 'url-search-params-polyfill'
-import 'whatwg-fetch'
-import './index.less'
+import 'intersection-observer';
+import 'element-closest-polyfill';
+import 'regenerator-runtime/runtime';
+import 'url-search-params-polyfill';
+import 'whatwg-fetch';
+import './index.less';
 
-import init, { Config } from './script'
-import { useEffect, useRef } from 'react'
+import init, { Config } from './script';
+import { useEffect, useRef } from 'react';
 
-import { Ketcher } from 'ketcher-core'
-import classes from './Editor.module.less'
-import clsx from 'clsx'
-import { useResizeObserver } from './hooks'
+import { Ketcher } from 'ketcher-core';
+import classes from './Editor.module.less';
+import clsx from 'clsx';
+import { useResizeObserver } from './hooks';
 import {
   KETCHER_INIT_EVENT_NAME,
-  KETCHER_ROOT_NODE_CLASS_NAME
-} from './constants'
+  KETCHER_ROOT_NODE_CLASS_NAME,
+} from './constants';
 
 const mediaSizes = {
   smallWidth: 1040,
-  smallHeight: 600
-}
+  smallHeight: 600,
+};
 
 interface EditorProps extends Omit<Config, 'element'> {
-  onInit?: (ketcher: Ketcher) => void
+  onInit?: (ketcher: Ketcher) => void;
 }
 
 function Editor(props: EditorProps) {
-  const rootElRef = useRef<HTMLDivElement>(null)
-  const { onInit } = props
+  const rootElRef = useRef<HTMLDivElement>(null);
+  const { onInit } = props;
   const { height, width } = useResizeObserver<HTMLDivElement>({
-    ref: rootElRef
-  })
+    ref: rootElRef,
+  });
 
-  const ketcherInitEvent = new Event(KETCHER_INIT_EVENT_NAME)
+  const ketcherInitEvent = new Event(KETCHER_INIT_EVENT_NAME);
 
   useEffect(() => {
     init({
       ...props,
-      element: rootElRef.current
+      element: rootElRef.current,
     }).then((ketcher: Ketcher) => {
       if (typeof onInit === 'function') {
-        onInit(ketcher)
-        window.dispatchEvent(ketcherInitEvent)
+        onInit(ketcher);
+        window.dispatchEvent(ketcherInitEvent);
       }
-    })
+    });
     // TODO: provide the list of dependencies after implementing unsubscribe function
-  }, [])
+  }, []);
 
   return (
     <div
@@ -70,10 +70,10 @@ function Editor(props: EditorProps) {
       className={clsx(KETCHER_ROOT_NODE_CLASS_NAME, classes.editor, {
         [classes.small]:
           (height && height <= mediaSizes.smallHeight) ||
-          (width && width <= mediaSizes.smallWidth)
+          (width && width <= mediaSizes.smallWidth),
       })}
     />
-  )
+  );
 }
 
-export { Editor }
+export { Editor };

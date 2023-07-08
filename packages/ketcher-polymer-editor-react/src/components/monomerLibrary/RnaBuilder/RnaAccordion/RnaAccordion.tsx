@@ -14,44 +14,44 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { MonomerGroup } from 'components/monomerLibrary/monomerLibraryGroup'
-import { Group } from 'components/monomerLibrary/monomerLibraryList/types'
-import { useAppSelector } from 'hooks'
-import { Button, IconName } from 'ketcher-react'
-import { useState } from 'react'
+import { MonomerGroup } from 'components/monomerLibrary/monomerLibraryGroup';
+import { Group } from 'components/monomerLibrary/monomerLibraryList/types';
+import { useAppSelector } from 'hooks';
+import { Button, IconName } from 'ketcher-react';
+import { useState } from 'react';
 import {
   MonomerCodeToGroup,
   MonomerGroupCodes,
-  MonomerGroups
-} from 'src/constants'
-import { selectFilteredMonomers, selectMonomerGroups } from 'state/library'
+  MonomerGroups,
+} from 'src/constants';
+import { selectFilteredMonomers, selectMonomerGroups } from 'state/library';
 import {
   DetailsContainer,
   RnaAccordionContainer,
-  StyledAccordion
-} from './styles'
-import { Summary } from './Summary'
+  StyledAccordion,
+} from './styles';
+import { Summary } from './Summary';
 
 export const RnaAccordion = () => {
-  const monomers = useAppSelector(selectFilteredMonomers)
-  const groups = selectMonomerGroups(monomers)
+  const monomers = useAppSelector(selectFilteredMonomers);
+  const groups = selectMonomerGroups(monomers);
 
   const [expandedAccordion, setExpandedAccordion] = useState<number | null>(
-    null
-  )
+    null,
+  );
 
   const handleAccordionSummaryClick = (index: number) => {
     if (expandedAccordion === index) {
-      setExpandedAccordion(null)
-    } else setExpandedAccordion(index)
-  }
+      setExpandedAccordion(null);
+    } else setExpandedAccordion(index);
+  };
 
   const groupsData = [
     {
       children: <Button>New Preset</Button>,
       groupName: 'Presets',
       iconName: 'preset',
-      groups: [] as Group[]
+      groups: [] as Group[],
     },
     {
       groupName: MonomerGroups.SUGARS,
@@ -59,8 +59,8 @@ export const RnaAccordion = () => {
       groups: groups.filter(
         (group) =>
           MonomerCodeToGroup[group.groupTitle as MonomerGroupCodes] ===
-          MonomerGroups.SUGARS
-      )
+          MonomerGroups.SUGARS,
+      ),
     },
     {
       groupName: MonomerGroups.BASES,
@@ -68,8 +68,8 @@ export const RnaAccordion = () => {
       groups: groups.filter(
         (group) =>
           MonomerCodeToGroup[group.groupTitle as MonomerGroupCodes] ===
-          MonomerGroups.BASES
-      )
+          MonomerGroups.BASES,
+      ),
     },
     {
       groupName: MonomerGroups.PHOSPHATES,
@@ -77,27 +77,27 @@ export const RnaAccordion = () => {
       groups: groups.filter(
         (group) =>
           MonomerCodeToGroup[group.groupTitle as MonomerGroupCodes] ===
-          MonomerGroups.PHOSPHATES
-      )
-    }
-  ]
-  const [selectedMonomers, setSelectedMonomers] = useState({})
+          MonomerGroups.PHOSPHATES,
+      ),
+    },
+  ];
+  const [selectedMonomers, setSelectedMonomers] = useState({});
 
   const selectItem = (monomer, groupName) => {
     setSelectedMonomers({
       ...selectedMonomers,
-      [groupName]: monomer.label
-    })
-  }
+      [groupName]: monomer.label,
+    });
+  };
 
   return (
     <RnaAccordionContainer>
       {groupsData.map((groupData, i) => {
-        const expanded = expandedAccordion === i
+        const expanded = expandedAccordion === i;
         const quantity = groupData.groups.reduce(
           (acc, group) => acc + group.groupItems.length,
-          0
-        )
+          0,
+        );
         const summary = (
           <Summary
             iconName={groupData.iconName as IconName}
@@ -105,7 +105,7 @@ export const RnaAccordion = () => {
             quantity={quantity}
             expanded={expanded}
           />
-        )
+        );
         const details = (
           <DetailsContainer>
             {groupData.children}
@@ -120,10 +120,10 @@ export const RnaAccordion = () => {
                     selectItem(monomer, groupData.groupName)
                   }
                 />
-              )
+              );
             })}
           </DetailsContainer>
-        )
+        );
         return (
           <StyledAccordion
             key={groupData.groupName}
@@ -132,8 +132,8 @@ export const RnaAccordion = () => {
             expanded={expanded}
             onSummaryClick={() => handleAccordionSummaryClick(i)}
           />
-        )
+        );
       })}
     </RnaAccordionContainer>
-  )
-}
+  );
+};

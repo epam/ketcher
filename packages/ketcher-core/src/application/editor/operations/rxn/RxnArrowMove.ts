@@ -14,36 +14,36 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Base from '../base'
-import { OperationType } from '../OperationType'
-import { Scale } from 'domain/helpers'
+import Base from '../base';
+import { OperationType } from '../OperationType';
+import { Scale } from 'domain/helpers';
 
 interface RxnArrowMoveData {
-  id: number
-  d: any
-  noinvalidate: boolean
+  id: number;
+  d: any;
+  noinvalidate: boolean;
 }
 
 export class RxnArrowMove extends Base {
-  data: RxnArrowMoveData
+  data: RxnArrowMoveData;
 
   constructor(id?: any, d?: any, noinvalidate?: any) {
-    super(OperationType.RXN_ARROW_MOVE)
-    this.data = { id, d, noinvalidate }
+    super(OperationType.RXN_ARROW_MOVE);
+    this.data = { id, d, noinvalidate };
   }
 
   execute(restruct: any): void {
-    const struct = restruct.molecule
-    const id = this.data.id
-    const d = this.data.d
-    const item = struct.rxnArrows.get(id)
-    item.pos.forEach((p) => p.add_(d))
+    const struct = restruct.molecule;
+    const id = this.data.id;
+    const d = this.data.d;
+    const item = struct.rxnArrows.get(id);
+    item.pos.forEach((p) => p.add_(d));
     restruct.rxnArrows
       .get(id)
-      .visel.translate(Scale.obj2scaled(d, restruct.render.options))
-    this.data.d = d.negated()
+      .visel.translate(Scale.obj2scaled(d, restruct.render.options));
+    this.data.d = d.negated();
     if (!this.data.noinvalidate) {
-      Base.invalidateItem(restruct, 'rxnArrows', id, 1)
+      Base.invalidateItem(restruct, 'rxnArrows', id, 1);
     }
   }
 
@@ -51,9 +51,9 @@ export class RxnArrowMove extends Base {
     const move = new RxnArrowMove(
       this.data.id,
       this.data.d,
-      this.data.noinvalidate
-    )
-    move.data = this.data
-    return move
+      this.data.noinvalidate,
+    );
+    move.data = this.data;
+    return move;
   }
 }

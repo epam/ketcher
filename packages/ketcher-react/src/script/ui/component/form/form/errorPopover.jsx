@@ -14,8 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Popover } from '@mui/material'
-import styled from '@emotion/styled'
+import { Popover } from '@mui/material';
+import styled from '@emotion/styled';
 
 const ErrorMessage = styled(Popover)`
   & .MuiPopover-paper {
@@ -24,7 +24,7 @@ const ErrorMessage = styled(Popover)`
     font-size: 12px;
     max-width: 160px;
   }
-`
+`;
 
 export const ErrorPopover = ({ error, anchorEl, handleClose }) => (
   <ErrorMessage
@@ -33,16 +33,16 @@ export const ErrorPopover = ({ error, anchorEl, handleClose }) => (
     anchorEl={anchorEl}
     disableAutoFocus
     sx={{
-      pointerEvents: 'none'
+      pointerEvents: 'none',
     }}
     onClose={handleClose}
     anchorOrigin={{
       vertical: 'bottom',
-      horizontal: 'center'
+      horizontal: 'center',
     }}
     transformOrigin={{
       vertical: 'top',
-      horizontal: 'left'
+      horizontal: 'left',
     }}
   >
     <>
@@ -50,4 +50,4 @@ export const ErrorPopover = ({ error, anchorEl, handleClose }) => (
       <p>{error}</p>
     </>
   </ErrorMessage>
-)
+);

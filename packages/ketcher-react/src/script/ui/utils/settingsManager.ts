@@ -14,42 +14,42 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { KETCHER_SAVED_SETTINGS_KEY } from 'src/constants'
+import { KETCHER_SAVED_SETTINGS_KEY } from 'src/constants';
 
 interface SavedSettings {
-  selectionTool?: any
+  selectionTool?: any;
 }
 
 export class SettingsManager {
   static getSettings(): SavedSettings {
     try {
       return JSON.parse(
-        localStorage.getItem(KETCHER_SAVED_SETTINGS_KEY) || '{}'
-      )
+        localStorage.getItem(KETCHER_SAVED_SETTINGS_KEY) || '{}',
+      );
     } catch (e) {
-      return {} as SavedSettings
+      return {} as SavedSettings;
     }
   }
 
   static saveSettings(settings: SavedSettings) {
     if (!settings) {
-      return
+      return;
     }
-    localStorage.setItem(KETCHER_SAVED_SETTINGS_KEY, JSON.stringify(settings))
+    localStorage.setItem(KETCHER_SAVED_SETTINGS_KEY, JSON.stringify(settings));
   }
 
   static get selectionTool() {
-    const { selectionTool } = this.getSettings()
+    const { selectionTool } = this.getSettings();
 
-    return selectionTool
+    return selectionTool;
   }
 
   static set selectionTool(selectionTool) {
-    const settings = this.getSettings()
+    const settings = this.getSettings();
 
     this.saveSettings({
       ...settings,
-      selectionTool
-    })
+      selectionTool,
+    });
   }
 }

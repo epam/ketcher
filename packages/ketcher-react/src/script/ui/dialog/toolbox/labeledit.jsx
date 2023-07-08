@@ -14,43 +14,45 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Form, { Field } from '../../component/form/form/form'
+import Form, { Field } from '../../component/form/form/form';
 
-import { Dialog } from '../../views/components'
-import { Elements } from 'ketcher-core'
-import { capitalize } from 'lodash/fp'
-import { connect } from 'react-redux'
-import { labelEdit as labelEditSchema } from '../../data/schema/struct-schema'
-import styles from './labelEdit.module.less'
+import { Dialog } from '../../views/components';
+import { Elements } from 'ketcher-core';
+import { capitalize } from 'lodash/fp';
+import { connect } from 'react-redux';
+import { labelEdit as labelEditSchema } from '../../data/schema/struct-schema';
+import styles from './labelEdit.module.less';
 
 function serialize(lc) {
-  const charge = Math.abs(lc.charge)
-  const radical = ['', ':', '.', '^^'][lc.radical] || ''
-  let sign = ''
-  if (charge) sign = lc.charge < 0 ? '-' : '+'
+  const charge = Math.abs(lc.charge);
+  const radical = ['', ':', '.', '^^'][lc.radical] || '';
+  let sign = '';
+  if (charge) sign = lc.charge < 0 ? '-' : '+';
   return (
     (lc.isotope || '') + lc.label + radical + (charge > 1 ? charge : '') + sign
-  )
+  );
 }
 
 function deserialize(value) {
-  const match = value.match(/^(\d+)?([a-z*]{1,3})(\.|:|\^\^)?(\d+[-+]|[-+])?$/i) // TODO: radical on last place
+  const match = value.match(
+    /^(\d+)?([a-z*]{1,3})(\.|:|\^\^)?(\d+[-+]|[-+])?$/i,
+  ); // TODO: radical on last place
   if (match) {
-    const label = match[2] === '*' ? 'A' : capitalize(match[2])
-    let charge = 0
-    let isotope = 0
-    let radical = 0
+    const label = match[2] === '*' ? 'A' : capitalize(match[2]);
+    let charge = 0;
+    let isotope = 0;
+    let radical = 0;
 
-    if (match[1]) isotope = parseInt(match[1])
+    if (match[1]) isotope = parseInt(match[1]);
 
-    if (match[3]) radical = { ':': 1, '.': 2, '^^': 3 }[match[3]]
+    if (match[3]) radical = { ':': 1, '.': 2, '^^': 3 }[match[3]];
 
     if (match[4]) {
-      charge = parseInt(match[4])
+      charge = parseInt(match[4]);
       if (isNaN(charge))
         // eslint-disable-line
-        charge = 1
-      if (match[4].endsWith('-')) charge = -charge
+        charge = 1;
+      if (match[4].endsWith('-')) charge = -charge;
     }
     // Not consistant
     if (
@@ -60,15 +62,15 @@ function deserialize(value) {
       label === 'M' ||
       Elements.get(label)
     )
-      return { label, charge, isotope, radical }
+      return { label, charge, isotope, radical };
   }
-  return null
+  return null;
 }
 
 function LabelEdit(props) {
-  const init = { label: props.letter || serialize(props) }
-  const { formState, ...prop } = props
-  const { result, valid } = formState
+  const init = { label: props.letter || serialize(props) };
+  const { formState, ...prop } = props;
+  const { result, valid } = formState;
 
   return (
     <Dialog
@@ -98,7 +100,7 @@ function LabelEdit(props) {
         />
       </Form>
     </Dialog>
-  )
+  );
 }
 
-export default connect((store) => ({ formState: store.modal.form }))(LabelEdit)
+export default connect((store) => ({ formState: store.modal.form }))(LabelEdit);

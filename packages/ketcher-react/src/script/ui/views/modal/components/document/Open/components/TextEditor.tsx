@@ -14,18 +14,18 @@
  * limitations under the License.
  ***************************************************************************/
 
-import classes from '../Open.module.less'
+import classes from '../Open.module.less';
 
 export type TextEditorProps = {
-  structStr: string
-  inputHandler: (str: string) => void
-  autoFocus?: boolean
-}
+  structStr: string;
+  inputHandler: (str: string) => void;
+  autoFocus?: boolean;
+};
 
 export const TextEditor = ({
   structStr,
   inputHandler,
-  autoFocus = false
+  autoFocus = false,
 }: TextEditorProps) => {
   return (
     <>
@@ -36,5 +36,5 @@ export const TextEditor = ({
         autoFocus={autoFocus}
       />
     </>
-  )
-}
+  );
+};

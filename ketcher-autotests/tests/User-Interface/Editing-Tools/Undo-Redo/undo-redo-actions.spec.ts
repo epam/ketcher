@@ -42,7 +42,7 @@ async function selectBondProperties(
   bondType: string,
   bondTopology: string,
   bondReactingCenter: string,
-  finalizationButton: string
+  finalizationButton: string,
 ) {
   await page.getByRole('button', { name: 'Single', exact: true }).click();
   await page.getByRole('option', { name: bondType, exact: true }).click();
@@ -60,7 +60,7 @@ async function selectSruPolymer(
   text: string,
   dataName: string,
   polymerLabel: string,
-  repeatPattern: string
+  repeatPattern: string,
 ) {
   await page.locator('span').filter({ hasText: text }).click();
   await page.getByRole('option', { name: dataName }).click();
@@ -79,7 +79,7 @@ async function selectMultipleGroup(
   page: Page,
   text: string,
   dataName: string,
-  valueRepeatCount: string
+  valueRepeatCount: string,
 ) {
   await page.locator('span').filter({ hasText: text }).click();
   await page.getByRole('option', { name: dataName }).click();
@@ -90,7 +90,7 @@ async function selectMultipleGroup(
 async function addNameToSuperatom(
   page: Page,
   fieldLabel: string,
-  superatomName: string
+  superatomName: string,
 ) {
   await page.locator('span').filter({ hasText: 'Data' }).click();
   await page.getByRole('option', { name: 'Superatom' }).click();

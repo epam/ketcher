@@ -15,12 +15,12 @@
  ***************************************************************************/
 
 export interface MolSerializerOptions {
-  reactionRelayout: boolean
-  badHeaderRecover: boolean
-  ignoreErrors: boolean
-  noRgroups: boolean
-  preserveIndigoDesc: boolean
-  ignoreChiralFlag?: boolean
+  reactionRelayout: boolean;
+  badHeaderRecover: boolean;
+  ignoreErrors: boolean;
+  noRgroups: boolean;
+  preserveIndigoDesc: boolean;
+  ignoreChiralFlag?: boolean;
 }
 
-export type MolfileFormat = 'v2000' | 'v3000'
+export type MolfileFormat = 'v2000' | 'v3000';

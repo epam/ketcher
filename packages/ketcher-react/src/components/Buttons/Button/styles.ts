@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import styled from '@emotion/styled'
-import { style } from 'src/components/styles'
+import styled from '@emotion/styled';
+import { style } from 'src/components/styles';
 
 export const StyledButton = styled.button({
   boxShadow: 'none',
@@ -35,6 +35,6 @@ export const StyledButton = styled.button({
   ':disabled': {
     cursor: 'auto',
     background: '#e1e5ea',
-    outline: 'none'
-  }
-})
+    outline: 'none',
+  },
+});

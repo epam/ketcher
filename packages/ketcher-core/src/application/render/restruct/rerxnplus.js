@@ -14,50 +14,50 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Box2Abs } from 'domain/entities'
-import { LayerMap } from './generalEnumTypes'
-import ReObject from './reobject'
-import { Scale } from 'domain/helpers'
-import draw from '../draw'
-import util from '../util'
+import { Box2Abs } from 'domain/entities';
+import { LayerMap } from './generalEnumTypes';
+import ReObject from './reobject';
+import { Scale } from 'domain/helpers';
+import draw from '../draw';
+import util from '../util';
 
 class ReRxnPlus extends ReObject {
   constructor(/* chem.RxnPlus */ plus) {
-    super('rxnPlus')
-    this.item = plus
+    super('rxnPlus');
+    this.item = plus;
   }
 
   static isSelectable() {
-    return true
+    return true;
   }
 
   hoverPath(render) {
-    const p = Scale.obj2scaled(this.item.pp, render.options)
-    const s = render.options.scale
+    const p = Scale.obj2scaled(this.item.pp, render.options);
+    const s = render.options.scale;
     /* eslint-disable no-mixed-operators */
-    return render.paper.rect(p.x - s / 4, p.y - s / 4, s / 2, s / 2, s / 8)
+    return render.paper.rect(p.x - s / 4, p.y - s / 4, s / 2, s / 2, s / 8);
     /* eslint-enable no-mixed-operators */
   }
 
   drawHover(render) {
-    const ret = this.hoverPath(render).attr(render.options.hoverStyle)
-    render.ctab.addReObjectPath(LayerMap.hovering, this.visel, ret)
-    return ret
+    const ret = this.hoverPath(render).attr(render.options.hoverStyle);
+    render.ctab.addReObjectPath(LayerMap.hovering, this.visel, ret);
+    return ret;
   }
 
   makeSelectionPlate(restruct, paper, styles) {
     // TODO [MK] review parameters
-    return this.hoverPath(restruct.render).attr(styles.selectionStyle)
+    return this.hoverPath(restruct.render).attr(styles.selectionStyle);
   }
 
   show(restruct, id, options) {
-    const render = restruct.render
-    const centre = Scale.obj2scaled(this.item.pp, options)
-    const path = draw.plus(render.paper, centre, options)
-    const offset = options.offset
-    if (offset != null) path.translateAbs(offset.x, offset.y)
-    this.visel.add(path, Box2Abs.fromRelBox(util.relBox(path.getBBox())))
+    const render = restruct.render;
+    const centre = Scale.obj2scaled(this.item.pp, options);
+    const path = draw.plus(render.paper, centre, options);
+    const offset = options.offset;
+    if (offset != null) path.translateAbs(offset.x, offset.y);
+    this.visel.add(path, Box2Abs.fromRelBox(util.relBox(path.getBBox())));
   }
 }
 
-export default ReRxnPlus
+export default ReRxnPlus;

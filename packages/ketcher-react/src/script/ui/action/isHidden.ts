@@ -15,5 +15,5 @@
  ***************************************************************************/
 
 export default function isHidden(options: any, buttonName: string): boolean {
-  return Boolean(options.buttons?.[buttonName]?.hidden)
+  return Boolean(options.buttons?.[buttonName]?.hidden);
 }

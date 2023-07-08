@@ -17,17 +17,17 @@
 import {
   RightToolbar,
   RightToolbarCallProps,
-  RightToolbarProps
-} from './RightToolbar'
+  RightToolbarProps,
+} from './RightToolbar';
 
-import { ComponentType } from 'react'
-import { Dispatch } from 'redux'
-import { connect } from 'react-redux'
-import { onAction } from '../../../state'
+import { ComponentType } from 'react';
+import { Dispatch } from 'redux';
+import { connect } from 'react-redux';
+import { onAction } from '../../../state';
 
-type StateProps = Omit<RightToolbarProps, 'className'>
-type OwnProps = Pick<RightToolbarProps, 'className'>
-const disableableButtons = []
+type StateProps = Omit<RightToolbarProps, 'className'>;
+type OwnProps = Pick<RightToolbarProps, 'className'>;
+const disableableButtons = [];
 
 const mapStateToProps = (state): StateProps => ({
   active: state.actionState && state.actionState.activeTool,
@@ -35,22 +35,22 @@ const mapStateToProps = (state): StateProps => ({
   freqAtoms: state.toolbar.freqAtoms,
   opened: state.toolbar.opened,
   indigoVerification: state.requestsStatuses.indigoVerification,
-  disableableButtons
-})
+  disableableButtons,
+});
 
 const mapDispatchToProps = (dispatch: Dispatch): RightToolbarCallProps => ({
   onAction: (action) => dispatch(onAction(action)),
   onOpen: (menuName, isSelected) =>
     dispatch({
       type: 'OPENED',
-      data: { menuName, isSelected }
-    })
-})
+      data: { menuName, isSelected },
+    }),
+});
 
 const RightToolbarContainer: ComponentType<OwnProps> = connect(
   mapStateToProps,
-  mapDispatchToProps
-)(RightToolbar)
+  mapDispatchToProps,
+)(RightToolbar);
 
-export { RightToolbarContainer }
-export default RightToolbarContainer
+export { RightToolbarContainer };
+export default RightToolbarContainer;

@@ -19,14 +19,14 @@ import {
   RnaEditorCollapsedContainer,
   MonomerFullName,
   TextContainer,
-  EditIcon
-} from './styles'
-import { IRnaEditorCollapsedProps } from './types'
+  EditIcon,
+} from './styles';
+import { IRnaEditorCollapsedProps } from './types';
 
 export const RnaEditorCollapsed = ({
   name,
   fullName,
-  onEdit
+  onEdit,
 }: IRnaEditorCollapsedProps) => {
   return (
     <RnaEditorCollapsedContainer>
@@ -36,5 +36,5 @@ export const RnaEditorCollapsed = ({
       </TextContainer>
       <EditIcon name="edit-filled" onClick={onEdit} />
     </RnaEditorCollapsedContainer>
-  )
-}
+  );
+};

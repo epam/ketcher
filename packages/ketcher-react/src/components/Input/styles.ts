@@ -14,8 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import styled from '@emotion/styled'
-import { style } from '../styles'
+import styled from '@emotion/styled';
+import { style } from '../styles';
 
 export const StyledInput = styled.input({
   border: 'none',
@@ -25,16 +25,16 @@ export const StyledInput = styled.input({
   caretColor: style.color.green,
 
   ':hover': {
-    outline: style.border.medium
+    outline: style.border.medium,
   },
 
   ':active, :focus,:focus-visible': {
-    outline: style.border.secondary
+    outline: style.border.secondary,
   },
 
   ':disabled': {
     color: 'blue',
     outline: style.border.primary,
-    backgroundColor: '#e1e5ea'
-  }
-})
+    backgroundColor: '#e1e5ea',
+  },
+});

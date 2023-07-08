@@ -14,15 +14,15 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { IconName } from 'ketcher-react'
+import { IconName } from 'ketcher-react';
 
 export interface ISummaryProps {
-  groupName: string
-  quantity: number
-  expanded: boolean
-  iconName: IconName
+  groupName: string;
+  quantity: number;
+  expanded: boolean;
+  iconName: IconName;
 }
 
 export interface IStyledIconProps {
-  expanded?: boolean
+  expanded?: boolean;
 }

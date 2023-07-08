@@ -14,22 +14,22 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { ChangeEvent, useState } from 'react'
-import { RnaEditorCollapsed } from './RnaEditorCollapsed'
-import { RnaEditorExpanded } from './RnaEditorExpanded'
-import { ExpandButton, ExpandIcon, RnaEditorContainer } from './styles'
+import { ChangeEvent, useState } from 'react';
+import { RnaEditorCollapsed } from './RnaEditorCollapsed';
+import { RnaEditorExpanded } from './RnaEditorExpanded';
+import { ExpandButton, ExpandIcon, RnaEditorContainer } from './styles';
 
 export const RnaEditor = () => {
-  const [expanded, setExpanded] = useState(false)
-  const [name, setName] = useState('My Rna')
+  const [expanded, setExpanded] = useState(false);
+  const [name, setName] = useState('My Rna');
 
   const expandEditor = () => {
-    setExpanded(!expanded)
-  }
+    setExpanded(!expanded);
+  };
 
   const changeName = (event: ChangeEvent<HTMLInputElement>) => {
-    setName(event.target.value)
-  }
+    setName(event.target.value);
+  };
 
   return (
     <RnaEditorContainer>
@@ -51,5 +51,5 @@ export const RnaEditor = () => {
         <ExpandIcon expanded={expanded} name="chevron" />
       </ExpandButton>
     </RnaEditorContainer>
-  )
-}
+  );
+};

@@ -14,32 +14,32 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Pile } from './pile'
-import { Pool } from './pool'
+import { Pile } from './pile';
+import { Pool } from './pool';
 
 export interface RGroupAttributes {
-  index?: number
-  ifthen?: number
-  resth?: boolean
-  range?: string
+  index?: number;
+  ifthen?: number;
+  resth?: boolean;
+  range?: string;
 }
 export class RGroup {
-  frags: Pile<number>
-  resth: boolean
-  range: string
-  ifthen: number
-  index: number
+  frags: Pile<number>;
+  resth: boolean;
+  range: string;
+  ifthen: number;
+  index: number;
 
   constructor(atrributes?: RGroupAttributes) {
-    this.frags = new Pile<number>()
-    this.resth = atrributes?.resth || false
-    this.range = atrributes?.range || ''
-    this.ifthen = atrributes?.ifthen || 0
-    this.index = atrributes?.index || -1
+    this.frags = new Pile<number>();
+    this.resth = atrributes?.resth || false;
+    this.range = atrributes?.range || '';
+    this.ifthen = atrributes?.ifthen || 0;
+    this.index = atrributes?.index || -1;
   }
 
   static findRGroupByFragment(rgroups: Pool<RGroup>, frid: number) {
-    return rgroups.find((_rgid, rgroup) => rgroup.frags.has(frid))
+    return rgroups.find((_rgid, rgroup) => rgroup.frags.has(frid));
   }
 
   getAttrs(): RGroupAttributes {
@@ -47,15 +47,15 @@ export class RGroup {
       resth: this.resth,
       range: this.range,
       ifthen: this.ifthen,
-      index: this.index
-    }
+      index: this.index,
+    };
   }
 
   clone(fidMap?: Map<number, number> | null): RGroup {
-    const ret = new RGroup(this)
+    const ret = new RGroup(this);
     this.frags.forEach((fid) => {
-      ret.frags.add(fidMap ? fidMap.get(fid)! : fid)
-    })
-    return ret
+      ret.frags.add(fidMap ? fidMap.get(fid)! : fid);
+    });
+    return ret;
   }
 }

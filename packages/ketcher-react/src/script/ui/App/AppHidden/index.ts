@@ -14,4 +14,4 @@
  * limitations under the License.
  ***************************************************************************/
 
-export * from './AppHidden.container'
+export * from './AppHidden.container';

@@ -14,9 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { css } from '@emotion/react'
+import { css } from '@emotion/react';
 
-import { ThemeType } from '../defaultTheme'
+import { ThemeType } from '../defaultTheme';
 
 export const getGlobalStyles = (theme: ThemeType) =>
   css({
@@ -26,41 +26,41 @@ export const getGlobalStyles = (theme: ThemeType) =>
       fontWeight: theme.ketcher.font.weight.regular,
       backgroundColor: theme.ketcher.color.background.primary,
       color: theme.ketcher.color.text.primary,
-      boxSizing: 'border-box'
+      boxSizing: 'border-box',
     },
     div: {
-      boxSizing: 'border-box'
+      boxSizing: 'border-box',
     },
     input: {
       fontFamily: theme.ketcher.font.family.inter,
       fontWeight: theme.ketcher.font.weight.regular,
       fontSize: theme.ketcher.font.size.regular,
-      boxSizing: 'border-box'
+      boxSizing: 'border-box',
     },
     h1: {
-      fontSize: 96
+      fontSize: 96,
     },
     h2: {
-      fontSize: 60
+      fontSize: 60,
     },
     h3: {
-      fontSize: 48
+      fontSize: 48,
     },
     h4: {
-      fontSize: 34
+      fontSize: 34,
     },
     h5: {
-      fontSize: 24
+      fontSize: 24,
     },
     h6: {
       fontSize: 20,
-      fontWeight: theme.ketcher.font.weight.bold
+      fontWeight: theme.ketcher.font.weight.bold,
     },
     p: {
-      fontSize: theme.ketcher.font.size.regular
+      fontSize: theme.ketcher.font.size.regular,
     },
     button: {
       textTransform: 'uppercase',
-      fontWeight: theme.ketcher.font.weight.bold
-    }
-  })
+      fontWeight: theme.ketcher.font.weight.bold,
+    },
+  });

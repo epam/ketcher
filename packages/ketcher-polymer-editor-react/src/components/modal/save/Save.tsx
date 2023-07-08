@@ -14,78 +14,78 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useEffect, useState } from 'react'
-import styled from '@emotion/styled'
+import { useEffect, useState } from 'react';
+import styled from '@emotion/styled';
 
-import { Modal } from 'components/shared/modal'
-import { DropDown } from 'components/shared/dropDown'
-import { Option } from 'components/shared/dropDown/dropDown'
-import { TextField } from 'components/shared/textEditor'
-import { TextInputField } from 'components/shared/textInputField'
-import { SaveButton } from 'components/modal/save/saveButton'
-import { getPropertiesByFormat, SupportedFormats } from 'helpers/formats'
-import { ActionButton } from 'components/shared/actionButton'
-import { Icon } from 'ketcher-react'
+import { Modal } from 'components/shared/modal';
+import { DropDown } from 'components/shared/dropDown';
+import { Option } from 'components/shared/dropDown/dropDown';
+import { TextField } from 'components/shared/textEditor';
+import { TextInputField } from 'components/shared/textInputField';
+import { SaveButton } from 'components/modal/save/saveButton';
+import { getPropertiesByFormat, SupportedFormats } from 'helpers/formats';
+import { ActionButton } from 'components/shared/actionButton';
+import { Icon } from 'ketcher-react';
 
 interface Props {
-  onClose: () => void
-  isModalOpen: boolean
+  onClose: () => void;
+  isModalOpen: boolean;
 }
 
 const options: Array<Option> = [
   { id: 'mol', label: 'MDL Molfile V3000' },
-  { id: 'helm', label: 'HELM' }
-]
+  { id: 'helm', label: 'HELM' },
+];
 
 const Form = styled.form({
   display: 'flex',
   flexDirection: 'column',
-  height: '100%'
-})
+  height: '100%',
+});
 
 const Row = styled.div({
   display: 'flex',
   justifyContent: 'space-between',
-  marginBottom: '16px'
-})
+  marginBottom: '16px',
+});
 
 const Label = styled.label(({ theme }) => ({
   marginRight: '8px',
-  color: theme.ketcher.color.text.secondary
-}))
+  color: theme.ketcher.color.text.secondary,
+}));
 
 const StyledDropdown = styled(DropDown)(({ theme }) => ({
   '& .MuiOutlinedInput-root': {
     border: 'none',
     backgroundColor: theme.ketcher.color.background.primary,
     color: theme.ketcher.color.text.primary,
-    fontFamily: theme.ketcher.font.family.inter
-  }
-}))
+    fontFamily: theme.ketcher.font.family.inter,
+  },
+}));
 
 const stylesForExpanded = {
-  border: 'none'
-}
+  border: 'none',
+};
 
 const StyledModal = styled(Modal)({
   '& .MuiPaper-root': {
     width: '520px',
-    height: '358px'
+    height: '358px',
   },
 
   '& .MuiDialogContent-root': {
-    overflow: 'hidden'
-  }
-})
+    overflow: 'hidden',
+  },
+});
 
 const ErrorsButton = styled(ActionButton)(({ theme }) => ({
   backgroundColor: theme.ketcher.color.background.canvas,
   color: theme.ketcher.color.text.error,
 
   '&:hover': {
-    backgroundColor: 'initial'
-  }
-}))
+    backgroundColor: 'initial',
+  },
+}));
 
 const structExample = {
   mol: `
@@ -122,43 +122,43 @@ const structExample = {
   M  V30 END CTAB
   M  END
   `,
-  helm: `PEPTIDE1{A.C.D.F.G.H.K.A.C.D}$PEPTIDE1,PEPTIDE1,3:R3-7:R3`
-} // TODO remove when canvas and get struct method are ready
+  helm: `PEPTIDE1{A.C.D.F.G.H.K.A.C.D}$PEPTIDE1,PEPTIDE1,3:R3-7:R3`,
+}; // TODO remove when canvas and get struct method are ready
 
 export const Save = ({ onClose, isModalOpen }: Props): JSX.Element => {
   const [currentFileFormat, setCurrentFileFormat] =
-    useState<SupportedFormats>('mol')
-  const [currentFileName, setCurrentFileName] = useState('ketcher')
-  const [struct, setStruct] = useState('')
-  const [errors, setErrors] = useState('')
+    useState<SupportedFormats>('mol');
+  const [currentFileName, setCurrentFileName] = useState('ketcher');
+  const [struct, setStruct] = useState('');
+  const [errors, setErrors] = useState('');
 
   const handleSelectChange = (value) => {
-    setCurrentFileFormat(value)
-  }
+    setCurrentFileFormat(value);
+  };
 
   const handleInputChange = (value) => {
-    setCurrentFileName(value)
-  }
+    setCurrentFileName(value);
+  };
 
   const handleSave = () => {
-    console.log('Saved', structExample)
-  }
+    console.log('Saved', structExample);
+  };
 
   const handleErrorsClick = () => {
-    console.log('errors...')
-  }
+    console.log('errors...');
+  };
 
   useEffect(() => {
-    console.log('Getting and setting struct here...') // get / convert struct and errors
-    setStruct(structExample[currentFileFormat])
+    console.log('Getting and setting struct here...'); // get / convert struct and errors
+    setStruct(structExample[currentFileFormat]);
 
     if (currentFileFormat === 'mol') {
       // just an example
-      setErrors('some error')
+      setErrors('some error');
     } else {
-      setErrors('')
+      setErrors('');
     }
-  }, [currentFileFormat])
+  }, [currentFileFormat]);
 
   return (
     <StyledModal title="save structure" isOpen={isModalOpen} onClose={onClose}>
@@ -208,5 +208,5 @@ export const Save = ({ onClose, isModalOpen }: Props): JSX.Element => {
         />
       </Modal.Footer>
     </StyledModal>
-  )
-}
+  );
+};

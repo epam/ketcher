@@ -14,52 +14,52 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Modal, ModalProps } from './Modal'
+import { Modal, ModalProps } from './Modal';
 
-import { BaseCallProps } from './modal.types'
-import { Dispatch } from 'redux'
-import { connect } from 'react-redux'
-import { omit } from 'lodash/fp'
+import { BaseCallProps } from './modal.types';
+import { Dispatch } from 'redux';
+import { connect } from 'react-redux';
+import { omit } from 'lodash/fp';
 
-type StateProps = Pick<ModalProps, 'modal'>
+type StateProps = Pick<ModalProps, 'modal'>;
 
 const mapStateToProps = (state): StateProps => ({
-  modal: state.modal
-})
+  modal: state.modal,
+});
 
 const mapDispatchToProps = (dispatch: Dispatch): BaseCallProps => ({
   onOk: (_result) => {
-    dispatch({ type: 'MODAL_CLOSE' })
+    dispatch({ type: 'MODAL_CLOSE' });
   },
   onCancel: () => {
-    dispatch({ type: 'MODAL_CLOSE' })
-  }
-})
+    dispatch({ type: 'MODAL_CLOSE' });
+  },
+});
 
 const mergeProps = (
   stateProps: StateProps,
-  dispatchProps: BaseCallProps
+  dispatchProps: BaseCallProps,
 ): ModalProps => {
-  const prop = stateProps.modal && stateProps.modal.prop
-  const initProps = prop ? omit(['onResult', 'onCancel'], prop) : {}
+  const prop = stateProps.modal && stateProps.modal.prop;
+  const initProps = prop ? omit(['onResult', 'onCancel'], prop) : {};
   return {
     modal: stateProps.modal,
     ...initProps,
     onOk: (result) => {
-      if (prop && prop.onResult) prop.onResult(result)
-      dispatchProps.onOk(result)
+      if (prop && prop.onResult) prop.onResult(result);
+      dispatchProps.onOk(result);
     },
     onCancel: () => {
-      if (prop && prop.onCancel) prop.onCancel()
-      dispatchProps.onCancel()
-    }
-  }
-}
+      if (prop && prop.onCancel) prop.onCancel();
+      dispatchProps.onCancel();
+    },
+  };
+};
 
 const ModalContainer = connect(
   mapStateToProps,
   mapDispatchToProps,
-  mergeProps
-)(Modal)
+  mergeProps,
+)(Modal);
 
-export default ModalContainer
+export default ModalContainer;

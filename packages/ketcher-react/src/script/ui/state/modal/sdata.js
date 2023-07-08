@@ -17,22 +17,22 @@
 import {
   getSdataDefault,
   sdataSchema,
-  sdataCustomSchema
-} from '../../data/schema/sdata-schema'
+  sdataCustomSchema,
+} from '../../data/schema/sdata-schema';
 
 export const initSdata = (schema) => {
-  const isCustomShema = schema.key === 'Custom'
+  const isCustomShema = schema.key === 'Custom';
 
   const context = isCustomShema
     ? getSdataDefault(sdataCustomSchema, 'context')
-    : getSdataDefault(sdataSchema)
+    : getSdataDefault(sdataSchema);
   const fieldName = isCustomShema
     ? getSdataDefault(sdataCustomSchema, 'fieldName')
-    : getSdataDefault(sdataSchema, context)
+    : getSdataDefault(sdataSchema, context);
   const fieldValue = isCustomShema
     ? getSdataDefault(sdataCustomSchema, 'fieldValue')
-    : getSdataDefault(sdataSchema, context, fieldName)
-  const radiobuttons = 'Absolute'
+    : getSdataDefault(sdataSchema, context, fieldName);
+  const radiobuttons = 'Absolute';
 
   return {
     errors: {},
@@ -42,91 +42,91 @@ export const initSdata = (schema) => {
       fieldName,
       fieldValue,
       radiobuttons,
-      type: 'DAT'
-    }
-  }
-}
+      type: 'DAT',
+    },
+  };
+};
 
 const correctErrors = (state, payload) => {
-  const { valid, errors } = payload
-  const { fieldName, fieldValue } = state.result
+  const { valid, errors } = payload;
+  const { fieldName, fieldValue } = state.result;
 
   return {
     result: state.result,
     valid: valid && !!fieldName && !!fieldValue,
-    errors
-  }
-}
+    errors,
+  };
+};
 
 const onContextChange = (state, payload) => {
-  const { context, fieldValue } = payload
+  const { context, fieldValue } = payload;
 
-  const fieldName = getSdataDefault(sdataCustomSchema, 'fieldName')
+  const fieldName = getSdataDefault(sdataCustomSchema, 'fieldName');
 
-  let fValue = fieldValue
+  let fValue = fieldValue;
   if (fValue === state.result.fieldValue)
-    fValue = getSdataDefault(sdataCustomSchema, 'fieldValue')
+    fValue = getSdataDefault(sdataCustomSchema, 'fieldValue');
 
   return {
     result: {
       ...payload,
       context,
       fieldName,
-      fieldValue: fValue
-    }
-  }
-}
+      fieldValue: fValue,
+    },
+  };
+};
 
 const onFieldNameChange = (state, payload) => {
-  const { fieldName } = payload
+  const { fieldName } = payload;
 
-  const context = state.result.context
+  const context = state.result.context;
 
-  let fieldValue = payload.fieldValue
+  let fieldValue = payload.fieldValue;
 
   if (sdataSchema[context][fieldName])
-    fieldValue = getSdataDefault(sdataSchema, context, fieldName)
+    fieldValue = getSdataDefault(sdataSchema, context, fieldName);
 
   if (
     fieldValue === state.result.fieldValue &&
     sdataSchema[context][state.result.fieldName]
   )
-    fieldValue = ''
+    fieldValue = '';
 
   return {
     result: {
       ...payload,
       fieldName,
-      fieldValue
-    }
-  }
-}
+      fieldValue,
+    },
+  };
+};
 
 export function sdataReducer(state, action) {
   if (action.data.result.init) {
     return correctErrors(
       {
         ...state,
-        result: Object.assign({}, state.result, action.data.result)
+        result: Object.assign({}, state.result, action.data.result),
       },
-      action.data
-    )
+      action.data,
+    );
   }
 
-  const actionContext = action.data.result.context
-  const actionFieldName = action.data.result.fieldName
+  const actionContext = action.data.result.context;
+  const actionFieldName = action.data.result.fieldName;
 
-  let newstate = null
+  let newstate = null;
 
   if (actionContext !== state.result.context)
-    newstate = onContextChange(state, action.data.result)
+    newstate = onContextChange(state, action.data.result);
   else if (actionFieldName !== state.result.fieldName)
-    newstate = onFieldNameChange(state, action.data.result)
+    newstate = onFieldNameChange(state, action.data.result);
 
   newstate = newstate || {
     ...state,
-    result: Object.assign({}, state.result, action.data.result)
-  }
+    result: Object.assign({}, state.result, action.data.result),
+  };
 
-  return correctErrors(newstate, action.data)
+  return correctErrors(newstate, action.data);
 }

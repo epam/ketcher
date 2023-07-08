@@ -14,30 +14,30 @@
  * limitations under the License.
  ***************************************************************************/
 
-export const MONOMER_LIBRARY_FAVORITES = 'FAVORITES'
+export const MONOMER_LIBRARY_FAVORITES = 'FAVORITES';
 
 export const MONOMER_TYPES = {
   PEPTIDE: 'PEPTIDE',
   CHEM: 'CHEM',
-  RNA: 'RNA'
-} as const
+  RNA: 'RNA',
+} as const;
 export type LibraryNameType =
   | typeof MONOMER_LIBRARY_FAVORITES
-  | keyof typeof MONOMER_TYPES
+  | keyof typeof MONOMER_TYPES;
 
-export const EditorClassName = 'Ketcher-polymer-editor-root'
-export const EditorQuerySelector = `.${EditorClassName}`
+export const EditorClassName = 'Ketcher-polymer-editor-root';
+export const EditorQuerySelector = `.${EditorClassName}`;
 
 export const preview = {
   width: 230,
   height: 230,
-  gap: 5
-} as const
+  gap: 5,
+} as const;
 
 export enum MonomerGroups {
   SUGARS = 'Sugars',
   BASES = 'Bases',
-  PHOSPHATES = 'Phosphates'
+  PHOSPHATES = 'Phosphates',
 }
 
 export enum MonomerGroupCodes {
@@ -48,7 +48,7 @@ export enum MonomerGroupCodes {
   T = 'T',
   U = 'U',
   X = 'X',
-  P = 'P'
+  P = 'P',
 }
 
 export const MonomerCodeToGroup: Record<MonomerGroupCodes, MonomerGroups> = {
@@ -59,5 +59,5 @@ export const MonomerCodeToGroup: Record<MonomerGroupCodes, MonomerGroups> = {
   T: MonomerGroups.BASES,
   U: MonomerGroups.BASES,
   X: MonomerGroups.BASES,
-  P: MonomerGroups.PHOSPHATES
-} as const
+  P: MonomerGroups.PHOSPHATES,
+} as const;

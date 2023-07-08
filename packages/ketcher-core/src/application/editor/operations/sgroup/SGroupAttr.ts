@@ -14,48 +14,48 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { BaseOperation } from '../base'
-import { OperationType } from '../OperationType'
-import { ReStruct } from '../../../render'
+import { BaseOperation } from '../base';
+import { OperationType } from '../OperationType';
+import { ReStruct } from '../../../render';
 
 export class SGroupAttr extends BaseOperation {
   data: {
-    sgid: any
-    attr: any
-    value: any
-  }
+    sgid: any;
+    attr: any;
+    value: any;
+  };
 
   constructor(sgroupId?: any, attribute?: any, value?: any) {
-    super(OperationType.S_GROUP_ATTR, 4)
+    super(OperationType.S_GROUP_ATTR, 4);
     this.data = {
       sgid: sgroupId,
       attr: attribute,
-      value
-    }
+      value,
+    };
   }
 
   execute(restruct: ReStruct) {
-    const struct = restruct.molecule
-    const sgroupId = this.data.sgid!
-    const sgroup = struct.sgroups.get(sgroupId)!
+    const struct = restruct.molecule;
+    const sgroupId = this.data.sgid!;
+    const sgroup = struct.sgroups.get(sgroupId)!;
 
     if (!sgroup) {
-      return
+      return;
     }
 
-    const sgroupData = restruct.sgroupData.get(sgroupId)
+    const sgroupData = restruct.sgroupData.get(sgroupId);
     if (sgroup.type === 'DAT' && sgroupData) {
       // clean the stuff here, else it might be left behind if the sgroups is set to "attached"
-      restruct.clearVisel(sgroupData.visel)
-      restruct.sgroupData.delete(sgroupId)
+      restruct.clearVisel(sgroupData.visel);
+      restruct.sgroupData.delete(sgroupId);
     }
 
-    this.data.value = sgroup.setAttr(this.data.attr, this.data.value)
+    this.data.value = sgroup.setAttr(this.data.attr, this.data.value);
   }
 
   invert() {
-    const inverted = new SGroupAttr()
-    inverted.data = this.data
-    return inverted
+    const inverted = new SGroupAttr();
+    inverted.data = this.data;
+    return inverted;
   }
 }

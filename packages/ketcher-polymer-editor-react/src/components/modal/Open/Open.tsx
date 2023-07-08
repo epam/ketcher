@@ -13,72 +13,72 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { Modal } from 'components/shared/modal'
-import { useCallback, useEffect, useState } from 'react'
-import { ViewSwitcher } from './ViewSwitcher'
-import { ActionButton } from 'components/shared/actionButton'
-import { FileOpener, fileOpener } from './fileOpener'
+import { Modal } from 'components/shared/modal';
+import { useCallback, useEffect, useState } from 'react';
+import { ViewSwitcher } from './ViewSwitcher';
+import { ActionButton } from 'components/shared/actionButton';
+import { FileOpener, fileOpener } from './fileOpener';
 
 export interface Props {
-  onClose: () => void
-  isModalOpen: boolean
+  onClose: () => void;
+  isModalOpen: boolean;
 }
 
 const MODAL_STATES = {
   openOptions: 'openOptions',
-  textEditor: 'textEditor'
-}
+  textEditor: 'textEditor',
+};
 
 // TODO: replace after the implementation of the function for processing the structure from the file
 const onOk = ({ struct, fragment }) => {
   if (fragment) {
-    console.log('add fragment')
+    console.log('add fragment');
   }
-  console.log(struct)
-}
-const isAnalyzingFile = false
-const errorHandler = (error) => console.log(error)
+  console.log(struct);
+};
+const isAnalyzingFile = false;
+const errorHandler = (error) => console.log(error);
 
 const Open = ({ isModalOpen, onClose }: Props) => {
-  const [structStr, setStructStr] = useState<string>('')
-  const [fileName, setFileName] = useState<string>('')
+  const [structStr, setStructStr] = useState<string>('');
+  const [fileName, setFileName] = useState<string>('');
   const [opener, setOpener] = useState<
     { chosenOpener: FileOpener } | undefined
-  >()
-  const [currentState, setCurrentState] = useState(MODAL_STATES.openOptions)
+  >();
+  const [currentState, setCurrentState] = useState(MODAL_STATES.openOptions);
 
   useEffect(() => {
     fileOpener().then((chosenOpener) => {
-      setOpener({ chosenOpener })
-    })
-  }, [])
+      setOpener({ chosenOpener });
+    });
+  }, []);
 
   const onCloseCallback = useCallback(() => {
-    setCurrentState(MODAL_STATES.openOptions)
-    setStructStr('')
-    onClose()
-  }, [onClose])
+    setCurrentState(MODAL_STATES.openOptions);
+    setStructStr('');
+    onClose();
+  }, [onClose]);
 
   const onFileLoad = (files: File[]) => {
     const onLoad = (fileContent) => {
-      setStructStr(fileContent)
-      setCurrentState(MODAL_STATES.textEditor)
-    }
-    const onError = () => errorHandler('Error processing file')
+      setStructStr(fileContent);
+      setCurrentState(MODAL_STATES.textEditor);
+    };
+    const onError = () => errorHandler('Error processing file');
 
-    setFileName(files[0].name)
-    opener?.chosenOpener(files[0]).then(onLoad, onError)
-  }
+    setFileName(files[0].name);
+    opener?.chosenOpener(files[0]).then(onLoad, onError);
+  };
 
   const copyHandler = () => {
-    onOk({ struct: structStr, fragment: true })
-    onCloseCallback()
-  }
+    onOk({ struct: structStr, fragment: true });
+    onCloseCallback();
+  };
 
   const openHandler = () => {
-    onOk({ struct: structStr, fragment: false })
-    onCloseCallback()
-  }
+    onOk({ struct: structStr, fragment: false });
+    onCloseCallback();
+  };
 
   const getButtons = () => {
     if (currentState === MODAL_STATES.textEditor && !isAnalyzingFile) {
@@ -96,12 +96,12 @@ const Open = ({ isModalOpen, onClose }: Props) => {
           disabled={!structStr}
           clickHandler={openHandler}
           label="Open as New Project"
-        />
-      ]
+        />,
+      ];
     } else {
-      return []
+      return [];
     }
-  }
+  };
 
   return (
     <Modal
@@ -124,6 +124,6 @@ const Open = ({ isModalOpen, onClose }: Props) => {
       </Modal.Content>
       <Modal.Footer>{getButtons()}</Modal.Footer>
     </Modal>
-  )
-}
-export { Open }
+  );
+};
+export { Open };

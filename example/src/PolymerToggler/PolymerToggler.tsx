@@ -14,10 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import styles from './PolymerToggler.module.css'
+import styles from './PolymerToggler.module.css';
 
 export interface PolymerTogglerProps {
-  toggle: (isEnabled: boolean) => void
+  toggle: (isEnabled: boolean) => void;
 }
 
 const PolymerToggler = ({ toggle }: PolymerTogglerProps): JSX.Element => {
@@ -26,7 +26,7 @@ const PolymerToggler = ({ toggle }: PolymerTogglerProps): JSX.Element => {
       <input type="checkbox" onChange={(e) => toggle(e.target.checked)} />
       <span className={styles.slider} />
     </label>
-  )
-}
+  );
+};
 
-export { PolymerToggler }
+export { PolymerToggler };

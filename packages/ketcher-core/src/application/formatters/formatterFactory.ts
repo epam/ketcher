@@ -17,30 +17,30 @@
 import {
   FormatterFactoryOptions,
   StructFormatter,
-  SupportedFormat
-} from './structFormatter.types'
+  SupportedFormat,
+} from './structFormatter.types';
 import {
   KetSerializer,
   MolSerializer,
-  MolSerializerOptions
-} from 'domain/serializers'
-import { StructService, StructServiceOptions } from 'domain/services'
-import { KetFormatter } from './ketFormatter'
-import { ServerFormatter } from './serverFormatter'
-import { MolfileV2000Formatter } from './molfileV2000Formatter'
+  MolSerializerOptions,
+} from 'domain/serializers';
+import { StructService, StructServiceOptions } from 'domain/services';
+import { KetFormatter } from './ketFormatter';
+import { ServerFormatter } from './serverFormatter';
+import { MolfileV2000Formatter } from './molfileV2000Formatter';
 
 export class FormatterFactory {
-  #structService: StructService
+  #structService: StructService;
 
   constructor(structService: StructService) {
-    this.#structService = structService
+    this.#structService = structService;
   }
 
   private separateOptions(
-    options?: FormatterFactoryOptions
+    options?: FormatterFactoryOptions,
   ): [Partial<MolSerializerOptions>, Partial<StructServiceOptions>] {
     if (!options) {
-      return [{}, {}]
+      return [{}, {}];
     }
 
     const {
@@ -48,43 +48,43 @@ export class FormatterFactory {
       badHeaderRecover,
       ignoreChiralFlag,
       ...structServiceOptions
-    } = options
+    } = options;
 
-    const molfileParseOptions: Partial<MolSerializerOptions> = {}
+    const molfileParseOptions: Partial<MolSerializerOptions> = {};
 
     if (typeof reactionRelayout === 'boolean') {
-      molfileParseOptions.reactionRelayout = reactionRelayout
+      molfileParseOptions.reactionRelayout = reactionRelayout;
     }
     if (typeof badHeaderRecover === 'boolean') {
-      molfileParseOptions.badHeaderRecover = badHeaderRecover
+      molfileParseOptions.badHeaderRecover = badHeaderRecover;
     }
 
     if (typeof ignoreChiralFlag === 'boolean') {
-      molfileParseOptions.ignoreChiralFlag = ignoreChiralFlag
-      structServiceOptions['ignore-no-chiral-flag'] = ignoreChiralFlag
+      molfileParseOptions.ignoreChiralFlag = ignoreChiralFlag;
+      structServiceOptions['ignore-no-chiral-flag'] = ignoreChiralFlag;
     }
 
-    return [molfileParseOptions, structServiceOptions]
+    return [molfileParseOptions, structServiceOptions];
   }
 
   create(
     format: SupportedFormat,
-    options?: FormatterFactoryOptions
+    options?: FormatterFactoryOptions,
   ): StructFormatter {
     const [molSerializerOptions, structServiceOptions] =
-      this.separateOptions(options)
+      this.separateOptions(options);
 
-    let formatter: StructFormatter
+    let formatter: StructFormatter;
     switch (format) {
       case SupportedFormat.ket:
-        formatter = new KetFormatter(new KetSerializer())
-        break
+        formatter = new KetFormatter(new KetSerializer());
+        break;
 
       case SupportedFormat.mol:
         formatter = new MolfileV2000Formatter(
-          new MolSerializer(molSerializerOptions)
-        )
-        break
+          new MolSerializer(molSerializerOptions),
+        );
+        break;
 
       case SupportedFormat.cml:
       case SupportedFormat.inChIAuxInfo:
@@ -104,10 +104,10 @@ export class FormatterFactory {
           this.#structService,
           new KetSerializer(),
           format,
-          structServiceOptions
-        )
+          structServiceOptions,
+        );
     }
 
-    return formatter
+    return formatter;
   }
 }

@@ -14,25 +14,25 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { BaseOperation } from './base'
-import { OperationType } from './OperationType'
-import { ReStruct } from '../../render'
+import { BaseOperation } from './base';
+import { OperationType } from './OperationType';
+import { ReStruct } from '../../render';
 
 export class CalcImplicitH extends BaseOperation {
-  atomIds: Array<number>
+  atomIds: Array<number>;
 
   constructor(aids: Array<number>) {
-    super(OperationType.CALC_IMPLICIT_H, 10)
-    this.atomIds = aids
+    super(OperationType.CALC_IMPLICIT_H, 10);
+    this.atomIds = aids;
   }
 
   execute(restruct: ReStruct) {
-    const aIds = this.atomIds
+    const aIds = this.atomIds;
 
-    restruct.molecule.setImplicitHydrogen(aIds)
+    restruct.molecule.setImplicitHydrogen(aIds);
   }
 
   invert() {
-    return new CalcImplicitH(this.atomIds)
+    return new CalcImplicitH(this.atomIds);
   }
 }

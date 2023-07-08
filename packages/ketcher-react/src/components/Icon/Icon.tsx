@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { IIconProps } from './types'
-import { getIconByName } from './utils/getIconByName'
+import { IIconProps } from './types';
+import { getIconByName } from './utils/getIconByName';
 
 const Icon = ({ name, className, onClick }: IIconProps) => {
-  const Component = getIconByName(name)
+  const Component = getIconByName(name);
 
-  return <Component className={className} onClick={onClick} />
-}
+  return <Component className={className} onClick={onClick} />;
+};
 
-export default Icon
+export default Icon;

@@ -16,7 +16,7 @@
 
 import {
   StandaloneStructService,
-  StandaloneStructServiceProvider
-} from './struct'
+  StandaloneStructServiceProvider,
+} from './struct';
 
-export { StandaloneStructServiceProvider, StandaloneStructService }
+export { StandaloneStructServiceProvider, StandaloneStructService };

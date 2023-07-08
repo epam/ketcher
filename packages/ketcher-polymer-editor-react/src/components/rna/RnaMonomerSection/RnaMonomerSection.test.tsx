@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { render, screen, fireEvent } from '@testing-library/react'
-import { Struct } from 'ketcher-core'
-import { RnaMonomerSection } from './RnaMonomerSection'
+import { render, screen, fireEvent } from '@testing-library/react';
+import { Struct } from 'ketcher-core';
+import { RnaMonomerSection } from './RnaMonomerSection';
 
 // will be completely rewored in the nearest tasks
 describe.skip('RNA Monomer Section', () => {
@@ -30,53 +30,53 @@ describe.skip('RNA Monomer Section', () => {
             monomers: {
               Sugar: 'R',
               Nucleobase: 'A',
-              Phosphate: 'P'
+              Phosphate: 'P',
             },
-            struct: new Struct()
+            struct: new Struct(),
           },
           {
             label: 'U',
             monomers: {
               Sugar: 'R',
               Nucleobase: 'U',
-              Phosphate: 'P'
+              Phosphate: 'P',
             },
-            struct: new Struct()
-          }
+            struct: new Struct(),
+          },
         ],
-        groupTitle: 'Nucleotides'
-      }
+        groupTitle: 'Nucleotides',
+      },
     ],
     Nucleobase: [
       {
         groupItems: [
           { label: 'A', struct: new Struct() },
-          { label: '2ldg', struct: new Struct() }
+          { label: '2ldg', struct: new Struct() },
         ],
-        groupTitle: 'Nucleobase'
-      }
+        groupTitle: 'Nucleobase',
+      },
     ],
     Sugar: [
       {
         groupItems: [
           { label: 'R', struct: new Struct() },
-          { label: 'm', struct: new Struct() }
+          { label: 'm', struct: new Struct() },
         ],
-        groupTitle: 'Sugar'
-      }
+        groupTitle: 'Sugar',
+      },
     ],
     Phosphate: [
       {
         groupItems: [
           { label: 'p', struct: new Struct() },
-          { label: '36dcd', struct: new Struct() }
+          { label: '36dcd', struct: new Struct() },
         ],
-        groupTitle: 'Phosphate'
-      }
-    ]
-  }
-  const selectItemMock = jest.fn()
-  const initialMonomers = ['R', 'A', 'P']
+        groupTitle: 'Phosphate',
+      },
+    ],
+  };
+  const selectItemMock = jest.fn();
+  const initialMonomers = ['R', 'A', 'P'];
 
   it('should correct render with initial values', () => {
     render(
@@ -84,17 +84,17 @@ describe.skip('RNA Monomer Section', () => {
         <RnaMonomerSection
           items={rnaMonomersMock}
           selectItem={selectItemMock}
-        />
-      )
-    )
-    const switcherButtons = screen.getAllByRole('button')
-    const tabTitle = screen.getByText('Nucleotides')
-    const tabContent = screen.getByText('U')
+        />,
+      ),
+    );
+    const switcherButtons = screen.getAllByRole('button');
+    const tabTitle = screen.getByText('Nucleotides');
+    const tabContent = screen.getByText('U');
 
-    expect(switcherButtons.length).toEqual(5)
-    expect(tabTitle).toBeInTheDocument()
-    expect(tabContent).toBeInTheDocument()
-  })
+    expect(switcherButtons.length).toEqual(5);
+    expect(tabTitle).toBeInTheDocument();
+    expect(tabContent).toBeInTheDocument();
+  });
 
   it('should pass correct initial monomers to switcher', () => {
     render(
@@ -102,12 +102,12 @@ describe.skip('RNA Monomer Section', () => {
         <RnaMonomerSection
           items={rnaMonomersMock}
           selectItem={selectItemMock}
-        />
-      )
-    )
-    const switcherButton = screen.getByText('R(A)P')
-    expect(switcherButton).toBeInTheDocument()
-  })
+        />,
+      ),
+    );
+    const switcherButton = screen.getByText('R(A)P');
+    expect(switcherButton).toBeInTheDocument();
+  });
 
   it('should render correct tab when each switcher button selected', () => {
     render(
@@ -115,25 +115,25 @@ describe.skip('RNA Monomer Section', () => {
         <RnaMonomerSection
           items={rnaMonomersMock}
           selectItem={selectItemMock}
-        />
-      )
-    )
+        />,
+      ),
+    );
 
-    const sugarButton = screen.getByText('R')
-    fireEvent.click(sugarButton)
-    const sugarTab = screen.getByText('Sugar')
-    expect(sugarTab).toBeInTheDocument()
+    const sugarButton = screen.getByText('R');
+    fireEvent.click(sugarButton);
+    const sugarTab = screen.getByText('Sugar');
+    expect(sugarTab).toBeInTheDocument();
 
-    const nucleobaseButton = screen.getByText('A')
-    fireEvent.click(nucleobaseButton)
-    const nucleobaseTab = screen.getByText('Nucleobase')
-    expect(nucleobaseTab).toBeInTheDocument()
+    const nucleobaseButton = screen.getByText('A');
+    fireEvent.click(nucleobaseButton);
+    const nucleobaseTab = screen.getByText('Nucleobase');
+    expect(nucleobaseTab).toBeInTheDocument();
 
-    const phosphateButton = screen.getByText('P')
-    fireEvent.click(phosphateButton)
-    const phosphateTab = screen.getByText('Phosphate')
-    expect(phosphateTab).toBeInTheDocument()
-  })
+    const phosphateButton = screen.getByText('P');
+    fireEvent.click(phosphateButton);
+    const phosphateTab = screen.getByText('Phosphate');
+    expect(phosphateTab).toBeInTheDocument();
+  });
 
   it('should pass correct arg to callback function after changing type', () => {
     render(
@@ -141,21 +141,21 @@ describe.skip('RNA Monomer Section', () => {
         <RnaMonomerSection
           items={rnaMonomersMock}
           selectItem={selectItemMock}
-        />
-      )
-    )
+        />,
+      ),
+    );
 
     expect(selectItemMock).toHaveBeenCalledWith({
       Sugar: 'R',
       Nucleobase: 'A',
-      Phosphate: 'P'
-    })
+      Phosphate: 'P',
+    });
 
     initialMonomers.forEach((monomer) => {
-      fireEvent.click(screen.getByText(monomer))
-      expect(selectItemMock).toHaveBeenCalledWith(monomer)
-    })
-  })
+      fireEvent.click(screen.getByText(monomer));
+      expect(selectItemMock).toHaveBeenCalledWith(monomer);
+    });
+  });
 
   it('should pass correct arg to callback function after changing monomer', () => {
     render(
@@ -163,24 +163,24 @@ describe.skip('RNA Monomer Section', () => {
         <RnaMonomerSection
           items={rnaMonomersMock}
           selectItem={selectItemMock}
-        />
-      )
-    )
+        />,
+      ),
+    );
 
     // nucleotides
-    let selectedMonomer = screen.getByText('U')
-    fireEvent.click(selectedMonomer)
+    let selectedMonomer = screen.getByText('U');
+    fireEvent.click(selectedMonomer);
     expect(selectItemMock).toHaveBeenCalledWith({
       Sugar: 'R',
       Nucleobase: 'U',
-      Phosphate: 'P'
-    })
+      Phosphate: 'P',
+    });
 
     // sugar
-    const sugarButton = screen.getByText('R')
-    fireEvent.click(sugarButton)
-    selectedMonomer = screen.getByText('m')
-    fireEvent.click(selectedMonomer)
-    expect(selectItemMock).toHaveBeenCalledWith('m')
-  })
-})
+    const sugarButton = screen.getByText('R');
+    fireEvent.click(sugarButton);
+    selectedMonomer = screen.getByText('m');
+    fireEvent.click(selectedMonomer);
+    expect(selectItemMock).toHaveBeenCalledWith('m');
+  });
+});

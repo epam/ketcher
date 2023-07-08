@@ -6,12 +6,12 @@ module.exports = {
   transform: {
     '\\.(js|jsx)$': 'babel-jest',
     '^.+\\.(ts|tsx)$': 'ts-jest',
-    '\\.svg$': '<rootDir>/testFileTransformer.js'
+    '\\.svg$': '<rootDir>/testFileTransformer.js',
   },
   moduleNameMapper: {
     '\\.(css|less|sdf)$': 'identity-obj-proxy',
     '^src(.*)$': '<rootDir>/src/$1',
-    '^components$': '<rootDir>/src/components'
+    '^components$': '<rootDir>/src/components',
   },
-  setupFilesAfterEnv: ['<rootDir>/src/setupTests.ts']
-}
+  setupFilesAfterEnv: ['<rootDir>/src/setupTests.ts'],
+};

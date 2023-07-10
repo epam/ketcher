@@ -26,12 +26,13 @@ import { Page } from '@playwright/test';
  */
 export const waitForLoad = async (page: Page, callback: VoidFunction) => {
   await page.waitForFunction(() => window.ketcher);
-  // const promise = page.evaluate(evaluateCallback, REQUEST_IS_FINISHED);
   callback();
+
+  if (await page.locator('[role=dialog]').isVisible()) {
+    await page.waitForSelector('[role=dialog]', { state: 'detached' });
+  }
 
   if (await page.locator('.loading-spinner').isVisible()) {
     await page.waitForSelector('.loading-spinner', { state: 'detached' });
   }
-
-  // return promise;
 };

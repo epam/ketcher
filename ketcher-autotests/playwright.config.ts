@@ -19,7 +19,6 @@ const ignoredTests = [
   'Indigo-Tools/**',
   'Reagents/**',
   'Structure-Creating-&-Editing/**',
-  'Templates/Functional-Groups/functional-groups.spec.ts',
   'Templates/Functional-Groups/Functional-Group-Tools/functional-group-tools.spec.ts',
   'Templates/Salts-and-Solvents/**',
   'Templates/User-Templates/**',

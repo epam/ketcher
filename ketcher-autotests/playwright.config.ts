@@ -15,7 +15,6 @@ dotenv.config();
 const ignoredTests = [
   'API/**',
   'Examples/**',
-  'File-Management/**',
   'Indigo-Tools/**',
   'Reagents/**',
   'Structure-Creating-&-Editing/**',
@@ -64,7 +63,7 @@ const config: PlaywrightTestConfig = {
   /* Retry on CI only */
   retries: process.env.CI ? MAX_NUMBER_OF_RETRIES : 0,
   /* Opt out of parallel tests on CI. */
-  workers: process.env.CI ? 1 : undefined,
+  workers: process.env.CI ? 1 : 2,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: [
     [

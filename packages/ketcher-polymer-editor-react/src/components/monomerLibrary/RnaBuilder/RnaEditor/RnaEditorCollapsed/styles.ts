@@ -14,30 +14,30 @@
  * limitations under the License.
  ***************************************************************************/
 
-import styled from '@emotion/styled'
-import { Icon } from 'ketcher-react'
+import styled from '@emotion/styled';
+import { Icon } from 'ketcher-react';
 
 export const RnaEditorCollapsedContainer = styled.div({
   display: 'flex',
   flexDirection: 'row',
   justifyContent: 'space-between',
   alignItems: 'center',
-  padding: '10px'
-})
+  padding: '10px',
+});
 
 export const MonomerFullName = styled.span((props) => ({
-  fontSize: props.theme.ketcher.font.size.small
-}))
+  fontSize: props.theme.ketcher.font.size.small,
+}));
 
 export const MonomerName = styled.span((props) => ({
-  fontSize: props.theme.ketcher.font.size.medium
-}))
+  fontSize: props.theme.ketcher.font.size.medium,
+}));
 
 export const TextContainer = styled.div({
   display: 'flex',
   flexDirection: 'column',
-  gap: '4px'
-})
+  gap: '4px',
+});
 
 export const EditIcon = styled(Icon)((props) => ({
   width: '24px',
@@ -46,6 +46,6 @@ export const EditIcon = styled(Icon)((props) => ({
   color: props.theme.ketcher.color.text.primary,
 
   ':hover': {
-    color: props.theme.ketcher.color.text.secondary
-  }
-}))
+    color: props.theme.ketcher.color.text.secondary,
+  },
+}));

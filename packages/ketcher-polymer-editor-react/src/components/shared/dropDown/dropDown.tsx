@@ -14,12 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useState, CSSProperties } from 'react'
-import { Select, FormControl, MenuItem, ListItemText } from '@mui/material'
-import styled from '@emotion/styled'
-import { css } from '@emotion/react'
+import { useState, CSSProperties } from 'react';
+import { Select, FormControl, MenuItem, ListItemText } from '@mui/material';
+import styled from '@emotion/styled';
+import { css } from '@emotion/react';
 
-import { ChevronIcon, CheckMarkIcon } from './styledIcons'
+import { ChevronIcon, CheckMarkIcon } from './styledIcons';
 
 const DropDownSelect = styled(Select)`
   width: 150px;
@@ -46,7 +46,7 @@ const DropDownSelect = styled(Select)`
   & .MuiOutlinedInput-notchedOutline {
     border: 0;
   }
-`
+`;
 
 const stylesForExpanded: CSSProperties = {
   width: '120px',
@@ -54,8 +54,8 @@ const stylesForExpanded: CSSProperties = {
   border: '1px solid #5B6077',
   borderTopWidth: '0',
   borderRadius: '0px 0px 2px 2px',
-  boxShadow: 'none'
-}
+  boxShadow: 'none',
+};
 
 const DropDownItem = styled(MenuItem)`
   display: flex;
@@ -66,49 +66,49 @@ const DropDownItem = styled(MenuItem)`
   & .MuiTypography-root {
     ${({ theme }) => `font-size: ${theme.ketcher.font.size.regular}`}
   }
-`
+`;
 
 export type Option = {
-  id: string
-  label: string
-}
+  id: string;
+  label: string;
+};
 
 export type DropDownProps = {
-  options: Array<Option>
-  currentSelection: Option['id']
-  selectionHandler: (value: Option['id']) => void
-  className?: string
-  customStylesForExpanded?: CSSProperties
-}
+  options: Array<Option>;
+  currentSelection: Option['id'];
+  selectionHandler: (value: Option['id']) => void;
+  className?: string;
+  customStylesForExpanded?: CSSProperties;
+};
 
 export const DropDown = ({
   options,
   currentSelection,
   selectionHandler,
   className,
-  customStylesForExpanded = {}
+  customStylesForExpanded = {},
 }: DropDownProps) => {
-  const [expanded, setExpanded] = useState(false)
+  const [expanded, setExpanded] = useState(false);
 
   const renderLabelById = (value: unknown) => {
     const selectedOption = options.filter(
-      (option) => option.id === (value as typeof currentSelection)
-    )[0]
+      (option) => option.id === (value as typeof currentSelection),
+    )[0];
 
-    return <span>{selectedOption.label}</span>
-  }
+    return <span>{selectedOption.label}</span>;
+  };
 
   const handleSelection = (event) => {
-    selectionHandler(event.target.value)
-  }
+    selectionHandler(event.target.value);
+  };
 
   const handleExpand = () => {
-    setExpanded(true)
-  }
+    setExpanded(true);
+  };
 
   const handleCollapse = () => {
-    setExpanded(false)
-  }
+    setExpanded(false);
+  };
 
   return (
     <FormControl className={className}>
@@ -124,11 +124,11 @@ export const DropDown = ({
         data-testid="dropdown-select"
         MenuProps={{
           PaperProps: {
-            style: { ...stylesForExpanded, ...customStylesForExpanded }
+            style: { ...stylesForExpanded, ...customStylesForExpanded },
           },
           MenuListProps: {
-            style: { padding: '0' }
-          }
+            style: { padding: '0' },
+          },
         }}
       >
         {options.map((item: Option) => (
@@ -139,5 +139,5 @@ export const DropDown = ({
         ))}
       </DropDownSelect>
     </FormControl>
-  )
-}
+  );
+};

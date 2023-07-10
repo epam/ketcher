@@ -14,15 +14,15 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useState } from 'react'
-import { connect } from 'react-redux'
-import { ClickAwayListener, Collapse, IconButton } from '@mui/material'
-import styled from '@emotion/styled'
-import { Icon } from 'components'
+import { useState } from 'react';
+import { connect } from 'react-redux';
+import { ClickAwayListener, Collapse, IconButton } from '@mui/material';
+import styled from '@emotion/styled';
+import { Icon } from 'components';
 
 const ElementAndDropdown = styled('div')`
   position: relative;
-`
+`;
 
 const DropDownContent = styled('div')`
   display: flex;
@@ -38,7 +38,7 @@ const DropDownContent = styled('div')`
   border: 1px solid #cad3dd; // TODO use variable
   border-radius: 5px;
   box-shadow: 0 6px 12px rgb(0 0 0 / 18%);
-`
+`;
 
 const DropDownButton = styled(IconButton)`
   position: absolute;
@@ -53,7 +53,7 @@ const DropDownButton = styled(IconButton)`
     color: #333;
     pointer-events: auto;
   }
-`
+`;
 
 const DropDownArrow = styled(Icon)`
   display: block;
@@ -77,29 +77,29 @@ const DropDownArrow = styled(Icon)`
   &svg path {
     fill: inherit;
   }
-`
+`;
 
 interface ElementWithDropdownProps {
-  topElement?: JSX.Element
-  dropDownElements: JSX.Element[]
-  onToolOpen: () => void
+  topElement?: JSX.Element;
+  dropDownElements: JSX.Element[];
+  onToolOpen: () => void;
 }
 
 const MenuItemWithDropdown = ({
   topElement,
   dropDownElements,
-  onToolOpen
+  onToolOpen,
 }: ElementWithDropdownProps) => {
-  const [isExpanded, setIsExpanded] = useState<boolean>(false)
+  const [isExpanded, setIsExpanded] = useState<boolean>(false);
 
   const collapse = () => {
-    setIsExpanded(false)
-  }
+    setIsExpanded(false);
+  };
 
   const expand = () => {
-    onToolOpen()
-    setIsExpanded(true)
-  }
+    onToolOpen();
+    setIsExpanded(true);
+  };
 
   return (
     <ElementAndDropdown>
@@ -119,19 +119,19 @@ const MenuItemWithDropdown = ({
         </ClickAwayListener>
       </Collapse>
     </ElementAndDropdown>
-  )
-}
+  );
+};
 
 // TODO: refactor, workaround to fix top toolbar dropdowns and left toolbar dropdowns overlapping
 const mapDispatchToProps = (dispatch) => ({
   onToolOpen: () =>
     dispatch({
       type: 'OPENED',
-      data: { menuName: null, isSelected: null }
-    })
-})
+      data: { menuName: null, isSelected: null },
+    }),
+});
 
 export const ElementWithDropdown = connect(
   null,
-  mapDispatchToProps
-)(MenuItemWithDropdown)
+  mapDispatchToProps,
+)(MenuItemWithDropdown);

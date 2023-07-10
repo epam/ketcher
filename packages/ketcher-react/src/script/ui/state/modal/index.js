@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { formReducer, formsState } from './form'
+import { formReducer, formsState } from './form';
 
 export function openDialog(dispatch, dialogName, props) {
   return new Promise((resolve, reject) => {
@@ -25,40 +25,40 @@ export function openDialog(dispatch, dialogName, props) {
         prop: {
           ...props,
           onResult: resolve,
-          onCancel: reject
-        }
-      }
-    })
-  })
+          onCancel: reject,
+        },
+      },
+    });
+  });
 }
 
 function modalReducer(state = null, action) {
-  const { type, data } = action
+  const { type, data } = action;
 
   if (type === 'UPDATE_FORM') {
     // Don't update if modal has already been closed
     // TODO: refactor actions and server functions in /src/script/ui/state/server/index.js to
     // not send 'UPDATE_FORM' action to a closed modal in the first place
     if (!state) {
-      return null
+      return null;
     }
 
-    const formState = formReducer(state.form, action)
-    return { ...state, form: formState }
+    const formState = formReducer(state.form, action);
+    return { ...state, form: formState };
   }
 
   switch (type) {
     case 'MODAL_CLOSE':
-      return null
+      return null;
     case 'MODAL_OPEN':
       return {
         name: data.name,
         form: formsState[data.name] || null,
-        prop: data.prop || null
-      }
+        prop: data.prop || null,
+      };
     default:
-      return state
+      return state;
   }
 }
 
-export default modalReducer
+export default modalReducer;

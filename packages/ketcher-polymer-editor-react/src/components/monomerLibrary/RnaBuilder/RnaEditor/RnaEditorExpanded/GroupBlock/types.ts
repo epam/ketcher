@@ -14,14 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { IconName } from 'ketcher-react'
-import { MonomerGroups } from 'src/constants'
+import { IconName } from 'ketcher-react';
+import { MonomerGroups } from 'src/constants';
 
 export interface IGroupBlockProps {
-  groupName: MonomerGroups
-  iconName: IconName
-  monomerName?: string
-  selected?: boolean
-  disabled?: boolean
-  onClick?: () => void
+  groupName: MonomerGroups;
+  iconName: IconName;
+  monomerName?: string;
+  selected?: boolean;
+  disabled?: boolean;
+  onClick?: () => void;
 }

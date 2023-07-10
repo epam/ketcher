@@ -14,8 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { IconName, SvgComponent } from '../types'
-import { iconNameToIcon } from './iconNameToIcon'
+import { IconName, SvgComponent } from '../types';
+import { iconNameToIcon } from './iconNameToIcon';
 
 export const getIconByName = (name: IconName): SvgComponent =>
-  iconNameToIcon[name]
+  iconNameToIcon[name];

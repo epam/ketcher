@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { StyledInput } from './styles'
+import { StyledInput } from './styles';
 
 export const Input = (props: React.InputHTMLAttributes<HTMLInputElement>) => {
-  return <StyledInput {...props} />
-}
+  return <StyledInput {...props} />;
+};

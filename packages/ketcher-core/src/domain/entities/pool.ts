@@ -15,47 +15,47 @@
  ***************************************************************************/
 
 export class Pool<TValue = any> extends Map<number, TValue> {
-  private nextId = 0
+  private nextId = 0;
 
   add(item: TValue): number {
-    const id = this.nextId++
-    super.set(id, item)
-    return id
+    const id = this.nextId++;
+    super.set(id, item);
+    return id;
   }
 
   newId(): number {
-    return this.nextId++
+    return this.nextId++;
   }
 
   keyOf(item: TValue): number | null {
     for (const [key, value] of this.entries()) {
-      if (value === item) return key
+      if (value === item) return key;
     }
 
-    return null
+    return null;
   }
 
   find(predicate: (key: number, value: TValue) => boolean): number | null {
     for (const [key, value] of this.entries()) {
-      if (predicate(key, value)) return key
+      if (predicate(key, value)) return key;
     }
 
-    return null
+    return null;
   }
 
   filter(predicate: (key: number, value: TValue) => boolean): Pool<TValue> {
     return new Pool<TValue>(
-      Array.from(this).filter(([key, value]) => predicate(key, value))
-    )
+      Array.from(this).filter(([key, value]) => predicate(key, value)),
+    );
   }
 
   some(predicate: (value: TValue) => boolean): boolean {
     for (const value of this.values()) {
       if (predicate(value)) {
-        return true
+        return true;
       }
     }
 
-    return false
+    return false;
   }
 }

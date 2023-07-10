@@ -14,4 +14,4 @@
  * limitations under the License.
  ***************************************************************************/
 
-export * from './MonomerLibrary'
+export * from './MonomerLibrary';

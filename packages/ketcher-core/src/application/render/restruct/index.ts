@@ -16,20 +16,20 @@
 // ReStruct is to store all the auxiliary information for
 //  Struct while rendering
 
-import ReAtom from './reatom'
-import ReBond from './rebond'
-import ReEnhancedFlag from './reenhancedFlag'
-import ReFrag from './refrag'
-import ReRGroup from './rergroup'
-import ReRxnArrow from './rerxnarrow'
-import ReRxnPlus from './rerxnplus'
-import ReSGroup from './resgroup'
-import ReSimpleObject from './resimpleObject'
-import ReStruct from './restruct'
-import ReText from './retext'
+import ReAtom from './reatom';
+import ReBond from './rebond';
+import ReEnhancedFlag from './reenhancedFlag';
+import ReFrag from './refrag';
+import ReRGroup from './rergroup';
+import ReRxnArrow from './rerxnarrow';
+import ReRxnPlus from './rerxnplus';
+import ReSGroup from './resgroup';
+import ReSimpleObject from './resimpleObject';
+import ReStruct from './restruct';
+import ReText from './retext';
 
-export * from './generalEnumTypes'
-export * from './reatom'
+export * from './generalEnumTypes';
+export * from './reatom';
 export {
   ReAtom,
   ReBond,
@@ -41,5 +41,5 @@ export {
   ReSGroup,
   ReSimpleObject,
   ReText,
-  ReStruct
-}
+  ReStruct,
+};

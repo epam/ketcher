@@ -14,4 +14,4 @@
  * limitations under the License.
  ***************************************************************************/
 
-export { default as style } from './consts'
+export { default as style } from './consts';

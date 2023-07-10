@@ -17,24 +17,24 @@
 import {
   SERVER_OPTIONS,
   getDefaultOptions,
-  validation
-} from '../../data/schema/options-schema'
+  validation,
+} from '../../data/schema/options-schema';
 
-import { pick } from 'lodash/fp'
-import { storage } from '../../storage-ext'
+import { pick } from 'lodash/fp';
+import { storage } from '../../storage-ext';
 
 export const initOptionsState = {
   app: {
     server: false,
     templates: false,
     functionalGroups: false,
-    saltsAndSolvents: false
+    saltsAndSolvents: false,
   },
   analyse: {
     values: null,
     roundWeight: 3,
     roundMass: 3,
-    roundElAnalysis: 1
+    roundElAnalysis: 1,
   },
   check: {
     checkOptions: [
@@ -48,46 +48,46 @@ export const initOptionsState = {
       'rgroups',
       'chiral',
       '3d',
-      'chiral_flag'
-    ]
+      'chiral_flag',
+    ],
   },
   recognize: {
     file: null,
     structStr: null,
     fragment: false,
-    version: null
+    version: null,
   },
   settings: Object.assign(
     getDefaultOptions(),
-    validation(storage.getItem('ketcher-opts'))
+    validation(storage.getItem('ketcher-opts')),
   ),
   getServerSettings() {
-    return pick(SERVER_OPTIONS, this.settings)
-  }
-}
+    return pick(SERVER_OPTIONS, this.settings);
+  },
+};
 
 export function appUpdate(data) {
   return (dispatch) => {
-    dispatch({ type: 'APP_OPTIONS', data })
-    dispatch({ type: 'UPDATE' })
-  }
+    dispatch({ type: 'APP_OPTIONS', data });
+    dispatch({ type: 'UPDATE' });
+  };
 }
 
 /* SETTINGS */
 export function saveSettings(newSettings) {
-  storage.setItem('ketcher-opts', newSettings)
+  storage.setItem('ketcher-opts', newSettings);
   return {
     type: 'SAVE_SETTINGS',
-    data: newSettings
-  }
+    data: newSettings,
+  };
 }
 
 /* ANALYZE */
 export function changeRound(roundName, value) {
   return {
     type: 'CHANGE_ANALYSE',
-    data: { [roundName]: value }
-  }
+    data: { [roundName]: value },
+  };
 }
 
 /* RECOGNIZE */
@@ -95,21 +95,21 @@ const recognizeActions = [
   'SET_RECOGNIZE_STRUCT',
   'CHANGE_RECOGNIZE_FILE',
   'CHANGE_IMAGO_VERSION',
-  'IS_FRAGMENT_RECOGNIZE'
-]
+  'IS_FRAGMENT_RECOGNIZE',
+];
 
 export function setStruct(str) {
   return {
     type: 'SET_RECOGNIZE_STRUCT',
-    data: { structStr: str }
-  }
+    data: { structStr: str },
+  };
 }
 
 export function changeVersion(version) {
   return {
     type: 'CHANGE_IMAGO_VERSION',
-    data: { version }
-  }
+    data: { version },
+  };
 }
 
 export function changeImage(file) {
@@ -117,46 +117,46 @@ export function changeImage(file) {
     type: 'CHANGE_RECOGNIZE_FILE',
     data: {
       file,
-      structStr: null
-    }
-  }
+      structStr: null,
+    },
+  };
 }
 
 export function shouldFragment(isFrag) {
   return {
     type: 'IS_FRAGMENT_RECOGNIZE',
-    data: { fragment: isFrag }
-  }
+    data: { fragment: isFrag },
+  };
 }
 
 /* CHECK */
 export function checkOpts(data) {
   return {
     type: 'SAVE_CHECK_OPTS',
-    data
-  }
+    data,
+  };
 }
 
 /* REDUCER */
 function optionsReducer(state = {}, action) {
-  const { type, data } = action
+  const { type, data } = action;
 
   if (type === 'APP_OPTIONS')
-    return { ...state, app: { ...state.app, ...data } }
+    return { ...state, app: { ...state.app, ...data } };
 
-  if (type === 'SAVE_SETTINGS') return { ...state, settings: data }
+  if (type === 'SAVE_SETTINGS') return { ...state, settings: data };
 
-  if (type === 'SAVE_CHECK_OPTS') return { ...state, check: data }
+  if (type === 'SAVE_CHECK_OPTS') return { ...state, check: data };
 
   if (type === 'CHANGE_ANALYSE')
-    return { ...state, analyse: { ...state.analyse, ...data, loading: false } }
+    return { ...state, analyse: { ...state.analyse, ...data, loading: false } };
 
   if (type === 'ANALYSE_LOADING')
-    return { ...state, analyse: { ...state.analyse, loading: true } }
+    return { ...state, analyse: { ...state.analyse, loading: true } };
 
   if (recognizeActions.includes(type))
-    return { ...state, recognize: { ...state.recognize, ...data } }
-  return state
+    return { ...state, recognize: { ...state.recognize, ...data } };
+  return state;
 }
 
-export default optionsReducer
+export default optionsReducer;

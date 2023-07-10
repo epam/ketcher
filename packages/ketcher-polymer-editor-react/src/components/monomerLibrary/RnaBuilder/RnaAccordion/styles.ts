@@ -14,19 +14,19 @@
  * limitations under the License.
  ***************************************************************************/
 
-import styled from '@emotion/styled'
-import { Accordion } from 'ketcher-react'
+import styled from '@emotion/styled';
+import { Accordion } from 'ketcher-react';
 
 export const RnaAccordionContainer = styled.div({
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'flex-end',
-  overflow: 'hidden'
-})
+  overflow: 'hidden',
+});
 
 export const StyledAccordion = styled(Accordion)({
-  minHeight: '32px'
-})
+  minHeight: '32px',
+});
 
 export const DetailsContainer = styled.div({
   width: '100%',
@@ -34,5 +34,5 @@ export const DetailsContainer = styled.div({
   flexDirection: 'column',
   gap: '24px',
   justifyContent: 'start',
-  padding: '16px 12px'
-})
+  padding: '16px 12px',
+});

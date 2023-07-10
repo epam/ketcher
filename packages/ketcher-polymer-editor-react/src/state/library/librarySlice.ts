@@ -14,26 +14,26 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { createSlice, PayloadAction, Slice } from '@reduxjs/toolkit'
-import { MonomerItemType } from 'components/monomerLibrary/monomerLibraryItem/types'
-import { Group } from 'components/monomerLibrary/monomerLibraryList/types'
-import { SdfItem } from 'ketcher-core'
-import { LibraryNameType } from 'src/constants'
+import { createSlice, PayloadAction, Slice } from '@reduxjs/toolkit';
+import { MonomerItemType } from 'components/monomerLibrary/monomerLibraryItem/types';
+import { Group } from 'components/monomerLibrary/monomerLibraryList/types';
+import { SdfItem } from 'ketcher-core';
+import { LibraryNameType } from 'src/constants';
 
 interface LibraryState {
-  monomers: Group[]
-  favorites: { [key: string]: Group }
-  searchFilter: string
+  monomers: Group[];
+  favorites: { [key: string]: Group };
+  searchFilter: string;
 }
 
 const initialState: LibraryState = {
   monomers: [],
   favorites: {},
-  searchFilter: ''
-}
+  searchFilter: '',
+};
 
 function getMonomerUniqueKey(monomer: MonomerItemType) {
-  return `${monomer.props.MonomerName}___${monomer.props.Name}`
+  return `${monomer.props.MonomerName}___${monomer.props.Name}`;
 }
 
 export const librarySlice: Slice = createSlice({
@@ -41,93 +41,93 @@ export const librarySlice: Slice = createSlice({
   initialState,
   reducers: {
     loadMonomerLibrary: (state, action: PayloadAction<SdfItem[]>) => {
-      state.monomers = action.payload
+      state.monomers = action.payload;
     },
     addMonomerFavorites: (state, action: PayloadAction<MonomerItemType>) => {
-      state.favorites[getMonomerUniqueKey(action.payload)] = action.payload
+      state.favorites[getMonomerUniqueKey(action.payload)] = action.payload;
     },
     removeMonomerFavorites: (state, action: PayloadAction<MonomerItemType>) => {
-      delete state.favorites[getMonomerUniqueKey(action.payload)]
+      delete state.favorites[getMonomerUniqueKey(action.payload)];
     },
     toggleMonomerFavorites: (state, action: PayloadAction<MonomerItemType>) => {
-      const key = getMonomerUniqueKey(action.payload)
+      const key = getMonomerUniqueKey(action.payload);
       if (state.favorites[key]) {
-        delete state.favorites[key]
+        delete state.favorites[key];
       } else {
-        state.favorites[key] = action.payload
+        state.favorites[key] = action.payload;
       }
     },
     setSearchFilter: (state, action: PayloadAction<string>) => {
-      state.searchFilter = action.payload
-    }
-  }
-})
+      state.searchFilter = action.payload;
+    },
+  },
+});
 
 export const selectMonomersInCategory = (
   items: MonomerItemType[],
-  category: LibraryNameType
-) => items.filter((item) => item.props?.MonomerType === category)
+  category: LibraryNameType,
+) => items.filter((item) => item.props?.MonomerType === category);
 
 export const selectMonomersInFavorites = (items: MonomerItemType[]) =>
-  items.filter((item) => item.favorite)
+  items.filter((item) => item.favorite);
 
 export const selectFilteredMonomers = (state) => {
-  const { searchFilter, monomers } = state.library
+  const { searchFilter, monomers } = state.library;
   return monomers
     .filter((item: MonomerItemType) => {
-      const { Name = '', MonomerName = '' } = item.props
-      const monomerName = Name.toLowerCase()
-      const monomerNameFull = MonomerName.toLowerCase()
-      const normalizedSearchFilter = searchFilter.toLowerCase()
+      const { Name = '', MonomerName = '' } = item.props;
+      const monomerName = Name.toLowerCase();
+      const monomerNameFull = MonomerName.toLowerCase();
+      const normalizedSearchFilter = searchFilter.toLowerCase();
       const cond =
         monomerName.includes(normalizedSearchFilter) ||
-        monomerNameFull.includes(normalizedSearchFilter)
-      return cond
+        monomerNameFull.includes(normalizedSearchFilter);
+      return cond;
     })
     .map((item: MonomerItemType) => {
       return {
         ...item,
-        favorite: !!state.library.favorites[getMonomerUniqueKey(item)]
-      }
-    })
-}
+        favorite: !!state.library.favorites[getMonomerUniqueKey(item)],
+      };
+    });
+};
 
 export const selectMonomerGroups = (monomers: MonomerItemType[]) => {
   const preparedData = monomers.reduce((result, monomerItem) => {
     // separate monomers by NaturalAnalogCode
-    const code = monomerItem.props.MonomerNaturalAnalogCode
+    const code = monomerItem.props.MonomerNaturalAnalogCode;
     if (!result[code]) {
-      result[code] = []
+      result[code] = [];
     }
     result[code].push({
       ...monomerItem,
-      label: monomerItem.props.MonomerName
-    })
-    return result
-  }, {})
+      label: monomerItem.props.MonomerName,
+    });
+    return result;
+  }, {});
   // generate list of monomer groups
-  const preparedGroups: Group[] = []
+  const preparedGroups: Group[] = [];
   return Object.keys(preparedData)
     .sort()
     .reduce((result, code) => {
       const group: Group = {
         groupTitle: code,
-        groupItems: []
-      }
+        groupItems: [],
+      };
       preparedData[code].forEach((item: MonomerItemType) => {
         group.groupItems.push({
           ...item,
-          props: { ...item.props }
-        })
-      })
+          props: { ...item.props },
+        });
+      });
       if (group.groupItems.length) {
-        result.push(group)
+        result.push(group);
       }
-      return result
-    }, preparedGroups)
-}
+      return result;
+    }, preparedGroups);
+};
 
 export const { loadMonomerLibrary, toggleMonomerFavorites, setSearchFilter } =
-  librarySlice.actions
+  librarySlice.actions;
 
-export const libraryReducer = librarySlice.reducer
+export const libraryReducer = librarySlice.reducer;

@@ -19,10 +19,10 @@ import {
   GroupIcon,
   GroupName,
   MonomerName,
-  TextContainer
-} from './styles'
-import { IGroupBlockProps } from './types'
-import { groupNameToLabel, groupNameToRnaEditorItemLabel } from './utils'
+  TextContainer,
+} from './styles';
+import { IGroupBlockProps } from './types';
+import { groupNameToLabel, groupNameToRnaEditorItemLabel } from './utils';
 
 export const GroupBlock = ({
   groupName,
@@ -30,7 +30,7 @@ export const GroupBlock = ({
   monomerName,
   selected,
   disabled,
-  onClick
+  onClick,
 }: IGroupBlockProps) => {
   return (
     <GroupBlockContainer
@@ -48,5 +48,5 @@ export const GroupBlock = ({
         </MonomerName>
       </TextContainer>
     </GroupBlockContainer>
-  )
-}
+  );
+};

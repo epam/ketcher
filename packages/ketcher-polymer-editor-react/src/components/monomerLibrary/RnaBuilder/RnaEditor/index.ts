@@ -14,4 +14,4 @@
  * limitations under the License.
  ***************************************************************************/
 
-export { RnaEditor } from './RnaEditor'
+export { RnaEditor } from './RnaEditor';

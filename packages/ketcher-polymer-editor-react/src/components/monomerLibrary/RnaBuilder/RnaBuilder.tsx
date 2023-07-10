@@ -14,9 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { RnaAccordion } from './RnaAccordion'
-import { RnaEditor } from './RnaEditor'
-import { RnaBuilderContainer } from './styles'
+import { RnaAccordion } from './RnaAccordion';
+import { RnaEditor } from './RnaEditor';
+import { RnaBuilderContainer } from './styles';
 
 export const RnaBuilder = () => {
   return (
@@ -24,5 +24,5 @@ export const RnaBuilder = () => {
       <RnaEditor />
       <RnaAccordion />
     </RnaBuilderContainer>
-  )
-}
+  );
+};

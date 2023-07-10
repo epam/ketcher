@@ -24,11 +24,11 @@ import {
   ConvertResult,
   InfoResult,
   OutputFormatType,
-  StructService
-} from 'domain/services'
-import { StructOrString } from 'application/indigo.types'
-import { KetSerializer } from 'domain/serializers'
-import { Struct } from 'domain/entities'
+  StructService,
+} from 'domain/services';
+import { StructOrString } from 'application/indigo.types';
+import { KetSerializer } from 'domain/serializers';
+import { Struct } from 'domain/entities';
 
 const defaultTypes: Array<CheckTypes> = [
   'radicals',
@@ -39,174 +39,174 @@ const defaultTypes: Array<CheckTypes> = [
   'overlapping_bonds',
   'rgroups',
   'chiral',
-  '3d'
-]
+  '3d',
+];
 const defaultCalcProps: Array<CalculateProps> = [
   'molecular-weight',
   'most-abundant-mass',
   'monoisotopic-mass',
   'gross',
-  'mass-composition'
-]
+  'mass-composition',
+];
 
 type ConvertOptions = {
-  outputFormat?: ChemicalMimeType
-}
+  outputFormat?: ChemicalMimeType;
+};
 type AutomapOptions = {
-  mode?: AutomapMode
-}
+  mode?: AutomapMode;
+};
 type CheckOptions = {
-  types?: Array<CheckTypes>
-}
+  types?: Array<CheckTypes>;
+};
 type CalculateOptions = {
-  properties?: Array<CalculateProps>
-}
+  properties?: Array<CalculateProps>;
+};
 type RecognizeOptions = {
-  version?: string
-}
+  version?: string;
+};
 type GenerateImageOptions = {
-  outputFormat?: OutputFormatType
-  backgroundColor?: string
-}
+  outputFormat?: OutputFormatType;
+  backgroundColor?: string;
+};
 
 function convertStructToString(
   struct: StructOrString,
-  serializer: KetSerializer
+  serializer: KetSerializer,
 ): string {
   if (typeof struct !== 'string') {
-    const aidMap = new Map()
-    const result = struct.clone(null, null, false, aidMap)
+    const aidMap = new Map();
+    const result = struct.clone(null, null, false, aidMap);
 
-    return serializer.serialize(result)
+    return serializer.serialize(result);
   }
 
-  return struct
+  return struct;
 }
 
 export class Indigo {
-  #structService: StructService
-  #ketSerializer: KetSerializer
+  #structService: StructService;
+  #ketSerializer: KetSerializer;
 
   constructor(structService) {
-    this.#structService = structService
-    this.#ketSerializer = new KetSerializer()
+    this.#structService = structService;
+    this.#ketSerializer = new KetSerializer();
   }
 
   info(): Promise<InfoResult> {
-    return this.#structService.info()
+    return this.#structService.info();
   }
 
   convert(
     struct: StructOrString,
-    options?: ConvertOptions
+    options?: ConvertOptions,
   ): Promise<ConvertResult> {
-    const outputFormat = options?.outputFormat || ChemicalMimeType.KET
+    const outputFormat = options?.outputFormat || ChemicalMimeType.KET;
 
     return this.#structService.convert({
       struct: convertStructToString(struct, this.#ketSerializer),
-      output_format: outputFormat
-    })
+      output_format: outputFormat,
+    });
   }
 
   layout(struct: StructOrString): Promise<Struct> {
     return this.#structService
       .layout({
         struct: convertStructToString(struct, this.#ketSerializer),
-        output_format: ChemicalMimeType.KET
+        output_format: ChemicalMimeType.KET,
       })
-      .then((data) => this.#ketSerializer.deserialize(data.struct))
+      .then((data) => this.#ketSerializer.deserialize(data.struct));
   }
 
   clean(struct: StructOrString): Promise<Struct> {
     return this.#structService
       .clean({
         struct: convertStructToString(struct, this.#ketSerializer),
-        output_format: ChemicalMimeType.KET
+        output_format: ChemicalMimeType.KET,
       })
-      .then((data) => this.#ketSerializer.deserialize(data.struct))
+      .then((data) => this.#ketSerializer.deserialize(data.struct));
   }
 
   aromatize(struct: StructOrString): Promise<Struct> {
     return this.#structService
       .aromatize({
         struct: convertStructToString(struct, this.#ketSerializer),
-        output_format: ChemicalMimeType.KET
+        output_format: ChemicalMimeType.KET,
       })
-      .then((data) => this.#ketSerializer.deserialize(data.struct))
+      .then((data) => this.#ketSerializer.deserialize(data.struct));
   }
 
   dearomatize(struct: StructOrString): Promise<Struct> {
     return this.#structService
       .dearomatize({
         struct: convertStructToString(struct, this.#ketSerializer),
-        output_format: ChemicalMimeType.KET
+        output_format: ChemicalMimeType.KET,
       })
-      .then((data) => this.#ketSerializer.deserialize(data.struct))
+      .then((data) => this.#ketSerializer.deserialize(data.struct));
   }
 
   calculateCip(struct: StructOrString): Promise<Struct> {
     return this.#structService
       .calculateCip({
         struct: convertStructToString(struct, this.#ketSerializer),
-        output_format: ChemicalMimeType.KET
+        output_format: ChemicalMimeType.KET,
       })
-      .then((data) => this.#ketSerializer.deserialize(data.struct))
+      .then((data) => this.#ketSerializer.deserialize(data.struct));
   }
 
   automap(struct: StructOrString, options?: AutomapOptions): Promise<Struct> {
-    const mode = options?.mode || 'discard'
+    const mode = options?.mode || 'discard';
 
     return this.#structService
       .automap({
         struct: convertStructToString(struct, this.#ketSerializer),
         output_format: ChemicalMimeType.KET,
-        mode
+        mode,
       })
-      .then((data) => this.#ketSerializer.deserialize(data.struct))
+      .then((data) => this.#ketSerializer.deserialize(data.struct));
   }
 
   check(struct: StructOrString, options?: CheckOptions): Promise<CheckResult> {
-    const types = options?.types || defaultTypes
+    const types = options?.types || defaultTypes;
 
     return this.#structService.check({
       struct: convertStructToString(struct, this.#ketSerializer),
-      types
-    })
+      types,
+    });
   }
 
   calculate(
     struct: StructOrString,
-    options?: CalculateOptions
+    options?: CalculateOptions,
   ): Promise<CalculateResult> {
-    const properties = options?.properties || defaultCalcProps
+    const properties = options?.properties || defaultCalcProps;
 
     return this.#structService.calculate({
       struct: convertStructToString(struct, this.#ketSerializer),
-      properties
-    })
+      properties,
+    });
   }
 
   recognize(image: Blob, options?: RecognizeOptions): Promise<Struct> {
-    const version = options?.version || ''
+    const version = options?.version || '';
 
     return this.#structService
       .recognize(image, version)
-      .then((data) => this.#ketSerializer.deserialize(data.struct))
+      .then((data) => this.#ketSerializer.deserialize(data.struct));
   }
 
   generateImageAsBase64(
     struct: StructOrString,
-    options?: GenerateImageOptions
+    options?: GenerateImageOptions,
   ): Promise<string> {
-    const outputFormat = options?.outputFormat || 'png'
-    const backgroundColor = options?.backgroundColor || ''
+    const outputFormat = options?.outputFormat || 'png';
+    const backgroundColor = options?.backgroundColor || '';
 
     return this.#structService.generateImageAsBase64(
       convertStructToString(struct, this.#ketSerializer),
       {
         outputFormat,
-        backgroundColor
-      }
-    )
+        backgroundColor,
+      },
+    );
   }
 }

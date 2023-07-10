@@ -19,58 +19,58 @@ import {
   fromSimpleObjectAddition,
   fromSimpleObjectDeletion,
   fromSimpleObjectResizing,
-  SimpleObjectMode
-} from 'ketcher-core'
-import Editor from '../Editor'
-import { Tool } from './Tool'
+  SimpleObjectMode,
+} from 'ketcher-core';
+import Editor from '../Editor';
+import { Tool } from './Tool';
 
 class SimpleObjectTool implements Tool {
-  private readonly mode: SimpleObjectMode
-  private readonly editor: Editor
-  private dragCtx: any
+  private readonly mode: SimpleObjectMode;
+  private readonly editor: Editor;
+  private dragCtx: any;
 
   constructor(editor: Editor, mode: SimpleObjectMode) {
-    this.mode = mode
-    this.editor = editor
-    this.editor.selection(null)
+    this.mode = mode;
+    this.editor = editor;
+    this.editor.selection(null);
   }
 
   mousedown(event) {
-    const rnd = this.editor.render
-    const p0 = rnd.page2obj(event)
-    this.dragCtx = { p0 }
+    const rnd = this.editor.render;
+    const p0 = rnd.page2obj(event);
+    this.dragCtx = { p0 };
 
-    const ci = this.editor.findItem(event, ['simpleObjects'])
+    const ci = this.editor.findItem(event, ['simpleObjects']);
 
     if (ci && ci.map === 'simpleObjects') {
-      this.editor.hover(null)
-      this.editor.selection({ simpleObjects: [ci.id] })
-      this.dragCtx.ci = ci
+      this.editor.hover(null);
+      this.editor.selection({ simpleObjects: [ci.id] });
+      this.dragCtx.ci = ci;
     } else {
-      this.dragCtx.isNew = true
-      this.editor.selection(null)
+      this.dragCtx.isNew = true;
+      this.editor.selection(null);
     }
   }
 
   mousemove(event) {
-    const rnd = this.editor.render
+    const rnd = this.editor.render;
 
     if (this.dragCtx) {
-      const current = rnd.page2obj(event)
-      const diff = current.sub(this.dragCtx.p0)
-      this.dragCtx.previous = current
+      const current = rnd.page2obj(event);
+      const diff = current.sub(this.dragCtx.p0);
+      this.dragCtx.previous = current;
 
       if (this.dragCtx.ci) {
         if (this.dragCtx.action) {
-          this.dragCtx.action.perform(rnd.ctab)
+          this.dragCtx.action.perform(rnd.ctab);
         }
 
         if (!this.dragCtx.ci.ref) {
           this.dragCtx.action = fromMultipleMove(
             rnd.ctab,
             this.editor.selection() || {},
-            diff
-          )
+            diff,
+          );
         } else {
           this.dragCtx.action = fromSimpleObjectResizing(
             rnd.ctab,
@@ -78,25 +78,25 @@ class SimpleObjectTool implements Tool {
             diff,
             current,
             this.dragCtx.ci.ref,
-            event.shiftKey
-          )
+            event.shiftKey,
+          );
         }
-        this.editor.update(this.dragCtx.action, true)
+        this.editor.update(this.dragCtx.action, true);
       } else {
         if (!this.dragCtx.action) {
           const action = fromSimpleObjectAddition(
             rnd.ctab,
             [this.dragCtx.p0, this.dragCtx.p0],
             this.mode,
-            false
-          )
+            false,
+          );
           // TODO: need to rework  actions/operations logic
-          const addOperation = action.operations[0]
-          this.dragCtx.itemId = addOperation.data.id
-          this.dragCtx.action = action
-          this.editor.update(this.dragCtx.action, true)
+          const addOperation = action.operations[0];
+          this.dragCtx.itemId = addOperation.data.id;
+          this.dragCtx.action = action;
+          this.editor.update(this.dragCtx.action, true);
         } else {
-          this.dragCtx.action.perform(rnd.ctab)
+          this.dragCtx.action.perform(rnd.ctab);
         }
 
         this.dragCtx.action = fromSimpleObjectResizing(
@@ -105,41 +105,41 @@ class SimpleObjectTool implements Tool {
           diff,
           current,
           null,
-          event.shiftKey
-        )
-        this.editor.update(this.dragCtx.action, true)
+          event.shiftKey,
+        );
+        this.editor.update(this.dragCtx.action, true);
       }
     } else {
-      const items = this.editor.findItem(event, ['simpleObjects'])
-      this.editor.hover(items, null, event)
+      const items = this.editor.findItem(event, ['simpleObjects']);
+      this.editor.hover(items, null, event);
     }
   }
 
   mouseup(event) {
     if (!this.dragCtx) {
-      return true
+      return true;
     }
 
     if (this.dragCtx.action) {
       if (this.dragCtx.isNew) {
-        const rnd = this.editor.render
+        const rnd = this.editor.render;
         this.editor.update(
           fromSimpleObjectDeletion(rnd.ctab, this.dragCtx.itemId),
-          true
-        )
+          true,
+        );
         this.dragCtx.action = fromSimpleObjectAddition(
           rnd.ctab,
           [this.dragCtx.p0, this.dragCtx.previous],
           this.mode,
-          event.shiftKey
-        )
+          event.shiftKey,
+        );
       }
-      this.editor.update(this.dragCtx.action)
+      this.editor.update(this.dragCtx.action);
     }
 
-    delete this.dragCtx
-    return true
+    delete this.dragCtx;
+    return true;
   }
 }
 
-export default SimpleObjectTool
+export default SimpleObjectTool;

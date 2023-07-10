@@ -14,36 +14,36 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useCallback } from 'react'
-import { Menu, MenuProps } from 'react-contexify'
-import 'react-contexify/ReactContexify.css'
-import { useAppContext } from 'src/hooks'
-import Editor from 'src/script/editor'
-import styles from './ContextMenu.module.less'
-import { CONTEXT_MENU_ID } from './contextMenu.types'
-import AtomMenuItems from './menuItems/AtomMenuItems'
-import BondMenuItems from './menuItems/BondMenuItems'
-import FunctionalGroupMenuItems from './menuItems/FunctionalGroupMenuItems'
-import SelectionMenuItems from './menuItems/SelectionMenuItems'
+import { useCallback } from 'react';
+import { Menu, MenuProps } from 'react-contexify';
+import 'react-contexify/ReactContexify.css';
+import { useAppContext } from 'src/hooks';
+import Editor from 'src/script/editor';
+import styles from './ContextMenu.module.less';
+import { CONTEXT_MENU_ID } from './contextMenu.types';
+import AtomMenuItems from './menuItems/AtomMenuItems';
+import BondMenuItems from './menuItems/BondMenuItems';
+import FunctionalGroupMenuItems from './menuItems/FunctionalGroupMenuItems';
+import SelectionMenuItems from './menuItems/SelectionMenuItems';
 
 const props: Partial<MenuProps> = {
   animation: false,
-  className: styles.contextMenu
-}
+  className: styles.contextMenu,
+};
 
 const ContextMenu: React.FC = () => {
-  const { getKetcherInstance } = useAppContext()
+  const { getKetcherInstance } = useAppContext();
 
   const trackVisibility = useCallback(
     (id: CONTEXT_MENU_ID, visible: boolean) => {
-      const editor = getKetcherInstance().editor as Editor
+      const editor = getKetcherInstance().editor as Editor;
       if (visible) {
-        editor.hoverIcon.hide()
+        editor.hoverIcon.hide();
       }
-      editor.contextMenu[id] = visible
+      editor.contextMenu[id] = visible;
     },
-    [getKetcherInstance]
-  )
+    [getKetcherInstance],
+  );
 
   return (
     <>
@@ -87,7 +87,7 @@ const ContextMenu: React.FC = () => {
         <FunctionalGroupMenuItems />
       </Menu>
     </>
-  )
-}
+  );
+};
 
-export default ContextMenu
+export default ContextMenu;

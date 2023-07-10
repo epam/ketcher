@@ -14,17 +14,17 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { MultiToolCallProps, MultiToolProps } from '../variants.types'
+import { MultiToolCallProps, MultiToolProps } from '../variants.types';
 
-import { ActionButton, ActionButtonProps } from '../../../ActionButton'
-import action from '../../../../../../action'
-import classes from './GroupedMultiTool.module.less'
-import { getIconName } from 'components'
+import { ActionButton, ActionButtonProps } from '../../../ActionButton';
+import action from '../../../../../../action';
+import classes from './GroupedMultiTool.module.less';
+import { getIconName } from 'components';
 
-type GroupedMultiToolProps = MultiToolProps
-type GroupedMultiToolCallProps = MultiToolCallProps
+type GroupedMultiToolProps = MultiToolProps;
+type GroupedMultiToolCallProps = MultiToolCallProps;
 
-type Props = GroupedMultiToolProps & GroupedMultiToolCallProps
+type Props = GroupedMultiToolProps & GroupedMultiToolCallProps;
 
 const GroupedMultiTool = (props: Props) => {
   const {
@@ -33,11 +33,11 @@ const GroupedMultiTool = (props: Props) => {
     status,
     disableableButtons,
     indigoVerification,
-    onAction
-  } = props
+    onAction,
+  } = props;
 
   if (!groups) {
-    return null
+    return null;
   }
 
   return (
@@ -47,8 +47,8 @@ const GroupedMultiTool = (props: Props) => {
           {options
             .slice(descriptor.start, descriptor.end)
             .map((toolbarItem) => {
-              const currentStatus = status[toolbarItem.id]
-              const iconName = getIconName(toolbarItem.id)
+              const currentStatus = status[toolbarItem.id];
+              const iconName = getIconName(toolbarItem.id);
               return (
                 iconName && (
                   <ActionButton
@@ -62,13 +62,13 @@ const GroupedMultiTool = (props: Props) => {
                     onAction={onAction}
                   />
                 )
-              )
+              );
             })}
         </div>
       ))}
     </>
-  )
-}
+  );
+};
 
-export type { GroupedMultiToolProps, GroupedMultiToolCallProps }
-export { GroupedMultiTool }
+export type { GroupedMultiToolProps, GroupedMultiToolCallProps };
+export { GroupedMultiTool };

@@ -14,44 +14,44 @@
  * limitations under the License.
  ***************************************************************************/
 
-import action, { UiAction, UiActionAction } from '../../../../action'
+import action, { UiAction, UiActionAction } from '../../../../action';
 
-import { ActionButton } from '../../ToolbarGroupItem/ActionButton'
-import templates from '../../../../data/templates'
-import { getIconName } from 'components'
+import { ActionButton } from '../../ToolbarGroupItem/ActionButton';
+import templates from '../../../../data/templates';
+import { getIconName } from 'components';
 
 interface TemplatesListProps {
   active?: {
-    tool?: string
+    tool?: string;
     opts: {
-      struct: any
-    }
-  }
-  disableableButtons: string[]
-  indigoVerification: boolean
+      struct: any;
+    };
+  };
+  disableableButtons: string[];
+  indigoVerification: boolean;
 }
 
 interface TemplatesListCallProps {
-  onAction: (action: UiActionAction) => void
+  onAction: (action: UiActionAction) => void;
 }
 
-type Props = TemplatesListProps & TemplatesListCallProps
+type Props = TemplatesListProps & TemplatesListCallProps;
 
 const TemplatesList = (props: Props) => {
-  const { active, disableableButtons, indigoVerification, onAction } = props
+  const { active, disableableButtons, indigoVerification, onAction } = props;
 
-  const isTemplate = active && active.tool === 'template'
+  const isTemplate = active && active.tool === 'template';
 
   const makeAction = (struct, index): UiAction => ({
     shortcut: action[`template-${index}`].shortcut,
     action: { tool: 'template', opts: { struct } },
-    title: struct.name
-  })
+    title: struct.name,
+  });
 
   return (
     <>
       {templates.map((struct, index) => {
-        const iconName = getIconName(`template-${index}`)
+        const iconName = getIconName(`template-${index}`);
         return (
           iconName && (
             <ActionButton
@@ -65,11 +65,11 @@ const TemplatesList = (props: Props) => {
               indigoVerification={indigoVerification}
             />
           )
-        )
+        );
       })}
     </>
-  )
-}
+  );
+};
 
-export type { TemplatesListProps, TemplatesListCallProps }
-export { TemplatesList }
+export type { TemplatesListProps, TemplatesListCallProps };
+export { TemplatesList };

@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import MenuContext from '../contexts/menuContext'
-import React from 'react'
+import MenuContext from '../contexts/menuContext';
+import React from 'react';
 
-export const useMenuContext = () => React.useContext(MenuContext)
+export const useMenuContext = () => React.useContext(MenuContext);

@@ -14,12 +14,12 @@ import { BondAttributes, SORT_TYPE, BondXy } from '@utils/canvas/types';
  */
 export async function getTopBondByAttributes(
   page: Page,
-  attributes: BondAttributes
+  attributes: BondAttributes,
 ): Promise<BondXy> {
   const result = await getBondsCoordinatesByAttributes(
     page,
     attributes,
-    SORT_TYPE.ASC_Y
+    SORT_TYPE.ASC_Y,
   );
 
   return result[0];

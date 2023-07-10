@@ -23,13 +23,14 @@ import {
 export async function getAtomsCoordinatesByAttributes(
   page: Page,
   attrs: AtomAttributes,
-  sortBy: SORT_TYPE = SORT_TYPE.ASC_X
+  sortBy: SORT_TYPE = SORT_TYPE.ASC_X,
 ): Promise<AtomXy[] | []> {
-  const { atoms, scale } = await page.evaluate(() => {
+  const { atoms, scale, offset } = await page.evaluate(() => {
     return {
       // eslint-disable-next-line no-unsafe-optional-chaining
       atoms: [...window.ketcher?.editor?.struct()?.atoms?.values()],
       scale: window.ketcher?.editor?.options()?.scale,
+      offset: window.ketcher?.editor?.options()?.offset,
     };
   });
 
@@ -44,8 +45,8 @@ export async function getAtomsCoordinatesByAttributes(
     const coords = targets.map((target) => {
       return {
         ...target,
-        x: target.pp.x * scale + leftBarWidth,
-        y: target.pp.y * scale + topBarHeight,
+        x: target.pp.x * scale + offset.x + leftBarWidth,
+        y: target.pp.y * scale + offset.y + topBarHeight,
       };
     });
 

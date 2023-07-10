@@ -1,45 +1,45 @@
-import { FunctionalGroup } from 'ketcher-core'
-import Editor from 'src/script/editor'
+import { FunctionalGroup } from 'ketcher-core';
+import Editor from 'src/script/editor';
 import {
   ClosestItem,
   CONTEXT_MENU_ID,
   ContextMenuShowProps,
-  GetIsItemInSelectionArgs
-} from './contextMenu.types'
-import { Selection } from '../../../../editor/Editor'
-import { onlyHasProperty } from './utils'
+  GetIsItemInSelectionArgs,
+} from './contextMenu.types';
+import { Selection } from '../../../../editor/Editor';
+import { onlyHasProperty } from './utils';
 
 export const getIsItemInSelection = ({
   item,
   selection,
   selectedSGroupsIds,
-  selectedFunctionalGroups
+  selectedFunctionalGroups,
 }: GetIsItemInSelectionArgs): boolean => {
   if (!item || !selection) {
-    return false
+    return false;
   }
 
   switch (item.map) {
     case 'sgroups':
-      return selectedSGroupsIds.has(item.id)
+      return selectedSGroupsIds.has(item.id);
 
     case 'functionalGroups':
-      return Array.from(selectedFunctionalGroups.keys()).includes(item.id)
+      return Array.from(selectedFunctionalGroups.keys()).includes(item.id);
 
     default:
       return (
         item.map in selection &&
         Array.isArray(selection[item.map]) &&
         selection[item.map].includes(item.id)
-      )
+      );
   }
-}
+};
 
 export function getMenuPropsForClosestItem(
   editor: Editor,
-  closestItem: ClosestItem
+  closestItem: ClosestItem,
 ): ContextMenuShowProps | null {
-  const struct = editor.struct()
+  const struct = editor.struct();
 
   switch (closestItem.map) {
     case 'bonds': {
@@ -47,78 +47,78 @@ export function getMenuPropsForClosestItem(
         struct,
         struct.functionalGroups,
         closestItem.id,
-        true
-      )
+        true,
+      );
 
       return functionalGroup === null
         ? {
             id: CONTEXT_MENU_ID.FOR_BONDS,
-            bondIds: [closestItem.id]
+            bondIds: [closestItem.id],
           }
         : {
             id: CONTEXT_MENU_ID.FOR_FUNCTIONAL_GROUPS,
-            functionalGroups: [functionalGroup]
-          }
+            functionalGroups: [functionalGroup],
+          };
     }
 
     case 'atoms': {
       const functionalGroup = FunctionalGroup.findFunctionalGroupByAtom(
         struct.functionalGroups,
         closestItem.id,
-        true
-      )
+        true,
+      );
 
       return functionalGroup === null
         ? {
             id: CONTEXT_MENU_ID.FOR_ATOMS,
-            atomIds: [closestItem.id]
+            atomIds: [closestItem.id],
           }
         : {
             id: CONTEXT_MENU_ID.FOR_FUNCTIONAL_GROUPS,
-            functionalGroups: [functionalGroup]
-          }
+            functionalGroups: [functionalGroup],
+          };
     }
 
     case 'sgroups':
     case 'functionalGroups': {
-      const sGroup = struct.sgroups.get(closestItem.id)
+      const sGroup = struct.sgroups.get(closestItem.id);
       const functionalGroup = FunctionalGroup.findFunctionalGroupBySGroup(
         struct.functionalGroups,
-        sGroup
-      )
+        sGroup,
+      );
 
       return functionalGroup
         ? {
             id: CONTEXT_MENU_ID.FOR_FUNCTIONAL_GROUPS,
-            functionalGroups: [functionalGroup]
+            functionalGroups: [functionalGroup],
           }
-        : null
+        : null;
     }
 
     default:
-      return null
+      return null;
   }
 }
 
-const IGNORED_MAPS_LIST = ['enhancedFlags']
+const IGNORED_MAPS_LIST = ['enhancedFlags'];
 
 export function getMenuPropsForSelection(
   selection: Selection | null,
-  selectedFunctionalGroups: Map<number, FunctionalGroup>
+  selectedFunctionalGroups: Map<number, FunctionalGroup>,
 ): ContextMenuShowProps | null {
   if (!selection) {
-    return null
+    return null;
   }
 
-  const bondsInSelection = 'bonds' in selection
-  const atomsInSelection = 'atoms' in selection
+  const bondsInSelection = 'bonds' in selection;
+  const atomsInSelection = 'atoms' in selection;
 
   if (selectedFunctionalGroups.size > 0) {
-    const functionalGroups = Array.from(selectedFunctionalGroups.values())
+    const functionalGroups = Array.from(selectedFunctionalGroups.values());
     return {
       id: CONTEXT_MENU_ID.FOR_FUNCTIONAL_GROUPS,
-      functionalGroups
-    }
+      functionalGroups,
+    };
   } else if (bondsInSelection && !atomsInSelection) {
     return {
       id: CONTEXT_MENU_ID.FOR_BONDS,
@@ -126,9 +126,9 @@ export function getMenuPropsForSelection(
       extraItemsSelected: !onlyHasProperty(
         selection,
         'bonds',
-        IGNORED_MAPS_LIST
-      )
-    }
+        IGNORED_MAPS_LIST,
+      ),
+    };
   } else if (atomsInSelection && !bondsInSelection) {
     return {
       id: CONTEXT_MENU_ID.FOR_ATOMS,
@@ -136,14 +136,14 @@ export function getMenuPropsForSelection(
       extraItemsSelected: !onlyHasProperty(
         selection,
         'atoms',
-        IGNORED_MAPS_LIST
-      )
-    }
+        IGNORED_MAPS_LIST,
+      ),
+    };
   } else {
     return {
       id: CONTEXT_MENU_ID.FOR_SELECTION,
       bondIds: selection.bonds,
-      atomIds: selection.atoms
-    }
+      atomIds: selection.atoms,
+    };
   }
 }

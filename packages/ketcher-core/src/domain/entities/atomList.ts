@@ -14,38 +14,38 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { ElementLabel, Elements } from 'domain/constants'
+import { ElementLabel, Elements } from 'domain/constants';
 
 export interface AtomListParams {
-  readonly notList: boolean
-  readonly ids: Array<number>
+  readonly notList: boolean;
+  readonly ids: Array<number>;
 }
 
 export class AtomList {
-  notList: boolean
-  ids: Array<number>
+  notList: boolean;
+  ids: Array<number>;
 
   constructor(params: AtomListParams) {
-    this.notList = params.notList
-    this.ids = params.ids
+    this.notList = params.notList;
+    this.ids = params.ids;
   }
 
   labelList() {
-    const labels: Array<ElementLabel> = []
+    const labels: Array<ElementLabel> = [];
     for (const id of this.ids) {
-      const currenElement = Elements.get(id)
-      currenElement && labels.push(currenElement!.label)
+      const currenElement = Elements.get(id);
+      currenElement && labels.push(currenElement!.label);
     }
 
-    return labels
+    return labels;
   }
 
   label() {
-    let label = '[' + this.labelList().join(',') + ']'
+    let label = '[' + this.labelList().join(',') + ']';
     if (this.notList) {
-      label = '!' + label
+      label = '!' + label;
     }
-    return label
+    return label;
   }
 
   equals(atomList: AtomList) {
@@ -53,6 +53,6 @@ export class AtomList {
       this.notList === atomList.notList &&
       (this.ids || []).sort().toString() ===
         (atomList.ids || []).sort().toString()
-    )
+    );
   }
 }

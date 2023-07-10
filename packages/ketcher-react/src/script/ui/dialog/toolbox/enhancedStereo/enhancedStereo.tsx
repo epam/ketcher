@@ -14,68 +14,68 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Form, { Field } from '../../../component/form/form/form'
-import { StereoLabel, Struct } from 'ketcher-core'
+import Form, { Field } from '../../../component/form/form/form';
+import { StereoLabel, Struct } from 'ketcher-core';
 
-import { Dialog } from '../../../views/components'
-import { FC } from 'react'
-import classes from './enhancedStereo.module.less'
-import { connect } from 'react-redux'
-import { range } from 'lodash'
+import { Dialog } from '../../../views/components';
+import { FC } from 'react';
+import classes from './enhancedStereo.module.less';
+import { connect } from 'react-redux';
+import { range } from 'lodash';
 
 interface EnhancedStereoResult {
-  andNumber: number
-  orNumber: number
-  type: StereoLabel
+  andNumber: number;
+  orNumber: number;
+  type: StereoLabel;
 }
 
 interface EnhancedStereoFormState {
-  result: EnhancedStereoResult
-  valid: boolean
-  errors: string[]
+  result: EnhancedStereoResult;
+  valid: boolean;
+  errors: string[];
 }
 
 interface EnhancedStereoProps {
-  className: string
-  init: EnhancedStereoResult & { init?: true }
-  formState: EnhancedStereoFormState
-  struct: Struct
+  className: string;
+  init: EnhancedStereoResult & { init?: true };
+  formState: EnhancedStereoFormState;
+  struct: Struct;
 }
 
 interface EnhancedStereoCallProps {
-  onCancel: () => void
-  onOk: (res: any) => void
+  onCancel: () => void;
+  onOk: (res: any) => void;
 }
 
-type Props = EnhancedStereoProps & EnhancedStereoCallProps
+type Props = EnhancedStereoProps & EnhancedStereoCallProps;
 
 const EnhancedStereo: FC<Props> = (props) => {
-  const { struct, formState, init, ...rest } = props
-  const { result, valid } = formState
+  const { struct, formState, init, ...rest } = props;
+  const { result, valid } = formState;
 
   const stereoLabels: Array<string> = findStereLabels(
     struct,
-    Array.from(struct.atoms.keys())
-  )
+    Array.from(struct.atoms.keys()),
+  );
 
-  const maxAnd: number = maxOfAnds(stereoLabels)
-  const maxOr: number = maxOfOrs(stereoLabels)
+  const maxAnd: number = maxOfAnds(stereoLabels);
+  const maxOr: number = maxOfOrs(stereoLabels);
 
   const enhancedStereoSchema = {
     title: 'Enhanced Stereo',
     type: 'object',
     properties: {
       type: {
-        type: 'string'
+        type: 'string',
       },
       andNumber: {
-        type: 'integer'
+        type: 'integer',
       },
       orNumber: {
-        type: 'integer'
-      }
-    }
-  }
+        type: 'integer',
+      },
+    },
+  };
 
   return (
     <Dialog
@@ -161,32 +161,32 @@ const EnhancedStereo: FC<Props> = (props) => {
         </fieldset>
       </Form>
     </Dialog>
-  )
-}
+  );
+};
 
 // TODO: Move the function below to Struct class
 function findStereLabels(struct, aids): Array<string> {
   const stereoIds = aids.filter(
-    (aid) => struct.atoms.get(aid).stereoLabel !== null
-  )
-  return stereoIds.map((aid) => struct.atoms.get(aid).stereoLabel)
+    (aid) => struct.atoms.get(aid).stereoLabel !== null,
+  );
+  return stereoIds.map((aid) => struct.atoms.get(aid).stereoLabel);
 }
 
 function maxOfAnds(stereLabels): number {
   const numbers = stereLabels.map((label) => {
-    return label.match(/&/) ? +label.match(/\d+/)?.join() : 0
-  })
-  return Math.max(...numbers)
+    return label.match(/&/) ? +label.match(/\d+/)?.join() : 0;
+  });
+  return Math.max(...numbers);
 }
 
 function maxOfOrs(stereLabels): number {
   const numbers = stereLabels.map((label) => {
-    return label.match(/or/) ? +label.match(/\d+/)?.join() : 0
-  })
-  return Math.max(...numbers)
+    return label.match(/or/) ? +label.match(/\d+/)?.join() : 0;
+  });
+  return Math.max(...numbers);
 }
 
 export default connect((state) => ({
   formState: (state as any).modal.form || { result: {}, valid: false },
-  struct: (state as any).editor.struct()
-}))(EnhancedStereo)
+  struct: (state as any).editor.struct(),
+}))(EnhancedStereo);

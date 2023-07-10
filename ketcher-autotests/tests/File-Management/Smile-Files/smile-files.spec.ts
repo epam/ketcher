@@ -16,7 +16,7 @@ import { getSmiles } from '@utils/formats';
 async function getPreviewForSmiles(
   page: Page,
   formatName: string,
-  smileType: string
+  smileType: string,
 ) {
   await selectTopPanelButton(TopPanelButton.Save, page);
   await page.getByRole('button', { name: formatName }).click();
@@ -57,7 +57,7 @@ test.describe('SMILES files', () => {
     await openFileAndAddToCanvas('all-type-bonds.ket', page);
     await getAndCompareSmiles(
       page,
-      'tests/test-data/smiles-all-bonds-expected.json'
+      'tests/test-data/smiles-all-bonds-expected.json',
     );
 
     await getPreviewForSmiles(page, 'MDL Molfile V2000', 'Daylight SMILES');
@@ -75,7 +75,7 @@ test.describe('SMILES files', () => {
     await openFileAndAddToCanvas('all-atoms-properties.ket', page);
     await getAndCompareSmiles(
       page,
-      'tests/test-data/smiles-all-atoms-properties-expected.json'
+      'tests/test-data/smiles-all-atoms-properties-expected.json',
     );
 
     await getPreviewForSmiles(page, 'MDL Molfile V2000', 'Daylight SMILES');
@@ -83,7 +83,7 @@ test.describe('SMILES files', () => {
 
     await clearCanvasAndPasteSmiles(
       page,
-      'CCCCCC[C+][1C]C[CH]CC |^1:3,^3:4,^4:5,rb:8:*|'
+      'CCCCCC[C+][1C]C[CH]CC |^1:3,^3:4,^4:5,rb:8:*|',
     );
   });
 
@@ -112,7 +112,7 @@ test.describe('SMILES files', () => {
     await openFileAndAddToCanvas('sgroups-diff-symyx.mol', page);
     await getAndCompareSmiles(
       page,
-      'tests/test-data/sgroups-diff-symyx-expected.json'
+      'tests/test-data/sgroups-diff-symyx-expected.json',
     );
 
     await getPreviewForSmiles(page, 'MDL Molfile V2000', 'Daylight SMILES');
@@ -121,7 +121,7 @@ test.describe('SMILES files', () => {
 
     await clearCanvasAndPasteSmiles(
       page,
-      'CCCCCCCCCCCCC.CCCCCCC.CCCCCCC.CCCCCCC.CCCCCCC |Sg:gen:16,17,15:,Sg:n:23,24,22:n:ht|'
+      'CCCCCCCCCCCCC.CCCCCCC.CCCCCCC.CCCCCCC.CCCCCCC |Sg:gen:16,17,15:,Sg:n:23,24,22:n:ht|',
     );
   });
 
@@ -136,7 +136,7 @@ test.describe('SMILES files', () => {
     await openFileAndAddToCanvas('Heteroatoms.mol', page);
     await getAndCompareSmiles(
       page,
-      'tests/test-data/smiles-heteroatoms-expected.json'
+      'tests/test-data/smiles-heteroatoms-expected.json',
     );
 
     await getPreviewForSmiles(page, 'MDL Molfile V2000', 'Daylight SMILES');
@@ -156,7 +156,7 @@ test.describe('SMILES files', () => {
     await openFileAndAddToCanvas('Attached data.mol', page);
     await getAndCompareSmiles(
       page,
-      'tests/test-data/attached-data-expected.json'
+      'tests/test-data/attached-data-expected.json',
     );
 
     await getPreviewForSmiles(page, 'MDL Molfile V2000', 'Daylight SMILES');
@@ -178,7 +178,7 @@ test.describe('SMILES files', () => {
     await openFileAndAddToCanvas('V2000_abs.mol', page);
     await getAndCompareSmiles(
       page,
-      'tests/test-data/smiles-v2000-abs-expected.json'
+      'tests/test-data/smiles-v2000-abs-expected.json',
     );
 
     await getPreviewForSmiles(page, 'MDL Molfile V2000', 'Daylight SMILES');
@@ -187,7 +187,7 @@ test.describe('SMILES files', () => {
     await clearCanvasAndPasteSmiles(
       page,
       // eslint-disable-next-line max-len
-      '[C@]12(OC(C)=O)C[C@H](C)[C@H](OC(CC3C=CC=CC=3)=O)[C@]1([H])[C@H](OC(C)=O)[C@@]1(CC[C@]3([H])C(C)(C)[C@]3([H])C=C(C)C2=O)CO1 |c:39|'
+      '[C@]12(OC(C)=O)C[C@H](C)[C@H](OC(CC3C=CC=CC=3)=O)[C@]1([H])[C@H](OC(C)=O)[C@@]1(CC[C@]3([H])C(C)(C)[C@]3([H])C=C(C)C2=O)CO1 |c:39|',
     );
   });
 
@@ -204,7 +204,7 @@ test.describe('SMILES files', () => {
     await openFileAndAddToCanvas('different-features.mol', page);
     await getAndCompareSmiles(
       page,
-      'tests/test-data/smiles-different-features-expected.json'
+      'tests/test-data/smiles-different-features-expected.json',
     );
 
     await getPreviewForSmiles(page, 'MDL Molfile V2000', 'Daylight SMILES');
@@ -213,7 +213,7 @@ test.describe('SMILES files', () => {
     await clearCanvasAndPasteSmiles(
       page,
       // eslint-disable-next-line max-len
-      'S=CC(F)CCCCC[C@@](CCO)/C=C/[C@@](N)CCC[C]C([13C]CC([C+2]CC(CC%91)CC(C)CCC)CCC)CC%92.[*:2]%92.[*:1]%91 |$;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;_R2;_R1$,rb:32:*,u:3|'
+      'S=CC(F)CCCCC[C@@](CCO)/C=C/[C@@](N)CCC[C]C([13C]CC([C+2]CC(CC%91)CC(C)CCC)CCC)CC%92.[*:2]%92.[*:1]%91 |$;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;_R2;_R1$,rb:32:*,u:3|',
     );
     await delay(DELAY_IN_SECONDS.THREE);
   });
@@ -229,7 +229,7 @@ test.describe('SMILES files', () => {
     await openFileAndAddToCanvas('cis-trans-cycle.mol', page);
     await getAndCompareSmiles(
       page,
-      'tests/test-data/smiles-cis-trans-cycle-expected.json'
+      'tests/test-data/smiles-cis-trans-cycle-expected.json',
     );
 
     await getPreviewForSmiles(page, 'MDL Molfile V2000', 'Daylight SMILES');
@@ -237,7 +237,7 @@ test.describe('SMILES files', () => {
 
     await clearCanvasAndPasteSmiles(
       page,
-      'C1CC=CC=CC=CCC=CC=CC=CCC=CC=C1 |c:2,11,16,t:4,6,9,13,18|'
+      'C1CC=CC=CC=CCC=CC=CC=CCC=CC=C1 |c:2,11,16,t:4,6,9,13,18|',
     );
   });
 
@@ -252,7 +252,7 @@ test.describe('SMILES files', () => {
     await openFileAndAddToCanvas('alias-pseudoatom.ket', page);
     await getAndCompareSmiles(
       page,
-      'tests/test-data/smiles-alias-pseudoatom-expected.json'
+      'tests/test-data/smiles-alias-pseudoatom-expected.json',
     );
 
     await getPreviewForSmiles(page, 'MDL Molfile V2000', 'Daylight SMILES');
@@ -272,7 +272,7 @@ test.describe('SMILES files', () => {
     await openFileAndAddToCanvas('two-arrows-and-plus.ket', page);
     await getAndCompareSmiles(
       page,
-      'tests/test-data/smiles-two-arrows-and-plus-expected.json'
+      'tests/test-data/smiles-two-arrows-and-plus-expected.json',
     );
 
     await getPreviewForSmiles(page, 'MDL Rxnfile V2000', 'Daylight SMILES');
@@ -280,7 +280,7 @@ test.describe('SMILES files', () => {
 
     await clearCanvasAndPasteSmiles(
       page,
-      'C1C=CC=CC=1.O>>C1C=CC(C)=CC=1C.C1C=CC(C)=CC=1C'
+      'C1C=CC=CC=1.O>>C1C=CC(C)=CC=1C.C1C=CC(C)=CC=1C',
     );
   });
 
@@ -294,7 +294,7 @@ test.describe('SMILES files', () => {
     await openFileAndAddToCanvas('benzene-arrow-benzene-reagent-nh3.ket', page);
     await getAndCompareSmiles(
       page,
-      'tests/test-data/smiles-benzene-arrow-benzene-reagent-nh3-expected.json'
+      'tests/test-data/smiles-benzene-arrow-benzene-reagent-nh3-expected.json',
     );
 
     await getPreviewForSmiles(page, 'MDL Rxnfile V2000', 'Daylight SMILES');

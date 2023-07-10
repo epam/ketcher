@@ -14,12 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-import styled from '@emotion/styled'
+import styled from '@emotion/styled';
 
 export const RnaBuilderContainer = styled.div({
   height: '100%',
   width: '100%',
   display: 'flex',
   flexDirection: 'column',
-  justifyContent: 'space-between'
-})
+  justifyContent: 'space-between',
+});

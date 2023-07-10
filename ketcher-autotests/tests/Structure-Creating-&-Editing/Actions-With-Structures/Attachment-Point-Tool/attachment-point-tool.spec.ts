@@ -354,7 +354,7 @@ test.describe('Attachment Point Tool', () => {
     const expectedFile = await getMolfile(page, 'v3000');
     await saveToFile(
       'chain-with-attachment-points-expectedV3000.mol',
-      expectedFile
+      expectedFile,
     );
     const METADATA_STRING_INDEX = [1];
     const { fileExpected: molFileExpected, file: molFile } =
@@ -397,7 +397,7 @@ test.describe('Attachment Point Tool', () => {
     const expectedFile = await getRxn(page, 'v3000');
     await saveToFile(
       'reaction-with-arrow-and-plus-expectedV3000.rxn',
-      expectedFile
+      expectedFile,
     );
 
     const METADATA_STRING_INDEX = [2];
@@ -439,7 +439,7 @@ test.describe('Attachment Point Tool', () => {
     */
       await openFileAndAddToCanvas(
         'distorted-chain-with-attachment-points.mol',
-        page
+        page,
       );
 
       await selectTopPanelButton(TopPanelButton.Layout, page);
@@ -451,7 +451,7 @@ test.describe('Attachment Point Tool', () => {
       await selectTopPanelButton(TopPanelButton.Clean, page);
       await delay(DELAY_IN_SECONDS.SEVEN);
       await takeEditorScreenshot(page);
-    }
+    },
   );
 
   test('Rotate structure with attachment points', async ({ page }) => {

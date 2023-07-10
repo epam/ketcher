@@ -14,20 +14,20 @@
  * limitations under the License.
  ***************************************************************************/
 
-export * from './atom'
-export * from './bond'
-export * from './CanvasLoad'
-export * from './descriptors'
-export * from './EnhancedFlagMove'
-export * from './ifThen'
-export * from './fragment'
-export * from './fragmentStereoAtom'
-export * from './FragmentStereoFlag'
-export * from './calcimplicitH'
-export * from './LoopMove'
-export * from './OperationType'
-export * from './rgroup'
-export * from './rxn'
-export * from './simpleObject'
-export * from './sgroup'
-export * from './Text'
+export * from './atom';
+export * from './bond';
+export * from './CanvasLoad';
+export * from './descriptors';
+export * from './EnhancedFlagMove';
+export * from './ifThen';
+export * from './fragment';
+export * from './fragmentStereoAtom';
+export * from './FragmentStereoFlag';
+export * from './calcimplicitH';
+export * from './LoopMove';
+export * from './OperationType';
+export * from './rgroup';
+export * from './rxn';
+export * from './simpleObject';
+export * from './sgroup';
+export * from './Text';

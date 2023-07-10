@@ -14,8 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { MonomerGroups } from 'src/constants'
-import { GroupBlock } from './GroupBlock'
+import { MonomerGroups } from 'src/constants';
+import { GroupBlock } from './GroupBlock';
 import {
   ButtonsContainer,
   GroupsContainer,
@@ -23,36 +23,36 @@ import {
   NameInput,
   NameLine,
   RnaEditorExpandedContainer,
-  StyledButton
-} from './styles'
-import { IRnaEditorExpandedProps } from 'components/monomerLibrary/RnaBuilder/RnaEditor/RnaEditorExpanded/types'
-import { useState } from 'react'
+  StyledButton,
+} from './styles';
+import { IRnaEditorExpandedProps } from 'components/monomerLibrary/RnaBuilder/RnaEditor/RnaEditorExpanded/types';
+import { useState } from 'react';
 
 export const RnaEditorExpanded = ({
   name,
   onCancel,
-  onChangeName
+  onChangeName,
 }: IRnaEditorExpandedProps) => {
   const groupsData = [
     {
       groupName: MonomerGroups.SUGARS,
-      iconName: 'sugar'
+      iconName: 'sugar',
     },
     {
       groupName: MonomerGroups.BASES,
-      iconName: 'base'
+      iconName: 'base',
     },
     {
       groupName: MonomerGroups.PHOSPHATES,
-      iconName: 'phosphate'
-    }
-  ] as const
+      iconName: 'phosphate',
+    },
+  ] as const;
 
-  const [selectedGroup, setSelectedGroup] = useState<MonomerGroups>()
+  const [selectedGroup, setSelectedGroup] = useState<MonomerGroups>();
 
   const selectGroup = (selectedGroup) => {
-    setSelectedGroup(selectedGroup)
-  }
+    setSelectedGroup(selectedGroup);
+  };
 
   return (
     <RnaEditorExpandedContainer>
@@ -74,7 +74,7 @@ export const RnaEditorExpanded = ({
               iconName={iconName}
               onClick={() => selectGroup(groupName)}
             />
-          )
+          );
         })}
       </GroupsContainer>
       <ButtonsContainer>
@@ -82,5 +82,5 @@ export const RnaEditorExpanded = ({
         <StyledButton disabled>Add to Presets</StyledButton>
       </ButtonsContainer>
     </RnaEditorExpandedContainer>
-  )
-}
+  );
+};

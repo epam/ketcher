@@ -143,7 +143,7 @@ test.describe('Click User Templates on canvas', () => {
     */
     await selectUserTemplatesAndPlaceInTheMiddle(
       TemplateLibrary.Naphtalene,
-      page
+      page,
     );
     await selectTopPanelButton(TopPanelButton.Save, page);
     await pressButton(page, 'Save to Templates');
@@ -163,7 +163,7 @@ test.describe('Click User Templates on canvas', () => {
     */
     await selectUserTemplatesAndPlaceInTheMiddle(
       TemplateLibrary.Naphtalene,
-      page
+      page,
     );
     await selectTopPanelButton(TopPanelButton.Save, page);
     await pressButton(page, 'Save to Templates');
@@ -187,7 +187,7 @@ test.describe('Click User Templates on canvas', () => {
     */
     await openFileAndAddToCanvas(
       'Create Template with Simple Objects.mol',
-      page
+      page,
     );
     await selectTopPanelButton(TopPanelButton.Save, page);
     await pressButton(page, 'Save to Templates');
@@ -210,7 +210,7 @@ test.describe('Click User Templates on canvas', () => {
     */
     await openFileAndAddToCanvas(
       'Create Template with Reaction arrow.rxn',
-      page
+      page,
     );
     await selectTopPanelButton(TopPanelButton.Save, page);
     await pressButton(page, 'Save to Templates');
@@ -266,7 +266,7 @@ test.describe('Click User Templates on canvas', () => {
     */
     await pasteFromClipboardAndAddToCanvas(
       page,
-      'C12(C(C3CN4CN5C6(CCN78CCC(C9CCCN9)C7CNN68)CCC5C4N3)CC3N1NCC3)CCCN2'
+      'C12(C(C3CN4CN5C6(CCN78CCC(C9CCCN9)C7CNN68)CCC5C4N3)CC3N1NCC3)CCCN2',
     );
     await delay(DELAY_IN_SECONDS.THREE);
     await clickInTheMiddleOfTheScreen(page);
@@ -287,7 +287,7 @@ test.describe('Click User Templates on canvas', () => {
     */
     await selectUserTemplatesAndPlaceInTheMiddle(
       TemplateLibrary.Naphtalene,
-      page
+      page,
     );
     await selectTopPanelButton(TopPanelButton.Save, page);
     await clickInTheMiddleOfTheScreen(page);

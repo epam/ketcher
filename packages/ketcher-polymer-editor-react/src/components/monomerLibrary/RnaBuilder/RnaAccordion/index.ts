@@ -14,4 +14,4 @@
  * limitations under the License.
  ***************************************************************************/
 
-export { RnaAccordion } from './RnaAccordion'
+export { RnaAccordion } from './RnaAccordion';

@@ -14,34 +14,34 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { fromElement, toElement } from '../../../../data/convert/structconv'
+import { fromElement, toElement } from '../../../../data/convert/structconv';
 
-import { Dialog } from '../../../components'
-import GenericGroups from './components/GenericGroups'
-import classes from './ExtendedTable.module.less'
-import { connect } from 'react-redux'
-import { onAction } from '../../../../state'
-import { useState } from 'react'
+import { Dialog } from '../../../components';
+import GenericGroups from './components/GenericGroups';
+import classes from './ExtendedTable.module.less';
+import { connect } from 'react-redux';
+import { onAction } from '../../../../state';
+import { useState } from 'react';
 
 const Table = (props) => {
-  const [value, setValue] = useState(props.pseudo ? props.label : null)
+  const [value, setValue] = useState(props.pseudo ? props.label : null);
 
-  const selected = (label) => value === label
+  const selected = (label) => value === label;
 
   const result = () => {
     if (!value || !value.length) {
-      return null
+      return null;
     }
-    return { type: 'gen', label: value, pseudo: value }
-  }
+    return { type: 'gen', label: value, pseudo: value };
+  };
 
   const onAtomSelect = (label, activateImmediately = false) => {
-    setValue(label)
+    setValue(label);
 
     if (activateImmediately) {
-      props.onOk(result())
+      props.onOk(result());
     }
-  }
+  };
 
   return (
     <Dialog
@@ -60,38 +60,38 @@ const Table = (props) => {
         disabledQueryElements={props.disabledQueryElements}
       ></GenericGroups>
     </Dialog>
-  )
-}
+  );
+};
 
 function mapSelectionToProps(editor) {
-  const selection = editor.selection()
+  const selection = editor.selection();
   if (selection?.atoms?.length === 1) {
-    const struct = editor.struct()
-    const atom = struct.atoms.get(selection.atoms[0])
-    return { ...fromElement(atom) }
+    const struct = editor.struct();
+    const atom = struct.atoms.get(selection.atoms[0]);
+    return { ...fromElement(atom) };
   }
 
-  return {}
+  return {};
 }
 
 const mapStateToProps = (state, ownProps) => {
-  const editor = state.editor
+  const editor = state.editor;
   if (ownProps.values || ownProps.label) {
-    return {}
+    return {};
   }
-  const disabledQueryElements = editor.render.options.disableQueryElements
-  return { disabledQueryElements, ...mapSelectionToProps(editor) }
-}
+  const disabledQueryElements = editor.render.options.disableQueryElements;
+  return { disabledQueryElements, ...mapSelectionToProps(editor) };
+};
 
 const mapDispatchToProps = (dispatch, ownProps) => {
   return {
     onOk: (result) => {
-      dispatch(onAction({ tool: 'atom', opts: toElement(result) }))
-      ownProps.onOk(result)
-    }
-  }
-}
+      dispatch(onAction({ tool: 'atom', opts: toElement(result) }));
+      ownProps.onOk(result);
+    },
+  };
+};
 
-const ExtendedTable = connect(mapStateToProps, mapDispatchToProps)(Table)
+const ExtendedTable = connect(mapStateToProps, mapDispatchToProps)(Table);
 
-export default ExtendedTable
+export default ExtendedTable;

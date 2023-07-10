@@ -14,19 +14,19 @@
  * limitations under the License.
  ***************************************************************************/
 
-import styles from './FormulaInput.module.less'
+import styles from './FormulaInput.module.less';
 
-const formulaRegexp = /\b(\d*)([A-Z][a-z]{0,3}#?)(\d*)\s*\b/g
-const errorRegexp = /error:.*/g
+const formulaRegexp = /\b(\d*)([A-Z][a-z]{0,3}#?)(\d*)\s*\b/g;
+const errorRegexp = /error:.*/g;
 
 function formulaInputMarkdown(contentData) {
-  const { content, contentEditable } = contentData
+  const { content, contentEditable } = contentData;
   const onKeyDown = (e) => {
     if (e.keyCode === 8) {
-      e.preventDefault()
-      return false
+      e.preventDefault();
+      return false;
     }
-  }
+  };
   return (
     <div
       className={styles.chem_input}
@@ -38,29 +38,29 @@ function formulaInputMarkdown(contentData) {
     >
       {content}
     </div>
-  )
+  );
 }
 
 function FormulaInput({ value, contentEditable }) {
-  if (errorRegexp.test(value)) return formulaInputMarkdown(value)
+  if (errorRegexp.test(value)) return formulaInputMarkdown(value);
 
-  const content = []
-  let cnd
-  let pos = 0
+  const content = [];
+  let cnd;
+  let pos = 0;
 
   while ((cnd = formulaRegexp.exec(value)) !== null) {
     if (cnd[1].length > 0)
-      content.push(<sup key={content.length}>{cnd[1]}</sup>)
-    content.push(value.substring(pos, cnd.index) + cnd[2])
+      content.push(<sup key={content.length}>{cnd[1]}</sup>);
+    content.push(value.substring(pos, cnd.index) + cnd[2]);
     if (cnd[3].length > 0)
-      content.push(<sub key={content.length}>{cnd[3]}</sub>)
-    pos = cnd.index + cnd[0].length
+      content.push(<sub key={content.length}>{cnd[3]}</sub>);
+    pos = cnd.index + cnd[0].length;
   }
 
-  if (pos === 0) content.push(value)
-  else content.push(value.substring(pos, value.length))
+  if (pos === 0) content.push(value);
+  else content.push(value.substring(pos, value.length));
 
-  return formulaInputMarkdown({ content, contentEditable })
+  return formulaInputMarkdown({ content, contentEditable });
 }
 
-export default FormulaInput
+export default FormulaInput;

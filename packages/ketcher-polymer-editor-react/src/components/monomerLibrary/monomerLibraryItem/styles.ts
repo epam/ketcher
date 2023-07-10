@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import styled from '@emotion/styled'
+import styled from '@emotion/styled';
 
 export const Card = styled.div<{ code: string; isSelected?: boolean }>`
   background: white;
@@ -93,4 +93,4 @@ export const Card = styled.div<{ code: string; isSelected?: boolean }>`
       color: #faa500;
     }
   }
-`
+`;

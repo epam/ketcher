@@ -14,7 +14,7 @@ import { BondAttributes, BondXy } from '@utils/canvas/types';
  */
 export async function getFirstBondCoordinatesByAttributes(
   page: Page,
-  attrs: BondAttributes
+  attrs: BondAttributes,
 ): Promise<BondXy> {
   const result = await getBondsCoordinatesByAttributes(page, attrs);
 

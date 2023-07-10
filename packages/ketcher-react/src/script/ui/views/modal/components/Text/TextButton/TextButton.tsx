@@ -14,41 +14,41 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React from 'react'
-import { TextCommand } from 'ketcher-core'
-import clsx from 'clsx'
-import styles from './TextButton.module.less'
-import { Icon, IconName } from 'components'
+import React from 'react';
+import { TextCommand } from 'ketcher-core';
+import clsx from 'clsx';
+import styles from './TextButton.module.less';
+import { Icon, IconName } from 'components';
 
 interface TextButtonProps {
-  button: { command: TextCommand; name: IconName }
-  active: boolean
+  button: { command: TextCommand; name: IconName };
+  active: boolean;
 }
 
 interface TextButtonPropsCallProps {
-  toggleStyle: (command: TextCommand) => void
+  toggleStyle: (command: TextCommand) => void;
 }
 
-type Props = TextButtonProps & TextButtonPropsCallProps
+type Props = TextButtonProps & TextButtonPropsCallProps;
 
 export const TextButton = (props: Props) => {
   const toggleStyle = (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-    command: TextCommand
+    command: TextCommand,
   ) => {
-    event.preventDefault()
-    props.toggleStyle(command)
-  }
+    event.preventDefault();
+    props.toggleStyle(command);
+  };
 
   return (
     <button
       className={clsx(styles.textButton, { [styles.isActive]: props.active })}
       title={props.button.command.toLowerCase()}
       onMouseDown={(event) => {
-        toggleStyle(event, props.button.command)
+        toggleStyle(event, props.button.command);
       }}
     >
       <Icon name={props.button.name} />
     </button>
-  )
-}
+  );
+};

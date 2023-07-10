@@ -14,20 +14,20 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useSelector } from 'react-redux'
+import { useSelector } from 'react-redux';
 
-import { AbbreviationLookup } from './AbbreviationLookup'
-import { useOptions } from './hooks/useOptions'
+import { AbbreviationLookup } from './AbbreviationLookup';
+import { useOptions } from './hooks/useOptions';
 
-import { selectIsAbbreviationLookupOpen } from '../../state/abbreviationLookup/selectors'
+import { selectIsAbbreviationLookupOpen } from '../../state/abbreviationLookup/selectors';
 
 export const AbbreviationLookupContainer = () => {
-  const isOpen = useSelector(selectIsAbbreviationLookupOpen)
-  const abbreviationOptions = useOptions()
+  const isOpen = useSelector(selectIsAbbreviationLookupOpen);
+  const abbreviationOptions = useOptions();
 
   if (!isOpen) {
-    return null
+    return null;
   }
 
-  return <AbbreviationLookup options={abbreviationOptions} />
-}
+  return <AbbreviationLookup options={abbreviationOptions} />;
+};

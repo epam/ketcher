@@ -17,7 +17,6 @@ const ignoredTests = [
   'Examples/**',
   'File-Management/**',
   'Indigo-Tools/**',
-  'R-group-tool/**',
   'Reagents/**',
   'Structure-Creating-&-Editing/**',
   'Templates/Functional-Groups/functional-groups.spec.ts',

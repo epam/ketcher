@@ -14,65 +14,72 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { BaseCallProps, BaseProps } from '../../../modal.types'
+import { BaseCallProps, BaseProps } from '../../../modal.types';
 
-import Form, { Field } from '../../../../../component/form/form/form'
-import { FC, useCallback, useState } from 'react'
+import Form, { Field } from '../../../../../component/form/form/form';
+import { FC, useCallback, useState } from 'react';
 
-import { Dialog } from '../../../../components'
-import ElementNumber from './ElementNumber'
-import { Elements } from 'ketcher-core'
-import { atom as atomSchema } from '../../../../../data/schema/struct-schema'
-import { capitalize } from 'lodash/fp'
-import classes from './Atom.module.less'
-import Select from '../../../../../component/form/Select'
-import { getSelectOptionsFromSchema } from '../../../../../utils'
-import clsx from 'clsx'
-import { Icon } from 'components'
+import { Dialog } from '../../../../components';
+import ElementNumber from './ElementNumber';
+import { Elements } from 'ketcher-core';
+import { atom as atomSchema } from '../../../../../data/schema/struct-schema';
+import { capitalize } from 'lodash/fp';
+import classes from './Atom.module.less';
+import Select from '../../../../../component/form/Select';
+import { getSelectOptionsFromSchema } from '../../../../../utils';
+import clsx from 'clsx';
+import { Icon } from 'components';
 
 interface AtomProps extends BaseCallProps, BaseProps {
-  alias: string
-  charge: string
-  exactChangeFlag: boolean
-  explicitValence: number
-  hCount: number
-  invRet: number
-  isotope: number
-  label: string
-  radical: number
-  ringBondCount: number
-  stereoParity: number
-  substitutionCount: number
-  unsaturatedAtom: boolean
+  alias: string;
+  charge: string;
+  exactChangeFlag: boolean;
+  explicitValence: number;
+  hCount: number;
+  invRet: number;
+  isotope: number;
+  label: string;
+  radical: number;
+  ringBondCount: number;
+  stereoParity: number;
+  substitutionCount: number;
+  unsaturatedAtom: boolean;
 }
 
 type Props = AtomProps & {
-  isMultipleAtoms?: boolean
-}
+  isMultipleAtoms?: boolean;
+};
 
-const atomProps = atomSchema.properties
+const atomProps = atomSchema.properties;
 
 const Atom: FC<Props> = (props: Props) => {
-  const { formState, stereoParity, isMultipleAtoms = false, ...rest } = props
-  const [currentLabel, setCurrentLabel] = useState<string>(rest.label)
+  const {
+    formState,
+    /* eslint-disable @typescript-eslint/no-unused-vars */
+    stereoParity,
+    /* eslint-enable @typescript-eslint/no-unused-vars */
+    isMultipleAtoms = false,
+    ...rest
+  } = props;
+  const [currentLabel, setCurrentLabel] = useState<string>(rest.label);
   const [expandedAccordions, setExpandedAccordions] = useState<string[]>([
-    'General'
-  ])
+    'General',
+  ]);
 
   const handleAccordionChange = (accordion) => () => {
-    const isExpand = !expandedAccordions.includes(accordion)
+    const isExpand = !expandedAccordions.includes(accordion);
     setExpandedAccordions(
       isExpand
         ? [...expandedAccordions, accordion]
         : [...expandedAccordions].filter(
-            (expandedAccordion) => expandedAccordion !== accordion
-          )
-    )
-  }
+            (expandedAccordion) => expandedAccordion !== accordion,
+          ),
+    );
+  };
 
   const onLabelChangeCallback = useCallback((newValue) => {
-    setCurrentLabel(newValue)
-  }, [])
+    setCurrentLabel(newValue);
+  }, []);
 
   const itemGroups = [
     {
@@ -99,7 +106,7 @@ const Atom: FC<Props> = (props: Props) => {
             options={getSelectOptionsFromSchema(atomProps.radical)}
           />
         </div>
-      )
+      ),
     },
     {
       groupName: 'Query specific',
@@ -126,7 +133,7 @@ const Atom: FC<Props> = (props: Props) => {
             className={classes.checkbox}
           />
         </div>
-      )
+      ),
     },
     {
       groupName: 'Reaction flags',
@@ -143,9 +150,9 @@ const Atom: FC<Props> = (props: Props) => {
             className={classes.checkbox}
           />
         </div>
-      )
-    }
-  ]
+      ),
+    },
+  ];
 
   return (
     <Dialog
@@ -162,14 +169,14 @@ const Atom: FC<Props> = (props: Props) => {
         schema={atomSchema}
         customValid={{
           label: (label) => atomValid(label, isMultipleAtoms),
-          charge: (charge) => chargeValid(charge, isMultipleAtoms)
+          charge: (charge) => chargeValid(charge, isMultipleAtoms),
         }}
         init={rest}
         {...formState}
       >
         <div className={classes.accordionWrapper}>
           {itemGroups.map(({ groupName, component }) => {
-            const shouldGroupBeRended = expandedAccordions.includes(groupName)
+            const shouldGroupBeRended = expandedAccordions.includes(groupName);
             return (
               <div key={groupName}>
                 <div
@@ -181,7 +188,7 @@ const Atom: FC<Props> = (props: Props) => {
                     <Icon
                       className={clsx({
                         [classes.expandIcon]: true,
-                        [classes.turnedIcon]: !shouldGroupBeRended
+                        [classes.turnedIcon]: !shouldGroupBeRended,
                       })}
                       name="chevron"
                     />
@@ -190,37 +197,37 @@ const Atom: FC<Props> = (props: Props) => {
                 <div
                   className={clsx({
                     [classes.accordionDetailsWrapper]: true,
-                    [classes.hiddenAccordion]: !shouldGroupBeRended
+                    [classes.hiddenAccordion]: !shouldGroupBeRended,
                   })}
                 >
                   <div className={classes.accordionDetails}>{component}</div>
                 </div>
               </div>
-            )
+            );
           })}
         </div>
       </Form>
     </Dialog>
-  )
-}
+  );
+};
 
 function atomValid(label: string, isMultipleAtoms: boolean) {
-  const isChemicalElement = !!Elements.get(capitalize(label))
+  const isChemicalElement = !!Elements.get(capitalize(label));
   if (isMultipleAtoms) {
-    return label === '' || isChemicalElement
+    return label === '' || isChemicalElement;
   }
-  return label && isChemicalElement
+  return label && isChemicalElement;
 }
 
 function chargeValid(charge, isMultipleAtoms: boolean) {
-  const regex = new RegExp(atomSchema.properties.charge.pattern)
-  const result = regex.exec(charge)
-  const isValidCharge = result && (result[1] === '' || result[3] === '')
+  const regex = new RegExp(atomSchema.properties.charge.pattern);
+  const result = regex.exec(charge);
+  const isValidCharge = result && (result[1] === '' || result[3] === '');
   if (isMultipleAtoms) {
-    return charge === '0' || charge === 0 || charge === '' || isValidCharge
+    return charge === '0' || charge === 0 || charge === '' || isValidCharge;
   }
-  return isValidCharge
+  return isValidCharge;
 }
 
-export type { AtomProps }
-export default Atom
+export type { AtomProps };
+export default Atom;

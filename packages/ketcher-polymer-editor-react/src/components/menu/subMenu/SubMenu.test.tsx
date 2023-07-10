@@ -13,40 +13,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { render, screen, fireEvent } from '@testing-library/react'
-import { Menu, MenuContext } from 'components/menu'
+import { render, screen, fireEvent } from '@testing-library/react';
+import { Menu, MenuContext } from 'components/menu';
 
-const mockClickHandler = jest.fn()
-const MOCK_NAME = 'select-lasso'
+const mockClickHandler = jest.fn();
+const MOCK_NAME = 'select-lasso';
 
 const mockValue = {
   activate: mockClickHandler,
-  isActive: (itemKey) => itemKey === MOCK_NAME
-}
+  isActive: (itemKey) => itemKey === MOCK_NAME,
+};
 
 const mockMenuItems = [
   <Menu.Item itemId="help" />,
   <Menu.Item itemId="settings" />,
-  <Menu.Item itemId="undo" />
-]
+  <Menu.Item itemId="undo" />,
+];
 
 const mockSubMenu = () => {
   return (
     <MenuContext.Provider value={mockValue}>
       <Menu.Submenu vertical>{...mockMenuItems}</Menu.Submenu>
     </MenuContext.Provider>
-  )
-}
+  );
+};
 
 describe('Test SubMenu component', () => {
   it('should be rendered without crashing', () => {
-    const { asFragment } = render(withThemeProvider(mockSubMenu()))
-    expect(asFragment).toMatchSnapshot()
-  })
+    const { asFragment } = render(withThemeProvider(mockSubMenu()));
+    expect(asFragment).toMatchSnapshot();
+  });
   it('should call provided callback when header icon is clicked', () => {
-    render(withThemeProvider(mockSubMenu()))
-    const button = screen.getByRole('button')
-    fireEvent.click(button)
-    expect(mockClickHandler).toHaveBeenCalled()
-  })
-})
+    render(withThemeProvider(mockSubMenu()));
+    const button = screen.getByRole('button');
+    fireEvent.click(button);
+    expect(mockClickHandler).toHaveBeenCalled();
+  });
+});

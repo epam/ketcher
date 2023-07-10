@@ -15,14 +15,14 @@
  ***************************************************************************/
 
 function ErrorsCheck(props) {
-  const { moleculeErrors, checkSchema } = props
-  const moleculeErrorsTypes = Object.keys(moleculeErrors)
+  const { moleculeErrors, checkSchema } = props;
+  const moleculeErrorsTypes = Object.keys(moleculeErrors);
 
   const getOptionName = (option) => {
-    const { items } = checkSchema.properties.checkOptions
-    const nameIndex = items.enum.indexOf(option)
-    return items.enumNames[nameIndex]
-  }
+    const { items } = checkSchema.properties.checkOptions;
+    const nameIndex = items.enum.indexOf(option);
+    return items.enumNames[nameIndex];
+  };
 
   return (
     <>
@@ -41,7 +41,7 @@ function ErrorsCheck(props) {
         )}
       </fieldset>
     </>
-  )
+  );
 }
 
-export default ErrorsCheck
+export default ErrorsCheck;

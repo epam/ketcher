@@ -15,23 +15,23 @@
  ***************************************************************************/
 
 export type GenItem = {
-  label: string
-  description?: string
-}
+  label: string;
+  description?: string;
+};
 
 export type GenItemSet = {
-  items: GenItem[]
-  displayName?: string
-}
+  items: GenItem[];
+  displayName?: string;
+};
 
 export type GenGroup = {
-  itemSets: GenItemSet[]
-  title: string
-}
+  itemSets: GenItemSet[];
+  title: string;
+};
 
 export type GenericsType = {
-  [index: string]: GenGroup & { subGroups?: GenericsType }
-}
+  [index: string]: GenGroup & { subGroups?: GenericsType };
+};
 
 export const Generics: GenericsType = {
   'atoms-gen': {
@@ -41,34 +41,34 @@ export const Generics: GenericsType = {
         displayName: 'any atom',
         items: [
           { label: 'A', description: 'Any atom except hydrogen' },
-          { label: 'AH', description: 'Any atom, including hydrogen' }
-        ]
+          { label: 'AH', description: 'Any atom, including hydrogen' },
+        ],
       },
       {
         displayName: 'except C or H',
         items: [
           {
             label: 'Q',
-            description: 'Any heteroatom (any atom except C or H)'
+            description: 'Any heteroatom (any atom except C or H)',
           },
-          { label: 'QH', description: 'Any atom except C' }
-        ]
+          { label: 'QH', description: 'Any atom except C' },
+        ],
       },
       {
         displayName: 'any metal',
         items: [
           { label: 'M', description: 'Any metal' },
-          { label: 'MH', description: 'Any metal or hydrogen' }
-        ]
+          { label: 'MH', description: 'Any metal or hydrogen' },
+        ],
       },
       {
         displayName: 'any halogen',
         items: [
           { label: 'X', description: 'Any halogen' },
-          { label: 'XH', description: 'Any halogen or hydrogen' }
-        ]
-      }
-    ]
+          { label: 'XH', description: 'Any halogen or hydrogen' },
+        ],
+      },
+    ],
   },
   'special-nodes': {
     title: 'Special Nodes',
@@ -79,10 +79,10 @@ export const Generics: GenericsType = {
           { label: 'D', description: 'Deuterium' },
           { label: 'T', description: 'Tritium' },
           { label: 'R', description: 'Pseudoatom' },
-          { label: 'Pol', description: 'Polymer Bead' }
-        ]
-      }
-    ]
+          { label: 'Pol', description: 'Polymer Bead' },
+        ],
+      },
+    ],
   },
 
   'group-gen': {
@@ -92,26 +92,26 @@ export const Generics: GenericsType = {
         items: [
           {
             label: 'G',
-            description: 'Any group'
+            description: 'Any group',
           },
           {
             label: 'GH',
-            description: 'Any group or hydrogen'
-          }
-        ]
+            description: 'Any group or hydrogen',
+          },
+        ],
       },
       {
         items: [
           {
             label: 'G*',
-            description: 'Any group with a ring closure'
+            description: 'Any group with a ring closure',
           },
           {
             label: 'GH*',
-            description: 'Any group with a ring closure or hydrogen'
-          }
-        ]
-      }
+            description: 'Any group with a ring closure or hydrogen',
+          },
+        ],
+      },
     ],
     subGroups: {
       'group-acyclic': {
@@ -120,9 +120,9 @@ export const Generics: GenericsType = {
           {
             items: [
               { label: 'ACY', description: 'Acyclic group' },
-              { label: 'ACH', description: 'Acyclic group or hydrogen' }
-            ]
-          }
+              { label: 'ACH', description: 'Acyclic group or hydrogen' },
+            ],
+          },
         ],
         subGroups: {
           'acyclic-carbo': {
@@ -131,31 +131,31 @@ export const Generics: GenericsType = {
               {
                 items: [
                   { label: 'ABC', description: 'Carbocyclic' },
-                  { label: 'ABH', description: 'Carbocyclic of hydrogen' }
-                ]
+                  { label: 'ABH', description: 'Carbocyclic of hydrogen' },
+                ],
               },
               {
                 displayName: 'alkynyl',
                 items: [
                   { label: 'AYL', description: 'Alkynyl' },
-                  { label: 'AYH', description: 'Alkynyl or hydrogen' }
-                ]
+                  { label: 'AYH', description: 'Alkynyl or hydrogen' },
+                ],
               },
               {
                 displayName: 'alkyl',
                 items: [
                   { label: 'ALK', description: 'Alkyl' },
-                  { label: 'ALH', description: 'Alkyl or hydrogen' }
-                ]
+                  { label: 'ALH', description: 'Alkyl or hydrogen' },
+                ],
               },
               {
                 displayName: 'alkenyl',
                 items: [
                   { label: 'AEL', description: 'Alkenyl' },
-                  { label: 'AEH', description: 'Alkenyl or hydrogen' }
-                ]
-              }
-            ]
+                  { label: 'AEH', description: 'Alkenyl or hydrogen' },
+                ],
+              },
+            ],
           },
           'acyclic-hetero': {
             title: 'Acyclic Hetero',
@@ -163,18 +163,18 @@ export const Generics: GenericsType = {
               {
                 items: [
                   { label: 'AHC', description: 'Heteroacyclic' },
-                  { label: 'AHH', description: 'Heterocyclic or hydrogen' }
-                ]
+                  { label: 'AHH', description: 'Heterocyclic or hydrogen' },
+                ],
               },
               {
                 items: [
                   { label: 'AOX', description: 'Alkoxy' },
-                  { label: 'AOH', description: 'Alkoxy or hydrogen' }
-                ]
-              }
-            ]
-          }
-        }
+                  { label: 'AOH', description: 'Alkoxy or hydrogen' },
+                ],
+              },
+            ],
+          },
+        },
       },
       'group-cyclic': {
         title: 'Cyclic',
@@ -182,22 +182,22 @@ export const Generics: GenericsType = {
           {
             items: [
               { label: 'CYC', description: 'Cyclic group' },
-              { label: 'CYH', description: 'Cyclic group or hydrogen' }
-            ]
+              { label: 'CYH', description: 'Cyclic group or hydrogen' },
+            ],
           },
           {
             displayName: 'no carbon',
             items: [
               {
                 label: 'CXX',
-                description: 'Cyclic group with no Carbon atoms'
+                description: 'Cyclic group with no Carbon atoms',
               },
               {
                 label: 'CXH',
-                description: 'Cyclic group with no Carbon atoms or hydrogen'
-              }
-            ]
-          }
+                description: 'Cyclic group with no Carbon atoms or hydrogen',
+              },
+            ],
+          },
         ],
         subGroups: {
           'cyclic-carbo': {
@@ -208,16 +208,16 @@ export const Generics: GenericsType = {
                   { label: 'CBC', description: 'Carbocyclic derivatives' },
                   {
                     label: 'CBH',
-                    description: 'Carbocyclic derivatives or hydrogen'
-                  }
-                ]
+                    description: 'Carbocyclic derivatives or hydrogen',
+                  },
+                ],
               },
               {
                 displayName: 'aryl',
                 items: [
                   { label: 'ARY', description: 'Any aryl group' },
-                  { label: 'ARH', description: 'Any aryl group or hydrogen' }
-                ]
+                  { label: 'ARH', description: 'Any aryl group or hydrogen' },
+                ],
               },
               {
                 displayName: 'cycloalkyl',
@@ -225,9 +225,9 @@ export const Generics: GenericsType = {
                   { label: 'CAL', description: 'Any cycloalkyl group' },
                   {
                     label: 'CAH',
-                    description: 'Any cycloalkyl group or hydrogen'
-                  }
-                ]
+                    description: 'Any cycloalkyl group or hydrogen',
+                  },
+                ],
               },
               {
                 displayName: 'cycloalkenyl',
@@ -235,11 +235,11 @@ export const Generics: GenericsType = {
                   { label: 'CEL', description: 'Any cyloalkenyl group' },
                   {
                     label: 'CEH',
-                    description: 'Any cyloalkenyl group or hydrogen'
-                  }
-                ]
-              }
-            ]
+                    description: 'Any cyloalkenyl group or hydrogen',
+                  },
+                ],
+              },
+            ],
           },
           'cyclic-hetero': {
             title: 'Cyclic Hetero',
@@ -249,21 +249,21 @@ export const Generics: GenericsType = {
                   { label: 'CHC', description: 'Heterocyclic group' },
                   {
                     label: 'CHH',
-                    description: 'Heterocyclic group or hydrogen'
-                  }
-                ]
+                    description: 'Heterocyclic group or hydrogen',
+                  },
+                ],
               },
               {
                 displayName: 'hetero aryl',
                 items: [
                   { label: 'HAR', description: 'Heteroaryl group' },
-                  { label: 'HAH', description: 'Heteroaryl group or hydrogen' }
-                ]
-              }
-            ]
-          }
-        }
-      }
-    }
-  }
-}
+                  { label: 'HAH', description: 'Heteroaryl group or hydrogen' },
+                ],
+              },
+            ],
+          },
+        },
+      },
+    },
+  },
+};

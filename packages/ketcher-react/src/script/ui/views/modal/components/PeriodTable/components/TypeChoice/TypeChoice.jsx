@@ -14,14 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 
-import classes from './TypeChoice.module.less'
-import { GenericInput } from 'src/script/ui/component/form/Input/Input'
+import classes from './TypeChoice.module.less';
+import { GenericInput } from 'src/script/ui/component/form/Input/Input';
 
 const typeSchema = [
   { title: 'Single', value: 'atom' },
   { title: 'List', value: 'list' },
-  { title: 'Not List', value: 'not-list' }
-]
+  { title: 'Not List', value: 'not-list' },
+];
 
 function TypeChoice({ value, onChange, ...props }) {
   return (
@@ -39,7 +39,7 @@ function TypeChoice({ value, onChange, ...props }) {
         </label>
       ))}
     </fieldset>
-  )
+  );
 }
 
-export default TypeChoice
+export default TypeChoice;

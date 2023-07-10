@@ -1,38 +1,38 @@
-import { Action, Bond, fromBondsAttrs } from 'ketcher-core'
-import { updateOnlyChangedProperties } from './utils'
+import { Action, Bond, fromBondsAttrs } from 'ketcher-core';
+import { updateOnlyChangedProperties } from './utils';
 
 export function updateSelectedBonds({
   bonds,
   changeBondPromise,
-  editor
+  editor,
 }: {
-  bonds: number[]
-  changeBondPromise: Promise<Bond>
-  editor
+  bonds: number[];
+  changeBondPromise: Promise<Bond>;
+  editor;
 }) {
-  const action = new Action()
-  const struct = editor.render.ctab
-  const { molecule } = struct
+  const action = new Action();
+  const struct = editor.render.ctab;
+  const { molecule } = struct;
   if (bonds) {
     Promise.resolve(changeBondPromise)
       .then((userChangedBond) => {
         bonds.forEach((bondId) => {
-          const unchangedBond = molecule.bonds.get(bondId)
+          const unchangedBond = molecule.bonds.get(bondId);
           const bondWithChangedProperties = updateOnlyChangedProperties(
             unchangedBond,
-            userChangedBond
-          )
+            userChangedBond,
+          );
           action.mergeWith(
             fromBondsAttrs(
               struct,
               bondId,
               bondWithChangedProperties as Bond,
-              false
-            )
-          )
-        })
-        editor.update(action)
+              false,
+            ),
+          );
+        });
+        editor.update(action);
       })
-      .catch(() => null)
+      .catch(() => null);
   }
 }

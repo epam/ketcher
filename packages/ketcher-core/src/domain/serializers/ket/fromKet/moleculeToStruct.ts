@@ -14,163 +14,163 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Atom, Bond, SGroup, Struct } from 'domain/entities'
+import { Atom, Bond, SGroup, Struct } from 'domain/entities';
 
-import { Elements } from 'domain/constants'
-import { ifDef } from 'utilities'
+import { Elements } from 'domain/constants';
+import { ifDef } from 'utilities';
 
 export function toRlabel(values) {
-  let res = 0
+  let res = 0;
   values.forEach((val) => {
-    const rgi = val - 1
-    res |= 1 << rgi
-  })
-  return res
+    const rgi = val - 1;
+    res |= 1 << rgi;
+  });
+  return res;
 }
 
 export function moleculeToStruct(ketItem: any): Struct {
-  const struct = new Struct()
+  const struct = new Struct();
   if (ketItem.atoms) {
     ketItem.atoms.forEach((atom) => {
-      if (atom.type === 'rg-label') struct.atoms.add(rglabelToStruct(atom))
-      if (atom.type === 'atom-list') struct.atoms.add(atomListToStruct(atom))
-      if (!atom.type) struct.atoms.add(atomToStruct(atom))
-    })
+      if (atom.type === 'rg-label') struct.atoms.add(rglabelToStruct(atom));
+      if (atom.type === 'atom-list') struct.atoms.add(atomListToStruct(atom));
+      if (!atom.type) struct.atoms.add(atomToStruct(atom));
+    });
   }
 
   if (ketItem.bonds) {
-    ketItem.bonds.forEach((bond) => struct.bonds.add(bondToStruct(bond)))
+    ketItem.bonds.forEach((bond) => struct.bonds.add(bondToStruct(bond)));
   }
 
   if (ketItem.sgroups) {
     ketItem.sgroups.forEach((sgroup) =>
-      struct.sgroups.add(sgroupToStruct(sgroup))
-    )
+      struct.sgroups.add(sgroupToStruct(sgroup)),
+    );
   }
 
-  struct.initHalfBonds()
-  struct.initNeighbors()
-  struct.markFragments()
-  struct.bindSGroupsToFunctionalGroups()
+  struct.initHalfBonds();
+  struct.initNeighbors();
+  struct.markFragments();
+  struct.bindSGroupsToFunctionalGroups();
 
-  return struct
+  return struct;
 }
 
 export function atomToStruct(source) {
-  const params: any = {}
+  const params: any = {};
 
-  ifDef(params, 'label', source.label)
-  ifDef(params, 'alias', source.alias)
+  ifDef(params, 'label', source.label);
+  ifDef(params, 'alias', source.alias);
   ifDef(params, 'pp', {
     x: source.location[0],
     y: -source.location[1],
-    z: source.location[2] || 0.0
-  })
-  ifDef(params, 'charge', source.charge)
-  ifDef(params, 'explicitValence', source.explicitValence)
-  ifDef(params, 'isotope', source.isotope)
-  ifDef(params, 'radical', source.radical)
-  ifDef(params, 'cip', source.cip)
-  ifDef(params, 'attpnt', source.attachmentPoints)
+    z: source.location[2] || 0.0,
+  });
+  ifDef(params, 'charge', source.charge);
+  ifDef(params, 'explicitValence', source.explicitValence);
+  ifDef(params, 'isotope', source.isotope);
+  ifDef(params, 'radical', source.radical);
+  ifDef(params, 'cip', source.cip);
+  ifDef(params, 'attpnt', source.attachmentPoints);
   // stereo
-  ifDef(params, 'stereoLabel', source.stereoLabel)
-  ifDef(params, 'stereoParity', source.stereoParity)
-  ifDef(params, 'weight', source.weight)
+  ifDef(params, 'stereoLabel', source.stereoLabel);
+  ifDef(params, 'stereoParity', source.stereoParity);
+  ifDef(params, 'weight', source.weight);
   // query
-  ifDef(params, 'ringBondCount', source.ringBondCount)
-  ifDef(params, 'substitutionCount', source.substitutionCount)
-  ifDef(params, 'unsaturatedAtom', Number(Boolean(source.unsaturatedAtom)))
-  ifDef(params, 'hCount', source.hCount)
+  ifDef(params, 'ringBondCount', source.ringBondCount);
+  ifDef(params, 'substitutionCount', source.substitutionCount);
+  ifDef(params, 'unsaturatedAtom', Number(Boolean(source.unsaturatedAtom)));
+  ifDef(params, 'hCount', source.hCount);
   // reaction
-  ifDef(params, 'aam', source.mapping)
-  ifDef(params, 'invRet', source.invRet)
-  ifDef(params, 'exactChangeFlag', Number(Boolean(source.exactChangeFlag)))
+  ifDef(params, 'aam', source.mapping);
+  ifDef(params, 'invRet', source.invRet);
+  ifDef(params, 'exactChangeFlag', Number(Boolean(source.exactChangeFlag)));
   // implicit hydrogens
-  ifDef(params, 'implicitHCount', source.implicitHCount)
-  return new Atom(params)
+  ifDef(params, 'implicitHCount', source.implicitHCount);
+  return new Atom(params);
 }
 
 export function rglabelToStruct(source) {
-  const params: any = {}
-  params.label = 'R#'
+  const params: any = {};
+  params.label = 'R#';
   ifDef(params, 'pp', {
     x: source.location[0],
     y: -source.location[1],
-    z: source.location[2] || 0.0
-  })
-  ifDef(params, 'attpnt', source.attachmentPoints)
-  const rglabel = toRlabel(source.$refs.map((el) => parseInt(el.slice(3))))
-  ifDef(params, 'rglabel', rglabel)
-  return new Atom(params)
+    z: source.location[2] || 0.0,
+  });
+  ifDef(params, 'attpnt', source.attachmentPoints);
+  const rglabel = toRlabel(source.$refs.map((el) => parseInt(el.slice(3))));
+  ifDef(params, 'rglabel', rglabel);
+  return new Atom(params);
 }
 
 export function atomListToStruct(source) {
-  const params: any = {}
-  params.label = 'L#'
+  const params: any = {};
+  params.label = 'L#';
   ifDef(params, 'pp', {
     x: source.location[0],
     y: -source.location[1],
-    z: source.location[2] || 0.0
-  })
-  ifDef(params, 'attpnt', source.attachmentPoints)
+    z: source.location[2] || 0.0,
+  });
+  ifDef(params, 'attpnt', source.attachmentPoints);
   const ids = source.elements
     .map((el) => Elements.get(el)?.number)
-    .filter((id) => id)
+    .filter((id) => id);
   ifDef(params, 'atomList', {
     ids,
-    notList: source.notList
-  })
-  return new Atom(params)
+    notList: source.notList,
+  });
+  return new Atom(params);
 }
 
 export function bondToStruct(source) {
-  const params: any = {}
+  const params: any = {};
 
-  ifDef(params, 'type', source.type)
-  ifDef(params, 'topology', source.topology)
-  ifDef(params, 'reactingCenterStatus', source.center)
-  ifDef(params, 'stereo', source.stereo)
-  ifDef(params, 'cip', source.cip)
+  ifDef(params, 'type', source.type);
+  ifDef(params, 'topology', source.topology);
+  ifDef(params, 'reactingCenterStatus', source.center);
+  ifDef(params, 'stereo', source.stereo);
+  ifDef(params, 'cip', source.cip);
   // if (params.stereo)
   // 	params.stereo = params.stereo > 1 ? params.stereo * 2 : params.stereo;
   // params.xxx = 0;
-  ifDef(params, 'begin', source.atoms[0])
-  ifDef(params, 'end', source.atoms[1])
+  ifDef(params, 'begin', source.atoms[0]);
+  ifDef(params, 'end', source.atoms[1]);
 
-  return new Bond(params)
+  return new Bond(params);
 }
 
 export function sgroupToStruct(source) {
-  const sgroup = new SGroup(source.type)
-  ifDef(sgroup, 'atoms', source.atoms)
+  const sgroup = new SGroup(source.type);
+  ifDef(sgroup, 'atoms', source.atoms);
   switch (source.type) {
     case 'GEN':
-      break
+      break;
     case 'MUL': {
-      ifDef(sgroup.data, 'mul', source.mul)
-      break
+      ifDef(sgroup.data, 'mul', source.mul);
+      break;
     }
     case 'SRU': {
-      ifDef(sgroup.data, 'subscript', source.subscript)
-      ifDef(sgroup.data, 'connectivity', source.connectivity.toLowerCase())
-      break
+      ifDef(sgroup.data, 'subscript', source.subscript);
+      ifDef(sgroup.data, 'connectivity', source.connectivity.toLowerCase());
+      break;
     }
     case 'SUP': {
-      ifDef(sgroup.data, 'name', source.name)
-      ifDef(sgroup.data, 'expanded', source.expanded)
-      ifDef(sgroup, 'id', source.id)
-      break
+      ifDef(sgroup.data, 'name', source.name);
+      ifDef(sgroup.data, 'expanded', source.expanded);
+      ifDef(sgroup, 'id', source.id);
+      break;
     }
     case 'DAT': {
-      ifDef(sgroup.data, 'absolute', source.placement)
-      ifDef(sgroup.data, 'attached', source.display)
-      ifDef(sgroup.data, 'context', source.context)
-      ifDef(sgroup.data, 'fieldName', source.fieldName)
-      ifDef(sgroup.data, 'fieldValue', source.fieldData)
-      break
+      ifDef(sgroup.data, 'absolute', source.placement);
+      ifDef(sgroup.data, 'attached', source.display);
+      ifDef(sgroup.data, 'context', source.context);
+      ifDef(sgroup.data, 'fieldName', source.fieldName);
+      ifDef(sgroup.data, 'fieldValue', source.fieldData);
+      break;
     }
     default:
-      break
+      break;
   }
-  return sgroup
+  return sgroup;
 }

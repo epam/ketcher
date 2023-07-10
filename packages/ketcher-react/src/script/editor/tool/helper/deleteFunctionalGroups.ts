@@ -4,33 +4,39 @@ import {
   fromSgroupDeletion,
   fromFragmentDeletion,
   ReStruct,
-  Action
-} from 'ketcher-core'
+  Action,
+} from 'ketcher-core';
 
 export function deleteFunctionalGroups(
   sGroupsId: number[],
   struct: ReStruct,
-  action: Action
+  action: Action,
 ): number[] {
-  const deletedAtoms: number[] = []
-  const functionalGroups = struct.molecule.functionalGroups
-  const sgroups = struct.sgroups
+  const deletedAtoms: number[] = [];
+  const functionalGroups = struct.molecule.functionalGroups;
+  const sgroups = struct.sgroups;
   sGroupsId.forEach((sGroupId) => {
-    const sGroupItem = sgroups.get(sGroupId)?.item
+    const sGroupItem = sgroups.get(sGroupId)?.item as SGroup;
     if (
       FunctionalGroup.isContractedFunctionalGroup(sGroupId, functionalGroups)
     ) {
-      const atomsWithoutAttachmentPoint =
-        SGroup.getAtomsSGroupWithoutAttachmentPoint(sGroupItem, struct.molecule)
-      deletedAtoms.push(...atomsWithoutAttachmentPoint)
-      action.mergeWith(fromSgroupDeletion(struct, sGroupId))
+      const sGroupAtoms = SGroup.getAtoms(struct.molecule, sGroupItem);
+      const { atomId: positionAtomId } = sGroupItem.getContractedPosition(
+        struct.molecule,
+      );
+      const atomsWithoutAttachmentPoint = sGroupAtoms.filter(
+        (atomId) => atomId !== positionAtomId,
+      );
+
+      deletedAtoms.push(...atomsWithoutAttachmentPoint);
+      action.mergeWith(fromSgroupDeletion(struct, sGroupId));
       action.mergeWith(
         fromFragmentDeletion(struct, {
           atoms: atomsWithoutAttachmentPoint,
-          bonds: SGroup.getBonds(struct, sGroupItem)
-        })
-      )
+          bonds: SGroup.getBonds(struct, sGroupItem),
+        }),
+      );
     }
-  })
-  return deletedAtoms
+  });
+  return deletedAtoms;
 }

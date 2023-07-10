@@ -14,51 +14,51 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react';
 
-import Input from '../Input/Input'
-import Select from '../Select'
-import styles from './measure-input.module.less'
-import { getSelectOptionsFromSchema } from '../../../utils'
+import Input from '../Input/Input';
+import Select from '../Select';
+import styles from './measure-input.module.less';
+import { getSelectOptionsFromSchema } from '../../../utils';
 
 const selectOptions = getSelectOptionsFromSchema({
-  enum: ['cm', 'px', 'pt', 'inch']
-})
+  enum: ['cm', 'px', 'pt', 'inch'],
+});
 
 const MeasureInput = ({ schema, value, onChange, name, ...rest }) => {
-  const [measure, setMeasure] = useState('px')
-  const [cust, setCust] = useState(value || schema.default)
+  const [measure, setMeasure] = useState('px');
+  const [cust, setCust] = useState(value || schema.default);
 
   useEffect(() => {
     if (measure === 'px' && cust?.toFixed() - 0 !== value) {
-      setMeasure('px')
-      setCust(value)
+      setMeasure('px');
+      setCust(value);
     } // Hack: Set init value (RESET)
-  }, [])
+  }, []);
 
   const handleChange = (value) => {
-    const convValue = convertValue(value, measure, 'px')
-    setCust(value)
-    onChange(convValue)
-  }
+    const convValue = convertValue(value, measure, 'px');
+    setCust(value);
+    onChange(convValue);
+  };
 
   const handleMeasChange = (m) => {
     setCust((prev) => {
-      convertValue(prev, measure, m)
-    })
-    setMeasure(m)
-  }
+      convertValue(prev, measure, m);
+    });
+    setMeasure(m);
+  };
 
   const calcValue = () => {
-    const newValue = convertValue(value, 'px', measure)
-    setCust(newValue)
-  }
+    const newValue = convertValue(value, 'px', measure);
+    setCust(newValue);
+  };
 
   useEffect(() => {
-    calcValue()
-  }, [value, measure, calcValue])
+    calcValue();
+  }, [value, measure, calcValue]);
 
-  const desc = schema || schema.properties[name]
+  const desc = schema || schema.properties[name];
 
   return (
     <div className={styles.measureInput} {...rest}>
@@ -78,22 +78,23 @@ const MeasureInput = ({ schema, value, onChange, name, ...rest }) => {
         />
       </div>
     </div>
-  )
-}
+  );
+};
 
 const measureMap = {
   px: 1,
   cm: 37.795278,
   pt: 1.333333,
-  inch: 96
-}
+  inch: 96,
+};
 
 function convertValue(value, measureFrom, measureTo) {
-  if ((!value && value !== 0) || isNaN(value)) return null // eslint-disable-line
+  if ((!value && value !== 0) || isNaN(value)) return null; // eslint-disable-line
 
   return measureTo === 'px' || measureTo === 'pt'
     ? ((value * measureMap[measureFrom]) / measureMap[measureTo]).toFixed() - 0
-    : ((value * measureMap[measureFrom]) / measureMap[measureTo]).toFixed(3) - 0
+    : ((value * measureMap[measureFrom]) / measureMap[measureTo]).toFixed(3) -
+        0;
 }
 
-export default MeasureInput
+export default MeasureInput;

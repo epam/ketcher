@@ -14,37 +14,45 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Component } from 'react'
-import clsx from 'clsx'
+import { Component } from 'react';
+import clsx from 'clsx';
 
-import { fileOpener } from '../../utils'
-import classes from './buttons.module.less'
+import { fileOpener } from '../../utils';
+import classes from './buttons.module.less';
 
 class OpenButton extends Component {
   constructor(props) {
-    super(props)
-    this.state = {}
+    super(props);
+    this.state = {};
     if (props.server) {
       fileOpener(props.server).then((opener) => {
-        this.setState({ opener })
-      })
+        this.setState({ opener });
+      });
     }
   }
 
   open(ev) {
-    const files = ev.target.files
-    const noop = () => null
-    const { onLoad = noop, onError = noop } = this.props
+    const files = ev.target.files;
+    const noop = () => null;
+    const { onLoad = noop, onError = noop } = this.props;
 
     if (this.state.opener && files.length)
-      this.state.opener(files[0]).then(onLoad, onError)
-    else if (files.length) onLoad(files[0])
-    ev.target.value = null
-    ev.preventDefault()
+      this.state.opener(files[0]).then(onLoad, onError);
+    else if (files.length) onLoad(files[0]);
+    ev.target.value = null;
+    ev.preventDefault();
   }
 
   render() {
-    const { children, type, server, className, ...props } = this.props
+    const {
+      children,
+      type,
+      /* eslint-disable @typescript-eslint/no-unused-vars */
+      server,
+      /* eslint-enable @typescript-eslint/no-unused-vars */
+      className,
+      ...props
+    } = this.props;
 
     return (
       <button
@@ -57,13 +65,13 @@ class OpenButton extends Component {
           accept={type}
           type="file"
           ref={(el) => {
-            this.btn = el
+            this.btn = el;
           }}
         />
         {children}
       </button>
-    )
+    );
   }
 }
 
-export default OpenButton
+export default OpenButton;

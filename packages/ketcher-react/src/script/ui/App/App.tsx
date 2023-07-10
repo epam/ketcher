@@ -18,48 +18,49 @@ import {
   BottomToolbarContainer,
   LeftToolbarContainer,
   RightToolbarContainer,
-  TopToolbarContainer
-} from '../views/toolbars'
-import { useEffect } from 'react'
-import { useDispatch } from 'react-redux'
-import { createTheme, ThemeProvider } from '@mui/material'
-import AppClipArea from '../views/AppClipArea'
-import { AppHiddenContainer } from './AppHidden'
-import AppModalContainer from '../views/modal'
-import Editor from '../views/Editor'
-import classes from './App.module.less'
-import { initFGTemplates } from '../state/functionalGroups'
-import { initSaltsAndSolventsTemplates } from '../state/saltsAndSolvents'
-import { useSubscriptionOnEvents } from '../../../hooks'
+  TopToolbarContainer,
+} from '../views/toolbars';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { createTheme, ThemeProvider } from '@mui/material';
+import AppClipArea from '../views/AppClipArea';
+import { AppHiddenContainer } from './AppHidden';
+import AppModalContainer from '../views/modal';
+import Editor from '../views/Editor';
+import classes from './App.module.less';
+import { initFGTemplates } from '../state/functionalGroups';
+import { initSaltsAndSolventsTemplates } from '../state/saltsAndSolvents';
+import { useSubscriptionOnEvents } from '../../../hooks';
+import { AbbreviationLookupContainer } from '../dialog/AbbreviationLookup';
 
 interface AppCallProps {
-  checkServer: () => void
+  checkServer: () => void;
 }
 
 const muiTheme = createTheme({
   components: {
     MuiButtonBase: {
       defaultProps: {
-        disableRipple: true
-      }
-    }
-  }
-})
+        disableRipple: true,
+      },
+    },
+  },
+});
 
-type Props = AppCallProps
+type Props = AppCallProps;
 
 const App = (props: Props) => {
-  const dispatch = useDispatch()
-  const { checkServer } = props
+  const dispatch = useDispatch();
+  const { checkServer } = props;
 
-  useSubscriptionOnEvents()
+  useSubscriptionOnEvents();
 
   useEffect(() => {
-    checkServer()
-    dispatch(initFGTemplates())
-    dispatch(initSaltsAndSolventsTemplates())
-    window.scrollTo(0, 0)
-  }, [])
+    checkServer();
+    dispatch(initFGTemplates());
+    dispatch(initSaltsAndSolventsTemplates());
+    window.scrollTo(0, 0);
+  }, []);
 
   return (
     <ThemeProvider theme={muiTheme}>
@@ -74,10 +75,11 @@ const App = (props: Props) => {
 
         <AppClipArea />
         <AppModalContainer />
+        <AbbreviationLookupContainer />
       </div>
     </ThemeProvider>
-  )
-}
+  );
+};
 
-export type { AppCallProps }
-export { App }
+export type { AppCallProps };
+export { App };

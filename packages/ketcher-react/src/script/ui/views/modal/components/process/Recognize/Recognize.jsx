@@ -14,28 +14,27 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react';
 import {
   changeImage,
   changeVersion,
-  shouldFragment
-} from '../../../../../state/options'
+  shouldFragment,
+} from '../../../../../state/options';
 
-import { Dialog } from '../../../../components'
-import Input from '../../../../../component/form/Input/Input'
-import OpenButton from '../../../../../component/view/openbutton'
-import { LoadingCircles } from 'src/script/ui/views/components/Spinner'
-import StructRender from '../../../../../component/structrender'
-import classes from './Recognize.module.less'
-import { connect } from 'react-redux'
-import { load } from '../../../../../state'
-import { range } from 'lodash/fp'
-import { recognize } from '../../../../../state/server'
-import { DialogActionButton } from 'src/script/ui/views/modal/components/document/Open/components/DialogActionButton'
-import { Icon } from 'components'
+import { Dialog } from '../../../../components';
+import Input from '../../../../../component/form/Input/Input';
+import OpenButton from '../../../../../component/view/openbutton';
+import { LoadingCircles } from 'src/script/ui/views/components/Spinner';
+import classes from './Recognize.module.less';
+import { connect } from 'react-redux';
+import { load } from '../../../../../state';
+import { range } from 'lodash/fp';
+import { recognize } from '../../../../../state/server';
+import { DialogActionButton } from 'src/script/ui/views/modal/components/document/Open/components/DialogActionButton';
+import { Icon, StructRender } from 'components';
 
 function isImage(file) {
-  return file?.type?.includes('image')
+  return file?.type?.includes('image');
 }
 
 function FooterContent({ onImage, structStr, openHandler, copyHandler }) {
@@ -68,7 +67,7 @@ function FooterContent({ onImage, structStr, openHandler, copyHandler }) {
         />
       </div>
     </div>
-  )
+  );
 }
 
 function RecognizeDialog(prop) {
@@ -80,31 +79,38 @@ function RecognizeDialog(prop) {
     imagoVersions,
     onOk,
     ...partProps
-  } = prop
-  const { onRecognize, isFragment, onImage, onChangeImago, ...props } =
-    partProps
-  const [canPreviewImage, setCanPreviewImage] = useState(true)
+  } = prop;
+  const {
+    onRecognize,
+    /* eslint-disable @typescript-eslint/no-unused-vars */
+    isFragment,
+    /* eslint-enable @typescript-eslint/no-unused-vars */
+    onImage,
+    onChangeImago,
+    ...props
+  } = partProps;
+  const [canPreviewImage, setCanPreviewImage] = useState(true);
   const result = () =>
     structStr && !(structStr instanceof Promise)
       ? { structStr, fragment }
-      : null
+      : null;
 
   useEffect(() => {
-    onRecognize(file, version)
-  }, [file, version])
+    onRecognize(file, version);
+  }, [file, version]);
 
   const clearFile = useCallback(() => {
-    onImage(null)
-    return true
-  }, [onImage])
+    onImage(null);
+    return true;
+  }, [onImage]);
 
   const copyHandler = () => {
-    onOk({ structStr, fragment: true })
-  }
+    onOk({ structStr, fragment: true });
+  };
 
   const openHandler = () => {
-    onOk({ structStr, fragment: false })
-  }
+    onOk({ structStr, fragment: false });
+  };
 
   return (
     <Dialog
@@ -131,8 +137,8 @@ function RecognizeDialog(prop) {
             schema={{
               enum: imagoVersions,
               enumNames: range(1, imagoVersions.length + 1).map(
-                (i) => `Version ${i}`
-              )
+                (i) => `Version ${i}`,
+              ),
             }}
             value={version}
             onChange={onChangeImago}
@@ -149,7 +155,7 @@ function RecognizeDialog(prop) {
               id="pic"
               src={url(file) || ''}
               onError={() => {
-                setCanPreviewImage(false)
+                setCanPreviewImage(false);
               }}
             />
           )}
@@ -181,13 +187,13 @@ function RecognizeDialog(prop) {
         </div>
       </div>
     </Dialog>
-  )
+  );
 }
 
 function url(file) {
-  if (!file) return null
-  const URL = window.URL || window.webkitURL
-  return URL ? URL.createObjectURL(file) : 'No preview'
+  if (!file) return null;
+  const URL = window.URL || window.webkitURL;
+  return URL ? URL.createObjectURL(file) : 'No preview';
 }
 
 const mapStateToProps = (state) => ({
@@ -195,8 +201,9 @@ const mapStateToProps = (state) => ({
   file: state.options.recognize.file,
   structStr: state.options.recognize.structStr,
   fragment: state.options.recognize.fragment,
-  version: state.options.recognize.version || state.options.app.imagoVersions[1]
-})
+  version:
+    state.options.recognize.version || state.options.app.imagoVersions[1],
+});
 
 const mapDispatchToProps = (dispatch) => ({
   isFragment: (v) => dispatch(shouldFragment(v)),
@@ -207,14 +214,14 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(
       load(res.structStr, {
         rescale: true,
-        fragment: res.fragment
-      })
+        fragment: res.fragment,
+      }),
       // TODO: Removed ownProps.onOk call. consider refactoring of load function in release 2.4
       // See PR #731 (https://github.com/epam/ketcher/pull/731)
-    )
-  }
-})
+    );
+  },
+});
 
-const Recognize = connect(mapStateToProps, mapDispatchToProps)(RecognizeDialog)
+const Recognize = connect(mapStateToProps, mapDispatchToProps)(RecognizeDialog);
 
-export default Recognize
+export default Recognize;

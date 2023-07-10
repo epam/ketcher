@@ -15,11 +15,7 @@
     "jsx-a11y/no-autofocus": "warn",
     "jsx-a11y/no-noninteractive-element-interactions": "warn",
     "jsx-a11y/alt-text": "warn",
-    "jsx-a11y/click-events-have-key-events": "warn",
-    "@typescript-eslint/no-explicit-any": "warn",
-    "no-fallthrough": "warn",
-    "no-case-declarations": "warn",
-    "no-prototype-builtins": "warn"
+    "jsx-a11y/click-events-have-key-events": "warn"
   },
   "overrides": [
     {
@@ -31,6 +27,100 @@
       "rules": {
         "testing-library/no-container": "warn",
         "testing-library/no-node-access": "warn"
+      }
+    },
+    {
+      "files": [
+        "src/script/builders/ketcher/KetcherBuilder.ts",
+        "src/script/editor/Editor.ts",
+        "src/script/editor/tool/template.ts",
+        "src/script/editor/tool/text.ts",
+        "src/script/editor/utils/functionalGroupsTooltip.ts",
+        "src/script/ui/App/initApp.tsx",
+        "src/script/ui/dialog/template/TemplateTable.tsx",
+        "src/script/ui/views/components/ContextMenu/hooks/useBondSGroupAttach.ts",
+        "src/script/ui/views/components/ContextMenu/hooks/useBondSGroupEdit.ts",
+        "src/script/ui/views/modal/components/toolbox/RgroupLogic/components/IfThenSelect/IfThenSelect.tsx",
+        "src/script/ui/views/toolbars/ToolbarGroupItem/ToolbarMultiToolItem/usePortalOpening.ts"
+      ],
+      "rules": {
+        "@typescript-eslint/no-non-null-assertion": "warn"
+      }
+    },
+    {
+      "files": [
+        "src/script/editor/Editor.ts",
+        "src/script/editor/HoverIcon.ts",
+        "src/script/editor/tool/Tool.ts",
+        "src/script/editor/tool/atom.ts",
+        "src/script/editor/tool/bond.ts",
+        "src/script/editor/tool/chain.ts",
+        "src/script/editor/tool/charge.ts",
+        "src/script/editor/tool/eraser.ts",
+        "src/script/editor/tool/helper/dropAndMerge.ts",
+        "src/script/editor/tool/helper/lasso.ts",
+        "src/script/editor/tool/helper/locate.ts",
+        "src/script/editor/tool/paste.ts",
+        "src/script/editor/tool/reactionarrow.ts",
+        "src/script/editor/tool/reactionmap.ts",
+        "src/script/editor/tool/reactionplus.ts",
+        "src/script/editor/tool/rotate-controller.test.ts",
+        "src/script/editor/tool/rotate-controller.ts",
+        "src/script/editor/tool/rotate.ts",
+        "src/script/editor/tool/select.ts",
+        "src/script/editor/tool/sgroup.ts",
+        "src/script/editor/tool/simpleobject.ts",
+        "src/script/editor/tool/template.ts",
+        "src/script/editor/tool/text.ts",
+        "src/script/editor/utils/customOnChangeHandler.ts",
+        "src/script/ui/App/initApp.tsx",
+        "src/script/ui/Portal/Portal.tsx",
+        "src/script/ui/action/action.types.ts",
+        "src/script/ui/action/isHidden.ts",
+        "src/script/ui/component/form/Input/Input.tsx",
+        "src/script/ui/component/form/colorPicker/ColorPicker.tsx",
+        "src/script/ui/component/structrender.tsx",
+        "src/script/ui/component/view/savebutton.tsx",
+        "src/script/ui/data/convert/structConverter.ts",
+        "src/script/ui/data/schema/options-schema.ts",
+        "src/script/ui/dialog/index.ts",
+        "src/script/ui/dialog/template/TemplateDialog.tsx",
+        "src/script/ui/dialog/template/TemplateTable.tsx",
+        "src/script/ui/dialog/toolbox/enhancedStereo/enhancedStereo.tsx",
+        "src/script/ui/state/functionalGroups/index.ts",
+        "src/script/ui/state/handleHotkeysOverItem.ts",
+        "src/script/ui/state/hotkeys.ts",
+        "src/script/ui/state/shared.ts",
+        "src/script/ui/utils/index.ts",
+        "src/script/ui/utils/settingsManager.ts",
+        "src/script/ui/views/AppClipArea.tsx",
+        "src/script/ui/views/components/Dialog/Dialog.tsx",
+        "src/script/ui/views/components/StructEditor/InfoPanel.tsx",
+        "src/script/ui/views/modal/Modal.tsx",
+        "src/script/ui/views/modal/components/Text/Text.tsx",
+        "src/script/ui/views/modal/components/document/Open/Open.tsx",
+        "src/script/ui/views/modal/components/meta/Settings/Settings.tsx",
+        "src/script/ui/views/modal/components/process/Miew/Miew.tsx",
+        "src/script/ui/views/modal/components/toolbox/Atom/Atom.container.ts",
+        "src/script/ui/views/modal/components/toolbox/Attach/Attach.container.ts",
+        "src/script/ui/views/modal/components/toolbox/Automap/Automap.container.ts",
+        "src/script/ui/views/modal/components/toolbox/Bond/Bond.container.ts",
+        "src/script/ui/views/modal/components/toolbox/FG/RemoveFG.tsx",
+        "src/script/ui/views/modal/components/toolbox/RgroupLogic/RgroupLogic.container.ts",
+        "src/script/ui/views/modal/components/toolbox/RgroupLogic/components/IfThenSelect/IfThenSelect.tsx",
+        "src/script/ui/views/modal/modal.types.ts",
+        "src/script/ui/views/toolbars/ArrowScroll/ArrowScroll.tsx",
+        "src/script/ui/views/toolbars/BottomToolbar/BottomToolbar.tsx",
+        "src/script/ui/views/toolbars/BottomToolbar/TemplatesList/TemplatesList.tsx",
+        "src/script/ui/views/toolbars/FloatingTools/FloatingTools.container.ts",
+        "src/script/ui/views/toolbars/LeftToolbar/LeftToolbar.container.ts",
+        "src/script/ui/views/toolbars/RightToolbar/AtomsList/AtomsList.tsx",
+        "src/script/ui/views/toolbars/RightToolbar/RightToolbar.tsx",
+        "src/script/ui/views/toolbars/TopToolbar/TopToolbar.container.ts",
+        "src/typings.d.ts"
+      ],
+      "rules": {
+        "@typescript-eslint/no-explicit-any": "warn"
       }
     }
   ]

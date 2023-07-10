@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE CDXML SYSTEM "http://www.cambridgesoft.com/xml/cdxml.dtd">
+<CDXML BondLength="30.000000" LabelFont="3" CaptionFont="4">
+    <fonttable id="1">
+        <font id="2" charset="utf-8" name="Arial"/>
+        <font id="3" charset="utf-8" name="Times New Roman"/>
+    </fonttable>
+    <colortable>
+        <color r="1" g="1" b="1"/>
+        <color r="0" g="0" b="0"/>
+        <color r="1" g="0" b="0"/>
+        <color r="1" g="1" b="0"/>
+        <color r="0" g="1" b="0"/>
+        <color r="0" g="1" b="1"/>
+        <color r="0" g="0" b="1"/>
+        <color r="1" g="0" b="1"/>
+        <color r="0.5" g="0.5" b="0.5"/>
+    </colortable>
+    <page HeightPages="1" WidthPages="1">
+        <fragment id="4">
+            <n id="27" NodeType="Fragment">
+                <fragment id="28">
+                    <n id="5" p="30.000000 85.980423"/>
+                    <n id="6" Element="8" NumHydrogens="0" p="45.000114 60.000229">
+                        <t p="45.000114 60.000229" LabelJustification="Left">
+                            <s font="3" size="10" face="96">O</s>
+                        </t>
+                    </n>
+                    <n id="7" Element="8" NumHydrogens="0" p="45.000114 111.960594">
+                        <t p="45.000114 111.960594" LabelJustification="Left">
+                            <s font="3" size="10" face="96">O</s>
+                        </t>
+                    </n>
+                    <n id="8" p="75.000313 60.000229"/>
+                    <n id="9" p="105.000542 60.000229"/>
+                    <n id="10" p="75.000313 30.000000"/>
+                    <n id="11" p="75.000313 90.000443"/>
+                    <b id="17" B="5" E="6"/>
+                    <b id="18" B="5" E="7" Order="2"/>
+                    <b id="19" B="6" E="8"/>
+                    <b id="20" B="8" E="9"/>
+                    <b id="21" B="8" E="10"/>
+                    <b id="22" B="8" E="11"/>
+                </fragment>
+                <t LabelJustification="Left" LabelAlignment="Above">
+                    <s>Boc</s>
+                </t>
+            </n>
+            <n id="29" NodeType="Fragment">
+                <fragment id="30">
+                    <n id="12" p="201.000000 85.980423"/>
+                    <n id="14" Element="8" NumHydrogens="0" p="226.977448 70.980820">
+                        <t p="226.977448 70.980820" LabelJustification="Left">
+                            <s font="3" size="10" face="96">O</s>
+                        </t>
+                    </n>
+                    <n id="13" p="252.957428 85.977875"/>
+                    <n id="16" p="278.942505 70.973198"/>
+                    <n id="15" Element="8" NumHydrogens="0" p="175.019989 70.980820">
+                        <t p="175.019989 70.980820" LabelJustification="Left">
+                            <s font="3" size="10" face="96">O</s>
+                        </t>
+                    </n>
+                    <b id="23" B="12" E="14"/>
+                    <b id="24" B="12" E="15" Order="2"/>
+                    <b id="25" B="14" E="13"/>
+                    <b id="26" B="13" E="16"/>
+                </fragment>
+                <t LabelJustification="Left" LabelAlignment="Above">
+                    <s>CO2Et</s>
+                </t>
+            </n>
+        </fragment>
+    </page>
+</CDXML>

@@ -14,14 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 
-import styled from '@emotion/styled'
-import { Collapse } from '@mui/material'
-import { Icon } from 'ketcher-react'
+import styled from '@emotion/styled';
+import { Collapse } from '@mui/material';
+import { Icon } from 'ketcher-react';
 
-import { IStyledDropdownIconProps, OptionsContainerProps } from './types'
+import { IStyledDropdownIconProps, OptionsContainerProps } from './types';
 
 export const StyledDropdownIcon = styled(Icon, {
-  shouldForwardProp: (prop) => prop !== 'isActive'
+  shouldForwardProp: (prop) => prop !== 'isActive',
 })<IStyledDropdownIconProps>`
   position: absolute;
   height: 7px;
@@ -33,7 +33,7 @@ export const StyledDropdownIcon = styled(Icon, {
   path {
     fill: ${({ isActive }) => (isActive ? 'white' : undefined)};
   }
-`
+`;
 
 export const RootContainer = styled.div`
   display: flex;
@@ -44,7 +44,7 @@ export const RootContainer = styled.div`
       fill: white;
     }
   }
-`
+`;
 
 export const OptionsContainer = styled.div<OptionsContainerProps>`
   display: flex;
@@ -52,11 +52,11 @@ export const OptionsContainer = styled.div<OptionsContainerProps>`
   left: 5px;
   border-radius: 2px;
   flex-direction: ${({ isVertical }) => (isVertical ? 'column' : 'row')};
-`
+`;
 
 export const OptionsItemsCollapse = styled(Collapse)`
   position: relative;
-`
+`;
 
 export const VisibleItem = styled.div`
   display: flex;
@@ -67,4 +67,4 @@ export const VisibleItem = styled.div`
   padding: 0;
   justify-content: center;
   border-radius: 2px;
-`
+`;

@@ -14,28 +14,32 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { applyMiddleware, combineReducers, createStore } from 'redux'
-import { load, onAction } from './shared'
-import optionsReducer, { initOptionsState } from './options'
-import templatesReducer, { initTmplsState } from './templates'
+import { applyMiddleware, combineReducers, createStore } from 'redux';
+import { load, onAction } from './shared';
+import optionsReducer, { initOptionsState } from './options';
+import templatesReducer, { initTmplsState } from './templates';
+import abbreviationLookupReducer from './abbreviationLookup';
+import commonReducer from './common';
 
-import actionStateReducer from './action'
-import functionalGroupsReducer from './functionalGroups'
-import saltsAndSolventsReducer from './saltsAndSolvents'
-import { logger } from 'redux-logger'
-import modalReducer from './modal'
-import { pick } from 'lodash/fp'
-import requestReducer from './request'
-import thunk from 'redux-thunk'
-import toolbarReducer from './toolbar'
-import floatingToolsReducer from './floatingTools'
+import actionStateReducer from './action';
+import functionalGroupsReducer from './functionalGroups';
+import saltsAndSolventsReducer from './saltsAndSolvents';
+import { logger } from 'redux-logger';
+import modalReducer from './modal';
+import { pick } from 'lodash/fp';
+import requestReducer from './request';
+import thunk from 'redux-thunk';
+import toolbarReducer from './toolbar';
+import floatingToolsReducer from './floatingTools';
 
-export { onAction, load }
+export { onAction, load };
 
 const shared = combineReducers({
+  common: commonReducer,
   actionState: actionStateReducer,
   toolbar: toolbarReducer,
   modal: modalReducer,
+  abbreviationLookup: abbreviationLookupReducer,
   server: (store = null) => store,
   editor: (store = null) => store,
   options: optionsReducer,
@@ -43,41 +47,52 @@ const shared = combineReducers({
   functionalGroups: functionalGroupsReducer,
   saltsAndSolvents: saltsAndSolventsReducer,
   requestsStatuses: requestReducer,
-  floatingTools: floatingToolsReducer
-})
+  floatingTools: floatingToolsReducer,
+});
 
 function getRootReducer(setEditor) {
   return function root(state, action) {
+    // TODO need a refactoring for this reducer since it uses (probably unintentionally falling through switch-case)
+    // F.e. when it gets action: INIT it will call all cases below - INIT+UPDATE
+    /* eslint-disable no-fallthrough */
     switch (action.type) {
-      case 'INIT':
-        setEditor(action.editor)
+      case 'INIT': {
+        setEditor(action.editor);
+      }
 
-      case 'UPDATE':
-        const { type, ...data } = action
-        if (data) state = { ...state, ...data }
+      case 'UPDATE': {
+        const {
+          /* eslint-disable @typescript-eslint/no-unused-vars */
+          type,
+          /* eslint-enable @typescript-eslint/no-unused-vars */
+          ...data
+        } = action;
+        if (data) state = { ...state, ...data };
+      }
     }
+    /* eslint-enable no-fallthrough */
 
     const sh = shared(state, {
       ...action,
-      ...pick(['editor', 'server', 'options'], state)
-    })
+      ...pick(['editor', 'server', 'options'], state),
+    });
 
     const finalState =
       sh === state.shared
         ? state
         : {
             ...state,
-            ...sh
-          }
+            ...sh,
+          };
 
     // TODO: temporary solution. Need to review work with redux store
-    global.currentState = finalState
-    return finalState
-  }
+    global.currentState = finalState;
+    return finalState;
+  };
 }
 
 export default function (options, server, setEditor) {
-  const { buttons = {}, ...restOptions } = options
+  const { buttons = {}, ...restOptions } = options;
 
   // TODO: redux localStorage here
   const initState = {
@@ -86,17 +101,17 @@ export default function (options, server, setEditor) {
     modal: null,
     options: Object.assign(initOptionsState, { app: restOptions, buttons }),
     server: server || Promise.reject(new Error('Standalone mode!')),
-    templates: initTmplsState
-  }
+    templates: initTmplsState,
+  };
 
-  const middleware = [thunk]
+  const middleware = [thunk];
   if (
     process.env.NODE_ENV !== 'production' &&
     process.env.KETCHER_ENABLE_REDUX_LOGGER === 'true'
   ) {
-    middleware.push(logger)
+    middleware.push(logger);
   }
 
-  const rootReducer = getRootReducer(setEditor)
-  return createStore(rootReducer, initState, applyMiddleware(...middleware))
+  const rootReducer = getRootReducer(setEditor);
+  return createStore(rootReducer, initState, applyMiddleware(...middleware));
 }

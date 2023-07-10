@@ -1,14 +1,14 @@
-import { FC } from 'react'
-import { Item } from 'react-contexify'
-import useAtomEdit from '../hooks/useAtomEdit'
-import useAtomStereo from '../hooks/useAtomStereo'
-import useDelete from '../hooks/useDelete'
-import { MenuItemsProps } from '../contextMenu.types'
+import { FC } from 'react';
+import { Item } from 'react-contexify';
+import useAtomEdit from '../hooks/useAtomEdit';
+import useAtomStereo from '../hooks/useAtomStereo';
+import useDelete from '../hooks/useDelete';
+import { MenuItemsProps } from '../contextMenu.types';
 
 const AtomMenuItems: FC<MenuItemsProps> = (props) => {
-  const [handleEdit] = useAtomEdit()
-  const [handleStereo, stereoDisabled] = useAtomStereo()
-  const handleDelete = useDelete()
+  const [handleEdit] = useAtomEdit();
+  const [handleStereo, stereoDisabled] = useAtomStereo();
+  const handleDelete = useDelete();
 
   return (
     <>
@@ -26,7 +26,7 @@ const AtomMenuItems: FC<MenuItemsProps> = (props) => {
         Delete
       </Item>
     </>
-  )
-}
+  );
+};
 
-export default AtomMenuItems
+export default AtomMenuItems;

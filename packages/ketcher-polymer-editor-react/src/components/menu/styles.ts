@@ -14,11 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import styled from '@emotion/styled'
+import styled from '@emotion/styled';
 
 export const MenuLayout = styled.div`
   background-color: ${({ theme }) => theme.ketcher.color.background.primary};
-`
+`;
 
 export const Divider = styled.span`
   display: block;
@@ -26,7 +26,7 @@ export const Divider = styled.span`
   width: 32px;
   border-top: 1px solid;
   border-color: ${({ theme }) => theme.ketcher.color.divider};
-`
+`;
 
 export const StyledGroup = styled.div`
   display: flex;
@@ -45,4 +45,4 @@ export const StyledGroup = styled.div`
   > :last-child {
     margin-bottom: 0;
   }
-`
+`;

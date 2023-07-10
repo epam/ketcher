@@ -14,20 +14,20 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useMemo } from 'react'
-import { useDropzone, DropzoneOptions } from 'react-dropzone'
+import { useMemo } from 'react';
+import { useDropzone, DropzoneOptions } from 'react-dropzone';
 
-import parentStyles from './OpenOptions.module.less'
-import styles from './FileDrop.module.less'
-import { Icon, IconName } from 'components'
+import parentStyles from './OpenOptions.module.less';
+import styles from './FileDrop.module.less';
+import { Icon, IconName } from 'components';
 
 type FileDropProps = {
-  buttonLabel: string
-  textLabel: string
-  iconName: IconName
-  disabled?: boolean
-  disabledText?: string
-} & DropzoneOptions
+  buttonLabel: string;
+  textLabel: string;
+  iconName: IconName;
+  disabled?: boolean;
+  disabledText?: string;
+} & DropzoneOptions;
 
 const FileDrop = ({
   buttonLabel,
@@ -40,23 +40,23 @@ const FileDrop = ({
   const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
     multiple: false,
     disabled,
-    ...rest
-  })
+    ...rest,
+  });
 
   const getClassesString = useMemo((): string => {
     const classes = [
       parentStyles.dropContainer,
       isDragActive ? styles.isHovered : null,
-      disabled ? styles.isDisabled : null
-    ]
-    return classes.join(' ')
-  }, [isDragActive])
+      disabled ? styles.isDisabled : null,
+    ];
+    return classes.join(' ');
+  }, [isDragActive]);
 
   return (
     <div
       onKeyDown={open}
       {...getRootProps({
-        className: getClassesString
+        className: getClassesString,
       })}
     >
       <input {...getInputProps()} />
@@ -76,7 +76,7 @@ const FileDrop = ({
         </>
       )}
     </div>
-  )
-}
+  );
+};
 
-export { FileDrop }
+export { FileDrop };

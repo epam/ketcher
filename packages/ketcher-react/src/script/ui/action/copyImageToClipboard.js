@@ -14,30 +14,30 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { FormatterFactory, Ketcher } from 'ketcher-core'
+import { FormatterFactory, Ketcher } from 'ketcher-core';
 
 async function copyImageToClipboard() {
-  const state = global.currentState
-  const editor = state.editor
-  const server = state.server
-  const options = state.options
-  const struct = editor.structSelected()
-  const errorHandler = editor.errorHandler
+  const state = global.currentState;
+  const editor = state.editor;
+  const server = state.server;
+  const options = state.options;
+  const struct = editor.structSelected();
+  const errorHandler = editor.errorHandler;
 
   try {
-    const factory = new FormatterFactory(server)
-    const service = factory.create('ket', options)
-    const structStr = await service.getStructureFromStructAsync(struct)
-    const ketcher = new Ketcher(editor, server, {}, factory)
+    const factory = new FormatterFactory(server);
+    const service = factory.create('ket', options);
+    const structStr = await service.getStructureFromStructAsync(struct);
+    const ketcher = new Ketcher(editor, server, {}, factory);
     const image = await ketcher.generateImage(structStr, {
       outputFormat: 'png',
-      backgroundColor: '255, 255, 255'
-    })
-    const item = new ClipboardItem({ [image.type]: image }) // eslint-disable-line no-undef
-    await navigator.clipboard.write([item])
+      backgroundColor: '255, 255, 255',
+    });
+    const item = new ClipboardItem({ [image.type]: image }); // eslint-disable-line no-undef
+    await navigator.clipboard.write([item]);
   } catch {
-    errorHandler('This feature is not available in your browser')
+    errorHandler('This feature is not available in your browser');
   }
 }
 
-export default copyImageToClipboard
+export default copyImageToClipboard;

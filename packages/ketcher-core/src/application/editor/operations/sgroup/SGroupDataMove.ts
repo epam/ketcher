@@ -14,35 +14,35 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { BaseOperation } from '../base'
-import { OperationType } from '../OperationType'
-import { ReStruct } from '../../../render'
+import { BaseOperation } from '../base';
+import { OperationType } from '../OperationType';
+import { ReStruct } from '../../../render';
 
 export class SGroupDataMove extends BaseOperation {
   data: {
-    id: any
-    d: any
-  }
+    id: any;
+    d: any;
+  };
 
   constructor(id?: any, d?: any) {
-    super(OperationType.S_GROUP_DATA_MOVE)
-    this.data = { id, d }
+    super(OperationType.S_GROUP_DATA_MOVE);
+    this.data = { id, d };
   }
 
   execute(restruct: ReStruct) {
-    const { d, id } = this.data
-    const { sgroups } = restruct.molecule
+    const { d, id } = this.data;
+    const { sgroups } = restruct.molecule;
 
-    sgroups.get(id)!.pp?.add_(d) // eslint-disable-line no-underscore-dangle
-    this.data.d = d.negated()
+    sgroups.get(id)!.pp?.add_(d); // eslint-disable-line no-underscore-dangle
+    this.data.d = d.negated();
 
     // [MK] this currently does nothing since the DataSGroupData Visel only contains the highlighting/selection and SGroups are redrawn every time anyway
-    BaseOperation.invalidateItem(restruct, 'sgroupData', id, 1)
+    BaseOperation.invalidateItem(restruct, 'sgroupData', id, 1);
   }
 
   invert() {
-    const inverted = new SGroupDataMove()
-    inverted.data = this.data
-    return inverted
+    const inverted = new SGroupDataMove();
+    inverted.data = this.data;
+    return inverted;
   }
 }

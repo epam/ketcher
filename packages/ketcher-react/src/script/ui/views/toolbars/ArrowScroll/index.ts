@@ -1,2 +1,2 @@
-import { ArrowScroll } from './ArrowScroll'
-export { ArrowScroll }
+import { ArrowScroll } from './ArrowScroll';
+export { ArrowScroll };

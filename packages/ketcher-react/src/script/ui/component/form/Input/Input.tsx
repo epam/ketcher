@@ -14,27 +14,29 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React, { PureComponent, ComponentType, useRef, useEffect } from 'react'
+import React, { PureComponent, ComponentType, useRef, useEffect } from 'react';
 
-import classes from './Input.module.less'
-import clsx from 'clsx'
+import classes from './Input.module.less';
+import clsx from 'clsx';
 
 type Props = {
-  component?: ComponentType
-  children?: React.ReactNode
-  className?: string
-  type: string
-  value: number | string | boolean
-  onChange: (val: any) => void
-  placeholder?: string
-  isFocused?: boolean
-  innerRef?: React.Ref<any>
-  schema?: any
-  multiple?: boolean
-}
+  component?: ComponentType;
+  children?: React.ReactNode;
+  className?: string;
+  type: string;
+  value: number | string | boolean;
+  onChange: (val: any) => void;
+  placeholder?: string;
+  isFocused?: boolean;
+  innerRef?: React.Ref<any>;
+  schema?: any;
+  multiple?: boolean;
+};
 
 export function GenericInput({
+  /* eslint-disable @typescript-eslint/no-unused-vars */
   schema,
+  /* eslint-enable @typescript-eslint/no-unused-vars */
   value,
   onChange,
   innerRef,
@@ -42,19 +44,19 @@ export function GenericInput({
   isFocused = false,
   ...props
 }) {
-  const inputRef = useRef<HTMLInputElement>(innerRef)
+  const inputRef = useRef<HTMLInputElement>(innerRef);
 
   useEffect(() => {
     if (innerRef && inputRef.current) {
-      innerRef.current = inputRef.current
+      innerRef.current = inputRef.current;
     }
-  }, [innerRef])
+  }, [innerRef]);
 
   useEffect(() => {
     if (inputRef.current && isFocused) {
-      inputRef.current.focus()
+      inputRef.current.focus();
     }
-  }, [inputRef, isFocused])
+  }, [inputRef, isFocused]);
 
   return (
     <>
@@ -70,27 +72,43 @@ export function GenericInput({
       {type === 'checkbox' && <span className={classes.checkbox} />}
       {type === 'radio' && <span className={classes.radioButton} />}
     </>
-  )
+  );
 }
 
 GenericInput.val = function (ev, schema) {
-  const input = ev.target
+  const input = ev.target;
   const isNumber =
     input.type === 'number' ||
     input.type === 'range' ||
-    (schema && (schema.type === 'number' || schema.type === 'integer'))
-  const value = isNumber ? input.value.replace(/,/g, '.') : input.value
+    (schema && (schema.type === 'number' || schema.type === 'integer'));
+  const value = isNumber ? input.value.replace(/,/g, '.') : input.value;
 
-  return isNumber && !isNaN(value - 0) ? value - 0 : value // eslint-disable-line
+  return isNumber && !isNaN(value - 0) ? value - 0 : value; // eslint-disable-line
+};
+
+function TextArea({
+  /* eslint-disable @typescript-eslint/no-unused-vars */
+  schema,
+  /* eslint-enable @typescript-eslint/no-unused-vars */
+  value,
+  onChange,
+  innerRef,
+  ...rest
+}) {
+  return <textarea value={value} ref={innerRef} onInput={onChange} {...rest} />;
 }
 
-function TextArea({ schema, value, onChange, innerRef, ...rest }) {
-  return <textarea value={value} ref={innerRef} onInput={onChange} {...rest} />
-}
+TextArea.val = (ev) => ev.target.value;
 
-TextArea.val = (ev) => ev.target.value
-
-function CheckBox({ schema, value = '', onChange, innerRef, ...rest }) {
+function CheckBox({
+  /* eslint-disable @typescript-eslint/no-unused-vars */
+  schema,
+  /* eslint-enable @typescript-eslint/no-unused-vars */
+  value = '',
+  onChange,
+  innerRef,
+  ...rest
+}) {
   return (
     <div className={classes.fieldSetItem}>
       <input
@@ -104,13 +122,13 @@ function CheckBox({ schema, value = '', onChange, innerRef, ...rest }) {
       />
       <span className={classes.checkbox} />
     </div>
-  )
+  );
 }
 
 CheckBox.val = function (ev) {
-  ev.stopPropagation()
-  return !!ev.target.checked
-}
+  ev.stopPropagation();
+  return !!ev.target.checked;
+};
 
 function Select({
   schema,
@@ -118,7 +136,7 @@ function Select({
   name,
   onSelect,
   className,
-  multiple = false
+  multiple = false,
 }) {
   return (
     <select
@@ -134,21 +152,21 @@ function Select({
         </option>
       ))}
     </select>
-  )
+  );
 }
 
 Select.val = function (ev, schema) {
-  const select = ev.target as HTMLSelectElement
-  if (!select.multiple) return enumSchema(schema, select.selectedIndex)
+  const select = ev.target as HTMLSelectElement;
+  if (!select.multiple) return enumSchema(schema, select.selectedIndex);
 
-  const options = select.options
+  const options = select.options;
 
   return Array.from(options).reduce(
     (res, o: HTMLOptionElement, i) =>
       !o.selected ? res : [enumSchema(schema, i), ...res],
-    [] as HTMLOptionElement[]
-  )
-}
+    [] as HTMLOptionElement[],
+  );
+};
 
 function FieldSet({
   schema,
@@ -157,6 +175,7 @@ function FieldSet({
   onSelect,
   type = 'radio',
   checked,
+  innerRef,
   ...rest
 }) {
   return (
@@ -165,6 +184,7 @@ function FieldSet({
         <li key={title} className={classes.fieldSetItem}>
           <label className={classes.fieldSetLabel}>
             <input
+              ref={innerRef}
               type={type}
               defaultChecked={
                 type === 'radio' ? selected(val, checked) : selected(val, value)
@@ -180,35 +200,35 @@ function FieldSet({
         </li>
       ))}
     </fieldset>
-  )
+  );
 }
 
 FieldSet.val = function (ev, schema) {
-  const input = ev.target as HTMLInputElement
+  const input = ev.target as HTMLInputElement;
 
   if (ev.target.tagName !== 'INPUT') {
-    ev.stopPropagation()
-    return undefined
+    ev.stopPropagation();
+    return undefined;
   }
 
   // Hm.. looks like premature optimization
   //      should we inline this?
 
-  const fieldset = input?.parentNode?.parentNode?.parentNode
-  const inputCollection = fieldset?.querySelectorAll('input')
-  let result
+  const fieldset = input?.parentNode?.parentNode?.parentNode;
+  const inputCollection = fieldset?.querySelectorAll('input');
+  let result;
 
   if (inputCollection?.length) {
     result = Array.from(inputCollection).reduce(
       (res, inp: HTMLInputElement, i) =>
         !inp.checked ? res : [enumSchema(schema, i), ...res],
 
-      [] as HTMLInputElement[]
-    )
+      [] as HTMLInputElement[],
+    );
   }
 
-  return input.type === 'radio' ? result[0] : result
-}
+  return input.type === 'radio' ? result[0] : result;
+};
 
 function Slider({ value, onChange, name, innerRef, ...rest }) {
   return (
@@ -224,61 +244,61 @@ function Slider({ value, onChange, name, innerRef, ...rest }) {
       />
       <span />
     </div>
-  )
+  );
 }
 
 Slider.val = function (ev) {
-  ev.stopPropagation()
-  return !!ev.target.checked
-}
+  ev.stopPropagation();
+  return !!ev.target.checked;
+};
 
 function enumSchema(schema, cbOrIndex) {
-  const isTypeValue = Array.isArray(schema)
-  if (!isTypeValue && schema.items) schema = schema.items
+  const isTypeValue = Array.isArray(schema);
+  if (!isTypeValue && schema.items) schema = schema.items;
 
   if (typeof cbOrIndex === 'function') {
     return (isTypeValue ? schema : schema.enum).map((item, i) => {
       const title = isTypeValue
         ? item.title
-        : schema.enumNames && schema.enumNames[i]
+        : schema.enumNames && schema.enumNames[i];
       return cbOrIndex(
         title !== undefined ? title : item,
-        item && item.value !== undefined ? item.value : item
-      )
-    })
+        item && item.value !== undefined ? item.value : item,
+      );
+    });
   }
 
-  if (!isTypeValue) return schema.enum[cbOrIndex]
+  if (!isTypeValue) return schema.enum[cbOrIndex];
 
-  const res = schema[cbOrIndex]
-  return res.value !== undefined ? res.value : res
+  const res = schema[cbOrIndex];
+  return res.value !== undefined ? res.value : res;
 }
 
 function inputCtrl(component, schema, onChange) {
-  let props = {}
+  let props = {};
   if (schema) {
     // TODO: infer maxLength, min, max, step, etc
     if (schema.type === 'number' || schema.type === 'integer')
-      props = { type: 'text' }
+      props = { type: 'text' };
   }
 
   return {
     onChange: (ev) => {
-      const val = !component.val ? ev : component.val(ev, schema)
-      onChange(val)
+      const val = !component.val ? ev : component.val(ev, schema);
+      onChange(val);
     },
-    ...props
-  }
+    ...props,
+  };
 }
 
 function singleSelectCtrl(component, schema, onChange) {
   return {
     selected: (testVal, value) => value === testVal,
     onSelect: (ev) => {
-      const val = !component.val ? ev : component.val(ev, schema)
-      if (val !== undefined) onChange(val)
-    }
-  }
+      const val = !component.val ? ev : component.val(ev, schema);
+      if (val !== undefined) onChange(val);
+    },
+  };
 }
 
 function multipleSelectCtrl(component, schema, onChange) {
@@ -287,77 +307,86 @@ function multipleSelectCtrl(component, schema, onChange) {
     selected: (testVal, values) => values && values.indexOf(testVal) >= 0,
     onSelect: (ev, values) => {
       if (component.val) {
-        const val = component.val(ev, schema)
-        if (val !== undefined) onChange(val)
+        const val = component.val(ev, schema);
+        if (val !== undefined) onChange(val);
       } else {
-        const i = values ? values.indexOf(ev) : -1
-        if (i < 0) onChange(values ? [ev, ...values] : [ev])
-        else onChange([...values.slice(0, i), ...values.slice(i + 1)])
+        const i = values ? values.indexOf(ev) : -1;
+        if (i < 0) onChange(values ? [ev, ...values] : [ev]);
+        else onChange([...values.slice(0, i), ...values.slice(i + 1)]);
       }
-    }
-  }
+    },
+  };
 }
 
 function ctrlMap(component, props: Props) {
-  const { schema, multiple, onChange } = props
+  const { schema, multiple, onChange } = props;
   if (
     !schema ||
     (!schema.enum && !schema.items && !Array.isArray(schema)) ||
     schema.type === 'string'
   )
-    return inputCtrl(component, schema, onChange)
+    return inputCtrl(component, schema, onChange);
 
   if (multiple || schema.type === 'array')
-    return multipleSelectCtrl(component, schema, onChange)
+    return multipleSelectCtrl(component, schema, onChange);
 
-  return singleSelectCtrl(component, schema, onChange)
+  return singleSelectCtrl(component, schema, onChange);
 }
 
 function componentMap(props: Props) {
-  const { schema, type, multiple } = props
+  const { schema, type, multiple } = props;
 
   if (schema?.type === 'boolean' && schema?.description === 'slider') {
-    return Slider
+    return Slider;
   }
 
   if (!schema || (!schema.enum && !schema.items && !Array.isArray(schema))) {
     if (type === 'checkbox' || (schema && schema.type === 'boolean')) {
-      return CheckBox
+      return CheckBox;
     }
 
-    return type === 'textarea' ? TextArea : GenericInput
+    return type === 'textarea' ? TextArea : GenericInput;
   }
 
   if (multiple || schema.type === 'array')
-    return type === 'checkbox' ? FieldSet : Select
+    return type === 'checkbox' ? FieldSet : Select;
 
-  return type === 'radio' ? FieldSet : Select
+  return type === 'radio' ? FieldSet : Select;
 }
 
 const AnyComponentWithRef = React.forwardRef(
-  ({ Component, ...props }: any, ref) => <Component {...props} innerRef={ref} />
-)
+  ({ Component, ...props }: any, ref) => (
+    <Component {...props} innerRef={ref} />
+  ),
+);
 
 class Input extends PureComponent<
   Props & { innerRef: React.Ref<HTMLInputElement> }
 > {
-  component: any
+  component: any;
   ctrl: {
-    type?: string
-    onChange?: (val: any) => void
-    onSelect?: (ev, values) => void
-    selected?: (testVal: any, value: any) => boolean
-    multiple?: boolean
-  }
+    type?: string;
+    onChange?: (val: any) => void;
+    onSelect?: (ev, values) => void;
+    selected?: (testVal: any, value: any) => boolean;
+    multiple?: boolean;
+  };
 
   constructor(props: Props & { innerRef: React.Ref<HTMLInputElement> }) {
-    super(props)
-    this.component = props.component || componentMap(props)
-    this.ctrl = ctrlMap(this.component, props)
+    super(props);
+    this.component = props.component || componentMap(props);
+    this.ctrl = ctrlMap(this.component, props);
   }
 
   render() {
-    const { children, onChange, innerRef, ...restProps } = this.props
+    const {
+      /* eslint-disable @typescript-eslint/no-unused-vars */
+      children,
+      onChange,
+      /* eslint-enable @typescript-eslint/no-unused-vars */
+      innerRef,
+      ...restProps
+    } = this.props;
     return (
       <AnyComponentWithRef
         Component={this.component}
@@ -365,12 +394,12 @@ class Input extends PureComponent<
         {...this.ctrl}
         {...restProps}
       />
-    )
+    );
   }
 }
 
 export default React.forwardRef(
   (props: Props, ref: React.Ref<HTMLInputElement>) => {
-    return <Input innerRef={ref} {...props} />
-  }
-)
+    return <Input innerRef={ref} {...props} />;
+  },
+);

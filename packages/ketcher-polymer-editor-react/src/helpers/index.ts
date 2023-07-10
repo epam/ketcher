@@ -14,5 +14,5 @@
  * limitations under the License.
  ***************************************************************************/
 
-export {}
-export * from './emptyFunction'
+export {};
+export * from './emptyFunction';

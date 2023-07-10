@@ -13,88 +13,89 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+/* eslint-disable @typescript-eslint/no-use-before-define */
 
-import { ReRxnPlus, ReStruct } from '../../../../render'
-import { RxnPlus, Vec2 } from 'domain/entities'
+import { ReRxnPlus, ReStruct } from '../../../../render';
+import { RxnPlus, Vec2 } from 'domain/entities';
 
-import { BaseOperation } from '../../base'
-import { OperationType } from '../../OperationType'
+import { BaseOperation } from '../../base';
+import { OperationType } from '../../OperationType';
 
 // todo: separate classes: now here is circular dependency in `invert` method
 
 type Data = {
-  plid: any
-  pos: any
-}
+  plid: any;
+  pos: any;
+};
 
 class RxnPlusAdd extends BaseOperation {
-  data: Data
+  data: Data;
 
   constructor(pos?: any) {
-    super(OperationType.RXN_PLUS_ADD)
-    this.data = { plid: null, pos }
+    super(OperationType.RXN_PLUS_ADD);
+    this.data = { plid: null, pos };
   }
 
   execute(restruct: ReStruct) {
-    const struct = restruct.molecule
+    const struct = restruct.molecule;
 
-    const newRxn = new RxnPlus()
+    const newRxn = new RxnPlus();
     if (typeof this.data.plid === 'number') {
-      struct.rxnPluses.set(this.data.plid, newRxn)
+      struct.rxnPluses.set(this.data.plid, newRxn);
     } else {
-      this.data.plid = struct.rxnPluses.add(newRxn)
+      this.data.plid = struct.rxnPluses.add(newRxn);
     }
 
-    const { pos, plid } = this.data
+    const { pos, plid } = this.data;
 
-    const structRxn = struct.rxnPluses.get(plid)
+    const structRxn = struct.rxnPluses.get(plid);
     // notifyRxnPlusAdded
-    restruct.rxnPluses.set(plid, new ReRxnPlus(structRxn))
+    restruct.rxnPluses.set(plid, new ReRxnPlus(structRxn));
 
-    struct.rxnPlusSetPos(plid, new Vec2(pos))
+    struct.rxnPlusSetPos(plid, new Vec2(pos));
 
-    BaseOperation.invalidateItem(restruct, 'rxnPluses', plid, 1)
+    BaseOperation.invalidateItem(restruct, 'rxnPluses', plid, 1);
   }
 
   invert() {
-    const inverted = new RxnPlusDelete()
-    inverted.data = this.data
-    return inverted
+    const inverted = new RxnPlusDelete();
+    inverted.data = this.data;
+    return inverted;
   }
 }
 
 class RxnPlusDelete extends BaseOperation {
-  data: Data
+  data: Data;
 
   constructor(plid?: any) {
-    super(OperationType.RXN_PLUS_DELETE)
-    this.data = { plid, pos: null }
+    super(OperationType.RXN_PLUS_DELETE);
+    this.data = { plid, pos: null };
   }
 
   execute(restruct: ReStruct) {
-    const { plid } = this.data
+    const { plid } = this.data;
 
-    const struct = restruct.molecule
+    const struct = restruct.molecule;
     if (!this.data.pos) {
-      this.data.pos = struct.rxnPluses.get(plid)!.pp
+      this.data.pos = struct.rxnPluses.get(plid)!.pp;
     }
 
     // notifyRxnPlusRemoved
-    restruct.markItemRemoved()
-    const rxn = restruct.rxnPluses.get(plid)
-    if (!rxn) return
-    restruct.clearVisel(rxn.visel)
-    restruct.rxnPluses.delete(plid)
+    restruct.markItemRemoved();
+    const rxn = restruct.rxnPluses.get(plid);
+    if (!rxn) return;
+    restruct.clearVisel(rxn.visel);
+    restruct.rxnPluses.delete(plid);
 
-    struct.rxnPluses.delete(plid)
+    struct.rxnPluses.delete(plid);
   }
 
   invert() {
-    const inverted = new RxnPlusAdd()
-    inverted.data = this.data
-    return inverted
+    const inverted = new RxnPlusAdd();
+    inverted.data = this.data;
+    return inverted;
   }
 }
 
-export { RxnPlusAdd, RxnPlusDelete }
-export * from './RxnPlusMove'
+export { RxnPlusAdd, RxnPlusDelete };
+export * from './RxnPlusMove';

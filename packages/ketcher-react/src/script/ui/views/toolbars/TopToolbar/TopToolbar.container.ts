@@ -14,77 +14,79 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { TopToolbar } from './TopToolbar'
+import { TopToolbar } from './TopToolbar';
 
-import { Dispatch } from 'redux'
-import { connect } from 'react-redux'
-import { onAction } from '../../../state'
-import action from 'src/script/ui/action/index.js'
-import { shortcutStr } from '../shortcutStr'
-import { removeStructAction } from 'src/script/ui/state/shared'
+import { Dispatch } from 'redux';
+import { connect } from 'react-redux';
+import { onAction } from '../../../state';
+import action from 'src/script/ui/action/index.js';
+import { shortcutStr } from '../shortcutStr';
+import { removeStructAction } from 'src/script/ui/state/shared';
+import { createSelector } from 'reselect';
+
+const getActionState = (state) => state.actionState || {};
+
+const disabledButtonsSelector = createSelector(
+  [getActionState],
+  (actionState) =>
+    Object.keys(actionState).reduce((acc: string[], item) => {
+      if (actionState[item]?.disabled) {
+        acc.push(item);
+      }
+      return acc;
+    }, []),
+);
+const hiddenButtonsSelector = createSelector([getActionState], (actionState) =>
+  Object.keys(actionState).reduce((acc: string[], item) => {
+    if (actionState[item]?.hidden) {
+      acc.push(item);
+    }
+    return acc;
+  }, []),
+);
+
+const disableableButtons = [
+  'layout',
+  'clean',
+  'arom',
+  'dearom',
+  'cip',
+  'enhanced-stereo',
+];
 
 const shortcuts = Object.keys(action).reduce((acc, key) => {
   if (action[key]?.shortcut) {
-    const shortcut = action[key].shortcut
-    const processedShortcut = shortcutStr(shortcut)
-    acc[key] = processedShortcut
+    const shortcut = action[key].shortcut;
+    const processedShortcut = shortcutStr(shortcut);
+    acc[key] = processedShortcut;
   }
-  return acc
-}, {})
+  return acc;
+}, {});
 
 const mapStateToProps = (state: any) => {
-  const actionState = state.actionState || {}
-
-  const disabledButtons = Object.keys(actionState).reduce(
-    (acc: string[], item) => {
-      if (actionState[item]?.disabled) {
-        acc.push(item)
-      }
-      return acc
-    },
-    []
-  )
-
-  const hiddenButtons = Object.keys(actionState).reduce(
-    (acc: string[], item) => {
-      if (actionState[item]?.hidden) {
-        acc.push(item)
-      }
-      return acc
-    },
-    []
-  )
-
   return {
     currentZoom: Math.round(state.actionState?.zoom?.selected * 100),
-    disabledButtons,
-    hiddenButtons,
+    disabledButtons: disabledButtonsSelector(state),
+    hiddenButtons: hiddenButtonsSelector(state),
     shortcuts,
     status: state.actionState || {},
     opened: state.toolbar.opened,
     indigoVerification: state.requestsStatuses.indigoVerification,
-    disableableButtons: [
-      'layout',
-      'clean',
-      'arom',
-      'dearom',
-      'cip',
-      'enhanced-stereo'
-    ]
-  }
-}
+    disableableButtons,
+  };
+};
 
 const mapDispatchToProps = (dispatch: Dispatch) => {
   const dispatchAction = (actionName) => {
-    dispatch(onAction(action[actionName].action))
-  }
+    dispatch(onAction(action[actionName].action));
+  };
 
   return {
     onClear: () => dispatchAction('clear'),
     onFileOpen: () => dispatchAction('open'),
     onSave: () => {
-      dispatch(removeStructAction())
-      dispatchAction('save')
+      dispatch(removeStructAction());
+      dispatchAction('save');
     },
     onUndo: () => dispatchAction('undo'),
     onRedo: () => dispatchAction('redo'),
@@ -111,17 +113,17 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
     onOpen: (menuName, isSelected) =>
       dispatch({
         type: 'OPENED',
-        data: { menuName, isSelected }
+        data: { menuName, isSelected },
       }),
     onFullscreen: () => dispatchAction('fullscreen'),
     onHelp: () => dispatchAction('help'),
-    onAbout: () => dispatchAction('about')
-  }
-}
+    onAbout: () => dispatchAction('about'),
+  };
+};
 
 const TopToolbarContainer = connect(
   mapStateToProps,
-  mapDispatchToProps
-)(TopToolbar)
+  mapDispatchToProps,
+)(TopToolbar);
 
-export { TopToolbarContainer }
+export { TopToolbarContainer };

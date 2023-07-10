@@ -14,40 +14,40 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { BaseOperation } from '../base'
-import { OperationType } from '../OperationType'
-import { ReStruct } from '../../../render'
+import { BaseOperation } from '../base';
+import { OperationType } from '../OperationType';
+import { ReStruct } from '../../../render';
 
 interface TextUpdateData {
-  id: number
-  content: string
-  previousContent?: string
+  id: number;
+  content: string;
+  previousContent?: string;
 }
 
 export class TextUpdate extends BaseOperation {
-  data: TextUpdateData
+  data: TextUpdateData;
 
   constructor(id: number, content: string) {
-    super(OperationType.TEXT_UPDATE)
-    this.data = { id, content: content }
+    super(OperationType.TEXT_UPDATE);
+    this.data = { id, content };
   }
 
   execute(restruct: ReStruct) {
-    const { id, content } = this.data
-    const text = restruct.molecule.texts.get(id)
+    const { id, content } = this.data;
+    const text = restruct.molecule.texts.get(id);
 
     if (text) {
-      this.data.previousContent = text.content!
-      text.content = content
+      this.data.previousContent = text.content!;
+      text.content = content;
     }
 
-    BaseOperation.invalidateItem(restruct, 'texts', id, 1)
+    BaseOperation.invalidateItem(restruct, 'texts', id, 1);
   }
 
   invert() {
-    const inverted = new TextUpdate(this.data.id, this.data.previousContent!)
+    const inverted = new TextUpdate(this.data.id, this.data.previousContent!);
 
-    inverted.data.previousContent = this.data.content
-    return inverted
+    inverted.data.previousContent = this.data.content;
+    return inverted;
   }
 }

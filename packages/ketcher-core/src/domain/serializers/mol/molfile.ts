@@ -14,79 +14,80 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { StereoFlag, Struct } from 'domain/entities'
+import { StereoFlag, Struct } from 'domain/entities';
 
-import { Elements } from 'domain/constants'
-import common from './common'
-import utils from './utils'
+import { Elements } from 'domain/constants';
+import common from './common';
+import utils from './utils';
+import { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
 
-const END_V2000 = '2D 1   1.00000     0.00000     0'
+const END_V2000 = '2D 1   1.00000     0.00000     0';
 
 type Mapping = {
-  [key in number]: number
-}
-type NumberTuple = [number, number]
+  [key in number]: number;
+};
+type NumberTuple = [number, number];
 
 interface ParseCTFileProps {
-  molfileLines: string[]
-  shouldReactionRelayout?: boolean
-  ignoreChiralFlag?: boolean
+  molfileLines: string[];
+  shouldReactionRelayout?: boolean;
+  ignoreChiralFlag?: boolean;
 }
 
 export class Molfile {
-  molecule: Struct | null
-  molfile: string | null
-  reaction: boolean
-  mapping: Mapping
-  bondMapping: Mapping
+  molecule: Struct | null;
+  molfile: string | null;
+  reaction: boolean;
+  mapping: Mapping;
+  bondMapping: Mapping;
 
   constructor() {
-    this.molecule = null
-    this.molfile = null
+    this.molecule = null;
+    this.molfile = null;
 
-    this.reaction = false
-    this.mapping = {}
-    this.bondMapping = {}
+    this.reaction = false;
+    this.mapping = {};
+    this.bondMapping = {};
   }
 
   parseCTFile(props: ParseCTFileProps) {
-    const { molfileLines, shouldReactionRelayout, ignoreChiralFlag } = props
-    let ret
+    const { molfileLines, shouldReactionRelayout, ignoreChiralFlag } = props;
+    let ret;
     if (molfileLines[0].search('\\$RXN') === 0) {
       ret = common.parseRxn(
         molfileLines,
         shouldReactionRelayout,
-        ignoreChiralFlag
-      )
+        ignoreChiralFlag,
+      );
     } else {
-      ret = common.parseMol(molfileLines, ignoreChiralFlag)
+      ret = common.parseMol(molfileLines, ignoreChiralFlag);
     }
-    ret.initHalfBonds()
-    ret.initNeighbors()
-    ret.bindSGroupsToFunctionalGroups()
+    ret.initHalfBonds();
+    ret.initNeighbors();
+    ret.bindSGroupsToFunctionalGroups();
 
-    return ret
+    return ret;
   }
 
   prepareSGroups(skipErrors: boolean, preserveIndigoDesc?: boolean) {
-    const mol = this.molecule
-    const toRemove: any[] = []
-    let errors = 0
+    const mol = this.molecule;
+    const toRemove: any[] = [];
+    let errors = 0;
 
     this.molecule?.sGroupForest
       .getSGroupsBFS()
       .reverse()
       .forEach((id) => {
-        const sgroup = mol!.sgroups.get(id)!
-        let errorIgnore = false
+        const sgroup = mol!.sgroups.get(id)!;
+        let errorIgnore = false;
 
         try {
-          common.prepareForSaving[sgroup.type](sgroup, mol)
+          common.prepareForSaving[sgroup.type](sgroup, mol);
         } catch (ex: any) {
           if (!skipErrors || typeof ex.id !== 'number') {
-            throw new Error(`Error: ${ex.message}`)
+            throw new Error(`Error: ${ex.message}`);
           }
-          errorIgnore = true
+          errorIgnore = true;
         }
         /* eslint-disable no-mixed-operators */
         if (
@@ -94,31 +95,31 @@ export class Molfile {
           (!preserveIndigoDesc &&
             /^INDIGO_.+_DESC$/i.test(sgroup.data.fieldName))
         ) {
-          errors += +errorIgnore
-          toRemove.push(sgroup.id)
+          errors += +errorIgnore;
+          toRemove.push(sgroup.id);
         }
-      }, this)
+      }, this);
 
     if (errors) {
       throw new Error(
         'Warning: ' +
           errors +
-          ' invalid S-groups were detected. They will be omitted.'
-      )
+          ' invalid S-groups were detected. They will be omitted.',
+      );
     }
 
     for (let i = 0; i < toRemove.length; ++i) {
-      mol?.sGroupDelete(toRemove[i])
+      mol?.sGroupDelete(toRemove[i]);
     }
   }
 
   getCTab(molecule: Struct, rgroups?: Map<any, any>) {
     /* saver */
-    this.molecule = molecule.clone()
-    this.prepareSGroups(false, false)
-    this.molfile = ''
-    this.writeCTab2000(rgroups)
-    return this.molfile
+    this.molecule = molecule.clone();
+    this.prepareSGroups(false, false);
+    this.molfile = '';
+    this.writeCTab2000(rgroups);
+    return this.molfile;
   }
 
   saveMolecule(
@@ -126,23 +127,23 @@ export class Molfile {
     skipSGroupErrors: boolean,
     norgroups?: boolean,
     preserveIndigoDesc?: boolean,
-    ignoreChiralFlag?: boolean
+    ignoreChiralFlag?: boolean,
   ) {
     // eslint-disable-line max-statements
     /* saver */
-    this.reaction = molecule.hasRxnArrow()
-    this.molfile = '' + molecule.name
+    this.reaction = molecule.hasRxnArrow();
+    this.molfile = '' + molecule.name;
     if (this.reaction) {
       if (molecule.rgroups.size > 0) {
         throw new Error(
-          'Reactions with r-groups are not supported at the moment'
-        )
+          'Reactions with r-groups are not supported at the moment',
+        );
       }
-      const components = molecule.getComponents()
+      const components = molecule.getComponents();
 
-      const reactants = components.reactants
-      const products = components.products
-      const all = reactants.concat(products)
+      const reactants = components.reactants;
+      const products = components.products;
+      const all = reactants.concat(products);
       this.molfile =
         '$RXN\n' +
         molecule.name +
@@ -150,229 +151,229 @@ export class Molfile {
         utils.paddedNum(reactants.length, 3) +
         utils.paddedNum(products.length, 3) +
         utils.paddedNum(0, 3) +
-        '\n'
+        '\n';
       for (let i = 0; i < all.length; ++i) {
-        const saver = new Molfile()
-        const submol = molecule.clone(all[i], null, true)
-        const molfile = saver.saveMolecule(submol, false, true)
-        this.molfile += '$MOL\n' + molfile
+        const saver = new Molfile();
+        const submol = molecule.clone(all[i], null, true);
+        const molfile = saver.saveMolecule(submol, false, true);
+        this.molfile += '$MOL\n' + molfile;
       }
-      return this.molfile
+      return this.molfile;
     }
 
     if (molecule.rgroups.size > 0) {
       if (norgroups) {
-        molecule = molecule.getScaffold()
+        molecule = molecule.getScaffold();
       } else {
         const scaffold = new Molfile().getCTab(
           molecule.getScaffold(),
-          molecule.rgroups
-        )
+          molecule.rgroups,
+        );
         this.molfile =
-          '$MDL  REV  1\n$MOL\n$HDR\n' + molecule.name + '\n\n\n$END HDR\n'
-        this.molfile += '$CTAB\n' + scaffold + '$END CTAB\n'
+          '$MDL  REV  1\n$MOL\n$HDR\n' + molecule.name + '\n\n\n$END HDR\n';
+        this.molfile += '$CTAB\n' + scaffold + '$END CTAB\n';
 
         molecule.rgroups.forEach((rg, rgid) => {
-          this.molfile += '$RGP\n'
-          this.writePaddedNumber(rgid, 3)
-          this.molfile += '\n'
+          this.molfile += '$RGP\n';
+          this.writePaddedNumber(rgid, 3);
+          this.molfile += '\n';
           rg.frags.forEach((fid) => {
-            const group = new Molfile().getCTab(molecule.getFragment(fid))
-            this.molfile += '$CTAB\n' + group + '$END CTAB\n'
-          })
-          this.molfile += '$END RGP\n'
-        })
-        this.molfile += '$END MOL\n'
+            const group = new Molfile().getCTab(molecule.getFragment(fid));
+            this.molfile += '$CTAB\n' + group + '$END CTAB\n';
+          });
+          this.molfile += '$END RGP\n';
+        });
+        this.molfile += '$END MOL\n';
 
-        return this.molfile
+        return this.molfile;
       }
     }
 
-    this.molecule = molecule.clone()
+    this.molecule = molecule.clone();
 
-    this.prepareSGroups(skipSGroupErrors, preserveIndigoDesc)
+    this.prepareSGroups(skipSGroupErrors, preserveIndigoDesc);
 
-    this.writeHeader()
-    this.writeCTab2000(undefined, ignoreChiralFlag)
+    this.writeHeader();
+    this.writeCTab2000(undefined, ignoreChiralFlag);
 
-    return this.molfile
+    return this.molfile;
   }
 
   writeHeader() {
     /* saver */
 
-    const date = new Date()
+    const date = new Date();
 
-    this.writeCR() // TODO: write structure name
-    this.writeWhiteSpace(2)
-    this.write('Ketcher')
-    this.writeWhiteSpace()
+    this.writeCR(); // TODO: write structure name
+    this.writeWhiteSpace(2);
+    this.write('Ketcher');
+    this.writeWhiteSpace();
     this.writeCR(
       (date.getMonth() + 1 + '').padStart(2) +
         (date.getDate() + '').padStart(2) +
         ((date.getFullYear() % 100) + '').padStart(2) +
         (date.getHours() + '').padStart(2) +
         (date.getMinutes() + '').padStart(2) +
-        END_V2000
-    )
-    this.writeCR()
+        END_V2000,
+    );
+    this.writeCR();
   }
 
   write(str: string) {
     /* saver */
-    this.molfile += str
+    this.molfile += str;
   }
 
   writeCR(str?: string) {
     /* saver */
     if (arguments.length === 0) {
-      str = ''
+      str = '';
     }
 
-    this.molfile += str + '\n'
+    this.molfile += str + '\n';
   }
 
   writeWhiteSpace(length = 0) {
     /* saver */
     if (arguments.length === 0) {
-      length = 1
+      length = 1;
     }
 
-    this.write(' '.repeat(Math.max(length, 0)))
+    this.write(' '.repeat(Math.max(length, 0)));
   }
 
   writePadded(str: string, width: number) {
     /* saver */
-    this.write(str)
-    this.writeWhiteSpace(width - str.length)
+    this.write(str);
+    this.writeWhiteSpace(width - str.length);
   }
 
   writePaddedNumber(number: number, width: number) {
     /* saver */
-    const str = (number - 0).toString()
+    const str = (number - 0).toString();
 
-    this.writeWhiteSpace(width - str.length)
-    this.write(str)
+    this.writeWhiteSpace(width - str.length);
+    this.write(str);
   }
 
   writePaddedFloat(number: string | number, width: number, precision: number) {
     /* saver */
-    this.write(utils.paddedNum(number, width, precision))
+    this.write(utils.paddedNum(number, width, precision));
   }
 
   writeCTab2000Header(ignoreChiralFlag) {
     /* saver */
-    this.writePaddedNumber(this.molecule!.atoms.size, 3)
-    this.writePaddedNumber(this.molecule!.bonds.size, 3)
+    this.writePaddedNumber(this.molecule!.atoms.size, 3);
+    this.writePaddedNumber(this.molecule!.bonds.size, 3);
 
-    this.writePaddedNumber(0, 3)
-    this.writePaddedNumber(0, 3)
+    this.writePaddedNumber(0, 3);
+    this.writePaddedNumber(0, 3);
     const isAbsFlag = Array.from(this.molecule!.frags.values()).some((fr) =>
-      fr ? fr.enhancedStereoFlag === StereoFlag.Abs : false
-    )
+      fr ? fr.enhancedStereoFlag === StereoFlag.Abs : false,
+    );
 
-    this.writePaddedNumber(isAbsFlag || ignoreChiralFlag ? 1 : 0, 3)
-    this.writePaddedNumber(0, 3)
-    this.writePaddedNumber(0, 3)
-    this.writePaddedNumber(0, 3)
-    this.writePaddedNumber(0, 3)
-    this.writePaddedNumber(0, 3)
-    this.writePaddedNumber(999, 3)
-    this.writeCR(' V2000')
+    this.writePaddedNumber(isAbsFlag || ignoreChiralFlag ? 1 : 0, 3);
+    this.writePaddedNumber(0, 3);
+    this.writePaddedNumber(0, 3);
+    this.writePaddedNumber(0, 3);
+    this.writePaddedNumber(0, 3);
+    this.writePaddedNumber(0, 3);
+    this.writePaddedNumber(999, 3);
+    this.writeCR(' V2000');
   }
 
   writeCTab2000(rgroups?: Map<any, any>, ignoreChiralFlag?: boolean) {
     // eslint-disable-line max-statements
     /* saver */
-    this.writeCTab2000Header(ignoreChiralFlag)
+    this.writeCTab2000Header(ignoreChiralFlag);
 
-    this.mapping = {}
-    let i = 1
+    this.mapping = {};
+    let i = 1;
 
-    const atomsIds: number[] = []
+    const atomsIds: number[] = [];
     const atomsProps: {
-      id: number
-      value: string
-    }[] = []
+      id: number;
+      value: string;
+    }[] = [];
     this.molecule!.atoms.forEach((atom, id) => {
-      let label = atom.label
+      let label = atom.label;
       if (atom.atomList != null) {
-        label = 'L'
-        atomsIds.push(id)
+        label = 'L';
+        atomsIds.push(id);
       } else if (atom.pseudo) {
         if (atom.pseudo.length > 3) {
-          label = 'A'
-          atomsProps.push({ id, value: `'${atom.pseudo}'` })
+          label = 'A';
+          atomsProps.push({ id, value: `'${atom.pseudo}'` });
         }
       } else if (atom.alias) {
-        atomsProps.push({ id, value: atom.alias })
+        atomsProps.push({ id, value: atom.alias });
       } else if (
         !Elements.get(atom.label) &&
         ['A', 'Q', 'X', '*', 'R#'].indexOf(atom.label) === -1
       ) {
         // search in generics?
-        label = 'C'
-        atomsProps.push({ id, value: atom.label })
+        label = 'C';
+        atomsProps.push({ id, value: atom.label });
       }
 
-      this.writeAtom(atom, label)
+      this.writeAtom(atom, label);
 
-      this.mapping[id] = i++
-    }, this)
+      this.mapping[id] = i++;
+    }, this);
 
-    this.bondMapping = {}
-    i = 1
+    this.bondMapping = {};
+    i = 1;
     this.molecule!.bonds.forEach((bond, id) => {
-      this.bondMapping[id] = i++
-      this.writeBond(bond)
-    }, this)
+      this.bondMapping[id] = i++;
+      this.writeBond(bond);
+    }, this);
 
     while (atomsProps.length > 0) {
-      this.writeAtomProps(atomsProps[0])
-      atomsProps.splice(0, 1)
+      this.writeAtomProps(atomsProps[0]);
+      atomsProps.splice(0, 1);
     }
 
-    const chargeList: NumberTuple[] = []
-    const isotopeList: NumberTuple[] = []
-    const radicalList: NumberTuple[] = []
-    const rglabelList: NumberTuple[] = []
-    const rglogicList: string[] = []
-    const aplabelList: NumberTuple[] = []
-    const rbcountList: NumberTuple[] = []
-    const unsaturatedList: NumberTuple[] = []
-    const substcountList: NumberTuple[] = []
+    const chargeList: NumberTuple[] = [];
+    const isotopeList: NumberTuple[] = [];
+    const radicalList: NumberTuple[] = [];
+    const rglabelList: NumberTuple[] = [];
+    const rglogicList: string[] = [];
+    const aplabelList: NumberTuple[] = [];
+    const rbcountList: NumberTuple[] = [];
+    const unsaturatedList: NumberTuple[] = [];
+    const substcountList: NumberTuple[] = [];
 
     this.molecule!.atoms.forEach((atom, id) => {
       if (atom.charge !== 0) {
-        chargeList.push([id, atom.charge])
+        chargeList.push([id, atom.charge]);
       }
       if (atom.isotope !== 0) {
-        isotopeList.push([id, atom.isotope])
+        isotopeList.push([id, atom.isotope]);
       }
       if (atom.radical !== 0) {
-        radicalList.push([id, atom.radical])
+        radicalList.push([id, atom.radical]);
       }
       if (atom.rglabel != null && atom.label === 'R#') {
         // TODO need to force rglabel=null when label is not 'R#'
         for (let rgi = 0; rgi < 32; rgi++) {
           if ((atom.rglabel as any) & (1 << rgi)) {
-            rglabelList.push([id, rgi + 1])
+            rglabelList.push([id, rgi + 1]);
           }
         }
       }
       if (atom.attpnt != null) {
-        aplabelList.push([id, atom.attpnt])
+        aplabelList.push([id, atom.attpnt]);
       }
       if (atom.ringBondCount !== 0) {
-        rbcountList.push([id, atom.ringBondCount])
+        rbcountList.push([id, atom.ringBondCount]);
       }
       if (atom.substitutionCount !== 0) {
-        substcountList.push([id, atom.substitutionCount])
+        substcountList.push([id, atom.substitutionCount]);
       }
       if (atom.unsaturatedAtom !== 0) {
-        unsaturatedList.push([id, atom.unsaturatedAtom])
+        unsaturatedList.push([id, atom.unsaturatedAtom]);
       }
-    })
+    });
 
     if (rgroups) {
       rgroups.forEach((rg, rgid) => {
@@ -385,105 +386,108 @@ export class Molfile {
             ' ' +
             utils.paddedNum(rg.resth ? 1 : 0, 3) +
             '   ' +
-            rg.range
-          rglogicList.push(line)
+            rg.range;
+          rglogicList.push(line);
         }
-      })
+      });
     }
 
-    this.writeAtomPropList('M  CHG', chargeList)
-    this.writeAtomPropList('M  ISO', isotopeList)
-    this.writeAtomPropList('M  RAD', radicalList)
-    this.writeAtomPropList('M  RGP', rglabelList)
+    this.writeAtomPropList('M  CHG', chargeList);
+    this.writeAtomPropList('M  ISO', isotopeList);
+    this.writeAtomPropList('M  RAD', radicalList);
+    this.writeAtomPropList('M  RGP', rglabelList);
     for (let j = 0; j < rglogicList.length; ++j) {
-      this.write('M  LOG' + rglogicList[j] + '\n')
+      this.write('M  LOG' + rglogicList[j] + '\n');
     }
 
-    this.writeAtomPropList('M  APO', aplabelList)
-    this.writeAtomPropList('M  RBC', rbcountList)
-    this.writeAtomPropList('M  SUB', substcountList)
-    this.writeAtomPropList('M  UNS', unsaturatedList)
+    this.writeAtomPropList('M  APO', aplabelList);
+    this.writeAtomPropList('M  RBC', rbcountList);
+    this.writeAtomPropList('M  SUB', substcountList);
+    this.writeAtomPropList('M  UNS', unsaturatedList);
 
     if (atomsIds.length > 0) {
       for (let j = 0; j < atomsIds.length; ++j) {
-        const atomId = atomsIds[j]
-        const atomList = this.molecule!.atoms.get(atomId)!.atomList!
-        this.write('M  ALS')
-        this.writePaddedNumber(atomId + 1, 4)
-        this.writePaddedNumber(atomList.ids.length, 3)
-        this.writeWhiteSpace()
-        this.write(atomList.notList ? 'T' : 'F')
+        const atomId = atomsIds[j];
+        const atomList = this.molecule!.atoms.get(atomId)!.atomList!;
+        this.write('M  ALS');
+        this.writePaddedNumber(atomId + 1, 4);
+        this.writePaddedNumber(atomList.ids.length, 3);
+        this.writeWhiteSpace();
+        this.write(atomList.notList ? 'T' : 'F');
 
-        const labelList = atomList.labelList()
+        const labelList = atomList.labelList();
         for (let k = 0; k < labelList.length; ++k) {
-          this.writeWhiteSpace()
-          this.writePadded(labelList[k], 3)
+          this.writeWhiteSpace();
+          this.writePadded(labelList[k], 3);
         }
-        this.writeWhiteSpace()
-        this.writeCR()
+        this.writeWhiteSpace();
+        this.writeCR();
       }
     }
 
-    const sgmap = {}
-    let cnt = 1
-    const sgmapback = {}
-    const sgorder = this.molecule!.sGroupForest.getSGroupsBFS()
+    const sgmap = {};
+    let cnt = 1;
+    const sgmapback = {};
+    const sgorder = this.molecule!.sGroupForest.getSGroupsBFS();
     sgorder.forEach((id) => {
-      sgmapback[cnt] = id
-      sgmap[id] = cnt++
-    })
-    for (let q = 1; q < cnt; ++q) {
+      sgmapback[cnt] = id;
+      sgmap[id] = cnt++;
+    });
+    for (let sGroupIdInCTab = 1; sGroupIdInCTab < cnt; ++sGroupIdInCTab) {
       // each group on its own
-      const id = sgmapback[q]
-      const sgroup = this.molecule!.sgroups.get(id)!
-      this.write('M  STY')
-      this.writePaddedNumber(1, 3)
-      this.writeWhiteSpace(1)
-      this.writePaddedNumber(q, 3)
-      this.writeWhiteSpace(1)
-      this.writePadded(sgroup.type, 3)
-      this.writeCR()
+      const id = sgmapback[sGroupIdInCTab];
+      const sgroup = this.molecule!.sgroups.get(id)!;
+      this.write('M  STY');
+      this.writePaddedNumber(1, 3);
+      this.writeWhiteSpace(1);
+      this.writePaddedNumber(sGroupIdInCTab, 3);
+      this.writeWhiteSpace(1);
+      this.writePadded(sgroup.type, 3);
+      this.writeCR();
 
       // TODO: write subtype, M SST
 
-      this.write('M  SLB')
-      this.writePaddedNumber(1, 3)
-      this.writeWhiteSpace(1)
-      this.writePaddedNumber(q, 3)
-      this.writeWhiteSpace(1)
-      this.writePaddedNumber(q, 3)
-      this.writeCR()
+      this.write('M  SLB');
+      this.writePaddedNumber(1, 3);
+      this.writeWhiteSpace(1);
+      this.writePaddedNumber(sGroupIdInCTab, 3);
+      this.writeWhiteSpace(1);
+      this.writePaddedNumber(sGroupIdInCTab, 3);
+      this.writeCR();
 
-      const parentId = this.molecule!.sGroupForest.parent.get(id)!
+      const parentId = this.molecule!.sGroupForest.parent.get(id)!;
       if (parentId >= 0) {
-        this.write('M  SPL')
-        this.writePaddedNumber(1, 3)
-        this.writeWhiteSpace(1)
-        this.writePaddedNumber(q, 3)
-        this.writeWhiteSpace(1)
-        this.writePaddedNumber(sgmap[parentId], 3)
-        this.writeCR()
+        this.write('M  SPL');
+        this.writePaddedNumber(1, 3);
+        this.writeWhiteSpace(1);
+        this.writePaddedNumber(sGroupIdInCTab, 3);
+        this.writeWhiteSpace(1);
+        this.writePaddedNumber(sgmap[parentId], 3);
+        this.writeCR();
       }
 
       // connectivity
       if (sgroup.type === 'SRU' && sgroup.data.connectivity) {
-        const connectivity = ` ${q.toString().padStart(3)} ${(
+        const connectivity = ` ${sGroupIdInCTab.toString().padStart(3)} ${(
           sgroup.data.connectivity || ''
-        ).padEnd(3)}`
+        ).padEnd(3)}`;
 
-        this.write('M  SCN')
-        this.writePaddedNumber(1, 3)
-        this.write(connectivity.toUpperCase())
-        this.writeCR()
+        this.write('M  SCN');
+        this.writePaddedNumber(1, 3);
+        this.write(connectivity.toUpperCase());
+        this.writeCR();
       }
 
       if (sgroup.type === 'SRU') {
-        this.write('M  SMT ')
-        this.writePaddedNumber(q, 3)
-        this.writeWhiteSpace()
-        this.write(sgroup.data.subscript || 'n')
-        this.writeCR()
+        this.write('M  SMT ');
+        this.writePaddedNumber(sGroupIdInCTab, 3);
+        this.writeWhiteSpace();
+        this.write(sgroup.data.subscript || 'n');
+        this.writeCR();
       }
+      sgroup.getAttachmentPoints().forEach((attachmentPoint) => {
+        this.writeSGroupAttachmentPointLine(sGroupIdInCTab, attachmentPoint);
+      });
 
       this.writeCR(
         common.saveToMolfile[sgroup.type](
@@ -491,9 +495,9 @@ export class Molfile {
           this.molecule,
           sgmap,
           this.mapping,
-          this.bondMapping
-        )
-      )
+          this.bondMapping,
+        ),
+      );
     }
 
     // TODO: write M  APO
@@ -501,125 +505,145 @@ export class Molfile {
     // TODO: write M  RGP
     // TODO: write M  LOG
 
-    const expandedGroups: number[] = []
+    const expandedGroups: number[] = [];
     this.molecule!.sgroups.forEach((sg) => {
-      if (sg.data.expanded) expandedGroups.push(sg.id + 1)
-    })
+      if (sg.isExpanded()) expandedGroups.push(sg.id + 1);
+    });
 
     if (expandedGroups.length) {
       const expandedGroupsLine = `M  SDS EXP  ${
         expandedGroups.length
-      }   ${expandedGroups.join('   ')}`
-      this.writeCR(expandedGroupsLine)
+      }   ${expandedGroups.join('   ')}`;
+      this.writeCR(expandedGroupsLine);
     }
 
-    this.writeCR('M  END')
+    this.writeCR('M  END');
   }
 
   private writeAtom(atom, atomLabel: string) {
-    this.writePaddedFloat(atom.pp.x, 10, 4)
-    this.writePaddedFloat(-atom.pp.y, 10, 4)
-    this.writePaddedFloat(atom.pp.z, 10, 4)
-    this.writeWhiteSpace()
-    this.writePadded(atomLabel, 3)
-    this.writePaddedNumber(0, 2)
-    this.writePaddedNumber(0, 3)
-    this.writePaddedNumber(0, 3)
+    this.writePaddedFloat(atom.pp.x, 10, 4);
+    this.writePaddedFloat(-atom.pp.y, 10, 4);
+    this.writePaddedFloat(atom.pp.z, 10, 4);
+    this.writeWhiteSpace();
+    this.writePadded(atomLabel, 3);
+    this.writePaddedNumber(0, 2);
+    this.writePaddedNumber(0, 3);
+    this.writePaddedNumber(0, 3);
 
     if (typeof atom.hCount === 'undefined') {
-      atom.hCount = 0
+      atom.hCount = 0;
     }
-    this.writePaddedNumber(atom.hCount, 3)
+    this.writePaddedNumber(atom.hCount, 3);
 
     if (typeof atom.stereoCare === 'undefined') {
-      atom.stereoCare = 0
+      atom.stereoCare = 0;
     }
-    this.writePaddedNumber(atom.stereoCare, 3)
+    this.writePaddedNumber(atom.stereoCare, 3);
 
-    let number: number
+    let number: number;
     if (atom.explicitValence < 0) {
-      number = 0
+      number = 0;
     } else if (atom.explicitValence === 0) {
-      number = 15
+      number = 15;
     } else {
-      number = atom.explicitValence
+      number = atom.explicitValence;
     }
-    this.writePaddedNumber(number, 3)
+    this.writePaddedNumber(number, 3);
 
-    this.writePaddedNumber(0, 3)
-    this.writePaddedNumber(0, 3)
-    this.writePaddedNumber(0, 3)
+    this.writePaddedNumber(0, 3);
+    this.writePaddedNumber(0, 3);
+    this.writePaddedNumber(0, 3);
 
     if (typeof atom.aam === 'undefined') {
-      atom.aam = 0
+      atom.aam = 0;
     }
-    this.writePaddedNumber(atom.aam, 3)
+    this.writePaddedNumber(atom.aam, 3);
 
     if (typeof atom.invRet === 'undefined') {
-      atom.invRet = 0
+      atom.invRet = 0;
     }
-    this.writePaddedNumber(atom.invRet, 3)
+    this.writePaddedNumber(atom.invRet, 3);
 
     if (typeof atom.exactChangeFlag === 'undefined') {
-      atom.exactChangeFlag = 0
+      atom.exactChangeFlag = 0;
     }
-    this.writePaddedNumber(atom.exactChangeFlag, 3)
+    this.writePaddedNumber(atom.exactChangeFlag, 3);
 
-    this.writeCR()
+    this.writeCR();
   }
 
   private writeBond(bond) {
-    this.writePaddedNumber(this.mapping[bond.begin], 3)
-    this.writePaddedNumber(this.mapping[bond.end], 3)
-    this.writePaddedNumber(bond.type, 3)
+    this.writePaddedNumber(this.mapping[bond.begin], 3);
+    this.writePaddedNumber(this.mapping[bond.end], 3);
+    this.writePaddedNumber(bond.type, 3);
 
     if (typeof bond.stereo === 'undefined') {
-      bond.stereo = 0
+      bond.stereo = 0;
     }
-    this.writePaddedNumber(bond.stereo, 3)
+    this.writePaddedNumber(bond.stereo, 3);
 
-    this.writePadded(bond.xxx, 3)
+    this.writePadded(bond.xxx, 3);
 
     if (typeof bond.topology === 'undefined') {
-      bond.topology = 0
+      bond.topology = 0;
     }
-    this.writePaddedNumber(bond.topology, 3)
+    this.writePaddedNumber(bond.topology, 3);
 
     if (typeof bond.reactingCenterStatus === 'undefined') {
-      bond.reactingCenterStatus = 0
+      bond.reactingCenterStatus = 0;
     }
-    this.writePaddedNumber(bond.reactingCenterStatus, 3)
+    this.writePaddedNumber(bond.reactingCenterStatus, 3);
 
-    this.writeCR()
+    this.writeCR();
   }
 
   private writeAtomProps(props) {
-    this.write('A  ')
-    this.writePaddedNumber(props.id + 1, 3)
-    this.writeCR()
-    this.writeCR(props.value)
+    this.write('A  ');
+    this.writePaddedNumber(props.id + 1, 3);
+    this.writeCR();
+    this.writeCR(props.value);
   }
 
   private writeAtomPropList(propId: string, values: NumberTuple[]) {
     while (values.length > 0) {
-      const part: NumberTuple[] = []
+      const part: NumberTuple[] = [];
 
       while (values.length > 0 && part.length < 8) {
-        part.push(values[0])
-        values.splice(0, 1)
+        part.push(values[0]);
+        values.splice(0, 1);
       }
 
-      this.write(propId)
-      this.writePaddedNumber(part.length, 3)
+      this.write(propId);
+      this.writePaddedNumber(part.length, 3);
 
       part.forEach((value) => {
-        this.writeWhiteSpace()
-        this.writePaddedNumber(this.mapping[value[0]], 3)
-        this.writeWhiteSpace()
-        this.writePaddedNumber(value[1], 3)
-      })
+        this.writeWhiteSpace();
+        this.writePaddedNumber(this.mapping[value[0]], 3);
+        this.writeWhiteSpace();
+        this.writePaddedNumber(value[1], 3);
+      });
 
-      this.writeCR()
+      this.writeCR();
     }
+  }
+
+  private writeSGroupAttachmentPointLine(
+    sgroupId: number,
+    attachmentPoint: SGroupAttachmentPoint,
+  ) {
+    this.write(`M  SAP`);
+    this.writeWhiteSpace(1);
+    this.writePaddedNumber(sgroupId, 3);
+    this.writePaddedNumber(1, 3);
+    this.writeWhiteSpace(1);
+    const atomId = this.mapping[attachmentPoint.atomId];
+    this.writePaddedNumber(atomId, 3);
+    this.writeWhiteSpace(1);
+    const leaveAtomId =
+      this.mapping[attachmentPoint.leaveAtomId as number] ?? 0;
+    this.writePaddedNumber(leaveAtomId, 3);
+    this.writeWhiteSpace(1);
+    this.writePadded(attachmentPoint.additionalData, 2);
+    this.writeCR();
   }
 }

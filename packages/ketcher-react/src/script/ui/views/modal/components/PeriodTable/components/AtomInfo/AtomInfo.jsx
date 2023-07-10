@@ -14,20 +14,20 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { ElementColor } from 'ketcher-core'
-import classes from './AtomInfo.module.less'
-import clsx from 'clsx'
+import { ElementColor } from 'ketcher-core';
+import classes from './AtomInfo.module.less';
+import clsx from 'clsx';
 
 function AtomInfo({ el, isInfo }) {
   const numberStyle = {
     color: ElementColor[el.label] || 'black',
-    fontSize: '12px'
-  }
+    fontSize: '12px',
+  };
   const elemStyle = {
     color: ElementColor[el.label] || 'black',
     fontWeight: 'bold',
-    fontSize: '18px'
-  }
+    fontSize: '18px',
+  };
   return (
     <div className={clsx(classes.ket_atom_info, !isInfo && classes.none)}>
       <div style={numberStyle}>{el.number}</div>
@@ -37,7 +37,7 @@ function AtomInfo({ el, isInfo }) {
       <br />
       {el.mass}
     </div>
-  )
+  );
 }
 
-export default AtomInfo
+export default AtomInfo;

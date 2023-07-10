@@ -14,8 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Atom from '../../../../../../../component/view/Atom'
-import clsx from 'clsx'
+import Atom from '../../../../../../../component/view/Atom';
+import clsx from 'clsx';
 
 function MainRow({
   row,
@@ -25,7 +25,7 @@ function MainRow({
   onDoubleClick,
   currentEvents,
   atomClassNames,
-  className
+  className,
 }) {
   return (
     <tbody>
@@ -48,11 +48,11 @@ function MainRow({
             </td>
           ) : (
             <td key={index} colSpan={element} />
-          )
+          ),
         )}
       </tr>
     </tbody>
-  )
+  );
 }
 
-export default MainRow
+export default MainRow;

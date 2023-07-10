@@ -13,69 +13,70 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+/* eslint-disable @typescript-eslint/no-use-before-define */
 
-import { ReEnhancedFlag, ReFrag, ReStruct } from '../../render'
+import { ReEnhancedFlag, ReFrag, ReStruct } from '../../render';
 
-import { BaseOperation } from './base'
-import { Fragment } from 'domain/entities'
-import { OperationType } from './OperationType'
+import { BaseOperation } from './base';
+import { Fragment } from 'domain/entities';
+import { OperationType } from './OperationType';
 
 // todo: separate classes: now here is circular dependency in `invert` method
 
 class FragmentAdd extends BaseOperation {
-  frid: any
+  frid: any;
 
   constructor(fragmentId?: any) {
-    super(OperationType.FRAGMENT_ADD)
-    this.frid = typeof fragmentId === 'undefined' ? null : fragmentId
+    super(OperationType.FRAGMENT_ADD);
+    this.frid = typeof fragmentId === 'undefined' ? null : fragmentId;
   }
 
   execute(restruct: ReStruct) {
-    const struct = restruct.molecule
-    const frag = new Fragment()
+    const struct = restruct.molecule;
+    const frag = new Fragment();
 
     if (this.frid === null) {
-      this.frid = struct.frags.add(frag)
+      this.frid = struct.frags.add(frag);
     } else {
-      struct.frags.set(this.frid, frag)
+      struct.frags.set(this.frid, frag);
     }
 
-    restruct.frags.set(this.frid, new ReFrag(frag)) // TODO add restruct.notifyFragmentAdded
-    restruct.enhancedFlags.set(this.frid, new ReEnhancedFlag())
+    restruct.frags.set(this.frid, new ReFrag(frag)); // TODO add restruct.notifyFragmentAdded
+    restruct.enhancedFlags.set(this.frid, new ReEnhancedFlag());
   }
 
   invert() {
-    return new FragmentDelete(this.frid)
+    return new FragmentDelete(this.frid);
   }
 }
 
 class FragmentDelete extends BaseOperation {
-  frid: any
+  frid: any;
 
   constructor(fragmentId: any) {
-    super(OperationType.FRAGMENT_DELETE, 100)
-    this.frid = fragmentId
+    super(OperationType.FRAGMENT_DELETE, 100);
+    this.frid = fragmentId;
   }
 
   execute(restruct: ReStruct) {
-    const struct = restruct.molecule
+    const struct = restruct.molecule;
     if (!struct.frags.get(this.frid)) {
-      return
+      return;
     }
 
-    BaseOperation.invalidateItem(restruct, 'frags', this.frid, 1)
-    restruct.frags.delete(this.frid)
-    struct.frags.delete(this.frid) // TODO add restruct.notifyFragmentRemoved
+    BaseOperation.invalidateItem(restruct, 'frags', this.frid, 1);
+    restruct.frags.delete(this.frid);
+    struct.frags.delete(this.frid); // TODO add restruct.notifyFragmentRemoved
 
-    const enhancedFalg = restruct.enhancedFlags.get(this.frid)
-    if (!enhancedFalg) return
-    restruct.clearVisel(enhancedFalg.visel)
-    restruct.enhancedFlags.delete(this.frid)
+    const enhancedFalg = restruct.enhancedFlags.get(this.frid);
+    if (!enhancedFalg) return;
+    restruct.clearVisel(enhancedFalg.visel);
+    restruct.enhancedFlags.delete(this.frid);
   }
 
   invert() {
-    return new FragmentAdd(this.frid)
+    return new FragmentAdd(this.frid);
   }
 }
 
-export { FragmentAdd, FragmentDelete }
+export { FragmentAdd, FragmentDelete };

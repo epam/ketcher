@@ -14,20 +14,20 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Vec2 } from 'domain/entities'
-import utils from '../editor/shared/utils'
-import { ShowHydrogenLabels } from './restruct/reatom'
-import { RenderOptions } from './render.types'
+import { Vec2 } from 'domain/entities';
+import utils from '../editor/shared/utils';
+import { ShowHydrogenLabels } from './restruct/reatom';
+import { RenderOptions } from './render.types';
 
 function defaultOptions(options: RenderOptions): RenderOptions {
-  const scaleFactor = options.scale || 100
+  const scaleFactor = options.scale || 100;
 
   if (options.rotationStep) {
-    utils.setFracAngle(options.rotationStep)
+    utils.setFracAngle(options.rotationStep);
   }
 
-  const labelFontSize = Math.ceil(1.9 * (scaleFactor / 6))
-  const subFontSize = Math.ceil(0.5 * labelFontSize)
+  const labelFontSize = Math.ceil(1.9 * (scaleFactor / 6));
+  const subFontSize = Math.ceil(0.5 * labelFontSize);
 
   const defaultOptions: Partial<RenderOptions> = {
     'dearomatize-on-load': false,
@@ -76,38 +76,42 @@ function defaultOptions(options: RenderOptions): RenderOptions {
       stroke: '#000',
       'stroke-width': options.bondThickness || scaleFactor / 20,
       'stroke-linecap': 'round',
-      'stroke-linejoin': 'round'
+      'stroke-linejoin': 'round',
+    },
+    arrowSnappingStyle: {
+      fill: '#365CFF',
+      stroke: '#365CFF',
     },
     /* eslint-enable quote-props */
     selectionStyle: {
       fill: '#57FF8F',
-      stroke: '#57FF8F'
+      stroke: '#57FF8F',
     },
     hoverStyle: {
       stroke: '#0097A8',
       fill: 'transparent',
       fillSelected: '#CCFFDD',
-      'stroke-width': (0.6 * scaleFactor) / 20
+      'stroke-width': (0.6 * scaleFactor) / 20,
     },
     sgroupBracketStyle: {
       stroke: 'darkgray',
-      'stroke-width': (0.5 * scaleFactor) / 20
+      'stroke-width': (0.5 * scaleFactor) / 20,
     },
     lassoStyle: {
       stroke: 'gray',
-      'stroke-width': '1px'
+      'stroke-width': '1px',
     },
     hoverStyleSimpleObject: {
       stroke: '#57FF8F',
       'stroke-width': scaleFactor / 4,
       'stroke-linecap': 'round',
-      'stroke-opacity': 0.6
+      'stroke-opacity': 0.6,
     },
     atomSelectionPlateRadius: labelFontSize,
-    contractedFunctionalGroupSize: 50
-  }
+    contractedFunctionalGroupSize: 50,
+  };
 
-  return Object.assign({}, defaultOptions, options)
+  return Object.assign({}, defaultOptions, options);
 }
 
-export default defaultOptions
+export default defaultOptions;

@@ -14,13 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
-import styled from '@emotion/styled'
-import { Icon } from 'components'
-import { style } from 'src/components/styles'
-import { IStyledButtonProps } from './types'
+import styled from '@emotion/styled';
+import { Icon } from 'components';
+import { style } from 'src/components/styles';
+import { IStyledButtonProps } from './types';
 
 export const StyledButton = styled('button', {
-  shouldForwardProp: (prop) => prop !== 'isActive'
+  shouldForwardProp: (prop) => prop !== 'isActive',
 })<IStyledButtonProps>((props) => ({
   boxShadow: 'none',
   transition: 'none',
@@ -39,21 +39,21 @@ export const StyledButton = styled('button', {
 
   ':hover': {
     color: props.isActive ? undefined : style.text.color.hover,
-    backgroundColor: props.isActive ? style.background.color.hover : undefined
+    backgroundColor: props.isActive ? style.background.color.hover : undefined,
   },
 
   ':active': {
     color: style.text.color.secondary,
-    backgroundColor: style.background.color.secondary
+    backgroundColor: style.background.color.secondary,
   },
 
   ':disabled': {
     opacity: '0.4',
-    cursor: 'not-allowed'
-  }
-}))
+    cursor: 'not-allowed',
+  },
+}));
 
 export const StyledIcon = styled(Icon)({
   width: '100%',
-  height: '100%'
-})
+  height: '100%',
+});

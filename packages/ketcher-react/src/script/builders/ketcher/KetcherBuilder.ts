@@ -20,45 +20,45 @@ import {
   Ketcher,
   ServiceMode,
   StructService,
-  StructServiceProvider
-} from 'ketcher-core'
+  StructServiceProvider,
+} from 'ketcher-core';
 
-import { ButtonsConfig } from './ButtonsConfig'
-import { Editor } from '../../editor'
-import createApi from '../../api'
-import { initApp } from '../../ui'
+import { ButtonsConfig } from './ButtonsConfig';
+import { Editor } from '../../editor';
+import createApi from '../../api';
+import { initApp } from '../../ui';
 
 class KetcherBuilder {
-  private structService: StructService | null
-  private editor: Editor | null
-  private serviceMode: ServiceMode | null
-  private formatterFactory: FormatterFactory | null
+  private structService: StructService | null;
+  private editor: Editor | null;
+  private serviceMode: ServiceMode | null;
+  private formatterFactory: FormatterFactory | null;
 
   constructor() {
-    this.structService = null
-    this.editor = null
-    this.serviceMode = null
-    this.formatterFactory = null
+    this.structService = null;
+    this.editor = null;
+    this.serviceMode = null;
+    this.formatterFactory = null;
   }
 
   async appendApiAsync(structServiceProvider: StructServiceProvider) {
     this.structService = createApi(
       structServiceProvider,
-      DefaultStructServiceOptions
-    )
+      DefaultStructServiceOptions,
+    );
   }
 
   appendServiceMode(mode: ServiceMode) {
-    this.serviceMode = mode
+    this.serviceMode = mode;
   }
 
   async appendUiAsync(
     element: HTMLDivElement | null,
     staticResourcesUrl: string,
     errorHandler: (message: string) => void,
-    buttons?: ButtonsConfig
+    buttons?: ButtonsConfig,
   ): Promise<void> {
-    const { structService } = this
+    const { structService } = this;
 
     const editor = await new Promise<Editor>((resolve) => {
       initApp(
@@ -69,52 +69,52 @@ class KetcherBuilder {
           errorHandler: errorHandler || null,
           version: process.env.VERSION || '',
           buildDate: process.env.BUILD_DATE || '',
-          buildNumber: process.env.BUILD_NUMBER || ''
+          buildNumber: process.env.BUILD_NUMBER || '',
         },
         structService!,
-        resolve
-      )
-    })
+        resolve,
+      );
+    });
 
-    this.editor = editor
+    this.editor = editor;
     this.editor.errorHandler =
       errorHandler && typeof errorHandler === 'function'
         ? errorHandler
         : // eslint-disable-next-line @typescript-eslint/no-empty-function
-          () => {}
-    this.formatterFactory = new FormatterFactory(structService!)
+          () => {};
+    this.formatterFactory = new FormatterFactory(structService!);
   }
 
   build() {
     if (!this.serviceMode) {
-      throw new Error('You should append ServiceMode before building')
+      throw new Error('You should append ServiceMode before building');
     }
 
     if (!this.structService) {
-      throw new Error('You should append Api before building')
+      throw new Error('You should append Api before building');
     }
 
     if (!this.formatterFactory) {
       throw new Error(
-        'You should append StructureServiceFactory before building'
-      )
+        'You should append StructureServiceFactory before building',
+      );
     }
 
     const ketcher = new Ketcher(
       this.editor!,
       this.structService,
-      this.formatterFactory
-    )
-    ketcher[this.serviceMode] = true
+      this.formatterFactory,
+    );
+    ketcher[this.serviceMode] = true;
 
-    const params = new URLSearchParams(document.location.search)
-    const initialMol = params.get('moll')
+    const params = new URLSearchParams(document.location.search);
+    const initialMol = params.get('moll');
     if (initialMol) {
-      ketcher.setMolecule(initialMol)
+      ketcher.setMolecule(initialMol);
     }
 
-    return ketcher
+    return ketcher;
   }
 }
 
-export { KetcherBuilder }
+export { KetcherBuilder };

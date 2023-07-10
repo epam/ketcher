@@ -13,135 +13,136 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+/* eslint-disable @typescript-eslint/no-use-before-define */
 
-import { FunctionalGroup, SGroup, Vec2 } from 'domain/entities'
-import { ReSGroup, ReStruct } from '../../../render'
+import { FunctionalGroup, SGroup, Vec2 } from 'domain/entities';
+import { ReSGroup, ReStruct } from '../../../render';
 
-import { BaseOperation } from '../base'
-import { OperationType } from '../OperationType'
+import { BaseOperation } from '../base';
+import { OperationType } from '../OperationType';
 
 // todo: separate classes: now here is circular dependency in `invert` method
 
 type Data = {
-  sgid: any
-  type?: any
-  pp?: any
-  expanded?: boolean
-  name?: string
-}
+  sgid: any;
+  type?: any;
+  pp?: any;
+  expanded?: boolean;
+  name?: string;
+};
 
 class SGroupCreate extends BaseOperation {
-  data: Data
+  data: Data;
 
   constructor(
     sgroupId?: any,
     type?: any,
     pp?: any,
     expanded?: boolean,
-    name?: string
+    name?: string,
   ) {
-    super(OperationType.S_GROUP_CREATE)
+    super(OperationType.S_GROUP_CREATE);
     this.data = {
       sgid: sgroupId,
       type,
       pp,
       expanded,
-      name
-    }
+      name,
+    };
   }
 
   execute(restruct: ReStruct) {
-    const struct = restruct.molecule
-    const sgroup = new SGroup(this.data.type)
-    const { sgid, pp, expanded, name } = this.data
+    const struct = restruct.molecule;
+    const sgroup = new SGroup(this.data.type);
+    const { sgid, pp, expanded, name } = this.data;
 
-    sgroup.id = sgid
-    struct.sgroups.set(sgid, sgroup)
+    sgroup.id = sgid;
+    struct.sgroups.set(sgid, sgroup);
 
     if (pp) {
-      struct.sgroups.get(sgid)!.pp = new Vec2(pp)
+      struct.sgroups.get(sgid)!.pp = new Vec2(pp);
     }
 
     if (expanded) {
-      sgroup.data.expanded = expanded
+      sgroup.data.expanded = expanded;
     }
 
     if (name) {
-      sgroup.data.name = name
+      sgroup.data.name = name;
     }
 
-    restruct.sgroups.set(sgid, new ReSGroup(struct.sgroups.get(sgid)))
+    restruct.sgroups.set(sgid, new ReSGroup(struct.sgroups.get(sgid)));
     if (
       FunctionalGroup.isFunctionalGroup(sgroup) ||
       SGroup.isSuperAtom(sgroup)
     ) {
-      restruct.molecule.functionalGroups.add(new FunctionalGroup(sgroup))
+      restruct.molecule.functionalGroups.add(new FunctionalGroup(sgroup));
     }
-    this.data.sgid = sgid
+    this.data.sgid = sgid;
   }
 
   invert() {
-    const inverted = new SGroupDelete()
-    inverted.data = this.data
-    return inverted
+    const inverted = new SGroupDelete();
+    inverted.data = this.data;
+    return inverted;
   }
 }
 
 class SGroupDelete extends BaseOperation {
-  data: Data
+  data: Data;
 
   constructor(sgroupId?: any) {
-    super(OperationType.S_GROUP_DELETE, 95)
-    this.data = { sgid: sgroupId }
+    super(OperationType.S_GROUP_DELETE, 95);
+    this.data = { sgid: sgroupId };
   }
 
   execute(restruct: ReStruct) {
-    const struct = restruct.molecule
-    const { sgid } = this.data
-    const sgroup = restruct.sgroups.get(sgid)
-    const sgroupData = restruct.sgroupData.get(sgid)
-    if (!sgroup) return
-    this.data.type = sgroup.item.type
-    this.data.pp = sgroup.item.pp
+    const struct = restruct.molecule;
+    const { sgid } = this.data;
+    const sgroup = restruct.sgroups.get(sgid);
+    const sgroupData = restruct.sgroupData.get(sgid);
+    if (!sgroup) return;
+    this.data.type = sgroup.item.type;
+    this.data.pp = sgroup.item.pp;
 
     if (sgroup.item.type === 'DAT' && sgroupData) {
-      restruct.clearVisel(sgroupData.visel)
-      restruct.sgroupData.delete(sgid)
+      restruct.clearVisel(sgroupData.visel);
+      restruct.sgroupData.delete(sgid);
     }
 
-    restruct.clearVisel(sgroup.visel)
+    restruct.clearVisel(sgroup.visel);
     if (sgroup.item.atoms.length !== 0) {
-      throw new Error('S-Group not empty!')
+      throw new Error('S-Group not empty!');
     }
 
     if (
       FunctionalGroup.isFunctionalGroup(sgroup.item) ||
       SGroup.isSuperAtom(sgroup.item)
     ) {
-      let relatedFGroupId
-      this.data.name = sgroup.item.data.name
-      this.data.expanded = sgroup.item.expanded
+      let relatedFGroupId;
+      this.data.name = sgroup.item.data.name;
+      this.data.expanded = (sgroup.item as SGroup).isExpanded();
       restruct.molecule.functionalGroups.forEach((fg, fgid) => {
         if (fg.relatedSGroupId === sgid) {
-          relatedFGroupId = fgid
+          relatedFGroupId = fgid;
         }
-      })
-      restruct.molecule.functionalGroups.delete(relatedFGroupId)
+      });
+      restruct.molecule.functionalGroups.delete(relatedFGroupId);
     }
 
-    restruct.sgroups.delete(sgid)
-    struct.sgroups.delete(sgid)
+    restruct.sgroups.delete(sgid);
+    struct.sgroups.delete(sgid);
   }
 
   invert() {
-    const inverted = new SGroupCreate()
-    inverted.data = this.data
-    return inverted
+    const inverted = new SGroupCreate();
+    inverted.data = this.data;
+    return inverted;
   }
 }
 
-export { SGroupCreate, SGroupDelete }
-export * from './sgroupAtom'
-export * from './SGroupAttr'
-export * from './SGroupDataMove'
-export * from './sgroupHierarchy'
+export { SGroupCreate, SGroupDelete };
+export * from './sgroupAtom';
+export * from './SGroupAttr';
+export * from './SGroupDataMove';
+export * from './sgroupHierarchy';

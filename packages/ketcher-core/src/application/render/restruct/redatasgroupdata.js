@@ -14,37 +14,37 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { LayerMap } from './generalEnumTypes'
-import ReObject from './reobject'
-import { Scale } from 'domain/helpers'
+import { LayerMap } from './generalEnumTypes';
+import ReObject from './reobject';
+import { Scale } from 'domain/helpers';
 
 class ReDataSGroupData extends ReObject {
   constructor(sgroup) {
-    super('sgroupData')
-    this.sgroup = sgroup
+    super('sgroupData');
+    this.sgroup = sgroup;
   }
 
   static isSelectable() {
-    return true
+    return true;
   }
 
   hoverPath(render) {
-    const box = this.sgroup.dataArea
-    const p0 = Scale.obj2scaled(box.p0, render.options)
-    const sz = Scale.obj2scaled(box.p1, render.options).sub(p0)
-    return render.paper.rect(p0.x, p0.y, sz.x, sz.y)
+    const box = this.sgroup.dataArea;
+    const p0 = Scale.obj2scaled(box.p0, render.options);
+    const sz = Scale.obj2scaled(box.p1, render.options).sub(p0);
+    return render.paper.rect(p0.x, p0.y, sz.x, sz.y);
   }
 
   drawHover(render) {
-    const ret = this.hoverPath(render).attr(render.options.hoverStyle)
-    render.ctab.addReObjectPath(LayerMap.hovering, this.visel, ret)
-    return ret
+    const ret = this.hoverPath(render).attr(render.options.hoverStyle);
+    render.ctab.addReObjectPath(LayerMap.hovering, this.visel, ret);
+    return ret;
   }
 
   makeSelectionPlate(restruct, paper, styles) {
     // TODO [MK] review parameters
-    return this.hoverPath(restruct.render).attr(styles.selectionStyle)
+    return this.hoverPath(restruct.render).attr(styles.selectionStyle);
   }
 }
 
-export default ReDataSGroupData
+export default ReDataSGroupData;

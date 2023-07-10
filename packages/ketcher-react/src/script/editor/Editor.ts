@@ -22,31 +22,31 @@ import {
   Struct,
   Vec2,
   fromDescriptorsAlign,
-  fromNewCanvas
-} from 'ketcher-core'
+  fromNewCanvas,
+} from 'ketcher-core';
 import {
   DOMSubscription,
   PipelineSubscription,
-  Subscription
-} from 'subscription'
+  Subscription,
+} from 'subscription';
 
-import closest from './shared/closest'
-import { customOnChangeHandler } from './utils'
-import { isEqual } from 'lodash/fp'
-import { toolsMap } from './tool'
-import { Highlighter } from './highlighter'
-import { setFunctionalGroupsTooltip } from './utils/functionalGroupsTooltip'
-import { contextMenuInfo } from '../ui/views/components/ContextMenu/contextMenu.types'
-import { HoverIcon } from './HoverIcon'
-import RotateController from './tool/rotate-controller'
+import closest from './shared/closest';
+import { customOnChangeHandler } from './utils';
+import { isEqual } from 'lodash/fp';
+import { toolsMap } from './tool';
+import { Highlighter } from './highlighter';
+import { setFunctionalGroupsTooltip } from './utils/functionalGroupsTooltip';
+import { contextMenuInfo } from '../ui/views/components/ContextMenu/contextMenu.types';
+import { HoverIcon } from './HoverIcon';
+import RotateController from './tool/rotate-controller';
 import {
   Tool,
   ToolConstructorInterface,
-  ToolEventHandlerName
-} from './tool/Tool'
+  ToolEventHandlerName,
+} from './tool/Tool';
 
-const SCALE = 40
-const HISTORY_SIZE = 32 // put me to options
+const SCALE = 40;
+const HISTORY_SIZE = 32; // put me to options
 
 const structObjects = [
   'atoms',
@@ -59,8 +59,8 @@ const structObjects = [
   'rxnPluses',
   'enhancedFlags',
   'simpleObjects',
-  'texts'
-]
+  'texts',
+];
 
 const highlightTargets = [
   'atoms',
@@ -75,112 +75,112 @@ const highlightTargets = [
   'sgroupData',
   'enhancedFlags',
   'simpleObjects',
-  'texts'
-]
+  'texts',
+];
 
 function selectStereoFlagsIfNecessary(
   atoms: any,
-  expAtoms: number[]
+  expAtoms: number[],
 ): number[] {
-  const atomsOfFragments = {}
+  const atomsOfFragments = {};
   atoms.forEach((atom, atomId) => {
     atomsOfFragments[atom.fragment]
       ? atomsOfFragments[atom.fragment].push(atomId)
-      : (atomsOfFragments[atom.fragment] = [atomId])
-  })
+      : (atomsOfFragments[atom.fragment] = [atomId]);
+  });
 
-  const stereoFlags: number[] = []
+  const stereoFlags: number[] = [];
 
   Object.keys(atomsOfFragments).forEach((fragId) => {
-    let shouldSelSFlag = true
+    let shouldSelSFlag = true;
     atomsOfFragments[fragId].forEach((atomId) => {
-      if (!expAtoms.includes(atomId)) shouldSelSFlag = false
-    })
-    shouldSelSFlag && stereoFlags.push(Number(fragId))
-  })
-  return stereoFlags
+      if (!expAtoms.includes(atomId)) shouldSelSFlag = false;
+    });
+    shouldSelSFlag && stereoFlags.push(Number(fragId));
+  });
+  return stereoFlags;
 }
 
 export type FloatingToolsParams = {
-  visible?: boolean
-  rotateHandlePosition?: { x: number; y: number }
-}
+  visible?: boolean;
+  rotateHandlePosition?: { x: number; y: number };
+};
 
 export interface Selection {
-  atoms?: Array<number>
-  bonds?: Array<number>
-  enhancedFlags?: Array<number>
-  rxnPluses?: Array<number>
-  rxnArrows?: Array<number>
-  texts?: Array<number>
+  atoms?: Array<number>;
+  bonds?: Array<number>;
+  enhancedFlags?: Array<number>;
+  rxnPluses?: Array<number>;
+  rxnArrows?: Array<number>;
+  texts?: Array<number>;
 }
 
 class Editor implements KetcherEditor {
-  #origin?: any
-  render: Render
-  _selection: Selection | null
-  _tool: Tool | null
-  historyStack: any
-  historyPtr: any
-  errorHandler: ((message: string) => void) | null
-  highlights: Highlighter
-  hoverIcon: HoverIcon
-  lastCursorPosition: { x: number; y: number }
-  contextMenu: contextMenuInfo
-  rotateController: RotateController
+  #origin?: any;
+  render: Render;
+  _selection: Selection | null;
+  _tool: Tool | null;
+  historyStack: any;
+  historyPtr: any;
+  errorHandler: ((message: string) => void) | null;
+  highlights: Highlighter;
+  hoverIcon: HoverIcon;
+  lastCursorPosition: { x: number; y: number };
+  contextMenu: contextMenuInfo;
+  rotateController: RotateController;
   event: {
-    message: Subscription
-    elementEdit: PipelineSubscription
-    bondEdit: PipelineSubscription
-    rgroupEdit: PipelineSubscription
-    sgroupEdit: PipelineSubscription
-    sdataEdit: PipelineSubscription
-    quickEdit: PipelineSubscription
-    attachEdit: PipelineSubscription
-    removeFG: PipelineSubscription
-    change: Subscription
-    selectionChange: PipelineSubscription
-    aromatizeStruct: PipelineSubscription
-    dearomatizeStruct: PipelineSubscription
-    enhancedStereoEdit: PipelineSubscription
-    confirm: PipelineSubscription
-    showInfo: PipelineSubscription
-    apiSettings: PipelineSubscription
-    cursor: Subscription
-    updateFloatingTools: Subscription<FloatingToolsParams>
-  }
+    message: Subscription;
+    elementEdit: PipelineSubscription;
+    bondEdit: PipelineSubscription;
+    rgroupEdit: PipelineSubscription;
+    sgroupEdit: PipelineSubscription;
+    sdataEdit: PipelineSubscription;
+    quickEdit: PipelineSubscription;
+    attachEdit: PipelineSubscription;
+    removeFG: PipelineSubscription;
+    change: Subscription;
+    selectionChange: PipelineSubscription;
+    aromatizeStruct: PipelineSubscription;
+    dearomatizeStruct: PipelineSubscription;
+    enhancedStereoEdit: PipelineSubscription;
+    confirm: PipelineSubscription;
+    showInfo: PipelineSubscription;
+    apiSettings: PipelineSubscription;
+    cursor: Subscription;
+    updateFloatingTools: Subscription<FloatingToolsParams>;
+  };
 
-  lastEvent: any
+  lastEvent: any;
 
   constructor(clientArea, options) {
     this.render = new Render(
       clientArea,
       Object.assign(
         {
-          scale: SCALE
+          scale: SCALE,
         },
-        options
-      )
-    )
+        options,
+      ),
+    );
 
-    this._selection = null // eslint-disable-line
-    this._tool = null // eslint-disable-line
-    this.historyStack = []
-    this.historyPtr = 0
-    this.errorHandler = null
-    this.highlights = new Highlighter(this)
+    this._selection = null; // eslint-disable-line
+    this._tool = null; // eslint-disable-line
+    this.historyStack = [];
+    this.historyPtr = 0;
+    this.errorHandler = null;
+    this.highlights = new Highlighter(this);
     this.renderAndRecoordinateStruct =
-      this.renderAndRecoordinateStruct.bind(this)
-    this.setOptions = this.setOptions.bind(this)
+      this.renderAndRecoordinateStruct.bind(this);
+    this.setOptions = this.setOptions.bind(this);
 
     this.lastCursorPosition = {
       x: 0,
-      y: 0
-    }
-    this.hoverIcon = new HoverIcon(this)
-    this.hoverIcon.updatePosition()
-    this.contextMenu = {}
-    this.rotateController = new RotateController(this)
+      y: 0,
+    };
+    this.hoverIcon = new HoverIcon(this);
+    this.hoverIcon.updatePosition();
+    this.contextMenu = {};
+    this.rotateController = new RotateController(this);
 
     this.event = {
       message: new Subscription(),
@@ -202,351 +202,374 @@ class Editor implements KetcherEditor {
       cursor: new PipelineSubscription(),
       showInfo: new PipelineSubscription(),
       apiSettings: new PipelineSubscription(),
-      updateFloatingTools: new Subscription()
-    }
+      updateFloatingTools: new Subscription(),
+    };
 
-    domEventSetup(this, clientArea)
+    domEventSetup(this, clientArea);
   }
 
   isDitrty(): boolean {
-    const position = this.historyPtr
-    const length = this.historyStack.length
+    const position = this.historyPtr;
+    const length = this.historyStack.length;
     if (!length || !this.#origin) {
-      return false
+      return false;
     }
-    return !isEqual(this.historyStack[position - 1], this.#origin)
+    return !isEqual(this.historyStack[position - 1], this.#origin);
   }
 
   setOrigin(): void {
-    const position = this.historyPtr
-    this.#origin = position ? this.historyStack[position - 1] : null
+    const position = this.historyPtr;
+    this.#origin = position ? this.historyStack[position - 1] : null;
   }
 
   tool(name?: any, opts?: any): Tool | null {
     /* eslint-disable no-underscore-dangle */
     if (arguments.length === 0) {
-      return this._tool
+      return this._tool;
     }
 
     if (this._tool && this._tool.cancel) {
-      this._tool.cancel()
+      this._tool.cancel();
     }
 
-    const ToolConstructor: ToolConstructorInterface = toolsMap[name]
+    const ToolConstructor: ToolConstructorInterface = toolsMap[name];
 
-    const tool = new ToolConstructor(this, opts)
+    const tool = new ToolConstructor(this, opts);
 
-    const isAtomToolChosen = name === 'atom'
+    const isAtomToolChosen = name === 'atom';
     if (!isAtomToolChosen) {
-      this.hoverIcon.hide(true)
+      this.hoverIcon.hide(true);
     }
 
     if (!tool || tool.isNotActiveTool) {
-      return null
+      return null;
     }
 
-    const isSelectToolChosen = name === 'select'
+    const isSelectToolChosen = name === 'select';
     if (!isSelectToolChosen) {
-      this.rotateController.clean()
+      this.rotateController.clean();
     }
 
-    this._tool = tool
-    return this._tool
+    this._tool = tool;
+    return this._tool;
     /* eslint-enable no-underscore-dangle */
   }
 
   clear() {
-    this.struct(undefined)
+    this.struct(undefined);
   }
 
   renderAndRecoordinateStruct(struct: Struct) {
-    const action = fromNewCanvas(this.render.ctab, struct)
-    this.update(action)
+    const action = fromNewCanvas(this.render.ctab, struct);
+    this.update(action);
 
-    const structCenter = getStructCenter(this.render.ctab)
-    recoordinate(this, structCenter)
-    return this.render.ctab.molecule
+    const structCenter = getStructCenter(this.render.ctab);
+    recoordinate(this, structCenter);
+    return this.render.ctab.molecule;
   }
 
   struct(value?: Struct): Struct {
     if (arguments.length === 0) {
-      return this.render.ctab.molecule
+      return this.render.ctab.molecule;
     }
 
-    this.selection(null)
-    const struct = value || new Struct()
+    this.selection(null);
+    const struct = value || new Struct();
 
-    const molecule = this.renderAndRecoordinateStruct(struct)
+    const molecule = this.renderAndRecoordinateStruct(struct);
 
-    this.hoverIcon.create()
-    return molecule
+    this.hoverIcon.create();
+    return molecule;
   }
 
   // this is used by API addFragment method
   structToAddFragment(value: Struct): Struct {
-    const superStruct = value.mergeInto(this.render.ctab.molecule)
+    const superStruct = value.mergeInto(this.render.ctab.molecule);
 
-    return this.renderAndRecoordinateStruct(superStruct)
+    return this.renderAndRecoordinateStruct(superStruct);
   }
 
   setOptions(opts: string) {
-    const options = JSON.parse(opts)
-    this.event.apiSettings.dispatch({ ...this.options(), ...options })
-    return this.render.updateOptions(opts)
+    const options = JSON.parse(opts);
+    this.event.apiSettings.dispatch({ ...this.options(), ...options });
+    return this.render.updateOptions(opts);
   }
 
   options(value?: any) {
     if (arguments.length === 0) {
-      return this.render.options
+      return this.render.options;
     }
 
-    const struct = this.render.ctab.molecule
-    const zoom = this.render.options.zoom
-    this.render.clientArea.innerHTML = ''
+    const struct = this.render.ctab.molecule;
+    const zoom = this.render.options.zoom;
+    this.render.clientArea.innerHTML = '';
 
     this.render = new Render(
       this.render.clientArea,
-      Object.assign({ scale: SCALE }, value)
-    )
-    this.struct(struct)
-    this.render.setZoom(zoom)
-    this.render.update()
-    return this.render.options
+      Object.assign({ scale: SCALE }, value),
+    );
+    this.struct(struct);
+    this.render.setZoom(zoom);
+    this.render.update();
+    return this.render.options;
   }
 
   zoom(value?: any) {
     if (arguments.length === 0) {
-      return this.render.options.zoom
+      return this.render.options.zoom;
     }
 
-    this.render.setZoom(value)
+    this.render.setZoom(value);
 
-    const selection = this.selection()
-    const structCenter = getStructCenter(this.render.ctab, selection)
-    recoordinate(this, structCenter)
+    const selection = this.selection();
+    const structCenter = getStructCenter(this.render.ctab, selection);
+    recoordinate(this, structCenter);
 
-    this.render.update()
-    this.rotateController.rerender()
-    return this.render.options.zoom
+    this.render.update();
+    this.rotateController.rerender();
+    return this.render.options.zoom;
+  }
+
+  zoomAccordingContent() {
+    this.zoom(1);
+    const clientAreaBoundingBox =
+      this.render.clientArea.getBoundingClientRect();
+    const paper = this.render.paper;
+    const MIN_ZOOM_VALUE = 0.1;
+    const MAX_ZOOM_VALUE = 1;
+    const newZoomValue =
+      paper.height - clientAreaBoundingBox.height >
+      paper.width - clientAreaBoundingBox.width
+        ? clientAreaBoundingBox.height / paper.height
+        : clientAreaBoundingBox.width / paper.width;
+
+    if (newZoomValue < MAX_ZOOM_VALUE) {
+      this.zoom(
+        newZoomValue < MIN_ZOOM_VALUE
+          ? MIN_ZOOM_VALUE
+          : Number(newZoomValue.toFixed(2)),
+      );
+    }
   }
 
   selection(ci?: any) {
     if (arguments.length === 0) {
-      return this._selection // eslint-disable-line
+      return this._selection; // eslint-disable-line
     }
 
-    let ReStruct = this.render.ctab
-    let selectAll = false
-    this._selection = null // eslint-disable-line
+    let ReStruct = this.render.ctab;
+    let selectAll = false;
+    this._selection = null; // eslint-disable-line
     if (ci === 'all') {
-      selectAll = true
+      selectAll = true;
       // TODO: better way will be this.struct()
       ci = structObjects.reduce((res, key) => {
-        res[key] = Array.from(ReStruct[key].keys())
-        return res
-      }, {})
+        res[key] = Array.from(ReStruct[key].keys());
+        return res;
+      }, {});
     }
 
     if (ci === 'descriptors') {
-      ReStruct = this.render.ctab
-      ci = { sgroupData: Array.from(ReStruct.sgroupData.keys()) }
+      ReStruct = this.render.ctab;
+      ci = { sgroupData: Array.from(ReStruct.sgroupData.keys()) };
     }
 
     if (ci) {
-      const res: Selection = {}
+      const res: Selection = {};
 
       Object.keys(ci).forEach((key) => {
         if (ci[key].length > 0)
           // TODO: deep merge
-          res[key] = ci[key].slice()
-      })
+          res[key] = ci[key].slice();
+      });
 
       if (Object.keys(res).length !== 0) {
-        this._selection = res // eslint-disable-line
+        this._selection = res; // eslint-disable-line
       }
       const stereoFlags = selectStereoFlagsIfNecessary(
         this.struct().atoms,
-        this.explicitSelected().atoms
-      )
+        this.explicitSelected().atoms,
+      );
       if (stereoFlags.length !== 0) {
         this._selection && this._selection.enhancedFlags
           ? (this._selection.enhancedFlags = Array.from(
-              new Set([...this._selection.enhancedFlags, ...stereoFlags])
+              new Set([...this._selection.enhancedFlags, ...stereoFlags]),
             ))
-          : (res.enhancedFlags = stereoFlags)
+          : (res.enhancedFlags = stereoFlags);
       }
     }
 
-    this.render.ctab.setSelection(this._selection) // eslint-disable-line
-    this.event.selectionChange.dispatch(this._selection) // eslint-disable-line
+    this.render.ctab.setSelection(this._selection); // eslint-disable-line
+    this.event.selectionChange.dispatch(this._selection); // eslint-disable-line
 
     if (selectAll) {
-      this.rotateController.rerender()
+      this.rotateController.rerender();
     } else if (this._selection === null) {
-      this.rotateController.clean()
+      this.rotateController.clean();
     }
 
-    this.render.update(false, null, { resizeCanvas: false })
-    return this._selection // eslint-disable-line
+    this.render.update(false, null, { resizeCanvas: false });
+    return this._selection; // eslint-disable-line
   }
 
   hover(ci: any, newTool?: any, event?: PointerEvent) {
-    const tool = newTool || this._tool // eslint-disable-line
+    const tool = newTool || this._tool; // eslint-disable-line
 
     if (
       'ci' in tool &&
       (!ci || tool.ci.map !== ci.map || tool.ci.id !== ci.id)
     ) {
-      setHover(tool.ci, false, this.render)
-      delete tool.ci
+      setHover(tool.ci, false, this.render);
+      delete tool.ci;
     }
 
-    if (ci && setHover(ci, true, this.render)) tool.ci = ci
+    if (ci && setHover(ci, true, this.render)) tool.ci = ci;
 
-    if (!event) return
+    if (!event) return;
 
     setFunctionalGroupsTooltip({
       editor: this,
       event,
-      isShow: true
-    })
+      isShow: true,
+    });
   }
 
   update(
     action: Action | true,
     ignoreHistory?: boolean,
-    options = { resizeCanvas: true }
+    options = { resizeCanvas: true },
   ) {
     setFunctionalGroupsTooltip({
       editor: this,
-      isShow: false
-    })
+      isShow: false,
+    });
 
     if (action === true) {
-      this.render.update(true, null, options) // force
+      this.render.update(true, null, options); // force
     } else {
       if (!ignoreHistory && !action.isDummy()) {
-        this.historyStack.splice(this.historyPtr, HISTORY_SIZE + 1, action)
+        this.historyStack.splice(this.historyPtr, HISTORY_SIZE + 1, action);
         if (this.historyStack.length > HISTORY_SIZE) {
-          this.historyStack.shift()
+          this.historyStack.shift();
         }
-        this.historyPtr = this.historyStack.length
-        this.event.change.dispatch(action) // TODO: stoppable here
+        this.historyPtr = this.historyStack.length;
+        this.event.change.dispatch(action); // TODO: stoppable here
       }
-      this.render.update(false, null, options)
+      this.render.update(false, null, options);
     }
   }
 
   historySize() {
     return {
       undo: this.historyPtr,
-      redo: this.historyStack.length - this.historyPtr
-    }
+      redo: this.historyStack.length - this.historyPtr,
+    };
   }
 
   undo() {
     if (this.historyPtr === 0) {
-      throw new Error('Undo stack is empty')
+      throw new Error('Undo stack is empty');
     }
     if (this._tool && this._tool.cancel) {
-      this._tool.cancel()
+      this._tool.cancel();
     }
 
-    this.selection(null)
+    this.selection(null);
 
     if (this._tool instanceof toolsMap.paste) {
-      this.event.change.dispatch()
-      return
+      this.event.change.dispatch();
+      return;
     }
 
-    this.historyPtr--
-    const stack = this.historyStack[this.historyPtr]
-    const action = stack.perform(this.render.ctab)
+    this.historyPtr--;
+    const stack = this.historyStack[this.historyPtr];
+    const action = stack.perform(this.render.ctab);
 
-    this.historyStack[this.historyPtr] = action
-    this.event.change.dispatch(action)
-    this.render.update()
+    this.historyStack[this.historyPtr] = action;
+    this.event.change.dispatch(action);
+    this.render.update();
   }
 
   redo() {
     if (this.historyPtr === this.historyStack.length) {
-      throw new Error('Redo stack is empty')
+      throw new Error('Redo stack is empty');
     }
 
     if (this._tool && this._tool.cancel) {
-      this._tool.cancel()
+      this._tool.cancel();
     }
 
-    this.selection(null)
+    this.selection(null);
     if (this._tool instanceof toolsMap.paste) {
-      this.event.change.dispatch()
-      return
+      this.event.change.dispatch();
+      return;
     }
 
-    const action = this.historyStack[this.historyPtr].perform(this.render.ctab)
-    this.historyStack[this.historyPtr] = action
-    this.historyPtr++
-    this.event.change.dispatch(action)
-    this.render.update()
+    const action = this.historyStack[this.historyPtr].perform(this.render.ctab);
+    this.historyStack[this.historyPtr] = action;
+    this.historyPtr++;
+    this.event.change.dispatch(action);
+    this.render.update();
   }
 
   subscribe(eventName: any, handler: any) {
     const subscriber = {
-      handler
-    }
+      handler,
+    };
 
     switch (eventName) {
-      case 'change':
+      case 'change': {
         const subscribeFuncWrapper = (action) =>
-          customOnChangeHandler(action, handler)
-        subscriber.handler = subscribeFuncWrapper
-        this.event[eventName].add(subscribeFuncWrapper)
-        break
+          customOnChangeHandler(action, handler);
+        subscriber.handler = subscribeFuncWrapper;
+        this.event[eventName].add(subscribeFuncWrapper);
+        break;
+      }
 
       default:
-        this.event[eventName].add(handler)
+        this.event[eventName].add(handler);
     }
 
-    return subscriber
+    return subscriber;
   }
 
   unsubscribe(eventName: any, subscriber: any) {
     // Only for event type - subscription
-    this.event[eventName].remove(subscriber.handler)
+    this.event[eventName].remove(subscriber.handler);
   }
 
-  findItem(event: any, maps: any, skip: any = null) {
-    const pos = new Vec2(this.render.page2obj(event))
+  findItem(event: any, maps: Array<string> | null, skip: any = null) {
+    const pos = new Vec2(this.render.page2obj(event));
 
-    return closest.item(this.render.ctab, pos, maps, skip, this.render.options)
+    return closest.item(this.render.ctab, pos, maps, skip, this.render.options);
   }
 
   findMerge(srcItems: any, maps: any) {
-    return closest.merge(this.render.ctab, srcItems, maps, this.render.options)
+    return closest.merge(this.render.ctab, srcItems, maps, this.render.options);
   }
 
   explicitSelected() {
-    const selection = this.selection() || {}
+    const selection = this.selection() || {};
     const res = structObjects.reduce((acc, key) => {
-      acc[key] = selection[key] ? selection[key].slice() : []
-      return acc
-    }, {} as any)
+      acc[key] = selection[key] ? selection[key].slice() : [];
+      return acc;
+    }, {} as any);
 
-    const struct = this.render.ctab.molecule
+    const struct = this.render.ctab.molecule;
 
     // "auto-select" the atoms for the bonds in selection
     if (res.bonds) {
       res.bonds.forEach((bid) => {
-        const bond = struct.bonds.get(bid)!
-        res.atoms = res.atoms || []
+        const bond = struct.bonds.get(bid)!;
+        res.atoms = res.atoms || [];
         if (res.atoms.indexOf(bond.begin) < 0) {
-          res.atoms.push(bond.begin)
+          res.atoms.push(bond.begin);
         }
 
         if (res.atoms.indexOf(bond.end) < 0) {
-          res.atoms.push(bond.end)
+          res.atoms.push(bond.end);
         }
-      })
+      });
     }
 
     // "auto-select" the bonds with both atoms selected
@@ -557,48 +580,48 @@ class Editor implements KetcherEditor {
           res.atoms.indexOf(bond.begin) >= 0 &&
           res.atoms.indexOf(bond.end) >= 0
         ) {
-          res.bonds = res.bonds || []
-          res.bonds.push(bid)
+          res.bonds = res.bonds || [];
+          res.bonds.push(bid);
         }
-      })
+      });
     }
 
-    return res
+    return res;
   }
 
   structSelected() {
-    const struct = this.render.ctab.molecule
-    const selection = this.explicitSelected()
+    const struct = this.render.ctab.molecule;
+    const selection = this.explicitSelected();
     const dst = struct.clone(
       new Pile(selection.atoms),
       new Pile(selection.bonds),
       true,
       null,
       new Pile(selection.simpleObjects),
-      new Pile(selection.texts)
-    )
+      new Pile(selection.texts),
+    );
 
     // Copy by its own as Struct.clone doesn't support
     // arrows/pluses id sets
     struct.rxnArrows.forEach((item, id) => {
       if (selection.rxnArrows.indexOf(id) !== -1)
-        dst.rxnArrows.add(item.clone())
-    })
+        dst.rxnArrows.add(item.clone());
+    });
     struct.rxnPluses.forEach((item, id) => {
       if (selection.rxnPluses.indexOf(id) !== -1)
-        dst.rxnPluses.add(item.clone())
-    })
+        dst.rxnPluses.add(item.clone());
+    });
 
-    dst.isReaction = struct.isReaction && struct.isRxn()
+    dst.isReaction = struct.isReaction && struct.isRxn();
 
-    return dst
+    return dst;
   }
 
   alignDescriptors() {
-    this.selection(null)
-    const action = fromDescriptorsAlign(this.render.ctab)
-    this.update(action)
-    this.render.update(true)
+    this.selection(null);
+    const action = fromDescriptorsAlign(this.render.ctab);
+    this.update(action);
+    this.render.update(true);
   }
 }
 
@@ -607,135 +630,138 @@ class Editor implements KetcherEditor {
  * See: https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/button
  */
 function isMouseMainButtonPressed(event: MouseEvent) {
-  return event.button === 0
+  return event.button === 0;
 }
 
 function resetSelectionOnCanvasClick(
   editor: Editor,
   eventName: string,
   clientArea: HTMLElement,
-  event
+  event,
 ) {
   if (
     eventName === 'mouseup' &&
     editor.selection() &&
     clientArea.contains(event.target)
   ) {
-    editor.selection(null)
+    editor.selection(null);
   }
 }
 
 function updateLastCursorPosition(editor: Editor, event) {
-  const events = ['mousemove', 'click', 'mousedown', 'mouseup', 'mouseover']
+  const events = ['mousemove', 'click', 'mousedown', 'mouseup', 'mouseover'];
   if (events.includes(event.type)) {
+    const clientAreaBoundingBox =
+      editor.render.clientArea.getBoundingClientRect();
+
     editor.lastCursorPosition = {
-      x: event.layerX,
-      y: event.layerY
-    }
+      x: event.pageX - clientAreaBoundingBox.x,
+      y: event.pageY - clientAreaBoundingBox.y,
+    };
   }
 }
 
 function isContextMenuClosed(contextMenu: contextMenuInfo) {
-  return !Object.values(contextMenu).some(Boolean)
+  return !Object.values(contextMenu).some(Boolean);
 }
 
 function useToolIfNeeded(
   editor: Editor,
   eventHandlerName: ToolEventHandlerName,
   clientArea: HTMLElement,
-  event
+  event,
 ) {
-  const editorTool = editor.tool()
+  const editorTool = editor.tool();
   if (!editorTool) {
-    return false
+    return false;
   }
 
-  editor.lastEvent = event
+  editor.lastEvent = event;
   const conditions = [
     eventHandlerName in editorTool,
     clientArea.contains(event.target) || editorTool.isSelectionRunning?.(),
-    isContextMenuClosed(editor.contextMenu)
-  ]
+    isContextMenuClosed(editor.contextMenu),
+  ];
 
   if (conditions.every((condition) => condition)) {
-    editorTool[eventHandlerName]?.(event)
-    return true
+    editorTool[eventHandlerName]?.(event);
+    return true;
   }
 
-  return false
+  return false;
 }
 
 function domEventSetup(editor: Editor, clientArea: HTMLElement) {
   // TODO: addEventListener('resize', ...);
   const trackedDomEvents: {
-    target: Node
-    eventName: string
-    toolEventHandler: ToolEventHandlerName
+    target: Node;
+    eventName: string;
+    toolEventHandler: ToolEventHandlerName;
   }[] = [
     {
       target: clientArea,
       eventName: 'click',
-      toolEventHandler: 'click'
+      toolEventHandler: 'click',
     },
     {
       target: clientArea,
       eventName: 'dblclick',
-      toolEventHandler: 'dblclick'
+      toolEventHandler: 'dblclick',
     },
     {
       target: clientArea,
       eventName: 'mousedown',
-      toolEventHandler: 'mousedown'
+      toolEventHandler: 'mousedown',
     },
     {
       target: document,
       eventName: 'mousemove',
-      toolEventHandler: 'mousemove'
+      toolEventHandler: 'mousemove',
     },
     {
       target: document,
       eventName: 'mouseup',
-      toolEventHandler: 'mouseup'
+      toolEventHandler: 'mouseup',
     },
     {
       target: document,
       eventName: 'mouseleave',
-      toolEventHandler: 'mouseleave'
+      toolEventHandler: 'mouseleave',
     },
     {
       target: clientArea,
       eventName: 'mouseleave',
-      toolEventHandler: 'mouseLeaveClientArea'
+      toolEventHandler: 'mouseLeaveClientArea',
     },
     {
       target: clientArea,
       eventName: 'mouseover',
-      toolEventHandler: 'mouseover'
-    }
-  ]
+      toolEventHandler: 'mouseover',
+    },
+  ];
 
   trackedDomEvents.forEach(({ target, eventName, toolEventHandler }) => {
-    editor.event[eventName] = new DOMSubscription()
-    const subs = editor.event[eventName]
+    editor.event[eventName] = new DOMSubscription();
+    const subs = editor.event[eventName];
 
-    target.addEventListener(eventName, subs.dispatch.bind(subs))
+    target.addEventListener(eventName, subs.dispatch.bind(subs));
 
     subs.add((event) => {
-      updateLastCursorPosition(editor, event)
+      updateLastCursorPosition(editor, event);
 
       if (
         ['mouseup', 'mousedown', 'click', 'dbclick'].includes(event.type) &&
         !isMouseMainButtonPressed(event)
       ) {
-        return true
+        return true;
       }
 
       if (eventName !== 'mouseup' && eventName !== 'mouseleave') {
         // to complete drag actions
         if (!event.target || event.target.nodeName === 'DIV') {
           // click on scroll
-          editor.hover(null)
-          return true
+          editor.hover(null);
+          return true;
         }
       }
 
@@ -743,65 +769,65 @@ function domEventSetup(editor: Editor, clientArea: HTMLElement) {
         editor,
         toolEventHandler,
         clientArea,
-        event
-      )
+        event,
+      );
       if (isToolUsed) {
-        return true
+        return true;
       }
 
-      resetSelectionOnCanvasClick(editor, eventName, clientArea, event)
+      resetSelectionOnCanvasClick(editor, eventName, clientArea, event);
 
-      return true
-    }, -1)
-  })
+      return true;
+    }, -1);
+  });
 }
 
 function recoordinate(editor: Editor, rp?: Vec2 /* , vp */) {
   // rp is a point in scaled coordinates, which will be positioned
   // vp is the point where the reference point should now be (in view coordinates)
   //    or the center if not set
-  console.assert(rp, 'Reference point not specified')
+  console.assert(rp, 'Reference point not specified');
   if (rp) {
-    editor.render.setScrollOffset(rp.x, rp.y)
+    editor.render.setScrollOffset(rp.x, rp.y);
   } else {
-    editor.render.setScrollOffset(0, 0)
+    editor.render.setScrollOffset(0, 0);
   }
 }
 
 function getStructCenter(ReStruct, selection?) {
-  const bb = ReStruct.getVBoxObj(selection || {})
-  return Vec2.lc2(bb.p0, 0.5, bb.p1, 0.5)
+  const bb = ReStruct.getVBoxObj(selection || {});
+  return Vec2.lc2(bb.p0, 0.5, bb.p1, 0.5);
 }
 
-export { Editor }
-export default Editor
+export { Editor };
+export default Editor;
 
 function setHover(ci: any, visible: any, render: any) {
   if (highlightTargets.indexOf(ci.map) === -1) {
-    return false
+    return false;
   }
 
-  let item: any = null
+  let item: any = null;
 
   if (ci.map === 'merge') {
     Object.keys(ci.items).forEach((mp) => {
       ci.items[mp].forEach((dstId) => {
-        item = render.ctab[mp].get(dstId)!
+        item = render.ctab[mp].get(dstId)!;
 
         if (item) {
-          item.setHover(visible, render)
+          item.setHover(visible, render);
         }
-      })
-    })
+      });
+    });
 
-    return true
+    return true;
   }
 
-  if (ci.map === 'functionalGroups') ci.map = 'sgroups' // TODO: Refactor object
+  if (ci.map === 'functionalGroups') ci.map = 'sgroups'; // TODO: Refactor object
 
-  item = (render.ctab[ci.map] as Map<any, any>).get(ci.id)
+  item = (render.ctab[ci.map] as Map<any, any>).get(ci.id);
   if (!item) {
-    return true // TODO: fix, attempt to highlight a deleted item
+    return true; // TODO: fix, attempt to highlight a deleted item
   }
 
   if (
@@ -809,17 +835,17 @@ function setHover(ci: any, visible: any, render: any) {
     ci.map === 'sgroupData'
   ) {
     // set highlight for both the group and the data item
-    const item1 = render.ctab.sgroups.get(ci.id)
+    const item1 = render.ctab.sgroups.get(ci.id);
     if (item1) {
-      item1.setHover(visible, render)
+      item1.setHover(visible, render);
     }
 
-    const item2 = render.ctab.sgroupData.get(ci.id)
+    const item2 = render.ctab.sgroupData.get(ci.id);
     if (item2) {
-      item2.setHover(visible, render)
+      item2.setHover(visible, render);
     }
   } else {
-    item.setHover(visible, render)
+    item.setHover(visible, render);
   }
-  return true
+  return true;
 }

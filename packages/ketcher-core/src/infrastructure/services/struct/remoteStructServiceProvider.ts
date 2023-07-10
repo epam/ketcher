@@ -18,30 +18,30 @@ import {
   ServiceMode,
   StructService,
   StructServiceOptions,
-  StructServiceProvider
-} from 'domain/services'
+  StructServiceProvider,
+} from 'domain/services';
 
-import { RemoteStructService } from './remoteStructService'
+import { RemoteStructService } from './remoteStructService';
 
 export class RemoteStructServiceProvider implements StructServiceProvider {
-  private readonly apiPath: string
-  mode: ServiceMode = 'remote'
-  customHeaders?: Record<string, string>
+  private readonly apiPath: string;
+  mode: ServiceMode = 'remote';
+  customHeaders?: Record<string, string>;
 
   constructor(apiPath: string, customHeaders?: Record<string, string>) {
-    let currentApiPath = apiPath
-    this.customHeaders = customHeaders
-    const params = new URLSearchParams(document.location.search)
+    let currentApiPath = apiPath;
+    this.customHeaders = customHeaders;
+    const params = new URLSearchParams(document.location.search);
     if (params.has('api_path')) {
-      currentApiPath = params.get('api_path')!
+      currentApiPath = params.get('api_path')!;
     }
     this.apiPath =
       !currentApiPath || /\/$/.test(currentApiPath)
         ? currentApiPath
-        : currentApiPath + '/'
+        : currentApiPath + '/';
   }
 
   createStructService(options: StructServiceOptions): StructService {
-    return new RemoteStructService(this.apiPath, options, this.customHeaders)
+    return new RemoteStructService(this.apiPath, options, this.customHeaders);
   }
 }

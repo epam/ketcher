@@ -17,21 +17,21 @@
 import {
   ToolbarGroupItem,
   ToolbarGroupItemCallProps,
-  ToolbarGroupItemProps
-} from '../../ToolbarGroupItem'
+  ToolbarGroupItemProps,
+} from '../../ToolbarGroupItem';
 
-import { rGroupOptions } from '../leftToolbarOptions'
+import { rGroupOptions } from '../leftToolbarOptions';
 
 interface RGroupProps extends Omit<ToolbarGroupItemProps, 'id' | 'options'> {
-  height?: number
+  height?: number;
 }
-type RGroupCallProps = ToolbarGroupItemCallProps
+type RGroupCallProps = ToolbarGroupItemCallProps;
 
-type Props = RGroupProps & RGroupCallProps
+type Props = RGroupProps & RGroupCallProps;
 
 const RGroup = (props: Props) => {
-  return <ToolbarGroupItem id="rgroup" options={rGroupOptions} {...props} />
-}
+  return <ToolbarGroupItem id="rgroup" options={rGroupOptions} {...props} />;
+};
 
-export type { RGroupProps, RGroupCallProps }
-export { RGroup }
+export type { RGroupProps, RGroupCallProps };
+export { RGroup };

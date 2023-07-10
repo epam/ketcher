@@ -1,65 +1,61 @@
-import { Action, FunctionalGroup, setExpandSGroup } from 'ketcher-core'
-import { useCallback } from 'react'
-import { useDispatch } from 'react-redux'
-import { useAppContext } from 'src/hooks'
-import Editor from 'src/script/editor'
-import { highlightFG } from 'src/script/ui/state/functionalGroups'
-import { ItemEventParams } from '../contextMenu.types'
+import { Action, setExpandSGroup } from 'ketcher-core';
+import { useCallback } from 'react';
+import { useDispatch } from 'react-redux';
+import { useAppContext } from 'src/hooks';
+import Editor from 'src/script/editor';
+import { highlightFG } from 'src/script/ui/state/functionalGroups';
+import { ItemEventParams } from '../contextMenu.types';
 
 /**
  * Fullname: useFunctionalGroupExpandOrContract
  */
 const useFunctionalGroupEoc = () => {
-  const { getKetcherInstance } = useAppContext()
-  const dispatch = useDispatch()
+  const { getKetcherInstance } = useAppContext();
+  const dispatch = useDispatch();
 
   const handler = useCallback(
     ({ props }: ItemEventParams, toExpand: boolean) => {
-      const editor = getKetcherInstance().editor as Editor
-      const molecule = editor.render.ctab
-      const selectedFunctionalGroups = props?.functionalGroups
-      const action = new Action()
+      const editor = getKetcherInstance().editor as Editor;
+      const molecule = editor.render.ctab;
+      const selectedFunctionalGroups = props?.functionalGroups;
+      const action = new Action();
 
       selectedFunctionalGroups?.forEach((functionalGroup) => {
         action.mergeWith(
           setExpandSGroup(molecule, functionalGroup.relatedSGroupId, {
-            expanded: toExpand
-          })
-        )
-      })
+            expanded: toExpand,
+          }),
+        );
+      });
 
-      editor.update(action)
-      editor.rotateController.rerender()
-      highlightFG(dispatch, { group: null, id: null })
+      editor.update(action);
+      editor.rotateController.rerender();
+      highlightFG(dispatch, { group: null, id: null });
     },
-    [dispatch, getKetcherInstance]
-  )
+    [dispatch, getKetcherInstance],
+  );
 
   const hidden = useCallback(
     ({ props }: ItemEventParams, toExpand: boolean) => {
       return Boolean(
         props?.functionalGroups?.every((functionalGroup) =>
-          toExpand ? functionalGroup.isExpanded : !functionalGroup.isExpanded
-        )
-      )
+          toExpand ? functionalGroup.isExpanded : !functionalGroup.isExpanded,
+        ),
+      );
     },
-    []
-  )
+    [],
+  );
   const disabled = useCallback(({ props }: ItemEventParams) => {
-    const editor = getKetcherInstance().editor as Editor
-    const molecule = editor.render.ctab.molecule
+    const editor = getKetcherInstance().editor as Editor;
+    const molecule = editor.render.ctab.molecule;
     return Boolean(
-      props?.functionalGroups?.every(
-        (functionalGroup) =>
-          FunctionalGroup.getAttachmentPointCount(
-            functionalGroup?.relatedSGroup,
-            molecule
-          ) > 1
-      )
-    )
-  }, [])
+      props?.functionalGroups?.every((functionalGroup) =>
+        functionalGroup?.relatedSGroup.isNotContractible(molecule),
+      ),
+    );
+  }, []);
 
-  return [handler, hidden, disabled] as const
-}
+  return [handler, hidden, disabled] as const;
+};
 
-export default useFunctionalGroupEoc
+export default useFunctionalGroupEoc;

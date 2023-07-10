@@ -18,19 +18,19 @@ import {
   InfoResult,
   StructService,
   StructServiceOptions,
-  StructServiceProvider
-} from 'ketcher-core'
+  StructServiceProvider,
+} from 'ketcher-core';
 
-type Api = StructService & Promise<InfoResult>
+type Api = StructService & Promise<InfoResult>;
 
 // todo: remove - ?? should we? it's in use
 function createApi(
   structServiceProvider: StructServiceProvider,
-  defaultOptions: StructServiceOptions
+  defaultOptions: StructServiceOptions,
 ): Api {
   const structService =
-    structServiceProvider.createStructService(defaultOptions)
-  const info = structService.info()
+    structServiceProvider.createStructService(defaultOptions);
+  const info = structService.info();
 
   return Object.assign(info, {
     info: structService.info.bind(structService),
@@ -46,8 +46,8 @@ function createApi(
     recognize: structService.recognize.bind(structService),
     generateImageAsBase64:
       structService.generateImageAsBase64.bind(structService),
-    generateInchIKey: structService.generateInchIKey.bind(structService)
-  })
+    generateInchIKey: structService.generateInchIKey.bind(structService),
+  });
 }
 
-export default createApi
+export default createApi;

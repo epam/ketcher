@@ -14,30 +14,30 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { put, takeEvery, call } from 'redux-saga/effects'
-import { init, initFailure, initSuccess } from 'state/common'
+import { put, takeEvery, call } from 'redux-saga/effects';
+import { init, initFailure, initSuccess } from 'state/common';
 
-const FETCH_DATA = 'editor/fetchData'
+const FETCH_DATA = 'editor/fetchData';
 
 const fetchDataCall = () =>
   new Promise((resolve) => {
-    setTimeout(() => resolve('some data'), 1000)
-  })
+    setTimeout(() => resolve('some data'), 1000);
+  });
 
 function* fetchData() {
-  yield put(init())
+  yield put(init());
   try {
-    yield call(fetchDataCall)
-    yield put(initSuccess())
+    yield call(fetchDataCall);
+    yield put(initSuccess());
   } catch (e) {
-    yield put(initFailure())
+    yield put(initFailure());
   }
 }
 
 export function* watchFetchData() {
-  yield takeEvery(FETCH_DATA, fetchData)
+  yield takeEvery(FETCH_DATA, fetchData);
 }
 
 export const fetchInitData = () => ({
-  type: FETCH_DATA
-})
+  type: FETCH_DATA,
+});

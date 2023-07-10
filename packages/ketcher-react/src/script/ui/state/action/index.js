@@ -14,77 +14,85 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { isEmpty, isEqual, pickBy } from 'lodash/fp'
+import { isEmpty, isEqual, pickBy } from 'lodash/fp';
 
-import { SettingsManager } from '../../utils/settingsManager'
-import actions from '../../action'
+import { SettingsManager } from '../../utils/settingsManager';
+import actions from '../../action';
 
 function execute(activeTool, { action, editor, server, options }) {
   if (action.tool) {
     if (editor.tool(action.tool, action.opts)) {
-      return action
+      return action;
     }
   } else if (typeof action === 'function') {
-    action(editor, server, options)
+    action(editor, server, options);
   } else {
-    console.info('no action')
+    console.info('no action');
   }
-  return activeTool
+  return activeTool;
 }
 
 function selected(actObj, activeTool, { editor, server }) {
   if (typeof actObj.selected === 'function')
-    return actObj.selected(editor, server)
+    return actObj.selected(editor, server);
   else if (actObj.action && actObj.action.tool)
-    return isEqual(activeTool, actObj.action)
-  return false
+    return isEqual(activeTool, actObj.action);
+  return false;
 }
 
 function disabled(actObj, { editor, server, options }) {
   if (typeof actObj.disabled === 'function')
-    return actObj.disabled(editor, server, options)
-  return false
+    return actObj.disabled(editor, server, options);
+  return false;
 }
 
 function hidden(actObj, { options }) {
-  if (typeof actObj.hidden === 'function') return actObj.hidden(options)
-  return false
+  if (typeof actObj.hidden === 'function') return actObj.hidden(options);
+  return false;
 }
 
 function status(actionName, activeTool, params) {
-  const actObj = actions[actionName]
+  const actObj = actions[actionName];
   return pickBy((x) => x, {
     selected: selected(actObj, activeTool, params),
     disabled: disabled(actObj, params),
-    hidden: hidden(actObj, params)
-  })
+    hidden: hidden(actObj, params),
+  });
 }
 
+// TODO need a refactoring for this reducer since it uses (probably unintentionally falling through switch-case)
+// F.e. when it gets action: INIT it will call all cases below - INIT+ACTION+UPDATE
+/* eslint-disable no-fallthrough */
 export default function (state = null, { type, action, ...params }) {
-  let activeTool
+  let activeTool;
   switch (type) {
     case 'INIT': {
-      const savedSelectedTool = SettingsManager.selectionTool
-      action = savedSelectedTool || actions['select-rectangle'].action
+      const savedSelectedTool = SettingsManager.selectionTool;
+      action = savedSelectedTool || actions['select-rectangle'].action;
     }
-    case 'ACTION':
+
+    case 'ACTION': {
       activeTool = execute(state && state.activeTool, {
         ...params,
-        action
-      })
+        action,
+      });
       if (activeTool.tool === 'select') {
-        SettingsManager.selectionTool = activeTool
+        SettingsManager.selectionTool = activeTool;
       }
+    }
+
     case 'UPDATE':
       return Object.keys(actions).reduce(
         (res, actionName) => {
-          const value = status(actionName, res.activeTool, params)
-          if (!isEmpty(value)) res[actionName] = value
-          return res
+          const value = status(actionName, res.activeTool, params);
+          if (!isEmpty(value)) res[actionName] = value;
+          return res;
         },
-        { activeTool: activeTool || state.activeTool }
-      )
+        { activeTool: activeTool || state.activeTool },
+      );
+
     default:
-      return state
+      return state;
   }
 }
+/* eslint-enable no-fallthrough */

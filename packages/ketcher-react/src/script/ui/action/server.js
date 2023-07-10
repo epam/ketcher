@@ -14,68 +14,68 @@
  * limitations under the License.
  ***************************************************************************/
 
-import isHidden from './isHidden'
-import { serverTransform } from '../state/server'
+import isHidden from './isHidden';
+import { serverTransform } from '../state/server';
 
 const config = {
   layout: {
     shortcut: 'Mod+l',
     title: 'Layout',
     action: {
-      thunk: serverTransform('layout')
+      thunk: serverTransform('layout'),
     },
     disabled: (editor, server, options) => !options.app.server,
-    hidden: (options) => isHidden(options, 'layout')
+    hidden: (options) => isHidden(options, 'layout'),
   },
   clean: {
     shortcut: 'Mod+Shift+l',
     title: 'Clean Up',
     action: {
-      thunk: serverTransform('clean')
+      thunk: serverTransform('clean'),
     },
     disabled: (editor, server, options) => !options.app.server,
-    hidden: (options) => isHidden(options, 'clean')
+    hidden: (options) => isHidden(options, 'clean'),
   },
   arom: {
     shortcut: 'Alt+a',
     title: 'Aromatize',
     action: {
-      thunk: serverTransform('aromatize')
+      thunk: serverTransform('aromatize'),
     },
     disabled: (editor, server, options) => !options.app.server,
-    hidden: (options) => isHidden(options, 'arom')
+    hidden: (options) => isHidden(options, 'arom'),
   },
   dearom: {
     shortcut: 'Ctrl+Alt+a',
     title: 'Dearomatize',
     action: {
-      thunk: serverTransform('dearomatize')
+      thunk: serverTransform('dearomatize'),
     },
     disabled: (editor, server, options) => !options.app.server,
-    hidden: (options) => isHidden(options, 'dearom')
+    hidden: (options) => isHidden(options, 'dearom'),
   },
   cip: {
     shortcut: 'Mod+p',
     title: 'Calculate CIP',
     action: {
-      thunk: serverTransform('calculateCip')
+      thunk: serverTransform('calculateCip'),
     },
     disabled: (editor, server, options) => !options.app.server,
-    hidden: (options) => isHidden(options, 'cip')
+    hidden: (options) => isHidden(options, 'cip'),
   },
   check: {
     shortcut: 'Alt+s',
     title: 'Check Structure',
     action: { dialog: 'check' },
     disabled: (editor, server, options) => !options.app.server,
-    hidden: (options) => isHidden(options, 'check')
+    hidden: (options) => isHidden(options, 'check'),
   },
   analyse: {
     shortcut: 'Alt+c',
     title: 'Calculated Values',
     action: { dialog: 'analyse' },
     disabled: (editor, server, options) => !options.app.server,
-    hidden: (options) => isHidden(options, 'analyse')
+    hidden: (options) => isHidden(options, 'analyse'),
   },
   recognize: {
     title: 'Recognize Molecule',
@@ -83,13 +83,13 @@ const config = {
     disabled: (editor, server, options) =>
       // TODO: provide the list of disabled functions as array
       !options.app.server || !options.app.imagoVersions?.length > 0,
-    hidden: (options) => isHidden(options, 'recognize')
+    hidden: (options) => isHidden(options, 'recognize'),
   },
   miew: {
     title: '3D Viewer',
     action: { dialog: 'miew' },
-    hidden: (options) => isHidden(options, 'miew')
-  }
-}
+    hidden: (options) => isHidden(options, 'miew'),
+  },
+};
 
-export default config
+export default config;

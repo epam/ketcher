@@ -14,100 +14,100 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { KetSerializer, SdfSerializer } from 'ketcher-core'
+import { KetSerializer, SdfSerializer } from 'ketcher-core';
 
-import { appUpdate } from '../options'
-import { storage } from '../../storage-ext'
-import templatesRawData from '../../../../templates/library.sdf'
+import { appUpdate } from '../options';
+import { storage } from '../../storage-ext';
+import templatesRawData from '../../../../templates/library.sdf';
 
 export function initLib(lib) {
   return {
     type: 'TMPL_INIT',
-    data: { lib }
-  }
+    data: { lib },
+  };
 }
 
-export default function initTmplLib(dispatch, baseUrl, cacheEl) {
-  const fileName = 'library.sdf'
-  return deserializeSdfTemplates(baseUrl, cacheEl, fileName).then((res) => {
-    const lib = res.concat(userTmpls())
-    dispatch(initLib(lib))
-    dispatch(appUpdate({ templates: true }))
-  })
-}
-
-const deserializeSdfTemplates = (baseUrl, cacheEl, fileName) => {
-  const sdfSerializer = new SdfSerializer()
-  const tmpls = sdfSerializer.deserialize(templatesRawData)
-  const prefetch = prefetchRender(tmpls, baseUrl + '/templates/', cacheEl)
+const deserializeSdfTemplates = (baseUrl, cacheEl, _fileName) => {
+  const sdfSerializer = new SdfSerializer();
+  const tmpls = sdfSerializer.deserialize(templatesRawData);
+  const prefetch = prefetchRender(tmpls, baseUrl + '/templates/', cacheEl);
 
   return prefetch.then((cachedFiles) =>
     tmpls.map((tmpl) => {
-      const pr = prefetchSplit(tmpl)
+      const pr = prefetchSplit(tmpl);
       if (pr.file)
         tmpl.props.prerender =
-          cachedFiles.indexOf(pr.file) !== -1 ? `#${pr.id}` : ''
+          cachedFiles.indexOf(pr.file) !== -1 ? `#${pr.id}` : '';
 
-      return tmpl
-    })
-  )
+      return tmpl;
+    }),
+  );
+};
+
+export default function initTmplLib(dispatch, baseUrl, cacheEl) {
+  const fileName = 'library.sdf';
+  return deserializeSdfTemplates(baseUrl, cacheEl, fileName).then((res) => {
+    const lib = res.concat(userTmpls());
+    dispatch(initLib(lib));
+    dispatch(appUpdate({ templates: true }));
+  });
 }
 
 function userTmpls() {
-  const userLib = storage.getItem('ketcher-tmpls')
-  if (!Array.isArray(userLib) || userLib.length === 0) return []
-  const ketSerializer = new KetSerializer()
+  const userLib = storage.getItem('ketcher-tmpls');
+  if (!Array.isArray(userLib) || userLib.length === 0) return [];
+  const ketSerializer = new KetSerializer();
   return userLib
     .map((tmpl) => {
       try {
-        if (tmpl.props === '') tmpl.props = {}
-        tmpl.props.group = 'User Templates'
+        if (tmpl.props === '') tmpl.props = {};
+        tmpl.props.group = 'User Templates';
 
         return {
           struct: ketSerializer.deserialize(tmpl.struct),
-          props: tmpl.props
-        }
+          props: tmpl.props,
+        };
       } catch (ex) {
-        return null
+        return null;
       }
     })
-    .filter((tmpl) => tmpl !== null)
+    .filter((tmpl) => tmpl !== null);
 }
 
 export function prefetchStatic(url) {
   return fetch(url, { credentials: 'same-origin' }).then((resp) => {
-    if (resp.ok) return resp.text()
-    throw Error('Could not fetch ' + url)
-  })
+    if (resp.ok) return resp.text();
+    throw Error('Could not fetch ' + url);
+  });
 }
 
 function prefetchSplit(tmpl) {
-  const pr = tmpl.props.prerender
-  const res = pr && pr.split('#', 2)
+  const pr = tmpl.props.prerender;
+  const res = pr && pr.split('#', 2);
 
   return {
     file: pr && res[0],
-    id: pr && res[1]
-  }
+    id: pr && res[1],
+  };
 }
 
 function prefetchRender(tmpls, baseUrl, cacheEl) {
   const files = tmpls.reduce((res, tmpl) => {
-    const file = prefetchSplit(tmpl).file
+    const file = prefetchSplit(tmpl).file;
 
-    if (file && res.indexOf(file) === -1) res.push(file)
+    if (file && res.indexOf(file) === -1) res.push(file);
 
-    return res
-  }, [])
+    return res;
+  }, []);
   const fetch = Promise.all(
-    files.map((fn) => prefetchStatic(baseUrl + fn).catch(() => null))
-  )
+    files.map((fn) => prefetchStatic(baseUrl + fn).catch(() => null)),
+  );
 
   return fetch.then((svgs) => {
     svgs.forEach((svgContent) => {
-      if (svgContent) cacheEl.innerHTML += svgContent
-    })
+      if (svgContent) cacheEl.innerHTML += svgContent;
+    });
 
-    return files.filter((file, i) => !!svgs[i])
-  })
+    return files.filter((file, i) => !!svgs[i]);
+  });
 }

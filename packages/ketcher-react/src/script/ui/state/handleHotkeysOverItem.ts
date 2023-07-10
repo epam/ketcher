@@ -1,4 +1,4 @@
-import { Dispatch } from 'redux'
+import { Dispatch } from 'redux';
 import {
   fromAtomAddition,
   fromAtomsAttrs,
@@ -6,145 +6,147 @@ import {
   fromBondsAttrs,
   fromFragmentDeletion,
   FunctionalGroup,
-  Atom
-} from 'ketcher-core'
-import { STRUCT_TYPE } from 'src/constants'
-import { openDialog } from './modal'
-import { getSelectedAtoms } from '../../editor/tool/select'
-import { onAction } from './shared'
-import { Editor } from '../../editor'
-import { updateSelectedAtoms } from 'src/script/ui/state/modal/atoms'
-import { fromAtom, toAtom, fromBond, toBond } from '../data/convert/structconv'
-import SGroupTool from '../../editor/tool/sgroup'
+  Atom,
+  Action,
+} from 'ketcher-core';
+import { STRUCT_TYPE } from 'src/constants';
+import { openDialog } from './modal';
+import { getSelectedAtoms } from '../../editor/tool/select';
+import { onAction } from './shared';
+import { Editor } from '../../editor';
+import { updateSelectedAtoms } from 'src/script/ui/state/modal/atoms';
+import { fromAtom, toAtom, fromBond, toBond } from '../data/convert/structconv';
+import SGroupTool from '../../editor/tool/sgroup';
+import { deleteFunctionalGroups } from '../../editor/tool/helper/deleteFunctionalGroups';
 
 type TNewAction = {
-  tool?: string
-  dialog?: string
-  opts?: any
-}
+  tool?: string;
+  dialog?: string;
+  opts?: any;
+};
 
 type HandlersProps = {
-  hoveredItemId: number
-  newAction: TNewAction
-  editor: Editor
-  dispatch: Dispatch
-}
+  hoveredItemId: number;
+  newAction: TNewAction;
+  editor: Editor;
+  dispatch: Dispatch;
+};
 
 type HandleHotkeyOverItemProps = {
-  hoveredItem: Record<string, number>
-  newAction: TNewAction
-  editor: Editor
-  dispatch: Dispatch
-}
+  hoveredItem: Record<string, number>;
+  newAction: TNewAction;
+  editor: Editor;
+  dispatch: Dispatch;
+};
 
 export function handleHotkeyOverItem(props: HandleHotkeyOverItemProps) {
   if (props.newAction.tool === 'eraser') {
-    handleEraser(props)
+    handleEraser(props);
   } else if (props.newAction.dialog) {
-    handleDialog(props)
+    handleDialog(props);
   } else if (props.newAction.tool) {
-    handleTool(props)
+    handleTool(props);
   } else {
-    handleOtherActions(props)
+    handleOtherActions(props);
   }
 }
 
 function handleOtherActions({
   dispatch,
-  newAction
+  newAction,
 }: HandleHotkeyOverItemProps) {
-  dispatch(onAction(newAction))
+  dispatch(onAction(newAction));
 }
 
 function eraseItem({
   editor,
-  item
+  item,
 }: {
-  editor: Editor
-  item: Record<string, number[]>
+  editor: Editor;
+  item: Record<string, number[]>;
 }) {
-  const action = fromFragmentDeletion(editor.render.ctab, item)
+  const action = fromFragmentDeletion(editor.render.ctab, item);
 
-  editor.update(action)
-  editor.hover(null)
+  editor.update(action);
+  editor.hover(null);
 }
 
 function handleEraser({
   editor,
   hoveredItem,
   newAction,
-  dispatch
+  dispatch,
 }: HandleHotkeyOverItemProps) {
-  const item = mapItemsToArrays(hoveredItem)
-  const itemType = Object.keys(hoveredItem)[0]
+  const item = mapItemsToArrays(hoveredItem);
+  const itemType = Object.keys(hoveredItem)[0];
 
   if ([STRUCT_TYPE.atoms, STRUCT_TYPE.bonds].includes(itemType)) {
     isFunctionalGroupChange(
       { editor, hoveredItemId: item[itemType][0], newAction, dispatch },
-      itemType
+      itemType,
     ).then((res) => {
-      res && eraseItem({ editor, item })
-    })
+      res && eraseItem({ editor, item });
+    });
 
-    return
+    return;
   }
 
-  eraseItem({ editor, item })
+  eraseItem({ editor, item });
 }
 
 function handleDialog({
   hoveredItem,
   newAction,
   editor,
-  dispatch
+  dispatch,
 }: HandleHotkeyOverItemProps) {
-  const dialogType = Object.keys(hoveredItem)[0]
-  const dialogHandler = getDialogHandler(dialogType)
-  const hoveredItemId = hoveredItem[dialogType]
+  const dialogType = Object.keys(hoveredItem)[0];
+  const dialogHandler = getDialogHandler(dialogType);
+  const hoveredItemId = hoveredItem[dialogType];
 
   if (dialogHandler) {
     const props: HandlersProps = {
       hoveredItemId,
       newAction,
       editor,
-      dispatch
-    }
-    return dialogHandler(props)
+      dispatch,
+    };
+    return dialogHandler(props);
   }
 }
 
 function getDialogHandler(itemType: string) {
   const dialogs = {
     atoms: (props: HandlersProps) => handleAtomPropsDialog(props),
-    bonds: (props: HandlersProps) => handleBondPropsDialog(props)
-  }
+    bonds: (props: HandlersProps) => handleBondPropsDialog(props),
+  };
 
-  const dialog = dialogs[itemType]
-  return dialog
+  const dialog = dialogs[itemType];
+  return dialog;
 }
 
 function handleAtomPropsDialog({
   hoveredItemId,
   newAction,
   editor,
-  dispatch
+  dispatch,
 }: HandlersProps) {
-  const selection = editor.selection()
-  const atomsSelected = selection?.atoms
-  const restruct = editor.render.ctab
+  const selection = editor.selection();
+  const atomsSelected = selection?.atoms;
+  const restruct = editor.render.ctab;
 
   if (atomsSelected && atomsSelected.includes(hoveredItemId)) {
-    const atoms = getSelectedAtoms(selection, restruct.molecule)
-    const changeAtomPromise = editor.event.elementEdit.dispatch(atoms)
+    const atoms = getSelectedAtoms(selection, restruct.molecule);
+    const changeAtomPromise = editor.event.elementEdit.dispatch(atoms);
 
     updateSelectedAtoms({
       atoms: selection.atoms || [],
       editor,
-      changeAtomPromise
-    })
+      changeAtomPromise,
+    });
   } else {
-    const atomFromStruct = restruct.atoms.get(hoveredItemId)
-    const convertedAtomForModal = fromAtom(atomFromStruct?.a)
+    const atomFromStruct = restruct.atoms.get(hoveredItemId);
+    const convertedAtomForModal = fromAtom(atomFromStruct?.a);
 
     openDialog(dispatch, newAction.dialog, convertedAtomForModal)
       .then((res) => {
@@ -152,12 +154,12 @@ function handleAtomPropsDialog({
           restruct,
           hoveredItemId,
           toAtom(res),
-          false
-        )
+          false,
+        );
 
-        editor.update(updatedAtom)
+        editor.update(updatedAtom);
       })
-      .catch(() => null)
+      .catch(() => null);
   }
 }
 
@@ -165,11 +167,11 @@ function handleBondPropsDialog({
   hoveredItemId,
   newAction,
   editor,
-  dispatch
+  dispatch,
 }: HandlersProps) {
-  const restruct = editor.render.ctab
-  const bondFromStruct = restruct.bonds.get(hoveredItemId)
-  const convertedBondForModal = fromBond(bondFromStruct?.b)
+  const restruct = editor.render.ctab;
+  const bondFromStruct = restruct.bonds.get(hoveredItemId);
+  const convertedBondForModal = fromBond(bondFromStruct?.b);
 
   openDialog(dispatch, newAction.dialog, convertedBondForModal)
     .then((res) => {
@@ -177,45 +179,46 @@ function handleBondPropsDialog({
         restruct,
         hoveredItemId,
         toBond(res),
-        false
-      )
+        false,
+      );
 
-      editor.update(updatedBond)
+      editor.update(updatedBond);
     })
-    .catch(() => null)
+    .catch(() => null);
 }
 
 function handleTool({
   hoveredItem,
   newAction,
   editor,
-  dispatch
+  dispatch,
 }: HandleHotkeyOverItemProps) {
   for (const item in hoveredItem) {
-    const toolHandler = getToolHandler(item, newAction.tool)
-    const isChangeStructureTool = newAction.tool !== 'hand'
-    const hoveredItemId = hoveredItem[item]
+    const toolHandler = getToolHandler(item, newAction.tool);
+    const isChangeStructureTool = newAction.tool !== 'hand';
+    const hoveredItemId = hoveredItem[item];
 
     if (toolHandler) {
       const props: HandlersProps = {
         hoveredItemId,
         editor,
         newAction,
-        dispatch
-      }
+        dispatch,
+      };
       isFunctionalGroupChange(props, item).then((result) => {
-        if (!result && isChangeStructureTool) return
-        toolHandler(props)
-      })
+        if (!result && isChangeStructureTool) return;
+        toolHandler(props);
+      });
     }
   }
 }
 
 async function isFunctionalGroupChange(
   props: HandlersProps,
-  type: string
+  type: string,
 ): Promise<boolean> {
-  return await isChangingFunctionalGroup(props, type)
+  if (type === 'sgroups') return true;
+  return await isChangingFunctionalGroup(props, type);
 }
 
 function getToolHandler(itemType: string, toolName = '') {
@@ -226,31 +229,58 @@ function getToolHandler(itemType: string, toolName = '') {
       charge: (props: HandlersProps) => handleChargeTool(props),
       rgroupatom: (props: HandlersProps) => handleRGroupAtomTool(props),
       sgroup: ({ editor, hoveredItemId }: HandlersProps) => {
-        SGroupTool.sgroupDialog(editor, hoveredItemId)
+        SGroupTool.sgroupDialog(editor, hoveredItemId);
       },
       hand: ({ dispatch }: HandlersProps) =>
-        dispatch(onAction({ tool: 'hand' }))
+        dispatch(onAction({ tool: 'hand' })),
     },
-    _default: {}
-  }
+    sgroups: {
+      atom: (props: HandlersProps) => handleSgroupsTool(props),
+    },
+    _default: {},
+  };
 
-  const item = items[itemType]
+  const item = items[itemType];
 
   if (item) {
-    return item[toolName]
+    return item[toolName];
   }
-  return items._default[toolName]
+  return items._default[toolName];
 }
 
 function handleAtomTool({ hoveredItemId, newAction, editor }: HandlersProps) {
-  const atomProps = { ...newAction.opts }
+  const atomProps = { ...newAction.opts };
   const updatedAtoms = fromAtomsAttrs(
     editor.render.ctab,
     hoveredItemId,
     atomProps,
-    true
-  )
-  editor.update(updatedAtoms)
+    true,
+  );
+  editor.update(updatedAtoms);
+}
+
+function handleSgroupsTool({
+  hoveredItemId,
+  newAction,
+  editor,
+}: HandlersProps) {
+  const atomProps = { ...newAction.opts };
+  const action = new Action();
+  const ctab = editor.render.ctab;
+  const sGroup = ctab.molecule.sgroups.get(hoveredItemId);
+  if (sGroup == null) {
+    throw new Error(
+      `unexpected error, sgroup with id "${hoveredItemId}" is not found`,
+    );
+  }
+  const { atomId: SGroupPositionAtomId } = sGroup.getContractedPosition(
+    ctab.molecule,
+  );
+  deleteFunctionalGroups([hoveredItemId], ctab, action);
+  action.mergeWith(
+    fromAtomsAttrs(editor.render.ctab, SGroupPositionAtomId, atomProps, true),
+  );
+  editor.update(action);
 }
 
 function handleBondTool({ hoveredItemId, newAction, editor }: HandlersProps) {
@@ -258,63 +288,63 @@ function handleBondTool({ hoveredItemId, newAction, editor }: HandlersProps) {
     editor.render.ctab,
     newAction.opts,
     hoveredItemId,
-    { label: 'C' }
-  )[0]
-  editor.update(newBond)
+    { label: 'C' },
+  )[0];
+  editor.update(newBond);
 }
 
 function handleChargeTool({ hoveredItemId, newAction, editor }: HandlersProps) {
-  const existingAtom = editor.render.ctab.atoms.get(hoveredItemId)?.a
+  const existingAtom = editor.render.ctab.atoms.get(hoveredItemId)?.a;
   if (existingAtom) {
     const updatedAtom = fromAtomsAttrs(
       editor.render.ctab,
       hoveredItemId,
       {
-        charge: existingAtom.charge + newAction.opts
+        charge: existingAtom.charge + newAction.opts,
       },
-      null
-    )
-    editor.update(updatedAtom)
+      null,
+    );
+    editor.update(updatedAtom);
   }
 }
 
 function mapItemsToArrays(
-  items: Record<string, number>
+  items: Record<string, number>,
 ): Record<string, number[]> {
-  const mappedItems = {}
+  const mappedItems = {};
   for (const item in items) {
-    mappedItems[item] = [items[item]]
+    mappedItems[item] = [items[item]];
   }
-  return mappedItems
+  return mappedItems;
 }
 
 async function handleRGroupAtomTool({ hoveredItemId, editor }: HandlersProps) {
-  const struct = editor.render.ctab.molecule
+  const struct = editor.render.ctab.molecule;
   const atom =
     hoveredItemId || hoveredItemId === 0
       ? struct.atoms.get(hoveredItemId)
-      : null
-  const rglabel = atom ? atom.rglabel : 0
-  const label = atom ? atom.label : 'R#'
+      : null;
+  const rglabel = atom ? atom.rglabel : 0;
+  const label = atom ? atom.label : 'R#';
 
   try {
     let element = await editor.event.elementEdit.dispatch({
       label: 'R#',
       rglabel,
-      fragId: atom ? atom.fragment : null
-    })
-    element = Object.assign({}, Atom.attrlist, element)
+      fragId: atom ? atom.fragment : null,
+    });
+    element = Object.assign({}, Atom.attrlist, element);
 
     if (!hoveredItemId && hoveredItemId !== 0 && element.rglabel) {
-      editor.update(fromAtomAddition(editor.render.ctab, null, element))
+      editor.update(fromAtomAddition(editor.render.ctab, null, element));
     } else if (rglabel !== element.rglabel) {
       if (!element.rglabel && label !== 'R#') {
-        element.label = label
+        element.label = label;
       }
 
       editor.update(
-        fromAtomsAttrs(editor.render.ctab, hoveredItemId, element, false)
-      )
+        fromAtomsAttrs(editor.render.ctab, hoveredItemId, element, false),
+      );
     }
   } catch (error) {} // w/o changes
 }
@@ -322,31 +352,31 @@ async function handleRGroupAtomTool({ hoveredItemId, editor }: HandlersProps) {
 function getFunctionalGroupIdByItem(
   editor: Editor,
   hoveredItemId: number,
-  type: string
+  type: string,
 ): number | null {
-  const molecule = editor.render.ctab.molecule
-  const functionalGroups = molecule.functionalGroups
+  const molecule = editor.render.ctab.molecule;
+  const functionalGroups = molecule.functionalGroups;
 
   return type === 'atoms'
     ? FunctionalGroup.findFunctionalGroupByAtom(functionalGroups, hoveredItemId)
     : FunctionalGroup.findFunctionalGroupByBond(
         molecule,
         functionalGroups,
-        hoveredItemId
-      )
+        hoveredItemId,
+      );
 }
 
 async function isChangingFunctionalGroup(
   { hoveredItemId, editor }: HandlersProps,
-  type: string
+  type: string,
 ) {
-  const fgId = getFunctionalGroupIdByItem(editor, hoveredItemId, type)
+  const fgId = getFunctionalGroupIdByItem(editor, hoveredItemId, type);
 
   if (fgId !== null) {
-    await editor.event.removeFG.dispatch({ fgIds: [fgId] })
+    await editor.event.removeFG.dispatch({ fgIds: [fgId] });
 
-    return false
+    return false;
   }
 
-  return true
+  return true;
 }

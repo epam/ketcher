@@ -14,15 +14,15 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Divider } from './Divider'
-import { IconButton } from './IconButton'
+import { Divider } from './Divider';
+import { TopToolbarIconButton } from './TopToolbarIconButton';
 
 interface UndoRedoProps {
-  disabledButtons: string[]
-  hiddenButtons: string[]
-  shortcuts: { [key in string]: string }
-  onUndo: () => void
-  onRedo: () => void
+  disabledButtons: string[];
+  hiddenButtons: string[];
+  shortcuts: { [key in string]: string };
+  onUndo: () => void;
+  onRedo: () => void;
 }
 
 export const UndoRedo = ({
@@ -30,12 +30,12 @@ export const UndoRedo = ({
   onRedo,
   disabledButtons,
   hiddenButtons,
-  shortcuts
+  shortcuts,
 }: UndoRedoProps) => {
   return (
     <>
       <Divider />
-      <IconButton
+      <TopToolbarIconButton
         title="Undo"
         onClick={onUndo}
         iconName="undo"
@@ -43,7 +43,7 @@ export const UndoRedo = ({
         isHidden={hiddenButtons.includes('undo')}
         shortcut={shortcuts.undo}
       />
-      <IconButton
+      <TopToolbarIconButton
         title="Redo"
         onClick={onRedo}
         iconName="redo"
@@ -53,5 +53,5 @@ export const UndoRedo = ({
       />
       <Divider />
     </>
-  )
-}
+  );
+};

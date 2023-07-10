@@ -13,73 +13,80 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { MonomerItem, MonomerItemType } from '../monomerLibraryItem'
-import styled from '@emotion/styled'
+import { EmptyFunction } from 'helpers';
+import { debounce } from 'lodash';
+import { useMemo, useRef } from 'react';
+import { MonomerItem } from '../monomerLibraryItem';
+import { MonomerItemType } from '../monomerLibraryItem/types';
+import {
+  GroupContainer,
+  GroupTitle,
+  ItemsContainer,
+  StyledPreview,
+} from './styles';
+import { IMonomerGroupProps } from './types';
+import { usePreview } from '../../../hooks/usePreview';
 
-interface MonomerGroupProps {
-  items: MonomerItemType[]
-  onItemClick: (item: MonomerItemType) => void
-  title?: string
-}
+const MonomerGroup = ({
+  items,
+  title,
+  selectedMonomerLabel,
+  onItemClick = EmptyFunction,
+}: IMonomerGroupProps) => {
+  const ref = useRef<HTMLDivElement>(null);
+  const [previewItem, previewStyle, setPreviewItem] = usePreview(ref);
 
-const ItemsContainer = styled.div`
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: flex-start;
-  margin: 0 15px;
+  const debouncedSetPreviewItem = useMemo(
+    () => debounce(setPreviewItem, 500),
+    [setPreviewItem],
+  );
 
-  & > * {
-    margin: 4px 2px;
-  }
-`
+  const handleItemMouseLeave = () => {
+    debouncedSetPreviewItem.cancel();
+    setPreviewItem();
+  };
 
-const Divider = styled.div`
-  display: block;
-  height: 5px;
-  width: 10px;
-  border-bottom: 1px solid;
-  border-color: ${({ theme }) => theme.ketcher.color.divider};
-`
+  const handleItemMouseMove = (
+    monomer: MonomerItemType,
+    e: React.MouseEvent<HTMLDivElement, MouseEvent>,
+  ) => {
+    if (previewItem) {
+      setPreviewItem();
+      return;
+    }
 
-const GroupTitle = styled.div`
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  flex-wrap: wrap;
-  justify-content: flex-start;
-  font-size: ${({ theme }) => theme.ketcher.font.size.small};
-  font-family: ${({ theme }) => theme.ketcher.font.family.roboto};
-  color: ${({ theme }) => theme.ketcher.color.divider};
-  margin: 4px 4px 0;
-`
-
-const MonomerGroup = (props: MonomerGroupProps) => {
-  const { items, title, onItemClick } = props
+    const rect = e.currentTarget.getBoundingClientRect();
+    debouncedSetPreviewItem(monomer, rect);
+  };
 
   return (
-    <>
+    <GroupContainer ref={ref}>
       {title && (
         <GroupTitle>
           <span>{title}</span>
-          <Divider />
         </GroupTitle>
       )}
       <ItemsContainer>
-        {items.map((monomer, key) => {
+        {items.map((monomer) => {
+          const key = monomer.props
+            ? `${monomer.props.MonomerName + monomer.props.Name}`
+            : monomer.label;
           return (
             <MonomerItem
               key={key}
               item={monomer}
+              isSelected={selectedMonomerLabel === monomer.label}
+              onMouseLeave={handleItemMouseLeave}
+              onMouseMove={(e) => handleItemMouseMove(monomer, e)}
               onClick={() => onItemClick(monomer)}
             />
-          )
+          );
         })}
       </ItemsContainer>
-    </>
-  )
-}
-export { MonomerGroup }
+      {previewItem && (
+        <StyledPreview monomer={previewItem} top={previewStyle?.top || ''} />
+      )}
+    </GroupContainer>
+  );
+};
+export { MonomerGroup };

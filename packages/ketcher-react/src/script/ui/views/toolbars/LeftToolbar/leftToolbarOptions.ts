@@ -1,30 +1,24 @@
-import { bondCommon, bondQuery, bondSpecial, bondStereo } from './Bond/options'
-import { makeItems } from '../ToolbarGroupItem/utils'
-import { ToolbarItem } from '../toolbar.types'
+import { bondCommon, bondQuery, bondSpecial, bondStereo } from './Bond/options';
+import { makeItems } from '../ToolbarGroupItem/utils';
+import { ToolbarItem } from '../toolbar.types';
 
 const rGroupOptions: ToolbarItem[] = makeItems([
   'rgroup-label',
   'rgroup-fragment',
-  'rgroup-attpoints'
-])
+  'rgroup-attpoints',
+]);
 
 const shapeOptions: ToolbarItem[] = makeItems([
   'shape-ellipse',
   'shape-rectangle',
-  'shape-line'
-])
-
-const transformOptions: ToolbarItem[] = makeItems([
-  'transform-rotate',
-  'transform-flip-h',
-  'transform-flip-v'
-])
+  'shape-line',
+]);
 
 const selectOptions: ToolbarItem[] = makeItems([
   'select-rectangle',
   'select-lasso',
-  'select-fragment'
-])
+  'select-fragment',
+]);
 
 const arrowsOptions: ToolbarItem[] = makeItems([
   'reaction-arrow-open-angle',
@@ -43,14 +37,14 @@ const arrowsOptions: ToolbarItem[] = makeItems([
   'reaction-arrow-elliptical-arc-arrow-filled-bow',
   'reaction-arrow-elliptical-arc-arrow-filled-triangle',
   'reaction-arrow-elliptical-arc-arrow-open-angle',
-  'reaction-arrow-elliptical-arc-arrow-open-half-angle'
-])
+  'reaction-arrow-elliptical-arc-arrow-open-half-angle',
+]);
 
 const mappingOptions: ToolbarItem[] = makeItems([
   'reaction-map',
   'reaction-unmap',
-  'reaction-automap'
-])
+  'reaction-automap',
+]);
 
 export {
   rGroupOptions,
@@ -59,8 +53,7 @@ export {
   bondSpecial,
   bondStereo,
   shapeOptions,
-  transformOptions,
   selectOptions,
   arrowsOptions,
-  mappingOptions
-}
+  mappingOptions,
+};

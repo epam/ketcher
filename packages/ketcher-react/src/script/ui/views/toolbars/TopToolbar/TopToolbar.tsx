@@ -14,57 +14,57 @@
  * limitations under the License.
  ***************************************************************************/
 
-import styled from '@emotion/styled'
+import styled from '@emotion/styled';
 
-import { useResizeObserver } from 'src/hooks'
-import { FileControls } from './FileControls'
-import { ClipboardControls } from './ClipboardControls'
-import { UndoRedo } from './UndoRedo'
-import { ZoomControls } from './ZoomControls'
+import { useResizeObserver } from 'src/hooks';
+import { FileControls } from './FileControls';
+import { ClipboardControls } from './ClipboardControls';
+import { UndoRedo } from './UndoRedo';
+import { ZoomControls } from './ZoomControls';
 
-import { SystemControls } from './SystemControls'
-import { IconButton } from './IconButton'
-import { ExternalFuncControls } from './ExternalFuncControls'
-import { Divider } from './Divider'
+import { SystemControls } from './SystemControls';
+import { ExternalFuncControls } from './ExternalFuncControls';
+import { Divider } from './Divider';
+import { TopToolbarIconButton } from './TopToolbarIconButton';
 
-type VoidFunction = () => void
+type VoidFunction = () => void;
 
 export interface PanelProps {
-  className: string
-  disabledButtons: string[]
-  indigoVerification: boolean
-  hiddenButtons: string[]
-  shortcuts: { [key in string]: string }
-  onClear: VoidFunction
-  onFileOpen: VoidFunction
-  onSave: VoidFunction
-  onUndo: VoidFunction
-  onRedo: VoidFunction
-  onCopy: VoidFunction
-  onCopyMol: VoidFunction
-  onCopyKet: VoidFunction
-  onCopyImage: VoidFunction
-  onCut: VoidFunction
-  onPaste: VoidFunction
-  currentZoom: number | undefined
-  onZoom: (zoom: number) => void
-  onZoomIn: VoidFunction
-  onZoomOut: VoidFunction
-  onSettingsOpen: VoidFunction
-  onLayout: VoidFunction
-  onClean: VoidFunction
-  onAromatize: VoidFunction
-  onDearomatize: VoidFunction
-  onCalculate: VoidFunction
-  onCheck: VoidFunction
-  onAnalyse: VoidFunction
-  onMiew: VoidFunction
-  onFullscreen: VoidFunction
-  onAbout: VoidFunction
-  onHelp: VoidFunction
+  className: string;
+  disabledButtons: string[];
+  indigoVerification: boolean;
+  hiddenButtons: string[];
+  shortcuts: { [key in string]: string };
+  onClear: VoidFunction;
+  onFileOpen: VoidFunction;
+  onSave: VoidFunction;
+  onUndo: VoidFunction;
+  onRedo: VoidFunction;
+  onCopy: VoidFunction;
+  onCopyMol: VoidFunction;
+  onCopyKet: VoidFunction;
+  onCopyImage: VoidFunction;
+  onCut: VoidFunction;
+  onPaste: VoidFunction;
+  currentZoom: number | undefined;
+  onZoom: (zoom: number) => void;
+  onZoomIn: VoidFunction;
+  onZoomOut: VoidFunction;
+  onSettingsOpen: VoidFunction;
+  onLayout: VoidFunction;
+  onClean: VoidFunction;
+  onAromatize: VoidFunction;
+  onDearomatize: VoidFunction;
+  onCalculate: VoidFunction;
+  onCheck: VoidFunction;
+  onAnalyse: VoidFunction;
+  onMiew: VoidFunction;
+  onFullscreen: VoidFunction;
+  onAbout: VoidFunction;
+  onHelp: VoidFunction;
 }
 
-const collapseLimit = 650
+const collapseLimit = 650;
 
 const ControlsPanel = styled('div')`
   display: flex;
@@ -72,7 +72,9 @@ const ControlsPanel = styled('div')`
   align-items: center;
   gap: 0px;
   height: 36px;
-  padding: 0px 8px;
+  padding: 0px 22px;
+  background-color: #ffffff;
+  box-shadow: 0px 2px 5px rgba(103, 104, 132, 0.15);
 
   .group {
     display: flex;
@@ -86,8 +88,8 @@ const ControlsPanel = styled('div')`
 
   @media only screen and (min-width: 1024px) {
     height: 40px;
-    gap: 4px;
-
+    gap: 0px;
+    padding-bottom: 0;
     .group {
       gap: 4px;
     }
@@ -97,7 +99,7 @@ const ControlsPanel = styled('div')`
     height: 64px;
     gap: 12px;
   }
-`
+`;
 
 export const TopToolbar = ({
   className,
@@ -131,13 +133,13 @@ export const TopToolbar = ({
   onMiew,
   onFullscreen,
   onAbout,
-  onHelp
+  onHelp,
 }: PanelProps) => {
-  const { ref: resizeRef, width = 50 } = useResizeObserver<HTMLDivElement>()
+  const { ref: resizeRef, width = 50 } = useResizeObserver<HTMLDivElement>();
 
   return (
     <ControlsPanel className={className} ref={resizeRef}>
-      <IconButton
+      <TopToolbarIconButton
         title="Clear Canvas"
         onClick={onClear}
         iconName="clear"
@@ -185,7 +187,7 @@ export const TopToolbar = ({
       />
       <SystemControls
         onHistoryClick={() => {
-          console.log('History button clicked') // @TODO Implement handler when History log is ready
+          console.log('History button clicked'); // @TODO Implement handler when History log is ready
         }}
         onSettingsOpen={onSettingsOpen}
         onFullscreen={onFullscreen}
@@ -207,5 +209,5 @@ export const TopToolbar = ({
         />
       )}
     </ControlsPanel>
-  )
-}
+  );
+};

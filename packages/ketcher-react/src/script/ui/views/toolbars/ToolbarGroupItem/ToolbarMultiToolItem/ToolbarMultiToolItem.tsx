@@ -17,43 +17,43 @@
 import {
   ActionButton,
   ActionButtonCallProps,
-  ActionButtonProps
-} from '../ActionButton'
-import { GroupDescriptor, MultiToolVariant } from './variants/variants.types'
-import { ToolbarItem, ToolbarItemVariant } from '../../toolbar.types'
-import action, { UiAction, UiActionAction } from '../../../../action'
+  ActionButtonProps,
+} from '../ActionButton';
+import { GroupDescriptor, MultiToolVariant } from './variants/variants.types';
+import { ToolbarItem, ToolbarItemVariant } from '../../toolbar.types';
+import action, { UiAction, UiActionAction } from '../../../../action';
 
-import { useRef } from 'react'
-import clsx from 'clsx'
-import Icon from '../../../../component/view/icon'
-import { Portal } from '../../../../Portal'
-import { chooseMultiTool } from './variants/chooseMultiTool'
-import classes from './ToolbarMultiToolItem.module.less'
-import { usePortalOpening } from './usePortalOpening'
-import { usePortalStyle } from './usePortalStyle'
-import { SettingsManager } from '../../../../utils/settingsManager'
+import { useRef } from 'react';
+import clsx from 'clsx';
+import { Portal } from '../../../../Portal';
+import { chooseMultiTool } from './variants/chooseMultiTool';
+import classes from './ToolbarMultiToolItem.module.less';
+import { usePortalOpening } from './usePortalOpening';
+import { usePortalStyle } from './usePortalStyle';
+import { SettingsManager } from '../../../../utils/settingsManager';
+import { getIconName, Icon } from 'components';
 
 interface ToolbarMultiToolItemProps {
-  id: ToolbarItemVariant
-  options: ToolbarItem[]
-  groups?: GroupDescriptor[]
-  variant?: MultiToolVariant
+  id: ToolbarItemVariant;
+  options: ToolbarItem[];
+  groups?: GroupDescriptor[];
+  variant?: MultiToolVariant;
   status: {
-    [key in string]?: UiAction
-  }
-  opened: string | null
-  disableableButtons: string[]
-  indigoVerification: boolean
-  className?: string
-  vertical?: boolean
+    [key in string]?: UiAction;
+  };
+  opened: string | null;
+  disableableButtons: string[];
+  indigoVerification: boolean;
+  className?: string;
+  vertical?: boolean;
 }
 
 interface ToolbarMultiToolItemCallProps {
-  onAction: (action: UiActionAction) => void
-  onOpen: (menuName: string, isSelected: boolean) => void
+  onAction: (action: UiActionAction) => void;
+  onOpen: (menuName: string, isSelected: boolean) => void;
 }
 
-type Props = ToolbarMultiToolItemProps & ToolbarMultiToolItemCallProps
+type Props = ToolbarMultiToolItemProps & ToolbarMultiToolItemCallProps;
 
 const ToolbarMultiToolItem = (props: Props) => {
   const {
@@ -68,54 +68,58 @@ const ToolbarMultiToolItem = (props: Props) => {
     className,
     vertical,
     onAction,
-    onOpen
-  } = props
+    onOpen,
+  } = props;
 
-  const ref = useRef<HTMLDivElement>(null)
-  const [isOpen] = usePortalOpening([id, opened, options])
-  const [portalStyle] = usePortalStyle([ref, isOpen])
+  const ref = useRef<HTMLDivElement>(null);
+  const [isOpen] = usePortalOpening([id, opened, options]);
+  const [portalStyle] = usePortalStyle([ref, isOpen]);
 
-  let selected = false
-  let currentId = id
+  let selected = false;
+  let currentId = id;
 
   const selectedTool = options.find(
-    (toolbarItem) => status[toolbarItem.id]?.selected
-  )
+    (toolbarItem) => status[toolbarItem.id]?.selected,
+  );
   if (selectedTool) {
-    currentId = selectedTool.id
-    selected = true
+    currentId = selectedTool.id;
+    selected = true;
   }
 
-  const currentStatus = status[currentId]
+  const currentStatus = status[currentId];
   // todo: #type find out real type, possible GetActionState is no acceptable here
   // and check this type convert is redundant
-  selected = selected || Boolean(currentStatus?.selected)
+  selected = selected || Boolean(currentStatus?.selected);
 
   const allInnerItemsHidden: boolean = options.every(
-    (option) => status[option.id]?.hidden
-  )
+    (option) => status[option.id]?.hidden,
+  );
 
-  const displayMultiToolItem = !(allInnerItemsHidden || currentStatus?.hidden)
+  const displayMultiToolItem = !(allInnerItemsHidden || currentStatus?.hidden);
 
   if (!currentStatus && options.length) {
-    const savedSelectionTool = SettingsManager.selectionTool
+    const savedSelectionTool = SettingsManager.selectionTool;
     const savedSelectionToolId =
       savedSelectionTool &&
-      `${savedSelectionTool.tool}-${savedSelectionTool.opts}`
+      `${savedSelectionTool.tool}-${savedSelectionTool.opts}`;
     currentId =
       savedSelectionTool &&
       savedSelectionToolId &&
       options.filter(
         (option) =>
-          !status[option.id]?.hidden && option.id === savedSelectionToolId
-      )[0]?.id
+          !status[option.id]?.hidden && option.id === savedSelectionToolId,
+      )[0]?.id;
 
     if (!currentId) {
       currentId =
         options.filter((option) => !status[option.id]?.hidden)[0]?.id ||
-        options[0].id
+        options[0].id;
     }
   }
+  const onOpenOptions = () => {
+    // TODO: same as #type above
+    onOpen(id, Boolean(currentStatus?.selected));
+  };
 
   const actionButtonProps: Omit<
     ActionButtonProps & ActionButtonCallProps,
@@ -123,22 +127,17 @@ const ToolbarMultiToolItem = (props: Props) => {
   > = {
     disableableButtons,
     indigoVerification,
-    onAction: selected ? () => onOpenOptions() : onAction
-  }
+    onAction: selected ? () => onOpenOptions() : onAction,
+  };
 
-  const onOpenOptions = () => {
-    // todo: same as #type above
-    onOpen(id, Boolean(currentStatus?.selected))
-  }
-
-  const [Component, portalClassName] = chooseMultiTool(variant)
-
-  return displayMultiToolItem ? (
+  const [Component, portalClassName] = chooseMultiTool(variant);
+  const iconName = getIconName(currentId);
+  return displayMultiToolItem && iconName ? (
     <div ref={ref} className={classes.root}>
       <ActionButton
         {...actionButtonProps}
         className={className}
-        name={currentId}
+        name={iconName}
         action={action[currentId]}
         status={currentStatus as ActionButtonProps['status']}
         selected={selected}
@@ -159,7 +158,7 @@ const ToolbarMultiToolItem = (props: Props) => {
           className={clsx(
             classes.portal,
             vertical && classes['portal-vertical'],
-            portalClassName
+            portalClassName,
           )}
           style={portalStyle}
         >
@@ -174,8 +173,8 @@ const ToolbarMultiToolItem = (props: Props) => {
         </Portal>
       ) : null}
     </div>
-  ) : null
-}
+  ) : null;
+};
 
-export type { ToolbarMultiToolItemProps, ToolbarMultiToolItemCallProps }
-export { ToolbarMultiToolItem }
+export type { ToolbarMultiToolItemProps, ToolbarMultiToolItemCallProps };
+export { ToolbarMultiToolItem };

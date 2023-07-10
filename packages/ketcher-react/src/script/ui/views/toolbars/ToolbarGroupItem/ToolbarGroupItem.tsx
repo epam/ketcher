@@ -14,29 +14,30 @@
  * limitations under the License.
  ***************************************************************************/
 
-import action, { UiAction, UiActionAction } from '../../../action'
+import action, { UiAction, UiActionAction } from '../../../action';
 
-import { ActionButton, ActionButtonProps } from './ActionButton'
-import { ToolbarItem } from '../toolbar.types'
-import { ToolbarMultiToolItem } from './ToolbarMultiToolItem'
+import { ActionButton, ActionButtonProps } from './ActionButton';
+import { ToolbarItem } from '../toolbar.types';
+import { ToolbarMultiToolItem } from './ToolbarMultiToolItem';
+import { getIconName } from 'components';
 
 interface ToolbarGroupItemProps extends ToolbarItem {
   status: {
-    [key in string]?: UiAction
-  }
-  opened: string | null
-  disableableButtons: string[]
-  indigoVerification: boolean
-  className?: string
-  vertical?: boolean
+    [key in string]?: UiAction;
+  };
+  opened: string | null;
+  disableableButtons: string[];
+  indigoVerification: boolean;
+  className?: string;
+  vertical?: boolean;
 }
 
 interface ToolbarGroupItemCallProps {
-  onAction: (action: UiActionAction) => void
-  onOpen: (menuName: string, isSelected: boolean) => void
+  onAction: (action: UiActionAction) => void;
+  onOpen: (menuName: string, isSelected: boolean) => void;
 }
 
-type Props = ToolbarGroupItemProps & ToolbarGroupItemCallProps
+type Props = ToolbarGroupItemProps & ToolbarGroupItemCallProps;
 
 const ToolbarGroupItem = (props: Props) => {
   const {
@@ -49,22 +50,25 @@ const ToolbarGroupItem = (props: Props) => {
     disableableButtons,
     vertical,
     onAction,
-    onOpen
-  } = props
+    onOpen,
+  } = props;
 
   if (!options?.length) {
+    const iconName = getIconName(id);
     return (
-      <ActionButton
-        className={className}
-        name={id}
-        action={action[id]}
-        status={status[id] as ActionButtonProps['status']}
-        selected={!!status[id]?.selected}
-        indigoVerification={indigoVerification}
-        disableableButtons={disableableButtons}
-        onAction={onAction}
-      />
-    )
+      iconName && (
+        <ActionButton
+          className={className}
+          name={iconName}
+          action={action[id]}
+          status={status[id] as ActionButtonProps['status']}
+          selected={!!status[id]?.selected}
+          indigoVerification={indigoVerification}
+          disableableButtons={disableableButtons}
+          onAction={onAction}
+        />
+      )
+    );
   }
 
   return (
@@ -80,8 +84,8 @@ const ToolbarGroupItem = (props: Props) => {
       onOpen={onOpen}
       vertical={vertical}
     />
-  )
-}
+  );
+};
 
-export type { ToolbarGroupItemProps, ToolbarGroupItemCallProps }
-export { ToolbarGroupItem }
+export type { ToolbarGroupItemProps, ToolbarGroupItemCallProps };
+export { ToolbarGroupItem };

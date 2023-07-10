@@ -14,14 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { BaseCallProps, BaseProps } from '../../../modal.types'
-import Form, { Field } from '../../../../../component/form/form/form'
-import { Dialog } from '../../../../components'
-import classes from './Automap.module.less'
-import Select from '../../../../../component/form/Select/Select'
-import { getSelectOptionsFromSchema } from '../../../../../utils'
+import { BaseCallProps, BaseProps } from '../../../modal.types';
+import Form, { Field } from '../../../../../component/form/form/form';
+import { Dialog } from '../../../../components';
+import classes from './Automap.module.less';
+import Select from '../../../../../component/form/Select/Select';
+import { getSelectOptionsFromSchema } from '../../../../../utils';
 
-type Props = BaseProps & BaseCallProps
+type Props = BaseProps & BaseCallProps;
 
 export const automapSchema = {
   title: 'Reaction Auto-Mapping',
@@ -32,13 +32,13 @@ export const automapSchema = {
       title: 'Mode',
       enum: ['discard', 'keep', 'alter', 'clear'],
       enumNames: ['Discard', 'Keep', 'Alter', 'Clear'],
-      default: 'discard'
-    }
-  }
-}
+      default: 'discard',
+    },
+  },
+};
 
 const Automap = (props: Props) => {
-  const { formState, ...rest } = props
+  const { formState, ...rest } = props;
   return (
     <Dialog
       title="Reaction Auto-Mapping"
@@ -59,7 +59,7 @@ const Automap = (props: Props) => {
         />
       </Form>
     </Dialog>
-  )
-}
+  );
+};
 
-export default Automap
+export default Automap;

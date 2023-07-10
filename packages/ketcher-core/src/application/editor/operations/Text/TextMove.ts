@@ -14,48 +14,59 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { BaseOperation } from '../base'
-import { OperationType } from '../OperationType'
-import { ReStruct } from '../../../render'
-import { Scale } from 'domain/helpers'
+import { BaseOperation } from '../base';
+import { OperationType } from '../OperationType';
+import { ReStruct } from '../../../render';
+import { Scale } from 'domain/helpers';
 
 interface TextMoveData {
-  id: any
-  d: any
-  noinvalidate?: boolean
+  id: any;
+  d: any;
+  noinvalidate?: boolean;
 }
 
 export class TextMove extends BaseOperation {
-  data: TextMoveData
+  data: TextMoveData;
 
   constructor(id: any, d: any, noinvalidate?: boolean) {
-    super(OperationType.TEXT_MOVE)
-    this.data = { id, d, noinvalidate }
+    super(OperationType.TEXT_MOVE);
+    this.data = { id, d, noinvalidate };
   }
 
   execute(restruct: ReStruct): void {
-    const struct = restruct.molecule
-    const id = this.data.id
-    const difference = this.data.d
-    const item = struct.texts.get(id)
+    const struct = restruct.molecule;
+    const id = this.data.id;
+    const difference = this.data.d;
+    const item = struct.texts.get(id);
+    const renderItem = restruct.texts.get(id);
 
-    item?.position?.add_(difference)
-    restruct.texts
-      .get(id)
-      ?.visel.translate(Scale.obj2scaled(difference, restruct.render.options))
+    if (!item || !renderItem) {
+      return;
+    }
 
-    this.data.d = difference.negated()
+    item.position.add_(difference);
+    item.setPos(renderItem.getReferencePoints());
+
+    renderItem.visel.translate(
+      Scale.obj2scaled(difference, restruct.render.options),
+    );
+
+    this.data.d = difference.negated();
 
     if (!this.data.noinvalidate) {
-      BaseOperation.invalidateItem(restruct, 'texts', id, 1)
+      BaseOperation.invalidateItem(restruct, 'texts', id, 1);
     }
   }
 
   invert(): BaseOperation {
-    const move = new TextMove(this.data.id, this.data.d, this.data.noinvalidate)
+    const move = new TextMove(
+      this.data.id,
+      this.data.d,
+      this.data.noinvalidate,
+    );
 
-    move.data = this.data
+    move.data = this.data;
 
-    return move
+    return move;
   }
 }

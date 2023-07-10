@@ -14,19 +14,19 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Form, { SelectOneOf } from '../../component/form/form/form'
-import { connect } from 'react-redux'
-import { sgroupMap as schemes } from '../../data/schema/struct-schema'
-import { Dialog } from '../../views/components'
-import SDataFieldset from './SDataFieldset'
-import classes from './sgroup.module.less'
-import SGroupFieldset from './SGroupFieldset'
-import { useMemo } from 'react'
+import Form, { SelectOneOf } from '../../component/form/form/form';
+import { connect } from 'react-redux';
+import { sgroupMap as schemes } from '../../data/schema/struct-schema';
+import { Dialog } from '../../views/components';
+import SDataFieldset from './SDataFieldset';
+import classes from './sgroup.module.less';
+import SGroupFieldset from './SGroupFieldset';
+import { useMemo } from 'react';
 
 function Sgroup({ formState, ...props }) {
-  const { result, valid } = formState
+  const { result, valid } = formState;
 
-  const type = result.type
+  const type = result.type;
 
   const serialize = useMemo(
     () =>
@@ -37,11 +37,11 @@ function Sgroup({ formState, ...props }) {
             fieldValue:
               typeof result.fieldValue === 'string'
                 ? result.fieldValue.trim()
-                : result.fieldValue
+                : result.fieldValue,
           }
         : {},
-    [result.context, result.fieldName, result.fieldValue, type]
-  )
+    [result.context, result.fieldName, result.fieldValue, type],
+  );
 
   return (
     <Dialog
@@ -69,7 +69,7 @@ function Sgroup({ formState, ...props }) {
         )}
       </Form>
     </Dialog>
-  )
+  );
 }
 
-export default connect((store) => ({ formState: store.modal.form }))(Sgroup)
+export default connect((store) => ({ formState: store.modal.form }))(Sgroup);

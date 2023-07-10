@@ -14,6 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
+// TODO add typings for Indigo standalone object
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type IndigoStandalone = any;
+
 export const enum Command {
   Info,
   Convert,
@@ -26,7 +30,7 @@ export const enum Command {
   Check,
   Calculate,
   GenerateImageAsBase64,
-  GenerateInchIKey
+  GenerateInchIKey,
 }
 
 export const enum WorkerEvent {
@@ -41,7 +45,7 @@ export const enum WorkerEvent {
   Check = 'check',
   Calculate = 'calculate',
   GenerateImageAsBase64 = 'generateImageAsBase64',
-  GenerateInchIKey = 'generateInchIKey'
+  GenerateInchIKey = 'generateInchIKey',
 }
 
 export enum SupportedFormat {
@@ -54,31 +58,31 @@ export enum SupportedFormat {
   InChIAuxInfo = 'inchi-aux',
   Ket = 'ket',
   CDX = 'cdx',
-  CDXML = 'cdxml'
+  CDXML = 'cdxml',
 }
 
 export interface WithStruct {
-  struct: string
+  struct: string;
 }
 
 export interface WithFormat {
-  format: SupportedFormat
+  format: SupportedFormat;
 }
 
 export interface WithSelection {
-  selectedAtoms: Array<number>
+  selectedAtoms: Array<number>;
 }
 
 export interface CommandOptions {
-  [key: string]: string | number | boolean | undefined
+  [key: string]: string | number | boolean | undefined;
 }
 
 export interface CommandData {
-  options?: CommandOptions
+  options?: CommandOptions;
 }
 
 export interface CheckCommandData extends CommandData, WithStruct {
-  types: Array<string>
+  types: Array<string>;
 }
 
 export interface ConvertCommandData
@@ -89,8 +93,8 @@ export interface ConvertCommandData
 export interface GenerateInchIKeyCommandData extends CommandData, WithStruct {}
 
 export interface GenerateImageCommandData extends CommandData, WithStruct {
-  outputFormat: 'png' | 'svg'
-  backgroundColor?: string
+  outputFormat: 'png' | 'svg';
+  backgroundColor?: string;
 }
 
 export interface LayoutCommandData
@@ -125,29 +129,46 @@ export type CalculateProps =
   | 'monoisotopic-mass'
   | 'gross'
   | 'gross-formula'
-  | 'mass-composition'
+  | 'mass-composition';
 
 export interface CalculateCommandData
   extends CommandData,
     WithStruct,
     WithSelection {
-  properties: Array<string>
+  properties: Array<string>;
 }
 
 export interface AutomapCommandData
   extends CommandData,
     WithStruct,
     WithFormat {
-  mode: string
+  mode: string;
 }
 
-export interface OutputMessage<T> {
-  type?: Command
-  hasError?: boolean
-  payload?: T
-  error?: string
+interface OutputMessageBase {
+  type?: Command;
+  hasError?: boolean;
 }
+
+interface OutputMessageWithError extends OutputMessageBase {
+  hasError: true;
+  error: string;
+}
+
+interface OutputMessageWithoutError<T> extends OutputMessageBase {
+  hasError?: false;
+  payload: T;
+}
+
+export type OutputMessage<T> =
+  | OutputMessageWithError
+  | OutputMessageWithoutError<T>;
+
 export interface InputMessage<T> {
-  type: Command
-  data: T
+  type: Command;
+  data: T;
+}
+
+export interface OutputMessageWrapper<T = string> {
+  data: OutputMessage<T>;
 }

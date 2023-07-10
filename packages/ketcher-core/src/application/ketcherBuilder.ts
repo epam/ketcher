@@ -17,13 +17,13 @@
 import {
   StructService,
   StructServiceOptions,
-  StructServiceProvider
-} from 'domain/services'
+  StructServiceProvider,
+} from 'domain/services';
 
-import { Editor } from 'application/editor'
-import { FormatterFactory } from 'application/formatters'
-import { Ketcher } from './ketcher'
-import assert from 'assert'
+import { Editor } from 'application/editor';
+import { FormatterFactory } from 'application/formatters';
+import { Ketcher } from './ketcher';
+import assert from 'assert';
 
 export const DefaultStructServiceOptions = {
   'smart-layout': true,
@@ -32,36 +32,36 @@ export const DefaultStructServiceOptions = {
   'gross-formula-add-rsites': true,
   'aromatize-skip-superatoms': true,
   'dearomatize-on-load': false,
-  'ignore-no-chiral-flag': false
-}
+  'ignore-no-chiral-flag': false,
+};
 
 export class KetcherBuilder {
-  #structServiceProvider?: StructServiceProvider
+  #structServiceProvider?: StructServiceProvider;
 
   withStructServiceProvider(
-    structServiceProvider: StructServiceProvider
+    structServiceProvider: StructServiceProvider,
   ): KetcherBuilder {
-    this.#structServiceProvider = structServiceProvider
-    return this
+    this.#structServiceProvider = structServiceProvider;
+    return this;
   }
 
   build(editor: Editor, serviceOptions?: StructServiceOptions): Ketcher {
-    assert(editor != null)
-    assert(this.#structServiceProvider != null)
+    assert(editor != null);
+    assert(this.#structServiceProvider != null);
 
     const mergedServiceOptions: StructServiceOptions = {
       ...DefaultStructServiceOptions,
-      ...serviceOptions
-    }
+      ...serviceOptions,
+    };
     const structService: StructService =
-      this.#structServiceProvider!.createStructService(mergedServiceOptions)
+      this.#structServiceProvider!.createStructService(mergedServiceOptions);
     const ketcher = new Ketcher(
       editor,
       structService,
-      new FormatterFactory(structService)
-    )
-    ketcher[this.#structServiceProvider.mode] = true
+      new FormatterFactory(structService),
+    );
+    ketcher[this.#structServiceProvider.mode] = true;
 
-    return ketcher
+    return ketcher;
   }
 }

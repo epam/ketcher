@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-export const basicAtoms = ['H', 'C', 'N', 'O', 'S', 'P', 'F', 'Cl', 'Br', 'I']
+export const basicAtoms = ['H', 'C', 'N', 'O', 'S', 'P', 'F', 'Cl', 'Br', 'I'];
 
 export const atomCuts = {
   H: 'h',
@@ -36,8 +36,8 @@ export const atomCuts = {
   Na: 'Shift+n',
   X: 'x',
   D: 'd',
-  B: 'Shift+b'
-}
+  B: 'Shift+b',
+};
 
 export default Object.keys(atomCuts).reduce((res, label) => {
   res[`atom-${label.toLowerCase()}`] = {
@@ -45,8 +45,8 @@ export default Object.keys(atomCuts).reduce((res, label) => {
     shortcut: atomCuts[label],
     action: {
       tool: 'atom',
-      opts: { label }
-    }
-  }
-  return res
-}, {})
+      opts: { label },
+    },
+  };
+  return res;
+}, {});

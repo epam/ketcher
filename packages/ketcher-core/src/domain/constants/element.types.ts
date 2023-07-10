@@ -132,20 +132,20 @@ export type ElementLabel =
   | 'Mc'
   | 'Lv'
   | 'Ts'
-  | 'Og'
+  | 'Og';
 
-export type Period = 1 | 2 | 3 | 4 | 5 | 6 | 7
-export type Group = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8
+export type Period = 1 | 2 | 3 | 4 | 5 | 6 | 7;
+export type Group = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 
 export interface Element {
-  number: number
-  label: ElementLabel
-  period: Period
-  group: Group
-  title: string
-  state?: string
-  origin: string
-  type?: string
-  mass: number
-  leftH?: boolean
+  number: number;
+  label: ElementLabel;
+  period: Period;
+  group: Group;
+  title: string;
+  state?: string;
+  origin: string;
+  type?: string;
+  mass: number;
+  leftH?: boolean;
 }

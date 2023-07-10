@@ -14,15 +14,15 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { cloneDeepWith, cloneDeep } from 'lodash'
+import { cloneDeepWith, cloneDeep } from 'lodash';
 
 const customizer = (value: any) => {
   if (typeof value === 'object' && value.y) {
-    const clonedValue = cloneDeep(value)
-    clonedValue.y = -clonedValue.y
-    return clonedValue
+    const clonedValue = cloneDeep(value);
+    clonedValue.y = -clonedValue.y;
+    return clonedValue;
   }
-}
+};
 
 export const getNodeWithInvertedYCoord = (node: object) =>
-  cloneDeepWith(node, customizer)
+  cloneDeepWith(node, customizer);

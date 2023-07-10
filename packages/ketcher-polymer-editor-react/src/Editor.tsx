@@ -13,102 +13,111 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+import { Provider } from 'react-redux';
+import { useEffect, useRef } from 'react';
+import { Global, ThemeProvider } from '@emotion/react';
+import { createTheme } from '@mui/material/styles';
+import { merge } from 'lodash';
+import { SdfSerializer } from 'ketcher-core';
+import monomersData from './data/monomers.sdf';
 
-import { Provider } from 'react-redux'
-import { useEffect, useRef } from 'react'
-import { Global, ThemeProvider } from '@emotion/react'
-import { createTheme } from '@mui/material/styles'
-import { merge } from 'lodash'
-
-import { store } from 'state'
+import { store } from 'state';
 import {
   defaultTheme,
   muiOverrides,
   EditorTheme,
-  MergedThemeType
-} from 'theming/defaultTheme'
-import { getGlobalStyles } from 'theming/globalStyles'
-import { Layout } from 'components/Layout'
-import { MonomerLibrary } from 'components/monomerLibrary'
-import { NotationInput } from 'components/notationInput'
-import { Menu } from 'components/menu'
-import { selectEditorActiveTool, selectTool } from 'state/common'
-import { useAppDispatch, useAppSelector } from 'hooks'
-import { Logo } from 'components/Logo'
-import { openModal } from 'state/modal'
+  MergedThemeType,
+} from 'theming/defaultTheme';
+import { getGlobalStyles } from 'theming/globalStyles';
+import { Layout } from 'components/Layout';
+import { MonomerLibrary } from 'components/monomerLibrary';
+import { Menu } from 'components/menu';
+import { selectEditorActiveTool, selectTool } from 'state/common';
+import { loadMonomerLibrary } from 'state/library';
+import { useAppDispatch, useAppSelector } from 'hooks';
+import { openModal } from 'state/modal';
 import {
   modalComponentList,
-  ModalContainer
-} from 'components/modal/modalContainer'
-import { FullscreenButton } from 'components/FullscreenButton'
+  ModalContainer,
+} from 'components/modal/modalContainer';
+import { FullscreenButton } from 'components/FullscreenButton';
+import { DeepPartial } from './types';
+import { EditorClassName } from './constants';
 
-const muiTheme = createTheme(muiOverrides)
-
-type DeepPartial<T> = {
-  [P in keyof T]?: DeepPartial<T[P]>
-}
+const muiTheme = createTheme(muiOverrides);
 
 interface EditorProps {
-  onInit?: () => void
-  theme?: DeepPartial<EditorTheme>
+  onInit?: () => void;
+  theme?: DeepPartial<EditorTheme>;
 }
 
-function Editor({ onInit, theme }: EditorProps) {
-  const rootElRef = useRef<HTMLDivElement>(null)
-
+function EditorContainer({ onInit, theme }: EditorProps) {
+  const rootElRef = useRef<HTMLDivElement>(null);
   const editorTheme: EditorTheme = theme
     ? merge(defaultTheme, theme)
-    : defaultTheme
+    : defaultTheme;
 
-  const mergedTheme: MergedThemeType = merge(muiTheme, { ketcher: editorTheme })
+  const mergedTheme: MergedThemeType = merge(muiTheme, {
+    ketcher: editorTheme,
+  });
 
   useEffect(() => {
-    onInit?.()
-  }, [onInit])
+    onInit?.();
+  }, [onInit]);
 
   return (
     <Provider store={store}>
       <ThemeProvider theme={mergedTheme}>
         <Global styles={getGlobalStyles} />
-
-        <div ref={rootElRef} className="Ketcher-polymer-editor-root">
-          <Layout>
-            <Layout.Left>
-              <MenuComponent />
-            </Layout.Left>
-
-            <Layout.Top>
-              <NotationInput />
-            </Layout.Top>
-
-            <Layout.Main></Layout.Main>
-
-            <Layout.Right>
-              <MonomerLibrary />
-            </Layout.Right>
-          </Layout>
-
-          <Logo />
-          <FullscreenButton />
-
-          <ModalContainer />
+        <div ref={rootElRef} className={EditorClassName}>
+          <Editor />
         </div>
       </ThemeProvider>
     </Provider>
-  )
+  );
+}
+
+function Editor() {
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    const serializer = new SdfSerializer();
+    const library = serializer.deserialize(monomersData);
+    dispatch(loadMonomerLibrary(library));
+  }, [dispatch]);
+
+  return (
+    <>
+      <Layout>
+        <Layout.Left>
+          <MenuComponent />
+        </Layout.Left>
+
+        <Layout.Main></Layout.Main>
+
+        <Layout.Right>
+          <MonomerLibrary />
+        </Layout.Right>
+      </Layout>
+
+      <FullscreenButton />
+
+      <ModalContainer />
+    </>
+  );
 }
 
 function MenuComponent() {
-  const dispatch = useAppDispatch()
-  const activeTool = useAppSelector(selectEditorActiveTool)
+  const dispatch = useAppDispatch();
+  const activeTool = useAppSelector(selectEditorActiveTool);
 
   const menuItemChanged = (name) => {
     if (modalComponentList[name]) {
-      dispatch(openModal(name))
+      dispatch(openModal(name));
     } else {
-      dispatch(selectTool(name))
+      dispatch(selectTool(name));
     }
-  }
+  };
 
   return (
     <Menu onItemClick={menuItemChanged} activeMenuItem={activeTool}>
@@ -129,17 +138,16 @@ function MenuComponent() {
           <Menu.Item itemId="select-fragment" />
         </Menu.Submenu>
         <Menu.Submenu>
-          <Menu.Item itemId="rectangle" />
-          <Menu.Item itemId="ellipse" />
+          <Menu.Item itemId="shape-rectangle" />
+          <Menu.Item itemId="shape-ellipse" />
         </Menu.Submenu>
         <Menu.Submenu>
-          <Menu.Item itemId="rotate" />
-          <Menu.Item itemId="horizontal-flip" />
-          <Menu.Item itemId="vertical-flip" />
+          <Menu.Item itemId="transform-flip-h" />
+          <Menu.Item itemId="transform-flip-v" />
         </Menu.Submenu>
       </Menu.Group>
       <Menu.Group>
-        <Menu.Item itemId="single-bond" />
+        <Menu.Item itemId="bond-single" />
       </Menu.Group>
       <Menu.Group divider>
         <Menu.Item itemId="bracket" />
@@ -149,7 +157,7 @@ function MenuComponent() {
         <Menu.Item itemId="help" />
       </Menu.Group>
     </Menu>
-  )
+  );
 }
 
-export { Editor }
+export { EditorContainer as Editor };

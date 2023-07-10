@@ -14,9 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { spawn } from 'redux-saga/effects'
-import { watchFetchData } from 'state/common/editorSaga'
+import { spawn } from 'redux-saga/effects';
+import { watchFetchData } from 'state/common/editorSaga';
 
 export function* rootSaga() {
-  yield spawn(watchFetchData)
+  yield spawn(watchFetchData);
 }

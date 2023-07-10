@@ -13,40 +13,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { render, screen } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { render, screen, fireEvent } from '@testing-library/react';
 
-import { OpenOptions } from './OpenOptions'
+import { OpenOptions } from './OpenOptions';
 
 const mockProps = {
   selectClipboard: jest.fn(),
   fileLoadHandler: jest.fn(),
-  errorHandler: jest.fn()
-}
+  errorHandler: jest.fn(),
+};
 
 describe('OpenOptions component', () => {
   it('should render correctly', () => {
     expect(
-      render(withThemeProvider(<OpenOptions {...mockProps} />))
-    ).toMatchSnapshot()
-  })
+      render(withThemeProvider(<OpenOptions {...mockProps} />)),
+    ).toMatchSnapshot();
+  });
   it('should render correctly with passed props', () => {
-    render(withThemeProvider(<OpenOptions {...mockProps} />))
+    render(withThemeProvider(<OpenOptions {...mockProps} />));
 
     expect(
-      screen.getByRole('button', { name: 'Paste from Clipboard' })
-    ).toBeInTheDocument()
+      screen.getByRole('button', { name: 'Paste from Clipboard' }),
+    ).toBeInTheDocument();
     expect(
-      screen.getByRole('button', { name: 'Open from file' })
-    ).toBeInTheDocument()
-    expect(screen.getAllByRole('img').length).toEqual(2)
-  })
+      screen.getByRole('button', { name: 'Open from file' }),
+    ).toBeInTheDocument();
+  });
   it('callback for Paste from Clipboard button should be called after click', () => {
-    render(withThemeProvider(<OpenOptions {...mockProps} />))
-    const button = screen.getByRole('button', { name: 'Paste from Clipboard' })
+    render(withThemeProvider(<OpenOptions {...mockProps} />));
+    const button = screen.getByRole('button', { name: 'Paste from Clipboard' });
 
-    userEvent.click(button)
+    fireEvent.click(button);
 
-    expect(mockProps.selectClipboard).toBeCalled()
-  })
-})
+    expect(mockProps.selectClipboard).toBeCalled();
+  });
+});

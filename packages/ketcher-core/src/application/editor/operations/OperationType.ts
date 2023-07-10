@@ -25,6 +25,8 @@ export const OperationType = Object.freeze({
   BOND_ATTR: 'Set bond attribute',
   BOND_MOVE: 'Move bond',
   LOOP_MOVE: 'Move loop',
+  S_GROUP_ATTACHMENT_POINT_ADD: 'Add attachment point to s-group',
+  S_GROUP_ATTACHMENT_POINT_REMOVE: 'Remove attachment point from s-group',
   S_GROUP_ATOM_ADD: 'Add atom to s-group',
   S_GROUP_ATOM_REMOVE: 'Remove atom from s-group',
   S_GROUP_ATTR: 'Set s-group attribute',
@@ -64,5 +66,5 @@ export const OperationType = Object.freeze({
   TEXT_MOVE: 'Move text',
   ADD_HIGHLIGHT: 'Highlight',
   UPDATE_HIGHLIGHT: 'Update highlight',
-  REMOVE_HIGHLIGHT: 'Remove highlight'
-})
+  REMOVE_HIGHLIGHT: 'Remove highlight',
+});

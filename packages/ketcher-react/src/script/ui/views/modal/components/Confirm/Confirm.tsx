@@ -1,9 +1,9 @@
-import classes from '../toolbox/FG/RemoveFG.module.less'
+import classes from '../toolbox/FG/RemoveFG.module.less';
 
 type ConfirmProps = {
-  onOk: () => void
-  onCancel: () => void
-}
+  onOk: () => void;
+  onCancel: () => void;
+};
 
 export const Confirm = ({ onOk, onCancel }: ConfirmProps) => {
   return (
@@ -28,5 +28,5 @@ export const Confirm = ({ onOk, onCancel }: ConfirmProps) => {
         />
       </footer>
     </div>
-  )
-}
+  );
+};

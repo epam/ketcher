@@ -14,41 +14,42 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React from 'react'
-import { render, screen } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import React from 'react';
+import { fireEvent, render, screen } from '@testing-library/react';
 
-import { Open } from './Open'
+import { Open } from './Open';
 
 const mockProps = {
   isModalOpen: true,
-  onClose: jest.fn()
-}
+  onClose: jest.fn(),
+};
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
-jest.spyOn(React, 'useEffect').mockImplementation(() => {})
+jest.spyOn(React, 'useEffect').mockImplementation(() => {});
 
 describe('Open component', () => {
   it('should render correctly', () => {
-    expect(render(withThemeProvider(<Open {...mockProps} />))).toMatchSnapshot()
-  })
+    expect(
+      render(withThemeProvider(<Open {...mockProps} />)),
+    ).toMatchSnapshot();
+  });
   it('paste from clipboard', () => {
-    const mockTypedText = 'more typed text'
-    render(withThemeProvider(<Open {...mockProps} />))
+    const mockTypedText = 'more typed text';
+    render(withThemeProvider(<Open {...mockProps} />));
     const clipboardButton = screen.getByRole('button', {
-      name: 'Paste from Clipboard'
-    })
-    userEvent.click(clipboardButton)
+      name: 'Paste from Clipboard',
+    });
+    fireEvent.click(clipboardButton);
 
-    const clipboardTextarea = screen.getByRole('textbox')
-    userEvent.type(clipboardTextarea, mockTypedText)
-    expect(clipboardTextarea).toBeInTheDocument()
-    expect(clipboardTextarea).toHaveValue(mockTypedText)
+    const clipboardTextarea = screen.getByRole('textbox');
+    fireEvent.change(clipboardTextarea, { target: { value: mockTypedText } });
+    expect(clipboardTextarea).toBeInTheDocument();
+    expect(clipboardTextarea).toHaveValue(mockTypedText);
 
     const newProjectButton = screen.getByRole('button', {
-      name: 'Open as New Project'
-    })
-    userEvent.click(newProjectButton)
-    expect(mockProps.onClose).toHaveBeenCalled()
-  })
-})
+      name: 'Open as New Project',
+    });
+    fireEvent.click(newProjectButton);
+    expect(mockProps.onClose).toHaveBeenCalled();
+  });
+});

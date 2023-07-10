@@ -14,54 +14,54 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { EditorState, Modifier } from 'draft-js'
+import { EditorState, Modifier } from 'draft-js';
 
-import Icon from '../../../../../component/view/icon'
-import { SpecialSymbolsList } from '../SpecialSymbolsList/SpecialSymbolsList'
-import classes from './SpecialSymbolsButton.module.less'
-import { useState } from 'react'
+import { SpecialSymbolsList } from '../SpecialSymbolsList/SpecialSymbolsList';
+import classes from './SpecialSymbolsButton.module.less';
+import { useState } from 'react';
+import { Icon } from 'components';
 
 const SpecialSymbolsButton = ({ editorState, setEditorState, styles }) => {
-  const [showSpecialSymbols, setShowSpecialSymbols] = useState(false)
+  const [showSpecialSymbols, setShowSpecialSymbols] = useState(false);
 
   const handleClose = (event) => {
-    event.stopPropagation()
-    event.preventDefault()
-    setShowSpecialSymbols(false)
-  }
+    event.stopPropagation();
+    event.preventDefault();
+    setShowSpecialSymbols(false);
+  };
 
   const closeSymbolsList = (event) => {
     if (!event.currentTarget.contains(event.relatedTarget)) {
-      handleClose(event)
+      handleClose(event);
     }
-  }
+  };
 
   const addSymbol = (e, value) => {
-    e.preventDefault()
-    const selection = editorState.getSelection()
-    const contentState = editorState.getCurrentContent()
+    e.preventDefault();
+    const selection = editorState.getSelection();
+    const contentState = editorState.getCurrentContent();
     const nextContentState = Modifier.replaceText(
       contentState,
       selection,
       value,
-      styles
-    )
+      styles,
+    );
     const nextEditorState = EditorState.push(
       editorState,
       nextContentState,
-      'insert-characters'
-    )
-    setEditorState(nextEditorState)
-    setShowSpecialSymbols(false)
-  }
+      'insert-characters',
+    );
+    setEditorState(nextEditorState);
+    setShowSpecialSymbols(false);
+  };
 
   return (
     <div onBlur={closeSymbolsList}>
       <button
         title="symbols"
         onMouseDown={(e) => {
-          e.preventDefault()
-          setShowSpecialSymbols(!showSpecialSymbols)
+          e.preventDefault();
+          setShowSpecialSymbols(!showSpecialSymbols);
         }}
         className={
           showSpecialSymbols ? classes.activeTextButton : classes.textButton
@@ -71,7 +71,7 @@ const SpecialSymbolsButton = ({ editorState, setEditorState, styles }) => {
       </button>
       {showSpecialSymbols && <SpecialSymbolsList select={addSymbol} />}
     </div>
-  )
-}
+  );
+};
 
-export { SpecialSymbolsButton }
+export { SpecialSymbolsButton };

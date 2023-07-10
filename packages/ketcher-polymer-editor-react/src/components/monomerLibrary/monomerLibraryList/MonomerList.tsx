@@ -1,29 +1,60 @@
-import { MonomerGroup } from '../monomerLibraryGroup'
-import { MonomerItemType } from '../monomerLibraryItem'
+/****************************************************************************
+ * Copyright 2021 EPAM Systems
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ***************************************************************************/
+
+import { MonomerGroup } from '../monomerLibraryGroup';
+import { useAppSelector } from 'hooks';
+import { MonomerListContainer } from './styles';
+import { IMonomerListProps } from './types';
+import {
+  selectFilteredMonomers,
+  selectMonomerGroups,
+  selectMonomersInCategory,
+  selectMonomersInFavorites,
+} from 'state/library';
+import { MONOMER_LIBRARY_FAVORITES } from '../../../constants';
+import { MonomerItemType } from '../monomerLibraryItem/types';
 
 export type Group = {
-  groupItems: Array<MonomerItemType>
-  groupTitle?: string
-}
+  groupItems: Array<MonomerItemType>;
+  groupTitle?: string;
+};
 
-export interface MonomerListProps {
-  list: Array<Group>
-  onItemClick: (item) => void
-}
+const MonomerList = ({ onItemClick, libraryName }: IMonomerListProps) => {
+  const monomers = useAppSelector(selectFilteredMonomers);
+  const items =
+    libraryName !== MONOMER_LIBRARY_FAVORITES
+      ? selectMonomersInCategory(monomers, libraryName)
+      : selectMonomersInFavorites(monomers);
 
-export const MonomerList = ({ list, onItemClick }: MonomerListProps) => {
+  const groups = selectMonomerGroups(items);
+
   return (
-    <>
-      {list.map(({ groupTitle, groupItems }, key) => {
+    <MonomerListContainer>
+      {groups.map(({ groupItems, groupTitle }) => {
         return (
           <MonomerGroup
-            key={key}
+            key={groupTitle}
             title={groupTitle}
             items={groupItems}
             onItemClick={onItemClick}
           />
-        )
+        );
       })}
-    </>
-  )
-}
+    </MonomerListContainer>
+  );
+};
+
+export { MonomerList };

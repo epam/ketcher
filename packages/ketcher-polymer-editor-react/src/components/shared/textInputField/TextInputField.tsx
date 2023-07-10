@@ -14,19 +14,19 @@
  * limitations under the License.
  ***************************************************************************/
 
-import styled from '@emotion/styled'
+import styled from '@emotion/styled';
 
 interface Props {
-  value: string
-  id: string
-  onChange: (value: string) => void
-  label?: string
+  value: string;
+  id: string;
+  onChange: (value: string) => void;
+  label?: string;
 }
 
 const Label = styled.label(({ theme }) => ({
   marginRight: '8px',
-  color: theme.ketcher.color.text.secondary
-}))
+  color: theme.ketcher.color.text.secondary,
+}));
 
 const Input = styled.input(({ theme }) => ({
   height: '24px',
@@ -40,13 +40,13 @@ const Input = styled.input(({ theme }) => ({
   letterSpacing: 'normal',
 
   '&:active, &:focus': {
-    color: theme.ketcher.color.input.text.active
+    color: theme.ketcher.color.input.text.active,
   },
 
   '&:hover': {
-    backgroundColor: theme.ketcher.color.input.background.hover
-  }
-}))
+    backgroundColor: theme.ketcher.color.input.background.hover,
+  },
+}));
 
 export const TextInputField = ({
   value,
@@ -56,8 +56,8 @@ export const TextInputField = ({
   ...rest
 }: Props) => {
   const handleChange = (event) => {
-    onChange(event.target.value)
-  }
+    onChange(event.target.value);
+  };
 
   return (
     <>
@@ -70,5 +70,5 @@ export const TextInputField = ({
         {...rest}
       />
     </>
-  )
-}
+  );
+};

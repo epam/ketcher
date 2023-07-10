@@ -14,20 +14,20 @@
  * limitations under the License.
  ***************************************************************************/
 
-import React from 'react'
-import styled from '@emotion/styled'
-import { css } from '@emotion/react'
+import React from 'react';
+import styled from '@emotion/styled';
+import { css } from '@emotion/react';
 
 interface LayoutProps {
-  children: JSX.Element | Array<JSX.Element>
+  children: JSX.Element | Array<JSX.Element>;
 }
 
 const Column = styled.div<{ fullWidth?: boolean }>(({ fullWidth }) => ({
   width: fullWidth ? '100%' : 'fit-content',
   display: 'flex',
   flexDirection: 'column',
-  justifyContent: 'space-between'
-}))
+  justifyContent: 'space-between',
+}));
 
 const RowMain = styled.div(({ theme }) => ({
   height: '100vh',
@@ -38,68 +38,68 @@ const RowMain = styled.div(({ theme }) => ({
   backgroundColor: theme.ketcher.color.background.canvas,
   display: 'flex',
   justifyContent: 'space-between',
-  columnGap: '6px'
-}))
+  columnGap: '6px',
+}));
 
 const Row = styled.div({
   display: 'flex',
-  height: 'fit-content'
-})
+  height: 'fit-content',
+});
 
 const baseLeftRightStyle = css({
   height: '100%',
   width: 'fit-content',
   display: 'flex',
-  flexDirection: 'column'
-})
+  flexDirection: 'column',
+});
 
-const Left = styled.div(baseLeftRightStyle)
+const Left = styled.div(baseLeftRightStyle);
 
-const Right = styled.div(baseLeftRightStyle)
+const Right = styled.div(baseLeftRightStyle);
 
 const Top = styled.div({
   height: 'fit-content',
   width: '100%',
   marginBottom: '6px',
   display: 'flex',
-  justifyContent: 'flex-end'
-})
+  justifyContent: 'flex-end',
+});
 
 const Main = styled.div({
   height: '100%',
-  width: '100%'
-})
+  width: '100%',
+});
 
 const DummyDiv = styled.div({
-  height: '40px'
-})
+  height: '40px',
+});
 
 const DummyDivInRow = styled.div({
   flexBasis: '40px',
   height: '100%',
-  flexShrink: '1'
-})
+  flexShrink: '1',
+});
 
-type LayoutSection = 'Left' | 'Right' | 'Main' | 'Top'
+type LayoutSection = 'Left' | 'Right' | 'Main' | 'Top';
 
 export const Layout = ({ children }: LayoutProps) => {
   const subcomponents: Record<LayoutSection, JSX.Element | null> = {
     Left: null,
     Main: null,
     Right: null,
-    Top: null
-  }
+    Top: null,
+  };
   React.Children.forEach(children, (child) => {
     if (child.type === Left) {
-      subcomponents.Left = child
+      subcomponents.Left = child;
     } else if (child.type === Right) {
-      subcomponents.Right = child
+      subcomponents.Right = child;
     } else if (child.type === Top) {
-      subcomponents.Top = child
+      subcomponents.Top = child;
     } else if (child.type === Main) {
-      subcomponents.Main = child
+      subcomponents.Main = child;
     }
-  })
+  });
 
   return (
     <RowMain>
@@ -117,10 +117,10 @@ export const Layout = ({ children }: LayoutProps) => {
       </Column>
       <Column>{subcomponents.Right}</Column>
     </RowMain>
-  )
-}
+  );
+};
 
-Layout.Left = Left
-Layout.Top = Top
-Layout.Right = Right
-Layout.Main = Main
+Layout.Left = Left;
+Layout.Top = Top;
+Layout.Right = Right;
+Layout.Main = Main;

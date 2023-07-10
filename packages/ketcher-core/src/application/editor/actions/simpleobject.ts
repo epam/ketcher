@@ -17,21 +17,21 @@
 import {
   SimpleObjectAdd,
   SimpleObjectDelete,
-  SimpleObjectResize
-} from '../operations'
+  SimpleObjectResize,
+} from '../operations';
 
-import { Action } from './action'
+import { Action } from './action';
 
 export function fromSimpleObjectDeletion(restruct, id) {
-  const action = new Action()
-  action.addOp(new SimpleObjectDelete(id))
-  return action.perform(restruct)
+  const action = new Action();
+  action.addOp(new SimpleObjectDelete(id));
+  return action.perform(restruct);
 }
 
 export function fromSimpleObjectAddition(restruct, pos, mode, toCircle) {
-  const action = new Action()
-  action.addOp(new SimpleObjectAdd(pos, mode, toCircle))
-  return action.perform(restruct)
+  const action = new Action();
+  action.addOp(new SimpleObjectAdd(pos, mode, toCircle));
+  return action.perform(restruct);
 }
 
 export function fromSimpleObjectResizing(
@@ -40,9 +40,9 @@ export function fromSimpleObjectResizing(
   d,
   current,
   anchor,
-  toCircle
+  toCircle,
 ) {
-  const action = new Action()
-  action.addOp(new SimpleObjectResize(id, d, current, anchor, false, toCircle))
-  return action.perform(restruct)
+  const action = new Action();
+  action.addOp(new SimpleObjectResize(id, d, current, anchor, false, toCircle));
+  return action.perform(restruct);
 }

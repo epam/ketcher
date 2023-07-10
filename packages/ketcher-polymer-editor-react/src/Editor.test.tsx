@@ -14,19 +14,17 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { render, screen } from '@testing-library/react'
-import { Editor } from './Editor'
+import { render, screen } from '@testing-library/react';
+import { Editor } from './Editor';
 
 describe('Editor', () => {
   it('should be rendered correctly', () => {
-    expect(render(<Editor />)).toMatchSnapshot()
-  })
+    expect(render(<Editor />)).toMatchSnapshot();
+  });
 
   it('renders the logo', () => {
-    render(<Editor />)
+    render(<Editor />);
 
-    expect(screen.getByText('Polymer Editor')).toBeVisible()
-    expect(screen.getByText('Ketcher')).toBeVisible()
-    expect(screen.getByText('EPAM')).toBeVisible()
-  })
-})
+    expect(screen.getByText('Library')).toBeVisible();
+  });
+});

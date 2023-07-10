@@ -19,9 +19,9 @@ import {
   KeyboardEvent,
   useEffect,
   useCallback,
-  RefObject
-} from 'react'
-import styled from '@emotion/styled'
+  RefObject,
+} from 'react';
+import styled from '@emotion/styled';
 
 const StyledInput = styled('input')`
   border: 1px solid #cad3dd;
@@ -47,69 +47,69 @@ const StyledInput = styled('input')`
   &::before {
     display: none;
   }
-`
+`;
 
 const onFocusHandler = (event: FocusEvent<HTMLInputElement>) => {
-  const el = event.target
-  el.select()
-}
+  const el = event.target;
+  el.select();
+};
 
 export const updateInputString = (
   zoom: number,
-  inputElement: HTMLInputElement | null
+  inputElement: HTMLInputElement | null,
 ) => {
-  if (!inputElement) return
-  inputElement.value = `${zoom}%`
-}
+  if (!inputElement) return;
+  inputElement.value = `${zoom}%`;
+};
 
 export interface ZoomInputProps {
-  onZoomSubmit: () => void
-  currentZoom: number
-  inputRef: RefObject<HTMLInputElement>
-  shortcuts: { [key in string]: string }
+  onZoomSubmit: () => void;
+  currentZoom: number;
+  inputRef: RefObject<HTMLInputElement>;
+  shortcuts: { [key in string]: string };
 }
 
 export const ZoomInput = ({
   onZoomSubmit,
   currentZoom,
   inputRef,
-  shortcuts
+  shortcuts,
 }: ZoomInputProps) => {
   useEffect(() => {
-    const inputEl = inputRef.current
-    updateInputString(currentZoom, inputEl)
+    const inputEl = inputRef.current;
+    updateInputString(currentZoom, inputEl);
     if (document.activeElement === inputEl) {
-      inputEl?.select()
+      inputEl?.select();
     }
-  }, [currentZoom, inputRef])
+  }, [currentZoom, inputRef]);
 
   const onKeyDown = useCallback(
     (event: KeyboardEvent<HTMLInputElement>) => {
-      const inputEl = inputRef.current
+      const inputEl = inputRef.current;
       if (!inputEl) {
-        return
+        return;
       }
 
       // Prevent bubbling of keyDown events to capture input and Enter, allow bubbling of shortcuts
-      const zoomShortcuts = [shortcuts['zoom-out'], shortcuts['zoom-in']]
+      const zoomShortcuts = [shortcuts['zoom-out'], shortcuts['zoom-in']];
       if (!zoomShortcuts.includes(event.key)) {
-        event.nativeEvent.stopImmediatePropagation()
+        event.nativeEvent.stopImmediatePropagation();
       }
 
       if (event.key === 'Enter') {
-        onZoomSubmit()
-        inputEl.select()
+        onZoomSubmit();
+        inputEl.select();
       }
     },
-    [onZoomSubmit, inputRef, shortcuts]
-  )
+    [onZoomSubmit, inputRef, shortcuts],
+  );
 
   // Focus on input field upon mounting
   useEffect(() => {
-    const inputEl = inputRef.current
-    inputEl?.focus()
-    inputEl?.select()
-  }, [inputRef])
+    const inputEl = inputRef.current;
+    inputEl?.focus();
+    inputEl?.select();
+  }, [inputRef]);
 
   return (
     <StyledInput
@@ -117,5 +117,5 @@ export const ZoomInput = ({
       onFocus={onFocusHandler}
       onKeyDown={onKeyDown}
     />
-  )
-}
+  );
+};

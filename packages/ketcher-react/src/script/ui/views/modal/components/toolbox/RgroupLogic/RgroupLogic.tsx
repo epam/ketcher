@@ -13,28 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { BaseCallProps, BaseProps } from '../../../modal.types'
-import Form, { Field } from '../../../../../component/form/form/form'
+import { BaseCallProps, BaseProps } from '../../../modal.types';
+import Form, { Field } from '../../../../../component/form/form/form';
 
-import { Dialog } from '../../../../components'
-import IfThenSelect from './components'
-import classes from './RgroupLogic.module.less'
-import { rgroupLogic as rgroupSchema } from '../../../../../data/schema/struct-schema'
+import { Dialog } from '../../../../components';
+import IfThenSelect from './components';
+import classes from './RgroupLogic.module.less';
+import { rgroupLogic as rgroupSchema } from '../../../../../data/schema/struct-schema';
 
 interface RgroupLogicProps extends BaseProps {
-  frags: Set<number>
-  ifthen: number
-  label: number
-  range: string
-  resth: boolean
-  rgroupLabels: Array<number>
-  name?: string
+  frags: Set<number>;
+  ifthen: number;
+  label: number;
+  range: string;
+  resth: boolean;
+  rgroupLabels: Array<number>;
+  name?: string;
 }
 
-type Props = RgroupLogicProps & BaseCallProps
+type Props = RgroupLogicProps & BaseCallProps;
 
 const RgroupLogic = (props: Props) => {
-  const { formState, label, rgroupLabels, ...rest } = props
+  const { formState, label, rgroupLabels, ...rest } = props;
   return (
     <Dialog
       title="R-Group Logic Condition"
@@ -57,8 +57,8 @@ const RgroupLogic = (props: Props) => {
         <IfThenSelect name="ifthen" label={label} rgroupLabels={rgroupLabels} />
       </Form>
     </Dialog>
-  )
-}
+  );
+};
 
 function rangeConv(range) {
   // structConv
@@ -66,12 +66,12 @@ function rangeConv(range) {
     .replace(/\s*/g, '')
     .replace(/,+/g, ',')
     .replace(/^,/, '')
-    .replace(/,$/, '')
+    .replace(/,$/, '');
 
   return res
     .split(',')
-    .every((s) => s.match(/^[>,<=]?[0-9]+$/g) || s.match(/^[0-9]+-[0-9]+$/g))
+    .every((s) => s.match(/^[>,<=]?[0-9]+$/g) || s.match(/^[0-9]+-[0-9]+$/g));
 }
 
-export type { RgroupLogicProps }
-export default RgroupLogic
+export type { RgroupLogicProps };
+export default RgroupLogic;

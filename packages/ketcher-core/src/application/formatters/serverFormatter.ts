@@ -20,97 +20,96 @@ import {
   LayoutData,
   LayoutResult,
   StructService,
-  StructServiceOptions
-} from 'domain/services'
-import { StructFormatter, SupportedFormat } from './structFormatter.types'
+  StructServiceOptions,
+} from 'domain/services';
+import { StructFormatter, SupportedFormat } from './structFormatter.types';
 
-import { KetSerializer } from 'domain/serializers'
-import { Struct } from 'domain/entities'
-import { getPropertiesByFormat } from './formatProperties'
+import { KetSerializer } from 'domain/serializers';
+import { Struct } from 'domain/entities';
+import { getPropertiesByFormat } from './formatProperties';
 
 type ConvertPromise = (
   data: ConvertData,
-  options?: StructServiceOptions
-) => Promise<ConvertResult>
+  options?: StructServiceOptions,
+) => Promise<ConvertResult>;
 
 type LayoutPromise = (
   data: LayoutData,
-  options?: StructServiceOptions
-) => Promise<LayoutResult>
+  options?: StructServiceOptions,
+) => Promise<LayoutResult>;
 
 export class ServerFormatter implements StructFormatter {
-  #structService: StructService
-  #ketSerializer: KetSerializer
-  #format: SupportedFormat
-  #options?: StructServiceOptions
+  #structService: StructService;
+  #ketSerializer: KetSerializer;
+  #format: SupportedFormat;
+  #options?: StructServiceOptions;
 
   constructor(
     structService: StructService,
     ketSerializer: KetSerializer,
     format: SupportedFormat,
-    options?: StructServiceOptions
+    options?: StructServiceOptions,
   ) {
-    this.#structService = structService
-    this.#ketSerializer = ketSerializer
-    this.#format = format
-    this.#options = options
+    this.#structService = structService;
+    this.#ketSerializer = ketSerializer;
+    this.#format = format;
+    this.#options = options;
   }
 
   async getStructureFromStructAsync(struct: Struct): Promise<string> {
-    const formatProperties = getPropertiesByFormat(this.#format)
+    const formatProperties = getPropertiesByFormat(this.#format);
 
     try {
-      const stringifiedStruct = this.#ketSerializer.serialize(struct)
+      const stringifiedStruct = this.#ketSerializer.serialize(struct);
       const convertResult = await this.#structService.convert(
         {
           struct: stringifiedStruct,
-          output_format: formatProperties.mime
+          output_format: formatProperties.mime,
         },
-        { ...this.#options, ...formatProperties.options }
-      )
+        { ...this.#options, ...formatProperties.options },
+      );
 
-      return convertResult.struct
+      return convertResult.struct;
     } catch (error: any) {
-      let message
+      let message;
       if (error.message === 'Server is not compatible') {
-        message = `${formatProperties.name} is not supported.`
+        message = `${formatProperties.name} is not supported.`;
       } else {
-        message = `Convert error!\n${error.message || error}`
+        message = `Convert error!\n${error.message || error}`;
       }
-
-      throw new Error(message)
+      throw new Error(message);
     }
   }
 
   async getStructureFromStringAsync(
-    stringifiedStruct: string
+    stringifiedStruct: string,
   ): Promise<Struct> {
-    let promise: LayoutPromise | ConvertPromise
+    let promise: LayoutPromise | ConvertPromise;
 
     const data: ConvertData | LayoutData = {
       struct: undefined as any,
-      output_format: getPropertiesByFormat(SupportedFormat.ket).mime
-    }
+      output_format: getPropertiesByFormat(SupportedFormat.ket).mime,
+    };
 
-    const withCoords = getPropertiesByFormat(this.#format).supportsCoords
+    const withCoords = getPropertiesByFormat(this.#format).supportsCoords;
     if (withCoords) {
-      promise = this.#structService.convert
-      data.struct = stringifiedStruct
+      promise = this.#structService.convert;
+      data.struct = stringifiedStruct;
     } else {
-      promise = this.#structService.layout
-      data.struct = stringifiedStruct.trim()
+      promise = this.#structService.layout;
+      data.struct = stringifiedStruct.trim();
     }
 
     try {
-      const result = await promise(data, this.#options)
-      const parsedStruct = this.#ketSerializer.deserialize(result.struct)
+      const result = await promise(data, this.#options);
+      const parsedStruct = this.#ketSerializer.deserialize(result.struct);
       if (!withCoords) {
-        parsedStruct.rescale()
+        parsedStruct.rescale();
       }
-      return parsedStruct
+      return parsedStruct;
     } catch (error: any) {
       if (error.message !== 'Server is not compatible') {
-        throw Error(`Convert error!\n${error.message || error}`)
+        throw Error(`Convert error!\n${error.message || error}`);
       }
 
       const formatError =
@@ -120,9 +119,9 @@ export class ServerFormatter implements StructFormatter {
             } and opening of ${
               getPropertiesByFormat(SupportedFormat.smiles).name
             }`
-          : getPropertiesByFormat(this.#format).name
+          : getPropertiesByFormat(this.#format).name;
 
-      throw Error(`${formatError} is not supported in standalone mode.`)
+      throw Error(`${formatError} is not supported in standalone mode.`);
     }
   }
 }

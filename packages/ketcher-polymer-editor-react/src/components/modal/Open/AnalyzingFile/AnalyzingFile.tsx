@@ -13,15 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { Icon } from 'components/shared/icon'
-import { LoadingCircles } from './LoadingCircles'
-import styled from '@emotion/styled'
+import { Icon } from 'ketcher-react';
+import { LoadingCircles } from './LoadingCircles';
+import styled from '@emotion/styled';
 
 export type AnalyzingFileProps = {
-  fileName?: string
-}
+  fileName?: string;
+};
 
-const ICON_NAME = 'file-thumbnail'
+const ICON_NAME = 'file-thumbnail';
 
 const RootContainer = styled.div`
   width: 410px;
@@ -31,7 +31,7 @@ const RootContainer = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-`
+`;
 
 const FileBox = styled.div`
   display: flex;
@@ -47,7 +47,7 @@ const FileBox = styled.div`
     font-size: 16px;
     line-height: 19px;
   }
-`
+`;
 
 export const AnalyzingFile = ({ fileName }: AnalyzingFileProps) => {
   return (
@@ -60,5 +60,5 @@ export const AnalyzingFile = ({ fileName }: AnalyzingFileProps) => {
       )}
       <LoadingCircles />
     </RootContainer>
-  )
-}
+  );
+};

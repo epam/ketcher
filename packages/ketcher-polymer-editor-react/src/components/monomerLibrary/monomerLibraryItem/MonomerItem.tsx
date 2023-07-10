@@ -13,41 +13,45 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import styled from '@emotion/styled'
+import { EmptyFunction } from 'helpers';
+import { useAppDispatch } from 'hooks';
+import { useState } from 'react';
+import { toggleMonomerFavorites } from 'state/library';
+import { Card } from './styles';
+import { IMonomerItemProps } from './types';
 
-export type MonomerItemType = {
-  label: string
-  colorScheme?: string
-  monomers?: object
-}
-
-interface MonomerItemProps {
-  item: MonomerItemType
-  onClick: () => void
-}
-
-const Card = styled.div<{ colorScheme?: string }>`
-  background: ${({ colorScheme, theme }) =>
-    colorScheme || theme.ketcher.color.monomer.default};
-  border-radius: 2px;
-  width: 48px;
-  height: 48px;
-  text-align: center;
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: ${({ theme }) => theme.ketcher.font.size.small};
-`
-
-const MonomerItem = (props: MonomerItemProps) => {
-  const { item, onClick } = props
+const MonomerItem = ({
+  item,
+  onMouseLeave,
+  onMouseMove,
+  isSelected,
+  onClick = EmptyFunction,
+}: IMonomerItemProps) => {
+  const [favorite, setFavorite] = useState(item.favorite);
+  const dispatch = useAppDispatch();
 
   return (
-    <Card onClick={onClick} colorScheme={item.colorScheme}>
-      {item.label}
+    <Card
+      onClick={onClick}
+      isSelected={isSelected}
+      code={item.props.MonomerNaturalAnalogCode}
+      data-testid={item.props.MonomerNaturalAnalogCode}
+      onMouseLeave={onMouseLeave}
+      onMouseMove={onMouseMove}
+    >
+      <span>{item.label}</span>
+      <div
+        onClick={(event) => {
+          event.stopPropagation();
+          setFavorite(!favorite);
+          dispatch(toggleMonomerFavorites(item));
+        }}
+        className={`star ${favorite ? 'visible' : ''}`}
+      >
+        ★
+      </div>
     </Card>
-  )
-}
+  );
+};
 
-export { MonomerItem }
+export { MonomerItem };

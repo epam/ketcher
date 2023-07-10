@@ -14,23 +14,23 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { KetSerializer } from 'domain/serializers'
-import { Struct } from 'domain/entities'
-import { StructFormatter } from './structFormatter.types'
+import { KetSerializer } from 'domain/serializers';
+import { Struct } from 'domain/entities';
+import { StructFormatter } from './structFormatter.types';
 
 export class KetFormatter implements StructFormatter {
-  #ketSerializer: KetSerializer
+  #ketSerializer: KetSerializer;
 
   constructor(serializer: KetSerializer) {
-    this.#ketSerializer = serializer
+    this.#ketSerializer = serializer;
   }
 
   async getStructureFromStructAsync(struct: Struct): Promise<string> {
-    const ket = this.#ketSerializer.serialize(struct)
-    return ket
+    const ket = this.#ketSerializer.serialize(struct);
+    return ket;
   }
 
   async getStructureFromStringAsync(content: string): Promise<Struct> {
-    return this.#ketSerializer.deserialize(content)
+    return this.#ketSerializer.deserialize(content);
   }
 }

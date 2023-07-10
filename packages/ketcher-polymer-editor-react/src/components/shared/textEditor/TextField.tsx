@@ -14,17 +14,17 @@
  * limitations under the License.
  ***************************************************************************/
 
-import styled from '@emotion/styled'
-import { scrollbarThin } from 'theming/mixins'
-import { useEffect, useRef } from 'react'
+import styled from '@emotion/styled';
+import { scrollbarThin } from 'theming/mixins';
+import { useEffect, useRef } from 'react';
 
 export type TextEditorProps = {
-  struct: string
-  inputHandler?: (str: string) => void
-  readonly?: boolean
-  selectOnInit?: boolean
-  className?: string
-}
+  struct: string;
+  inputHandler?: (str: string) => void;
+  readonly?: boolean;
+  selectOnInit?: boolean;
+  className?: string;
+};
 
 const StyledTextarea = styled.textarea`
   width: 100%;
@@ -44,22 +44,22 @@ const StyledTextarea = styled.textarea`
   &:hover {
     cursor: ${(props) => props.readOnly && 'not-allowed'};
   }
-`
+`;
 
 export const TextField = ({
   struct,
   inputHandler,
   readonly = false,
   selectOnInit = false,
-  className
+  className,
 }: TextEditorProps) => {
-  const textArea = useRef<HTMLTextAreaElement>(null)
+  const textArea = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     if (selectOnInit) {
-      textArea.current?.select()
+      textArea.current?.select();
     }
-  }, [textArea, struct, selectOnInit])
+  }, [textArea, struct, selectOnInit]);
 
   return (
     <StyledTextarea
@@ -69,5 +69,5 @@ export const TextField = ({
       ref={textArea}
       className={className}
     />
-  )
-}
+  );
+};

@@ -14,143 +14,144 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { AtomAttributes, Bond, Vec2 } from 'domain/entities'
+import { AtomAttributes, Bond, Struct, Vec2 } from 'domain/entities';
 
-import closest from '../shared/closest'
-import { difference } from 'lodash'
-import { ReStruct } from 'application/render'
-import { selectionKeys } from '../shared/constants'
+import closest from '../shared/closest';
+import { difference } from 'lodash';
+import { ReStruct } from 'application/render';
+import { selectionKeys } from '../shared/constants';
+import { EditorSelection } from '../editor.types';
 
-type AtomAttributeName = keyof AtomAttributes
+type AtomAttributeName = keyof AtomAttributes;
 
 export function atomGetAttr(
   restruct: ReStruct,
   aid: number,
-  name: AtomAttributeName
+  name: AtomAttributeName,
 ) {
-  const atom = restruct.molecule.atoms.get(aid)
-  if (!atom) return null
-  return atom[name]
+  const atom = restruct.molecule.atoms.get(aid);
+  if (!atom) return null;
+  return atom[name];
 }
 
 export function atomGetDegree(restruct, aid) {
-  return restruct.atoms.get(aid).a.neighbors.length
+  return restruct.atoms.get(aid).a.neighbors.length;
 }
 
 export function atomGetSGroups(restruct, aid) {
-  return Array.from(restruct.atoms.get(aid).a.sgs)
+  return Array.from(restruct.atoms.get(aid).a.sgs);
 }
 
 export function atomGetPos(restruct, id) {
-  return restruct.molecule.atoms.get(id).pp
+  return restruct.molecule.atoms.get(id).pp;
 }
 
 export function findStereoAtoms(struct, aids: number[] | undefined): number[] {
   if (!aids) {
-    return [] as number[]
+    return [] as number[];
   }
 
-  return aids.filter((aid) => struct.atoms.get(aid).stereoLabel !== null)
+  return aids.filter((aid) => struct.atoms.get(aid).stereoLabel !== null);
 }
 
-export function structSelection(struct) {
+export function structSelection(struct): EditorSelection {
   return selectionKeys.reduce((res, key) => {
-    res[key] = Array.from(struct[key].keys())
-    return res
-  }, {})
+    res[key] = Array.from(struct[key].keys());
+    return res;
+  }, {});
 }
 
 export function formatSelection(selection): any {
   return selectionKeys.reduce((res, key) => {
-    res[key] = selection[key] || []
+    res[key] = selection[key] || [];
 
-    return res
-  }, {})
+    return res;
+  }, {});
 }
 
 // Get new atom id/label and pos for bond being added to existing atom
 export function atomForNewBond(restruct, id, bond?) {
   // eslint-disable-line max-statements
-  const neighbours: Array<{ id: number; v: Vec2 }> = []
-  const pos = atomGetPos(restruct, id)
-  const atomNeighbours = restruct.molecule.atomGetNeighbors(id)
+  const neighbours: Array<{ id: number; v: Vec2 }> = [];
+  const pos = atomGetPos(restruct, id);
+  const atomNeighbours = restruct.molecule.atomGetNeighbors(id);
 
   const prevBondId = restruct.molecule.findBondId(
     id,
-    atomNeighbours.length ? atomNeighbours[0]?.aid : undefined
-  )
-  const prevBond = restruct.molecule.bonds.get(prevBondId)
-  const prevBondType = prevBond ? prevBond.type : bond ? bond.type : 1
+    atomNeighbours.length ? atomNeighbours[0]?.aid : undefined,
+  );
+  const prevBond = restruct.molecule.bonds.get(prevBondId);
+  const prevBondType = prevBond ? prevBond.type : bond ? bond.type : 1;
 
   restruct.molecule.atomGetNeighbors(id).forEach((nei) => {
-    const neiPos = atomGetPos(restruct, nei.aid)
+    const neiPos = atomGetPos(restruct, nei.aid);
 
-    if (Vec2.dist(pos, neiPos) < 0.1) return
+    if (Vec2.dist(pos, neiPos) < 0.1) return;
 
-    neighbours.push({ id: nei.aid, v: Vec2.diff(neiPos, pos) })
-  })
+    neighbours.push({ id: nei.aid, v: Vec2.diff(neiPos, pos) });
+  });
 
   neighbours.sort(
     (nei1, nei2) =>
-      Math.atan2(nei1.v.y, nei1.v.x) - Math.atan2(nei2.v.y, nei2.v.x)
-  )
+      Math.atan2(nei1.v.y, nei1.v.x) - Math.atan2(nei2.v.y, nei2.v.x),
+  );
 
-  let i
-  let maxI = 0
-  let angle
-  let maxAngle = 0
+  let i;
+  let maxI = 0;
+  let angle;
+  let maxAngle = 0;
 
   // TODO: impove layout: tree, ...
 
   for (i = 0; i < neighbours.length; i++) {
     angle = Vec2.angle(
       neighbours[i].v,
-      neighbours[(i + 1) % neighbours.length].v
-    )
+      neighbours[(i + 1) % neighbours.length].v,
+    );
 
-    if (angle < 0) angle += 2 * Math.PI
+    if (angle < 0) angle += 2 * Math.PI;
 
     if (angle > maxAngle) {
-      maxI = i
-      maxAngle = angle
+      maxI = i;
+      maxAngle = angle;
     }
   }
 
-  let v = new Vec2(1, 0)
+  let v = new Vec2(1, 0);
 
   if (neighbours.length > 0) {
     if (neighbours.length === 1) {
-      maxAngle = -((4 * Math.PI) / 3)
+      maxAngle = -((4 * Math.PI) / 3);
 
       // zig-zag
-      const nei = restruct.molecule.atomGetNeighbors(id)[0]
+      const nei = restruct.molecule.atomGetNeighbors(id)[0];
       if (atomGetDegree(restruct, nei.aid) > 1) {
-        const neiNeighbours: Array<any> = []
-        const neiPos = atomGetPos(restruct, nei.aid)
-        const neiV = Vec2.diff(pos, neiPos)
-        const neiAngle = Math.atan2(neiV.y, neiV.x)
+        const neiNeighbours: Array<any> = [];
+        const neiPos = atomGetPos(restruct, nei.aid);
+        const neiV = Vec2.diff(pos, neiPos);
+        const neiAngle = Math.atan2(neiV.y, neiV.x);
 
         restruct.molecule.atomGetNeighbors(nei.aid).forEach((neiNei) => {
-          const neiNeiPos = atomGetPos(restruct, neiNei.aid)
+          const neiNeiPos = atomGetPos(restruct, neiNei.aid);
 
           if (neiNei.bid === nei.bid || Vec2.dist(neiPos, neiNeiPos) < 0.1) {
-            return
+            return;
           }
 
-          const vDiff = Vec2.diff(neiNeiPos, neiPos)
-          let ang = Math.atan2(vDiff.y, vDiff.x) - neiAngle
+          const vDiff = Vec2.diff(neiNeiPos, neiPos);
+          let ang = Math.atan2(vDiff.y, vDiff.x) - neiAngle;
 
-          if (ang < 0) ang += 2 * Math.PI
+          if (ang < 0) ang += 2 * Math.PI;
 
-          neiNeighbours.push(ang)
-        })
-        neiNeighbours.sort((nei1, nei2) => nei1 - nei2)
+          neiNeighbours.push(ang);
+        });
+        neiNeighbours.sort((nei1, nei2) => nei1 - nei2);
 
         if (
           neiNeighbours[0] <= Math.PI * 1.01 &&
           neiNeighbours[neiNeighbours.length - 1] <= 1.01 * Math.PI
         ) {
-          maxAngle *= -1
+          maxAngle *= -1;
         }
       }
     }
@@ -163,50 +164,56 @@ export function atomForNewBond(restruct, id, bond?) {
       (prevBondType === Bond.PATTERN.TYPE.SINGLE &&
         bond?.type === Bond.PATTERN.TYPE.TRIPLE) ||
       (prevBondType === Bond.PATTERN.TYPE.TRIPLE &&
-        bond?.type === Bond.PATTERN.TYPE.SINGLE)
+        bond?.type === Bond.PATTERN.TYPE.SINGLE);
 
     if (shallBe180DegToPrevBond) {
-      const prevBondAngle = restruct.molecule.bonds.get(prevBondId).angle
+      const prevBondAngle = restruct.molecule.bonds.get(prevBondId).angle;
       if (prevBondAngle > -90 && prevBondAngle < 90 && neighbours[0].v.x > 0) {
-        angle = (prevBondAngle * Math.PI) / 180 + Math.PI
+        angle = (prevBondAngle * Math.PI) / 180 + Math.PI;
       } else {
-        angle = (prevBondAngle * Math.PI) / 180
+        angle = (prevBondAngle * Math.PI) / 180;
       }
     } else {
       angle =
-        maxAngle / 2 + Math.atan2(neighbours[maxI].v.y, neighbours[maxI].v.x)
+        maxAngle / 2 + Math.atan2(neighbours[maxI].v.y, neighbours[maxI].v.x);
     }
 
-    v = v.rotate(angle)
+    v = v.rotate(angle);
   }
 
-  v.add_(pos) // eslint-disable-line no-underscore-dangle
+  v.add_(pos); // eslint-disable-line no-underscore-dangle
 
-  let a: any = closest.atom(restruct, v, null, 0.1)
-  a = a === null ? { label: 'C' } : a.id
+  let a: any = closest.atom(restruct, v, null, 0.1);
+  a = a === null ? { label: 'C' } : a.id;
 
-  return { atom: a, pos: v }
+  return { atom: a, pos: v };
 }
 
-export function getRelSgroupsBySelection(restruct, selectedAtoms) {
-  return restruct.molecule.sgroups.filter(
+export function getRelSGroupsBySelection(
+  struct: Struct,
+  selectedAtoms: number[],
+) {
+  return struct.sgroups.filter(
     (_sgid, sg) =>
       !sg.data.attached &&
       !sg.data.absolute &&
-      difference(sg.atoms, selectedAtoms).length === 0
-  )
+      difference(sg.atoms, selectedAtoms).length === 0,
+  );
 }
 
-export function isAttachmentBond({ begin, end }: Bond, selection): boolean {
+export function isAttachmentBond(
+  { begin, end }: Bond,
+  selection: EditorSelection,
+) {
   if (!selection.atoms) {
-    return false
+    return false;
   }
   const isBondStartsInSelectionAndEndsOutside =
-    selection.atoms.includes(begin) && !selection.atoms.includes(end)
+    selection.atoms.includes(begin) && !selection.atoms.includes(end);
   const isBondEndsInSelectionAndStartsOutside =
-    selection.atoms.includes(end) && !selection.atoms.includes(begin)
+    selection.atoms.includes(end) && !selection.atoms.includes(begin);
   return (
     isBondStartsInSelectionAndEndsOutside ||
     isBondEndsInSelectionAndStartsOutside
-  )
+  );
 }

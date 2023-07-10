@@ -1,6 +1,7 @@
-import { ReAtom, ReBond } from 'application/render'
+/* eslint-disable @typescript-eslint/no-empty-function */
+import { ReAtom, ReBond } from 'application/render';
 
-import { Pool } from 'domain/entities'
+import { Pool } from 'domain/entities';
 
 const mockAtoms = [
   {
@@ -31,7 +32,7 @@ const mockAtoms = [
     stereoParity: 0,
     substitutionCount: 0,
     unsaturatedAtom: 0,
-    valence: 4
+    valence: 4,
   },
   {
     aam: 0,
@@ -61,7 +62,7 @@ const mockAtoms = [
     stereoParity: 0,
     substitutionCount: 0,
     unsaturatedAtom: 0,
-    valence: 4
+    valence: 4,
   },
   {
     aam: 0,
@@ -91,7 +92,7 @@ const mockAtoms = [
     stereoParity: 0,
     substitutionCount: 0,
     unsaturatedAtom: 0,
-    valence: 4
+    valence: 4,
   },
   {
     aam: 0,
@@ -121,7 +122,7 @@ const mockAtoms = [
     stereoParity: 0,
     substitutionCount: 0,
     unsaturatedAtom: 0,
-    valence: 4
+    valence: 4,
   },
   {
     aam: 0,
@@ -151,7 +152,7 @@ const mockAtoms = [
     stereoParity: 0,
     substitutionCount: 0,
     unsaturatedAtom: 0,
-    valence: 4
+    valence: 4,
   },
   {
     aam: 0,
@@ -181,7 +182,7 @@ const mockAtoms = [
     stereoParity: 1,
     substitutionCount: 0,
     unsaturatedAtom: 0,
-    valence: 4
+    valence: 4,
   },
   {
     aam: 0,
@@ -211,7 +212,7 @@ const mockAtoms = [
     stereoParity: 0,
     substitutionCount: 0,
     unsaturatedAtom: 0,
-    valence: 4
+    valence: 4,
   },
   {
     aam: 0,
@@ -241,9 +242,9 @@ const mockAtoms = [
     stereoParity: 0,
     substitutionCount: 0,
     unsaturatedAtom: 0,
-    valence: 4
-  }
-]
+    valence: 4,
+  },
+];
 
 const mockBonds = [
   {
@@ -260,7 +261,7 @@ const mockBonds = [
     stereo: 0,
     topology: 0,
     type: 1,
-    xxx: '   '
+    xxx: '   ',
   },
   {
     angle: 90,
@@ -276,7 +277,7 @@ const mockBonds = [
     stereo: 0,
     topology: 0,
     type: 2,
-    xxx: '   '
+    xxx: '   ',
   },
   {
     angle: 149.99927221917264,
@@ -292,7 +293,7 @@ const mockBonds = [
     stereo: 0,
     topology: 0,
     type: 1,
-    xxx: '   '
+    xxx: '   ',
   },
   {
     angle: -149.99927221917264,
@@ -308,7 +309,7 @@ const mockBonds = [
     stereo: 0,
     topology: 0,
     type: 2,
-    xxx: '   '
+    xxx: '   ',
   },
   {
     angle: -90,
@@ -324,7 +325,7 @@ const mockBonds = [
     stereo: 0,
     topology: 0,
     type: 1,
-    xxx: '   '
+    xxx: '   ',
   },
   {
     angle: -30.00072778082736,
@@ -340,7 +341,7 @@ const mockBonds = [
     stereo: 0,
     topology: 0,
     type: 2,
-    xxx: '   '
+    xxx: '   ',
   },
   {
     angle: -150.00036389041367,
@@ -356,7 +357,7 @@ const mockBonds = [
     stereo: 1,
     topology: 0,
     type: 1,
-    xxx: ''
+    xxx: '',
   },
   {
     angle: 0,
@@ -372,15 +373,15 @@ const mockBonds = [
     stereo: 0,
     topology: 0,
     type: 1,
-    xxx: ''
-  }
-]
+    xxx: '',
+  },
+];
 
-const atoms = new Pool()
-mockAtoms.forEach((atom, key) => atoms.set(key, atom))
+const atoms = new Pool();
+mockAtoms.forEach((atom, key) => atoms.set(key, atom));
 
-const bonds = new Pool()
-mockBonds.forEach((bond, key) => bonds.set(key, bond))
+const bonds = new Pool();
+mockBonds.forEach((bond, key) => bonds.set(key, bond));
 
 const mockHalfBonds = [
   {
@@ -390,18 +391,18 @@ const mockHalfBonds = [
     dir: {
       x: 0.8660190526287391,
       y: 0.5000110003630132,
-      z: 0
+      z: 0,
     },
     norm: {
       x: -0.5000110003630132,
       y: 0.8660190526287391,
-      z: 0
+      z: 0,
     },
     ang: 0.5236114777699692,
     p: {
       x: 356,
       y: 252.99941331827512,
-      z: 0
+      z: 0,
     },
     loop: -2,
     contra: 1,
@@ -411,7 +412,7 @@ const mockHalfBonds = [
     leftNeighbor: 14,
     rightSin: 0.8660381056766496,
     rightCos: -0.4999779990319577,
-    rightNeighbor: 11
+    rightNeighbor: 11,
   },
   {
     begin: 1,
@@ -420,18 +421,18 @@ const mockHalfBonds = [
     dir: {
       x: -0.8660190526287391,
       y: -0.5000110003630132,
-      z: 0
+      z: 0,
     },
     norm: {
       x: 0.5000110003630132,
       y: -0.8660190526287391,
-      z: 0
+      z: 0,
     },
     ang: -2.617981175819824,
     p: {
       x: 390.64050806637374,
       y: 272.99970665913753,
-      z: 0
+      z: 0,
     },
     loop: -1,
     contra: 0,
@@ -441,7 +442,7 @@ const mockHalfBonds = [
     leftNeighbor: 2,
     rightSin: -0.8660190526287391,
     rightCos: -0.5000110003630132,
-    rightNeighbor: 2
+    rightNeighbor: 2,
   },
   {
     begin: 1,
@@ -450,18 +451,18 @@ const mockHalfBonds = [
     dir: {
       x: 0,
       y: 1,
-      z: 0
+      z: 0,
     },
     norm: {
       x: -1,
       y: 0,
-      z: 0
+      z: 0,
     },
     ang: 1.5707963267948966,
     p: {
       x: 390.64050806637374,
       y: 272.99970665913753,
-      z: 0
+      z: 0,
     },
     loop: -2,
     contra: 3,
@@ -471,7 +472,7 @@ const mockHalfBonds = [
     leftNeighbor: 1,
     rightSin: 0.8660190526287391,
     rightCos: -0.5000110003630132,
-    rightNeighbor: 1
+    rightNeighbor: 1,
   },
   {
     begin: 2,
@@ -480,18 +481,18 @@ const mockHalfBonds = [
     dir: {
       x: 0,
       y: -1,
-      z: 0
+      z: 0,
     },
     norm: {
       x: 1,
       y: 0,
-      z: 0
+      z: 0,
     },
     ang: -1.5707963267948966,
     p: {
       x: 390.64050806637374,
       y: 313.00029334086247,
-      z: 0
+      z: 0,
     },
     loop: -1,
     contra: 2,
@@ -501,7 +502,7 @@ const mockHalfBonds = [
     leftNeighbor: 4,
     rightSin: -0.8660190526287391,
     rightCos: -0.5000110003630132,
-    rightNeighbor: 4
+    rightNeighbor: 4,
   },
   {
     begin: 2,
@@ -510,18 +511,18 @@ const mockHalfBonds = [
     dir: {
       x: -0.8660190526287391,
       y: 0.5000110003630132,
-      z: 0
+      z: 0,
     },
     norm: {
       x: -0.5000110003630132,
       y: -0.8660190526287391,
-      z: 0
+      z: 0,
     },
     ang: 2.617981175819824,
     p: {
       x: 390.64050806637374,
       y: 313.00029334086247,
-      z: 0
+      z: 0,
     },
     loop: -2,
     contra: 5,
@@ -531,7 +532,7 @@ const mockHalfBonds = [
     leftNeighbor: 3,
     rightSin: 0.8660190526287391,
     rightCos: -0.5000110003630132,
-    rightNeighbor: 3
+    rightNeighbor: 3,
   },
   {
     begin: 3,
@@ -540,18 +541,18 @@ const mockHalfBonds = [
     dir: {
       x: 0.8660190526287391,
       y: -0.5000110003630132,
-      z: 0
+      z: 0,
     },
     norm: {
       x: 0.5000110003630132,
       y: 0.8660190526287391,
-      z: 0
+      z: 0,
     },
     ang: -0.5236114777699692,
     p: {
       x: 356,
       y: 333.0005866817249,
-      z: 0
+      z: 0,
     },
     loop: -1,
     contra: 4,
@@ -561,7 +562,7 @@ const mockHalfBonds = [
     leftNeighbor: 6,
     rightSin: -0.8660381056766496,
     rightCos: -0.4999779990319577,
-    rightNeighbor: 6
+    rightNeighbor: 6,
   },
   {
     begin: 3,
@@ -570,18 +571,18 @@ const mockHalfBonds = [
     dir: {
       x: -0.8660190526287391,
       y: -0.5000110003630132,
-      z: 0
+      z: 0,
     },
     norm: {
       x: 0.5000110003630132,
       y: -0.8660190526287391,
-      z: 0
+      z: 0,
     },
     ang: -2.617981175819824,
     p: {
       x: 356,
       y: 333.0005866817249,
-      z: 0
+      z: 0,
     },
     loop: -2,
     contra: 7,
@@ -591,7 +592,7 @@ const mockHalfBonds = [
     leftNeighbor: 5,
     rightSin: 0.8660381056766496,
     rightCos: -0.4999779990319577,
-    rightNeighbor: 5
+    rightNeighbor: 5,
   },
   {
     begin: 4,
@@ -600,18 +601,18 @@ const mockHalfBonds = [
     dir: {
       x: 0.8660190526287391,
       y: 0.5000110003630132,
-      z: 0
+      z: 0,
     },
     norm: {
       x: -0.5000110003630132,
       y: 0.8660190526287391,
-      z: 0
+      z: 0,
     },
     ang: 0.5236114777699692,
     p: {
       x: 321.35949193362626,
       y: 313.00029334086247,
-      z: 0
+      z: 0,
     },
     loop: -1,
     contra: 6,
@@ -621,28 +622,28 @@ const mockHalfBonds = [
     leftNeighbor: 8,
     rightSin: -0.8660190526287391,
     rightCos: -0.5000110003630132,
-    rightNeighbor: 8
-  }
-]
-const halfBonds = new Map()
-mockHalfBonds.forEach((halfBond, key) => halfBonds.set(key, halfBond))
+    rightNeighbor: 8,
+  },
+];
+const halfBonds = new Map();
+mockHalfBonds.forEach((halfBond, key) => halfBonds.set(key, halfBond));
 
 const mockFrags = [
   {
     stereoAtoms: [5],
     stereoFlagPosition: undefined,
     enhancedStereoFlag: 'ABS',
-    updateStereoFlag() {}
-  }
-]
-const frags = new Map()
-mockFrags.forEach((frag, key) => frags.set(key, frag))
+    updateStereoFlag() {},
+  },
+];
+const frags = new Map();
+mockFrags.forEach((frag, key) => frags.set(key, frag));
 
 const molecule = {
-  atoms: atoms,
-  bonds: bonds,
-  frags: frags,
-  halfBonds: halfBonds,
+  atoms,
+  bonds,
+  frags,
+  halfBonds,
   isReaction: false,
   loops: { nextId: 0 },
   name: '',
@@ -653,9 +654,9 @@ const molecule = {
     parent: {},
     children: {
       key: -1,
-      value: []
+      value: [],
     },
-    atomSets: {}
+    atomSets: {},
   },
   sgroups: { nextId: 0 },
   simpleObjects: { nextId: 0 },
@@ -664,43 +665,43 @@ const molecule = {
     return [
       {
         aid: 1,
-        bid: 2
+        bid: 2,
       },
       {
         aid: 3,
-        bid: 4
-      }
-    ]
+        bid: 4,
+      },
+    ];
   },
   findBondId() {
-    return 6
+    return 6;
   },
   atomSetPos() {},
   bondInitHalfBonds() {},
   atomAddNeighbor() {},
-  setImplicitHydrogen() {}
-}
+  setImplicitHydrogen() {},
+};
 
 export const restruct = {
   atoms: new Map(),
   bonds: new Map(),
-  molecule: molecule,
+  molecule,
   connectedComponents: new Set(),
   render: {
     options: {
-      stereoLabelStyle: 'Iupac'
-    }
+      stereoLabelStyle: 'Iupac',
+    },
   },
   markAtom() {},
   markBond() {},
-  markItem() {}
-}
+  markItem() {},
+};
 
 molecule.atoms.forEach((atom, aid) => {
-  restruct.atoms.set(aid, new ReAtom(atom))
-})
+  restruct.atoms.set(aid, new ReAtom(atom));
+});
 molecule.bonds.forEach((bond, bid) => {
-  restruct.bonds.set(bid, new ReBond(bond))
-})
+  restruct.bonds.set(bid, new ReBond(bond));
+});
 
-export const singleBond = { type: 1, stereo: 0 }
+export const singleBond = { type: 1, stereo: 0 };

@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import styles from './LoadingCircles.module.less'
+import styles from './LoadingCircles.module.less';
 
 export const LoadingCircles = () => (
   <div className={styles.container}>
@@ -22,4 +22,4 @@ export const LoadingCircles = () => (
     <span />
     <span />
   </div>
-)
+);

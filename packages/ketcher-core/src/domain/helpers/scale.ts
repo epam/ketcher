@@ -14,21 +14,21 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Vec2 } from 'domain/entities'
+import { Vec2 } from 'domain/entities';
 
 export interface ScaleOptions {
-  scale: number
+  scale: number;
 }
 
 function scaled2obj(v: Vec2, options: ScaleOptions): Vec2 {
-  return v.scaled(1 / options.scale)
+  return v.scaled(1 / options.scale);
 }
 
 function obj2scaled(v: Vec2, options: ScaleOptions): Vec2 {
-  return v.scaled(options.scale)
+  return v.scaled(options.scale);
 }
 
 export const Scale = {
   scaled2obj,
-  obj2scaled
-}
+  obj2scaled,
+};

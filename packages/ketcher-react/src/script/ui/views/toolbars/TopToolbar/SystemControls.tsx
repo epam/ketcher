@@ -14,19 +14,19 @@
  * limitations under the License.
  ***************************************************************************/
 
-import styled from '@emotion/styled'
-import { shortcutStr } from '../shortcutStr'
-import { IconButton } from './IconButton'
+import styled from '@emotion/styled';
+import { shortcutStr } from '../shortcutStr';
+import { TopToolbarIconButton } from './TopToolbarIconButton';
 
 interface SystemControlsProps {
-  disabledButtons: string[]
-  hiddenButtons: string[]
-  className?: string
-  onSettingsOpen: () => void
-  onAboutOpen: () => void
-  onHistoryClick: () => void
-  onFullscreen: () => void
-  onHelp: () => void
+  disabledButtons: string[];
+  hiddenButtons: string[];
+  className?: string;
+  onSettingsOpen: () => void;
+  onAboutOpen: () => void;
+  onHistoryClick: () => void;
+  onFullscreen: () => void;
+  onHelp: () => void;
 }
 
 const getIfFullScreen = () => {
@@ -35,15 +35,15 @@ const getIfFullScreen = () => {
     document.mozFullScreenElement ||
     document.webkitFullscreenElement ||
     document.msFullscreenElement
-  )
-}
+  );
+};
 
 const ControlsPanel = styled('div')`
   display: flex;
   align-items: center;
   flex-grow: 1;
   justify-content: flex-end;
-`
+`;
 
 export const SystemControls = ({
   disabledButtons,
@@ -53,7 +53,7 @@ export const SystemControls = ({
   onFullscreen,
   onHelp,
   onAboutOpen,
-  className
+  className,
 }: SystemControlsProps) => {
   return (
     <ControlsPanel className={className}>
@@ -65,14 +65,14 @@ export const SystemControls = ({
         disabled={disabledButtons.includes('history')}
         isHidden={hiddenButtons.includes('history')}
       /> */}
-      <IconButton
+      <TopToolbarIconButton
         title="Settings"
         onClick={onSettingsOpen}
         iconName="settings"
         disabled={disabledButtons.includes('settings')}
         isHidden={hiddenButtons.includes('settings')}
       />
-      <IconButton
+      <TopToolbarIconButton
         title={`Help (${shortcutStr(['?', '&', 'Shift+/'])})`}
         onClick={onHelp}
         iconName="help"
@@ -80,14 +80,14 @@ export const SystemControls = ({
         isHidden={hiddenButtons.includes('help')}
       />
       {/* @TODO Temporary About button, when design is ready, reimplement */}
-      <IconButton
+      <TopToolbarIconButton
         title="About"
         onClick={onAboutOpen}
         iconName="about"
         disabled={disabledButtons.includes('about')}
         isHidden={hiddenButtons.includes('about')}
       />
-      <IconButton
+      <TopToolbarIconButton
         title="Fullscreen mode"
         onClick={onFullscreen}
         iconName={getIfFullScreen() ? 'fullscreen-exit' : 'fullscreen-enter'}
@@ -95,5 +95,5 @@ export const SystemControls = ({
         isHidden={hiddenButtons.includes('fullscreen')}
       />
     </ControlsPanel>
-  )
-}
+  );
+};

@@ -13,98 +13,63 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import styled from '@emotion/styled'
-import React from 'react'
-import { MenuItem } from './menuItem'
-import { SubMenu } from './subMenu'
-import { IMenuContext, MenuContext } from '../../contexts'
-
-const Divider = styled.span`
-  display: block;
-  height: 8px;
-  width: 32px;
-  border-top: 1px solid;
-  border-color: ${({ theme }) => theme.ketcher.color.divider};
-`
-
-const StyledGroup = styled.div`
-  display: flex;
-  flex-direction: column;
-  flex-wrap: nowrap;
-  align-items: center;
-  background-color: ${({ theme }) => theme.ketcher.color.background.primary};
-  border-radius: 2px;
-  width: 32px;
-  margin-bottom: 8px;
-
-  > * {
-    margin-bottom: 8px;
-  }
-
-  > :last-child {
-    margin-bottom: 0;
-  }
-`
-
-interface GroupProps {
-  divider?: boolean
-}
+import React from 'react';
+import { MenuItem } from './menuItem';
+import { SubMenu } from './subMenu';
+import { IMenuContext, MenuContext } from '../../contexts';
+import { Divider, MenuLayout, StyledGroup } from './styles';
+import { GroupProps, MenuProps } from './types';
 
 const Group = ({
   children,
-  divider = false
+  divider = false,
 }: React.PropsWithChildren<GroupProps>) => {
   const subComponents = React.Children.map(
     children as JSX.Element[],
     (child) => {
-      return child.type === MenuItem || SubMenu ? child : null
-    }
-  )
+      return child.type === MenuItem || child.type === SubMenu ? child : null;
+    },
+  );
 
   return (
     <>
       <StyledGroup>{subComponents.map((component) => component)}</StyledGroup>
       {divider && <Divider />}
     </>
-  )
-}
-
-type MenuProps = {
-  onItemClick: (itemKey: string) => void
-  activeMenuItem?: string
-}
+  );
+};
 
 const Menu = ({
   children,
   onItemClick,
-  activeMenuItem
+  activeMenuItem,
 }: React.PropsWithChildren<MenuProps>) => {
   const context = React.useMemo<IMenuContext>(
     () => ({
       isActive: (itemKey) => activeMenuItem === itemKey,
       activate: (itemKey) => {
-        onItemClick(itemKey)
-      }
+        onItemClick(itemKey);
+      },
     }),
-    [activeMenuItem, onItemClick]
-  )
+    [activeMenuItem, onItemClick],
+  );
 
   const subComponents = React.Children.map(
     children as JSX.Element[],
     (child) => {
-      return child.type === Group ? child : null
-    }
-  )
+      return child.type === Group ? child : null;
+    },
+  );
 
   return (
     <MenuContext.Provider value={context}>
-      {subComponents.map((component) => component)}
+      <MenuLayout>{subComponents.map((component) => component)}</MenuLayout>
     </MenuContext.Provider>
-  )
-}
+  );
+};
 
-Menu.Group = Group
-Menu.Item = MenuItem
-Menu.Submenu = SubMenu
+Menu.Group = Group;
+Menu.Item = MenuItem;
+Menu.Submenu = SubMenu;
 
-export { Menu, MenuContext }
+export { Menu, MenuContext };

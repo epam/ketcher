@@ -13,63 +13,65 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { Switcher } from 'components/rna/Switcher'
-import { useEffect, useState } from 'react'
-import { Group, MonomerList } from '../../monomerLibrary/monomerLibraryList'
+import { Switcher } from 'components/rna/Switcher';
+import { useEffect, useState } from 'react';
+import { MonomerList } from '../../monomerLibrary/monomerLibraryList';
+import { MONOMER_TYPES } from '../../../constants';
+import { Group } from '../../monomerLibrary/monomerLibraryList/types';
 
 type selectedMonomersType = {
-  Sugar: string
-  Nucleobase: string
-  Phosphate: string
-}
+  Sugar: string;
+  Nucleobase: string;
+  Phosphate: string;
+};
 
 export interface MonomerSectionProps {
-  selectItem: (item) => void
+  selectItem: (item) => void;
   items: {
-    Nucleotide: Array<Group>
-    Nucleobase: Array<Group>
-    Sugar: Array<Group>
-    Phosphate: Array<Group>
-  }
+    Nucleotide: Array<Group>;
+    Nucleobase: Array<Group>;
+    Sugar: Array<Group>;
+    Phosphate: Array<Group>;
+  };
 }
 
 const getInitialMonomers = (items) => {
-  return items.Nucleotide[0].groupItems[0].monomers as selectedMonomersType
-}
+  return items.Nucleotide[0].groupItems[0].monomers as selectedMonomersType;
+};
 
 const RnaMonomerSection = ({ selectItem, items }: MonomerSectionProps) => {
   const [selectedMonomers, setSelectedMonomers] =
-    useState<selectedMonomersType>(getInitialMonomers(items))
-  const [activeMonomerType, setActiveMonomerType] = useState('Nucleotide')
+    useState<selectedMonomersType>(getInitialMonomers(items));
+  const [activeMonomerType, setActiveMonomerType] = useState('Nucleotide');
   useEffect(() => {
     const matchMonomerByType =
       activeMonomerType === 'Nucleotide'
         ? selectedMonomers
-        : selectedMonomers[activeMonomerType]
-    selectItem(matchMonomerByType)
-  }, [selectItem, activeMonomerType, selectedMonomers])
+        : selectedMonomers[activeMonomerType];
+    selectItem(matchMonomerByType);
+  }, [selectItem, activeMonomerType, selectedMonomers]);
 
   const selectMonomerType = (type) => {
     if (type === 'reset') {
-      setActiveMonomerType('Nucleotide')
-      setSelectedMonomers(getInitialMonomers(items))
+      setActiveMonomerType('Nucleotide');
+      setSelectedMonomers(getInitialMonomers(items));
     } else {
-      setActiveMonomerType(type)
+      setActiveMonomerType(type);
     }
-  }
+  };
 
   const selectMonomer = (item) => {
     if (activeMonomerType === 'Nucleotide') {
-      setSelectedMonomers(item.monomers)
+      setSelectedMonomers(item.monomers);
     } else {
       setSelectedMonomers((prevState) => {
         return {
           ...prevState,
-          [activeMonomerType]: item.label
-        }
-      })
+          [activeMonomerType]: item.label,
+        };
+      });
     }
-  }
+  };
 
   return (
     <>
@@ -78,10 +80,10 @@ const RnaMonomerSection = ({ selectItem, items }: MonomerSectionProps) => {
         setActiveMonomerType={selectMonomerType}
       />
       <MonomerList
-        list={items[activeMonomerType]}
+        libraryName={MONOMER_TYPES.RNA}
         onItemClick={selectMonomer}
       />
     </>
-  )
-}
-export { RnaMonomerSection }
+  );
+};
+export { RnaMonomerSection };

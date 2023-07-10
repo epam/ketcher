@@ -14,44 +14,43 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { render, screen } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { render, screen, fireEvent } from '@testing-library/react';
 
-import { Modal } from '.'
+import { Modal } from '.';
 
-const mockOnCloseHandler = jest.fn()
+const mockOnCloseHandler = jest.fn();
 
 const mockModal = () => {
   return (
     <Modal title="title" isOpen={true} onClose={mockOnCloseHandler}>
       <Modal.Content>Content</Modal.Content>
     </Modal>
-  )
-}
+  );
+};
 
 describe('Modal component', () => {
   it('should render correctly', () => {
-    expect(render(withThemeProvider(mockModal()))).toMatchSnapshot()
-  })
+    expect(render(withThemeProvider(mockModal()))).toMatchSnapshot();
+  });
 
   it('should render with passed title', () => {
-    render(withThemeProvider(mockModal()))
-    expect(screen.getByText('title')).toBeInTheDocument()
-  })
+    render(withThemeProvider(mockModal()));
+    expect(screen.getByText('title')).toBeInTheDocument();
+  });
 
   it('should render with passed content', () => {
-    render(withThemeProvider(mockModal()))
-    expect(screen.getByText('Content')).toBeInTheDocument()
-  })
+    render(withThemeProvider(mockModal()));
+    expect(screen.getByText('Content')).toBeInTheDocument();
+  });
 
   it('should call close handler when close icon clicked', () => {
-    render(withThemeProvider(mockModal()))
+    render(withThemeProvider(mockModal()));
 
-    const closeIcon = screen.getByTitle('Close window')
-    userEvent.click(closeIcon)
+    const closeIcon = screen.getByTitle('Close window');
+    fireEvent.click(closeIcon);
 
-    expect(mockOnCloseHandler).toHaveBeenCalledTimes(1)
-  })
+    expect(mockOnCloseHandler).toHaveBeenCalledTimes(1);
+  });
 
   it('should not render close icon if showCloseButton prop set to false', () => {
     render(
@@ -63,10 +62,10 @@ describe('Modal component', () => {
           onClose={mockOnCloseHandler}
         >
           <Modal.Content>Content</Modal.Content>
-        </Modal>
-      )
-    )
+        </Modal>,
+      ),
+    );
 
-    expect(screen.queryByTitle('Close window')).not.toBeInTheDocument()
-  })
-})
+    expect(screen.queryByTitle('Close window')).not.toBeInTheDocument();
+  });
+});

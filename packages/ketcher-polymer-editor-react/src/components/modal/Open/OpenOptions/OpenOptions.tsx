@@ -13,21 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { Icon } from 'components/shared/icon'
-import styled from '@emotion/styled'
-import { FileDrop } from './FileDrop'
-import { ActionButton } from 'components/shared/actionButton'
+import { Icon, IconName } from 'ketcher-react';
+import styled from '@emotion/styled';
+import { FileDrop } from './FileDrop';
+import { ActionButton } from 'components/shared/actionButton';
 
-const ICON_NAMES = {
+const ICON_NAMES: Record<string, IconName> = {
   PASTE: 'capital-t',
-  FILE: 'arrow-up'
-}
+  FILE: 'arrow-upward',
+};
 
 export type OpenOptionsProps = {
-  selectClipboard: () => void
-  errorHandler: (err: string) => void
-  fileLoadHandler: (files: File[]) => void
-}
+  selectClipboard: () => void;
+  errorHandler: (err: string) => void;
+  fileLoadHandler: (files: File[]) => void;
+};
 
 const RootContainer = styled.div`
   display: flex;
@@ -42,7 +42,7 @@ const RootContainer = styled.div`
   & :last-child {
     margin-right: 0;
   }
-`
+`;
 
 const DropContainer = styled.div`
   width: 152px;
@@ -65,12 +65,12 @@ const DropContainer = styled.div`
   svg {
     fill: ${({ theme }) => theme.ketcher.color.button.primary.active};
   }
-`
+`;
 
 const OpenOptions = ({
   selectClipboard,
   fileLoadHandler,
-  errorHandler
+  errorHandler,
 }: OpenOptionsProps) => {
   return (
     <RootContainer>
@@ -91,7 +91,7 @@ const OpenOptions = ({
         />
       </DropContainer>
     </RootContainer>
-  )
-}
+  );
+};
 
-export { OpenOptions }
+export { OpenOptions };

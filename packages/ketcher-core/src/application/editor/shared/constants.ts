@@ -19,8 +19,8 @@ export const SgContexts = {
   Multifragment: 'Multifragment',
   Bond: 'Bond',
   Atom: 'Atom',
-  Group: 'Group'
-}
+  Group: 'Group',
+};
 
 export const selectionKeys = [
   'atoms',
@@ -31,5 +31,5 @@ export const selectionKeys = [
   'rxnArrows',
   'rxnPluses',
   'simpleObjects',
-  'texts'
-]
+  'texts',
+] as const;

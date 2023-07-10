@@ -14,30 +14,29 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { render, screen } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { render, screen, fireEvent } from '@testing-library/react';
 
-import { ChemicalMimeType } from 'helpers/formats'
-import { saveAs } from 'file-saver'
-import { SaveButton } from 'components/modal/save/saveButton'
+import { ChemicalMimeType } from 'helpers/formats';
+import { saveAs } from 'file-saver';
+import { SaveButton } from 'components/modal/save/saveButton';
 
-jest.mock('file-saver', () => ({ saveAs: jest.fn() }))
+jest.mock('file-saver', () => ({ saveAs: jest.fn() }));
 
 const mockProps = {
   data: 'some test data',
   label: 'save',
   filename: 'test.mol',
   type: ChemicalMimeType.Mol,
-  onSave: jest.fn()
-}
+  onSave: jest.fn(),
+};
 
 describe('save button', () => {
   it('file is downloaded after clicking save button', () => {
-    render(withThemeProvider(<SaveButton {...mockProps} />))
+    render(withThemeProvider(<SaveButton {...mockProps} />));
 
-    const button = screen.getByRole('button', { name: 'save' })
-    userEvent.click(button)
+    const button = screen.getByRole('button', { name: 'save' });
+    fireEvent.click(button);
 
-    expect(saveAs).toHaveBeenCalled()
-  })
-})
+    expect(saveAs).toHaveBeenCalled();
+  });
+});

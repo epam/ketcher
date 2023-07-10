@@ -37,7 +37,7 @@ const fieldGroups = {
   showAtomIds: 'Options for Debugging',
   showBondIds: 'Options for Debugging',
   showHalfBondIds: 'Options for Debugging',
-  showLoopIds: 'Options for Debugging'
-}
+  showLoopIds: 'Options for Debugging',
+};
 
-export default fieldGroups
+export default fieldGroups;

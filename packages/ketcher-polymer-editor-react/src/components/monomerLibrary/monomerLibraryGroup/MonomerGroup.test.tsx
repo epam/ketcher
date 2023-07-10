@@ -14,68 +14,109 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen, fireEvent } from '@testing-library/react';
+import { Struct } from 'ketcher-core';
 
-import { MonomerGroup } from './MonomerGroup'
+import { MonomerGroup } from './MonomerGroup';
 
 describe('Monomer Group', () => {
   const mockGroupProps = {
     groupItems: [
-      { label: 'R' },
-      { label: 'm' },
-      { label: 'd' },
-      { label: 'ar' },
-      { label: 'Ld' }
+      {
+        label: 'R',
+        props: {
+          MonomerNaturalAnalogCode: 'R',
+          MonomerName: 'RRMonomerName',
+          Name: 'RRName',
+        },
+        struct: new Struct(),
+      },
+      {
+        label: 'm',
+        props: {
+          MonomerNaturalAnalogCode: 'A',
+          MonomerName: 'mAMonomerName',
+          Name: 'mAName',
+        },
+        struct: new Struct(),
+      },
+      {
+        label: 'd',
+        props: {
+          MonomerNaturalAnalogCode: 'D',
+          MonomerName: 'dDMonomerName',
+          Name: 'dDName',
+        },
+        struct: new Struct(),
+      },
+      {
+        label: 'ar',
+        props: {
+          MonomerNaturalAnalogCode: 'R',
+          MonomerName: 'arRMonomerName',
+          Name: 'arRName',
+        },
+        struct: new Struct(),
+      },
+      {
+        label: 'Ld',
+        props: {
+          MonomerNaturalAnalogCode: 'L',
+          MonomerName: 'LdLMonomerName',
+          Name: 'LdLRName',
+        },
+        struct: new Struct(),
+      },
     ],
-    groupTitle: 'Mock title'
-  }
-  const onItemClick = jest.fn()
+    groupTitle: 'Mock title',
+  };
+  const onItemClick = jest.fn();
 
   it('should render correct without title prop', () => {
     const view = render(
-      withThemeProvider(
+      withThemeAndStoreProvider(
         <MonomerGroup
           items={mockGroupProps.groupItems}
           onItemClick={onItemClick}
-        />
-      )
-    )
+        />,
+      ),
+    );
 
     mockGroupProps.groupItems.forEach((item) => {
-      const currentItem = screen.getByText(item.label)
-      expect(currentItem).toBeInTheDocument()
-    })
+      const currentItem = screen.getByText(item.label);
+      expect(currentItem).toBeInTheDocument();
+    });
 
-    expect(view).toMatchSnapshot()
-  })
+    expect(view).toMatchSnapshot();
+  });
   it('should render correct with title prop', () => {
     const view = render(
-      withThemeProvider(
+      withThemeAndStoreProvider(
         <MonomerGroup
           items={mockGroupProps.groupItems}
           title={mockGroupProps.groupTitle}
           onItemClick={onItemClick}
-        />
-      )
-    )
+        />,
+      ),
+    );
 
-    const title = screen.getByText(mockGroupProps.groupTitle)
-    expect(title).toBeInTheDocument()
+    const title = screen.getByText(mockGroupProps.groupTitle);
+    expect(title).toBeInTheDocument();
 
-    expect(view).toMatchSnapshot()
-  })
+    expect(view).toMatchSnapshot();
+  });
   it('callback for monomer item should be called for group items', () => {
     render(
-      withThemeProvider(
+      withThemeAndStoreProvider(
         <MonomerGroup
           items={mockGroupProps.groupItems}
           title={mockGroupProps.groupTitle}
           onItemClick={onItemClick}
-        />
-      )
-    )
-    const item = screen.getByText('Ld')
-    fireEvent.click(item)
-    expect(onItemClick).toBeCalled()
-  })
-})
+        />,
+      ),
+    );
+    const item = screen.getByText('Ld');
+    fireEvent.click(item);
+    expect(onItemClick).toBeCalled();
+  });
+});

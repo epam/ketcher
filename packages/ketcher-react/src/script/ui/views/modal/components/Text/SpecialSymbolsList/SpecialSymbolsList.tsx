@@ -14,11 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import classes from './SpecialSymbolsList.module.less'
-import Icon from 'src/script/ui/component/view/icon'
+import { Icon, IconName } from 'components';
+import classes from './SpecialSymbolsList.module.less';
 
 const SpecialSymbolsList = ({ select }) => {
-  const symbols = [
+  const symbols: IconName[] = [
     'α',
     'β',
     'γ',
@@ -65,8 +65,8 @@ const SpecialSymbolsList = ({ select }) => {
     '≈',
     '=/',
     '≤',
-    '≥'
-  ]
+    '≥',
+  ];
   return (
     <div className={classes.window}>
       {symbols.map((symbol, id) => {
@@ -76,14 +76,14 @@ const SpecialSymbolsList = ({ select }) => {
             key={`symbol-${id}`}
             value={symbol}
             onMouseDown={(event) => {
-              select(event, symbol)
+              select(event, symbol);
             }}
           >
             <Icon name={symbol} />
           </button>
-        )
+        );
       })}
     </div>
-  )
-}
-export { SpecialSymbolsList }
+  );
+};
+export { SpecialSymbolsList };

@@ -14,36 +14,44 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { FormulaInput, FrozenInput } from './components'
+import { FormulaInput, FrozenInput } from './components';
 
-import { Component } from 'react'
-import { Dialog } from '../../../../components'
-import { ErrorsContext } from '../../../../../../../contexts'
-import { analyse } from '../../../../../state/server'
-import { changeRound } from '../../../../../state/options'
-import classes from './Analyse.module.less'
-import { connect } from 'react-redux'
-import { range } from 'lodash/fp'
-import Select from '../../../../../component/form/Select'
-import { getSelectOptionsFromSchema } from '../../../../../utils'
+import { Component } from 'react';
+import { Dialog } from '../../../../components';
+import { ErrorsContext } from '../../../../../../../contexts';
+import { analyse } from '../../../../../state/server';
+import { changeRound } from '../../../../../state/options';
+import classes from './Analyse.module.less';
+import { connect } from 'react-redux';
+import { range } from 'lodash/fp';
+import Select from '../../../../../component/form/Select';
+import { getSelectOptionsFromSchema } from '../../../../../utils';
 
 function roundOff(value, round) {
-  if (typeof value === 'number') return value.toFixed(round)
-  return value.replace(/[0-9]*\.[0-9]+/g, (str) => (+str).toFixed(round))
+  if (typeof value === 'number') return value.toFixed(round);
+  return value.replace(/[0-9]*\.[0-9]+/g, (str) => (+str).toFixed(round));
 }
 
-const selectOptions = getSelectOptionsFromSchema({ enum: range(0, 8) })
+const selectOptions = getSelectOptionsFromSchema({ enum: range(0, 8) });
 
 class AnalyseDialog extends Component {
-  static contextType = ErrorsContext
+  static contextType = ErrorsContext;
 
   componentDidMount() {
-    this.props.onAnalyse()
+    this.props.onAnalyse();
   }
 
   render() {
-    const { values, round, loading, onAnalyse, onChangeRound, ...props } =
-      this.props
+    const {
+      values,
+      round,
+      loading,
+      /* eslint-disable @typescript-eslint/no-unused-vars */
+      onAnalyse,
+      /* eslint-enable @typescript-eslint/no-unused-vars */
+      onChangeRound,
+      ...props
+    } = this.props;
     return (
       <Dialog
         title="Calculated Values"
@@ -60,26 +68,26 @@ class AnalyseDialog extends Component {
             {
               name: 'Chemical Formula',
               key: 'gross',
-              withSelector: false
+              withSelector: false,
             },
             {
               name: 'Molecular Weight',
               key: 'molecular-weight',
               round: 'roundWeight',
-              withSelector: true
+              withSelector: true,
             },
             {
               name: 'Exact Mass',
               key: 'monoisotopic-mass',
               round: 'roundMass',
-              withSelector: true
+              withSelector: true,
             },
             {
               name: 'Elemental Analysis',
               key: 'mass-composition',
               round: 'roundElAnalysis',
-              withSelector: false
-            }
+              withSelector: false,
+            },
           ].map((item) => (
             <li key={item.key} className={classes.contentWrapper}>
               <div className={classes.inputWrapper}>
@@ -123,7 +131,7 @@ class AnalyseDialog extends Component {
           ))}
         </ul>
       </Dialog>
-    )
+    );
   }
 }
 
@@ -133,15 +141,15 @@ const mapStateToProps = (state) => ({
   round: {
     roundWeight: state.options.analyse.roundWeight,
     roundMass: state.options.analyse.roundMass,
-    roundElAnalysis: state.options.analyse.roundElAnalysis
-  }
-})
+    roundElAnalysis: state.options.analyse.roundElAnalysis,
+  },
+});
 
 const mapDispatchToProps = (dispatch) => ({
   onAnalyse: () => dispatch(analyse()),
-  onChangeRound: (roundName, val) => dispatch(changeRound(roundName, val))
-})
+  onChangeRound: (roundName, val) => dispatch(changeRound(roundName, val)),
+});
 
-const Analyse = connect(mapStateToProps, mapDispatchToProps)(AnalyseDialog)
+const Analyse = connect(mapStateToProps, mapDispatchToProps)(AnalyseDialog);
 
-export default Analyse
+export default Analyse;

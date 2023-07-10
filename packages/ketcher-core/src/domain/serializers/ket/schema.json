@@ -468,6 +468,28 @@
             },
             "id": {
               "type": "number"
+            },
+            "attachmentPoints": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["attachmentAtom"],
+                "properties": {
+                  "attachmentAtom": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "leavingAtom": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "attachmentId": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 2
+                  }
+                }
+              }
             }
           }
         },
@@ -479,7 +501,6 @@
           }
         },
         "then": {
-          "required": ["fieldName"],
           "properties": {
             "context": {
               "enum": ["Fragment", "Multifragment", "Bond", "Atom", "Group"]

@@ -1,38 +1,37 @@
-import { Button } from '@mui/material'
-import styled from '@emotion/styled'
-import { ReactNode, useState } from 'react'
-import { Icon } from 'components/shared/icon'
-import { IconNameType } from 'components/shared/icon/icon'
-import { css, useTheme } from '@emotion/react'
+import { Button } from '@mui/material';
+import styled from '@emotion/styled';
+import { ReactNode, useState } from 'react';
+import { Icon, type IconName } from 'ketcher-react';
+import { css, useTheme } from '@emotion/react';
 
 type SwitcherProps = {
-  selectedMonomers: string[]
-  setActiveMonomerType: (type: string) => void
-}
+  selectedMonomers: string[];
+  setActiveMonomerType: (type: string) => void;
+};
 
 type RAPButtonProps = {
-  isActive: boolean
-  callback: () => void
-  children: ReactNode
-}
+  isActive: boolean;
+  callback: () => void;
+  children: ReactNode;
+};
 
 enum Monomers {
   Nucleotide,
   Sugar,
   Nucleobase,
-  Phosphate
+  Phosphate,
 }
 
-const svgNames: IconNameType[] = [
+const svgNames: IconName[] = [
   'rap-left-link',
   'rap-middle-link',
-  'rap-right-link'
-]
+  'rap-right-link',
+];
 
 const RAPButton = ({ isActive, children, callback }: RAPButtonProps) => {
   const {
-    ketcher: { color }
-  } = useTheme()
+    ketcher: { color },
+  } = useTheme();
   const styles = css`
     padding: 3px 12px;
     background-color: ${isActive
@@ -46,36 +45,36 @@ const RAPButton = ({ isActive, children, callback }: RAPButtonProps) => {
       background-color: ${color.button.primary.hover};
       color: ${color.text.light};
     }
-  `
+  `;
   return (
     <Button css={styles} onClick={callback}>
       {children}
     </Button>
-  )
-}
+  );
+};
 
 const SwitcherContainer = styled('div')`
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 8px 0;
-`
+  margin: 0;
+`;
 const SvgContainer = styled('div')`
   display: flex;
   gap: 11px;
-`
+`;
 const ButtonContainer = styled('div')`
   display: flex;
   gap: 4px;
-`
+`;
 const LinkIcon = styled(Icon)<{ isActive: boolean }>(({ isActive, theme }) => ({
   fill: 'none',
   '& path': {
     strokeDasharray: isActive ? 'none' : '4,4',
-    stroke: isActive ? theme.ketcher.color.button.primary.active : '#D1D5E3'
-  }
-}))
+    stroke: isActive ? theme.ketcher.color.button.primary.active : '#D1D5E3',
+  },
+}));
 
 const ResetButton = styled(Button)`
   margin-left: auto;
@@ -87,24 +86,23 @@ const ResetButton = styled(Button)`
   :hover {
     background-color: unset;
   }
-`
+`;
 
 export const Switcher = ({
   selectedMonomers,
-  setActiveMonomerType
+  setActiveMonomerType,
 }: SwitcherProps) => {
-  const [activeIndex, setActiveIndex] = useState(0)
+  const [activeIndex, setActiveIndex] = useState(0);
   const handleClick = (type: string, index: number) => {
-    setActiveMonomerType(type)
-    setActiveIndex(index)
-  }
-  const [nucleobase, sugar, phosphate] = selectedMonomers
-  const nucleotide = `${nucleobase}(${sugar})${phosphate}`
-
+    setActiveMonomerType(type);
+    setActiveIndex(index);
+  };
+  const [nucleobase, sugar, phosphate] = selectedMonomers;
+  const nucleotide = `${nucleobase}(${sugar})${phosphate}`;
   const onReset = () => {
-    setActiveMonomerType('reset')
-    setActiveIndex(0)
-  }
+    setActiveMonomerType('reset');
+    setActiveIndex(0);
+  };
 
   return (
     <>
@@ -140,5 +138,5 @@ export const Switcher = ({
         Reset
       </ResetButton>
     </>
-  )
-}
+  );
+};

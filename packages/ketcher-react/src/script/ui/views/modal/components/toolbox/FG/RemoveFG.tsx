@@ -14,33 +14,33 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { BaseCallProps, BaseProps } from '../../../modal.types'
-import classes from './RemoveFG.module.less'
-import { useAppContext } from '../../../../../../../hooks'
-import { fromSgroupDeletion } from 'ketcher-core'
+import { BaseCallProps, BaseProps } from '../../../modal.types';
+import classes from './RemoveFG.module.less';
+import { useAppContext } from '../../../../../../../hooks';
+import { fromSgroupDeletion } from 'ketcher-core';
 
 interface RemoveFGProps extends BaseProps {
-  fgIds: any
+  fgIds: any;
 }
 
-type Props = RemoveFGProps & BaseCallProps
+type Props = RemoveFGProps & BaseCallProps;
 
 const RemoveFG = (props: Props) => {
-  const { getKetcherInstance } = useAppContext()
-  const editor = getKetcherInstance().editor as any
-  const { fgIds } = props
+  const { getKetcherInstance } = useAppContext();
+  const editor = getKetcherInstance().editor as any;
+  const { fgIds } = props;
 
   const remove = function () {
     if (fgIds.length > 0)
       for (const id of fgIds) {
-        editor.update(fromSgroupDeletion(editor.render.ctab, id))
+        editor.update(fromSgroupDeletion(editor.render.ctab, id));
       }
-    return true
-  }
+    return true;
+  };
 
   const exit = (key, res) => {
-    props[key](res)
-  }
+    props[key](res);
+  };
 
   return (
     <div
@@ -69,8 +69,8 @@ const RemoveFG = (props: Props) => {
         />
       </footer>
     </div>
-  )
-}
+  );
+};
 
-export type { RemoveFGProps }
-export { RemoveFG }
+export type { RemoveFGProps };
+export { RemoveFG };

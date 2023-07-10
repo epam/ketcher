@@ -13,108 +13,62 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import React, { useState } from 'react'
-import { ClickAwayListener } from '@mui/material'
-import styled from '@emotion/styled'
-import Collapse from '@mui/material/Collapse'
-import { Icon } from 'components/shared/icon'
-import { MenuItem } from '../menuItem'
-import { useMenuContext } from '../../../hooks/useMenuContext'
-
-const RootContainer = styled.div`
-  display: flex;
-  position: relative;
-`
-
-type OptionsContainerProps = {
-  isVertical?: boolean
-} & React.HTMLAttributes<HTMLDivElement>
-
-const OptionsContainer = styled.div<OptionsContainerProps>`
-  display: flex;
-  position: absolute;
-  left: 5px;
-  border-radius: 2px;
-  flex-direction: ${({ isVertical }) => (isVertical ? 'column' : 'row')};
-`
-
-type DropDownProps = {
-  isActive: boolean
-} & React.HTMLAttributes<HTMLDivElement>
-
-const DropDown = styled.div<DropDownProps>`
-  display: flex;
-  width: 6px;
-  height: 6px;
-  position: absolute;
-  bottom: 0;
-  right: 0;
-
-  > svg path {
-    fill: ${({ isActive, theme }) =>
-      isActive
-        ? theme.ketcher.color.icon.clicked
-        : theme.ketcher.color.icon.activeMenu};
-  }
-`
-
-const OptionsItemsCollapse = styled(Collapse)`
-  position: relative;
-`
-
-const VisibleItem = styled.div`
-  display: flex;
-  align-items: center;
-  position: relative;
-  width: 32px;
-  height: 32px;
-  padding: 0;
-  justify-content: center;
-  border-radius: 2px;
-`
+import React, { useState } from 'react';
+import { ClickAwayListener } from '@mui/material';
+import { MenuItem } from '../menuItem';
+import { useMenuContext } from '../../../hooks/useMenuContext';
+import {
+  OptionsContainer,
+  OptionsItemsCollapse,
+  RootContainer,
+  StyledDropdownIcon,
+  VisibleItem,
+} from './styles';
 
 type SubMenuProps = {
-  vertical?: boolean
-}
+  vertical?: boolean;
+};
 
 const SubMenu = ({
   children,
-  vertical = false
+  vertical = false,
 }: React.PropsWithChildren<SubMenuProps>) => {
-  const [open, setOpen] = useState(false)
-  const { isActive } = useMenuContext()
+  const [open, setOpen] = useState(false);
+  const { isActive } = useMenuContext();
 
   const handleDropDownClick = () => {
-    setOpen((prev) => !prev)
-  }
+    setOpen((prev) => !prev);
+  };
 
   const hideCollapse = () => {
-    open && setOpen(false)
-  }
+    open && setOpen(false);
+  };
 
   const subComponents = React.Children.map(
     children as JSX.Element[],
     (child) => {
-      return child.type === MenuItem ? child : null
-    }
-  )
+      return child.type === MenuItem ? child : null;
+    },
+  );
 
   const options = subComponents
     .map((item) => item.props.itemId)
-    .filter((item) => item)
-  const activeOption = options.filter((itemKey) => isActive(itemKey))
-  const visibleItemId = activeOption.length ? activeOption[0] : options[0]
+    .filter((item) => item);
+  const activeOption = options.filter((itemKey) => isActive(itemKey));
+  const visibleItemId = activeOption.length ? activeOption[0] : options[0];
 
   return (
     <RootContainer>
       <VisibleItem>
         <MenuItem itemId={visibleItemId} />
-        <DropDown
-          isActive={isActive(visibleItemId)}
-          onClick={handleDropDownClick}
-        >
-          <Icon name="dropdown" />
-        </DropDown>
+        {open || (
+          <StyledDropdownIcon
+            className="dropdown"
+            name="dropdown"
+            onClick={handleDropDownClick}
+            isActive={isActive(visibleItemId)}
+          />
+        )}
       </VisibleItem>
       <OptionsItemsCollapse
         in={open}
@@ -129,7 +83,7 @@ const SubMenu = ({
         </ClickAwayListener>
       </OptionsItemsCollapse>
     </RootContainer>
-  )
-}
+  );
+};
 
-export { SubMenu }
+export { SubMenu };

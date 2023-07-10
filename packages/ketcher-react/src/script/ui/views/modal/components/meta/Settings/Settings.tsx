@@ -14,66 +14,66 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { BaseCallProps, BaseProps } from '../../../modal.types'
-import Form, { Field } from '../../../../../component/form/form/form'
+import { BaseCallProps, BaseProps } from '../../../modal.types';
+import Form, { Field } from '../../../../../component/form/form/form';
 import {
   setDefaultSettings,
-  updateFormState
-} from '../../../../../state/modal/form'
-import { useEffect, useState } from 'react'
+  updateFormState,
+} from '../../../../../state/modal/form';
+import { useEffect, useState } from 'react';
 
-import ColorPicker from '../../../../../component/form/colorPicker/ColorPicker'
-import { Dialog } from '../../../../components'
-import Icon from '../../../../../component/view/icon'
-import MeasureInput from '../../../../../component/form/MeasureInput/measure-input'
-import OpenButton from '../../../../../component/view/openbutton'
-import { SaveButton } from '../../../../../component/view/savebutton'
-import Select from '../../../../../component/form/Select'
-import Accordion from './Accordion'
-import { StructService } from 'ketcher-core'
-import SystemFonts from '../../../../../component/form/systemfonts'
-import classes from './Settings.module.less'
-import { connect } from 'react-redux'
-import { getSelectOptionsFromSchema } from '../../../../../utils'
-import { saveSettings } from '../../../../../state/options'
+import ColorPicker from '../../../../../component/form/colorPicker/ColorPicker';
+import { Dialog } from '../../../../components';
+import MeasureInput from '../../../../../component/form/MeasureInput/measure-input';
+import OpenButton from '../../../../../component/view/openbutton';
+import { SaveButton } from '../../../../../component/view/savebutton';
+import Select from '../../../../../component/form/Select';
+import Accordion from './Accordion';
+import { StructService } from 'ketcher-core';
+import SystemFonts from '../../../../../component/form/systemfonts';
+import classes from './Settings.module.less';
+import { connect } from 'react-redux';
+import { getSelectOptionsFromSchema } from '../../../../../utils';
+import { saveSettings } from '../../../../../state/options';
 import settingsSchema, {
-  getDefaultOptions
-} from '../../../../../data/schema/options-schema'
-import fieldGroups from './fieldGroups'
-import { isEqual } from 'lodash'
+  getDefaultOptions,
+} from '../../../../../data/schema/options-schema';
+import fieldGroups from './fieldGroups';
+import { isEqual } from 'lodash';
+import { Icon } from 'components';
 
 interface SettingsProps extends BaseProps {
-  initState: any
+  initState: any;
   appOpts: {
-    version: string
-    buildDate: string
-    buildNumber: string
-    indigoVersion: string
-    imagoVersions: Array<string>
-    server: boolean
-    templates: boolean
-  }
-  server: StructService
+    version: string;
+    buildDate: string;
+    buildNumber: string;
+    indigoVersion: string;
+    imagoVersions: Array<string>;
+    server: boolean;
+    templates: boolean;
+  };
+  server: StructService;
 }
 
 interface SettingsCallProps extends BaseCallProps {
-  onOpenFile: (any) => void
-  onReset: () => void
+  onOpenFile: (any) => void;
+  onReset: () => void;
 }
 
-const defaultSettings = getDefaultOptions()
+const defaultSettings = getDefaultOptions();
 
 const HeaderContent = ({
   server,
   onOpenFile,
   onReset,
   formState,
-  initState
+  initState,
 }) => {
   const getIsResetDisabled = () => {
-    if (formState.result.init) return isEqual(defaultSettings, initState)
-    else return isEqual(defaultSettings, formState.result)
-  }
+    if (formState.result.init) return isEqual(defaultSettings, initState);
+    else return isEqual(defaultSettings, formState.result);
+  };
 
   return (
     <div className={classes.headerContent}>
@@ -106,12 +106,12 @@ const HeaderContent = ({
         <Icon name="reset" />
       </button>
     </div>
-  )
-}
+  );
+};
 
-type Props = SettingsProps & SettingsCallProps
+type Props = SettingsProps & SettingsCallProps;
 
-const settingsProps = settingsSchema.properties
+const settingsProps = settingsSchema.properties;
 
 const SettingsDialog = (props: Props) => {
   const {
@@ -122,21 +122,21 @@ const SettingsDialog = (props: Props) => {
     onReset,
     appOpts,
     ...prop
-  } = props
+  } = props;
 
-  const [changedGroups, setChangedGroups] = useState(new Set())
+  const [changedGroups, setChangedGroups] = useState(new Set());
 
   useEffect(() => {
-    const changed = new Set<string>()
+    const changed = new Set<string>();
 
     for (const key in initState) {
       if (initState[key] !== formState.result[key]) {
-        const group = fieldGroups[key]
-        changed.add(group)
+        const group = fieldGroups[key];
+        changed.add(group);
       }
     }
-    setChangedGroups(changed)
-  }, [initState, formState.result])
+    setChangedGroups(changed);
+  }, [initState, formState.result]);
 
   const generalTab = {
     key: 'general',
@@ -155,8 +155,8 @@ const SettingsDialog = (props: Props) => {
         <Field name="fontsz" component={MeasureInput} labelPos={false} />
         <Field name="fontszsub" component={MeasureInput} labelPos={false} />
       </fieldset>
-    )
-  }
+    ),
+  };
   const stereoTab = {
     key: 'stereo',
     label: 'Stereochemistry',
@@ -175,7 +175,7 @@ const SettingsDialog = (props: Props) => {
           name="colorStereogenicCenters"
           component={Select}
           options={getSelectOptionsFromSchema(
-            settingsProps?.colorStereogenicCenters
+            settingsProps?.colorStereogenicCenters,
           )}
         />
         <Field name="autoFadeOfStereoLabels" />
@@ -188,8 +188,8 @@ const SettingsDialog = (props: Props) => {
           tooltip="Ignore chiral flag while loading from molfiles. By default all the stereo will be ABS"
         />
       </fieldset>
-    )
-  }
+    ),
+  };
   const atomsTab = {
     key: 'atoms',
     label: 'Atoms',
@@ -202,12 +202,12 @@ const SettingsDialog = (props: Props) => {
           name="showHydrogenLabels"
           component={Select}
           options={getSelectOptionsFromSchema(
-            settingsProps?.showHydrogenLabels
+            settingsProps?.showHydrogenLabels,
           )}
         />
       </fieldset>
-    )
-  }
+    ),
+  };
   const bondsTab = {
     key: 'bonds',
     label: 'Bonds',
@@ -226,8 +226,8 @@ const SettingsDialog = (props: Props) => {
           labelPos={false}
         />
       </fieldset>
-    )
-  }
+    ),
+  };
   const serverTab = {
     key: 'server',
     label: 'Server',
@@ -239,8 +239,8 @@ const SettingsDialog = (props: Props) => {
         <Field name="gross-formula-add-rsites" />
         <Field name="gross-formula-add-isotopes" />
       </fieldset>
-    )
-  }
+    ),
+  };
   const threeDViewerTab = {
     key: '3dviewer',
     label: '3D Viewer',
@@ -263,8 +263,8 @@ const SettingsDialog = (props: Props) => {
           options={getSelectOptionsFromSchema(settingsProps?.miewAtomLabel)}
         />
       </fieldset>
-    )
-  }
+    ),
+  };
   const debuggingTab = {
     key: 'debugging',
     label: 'Options for Debugging',
@@ -275,8 +275,8 @@ const SettingsDialog = (props: Props) => {
         <Field name="showHalfBondIds" />
         <Field name="showLoopIds" />
       </fieldset>
-    )
-  }
+    ),
+  };
 
   const tabs = [
     generalTab,
@@ -285,8 +285,8 @@ const SettingsDialog = (props: Props) => {
     bondsTab,
     serverTab,
     threeDViewerTab,
-    debuggingTab
-  ]
+    debuggingTab,
+  ];
 
   return (
     <Dialog
@@ -316,31 +316,31 @@ const SettingsDialog = (props: Props) => {
         />
       </Form>
     </Dialog>
-  )
-}
+  );
+};
 
 const mapStateToProps = (state) => ({
   server: state.options.app.server ? state.server : null,
   appOpts: state.options.app,
   initState: state.options.settings,
-  formState: state.modal.form
-})
+  formState: state.modal.form,
+});
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
   onOpenFile: (newOpts) => {
     try {
-      dispatch(updateFormState({ result: JSON.parse(newOpts) }))
+      dispatch(updateFormState({ result: JSON.parse(newOpts) }));
     } catch (ex) {
-      console.info('Bad file')
+      console.info('Bad file');
     }
   },
   onReset: () => dispatch(setDefaultSettings()),
   onOk: (res) => {
-    dispatch(saveSettings(res))
-    ownProps.onOk(res)
-  }
-})
+    dispatch(saveSettings(res));
+    ownProps.onOk(res);
+  },
+});
 
-const Settings = connect(mapStateToProps, mapDispatchToProps)(SettingsDialog)
+const Settings = connect(mapStateToProps, mapDispatchToProps)(SettingsDialog);
 
-export default Settings
+export default Settings;

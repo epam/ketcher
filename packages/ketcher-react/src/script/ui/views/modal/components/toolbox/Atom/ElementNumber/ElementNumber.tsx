@@ -14,25 +14,25 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Elements } from 'ketcher-core'
-import { capitalize } from 'lodash/fp'
+import { Elements } from 'ketcher-core';
+import { capitalize } from 'lodash/fp';
 
 interface ElementNumberProps {
-  label: string
+  label: string;
 }
 
-type Props = ElementNumberProps
+type Props = ElementNumberProps;
 
 const ElementNumber = (props: Props) => {
-  const { label } = props
-  const value = Elements.get(capitalize(label))?.number || ''
+  const { label } = props;
+  const value = Elements.get(capitalize(label))?.number || '';
 
   return (
     <label>
       <span>Number</span>
       <input type="text" readOnly value={value} />
     </label>
-  )
-}
+  );
+};
 
-export default ElementNumber
+export default ElementNumber;

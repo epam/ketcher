@@ -14,93 +14,129 @@
  * limitations under the License.
  ***************************************************************************/
 
-import * as clipArea from '../component/cliparea/cliparea'
+import * as clipArea from '../component/cliparea/cliparea';
 
 import {
   KetSerializer,
   MolSerializer,
   formatProperties,
-  ChemicalMimeType
-} from 'ketcher-core'
-import { debounce, isEqual } from 'lodash/fp'
-import { load, onAction, removeStructAction } from './shared'
+  ChemicalMimeType,
+} from 'ketcher-core';
+import { debounce, isEqual } from 'lodash/fp';
+import { load, onAction, removeStructAction } from './shared';
 
-import actions from '../action'
-import keyNorm from '../data/convert/keynorm'
-import { isIE } from 'react-device-detect'
-import { handleHotkeyOverItem } from './handleHotkeysOverItem'
-import { SettingsManager } from '../utils/settingsManager'
+import actions from '../action';
+import keyNorm from '../data/convert/keynorm';
+import { isIE } from 'react-device-detect';
+import { SettingsManager } from '../utils/settingsManager';
+import {
+  selectAbbreviationLookupValue,
+  selectIsAbbreviationLookupOpen,
+} from './abbreviationLookup/selectors';
+import {
+  closeAbbreviationLookup,
+  initAbbreviationLookup,
+  showAbbreviationLookup,
+} from './abbreviationLookup';
+import { isArrowKey, moveSelectedItems } from './moveSelectedItems';
+import { handleHotkeyOverItem } from './handleHotkeysOverItem';
 
 export function initKeydownListener(element) {
   return function (dispatch, getState) {
-    const hotKeys = initHotKeys()
+    const hotKeys = initHotKeys();
     element.addEventListener('keydown', (event) =>
-      keyHandle(dispatch, getState(), hotKeys, event)
-    )
-  }
+      keyHandle(dispatch, getState, hotKeys, event),
+    );
+  };
 }
 
 function removeNotRenderedStruct(actionTool, group, dispatch) {
-  const affectedTools = ['paste', 'template']
+  const affectedTools = ['paste', 'template'];
   if (affectedTools.includes(actionTool.tool) && group?.includes('save')) {
-    dispatch(removeStructAction())
+    dispatch(removeStructAction());
   }
 }
 
+let abbreviationLookupTimeoutId: number | undefined;
+const ABBREVIATION_LOOKUP_TYPING_TIMEOUT = 1000;
+
 /* HotKeys */
-function keyHandle(dispatch, state, hotKeys, event) {
-  if (state.modal) return
+function keyHandle(dispatch, getState, hotKeys, event) {
+  const state = getState();
 
-  const { editor } = state
-  const { render } = editor
-  const actionState = state.actionState
-  const actionTool = actionState.activeTool
+  if (state.modal || selectIsAbbreviationLookupOpen(state)) return;
 
-  const key = keyNorm(event)
+  const { editor } = state;
+  const { render } = editor;
+  const actionState = state.actionState;
+  const actionTool = actionState.activeTool;
 
-  let group: any = null
+  const key = keyNorm(event);
+
+  let group: any = null;
+
+  if (key && key.length === 1) {
+    if (selectAbbreviationLookupValue(state)) {
+      dispatch(showAbbreviationLookup(event.key));
+      clearTimeout(abbreviationLookupTimeoutId);
+      abbreviationLookupTimeoutId = undefined;
+
+      const resetAction = SettingsManager.getSettings().selectionTool;
+      dispatch(onAction(resetAction));
+
+      event.preventDefault();
+      return;
+    } else {
+      abbreviationLookupTimeoutId = window.setTimeout(() => {
+        dispatch(closeAbbreviationLookup());
+        abbreviationLookupTimeoutId = undefined;
+      }, ABBREVIATION_LOOKUP_TYPING_TIMEOUT);
+
+      dispatch(initAbbreviationLookup(event.key));
+    }
+  }
 
   if (key && key.length === 1 && key.match('/')) {
     const hotkeyDialogTypes = {
       atoms: actions['atom-props'].action,
-      bonds: actions['bond-props'].action
-    }
+      bonds: actions['bond-props'].action,
+    };
 
-    const hoveredItem = getHoveredItem(render.ctab)
+    const hoveredItem = getHoveredItem(render.ctab);
     if (!hoveredItem) {
-      return
+      return;
     }
-    const dialogType = Object.keys(hoveredItem)[0]
+    const dialogType = Object.keys(hoveredItem)[0];
 
     if (Object.hasOwn(hotkeyDialogTypes, dialogType)) {
       handleHotkeyOverItem({
         hoveredItem,
         newAction: hotkeyDialogTypes[dialogType],
         editor,
-        dispatch
-      })
+        dispatch,
+      });
     }
 
-    event.preventDefault()
+    event.preventDefault();
   } else if (editor.rotateController.isRotating && key === 'Escape') {
-    editor.rotateController.revert()
+    editor.rotateController.revert();
   } else if ((group = keyNorm.lookup(hotKeys, event)) !== undefined) {
-    const index = checkGroupOnTool(group, actionTool) // index currentTool in group || -1
-    const groupLength = group !== null ? group.length : 1
-    const newIndex = (index + 1) % groupLength
+    const index = checkGroupOnTool(group, actionTool); // index currentTool in group || -1
+    const groupLength = group !== null ? group.length : 1;
+    const newIndex = (index + 1) % groupLength;
 
-    const actName = group[newIndex]
+    const actName = group[newIndex];
     if (actionState[actName] && actionState[actName].disabled === true) {
-      event.preventDefault()
-      return
+      event.preventDefault();
+      return;
     }
     // Removing from what should be saved - structure, which was added to paste tool,
     // but not yet rendered on canvas
-    removeNotRenderedStruct(actionTool, group, dispatch)
+    removeNotRenderedStruct(actionTool, group, dispatch);
 
     if (clipArea.actions.indexOf(actName) === -1) {
-      let newAction = actions[actName].action
-      const hoveredItem = getHoveredItem(render.ctab)
+      let newAction = actions[actName].action;
+      const hoveredItem = getHoveredItem(render.ctab);
       // check if atom is currently hovered over
       // in this case we do not want to activate the corresponding tool
       // and just insert the atom directly
@@ -109,170 +145,174 @@ function keyHandle(dispatch, state, hotKeys, event) {
         newAction.tool !== 'select' &&
         newAction.dialog !== 'templates'
       ) {
-        newAction = getCurrentAction(group[index]) || newAction
+        newAction = getCurrentAction(group[index]) || newAction;
         handleHotkeyOverItem({
           hoveredItem,
           newAction,
           editor,
-          dispatch
-        })
+          dispatch,
+        });
       } else {
         if (newAction.tool === 'select') {
-          newAction = SettingsManager.getSettings().selectionTool
+          newAction = SettingsManager.getSettings().selectionTool;
         }
 
-        dispatch(onAction(newAction))
+        dispatch(onAction(newAction));
       }
 
-      event.preventDefault()
+      event.preventDefault();
     } else if (isIE) {
-      clipArea.exec(event)
+      clipArea.exec(event);
     }
+  } else if (isArrowKey(event.key)) {
+    moveSelectedItems(editor, event.key, event.shiftKey);
   }
 }
 
 function getCurrentAction(prevActName) {
-  return actions[prevActName]?.action
+  return actions[prevActName]?.action;
 }
 
 function getHoveredItem(
-  ctab: Record<string, Map<number, Record<string, unknown>>>
+  ctab: Record<string, Map<number, Record<string, unknown>>>,
 ): Record<string, number> | null {
-  const hoveredItem = {}
+  const hoveredItem = {};
 
   for (const ctabItem in ctab) {
     if (Object.keys(hoveredItem).length) {
-      break
+      break;
     }
 
     if (!(ctab[ctabItem] instanceof Map)) {
-      continue
+      continue;
     }
 
     ctab[ctabItem].forEach((item, id) => {
       if (item.hover) {
-        hoveredItem[ctabItem] = id
+        hoveredItem[ctabItem] = id;
       }
-    })
+    });
   }
 
-  return Object.keys(hoveredItem).length ? hoveredItem : null
+  return Object.keys(hoveredItem).length ? hoveredItem : null;
 }
 
 function setHotKey(key, actName, hotKeys) {
-  if (Array.isArray(hotKeys[key])) hotKeys[key].push(actName)
-  else hotKeys[key] = [actName]
+  if (Array.isArray(hotKeys[key])) hotKeys[key].push(actName);
+  else hotKeys[key] = [actName];
 }
 
 function initHotKeys() {
-  const hotKeys = {}
-  let act
+  const hotKeys = {};
+  let act;
 
   Object.keys(actions).forEach((actName) => {
-    act = actions[actName]
-    if (!act.shortcut) return
+    act = actions[actName];
+    if (!act.shortcut) return;
 
     if (Array.isArray(act.shortcut)) {
       act.shortcut.forEach((key) => {
-        setHotKey(key, actName, hotKeys)
-      })
+        setHotKey(key, actName, hotKeys);
+      });
     } else {
-      setHotKey(act.shortcut, actName, hotKeys)
+      setHotKey(act.shortcut, actName, hotKeys);
     }
-  })
+  });
 
-  return keyNorm(hotKeys)
+  return keyNorm(hotKeys);
 }
 
 function checkGroupOnTool(group, actionTool) {
-  let index = group.indexOf(actionTool.tool)
+  let index = group.indexOf(actionTool.tool);
 
   group.forEach((actName, i) => {
-    if (isEqual(actions[actName].action, actionTool)) index = i
-  })
+    if (isEqual(actions[actName].action, actionTool)) index = i;
+  });
 
-  return index
+  return index;
 }
 
-const rxnTextPlain = /\$RXN\n+\s+0\s+0\s+0\n*/
+const rxnTextPlain = /\$RXN\n+\s+0\s+0\s+0\n*/;
 
 /* ClipArea */
 export function initClipboard(dispatch) {
   const formats = Object.keys(formatProperties).map(
-    (format) => formatProperties[format].mime
-  )
+    (format) => formatProperties[format].mime,
+  );
 
-  const debAction = debounce(0, (action) => dispatch(onAction(action)))
+  const debAction = debounce(0, (action) => dispatch(onAction(action)));
   const loadStruct = debounce(0, (structStr, opts) =>
-    dispatch(load(structStr, opts))
-  )
+    dispatch(load(structStr, opts)),
+  );
 
   return {
     formats,
     focused() {
-      const state = global.currentState
-      return !state.modal
+      const state = global.currentState;
+      return !state.modal;
     },
     onCut() {
-      const state = global.currentState
-      const editor = state.editor
-      const data = clipData(editor)
-      if (data) debAction({ tool: 'eraser', opts: 1 })
-      else editor.selection(null)
-      return data
+      const state = global.currentState;
+      const editor = state.editor;
+      const data = clipData(editor);
+      if (data) debAction({ tool: 'eraser', opts: 1 });
+      else editor.selection(null);
+      return data;
     },
     onCopy() {
-      const state = global.currentState
-      const editor = state.editor
-      const data = clipData(editor)
-      editor.selection(null)
-      return data
+      const state = global.currentState;
+      const editor = state.editor;
+      const data = clipData(editor);
+      editor.selection(null);
+      return data;
     },
     onPaste(data) {
       const structStr =
         data[ChemicalMimeType.KET] ||
         data[ChemicalMimeType.Mol] ||
         data[ChemicalMimeType.Rxn] ||
-        data['text/plain']
+        data['text/plain'];
 
       if (structStr || !rxnTextPlain.test(data['text/plain']))
-        loadStruct(structStr, { fragment: true })
-    }
-  }
+        loadStruct(structStr, { fragment: true });
+    },
+  };
 }
 
 function clipData(editor) {
-  const res = {}
-  const struct = editor.structSelected()
-  const errorHandler = editor.errorHandler
+  const res = {};
+  const struct = editor.structSelected();
+  const errorHandler = editor.errorHandler;
 
-  if (struct.isBlank()) return null
+  if (struct.isBlank()) return null;
   const simpleObjectOrText = Boolean(
-    struct.simpleObjects.size || struct.texts.size
-  )
+    struct.simpleObjects.size || struct.texts.size,
+  );
   if (simpleObjectOrText && isIE) {
     errorHandler(
       'The structure you are trying to copy contains Simple object or/and Text object.' +
-        'To copy Simple object or Text object in Internet Explorer try "Copy as KET" button'
-    )
-    return null
+        'To copy Simple object or Text object in Internet Explorer try "Copy as KET" button',
+    );
+    return null;
   }
-  const molSerializer = new MolSerializer()
+  const molSerializer = new MolSerializer();
   try {
-    const serializer = new KetSerializer()
-    const ket = serializer.serialize(struct)
-    res[ChemicalMimeType.KET] = ket
+    const serializer = new KetSerializer();
+    const ket = serializer.serialize(struct);
+    res[ChemicalMimeType.KET] = ket;
 
-    const type = struct.isReaction ? ChemicalMimeType.Mol : ChemicalMimeType.Rxn
-    const data = molSerializer.serialize(struct)
-    res['text/plain'] = data
-    res[type] = data
+    const type = struct.isReaction
+      ? ChemicalMimeType.Mol
+      : ChemicalMimeType.Rxn;
+    const data = molSerializer.serialize(struct);
+    res['text/plain'] = data;
+    res[type] = data;
 
     // res['chemical/x-daylight-smiles'] = smiles.stringify(struct);
-    return res
+    return res;
   } catch (e: any) {
-    errorHandler(e.message)
+    errorHandler(e.message);
   }
 
-  return null
+  return null;
 }

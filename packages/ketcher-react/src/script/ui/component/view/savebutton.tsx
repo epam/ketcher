@@ -13,35 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { OutputFormatType } from 'ketcher-core'
+import { OutputFormatType } from 'ketcher-core';
+import { saveAs } from 'file-saver';
 
-import { saveAs } from 'file-saver'
-import React, { PropsWithChildren } from 'react'
-import { useAppContext } from '../../../../hooks'
+import React, { PropsWithChildren } from 'react';
+import { useAppContext } from '../../../../hooks';
+import { fileSaver } from './saveButton.utils';
+import { SaverType } from './saveButton.types';
 
 type Props = {
-  server?: any
-  filename: string
-  outputFormat?: OutputFormatType
-  data: any
-  type?: string
-  mode?: string
-  onSave?: () => void
-  onError?: (err: any) => void
-  className?: string
-  title?: string
-  disabled?: boolean
-}
+  server?: any;
+  filename: string;
+  outputFormat?: OutputFormatType;
+  data: any;
+  type?: string;
+  mode?: string;
+  onSave?: () => void;
+  onError?: (err: any) => void;
+  className?: string;
+  title?: string;
+  disabled?: boolean;
+};
 
-type FileSaverReturnType = Promise<
-  (data: Blob | string, fn, type: string | undefined) => void | never
->
-
-type SaverType = Awaited<FileSaverReturnType>
-type SaveButtonProps = PropsWithChildren<Props>
+type SaveButtonProps = PropsWithChildren<Props>;
 
 const SaveButton = (props: SaveButtonProps) => {
-  const noop = () => null
+  const noop = () => null;
   const {
     server,
     filename = 'unnamed',
@@ -53,49 +50,49 @@ const SaveButton = (props: SaveButtonProps) => {
     onError = noop,
     className,
     title,
-    disabled
-  } = props
-  const { getKetcherInstance } = useAppContext()
-
-  const save = (event: React.KeyboardEvent | React.MouseEvent) => {
-    event.preventDefault()
-    switch (mode) {
-      case 'saveImage':
-        saveImage()
-        break
-      case 'saveFile':
-      default:
-        saveFile()
-    }
-  }
+    disabled,
+  } = props;
+  const { getKetcherInstance } = useAppContext();
 
   const saveFile = () => {
     if (data) {
       try {
         fileSaver(server).then((saver: SaverType) => {
-          saver(data, filename, type)
-          onSave()
-        })
+          saver(data, filename, type);
+          onSave();
+        });
       } catch (error) {
-        onError(error)
+        onError(error);
       }
     }
-  }
+  };
 
   const saveImage = () => {
-    const ketcherInstance = getKetcherInstance()
+    const ketcherInstance = getKetcherInstance();
     if (outputFormat) {
       ketcherInstance
         .generateImage(data, { outputFormat })
         .then((blob) => {
-          saveAs(blob, `${filename}.${outputFormat}`)
-          onSave()
+          saveAs(blob, `${filename}.${outputFormat}`);
+          onSave();
         })
         .catch((error) => {
-          onError(error)
-        })
+          onError(error);
+        });
     }
-  }
+  };
+
+  const save = (event: React.KeyboardEvent | React.MouseEvent) => {
+    event.preventDefault();
+    switch (mode) {
+      case 'saveImage':
+        saveImage();
+        break;
+      case 'saveFile':
+      default:
+        saveFile();
+    }
+  };
 
   return (
     <button
@@ -103,31 +100,12 @@ const SaveButton = (props: SaveButtonProps) => {
       className={className}
       disabled={disabled}
       onClick={(event) => {
-        save(event)
+        save(event);
       }}
     >
       {props.children}
     </button>
-  )
-}
+  );
+};
 
-const fileSaver = (server): FileSaverReturnType => {
-  return new Promise((resolve, reject) => {
-    if (global.Blob && saveAs) {
-      resolve((data, fn, type) => {
-        const blob = new Blob([data], { type }) // eslint-disable-line no-undef
-        saveAs(blob, fn)
-      })
-    } else if (server) {
-      resolve(
-        server.then(() => {
-          throw Error("Server doesn't still support echo method")
-        })
-      )
-    } else {
-      reject(new Error('Your browser does not support opening files locally'))
-    }
-  })
-}
-
-export { SaveButton }
+export { SaveButton };

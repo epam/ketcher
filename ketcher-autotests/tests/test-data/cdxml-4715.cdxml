@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE CDXML SYSTEM "http://www.cambridgesoft.com/xml/cdxml.dtd">
+<CDXML BondLength="30.000000" LabelFont="3" CaptionFont="4">
+    <fonttable id="1">
+        <font id="2" charset="utf-8" name="Arial"/>
+        <font id="3" charset="utf-8" name="Times New Roman"/>
+    </fonttable>
+    <colortable>
+        <color r="1" g="1" b="1"/>
+        <color r="0" g="0" b="0"/>
+        <color r="1" g="0" b="0"/>
+        <color r="1" g="1" b="0"/>
+        <color r="0" g="1" b="0"/>
+        <color r="0" g="1" b="1"/>
+        <color r="0" g="0" b="1"/>
+        <color r="1" g="0" b="1"/>
+        <color r="0.5" g="0.5" b="0.5"/>
+    </colortable>
+    <page HeightPages="1" WidthPages="1">
+        <fragment id="4">
+            <n id="5" p="77.555481 325.706421"/>
+            <n id="6" p="101.538231 343.627869"/>
+            <n id="7" p="102.644394 373.552155"/>
+            <n id="8" p="80.056297 393.086487"/>
+            <n id="9" p="48.412270 333.686401"/>
+            <n id="10" p="50.407646 387.570740"/>
+            <n id="11" p="36.398018 361.082153"/>
+            <n id="12" p="30.000000 45.000221"/>
+            <n id="13" p="30.000000 75.000664"/>
+            <n id="14" p="55.980392 90.000877"/>
+            <n id="15" p="81.960770 75.000664"/>
+            <n id="16" p="81.960770 45.000221"/>
+            <n id="17" p="55.980392 30.000000"/>
+            <b id="18" B="5" E="6"/>
+            <b id="19" B="6" E="7"/>
+            <b id="20" B="7" E="8"/>
+            <b id="21" B="8" E="10"/>
+            <b id="22" B="5" E="9"/>
+            <b id="23" B="9" E="11"/>
+            <b id="24" B="10" E="11"/>
+            <b id="25" B="12" E="17"/>
+            <b id="26" B="12" E="13"/>
+            <b id="27" B="13" E="14"/>
+            <b id="28" B="14" E="15"/>
+            <b id="29" B="15" E="16"/>
+            <b id="30" B="16" E="17"/>
+            <graphic id="31" BoundingBox="483.750000 155.250000 12915.000000 -5535.000000" Center3D="430.500000 184.500000" MajorAxisEnd3D="483.750000 184.500000" MinorAxisEnd3D="430.500000 155.250000" GraphicType="Oval"/>
+            <graphic id="32" BoundingBox="132.750000 312.000000 261.000000 254.250015" GraphicType="Rectangle"/>
+        </fragment>
+    </page>
+</CDXML>

@@ -14,43 +14,43 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { BaseOperation } from '../../base'
-import { OperationType } from '../../OperationType'
-import { ReStruct } from '../../../../render'
-import { Scale } from 'domain/helpers'
+import { BaseOperation } from '../../base';
+import { OperationType } from '../../OperationType';
+import { ReStruct } from '../../../../render';
+import { Scale } from 'domain/helpers';
 
 export class RxnPlusMove extends BaseOperation {
   data: {
-    id: any
-    d: any
-    noinvalidate: any
-  }
+    id: any;
+    d: any;
+    noinvalidate: any;
+  };
 
   constructor(id?: any, d?: any, noinvalidate?: any) {
-    super(OperationType.RXN_PLUS_MOVE)
-    this.data = { id, d, noinvalidate }
+    super(OperationType.RXN_PLUS_MOVE);
+    this.data = { id, d, noinvalidate };
   }
 
   execute(restruct: ReStruct) {
-    const { id, d, noinvalidate } = this.data
+    const { id, d, noinvalidate } = this.data;
 
-    const struct = restruct.molecule
-    struct.rxnPluses.get(id)!.pp.add_(d) // eslint-disable-line no-underscore-dangle
+    const struct = restruct.molecule;
+    struct.rxnPluses.get(id)!.pp.add_(d); // eslint-disable-line no-underscore-dangle
 
-    const rxn = restruct.rxnPluses.get(id)!
-    const scaled = Scale.obj2scaled(d, restruct.render.options)
-    rxn.visel.translate(scaled)
+    const rxn = restruct.rxnPluses.get(id)!;
+    const scaled = Scale.obj2scaled(d, restruct.render.options);
+    rxn.visel.translate(scaled);
 
-    this.data.d = d.negated()
+    this.data.d = d.negated();
 
     if (!noinvalidate) {
-      BaseOperation.invalidateItem(restruct, 'rxnPluses', id, 1)
+      BaseOperation.invalidateItem(restruct, 'rxnPluses', id, 1);
     }
   }
 
   invert() {
-    const inverted = new RxnPlusMove()
-    inverted.data = this.data
-    return inverted
+    const inverted = new RxnPlusMove();
+    inverted.data = this.data;
+    return inverted;
   }
 }

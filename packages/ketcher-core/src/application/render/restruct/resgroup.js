@@ -16,7 +16,7 @@
 
 import { Box2Abs, FunctionalGroup, Pile, SGroup, Vec2 } from 'domain/entities';
 
-import { SgContexts } from 'application/editor';
+import { SgContexts } from 'application/editor/shared/constants';
 import { LayerMap } from './generalEnumTypes';
 import ReDataSGroupData from './redatasgroupdata';
 import ReObject from './reobject';

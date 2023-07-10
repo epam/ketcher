@@ -1,5 +1,5 @@
-import { Vec2 } from 'domain/entities/vec2'
-import { Box2Abs } from 'domain/entities/box2Abs'
+import { Vec2 } from 'domain/entities/vec2';
+import { Box2Abs } from 'domain/entities/box2Abs';
 
 describe('Box2Abs', () => {
   describe('segmentIntersection', () => {
@@ -27,8 +27,8 @@ describe('Box2Abs', () => {
       [new Vec2(2, 2), new Vec2(3, 2), new Vec2(3, 2), new Vec2(7, 2), true],
       [new Vec2(5, 2), new Vec2(7, 2), new Vec2(2, 2), new Vec2(5, 2), true],
       // Common point (is not considering as intersection)
-      [new Vec2(2, 3), new Vec2(4, 1), new Vec2(4, 1), new Vec2(5, 2), false]
-    ]
+      [new Vec2(2, 3), new Vec2(4, 1), new Vec2(4, 1), new Vec2(5, 2), false],
+    ];
     it.each(testData)(
       'Should detect intersection of two segments',
       (
@@ -36,16 +36,16 @@ describe('Box2Abs', () => {
         seg1BottomRight,
         seg2TopLeft,
         seg2BottomRight,
-        expectedResult
+        expectedResult,
       ) => {
         const result = Box2Abs.segmentIntersection(
           seg1TopLeft,
           seg1BottomRight,
           seg2TopLeft,
-          seg2BottomRight
-        )
-        expect(result).toBe(expectedResult)
-      }
-    )
-  })
-})
+          seg2BottomRight,
+        );
+        expect(result).toBe(expectedResult);
+      },
+    );
+  });
+});

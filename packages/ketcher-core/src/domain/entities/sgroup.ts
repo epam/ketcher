@@ -24,6 +24,7 @@ import { Vec2 } from './vec2';
 import { ReStruct } from '../../application/render';
 import { Pool } from 'domain/entities/pool';
 import { ReSGroup } from 'application/render';
+import { SgContexts } from 'application/editor';
 import { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
 import assert from 'assert';
 
@@ -175,8 +176,8 @@ export class SGroup {
   calculatePP(struct: Struct): void {
     let topLeftPoint;
 
-    const isAtomContext = this.data.context === 'Atom';
-    const isBondContent = this.data.context === 'Bond';
+    const isAtomContext = this.data.context === SgContexts.Atom;
+    const isBondContent = this.data.context === SgContexts.Bond;
     if (isAtomContext || isBondContent) {
       const contentBoxes: Array<any> = [];
       let contentBB: Box2Abs | null = null;

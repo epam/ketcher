@@ -33,7 +33,7 @@
   },
   "lint-staged": {
     "*.md": [
-      "prettier --write",
+      "prettier --write"
     ],
     "*.{js,ts}": [
       "prettier --write",

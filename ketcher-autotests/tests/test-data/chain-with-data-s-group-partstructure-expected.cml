@@ -1,1 +1,30 @@
-{"root":{"nodes":[{"$ref":"mol0"}]},"mol0":{"type":"molecule","atoms":[{"label":"C","location":[9.801919937133789,-7.800000190734863,0.0]},{"label":"C","location":[10.667900085449219,-8.300000190734864,0.0]},{"label":"C","location":[11.534000396728516,-7.800000190734863,0.0]},{"label":"C","location":[12.399999618530274,-8.300000190734864,0.0]},{"label":"C","location":[13.265999794006348,-7.800000190734863,0.0]},{"label":"C","location":[14.132100105285645,-8.300000190734864,0.0]},{"label":"C","location":[14.998100280761719,-7.800000190734863,0.0]}],"bonds":[{"type":1,"atoms":[0,1]},{"type":1,"atoms":[1,2]},{"type":1,"atoms":[2,3]},{"type":1,"atoms":[3,4]},{"type":1,"atoms":[4,5]},{"type":1,"atoms":[5,6]}],"sgroups":[{"type":"DAT","atoms":[0,1,2,3],"fieldName":"Test","fieldData":"55","x":0.0,"y":0.0,"bonds":[0,1,2]}]}}
+<?xml version="1.0" encoding="UTF-8"?>
+<cml>
+    <molecule>
+        <atomArray>
+            <atom id="a0" elementType="C" x2="12.6019" y2="-8.175"/>
+            <atom id="a1" elementType="C" x2="13.4679" y2="-8.675"/>
+            <atom id="a2" elementType="C" x2="14.334" y2="-8.175"/>
+            <atom id="a3" elementType="C" x2="15.2" y2="-8.675"/>
+            <atom id="a4" elementType="C" x2="16.066" y2="-8.175"/>
+            <atom id="a5" elementType="C" x2="16.9321" y2="-8.675"/>
+            <atom id="a6" elementType="C" x2="17.7981" y2="-8.175"/>
+        </atomArray>
+        <bondArray>
+            <bond atomRefs2="a0 a1" order="1"/>
+            <bond atomRefs2="a1 a2" order="1"/>
+            <bond atomRefs2="a2 a3" order="1"/>
+            <bond atomRefs2="a3 a4" order="1"/>
+            <bond atomRefs2="a4 a5" order="1"/>
+            <bond atomRefs2="a5 a6" order="1"/>
+        </bondArray>
+        <molecule id="sg0" atomRefs="a0 a1 a2 a3" role="DataSgroup" fieldName="Test" x="0" y="0" fieldData="55">
+            <MBracket type="SQUARE">
+                <MPoint x="0" y="0"/>
+                <MPoint x="0" y="0"/>
+                <MPoint x="0" y="0"/>
+                <MPoint x="0" y="0"/>
+            </MBracket>
+        </molecule>
+    </molecule>
+</cml>

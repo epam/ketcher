@@ -47,6 +47,7 @@ if (enablePolymerEditor) {
 }
 
 const App = () => {
+  console.log('run app', process.env.MODE, process.env.KETCHER_URL);
   const hiddenButtonsConfig = getHiddenButtonsConfig();
   const [hasError, setHasError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');

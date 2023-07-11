@@ -1,4 +1,5 @@
 import { Page } from '@playwright/test';
+import {delay, DELAY_IN_SECONDS} from "@tests/utils";
 
 // const evaluateCallback = (REQUEST_IS_FINISHED: string) => {
 //   const MAX_TIME_TO_WAIT = 10000;
@@ -27,6 +28,8 @@ import { Page } from '@playwright/test';
 export const waitForLoad = async (page: Page, callback: VoidFunction) => {
   await page.waitForFunction(() => window.ketcher);
   callback();
+
+  await delay(DELAY_IN_SECONDS.TWO);
 
   if (await page.getByTestId('openStructureModal').isVisible()) {
     await page.waitForSelector('[data-testid=openStructureModal]', { state: 'detached' });

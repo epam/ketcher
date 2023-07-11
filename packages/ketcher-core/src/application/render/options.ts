@@ -85,7 +85,7 @@ function defaultOptions(options: RenderOptions): RenderOptions {
     bondSnappingStyle: {
       fill: '#365CFF',
       stroke: '#365CFF',
-      'stroke-width': options.bondThickness * 1.5
+      'stroke-width': options.bondThickness * 1.5,
     },
     /* eslint-enable quote-props */
     selectionStyle: {

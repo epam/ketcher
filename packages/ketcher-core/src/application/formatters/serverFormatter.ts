@@ -107,6 +107,7 @@ export class ServerFormatter implements StructFormatter {
 
     try {
       const result = await promise(data, this.#options);
+      console.log('result', result);
       const parsedStruct = this.#ketSerializer.deserialize(result.struct);
       console.log('parsedStruct', parsedStruct);
       if (!withCoords) {

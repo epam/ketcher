@@ -36,21 +36,21 @@ export function initMouseListener(element) {
     element.addEventListener(
       'mousedown',
       function (event: MouseEvent) {
-        const isBothLeftAndRightClick = event.buttons === 3
+        const isBothLeftAndRightClick = event.buttons === 3;
         if (isBothLeftAndRightClick) {
-          rightClickHandle(getState)
+          rightClickHandle(getState);
         }
       },
-      true
-    )
-  }
+      true,
+    );
+  };
 }
 
 function rightClickHandle(getState) {
-  const state = getState()
-  const { editor } = state
+  const state = getState();
+  const { editor } = state;
 
   if (editor.rotateController.isRotating) {
-    editor.rotateController.revert()
+    editor.rotateController.revert();
   }
 }

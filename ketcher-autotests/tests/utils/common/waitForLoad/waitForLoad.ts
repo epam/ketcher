@@ -42,4 +42,18 @@ export const waitForLoad = async (page: Page, callback: VoidFunction) => {
   if (await page.locator('.loading-spinner').isVisible()) {
     await page.waitForSelector('.loading-spinner', { state: 'detached' });
   }
+
+  await delay(DELAY_IN_SECONDS.FIVE);
+
+  if (await page.getByTestId('openStructureModal').isVisible()) {
+    await page.waitForSelector('[data-testid=openStructureModal]', { state: 'detached' });
+  }
+
+  if (await page.locator('[role=dialog]').isVisible()) {
+    await page.waitForSelector('[role=dialog]', { state: 'detached' });
+  }
+
+  if (await page.locator('.loading-spinner').isVisible()) {
+    await page.waitForSelector('.loading-spinner', { state: 'detached' });
+  }
 };

@@ -976,14 +976,19 @@ function bondSingle(
   halfBond1: HalfBond,
   halfBond2: HalfBond,
   options: RenderOptions,
+  isSnapping: boolean,
   color = '#000',
 ) {
   const a = halfBond1.p;
   const b = halfBond2.p;
-  return paper.path(makeStroke(a, b)).attr(options.lineattr).attr({
-    fill: color,
-    stroke: color,
-  });
+  return paper
+    .path(makeStroke(a, b))
+    .attr(options.lineattr)
+    .attr({
+      fill: color,
+      stroke: color,
+    })
+    .attr(isSnapping ? options.bondSnappingStyle : {});
 }
 
 function bondSingleUp(
@@ -992,6 +997,7 @@ function bondSingleUp(
   b2: Vec2,
   b3: Vec2,
   options: RenderOptions,
+  isSnapping: boolean,
   color = '#000',
 ) {
   // eslint-disable-line max-params
@@ -1009,7 +1015,8 @@ function bondSingleUp(
     .attr({
       fill: color,
       stroke: color,
-    });
+    })
+    .attr(isSnapping ? options.bondSnappingStyle : {});
 }
 
 function bondSingleStereoBold(
@@ -1019,6 +1026,7 @@ function bondSingleStereoBold(
   a3: Vec2,
   a4: Vec2,
   options: RenderOptions,
+  isSnapping: boolean,
   color = '#000',
 ) {
   // eslint-disable-line max-params
@@ -1034,11 +1042,12 @@ function bondSingleStereoBold(
       tfx(a4.x),
       tfx(a4.y),
     )
-    .attr(options.lineattr);
-  bond.attr({
-    stroke: color,
-    fill: color,
-  });
+    .attr(options.lineattr)
+    .attr({
+      stroke: color,
+      fill: color,
+    })
+    .attr(isSnapping ? options.bondSnappingStyle : {});
   return bond;
 }
 
@@ -1048,6 +1057,7 @@ function bondDoubleStereoBold(
   b1: Vec2,
   b2: Vec2,
   options: RenderOptions,
+  isSnapping: boolean,
   color = '#000',
 ) {
   // eslint-disable-line max-params
@@ -1059,7 +1069,8 @@ function bondDoubleStereoBold(
       .attr({
         stroke: color,
         fill: color,
-      }),
+      })
+      .attr(isSnapping ? options.bondSnappingStyle : {}),
   ]);
 }
 
@@ -1070,6 +1081,7 @@ function bondSingleDown(
   nlines: number,
   step: number,
   options: RenderOptions,
+  isSnapping: boolean,
   color = '#000',
 ) {
   // eslint-disable-line max-params
@@ -1087,10 +1099,14 @@ function bondSingleDown(
     q = r.addScaled(n, (-bsp * (i + 0.5)) / (nlines - 0.5));
     path += makeStroke(p, q);
   }
-  return paper.path(path).attr(options.lineattr).attr({
-    fill: color,
-    stroke: color,
-  });
+  return paper
+    .path(path)
+    .attr(options.lineattr)
+    .attr({
+      fill: color,
+      stroke: color,
+    })
+    .attr(isSnapping ? options.bondSnappingStyle : {});
 }
 
 function bondSingleEither(
@@ -1100,6 +1116,7 @@ function bondSingleEither(
   nlines: number,
   step: number,
   options: RenderOptions,
+  isSnapping: boolean,
   color = '#000',
 ) {
   // eslint-disable-line max-params
@@ -1115,10 +1132,14 @@ function bondSingleEither(
       .addScaled(n, ((i & 1 ? -1 : +1) * bsp * (i + 0.5)) / (nlines - 0.5));
     path += 'L' + tfx(r.x) + ',' + tfx(r.y);
   }
-  return paper.path(path).attr(options.lineattr).attr({
-    fill: color,
-    stroke: color,
-  });
+  return paper
+    .path(path)
+    .attr(options.lineattr)
+    .attr({
+      fill: color,
+      stroke: color,
+    })
+    .attr(isSnapping ? options.bondSnappingStyle : {});
 }
 
 function bondDouble(
@@ -1129,6 +1150,7 @@ function bondDouble(
   b2: Vec2,
   cisTrans: boolean,
   options: RenderOptions,
+  isSnapping: boolean,
 ) {
   // eslint-disable-line max-params
   return paper
@@ -1145,7 +1167,8 @@ function bondDouble(
       tfx(b2.x),
       tfx(b2.y),
     )
-    .attr(options.lineattr);
+    .attr(options.lineattr)
+    .attr(isSnapping ? options.bondSnappingStyle : {});
 }
 
 function bondSingleOrDouble(
@@ -1154,6 +1177,7 @@ function bondSingleOrDouble(
   halfBond2: HalfBond,
   nSect: number,
   options: RenderOptions,
+  isSnapping: boolean,
 ) {
   // eslint-disable-line max-statements, max-params
   const a = halfBond1.p;
@@ -1174,7 +1198,10 @@ function bondSingleOrDouble(
     }
     pp = pi;
   }
-  return paper.path(path).attr(options.lineattr);
+  return paper
+    .path(path)
+    .attr(options.lineattr)
+    .attr(isSnapping ? options.bondSnappingStyle : {});
 }
 
 function bondTriple(
@@ -1182,6 +1209,7 @@ function bondTriple(
   halfBond1: HalfBond,
   halfBond2: HalfBond,
   options: RenderOptions,
+  isSnapping: boolean,
   color = '#000',
 ) {
   const a = halfBond1.p;
@@ -1197,7 +1225,8 @@ function bondTriple(
     .attr({
       fill: color,
       stroke: color,
-    });
+    })
+    .attr(isSnapping ? options.bondSnappingStyle : {});
 }
 
 function bondAromatic(
@@ -1205,9 +1234,16 @@ function bondAromatic(
   paths: string[],
   bondShift: number,
   options: RenderOptions,
+  isSnapping: boolean,
 ) {
-  const l1 = paper.path(paths[0]).attr(options.lineattr);
-  const l2 = paper.path(paths[1]).attr(options.lineattr);
+  const l1 = paper
+    .path(paths[0])
+    .attr(options.lineattr)
+    .attr(isSnapping ? options.bondSnappingStyle : {});
+  const l2 = paper
+    .path(paths[1])
+    .attr(options.lineattr)
+    .attr(isSnapping ? options.bondSnappingStyle : {});
   if (bondShift !== undefined && bondShift !== null) {
     (bondShift > 0 ? l1 : l2).attr({ 'stroke-dasharray': '- ' });
   }
@@ -1220,13 +1256,15 @@ function bondAny(
   halfBond1: HalfBond,
   halfBond2: HalfBond,
   options: RenderOptions,
+  isSnapping: boolean,
 ) {
   const a = halfBond1.p;
   const b = halfBond2.p;
   return paper
     .path(makeStroke(a, b))
     .attr(options.lineattr)
-    .attr({ 'stroke-dasharray': '- ' });
+    .attr({ 'stroke-dasharray': '- ' })
+    .attr(isSnapping ? options.bondSnappingStyle : {});
 }
 
 function bondHydrogen(
@@ -1234,13 +1272,18 @@ function bondHydrogen(
   halfBond1: HalfBond,
   halfBond2: HalfBond,
   options: RenderOptions,
+  isSnapping: boolean,
 ) {
   const a = halfBond1.p;
   const b = halfBond2.p;
-  return paper.path(makeStroke(a, b)).attr(options.lineattr).attr({
-    'stroke-dasharray': '.',
-    'stroke-linecap': 'square',
-  });
+  return paper
+    .path(makeStroke(a, b))
+    .attr(options.lineattr)
+    .attr({
+      'stroke-dasharray': '.',
+      'stroke-linecap': 'square',
+    })
+    .attr(isSnapping ? options.bondSnappingStyle : {});
 }
 
 function bondDative(
@@ -1248,13 +1291,15 @@ function bondDative(
   halfBond1: HalfBond,
   halfBond2: HalfBond,
   options: RenderOptions,
+  isSnapping: boolean,
 ) {
   const a = halfBond1.p;
   const b = halfBond2.p;
   return paper
     .path(makeStroke(a, b))
     .attr(options.lineattr)
-    .attr({ 'arrow-end': 'block-midium-long' });
+    .attr({ 'arrow-end': 'block-midium-long' })
+    .attr(isSnapping ? options.bondSnappingStyle : {});
 }
 
 function reactingCenter(

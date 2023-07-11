@@ -15,14 +15,22 @@ describe('Rotate controller', () => {
     const tool = () => new SelectTool();
     const paper = jest.fn();
     const selection = () => null;
-    const controller = new RotateController({
+    const visibleAtoms = [1];
+    const editor = {
       selection,
       tool,
-      render: { paper },
-    } as any);
-    let visibleAtoms = [1];
+      render: {
+        paper,
+        ctab: {
+          molecule: {
+            getSelectedVisibleAtoms: () => visibleAtoms,
+          },
+        },
+      },
+    };
+    const controller = new RotateController(editor as any);
     // @ts-ignore
-    controller.rotateTool.getCenter = () => [new Vec2(), visibleAtoms];
+    controller.rotateTool.getCenter = () => new Vec2();
     expect(tool()).toBeInstanceOf(SelectTool);
     expect(selection()).toBe(null);
 
@@ -30,9 +38,9 @@ describe('Rotate controller', () => {
     controller.show();
     expect(paper).toBeCalledTimes(0);
 
-    visibleAtoms = [1, 2];
+    visibleAtoms.push(2);
     // @ts-ignore
-    controller.rotateTool.getCenter = () => [new Vec2(), visibleAtoms];
+    controller.rotateTool.getCenter = () => new Vec2();
     expect(() => {
       // @ts-ignore
       controller.show();
@@ -48,14 +56,22 @@ describe('Rotate controller', () => {
     const editor = new Editor(document, {});
     const NonSelectTool = new RotateTool(editor, undefined);
     const paper = jest.fn();
+    const visibleAtoms = [0, 1];
     const controller = new RotateController({
       selection: () => null,
       tool: () => NonSelectTool,
-      render: { paper },
+      render: {
+        paper,
+        ctab: {
+          // @ts-ignore
+          molecule: {
+            getSelectedVisibleAtoms: () => visibleAtoms,
+          },
+        },
+      },
     } as any);
-    const visibleAtoms = [0, 1];
     // @ts-ignore
-    controller.rotateTool.getCenter = () => [new Vec2(), visibleAtoms];
+    controller.rotateTool.getCenter = () => new Vec2();
     expect(visibleAtoms.length).toBeGreaterThan(1);
 
     // @ts-ignore
@@ -184,6 +200,7 @@ describe('Rotate controller', () => {
    */
   it(`cancels rotation without modifying history stack`, () => {
     const editor = new Editor(document, {});
+    editor.render.ctab.molecule.getSelectedVisibleAtoms = () => [];
     // @ts-ignore
     editor.rotateController.rotateTool.dragCtx = {
       action: { operations: [], perform: () => undefined },

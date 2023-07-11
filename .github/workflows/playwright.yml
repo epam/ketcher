@@ -43,8 +43,6 @@ jobs:
         run: npm run build
       - name: Run example in standalone mode
         run: cd example/ && nohup npm run serve:standalone &
-      - name: watch
-        run: ls example/dist/
       - name: Create env file
         run: |
           cd ketcher-autotests

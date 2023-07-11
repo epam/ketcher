@@ -22,17 +22,39 @@ import {
   NameContainer,
   NameInput,
   NameLine,
+  PresetName,
   RnaEditorExpandedContainer,
   StyledButton,
 } from './styles';
 import { IRnaEditorExpandedProps } from 'components/monomerLibrary/RnaBuilder/RnaEditor/RnaEditorExpanded/types';
-import { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import {
+  monomerGroupToPresetGroup,
+  RnaBuilderPresetsItem,
+  selectActivePreset,
+  selectActivePresetMonomerGroup,
+  selectActiveRnaBuilderItem,
+  selectIsPresetReadyToSave,
+  setActiveRnaBuilderItem,
+} from 'state/rna-builder';
+import { useAppSelector } from 'hooks';
+import {
+  scrollToSelectedMonomer,
+  scrollToSelectedPreset,
+} from 'components/monomerLibrary/RnaBuilder/RnaEditor/RnaEditor';
+import { getMonomerUniqueKey } from 'state/library';
 
 export const RnaEditorExpanded = ({
   name,
+  isEditMode,
   onCancel,
   onChangeName,
+  onSave,
+  onEdit,
+  onDuplicate,
 }: IRnaEditorExpandedProps) => {
+  const dispatch = useDispatch();
+  const activePreset = useAppSelector(selectActivePreset);
   const groupsData = [
     {
       groupName: MonomerGroups.SUGARS,
@@ -48,29 +70,76 @@ export const RnaEditorExpanded = ({
     },
   ] as const;
 
-  const [selectedGroup, setSelectedGroup] = useState<MonomerGroups>();
+  const activeMonomerGroup = useAppSelector(selectActiveRnaBuilderItem);
 
-  const selectGroup = (selectedGroup) => {
-    setSelectedGroup(selectedGroup);
+  const scrollToActiveItemInLibrary = (selectedGroup) => {
+    if (selectedGroup === RnaBuilderPresetsItem.Presets) {
+      scrollToSelectedPreset(activePreset.name);
+      return;
+    }
+
+    const activeMonomerInSelectedGroup =
+      activePreset[monomerGroupToPresetGroup[selectedGroup]];
+
+    if (!activeMonomerInSelectedGroup) return;
+    scrollToSelectedMonomer(getMonomerUniqueKey(activeMonomerInSelectedGroup));
   };
+  const selectGroup = (selectedGroup) => {
+    scrollToActiveItemInLibrary(selectedGroup);
+    dispatch(setActiveRnaBuilderItem(selectedGroup));
+  };
+
+  let mainButton;
+
+  if (!activePreset.presetInList) {
+    mainButton = (
+      <StyledButton
+        disabled={!selectIsPresetReadyToSave(activePreset)}
+        primary
+        onClick={onSave}
+      >
+        Add to Presets
+      </StyledButton>
+    );
+  } else if (isEditMode) {
+    mainButton = (
+      <StyledButton primary onClick={onSave}>
+        Save
+      </StyledButton>
+    );
+  } else {
+    mainButton = <StyledButton onClick={onEdit}>Edit</StyledButton>;
+  }
 
   return (
     <RnaEditorExpandedContainer>
-      <NameContainer>
-        <NameInput
-          value={name}
-          placeholder="Name your structure"
-          onChange={onChangeName}
+      <NameContainer
+        selected={activeMonomerGroup === RnaBuilderPresetsItem.Presets}
+        onClick={() => selectGroup(RnaBuilderPresetsItem.Presets)}
+      >
+        {isEditMode ? (
+          <NameInput
+            value={name}
+            placeholder="Name your structure"
+            onChange={onChangeName}
+          />
+        ) : (
+          <PresetName>{name}</PresetName>
+        )}
+        <NameLine
+          selected={activeMonomerGroup === RnaBuilderPresetsItem.Presets}
         />
-        <NameLine selected />
       </NameContainer>
       <GroupsContainer>
         {groupsData.map(({ groupName, iconName }) => {
           return (
             <GroupBlock
               key={groupName}
-              selected={selectedGroup === groupName}
+              selected={activeMonomerGroup === groupName}
               groupName={groupName}
+              monomerName={
+                selectActivePresetMonomerGroup(activePreset, groupName)?.label
+              }
               iconName={iconName}
               onClick={() => selectGroup(groupName)}
             />
@@ -78,8 +147,12 @@ export const RnaEditorExpanded = ({
         })}
       </GroupsContainer>
       <ButtonsContainer>
-        <StyledButton onClick={onCancel}>Cancel</StyledButton>
-        <StyledButton disabled>Add to Presets</StyledButton>
+        {isEditMode ? (
+          <StyledButton onClick={onCancel}>Cancel</StyledButton>
+        ) : (
+          <StyledButton onClick={onDuplicate}>Duplicate and Edit</StyledButton>
+        )}
+        {mainButton}
       </ButtonsContainer>
     </RnaEditorExpandedContainer>
   );

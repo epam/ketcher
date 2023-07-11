@@ -17,12 +17,36 @@
 import { RnaAccordion } from './RnaAccordion';
 import { RnaEditor } from './RnaEditor';
 import { RnaBuilderContainer } from './styles';
+import { useAppDispatch, useAppSelector } from 'hooks';
+import {
+  selectActivePreset,
+  selectHasUniqueNameError,
+  setHasUniqueNameError,
+} from 'state/rna-builder';
+import { Modal } from 'components/shared/modal';
+import { StyledButton } from 'components/monomerLibrary/RnaBuilder/RnaAccordion/styles';
 
 export const RnaBuilder = () => {
+  const dispatch = useAppDispatch();
+  const hasError = useAppSelector(selectHasUniqueNameError);
+  const activePreset = useAppSelector(selectActivePreset);
+  const closeErrorModal = () => {
+    dispatch(setHasUniqueNameError(false));
+  };
+
   return (
     <RnaBuilderContainer>
       <RnaEditor />
       <RnaAccordion />
+      <Modal isOpen={hasError} title="Error Message" onClose={closeErrorModal}>
+        <Modal.Content>
+          Preset with name "{activePreset?.name}" already exist. Please choose
+          another name.
+        </Modal.Content>
+        <Modal.Footer>
+          <StyledButton onClick={closeErrorModal}>Close</StyledButton>
+        </Modal.Footer>
+      </Modal>
     </RnaBuilderContainer>
   );
 };

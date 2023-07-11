@@ -14,7 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-export interface IRnaEditorCollapsedProps {
-  name?: string;
-  fullName?: string;
+import { IRnaPreset } from '../RnaBuilder/types';
+
+export interface IRnaPresetItemrops {
+  preset: IRnaPreset;
+  isSelected?: boolean;
+  onClick?: VoidFunction;
 }

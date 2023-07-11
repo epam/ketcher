@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import styled from '@emotion/styled';
-import { Accordion } from 'ketcher-react';
+import { Accordion, Button } from 'ketcher-react';
 
 export const RnaAccordionContainer = styled.div({
   display: 'flex',
@@ -29,10 +29,28 @@ export const StyledAccordion = styled(Accordion)({
 });
 
 export const DetailsContainer = styled.div({
+  position: 'relative',
   width: '100%',
   display: 'flex',
   flexDirection: 'column',
   gap: '24px',
   justifyContent: 'start',
   padding: '16px 12px',
+});
+
+export const StyledButton = styled(Button)((props) => {
+  return {
+    backgroundColor: props.theme.ketcher.color.button.transparent.active,
+    color: props.theme.ketcher.color.text.light,
+    borderColor: props.theme.ketcher.color.text.light,
+  };
+});
+
+export const DisabledArea = styled.div({
+  width: '100%',
+  height: '100%',
+  backgroundColor: '#eff2f594',
+  position: 'absolute',
+  top: 0,
+  left: 0,
 });

@@ -164,10 +164,8 @@ test.describe('3D Viewer', () => {
     const changedStructureData = await getKet(page);
 
     // Compare the initial and changed structure data
-    if (
-      JSON.stringify(initialStructureData) !==
-      JSON.stringify(changedStructureData)
-    ) {
+    expect(initialStructureData).not.toEqual(changedStructureData);
+    if (initialStructureData !== changedStructureData) {
       console.log('The structure has been changed successfully.');
     } else {
       throw new Error('The structure has not been changed.');
@@ -194,10 +192,8 @@ test.describe('3D Viewer', () => {
     const changedStructureData = await getKet(page);
 
     // Compare the initial and changed structure data
-    if (
-      JSON.stringify(initialStructureData) !==
-      JSON.stringify(changedStructureData)
-    ) {
+    expect(initialStructureData).not.toEqual(changedStructureData);
+    if (initialStructureData !== changedStructureData) {
       console.log('The structure has been changed successfully.');
     } else {
       throw new Error('The structure has not been changed.');
@@ -223,10 +219,8 @@ test.describe('3D Viewer', () => {
     const changedStructureData = await getKet(page);
 
     // Compare the initial and changed structure data
-    if (
-      JSON.stringify(initialStructureData) !==
-      JSON.stringify(changedStructureData)
-    ) {
+    expect(initialStructureData).not.toEqual(changedStructureData);
+    if (initialStructureData !== changedStructureData) {
       console.log('The structure has been changed successfully.');
     } else {
       throw new Error('The structure has not been changed.');
@@ -252,10 +246,8 @@ test.describe('3D Viewer', () => {
     const changedStructureData = await getKet(page);
 
     // Compare the initial and changed structure data
-    if (
-      JSON.stringify(initialStructureData) !==
-      JSON.stringify(changedStructureData)
-    ) {
+    expect(initialStructureData).not.toEqual(changedStructureData);
+    if (initialStructureData !== changedStructureData) {
       console.log('The structure has been changed successfully.');
     } else {
       throw new Error('The structure has not been changed.');

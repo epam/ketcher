@@ -38,7 +38,7 @@ export async function openFileAndAddToCanvas(filename: string, page: Page) {
   await selectTopPanelButton(TopPanelButton.Open, page);
   await openFile(filename, page);
   await waitForLoad(page, () => {
-    pressButton(page, 'Add to Canvas');
+    page.getByRole('button', { name: 'Add to Canvas' }).click();
   })
   await clickInTheMiddleOfTheScreen(page);
 }

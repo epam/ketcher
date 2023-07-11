@@ -82,7 +82,8 @@ const ContextMenuTrigger: React.FC<PropsWithChildren> = ({ children }) => {
 
       if (!closestItem) {
         const isLeftMouseButtonPressed = event.buttons === 1;
-        if (selection && !isLeftMouseButtonPressed) {
+        const isRotationReverted = isLeftMouseButtonPressed;
+        if (selection && !isRotationReverted) {
           // if it was a click outside of any item
           editor.selection(null);
         }

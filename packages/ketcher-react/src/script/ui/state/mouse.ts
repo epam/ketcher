@@ -36,9 +36,9 @@ export function initMouseListener(element) {
     element.addEventListener(
       'mousedown',
       function (event: MouseEvent) {
-        const isBothLeftAndRightClick = event.buttons === 3;
-        if (isBothLeftAndRightClick) {
-          rightClickHandle(getState);
+        const areBothLeftAndRightButtonsClicked = event.buttons === 3;
+        if (areBothLeftAndRightButtonsClicked) {
+          handleRightClick(getState);
         }
       },
       true,
@@ -46,7 +46,7 @@ export function initMouseListener(element) {
   };
 }
 
-function rightClickHandle(getState) {
+function handleRightClick(getState) {
   const state = getState();
   const { editor } = state;
 

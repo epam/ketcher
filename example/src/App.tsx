@@ -27,6 +27,7 @@ let structServiceProvider: StructServiceProvider =
   new RemoteStructServiceProvider(
     process.env.API_PATH || process.env.REACT_APP_API_PATH,
   );
+console.log('app tsx', process.env.MODE, process.env.KETCHER_URL);
 if (process.env.MODE === 'standalone') {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   const { StandaloneStructServiceProvider } = require('ketcher-standalone');

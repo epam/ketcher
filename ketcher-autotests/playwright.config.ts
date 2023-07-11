@@ -26,6 +26,7 @@ const ignoredTests = [
 ];
 
 function baseURL(): string {
+  console.log('base URL = ', process.env.MODE, process.env.KETCHER_URL);
   if (!process.env.MODE || !process.env.KETCHER_URL) {
     return DEFAULT_KETCHER_STANDALONE_URL;
   }

@@ -27,7 +27,7 @@ import {delay, DELAY_IN_SECONDS} from "@tests/utils";
  */
 export const waitForLoad = async (page: Page, callback: VoidFunction) => {
   await page.waitForFunction(() => window.ketcher);
-  callback();
+  await callback();
 
   await delay(DELAY_IN_SECONDS.TWO);
 

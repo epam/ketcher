@@ -23,11 +23,6 @@ test.describe('open files with different formats', () => {
     await takeEditorScreenshot(page);
   });
 
-
-  test('test mol file @check', async ({ page }) => {
-    await openFileAndAddToCanvas('functional-groups-expanded.mol', page);
-  });
-
   test('opening rxn files @check', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1839

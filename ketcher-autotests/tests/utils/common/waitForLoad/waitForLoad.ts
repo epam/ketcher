@@ -28,6 +28,10 @@ export const waitForLoad = async (page: Page, callback: VoidFunction) => {
   await page.waitForFunction(() => window.ketcher);
   callback();
 
+  if (await page.getByTestId('openStructureModal').isVisible()) {
+    await page.waitForSelector('[data-testid=openStructureModal]', { state: 'detached' });
+  }
+
   if (await page.locator('[role=dialog]').isVisible()) {
     await page.waitForSelector('[role=dialog]', { state: 'detached' });
   }

@@ -10,8 +10,10 @@ const GitRevisionPlugin = require('git-revision-webpack-plugin');
 
 const gitRevisionPlugin = new GitRevisionPlugin();
 const applicationVersion = gitRevisionPlugin.version().split('-')[0];
+console.log('process.env.MODE', process.env.MODE);
+
 const envVariables = {
-  MODE: process.env.MODE,
+  MODE: process.env.MODE || 'standalone',
   API_PATH: process.env.REACT_APP_API_PATH,
   ENABLE_POLYMER_EDITOR: !!process.env.ENABLE_POLYMER_EDITOR,
   KETCHER_ENABLE_REDUX_LOGGER: JSON.stringify(false),

@@ -31,15 +31,19 @@ const MonomerItem = ({
   const [favorite, setFavorite] = useState(item.favorite);
   const dispatch = useAppDispatch();
   const isEditMode = useAppSelector(selectIsEditMode);
+  const colorCode =
+    item.props.MonomerNaturalAnalogCode !== '.'
+      ? item.props.MonomerNaturalAnalogCode
+      : item.props.MonomerType;
 
   return (
     <Card
       onClick={onClick}
       selected={isSelected}
       disabled={!isEditMode}
-      code={item.props.MonomerNaturalAnalogCode}
       data-testid={getMonomerUniqueKey(item)}
       data-monomer-item-id={getMonomerUniqueKey(item)}
+      code={colorCode}
       onMouseLeave={onMouseLeave}
       onMouseMove={onMouseMove}
     >

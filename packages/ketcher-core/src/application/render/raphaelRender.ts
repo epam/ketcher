@@ -101,7 +101,7 @@ export class Render {
     return new Vec2(this.clientArea.scrollLeft, this.clientArea.scrollTop);
   }
 
-  page2obj(event: MouseEvent) {
+  page2obj(event: MouseEvent | { clientX: number; clientY: number }) {
     const clientArea = this.clientArea;
 
     const { top: offsetTop, left: offsetLeft } =

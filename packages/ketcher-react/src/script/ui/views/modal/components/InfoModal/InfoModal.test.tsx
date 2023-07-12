@@ -7,16 +7,16 @@ describe('InfoModal should be rendered correctly', () => {
   it('should render default error message for Cut and Copy actions', () => {
     const props = 'Cut';
     const defaultErrorText = `This action is unavailable via menu. Instead, use shortcut to ${props}.`;
-    const container = renderWithMockStore(<InfoModal message={props} />);
+    const view = renderWithMockStore(<InfoModal message={props} />);
 
-    expect(container).toMatchSnapshot();
+    expect(view).toMatchSnapshot();
     expect(screen.getByText(defaultErrorText)).toBeInTheDocument();
   });
 
   it('should render Paste shortcut message if Paste message dispatched to props', () => {
     const props = 'Paste';
-    const container = renderWithMockStore(<InfoModal message={props} />);
-    expect(container).toMatchSnapshot();
+    const view = renderWithMockStore(<InfoModal message={props} />);
+    expect(view).toMatchSnapshot();
     expect(screen.getByText(shortcut.hotKey)).toBeInTheDocument();
   });
 });

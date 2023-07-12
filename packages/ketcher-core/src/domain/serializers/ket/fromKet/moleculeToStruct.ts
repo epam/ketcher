@@ -18,6 +18,7 @@ import { Atom, Bond, SGroup, Struct } from 'domain/entities';
 
 import { Elements } from 'domain/constants';
 import { ifDef } from 'utilities';
+import { mergeFragmentsToStruct } from './mergeFragmentsToStruct';
 
 export function toRlabel(values) {
   let res = 0;
@@ -26,20 +27,6 @@ export function toRlabel(values) {
     res |= 1 << rgi;
   });
   return res;
-}
-
-function mergeFragmentsToStruct(ketItem: any, struct: Struct): Struct {
-  let atomsOffset = 0;
-  if (ketItem.fragments) {
-    ketItem.fragments.forEach((fragment) => {
-      fragment.atoms.forEach((atom) => struct.atoms.add(atomToStruct(atom)));
-      fragment.bonds.forEach((bond) =>
-        struct.bonds.add(bondToStruct(bond, atomsOffset))
-      );
-      atomsOffset += fragment.atoms.length;
-    });
-  }
-  return struct;
 }
 
 export function moleculeToStruct(ketItem: any): Struct {
@@ -58,7 +45,7 @@ export function moleculeToStruct(ketItem: any): Struct {
 
   if (ketItem.sgroups) {
     ketItem.sgroups.forEach((sgroup) =>
-      struct.sgroups.add(sgroupToStruct(sgroup))
+      struct.sgroups.add(sgroupToStruct(sgroup)),
     );
   }
 

@@ -532,6 +532,7 @@ test('Open and Save file - Save V3000 molfile as V2000 molfile', async ({
 });
 
 test('Open V3000 file with R-Groups with Fragments', async ({ page }) => {
+  // Related Github issue https://github.com/epam/ketcher/issues/2774
   await page.goto('');
   await openFileAndAddToCanvas('RGroup-With-Fragments.mol', page);
   await takeEditorScreenshot(page);

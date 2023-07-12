@@ -15,6 +15,8 @@ import {
   takeEditorScreenshot,
   TopPanelButton,
   DELAY_IN_SECONDS,
+  selectNestedTool,
+  BondTool,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import {
@@ -22,14 +24,13 @@ import {
   getLeftBondByAttributes,
   getTopBondByAttributes,
 } from '@utils/canvas/bonds';
-import { BondTypeName, selectBond } from '@utils/canvas/selectBond';
 import { BondType } from '@utils/canvas/types';
 import { SelectionType, selectSelection } from '@utils/canvas/selectSelection';
 
-for (const bondType of Object.values(BondTypeName)) {
+for (const bondToolKey of Object.keys(BondTool)) {
   let point: { x: number; y: number };
   const DELTA = 150;
-  test.describe(`${bondType} bond tool`, () => {
+  test.describe(`${bondToolKey} bond tool`, () => {
     let page: Page;
 
     test.beforeAll(async ({ browser }) => {
@@ -50,7 +51,7 @@ for (const bondType of Object.values(BondTypeName)) {
       await page.close();
     });
 
-    test(`placing ${bondType} on canvas`, async () => {
+    test(`placing ${bondToolKey} on canvas`, async () => {
       /*
        *   Test cases: EPMLSOPKET-1371, 1380, 1389, 1396, 1404, 1410, 1416, 1422, 1428, 1437, 1444, 1451, 2238, 2244
        */
@@ -58,7 +59,8 @@ for (const bondType of Object.values(BondTypeName)) {
       const drawnBonds = 3;
       const drawnBondsWithRing = 7;
       const bondAfterErase = 6;
-      await selectBond(bondType, page);
+      await selectNestedTool(page, BondTool[bondToolKey]);
+
       await clickInTheMiddleOfTheScreen(page);
 
       point = await getAtomByIndex(page, { label: 'C' }, 0);
@@ -76,7 +78,7 @@ for (const bondType of Object.values(BondTypeName)) {
       await selectRing(RingButton.Benzene, page);
       await clickInTheMiddleOfTheScreen(page);
 
-      await selectBond(bondType, page);
+      await selectNestedTool(page, BondTool[bondToolKey]);
       point = await getAtomByIndex(page, { label: 'C' }, 0);
       await page.mouse.click(point.x, point.y);
 
@@ -97,7 +99,7 @@ for (const bondType of Object.values(BondTypeName)) {
 
       expect(sizeAfterErase).toEqual(bondAfterErase);
 
-      await selectBond(bondType, page);
+      await selectNestedTool(page, BondTool[bondToolKey]);
       point = await getAtomByIndex(page, { label: 'C' }, 0);
       await page.mouse.click(point.x, point.y);
 
@@ -108,7 +110,7 @@ for (const bondType of Object.values(BondTypeName)) {
       expect(sizeWithRingAndBond).toEqual(drawnBondsWithRing);
     });
 
-    test(`click on an existing bond using ${bondType}`, async () => {
+    test(`click on an existing bond using ${bondToolKey}`, async () => {
       /*
        * Test case: EPMLSOPKET-1375, 1383, 1392, 1398, 1406, 1412, 1418, 1424, 1430, 1439, 1446, 1453, 2240, 2246
        */
@@ -118,7 +120,7 @@ for (const bondType of Object.values(BondTypeName)) {
       point = await getCoordinatesOfTheMiddleOfTheScreen(page);
       await dragMouseTo(point.x + DELTA, point.y, page);
 
-      await selectBond(bondType, page);
+      await selectNestedTool(page, BondTool[bondToolKey]);
 
       point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
       await page.mouse.click(point.x, point.y);
@@ -128,7 +130,7 @@ for (const bondType of Object.values(BondTypeName)) {
       await selectRing(RingButton.Benzene, page);
       await clickInTheMiddleOfTheScreen(page);
 
-      await selectBond(bondType, page);
+      await selectNestedTool(page, BondTool[bondToolKey]);
       const doubleBond = await getTopBondByAttributes(page, {
         type: BondType.DOUBLE,
       });
@@ -140,7 +142,7 @@ for (const bondType of Object.values(BondTypeName)) {
       await page.mouse.click(singleBond.x, singleBond.y);
     });
 
-    test(`Undo/Redo ${bondType} creation`, async () => {
+    test(`Undo/Redo ${bondToolKey} creation`, async () => {
       /*
        * Test case: EPMLSOPKET-1376, 1384, 1393, 1399, 1407, 1413, 1419, 1425, 1431, 1440, 1447, 1454, 2241, 2247
        */
@@ -152,7 +154,7 @@ for (const bondType of Object.values(BondTypeName)) {
       point = await getCoordinatesOfTheMiddleOfTheScreen(page);
       await dragMouseTo(point.x + DELTA, point.y, page);
 
-      await selectBond(bondType, page);
+      await selectNestedTool(page, BondTool[bondToolKey]);
 
       point = await getAtomByIndex(page, { label: 'C' }, 0);
       await page.mouse.click(point.x, point.y);
@@ -214,14 +216,14 @@ for (const bondType of Object.values(BondTypeName)) {
     });
 
     // TODO:
-    test.skip(`Manipulations with ${bondType}`, async () => {
+    test.skip(`Manipulations with ${bondToolKey}`, async () => {
       /*
        * Test case: EPMLSOPKET-1377, 1385, 1394, 1400, 1408, 1414, 1420 1426, 1432, 1441, 1448, 1455, 2242, 2248
        */
       const DELTA_X = 100;
       point = await getCoordinatesOfTheMiddleOfTheScreen(page);
 
-      await selectBond(bondType, page);
+      await selectNestedTool(page, BondTool[bondToolKey]);
       await clickInTheMiddleOfTheScreen(page);
 
       await selectSelection(SelectionType.Rectangle, page);

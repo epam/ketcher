@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { useState } from 'react';
 import { MonomerGroup } from '../monomerLibraryGroup';
 import { useAppSelector } from 'hooks';
 import { MonomerListContainer } from './styles';
@@ -41,15 +42,33 @@ const MonomerList = ({ onItemClick, libraryName }: IMonomerListProps) => {
 
   const groups = selectMonomerGroups(items);
 
+  const [selectedMonomers, setSelectedMonomers] = useState('');
+
+  const selectItem = (monomer: MonomerItemType) => {
+    setSelectedMonomers(monomer.label);
+  };
+
   return (
     <MonomerListContainer>
-      {groups.map(({ groupItems, groupTitle }) => {
+      {groups.map(({ groupItems, groupTitle }, index) => {
+        if (groupTitle === '.') {
+          return (
+            <MonomerGroup
+              key={index}
+              items={groupItems}
+              onItemClick={onItemClick || selectItem}
+              selectedMonomerLabel={selectedMonomers}
+            />
+          );
+        }
+
         return (
           <MonomerGroup
             key={groupTitle}
             title={groupTitle}
             items={groupItems}
-            onItemClick={onItemClick}
+            onItemClick={onItemClick || selectItem}
+            selectedMonomerLabel={selectedMonomers}
           />
         );
       })}

@@ -29,12 +29,16 @@ const MonomerItem = ({
 }: IMonomerItemProps) => {
   const [favorite, setFavorite] = useState(item.favorite);
   const dispatch = useAppDispatch();
+  const colorCode =
+    item.props.MonomerNaturalAnalogCode !== '.'
+      ? item.props.MonomerNaturalAnalogCode
+      : item.props.MonomerType;
 
   return (
     <Card
       onClick={onClick}
       isSelected={isSelected}
-      code={item.props.MonomerNaturalAnalogCode}
+      code={colorCode}
       data-testid={item.props.MonomerNaturalAnalogCode}
       onMouseLeave={onMouseLeave}
       onMouseMove={onMouseMove}

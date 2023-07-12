@@ -28,8 +28,22 @@ export function toRlabel(values) {
   return res;
 }
 
+function mergeFragmentsToStruct(ketItem: any, struct: Struct): Struct {
+  let atomsOffset = 0;
+  if (ketItem.fragments) {
+    ketItem.fragments.forEach((fragment) => {
+      fragment.atoms.forEach((atom) => struct.atoms.add(atomToStruct(atom)));
+      fragment.bonds.forEach((bond) =>
+        struct.bonds.add(bondToStruct(bond, atomsOffset))
+      );
+      atomsOffset += fragment.atoms.length;
+    });
+  }
+  return struct;
+}
+
 export function moleculeToStruct(ketItem: any): Struct {
-  const struct = new Struct();
+  const struct = mergeFragmentsToStruct(ketItem, new Struct());
   if (ketItem.atoms) {
     ketItem.atoms.forEach((atom) => {
       if (atom.type === 'rg-label') struct.atoms.add(rglabelToStruct(atom));
@@ -44,7 +58,7 @@ export function moleculeToStruct(ketItem: any): Struct {
 
   if (ketItem.sgroups) {
     ketItem.sgroups.forEach((sgroup) =>
-      struct.sgroups.add(sgroupToStruct(sgroup)),
+      struct.sgroups.add(sgroupToStruct(sgroup))
     );
   }
 
@@ -123,7 +137,22 @@ export function atomListToStruct(source) {
   return new Atom(params);
 }
 
-export function bondToStruct(source) {
+/**
+ *
+ * @param source
+ * @param atomOffset – if bond is a part of a fragment, then we need to consider atoms from previous fragment.
+ * source.atoms contains numbers related to fragment, but we need to count atoms related to struct. Example:
+ * fragments: [{
+ *   atoms: [...],
+ *   bonds: [...], this bonds point to atoms in the first fragment
+ * }, {
+ *   atoms: [...],
+ *   bonds: [...], this bonds point to atoms in the second fragment
+ * }]
+ * When we add bonds from second fragment we need to count atoms from fragments[0].atoms.length + 1, not from zero
+ * @returns newly created Bond
+ */
+export function bondToStruct(source, atomOffset = 0) {
   const params: any = {};
 
   ifDef(params, 'type', source.type);
@@ -134,8 +163,8 @@ export function bondToStruct(source) {
   // if (params.stereo)
   // 	params.stereo = params.stereo > 1 ? params.stereo * 2 : params.stereo;
   // params.xxx = 0;
-  ifDef(params, 'begin', source.atoms[0]);
-  ifDef(params, 'end', source.atoms[1]);
+  ifDef(params, 'begin', source.atoms[0] + atomOffset);
+  ifDef(params, 'end', source.atoms[1] + atomOffset);
 
   return new Bond(params);
 }

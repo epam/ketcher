@@ -1,4 +1,4 @@
-import { Locator, Page } from '@playwright/test';
+import { Page } from '@playwright/test';
 import { selectButtonByTitle } from '@utils/clicks/selectButtonByTitle';
 import {
   AtomButton,

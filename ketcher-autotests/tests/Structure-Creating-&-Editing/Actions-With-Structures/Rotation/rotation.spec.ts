@@ -23,7 +23,7 @@ test.describe('Rotation', () => {
 
     const coordinates = await getRotationHandleCoordinates(page);
 
-    const { x, y, z } = coordinates;
+    const { x, y } = coordinates;
 
     await page.mouse.click(x, y);
 

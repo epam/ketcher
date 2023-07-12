@@ -20,7 +20,7 @@ const ignoredTests = [
   'R-group-tool/**',
   'Reagents/**',
   'Structure-Creating-&-Editing/**',
-  'Templates/Functional-Groups/click-and-drag-fg-on-canvas.spec.ts',
+  // 'Templates/Functional-Groups/click-and-drag-fg-on-canvas.spec.ts',
   'Templates/Functional-Groups/functional-groups.spec.ts',
   'Templates/Functional-Groups/Functional-Group-Tools/functional-group-tools.spec.ts',
   'Templates/Salts-and-Solvents/**',

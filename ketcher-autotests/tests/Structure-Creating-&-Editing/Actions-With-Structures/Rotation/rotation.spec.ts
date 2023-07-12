@@ -1,10 +1,10 @@
-import { test } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import {
-  selectAllStructuresOnCanvas,
-  selectRotationTool,
-  takeEditorScreenshot,
-} from '@utils/canvas';
-import { openFileAndAddToCanvas } from '@utils/files';
+  getEditorScreenshot,
+  drawBenzeneRing,
+  selectSingleBondTool,
+} from '@utils';
+import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
 
 test.describe('Rotation', () => {
   const MOUSE_COORDS = {
@@ -14,34 +14,25 @@ test.describe('Rotation', () => {
 
   test.beforeEach(async ({ page }) => {
     await page.goto('');
-    await openFileAndAddToCanvas('benzene-bromobutane-reaction.rxn', page);
-    await selectAllStructuresOnCanvas(page);
-  });
-
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
+    await drawBenzeneRing(page);
+    await selectSingleBondTool(page);
   });
 
   test('Cancel rotation on right click', async ({ page }) => {
-    const editor = await page.locator('[class*="App-module_canvas"]');
+    const snapshotBeforeRotation = await getEditorScreenshot(page);
 
-    // 1. take snapshot of current structure in editor
-    const snapshotBeforeRotation = await editor.screenshot();
+    const coordinates = await getRotationHandleCoordinates(page);
 
-    // 2. select rotation tool
-    await selectRotationTool(page);
+    const { x, y, z } = coordinates;
 
-    // 3. hold left mouse button, mouse move
-    await page.mouse.down();
+    await page.mouse.click(x, y);
+
     await page.mouse.move(MOUSE_COORDS.x, MOUSE_COORDS.y);
 
-    // 4. right click
     await page.mouse.click(MOUSE_COORDS.x, MOUSE_COORDS.y, { button: 'right' });
 
-    // 5. get current structure on canvas
-    const snapshotAfterRotation = await editor.screenshot();
+    const snapshotAfterRotation = await getEditorScreenshot(page);
 
-    // 6. compare with snapshot on step 1
-    expect(snapshotBeforeRotation).toMatchScreenshot(snapshotAfterRotation);
+    expect(snapshotBeforeRotation).toEqual(snapshotAfterRotation);
   });
 });

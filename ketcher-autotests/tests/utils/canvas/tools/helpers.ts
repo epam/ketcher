@@ -65,24 +65,3 @@ export async function selectLeftPanelButton(
   const leftPanelButton = page.locator(`button[title*="${buttonName}"]`);
   await leftPanelButton.click();
 }
-
-/**
- * Usage: await selectRotationTool(page)
- * Selects a rotation svg on selected structure
- * **/
-export async function selectRotationTool(page: Page) {
-  const rotationSvg = page.locator('svg circle').filter({
-    has: {
-      'data-cx': '0',
-      'data-cy': '0',
-      'data-r': '10',
-      'data-fill': '#b4b9d6',
-      'data-stroke': 'none',
-      'data-transform': 'matrix(1,0,0,1,238,148.5012)',
-      'data-style':
-        '-webkit-tap-highlight-color: rgba(0, 0, 0, 0); cursor: grab;',
-    } as unknown as Locator,
-  });
-
-  await rotationSvg.click();
-}

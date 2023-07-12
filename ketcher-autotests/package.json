@@ -29,7 +29,7 @@
   },
   "dependencies": {
     "dotenv": "^16.0.3",
-    "ketcher-core": "^2.7.2"
+    "ketcher-core": "*"
   },
   "lint-staged": {
     "*.md": [

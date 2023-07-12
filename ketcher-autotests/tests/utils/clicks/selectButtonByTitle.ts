@@ -5,7 +5,10 @@ export async function selectButtonByTitle(title: ToolbarButton, page: Page) {
   await page.locator(`button[title*="${title}"]`).click();
 }
 
-// export async function getRotationHandleCoordinates(page: Page): Promise<Point> {
-//   // @ts-ignore
-//   return await page.evaluate(() => window.ketcher.editor.rotateController.handleCenter);
-// }
+export async function getRotationHandleCoordinates(page: Page) {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  return await page.evaluate(
+    () => window.ketcher.editor.rotateController.handleCenter,
+  );
+}

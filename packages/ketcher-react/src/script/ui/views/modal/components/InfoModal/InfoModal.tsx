@@ -26,7 +26,7 @@ function ErrorInfoModal(props) {
   const paste = config.paste.title ?? 'Paste';
   const isPasteError = props.message === paste;
 
-  const defaultMessage = `This action is unavailable via menu. Instead, use shortcut to ${props.message}.`;
+  const defaultCutCopyMessage = `This action is unavailable via menu. Instead, use shortcut to ${props.message}.`;
 
   const headerContent = <div>{error.message}</div>;
 
@@ -41,7 +41,9 @@ function ErrorInfoModal(props) {
       ]}
       headerContent={headerContent}
     >
-      <div>{isPasteError ? <PasteErrorModalBody /> : defaultMessage}</div>
+      <div>
+        {isPasteError ? <PasteErrorModalBody /> : defaultCutCopyMessage}
+      </div>
     </Dialog>
   );
 }

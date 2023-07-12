@@ -1,0 +1,109 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`InfoModal should be rendered correctly should render Paste shortcut message if Paste message dispatched to props 1`] = `
+<div
+  class="dialog infoModal"
+  role="dialog"
+  tabindex="-1"
+>
+  <header
+    class="header"
+  >
+    <div>
+      Error Message
+    </div>
+    <div
+      class="btnContainer"
+    >
+      <button
+        class="buttonTop"
+      >
+        <icon-close.svg
+          classname="closeButton"
+        />
+      </button>
+    </div>
+  </header>
+  <div
+    class="body withMargin"
+  >
+    <div>
+      <div
+        class="pasteErrorModalBody"
+      >
+        <div>
+          Your browser doesn't allow pasting clipboard content via button. Please use shortcut instead.
+        </div>
+        <div
+          class="shortcutsBlock"
+        >
+          <div
+            class="shortcuts"
+          >
+            <div
+              class="shortcut"
+            >
+              CTRL/Cmd + V
+            </div>
+            <div>
+              for paste
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <footer
+    class="footer"
+  >
+    <button
+      class="ok"
+    >
+      Close
+    </button>
+  </footer>
+</div>
+`;
+
+exports[`InfoModal should be rendered correctly should render default error message for Cut and Copy actions 1`] = `
+<div
+  class="dialog infoModal"
+  role="dialog"
+  tabindex="-1"
+>
+  <header
+    class="header"
+  >
+    <div>
+      Error Message
+    </div>
+    <div
+      class="btnContainer"
+    >
+      <button
+        class="buttonTop"
+      >
+        <icon-close.svg
+          classname="closeButton"
+        />
+      </button>
+    </div>
+  </header>
+  <div
+    class="body withMargin"
+  >
+    <div>
+      This action is unavailable via menu. Instead, use shortcut to Cut.
+    </div>
+  </div>
+  <footer
+    class="footer"
+  >
+    <button
+      class="ok"
+    >
+      Close
+    </button>
+  </footer>
+</div>
+`;

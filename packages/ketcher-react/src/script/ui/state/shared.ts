@@ -184,11 +184,11 @@ export function load(struct: Struct, options?) {
 }
 
 export function openInfoModal(command: 'Paste' | 'Copy' | 'Cut'): {
-  type: 'MODAL_OPEN'
-  data: { name: 'info-modal'; prop: { message: 'Paste' | 'Copy' | 'Cut' } }
+  type: 'MODAL_OPEN';
+  data: { name: 'info-modal'; prop: { message: 'Paste' | 'Copy' | 'Cut' } };
 } {
   return {
     type: 'MODAL_OPEN',
-    data: { name: 'info-modal', prop: { message: command } }
-  }
+    data: { name: 'info-modal', prop: { message: command } },
+  };
 }

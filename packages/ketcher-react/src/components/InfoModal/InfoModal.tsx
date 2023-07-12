@@ -14,21 +14,16 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { PasteErrorModalBody } from './PasteErrorModalBody'
-import config from 'src/script/ui/action'
-import { error } from './constants'
+import { error } from './constants';
 
-import styles from './InfoModal.module.less'
+import styles from './InfoModal.module.less';
 
 interface InfoModalProps {
-  message: string
-  close: () => void
+  message: string;
+  close: () => void;
 }
 
 const InfoModal = ({ message, close }: InfoModalProps): JSX.Element => {
-  const paste = config.paste.title ?? 'Paste'
-  const isPasteError = message?.includes(paste)
-
   return (
     <div className={styles.infoModalOverlay}>
       <div
@@ -40,7 +35,7 @@ const InfoModal = ({ message, close }: InfoModalProps): JSX.Element => {
       >
         <header id="dialog-label">{error.message}</header>
         <div className={styles.infoModalBody} id="dialog-content">
-          {isPasteError ? <PasteErrorModalBody /> : message}
+          {message}
         </div>
         <footer>
           <button className={styles.ok} onClick={close}>
@@ -52,4 +47,4 @@ const InfoModal = ({ message, close }: InfoModalProps): JSX.Element => {
   );
 };
 
-export default InfoModal
+export default InfoModal;

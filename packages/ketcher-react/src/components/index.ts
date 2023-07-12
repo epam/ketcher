@@ -14,9 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-export * from './Icon'
-export * from './Buttons'
-export * from './StructRender'
-export * from './Input'
-export * from './Accordion'
-export * from './InfoModal'
+export * from './Icon';
+export * from './Buttons';
+export * from './StructRender';
+export * from './Input';
+export * from './Accordion';
+export * from './InfoModal';

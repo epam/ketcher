@@ -14,23 +14,21 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { connect } from 'react-redux'
-import config from 'src/script/ui/action'
-import { error } from './constants'
-import { Dialog } from '../../../components'
-import { PasteErrorModalBody } from './PasteErrorModalBody'
+import { connect } from 'react-redux';
+import config from 'src/script/ui/action';
+import { error } from './constants';
+import { Dialog } from '../../../components';
+import { PasteErrorModalBody } from './PasteErrorModalBody';
 
-import styles from './InfoModal.module.less'
+import styles from './InfoModal.module.less';
 
 function ErrorInfoModal(props) {
-  console.log('props in ErrorInfoModal', props)
+  const paste = config.paste.title ?? 'Paste';
+  const isPasteError = props.message === paste;
 
-  const paste = config.paste.title ?? 'Paste'
-  const isPasteError = props.message === paste
+  const defaultMessage = `This action is unavailable via menu. Instead, use shortcut to ${props.message}.`;
 
-  const defaultMessage = `This action is unavailable via menu. Instead, use shortcut to ${props.message}.`
-
-  const headerContent = <div>{error.message}</div>
+  const headerContent = <div>{error.message}</div>;
 
   return (
     <Dialog
@@ -39,25 +37,25 @@ function ErrorInfoModal(props) {
       buttons={[
         <button onClick={props.onOk} className={styles.ok} key="ok">
           Close
-        </button>
+        </button>,
       ]}
       headerContent={headerContent}
     >
       <div>{isPasteError ? <PasteErrorModalBody /> : defaultMessage}</div>
     </Dialog>
-  )
+  );
 }
 
 const mapStateToProps = (state) => ({
-  errorMessage: state.options.app.errorMessage
-})
+  errorMessage: state.options.app.errorMessage,
+});
 
 const mapDispatchToProps = (dispatch) => ({
   onOk: (_result) => {
-    dispatch({ type: 'MODAL_CLOSE' })
-  }
-})
+    dispatch({ type: 'MODAL_CLOSE' });
+  },
+});
 
-const InfoModal = connect(mapStateToProps, mapDispatchToProps)(ErrorInfoModal)
+const InfoModal = connect(mapStateToProps, mapDispatchToProps)(ErrorInfoModal);
 
-export default InfoModal
+export default InfoModal;

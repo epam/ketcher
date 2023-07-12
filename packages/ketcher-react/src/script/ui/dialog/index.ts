@@ -31,18 +31,18 @@ import {
 } from '../views/modal/components/toolbox';
 import { Open, Save } from '../views/modal/components/document';
 
-import EnhancedStereo from './toolbox/enhancedStereo/enhancedStereo'
-import LabelEdit from './toolbox/labeledit'
-import PeriodTable from '../views/modal/components/PeriodTable'
-import ExtendedTable from '../views/modal/components/ExtendedTable'
-import { RemoveFG } from '../views/modal/components/toolbox/FG/RemoveFG'
-import Rgroup from './toolbox/rgroup/rgroup'
-import SGroup from './toolbox/sgroup'
-import TemplateAttach from './template/template-attach'
-import TemplatesDialog from './template/TemplateDialog'
-import Text from '../views/modal/components/Text'
-import { Confirm } from '../views/modal/components/Confirm'
-import InfoModal from '../views/modal/components/InfoModal'
+import EnhancedStereo from './toolbox/enhancedStereo/enhancedStereo';
+import LabelEdit from './toolbox/labeledit';
+import PeriodTable from '../views/modal/components/PeriodTable';
+import ExtendedTable from '../views/modal/components/ExtendedTable';
+import { RemoveFG } from '../views/modal/components/toolbox/FG/RemoveFG';
+import Rgroup from './toolbox/rgroup/rgroup';
+import SGroup from './toolbox/sgroup';
+import TemplateAttach from './template/template-attach';
+import TemplatesDialog from './template/TemplateDialog';
+import Text from '../views/modal/components/Text';
+import { Confirm } from '../views/modal/components/Confirm';
+import InfoModal from '../views/modal/components/InfoModal';
 
 export default {
   open: Open,
@@ -70,4 +70,4 @@ export default {
   text: Text,
   confirm: Confirm,
   'info-modal': InfoModal,
-} as any
+} as any;

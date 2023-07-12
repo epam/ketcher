@@ -1,1 +1,1 @@
-export * from './PasteErrorModalBody'
+export * from './PasteErrorModalBody';

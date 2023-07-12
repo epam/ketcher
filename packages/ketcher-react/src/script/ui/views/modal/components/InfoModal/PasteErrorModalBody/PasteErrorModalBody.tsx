@@ -1,6 +1,6 @@
-import { pasteErrorText, shortcut } from '../constants'
+import { pasteErrorText, shortcut } from '../constants';
 
-import styles from './PasteErrorModalBody.module.less'
+import styles from './PasteErrorModalBody.module.less';
 
 export const PasteErrorModalBody = (): JSX.Element => {
   return (
@@ -13,5 +13,5 @@ export const PasteErrorModalBody = (): JSX.Element => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};

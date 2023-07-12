@@ -14,20 +14,20 @@
  * limitations under the License.
  ***************************************************************************/
 
-import atoms from './atoms'
-import copyAs from './copyAs'
-import copyImageToClipboard from './copyImageToClipboard'
-import debug from './debug'
-import { exec } from '../component/cliparea/cliparea'
-import isHidden from './isHidden'
-import server from './server'
-import templates from './templates'
-import tools from './tools'
-import zoom from './zoom'
-import help from './help'
-import functionalGroups from './functionalGroups'
-import fullscreen from './fullscreen'
-import { removeStructAction, openInfoModal } from '../state/shared'
+import atoms from './atoms';
+import copyAs from './copyAs';
+import copyImageToClipboard from './copyImageToClipboard';
+import debug from './debug';
+import { exec } from '../component/cliparea/cliparea';
+import isHidden from './isHidden';
+import server from './server';
+import templates from './templates';
+import tools from './tools';
+import zoom from './zoom';
+import help from './help';
+import functionalGroups from './functionalGroups';
+import fullscreen from './fullscreen';
+import { removeStructAction, openInfoModal } from '../state/shared';
 
 export * from './action.types';
 
@@ -91,12 +91,12 @@ const config = {
     title: 'Cut',
     action: {
       thunk: (dispatch, _) => {
-        const isCutSupported = exec('cut')
+        const isCutSupported = exec('cut');
 
         if (!isCutSupported) {
-          dispatch(openInfoModal('Cut'))
+          dispatch(openInfoModal('Cut'));
         }
-      }
+      },
     },
     disabled: (editor) => !hasSelection(editor),
     hidden: (options) => isHidden(options, 'cut'),
@@ -110,12 +110,12 @@ const config = {
     title: 'Copy',
     action: {
       thunk: (dispatch, _) => {
-        const isCopySupported = exec('copy')
+        const isCopySupported = exec('copy');
 
         if (!isCopySupported) {
-          dispatch(openInfoModal('Copy'))
+          dispatch(openInfoModal('Copy'));
         }
-      }
+      },
     },
     disabled: (editor) => !hasSelection(editor),
     hidden: (options) => isHidden(options, 'copy'),
@@ -152,12 +152,12 @@ const config = {
     title: 'Paste',
     action: {
       thunk: (dispatch, _) => {
-        const isPasteSupported = exec('paste')
+        const isPasteSupported = exec('paste');
 
         if (!isPasteSupported) {
-          dispatch(openInfoModal('Paste'))
+          dispatch(openInfoModal('Paste'));
         }
-      }
+      },
     },
     selected: ({ actions }) =>
       actions && // TMP
@@ -241,7 +241,7 @@ const config = {
   'info-modal': {
     title: 'Error message',
     action: { dialog: 'info-modal' },
-    hidden: (options) => isHidden(options, 'info-modal')
+    hidden: (options) => isHidden(options, 'info-modal'),
   },
   ...server,
   ...debug,
@@ -263,4 +263,4 @@ function hasSelection(editor) {
   );
 }
 
-export default config
+export default config;

@@ -531,7 +531,7 @@ test('Open and Save file - Save V3000 molfile as V2000 molfile', async ({
   expect(molFile).toEqual(molFileExpected);
 });
 
-test('Open V3000 file with G-Groups with Fragments', async ({ page }) => {
+test('Open V3000 file with R-Groups with Fragments', async ({ page }) => {
   await page.goto('');
   await openFileAndAddToCanvas('RGroup-With-Fragments.mol', page);
   await takeEditorScreenshot(page);

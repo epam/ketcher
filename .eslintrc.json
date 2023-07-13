@@ -29,6 +29,7 @@
       { "functions": false, "typedefs": false }
     ],
     "no-duplicate-imports": "error",
-    "no-alert": "error"
+    "no-alert": "error",
+    "comma-dangle": 0
   }
 }

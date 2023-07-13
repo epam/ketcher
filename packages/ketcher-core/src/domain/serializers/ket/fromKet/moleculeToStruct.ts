@@ -18,6 +18,7 @@ import { Atom, Bond, SGroup, Struct } from 'domain/entities';
 
 import { Elements } from 'domain/constants';
 import { ifDef } from 'utilities';
+import { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
 import { mergeFragmentsToStruct } from './mergeFragmentsToStruct';
 
 export function toRlabel(values) {
@@ -175,6 +176,11 @@ export function sgroupToStruct(source) {
       ifDef(sgroup.data, 'name', source.name);
       ifDef(sgroup.data, 'expanded', source.expanded);
       ifDef(sgroup, 'id', source.id);
+      source.attachmentPoints?.forEach((sourceAttachmentPoint: any) => {
+        sgroup.addAttachmentPoint(
+          sgroupAttachmentPointToStruct(sourceAttachmentPoint),
+        );
+      });
       break;
     }
     case 'DAT': {
@@ -189,4 +195,11 @@ export function sgroupToStruct(source) {
       break;
   }
   return sgroup;
+}
+
+function sgroupAttachmentPointToStruct(source: any): SGroupAttachmentPoint {
+  const atomId = source.attachmentAtom as number;
+  const leavingAtomId = source.leavingAtom as number | undefined;
+  const attachmentId = source.attachmentId as string | undefined;
+  return new SGroupAttachmentPoint(atomId, leavingAtomId, attachmentId);
 }

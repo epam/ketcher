@@ -643,7 +643,11 @@ export class Molfile {
       this.mapping[attachmentPoint.leaveAtomId as number] ?? 0;
     this.writePaddedNumber(leaveAtomId, 3);
     this.writeWhiteSpace(1);
-    this.writePadded(attachmentPoint.additionalData, 2);
+
+    const attachmentId = attachmentPoint.attachmentId
+      ? attachmentPoint.attachmentId.slice(0, 2)
+      : '  ';
+    this.writePadded(attachmentId, 2);
     this.writeCR();
   }
 }

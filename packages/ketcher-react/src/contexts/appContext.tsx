@@ -19,6 +19,7 @@ import React from 'react'
 
 export interface IAppContext {
   getKetcherInstance: () => Ketcher
+  ketcherId: string
 }
 
 const appContext = React.createContext<IAppContext>({} as IAppContext)

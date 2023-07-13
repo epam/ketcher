@@ -37,14 +37,16 @@ async function buildKetcherAsync({
 
   await builder.appendApiAsync(structServiceProvider)
   builder.appendServiceMode(structServiceProvider.mode)
-  await builder.appendUiAsync(
+  const { setKetcher, ketcherId } = await builder.appendUiAsync(
     element,
     staticResourcesUrl,
     errorHandler,
     buttons
   )
 
-  return builder.build()
+  const ketcher = builder.build()
+  setKetcher(ketcher)
+  return { ketcher, ketcherId }
 }
 
 export type { Config, ButtonsConfig }

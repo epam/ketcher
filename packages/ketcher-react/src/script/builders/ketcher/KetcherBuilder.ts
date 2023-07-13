@@ -57,10 +57,14 @@ class KetcherBuilder {
     staticResourcesUrl: string,
     errorHandler: (message: string) => void,
     buttons?: ButtonsConfig
-  ): Promise<void> {
+  ): Promise<{ setKetcher: (ketcher: Ketcher) => void; ketcherId: string }> {
     const { structService } = this
 
-    const editor = await new Promise<Editor>((resolve) => {
+    const { editor, setKetcher, ketcherId } = await new Promise<{
+      editor: Editor
+      setKetcher: (ketcher: Ketcher) => void
+      ketcherId: string
+    }>((resolve) => {
       initApp(
         element,
         staticResourcesUrl,
@@ -83,6 +87,7 @@ class KetcherBuilder {
         : // eslint-disable-next-line @typescript-eslint/no-empty-function
           () => {}
     this.formatterFactory = new FormatterFactory(structService!)
+    return { setKetcher, ketcherId }
   }
 
   build() {

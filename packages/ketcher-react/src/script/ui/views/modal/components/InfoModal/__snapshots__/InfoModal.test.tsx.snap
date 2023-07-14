@@ -46,6 +46,7 @@ Object {
                 >
                   <div
                     class="shortcut"
+                    data-testid="infoModal-shortcut-for-paste"
                   >
                     CTRL/Cmd + V
                   </div>
@@ -111,6 +112,7 @@ Object {
               >
                 <div
                   class="shortcut"
+                  data-testid="infoModal-shortcut-for-paste"
                 >
                   CTRL/Cmd + V
                 </div>

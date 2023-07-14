@@ -11,14 +11,13 @@ test.describe('Paste Tool', () => {
     await page.goto('');
   });
 
-  const hotKey = 'CTRL/Cmd + V';
-
   test('InfoModal with hotkey display for Paste action', async ({ page }) => {
-    await openFileAndAddToCanvas('mol_1855_to_open.mol', page);
+    const anyStructure = 'mol_1855_to_open.mol';
+    await openFileAndAddToCanvas(anyStructure, page);
     await page.keyboard.press('Control+a');
     await selectAction(TopPanelButton.Copy, page);
     await selectAction(TopPanelButton.Paste, page);
-    await page.locator('div').filter({ hasText: hotKey }).first().isVisible();
+    await page.getByTestId('infoModal-shortcut-for-paste').first().isVisible();
     await takeEditorScreenshot(page);
   });
 });

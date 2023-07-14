@@ -8,7 +8,12 @@ export const PasteErrorModalBody = (): JSX.Element => {
       <div>{pasteErrorText}</div>
       <div className={styles.shortcutsBlock}>
         <div className={styles.shortcuts}>
-          <div className={styles.shortcut}>{shortcut.hotKey}</div>
+          <div
+            className={styles.shortcut}
+            data-testid="infoModal-shortcut-for-paste"
+          >
+            {shortcut.hotKey}
+          </div>
           <div>{shortcut.label}</div>
         </div>
       </div>

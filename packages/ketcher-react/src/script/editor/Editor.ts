@@ -16,13 +16,16 @@
 
 import {
   Action,
+  FloatingToolsParams,
   Editor as KetcherEditor,
   Pile,
   Render,
   Struct,
   Vec2,
   fromDescriptorsAlign,
+  fromMultipleMove,
   fromNewCanvas,
+  ReStruct,
 } from 'ketcher-core';
 import {
   DOMSubscription,
@@ -100,11 +103,6 @@ function selectStereoFlagsIfNecessary(
   });
   return stereoFlags;
 }
-
-export type FloatingToolsParams = {
-  visible?: boolean;
-  rotateHandlePosition?: { x: number; y: number };
-};
 
 export interface Selection {
   atoms?: Array<number>;
@@ -328,6 +326,27 @@ class Editor implements KetcherEditor {
     this.render.update();
     this.rotateController.rerender();
     return this.render.options.zoom;
+  }
+
+  centerStruct() {
+    const structure = this.render.ctab;
+    const { scale, offset } = this.render.options;
+    const structCenter = getStructCenter(structure);
+    const canvasCenter = this.render.sz.scaled(1 / scale);
+    const shiftVector = canvasCenter
+      .sub(structCenter)
+      .sub(offset.scaled(1 / scale))
+      .scaled(0.5);
+
+    const structureToMove = Object.keys(ReStruct.maps).reduce((result, map) => {
+      result[map] = Array.from(structure[map].keys());
+      return result;
+    }, {});
+
+    const action = fromMultipleMove(structure, structureToMove, shiftVector);
+    this.update(action);
+
+    recoordinate(this, canvasCenter);
   }
 
   zoomAccordingContent() {

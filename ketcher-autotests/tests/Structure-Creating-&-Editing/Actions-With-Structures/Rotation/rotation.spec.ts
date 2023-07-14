@@ -1,38 +1,37 @@
 import { expect, test } from '@playwright/test';
-import {
-  getEditorScreenshot,
-  drawBenzeneRing,
-  selectSingleBondTool,
-} from '@utils';
+import { openFileAndAddToCanvas, takeEditorScreenshot } from '@utils';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
 
 test.describe('Rotation', () => {
-  const MOUSE_COORDS = {
+  const COORDINATES_TO_PERFORM_ROTATION = {
     x: 20,
     y: 160,
   };
 
   test.beforeEach(async ({ page }) => {
     await page.goto('');
-    await drawBenzeneRing(page);
-    await selectSingleBondTool(page);
   });
 
   test('Cancel rotation on right click', async ({ page }) => {
-    const snapshotBeforeRotation = await getEditorScreenshot(page);
-
+    await openFileAndAddToCanvas('mol_1855_to_open.mol', page);
+    await page.keyboard.press('Control+a');
+    const screenBeforeRotation = await takeEditorScreenshot(page);
     const coordinates = await getRotationHandleCoordinates(page);
+    const { x: rotationHandleX, y: rotationHandleY } = coordinates;
 
-    const { x, y } = coordinates;
+    await page.mouse.move(rotationHandleX, rotationHandleY);
+    await page.mouse.down();
+    await page.mouse.move(
+      COORDINATES_TO_PERFORM_ROTATION.x,
+      COORDINATES_TO_PERFORM_ROTATION.y,
+    );
+    await page.mouse.click(
+      COORDINATES_TO_PERFORM_ROTATION.x,
+      COORDINATES_TO_PERFORM_ROTATION.y,
+      { button: 'right' },
+    );
 
-    await page.mouse.click(x, y);
-
-    await page.mouse.move(MOUSE_COORDS.x, MOUSE_COORDS.y);
-
-    await page.mouse.click(MOUSE_COORDS.x, MOUSE_COORDS.y, { button: 'right' });
-
-    const snapshotAfterRotation = await getEditorScreenshot(page);
-
-    expect(snapshotBeforeRotation).toEqual(snapshotAfterRotation);
+    const screenAfterRotation = await takeEditorScreenshot(page);
+    expect(screenAfterRotation).toEqual(screenBeforeRotation);
   });
 });

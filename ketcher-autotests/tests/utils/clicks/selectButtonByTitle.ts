@@ -6,8 +6,6 @@ export async function selectButtonByTitle(title: ToolbarButton, page: Page) {
 }
 
 export async function getRotationHandleCoordinates(page: Page) {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
   return await page.evaluate(
     () => window.ketcher.editor.rotateController.handleCenter,
   );

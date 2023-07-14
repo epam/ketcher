@@ -14,10 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { SGroup, Struct } from 'domain/entities';
+import { SGroup, Struct, SGroupAttachmentPoint } from 'domain/entities';
 
 import { ifDef } from 'utilities';
-import { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
 
 function fromRlabel(rg) {
   const res: Array<any> = [];

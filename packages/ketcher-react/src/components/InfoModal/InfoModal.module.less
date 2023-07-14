@@ -1,0 +1,119 @@
+/****************************************************************************
+ * Copyright 2021 EPAM Systems
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ***************************************************************************/
+
+.infoModalOverlay {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    z-index: 40;
+    background: rgba(119, 119, 119, 0.2);
+  }
+  
+  .infoModalOverlay .infoModalWindow {
+    outline: 0;
+    position: relative;
+    vertical-align: middle;
+    display: flex;
+    flex-direction: column;
+    width: 360px;
+    max-height: 300px;
+    text-align: left;
+    background-color: #fff;
+    border-radius: 8px;
+    background-clip: padding-box;
+    opacity: 1;
+    transform: scale(1);
+    transition: transform 0.3s, opacity 0.3s;
+    font-family: Inter, FreeSans, Arimo, 'Droid Sans', Helvetica, 'Helvetica Neue',
+      Arial, sans-serif;
+  }
+  
+  .infoModalWindow header {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    line-height: 14px;
+    border-radius: 6px 6px 0 0;
+    color: #333;
+    font-weight: 500;
+    padding: 12px;
+  }
+  
+  .infoModalBody {
+    font-size: 12px;
+    line-height: 14px;
+    overflow: auto;
+    height: 100%;
+    padding: 12px;
+  }
+  
+  .infoModalBody::-webkit-scrollbar {
+    background-color: #eff2f5;
+    width: 6px;
+    height: 6px;
+  }
+  
+  .infoModalBody::-webkit-scrollbar-thumb {
+    background-color:rgba(165,175,185,.85);
+    border-radius: 10px;
+    -webkit-border-radius: 10px;
+  }
+  
+  .infoModalBody::-webkit-scrollbar-track {
+    background-color: transparent;
+    scrollbar-width: thin;
+  }
+  
+  .infoModalBody::-webkit-scrollbar-thumb:active,
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: #A5AFB9;
+  }
+  
+  .infoModalWindow footer {
+    display: flex;
+    justify-content: flex-end;
+    padding: 16px 12px 12px;
+    gap: 8px;
+  }
+  
+  .modalHidden {
+    display: none;
+  }
+  
+  .ok {
+    min-width: 70px;
+    height: 24px;
+    border-radius: 4px;
+    font-size: 12px;
+    color: #fff;
+    background-color: #167782;
+    border: 1px solid transparent;
+  }
+  
+  .ok:hover, .ok:active {
+    background-color: #4fb3bf;
+  }
+  
+  .ok:disabled {
+    color: #333;
+    background-color: #e1e5ea;
+  }
+    

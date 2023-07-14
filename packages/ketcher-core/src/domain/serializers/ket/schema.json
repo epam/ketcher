@@ -278,9 +278,18 @@
               "default": 0
             }
           }
+        },
+        "fragments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/structure"
+          }
         }
       },
-      "allOf": [
+      "anyOf": [
+        {
+          "required": ["fragments"]
+        },
         {
           "$ref": "#/definitions/structure"
         }

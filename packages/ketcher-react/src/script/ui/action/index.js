@@ -27,7 +27,7 @@ import zoom from './zoom';
 import help from './help';
 import functionalGroups from './functionalGroups';
 import fullscreen from './fullscreen';
-import { removeStructAction } from '../state/shared';
+import { removeStructAction, openInfoModal } from '../state/shared';
 
 export * from './action.types';
 
@@ -89,8 +89,14 @@ const config = {
   cut: {
     shortcut: 'Mod+x',
     title: 'Cut',
-    action: (editor) => {
-      exec('cut') || dontClipMessage('Cut', editor.errorHandler); // eslint-disable-line no-unused-expressions
+    action: {
+      thunk: (dispatch, _) => {
+        const isCutSupported = exec('cut');
+
+        if (!isCutSupported) {
+          dispatch(openInfoModal('Cut'));
+        }
+      },
     },
     disabled: (editor) => !hasSelection(editor),
     hidden: (options) => isHidden(options, 'cut'),
@@ -102,8 +108,14 @@ const config = {
   copy: {
     shortcut: 'Mod+c',
     title: 'Copy',
-    action: (editor) => {
-      exec('copy') || dontClipMessage('Copy', editor.errorHandler); // eslint-disable-line no-unused-expressions
+    action: {
+      thunk: (dispatch, _) => {
+        const isCopySupported = exec('copy');
+
+        if (!isCopySupported) {
+          dispatch(openInfoModal('Copy'));
+        }
+      },
     },
     disabled: (editor) => !hasSelection(editor),
     hidden: (options) => isHidden(options, 'copy'),
@@ -138,8 +150,14 @@ const config = {
   paste: {
     shortcut: 'Mod+v',
     title: 'Paste',
-    action: (editor) => {
-      exec('paste') || dontClipMessage('Paste', editor.errorHandler); // eslint-disable-line no-unused-expressions
+    action: {
+      thunk: (dispatch, _) => {
+        const isPasteSupported = exec('paste');
+
+        if (!isPasteSupported) {
+          dispatch(openInfoModal('Paste'));
+        }
+      },
     },
     selected: ({ actions }) =>
       actions && // TMP
@@ -220,6 +238,11 @@ const config = {
     },
     hidden: (options) => isHidden(options, 'any-atom'),
   },
+  'info-modal': {
+    title: 'Error message',
+    action: { dialog: 'info-modal' },
+    hidden: (options) => isHidden(options, 'info-modal'),
+  },
   ...server,
   ...debug,
   ...tools,
@@ -237,15 +260,6 @@ function hasSelection(editor) {
     selection && // if not only sgroupData selected
     Object.keys(selection).filter((key) => !['sgroupData'].includes(key))
       .length > 0
-  );
-}
-
-function dontClipMessage(title, errorHandler) {
-  errorHandler(
-    'This action is unavailable via menu.\n' + // eslint-disable-line no-undef
-      'Instead, use shortcut to ' +
-      title +
-      '.',
   );
 }
 

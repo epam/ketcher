@@ -29,10 +29,13 @@
   },
   "dependencies": {
     "dotenv": "^16.0.3",
-    "ketcher-core": "^2.7.2"
+    "ketcher-core": "*"
   },
   "lint-staged": {
-    "*.{js,md,ts}": [
+    "*.md": [
+      "prettier --write"
+    ],
+    "*.{js,ts}": [
       "prettier --write",
       "eslint ."
     ]

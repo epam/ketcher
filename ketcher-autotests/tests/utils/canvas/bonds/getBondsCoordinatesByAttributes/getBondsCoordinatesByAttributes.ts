@@ -25,11 +25,12 @@ export async function getBondsCoordinatesByAttributes(
   attrs: BondAttributes,
   sortBy: SORT_TYPE = SORT_TYPE.ASC_X,
 ): Promise<BondXy[] | []> {
-  const { bonds, scale } = await page.evaluate(() => {
+  const { bonds, scale, offset } = await page.evaluate(() => {
     return {
       // eslint-disable-next-line no-unsafe-optional-chaining
       bonds: [...window.ketcher?.editor?.struct()?.bonds?.values()],
       scale: window.ketcher?.editor?.options()?.scale,
+      offset: window.ketcher?.editor?.options()?.offset,
     };
   });
 
@@ -44,8 +45,8 @@ export async function getBondsCoordinatesByAttributes(
     const coords = targets.map((target) => {
       return {
         ...target,
-        x: target.center.x * scale + leftBarWidth,
-        y: target.center.y * scale + topBarHeight,
+        x: target.center.x * scale + offset.x + leftBarWidth,
+        y: target.center.y * scale + offset.y + topBarHeight,
       };
     });
 

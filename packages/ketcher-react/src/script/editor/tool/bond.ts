@@ -293,18 +293,24 @@ class BondTool implements Tool {
   mouseup(event) {
     if ('dragCtx' in this) {
       const dragCtx = this.dragCtx;
-      const rnd = this.editor.render;
-      const struct = rnd.ctab.molecule;
+      const render = this.editor.render;
+      const struct = render.ctab.molecule;
       if ('action' in dragCtx) {
         this.restoreBondWhenHoveringOnCanvas(event);
         this.editor.update(dragCtx.action);
       } else if (!('item' in dragCtx)) {
-        const xy = rnd.page2obj(event);
+        const editorOptions = this.editor.options();
+        const QUARTER_OF_BOND_WIDTH = 20;
+        const QUARTER_OF_BOND_HEIGHT = 5;
+        const xy = render.page2obj({
+          clientX: event.clientX + QUARTER_OF_BOND_WIDTH * editorOptions.zoom,
+          clientY: event.clientY - QUARTER_OF_BOND_HEIGHT * editorOptions.zoom,
+        });
         const v = new Vec2(1.0 / 2, 0).rotate(
           this.bondProps.type === Bond.PATTERN.TYPE.SINGLE ? -Math.PI / 6 : 0,
         );
         const bondAddition = fromBondAddition(
-          rnd.ctab,
+          render.ctab,
           this.bondProps,
           { label: 'C' },
           { label: 'C' },
@@ -316,7 +322,7 @@ class BondTool implements Tool {
       } else if (dragCtx.item.map === 'atoms') {
         // click on atom
         this.editor.update(
-          fromBondAddition(rnd.ctab, this.bondProps, dragCtx.item.id, {
+          fromBondAddition(render.ctab, this.bondProps, dragCtx.item.id, {
             label: 'C',
           })[0],
         );
@@ -326,7 +332,7 @@ class BondTool implements Tool {
         const bond = struct.bonds.get(dragCtx.item.id) as Bond;
 
         this.editor.update(
-          bondChangingAction(rnd.ctab, dragCtx.item.id, bond, bondProps),
+          bondChangingAction(render.ctab, dragCtx.item.id, bond, bondProps),
         );
       }
       delete this.dragCtx;

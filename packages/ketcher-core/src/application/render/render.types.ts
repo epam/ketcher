@@ -53,6 +53,7 @@ export type RenderOptions = {
   /* styles */
   lineattr: RenderOptionStyles;
   arrowSnappingStyle: RenderOptionStyles;
+  bondSnappingStyle: RenderOptionStyles;
   selectionStyle: RenderOptionStyles;
   hoverStyle: RenderOptionStyles;
   sgroupBracketStyle: RenderOptionStyles;

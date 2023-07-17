@@ -1,9 +1,11 @@
-import { render, screen, fireEvent } from '@testing-library/react'
-import { MonomerItem, MonomerItemType } from './MonomerItem'
+import { render, screen, fireEvent } from '@testing-library/react';
+import { Struct } from 'ketcher-core';
+import { MonomerItem } from './MonomerItem';
+import { MonomerItemType } from './types';
 
 describe('Test Monomer Item component', () => {
   it('Test click event', () => {
-    const monomerItemHandleClick = jest.fn()
+    const monomerItemHandleClick = jest.fn();
     const monomer: MonomerItemType = {
       label: 'for test',
       props: {
@@ -13,18 +15,19 @@ describe('Test Monomer Item component', () => {
         MonomerName: 'Cya',
         MonomerNaturalAnalogCode: 'A',
         MonomerType: 'PEPTIDE',
-        Name: '3-sulfoalanine'
-      }
-    }
+        Name: '3-sulfoalanine',
+      },
+      struct: new Struct(),
+    };
     render(
       withThemeAndStoreProvider(
-        <MonomerItem key={1} item={monomer} onClick={monomerItemHandleClick} />
-      )
-    )
+        <MonomerItem key={1} item={monomer} onClick={monomerItemHandleClick} />,
+      ),
+    );
 
-    const div = screen.getByTestId(monomer.props.MonomerNaturalAnalogCode)
-    fireEvent.click(div)
+    const div = screen.getByTestId(monomer.props.MonomerNaturalAnalogCode);
+    fireEvent.click(div);
 
-    expect(monomerItemHandleClick.mock.calls.length).toEqual(1)
-  })
-})
+    expect(monomerItemHandleClick.mock.calls.length).toEqual(1);
+  });
+});

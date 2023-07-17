@@ -14,19 +14,22 @@ import {
   getTopAtomByAttributes,
   getLeftAtomByAttributes,
 } from '@utils/canvas/atoms';
-import { BondType } from '@utils/canvas/types';
-import { ELEMENT_TITLE } from '@utils/canvas/types';
+import { BondType, ELEMENT_TITLE } from '@utils/canvas/types';
+
+const OFFSET_X = 300;
+const OFFSET_Y = 300;
 
 // ONLY FOR EXAMPLES, can be deleted later
 test.skip(`BOND`, async ({ page }) => {
   await page.goto('');
-  await drawElementByTitle(page, ELEMENT_TITLE.BENZENE, 300, 300);
+  await drawElementByTitle(page, ELEMENT_TITLE.BENZENE, OFFSET_X, OFFSET_Y);
 
+  const searchedIndex = 2;
   // type: 1 for single type: 2 for double,
   const bondByIndex = await getBondByIndex(
     page,
     { type: BondType.HYDROGEN },
-    2
+    searchedIndex,
   );
   await page.mouse.click(bondByIndex.x, bondByIndex.y);
 
@@ -53,7 +56,7 @@ test.skip(`BOND`, async ({ page }) => {
 
 test.skip(`ATOM`, async ({ page }) => {
   await page.goto('');
-  await drawElementByTitle(page, ELEMENT_TITLE.BENZENE, 300, 300);
+  await drawElementByTitle(page, ELEMENT_TITLE.BENZENE, OFFSET_X, OFFSET_Y);
 
   const firstAtom = await getAtomByIndex(page, { label: 'C', valence: 1 }, 0);
   await page.mouse.click(firstAtom.x, firstAtom.y);

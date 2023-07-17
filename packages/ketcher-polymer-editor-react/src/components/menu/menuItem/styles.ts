@@ -14,10 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import styled from '@emotion/styled'
+import styled from '@emotion/styled';
 
-import { IconButton } from 'ketcher-react'
+import { IconButton } from 'ketcher-react';
 
 export const StyledIconButton = styled(IconButton)`
   margin: 2px;
-`
+`;

@@ -1,7 +1,6 @@
 import { Page } from '@playwright/test';
-import { getBondsCoordinatesByAttributes } from '@utils/canvas/bonds/getBondsCoordinatesByAttributes/getBondsCoordinatesByAttributes';
-import { BondAttributes, SORT_TYPE } from '@utils/canvas/types';
-import { BondXy } from '@utils/canvas/types';
+import { getBondsCoordinatesByAttributes } from '@utils/canvas/bonds';
+import { BondAttributes, SORT_TYPE, BondXy } from '@utils/canvas/types';
 
 /**
  * Get right bond by attributes.
@@ -15,12 +14,12 @@ import { BondXy } from '@utils/canvas/types';
  */
 export async function getRightBondByAttributes(
   page: Page,
-  attributes: BondAttributes
+  attributes: BondAttributes,
 ): Promise<BondXy> {
   const result = await getBondsCoordinatesByAttributes(
     page,
     attributes,
-    SORT_TYPE.DESC_X
+    SORT_TYPE.DESC_X,
   );
 
   return result[0];

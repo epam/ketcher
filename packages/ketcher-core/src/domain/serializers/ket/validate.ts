@@ -14,11 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Ajv from 'ajv'
-import schema from './schema.json'
+import Ajv from 'ajv';
+import schema from './schema.json';
 
 export function validate(ket: any): boolean {
-  const ajv = new Ajv()
-  const validate = ajv.compile(schema)
-  return validate(ket)
+  const ajv = new Ajv();
+  const validate = ajv.compile(schema);
+  return validate(ket);
 }

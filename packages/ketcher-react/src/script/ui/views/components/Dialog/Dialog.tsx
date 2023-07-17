@@ -14,52 +14,52 @@
  * limitations under the License.
  ***************************************************************************/
 
-import * as KN from 'w3c-keyname'
+import * as KN from 'w3c-keyname';
 
 import {
   FC,
   PropsWithChildren,
   ReactElement,
   useLayoutEffect,
-  useRef
-} from 'react'
+  useRef,
+} from 'react';
 
-import clsx from 'clsx'
-import { Icon } from 'components'
-import styles from './Dialog.module.less'
-import { KETCHER_ROOT_NODE_CSS_SELECTOR } from 'src/constants'
-import { CLIP_AREA_BASE_CLASS } from '../../../component/cliparea/cliparea'
+import clsx from 'clsx';
+import { Icon } from 'components';
+import styles from './Dialog.module.less';
+import { KETCHER_ROOT_NODE_CSS_SELECTOR } from 'src/constants';
+import { CLIP_AREA_BASE_CLASS } from '../../../component/cliparea/cliparea';
 
 interface DialogParamsCallProps {
-  onCancel: () => void
-  onOk: (result: any) => void
+  onCancel: () => void;
+  onOk: (result: any) => void;
 }
 
 export interface DialogParams extends DialogParamsCallProps {
-  className?: string
+  className?: string;
 }
 
 interface DialogProps {
-  title?: string
-  params: DialogParams
-  buttons?: Array<string | ReactElement>
-  className?: string
-  needMargin?: boolean
-  withDivider?: boolean
-  headerContent?: ReactElement
-  footerContent?: ReactElement
+  title?: string;
+  params: DialogParams;
+  buttons?: Array<string | ReactElement>;
+  className?: string;
+  needMargin?: boolean;
+  withDivider?: boolean;
+  headerContent?: ReactElement;
+  footerContent?: ReactElement;
   buttonsNameMap?: {
-    [key in string]: string
-  }
-  focusable?: boolean
+    [key in string]: string;
+  };
+  focusable?: boolean;
 }
 
 interface DialogCallProps {
-  result?: () => any
-  valid?: () => boolean
+  result?: () => any;
+  valid?: () => boolean;
 }
 
-type Props = DialogProps & DialogCallProps
+type Props = DialogProps & DialogCallProps;
 
 const Dialog: FC<PropsWithChildren & Props> = (props) => {
   const {
@@ -77,44 +77,44 @@ const Dialog: FC<PropsWithChildren & Props> = (props) => {
     withDivider = false,
     focusable = true,
     ...rest
-  } = props
-  const dialogRef = useRef<HTMLDivElement>(null)
+  } = props;
+  const dialogRef = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
     if (focusable) {
-      ;(dialogRef.current as HTMLElement).focus()
+      (dialogRef.current as HTMLElement).focus();
     }
 
     return () => {
-      ;(
+      (
         dialogRef.current
           ?.closest(KETCHER_ROOT_NODE_CSS_SELECTOR)
           ?.getElementsByClassName(CLIP_AREA_BASE_CLASS)[0] as HTMLElement
-      ).focus()
-    }
-  }, [focusable])
+      ).focus();
+    };
+  }, [focusable]);
 
   const isButtonOk = (button) => {
-    return button === 'OK' || button === 'Save'
-  }
+    return button === 'OK' || button === 'Save';
+  };
 
   const exit = (mode) => {
-    const key = isButtonOk(mode) ? 'onOk' : 'onCancel'
+    const key = isButtonOk(mode) ? 'onOk' : 'onCancel';
     if (params && key in params && (key !== 'onOk' || valid())) {
-      params[key](result())
+      params[key](result());
     }
-  }
+  };
 
   const keyDown = (event) => {
-    const key = KN.keyName(event)
-    const active = document.activeElement
-    const activeTextarea = active && active.tagName === 'TEXTAREA'
+    const key = KN.keyName(event);
+    const active = document.activeElement;
+    const activeTextarea = active && active.tagName === 'TEXTAREA';
     if (key === 'Escape' || (key === 'Enter' && !activeTextarea)) {
-      exit(key === 'Enter' ? 'OK' : 'Cancel')
-      event.preventDefault()
-      event.stopPropagation()
+      exit(key === 'Enter' ? 'OK' : 'Cancel');
+      event.preventDefault();
+      event.stopPropagation();
     }
-  }
+  };
 
   return (
     <div
@@ -153,7 +153,7 @@ const Dialog: FC<PropsWithChildren & Props> = (props) => {
                   type="button"
                   className={clsx(
                     isButtonOk(button) ? styles.ok : styles.cancel,
-                    button === 'Save' && styles.save
+                    button === 'Save' && styles.save,
                   )}
                   value={
                     buttonsNameMap && buttonsNameMap[button]
@@ -162,13 +162,14 @@ const Dialog: FC<PropsWithChildren & Props> = (props) => {
                   }
                   disabled={isButtonOk(button) && !valid()}
                   onClick={() => exit(button)}
+                  data-testid={button}
                 />
-              )
+              ),
             )}
         </footer>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default Dialog
+export default Dialog;

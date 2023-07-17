@@ -115,7 +115,7 @@ export const withoutHeaderKet = `{
                 }
             ]
         }
-    }`
+    }`;
 export const moleculeRgroupKet = `{
         "root": {
             "nodes": [
@@ -190,7 +190,7 @@ export const moleculeRgroupKet = `{
                 }
             ]
         }
-    }`
+    }`;
 export const rxnKet = `{
         "root": {
             "nodes": [
@@ -316,7 +316,7 @@ export const rxnKet = `{
                 "z": 0
             }
         }
-    }`
+    }`;
 export const simpleObjectKet = `{
         "root": {
             "nodes": [
@@ -340,7 +340,7 @@ export const simpleObjectKet = `{
                 }
             ]
         }
-    }`
+    }`;
 export const textKet = `{
         "root": {
             "nodes": [
@@ -379,7 +379,7 @@ export const textKet = `{
                 }
             ]
         }
-    }`
+    }`;
 export const moleculeKet = `{
         "root": {
             "nodes": [
@@ -526,7 +526,7 @@ export const moleculeKet = `{
                 }
             ]
         }
-    }`
+    }`;
 export const moleculeSgroupKet = `{
         "root": {
             "nodes": [
@@ -683,7 +683,7 @@ export const moleculeSgroupKet = `{
                 }
             ]
         }
-    }`
+    }`;
 export const preparedKet = `{
         "root": {
             "nodes": [
@@ -873,7 +873,7 @@ export const preparedKet = `{
                 }
             ]
         }
-    }`
+    }`;
 export const errorKet = ` {
         "root": {
             "nodes": [
@@ -896,4 +896,4 @@ export const errorKet = ` {
                 }
             ]
         }
-    }`
+    }`;

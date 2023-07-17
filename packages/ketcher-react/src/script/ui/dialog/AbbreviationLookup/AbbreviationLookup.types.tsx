@@ -14,32 +14,32 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Template } from '../template/TemplateTable'
-import { Element } from 'ketcher-core'
+import { Template } from '../template/TemplateTable';
+import { Element } from 'ketcher-core';
 
 export enum AbbreviationType {
   Template = 'Template',
-  Element = 'Element'
+  Element = 'Element',
 }
 
 export interface AbbreviationGenericOption {
-  type: AbbreviationType
-  loweredName: string
-  loweredAbbreviation?: string
-  label: string
-  loweredLabel: string
+  type: AbbreviationType;
+  loweredName: string;
+  loweredAbbreviation?: string;
+  label: string;
+  loweredLabel: string;
 }
 
 export interface AbbreviationTemplateOption extends AbbreviationGenericOption {
-  type: AbbreviationType.Template
-  template: Template
+  type: AbbreviationType.Template;
+  template: Template;
 }
 
 export interface AbbreviationElementOption extends AbbreviationGenericOption {
-  type: AbbreviationType.Element
-  element: Element
+  type: AbbreviationType.Element;
+  element: Element;
 }
 
 export type AbbreviationOption =
   | AbbreviationTemplateOption
-  | AbbreviationElementOption
+  | AbbreviationElementOption;

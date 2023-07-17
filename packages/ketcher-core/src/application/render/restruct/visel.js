@@ -16,60 +16,60 @@
 
 // Visel is a shorthand for VISual ELement
 // It corresponds to a visualization (i.e. set of paths) of an atom or a bond.
-import { Box2Abs, Vec2 } from 'domain/entities'
+import { Box2Abs, Vec2 } from 'domain/entities';
 
 class Visel {
   constructor(type) {
-    this.type = type
-    this.paths = []
+    this.type = type;
+    this.paths = [];
     /** @type {Box2Abs[]} */
-    this.boxes = []
+    this.boxes = [];
     /** @type {Box2Abs | null} */
-    this.boundingBox = null
-    this.oldBoundingBox = null
-    this.exts = []
+    this.boundingBox = null;
+    this.oldBoundingBox = null;
+    this.exts = [];
   }
 
   add(path, bb, ext) {
-    this.paths.push(path)
+    this.paths.push(path);
     if (bb) {
-      this.boxes.push(bb)
+      this.boxes.push(bb);
       this.boundingBox =
-        this.boundingBox == null ? bb : Box2Abs.union(this.boundingBox, bb)
+        this.boundingBox == null ? bb : Box2Abs.union(this.boundingBox, bb);
     }
-    if (ext) this.exts.push(ext)
+    if (ext) this.exts.push(ext);
   }
 
   clear() {
-    this.paths = []
-    this.boxes = []
-    this.exts = []
+    this.paths = [];
+    this.boxes = [];
+    this.exts = [];
     if (this.boundingBox !== null) {
-      this.oldBoundingBox = this.boundingBox.clone()
+      this.oldBoundingBox = this.boundingBox.clone();
     }
-    this.boundingBox = null
+    this.boundingBox = null;
   }
 
   translate(...args) {
     if (args.length > 2) {
       // TODO: replace to debug time assert
-      throw new Error('One vector or two scalar arguments expected')
+      throw new Error('One vector or two scalar arguments expected');
     }
     if (args.length === 1) {
-      const vector = args[0]
-      this.translate(vector.x, vector.y)
+      const vector = args[0];
+      this.translate(vector.x, vector.y);
     } else {
-      const x = args[0]
-      const y = args[1]
-      const delta = new Vec2(x, y)
+      const x = args[0];
+      const y = args[1];
+      const delta = new Vec2(x, y);
       for (let i = 0; i < this.paths.length; ++i) {
-        this.paths[i].translateAbs(x, y)
+        this.paths[i].translateAbs(x, y);
       }
       for (let j = 0; j < this.boxes.length; ++j) {
-        this.boxes[j] = this.boxes[j].translate(delta)
+        this.boxes[j] = this.boxes[j].translate(delta);
       }
       if (this.boundingBox !== null) {
-        this.boundingBox = this.boundingBox.translate(delta)
+        this.boundingBox = this.boundingBox.translate(delta);
       }
     }
   }
@@ -80,20 +80,20 @@ class Visel {
    */
   rotate(degree, center) {
     for (let i = 0; i < this.paths.length; ++i) {
-      this.paths[i].rotate(degree, center.x, center.y)
+      this.paths[i].rotate(degree, center.x, center.y);
     }
 
     for (let j = 0; j < this.boxes.length; ++j) {
       this.boxes[j] = this.boxes[j].transform((point) =>
-        point.rotateAroundOrigin(degree, center)
-      )
+        point.rotateAroundOrigin(degree, center),
+      );
     }
     if (this.boundingBox !== null) {
       this.boundingBox = this.boundingBox.transform((point) =>
-        point.rotateAroundOrigin(degree, center)
-      )
+        point.rotateAroundOrigin(degree, center),
+      );
     }
   }
 }
 
-export default Visel
+export default Visel;

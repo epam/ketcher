@@ -1,25 +1,25 @@
-import { FC } from 'react'
-import { Item, Submenu } from 'react-contexify'
-import tools from 'src/script/ui/action/tools'
-import styles from '../ContextMenu.module.less'
-import useBondEdit from '../hooks/useBondEdit'
-import useBondSGroupAttach from '../hooks/useBondSGroupAttach'
-import useBondSGroupEdit from '../hooks/useBondSGroupEdit'
-import useBondTypeChange from '../hooks/useBondTypeChange'
-import useDelete from '../hooks/useDelete'
-import { formatTitle, getNonQueryBondNames, queryBondNames } from '../utils'
-import { MenuItemsProps } from '../contextMenu.types'
-import { getIconName, Icon } from 'components'
+import { FC } from 'react';
+import { Item, Submenu } from 'react-contexify';
+import tools from 'src/script/ui/action/tools';
+import styles from '../ContextMenu.module.less';
+import useBondEdit from '../hooks/useBondEdit';
+import useBondSGroupAttach from '../hooks/useBondSGroupAttach';
+import useBondSGroupEdit from '../hooks/useBondSGroupEdit';
+import useBondTypeChange from '../hooks/useBondTypeChange';
+import useDelete from '../hooks/useDelete';
+import { formatTitle, getNonQueryBondNames, queryBondNames } from '../utils';
+import { MenuItemsProps } from '../contextMenu.types';
+import { getIconName, Icon } from 'components';
 
-const nonQueryBondNames = getNonQueryBondNames(tools)
+const nonQueryBondNames = getNonQueryBondNames(tools);
 
 const BondMenuItems: FC<MenuItemsProps> = (props) => {
-  const [handleEdit] = useBondEdit()
-  const [handleTypeChange] = useBondTypeChange()
-  const [handleSGroupAttach, sGroupAttachHidden] = useBondSGroupAttach()
+  const [handleEdit] = useBondEdit();
+  const [handleTypeChange] = useBondTypeChange();
+  const [handleSGroupAttach, sGroupAttachHidden] = useBondSGroupAttach();
   const [handleSGroupEdit, sGroupEditDisabled, sGroupEditHidden] =
-    useBondSGroupEdit()
-  const handleDelete = useDelete()
+    useBondSGroupEdit();
+  const handleDelete = useDelete();
 
   return (
     <>
@@ -30,24 +30,24 @@ const BondMenuItems: FC<MenuItemsProps> = (props) => {
       </Item>
 
       {nonQueryBondNames.map((name) => {
-        const iconName = getIconName(name)
+        const iconName = getIconName(name);
         return (
           <Item {...props} id={name} onClick={handleTypeChange} key={name}>
             {iconName && <Icon name={iconName} className={styles.icon} />}
             <span>{formatTitle(tools[name].title)}</span>
           </Item>
-        )
+        );
       })}
 
       <Submenu {...props} label="Query bonds" className={styles.subMenu}>
         {queryBondNames.map((name) => {
-          const iconName = getIconName(name)
+          const iconName = getIconName(name);
           return (
             <Item id={name} onClick={handleTypeChange} key={name}>
               {iconName && <Icon name={iconName} className={styles.icon} />}
               <span>{formatTitle(tools[name].title)}</span>
             </Item>
-          )
+          );
         })}
       </Submenu>
 
@@ -68,7 +68,7 @@ const BondMenuItems: FC<MenuItemsProps> = (props) => {
         Delete
       </Item>
     </>
-  )
-}
+  );
+};
 
-export default BondMenuItems
+export default BondMenuItems;

@@ -272,6 +272,14 @@ To create a set of R-Group members:
 
 3. Click on **Apply** to convert the structure into an R-Group member.
 
+Schematically, the entire process of the R-Group member creation can
+be presented as:
+
+![](images/rgroup-example3.png)
+
+![](images/rgroup-example4.png)
+
+## R-Group attachment point
 An R-Group attachment point is the atom in an R-Group member fragment
 that attaches the fragment to the initial Markush structure.
 
@@ -281,20 +289,18 @@ R-Group contains more than one attachment point, you can specify one
 of them as primary and the other as secondary. You can select between
 either the primary or secondary attachment point using the dialog that
 appears after clicking on the atom:
-
 <img src = images/25_attach_point.png width = "300" />
+
+Result view of RGroup attachment points (IUPAC style):\
+<img src = images/25_1_attachment_points_view.png width = "300" />
 
 If there are two attachment points on an R-Group member, there must be
 two corresponding attachments (bonds) to the R-Group atom that has the
 same R-Group label. Clicking on **Apply** in the above dialog creates the
-attachment point.
+attachment points.
+Result view of RGroup attachment points both primary and secondary (IUPAC style):
 
-Schematically, the entire process of the R-Group member creation can
-be presented as:
-
-![](images/rgroup-example3.png)
-
-![](images/rgroup-example4.png)
+<img src = images/25_2_attachment_points_view_of_two_attachments.png width = "150" />
 
 # R-Group Logic
 
@@ -347,20 +353,21 @@ The Structural Repeating Unit (SRU) brackets enclose the structural
 repeating of a polymer. You have three available patterns:
 head-to-tail (the default), head-to-head, and either/unknown.
 
-_Superatom_
+## Superatom S-Group
 
 An abbreviated structure (abbreviation) is all or part of a structure
 (molecule or reaction component) that has been abbreviated to a text
 label. Structures that you abbreviate keep their chemical
-significance, but their underlying structure is hidden. The current
-version can&#39;t display contracted structures but correctly
-saves/reads them into/from files.
+significance, but their underlying structure is hidden.
 
-# Data S-Groups
+<img src = images/31_2_sgroup_superatom.png width = "300" />
 
-The _Data S-Groups Tool_ <img src = images/31_datasgroup_icon.png width = "42" /> is a separate tool for
-comfortable use with the accustomed set of descriptors (like Attached
-Data in **Marvin** Editor).
+After applying Superatom S-Group - there is ability to contract the S-Group, 
+and ability to remove the abbreviation, from the right-click menu on the S-Group:
+
+<img src = images/31_2_sgroup_superatom_context_menu.png width = "300" />
+
+## Data S-Groups
 
 You can attach data to an atom, a fragment, a multifragment, a single bond, or a
 group. The defined set of _Names_ and _Values_ is introduced for each
@@ -448,8 +455,7 @@ You can add templates (rings or other predefined structures) to the
 structure using the _Templates_ toolbar together with the _Custom
 Templates_ button located at the bottom:
 
-<img src = images/43_templates_toolbar.png align = left width = "360" /> <br/>
-<br/>
+<img src = images/43_templates_toolbar.png width = "360" />
 
 To add a ring to the molecule, select a ring from the toolbar and
 click inside the drawing area, or click on an atom or a bond in the
@@ -516,8 +522,10 @@ Saved template will be available in User Templates tab in the list of templates.
 Ketcher allows you to select and use Functional Groups to properly represent your structure on the canvas.
 Set of functional groups available is predefined and can't be changed right now.
 
-Explore the list of the Functional Groups available in the Templates library. Open it using the icon in the bottom toolbar: <br>
-<img src = images/43_custom_templates_icon.png width = "42" /> <br>
+Explore the list of the Functional Groups available in the Templates library. 
+Open it using the icon in the bottom toolbar:\
+<img src = images/43_custom_templates_icon.png width = "42" />
+
 Navigate to the Functional Groups tab to explore the FGs available:
 
 ![](images/FG_tab.png)
@@ -527,8 +535,10 @@ Filter Functional Groups by name: <br>
 
 To add Functional Group to the canvas and join it to the structure do the following:
 
-1. Select the proper FG in the FG menu and click _Add to canvas_ <br> <img src=images/fg_selected.png width = "400">
-2. Click on the atom FG should connect with on the canvas: bond will be created automatically and FG will be joined to the structure.
+1. Select the proper FG in the FG menu and click _Add to canvas_\
+   <img src=images/FG_search_cf3.png width = "300">
+2. Click on the atom FG should connect with on the canvas: 
+   bond will be created automatically and FG will be joined to the structure.\
    <img src = images/FG_attaching.gif width = "400"/>
 
 You can just click on the canvas having the FG selected. To connect it with other structure on the canvas do the following:
@@ -538,6 +548,12 @@ You can just click on the canvas having the FG selected. To connect it with othe
 
 <img src = images/FG_chain.gif width = "400"/>
 
+### Contracted s-group tooltip
+Hover mouse cursor over the contracted s-group, and you will see the preview of the s-group.
+
+<img src = images/FG_contracted_group_tooltip.png width = "220"/>
+
+### Expanding/Contracting s-group 
 Functional Group on the canvas can be **Expanded** to view it's internal structure. Expanded group can be **Contracted** back to the compact presentation.
 
 You can also **Remove the Abbreviation** on the group - it will allows you to work with the functional group atoms and bonds as with regular atoms and bonds on the canvas. To Expand, Contract and Remove Abbreviation:
@@ -547,7 +563,10 @@ You can also **Remove the Abbreviation** on the group - it will allows you to wo
 
 <img src=images/FG_contract.gif width = "400"/>
 
-Please, note that a lot of Ketcher tools will be not applicable for the separate atoms and bonds of FG. FG can only be selected as a whole. It can also be deleted, moved, or rotated only as an entire entity.
+### Disability to change s-group
+Please, note that a lot of Ketcher tools will be not applicable for the separate atoms and bonds of FG.
+FG can only be selected as a whole. 
+It can also be deleted, moved, or rotated only as an entire entity.
 
 Ketcher will let you know if the tool is not applicable for the FG and will suggest to Remove the Abbreviation immediately: <br>
 <img src=images/FG_remove_abb.png width = "300"/>

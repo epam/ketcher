@@ -1,4 +1,4 @@
-import assert from 'assert'
+import assert from 'assert';
 
 /**
  * This is data model for Sgrou attachment point.
@@ -9,7 +9,7 @@ export class SGroupAttachmentPoint {
   /**
    * This is the index of the atom in the S-group that serves as the attachment point.
    */
-  public readonly atomId: number
+  public readonly atomId: number;
   /**
    * This is the index of the atom that is being replaced or removed at the attachment point
    * when the S-group is connected to another structure.
@@ -18,7 +18,7 @@ export class SGroupAttachmentPoint {
    * NOTE: The logic is not supported in the current implementation of Ketcher.
    * Only reading from file and saving to file.
    */
-  public readonly leaveAtomId: number | undefined
+  public readonly leaveAtomId: number | undefined;
   /**
    * 2 character attachment identifier (for example, H or T for head/tail).
    * No validation of any kind is performed, and ‘ ’ is allowed.
@@ -29,27 +29,27 @@ export class SGroupAttachmentPoint {
    * NOTE: The logic is not supported in the current implementation of Ketcher.
    * Only reading from file and saving to file.
    */
-  public readonly additionalData: string
+  public readonly additionalData: string;
 
   constructor(
     atomId: number,
     leaveAtomId: number | undefined,
-    additionalData: string | undefined
+    additionalData: string | undefined,
   ) {
-    this.atomId = atomId
-    this.leaveAtomId = leaveAtomId
-    this.additionalData = this.formatAdditionalInfo(additionalData)
+    this.atomId = atomId;
+    this.leaveAtomId = leaveAtomId;
+    this.additionalData = this.formatAdditionalInfo(additionalData);
   }
 
   clone(atomIdMap: Map<number, number>): SGroupAttachmentPoint {
-    const newAtomId = atomIdMap.get(this.atomId)
-    assert(newAtomId != null)
-    const newLeaveAtomId = atomIdMap.get(this.leaveAtomId as number)
+    const newAtomId = atomIdMap.get(this.atomId);
+    assert(newAtomId != null);
+    const newLeaveAtomId = atomIdMap.get(this.leaveAtomId as number);
     return new SGroupAttachmentPoint(
       newAtomId,
       newLeaveAtomId,
-      this.additionalData
-    )
+      this.additionalData,
+    );
   }
 
   /**
@@ -57,9 +57,9 @@ export class SGroupAttachmentPoint {
    * in case of empty we should use two spaces ('  ')
    */
   private formatAdditionalInfo(additionalData: string | undefined) {
-    const DEFAULT_ADDITIONAL_INFO = '  '
+    const DEFAULT_ADDITIONAL_INFO = '  ';
     return additionalData !== undefined
       ? String(additionalData).slice(0, 2)
-      : DEFAULT_ADDITIONAL_INFO
+      : DEFAULT_ADDITIONAL_INFO;
   }
 }

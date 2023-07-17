@@ -14,31 +14,53 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Vec2, fracAngle } from 'ketcher-core'
+import { Vec2, fracAngle } from 'ketcher-core';
 
 function calcAngle(pos0, pos1) {
-  const v = Vec2.diff(pos1, pos0)
-  return Math.atan2(v.y, v.x)
+  const v = Vec2.diff(pos1, pos0);
+  return Math.atan2(v.y, v.x);
 }
 
 function calcNewAtomPos(pos0, pos1, ctrlKey) {
   const v = new Vec2(1, 0).rotate(
-    ctrlKey ? calcAngle(pos0, pos1) : fracAngle(pos0, pos1)
-  )
-  v.add_(pos0) // eslint-disable-line no-underscore-dangle
-  return v
+    ctrlKey ? calcAngle(pos0, pos1) : fracAngle(pos0, pos1),
+  );
+  v.add_(pos0); // eslint-disable-line no-underscore-dangle
+  return v;
 }
 
 function degrees(angle) {
-  let degree = Math.round((angle / Math.PI) * 180)
-  if (degree > 180) degree -= 360
-  else if (degree <= -180) degree += 360
-  return degree
+  let degree = Math.round((angle / Math.PI) * 180);
+  if (degree > 180) degree -= 360;
+  else if (degree <= -180) degree += 360;
+  return degree;
+}
+
+/**
+ * @param {number} angle angle (in radians) from the X axis
+ * @returns {number} normalized angle (in radians) from the X axis
+ * @example
+ * normalizeAngleRelativeToXAxis(PI / 2) === PI / 2
+ * normalizeAngleRelativeToXAxis(PI) === PI
+ * normalizeAngleRelativeToXAxis(3/2 * PI) === -PI / 2
+ * normalizeAngleRelativeToXAxis(2 * PI) === 0
+ * normalizeAngleRelativeToXAxis(3 * PI) === PI
+ */
+function normalizeAngle(angle) {
+  const angleWithinFullCircle = angle % (2 * Math.PI);
+  if (angleWithinFullCircle > Math.PI) {
+    return angleWithinFullCircle - 2 * Math.PI;
+  }
+  if (angleWithinFullCircle <= -Math.PI) {
+    return angleWithinFullCircle + 2 * Math.PI;
+  }
+  return angleWithinFullCircle;
 }
 
 export default {
   calcAngle,
   fracAngle,
   calcNewAtomPos,
-  degrees
-}
+  degrees,
+  normalizeAngle,
+};

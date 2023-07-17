@@ -14,24 +14,24 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Layout } from 'components/Layout'
-import { render, screen } from '@testing-library/react'
+import { Layout } from 'components/Layout';
+import { render, screen } from '@testing-library/react';
 
 const TopElementMock = () => {
-  return <div>top element</div>
-}
+  return <div>top element</div>;
+};
 
 const LeftElementMock = () => {
-  return <div>left element</div>
-}
+  return <div>left element</div>;
+};
 
 const MainElementMock = () => {
-  return <div>main element</div>
-}
+  return <div>main element</div>;
+};
 
 const RightElementMock = () => {
-  return <div>right element</div>
-}
+  return <div>right element</div>;
+};
 
 describe('Layout', () => {
   it('should render several subcomponents correctly', () => {
@@ -47,18 +47,18 @@ describe('Layout', () => {
           <Layout.Main>
             <MainElementMock />
           </Layout.Main>
-        </Layout>
-      )
-    )
+        </Layout>,
+      ),
+    );
 
-    const topElement = screen.getByText('top element')
-    const mainElement = screen.getByText('main element')
-    const leftElement = screen.getByText('left element')
+    const topElement = screen.getByText('top element');
+    const mainElement = screen.getByText('main element');
+    const leftElement = screen.getByText('left element');
 
-    expect(topElement).toBeVisible()
-    expect(mainElement).toBeVisible()
-    expect(leftElement).toBeVisible()
-  })
+    expect(topElement).toBeVisible();
+    expect(mainElement).toBeVisible();
+    expect(leftElement).toBeVisible();
+  });
 
   it('should render all subcomponents correctly', () => {
     render(
@@ -76,18 +76,18 @@ describe('Layout', () => {
           <Layout.Right>
             <RightElementMock />
           </Layout.Right>
-        </Layout>
-      )
-    )
+        </Layout>,
+      ),
+    );
 
-    const topElement = screen.getByText('top element')
-    const mainElement = screen.getByText('main element')
-    const leftElement = screen.getByText('left element')
-    const rightElement = screen.getByText('right element')
+    const topElement = screen.getByText('top element');
+    const mainElement = screen.getByText('main element');
+    const leftElement = screen.getByText('left element');
+    const rightElement = screen.getByText('right element');
 
-    expect(topElement).toBeVisible()
-    expect(mainElement).toBeVisible()
-    expect(leftElement).toBeVisible()
-    expect(rightElement).toBeVisible()
-  })
-})
+    expect(topElement).toBeVisible();
+    expect(mainElement).toBeVisible();
+    expect(leftElement).toBeVisible();
+    expect(rightElement).toBeVisible();
+  });
+});

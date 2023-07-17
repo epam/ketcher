@@ -15,5 +15,5 @@
  ***************************************************************************/
 
 export interface SmiSerializerOptions {
-  ignoreErrors: boolean
+  ignoreErrors: boolean;
 }

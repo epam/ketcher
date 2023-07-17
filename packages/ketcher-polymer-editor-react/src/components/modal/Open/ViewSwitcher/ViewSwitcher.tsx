@@ -13,40 +13,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { AnalyzingFile, AnalyzingFileProps } from '../AnalyzingFile'
-import { OpenOptions, OpenOptionsProps } from '../OpenOptions'
-import { TextEditorProps, TextField } from '../../../shared/textEditor'
-import styled from '@emotion/styled'
+import { AnalyzingFile, AnalyzingFileProps } from '../AnalyzingFile';
+import { OpenOptions, OpenOptionsProps } from '../OpenOptions';
+import { TextEditorProps, TextField } from '../../../shared/textEditor';
+import styled from '@emotion/styled';
 
 type ViewStates = {
-  openOptions: string
-  textEditor: string
-}
+  openOptions: string;
+  textEditor: string;
+};
 
 type SwitchProps = {
-  currentState: string
-  states: ViewStates
-  isAnalyzingFile: boolean
+  currentState: string;
+  states: ViewStates;
+  isAnalyzingFile: boolean;
 } & OpenOptionsProps &
   TextEditorProps &
-  AnalyzingFileProps
+  AnalyzingFileProps;
 
 const StyledTextField = styled(TextField)`
   width: 405px;
   height: 320px;
-`
+`;
 
 export const ViewSwitcher = (props: SwitchProps) => {
   if (props.isAnalyzingFile) {
-    return <AnalyzingFile fileName={props.fileName} />
+    return <AnalyzingFile fileName={props.fileName} />;
   } else {
     switch (props.currentState) {
       case props.states.openOptions:
-        return <OpenOptions {...props} />
+        return <OpenOptions {...props} />;
       case props.states.textEditor:
-        return <StyledTextField {...props} />
+        return <StyledTextField {...props} />;
       default:
-        return null
+        return null;
     }
   }
-}
+};

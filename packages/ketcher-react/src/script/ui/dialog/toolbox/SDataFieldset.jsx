@@ -14,15 +14,15 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Field } from '../../component/form/form/form'
-import { getSelectOptionsFromSchema } from '../../utils'
-import Select from '../../component/form/Select'
-import { sdataCustomSchema } from '../../data/schema/sdata-schema'
+import { Field } from '../../component/form/form/form';
+import { getSelectOptionsFromSchema } from '../../utils';
+import Select from '../../component/form/Select';
+import { sdataCustomSchema } from '../../data/schema/sdata-schema';
 
 const content = (schema, context, fieldName, fieldValue, checked) =>
   Object.keys(schema.properties)
     .filter(
-      (prop) => prop !== 'type' && prop !== 'context' && prop !== 'fieldName'
+      (prop) => prop !== 'type' && prop !== 'context' && prop !== 'fieldName',
     )
     .map((prop) => {
       if (prop === 'radiobuttons') {
@@ -34,7 +34,7 @@ const content = (schema, context, fieldName, fieldValue, checked) =>
             key={`${context}-${fieldName}-${prop}-radio`}
             labelPos={false}
           />
-        )
+        );
       } else if (prop === 'fieldValue') {
         return (
           <Field
@@ -42,7 +42,7 @@ const content = (schema, context, fieldName, fieldValue, checked) =>
             key={`${context}-${fieldName}-${prop}-select`}
             placeholder="Enter value"
           />
-        )
+        );
       } else {
         return (
           <Field
@@ -50,13 +50,13 @@ const content = (schema, context, fieldName, fieldValue, checked) =>
             type="textarea"
             key={`${context}-${fieldName}-${prop}-select`}
           />
-        )
+        );
       }
-    })
+    });
 
 function SDataFieldset({ formState }) {
-  const { result } = formState
-  const formSchema = sdataCustomSchema
+  const { result } = formState;
+  const formSchema = sdataCustomSchema;
 
   return (
     <fieldset className="sdata">
@@ -71,10 +71,10 @@ function SDataFieldset({ formState }) {
         result.context,
         result.fieldName,
         result.fieldValue,
-        result.radiobuttons
+        result.radiobuttons,
       )}
     </fieldset>
-  )
+  );
 }
 
-export default SDataFieldset
+export default SDataFieldset;

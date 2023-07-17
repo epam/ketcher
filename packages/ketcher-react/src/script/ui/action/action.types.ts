@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Dispatch } from 'redux'
+import { Dispatch } from 'redux';
 
 type ToolVariant =
   | 'about'
@@ -96,45 +96,45 @@ type ToolVariant =
   | 'shape-rectangle'
   | 'shape-polyline'
   | 'shape-line'
-  | 'undo'
+  | 'undo';
 
 // todo: find out types
-type Editor = any
-type Server = any
-type Options = any
-type ReduxState = any
+type Editor = any;
+type Server = any;
+type Options = any;
+type ReduxState = any;
 
 type ActionObj = {
-  tool?: string
-  opts?: any
-  dialog?: string
-  thunk?: (dispatch: Dispatch, getState: () => ReduxState) => void
-}
-type ActionFn = (editor: Editor) => void
+  tool?: string;
+  opts?: any;
+  dialog?: string;
+  thunk?: (dispatch: Dispatch, getState: () => ReduxState) => void;
+};
+type ActionFn = (editor: Editor) => void;
 // todo: come up with better name
-type UiActionAction = ActionObj | ActionFn
+type UiActionAction = ActionObj | ActionFn;
 
 // todo: come up with better name
 type GetActionState = (
   editor: Editor,
   server?: Server,
-  options?: Options
-) => boolean
+  options?: Options,
+) => boolean;
 
-type IsActionState = boolean | GetActionState
+type IsActionState = boolean | GetActionState;
 
 interface UiAction {
-  title?: string
-  shortcut?: string
-  action: UiActionAction
-  selected?: IsActionState
-  disabled?: IsActionState
-  hidden?: IsActionState
-  onAction?: (action: UiActionAction) => void
+  title?: string;
+  shortcut?: string;
+  action: UiActionAction;
+  selected?: IsActionState;
+  disabled?: IsActionState;
+  hidden?: IsActionState;
+  onAction?: (action: UiActionAction) => void;
 }
 
 type Tools = {
-  [ket in keyof ToolVariant]?: UiAction
-}
+  [ket in keyof ToolVariant]?: UiAction;
+};
 
-export type { Tools, UiAction, UiActionAction }
+export type { Tools, UiAction, UiActionAction };

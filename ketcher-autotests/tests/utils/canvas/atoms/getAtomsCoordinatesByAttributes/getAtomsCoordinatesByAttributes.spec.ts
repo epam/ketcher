@@ -1,12 +1,11 @@
 import { expect, test } from '@playwright/test';
 import { drawElementByTitle } from '@utils';
 import { getAtomsCoordinatesByAttributes } from './getAtomsCoordinatesByAttributes';
-import { SORT_TYPE } from '@utils/canvas/types';
+import { SORT_TYPE, ELEMENT_TITLE } from '@utils/canvas/types';
 import {
   STRUCTURE_NOT_FOUND_ERROR,
   NO_STRUCTURE_AT_THE_CANVAS_ERROR,
 } from '@utils/canvas/constants';
-import { ELEMENT_TITLE } from '@utils/canvas/types';
 
 /**
  * These tests are only need to debug getAtomsCoordinatesByAttributes function itself.
@@ -17,9 +16,16 @@ import { ELEMENT_TITLE } from '@utils/canvas/types';
 test.skip(`should return only coordinates for benzene ring in ascending order`, async ({
   page,
 }) => {
+  const offset = {
+    x1: 50,
+    y1: 50,
+    x2: 300,
+    y2: 300,
+  };
+
   await page.goto('');
-  await drawElementByTitle(page, ELEMENT_TITLE.HYDROGEN, 50, 50);
-  await drawElementByTitle(page, ELEMENT_TITLE.BENZENE, 300, 300);
+  await drawElementByTitle(page, ELEMENT_TITLE.HYDROGEN, offset.x1, offset.y1);
+  await drawElementByTitle(page, ELEMENT_TITLE.BENZENE, offset.x2, offset.y2);
 
   const coords = await getAtomsCoordinatesByAttributes(
     page,
@@ -28,7 +34,7 @@ test.skip(`should return only coordinates for benzene ring in ascending order`, 
       label: 'C',
       valence: 4,
     },
-    SORT_TYPE.ASC_Y
+    SORT_TYPE.ASC_Y,
   );
 
   expect(coords[0].y < coords[1].y).toBeTruthy();
@@ -36,8 +42,9 @@ test.skip(`should return only coordinates for benzene ring in ascending order`, 
   expect(coords[2].y < coords[3].y).toBeTruthy();
   expect(coords[3].y < coords[4].y).toBeTruthy();
   expect(coords[4].y < coords[5].y).toBeTruthy();
+  const expectedLength = 6;
 
-  expect(coords.length).toEqual(6);
+  expect(coords.length).toEqual(expectedLength);
   coords.forEach((coord) => {
     expect(coord).toEqual({
       ...coord,
@@ -50,10 +57,12 @@ test.skip(`should return only coordinates for benzene ring in ascending order`, 
 test.skip(`should throw error in case we draw atom below left/top toolbars`, async ({
   page,
 }) => {
+  const offsetX = -10;
+  const offsetY = -10;
   await page.goto('');
 
   // draw atom below from left/top toolbar
-  await drawElementByTitle(page, ELEMENT_TITLE.HYDROGEN, -10, -10);
+  await drawElementByTitle(page, ELEMENT_TITLE.HYDROGEN, offsetX, offsetY);
 
   await expect(async () => {
     await getAtomsCoordinatesByAttributes(page, {
@@ -67,6 +76,8 @@ test.skip(`should throw error in case we draw atom below left/top toolbars`, asy
 test.skip(`should throw error in case we pass incorrect attributes to find atoms`, async ({
   page,
 }) => {
+  const offsetX = 10;
+  const offsetY = 10;
   const incorrectAttributes = {
     charge: 0,
     label: 'H',
@@ -76,7 +87,7 @@ test.skip(`should throw error in case we pass incorrect attributes to find atoms
   await page.goto('');
 
   // draw atom below from left/top toolbar
-  await drawElementByTitle(page, ELEMENT_TITLE.HYDROGEN, 10, 10);
+  await drawElementByTitle(page, ELEMENT_TITLE.HYDROGEN, offsetX, offsetY);
 
   await expect(async () => {
     await getAtomsCoordinatesByAttributes(page, incorrectAttributes);

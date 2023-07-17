@@ -14,19 +14,23 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Dialog, StructEditor } from '../../views/components'
-import { Component } from 'react'
-import { isEmpty } from 'lodash'
-import { initAttach, setAttachPoints, setTmplName } from '../../state/templates'
+import { Dialog, StructEditor } from '../../views/components';
+import { Component } from 'react';
+import { isEmpty } from 'lodash';
+import {
+  initAttach,
+  setAttachPoints,
+  setTmplName,
+} from '../../state/templates';
 
-import { connect } from 'react-redux'
-import { storage } from '../../storage-ext'
-import Form, { Field } from '../../component/form/form/form'
-import { attachSchema } from '../../data/schema/struct-schema'
-import styled from '@emotion/styled'
-import classes from './template-lib.module.less'
-import { css } from '@emotion/react'
-import { Button } from '@mui/material'
+import { connect } from 'react-redux';
+import { storage } from '../../storage-ext';
+import Form, { Field } from '../../component/form/form/form';
+import { attachSchema } from '../../data/schema/struct-schema';
+import styled from '@emotion/styled';
+import classes from './template-lib.module.less';
+import { css } from '@emotion/react';
+import { Button } from '@mui/material';
 
 // @TODO When theming is implemented, use theme wherever possible
 const TemplateEditDialog = styled(Dialog)`
@@ -47,7 +51,7 @@ const TemplateEditDialog = styled(Dialog)`
       margin-right: 12px;
     }
   }
-`
+`;
 
 const Editor = styled('div')`
   border: 1px solid #b4b9d6;
@@ -63,11 +67,11 @@ const Editor = styled('div')`
     width: 100%;
     border: none;
   }
-`
+`;
 
 const Warning = styled('div')`
   padding: 0 5px;
-`
+`;
 
 const Message = styled('div')`
   background-color: #e1e5ea;
@@ -75,13 +79,13 @@ const Message = styled('div')`
   padding: 10px 12px;
   border-top: 1px solid #cad3dd;
   border-bottom: 1px solid #cad3dd;
-`
+`;
 
 const LeftColumn = styled('div')`
   padding: 12px;
   border-radius: 0 0 0 8px;
   background-color: #eff2f5;
-`
+`;
 
 const RightColumn = styled('div')`
   width: 40%;
@@ -90,7 +94,7 @@ const RightColumn = styled('div')`
   padding: 12px;
   display: flex;
   flex-direction: column;
-`
+`;
 
 const NameInput = styled(Field)`
   display: flex;
@@ -121,7 +125,7 @@ const NameInput = styled(Field)`
     display: block;
     width: 100%;
   }
-`
+`;
 
 const AttachmentOutput = styled('span')`
   display: block;
@@ -135,7 +139,7 @@ const AttachmentOutput = styled('span')`
   font-size: 14px;
   background-color: #eff2f5;
   margin-top: 4px;
-`
+`;
 
 const Buttons = styled('div')`
   display: flex;
@@ -143,7 +147,7 @@ const Buttons = styled('div')`
   margin-top: auto;
   justify-content: flex-end;
   gap: 8px;
-`
+`;
 
 const buttonCommonStyles = css`
   width: fit-content;
@@ -152,7 +156,7 @@ const buttonCommonStyles = css`
   font-size: 12px;
   line-height: 14px;
   box-shadow: none;
-`
+`;
 
 const SaveButton = styled(Button)`
   ${buttonCommonStyles}
@@ -167,7 +171,7 @@ const SaveButton = styled(Button)`
     background-color: #e1e5ea;
     color: #333333;
   }
-`
+`;
 
 const CancelButton = styled(Button)`
   ${buttonCommonStyles}
@@ -179,41 +183,41 @@ const CancelButton = styled(Button)`
     color: #333333;
     box-shadow: none;
   }
-`
+`;
 
 const editorStyles = {
   selectionStyle: {
     fill: '#167782',
     'fill-opacity': '0.28',
-    stroke: '#167782'
+    stroke: '#167782',
   },
   hoverStyle: { stroke: '#1a7090', 'stroke-width': 1.2 },
-  hoverStyleSimpleObject: { 'stroke-opacity': 0.3 }
-}
+  hoverStyleSimpleObject: { 'stroke-opacity': 0.3 },
+};
 
 class Attach extends Component {
   MODES = {
     SAVE: 'save',
-    EDIT: 'edit'
-  }
+    EDIT: 'edit',
+  };
 
   constructor({ onInit, ...props }) {
-    super()
-    this.mode = isEmpty(props.tmpl.props) ? this.MODES.SAVE : this.MODES.EDIT
-    this.tmpl = initTmpl(props.tmpl)
-    onInit(this.tmpl.struct.name, this.tmpl.props)
-    this.onResult = this.onResult.bind(this)
+    super();
+    this.mode = isEmpty(props.tmpl.props) ? this.MODES.SAVE : this.MODES.EDIT;
+    this.tmpl = initTmpl(props.tmpl);
+    onInit(this.tmpl.struct.name, this.tmpl.props);
+    this.onResult = this.onResult.bind(this);
   }
 
   onResult() {
-    const { name, atomid, bondid } = this.props
+    const { name, atomid, bondid } = this.props;
     return name &&
       (name !== this.tmpl.struct.name ||
         atomid !== this.tmpl.props.atomid ||
         bondid !== this.tmpl.props.bondid) &&
       name.trim().length
       ? { name, attach: { atomid, bondid } }
-      : null
+      : null;
   }
 
   checkIsValidName(name) {
@@ -221,10 +225,10 @@ class Attach extends Component {
       !!name &&
       !this.props.templateLib.some(
         (tmpl) =>
-          tmpl.struct.name === name && tmpl.props.group === 'User Templates'
+          tmpl.struct.name === name && tmpl.props.group === 'User Templates',
       ) &&
       name.length <= 128
-    )
+    );
   }
 
   render() {
@@ -235,19 +239,19 @@ class Attach extends Component {
       /* eslint-enable @typescript-eslint/no-unused-vars */
       onAttachEdit,
       ...prop
-    } = this.props
-    const struct = this.tmpl.struct
+    } = this.props;
+    const struct = this.tmpl.struct;
     const { atomid, bondid } =
       struct.atoms.get(this.props.atomid) && struct.bonds.get(this.props.bondid)
         ? this.props
-        : this.tmpl.props
+        : this.tmpl.props;
     const options = Object.assign(editorStyles, this.props.globalSettings, {
-      scale: getScale(struct)
-    })
+      scale: getScale(struct),
+    });
     const dialogTitle =
-      this.mode === this.MODES.SAVE ? 'Save to Templates' : 'Template Edit'
+      this.mode === this.MODES.SAVE ? 'Save to Templates' : 'Template Edit';
     const warningObject =
-      this.mode === this.MODES.SAVE ? 'Templates' : 'Edited templates'
+      this.mode === this.MODES.SAVE ? 'Templates' : 'Edited templates';
 
     return (
       <TemplateEditDialog
@@ -271,7 +275,7 @@ class Attach extends Component {
         <Form
           schema={attachSchema}
           customValid={{
-            name: (name) => this.checkIsValidName(name)
+            name: (name) => this.checkIsValidName(name),
           }}
           {...this.props.formState}
         >
@@ -323,7 +327,7 @@ class Attach extends Component {
           </RightColumn>
         </Form>
       </TemplateEditDialog>
-    )
+    );
   }
 }
 
@@ -332,64 +336,64 @@ export default connect(
     ...store.templates.attach,
     templateLib: store.templates.lib,
     formState: store.modal.form,
-    globalSettings: store.options.settings
+    globalSettings: store.options.settings,
   }),
   (dispatch) => ({
     onInit: (name, ap) => dispatch(initAttach(name, ap)),
     onAttachEdit: (ap) => dispatch(setAttachPoints(ap)),
-    onNameEdit: (name) => dispatch(setTmplName(name))
-  })
-)(Attach)
+    onNameEdit: (name) => dispatch(setTmplName(name)),
+  }),
+)(Attach);
 
 function initTmpl(tmpl) {
   const normTmpl = {
     struct: structNormalization(tmpl.struct),
     props: {
       atomid: +tmpl.props.atomid || 0,
-      bondid: +tmpl.props.bondid || 0
-    }
-  }
-  normTmpl.struct.name = tmpl.struct.name
-  return normTmpl
+      bondid: +tmpl.props.bondid || 0,
+    },
+  };
+  normTmpl.struct.name = tmpl.struct.name;
+  return normTmpl;
 }
 
 function structNormalization(struct) {
-  const normStruct = struct.clone()
-  const cbb = normStruct.getCoordBoundingBox()
+  const normStruct = struct.clone();
+  const cbb = normStruct.getCoordBoundingBox();
 
   normStruct.atoms.forEach((atom) => {
-    atom.pp = atom.pp.sub(cbb.min)
-  })
+    atom.pp = atom.pp.sub(cbb.min);
+  });
 
   normStruct.sgroups.forEach((sg) => {
-    sg.pp = sg.pp ? sg.pp.sub(cbb.min) : cbb.min
-  })
+    sg.pp = sg.pp ? sg.pp.sub(cbb.min) : cbb.min;
+  });
 
   normStruct.rxnArrows.forEach((rxnArrow) => {
-    rxnArrow.pos = rxnArrow.pos.map((p) => p.sub(cbb.min))
-  })
+    rxnArrow.pos = rxnArrow.pos.map((p) => p.sub(cbb.min));
+  });
 
   normStruct.rxnPluses.forEach((rxnPlus) => {
-    rxnPlus.pp = rxnPlus.pp.sub(cbb.min)
-  })
+    rxnPlus.pp = rxnPlus.pp.sub(cbb.min);
+  });
 
   normStruct.simpleObjects.forEach((simpleObject) => {
-    simpleObject.pos = simpleObject.pos.map((p) => p.sub(cbb.min))
-  })
+    simpleObject.pos = simpleObject.pos.map((p) => p.sub(cbb.min));
+  });
 
   normStruct.texts.forEach((text) => {
-    text.position = text.position.sub(cbb.min)
-  })
+    text.position = text.position.sub(cbb.min);
+  });
 
-  return normStruct
+  return normStruct;
 }
 
 function getScale(struct) {
-  const cbb = struct.getCoordBoundingBox()
-  const VIEW_SIZE = 220
+  const cbb = struct.getCoordBoundingBox();
+  const VIEW_SIZE = 220;
   const scale =
-    VIEW_SIZE / Math.max(cbb.max.y - cbb.min.y, cbb.max.x - cbb.min.x)
-  if (scale < 35) return 35
-  if (scale > 50) return 50
-  return 40
+    VIEW_SIZE / Math.max(cbb.max.y - cbb.min.y, cbb.max.x - cbb.min.x);
+  if (scale < 35) return 35;
+  if (scale > 50) return 50;
+  return 40;
 }

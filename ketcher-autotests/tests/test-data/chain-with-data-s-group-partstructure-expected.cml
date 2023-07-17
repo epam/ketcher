@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cml>
+    <molecule>
+        <atomArray>
+            <atom id="a0" elementType="C" x2="12.6019" y2="-8.175"/>
+            <atom id="a1" elementType="C" x2="13.4679" y2="-8.675"/>
+            <atom id="a2" elementType="C" x2="14.334" y2="-8.175"/>
+            <atom id="a3" elementType="C" x2="15.2" y2="-8.675"/>
+            <atom id="a4" elementType="C" x2="16.066" y2="-8.175"/>
+            <atom id="a5" elementType="C" x2="16.9321" y2="-8.675"/>
+            <atom id="a6" elementType="C" x2="17.7981" y2="-8.175"/>
+        </atomArray>
+        <bondArray>
+            <bond atomRefs2="a0 a1" order="1"/>
+            <bond atomRefs2="a1 a2" order="1"/>
+            <bond atomRefs2="a2 a3" order="1"/>
+            <bond atomRefs2="a3 a4" order="1"/>
+            <bond atomRefs2="a4 a5" order="1"/>
+            <bond atomRefs2="a5 a6" order="1"/>
+        </bondArray>
+        <molecule id="sg0" atomRefs="a0 a1 a2 a3" role="DataSgroup" fieldName="Test" x="0" y="0" fieldData="55">
+            <MBracket type="SQUARE">
+                <MPoint x="0" y="0"/>
+                <MPoint x="0" y="0"/>
+                <MPoint x="0" y="0"/>
+                <MPoint x="0" y="0"/>
+            </MBracket>
+        </molecule>
+    </molecule>
+</cml>

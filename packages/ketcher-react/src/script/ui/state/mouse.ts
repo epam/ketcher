@@ -14,24 +14,43 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { updateCursorPosition } from './common'
-import { throttle } from 'lodash'
+import { updateCursorPosition } from './common';
+import { throttle } from 'lodash';
 
-const MOUSE_MOVE_THROTTLE_TIMEOUT = 300
+const MOUSE_MOVE_THROTTLE_TIMEOUT = 300;
 
 const handleMouseMove = (dispatch, event: MouseEvent) => {
-  dispatch(updateCursorPosition(event.clientX, event.clientY))
-}
+  dispatch(updateCursorPosition(event.clientX, event.clientY));
+};
 
 export function initMouseListener(element) {
-  return function (dispatch) {
+  return function (dispatch, getState) {
     const throttledHandleMouseMove = throttle(
       handleMouseMove,
-      MOUSE_MOVE_THROTTLE_TIMEOUT
-    )
+      MOUSE_MOVE_THROTTLE_TIMEOUT,
+    );
 
     element.addEventListener('pointermove', (event: MouseEvent) =>
-      throttledHandleMouseMove(dispatch, event)
-    )
+      throttledHandleMouseMove(dispatch, event),
+    );
+    element.addEventListener(
+      'mousedown',
+      function (event: MouseEvent) {
+        const areBothLeftAndRightButtonsClicked = event.buttons === 3;
+        if (areBothLeftAndRightButtonsClicked) {
+          handleRightClick(getState);
+        }
+      },
+      true,
+    );
+  };
+}
+
+function handleRightClick(getState) {
+  const state = getState();
+  const { editor } = state;
+
+  if (editor.rotateController.isRotating) {
+    editor.rotateController.revert();
   }
 }

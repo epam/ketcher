@@ -14,36 +14,36 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { TopToolbar } from './TopToolbar'
+import { TopToolbar } from './TopToolbar';
 
-import { Dispatch } from 'redux'
-import { connect } from 'react-redux'
-import { onAction } from '../../../state'
-import action from 'src/script/ui/action/index.js'
-import { shortcutStr } from '../shortcutStr'
-import { removeStructAction } from 'src/script/ui/state/shared'
-import { createSelector } from 'reselect'
+import { Dispatch } from 'redux';
+import { connect } from 'react-redux';
+import { onAction } from '../../../state';
+import action from 'src/script/ui/action/index.js';
+import { shortcutStr } from '../shortcutStr';
+import { removeStructAction } from 'src/script/ui/state/shared';
+import { createSelector } from 'reselect';
 
-const getActionState = (state) => state.actionState || {}
+const getActionState = (state) => state.actionState || {};
 
 const disabledButtonsSelector = createSelector(
   [getActionState],
   (actionState) =>
     Object.keys(actionState).reduce((acc: string[], item) => {
       if (actionState[item]?.disabled) {
-        acc.push(item)
+        acc.push(item);
       }
-      return acc
-    }, [])
-)
+      return acc;
+    }, []),
+);
 const hiddenButtonsSelector = createSelector([getActionState], (actionState) =>
   Object.keys(actionState).reduce((acc: string[], item) => {
     if (actionState[item]?.hidden) {
-      acc.push(item)
+      acc.push(item);
     }
-    return acc
-  }, [])
-)
+    return acc;
+  }, []),
+);
 
 const disableableButtons = [
   'layout',
@@ -51,17 +51,17 @@ const disableableButtons = [
   'arom',
   'dearom',
   'cip',
-  'enhanced-stereo'
-]
+  'enhanced-stereo',
+];
 
 const shortcuts = Object.keys(action).reduce((acc, key) => {
   if (action[key]?.shortcut) {
-    const shortcut = action[key].shortcut
-    const processedShortcut = shortcutStr(shortcut)
-    acc[key] = processedShortcut
+    const shortcut = action[key].shortcut;
+    const processedShortcut = shortcutStr(shortcut);
+    acc[key] = processedShortcut;
   }
-  return acc
-}, {})
+  return acc;
+}, {});
 
 const mapStateToProps = (state: any) => {
   return {
@@ -72,21 +72,21 @@ const mapStateToProps = (state: any) => {
     status: state.actionState || {},
     opened: state.toolbar.opened,
     indigoVerification: state.requestsStatuses.indigoVerification,
-    disableableButtons
-  }
-}
+    disableableButtons,
+  };
+};
 
 const mapDispatchToProps = (dispatch: Dispatch) => {
   const dispatchAction = (actionName) => {
-    dispatch(onAction(action[actionName].action))
-  }
+    dispatch(onAction(action[actionName].action));
+  };
 
   return {
     onClear: () => dispatchAction('clear'),
     onFileOpen: () => dispatchAction('open'),
     onSave: () => {
-      dispatch(removeStructAction())
-      dispatchAction('save')
+      dispatch(removeStructAction());
+      dispatchAction('save');
     },
     onUndo: () => dispatchAction('undo'),
     onRedo: () => dispatchAction('redo'),
@@ -113,17 +113,17 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
     onOpen: (menuName, isSelected) =>
       dispatch({
         type: 'OPENED',
-        data: { menuName, isSelected }
+        data: { menuName, isSelected },
       }),
     onFullscreen: () => dispatchAction('fullscreen'),
     onHelp: () => dispatchAction('help'),
-    onAbout: () => dispatchAction('about')
-  }
-}
+    onAbout: () => dispatchAction('about'),
+  };
+};
 
 const TopToolbarContainer = connect(
   mapStateToProps,
-  mapDispatchToProps
-)(TopToolbar)
+  mapDispatchToProps,
+)(TopToolbar);
 
-export { TopToolbarContainer }
+export { TopToolbarContainer };

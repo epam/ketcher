@@ -1,10 +1,7 @@
 {
   "compilerOptions": {
     "module": "esnext",
-    "lib": [
-      "dom",
-      "esnext"
-    ],
+    "lib": ["dom", "esnext"],
     "moduleResolution": "node",
     "sourceMap": true,
     "declaration": true,
@@ -27,36 +24,15 @@
     "noFallthroughCasesInSwitch": true,
     "baseUrl": ".",
     "paths": {
-      "@utils/*": [
-        "tests/utils/*"
-      ],
-      "@utils": [
-        "tests/utils"
-      ],
-      "@tests/*": [
-        "tests/*"
-      ],
-      "@tests": [
-        "tests"
-      ],
-      "@constants/*": [
-        "constants/*"
-      ],
-      "@constants": [
-        "constants"
-      ],
-      "@app/*": [
-        "*"
-      ],
+      "@utils/*": ["tests/utils/*"],
+      "@utils": ["tests/utils"],
+      "@tests/*": ["tests/*"],
+      "@tests": ["tests"],
+      "@constants/*": ["constants/*"],
+      "@constants": ["constants"],
+      "@app/*": ["*"]
     }
   },
-  "include": [
-    "./**/*"
-  ],
-  "exclude": [
-    "node_modules",
-    "build",
-    "playwright-report",
-    "test-results"
-  ]
+  "include": ["./**/*"],
+  "exclude": ["node_modules", "build", "playwright-report", "test-results"]
 }

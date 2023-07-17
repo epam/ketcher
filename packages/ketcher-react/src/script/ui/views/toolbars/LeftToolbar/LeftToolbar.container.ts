@@ -17,34 +17,34 @@
 import {
   LeftToolbar,
   LeftToolbarCallProps,
-  LeftToolbarProps
-} from './LeftToolbar'
+  LeftToolbarProps,
+} from './LeftToolbar';
 
-import { Dispatch } from 'redux'
-import { connect } from 'react-redux'
-import { onAction } from '../../../state'
+import { Dispatch } from 'redux';
+import { connect } from 'react-redux';
+import { onAction } from '../../../state';
 
-type StateProps = Omit<LeftToolbarProps, 'className'>
-const disableableButtons = []
+type StateProps = Omit<LeftToolbarProps, 'className'>;
+const disableableButtons = [];
 const mapStateToProps = (state: any): StateProps => ({
   status: state.actionState || {},
   opened: state.toolbar.opened,
   indigoVerification: state.requestsStatuses.indigoVerification,
-  disableableButtons
-})
+  disableableButtons,
+});
 
 const mapDispatchToProps = (dispatch: Dispatch): LeftToolbarCallProps => ({
   onAction: (action) => dispatch(onAction(action)),
   onOpen: (menuName, isSelected) =>
     dispatch({
       type: 'OPENED',
-      data: { menuName, isSelected }
-    })
-})
+      data: { menuName, isSelected },
+    }),
+});
 
 const LeftToolbarContainer = connect(
   mapStateToProps,
-  mapDispatchToProps
-)(LeftToolbar)
+  mapDispatchToProps,
+)(LeftToolbar);
 
-export { LeftToolbarContainer }
+export { LeftToolbarContainer };

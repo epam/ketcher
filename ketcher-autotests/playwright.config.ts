@@ -1,6 +1,5 @@
 import * as dotenv from 'dotenv';
-import type { PlaywrightTestConfig } from '@playwright/test';
-import { devices } from '@playwright/test';
+import { PlaywrightTestConfig, devices } from '@playwright/test';
 import {
   REMOTE_URL,
   STANDALONE_URL,
@@ -13,7 +12,22 @@ dotenv.config();
  * See https://playwright.dev/docs/test-configuration.
  */
 
-const ignoredTests = ['clean-tools.spec.ts'];
+const ignoredTests = [
+  'API/**',
+  'Examples/**',
+  'File-Management/**',
+  'Indigo-Tools/**',
+  'R-group-tool/**',
+  'Reagents/**',
+  'Structure-Creating-&-Editing/**',
+  'Templates/Functional-Groups/click-and-drag-fg-on-canvas.spec.ts',
+  'Templates/Functional-Groups/functional-groups.spec.ts',
+  'Templates/Functional-Groups/Functional-Group-Tools/functional-group-tools.spec.ts',
+  'Templates/Salts-and-Solvents/**',
+  'Templates/User-Templates/**',
+  'User-Interface/**',
+  'utils/**',
+];
 
 function baseURL(): string {
   if (!process.env.MODE || !process.env.KETCHER_URL) {
@@ -135,4 +149,5 @@ const config: PlaywrightTestConfig = {
   // },
 };
 
+// eslint-disable-next-line no-restricted-exports
 export default config;

@@ -14,71 +14,53 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { FC } from 'react'
-import { Struct } from 'ketcher-core'
-import StructRender from '../../component/structrender'
-import classes from './TemplateTable.module.less'
-import { greekify } from '../../utils'
-import { Icon } from 'components'
+import { FC } from 'react';
+import { Struct } from 'ketcher-core';
+import classes from './TemplateTable.module.less';
+import { greekify } from '../../utils';
+import { Icon, StructRender } from 'components';
 
 export interface Template {
-  struct: Struct
+  struct: Struct;
   props: {
-    atomid: number
-    bondid: number
-    group: string
-    prerender?: string
-    abbreviation: string
-    name: string
-  }
+    atomid: number;
+    bondid: number;
+    group: string;
+    prerender?: string;
+    abbreviation: string;
+    name: string;
+  };
 }
 
 interface TemplateTableProps {
-  templates: Array<Template>
-  selected: Template | null
-  onSelect: (tmpl: Template) => void
-  onDelete?: (tmpl: Template) => void
-  onAttach?: (tmpl: Template) => void
-  titleRows?: 1 | 2
-  renderOptions?: any
+  templates: Array<Template>;
+  selected: Template | null;
+  onSelect: (tmpl: Template) => void;
+  onDelete?: (tmpl: Template) => void;
+  onAttach?: (tmpl: Template) => void;
+  titleRows?: 1 | 2;
+  renderOptions?: any;
 }
 
 const isSaltOrSolventTemplate = (template) =>
-  template.props.group === 'Salts and Solvents'
+  template.props.group === 'Salts and Solvents';
 const isFunctionalGroupTemplate = (template) =>
-  template.props.group === 'Functional Groups'
+  template.props.group === 'Functional Groups';
 
 function getTemplateTitle(template: Template, index: number): string {
   if (isSaltOrSolventTemplate(template)) {
-    return template.props.name
+    return template.props.name;
   }
-  return template.struct.name || `${template.props.group} template ${index + 1}`
+  return (
+    template.struct.name || `${template.props.group} template ${index + 1}`
+  );
 }
 
 function tmplName(tmpl: Template, i: number): string {
   if (isSaltOrSolventTemplate(tmpl)) {
-    return tmpl.props.abbreviation
+    return tmpl.props.abbreviation;
   }
-  return tmpl.struct.name || `${tmpl.props.group} template ${i + 1}`
-}
-
-const RenderTmpl: FC<{
-  tmpl: Template
-  options: any
-  className: string
-}> = ({ tmpl, options, ...props }) => {
-  return (
-    <StructRender
-      struct={tmpl.struct}
-      {...props}
-      options={{
-        ...options,
-        autoScaleMargin: 10,
-        cachePrefix: 'templates',
-        downScale: true
-      }}
-    />
-  )
+  return tmpl.struct.name || `${tmpl.props.group} template ${i + 1}`;
 }
 
 const TemplateTable: FC<TemplateTableProps> = (props) => {
@@ -89,8 +71,8 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
     onDelete,
     onAttach,
     titleRows = 2,
-    renderOptions
-  } = props
+    renderOptions,
+  } = props;
 
   return (
     <div
@@ -114,10 +96,15 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
             }
             onClick={() => onSelect(tmpl)}
           >
-            <RenderTmpl
-              tmpl={tmpl}
-              options={renderOptions}
+            <StructRender
+              struct={tmpl.struct}
               className={classes.struct}
+              options={{
+                ...renderOptions,
+                autoScaleMargin: 10,
+                cachePrefix: 'templates',
+                downScale: true,
+              }}
             />
             <div
               className={`${classes.structTitle} ${
@@ -139,18 +126,18 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
                 <button
                   className={`${classes.button} ${classes.editButton}`}
                   onClick={(e) => {
-                    e.stopPropagation()
-                    onAttach!(tmpl)
+                    e.stopPropagation();
+                    onAttach!(tmpl);
                   }}
                 >
                   <Icon name="edit" />
                 </button>
               )}
           </div>
-        )
+        );
       })}
     </div>
-  )
-}
+  );
+};
 
-export default TemplateTable
+export default TemplateTable;

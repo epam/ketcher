@@ -34,10 +34,10 @@ export enum TopPanelButton {
   Dearomatize = 'Dearomatize',
   Layout = 'Layout',
   Clean = 'Clean',
-  Calculate = 'Calculate',
+  Calculate = 'Calculate CIP',
   Check = 'Check',
   Calculated = 'Calculated',
-  _3D = '3D',
+  ThreeD = '3D',
   Settings = 'Settings',
   Help = 'Help',
   About = 'About',
@@ -74,11 +74,11 @@ export enum RingButton {
   Cyclooctane = 'Cyclooctane',
 }
 
-export const CustomTemplatesButton = 'Structure Library';
+export const STRUCTURE_LIBRARY_BUTTON_NAME = 'Structure Library';
 
 export type ToolbarButton =
   | AtomButton
   | TopPanelButton
   | LeftPanelButton
   | RingButton
-  | typeof CustomTemplatesButton;
+  | typeof STRUCTURE_LIBRARY_BUTTON_NAME;

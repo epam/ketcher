@@ -14,11 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { getNodeWithInvertedYCoord } from '../helpers'
+import { getNodeWithInvertedYCoord } from '../helpers';
 
 export function simpleObjectToKet(simpleObjectNode) {
   return {
     type: 'simpleObject',
-    data: getNodeWithInvertedYCoord(simpleObjectNode.data)
-  }
+    data: getNodeWithInvertedYCoord(simpleObjectNode.data),
+  };
 }

@@ -14,9 +14,9 @@ import { getToolType, openTool } from './helpers';
  */
 export const selectNestedTool = async (
   page: Page,
-  toolElementId: [presses: number, domElementId: string]
+  toolElementId: [presses: number, domElementId: string],
 ): Promise<void> => {
-  let toolType = getToolType(toolElementId[1]);
+  const toolType = getToolType(toolElementId[1]);
 
   const toolTypeValues = Object.values(toolType);
 
@@ -38,6 +38,6 @@ export const selectNestedTool = async (
   }
 
   throw Error(
-    `Can't find tool. Please, be sure that tool has nested / sub levels.`
+    `Can't find tool. Please, be sure that tool has nested / sub levels.`,
   );
 };

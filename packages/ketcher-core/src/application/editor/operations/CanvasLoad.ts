@@ -14,34 +14,34 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { BaseOperation } from './base'
-import { OperationType } from './OperationType'
-import { ReStruct } from '../../render'
-import { Struct } from 'domain/entities'
+import { BaseOperation } from './base';
+import { OperationType } from './OperationType';
+import { ReStruct } from '../../render';
+import { Struct } from 'domain/entities';
 
 export class CanvasLoad extends BaseOperation {
   data: {
-    struct?: Struct
-  }
+    struct?: Struct;
+  };
 
   constructor(struct?: Struct) {
-    super(OperationType.CANVAS_LOAD)
-    this.data = { struct }
+    super(OperationType.CANVAS_LOAD);
+    this.data = { struct };
   }
 
   execute(restruct: ReStruct) {
-    const oldStruct = restruct.molecule
-    restruct.clearVisels() // TODO: What is it?
+    const oldStruct = restruct.molecule;
+    restruct.clearVisels(); // TODO: What is it?
     if (this.data.struct) {
-      restruct.render.setMolecule(this.data.struct)
+      restruct.render.setMolecule(this.data.struct);
     }
 
-    this.data.struct = oldStruct
+    this.data.struct = oldStruct;
   }
 
   invert() {
-    const inverted = new CanvasLoad()
-    inverted.data = this.data
-    return inverted
+    const inverted = new CanvasLoad();
+    inverted.data = this.data;
+    return inverted;
   }
 }

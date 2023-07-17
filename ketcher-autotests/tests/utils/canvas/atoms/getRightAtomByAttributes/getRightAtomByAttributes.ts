@@ -1,7 +1,6 @@
 import { Page } from '@playwright/test';
-import { getAtomsCoordinatesByAttributes } from '@utils/canvas/atoms/getAtomsCoordinatesByAttributes/getAtomsCoordinatesByAttributes';
-import { AtomAttributes, SORT_TYPE } from '@utils/canvas/types';
-import { AtomXy } from '@utils/canvas/types';
+import { getAtomsCoordinatesByAttributes } from '@utils/canvas/atoms';
+import { AtomAttributes, SORT_TYPE, AtomXy } from '@utils/canvas/types';
 
 /**
  * Get right atom by attributes.
@@ -15,12 +14,12 @@ import { AtomXy } from '@utils/canvas/types';
  */
 export async function getRightAtomByAttributes(
   page: Page,
-  attributes: AtomAttributes
+  attributes: AtomAttributes,
 ): Promise<AtomXy> {
   const result = await getAtomsCoordinatesByAttributes(
     page,
     attributes,
-    SORT_TYPE.DESC_X
+    SORT_TYPE.DESC_X,
   );
 
   return result[0];

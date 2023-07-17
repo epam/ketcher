@@ -14,43 +14,43 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Fragment, Vec2 } from 'domain/entities'
+import { Fragment, Vec2 } from 'domain/entities';
 
-import { BaseOperation } from './base'
-import { OperationType } from './OperationType'
-import { ReStruct } from '../../render'
+import { BaseOperation } from './base';
+import { OperationType } from './OperationType';
+import { ReStruct } from '../../render';
 
 export class EnhancedFlagMove extends BaseOperation {
   data: {
-    frid: any
-    p: any
-  }
+    frid: any;
+    p: any;
+  };
 
   constructor(fragmentId?: any, p?: any) {
-    super(OperationType.ENHANCED_FLAG_MOVE)
-    this.data = { frid: fragmentId, p }
+    super(OperationType.ENHANCED_FLAG_MOVE);
+    this.data = { frid: fragmentId, p };
   }
 
   execute(restruct: ReStruct) {
-    const { frid } = this.data
-    const { p } = this.data
-    const fragment = restruct.molecule.frags.get(frid)
-    if (!fragment) return
+    const { frid } = this.data;
+    const { p } = this.data;
+    const fragment = restruct.molecule.frags.get(frid);
+    if (!fragment) return;
 
     const currentPosition = fragment.stereoFlagPosition
       ? new Vec2(fragment.stereoFlagPosition.x, fragment.stereoFlagPosition.y)
-      : Fragment.getDefaultStereoFlagPosition(restruct.molecule, frid)!
+      : Fragment.getDefaultStereoFlagPosition(restruct.molecule, frid)!;
 
-    const newPosition = Vec2.sum(currentPosition, p)
-    fragment.stereoFlagPosition = newPosition
+    const newPosition = Vec2.sum(currentPosition, p);
+    fragment.stereoFlagPosition = newPosition;
 
-    this.data.p = p.negated()
-    BaseOperation.invalidateItem(restruct, 'enhancedFlags', frid, 1)
+    this.data.p = p.negated();
+    BaseOperation.invalidateItem(restruct, 'enhancedFlags', frid, 1);
   }
 
   invert() {
-    const inverted = new EnhancedFlagMove()
-    inverted.data = this.data
-    return inverted
+    const inverted = new EnhancedFlagMove();
+    inverted.data = this.data;
+    return inverted;
   }
 }

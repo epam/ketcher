@@ -15,5 +15,5 @@
  ***************************************************************************/
 
 export interface Renderer {
-  renderLine: () => void
+  renderLine: () => void;
 }

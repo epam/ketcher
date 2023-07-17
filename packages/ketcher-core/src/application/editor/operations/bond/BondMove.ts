@@ -14,35 +14,35 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { BaseOperation } from '../base'
-import { OperationType } from '../OperationType'
-import { ReStruct } from '../../../render'
-import { Scale } from 'domain/helpers'
+import { BaseOperation } from '../base';
+import { OperationType } from '../OperationType';
+import { ReStruct } from '../../../render';
+import { Scale } from 'domain/helpers';
 
 export class BondMove extends BaseOperation {
   data: {
-    bid: any
-    d: any
-  }
+    bid: any;
+    d: any;
+  };
 
   constructor(bondId?: any, d?: any) {
-    super(OperationType.BOND_MOVE, 2)
-    this.data = { bid: bondId, d }
+    super(OperationType.BOND_MOVE, 2);
+    this.data = { bid: bondId, d };
   }
 
   execute(restruct: ReStruct) {
-    const { bid, d } = this.data
-    const bond = restruct.bonds.get(bid)
-    if (!bond) return
+    const { bid, d } = this.data;
+    const bond = restruct.bonds.get(bid);
+    if (!bond) return;
 
-    const scaled = Scale.obj2scaled(d, restruct.render.options)
-    bond.visel.translate(scaled)
-    this.data.d = d.negated()
+    const scaled = Scale.obj2scaled(d, restruct.render.options);
+    bond.visel.translate(scaled);
+    this.data.d = d.negated();
   }
 
   invert() {
-    const inverted = new BondMove()
-    inverted.data = this.data
-    return inverted
+    const inverted = new BondMove();
+    inverted.data = this.data;
+    return inverted;
   }
 }

@@ -13,19 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { useDropzone, DropzoneOptions } from 'react-dropzone'
-import { Icon, IconName } from 'ketcher-react'
-import React, { useMemo } from 'react'
-import { ActionButton } from 'components/shared/actionButton'
-import styled from '@emotion/styled'
+import { useDropzone, DropzoneOptions } from 'react-dropzone';
+import { Icon, IconName } from 'ketcher-react';
+import React, { useMemo } from 'react';
+import { ActionButton } from 'components/shared/actionButton';
+import styled from '@emotion/styled';
 
 export type FileDropProps = {
-  buttonLabel: string
-  textLabel: string
-  iconName: IconName
-  disabled?: boolean
-  disabledText?: string
-} & DropzoneOptions
+  buttonLabel: string;
+  textLabel: string;
+  iconName: IconName;
+  disabled?: boolean;
+  disabledText?: string;
+} & DropzoneOptions;
 
 const baseStyle = {
   width: '100%',
@@ -33,12 +33,12 @@ const baseStyle = {
   display: 'flex',
   alignItems: 'center',
   flexDirection: 'column',
-  justifyContent: 'space-around'
-}
+  justifyContent: 'space-around',
+};
 
 const activeStyle = {
-  backgroundColor: '#F8FEFFFF'
-}
+  backgroundColor: '#F8FEFFFF',
+};
 
 const ButtonContainer = styled.div`
   display: flex;
@@ -53,7 +53,7 @@ const ButtonContainer = styled.div`
   & > svg {
     margin-bottom: 8px;
   }
-`
+`;
 
 const FileDrop = ({
   buttonLabel,
@@ -67,16 +67,16 @@ const FileDrop = ({
     multiple: false,
     noClick: true,
     disabled,
-    ...rest
-  })
+    ...rest,
+  });
 
   const style = useMemo(
     () => ({
       ...baseStyle,
-      ...(isDragActive ? activeStyle : {})
+      ...(isDragActive ? activeStyle : {}),
     }),
-    [isDragActive]
-  ) as React.CSSProperties
+    [isDragActive],
+  ) as React.CSSProperties;
 
   return (
     <div {...getRootProps({ style })}>
@@ -91,7 +91,7 @@ const FileDrop = ({
       </ButtonContainer>
       {disabled ? <p>{disabledText}</p> : <Icon name={iconName} />}
     </div>
-  )
-}
+  );
+};
 
-export { FileDrop }
+export { FileDrop };

@@ -14,8 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-export * from './BottomToolbar'
-export * from './LeftToolbar'
-export * from './RightToolbar'
-export * from './TopToolbar'
-export * from './FloatingTools'
+export * from './BottomToolbar';
+export * from './LeftToolbar';
+export * from './RightToolbar';
+export * from './TopToolbar';
+export * from './FloatingTools';

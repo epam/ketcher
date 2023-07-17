@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 export const selectIsAbbreviationLookupOpen = (state): boolean =>
-  state.abbreviationLookup.isOpen
+  state.abbreviationLookup.isOpen;
 
 export const selectAbbreviationLookupValue = (state): string =>
-  state.abbreviationLookup.lookupValue ?? ''
+  state.abbreviationLookup.lookupValue ?? '';

@@ -13,49 +13,49 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import React, { useState } from 'react'
-import { ClickAwayListener } from '@mui/material'
-import { MenuItem } from '../menuItem'
-import { useMenuContext } from '../../../hooks/useMenuContext'
+import React, { useState } from 'react';
+import { ClickAwayListener } from '@mui/material';
+import { MenuItem } from '../menuItem';
+import { useMenuContext } from '../../../hooks/useMenuContext';
 import {
   OptionsContainer,
   OptionsItemsCollapse,
   RootContainer,
   StyledDropdownIcon,
-  VisibleItem
-} from './styles'
+  VisibleItem,
+} from './styles';
 
 type SubMenuProps = {
-  vertical?: boolean
-}
+  vertical?: boolean;
+};
 
 const SubMenu = ({
   children,
-  vertical = false
+  vertical = false,
 }: React.PropsWithChildren<SubMenuProps>) => {
-  const [open, setOpen] = useState(false)
-  const { isActive } = useMenuContext()
+  const [open, setOpen] = useState(false);
+  const { isActive } = useMenuContext();
 
   const handleDropDownClick = () => {
-    setOpen((prev) => !prev)
-  }
+    setOpen((prev) => !prev);
+  };
 
   const hideCollapse = () => {
-    open && setOpen(false)
-  }
+    open && setOpen(false);
+  };
 
   const subComponents = React.Children.map(
     children as JSX.Element[],
     (child) => {
-      return child.type === MenuItem ? child : null
-    }
-  )
+      return child.type === MenuItem ? child : null;
+    },
+  );
 
   const options = subComponents
     .map((item) => item.props.itemId)
-    .filter((item) => item)
-  const activeOption = options.filter((itemKey) => isActive(itemKey))
-  const visibleItemId = activeOption.length ? activeOption[0] : options[0]
+    .filter((item) => item);
+  const activeOption = options.filter((itemKey) => isActive(itemKey));
+  const visibleItemId = activeOption.length ? activeOption[0] : options[0];
 
   return (
     <RootContainer>
@@ -83,7 +83,7 @@ const SubMenu = ({
         </ClickAwayListener>
       </OptionsItemsCollapse>
     </RootContainer>
-  )
-}
+  );
+};
 
-export { SubMenu }
+export { SubMenu };

@@ -13,55 +13,57 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { Provider } from 'react-redux'
-import { useEffect, useRef } from 'react'
-import { Global, ThemeProvider } from '@emotion/react'
-import { createTheme } from '@mui/material/styles'
-import { merge } from 'lodash'
-import { SdfSerializer } from 'ketcher-core'
-import monomersData from './data/monomers.sdf'
+import { Provider } from 'react-redux';
+import { useEffect, useRef } from 'react';
+import { Global, ThemeProvider } from '@emotion/react';
+import { createTheme } from '@mui/material/styles';
+import { merge } from 'lodash';
+import { SdfSerializer } from 'ketcher-core';
+import monomersData from './data/monomers.sdf';
 
-import { store } from 'state'
+import { store } from 'state';
 import {
   defaultTheme,
   muiOverrides,
   EditorTheme,
-  MergedThemeType
-} from 'theming/defaultTheme'
-import { getGlobalStyles } from 'theming/globalStyles'
-import { Layout } from 'components/Layout'
-import { MonomerLibrary } from 'components/monomerLibrary'
-import { Menu } from 'components/menu'
-import { selectEditorActiveTool, selectTool } from 'state/common'
-import { loadMonomerLibrary } from 'state/library'
-import { useAppDispatch, useAppSelector } from 'hooks'
-import { openModal } from 'state/modal'
+  MergedThemeType,
+} from 'theming/defaultTheme';
+import { getGlobalStyles } from 'theming/globalStyles';
+import { Layout } from 'components/Layout';
+import { MonomerLibrary } from 'components/monomerLibrary';
+import { Menu } from 'components/menu';
+import { selectEditorActiveTool, selectTool } from 'state/common';
+import { loadMonomerLibrary } from 'state/library';
+import { useAppDispatch, useAppSelector } from 'hooks';
+import { openModal } from 'state/modal';
 import {
   modalComponentList,
-  ModalContainer
-} from 'components/modal/modalContainer'
-import { FullscreenButton } from 'components/FullscreenButton'
-import { DeepPartial } from './types'
-import { EditorClassName } from './constants'
+  ModalContainer,
+} from 'components/modal/modalContainer';
+import { FullscreenButton } from 'components/FullscreenButton';
+import { DeepPartial } from './types';
+import { EditorClassName } from './constants';
 
-const muiTheme = createTheme(muiOverrides)
+const muiTheme = createTheme(muiOverrides);
 
 interface EditorProps {
-  onInit?: () => void
-  theme?: DeepPartial<EditorTheme>
+  onInit?: () => void;
+  theme?: DeepPartial<EditorTheme>;
 }
 
 function EditorContainer({ onInit, theme }: EditorProps) {
-  const rootElRef = useRef<HTMLDivElement>(null)
+  const rootElRef = useRef<HTMLDivElement>(null);
   const editorTheme: EditorTheme = theme
     ? merge(defaultTheme, theme)
-    : defaultTheme
+    : defaultTheme;
 
-  const mergedTheme: MergedThemeType = merge(muiTheme, { ketcher: editorTheme })
+  const mergedTheme: MergedThemeType = merge(muiTheme, {
+    ketcher: editorTheme,
+  });
 
   useEffect(() => {
-    onInit?.()
-  }, [onInit])
+    onInit?.();
+  }, [onInit]);
 
   return (
     <Provider store={store}>
@@ -72,17 +74,17 @@ function EditorContainer({ onInit, theme }: EditorProps) {
         </div>
       </ThemeProvider>
     </Provider>
-  )
+  );
 }
 
 function Editor() {
-  const dispatch = useAppDispatch()
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
-    const serializer = new SdfSerializer()
-    const library = serializer.deserialize(monomersData)
-    dispatch(loadMonomerLibrary(library))
-  }, [dispatch])
+    const serializer = new SdfSerializer();
+    const library = serializer.deserialize(monomersData);
+    dispatch(loadMonomerLibrary(library));
+  }, [dispatch]);
 
   return (
     <>
@@ -102,20 +104,20 @@ function Editor() {
 
       <ModalContainer />
     </>
-  )
+  );
 }
 
 function MenuComponent() {
-  const dispatch = useAppDispatch()
-  const activeTool = useAppSelector(selectEditorActiveTool)
+  const dispatch = useAppDispatch();
+  const activeTool = useAppSelector(selectEditorActiveTool);
 
   const menuItemChanged = (name) => {
     if (modalComponentList[name]) {
-      dispatch(openModal(name))
+      dispatch(openModal(name));
     } else {
-      dispatch(selectTool(name))
+      dispatch(selectTool(name));
     }
-  }
+  };
 
   return (
     <Menu onItemClick={menuItemChanged} activeMenuItem={activeTool}>
@@ -155,7 +157,7 @@ function MenuComponent() {
         <Menu.Item itemId="help" />
       </Menu.Group>
     </Menu>
-  )
+  );
 }
 
-export { EditorContainer as Editor }
+export { EditorContainer as Editor };

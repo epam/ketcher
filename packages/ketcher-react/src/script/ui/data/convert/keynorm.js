@@ -14,97 +14,97 @@
  * limitations under the License.
  ***************************************************************************/
 
-import * as KN from 'w3c-keyname'
+import * as KN from 'w3c-keyname';
 
 const mac =
-  typeof navigator !== 'undefined' ? /Mac/.test(navigator.platform) : false // eslint-disable-line no-undef
+  typeof navigator !== 'undefined' ? /Mac/.test(navigator.platform) : false; // eslint-disable-line no-undef
 
 function normalizeKeyName(name) {
-  const parts = name.split(/\+(?!$)/)
-  let result = parts[parts.length - 1]
-  if (result === 'Space') result = ' '
-  let alt
-  let ctrl
-  let shift
-  let meta
+  const parts = name.split(/\+(?!$)/);
+  let result = parts[parts.length - 1];
+  if (result === 'Space') result = ' ';
+  let alt;
+  let ctrl;
+  let shift;
+  let meta;
 
   for (let i = 0; i < parts.length - 1; i++) {
-    const mod = parts[i]
-    if (/^(cmd|meta|m)$/i.test(mod)) meta = true
-    else if (/^a(lt)?$/i.test(mod)) alt = true
-    else if (/^(c|ctrl|control)$/i.test(mod)) ctrl = true
-    else if (/^s(hift)?$/i.test(mod)) shift = true
+    const mod = parts[i];
+    if (/^(cmd|meta|m)$/i.test(mod)) meta = true;
+    else if (/^a(lt)?$/i.test(mod)) alt = true;
+    else if (/^(c|ctrl|control)$/i.test(mod)) ctrl = true;
+    else if (/^s(hift)?$/i.test(mod)) shift = true;
     else if (/^mod$/i.test(mod))
-      if (mac) meta = true
-      else ctrl = true
-    else throw new Error('Unrecognized modifier name: ' + mod)
+      if (mac) meta = true;
+      else ctrl = true;
+    else throw new Error('Unrecognized modifier name: ' + mod);
   }
 
-  if (alt) result = 'Alt+' + result
-  if (ctrl) result = 'Ctrl+' + result
-  if (meta) result = 'Meta+' + result
-  if (shift) result = 'Shift+' + result
+  if (alt) result = 'Alt+' + result;
+  if (ctrl) result = 'Ctrl+' + result;
+  if (meta) result = 'Meta+' + result;
+  if (shift) result = 'Shift+' + result;
 
-  return result
+  return result;
 }
 
 function normalizeKeyMap(map) {
-  const copy = Object.create(null)
+  const copy = Object.create(null);
 
   Object.keys(map).forEach((prop) => {
-    copy[normalizeKeyName(prop)] = map[prop]
-  })
+    copy[normalizeKeyName(prop)] = map[prop];
+  });
 
-  return copy
+  return copy;
 }
 
 function modifiers(name, event, shift) {
-  if (event.altKey) name = 'Alt+' + name
-  if (event.ctrlKey) name = 'Ctrl+' + name
-  if (event.metaKey) name = 'Meta+' + name
-  if (shift !== false && event.shiftKey) name = 'Shift+' + name
+  if (event.altKey) name = 'Alt+' + name;
+  if (event.ctrlKey) name = 'Ctrl+' + name;
+  if (event.metaKey) name = 'Meta+' + name;
+  if (shift !== false && event.shiftKey) name = 'Shift+' + name;
 
-  return name
+  return name;
 }
 
 function rusToEng(name, event) {
   return name
     .replace(/[а-я]/, KN.base[event.keyCode])
-    .replace(/[А-Я]/, KN.shift[event.keyCode])
+    .replace(/[А-Я]/, KN.shift[event.keyCode]);
 }
 
 function normalizeKeyEvent(event, base = false) {
-  const name = rusToEng(KN.keyName(event), event)
-  const isChar = name.length === 1 && name !== ' '
+  const name = rusToEng(KN.keyName(event), event);
+  const isChar = name.length === 1 && name !== ' ';
 
   return isChar && !base
     ? modifiers(name, event, !isChar)
-    : modifiers(KN.base[event.keyCode], event, true)
+    : modifiers(KN.base[event.keyCode], event, true);
 }
 
 function keyNorm(obj) {
   if (obj instanceof KeyboardEvent)
     // eslint-disable-line no-undef
-    return normalizeKeyEvent(...arguments) // eslint-disable-line prefer-rest-params
+    return normalizeKeyEvent(...arguments); // eslint-disable-line prefer-rest-params
 
-  return typeof obj === 'object' ? normalizeKeyMap(obj) : normalizeKeyName(obj)
+  return typeof obj === 'object' ? normalizeKeyMap(obj) : normalizeKeyName(obj);
 }
 
 function lookup(map, event) {
-  let name = rusToEng(KN.keyName(event), event)
-  if (name === 'Add') name = '+' // numpad '+' and '-'
-  if (name === 'Subtract') name = '-'
+  let name = rusToEng(KN.keyName(event), event);
+  if (name === 'Add') name = '+'; // numpad '+' and '-'
+  if (name === 'Subtract') name = '-';
 
-  const isChar = name.length === 1 && name !== ' '
-  let res = map[modifiers(name, event, !isChar)]
-  let baseName
+  const isChar = name.length === 1 && name !== ' ';
+  let res = map[modifiers(name, event, !isChar)];
+  let baseName;
 
   if (event.shiftKey && isChar && (baseName = KN.base[event.keyCode]))
-    res = map[modifiers(baseName, event, true)] || res
+    res = map[modifiers(baseName, event, true)] || res;
 
-  return res
+  return res;
 }
 
-keyNorm.lookup = lookup
+keyNorm.lookup = lookup;
 
-export default keyNorm
+export default keyNorm;

@@ -1,6 +1,14 @@
-import { LocatorScreenshotOptions, Page, expect } from '@playwright/test';
-import { clickInTheMiddleOfTheScreen } from '@utils/clicks';
+import {
+  LocatorScreenshotOptions,
+  Page,
+  expect,
+  Locator,
+} from '@playwright/test';
+import { clickInTheMiddleOfTheScreen, pressButton } from '@utils/clicks';
 import { ELEMENT_TITLE } from './types';
+import { TopPanelButton } from '..';
+import { selectTopPanelButton } from './tools';
+import { getLeftTopBarSize } from './common/getLeftTopBarSize';
 
 export async function drawBenzeneRing(page: Page) {
   await page.getByRole('button', { name: 'Benzene (T)' }).click();
@@ -10,8 +18,8 @@ export async function drawBenzeneRing(page: Page) {
 export async function drawElementByTitle(
   page: Page,
   elementTitle: string = ELEMENT_TITLE.HYDROGEN,
-  offsetX: number = 0,
-  offsetY: number = 0
+  offsetX = 0,
+  offsetY = 0,
 ) {
   const leftBarWidth = await getLeftToolBarWidth(page);
   const topBarHeight = await getTopToolBarHeight(page);
@@ -45,34 +53,41 @@ export async function getTopToolBarHeight(page: Page): Promise<number> {
 }
 
 export async function getCoordinatesTopAtomOfBenzeneRing(page: Page) {
-  const { carbonAtoms, scale } = await page.evaluate(() => {
+  const { carbonAtoms, scale, offset } = await page.evaluate(() => {
     const allAtoms = [...window.ketcher.editor.struct().atoms.values()];
     const onlyCarbons = allAtoms.filter((a) => a.label === 'C');
     return {
       carbonAtoms: onlyCarbons,
       scale: window.ketcher.editor.options().scale,
+      offset: window.ketcher?.editor?.options()?.offset,
     };
   });
   let min = {
     x: Infinity,
     y: Infinity,
   };
-  for (let carbonAtom of carbonAtoms) {
+  for (const carbonAtom of carbonAtoms) {
     if (carbonAtom.pp.y < min.y) {
       min = carbonAtom.pp;
     }
   }
-  const barHeight = 36;
+  const { leftBarWidth, topBarHeight } = await getLeftTopBarSize(page);
   return {
-    x: min.x * scale + barHeight,
-    y: min.y * scale + barHeight,
+    x: min.x * scale + offset.x + leftBarWidth,
+    y: min.y * scale + offset.y + topBarHeight,
   };
 }
 
-export async function takeEditorScreenshot(page: Page) {
-  const editor = page.locator(
-    '[class*="StructEditor-module_intermediateCanvas"]'
-  );
+export async function takeEditorScreenshot(
+  page: Page,
+  options?: { masks?: Locator[] },
+) {
+  const editor = page.locator('[class*="App-module_canvas"]');
+  await expect(editor).toHaveScreenshot({ mask: options?.masks });
+}
+
+export async function takeLeftToolbarScreenshot(page: Page) {
+  const editor = page.locator('[class*="LeftToolbar-module_buttons"]');
   await expect(editor).toHaveScreenshot();
 }
 
@@ -90,13 +105,26 @@ export async function takeEditorScreenshot(page: Page) {
  **/
 export async function getEditorScreenshot(
   page: Page,
-  options?: LocatorScreenshotOptions
+  options?: LocatorScreenshotOptions,
 ) {
   return await page.locator('[class*="App-module_canvas"]').screenshot(options);
 }
 
 export async function delay(seconds = 1) {
+  const msInSecond = 1000;
   return new Promise((resolve) =>
-    setTimeout(() => resolve(true), seconds * 1000)
+    setTimeout(() => resolve(true), seconds * msInSecond),
   );
+}
+
+export async function screenshotBetweenUndoRedo(page: Page) {
+  await selectTopPanelButton(TopPanelButton.Undo, page);
+  await takeEditorScreenshot(page);
+  await selectTopPanelButton(TopPanelButton.Redo, page);
+}
+
+export async function resetAllSettingsToDefault(page: Page) {
+  await selectTopPanelButton(TopPanelButton.Settings, page);
+  await pressButton(page, 'Reset');
+  await pressButton(page, 'Apply');
 }

@@ -1,7 +1,6 @@
 import { Page } from '@playwright/test';
-import { getAtomsCoordinatesByAttributes } from '@utils/canvas/atoms/getAtomsCoordinatesByAttributes/getAtomsCoordinatesByAttributes';
-import { AtomAttributes } from '@utils/canvas/types';
-import { AtomXy } from '@utils/canvas/types';
+import { getAtomsCoordinatesByAttributes } from '@utils/canvas/atoms';
+import { AtomAttributes, AtomXy } from '@utils/canvas/types';
 
 /**
  * Filter atoms by its attributes and then get atom by index.
@@ -17,13 +16,13 @@ import { AtomXy } from '@utils/canvas/types';
 export async function getAtomByIndex(
   page: Page,
   attributes: AtomAttributes,
-  index: number
+  index: number,
 ): Promise<AtomXy> {
   const result = await getAtomsCoordinatesByAttributes(page, attributes);
 
   if (index > result.length - 1 || index < 0) {
     throw Error(
-      'Incorrect index, please be sure that you index is less than the length of the atoms'
+      'Incorrect index, please be sure that you index is less than the length of the atoms',
     );
   }
 

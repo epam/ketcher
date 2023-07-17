@@ -158,7 +158,9 @@ export const ZoomControls = ({
   return (
     <ElementAndDropdown ref={containerRef}>
       <DropDownButton onClick={onExpand}>
-        <ZoomLabel>{Math.round(currentZoom)}%</ZoomLabel>
+        <ZoomLabel data-testid="zoom-input">
+          {Math.round(currentZoom)}%
+        </ZoomLabel>
         <Icon name="chevron" />
       </DropDownButton>
 

@@ -17,6 +17,7 @@ type InfoPanelData = {
  * But due to current rendering approach for sgroups (ungrouping sgroups)
  * - we have to use RGroup attachment points on atoms for this purposes
  */
+// @yuleicul FIXME: R-Group and S-Group AttachmentPoints both disappear on infoPanel and template modal
 function convertSGroupAttachmentPointsToRGroupAttachmentPoints(
   struct: Struct,
   sGroup: SGroup,

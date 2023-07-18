@@ -14,11 +14,16 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Atom, Bond, SGroup, Struct } from 'domain/entities';
+import {
+  Atom,
+  Bond,
+  SGroup,
+  Struct,
+  SGroupAttachmentPoint,
+} from 'domain/entities';
 
 import { Elements } from 'domain/constants';
 import { ifDef } from 'utilities';
-import { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
 import { mergeFragmentsToStruct } from './mergeFragmentsToStruct';
 
 export function toRlabel(values) {

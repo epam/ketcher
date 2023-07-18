@@ -22,10 +22,9 @@ import { Struct } from './struct';
 import { SaltsAndSolventsProvider } from '../helpers';
 import { Vec2 } from './vec2';
 import { ReStruct } from '../../application/render';
-import { Pool } from 'domain/entities/pool';
+import { Pool, SGroupAttachmentPoint } from 'domain/entities';
 import { ReSGroup } from 'application/render';
 import { SgContexts } from 'application/editor/shared/constants';
-import { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
 import assert from 'assert';
 
 export class SGroupBracketParams {

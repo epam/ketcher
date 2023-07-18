@@ -14,12 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { StereoFlag, Struct } from 'domain/entities';
+import { StereoFlag, Struct, SGroupAttachmentPoint } from 'domain/entities';
 
 import { Elements } from 'domain/constants';
 import common from './common';
 import utils from './utils';
-import { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
 
 const END_V2000 = '2D 1   1.00000     0.00000     0';
 

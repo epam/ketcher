@@ -14,7 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { fromAtomsAttrs, FunctionalGroup } from 'ketcher-core';
+import {
+  fromAtomsAttrs,
+  fromRGroupAttachmentPointUpdate,
+  FunctionalGroup,
+} from 'ketcher-core';
 import Editor from '../Editor';
 import { Tool } from './Tool';
 
@@ -83,12 +87,23 @@ class APointTool implements Tool {
       });
       Promise.resolve(res)
         .then((newatom) => {
-          if (atom?.attpnt !== newatom.attpnt) {
-            const action = fromAtomsAttrs(
+          const previousAttpnt = atom?.attpnt;
+          const currentAttpnt = newatom.attpnt;
+          if (previousAttpnt !== currentAttpnt) {
+            const actionFromAtomsAttrs = fromAtomsAttrs(
               editor.render.ctab,
               ci.id,
               newatom,
               null,
+            );
+            const actionFromRGroupAttachmentPointUpdate =
+              fromRGroupAttachmentPointUpdate(
+                editor.render.ctab,
+                ci.id,
+                currentAttpnt,
+              );
+            const action = actionFromAtomsAttrs.mergeWith(
+              actionFromRGroupAttachmentPointUpdate,
             );
             editor.update(action);
           }

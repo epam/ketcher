@@ -34,6 +34,7 @@ import { SimpleObject } from './simpleObject';
 import { Text } from './text';
 import { Vec2 } from './vec2';
 import { Highlight } from './highlight';
+import { RGroupAttachmentPoint } from './rgroupAttachmentPoint';
 
 export type Neighbor = {
   aid: number;
@@ -59,6 +60,7 @@ export class Struct {
   rxnPluses: Pool<RxnPlus>;
   frags: Pool<Fragment | null>;
   rgroups: Pool<RGroup>;
+  rgroupAttachmentPoints: Pool<RGroupAttachmentPoint>;
   name: string;
   abbreviation?: string;
   sGroupForest: SGroupForest;
@@ -78,6 +80,7 @@ export class Struct {
     this.rxnPluses = new Pool<RxnPlus>();
     this.frags = new Pool<Fragment>();
     this.rgroups = new Pool<RGroup>();
+    this.rgroupAttachmentPoints = new Pool<RGroupAttachmentPoint>();
     this.name = '';
     this.abbreviation = '';
     this.sGroupForest = new SGroupForest();

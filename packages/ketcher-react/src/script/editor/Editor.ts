@@ -25,7 +25,6 @@ import {
   fromDescriptorsAlign,
   fromMultipleMove,
   fromNewCanvas,
-  ReStruct,
 } from 'ketcher-core';
 import {
   DOMSubscription,
@@ -47,6 +46,11 @@ import {
   ToolConstructorInterface,
   ToolEventHandlerName,
 } from './tool/Tool';
+import {
+  getSelectionMap,
+  getStructCenter,
+  recoordinate,
+} from './utils/structLayout';
 
 const SCALE = 40;
 const HISTORY_SIZE = 32; // put me to options
@@ -83,7 +87,7 @@ const highlightTargets = [
 
 function selectStereoFlagsIfNecessary(
   atoms: any,
-  expAtoms: number[]
+  expAtoms: number[],
 ): number[] {
   const atomsOfFragments = {};
   atoms.forEach((atom, atomId) => {
@@ -157,8 +161,8 @@ class Editor implements KetcherEditor {
         {
           scale: SCALE,
         },
-        options
-      )
+        options,
+      ),
     );
 
     this._selection = null; // eslint-disable-line
@@ -304,7 +308,7 @@ class Editor implements KetcherEditor {
 
     this.render = new Render(
       this.render.clientArea,
-      Object.assign({ scale: SCALE }, value)
+      Object.assign({ scale: SCALE }, value),
     );
     this.struct(struct);
     this.render.setZoom(zoom);
@@ -332,15 +336,15 @@ class Editor implements KetcherEditor {
     const structure = this.render.ctab;
     const { scale, offset } = this.render.options;
     const structCenter = getStructCenter(structure);
-    const canvasCenter = this.render.sz.scaled(1 / scale).scaled(0.5);
+    const { width, height } = this.render.clientArea.getBoundingClientRect();
+    const canvasCenterVector = new Vec2(width, height);
+    const canvasCenter = this.render.view2obj(canvasCenterVector).scaled(0.5);
+    const shiftFactor = 0.4;
     const shiftVector = canvasCenter
       .sub(structCenter)
-      .sub(offset.scaled(1 / scale));
+      .sub(offset.scaled(shiftFactor / scale));
 
-    const structureToMove = Object.keys(ReStruct.maps).reduce((result, map) => {
-      result[map] = Array.from(structure[map].keys());
-      return result;
-    }, {});
+    const structureToMove = getSelectionMap(structure);
 
     const action = fromMultipleMove(structure, structureToMove, shiftVector);
     this.update(action, true);
@@ -365,7 +369,7 @@ class Editor implements KetcherEditor {
       this.zoom(
         newZoomValue < MIN_ZOOM_VALUE
           ? MIN_ZOOM_VALUE
-          : Number(newZoomValue.toFixed(2))
+          : Number(newZoomValue.toFixed(2)),
       );
     }
   }
@@ -406,12 +410,12 @@ class Editor implements KetcherEditor {
       }
       const stereoFlags = selectStereoFlagsIfNecessary(
         this.struct().atoms,
-        this.explicitSelected().atoms
+        this.explicitSelected().atoms,
       );
       if (stereoFlags.length !== 0) {
         this._selection && this._selection.enhancedFlags
           ? (this._selection.enhancedFlags = Array.from(
-              new Set([...this._selection.enhancedFlags, ...stereoFlags])
+              new Set([...this._selection.enhancedFlags, ...stereoFlags]),
             ))
           : (res.enhancedFlags = stereoFlags);
       }
@@ -455,7 +459,7 @@ class Editor implements KetcherEditor {
   update(
     action: Action | true,
     ignoreHistory?: boolean,
-    options = { resizeCanvas: true }
+    options = { resizeCanvas: true },
   ) {
     setFunctionalGroupsTooltip({
       editor: this,
@@ -616,7 +620,7 @@ class Editor implements KetcherEditor {
       true,
       null,
       new Pile(selection.simpleObjects),
-      new Pile(selection.texts)
+      new Pile(selection.texts),
     );
 
     // Copy by its own as Struct.clone doesn't support
@@ -655,7 +659,7 @@ function resetSelectionOnCanvasClick(
   editor: Editor,
   eventName: string,
   clientArea: HTMLElement,
-  event
+  event,
 ) {
   if (
     eventName === 'mouseup' &&
@@ -687,7 +691,7 @@ function useToolIfNeeded(
   editor: Editor,
   eventHandlerName: ToolEventHandlerName,
   clientArea: HTMLElement,
-  event
+  event,
 ) {
   const editorTool = editor.tool();
   if (!editorTool) {
@@ -787,7 +791,7 @@ function domEventSetup(editor: Editor, clientArea: HTMLElement) {
         editor,
         toolEventHandler,
         clientArea,
-        event
+        event,
       );
       if (isToolUsed) {
         return true;
@@ -798,23 +802,6 @@ function domEventSetup(editor: Editor, clientArea: HTMLElement) {
       return true;
     }, -1);
   });
-}
-
-function recoordinate(editor: Editor, rp?: Vec2 /* , vp */) {
-  // rp is a point in scaled coordinates, which will be positioned
-  // vp is the point where the reference point should now be (in view coordinates)
-  //    or the center if not set
-  console.assert(rp, 'Reference point not specified');
-  if (rp) {
-    editor.render.setScrollOffset(rp.x, rp.y);
-  } else {
-    editor.render.setScrollOffset(0, 0);
-  }
-}
-
-function getStructCenter(ReStruct, selection?) {
-  const bb = ReStruct.getVBoxObj(selection || {});
-  return Vec2.lc2(bb.p0, 0.5, bb.p1, 0.5);
 }
 
 export { Editor };

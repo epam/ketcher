@@ -242,7 +242,7 @@ const sgroup = {
           type: 'integer',
           default: 1,
           minimum: 1,
-          maximum: 99,
+          maximum: 200,
         },
       },
       required: ['mul'],

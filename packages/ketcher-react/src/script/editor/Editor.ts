@@ -337,11 +337,14 @@ class Editor implements KetcherEditor {
     const paper = this.render.paper;
     const MIN_ZOOM_VALUE = 0.1;
     const MAX_ZOOM_VALUE = 1;
-    const newZoomValue =
+    const MARGIN = 0.02;
+    let newZoomValue =
       paper.height - clientAreaBoundingBox.height >
       paper.width - clientAreaBoundingBox.width
         ? clientAreaBoundingBox.height / paper.height
         : clientAreaBoundingBox.width / paper.width;
+
+    newZoomValue -= MARGIN;
 
     if (newZoomValue < MAX_ZOOM_VALUE) {
       this.zoom(

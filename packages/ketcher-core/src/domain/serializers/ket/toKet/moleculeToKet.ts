@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { SGroup, Struct } from 'domain/entities';
+import { SGroup, Struct, SGroupAttachmentPoint } from 'domain/entities';
 
 import { ifDef } from 'utilities';
 
@@ -127,7 +127,7 @@ function bondToKet(source) {
   return result;
 }
 
-function sgroupToKet(struct, source) {
+function sgroupToKet(struct, source: SGroup) {
   const result = {};
 
   ifDef(result, 'type', source.type);
@@ -153,6 +153,12 @@ function sgroupToKet(struct, source) {
       ifDef(result, 'name', source.data.name || '');
       ifDef(result, 'expanded', source.data.expanded);
       ifDef(result, 'id', source.id);
+      ifDef(
+        result,
+        'attachmentPoints',
+        source.getAttachmentPoints().map(sgroupAttachmentPointToKet),
+        [],
+      );
       break;
     }
     case 'DAT': {
@@ -168,6 +174,16 @@ function sgroupToKet(struct, source) {
     default:
       break;
   }
+
+  return result;
+}
+
+function sgroupAttachmentPointToKet(source: SGroupAttachmentPoint) {
+  const result = {};
+
+  ifDef(result, 'attachmentAtom', source.atomId);
+  ifDef(result, 'leavingAtom', source.leaveAtomId);
+  ifDef(result, 'attachmentId', source.attachmentId);
 
   return result;
 }

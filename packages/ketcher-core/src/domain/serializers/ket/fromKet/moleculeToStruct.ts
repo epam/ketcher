@@ -14,7 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Atom, Bond, SGroup, Struct } from 'domain/entities';
+import {
+  Atom,
+  Bond,
+  SGroup,
+  Struct,
+  SGroupAttachmentPoint,
+} from 'domain/entities';
 
 import { Elements } from 'domain/constants';
 import { ifDef } from 'utilities';
@@ -156,6 +162,12 @@ export function bondToStruct(source, atomOffset = 0) {
   return new Bond(params);
 }
 
+type KetAttachmentPoint = {
+  attachmentAtom: number;
+  leavingAtom?: number;
+  attachmentId?: string;
+};
+
 export function sgroupToStruct(source) {
   const sgroup = new SGroup(source.type);
   ifDef(sgroup, 'atoms', source.atoms);
@@ -175,6 +187,13 @@ export function sgroupToStruct(source) {
       ifDef(sgroup.data, 'name', source.name);
       ifDef(sgroup.data, 'expanded', source.expanded);
       ifDef(sgroup, 'id', source.id);
+      source.attachmentPoints?.forEach(
+        (sourceAttachmentPoint: KetAttachmentPoint) => {
+          sgroup.addAttachmentPoint(
+            sgroupAttachmentPointToStruct(sourceAttachmentPoint),
+          );
+        },
+      );
       break;
     }
     case 'DAT': {
@@ -189,4 +208,13 @@ export function sgroupToStruct(source) {
       break;
   }
   return sgroup;
+}
+
+function sgroupAttachmentPointToStruct(
+  source: KetAttachmentPoint,
+): SGroupAttachmentPoint {
+  const atomId = source.attachmentAtom;
+  const leavingAtomId = source.leavingAtom;
+  const attachmentId = source.attachmentId;
+  return new SGroupAttachmentPoint(atomId, leavingAtomId, attachmentId);
 }

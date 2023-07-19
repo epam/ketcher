@@ -29,16 +29,16 @@ export class SGroupAttachmentPoint {
    * NOTE: The logic is not supported in the current implementation of Ketcher.
    * Only reading from file and saving to file.
    */
-  public readonly additionalData: string;
+  public readonly attachmentId: string | undefined;
 
   constructor(
     atomId: number,
     leaveAtomId: number | undefined,
-    additionalData: string | undefined,
+    attachmentId: string | undefined,
   ) {
     this.atomId = atomId;
     this.leaveAtomId = leaveAtomId;
-    this.additionalData = this.formatAdditionalInfo(additionalData);
+    this.attachmentId = attachmentId;
   }
 
   clone(atomIdMap: Map<number, number>): SGroupAttachmentPoint {
@@ -48,18 +48,7 @@ export class SGroupAttachmentPoint {
     return new SGroupAttachmentPoint(
       newAtomId,
       newLeaveAtomId,
-      this.additionalData,
+      this.attachmentId,
     );
-  }
-
-  /**
-   * based on specification we need only first two symbols from the string,
-   * in case of empty we should use two spaces ('  ')
-   */
-  private formatAdditionalInfo(additionalData: string | undefined) {
-    const DEFAULT_ADDITIONAL_INFO = '  ';
-    return additionalData !== undefined
-      ? String(additionalData).slice(0, 2)
-      : DEFAULT_ADDITIONAL_INFO;
   }
 }

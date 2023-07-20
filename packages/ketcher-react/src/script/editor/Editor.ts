@@ -133,6 +133,8 @@ class Editor implements KetcherEditor {
   event: {
     message: Subscription;
     elementEdit: PipelineSubscription;
+    zoomIn: PipelineSubscription;
+    zoomOut: PipelineSubscription;
     bondEdit: PipelineSubscription;
     rgroupEdit: PipelineSubscription;
     sgroupEdit: PipelineSubscription;
@@ -188,6 +190,8 @@ class Editor implements KetcherEditor {
       message: new Subscription(),
       elementEdit: new PipelineSubscription(),
       bondEdit: new PipelineSubscription(),
+      zoomIn: new PipelineSubscription(),
+      zoomOut: new PipelineSubscription(),
       rgroupEdit: new PipelineSubscription(),
       sgroupEdit: new PipelineSubscription(),
       sdataEdit: new PipelineSubscription(),

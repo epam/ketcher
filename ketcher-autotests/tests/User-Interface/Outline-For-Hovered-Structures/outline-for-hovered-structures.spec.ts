@@ -5,6 +5,9 @@ import {
   getCoordinatesOfTheMiddleOfTheScreen,
 } from '@utils';
 
+// shift of coordinates relative to the center, for the hover of the entire structure:
+const screenCenterShift = 50;
+
 test.describe('Open Ketcher', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('');
@@ -14,7 +17,9 @@ test.describe('Open Ketcher', () => {
     await takeEditorScreenshot(page);
   });
 
-  /* Draw selection outline correctly for hovered structures: */
+  /* Draw selection outline correctly for hovered structures:
+   * related to GitHub issue: https://github.com/epam/ketcher/issues/2595
+   */
   /* Arrangement by layers of structures from top to bottom:
 		text, bond, outline of atoms, outline of bonds, selection of atoms (with hover), selection of bonds (with hover) */
   test('Should draw selection outline correctly for hovered structures', async ({
@@ -30,9 +35,7 @@ test.describe('Open Ketcher', () => {
     // mouse movement start coordinate to get the hover of the entire selected structure:
     await page.mouse.move(x, y);
 
-    // 50 - shift of coordinates relative to the center, for the hover of the entire structure:
-    // eslint-disable-next-line no-magic-numbers
-    await page.mouse.move(x, y + 50, { steps: 10 });
+    await page.mouse.move(x, y + screenCenterShift, { steps: 10 });
 
     await takeEditorScreenshot(page);
   });

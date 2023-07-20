@@ -20,6 +20,7 @@ import { getMonomerUniqueKey, toggleMonomerFavorites } from 'state/library';
 import { Card } from './styles';
 import { IMonomerItemProps } from './types';
 import { selectIsEditMode } from 'state/rna-builder';
+import { MONOMER_TYPES } from '../../../constants';
 
 const MonomerItem = ({
   item,
@@ -32,9 +33,9 @@ const MonomerItem = ({
   const dispatch = useAppDispatch();
   const isEditMode = useAppSelector(selectIsEditMode);
   const colorCode =
-    item.props.MonomerNaturalAnalogCode !== '.'
-      ? item.props.MonomerNaturalAnalogCode
-      : item.props.MonomerType;
+    item.props.MonomerType === MONOMER_TYPES.CHEM
+      ? item.props.MonomerType
+      : item.props.MonomerNaturalAnalogCode;
 
   return (
     <Card

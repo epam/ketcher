@@ -50,22 +50,11 @@ const MonomerList = ({ onItemClick, libraryName }: IMonomerListProps) => {
 
   return (
     <MonomerListContainer>
-      {groups.map(({ groupItems, groupTitle }, index) => {
-        if (groupTitle === '.') {
-          return (
-            <MonomerGroup
-              key={index}
-              items={groupItems}
-              onItemClick={onItemClick || selectItem}
-              selectedMonomerLabel={selectedMonomers}
-            />
-          );
-        }
-
+      {groups.map(({ groupItems, groupTitle }, index, groups) => {
         return (
           <MonomerGroup
             key={groupTitle}
-            title={groupTitle}
+            title={groups.length === 1 ? undefined : groupTitle}
             items={groupItems}
             onItemClick={onItemClick || selectItem}
             selectedMonomerLabel={selectedMonomers}

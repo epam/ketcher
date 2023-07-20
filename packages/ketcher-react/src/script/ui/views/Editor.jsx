@@ -31,7 +31,7 @@ const mapDispatchToProps = (dispatch) => {
   return {
     onZoomIn,
     onZoomOut,
-    ...initEditor(dispatch),
+    ...dispatch(initEditor),
   };
 };
 

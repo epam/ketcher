@@ -229,5 +229,8 @@ export default function initEditor(dispatch, getState) {
         dispatch(updateFloatingTools(payload));
       },
     ),
+
+    onZoomIn: updateAction,
+    onZoomOut: updateAction,
   };
 }

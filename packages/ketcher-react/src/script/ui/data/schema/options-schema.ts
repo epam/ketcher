@@ -360,7 +360,7 @@ export function getDefaultOptions(): Record<string, any> {
   if (!optionsSchema.properties) return {}
 
   return Object.keys(optionsSchema.properties).reduce((res, prop) => {
-    res[prop] = (optionsSchema.properties[prop] as ExtendedSchema).default
+    res[prop] = (optionsSchema.properties?.[prop] as ExtendedSchema)?.default
     return res
   }, {})
 }

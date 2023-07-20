@@ -64,6 +64,8 @@ export interface Editor {
     message: Subscription;
     elementEdit: PipelineSubscription;
     bondEdit: PipelineSubscription;
+    zoomIn: PipelineSubscription;
+    zoomOut: PipelineSubscription;
     rgroupEdit: PipelineSubscription;
     sgroupEdit: PipelineSubscription;
     sdataEdit: PipelineSubscription;

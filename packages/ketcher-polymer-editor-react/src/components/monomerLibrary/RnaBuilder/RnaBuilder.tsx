@@ -40,7 +40,7 @@ export const RnaBuilder = () => {
       <RnaAccordion />
       <Modal isOpen={hasError} title="Error Message" onClose={closeErrorModal}>
         <Modal.Content>
-          Preset with name "{activePreset?.name}" already exist. Please choose
+          Preset with name "{activePreset?.name}" already exists. Please choose
           another name.
         </Modal.Content>
         <Modal.Footer>

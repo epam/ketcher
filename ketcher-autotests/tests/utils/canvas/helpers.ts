@@ -91,6 +91,11 @@ export async function takeLeftToolbarScreenshot(page: Page) {
   await expect(editor).toHaveScreenshot();
 }
 
+export async function takeTopToolbarScreenshot(page: Page) {
+  const editor = page.getByTestId('top-toolbar');
+  await expect(editor).toHaveScreenshot();
+}
+
 /**
  * Returns an editor screenshot
  * Usage: convenient for temporary comparison of different states

@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { takeEditorScreenshot, clickInTheMiddleOfTheScreen } from '@utils';
+import { takeTopToolbarScreenshot, clickInTheMiddleOfTheScreen } from '@utils';
 import { TestIdSelectors } from '../../utils/selectors/testIdSelectors';
 
 const randomNegativeNumber = -60;
@@ -11,7 +11,7 @@ test.describe('Open Ketcher', () => {
   });
 
   test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
+    await takeTopToolbarScreenshot(page);
   });
 
   /* Editor is zoomed correctly: */

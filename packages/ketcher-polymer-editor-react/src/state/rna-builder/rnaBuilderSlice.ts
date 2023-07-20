@@ -94,7 +94,8 @@ export const rnaBuilderSlice = createSlice({
       } else {
         state.presets.push(newPreset);
       }
-      state.activePreset!.presetInList = newPreset;
+      if (!state.activePreset) return;
+      state.activePreset.presetInList = newPreset;
     },
     setIsEditMode: (state, action: PayloadAction<boolean>) => {
       state.isEditMode = action.payload;

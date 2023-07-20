@@ -152,7 +152,7 @@ export const RnaAccordion = () => {
   };
 
   return (
-    <RnaAccordionContainer>
+    <RnaAccordionContainer data-testid="rna-accordion">
       {groupsData.map((groupData) => {
         const expanded = expandedAccordion === groupData.groupName;
         const quantity = groupData.groups.reduce(
@@ -215,6 +215,7 @@ export const RnaAccordion = () => {
         return (
           <StyledAccordion
             key={groupData.groupName}
+            data-testid="styled-accordion"
             summary={summary}
             details={details}
             expanded={expanded}

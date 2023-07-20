@@ -1,33 +1,27 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import { Struct } from 'ketcher-core';
-import { MonomerItem } from './RnaPresetItem';
-import { MonomerItemType } from './types';
+import { RnaPresetItem } from './RnaPresetItem';
+import { IRnaPreset } from 'components/monomerLibrary/RnaBuilder/types';
 
-describe('Test Monomer Item component', () => {
+describe('Test Rna Preset Item component', () => {
   it('Test click event', () => {
-    const monomerItemHandleClick = jest.fn();
-    const monomer: MonomerItemType = {
-      label: 'for test',
-      props: {
-        BranchMonomer: 'false',
-        MonomerCaps: '[R1]H',
-        MonomerCode: '',
-        MonomerName: 'Cya',
-        MonomerNaturalAnalogCode: 'A',
-        MonomerType: 'PEPTIDE',
-        Name: '3-sulfoalanine',
-      },
-      struct: new Struct(),
+    const rnaPresetItemHandleClick = jest.fn();
+    const preset: IRnaPreset = {
+      base: undefined,
+      name: 'MyRna',
+      phosphate: undefined,
+      presetInList: undefined,
+      sugar: undefined,
     };
+
     render(
       withThemeAndStoreProvider(
-        <MonomerItem key={1} item={monomer} onClick={monomerItemHandleClick} />,
+        <RnaPresetItem preset={preset} onClick={rnaPresetItemHandleClick} />,
       ),
     );
 
-    const div = screen.getByTestId(monomer.props.MonomerNaturalAnalogCode);
+    const div = screen.getByTestId(preset.name as string);
     fireEvent.click(div);
 
-    expect(monomerItemHandleClick.mock.calls.length).toEqual(1);
+    expect(rnaPresetItemHandleClick.mock.calls.length).toEqual(1);
   });
 });

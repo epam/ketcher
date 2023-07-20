@@ -96,6 +96,7 @@ export const RnaEditorExpanded = ({
       <StyledButton
         disabled={!selectIsPresetReadyToSave(activePreset)}
         primary
+        data-testid="add-to-presets-btn"
         onClick={onSave}
       >
         Add to Presets
@@ -103,16 +104,20 @@ export const RnaEditorExpanded = ({
     );
   } else if (isEditMode) {
     mainButton = (
-      <StyledButton primary onClick={onSave}>
+      <StyledButton primary data-testid="save-btn" onClick={onSave}>
         Save
       </StyledButton>
     );
   } else {
-    mainButton = <StyledButton onClick={onEdit}>Edit</StyledButton>;
+    mainButton = (
+      <StyledButton data-testid="edit-btn" onClick={onEdit}>
+        Edit
+      </StyledButton>
+    );
   }
 
   return (
-    <RnaEditorExpandedContainer>
+    <RnaEditorExpandedContainer data-testid="rna-editor-expanded">
       <NameContainer
         selected={activeMonomerGroup === RnaBuilderPresetsItem.Presets}
         onClick={() => selectGroup(RnaBuilderPresetsItem.Presets)}
@@ -148,9 +153,13 @@ export const RnaEditorExpanded = ({
       </GroupsContainer>
       <ButtonsContainer>
         {isEditMode ? (
-          <StyledButton onClick={onCancel}>Cancel</StyledButton>
+          <StyledButton data-testid="cancel-btn" onClick={onCancel}>
+            Cancel
+          </StyledButton>
         ) : (
-          <StyledButton onClick={onDuplicate}>Duplicate and Edit</StyledButton>
+          <StyledButton data-testid="duplicate-btn" onClick={onDuplicate}>
+            Duplicate and Edit
+          </StyledButton>
         )}
         {mainButton}
       </ButtonsContainer>

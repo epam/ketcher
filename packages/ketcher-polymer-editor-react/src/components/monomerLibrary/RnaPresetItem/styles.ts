@@ -13,8 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+import styled from '@emotion/styled';
+import { Card as MonomerCard } from '../monomerLibraryItem/styles';
 
-export interface IRnaEditorCollapsedProps {
-  name?: string;
-  fullName?: string;
-}
+export const Card = styled(MonomerCard)<{ code?: string; selected?: boolean }>`
+  &::after {
+    content: '';
+    background: ${({ theme, selected }) =>
+      selected ? theme.ketcher.color.button.primary.active : '#faa500'};
+  }
+`;

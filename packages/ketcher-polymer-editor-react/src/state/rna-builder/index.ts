@@ -14,7 +14,4 @@
  * limitations under the License.
  ***************************************************************************/
 
-export interface IRnaEditorCollapsedProps {
-  name?: string;
-  fullName?: string;
-}
+export * from './rnaBuilderSlice';

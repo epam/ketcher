@@ -26,15 +26,22 @@ export const RnaEditorContainer = styled.div((props) => ({
   flexShrink: 0,
 }));
 
+export const StyledHeader = styled.div((props) => ({
+  height: '32px',
+  backgroundColor: '#fff',
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  paddingLeft: '10px',
+  fontSize: props.theme.ketcher.font.size.regular,
+}));
+
 export const ExpandButton = styled(Button)({
-  width: '100%',
+  width: '32px',
+  height: '100%',
   outline: 'none',
   borderRadius: '0',
   padding: '0',
-
-  ':hover': {
-    backgroundColor: '#E1E5EA',
-  },
 });
 
 export const ExpandIcon = styled(Icon)<{ expanded?: boolean }>(

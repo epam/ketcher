@@ -224,6 +224,8 @@ class StructEditor extends Component {
       onEnhancedStereoEdit,
       onQuickEdit,
       onBondEdit,
+      onZoomIn,
+      onZoomOut,
       onRgroupEdit,
       onSgroupEdit,
       onRemoveFG,

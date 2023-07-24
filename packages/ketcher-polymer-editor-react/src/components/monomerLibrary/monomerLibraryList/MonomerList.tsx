@@ -50,7 +50,7 @@ const MonomerList = ({ onItemClick, libraryName }: IMonomerListProps) => {
 
   return (
     <MonomerListContainer>
-      {groups.map(({ groupItems, groupTitle }, index, groups) => {
+      {groups.map(({ groupItems, groupTitle }, _index, groups) => {
         return (
           <MonomerGroup
             key={groupTitle}

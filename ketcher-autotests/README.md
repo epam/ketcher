@@ -104,7 +104,6 @@ selectNestedTool - select specific tool that has sub / nested levels.
   If you want to run tests from Polymer Editor, add `ENABLE_POLYMER_EDITOR=true` in scripts:
 
   - Root package.json: "build:example": "ENABLE_POLYMER_EDITOR=true npm run build -w example";
-  - ./example/package.json: "serve:standalone": "ENABLE_POLYMER_EDITOR=true serve -s dist/standalone -l 4002";
 
 - **Run app in browser: from root directory "ketcher"**:
 

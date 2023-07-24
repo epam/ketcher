@@ -40,7 +40,7 @@ jobs:
           echo "GENERATE_SOURCEMAP = false" >> .env
           cat .env
       - name: Build all packages
-        run: npm run build
+        run: npm run build:packages && npm run build:example:standalone
       - name: Run example in standalone mode
         run: cd example/ && nohup npm run serve:standalone &
       - name: Create env file

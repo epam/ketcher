@@ -20,6 +20,9 @@ import {
   fillFieldByLabel,
   screenshotBetweenUndoRedo,
   saveToFile,
+  RgroupTool,
+  selectNestedTool,
+  AttachmentPoint,
 } from '@utils';
 import { getMolfile } from '@utils/formats';
 
@@ -76,6 +79,19 @@ test.describe('Multiple S-Group tool', () => {
       Description: The brackets are rendered correctly around whole structure
     */
     await openFileAndAddToCanvas('simple-chain.ket', page);
+    await page.keyboard.press('Control+a');
+    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await selectMultipleGroup(page, 'Data', 'Multiple group', '88');
+  });
+
+  test('Brackets rendering for whole structure even with attachment points', async ({
+    page,
+  }) => {
+    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
+    await clickOnAtom(page, 'C', 3);
+    await page.getByLabel(AttachmentPoint.PRIMARY).check();
+    await pressButton(page, 'Apply');
     await page.keyboard.press('Control+a');
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await selectMultipleGroup(page, 'Data', 'Multiple group', '88');

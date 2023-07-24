@@ -17,6 +17,9 @@ import {
   openFileAndAddToCanvas,
   SelectTool,
   pressButton,
+  clickOnAtom,
+  clickOnBond,
+  BondType,
 } from '@utils';
 
 async function openRGroupModalForTopAtom(page: Page) {
@@ -56,6 +59,8 @@ test.describe('Open Ketcher', () => {
   test.afterEach(async ({ page }) => {
     await takeEditorScreenshot(page);
   });
+
+  const atomNumber = 3;
 
   test('R-Fragment-Group dialog opening', async ({ page }) => {
     /* Test case: EPMLSOPKET-1582 and EPMLSOPKET-1610
@@ -118,6 +123,44 @@ test.describe('Open Ketcher', () => {
     await page.keyboard.press('Control+r');
     await page.mouse.click(x, y);
     await page.getByLabel(AttachmentPoint.PRIMARY).check();
+    await clickModalButton(page, 'Apply');
+  });
+
+  test('Brackets rendering for atom', async ({ page }) => {
+    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await selectNestedTool(page, RgroupTool.R_GROUP_FRAGMENT);
+    await clickOnAtom(page, 'C', atomNumber);
+    await page.getByText('R5').click();
+    await clickModalButton(page, 'Apply');
+  });
+
+  test('Brackets rendering for bond', async ({ page }) => {
+    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await selectNestedTool(page, RgroupTool.R_GROUP_FRAGMENT);
+    await clickOnBond(page, BondType.SINGLE, atomNumber);
+    await page.getByText('R5').click();
+    await clickModalButton(page, 'Apply');
+  });
+
+  test('Brackets rendering for whole structure', async ({ page }) => {
+    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await page.keyboard.press('Control+a');
+    await selectNestedTool(page, RgroupTool.R_GROUP_FRAGMENT);
+    await page.getByText('R5').click();
+    await clickModalButton(page, 'Apply');
+  });
+
+  test('Brackets rendering for whole structure even with attachment points', async ({
+    page,
+  }) => {
+    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
+    await clickOnAtom(page, 'C', atomNumber);
+    await page.getByLabel(AttachmentPoint.PRIMARY).check();
+    await pressButton(page, 'Apply');
+    await page.keyboard.press('Control+a');
+    await selectNestedTool(page, RgroupTool.R_GROUP_FRAGMENT);
+    await page.getByText('R5').click();
     await clickModalButton(page, 'Apply');
   });
 

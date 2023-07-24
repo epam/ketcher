@@ -23,6 +23,7 @@ import {
   Struct,
   SupportedFormat,
   emitEventRequestIsFinished,
+  Editor,
 } from 'ketcher-core';
 
 import { supportedSGroupTypes } from './constants';
@@ -96,7 +97,7 @@ export function removeStructAction(): {
 export function load(struct: Struct, options?) {
   return async (dispatch, getState) => {
     const state = getState();
-    const editor = state.editor;
+    const editor = state.editor as Editor;
     const server = state.server;
     const errorHandler = editor.errorHandler;
 
@@ -129,7 +130,11 @@ export function load(struct: Struct, options?) {
         // NB: reset id
         const oldStruct = editor.struct().clone();
         parsedStruct.sgroups.forEach((sg, sgId) => {
-          const offset = SGroup.getOffset(oldStruct.sgroups.get(sgId));
+          const sgroup = oldStruct.sgroups.get(sgId);
+          if (!sgroup) {
+            throw Error('Incorrect sgroupId provided');
+          }
+          const offset = SGroup.getOffset(sgroup);
           const atomSet = new Pile(sg.atoms);
           const crossBonds = SGroup.getCrossBonds(parsedStruct, atomSet);
           SGroup.bracketPos(sg, parsedStruct, crossBonds);
@@ -171,14 +176,25 @@ export function load(struct: Struct, options?) {
       }
 
       editor.zoomAccordingContent();
+      editor.centerStruct();
 
       dispatch(setAnalyzingFile(false));
       dispatch({ type: 'MODAL_CLOSE' });
     } catch (err: any) {
       dispatch(setAnalyzingFile(false));
-      err && errorHandler(err.message);
+      err && errorHandler && errorHandler(err.message);
     } finally {
       emitEventRequestIsFinished();
     }
+  };
+}
+
+export function openInfoModal(command: 'Paste' | 'Copy' | 'Cut'): {
+  type: 'MODAL_OPEN';
+  data: { name: 'info-modal'; prop: { message: 'Paste' | 'Copy' | 'Cut' } };
+} {
+  return {
+    type: 'MODAL_OPEN',
+    data: { name: 'info-modal', prop: { message: command } },
   };
 }

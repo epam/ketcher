@@ -26,11 +26,12 @@ import {
 } from './styles';
 import { IMonomerGroupProps } from './types';
 import { usePreview } from '../../../hooks/usePreview';
+import { getMonomerUniqueKey } from 'state/library';
 
 const MonomerGroup = ({
   items,
   title,
-  selectedMonomerLabel,
+  selectedMonomerUniqueKey,
   onItemClick = EmptyFunction,
 }: IMonomerGroupProps) => {
   const ref = useRef<HTMLDivElement>(null);
@@ -75,7 +76,9 @@ const MonomerGroup = ({
             <MonomerItem
               key={key}
               item={monomer}
-              isSelected={selectedMonomerLabel === monomer.label}
+              isSelected={
+                selectedMonomerUniqueKey === getMonomerUniqueKey(monomer)
+              }
               onMouseLeave={handleItemMouseLeave}
               onMouseMove={(e) => handleItemMouseMove(monomer, e)}
               onClick={() => onItemClick(monomer)}

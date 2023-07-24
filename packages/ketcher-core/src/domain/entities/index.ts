@@ -34,3 +34,4 @@ export * from './vec2';
 export * from './box2Abs';
 export * from './pool';
 export * from './highlight';
+export * from './sGroupAttachmentPoint';

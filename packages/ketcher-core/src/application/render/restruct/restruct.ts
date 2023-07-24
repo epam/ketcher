@@ -84,6 +84,7 @@ class ReStruct {
   private enhancedFlagsChanged: Map<number, ReEnhancedFlag> = new Map();
   private bondsChanged: Map<number, ReEnhancedFlag> = new Map();
   private textsChanged: Map<number, ReText> = new Map();
+  private snappingBonds: number[] = [];
   constructor(molecule, render: Render) {
     // eslint-disable-line max-statements
     this.render = render;
@@ -319,7 +320,7 @@ class ReStruct {
    * and this lead to unstable flip tool work
    */
   // eslint-disable-next-line no-use-before-define
-  getSelectionRotationCenter(selection: SelectionMap): Vec2 | undefined {
+  getSelectionBoxCenter(selection: SelectionMap): Vec2 | undefined {
     let boundingBox: Box2Abs | null = null;
 
     for (const atomId of selection.atoms ?? []) {
@@ -617,7 +618,7 @@ class ReStruct {
     });
   }
 
-  private getAttachmentsPointsVBox(atomsIds: number[]): Box2Abs | null {
+  getAttachmentsPointsVBox(atomsIds: number[]): Box2Abs | null {
     let result: Box2Abs | null = null;
     for (const atomId of atomsIds) {
       const reAtom = this.atoms.get(atomId)!;
@@ -760,6 +761,18 @@ class ReStruct {
         stroke: '#fff',
       });
     }
+  }
+
+  addSnappingBonds(bondId: number) {
+    this.snappingBonds.push(bondId);
+  }
+
+  clearSnappingBonds() {
+    this.snappingBonds = [];
+  }
+
+  isSnappingBond(bondId: number) {
+    return this.snappingBonds.includes(bondId);
   }
 }
 

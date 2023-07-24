@@ -81,6 +81,20 @@ class StructEditor extends Component {
       this.updateFloatingToolsPositionOnScroll.bind(this);
   }
 
+  handleWheel = (event) => {
+    if (event.ctrlKey) {
+      event.preventDefault();
+
+      const zoomDelta = event.deltaY > 0 ? -1 : 1;
+
+      if (zoomDelta === 1) {
+        this.props.onZoomIn();
+      } else {
+        this.props.onZoomOut();
+      }
+    }
+  };
+
   shouldComponentUpdate(nextProps, nextState) {
     return (
       this.props.indigoVerification !== nextProps.indigoVerification ||
@@ -181,10 +195,13 @@ class StructEditor extends Component {
     this.editor.event.message.dispatch({
       info: JSON.stringify(this.props.toolOpts),
     });
+
+    this.editorRef.current.addEventListener('wheel', this.handleWheel);
   }
 
   componentWillUnmount() {
     removeEditorHandlers(this.editor, this.props);
+    this.editorRef.current.removeEventListener('wheel', this.handleWheel);
   }
 
   updateFloatingToolsPositionOnScroll() {
@@ -207,6 +224,8 @@ class StructEditor extends Component {
       onEnhancedStereoEdit,
       onQuickEdit,
       onBondEdit,
+      onZoomIn,
+      onZoomOut,
       onRgroupEdit,
       onSgroupEdit,
       onRemoveFG,

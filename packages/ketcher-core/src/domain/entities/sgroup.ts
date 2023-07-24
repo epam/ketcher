@@ -22,9 +22,9 @@ import { Struct } from './struct';
 import { SaltsAndSolventsProvider } from '../helpers';
 import { Vec2 } from './vec2';
 import { ReStruct } from '../../application/render';
-import { Pool } from 'domain/entities/pool';
+import { Pool, SGroupAttachmentPoint } from 'domain/entities';
 import { ReSGroup } from 'application/render';
-import { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
+import { SgContexts } from 'application/editor/shared/constants';
 import assert from 'assert';
 
 export class SGroupBracketParams {
@@ -175,34 +175,33 @@ export class SGroup {
   calculatePP(struct: Struct): void {
     let topLeftPoint;
 
-    if (this.data.context === 'Atom' || this.data.context === 'Bond') {
+    const isAtomContext = this.data.context === SgContexts.Atom;
+    const isBondContent = this.data.context === SgContexts.Bond;
+    if (isAtomContext || isBondContent) {
       const contentBoxes: Array<any> = [];
       let contentBB: Box2Abs | null = null;
-      const direction = new Vec2(1, 0);
 
       this.atoms.forEach((aid) => {
         const atom = struct.atoms.get(aid);
         const pos = new Vec2(atom!.pp);
+
         const ext = new Vec2(0.05 * 3, 0.05 * 3);
         const bba = new Box2Abs(pos, pos).extend(ext, ext);
         contentBoxes.push(bba);
       });
+
       contentBoxes.forEach((bba) => {
         let bbb: Box2Abs | null = null;
         [bba.p0.x, bba.p1.x].forEach((x) => {
           [bba.p0.y, bba.p1.y].forEach((y) => {
             const v = new Vec2(x, y);
-            const p = new Vec2(
-              Vec2.dot(v, direction),
-              Vec2.dot(v, direction.rotateSC(1, 0)),
-            );
-            bbb = !bbb ? new Box2Abs(p, p) : bbb!.include(p);
+            bbb = !bbb ? new Box2Abs(v, v) : bbb!.include(v);
           });
         });
         contentBB = !contentBB ? bbb : Box2Abs.union(contentBB, bbb!);
       });
 
-      topLeftPoint = contentBB!.p0;
+      topLeftPoint = isBondContent ? contentBB!.centre() : contentBB!.p0;
     } else {
       topLeftPoint = this.bracketBox.p1.add(new Vec2(0.5, 0.5));
     }
@@ -749,7 +748,7 @@ export class SGroup {
   }
 }
 
-function descriptorIntersects(sgroups: [], topLeftPoint: Vec2): boolean {
+function descriptorIntersects(sgroups: SGroup[], topLeftPoint: Vec2): boolean {
   return sgroups.some((sg: SGroup) => {
     if (!sg.pp) return false;
 

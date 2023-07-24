@@ -1,14 +1,13 @@
 import 'ketcher-react/dist/index.css';
 
-import { ButtonsConfig, Editor } from 'ketcher-react';
+import { useState } from 'react';
+import { ButtonsConfig, Editor, InfoModal } from 'ketcher-react';
 import {
   Ketcher,
   RemoteStructServiceProvider,
   StructServiceProvider,
 } from 'ketcher-core';
-import { ErrorModal } from './ErrorModal';
 import { PolymerToggler } from './PolymerToggler';
-import { useState } from 'react';
 
 const getHiddenButtonsConfig = (): ButtonsConfig => {
   const searchParams = new URLSearchParams(window.location.search);
@@ -80,7 +79,7 @@ const App = () => {
       />
       {enablePolymerEditor && <PolymerToggler toggle={setShowPolymerEditor} />}
       {hasError && (
-        <ErrorModal
+        <InfoModal
           message={errorMessage}
           close={() => {
             setHasError(false);

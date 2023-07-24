@@ -62,8 +62,12 @@ export class ServerFormatter implements StructFormatter {
 
     try {
       const stringifiedStruct = this.#ketSerializer.serialize(struct);
-      console.log('stringifiedStruct', stringifiedStruct)
-      console.log('serverFormatter = ', process.env.MODE, process.env.KETCHER_URL);
+      console.log('stringifiedStruct', stringifiedStruct);
+      console.log(
+        'serverFormatter = ',
+        process.env.MODE,
+        process.env.KETCHER_URL,
+      );
       const convertResult = await this.#structService.convert(
         {
           struct: stringifiedStruct,

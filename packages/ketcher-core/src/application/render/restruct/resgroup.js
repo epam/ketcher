@@ -16,6 +16,7 @@
 
 import { Box2Abs, FunctionalGroup, Pile, SGroup, Vec2 } from 'domain/entities';
 
+import { SgContexts } from 'application/editor/shared/constants';
 import { LayerMap } from './generalEnumTypes';
 import ReDataSGroupData from './redatasgroupdata';
 import ReObject from './reobject';
@@ -330,9 +331,12 @@ function drawAbsoluteDat(restruct, sgroup) {
 
   const ps = sgroup.pp.scaled(options.scale);
   const name = showValue(paper, ps, sgroup, options);
-  const box = util.relBox(name.getBBox());
 
-  name.translateAbs(0.5 * box.width, -0.5 * box.height);
+  if (sgroup.data.context !== SgContexts.Bond) {
+    const box = util.relBox(name.getBBox());
+    name.translateAbs(0.5 * box.width, -0.5 * box.height);
+  }
+
   set.push(name);
 
   const sbox = Box2Abs.fromRelBox(util.relBox(name.getBBox()));

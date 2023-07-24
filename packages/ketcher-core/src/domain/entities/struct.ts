@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { Atom, radicalElectrons } from './atom';
-
+import { EditorSelection } from 'application/editor';
 import { Bond } from './bond';
 import { Box2Abs } from './box2Abs';
 import { Elements } from 'domain/constants';
@@ -1117,5 +1117,42 @@ export class Struct {
       }
     }
     return groupsIds;
+  }
+
+  getBondIdByHalfBond(halfBondId: number) {
+    const halfBond = this.halfBonds.get(halfBondId);
+    if (halfBond) {
+      return halfBond.bid;
+    }
+    return undefined;
+  }
+
+  /**
+   * @returns visibleAtoms = selected atoms
+   *                       - atoms in contracted functional groups
+   *                       + functional groups's attachment atoms
+   */
+  getSelectedVisibleAtoms(selection: EditorSelection | null) {
+    return (
+      selection?.atoms?.filter((atomId) => {
+        const atom = this.atoms.get(atomId);
+        if (!atom) {
+          return false;
+        }
+        const isAtomNotInContractedGroup =
+          !FunctionalGroup.isAtomInContractedFunctionalGroup(
+            atom,
+            this.sgroups,
+            this.functionalGroups,
+            false,
+          );
+        if (isAtomNotInContractedGroup) {
+          return true;
+        }
+        const groupId = this.getGroupIdFromAtomId(atomId);
+        const sgroup = this.sgroups.get(groupId as number);
+        return sgroup?.getAttachmentAtomId() === atomId;
+      }) || []
+    );
   }
 }

@@ -17,13 +17,30 @@
 import { StructEditor } from './components';
 import { connect } from 'react-redux';
 import initEditor from '../state/editor';
+import { onAction } from '../state';
+import action from '../action';
+
+const dispatchAction = (dispatch, actionName) => {
+  dispatch(onAction(action[actionName].action));
+};
+
+const mapDispatchToProps = (dispatch) => {
+  const onZoomIn = () => dispatchAction(dispatch, 'zoom-in');
+  const onZoomOut = () => dispatchAction(dispatch, 'zoom-out');
+
+  return {
+    onZoomIn,
+    onZoomOut,
+    ...dispatch(initEditor),
+  };
+};
 
 const Editor = connect(
   (state) => ({
     options: state.options.settings,
     indigoVerification: state.requestsStatuses.indigoVerification,
   }),
-  (dispatch) => dispatch(initEditor),
+  mapDispatchToProps,
 )(StructEditor);
 
 export default Editor;

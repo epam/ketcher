@@ -14,10 +14,17 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Atom, Bond, SGroup, Struct } from 'domain/entities';
+import {
+  Atom,
+  Bond,
+  SGroup,
+  Struct,
+  SGroupAttachmentPoint,
+} from 'domain/entities';
 
 import { Elements } from 'domain/constants';
 import { ifDef } from 'utilities';
+import { mergeFragmentsToStruct } from './mergeFragmentsToStruct';
 
 export function toRlabel(values) {
   let res = 0;
@@ -29,12 +36,14 @@ export function toRlabel(values) {
 }
 
 export function moleculeToStruct(ketItem: any): Struct {
-  const struct = new Struct();
-  ketItem.atoms.forEach((atom) => {
-    if (atom.type === 'rg-label') struct.atoms.add(rglabelToStruct(atom));
-    if (atom.type === 'atom-list') struct.atoms.add(atomListToStruct(atom));
-    if (!atom.type) struct.atoms.add(atomToStruct(atom));
-  });
+  const struct = mergeFragmentsToStruct(ketItem, new Struct());
+  if (ketItem.atoms) {
+    ketItem.atoms.forEach((atom) => {
+      if (atom.type === 'rg-label') struct.atoms.add(rglabelToStruct(atom));
+      if (atom.type === 'atom-list') struct.atoms.add(atomListToStruct(atom));
+      if (!atom.type) struct.atoms.add(atomToStruct(atom));
+    });
+  }
 
   if (ketItem.bonds) {
     ketItem.bonds.forEach((bond) => struct.bonds.add(bondToStruct(bond)));
@@ -121,7 +130,22 @@ export function atomListToStruct(source) {
   return new Atom(params);
 }
 
-export function bondToStruct(source) {
+/**
+ *
+ * @param source
+ * @param atomOffset – if bond is a part of a fragment, then we need to consider atoms from previous fragment.
+ * source.atoms contains numbers related to fragment, but we need to count atoms related to struct. Example:
+ * fragments: [{
+ *   atoms: [...],
+ *   bonds: [...], this bonds point to atoms in the first fragment
+ * }, {
+ *   atoms: [...],
+ *   bonds: [...], this bonds point to atoms in the second fragment
+ * }]
+ * When we add bonds from second fragment we need to count atoms from fragments[0].atoms.length + 1, not from zero
+ * @returns newly created Bond
+ */
+export function bondToStruct(source, atomOffset = 0) {
   const params: any = {};
 
   ifDef(params, 'type', source.type);
@@ -132,11 +156,17 @@ export function bondToStruct(source) {
   // if (params.stereo)
   // 	params.stereo = params.stereo > 1 ? params.stereo * 2 : params.stereo;
   // params.xxx = 0;
-  ifDef(params, 'begin', source.atoms[0]);
-  ifDef(params, 'end', source.atoms[1]);
+  ifDef(params, 'begin', source.atoms[0] + atomOffset);
+  ifDef(params, 'end', source.atoms[1] + atomOffset);
 
   return new Bond(params);
 }
+
+type KetAttachmentPoint = {
+  attachmentAtom: number;
+  leavingAtom?: number;
+  attachmentId?: string;
+};
 
 export function sgroupToStruct(source) {
   const sgroup = new SGroup(source.type);
@@ -157,6 +187,13 @@ export function sgroupToStruct(source) {
       ifDef(sgroup.data, 'name', source.name);
       ifDef(sgroup.data, 'expanded', source.expanded);
       ifDef(sgroup, 'id', source.id);
+      source.attachmentPoints?.forEach(
+        (sourceAttachmentPoint: KetAttachmentPoint) => {
+          sgroup.addAttachmentPoint(
+            sgroupAttachmentPointToStruct(sourceAttachmentPoint),
+          );
+        },
+      );
       break;
     }
     case 'DAT': {
@@ -171,4 +208,13 @@ export function sgroupToStruct(source) {
       break;
   }
   return sgroup;
+}
+
+function sgroupAttachmentPointToStruct(
+  source: KetAttachmentPoint,
+): SGroupAttachmentPoint {
+  const atomId = source.attachmentAtom;
+  const leavingAtomId = source.leavingAtom;
+  const attachmentId = source.attachmentId;
+  return new SGroupAttachmentPoint(atomId, leavingAtomId, attachmentId);
 }

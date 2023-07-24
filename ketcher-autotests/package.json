@@ -23,17 +23,20 @@
   "author": "Nitvex",
   "license": "ISC",
   "devDependencies": {
-    "@playwright/test": "^1.31.1",
+    "@playwright/test": "^1.36.1",
     "eslint": "^8.44.0",
     "lint-staged": "^13.1.2",
     "prettier": "2.8.4"
   },
   "dependencies": {
     "dotenv": "^16.0.3",
-    "ketcher-core": "^2.7.2"
+    "ketcher-core": "*"
   },
   "lint-staged": {
-    "*.{js,md,ts}": [
+    "*.md": [
+      "prettier --write"
+    ],
+    "*.{js,ts}": [
       "prettier --write",
       "eslint ."
     ]

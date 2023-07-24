@@ -18,6 +18,7 @@ import { Action } from '../editor/actions';
 import { Render } from 'application/render';
 import { Struct } from 'domain/entities';
 import { selectionKeys } from './shared/constants';
+import { PipelineSubscription, Subscription } from 'subscription';
 
 export interface EditorHistory {
   readonly current?: number;
@@ -33,6 +34,11 @@ export interface LoadOptions {
 
 export type EditorSelection = {
   [key in typeof selectionKeys[number]]?: number[];
+};
+
+export type FloatingToolsParams = {
+  visible?: boolean;
+  rotateHandlePosition?: { x: number; y: number };
 };
 
 export interface Editor {
@@ -51,6 +57,32 @@ export interface Editor {
   zoom: (value?: any) => any;
   structSelected: () => Struct;
   explicitSelected: () => EditorSelection;
+  centerStruct: () => void;
+  zoomAccordingContent: () => void;
+  errorHandler: ((message: string) => void) | null;
+  event: {
+    message: Subscription;
+    elementEdit: PipelineSubscription;
+    bondEdit: PipelineSubscription;
+    zoomIn: PipelineSubscription;
+    zoomOut: PipelineSubscription;
+    rgroupEdit: PipelineSubscription;
+    sgroupEdit: PipelineSubscription;
+    sdataEdit: PipelineSubscription;
+    quickEdit: PipelineSubscription;
+    attachEdit: PipelineSubscription;
+    removeFG: PipelineSubscription;
+    change: Subscription;
+    selectionChange: PipelineSubscription;
+    aromatizeStruct: PipelineSubscription;
+    dearomatizeStruct: PipelineSubscription;
+    enhancedStereoEdit: PipelineSubscription;
+    confirm: PipelineSubscription;
+    showInfo: PipelineSubscription;
+    apiSettings: PipelineSubscription;
+    cursor: Subscription;
+    updateFloatingTools: Subscription<FloatingToolsParams>;
+  };
   update: (
     action: Action | true,
     ignoreHistory?: boolean,

@@ -1,5 +1,5 @@
 import { Page } from '@playwright/test';
-import {delay, DELAY_IN_SECONDS} from "@tests/utils";
+import { delay, DELAY_IN_SECONDS } from '@tests/utils';
 
 // const evaluateCallback = (REQUEST_IS_FINISHED: string) => {
 //   const MAX_TIME_TO_WAIT = 10000;
@@ -32,7 +32,13 @@ export const waitForLoad = async (page: Page, callback: VoidFunction) => {
   await delay(DELAY_IN_SECONDS.TWO);
 
   if (await page.getByTestId('openStructureModal').isVisible()) {
-    await page.waitForSelector('[data-testid=openStructureModal]', { state: 'detached' });
+    await page.waitForSelector('[data-testid=openStructureModal]', {
+      state: 'detached',
+    });
+  }
+
+  if (await page.locator('[role=dialog]').isVisible()) {
+    await page.waitForSelector('[role=dialog]', { state: 'detached' });
   }
 
   if (await page.locator('[role=dialog]').isVisible()) {

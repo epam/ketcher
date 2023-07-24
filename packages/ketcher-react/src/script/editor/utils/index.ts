@@ -16,3 +16,4 @@
 
 export * from './customOnChangeHandler';
 export * from './elementOffset';
+export * from './structLayout';

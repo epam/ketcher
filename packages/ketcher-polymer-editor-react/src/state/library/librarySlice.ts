@@ -32,7 +32,7 @@ const initialState: LibraryState = {
   searchFilter: '',
 };
 
-function getMonomerUniqueKey(monomer: MonomerItemType) {
+export function getMonomerUniqueKey(monomer: MonomerItemType) {
   return `${monomer.props.MonomerName}___${monomer.props.Name}`;
 }
 

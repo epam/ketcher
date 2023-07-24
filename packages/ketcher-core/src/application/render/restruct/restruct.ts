@@ -69,8 +69,7 @@ class ReStruct {
   public rxnArrows: Map<number, ReRxnArrow> = new Map();
   public frags: Pool = new Pool();
   public rgroups: Pool = new Pool();
-  public rgroupAttachmentPoints: Map<number, ReRGroupAttachmentPoint> =
-    new Map();
+  public rgroupAttachmentPoints: Pool<ReRGroupAttachmentPoint> = new Pool();
 
   public sgroups: Map<number, ReSGroup> = new Map();
   public sgroupData: Map<number, ReDataSGroupData> = new Map();
@@ -155,6 +154,22 @@ class ReStruct {
       if (FunctionalGroup.isFunctionalGroup(item) || SGroup.isSuperAtom(item)) {
         this.molecule.functionalGroups.set(id, new FunctionalGroup(item));
       }
+    });
+  }
+
+  get visibleRGroupAttachmentPoints() {
+    const sgroups = this.molecule.sgroups;
+    const functionalGroups = this.molecule.functionalGroups;
+    return this.rgroupAttachmentPoints.filter((_id, reItem) => {
+      const atomId = reItem.item.atomId;
+      const atom = this.molecule.atoms.get(atomId);
+      assert(atom != null);
+      return !FunctionalGroup.isAtomInContractedFunctionalGroup(
+        atom,
+        sgroups,
+        functionalGroups,
+        false,
+      );
     });
   }
 

@@ -645,6 +645,7 @@ function getMapsForClosestItem(selectFragment: boolean) {
     'functionalGroups',
     'sgroupData',
     'rgroups',
+    'rgroupAttachmentPoints',
     'rxnArrows',
     'rxnPluses',
     'enhancedFlags',
@@ -664,10 +665,7 @@ function getResizingProps(
   return [editor.render.ctab, dragCtx.item.id, diff, current, dragCtx.item.ref];
 }
 
-function getNewSelectedItems(
-  editor: Editor,
-  selectedSgroups: number[],
-): { atoms: number[]; bonds: number[] } {
+function getNewSelectedItems(editor: Editor, selectedSgroups: number[]) {
   const newSelected: Record<'atoms' | 'bonds', number[]> = {
     atoms: [],
     bonds: [],

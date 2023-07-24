@@ -32,11 +32,17 @@ class APointTool implements Tool {
 
   mousemove(event) {
     const struct = this.editor.render.ctab.molecule;
-    const closestItem = this.editor.findItem(event, ['atoms']);
-    if (closestItem) {
+    const closestItem = this.editor.findItem(event, [
+      'atoms',
+      'rgroupAttachmentPoints',
+    ]);
+    if (closestItem?.map === 'atoms') {
       const atom = struct.atoms.get(closestItem.id);
-      if (atom?.label !== 'R#' && atom?.rglabel === null)
+      if (atom?.label !== 'R#' && atom?.rglabel === null) {
         this.editor.hover(closestItem, null, event);
+      }
+    } else if (closestItem?.map === 'rgroupAttachmentPoints') {
+      this.editor.hover(closestItem, null, event);
     } else {
       this.editor.hover(null);
     }

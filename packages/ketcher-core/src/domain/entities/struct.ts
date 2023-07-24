@@ -1158,4 +1158,11 @@ export class Struct {
       }) || []
     );
   }
+
+  getRGroupAttachmentPointsByAtomId(atomId: number) {
+    const rgroupAttachmentPoints = this.rgroupAttachmentPoints.filter(
+      (_id, attachmentPoint) => attachmentPoint.atomId === atomId,
+    );
+    return [...rgroupAttachmentPoints.keys()];
+  }
 }

@@ -1,6 +1,6 @@
+import { RaphaelPaper } from 'raphael';
 import {
   Bond,
-  Box2Abs,
   RGroupAttachmentPoint,
   RGroupAttachmentPointType,
   Struct,
@@ -10,12 +10,19 @@ import { Scale } from 'domain/helpers';
 import { ReAtom, ReObject, ReStruct } from '.';
 import draw from '../draw';
 import { Render } from '../raphaelRender';
+import { RenderOptions } from '../render.types';
 import { LayerMap } from './generalEnumTypes';
 import Visel from './visel';
 
 class ReRGroupAttachmentPoint extends ReObject {
   item: RGroupAttachmentPoint;
   reAtom: ReAtom;
+  lineDirectionVector: Vec2 = new Vec2();
+
+  static LINE_OUTLINE_WIDTH = 0.36;
+  static OUTLINE_PADDING = 0.15;
+  static CURVE_OUTLINE_WIDTH = 1.0;
+  static CURVE_OUTLINE_HEIGHT = 0.42;
 
   constructor(item: RGroupAttachmentPoint, reAtom: ReAtom) {
     super('rgroupAttachmentPoint');
@@ -23,32 +30,121 @@ class ReRGroupAttachmentPoint extends ReObject {
     this.reAtom = reAtom;
   }
 
-  static isSelectable() {
-    return false;
+  get normalizedLineDirectionVector() {
+    return this.lineDirectionVector.normalized();
   }
 
-  /**
-   * Why?
-   * We need to return Bounding box for the attachment points for this atom,
-   * to be able to correctly calculate boundaries for autoscaling and positioning
-   */
-  getVBoxObj(render: Render): Box2Abs | null {
-    let accumulatedBBox: Box2Abs | null = null;
-    const directionVector = this.getAttachmentPointDirectionVector(
-      render.ctab.molecule,
+  get normalizedCurveDirectionVector() {
+    return this.lineDirectionVector.rotate(Math.PI / 2).normalized();
+  }
+
+  get startPoint() {
+    return this.reAtom.a.pp;
+  }
+
+  get middlePoint() {
+    return this.outlineEndPoint.addScaled(
+      this.normalizedLineDirectionVector,
+      -ReRGroupAttachmentPoint.CURVE_OUTLINE_HEIGHT,
     );
-    if (!directionVector) {
-      return null;
-    }
-    const attachmentPointEndPosition = this.reAtom.a.pp.add(directionVector);
-    const attachmentPointEndBoundingBox = new Box2Abs(
-      attachmentPointEndPosition,
-      attachmentPointEndPosition,
+  }
+
+  get endPoint() {
+    return this.startPoint.add(this.lineDirectionVector);
+  }
+
+  get outlineEndPoint() {
+    const length =
+      this.lineDirectionVector.length() +
+      ReRGroupAttachmentPoint.OUTLINE_PADDING;
+    return this.startPoint.addScaled(
+      this.normalizedLineDirectionVector,
+      length,
     );
-    accumulatedBBox = accumulatedBBox
-      ? Box2Abs.union(accumulatedBBox, attachmentPointEndBoundingBox)
-      : attachmentPointEndBoundingBox;
-    return accumulatedBBox;
+  }
+
+  static isSelectable() {
+    return true;
+  }
+
+  getOutlinePoints() {
+    const topLeftPadPoint = this.outlineEndPoint.addScaled(
+      this.normalizedCurveDirectionVector,
+      -ReRGroupAttachmentPoint.CURVE_OUTLINE_WIDTH / 2,
+    );
+    const topLeftPoint = topLeftPadPoint.addScaled(
+      this.normalizedCurveDirectionVector,
+      ReRGroupAttachmentPoint.OUTLINE_PADDING,
+    );
+    const topRightPadPoint = this.outlineEndPoint.addScaled(
+      this.normalizedCurveDirectionVector,
+      ReRGroupAttachmentPoint.CURVE_OUTLINE_WIDTH / 2,
+    );
+    const topRightPoint = topRightPadPoint.addScaled(
+      this.normalizedCurveDirectionVector,
+      -ReRGroupAttachmentPoint.OUTLINE_PADDING,
+    );
+    const middleMostLeftPadPoint = this.middlePoint.addScaled(
+      this.normalizedCurveDirectionVector,
+      -ReRGroupAttachmentPoint.CURVE_OUTLINE_WIDTH / 2,
+    );
+    const middleMostLeftPoint = middleMostLeftPadPoint.addScaled(
+      this.normalizedCurveDirectionVector,
+      ReRGroupAttachmentPoint.OUTLINE_PADDING,
+    );
+    const middleMostRightPadPoint = this.middlePoint.addScaled(
+      this.normalizedCurveDirectionVector,
+      ReRGroupAttachmentPoint.CURVE_OUTLINE_WIDTH / 2,
+    );
+    const middleMostRightPoint = middleMostRightPadPoint.addScaled(
+      this.normalizedCurveDirectionVector,
+      -ReRGroupAttachmentPoint.OUTLINE_PADDING,
+    );
+    const middleLeftPoint = this.middlePoint.addScaled(
+      this.normalizedCurveDirectionVector,
+      -ReRGroupAttachmentPoint.LINE_OUTLINE_WIDTH / 2,
+    );
+    const middleRightPoint = this.middlePoint.addScaled(
+      this.normalizedCurveDirectionVector,
+      ReRGroupAttachmentPoint.LINE_OUTLINE_WIDTH / 2,
+    );
+    const bottomLeftPadPoint = this.startPoint.addScaled(
+      this.normalizedCurveDirectionVector,
+      -ReRGroupAttachmentPoint.LINE_OUTLINE_WIDTH / 2,
+    );
+    const bottomLeftPoint = bottomLeftPadPoint.addScaled(
+      this.normalizedLineDirectionVector,
+      ReRGroupAttachmentPoint.OUTLINE_PADDING,
+    );
+    const bottomRightPadPoint = this.startPoint.addScaled(
+      this.normalizedCurveDirectionVector,
+      ReRGroupAttachmentPoint.LINE_OUTLINE_WIDTH / 2,
+    );
+    const bottomRightPoint = bottomRightPadPoint.addScaled(
+      this.normalizedLineDirectionVector,
+      ReRGroupAttachmentPoint.OUTLINE_PADDING,
+    );
+
+    return [
+      topLeftPadPoint,
+      topLeftPoint,
+      topRightPoint,
+      topRightPadPoint,
+      middleMostRightPadPoint,
+      middleMostRightPoint,
+      middleRightPoint,
+      bottomRightPoint,
+      bottomRightPadPoint,
+      bottomLeftPadPoint,
+      bottomLeftPoint,
+      middleLeftPoint,
+      middleMostLeftPoint,
+      middleMostLeftPadPoint,
+    ] as const;
+  }
+
+  getDistanceTo(destination: Vec2) {
+    return Vec2.dist(destination, this.middlePoint);
   }
 
   show(restruct: ReStruct) {
@@ -59,6 +155,7 @@ class ReRGroupAttachmentPoint extends ReObject {
     if (!directionVector) {
       return;
     }
+    this.lineDirectionVector = directionVector;
 
     showAttachmentPointShape(
       this.reAtom,
@@ -81,6 +178,63 @@ class ReRGroupAttachmentPoint extends ReObject {
         this.visel,
       );
     }
+  }
+
+  private getHoverPlatePath(options: RenderOptions) {
+    const outlinePoints = this.getOutlinePoints();
+    const scaledOutlinePoints = outlinePoints.map((point) =>
+      Scale.obj2scaled(point, options),
+    );
+    const [
+      topLeftPadPoint,
+      topLeftPoint,
+      topRightPoint,
+      topRightPadPoint,
+      middleMostRightPadPoint,
+      middleMostRightPoint,
+      middleRightPoint,
+      bottomRightPoint,
+      bottomRightPadPoint,
+      bottomLeftPadPoint,
+      bottomLeftPoint,
+      middleLeftPoint,
+      middleMostLeftPoint,
+      middleMostLeftPadPoint,
+    ] = scaledOutlinePoints;
+
+    // Docs: ketcher-core/docs/data/hover_selection_rgroup_attachment_point.png
+    const pathString = `
+      M ${topLeftPoint.x} ${topLeftPoint.y}
+      L ${topRightPoint.x} ${topRightPoint.y}
+      C ${topRightPadPoint.x} ${topRightPadPoint.y}, ${middleMostRightPadPoint.x} ${middleMostRightPadPoint.y}, ${middleMostRightPoint.x} ${middleMostRightPoint.y}
+      L ${middleRightPoint.x} ${middleRightPoint.y}
+      L ${bottomRightPoint.x} ${bottomRightPoint.y}
+      C ${bottomRightPadPoint.x} ${bottomRightPadPoint.y}, ${bottomLeftPadPoint.x} ${bottomLeftPadPoint.y}, ${bottomLeftPoint.x} ${bottomLeftPoint.y}
+      L ${middleLeftPoint.x} ${middleLeftPoint.y}
+      L ${middleMostLeftPoint.x} ${middleMostLeftPoint.y}
+      C ${middleMostLeftPadPoint.x} ${middleMostLeftPadPoint.y}, ${topLeftPadPoint.x} ${topLeftPadPoint.y}, ${topLeftPoint.x} ${topLeftPoint.y}
+    `;
+    return pathString;
+  }
+
+  makeHoverPlate(render: Render) {
+    const hoverPlatePath = this.getHoverPlatePath(render.options);
+    return render.paper.path(hoverPlatePath).attr(render.options.hoverStyle);
+  }
+
+  makeSelectionPlate(
+    _restruct: ReStruct,
+    paper: RaphaelPaper,
+    options: RenderOptions,
+  ) {
+    const hoverPlatePath = this.getHoverPlatePath(options);
+    return paper.path(hoverPlatePath).attr(options.selectionStyle);
+  }
+
+  drawHover(render: Render) {
+    const hoverPlate = this.makeHoverPlate(render);
+    render.ctab.addReObjectPath(LayerMap.hovering, this.visel, hoverPlate);
+    return hoverPlate;
   }
 
   private getAttachmentPointDirectionVector(struct: Struct) {
@@ -133,7 +287,13 @@ function showAttachmentPointShape(
     options,
   );
 
-  addReObjectPath(LayerMap.indices, visel, resultShape, atomPositionVector);
+  addReObjectPath(
+    LayerMap.indices,
+    visel,
+    resultShape,
+    atomPositionVector,
+    true,
+  );
 }
 
 function trisectionLargestSector(
@@ -201,7 +361,7 @@ function showAttachmentPointLabel(
     options,
     atom.color,
   );
-  addReObjectPath(LayerMap.indices, visel, labelPath, atomPositionVector);
+  addReObjectPath(LayerMap.indices, visel, labelPath, atomPositionVector, true);
 }
 
 function getLabelPositionForAttachmentPoint(

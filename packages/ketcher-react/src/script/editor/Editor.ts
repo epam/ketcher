@@ -208,6 +208,7 @@ class Editor implements KetcherEditor {
     };
 
     domEventSetup(this, clientArea);
+    this.render.paper.canvas.setAttribute('data-testid', 'canvas');
   }
 
   isDitrty(): boolean {

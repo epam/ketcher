@@ -168,7 +168,7 @@ class ReRGroupAttachmentPoint extends ReObject {
     const showLabel = isAttachmentPointLabelRequired(restruct);
     if (showLabel) {
       // in case of isTrisectionRequired (trisection case) we should show labels '1' and '2' for those separated vectors
-      const labelText = this.item.attachmentPointType === 'primary' ? '1' : '2';
+      const labelText = this.item.type === 'primary' ? '1' : '2';
       showAttachmentPointLabel(
         this.reAtom,
         restruct.render,
@@ -242,11 +242,7 @@ class ReRGroupAttachmentPoint extends ReObject {
       return;
     }
     if (this.isTrisectionAttachmentPoint()) {
-      return trisectionLargestSector(
-        this.reAtom,
-        struct,
-        this.item.attachmentPointType,
-      );
+      return trisectionLargestSector(this.reAtom, struct, this.item.type);
     } else {
       const hasOnlyOneBond = this.reAtom.a.neighbors.length === 1;
       const directionVector = hasOnlyOneBond

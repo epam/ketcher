@@ -20,6 +20,7 @@ import {
   fromOneAtomDeletion,
   fromOneBondDeletion,
   fromPlusDeletion,
+  fromRGroupAttachmentPointDeletion,
   fromSgroupDeletion,
   fromSimpleObjectDeletion,
   fromTextDeletion,
@@ -50,6 +51,7 @@ class EraserTool implements Tool {
       'sgroupData',
       'simpleObjects',
       'texts',
+      'rgroupAttachmentPoints',
     ];
     this.lassoHelper = new LassoHelper(mode || 0, editor, null);
 
@@ -341,6 +343,8 @@ class EraserTool implements Tool {
       this.editor.update(fromSimpleObjectDeletion(restruct, ci.id));
     } else if (ci.map === 'texts') {
       this.editor.update(fromTextDeletion(restruct, ci.id));
+    } else if (ci.map === 'rgroupAttachmentPoints') {
+      this.editor.update(fromRGroupAttachmentPointDeletion(restruct, ci.id));
     } else {
       // TODO re-factoring needed - should be "map-independent"
       console.error(

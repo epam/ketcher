@@ -34,7 +34,7 @@ class RGroupAttachmentPointRemove extends BaseOperation {
     assert(item != null && reItem != null);
 
     this.data.atomId = item.atomId;
-    this.data.attachmentPointType = item.attachmentPointType;
+    this.data.attachmentPointType = item.type;
 
     restruct.markItemRemoved();
     restruct.clearVisel(reItem.visel);

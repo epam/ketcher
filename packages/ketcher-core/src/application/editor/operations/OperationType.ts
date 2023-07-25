@@ -74,6 +74,7 @@ export const OperationType = Object.freeze({
 export enum OperationPriority {
   ATOM_ATTR = 1,
   BOND_ADD = 1,
+  R_GROUP_ATTACHMENT_POINT_REMOVE = 1,
   ATOM_MOVE = 2,
   BOND_ATTR = 2,
   BOND_MOVE = 2,
@@ -81,7 +82,6 @@ export enum OperationPriority {
   S_GROUP_ATOM_ADD = 3,
   S_GROUP_ATTACHMENT_POINT_ADD = 3,
   R_GROUP_ATTACHMENT_POINT_ADD = 3,
-  R_GROUP_ATTACHMENT_POINT_REMOVE = 3,
   S_GROUP_ATTR = 4,
   ATOM_DELETE = 5,
   FRAGMENT_STEREO_FLAG = 6,

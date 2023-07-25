@@ -9,7 +9,7 @@ import { getToolType, openTool } from './helpers';
  *
  * @param page - playwright page object
  * @param toolElementId - tuple [presses: number, domElementId: string]
- * @param currentToolId - current selectede-group tool
+ * @param currentToolId - current selected-group tool
  * presses - specifies the number of times to press Tab key
  * domElementId - id of the element to search
  */

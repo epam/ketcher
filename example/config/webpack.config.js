@@ -10,7 +10,6 @@ const GitRevisionPlugin = require('git-revision-webpack-plugin');
 
 const gitRevisionPlugin = new GitRevisionPlugin();
 const applicationVersion = gitRevisionPlugin.version().split('-')[0];
-console.log('process.env.MODE', process.env.MODE);
 
 const envVariables = {
   MODE: process.env.MODE || 'standalone',

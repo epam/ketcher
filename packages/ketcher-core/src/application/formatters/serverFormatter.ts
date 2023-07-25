@@ -57,17 +57,10 @@ export class ServerFormatter implements StructFormatter {
   }
 
   async getStructureFromStructAsync(struct: Struct): Promise<string> {
-    console.log('struct', struct);
     const formatProperties = getPropertiesByFormat(this.#format);
 
     try {
       const stringifiedStruct = this.#ketSerializer.serialize(struct);
-      console.log('stringifiedStruct', stringifiedStruct);
-      console.log(
-        'serverFormatter = ',
-        process.env.MODE,
-        process.env.KETCHER_URL,
-      );
       const convertResult = await this.#structService.convert(
         {
           struct: stringifiedStruct,
@@ -75,12 +68,10 @@ export class ServerFormatter implements StructFormatter {
         },
         { ...this.#options, ...formatProperties.options },
       );
-      console.log('convertResult', convertResult);
 
       return convertResult.struct;
     } catch (error: any) {
       let message;
-      console.log('error getStructureFromStructAsync ', error);
       if (error.message === 'Server is not compatible') {
         message = `${formatProperties.name} is not supported.`;
       } else {
@@ -93,7 +84,6 @@ export class ServerFormatter implements StructFormatter {
   async getStructureFromStringAsync(
     stringifiedStruct: string,
   ): Promise<Struct> {
-    console.log('stringifiedStruct', stringifiedStruct);
     let promise: LayoutPromise | ConvertPromise;
 
     const data: ConvertData | LayoutData = {
@@ -112,15 +102,12 @@ export class ServerFormatter implements StructFormatter {
 
     try {
       const result = await promise(data, this.#options);
-      console.log('result', result);
       const parsedStruct = this.#ketSerializer.deserialize(result.struct);
-      console.log('parsedStruct', parsedStruct);
       if (!withCoords) {
         parsedStruct.rescale();
       }
       return parsedStruct;
     } catch (error: any) {
-      console.log('error getStructureFromStringAsync', error);
       if (error.message !== 'Server is not compatible') {
         throw Error(`Convert error!\n${error.message || error}`);
       }

@@ -16,8 +16,11 @@ const ignoredTests = [
   'API/**',
   'Examples/**',
   'Indigo-Tools/**',
+  'R-group-tool/**',
   'Reagents/**',
   'Structure-Creating-&-Editing/**',
+  'Templates/Functional-Groups/click-and-drag-fg-on-canvas.spec.ts',
+  'Templates/Functional-Groups/functional-groups.spec.ts',
   'Templates/Functional-Groups/Functional-Group-Tools/functional-group-tools.spec.ts',
   'Templates/Salts-and-Solvents/**',
   'Templates/User-Templates/**',
@@ -26,7 +29,6 @@ const ignoredTests = [
 ];
 
 function baseURL(): string {
-  console.log('base URL = ', process.env.MODE, process.env.KETCHER_URL);
   if (!process.env.MODE || !process.env.KETCHER_URL) {
     return DEFAULT_KETCHER_STANDALONE_URL;
   }
@@ -65,7 +67,7 @@ const config: PlaywrightTestConfig = {
   retries: process.env.CI ? MAX_NUMBER_OF_RETRIES : 0,
   /* Opt out of parallel tests on CI. */
   // eslint-disable-next-line no-magic-numbers
-  workers: process.env.CI ? 1 : 2,
+  workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: [
     [

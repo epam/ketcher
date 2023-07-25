@@ -29,16 +29,6 @@ jobs:
           node-version: 18.12.0
       - name: Install dependencies
         run: npm ci
-      - name: Create env file
-        run: |
-          cd example
-          echo "KETCHER_URL=$KETCHER_URL" > .env
-          echo "MODE=$MODE" >> .env
-          echo "SKIP_PREFLIGHT_CHECK=true" >> .env
-          echo "REACT_APP_API_PATH=/v2" >> .env
-          echo "PUBLIC_URL=./" >> .env
-          echo "GENERATE_SOURCEMAP = false" >> .env
-          cat .env
       - name: Build all packages
         run: npm run build:packages && npm run build:example:standalone
       - name: Run example in standalone mode

@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { takeEditorScreenshot } from '@utils';
 
 test.describe('Open Ketcher', () => {
   test.beforeEach(async ({ page }) => {
@@ -23,5 +24,8 @@ test.describe('Open Ketcher', () => {
     await page.getByTestId('PolymerToggler').click();
     await page.getByText('CHEM').click();
     await expect(page.getByText('A6OH')).toBeVisible();
+    await page.screenshot({
+      path: 'tests/Macromolecule-editor/screenshots/chem-library.png',
+    });
   });
 });

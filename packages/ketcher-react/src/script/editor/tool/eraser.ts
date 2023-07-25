@@ -165,6 +165,19 @@ class EraserTool implements Tool {
       }
     }
 
+    if (selected && functionalGroups.size && selected.rgroupAttachmentPoints) {
+      for (const rgroupAttachmentPointId of selected.rgroupAttachmentPoints) {
+        const attachedAtomId =
+          FunctionalGroup.isRGroupAttachmentPointInsideFunctionalGroup(
+            molecule,
+            rgroupAttachmentPointId,
+          );
+        if (attachedAtomId !== null) {
+          atomsResult.push(attachedAtomId);
+        }
+      }
+    }
+
     if (atomsResult.length > 0) {
       for (const id of atomsResult) {
         const fgId = FunctionalGroup.findFunctionalGroupByAtom(
@@ -275,6 +288,15 @@ class EraserTool implements Tool {
         )
       ) {
         bondResult.push(bondId);
+      }
+    } else if (functionalGroups && ci?.map === 'rgroupAttachmentPoints') {
+      const attachedAtomId =
+        FunctionalGroup.isRGroupAttachmentPointInsideFunctionalGroup(
+          molecule,
+          ci.id,
+        );
+      if (attachedAtomId !== null) {
+        atomResult.push(attachedAtomId);
       }
     }
 

@@ -1,5 +1,4 @@
 import { test, expect } from '@playwright/test';
-import { takeEditorScreenshot } from '@utils';
 
 test.describe('Open Ketcher', () => {
   test.beforeEach(async ({ page }) => {

@@ -24,6 +24,7 @@ import {
   selectMonomerGroups,
   selectMonomersInCategory,
   selectMonomersInFavorites,
+  getMonomerUniqueKey,
 } from 'state/library';
 import { MONOMER_LIBRARY_FAVORITES } from '../../../constants';
 import { MonomerItemType } from '../monomerLibraryItem/types';
@@ -45,7 +46,7 @@ const MonomerList = ({ onItemClick, libraryName }: IMonomerListProps) => {
   const [selectedMonomers, setSelectedMonomers] = useState('');
 
   const selectItem = (monomer: MonomerItemType) => {
-    setSelectedMonomers(monomer.label);
+    setSelectedMonomers(getMonomerUniqueKey(monomer));
   };
 
   return (
@@ -57,7 +58,7 @@ const MonomerList = ({ onItemClick, libraryName }: IMonomerListProps) => {
             title={groups.length === 1 ? undefined : groupTitle}
             items={groupItems}
             onItemClick={onItemClick || selectItem}
-            selectedMonomerLabel={selectedMonomers}
+            selectedMonomerUniqueKey={selectedMonomers}
           />
         );
       })}

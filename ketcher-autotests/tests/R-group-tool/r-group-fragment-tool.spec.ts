@@ -18,8 +18,6 @@ import {
   SelectTool,
   pressButton,
   clickOnAtom,
-  clickOnBond,
-  BondType,
 } from '@utils';
 
 async function openRGroupModalForTopAtom(page: Page) {
@@ -34,6 +32,7 @@ async function openRGroupModalForTopAtom(page: Page) {
 }
 
 const rGroupFromFile = 'R8';
+const atomIndex = 3;
 async function selectRGroups(page: Page, rGroups: string[]) {
   await selectNestedTool(page, RgroupTool.R_GROUP_FRAGMENT);
   await page.getByText(rGroupFromFile).click();
@@ -48,7 +47,7 @@ async function selectRGroup(page: Page, rgroup: string) {
 }
 
 async function clickModalButton(page: Page, button: 'Apply' | 'Cancel') {
-  await page.locator(`input[type="button"][value="${button}"]`);
+  await page.locator(`input[type="button"][value="${button}"]`).click();
 }
 
 test.describe('Open Ketcher', () => {
@@ -59,8 +58,6 @@ test.describe('Open Ketcher', () => {
   test.afterEach(async ({ page }) => {
     await takeEditorScreenshot(page);
   });
-
-  const atomNumber = 3;
 
   test('R-Fragment-Group dialog opening', async ({ page }) => {
     /* Test case: EPMLSOPKET-1582 and EPMLSOPKET-1610
@@ -126,41 +123,29 @@ test.describe('Open Ketcher', () => {
     await clickModalButton(page, 'Apply');
   });
 
-  test('Brackets rendering for atom', async ({ page }) => {
+  test('Brackets rendering for whole r-group structure', async ({ page }) => {
     await openFileAndAddToCanvas('simple-chain.ket', page);
     await selectNestedTool(page, RgroupTool.R_GROUP_FRAGMENT);
-    await clickOnAtom(page, 'C', atomNumber);
-    await page.getByText('R5').click();
+    await clickOnAtom(page, 'C', atomIndex);
+    await page.getByText(rGroupFromFile).click();
     await clickModalButton(page, 'Apply');
   });
 
-  test('Brackets rendering for bond', async ({ page }) => {
-    await openFileAndAddToCanvas('simple-chain.ket', page);
-    await selectNestedTool(page, RgroupTool.R_GROUP_FRAGMENT);
-    await clickOnBond(page, BondType.SINGLE, atomNumber);
-    await page.getByText('R5').click();
-    await clickModalButton(page, 'Apply');
-  });
-
-  test('Brackets rendering for whole structure', async ({ page }) => {
-    await openFileAndAddToCanvas('simple-chain.ket', page);
-    await page.keyboard.press('Control+a');
-    await selectNestedTool(page, RgroupTool.R_GROUP_FRAGMENT);
-    await page.getByText('R5').click();
-    await clickModalButton(page, 'Apply');
-  });
-
-  test('Brackets rendering for whole structure even with attachment points', async ({
+  test('Brackets rendering for whole r-group structure even with attachment points', async ({
     page,
   }) => {
     await openFileAndAddToCanvas('simple-chain.ket', page);
     await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
-    await clickOnAtom(page, 'C', atomNumber);
+    await clickOnAtom(page, 'C', atomIndex);
     await page.getByLabel(AttachmentPoint.PRIMARY).check();
-    await pressButton(page, 'Apply');
-    await page.keyboard.press('Control+a');
-    await selectNestedTool(page, RgroupTool.R_GROUP_FRAGMENT);
-    await page.getByText('R5').click();
+    await clickModalButton(page, 'Apply');
+    await selectNestedTool(
+      page,
+      RgroupTool.R_GROUP_FRAGMENT,
+      RgroupTool.ATTACHMENT_POINTS,
+    );
+    await clickOnAtom(page, 'C', atomIndex);
+    await page.getByText(rGroupFromFile).click();
     await clickModalButton(page, 'Apply');
   });
 

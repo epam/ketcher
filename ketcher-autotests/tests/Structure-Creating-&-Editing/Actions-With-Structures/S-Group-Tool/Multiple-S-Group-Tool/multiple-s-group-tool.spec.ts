@@ -73,7 +73,7 @@ test.describe('Multiple S-Group tool', () => {
     await selectMultipleGroup(page, 'Data', 'Multiple group', '88');
   });
 
-  test('Brackets rendering for whole structure', async ({ page }) => {
+  test('Brackets rendering for whole s-group structure', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-1506
       Description: The brackets are rendered correctly around whole structure
@@ -84,7 +84,7 @@ test.describe('Multiple S-Group tool', () => {
     await selectMultipleGroup(page, 'Data', 'Multiple group', '88');
   });
 
-  test('Brackets rendering for whole structure even with attachment points', async ({
+  test('Brackets rendering for whole s-group structure even with attachment points', async ({
     page,
   }) => {
     await openFileAndAddToCanvas('simple-chain.ket', page);

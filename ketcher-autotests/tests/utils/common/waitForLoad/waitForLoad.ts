@@ -27,19 +27,8 @@ import { delay, DELAY_IN_SECONDS } from '@tests/utils';
  */
 export const waitForLoad = async (page: Page, callback: VoidFunction) => {
   await page.waitForFunction(() => window.ketcher);
-  await callback();
-
-  await delay(DELAY_IN_SECONDS.TWO);
-
-  if (await page.getByTestId('openStructureModal').isVisible()) {
-    await page.waitForSelector('[data-testid=openStructureModal]', {
-      state: 'detached',
-    });
-  }
-
-  if (await page.locator('[role=dialog]').isVisible()) {
-    await page.waitForSelector('[role=dialog]', { state: 'detached' });
-  }
+  // const promise = page.evaluate(evaluateCallback, REQUEST_IS_FINISHED);
+  callback();
 
   if (await page.locator('[role=dialog]').isVisible()) {
     await page.waitForSelector('[role=dialog]', { state: 'detached' });

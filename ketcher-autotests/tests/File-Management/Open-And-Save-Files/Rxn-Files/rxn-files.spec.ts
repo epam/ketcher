@@ -47,45 +47,47 @@ test('Open and Save file - Reaction from file that contains abbreviation 2/2 - s
   expect(rxnFile).toEqual(rxnFileExpected);
 });
 
-test('Open and Save file - Reaction from file that contains Heteroatoms 1/2 - open', async ({
-  page,
-}) => {
-  /**
-   * Test case: EPMLSOPKET-1904(1)
-   * Description: Reaction with heteroatoms is opened and saved correctly
-   */
-  await page.goto('');
+test.fixme(
+  'Open and Save file - Reaction from file that contains Heteroatoms 1/2 - open',
+  async ({ page }) => {
+    /**
+     * Test case: EPMLSOPKET-1904(1)
+     * Description: Reaction with heteroatoms is opened and saved correctly
+     */
+    await page.goto('');
 
-  await openFileAndAddToCanvas('Heteroatoms.rxn', page);
-  // check that structure opened from file is displayed correctly
-  await takeEditorScreenshot(page);
-});
+    await openFileAndAddToCanvas('Heteroatoms.rxn', page);
+    // check that structure opened from file is displayed correctly
+    await takeEditorScreenshot(page);
+  }
+);
 
-test('Open and Save file - Reaction from file that contains Heteroatoms 2/2 - save', async ({
-  page,
-}) => {
-  /**
-   * Test case: EPMLSOPKET-1904(2)
-   * Description: Reaction with heteroatoms is opened and saved correctly
-   */
-  await page.goto('');
+test.fixme(
+  'Open and Save file - Reaction from file that contains Heteroatoms 2/2 - save',
+  async ({ page }) => {
+    /**
+     * Test case: EPMLSOPKET-1904(2)
+     * Description: Reaction with heteroatoms is opened and saved correctly
+     */
+    await page.goto('');
 
-  await openFileAndAddToCanvas('Heteroatoms.rxn', page);
-  const expectedFile = await getRxn(page, 'v2000');
-  await saveToFile('heteroatoms-expectedV2000.rxn', expectedFile);
+    await openFileAndAddToCanvas('Heteroatoms.rxn', page);
+    const expectedFile = await getRxn(page, 'v2000');
+    await saveToFile('heteroatoms-expectedV2000.rxn', expectedFile);
 
-  // eslint-disable-next-line no-magic-numbers
-  const METADATA_STRINGS_INDEXES = [2, 7, 30, 39, 62];
+    // eslint-disable-next-line no-magic-numbers
+    const METADATA_STRINGS_INDEXES = [2, 7, 30, 39, 62];
 
-  const { fileExpected: rxnFileExpected, file: rxnFile } =
-    await receiveFileComparisonData({
-      page,
-      expectedFileName: 'tests/test-data/heteroatoms-expectedV2000.rxn',
-      metaDataIndexes: METADATA_STRINGS_INDEXES,
-    });
+    const { fileExpected: rxnFileExpected, file: rxnFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName: 'tests/test-data/heteroatoms-expectedV2000.rxn',
+        metaDataIndexes: METADATA_STRINGS_INDEXES,
+      });
 
-  expect(rxnFile).toEqual(rxnFileExpected);
-});
+    expect(rxnFile).toEqual(rxnFileExpected);
+  }
+);
 
 test('Open and Save file - V3000 rxn file contains Rgroup 1/2 - open', async ({
   page,

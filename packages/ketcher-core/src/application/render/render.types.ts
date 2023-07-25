@@ -58,6 +58,7 @@ export type RenderOptions = {
   hoverStyle: RenderOptionStyles;
   sgroupBracketStyle: RenderOptionStyles;
   lassoStyle: RenderOptionStyles;
+  selectionStyleSimpleObject: RenderOptionStyles;
   hoverStyleSimpleObject: RenderOptionStyles;
   atomSelectionPlateRadius: number;
   contractedFunctionalGroupSize: number;

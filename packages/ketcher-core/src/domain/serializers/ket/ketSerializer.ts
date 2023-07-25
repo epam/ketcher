@@ -71,10 +71,7 @@ function parseNode(node: any, struct: any) {
 export class KetSerializer implements Serializer<Struct> {
   deserialize(content: string): Struct {
     const resultingStruct = new Struct();
-    console.log('content', content);
     const ket = JSON.parse(content);
-    console.log('ket', ket);
-    console.log('validate ket', validate(ket));
     if (!validate(ket)) {
       throw new Error('Cannot deserialize input JSON.');
     }

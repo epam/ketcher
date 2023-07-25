@@ -103,13 +103,13 @@ selectNestedTool - select specific tool that has sub / nested levels.
 - **OPTIONAL: Test Polymer Editor **:
   If you want to run tests from Polymer Editor, add `ENABLE_POLYMER_EDITOR=true` in scripts:
 
-  - Root package.json: "build:example": "ENABLE_POLYMER_EDITOR=true npm run build -w example";
+  - Root package.json: "build": "ENABLE_POLYMER_EDITOR=true npm run build -w example";
 
 - **Run app in browser: from root directory "ketcher"**:
 
 - `npm ci`
-- `npm run build:example`
-- `npm run serve:standalone`
+- `npm run build`
+- `npm run serve`
 
 - **Run docker**:
 

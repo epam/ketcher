@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
+import assert from 'assert';
 import { Atom, radicalElectrons } from './atom';
 import { EditorSelection } from 'application/editor';
 import { Bond } from './bond';
@@ -132,6 +133,7 @@ export class Struct {
     aidMap?: Map<number, number> | null,
     simpleObjectsSet?: Pile<number> | null,
     textsSet?: Pile<number> | null,
+    rgroupAttachmentPointSet?: Pile<number> | null,
   ): Struct {
     return this.mergeInto(
       new Struct(),
@@ -142,6 +144,7 @@ export class Struct {
       aidMap,
       simpleObjectsSet,
       textsSet,
+      rgroupAttachmentPointSet,
     );
   }
 
@@ -185,12 +188,16 @@ export class Struct {
     aidMap?: Map<number, number> | null,
     simpleObjectsSet?: Pile<number> | null,
     textsSet?: Pile<number> | null,
+    rgroupAttachmentPointSet?: Pile<number> | null,
   ): Struct {
     atomSet = atomSet || new Pile<number>(this.atoms.keys());
     bondSet = bondSet || new Pile<number>(this.bonds.keys());
     simpleObjectsSet =
       simpleObjectsSet || new Pile<number>(this.simpleObjects.keys());
     textsSet = textsSet || new Pile<number>(this.texts.keys());
+    rgroupAttachmentPointSet =
+      rgroupAttachmentPointSet ||
+      new Pile<number>(this.rgroupAttachmentPoints.keys());
     aidMap = aidMap || new Map();
 
     bondSet = bondSet.filter((bid) => {
@@ -287,6 +294,12 @@ export class Struct {
 
     textsSet.forEach((id) => {
       cp.texts.add(this.texts.get(id)!.clone());
+    });
+
+    rgroupAttachmentPointSet.forEach((id) => {
+      const rgroupAttachmentPoint = this.rgroupAttachmentPoints.get(id);
+      assert(rgroupAttachmentPoint != null);
+      cp.rgroupAttachmentPoints.add(rgroupAttachmentPoint.clone(aidMap));
     });
 
     if (!dropRxnSymbols) {

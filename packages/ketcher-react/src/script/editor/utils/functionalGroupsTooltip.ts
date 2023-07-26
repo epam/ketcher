@@ -1,5 +1,6 @@
-import Editor from '../Editor';
+import assert from 'assert';
 import { Bond, SGroup, Struct } from 'ketcher-core';
+import Editor from '../Editor';
 
 let showTooltipTimer: ReturnType<typeof setTimeout> | null = null;
 
@@ -17,30 +18,46 @@ type InfoPanelData = {
  * But due to current rendering approach for sgroups (ungrouping sgroups)
  * - we have to use RGroup attachment points on atoms for this purposes
  */
-// @yuleicul FIXME: R-Group and S-Group AttachmentPoints both disappear on infoPanel and template modal
 function convertSGroupAttachmentPointsToRGroupAttachmentPoints(
   struct: Struct,
   sGroup: SGroup,
   atomsIdMapping: Map<number, number>,
 ) {
   sGroup.getAttachmentPoints().forEach((attachmentPoint) => {
-    const attachmentPointAtom = struct.atoms.get(
-      atomsIdMapping.get(attachmentPoint.atomId)!,
-    )!;
+    const atomId = atomsIdMapping.get(attachmentPoint.atomId);
+    assert(atomId != null);
+    const attachmentPointAtom = struct.atoms.get(atomId);
+    assert(attachmentPointAtom != null);
     attachmentPointAtom.setRGAttachmentPointForDisplayPurpose();
+    const rgroupAttachmentPoint =
+      attachmentPoint.convertToRGroupAttachmentPointForDisplayPurpose(atomId);
+    struct.rgroupAttachmentPoints.add(rgroupAttachmentPoint);
   });
 }
 
 function makeStruct(editor: Editor, sGroup: SGroup) {
   const existingStruct = editor.struct();
   const struct = new Struct();
-  const atomsIdMapping = new Map();
 
-  sGroup.atoms.forEach((atomId) => {
-    const atom = existingStruct.atoms.get(atomId)!;
-    const atomIdInTooltip = struct.atoms.add(atom.clone());
-    atomsIdMapping.set(atomId, atomIdInTooltip);
-  });
+  const atomsIdMapping = makeAtoms(sGroup, existingStruct, struct);
+  makeRGroupAttachmentPoints(sGroup, existingStruct, struct, atomsIdMapping);
+  makeBonds(sGroup, existingStruct, struct, atomsIdMapping);
+
+  convertSGroupAttachmentPointsToRGroupAttachmentPoints(
+    struct,
+    sGroup,
+    atomsIdMapping,
+  );
+
+  return struct;
+}
+
+function makeBonds(
+  sGroup: SGroup,
+  existingStruct: Struct,
+  struct: Struct,
+  atomsIdMapping: Map<number, number>,
+) {
   Array.from(existingStruct.bonds).forEach((value) => {
     const [_, bond] = value as [number, Bond];
     const clonedBond = bond.clone(atomsIdMapping);
@@ -50,14 +67,37 @@ function makeStruct(editor: Editor, sGroup: SGroup) {
       struct.bonds.add(clonedBond);
     }
   });
+}
 
-  convertSGroupAttachmentPointsToRGroupAttachmentPoints(
-    struct,
-    sGroup,
-    atomsIdMapping,
-  );
+function makeRGroupAttachmentPoints(
+  sGroup: SGroup,
+  existingStruct: Struct,
+  struct: Struct,
+  atomsIdMapping: Map<number, number>,
+) {
+  sGroup.atoms.forEach((atomId: number) => {
+    const rgroupAttachmentPointIds =
+      existingStruct.getRGroupAttachmentPointsByAtomId(atomId);
+    rgroupAttachmentPointIds.forEach((id) => {
+      const rgroupAttachmentPoint =
+        existingStruct.rgroupAttachmentPoints.get(id);
+      assert(rgroupAttachmentPoint != null);
+      struct.rgroupAttachmentPoints.add(
+        rgroupAttachmentPoint.clone(atomsIdMapping),
+      );
+    });
+  });
+}
 
-  return struct;
+function makeAtoms(sGroup: SGroup, existingStruct: Struct, struct: Struct) {
+  const atomsIdMapping = new Map();
+  sGroup.atoms.forEach((atomId: number) => {
+    const atom = existingStruct.atoms.get(atomId);
+    assert(atom != null);
+    const atomIdInTooltip = struct.atoms.add(atom.clone());
+    atomsIdMapping.set(atomId, atomIdInTooltip);
+  });
+  return atomsIdMapping;
 }
 
 function hideTooltip(editor: Editor) {

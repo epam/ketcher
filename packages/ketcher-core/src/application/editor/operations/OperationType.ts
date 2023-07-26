@@ -36,6 +36,8 @@ export const OperationType = Object.freeze({
   S_GROUP_REMOVE_FROM_HIERACHY: 'Delete s-group from hierarchy',
   R_GROUP_ATTR: 'Set r-group attribute',
   R_GROUP_FRAGMENT: 'R-group fragment',
+  R_GROUP_ATTACHMENT_POINT_ADD: 'Add R-group attachment point',
+  R_GROUP_ATTACHMENT_POINT_REMOVE: 'Remove R-group attachment point',
   UPDATE_IF_THEN: 'Update',
   RESTORE_IF_THEN: 'Restore',
   RXN_ARROW_ADD: 'Add rxn arrow',
@@ -68,3 +70,24 @@ export const OperationType = Object.freeze({
   UPDATE_HIGHLIGHT: 'Update highlight',
   REMOVE_HIGHLIGHT: 'Remove highlight',
 });
+
+export enum OperationPriority {
+  ATOM_ATTR = 1,
+  BOND_ADD = 1,
+  ATOM_MOVE = 2,
+  BOND_ATTR = 2,
+  BOND_MOVE = 2,
+  BOND_DELETE = 3,
+  S_GROUP_ATOM_ADD = 3,
+  S_GROUP_ATTACHMENT_POINT_ADD = 3,
+  R_GROUP_ATTACHMENT_POINT_ADD = 3,
+  R_GROUP_ATTACHMENT_POINT_REMOVE = 3,
+  S_GROUP_ATTR = 4,
+  ATOM_DELETE = 5,
+  FRAGMENT_STEREO_FLAG = 6,
+  CALC_IMPLICIT_H = 10,
+  FRAGMENT_DELETE_STEREO_ATOM = 90,
+  S_GROUP_DELETE = 95,
+  S_GROUP_ADD_TO_HIERACHY = 100,
+  FRAGMENT_ADD_STEREO_ATOM = 100,
+}

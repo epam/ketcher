@@ -2,10 +2,10 @@ export type RGroupAttachmentPointType = 'primary' | 'secondary';
 
 export class RGroupAttachmentPoint {
   atomId: number;
-  attachmentPointType: RGroupAttachmentPointType;
+  type: RGroupAttachmentPointType;
 
-  constructor(atomId: number, attachmentPointType: RGroupAttachmentPointType) {
+  constructor(atomId: number, type: RGroupAttachmentPointType) {
     this.atomId = atomId;
-    this.attachmentPointType = attachmentPointType;
+    this.type = type;
   }
 }

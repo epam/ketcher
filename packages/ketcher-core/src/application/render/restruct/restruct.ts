@@ -383,8 +383,6 @@ class ReStruct {
 
     let boundingBox = this.getBoundingBoxForSelection(selection);
 
-    // @yuleicul TODO: selectionBox for R-Group attachment points
-
     boundingBox = boundingBox || new Box2Abs(0, 0, 0, 0);
     return boundingBox;
   }

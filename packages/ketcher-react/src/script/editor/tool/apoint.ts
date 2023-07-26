@@ -14,13 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import {
-  fromAtomsAttrs,
-  fromRGroupAttachmentPointUpdate,
-  FunctionalGroup,
-} from 'ketcher-core';
+import assert from 'assert';
+import { FunctionalGroup } from 'ketcher-core';
 import Editor from '../Editor';
 import { Tool } from './Tool';
+import { editRGroupAttachmentPoint } from './apoint.utils';
 
 class APointTool implements Tool {
   private readonly editor: Editor;
@@ -85,36 +83,12 @@ class APointTool implements Tool {
     if (ci && ci.map === 'atoms') {
       this.editor.hover(null);
       const atom = molecule.atoms.get(ci.id);
+      assert(atom != null);
 
-      if (atom?.label === 'R#' && atom?.rglabel !== null) return;
+      if (!atom.isRGroupAttachmentPointEditDisabled) {
+        editRGroupAttachmentPoint(editor, atom, ci.id);
+      }
 
-      const res = editor.event.elementEdit.dispatch({
-        attpnt: atom?.attpnt,
-      });
-      Promise.resolve(res)
-        .then((newatom) => {
-          const previousAttpnt = atom?.attpnt;
-          const currentAttpnt = newatom.attpnt;
-          if (previousAttpnt !== currentAttpnt) {
-            const actionFromAtomsAttrs = fromAtomsAttrs(
-              editor.render.ctab,
-              ci.id,
-              newatom,
-              null,
-            );
-            const actionFromRGroupAttachmentPointUpdate =
-              fromRGroupAttachmentPointUpdate(
-                editor.render.ctab,
-                ci.id,
-                currentAttpnt,
-              );
-            const action = actionFromAtomsAttrs.mergeWith(
-              actionFromRGroupAttachmentPointUpdate,
-            );
-            editor.update(action);
-          }
-        })
-        .catch(() => null); // w/o changes
       return true;
     }
     return true;

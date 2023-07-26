@@ -648,7 +648,7 @@ function shouldDisplayStereoLabel(
 }
 
 function isLabelVisible(restruct, options, atom) {
-  const isAttachmentPointAtom = atom.a.attpnt;
+  const isAttachmentPointAtom = Boolean(atom.a.attpnt);
   const isCarbon = atom.a.label.toLowerCase() === 'c';
   const visibleTerminal =
     options.showHydrogenLabels !== ShowHydrogenLabels.Off &&

@@ -69,8 +69,7 @@ class ReStruct {
   public rxnArrows: Map<number, ReRxnArrow> = new Map();
   public frags: Pool = new Pool();
   public rgroups: Pool = new Pool();
-  public rgroupAttachmentPoints: Map<number, ReRGroupAttachmentPoint> =
-    new Map();
+  public rgroupAttachmentPoints: Pool<ReRGroupAttachmentPoint> = new Pool();
 
   public sgroups: Map<number, ReSGroup> = new Map();
   public sgroupData: Map<number, ReDataSGroupData> = new Map();
@@ -155,6 +154,22 @@ class ReStruct {
       if (FunctionalGroup.isFunctionalGroup(item) || SGroup.isSuperAtom(item)) {
         this.molecule.functionalGroups.set(id, new FunctionalGroup(item));
       }
+    });
+  }
+
+  get visibleRGroupAttachmentPoints() {
+    const sgroups = this.molecule.sgroups;
+    const functionalGroups = this.molecule.functionalGroups;
+    return this.rgroupAttachmentPoints.filter((_id, reItem) => {
+      const atomId = reItem.item.atomId;
+      const atom = this.molecule.atoms.get(atomId);
+      assert(atom != null);
+      return !FunctionalGroup.isAtomInContractedFunctionalGroup(
+        atom,
+        sgroups,
+        functionalGroups,
+        false,
+      );
     });
   }
 
@@ -612,6 +627,40 @@ class ReStruct {
     this.reloops.forEach((reloop, rlid) => {
       if (!reloop.isValid(this.molecule, rlid)) this.loopRemove(rlid);
     });
+  }
+
+  getRGroupAttachmentPointsVBoxByAtomIds(atomsIds: number[]): Box2Abs | null {
+    let allAtomAttachmentPointsVBox: Box2Abs | null = null;
+
+    atomsIds.forEach((atomId) => {
+      const attachmentPointIds =
+        this.molecule.getRGroupAttachmentPointsByAtomId(atomId);
+
+      const oneAtomAttachmentPointsVBox = attachmentPointIds.reduce(
+        (previousVBox, attachmentPointId) => {
+          const attachmentPoint =
+            this.rgroupAttachmentPoints.get(attachmentPointId);
+          assert(attachmentPoint != null);
+          const currentVBox = attachmentPoint.getVBoxObj(this.render);
+          return previousVBox && currentVBox
+            ? Box2Abs.union(previousVBox, currentVBox)
+            : currentVBox;
+        },
+        null as Box2Abs | null,
+      );
+
+      if (allAtomAttachmentPointsVBox && oneAtomAttachmentPointsVBox) {
+        allAtomAttachmentPointsVBox = Box2Abs.union(
+          allAtomAttachmentPointsVBox,
+          oneAtomAttachmentPointsVBox,
+        );
+      } else {
+        allAtomAttachmentPointsVBox =
+          allAtomAttachmentPointsVBox ?? oneAtomAttachmentPointsVBox;
+      }
+    });
+
+    return allAtomAttachmentPointsVBox;
   }
 
   private showRgroupAttachmentPoints() {

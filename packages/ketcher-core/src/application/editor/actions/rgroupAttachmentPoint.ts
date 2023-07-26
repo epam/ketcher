@@ -4,7 +4,7 @@ import {
   RGroupAttachmentPointRemove,
 } from '../operations';
 import { Action } from './action';
-import { RGroupAttachmentPoint, Struct } from 'domain/entities';
+import { Struct } from 'domain/entities';
 
 function fromRGroupAttachmentPointUpdate(
   restruct: ReStruct,
@@ -64,8 +64,8 @@ function fromRGroupAttachmentPointAddition(attpnt, atomId: number) {
 function fromRGroupAttachmentPointsDeletion(struct: Struct, atomId: number) {
   const action = new Action();
   const attachmentPointsToDelete =
-    RGroupAttachmentPoint.getRGroupAttachmentPointsByAtomId(atomId, struct);
-  attachmentPointsToDelete.forEach((_attachmentPoint, id) => {
+    struct.getRGroupAttachmentPointsByAtomId(atomId);
+  attachmentPointsToDelete.forEach((id) => {
     action.addOp(new RGroupAttachmentPointRemove(id));
   });
   return action;

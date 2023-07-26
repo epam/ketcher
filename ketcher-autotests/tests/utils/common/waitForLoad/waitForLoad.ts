@@ -1,5 +1,4 @@
 import { Page } from '@playwright/test';
-import { delay, DELAY_IN_SECONDS } from '@tests/utils';
 
 // const evaluateCallback = (REQUEST_IS_FINISHED: string) => {
 //   const MAX_TIME_TO_WAIT = 10000;

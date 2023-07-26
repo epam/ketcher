@@ -59,7 +59,7 @@ test.fixme(
     await openFileAndAddToCanvas('Heteroatoms.rxn', page);
     // check that structure opened from file is displayed correctly
     await takeEditorScreenshot(page);
-  }
+  },
 );
 
 test.fixme(
@@ -86,7 +86,7 @@ test.fixme(
       });
 
     expect(rxnFile).toEqual(rxnFileExpected);
-  }
+  },
 );
 
 test('Open and Save file - V3000 rxn file contains Rgroup 1/2 - open', async ({

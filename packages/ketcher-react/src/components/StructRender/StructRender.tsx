@@ -14,10 +14,22 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { RenderStruct } from 'ketcher-core';
+import { MolSerializer, RenderStruct, Struct } from 'ketcher-core';
 import { useEffect, useRef } from 'react';
 import { Container } from './styles';
 import { IStructRenderProps } from './types';
+
+const normalizeStruct = (molV2000StringOrStruct: string | Struct) => {
+  if (molV2000StringOrStruct instanceof Struct) {
+    return molV2000StringOrStruct;
+  }
+
+  try {
+    return new MolSerializer().deserialize(molV2000StringOrStruct);
+  } catch (e) {
+    throw Error('Could not parse Struct');
+  }
+};
 
 const StructRender = ({ struct, options, className }: IStructRenderProps) => {
   const renderRef = useRef<HTMLDivElement>(null);
@@ -27,7 +39,8 @@ const StructRender = ({ struct, options, className }: IStructRenderProps) => {
 
     if (container) {
       container.innerHTML = '';
-      RenderStruct.render(container, struct, options);
+      const normalizedStruct = normalizeStruct(struct);
+      RenderStruct.render(container, normalizedStruct, options);
     }
   }, [struct, options]);
 

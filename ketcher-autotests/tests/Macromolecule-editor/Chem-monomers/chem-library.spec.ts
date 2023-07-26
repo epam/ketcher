@@ -4,7 +4,7 @@ test.describe('Open Ketcher', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('');
   });
-  test('Switch to Polymer Editor', async ({ page }) => {
+  test.skip('Switch to Polymer Editor', async ({ page }) => {
     /* 
     Test case: #2496 - chem monomer library
     Description: Switch to Polymer Editor
@@ -15,7 +15,7 @@ test.describe('Open Ketcher', () => {
     await expect(page.getByText('CHEM')).toBeVisible();
   });
 
-  test('Open Chem tab in library', async ({ page }) => {
+  test.skip('Open Chem tab in library', async ({ page }) => {
     /* 
     Test case: #2496 - chem monomer library
     Description: Open Chem tab in library

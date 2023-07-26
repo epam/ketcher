@@ -87,7 +87,7 @@ test.describe('SMILES files', () => {
     );
   });
 
-  test('SmileString from mol file that contains abbreviation', async ({
+  test('SmileString from mol file that contains abbreviation @check', async ({
     page,
   }) => {
     /*
@@ -96,7 +96,8 @@ test.describe('SMILES files', () => {
     warning appears for all types of Sgroup except the multiple Sgroup type.
     */
     await openFileAndAddToCanvas('sec_butyl_abr.mol', page);
-
+    // w/o this delay get "Convert error! Cannot read properties of null (reading 'convert')". This happens only on docker env
+    await delay(DELAY_IN_SECONDS.ONE);
     await getPreviewForSmiles(page, 'MDL Molfile V2000', 'Daylight SMILES');
     await delay(DELAY_IN_SECONDS.TWO);
     await page.getByText('Warnings').click();

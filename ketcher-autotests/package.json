@@ -17,6 +17,7 @@
     "docker": "docker-compose run --rm autotests",
     "docker:build": "docker-compose build autotests",
     "docker:test": "npm run docker npx playwright test",
+    "docker:trace": "npm run docker npm run test:trace",
     "docker:update": "npm run docker npm run test:update",
     "docker:update:test": "npm run docker -- npx playwright test --update-snapshots -g"
   },

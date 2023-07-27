@@ -23,7 +23,6 @@ import { selectShowPreview } from 'state/common';
 
 const MonomerPreview = ({ className }: IPreviewProps) => {
   const preview = useAppSelector(selectShowPreview);
-
   const ContainerDinamic = useMemo(
     () => styled(Container)`
       top: ${preview?.style || ''};

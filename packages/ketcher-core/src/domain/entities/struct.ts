@@ -34,6 +34,7 @@ import { SimpleObject } from './simpleObject';
 import { Text } from './text';
 import { Vec2 } from './vec2';
 import { Highlight } from './highlight';
+import { Peptide } from 'domain/entities/Peptide';
 
 export type Neighbor = {
   aid: number;
@@ -52,6 +53,7 @@ export class Struct {
   atoms: Pool<Atom>;
   bonds: Pool<Bond>;
   sgroups: Pool<SGroup>;
+  peptides: Pool<Peptide>;
   halfBonds: Pool<HalfBond>;
   loops: Pool<Loop>;
   isReaction: boolean;
@@ -71,6 +73,7 @@ export class Struct {
     this.atoms = new Pool<Atom>();
     this.bonds = new Pool<Bond>();
     this.sgroups = new Pool<SGroup>();
+    this.peptides = new Pool<Peptide>();
     this.halfBonds = new Pool<HalfBond>();
     this.loops = new Pool<Loop>();
     this.isReaction = false;

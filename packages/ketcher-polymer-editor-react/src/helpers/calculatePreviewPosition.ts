@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 import { EditorClassName, preview } from '../constants';
-import { MonomerItemType } from '../components/monomerLibrary/monomerLibraryItem/types';
+import { MonomerItemType } from 'ketcher-core';
 
 export const calculatePreviewPosition = (
   monomer: MonomerItemType | undefined,

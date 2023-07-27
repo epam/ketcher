@@ -13,13 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { LibraryNameType } from '../../../constants';
-import { MonomerItemType } from 'ketcher-core';
+import { Tool } from 'application/editor/tools/Tool';
+import { Vec2 } from 'domain/entities';
 
-export interface IMonomerGroupProps {
-  items: MonomerItemType[];
-  onItemClick?: (item: MonomerItemType) => void;
-  title?: string;
-  libraryName?: LibraryNameType;
-  selectedMonomerUniqueKey?: string;
+class SelectLasso implements Tool {
+  private isMouseDown = false;
+  private selectedItem;
+
+  mousedown(event) {
+    this.isMouseDown = true;
+    this.selectedItem = event.target.__data__;
+  }
+
+  mousemove(event) {
+    if (this.isMouseDown && this.selectedItem) {
+      this.selectedItem.peptide.moveRelative(
+        new Vec2(event.movementX, event.movementY),
+      );
+      this.selectedItem.move();
+    }
+  }
+
+  mouseup() {
+    this.isMouseDown = false;
+    this.selectedItem = null;
+  }
 }
+
+export { SelectLasso };

@@ -40,6 +40,7 @@ import ReText from './retext';
 import { Render } from '../raphaelRender';
 import Visel from './visel';
 import util from '../util';
+import { PeptideRenderer } from 'application/render/renderers/PeptideRenderer';
 
 class ReStruct {
   public static maps = {
@@ -52,6 +53,7 @@ class ReStruct {
     sgroupData: ReDataSGroupData,
     enhancedFlags: ReEnhancedFlag,
     sgroups: ReSGroup,
+    peptides: PeptideRenderer,
     reloops: ReLoop,
     simpleObjects: ReSimpleObject,
     texts: ReText,
@@ -67,6 +69,7 @@ class ReStruct {
   public frags: Pool = new Pool();
   public rgroups: Pool = new Pool();
   public sgroups: Map<number, ReSGroup> = new Map();
+  public peptides: Map<number, PeptideRenderer> = new Map();
   public sgroupData: Map<number, ReDataSGroupData> = new Map();
   public enhancedFlags: Map<number, ReEnhancedFlag> = new Map();
   private simpleObjects: Map<number, ReSimpleObject> = new Map();
@@ -89,7 +92,9 @@ class ReStruct {
     // eslint-disable-line max-statements
     this.render = render;
     this.molecule = molecule || new Struct();
-    this.initLayers();
+    if (!render.skipRaphaelInitialization) {
+      this.initLayers();
+    }
     this.clearMarks();
     // TODO: eachItem ?
 
@@ -454,7 +459,9 @@ class ReStruct {
       const mapChanged = this[map + 'Changed'];
 
       mapChanged.forEach((_value, id) => {
-        this.clearVisel(this[map].get(id).visel);
+        if (this[map].get(id).visel) {
+          this.clearVisel(this[map].get(id).visel);
+        }
         this.structChanged = this.structChanged || mapChanged.get(id) > 0;
       });
     });
@@ -489,6 +496,8 @@ class ReStruct {
 
     this.assignConnectedComponents();
     this.initialized = true;
+
+    this.showPeptides();
 
     this.verifyLoops();
     const updLoops = force || this.structChanged;
@@ -649,6 +658,13 @@ class ReStruct {
     this.atomsChanged.forEach((_value, aid) => {
       const atom = this.atoms.get(aid);
       if (atom) atom.show(this, aid, options);
+    });
+  }
+
+  private showPeptides(): void {
+    this.peptides.forEach((peptideRenderer) => {
+      peptideRenderer.remove();
+      peptideRenderer.show((this.render as any).theme);
     });
   }
 

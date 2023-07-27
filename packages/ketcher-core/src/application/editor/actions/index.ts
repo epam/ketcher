@@ -17,3 +17,4 @@ export * from './template';
 export * from './text';
 export * from './utils';
 export * from './highlight';
+export * from './peptide';

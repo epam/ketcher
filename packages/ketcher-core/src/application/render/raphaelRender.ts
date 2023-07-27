@@ -25,6 +25,7 @@ import draw from './draw';
 import { RenderOptions } from './render.types';
 
 export class Render {
+  public skipRaphaelInitialization: boolean = false;
   public readonly clientArea: HTMLElement;
   public readonly paper: RaphaelPaper;
   // TODO https://github.com/epam/ketcher/issues/2631

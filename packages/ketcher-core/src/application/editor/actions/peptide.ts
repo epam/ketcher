@@ -13,13 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { LibraryNameType } from '../../../constants';
-import { MonomerItemType } from 'ketcher-core';
+import { ReStruct } from 'application/render';
+import { Action } from 'application/editor';
+import { PeptideAdd } from 'application/editor/operations/peptide';
+import { Vec2 } from 'domain/entities';
+import { MonomerItemType } from 'domain/types';
 
-export interface IMonomerGroupProps {
-  items: MonomerItemType[];
-  onItemClick?: (item: MonomerItemType) => void;
-  title?: string;
-  libraryName?: LibraryNameType;
-  selectedMonomerUniqueKey?: string;
+export function fromPeptideAddition(
+  renderersContainer: ReStruct,
+  peptide: MonomerItemType,
+  position: Vec2,
+): Action {
+  const action = new Action();
+  action.addOp(new PeptideAdd(peptide, position)).perform(renderersContainer);
+
+  return action;
 }

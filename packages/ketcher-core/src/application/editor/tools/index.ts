@@ -13,13 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { LibraryNameType } from '../../../constants';
-import { MonomerItemType } from 'ketcher-core';
+import { ToolConstructorInterface } from './Tool';
+import { PeptideTool } from 'application/editor/tools/Peptide';
+import { SelectLasso } from 'application/editor/tools/SelectLasso';
 
-export interface IMonomerGroupProps {
-  items: MonomerItemType[];
-  onItemClick?: (item: MonomerItemType) => void;
-  title?: string;
-  libraryName?: LibraryNameType;
-  selectedMonomerUniqueKey?: string;
-}
+export const toolsMap: Record<string, ToolConstructorInterface> = {
+  peptide: PeptideTool,
+  'select-lasso': SelectLasso,
+};

@@ -17,7 +17,7 @@ import {
   saveToFile,
   dragMouseTo,
   pressButton,
-  STRUCTURE_LIBRARY_BUTTON_NAME
+  STRUCTURE_LIBRARY_BUTTON_NAME,
 } from '@utils';
 import { getMolfile, getRxn } from '@utils/formats';
 
@@ -25,7 +25,7 @@ import {
   getFirstAtomCoordinatesByAttributes,
   getBottomAtomByAttributes,
   getTopAtomByAttributes,
-  getLeftAtomByAttributes
+  getLeftAtomByAttributes,
 } from '@utils/canvas/atoms';
 
 let point: { x: number; y: number };
@@ -37,7 +37,7 @@ async function moveCursoreAroundPoint(
   x: number,
   y: number,
   delta: number,
-  page: Page
+  page: Page,
 ) {
   await page.mouse.click(x, y);
   await dragMouseTo(x + delta, y, page);
@@ -55,6 +55,15 @@ test.describe('Template Manupulations', () => {
   test.afterEach(async ({ page }) => {
     await takeEditorScreenshot(page);
   });
+  test('Template palette', async ({ page }) => {
+    /*
+            Test case: 1666
+            Description: Look at the bottom of the application.
+            Choose any template.
+            */
+    await takeEditorScreenshot;
+    await selectRing(RingButton.Benzene, page);
+  });
 
   test('1-2) Fuse atom-to-atom', async ({ page }) => {
     /*
@@ -65,7 +74,7 @@ test.describe('Template Manupulations', () => {
     await openFileAndAddToCanvas('template-manipulations/TM-1674.mol', page);
     await selectAtomInToolbar(AtomButton.Carbon, page);
     point = await getFirstAtomCoordinatesByAttributes(page, {
-      label: 'O'
+      label: 'O',
     });
     await page.mouse.click(point.x, point.y);
   });
@@ -78,7 +87,7 @@ test.describe('Template Manupulations', () => {
       */
     await openFileAndAddToCanvas('template-manipulations/TM-1674.mol', page);
     point = await getBottomAtomByAttributes(page, {
-      label: 'O'
+      label: 'O',
     });
     await page.mouse.click(point.x, point.y);
     await dragMouseTo(point.x + delta, point.y + delta, page);
@@ -92,22 +101,22 @@ test.describe('Template Manupulations', () => {
        */
     await openFileAndAddToCanvas('template-manipulations/TM-1674.mol', page);
     point = await getLeftAtomByAttributes(page, {
-      label: 'O'
+      label: 'O',
     });
     secondPoint = await getBottomAtomByAttributes(page, {
-      label: 'O'
+      label: 'O',
     });
     await moveCursoreAroundPoint(point.x, point.y + delta, delta, page);
     await dragMouseTo(
       secondPoint.x - smallDelta,
       secondPoint.y - smallDelta,
-      page
+      page,
     );
     await dragMouseTo(point.x + delta, point.y + delta, page);
   });
 
   test('5) Fuse atom-to-atom: click and drug atom to fuse atom-to-atom', async ({
-    page
+    page,
   }) => {
     /*
         Test case: EPMLSOPKET-1674
@@ -117,27 +126,27 @@ test.describe('Template Manupulations', () => {
     await openFileAndAddToCanvas('template-manipulations/TM-1674.mol', page);
 
     point = await getLeftAtomByAttributes(page, {
-      label: 'O'
+      label: 'O',
     });
     secondPoint = await getBottomAtomByAttributes(page, {
-      label: 'O'
+      label: 'O',
     });
 
     await page.mouse.click(point.x, point.y);
     await dragMouseTo(
       secondPoint.x - smallDelta,
       secondPoint.y - smallDelta,
-      page
+      page,
     );
     await dragMouseTo(
       point.x + point.x + delta,
       point.y + point.y + delta,
-      page
+      page,
     );
   });
 
   test('Fuse atom-to-atom: click and drug atom to extand bonds', async ({
-    page
+    page,
   }) => {
     /*
       Test case: EPMLSOPKET-1674
@@ -146,7 +155,7 @@ test.describe('Template Manupulations', () => {
 
     await openFileAndAddToCanvas('template-manipulations/TM-1674.mol', page);
     point = await getLeftAtomByAttributes(page, {
-      label: 'O'
+      label: 'O',
     });
 
     await page.mouse.click(point.x, point.y);
@@ -154,7 +163,7 @@ test.describe('Template Manupulations', () => {
   });
 
   test('Click or drag on the canvas: Place template on the Canvas', async ({
-    page
+    page,
   }) => {
     /*
       Test case: 1678
@@ -167,7 +176,7 @@ test.describe('Template Manupulations', () => {
   });
 
   test('Click or drag on the canvas: Rotate a template while placing', async ({
-    page
+    page,
   }) => {
     /*
       Test case: 1678
@@ -181,7 +190,7 @@ test.describe('Template Manupulations', () => {
   });
 
   test('Click or drag on the canvas: Rotate with a benzene', async ({
-    page
+    page,
   }) => {
     /*
       Test case: 1678
@@ -207,7 +216,7 @@ test.describe('Template Manupulations', () => {
     await openFileAndAddToCanvas('template-manipulations/TM-1737.mol', page);
     await clickInTheMiddleOfTheScreen(page);
     point = await getTopAtomByAttributes(page, {
-      label: 'O'
+      label: 'O',
     });
     await page.mouse.click(point.x, point.y);
     await dragMouseTo(point.x + delta, point.y + delta, page);
@@ -246,7 +255,7 @@ test.describe('Template Manupulations', () => {
         page,
         expectedFileName: 'tests/test-data/template-manipulations/TM-1737.mol',
         fileFormat: 'v2000',
-        metaDataIndexes: METADATA_STRING_INDEX
+        metaDataIndexes: METADATA_STRING_INDEX,
       });
 
     expect(molFile).toEqual(molFileExpected);
@@ -262,25 +271,15 @@ test.describe('Template Manupulations', () => {
     const expectedFile = await getRxn(page, 'v2000');
     await saveToFile(
       'template-manipulations/TM-1748-current.Rxn',
-      expectedFile
+      expectedFile,
     );
     const { file: RxnFile, fileExpected: RxnFileExpected } =
       await receiveFileComparisonData({
         page,
-        expectedFileName: 'tests/test-data/template-manipulations/TM-1748.Rxn'
+        expectedFileName: 'tests/test-data/template-manipulations/TM-1748.Rxn',
       });
     // comparing Rxn file with golden Rxn file
 
     expect(RxnFile).toEqual(RxnFileExpected);
-  });
-
-  test('Template palette', async ({ page }) => {
-    /*
-            Test case: 1666
-            Description: Look at the bottom of the application.
-            Choose any template.
-            */
-    await takeEditorScreenshot;
-    await selectRing(RingButton.Benzene, page);
   });
 });

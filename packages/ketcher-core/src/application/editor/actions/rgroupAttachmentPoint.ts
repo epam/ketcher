@@ -65,8 +65,8 @@ function fromRGroupAttachmentPointsDeletion(struct: Struct, atomId: number) {
   const action = new Action();
   const attachmentPointsToDelete =
     struct.getRGroupAttachmentPointsByAtomId(atomId);
-  attachmentPointsToDelete.forEach((id) => {
-    action.addOp(new RGroupAttachmentPointRemove(id));
+  attachmentPointsToDelete.forEach((rgroupAttachmentPointId) => {
+    action.addOp(new RGroupAttachmentPointRemove(rgroupAttachmentPointId));
   });
   return action;
 }

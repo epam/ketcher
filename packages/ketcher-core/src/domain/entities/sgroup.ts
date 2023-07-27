@@ -610,16 +610,6 @@ export class SGroup {
     return bonds;
   }
 
-  getRGroupAttachmentPoints(molecule: Struct) {
-    const atomIds = SGroup.getAtoms(molecule, this);
-    const rgroupAttachmentPointsInSGroup = atomIds.map((atomId) => {
-      const rgroupAttachmentPoints =
-        molecule.getRGroupAttachmentPointsByAtomId(atomId);
-      return rgroupAttachmentPoints;
-    });
-    return rgroupAttachmentPointsInSGroup.flat();
-  }
-
   static prepareMulForSaving(sgroup, mol): void {
     sgroup.atoms.sort((a, b) => a - b);
     sgroup.atomSet = new Pile(sgroup.atoms);

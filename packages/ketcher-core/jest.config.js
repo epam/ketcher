@@ -10,6 +10,7 @@ module.exports = {
     'domain(.*)$': '<rootDir>/src/domain/$1',
     'infrastructure(.*)$': '<rootDir>/src/infrastructure/$1',
     'utilities(.*)$': '<rootDir>/src/utilities/$1',
+    '^d3$': '<rootDir>/../../node_modules/d3/dist/d3.min.js',
   },
   globals: {
     'ts-jest': {

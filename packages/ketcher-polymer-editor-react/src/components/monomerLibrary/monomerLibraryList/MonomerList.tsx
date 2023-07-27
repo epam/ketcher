@@ -27,7 +27,7 @@ import {
   getMonomerUniqueKey,
 } from 'state/library';
 import { MONOMER_LIBRARY_FAVORITES } from '../../../constants';
-import { MonomerItemType } from '../monomerLibraryItem/types';
+import { MonomerItemType } from 'ketcher-core';
 
 export type Group = {
   groupItems: Array<MonomerItemType>;
@@ -57,6 +57,7 @@ const MonomerList = ({ onItemClick, libraryName }: IMonomerListProps) => {
             key={groupTitle}
             title={groups.length === 1 ? undefined : groupTitle}
             items={groupItems}
+            libraryName={libraryName}
             onItemClick={onItemClick || selectItem}
             selectedMonomerUniqueKey={selectedMonomers}
           />

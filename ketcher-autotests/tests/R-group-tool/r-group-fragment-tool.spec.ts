@@ -17,6 +17,7 @@ import {
   openFileAndAddToCanvas,
   SelectTool,
   pressButton,
+  clickOnAtom,
 } from '@utils';
 
 async function openRGroupModalForTopAtom(page: Page) {
@@ -31,6 +32,7 @@ async function openRGroupModalForTopAtom(page: Page) {
 }
 
 const rGroupFromFile = 'R8';
+const atomIndex = 3;
 async function selectRGroups(page: Page, rGroups: string[]) {
   await selectNestedTool(page, RgroupTool.R_GROUP_FRAGMENT);
   await page.getByText(rGroupFromFile).click();
@@ -45,7 +47,7 @@ async function selectRGroup(page: Page, rgroup: string) {
 }
 
 async function clickModalButton(page: Page, button: 'Apply' | 'Cancel') {
-  await page.locator(`input[type="button"][value="${button}"]`);
+  await page.locator(`input[type="button"][value="${button}"]`).click();
 }
 
 test.describe('Open Ketcher', () => {
@@ -118,6 +120,32 @@ test.describe('Open Ketcher', () => {
     await page.keyboard.press('Control+r');
     await page.mouse.click(x, y);
     await page.getByLabel(AttachmentPoint.PRIMARY).check();
+    await clickModalButton(page, 'Apply');
+  });
+
+  test('Brackets rendering for whole r-group structure', async ({ page }) => {
+    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await selectNestedTool(page, RgroupTool.R_GROUP_FRAGMENT);
+    await clickOnAtom(page, 'C', atomIndex);
+    await page.getByText(rGroupFromFile).click();
+    await clickModalButton(page, 'Apply');
+  });
+
+  test('Brackets rendering for whole r-group structure even with attachment points', async ({
+    page,
+  }) => {
+    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
+    await clickOnAtom(page, 'C', atomIndex);
+    await page.getByLabel(AttachmentPoint.PRIMARY).check();
+    await clickModalButton(page, 'Apply');
+    await selectNestedTool(
+      page,
+      RgroupTool.R_GROUP_FRAGMENT,
+      RgroupTool.ATTACHMENT_POINTS,
+    );
+    await clickOnAtom(page, 'C', atomIndex);
+    await page.getByText(rGroupFromFile).click();
     await clickModalButton(page, 'Apply');
   });
 

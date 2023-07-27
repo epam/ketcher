@@ -114,7 +114,7 @@ class ReBond extends ReObject {
       bond.stereo !== Bond.PATTERN.STEREO.NONE &&
       bond.stereo !== Bond.PATTERN.STEREO.CIS_TRANS;
 
-    const addPadding = isStereoBond ? 0 : 3;
+    const addPadding = isStereoBond ? 0 : -3.5;
 
     // find the points on the line where we will be drawing the curves
     const contourStart = Vec2.getLinePoint(

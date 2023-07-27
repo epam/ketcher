@@ -20,6 +20,7 @@ import { getMonomerUniqueKey, toggleMonomerFavorites } from 'state/library';
 import { Card } from './styles';
 import { IMonomerItemProps } from './types';
 import { selectIsEditMode } from 'state/rna-builder';
+import { MONOMER_TYPES } from '../../../constants';
 
 const MonomerItem = ({
   item,
@@ -31,15 +32,19 @@ const MonomerItem = ({
   const [favorite, setFavorite] = useState(item.favorite);
   const dispatch = useAppDispatch();
   const isEditMode = useAppSelector(selectIsEditMode);
+  const colorCode =
+    item.props.MonomerType === MONOMER_TYPES.CHEM
+      ? item.props.MonomerType
+      : item.props.MonomerNaturalAnalogCode;
 
   return (
     <Card
       onClick={onClick}
       selected={isSelected}
       disabled={!isEditMode}
-      code={item.props.MonomerNaturalAnalogCode}
       data-testid={getMonomerUniqueKey(item)}
       data-monomer-item-id={getMonomerUniqueKey(item)}
+      code={colorCode}
       onMouseLeave={onMouseLeave}
       onMouseMove={onMouseMove}
     >

@@ -86,6 +86,18 @@ const MonomerGroup = ({
     }
   };
 
+  const selectMonomer = (monomer: MonomerItemType) => {
+    switch (libraryName) {
+      case 'PEPTIDE':
+        editor.events.selectPeptide.dispatch(monomer);
+        onItemClick(monomer);
+        break;
+      default:
+        onItemClick(monomer);
+        break;
+    }
+  };
+
   return (
     <GroupContainer>
       {title && (

@@ -13,7 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+import { EditorClassName, preview } from '../constants';
+import { MonomerItemType } from '../components/monomerLibrary/monomerLibraryItem/types';
 
-export {};
-export * from './emptyFunction';
-export * from './calculatePreviewPosition';
+export const calculatePreviewPosition = (
+  monomer: MonomerItemType | undefined,
+  target?: DOMRect,
+): string => {
+  if (monomer && target) {
+    const editorRect = document
+      .querySelector(`.${EditorClassName}`)
+      ?.getBoundingClientRect();
+
+    if (!editorRect || !target) {
+      return '';
+    }
+
+    const top =
+      target.top > preview.height + preview.gap
+        ? target.top - preview.gap - preview.height - preview.topPadding
+        : target.bottom + preview.gap - preview.topPadding;
+
+    const newStyle = `${top}px`;
+
+    return newStyle;
+  }
+  return '';
+};

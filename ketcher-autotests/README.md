@@ -12,6 +12,7 @@ Now you're ready to clone the repository :tada:
 1. Go to a folder on your machine that you will use as your working directory.
 2. Clone repository to your working directory using this guide [how to clone Git repo](https://docs.gitlab.com/ee/user/project/repository/#clone-and-open-in-visual-studio-code)
 3. Open a terminal, go to your working directory and run `npm install`. This will install the dependencies from `package.json` file.
+4. Possible you may need install browsers (f.ex. `npx playwright install chromium`)
 
 # Add environment variables to your .env file
 

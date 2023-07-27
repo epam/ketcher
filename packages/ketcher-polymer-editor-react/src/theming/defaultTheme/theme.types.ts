@@ -40,6 +40,7 @@ export type EditorTheme = {
       light: string;
       dark: string;
       error: string;
+      lightgrey: string;
     };
     tab: {
       regular: string;
@@ -63,6 +64,9 @@ export type EditorTheme = {
         hover: string;
         clicked: string;
         disabled: string;
+      };
+      transparent: {
+        active: string;
       };
       text: {
         primary: string;
@@ -158,7 +162,11 @@ export type EditorTheme = {
     color: string;
     selected: {
       color: string;
+      small: string;
       medium: string;
+    };
+    grey: {
+      small: string;
     };
   };
   transition: {

@@ -20,7 +20,6 @@ const ignoredTests = [
   'R-group-tool/**',
   'Reagents/**',
   'Structure-Creating-&-Editing/**',
-  'Templates/Functional-Groups/click-and-drag-fg-on-canvas.spec.ts',
   'Templates/Functional-Groups/functional-groups.spec.ts',
   'Templates/Functional-Groups/Functional-Group-Tools/functional-group-tools.spec.ts',
   'Templates/Salts-and-Solvents/**',
@@ -42,9 +41,6 @@ function baseURL(): string {
 }
 
 const MAX_NUMBER_OF_RETRIES = 2;
-
-console.log('process.env.CI', process.env.CI, typeof process.env.CI);
-console.log('CPUs number', os.cpus().length);
 
 const config: PlaywrightTestConfig = {
   testDir: './tests',
@@ -68,7 +64,7 @@ const config: PlaywrightTestConfig = {
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: Boolean(process.env.CI),
   /* Retry on CI only */
-  retries: process.env.CI ? MAX_NUMBER_OF_RETRIES : 0,
+  retries: MAX_NUMBER_OF_RETRIES,
   /* Opt out of parallel tests on CI. */
   // eslint-disable-next-line no-magic-numbers
   workers: process.env.CI ? 2 : os.cpus().length,

@@ -748,6 +748,10 @@ class ReStruct {
       if (item.selectionPlate) {
         item.selectionPlate.show();
         item.additionalInfo?.show();
+        item.cip?.rectangle.attr({
+          fill: '#7f7',
+          stroke: '#7f7',
+        });
         if (item.togglePoints) item.togglePoints(true);
       }
     } else if (exists && item.selectionPlate) {

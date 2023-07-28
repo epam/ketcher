@@ -191,8 +191,12 @@ class ReSimpleObject extends ReObject {
     return refPoints;
   }
 
-  getHoverPathStyle(path: any, render: Render, type: boolean) {
-    if (type) {
+  getHoverPathStyle(
+    path: any,
+    render: Render,
+    isOuterShapeOfHoverPath: boolean,
+  ) {
+    if (isOuterShapeOfHoverPath) {
       return path.attr(render.options.hoverStyle);
     } else {
       return path.attr({ ...render.options.hoverStyle, fill: '#fff' });

@@ -148,11 +148,15 @@ test.describe('Click and drag Atom on canvas', () => {
     for (const [idx, direction] of directions.entries()) {
       await moveOnAtom(page, 'P', idx);
 
-      const previousAtomPos = await getAtomByIndex(page, { label: 'P' }, idx);
+      const previousAtomPosition = await getAtomByIndex(
+        page,
+        { label: 'P' },
+        idx,
+      );
 
       await dragMouseTo(
-        previousAtomPos.x + direction.x,
-        previousAtomPos.y + direction.y,
+        previousAtomPosition.x + direction.x,
+        previousAtomPosition.y + direction.y,
         page,
       );
     }

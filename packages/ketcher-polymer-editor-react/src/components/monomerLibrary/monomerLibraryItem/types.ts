@@ -29,7 +29,7 @@ export type MonomerItemType = {
     BranchMonomer?: string;
     MonomerCaps?: string;
     MonomerCode?: string;
-    MonomerType?: string;
+    MonomerType: string;
   };
 };
 

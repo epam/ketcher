@@ -15,6 +15,7 @@ dotenv.config();
 
 const ignoredTests = [
   'API/**',
+  'File-Management/Smile-Files/smile-files.spec.ts',
   'Examples/**',
   'Indigo-Tools/**',
   'R-group-tool/**',

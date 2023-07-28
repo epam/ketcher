@@ -226,7 +226,7 @@ class ReAtom extends ReObject {
     if (atomSymbolShift > 0) {
       return atomPosition.addScaled(
         direction,
-        atomSymbolShift + 2 * renderOptions.lineWidth,
+        atomSymbolShift + 3 * renderOptions.lineWidth,
       );
     } else {
       return atomPosition;

@@ -163,8 +163,4 @@ test.describe('Click and drag FG on canvas', () => {
       pressButton(page, 'Open as New Project');
     });
   });
-
-  test('Opening text file/placeholder', async ({ page }) => {
-    // Read your file into a buffer.
-  });
 });

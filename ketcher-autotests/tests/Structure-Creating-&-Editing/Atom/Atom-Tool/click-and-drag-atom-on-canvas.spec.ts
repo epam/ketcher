@@ -15,8 +15,9 @@ import {
   takeEditorScreenshot,
   resetCurrentTool,
   STRUCTURE_LIBRARY_BUTTON_NAME,
+  moveOnAtom,
 } from '@utils';
-import { createNextChainElement } from './helpers';
+import { getAtomByIndex } from '@utils/canvas/atoms';
 
 test.describe('Click and drag Atom on canvas', () => {
   test.beforeEach(async ({ page }) => {
@@ -145,7 +146,15 @@ test.describe('Click and drag Atom on canvas', () => {
     await clickInTheMiddleOfTheScreen(page);
 
     for (const [idx, direction] of directions.entries()) {
-      await createNextChainElement(page, 'P', idx, direction.x, direction.y);
+      await moveOnAtom(page, 'P', idx);
+
+      const previousAtomPos = await getAtomByIndex(page, { label: 'P' }, idx);
+
+      await dragMouseTo(
+        previousAtomPos.x + direction.x,
+        previousAtomPos.y + direction.y,
+        page,
+      );
     }
   });
 });

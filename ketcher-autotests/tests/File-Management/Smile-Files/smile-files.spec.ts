@@ -10,6 +10,7 @@ import {
   pressButton,
   clickInTheMiddleOfTheScreen,
   DELAY_IN_SECONDS,
+  waitForLoad,
 } from '@utils';
 import { getSmiles } from '@utils/formats';
 
@@ -35,7 +36,9 @@ async function clearCanvasAndPasteSmiles(page: Page, smiles: string) {
   await selectTopPanelButton(TopPanelButton.Open, page);
   await page.getByText('Paste from clipboard').click();
   await pasteFromClipboard(page, smiles);
-  await pressButton(page, 'Add to Canvas');
+  await waitForLoad(page, async () => {
+    await pressButton(page, 'Add to Canvas');
+  });
   await clickInTheMiddleOfTheScreen(page);
 }
 

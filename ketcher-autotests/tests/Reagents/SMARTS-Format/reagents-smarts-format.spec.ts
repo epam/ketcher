@@ -90,8 +90,8 @@ test.describe('Reagents SMARTS format', () => {
       page,
       '[#6]-[#6]-1=[#6]-[#6](-[#7])=[#6](-[#16])-[#6]=[#6]-1-[#8]>Cl>[#6]-[#6]-1=[#6]-[#6](I)=[#6](-[#8])-[#6]=[#6]-1Br',
     );
-    await waitForLoad(page, () => {
-      pressButton(page, 'Add to Canvas');
+    await waitForLoad(page, async () => {
+      await pressButton(page, 'Add to Canvas');
     });
     await clickInTheMiddleOfTheScreen(page);
   });

@@ -41,7 +41,9 @@ test.describe('Indigo Tools - Clean Tools', () => {
    */
     await selectTopPanelButton(TopPanelButton.Open, page);
     await openFile('different-angle-fr.mol', page);
-    await pressButton(page, 'Add to Canvas');
+    await waitForLoad(page, async () => {
+      await pressButton(page, 'Add to Canvas');
+    });
     // Large structure. Delay is necessary here
     await delay(DELAY_IN_SECONDS.FOUR);
     await clickInTheMiddleOfTheScreen(page);

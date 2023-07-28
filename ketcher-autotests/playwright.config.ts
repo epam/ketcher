@@ -24,7 +24,6 @@ const ignoredTests = [
   'Templates/Functional-Groups/Functional-Group-Tools/functional-group-tools.spec.ts',
   'Templates/Salts-and-Solvents/**',
   'Templates/User-Templates/**',
-  'User-Interface/**',
   'utils/**',
 ];
 
@@ -64,7 +63,7 @@ const config: PlaywrightTestConfig = {
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: Boolean(process.env.CI),
   /* Retry on CI only */
-  retries: MAX_NUMBER_OF_RETRIES,
+  retries: process.env.CI_ENVIRONMENT === 'true' ? MAX_NUMBER_OF_RETRIES : 0,
   /* Opt out of parallel tests on CI. */
   // eslint-disable-next-line no-magic-numbers
   workers: process.env.CI ? 2 : os.cpus().length,

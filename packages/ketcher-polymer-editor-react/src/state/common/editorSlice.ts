@@ -16,15 +16,18 @@
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from 'state';
+import { MonomerItemType } from 'components/monomerLibrary/monomerLibraryItem/types';
 
 interface EditorState {
   isReady: boolean | null;
   activeTool: string;
+  preview: { monomer: undefined | MonomerItemType; style: string };
 }
 
 const initialState: EditorState = {
   isReady: null,
   activeTool: 'select',
+  preview: { monomer: undefined, style: '' },
 };
 
 export const editorSlice = createSlice({
@@ -43,13 +46,26 @@ export const editorSlice = createSlice({
     selectTool: (state, action: PayloadAction<string>) => {
       state.activeTool = action.payload;
     },
+    showPreview: (
+      state,
+      action: PayloadAction<
+        | {
+            monomer: undefined | MonomerItemType;
+            style: string;
+          }
+        | undefined
+      >,
+    ) => {
+      state.preview = action.payload || { monomer: undefined, style: '' };
+    },
   },
 });
 
-export const { init, initSuccess, initFailure, selectTool } =
+export const { init, initSuccess, initFailure, selectTool, showPreview } =
   editorSlice.actions;
 
 export const selectEditorIsReady = (state: RootState) => state.editor.isReady;
+export const selectShowPreview = (state: RootState) => state.editor.preview;
 export const selectEditorActiveTool = (state: RootState) =>
   state.editor.activeTool;
 

@@ -67,11 +67,6 @@ class ReRGroup extends ReObject {
           : fragBox;
       }
     });
-
-    rGroupBoundingBox = rGroupBoundingBox
-      ? rGroupBoundingBox.extend(BORDER_EXT, BORDER_EXT)
-      : rGroupBoundingBox;
-
     let attachmentPointsVBox = render.ctab.getAttachmentsPointsVBox(
       this.getAtoms(render),
     );

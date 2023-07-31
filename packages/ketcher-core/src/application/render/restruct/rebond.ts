@@ -129,14 +129,15 @@ class ReBond extends ReObject {
     );
 
     const stereoBondStartHeightCoef = 0.5;
+    const bondPadding = 0.5;
     const addStart = isStereoBond
       ? stereoBondWidth * stereoBondStartHeightCoef
-      : regularSelectionThikness;
+      : regularSelectionThikness + bondPadding;
     const stereoBondEndHeightCoef = 1;
     const addEnd = isStereoBond
       ? stereoBondWidth +
         (regularSelectionThikness * stereoBondEndHeightCoef) / stereoBondWidth
-      : regularSelectionThikness;
+      : regularSelectionThikness + bondPadding;
 
     const contourPaddedStart = Vec2.getLinePoint(
       contourStart,

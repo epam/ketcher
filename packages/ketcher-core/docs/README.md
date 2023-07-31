@@ -147,7 +147,6 @@ ketcher-core
 ### Functions
 
 - [checkOverlapping](README.md#checkoverlapping)
-- [fracAngle](README.md#fracangle)
 - [getPropertiesByFormat](README.md#getpropertiesbyformat)
 - [getPropertiesByImgFormat](README.md#getpropertiesbyimgformat)
 - [identifyStructFormat](README.md#identifystructformat)
@@ -517,27 +516,6 @@ ___
 #### Defined in
 
 [packages/ketcher-core/src/domain/entities/sgroupForest.ts:164](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/domain/entities/sgroupForest.ts#L164)
-
-___
-
-### fracAngle
-
-▸ **fracAngle**(`angle`, `angle2`): `number`
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `angle` | `any` |
-| `angle2` | `any` |
-
-#### Returns
-
-`number`
-
-#### Defined in
-
-[packages/ketcher-core/src/application/editor/index.ts:20](https://github.com/epam/ketcher/blob/bf065756/packages/ketcher-core/src/application/editor/index.ts#L20)
 
 ___
 

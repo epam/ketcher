@@ -621,7 +621,10 @@ class ReStruct {
   getAttachmentsPointsVBox(atomsIds: number[]): Box2Abs | null {
     let result: Box2Abs | null = null;
     for (const atomId of atomsIds) {
-      const reAtom = this.atoms.get(atomId)!;
+      const reAtom = this.atoms.get(atomId);
+      if (!reAtom) {
+        return null;
+      }
       const bbox = reAtom.getVBoxObjOfAttachmentPoint(this.render);
       if (bbox) {
         result = result ? Box2Abs.union(result, bbox) : bbox;

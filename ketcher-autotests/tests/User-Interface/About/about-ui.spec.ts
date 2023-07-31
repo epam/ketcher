@@ -18,7 +18,9 @@ test.describe('Open Ketcher', () => {
     */
     await selectTopPanelButton(TopPanelButton.About, page);
 
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      masks: [page.getByTestId('build-time')],
+    });
   });
 
   test('Links in About floating window', async ({ page }) => {

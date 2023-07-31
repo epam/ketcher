@@ -12,7 +12,7 @@ test.describe('Open and validate Extended table', () => {
 
   test('Periodic table check', async ({ page }) => {
     /* 
-      Test cases: EPMLSOPKET-16821, EPMLSOPKET-16825, EPMLSOPKET-16823, EPMLSOPKET-16827, EPMLSOPKET-16829
+      Test cases: EPMLSOPKET-1507, EPMLSOPKET-1509, EPMLSOPKET-1515, EPMLSOPKET-1519, EPMLSOPKET-1525
       */
     await selectAtomInToolbar(AtomButton.Extended, page);
   });

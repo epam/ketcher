@@ -19,7 +19,7 @@ export function fromRGroupAttachmentPointUpdate(
   return action;
 }
 
-function fromRGroupAttachmentPointAddition(
+export function fromRGroupAttachmentPointAddition(
   restruct: ReStruct,
   attpnt,
   atomId: number,

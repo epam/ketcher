@@ -640,7 +640,7 @@ test.describe('Templates - Functional Group Tools3', () => {
     await pressButton(page, 'Save to SDF');
   });
 
-  test('Check aromatize/dearomatize tool on FG', async ({page}) => {
+  test('Check aromatize/dearomatize tool on FG', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-2954
     Description: Two FG's are added. Aromatize funcion is selected, nothing happens.

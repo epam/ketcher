@@ -497,26 +497,26 @@ class ReAtom extends ReObject {
     largestAngle: number;
   } {
     let angles: Array<number> = [];
-    this.a.neighbors.forEach((hbid) => {
-      const hb = struct.halfBonds.get(hbid);
-      hb && angles.push(hb.ang);
+    this.a.neighbors.forEach((halfBondId) => {
+      const halfBond = struct.halfBonds.get(halfBondId);
+      halfBond && angles.push(halfBond.ang);
     });
     angles = angles.sort((a, b) => a - b);
-    const da: Array<number> = [];
+    const largeAngles: Array<number> = [];
     for (let i = 0; i < angles.length - 1; ++i) {
-      da.push(angles[(i + 1) % angles.length] - angles[i]);
+      largeAngles.push(angles[(i + 1) % angles.length] - angles[i]);
     }
-    da.push(angles[0] - angles[angles.length - 1] + 2 * Math.PI);
-    let daMax = 0;
-    let ang = -Math.PI / 2;
+    largeAngles.push(angles[0] - angles[angles.length - 1] + 2 * Math.PI);
+    let largestAngle = 0;
+    let neighborAngle = -Math.PI / 2;
     for (let i = 0; i < angles.length; ++i) {
-      if (da[i] > daMax) {
-        daMax = da[i];
-        ang = angles[i];
+      if (largeAngles[i] > largestAngle) {
+        largestAngle = largeAngles[i];
+        neighborAngle = angles[i];
       }
     }
 
-    return { neighborAngle: ang, largestAngle: daMax };
+    return { neighborAngle, largestAngle };
   }
 
   bisectLargestSector(struct: Struct): Vec2 {

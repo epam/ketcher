@@ -27,17 +27,20 @@ class RGroupAttachmentPointAdd extends BaseOperation {
 
   execute(restruct: ReStruct) {
     const { atomId, attachmentPointType } = this.data;
-    const item = new RGroupAttachmentPoint(atomId, attachmentPointType);
+    const newAttachmentPoint = new RGroupAttachmentPoint(
+      atomId,
+      attachmentPointType,
+    );
 
     const struct = restruct.molecule;
-    const revertedItemId = this.data.attachmentPointId;
+    const revertedId = this.data.attachmentPointId;
     let attachmentPointId = 0;
-    if (revertedItemId === undefined) {
-      const newId = struct.rgroupAttachmentPoints.add(item);
+    if (revertedId === undefined) {
+      const newId = struct.rgroupAttachmentPoints.add(newAttachmentPoint);
       attachmentPointId = newId;
     } else {
-      struct.rgroupAttachmentPoints.set(revertedItemId, item);
-      attachmentPointId = revertedItemId;
+      struct.rgroupAttachmentPoints.set(revertedId, newAttachmentPoint);
+      attachmentPointId = revertedId;
     }
     this.data.attachmentPointId = attachmentPointId;
 
@@ -45,7 +48,7 @@ class RGroupAttachmentPointAdd extends BaseOperation {
     assert(reAtom != null);
     restruct.rgroupAttachmentPoints.set(
       attachmentPointId,
-      new ReRGroupAttachmentPoint(item, reAtom),
+      new ReRGroupAttachmentPoint(newAttachmentPoint, reAtom),
     );
   }
 

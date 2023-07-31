@@ -168,7 +168,7 @@ test.describe('SMILES files', () => {
     await clearCanvasAndPasteSmiles(page, 'CCCC[C@@H](C)[C@@H](C)CC');
   });
 
-  test('SmileString  from V2000 mol file contains abs stereochemistry', async ({
+  test('SmileString from V2000 mol file contains abs stereochemistry', async ({
     page,
   }) => {
     /*

@@ -506,7 +506,8 @@ export class SGroup {
       braketBox = !braketBox ? bbb : Box2Abs.union(braketBox, bbb!);
     });
     if (!render) render = window.ketcher!.editor.render;
-    let attachmentPointsVBox = render.ctab.getAttachmentsPointsVBox(atoms);
+    let attachmentPointsVBox =
+      render.ctab.getRGroupAttachmentPointsVBoxByAtomIds(atoms);
     attachmentPointsVBox = attachmentPointsVBox
       ? attachmentPointsVBox.extend(BORDER_EXT, BORDER_EXT)
       : attachmentPointsVBox;

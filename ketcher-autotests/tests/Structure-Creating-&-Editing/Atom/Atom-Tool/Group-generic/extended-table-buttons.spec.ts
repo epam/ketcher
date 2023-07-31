@@ -1,7 +1,7 @@
 import { test } from '@playwright/test';
 import { takeEditorScreenshot, AtomButton, selectAtomInToolbar } from '@utils';
 
-test.describe('Open Ketcher', () => {
+test.describe('Open and validate Extended table', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('');
   });

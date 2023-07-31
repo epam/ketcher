@@ -9,6 +9,7 @@ import {
   delay,
   takeEditorScreenshot,
   DELAY_IN_SECONDS,
+  waitForLoad,
 } from '@utils';
 
 test.describe('Indigo Tools - Clean Tools', () => {

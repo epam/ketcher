@@ -27,6 +27,7 @@ test.describe('open files with different formats', () => {
     /*
     Test case: EPMLSOPKET-1839
     */
+
     await openFileAndAddToCanvas('1839-ketcher.rxn', page);
   });
 

@@ -12,7 +12,10 @@ describe('rergroup should calculate R-Group bounding box correctly', () => {
     rGroup.frags.add(0);
     const rerGroup = new ReRGroup(rGroup);
     rerGroup.getAtoms = mockFn().mockReturnValue(restruct.molecule.atoms);
-    const attachmentsSpy = jest.spyOn(render.ctab, 'getAttachmentsPointsVBox');
+    const attachmentsSpy = jest.spyOn(
+      render.ctab,
+      'getRGroupAttachmentPointsVBoxByAtomIds',
+    );
     rerGroup.calcBBox(render);
     expect(attachmentsSpy).toHaveBeenCalled();
   });

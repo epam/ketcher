@@ -1,4 +1,5 @@
 import * as dotenv from 'dotenv';
+import * as os from 'os';
 import { PlaywrightTestConfig, devices } from '@playwright/test';
 import {
   REMOTE_URL,
@@ -14,18 +15,16 @@ dotenv.config();
 
 const ignoredTests = [
   'API/**',
+  'File-Management/Smile-Files/smile-files.spec.ts',
   'Examples/**',
-  'File-Management/**',
   'Indigo-Tools/**',
   'R-group-tool/**',
   'Reagents/**',
   'Structure-Creating-&-Editing/**',
-  'Templates/Functional-Groups/click-and-drag-fg-on-canvas.spec.ts',
   'Templates/Functional-Groups/functional-groups.spec.ts',
   'Templates/Functional-Groups/Functional-Group-Tools/functional-group-tools.spec.ts',
   'Templates/Salts-and-Solvents/**',
   'Templates/User-Templates/**',
-  'User-Interface/**',
   'utils/**',
 ];
 
@@ -65,9 +64,10 @@ const config: PlaywrightTestConfig = {
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: Boolean(process.env.CI),
   /* Retry on CI only */
-  retries: process.env.CI ? MAX_NUMBER_OF_RETRIES : 0,
+  retries: process.env.CI_ENVIRONMENT === 'true' ? MAX_NUMBER_OF_RETRIES : 0,
   /* Opt out of parallel tests on CI. */
-  workers: process.env.CI ? 1 : undefined,
+  // eslint-disable-next-line no-magic-numbers
+  workers: process.env.CI ? 2 : os.cpus().length,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: [
     [

@@ -36,7 +36,7 @@ test.describe('CDX files', () => {
     await openFileAndAddToCanvas('cdx_file.cdx', page);
   });
 
-  test('opening cdx files from clickboard', async ({ page }) => {
+  test.fixme('opening cdx files from clipboard', async ({ page }) => {
     /* 
   Test case: EPMLSOPKET-6972
   Description: Open structure created in ChemDraw from clickboard

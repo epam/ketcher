@@ -9,6 +9,7 @@ import {
   openFileAndAddToCanvas,
   FILE_TEST_DATA,
   DELAY_IN_SECONDS,
+  waitForLoad,
 } from '@utils';
 
 import NH3TextAboveRequestData from '@tests/test-data/cdxml-nh3-text-above-request-data.json';
@@ -32,7 +33,9 @@ async function pasteCDXML(page: Page, fileFormat: string) {
   await selectTopPanelButton(TopPanelButton.Open, page);
   await page.getByText('Paste from clipboard').click();
   await page.getByRole('dialog').getByRole('textbox').fill(fileFormat);
-  await pressButton(page, 'Add to Canvas');
+  await waitForLoad(page, async () => {
+    await pressButton(page, 'Add to Canvas');
+  });
 }
 
 test.describe('Reagents CDXML format', () => {

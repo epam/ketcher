@@ -165,11 +165,6 @@ test.describe('3D Viewer', () => {
 
     // Compare the initial and changed structure data
     expect(initialStructureData).not.toEqual(changedStructureData);
-    if (initialStructureData !== changedStructureData) {
-      console.log('The structure has been changed successfully.');
-    } else {
-      throw new Error('The structure has not been changed.');
-    }
   });
 
   test('Structure with Heteroatoms with Save Position', async ({ page }) => {
@@ -193,11 +188,6 @@ test.describe('3D Viewer', () => {
 
     // Compare the initial and changed structure data
     expect(initialStructureData).not.toEqual(changedStructureData);
-    if (initialStructureData !== changedStructureData) {
-      console.log('The structure has been changed successfully.');
-    } else {
-      throw new Error('The structure has not been changed.');
-    }
   });
 
   test('Structure with a Stereobonds with Save Position', async ({ page }) => {
@@ -220,11 +210,6 @@ test.describe('3D Viewer', () => {
 
     // Compare the initial and changed structure data
     expect(initialStructureData).not.toEqual(changedStructureData);
-    if (initialStructureData !== changedStructureData) {
-      console.log('The structure has been changed successfully.');
-    } else {
-      throw new Error('The structure has not been changed.');
-    }
   });
 
   test('Structure with Aromatic Bonds with Save Position', async ({ page }) => {
@@ -247,10 +232,5 @@ test.describe('3D Viewer', () => {
 
     // Compare the initial and changed structure data
     expect(initialStructureData).not.toEqual(changedStructureData);
-    if (initialStructureData !== changedStructureData) {
-      console.log('The structure has been changed successfully.');
-    } else {
-      throw new Error('The structure has not been changed.');
-    }
   });
 });

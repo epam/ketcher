@@ -110,6 +110,15 @@ class ReSGroup extends ReObject {
         }
         case 'DAT': {
           set = drawGroupDat(remol, sgroup);
+          SGroupdrawBrackets(
+            set,
+            this.render,
+            sgroup,
+            crossBonds,
+            atomSet,
+            bracketBox,
+            d,
+          );
           break;
         }
         default:

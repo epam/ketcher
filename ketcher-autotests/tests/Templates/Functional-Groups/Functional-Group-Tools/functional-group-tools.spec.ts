@@ -639,4 +639,62 @@ test.describe('Templates - Functional Group Tools3', () => {
     await page.getByRole('tab', { name: 'Functional Groups' }).click();
     await pressButton(page, 'Save to SDF');
   });
+
+  test.only('Check aromatize/dearomatize tool on FG', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-2954
+    Description: Two FG's are added. Aromatize funcion is selected, nothing happens.
+    Dearomatize function is selected, nothing happens.
+    */
+
+    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+    await page.getByRole('tab', { name: 'Functional Groups' }).click();
+    await selectFunctionalGroups(FunctionalGroups.Bn, page);
+    await clickInTheMiddleOfTheScreen(page);
+
+    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+    await page.getByRole('tab', { name: 'Functional Groups' }).click();
+    await selectFunctionalGroups(FunctionalGroups.Bn, page);
+    await clickInTheMiddleOfTheScreen(page, 'right');
+
+    await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
+    await clickInTheMiddleOfTheScreen(page, 'right');
+    await page.getByText('Expand Abbreviation').click();
+
+    await selectTopPanelButton(TopPanelButton.Aromatize, page);
+    await takeEditorScreenshot(page);
+
+    await selectTopPanelButton(TopPanelButton.Dearomatize, page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check layout and cleanup buttons tool on FG', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-2955
+    Description: Two FG's are added,
+    one Expanded and one Contracted.
+    Layout button is selected, nothing happens.
+    Clean Up button is selected, nothing happens.
+    */
+
+    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+    await page.getByRole('tab', { name: 'Functional Groups' }).click();
+    await selectFunctionalGroups(FunctionalGroups.CCl3, page);
+    await clickInTheMiddleOfTheScreen(page);
+
+    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+    await page.getByRole('tab', { name: 'Functional Groups' }).click();
+    await selectFunctionalGroups(FunctionalGroups.C2H5, page);
+    await clickInTheMiddleOfTheScreen(page, 'right');
+
+    await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
+    await clickInTheMiddleOfTheScreen(page, 'right');
+    await page.getByText('Expand Abbreviation').click();
+
+    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await takeEditorScreenshot(page);
+
+    await selectTopPanelButton(TopPanelButton.Clean, page);
+    await takeEditorScreenshot(page);
+  });
 });

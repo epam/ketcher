@@ -102,7 +102,7 @@ class ReAtom extends ReObject {
 
   drawHover(render: Render) {
     const ret = this.makeHoverPlate(render);
-    render.ctab.addReObjectPath(LayerMap.hovering, this.visel, ret);
+    render.ctab.addReObjectPath(LayerMap.atom, this.visel, ret);
     return ret;
   }
 
@@ -244,7 +244,7 @@ class ReAtom extends ReObject {
 
     this.hydrogenOnTheLeft = setHydrogenPos(restruct.molecule, this);
     this.showLabel = isLabelVisible(restruct, render.options, this);
-    this.color = 'black'; // reset colour
+    this.color = 'black'; // reset color
 
     let delta;
     let rightMargin;

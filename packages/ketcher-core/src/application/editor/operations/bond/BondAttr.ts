@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { BaseOperation } from '../base';
-import { OperationPriority, OperationType } from '../OperationType';
+import { OperationType } from '../OperationType';
 import { ReStruct } from '../../../render';
 
 type Data = {
@@ -29,7 +29,7 @@ export class BondAttr extends BaseOperation {
   data2: Data | null;
 
   constructor(bondId?: any, attribute?: any, value?: any) {
-    super(OperationType.BOND_ATTR, OperationPriority.BOND_ATTR);
+    super(OperationType.BOND_ATTR, 2);
     this.data = { bid: bondId, attribute, value };
     this.data2 = null;
   }

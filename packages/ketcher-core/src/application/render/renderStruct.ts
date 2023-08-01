@@ -66,11 +66,6 @@ function convertAllSGroupAttachmentPointsToRGroupAttachmentPoints(
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const attachmentPointAtom = struct.atoms.get(attachmentPoint.atomId)!;
       attachmentPointAtom.setRGAttachmentPointForDisplayPurpose();
-      const rgroupAttachmentPoint =
-        attachmentPoint.convertToRGroupAttachmentPointForDisplayPurpose(
-          attachmentPoint.atomId,
-        );
-      struct.rgroupAttachmentPoints.add(rgroupAttachmentPoint);
     });
   });
 }

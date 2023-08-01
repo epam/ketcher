@@ -10,7 +10,6 @@ export * from './fragment';
 export * from './paste';
 export * from './reaction';
 export * from './rgroup';
-export * from './rgroupAttachmentPoint';
 export * from './rotate';
 export * from './sgroup';
 export * from './simpleobject';

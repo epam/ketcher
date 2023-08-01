@@ -22,7 +22,6 @@ export * from './functionalGroup';
 export * from './halfBond';
 export * from './loop';
 export * from './rgroup';
-export * from './rgroupAttachmentPoint';
 export * from './rxnArrow';
 export * from './rxnPlus';
 export * from './sgroup';

@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { BaseOperation } from '../base';
-import { OperationPriority, OperationType } from '../OperationType';
+import { OperationType } from '../OperationType';
 import { ReStruct } from '../../../render';
 import { Scale } from 'domain/helpers';
 
@@ -26,7 +26,7 @@ export class BondMove extends BaseOperation {
   };
 
   constructor(bondId?: any, d?: any) {
-    super(OperationType.BOND_MOVE, OperationPriority.BOND_MOVE);
+    super(OperationType.BOND_MOVE, 2);
     this.data = { bid: bondId, d };
   }
 

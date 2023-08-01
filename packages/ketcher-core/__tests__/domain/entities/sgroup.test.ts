@@ -10,10 +10,7 @@ describe('sgroup should calculate S-Group bounding box correctly', () => {
     render.ctab = { ...restruct.molecule } as unknown as ReStruct;
     const sGroup = new SGroup('MUL');
     sGroup.atoms = [0, 1, 2, 3, 4];
-    const attachmentsSpy = jest.spyOn(
-      render.ctab,
-      'getRGroupAttachmentPointsVBoxByAtomIds',
-    );
+    const attachmentsSpy = jest.spyOn(render.ctab, 'getAttachmentsPointsVBox');
     SGroup.bracketPos(sGroup, restruct.molecule, {}, undefined, render);
     expect(attachmentsSpy).toHaveBeenCalled();
   });

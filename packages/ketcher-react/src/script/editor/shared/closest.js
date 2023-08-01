@@ -14,15 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import {
-  Fragment,
-  FunctionalGroup,
-  Vec2,
-  Scale,
-  SGroup,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  ReStruct,
-} from 'ketcher-core';
+import { Fragment, FunctionalGroup, Vec2, Scale, SGroup } from 'ketcher-core';
 
 const SELECTION_DISTANCE_COEFFICIENT = 0.4;
 const SELECTION_WITHIN_TEXT = 0;
@@ -38,7 +30,6 @@ const findMaps = {
   rxnPluses: findClosestRxnPlus,
   frags: findClosestFrag,
   rgroups: findClosestRGroup,
-  rgroupAttachmentPoints: findClosestRgroupAttachmentPoints,
   simpleObjects: findClosestSimpleObject,
   texts: findClosestText,
 };
@@ -355,42 +346,6 @@ function findClosestRGroup(restruct, pos, skip, minDist) {
   });
 
   return ret;
-}
-
-/**
- * @param {ReStruct} restruct
- * @param {Vec2} cursorPosition
- * @param {number} minDistToOtherItems
- */
-function findClosestRgroupAttachmentPoints(
-  restruct,
-  cursorPosition,
-  _skip,
-  minDistToOtherItems,
-) {
-  let minDist = minDistToOtherItems ?? Number.POSITIVE_INFINITY;
-  /** @type {number | undefined} */
-  let closestItemId;
-
-  restruct.visibleRGroupAttachmentPoints.forEach((reItem, id) => {
-    const itemOutlinePoints = reItem.getOutlinePoints();
-    const isCursorInsideOutline =
-      cursorPosition.isInsidePolygon(itemOutlinePoints);
-    if (isCursorInsideOutline) {
-      const dist = reItem.getDistanceTo(cursorPosition);
-      if (dist < minDist) {
-        minDist = dist;
-        closestItemId = id;
-      }
-    }
-  });
-
-  return closestItemId === undefined
-    ? null
-    : {
-        id: closestItemId,
-        dist: minDist,
-      };
 }
 
 function findClosestRxnArrow(restruct, pos) {

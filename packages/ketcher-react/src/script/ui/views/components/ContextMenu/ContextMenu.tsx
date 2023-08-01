@@ -25,7 +25,6 @@ import AtomMenuItems from './menuItems/AtomMenuItems';
 import BondMenuItems from './menuItems/BondMenuItems';
 import FunctionalGroupMenuItems from './menuItems/FunctionalGroupMenuItems';
 import SelectionMenuItems from './menuItems/SelectionMenuItems';
-import RGroupAttachmentPointMenuItems from './menuItems/RGroupAttachmentPointMenuItems';
 
 const props: Partial<MenuProps> = {
   animation: false,
@@ -86,16 +85,6 @@ const ContextMenu: React.FC = () => {
         }
       >
         <FunctionalGroupMenuItems />
-      </Menu>
-
-      <Menu
-        {...props}
-        id={CONTEXT_MENU_ID.FOR_R_GROUP_ATTACHMENT_POINT}
-        onVisibilityChange={(visible) =>
-          trackVisibility(CONTEXT_MENU_ID.FOR_R_GROUP_ATTACHMENT_POINT, visible)
-        }
-      >
-        <RGroupAttachmentPointMenuItems />
       </Menu>
     </>
   );

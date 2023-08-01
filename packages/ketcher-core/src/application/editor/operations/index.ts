@@ -27,7 +27,6 @@ export * from './calcimplicitH';
 export * from './LoopMove';
 export * from './OperationType';
 export * from './rgroup';
-export * from './rgroupAttachmentPoint';
 export * from './rxn';
 export * from './simpleObject';
 export * from './sgroup';

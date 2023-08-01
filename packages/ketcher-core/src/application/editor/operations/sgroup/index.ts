@@ -19,7 +19,7 @@ import { FunctionalGroup, SGroup, Vec2 } from 'domain/entities';
 import { ReSGroup, ReStruct } from '../../../render';
 
 import { BaseOperation } from '../base';
-import { OperationPriority, OperationType } from '../OperationType';
+import { OperationType } from '../OperationType';
 
 // todo: separate classes: now here is circular dependency in `invert` method
 
@@ -92,7 +92,7 @@ class SGroupDelete extends BaseOperation {
   data: Data;
 
   constructor(sgroupId?: any) {
-    super(OperationType.S_GROUP_DELETE, OperationPriority.S_GROUP_DELETE);
+    super(OperationType.S_GROUP_DELETE, 95);
     this.data = { sgid: sgroupId };
   }
 

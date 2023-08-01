@@ -98,11 +98,7 @@ const ContextMenuTrigger: React.FC<PropsWithChildren> = ({ children }) => {
           selectedSGroupsIds,
         })
       ) {
-        if (
-          !selection.bonds &&
-          !selection.atoms &&
-          !selection.rgroupAttachmentPoints
-        ) {
+        if (!selection.bonds && !selection.atoms) {
           triggerType = ContextMenuTriggerType.None;
         } else {
           triggerType = ContextMenuTriggerType.Selection;

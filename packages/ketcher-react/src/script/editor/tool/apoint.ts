@@ -14,11 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import assert from 'assert';
-import { FunctionalGroup } from 'ketcher-core';
+import { fromAtomsAttrs, FunctionalGroup } from 'ketcher-core';
 import Editor from '../Editor';
 import { Tool } from './Tool';
-import { editRGroupAttachmentPoint } from './apoint.utils';
 
 class APointTool implements Tool {
   private readonly editor: Editor;
@@ -30,17 +28,11 @@ class APointTool implements Tool {
 
   mousemove(event) {
     const struct = this.editor.render.ctab.molecule;
-    const closestItem = this.editor.findItem(event, [
-      'atoms',
-      'rgroupAttachmentPoints',
-    ]);
-    if (closestItem?.map === 'atoms') {
+    const closestItem = this.editor.findItem(event, ['atoms']);
+    if (closestItem) {
       const atom = struct.atoms.get(closestItem.id);
-      if (atom?.label !== 'R#' && atom?.rglabel === null) {
+      if (atom?.label !== 'R#' && atom?.rglabel === null)
         this.editor.hover(closestItem, null, event);
-      }
-    } else if (closestItem?.map === 'rgroupAttachmentPoints') {
-      this.editor.hover(closestItem, null, event);
     } else {
       this.editor.hover(null);
     }
@@ -83,12 +75,25 @@ class APointTool implements Tool {
     if (ci && ci.map === 'atoms') {
       this.editor.hover(null);
       const atom = molecule.atoms.get(ci.id);
-      assert(atom != null);
 
-      if (!atom.isRGroupAttachmentPointEditDisabled) {
-        editRGroupAttachmentPoint(editor, atom, ci.id);
-      }
+      if (atom?.label === 'R#' && atom?.rglabel !== null) return;
 
+      const res = editor.event.elementEdit.dispatch({
+        attpnt: atom?.attpnt,
+      });
+      Promise.resolve(res)
+        .then((newatom) => {
+          if (atom?.attpnt !== newatom.attpnt) {
+            const action = fromAtomsAttrs(
+              editor.render.ctab,
+              ci.id,
+              newatom,
+              null,
+            );
+            editor.update(action);
+          }
+        })
+        .catch(() => null); // w/o changes
       return true;
     }
     return true;

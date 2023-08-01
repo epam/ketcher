@@ -16,7 +16,7 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
 import { BaseOperation } from './base';
-import { OperationPriority, OperationType } from './OperationType';
+import { OperationType } from './OperationType';
 import { ReStruct } from '../../render';
 
 // todo: separate classes: now here is circular dependency in `invert` method
@@ -31,10 +31,7 @@ class FragmentAddStereoAtom extends BaseOperation {
   data: Data;
 
   constructor(fragmentId: any, atomId: any) {
-    super(
-      OperationType.FRAGMENT_ADD_STEREO_ATOM,
-      OperationPriority.FRAGMENT_ADD_STEREO_ATOM,
-    );
+    super(OperationType.FRAGMENT_ADD_STEREO_ATOM, 100);
     this.data = { frid: fragmentId, aid: atomId };
   }
 
@@ -58,10 +55,7 @@ class FragmentDeleteStereoAtom extends BaseOperation {
   data: Data;
 
   constructor(fragmentId: any, atomId: any) {
-    super(
-      OperationType.FRAGMENT_DELETE_STEREO_ATOM,
-      OperationPriority.FRAGMENT_DELETE_STEREO_ATOM,
-    );
+    super(OperationType.FRAGMENT_DELETE_STEREO_ATOM, 90);
     this.data = { frid: fragmentId, aid: atomId };
   }
 

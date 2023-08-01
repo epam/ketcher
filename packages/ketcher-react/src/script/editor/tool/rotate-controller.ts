@@ -148,11 +148,11 @@ class RotateController {
 
   private show() {
     const originalCenter = this.rotateTool.getCenter();
-    const selection = this.editor.selection();
-    const visibleAtoms =
-      this.render.ctab.molecule.getSelectedVisibleAtoms(selection);
+    const visibleAtoms = this.render.ctab.molecule.getSelectedVisibleAtoms(
+      this.editor.selection(),
+    );
 
-    const { texts, rxnArrows, rxnPluses } = selection || {};
+    const { texts, rxnArrows, rxnPluses } = this.editor.selection() || {};
 
     const isMoreThanOneItemBeingSelected =
       visibleAtoms.concat(texts || [], rxnArrows || [], rxnPluses || [])
@@ -174,8 +174,7 @@ class RotateController {
       texts,
       rxnArrows,
       rxnPluses,
-      selection?.bonds,
-      selection?.rgroupAttachmentPoints,
+      this.editor.selection()?.bonds,
     );
 
     this.handleCenter = new Vec2(
@@ -271,7 +270,6 @@ class RotateController {
     rxnArrows?: number[],
     rxnPluses?: number[],
     bonds?: number[],
-    rgroupAttachmentPoints?: number[],
   ) {
     const RECT_RADIUS = 20;
     const RECT_PADDING = 10;
@@ -287,7 +285,6 @@ class RotateController {
           atoms: visibleAtoms,
         }),
         bonds,
-        rgroupAttachmentPoints,
       })
       .transform(Scale.obj2scaled, this.render.options)
       .translate(this.render.options.offset || new Vec2());

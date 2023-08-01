@@ -140,18 +140,6 @@ function getElementsInRectangle(restruct, p0, p1) {
     }
   });
 
-  const rgroupAttachmentPointList: number[] = [];
-  restruct.visibleRGroupAttachmentPoints.forEach((item, id) => {
-    if (
-      item.middlePoint.x > x0 &&
-      item.middlePoint.x < x1 &&
-      item.middlePoint.y > y0 &&
-      item.middlePoint.y < y1
-    ) {
-      rgroupAttachmentPointList.push(id);
-    }
-  });
-
   return {
     atoms: atomList,
     bonds: bondList,
@@ -161,7 +149,6 @@ function getElementsInRectangle(restruct, p0, p1) {
     sgroupData: sgroupDataList,
     simpleObjects: simpleObjectsList,
     texts: textsList,
-    rgroupAttachmentPoints: rgroupAttachmentPointList,
   };
 }
 
@@ -272,13 +259,6 @@ function getElementsInPolygon(restruct, rr) {
     }
   });
 
-  const rgroupAttachmentPointList: number[] = [];
-  restruct.visibleRGroupAttachmentPoints.forEach((item, id) => {
-    if (isPointInPolygon(r, item.middlePoint)) {
-      rgroupAttachmentPointList.push(id);
-    }
-  });
-
   return {
     atoms: atomList,
     bonds: bondList,
@@ -288,7 +268,6 @@ function getElementsInPolygon(restruct, rr) {
     sgroupData: sgroupDataList,
     simpleObjects: simpleObjectsList,
     texts: textsList,
-    rgroupAttachmentPoints: rgroupAttachmentPointList,
   };
 }
 

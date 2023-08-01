@@ -19,7 +19,7 @@ import { Atom, Pile, Vec2 } from 'domain/entities';
 import { ReAtom, ReStruct } from '../../../render';
 
 import { BaseOperation } from '../base';
-import { OperationPriority, OperationType } from '../OperationType';
+import { OperationType } from '../OperationType';
 
 // todo: separate classes: now here is circular dependency in `invert` method
 
@@ -88,7 +88,7 @@ class AtomDelete extends BaseOperation {
   data: Data;
 
   constructor(atomId?: any) {
-    super(OperationType.ATOM_DELETE, OperationPriority.ATOM_DELETE);
+    super(OperationType.ATOM_DELETE, 5);
     this.data = { aid: atomId, atom: null, pos: null };
   }
 

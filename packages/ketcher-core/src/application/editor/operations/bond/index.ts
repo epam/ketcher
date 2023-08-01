@@ -19,7 +19,7 @@ import { ReBond, ReStruct } from '../../../render';
 
 import { BaseOperation } from '../base';
 import { Bond } from 'domain/entities';
-import { OperationPriority, OperationType } from '../OperationType';
+import { OperationType } from '../OperationType';
 
 // todo: separate classes: now here is circular dependency in `invert` method
 
@@ -34,7 +34,7 @@ class BondAdd extends BaseOperation {
   data: Data;
 
   constructor(begin?: any, end?: any, bond?: any) {
-    super(OperationType.BOND_ADD, OperationPriority.BOND_ADD);
+    super(OperationType.BOND_ADD, 1);
     this.data = { bond, begin, end, bid: null };
   }
 
@@ -100,7 +100,7 @@ class BondDelete extends BaseOperation {
   data: Data;
 
   constructor(bondId?: any) {
-    super(OperationType.BOND_DELETE, OperationPriority.BOND_DELETE);
+    super(OperationType.BOND_DELETE, 3);
     this.data = { bid: bondId, bond: null, begin: null, end: null };
   }
 

@@ -93,7 +93,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await screenshotBetweenUndoRedo(page);
   });
 
-  test.fixme('Cut and Paste structure and edit', async ({ page }) => {
+  test('Cut and Paste structure and edit', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1713
     Description: The correct structure is pasted on the canvas.
@@ -107,7 +107,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await clickOnAtom(page, 'C', 12);
   });
 
-  test.fixme('Cut the reaction', async ({ page }) => {
+  test('Cut the reaction', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1714
     Description: After the clicking the Cut button, the selected object disappears.
@@ -118,7 +118,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await screenshotBetweenUndoRedo(page);
   });
 
-  test.fixme('Cut the Atom from reaction', async ({ page }) => {
+  test('Cut the Atom from reaction', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1714
     Description: After the clicking the Cut button, the selected object disappears.
@@ -130,7 +130,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await screenshotBetweenUndoRedo(page);
   });
 
-  test.fixme('Cut the Bond from reaction', async ({ page }) => {
+  test('Cut the Bond from reaction', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1714
     Description: After the clicking the Cut button, the selected object disappears.
@@ -142,7 +142,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await screenshotBetweenUndoRedo(page);
   });
 
-  test.fixme('Cut the reaction with hotkey', async ({ page }) => {
+  test('Cut the reaction with hotkey', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1714
     Description: After the clicking the Cut button, the selected object disappears.
@@ -153,7 +153,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await screenshotBetweenUndoRedo(page);
   });
 
-  test.fixme('Copy structure', async ({ page }) => {
+  test('Copy structure', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1715
     Description: After the clicking the Copy button, the selected object not disappears.
@@ -163,7 +163,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectTopPanelButton(TopPanelButton.Copy, page);
   });
 
-  test.fixme('Copy the Atom from reaction', async ({ page }) => {
+  test('Copy the Atom from reaction', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1715
     Description: After the clicking the Copy button, the selected object not disappears.
@@ -173,7 +173,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectTopPanelButton(TopPanelButton.Copy, page);
   });
 
-  test.fixme('Copy the Bond from reaction', async ({ page }) => {
+  test('Copy the Bond from reaction', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1715
     Description: After the clicking the Copy button, the selected object not disappears.
@@ -183,7 +183,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectTopPanelButton(TopPanelButton.Copy, page);
   });
 
-  test.fixme('Copy the reaction with hotkey', async ({ page }) => {
+  test('Copy the reaction with hotkey', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1715
     Description: After the clicking the Copy button, the selected object not disappears.
@@ -193,7 +193,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await page.keyboard.press('Control+c');
   });
 
-  test.fixme('Copy and Paste structure and edit', async ({ page }) => {
+  test('Copy and Paste structure and edit', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1716
     Description: The correct structure is pasted on the canvas.
@@ -207,7 +207,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await clickOnAtom(page, 'C', 12);
   });
 
-  test.fixme('Copy and paste the reaction', async ({ page }) => {
+  test('Copy and paste the reaction', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1717
     Description: After the clicking the Copy button, the selected object not disappears.
@@ -218,7 +218,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
   });
 
-  test.fixme('Copy and paste the Atom from reaction', async ({ page }) => {
+  test('Copy and paste the Atom from reaction', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1717
     Description: After the clicking the Copy button, the selected object not disappears.
@@ -230,7 +230,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
   });
 
-  test.fixme('Copy and paste the Bond from reaction', async ({ page }) => {
+  test('Copy and paste the Bond from reaction', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1717
     Description: After the clicking the Copy button, the selected object not disappears.
@@ -242,7 +242,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
   });
 
-  test.fixme('Copy and paste the reaction with hotkey', async ({ page }) => {
+  test('Copy and paste the reaction with hotkey', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1717
     Description: After the clicking the Copy button, the selected object not disappears.

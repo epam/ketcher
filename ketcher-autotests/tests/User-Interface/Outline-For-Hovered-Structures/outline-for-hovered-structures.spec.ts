@@ -8,7 +8,7 @@ import {
 // shift of coordinates relative to the center, for the hover of the entire structure:
 const screenCenterShift = 50;
 
-test.describe('Open Ketcher', () => {
+test.describe('Outline for hovered structures', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('');
   });

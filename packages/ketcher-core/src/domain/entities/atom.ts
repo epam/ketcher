@@ -46,6 +46,13 @@ export interface AtomAttributes {
   substitutionCount?: number;
   ringBondCount?: number;
   explicitValence?: number;
+  /**
+   *  Values can be `0 | 1 | 2 | 3 | null`.
+   * `1` - has a `primary` R-Group Attachment Point
+   * `2` - has a `secondary` R-Group Attachment Point
+   * `3` - has a `primary` and a `secondary` R-Group Attachment Points
+   * `null` and `0` both mean the atom has no R-Group Attachment Points
+   */
   attpnt?: any;
   rglabel?: string | null;
   charge?: number;

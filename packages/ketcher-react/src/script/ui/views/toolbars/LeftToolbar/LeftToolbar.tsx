@@ -114,7 +114,7 @@ const LeftToolbar = (props: Props) => {
 
   return (
     <div
-      data-testid="LeftToolbar-module_root"
+      data-testid="left-toolbar"
       className={clsx(classes.root, className)}
       ref={ref}
     >

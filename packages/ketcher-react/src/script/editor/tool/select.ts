@@ -452,7 +452,6 @@ class SelectTool implements Tool {
   }
 
   mouseleave() {
-    console.log('leave');
     if (this.dragCtx && this.dragCtx.stopTapping) this.dragCtx.stopTapping();
 
     if (this.dragCtx && this.dragCtx.action) {

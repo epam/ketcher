@@ -19,6 +19,7 @@ import {
   LeftPanelButton,
   fillFieldByPlaceholder,
   dragMouseTo,
+  takeLeftToolbarScreenshot,
 } from '@utils';
 
 test.describe('Selection tools', () => {
@@ -314,9 +315,7 @@ test.describe('Selection tools', () => {
     Test case: EPMLSOPKET-15511
     Description: The flip and rotation buttons are no longer present in the left toolbar.
     */
-    await expect(page).toHaveScreenshot({
-      clip: { x: 0, y: 0, width: 800, height: 600 },
-    });
+    await takeLeftToolbarScreenshot(page);
   });
 
   test('Canvas Expansion when Structure is Moved Outside Down', async ({

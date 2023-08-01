@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { expect, test } from '@playwright/test';
 import {
   takeEditorScreenshot,
@@ -65,8 +64,9 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Test case: EPMLSOPKET-1712
     Description: After the clicking the 'Cut' button, the selected object disappears.
     */
+    const anyAtom = 3;
     await openFileAndAddToCanvas('query-feat.mol', page);
-    await clickOnAtom(page, 'C', 3);
+    await clickOnAtom(page, 'C', anyAtom);
     await selectTopPanelButton(TopPanelButton.Cut, page);
     await screenshotBetweenUndoRedo(page);
   });
@@ -100,11 +100,12 @@ test.describe('Copy/Cut/Paste Actions', () => {
     All query features are correctly rendered.
     User is able to edit the pasted structure.
     */
+    const anyAtom = 12;
     await openFileAndAddToCanvas('clean-diffproperties.mol', page);
     await cutAndPaste(page);
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
-    await clickOnAtom(page, 'C', 12);
+    await clickOnAtom(page, 'C', anyAtom);
   });
 
   test('Cut the reaction', async ({ page }) => {
@@ -200,11 +201,12 @@ test.describe('Copy/Cut/Paste Actions', () => {
     All query features are correctly rendered.
     User is able to edit the pasted structure.
     */
+    const anyAtom = 12;
     await openFileAndAddToCanvas('clean-diffproperties.mol', page);
     await copyAndPaste(page);
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
-    await clickOnAtom(page, 'C', 12);
+    await clickOnAtom(page, 'C', anyAtom);
   });
 
   test('Copy and paste the reaction', async ({ page }) => {
@@ -288,12 +290,12 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Object is created. 
     Object is selected. Buttons are enabled.
     */
-    await page.locator('.MuiButtonBase-root').first().click();
+    await page.locator('copy-button-dropdown-triangle').click();
     await expect(page).toHaveScreenshot();
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
     await page.keyboard.press('Control+a');
-    await page.locator('.MuiButtonBase-root').first().click();
+    await page.locator('copy-button-dropdown-triangle').click();
   });
 
   test('Cut button', async ({ page }) => {

@@ -2,6 +2,7 @@ import { Page } from '@playwright/test';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
 import { BondType } from '..';
+import { AtomLabelType } from './types';
 
 type BoundingBox = {
   width: number;
@@ -89,7 +90,7 @@ export async function clickOnBond(
 
 export async function clickOnAtom(
   page: Page,
-  atomLabel: string,
+  atomLabel: AtomLabelType,
   atomNumber: number,
   buttonSelect?: 'left' | 'right' | 'middle',
 ) {

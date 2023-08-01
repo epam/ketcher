@@ -95,6 +95,13 @@ export function getMenuPropsForClosestItem(
         : null;
     }
 
+    case 'rgroupAttachmentPoints': {
+      return {
+        id: CONTEXT_MENU_ID.FOR_R_GROUP_ATTACHMENT_POINT,
+        rgroupAttachmentPoints: [closestItem.id],
+      };
+    }
+
     default:
       return null;
   }
@@ -112,6 +119,8 @@ export function getMenuPropsForSelection(
 
   const bondsInSelection = 'bonds' in selection;
   const atomsInSelection = 'atoms' in selection;
+  const isRGroupAttachmentPointsSelected =
+    'rgroupAttachmentPoints' in selection;
 
   if (selectedFunctionalGroups.size > 0) {
     const functionalGroups = Array.from(selectedFunctionalGroups.values());
@@ -119,7 +128,11 @@ export function getMenuPropsForSelection(
       id: CONTEXT_MENU_ID.FOR_FUNCTIONAL_GROUPS,
       functionalGroups,
     };
-  } else if (bondsInSelection && !atomsInSelection) {
+  } else if (
+    bondsInSelection &&
+    !atomsInSelection &&
+    !isRGroupAttachmentPointsSelected
+  ) {
     return {
       id: CONTEXT_MENU_ID.FOR_BONDS,
       bondIds: selection.bonds,
@@ -129,13 +142,31 @@ export function getMenuPropsForSelection(
         IGNORED_MAPS_LIST,
       ),
     };
-  } else if (atomsInSelection && !bondsInSelection) {
+  } else if (
+    atomsInSelection &&
+    !bondsInSelection &&
+    !isRGroupAttachmentPointsSelected
+  ) {
     return {
       id: CONTEXT_MENU_ID.FOR_ATOMS,
       atomIds: selection.atoms,
       extraItemsSelected: !onlyHasProperty(
         selection,
         'atoms',
+        IGNORED_MAPS_LIST,
+      ),
+    };
+  } else if (
+    isRGroupAttachmentPointsSelected &&
+    !bondsInSelection &&
+    !atomsInSelection
+  ) {
+    return {
+      id: CONTEXT_MENU_ID.FOR_R_GROUP_ATTACHMENT_POINT,
+      rgroupAttachmentPoints: selection.rgroupAttachmentPoints,
+      extraItemsSelected: !onlyHasProperty(
+        selection,
+        'rgroupAttachmentPoints',
         IGNORED_MAPS_LIST,
       ),
     };

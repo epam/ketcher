@@ -26,7 +26,7 @@ import { createTheme, ThemeProvider } from '@mui/material';
 import AppClipArea from '../views/AppClipArea';
 import { AppHiddenContainer } from './AppHidden';
 import AppModalContainer from '../views/modal';
-import Editor from '../views/Editor';
+import ConnectedEditor from '../views/Editor';
 import classes from './App.module.less';
 import { initFGTemplates } from '../state/functionalGroups';
 import { initSaltsAndSolventsTemplates } from '../state/saltsAndSolvents';
@@ -61,6 +61,9 @@ const App = (props: Props) => {
     dispatch(initSaltsAndSolventsTemplates());
     window.scrollTo(0, 0);
   }, []);
+
+  // Temporary workaround: add proper types for Editor
+  const Editor = ConnectedEditor as React.ComponentType<{ className: string }>;
 
   return (
     <ThemeProvider theme={muiTheme}>

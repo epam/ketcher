@@ -12,6 +12,7 @@ import {
   FILE_TEST_DATA,
   DELAY_IN_SECONDS,
   saveToFile,
+  waitForLoad,
 } from '@utils';
 import { getRxn } from '@utils/formats';
 
@@ -44,7 +45,9 @@ async function pasteFromClipboard(page: Page, fileFormats: string) {
   await selectTopPanelButton(TopPanelButton.Open, page);
   await page.getByText('Paste from clipboard').click();
   await page.getByRole('dialog').getByRole('textbox').fill(fileFormats);
-  await pressButton(page, 'Add to Canvas');
+  await waitForLoad(page, async () => {
+    await pressButton(page, 'Add to Canvas');
+  });
 }
 
 test.describe('Reagents RXN format', () => {

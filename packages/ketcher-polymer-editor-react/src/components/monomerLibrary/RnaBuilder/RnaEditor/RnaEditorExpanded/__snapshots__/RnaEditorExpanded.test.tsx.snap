@@ -1,0 +1,289 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Test Rna Editor Expanded component should render correctly in edit mode 1`] = `
+<div
+  class="css-zbq0po"
+  data-testid="rna-editor-expanded"
+>
+  <div
+    class="css-19lk7et"
+  >
+    <input
+      class="css-9fgya1"
+      placeholder="Name your structure"
+      value=""
+    />
+    <span
+      class="css-1o94icx"
+    />
+  </div>
+  <div
+    class="css-s3o4ys"
+  >
+    <div
+      class="css-1b10s7n"
+    >
+      <svg
+        class="css-dsqlr9"
+        fill="none"
+        height="16"
+        viewBox="0 0 16 16"
+        width="16"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <rect
+          fill="currentColor"
+          height="13.333"
+          rx="1"
+          width="13.333"
+          x="1.332"
+          y="1.333"
+        />
+      </svg>
+      <div
+        class="css-j7qwjs"
+      >
+        <span
+          class="css-9c7r58"
+        >
+          Sugar
+        </span>
+        <span
+          class="css-1mtxt16"
+        >
+          Not selected
+        </span>
+      </div>
+    </div>
+    <div
+      class="css-1b10s7n"
+    >
+      <svg
+        class="css-dsqlr9"
+        fill="none"
+        height="17"
+        viewBox="0 0 18 17"
+        width="18"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <rect
+          fill="currentColor"
+          height="12"
+          rx="1"
+          transform="rotate(45 9 0)"
+          width="12"
+          x="9"
+        />
+      </svg>
+      <div
+        class="css-j7qwjs"
+      >
+        <span
+          class="css-9c7r58"
+        >
+          Base
+        </span>
+        <span
+          class="css-1mtxt16"
+        >
+          Not selected
+        </span>
+      </div>
+    </div>
+    <div
+      class="css-1b10s7n"
+    >
+      <svg
+        class="css-dsqlr9"
+        fill="none"
+        height="24"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <rect
+          fill="currentColor"
+          height="20"
+          rx="10"
+          width="20"
+          x="2"
+          y="2"
+        />
+      </svg>
+      <div
+        class="css-j7qwjs"
+      >
+        <span
+          class="css-9c7r58"
+        >
+          Phosphate
+        </span>
+        <span
+          class="css-1mtxt16"
+        >
+          Not selected
+        </span>
+      </div>
+    </div>
+  </div>
+  <div
+    class="css-1iug9fi"
+  >
+    <button
+      class="css-1971dyf"
+      data-testid="cancel-btn"
+    >
+      Cancel
+    </button>
+    <button
+      class="css-4dyvry"
+      data-testid="add-to-presets-btn"
+    >
+      Add to Presets
+    </button>
+  </div>
+</div>
+`;
+
+exports[`Test Rna Editor Expanded component should render correctly in view mode 1`] = `
+<div
+  class="css-zbq0po"
+  data-testid="rna-editor-expanded"
+>
+  <div
+    class="css-19lk7et"
+  >
+    <div
+      class="css-1o4wo1x"
+    />
+    <span
+      class="css-1o94icx"
+    />
+  </div>
+  <div
+    class="css-s3o4ys"
+  >
+    <div
+      class="css-1b10s7n"
+    >
+      <svg
+        class="css-dsqlr9"
+        fill="none"
+        height="16"
+        viewBox="0 0 16 16"
+        width="16"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <rect
+          fill="currentColor"
+          height="13.333"
+          rx="1"
+          width="13.333"
+          x="1.332"
+          y="1.333"
+        />
+      </svg>
+      <div
+        class="css-j7qwjs"
+      >
+        <span
+          class="css-9c7r58"
+        >
+          Sugar
+        </span>
+        <span
+          class="css-1mtxt16"
+        >
+          Not selected
+        </span>
+      </div>
+    </div>
+    <div
+      class="css-1b10s7n"
+    >
+      <svg
+        class="css-dsqlr9"
+        fill="none"
+        height="17"
+        viewBox="0 0 18 17"
+        width="18"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <rect
+          fill="currentColor"
+          height="12"
+          rx="1"
+          transform="rotate(45 9 0)"
+          width="12"
+          x="9"
+        />
+      </svg>
+      <div
+        class="css-j7qwjs"
+      >
+        <span
+          class="css-9c7r58"
+        >
+          Base
+        </span>
+        <span
+          class="css-1mtxt16"
+        >
+          Not selected
+        </span>
+      </div>
+    </div>
+    <div
+      class="css-1b10s7n"
+    >
+      <svg
+        class="css-dsqlr9"
+        fill="none"
+        height="24"
+        viewBox="0 0 24 24"
+        width="24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <rect
+          fill="currentColor"
+          height="20"
+          rx="10"
+          width="20"
+          x="2"
+          y="2"
+        />
+      </svg>
+      <div
+        class="css-j7qwjs"
+      >
+        <span
+          class="css-9c7r58"
+        >
+          Phosphate
+        </span>
+        <span
+          class="css-1mtxt16"
+        >
+          Not selected
+        </span>
+      </div>
+    </div>
+  </div>
+  <div
+    class="css-1iug9fi"
+  >
+    <button
+      class="css-1971dyf"
+      data-testid="duplicate-btn"
+    >
+      Duplicate and Edit
+    </button>
+    <button
+      class="css-1971dyf"
+      data-testid="edit-btn"
+    >
+      Edit
+    </button>
+  </div>
+</div>
+`;

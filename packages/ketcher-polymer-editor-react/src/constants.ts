@@ -32,6 +32,7 @@ export const preview = {
   width: 230,
   height: 230,
   gap: 5,
+  topPadding: 16,
 } as const;
 
 export enum MonomerGroups {

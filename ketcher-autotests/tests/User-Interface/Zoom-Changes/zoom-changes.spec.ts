@@ -5,7 +5,7 @@ import { TestIdSelectors } from '../../utils/selectors/testIdSelectors';
 const randomNegativeNumber = -60;
 const randomPositiveNumber = 60;
 
-test.describe('Open Ketcher', () => {
+test.describe('Zoom changes', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('');
   });

@@ -23,26 +23,29 @@ import {
 } from './styles';
 import { IGroupBlockProps } from './types';
 import { groupNameToLabel, groupNameToRnaEditorItemLabel } from './utils';
+import { useAppSelector } from 'hooks';
+import { selectIsEditMode } from 'state/rna-builder';
 
 export const GroupBlock = ({
   groupName,
   iconName,
   monomerName,
   selected,
-  disabled,
   onClick,
 }: IGroupBlockProps) => {
+  const isEditMode = useAppSelector(selectIsEditMode);
+
   return (
     <GroupBlockContainer
       selected={selected}
       onClick={onClick}
-      disabled={disabled}
-      empty
+      empty={!monomerName}
+      isEditMode={isEditMode}
     >
       <GroupIcon empty={!monomerName} selected={selected} name={iconName} />
       <TextContainer>
         <GroupName>{groupNameToRnaEditorItemLabel[groupName]}</GroupName>
-        <MonomerName>
+        <MonomerName empty={!monomerName} selected={selected}>
           {monomerName ||
             (selected ? groupNameToLabel[groupName] : 'Not selected')}
         </MonomerName>

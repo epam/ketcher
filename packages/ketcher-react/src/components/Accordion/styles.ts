@@ -36,7 +36,8 @@ export const SummaryContainer = styled.div({
 
 export const DetailsContainer = styled.div<IDetailsContainerProps>(
   {
-    overflow: 'scroll',
+    overflowX: 'hidden',
+    overflowY: 'auto',
     transition: 'all .3s',
   },
   ({ expanded }) => ({

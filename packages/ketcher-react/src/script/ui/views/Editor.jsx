@@ -29,9 +29,9 @@ const mapDispatchToProps = (dispatch) => {
   const onZoomOut = () => dispatchAction(dispatch, 'zoom-out');
 
   return {
-    onZoomIn,
+    ...dispatch(initEditor),
     onZoomOut,
-    ...initEditor(dispatch),
+    onZoomIn,
   };
 };
 

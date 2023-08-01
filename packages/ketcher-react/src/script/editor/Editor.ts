@@ -16,12 +16,14 @@
 
 import {
   Action,
+  FloatingToolsParams,
   Editor as KetcherEditor,
   Pile,
   Render,
   Struct,
   Vec2,
   fromDescriptorsAlign,
+  fromMultipleMove,
   fromNewCanvas,
 } from 'ketcher-core';
 import {
@@ -44,6 +46,11 @@ import {
   ToolConstructorInterface,
   ToolEventHandlerName,
 } from './tool/Tool';
+import {
+  getSelectionMap,
+  getStructCenter,
+  recoordinate,
+} from './utils/structLayout';
 
 const SCALE = 40;
 const HISTORY_SIZE = 32; // put me to options
@@ -71,6 +78,7 @@ const highlightTargets = [
   'frags',
   'merge',
   'rgroups',
+  'rgroupAttachmentPoints',
   'sgroups',
   'sgroupData',
   'enhancedFlags',
@@ -101,11 +109,6 @@ function selectStereoFlagsIfNecessary(
   return stereoFlags;
 }
 
-export type FloatingToolsParams = {
-  visible?: boolean;
-  rotateHandlePosition?: { x: number; y: number };
-};
-
 export interface Selection {
   atoms?: Array<number>;
   bonds?: Array<number>;
@@ -113,6 +116,7 @@ export interface Selection {
   rxnPluses?: Array<number>;
   rxnArrows?: Array<number>;
   texts?: Array<number>;
+  rgroupAttachmentPoints?: Array<number>;
 }
 
 class Editor implements KetcherEditor {
@@ -131,6 +135,8 @@ class Editor implements KetcherEditor {
   event: {
     message: Subscription;
     elementEdit: PipelineSubscription;
+    zoomIn: PipelineSubscription;
+    zoomOut: PipelineSubscription;
     bondEdit: PipelineSubscription;
     rgroupEdit: PipelineSubscription;
     sgroupEdit: PipelineSubscription;
@@ -186,6 +192,8 @@ class Editor implements KetcherEditor {
       message: new Subscription(),
       elementEdit: new PipelineSubscription(),
       bondEdit: new PipelineSubscription(),
+      zoomIn: new PipelineSubscription(),
+      zoomOut: new PipelineSubscription(),
       rgroupEdit: new PipelineSubscription(),
       sgroupEdit: new PipelineSubscription(),
       sdataEdit: new PipelineSubscription(),
@@ -328,6 +336,26 @@ class Editor implements KetcherEditor {
     this.render.update();
     this.rotateController.rerender();
     return this.render.options.zoom;
+  }
+
+  centerStruct() {
+    const structure = this.render.ctab;
+    const { scale, offset } = this.render.options;
+    const structCenter = getStructCenter(structure);
+    const { width, height } = this.render.clientArea.getBoundingClientRect();
+    const canvasCenterVector = new Vec2(width, height);
+    const canvasCenter = this.render.view2obj(canvasCenterVector).scaled(0.5);
+    const shiftFactor = 0.4;
+    const shiftVector = canvasCenter
+      .sub(structCenter)
+      .sub(offset.scaled(shiftFactor / scale));
+
+    const structureToMove = getSelectionMap(structure);
+
+    const action = fromMultipleMove(structure, structureToMove, shiftVector);
+    this.update(action, true);
+
+    recoordinate(this, canvasCenter);
   }
 
   zoomAccordingContent() {
@@ -783,23 +811,6 @@ function domEventSetup(editor: Editor, clientArea: HTMLElement) {
       return true;
     }, -1);
   });
-}
-
-function recoordinate(editor: Editor, rp?: Vec2 /* , vp */) {
-  // rp is a point in scaled coordinates, which will be positioned
-  // vp is the point where the reference point should now be (in view coordinates)
-  //    or the center if not set
-  console.assert(rp, 'Reference point not specified');
-  if (rp) {
-    editor.render.setScrollOffset(rp.x, rp.y);
-  } else {
-    editor.render.setScrollOffset(0, 0);
-  }
-}
-
-function getStructCenter(ReStruct, selection?) {
-  const bb = ReStruct.getVBoxObj(selection || {});
-  return Vec2.lc2(bb.p0, 0.5, bb.p1, 0.5);
 }
 
 export { Editor };

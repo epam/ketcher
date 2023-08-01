@@ -24,5 +24,5 @@ export type Group = {
 
 export interface IMonomerListProps {
   libraryName: LibraryNameType;
-  onItemClick: (item) => void;
+  onItemClick?: (item) => void;
 }

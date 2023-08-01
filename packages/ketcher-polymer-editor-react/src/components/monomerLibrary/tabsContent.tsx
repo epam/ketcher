@@ -23,6 +23,9 @@ export const tabsContent = [
   },
   {
     caption: 'CHEM',
-    component: () => <></>,
+    component: MonomerList,
+    props: {
+      libraryName: MONOMER_TYPES.CHEM,
+    },
   },
 ];

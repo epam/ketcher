@@ -20,6 +20,7 @@ import {
   SGroup,
   Struct,
   SGroupAttachmentPoint,
+  RGroupAttachmentPoint,
 } from 'domain/entities';
 
 import { Elements } from 'domain/constants';
@@ -39,9 +40,23 @@ export function moleculeToStruct(ketItem: any): Struct {
   const struct = mergeFragmentsToStruct(ketItem, new Struct());
   if (ketItem.atoms) {
     ketItem.atoms.forEach((atom) => {
-      if (atom.type === 'rg-label') struct.atoms.add(rglabelToStruct(atom));
-      if (atom.type === 'atom-list') struct.atoms.add(atomListToStruct(atom));
-      if (!atom.type) struct.atoms.add(atomToStruct(atom));
+      let atomId: number | null = null;
+      if (atom.type === 'rg-label') {
+        atomId = struct.atoms.add(rglabelToStruct(atom));
+      }
+      if (atom.type === 'atom-list') {
+        atomId = struct.atoms.add(atomListToStruct(atom));
+      }
+      if (!atom.type) {
+        atomId = struct.atoms.add(atomToStruct(atom));
+      }
+      if (atomId !== null) {
+        addRGroupAttachmentPointsToStruct(
+          struct,
+          atomId,
+          atom.attachmentPoints,
+        );
+      }
     });
   }
 
@@ -128,6 +143,33 @@ export function atomListToStruct(source) {
     notList: source.notList,
   });
   return new Atom(params);
+}
+
+function addRGroupAttachmentPointsToStruct(
+  struct: Struct,
+  attachedAtomId: number,
+  attpnt,
+) {
+  const rgroupAttachmentPoints: RGroupAttachmentPoint[] = [];
+  if (attpnt === 1) {
+    rgroupAttachmentPoints.push(
+      new RGroupAttachmentPoint(attachedAtomId, 'primary'),
+    );
+  } else if (attpnt === 2) {
+    rgroupAttachmentPoints.push(
+      new RGroupAttachmentPoint(attachedAtomId, 'secondary'),
+    );
+  } else if (attpnt === 3) {
+    rgroupAttachmentPoints.push(
+      new RGroupAttachmentPoint(attachedAtomId, 'primary'),
+    );
+    rgroupAttachmentPoints.push(
+      new RGroupAttachmentPoint(attachedAtomId, 'secondary'),
+    );
+  }
+  rgroupAttachmentPoints.forEach((rgroupAttachmentPoint) => {
+    struct.rgroupAttachmentPoints.add(rgroupAttachmentPoint);
+  });
 }
 
 /**

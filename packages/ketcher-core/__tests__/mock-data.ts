@@ -693,7 +693,7 @@ const molecule = {
   bondInitHalfBonds() {},
   atomAddNeighbor() {},
   setImplicitHydrogen() {},
-  getAttachmentsPointsVBox: mockFn().mockReturnValue(
+  getRGroupAttachmentPointsVBoxByAtomIds: mockFn().mockReturnValue(
     new Box2Abs(
       new Vec2({
         x: 6,

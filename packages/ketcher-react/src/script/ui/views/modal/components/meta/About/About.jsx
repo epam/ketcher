@@ -51,7 +51,7 @@ function AboutDialog(props) {
                 Version {props.version}
               </a>
             </dt>
-            <dd>
+            <dd data-testid="build-time">
               Build at <time>{props.date}</time>
             </dd>
             <div className={classes.infoLinks}>

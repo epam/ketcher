@@ -1,4 +1,5 @@
 import assert from 'assert';
+import { RGroupAttachmentPoint } from './rgroupAttachmentPoint';
 
 /**
  * This is data model for Sgrou attachment point.
@@ -50,5 +51,19 @@ export class SGroupAttachmentPoint {
       newLeaveAtomId,
       this.attachmentId,
     );
+  }
+
+  /**
+   * Trick: used for cloned struct for tooltips, for preview, for templates
+   *
+   * Why?
+   * Currently, tooltips are implemented with removing sgroups (wrong implementation)
+   * That's why we need to mark atoms as sgroup attachment points.
+   *
+   * If we change preview approach to flagged (option for showing sgroups without abbreviation),
+   * then we will be able to remove this hack.
+   */
+  convertToRGroupAttachmentPointForDisplayPurpose(attachedAtomId: number) {
+    return new RGroupAttachmentPoint(attachedAtomId, 'primary');
   }
 }

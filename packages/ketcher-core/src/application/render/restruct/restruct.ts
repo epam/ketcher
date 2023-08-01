@@ -19,11 +19,12 @@ import {
   FunctionalGroup,
   Pile,
   Pool,
+  RGroupAttachmentPoint,
   SGroup,
   Struct,
   Vec2,
 } from 'domain/entities';
-
+import assert from 'assert';
 import { LayerMap } from './generalEnumTypes';
 import ReAtom from './reatom';
 import ReBond from './rebond';
@@ -40,6 +41,7 @@ import ReText from './retext';
 import { Render } from '../raphaelRender';
 import Visel from './visel';
 import util from '../util';
+import { ReRGroupAttachmentPoint } from './rergroupAttachmentPoint';
 
 class ReStruct {
   public static maps = {
@@ -49,6 +51,7 @@ class ReStruct {
     rxnArrows: ReRxnArrow,
     frags: ReFrag,
     rgroups: ReRGroup,
+    rgroupAttachmentPoints: ReRGroupAttachmentPoint,
     sgroupData: ReDataSGroupData,
     enhancedFlags: ReEnhancedFlag,
     sgroups: ReSGroup,
@@ -66,6 +69,8 @@ class ReStruct {
   public rxnArrows: Map<number, ReRxnArrow> = new Map();
   public frags: Pool = new Pool();
   public rgroups: Pool = new Pool();
+  public rgroupAttachmentPoints: Pool<ReRGroupAttachmentPoint> = new Pool();
+
   public sgroups: Map<number, ReSGroup> = new Map();
   public sgroupData: Map<number, ReDataSGroupData> = new Map();
   public enhancedFlags: Map<number, ReEnhancedFlag> = new Map();
@@ -130,6 +135,17 @@ class ReStruct {
       this.rgroups.set(id, new ReRGroup(item));
     });
 
+    molecule.rgroupAttachmentPoints.forEach(
+      (item: RGroupAttachmentPoint, id: number) => {
+        const reAtom = this.atoms.get(item.atomId);
+        assert(reAtom != null);
+        this.rgroupAttachmentPoints.set(
+          id,
+          new ReRGroupAttachmentPoint(item, reAtom),
+        );
+      },
+    );
+
     molecule.sgroups.forEach((item, id) => {
       this.sgroups.set(id, new ReSGroup(item));
       if (item.type === 'DAT' && !item.data.attached) {
@@ -138,6 +154,22 @@ class ReStruct {
       if (FunctionalGroup.isFunctionalGroup(item) || SGroup.isSuperAtom(item)) {
         this.molecule.functionalGroups.set(id, new FunctionalGroup(item));
       }
+    });
+  }
+
+  get visibleRGroupAttachmentPoints() {
+    const sgroups = this.molecule.sgroups;
+    const functionalGroups = this.molecule.functionalGroups;
+    return this.rgroupAttachmentPoints.filter((_id, reItem) => {
+      const atomId = reItem.item.atomId;
+      const atom = this.molecule.atoms.get(atomId);
+      assert(atom != null);
+      return !FunctionalGroup.isAtomInContractedFunctionalGroup(
+        atom,
+        sgroups,
+        functionalGroups,
+        false,
+      );
     });
   }
 
@@ -351,17 +383,6 @@ class ReStruct {
 
     let boundingBox = this.getBoundingBoxForSelection(selection);
 
-    if (boundingBox) {
-      const atomsIdsSelected: number[] = selection.atoms ?? [
-        ...this.atoms.keys(),
-      ];
-      const attachmentPointsVBox =
-        this.getAttachmentsPointsVBox(atomsIdsSelected);
-      if (attachmentPointsVBox) {
-        boundingBox = Box2Abs.union(boundingBox, attachmentPointsVBox);
-      }
-    }
-
     boundingBox = boundingBox || new Box2Abs(0, 0, 0, 0);
     return boundingBox;
   }
@@ -436,18 +457,6 @@ class ReStruct {
       this.clearVisel(frag.visel);
       this.frags.delete(fid);
       this.molecule.frags.delete(fid);
-    });
-
-    // dependency on attachment points
-    // must be removed once attachment points will be dedicated Visel
-    // must be refactored in https://github.com/epam/ketcher/issues/2742 (#2742)
-    this.atoms.forEach((_, aid) => {
-      const atom = this.atoms.get(aid);
-      // in case of atom has attachment point we have to mark it as changed,
-      // so the labels for attachment point will be recalculated
-      if (atom?.hasAttachmentPoint()) {
-        this.atomsChanged.set(aid, 1);
-      }
     });
 
     Object.keys(ReStruct.maps).forEach((map) => {
@@ -618,30 +627,58 @@ class ReStruct {
     });
   }
 
-  getAttachmentsPointsVBox(atomsIds: number[]): Box2Abs | null {
-    let result: Box2Abs | null = null;
-    for (const atomId of atomsIds) {
-      const reAtom = this.atoms.get(atomId);
-      if (!reAtom) {
-        return null;
+  getRGroupAttachmentPointsVBoxByAtomIds(atomsIds: number[]): Box2Abs | null {
+    let allAtomAttachmentPointsVBox: Box2Abs | null = null;
+
+    atomsIds.forEach((atomId) => {
+      const attachmentPointIds =
+        this.molecule.getRGroupAttachmentPointsByAtomId(atomId);
+
+      const oneAtomAttachmentPointsVBox = attachmentPointIds.reduce(
+        (previousVBox, attachmentPointId) => {
+          const attachmentPoint =
+            this.rgroupAttachmentPoints.get(attachmentPointId);
+          assert(attachmentPoint != null);
+          const currentVBox = attachmentPoint.getVBoxObj(this.render);
+          return previousVBox && currentVBox
+            ? Box2Abs.union(previousVBox, currentVBox)
+            : currentVBox;
+        },
+        null as Box2Abs | null,
+      );
+
+      if (allAtomAttachmentPointsVBox && oneAtomAttachmentPointsVBox) {
+        allAtomAttachmentPointsVBox = Box2Abs.union(
+          allAtomAttachmentPointsVBox,
+          oneAtomAttachmentPointsVBox,
+        );
+      } else {
+        allAtomAttachmentPointsVBox =
+          allAtomAttachmentPointsVBox ?? oneAtomAttachmentPointsVBox;
       }
-      const bbox = reAtom.getVBoxObjOfAttachmentPoint(this.render);
-      if (bbox) {
-        result = result ? Box2Abs.union(result, bbox) : bbox;
-      }
-    }
-    return result;
+    });
+
+    return allAtomAttachmentPointsVBox;
   }
 
   private showRgroupAttachmentPoints() {
-    this.atoms.forEach((_value, aid) => {
-      const atom = this.atoms.get(aid);
-      const sgroup = this.molecule.getGroupFromAtomId(aid);
+    // why update all rgroupAttachmentPoints instead of changed ones?
+    // 1. The label of an R-Group attachment point may be affected by other R-Group attachment points
+    // 2. The visibility of an an R-Group attachment point may be affected by contracting/expanding an S-Group
+    this.rgroupAttachmentPoints.forEach((_value, id) => {
+      const rgroupAttachmentPoint = this.rgroupAttachmentPoints.get(id);
+      if (rgroupAttachmentPoint?.visel) {
+        this.clearVisel(rgroupAttachmentPoint.visel);
+      }
+
+      const attachedAtomId = rgroupAttachmentPoint?.item.atomId;
+      const sgroup = this.molecule.getGroupFromAtomId(attachedAtomId);
       const isInsideContractedSGroup = Boolean(sgroup?.isContracted());
       if (isInsideContractedSGroup) {
         return;
       }
-      atom?.showAttachmentPoints(this);
+
+      rgroupAttachmentPoint?.show(this);
     });
   }
 

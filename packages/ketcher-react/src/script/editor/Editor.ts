@@ -78,6 +78,7 @@ const highlightTargets = [
   'frags',
   'merge',
   'rgroups',
+  'rgroupAttachmentPoints',
   'sgroups',
   'sgroupData',
   'enhancedFlags',
@@ -115,6 +116,7 @@ export interface Selection {
   rxnPluses?: Array<number>;
   rxnArrows?: Array<number>;
   texts?: Array<number>;
+  rgroupAttachmentPoints?: Array<number>;
 }
 
 class Editor implements KetcherEditor {

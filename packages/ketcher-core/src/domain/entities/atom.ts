@@ -219,6 +219,10 @@ export class Atom {
     });
   }
 
+  get isRGroupAttachmentPointEditDisabled() {
+    return this.label === 'R#' && this.rglabel !== null;
+  }
+
   /**
    * Trick: used for cloned struct for tooltips, for preview, for templates
    *

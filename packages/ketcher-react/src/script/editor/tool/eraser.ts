@@ -20,6 +20,7 @@ import {
   fromOneAtomDeletion,
   fromOneBondDeletion,
   fromPlusDeletion,
+  fromRGroupAttachmentPointDeletion,
   fromSgroupDeletion,
   fromSimpleObjectDeletion,
   fromTextDeletion,
@@ -50,6 +51,7 @@ class EraserTool implements Tool {
       'sgroupData',
       'simpleObjects',
       'texts',
+      'rgroupAttachmentPoints',
     ];
     this.lassoHelper = new LassoHelper(mode || 0, editor, null);
 
@@ -159,6 +161,19 @@ class EraserTool implements Tool {
           )
         ) {
           bondsResult.push(bondId);
+        }
+      }
+    }
+
+    if (selected && functionalGroups.size && selected.rgroupAttachmentPoints) {
+      for (const rgroupAttachmentPointId of selected.rgroupAttachmentPoints) {
+        const attachedAtomId =
+          FunctionalGroup.isRGroupAttachmentPointInsideFunctionalGroup(
+            molecule,
+            rgroupAttachmentPointId,
+          );
+        if (attachedAtomId !== null) {
+          atomsResult.push(attachedAtomId);
         }
       }
     }
@@ -274,6 +289,15 @@ class EraserTool implements Tool {
       ) {
         bondResult.push(bondId);
       }
+    } else if (functionalGroups && ci?.map === 'rgroupAttachmentPoints') {
+      const attachedAtomId =
+        FunctionalGroup.isRGroupAttachmentPointInsideFunctionalGroup(
+          molecule,
+          ci.id,
+        );
+      if (attachedAtomId !== null) {
+        atomResult.push(attachedAtomId);
+      }
     }
 
     if (atomResult.length) {
@@ -341,6 +365,8 @@ class EraserTool implements Tool {
       this.editor.update(fromSimpleObjectDeletion(restruct, ci.id));
     } else if (ci.map === 'texts') {
       this.editor.update(fromTextDeletion(restruct, ci.id));
+    } else if (ci.map === 'rgroupAttachmentPoints') {
+      this.editor.update(fromRGroupAttachmentPointDeletion(restruct, ci.id));
     } else {
       // TODO re-factoring needed - should be "map-independent"
       console.error(

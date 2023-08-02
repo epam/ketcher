@@ -94,8 +94,7 @@ function defaultOptions(options: RenderOptions): RenderOptions {
     },
     hoverStyle: {
       stroke: '#0097A8',
-      fill: 'transparent',
-      fillSelected: '#CCFFDD',
+      fill: '#CCFFDD',
       'stroke-width': (0.6 * scaleFactor) / 20,
     },
     sgroupBracketStyle: {
@@ -106,11 +105,10 @@ function defaultOptions(options: RenderOptions): RenderOptions {
       stroke: 'gray',
       'stroke-width': '1px',
     },
-    hoverStyleSimpleObject: {
+    selectionStyleSimpleObject: {
       stroke: '#57FF8F',
       'stroke-width': scaleFactor / 4,
       'stroke-linecap': 'round',
-      'stroke-opacity': 0.6,
     },
     atomSelectionPlateRadius: labelFontSize,
     contractedFunctionalGroupSize: 50,

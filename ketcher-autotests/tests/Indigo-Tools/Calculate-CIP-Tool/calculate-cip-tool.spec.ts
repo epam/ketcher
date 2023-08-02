@@ -21,9 +21,9 @@ import {
   copyAndPaste,
   cutAndPaste,
   receiveFileComparisonData,
-  selectBond,
-  BondTypeName,
   saveToFile,
+  BondTool,
+  selectNestedTool,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
@@ -309,7 +309,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await openFileAndAddToCanvas('chain-with-stereo-bonds.mol', page);
     await selectTopPanelButton(TopPanelButton.Calculate, page);
     await delay(DELAY_IN_SECONDS.TWO);
-    await selectBond(BondTypeName.SingleUp, page);
+    await selectNestedTool(page, BondTool.UP);
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 6);
     await page.mouse.click(point.x, point.y);
   });

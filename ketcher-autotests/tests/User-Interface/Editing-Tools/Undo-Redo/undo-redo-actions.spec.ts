@@ -204,7 +204,6 @@ test.describe('Undo/Redo Actions', () => {
     */
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
-    // function can't select Double Bond
     await selectNestedTool(page, BondTool.DOUBLE);
     await clickOnAtom(page, 'C', 0);
 

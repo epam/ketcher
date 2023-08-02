@@ -157,7 +157,7 @@ test.describe('3D Viewer', () => {
     await selectTopPanelButton(TopPanelButton.ThreeD, page);
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
-    await dragMouseTo(x, y - 30, page);
+    await dragMouseTo(x, y + 75, page);
     await pressButton(page, 'Apply');
 
     // Get the structure data after making changes
@@ -180,7 +180,7 @@ test.describe('3D Viewer', () => {
     await delay(DELAY_IN_SECONDS.TWO);
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
-    await dragMouseTo(x - 70, y, page);
+    await dragMouseTo(x + 80, y, page);
     await pressButton(page, 'Apply');
 
     // Get the structure data after making changes
@@ -202,7 +202,7 @@ test.describe('3D Viewer', () => {
     await delay(DELAY_IN_SECONDS.TWO);
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
-    await dragMouseTo(x - 70, y, page);
+    await dragMouseTo(x + 75, y, page);
     await pressButton(page, 'Apply');
 
     // Get the structure data after making changes
@@ -224,7 +224,7 @@ test.describe('3D Viewer', () => {
     await delay(DELAY_IN_SECONDS.TWO);
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
-    await dragMouseTo(x - 50, y, page);
+    await dragMouseTo(x - 90, y, page);
     await pressButton(page, 'Apply');
 
     // Get the structure data after making changes

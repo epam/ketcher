@@ -307,13 +307,13 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Object is created. 
     Object is selected. Buttons are enabled.
     */
-    await page.locator('.MuiButtonBase-root').first().click();
+    await page.getByTestId('copy-button-dropdown-triangle').click();
     await delay(DELAY_IN_SECONDS.THREE);
     await expect(page).toHaveScreenshot();
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
     await page.keyboard.press('Control+a');
-    await page.locator('.MuiButtonBase-root').first().click();
+    await page.getByTestId('copy-button-dropdown-triangle').click();
   });
 
   test('Cut button', async ({ page }) => {

@@ -31,6 +31,7 @@ import {
   AttachmentPoint,
   copyAndPaste,
   cutAndPaste,
+  BondTool,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 
@@ -194,7 +195,7 @@ test.describe('Undo/Redo Actions', () => {
     await screenshotBetweenUndoRedo(page);
   });
 
-  test.fixme('Undo/Redo Double Bond template action', async ({ page }) => {
+  test('Undo/Redo Double Bond template action', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1744
     Description: Undo/Redo action should work correctly:
@@ -204,13 +205,13 @@ test.describe('Undo/Redo Actions', () => {
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
     // function can't select Double Bond
-    await selectBond(BondTypeName.Double, page);
+    await selectNestedTool(page, BondTool.DOUBLE);
     await clickOnAtom(page, 'C', 0);
 
     await screenshotBetweenUndoRedo(page);
   });
 
-  test.fixme('Undo/Redo Triple Bond template action', async ({ page }) => {
+  test('Undo/Redo Triple Bond template action', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1750
     Description: Undo/Redo action should work correctly:
@@ -219,8 +220,7 @@ test.describe('Undo/Redo Actions', () => {
     */
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
-    // function can't select Triple Bond
-    await selectBond(BondTypeName.Triple, page);
+    await selectNestedTool(page, BondTool.TRIPPLE);
     await clickOnAtom(page, 'C', 0);
 
     await screenshotBetweenUndoRedo(page);
@@ -245,83 +245,75 @@ test.describe('Undo/Redo Actions', () => {
     await screenshotBetweenUndoRedo(page);
   });
 
-  test.fixme(
-    'Undo/Redo Single Up stereobond template action',
-    async ({ page }) => {
-      /*
+  test('Undo/Redo Single Up stereobond template action', async ({ page }) => {
+    /*
     Test case: EPMLSOPKET-1752
     Description: Undo/Redo action should work correctly:
     Undo: the Single Up stereobond is removed;
     Redo: the Single Up stereobond is restored.
     */
-      await selectRing(RingButton.Benzene, page);
-      await clickInTheMiddleOfTheScreen(page);
+    await selectRing(RingButton.Benzene, page);
+    await clickInTheMiddleOfTheScreen(page);
 
-      await selectBond(BondTypeName.SingleUp, page);
-      await clickOnAtom(page, 'C', 0);
+    await selectNestedTool(page, BondTool.UP);
+    await clickOnAtom(page, 'C', 0);
 
-      await screenshotBetweenUndoRedo(page);
-    },
-  );
+    await screenshotBetweenUndoRedo(page);
+  });
 
-  test.fixme(
-    'Undo/Redo Single Down stereobond template action',
-    async ({ page }) => {
-      /*
+  test('Undo/Redo Single Down stereobond template action', async ({ page }) => {
+    /*
     Test case: EPMLSOPKET-1752
     Description: Undo/Redo action should work correctly:
     Undo: the Single Down stereobond is removed;
     Redo: the Single Down stereobond is restored.
     */
-      await selectRing(RingButton.Benzene, page);
-      await clickInTheMiddleOfTheScreen(page);
+    await selectRing(RingButton.Benzene, page);
+    await clickInTheMiddleOfTheScreen(page);
 
-      await selectBond(BondTypeName.SingleDown, page);
-      await clickOnAtom(page, 'C', 0);
+    await selectNestedTool(page, BondTool.DOWN);
+    await clickOnAtom(page, 'C', 0);
 
-      await screenshotBetweenUndoRedo(page);
-    },
-  );
+    await screenshotBetweenUndoRedo(page);
+  });
 
-  test.fixme(
-    'Undo/Redo Single Up/Down stereobond template action',
-    async ({ page }) => {
-      /*
+  test('Undo/Redo Single Up/Down stereobond template action', async ({
+    page,
+  }) => {
+    /*
     Test case: EPMLSOPKET-1752
     Description: Undo/Redo action should work correctly:
     Undo: the Single Up/Down stereobond is removed;
     Redo: the Single Up/Down stereobond is restored.
     */
-      await selectRing(RingButton.Benzene, page);
-      await clickInTheMiddleOfTheScreen(page);
+    await selectRing(RingButton.Benzene, page);
+    await clickInTheMiddleOfTheScreen(page);
 
-      await selectBond(BondTypeName.SingleUpDown, page);
-      await clickOnAtom(page, 'C', 0);
+    await selectNestedTool(page, BondTool.UP_DOWN);
+    await clickOnAtom(page, 'C', 0);
 
-      await screenshotBetweenUndoRedo(page);
-    },
-  );
+    await screenshotBetweenUndoRedo(page);
+  });
 
-  test.fixme(
-    'Undo/Redo Double Cis/Trans stereobond template action',
-    async ({ page }) => {
-      /*
+  test('Undo/Redo Double Cis/Trans stereobond template action', async ({
+    page,
+  }) => {
+    /*
     Test case: EPMLSOPKET-1752
     Description: Undo/Redo action should work correctly:
     Undo: the Double Cis/Trans stereobond is removed;
     Redo: the Double Cis/Trans stereobond is restored.
     */
-      await selectRing(RingButton.Benzene, page);
-      await clickInTheMiddleOfTheScreen(page);
+    await selectRing(RingButton.Benzene, page);
+    await clickInTheMiddleOfTheScreen(page);
 
-      await selectBond(BondTypeName.DoubleCisTrans, page);
-      await clickOnAtom(page, 'C', 0);
+    await selectNestedTool(page, BondTool.CROSSED);
+    await clickOnAtom(page, 'C', 0);
 
-      await screenshotBetweenUndoRedo(page);
-    },
-  );
+    await screenshotBetweenUndoRedo(page);
+  });
 
-  test.fixme('Undo/Redo Any Query Bond template action', async ({ page }) => {
+  test('Undo/Redo Any Query Bond template action', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1753
     Description: Undo/Redo action should work correctly:
@@ -331,87 +323,81 @@ test.describe('Undo/Redo Actions', () => {
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectBond(BondTypeName.Any, page);
+    await selectNestedTool(page, BondTool.ANY);
     await clickOnAtom(page, 'C', 0);
 
     await screenshotBetweenUndoRedo(page);
   });
 
-  test.fixme(
-    'Undo/Redo Aromatic Query Bond template action',
-    async ({ page }) => {
-      /*
+  test('Undo/Redo Aromatic Query Bond template action', async ({ page }) => {
+    /*
     Test case: EPMLSOPKET-1753
     Description: Undo/Redo action should work correctly:
     Undo: the Aromatic Query Bond is removed;
     Redo: the Aromatic Query Bond is restored.
     */
-      await selectRing(RingButton.Benzene, page);
-      await clickInTheMiddleOfTheScreen(page);
+    await selectRing(RingButton.Benzene, page);
+    await clickInTheMiddleOfTheScreen(page);
 
-      await selectBond(BondTypeName.Aromatic, page);
-      await clickOnAtom(page, 'C', 0);
+    await selectNestedTool(page, BondTool.AROMATIC);
+    await clickOnAtom(page, 'C', 0);
 
-      await screenshotBetweenUndoRedo(page);
-    },
-  );
+    await screenshotBetweenUndoRedo(page);
+  });
 
-  test.fixme(
-    'Undo/Redo Single/Double Query Bond template action',
-    async ({ page }) => {
-      /*
+  test('Undo/Redo Single/Double Query Bond template action', async ({
+    page,
+  }) => {
+    /*
     Test case: EPMLSOPKET-1753
     Description: Undo/Redo action should work correctly:
     Undo: the Single/Double Query Bond is removed;
     Redo: the Single/Double Query Bond is restored.
     */
-      await selectRing(RingButton.Benzene, page);
-      await clickInTheMiddleOfTheScreen(page);
+    await selectRing(RingButton.Benzene, page);
+    await clickInTheMiddleOfTheScreen(page);
 
-      await selectBond(BondTypeName.SingleDouble, page);
-      await clickOnAtom(page, 'C', 0);
+    await selectNestedTool(page, BondTool.SINGLE_DOUBLE);
+    await clickOnAtom(page, 'C', 0);
 
-      await screenshotBetweenUndoRedo(page);
-    },
-  );
+    await screenshotBetweenUndoRedo(page);
+  });
 
-  test.fixme(
-    'Undo/Redo Single/Aromatic Query Bond template action',
-    async ({ page }) => {
-      /*
+  test('Undo/Redo Single/Aromatic Query Bond template action', async ({
+    page,
+  }) => {
+    /*
     Test case: EPMLSOPKET-1753
     Description: Undo/Redo action should work correctly:
     Undo: the Single/Aromatic Query Bond is removed;
     Redo: the Single/Aromatic Query Bond is restored.
     */
-      await selectRing(RingButton.Benzene, page);
-      await clickInTheMiddleOfTheScreen(page);
+    await selectRing(RingButton.Benzene, page);
+    await clickInTheMiddleOfTheScreen(page);
 
-      await selectBond(BondTypeName.SingleAromatic, page);
-      await clickOnAtom(page, 'C', 0);
+    await selectNestedTool(page, BondTool.SINGLE_AROMATIC);
+    await clickOnAtom(page, 'C', 0);
 
-      await screenshotBetweenUndoRedo(page);
-    },
-  );
+    await screenshotBetweenUndoRedo(page);
+  });
 
-  test.fixme(
-    'Undo/Redo Double/Aromatic Query Bond template action',
-    async ({ page }) => {
-      /*
+  test('Undo/Redo Double/Aromatic Query Bond template action', async ({
+    page,
+  }) => {
+    /*
     Test case: EPMLSOPKET-1753
     Description: Undo/Redo action should work correctly:
     Undo: the Double/Aromatic Query Bond is removed;
     Redo: the Double/Aromatic Query Bond is restored.
     */
-      await selectRing(RingButton.Benzene, page);
-      await clickInTheMiddleOfTheScreen(page);
+    await selectRing(RingButton.Benzene, page);
+    await clickInTheMiddleOfTheScreen(page);
 
-      await selectBond(BondTypeName.DoubleAromatic, page);
-      await clickOnAtom(page, 'C', 0);
+    await selectNestedTool(page, BondTool.DOUBLE_AROMATIC);
+    await clickOnAtom(page, 'C', 0);
 
-      await screenshotBetweenUndoRedo(page);
-    },
-  );
+    await screenshotBetweenUndoRedo(page);
+  });
 
   test('Undo/Redo Mapping tool template action', async ({ page }) => {
     /*

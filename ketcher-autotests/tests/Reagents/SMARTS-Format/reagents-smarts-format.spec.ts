@@ -25,7 +25,6 @@ async function previewSmarts(page: Page) {
   await selectTopPanelButton(TopPanelButton.Save, page);
   await page.getByRole('button', { name: 'MDL Rxnfile V2000' }).click();
   await page.getByRole('option', { name: 'Daylight SMARTS' }).click();
-  await delay(DELAY_IN_SECONDS.ONE);
 }
 
 test.describe('Reagents SMARTS format', () => {

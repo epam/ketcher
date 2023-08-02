@@ -12,12 +12,10 @@ import {
   BondType,
   selectLeftPanelButton,
   LeftPanelButton,
-  dragMouseTo,
   selectRingButton,
   RingButton,
   clickInTheMiddleOfTheScreen,
   resetCurrentTool,
-  getCoordinatesOfTheMiddleOfTheScreen,
   copyAndPaste,
   cutAndPaste,
   receiveFileComparisonData,
@@ -27,6 +25,7 @@ import {
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
+import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
 import { getKet, getMolfile } from '@utils/formats';
 
 test.describe('Indigo Tools - Calculate CIP Tool', () => {
@@ -35,7 +34,6 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
   });
 
   test.afterEach(async ({ page }) => {
-    await delay(DELAY_IN_SECONDS.THREE);
     await takeEditorScreenshot(page);
   });
 
@@ -289,14 +287,24 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     Test case: EPMLSOPKET-1925
     Description: The whole fragment is rotated around the structure center. Stereo labels are rotated with structure.
     */
-    const yDelta = 300;
+    const COORDINATES_TO_PERFORM_ROTATION = {
+      x: 20,
+      y: 160,
+    };
     await openFileAndAddToCanvas('structure-with-stereo-bonds.mol', page);
     await selectTopPanelButton(TopPanelButton.Calculate, page);
-    await selectLeftPanelButton(LeftPanelButton.RotateTool, page);
-    await clickInTheMiddleOfTheScreen(page);
-    const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
-    const coordinatesWithShift = y - yDelta;
-    await dragMouseTo(x, coordinatesWithShift, page);
+    await delay(DELAY_IN_SECONDS.TWO);
+    await page.keyboard.press('Control+a');
+    const coordinates = await getRotationHandleCoordinates(page);
+    const { x: rotationHandleX, y: rotationHandleY } = coordinates;
+
+    await page.mouse.move(rotationHandleX, rotationHandleY);
+    await page.mouse.down();
+    await page.mouse.move(
+      COORDINATES_TO_PERFORM_ROTATION.x,
+      COORDINATES_TO_PERFORM_ROTATION.y,
+    );
+    await page.mouse.up();
   });
 
   test('(Add a new stereobond to the structure) Manipulations with structure with stereo labels', async ({
@@ -310,7 +318,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await selectTopPanelButton(TopPanelButton.Calculate, page);
     await delay(DELAY_IN_SECONDS.TWO);
     await selectNestedTool(page, BondTool.UP);
-    const point = await getBondByIndex(page, { type: BondType.SINGLE }, 6);
+    const point = await getBondByIndex(page, { type: BondType.SINGLE }, 5);
     await page.mouse.click(point.x, point.y);
   });
 

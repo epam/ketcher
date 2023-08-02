@@ -5,7 +5,6 @@ import {
   LeftPanelButton,
   selectLeftPanelButton,
   clickInTheMiddleOfTheScreen,
-  delay,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   pressButton,
@@ -21,7 +20,6 @@ import {
   cutAndPaste,
   clickOnBond,
   clickOnAtom,
-  DELAY_IN_SECONDS,
   fillFieldByPlaceholder,
   screenshotBetweenUndoRedo,
   saveToFile,
@@ -72,7 +70,6 @@ test.describe('Data S-Group tool', () => {
   });
 
   test.afterEach(async ({ page }) => {
-    await delay(DELAY_IN_SECONDS.THREE);
     await takeEditorScreenshot(page);
   });
 
@@ -347,7 +344,7 @@ test.describe('Data S-Group tool', () => {
     */
     await openFileAndAddToCanvas('chain-with-name-and-value.ket', page);
     await page.keyboard.press('Control+a');
-    await selectLeftPanelButton(LeftPanelButton.Erase, page);
+    await page.getByTestId('delete').click();
     await takeEditorScreenshot(page);
 
     await screenshotBetweenUndoRedo(page);

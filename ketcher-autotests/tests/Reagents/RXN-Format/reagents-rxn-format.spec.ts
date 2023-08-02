@@ -5,12 +5,10 @@ import {
   TopPanelButton,
   clickInTheMiddleOfTheScreen,
   pressButton,
-  delay,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   readFileContents,
   FILE_TEST_DATA,
-  DELAY_IN_SECONDS,
   saveToFile,
   waitForLoad,
 } from '@utils';
@@ -187,7 +185,6 @@ test.describe('Reagents RXN format', () => {
   });
 
   test.afterEach(async ({ page }) => {
-    await delay(DELAY_IN_SECONDS.THREE);
     await takeEditorScreenshot(page);
   });
 

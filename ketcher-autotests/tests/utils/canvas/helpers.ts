@@ -6,7 +6,7 @@ import {
 } from '@playwright/test';
 import { clickInTheMiddleOfTheScreen, pressButton } from '@utils/clicks';
 import { ELEMENT_TITLE } from './types';
-import { TopPanelButton } from '..';
+import { DELAY_IN_SECONDS, TopPanelButton } from '..';
 import { selectTopPanelButton } from './tools';
 import { getLeftTopBarSize } from './common/getLeftTopBarSize';
 
@@ -83,16 +83,19 @@ export async function takeEditorScreenshot(
   options?: { masks?: Locator[] },
 ) {
   const editor = page.locator('[class*="App-module_canvas"]');
+  await delay(DELAY_IN_SECONDS.THREE);
   await expect(editor).toHaveScreenshot({ mask: options?.masks });
 }
 
 export async function takeLeftToolbarScreenshot(page: Page) {
   const editor = page.locator('[class*="LeftToolbar-module_buttons"]');
+  await delay(DELAY_IN_SECONDS.THREE);
   await expect(editor).toHaveScreenshot();
 }
 
 export async function takeTopToolbarScreenshot(page: Page) {
   const editor = page.getByTestId('top-toolbar');
+  await delay(DELAY_IN_SECONDS.THREE);
   await expect(editor).toHaveScreenshot();
 }
 

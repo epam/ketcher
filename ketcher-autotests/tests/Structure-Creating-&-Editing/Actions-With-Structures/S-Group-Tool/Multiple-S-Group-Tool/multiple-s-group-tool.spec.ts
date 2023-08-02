@@ -47,7 +47,6 @@ test.describe('Multiple S-Group tool', () => {
   });
 
   test.afterEach(async ({ page }) => {
-    await delay(3);
     await takeEditorScreenshot(page);
   });
 
@@ -145,7 +144,7 @@ test.describe('Multiple S-Group tool', () => {
     */
     await openFileAndAddToCanvas('multiple-group.ket', page);
     await page.keyboard.press('Control+a');
-    await selectLeftPanelButton(LeftPanelButton.Erase, page);
+    await page.getByTestId('delete').click();
     await takeEditorScreenshot(page);
 
     await screenshotBetweenUndoRedo(page);

@@ -16,7 +16,6 @@ test.describe('CDX files', () => {
   });
 
   test.afterEach(async ({ page }) => {
-    await delay(DELAY_IN_SECONDS.TWO);
     await takeEditorScreenshot(page);
   });
 

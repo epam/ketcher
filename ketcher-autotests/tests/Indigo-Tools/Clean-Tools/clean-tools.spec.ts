@@ -25,7 +25,6 @@ test.describe('Indigo Tools - Clean Tools', () => {
     await openFileAndAddToCanvas('different-bond-length.mol', page);
 
     await selectTopPanelButton(TopPanelButton.Layout, page);
-    await delay(DELAY_IN_SECONDS.TWO);
     await takeEditorScreenshot(page);
 
     await selectTopPanelButton(TopPanelButton.Undo, page);
@@ -70,7 +69,6 @@ test.describe('Indigo Tools - Clean Tools', () => {
     await openFileAndAddToCanvas('4-bonds.mol', page);
 
     await selectTopPanelButton(TopPanelButton.Layout, page);
-    await delay(DELAY_IN_SECONDS.TWO);
     await takeEditorScreenshot(page);
 
     await selectTopPanelButton(TopPanelButton.Undo, page);
@@ -90,7 +88,6 @@ test.describe('Indigo Tools - Clean Tools', () => {
     await openFileAndAddToCanvas('layout-distorted.mol', page);
 
     await selectTopPanelButton(TopPanelButton.Layout, page);
-    await delay(DELAY_IN_SECONDS.TWO);
     await takeEditorScreenshot(page);
   });
 
@@ -115,7 +112,6 @@ test.describe('Indigo Tools - Clean Tools', () => {
     await openFileAndAddToCanvas('clean-structure.mol', page);
 
     await selectTopPanelButton(TopPanelButton.Layout, page);
-    await delay(DELAY_IN_SECONDS.TWO);
     await takeEditorScreenshot(page);
 
     await selectTopPanelButton(TopPanelButton.Undo, page);
@@ -147,7 +143,6 @@ test.describe('Indigo Tools - Clean Tools', () => {
     await openFileAndAddToCanvas('distorted-structures.mol', page);
 
     await selectTopPanelButton(TopPanelButton.Layout, page);
-    await delay(DELAY_IN_SECONDS.TWO);
     await takeEditorScreenshot(page);
 
     await selectTopPanelButton(TopPanelButton.Undo, page);
@@ -157,7 +152,6 @@ test.describe('Indigo Tools - Clean Tools', () => {
     await takeEditorScreenshot(page);
 
     await selectTopPanelButton(TopPanelButton.Undo, page);
-    await delay(DELAY_IN_SECONDS.TWO);
     await takeEditorScreenshot(page);
   });
 
@@ -170,7 +164,6 @@ test.describe('Indigo Tools - Clean Tools', () => {
     await openFileAndAddToCanvas('clean-stereo.mol', page);
 
     await selectTopPanelButton(TopPanelButton.Layout, page);
-    await delay(DELAY_IN_SECONDS.TWO);
     await takeEditorScreenshot(page);
 
     await selectTopPanelButton(TopPanelButton.Undo, page);
@@ -191,7 +184,6 @@ test.describe('Indigo Tools - Clean Tools', () => {
     await openFileAndAddToCanvas('clean-rgroups.mol', page);
 
     await selectTopPanelButton(TopPanelButton.Layout, page);
-    await delay(DELAY_IN_SECONDS.TWO);
     await takeEditorScreenshot(page);
 
     await selectTopPanelButton(TopPanelButton.Undo, page);
@@ -211,7 +203,6 @@ test.describe('Indigo Tools - Clean Tools', () => {
     await openFileAndAddToCanvas('clean-sgroups.mol', page);
 
     await selectTopPanelButton(TopPanelButton.Layout, page);
-    await delay(DELAY_IN_SECONDS.TWO);
     await takeEditorScreenshot(page);
 
     await selectTopPanelButton(TopPanelButton.Undo, page);
@@ -246,7 +237,6 @@ test.describe('Indigo Tools - Clean Tools', () => {
     await openFileAndAddToCanvas('mapping-reaction.rxn', page);
 
     await selectTopPanelButton(TopPanelButton.Layout, page);
-    await delay(DELAY_IN_SECONDS.TWO);
     await takeEditorScreenshot(page);
 
     await selectTopPanelButton(TopPanelButton.Undo, page);
@@ -264,7 +254,6 @@ test.describe('Indigo Tools - Clean Tools', () => {
     await openFileAndAddToCanvas('cyclic-structures.mol', page);
 
     await selectTopPanelButton(TopPanelButton.Layout, page);
-    await delay(DELAY_IN_SECONDS.TWO);
     await takeEditorScreenshot(page);
   });
 
@@ -276,7 +265,6 @@ test.describe('Indigo Tools - Clean Tools', () => {
     await openFileAndAddToCanvas('several-structures.mol', page);
 
     await selectTopPanelButton(TopPanelButton.Layout, page);
-    await delay(DELAY_IN_SECONDS.TWO);
     await takeEditorScreenshot(page);
   });
 });

@@ -39,6 +39,7 @@ test.describe('3D Viewer', () => {
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
     await selectTopPanelButton(TopPanelButton.ThreeD, page);
+    // delay need to load 3D Viewer
     await delay(DELAY_IN_SECONDS.THREE);
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
@@ -55,6 +56,7 @@ test.describe('3D Viewer', () => {
     */
     await openFileAndAddToCanvas('benzene-br.mol', page);
     await selectTopPanelButton(TopPanelButton.ThreeD, page);
+    // delay need to load 3D Viewer
     await delay(DELAY_IN_SECONDS.THREE);
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
@@ -72,6 +74,7 @@ test.describe('3D Viewer', () => {
     */
     await openFileAndAddToCanvas('benzene-stereo.mol', page);
     await selectTopPanelButton(TopPanelButton.ThreeD, page);
+    // delay need to load 3D Viewer
     await delay(DELAY_IN_SECONDS.THREE);
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
@@ -89,6 +92,7 @@ test.describe('3D Viewer', () => {
     */
     await openFileAndAddToCanvas('benzene-with-aromatic-bonds.mol', page);
     await selectTopPanelButton(TopPanelButton.ThreeD, page);
+    // delay need to load 3D Viewer
     await delay(DELAY_IN_SECONDS.THREE);
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
@@ -108,6 +112,7 @@ test.describe('3D Viewer', () => {
     Description: '3D Viewer' button is present on the main toolbar.
     */
     await selectTopPanelButton(TopPanelButton.ThreeD, page);
+    // delay need to load 3D Viewer
     await delay(DELAY_IN_SECONDS.THREE);
     await expect(page).toHaveScreenshot({
       animations: 'disabled',
@@ -177,6 +182,7 @@ test.describe('3D Viewer', () => {
     await openFileAndAddToCanvas('benzene-br.mol', page);
     const initialStructureData = await getKet(page);
     await selectTopPanelButton(TopPanelButton.ThreeD, page);
+    // delay need to load 3D Viewer
     await delay(DELAY_IN_SECONDS.TWO);
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
@@ -199,6 +205,7 @@ test.describe('3D Viewer', () => {
     await openFileAndAddToCanvas('benzene-stereo.mol', page);
     const initialStructureData = await getKet(page);
     await selectTopPanelButton(TopPanelButton.ThreeD, page);
+    // delay need to load 3D Viewer
     await delay(DELAY_IN_SECONDS.TWO);
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
@@ -221,6 +228,7 @@ test.describe('3D Viewer', () => {
     await openFileAndAddToCanvas('benzene-with-aromatic-bonds.mol', page);
     const initialStructureData = await getKet(page);
     await selectTopPanelButton(TopPanelButton.ThreeD, page);
+    // delay need to load 3D Viewer
     await delay(DELAY_IN_SECONDS.TWO);
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);

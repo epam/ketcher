@@ -26,7 +26,7 @@ const ignoredTests = [
   'Indigo-Tools/Clean-Tools/clean-tools.spec.ts:158',
   'Indigo-Tools/Clean-Tools/clean-tools.spec.ts:215',
   'Indigo-Tools/Clean-Tools/clean-tools.spec.ts:232',
-  'R-group-tool/**',
+  // 'R-group-tool/**',
   'Reagents/**',
   'Structure-Creating-&-Editing/**',
   'Templates/Functional-Groups/functional-groups.spec.ts',

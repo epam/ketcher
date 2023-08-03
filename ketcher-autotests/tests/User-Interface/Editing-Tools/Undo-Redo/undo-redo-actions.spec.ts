@@ -32,6 +32,8 @@ import {
   copyAndPaste,
   cutAndPaste,
   BondTool,
+  DELAY_IN_SECONDS,
+  delay,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 
@@ -408,6 +410,7 @@ test.describe('Undo/Redo Actions', () => {
     await openFileAndAddToCanvas('reaction-chain.ket', page);
     await selectNestedTool(page, ReactionMappingTool.AUTOMAP);
     await pressButton(page, 'Apply');
+    await delay(DELAY_IN_SECONDS.THREE);
     await screenshotBetweenUndoRedo(page);
   });
 
@@ -582,6 +585,7 @@ test.describe('Undo/Redo Actions', () => {
     await pressButton(page, 'Apply');
     await cutAndPaste(page);
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await delay(DELAY_IN_SECONDS.TWO);
     await screenshotBetweenUndoRedo(page);
   });
 

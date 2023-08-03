@@ -19,8 +19,6 @@ import {
   selectBond,
   BondTypeName,
   clickOnAtom,
-  delay,
-  DELAY_IN_SECONDS,
   BondTool,
   selectNestedTool,
 } from '@utils';

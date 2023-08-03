@@ -4,12 +4,10 @@ import {
   TopPanelButton,
   clickInTheMiddleOfTheScreen,
   pressButton,
-  delay,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   readFileContents,
   pasteFromClipboard,
-  DELAY_IN_SECONDS,
   waitForLoad,
 } from '@utils';
 import { getSmarts } from '@utils/formats';

@@ -3,12 +3,10 @@ import {
   selectTopPanelButton,
   TopPanelButton,
   clickInTheMiddleOfTheScreen,
-  delay,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   readFileContents,
   pasteFromClipboardAndAddToCanvas,
-  DELAY_IN_SECONDS,
 } from '@utils';
 import {
   getExtendedSmiles,

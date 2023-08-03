@@ -3,10 +3,8 @@ import {
   clickInTheMiddleOfTheScreen,
   TopPanelButton,
   selectTopPanelButton,
-  delay,
   openFileAndAddToCanvas,
   takeEditorScreenshot,
-  DELAY_IN_SECONDS,
   pasteFromClipboardAndAddToCanvas,
 } from '@utils';
 

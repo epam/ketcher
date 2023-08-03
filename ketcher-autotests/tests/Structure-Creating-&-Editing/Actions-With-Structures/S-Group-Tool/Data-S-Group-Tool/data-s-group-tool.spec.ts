@@ -25,7 +25,6 @@ import {
   saveToFile,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
-import { getBondByIndex } from '@utils/canvas/bonds';
 import { getCml, getMolfile } from '@utils/formats';
 
 const CANVAS_CLICK_X = 600;
@@ -431,7 +430,6 @@ test.describe('Data S-Group tool', () => {
       Description: Hover over created S-Group displays tooltip for Benzene ring with Nitrogen atom
     */
     await openFileAndAddToCanvas('benzene-with-data-s-group.ket', page);
-    const point = await getBondByIndex(page, { type: BondType.SINGLE }, 2);
-    await page.mouse.move(point.x, point.y);
+    await clickInTheMiddleOfTheScreen(page);
   });
 });

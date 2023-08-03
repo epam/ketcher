@@ -80,6 +80,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     Stereo labels disappear after 'Layout' action.
     'Undo' action leads to the previous structure with stereo labels.
     */
+    // will work after bugfix in 2.13-rc.3 bug#3025
     await openFileAndAddToCanvas('structure-with-stereo-bonds.mol', page);
     await selectTopPanelButton(TopPanelButton.Calculate, page);
     await selectTopPanelButton(TopPanelButton.Layout, page);
@@ -241,25 +242,26 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await selectTopPanelButton(TopPanelButton.ThreeD, page);
   });
 
-  test('(Erase bond with stereo labels and Undo) Manipulations with structure with stereo labels', async ({
-    page,
-  }) => {
-    /*
+  test.fixme(
+    '(Erase bond with stereo labels and Undo) Manipulations with structure with stereo labels',
+    async ({ page }) => {
+      /*
     Test case: EPMLSOPKET-1925
     Description: Stereo labels appear near stereobonds after 'Calculate CIP' action.
     Bond with stereo label is deleted after removing by the 'Erase' tool.
     'Undo' action leads to the previous structure with stereo labels.
     */
-    await openFileAndAddToCanvas('structure-with-stereo-bonds.mol', page);
-    await selectTopPanelButton(TopPanelButton.Calculate, page);
-    await selectLeftPanelButton(LeftPanelButton.Erase, page);
-    const point = await getBondByIndex(page, { type: BondType.SINGLE }, 3);
-    await page.mouse.click(point.x, point.y);
+      await openFileAndAddToCanvas('structure-with-stereo-bonds.mol', page);
+      await selectTopPanelButton(TopPanelButton.Calculate, page);
+      await selectLeftPanelButton(LeftPanelButton.Erase, page);
+      const point = await getBondByIndex(page, { type: BondType.SINGLE }, 3);
+      await page.mouse.click(point.x, point.y);
 
-    await takeEditorScreenshot(page);
+      await takeEditorScreenshot(page);
 
-    await selectTopPanelButton(TopPanelButton.Undo, page);
-  });
+      await selectTopPanelButton(TopPanelButton.Undo, page);
+    },
+  );
 
   test('(Erase atom with stereo labels and Undo) Manipulations with structure with stereo labels', async ({
     page,

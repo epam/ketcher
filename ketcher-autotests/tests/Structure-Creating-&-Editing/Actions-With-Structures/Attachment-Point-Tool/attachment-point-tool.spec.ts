@@ -24,6 +24,7 @@ import {
   saveToFile,
   receiveFileComparisonData,
   clickOnAtom,
+  screenshotBetweenUndoRedo,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
@@ -277,9 +278,7 @@ test.describe('Attachment Point Tool', () => {
     await copyAndPaste(page);
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
 
-    await selectTopPanelButton(TopPanelButton.Undo, page);
-    await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.Redo, page);
+    await screenshotBetweenUndoRedo(page);
   });
 
   test('Cut/Paste actions', async ({ page }) => {
@@ -292,9 +291,7 @@ test.describe('Attachment Point Tool', () => {
     await cutAndPaste(page);
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
 
-    await selectTopPanelButton(TopPanelButton.Undo, page);
-    await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.Redo, page);
+    await screenshotBetweenUndoRedo(page);
   });
 
   test.fixme('Copy/Paste reaction with Attachment point', async ({ page }) => {
@@ -320,9 +317,7 @@ test.describe('Attachment Point Tool', () => {
     await cutAndPaste(page);
     await page.mouse.click(x, y);
 
-    await selectTopPanelButton(TopPanelButton.Undo, page);
-    await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.Redo, page);
+    await screenshotBetweenUndoRedo(page);
   });
 
   test('Save as *.mol file', async ({ page }) => {

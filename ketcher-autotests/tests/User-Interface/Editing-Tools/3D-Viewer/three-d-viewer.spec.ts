@@ -131,12 +131,13 @@ test.describe('3D Viewer', () => {
     });
   });
 
-  test('One simple structure', async ({ page }) => {
+  test.fixme('One simple structure', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1933
     Description: A structure (e.g. Benzene) is created on the canvas.
     3D window is opened. Benzene is drawn in it. 
     */
+    // we need remove or block the variable number of frames per second in the lower right corner
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
     await selectTopPanelButton(TopPanelButton.ThreeD, page);

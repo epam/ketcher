@@ -102,7 +102,8 @@ test.describe('Multiple S-Group tool', () => {
     */
     await openFileAndAddToCanvas('multiple-group.ket', page);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
-    await clickOnBond(page, BondType.SINGLE, 3);
+    await clickOnBond(page, BondType.SINGLE, 3, 'right');
+    await page.getByText('Edit S-Group...').click();
     await fillFieldByLabel(page, 'Repeat count', '99');
     await pressButton(page, 'Apply');
     await resetCurrentTool(page);

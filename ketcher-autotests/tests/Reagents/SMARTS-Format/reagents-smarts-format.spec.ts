@@ -79,7 +79,7 @@ test.describe('Reagents SMARTS format', () => {
   test('Paste from clipboard in "Daylight SMARTS" format', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-4687
-    Description: Reagent 'Cl' displays below reaction arrow
+    Description: Reagent 'Cl' displays above reaction arrow
     */
     await selectTopPanelButton(TopPanelButton.Open, page);
     await page.getByText('Paste from clipboard').click();

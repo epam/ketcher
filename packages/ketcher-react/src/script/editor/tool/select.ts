@@ -508,7 +508,7 @@ function resizeCanvas(render, event) {
     isCloseToTopEdgeOfCanvas,
     isCloseToRightEdgeOfCanvas,
     isCloseToBottomEdgeOfCanvas,
-  } = isCloseToEdgeOfCanvas(event, render.sz);
+  } = isCloseToEdgeOfCanvas(event, render.sz, render.options.zoom);
   const {
     isCloseToLeftEdgeOfScreen,
     isCloseToTopEdgeOfScreen,

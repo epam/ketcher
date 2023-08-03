@@ -28,7 +28,7 @@ interface TabPanelProps {
 const TabPanelDiv = styled.div(() => ({
   backgroundColor: '#eef2f5',
   flexGrow: 1,
-  overflowY: 'scroll',
+  overflowY: 'auto',
 }));
 
 const TabPanelBox = styled(Box)({
@@ -122,7 +122,6 @@ function CustomTabs(props): ReactElement {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'flex-start',
-    overflowY: 'auto',
     width: '100%',
     height: '100%',
   }));

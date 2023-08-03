@@ -101,6 +101,19 @@ export class FunctionalGroup {
     return null;
   }
 
+  static isRGroupAttachmentPointInsideFunctionalGroup(
+    molecule: Struct,
+    id: number,
+  ) {
+    const rgroupAttachmentPoint = molecule.rgroupAttachmentPoints.get(id);
+    assert(rgroupAttachmentPoint != null);
+    const attachedAtom = rgroupAttachmentPoint.atomId;
+    return FunctionalGroup.atomsInFunctionalGroup(
+      molecule.functionalGroups,
+      attachedAtom,
+    );
+  }
+
   static findFunctionalGroupByAtom(
     functionalGroups: Pool<FunctionalGroup>,
     atomId: number,

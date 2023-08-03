@@ -30,6 +30,7 @@ const monomerColors: Record<string, MonomerColorScheme> = {
   colorP: { regular: '#F2C5B6', hover: '#FFA98C' },
   colorST: { regular: '#FFC44C', hover: '#FFAA00' },
   colorW: { regular: '#99458B', hover: '#7F006B' },
+  chem: { regular: '#333333', hover: '#555555' },
 };
 
 export const defaultTheme: EditorTheme = {
@@ -49,6 +50,7 @@ export const defaultTheme: EditorTheme = {
       light: '#585858',
       dark: '#000000',
       error: '#FF4A4A',
+      lightgrey: '#7C7C7F',
     },
     tab: {
       regular: '#FFFFFF',
@@ -72,6 +74,9 @@ export const defaultTheme: EditorTheme = {
         hover: '#333333',
         clicked: '#AEAEAE',
         disabled: 'rgba(113, 113, 113, 0.4)',
+      },
+      transparent: {
+        active: 'transparent',
       },
       text: {
         primary: '#FFFFFF',
@@ -172,6 +177,7 @@ export const defaultTheme: EditorTheme = {
       S: monomerColors.colorST,
       T: monomerColors.colorST,
       W: monomerColors.colorW,
+      CHEM: monomerColors.chem,
     },
   },
   border: {
@@ -190,7 +196,11 @@ export const defaultTheme: EditorTheme = {
     color: '#B4B9D6',
     selected: {
       color: '#167782',
+      small: '1px solid #167782',
       medium: '2px solid #167782',
+    },
+    grey: {
+      small: '1px solid #585858',
     },
   },
   transition: {

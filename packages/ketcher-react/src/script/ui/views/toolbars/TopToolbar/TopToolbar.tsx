@@ -139,9 +139,9 @@ export const TopToolbar = ({
 
   return (
     <ControlsPanel
-      data-testid="App-module_top"
       className={className}
       ref={resizeRef}
+      data-testid="top-toolbar"
     >
       <TopToolbarIconButton
         title="Clear Canvas"

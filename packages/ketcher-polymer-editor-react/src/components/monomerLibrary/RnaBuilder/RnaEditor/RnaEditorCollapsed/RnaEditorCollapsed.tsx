@@ -17,24 +17,21 @@
 import {
   MonomerName,
   RnaEditorCollapsedContainer,
-  MonomerFullName,
   TextContainer,
-  EditIcon,
 } from './styles';
 import { IRnaEditorCollapsedProps } from './types';
 
 export const RnaEditorCollapsed = ({
   name,
   fullName,
-  onEdit,
 }: IRnaEditorCollapsedProps) => {
   return (
     <RnaEditorCollapsedContainer>
       <TextContainer>
-        <MonomerName>{name || 'Not selected'}</MonomerName>
-        <MonomerFullName>{fullName}</MonomerFullName>
+        <MonomerName grey={!name && !fullName}>
+          {name || fullName || 'Untitled'}
+        </MonomerName>
       </TextContainer>
-      <EditIcon name="edit-filled" onClick={onEdit} />
     </RnaEditorCollapsedContainer>
   );
 };

@@ -32,6 +32,7 @@ import {
   KETCHER_INIT_EVENT_NAME,
   KETCHER_ROOT_NODE_CLASS_NAME,
 } from './constants';
+import { createRoot } from 'react-dom/client';
 
 const mediaSizes = {
   smallWidth: 1040,
@@ -52,15 +53,18 @@ function Editor(props: EditorProps) {
   const ketcherInitEvent = new Event(KETCHER_INIT_EVENT_NAME);
 
   useEffect(() => {
+    const rootRef = createRoot(rootElRef.current as HTMLDivElement);
     init({
       ...props,
       element: rootElRef.current,
+      rootRef,
     }).then((ketcher: Ketcher) => {
       if (typeof onInit === 'function') {
         onInit(ketcher);
         window.dispatchEvent(ketcherInitEvent);
       }
     });
+    return () => rootRef.unmount();
     // TODO: provide the list of dependencies after implementing unsubscribe function
   }, []);
 

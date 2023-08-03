@@ -27,6 +27,7 @@ import { ButtonsConfig } from './ButtonsConfig';
 import { Editor } from '../../editor';
 import createApi from '../../api';
 import { initApp } from '../../ui';
+import { Root } from 'react-dom/client';
 
 class KetcherBuilder {
   private structService: StructService | null;
@@ -54,6 +55,7 @@ class KetcherBuilder {
 
   async appendUiAsync(
     element: HTMLDivElement | null,
+    rootRef: Root,
     staticResourcesUrl: string,
     errorHandler: (message: string) => void,
     buttons?: ButtonsConfig,
@@ -63,6 +65,7 @@ class KetcherBuilder {
     const editor = await new Promise<Editor>((resolve) => {
       initApp(
         element,
+        rootRef,
         staticResourcesUrl,
         {
           buttons: buttons || {},

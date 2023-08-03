@@ -15,8 +15,6 @@ import {
   AtomButton,
   LeftPanelButton,
   selectLeftPanelButton,
-  moveMouseToTheMiddleOfTheScreen,
-  getCoordinatesOfTheMiddleOfTheScreen,
   dragMouseTo,
   selectRing,
   RingButton,

@@ -4,7 +4,6 @@ import {
   LeftPanelButton,
   selectLeftPanelButton,
   clickInTheMiddleOfTheScreen,
-  delay,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   pressButton,

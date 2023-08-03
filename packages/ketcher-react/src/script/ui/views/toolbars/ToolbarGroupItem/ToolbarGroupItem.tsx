@@ -30,6 +30,7 @@ interface ToolbarGroupItemProps extends ToolbarItem {
   indigoVerification: boolean;
   className?: string;
   vertical?: boolean;
+  dataTestId?: string;
 }
 
 interface ToolbarGroupItemCallProps {
@@ -51,8 +52,9 @@ const ToolbarGroupItem = (props: Props) => {
     vertical,
     onAction,
     onOpen,
+    dataTestId,
   } = props;
-
+  console.log('name', name, dataTestId);
   if (!options?.length) {
     const iconName = getIconName(id);
     return (
@@ -66,6 +68,7 @@ const ToolbarGroupItem = (props: Props) => {
           indigoVerification={indigoVerification}
           disableableButtons={disableableButtons}
           onAction={onAction}
+          dataTestId={dataTestId}
         />
       )
     );
@@ -83,6 +86,7 @@ const ToolbarGroupItem = (props: Props) => {
       onAction={onAction}
       onOpen={onOpen}
       vertical={vertical}
+      dataTestId={dataTestId}
     />
   );
 };

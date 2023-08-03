@@ -53,18 +53,18 @@ function Editor(props: EditorProps) {
   const ketcherInitEvent = new Event(KETCHER_INIT_EVENT_NAME);
 
   useEffect(() => {
-    const rootRef = createRoot(rootElRef.current as HTMLDivElement);
+    const appRoot = createRoot(rootElRef.current as HTMLDivElement);
     init({
       ...props,
       element: rootElRef.current,
-      rootRef,
+      appRoot,
     }).then((ketcher: Ketcher) => {
       if (typeof onInit === 'function') {
         onInit(ketcher);
         window.dispatchEvent(ketcherInitEvent);
       }
     });
-    return () => rootRef.unmount();
+    return () => appRoot.unmount();
     // TODO: provide the list of dependencies after implementing unsubscribe function
   }, []);
 

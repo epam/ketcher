@@ -21,7 +21,7 @@ import { StructServiceProvider } from 'ketcher-core';
 
 interface Config {
   element: HTMLDivElement | null;
-  rootRef: Root;
+  appRoot: Root;
   staticResourcesUrl: string;
   structServiceProvider: StructServiceProvider;
   buttons?: ButtonsConfig;
@@ -30,7 +30,7 @@ interface Config {
 
 async function buildKetcherAsync({
   element,
-  rootRef,
+  appRoot,
   staticResourcesUrl,
   structServiceProvider,
   buttons,
@@ -42,7 +42,7 @@ async function buildKetcherAsync({
   builder.appendServiceMode(structServiceProvider.mode);
   await builder.appendUiAsync(
     element,
-    rootRef,
+    appRoot,
     staticResourcesUrl,
     errorHandler,
     buttons,

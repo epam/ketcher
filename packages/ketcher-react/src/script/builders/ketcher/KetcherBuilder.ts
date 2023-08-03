@@ -55,7 +55,7 @@ class KetcherBuilder {
 
   async appendUiAsync(
     element: HTMLDivElement | null,
-    rootRef: Root,
+    appRoot: Root,
     staticResourcesUrl: string,
     errorHandler: (message: string) => void,
     buttons?: ButtonsConfig,
@@ -65,7 +65,7 @@ class KetcherBuilder {
     const editor = await new Promise<Editor>((resolve) => {
       initApp(
         element,
-        rootRef,
+        appRoot,
         staticResourcesUrl,
         {
           buttons: buttons || {},

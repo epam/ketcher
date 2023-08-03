@@ -31,7 +31,7 @@ import { initMouseListener } from '../state/mouse';
 
 function initApp(
   element: HTMLDivElement | null,
-  root: Root,
+  appRoot: Root,
   staticResourcesUrl: string,
   options: any,
   server: StructService,
@@ -42,7 +42,7 @@ function initApp(
   store.dispatch(initMouseListener(element));
   store.dispatch(initResize());
 
-  root.render(
+  appRoot.render(
     <Provider store={store}>
       <SettingsContext.Provider value={{ staticResourcesUrl }}>
         <ErrorsContext.Provider value={{ errorHandler: options.errorHandler }}>

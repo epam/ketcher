@@ -1,67 +1,145 @@
 /* eslint-disable no-magic-numbers */
-import { test } from '@playwright/test';
+import { test, Page } from '@playwright/test';
 import {
   selectTool,
   selectTopPanelButton,
   TopPanelButton,
-  selectRing,
-  BondType,
-  getCoordinatesTopAtomOfBenzeneRing,
   clickInTheMiddleOfTheScreen,
   dragMouseTo,
   takeEditorScreenshot,
   LeftPanelButton,
   RingButton,
-  delay,
 } from '@utils';
+import { BondType } from '@utils/canvas/types';
 import { getAtomByIndex } from '@utils/canvas/atoms';
-import { getBondByIndex } from '@utils/canvas/bonds';
+import {
+  getRightBondByAttributes,
+  getLeftBondByAttributes,
+  getBondByIndex,
+} from '@utils/canvas/bonds';
+import { selectButtonByTitle } from '@utils/clicks/selectButtonByTitle';
 
-const D = 100;
-const d = 70;
+async function ManipulateRingsByName(type: RingButton, page: Page) {
+  // checking the tooltip
+  await page.getByRole('button', { name: type }).hover();
+  await takeEditorScreenshot(page);
 
-test.describe('Templates - Functional Group Tools', () => {
+  // Placing the first Ring
+  await selectButtonByTitle(type, page);
+  await clickInTheMiddleOfTheScreen(page);
+
+  // Attaching Second Ring By Atom
+  await selectButtonByTitle(type, page);
+  let point = await getAtomByIndex(page, { label: 'C' }, 2);
+  await page.mouse.click(point.x, point.y);
+  await takeEditorScreenshot(page);
+
+  await selectTopPanelButton(TopPanelButton.Clear, page);
+
+  // Placing the first Ring again
+  await selectButtonByTitle(type, page);
+  await clickInTheMiddleOfTheScreen(page);
+
+  // Attaching Second Ring By Atom
+  await selectButtonByTitle(type, page);
+  point = await getAtomByIndex(page, { label: 'C' }, 2);
+  await page.mouse.click(point.x, point.y);
+
+  // Attaching Third Ring By Bond
+  await selectButtonByTitle(type, page);
+  point = await getBondByIndex(page, { type: BondType.SINGLE }, 5);
+  await page.mouse.click(point.x, point.y);
+
+  // Placing Fourth Ring away
+  await selectButtonByTitle(type, page);
+  const selectionRange = point.x / 4;
+  await page.mouse.click(
+    selectionRange + selectionRange,
+    selectionRange + selectionRange,
+  );
+  // Selection of fourth Ring
+  point = await getLeftBondByAttributes(page, { reactingCenterStatus: 0 });
+  await selectTool(LeftPanelButton.RectangleSelection, page);
+  await page.mouse.click(point.x + selectionRange, point.y + selectionRange);
+  await dragMouseTo(point.x - selectionRange, point.y - selectionRange, page);
+
+  // Attaching Fourth Ring to First Bond by Bond
+  await page.mouse.move(point.x - 1, point.y - 1);
+  point = await getRightBondByAttributes(page, { reactingCenterStatus: 0 });
+  await dragMouseTo(point.x, point.y, page);
+  await takeEditorScreenshot(page);
+
+  await selectTopPanelButton(TopPanelButton.Clear, page);
+
+  // Placing the first Ring again
+  await selectButtonByTitle(type, page);
+  await clickInTheMiddleOfTheScreen(page);
+
+  // Deleting one bonds
+  point = await getRightBondByAttributes(page, { reactingCenterStatus: 0 });
+  await page.keyboard.press('Escape');
+  await page.mouse.click(point.x, point.y);
+  await page.keyboard.press('Delete');
+  await takeEditorScreenshot(page);
+
+  // History correctness check
+  await selectTopPanelButton(TopPanelButton.Undo, page);
+  await selectTopPanelButton(TopPanelButton.Undo, page);
+  await selectTopPanelButton(TopPanelButton.Redo, page);
+  await selectTopPanelButton(TopPanelButton.Undo, page);
+  await selectTopPanelButton(TopPanelButton.Redo, page);
+  await selectTopPanelButton(TopPanelButton.Redo, page);
+  await selectTopPanelButton(TopPanelButton.Undo, page);
+}
+
+test.describe('Templates - Rings manipulations', () => {
+  // EPLMSOCKET: connecting different rings to rins, uplying changes to a single ring, history check
+
   test.beforeEach(async ({ page }) => {
     await page.goto('');
   });
 
   test.afterEach(async ({ page }) => {
-    // await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page);
   });
 
-  test('A', async ({ page }) => {
-    await page.getByRole('button', { name: 'Cyclohexane (T)' }).first().hover();
-    await selectRing(RingButton.Cyclohexane, page);
-    clickInTheMiddleOfTheScreen(page);
+  test('Benzene', async ({ page }) => {
+    // EPLMSOCKET-1668
+    await ManipulateRingsByName(RingButton.Benzene, page);
+  });
 
-    await selectRing(RingButton.Benzene, page);
-    const point = await getAtomByIndex(page, { label: 'C' }, 3);
-    await page.mouse.click(point.x, point.y);
+  test('Cyclopentadiene', async ({ page }) => {
+    // EPLMSOCKET-1675
+    await ManipulateRingsByName(RingButton.Cyclopentane, page);
+  });
 
-    await selectTopPanelButton(TopPanelButton.Clear, page);
+  test('Cyclohexane', async ({ page }) => {
+    // EPLMSOCKET-1677
+    await ManipulateRingsByName(RingButton.Cyclohexane, page);
+  });
 
-    await selectRing(RingButton.Cyclohexane, page);
-    clickInTheMiddleOfTheScreen(page);
+  test('Cyclopentane', async ({ page }) => {
+    // EPLMSOCKET-1679
+    await ManipulateRingsByName(RingButton.Cyclopentane, page);
+  });
 
-    await selectRing(RingButton.Benzene, page);
-    const point2 = await getAtomByIndex(page, { label: 'C' }, 1);
-    await page.mouse.click(point2.x, point2.y);
+  test('Cyclopropane', async ({ page }) => {
+    // EPLMSOCKET-1680
+    await ManipulateRingsByName(RingButton.Cyclopropane, page);
+  });
 
-    await selectRing(RingButton.Benzene, page);
-    const point3 = await getBondByIndex(page, { type: BondType.SINGLE }, 5);
-    await page.mouse.click(point3.x, point3.y);
+  test('Cyclobutane', async ({ page }) => {
+    // EPLMSOCKET-1681
+    await ManipulateRingsByName(RingButton.Cyclobutane, page);
+  });
 
-    await page.mouse.click(D, D);
+  test('Cycloheptane', async ({ page }) => {
+    // EPLMSOCKET-1682
+    await ManipulateRingsByName(RingButton.Cycloheptane, page);
+  });
 
-    await selectTool(LeftPanelButton.RectangleSelection, page);
-    const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-
-    await page.mouse.click(x + d, y + d);
-    await delay(5);
-    await dragMouseTo(x - d, y - d, page);
-    await delay(5);
-
-    await page.mouse.move(x, y);
-    await dragMouseTo(point.x + y, point.y, page);
+  test('Cyclooctane', async ({ page }) => {
+    // EPLMSOCKET-1683
+    await ManipulateRingsByName(RingButton.Benzene, page);
   });
 });

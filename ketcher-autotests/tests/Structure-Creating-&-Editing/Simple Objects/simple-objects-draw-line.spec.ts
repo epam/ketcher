@@ -1,11 +1,13 @@
 import { test } from '@playwright/test';
 import { takeEditorScreenshot } from '@utils/canvas';
 import {
+  clickInTheMiddleOfTheScreen,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
 } from '@utils/clicks';
 
 test.describe('draw and highlight line', () => {
+  // selecting 'Shape Line', drawing it on canvas, highlighting created line
   test.beforeEach(async ({ page }) => {
     await page.goto('');
   });
@@ -20,12 +22,8 @@ test.describe('draw and highlight line', () => {
     await page.getByTitle('Shape Ellipse').click();
     await page.getByTestId('shape-line').click();
 
-    await page
-      .locator('svg')
-      .filter({ hasText: 'Created with Raphaël 2.3.0' })
-      .click();
-
-    const moveTo = 500;
+    const moveTo = 250;
+    await clickInTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     const coordinatesWithShift = x + moveTo;
     await dragMouseTo(coordinatesWithShift, y, page);

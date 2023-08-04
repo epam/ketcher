@@ -14,18 +14,18 @@ dotenv.config();
  */
 
 const ignoredTests = [
-  'API/**',
-  'File-Management/Smile-Files/smile-files.spec.ts',
-  'Examples/**',
+  // 'API/**',
+  // 'File-Management/Smile-Files/smile-files.spec.ts',
+  // 'Examples/**',
   // 'Indigo-Tools/**',
   // 'R-group-tool/**',
-  'Reagents/**',
-  'Structure-Creating-&-Editing/**',
-  'Templates/Functional-Groups/functional-groups.spec.ts',
-  'Templates/Functional-Groups/Functional-Group-Tools/functional-group-tools.spec.ts',
-  'Templates/Salts-and-Solvents/**',
-  'Templates/User-Templates/**',
-  'utils/**',
+  // 'Reagents/**',
+  // 'Structure-Creating-&-Editing/**',
+  // 'Templates/Functional-Groups/functional-groups.spec.ts',
+  // 'Templates/Functional-Groups/Functional-Group-Tools/functional-group-tools.spec.ts',
+  // 'Templates/Salts-and-Solvents/**',
+  // 'Templates/User-Templates/**',
+  // 'utils/**',
 ];
 
 function baseURL(): string {

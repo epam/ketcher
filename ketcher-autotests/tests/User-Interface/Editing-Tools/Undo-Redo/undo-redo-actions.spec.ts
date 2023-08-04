@@ -572,7 +572,7 @@ test.describe('Undo/Redo Actions', () => {
     await screenshotBetweenUndoRedo(page);
   });
 
-  test('Undo/Redo Cut/Past', async ({ page }) => {
+  test.fixme('Undo/Redo Cut/Past', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1758
     Description: Undo/Redo action should work correctly

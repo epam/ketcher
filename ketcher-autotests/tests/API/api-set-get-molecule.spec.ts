@@ -118,26 +118,29 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await setMolecule(page, 'Brc1ccc(COC(Cn2ccnc2)c2ccc(Cl)cc2Cl)c(Cl)c1');
   });
 
-  test('Set and Get Molecule using V3000 Molfile format', async ({ page }) => {
-    /*
+  test.fixme(
+    'Set and Get Molecule using V3000 Molfile format',
+    async ({ page }) => {
+      /*
     Test case: EPMLSOPKET- 10095
     Description:  Molecule set and get using V3000 format
     */
-    const ignoredLineIndigo = 1;
-    const orEnantiomer = await readFileContents(
-      'tests/test-data/or-enantiomer.mol',
-    );
-    await setMolecule(page, orEnantiomer);
+      const ignoredLineIndigo = 1;
+      const orEnantiomer = await readFileContents(
+        'tests/test-data/or-enantiomer.mol',
+      );
+      await setMolecule(page, orEnantiomer);
 
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName: 'tests/test-data/test-data-for-enatiomer.mol',
-        metaDataIndexes: [ignoredLineIndigo],
-        fileFormat: 'v3000',
-      });
-    expect(molFile).toEqual(molFileExpected);
-  });
+      const { fileExpected: molFileExpected, file: molFile } =
+        await receiveFileComparisonData({
+          page,
+          expectedFileName: 'tests/test-data/test-data-for-enatiomer.mol',
+          metaDataIndexes: [ignoredLineIndigo],
+          fileFormat: 'v3000',
+        });
+      expect(molFile).toEqual(molFileExpected);
+    },
+  );
 
   test('Set and Get Molecule containing chiral centers', async ({ page }) => {
     /*

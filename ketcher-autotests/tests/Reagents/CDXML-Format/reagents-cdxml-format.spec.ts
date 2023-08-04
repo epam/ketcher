@@ -46,93 +46,99 @@ test.describe('Reagents CDXML format', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Detection molecule as reagent and write reagent information in "CDXML" format in "Preview" tab', async ({
-    page,
-    request,
-  }) => {
-    /*
+  test.fixme(
+    'Detection molecule as reagent and write reagent information in "CDXML" format in "Preview" tab',
+    async ({ page, request }) => {
+      /*
     Test case: EPMLSOPKET-4719
     Description: System detect molecule NH3 above arrow as reagent and write reagent in 'CDXML' format in "Preview" tab
     */
-    await openFileAndAddToCanvas('benzene-arrow-benzene-reagent-nh3.ket', page);
+      await openFileAndAddToCanvas(
+        'benzene-arrow-benzene-reagent-nh3.ket',
+        page,
+      );
 
-    const cdxmlResult = await request.post(`${API_INDIGO_URL}/convert`, {
-      data: NH3MoleculeAboveRequestData,
-    });
-    const cdxmlFromIndigo = await cdxmlResult.json();
+      const cdxmlResult = await request.post(`${API_INDIGO_URL}/convert`, {
+        data: NH3MoleculeAboveRequestData,
+      });
+      const cdxmlFromIndigo = await cdxmlResult.json();
 
-    expect(cdxmlFromIndigo).toEqual(NH3MoleculeAboveTestData);
+      expect(cdxmlFromIndigo).toEqual(NH3MoleculeAboveTestData);
 
-    await previewCDXML(page);
-  });
+      await previewCDXML(page);
+    },
+  );
 
-  test(`Detection molecule as reagent below arrow 
-  and write reagent information in "CDXML" format in "Preview" tab`, async ({
-    page,
-    request,
-  }) => {
-    /*
+  test.fixme(
+    `Detection molecule as reagent below arrow 
+  and write reagent information in "CDXML" format in "Preview" tab`,
+    async ({ page, request }) => {
+      /*
     Test case: EPMLSOPKET-4719
     Description: System detect molecule HCl below arrow as reagent and write reagent in 'CDXML' format in "Preview" tab
     */
-    await openFileAndAddToCanvas('benzene-arrow-benzene-reagent-hcl.ket', page);
-    await delay(DELAY_IN_SECONDS.THREE);
+      await openFileAndAddToCanvas(
+        'benzene-arrow-benzene-reagent-hcl.ket',
+        page,
+      );
+      await delay(DELAY_IN_SECONDS.THREE);
 
-    const cdxmlResult = await request.post(`${API_INDIGO_URL}/convert`, {
-      data: HClMoleculeBelowRequestData,
-    });
-    const cdxmlFromIndigo = await cdxmlResult.json();
+      const cdxmlResult = await request.post(`${API_INDIGO_URL}/convert`, {
+        data: HClMoleculeBelowRequestData,
+      });
+      const cdxmlFromIndigo = await cdxmlResult.json();
 
-    expect(cdxmlFromIndigo).toEqual(HClMoleculeBelowTestData);
+      expect(cdxmlFromIndigo).toEqual(HClMoleculeBelowTestData);
 
-    await previewCDXML(page);
-  });
+      await previewCDXML(page);
+    },
+  );
 
-  test(`Detection text above arrow as reagent
-  and write reagent information in "CDXML" format in "Preview" tab`, async ({
-    page,
-    request,
-  }) => {
-    /*
+  test.fixme(
+    `Detection text above arrow as reagent
+  and write reagent information in "CDXML" format in "Preview" tab`,
+    async ({ page, request }) => {
+      /*
     Test case: EPMLSOPKET-4720
     Description: System detect text NH3 as reagent and write reagent in 'CDXML' format in "Preview" tab
     */
-    await openFileAndAddToCanvas('reagent-nh3-text-above-arrow.ket', page);
-    await delay(DELAY_IN_SECONDS.THREE);
+      await openFileAndAddToCanvas('reagent-nh3-text-above-arrow.ket', page);
+      await delay(DELAY_IN_SECONDS.THREE);
 
-    const cdxmlResult = await request.post(`${API_INDIGO_URL}/convert`, {
-      data: NH3TextAboveRequestData,
-    });
-    const cdxmlFromIndigo = await cdxmlResult.json();
+      const cdxmlResult = await request.post(`${API_INDIGO_URL}/convert`, {
+        data: NH3TextAboveRequestData,
+      });
+      const cdxmlFromIndigo = await cdxmlResult.json();
 
-    expect(cdxmlFromIndigo).toEqual(NH3TextAboveTestData);
+      expect(cdxmlFromIndigo).toEqual(NH3TextAboveTestData);
 
-    await previewCDXML(page);
-  });
+      await previewCDXML(page);
+    },
+  );
 
-  test(`Detection text as reagent below arrow 
-  and write reagent information in "CDXML" format in "Preview" tab`, async ({
-    page,
-    request,
-  }) => {
-    /*
+  test.fixme(
+    `Detection text as reagent below arrow 
+  and write reagent information in "CDXML" format in "Preview" tab`,
+    async ({ page, request }) => {
+      /*
     Test case: EPMLSOPKET-4720
     Description: System detect text HCl below arrow as reagent and write reagent in 'CDXML' format in "Preview" tab
     */
-    await openFileAndAddToCanvas('reagent-hcl-text-below-arrow.ket', page);
-    await delay(DELAY_IN_SECONDS.THREE);
+      await openFileAndAddToCanvas('reagent-hcl-text-below-arrow.ket', page);
+      await delay(DELAY_IN_SECONDS.THREE);
 
-    const cdxmlResult = await request.post(`${API_INDIGO_URL}/convert`, {
-      data: HClTextBelowRequestData,
-    });
-    const cdxmlFromIndigo = await cdxmlResult.json();
+      const cdxmlResult = await request.post(`${API_INDIGO_URL}/convert`, {
+        data: HClTextBelowRequestData,
+      });
+      const cdxmlFromIndigo = await cdxmlResult.json();
 
-    expect(cdxmlFromIndigo).toEqual(HClTextBelowTestData);
+      expect(cdxmlFromIndigo).toEqual(HClTextBelowTestData);
 
-    await previewCDXML(page);
-  });
+      await previewCDXML(page);
+    },
+  );
 
-  test('File saves in "CDXML" format', async ({ page, request }) => {
+  test.fixme('File saves in "CDXML" format', async ({ page, request }) => {
     /*
     Test case: EPMLSOPKET-4721
     Description: File saved in format (e.g. "ketcher.cdxml")

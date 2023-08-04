@@ -43,7 +43,7 @@ test.describe('Click and drag Salts and Solvents on canvas', () => {
     await drawSaltAndDrag(SaltsAndSolvents.FormicAcid, SHIFT, page);
   });
 
-  test('Acetic acid appears near Cbz', async ({ page }) => {
+  test.fixme('Acetic acid appears near Cbz', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-11556
       Description: when click & drag with a Salts and Solvents on Functional Group

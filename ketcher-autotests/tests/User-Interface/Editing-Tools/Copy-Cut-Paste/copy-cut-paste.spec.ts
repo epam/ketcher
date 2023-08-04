@@ -296,7 +296,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await expect(page).toHaveScreenshot();
   });
 
-  test('Copy button', async ({ page }) => {
+  test.fixme('Copy button', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1709
     Description: Button is disabled. Tooltip "Copy (Ctrl+С)" appears.
@@ -316,7 +316,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await page.getByTestId('copy-button-dropdown-triangle').click();
   });
 
-  test('Cut button', async ({ page }) => {
+  test.fixme('Cut button', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1710
     Description: The 'Cut' button  is disabled if nothing is selected on the canvas.

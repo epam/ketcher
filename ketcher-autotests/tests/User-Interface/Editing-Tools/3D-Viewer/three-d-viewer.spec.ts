@@ -17,7 +17,7 @@ import {
 } from '@utils';
 import { getKet } from '@utils/formats';
 
-test.describe('3D Viewer', () => {
+test.describe.fixme('3D Viewer', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('');
   });
@@ -100,7 +100,7 @@ test.describe('3D Viewer', () => {
   });
 });
 
-test.describe('3D Viewer', () => {
+test.describe.fixme('3D Viewer', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('');
   });

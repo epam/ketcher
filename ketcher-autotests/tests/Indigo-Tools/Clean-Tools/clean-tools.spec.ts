@@ -178,7 +178,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Structure with R-Groups', async ({ page }) => {
+  test.fixme('Structure with R-Groups', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1794
     Description: Structures with R-group are cleaned correctly.

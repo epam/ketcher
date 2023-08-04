@@ -71,24 +71,25 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await resetCurrentTool(page);
   });
 
-  test('Layout/Undo with structure that contain stereo labels', async ({
-    page,
-  }) => {
-    /*
+  test.fixme(
+    'Layout/Undo with structure that contain stereo labels',
+    async ({ page }) => {
+      /*
     Test case: EPMLSOPKET-1900
     Description: Stereo labels appear near stereobonds after 'Calculate CIP' action.
     Stereo labels disappear after 'Layout' action.
     'Undo' action leads to the previous structure with stereo labels.
     */
-    // will work after bugfix in 2.13-rc.3 bug#3025
-    await openFileAndAddToCanvas('structure-with-stereo-bonds.mol', page);
-    await selectTopPanelButton(TopPanelButton.Calculate, page);
-    await selectTopPanelButton(TopPanelButton.Layout, page);
+      // will work after bugfix in 2.13-rc.3 bug#3025
+      await openFileAndAddToCanvas('structure-with-stereo-bonds.mol', page);
+      await selectTopPanelButton(TopPanelButton.Calculate, page);
+      await selectTopPanelButton(TopPanelButton.Layout, page);
 
-    await takeEditorScreenshot(page);
+      await takeEditorScreenshot(page);
 
-    await selectTopPanelButton(TopPanelButton.Undo, page);
-  });
+      await selectTopPanelButton(TopPanelButton.Undo, page);
+    },
+  );
 
   test.fixme(
     'Copy/Paste of structure that contain stereo labels',

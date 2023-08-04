@@ -1,4 +1,4 @@
-import { test } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 import { clickInTheMiddleOfTheScreen, takeEditorScreenshot } from '@utils';
 
 /*
@@ -20,5 +20,35 @@ test.describe('Lookup Abbreviations window', () => {
     await newPage.bringToFront();
     await page.bringToFront();
     await takeEditorScreenshot(page);
+  });
+
+  test('is shown, when entering some text', async ({ page }) => {
+    await clickInTheMiddleOfTheScreen(page);
+    await page.keyboard.type('mek');
+    const abbreviationLookup = await page.getByTestId('AbbreviationLookup');
+    expect(await abbreviationLookup.isVisible()).toBe(true);
+    await takeEditorScreenshot(page);
+  });
+
+  test('is not shown, when pressing "1" multiple times to change bond type', async ({
+    page,
+  }) => {
+    await clickInTheMiddleOfTheScreen(page);
+    await page.keyboard.type('1');
+    await page.keyboard.type('1');
+    await page.keyboard.type('1');
+    const abbreviationLookup = await page.getByTestId('AbbreviationLookup');
+    expect(await abbreviationLookup.isVisible()).toBe(false);
+  });
+
+  test('is not shown, when pressing "t" multiple times to change template', async ({
+    page,
+  }) => {
+    await clickInTheMiddleOfTheScreen(page);
+    await page.keyboard.type('t');
+    await page.keyboard.type('t');
+    await page.keyboard.type('t');
+    const abbreviationLookup = await page.getByTestId('AbbreviationLookup');
+    expect(await abbreviationLookup.isVisible()).toBe(false);
   });
 });

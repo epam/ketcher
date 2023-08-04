@@ -32,4 +32,16 @@ test.describe('Indigo Tools - Layout', () => {
     await selectTopPanelButton(TopPanelButton.Layout, page);
     await takeEditorScreenshot(page);
   });
+
+  test('Stereo flag is not shifted after clicking layout multiple times', async ({
+    page,
+  }) => {
+    // Related Github issue: https://github.com/epam/ketcher/issues/3025
+    const structureWithStereoFlags = 'structure-with-stereo-flags.ket';
+    await openFileWithShift(structureWithStereoFlags, page);
+    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await takeEditorScreenshot(page);
+  });
 });

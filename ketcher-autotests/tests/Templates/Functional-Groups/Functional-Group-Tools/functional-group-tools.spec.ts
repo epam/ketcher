@@ -29,6 +29,7 @@ import {
   STRUCTURE_LIBRARY_BUTTON_NAME,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
+import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
 
 const X_DELTA = 300;
 
@@ -84,26 +85,40 @@ test.describe('Templates - Functional Group Tools', () => {
     await clickOnAtom(page, 'C', 0);
   });
 
-  test.fixme('Rotate of expanded Functional Group', async ({ page }) => {
+  test('Rotate of expanded Functional Group', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-2900
     Description: All elements of the Functional Group are rotated
    */
+    const COORDINATES_TO_PERFORM_ROTATION = {
+      x: 20,
+      y: 160,
+    };
     await openFileAndAddToCanvas('functional-group-expanded.mol', page);
 
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
-    await clickInTheMiddleOfTheScreen(page);
+    await page.keyboard.press('Control+a');
+    const coordinates = await getRotationHandleCoordinates(page);
+    const { x: rotationHandleX, y: rotationHandleY } = coordinates;
 
-    // const { x, y } = await getRotationHandleCoordinates(page);
-    // await page.mouse.move(x, y);
-    // await dragMouseTo(x - 100, y, page);
+    await page.mouse.move(rotationHandleX, rotationHandleY);
+    await page.mouse.down();
+    await page.mouse.move(
+      COORDINATES_TO_PERFORM_ROTATION.x,
+      COORDINATES_TO_PERFORM_ROTATION.y,
+    );
+    await page.mouse.up();
   });
 
-  test.fixme('Rotate Tool (FG + Other structures)', async ({ page }) => {
+  test('Rotate Tool (FG + Other structures)', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-3935
-    Description: The selected Functional Group is rotated. Benzene ring is not rotated.
+    Description: The selected Functional Group is rotated. Benzene ring is rotated.
    */
+    const COORDINATES_TO_PERFORM_ROTATION = {
+      x: 20,
+      y: 160,
+    };
     await openFileAndAddToCanvas(
       'expand-functional-group-with-benzene.mol',
       page,
@@ -112,9 +127,16 @@ test.describe('Templates - Functional Group Tools', () => {
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
     await page.keyboard.press('Control+a');
 
-    // const { x, y } = await getRotationHandleCoordinates(page);
-    // await page.mouse.move(x, y);
-    // await dragMouseTo(x + 100, y + 100, page);
+    const coordinates = await getRotationHandleCoordinates(page);
+    const { x: rotationHandleX, y: rotationHandleY } = coordinates;
+
+    await page.mouse.move(rotationHandleX, rotationHandleY);
+    await page.mouse.down();
+    await page.mouse.move(
+      COORDINATES_TO_PERFORM_ROTATION.x,
+      COORDINATES_TO_PERFORM_ROTATION.y,
+    );
+    await page.mouse.up();
   });
 
   test('Add Charge to the Functional group', async ({ page }) => {

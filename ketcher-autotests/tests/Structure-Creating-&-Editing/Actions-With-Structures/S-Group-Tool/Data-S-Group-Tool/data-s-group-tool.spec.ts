@@ -5,7 +5,6 @@ import {
   LeftPanelButton,
   selectLeftPanelButton,
   clickInTheMiddleOfTheScreen,
-  delay,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   pressButton,
@@ -21,13 +20,11 @@ import {
   cutAndPaste,
   clickOnBond,
   clickOnAtom,
-  DELAY_IN_SECONDS,
   fillFieldByPlaceholder,
   screenshotBetweenUndoRedo,
   saveToFile,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
-import { getBondByIndex } from '@utils/canvas/bonds';
 import { getCml, getMolfile } from '@utils/formats';
 
 const CANVAS_CLICK_X = 600;
@@ -72,7 +69,6 @@ test.describe('Data S-Group tool', () => {
   });
 
   test.afterEach(async ({ page }) => {
-    await delay(DELAY_IN_SECONDS.THREE);
     await takeEditorScreenshot(page);
   });
 
@@ -347,7 +343,7 @@ test.describe('Data S-Group tool', () => {
     */
     await openFileAndAddToCanvas('chain-with-name-and-value.ket', page);
     await page.keyboard.press('Control+a');
-    await selectLeftPanelButton(LeftPanelButton.Erase, page);
+    await page.getByTestId('delete').click();
     await takeEditorScreenshot(page);
 
     await screenshotBetweenUndoRedo(page);
@@ -434,7 +430,6 @@ test.describe('Data S-Group tool', () => {
       Description: Hover over created S-Group displays tooltip for Benzene ring with Nitrogen atom
     */
     await openFileAndAddToCanvas('benzene-with-data-s-group.ket', page);
-    const point = await getBondByIndex(page, { type: BondType.SINGLE }, 2);
-    await page.mouse.move(point.x, point.y);
+    await clickInTheMiddleOfTheScreen(page);
   });
 });

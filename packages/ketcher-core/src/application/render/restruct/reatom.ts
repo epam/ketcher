@@ -210,7 +210,7 @@ class ReAtom extends ReObject {
   }
 
   hasAttachmentPoint(): boolean {
-    return Boolean(this.a.attpnt);
+    return Boolean(this.a.attachmentPoints);
   }
 
   show(restruct: ReStruct, aid: number, options: any): void {
@@ -608,8 +608,8 @@ function shouldDisplayStereoLabel(
   }
 }
 
-function isLabelVisible(restruct, options, atom) {
-  const isAttachmentPointAtom = Boolean(atom.a.attpnt);
+function isLabelVisible(restruct, options, atom: ReAtom) {
+  const isAttachmentPointAtom = Boolean(atom.a.attachmentPoints);
   const isCarbon = atom.a.label.toLowerCase() === 'c';
   const visibleTerminal =
     options.showHydrogenLabels !== ShowHydrogenLabels.Off &&

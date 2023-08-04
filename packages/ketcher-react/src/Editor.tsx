@@ -39,7 +39,7 @@ const mediaSizes = {
   smallHeight: 600,
 };
 
-interface EditorProps extends Omit<Config, 'element'> {
+interface EditorProps extends Omit<Config, 'element' | 'appRoot'> {
   onInit?: (ketcher: Ketcher) => void;
 }
 

@@ -36,6 +36,4 @@ export const waitForLoad = async (page: Page, callback: VoidFunction) => {
   if (await page.locator('.loading-spinner').isVisible()) {
     await page.waitForSelector('.loading-spinner', { state: 'detached' });
   }
-
-  // return promise;
 };

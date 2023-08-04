@@ -17,6 +17,7 @@
 import { fromMultipleMove, fromPlusAddition } from 'ketcher-core';
 import Editor from '../Editor';
 import { Tool } from './Tool';
+import { handleMovingPosibilityCursor } from '../utils';
 
 class ReactionPlusTool implements Tool {
   private readonly editor: Editor;
@@ -54,7 +55,14 @@ class ReactionPlusTool implements Tool {
       );
       editor.update(this.dragCtx.action, true);
     } else {
-      editor.hover(editor.findItem(event, ['rxnPluses']), null, event);
+      const item = editor.findItem(event, ['rxnPluses']);
+      editor.hover(item, null, event);
+
+      handleMovingPosibilityCursor(
+        item,
+        editor.render.paper.canvas,
+        editor.render.options.movingStyle.cursor as string,
+      );
     }
   }
 

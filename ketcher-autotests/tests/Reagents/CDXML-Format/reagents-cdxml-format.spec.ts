@@ -9,6 +9,7 @@ import {
   openFileAndAddToCanvas,
   FILE_TEST_DATA,
   DELAY_IN_SECONDS,
+  waitForLoad,
 } from '@utils';
 
 import NH3TextAboveRequestData from '@tests/test-data/cdxml-nh3-text-above-request-data.json';
@@ -25,14 +26,15 @@ async function previewCDXML(page: Page) {
   await selectTopPanelButton(TopPanelButton.Save, page);
   await page.getByRole('button', { name: 'MDL Rxnfile V2000' }).click();
   await page.getByRole('option', { name: 'CDXML' }).click();
-  await delay(DELAY_IN_SECONDS.ONE);
 }
 
 async function pasteCDXML(page: Page, fileFormat: string) {
   await selectTopPanelButton(TopPanelButton.Open, page);
   await page.getByText('Paste from clipboard').click();
   await page.getByRole('dialog').getByRole('textbox').fill(fileFormat);
-  await pressButton(page, 'Add to Canvas');
+  await waitForLoad(page, async () => {
+    await pressButton(page, 'Add to Canvas');
+  });
 }
 
 test.describe('Reagents CDXML format', () => {
@@ -53,7 +55,6 @@ test.describe('Reagents CDXML format', () => {
     Description: System detect molecule NH3 above arrow as reagent and write reagent in 'CDXML' format in "Preview" tab
     */
     await openFileAndAddToCanvas('benzene-arrow-benzene-reagent-nh3.ket', page);
-    await delay();
 
     const cdxmlResult = await request.post(`${API_INDIGO_URL}/convert`, {
       data: NH3MoleculeAboveRequestData,

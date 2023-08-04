@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { ReAtom, ReBond } from 'application/render';
 
-import { Pool } from 'domain/entities';
+import { Box2Abs, Pool, Vec2 } from 'domain/entities';
+import { mockFn } from 'jest-mock-extended';
 
 const mockAtoms = [
   {
@@ -634,6 +635,18 @@ const mockFrags = [
     stereoFlagPosition: undefined,
     enhancedStereoFlag: 'ABS',
     updateStereoFlag() {},
+    calcBBox: mockFn().mockReturnValue({
+      p0: {
+        x: 4,
+        y: 6,
+        z: 0,
+      },
+      p1: {
+        x: 6,
+        y: 8,
+        z: 0,
+      },
+    }),
   },
 ];
 const frags = new Map();
@@ -680,11 +693,26 @@ const molecule = {
   bondInitHalfBonds() {},
   atomAddNeighbor() {},
   setImplicitHydrogen() {},
+  getRGroupAttachmentPointsVBoxByAtomIds: mockFn().mockReturnValue(
+    new Box2Abs(
+      new Vec2({
+        x: 6,
+        y: 7,
+        z: 0,
+      }),
+      new Vec2({
+        x: 7,
+        y: 9,
+        z: 0,
+      }),
+    ),
+  ),
 };
 
 export const restruct = {
   atoms: new Map(),
   bonds: new Map(),
+  frags,
   molecule,
   connectedComponents: new Set(),
   render: {

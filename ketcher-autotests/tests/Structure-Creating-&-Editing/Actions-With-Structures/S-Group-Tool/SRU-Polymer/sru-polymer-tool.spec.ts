@@ -209,7 +209,7 @@ test.describe('SRU Polymer tool', () => {
     */
     await openFileAndAddToCanvas('sru-polymer.mol', page);
     await page.keyboard.press('Control+a');
-    await selectLeftPanelButton(LeftPanelButton.Erase, page);
+    await page.getByTestId('delete').click();
     await takeEditorScreenshot(page);
 
     await screenshotBetweenUndoRedo(page);

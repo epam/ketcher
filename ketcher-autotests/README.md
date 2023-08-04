@@ -97,9 +97,26 @@ selectNestedTool - select specific tool that has sub / nested levels.
     - Local frontend: KETCHER_URL=http://host.docker.internal:port (port where you run application)
   - OPTIONAL: IGNORE_UNSTABLE_TESTS=true (if you want to ignore unstable tests)
 - **OPTIONAL: Build frontend**:
-  if you want to run tests based on the localhost:4002, build and run frontend:
+  if you want to run tests based on the localhost:4002, you can put KETCHER_URL=http://localhost:4002
 
-  Directory "ketcher": - `npm ci` - `npm run build:example` - `npm run serve:standalone`
+### Run tests:
+
+- **OPTIONAL: Test Polymer Editor **:
+  If you want to run tests from Polymer Editor, add `ENABLE_POLYMER_EDITOR=true` in scripts:
+
+  - Root package.json: "build": "ENABLE_POLYMER_EDITOR=true npm run build -w example";
+
+- **Run app in browser: from root directory "ketcher"**:
+
+- `npm ci`
+- `npm run build`
+- `npm run serve`
+
+- **Run docker**:
+
+  - `cd ketcher-autotests`
+  - `npm run docker:build`
+  - `npm run docker:test`
 
 ### How to use?
 

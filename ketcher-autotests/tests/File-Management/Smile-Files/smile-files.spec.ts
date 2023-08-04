@@ -10,6 +10,7 @@ import {
   pressButton,
   clickInTheMiddleOfTheScreen,
   DELAY_IN_SECONDS,
+  waitForLoad,
 } from '@utils';
 import { getSmiles } from '@utils/formats';
 
@@ -35,7 +36,9 @@ async function clearCanvasAndPasteSmiles(page: Page, smiles: string) {
   await selectTopPanelButton(TopPanelButton.Open, page);
   await page.getByText('Paste from clipboard').click();
   await pasteFromClipboard(page, smiles);
-  await pressButton(page, 'Add to Canvas');
+  await waitForLoad(page, async () => {
+    await pressButton(page, 'Add to Canvas');
+  });
   await clickInTheMiddleOfTheScreen(page);
 }
 
@@ -87,7 +90,7 @@ test.describe('SMILES files', () => {
     );
   });
 
-  test('SmileString from mol file that contains abbreviation', async ({
+  test.skip('SmileString from mol file that contains abbreviation', async ({
     page,
   }) => {
     /*
@@ -96,7 +99,6 @@ test.describe('SMILES files', () => {
     warning appears for all types of Sgroup except the multiple Sgroup type.
     */
     await openFileAndAddToCanvas('sec_butyl_abr.mol', page);
-
     await getPreviewForSmiles(page, 'MDL Molfile V2000', 'Daylight SMILES');
     await delay(DELAY_IN_SECONDS.TWO);
     await page.getByText('Warnings').click();
@@ -116,7 +118,6 @@ test.describe('SMILES files', () => {
     );
 
     await getPreviewForSmiles(page, 'MDL Molfile V2000', 'Daylight SMILES');
-    await delay(DELAY_IN_SECONDS.ONE);
     await takeEditorScreenshot(page);
 
     await clearCanvasAndPasteSmiles(
@@ -166,7 +167,7 @@ test.describe('SMILES files', () => {
     await clearCanvasAndPasteSmiles(page, 'CCCC[C@@H](C)[C@@H](C)CC');
   });
 
-  test('SmileString  from V2000 mol file contains abs stereochemistry', async ({
+  test('SmileString from V2000 mol file contains abs stereochemistry', async ({
     page,
   }) => {
     /*

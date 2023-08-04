@@ -300,6 +300,5 @@ test.describe('Click User Templates on canvas', () => {
     await openStructureLibrary(page);
     await page.getByRole('button', { name: 'User Templates (1)' }).click();
     await page.getByText('user_template_1').click();
-    await delay(DELAY_IN_SECONDS.THREE);
   });
 });

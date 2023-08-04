@@ -28,6 +28,7 @@ export const selectionKeys = [
   'frags',
   'sgroups',
   'rgroups',
+  'rgroupAttachmentPoints',
   'rxnArrows',
   'rxnPluses',
   'simpleObjects',

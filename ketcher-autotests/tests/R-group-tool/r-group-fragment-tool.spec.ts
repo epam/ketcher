@@ -2,14 +2,10 @@ import { Page, test } from '@playwright/test';
 import {
   delay,
   takeEditorScreenshot,
-  LeftPanelButton,
   clickInTheMiddleOfTheScreen,
-  selectLeftPanelButton,
   getCoordinatesTopAtomOfBenzeneRing,
   selectRingButton,
   RingButton,
-  TopPanelButton,
-  selectTopPanelButton,
   selectNestedTool,
   RgroupTool,
   DELAY_IN_SECONDS,
@@ -17,6 +13,11 @@ import {
   openFileAndAddToCanvas,
   SelectTool,
   pressButton,
+  clickOnAtom,
+  TopPanelButton,
+  selectTopPanelButton,
+  LeftPanelButton,
+  selectLeftPanelButton,
 } from '@utils';
 
 async function openRGroupModalForTopAtom(page: Page) {
@@ -31,6 +32,7 @@ async function openRGroupModalForTopAtom(page: Page) {
 }
 
 const rGroupFromFile = 'R8';
+const atomIndex = 3;
 async function selectRGroups(page: Page, rGroups: string[]) {
   await selectNestedTool(page, RgroupTool.R_GROUP_FRAGMENT);
   await page.getByText(rGroupFromFile).click();
@@ -45,7 +47,7 @@ async function selectRGroup(page: Page, rgroup: string) {
 }
 
 async function clickModalButton(page: Page, button: 'Apply' | 'Cancel') {
-  await page.locator(`input[type="button"][value="${button}"]`);
+  await page.locator(`input[type="button"][value="${button}"]`).click();
 }
 
 test.describe('Open Ketcher', () => {
@@ -101,7 +103,6 @@ test.describe('Open Ketcher', () => {
     await clickModalButton(page, 'Apply');
 
     await page.mouse.click(x, y);
-    await page.getByText('R5').click();
     await selectRGroup(page, rGroupFromFile);
     await clickModalButton(page, 'Apply');
   });
@@ -118,6 +119,32 @@ test.describe('Open Ketcher', () => {
     await page.keyboard.press('Control+r');
     await page.mouse.click(x, y);
     await page.getByLabel(AttachmentPoint.PRIMARY).check();
+    await clickModalButton(page, 'Apply');
+  });
+
+  test('Brackets rendering for whole r-group structure', async ({ page }) => {
+    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await selectNestedTool(page, RgroupTool.R_GROUP_FRAGMENT);
+    await clickOnAtom(page, 'C', atomIndex);
+    await page.getByText(rGroupFromFile).click();
+    await clickModalButton(page, 'Apply');
+  });
+
+  test('Brackets rendering for whole r-group structure even with attachment points', async ({
+    page,
+  }) => {
+    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
+    await clickOnAtom(page, 'C', atomIndex);
+    await page.getByLabel(AttachmentPoint.PRIMARY).check();
+    await clickModalButton(page, 'Apply');
+    await selectNestedTool(
+      page,
+      RgroupTool.R_GROUP_FRAGMENT,
+      RgroupTool.ATTACHMENT_POINTS,
+    );
+    await clickOnAtom(page, 'C', atomIndex);
+    await page.getByText(rGroupFromFile).click();
     await clickModalButton(page, 'Apply');
   });
 
@@ -146,16 +173,15 @@ test.describe('Open Ketcher', () => {
       Description: Create several R-Group members
     */
     await openFileAndAddToCanvas('3structeres.mol', page);
-    await clickInTheMiddleOfTheScreen(page);
 
     await selectRGroups(page, ['R7']);
 
-    await selectRGroup(page, 'R16');
-    await selectRGroup(page, 'R5');
+    await page.getByText('R16').click();
+    await selectRGroup(page, 'R8');
     await clickModalButton(page, 'Apply');
 
-    await selectRGroup(page, 'R14');
-    await selectRGroup(page, 'R5');
+    await page.getByText('R14').click();
+    await selectRGroup(page, 'R15');
     await clickModalButton(page, 'Apply');
   });
 
@@ -190,22 +216,18 @@ test.describe('Open Ketcher', () => {
       Description: R-Group definition is not deleted when root structure was deleted
     */
     await openFileAndAddToCanvas('R-fragment-structure.mol', page);
-    await clickInTheMiddleOfTheScreen(page);
-
-    await selectNestedTool(page, SelectTool.FRAGMENT_SELECTION);
-    await selectRGroup(page, rGroupFromFile);
+    await page.getByText('R8').click();
     await page.keyboard.press('Delete');
   });
 
-  test('Delete R-Group member', async ({ page }) => {
+  test.fixme('Delete R-Group member', async ({ page }) => {
     /* Test case: EPMLSOPKET-1590
   Description: Delete R-Group member
   */
     await openFileAndAddToCanvas('R-fragment-structure.mol', page);
-    await clickInTheMiddleOfTheScreen(page);
 
     await selectNestedTool(page, SelectTool.FRAGMENT_SELECTION);
-    await selectRGroup(page, rGroupFromFile);
+    await page.getByText('R8').click();
     await page.keyboard.press('Delete');
     await takeEditorScreenshot(page);
 

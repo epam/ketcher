@@ -27,8 +27,8 @@ import {
 const CANVAS_CLICK_X = 300;
 const CANVAS_CLICK_Y = 300;
 
-const SECOND_CANVAS_CLICK_X = 700;
-const SECOND_CANVAS_CLICK_Y = 700;
+const SECOND_CANVAS_CLICK_X = 300;
+const SECOND_CANVAS_CLICK_Y = 500;
 
 test.describe('Copy/Cut/Paste Actions', () => {
   test.beforeEach(async ({ page }) => {

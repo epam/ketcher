@@ -29,8 +29,7 @@ export async function drawElementByTitle(
 }
 
 export async function getLeftToolBarWidth(page: Page): Promise<number> {
-  const leftBar = await page.locator('[class^="LeftToolbar-module_root"]');
-  const leftBarSize = await leftBar.boundingBox();
+  const leftBarSize = await page.getByTestId('left-toolbar').boundingBox();
 
   // we can get padding / margin values of left toolbar through x property
   if (leftBarSize?.width) {
@@ -41,8 +40,7 @@ export async function getLeftToolBarWidth(page: Page): Promise<number> {
 }
 
 export async function getTopToolBarHeight(page: Page): Promise<number> {
-  const topBar = await page.locator('[class^="App-module_top"]');
-  const topBarSize = await topBar.boundingBox();
+  const topBarSize = await page.getByTestId('top-toolbar').boundingBox();
 
   // we can get padding / margin values of top toolbar through y property
   if (topBarSize?.height) {

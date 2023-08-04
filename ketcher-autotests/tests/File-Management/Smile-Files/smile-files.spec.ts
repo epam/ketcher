@@ -118,7 +118,6 @@ test.describe('SMILES files', () => {
     );
 
     await getPreviewForSmiles(page, 'MDL Molfile V2000', 'Daylight SMILES');
-    await delay(DELAY_IN_SECONDS.ONE);
     await takeEditorScreenshot(page);
 
     await clearCanvasAndPasteSmiles(

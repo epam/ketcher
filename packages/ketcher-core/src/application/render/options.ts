@@ -110,6 +110,9 @@ function defaultOptions(options: RenderOptions): RenderOptions {
       'stroke-width': scaleFactor / 4,
       'stroke-linecap': 'round',
     },
+    movingStyle: {
+      cursor: 'all-scroll',
+    },
     atomSelectionPlateRadius: labelFontSize,
     contractedFunctionalGroupSize: 50,
   };

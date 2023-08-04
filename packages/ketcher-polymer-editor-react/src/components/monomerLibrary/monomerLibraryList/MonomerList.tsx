@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { MonomerGroup } from '../monomerLibraryGroup';
 import { useAppSelector } from 'hooks';
 import { MonomerListContainer } from './styles';
@@ -28,6 +28,7 @@ import {
 } from 'state/library';
 import { MONOMER_LIBRARY_FAVORITES } from '../../../constants';
 import { MonomerItemType } from 'ketcher-core';
+import { selectEditorActiveTool } from 'state/common';
 
 export type Group = {
   groupItems: Array<MonomerItemType>;
@@ -36,6 +37,8 @@ export type Group = {
 
 const MonomerList = ({ onItemClick, libraryName }: IMonomerListProps) => {
   const monomers = useAppSelector(selectFilteredMonomers);
+  const activeTool = useAppSelector(selectEditorActiveTool);
+
   const items =
     libraryName !== MONOMER_LIBRARY_FAVORITES
       ? selectMonomersInCategory(monomers, libraryName)
@@ -48,6 +51,12 @@ const MonomerList = ({ onItemClick, libraryName }: IMonomerListProps) => {
   const selectItem = (monomer: MonomerItemType) => {
     setSelectedMonomers(getMonomerUniqueKey(monomer));
   };
+
+  useEffect(() => {
+    if (activeTool !== 'monomer') {
+      setSelectedMonomers('');
+    }
+  }, [activeTool]);
 
   return (
     <MonomerListContainer>

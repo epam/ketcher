@@ -15,43 +15,47 @@
  ***************************************************************************/
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
-import { Vec2 } from 'domain/entities';
 import { ReStruct } from '../../../render';
 
 import { BaseOperation } from '../base';
 import { OperationType } from '../OperationType';
-import { Peptide } from 'domain/entities/Peptide';
-import { PeptideRenderer } from 'application/render/renderers/PeptideRenderer';
-import { MonomerItemType } from 'domain/types';
+import { PolymerBond } from 'domain/entities/PolymerBond';
+import { PolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer';
 
 type Data = {
-  peptide: MonomerItemType;
-  position: Vec2;
+  firstMonomer;
+  startPosition;
+  endPosition;
 };
 
-class PeptideAdd extends BaseOperation {
+class PolymerBondAdd extends BaseOperation {
   data: Data;
 
-  constructor(peptide: MonomerItemType, position: Vec2) {
-    super(OperationType.ATOM_ADD);
-    this.data = { peptide, position };
+  constructor(data: Data) {
+    super(OperationType.POLYMER_BOND_ADD);
+    this.data = data;
   }
 
   execute(restruct: ReStruct) {
-    const { peptide, position } = this.data;
-
+    const { firstMonomer, startPosition, endPosition } = this.data;
     const struct = restruct.molecule;
-    const newPeptide = new Peptide(peptide, position);
-    const peptideRenderer = new PeptideRenderer(newPeptide);
-    struct.peptides.set(newPeptide.id, newPeptide);
-    restruct.peptides.set(newPeptide.id, peptideRenderer);
+    const polymerBond = new PolymerBond(firstMonomer);
+    const polymerBondRenderer = new PolymerBondRenderer(polymerBond);
+    struct.polymerBonds.set(polymerBond.id, polymerBond);
+    restruct.polymerBonds.set(polymerBond.id, polymerBondRenderer);
+    firstMonomer.setPotentialBond(
+      firstMonomer.firstFreeAttachmentPoint,
+      polymerBond,
+    );
+    polymerBond.moveBondStartAbsolute(startPosition.x, startPosition.y);
+    polymerBond.moveBondEndAbsolute(endPosition.x, endPosition.y);
   }
 
   invert() {
-    const inverted = new PeptideAdd(this.data.peptide, this.data.position);
+    const inverted = new PolymerBondAdd(this.data.firstMonomer);
     inverted.data = this.data;
     return inverted;
   }
 }
 
-export { PeptideAdd };
+export { PolymerBondAdd };

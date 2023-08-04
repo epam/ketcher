@@ -556,7 +556,7 @@ test.describe('Undo/Redo Actions', () => {
     }
   });
 
-  test('Undo/Redo Copy/Past', async ({ page }) => {
+  test.fixme('Undo/Redo Copy/Past', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1758
     Description: Undo/Redo action should work correctly

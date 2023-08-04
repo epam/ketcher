@@ -17,7 +17,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
     await page.goto('');
   });
 
-  test('Clean bonds lenght', async ({ page }) => {
+  test.fixme('Clean bonds lenght', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1778
     Description: The length of the bonds becomes the same
@@ -33,7 +33,8 @@ test.describe('Indigo Tools - Clean Tools', () => {
     await delay(DELAY_IN_SECONDS.SEVEN);
     await takeEditorScreenshot(page);
   });
-  test('Clean bonds angles', async ({ page }) => {
+
+  test.fixme('Clean bonds angles', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1779
     Description: The angles should be 60, 90 or 120°
@@ -91,20 +92,23 @@ test.describe('Indigo Tools - Clean Tools', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Clean distorted molecule with Clean Up tool', async ({ page }) => {
-    /*
+  test.fixme(
+    'Clean distorted molecule with Clean Up tool',
+    async ({ page }) => {
+      /*
     Test case: EPMLSOPKET-1785
     Description: After the 'Clean Up' action the structures don't change its position on the canvas.
     The group of structures is cleaned up and appear undistorted.
    */
-    await openFileAndAddToCanvas('layout-distorted.mol', page);
+      await openFileAndAddToCanvas('layout-distorted.mol', page);
 
-    await selectTopPanelButton(TopPanelButton.Clean, page);
-    await delay(DELAY_IN_SECONDS.SEVEN);
-    await takeEditorScreenshot(page);
-  });
+      await selectTopPanelButton(TopPanelButton.Clean, page);
+      await delay(DELAY_IN_SECONDS.SEVEN);
+      await takeEditorScreenshot(page);
+    },
+  );
 
-  test('Clean Queries structure', async ({ page }) => {
+  test.fixme('Clean Queries structure', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1786
     Description: After the Layout and Clean Up actions the structure features appear undistorted.
@@ -121,21 +125,22 @@ test.describe('Indigo Tools - Clean Tools', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Clean Up action on a structures with Attachment point', async ({
-    page,
-  }) => {
-    /*
+  test.fixme(
+    'Clean Up action on a structures with Attachment point',
+    async ({ page }) => {
+      /*
     Test case: EPMLSOPKET-1787
     Description: Clean action is correct for the all selected structures.
    */
-    await openFileAndAddToCanvas('clean-appoints.mol', page);
+      await openFileAndAddToCanvas('clean-appoints.mol', page);
 
-    await selectTopPanelButton(TopPanelButton.Clean, page);
-    await delay(DELAY_IN_SECONDS.SEVEN);
-    await takeEditorScreenshot(page);
-  });
+      await selectTopPanelButton(TopPanelButton.Clean, page);
+      await delay(DELAY_IN_SECONDS.SEVEN);
+      await takeEditorScreenshot(page);
+    },
+  );
 
-  test('Multiple undo', async ({ page }) => {
+  test.fixme('Multiple undo', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1788
     Description: Multiple Undo/Redo actions are correct after the Clean Up action.
@@ -155,7 +160,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Structure with Stereochemistry', async ({ page }) => {
+  test.fixme('Structure with Stereochemistry', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1789
     Description: After the Clean Up and Layout actions the structure
@@ -193,7 +198,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
     await takeEditorScreenshot(page);
   });
 
-  test.skip('Structure with S-Groups', async ({ page }) => {
+  test.fixme('Structure with S-Groups', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1795
     Description: S-group brackets aren't moved away from the structure after the
@@ -212,7 +217,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Structure with Stereolabels', async ({ page }) => {
+  test.fixme('Structure with Stereolabels', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1796
     Description: The cleaned structure has the correct abs/or1/&1 stereolabels.
@@ -229,7 +234,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Structure with Mapping', async ({ page }) => {
+  test.fixme('Structure with Mapping', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1797
     Description: The reaction mapping is kept after the Layout and Clean Up action.

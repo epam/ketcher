@@ -285,6 +285,102 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await page.keyboard.press('Control+v');
     await page.mouse.click(SECOND_CANVAS_CLICK_X, SECOND_CANVAS_CLICK_Y);
   });
+
+  test.fixme(
+    'Copy and paste the Generic S-Group structure',
+    async ({ page }) => {
+      /*
+    Test case: EPMLSOPKET-1726
+    Description: After the clicking the Copy button, the selected object not disappears.
+    After pasting three same structures located on canvas.
+    */
+      const x = 500;
+      const y = 200;
+      await openFileAndAddToCanvas('generic-groups.mol', page);
+      await copyAndPaste(page);
+      await page.mouse.click(x, y);
+    },
+  );
+
+  test.fixme(
+    'Cut and Paste the Generic S-Group structure and edit',
+    async ({ page }) => {
+      /*
+    Test case: EPMLSOPKET-1726
+    Description: The correct structure is pasted on the canvas.
+    All Generic S-Group are correctly rendered.
+    User is able to edit the pasted structure.
+    */
+      await openFileAndAddToCanvas('generic-groups.mol', page);
+      await cutAndPaste(page);
+      await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+      await delay(DELAY_IN_SECONDS.TWO);
+      await selectAtomInToolbar(AtomButton.Nitrogen, page);
+      await clickOnAtom(page, 'C', 12);
+    },
+  );
+
+  test.fixme(
+    'Copy and paste and  Edit the pasted Structure',
+    async ({ page }) => {
+      /*
+    Test case: EPMLSOPKET-1719
+    Description: After the clicking the Copy button, the selected object not disappears.
+    After pasting three same structures located on canvas.
+    */
+      const x = 500;
+      const y = 200;
+      await openFileAndAddToCanvas('query-feat.mol', page);
+      await copyAndPaste(page);
+      await page.mouse.click(x, y);
+    },
+  );
+
+  test.fixme(
+    'Cut and Paste and Edit the pasted Structure',
+    async ({ page }) => {
+      /*
+    Test case: EPMLSOPKET-1719
+    Description: The correct structure is pasted on the canvas.
+    All Generic S-Group are correctly rendered.
+    User is able to edit the pasted structure.
+    */
+      await openFileAndAddToCanvas('query-feat.mol', page);
+      await cutAndPaste(page);
+      await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+      await delay(DELAY_IN_SECONDS.TWO);
+      await selectAtomInToolbar(AtomButton.Nitrogen, page);
+      await clickOnAtom(page, 'C', 12);
+    },
+  );
+
+  test('Copy and paste R-Group structure', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-1724
+    Description: After the clicking the Copy button, the selected object not disappears.
+    After pasting R-Group structure same structures located on canvas.
+    */
+    const x = 500;
+    const y = 200;
+    await openFileAndAddToCanvas('R-Group-structure.mol', page);
+    await copyAndPaste(page);
+    await page.mouse.click(x, y);
+  });
+
+  test('Cut and Paste R-Group structure', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-1724
+    Description: The correct structure is pasted on the canvas.
+    All R-Group structure are correctly rendered.
+    User is able to edit the pasted structure.
+    */
+    await openFileAndAddToCanvas('R-Group-structure.mol', page);
+    await cutAndPaste(page);
+    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await delay(DELAY_IN_SECONDS.TWO);
+    await selectAtomInToolbar(AtomButton.Nitrogen, page);
+    await clickOnAtom(page, 'C', 5);
+  });
 });
 
 test.describe('Copy/Cut/Paste Actions', () => {

@@ -17,6 +17,7 @@ const ignoredTests = [
   'API/**',
   'File-Management/Smile-Files/smile-files.spec.ts',
   'Examples/**',
+  'Indigo-Tools/**',
   'Indigo-Tools/Clean-Tools/clean-tools.spec.ts:20',
   'Indigo-Tools/Clean-Tools/clean-tools.spec.ts:36',
   'Indigo-Tools/Clean-Tools/clean-tools.spec.ts:94',

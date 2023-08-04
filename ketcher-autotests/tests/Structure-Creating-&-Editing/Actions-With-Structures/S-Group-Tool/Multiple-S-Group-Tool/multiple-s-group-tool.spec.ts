@@ -4,7 +4,6 @@ import {
   LeftPanelButton,
   selectLeftPanelButton,
   clickInTheMiddleOfTheScreen,
-  delay,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   pressButton,
@@ -47,7 +46,6 @@ test.describe('Multiple S-Group tool', () => {
   });
 
   test.afterEach(async ({ page }) => {
-    await delay(3);
     await takeEditorScreenshot(page);
   });
 
@@ -104,7 +102,8 @@ test.describe('Multiple S-Group tool', () => {
     */
     await openFileAndAddToCanvas('multiple-group.ket', page);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
-    await clickOnBond(page, BondType.SINGLE, 3);
+    await clickOnBond(page, BondType.SINGLE, 3, 'right');
+    await page.getByText('Edit S-Group...').click();
     await fillFieldByLabel(page, 'Repeat count', '99');
     await pressButton(page, 'Apply');
     await resetCurrentTool(page);
@@ -145,7 +144,7 @@ test.describe('Multiple S-Group tool', () => {
     */
     await openFileAndAddToCanvas('multiple-group.ket', page);
     await page.keyboard.press('Control+a');
-    await selectLeftPanelButton(LeftPanelButton.Erase, page);
+    await page.getByTestId('delete').click();
     await takeEditorScreenshot(page);
 
     await screenshotBetweenUndoRedo(page);

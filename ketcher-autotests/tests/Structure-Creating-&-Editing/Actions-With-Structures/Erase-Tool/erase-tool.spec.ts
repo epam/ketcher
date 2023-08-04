@@ -114,7 +114,8 @@ test.describe('Erase Tool', () => {
       y: (pnt1.y + pnt2.y) / halfDivider,
     };
 
-    await selectTool(LeftPanelButton.Erase, page);
+    await page.keyboard.press('Control+a');
+    await page.getByTestId('delete').click();
 
     await page.mouse.click(arrowMiddle.x, arrowMiddle.y);
 

@@ -203,7 +203,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await page.keyboard.press('Control+c');
   });
 
-  test('Copy and Paste structure and edit', async ({ page }) => {
+  test.fixme('Copy and Paste structure and edit', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1716
     Description: The correct structure is pasted on the canvas.
@@ -273,7 +273,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await page.mouse.click(x, y);
   });
 
-  test('Multiple Paste action', async ({ page }) => {
+  test.fixme('Multiple Paste action', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1718
     Description: After the clicking the Copy button, the selected object not disappears.

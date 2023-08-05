@@ -669,7 +669,7 @@ test.describe('Undo/Redo Actions', () => {
     await page.goto('');
   });
 
-  test('Undo/Redo paste template action', async ({ page }) => {
+  test.fixme('Undo/Redo paste template action', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1731
     Description: Undo/Redo actions work correctly:

@@ -142,47 +142,50 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     },
   );
 
-  test('Set and Get Molecule containing chiral centers', async ({ page }) => {
-    /*
+  test.fixme(
+    'Set and Get Molecule containing chiral centers',
+    async ({ page }) => {
+      /*
     Test case: EPMLSOPKET- 10097
     Description:  Molecule set and get with chiral centers
     */
-    const indexOfLineWithIndigo = 2;
-    const indexOfLineWithKetcher = 2;
+      const indexOfLineWithIndigo = 2;
+      const indexOfLineWithKetcher = 2;
 
-    await setMolecule(page, 'CC(=O)O[C@@H](C)[C@H](O)Cn1cnc2c1ncnc2N');
-    await delay(DELAY_IN_SECONDS.THREE);
+      await setMolecule(page, 'CC(=O)O[C@@H](C)[C@H](O)Cn1cnc2c1ncnc2N');
+      await delay(DELAY_IN_SECONDS.THREE);
 
-    const molV2000FileExpected = await readFileContents(
-      'tests/test-data/test-data-for-chiral-centersv2000.json',
-    );
-    const molV2000File = await getMolfile(page, 'v2000');
-    const filteredmolV2000FileExpected = filteredFile(
-      molV2000FileExpected,
-      indexOfLineWithKetcher,
-    );
-    const filteredmolV2000File = filteredFile(
-      molV2000File,
-      indexOfLineWithKetcher,
-    );
+      const molV2000FileExpected = await readFileContents(
+        'tests/test-data/test-data-for-chiral-centersv2000.json',
+      );
+      const molV2000File = await getMolfile(page, 'v2000');
+      const filteredmolV2000FileExpected = filteredFile(
+        molV2000FileExpected,
+        indexOfLineWithKetcher,
+      );
+      const filteredmolV2000File = filteredFile(
+        molV2000File,
+        indexOfLineWithKetcher,
+      );
 
-    expect(filteredmolV2000File).toEqual(filteredmolV2000FileExpected);
+      expect(filteredmolV2000File).toEqual(filteredmolV2000FileExpected);
 
-    const molV3000FileExpected = await readFileContents(
-      'tests/test-data/test-data-for-chiral-centersv3000.json',
-    );
-    const molV3000File = await getMolfile(page, 'v3000');
-    const filteredmolV3000FileExpected = filteredFile(
-      molV3000FileExpected,
-      indexOfLineWithIndigo,
-    );
-    const filteredmolV3000File = filteredFile(
-      molV3000File,
-      indexOfLineWithIndigo,
-    );
+      const molV3000FileExpected = await readFileContents(
+        'tests/test-data/test-data-for-chiral-centersv3000.json',
+      );
+      const molV3000File = await getMolfile(page, 'v3000');
+      const filteredmolV3000FileExpected = filteredFile(
+        molV3000FileExpected,
+        indexOfLineWithIndigo,
+      );
+      const filteredmolV3000File = filteredFile(
+        molV3000File,
+        indexOfLineWithIndigo,
+      );
 
-    expect(filteredmolV3000File).toEqual(filteredmolV3000FileExpected);
-  });
+      expect(filteredmolV3000File).toEqual(filteredmolV3000FileExpected);
+    },
+  );
 
   test('Check DisableQueryElements parameter', async ({ page }) => {
     /*

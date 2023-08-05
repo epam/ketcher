@@ -25,7 +25,7 @@ const ignoredTests = [
   // 'Templates/Functional-Groups/Functional-Group-Tools/functional-group-tools.spec.ts',
   // 'Templates/Salts-and-Solvents/**',
   // 'Templates/User-Templates/**',
-  // 'utils/**',
+  'utils/**',
 ];
 
 function baseURL(): string {

@@ -4,12 +4,10 @@ import {
   TopPanelButton,
   clickInTheMiddleOfTheScreen,
   pressButton,
-  delay,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   readFileContents,
   pasteFromClipboard,
-  DELAY_IN_SECONDS,
   waitForLoad,
 } from '@utils';
 import { getSmarts } from '@utils/formats';
@@ -25,7 +23,6 @@ async function previewSmarts(page: Page) {
   await selectTopPanelButton(TopPanelButton.Save, page);
   await page.getByRole('button', { name: 'MDL Rxnfile V2000' }).click();
   await page.getByRole('option', { name: 'Daylight SMARTS' }).click();
-  await delay(DELAY_IN_SECONDS.ONE);
 }
 
 test.describe('Reagents SMARTS format', () => {
@@ -82,7 +79,7 @@ test.describe('Reagents SMARTS format', () => {
   test('Paste from clipboard in "Daylight SMARTS" format', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-4687
-    Description: Reagent 'Cl' displays below reaction arrow
+    Description: Reagent 'Cl' displays above reaction arrow
     */
     await selectTopPanelButton(TopPanelButton.Open, page);
     await page.getByText('Paste from clipboard').click();

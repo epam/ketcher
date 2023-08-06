@@ -17,8 +17,8 @@ const ignoredTests = [
   'API/**',
   'File-Management/Smile-Files/smile-files.spec.ts',
   'Examples/**',
-  'Indigo-Tools/**',
-  'R-group-tool/**',
+  // 'Indigo-Tools/**',
+  // 'R-group-tool/**',
   'Reagents/**',
   'Structure-Creating-&-Editing/**',
   'Templates/Functional-Groups/functional-groups.spec.ts',
@@ -41,6 +41,8 @@ function baseURL(): string {
 }
 
 const MAX_NUMBER_OF_RETRIES = 2;
+const MAX_NUMBER_OF_FAILURES = 3;
+const isCI = process.env.CI_ENVIRONMENT === 'true';
 
 const config: PlaywrightTestConfig = {
   testDir: './tests',
@@ -59,12 +61,13 @@ const config: PlaywrightTestConfig = {
     // },
     timeout: 10_000,
   },
+  maxFailures: isCI ? MAX_NUMBER_OF_FAILURES : 0,
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: Boolean(process.env.CI),
   /* Retry on CI only */
-  retries: process.env.CI_ENVIRONMENT === 'true' ? MAX_NUMBER_OF_RETRIES : 0,
+  retries: isCI ? MAX_NUMBER_OF_RETRIES : 0,
   /* Opt out of parallel tests on CI. */
   // eslint-disable-next-line no-magic-numbers
   workers: process.env.CI ? 2 : os.cpus().length,

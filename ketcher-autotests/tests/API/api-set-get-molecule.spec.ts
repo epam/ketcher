@@ -482,7 +482,6 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Functional Group is able to expand.
     */
     await setMolecule(page, FILE_TEST_DATA.oneFunctionalGroupContractedCml);
-    await delay(DELAY_IN_SECONDS.THREE);
     await takeEditorScreenshot(page);
 
     await page.getByText('Boc').click({ button: 'right' });

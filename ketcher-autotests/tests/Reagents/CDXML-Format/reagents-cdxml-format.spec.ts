@@ -26,7 +26,6 @@ async function previewCDXML(page: Page) {
   await selectTopPanelButton(TopPanelButton.Save, page);
   await page.getByRole('button', { name: 'MDL Rxnfile V2000' }).click();
   await page.getByRole('option', { name: 'CDXML' }).click();
-  await delay(DELAY_IN_SECONDS.ONE);
 }
 
 async function pasteCDXML(page: Page, fileFormat: string) {
@@ -56,7 +55,6 @@ test.describe('Reagents CDXML format', () => {
     Description: System detect molecule NH3 above arrow as reagent and write reagent in 'CDXML' format in "Preview" tab
     */
     await openFileAndAddToCanvas('benzene-arrow-benzene-reagent-nh3.ket', page);
-    await delay();
 
     const cdxmlResult = await request.post(`${API_INDIGO_URL}/convert`, {
       data: NH3MoleculeAboveRequestData,

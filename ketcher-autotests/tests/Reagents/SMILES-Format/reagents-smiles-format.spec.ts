@@ -3,12 +3,10 @@ import {
   selectTopPanelButton,
   TopPanelButton,
   clickInTheMiddleOfTheScreen,
-  delay,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   readFileContents,
   pasteFromClipboardAndAddToCanvas,
-  DELAY_IN_SECONDS,
 } from '@utils';
 import {
   getExtendedSmiles,
@@ -71,7 +69,6 @@ test.describe('Reagents SMILES format', () => {
     expect(smiFile).toEqual(smiFileExpected);
 
     await getPreviewForSmiles(page, 'MDL Rxnfile V2000', 'Daylight SMILES');
-    await delay(DELAY_IN_SECONDS.ONE);
   });
 
   test(`Detection molecule as reagent below arrow
@@ -108,7 +105,6 @@ test.describe('Reagents SMILES format', () => {
     await openFileAndAddToCanvas('benzene-arrow-benzene-reagent-nh3.ket', page);
 
     await getPreviewForSmiles(page, 'MDL Rxnfile V2000', 'Extended SMILES');
-    await delay(DELAY_IN_SECONDS.ONE);
   });
 
   test(`Detection molecule as reagent below arrow
@@ -124,7 +120,6 @@ test.describe('Reagents SMILES format', () => {
     await openFileAndAddToCanvas('benzene-arrow-benzene-reagent-hcl.ket', page);
 
     await getPreviewForSmiles(page, 'MDL Rxnfile V2000', 'Extended SMILES');
-    await delay(DELAY_IN_SECONDS.ONE);
   });
 
   test('Open from file in "Daylight SMILES" format', async ({ page }) => {
@@ -153,7 +148,6 @@ test.describe('Reagents SMILES format', () => {
       'C1(C)C(O)=CC(S)=C(N)C=1>Cl>C1(Br)C(C)=CC(I)=C(O)C=1',
     );
     await clickInTheMiddleOfTheScreen(page);
-    await delay(DELAY_IN_SECONDS.ONE);
   });
 
   test('Paste from clipboard in "Extended SMILES" format', async ({ page }) => {
@@ -166,7 +160,6 @@ test.describe('Reagents SMILES format', () => {
       'CN(C(Cl)=O)C>Cl>c1ccc(OCCN(C(Cl)=O)C)cc1',
     );
     await clickInTheMiddleOfTheScreen(page);
-    await delay(DELAY_IN_SECONDS.ONE);
   });
 
   test('SMILES import if dearomotize-on-load is true', async ({ page }) => {

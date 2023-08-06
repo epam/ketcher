@@ -646,19 +646,27 @@ test.describe('Templates - Functional Group Tools3', () => {
     Description: Two FG's are added. Aromatize funcion is selected, nothing happens.
     Dearomatize function is selected, nothing happens.
     */
+    const clickCoordines = {
+      x1: 560,
+      y1: 360,
+      x2: 700,
+      y2: 360,
+    };
 
     await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
     await page.getByRole('tab', { name: 'Functional Groups' }).click();
     await selectFunctionalGroups(FunctionalGroups.Bn, page);
-    await clickInTheMiddleOfTheScreen(page);
+    await page.mouse.click(clickCoordines.x1, clickCoordines.y1);
+    await resetCurrentTool(page);
 
     await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
     await page.getByRole('tab', { name: 'Functional Groups' }).click();
     await selectFunctionalGroups(FunctionalGroups.Bn, page);
-    await clickInTheMiddleOfTheScreen(page, 'right');
+    await page.mouse.click(clickCoordines.x2, clickCoordines.y2);
+    await resetCurrentTool(page);
 
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
-    await clickInTheMiddleOfTheScreen(page, 'right');
+    await page.getByText('Bn').first().click({ button: 'right' });
     await page.getByText('Expand Abbreviation').click();
 
     await selectTopPanelButton(TopPanelButton.Aromatize, page);
@@ -677,18 +685,27 @@ test.describe('Templates - Functional Group Tools3', () => {
     Clean Up button is selected, nothing happens.
     */
 
+    const clickCoordines = {
+      x1: 560,
+      y1: 360,
+      x2: 700,
+      y2: 360,
+    };
+
     await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
     await page.getByRole('tab', { name: 'Functional Groups' }).click();
     await selectFunctionalGroups(FunctionalGroups.CCl3, page);
-    await clickInTheMiddleOfTheScreen(page);
+    await page.mouse.click(clickCoordines.x1, clickCoordines.y1);
+    await resetCurrentTool(page);
 
     await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
     await page.getByRole('tab', { name: 'Functional Groups' }).click();
     await selectFunctionalGroups(FunctionalGroups.C2H5, page);
-    await clickInTheMiddleOfTheScreen(page, 'right');
+    await page.mouse.click(clickCoordines.x2, clickCoordines.y2);
+    await resetCurrentTool(page);
 
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
-    await clickInTheMiddleOfTheScreen(page, 'right');
+    await page.getByText('CCl3').click({ button: 'right' });
     await page.getByText('Expand Abbreviation').click();
 
     await selectTopPanelButton(TopPanelButton.Layout, page);

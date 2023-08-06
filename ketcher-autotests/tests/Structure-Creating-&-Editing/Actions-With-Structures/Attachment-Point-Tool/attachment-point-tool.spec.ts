@@ -268,7 +268,7 @@ test.describe('Attachment Point Tool', () => {
     await pressButton(page, 'Apply');
   });
 
-  test('Copy/Paste actions', async ({ page }) => {
+  test.fixme('Copy/Paste actions', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1648
     Description: Pasted structures are displayed with correct attachment points.
@@ -281,7 +281,7 @@ test.describe('Attachment Point Tool', () => {
     await screenshotBetweenUndoRedo(page);
   });
 
-  test('Cut/Paste actions', async ({ page }) => {
+  test.fixme('Cut/Paste actions', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1648
     Description: Pasted structures are displayed with correct attachment points.

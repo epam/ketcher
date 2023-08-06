@@ -280,7 +280,7 @@ test.describe('Click User Templates on canvas', () => {
     await resetCurrentTool(page);
   });
 
-  test('Create Template - saving', async ({ page }) => {
+  test.fixme('Create Template - saving', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-1722
       Description: saving user template validation

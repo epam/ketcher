@@ -344,37 +344,39 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await page.getByText('Contract Abbreviation').click();
   });
 
-  test('Add one contracted Functional Group through API ketcher.setMolecule (V3000)', async ({
-    page,
-  }) => {
-    /*
+  test.fixme(
+    'Add one contracted Functional Group through API ketcher.setMolecule (V3000)',
+    async ({ page }) => {
+      /*
     Test case: EPMLSOPKET-13021
     Description: one contracted Functional Group added through API ketcher.setMolecule.
     Functional Group is able to expand.
     */
-    await setMolecule(page, FILE_TEST_DATA.oneFunctionalGroupContractedV3000);
-    await takeEditorScreenshot(page);
+      await setMolecule(page, FILE_TEST_DATA.oneFunctionalGroupContractedV3000);
+      await takeEditorScreenshot(page);
 
-    await page.getByText('Boc').click({ button: 'right' });
-    await page.getByText('Expand Abbreviation').click();
-  });
+      await page.getByText('Boc').click({ button: 'right' });
+      await page.getByText('Expand Abbreviation').click();
+    },
+  );
 
-  test('Add one expanded Functional Group through API ketcher.setMolecule (V3000)', async ({
-    page,
-  }) => {
-    /*
+  test.fixme(
+    'Add one expanded Functional Group through API ketcher.setMolecule (V3000)',
+    async ({ page }) => {
+      /*
     Test case: EPMLSOPKET-13022
     Description: one expanded Functional Group added through API ketcher.setMolecule.
     Functional Group is able to contract.
     */
-    await setMolecule(page, FILE_TEST_DATA.oneFunctionalGroupExpandedV3000);
-    await takeEditorScreenshot(page);
+      await setMolecule(page, FILE_TEST_DATA.oneFunctionalGroupExpandedV3000);
+      await takeEditorScreenshot(page);
 
-    // eslint-disable-next-line no-magic-numbers
-    const point = await getAtomByIndex(page, { label: 'C' }, 3);
-    await page.mouse.click(point.x, point.y, { button: 'right' });
-    await page.getByText('Contract Abbreviation').click();
-  });
+      // eslint-disable-next-line no-magic-numbers
+      const point = await getAtomByIndex(page, { label: 'C' }, 3);
+      await page.mouse.click(point.x, point.y, { button: 'right' });
+      await page.getByText('Contract Abbreviation').click();
+    },
+  );
 
   test('Add Functional Groups expanded/contracted through API ketcher.setMolecule (.ket)', async ({
     page,

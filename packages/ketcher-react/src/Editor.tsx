@@ -64,7 +64,12 @@ function Editor(props: EditorProps) {
         window.dispatchEvent(ketcherInitEvent);
       }
     });
-    return () => appRoot.unmount();
+    return () => {
+      // setTimeout is used to disable the warn msg from react "Attempted to synchronously unmount a root while React was already rendering"
+      setTimeout(() => {
+        appRoot.unmount();
+      });
+    };
     // TODO: provide the list of dependencies after implementing unsubscribe function
   }, []);
 

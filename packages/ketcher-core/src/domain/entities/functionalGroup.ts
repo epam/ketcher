@@ -62,20 +62,6 @@ export class FunctionalGroup {
     );
   }
 
-  static getFunctionalGroupByName(searchName: string): Struct | null {
-    const provider = FunctionalGroupsProvider.getInstance();
-    const functionalGroups = provider.getFunctionalGroupsList();
-
-    let foundGroup;
-    if (searchName) {
-      foundGroup = functionalGroups.find(({ name, abbreviation }) => {
-        return name === searchName || abbreviation === searchName;
-      });
-    }
-
-    return foundGroup || null;
-  }
-
   static atomsInFunctionalGroup(functionalGroups, atom): number | null {
     if (functionalGroups.size === 0) {
       return null;

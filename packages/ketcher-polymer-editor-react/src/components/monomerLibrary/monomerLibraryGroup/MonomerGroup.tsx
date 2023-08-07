@@ -34,10 +34,6 @@ const MonomerGroup = ({
   const dispatch = useAppDispatch();
   const preview = useAppSelector(selectShowPreview);
 
-  const handleItemMouseLeave = () => {
-    dispatch(showPreview());
-  };
-
   const dispatchShowPreview = useCallback(
     (payload) => dispatch(showPreview(payload)),
     [dispatch],
@@ -47,6 +43,11 @@ const MonomerGroup = ({
     () => debounce((p) => dispatchShowPreview(p), 500),
     [dispatchShowPreview],
   );
+
+  const handleItemMouseLeave = () => {
+    debouncedShowPreview.cancel();
+    dispatch(showPreview());
+  };
 
   const handleItemMouseMove = (
     monomer: MonomerItemType,

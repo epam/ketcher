@@ -35,7 +35,7 @@ export interface BondAttributes {
   end: number;
   begin: number;
   cip?: CIP | null;
-  isPreview: boolean;
+  isPreview?: boolean;
 }
 
 export class Bond {

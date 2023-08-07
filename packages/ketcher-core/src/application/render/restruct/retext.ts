@@ -129,7 +129,7 @@ class ReText extends ReObject {
   drawHover(render: any): any {
     if (!this.paths.length) return null;
     const ret = this.hoverPath(render).attr(render.options.hoverStyle);
-    render.ctab.addReObjectPath(LayerMap.data, this.visel, ret);
+    render.ctab.addReObjectPath(LayerMap.hovering, this.visel, ret);
     return ret;
   }
 

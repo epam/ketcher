@@ -50,6 +50,7 @@ import { updateSelectedBonds } from 'src/script/ui/state/modal/bonds';
 import { hasAtomsOutsideCanvas } from './helper/isAtomOutSideCanvas';
 import { filterNotInContractedSGroup } from './helper/filterNotInCollapsedSGroup';
 import { Tool } from './Tool';
+import { handleMovingPosibilityCursor } from '../utils';
 
 type SelectMode = 'lasso' | 'fragment' | 'rectangle';
 
@@ -59,6 +60,7 @@ class SelectTool implements Tool {
   private readonly editor: Editor;
   private dragCtx: any;
   isMousedDown = false;
+  readonly isMoving = false;
 
   constructor(editor: Editor, mode: SelectMode) {
     this.editor = editor;
@@ -238,7 +240,14 @@ class SelectTool implements Tool {
     const maps = getMapsForClosestItem(
       this.#lassoHelper.fragment || event.ctrlKey,
     );
-    editor.hover(editor.findItem(event, maps, null), null, event);
+    const item = editor.findItem(event, maps, null);
+    editor.hover(item, null, event);
+
+    handleMovingPosibilityCursor(
+      item,
+      this.editor.render.paper.canvas,
+      this.editor.render.options.movingStyle.cursor as string,
+    );
 
     return true;
   }

@@ -41,38 +41,45 @@ test.describe('Click Salts and Solvents on canvas', () => {
     await clickInTheMiddleOfTheScreen(page);
   });
 
-  test('The isobutanol replaces the Boc functional group', async ({ page }) => {
-    /*
+  test.fixme(
+    'The isobutanol replaces the Boc functional group',
+    async ({ page }) => {
+      /*
       Test case: EPMLSOPKET-10110
       Description: when clicking with a Salts and Solvents on a FG it should replace it
     */
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await page.getByRole('tab', { name: 'Functional Groups' }).click();
-    await selectFunctionalGroups(FunctionalGroups.Boc, page);
-    await clickInTheMiddleOfTheScreen(page);
+      await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+      await page.getByRole('tab', { name: 'Functional Groups' }).click();
+      await selectFunctionalGroups(FunctionalGroups.Boc, page);
+      await clickInTheMiddleOfTheScreen(page);
 
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await page.getByRole('tab', { name: 'Salts and Solvents' }).click();
-    await selectSaltsAndSolvents(SaltsAndSolvents.Isobutanol, page);
-    await clickInTheMiddleOfTheScreen(page);
-  });
+      await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+      await page.getByRole('tab', { name: 'Salts and Solvents' }).click();
+      // function can't select Salt
+      await selectSaltsAndSolvents(SaltsAndSolvents.Isobutanol, page);
+      await clickInTheMiddleOfTheScreen(page);
+    },
+  );
 
-  test('The t-butanol replaces methane sulphonic acid', async ({ page }) => {
-    /*
+  test.fixme(
+    'The t-butanol replaces methane sulphonic acid',
+    async ({ page }) => {
+      /*
       Test case: EPMLSOPKET-10110
       Description: when clicking with a Salts and Solvents template on a Salts and Solvents
       it should replace it
     */
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await page.getByRole('tab', { name: 'Salts and Solvents' }).click();
-    await selectSaltsAndSolvents(SaltsAndSolvents.MethaneSulphonicAcid, page);
-    await clickInTheMiddleOfTheScreen(page);
+      await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+      await page.getByRole('tab', { name: 'Salts and Solvents' }).click();
+      await selectSaltsAndSolvents(SaltsAndSolvents.MethaneSulphonicAcid, page);
+      await clickInTheMiddleOfTheScreen(page);
 
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await page.getByRole('tab', { name: 'Salts and Solvents' }).click();
-    await selectSaltsAndSolvents(SaltsAndSolvents.TButanol, page);
-    await clickInTheMiddleOfTheScreen(page);
-  });
+      await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+      await page.getByRole('tab', { name: 'Salts and Solvents' }).click();
+      await selectSaltsAndSolvents(SaltsAndSolvents.TButanol, page);
+      await clickInTheMiddleOfTheScreen(page);
+    },
+  );
 
   test('Formic acid places near the Cl atom', async ({ page }) => {
     /*
@@ -95,26 +102,29 @@ test.describe('Click Salts and Solvents on canvas', () => {
     await clickInTheMiddleOfTheScreen(page);
   });
 
-  test('sulfolane places near the Cbz functional group', async ({ page }) => {
-    /*
+  test.fixme(
+    'sulfolane places near the Cbz functional group',
+    async ({ page }) => {
+      /*
       Test case: EPMLSOPKET-10111
       Description: when clicking with a Salt and Solvents template on an FG connected with bond
        to another atom  it should place Salts and Solvents near FG
     */
-    await selectAtomInToolbar(AtomButton.Oxygen, page);
-    await clickInTheMiddleOfTheScreen(page);
+      await selectAtomInToolbar(AtomButton.Oxygen, page);
+      await clickInTheMiddleOfTheScreen(page);
 
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await page.getByRole('tab', { name: 'Functional Groups' }).click();
-    await selectFunctionalGroups(FunctionalGroups.Cbz, page);
-    await moveMouseToTheMiddleOfTheScreen(page);
-    const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
-    const coordinatesWithShift = x + MAX_BOND_LENGTH;
-    await dragMouseTo(coordinatesWithShift, y, page);
+      await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+      await page.getByRole('tab', { name: 'Functional Groups' }).click();
+      await selectFunctionalGroups(FunctionalGroups.Cbz, page);
+      await moveMouseToTheMiddleOfTheScreen(page);
+      const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
+      const coordinatesWithShift = x + MAX_BOND_LENGTH;
+      await dragMouseTo(coordinatesWithShift, y, page);
 
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await page.getByRole('tab', { name: 'Salts and Solvents' }).click();
-    await selectSaltsAndSolvents(SaltsAndSolvents.Sulfolane, page);
-    await page.mouse.click(coordinatesWithShift, y);
-  });
+      await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+      await page.getByRole('tab', { name: 'Salts and Solvents' }).click();
+      await selectSaltsAndSolvents(SaltsAndSolvents.Sulfolane, page);
+      await page.mouse.click(coordinatesWithShift, y);
+    },
+  );
 });

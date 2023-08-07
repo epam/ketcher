@@ -5,8 +5,6 @@ import {
   openFileAndAddToCanvas,
   TopPanelButton,
   takeEditorScreenshot,
-  DELAY_IN_SECONDS,
-  delay,
   BondType,
   dragMouseTo,
   selectRingButton,
@@ -25,7 +23,6 @@ test.describe('Calculated Values Tools', () => {
   });
 
   test.afterEach(async ({ page }) => {
-    await delay(DELAY_IN_SECONDS.THREE);
     await takeEditorScreenshot(page);
   });
 

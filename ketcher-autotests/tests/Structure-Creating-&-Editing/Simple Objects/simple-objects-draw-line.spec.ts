@@ -1,4 +1,5 @@
 import { test } from '@playwright/test';
+import { openSimpleObjectsDropdown } from '@utils';
 import { takeEditorScreenshot } from '@utils/canvas';
 import {
   clickInTheMiddleOfTheScreen,
@@ -18,8 +19,7 @@ test.describe('draw and highlight line', () => {
 
   test('drawing and highlighting', async ({ page }) => {
     // test case: EPMLSOPKET-16750
-    await page.getByTitle('Shape Ellipse').click();
-    await page.getByTitle('Shape Ellipse').click();
+    await openSimpleObjectsDropdown(page);
     await page.getByTestId('shape-line').click();
 
     const moveTo = 250;

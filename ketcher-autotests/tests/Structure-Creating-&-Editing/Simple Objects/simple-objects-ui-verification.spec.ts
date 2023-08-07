@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { openSimpleObjectsDropdown } from '@utils';
 
 test.describe('Verifying buttons on Simple Objects', () => {
   test.beforeEach(async ({ page }) => {
@@ -12,15 +13,13 @@ test.describe('Verifying buttons on Simple Objects', () => {
   });
 
   test('open Simple Objects and Shape Rectangle tooltip', async ({ page }) => {
-    await page.getByTitle('Shape Ellipse').click();
-    await page.getByTitle('Shape Ellipse').click();
+    await openSimpleObjectsDropdown(page);
     const button = page.getByTestId('shape-rectangle');
     await expect(button).toHaveAttribute('title', 'Shape Rectangle');
   });
 
   test('open Simple Objects and Shape Line tooltip', async ({ page }) => {
-    await page.getByTitle('Shape Ellipse').click();
-    await page.getByTitle('Shape Ellipse').click();
+    await openSimpleObjectsDropdown(page);
     const button = page.getByTestId('shape-line');
     await expect(button).toHaveAttribute('title', 'Shape Line');
   });

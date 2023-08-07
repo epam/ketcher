@@ -82,6 +82,7 @@ export class SGroup {
   neiAtoms: any;
   pp: Vec2 | null;
   data: any;
+  dataArea: any;
   private readonly attachmentPoints: SGroupAttachmentPoint[];
 
   constructor(type: string) {
@@ -455,7 +456,7 @@ export class SGroup {
   static bracketPos(
     sGroup,
     mol,
-    crossBondsPerAtom: { [key: number]: Array<Bond> },
+    crossBondsPerAtom?: { [key: number]: Array<Bond> },
     remol?: ReStruct,
     render?,
   ): void {

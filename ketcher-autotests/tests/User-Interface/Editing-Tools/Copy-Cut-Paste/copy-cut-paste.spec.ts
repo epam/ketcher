@@ -409,6 +409,177 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickOnAtom(page, 'C', 12);
   });
+
+  test('Copy and paste the structure with attached data', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-1727
+    Description: After the clicking the Copy button, the selected object not disappears.
+    After pasting three same structures located on canvas.
+    */
+    const x = 500;
+    const y = 300;
+    await openFileAndAddToCanvas('attached.mol', page);
+    await copyAndPaste(page);
+    await page.mouse.click(x, y);
+  });
+
+  test('Cut and Paste structure with attached data and edit', async ({
+    page,
+  }) => {
+    /*
+    Test case: EPMLSOPKET-1727
+    Description: The correct structure is pasted on the canvas.
+    All attached data are correctly rendered.
+    User is able to edit the pasted structure.
+    */
+    await openFileAndAddToCanvas('attached.mol', page);
+    await cutAndPaste(page);
+    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await delay(DELAY_IN_SECONDS.TWO);
+    await selectAtomInToolbar(AtomButton.Nitrogen, page);
+    await clickOnAtom(page, 'C', 12);
+  });
+
+  test('Copy and paste Stereo structure with Chiral flag', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-1728
+    Description: Copied objects are pasted correctly.
+    The structure is copied (and then is pasted) with the Chiral flag.
+    */
+    const x = 500;
+    const y = 300;
+    await openFileAndAddToCanvas('chiral-structure.mol', page);
+    await copyAndPaste(page);
+    await page.mouse.click(x, y);
+  });
+
+  test('Cut and Paste structure with Stereo and Chiral flag and edit', async ({
+    page,
+  }) => {
+    /*
+    Test case: EPMLSOPKET-1728
+    Description: Copied objects are pasted correctly.
+    The structure is cut (and then is pasted) with the Chiral flag.
+    */
+    await openFileAndAddToCanvas('chiral-structure.mol', page);
+    await cutAndPaste(page);
+    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await delay(DELAY_IN_SECONDS.TWO);
+    await selectAtomInToolbar(AtomButton.Nitrogen, page);
+    await clickOnAtom(page, 'C', 12);
+  });
+
+  test('Copy and paste reaction by hotkeys', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-1730
+    Description: Copied objects are pasted correctly.
+    The structure is copied (and then is pasted) with reaction arrow and plus sign
+    */
+    const x = 500;
+    const y = 200;
+    await openFileAndAddToCanvas('reaction.rxn', page);
+    await copyAndPaste(page);
+    await page.mouse.click(x, y);
+  });
+
+  test('Cut and Paste reaction by hotkeys and edit', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-1730
+    Description: Copied objects are pasted correctly.
+    The structure is cut (and then is pasted) with reaction arrow and plus sign
+    */
+    await openFileAndAddToCanvas('reaction.rxn', page);
+    await cutAndPaste(page);
+    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await delay(DELAY_IN_SECONDS.TWO);
+    await selectAtomInToolbar(AtomButton.Nitrogen, page);
+    await clickOnAtom(page, 'C', 12);
+  });
+
+  test('Copy and paste reaction with changed arrow', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-2873
+    Description: Copied reaction has Failed Arrow with default size and position.
+    */
+    const x = 500;
+    const y = 200;
+    await openFileAndAddToCanvas('structure-with-failed-arrow.rxn', page);
+    await copyAndPaste(page);
+    await page.mouse.click(x, y);
+  });
+
+  test('Cut and Paste reaction with changed arrow and edit', async ({
+    page,
+  }) => {
+    /*
+    Test case: EPMLSOPKET-2873
+    Description: Cut reaction has Failed Arrow with default size and position.
+    */
+    await openFileAndAddToCanvas('structure-with-failed-arrow.rxn', page);
+    await cutAndPaste(page);
+    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await delay(DELAY_IN_SECONDS.TWO);
+    await selectAtomInToolbar(AtomButton.Nitrogen, page);
+    await clickOnAtom(page, 'C', 5);
+  });
+
+  test('Copy and paste reaction with multiple arrows', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-2874
+    Description: Copied reaction has plus sign and one arrow.
+    */
+    const x = 500;
+    const y = 200;
+    await openFileAndAddToCanvas('arrows-in-different-directions.rxn', page);
+    await copyAndPaste(page);
+    await page.mouse.click(x, y);
+  });
+
+  test('Cut and Paste reaction with multiple arrows and edit', async ({
+    page,
+  }) => {
+    /*
+    Test case: EPMLSOPKET-2874
+    Description: Cut reaction has plus sign and one arrow.
+    */
+    await openFileAndAddToCanvas('arrows-in-different-directions.rxn', page);
+    await cutAndPaste(page);
+    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await delay(DELAY_IN_SECONDS.TWO);
+    await selectAtomInToolbar(AtomButton.Nitrogen, page);
+    await clickOnAtom(page, 'C', 5);
+  });
+
+  test('Copy and paste all kind of S-groups', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-2884
+    Description: Copied objects are pasted as one object and correctly displayed without data loss.
+    */
+    const x = 100;
+    const y = 100;
+    await openFileAndAddToCanvas(
+      'structure-with-all-kinds-of-s-groups.mol',
+      page,
+    );
+    await copyAndPaste(page);
+    await page.mouse.click(x, y);
+  });
+
+  test('Cut and Paste all kind of S-groups and edit', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-2884
+    Description: Cut objects are pasted as one object and correctly displayed without data loss.
+    */
+    await openFileAndAddToCanvas(
+      'structure-with-all-kinds-of-s-groups.mol',
+      page,
+    );
+    await cutAndPaste(page);
+    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await delay(DELAY_IN_SECONDS.TWO);
+    await selectAtomInToolbar(AtomButton.Nitrogen, page);
+    await clickOnAtom(page, 'C', 5);
+  });
 });
 
 test.describe('Copy/Cut/Paste Actions', () => {

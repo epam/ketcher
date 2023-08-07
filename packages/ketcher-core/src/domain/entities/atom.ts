@@ -42,7 +42,7 @@ export interface AtomAttributes {
   invRet?: number;
   aam?: number;
   hCount?: number;
-  isPreview: boolean;
+  isPreview?: boolean;
   unsaturatedAtom?: number;
   substitutionCount?: number;
   ringBondCount?: number;

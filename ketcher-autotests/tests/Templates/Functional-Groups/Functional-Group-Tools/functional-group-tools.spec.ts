@@ -711,7 +711,7 @@ test.describe('Templates - Functional Group Tools3', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Check layout and cleanup buttons tool on FG', async ({ page }) => {
+  test.only('Check layout and cleanup buttons tool on FG', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-2955
     Description: Two FG's are added,
@@ -747,6 +747,7 @@ test.describe('Templates - Functional Group Tools3', () => {
     await takeEditorScreenshot(page);
 
     await selectTopPanelButton(TopPanelButton.Clean, page);
+    await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });
 });

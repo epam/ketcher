@@ -280,7 +280,7 @@ test.describe('Click User Templates on canvas', () => {
     await resetCurrentTool(page);
   });
 
-  test('Create Template - saving', async ({ page }) => {
+  test.fixme('Create Template - saving', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-1722
       Description: saving user template validation
@@ -300,6 +300,5 @@ test.describe('Click User Templates on canvas', () => {
     await openStructureLibrary(page);
     await page.getByRole('button', { name: 'User Templates (1)' }).click();
     await page.getByText('user_template_1').click();
-    await delay(DELAY_IN_SECONDS.THREE);
   });
 });

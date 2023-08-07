@@ -460,6 +460,8 @@ export class SGroup {
     remol?: ReStruct,
     render?,
   ): void {
+    const BORDER_EXT = new Vec2(0.05 * 3, 0.05 * 3);
+    const PADDING_VECTOR = new Vec2(0.2, 0.4);
     const atoms = sGroup.atoms;
     const crossBonds = crossBondsPerAtom
       ? Object.values(crossBondsPerAtom).flat()
@@ -483,7 +485,6 @@ export class SGroup {
     };
     atoms.forEach((aid) => {
       const atom = getAtom(aid);
-      const ext = new Vec2(0.05 * 3, 0.05 * 3);
       let position;
       let structBoundingBox;
       if ('getVBoxObj' in atom && render) {
@@ -492,7 +493,7 @@ export class SGroup {
         position = new Vec2(atom.pp);
         structBoundingBox = new Box2Abs(position, position);
       }
-      contentBoxes.push(structBoundingBox.extend(ext, ext));
+      contentBoxes.push(structBoundingBox.extend(BORDER_EXT, BORDER_EXT));
     });
     contentBoxes.forEach((bba) => {
       let bbb: Box2Abs | null = null;
@@ -505,8 +506,19 @@ export class SGroup {
       });
       braketBox = !braketBox ? bbb : Box2Abs.union(braketBox, bbb!);
     });
-    const vext = new Vec2(0.2, 0.4);
-    if (braketBox) braketBox = (braketBox as Box2Abs).extend(vext, vext);
+    if (!render) render = window.ketcher!.editor.render;
+    let attachmentPointsVBox =
+      render.ctab.getRGroupAttachmentPointsVBoxByAtomIds(atoms);
+    attachmentPointsVBox = attachmentPointsVBox
+      ? attachmentPointsVBox.extend(BORDER_EXT, BORDER_EXT)
+      : attachmentPointsVBox;
+
+    braketBox =
+      attachmentPointsVBox && braketBox
+        ? Box2Abs.union(attachmentPointsVBox, braketBox)
+        : braketBox;
+    if (braketBox)
+      braketBox = (braketBox as Box2Abs).extend(PADDING_VECTOR, PADDING_VECTOR);
     sGroup.bracketBox = braketBox;
   }
 

@@ -90,7 +90,7 @@ describe('AbbreviationLookup', () => {
       wrapper: KetcherWrapper,
     });
     const input = screen.getByRole('combobox');
-    fireEvent.blur(input);
+    input.blur();
 
     expect(mockedDispatch).toHaveBeenCalledWith(closeAbbreviationLookup());
   });

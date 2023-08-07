@@ -56,8 +56,10 @@ export type RenderOptions = {
   bondSnappingStyle: RenderOptionStyles;
   selectionStyle: RenderOptionStyles;
   hoverStyle: RenderOptionStyles;
+  movingStyle: RenderOptionStyles;
   sgroupBracketStyle: RenderOptionStyles;
   lassoStyle: RenderOptionStyles;
+  selectionStyleSimpleObject: RenderOptionStyles;
   hoverStyleSimpleObject: RenderOptionStyles;
   atomSelectionPlateRadius: number;
   contractedFunctionalGroupSize: number;

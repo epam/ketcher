@@ -14,9 +14,6 @@
  * limitations under the License.
  ***************************************************************************/
 import styled from '@emotion/styled';
-import { MonomerPreview } from 'components/shared/MonomerPreview';
-import { preview } from '../../../constants';
-import { PreviewStyle } from '../../../types';
 
 export const ItemsContainer = styled.div`
   display: grid;
@@ -57,14 +54,4 @@ export const GroupTitle = styled.div`
   font-family: ${({ theme }) => theme.ketcher.font.family.roboto};
   color: ${({ theme }) => theme.ketcher.color.text.primary};
   margin: 0;
-`;
-
-export const StyledPreview = styled(MonomerPreview)<PreviewStyle>`
-  z-index: 1;
-  position: absolute;
-  left: 50%;
-  transform: translate(-50%, 0);
-  top: ${(props) => props.top};
-  width: ${preview.width}px;
-  height: ${preview.height}px;
 `;

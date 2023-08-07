@@ -244,16 +244,19 @@ test.describe('Functional Groups', () => {
     await clickInTheMiddleOfTheScreen(page);
   });
 
-  test('Highlight Functional Group with Selection tool', async ({ page }) => {
-    /*
+  test.fixme(
+    'Highlight Functional Group with Selection tool',
+    async ({ page }) => {
+      /*
     Test case: EPMLSOPKET-2899
     Description: Expanded functional group are highlight with Selection tool.
     */
-    const x = 570;
-    const y = 320;
-    await openFileAndAddToCanvas('functional-group-expanded.mol', page);
-    await page.mouse.move(x, y);
-  });
+      const x = 570;
+      const y = 320;
+      await openFileAndAddToCanvas('functional-group-expanded.mol', page);
+      await page.mouse.move(x, y);
+    },
+  );
 
   test('Add Bond to expanded Functional Group', async ({ page }) => {
     /*

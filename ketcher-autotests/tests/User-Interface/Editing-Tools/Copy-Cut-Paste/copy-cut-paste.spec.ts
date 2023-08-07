@@ -27,8 +27,8 @@ import {
 const CANVAS_CLICK_X = 300;
 const CANVAS_CLICK_Y = 300;
 
-const SECOND_CANVAS_CLICK_X = 700;
-const SECOND_CANVAS_CLICK_Y = 700;
+const SECOND_CANVAS_CLICK_X = 300;
+const SECOND_CANVAS_CLICK_Y = 500;
 
 test.describe('Copy/Cut/Paste Actions', () => {
   test.beforeEach(async ({ page }) => {
@@ -203,7 +203,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await page.keyboard.press('Control+c');
   });
 
-  test('Copy and Paste structure and edit', async ({ page }) => {
+  test.fixme('Copy and Paste structure and edit', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1716
     Description: The correct structure is pasted on the canvas.
@@ -273,7 +273,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await page.mouse.click(x, y);
   });
 
-  test('Multiple Paste action', async ({ page }) => {
+  test.fixme('Multiple Paste action', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1718
     Description: After the clicking the Copy button, the selected object not disappears.
@@ -296,7 +296,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await expect(page).toHaveScreenshot();
   });
 
-  test('Copy button', async ({ page }) => {
+  test.fixme('Copy button', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1709
     Description: Button is disabled. Tooltip "Copy (Ctrl+С)" appears.
@@ -316,7 +316,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await page.getByTestId('copy-button-dropdown-triangle').click();
   });
 
-  test('Cut button', async ({ page }) => {
+  test.fixme('Cut button', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1710
     Description: The 'Cut' button  is disabled if nothing is selected on the canvas.

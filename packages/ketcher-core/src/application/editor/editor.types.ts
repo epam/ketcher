@@ -58,7 +58,7 @@ export interface Editor {
   structSelected: () => Struct;
   explicitSelected: () => EditorSelection;
   centerStruct: () => void;
-  zoomAccordingContent: () => void;
+  zoomAccordingContent: (struct: Struct) => void;
   errorHandler: ((message: string) => void) | null;
   event: {
     message: Subscription;

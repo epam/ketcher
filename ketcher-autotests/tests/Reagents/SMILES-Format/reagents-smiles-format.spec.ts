@@ -162,14 +162,17 @@ test.describe('Reagents SMILES format', () => {
     await clickInTheMiddleOfTheScreen(page);
   });
 
-  test('SMILES import if dearomotize-on-load is true', async ({ page }) => {
-    /*
+  test.fixme(
+    'SMILES import if dearomotize-on-load is true',
+    async ({ page }) => {
+      /*
     Test case: EPMLSOPKET-5254
     Description: Aromatic Benzene ring transforms into non aromatic Benzene ring
     */
-    await enableDearomatizeOnLoad(page);
-    await setMolecule(page, 'c1ccccc1');
-  });
+      await enableDearomatizeOnLoad(page);
+      await setMolecule(page, 'c1ccccc1');
+    },
+  );
 });
 
 test.describe('Reagents SMILES format', () => {

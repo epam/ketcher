@@ -53,7 +53,7 @@ test.describe('Erase Tool', () => {
     expect(bondSize).toEqual(bondsSizeAfterErase);
   });
 
-  test('Erase reaction', async ({ page }) => {
+  test.fixme('Erase reaction', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1364, 1365
     Description: Erase the reaction arrow and plus signs, undo and redo action

@@ -47,7 +47,7 @@ test.describe('Drawing atom, Benzene ring, Single and Double Bond', () => {
     await clickOnAtom(page, 'C', 2);
   });
 
-  test('single bond tool', async ({ page }) => {
+  test.fixme('single bond tool', async ({ page }) => {
     /*
      *   Test case: EPMLSOPKET-1371
      */

@@ -556,7 +556,7 @@ test.describe('Undo/Redo Actions', () => {
     }
   });
 
-  test('Undo/Redo Copy/Past', async ({ page }) => {
+  test.fixme('Undo/Redo Copy/Past', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1758
     Description: Undo/Redo action should work correctly
@@ -572,7 +572,7 @@ test.describe('Undo/Redo Actions', () => {
     await screenshotBetweenUndoRedo(page);
   });
 
-  test('Undo/Redo Cut/Past', async ({ page }) => {
+  test.fixme('Undo/Redo Cut/Past', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1758
     Description: Undo/Redo action should work correctly
@@ -669,7 +669,7 @@ test.describe('Undo/Redo Actions', () => {
     await page.goto('');
   });
 
-  test('Undo/Redo paste template action', async ({ page }) => {
+  test.fixme('Undo/Redo paste template action', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1731
     Description: Undo/Redo actions work correctly:

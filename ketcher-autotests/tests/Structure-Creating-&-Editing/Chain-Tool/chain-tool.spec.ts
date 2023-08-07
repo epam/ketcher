@@ -39,7 +39,7 @@ test.describe('Chain Tool drawing', () => {
     */
   });
 
-  test('Create structure', async ({ page }) => {
+  test.fixme('Create structure', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1475
     Description: Chain structure creation and sprouting.

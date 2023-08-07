@@ -3,7 +3,6 @@ import { TestIdSelectors } from '../../utils/selectors/testIdSelectors';
 import { clickInTheMiddleOfTheScreen, pressButton } from '@utils/clicks';
 import {
   FunctionalGroups,
-  LeftPanelButton,
   STRUCTURE_LIBRARY_BUTTON_NAME,
   TemplateLibrary,
   TopPanelButton,
@@ -11,14 +10,11 @@ import {
   selectUserTemplatesAndPlaceInTheMiddle,
 } from '@utils/selectors';
 import {
-  delay,
   resetCurrentTool,
-  selectLeftPanelButton,
   selectTopPanelButton,
   takeEditorScreenshot,
   takeTopToolbarScreenshot,
 } from '@utils/canvas';
-import { DELAY_IN_SECONDS } from '@utils/globals';
 import { openFileAndAddToCanvas } from '@utils/files';
 
 const randomNegativeNumber = -60;
@@ -65,6 +61,9 @@ test.describe('Zoom changes', () => {
   });
 
   test('Zoom In button verification', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-1761
+    */
     await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
     await page.getByRole('tab', { name: 'Functional Groups' }).click();
     await selectFunctionalGroups(FunctionalGroups.CO2Et, page);
@@ -83,6 +82,9 @@ test.describe('Zoom changes', () => {
   });
 
   test('Zoom Out button verification', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-1762
+    */
     await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
     await page.getByRole('tab', { name: 'Functional Groups' }).click();
     await selectFunctionalGroups(FunctionalGroups.CO2Et, page);
@@ -100,7 +102,10 @@ test.describe('Zoom changes', () => {
     await takeEditorScreenshot(page);
   });
 
-  test.only('Zoom in structure verification', async ({ page }) => {
+  test('Zoom in structure verification', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-1763
+    */
     await selectUserTemplatesAndPlaceInTheMiddle(TemplateLibrary.Azulene, page);
     await resetCurrentTool(page);
 

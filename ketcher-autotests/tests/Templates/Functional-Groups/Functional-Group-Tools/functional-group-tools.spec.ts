@@ -747,7 +747,6 @@ test.describe('Templates - Functional Group Tools3', () => {
     await takeEditorScreenshot(page);
 
     await selectTopPanelButton(TopPanelButton.Clean, page);
-    await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });
 });

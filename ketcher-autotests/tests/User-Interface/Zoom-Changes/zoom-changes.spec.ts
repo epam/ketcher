@@ -145,7 +145,6 @@ test.describe('Zoom changes', () => {
     await takeTopToolbarScreenshot(page);
     await takeEditorScreenshot(page);
 
-    zoomInput.click();
     await page.getByText('Zoom in').click();
 
     await takeTopToolbarScreenshot(page);

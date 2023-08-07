@@ -14,6 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
+// @ts-nocheck
+
 import {
   Vec2,
   fromItemsFuse,
@@ -37,18 +39,66 @@ import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems';
 import { MODES } from 'src/constants';
 import { Tool } from './Tool';
 
+function getBondStuff(struct, bond) {
+  const xy0 = new Vec2();
+  const frid = struct.atoms.get(bond?.begin as number)?.fragment;
+  const frIds = struct.getFragmentIds(frid as number);
+  let count = 0;
+
+  let loop = struct.halfBonds.get(bond?.hb1 as number)?.loop;
+
+  if (loop && loop < 0) {
+    loop = struct.halfBonds.get(bond?.hb2 as number)?.loop;
+  }
+
+  if (loop && loop >= 0) {
+    const loopHbs = struct.loops.get(loop)?.hbs;
+    loopHbs?.forEach((hb) => {
+      const halfBondBegin = struct.halfBonds.get(hb)?.begin;
+
+      if (halfBondBegin) {
+        const hbbAtom = struct.atoms.get(halfBondBegin);
+
+        if (hbbAtom) {
+          xy0.add_(hbbAtom.pp); // eslint-disable-line no-underscore-dangle, max-len
+          count++;
+        }
+      }
+    });
+  } else {
+    frIds.forEach((id) => {
+      const atomById = struct.atoms.get(id);
+
+      if (atomById) {
+        xy0.add_(atomById.pp); // eslint-disable-line no-underscore-dangle
+        count++;
+      }
+    });
+  }
+
+  return [xy0 as Vec2, count];
+}
+
 class TemplateTool implements Tool {
   private readonly editor: Editor;
   private readonly mode: any;
   private readonly template: any;
   private readonly findItems: Array<string>;
   private dragCtx: any;
+  private isPreviewVisible: boolean;
+  private previewAction: Action;
+  private previewId: number | null;
+  private lastPreviewId: number | null;
   private targetGroupsIds: Array<number> = [];
   private readonly isSaltOrSolvent: boolean;
   private event: Event | undefined;
 
   constructor(editor: Editor, tmpl) {
     this.editor = editor;
+    this.isPreviewVisible = false;
+    this.previewAction = new Action();
+    this.previewId = null;
+    this.lastPreviewId = null;
     this.mode = getTemplateMode(tmpl);
     this.editor.selection(null);
     this.isSaltOrSolvent = SGroup.isSaltOrSolvent(tmpl.struct.name);
@@ -156,6 +206,12 @@ class TemplateTool implements Tool {
   async mousedown(event: MouseEvent) {
     this.event = event;
 
+    if (this.isPreviewVisible && this.previewAction) {
+      this.previewAction.perform(this.editor.render.ctab);
+      this.isPreviewVisible = false;
+      this.editor.render.update();
+    }
+
     if (this.functionalGroups.size) {
       this.targetGroupsIds = getGroupIdsFromItemArrays(this.struct, {
         ...(this.closestItem?.map === 'atoms' && {
@@ -202,46 +258,12 @@ class TemplateTool implements Tool {
 
     if (ci.map === 'bonds' && !this.isModeFunctionalGroup) {
       // calculate fragment center
-      const xy0 = new Vec2();
       const bond = this.struct.bonds.get(ci.id);
-      const frid = this.struct.atoms.get(bond?.begin as number)?.fragment;
-      const frIds = this.struct.getFragmentIds(frid as number);
-      let count = 0;
+      const [xy0, count] = getBondStuff(this.struct, bond);
+      // @ts-ignore
+      const v0 = xy0.scaled(1 / count);
 
-      let loop = this.struct.halfBonds.get(bond?.hb1 as number)?.loop;
-
-      if (loop && loop < 0) {
-        loop = this.struct.halfBonds.get(bond?.hb2 as number)?.loop;
-      }
-
-      if (loop && loop >= 0) {
-        const loopHbs = this.struct.loops.get(loop)?.hbs;
-        loopHbs?.forEach((hb) => {
-          const halfBondBegin = this.struct.halfBonds.get(hb)?.begin;
-
-          if (halfBondBegin) {
-            const hbbAtom = this.struct.atoms.get(halfBondBegin);
-
-            if (hbbAtom) {
-              xy0.add_(hbbAtom.pp); // eslint-disable-line no-underscore-dangle, max-len
-              count++;
-            }
-          }
-        });
-      } else {
-        frIds.forEach((id) => {
-          const atomById = this.struct.atoms.get(id);
-
-          if (atomById) {
-            xy0.add_(atomById.pp); // eslint-disable-line no-underscore-dangle
-            count++;
-          }
-        });
-      }
-
-      dragCtx.v0 = xy0.scaled(1 / count);
-
-      const sign = getSign(this.struct, bond, dragCtx.v0);
+      const sign = getSign(this.struct, bond, v0);
 
       // calculate default template flip
       dragCtx.sign1 = sign || 1;
@@ -251,13 +273,115 @@ class TemplateTool implements Tool {
 
   mousemove(event) {
     if (!this.dragCtx) {
-      this.editor.hoverIcon.show();
+      // this.editor.hoverIcon.show();
       this.editor.hoverIcon.updatePosition();
       this.editor.hover(
         this.editor.findItem(event, this.findItems),
         null,
         event,
       );
+      const restruct = this.editor.render.ctab;
+      const ci = this.editor.findItem(event, ['atoms', 'bonds']);
+
+      if (!ci) {
+        this.editor.hoverIcon.show();
+      }
+
+      if (ci && !this.isPreviewVisible && !this.isSaltOrSolvent) {
+        this.isPreviewVisible = true;
+        this.previewId = ci.id;
+        this.lastPreviewId = ci.id;
+
+        if (ci.map === 'bonds' && !this.isModeFunctionalGroup) {
+          this.editor.hoverIcon.hide();
+          const bond = this.struct.bonds.get(ci.id);
+          const [xy0, count] = getBondStuff(this.struct, bond);
+          // @ts-ignore
+          const v0 = xy0.scaled(1 / count);
+          const sign = getSign(this.struct, bond, v0);
+
+          // calculate default template flip
+          const sign1 = sign || 1;
+          const sign2 = this.template.sign;
+
+          const promise = fromTemplateOnBondAction(
+            restruct,
+            this.template,
+            ci.id,
+            this.editor.event,
+            sign1 * sign2 > 0,
+            true,
+            true,
+          ) as Promise<any>;
+
+          const changedBonds = restruct.getChangedBonds();
+          console.log('changedBonds', changedBonds);
+
+          promise.then(([action, pasteItems]) => {
+            if (!this.isModeFunctionalGroup) {
+              const mergeItems = getItemsToFuse(this.editor, pasteItems);
+              action = fromItemsFuse(restruct, mergeItems).mergeWith(action);
+              this.editor.update(action, true);
+              this.previewAction = action;
+              const changedBonds = restruct.getChangedBonds();
+              console.log('changedBonds', changedBonds);
+              changedBonds.forEach((bond) => {
+                console.log('bond', bond);
+              });
+            }
+          });
+        } else if (ci.map === 'atoms') {
+          this.editor.hoverIcon.hide();
+          const degree = restruct.atoms.get(ci.id)?.a.neighbors.length;
+          let angle;
+          if (degree && degree > 1) {
+            // common case
+            angle = null;
+          } else if (degree === 1) {
+            // on chain end
+            const atom = this.struct.atoms.get(ci.id);
+            const neiId =
+              atom && this.struct.halfBonds.get(atom.neighbors[0])?.end;
+            const nei: any =
+              (neiId || neiId === 0) && this.struct.atoms.get(neiId);
+
+            angle = utils.fracAngle(utils.calcAngle(nei.pp, atom?.pp), null);
+          } else {
+            // on single atom
+            angle = 0;
+          }
+
+          let [action, pasteItems] = fromTemplateOnAtom(
+            restruct,
+            this.template,
+            ci.id,
+            angle,
+            false,
+            true,
+          );
+
+          if (pasteItems && !this.isModeFunctionalGroup) {
+            const mergeItems = getItemsToFuse(this.editor, pasteItems);
+            action = fromItemsFuse(restruct, mergeItems).mergeWith(action);
+          }
+
+          this.editor.update(action, true);
+          this.previewAction = action;
+          console.log('previewAction', restruct.getChangedBonds());
+        }
+      }
+
+      if (
+        (!ci && this.isPreviewVisible) ||
+        (ci && this.lastPreviewId !== ci.id)
+      ) {
+        this.isPreviewVisible = false;
+        if (this.previewAction) {
+          this.previewAction.perform(this.editor.render.ctab);
+        }
+        this.editor.hoverIcon.show();
+        this.editor.render.update();
+      }
       return true;
     }
 

@@ -93,6 +93,7 @@ export function fromTemplateOnAtom(
   aid,
   angle,
   extraBond,
+  isPreview = false,
 ): [Action, { atoms: number[]; bonds: number[] }] {
   let action = new Action();
 
@@ -163,6 +164,7 @@ export function fromTemplateOnAtom(
       bond,
     ).perform(restruct) as BondAdd;
     action.addOp(operation);
+    new BondAttr(operation.data.bid, 'isPreview', isPreview).perform(restruct);
 
     pasteItems.bonds.push(operation.data.bid);
   });
@@ -175,7 +177,10 @@ export function fromTemplateOnAtom(
       restruct,
       sg.type,
       sgAtoms,
-      sg.data,
+      {
+        ...sg.data,
+        expanded: isPreview ? true : sg.data.expanded,
+      },
       newsgid,
       attachmentPoints,
       atom.pp,
@@ -207,11 +212,12 @@ export function fromTemplateOnBondAction(
   events,
   flip,
   force,
+  isPreview = false,
 ) {
   if (!force) return fromTemplateOnBond(restruct, template, bid, flip);
 
   const simpleFusing = (restruct, template, bid) =>
-    fromTemplateOnBond(restruct, template, bid, flip); // eslint-disable-line
+    fromTemplateOnBond(restruct, template, bid, flip, isPreview); // eslint-disable-line
   /* aromatic merge (Promise) */
   return fromAromaticTemplateOnBond(
     restruct,
@@ -260,7 +266,7 @@ function getConnectingBond(
   return null;
 }
 
-function fromTemplateOnBond(restruct, template, bid, flip) {
+function fromTemplateOnBond(restruct, template, bid, flip, isPreview = false) {
   // TODO: refactor function !!
   const action = new Action();
 
@@ -298,10 +304,10 @@ function fromTemplateOnBond(restruct, template, bid, flip) {
     bonds: [],
   };
   /* ----- */
-
   tmpl.atoms.forEach((atom, id) => {
     const attrs: any = Atom.getAttrHash(atom);
     attrs.fragment = frid;
+    attrs.isPreview = id !== bid ? isPreview : false;
     if (id === tmplBond.begin || id === tmplBond.end) {
       action.mergeWith(fromAtomsAttrs(restruct, atomsMap.get(id), attrs, true));
       return;
@@ -380,6 +386,10 @@ function fromTemplateOnBond(restruct, template, bid, flip) {
         }
       }
 
+      action.addOp(
+        new BondAttr(newBondId, 'isPreview', isPreview).perform(restruct),
+      );
+
       pasteItems.bonds.push(newBondId);
     } else {
       const commonBond = bond.type > tmplBond.type ? bond : tmplBond;
@@ -388,6 +398,9 @@ function fromTemplateOnBond(restruct, template, bid, flip) {
       if (isFusingBenzeneBySpecialRules && fusingBondType) {
         action.addOp(
           new BondAttr(bid, 'type', fusingBondType).perform(restruct),
+        );
+        action.addOp(
+          new BondAttr(bid, 'isPreview', isPreview).perform(restruct),
         );
       }
     }

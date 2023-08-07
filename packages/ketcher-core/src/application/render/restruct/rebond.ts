@@ -90,6 +90,7 @@ class ReBond extends ReObject {
   }
 
   drawHover(render: Render) {
+    if (this.b.isPreview) return null;
     const ret = this.makeHoverPlate(render);
     render.ctab.addReObjectPath(LayerMap.hovering, this.visel, ret);
     return ret;
@@ -517,7 +518,7 @@ function getBondPath(
   hb2: HalfBond,
   isSnapping: boolean,
 ) {
-  let path = null;
+  let path: any = null;
   const render = restruct.render;
   const struct = restruct.molecule;
   const shiftA = !restruct.atoms.get(hb1.begin)?.showLabel;
@@ -682,6 +683,9 @@ function getBondPath(
       break;
     default:
       throw new Error('Bond type ' + bond.b.type + ' not supported');
+  }
+  if (path) {
+    path.attr({ opacity: bond.b.isPreview ? 0.5 : 1 });
   }
   return path;
 }

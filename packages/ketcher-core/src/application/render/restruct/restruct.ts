@@ -426,6 +426,10 @@ class ReStruct {
     this.eachItem((item) => this.clearVisel(item.visel));
   }
 
+  getChangedBonds() {
+    return this.bondsChanged;
+  }
+
   update(force: boolean): boolean {
     // eslint-disable-line max-statements
     force = force || !this.initialized;

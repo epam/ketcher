@@ -101,6 +101,7 @@ class ReAtom extends ReObject {
   }
 
   drawHover(render: Render) {
+    if (this.a.isPreview) return null;
     const ret = this.makeHoverPlate(render);
     render.ctab.addReObjectPath(LayerMap.atom, this.visel, ret);
     return ret;
@@ -237,6 +238,7 @@ class ReAtom extends ReObject {
           'font-weight': 700,
           'font-size': 14,
         });
+        path.attr({ opacity: this.a.isPreview ? 0.5 : 1 });
         restruct.addReObjectPath(LayerMap.data, this.visel, path, ps, true);
       }
       return;

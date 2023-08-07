@@ -82,6 +82,7 @@ export class SGroup {
   neiAtoms: any;
   pp: Vec2 | null;
   data: any;
+  // isPreview: boolean;
   private readonly attachmentPoints: SGroupAttachmentPoint[];
 
   constructor(type: string) {
@@ -718,6 +719,19 @@ export class SGroup {
       const sGroup =
         'item' in sGroupOrReSGroup ? sGroupOrReSGroup.item : sGroupOrReSGroup;
       if (sGroup.isContracted()) {
+        contractedSGroup.push(sGroup.id);
+      }
+    });
+    return contractedSGroup.some((sg) => atom.sgs.has(sg));
+  };
+
+  static isAtomInExpandedSGroup = (atom, sGroups) => {
+    const contractedSGroup: number[] = [];
+
+    sGroups.forEach((sGroupOrReSGroup) => {
+      const sGroup =
+        'item' in sGroupOrReSGroup ? sGroupOrReSGroup.item : sGroupOrReSGroup;
+      if (!sGroup.isContracted()) {
         contractedSGroup.push(sGroup.id);
       }
     });

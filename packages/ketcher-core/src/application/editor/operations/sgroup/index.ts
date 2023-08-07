@@ -49,6 +49,7 @@ class SGroupCreate extends BaseOperation {
       expanded,
       name,
     };
+    this.data.expanded = true;
   }
 
   execute(restruct: ReStruct) {

@@ -42,6 +42,7 @@ export interface AtomAttributes {
   invRet?: number;
   aam?: number;
   hCount?: number;
+  isPreview: boolean;
   unsaturatedAtom?: number;
   substitutionCount?: number;
   ringBondCount?: number;
@@ -104,6 +105,7 @@ export class Atom {
     rglabel: null,
     attpnt: null,
     aam: 0,
+    isPreview: false,
     // enhanced stereo
     stereoLabel: null,
     stereoParity: 0,
@@ -115,6 +117,7 @@ export class Atom {
   atomList: AtomList | null;
   attpnt: any;
   isotope: number;
+  isPreview: boolean;
   hCount: number;
   radical: number;
   cip: CIP | null;
@@ -155,6 +158,10 @@ export class Atom {
     this.explicitValence = getValueOrDefault(
       attributes.explicitValence,
       Atom.attrlist.explicitValence,
+    );
+    this.isPreview = getValueOrDefault(
+      attributes.isPreview,
+      Atom.attrlist.isPreview,
     );
 
     this.valence = 0;

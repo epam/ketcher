@@ -178,6 +178,7 @@ export const RnaAccordion = () => {
                   {presets.map((preset, index) => {
                     return (
                       <RnaPresetItem
+                        data-testid={`${preset.name}`}
                         key={`${preset.name}${index}`}
                         preset={preset}
                         onClick={() => selectPreset(preset)}

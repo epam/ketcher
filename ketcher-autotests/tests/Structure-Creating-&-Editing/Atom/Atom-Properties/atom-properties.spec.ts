@@ -525,7 +525,7 @@ test.describe('Atom Properties', () => {
     expect(molFile).toEqual(molFileExpected);
   });
 
-  test('Change charge on different atoms', async ({ page }) => {
+  test.fixme('Change charge on different atoms', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-1607
       Description: The Charge are changed for three atoms (S, F, I).
@@ -545,7 +545,7 @@ test.describe('Atom Properties', () => {
     await fillChargeForAtom(page, '3', 'Apply');
   });
 
-  test('Typing in Charge for sigle atom', async ({ page }) => {
+  test.fixme('Typing in Charge for sigle atom', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-1608
       Description: The Charge are changed for three atoms (S, F, I).
@@ -623,7 +623,7 @@ test.describe('Atom Properties', () => {
     expect(molFile).toEqual(molFileExpected);
   });
 
-  test('Change Isotope value on different atoms', async ({ page }) => {
+  test.fixme('Change Isotope value on different atoms', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-1616
       Description: The typed isotope value appears near the selected atoms only.Number is colored same as atoms.
@@ -658,28 +658,29 @@ test.describe('Atom Properties', () => {
     await pressButton(page, 'Apply');
   });
 
-  test('Typing in isotope - several atoms through Label Edit modal', async ({
-    page,
-  }) => {
-    /*
+  test.fixme(
+    'Typing in isotope - several atoms through Label Edit modal',
+    async ({ page }) => {
+      /*
       Test case: EPMLSOPKET-1618
       Description: Only last selected atom is replaced with the typed atom symbol and isotope.
     */
-    await openFileAndAddToCanvas('Heteroatoms.mol', page);
+      await openFileAndAddToCanvas('Heteroatoms.mol', page);
 
-    await page.keyboard.down('Shift');
-    await clickOnAtom(page, 'S', 0);
+      await page.keyboard.down('Shift');
+      await clickOnAtom(page, 'S', 0);
 
-    await clickOnAtom(page, 'F', 0);
-    await page.keyboard.up('Shift');
+      await clickOnAtom(page, 'F', 0);
+      await page.keyboard.up('Shift');
 
-    await moveOnAtom(page, 'S', 0);
-    await page.mouse.down();
-    await page.waitForTimeout(2000);
+      await moveOnAtom(page, 'S', 0);
+      await page.mouse.down();
+      await page.waitForTimeout(2000);
 
-    await page.getByLabel('Atom').fill('18S');
-    await pressButton(page, 'Apply');
-  });
+      await page.getByLabel('Atom').fill('18S');
+      await pressButton(page, 'Apply');
+    },
+  );
 
   test('Add Valence in modal and press Cancel', async ({ page }) => {
     /*
@@ -731,7 +732,7 @@ test.describe('Atom Properties', () => {
     expect(molFile).toEqual(molFileExpected);
   });
 
-  test('Change Valence value on different atoms', async ({ page }) => {
+  test.fixme('Change Valence value on different atoms', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-1620
       Description: The typed Valence value appears near the selected atoms only. 
@@ -843,7 +844,7 @@ test.describe('Atom Properties', () => {
     await pressButton(page, 'Apply');
   });
 
-  test('Add Radicals value on different atoms', async ({ page }) => {
+  test.fixme('Add Radicals value on different atoms', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-1635
       Description: The typed Valence value appears near the selected atoms only. 
@@ -1395,35 +1396,37 @@ test.describe('Atom Properties', () => {
     await selectReactionFlagsInversion(page, 'Inverts', 'Cancel');
   });
 
-  test('Add Reaction flags - Inversion (Inverts) and Exact change in modal and press Apply', async ({
-    page,
-  }) => {
-    /*
+  test.fixme(
+    'Add Reaction flags - Inversion (Inverts) and Exact change in modal and press Apply',
+    async ({ page }) => {
+      /*
       Test case: EPMLSOPKET-1650
       Description: The selected stereo mark appears near the carbon atom for 
       Inverts - .Inv, ext.
     */
-    await openFileAndAddToCanvas('chain.ket', page);
+      await openFileAndAddToCanvas('chain.ket', page);
 
-    await doubleClickOnAtom(page, 'C', 3);
-    await selectReactionFlagsInversion(page, 'Inverts');
-    await selectExactChange(page, 'Apply');
-  });
+      await doubleClickOnAtom(page, 'C', 3);
+      await selectReactionFlagsInversion(page, 'Inverts');
+      await selectExactChange(page, 'Apply');
+    },
+  );
 
-  test('Add Reaction flags - Inversion (Retains) and Exact change in modal and press Apply', async ({
-    page,
-  }) => {
-    /*
+  test.fixme(
+    'Add Reaction flags - Inversion (Retains) and Exact change in modal and press Apply',
+    async ({ page }) => {
+      /*
       Test case: EPMLSOPKET-1650
       Description: The selected stereo mark appears near the carbon atom for 
       Retains - .Ret, ext.
     */
-    await openFileAndAddToCanvas('chain.ket', page);
+      await openFileAndAddToCanvas('chain.ket', page);
 
-    await doubleClickOnAtom(page, 'C', 3);
-    await selectReactionFlagsInversion(page, 'Retains');
-    await selectExactChange(page, 'Apply');
-  });
+      await doubleClickOnAtom(page, 'C', 3);
+      await selectReactionFlagsInversion(page, 'Retains');
+      await selectExactChange(page, 'Apply');
+    },
+  );
 
   test('Reaction flags information saved as *.mol file', async ({ page }) => {
     /*

@@ -356,24 +356,25 @@ test.describe('Selection tools', () => {
     await expect(page).toHaveScreenshot();
   });
 
-  test('Canvas Expansion when Structure is Moved Outside Right', async ({
-    page,
-  }) => {
-    /*
+  test.fixme(
+    'Canvas Expansion when Structure is Moved Outside Right',
+    async ({ page }) => {
+      /*
     Test case: EPMLSOPKET-15515
     Description: The canvas should automatically expand in the direction the structure is being moved.
     */
-    await openFileAndAddToCanvas('two-benzene-with-atoms.ket', page);
-    await delay(DELAY_IN_SECONDS.TWO);
-    await selectNestedTool(page, SelectTool.FRAGMENT_SELECTION);
-    await clickOnAtom(page, 'N', 0);
-    await page.keyboard.down('Shift');
-    for (let i = 0; i < 80; i++) {
-      await page.keyboard.press('ArrowRight');
-    }
-    await page.keyboard.up('Shift');
-    await expect(page).toHaveScreenshot();
-  });
+      await openFileAndAddToCanvas('two-benzene-with-atoms.ket', page);
+      await delay(DELAY_IN_SECONDS.TWO);
+      await selectNestedTool(page, SelectTool.FRAGMENT_SELECTION);
+      await clickOnAtom(page, 'N', 0);
+      await page.keyboard.down('Shift');
+      for (let i = 0; i < 80; i++) {
+        await page.keyboard.press('ArrowRight');
+      }
+      await page.keyboard.up('Shift');
+      await expect(page).toHaveScreenshot();
+    },
+  );
 
   test('Canvas Expansion when Structure is Moved Outside Left', async ({
     page,

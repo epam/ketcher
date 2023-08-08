@@ -34,14 +34,6 @@ function fracAngle(angle, angle2): number {
   return Math.round(angle / FRAC) * FRAC;
 }
 
-function calcNewAtomPos(pos0: Vec2, pos1: Vec2, ctrlKey: boolean): Vec2 {
-  const vector = new Vec2(1, 0).rotate(
-    ctrlKey ? calcAngle(pos0, pos1) : fracAngle(pos0, pos1),
-  );
-  vector.add_(pos0); // eslint-disable-line no-underscore-dangle
-  return vector;
-}
-
 function degrees(angle: number): number {
   let degree = Math.round((angle / Math.PI) * 180);
   if (degree > 180) degree -= 360;
@@ -80,7 +72,6 @@ function mergeBondsParams(
 export default {
   calcAngle,
   fracAngle,
-  calcNewAtomPos,
   degrees,
   setFracAngle,
   mergeBondsParams,

@@ -14,17 +14,17 @@ dotenv.config();
  */
 
 const ignoredTests = [
-  'API/**',
-  'File-Management/Smile-Files/smile-files.spec.ts',
-  'Examples/**',
+  // 'API/**',
+  // 'File-Management/Smile-Files/smile-files.spec.ts',
+  // 'Examples/**',
   // 'Indigo-Tools/**',
   // 'R-group-tool/**',
-  'Reagents/**',
-  'Structure-Creating-&-Editing/**',
-  'Templates/Functional-Groups/functional-groups.spec.ts',
-  'Templates/Functional-Groups/Functional-Group-Tools/functional-group-tools.spec.ts',
-  'Templates/Salts-and-Solvents/**',
-  'Templates/User-Templates/**',
+  // 'Reagents/**',
+  // 'Structure-Creating-&-Editing/**',
+  // 'Templates/Functional-Groups/functional-groups.spec.ts',
+  // 'Templates/Functional-Groups/Functional-Group-Tools/functional-group-tools.spec.ts',
+  // 'Templates/Salts-and-Solvents/**',
+  // 'Templates/User-Templates/**',
   'utils/**',
 ];
 
@@ -41,7 +41,7 @@ function baseURL(): string {
 }
 
 const MAX_NUMBER_OF_RETRIES = 2;
-const MAX_NUMBER_OF_FAILURES = 3;
+// const MAX_NUMBER_OF_FAILURES = 3;
 const isCI = process.env.CI_ENVIRONMENT === 'true';
 
 const config: PlaywrightTestConfig = {
@@ -61,7 +61,7 @@ const config: PlaywrightTestConfig = {
     // },
     timeout: 10_000,
   },
-  maxFailures: isCI ? MAX_NUMBER_OF_FAILURES : 0,
+  // maxFailures: isCI ? MAX_NUMBER_OF_FAILURES : 0,
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */

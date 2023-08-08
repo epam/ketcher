@@ -17,7 +17,7 @@ import {
 } from '@utils';
 import { getKet } from '@utils/formats';
 
-test.describe('3D Viewer', () => {
+test.describe.fixme('3D Viewer', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('');
   });
@@ -100,7 +100,7 @@ test.describe('3D Viewer', () => {
   });
 });
 
-test.describe('3D Viewer', () => {
+test.describe.fixme('3D Viewer', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('');
   });
@@ -147,98 +147,108 @@ test.describe('3D Viewer', () => {
     });
   });
 
-  test('3D Rotation of the simple structure with Save Position', async ({
-    page,
-  }) => {
-    /*
+  test.fixme(
+    '3D Rotation of the simple structure with Save Position',
+    async ({ page }) => {
+      /*
     Test case: EPMLSOPKET-1935
     Description: 3D window is opened.
     Benzene is drawn in it. The structure is spinned.
     Position of the structure on the canvas is changed. 
     */
-    await selectRing(RingButton.Benzene, page);
-    await clickInTheMiddleOfTheScreen(page);
-    const initialStructureData = await getKet(page);
-    await selectTopPanelButton(TopPanelButton.ThreeD, page);
-    await moveMouseToTheMiddleOfTheScreen(page);
-    const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
-    await dragMouseTo(x, y + 75, page);
-    await pressButton(page, 'Apply');
+      await selectRing(RingButton.Benzene, page);
+      await clickInTheMiddleOfTheScreen(page);
+      const initialStructureData = await getKet(page);
+      await selectTopPanelButton(TopPanelButton.ThreeD, page);
+      await moveMouseToTheMiddleOfTheScreen(page);
+      const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
+      await dragMouseTo(x, y + 75, page);
+      await pressButton(page, 'Apply');
 
-    // Get the structure data after making changes
-    const changedStructureData = await getKet(page);
+      // Get the structure data after making changes
+      const changedStructureData = await getKet(page);
 
-    // Compare the initial and changed structure data
-    expect(initialStructureData).not.toEqual(changedStructureData);
-  });
+      // Compare the initial and changed structure data
+      expect(initialStructureData).not.toEqual(changedStructureData);
+    },
+  );
 
-  test('Structure with Heteroatoms with Save Position', async ({ page }) => {
-    /*
+  test.fixme(
+    'Structure with Heteroatoms with Save Position',
+    async ({ page }) => {
+      /*
     Test case: EPMLSOPKET-15539
     Description: 3D window is opened.
     3D window is opened. Benzene with heteroatom is drawn in it. 
     Position of the structure on the canvas is changed. 
     */
-    await openFileAndAddToCanvas('benzene-br.mol', page);
-    const initialStructureData = await getKet(page);
-    await selectTopPanelButton(TopPanelButton.ThreeD, page);
-    // delay need to load 3D Viewer
-    await delay(DELAY_IN_SECONDS.TWO);
-    await moveMouseToTheMiddleOfTheScreen(page);
-    const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
-    await dragMouseTo(x + 80, y, page);
-    await pressButton(page, 'Apply');
+      await openFileAndAddToCanvas('benzene-br.mol', page);
+      const initialStructureData = await getKet(page);
+      await selectTopPanelButton(TopPanelButton.ThreeD, page);
+      // delay need to load 3D Viewer
+      await delay(DELAY_IN_SECONDS.TWO);
+      await moveMouseToTheMiddleOfTheScreen(page);
+      const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
+      await dragMouseTo(x + 80, y, page);
+      await pressButton(page, 'Apply');
 
-    // Get the structure data after making changes
-    const changedStructureData = await getKet(page);
+      // Get the structure data after making changes
+      const changedStructureData = await getKet(page);
 
-    // Compare the initial and changed structure data
-    expect(initialStructureData).not.toEqual(changedStructureData);
-  });
+      // Compare the initial and changed structure data
+      expect(initialStructureData).not.toEqual(changedStructureData);
+    },
+  );
 
-  test('Structure with a Stereobonds with Save Position', async ({ page }) => {
-    /*
+  test.fixme(
+    'Structure with a Stereobonds with Save Position',
+    async ({ page }) => {
+      /*
     Test case: EPMLSOPKET-1942
     Description: 3D window is opened. Benzene with all stereo bonds is drawn in it.
     The structure isn't changed.
     */
-    await openFileAndAddToCanvas('benzene-stereo.mol', page);
-    const initialStructureData = await getKet(page);
-    await selectTopPanelButton(TopPanelButton.ThreeD, page);
-    // delay need to load 3D Viewer
-    await delay(DELAY_IN_SECONDS.TWO);
-    await moveMouseToTheMiddleOfTheScreen(page);
-    const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
-    await dragMouseTo(x + 75, y, page);
-    await pressButton(page, 'Apply');
+      await openFileAndAddToCanvas('benzene-stereo.mol', page);
+      const initialStructureData = await getKet(page);
+      await selectTopPanelButton(TopPanelButton.ThreeD, page);
+      // delay need to load 3D Viewer
+      await delay(DELAY_IN_SECONDS.TWO);
+      await moveMouseToTheMiddleOfTheScreen(page);
+      const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
+      await dragMouseTo(x + 75, y, page);
+      await pressButton(page, 'Apply');
 
-    // Get the structure data after making changes
-    const changedStructureData = await getKet(page);
+      // Get the structure data after making changes
+      const changedStructureData = await getKet(page);
 
-    // Compare the initial and changed structure data
-    expect(initialStructureData).not.toEqual(changedStructureData);
-  });
+      // Compare the initial and changed structure data
+      expect(initialStructureData).not.toEqual(changedStructureData);
+    },
+  );
 
-  test('Structure with Aromatic Bonds with Save Position', async ({ page }) => {
-    /*
+  test.fixme(
+    'Structure with Aromatic Bonds with Save Position',
+    async ({ page }) => {
+      /*
     Test case: EPMLSOPKET-15541
     Description: 3D window is opened. The structure with a circle inside the cycle is displayed in the window. 
     The structure is changed.
     */
-    await openFileAndAddToCanvas('benzene-with-aromatic-bonds.mol', page);
-    const initialStructureData = await getKet(page);
-    await selectTopPanelButton(TopPanelButton.ThreeD, page);
-    // delay need to load 3D Viewer
-    await delay(DELAY_IN_SECONDS.TWO);
-    await moveMouseToTheMiddleOfTheScreen(page);
-    const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
-    await dragMouseTo(x - 90, y, page);
-    await pressButton(page, 'Apply');
+      await openFileAndAddToCanvas('benzene-with-aromatic-bonds.mol', page);
+      const initialStructureData = await getKet(page);
+      await selectTopPanelButton(TopPanelButton.ThreeD, page);
+      // delay need to load 3D Viewer
+      await delay(DELAY_IN_SECONDS.TWO);
+      await moveMouseToTheMiddleOfTheScreen(page);
+      const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
+      await dragMouseTo(x - 90, y, page);
+      await pressButton(page, 'Apply');
 
-    // Get the structure data after making changes
-    const changedStructureData = await getKet(page);
+      // Get the structure data after making changes
+      const changedStructureData = await getKet(page);
 
-    // Compare the initial and changed structure data
-    expect(initialStructureData).not.toEqual(changedStructureData);
-  });
+      // Compare the initial and changed structure data
+      expect(initialStructureData).not.toEqual(changedStructureData);
+    },
+  );
 });

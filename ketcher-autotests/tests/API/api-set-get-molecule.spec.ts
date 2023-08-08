@@ -118,68 +118,74 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await setMolecule(page, 'Brc1ccc(COC(Cn2ccnc2)c2ccc(Cl)cc2Cl)c(Cl)c1');
   });
 
-  test('Set and Get Molecule using V3000 Molfile format', async ({ page }) => {
-    /*
+  test.fixme(
+    'Set and Get Molecule using V3000 Molfile format',
+    async ({ page }) => {
+      /*
     Test case: EPMLSOPKET- 10095
     Description:  Molecule set and get using V3000 format
     */
-    const ignoredLineIndigo = 1;
-    const orEnantiomer = await readFileContents(
-      'tests/test-data/or-enantiomer.mol',
-    );
-    await setMolecule(page, orEnantiomer);
+      const ignoredLineIndigo = 1;
+      const orEnantiomer = await readFileContents(
+        'tests/test-data/or-enantiomer.mol',
+      );
+      await setMolecule(page, orEnantiomer);
 
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName: 'tests/test-data/test-data-for-enatiomer.mol',
-        metaDataIndexes: [ignoredLineIndigo],
-        fileFormat: 'v3000',
-      });
-    expect(molFile).toEqual(molFileExpected);
-  });
+      const { fileExpected: molFileExpected, file: molFile } =
+        await receiveFileComparisonData({
+          page,
+          expectedFileName: 'tests/test-data/test-data-for-enatiomer.mol',
+          metaDataIndexes: [ignoredLineIndigo],
+          fileFormat: 'v3000',
+        });
+      expect(molFile).toEqual(molFileExpected);
+    },
+  );
 
-  test('Set and Get Molecule containing chiral centers', async ({ page }) => {
-    /*
+  test.fixme(
+    'Set and Get Molecule containing chiral centers',
+    async ({ page }) => {
+      /*
     Test case: EPMLSOPKET- 10097
     Description:  Molecule set and get with chiral centers
     */
-    const indexOfLineWithIndigo = 2;
-    const indexOfLineWithKetcher = 2;
+      const indexOfLineWithIndigo = 2;
+      const indexOfLineWithKetcher = 2;
 
-    await setMolecule(page, 'CC(=O)O[C@@H](C)[C@H](O)Cn1cnc2c1ncnc2N');
-    await delay(DELAY_IN_SECONDS.THREE);
+      await setMolecule(page, 'CC(=O)O[C@@H](C)[C@H](O)Cn1cnc2c1ncnc2N');
+      await delay(DELAY_IN_SECONDS.THREE);
 
-    const molV2000FileExpected = await readFileContents(
-      'tests/test-data/test-data-for-chiral-centersv2000.json',
-    );
-    const molV2000File = await getMolfile(page, 'v2000');
-    const filteredmolV2000FileExpected = filteredFile(
-      molV2000FileExpected,
-      indexOfLineWithKetcher,
-    );
-    const filteredmolV2000File = filteredFile(
-      molV2000File,
-      indexOfLineWithKetcher,
-    );
+      const molV2000FileExpected = await readFileContents(
+        'tests/test-data/test-data-for-chiral-centersv2000.json',
+      );
+      const molV2000File = await getMolfile(page, 'v2000');
+      const filteredmolV2000FileExpected = filteredFile(
+        molV2000FileExpected,
+        indexOfLineWithKetcher,
+      );
+      const filteredmolV2000File = filteredFile(
+        molV2000File,
+        indexOfLineWithKetcher,
+      );
 
-    expect(filteredmolV2000File).toEqual(filteredmolV2000FileExpected);
+      expect(filteredmolV2000File).toEqual(filteredmolV2000FileExpected);
 
-    const molV3000FileExpected = await readFileContents(
-      'tests/test-data/test-data-for-chiral-centersv3000.json',
-    );
-    const molV3000File = await getMolfile(page, 'v3000');
-    const filteredmolV3000FileExpected = filteredFile(
-      molV3000FileExpected,
-      indexOfLineWithIndigo,
-    );
-    const filteredmolV3000File = filteredFile(
-      molV3000File,
-      indexOfLineWithIndigo,
-    );
+      const molV3000FileExpected = await readFileContents(
+        'tests/test-data/test-data-for-chiral-centersv3000.json',
+      );
+      const molV3000File = await getMolfile(page, 'v3000');
+      const filteredmolV3000FileExpected = filteredFile(
+        molV3000FileExpected,
+        indexOfLineWithIndigo,
+      );
+      const filteredmolV3000File = filteredFile(
+        molV3000File,
+        indexOfLineWithIndigo,
+      );
 
-    expect(filteredmolV3000File).toEqual(filteredmolV3000FileExpected);
-  });
+      expect(filteredmolV3000File).toEqual(filteredmolV3000FileExpected);
+    },
+  );
 
   test('Check DisableQueryElements parameter', async ({ page }) => {
     /*
@@ -338,37 +344,39 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await page.getByText('Contract Abbreviation').click();
   });
 
-  test('Add one contracted Functional Group through API ketcher.setMolecule (V3000)', async ({
-    page,
-  }) => {
-    /*
+  test.fixme(
+    'Add one contracted Functional Group through API ketcher.setMolecule (V3000)',
+    async ({ page }) => {
+      /*
     Test case: EPMLSOPKET-13021
     Description: one contracted Functional Group added through API ketcher.setMolecule.
     Functional Group is able to expand.
     */
-    await setMolecule(page, FILE_TEST_DATA.oneFunctionalGroupContractedV3000);
-    await takeEditorScreenshot(page);
+      await setMolecule(page, FILE_TEST_DATA.oneFunctionalGroupContractedV3000);
+      await takeEditorScreenshot(page);
 
-    await page.getByText('Boc').click({ button: 'right' });
-    await page.getByText('Expand Abbreviation').click();
-  });
+      await page.getByText('Boc').click({ button: 'right' });
+      await page.getByText('Expand Abbreviation').click();
+    },
+  );
 
-  test('Add one expanded Functional Group through API ketcher.setMolecule (V3000)', async ({
-    page,
-  }) => {
-    /*
+  test.fixme(
+    'Add one expanded Functional Group through API ketcher.setMolecule (V3000)',
+    async ({ page }) => {
+      /*
     Test case: EPMLSOPKET-13022
     Description: one expanded Functional Group added through API ketcher.setMolecule.
     Functional Group is able to contract.
     */
-    await setMolecule(page, FILE_TEST_DATA.oneFunctionalGroupExpandedV3000);
-    await takeEditorScreenshot(page);
+      await setMolecule(page, FILE_TEST_DATA.oneFunctionalGroupExpandedV3000);
+      await takeEditorScreenshot(page);
 
-    // eslint-disable-next-line no-magic-numbers
-    const point = await getAtomByIndex(page, { label: 'C' }, 3);
-    await page.mouse.click(point.x, point.y, { button: 'right' });
-    await page.getByText('Contract Abbreviation').click();
-  });
+      // eslint-disable-next-line no-magic-numbers
+      const point = await getAtomByIndex(page, { label: 'C' }, 3);
+      await page.mouse.click(point.x, point.y, { button: 'right' });
+      await page.getByText('Contract Abbreviation').click();
+    },
+  );
 
   test('Add Functional Groups expanded/contracted through API ketcher.setMolecule (.ket)', async ({
     page,

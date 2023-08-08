@@ -33,6 +33,7 @@ const allowedApiSettings = {
   'general.dearomatize-on-load': 'dearomatize-on-load',
   ignoreChiralFlag: 'ignoreChiralFlag',
   disableQueryElements: 'disableQueryElements',
+  bondThickness: 'bondThickness',
 };
 
 async function prepareStructToRender(

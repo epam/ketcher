@@ -300,7 +300,7 @@ class Editor implements KetcherEditor {
 
   setOptions(opts: string) {
     const options = JSON.parse(opts);
-    this.event.apiSettings.dispatch({ ...this.options(), ...options });
+    this.event.apiSettings.dispatch({ ...options });
     return this.render.updateOptions(opts);
   }
 

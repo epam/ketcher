@@ -579,6 +579,210 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickOnAtom(page, 'C', 5);
   });
+
+  test('Copy and paste Mapped reaction', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-2883
+    Description: Copied objects are pasted as one object and correctly displayed without data loss.
+    */
+    const x = 100;
+    const y = 100;
+    await openFileAndAddToCanvas('mapped-structure.rxn', page);
+    await copyAndPaste(page);
+    await page.mouse.click(x, y);
+  });
+
+  test('Cut and Paste Mapped reaction and edit', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-2883
+    Description: Cut objects are pasted as one object and correctly displayed without data loss.
+    */
+    await openFileAndAddToCanvas('mapped-structure.rxn', page);
+    await cutAndPaste(page);
+    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await delay(DELAY_IN_SECONDS.TWO);
+    await selectAtomInToolbar(AtomButton.Nitrogen, page);
+    await clickOnAtom(page, 'C', 5);
+  });
+
+  test.fixme('Copy and paste All kinds of bonds', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-2945
+    Description: Copied bonds are pasted as one object and correctly displayed without data loss.
+    */
+    // Bonds not copied when test run under docker
+    const x = 100;
+    const y = 100;
+    await openFileAndAddToCanvas('all-kinds-of-bonds-test-file.mol', page);
+    await copyAndPaste(page);
+    await page.mouse.click(x, y);
+  });
+
+  test.fixme(
+    'Copy and paste structure with Stereochemistry',
+    async ({ page }) => {
+      /*
+    Test case: EPMLSOPKET-2946
+    Description: Copied objects are pasted as one object and correctly displayed without data loss.
+    */
+      // Error message when run under docker. But manual test is working.
+      const x = 100;
+      const y = 100;
+      await openFileAndAddToCanvas('stereo-test-structures.ket', page);
+      await copyAndPaste(page);
+      await page.mouse.click(x, y);
+    },
+  );
+
+  test.fixme(
+    'Cut and Paste structure with Stereochemistry and edit',
+    async ({ page }) => {
+      /*
+    Test case: EPMLSOPKET-2946
+    Description: Cut objects are pasted as one object and correctly displayed without data loss.
+    */
+      // Error message when run under docker. But manual test is working.
+      await openFileAndAddToCanvas('stereo-test-structures.ket', page);
+      await cutAndPaste(page);
+      await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+      await delay(DELAY_IN_SECONDS.TWO);
+      await selectAtomInToolbar(AtomButton.Nitrogen, page);
+      await clickOnAtom(page, 'C', 5);
+    },
+  );
+
+  test.fixme('Copy and paste complex R-Group structure', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-2947
+    Description: After the clicking the Copy button, the selected object not disappears.
+    After pasting R-Group structure same structures located on canvas.
+    */
+    // Error message when run under docker. But manual test is working.
+    const x = 500;
+    const y = 200;
+    await openFileAndAddToCanvas('complex-r-group-structure.mol', page);
+    await copyAndPaste(page);
+    await page.mouse.click(x, y);
+  });
+
+  test.fixme(
+    'Cut and Paste complex R-Group structure and edit',
+    async ({ page }) => {
+      /*
+    Test case: EPMLSOPKET-2947
+    Description: The correct structure is pasted on the canvas.
+    All R-Group structure are correctly rendered.
+    User is able to edit the pasted structure.
+    */
+      // Error message when run under docker. But manual test is working.
+      await openFileAndAddToCanvas('complex-r-group-structure.mol', page);
+      await cutAndPaste(page);
+      await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+      await delay(DELAY_IN_SECONDS.TWO);
+      await selectAtomInToolbar(AtomButton.Nitrogen, page);
+      await clickOnAtom(page, 'C', 5);
+    },
+  );
+
+  test('Copy and paste Structure with Simple objects and text', async ({
+    page,
+  }) => {
+    /*
+    Test case: EPMLSOPKET-2948
+    Description: After the clicking the Copy button, the selected object not disappears.
+    After pasting Structure with Simple objects and text same structures located on canvas.
+    */
+    const x = 500;
+    const y = 100;
+    await openFileAndAddToCanvas(
+      'structure-with-simple-objects-and-text.ket',
+      page,
+    );
+    await copyAndPaste(page);
+    await page.mouse.click(x, y);
+  });
+
+  test('Cut and Paste Structure with Simple objects and text and edit', async ({
+    page,
+  }) => {
+    /*
+    Test case: EPMLSOPKET-2948
+    Description: The correct structure is pasted on the canvas.
+    All Structure with Simple objects and text are correctly rendered.
+    User is able to edit the pasted structure.
+    */
+    await openFileAndAddToCanvas(
+      'structure-with-simple-objects-and-text.ket',
+      page,
+    );
+    await cutAndPaste(page);
+    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await delay(DELAY_IN_SECONDS.TWO);
+    await selectAtomInToolbar(AtomButton.Nitrogen, page);
+    await clickOnAtom(page, 'C', 5);
+  });
+
+  test.fixme('Copy and paste Aromatic structure', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-2949
+    Description: After the clicking the Copy button, the selected object not disappears.
+    After pasting  Aromatic structure same structures located on canvas.
+    */
+    // Error message when run under docker. But manual test is working.
+    const x = 500;
+    const y = 100;
+    await openFileAndAddToCanvas('aromatic-structures.mol', page);
+    await copyAndPaste(page);
+    await page.mouse.click(x, y);
+  });
+
+  test.fixme('Cut and Paste Aromatic structure and edit', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-2949
+    Description: The correct structure is pasted on the canvas.
+    All  Aromatic structure are correctly rendered.
+    User is able to edit the pasted structure.
+    */
+    // Error message when run under docker. But manual test is working.
+    await openFileAndAddToCanvas('aromatic-structures.mol', page);
+    await cutAndPaste(page);
+    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await delay(DELAY_IN_SECONDS.TWO);
+    await selectAtomInToolbar(AtomButton.Nitrogen, page);
+    await clickOnAtom(page, 'C', 5);
+  });
+
+  test('Copy and paste expanded and contracted Functional Froups', async ({
+    page,
+  }) => {
+    /*
+    Test case: EPMLSOPKET-2952
+    Description: After the clicking the Copy button, the selected object not disappears.
+    After pasting expanded and contracted Functional Froups same structures located on canvas.
+    */
+    const x = 500;
+    const y = 100;
+    await openFileAndAddToCanvas('expanded-and-contracted-fg.ket', page);
+    await copyAndPaste(page);
+    await page.mouse.click(x, y);
+  });
+
+  test('Cut and Paste expanded and contracted Functional Froups and edit', async ({
+    page,
+  }) => {
+    /*
+    Test case: EPMLSOPKET-2952
+    Description: The correct structure is pasted on the canvas.
+    All expanded and contracted Functional Froups are correctly rendered.
+    User is not able to edit the pasted Functional Groups.
+    */
+    await openFileAndAddToCanvas('expanded-and-contracted-fg.ket', page);
+    await cutAndPaste(page);
+    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await delay(DELAY_IN_SECONDS.TWO);
+    await selectAtomInToolbar(AtomButton.Nitrogen, page);
+    await clickOnAtom(page, 'C', 5);
+  });
 });
 
 test.describe('Copy/Cut/Paste Actions', () => {

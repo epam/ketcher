@@ -98,7 +98,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await screenshotBetweenUndoRedo(page);
   });
 
-  test.fixme('Cut and Paste structure and edit', async ({ page }) => {
+  test('Cut and Paste structure and edit', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1713
     Description: The correct structure is pasted on the canvas.
@@ -113,7 +113,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await clickOnAtom(page, 'C', 12);
   });
 
-  test.fixme('Cut the reaction', async ({ page }) => {
+  test('Cut the reaction', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1714
     Description: After the clicking the Cut button, the selected object disappears.
@@ -145,7 +145,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     const modifier = getControlModifier();
     await openFileAndAddToCanvas('reaction-dif-prop.rxn', page);
-    await clickOnBond(page, BondType.SINGLE, 0);
+    await clickOnBond(page, BondType.SINGLE, 1);
     await page.keyboard.press(`${modifier}+KeyX`);
     await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
@@ -203,7 +203,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await page.keyboard.press('Control+c');
   });
 
-  test.fixme('Copy and Paste structure and edit', async ({ page }) => {
+  test('Copy and Paste structure and edit', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1716
     Description: The correct structure is pasted on the canvas.
@@ -217,7 +217,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await clickOnAtom(page, 'C', 12);
   });
 
-  test.fixme('Copy and paste the reaction', async ({ page }) => {
+  test('Copy and paste the reaction', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1717
     Description: After the clicking the Copy button, the selected object not disappears.
@@ -273,7 +273,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await page.mouse.click(x, y);
   });
 
-  test.fixme('Multiple Paste action', async ({ page }) => {
+  test('Multiple Paste action', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1718
     Description: After the clicking the Copy button, the selected object not disappears.
@@ -336,23 +336,22 @@ test.describe('Copy/Cut/Paste Actions', () => {
     },
   );
 
-  test.fixme(
-    'Cut and Paste and Edit the pasted Structure',
-    async ({ page }) => {
-      /*
+  test('Cut and Paste and Edit the pasted Structure', async ({ page }) => {
+    /*
     Test case: EPMLSOPKET-1719
     Description: The correct structure is pasted on the canvas.
     All Generic S-Group are correctly rendered.
     User is able to edit the pasted structure.
     */
-      await openFileAndAddToCanvas('query-feat.mol', page);
-      await cutAndPaste(page);
-      await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
-      await delay(DELAY_IN_SECONDS.TWO);
-      await selectAtomInToolbar(AtomButton.Nitrogen, page);
-      await clickOnAtom(page, 'C', 12);
-    },
-  );
+    const x = 500;
+    const y = 200;
+    await openFileAndAddToCanvas('query-feat.mol', page);
+    await cutAndPaste(page);
+    await page.mouse.click(x, y);
+    await delay(DELAY_IN_SECONDS.TWO);
+    await selectAtomInToolbar(AtomButton.Nitrogen, page);
+    await clickOnAtom(page, 'C', 12);
+  });
 
   test('Copy and paste R-Group structure', async ({ page }) => {
     /*
@@ -591,7 +590,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await expect(page).toHaveScreenshot();
   });
 
-  test.fixme('Copy button', async ({ page }) => {
+  test('Copy button', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1709
     Description: Button is disabled. Tooltip "Copy (Ctrl+С)" appears.
@@ -611,7 +610,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await page.getByTestId('copy-button-dropdown-triangle').click();
   });
 
-  test.fixme('Cut button', async ({ page }) => {
+  test('Cut button', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1710
     Description: The 'Cut' button  is disabled if nothing is selected on the canvas.

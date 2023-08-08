@@ -3,10 +3,8 @@ import {
   clickInTheMiddleOfTheScreen,
   TopPanelButton,
   selectTopPanelButton,
-  delay,
   openFileAndAddToCanvas,
   takeEditorScreenshot,
-  DELAY_IN_SECONDS,
   pasteFromClipboardAndAddToCanvas,
 } from '@utils';
 
@@ -16,7 +14,6 @@ test.describe('CDX files', () => {
   });
 
   test.afterEach(async ({ page }) => {
-    await delay(DELAY_IN_SECONDS.TWO);
     await takeEditorScreenshot(page);
   });
 

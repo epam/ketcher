@@ -214,6 +214,7 @@ class Editor implements KetcherEditor {
     };
 
     domEventSetup(this, clientArea);
+    this.render.paper.canvas.setAttribute('data-testid', 'canvas');
   }
 
   isDitrty(): boolean {
@@ -358,29 +359,56 @@ class Editor implements KetcherEditor {
     recoordinate(this, canvasCenter);
   }
 
-  zoomAccordingContent() {
-    this.zoom(1);
-    const clientAreaBoundingBox =
-      this.render.clientArea.getBoundingClientRect();
-    const paper = this.render.paper;
+  zoomAccordingContent(struct: Struct) {
     const MIN_ZOOM_VALUE = 0.1;
     const MAX_ZOOM_VALUE = 1;
-    const MARGIN = 0.02;
-    let newZoomValue =
-      paper.height - clientAreaBoundingBox.height >
-      paper.width - clientAreaBoundingBox.width
-        ? clientAreaBoundingBox.height / paper.height
-        : clientAreaBoundingBox.width / paper.width;
+    const MARGIN_IN_PIXELS = 40;
+    const parsedStructCoordBoundingBox = struct.getCoordBoundingBox();
+    const parsedStructSize = new Vec2(
+      parsedStructCoordBoundingBox.max.x - parsedStructCoordBoundingBox.min.x,
+      parsedStructCoordBoundingBox.max.y - parsedStructCoordBoundingBox.min.y,
+    );
+    const parsedStructSizeInPixels = {
+      width:
+        parsedStructSize.x *
+        this.render.options.scale *
+        this.render.options.zoom,
+      height:
+        parsedStructSize.y *
+        this.render.options.scale *
+        this.render.options.zoom,
+    };
+    const clientAreaBoundingBox =
+      this.render.clientArea.getBoundingClientRect();
 
-    newZoomValue -= MARGIN;
-
-    if (newZoomValue < MAX_ZOOM_VALUE) {
-      this.zoom(
-        newZoomValue < MIN_ZOOM_VALUE
-          ? MIN_ZOOM_VALUE
-          : Number(newZoomValue.toFixed(2)),
-      );
+    if (
+      parsedStructSizeInPixels.width + MARGIN_IN_PIXELS <
+        clientAreaBoundingBox.width &&
+      parsedStructSizeInPixels.height + MARGIN_IN_PIXELS <
+        clientAreaBoundingBox.height
+    ) {
+      return;
     }
+
+    let newZoomValue =
+      this.render.options.zoom /
+      (parsedStructSizeInPixels.height - clientAreaBoundingBox.height >
+      parsedStructSizeInPixels.width - clientAreaBoundingBox.width
+        ? parsedStructSizeInPixels.height / clientAreaBoundingBox.height
+        : parsedStructSizeInPixels.width / clientAreaBoundingBox.width);
+
+    if (newZoomValue >= MAX_ZOOM_VALUE) {
+      this.zoom(MAX_ZOOM_VALUE);
+      return;
+    }
+
+    newZoomValue -= MARGIN_IN_PIXELS / clientAreaBoundingBox.width;
+
+    this.zoom(
+      newZoomValue < MIN_ZOOM_VALUE
+        ? MIN_ZOOM_VALUE
+        : Number(newZoomValue.toFixed(2)),
+    );
   }
 
   selection(ci?: any) {

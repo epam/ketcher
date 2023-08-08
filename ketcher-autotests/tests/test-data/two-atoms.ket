@@ -1,0 +1,38 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "mol0"
+            },
+            {
+                "$ref": "mol1"
+            }
+        ]
+    },
+    "mol0": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "N",
+                "location": [
+                    9.675,
+                    -6.5,
+                    0
+                ]
+            }
+        ]
+    },
+    "mol1": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "Br",
+                "location": [
+                    13.850000000000001,
+                    -6.525,
+                    0
+                ]
+            }
+        ]
+    }
+}

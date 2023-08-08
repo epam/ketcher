@@ -280,7 +280,7 @@ export function initClipboard(dispatch) {
         data['text/plain'];
 
       if (structStr || !rxnTextPlain.test(data['text/plain']))
-        loadStruct(structStr, { fragment: true });
+        loadStruct(structStr, { fragment: true, isPaste: true });
     },
   };
 }

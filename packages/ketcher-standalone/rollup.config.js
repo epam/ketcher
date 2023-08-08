@@ -5,7 +5,7 @@ import del from 'rollup-plugin-delete';
 import nodePolyfills from 'rollup-plugin-node-polyfills';
 import pkg from './package.json';
 import resolve from '@rollup/plugin-node-resolve';
-import strip from '@rollup/plugin-strip';
+// import strip from '@rollup/plugin-strip';
 import typescript from 'rollup-plugin-typescript2';
 import webWorkerLoader from 'rollup-plugin-web-worker-loader';
 import { license } from '../../license.ts';
@@ -16,7 +16,7 @@ const mode = {
 };
 
 const extensions = ['.js', '.ts'];
-const isProduction = process.env.NODE_ENV === mode.PRODUCTION;
+// const isProduction = process.env.NODE_ENV === mode.PRODUCTION;
 const includePattern = 'src/**/*';
 
 const config = {
@@ -61,7 +61,7 @@ const config = {
       include: includePattern,
       comments: 'none',
     }),
-    ...(isProduction ? [strip({ include: includePattern })] : []),
+    // ...(isProduction ? [strip({ include: includePattern })] : []),
   ],
 };
 

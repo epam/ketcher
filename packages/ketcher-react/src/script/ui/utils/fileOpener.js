@@ -41,11 +41,21 @@ export function fileOpener(server) {
 
 function throughFileReader(file) {
   const isCDX = file.name.endsWith('cdx') && !file.name.endsWith('b64cdx');
+  console.log('fileOpener.js::throughFileReader::file', file);
   return new Promise((resolve, reject) => {
     const rd = new FileReader(); // eslint-disable-line no-undef
 
     rd.onload = () => {
+      console.log(
+        'fileOpener.js::throughFileReader::onload::rd.result',
+        rd.result,
+      );
       const content = isCDX ? rd.result.slice(37) : rd.result;
+      console.log('fileOpener.js::throughFileReader::onload::content', content);
+      console.log(
+        'fileOpener.js::throughFileReader::onload::file.msClose',
+        file.msClose,
+      );
       if (file.msClose) file.msClose();
       resolve(content);
     };
@@ -53,6 +63,7 @@ function throughFileReader(file) {
     rd.onerror = (event) => {
       reject(event);
     };
+    console.log('fileOpener.js::throughFileReader::isCdx', isCDX);
     isCDX ? rd.readAsDataURL(file) : rd.readAsText(file, 'UTF-8');
   });
 }

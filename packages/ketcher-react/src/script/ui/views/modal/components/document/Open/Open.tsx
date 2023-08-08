@@ -95,12 +95,15 @@ const Open: FC<Props> = (props) => {
   }, [server]);
 
   const onFileLoad = (files) => {
+    console.log('Open.tsx::onFileLoad::files', files);
     const onLoad = (fileContent) => {
+      console.log('Open.tsx::onLoad::fileContent', fileContent);
       setStructStr(fileContent);
       setCurrentState(MODAL_STATES.textEditor);
     };
     const onError = () => errorHandler('Error processing file');
 
+    console.log('Open.tsx::onLoad::files[0].name', files[0].name);
     setFileName(files[0].name);
     opener.chosenOpener(files[0]).then(onLoad, onError);
   };
@@ -115,10 +118,12 @@ const Open: FC<Props> = (props) => {
   const { onOk } = rest;
 
   const copyHandler = () => {
+    console.log('Open.tsx::copyHandler::structStr', structStr);
     onOk({ structStr, fragment: true });
   };
 
   const openHandler = () => {
+    console.log('Open.tsx::openHandler::structStr', structStr);
     onOk({ structStr, fragment: false });
   };
 

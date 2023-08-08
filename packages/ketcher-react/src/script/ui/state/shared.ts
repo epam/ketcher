@@ -60,6 +60,7 @@ function parseStruct(
   server,
   options?,
 ): Promise<Struct> {
+  console.log('shared.ts::parseStruct::struct', struct);
   if (typeof struct === 'string') {
     options = options || {};
     const {
@@ -71,7 +72,9 @@ function parseStruct(
     } = options;
 
     const format = identifyStructFormat(struct);
+    console.log('shared.ts::parseStruct::format', format);
     if (format === SupportedFormat.cdx) {
+      console.log('shared.ts::parseStruct::format === SupportedFormat.cdx');
       struct = `base64::${struct.replace(/\s/g, '')}`;
     }
     const factory = new FormatterFactory(server);
@@ -96,6 +99,7 @@ export function removeStructAction(): {
 
 export function load(struct: Struct, options?) {
   return async (dispatch, getState) => {
+    console.log('shared.ts::load::struct', struct);
     const state = getState();
     const editor = state.editor as Editor;
     const server = state.server;

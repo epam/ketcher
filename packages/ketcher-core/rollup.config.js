@@ -7,7 +7,7 @@ import nodeResolve from '@rollup/plugin-node-resolve';
 import peerDepsExternal from 'rollup-plugin-peer-deps-external';
 import pkg from './package.json';
 import replace from '@rollup/plugin-replace';
-import strip from '@rollup/plugin-strip';
+// import strip from '@rollup/plugin-strip';
 import ttypescript from 'ttypescript';
 import typescript from 'rollup-plugin-typescript2';
 import { license } from '../../license.ts';
@@ -73,7 +73,7 @@ const config = {
       comments: 'none',
       include: includePattern,
     }),
-    ...(isProduction ? [strip({ include: includePattern })] : []),
+    // ...(isProduction ? [strip({ include: includePattern })] : []),
   ],
 };
 

@@ -10,7 +10,7 @@ import peerDepsExternal from 'rollup-plugin-peer-deps-external';
 import pkg from './package.json';
 import postcss from 'rollup-plugin-postcss';
 import replace from '@rollup/plugin-replace';
-import strip from '@rollup/plugin-strip';
+// import strip from '@rollup/plugin-strip';
 import svgr from '@svgr/rollup';
 import typescript from 'rollup-plugin-typescript2';
 import ttypescript from 'ttypescript';
@@ -91,7 +91,7 @@ const config = {
     string({
       include: '**/*.sdf',
     }),
-    ...(isProduction ? [strip({ include: includePattern })] : []),
+    // ...(isProduction ? [strip({ include: includePattern })] : []),
   ],
 };
 

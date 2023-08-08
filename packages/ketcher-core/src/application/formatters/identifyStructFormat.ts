@@ -21,22 +21,30 @@ export function identifyStructFormat(
 ): SupportedFormat {
   // Mimic Indigo/molecule_auto_loader.cpp as much as possible
   const sanitizedString = stringifiedStruct.trim();
+  console.log(
+    'identifyStructFormat.ts::identifyStructFormat::sanitizedString',
+    sanitizedString,
+  );
 
   try {
     if (JSON.parse(sanitizedString)) {
+      console.log('identifyStructFormat.ts::identifyStructFormat::isKet');
       return SupportedFormat.ket;
     }
   } catch (er) {} // eslint-disable-line
 
   if (sanitizedString.indexOf('$RXN') !== -1) {
+    console.log('identifyStructFormat.ts::identifyStructFormat::isRxn');
     return SupportedFormat.rxn;
   }
 
   if (sanitizedString.indexOf('V2000') !== -1) {
+    console.log('identifyStructFormat.ts::identifyStructFormat::V2000');
     return SupportedFormat.mol;
   }
 
   if (sanitizedString.indexOf('V3000') !== -1) {
+    console.log('identifyStructFormat.ts::identifyStructFormat::V3000');
     return SupportedFormat.molV3000;
   }
 
@@ -48,6 +56,7 @@ export function identifyStructFormat(
       end === sanitizedString.length ||
       sanitizedString.slice(end, end + 20).search(/^\$(MOL|END CTAB)$/m) !== -1
     ) {
+      console.log('identifyStructFormat.ts::identifyStructFormat::MOL');
       return SupportedFormat.mol;
     }
   }
@@ -56,6 +65,7 @@ export function identifyStructFormat(
     sanitizedString[0] === '<' &&
     sanitizedString.indexOf('<molecule') !== -1
   ) {
+    console.log('identifyStructFormat.ts::identifyStructFormat::CML');
     return SupportedFormat.cml;
   }
 
@@ -70,21 +80,27 @@ export function identifyStructFormat(
     isBase64String.test(clearStr) &&
     window.atob(clearStr).startsWith(cdxHeader)
   ) {
+    console.log('identifyStructFormat.ts::identifyStructFormat::CDX');
     return SupportedFormat.cdx;
   }
 
   if (sanitizedString.slice(0, 5) === 'InChI') {
+    console.log('identifyStructFormat.ts::identifyStructFormat::InChi');
     return SupportedFormat.inChI;
   }
 
   if (sanitizedString.indexOf('\n') === -1) {
+    console.log('identifyStructFormat.ts::identifyStructFormat::Smiles');
     // TODO: smiles regexp
     return SupportedFormat.smiles;
   }
 
   if (sanitizedString.indexOf('<CDXML') !== -1) {
+    console.log('identifyStructFormat.ts::identifyStructFormat::Cdxml');
     return SupportedFormat.cdxml;
   }
+
+  console.log('identifyStructFormat.ts::identifyStructFormat::Unknown');
 
   return SupportedFormat.unknown;
 }

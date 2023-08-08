@@ -40,6 +40,7 @@ const mapStateToProps = (state): StateProps => ({
 const mapDispatchToProps = (dispatch): DispatchProps => ({
   onOk: (result) => {
     if (result.fragment) exec('copy');
+    console.log('Open.container.ts::mapDispatchToProps::result', result);
     dispatch(
       load(result.structStr, {
         badHeaderRecover: true,

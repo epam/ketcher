@@ -13,20 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+import { useCallback, useMemo } from 'react';
 import { EmptyFunction } from 'helpers';
 import { debounce } from 'lodash';
-import { useMemo, useRef } from 'react';
 import { MonomerItem } from '../monomerLibraryItem';
 import { MonomerItemType } from '../monomerLibraryItem/types';
-import {
-  GroupContainer,
-  GroupTitle,
-  ItemsContainer,
-  StyledPreview,
-} from './styles';
+import { GroupContainer, GroupTitle, ItemsContainer } from './styles';
 import { IMonomerGroupProps } from './types';
-import { usePreview } from '../../../hooks/usePreview';
 import { getMonomerUniqueKey } from 'state/library';
+import { calculatePreviewPosition } from '../../../helpers';
+import { useAppDispatch, useAppSelector } from 'hooks';
+import { showPreview, selectShowPreview } from 'state/common';
 
 const MonomerGroup = ({
   items,
@@ -34,34 +31,39 @@ const MonomerGroup = ({
   selectedMonomerUniqueKey,
   onItemClick = EmptyFunction,
 }: IMonomerGroupProps) => {
-  const ref = useRef<HTMLDivElement>(null);
-  const [previewItem, previewStyle, setPreviewItem] = usePreview(ref);
+  const dispatch = useAppDispatch();
+  const preview = useAppSelector(selectShowPreview);
 
-  const debouncedSetPreviewItem = useMemo(
-    () => debounce(setPreviewItem, 500),
-    [setPreviewItem],
+  const dispatchShowPreview = useCallback(
+    (payload) => dispatch(showPreview(payload)),
+    [dispatch],
+  );
+
+  const debouncedShowPreview = useMemo(
+    () => debounce((p) => dispatchShowPreview(p), 500),
+    [dispatchShowPreview],
   );
 
   const handleItemMouseLeave = () => {
-    debouncedSetPreviewItem.cancel();
-    setPreviewItem();
+    debouncedShowPreview.cancel();
+    dispatch(showPreview());
   };
 
   const handleItemMouseMove = (
     monomer: MonomerItemType,
     e: React.MouseEvent<HTMLDivElement, MouseEvent>,
   ) => {
-    if (previewItem) {
-      setPreviewItem();
+    if (preview.monomer || !e.currentTarget) {
       return;
     }
 
-    const rect = e.currentTarget.getBoundingClientRect();
-    debouncedSetPreviewItem(monomer, rect);
+    const cardCoordinates = e.currentTarget.getBoundingClientRect();
+    const previewStyle = calculatePreviewPosition(monomer, cardCoordinates);
+    debouncedShowPreview({ monomer, style: previewStyle });
   };
 
   return (
-    <GroupContainer ref={ref}>
+    <GroupContainer>
       {title && (
         <GroupTitle>
           <span>{title}</span>
@@ -86,9 +88,6 @@ const MonomerGroup = ({
           );
         })}
       </ItemsContainer>
-      {previewItem && (
-        <StyledPreview monomer={previewItem} top={previewStyle?.top || ''} />
-      )}
     </GroupContainer>
   );
 };

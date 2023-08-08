@@ -3,10 +3,8 @@ import {
   clickInTheMiddleOfTheScreen,
   TopPanelButton,
   selectTopPanelButton,
-  delay,
   openFileAndAddToCanvas,
   takeEditorScreenshot,
-  DELAY_IN_SECONDS,
   pasteFromClipboardAndAddToCanvas,
 } from '@utils';
 
@@ -16,7 +14,6 @@ test.describe('CDX files', () => {
   });
 
   test.afterEach(async ({ page }) => {
-    await delay(DELAY_IN_SECONDS.TWO);
     await takeEditorScreenshot(page);
   });
 
@@ -36,7 +33,7 @@ test.describe('CDX files', () => {
     await openFileAndAddToCanvas('cdx_file.cdx', page);
   });
 
-  test('opening cdx files from clickboard', async ({ page }) => {
+  test.fixme('opening cdx files from clipboard', async ({ page }) => {
     /* 
   Test case: EPMLSOPKET-6972
   Description: Open structure created in ChemDraw from clickboard

@@ -78,24 +78,27 @@ class SaveDialog extends Component {
     };
     this.isRxn = this.props.struct.hasRxnArrow();
     this.textAreaRef = createRef();
-    const formats = [this.isRxn ? 'rxn' : 'mol', 'smiles', 'ket'];
-    if (this.props.server)
-      formats.push(
-        this.isRxn ? 'rxnV3000' : 'molV3000',
-        'smilesExt',
-        'smarts',
-        'cml',
-        '<----firstDivider--->', // for dividers in select list
-        'inChI',
-        'inChIAuxInfo',
-        '<----secondDivider--->', // for dividers in select list
-        'svg',
-        'png',
-        'cdxml',
-        'cdx',
-        'binaryCdx',
-      );
-    // TODO: pass the necessary divider not like list element
+
+    const formats = !this.props.server
+      ? ['ket', this.isRxn ? 'rxn' : 'mol', 'smiles']
+      : [
+          'ket',
+          this.isRxn ? 'rxn' : 'mol',
+          this.isRxn ? 'rxnV3000' : 'molV3000',
+          'smarts',
+          'smiles',
+          'smilesExt',
+          'cml',
+          '<----firstDivider--->', // for dividers in select list
+          'inChI',
+          'inChIAuxInfo',
+          '<----secondDivider--->', // for dividers in select list
+          'svg',
+          'png',
+          'cdxml',
+          'cdx',
+          'binaryCdx',
+        ];
 
     this.saveSchema = saveSchema;
     this.saveSchema.properties.format = Object.assign(

@@ -6,7 +6,7 @@ import {
 } from '@playwright/test';
 import { clickInTheMiddleOfTheScreen, pressButton } from '@utils/clicks';
 import { ELEMENT_TITLE } from './types';
-import { TopPanelButton } from '..';
+import { DELAY_IN_SECONDS, TopPanelButton } from '..';
 import { selectTopPanelButton } from './tools';
 import { getLeftTopBarSize } from './common/getLeftTopBarSize';
 
@@ -29,8 +29,7 @@ export async function drawElementByTitle(
 }
 
 export async function getLeftToolBarWidth(page: Page): Promise<number> {
-  const leftBar = await page.locator('[class^="LeftToolbar-module_root"]');
-  const leftBarSize = await leftBar.boundingBox();
+  const leftBarSize = await page.getByTestId('left-toolbar').boundingBox();
 
   // we can get padding / margin values of left toolbar through x property
   if (leftBarSize?.width) {
@@ -41,8 +40,7 @@ export async function getLeftToolBarWidth(page: Page): Promise<number> {
 }
 
 export async function getTopToolBarHeight(page: Page): Promise<number> {
-  const topBar = await page.locator('[class^="App-module_top"]');
-  const topBarSize = await topBar.boundingBox();
+  const topBarSize = await page.getByTestId('top-toolbar').boundingBox();
 
   // we can get padding / margin values of top toolbar through y property
   if (topBarSize?.height) {
@@ -83,11 +81,19 @@ export async function takeEditorScreenshot(
   options?: { masks?: Locator[] },
 ) {
   const editor = page.locator('[class*="App-module_canvas"]');
+  await delay(DELAY_IN_SECONDS.THREE);
   await expect(editor).toHaveScreenshot({ mask: options?.masks });
 }
 
 export async function takeLeftToolbarScreenshot(page: Page) {
   const editor = page.locator('[class*="LeftToolbar-module_buttons"]');
+  await delay(DELAY_IN_SECONDS.THREE);
+  await expect(editor).toHaveScreenshot();
+}
+
+export async function takeTopToolbarScreenshot(page: Page) {
+  const editor = page.getByTestId('top-toolbar');
+  await delay(DELAY_IN_SECONDS.THREE);
   await expect(editor).toHaveScreenshot();
 }
 

@@ -54,7 +54,6 @@ const ToolbarGroupItem = (props: Props) => {
     onOpen,
     dataTestId,
   } = props;
-  console.log('name', name, dataTestId);
   if (!options?.length) {
     const iconName = getIconName(id);
     return (

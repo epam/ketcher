@@ -21,10 +21,12 @@ export const openTool = async (
   page: Page,
   defaultToolId: string,
   currentType: string,
+  lastType?: string,
 ) => {
   // Selection tool is preselected by default so we do not need to click 2 times
   const defaultTool = await page.getByTestId(defaultToolId);
-  if (currentType !== TYPE_SELECT) {
+  lastType = lastType || TYPE_SELECT;
+  if (currentType !== lastType) {
     await defaultTool.click();
     await delay(DELAY_IN_SECONDS.ONE);
   }

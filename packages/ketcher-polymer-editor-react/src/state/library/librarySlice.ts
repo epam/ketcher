@@ -71,7 +71,9 @@ export const selectMonomersInCategory = (
 export const selectMonomersInFavorites = (items: MonomerItemType[]) =>
   items.filter((item) => item.favorite);
 
-export const selectFilteredMonomers = (state) => {
+export const selectFilteredMonomers = (
+  state,
+): Array<MonomerItemType & { favorite: boolean }> => {
   const { searchFilter, monomers } = state.library;
   return monomers
     .filter((item: MonomerItemType) => {

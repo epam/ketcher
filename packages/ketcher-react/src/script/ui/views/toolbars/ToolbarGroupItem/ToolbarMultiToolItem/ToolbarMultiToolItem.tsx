@@ -143,7 +143,7 @@ const ToolbarMultiToolItem = (props: Props) => {
         action={action[currentId]}
         status={currentStatus as ActionButtonProps['status']}
         selected={selected}
-        dataTestId={dataTestId}
+        data-testid={dataTestId || iconName}
       />
       {!isOpen && (
         <Icon

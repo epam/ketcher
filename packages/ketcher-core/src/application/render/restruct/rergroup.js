@@ -21,6 +21,8 @@ import ReObject from './reobject';
 import { Scale } from 'domain/helpers';
 import draw from '../draw';
 import util from '../util';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { Render } from '../raphaelRender';
 
 const BORDER_EXT = new Vec2(0.05 * 3, 0.05 * 3);
 const PADDING_VECTOR = new Vec2(0.2, 0.4);
@@ -55,7 +57,11 @@ class ReRGroup extends ReObject {
     return ret;
   }
 
+  /**
+   * @param {Render} render
+   */
   calcBBox(render) {
+    /** @type {Box2Abs | null} */
     let rGroupBoundingBox = null;
     this.item.frags.forEach((fid) => {
       const fragBox = render.ctab.frags
@@ -68,21 +74,18 @@ class ReRGroup extends ReObject {
       }
     });
 
+    const rGroupAttachmentPointsVBox =
+      render.ctab.getRGroupAttachmentPointsVBoxByAtomIds(this.getAtoms(render));
+    if (rGroupBoundingBox && rGroupAttachmentPointsVBox) {
+      rGroupBoundingBox = Box2Abs.union(
+        rGroupBoundingBox,
+        rGroupAttachmentPointsVBox,
+      );
+    }
+
     rGroupBoundingBox = rGroupBoundingBox
       ? rGroupBoundingBox.extend(BORDER_EXT, BORDER_EXT)
       : rGroupBoundingBox;
-
-    let attachmentPointsVBox = render.ctab.getAttachmentsPointsVBox(
-      this.getAtoms(render),
-    );
-    attachmentPointsVBox = attachmentPointsVBox
-      ? attachmentPointsVBox.extend(BORDER_EXT, BORDER_EXT)
-      : attachmentPointsVBox;
-
-    rGroupBoundingBox =
-      attachmentPointsVBox && rGroupBoundingBox
-        ? Box2Abs.union(attachmentPointsVBox, rGroupBoundingBox)
-        : rGroupBoundingBox;
 
     return rGroupBoundingBox;
   }

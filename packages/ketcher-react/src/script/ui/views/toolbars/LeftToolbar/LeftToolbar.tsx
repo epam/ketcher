@@ -125,7 +125,11 @@ const LeftToolbar = (props: Props) => {
   };
 
   return (
-    <div className={clsx(classes.root, className)} ref={ref}>
+    <div
+      data-testid="left-toolbar"
+      className={clsx(classes.root, className)}
+      ref={ref}
+    >
       <div className={classes.buttons} ref={scrollRef}>
         <div className={classes.listener} ref={startRef}>
           <Group

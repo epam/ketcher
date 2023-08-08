@@ -71,3 +71,8 @@ export async function selectButtonById(buttonId: BondIds, page: Page) {
   const element = page.getByTestId(buttonId);
   await element.click();
 }
+
+export async function openSimpleObjectsDropdown(page: Page) {
+  await page.getByTestId('shape-ellipse').click();
+  await page.getByTestId('shape-ellipse').click();
+}

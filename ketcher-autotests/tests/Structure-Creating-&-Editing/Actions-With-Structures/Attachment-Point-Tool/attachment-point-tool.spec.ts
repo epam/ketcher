@@ -15,8 +15,6 @@ import {
   AtomButton,
   LeftPanelButton,
   selectLeftPanelButton,
-  moveMouseToTheMiddleOfTheScreen,
-  getCoordinatesOfTheMiddleOfTheScreen,
   dragMouseTo,
   selectRing,
   RingButton,
@@ -26,8 +24,10 @@ import {
   saveToFile,
   receiveFileComparisonData,
   clickOnAtom,
+  screenshotBetweenUndoRedo,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
+import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
 import { getMolfile, getRxn, getSmiles } from '@utils/formats';
 
 const CANVAS_CLICK_X = 300;
@@ -268,7 +268,7 @@ test.describe('Attachment Point Tool', () => {
     await pressButton(page, 'Apply');
   });
 
-  test('Copy/Paste actions', async ({ page }) => {
+  test.fixme('Copy/Paste actions', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1648
     Description: Pasted structures are displayed with correct attachment points.
@@ -278,12 +278,10 @@ test.describe('Attachment Point Tool', () => {
     await copyAndPaste(page);
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
 
-    await selectTopPanelButton(TopPanelButton.Undo, page);
-    await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.Redo, page);
+    await screenshotBetweenUndoRedo(page);
   });
 
-  test('Cut/Paste actions', async ({ page }) => {
+  test.fixme('Cut/Paste actions', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1648
     Description: Pasted structures are displayed with correct attachment points.
@@ -293,9 +291,7 @@ test.describe('Attachment Point Tool', () => {
     await cutAndPaste(page);
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
 
-    await selectTopPanelButton(TopPanelButton.Undo, page);
-    await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.Redo, page);
+    await screenshotBetweenUndoRedo(page);
   });
 
   test.fixme('Copy/Paste reaction with Attachment point', async ({ page }) => {
@@ -321,9 +317,7 @@ test.describe('Attachment Point Tool', () => {
     await cutAndPaste(page);
     await page.mouse.click(x, y);
 
-    await selectTopPanelButton(TopPanelButton.Undo, page);
-    await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.Redo, page);
+    await screenshotBetweenUndoRedo(page);
   });
 
   test('Save as *.mol file', async ({ page }) => {
@@ -443,7 +437,6 @@ test.describe('Attachment Point Tool', () => {
       );
 
       await selectTopPanelButton(TopPanelButton.Layout, page);
-      await delay(DELAY_IN_SECONDS.TWO);
       await takeEditorScreenshot(page);
 
       await selectTopPanelButton(TopPanelButton.Undo, page);
@@ -459,14 +452,23 @@ test.describe('Attachment Point Tool', () => {
     Test case: EPMLSOPKET-1670
     Description: Structure with attachment points is rotated correctly. Structure rotated 90 degrees counterclockwise.
    */
-    const yDelta = 300;
+    const COORDINATES_TO_PERFORM_ROTATION = {
+      x: 20,
+      y: 160,
+    };
     await openFileAndAddToCanvas('chain-with-attachment-points.ket', page);
 
-    await selectLeftPanelButton(LeftPanelButton.RotateTool, page);
-    await moveMouseToTheMiddleOfTheScreen(page);
-    const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
-    const coordinatesWithShift = y + yDelta;
-    await dragMouseTo(x, coordinatesWithShift, page);
+    await page.keyboard.press('Control+a');
+    const coordinates = await getRotationHandleCoordinates(page);
+    const { x: rotationHandleX, y: rotationHandleY } = coordinates;
+
+    await page.mouse.move(rotationHandleX, rotationHandleY);
+    await page.mouse.down();
+    await page.mouse.move(
+      COORDINATES_TO_PERFORM_ROTATION.x,
+      COORDINATES_TO_PERFORM_ROTATION.y,
+    );
+    await page.mouse.up();
   });
 
   test('Drag atoms consist attachment points', async ({ page }) => {

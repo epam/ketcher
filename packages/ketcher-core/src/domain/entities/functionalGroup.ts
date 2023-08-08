@@ -62,20 +62,6 @@ export class FunctionalGroup {
     );
   }
 
-  static getFunctionalGroupByName(searchName: string): Struct | null {
-    const provider = FunctionalGroupsProvider.getInstance();
-    const functionalGroups = provider.getFunctionalGroupsList();
-
-    let foundGroup;
-    if (searchName) {
-      foundGroup = functionalGroups.find(({ name, abbreviation }) => {
-        return name === searchName || abbreviation === searchName;
-      });
-    }
-
-    return foundGroup || null;
-  }
-
   static atomsInFunctionalGroup(functionalGroups, atom): number | null {
     if (functionalGroups.size === 0) {
       return null;
@@ -99,6 +85,19 @@ export class FunctionalGroup {
       if (bonds.includes(bond)) return bond;
     }
     return null;
+  }
+
+  static isRGroupAttachmentPointInsideFunctionalGroup(
+    molecule: Struct,
+    id: number,
+  ) {
+    const rgroupAttachmentPoint = molecule.rgroupAttachmentPoints.get(id);
+    assert(rgroupAttachmentPoint != null);
+    const attachedAtom = rgroupAttachmentPoint.atomId;
+    return FunctionalGroup.atomsInFunctionalGroup(
+      molecule.functionalGroups,
+      attachedAtom,
+    );
   }
 
   static findFunctionalGroupByAtom(

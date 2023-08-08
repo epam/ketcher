@@ -42,7 +42,7 @@ const MonomerPreview = ({ className }: IPreviewProps) => {
 };
 
 const StyledPreview = styled(MonomerPreview)`
-  z-index: 1;
+  z-index: 5;
   position: absolute;
   width: ${preview.width}px;
   height: ${preview.height}px;

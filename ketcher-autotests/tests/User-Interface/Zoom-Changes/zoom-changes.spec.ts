@@ -109,12 +109,14 @@ test.describe('Zoom changes', () => {
     await selectUserTemplatesAndPlaceInTheMiddle(TemplateLibrary.Azulene, page);
     await resetCurrentTool(page);
 
-    await takeTopToolbarScreenshot(page);
-    await takeEditorScreenshot(page);
-
     const zoomInput = page.getByTestId(TestIdSelectors.ZoomInput);
+    const zoomInputValue = await zoomInput.evaluate(
+      (el: HTMLElement) => el.innerText,
+    );
     zoomInput.click();
     await page.getByText('Zoom in').click();
+    await takeTopToolbarScreenshot(page);
+    expect(zoomInputValue).toBe('110%');
 
     await takeTopToolbarScreenshot(page);
     await takeEditorScreenshot(page);
@@ -146,13 +148,15 @@ test.describe('Zoom changes', () => {
     await openFileAndAddToCanvas('clean_diffproperties.mol', page);
     zoomInput.click();
     await page.getByText('Zoom in').click();
-
-    await takeTopToolbarScreenshot(page);
-    await takeEditorScreenshot(page);
+    expect(zoomInputValue).toBe('110%');
 
     await page.getByText('Zoom in').click();
+    expect(zoomInputValue).toBe('120%');
 
-    await takeTopToolbarScreenshot(page);
-    await takeEditorScreenshot(page);
+    await page.getByText('Zoom out').click();
+    expect(zoomInputValue).toBe('110%');
+
+    await page.getByText('Zoom out').click();
+    expect(zoomInputValue).toBe('100%');
   });
 });

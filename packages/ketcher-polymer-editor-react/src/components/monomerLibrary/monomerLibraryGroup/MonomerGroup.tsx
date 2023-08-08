@@ -13,7 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+import { useCallback, useMemo } from 'react';
 import { EmptyFunction } from 'helpers';
+import { debounce } from 'lodash';
 import { MonomerItem } from '../monomerLibraryItem';
 import { MonomerItemType } from '../monomerLibraryItem/types';
 import { GroupContainer, GroupTitle, ItemsContainer } from './styles';
@@ -32,7 +34,18 @@ const MonomerGroup = ({
   const dispatch = useAppDispatch();
   const preview = useAppSelector(selectShowPreview);
 
+  const dispatchShowPreview = useCallback(
+    (payload) => dispatch(showPreview(payload)),
+    [dispatch],
+  );
+
+  const debouncedShowPreview = useMemo(
+    () => debounce((p) => dispatchShowPreview(p), 500),
+    [dispatchShowPreview],
+  );
+
   const handleItemMouseLeave = () => {
+    debouncedShowPreview.cancel();
     dispatch(showPreview());
   };
 
@@ -40,13 +53,13 @@ const MonomerGroup = ({
     monomer: MonomerItemType,
     e: React.MouseEvent<HTMLDivElement, MouseEvent>,
   ) => {
-    if (preview.monomer) {
+    if (preview.monomer || !e.currentTarget) {
       return;
     }
 
     const cardCoordinates = e.currentTarget.getBoundingClientRect();
     const previewStyle = calculatePreviewPosition(monomer, cardCoordinates);
-    dispatch(showPreview({ monomer, style: previewStyle }));
+    debouncedShowPreview({ monomer, style: previewStyle });
   };
 
   return (

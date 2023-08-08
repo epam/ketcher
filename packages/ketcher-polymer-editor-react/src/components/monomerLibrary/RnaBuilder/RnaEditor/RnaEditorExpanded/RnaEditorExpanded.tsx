@@ -143,7 +143,10 @@ export const RnaEditorExpanded = ({
               selected={activeMonomerGroup === groupName}
               groupName={groupName}
               monomerName={
-                selectActivePresetMonomerGroup(activePreset, groupName)?.label
+                selectActivePresetMonomerGroup(activePreset, groupName)
+                  ?.label ||
+                selectActivePresetMonomerGroup(activePreset, groupName)?.props
+                  .MonomerName
               }
               iconName={iconName}
               onClick={() => selectGroup(groupName)}

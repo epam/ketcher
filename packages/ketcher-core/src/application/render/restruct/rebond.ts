@@ -517,7 +517,7 @@ function getBondPath(
   hb2: HalfBond,
   isSnapping: boolean,
 ) {
-  let path = null;
+  let path: any = null;
   const render = restruct.render;
   const struct = restruct.molecule;
   const shiftA = !restruct.atoms.get(hb1.begin)?.showLabel;
@@ -682,6 +682,10 @@ function getBondPath(
       break;
     default:
       throw new Error('Bond type ' + bond.b.type + ' not supported');
+  }
+  if (path) {
+    const { previewOpacity } = render.options;
+    path.attr({ opacity: bond.b.isPreview ? previewOpacity : 1 });
   }
   return path;
 }

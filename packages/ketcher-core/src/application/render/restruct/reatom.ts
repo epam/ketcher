@@ -711,11 +711,13 @@ function buildLabel(
     }
   }
 
+  const { previewOpacity } = options;
   label.path = paper.text(ps.x, ps.y, label.text).attr({
     font: options.font,
     'font-size': options.fontsz,
     fill: atom.color,
     'font-style': atom.a.pseudo ? 'italic' : '',
+    'fill-opacity': atom.a.isPreview ? previewOpacity : 1,
   });
 
   label.rbb = util.relBox(label.path.getBBox());

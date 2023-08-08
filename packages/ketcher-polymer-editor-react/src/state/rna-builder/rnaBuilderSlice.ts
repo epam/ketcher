@@ -105,6 +105,22 @@ export const rnaBuilderSlice = createSlice({
     setHasUniqueNameError: (state, action: PayloadAction<boolean>) => {
       state.hasUniqueNameError = action.payload;
     },
+    setDefaultPresets: (
+      state: RootState,
+      action: PayloadAction<IRnaPreset[]>,
+    ) => {
+      const defaultNucleotide = action.payload[0];
+      if (!defaultNucleotide) {
+        return;
+      }
+      const presetExists = state.presets.find(
+        (item: IRnaPreset) => item.name === defaultNucleotide.name,
+      );
+      if (presetExists) {
+        return;
+      }
+      state.presets = action.payload;
+    },
   },
 });
 
@@ -169,6 +185,7 @@ export const {
   createNewPreset,
   setIsEditMode,
   setHasUniqueNameError,
+  setDefaultPresets,
 } = rnaBuilderSlice.actions;
 
 export const rnaBuilderReducer = rnaBuilderSlice.reducer;

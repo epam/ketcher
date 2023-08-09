@@ -112,7 +112,7 @@ If you want to run tests from Polymer Editor, add `ENABLE_POLYMER_EDITOR=true` i
 
 Also make sure, that test is not skipped! Check if test starts with
 `test.skip('We test something', async ({ page }) => {`
-Remove "skip" before running.
+Remove "skip" before running. Than add it back before push - we do not test Polymer Editor on ci/cd for now (will be changed in the future).
 
 - **Run app in browser: from root directory "ketcher"**:
 

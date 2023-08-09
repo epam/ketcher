@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test } from '@playwright/test';
 import {
   POLYMER_TOGGLER,
   RNA_TAB,
@@ -12,7 +12,7 @@ import {
 Test case: #3063 - Add e2e tests for Macromolecule editor
 */
 
-test('Add new preset and duplicate it', async ({ page }) => {
+test.skip('Add new preset and duplicate it', async ({ page }) => {
   await page.goto('');
 
   // Click on POLYMER_TOGGLER

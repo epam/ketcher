@@ -57,7 +57,7 @@ import {
   GroupContainer,
   ItemsContainer,
 } from 'components/monomerLibrary/monomerLibraryGroup/styles';
-import { MonomerItemType } from 'components/monomerLibrary/monomerLibraryItem/types';
+import { MonomerItemType } from 'ketcher-core';
 
 interface IGroupsDataItem {
   groupName: RnaBuilderItem;

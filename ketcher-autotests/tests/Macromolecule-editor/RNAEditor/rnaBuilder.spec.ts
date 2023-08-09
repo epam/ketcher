@@ -59,19 +59,19 @@ test.skip('Add new preset and duplicate it', async ({ page }) => {
   await page.click('[data-testid="duplicate-btn"]');
 
   // Click on <div> "Sugar 25R"
-  await page.click('[data-testid="rna-builder-slot--sugar"]');
+  await page.getByTestId(SUGAR).click();
 
   // Click on <div> "dR ★"
   await page.click('[data-testid="dR___D-Arginine"]');
 
   // Click on <div> "Base baA"
-  await page.click('[data-testid="rna-builder-slot--base"]');
+  await page.getByTestId(BASE).click();
 
   // Click on <span> "cl2A"
   await page.click('text=cl2A');
 
-  // Click on <span> "bP"
-  await page.click('text=bP');
+  // Click on <div> "Phosphate bP"
+  await page.getByTestId(PHOSPHATE).click();
 
   // Click on <div> "Smp ★"
   await page.click('[data-testid="Smp___(Sp)-Methylphosphonate"]');

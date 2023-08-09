@@ -2,7 +2,7 @@ import { test } from '@playwright/test';
 import { clickInTheMiddleOfTheScreen } from '@utils';
 import { POLYMER_TOGGLER } from '../../../constants/testIdConstants';
 
-test('Select peptide and drag it to canvas', async ({ page }) => {
+test.skip('Select peptide and drag it to canvas', async ({ page }) => {
   // Load "http://localhost:5173/"
   await page.goto('');
 

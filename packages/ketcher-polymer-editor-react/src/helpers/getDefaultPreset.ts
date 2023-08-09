@@ -1,5 +1,5 @@
 import { IRnaPreset } from 'components/monomerLibrary/RnaBuilder/types';
-import { MonomerItemType } from 'components/monomerLibrary/monomerLibraryItem/types';
+import { MonomerItemType } from 'ketcher-core';
 
 const defaultPresetBases = {
   A: 'Adenine',

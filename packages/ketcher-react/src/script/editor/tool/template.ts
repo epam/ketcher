@@ -29,9 +29,8 @@ import {
   fromFragmentDeletion,
   fromSgroupDeletion,
   Action,
+  vectorUtils,
 } from 'ketcher-core';
-
-import utils from '../shared/utils';
 import Editor from '../Editor';
 import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems';
 import { MODES } from 'src/constants';
@@ -74,7 +73,7 @@ class TemplateTool implements Tool {
 
     const atom = frag.atoms.get(this.template.aid);
     if (atom) {
-      this.template.angle0 = utils.calcAngle(atom.pp, this.template.xy0); // center tilt
+      this.template.angle0 = vectorUtils.calcAngle(atom.pp, this.template.xy0); // center tilt
       this.findItems.push('atoms');
     }
 
@@ -330,13 +329,13 @@ class TemplateTool implements Tool {
     }
 
     // calc angle
-    let angle = utils.calcAngle(targetPos, eventPos);
+    let angle = vectorUtils.calcAngle(targetPos, eventPos);
 
     if (!event.ctrlKey) {
-      angle = utils.fracAngle(angle, null);
+      angle = vectorUtils.fracAngle(angle, null);
     }
 
-    const degrees = utils.degrees(angle);
+    const degrees = vectorUtils.degrees(angle);
     this.editor.event.message.dispatch({ info: degrees + 'º' });
 
     // check if anything changed since last time
@@ -516,12 +515,15 @@ class TemplateTool implements Tool {
           const atom = this.struct.atoms.get(ci.id);
           const neiId =
             atom && this.struct.halfBonds.get(atom.neighbors[0])?.end;
-          const nei: any =
-            (neiId || neiId === 0) && this.struct.atoms.get(neiId);
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+          const nei = this.struct.atoms.get(neiId!)!;
 
           angle = event.ctrlKey
-            ? utils.calcAngle(nei?.pp, atom?.pp)
-            : utils.fracAngle(utils.calcAngle(nei.pp, atom?.pp), null);
+            ? vectorUtils.calcAngle(nei.pp, atom!.pp)
+            : vectorUtils.fracAngle(
+                vectorUtils.calcAngle(nei.pp, atom!.pp),
+                null,
+              );
         } else {
           // on single atom
           angle = 0;

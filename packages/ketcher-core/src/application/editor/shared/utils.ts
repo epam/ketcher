@@ -80,8 +80,8 @@ function mergeBondsParams(
 export default {
   calcAngle,
   fracAngle,
-  calcNewAtomPos,
   degrees,
   setFracAngle,
   mergeBondsParams,
+  calcNewAtomPos,
 };

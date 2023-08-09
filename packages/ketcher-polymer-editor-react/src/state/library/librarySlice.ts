@@ -15,9 +15,8 @@
  ***************************************************************************/
 
 import { createSlice, PayloadAction, Slice } from '@reduxjs/toolkit';
-import { MonomerItemType } from 'components/monomerLibrary/monomerLibraryItem/types';
 import { Group } from 'components/monomerLibrary/monomerLibraryList/types';
-import { SdfItem } from 'ketcher-core';
+import { MonomerItemType, SdfItem } from 'ketcher-core';
 import { LibraryNameType } from 'src/constants';
 
 interface LibraryState {
@@ -71,7 +70,9 @@ export const selectMonomersInCategory = (
 export const selectMonomersInFavorites = (items: MonomerItemType[]) =>
   items.filter((item) => item.favorite);
 
-export const selectFilteredMonomers = (state) => {
+export const selectFilteredMonomers = (
+  state,
+): Array<MonomerItemType & { favorite: boolean }> => {
   const { searchFilter, monomers } = state.library;
   return monomers
     .filter((item: MonomerItemType) => {

@@ -32,13 +32,14 @@ import {
   KETCHER_INIT_EVENT_NAME,
   KETCHER_ROOT_NODE_CLASS_NAME,
 } from './constants';
+import { createRoot } from 'react-dom/client';
 
 const mediaSizes = {
   smallWidth: 1040,
   smallHeight: 600,
 };
 
-interface EditorProps extends Omit<Config, 'element'> {
+interface EditorProps extends Omit<Config, 'element' | 'appRoot'> {
   onInit?: (ketcher: Ketcher) => void;
 }
 
@@ -52,15 +53,23 @@ function Editor(props: EditorProps) {
   const ketcherInitEvent = new Event(KETCHER_INIT_EVENT_NAME);
 
   useEffect(() => {
+    const appRoot = createRoot(rootElRef.current as HTMLDivElement);
     init({
       ...props,
       element: rootElRef.current,
+      appRoot,
     }).then((ketcher: Ketcher) => {
       if (typeof onInit === 'function') {
         onInit(ketcher);
         window.dispatchEvent(ketcherInitEvent);
       }
     });
+    return () => {
+      // setTimeout is used to disable the warn msg from react "Attempted to synchronously unmount a root while React was already rendering"
+      setTimeout(() => {
+        appRoot.unmount();
+      });
+    };
     // TODO: provide the list of dependencies after implementing unsubscribe function
   }, []);
 

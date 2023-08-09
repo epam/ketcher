@@ -4,7 +4,6 @@ import {
   LeftPanelButton,
   selectLeftPanelButton,
   clickInTheMiddleOfTheScreen,
-  delay,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   pressButton,
@@ -66,7 +65,6 @@ test.describe('Superatom S-Group tool', () => {
   });
 
   test.afterEach(async ({ page }) => {
-    await delay(3);
     await takeEditorScreenshot(page);
   });
 
@@ -148,7 +146,7 @@ test.describe('Superatom S-Group tool', () => {
     */
     await openFileAndAddToCanvas('superatom.mol', page);
     await page.keyboard.press('Control+a');
-    await selectLeftPanelButton(LeftPanelButton.Erase, page);
+    await page.getByTestId('delete').click();
     await takeEditorScreenshot(page);
 
     await screenshotBetweenUndoRedo(page);

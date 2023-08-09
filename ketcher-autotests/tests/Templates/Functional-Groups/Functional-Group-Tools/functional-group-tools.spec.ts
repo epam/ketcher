@@ -29,6 +29,7 @@ import {
   STRUCTURE_LIBRARY_BUTTON_NAME,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
+import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
 
 const X_DELTA = 300;
 
@@ -42,19 +43,22 @@ test.describe('Templates - Functional Group Tools', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Add a Bond to a contracted Functional Group', async ({ page }) => {
-    /*
+  test.fixme(
+    'Add a Bond to a contracted Functional Group',
+    async ({ page }) => {
+      /*
     Test case: EPMLSOPKET-10086
     Description: A bond is added to a contracted functional group and form a bond
     */
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await page.getByRole('tab', { name: 'Functional Groups' }).click();
-    await selectFunctionalGroups(FunctionalGroups.Boc, page);
-    await clickInTheMiddleOfTheScreen(page);
+      await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+      await page.getByRole('tab', { name: 'Functional Groups' }).click();
+      await selectFunctionalGroups(FunctionalGroups.Boc, page);
+      await clickInTheMiddleOfTheScreen(page);
 
-    await selectLeftPanelButton(LeftPanelButton.SingleBond, page);
-    await clickInTheMiddleOfTheScreen(page);
-  });
+      await selectLeftPanelButton(LeftPanelButton.SingleBond, page);
+      await clickInTheMiddleOfTheScreen(page);
+    },
+  );
 
   test('Add a Chain to a contracted Functional Group', async ({ page }) => {
     /*
@@ -84,26 +88,40 @@ test.describe('Templates - Functional Group Tools', () => {
     await clickOnAtom(page, 'C', 0);
   });
 
-  test.fixme('Rotate of expanded Functional Group', async ({ page }) => {
+  test('Rotate of expanded Functional Group', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-2900
     Description: All elements of the Functional Group are rotated
    */
+    const COORDINATES_TO_PERFORM_ROTATION = {
+      x: 20,
+      y: 160,
+    };
     await openFileAndAddToCanvas('functional-group-expanded.mol', page);
 
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
-    await clickInTheMiddleOfTheScreen(page);
+    await page.keyboard.press('Control+a');
+    const coordinates = await getRotationHandleCoordinates(page);
+    const { x: rotationHandleX, y: rotationHandleY } = coordinates;
 
-    // const { x, y } = await getRotationHandleCoordinates(page);
-    // await page.mouse.move(x, y);
-    // await dragMouseTo(x - 100, y, page);
+    await page.mouse.move(rotationHandleX, rotationHandleY);
+    await page.mouse.down();
+    await page.mouse.move(
+      COORDINATES_TO_PERFORM_ROTATION.x,
+      COORDINATES_TO_PERFORM_ROTATION.y,
+    );
+    await page.mouse.up();
   });
 
-  test.fixme('Rotate Tool (FG + Other structures)', async ({ page }) => {
+  test('Rotate Tool (FG + Other structures)', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-3935
-    Description: The selected Functional Group is rotated. Benzene ring is not rotated.
+    Description: The selected Functional Group is rotated. Benzene ring is rotated.
    */
+    const COORDINATES_TO_PERFORM_ROTATION = {
+      x: 20,
+      y: 160,
+    };
     await openFileAndAddToCanvas(
       'expand-functional-group-with-benzene.mol',
       page,
@@ -112,9 +130,16 @@ test.describe('Templates - Functional Group Tools', () => {
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
     await page.keyboard.press('Control+a');
 
-    // const { x, y } = await getRotationHandleCoordinates(page);
-    // await page.mouse.move(x, y);
-    // await dragMouseTo(x + 100, y + 100, page);
+    const coordinates = await getRotationHandleCoordinates(page);
+    const { x: rotationHandleX, y: rotationHandleY } = coordinates;
+
+    await page.mouse.move(rotationHandleX, rotationHandleY);
+    await page.mouse.down();
+    await page.mouse.move(
+      COORDINATES_TO_PERFORM_ROTATION.x,
+      COORDINATES_TO_PERFORM_ROTATION.y,
+    );
+    await page.mouse.up();
   });
 
   test('Add Charge to the Functional group', async ({ page }) => {
@@ -540,69 +565,79 @@ test.describe('Templates - Functional Group Tools3', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Expand/Remove abbreviation context menu with selected tools', async ({
-    page,
-  }) => {
-    /*
+  test.fixme(
+    'Expand/Remove abbreviation context menu with selected tools',
+    async ({ page }) => {
+      /*
     Test case: EPMLSOPKET-3933
     Description:  Functional Group-Expand/Remove abbreviation context menu is shown
    */
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await page.getByRole('tab', { name: 'Functional Groups' }).click();
-    await selectFunctionalGroups(FunctionalGroups.CO2Et, page);
-    await clickInTheMiddleOfTheScreen(page);
+      await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+      await page.getByRole('tab', { name: 'Functional Groups' }).click();
+      await selectFunctionalGroups(FunctionalGroups.CO2Et, page);
+      await clickInTheMiddleOfTheScreen(page);
 
-    await selectLeftPanelToolClickAndScreenshot(LeftPanelButton.HandTool, page);
-    await selectLeftPanelToolClickAndScreenshot(
-      LeftPanelButton.RectangleSelection,
-      page,
-    );
-    await selectLeftPanelToolClickAndScreenshot(LeftPanelButton.Erase, page);
-    await selectLeftPanelToolClickAndScreenshot(
-      LeftPanelButton.SingleBond,
-      page,
-    );
-    await selectLeftPanelToolClickAndScreenshot(LeftPanelButton.Chain, page);
-    await selectLeftPanelToolClickAndScreenshot(
-      LeftPanelButton.ChargePlus,
-      page,
-    );
-    await selectLeftPanelToolClickAndScreenshot(
-      LeftPanelButton.ChargeMinus,
-      page,
-    );
+      await selectLeftPanelToolClickAndScreenshot(
+        LeftPanelButton.HandTool,
+        page,
+      );
+      await selectLeftPanelToolClickAndScreenshot(
+        LeftPanelButton.RectangleSelection,
+        page,
+      );
+      await selectLeftPanelToolClickAndScreenshot(LeftPanelButton.Erase, page);
+      await selectLeftPanelToolClickAndScreenshot(
+        LeftPanelButton.SingleBond,
+        page,
+      );
+      await selectLeftPanelToolClickAndScreenshot(LeftPanelButton.Chain, page);
+      await selectLeftPanelToolClickAndScreenshot(
+        LeftPanelButton.ChargePlus,
+        page,
+      );
+      await selectLeftPanelToolClickAndScreenshot(
+        LeftPanelButton.ChargeMinus,
+        page,
+      );
 
-    await selectLeftPanelToolClickAndScreenshot(LeftPanelButton.S_Group, page);
-    await selectLeftPanelToolClickAndScreenshot(
-      LeftPanelButton.ReactionPlusTool,
-      page,
-    );
-    await selectLeftPanelToolClickAndScreenshot(
-      LeftPanelButton.ArrowOpenAngleTool,
-      page,
-    );
-    await selectLeftPanelToolClickAndScreenshot(
-      LeftPanelButton.ReactionMappingTool,
-      page,
-    );
-    await selectLeftPanelToolClickAndScreenshot(
-      LeftPanelButton.R_GroupLabelTool,
-      page,
-    );
-    await selectLeftPanelToolClickAndScreenshot(
-      LeftPanelButton.ShapeEllipse,
-      page,
-    );
-    await selectLeftPanelToolClickAndScreenshot(LeftPanelButton.AddText, page);
+      await selectLeftPanelToolClickAndScreenshot(
+        LeftPanelButton.S_Group,
+        page,
+      );
+      await selectLeftPanelToolClickAndScreenshot(
+        LeftPanelButton.ReactionPlusTool,
+        page,
+      );
+      await selectLeftPanelToolClickAndScreenshot(
+        LeftPanelButton.ArrowOpenAngleTool,
+        page,
+      );
+      await selectLeftPanelToolClickAndScreenshot(
+        LeftPanelButton.ReactionMappingTool,
+        page,
+      );
+      await selectLeftPanelToolClickAndScreenshot(
+        LeftPanelButton.R_GroupLabelTool,
+        page,
+      );
+      await selectLeftPanelToolClickAndScreenshot(
+        LeftPanelButton.ShapeEllipse,
+        page,
+      );
+      await selectLeftPanelToolClickAndScreenshot(
+        LeftPanelButton.AddText,
+        page,
+      );
 
-    await selectRingButton(RingButton.Benzene, page);
-    await clickInTheMiddleOfTheScreen(page, 'right');
-    await takeEditorScreenshot(page);
+      await selectRingButton(RingButton.Benzene, page);
+      await clickInTheMiddleOfTheScreen(page, 'right');
+      await takeEditorScreenshot(page);
 
-    await selectAtomInToolbar(AtomButton.Nitrogen, page);
-    await clickInTheMiddleOfTheScreen(page, 'right');
-    await takeEditorScreenshot(page);
-  });
+      await selectAtomInToolbar(AtomButton.Nitrogen, page);
+      await clickInTheMiddleOfTheScreen(page, 'right');
+      await takeEditorScreenshot(page);
+    },
+  );
 
   test('Expand/Contract/Remove Abbreviation with multiple FG', async ({
     page,

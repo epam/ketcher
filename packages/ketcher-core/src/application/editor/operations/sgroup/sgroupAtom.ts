@@ -16,7 +16,7 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
 import { BaseOperation } from '../base';
-import { OperationType } from '../OperationType';
+import { OperationPriority, OperationType } from '../OperationType';
 import { ReStruct } from '../../../render';
 import { SGroup } from 'domain/entities';
 
@@ -31,7 +31,7 @@ class SGroupAtomAdd extends BaseOperation {
   data: Data;
 
   constructor(sgroupId?: any, aid?: any) {
-    super(OperationType.S_GROUP_ATOM_ADD, 3);
+    super(OperationType.S_GROUP_ATOM_ADD, OperationPriority.S_GROUP_ATOM_ADD);
     this.data = { sgid: sgroupId, aid };
   }
 

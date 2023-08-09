@@ -56,7 +56,6 @@ async function mergeDistantRingByABond(type: RingButton, page: Page) {
   await page.mouse.move(point.x - 1, point.y - 1);
   point = await getRightBondByAttributes(page, { reactingCenterStatus: 0 });
   await dragMouseTo(point.x, point.y, page);
-  await takeEditorScreenshot(page);
 }
 
 async function deleteRightBondInRing(page: Page) {
@@ -66,7 +65,6 @@ async function deleteRightBondInRing(page: Page) {
   await page.keyboard.press('Escape');
   await page.mouse.click(point.x, point.y);
   await page.keyboard.press('Delete');
-  await takeEditorScreenshot(page);
 }
 
 async function checkHistoryForBondDeletation(page: Page) {
@@ -89,11 +87,13 @@ async function ManipulateRingsByName(type: RingButton, page: Page) {
   await placeTwoRingsMergedByAtom(type, page);
   await mergeRingByBond(type, page);
   await mergeDistantRingByABond(type, page);
+  await takeEditorScreenshot(page);
   await selectTopPanelButton(TopPanelButton.Clear, page);
 
   await selectButtonByTitle(type, page);
   await clickInTheMiddleOfTheScreen(page);
   await deleteRightBondInRing(page);
+  await takeEditorScreenshot(page);
 
   await checkHistoryForBondDeletation(page);
 }

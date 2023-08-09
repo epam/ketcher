@@ -102,20 +102,19 @@ test.describe('Zoom changes', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Zoom in structure verification', async ({ page }) => {
+  test('Zoom in&out structure verification', async ({ page }) => {
     /*
-    Test case: EPMLSOPKET-1763
+    Test case: EPMLSOPKET-1763, EPMLSOPKET-1764
     */
     await selectUserTemplatesAndPlaceInTheMiddle(TemplateLibrary.Azulene, page);
     await resetCurrentTool(page);
 
     const zoomInput = page.getByTestId(TestIdSelectors.ZoomInput);
+    zoomInput.click();
+    await page.getByText('Zoom in').click();
     const zoomInputValue = await zoomInput.evaluate(
       (el: HTMLElement) => el.innerText,
     );
-    zoomInput.click();
-    await page.getByText('Zoom in').click();
-    await takeTopToolbarScreenshot(page);
     expect(zoomInputValue).toBe('110%');
 
     await takeTopToolbarScreenshot(page);
@@ -142,21 +141,80 @@ test.describe('Zoom changes', () => {
     await resetCurrentTool(page);
 
     await page.keyboard.press('+');
+    const zoomInputValueOne = await zoomInput.evaluate(
+      (el: HTMLElement) => el.innerText,
+    );
+    expect(zoomInputValueOne).toBe('110%');
+  });
 
-    await page.goto('');
-
+  test('Zoom actions for structures with query features', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-1765
+    */
     await openFileAndAddToCanvas('clean_diffproperties.mol', page);
+    const zoomInput = page.getByTestId(TestIdSelectors.ZoomInput);
     zoomInput.click();
     await page.getByText('Zoom in').click();
+    await takeTopToolbarScreenshot(page);
+    const zoomInputValue = await zoomInput.evaluate(
+      (el: HTMLElement) => el.innerText,
+    );
     expect(zoomInputValue).toBe('110%');
 
     await page.getByText('Zoom in').click();
-    expect(zoomInputValue).toBe('120%');
+    const zoomInputValueOne = await zoomInput.evaluate(
+      (el: HTMLElement) => el.innerText,
+    );
+    expect(zoomInputValueOne).toBe('120%');
 
     await page.getByText('Zoom out').click();
+    const zoomInputValueTwo = await zoomInput.evaluate(
+      (el: HTMLElement) => el.innerText,
+    );
+    expect(zoomInputValueTwo).toBe('110%');
+
+    await page.getByText('Zoom out').click();
+    const zoomInputValueThree = await zoomInput.evaluate(
+      (el: HTMLElement) => el.innerText,
+    );
+    expect(zoomInputValueThree).toBe('100%');
+  });
+
+  test('Zoom actions for structures with Rgroup', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-1766
+    */
+
+    await openFileAndAddToCanvas('R-all.mol', page);
+
+    const zoomInput = page.getByTestId(TestIdSelectors.ZoomInput);
+    zoomInput.click();
+    await page.getByText('Zoom in').click();
+    const zoomInputValue = await zoomInput.evaluate(
+      (el: HTMLElement) => el.innerText,
+    );
     expect(zoomInputValue).toBe('110%');
+    await takeEditorScreenshot(page);
+
+    await page.getByText('Zoom in').click();
+    const zoomInputValueOne = await zoomInput.evaluate(
+      (el: HTMLElement) => el.innerText,
+    );
+    expect(zoomInputValueOne).toBe('120%');
+    await takeEditorScreenshot(page);
 
     await page.getByText('Zoom out').click();
-    expect(zoomInputValue).toBe('100%');
+    const zoomInputValueTwo = await zoomInput.evaluate(
+      (el: HTMLElement) => el.innerText,
+    );
+    expect(zoomInputValueTwo).toBe('110%');
+    await takeEditorScreenshot(page);
+
+    await page.getByText('Zoom out').click();
+    const zoomInputValueThree = await zoomInput.evaluate(
+      (el: HTMLElement) => el.innerText,
+    );
+    expect(zoomInputValueThree).toBe('100%');
+    await takeEditorScreenshot(page);
   });
 });

@@ -276,7 +276,7 @@ class SelectTool implements Tool {
       selectedSgroups[selectedSgroups.length - 1],
     );
     const isDraggingSaltOrSolventOnStructure = SGroup.isSaltOrSolvent(
-      possibleSaltOrSolvent?.item.data.name,
+      possibleSaltOrSolvent?.item?.data?.name,
     );
     const isDraggingCustomSgroupOnStructure =
       SGroup.isSuperAtom(possibleSaltOrSolvent?.item) &&
@@ -489,9 +489,9 @@ class SelectTool implements Tool {
     if (dragCtx?.mergeItems) {
       const mergeAtoms = Array.from(dragCtx.mergeItems.atoms.values());
       const mergeBonds = Array.from(dragCtx.mergeItems.bonds.values());
-      const sgroupsOnCanvas = Array.from(sgroups.values()).map(
-        ({ item }) => item,
-      );
+      const sgroupsOnCanvas = Array.from(sgroups.values())
+        .map(({ item }) => item)
+        .filter((sgroup): sgroup is SGroup => !!sgroup);
       isDraggingOnSaltOrSolventAtom = mergeAtoms.some((atomId) =>
         SGroup.isAtomInSaltOrSolvent(atomId as number, sgroupsOnCanvas),
       );

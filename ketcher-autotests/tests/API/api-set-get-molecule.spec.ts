@@ -8,6 +8,7 @@ import {
   DELAY_IN_SECONDS,
   FILE_TEST_DATA,
   receiveFileComparisonData,
+  waitForLoad,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import {
@@ -320,7 +321,12 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Description: one contracted Unknown Superatom added through API ketcher.setMolecule.
     Unknown Superatom is able to expand.
     */
-    await setMolecule(page, FILE_TEST_DATA.oneUnknownSuperatomContractedV3000);
+    await waitForLoad(page, async () => {
+      await setMolecule(
+        page,
+        FILE_TEST_DATA.oneUnknownSuperatomContractedV3000,
+      );
+    });
     await takeEditorScreenshot(page);
 
     await page.getByText('Some Name').click({ button: 'right' });

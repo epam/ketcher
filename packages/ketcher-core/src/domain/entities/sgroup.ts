@@ -83,6 +83,8 @@ export class SGroup {
   pp: Vec2 | null;
   data: any;
   dataArea: any;
+  atomId?: number;
+  position?: Vec2;
   private readonly attachmentPoints: SGroupAttachmentPoint[];
 
   constructor(type: string) {
@@ -730,11 +732,11 @@ export class SGroup {
     sGroups: Map<number, ReSGroup> | Pool<SGroup>,
   ) {
     return [...sGroups.values()].some((sGroupOrReSGroup) => {
-      const sGroup: SGroup =
+      const sGroup: SGroup | undefined =
         'item' in sGroupOrReSGroup ? sGroupOrReSGroup.item : sGroupOrReSGroup;
-      const atomsInSGroup = sGroup.atoms;
+      const atomsInSGroup = sGroup?.atoms;
       return (
-        sGroup.isContracted() &&
+        sGroup?.isContracted() &&
         atomsInSGroup.includes(bond?.begin) &&
         atomsInSGroup.includes(bond?.end)
       );

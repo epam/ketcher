@@ -118,7 +118,6 @@ class TemplateTool implements Tool {
   private previewAction: Action | null;
   private previewTimeout: ReturnType<typeof setTimeout> | null = null;
   private lastPreviewId: string | null;
-  private mouseMoveEvent: any;
   private targetGroupsIds: Array<number> = [];
   private readonly isSaltOrSolvent: boolean;
   private event: Event | undefined;
@@ -293,7 +292,6 @@ class TemplateTool implements Tool {
   }
 
   mousemove(event) {
-    this.mouseMoveEvent = event;
     if (!this.dragCtx) {
       this.editor.hoverIcon.updatePosition();
       this.editor.hover(
@@ -308,42 +306,28 @@ class TemplateTool implements Tool {
         this.editor.hoverIcon.show();
       }
 
-      const isMouseAwayFromAtomsAndBonds = !ci && this.isPreviewVisible;
+      const isMouseAwayFromAtomsAndBonds = !ci;
       const isPreviewTargetChanged =
         ci && this.lastPreviewId !== getUniqueCiId(ci);
       const shouldHidePreview =
         isMouseAwayFromAtomsAndBonds || isPreviewTargetChanged;
       if (shouldHidePreview) {
-        if (this.previewTimeout) {
-          clearTimeout(this.previewTimeout);
-          this.previewTimeout = null;
-          this.isPreviewVisible = false;
-          if (this.previewAction) {
-            this.previewAction.perform(this.editor.render.ctab);
-            this.previewAction = null;
-          }
+        this.hidePreview();
+        if (!this.editor.hoverIcon.isShown) {
           this.editor.hoverIcon.show();
-          this.editor.render.update();
         }
       }
 
-      const shouldShowPreview = ci && !this.isSaltOrSolvent;
+      const shouldShowPreview =
+        ci &&
+        !this.isSaltOrSolvent &&
+        !this.isPreviewVisible &&
+        !this.previewTimeout;
+
       if (shouldShowPreview) {
         this.lastPreviewId = getUniqueCiId(ci);
 
-        if (this.previewTimeout) {
-          clearTimeout(this.previewTimeout);
-          this.previewTimeout = null;
-        }
         this.previewTimeout = setTimeout(() => {
-          const updatedCi = this.editor.findItem(this.mouseMoveEvent, [
-            'atoms',
-            'bonds',
-          ]);
-          if (!updatedCi || getUniqueCiId(ci) !== this.lastPreviewId) {
-            return;
-          }
-
           if (ci.map === 'bonds' && !this.isModeFunctionalGroup) {
             this.isPreviewVisible = true;
             this.editor.hoverIcon.hide();
@@ -351,13 +335,14 @@ class TemplateTool implements Tool {
 
             const sign1 = getBondFlipSign(this.struct, bond);
             const sign2 = this.template.sign;
+            const shouldFlip = sign1 * sign2 > 0;
 
             const promise = fromTemplateOnBondAction(
               restruct,
               this.template,
               ci.id,
               this.editor.event,
-              sign1 * sign2 > 0,
+              shouldFlip,
               true,
               true,
             ) as Promise<any>;
@@ -711,11 +696,13 @@ class TemplateTool implements Tool {
   hidePreview() {
     if (this.isPreviewVisible && this.previewAction) {
       this.previewAction.perform(this.editor.render.ctab);
+      this.previewAction = null;
       this.isPreviewVisible = false;
       this.editor.render.update();
-      if (this.previewTimeout) {
-        clearTimeout(this.previewTimeout);
-      }
+    }
+    if (this.previewTimeout) {
+      clearTimeout(this.previewTimeout);
+      this.previewTimeout = null;
     }
   }
 }

@@ -35,12 +35,12 @@ import {
   scrollByVector,
   shiftAndExtendCanvasByVector,
   getItemsToFuse,
+  vectorUtils,
 } from 'ketcher-core';
 
 import LassoHelper from './helper/lasso';
 import { atomLongtapEvent } from './atom';
 import SGroupTool from './sgroup';
-import utils from '../shared/utils';
 import { xor } from 'lodash/fp';
 import { Editor } from '../Editor';
 import { dropAndMerge } from './helper/dropAndMerge';
@@ -172,8 +172,8 @@ class SelectTool implements Tool {
       if (shouldDisplayDegree) {
         // moving selected objects
         const pos = rnd.page2obj(event);
-        const angle = utils.calcAngle(dragCtx.xy0, pos);
-        const degrees = utils.degrees(angle);
+        const angle = vectorUtils.calcAngle(dragCtx.xy0, pos);
+        const degrees = vectorUtils.degrees(angle);
         editor.event.message.dispatch({ info: degrees + 'º' });
       }
       /* end */

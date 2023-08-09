@@ -16,8 +16,13 @@
 
 import utils from './shared/utils';
 
-// TODO: delete it
-export const fracAngle = utils.fracAngle;
+export const vectorUtils = {
+  fracAngle: utils.fracAngle,
+  calcAngle: utils.calcAngle,
+  degrees: utils.degrees,
+  calcNewAtomPos: utils.calcNewAtomPos,
+};
+
 export * from './operations';
 export * from './actions';
 export * from './shared/constants';

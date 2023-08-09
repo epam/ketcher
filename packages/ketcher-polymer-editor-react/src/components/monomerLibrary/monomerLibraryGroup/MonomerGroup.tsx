@@ -17,22 +17,24 @@ import { useCallback, useMemo } from 'react';
 import { EmptyFunction } from 'helpers';
 import { debounce } from 'lodash';
 import { MonomerItem } from '../monomerLibraryItem';
-import { MonomerItemType } from '../monomerLibraryItem/types';
 import { GroupContainer, GroupTitle, ItemsContainer } from './styles';
 import { IMonomerGroupProps } from './types';
 import { getMonomerUniqueKey } from 'state/library';
+import { MonomerItemType } from 'ketcher-core';
 import { calculatePreviewPosition } from '../../../helpers';
 import { useAppDispatch, useAppSelector } from 'hooks';
-import { showPreview, selectShowPreview } from 'state/common';
+import { showPreview, selectShowPreview, selectEditor } from 'state/common';
 
 const MonomerGroup = ({
   items,
   title,
   selectedMonomerUniqueKey,
+  libraryName,
   onItemClick = EmptyFunction,
 }: IMonomerGroupProps) => {
   const dispatch = useAppDispatch();
   const preview = useAppSelector(selectShowPreview);
+  const editor = useAppSelector(selectEditor);
 
   const dispatchShowPreview = useCallback(
     (payload) => dispatch(showPreview(payload)),
@@ -46,7 +48,7 @@ const MonomerGroup = ({
 
   const handleItemMouseLeave = () => {
     debouncedShowPreview.cancel();
-    dispatch(showPreview());
+    dispatch(showPreview(undefined));
   };
 
   const handleItemMouseMove = (
@@ -60,6 +62,18 @@ const MonomerGroup = ({
     const cardCoordinates = e.currentTarget.getBoundingClientRect();
     const previewStyle = calculatePreviewPosition(monomer, cardCoordinates);
     debouncedShowPreview({ monomer, style: previewStyle });
+  };
+
+  const selectMonomer = (monomer: MonomerItemType) => {
+    switch (libraryName) {
+      case 'PEPTIDE':
+        editor.events.selectPeptide.dispatch(monomer);
+        onItemClick(monomer);
+        break;
+      default:
+        onItemClick(monomer);
+        break;
+    }
   };
 
   return (
@@ -83,7 +97,7 @@ const MonomerGroup = ({
               }
               onMouseLeave={handleItemMouseLeave}
               onMouseMove={(e) => handleItemMouseMove(monomer, e)}
-              onClick={() => onItemClick(monomer)}
+              onClick={() => selectMonomer(monomer)}
             />
           );
         })}

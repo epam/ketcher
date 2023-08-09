@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { defaultBondThickness } from 'application/editor';
 import {
   AromatizeData,
   AromatizeResult,
@@ -325,7 +326,8 @@ export class RemoteStructService implements StructService {
     options?: GenerateImageOptions,
   ): Promise<string> {
     const outputFormat: OutputFormatType = options?.outputFormat || 'png';
-    const bondThickness: number = options?.bondThickness || 1;
+    const bondThickness: number =
+      options?.bondThickness || defaultBondThickness;
 
     return indigoCall(
       'POST',

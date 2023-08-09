@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { OutputFormatType } from 'ketcher-core';
+import { OutputFormatType, defaultBondThickness } from 'ketcher-core';
 import { saveAs } from 'file-saver';
 
 import React, { PropsWithChildren } from 'react';
@@ -75,7 +75,7 @@ const SaveButton = (props: SaveButtonProps) => {
       ketcherInstance
         .generateImage(data, {
           outputFormat,
-          bondThickness: bondThickness || 1,
+          bondThickness: bondThickness || defaultBondThickness,
         })
         .then((blob) => {
           saveAs(blob, `${filename}.${outputFormat}`);

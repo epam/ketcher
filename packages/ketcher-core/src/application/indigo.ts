@@ -29,6 +29,7 @@ import {
 import { StructOrString } from 'application/indigo.types';
 import { KetSerializer } from 'domain/serializers';
 import { Struct } from 'domain/entities';
+import { defaultBondThickness } from './editor';
 
 const defaultTypes: Array<CheckTypes> = [
   'radicals',
@@ -201,7 +202,7 @@ export class Indigo {
   ): Promise<string> {
     const outputFormat = options?.outputFormat || 'png';
     const backgroundColor = options?.backgroundColor || '';
-    const bondThickness = options?.bondThickness || 1;
+    const bondThickness = options?.bondThickness || defaultBondThickness;
     return this.#structService.generateImageAsBase64(
       convertStructToString(struct, this.#ketSerializer),
       {

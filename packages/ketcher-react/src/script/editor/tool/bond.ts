@@ -24,9 +24,9 @@ import {
   SGroup,
   fromOneBondDeletion,
   Struct,
+  vectorUtils,
 } from 'ketcher-core';
 
-import utils from '../shared/utils';
 import Editor from '../Editor';
 import { Tool } from './Tool';
 
@@ -143,10 +143,10 @@ class BondTool implements Tool {
       const dragCtx = this.dragCtx;
 
       const pos = rnd.page2obj(event);
-      let angle = utils.calcAngle(dragCtx.xy0, pos);
-      if (!event.ctrlKey) angle = utils.fracAngle(angle, null);
+      let angle = vectorUtils.calcAngle(dragCtx.xy0, pos);
+      if (!event.ctrlKey) angle = vectorUtils.fracAngle(angle, null);
 
-      const degrees = utils.degrees(angle);
+      const degrees = vectorUtils.degrees(angle);
       this.editor.event.message.dispatch({ info: degrees + 'º' });
 
       if (!('item' in dragCtx) || dragCtx.item.map === 'atoms') {
@@ -241,13 +241,14 @@ class BondTool implements Tool {
           dist = Vec2.dist(dragCtx.xy0, xy1);
           if (beginPos) {
             // rotation only, leght of bond = 1;
-            endPos = utils.calcNewAtomPos(beginPos, xy1, event.ctrlKey);
+            endPos = vectorUtils.calcNewAtomPos(beginPos, xy1, event.ctrlKey);
           } else {
             // first mousedown event intersect with any atom and
             // rotation only, leght of bond = 1;
             const atom = rnd.ctab.molecule.atoms.get(beginAtom);
-            endPos = utils.calcNewAtomPos(
-              atom?.pp.get_xy0(),
+            endPos = vectorUtils.calcNewAtomPos(
+              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+              atom!.pp.get_xy0(),
               xy1,
               event.ctrlKey,
             );

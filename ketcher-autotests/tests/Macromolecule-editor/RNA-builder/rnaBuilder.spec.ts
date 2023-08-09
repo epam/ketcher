@@ -12,7 +12,7 @@ import {
 Test case: #3063 - Add e2e tests for Macromolecule editor
 */
 
-test('Add new preset', async ({ page }) => {
+test('Add new preset and duplicate it', async ({ page }) => {
   await page.goto('');
 
   // Click on POLYMER_TOGGLER
@@ -53,5 +53,38 @@ test('Add new preset', async ({ page }) => {
 
   await page.screenshot({
     path: 'tests/Macromolecule-editor/screenshots/rnaBuilder.png',
+  });
+
+  // Click on <button> "Duplicate and Edit"
+  await page.click('[data-testid="duplicate-btn"]');
+
+  // Click on <div> "Sugar 25R"
+  await page.click('[data-testid="rna-builder-slot--sugar"]');
+
+  // Click on <div> "dR ★"
+  await page.click('[data-testid="dR___D-Arginine"]');
+
+  // Click on <div> "Base baA"
+  await page.click('[data-testid="rna-builder-slot--base"]');
+
+  // Click on <span> "cl2A"
+  await page.click('text=cl2A');
+
+  // Click on <span> "bP"
+  await page.click('text=bP');
+
+  // Click on <div> "Smp ★"
+  await page.click('[data-testid="Smp___(Sp)-Methylphosphonate"]');
+
+  // Click on <button> "Save"
+  await page.click('[data-testid="save-btn"]');
+
+  // Click on <div> "MyRNA"
+  await page.click('[data-testid="MyRNA"]');
+
+  // Take full page screenshot
+  await page.screenshot({
+    path: 'tests/Macromolecule-editor/screenshots/rnaBuilder-duplicate-preset.png',
+    fullPage: true,
   });
 });

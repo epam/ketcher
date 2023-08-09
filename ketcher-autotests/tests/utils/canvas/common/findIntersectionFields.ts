@@ -20,7 +20,6 @@ export function findIntersectionFields(
     }
     if (attributesLength === keysCounter) {
       targets.push(item);
-      break;
     }
   }
 

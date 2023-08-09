@@ -7,9 +7,10 @@ import {
   selectButtonById,
   BondTypeId,
 } from '@utils';
+import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
 
-test.describe('Bonds selection ', () => {
+test.describe('Bonds plus atoms selection ', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('');
   });
@@ -28,6 +29,11 @@ test.describe('Bonds selection ', () => {
 
       const point = await getBondByIndex(page, {}, 0);
       await page.mouse.click(point.x, point.y);
+      const atom1Point = await getAtomByIndex(page, {}, 0);
+      const atom2Point = await getAtomByIndex(page, {}, 1);
+      await page.keyboard.down('Shift');
+      await page.mouse.click(atom1Point.x, atom1Point.y);
+      await page.mouse.click(atom2Point.x, atom2Point.y);
     });
   }
 });

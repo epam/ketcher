@@ -36,7 +36,6 @@ test.describe('Preview for abbreviated structures: functional groups', () => {
     await page.mouse.move(point.x, point.y);
     // delay is required because preview is shown with delay
     await delay(1);
-
     await takeEditorScreenshot(page);
   });
 
@@ -48,21 +47,6 @@ test.describe('Preview for abbreviated structures: functional groups', () => {
     // delay is required because preview is shown with delay
     await delay(1);
     await moveMouseToTheMiddleOfTheScreen(page);
-
-    await delay(1);
-    await takeEditorScreenshot(page);
-  });
-
-  test('Should hide preview of a functional group when hovering over atom', async ({
-    page,
-  }) => {
-    const point = await getRightAtomByAttributes(page, { label: 'C' });
-    await page.mouse.move(point.x, point.y);
-    // delay is required because preview is shown with delay
-    await delay(1);
-    await moveMouseToTheMiddleOfTheScreen(page);
-
-    await delay(1);
     await takeEditorScreenshot(page);
   });
 
@@ -75,7 +59,6 @@ test.describe('Preview for abbreviated structures: functional groups', () => {
     await delay(1);
     await page.mouse.click(point.x, point.y);
     await moveMouseToTheMiddleOfTheScreen(page);
-
     await takeEditorScreenshot(page);
   });
 });

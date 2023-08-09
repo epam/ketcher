@@ -783,6 +783,42 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickOnAtom(page, 'C', 5);
   });
+
+  test.fixme(
+    'Copy and paste expanded and contracted Salts and Solvents',
+    async ({ page }) => {
+      /*
+    Test case: EPMLSOPKET-2871
+    Description: After the clicking the Copy button, the selected object not disappears.
+    After pasting expanded and contracted Salts and Solvents same structures located on canvas.
+    */
+      // Error message when run under docker. But manual test is working.
+      const x = 500;
+      const y = 100;
+      await openFileAndAddToCanvas('expanded-and-contracted-salts.mol', page);
+      await copyAndPaste(page);
+      await page.mouse.click(x, y);
+    },
+  );
+
+  test.fixme(
+    'Cut and Paste expanded and contracted Salts and Solvents and edit',
+    async ({ page }) => {
+      /*
+    Test case: EPMLSOPKET-2871
+    Description: The correct structure is pasted on the canvas.
+    All expanded and contracted Salts and Solvents are correctly rendered.
+    User is not able to edit the pasted Functional Groups.
+    */
+      // Error message when run under docker. But manual test is working.
+      await openFileAndAddToCanvas('expanded-and-contracted-salts.mol', page);
+      await cutAndPaste(page);
+      await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+      await delay(DELAY_IN_SECONDS.TWO);
+      await selectAtomInToolbar(AtomButton.Nitrogen, page);
+      await clickOnAtom(page, 'C', 5);
+    },
+  );
 });
 
 test.describe('Copy/Cut/Paste Actions', () => {

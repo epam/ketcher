@@ -227,9 +227,7 @@ class PasteTool implements Tool {
       const action = this.action;
       delete this.action;
       if (!this.isSingleContractedGroup || !this.mergeItems) {
-        this.editor.update(
-          dropAndMerge(this.editor, this.mergeItems, action, true),
-        );
+        dropAndMerge(this.editor, this.mergeItems, action, true);
       }
     }
   }

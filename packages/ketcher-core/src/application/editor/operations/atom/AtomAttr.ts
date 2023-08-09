@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { BaseOperation } from '../base';
-import { OperationType } from '../OperationType';
+import { OperationPriority, OperationType } from '../OperationType';
 import { ReStruct } from '../../../render';
 
 type Data = {
@@ -29,7 +29,7 @@ export class AtomAttr extends BaseOperation {
   data2: Data | null;
 
   constructor(atomId?: any, attribute?: any, value?: any) {
-    super(OperationType.ATOM_ATTR, 1);
+    super(OperationType.ATOM_ATTR, OperationPriority.ATOM_ATTR);
     this.data = { aid: atomId, attribute, value };
     this.data2 = null;
   }

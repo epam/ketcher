@@ -163,6 +163,14 @@ export function serverTransform(method, data, struct) {
   };
 }
 
+/*
+  Indigo doesn't perform layout for enhancedFlags and just preserves their positions
+  That results in structure being aligned and moved, but flags left as is.
+*/
+function resetStereoFlagsPosition(struct) {
+  struct.frags.forEach((fragment) => (fragment.stereoFlagPosition = undefined));
+}
+
 // TODO: serverCall function should not be exported
 export function serverCall(editor, server, method, options, struct) {
   const selection = editor.selection();
@@ -178,6 +186,9 @@ export function serverCall(editor, server, method, options, struct) {
     selectedAtoms = (
       selection.atoms ? selection.atoms : editor.explicitSelected().atoms
     ).map((aid) => aidMap.get(aid));
+  }
+  if (method === 'layout') {
+    resetStereoFlagsPosition(currentStruct);
   }
   const ketSerializer = new KetSerializer();
   return server.then(() =>

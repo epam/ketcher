@@ -19,11 +19,12 @@ import {
   FunctionalGroup,
   Pile,
   Pool,
+  RGroupAttachmentPoint,
   SGroup,
   Struct,
   Vec2,
 } from 'domain/entities';
-
+import assert from 'assert';
 import { LayerMap } from './generalEnumTypes';
 import ReAtom from './reatom';
 import ReBond from './rebond';
@@ -40,6 +41,8 @@ import ReText from './retext';
 import { Render } from '../raphaelRender';
 import Visel from './visel';
 import util from '../util';
+import { ReRGroupAttachmentPoint } from './rergroupAttachmentPoint';
+import { PeptideRenderer } from 'application/render/renderers/PeptideRenderer';
 
 class ReStruct {
   public static maps = {
@@ -49,9 +52,11 @@ class ReStruct {
     rxnArrows: ReRxnArrow,
     frags: ReFrag,
     rgroups: ReRGroup,
+    rgroupAttachmentPoints: ReRGroupAttachmentPoint,
     sgroupData: ReDataSGroupData,
     enhancedFlags: ReEnhancedFlag,
     sgroups: ReSGroup,
+    peptides: PeptideRenderer,
     reloops: ReLoop,
     simpleObjects: ReSimpleObject,
     texts: ReText,
@@ -66,7 +71,10 @@ class ReStruct {
   public rxnArrows: Map<number, ReRxnArrow> = new Map();
   public frags: Pool = new Pool();
   public rgroups: Pool = new Pool();
+  public rgroupAttachmentPoints: Pool<ReRGroupAttachmentPoint> = new Pool();
+
   public sgroups: Map<number, ReSGroup> = new Map();
+  public peptides: Map<number, PeptideRenderer> = new Map();
   public sgroupData: Map<number, ReDataSGroupData> = new Map();
   public enhancedFlags: Map<number, ReEnhancedFlag> = new Map();
   private simpleObjects: Map<number, ReSimpleObject> = new Map();
@@ -85,11 +93,16 @@ class ReStruct {
   private bondsChanged: Map<number, ReEnhancedFlag> = new Map();
   private textsChanged: Map<number, ReText> = new Map();
   private snappingBonds: number[] = [];
-  constructor(molecule, render: Render) {
+  constructor(
+    molecule,
+    render: Render | { skipRaphaelInitialization: boolean; theme },
+  ) {
     // eslint-disable-line max-statements
-    this.render = render;
+    this.render = render as Render;
     this.molecule = molecule || new Struct();
-    this.initLayers();
+    if (!render.skipRaphaelInitialization) {
+      this.initLayers();
+    }
     this.clearMarks();
     // TODO: eachItem ?
 
@@ -130,6 +143,17 @@ class ReStruct {
       this.rgroups.set(id, new ReRGroup(item));
     });
 
+    molecule.rgroupAttachmentPoints.forEach(
+      (item: RGroupAttachmentPoint, id: number) => {
+        const reAtom = this.atoms.get(item.atomId);
+        assert(reAtom != null);
+        this.rgroupAttachmentPoints.set(
+          id,
+          new ReRGroupAttachmentPoint(item, reAtom),
+        );
+      },
+    );
+
     molecule.sgroups.forEach((item, id) => {
       this.sgroups.set(id, new ReSGroup(item));
       if (item.type === 'DAT' && !item.data.attached) {
@@ -138,6 +162,22 @@ class ReStruct {
       if (FunctionalGroup.isFunctionalGroup(item) || SGroup.isSuperAtom(item)) {
         this.molecule.functionalGroups.set(id, new FunctionalGroup(item));
       }
+    });
+  }
+
+  get visibleRGroupAttachmentPoints() {
+    const sgroups = this.molecule.sgroups;
+    const functionalGroups = this.molecule.functionalGroups;
+    return this.rgroupAttachmentPoints.filter((_id, reItem) => {
+      const atomId = reItem.item.atomId;
+      const atom = this.molecule.atoms.get(atomId);
+      assert(atom != null);
+      return !FunctionalGroup.isAtomInContractedFunctionalGroup(
+        atom,
+        sgroups,
+        functionalGroups,
+        false,
+      );
     });
   }
 
@@ -351,17 +391,6 @@ class ReStruct {
 
     let boundingBox = this.getBoundingBoxForSelection(selection);
 
-    if (boundingBox) {
-      const atomsIdsSelected: number[] = selection.atoms ?? [
-        ...this.atoms.keys(),
-      ];
-      const attachmentPointsVBox =
-        this.getAttachmentsPointsVBox(atomsIdsSelected);
-      if (attachmentPointsVBox) {
-        boundingBox = Box2Abs.union(boundingBox, attachmentPointsVBox);
-      }
-    }
-
     boundingBox = boundingBox || new Box2Abs(0, 0, 0, 0);
     return boundingBox;
   }
@@ -438,23 +467,13 @@ class ReStruct {
       this.molecule.frags.delete(fid);
     });
 
-    // dependency on attachment points
-    // must be removed once attachment points will be dedicated Visel
-    // must be refactored in https://github.com/epam/ketcher/issues/2742 (#2742)
-    this.atoms.forEach((_, aid) => {
-      const atom = this.atoms.get(aid);
-      // in case of atom has attachment point we have to mark it as changed,
-      // so the labels for attachment point will be recalculated
-      if (atom?.hasAttachmentPoint()) {
-        this.atomsChanged.set(aid, 1);
-      }
-    });
-
     Object.keys(ReStruct.maps).forEach((map) => {
       const mapChanged = this[map + 'Changed'];
 
       mapChanged.forEach((_value, id) => {
-        this.clearVisel(this[map].get(id).visel);
+        if (this[map].get(id).visel) {
+          this.clearVisel(this[map].get(id).visel);
+        }
         this.structChanged = this.structChanged || mapChanged.get(id) > 0;
       });
     });
@@ -489,6 +508,8 @@ class ReStruct {
 
     this.assignConnectedComponents();
     this.initialized = true;
+
+    this.showPeptides();
 
     this.verifyLoops();
     const updLoops = force || this.structChanged;
@@ -618,27 +639,58 @@ class ReStruct {
     });
   }
 
-  getAttachmentsPointsVBox(atomsIds: number[]): Box2Abs | null {
-    let result: Box2Abs | null = null;
-    for (const atomId of atomsIds) {
-      const reAtom = this.atoms.get(atomId)!;
-      const bbox = reAtom.getVBoxObjOfAttachmentPoint(this.render);
-      if (bbox) {
-        result = result ? Box2Abs.union(result, bbox) : bbox;
+  getRGroupAttachmentPointsVBoxByAtomIds(atomsIds: number[]): Box2Abs | null {
+    let allAtomAttachmentPointsVBox: Box2Abs | null = null;
+
+    atomsIds.forEach((atomId) => {
+      const attachmentPointIds =
+        this.molecule.getRGroupAttachmentPointsByAtomId(atomId);
+
+      const oneAtomAttachmentPointsVBox = attachmentPointIds.reduce(
+        (previousVBox, attachmentPointId) => {
+          const attachmentPoint =
+            this.rgroupAttachmentPoints.get(attachmentPointId);
+          assert(attachmentPoint != null);
+          const currentVBox = attachmentPoint.getVBoxObj(this.render);
+          return previousVBox && currentVBox
+            ? Box2Abs.union(previousVBox, currentVBox)
+            : currentVBox;
+        },
+        null as Box2Abs | null,
+      );
+
+      if (allAtomAttachmentPointsVBox && oneAtomAttachmentPointsVBox) {
+        allAtomAttachmentPointsVBox = Box2Abs.union(
+          allAtomAttachmentPointsVBox,
+          oneAtomAttachmentPointsVBox,
+        );
+      } else {
+        allAtomAttachmentPointsVBox =
+          allAtomAttachmentPointsVBox ?? oneAtomAttachmentPointsVBox;
       }
-    }
-    return result;
+    });
+
+    return allAtomAttachmentPointsVBox;
   }
 
   private showRgroupAttachmentPoints() {
-    this.atoms.forEach((_value, aid) => {
-      const atom = this.atoms.get(aid);
-      const sgroup = this.molecule.getGroupFromAtomId(aid);
+    // why update all rgroupAttachmentPoints instead of changed ones?
+    // 1. The label of an R-Group attachment point may be affected by other R-Group attachment points
+    // 2. The visibility of an an R-Group attachment point may be affected by contracting/expanding an S-Group
+    this.rgroupAttachmentPoints.forEach((_value, id) => {
+      const rgroupAttachmentPoint = this.rgroupAttachmentPoints.get(id);
+      if (rgroupAttachmentPoint?.visel) {
+        this.clearVisel(rgroupAttachmentPoint.visel);
+      }
+
+      const attachedAtomId = rgroupAttachmentPoint?.item.atomId;
+      const sgroup = this.molecule.getGroupFromAtomId(attachedAtomId);
       const isInsideContractedSGroup = Boolean(sgroup?.isContracted());
       if (isInsideContractedSGroup) {
         return;
       }
-      atom?.showAttachmentPoints(this);
+
+      rgroupAttachmentPoint?.show(this);
     });
   }
 
@@ -649,6 +701,13 @@ class ReStruct {
     this.atomsChanged.forEach((_value, aid) => {
       const atom = this.atoms.get(aid);
       if (atom) atom.show(this, aid, options);
+    });
+  }
+
+  private showPeptides(): void {
+    this.peptides.forEach((peptideRenderer) => {
+      peptideRenderer.remove();
+      peptideRenderer.show((this.render as any).theme);
     });
   }
 
@@ -752,9 +811,11 @@ class ReStruct {
           fill: '#7f7',
           stroke: '#7f7',
         });
+        if (item.togglePoints) item.togglePoints(true);
       }
     } else if (exists && item.selectionPlate) {
       item.selectionPlate.hide();
+      if (item.togglePoints) item.togglePoints(false);
       item.additionalInfo?.hide();
       item.cip?.rectangle.attr({
         fill: '#fff',

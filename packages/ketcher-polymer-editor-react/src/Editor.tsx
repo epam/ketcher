@@ -32,7 +32,11 @@ import { getGlobalStyles } from 'theming/globalStyles';
 import { Layout } from 'components/Layout';
 import { MonomerLibrary } from 'components/monomerLibrary';
 import { Menu } from 'components/menu';
-import { selectEditorActiveTool, selectTool } from 'state/common';
+import {
+  createEditor,
+  selectEditor,
+  selectEditorActiveTool,
+} from 'state/common';
 import { loadMonomerLibrary } from 'state/library';
 import { useAppDispatch, useAppSelector } from 'hooks';
 import { openModal } from 'state/modal';
@@ -46,12 +50,16 @@ import { EditorClassName } from './constants';
 
 const muiTheme = createTheme(muiOverrides);
 
-interface EditorProps {
+interface EditorContainerProps {
   onInit?: () => void;
   theme?: DeepPartial<EditorTheme>;
 }
 
-function EditorContainer({ onInit, theme }: EditorProps) {
+interface EditorProps {
+  theme?: DeepPartial<EditorTheme>;
+}
+
+function EditorContainer({ onInit, theme }: EditorContainerProps) {
   const rootElRef = useRef<HTMLDivElement>(null);
   const editorTheme: EditorTheme = theme
     ? merge(defaultTheme, theme)
@@ -70,17 +78,19 @@ function EditorContainer({ onInit, theme }: EditorProps) {
       <ThemeProvider theme={mergedTheme}>
         <Global styles={getGlobalStyles} />
         <div ref={rootElRef} className={EditorClassName}>
-          <Editor />
+          <Editor theme={editorTheme} />
         </div>
       </ThemeProvider>
     </Provider>
   );
 }
 
-function Editor() {
+function Editor({ theme }: EditorProps) {
   const dispatch = useAppDispatch();
+  const canvasRef = useRef<SVGSVGElement>(null);
 
   useEffect(() => {
+    dispatch(createEditor({ theme, canvas: canvasRef.current }));
     const serializer = new SdfSerializer();
     const library = serializer.deserialize(monomersData);
     dispatch(loadMonomerLibrary(library));
@@ -93,7 +103,20 @@ function Editor() {
           <MenuComponent />
         </Layout.Left>
 
-        <Layout.Main></Layout.Main>
+        <Layout.Main>
+          <svg
+            id="polymer-editor-canvas"
+            ref={canvasRef}
+            width="100%"
+            height="100%"
+          >
+            <defs>
+              <symbol id="peptide" viewBox="0 0 70 61" width="70" height="61">
+                <path d="M16.9236 1.00466C17.2801 0.383231 17.9418 6.10888e-07 18.6583 5.98224e-07L51.3417 2.04752e-08C52.0582 7.81036e-09 52.7199 0.383234 53.0764 1.00466L69.4289 29.5047C69.7826 30.1211 69.7826 30.8789 69.4289 31.4953L53.0764 59.9953C52.7199 60.6168 52.0582 61 51.3417 61H18.6583C17.9418 61 17.2801 60.6168 16.9236 59.9953L0.571095 31.4953C0.217407 30.8789 0.217408 30.1211 0.571096 29.5047L16.9236 1.00466Z"></path>
+              </symbol>
+            </defs>
+          </svg>
+        </Layout.Main>
 
         <Layout.Right>
           <MonomerLibrary />
@@ -110,12 +133,12 @@ function Editor() {
 function MenuComponent() {
   const dispatch = useAppDispatch();
   const activeTool = useAppSelector(selectEditorActiveTool);
-
+  const editor = useAppSelector(selectEditor);
   const menuItemChanged = (name) => {
     if (modalComponentList[name]) {
       dispatch(openModal(name));
     } else {
-      dispatch(selectTool(name));
+      editor.events.selectTool.dispatch(name);
     }
   };
 

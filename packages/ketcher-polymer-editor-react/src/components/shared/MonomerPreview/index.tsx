@@ -23,7 +23,6 @@ import { selectShowPreview } from 'state/common';
 
 const MonomerPreview = ({ className }: IPreviewProps) => {
   const preview = useAppSelector(selectShowPreview);
-
   const ContainerDinamic = useMemo(
     () => styled(Container)`
       top: ${preview?.style || ''};
@@ -42,7 +41,7 @@ const MonomerPreview = ({ className }: IPreviewProps) => {
 };
 
 const StyledPreview = styled(MonomerPreview)`
-  z-index: 1;
+  z-index: 5;
   position: absolute;
   width: ${preview.width}px;
   height: ${preview.height}px;

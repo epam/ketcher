@@ -190,7 +190,6 @@ const util = {
   relBox,
   shiftRayBox,
   calcCoordinates,
-  getCIPValuePath,
   drawCIPLabel,
 };
 

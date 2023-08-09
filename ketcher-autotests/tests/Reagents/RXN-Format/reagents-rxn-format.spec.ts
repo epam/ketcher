@@ -5,13 +5,12 @@ import {
   TopPanelButton,
   clickInTheMiddleOfTheScreen,
   pressButton,
-  delay,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   readFileContents,
   FILE_TEST_DATA,
-  DELAY_IN_SECONDS,
   saveToFile,
+  waitForLoad,
 } from '@utils';
 import { getRxn } from '@utils/formats';
 
@@ -44,7 +43,9 @@ async function pasteFromClipboard(page: Page, fileFormats: string) {
   await selectTopPanelButton(TopPanelButton.Open, page);
   await page.getByText('Paste from clipboard').click();
   await page.getByRole('dialog').getByRole('textbox').fill(fileFormats);
-  await pressButton(page, 'Add to Canvas');
+  await waitForLoad(page, async () => {
+    await pressButton(page, 'Add to Canvas');
+  });
 }
 
 test.describe('Reagents RXN format', () => {
@@ -184,24 +185,25 @@ test.describe('Reagents RXN format', () => {
   });
 
   test.afterEach(async ({ page }) => {
-    await delay(DELAY_IN_SECONDS.THREE);
     await takeEditorScreenshot(page);
   });
 
-  test('Open from file in "RXN V2000" format', async ({ page }) => {
+  test.fixme('Open from file in "RXN V2000" format', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-4679
       Description: Reagent 'NH3' above the reaction arrow
       */
+    // will fix when fixed Indigo bug #1205
     await openFileAndAddToCanvas('mdl-rxnfile-v2000-expected.rxn', page);
     await clickInTheMiddleOfTheScreen(page);
   });
 
-  test('Open from file in "RXN V3000" format', async ({ page }) => {
+  test.fixme('Open from file in "RXN V3000" format', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-4680
       Description: Reagent 'NH3' above the reaction arrow
       */
+    // will fix when fixed Indigo bug #1205
     await openFileAndAddToCanvas('mdl-rxnfile-v3000-expected.rxn', page);
     await clickInTheMiddleOfTheScreen(page);
   });
@@ -218,11 +220,12 @@ test.describe('Reagents RXN format', () => {
     await clickInTheMiddleOfTheScreen(page);
   });
 
-  test('Paste from clipboard in "RXN V3000" format', async ({ page }) => {
+  test.fixme('Paste from clipboard in "RXN V3000" format', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-4678
       Description: Reagent 'Cl' displays below reaction arrow
       */
+    // will fix when fixed Indigo bug #1205
     await pasteFromClipboard(
       page,
       FILE_TEST_DATA.benzeneArrowBenzeneReagentHclV3000,

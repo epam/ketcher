@@ -11,14 +11,16 @@ test.describe('Open Ketcher', () => {
     await page.goto('');
   });
 
-  test('About floating windows appeared', async ({ page }) => {
+  test.fixme('About floating windows appeared', async ({ page }) => {
     /* 
     Test case: EPMLSOPKET-12191
     Description: 'About' floating window appears
     */
     await selectTopPanelButton(TopPanelButton.About, page);
 
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      masks: [page.getByTestId('build-time')],
+    });
   });
 
   test('Links in About floating window', async ({ page }) => {

@@ -67,7 +67,7 @@ async function deleteRightBondInRing(page: Page) {
   await page.keyboard.press('Delete');
 }
 
-async function checkHistoryForBondDeletation(page: Page) {
+async function checkHistoryForBondDeletion(page: Page) {
   await selectTopPanelButton(TopPanelButton.Undo, page);
   await selectTopPanelButton(TopPanelButton.Undo, page);
   await selectTopPanelButton(TopPanelButton.Redo, page);
@@ -95,7 +95,7 @@ async function ManipulateRingsByName(type: RingButton, page: Page) {
   await deleteRightBondInRing(page);
   await takeEditorScreenshot(page);
 
-  await checkHistoryForBondDeletation(page);
+  await checkHistoryForBondDeletion(page);
 }
 
 test.describe('Templates - Rings manipulations', () => {

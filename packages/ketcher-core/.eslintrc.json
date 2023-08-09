@@ -34,6 +34,7 @@
         "src/application/render/restruct/rerxnarrow.ts",
         "src/application/render/restruct/restruct.ts",
         "src/application/render/restruct/retext.ts",
+        "src/application/render/restruct/resgroup.ts",
         "src/domain/entities/atom.ts",
         "src/domain/entities/atomList.ts",
         "src/domain/entities/bond.ts",

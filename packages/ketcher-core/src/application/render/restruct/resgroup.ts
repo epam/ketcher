@@ -14,7 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Box2Abs, FunctionalGroup, Pile, SGroup, Vec2 } from 'domain/entities';
+import {
+  Box2Abs,
+  FunctionalGroup,
+  Pile,
+  SGroup,
+  Vec2,
+  Bond,
+} from 'domain/entities';
 import ReStruct from './restruct';
 import { Render } from '../raphaelRender';
 import { LayerMap } from './generalEnumTypes';
@@ -23,12 +30,11 @@ import { Scale } from 'domain/helpers';
 import draw from '../draw';
 import util from '../util';
 import { tfx } from 'utilities';
-
 interface SGroupdrawBracketsOptions {
   set: any;
   render: Render;
   sg: SGroup;
-  crossBonds: { [key: number]: Array<any> };
+  crossBonds: { [key: number]: Array<Bond> };
   atomSet: Pile;
   bracketBox: Box2Abs;
   d: Vec2;
@@ -81,7 +87,7 @@ class ReSGroup extends ReObject {
           break;
         }
         case 'SRU': {
-          let connectivity = sgroup.data.connectivity || 'eu';
+          let connectivity: string = sgroup.data.connectivity || 'eu';
           if (connectivity === 'ht') connectivity = '';
           const subscript = sgroup.data.subscript || 'n';
           SGroupdrawBracketsOptions.lowerIndexText = subscript;

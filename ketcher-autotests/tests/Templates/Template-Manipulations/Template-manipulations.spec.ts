@@ -61,7 +61,7 @@ test.describe('Template Manupulations', () => {
             Description: Look at the bottom of the application.
             Choose any template.
             */
-    await takeEditorScreenshot;
+    await takeEditorScreenshot(page);
     await selectRing(RingButton.Benzene, page);
   });
 

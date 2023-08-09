@@ -32,6 +32,7 @@ async function copyImageToClipboard() {
     const image = await ketcher.generateImage(structStr, {
       outputFormat: 'png',
       backgroundColor: '255, 255, 255',
+      bondThickness: options.settings.bondThickness || 1,
     });
     const item = new ClipboardItem({ [image.type]: image }); // eslint-disable-line no-undef
     await navigator.clipboard.write([item]);

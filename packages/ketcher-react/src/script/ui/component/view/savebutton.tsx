@@ -25,6 +25,7 @@ type Props = {
   server?: any;
   filename: string;
   outputFormat?: OutputFormatType;
+  bondThickness?: number;
   data: any;
   type?: string;
   mode?: string;
@@ -43,6 +44,7 @@ const SaveButton = (props: SaveButtonProps) => {
     server,
     filename = 'unnamed',
     outputFormat,
+    bondThickness,
     data,
     type,
     mode = 'saveFile',
@@ -71,7 +73,10 @@ const SaveButton = (props: SaveButtonProps) => {
     const ketcherInstance = getKetcherInstance();
     if (outputFormat) {
       ketcherInstance
-        .generateImage(data, { outputFormat })
+        .generateImage(data, {
+          outputFormat,
+          bondThickness: bondThickness || 1,
+        })
         .then((blob) => {
           saveAs(blob, `${filename}.${outputFormat}`);
           onSave();

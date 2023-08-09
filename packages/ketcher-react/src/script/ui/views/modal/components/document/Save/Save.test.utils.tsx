@@ -10,6 +10,9 @@ const initialState = {
     app: {
       server: true,
     },
+    settings: {
+      bondThickness: 2,
+    },
     check: { checkOptions: '' },
     getServerSettings: () => ({}),
   },

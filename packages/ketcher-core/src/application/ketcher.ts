@@ -302,7 +302,7 @@ export class Ketcher {
 
   async generateImage(
     data: string,
-    options: GenerateImageOptions = { outputFormat: 'png' },
+    options: GenerateImageOptions = { outputFormat: 'png', bondThickness: 1 },
   ): Promise<Blob> {
     let meta = '';
 

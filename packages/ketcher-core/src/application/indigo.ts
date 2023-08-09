@@ -67,6 +67,7 @@ type RecognizeOptions = {
 type GenerateImageOptions = {
   outputFormat?: OutputFormatType;
   backgroundColor?: string;
+  bondThickness?: number;
 };
 
 function convertStructToString(
@@ -200,12 +201,13 @@ export class Indigo {
   ): Promise<string> {
     const outputFormat = options?.outputFormat || 'png';
     const backgroundColor = options?.backgroundColor || '';
-
+    const bondThickness = options?.bondThickness || 1;
     return this.#structService.generateImageAsBase64(
       convertStructToString(struct, this.#ketSerializer),
       {
         outputFormat,
         backgroundColor,
+        bondThickness,
       },
     );
   }

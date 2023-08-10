@@ -88,11 +88,11 @@ function getAngleFromEvent(event, ci, restruct) {
     angle = null;
   } else if (degree === 1) {
     // on chain end
-    const atom = restruct.molecule.struct.atoms.get(ci.id);
+    const atom = restruct.molecule.atoms.get(ci.id);
     const neiId =
-      atom && restruct.molecule.struct.halfBonds.get(atom.neighbors[0])?.end;
+      atom && restruct.molecule.halfBonds.get(atom.neighbors[0])?.end;
     const nei: any =
-      (neiId || neiId === 0) && restruct.molecule.struct.atoms.get(neiId);
+      (neiId || neiId === 0) && restruct.molecule.atoms.get(neiId);
 
     angle = event.ctrlKey
       ? utils.calcAngle(nei?.pp, atom?.pp)

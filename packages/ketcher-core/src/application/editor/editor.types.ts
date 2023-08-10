@@ -20,18 +20,6 @@ import { Struct } from 'domain/entities';
 import { selectionKeys } from './shared/constants';
 import { PipelineSubscription, Subscription } from 'subscription';
 
-export interface EditorHistory {
-  readonly current?: number;
-  readonly length: number;
-  push: (action: Action) => EditorHistory;
-  pop: () => Action;
-}
-
-export interface LoadOptions {
-  rescale: boolean;
-  fragment: boolean;
-}
-
 export type EditorSelection = {
   [key in typeof selectionKeys[number]]?: number[];
 };
@@ -58,7 +46,7 @@ export interface Editor {
   structSelected: () => Struct;
   explicitSelected: () => EditorSelection;
   centerStruct: () => void;
-  zoomAccordingContent: () => void;
+  zoomAccordingContent: (struct: Struct) => void;
   errorHandler: ((message: string) => void) | null;
   event: {
     message: Subscription;

@@ -301,7 +301,14 @@ class ReBond extends ReObject {
     const isSnapping = restruct.isSnappingBond(bid);
     this.path = getBondPath(restruct, this, hb1, hb2, isSnapping);
     this.rbb = util.relBox(this.path.getBBox());
-    restruct.addReObjectPath(LayerMap.data, this.visel, this.path, null, true);
+    // add layer for bond's skeleton:
+    restruct.addReObjectPath(
+      LayerMap.bondSkeleton,
+      this.visel,
+      this.path,
+      null,
+      true,
+    );
     const reactingCenter: any = {};
     reactingCenter.path = getReactingCenterPath(render, this, hb1, hb2);
     if (reactingCenter.path) {

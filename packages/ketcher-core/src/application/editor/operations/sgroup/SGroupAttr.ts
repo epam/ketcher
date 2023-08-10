@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { BaseOperation } from '../base';
-import { OperationType } from '../OperationType';
+import { OperationPriority, OperationType } from '../OperationType';
 import { ReStruct } from '../../../render';
 
 export class SGroupAttr extends BaseOperation {
@@ -26,7 +26,7 @@ export class SGroupAttr extends BaseOperation {
   };
 
   constructor(sgroupId?: any, attribute?: any, value?: any) {
-    super(OperationType.S_GROUP_ATTR, 4);
+    super(OperationType.S_GROUP_ATTR, OperationPriority.S_GROUP_ATTR);
     this.data = {
       sgid: sgroupId,
       attr: attribute,

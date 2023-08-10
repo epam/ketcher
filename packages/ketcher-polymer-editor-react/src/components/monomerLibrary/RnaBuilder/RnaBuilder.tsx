@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { useEffect } from 'react';
 import { RnaAccordion } from './RnaAccordion';
 import { RnaEditor } from './RnaEditor';
 import { RnaBuilderContainer } from './styles';
@@ -22,17 +23,27 @@ import {
   selectActivePreset,
   selectHasUniqueNameError,
   setHasUniqueNameError,
+  setDefaultPresets,
 } from 'state/rna-builder';
+import { selectFilteredMonomers } from 'state/library';
 import { Modal } from 'components/shared/modal';
+import { getDefaultPresets } from 'src/helpers/getDefaultPreset';
 import { StyledButton } from 'components/monomerLibrary/RnaBuilder/RnaAccordion/styles';
+import { IRnaPreset } from 'components/monomerLibrary/RnaBuilder/types';
 
 export const RnaBuilder = () => {
   const dispatch = useAppDispatch();
   const hasError = useAppSelector(selectHasUniqueNameError);
+  const monomers = useAppSelector(selectFilteredMonomers);
   const activePreset = useAppSelector(selectActivePreset);
   const closeErrorModal = () => {
     dispatch(setHasUniqueNameError(false));
   };
+
+  useEffect(() => {
+    const defaultPresets: IRnaPreset[] = getDefaultPresets(monomers);
+    dispatch(setDefaultPresets(defaultPresets));
+  }, [dispatch]);
 
   return (
     <RnaBuilderContainer>

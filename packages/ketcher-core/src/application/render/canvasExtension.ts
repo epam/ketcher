@@ -1,50 +1,21 @@
 import { Vec2 } from 'domain/entities';
+import { Editor, ReAtom } from 'ketcher-core';
 
-const edgeOffset = 200;
-const scrollMultiplier = 1.2;
-const moveDelta = 0;
+const edgeOffset = 150;
+const scrollMultiplier = 2;
 let lastX = 0;
 let lastY = 0;
 
 export function getDirections(event) {
-  const { layerX, layerY } = event;
-  const isMovingRight = layerX - lastX > moveDelta;
-  const isMovingLeft = lastX - layerX > moveDelta;
-  const isMovingTop = lastY - layerY > moveDelta;
-  const isMovingBottom = layerY - lastY > moveDelta;
+  const layerX = event.offsetX;
+  const layerY = event.offsetY;
+  const isMovingRight = layerX > lastX;
+  const isMovingLeft = layerX < lastX;
+  const isMovingTop = layerY < lastY;
+  const isMovingBottom = layerY > lastY;
   lastX = layerX;
   lastY = layerY;
   return { isMovingRight, isMovingLeft, isMovingTop, isMovingBottom };
-}
-
-export function isCloseToEdgeOfScreen(event) {
-  const { clientX, clientY } = event;
-  const body = document.body;
-  const isCloseToLeftEdgeOfScreen = clientX <= edgeOffset;
-  const isCloseToTopEdgeOfScreen = clientY <= edgeOffset;
-  const isCloseToRightEdgeOfScreen = body.clientWidth - clientX <= edgeOffset;
-  const isCloseToBottomEdgeOfScreen = body.clientHeight - clientY <= edgeOffset;
-  return {
-    isCloseToLeftEdgeOfScreen,
-    isCloseToTopEdgeOfScreen,
-    isCloseToRightEdgeOfScreen,
-    isCloseToBottomEdgeOfScreen,
-  };
-}
-
-export function isCloseToEdgeOfCanvas(event, canvasSize, zoom) {
-  const { layerX, layerY } = event;
-  const scaledCanvasSize = canvasSize.scaled(zoom);
-  const isCloseToLeftEdgeOfCanvas = layerX <= edgeOffset;
-  const isCloseToTopEdgeOfCanvas = layerY <= edgeOffset;
-  const isCloseToRightEdgeOfCanvas = scaledCanvasSize.x - layerX <= edgeOffset;
-  const isCloseToBottomEdgeOfCanvas = scaledCanvasSize.y - layerY <= edgeOffset;
-  return {
-    isCloseToLeftEdgeOfCanvas,
-    isCloseToTopEdgeOfCanvas,
-    isCloseToRightEdgeOfCanvas,
-    isCloseToBottomEdgeOfCanvas,
-  };
 }
 
 export function calculateCanvasExtension(
@@ -71,7 +42,8 @@ export function calculateCanvasExtension(
   return new Vec2(horizontalExtension, verticalExtension, 0);
 }
 
-export function shiftAndExtendCanvasByVector(vector: Vec2, render) {
+export function shiftByVector(vector: Vec2, editor: Editor) {
+  const render = editor.render;
   const clientArea = render.clientArea;
   const extensionVector = calculateCanvasExtension(
     clientArea,
@@ -80,9 +52,7 @@ export function shiftAndExtendCanvasByVector(vector: Vec2, render) {
   ).scaled(1 / render.options.zoom);
 
   if (extensionVector.x > 0 || extensionVector.y > 0) {
-    /**
-     * When canvas extends previous (0, 0) coordinates may become (100, 100)
-     */
+    // When canvas extends previous (0, 0) coordinates may become (100, 100)
     lastX += extensionVector.x;
     lastY += extensionVector.y;
   }
@@ -102,6 +72,107 @@ export function shiftAndExtendCanvasByVector(vector: Vec2, render) {
     }
   });
   render.update(false);
+}
+
+export function isSelectionCloseToTheEdgeOfCanvas(editor: Editor) {
+  const canvasSize = editor.render.sz;
+  const selectedAreaCoordinates = getSelectedAreaCoordinates(editor);
+  if (!selectedAreaCoordinates) {
+    return false;
+  }
+  const { leftX, topY, rightX, bottomY } = selectedAreaCoordinates;
+  const isCloseToTopEdgeOfCanvas = topY <= edgeOffset;
+  const isCloseToBottomEdgeOfCanvas = canvasSize.y - bottomY <= edgeOffset;
+  const isCloseToLeftEdgeOfCanvas = leftX <= edgeOffset;
+  const isCloseToRightEdgeOfCanvas = canvasSize.x - rightX <= edgeOffset;
+  return {
+    isCloseToLeftEdgeOfCanvas,
+    isCloseToTopEdgeOfCanvas,
+    isCloseToRightEdgeOfCanvas,
+    isCloseToBottomEdgeOfCanvas,
+  };
+}
+
+export function isSelectionCloseToTheEdgeOfScreen(editor: Editor) {
+  const clientArea = editor.render.clientArea;
+  const clientAreaBoundingRect = clientArea.getBoundingClientRect();
+  const canvas = editor.render.paper.canvas;
+  const canvasBoundingRect = canvas.getBoundingClientRect();
+  const selectedAreaCoordinates = getSelectedAreaCoordinates(editor);
+  if (!selectedAreaCoordinates) {
+    return false;
+  }
+  const { leftX, topY, rightX, bottomY } = selectedAreaCoordinates;
+  const atomXOffset = canvasBoundingRect.x - clientAreaBoundingRect.x;
+  const atomYOffset = canvasBoundingRect.y - clientAreaBoundingRect.y;
+  const isCloseToTopEdgeOfScreen = topY + atomYOffset <= edgeOffset;
+  const isCloseToBottomEdgeOfScreen =
+    clientArea.clientHeight - (bottomY + atomYOffset) <= edgeOffset;
+  const isCloseToLeftEdgeOfScreen = leftX + atomXOffset <= edgeOffset;
+  const isCloseToRightEdgeOfScreen =
+    clientArea.clientWidth - (rightX + atomXOffset) <= edgeOffset;
+  return {
+    isCloseToLeftEdgeOfScreen,
+    isCloseToTopEdgeOfScreen,
+    isCloseToRightEdgeOfScreen,
+    isCloseToBottomEdgeOfScreen,
+  };
+}
+
+function getSelectedAreaCoordinates(editor: Editor) {
+  const restruct = editor.render.ctab;
+  const selectedItems = editor.explicitSelected();
+  if (!selectedItems.atoms) {
+    return false;
+  }
+  let theMostTopAtom = restruct.atoms.get(selectedItems?.atoms[0]);
+  let theMostBottomAtom = restruct.atoms.get(selectedItems?.atoms[0]);
+  let theMostRightAtom = restruct.atoms.get(selectedItems?.atoms[0]);
+  let theMostLeftAtom = restruct.atoms.get(selectedItems?.atoms[0]);
+  selectedItems.atoms.forEach((atomId) => {
+    const atom = restruct.atoms.get(atomId);
+    const position = atom?.a.pp;
+    if (position && theMostTopAtom) {
+      theMostTopAtom =
+        position.y < theMostTopAtom.a.pp.y ? atom : theMostTopAtom;
+    }
+    if (position && theMostBottomAtom) {
+      theMostBottomAtom =
+        position.y > theMostBottomAtom.a.pp.y ? atom : theMostBottomAtom;
+    }
+    if (position && theMostRightAtom) {
+      theMostRightAtom =
+        position.x > theMostRightAtom.a.pp.x ? atom : theMostRightAtom;
+    }
+    if (position && theMostLeftAtom) {
+      theMostLeftAtom =
+        position.x < theMostLeftAtom.a.pp.x ? atom : theMostLeftAtom;
+    }
+  });
+  if (
+    theMostTopAtom &&
+    theMostBottomAtom &&
+    theMostRightAtom &&
+    theMostLeftAtom
+  ) {
+    const scale = editor.options().scale;
+    const offset = editor.render.options.offset;
+    const getScreenCoordinates = (atom: ReAtom) =>
+      atom.a.pp.scaled(scale).add(offset);
+    const theMostTopAtomYCoordinate = getScreenCoordinates(theMostTopAtom).y;
+    const theMostBottomAtomYCoordinate =
+      getScreenCoordinates(theMostBottomAtom).y;
+    const theMostRightAtomXCoordinate =
+      getScreenCoordinates(theMostRightAtom).x;
+    const theMostLeftAtomXCoordinate = getScreenCoordinates(theMostLeftAtom).x;
+    return {
+      leftX: theMostLeftAtomXCoordinate,
+      topY: theMostTopAtomYCoordinate,
+      rightX: theMostRightAtomXCoordinate,
+      bottomY: theMostBottomAtomYCoordinate,
+    };
+  }
+  return false;
 }
 
 export function scrollByVector(vector: Vec2, render) {

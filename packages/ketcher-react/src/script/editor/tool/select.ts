@@ -52,6 +52,14 @@ import { filterNotInContractedSGroup } from './helper/filterNotInCollapsedSGroup
 import { Tool } from './Tool';
 
 type SelectMode = 'lasso' | 'fragment' | 'rectangle';
+type Direction = 'MoveUp' | 'MoveDown' | 'MoveRight' | 'MoveLeft';
+const moveOffset = 1;
+const destinationVectorMapping: { [key in Direction]: Vec2 } = {
+  MoveUp: new Vec2(0, -moveOffset, 0),
+  MoveDown: new Vec2(0, moveOffset, 0),
+  MoveRight: new Vec2(moveOffset, 0, 0),
+  MoveLeft: new Vec2(-moveOffset, 0, 0),
+};
 
 class SelectTool implements Tool {
   readonly #mode: SelectMode;
@@ -502,7 +510,7 @@ class SelectTool implements Tool {
 }
 
 function resizeCanvas(editor, event) {
-  const offset = 1;
+  let isCloseToSomeEdgeOfCanvas = false;
   const { isMovingLeft, isMovingRight, isMovingTop, isMovingBottom } =
     getDirections(event);
   const isCloseToEdgeOfCanvas = isSelectionCloseToTheEdgeOfCanvas(editor);
@@ -514,27 +522,24 @@ function resizeCanvas(editor, event) {
       isCloseToBottomEdgeOfCanvas,
     } = isCloseToEdgeOfCanvas;
     if (isCloseToLeftEdgeOfCanvas && isMovingLeft) {
-      shiftByVector(new Vec2(-offset, 0, 0), editor);
+      isCloseToSomeEdgeOfCanvas = true;
+      shiftByVector(destinationVectorMapping.MoveLeft, editor);
     }
 
     if (isCloseToTopEdgeOfCanvas && isMovingTop) {
-      shiftByVector(new Vec2(0, -offset, 0), editor);
+      isCloseToSomeEdgeOfCanvas = true;
+      shiftByVector(destinationVectorMapping.MoveUp, editor);
     }
 
     if (isCloseToRightEdgeOfCanvas && isMovingRight) {
-      shiftByVector(new Vec2(offset, 0, 0), editor);
+      isCloseToSomeEdgeOfCanvas = true;
+      shiftByVector(destinationVectorMapping.MoveRight, editor);
     }
 
     if (isCloseToBottomEdgeOfCanvas && isMovingBottom) {
-      shiftByVector(new Vec2(0, offset, 0), editor);
+      isCloseToSomeEdgeOfCanvas = true;
+      shiftByVector(destinationVectorMapping.MoveDown, editor);
     }
-
-    const isCloseToSomeEdgeOfCanvas = [
-      isCloseToTopEdgeOfCanvas && isMovingTop,
-      isCloseToRightEdgeOfCanvas && isMovingRight,
-      isCloseToBottomEdgeOfCanvas && isMovingBottom,
-      isCloseToLeftEdgeOfCanvas && isMovingLeft,
-    ].some((isCloseToEdge) => isCloseToEdge);
 
     if (isCloseToSomeEdgeOfCanvas) {
       return;
@@ -550,19 +555,19 @@ function resizeCanvas(editor, event) {
       isCloseToBottomEdgeOfScreen,
     } = isCloseToEdgeOfScreen;
     if (isCloseToTopEdgeOfScreen && isMovingTop) {
-      scrollByVector(new Vec2(0, -offset), editor.render);
+      scrollByVector(destinationVectorMapping.MoveUp, editor.render);
     }
 
     if (isCloseToBottomEdgeOfScreen && isMovingBottom) {
-      scrollByVector(new Vec2(0, offset), editor.render);
+      scrollByVector(destinationVectorMapping.MoveDown, editor.render);
     }
 
     if (isCloseToLeftEdgeOfScreen && isMovingLeft) {
-      scrollByVector(new Vec2(-offset, 0), editor.render);
+      scrollByVector(destinationVectorMapping.MoveLeft, editor.render);
     }
 
     if (isCloseToRightEdgeOfScreen && isMovingRight) {
-      scrollByVector(new Vec2(offset, 0), editor.render);
+      scrollByVector(destinationVectorMapping.MoveRight, editor.render);
     }
   }
 }

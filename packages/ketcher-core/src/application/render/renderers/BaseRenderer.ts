@@ -7,6 +7,7 @@ export abstract class BaseRenderer {
     | undefined;
 
   protected canvas: Selection<SVGElement, unknown, HTMLElement, never>;
+  // TO DO
   protected constructor() {
     this.canvas = select<SVGElement, unknown>('#polymer-editor-canvas');
   }

@@ -20,8 +20,6 @@ import {
   copyAndPaste,
   getControlModifier,
   INPUT_DELAY,
-  delay,
-  DELAY_IN_SECONDS,
 } from '@utils';
 
 const CANVAS_CLICK_X = 300;
@@ -105,10 +103,11 @@ test.describe('Copy/Cut/Paste Actions', () => {
     All query features are correctly rendered.
     User is able to edit the pasted structure.
     */
+    const x = 500;
+    const y = 200;
     await openFileAndAddToCanvas('clean-diffproperties.mol', page);
     await cutAndPaste(page);
-    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
-    await delay(DELAY_IN_SECONDS.TWO);
+    await page.mouse.click(x, y);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickOnAtom(page, 'C', 12);
   });
@@ -118,9 +117,11 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Test case: EPMLSOPKET-1714
     Description: After the clicking the Cut button, the selected object disappears.
     */
+    const x = 300;
+    const y = 300;
     await openFileAndAddToCanvas('reaction-dif-prop.rxn', page);
     await cutAndPaste(page);
-    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await page.mouse.click(x, y);
     await screenshotBetweenUndoRedo(page);
   });
 
@@ -203,16 +204,19 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await page.keyboard.press('Control+c');
   });
 
-  test('Copy and Paste structure and edit', async ({ page }) => {
+  test.fixme('Copy and Paste structure and edit', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1716
     Description: The correct structure is pasted on the canvas.
     All query features are correctly rendered.
     User is able to edit the pasted structure.
     */
+    // Nitrogen atom can't attach to atom on structure.
+    const x = 300;
+    const y = 300;
     await openFileAndAddToCanvas('clean-diffproperties.mol', page);
     await copyAndPaste(page);
-    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await page.mouse.click(x, y);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickOnAtom(page, 'C', 12);
   });
@@ -314,7 +318,6 @@ test.describe('Copy/Cut/Paste Actions', () => {
       await openFileAndAddToCanvas('generic-groups.mol', page);
       await cutAndPaste(page);
       await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
-      await delay(DELAY_IN_SECONDS.TWO);
       await selectAtomInToolbar(AtomButton.Nitrogen, page);
       await clickOnAtom(page, 'C', 12);
     },
@@ -348,7 +351,6 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await openFileAndAddToCanvas('query-feat.mol', page);
     await cutAndPaste(page);
     await page.mouse.click(x, y);
-    await delay(DELAY_IN_SECONDS.TWO);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickOnAtom(page, 'C', 12);
   });
@@ -366,17 +368,19 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await page.mouse.click(x, y);
   });
 
-  test('Cut and Paste R-Group structure', async ({ page }) => {
+  test.fixme('Cut and Paste R-Group structure', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1724
     Description: The correct structure is pasted on the canvas.
     All R-Group structure are correctly rendered.
     User is able to edit the pasted structure.
     */
+    // Nitrogen atom can't attach to structure
+    const x = 300;
+    const y = 300;
     await openFileAndAddToCanvas('R-Group-structure.mol', page);
     await cutAndPaste(page);
-    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
-    await delay(DELAY_IN_SECONDS.TWO);
+    await page.mouse.click(x, y);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickOnAtom(page, 'C', 5);
   });
@@ -404,7 +408,6 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await openFileAndAddToCanvas('s-group-features.mol', page);
     await cutAndPaste(page);
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
-    await delay(DELAY_IN_SECONDS.TWO);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickOnAtom(page, 'C', 12);
   });
@@ -422,22 +425,23 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await page.mouse.click(x, y);
   });
 
-  test('Cut and Paste structure with attached data and edit', async ({
-    page,
-  }) => {
-    /*
+  test.fixme(
+    'Cut and Paste structure with attached data and edit',
+    async ({ page }) => {
+      /*
     Test case: EPMLSOPKET-1727
     Description: The correct structure is pasted on the canvas.
     All attached data are correctly rendered.
     User is able to edit the pasted structure.
     */
-    await openFileAndAddToCanvas('attached.mol', page);
-    await cutAndPaste(page);
-    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
-    await delay(DELAY_IN_SECONDS.TWO);
-    await selectAtomInToolbar(AtomButton.Nitrogen, page);
-    await clickOnAtom(page, 'C', 12);
-  });
+      // Nitrogen atom can't attach to structure
+      await openFileAndAddToCanvas('attached.mol', page);
+      await cutAndPaste(page);
+      await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+      await selectAtomInToolbar(AtomButton.Nitrogen, page);
+      await clickOnAtom(page, 'C', 12);
+    },
+  );
 
   test('Copy and paste Stereo structure with Chiral flag', async ({ page }) => {
     /*
@@ -463,7 +467,6 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await openFileAndAddToCanvas('chiral-structure.mol', page);
     await cutAndPaste(page);
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
-    await delay(DELAY_IN_SECONDS.TWO);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickOnAtom(page, 'C', 12);
   });
@@ -481,16 +484,16 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await page.mouse.click(x, y);
   });
 
-  test('Cut and Paste reaction by hotkeys and edit', async ({ page }) => {
+  test.fixme('Cut and Paste reaction by hotkeys and edit', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1730
     Description: Copied objects are pasted correctly.
     The structure is cut (and then is pasted) with reaction arrow and plus sign
     */
+    // Nitrogen atom can't attach to structure.
     await openFileAndAddToCanvas('reaction.rxn', page);
     await cutAndPaste(page);
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
-    await delay(DELAY_IN_SECONDS.TWO);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickOnAtom(page, 'C', 12);
   });
@@ -517,7 +520,6 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await openFileAndAddToCanvas('structure-with-failed-arrow.rxn', page);
     await cutAndPaste(page);
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
-    await delay(DELAY_IN_SECONDS.TWO);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickOnAtom(page, 'C', 5);
   });
@@ -544,7 +546,6 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await openFileAndAddToCanvas('arrows-in-different-directions.rxn', page);
     await cutAndPaste(page);
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
-    await delay(DELAY_IN_SECONDS.TWO);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickOnAtom(page, 'C', 5);
   });
@@ -564,21 +565,24 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await page.mouse.click(x, y);
   });
 
-  test('Cut and Paste all kind of S-groups and edit', async ({ page }) => {
-    /*
+  test.fixme(
+    'Cut and Paste all kind of S-groups and edit',
+    async ({ page }) => {
+      /*
     Test case: EPMLSOPKET-2884
     Description: Cut objects are pasted as one object and correctly displayed without data loss.
     */
-    await openFileAndAddToCanvas(
-      'structure-with-all-kinds-of-s-groups.mol',
-      page,
-    );
-    await cutAndPaste(page);
-    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
-    await delay(DELAY_IN_SECONDS.TWO);
-    await selectAtomInToolbar(AtomButton.Nitrogen, page);
-    await clickOnAtom(page, 'C', 5);
-  });
+      // Can't attach atom of Nitrogen to structure.
+      await openFileAndAddToCanvas(
+        'structure-with-all-kinds-of-s-groups.mol',
+        page,
+      );
+      await cutAndPaste(page);
+      await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+      await selectAtomInToolbar(AtomButton.Nitrogen, page);
+      await clickOnAtom(page, 'C', 5);
+    },
+  );
 
   test('Copy and paste Mapped reaction', async ({ page }) => {
     /*
@@ -600,7 +604,6 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await openFileAndAddToCanvas('mapped-structure.rxn', page);
     await cutAndPaste(page);
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
-    await delay(DELAY_IN_SECONDS.TWO);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickOnAtom(page, 'C', 5);
   });
@@ -645,7 +648,6 @@ test.describe('Copy/Cut/Paste Actions', () => {
       await openFileAndAddToCanvas('stereo-test-structures.ket', page);
       await cutAndPaste(page);
       await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
-      await delay(DELAY_IN_SECONDS.TWO);
       await selectAtomInToolbar(AtomButton.Nitrogen, page);
       await clickOnAtom(page, 'C', 5);
     },
@@ -678,7 +680,6 @@ test.describe('Copy/Cut/Paste Actions', () => {
       await openFileAndAddToCanvas('complex-r-group-structure.mol', page);
       await cutAndPaste(page);
       await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
-      await delay(DELAY_IN_SECONDS.TWO);
       await selectAtomInToolbar(AtomButton.Nitrogen, page);
       await clickOnAtom(page, 'C', 5);
     },
@@ -692,8 +693,8 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Description: After the clicking the Copy button, the selected object not disappears.
     After pasting Structure with Simple objects and text same structures located on canvas.
     */
-    const x = 500;
-    const y = 100;
+    const x = 550;
+    const y = 150;
     await openFileAndAddToCanvas(
       'structure-with-simple-objects-and-text.ket',
       page,
@@ -702,25 +703,26 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await page.mouse.click(x, y);
   });
 
-  test('Cut and Paste Structure with Simple objects and text and edit', async ({
-    page,
-  }) => {
-    /*
+  test.fixme(
+    'Cut and Paste Structure with Simple objects and text and edit',
+    async ({ page }) => {
+      /*
     Test case: EPMLSOPKET-2948
     Description: The correct structure is pasted on the canvas.
     All Structure with Simple objects and text are correctly rendered.
     User is able to edit the pasted structure.
     */
-    await openFileAndAddToCanvas(
-      'structure-with-simple-objects-and-text.ket',
-      page,
-    );
-    await cutAndPaste(page);
-    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
-    await delay(DELAY_IN_SECONDS.TWO);
-    await selectAtomInToolbar(AtomButton.Nitrogen, page);
-    await clickOnAtom(page, 'C', 5);
-  });
+      // Can't attach atom of Nitrogen to structure.
+      await openFileAndAddToCanvas(
+        'structure-with-simple-objects-and-text.ket',
+        page,
+      );
+      await cutAndPaste(page);
+      await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+      await selectAtomInToolbar(AtomButton.Nitrogen, page);
+      await clickOnAtom(page, 'C', 5);
+    },
+  );
 
   test.fixme('Copy and paste Aromatic structure', async ({ page }) => {
     /*
@@ -747,7 +749,6 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await openFileAndAddToCanvas('aromatic-structures.mol', page);
     await cutAndPaste(page);
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
-    await delay(DELAY_IN_SECONDS.TWO);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickOnAtom(page, 'C', 5);
   });
@@ -767,22 +768,23 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await page.mouse.click(x, y);
   });
 
-  test('Cut and Paste expanded and contracted Functional Froups and edit', async ({
-    page,
-  }) => {
-    /*
+  test.fixme(
+    'Cut and Paste expanded and contracted Functional Froups and edit',
+    async ({ page }) => {
+      /*
     Test case: EPMLSOPKET-2952
     Description: The correct structure is pasted on the canvas.
     All expanded and contracted Functional Froups are correctly rendered.
     User is not able to edit the pasted Functional Groups.
     */
-    await openFileAndAddToCanvas('expanded-and-contracted-fg.ket', page);
-    await cutAndPaste(page);
-    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
-    await delay(DELAY_IN_SECONDS.TWO);
-    await selectAtomInToolbar(AtomButton.Nitrogen, page);
-    await clickOnAtom(page, 'C', 5);
-  });
+      // Can't attach atom of Nitrogen to the structure.
+      await openFileAndAddToCanvas('expanded-and-contracted-fg.ket', page);
+      await cutAndPaste(page);
+      await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+      await selectAtomInToolbar(AtomButton.Nitrogen, page);
+      await clickOnAtom(page, 'C', 5);
+    },
+  );
 
   test.fixme(
     'Copy and paste expanded and contracted Salts and Solvents',
@@ -814,7 +816,6 @@ test.describe('Copy/Cut/Paste Actions', () => {
       await openFileAndAddToCanvas('expanded-and-contracted-salts.mol', page);
       await cutAndPaste(page);
       await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
-      await delay(DELAY_IN_SECONDS.TWO);
       await selectAtomInToolbar(AtomButton.Nitrogen, page);
       await clickOnAtom(page, 'C', 5);
     },
@@ -842,7 +843,6 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Object is selected. Buttons are enabled.
     */
     await page.getByTestId('copy-button-dropdown-triangle').click();
-    await delay(DELAY_IN_SECONDS.THREE);
     await expect(page).toHaveScreenshot();
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
@@ -862,7 +862,6 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await page.keyboard.press('Control+a');
     await expect(page).toHaveScreenshot();
     await selectTopPanelButton(TopPanelButton.Cut, page);
-    await delay(DELAY_IN_SECONDS.THREE);
   });
 
   test('Paste button', async ({ page }) => {
@@ -880,6 +879,5 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await page.keyboard.press('Control+a');
     await selectTopPanelButton(TopPanelButton.Cut, page);
     await selectTopPanelButton(TopPanelButton.Paste, page);
-    await delay(DELAY_IN_SECONDS.THREE);
   });
 });

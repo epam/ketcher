@@ -21,6 +21,7 @@ export interface IGroupBlockProps {
   groupName: MonomerGroups;
   iconName: IconName;
   monomerName?: string;
+  testid?: string;
   selected?: boolean;
   disabled?: boolean;
   onClick?: () => void;

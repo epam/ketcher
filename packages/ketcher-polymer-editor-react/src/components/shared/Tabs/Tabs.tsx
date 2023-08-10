@@ -133,6 +133,7 @@ function CustomTabs(props): ReactElement {
           <StyledTab
             label={tabPanel.caption}
             key={index}
+            data-testid={tabPanel.testId}
             {...a11yProps(index)}
           />
         ))}

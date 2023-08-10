@@ -1,5 +1,6 @@
 import { Page } from '@playwright/test';
 import { getToolType, openTool } from './helpers';
+import { DEFAULT_BONDS_MAIN_BUTTON_TEST_ID } from './types';
 
 /**
  * Select specific tool that has sub / nested levels.
@@ -23,11 +24,14 @@ export const selectNestedTool = async (
   const toolTypeValues = Object.values(toolType);
 
   if (toolType && toolTypeValues.includes(toolElementId)) {
-    const defaultToolId =
-      (currentToolId && currentToolId[1]) || toolTypeValues[0][1];
     const currentType = toolElementId[1].split('-')[0];
     const lastType = currentToolId && currentToolId[1].split('-')[0];
-    await openTool(page, defaultToolId, currentType, lastType);
+    await openTool(
+      page,
+      DEFAULT_BONDS_MAIN_BUTTON_TEST_ID,
+      currentType,
+      lastType,
+    );
 
     const numberOfPresses = toolElementId[0];
 

@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { ReAtom, ReBond } from 'application/render';
 
-import { Box2Abs, Pool, Vec2 } from 'domain/entities';
+import { Box2Abs, Pool, Struct, Vec2 } from 'domain/entities';
 import { mockFn } from 'jest-mock-extended';
+import { MonomerItemType } from 'domain/types';
 
 const mockAtoms = [
   {
@@ -733,3 +734,22 @@ molecule.bonds.forEach((bond, bid) => {
 });
 
 export const singleBond = { type: 1, stereo: 0 };
+
+export const peptideMonomerItem: MonomerItemType = {
+  favorite: false,
+  label: 'Abc',
+  props: {
+    BranchMonomer: '',
+    MonomerCaps: '',
+    MonomerCode: '',
+    MonomerName: '',
+    MonomerType: '',
+    Name: '',
+    MonomerNaturalAnalogCode: 'A',
+  },
+  struct: new Struct(),
+};
+
+export const polymerEditorTheme = {
+  monomer: { color: { A: { regular: 'yellow' } } },
+};

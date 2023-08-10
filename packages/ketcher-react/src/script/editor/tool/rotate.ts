@@ -26,12 +26,13 @@ import {
   getHoverToFuse,
   getItemsToFuse,
   isAttachmentBond,
+  vectorUtils,
 } from 'ketcher-core';
 import assert from 'assert';
 import { intersection, throttle } from 'lodash';
-import utils from '../shared/utils';
 import Editor, { Selection } from '../Editor';
 import { Tool } from './Tool';
+import { normalizeAngle } from '../utils/normalizeAngle';
 
 type SnapMode = 'one-bond' | 'multiple-bonds';
 type SnapInfo = {
@@ -105,7 +106,7 @@ class RotateTool implements Tool {
   mousedownHandle(handleCenter: Vec2, center: Vec2) {
     this.dragCtx = {
       xy0: center,
-      angle1: utils.calcAngle(center, handleCenter),
+      angle1: vectorUtils.calcAngle(center, handleCenter),
     };
     this.initSnapInfo();
   }
@@ -193,7 +194,7 @@ class RotateTool implements Tool {
 
     const mousePos = this.editor.render.page2obj(event);
     const mouseMoveAngle =
-      utils.calcAngle(dragCtx.xy0, mousePos) - dragCtx.angle1;
+      vectorUtils.calcAngle(dragCtx.xy0, mousePos) - dragCtx.angle1;
 
     let rotateAngle = mouseMoveAngle;
     this.reStruct.clearSnappingBonds();
@@ -204,10 +205,10 @@ class RotateTool implements Tool {
       const [isSnapping, rotateAngleWithSnapping] = this.snap(mouseMoveAngle);
       rotateAngle = isSnapping
         ? rotateAngleWithSnapping
-        : utils.fracAngle(mouseMoveAngle, null);
+        : vectorUtils.fracAngle(mouseMoveAngle, null);
     }
 
-    const rotateAngleInDegrees = utils.degrees(rotateAngle);
+    const rotateAngleInDegrees = vectorUtils.degrees(rotateAngle);
     if ('angle' in dragCtx && dragCtx.angle === rotateAngleInDegrees) {
       return true;
     }
@@ -347,7 +348,7 @@ class RotateTool implements Tool {
     const absoluteSnapAngles: number[] = [];
     const snapAngleToHalfBonds: Map<number, number[]> = new Map();
     SNAP_ANGLES_RELATIVE_TO_FIXED_BOND.forEach((angle) => {
-      const snapAngle = utils.normalizeAngle(fixedHalfBondAngle + angle);
+      const snapAngle = normalizeAngle(fixedHalfBondAngle + angle);
       absoluteSnapAngles.push(snapAngle);
       snapAngleToHalfBonds.set(snapAngle, [
         rotatableHalfBondId,
@@ -372,13 +373,13 @@ class RotateTool implements Tool {
         const currentHalfBondId = fixedHalfBondIds[j];
         const currentHalfBondAngle = fixedHalfBondAngles[j];
         const difference = currentHalfBondAngle - previousHalfBondAngle;
-        const bisectorAngle = utils.normalizeAngle(
+        const bisectorAngle = normalizeAngle(
           currentHalfBondAngle - difference / 2,
         );
         const snapAngle =
           difference > Math.PI
             ? bisectorAngle
-            : utils.normalizeAngle(bisectorAngle + Math.PI);
+            : normalizeAngle(bisectorAngle + Math.PI);
         absoluteSnapAngles.push(snapAngle);
         snapAngleToHalfBonds.set(snapAngle, [
           rotatableHalfBondId,
@@ -434,7 +435,7 @@ class RotateTool implements Tool {
       return [isSnapping, rotateAngle];
     }
 
-    const newRotatedHalfBondAngle = utils.normalizeAngle(
+    const newRotatedHalfBondAngle = normalizeAngle(
       this.snapInfo.rotatableHalfBondAngle + mouseMoveAngle,
     );
     this.snapInfo.absoluteSnapAngles.some((snapAngle, index) => {

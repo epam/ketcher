@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { RnaAccordion } from 'components/monomerLibrary/RnaBuilder/RnaAccordion/RnaAccordion';
 import { getMonomerUniqueKey } from 'state/library';
-import { MonomerItemType } from 'components/monomerLibrary/monomerLibraryItem/types';
+import { MonomerItemType } from 'ketcher-core';
 
 describe('Test Rna Accordion component', () => {
   it('should render', () => {

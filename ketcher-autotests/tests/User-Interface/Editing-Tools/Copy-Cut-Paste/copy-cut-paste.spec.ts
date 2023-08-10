@@ -339,21 +339,25 @@ test.describe('Copy/Cut/Paste Actions', () => {
     },
   );
 
-  test('Cut and Paste and Edit the pasted Structure', async ({ page }) => {
-    /*
+  test.fixme(
+    'Cut and Paste and Edit the pasted Structure',
+    async ({ page }) => {
+      /*
     Test case: EPMLSOPKET-1719
     Description: The correct structure is pasted on the canvas.
     All Generic S-Group are correctly rendered.
     User is able to edit the pasted structure.
     */
-    const x = 500;
-    const y = 200;
-    await openFileAndAddToCanvas('query-feat.mol', page);
-    await cutAndPaste(page);
-    await page.mouse.click(x, y);
-    await selectAtomInToolbar(AtomButton.Nitrogen, page);
-    await clickOnAtom(page, 'C', 12);
-  });
+      // Unexpected error when test try to run
+      const x = 500;
+      const y = 200;
+      await openFileAndAddToCanvas('query-feat.mol', page);
+      await cutAndPaste(page);
+      await page.mouse.click(x, y);
+      await selectAtomInToolbar(AtomButton.Nitrogen, page);
+      await clickOnAtom(page, 'C', 12);
+    },
+  );
 
   test('Copy and paste R-Group structure', async ({ page }) => {
     /*

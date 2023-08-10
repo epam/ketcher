@@ -70,14 +70,16 @@ test.describe('Click and drag FG on canvas', () => {
       Test case: EPMLSOPKET-4002
       Description: verify empty fields in floating window for empty canvas 
     */
-    // await page.getByRole('button', { name: 'Calculated Values (Alt+C)' }).click();
+    // await page.getByRole('button',
+    // { name: 'Calculated Values (Alt+C)' }).click();
     await selectTopPanelButton(TopPanelButton.Calculated, page);
   });
 
   test('Open structure: Open window', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-4003
-      Description: verify floating window for open/drag file or paste from clipboard 
+      Description: verify floating window for 
+      open/drag file or paste from clipboard 
     */
     await selectTopPanelButton(TopPanelButton.Open, page);
   });
@@ -121,137 +123,9 @@ test.describe('Click and drag FG on canvas', () => {
     */
     await selectTopPanelButton(TopPanelButton.Open, page);
     await page.getByText('Paste from clipboard').click();
+    /*  eslint max-len: ["error", { "ignoreStrings": true }] */
     await pasteFromClipboardAndAddToCanvas(
       page,
-      
-max-len
-Enforce a maximum line length
-
-Very long lines of code in any language can be difficult to read. In order to aid in readability and maintainability many coders have developed a convention to limit lines of code to X number of characters (traditionally 80 characters).
-
-var foo = { "bar": "This is a bar.", "baz": { "qux": "This is a qux" }, "difficult": "to read" }; // very long
-
-Rule Details
-This rule enforces a maximum line length to increase code readability and maintainability. The length of a line is defined as the number of Unicode characters in the line.
-
-Options
-This rule can have up to two numbers as positional arguments (for code and tabWidth options), followed by an object option (provided positional arguments have priority):
-
-"code" (default 80) enforces a maximum line length
-"tabWidth" (default 4) specifies the character width for tab characters
-"comments" enforces a maximum line length for comments; defaults to value of code
-"ignorePattern" ignores lines matching a regular expression; can only match a single line and need to be double escaped when written in YAML or JSON
-"ignoreComments": true ignores all trailing comments and comments on their own line
-"ignoreTrailingComments": true ignores only trailing comments
-"ignoreUrls": true ignores lines that contain a URL
-"ignoreStrings": true ignores lines that contain a double-quoted or single-quoted string
-"ignoreTemplateLiterals": true ignores lines that contain a template literal
-"ignoreRegExpLiterals": true ignores lines that contain a RegExp literal
-code
-Examples of incorrect code for this rule with the default { "code": 80 } option:
-
-Open in Playground
-/*eslint max-len: ["error", { "code": 80 }]*/
-
-var foo = { "bar": "This is a bar.", "baz": { "qux": "This is a qux" }, "difficult": "to read" };
-
-
-
-Examples of correct code for this rule with the default { "code": 80 } option:
-
-Open in Playground
-/*eslint max-len: ["error", { "code": 80 }]*/
-
-var foo = {
-  "bar": "This is a bar.",
-  "baz": { "qux": "This is a qux" },
-  "easier": "to read"
-};
-
-
-
-
-
-
-
-tabWidth
-Examples of incorrect code for this rule with the default { "tabWidth": 4 } option:
-
-Open in Playground
-/*eslint max-len: ["error", { "code": 80, "tabWidth": 4 }]*/
-
-\t  \t  var foo = { "bar": "This is a bar.", "baz": { "qux": "This is a qux" } };
-
-
-
-Examples of correct code for this rule with the default { "tabWidth": 4 } option:
-
-Open in Playground
-/*eslint max-len: ["error", { "code": 80, "tabWidth": 4 }]*/
-
-\t  \t  var foo = {
-\t  \t  \t  \t  "bar": "This is a bar.",
-\t  \t  \t  \t  "baz": { "qux": "This is a qux" }
-\t  \t  };
-
-
-
-
-
-
-comments
-Examples of incorrect code for this rule with the { "comments": 65 } option:
-
-Open in Playground
-/*eslint max-len: ["error", { "comments": 65 }]*/
-
-/**
- * This is a comment that violates the maximum line length we have specified
-**/
-
-
-
-
-
-ignoreComments
-Examples of correct code for this rule with the { "ignoreComments": true } option:
-
-Open in Playground
-/*eslint max-len: ["error", { "ignoreComments": true }]*/
-
-/**
- * This is a really really really really really really really really really long comment
-**/
-
-
-
-
-
-ignoreTrailingComments
-Examples of correct code for this rule with the { "ignoreTrailingComments": true } option:
-
-Open in Playground
-/*eslint max-len: ["error", { "ignoreTrailingComments": true }]*/
-
-var foo = 'bar'; // This is a really really really really really really really long comment
-
-
-
-ignoreUrls
-Examples of correct code for this rule with the { "ignoreUrls": true } option:
-
-Open in Playground
-/*eslint max-len: ["error", { "ignoreUrls": true }]*/
-
-var url = 'https://www.example.com/really/really/really/really/really/really/really/long';
-
-
-
-ignoreStrings
-Examples of correct code for this rule with the { "ignoreStrings": true } option:
-
-Open in Playground
-/*eslint max-len: ["error", { "ignoreStrings": true }]*/
       'VmpDRDAxMDAEAwIBAAAAAAAAAAAAAAAAAAAAAAQCEAClnXYBBmHkAKuSsgHwQBgBAAMOAAIA////////AAAAAAAAAAETAAEAAQABAOIECQBTYW5zU2VyaWYBgAIAAAADgAMAAAAEAhAApR11AQbh4gCrErQB8MAZAQSABAAAAAACCACmm4UBBmHkAAIEAgAGACsEAgABAAAABIAFAAAAAAIIACiYhQHwQBgBAgQCAAcAKwQCAAAAAAAEgAYAAAAAAggApZ12ATJd/gACBAIACAArBAIAAAAAAASABwAAAAACCACnmaMB8EAYAQIEAgAGACsEAgABAAAABIAIAAAAAAIIABC8owEGYeQAAgQCAAYAKwQCAAEAAAAEgAkAAAAAAggAq5KyASdu/gACBAIABgArBAIAAQAAAAWACgAAAAQGBAAGAAAABQYEAAQAAAAABgIAAgABBgIAAAAAAAWACwAAAAQGBAAHAAAABQYEAAUAAAAABgIAAgABBgIAAAAAAAWADAAAAAQGBAAEAAAABQYEAAgAAAAABgIAAQABBgIAAAAAAAWADQAAAAQGBAAFAAAABQYEAAYAAAAABgIAAQABBgIAAAAAAAWADgAAAAQGBAAIAAAABQYEAAkAAAAABgIAAgABBgIAAAAAAAWADwAAAAQGBAAJAAAABQYEAAcAAAAABgIAAQABBgIAAAAAAAAAAAAAAA==',
     );
   });

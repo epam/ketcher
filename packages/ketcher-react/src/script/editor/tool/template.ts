@@ -95,8 +95,8 @@ function getAngleFromEvent(event, ci, restruct) {
       (neiId || neiId === 0) && restruct.molecule.atoms.get(neiId);
 
     angle = event.ctrlKey
-      ? utils.calcAngle(nei?.pp, atom?.pp)
-      : utils.fracAngle(utils.calcAngle(nei.pp, atom?.pp), null);
+      ? vectorUtils.calcAngle(nei?.pp, atom?.pp)
+      : vectorUtils.fracAngle(vectorUtils.calcAngle(nei.pp, atom?.pp), null);
   } else {
     // on single atom
     angle = 0;

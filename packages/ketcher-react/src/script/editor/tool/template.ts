@@ -60,7 +60,7 @@ function getBondFlipSign(struct: Struct, bond: Bond): number {
         const hbbAtom = struct.atoms.get(halfBondBegin);
 
         if (hbbAtom) {
-          xy0.add_(hbbAtom.pp); // eslint-disable-line no-underscore-dangle, max-len
+          xy0.add_(hbbAtom.pp); // eslint-disable-line no-underscore-dangle
           count++;
         }
       }

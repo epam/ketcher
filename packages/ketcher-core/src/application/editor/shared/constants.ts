@@ -35,4 +35,4 @@ export const selectionKeys = [
   'texts',
 ] as const;
 
-export const defaultBondThickness = 1;
+export const defaultBondThickness = 2;

@@ -35,4 +35,12 @@ export type AtomLabelType =
   | 'CEL'
   | 'CHC'
   | 'CHH'
-  | 'HAR';
+  | 'HAR'
+  | 'A'
+  | 'AH'
+  | 'Q'
+  | 'QH'
+  | 'M'
+  | 'MH'
+  | 'X'
+  | 'XH';

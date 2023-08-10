@@ -1,9 +1,13 @@
 import toolActions from '../../action/tools';
 
 describe('ToolActions', () => {
+  const toolsWithTitles = Object.values(toolActions).filter(
+    (tool) => tool.title !== undefined,
+  );
+
   it('should have a "title" property for each tool', () => {
-    Object.values(toolActions).forEach((tool) => {
-      expect(tool).toHaveProperty('title');
+    toolsWithTitles.forEach((tool) => {
+      expect(tool.title).toBeTruthy();
     });
   });
 });

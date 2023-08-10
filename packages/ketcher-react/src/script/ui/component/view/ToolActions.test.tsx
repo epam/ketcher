@@ -1,4 +1,4 @@
-import toolActions from '../../../../../../ketcher-react/src/script/ui/action/tools';
+import toolActions from '../../action/tools';
 
 describe('ToolActions', () => {
   it('should have a "title" property for each tool', () => {

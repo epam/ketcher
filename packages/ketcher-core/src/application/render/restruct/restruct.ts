@@ -43,6 +43,7 @@ import Visel from './visel';
 import util from '../util';
 import { ReRGroupAttachmentPoint } from './rergroupAttachmentPoint';
 import { PeptideRenderer } from 'application/render/renderers/PeptideRenderer';
+import { PolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer';
 
 class ReStruct {
   public static maps = {
@@ -57,6 +58,7 @@ class ReStruct {
     enhancedFlags: ReEnhancedFlag,
     sgroups: ReSGroup,
     peptides: PeptideRenderer,
+    polymerBonds: PolymerBondRenderer,
     reloops: ReLoop,
     simpleObjects: ReSimpleObject,
     texts: ReText,
@@ -75,6 +77,7 @@ class ReStruct {
 
   public sgroups: Map<number, ReSGroup> = new Map();
   public peptides: Map<number, PeptideRenderer> = new Map();
+  public polymerBonds: Map<number, PolymerBondRenderer> = new Map();
   public sgroupData: Map<number, ReDataSGroupData> = new Map();
   public enhancedFlags: Map<number, ReEnhancedFlag> = new Map();
   private simpleObjects: Map<number, ReSimpleObject> = new Map();
@@ -510,6 +513,7 @@ class ReStruct {
     this.initialized = true;
 
     this.showPeptides();
+    this.showPolymerBonds();
 
     this.verifyLoops();
     const updLoops = force || this.structChanged;
@@ -708,6 +712,13 @@ class ReStruct {
     this.peptides.forEach((peptideRenderer) => {
       peptideRenderer.remove();
       peptideRenderer.show((this.render as any).theme);
+    });
+  }
+
+  private showPolymerBonds(): void {
+    this.polymerBonds.forEach((polymerBond) => {
+      polymerBond.remove();
+      polymerBond.show();
     });
   }
 

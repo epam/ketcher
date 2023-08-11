@@ -803,7 +803,10 @@ function domEventSetup(editor: Editor, clientArea: HTMLElement) {
     editor.event[eventName] = new DOMSubscription();
     const subs = editor.event[eventName];
 
-    target.addEventListener(eventName, subs.dispatch.bind(subs));
+    target.addEventListener(eventName, (...args) => {
+      if (window.isPolymerEditorTurnedOn) return;
+      subs.dispatch(...args);
+    });
 
     subs.add((event) => {
       updateLastCursorPosition(editor, event);

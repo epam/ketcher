@@ -202,7 +202,7 @@ class ReAtom extends ReObject {
     if (atomSymbolShift > 0) {
       return atomPosition.addScaled(
         direction,
-        atomSymbolShift + 2 * renderOptions.lineWidth,
+        atomSymbolShift + 3 * renderOptions.lineWidth,
       );
     } else {
       return atomPosition;
@@ -242,7 +242,7 @@ class ReAtom extends ReObject {
       return;
     }
 
-    this.hydrogenOnTheLeft = setHydrogenPos(restruct.molecule, this);
+    this.hydrogenOnTheLeft = shouldHydrogenBeOnLeft(restruct.molecule, this);
     this.showLabel = isLabelVisible(restruct, render.options, this);
     this.color = 'black'; // reset color
 
@@ -672,8 +672,7 @@ function displayHydrogen(hydrogenLabels: ShowHydrogenLabels, atom: ReAtom) {
   );
 }
 
-function setHydrogenPos(struct, atom) {
-  // check where should the hydrogen be put on the left of the label
+function shouldHydrogenBeOnLeft(struct, atom) {
   if (atom.a.neighbors.length === 0) {
     if (atom.a.label === 'D' || atom.a.label === 'T') {
       return false;
@@ -683,24 +682,14 @@ function setHydrogenPos(struct, atom) {
     }
   }
 
-  let yl = 1;
-  let yr = 1;
-  let nl = 0;
-  let nr = 0;
+  if (atom.a.neighbors.length === 1) {
+    const neighbor = atom.a.neighbors[0];
+    const neighborDirection = struct.halfBonds.get(neighbor).dir;
 
-  atom.a.neighbors.forEach((nei) => {
-    const d = struct.halfBonds.get(nei).dir;
+    return neighborDirection.x > 0;
+  }
 
-    if (d.x <= 0) {
-      yl = Math.min(yl, Math.abs(d.y));
-      nl++;
-    } else {
-      yr = Math.min(yr, Math.abs(d.y));
-      nr++;
-    }
-  });
-
-  return yl < 0.51 || yr < 0.51 ? yr < yl : nr > nl;
+  return false;
 }
 
 function buildLabel(

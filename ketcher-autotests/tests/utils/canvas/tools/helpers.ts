@@ -2,6 +2,7 @@ import { Page } from '@playwright/test';
 import { selectButtonByTitle } from '@utils/clicks/selectButtonByTitle';
 import {
   AtomButton,
+  BondIds,
   LeftPanelButton,
   RingButton,
   TopPanelButton,
@@ -64,4 +65,14 @@ export async function selectLeftPanelButton(
 ) {
   const leftPanelButton = page.locator(`button[title*="${buttonName}"]`);
   await leftPanelButton.click();
+}
+
+export async function selectButtonById(buttonId: BondIds, page: Page) {
+  const element = page.getByTestId(buttonId);
+  await element.click();
+}
+
+export async function openSimpleObjectsDropdown(page: Page) {
+  await page.getByTestId('shape-ellipse').click();
+  await page.getByTestId('shape-ellipse').click();
 }

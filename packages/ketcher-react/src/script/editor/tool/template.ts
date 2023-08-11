@@ -115,7 +115,7 @@ class TemplateTool implements Tool {
   private readonly findItems: Array<string>;
   private dragCtx: any;
   private isPreviewVisible: boolean;
-  private previewAction: Action | null;
+  private previewRemoveAction: Action | null;
   private previewTimeout: ReturnType<typeof setTimeout> | null = null;
   private lastPreviewId: string | null;
   private targetGroupsIds: Array<number> = [];
@@ -125,7 +125,7 @@ class TemplateTool implements Tool {
   constructor(editor: Editor, tmpl) {
     this.editor = editor;
     this.isPreviewVisible = false;
-    this.previewAction = new Action();
+    this.previewRemoveAction = new Action();
     this.previewTimeout = null;
     this.lastPreviewId = null;
     this.mode = getTemplateMode(tmpl);
@@ -328,55 +328,7 @@ class TemplateTool implements Tool {
         this.lastPreviewId = getUniqueCiId(ci);
 
         this.previewTimeout = setTimeout(() => {
-          if (ci.map === 'bonds' && !this.isModeFunctionalGroup) {
-            this.isPreviewVisible = true;
-            this.editor.hoverIcon.hide();
-            const bond = this.struct.bonds.get(ci.id)!;
-
-            const sign1 = getBondFlipSign(this.struct, bond);
-            const sign2 = this.template.sign;
-            const shouldFlip = sign1 * sign2 > 0;
-
-            const promise = fromTemplateOnBondAction(
-              restruct,
-              this.template,
-              ci.id,
-              this.editor.event,
-              shouldFlip,
-              true,
-              true,
-            ) as Promise<any>;
-
-            promise.then(([action, pasteItems]) => {
-              if (!this.isModeFunctionalGroup) {
-                const mergeItems = getItemsToFuse(this.editor, pasteItems);
-                action = fromItemsFuse(restruct, mergeItems).mergeWith(action);
-                this.editor.update(action, true);
-                this.previewAction = action;
-              }
-            });
-          } else if (ci.map === 'atoms') {
-            this.isPreviewVisible = true;
-            this.editor.hoverIcon.hide();
-            const angle = getAngleFromEvent(event, ci, restruct);
-
-            let [action, pasteItems] = fromTemplateOnAtom(
-              restruct,
-              this.template,
-              ci.id,
-              angle,
-              false,
-              true,
-            );
-
-            if (pasteItems && !this.isModeFunctionalGroup) {
-              const mergeItems = getItemsToFuse(this.editor, pasteItems);
-              action = fromItemsFuse(restruct, mergeItems).mergeWith(action);
-            }
-
-            this.editor.update(action, true);
-            this.previewAction = action;
-          }
+          this.showPreview(ci, restruct);
         }, PREVIEW_DELAY);
       }
 
@@ -694,15 +646,69 @@ class TemplateTool implements Tool {
   }
 
   hidePreview() {
-    if (this.isPreviewVisible && this.previewAction) {
-      this.previewAction.perform(this.editor.render.ctab);
-      this.previewAction = null;
+    if (this.isPreviewVisible && this.previewRemoveAction) {
+      this.previewRemoveAction.perform(this.editor.render.ctab);
+      this.previewRemoveAction = null;
       this.isPreviewVisible = false;
       this.editor.render.update();
     }
     if (this.previewTimeout) {
       clearTimeout(this.previewTimeout);
       this.previewTimeout = null;
+    }
+  }
+
+  showPreview(ci, restruct) {
+    if (ci.map === 'bonds' && !this.isModeFunctionalGroup) {
+      // preview for bonds
+      this.isPreviewVisible = true;
+      this.editor.hoverIcon.hide();
+      const bond = this.struct.bonds.get(ci.id)!;
+
+      const sign1 = getBondFlipSign(this.struct, bond);
+      const sign2 = this.template.sign;
+      const shouldFlip = sign1 * sign2 > 0;
+
+      const promise = fromTemplateOnBondAction(
+        restruct,
+        this.template,
+        ci.id,
+        this.editor.event,
+        shouldFlip,
+        true,
+        true,
+      ) as Promise<any>;
+
+      promise.then(([action, pasteItems]) => {
+        if (!this.isModeFunctionalGroup) {
+          const mergeItems = getItemsToFuse(this.editor, pasteItems);
+          action = fromItemsFuse(restruct, mergeItems).mergeWith(action);
+          this.editor.update(action, true);
+          this.previewRemoveAction = action;
+        }
+      });
+    } else if (ci.map === 'atoms') {
+      // preview for atoms
+      this.isPreviewVisible = true;
+      this.editor.hoverIcon.hide();
+      const angle = getAngleFromEvent(event, ci, restruct);
+
+      let [action, pasteItems] = fromTemplateOnAtom(
+        restruct,
+        this.template,
+        ci.id,
+        angle,
+        false,
+        true,
+      );
+
+      if (pasteItems && !this.isModeFunctionalGroup) {
+        const mergeItems = getItemsToFuse(this.editor, pasteItems);
+        action = fromItemsFuse(restruct, mergeItems).mergeWith(action);
+      }
+
+      this.editor.update(action, true);
+      this.previewRemoveAction = action;
     }
   }
 }

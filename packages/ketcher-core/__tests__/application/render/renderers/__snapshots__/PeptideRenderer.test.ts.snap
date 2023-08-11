@@ -13,12 +13,14 @@ exports[`PeptideRenderer should render peptide 1`] = `
     <use
       fill="yellow"
       href="#peptide"
+      style="cursor: pointer;"
     />
     <text
       fill="black"
       font-size="12px"
       font-weight="700"
       line-height="12px"
+      style="cursor: pointer; user-select: none;"
       x="0"
       y="10"
     >

@@ -200,6 +200,7 @@ export const RnaAccordion = () => {
                 return (
                   <MonomerGroup
                     key={groupTitle}
+                    disabled={!isEditMode}
                     title={groupData.groups.length > 1 ? groupTitle : undefined}
                     items={groupItems as MonomerItemType[]}
                     selectedMonomerUniqueKey={

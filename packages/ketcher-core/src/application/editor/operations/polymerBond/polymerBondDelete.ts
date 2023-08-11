@@ -15,43 +15,42 @@
  ***************************************************************************/
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
-import { Vec2 } from 'domain/entities';
 import { ReStruct } from '../../../render';
 
 import { BaseOperation } from '../base';
 import { OperationType } from '../OperationType';
-import { Peptide } from 'domain/entities/Peptide';
-import { PeptideRenderer } from 'application/render/renderers/PeptideRenderer';
-import { MonomerItemType } from 'domain/types';
+import { PolymerBond } from 'domain/entities/PolymerBond';
 
 type Data = {
-  peptide: MonomerItemType;
-  position: Vec2;
+  polymerBond: PolymerBond;
 };
 
-class PeptideAdd extends BaseOperation {
+class PolymerBondDelete extends BaseOperation {
   data: Data;
 
-  constructor(peptide: MonomerItemType, position: Vec2) {
-    super(OperationType.ATOM_ADD);
-    this.data = { peptide, position };
+  constructor(polymerBond: PolymerBond) {
+    super(OperationType.POLYMER_BOND_DELETE);
+    this.data = { polymerBond };
   }
 
   execute(restruct: ReStruct) {
-    const { peptide, position } = this.data;
-
+    const { polymerBond } = this.data;
     const struct = restruct.molecule;
-    const newPeptide = new Peptide(peptide, position);
-    const peptideRenderer = new PeptideRenderer(newPeptide);
-    struct.peptides.set(newPeptide.id, newPeptide);
-    restruct.peptides.set(newPeptide.id, peptideRenderer);
+    const polymerBondRenderer = restruct.polymerBonds.get(polymerBond.id);
+    struct.polymerBonds.delete(polymerBond.id);
+    polymerBond.firstMonomer.turnOffSelection();
+    polymerBond.firstMonomer.removePotentialBonds();
+    polymerBond.secondMonomer?.turnOffSelection();
+    polymerBond.secondMonomer?.removePotentialBonds();
+    polymerBondRenderer?.remove();
+    restruct.polymerBonds.delete(polymerBond.id);
   }
 
   invert() {
-    const inverted = new PeptideAdd(this.data.peptide, this.data.position);
+    const inverted = new PolymerBondDelete(this.data.polymerBond);
     inverted.data = this.data;
     return inverted;
   }
 }
 
-export { PeptideAdd };
+export { PolymerBondDelete };

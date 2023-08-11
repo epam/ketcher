@@ -50,7 +50,17 @@ function throughFileReader(file) {
         'fileOpener.js::throughFileReader::onload::rd.result',
         rd.result,
       );
-      const content = isCDX ? rd.result.slice(37) : rd.result;
+      let content;
+      if (isCDX) {
+        const base64String = rd.result.split(',').at(-1);
+        console.log(
+          'fileOpener.js::throughFileReader::onload::base64String',
+          base64String,
+        );
+        content = base64String;
+      } else {
+        content = rd.result;
+      }
       console.log('fileOpener.js::throughFileReader::onload::content', content);
       console.log(
         'fileOpener.js::throughFileReader::onload::file.msClose',

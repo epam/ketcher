@@ -4,6 +4,8 @@ import {
   TopPanelButton,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
+  delay,
+  DELAY_IN_SECONDS,
 } from '@utils';
 
 test.describe('Reagents molecule above arrow', () => {
@@ -47,6 +49,7 @@ test.describe('Reagents molecule above arrow', () => {
     */
     await openFileAndAddToCanvas('benzene-arrow-benzene-reagent-nh3.ket', page);
 
+    await delay(DELAY_IN_SECONDS.THREE);
     await selectTopPanelButton(TopPanelButton.Save, page);
     await page.getByRole('button', { name: 'MDL Rxnfile V2000' }).click();
     await page.getByRole('option', { name: 'SVG Document' }).click();

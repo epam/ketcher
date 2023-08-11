@@ -22,6 +22,8 @@ import {
   Vec2,
   Bond,
 } from 'domain/entities';
+import { SgContexts } from 'application/editor/shared/constants';
+import ReDataSGroupData from './redatasgroupdata';
 import ReStruct from './restruct';
 import { Render } from '../raphaelRender';
 import { LayerMap } from './generalEnumTypes';
@@ -30,10 +32,12 @@ import { Scale } from 'domain/helpers';
 import draw from '../draw';
 import util from '../util';
 import { tfx } from 'utilities';
+import { RaphaelPaper } from 'raphael';
+import { RenderOptions } from '../render.types';
 interface SGroupdrawBracketsOptions {
   set: any;
   render: Render;
-  sg: SGroup;
+  sgroup: SGroup;
   crossBonds: { [key: number]: Array<Bond> };
   atomSet: Pile;
   bracketBox: Box2Abs;
@@ -64,7 +68,7 @@ class ReSGroup extends ReObject {
    */
   draw(remol: ReStruct, sgroup: SGroup): any {
     this.render = remol.render;
-    const set = this.render.paper.set();
+    let set = this.render.paper.set();
     const atomSet = new Pile(sgroup.atoms);
     const crossBonds = SGroup.getCrossBonds(remol.molecule, atomSet);
     SGroup.bracketPos(sgroup, remol.molecule, crossBonds, remol, this.render);
@@ -75,7 +79,7 @@ class ReSGroup extends ReObject {
       const SGroupdrawBracketsOptions: SGroupdrawBracketsOptions = {
         set,
         render: this.render,
-        sg: sgroup,
+        sgroup,
         crossBonds,
         atomSet,
         bracketBox,
@@ -104,15 +108,16 @@ class ReSGroup extends ReObject {
           break;
         }
         case 'DAT': {
-          SGroupdrawBracketsOptions.lowerIndexText = sgroup.data.fieldValue;
+          set = drawGroupDat(remol, sgroup);
           break;
         }
         default:
           break;
       }
 
-      const validSgroupTypes = ['MUL', 'SRU', 'SUP', 'GEN', 'DAT'];
-      if (validSgroupTypes.includes(sgroup.type)) {
+      // DAT S-Groups do not have brackets
+      const sgroupTypesWithBrackets = ['MUL', 'SRU', 'SUP', 'GEN'];
+      if (sgroupTypesWithBrackets.includes(sgroup.type)) {
         SGroupdrawBrackets(SGroupdrawBracketsOptions);
       }
     }
@@ -164,7 +169,7 @@ class ReSGroup extends ReObject {
 
   makeSelectionPlate(
     restruct: ReStruct,
-    _paper: any,
+    _paper: RaphaelPaper,
     options: any,
   ): any | void {
     const sgroup = this.item;
@@ -239,7 +244,7 @@ class ReSGroup extends ReObject {
 function SGroupdrawBrackets({
   set,
   render,
-  sg,
+  sgroup,
   crossBonds,
   atomSet,
   bracketBox,
@@ -256,7 +261,7 @@ function SGroupdrawBrackets({
     bracketBox,
     d,
     render,
-    sg.id,
+    sgroup.id,
   );
   let ir = -1;
   for (let i = 0; i < brackets.length; ++i) {
@@ -301,9 +306,99 @@ function SGroupdrawBrackets({
   if (upperIndexText) renderIndex(upperIndexText, -0.5);
 }
 
+function showValue(
+  paper: RaphaelPaper,
+  pos: Vec2 | undefined,
+  sgroup: SGroup,
+  options: RenderOptions,
+): any {
+  const text = paper.text(pos?.x, pos?.y, sgroup.data.fieldValue).attr({
+    font: options.font,
+    'font-size': options.fontsz,
+  });
+  const box = text.getBBox();
+  let rect = paper.rect(
+    box.x - 1,
+    box.y - 1,
+    box.width + 2,
+    box.height + 2,
+    3,
+    3,
+  );
+  rect = sgroup.selected
+    ? rect.attr(options.selectionStyle)
+    : rect.attr({ fill: '#fff', stroke: '#fff' });
+  const set = paper.set();
+  set.push(rect, text.toFront());
+  return set;
+}
+
+function drawGroupDat(restruct: ReStruct, sgroup: SGroup) {
+  SGroup.bracketPos(sgroup, restruct.molecule);
+  sgroup.areas = sgroup.bracketBox ? [sgroup.bracketBox] : [];
+
+  if (sgroup.pp === null) sgroup.calculatePP(restruct.molecule);
+
+  return sgroup.data.attached
+    ? drawAttachedDat(restruct, sgroup)
+    : drawAbsoluteDat(restruct, sgroup);
+}
+
+function drawAbsoluteDat(restruct: ReStruct, sgroup: SGroup): any {
+  const render = restruct.render;
+  const options = render.options;
+  const paper = render.paper;
+  const set = paper.set();
+
+  const ps = sgroup?.pp?.scaled(options.scale);
+  const name = showValue(paper, ps, sgroup, options);
+
+  if (sgroup.data.context !== SgContexts.Bond) {
+    const box = util.relBox(name.getBBox());
+    name.translateAbs(0.5 * box.width, -0.5 * box.height);
+  }
+
+  set.push(name);
+
+  const sbox = Box2Abs.fromRelBox(util.relBox(name.getBBox()));
+  sgroup.dataArea = sbox.transform(Scale.scaled2obj, render.options);
+
+  if (!restruct.sgroupData.has(sgroup.id)) {
+    restruct.sgroupData.set(sgroup.id, new ReDataSGroupData(sgroup));
+  }
+
+  return set;
+}
+
+function drawAttachedDat(restruct: ReStruct, sgroup: SGroup): any {
+  const render = restruct.render;
+  const options = render.options;
+  const paper = render.paper;
+  const set = paper.set();
+
+  SGroup.getAtoms(restruct, sgroup).forEach((aid) => {
+    const atom = restruct.atoms.get(aid);
+    if (atom) {
+      const p = Scale.obj2scaled(atom.a.pp, options);
+      const bb = atom.visel.boundingBox;
+      if (bb !== null) p.x = Math.max(p.x, bb.p1.x);
+      p.x += options.lineWidth; // shift a bit to the right
+      const nameI = showValue(paper, p, sgroup, options);
+      const boxI = util.relBox(nameI.getBBox());
+      nameI.translateAbs(0.5 * boxI.width, -0.3 * boxI.height);
+      set.push(nameI);
+      let sboxI = Box2Abs.fromRelBox(util.relBox(nameI.getBBox()));
+      sboxI = sboxI.transform(Scale.scaled2obj, render.options);
+      sgroup.areas.push(sboxI);
+    }
+  });
+
+  return set;
+}
+
 function getBracketParameters(
   mol: any,
-  crossBonds: { [key: number]: Array<any> },
+  crossBonds: { [key: number]: Array<Bond> },
   atomSet: Pile,
   bracketBox: Box2Abs,
   d: Vec2,

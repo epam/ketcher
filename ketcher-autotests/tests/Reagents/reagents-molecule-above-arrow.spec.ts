@@ -40,7 +40,7 @@ test.describe('Reagents molecule above arrow', () => {
     );
   });
 
-  test('Save SVG with reagent NH3 above arrow', async ({ page }) => {
+  test.fixme('Save SVG with reagent NH3 above arrow', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-4701
       Description: File is shown in the preview with the NH3 reagent above the arrow

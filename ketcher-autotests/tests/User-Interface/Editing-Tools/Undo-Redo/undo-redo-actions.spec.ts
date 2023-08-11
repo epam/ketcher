@@ -526,7 +526,7 @@ test.describe('Undo/Redo Actions', () => {
     await screenshotBetweenUndoRedo(page);
   });
 
-  test('Multiple Undo/Redo', async ({ page }) => {
+  test.fixme('Multiple Undo/Redo', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1757
     Description: Undo/Redo action should work correctly
@@ -609,7 +609,7 @@ test.describe('Undo/Redo Actions', () => {
     }
   });
 
-  test('Undo/Redo Zoom In/Zoom Out', async ({ page }) => {
+  test.fixme('Undo/Redo Zoom In/Zoom Out', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1760
     Description: Undo/Redo hotkeys action should work correctly

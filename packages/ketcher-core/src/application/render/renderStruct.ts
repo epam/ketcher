@@ -1,4 +1,5 @@
 import { Struct } from 'domain/entities';
+import { isEqual } from 'lodash';
 import { Render } from './raphaelRender';
 
 /**
@@ -6,6 +7,7 @@ import { Render } from './raphaelRender';
  * Rendering a lot of structures causes great delay
  */
 const renderCache = new Map();
+let previousOptions: any;
 
 export class RenderStruct {
   /**
@@ -26,14 +28,14 @@ export class RenderStruct {
     el: HTMLElement | null,
     struct: Struct | null,
     options: any = {},
-    invalidateCache = false,
   ) {
     if (el && struct) {
       const { cachePrefix = '', needCache = true } = options;
       const cacheKey = `${cachePrefix}${struct.name}`;
 
-      if (invalidateCache) {
+      if (!isEqual(previousOptions, options)) {
         renderCache.clear();
+        previousOptions = options;
       }
 
       if (renderCache.has(cacheKey) && needCache) {

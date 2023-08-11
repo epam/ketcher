@@ -31,12 +31,7 @@ const normalizeStruct = (molV2000StringOrStruct: string | Struct) => {
   }
 };
 
-const StructRender = ({
-  struct,
-  options,
-  className,
-  invalidateCache,
-}: IStructRenderProps) => {
+const StructRender = ({ struct, options, className }: IStructRenderProps) => {
   const renderRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -45,14 +40,9 @@ const StructRender = ({
     if (container) {
       container.innerHTML = '';
       const normalizedStruct = normalizeStruct(struct);
-      RenderStruct.render(
-        container,
-        normalizedStruct,
-        options,
-        invalidateCache,
-      );
+      RenderStruct.render(container, normalizedStruct, options);
     }
-  }, [struct, options, invalidateCache]);
+  }, [struct, options]);
 
   return <Container ref={renderRef} className={className}></Container>;
 };

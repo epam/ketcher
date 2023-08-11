@@ -19,7 +19,6 @@ import { Struct } from 'ketcher-core';
 import classes from './TemplateTable.module.less';
 import { greekify } from '../../utils';
 import { Icon, StructRender } from 'components';
-import { isEqual } from 'lodash';
 
 export interface Template {
   struct: Struct;
@@ -64,8 +63,6 @@ function tmplName(tmpl: Template, i: number): string {
   return tmpl.struct.name || `${tmpl.props.group} template ${i + 1}`;
 }
 
-let previousRenderOptions: any;
-
 const TemplateTable: FC<TemplateTableProps> = (props) => {
   const {
     templates,
@@ -84,12 +81,6 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
       }`}
     >
       {templates.map((tmpl, i) => {
-        let invalidateRenderCache = false;
-        if (!isEqual(previousRenderOptions, renderOptions)) {
-          previousRenderOptions = renderOptions;
-          invalidateRenderCache = true;
-        }
-
         return (
           <div
             className={
@@ -114,7 +105,6 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
                 cachePrefix: 'templates',
                 downScale: true,
               }}
-              invalidateCache={invalidateRenderCache}
             />
             <div
               className={`${classes.structTitle} ${

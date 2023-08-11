@@ -10,6 +10,8 @@ import {
   TopPanelButton,
   selectTopPanelButton,
   pressButton,
+  dragMouseTo,
+  openFileAndAddToCanvas,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 
@@ -229,5 +231,50 @@ test.describe('Open Ketcher', () => {
     for (let i = 0; i < 5; i++) {
       await page.keyboard.press('Control+=');
     }
+  });
+
+  test('Delete R-Group label using hotkey', async ({ page }) => {
+    /* Test case: EPMLSOPKET-1561
+      Description: Delete R-Group label using hotkey
+    */
+
+    await selectRingButton(RingButton.Benzene, page);
+    await clickInTheMiddleOfTheScreen(page);
+
+    await selectLeftPanelButton(LeftPanelButton.R_GroupLabelTool, page);
+    const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
+    await page.mouse.click(x, y);
+    await pressButton(page, 'R5');
+    await pressButton(page, 'Apply');
+
+    await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
+    await page.getByText('R5').click();
+    await page.keyboard.press('Delete');
+  });
+
+  test('Move Structure with R-Group label', async ({ page }) => {
+    /*
+      Test case: EPMLSOPKET-1564
+      Description: User is able to move the R-group label, a part of the structure.
+    */
+    const x = 500;
+    const y = 200;
+    await openFileAndAddToCanvas('chain-r1.mol', page);
+    await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
+    await page.getByText('R1').click();
+    await dragMouseTo(x, y, page);
+  });
+
+  test('Move whole Structure with R-Group label', async ({ page }) => {
+    /*
+      Test case: EPMLSOPKET-1564
+      Description: User is able to move the R-group label, the whole structure.
+    */
+    const x = 500;
+    const y = 200;
+    await openFileAndAddToCanvas('chain-r1.mol', page);
+    await page.keyboard.press('Control+a');
+    await page.getByText('R1').click();
+    await dragMouseTo(x, y, page);
   });
 });

@@ -46,6 +46,7 @@ interface ToolbarMultiToolItemProps {
   indigoVerification: boolean;
   className?: string;
   vertical?: boolean;
+  dataTestId?: string;
 }
 
 interface ToolbarMultiToolItemCallProps {
@@ -69,6 +70,7 @@ const ToolbarMultiToolItem = (props: Props) => {
     vertical,
     onAction,
     onOpen,
+    dataTestId,
   } = props;
 
   const ref = useRef<HTMLDivElement>(null);
@@ -141,7 +143,7 @@ const ToolbarMultiToolItem = (props: Props) => {
         action={action[currentId]}
         status={currentStatus as ActionButtonProps['status']}
         selected={selected}
-        data-testid={iconName}
+        dataTestId={dataTestId || iconName}
       />
       {!isOpen && (
         <Icon

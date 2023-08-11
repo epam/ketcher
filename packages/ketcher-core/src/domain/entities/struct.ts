@@ -37,6 +37,7 @@ import { Vec2 } from './vec2';
 import { Highlight } from './highlight';
 import { RGroupAttachmentPoint } from './rgroupAttachmentPoint';
 import { Peptide } from 'domain/entities/Peptide';
+import { PolymerBond } from 'domain/entities/PolymerBond';
 
 export type Neighbor = {
   aid: number;
@@ -55,7 +56,8 @@ export class Struct {
   atoms: Pool<Atom>;
   bonds: Pool<Bond>;
   sgroups: Pool<SGroup>;
-  peptides: Pool<Peptide>;
+  peptides: Map<number, Peptide>;
+  polymerBonds: Map<number, PolymerBond>;
   halfBonds: Pool<HalfBond>;
   loops: Pool<Loop>;
   isReaction: boolean;
@@ -76,7 +78,8 @@ export class Struct {
     this.atoms = new Pool<Atom>();
     this.bonds = new Pool<Bond>();
     this.sgroups = new Pool<SGroup>();
-    this.peptides = new Pool<Peptide>();
+    this.peptides = new Map<number, Peptide>();
+    this.polymerBonds = new Map<number, PolymerBond>();
     this.halfBonds = new Pool<HalfBond>();
     this.loops = new Pool<Loop>();
     this.isReaction = false;

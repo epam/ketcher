@@ -21,5 +21,6 @@ export interface IMonomerGroupProps {
   onItemClick?: (item: MonomerItemType) => void;
   title?: string;
   libraryName?: LibraryNameType;
+  disabled?: boolean;
   selectedMonomerUniqueKey?: string;
 }

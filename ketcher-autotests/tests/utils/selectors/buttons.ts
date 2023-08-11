@@ -4,6 +4,32 @@
  *
  **/
 
+export enum BondTypeId {
+  BondSingle = 'bond-single',
+  BondDouble = 'bond-double',
+  BondTriple = 'bond-triple',
+  BondDown = 'bond-down',
+}
+
+export type BondIds =
+  | BondTypeId.BondSingle
+  | BondTypeId.BondDouble
+  | BondTypeId.BondTriple
+  | 'bond-dative'
+  | 'bond-stereo'
+  | 'bond-up'
+  | BondTypeId.BondDown
+  | 'bond-updown'
+  | 'bond-crossed'
+  | 'bond-query'
+  | 'bond-special'
+  | 'bond-any'
+  | 'bond-hydrogen'
+  | 'bond-aromatic'
+  | 'bond-singledouble'
+  | 'bond-singlearomatic'
+  | 'bond-doublearomatic';
+
 export enum AtomButton {
   Hydrogen = 'Hydrogen',
   Carbon = 'Carbon',

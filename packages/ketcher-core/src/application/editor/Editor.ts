@@ -22,11 +22,13 @@ export class CoreEditor {
   public events = {
     selectPeptide: new Subscription(),
     selectTool: new Subscription(),
+    error: new Subscription(),
   };
 
   public renderersContainer: ReStruct;
   public lastCursorPosition: Vec2 = new Vec2(0, 0);
   private canvas: SVGSVGElement;
+  public canvasOffset: DOMRect;
   public theme;
   // private lastEvent: Event | undefined;
   private tool?: Tool;
@@ -40,6 +42,7 @@ export class CoreEditor {
       theme,
     });
     this.domEventSetup();
+    this.canvasOffset = this.canvas.getBoundingClientRect();
   }
 
   private subscribeEvents() {

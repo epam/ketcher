@@ -15,10 +15,16 @@
  ***************************************************************************/
 import { Tool } from 'application/editor/tools/Tool';
 import { Vec2 } from 'domain/entities';
+import { PeptideRenderer } from 'application/render/renderers/PeptideRenderer';
+import { CoreEditor } from 'application/editor';
 
 class SelectLasso implements Tool {
   private isMouseDown = false;
-  private selectedItem;
+  private selectedItem?: PeptideRenderer;
+
+  constructor(private editor: CoreEditor) {
+    this.editor = editor;
+  }
 
   mousedown(event) {
     this.isMouseDown = true;
@@ -27,16 +33,24 @@ class SelectLasso implements Tool {
 
   mousemove(event) {
     if (this.isMouseDown && this.selectedItem) {
-      this.selectedItem.peptide.moveRelative(
-        new Vec2(event.movementX, event.movementY),
-      );
-      this.selectedItem.move();
+      if (this.selectedItem instanceof PeptideRenderer) {
+        this.selectedItem.monomer.moveRelative(
+          new Vec2(event.movementX, event.movementY),
+        );
+        if (this.selectedItem.monomer.hasBonds) {
+          this.selectedItem.monomer.forEachBond((bond) => {
+            bond.moveToLinkedMonomers();
+          });
+        }
+        this.selectedItem.move();
+      }
+      this.editor.renderersContainer.update(false);
     }
   }
 
   mouseup() {
     this.isMouseDown = false;
-    this.selectedItem = null;
+    this.selectedItem = undefined;
   }
 }
 

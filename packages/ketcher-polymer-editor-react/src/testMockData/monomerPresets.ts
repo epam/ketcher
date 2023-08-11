@@ -1,5 +1,4 @@
-import { MonomerItemType } from 'components/monomerLibrary/monomerLibraryItem/types';
-import { Struct } from 'ketcher-core';
+import { MonomerItemType, Struct } from 'ketcher-core';
 
 // you can add other props in monomers, if you need them
 export const monomers: MonomerItemType[] = [

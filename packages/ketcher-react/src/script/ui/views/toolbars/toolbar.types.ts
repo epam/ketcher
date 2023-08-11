@@ -159,7 +159,8 @@ type ToolbarItemVariant =
   | LeftToolbarItemVariant
   | BottomToolbarItemVariant
   | RightToolbarItemVariant
-  | FloatingToolItemVariant;
+  | FloatingToolItemVariant
+  | 'bonds';
 
 interface ToolbarItem {
   id: ToolbarItemVariant;

@@ -579,10 +579,14 @@ function shouldDisplayStereoLabel(
   }
   const stereoLabelType = stereoLabel.match(/\D+/g)[0];
 
-  if (ignoreChiralFlag && stereoLabelType === StereoLabel.Abs) {
+  const stereoLabelTypeWithChiralFlag = ignoreChiralFlag
+    ? StereoLabel.Abs
+    : stereoLabelType;
+
+  if (stereoLabelTypeWithChiralFlag === StereoLabel.Abs) {
     return false;
   }
-  if (ignoreChiralFlag && stereoLabelType !== StereoLabel.Abs) {
+  if (stereoLabelTypeWithChiralFlag === StereoLabel.And) {
     return true;
   }
 

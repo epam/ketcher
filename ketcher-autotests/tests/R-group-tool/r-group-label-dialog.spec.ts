@@ -1,4 +1,4 @@
-import { test } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import {
   takeEditorScreenshot,
   LeftPanelButton,
@@ -12,10 +12,16 @@ import {
   pressButton,
   dragMouseTo,
   openFileAndAddToCanvas,
+  clickOnAtom,
+  copyAndPaste,
+  cutAndPaste,
+  receiveFileComparisonData,
+  saveToFile,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
+import { getRxn, getSmiles } from '@utils/formats';
 
-test.describe('Open Ketcher', () => {
+test.describe('R-Group Label Tool', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('');
   });
@@ -276,5 +282,137 @@ test.describe('Open Ketcher', () => {
     await page.keyboard.press('Control+a');
     await page.getByText('R1').click();
     await dragMouseTo(x, y, page);
+  });
+
+  test('Move Actions with Reaction components with R-Group label', async ({
+    page,
+  }) => {
+    /*
+      Test case: EPMLSOPKET-1565
+      Description: User is able to create the reaction with components which contain the R-group labels.
+      User is able to move the reaction components with R-group label, part of the reaction and the whole reaction.
+    */
+    const x = 500;
+    const y = 200;
+    const anyAtom = 3;
+    await openFileAndAddToCanvas('reaction-with-arrow-and-plus.ket', page);
+    await selectLeftPanelButton(LeftPanelButton.R_GroupLabelTool, page);
+    await clickOnAtom(page, 'C', anyAtom);
+    await pressButton(page, 'R8');
+    await pressButton(page, 'Apply');
+    await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
+    await page.getByText('R8').click();
+    await dragMouseTo(x, y, page);
+  });
+
+  test('Move whole Reaction components with R-Group label', async ({
+    page,
+  }) => {
+    /*
+      Test case: EPMLSOPKET-1565
+      Description: User is able to create the reaction with components which contain the R-group labels.
+      User is able to move the reaction components with R-group label, part of the reaction and the whole reaction.
+    */
+    const x = 500;
+    const y = 200;
+    const anyAtom = 3;
+    await openFileAndAddToCanvas('reaction-with-arrow-and-plus.ket', page);
+    await selectLeftPanelButton(LeftPanelButton.R_GroupLabelTool, page);
+    await clickOnAtom(page, 'C', anyAtom);
+    await pressButton(page, 'R8');
+    await pressButton(page, 'Apply');
+    await page.keyboard.press('Control+a');
+    await page.getByText('R8').click();
+    await dragMouseTo(x, y, page);
+  });
+
+  test('Copy/Paste actions Structure with R-Group label', async ({ page }) => {
+    /*
+      Test case: EPMLSOPKET-1566
+      Description: User is able to Copy/Paste structure with R-group label.
+    */
+    const x = 500;
+    const y = 200;
+    await openFileAndAddToCanvas('chain-with-r-group.rxn', page);
+    await copyAndPaste(page);
+    await dragMouseTo(x, y, page);
+  });
+
+  test('Cut/Paste actions Structure with R-Group label', async ({ page }) => {
+    /*
+      Test case: EPMLSOPKET-1566
+      Description: User is able to Cut/Paste the structure with R-group label.
+    */
+    const x = 500;
+    const y = 200;
+    await openFileAndAddToCanvas('chain-with-r-group.rxn', page);
+    await cutAndPaste(page);
+    await dragMouseTo(x, y, page);
+  });
+});
+
+test.describe('R-Group Label Tool', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('');
+  });
+
+  test('Save as *.rxn file', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-1568
+    Description: User is able to save the structure with R-group label as .rxn file
+    */
+    await openFileAndAddToCanvas('chain-with-r-group.rxn', page);
+    const expectedFile = await getRxn(page);
+    await saveToFile('chain-with-r-group-expected.rxn', expectedFile);
+
+    // eslint-disable-next-line no-magic-numbers
+    const METADATA_STRING_INDEX = [2, 7, 31, 38];
+    const { fileExpected: rxnFileExpected, file: rxnFile } =
+      await receiveFileComparisonData({
+        page,
+        metaDataIndexes: METADATA_STRING_INDEX,
+        expectedFileName: 'tests/test-data/chain-with-r-group-expected.rxn',
+      });
+    expect(rxnFile).toEqual(rxnFileExpected);
+  });
+
+  test('Save as *.rxn V3000 file', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-1567
+    Description: User is able to save the structure with R-group label as .rxn V3000 file
+    */
+    await openFileAndAddToCanvas('chain-with-r-group-V3000.rxn', page);
+    const expectedFile = await getRxn(page, 'v3000');
+    await saveToFile('chain-with-r-group-V3000-expected.rxn', expectedFile);
+
+    // eslint-disable-next-line no-magic-numbers
+    const METADATA_STRING_INDEX = [2];
+    const { fileExpected: rxnFileExpected, file: rxnFile } =
+      await receiveFileComparisonData({
+        page,
+        metaDataIndexes: METADATA_STRING_INDEX,
+        expectedFileName:
+          'tests/test-data/chain-with-r-group-V3000-expected.rxn',
+        fileFormat: 'v3000',
+      });
+    expect(rxnFile).toEqual(rxnFileExpected);
+  });
+
+  test('Save as *.smi file', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-1568
+    Description: User is able to save the structure with R-group label as .smi file
+    */
+    await openFileAndAddToCanvas('chain-with-r-group.smi', page);
+    const expectedFile = await getSmiles(page);
+    await saveToFile('chain-with-r-group-expected.smi', expectedFile);
+
+    const { fileExpected: smiFileExpected, file: smiFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName: 'tests/test-data/chain-with-r-group-expected.smi',
+      });
+
+    expect(smiFile).toEqual(smiFileExpected);
   });
 });

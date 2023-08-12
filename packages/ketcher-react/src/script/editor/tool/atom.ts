@@ -26,10 +26,10 @@ import {
   fromFragmentDeletion,
   fromSgroupDeletion,
   ElementColor,
+  vectorUtils,
 } from 'ketcher-core';
 
 import Editor from '../Editor';
-import utils from '../shared/utils';
 import { Tool } from './Tool';
 import { deleteFunctionalGroups } from './helper/deleteFunctionalGroups';
 import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems';
@@ -174,13 +174,14 @@ class AtomTool implements Tool {
     }
 
     if (atomId !== undefined) {
-      const atom = molecule.atoms.get(atomId);
-      let angle = utils.calcAngle(atom?.pp, rnd.page2obj(event));
-      if (!event.ctrlKey) angle = utils.fracAngle(angle, null);
-      const degrees = utils.degrees(angle);
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const atom = molecule.atoms.get(atomId)!;
+      let angle = vectorUtils.calcAngle(atom.pp, rnd.page2obj(event));
+      if (!event.ctrlKey) angle = vectorUtils.fracAngle(angle, null);
+      const degrees = vectorUtils.degrees(angle);
       editor.event.message.dispatch({ info: degrees + 'º' });
-      const newAtomPos = utils.calcNewAtomPos(
-        atom?.pp,
+      const newAtomPos = vectorUtils.calcNewAtomPos(
+        atom.pp,
         rnd.page2obj(event),
         event.ctrlKey,
       );

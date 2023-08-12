@@ -28,6 +28,8 @@ const ignoredTests = [
   'utils/**',
 ];
 
+const testDir = './tests';
+
 function baseURL(): string {
   if (!process.env.MODE || !process.env.KETCHER_URL) {
     return DEFAULT_KETCHER_STANDALONE_URL;
@@ -45,7 +47,7 @@ const MAX_NUMBER_OF_RETRIES = 2;
 const isCI = process.env.CI_ENVIRONMENT === 'true';
 
 const config: PlaywrightTestConfig = {
-  testDir: './tests',
+  testDir,
   /* Maximum time one test can run for. */
   timeout: 60_000,
   testIgnore: process.env.IGNORE_UNSTABLE_TESTS ? ignoredTests : undefined,

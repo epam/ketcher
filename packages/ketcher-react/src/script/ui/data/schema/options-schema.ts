@@ -19,6 +19,7 @@ import {
   StereoColoringType,
   ShowHydrogenLabels,
   ShowHydrogenLabelNames,
+  defaultBondThickness,
 } from 'ketcher-core';
 import Ajv, { SchemaObject } from 'ajv';
 
@@ -221,7 +222,7 @@ const render: {
   bondThickness: {
     title: 'Bond thickness',
     type: 'integer',
-    default: 2,
+    default: defaultBondThickness,
     minimum: 1,
     maximum: 96,
   },

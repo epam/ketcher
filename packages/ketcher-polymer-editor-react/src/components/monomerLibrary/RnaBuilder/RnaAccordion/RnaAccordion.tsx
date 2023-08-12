@@ -57,7 +57,7 @@ import {
   GroupContainer,
   ItemsContainer,
 } from 'components/monomerLibrary/monomerLibraryGroup/styles';
-import { MonomerItemType } from 'components/monomerLibrary/monomerLibraryItem/types';
+import { MonomerItemType } from 'ketcher-core';
 
 interface IGroupsDataItem {
   groupName: RnaBuilderItem;
@@ -178,6 +178,7 @@ export const RnaAccordion = () => {
                   {presets.map((preset, index) => {
                     return (
                       <RnaPresetItem
+                        data-testid={`${preset.name}`}
                         key={`${preset.name}${index}`}
                         preset={preset}
                         onClick={() => selectPreset(preset)}
@@ -199,6 +200,7 @@ export const RnaAccordion = () => {
                 return (
                   <MonomerGroup
                     key={groupTitle}
+                    disabled={!isEditMode}
                     title={groupData.groups.length > 1 ? groupTitle : undefined}
                     items={groupItems as MonomerItemType[]}
                     selectedMonomerUniqueKey={

@@ -99,6 +99,7 @@ self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
           'render-output-format': data.outputFormat,
           'render-background-color': data.backgroundColor,
           'render-coloring': true,
+          'render-bond-line-width': data.bondThickness,
         },
         Command.GenerateImageAsBase64,
       );

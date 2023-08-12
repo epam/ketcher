@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { put, takeEvery, call } from 'redux-saga/effects';
-import { init, initFailure, initSuccess } from 'state/common';
+import { editorSlice, init, initFailure, initSuccess } from 'state/common';
 
 const FETCH_DATA = 'editor/fetchData';
 
@@ -25,12 +25,12 @@ const fetchDataCall = () =>
   });
 
 function* fetchData() {
-  yield put(init());
+  yield put(init(editorSlice));
   try {
     yield call(fetchDataCall);
-    yield put(initSuccess());
+    yield put(initSuccess(editorSlice));
   } catch (e) {
-    yield put(initFailure());
+    yield put(initFailure(editorSlice));
   }
 }
 

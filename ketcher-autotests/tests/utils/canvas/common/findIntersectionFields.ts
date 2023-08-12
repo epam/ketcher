@@ -17,11 +17,9 @@ export function findIntersectionFields(
       if (item[attr] === attributes[attr]) {
         keysCounter++;
       }
-
-      if (attributesLength === keysCounter) {
-        targets.push(item);
-        break;
-      }
+    }
+    if (attributesLength === keysCounter) {
+      targets.push(item);
     }
   }
 

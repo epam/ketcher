@@ -17,6 +17,9 @@ import {
   cutAndPaste,
   receiveFileComparisonData,
   saveToFile,
+  BondTypeName,
+  selectBond,
+  moveOnAtom,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getRxn, getSmiles } from '@utils/formats';
@@ -347,6 +350,62 @@ test.describe('R-Group Label Tool', () => {
     const y = 200;
     await openFileAndAddToCanvas('chain-with-r-group.rxn', page);
     await cutAndPaste(page);
+    await dragMouseTo(x, y, page);
+  });
+
+  test('Atom properties do not implement for the Rgroup labels', async ({
+    page,
+  }) => {
+    /*
+      Test case: EPMLSOPKET-1572
+      Description: The plus symbol does not appear near the R-group label.
+      The minus symbol does not appear near the R-group label.
+    */
+    await openFileAndAddToCanvas('chain-with-r-group.rxn', page);
+    await selectLeftPanelButton(LeftPanelButton.ChargePlus, page);
+    await page.getByText('R8').click();
+    await selectLeftPanelButton(LeftPanelButton.ChargeMinus, page);
+    await page.getByText('R13').click();
+  });
+
+  test('Add Bond to the R-Group Label', async ({ page }) => {
+    /*
+      Test case: EPMLSOPKET-1573
+      Description: The correct bond is sprouted from the R-group label
+    */
+    const x = 0;
+    const y = 100;
+    await openFileAndAddToCanvas('chain-with-three-r-groups.rxn', page);
+    await selectBond(BondTypeName.Single, page);
+    await page.getByText('R8').click();
+    await dragMouseTo(x, y, page);
+  });
+
+  test.fixme('Add Chain to the R-Group Label', async ({ page }) => {
+    /*
+      Test case: EPMLSOPKET-1573
+      Description: The correct Chain is sprouted from the R-group label
+    */
+    // Can't drag Chain from R10 group.
+    const x = 0;
+    const y = 150;
+    await openFileAndAddToCanvas('chain-with-three-r-groups.rxn', page);
+    await selectLeftPanelButton(LeftPanelButton.Chain, page);
+    await page.getByText('R10').click();
+    await dragMouseTo(x, y, page);
+  });
+
+  test.fixme('Add Template to the R-Group Label', async ({ page }) => {
+    /*
+      Test case: EPMLSOPKET-1573
+      Description: The correct Template is sprouted from the R-group label
+    */
+    // Can't drag template from R13 group.
+    const x = 0;
+    const y = 200;
+    await openFileAndAddToCanvas('chain-with-three-r-groups.rxn', page);
+    await selectRingButton(RingButton.Benzene, page);
+    await page.getByText('R13').click();
     await dragMouseTo(x, y, page);
   });
 });

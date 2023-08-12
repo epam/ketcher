@@ -81,8 +81,9 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Test case: EPMLSOPKET-1712
     Description: After the clicking the 'Cut' button, the selected object disappears.
     */
+    const anyBond = 0;
     await openFileAndAddToCanvas('query-feat.mol', page);
-    await clickOnBond(page, BondType.TRIPLE, 0);
+    await clickOnBond(page, BondType.TRIPLE, anyBond);
     await selectTopPanelButton(TopPanelButton.Cut, page);
     await screenshotBetweenUndoRedo(page);
   });
@@ -149,9 +150,10 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Test case: EPMLSOPKET-1714
     Description: After the clicking the Cut button, the selected object disappears.
     */
+    const anyBond = 1;
     const modifier = getControlModifier();
     await openFileAndAddToCanvas('reaction-dif-prop.rxn', page);
-    await clickOnBond(page, BondType.SINGLE, 1);
+    await clickOnBond(page, BondType.SINGLE, anyBond);
     await page.keyboard.press(`${modifier}+KeyX`);
     await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
@@ -611,8 +613,8 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Test case: EPMLSOPKET-2883
     Description: Copied objects are pasted as one object and correctly displayed without data loss.
     */
-    const x = 100;
-    const y = 100;
+    const x = 200;
+    const y = 200;
     await openFileAndAddToCanvas('mapped-structure.rxn', page);
     await copyAndPaste(page);
     await page.mouse.click(x, y);

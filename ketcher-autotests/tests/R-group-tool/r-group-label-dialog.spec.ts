@@ -19,7 +19,6 @@ import {
   saveToFile,
   BondTypeName,
   selectBond,
-  moveOnAtom,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getRxn, getSmiles } from '@utils/formats';

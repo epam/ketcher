@@ -95,7 +95,7 @@ export interface GenerateInchIKeyCommandData extends CommandData, WithStruct {}
 export interface GenerateImageCommandData extends CommandData, WithStruct {
   outputFormat: 'png' | 'svg';
   backgroundColor?: string;
-  bondThickness?: number;
+  bondThickness?: number | undefined;
 }
 
 export interface LayoutCommandData

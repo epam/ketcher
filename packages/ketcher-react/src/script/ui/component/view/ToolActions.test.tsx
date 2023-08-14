@@ -8,13 +8,15 @@ const toolsWithoutTitles = [
   'shapes',
 ];
 const isToolWithTitle = (tool) => !toolsWithoutTitles.includes(tool);
-const toolsWithTitles = Object.values(toolActions).filter(isToolWithTitle);
+const toolsWithTitles = Object.keys(toolActions).filter(isToolWithTitle);
 
 describe('ToolActions', () => {
-  const tools = toolsWithTitles;
-
   it('should have a "title" property for each tool that is not hidden', () => {
-    tools.forEach((tool) => {
+    toolsWithTitles.forEach((toolKey) => {
+      const tool = toolActions[toolKey];
+      if (tool.title === undefined) {
+        console.error(`Tool without title: ${toolKey}`);
+      }
       expect(tool.title).toBeTruthy();
     });
   });

@@ -1,5 +1,5 @@
 import { Vec2 } from 'domain/entities';
-import { Editor, ReAtom } from 'ketcher-core';
+import { Editor, ReAtom, fromMultipleMove } from 'ketcher-core';
 
 const edgeOffset = 150;
 const scrollMultiplier = 2;
@@ -16,62 +16,6 @@ export function getDirections(event) {
   lastX = layerX;
   lastY = layerY;
   return { isMovingRight, isMovingLeft, isMovingTop, isMovingBottom };
-}
-
-export function calculateCanvasExtension(
-  clientArea,
-  currentCanvasSize,
-  extensionVector,
-) {
-  const newHorizontalScrollPosition = clientArea.scrollLeft + extensionVector.x;
-  const newVerticalScrollPosition = clientArea.scrollTop + extensionVector.y;
-  let horizontalExtension = 0;
-  let verticalExtension = 0;
-  if (newHorizontalScrollPosition > currentCanvasSize.x) {
-    horizontalExtension = newHorizontalScrollPosition - currentCanvasSize.x;
-  }
-  if (newHorizontalScrollPosition < 0) {
-    horizontalExtension = Math.abs(newHorizontalScrollPosition);
-  }
-  if (newVerticalScrollPosition > currentCanvasSize.y) {
-    verticalExtension = newVerticalScrollPosition - currentCanvasSize.y;
-  }
-  if (newVerticalScrollPosition < 0) {
-    verticalExtension = Math.abs(newVerticalScrollPosition);
-  }
-  return new Vec2(horizontalExtension, verticalExtension, 0);
-}
-
-export function shiftByVector(vector: Vec2, editor: Editor) {
-  const render = editor.render;
-  const clientArea = render.clientArea;
-  const extensionVector = calculateCanvasExtension(
-    clientArea,
-    render.sz.scaled(render.options.zoom),
-    vector,
-  ).scaled(1 / render.options.zoom);
-
-  if (extensionVector.x > 0 || extensionVector.y > 0) {
-    // When canvas extends previous (0, 0) coordinates may become (100, 100)
-    lastX += extensionVector.x;
-    lastY += extensionVector.y;
-  }
-  requestAnimationFrame(() => {
-    const clientArea = render.clientArea;
-    if (vector.x < 0) {
-      clientArea.scrollLeft = 0;
-    }
-    if (vector.x > 0) {
-      clientArea.scrollLeft = clientArea.scrollWidth;
-    }
-    if (vector.y < 0) {
-      clientArea.scrollTop = 0;
-    }
-    if (vector.y > 0) {
-      clientArea.scrollTop = clientArea.scrollHeight;
-    }
-  });
-  render.update(false);
 }
 
 export function isSelectionCloseToTheEdgeOfCanvas(editor: Editor) {
@@ -119,6 +63,103 @@ export function isSelectionCloseToTheEdgeOfScreen(editor: Editor) {
   };
 }
 
+export function calculateCanvasExtension(
+  clientArea,
+  currentCanvasSize,
+  extensionVector,
+) {
+  const newHorizontalScrollPosition = clientArea.scrollLeft + extensionVector.x;
+  const newVerticalScrollPosition = clientArea.scrollTop + extensionVector.y;
+  let horizontalExtension = 0;
+  let verticalExtension = 0;
+  if (newHorizontalScrollPosition > currentCanvasSize.x) {
+    horizontalExtension = newHorizontalScrollPosition - currentCanvasSize.x;
+  }
+  if (newHorizontalScrollPosition < 0) {
+    horizontalExtension = Math.abs(newHorizontalScrollPosition);
+  }
+  if (newVerticalScrollPosition > currentCanvasSize.y) {
+    verticalExtension = newVerticalScrollPosition - currentCanvasSize.y;
+  }
+  if (newVerticalScrollPosition < 0) {
+    verticalExtension = Math.abs(newVerticalScrollPosition);
+  }
+  return new Vec2(horizontalExtension, verticalExtension, 0);
+}
+
+export function shiftByVector(vector: Vec2, editor: Editor) {
+  const render = editor.render;
+  const clientArea = render.clientArea;
+  const extensionVector = calculateCanvasExtension(
+    clientArea,
+    render.sz.scaled(render.options.zoom),
+    vector,
+  ).scaled(1 / render.options.zoom);
+
+  if (extensionVector.x > 0 || extensionVector.y > 0) {
+    // When canvas extends previous (0, 0) coordinates may become (100, 100)
+    lastX += extensionVector.x;
+    lastY += extensionVector.y;
+  }
+  render.update(false);
+  scrollToEdgeOfScreen(vector, render);
+}
+
+export function scrollByVector(vector: Vec2, render) {
+  requestAnimationFrame(() => {
+    const clientArea = render.clientArea;
+    clientArea.scrollLeft +=
+      (vector.x * render.options.scale) / scrollMultiplier;
+    clientArea.scrollTop +=
+      (vector.y * render.options.scale) / scrollMultiplier;
+  });
+}
+
+export function scrollToEdgeOfScreen(vector: Vec2, render) {
+  requestAnimationFrame(() => {
+    const clientArea = render.clientArea;
+    if (vector.x < 0) {
+      clientArea.scrollLeft = 0;
+    }
+    if (vector.x > 0) {
+      clientArea.scrollLeft = clientArea.scrollWidth;
+    }
+    if (vector.y < 0) {
+      clientArea.scrollTop = 0;
+    }
+    if (vector.y > 0) {
+      clientArea.scrollTop = clientArea.scrollHeight;
+    }
+  });
+}
+
+export function moveSelected(
+  editor: Editor,
+  destinationVector: Vec2,
+  isFast: boolean,
+  direction: string,
+) {
+  const stepFactor = 1 / editor.options().scale;
+  const fasterStepFactor = stepFactor * 10;
+  const selectedItems = editor.explicitSelected();
+  const action = fromMultipleMove(
+    editor.render.ctab,
+    selectedItems,
+    destinationVector.scaled(isFast ? fasterStepFactor : stepFactor),
+  );
+  editor.update(action, false, { resizeCanvas: true });
+
+  const {
+    isCloseToEdgeOfCanvasAndMovingToEdge,
+    isCloseToEdgeOfScreenAndMovingToEdge,
+  } = isCloseToTheEdges(editor, direction);
+  if (isCloseToEdgeOfCanvasAndMovingToEdge) {
+    scrollToEdgeOfScreen(destinationVector, editor.render);
+  } else if (isCloseToEdgeOfScreenAndMovingToEdge) {
+    scrollByVector(destinationVector, editor.render);
+  }
+}
+
 function getSelectedAreaCoordinates(editor: Editor) {
   const restruct = editor.render.ctab;
   const selectedItems = editor.explicitSelected();
@@ -157,8 +198,10 @@ function getSelectedAreaCoordinates(editor: Editor) {
   ) {
     const scale = editor.options().scale;
     const offset = editor.render.options.offset;
+
     const getScreenCoordinates = (atom: ReAtom) =>
       atom.a.pp.scaled(scale).add(offset);
+
     const theMostTopAtomYCoordinate = getScreenCoordinates(theMostTopAtom).y;
     const theMostBottomAtomYCoordinate =
       getScreenCoordinates(theMostBottomAtom).y;
@@ -175,12 +218,43 @@ function getSelectedAreaCoordinates(editor: Editor) {
   return false;
 }
 
-export function scrollByVector(vector: Vec2, render) {
-  requestAnimationFrame(() => {
-    const clientArea = render.clientArea;
-    clientArea.scrollLeft +=
-      (vector.x * render.options.scale) / scrollMultiplier;
-    clientArea.scrollTop +=
-      (vector.y * render.options.scale) / scrollMultiplier;
-  });
+function isCloseToTheEdges(editor: Editor, direction: string) {
+  const result = {
+    isCloseToEdgeOfCanvasAndMovingToEdge: false,
+    isCloseToEdgeOfScreenAndMovingToEdge: false,
+  };
+  const selectedItems = editor.explicitSelected();
+  if (!selectedItems.atoms) {
+    return result;
+  }
+
+  const isCloseToEdgeOfCanvas = isSelectionCloseToTheEdgeOfCanvas(editor);
+  if (isCloseToEdgeOfCanvas) {
+    const {
+      isCloseToLeftEdgeOfCanvas,
+      isCloseToTopEdgeOfCanvas,
+      isCloseToRightEdgeOfCanvas,
+      isCloseToBottomEdgeOfCanvas,
+    } = isCloseToEdgeOfCanvas;
+    result.isCloseToEdgeOfCanvasAndMovingToEdge =
+      (isCloseToTopEdgeOfCanvas && direction === 'MoveUp') ||
+      (isCloseToBottomEdgeOfCanvas && direction === 'MoveDown') ||
+      (isCloseToLeftEdgeOfCanvas && direction === 'MoveLeft') ||
+      (isCloseToRightEdgeOfCanvas && direction === 'MoveRight');
+  }
+  const isCloseToEdgeOfScreen = isSelectionCloseToTheEdgeOfScreen(editor);
+  if (isCloseToEdgeOfScreen) {
+    const {
+      isCloseToLeftEdgeOfScreen,
+      isCloseToTopEdgeOfScreen,
+      isCloseToRightEdgeOfScreen,
+      isCloseToBottomEdgeOfScreen,
+    } = isCloseToEdgeOfScreen;
+    result.isCloseToEdgeOfScreenAndMovingToEdge =
+      (isCloseToTopEdgeOfScreen && direction === 'MoveUp') ||
+      (isCloseToBottomEdgeOfScreen && direction === 'MoveDown') ||
+      (isCloseToLeftEdgeOfScreen && direction === 'MoveLeft') ||
+      (isCloseToRightEdgeOfScreen && direction === 'MoveRight');
+  }
+  return result;
 }

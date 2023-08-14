@@ -385,7 +385,6 @@ test.describe('R-Group Label Tool', () => {
       Test case: EPMLSOPKET-1573
       Description: The correct Chain is sprouted from the R-group label
     */
-    // Can't drag Chain from R10 group.
     const x = 500;
     const y = 500;
     await openFileAndAddToCanvas('Rxn/chain-with-three-r-groups.rxn', page);
@@ -399,13 +398,23 @@ test.describe('R-Group Label Tool', () => {
       Test case: EPMLSOPKET-1573
       Description: The correct Template is sprouted from the R-group label
     */
-    // Can't drag template from R13 group.
     const x = 500;
     const y = 500;
     await openFileAndAddToCanvas('Rxn/chain-with-three-r-groups.rxn', page);
     await selectRingButton(RingButton.Benzene, page);
     await page.getByText('R10').hover();
     await dragMouseTo(x, y, page);
+  });
+
+  test('Layout action to the distorted structure with R-Group Label', async ({
+    page,
+  }) => {
+    /*
+      Test case: EPMLSOPKET-1576
+      Description: The structure is layout correctly without R-group label loss.
+    */
+    await openFileAndAddToCanvas('distorted-structure-with-r-group.mol', page);
+    await selectTopPanelButton(TopPanelButton.Layout, page);
   });
 });
 

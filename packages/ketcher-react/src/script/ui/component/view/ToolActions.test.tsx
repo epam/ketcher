@@ -1,10 +1,20 @@
 import toolActions from '../../action/tools';
 
-describe('ToolActions', () => {
-  const toolsWithTitles = Object.values(toolActions);
+const toolsWithoutTitles = [
+  'bonds',
+  'arrows',
+  'reaction-mapping-tools',
+  'rgroup',
+  'shapes',
+];
+const isToolWithTitle = (tool) => !toolsWithoutTitles.includes(tool);
+const toolsWithTitles = Object.values(toolActions).filter(isToolWithTitle);
 
-  it('should have a "title" property for each tool', () => {
-    toolsWithTitles.forEach((tool) => {
+describe('ToolActions', () => {
+  const tools = toolsWithTitles;
+
+  it('should have a "title" property for each tool that is not hidden', () => {
+    tools.forEach((tool) => {
       expect(tool.title).toBeTruthy();
     });
   });

@@ -1,4 +1,4 @@
-import { Page, test } from '@playwright/test';
+import { expect, Page, test } from '@playwright/test';
 import {
   delay,
   takeEditorScreenshot,
@@ -18,7 +18,10 @@ import {
   selectTopPanelButton,
   LeftPanelButton,
   selectLeftPanelButton,
+  receiveFileComparisonData,
+  saveToFile,
 } from '@utils';
+import { getExtendedSmiles, getMolfile } from '@utils/formats';
 
 async function openRGroupModalForTopAtom(page: Page) {
   await selectRingButton(RingButton.Benzene, page);
@@ -243,5 +246,95 @@ test.describe('Open Ketcher', () => {
 
     await page.keyboard.press('Control+a');
     await page.keyboard.press('Control+Delete');
+  });
+});
+
+test.describe('R-Group Fragment Tool', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('');
+  });
+
+  test('Save as *.mol V2000 file', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-1602
+    Description: All R-group members, R-group definition, occurrence, 
+    brackets are rendered correctly after saving as *.mol V2000 file.
+    */
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/r1-several-structures.mol',
+      page,
+    );
+    const expectedFile = await getMolfile(page, 'v2000');
+    await saveToFile(
+      'Molfiles-V2000/r1-several-structures-expected.mol',
+      expectedFile,
+    );
+
+    // eslint-disable-next-line no-magic-numbers
+    const METADATA_STRING_INDEX = [2, 7, 31, 38];
+    const { fileExpected: molFileExpected, file: molFile } =
+      await receiveFileComparisonData({
+        page,
+        metaDataIndexes: METADATA_STRING_INDEX,
+        expectedFileName:
+          'tests/test-data/Molfiles-V2000/r1-several-structures-expected.mol',
+        fileFormat: 'v2000',
+      });
+    expect(molFile).toEqual(molFileExpected);
+  });
+
+  test('Save as *.mol V3000 file', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-1603
+    Description: All R-group members, R-group definition, occurrence, 
+    brackets are rendered correctly after saving as *.mol V3000 file.
+    */
+    await openFileAndAddToCanvas(
+      'Molfiles-V3000/r1-several-structures-V3000.mol',
+      page,
+    );
+    const expectedFile = await getMolfile(page, 'v3000');
+    await saveToFile(
+      'Molfiles-V3000/r1-several-structures-V3000-expected.mol',
+      expectedFile,
+    );
+
+    // eslint-disable-next-line no-magic-numbers
+    const METADATA_STRING_INDEX = [2];
+    const { fileExpected: molFileExpected, file: molFile } =
+      await receiveFileComparisonData({
+        page,
+        metaDataIndexes: METADATA_STRING_INDEX,
+        expectedFileName:
+          'tests/test-data/Molfiles-V3000/r1-several-structures-V3000-expected.mol',
+        fileFormat: 'v3000',
+      });
+    expect(molFile).toEqual(molFileExpected);
+  });
+
+  test.fixme('Save as *.cxsmi file', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-1604
+    Description: User is able to save the structure with R-group label as .cxsmi file
+    */
+    // function await getExtendedSmiles get JSON instead cxsmi file
+    await openFileAndAddToCanvas(
+      'Extended-SMILES/r1-several-structures.cxsmi',
+      page,
+    );
+    const expectedFile = await getExtendedSmiles(page);
+    await saveToFile(
+      'Extended-SMILES/r1-several-structures-expected.cxsmi',
+      expectedFile,
+    );
+
+    const { fileExpected: smiFileExpected, file: smiFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/Extended-SMILES/r1-several-structures-expected.cxsmi',
+      });
+
+    expect(smiFile).toEqual(smiFileExpected);
   });
 });

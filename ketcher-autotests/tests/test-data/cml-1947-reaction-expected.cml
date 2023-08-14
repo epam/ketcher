@@ -4,12 +4,12 @@
 <reactantList>
 <molecule>
     <atomArray>
-        <atom id="a0" elementType="C" x2="7.9589" y2="-7.775"/>
-        <atom id="a1" elementType="C" x2="8.82491" y2="-8.275"/>
-        <atom id="a2" elementType="C" x2="8.82491" y2="-9.27501"/>
-        <atom id="a3" elementType="C" x2="7.9589" y2="-9.77501"/>
-        <atom id="a4" elementType="C" x2="7.0929" y2="-9.27501"/>
-        <atom id="a5" elementType="C" x2="7.0929" y2="-8.275"/>
+        <atom id="a0" elementType="C" x2="9.29388" y2="-7.29999"/>
+        <atom id="a1" elementType="C" x2="10.1599" y2="-7.8"/>
+        <atom id="a2" elementType="C" x2="10.1599" y2="-8.8"/>
+        <atom id="a3" elementType="C" x2="9.29388" y2="-9.30001"/>
+        <atom id="a4" elementType="C" x2="8.42788" y2="-8.8"/>
+        <atom id="a5" elementType="C" x2="8.42788" y2="-7.8"/>
     </atomArray>
     <bondArray>
         <bond atomRefs2="a0 a1" order="1"/>
@@ -28,10 +28,10 @@
 </molecule>
 <molecule>
     <atomArray>
-        <atom id="a0" elementType="C" x2="12.2589" y2="-8.85"/>
-        <atom id="a1" elementType="C" x2="13.1249" y2="-9.35001"/>
-        <atom id="a2" elementType="C" x2="13.991" y2="-8.85"/>
-        <atom id="a3" elementType="C" x2="14.857" y2="-9.35001"/>
+        <atom id="a0" elementType="C" x2="12.6599" y2="-8.05"/>
+        <atom id="a1" elementType="C" x2="13.5259" y2="-8.55"/>
+        <atom id="a2" elementType="C" x2="14.392" y2="-8.05"/>
+        <atom id="a3" elementType="C" x2="15.258" y2="-8.55"/>
     </atomArray>
     <bondArray>
         <bond atomRefs2="a0 a1" order="1"/>
@@ -43,15 +43,15 @@
 <productList>
 <molecule>
     <atomArray>
-        <atom id="a0" elementType="C" x2="21.409" y2="-7.9"/>
-        <atom id="a1" elementType="C" x2="22.275" y2="-8.4"/>
-        <atom id="a2" elementType="C" x2="22.275" y2="-9.40001"/>
-        <atom id="a3" elementType="C" x2="21.409" y2="-9.90001"/>
-        <atom id="a4" elementType="C" x2="20.543" y2="-9.40001"/>
-        <atom id="a5" elementType="C" x2="20.543" y2="-8.4"/>
-        <atom id="a6" elementType="C" x2="23.141" y2="-7.9"/>
-        <atom id="a7" elementType="C" x2="24.0071" y2="-8.4"/>
-        <atom id="a8" elementType="C" x2="23.141" y2="-6.89999"/>
+        <atom id="a0" elementType="C" x2="19.124" y2="-7.8"/>
+        <atom id="a1" elementType="C" x2="19.99" y2="-8.3"/>
+        <atom id="a2" elementType="C" x2="19.99" y2="-9.30001"/>
+        <atom id="a3" elementType="C" x2="19.124" y2="-9.80001"/>
+        <atom id="a4" elementType="C" x2="18.258" y2="-9.30001"/>
+        <atom id="a5" elementType="C" x2="18.258" y2="-8.3"/>
+        <atom id="a6" elementType="C" x2="20.856" y2="-7.8"/>
+        <atom id="a7" elementType="C" x2="21.7221" y2="-8.3"/>
+        <atom id="a8" elementType="C" x2="20.856" y2="-6.79999"/>
     </atomArray>
     <bondArray>
         <bond atomRefs2="a0 a1" order="1"/>

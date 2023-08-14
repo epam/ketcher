@@ -372,39 +372,39 @@ test.describe('R-Group Label Tool', () => {
       Test case: EPMLSOPKET-1573
       Description: The correct bond is sprouted from the R-group label
     */
-    const x = 0;
+    const x = 100;
     const y = 100;
-    await openFileAndAddToCanvas('chain-with-three-r-groups.rxn', page);
+    await openFileAndAddToCanvas('Rxn/chain-with-three-r-groups.rxn', page);
     await selectBond(BondTypeName.Single, page);
-    await page.getByText('R8').click();
+    await page.getByText('R8').hover();
     await dragMouseTo(x, y, page);
   });
 
-  test.fixme('Add Chain to the R-Group Label', async ({ page }) => {
+  test('Add Chain to the R-Group Label', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-1573
       Description: The correct Chain is sprouted from the R-group label
     */
     // Can't drag Chain from R10 group.
-    const x = 0;
-    const y = 150;
-    await openFileAndAddToCanvas('chain-with-three-r-groups.rxn', page);
+    const x = 500;
+    const y = 500;
+    await openFileAndAddToCanvas('Rxn/chain-with-three-r-groups.rxn', page);
     await selectLeftPanelButton(LeftPanelButton.Chain, page);
-    await page.getByText('R10').click();
+    await page.getByText('R10').hover();
     await dragMouseTo(x, y, page);
   });
 
-  test.fixme('Add Template to the R-Group Label', async ({ page }) => {
+  test('Add Template to the R-Group Label', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-1573
       Description: The correct Template is sprouted from the R-group label
     */
     // Can't drag template from R13 group.
-    const x = 0;
-    const y = 200;
-    await openFileAndAddToCanvas('chain-with-three-r-groups.rxn', page);
+    const x = 500;
+    const y = 500;
+    await openFileAndAddToCanvas('Rxn/chain-with-three-r-groups.rxn', page);
     await selectRingButton(RingButton.Benzene, page);
-    await page.getByText('R13').click();
+    await page.getByText('R10').hover();
     await dragMouseTo(x, y, page);
   });
 });

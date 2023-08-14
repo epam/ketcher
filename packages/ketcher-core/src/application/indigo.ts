@@ -68,7 +68,7 @@ type RecognizeOptions = {
 type GenerateImageOptions = {
   outputFormat?: OutputFormatType;
   backgroundColor?: string;
-  bondThickness?: number;
+  bondThickness?: string;
 };
 
 function convertStructToString(

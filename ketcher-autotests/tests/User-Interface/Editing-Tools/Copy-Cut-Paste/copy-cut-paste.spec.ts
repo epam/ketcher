@@ -46,7 +46,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     const xDelta = 200;
     const yDelta = 200;
-    await openFileAndAddToCanvas('query-feat.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/query-features.mol', page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(x + xDelta, y + yDelta, page);
     await selectTopPanelButton(TopPanelButton.Cut, page);
@@ -58,7 +58,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Test case: EPMLSOPKET-1712
     Description: After the clicking the 'Cut' button, the selected object disappears.
     */
-    await openFileAndAddToCanvas('query-feat.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/query-features.mol', page);
     await page.keyboard.press('Control+a');
     await selectTopPanelButton(TopPanelButton.Cut, page);
     await screenshotBetweenUndoRedo(page);
@@ -70,7 +70,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Description: After the clicking the 'Cut' button, the selected object disappears.
     */
     const anyAtom = 3;
-    await openFileAndAddToCanvas('query-feat.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/query-features.mol', page);
     await clickOnAtom(page, 'C', anyAtom);
     await selectTopPanelButton(TopPanelButton.Cut, page);
     await screenshotBetweenUndoRedo(page);
@@ -82,7 +82,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Description: After the clicking the 'Cut' button, the selected object disappears.
     */
     const anyBond = 0;
-    await openFileAndAddToCanvas('query-feat.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/query-features.mol', page);
     await clickOnBond(page, BondType.TRIPLE, anyBond);
     await selectTopPanelButton(TopPanelButton.Cut, page);
     await screenshotBetweenUndoRedo(page);
@@ -94,7 +94,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Description: After the clicking the 'Cut' button, the selected object disappears.
     */
     const modifier = getControlModifier();
-    await openFileAndAddToCanvas('query-feat.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/query-features.mol', page);
     await page.keyboard.press(`${modifier}+KeyA`);
     await page.keyboard.press(`${modifier}+KeyX`);
     await screenshotBetweenUndoRedo(page);
@@ -176,7 +176,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Test case: EPMLSOPKET-1715
     Description: After the clicking the Copy button, the selected object not disappears.
     */
-    await openFileAndAddToCanvas('query-feat.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/query-features.mol', page);
     await page.keyboard.press('Control+a');
     await selectTopPanelButton(TopPanelButton.Copy, page);
   });
@@ -187,7 +187,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Description: After the clicking the Copy button, the selected object not disappears.
     */
     const anyAtom = 0;
-    await openFileAndAddToCanvas('query-feat.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/query-features.mol', page);
     await clickOnAtom(page, 'C', anyAtom);
     await selectTopPanelButton(TopPanelButton.Copy, page);
   });
@@ -197,7 +197,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Test case: EPMLSOPKET-1715
     Description: After the clicking the Copy button, the selected object not disappears.
     */
-    await openFileAndAddToCanvas('query-feat.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/query-features.mol', page);
     await clickOnBond(page, BondType.SINGLE, 0);
     await selectTopPanelButton(TopPanelButton.Copy, page);
   });
@@ -207,7 +207,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Test case: EPMLSOPKET-1715
     Description: After the clicking the Copy button, the selected object not disappears.
     */
-    await openFileAndAddToCanvas('query-feat.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/query-features.mol', page);
     await page.keyboard.press('Control+a');
     await page.keyboard.press('Control+c');
   });
@@ -344,7 +344,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
       const x = 500;
       const y = 200;
-      await openFileAndAddToCanvas('query-feat.mol', page);
+      await openFileAndAddToCanvas('Molfiles-V2000/query-features.mol', page);
       await copyAndPaste(page);
       await page.mouse.click(x, y);
     },
@@ -363,7 +363,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
       const x = 500;
       const y = 200;
       const anyAtom = 12;
-      await openFileAndAddToCanvas('query-feat.mol', page);
+      await openFileAndAddToCanvas('Molfiles-V2000/query-features.mol', page);
       await cutAndPaste(page);
       await page.mouse.click(x, y);
       await selectAtomInToolbar(AtomButton.Nitrogen, page);

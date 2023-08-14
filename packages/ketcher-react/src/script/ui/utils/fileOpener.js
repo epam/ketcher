@@ -45,7 +45,13 @@ function throughFileReader(file) {
     const rd = new FileReader(); // eslint-disable-line no-undef
 
     rd.onload = () => {
-      const content = isCDX ? rd.result.slice(37) : rd.result;
+      let content;
+      if (isCDX) {
+        const base64String = rd.result.split(',').at(-1);
+        content = base64String;
+      } else {
+        content = rd.result;
+      }
       if (file.msClose) file.msClose();
       resolve(content);
     };

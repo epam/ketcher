@@ -66,7 +66,7 @@ export class SGroup {
   id: number;
   label: number;
   bracketBox: any;
-  bracketDir: Vec2;
+  bracketDirection: Vec2;
   areas: any;
   hover: boolean;
   hovering: any;
@@ -83,8 +83,6 @@ export class SGroup {
   pp: Vec2 | null;
   data: any;
   dataArea: any;
-  atomId?: number;
-  position?: Vec2;
   private readonly attachmentPoints: SGroupAttachmentPoint[];
 
   constructor(type: string) {
@@ -92,7 +90,7 @@ export class SGroup {
     this.id = -1;
     this.label = -1;
     this.bracketBox = null;
-    this.bracketDir = new Vec2(1, 0);
+    this.bracketDirection = new Vec2(1, 0);
     this.areas = [];
 
     this.hover = false;
@@ -469,13 +467,13 @@ export class SGroup {
       ? Object.values(crossBondsPerAtom).flat()
       : null;
     if (!crossBonds || crossBonds.length !== 2) {
-      sGroup.bracketDir = new Vec2(1, 0);
+      sGroup.bracketDirection = new Vec2(1, 0);
     } else {
       const p1 = mol.bonds.get(crossBonds[0]).getCenter(mol);
       const p2 = mol.bonds.get(crossBonds[1]).getCenter(mol);
-      sGroup.bracketDir = Vec2.diff(p2, p1).normalized();
+      sGroup.bracketDirection = Vec2.diff(p2, p1).normalized();
     }
-    const d = sGroup.bracketDir;
+    const d = sGroup.bracketDirection;
 
     let braketBox: Box2Abs | null = null;
     const contentBoxes: Array<any> = [];

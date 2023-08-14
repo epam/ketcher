@@ -21,6 +21,7 @@ import {
   SGroup,
   Vec2,
   Bond,
+  Struct,
 } from 'domain/entities';
 import { SgContexts } from 'application/editor/shared/constants';
 import ReDataSGroupData from './redatasgroupdata';
@@ -73,7 +74,7 @@ class ReSGroup extends ReObject {
     const crossBonds = SGroup.getCrossBonds(remol.molecule, atomSet);
     SGroup.bracketPos(sgroup, remol.molecule, crossBonds, remol, this.render);
     const bracketBox = sgroup.bracketBox;
-    const d = sgroup.bracketDir;
+    const d = sgroup.bracketDirection;
     sgroup.areas = [bracketBox];
     if (sgroup.isExpanded()) {
       const SGroupdrawBracketsOptions: SGroupdrawBracketsOptions = {
@@ -397,7 +398,7 @@ function drawAttachedDat(restruct: ReStruct, sgroup: SGroup): any {
 }
 
 function getBracketParameters(
-  mol: any,
+  mol: Struct,
   crossBonds: { [key: number]: Array<Bond> },
   atomSet: Pile,
   bracketBox: Box2Abs,
@@ -446,50 +447,54 @@ function getBracketParameters(
   } else if (crossBondsValues.length === 2 && crossBondsPerAtom.length === 2) {
     (function () {
       // eslint-disable-line max-statements
-      const b1 = mol.bonds.get(crossBondsValues[0]);
-      const b2 = mol.bonds.get(crossBondsValues[1]);
-      const cl0 = b1.getCenter(mol);
-      const cr0 = b2.getCenter(mol);
-      let tl = -1;
-      let tr = -1;
-      let tt = -1;
-      let tb = -1;
-      const cc = Vec2.centre(cl0, cr0);
-      const dr = Vec2.diff(cr0, cl0).normalized();
-      const dl = dr.negated();
-      const dt = dr.rotateSC(1, 0);
-      const db = dt.negated();
+      const b1 = mol.bonds.get(Number(crossBondsValues[0]));
+      const b2 = mol.bonds.get(Number(crossBondsValues[1]));
+      if (b1 && b2) {
+        const cl0 = b1.getCenter(mol);
+        const cr0 = b2.getCenter(mol);
+        let tl = -1;
+        let tr = -1;
+        let tt = -1;
+        let tb = -1;
+        const cc = Vec2.centre(cl0, cr0);
+        const dr = Vec2.diff(cr0, cl0).normalized();
+        const dl = dr.negated();
+        const dt = dr.rotateSC(1, 0);
+        const db = dt.negated();
 
-      mol.sGroupForest.children.get(id).forEach((sgid) => {
-        let bba = render?.ctab?.sgroups?.get(sgid)?.visel.boundingBox;
-        bba =
-          bba
-            ?.translate((render.options.offset || new Vec2()).negated())
-            .transform(Scale.scaled2obj, render.options) || new Box2Abs();
-        tl = Math.max(tl, util.shiftRayBox(cl0, dl, bba));
-        tr = Math.max(tr, util.shiftRayBox(cr0, dr, bba));
-        tt = Math.max(tt, util.shiftRayBox(cc, dt, bba));
-        tb = Math.max(tb, util.shiftRayBox(cc, db, bba));
-      });
-      tl = Math.max(tl + 0.2, 0);
-      tr = Math.max(tr + 0.2, 0);
-      tt = Math.max(Math.max(tt, tb) + 0.1, 0);
-      const bracketWidth = 0.25;
-      const bracketHeight = 1.5 + tt;
-      brackets.push(
-        BracketParams(cl0.addScaled(dl, tl), dl, bracketWidth, bracketHeight),
-        BracketParams(cr0.addScaled(dr, tr), dr, bracketWidth, bracketHeight),
-      );
+        mol?.sGroupForest?.children?.get(id)?.forEach((sgid) => {
+          let bba = render?.ctab?.sgroups?.get(sgid)?.visel.boundingBox;
+          bba =
+            bba
+              ?.translate((render.options.offset || new Vec2()).negated())
+              .transform(Scale.scaled2obj, render.options) || new Box2Abs();
+          tl = Math.max(tl, util.shiftRayBox(cl0, dl, bba));
+          tr = Math.max(tr, util.shiftRayBox(cr0, dr, bba));
+          tt = Math.max(tt, util.shiftRayBox(cc, dt, bba));
+          tb = Math.max(tb, util.shiftRayBox(cc, db, bba));
+        });
+        tl = Math.max(tl + 0.2, 0);
+        tr = Math.max(tr + 0.2, 0);
+        tt = Math.max(Math.max(tt, tb) + 0.1, 0);
+        const bracketWidth = 0.25;
+        const bracketHeight = 1.5 + tt;
+        brackets.push(
+          BracketParams(cl0.addScaled(dl, tl), dl, bracketWidth, bracketHeight),
+          BracketParams(cr0.addScaled(dr, tr), dr, bracketWidth, bracketHeight),
+        );
+      }
     })();
   } else {
     (function () {
       for (let i = 0; i < crossBondsValues.length; ++i) {
-        const b = mol.bonds.get(crossBondsValues[i]);
-        const c = b.getCenter(mol);
-        const d = atomSet.has(b.begin)
-          ? b.getDir(mol)
-          : b.getDir(mol).negated();
-        brackets.push(BracketParams(c, d, 0.2, 1.0));
+        const b = mol.bonds.get(Number(crossBondsValues[i]));
+        const c = b?.getCenter(mol);
+        const d = atomSet.has(b?.begin)
+          ? b?.getDir(mol)
+          : b?.getDir(mol).negated();
+        if (c && d) {
+          brackets.push(BracketParams(c, d, 0.2, 1.0));
+        }
       }
     })();
   }
@@ -518,7 +523,7 @@ function getHighlighPathInfo(
   const lineWidth = options.lineWidth;
   const vext = new Vec2(lineWidth * 4, lineWidth * 6);
   bracketBox = bracketBox.extend(vext, vext);
-  const d = sgroup.bracketDir;
+  const d = sgroup.bracketDirection;
   const n = d.rotateSC(1, 0);
   const a0 = Vec2.lc2(d, bracketBox.p0.x, n, bracketBox.p0.y);
   const a1 = Vec2.lc2(d, bracketBox.p0.x, n, bracketBox.p1.y);

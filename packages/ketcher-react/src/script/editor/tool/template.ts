@@ -658,7 +658,7 @@ class TemplateTool implements Tool {
     }
   }
 
-  showPreview(ci, restruct) {
+  showPreview(ci, restruct: ReStruct) {
     if (ci.map === 'bonds' && !this.isModeFunctionalGroup) {
       // preview for bonds
       this.isPreviewVisible = true;

@@ -10,6 +10,7 @@ import {
   delay,
   moveMouseToTheMiddleOfTheScreen,
   BondType,
+  DELAY_IN_SECONDS,
 } from '@utils';
 import { getRightAtomByAttributes } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
@@ -40,7 +41,7 @@ test.describe('Preview for abbreviated structures: functional groups', () => {
     const point = await getRightAtomByAttributes(page, { label: 'C' });
     await page.mouse.move(point.x, point.y);
     // delay is required because preview is shown with delay
-    await delay(1);
+    await delay(DELAY_IN_SECONDS.ONE);
     await takeEditorScreenshot(page);
   });
 
@@ -51,7 +52,7 @@ test.describe('Preview for abbreviated structures: functional groups', () => {
     const point = await getRightAtomByAttributes(page, { label: 'C' });
     await page.mouse.move(point.x, point.y);
     // delay is required because preview is shown with delay
-    await delay(1);
+    await delay(DELAY_IN_SECONDS.ONE);
     await moveMouseToTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
@@ -63,7 +64,7 @@ test.describe('Preview for abbreviated structures: functional groups', () => {
     const point = await getRightAtomByAttributes(page, { label: 'C' });
     await page.mouse.move(point.x, point.y);
     // delay is required because preview is shown with delay
-    await delay(1);
+    await delay(DELAY_IN_SECONDS.ONE);
     await page.mouse.click(point.x, point.y);
     await moveMouseToTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
@@ -79,7 +80,7 @@ test.describe('Preview for abbreviated structures: functional groups', () => {
     );
     await page.mouse.move(bondPosition.x, bondPosition.y);
     // delay is required because preview is shown with delay
-    await delay(1);
+    await delay(DELAY_IN_SECONDS.ONE);
     await takeEditorScreenshot(page);
   });
 });

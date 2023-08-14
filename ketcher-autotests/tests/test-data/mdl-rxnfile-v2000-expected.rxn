@@ -1,11 +1,19 @@
 $RXN
 
+<<<<<<< HEAD
  -INDIGO- 0810232018
+=======
+ -INDIGO- 0814231528
+>>>>>>> 480d64db2 (#3097 – apply auto zoom and centering for api (#3111))
 
   1  1  1
 $MOL
 
+<<<<<<< HEAD
   -INDIGO-08102320182D
+=======
+  -INDIGO-08142315282D
+>>>>>>> 480d64db2 (#3097 – apply auto zoom and centering for api (#3111))
 
   6  6  0  0  0  0  0  0  0  0999 V2000
    10.0723   -7.7876    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -23,7 +31,11 @@ $MOL
 M  END
 $MOL
 
+<<<<<<< HEAD
   -INDIGO-08102320182D
+=======
+  -INDIGO-08142315282D
+>>>>>>> 480d64db2 (#3097 – apply auto zoom and centering for api (#3111))
 
   6  6  0  0  0  0  0  0  0  0999 V2000
    18.3473   -7.8126    0.0000 C   0  0  0  0  0  0  0  0  0  0  0  0
@@ -41,7 +53,11 @@ $MOL
 M  END
 $MOL
 
+<<<<<<< HEAD
   -INDIGO-08102320182D
+=======
+  -INDIGO-08142315282D
+>>>>>>> 480d64db2 (#3097 – apply auto zoom and centering for api (#3111))
 
   1  0  0  0  0  0  0  0  0  0999 V2000
    14.8375   -7.8875    0.0000 N   0  0  0  0  0  0  0  0  0  0  0  0

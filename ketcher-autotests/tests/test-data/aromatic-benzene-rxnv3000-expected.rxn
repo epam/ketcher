@@ -1,6 +1,10 @@
 $RXN V3000
 
+<<<<<<< HEAD
  -INDIGO- 0810232011
+=======
+ -INDIGO- 0814231524
+>>>>>>> 480d64db2 (#3097 – apply auto zoom and centering for api (#3111))
 
 M  V30 COUNTS 1 1
 M  V30 BEGIN REACTANT

@@ -7,6 +7,8 @@ export const TYPE_REACTION = 'reaction';
 export const TYPE_R_GROUP = 'rgroup';
 export const TYPE_SHAPE = 'shape';
 
+export const DEFAULT_BONDS_MAIN_BUTTON_TEST_ID = 'bonds';
+
 // each field define number of presses and DOM element id
 type toolField = [presses: number, domElementId: string];
 

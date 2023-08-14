@@ -114,28 +114,30 @@ class ReBond extends ReObject {
       bond.stereo !== Bond.PATTERN.STEREO.NONE &&
       bond.stereo !== Bond.PATTERN.STEREO.CIS_TRANS;
 
-    // for stereo bonds we slightly change the parameters
-    // to adjust the shape of the selection
-    const addStereoPadding = isStereoBond ? stereoBondWidth / 2 : 0;
+    const addPadding = isStereoBond ? 0 : -2;
 
     // find the points on the line where we will be drawing the curves
     const contourStart = Vec2.getLinePoint(
       halfBondEnd,
       halfBondStart,
-      -bondThickness * 2.5 - addStereoPadding,
+      addPadding,
     );
     const contourEnd = Vec2.getLinePoint(
       halfBondStart,
       halfBondEnd,
-      -bondThickness * 2.5,
+      addPadding,
     );
 
+    const stereoBondStartHeightCoef = 0.5;
+    const bondPadding = 0.5;
     const addStart = isStereoBond
-      ? stereoBondWidth * 0.25
-      : regularSelectionThikness;
+      ? stereoBondWidth * stereoBondStartHeightCoef
+      : regularSelectionThikness + bondPadding;
+    const stereoBondEndHeightCoef = 1;
     const addEnd = isStereoBond
-      ? stereoBondWidth + (regularSelectionThikness * 4) / stereoBondWidth
-      : regularSelectionThikness;
+      ? stereoBondWidth +
+        (regularSelectionThikness * stereoBondEndHeightCoef) / stereoBondWidth
+      : regularSelectionThikness + bondPadding;
 
     const contourPaddedStart = Vec2.getLinePoint(
       contourStart,

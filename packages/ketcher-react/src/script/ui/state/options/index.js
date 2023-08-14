@@ -140,11 +140,12 @@ export function checkOpts(data) {
 /* REDUCER */
 function optionsReducer(state = {}, action) {
   const { type, data } = action;
-
   if (type === 'APP_OPTIONS')
     return { ...state, app: { ...state.app, ...data } };
 
-  if (type === 'SAVE_SETTINGS') return { ...state, settings: data };
+  if (type === 'SAVE_SETTINGS') {
+    return { ...state, settings: { ...state.settings, ...data } };
+  }
 
   if (type === 'SAVE_CHECK_OPTS') return { ...state, check: data };
 

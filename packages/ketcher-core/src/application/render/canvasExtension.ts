@@ -2,7 +2,7 @@ import { Vec2 } from 'domain/entities';
 import { Editor, ReAtom, fromMultipleMove } from 'ketcher-core';
 
 const edgeOffset = 150;
-const scrollMultiplier = 2;
+const scrollMultiplier = 1.5;
 let lastX = 0;
 let lastY = 0;
 
@@ -47,14 +47,14 @@ export function isSelectionCloseToTheEdgeOfScreen(editor: Editor) {
     return false;
   }
   const { leftX, topY, rightX, bottomY } = selectedAreaCoordinates;
-  const atomXOffset = canvasBoundingRect.x - clientAreaBoundingRect.x;
-  const atomYOffset = canvasBoundingRect.y - clientAreaBoundingRect.y;
-  const isCloseToTopEdgeOfScreen = topY + atomYOffset <= edgeOffset;
+  const canvasXOffset = canvasBoundingRect.x - clientAreaBoundingRect.x;
+  const canvasYOffset = canvasBoundingRect.y - clientAreaBoundingRect.y;
+  const isCloseToTopEdgeOfScreen = topY + canvasYOffset <= edgeOffset;
   const isCloseToBottomEdgeOfScreen =
-    clientArea.clientHeight - (bottomY + atomYOffset) <= edgeOffset;
-  const isCloseToLeftEdgeOfScreen = leftX + atomXOffset <= edgeOffset;
+    clientArea.clientHeight - (bottomY + canvasYOffset) <= edgeOffset;
+  const isCloseToLeftEdgeOfScreen = leftX + canvasXOffset <= edgeOffset;
   const isCloseToRightEdgeOfScreen =
-    clientArea.clientWidth - (rightX + atomXOffset) <= edgeOffset;
+    clientArea.clientWidth - (rightX + canvasXOffset) <= edgeOffset;
   return {
     isCloseToLeftEdgeOfScreen,
     isCloseToTopEdgeOfScreen,

@@ -4,7 +4,6 @@ import {
   pressButton,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
-  waitForLoad,
 } from '@utils';
 
 test.describe('S-Groups', () => {
@@ -24,12 +23,10 @@ test.describe('S-Groups', () => {
     Test case related to issue: https://github.com/epam/ketcher/issues/2389
     Description: Open file with S-groups (with Unsupported S-group type) and see that brackets in place for all S-Groups except DAT
     */
-      await waitForLoad(page, async () => {
-        await openFileAndAddToCanvas(
-          'structure-with-s-groups-with-unsupported-s-group-type.rxn',
-          page,
-        );
-      });
+      await openFileAndAddToCanvas(
+        'structure-with-s-groups-with-unsupported-s-group-type.rxn',
+        page,
+      );
       await pressButton(page, 'OK');
       await takeEditorScreenshot(page);
     },

@@ -467,7 +467,7 @@ class SelectTool implements Tool {
     return true;
   }
 
-  mouseLeaveClientArea(event) {
+  mouseleave() {
     if (this.dragCtx && this.dragCtx.stopTapping) this.dragCtx.stopTapping();
 
     if (this.dragCtx && this.dragCtx.action) {
@@ -480,25 +480,15 @@ class SelectTool implements Tool {
     delete this.dragCtx;
 
     this.editor.hover(null);
-
-    if (this.isMousedDown && this.selectionMoving.isMoving) {
-      this.startContinuousSelectionMoving(event);
-    }
   }
 
   addSubscription() {
     const rootElement = document.getElementById('root');
+    const clientAreaWrapper =
+      this.editor.render.clientArea.parentElement?.parentElement;
 
     const stopSelectionMoving = (event) => {
-      if (
-        this.editor.render.clientArea.contains(event.target) ||
-        this.isSelectionRunning()
-      ) {
-        return;
-      }
-      this.isMousedDown = false;
-      this.resetSelectionMoving();
-      this.editor.rotateController.rerender();
+      this.mouseup(event);
     };
 
     const onMouseUp = (event) => {
@@ -525,15 +515,25 @@ class SelectTool implements Tool {
         const offsetY = Math.abs(
           clientY - this.selectionMoving.selectionCrossEdge.y,
         );
-        if (offsetX > 30 || offsetY > 30) {
+        if (offsetX > 20 || offsetY > 20) {
           stopSelectionMoving(event);
         }
+      }
+    };
+
+    const onMouseLeaveClientAreaWrapper = (event) => {
+      if (this.isMousedDown && this.selectionMoving.isMoving) {
+        this.startContinuousSelectionMoving(event);
       }
     };
 
     rootElement?.addEventListener('mouseup', onMouseUp);
     rootElement?.addEventListener('mouseleave', onMouseLeave);
     rootElement?.addEventListener('mousemove', onMouseMove);
+    clientAreaWrapper?.addEventListener(
+      'mouseleave',
+      onMouseLeaveClientAreaWrapper,
+    );
   }
 
   private startContinuousSelectionMoving(event) {

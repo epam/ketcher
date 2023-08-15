@@ -113,7 +113,7 @@ const toolActions = {
     hidden: (options) => isHidden(options, 'reaction-arrow-open-angle'),
   },
   'reaction-arrow-filled-triangle': {
-    title: 'Arrow Filled Triangle',
+    title: 'Arrow Filled Triangle Tool',
     action: { tool: 'reactionarrow', opts: RxnArrowMode.FilledTriangle },
     hidden: (options) => isHidden(options, 'reaction-arrow-filled-triangle'),
   },

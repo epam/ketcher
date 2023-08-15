@@ -34,6 +34,7 @@ import {
   isSelectionCloseToTheEdgeOfScreen,
   scrollByVector,
   shiftByVector,
+  moveSelected,
   getItemsToFuse,
 } from 'ketcher-core';
 
@@ -54,11 +55,18 @@ import { Tool } from './Tool';
 type SelectMode = 'lasso' | 'fragment' | 'rectangle';
 type Direction = 'MoveUp' | 'MoveDown' | 'MoveRight' | 'MoveLeft';
 const moveOffset = 1;
+const closeOffset = 30;
 const destinationVectorMapping: { [key in Direction]: Vec2 } = {
   MoveUp: new Vec2(0, -moveOffset, 0),
   MoveDown: new Vec2(0, moveOffset, 0),
   MoveRight: new Vec2(moveOffset, 0, 0),
   MoveLeft: new Vec2(-moveOffset, 0, 0),
+};
+
+type SelectionMoving = {
+  isMoving: boolean;
+  timer: any;
+  selectionCrossEdge: { x: number; y: number } | null;
 };
 
 class SelectTool implements Tool {
@@ -68,6 +76,12 @@ class SelectTool implements Tool {
   private dragCtx: any;
   isMousedDown = false;
 
+  private selectionMoving: SelectionMoving = {
+    isMoving: false,
+    timer: null,
+    selectionCrossEdge: null,
+  };
+
   constructor(editor: Editor, mode: SelectMode) {
     this.editor = editor;
     this.#mode = mode;
@@ -76,6 +90,7 @@ class SelectTool implements Tool {
       editor,
       this.#mode === 'fragment',
     );
+    this.addSubscription();
   }
 
   isSelectionRunning() {
@@ -166,6 +181,7 @@ class SelectTool implements Tool {
     const dragCtx = this.dragCtx;
     if (dragCtx?.stopTapping) dragCtx.stopTapping();
     if (dragCtx?.item) {
+      this.selectionMoving.isMoving = true;
       const atoms = restruct.molecule.atoms;
       const selection = editor.selection();
 
@@ -256,6 +272,7 @@ class SelectTool implements Tool {
       return;
     }
     this.isMousedDown = false;
+    this.resetSelectionMoving();
 
     const editor = this.editor;
     const selected = editor.selection();
@@ -450,7 +467,7 @@ class SelectTool implements Tool {
     return true;
   }
 
-  mouseleave() {
+  mouseLeaveClientArea(event) {
     if (this.dragCtx && this.dragCtx.stopTapping) this.dragCtx.stopTapping();
 
     if (this.dragCtx && this.dragCtx.action) {
@@ -463,6 +480,101 @@ class SelectTool implements Tool {
     delete this.dragCtx;
 
     this.editor.hover(null);
+
+    if (this.isMousedDown && this.selectionMoving.isMoving) {
+      this.startContinuousSelectionMoving(event);
+    }
+  }
+
+  addSubscription() {
+    const rootElement = document.getElementById('root');
+
+    const stopSelectionMoving = (event) => {
+      if (
+        this.editor.render.clientArea.contains(event.target) ||
+        this.isSelectionRunning()
+      ) {
+        return;
+      }
+      this.isMousedDown = false;
+      this.resetSelectionMoving();
+      this.editor.rotateController.rerender();
+    };
+
+    const onMouseUp = (event) => {
+      if (this.selectionMoving.isMoving) {
+        stopSelectionMoving(event);
+      }
+    };
+
+    const onMouseLeave = (event) => {
+      if (this.selectionMoving.isMoving) {
+        stopSelectionMoving(event);
+      }
+    };
+
+    const onMouseMove = (event) => {
+      if (
+        this.selectionMoving.timer &&
+        this.selectionMoving.selectionCrossEdge
+      ) {
+        const { clientX, clientY } = event;
+        const offsetX = Math.abs(
+          clientX - this.selectionMoving.selectionCrossEdge.x,
+        );
+        const offsetY = Math.abs(
+          clientY - this.selectionMoving.selectionCrossEdge.y,
+        );
+        if (offsetX > 30 || offsetY > 30) {
+          stopSelectionMoving(event);
+        }
+      }
+    };
+
+    rootElement?.addEventListener('mouseup', onMouseUp);
+    rootElement?.addEventListener('mouseleave', onMouseLeave);
+    rootElement?.addEventListener('mousemove', onMouseMove);
+  }
+
+  private startContinuousSelectionMoving(event) {
+    if (!this.selectionMoving.timer) {
+      const { clientX, clientY } = event;
+      this.selectionMoving.selectionCrossEdge = { x: clientX, y: clientY };
+      const { left, top, right, bottom } =
+        this.editor.render.clientArea.getBoundingClientRect();
+      let direction;
+      if (Math.abs(clientX - left) < closeOffset) {
+        direction = 'MoveLeft';
+      } else if (Math.abs(clientX - right) < closeOffset) {
+        direction = 'MoveRight';
+      } else if (Math.abs(clientY - top) < closeOffset) {
+        direction = 'MoveUp';
+      } else if (Math.abs(clientY - bottom) < closeOffset) {
+        direction = 'MoveDown';
+      }
+      if (!direction) {
+        return;
+      }
+      this.selectionMoving.timer = setInterval(
+        () =>
+          moveSelected(
+            this.editor,
+            destinationVectorMapping[direction],
+            true,
+            direction,
+          ),
+        100,
+      );
+    }
+  }
+
+  private resetSelectionMoving() {
+    this.selectionMoving.isMoving = false;
+    if (this.selectionMoving.timer) {
+      clearInterval(this.selectionMoving.timer);
+    }
+    this.selectionMoving.timer = null;
+    this.selectionMoving.selectionCrossEdge = null;
   }
 
   private selectElementsOnCanvas(

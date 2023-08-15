@@ -271,6 +271,8 @@ export class Ketcher {
       );
 
       this.#editor.struct(struct);
+      this.#editor.zoomAccordingContent(struct);
+      this.#editor.centerStruct();
     }, this.eventBus);
   }
 

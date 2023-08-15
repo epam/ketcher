@@ -20,6 +20,9 @@ import {
   selectLeftPanelButton,
   receiveFileComparisonData,
   saveToFile,
+  copyAndPaste,
+  cutAndPaste,
+  dragMouseTo,
 } from '@utils';
 import { getExtendedSmiles, getMolfile } from '@utils/formats';
 
@@ -247,6 +250,56 @@ test.describe('Open Ketcher', () => {
     await page.keyboard.press('Control+a');
     await page.keyboard.press('Control+Delete');
   });
+
+  test('Layout action to the distorted structure with R-Group Label', async ({
+    page,
+  }) => {
+    /*
+      Test case: EPMLSOPKET-1609
+      Description: The structure is layout correctly without R-group label loss.
+    */
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/r1-several-distorted.mol',
+      page,
+    );
+    await selectTopPanelButton(TopPanelButton.Layout, page);
+  });
+
+  test.fixme(
+    'Copy/Paste actions Structure with R-Group label',
+    async ({ page }) => {
+      /*
+      Test case: EPMLSOPKET-1601
+      Description: User is able to Copy/Paste structure with R-group label.
+    */
+      const x = 200;
+      const y = 200;
+      await openFileAndAddToCanvas(
+        'Molfiles-V2000/r1-several-structures.mol',
+        page,
+      );
+      await copyAndPaste(page);
+      await page.mouse.click(x, y);
+    },
+  );
+
+  test.fixme(
+    'Cut/Paste actions Structure with R-Group label',
+    async ({ page }) => {
+      /*
+      Test case: EPMLSOPKET-1601
+      Description: User is able to Cut/Paste the structure with R-group label.
+    */
+      const x = 500;
+      const y = 200;
+      await openFileAndAddToCanvas(
+        'Molfiles-V2000/r1-several-structures.mol',
+        page,
+      );
+      await cutAndPaste(page);
+      await page.mouse.click(x, y);
+    },
+  );
 });
 
 test.describe('R-Group Fragment Tool', () => {

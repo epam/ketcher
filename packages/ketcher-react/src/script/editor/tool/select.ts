@@ -658,31 +658,6 @@ function resizeCanvas(editor, event) {
       return;
     }
   }
-
-  const isCloseToEdgeOfScreen = isSelectionCloseToTheEdgeOfScreen(editor);
-  if (isCloseToEdgeOfScreen) {
-    const {
-      isCloseToLeftEdgeOfScreen,
-      isCloseToTopEdgeOfScreen,
-      isCloseToRightEdgeOfScreen,
-      isCloseToBottomEdgeOfScreen,
-    } = isCloseToEdgeOfScreen;
-    if (isCloseToTopEdgeOfScreen && isMovingTop) {
-      scrollByVector(destinationVectorMapping.MoveUp, editor.render);
-    }
-
-    if (isCloseToBottomEdgeOfScreen && isMovingBottom) {
-      scrollByVector(destinationVectorMapping.MoveDown, editor.render);
-    }
-
-    if (isCloseToLeftEdgeOfScreen && isMovingLeft) {
-      scrollByVector(destinationVectorMapping.MoveLeft, editor.render);
-    }
-
-    if (isCloseToRightEdgeOfScreen && isMovingRight) {
-      scrollByVector(destinationVectorMapping.MoveRight, editor.render);
-    }
-  }
 }
 
 function closestToSel(ci) {

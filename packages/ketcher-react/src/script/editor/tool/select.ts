@@ -55,7 +55,8 @@ import { Tool } from './Tool';
 type SelectMode = 'lasso' | 'fragment' | 'rectangle';
 type Direction = 'MoveUp' | 'MoveDown' | 'MoveRight' | 'MoveLeft';
 const moveOffset = 1;
-const closeOffset = 30;
+const closeToEdgeOffset = 15;
+const selectionMovementInterval = 10;
 const destinationVectorMapping: { [key in Direction]: Vec2 } = {
   MoveUp: new Vec2(0, -moveOffset, 0),
   MoveDown: new Vec2(0, moveOffset, 0),
@@ -543,13 +544,13 @@ class SelectTool implements Tool {
       const { left, top, right, bottom } =
         this.editor.render.clientArea.getBoundingClientRect();
       let direction;
-      if (Math.abs(clientX - left) < closeOffset) {
+      if (Math.abs(clientX - left) < closeToEdgeOffset) {
         direction = 'MoveLeft';
-      } else if (Math.abs(clientX - right) < closeOffset) {
+      } else if (Math.abs(clientX - right) < closeToEdgeOffset) {
         direction = 'MoveRight';
-      } else if (Math.abs(clientY - top) < closeOffset) {
+      } else if (Math.abs(clientY - top) < closeToEdgeOffset) {
         direction = 'MoveUp';
-      } else if (Math.abs(clientY - bottom) < closeOffset) {
+      } else if (Math.abs(clientY - bottom) < closeToEdgeOffset) {
         direction = 'MoveDown';
       }
       if (!direction) {
@@ -563,7 +564,7 @@ class SelectTool implements Tool {
             true,
             direction,
           ),
-        100,
+        selectionMovementInterval,
       );
     }
   }

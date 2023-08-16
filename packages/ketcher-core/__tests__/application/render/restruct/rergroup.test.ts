@@ -7,7 +7,7 @@ import { Render } from 'src';
 describe('rergroup should calculate R-Group bounding box correctly', () => {
   it('should calculate R-Group attachments points bounding box', () => {
     const render = mock<Render>();
-    render.ctab = { ...restruct.molecule } as unknown as ReStruct;
+    render.ctab = restruct as unknown as ReStruct;
     const rGroup = new RGroup();
     rGroup.frags.add(0);
     const rerGroup = new ReRGroup(rGroup);

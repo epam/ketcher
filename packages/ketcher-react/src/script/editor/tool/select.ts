@@ -31,8 +31,6 @@ import {
   Bond,
   getDirections,
   isSelectionCloseToTheEdgeOfCanvas,
-  isSelectionCloseToTheEdgeOfScreen,
-  scrollByVector,
   shiftByVector,
   moveSelected,
   getItemsToFuse,
@@ -66,7 +64,8 @@ const destinationVectorMapping: { [key in Direction]: Vec2 } = {
 
 type SelectionMoving = {
   isMoving: boolean;
-  timer: any;
+  autoScrollTimer: any;
+  direction: string;
   selectionCrossEdge: { x: number; y: number } | null;
 };
 
@@ -79,7 +78,8 @@ class SelectTool implements Tool {
 
   private selectionMoving: SelectionMoving = {
     isMoving: false,
-    timer: null,
+    autoScrollTimer: null,
+    direction: '',
     selectionCrossEdge: null,
   };
 
@@ -176,6 +176,9 @@ class SelectTool implements Tool {
   }
 
   mousemove(event) {
+    if (this.selectionMoving.autoScrollTimer) {
+      return;
+    }
     const editor = this.editor;
     const rnd = editor.render;
     const restruct = editor.render.ctab;
@@ -506,17 +509,45 @@ class SelectTool implements Tool {
 
     const onMouseMove = (event) => {
       if (
-        this.selectionMoving.timer &&
+        this.selectionMoving.autoScrollTimer &&
         this.selectionMoving.selectionCrossEdge
       ) {
         const { clientX, clientY } = event;
-        const offsetX = Math.abs(
-          clientX - this.selectionMoving.selectionCrossEdge.x,
-        );
-        const offsetY = Math.abs(
-          clientY - this.selectionMoving.selectionCrossEdge.y,
-        );
-        if (offsetX > 20 || offsetY > 20) {
+        const offsetLeft = this.selectionMoving.selectionCrossEdge.x - clientX;
+        const offsetRight = clientX - this.selectionMoving.selectionCrossEdge.x;
+        const offsetTop = this.selectionMoving.selectionCrossEdge.y - clientY;
+        const offsetBottom =
+          clientY - this.selectionMoving.selectionCrossEdge.y;
+
+        const isOffsetBroken = (offsets) => {
+          return offsets.reduce(
+            (result, offset) => result || offset > 20,
+            false,
+          );
+        };
+
+        if (
+          this.selectionMoving.direction === 'MoveLeft' &&
+          isOffsetBroken([offsetRight, offsetTop, offsetBottom])
+        ) {
+          stopSelectionMoving(event);
+        }
+        if (
+          this.selectionMoving.direction === 'MoveDown' &&
+          isOffsetBroken([offsetRight, offsetTop, offsetLeft])
+        ) {
+          stopSelectionMoving(event);
+        }
+        if (
+          this.selectionMoving.direction === 'MoveRight' &&
+          isOffsetBroken([offsetLeft, offsetTop, offsetBottom])
+        ) {
+          stopSelectionMoving(event);
+        }
+        if (
+          this.selectionMoving.direction === 'MoveUp' &&
+          isOffsetBroken([offsetLeft, offsetRight, offsetBottom])
+        ) {
           stopSelectionMoving(event);
         }
       }
@@ -538,31 +569,30 @@ class SelectTool implements Tool {
   }
 
   private startContinuousSelectionMoving(event) {
-    if (!this.selectionMoving.timer) {
+    if (!this.selectionMoving.autoScrollTimer) {
       const { clientX, clientY } = event;
       this.selectionMoving.selectionCrossEdge = { x: clientX, y: clientY };
       const { left, top, right, bottom } =
         this.editor.render.clientArea.getBoundingClientRect();
-      let direction;
       if (Math.abs(clientX - left) < closeToEdgeOffset) {
-        direction = 'MoveLeft';
+        this.selectionMoving.direction = 'MoveLeft';
       } else if (Math.abs(clientX - right) < closeToEdgeOffset) {
-        direction = 'MoveRight';
+        this.selectionMoving.direction = 'MoveRight';
       } else if (Math.abs(clientY - top) < closeToEdgeOffset) {
-        direction = 'MoveUp';
+        this.selectionMoving.direction = 'MoveUp';
       } else if (Math.abs(clientY - bottom) < closeToEdgeOffset) {
-        direction = 'MoveDown';
+        this.selectionMoving.direction = 'MoveDown';
       }
-      if (!direction) {
+      if (!this.selectionMoving.direction) {
         return;
       }
-      this.selectionMoving.timer = setInterval(
+      this.selectionMoving.autoScrollTimer = setInterval(
         () =>
           moveSelected(
             this.editor,
-            destinationVectorMapping[direction],
+            destinationVectorMapping[this.selectionMoving.direction],
             true,
-            direction,
+            this.selectionMoving.direction,
           ),
         selectionMovementInterval,
       );
@@ -571,10 +601,10 @@ class SelectTool implements Tool {
 
   private resetSelectionMoving() {
     this.selectionMoving.isMoving = false;
-    if (this.selectionMoving.timer) {
-      clearInterval(this.selectionMoving.timer);
+    if (this.selectionMoving.autoScrollTimer) {
+      clearInterval(this.selectionMoving.autoScrollTimer);
     }
-    this.selectionMoving.timer = null;
+    this.selectionMoving.autoScrollTimer = null;
     this.selectionMoving.selectionCrossEdge = null;
   }
 
@@ -623,7 +653,6 @@ class SelectTool implements Tool {
 }
 
 function resizeCanvas(editor, event) {
-  let isCloseToSomeEdgeOfCanvas = false;
   const { isMovingLeft, isMovingRight, isMovingTop, isMovingBottom } =
     getDirections(event);
   const isCloseToEdgeOfCanvas = isSelectionCloseToTheEdgeOfCanvas(editor);
@@ -635,27 +664,19 @@ function resizeCanvas(editor, event) {
       isCloseToBottomEdgeOfCanvas,
     } = isCloseToEdgeOfCanvas;
     if (isCloseToLeftEdgeOfCanvas && isMovingLeft) {
-      isCloseToSomeEdgeOfCanvas = true;
       shiftByVector(destinationVectorMapping.MoveLeft, editor);
     }
 
     if (isCloseToTopEdgeOfCanvas && isMovingTop) {
-      isCloseToSomeEdgeOfCanvas = true;
       shiftByVector(destinationVectorMapping.MoveUp, editor);
     }
 
     if (isCloseToRightEdgeOfCanvas && isMovingRight) {
-      isCloseToSomeEdgeOfCanvas = true;
       shiftByVector(destinationVectorMapping.MoveRight, editor);
     }
 
     if (isCloseToBottomEdgeOfCanvas && isMovingBottom) {
-      isCloseToSomeEdgeOfCanvas = true;
       shiftByVector(destinationVectorMapping.MoveDown, editor);
-    }
-
-    if (isCloseToSomeEdgeOfCanvas) {
-      return;
     }
   }
 }

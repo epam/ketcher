@@ -166,9 +166,9 @@ function scrollByDirection(editor: Editor, direction) {
   }
   const { leftX, topY } = selectedAreaCoordinates;
   if (direction === 'MoveUp') {
-    clientArea.scrollTop = topY + 10;
+    clientArea.scrollTop = topY - 10;
   } else if (direction === 'MoveLeft') {
-    clientArea.scrollLeft = leftX + 10;
+    clientArea.scrollLeft = leftX - 10;
   } else if (direction === 'MoveRight') {
     clientArea.scrollLeft += scrollMultiplier;
   } else if (direction === 'MoveDown') {
@@ -183,11 +183,14 @@ export function setScrollOnSelection(editor: Editor, direction) {
     return;
   }
   const { leftX, topY } = selectedAreaCoordinates;
-  if (direction === 'MoveUp' || direction === 'MoveDown') {
-    clientArea.scrollTop = topY + 10;
-  }
-  if (direction === 'MoveLeft' || direction === 'MoveRight') {
-    clientArea.scrollLeft = leftX + 10;
+  if (direction === 'MoveUp') {
+    clientArea.scrollTop = topY - 10;
+  } else if (direction === 'MoveLeft') {
+    clientArea.scrollLeft = leftX - 10;
+  } else if (direction === 'MoveRight') {
+    clientArea.scrollLeft = leftX - clientArea.clientWidth / 2;
+  } else if (direction === 'MoveDown') {
+    clientArea.scrollTop = topY - clientArea.clientHeight / 2;
   }
 }
 

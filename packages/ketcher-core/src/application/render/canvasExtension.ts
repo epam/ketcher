@@ -2,7 +2,7 @@ import { Vec2 } from 'domain/entities';
 import { Editor, ReAtom, fromMultipleMove } from 'ketcher-core';
 
 const edgeOffset = 150;
-const scrollMultiplier = 1.5;
+const scrollMultiplier = 1.2;
 let lastX = 0;
 let lastY = 0;
 
@@ -108,10 +108,8 @@ export function shiftByVector(vector: Vec2, editor: Editor) {
 export function scrollByVector(vector: Vec2, render) {
   requestAnimationFrame(() => {
     const clientArea = render.clientArea;
-    clientArea.scrollLeft +=
-      (vector.x * render.options.scale) / scrollMultiplier;
-    clientArea.scrollTop +=
-      (vector.y * render.options.scale) / scrollMultiplier;
+    clientArea.scrollLeft += vector.x * scrollMultiplier;
+    clientArea.scrollTop += vector.y * scrollMultiplier;
   });
 }
 
@@ -154,13 +152,46 @@ export function moveSelected(
     isCloseToEdgeOfScreenAndMovingToEdge,
   } = isCloseToTheEdges(editor, direction);
   if (isCloseToEdgeOfCanvasAndMovingToEdge) {
-    scrollToEdgeOfScreen(destinationVector, editor.render);
+    scrollByDirection(editor, direction); // scrollToEdgeOfScreen(destinationVector, render)
   } else if (isCloseToEdgeOfScreenAndMovingToEdge) {
-    scrollByVector(destinationVector, editor.render);
+    scrollByDirection(editor, direction);
   }
 }
 
-function getSelectedAreaCoordinates(editor: Editor) {
+function scrollByDirection(editor: Editor, direction) {
+  const clientArea = editor.render.clientArea;
+  const selectedAreaCoordinates = getSelectedAreaCoordinates(editor);
+  if (!selectedAreaCoordinates) {
+    return;
+  }
+  const { leftX, topY } = selectedAreaCoordinates;
+  if (direction === 'MoveUp') {
+    clientArea.scrollTop = topY + 10;
+  } else if (direction === 'MoveLeft') {
+    clientArea.scrollLeft = leftX + 10;
+  } else if (direction === 'MoveRight') {
+    clientArea.scrollLeft += scrollMultiplier;
+  } else if (direction === 'MoveDown') {
+    clientArea.scrollTop += scrollMultiplier;
+  }
+}
+
+export function setScrollOnSelection(editor: Editor, direction) {
+  const clientArea = editor.render.clientArea;
+  const selectedAreaCoordinates = getSelectedAreaCoordinates(editor);
+  if (!selectedAreaCoordinates) {
+    return;
+  }
+  const { leftX, topY } = selectedAreaCoordinates;
+  if (direction === 'MoveUp' || direction === 'MoveDown') {
+    clientArea.scrollTop = topY + 10;
+  }
+  if (direction === 'MoveLeft' || direction === 'MoveRight') {
+    clientArea.scrollLeft = leftX + 10;
+  }
+}
+
+export function getSelectedAreaCoordinates(editor: Editor) {
   const restruct = editor.render.ctab;
   const selectedItems = editor.explicitSelected();
   if (!selectedItems.atoms) {

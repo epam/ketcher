@@ -33,6 +33,7 @@ import {
   isSelectionCloseToTheEdgeOfCanvas,
   shiftByVector,
   moveSelected,
+  setScrollOnSelection,
   getItemsToFuse,
 } from 'ketcher-core';
 
@@ -492,6 +493,7 @@ class SelectTool implements Tool {
       this.editor.render.clientArea.parentElement?.parentElement;
 
     const stopSelectionMoving = (event) => {
+      setScrollOnSelection(this.editor, this.selectionMoving.direction);
       this.mouseup(event);
     };
 
@@ -591,7 +593,7 @@ class SelectTool implements Tool {
           moveSelected(
             this.editor,
             destinationVectorMapping[this.selectionMoving.direction],
-            true,
+            false,
             this.selectionMoving.direction,
           ),
         selectionMovementInterval,

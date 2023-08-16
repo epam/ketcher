@@ -32,6 +32,10 @@ export enum SaltsAndSolvents {
   Sulfolane = 'sulfolane',
 }
 
+export enum FunctionalGroupMenu {
+  ExpandAbbreviation = 'Expand Abbreviation',
+}
+
 export enum FunctionalGroups {
   Ac = 'Ac',
   Bn = 'Bn',
@@ -109,6 +113,16 @@ export async function selectFunctionalGroups(
     .first();
   await functionalGroupButton.click();
 }
+
+export const expandFunctionalGroup = async (
+  page: Page,
+  functionalGroupName: FunctionalGroups,
+) => {
+  const t = page.getByText(functionalGroupName);
+
+  await t.click({ button: 'right' });
+  await page.getByText(FunctionalGroupMenu.ExpandAbbreviation).click();
+};
 
 export async function selectUserTemplate(
   userTemplateName: TemplateLibrary,

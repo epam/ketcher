@@ -37,3 +37,13 @@ export const waitForLoad = async (page: Page, callback: VoidFunction) => {
     await page.waitForSelector('.loading-spinner', { state: 'detached' });
   }
 };
+
+export const waitForCloseDialog = async (
+  page: Page,
+  callback: VoidFunction,
+) => {
+  return await Promise.all([
+    callback(),
+    page.waitForSelector('[role=dialog]', { state: 'detached' }),
+  ]);
+};

@@ -89,6 +89,12 @@ export enum LeftPanelButton {
   AddText = 'Add text',
 }
 
+export enum SelectionTitle {
+  RectangleSelection = 'Rectangle Selection',
+  LassoSelection = 'Lasso Selection',
+  FragmentSelection = 'Fragment Selection',
+}
+
 export enum RingButton {
   Benzene = 'Benzene',
   Cyclopentadiene = 'Cyclopentadiene',

@@ -9,10 +9,15 @@ export const TYPE_SHAPE = 'shape';
 
 export const DEFAULT_BONDS_MAIN_BUTTON_TEST_ID = 'bonds';
 
+export enum SelectToolId {
+  SELECT_RECTANGLE = 'select-rectangle',
+  SELECT_LASSO = 'select-lasso',
+  SELECT_FRAGMENT = 'select-fragment',
+}
 // each field define number of presses and DOM element id
-type toolField = [presses: number, domElementId: string];
+export type toolField = [presses: number, domElementId: string | SelectToolId];
 
-type toolType = {
+export type toolType = {
   [key: string]: toolField;
 };
 
@@ -34,9 +39,9 @@ export const BondTool: toolType = {
 };
 
 export const SelectTool: toolType = {
-  RECTANGLE_SELECTION: [1, 'select-rectangle'],
-  LASSO_SELECTION: [2, 'select-lasso'],
-  FRAGMENT_SELECTION: [3, 'select-fragment'],
+  RECTANGLE_SELECTION: [1, SelectToolId.SELECT_RECTANGLE],
+  LASSO_SELECTION: [2, SelectToolId.SELECT_LASSO],
+  FRAGMENT_SELECTION: [3, SelectToolId.SELECT_FRAGMENT],
 };
 
 // Rotate tool do not change image after selecting

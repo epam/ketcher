@@ -14,8 +14,10 @@ import {
   ReactionMappingTool,
   RgroupTool,
   ShapeTool,
+  SelectToolId,
+  toolField,
 } from './types';
-import { delay, DELAY_IN_SECONDS } from '@tests/utils';
+import { delay, DELAY_IN_SECONDS, SelectionTitle } from '@tests/utils';
 
 export const openTool = async (
   page: Page,
@@ -69,4 +71,21 @@ export const getToolType = (toolName: string) => {
   }
 
   return toolType;
+};
+
+const getActionTypeByToolType = (toolType: toolField) => {
+  switch (toolType[1]) {
+    case SelectToolId.SELECT_RECTANGLE:
+      return SelectionTitle.RectangleSelection;
+    case SelectToolId.SELECT_LASSO:
+      return SelectionTitle.LassoSelection;
+    case SelectToolId.SELECT_FRAGMENT:
+      return SelectionTitle.FragmentSelection;
+    default:
+      throw new Error('wrong tool action');
+  }
+};
+
+export const getTitleByToolType = (toolType: toolField) => {
+  return new RegExp(`(.*)${getActionTypeByToolType(toolType)}(.*)`);
 };

@@ -34,4 +34,45 @@ test.describe('Rotation', () => {
     const screenAfterRotation = await takeEditorScreenshot(page);
     expect(screenAfterRotation).toEqual(screenBeforeRotation);
   });
+
+  test('Floating icons are shown', async ({ page }) => {
+    /*
+      Test case: EPMLSOPKET-1685
+      Description: Floating icon are shown, when structure is selected
+    */
+    const anyStructure = 'benzene-bond-fg.mol';
+    await openFileAndAddToCanvas(anyStructure, page);
+    await page.keyboard.press('Control+a');
+    await page.getByTestId('floating-tools').isVisible();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Floating icons have tooltips', async ({ page }) => {
+    /*
+      Test case: EPMLSOPKET-1685
+      Description: Floating icon have tooltips
+    */
+    const anyStructure = 'benzene-bond-fg.mol';
+    await openFileAndAddToCanvas(anyStructure, page);
+    await page.keyboard.press('Control+a');
+    await page.getByTestId('floating-tools').isVisible();
+    const icons = [
+      {
+        testId: 'transform-flip-h',
+        title: 'Horizontal Flip (Alt+H)',
+      },
+      {
+        testId: 'transform-flip-v',
+        title: 'Vertical Flip (Alt+V)',
+      },
+      {
+        testId: 'delete',
+        title: 'Erase (Del)',
+      },
+    ];
+    for (const icon of icons) {
+      const iconButton = page.getByTestId(icon.testId);
+      await expect(iconButton).toHaveAttribute('title', icon.title);
+    }
+  });
 });

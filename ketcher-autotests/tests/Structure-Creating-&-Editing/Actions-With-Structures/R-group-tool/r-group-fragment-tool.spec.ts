@@ -22,7 +22,6 @@ import {
   saveToFile,
   copyAndPaste,
   cutAndPaste,
-  dragMouseTo,
 } from '@utils';
 import { getExtendedSmiles, getMolfile } from '@utils/formats';
 
@@ -353,7 +352,7 @@ test.describe('R-Group Fragment Tool', () => {
     );
 
     // eslint-disable-next-line no-magic-numbers
-    const METADATA_STRING_INDEX = [2];
+    const METADATA_STRING_INDEX = [1];
     const { fileExpected: molFileExpected, file: molFile } =
       await receiveFileComparisonData({
         page,

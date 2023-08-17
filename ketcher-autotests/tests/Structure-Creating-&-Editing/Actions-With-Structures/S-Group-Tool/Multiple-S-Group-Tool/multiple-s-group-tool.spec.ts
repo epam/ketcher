@@ -71,7 +71,9 @@ test.describe('Multiple S-Group tool', () => {
     await selectMultipleGroup(page, 'Data', 'Multiple group', '88');
   });
 
-  test('Brackets rendering for whole s-group structure', async ({ page }) => {
+  test('Brackets rendering for whole s-group structure without attachment points', async ({
+    page,
+  }) => {
     /*
       Test case: EPMLSOPKET-1506
       Description: The brackets are rendered correctly around whole structure
@@ -89,6 +91,48 @@ test.describe('Multiple S-Group tool', () => {
     await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
     await clickOnAtom(page, 'C', 3);
     await page.getByLabel(AttachmentPoint.PRIMARY).check();
+    await pressButton(page, 'Apply');
+    await page.keyboard.press('Control+a');
+    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await selectMultipleGroup(page, 'Data', 'Multiple group', '88');
+  });
+
+  test('Brackets rendering for s-group structure on atoms with 1 attachment point', async ({
+    page,
+  }) => {
+    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
+    await clickOnAtom(page, 'C', 3);
+    await page.getByLabel(AttachmentPoint.PRIMARY).check();
+    await pressButton(page, 'Apply');
+    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await clickOnAtom(page, 'C', 3);
+    await selectMultipleGroup(page, 'Data', 'Multiple group', '88');
+  });
+
+  test('Brackets rendering for s-group structure on 1 atom with 2 attachment points', async ({
+    page,
+  }) => {
+    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
+    await clickOnAtom(page, 'C', 3);
+    await page.getByLabel(AttachmentPoint.PRIMARY).check();
+    await page.getByLabel(AttachmentPoint.SECONDARY).check();
+    await pressButton(page, 'Apply');
+    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await clickOnAtom(page, 'C', 3);
+    await selectMultipleGroup(page, 'Data', 'Multiple group', '88');
+  });
+
+  test('Brackets rendering for whole s-group structure with 2 atoms with 1 attachment points each', async ({
+    page,
+  }) => {
+    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
+    await clickOnAtom(page, 'C', 3);
+    await page.getByLabel(AttachmentPoint.PRIMARY).check();
+    await clickOnAtom(page, 'C', 4);
+    await page.getByLabel(AttachmentPoint.SECONDARY).check();
     await pressButton(page, 'Apply');
     await page.keyboard.press('Control+a');
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);

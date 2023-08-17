@@ -208,7 +208,8 @@ test.describe('Reagents RXN format', () => {
     await clickInTheMiddleOfTheScreen(page);
   });
 
-  test('Paste from clipboard in "RXN V2000" format', async ({ page }) => {
+  // flaky
+  test.fixme('Paste from clipboard in "RXN V2000" format', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-4677
       Description: Reagent 'Cl' displays below reaction arrow

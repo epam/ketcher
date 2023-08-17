@@ -30,11 +30,7 @@ export function moveSelectedItems(
   isShiftPressed: boolean,
 ) {
   const destinationVector = destinationVectorMapping[key];
-  moveSelected(
-    editor,
-    destinationVector,
-    isShiftPressed,
-    directionMapping[key],
-  );
+  const step = isShiftPressed ? 10 : 1;
+  moveSelected(editor, destinationVector, step, directionMapping[key]);
   editor.rotateController.rerender();
 }

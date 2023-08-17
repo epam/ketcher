@@ -29,6 +29,9 @@ import {
   Vec2,
   Atom,
   Bond,
+  getDirections,
+  isSelectionCloseToTheEdgeOfCanvas,
+  shiftByVector,
   moveSelected,
   setScrollOnSelection,
   getItemsToFuse,
@@ -247,7 +250,7 @@ class SelectTool implements Tool {
       );
       dragCtx.mergeItems = getItemsToFuse(editor, visibleSelectedItems);
       editor.hover(getHoverToFuse(dragCtx.mergeItems));
-
+      resizeCanvas(editor, event);
       editor.update(dragCtx.action, true, { resizeCanvas: false });
       return true;
     }
@@ -591,7 +594,7 @@ class SelectTool implements Tool {
           moveSelected(
             this.editor,
             destinationVectorMapping[this.selectionMoving.direction],
-            false,
+            5,
             this.selectionMoving.direction,
           ),
         selectionMovementInterval,
@@ -648,6 +651,35 @@ class SelectTool implements Tool {
     const reArrow = this.editor.render.ctab.rxnArrows.get(itemId);
     if (reArrow) {
       reArrow.isResizing = isResizing;
+    }
+  }
+}
+
+function resizeCanvas(editor, event) {
+  const { isMovingLeft, isMovingRight, isMovingTop, isMovingBottom } =
+    getDirections(event);
+  const isCloseToEdgeOfCanvas = isSelectionCloseToTheEdgeOfCanvas(editor);
+  if (isCloseToEdgeOfCanvas) {
+    const {
+      isCloseToLeftEdgeOfCanvas,
+      isCloseToTopEdgeOfCanvas,
+      isCloseToRightEdgeOfCanvas,
+      isCloseToBottomEdgeOfCanvas,
+    } = isCloseToEdgeOfCanvas;
+    if (isCloseToLeftEdgeOfCanvas && isMovingLeft) {
+      shiftByVector(destinationVectorMapping.MoveLeft, editor);
+    }
+
+    if (isCloseToTopEdgeOfCanvas && isMovingTop) {
+      shiftByVector(destinationVectorMapping.MoveUp, editor);
+    }
+
+    if (isCloseToRightEdgeOfCanvas && isMovingRight) {
+      shiftByVector(destinationVectorMapping.MoveRight, editor);
+    }
+
+    if (isCloseToBottomEdgeOfCanvas && isMovingBottom) {
+      shiftByVector(destinationVectorMapping.MoveDown, editor);
     }
   }
 }

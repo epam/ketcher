@@ -134,16 +134,15 @@ export function scrollToEdgeOfScreen(vector: Vec2, render) {
 export function moveSelected(
   editor: Editor,
   destinationVector: Vec2,
-  isFast: boolean,
+  step: number,
   direction: string,
 ) {
-  const stepFactor = 1 / editor.options().scale;
-  const fasterStepFactor = stepFactor * 10;
+  const stepFactor = step / editor.options().scale;
   const selectedItems = editor.explicitSelected();
   const action = fromMultipleMove(
     editor.render.ctab,
     selectedItems,
-    destinationVector.scaled(isFast ? fasterStepFactor : stepFactor),
+    destinationVector.scaled(stepFactor),
   );
   editor.update(action, false, { resizeCanvas: true });
 
@@ -152,7 +151,7 @@ export function moveSelected(
     isCloseToEdgeOfScreenAndMovingToEdge,
   } = isCloseToTheEdges(editor, direction);
   if (isCloseToEdgeOfCanvasAndMovingToEdge) {
-    scrollByDirection(editor, direction); // scrollToEdgeOfScreen(destinationVector, render)
+    scrollToEdgeOfScreen(destinationVector, editor.render);
   } else if (isCloseToEdgeOfScreenAndMovingToEdge) {
     scrollByDirection(editor, direction);
   }

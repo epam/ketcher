@@ -13,55 +13,77 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+import { useCallback, useMemo } from 'react';
 import { EmptyFunction } from 'helpers';
 import { debounce } from 'lodash';
-import { useMemo, useRef } from 'react';
 import { MonomerItem } from '../monomerLibraryItem';
-import { MonomerItemType } from '../monomerLibraryItem/types';
-import {
-  GroupContainer,
-  GroupTitle,
-  ItemsContainer,
-  StyledPreview,
-} from './styles';
+import { GroupContainer, GroupTitle, ItemsContainer } from './styles';
 import { IMonomerGroupProps } from './types';
-import { usePreview } from '../../../hooks/usePreview';
 import { getMonomerUniqueKey } from 'state/library';
+import { MonomerItemType } from 'ketcher-core';
+import { calculatePreviewPosition } from '../../../helpers';
+import { useAppDispatch, useAppSelector } from 'hooks';
+import {
+  showPreview,
+  selectShowPreview,
+  selectEditor,
+  selectTool,
+} from 'state/common';
 
 const MonomerGroup = ({
   items,
   title,
   selectedMonomerUniqueKey,
+  libraryName,
+  disabled,
   onItemClick = EmptyFunction,
 }: IMonomerGroupProps) => {
-  const ref = useRef<HTMLDivElement>(null);
-  const [previewItem, previewStyle, setPreviewItem] = usePreview(ref);
+  const dispatch = useAppDispatch();
+  const preview = useAppSelector(selectShowPreview);
+  const editor = useAppSelector(selectEditor);
 
-  const debouncedSetPreviewItem = useMemo(
-    () => debounce(setPreviewItem, 500),
-    [setPreviewItem],
+  const dispatchShowPreview = useCallback(
+    (payload) => dispatch(showPreview(payload)),
+    [dispatch],
+  );
+
+  const debouncedShowPreview = useMemo(
+    () => debounce((p) => dispatchShowPreview(p), 500),
+    [dispatchShowPreview],
   );
 
   const handleItemMouseLeave = () => {
-    debouncedSetPreviewItem.cancel();
-    setPreviewItem();
+    debouncedShowPreview.cancel();
+    dispatch(showPreview(undefined));
   };
 
   const handleItemMouseMove = (
     monomer: MonomerItemType,
     e: React.MouseEvent<HTMLDivElement, MouseEvent>,
   ) => {
-    if (previewItem) {
-      setPreviewItem();
+    if (preview.monomer || !e.currentTarget) {
       return;
     }
+    const cardCoordinates = e.currentTarget.getBoundingClientRect();
+    const previewStyle = calculatePreviewPosition(monomer, cardCoordinates);
+    debouncedShowPreview({ monomer, style: previewStyle });
+  };
 
-    const rect = e.currentTarget.getBoundingClientRect();
-    debouncedSetPreviewItem(monomer, rect);
+  const selectMonomer = (monomer: MonomerItemType) => {
+    dispatch(selectTool('monomer'));
+    switch (libraryName) {
+      case 'PEPTIDE':
+        editor.events.selectPeptide.dispatch(monomer);
+        onItemClick(monomer);
+        break;
+      default:
+        onItemClick(monomer);
+        break;
+    }
   };
 
   return (
-    <GroupContainer ref={ref}>
+    <GroupContainer>
       {title && (
         <GroupTitle>
           <span>{title}</span>
@@ -75,20 +97,18 @@ const MonomerGroup = ({
           return (
             <MonomerItem
               key={key}
+              disabled={disabled}
               item={monomer}
               isSelected={
                 selectedMonomerUniqueKey === getMonomerUniqueKey(monomer)
               }
               onMouseLeave={handleItemMouseLeave}
               onMouseMove={(e) => handleItemMouseMove(monomer, e)}
-              onClick={() => onItemClick(monomer)}
+              onClick={() => selectMonomer(monomer)}
             />
           );
         })}
       </ItemsContainer>
-      {previewItem && (
-        <StyledPreview monomer={previewItem} top={previewStyle?.top || ''} />
-      )}
     </GroupContainer>
   );
 };

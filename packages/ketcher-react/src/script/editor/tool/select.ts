@@ -35,12 +35,12 @@ import {
   moveSelected,
   setScrollOnSelection,
   getItemsToFuse,
+  vectorUtils,
 } from 'ketcher-core';
 
 import LassoHelper from './helper/lasso';
 import { atomLongtapEvent } from './atom';
 import SGroupTool from './sgroup';
-import utils from '../shared/utils';
 import { xor } from 'lodash/fp';
 import { Editor } from '../Editor';
 import { dropAndMerge } from './helper/dropAndMerge';
@@ -50,6 +50,7 @@ import { updateSelectedBonds } from 'src/script/ui/state/modal/bonds';
 import { hasAtomsOutsideCanvas } from './helper/isAtomOutSideCanvas';
 import { filterNotInContractedSGroup } from './helper/filterNotInCollapsedSGroup';
 import { Tool } from './Tool';
+import { handleMovingPosibilityCursor } from '../utils';
 
 type SelectMode = 'lasso' | 'fragment' | 'rectangle';
 type Direction = 'MoveUp' | 'MoveDown' | 'MoveRight' | 'MoveLeft';
@@ -76,6 +77,7 @@ class SelectTool implements Tool {
   private readonly editor: Editor;
   private dragCtx: any;
   isMousedDown = false;
+  readonly isMoving = false;
 
   private selectionMoving: SelectionMoving = {
     isMoving: false,
@@ -199,8 +201,8 @@ class SelectTool implements Tool {
       if (shouldDisplayDegree) {
         // moving selected objects
         const pos = rnd.page2obj(event);
-        const angle = utils.calcAngle(dragCtx.xy0, pos);
-        const degrees = utils.degrees(angle);
+        const angle = vectorUtils.calcAngle(dragCtx.xy0, pos);
+        const degrees = vectorUtils.degrees(angle);
         editor.event.message.dispatch({ info: degrees + 'º' });
       }
       /* end */
@@ -266,7 +268,14 @@ class SelectTool implements Tool {
     const maps = getMapsForClosestItem(
       this.#lassoHelper.fragment || event.ctrlKey,
     );
-    editor.hover(editor.findItem(event, maps, null), null, event);
+    const item = editor.findItem(event, maps, null);
+    editor.hover(item, null, event);
+
+    handleMovingPosibilityCursor(
+      item,
+      this.editor.render.paper.canvas,
+      this.editor.render.options.movingStyle.cursor as string,
+    );
 
     return true;
   }
@@ -767,6 +776,7 @@ function getMapsForClosestItem(selectFragment: boolean) {
     'functionalGroups',
     'sgroupData',
     'rgroups',
+    'rgroupAttachmentPoints',
     'rxnArrows',
     'rxnPluses',
     'enhancedFlags',
@@ -786,10 +796,7 @@ function getResizingProps(
   return [editor.render.ctab, dragCtx.item.id, diff, current, dragCtx.item.ref];
 }
 
-function getNewSelectedItems(
-  editor: Editor,
-  selectedSgroups: number[],
-): { atoms: number[]; bonds: number[] } {
+function getNewSelectedItems(editor: Editor, selectedSgroups: number[]) {
   const newSelected: Record<'atoms' | 'bonds', number[]> = {
     atoms: [],
     bonds: [],

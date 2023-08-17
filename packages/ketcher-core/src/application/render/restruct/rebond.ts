@@ -114,28 +114,30 @@ class ReBond extends ReObject {
       bond.stereo !== Bond.PATTERN.STEREO.NONE &&
       bond.stereo !== Bond.PATTERN.STEREO.CIS_TRANS;
 
-    // for stereo bonds we slightly change the parameters
-    // to adjust the shape of the selection
-    const addStereoPadding = isStereoBond ? stereoBondWidth / 2 : 0;
+    const addPadding = isStereoBond ? 0 : -2;
 
     // find the points on the line where we will be drawing the curves
     const contourStart = Vec2.getLinePoint(
       halfBondEnd,
       halfBondStart,
-      -bondThickness * 2.5 - addStereoPadding,
+      addPadding,
     );
     const contourEnd = Vec2.getLinePoint(
       halfBondStart,
       halfBondEnd,
-      -bondThickness * 2.5,
+      addPadding,
     );
 
+    const stereoBondStartHeightCoef = 0.5;
+    const bondPadding = 0.5;
     const addStart = isStereoBond
-      ? stereoBondWidth * 0.25
-      : regularSelectionThikness;
+      ? stereoBondWidth * stereoBondStartHeightCoef
+      : regularSelectionThikness + bondPadding;
+    const stereoBondEndHeightCoef = 1;
     const addEnd = isStereoBond
-      ? stereoBondWidth + (regularSelectionThikness * 4) / stereoBondWidth
-      : regularSelectionThikness;
+      ? stereoBondWidth +
+        (regularSelectionThikness * stereoBondEndHeightCoef) / stereoBondWidth
+      : regularSelectionThikness + bondPadding;
 
     const contourPaddedStart = Vec2.getLinePoint(
       contourStart,
@@ -301,7 +303,14 @@ class ReBond extends ReObject {
     const isSnapping = restruct.isSnappingBond(bid);
     this.path = getBondPath(restruct, this, hb1, hb2, isSnapping);
     this.rbb = util.relBox(this.path.getBBox());
-    restruct.addReObjectPath(LayerMap.data, this.visel, this.path, null, true);
+    // add layer for bond's skeleton:
+    restruct.addReObjectPath(
+      LayerMap.bondSkeleton,
+      this.visel,
+      this.path,
+      null,
+      true,
+    );
     const reactingCenter: any = {};
     reactingCenter.path = getReactingCenterPath(render, this, hb1, hb2);
     if (reactingCenter.path) {
@@ -510,7 +519,7 @@ function getBondPath(
   hb2: HalfBond,
   isSnapping: boolean,
 ) {
-  let path = null;
+  let path: any = null;
   const render = restruct.render;
   const struct = restruct.molecule;
   const shiftA = !restruct.atoms.get(hb1.begin)?.showLabel;
@@ -675,6 +684,10 @@ function getBondPath(
       break;
     default:
       throw new Error('Bond type ' + bond.b.type + ' not supported');
+  }
+  if (path) {
+    const { previewOpacity } = render.options;
+    path.attr({ opacity: bond.b.isPreview ? previewOpacity : 1 });
   }
   return path;
 }

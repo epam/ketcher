@@ -1,6 +1,6 @@
 {
   "name": "ketcher-core",
-  "version": "2.13.0-rc.1",
+  "version": "2.14.0-rc.1",
   "description": "Web-based molecule sketcher",
   "license": "Apache-2.0",
   "homepage": "http://lifescience.opensource.epam.com/ketcher",
@@ -45,6 +45,7 @@
     "@babel/runtime": "^7.17.9",
     "ajv": "^8.10.0",
     "assert": "^2.0.0",
+    "d3": "^7.8.5",
     "lodash": "^4.17.21",
     "raphael": "^2.3.0",
     "svgpath": "^2.3.1"
@@ -60,6 +61,7 @@
     "@rollup/plugin-node-resolve": "^10.0.0",
     "@rollup/plugin-replace": "^2.3.4",
     "@rollup/plugin-strip": "^2.0.0",
+    "@types/d3": "^7.4.0",
     "@types/jest": "^27.0.3",
     "@types/node": "^16.11.12",
     "@zerollup/ts-transform-paths": "^1.7.18",

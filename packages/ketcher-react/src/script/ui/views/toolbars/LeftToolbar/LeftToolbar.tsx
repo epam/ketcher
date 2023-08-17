@@ -62,9 +62,10 @@ const LeftToolbar = (props: Props) => {
   type ItemProps = {
     id: ToolbarItemVariant;
     options?: ToolbarItem[];
+    dataTestId?: string;
   };
-  const Item = ({ id, options }: ItemProps) =>
-    ToolbarGroupItem({ id, options, ...rest });
+  const Item = ({ id, options, dataTestId }: ItemProps) =>
+    ToolbarGroupItem({ id, options, dataTestId, ...rest });
 
   const scrollUp = () => {
     scrollRef.current.scrollTop -= sizeRef.current.offsetHeight;
@@ -94,9 +95,11 @@ const LeftToolbar = (props: Props) => {
         if (visible) visibleItems.push(item);
       });
     }
+
     return visibleItems.length ? (
       <div className={clsx(classes.group, className)}>
         {visibleItems.map((item) => {
+          console.log('items', item, item.id);
           switch (item.id) {
             case 'bond-common':
               return <Bond {...rest} height={height} key={item.id} />;
@@ -104,6 +107,15 @@ const LeftToolbar = (props: Props) => {
               return <RGroup {...rest} key={item.id} />;
             case 'shapes':
               return <Shape {...rest} key={item.id} />;
+            case 'bonds':
+              return (
+                <Item
+                  id={item.id}
+                  options={item.options}
+                  key={item.id}
+                  dataTestId="bonds"
+                />
+              );
             default:
               return <Item id={item.id} options={item.options} key={item.id} />;
           }
@@ -113,7 +125,11 @@ const LeftToolbar = (props: Props) => {
   };
 
   return (
-    <div className={clsx(classes.root, className)} ref={ref}>
+    <div
+      data-testid="left-toolbar"
+      className={clsx(classes.root, className)}
+      ref={ref}
+    >
       <div className={classes.buttons} ref={scrollRef}>
         <div className={classes.listener} ref={startRef}>
           <Group

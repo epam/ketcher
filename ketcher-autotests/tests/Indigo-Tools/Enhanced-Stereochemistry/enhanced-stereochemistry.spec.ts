@@ -19,8 +19,8 @@ import {
   selectBond,
   BondTypeName,
   clickOnAtom,
-  delay,
-  DELAY_IN_SECONDS,
+  BondTool,
+  selectNestedTool,
 } from '@utils';
 import { getKet, getMolfile } from '@utils/formats';
 
@@ -459,7 +459,6 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     await selectTopPanelButton(TopPanelButton.Settings, page);
     await page.getByText('Stereochemistry', { exact: true }).click();
     await page.mouse.wheel(deltaX, deltaY);
-    await delay(DELAY_IN_SECONDS.THREE);
   });
 
   test('Save in Molfile V2000 - If one of the saved structures had the ABS (Chiral) Flag', async ({
@@ -574,7 +573,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     */
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectBond(BondTypeName.SingleUp, page);
+    await selectNestedTool(page, BondTool.UP);
     await clickOnAtom(page, 'C', 1);
 
     await selectBond(BondTypeName.Single, page);
@@ -590,7 +589,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     */
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectBond(BondTypeName.SingleUp, page);
+    await selectNestedTool(page, BondTool.UP);
     await clickOnAtom(page, 'C', 1);
   });
 });

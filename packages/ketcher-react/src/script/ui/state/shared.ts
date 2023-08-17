@@ -100,10 +100,10 @@ export function load(struct: Struct, options?) {
     const editor = state.editor as Editor;
     const server = state.server;
     const errorHandler = editor.errorHandler;
-
     options = options || {};
-    options = {
-      ...options,
+    let { isPaste, ...otherOptions } = options;
+    otherOptions = {
+      ...otherOptions,
       'dearomatize-on-load': editor.options()['dearomatize-on-load'],
       ignoreChiralFlag: editor.options().ignoreChiralFlag,
     };
@@ -111,8 +111,8 @@ export function load(struct: Struct, options?) {
     dispatch(setAnalyzingFile(true));
 
     try {
-      const parsedStruct = await parseStruct(struct, server, options);
-      const { fragment } = options;
+      const parsedStruct = await parseStruct(struct, server, otherOptions);
+      const { fragment } = otherOptions;
       const hasUnsupportedGroups = parsedStruct.sgroups.some(
         (sGroup) => !supportedSGroupTypes[sGroup.type],
       );
@@ -175,8 +175,10 @@ export function load(struct: Struct, options?) {
         editor.struct(parsedStruct);
       }
 
-      editor.zoomAccordingContent();
-      editor.centerStruct();
+      editor.zoomAccordingContent(parsedStruct);
+      if (!isPaste) {
+        editor.centerStruct();
+      }
 
       dispatch(setAnalyzingFile(false));
       dispatch({ type: 'MODAL_CLOSE' });

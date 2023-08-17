@@ -4,7 +4,6 @@ import {
   LeftPanelButton,
   selectLeftPanelButton,
   clickInTheMiddleOfTheScreen,
-  delay,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   pressButton,
@@ -20,6 +19,9 @@ import {
   fillFieldByLabel,
   screenshotBetweenUndoRedo,
   saveToFile,
+  RgroupTool,
+  selectNestedTool,
+  AttachmentPoint,
 } from '@utils';
 import { getMolfile } from '@utils/formats';
 
@@ -44,7 +46,6 @@ test.describe('Multiple S-Group tool', () => {
   });
 
   test.afterEach(async ({ page }) => {
-    await delay(3);
     await takeEditorScreenshot(page);
   });
 
@@ -70,12 +71,25 @@ test.describe('Multiple S-Group tool', () => {
     await selectMultipleGroup(page, 'Data', 'Multiple group', '88');
   });
 
-  test('Brackets rendering for whole structure', async ({ page }) => {
+  test('Brackets rendering for whole s-group structure', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-1506
       Description: The brackets are rendered correctly around whole structure
     */
     await openFileAndAddToCanvas('simple-chain.ket', page);
+    await page.keyboard.press('Control+a');
+    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await selectMultipleGroup(page, 'Data', 'Multiple group', '88');
+  });
+
+  test('Brackets rendering for whole s-group structure even with attachment points', async ({
+    page,
+  }) => {
+    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
+    await clickOnAtom(page, 'C', 3);
+    await page.getByLabel(AttachmentPoint.PRIMARY).check();
+    await pressButton(page, 'Apply');
     await page.keyboard.press('Control+a');
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await selectMultipleGroup(page, 'Data', 'Multiple group', '88');
@@ -88,7 +102,8 @@ test.describe('Multiple S-Group tool', () => {
     */
     await openFileAndAddToCanvas('multiple-group.ket', page);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
-    await clickOnBond(page, BondType.SINGLE, 3);
+    await clickOnBond(page, BondType.SINGLE, 3, 'right');
+    await page.getByText('Edit S-Group...').click();
     await fillFieldByLabel(page, 'Repeat count', '99');
     await pressButton(page, 'Apply');
     await resetCurrentTool(page);
@@ -129,7 +144,7 @@ test.describe('Multiple S-Group tool', () => {
     */
     await openFileAndAddToCanvas('multiple-group.ket', page);
     await page.keyboard.press('Control+a');
-    await selectLeftPanelButton(LeftPanelButton.Erase, page);
+    await page.getByTestId('delete').click();
     await takeEditorScreenshot(page);
 
     await screenshotBetweenUndoRedo(page);

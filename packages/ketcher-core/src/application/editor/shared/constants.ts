@@ -28,8 +28,11 @@ export const selectionKeys = [
   'frags',
   'sgroups',
   'rgroups',
+  'rgroupAttachmentPoints',
   'rxnArrows',
   'rxnPluses',
   'simpleObjects',
   'texts',
 ] as const;
+
+export const defaultBondThickness = 2;

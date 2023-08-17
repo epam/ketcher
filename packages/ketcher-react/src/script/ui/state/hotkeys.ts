@@ -59,6 +59,7 @@ function removeNotRenderedStruct(actionTool, group, dispatch) {
 
 let abbreviationLookupTimeoutId: number | undefined;
 const ABBREVIATION_LOOKUP_TYPING_TIMEOUT = 1000;
+const shortcutKeys = ['1', '2', '3', '4', 't'];
 
 /* HotKeys */
 function keyHandle(dispatch, getState, hotKeys, event) {
@@ -76,7 +77,12 @@ function keyHandle(dispatch, getState, hotKeys, event) {
   let group: any = null;
 
   if (key && key.length === 1) {
-    if (selectAbbreviationLookupValue(state)) {
+    const currentlyPressedKeys = selectAbbreviationLookupValue(state);
+    const isShortcutKey = shortcutKeys.includes(key?.toLowerCase());
+    const isTheSameKey = key === currentlyPressedKeys;
+    const isAbbreviationLookupShown =
+      (!isTheSameKey || !isShortcutKey) && currentlyPressedKeys;
+    if (isAbbreviationLookupShown) {
       dispatch(showAbbreviationLookup(event.key));
       clearTimeout(abbreviationLookupTimeoutId);
       abbreviationLookupTimeoutId = undefined;
@@ -274,7 +280,7 @@ export function initClipboard(dispatch) {
         data['text/plain'];
 
       if (structStr || !rxnTextPlain.test(data['text/plain']))
-        loadStruct(structStr, { fragment: true });
+        loadStruct(structStr, { fragment: true, isPaste: true });
     },
   };
 }

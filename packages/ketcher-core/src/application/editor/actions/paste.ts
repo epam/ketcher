@@ -31,6 +31,7 @@ import { fromRGroupAttrs, fromUpdateIfThen } from './rgroup';
 import { Action } from './action';
 import { SGroup, Struct, Vec2 } from 'domain/entities';
 import { fromSgroupAddition } from './sgroup';
+import { fromRGroupAttachmentPointAddition } from './rgroupAttachmentPoint';
 
 export function fromPaste(
   restruct,
@@ -71,6 +72,14 @@ export function fromPaste(
     aidMap.set(aid, operation.data.aid);
 
     pasteItems.atoms.push(operation.data.aid);
+
+    action.mergeWith(
+      fromRGroupAttachmentPointAddition(
+        restruct,
+        tmpAtom.attpnt,
+        operation.data.aid,
+      ),
+    );
   });
 
   pstruct.frags.forEach((frag, frid) => {

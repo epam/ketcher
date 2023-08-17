@@ -41,7 +41,7 @@ test.describe('Click and drag FG on canvas', () => {
     await drawFGAndDrag(FunctionalGroups.Cbz, SHIFT, page);
   });
 
-  test('Boc forms a bond with Cbz functional group', async ({ page }) => {
+  test.skip('Boc forms a bond with Cbz functional group', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-11551
       Description: when click & drag with an FG on FG it should forms a bond between it

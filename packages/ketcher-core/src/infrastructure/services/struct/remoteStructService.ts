@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { defaultBondThickness } from 'application/editor';
 import {
   AromatizeData,
   AromatizeResult,
@@ -325,14 +326,22 @@ export class RemoteStructService implements StructService {
     options?: GenerateImageOptions,
   ): Promise<string> {
     const outputFormat: OutputFormatType = options?.outputFormat || 'png';
+    const bondThickness: number =
+      options?.bondThickness || defaultBondThickness;
+
     return indigoCall(
       'POST',
       'indigo/render',
       this.apiPath,
       this.defaultOptions,
       this.customHeaders,
-    )({ struct: data }, { 'render-output-format': outputFormat }, (response) =>
-      response.then((resp) => resp.text()),
+    )(
+      { struct: data },
+      {
+        'render-output-format': outputFormat,
+        'render-bond-line-width': bondThickness,
+      },
+      (response) => response.then((resp) => resp.text()),
     );
   }
 }

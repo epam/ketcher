@@ -78,24 +78,27 @@ class SaveDialog extends Component {
     };
     this.isRxn = this.props.struct.hasRxnArrow();
     this.textAreaRef = createRef();
-    const formats = [this.isRxn ? 'rxn' : 'mol', 'smiles', 'ket'];
-    if (this.props.server)
-      formats.push(
-        this.isRxn ? 'rxnV3000' : 'molV3000',
-        'smilesExt',
-        'smarts',
-        'cml',
-        '<----firstDivider--->', // for dividers in select list
-        'inChI',
-        'inChIAuxInfo',
-        '<----secondDivider--->', // for dividers in select list
-        'svg',
-        'png',
-        'cdxml',
-        'cdx',
-        'binaryCdx',
-      );
-    // TODO: pass the necessary divider not like list element
+
+    const formats = !this.props.server
+      ? ['ket', this.isRxn ? 'rxn' : 'mol', 'smiles']
+      : [
+          'ket',
+          this.isRxn ? 'rxn' : 'mol',
+          this.isRxn ? 'rxnV3000' : 'molV3000',
+          'smarts',
+          'smiles',
+          'smilesExt',
+          'cml',
+          '<----firstDivider--->', // for dividers in select list
+          'inChI',
+          'inChIAuxInfo',
+          '<----secondDivider--->', // for dividers in select list
+          'svg',
+          'png',
+          'cdxml',
+          'cdx',
+          'binaryCdx',
+        ];
 
     this.saveSchema = saveSchema;
     this.saveSchema.properties.format = Object.assign(
@@ -133,7 +136,14 @@ class SaveDialog extends Component {
   };
 
   changeType = (type) => {
-    const { struct, server, options, formState, ignoreChiralFlag } = this.props;
+    const {
+      struct,
+      server,
+      options,
+      formState,
+      ignoreChiralFlag,
+      bondThickness,
+    } = this.props;
 
     const errorHandler = this.context.errorHandler;
     if (this.isImageFormat(type)) {
@@ -148,7 +158,7 @@ class SaveDialog extends Component {
       });
       const options = {};
       options.outputFormat = type;
-
+      options.bondThickness = bondThickness;
       return server
         .generateImageAsBase64(structStr, options)
         .then((base64) => {
@@ -353,7 +363,7 @@ class SaveDialog extends Component {
 
   getButtons = () => {
     const { disableControls, imageFormat, isLoading, structStr } = this.state;
-    const formState = this.props.formState;
+    const { formState, bondThickness } = this.props;
     const { filename, format } = formState.result;
     const isCleanStruct = this.props.struct.isBlank();
 
@@ -394,6 +404,7 @@ class SaveDialog extends Component {
           data={structStr}
           filename={filename}
           outputFormat={imageFormat}
+          bondThickness={bondThickness}
           key="save-image-button"
           type={`image/${format}+xml`}
           onSave={this.props.onOk}
@@ -456,6 +467,7 @@ const mapStateToProps = (state) => ({
   formState: state.modal.form,
   moleculeErrors: state.modal.form.moleculeErrors,
   checkState: state.options.check,
+  bondThickness: state.options.settings.bondThickness,
   ignoreChiralFlag: state.editor.render.options.ignoreChiralFlag,
 });
 

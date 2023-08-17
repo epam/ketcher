@@ -97,15 +97,19 @@ export const MonomerName = styled.span<{ selected?: boolean; empty: boolean }>(
   }),
 );
 
-export const GroupIcon = styled(Icon)<{ selected?: boolean; empty?: boolean }>(
-  (props) => ({
-    color: props.empty
-      ? 'transparent'
-      : props.selected
-      ? props.theme.ketcher.color.background.primary
-      : props.theme.ketcher.color.icon.grey,
-    stroke: props.selected
-      ? props.theme.ketcher.color.background.primary
-      : props.theme.ketcher.color.icon.grey,
-  }),
-);
+export const GroupIcon = styled(Icon)<{
+  selected?: boolean;
+  empty?: boolean;
+  name?: string;
+}>((props) => ({
+  color: props.empty
+    ? 'transparent'
+    : props.selected
+    ? props.theme.ketcher.color.background.primary
+    : props.theme.ketcher.color.icon.grey,
+  stroke: props.selected
+    ? props.theme.ketcher.color.background.primary
+    : props.theme.ketcher.color.icon.grey,
+  paddingRight:
+    props.name === 'sugar' ? '5px' : props.name === 'phosphate' ? '1px' : 0,
+}));

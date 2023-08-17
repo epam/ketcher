@@ -4,10 +4,16 @@ import useAtomEdit from '../hooks/useAtomEdit';
 import useAtomStereo from '../hooks/useAtomStereo';
 import useDelete from '../hooks/useDelete';
 import { MenuItemsProps } from '../contextMenu.types';
+import useRGroupAttachmentPointEdit from '../hooks/useRGroupAttachmentPointEdit';
 
 const AtomMenuItems: FC<MenuItemsProps> = (props) => {
   const [handleEdit] = useAtomEdit();
   const [handleStereo, stereoDisabled] = useAtomStereo();
+  const [
+    handleEditRGroupAttachmentPoint,
+    rgroupAttachmentPointDisabled,
+    rgroupAttachmentPointHidden,
+  ] = useRGroupAttachmentPointEdit();
   const handleDelete = useDelete();
 
   return (
@@ -20,6 +26,15 @@ const AtomMenuItems: FC<MenuItemsProps> = (props) => {
 
       <Item {...props} disabled={stereoDisabled} onClick={handleStereo}>
         Enhanced stereochemistry...
+      </Item>
+
+      <Item
+        {...props}
+        disabled={rgroupAttachmentPointDisabled}
+        hidden={rgroupAttachmentPointHidden}
+        onClick={handleEditRGroupAttachmentPoint}
+      >
+        Edit R-Group attachment point...
       </Item>
 
       <Item {...props} onClick={handleDelete}>

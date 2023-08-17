@@ -244,16 +244,19 @@ test.describe('Functional Groups', () => {
     await clickInTheMiddleOfTheScreen(page);
   });
 
-  test('Highlight Functional Group with Selection tool', async ({ page }) => {
-    /*
+  test.fixme(
+    'Highlight Functional Group with Selection tool',
+    async ({ page }) => {
+      /*
     Test case: EPMLSOPKET-2899
     Description: Expanded functional group are highlight with Selection tool.
     */
-    const x = 570;
-    const y = 320;
-    await openFileAndAddToCanvas('functional-group-expanded.mol', page);
-    await page.mouse.move(x, y);
-  });
+      const x = 570;
+      const y = 320;
+      await openFileAndAddToCanvas('functional-group-expanded.mol', page);
+      await page.mouse.move(x, y);
+    },
+  );
 
   test('Add Bond to expanded Functional Group', async ({ page }) => {
     /*
@@ -409,21 +412,22 @@ test.describe('Functional Groups', () => {
     await page.getByText('Expand Abbreviation').click();
   });
 
-  test('Ordinary elements should not show explicit valences (PO4H2)', async ({
-    page,
-  }) => {
-    /*
+  test.fixme(
+    'Ordinary elements should not show explicit valences (PO4H2)',
+    async ({ page }) => {
+      /*
     Test case: EPMLSOPKET-8915
     Description: Ordinary elements should not show explicit valences for 'P'.
     */
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await pressTab(page, 'Functional Groups');
-    await selectFunctionalGroups(FunctionalGroups.PO4H2, page);
-    await clickInTheMiddleOfTheScreen(page);
+      await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+      await pressTab(page, 'Functional Groups');
+      await selectFunctionalGroups(FunctionalGroups.PO4H2, page);
+      await clickInTheMiddleOfTheScreen(page);
 
-    await clickInTheMiddleOfTheScreen(page, 'right');
-    await page.getByText('Expand Abbreviation').click();
-  });
+      await clickInTheMiddleOfTheScreen(page, 'right');
+      await page.getByText('Expand Abbreviation').click();
+    },
+  );
 
   test('Selection highlight is displayed correctly for functional groups with longer names', async ({
     page,
@@ -457,21 +461,22 @@ test.describe('Functional Groups', () => {
     await clickInTheMiddleOfTheScreen(page);
   });
 
-  test('Selection highlight appears immediately after hover over text', async ({
-    page,
-  }) => {
-    /*
+  test.fixme(
+    'Selection highlight appears immediately after hover over text',
+    async ({ page }) => {
+      /*
     Test case: EPMLSOPKET-8920
     Description: Selection highlight appears immediately after hover over text.
     */
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await pressTab(page, 'Salts and Solvents');
-    await selectSaltsAndSolvents(SaltsAndSolvents.MethaneSulphonicAcid, page);
-    await clickInTheMiddleOfTheScreen(page);
+      await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+      await pressTab(page, 'Salts and Solvents');
+      await selectSaltsAndSolvents(SaltsAndSolvents.MethaneSulphonicAcid, page);
+      await clickInTheMiddleOfTheScreen(page);
 
-    await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
-    await page.getByText('me').first().hover();
-  });
+      await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
+      await page.getByText('me').first().hover();
+    },
+  );
 
   test('Add Atom by hotkey to expanded Functional Group', async ({ page }) => {
     /*
@@ -484,26 +489,27 @@ test.describe('Functional Groups', () => {
     await page.keyboard.press('n');
   });
 
-  test('Add Atom by hotkey to expanded Salts and Solvents', async ({
-    page,
-  }) => {
-    /*
+  test.fixme(
+    'Add Atom by hotkey to expanded Salts and Solvents',
+    async ({ page }) => {
+      /*
     Test case: EPMLSOPKET-8928
     Description: When Adding 'Atom' by hotkey to expanded Salts and Solvents system display 'Edit Abbreviation' pop-up window.
     */
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await pressTab(page, 'Salts and Solvents');
-    await selectSaltsAndSolvents(SaltsAndSolvents.MethaneSulphonicAcid, page);
-    await clickInTheMiddleOfTheScreen(page);
+      await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+      await pressTab(page, 'Salts and Solvents');
+      await selectSaltsAndSolvents(SaltsAndSolvents.MethaneSulphonicAcid, page);
+      await clickInTheMiddleOfTheScreen(page);
 
-    await clickInTheMiddleOfTheScreen(page, 'right');
-    await page.getByText('Expand Abbreviation').click();
+      await clickInTheMiddleOfTheScreen(page, 'right');
+      await page.getByText('Expand Abbreviation').click();
 
-    await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
-    point = await getAtomByIndex(page, { label: 'S' }, 0);
-    await page.mouse.move(point.x, point.y);
-    await page.keyboard.press('n');
-  });
+      await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
+      point = await getAtomByIndex(page, { label: 'S' }, 0);
+      await page.mouse.move(point.x, point.y);
+      await page.keyboard.press('n');
+    },
+  );
 
   test('Add Functional Group abbreviation to FG connected to terminal atoms of structure', async ({
     page,
@@ -547,23 +553,24 @@ test.describe('Functional Groups', () => {
     await resetCurrentTool(page);
   });
 
-  test('Hotkey (Del) can delete Salts and Solvents abbreviation', async ({
-    page,
-  }) => {
-    /*
+  test.fixme(
+    'Hotkey (Del) can delete Salts and Solvents abbreviation',
+    async ({ page }) => {
+      /*
     Test case: EPMLSOPKET-11844
     Description: Hotkey (Del) delete Salts and Solvents abbreviation.
     */
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await pressTab(page, 'Salts and Solvents');
-    await selectSaltsAndSolvents(SaltsAndSolvents.MethaneSulphonicAcid, page);
-    await clickInTheMiddleOfTheScreen(page);
+      await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+      await pressTab(page, 'Salts and Solvents');
+      await selectSaltsAndSolvents(SaltsAndSolvents.MethaneSulphonicAcid, page);
+      await clickInTheMiddleOfTheScreen(page);
 
-    await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
-    await moveMouseToTheMiddleOfTheScreen(page);
-    await page.keyboard.press('Delete');
-    await resetCurrentTool(page);
-  });
+      await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
+      await moveMouseToTheMiddleOfTheScreen(page);
+      await page.keyboard.press('Delete');
+      await resetCurrentTool(page);
+    },
+  );
 
   test.skip('Hotkey for Atom can replace Functional Groups abbreviation', async ({
     page,

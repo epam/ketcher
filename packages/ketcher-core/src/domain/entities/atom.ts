@@ -42,10 +42,18 @@ export interface AtomAttributes {
   invRet?: number;
   aam?: number;
   hCount?: number;
+  isPreview?: boolean;
   unsaturatedAtom?: number;
   substitutionCount?: number;
   ringBondCount?: number;
   explicitValence?: number;
+  /**
+   *  Values can be `0 | 1 | 2 | 3 | null`.
+   * `1` - has a `primary` R-Group Attachment Point
+   * `2` - has a `secondary` R-Group Attachment Point
+   * `3` - has a `primary` and a `secondary` R-Group Attachment Points
+   * `null` and `0` both mean the atom has no R-Group Attachment Points
+   */
   attpnt?: any;
   rglabel?: string | null;
   charge?: number;
@@ -97,6 +105,7 @@ export class Atom {
     rglabel: null,
     attpnt: null,
     aam: 0,
+    isPreview: false,
     // enhanced stereo
     stereoLabel: null,
     stereoParity: 0,
@@ -108,6 +117,7 @@ export class Atom {
   atomList: AtomList | null;
   attpnt: any;
   isotope: number;
+  isPreview: boolean;
   hCount: number;
   radical: number;
   cip: CIP | null;
@@ -148,6 +158,10 @@ export class Atom {
     this.explicitValence = getValueOrDefault(
       attributes.explicitValence,
       Atom.attrlist.explicitValence,
+    );
+    this.isPreview = getValueOrDefault(
+      attributes.isPreview,
+      Atom.attrlist.isPreview,
     );
 
     this.valence = 0;
@@ -210,6 +224,10 @@ export class Atom {
         }
       },
     });
+  }
+
+  get isRGroupAttachmentPointEditDisabled() {
+    return this.label === 'R#' && this.rglabel !== null;
   }
 
   /**

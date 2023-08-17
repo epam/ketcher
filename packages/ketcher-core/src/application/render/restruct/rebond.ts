@@ -669,8 +669,6 @@ function getBondPath(
       );
       break;
     case Bond.PATTERN.TYPE.ANY:
-      console.log(hb1.p, hb2.p);
-
       newHalfBonds = util.updateHalfBondCoordinates(hb1, hb2, -1);
       path = draw.bondAny(
         render.paper,

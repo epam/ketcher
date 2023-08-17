@@ -201,7 +201,6 @@ export class Render {
     const changes = this.ctab.update(force);
     this.ctab.setSelection(); // [MK] redraw the selection bits where necessary
     if (changes) {
-      const scale = this.options.scale;
       const bb = this.ctab
         .getVBoxObj()
         .transform(Scale.obj2scaled, this.options)
@@ -213,7 +212,7 @@ export class Render {
 
       const isAutoScale = this.options.autoScale || this.options.downScale;
       if (!isAutoScale) {
-        const ext = Vec2.UNIT.scaled(scale);
+        const ext = Vec2.UNIT.scaled(12);
         const eb = bb.sz().length() > 0 ? bb.extend(ext, ext) : bb;
         const vb = new Box2Abs(
           this.scrollPos(),

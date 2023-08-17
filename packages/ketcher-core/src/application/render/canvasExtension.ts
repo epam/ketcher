@@ -1,5 +1,6 @@
 import { Vec2 } from 'domain/entities';
-import { Editor, ReAtom, fromMultipleMove } from 'ketcher-core';
+import { Editor, fromMultipleMove } from 'application/editor';
+import { ReAtom } from 'application/render';
 
 const edgeOffset = 150;
 const scrollMultiplier = 1.2;

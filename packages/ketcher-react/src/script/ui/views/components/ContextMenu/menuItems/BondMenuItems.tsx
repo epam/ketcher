@@ -29,7 +29,7 @@ const BondMenuItems: FC<MenuItemsProps> = (props) => {
           : 'Edit...'}
       </Item>
 
-      {nonQueryBondNames.map((name) => {
+      {nonQueryBondNames.slice(1).map((name) => {
         const iconName = getIconName(name);
         return (
           <Item {...props} id={name} onClick={handleTypeChange} key={name}>

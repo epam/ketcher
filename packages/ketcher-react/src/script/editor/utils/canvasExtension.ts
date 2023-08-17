@@ -1,6 +1,5 @@
-import { Vec2 } from 'domain/entities';
-import { Editor, fromMultipleMove } from 'application/editor';
-import { ReAtom } from 'application/render';
+import { Editor, Vec2 } from 'ketcher-core';
+import { getSelectedAreaCoordinates } from './getSelectedAreaCoordinates';
 
 const edgeOffset = 150;
 const scrollMultiplier = 1.2;
@@ -132,33 +131,7 @@ export function scrollToEdgeOfScreen(vector: Vec2, render) {
   });
 }
 
-export function moveSelected(
-  editor: Editor,
-  destinationVector: Vec2,
-  step: number,
-  direction: string,
-) {
-  const stepFactor = step / editor.options().scale;
-  const selectedItems = editor.explicitSelected();
-  const action = fromMultipleMove(
-    editor.render.ctab,
-    selectedItems,
-    destinationVector.scaled(stepFactor),
-  );
-  editor.update(action, false, { resizeCanvas: true });
-
-  const {
-    isCloseToEdgeOfCanvasAndMovingToEdge,
-    isCloseToEdgeOfScreenAndMovingToEdge,
-  } = isCloseToTheEdges(editor, direction);
-  if (isCloseToEdgeOfCanvasAndMovingToEdge) {
-    scrollToEdgeOfScreen(destinationVector, editor.render);
-  } else if (isCloseToEdgeOfScreenAndMovingToEdge) {
-    scrollByDirection(editor, direction);
-  }
-}
-
-function scrollByDirection(editor: Editor, direction) {
+export function scrollByDirection(editor: Editor, direction) {
   const clientArea = editor.render.clientArea;
   const selectedAreaCoordinates = getSelectedAreaCoordinates(editor);
   if (!selectedAreaCoordinates) {
@@ -194,65 +167,7 @@ export function setScrollOnSelection(editor: Editor, direction) {
   }
 }
 
-export function getSelectedAreaCoordinates(editor: Editor) {
-  const restruct = editor.render.ctab;
-  const selectedItems = editor.explicitSelected();
-  if (!selectedItems.atoms) {
-    return false;
-  }
-  let theMostTopAtom = restruct.atoms.get(selectedItems?.atoms[0]);
-  let theMostBottomAtom = restruct.atoms.get(selectedItems?.atoms[0]);
-  let theMostRightAtom = restruct.atoms.get(selectedItems?.atoms[0]);
-  let theMostLeftAtom = restruct.atoms.get(selectedItems?.atoms[0]);
-  selectedItems.atoms.forEach((atomId) => {
-    const atom = restruct.atoms.get(atomId);
-    const position = atom?.a.pp;
-    if (position && theMostTopAtom) {
-      theMostTopAtom =
-        position.y < theMostTopAtom.a.pp.y ? atom : theMostTopAtom;
-    }
-    if (position && theMostBottomAtom) {
-      theMostBottomAtom =
-        position.y > theMostBottomAtom.a.pp.y ? atom : theMostBottomAtom;
-    }
-    if (position && theMostRightAtom) {
-      theMostRightAtom =
-        position.x > theMostRightAtom.a.pp.x ? atom : theMostRightAtom;
-    }
-    if (position && theMostLeftAtom) {
-      theMostLeftAtom =
-        position.x < theMostLeftAtom.a.pp.x ? atom : theMostLeftAtom;
-    }
-  });
-  if (
-    theMostTopAtom &&
-    theMostBottomAtom &&
-    theMostRightAtom &&
-    theMostLeftAtom
-  ) {
-    const scale = editor.options().scale;
-    const offset = editor.render.options.offset;
-
-    const getScreenCoordinates = (atom: ReAtom) =>
-      atom.a.pp.scaled(scale).add(offset);
-
-    const theMostTopAtomYCoordinate = getScreenCoordinates(theMostTopAtom).y;
-    const theMostBottomAtomYCoordinate =
-      getScreenCoordinates(theMostBottomAtom).y;
-    const theMostRightAtomXCoordinate =
-      getScreenCoordinates(theMostRightAtom).x;
-    const theMostLeftAtomXCoordinate = getScreenCoordinates(theMostLeftAtom).x;
-    return {
-      leftX: theMostLeftAtomXCoordinate,
-      topY: theMostTopAtomYCoordinate,
-      rightX: theMostRightAtomXCoordinate,
-      bottomY: theMostBottomAtomYCoordinate,
-    };
-  }
-  return false;
-}
-
-function isCloseToTheEdges(editor: Editor, direction: string) {
+export function isCloseToTheEdges(editor: Editor, direction: string) {
   const result = {
     isCloseToEdgeOfCanvasAndMovingToEdge: false,
     isCloseToEdgeOfScreenAndMovingToEdge: false,

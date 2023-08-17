@@ -18,3 +18,6 @@ export * from './customOnChangeHandler';
 export * from './elementOffset';
 export * from './structLayout';
 export * from './handleMovingPosibilityCursor';
+export * from './getSelectedAreaCoordinates';
+export * from './moveSelected';
+export * from './canvasExtension';

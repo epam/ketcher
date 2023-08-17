@@ -12,11 +12,11 @@ describe('Rotate controller', () => {
    */
   it(`hides for only one visible atom`, () => {
     // @ts-ignore
+    const editor = new Editor(document, {});
     const tool = () => new SelectTool(editor, 'rectangle');
     const paper = jest.fn();
     const selection = () => null;
     const visibleAtoms = [1];
-    const editor = new Editor(document, {});
     const controller = new RotateController({
       selection,
       tool,

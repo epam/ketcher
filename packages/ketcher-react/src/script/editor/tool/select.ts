@@ -29,11 +29,6 @@ import {
   Vec2,
   Atom,
   Bond,
-  getDirections,
-  isSelectionCloseToTheEdgeOfCanvas,
-  shiftByVector,
-  moveSelected,
-  setScrollOnSelection,
   getItemsToFuse,
   vectorUtils,
 } from 'ketcher-core';
@@ -50,7 +45,14 @@ import { updateSelectedBonds } from 'src/script/ui/state/modal/bonds';
 import { hasAtomsOutsideCanvas } from './helper/isAtomOutSideCanvas';
 import { filterNotInContractedSGroup } from './helper/filterNotInCollapsedSGroup';
 import { Tool } from './Tool';
-import { handleMovingPosibilityCursor } from '../utils';
+import {
+  handleMovingPosibilityCursor,
+  moveSelected,
+  getDirections,
+  isSelectionCloseToTheEdgeOfCanvas,
+  shiftByVector,
+  setScrollOnSelection,
+} from '../utils';
 
 type SelectMode = 'lasso' | 'fragment' | 'rectangle';
 type Direction = 'MoveUp' | 'MoveDown' | 'MoveRight' | 'MoveLeft';

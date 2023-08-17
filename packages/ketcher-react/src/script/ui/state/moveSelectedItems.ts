@@ -1,4 +1,5 @@
-import { Editor, Vec2, moveSelected } from 'ketcher-core';
+import { Editor, Vec2 } from 'ketcher-core';
+import { moveSelected } from '../../editor/utils';
 
 type ArrowKey = 'ArrowUp' | 'ArrowDown' | 'ArrowRight' | 'ArrowLeft';
 const destinationVectorMapping: { [key in ArrowKey]: Vec2 } = {

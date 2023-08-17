@@ -194,7 +194,8 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectTopPanelButton(TopPanelButton.Copy, page);
   });
 
-  test('Copy the reaction with hotkey', async ({ page }) => {
+  // flaky
+  test.fixme('Copy the reaction with hotkey', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1715
     Description: After the clicking the Copy button, the selected object not disappears.

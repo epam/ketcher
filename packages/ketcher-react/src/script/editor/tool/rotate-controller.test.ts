@@ -12,23 +12,24 @@ describe('Rotate controller', () => {
    */
   it(`hides for only one visible atom`, () => {
     // @ts-ignore
-    const tool = () => new SelectTool();
+    const tool = () => new SelectTool(editor, 'rectangle');
     const paper = jest.fn();
     const selection = () => null;
     const visibleAtoms = [1];
-    const editor = {
+    const editor = new Editor(document, {});
+    const controller = new RotateController({
       selection,
       tool,
       render: {
         paper,
         ctab: {
+          // @ts-ignore
           molecule: {
             getSelectedVisibleAtoms: () => visibleAtoms,
           },
         },
       },
-    };
-    const controller = new RotateController(editor as any);
+    } as any);
     // @ts-ignore
     controller.rotateTool.getCenter = () => new Vec2();
     expect(tool()).toBeInstanceOf(SelectTool);

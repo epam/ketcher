@@ -84,7 +84,7 @@ test.describe('Templates - Functional Group Tools', () => {
    */
     await openFileAndAddToCanvas('functional-group-expanded.mol', page);
     await delay(DELAY_IN_SECONDS.TWO);
-    await selectNestedTool(page, SelectTool.FRAGMENT_SELECTION);
+    await selectNestedTool(page, SelectTool.FRAGMENT_SELECTION, true);
     await clickOnAtom(page, 'C', 0);
   });
 

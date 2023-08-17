@@ -327,7 +327,7 @@ test.describe('Selection tools', () => {
     */
     await openFileAndAddToCanvas('two-benzene-with-atoms.ket', page);
     await delay(DELAY_IN_SECONDS.TWO);
-    await selectNestedTool(page, SelectTool.FRAGMENT_SELECTION);
+    await selectNestedTool(page, SelectTool.FRAGMENT_SELECTION, true);
     await clickOnAtom(page, 'N', 0);
     await page.keyboard.down('Shift');
     for (let i = 0; i < 50; i++) {
@@ -346,7 +346,7 @@ test.describe('Selection tools', () => {
     */
     await openFileAndAddToCanvas('two-benzene-with-atoms.ket', page);
     await delay(DELAY_IN_SECONDS.TWO);
-    await selectNestedTool(page, SelectTool.FRAGMENT_SELECTION);
+    await selectNestedTool(page, SelectTool.FRAGMENT_SELECTION, true);
     await clickOnAtom(page, 'N', 0);
     await page.keyboard.down('Shift');
     for (let i = 0; i < 50; i++) {
@@ -365,7 +365,7 @@ test.describe('Selection tools', () => {
     */
       await openFileAndAddToCanvas('two-benzene-with-atoms.ket', page);
       await delay(DELAY_IN_SECONDS.TWO);
-      await selectNestedTool(page, SelectTool.FRAGMENT_SELECTION);
+      await selectNestedTool(page, SelectTool.FRAGMENT_SELECTION, true);
       await clickOnAtom(page, 'N', 0);
       await page.keyboard.down('Shift');
       for (let i = 0; i < 80; i++) {
@@ -385,7 +385,7 @@ test.describe('Selection tools', () => {
     */
     await openFileAndAddToCanvas('two-benzene-with-atoms.ket', page);
     await delay(DELAY_IN_SECONDS.TWO);
-    await selectNestedTool(page, SelectTool.FRAGMENT_SELECTION);
+    await selectNestedTool(page, SelectTool.FRAGMENT_SELECTION, true);
     await clickOnAtom(page, 'N', 0);
     await page.keyboard.down('Shift');
     for (let i = 0; i < 80; i++) {
@@ -403,7 +403,7 @@ test.describe('Selection tools', () => {
     */
     await openFileAndAddToCanvas('two-benzene-with-atoms.ket', page);
     await delay(DELAY_IN_SECONDS.TWO);
-    await selectNestedTool(page, SelectTool.FRAGMENT_SELECTION);
+    await selectNestedTool(page, SelectTool.FRAGMENT_SELECTION, true);
     await clickOnAtom(page, 'N', 0);
     await page.keyboard.down('Shift');
     for (let i = 0; i < 100; i++) {

@@ -23,7 +23,7 @@ test.skip('use shape rectangle tool', async ({ page }) => {
 
 test.skip('use selection tool', async ({ page }) => {
   await page.goto('');
-  await selectNestedTool(page, SelectTool.LASSO_SELECTION);
+  await selectNestedTool(page, SelectTool.LASSO_SELECTION, true);
 });
 
 test.skip('use vertical rotate tool', async ({ page }) => {

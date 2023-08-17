@@ -17,6 +17,7 @@ import { DEFAULT_BONDS_MAIN_BUTTON_TEST_ID, TYPE_BOND } from './types';
 export const selectNestedTool = async (
   page: Page,
   toolElementId: [presses: number, domElementId: string],
+  isPreselected = false,
   currentToolId?: [presses: number, domElementId: string],
 ): Promise<void> => {
   const toolType = getToolType(toolElementId[1]);
@@ -30,7 +31,7 @@ export const selectNestedTool = async (
     }
     const currentType = toolElementId[1].split('-')[0];
     const lastType = currentToolId && currentToolId[1].split('-')[0];
-    await openTool(page, defaultToolId, currentType, lastType);
+    await openTool(page, defaultToolId, currentType, isPreselected, lastType);
 
     const numberOfPresses = toolElementId[0];
 

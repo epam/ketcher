@@ -141,6 +141,7 @@ test.describe('Open Ketcher', () => {
     await selectNestedTool(
       page,
       RgroupTool.R_GROUP_FRAGMENT,
+      false,
       RgroupTool.ATTACHMENT_POINTS,
     );
     await clickOnAtom(page, 'C', atomIndex);
@@ -226,7 +227,7 @@ test.describe('Open Ketcher', () => {
   */
     await openFileAndAddToCanvas('R-fragment-structure.mol', page);
 
-    await selectNestedTool(page, SelectTool.FRAGMENT_SELECTION);
+    await selectNestedTool(page, SelectTool.FRAGMENT_SELECTION, true);
     await page.getByText('R8').click();
     await page.keyboard.press('Delete');
     await takeEditorScreenshot(page);

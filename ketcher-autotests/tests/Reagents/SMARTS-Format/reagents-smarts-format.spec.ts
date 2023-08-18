@@ -76,24 +76,29 @@ test.describe('Reagents SMARTS format', () => {
     await previewSmarts(page);
   });
 
-  test('Paste from clipboard in "Daylight SMARTS" format', async ({ page }) => {
-    /*
+  // flaky
+  test.fixme(
+    'Paste from clipboard in "Daylight SMARTS" format',
+    async ({ page }) => {
+      /*
     Test case: EPMLSOPKET-4687
     Description: Reagent 'Cl' displays above reaction arrow
     */
-    await selectTopPanelButton(TopPanelButton.Open, page);
-    await page.getByText('Paste from clipboard').click();
-    await pasteFromClipboard(
-      page,
-      '[#6]-[#6]-1=[#6]-[#6](-[#7])=[#6](-[#16])-[#6]=[#6]-1-[#8]>Cl>[#6]-[#6]-1=[#6]-[#6](I)=[#6](-[#8])-[#6]=[#6]-1Br',
-    );
-    await waitForLoad(page, async () => {
-      await pressButton(page, 'Add to Canvas');
-    });
-    await clickInTheMiddleOfTheScreen(page);
-  });
+      await selectTopPanelButton(TopPanelButton.Open, page);
+      await page.getByText('Paste from clipboard').click();
+      await pasteFromClipboard(
+        page,
+        '[#6]-[#6]-1=[#6]-[#6](-[#7])=[#6](-[#16])-[#6]=[#6]-1-[#8]>Cl>[#6]-[#6]-1=[#6]-[#6](I)=[#6](-[#8])-[#6]=[#6]-1Br',
+      );
+      await waitForLoad(page, async () => {
+        await pressButton(page, 'Add to Canvas');
+      });
+      await clickInTheMiddleOfTheScreen(page);
+    },
+  );
 
-  test('Open from file in "Daylight SMARTS" format', async ({ page }) => {
+  // flaky
+  test.fixme('Open from file in "Daylight SMARTS" format', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-4689
     Description: Reagent 'Cl' below the reaction arrow

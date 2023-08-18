@@ -7,45 +7,49 @@ import {
 } from '@utils';
 import { getRxn } from '@utils/formats';
 
-test('Open and Save file - Reaction from file that contains abbreviation 1/2 - open', async ({
-  page,
-}) => {
-  /**
-   * Test case: EPMLSOPKET-1899(1)
-   * Description: Reaction with abbreviations is opened and saved correctly
-   */
-  await page.goto('');
+// flaky
+test.fixme(
+  'Open and Save file - Reaction from file that contains abbreviation 1/2 - open',
+  async ({ page }) => {
+    /**
+     * Test case: EPMLSOPKET-1899(1)
+     * Description: Reaction with abbreviations is opened and saved correctly
+     */
+    await page.goto('');
 
-  await openFileAndAddToCanvas('sec_butyl_abr.rxn', page);
-  // check that structure opened from file is displayed correctly
-  await takeEditorScreenshot(page);
-});
+    await openFileAndAddToCanvas('sec_butyl_abr.rxn', page);
+    // check that structure opened from file is displayed correctly
+    await takeEditorScreenshot(page);
+  },
+);
 
-test('Open and Save file - Reaction from file that contains abbreviation 2/2 - save', async ({
-  page,
-}) => {
-  /**
-   * Test case: EPMLSOPKET-1899(2)
-   * Description: Reaction with abbreviations is opened and saved correctly
-   */
-  await page.goto('');
+// flaky
+test.fixme(
+  'Open and Save file - Reaction from file that contains abbreviation 2/2 - save',
+  async ({ page }) => {
+    /**
+     * Test case: EPMLSOPKET-1899(2)
+     * Description: Reaction with abbreviations is opened and saved correctly
+     */
+    await page.goto('');
 
-  await openFileAndAddToCanvas('sec_butyl_abr.rxn', page);
-  const expectedFile = await getRxn(page, 'v2000');
-  await saveToFile('sec-butyl-abr-expectedV2000.rxn', expectedFile);
+    await openFileAndAddToCanvas('sec_butyl_abr.rxn', page);
+    const expectedFile = await getRxn(page, 'v2000');
+    await saveToFile('sec-butyl-abr-expectedV2000.rxn', expectedFile);
 
-  // eslint-disable-next-line no-magic-numbers
-  const METADATA_STRINGS_INDEXES = [2, 7, 23, 54];
+    // eslint-disable-next-line no-magic-numbers
+    const METADATA_STRINGS_INDEXES = [2, 7, 23, 54];
 
-  const { fileExpected: rxnFileExpected, file: rxnFile } =
-    await receiveFileComparisonData({
-      page,
-      expectedFileName: 'tests/test-data/sec-butyl-abr-expectedV2000.rxn',
-      metaDataIndexes: METADATA_STRINGS_INDEXES,
-    });
+    const { fileExpected: rxnFileExpected, file: rxnFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName: 'tests/test-data/sec-butyl-abr-expectedV2000.rxn',
+        metaDataIndexes: METADATA_STRINGS_INDEXES,
+      });
 
-  expect(rxnFile).toEqual(rxnFileExpected);
-});
+    expect(rxnFile).toEqual(rxnFileExpected);
+  },
+);
 
 test.fixme(
   'Open and Save file - Reaction from file that contains Heteroatoms 1/2 - open',

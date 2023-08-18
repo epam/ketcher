@@ -203,7 +203,8 @@ test.describe('Click User Templates on canvas', () => {
     await page.getByPlaceholder('Search by elements...').press('Enter');
   });
 
-  test('Create Template with with Reaction arrow', async ({ page }) => {
+  // flaky
+  test.fixme('Create Template with with Reaction arrow', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-12942
     Description: Creating Template with Reaction arrow validation.

@@ -1,5 +1,9 @@
 import { expect, test } from '@playwright/test';
-import { openFileAndAddToCanvas, takeEditorScreenshot } from '@utils';
+import {
+  getCoordinatesOfTheMiddleOfTheScreen,
+  openFileAndAddToCanvas,
+  takeEditorScreenshot,
+} from '@utils';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
 import {
   COORDINATES_TO_PERFORM_ROTATION,
@@ -15,9 +19,10 @@ import {
   anyStructure,
   EMPTY_SPACE_Y,
   EMPTY_SPACE_X,
+  selectChain,
 } from './utils';
 
-test.describe.only('Rotation', () => {
+test.describe('Rotation', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('');
   });
@@ -81,12 +86,14 @@ test.describe.only('Rotation', () => {
     for (const icon of icons) {
       const iconButton = page.getByTestId(icon.testId);
       await expect(iconButton).toHaveAttribute('title', icon.title);
+      await iconButton.click();
+      await takeEditorScreenshot(page);
     }
   });
 
   test('Rotate by 60 degrees', async ({ page }) => {
     /*
-      Test case: EPMLSOPKET-1686, 1687
+      Test case: EPMLSOPKET-1686, 1687, 13006
       Description: Structure is rotated by 15 degrees steps
     */
     await addStructureAndSelect(page);
@@ -322,8 +329,7 @@ test.describe.only('Rotation', () => {
     expect(y).toEqual(rotationHandleY);
   });
 
-  // unable to get correct rotation handle coordinates after zoom
-  test.skip('Works with different zoom level and screen resolution', async ({
+  test('Works with different zoom level and screen resolution', async ({
     page,
   }) => {
     /*
@@ -331,7 +337,7 @@ test.describe.only('Rotation', () => {
       Description: Click on rotation handle doesn't change its position
     */
     const fiftyPercentZoom = 5;
-    await page.setViewportSize({ width: 600, height: 800 });
+    await page.setViewportSize({ width: 1200, height: 1080 });
     for (let i = 0; i < fiftyPercentZoom; i++) {
       await page.keyboard.press('Control+_');
     }
@@ -438,6 +444,101 @@ test.describe.only('Rotation', () => {
     const chainWithDoubleBond = 'mol/benzene-stereo.mol';
     await addStructureAndSelect(page, chainWithDoubleBond);
     await rotateToCoordinates(page, COORDINATES_TO_PERFORM_ROTATION);
+    await takeEditorScreenshot(page);
+  });
+});
+
+test.describe('Rotation snapping', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('');
+  });
+
+  test('for 90, 120 and 180 degrees', async ({ page }) => {
+    /*
+      Test case: EPMLSOPKET-16906
+      Description: Bond has 90, 120 and 180 snaps
+    */
+    const benzeneWithChain = 'mol/benzene-with-chain.mol';
+    await openFileAndAddToCanvas(benzeneWithChain, page);
+    await selectChain(page);
+
+    const firstStepCoordinates = {
+      x: 500,
+      y: 200,
+    };
+    await rotateToCoordinates(page, firstStepCoordinates, false);
+    await takeEditorScreenshot(page);
+
+    const secondStepCoordinates = {
+      x: 600,
+      y: 200,
+    };
+    await page.mouse.move(secondStepCoordinates.x, secondStepCoordinates.y);
+    await takeEditorScreenshot(page);
+
+    const thirdStepCoordinates = {
+      x: 800,
+      y: 250,
+    };
+    await page.mouse.move(thirdStepCoordinates.x, thirdStepCoordinates.y);
+    await takeEditorScreenshot(page);
+  });
+
+  test('bisector snapping for 2+ bonds', async ({ page }) => {
+    /*
+      Test case: EPMLSOPKET-16907
+      Description: For 2+ bonds counterclockwise see a prompt for the bisector, then snap to it
+    */
+    const benzeneWithChain = 'mol/benzene-with-chain.mol';
+    await openFileAndAddToCanvas(benzeneWithChain, page);
+    await selectChain(page, true);
+    const coordinatesForBisectTip = {
+      x: 400,
+      y: 300,
+    };
+    await rotateToCoordinates(page, coordinatesForBisectTip, false);
+    await takeEditorScreenshot(page);
+
+    const coordinatesForBisectHighlight = {
+      x: 400,
+      y: 250,
+    };
+    await page.mouse.move(
+      coordinatesForBisectHighlight.x,
+      coordinatesForBisectHighlight.y,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('around new center', async ({ page }) => {
+    /*
+      Test case: EPMLSOPKET-17657, 17658
+      Description: Center of rotation can be selected and structure is rotated around new center.
+      Rotate
+    */
+    const newCenterOfRotation = {
+      x: 600,
+      y: 450,
+    };
+    const coordinatesForRotation = {
+      x: 700,
+      y: 500,
+    };
+    // it is used in order not to calculate position of rotation center
+    const symmetricStructure = 'mol/symmetric-structure.mol';
+    await addStructureAndSelect(page, symmetricStructure);
+    const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
+    await page.mouse.move(x, y);
+    await page.mouse.down();
+    await page.mouse.move(newCenterOfRotation.x, newCenterOfRotation.y);
+    await page.mouse.up();
+
+    await rotateToCoordinates(page, coordinatesForRotation, false);
+    await takeEditorScreenshot(page);
+    await page.mouse.up();
+
+    await page.keyboard.press('Control+a');
+    await page.getByTestId('floating-tools').isVisible();
     await takeEditorScreenshot(page);
   });
 });

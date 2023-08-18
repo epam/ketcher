@@ -24,10 +24,7 @@ export async function rotateToCoordinates(
   coordinates: { x: number; y: number },
   performMouseUp = true,
 ) {
-  const { x: rotationHandleX, y: rotationHandleY } =
-    await getRotationHandleCoordinates(page);
-
-  await page.mouse.move(rotationHandleX, rotationHandleY);
+  await page.getByTestId('rotation-handle').hover();
   await page.mouse.down();
   await page.mouse.move(coordinates.x, coordinates.y);
   if (performMouseUp) {
@@ -106,4 +103,21 @@ export async function performHorizontalFlip(page: Page) {
 export async function performVerticalFlip(page: Page) {
   await page.mouse.move(EMPTY_SPACE_X, EMPTY_SPACE_Y);
   await page.keyboard.press('Alt+v');
+}
+
+export async function selectChain(page: Page, withBond = false) {
+  const smallShift = 30;
+  const shiftForBond = 20;
+  const leftMostAtom = await getAtomByIndex(page, { label: 'S' }, 0);
+  const rightMostAtom = await getAtomByIndex(page, { label: 'P' }, 0);
+  await page.mouse.move(
+    withBond ? leftMostAtom.x - shiftForBond : leftMostAtom.x,
+    leftMostAtom.y - smallShift,
+  );
+  await page.mouse.down();
+  await page.mouse.move(
+    rightMostAtom.x + smallShift,
+    rightMostAtom.y + smallShift,
+  );
+  await page.mouse.up();
 }

@@ -8,7 +8,8 @@ import {
   DELAY_IN_SECONDS,
   FILE_TEST_DATA,
   receiveFileComparisonData,
-  waitForLoad,
+  waitForKetcherInit,
+  waitForSpinnerFinishedWork,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import {
@@ -30,11 +31,10 @@ function filteredFile(file: string, filteredIndex: number): string {
 test.describe('Tests for API setMolecule/getMolecule', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('');
-    await delay(DELAY_IN_SECONDS.FIVE);
+    await waitForKetcherInit(page);
   });
 
   test.afterEach(async ({ page }) => {
-    await delay(DELAY_IN_SECONDS.FIVE);
     await takeEditorScreenshot(page);
   });
 
@@ -43,7 +43,10 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Test case: EPMLSOPKET-2957
     Description: Molecule of Benzene is on canvas
     */
-    await setMolecule(page, 'C1C=CC=CC=1');
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await setMolecule(page, 'C1C=CC=CC=1'),
+    );
   });
 
   test('Add SMILES molecule using ketcher.setMolecule() method', async ({
@@ -53,7 +56,10 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Test case: EPMLSOPKET-10090
     Description: Molecule of aromatized Benzene is on canvas
     */
-    await setMolecule(page, 'c1ccccc1');
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await setMolecule(page, 'c1ccccc1'),
+    );
   });
 
   test('Structure import if dearomotize-on-load is true', async ({ page }) => {
@@ -62,7 +68,10 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Description: Aromatic Benzene ring loads as non aromatic Benzene ring
     */
     await enableDearomatizeOnLoad(page);
-    await setMolecule(page, 'c1ccccc1');
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await setMolecule(page, 'c1ccccc1'),
+    );
   });
 
   test('Add a molecule with custom atom properties using ketcher.setMolecule() method', async ({
@@ -72,7 +81,10 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Test case: EPMLSOPKET- 10092
     Description: Molecule with custom atom properties added to canvas
     */
-    await setMolecule(page, 'CCCC |Sg:gen:0,1,2:|');
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await setMolecule(page, 'CCCC |Sg:gen:0,1,2:|'),
+    );
   });
 
   test('Add a molecule with custom atom properties', async ({ page }) => {
@@ -80,7 +92,10 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Test case: EPMLSOPKET- 10092
     Description: Molecule with custom atom properties added to canvas
     */
-    await setMolecule(page, 'CCCC |Sg:n:0,1,2:3-6:eu|');
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await setMolecule(page, 'CCCC |Sg:n:0,1,2:3-6:eu|'),
+    );
   });
 
   test('Add a fragment using ketcher.addFragment() method', async ({
@@ -90,7 +105,10 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Test case: EPMLSOPKET- 10093
     Description:  Fragment is added to canvas.
     */
-    await addFragment(page, 'c1ccccc1');
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await addFragment(page, 'c1ccccc1'),
+    );
   });
 
   test('Add molecules with specified SMARTS patterns using ketcher.setMolecule() method', async ({
@@ -100,7 +118,10 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Test case: EPMLSOPKET- 10094
     Description:  The molecules with specified SMARTS patterns are successfully added to the Ketcher canvas.
     */
-    await setMolecule(page, '[#6]~[#6]~[#6]');
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await setMolecule(page, '[#6]~[#6]~[#6]'),
+    );
   });
 
   test('Add molecules with specified SMARTS patterns', async ({ page }) => {
@@ -108,7 +129,10 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Test case: EPMLSOPKET- 10094
     Description:  The molecules with specified SMARTS patterns are successfully added to the Ketcher canvas.
     */
-    await setMolecule(page, '[#6]=,:[#6]');
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await setMolecule(page, '[#6]=,:[#6]'),
+    );
   });
 
   test('Add complex molecule', async ({ page }) => {
@@ -116,7 +140,11 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Test case: EPMLSOPKET- 10096
     Description:  Complex molecule added to canvas
     */
-    await setMolecule(page, 'Brc1ccc(COC(Cn2ccnc2)c2ccc(Cl)cc2Cl)c(Cl)c1');
+    await waitForSpinnerFinishedWork(
+      page,
+      async () =>
+        await setMolecule(page, 'Brc1ccc(COC(Cn2ccnc2)c2ccc(Cl)cc2Cl)c(Cl)c1'),
+    );
   });
 
   test.fixme(
@@ -130,7 +158,10 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       const orEnantiomer = await readFileContents(
         'tests/test-data/or-enantiomer.mol',
       );
-      await setMolecule(page, orEnantiomer);
+      await waitForSpinnerFinishedWork(
+        page,
+        async () => await setMolecule(page, orEnantiomer),
+      );
 
       const { fileExpected: molFileExpected, file: molFile } =
         await receiveFileComparisonData({
@@ -153,7 +184,12 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       const indexOfLineWithIndigo = 2;
       const indexOfLineWithKetcher = 2;
 
-      await setMolecule(page, 'CC(=O)O[C@@H](C)[C@H](O)Cn1cnc2c1ncnc2N');
+      await waitForSpinnerFinishedWork(
+        page,
+        async () =>
+          await setMolecule(page, 'CC(=O)O[C@@H](C)[C@H](O)Cn1cnc2c1ncnc2N'),
+      );
+
       await delay(DELAY_IN_SECONDS.THREE);
 
       const molV2000FileExpected = await readFileContents(
@@ -204,9 +240,13 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Test case: EPMLSOPKET-13011
     Description: Functional Groups expanded/contracted added through API ketcher.setMolecule
     */
-    await setMolecule(
+    await waitForSpinnerFinishedWork(
       page,
-      FILE_TEST_DATA.functionalGroupsExpandedContractedV2000,
+      async () =>
+        await setMolecule(
+          page,
+          FILE_TEST_DATA.functionalGroupsExpandedContractedV2000,
+        ),
     );
   });
 
@@ -217,9 +257,13 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Test case: EPMLSOPKET-13012
     Description: Unknown superatom expanded/contracted added through API ketcher.setMolecule
     */
-    await setMolecule(
+    await waitForSpinnerFinishedWork(
       page,
-      FILE_TEST_DATA.unknownSuperatomExpandedContractedV2000,
+      async () =>
+        await setMolecule(
+          page,
+          FILE_TEST_DATA.unknownSuperatomExpandedContractedV2000,
+        ),
     );
   });
 
@@ -231,7 +275,15 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Description: one contracted Unknown Superatom added through API ketcher.setMolecule.
     Unknown Superatom is able to expand.
     */
-    await setMolecule(page, FILE_TEST_DATA.oneUnknownSuperatomContractedV2000);
+    await waitForSpinnerFinishedWork(
+      page,
+      async () =>
+        await setMolecule(
+          page,
+          FILE_TEST_DATA.oneUnknownSuperatomContractedV2000,
+        ),
+    );
+
     await takeEditorScreenshot(page);
 
     await page.getByText('Some Name').click({ button: 'right' });
@@ -246,7 +298,15 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Description: one expanded Unknown Superatom added through API ketcher.setMolecule.
     Unknown Superatom is able to contract.
     */
-    await setMolecule(page, FILE_TEST_DATA.oneUnknownSuperatomExpandedV2000);
+    await waitForSpinnerFinishedWork(
+      page,
+      async () =>
+        await setMolecule(
+          page,
+          FILE_TEST_DATA.oneUnknownSuperatomExpandedV2000,
+        ),
+    );
+
     await takeEditorScreenshot(page);
 
     // eslint-disable-next-line no-magic-numbers
@@ -263,7 +323,15 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Description: one contracted Functional Group added through API ketcher.setMolecule.
     Functional Group is able to expand.
     */
-    await setMolecule(page, FILE_TEST_DATA.oneFunctionalGroupContractedV2000);
+    await waitForSpinnerFinishedWork(
+      page,
+      async () =>
+        await setMolecule(
+          page,
+          FILE_TEST_DATA.oneFunctionalGroupContractedV2000,
+        ),
+    );
+
     await takeEditorScreenshot(page);
 
     await page.getByText('Boc').click({ button: 'right' });
@@ -278,7 +346,12 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Description: one expanded Functional Group added through API ketcher.setMolecule.
     Functional Group is able to contract.
     */
-    await setMolecule(page, FILE_TEST_DATA.oneFunctionalGroupExpandedV2000);
+    await waitForSpinnerFinishedWork(
+      page,
+      async () =>
+        await setMolecule(page, FILE_TEST_DATA.oneFunctionalGroupExpandedV2000),
+    );
+
     await takeEditorScreenshot(page);
 
     // eslint-disable-next-line no-magic-numbers
@@ -294,9 +367,13 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Test case: EPMLSOPKET-13017
     Description: Functional Groups expanded/contracted added through API ketcher.setMolecule
     */
-    await setMolecule(
+    await waitForSpinnerFinishedWork(
       page,
-      FILE_TEST_DATA.functionalGroupsExpandedContractedV3000,
+      async () =>
+        await setMolecule(
+          page,
+          FILE_TEST_DATA.functionalGroupsExpandedContractedV3000,
+        ),
     );
   });
 
@@ -307,9 +384,13 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Test case: EPMLSOPKET-13018
     Description: Unknown superatom expanded/contracted added through API ketcher.setMolecule
     */
-    await setMolecule(
+    await waitForSpinnerFinishedWork(
       page,
-      FILE_TEST_DATA.unknownSuperatomExpandedContractedV3000,
+      async () =>
+        await setMolecule(
+          page,
+          FILE_TEST_DATA.unknownSuperatomExpandedContractedV3000,
+        ),
     );
   });
 
@@ -321,12 +402,15 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Description: one contracted Unknown Superatom added through API ketcher.setMolecule.
     Unknown Superatom is able to expand.
     */
-    await waitForLoad(page, async () => {
-      await setMolecule(
-        page,
-        FILE_TEST_DATA.oneUnknownSuperatomContractedV3000,
-      );
-    });
+    await waitForSpinnerFinishedWork(
+      page,
+      async () =>
+        await setMolecule(
+          page,
+          FILE_TEST_DATA.oneUnknownSuperatomContractedV3000,
+        ),
+    );
+
     await takeEditorScreenshot(page);
 
     await page.getByText('Some Name').click({ button: 'right' });
@@ -341,7 +425,15 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Description: one expanded Unknown Superatom added through API ketcher.setMolecule.
     Unknown Superatom is able to contract.
     */
-    await setMolecule(page, FILE_TEST_DATA.oneUnknownSuperatomExpandedV3000);
+    await waitForSpinnerFinishedWork(
+      page,
+      async () =>
+        await setMolecule(
+          page,
+          FILE_TEST_DATA.oneUnknownSuperatomExpandedV3000,
+        ),
+    );
+
     await takeEditorScreenshot(page);
 
     // eslint-disable-next-line no-magic-numbers
@@ -358,7 +450,15 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Description: one contracted Functional Group added through API ketcher.setMolecule.
     Functional Group is able to expand.
     */
-      await setMolecule(page, FILE_TEST_DATA.oneFunctionalGroupContractedV3000);
+      await waitForSpinnerFinishedWork(
+        page,
+        async () =>
+          await setMolecule(
+            page,
+            FILE_TEST_DATA.oneFunctionalGroupContractedV3000,
+          ),
+      );
+
       await takeEditorScreenshot(page);
 
       await page.getByText('Boc').click({ button: 'right' });
@@ -374,7 +474,15 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Description: one expanded Functional Group added through API ketcher.setMolecule.
     Functional Group is able to contract.
     */
-      await setMolecule(page, FILE_TEST_DATA.oneFunctionalGroupExpandedV3000);
+      await waitForSpinnerFinishedWork(
+        page,
+        async () =>
+          await setMolecule(
+            page,
+            FILE_TEST_DATA.oneFunctionalGroupExpandedV3000,
+          ),
+      );
+
       await takeEditorScreenshot(page);
 
       // eslint-disable-next-line no-magic-numbers
@@ -391,9 +499,13 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Test case: EPMLSOPKET-13023
     Description: Functional Groups expanded/contracted added through API ketcher.setMolecule
     */
-    await setMolecule(
+    await waitForSpinnerFinishedWork(
       page,
-      FILE_TEST_DATA.functionalGroupsExpandedContractedKet,
+      async () =>
+        await setMolecule(
+          page,
+          FILE_TEST_DATA.functionalGroupsExpandedContractedKet,
+        ),
     );
   });
 
@@ -404,9 +516,13 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Test case: EPMLSOPKET-13024
     Description: Unknown superatom expanded/contracted added through API ketcher.setMolecule
     */
-    await setMolecule(
+    await waitForSpinnerFinishedWork(
       page,
-      FILE_TEST_DATA.unknownSuperatomExpandedContractedKet,
+      async () =>
+        await setMolecule(
+          page,
+          FILE_TEST_DATA.unknownSuperatomExpandedContractedKet,
+        ),
     );
   });
 
@@ -418,7 +534,15 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Description: one contracted Unknown Superatom added through API ketcher.setMolecule.
     Unknown Superatom is able to expand.
     */
-    await setMolecule(page, FILE_TEST_DATA.oneUnknownSuperatomContractedKet);
+    await waitForSpinnerFinishedWork(
+      page,
+      async () =>
+        await setMolecule(
+          page,
+          FILE_TEST_DATA.oneUnknownSuperatomContractedKet,
+        ),
+    );
+
     await takeEditorScreenshot(page);
 
     await page.getByText('Some Name').click({ button: 'right' });
@@ -433,7 +557,12 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Description: one expanded Unknown Superatom added through API ketcher.setMolecule.
     Unknown Superatom is able to contract.
     */
-    await setMolecule(page, FILE_TEST_DATA.oneUnknownSuperatomExpandedKet);
+    await waitForSpinnerFinishedWork(
+      page,
+      async () =>
+        await setMolecule(page, FILE_TEST_DATA.oneUnknownSuperatomExpandedKet),
+    );
+
     await takeEditorScreenshot(page);
 
     // eslint-disable-next-line no-magic-numbers
@@ -450,7 +579,12 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Description: one contracted Functional Group added through API ketcher.setMolecule.
     Functional Group is able to expand.
     */
-    await setMolecule(page, FILE_TEST_DATA.oneFunctionalGroupContractedKet);
+    await waitForSpinnerFinishedWork(
+      page,
+      async () =>
+        await setMolecule(page, FILE_TEST_DATA.oneFunctionalGroupContractedKet),
+    );
+
     await takeEditorScreenshot(page);
 
     await page.getByText('Boc').click({ button: 'right' });
@@ -465,7 +599,12 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Description: one expanded Functional Group added through API ketcher.setMolecule.
     Functional Group is able to contract.
     */
-    await setMolecule(page, FILE_TEST_DATA.oneFunctionalGroupExpandedKet);
+    await waitForSpinnerFinishedWork(
+      page,
+      async () =>
+        await setMolecule(page, FILE_TEST_DATA.oneFunctionalGroupExpandedKet),
+    );
+
     await takeEditorScreenshot(page);
 
     // eslint-disable-next-line no-magic-numbers
@@ -481,9 +620,13 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Test case: EPMLSOPKET-14257
     Description: Functional Groups added through API ketcher.setMolecule both contracted
     */
-    await setMolecule(
+    await waitForSpinnerFinishedWork(
       page,
-      FILE_TEST_DATA.functionalGroupsExpandedContractedCml,
+      async () =>
+        await setMolecule(
+          page,
+          FILE_TEST_DATA.functionalGroupsExpandedContractedCml,
+        ),
     );
   });
 
@@ -495,7 +638,12 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Description: one contracted Functional Group added through API ketcher.setMolecule.
     Functional Group is able to expand.
     */
-    await setMolecule(page, FILE_TEST_DATA.oneFunctionalGroupContractedCml);
+    await waitForSpinnerFinishedWork(
+      page,
+      async () =>
+        await setMolecule(page, FILE_TEST_DATA.oneFunctionalGroupContractedCml),
+    );
+
     await takeEditorScreenshot(page);
 
     await page.getByText('Boc').click({ button: 'right' });
@@ -509,9 +657,13 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Test case: EPMLSOPKET-14260
     Description: Unknown superatoms both added contracted through API ketcher.setMolecule
     */
-    await setMolecule(
+    await waitForSpinnerFinishedWork(
       page,
-      FILE_TEST_DATA.unknownSuperatomExpandedContractedCml,
+      async () =>
+        await setMolecule(
+          page,
+          FILE_TEST_DATA.unknownSuperatomExpandedContractedCml,
+        ),
     );
   });
 
@@ -523,7 +675,15 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Description: one contracted Unknown Superatom added through API ketcher.setMolecule.
     Unknown Superatom is able to expand.
     */
-    await setMolecule(page, FILE_TEST_DATA.oneUnknownSuperatomContractedCml);
+    await waitForSpinnerFinishedWork(
+      page,
+      async () =>
+        await setMolecule(
+          page,
+          FILE_TEST_DATA.oneUnknownSuperatomContractedCml,
+        ),
+    );
+
     await takeEditorScreenshot(page);
 
     await page.getByText('Some Name').click({ button: 'right' });

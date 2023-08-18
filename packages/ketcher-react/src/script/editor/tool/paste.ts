@@ -39,6 +39,7 @@ class PasteTool implements Tool {
   private dragCtx: any;
   private mergeItems: any;
   private readonly isSingleContractedGroup: boolean;
+  private previousMousemoveEvent: any;
 
   constructor(editor, struct) {
     this.editor = editor;
@@ -109,6 +110,8 @@ class PasteTool implements Tool {
   }
 
   mousemove(event) {
+    this.previousMousemoveEvent = event;
+
     if (this.action) {
       this.action?.perform(this.editor.render.ctab);
     }
@@ -187,6 +190,12 @@ class PasteTool implements Tool {
 
       this.mergeItems = getItemsToFuse(this.editor, visiblePasteItems);
       this.editor.hover(getHoverToFuse(this.mergeItems));
+    }
+  }
+
+  updatePreview() {
+    if (this.previousMousemoveEvent) {
+      this.mousemove(this.previousMousemoveEvent);
     }
   }
 

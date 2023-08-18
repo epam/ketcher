@@ -51,6 +51,7 @@ import {
   getStructCenter,
   recoordinate,
 } from './utils/structLayout';
+import PasteTool from './tool/paste';
 
 const SCALE = 40;
 const HISTORY_SIZE = 32; // put me to options
@@ -535,9 +536,8 @@ class Editor implements KetcherEditor {
 
     this.selection(null);
 
-    if (this._tool instanceof toolsMap.paste) {
-      this.event.change.dispatch();
-      return;
+    if (this._tool instanceof PasteTool) {
+      this._tool.updatePreview();
     }
 
     this.historyPtr--;
@@ -559,9 +559,9 @@ class Editor implements KetcherEditor {
     }
 
     this.selection(null);
-    if (this._tool instanceof toolsMap.paste) {
-      this.event.change.dispatch();
-      return;
+
+    if (this._tool instanceof PasteTool) {
+      this._tool.updatePreview();
     }
 
     const action = this.historyStack[this.historyPtr].perform(this.render.ctab);

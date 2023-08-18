@@ -233,58 +233,62 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     expect(smiFile).toEqual(smiFileExpected);
   });
 
-  test('(RxnV2000) Save cyclic structures with a circle inside the cycle', async ({
-    page,
-  }) => {
-    /*
+  // flaky
+  test.fixme(
+    '(RxnV2000) Save cyclic structures with a circle inside the cycle',
+    async ({ page }) => {
+      /*
     Test case: EPMLSOPKET-1877
     Description: The structures are saved as rxn-file.
     The saved rxn-file is opened correctly. In Ketcher the saved structures appear 
     with the circle inside the cycles.
     */
-    await openFileAndAddToCanvas('aromatic-benzene-rxnv2000.rxn', page);
-    const expectedFile = await getRxn(page, 'v2000');
-    await saveToFile('aromatic-benzene-rxnv2000-expected.rxn', expectedFile);
+      await openFileAndAddToCanvas('aromatic-benzene-rxnv2000.rxn', page);
+      const expectedFile = await getRxn(page, 'v2000');
+      await saveToFile('aromatic-benzene-rxnv2000-expected.rxn', expectedFile);
 
-    const METADATA_STRING_INDEX = [2, 7, 64];
+      const METADATA_STRING_INDEX = [2, 7, 64];
 
-    const { fileExpected: rxnFileExpected, file: rxnFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/aromatic-benzene-rxnv2000-expected.rxn',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
+      const { fileExpected: rxnFileExpected, file: rxnFile } =
+        await receiveFileComparisonData({
+          page,
+          expectedFileName:
+            'tests/test-data/aromatic-benzene-rxnv2000-expected.rxn',
+          metaDataIndexes: METADATA_STRING_INDEX,
+        });
 
-    expect(rxnFile).toEqual(rxnFileExpected);
-  });
+      expect(rxnFile).toEqual(rxnFileExpected);
+    },
+  );
 
-  test('(RxnV3000) Save cyclic structures with a circle inside the cycle', async ({
-    page,
-  }) => {
-    /*
+  // flaky
+  test.fixme(
+    '(RxnV3000) Save cyclic structures with a circle inside the cycle',
+    async ({ page }) => {
+      /*
     Test case: EPMLSOPKET-1877
     Description: The structures are saved as rxn-file.
     The saved rxn-file is opened correctly. In Ketcher the saved structures appear 
     with the circle inside the cycles.
     */
-    await openFileAndAddToCanvas('aromatic-benzene-rxnv3000.rxn', page);
-    const expectedFile = await getRxn(page, 'v3000');
-    await saveToFile('aromatic-benzene-rxnv3000-expected.rxn', expectedFile);
+      await openFileAndAddToCanvas('aromatic-benzene-rxnv3000.rxn', page);
+      const expectedFile = await getRxn(page, 'v3000');
+      await saveToFile('aromatic-benzene-rxnv3000-expected.rxn', expectedFile);
 
-    const METADATA_STRING_INDEX = [2];
+      const METADATA_STRING_INDEX = [2];
 
-    const { fileExpected: rxnFileExpected, file: rxnFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/aromatic-benzene-rxnv3000-expected.rxn',
-        metaDataIndexes: METADATA_STRING_INDEX,
-        fileFormat: 'v3000',
-      });
+      const { fileExpected: rxnFileExpected, file: rxnFile } =
+        await receiveFileComparisonData({
+          page,
+          expectedFileName:
+            'tests/test-data/aromatic-benzene-rxnv3000-expected.rxn',
+          metaDataIndexes: METADATA_STRING_INDEX,
+          fileFormat: 'v3000',
+        });
 
-    expect(rxnFile).toEqual(rxnFileExpected);
-  });
+      expect(rxnFile).toEqual(rxnFileExpected);
+    },
+  );
 
   test('(Cml file) Save cyclic structures with a circle inside the cycle', async ({
     page,

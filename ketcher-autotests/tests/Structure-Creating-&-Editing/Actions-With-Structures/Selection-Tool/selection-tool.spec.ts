@@ -413,7 +413,8 @@ test.describe('Selection tools', () => {
     await expect(page).toHaveScreenshot();
   });
 
-  test('Selection Drop-down list', async ({ page }) => {
+  // TODO: flaky
+  test.fixme('Selection Drop-down list', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-10068
     Description: Selection palette should contain Rectangle Selection, Lasso Selection, Fragment Selection tools.

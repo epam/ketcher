@@ -574,35 +574,21 @@ function shouldDisplayStereoLabel(
   ignoreChiralFlag,
   flag: StereoFlag | undefined,
 ): boolean {
-  if (!stereoLabel) {
+  if (!stereoLabel || ignoreChiralFlag) {
     return false;
   }
+
   const stereoLabelType = stereoLabel.match(/\D+/g)[0];
 
-  const stereoLabelTypeWithChiralFlag = ignoreChiralFlag
-    ? StereoLabel.Abs
-    : stereoLabelType;
-
-  if (stereoLabelTypeWithChiralFlag === StereoLabel.Abs) {
-    return false;
-  }
-  if (stereoLabelTypeWithChiralFlag === StereoLabel.And) {
-    return true;
-  }
-
   switch (labelStyle) {
-    // Off
     case StereLabelStyleType.Off:
       return false;
-    // On
     case StereLabelStyleType.On:
       return true;
-    // Classic
     case StereLabelStyleType.Classic:
       return !!(
         flag === StereoFlag.Mixed || stereoLabelType === StereoLabel.Or
       );
-    // IUPAC
     case StereLabelStyleType.IUPAC:
       return !!(
         flag === StereoFlag.Mixed && stereoLabelType !== StereoLabel.Abs

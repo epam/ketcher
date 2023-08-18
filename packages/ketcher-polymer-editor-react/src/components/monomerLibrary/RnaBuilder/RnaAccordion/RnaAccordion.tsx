@@ -58,6 +58,7 @@ import {
   ItemsContainer,
 } from 'components/monomerLibrary/monomerLibraryGroup/styles';
 import { MonomerItemType } from 'ketcher-core';
+import { selectEditor } from 'state/common';
 
 interface IGroupsDataItem {
   groupName: RnaBuilderItem;
@@ -75,6 +76,7 @@ export const RnaAccordion = () => {
   const groups = selectMonomerGroups(monomers);
   const presets = useAppSelector(selectPresets);
   const isEditMode = useAppSelector(selectIsEditMode);
+  const editor = useAppSelector(selectEditor);
 
   const [expandedAccordion, setExpandedAccordion] =
     useState<RnaBuilderItem | null>(RnaBuilderPresetsItem.Presets);
@@ -121,6 +123,8 @@ export const RnaAccordion = () => {
   ];
   const dispatch = useDispatch();
   const selectItem = (monomer, groupName) => {
+    editor.events.selectMonomer.dispatch(monomer);
+    console.log('monomer: ', monomer);
     if (!isEditMode) return;
 
     dispatch(setActivePresetMonomerGroup({ groupName, groupItem: monomer }));

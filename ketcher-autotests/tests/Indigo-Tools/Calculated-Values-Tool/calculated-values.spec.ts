@@ -81,8 +81,7 @@ test.describe('Calculated Values Tools', () => {
     await page.getByRole('option', { name: '2' }).click();
   });
 
-  // flaky
-  test.fixme('Calculate reaction', async ({ page }) => {
+  test('Calculate reaction', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1994
     Description:
@@ -177,19 +176,17 @@ test.describe('Calculated Values Tools', () => {
     await selectTopPanelButton(TopPanelButton.Calculated, page);
   });
 
-  // flaky
-  test.fixme(
-    'Calculation of exact mass for the reaction components',
-    async ({ page }) => {
-      /*
+  test('Calculation of exact mass for the reaction components', async ({
+    page,
+  }) => {
+    /*
     Test case: EPMLSOPKET-2001
     Description: Calculation of exact mass for the reaction
     should be correct: '[78.047] > [155.957]'.
     */
-      await openFileAndAddToCanvas('benzene-bromination.rxn', page);
-      await selectTopPanelButton(TopPanelButton.Calculated, page);
-    },
-  );
+    await openFileAndAddToCanvas('benzene-bromination.rxn', page);
+    await selectTopPanelButton(TopPanelButton.Calculated, page);
+  });
 
   test('Calculation for an inorganic compound', async ({ page }) => {
     /*
@@ -572,11 +569,8 @@ test.describe('Calculated Values Tools', () => {
     await selectTopPanelButton(TopPanelButton.Calculated, page);
   });
 
-  // flaky
-  test.fixme(
-    'Calculation for several reaction components',
-    async ({ page }) => {
-      /*
+  test('Calculation for several reaction components', async ({ page }) => {
+    /*
     Test case: EPMLSOPKET-2002
     Description: Reaction components are calculated.
     Chemical Formula:
@@ -588,10 +582,9 @@ test.describe('Calculated Values Tools', () => {
     Elemental Analysis:
     [C 40.0 H 6.7 O 53.3]+[C 52.1 H 13.1 O 34.7] > [C 54.5 H 9.2 O 36.3]+[H 11.2 O 88.8]
     */
-      await openFileAndAddToCanvas('reaction-plus-and-arrows.rxn', page);
-      await selectTopPanelButton(TopPanelButton.Calculated, page);
-    },
-  );
+    await openFileAndAddToCanvas('reaction-plus-and-arrows.rxn', page);
+    await selectTopPanelButton(TopPanelButton.Calculated, page);
+  });
 
   test('Calculation for several reaction components(part of structure)', async ({
     page,

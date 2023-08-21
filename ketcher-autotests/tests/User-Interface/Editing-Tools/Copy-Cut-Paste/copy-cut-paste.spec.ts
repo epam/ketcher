@@ -304,7 +304,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Copy as MOL (Ctrl+M);
     Copy as KET (Ctrl+Shift+K);
     Copy Image (Ctrl+Shift+F)
-    Object is created. 
+    Object is created.
     Object is selected. Buttons are enabled.
     */
     await page.getByTestId('copy-button-dropdown-triangle').click();
@@ -336,8 +336,8 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Test case: EPMLSOPKET-1711
     Description: The 'Paste' button is always enabled.
     The 'Paste (Ctrl+V)' tooltip appears when user moves the cursor over the button.
-    Note: in Chrome, FF and Edge the Paste action can be implemented with Ctrl+V buttons only! 
-    When user clicks on the 'Paste' button alert message appears. 
+    Note: in Chrome, FF and Edge the Paste action can be implemented with Ctrl+V buttons only!
+    When user clicks on the 'Paste' button alert message appears.
     Message should have direction to use shortcuts.
     */
     await expect(page).toHaveScreenshot();

@@ -111,8 +111,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
      * Test case: EPMLSOPKET-4717
      * Description: Open/Import structure while openning a CDXML file
      */
-    await openFileAndAddToCanvas('cdxml-4717.cdxml', page);
-    // check that structure opened from file is displayed correctly
+    // eslint-disable-next-line no-inline-comments
+    await openFileAndAddToCanvas('cdxml-4717.cdxml', page); // check that structure opened from file is displayed correctly
   });
 
   test('Open/save/open cdxml file with structure', async ({ page }) => {

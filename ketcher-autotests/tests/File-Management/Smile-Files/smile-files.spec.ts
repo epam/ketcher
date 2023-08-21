@@ -54,7 +54,7 @@ test.describe('SMILES files', () => {
   test('SmileString for structure with Bond properties', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1906
-    Description: SmileString is correctly generated from structure and vise 
+    Description: SmileString is correctly generated from structure and vise
     versa structure is correctly generated from SmileString.
     */
     await openFileAndAddToCanvas('all-type-bonds.ket', page);
@@ -72,7 +72,7 @@ test.describe('SMILES files', () => {
   test('SmileString for structure with Atom properties', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1907
-    Description: SmileString is correctly generated from structure and 
+    Description: SmileString is correctly generated from structure and
     vise versa structure is correctly generated from SmileString.
     */
     await openFileAndAddToCanvas('all-atoms-properties.ket', page);
@@ -95,7 +95,7 @@ test.describe('SMILES files', () => {
   }) => {
     /*
     Test case: EPMLSOPKET-1908
-    Description: <<In Daylight SMILES the structure will be saved without S-groups>>  
+    Description: <<In Daylight SMILES the structure will be saved without S-groups>>
     warning appears for all types of Sgroup except the multiple Sgroup type.
     */
     await openFileAndAddToCanvas('sec_butyl_abr.mol', page);
@@ -131,7 +131,7 @@ test.describe('SMILES files', () => {
   }) => {
     /*
     Test case: EPMLSOPKET-1915
-    Description: SmileString is correctly generated from structure and 
+    Description: SmileString is correctly generated from structure and
     vise versa structure is correctly generated from SmileString.
     */
     await openFileAndAddToCanvas('Heteroatoms.mol', page);
@@ -151,7 +151,7 @@ test.describe('SMILES files', () => {
   }) => {
     /*
     Test case: EPMLSOPKET-1916
-    Description: Warning tab: Structure contains query properties of atoms 
+    Description: Warning tab: Structure contains query properties of atoms
     and bonds that are not supported in the SMILES. Query properties will not be reflected in the saved file
     */
     await openFileAndAddToCanvas('Attached data.mol', page);
@@ -172,8 +172,8 @@ test.describe('SMILES files', () => {
   }) => {
     /*
     Test case: EPMLSOPKET-1917
-    Description: SmileString is correctly generated from structure and vise versa 
-    structure is correctly generated from SmileString. 
+    Description: SmileString is correctly generated from structure and vise versa
+    structure is correctly generated from SmileString.
     All stereobonds are displayed as in a mol-file.
     */
     await openFileAndAddToCanvas('V2000_abs.mol', page);
@@ -197,9 +197,9 @@ test.describe('SMILES files', () => {
   }) => {
     /*
     Test case: EPMLSOPKET-1920
-    Description: SmileString is correctly generated from structure and vise versa structure is 
+    Description: SmileString is correctly generated from structure and vise versa structure is
     correctly generated from SmileString.
-    Structure appears without attached data and brackets, query features, 
+    Structure appears without attached data and brackets, query features,
     Rgroup labels are rendered as R# symbols.
     */
     await openFileAndAddToCanvas('different-features.mol', page);
@@ -224,7 +224,7 @@ test.describe('SMILES files', () => {
   }) => {
     /*
     Test case: EPMLSOPKET-1923
-    Description: SmileString is correctly generated from structure and vise versa 
+    Description: SmileString is correctly generated from structure and vise versa
     structure is correctly generated from SmileString.
     */
     await openFileAndAddToCanvas('cis-trans-cycle.mol', page);
@@ -247,7 +247,7 @@ test.describe('SMILES files', () => {
   }) => {
     /*
     Test case: EPMLSOPKET-1924
-    Description: The structure generated from SMILE string is correct, 
+    Description: The structure generated from SMILE string is correct,
     pseudoatoms are rendered, alias appears as common atom symbol for which this alias was assigned.
     */
     await openFileAndAddToCanvas('alias-pseudoatom.ket', page);
@@ -267,7 +267,7 @@ test.describe('SMILES files', () => {
   }) => {
     /*
     Test case: EPMLSOPKET-8905
-    Description: Structure is correctly opens from saved files. Keep only first reaction arrow 
+    Description: Structure is correctly opens from saved files. Keep only first reaction arrow
     and keep all structures (all intermediate structures should be products and the arrow is replaced by a plus)
     */
     await openFileAndAddToCanvas('two-arrows-and-plus.ket', page);

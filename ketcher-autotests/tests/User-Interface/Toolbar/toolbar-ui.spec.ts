@@ -21,7 +21,7 @@ test.describe('Open Ketcher', () => {
   });
 
   test('Toolbar palette: full screen verification', async ({ page }) => {
-    /* 
+    /*
       Test case: EPMLSOPKET-1331
       Description:  Toolbar - Toolbar palette: full screen verification
       */
@@ -76,6 +76,7 @@ test.describe('Open Ketcher', () => {
         */
 
     await page.goto('/?hiddenControls=clear');
+    await delay(DELAY_IN_SECONDS.TWO);
     await takeTopToolbarScreenshot(page);
   });
 });

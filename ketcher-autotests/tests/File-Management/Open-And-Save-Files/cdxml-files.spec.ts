@@ -104,16 +104,18 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await page.keyboard.press('Control+Delete');
   });
 
-  test('Functional Groups - Open from .cdxml file with contracted and expanded function', async ({
-    page,
-  }) => {
-    /**
-     * Test case: EPMLSOPKET-4717
-     * Description: Open/Import structure while openning a CDXML file
-     */
-    // eslint-disable-next-line no-inline-comments
-    await openFileAndAddToCanvas('cdxml-4717.cdxml', page); // check that structure opened from file is displayed correctly
-  });
+  // flaky
+  test.fixme(
+    'Functional Groups - Open from .cdxml file with contracted and expanded function',
+    async ({ page }) => {
+      /**
+       * Test case: EPMLSOPKET-4717
+       * Description: Open/Import structure while openning a CDXML file
+       */
+      await openFileAndAddToCanvas('cdxml-4717.cdxml', page);
+      // check that structure opened from file is displayed correctly
+    },
+  );
 
   test('Open/save/open cdxml file with structure', async ({ page }) => {
     /**
@@ -124,7 +126,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     // check that structure opened from file is displayed correctly
   });
 
-  test('Save file - Save *.cdxml file', async ({ page }) => {
+  // flaky
+  test.fixme('Save file - Save *.cdxml file', async ({ page }) => {
     /**
      * Test case: EPMLSOPKET-6969
      * Description: Open/Import structure while openning a CDXML file

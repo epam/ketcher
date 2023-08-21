@@ -621,4 +621,30 @@ test.describe('Attachment Point Tool', () => {
       await selectTopPanelButton(TopPanelButton.Undo, page);
     }
   });
+
+  test('Verify that the attachment point visualization matches the rendering to PNG/SVG mockup(on several structures)', async ({
+    page,
+  }) => {
+    /*
+    Test case: EPMLSOPKET-15516, EPMLSOPKET-15517
+    Description: Openeded structures are displayed with the correct attachment points.
+    */
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/three-examples-attachment-points.mol',
+      page,
+    );
+  });
+
+  test('Verify that the attachment point visualization matches the rendering to PNG/SVG mockup(on one structure)', async ({
+    page,
+  }) => {
+    /*
+    Test case: EPMLSOPKET-15516, EPMLSOPKET-15518
+    Description: Openeded structure are displayed with the correct attachment points.
+    */
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/four-attachment-point.mol',
+      page,
+    );
+  });
 });

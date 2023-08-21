@@ -16,10 +16,11 @@ test.describe('Text tools test cases', () => {
 
   test('Text tool - Button and tooltip: verification', async ({ page }) => {
     // Test case: EPMLSOPKET-2225
-    const textToolButton = await page.getByTestId('text').hover();
+    const textToolButton = page.getByTestId('text');
+    textToolButton.hover();
     await delay(DELAY_IN_SECONDS.TWO);
     await selectLeftPanelButton(LeftPanelButton.ChargeMinus, page);
-    await page.getByTestId('text').hover();
+    textToolButton.hover();
     await delay(DELAY_IN_SECONDS.TWO);
 
     expect(textToolButton).toHaveAttribute('title', 'Add text (Alt+T)');
@@ -36,9 +37,11 @@ test.describe('Text tools test cases', () => {
 
   test('Text tool - Create a single text object', async ({ page }) => {
     // Test case: EPMLSOPKET-2227
-    const textToolButton = await page.getByTestId('text').click();
+    const textToolButton = page.getByTestId('text');
+    textToolButton.click();
     await clickInTheMiddleOfTheScreen(page);
-    const textInput = await page.getByRole('textbox').type('test');
+    const textInput = await page.getByRole('textbox');
+    textInput.type('test');
     await page.getByTestId('Cancel').click();
 
     await takeEditorScreenshot(page);

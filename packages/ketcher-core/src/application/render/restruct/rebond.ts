@@ -524,7 +524,9 @@ function getBondPath(
   const struct = restruct.molecule;
   const shiftA = !restruct.atoms.get(hb1.begin)?.showLabel;
   const shiftB = !restruct.atoms.get(hb2.begin)?.showLabel;
-
+  let newHalfBonds: [HalfBond, HalfBond];
+  const xShiftMinus1 = -1;
+  const xShiftPlus1 = 1;
   switch (bond.b.type) {
     case Bond.PATTERN.TYPE.SINGLE:
       switch (bond.b.stereo) {
@@ -637,7 +639,13 @@ function getBondPath(
       break;
     }
     case Bond.PATTERN.TYPE.SINGLE_OR_DOUBLE:
-      path = getSingleOrDoublePath(render, hb1, hb2, isSnapping);
+      newHalfBonds = util.updateHalfBondCoordinates(hb1, hb2, xShiftPlus1);
+      path = getSingleOrDoublePath(
+        render,
+        newHalfBonds[0],
+        newHalfBonds[1],
+        isSnapping,
+      );
       break;
     case Bond.PATTERN.TYPE.SINGLE_OR_AROMATIC:
       path = getBondAromaticPath(
@@ -651,10 +659,11 @@ function getBondPath(
       );
       break;
     case Bond.PATTERN.TYPE.DOUBLE_OR_AROMATIC:
+      newHalfBonds = util.updateHalfBondCoordinates(hb1, hb2, xShiftMinus1);
       path = getBondAromaticPath(
         render,
-        hb1,
-        hb2,
+        newHalfBonds[0],
+        newHalfBonds[1],
         bond,
         shiftA,
         shiftB,
@@ -662,13 +671,21 @@ function getBondPath(
       );
       break;
     case Bond.PATTERN.TYPE.ANY:
-      path = draw.bondAny(render.paper, hb1, hb2, render.options, isSnapping);
+      newHalfBonds = util.updateHalfBondCoordinates(hb1, hb2, xShiftMinus1);
+      path = draw.bondAny(
+        render.paper,
+        newHalfBonds[0],
+        newHalfBonds[1],
+        render.options,
+        isSnapping,
+      );
       break;
     case Bond.PATTERN.TYPE.HYDROGEN:
+      newHalfBonds = util.updateHalfBondCoordinates(hb1, hb2, xShiftPlus1);
       path = draw.bondHydrogen(
         render.paper,
-        hb1,
-        hb2,
+        newHalfBonds[0],
+        newHalfBonds[1],
         render.options,
         isSnapping,
       );

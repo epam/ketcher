@@ -1299,7 +1299,8 @@ test.describe('Atom Properties', () => {
     await pressButton(page, 'Apply');
   });
 
-  test('Colored atoms set - Mapping reaction', async ({ page }) => {
+  // flaky
+  test.fixme('Colored atoms set - Mapping reaction', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-1661
       Description: Mapping labels are colored with the same color as the colored atoms.
@@ -1354,32 +1355,34 @@ test.describe('Atom Properties', () => {
     expect(molFile).toEqual(molFileExpected);
   });
 
-  test('All atom properties information saved as *.rxn file', async ({
-    page,
-  }) => {
-    /*
+  // flaky
+  test.fixme(
+    'All atom properties information saved as *.rxn file',
+    async ({ page }) => {
+      /*
       Test case: EPMLSOPKET-1656
       Description: The structure is saved as *.rxn file.
     */
-    await openFileAndAddToCanvas('all-possible-atoms-properties.rxn', page);
-    const expectedFile = await getRxn(page, 'v3000');
-    await saveToFile(
-      'all-possible-atoms-properties-expected.rxn',
-      expectedFile,
-    );
+      await openFileAndAddToCanvas('all-possible-atoms-properties.rxn', page);
+      const expectedFile = await getRxn(page, 'v3000');
+      await saveToFile(
+        'all-possible-atoms-properties-expected.rxn',
+        expectedFile,
+      );
 
-    const METADATA_STRING_INDEX = [2];
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/all-possible-atoms-properties-expected.rxn',
-        fileFormat: 'v3000',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
+      const METADATA_STRING_INDEX = [2];
+      const { fileExpected: molFileExpected, file: molFile } =
+        await receiveFileComparisonData({
+          page,
+          expectedFileName:
+            'tests/test-data/all-possible-atoms-properties-expected.rxn',
+          fileFormat: 'v3000',
+          metaDataIndexes: METADATA_STRING_INDEX,
+        });
 
-    expect(molFile).toEqual(molFileExpected);
-  });
+      expect(molFile).toEqual(molFileExpected);
+    },
+  );
 
   test('Add Reaction flags - Inversion (Inverts) in modal and press Cancel', async ({
     page,

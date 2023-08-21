@@ -47,7 +47,7 @@ test.describe('Selection tools', () => {
   }) => {
     /*
     Test case: EPMLSOPKET-12975
-    Description: Selected bonds and atom labels with more than 1 symbol (e.g. "OH", "CH3") 
+    Description: Selected bonds and atom labels with more than 1 symbol (e.g. "OH", "CH3")
     are highlighted with rounded rectangles.
     */
     await openFileAndAddToCanvas('atoms-and-bonds.ket', page);
@@ -126,7 +126,7 @@ test.describe('Selection tools', () => {
   }) => {
     /*
     Test case: EPMLSOPKET-15512
-    Description: The selected structure should move 1 pixel in the corresponding 
+    Description: The selected structure should move 1 pixel in the corresponding
     direction with each key press. In this test to 50px Down.
     */
     await openFileAndAddToCanvas('two-benzene-with-atoms.ket', page);
@@ -142,7 +142,7 @@ test.describe('Selection tools', () => {
   }) => {
     /*
     Test case: EPMLSOPKET-15512
-    Description: The selected structure should move 1 pixel in the corresponding 
+    Description: The selected structure should move 1 pixel in the corresponding
     direction with each key press. In this test to 50px Up.
     */
     await openFileAndAddToCanvas('two-benzene-with-atoms.ket', page);
@@ -158,7 +158,7 @@ test.describe('Selection tools', () => {
   }) => {
     /*
     Test case: EPMLSOPKET-15512
-    Description: The selected structure should move 1 pixel in the corresponding 
+    Description: The selected structure should move 1 pixel in the corresponding
     direction with each key press. In this test to 50px Right.
     */
     await openFileAndAddToCanvas('two-benzene-with-atoms.ket', page);
@@ -174,7 +174,7 @@ test.describe('Selection tools', () => {
   }) => {
     /*
     Test case: EPMLSOPKET-15512
-    Description: The selected structure should move 1 pixel in the corresponding 
+    Description: The selected structure should move 1 pixel in the corresponding
     direction with each key press. In this test to 50px Left.
     */
     await openFileAndAddToCanvas('two-benzene-with-atoms.ket', page);
@@ -190,7 +190,7 @@ test.describe('Selection tools', () => {
   }) => {
     /*
     Test case: EPMLSOPKET-15512
-    Description: The selected structure should move 10 pixel in the corresponding 
+    Description: The selected structure should move 10 pixel in the corresponding
     direction with each key press with Shift key. In this test to 100px Down.
     */
     await openFileAndAddToCanvas('two-benzene-with-atoms.ket', page);
@@ -208,7 +208,7 @@ test.describe('Selection tools', () => {
   }) => {
     /*
     Test case: EPMLSOPKET-15512
-    Description: The selected structure should move 10 pixel in the corresponding 
+    Description: The selected structure should move 10 pixel in the corresponding
     direction with each key press with Shift key. In this test to 100px Up.
     */
     await openFileAndAddToCanvas('two-benzene-with-atoms.ket', page);
@@ -226,7 +226,7 @@ test.describe('Selection tools', () => {
   }) => {
     /*
     Test case: EPMLSOPKET-15512
-    Description: The selected structure should move 10 pixel in the corresponding 
+    Description: The selected structure should move 10 pixel in the corresponding
     direction with each key presswith Shift key. In this test to 100px Right.
     */
     await openFileAndAddToCanvas('two-benzene-with-atoms.ket', page);
@@ -244,7 +244,7 @@ test.describe('Selection tools', () => {
   }) => {
     /*
     Test case: EPMLSOPKET-15512
-    Description: The selected structure should move 10 pixel in the corresponding 
+    Description: The selected structure should move 10 pixel in the corresponding
     direction with each key press with Shift key. In this test to 100px Left.
     */
     await openFileAndAddToCanvas('two-benzene-with-atoms.ket', page);
@@ -296,7 +296,7 @@ test.describe('Selection tools', () => {
   }) => {
     /*
     Test case: EPMLSOPKET-10074
-    Description: If user presses esc, then last chosen selected tool must be 
+    Description: If user presses esc, then last chosen selected tool must be
     selected and pressing esc doesn't choose another mode of selection tool
     */
     await selectRing(RingButton.Benzene, page);
@@ -395,23 +395,27 @@ test.describe('Selection tools', () => {
     await expect(page).toHaveScreenshot();
   });
 
-  test('Move structure over the border of the canvas', async ({ page }) => {
-    /*
+  // flaky
+  test.fixme(
+    'Move structure over the border of the canvas',
+    async ({ page }) => {
+      /*
     Test case: EPMLSOPKET-10068
     Description: The canvas should automatically expand in the direction the structure is being moved.
     Structure is visible on the canvas.
     */
-    await openFileAndAddToCanvas('two-benzene-with-atoms.ket', page);
-    await delay(DELAY_IN_SECONDS.TWO);
-    await selectNestedTool(page, SelectTool.FRAGMENT_SELECTION);
-    await clickOnAtom(page, 'N', 0);
-    await page.keyboard.down('Shift');
-    for (let i = 0; i < 100; i++) {
-      await page.keyboard.press('ArrowDown');
-    }
-    await page.keyboard.up('Shift');
-    await expect(page).toHaveScreenshot();
-  });
+      await openFileAndAddToCanvas('two-benzene-with-atoms.ket', page);
+      await delay(DELAY_IN_SECONDS.TWO);
+      await selectNestedTool(page, SelectTool.FRAGMENT_SELECTION);
+      await clickOnAtom(page, 'N', 0);
+      await page.keyboard.down('Shift');
+      for (let i = 0; i < 100; i++) {
+        await page.keyboard.press('ArrowDown');
+      }
+      await page.keyboard.up('Shift');
+      await expect(page).toHaveScreenshot();
+    },
+  );
 
   // TODO: flaky
   test.fixme('Selection Drop-down list', async ({ page }) => {

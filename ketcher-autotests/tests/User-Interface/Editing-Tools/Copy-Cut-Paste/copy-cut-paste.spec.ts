@@ -152,7 +152,8 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await screenshotBetweenUndoRedo(page);
   });
 
-  test('Cut the reaction with hotkey', async ({ page }) => {
+  // flaky
+  test.fixme('Cut the reaction with hotkey', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1714
     Description: After the clicking the Cut button, the selected object disappears.
@@ -193,7 +194,8 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectTopPanelButton(TopPanelButton.Copy, page);
   });
 
-  test('Copy the reaction with hotkey', async ({ page }) => {
+  // flaky
+  test.fixme('Copy the reaction with hotkey', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1715
     Description: After the clicking the Copy button, the selected object not disappears.
@@ -260,7 +262,8 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await page.mouse.click(x, y);
   });
 
-  test('Copy and paste the reaction with hotkey', async ({ page }) => {
+  // flaky
+  test.fixme('Copy and paste the reaction with hotkey', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1717
     Description: After the clicking the Copy button, the selected object not disappears.

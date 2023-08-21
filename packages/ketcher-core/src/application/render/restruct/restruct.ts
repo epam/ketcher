@@ -158,6 +158,7 @@ class ReStruct {
     );
 
     molecule.sgroups.forEach((item, id) => {
+      console.log('sgroups in molecule', molecule.sgroups);
       this.sgroups.set(id, new ReSGroup(item));
       if (item.type === 'DAT' && !item.data.attached) {
         this.sgroupData.set(id, new ReDataSGroupData(item));

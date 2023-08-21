@@ -23,8 +23,7 @@ test.describe('open files with different formats', () => {
     await takeEditorScreenshot(page);
   });
 
-  // flaky
-  test.fixme('opening rxn files', async ({ page }) => {
+  test('opening rxn files', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1839
     */

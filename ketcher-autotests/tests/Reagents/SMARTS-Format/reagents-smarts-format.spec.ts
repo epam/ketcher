@@ -34,14 +34,14 @@ test.describe('Reagents SMARTS format', () => {
     await takeEditorScreenshot(page);
   });
 
-  test(`Detection molecule as reagent 
+  test(`Detection molecule as reagent
   and write reagent information in "Daylight SMARTS" format in "Preview" tab`, async ({
     page,
   }) => {
     /*
     Test case: EPMLSOPKET-4681
-    Description: System detect molecule as reagent and write reagent in "Daylight SMARTS' 
-    format in "Preview" tab (e.g. [#6]-1=[#6]-[#6]=[#6]-[#6]=[#6]-1>[#7]>[#6]-1=[#6]-[#6]=[#6]-[#6]=[#6]-1) 
+    Description: System detect molecule as reagent and write reagent in "Daylight SMARTS'
+    format in "Preview" tab (e.g. [#6]-1=[#6]-[#6]=[#6]-[#6]=[#6]-1>[#7]>[#6]-1=[#6]-[#6]=[#6]-[#6]=[#6]-1)
     */
     await openFileAndAddToCanvas('benzene-arrow-benzene-reagent-nh3.ket', page);
 
@@ -60,10 +60,10 @@ test.describe('Reagents SMARTS format', () => {
   }) => {
     /*
     Test case: EPMLSOPKET-4681
-    Description: System detect molecule as reagent and write reagent in "Daylight SMARTS' 
-    format in "Preview" tab (e.g. 
+    Description: System detect molecule as reagent and write reagent in "Daylight SMARTS'
+    format in "Preview" tab (e.g.
       [#6]1(-[#6])-[#6](-[#8])=[#6]-[#6](-[#16])=[#6](-[#7])-[#6]=1>[#17]>[#6]1(-[#35])-[#6](-[#6])=[#6]-[#6](-[#53])=[#6](-[#8])-[#6]=1
-    ) 
+    )
     */
     await openFileAndAddToCanvas('benzene-arrow-benzene-reagent-hcl.ket', page);
 
@@ -76,29 +76,24 @@ test.describe('Reagents SMARTS format', () => {
     await previewSmarts(page);
   });
 
-  // flaky
-  test.fixme(
-    'Paste from clipboard in "Daylight SMARTS" format',
-    async ({ page }) => {
-      /*
+  test('Paste from clipboard in "Daylight SMARTS" format', async ({ page }) => {
+    /*
     Test case: EPMLSOPKET-4687
     Description: Reagent 'Cl' displays above reaction arrow
     */
-      await selectTopPanelButton(TopPanelButton.Open, page);
-      await page.getByText('Paste from clipboard').click();
-      await pasteFromClipboard(
-        page,
-        '[#6]-[#6]-1=[#6]-[#6](-[#7])=[#6](-[#16])-[#6]=[#6]-1-[#8]>Cl>[#6]-[#6]-1=[#6]-[#6](I)=[#6](-[#8])-[#6]=[#6]-1Br',
-      );
-      await waitForLoad(page, async () => {
-        await pressButton(page, 'Add to Canvas');
-      });
-      await clickInTheMiddleOfTheScreen(page);
-    },
-  );
+    await selectTopPanelButton(TopPanelButton.Open, page);
+    await page.getByText('Paste from clipboard').click();
+    await pasteFromClipboard(
+      page,
+      '[#6]-[#6]-1=[#6]-[#6](-[#7])=[#6](-[#16])-[#6]=[#6]-1-[#8]>Cl>[#6]-[#6]-1=[#6]-[#6](I)=[#6](-[#8])-[#6]=[#6]-1Br',
+    );
+    await waitForLoad(page, async () => {
+      await pressButton(page, 'Add to Canvas');
+    });
+    await clickInTheMiddleOfTheScreen(page);
+  });
 
-  // flaky
-  test.fixme('Open from file in "Daylight SMARTS" format', async ({ page }) => {
+  test('Open from file in "Daylight SMARTS" format', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-4689
     Description: Reagent 'Cl' below the reaction arrow
@@ -111,7 +106,7 @@ test.describe('Reagents SMARTS format', () => {
   }) => {
     /*
     Test case: EPMLSOPKET-4706
-    Description: Chain is opened with Not List atoms ![Zr,Au,Zn] 
+    Description: Chain is opened with Not List atoms ![Zr,Au,Zn]
     */
     await openFileAndAddToCanvas('not-list-atoms-smarts.smarts', page);
   });

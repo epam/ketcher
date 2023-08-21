@@ -256,7 +256,7 @@ test.describe('Atom Properties', () => {
     /*
       Test case: EPMLSOPKET-1593
       Description: In the opened dialog the 'Label' field contains 'N'.
-      The 'Label' field has a red frame. The 'Error: Wrong label' tooltip appears 
+      The 'Label' field has a red frame. The 'Error: Wrong label' tooltip appears
       when the cursor is over the field. The Apply button becomes disabled.
     */
     await openFileAndAddToCanvas('benzene-ring-with-two-atoms.ket', page);
@@ -271,7 +271,7 @@ test.describe('Atom Properties', () => {
     /*
       Test case: EPMLSOPKET-1593
       Description: In the opened dialog the 'Label' field contains 'N'.
-      The 'Label' field has a red frame. The 'Error: Wrong label' tooltip appears 
+      The 'Label' field has a red frame. The 'Error: Wrong label' tooltip appears
       when the cursor is over the field. The Apply button becomes disabled.
       The 'N' atom symbol isn`t changed with an incorrect symbol.
     */
@@ -436,7 +436,7 @@ test.describe('Atom Properties', () => {
   }) => {
     /*
       Test case: EPMLSOPKET-1597
-      Description: In the opened dialog the 'Alias' field contains the correct text (for our example - 'abc123TesREasd!@'). 
+      Description: In the opened dialog the 'Alias' field contains the correct text (for our example - 'abc123TesREasd!@').
       The 'Label' field is filled with 'C' atom symbol.
       The 'Alias' field contains the correct edited text.
       The correct edited alias 'TesREasd!@' and Label ('Sb' for our example) appears for the edited atom.
@@ -451,7 +451,7 @@ test.describe('Atom Properties', () => {
   test('Dialog - Number of Atom', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-1605
-      Description: In the opened dialog the 'Number' field contains the correct text (for our example - Carbon = 6). 
+      Description: In the opened dialog the 'Number' field contains the correct text (for our example - Carbon = 6).
       Nitrogen = 7, Oxygen = 8
     */
     await openFileAndAddToCanvas('benzene-ring-with-two-atoms.ket', page);
@@ -494,8 +494,8 @@ test.describe('Atom Properties', () => {
   test('Type in the Charge field any incorrect data', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-1606
-      Description: The 'Charge' field is framed with the red frame. 
-      The 'Error: Invalid charge value' tooltip appears when the cursor over the field. 
+      Description: The 'Charge' field is framed with the red frame.
+      The 'Error: Invalid charge value' tooltip appears when the cursor over the field.
       The 'Apply' button becomes disabled.
     */
     await openFileAndAddToCanvas('benzene-ring-with-two-atoms.ket', page);
@@ -735,7 +735,7 @@ test.describe('Atom Properties', () => {
   test.fixme('Change Valence value on different atoms', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-1620
-      Description: The typed Valence value appears near the selected atoms only. 
+      Description: The typed Valence value appears near the selected atoms only.
       Number is colored same as atoms.
     */
     await openFileAndAddToCanvas('Heteroatoms.mol', page);
@@ -772,9 +772,9 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-1633
       Description: The 'Radical' field is empty.
       The 'Radical' field contains the selected parameter.
-      The symbol for the selected radical appears above. The selected parameter appears above the selected atom: 
-      Monoradical - one dot; 
-      Diradical (singlet) - two dots; 
+      The symbol for the selected radical appears above. The selected parameter appears above the selected atom:
+      Monoradical - one dot;
+      Diradical (singlet) - two dots;
       Diradical (triplet) - two caret signs (^^).
     */
     await openFileAndAddToCanvas('chain.ket', page);
@@ -809,7 +809,7 @@ test.describe('Atom Properties', () => {
   test('Open the saved *.mol file and edit it', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-1633
-      Description: The saved *.mol file is opened correctly with applied atom properties and can be edited. 
+      Description: The saved *.mol file is opened correctly with applied atom properties and can be edited.
     */
     await openFileAndAddToCanvas('chain-with-radicals.mol', page);
     await doubleClickOnAtom(page, 'C', 2);
@@ -847,7 +847,7 @@ test.describe('Atom Properties', () => {
   test.fixme('Add Radicals value on different atoms', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-1635
-      Description: The typed Valence value appears near the selected atoms only. 
+      Description: The typed Valence value appears near the selected atoms only.
       Number is colored same as atoms.
     */
     await openFileAndAddToCanvas('Heteroatoms.mol', page);
@@ -870,13 +870,13 @@ test.describe('Atom Properties', () => {
   }) => {
     /*
       Test case: EPMLSOPKET-1636
-      Description: The 'Ring bond count' drop-down list is present under 'Query specific'. 
+      Description: The 'Ring bond count' drop-down list is present under 'Query specific'.
       The field is empty by default.
       The 'Ring bond count' drop-down list contains values: blank, As drawn, 0, 2, 3, 4 items.
-      Blank, As drawn (solely those ring bond attachments that you see), 
-      0 (no ring bond attachments at the specified position), 
-      2 (two ring bond attachments - simple ring), 
-      3 (three ring bond attachments - fused rings), 
+      Blank, As drawn (solely those ring bond attachments that you see),
+      0 (no ring bond attachments at the specified position),
+      2 (two ring bond attachments - simple ring),
+      3 (three ring bond attachments - fused rings),
       4 (at least four ring bond attachments - spiro or higher).
       The 'Ring bond count' field contains the selected value.
       The Ring bond count value does not appear near the carbon atom.
@@ -931,7 +931,7 @@ test.describe('Atom Properties', () => {
   }) => {
     /*
       Test case: EPMLSOPKET-1636
-      Description: The saved *.mol file is opened correctly with applied atom properties and can be edited. 
+      Description: The saved *.mol file is opened correctly with applied atom properties and can be edited.
     */
     await openFileAndAddToCanvas('chain-with-ring-bond-count.mol', page);
     await doubleClickOnAtom(page, 'C', 2);
@@ -1028,8 +1028,8 @@ test.describe('Atom Properties', () => {
   }) => {
     /*
       Test case: EPMLSOPKET-1640
-      Description: 'Atom Properties' dialog is opened. The 'H count' drop-down list is present under 
-      'Query specific'. The field is empty by default. 
+      Description: 'Atom Properties' dialog is opened. The 'H count' drop-down list is present under
+      'Query specific'. The field is empty by default.
       The 'H count' drop-down list contains values: 0, 1, 2, 3, 4.
       The value is selected. The 'H count' field contains the selected value.
     */
@@ -1299,8 +1299,7 @@ test.describe('Atom Properties', () => {
     await pressButton(page, 'Apply');
   });
 
-  // flaky
-  test.fixme('Colored atoms set - Mapping reaction', async ({ page }) => {
+  test('Colored atoms set - Mapping reaction', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-1661
       Description: Mapping labels are colored with the same color as the colored atoms.
@@ -1355,34 +1354,32 @@ test.describe('Atom Properties', () => {
     expect(molFile).toEqual(molFileExpected);
   });
 
-  // flaky
-  test.fixme(
-    'All atom properties information saved as *.rxn file',
-    async ({ page }) => {
-      /*
+  test('All atom properties information saved as *.rxn file', async ({
+    page,
+  }) => {
+    /*
       Test case: EPMLSOPKET-1656
       Description: The structure is saved as *.rxn file.
     */
-      await openFileAndAddToCanvas('all-possible-atoms-properties.rxn', page);
-      const expectedFile = await getRxn(page, 'v3000');
-      await saveToFile(
-        'all-possible-atoms-properties-expected.rxn',
-        expectedFile,
-      );
+    await openFileAndAddToCanvas('all-possible-atoms-properties.rxn', page);
+    const expectedFile = await getRxn(page, 'v3000');
+    await saveToFile(
+      'all-possible-atoms-properties-expected.rxn',
+      expectedFile,
+    );
 
-      const METADATA_STRING_INDEX = [2];
-      const { fileExpected: molFileExpected, file: molFile } =
-        await receiveFileComparisonData({
-          page,
-          expectedFileName:
-            'tests/test-data/all-possible-atoms-properties-expected.rxn',
-          fileFormat: 'v3000',
-          metaDataIndexes: METADATA_STRING_INDEX,
-        });
+    const METADATA_STRING_INDEX = [2];
+    const { fileExpected: molFileExpected, file: molFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/all-possible-atoms-properties-expected.rxn',
+        fileFormat: 'v3000',
+        metaDataIndexes: METADATA_STRING_INDEX,
+      });
 
-      expect(molFile).toEqual(molFileExpected);
-    },
-  );
+    expect(molFile).toEqual(molFileExpected);
+  });
 
   test('Add Reaction flags - Inversion (Inverts) in modal and press Cancel', async ({
     page,
@@ -1404,7 +1401,7 @@ test.describe('Atom Properties', () => {
     async ({ page }) => {
       /*
       Test case: EPMLSOPKET-1650
-      Description: The selected stereo mark appears near the carbon atom for 
+      Description: The selected stereo mark appears near the carbon atom for
       Inverts - .Inv, ext.
     */
       await openFileAndAddToCanvas('chain.ket', page);
@@ -1420,7 +1417,7 @@ test.describe('Atom Properties', () => {
     async ({ page }) => {
       /*
       Test case: EPMLSOPKET-1650
-      Description: The selected stereo mark appears near the carbon atom for 
+      Description: The selected stereo mark appears near the carbon atom for
       Retains - .Ret, ext.
     */
       await openFileAndAddToCanvas('chain.ket', page);

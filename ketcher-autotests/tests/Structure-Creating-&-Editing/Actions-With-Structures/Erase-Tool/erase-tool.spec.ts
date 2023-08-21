@@ -27,8 +27,7 @@ test.describe('Erase Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  // flaky
-  test.fixme('Erase atom and bond', async ({ page }) => {
+  test('Erase atom and bond', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1363
     Description: Erase tool erases atom and bond

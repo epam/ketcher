@@ -25,6 +25,7 @@ import {
   receiveFileComparisonData,
   clickOnAtom,
   screenshotBetweenUndoRedo,
+  openFile,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
@@ -339,6 +340,27 @@ test.describe('Attachment Point Tool', () => {
     expect(molFile).toEqual(molFileExpected);
   });
 
+  test('Click and Save as *.mol file', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-1747
+    Description: Click the 'Save As' button, and click the 'Save' button.
+    Open the saved *.mol file and edit it in any way.
+    */
+    await openFileAndAddToCanvas('chain-with-attachment-points.ket', page);
+    const expectedFile = await getMolfile(page);
+    await saveToFile('chain-with-attachment-points-expected.mol', expectedFile);
+    await openFile('chain-with-attachment-points-expected.mol', page);
+    const METADATA_STRING_INDEX = [1];
+    const { fileExpected: molFileExpected, file: molFile } =
+      await receiveFileComparisonData({
+        page,
+        metaDataIndexes: METADATA_STRING_INDEX,
+        expectedFileName:
+          'tests/test-data/chain-with-attachment-points-expected.mol',
+      });
+    expect(molFile).toEqual(molFileExpected);
+  });
+
   test('Save as *.mol file V3000', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1651
@@ -370,6 +392,28 @@ test.describe('Attachment Point Tool', () => {
     await openFileAndAddToCanvas('reaction-with-arrow-and-plus.ket', page);
     const expectedFile = await getRxn(page);
     await saveToFile('reaction-with-arrow-and-plus-expected.rxn', expectedFile);
+
+    const METADATA_STRING_INDEX = [2, 7, 30, 37];
+    const { fileExpected: rxnFileExpected, file: rxnFile } =
+      await receiveFileComparisonData({
+        page,
+        metaDataIndexes: METADATA_STRING_INDEX,
+        expectedFileName:
+          'tests/test-data/reaction-with-arrow-and-plus-expected.rxn',
+      });
+    expect(rxnFile).toEqual(rxnFileExpected);
+  });
+
+  test('Click and Save as *.rxn file', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-1748
+    Description: Click the 'Save As' button and click the 'Save' button.
+    Open the saved *.rxn file and edit it in any way.
+    */
+    await openFileAndAddToCanvas('reaction-with-arrow-and-plus.ket', page);
+    const expectedFile = await getRxn(page);
+    await saveToFile('reaction-with-arrow-and-plus-expected.rxn', expectedFile);
+    await openFile('reaction-with-arrow-and-plus-expected.rxn', page);
 
     const METADATA_STRING_INDEX = [2, 7, 30, 37];
     const { fileExpected: rxnFileExpected, file: rxnFile } =
@@ -414,6 +458,30 @@ test.describe('Attachment Point Tool', () => {
     await openFileAndAddToCanvas('chain-with-attachment-points.ket', page);
     const expectedFile = await getSmiles(page);
     await saveToFile('chain-with-attachment-points-expected.smi', expectedFile);
+
+    const { fileExpected: smiFileExpected, file: smiFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/chain-with-attachment-points-expected.smi',
+      });
+    expect(smiFile).toEqual(smiFileExpected);
+  });
+
+  test.fixme('Click and Save as *.smi file', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-1749
+    Description: Click the 'Save As' button, save as Smiles file ('Daylight SMILES' format).
+    Open the saved *.smi file and edit it in any way.
+    Click the 'Save As' button, save as InChi file.
+    Open the saved *.inchi file and edit it in any way.
+    Click the 'Save As' button, save as CML file.
+    Open the saved *.cml file and edit it in any way.
+    */
+    await openFileAndAddToCanvas('chain-with-attachment-points.ket', page);
+    const expectedFile = await getSmiles(page);
+    await saveToFile('chain-with-attachment-points-expected.smi', expectedFile);
+    await openFile('chain-with-attachment-points-expected.smi', page);
 
     const { fileExpected: smiFileExpected, file: smiFile } =
       await receiveFileComparisonData({

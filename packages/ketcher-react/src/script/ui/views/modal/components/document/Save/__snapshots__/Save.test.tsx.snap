@@ -212,6 +212,24 @@ Object {
           <li
             aria-selected="false"
             class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-kk1bwy-MuiButtonBase-root-MuiMenuItem-root"
+            data-value="sdf"
+            role="option"
+            tabindex="-1"
+          >
+            SDF V2000
+          </li>
+          <li
+            aria-selected="false"
+            class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-kk1bwy-MuiButtonBase-root-MuiMenuItem-root"
+            data-value="sdfV3000"
+            role="option"
+            tabindex="-1"
+          >
+            SDF V3000
+          </li>
+          <li
+            aria-selected="false"
+            class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-kk1bwy-MuiButtonBase-root-MuiMenuItem-root"
             data-value="smarts"
             role="option"
             tabindex="-1"

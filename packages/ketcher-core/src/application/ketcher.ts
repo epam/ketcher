@@ -222,6 +222,22 @@ export class Ketcher {
     );
   }
 
+  getSdf(): Promise<string> {
+    return getStructure(
+      SupportedFormat.sdf,
+      this.#formatterFactory,
+      this.#editor.struct(),
+    );
+  }
+
+  getSdfV3000(): Promise<string> {
+    return getStructure(
+      SupportedFormat.sdfV3000,
+      this.#formatterFactory,
+      this.#editor.struct(),
+    );
+  }
+
   getCDXml(): Promise<string> {
     return getStructure(
       SupportedFormat.cdxml,

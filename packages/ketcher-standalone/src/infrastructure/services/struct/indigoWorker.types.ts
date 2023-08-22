@@ -60,6 +60,7 @@ export enum SupportedFormat {
   Ket = 'ket',
   CDX = 'cdx',
   CDXML = 'cdxml',
+  SDF = 'sdf',
 }
 
 export interface WithStruct {

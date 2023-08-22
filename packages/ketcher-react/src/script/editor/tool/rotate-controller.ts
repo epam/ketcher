@@ -367,6 +367,7 @@ class RotateController {
           fill: STYLE.INITIAL_COLOR,
           stroke: 'none',
         });
+        circle.node.setAttribute('data-testid', 'rotation-handle');
 
         const leftArrow = this.paper
           .path(LEFT_ARROW_PATH)

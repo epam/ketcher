@@ -337,7 +337,7 @@ test.describe('R-Group Label Tool', () => {
     const y = 200;
     await openFileAndAddToCanvas('chain-with-r-group.rxn', page);
     await copyAndPaste(page);
-    await dragMouseTo(x, y, page);
+    await page.mouse.click(x, y);
   });
 
   test('Cut/Paste actions Structure with R-Group label', async ({ page }) => {
@@ -349,7 +349,7 @@ test.describe('R-Group Label Tool', () => {
     const y = 200;
     await openFileAndAddToCanvas('chain-with-r-group.rxn', page);
     await cutAndPaste(page);
-    await dragMouseTo(x, y, page);
+    await page.mouse.click(x, y);
   });
 
   test('Atom properties do not implement for the Rgroup labels', async ({

@@ -592,8 +592,8 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Test case: EPMLSOPKET-2884
     Description: Copied objects are pasted as one object and correctly displayed without data loss.
     */
-    const x = 100;
-    const y = 100;
+    const x = 300;
+    const y = 200;
     await openFileAndAddToCanvas(
       'structure-with-all-kinds-of-s-groups.mol',
       page,

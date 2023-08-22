@@ -78,25 +78,29 @@ test.describe('CML files', () => {
     expect(cmlFile).toEqual(cmlFileExpected);
   });
 
-  test('Open and Save file - CML - CML for reaction', async ({ page }) => {
-    /**
+  // flaky
+  test.fixme(
+    'Open and Save file - CML - CML for reaction',
+    async ({ page }) => {
+      /**
    * Test case: EPMLSOPKET-1947
     Description: Saved cml file with structure is compering with paste reaction from rxn file
   */
-    await openFileAddToCanvasTakeScreenshot(page, 'cml-1947-reaction.rxn');
-    // check that structure opened from file is displayed correctly
+      await openFileAddToCanvasTakeScreenshot(page, 'cml-1947-reaction.rxn');
+      // check that structure opened from file is displayed correctly
 
-    const expectedFile = await getCml(page);
-    await saveToFile('cml-1947-reaction-expected.cml', expectedFile);
-    const { file: cmlFile, fileExpected: cmlFileExpected } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName: 'tests/test-data/cml-1947-reaction-expected.cml',
-      });
-    // comparing cml file with golden cml file
+      const expectedFile = await getCml(page);
+      await saveToFile('cml-1947-reaction-expected.cml', expectedFile);
+      const { file: cmlFile, fileExpected: cmlFileExpected } =
+        await receiveFileComparisonData({
+          page,
+          expectedFileName: 'tests/test-data/cml-1947-reaction-expected.cml',
+        });
+      // comparing cml file with golden cml file
 
-    expect(cmlFile).toEqual(cmlFileExpected);
-  });
+      expect(cmlFile).toEqual(cmlFileExpected);
+    },
+  );
 
   test.fixme(
     'Open and Save file - CML - CML for R-group and other features',

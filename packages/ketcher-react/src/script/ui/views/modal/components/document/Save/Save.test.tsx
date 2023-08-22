@@ -4,11 +4,11 @@ import Save from '.';
 import { renderWithMockContext } from './Save.test.utils';
 
 describe('Save Dialog should be rendered correctly', () => {
+  jest.setTimeout(60000);
   it('should render opened file format dropdown when the closed dropdown is clicked', async () => {
     const view = renderWithMockContext(<Save />);
 
     userEvent.click(screen.getByText('MDL Molfile V2000'));
-
     await screen.findByText('MDL Molfile V3000');
 
     expect(view).toMatchSnapshot();

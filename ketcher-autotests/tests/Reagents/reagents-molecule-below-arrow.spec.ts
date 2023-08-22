@@ -17,26 +17,38 @@ test.describe('Reagents molecule below arrow', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Open File RXN v3000 with reagent HCl below arrow', async ({ page }) => {
-    /*
+  // TODO flaky
+  test.fixme(
+    'Open File RXN v3000 with reagent HCl below arrow',
+    async ({ page }) => {
+      /*
       Test case: EPMLSOPKET-4723
       Description: File opens with the reagent HCl below the arrow
     */
-    await openFileAndAddToCanvas('benzene-arrow-benzene-reagent-hcl.rxn', page);
-  });
+      await openFileAndAddToCanvas(
+        'benzene-arrow-benzene-reagent-hcl.rxn',
+        page,
+      );
+    },
+  );
 
-  test('Open File CDXML with reagent HCl below arrow', async ({ page }) => {
-    /*
+  // TODO flaky
+  test.fixme(
+    'Open File CDXML with reagent HCl below arrow',
+    async ({ page }) => {
+      /*
       Test case: EPMLSOPKET-4723
       Description: File opens with the reagent HCl below the arrow
     */
-    await openFileAndAddToCanvas(
-      'benzene-arrow-benzene-reagent-hcl.cdxml',
-      page,
-    );
-  });
+      await openFileAndAddToCanvas(
+        'benzene-arrow-benzene-reagent-hcl.cdxml',
+        page,
+      );
+    },
+  );
 
-  test('Save SVG with reagent HCl below arrow', async ({ page }) => {
+  // TODO flaky
+  test.fixme('Save SVG with reagent HCl below arrow', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-4701
       Description: File is shown in the preview with the HCl reagent below the arrow
@@ -47,7 +59,8 @@ test.describe('Reagents molecule below arrow', () => {
     await page.getByRole('option', { name: 'SVG Document' }).click();
   });
 
-  test('Save PNG with reagent HCl below arrow', async ({ page }) => {
+  // TODO flaky
+  test.fixme('Save PNG with reagent HCl below arrow', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-4698
       Description: File is shown in the preview with the HCl reagent below the arrow

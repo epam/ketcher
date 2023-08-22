@@ -98,7 +98,7 @@ async function ManipulateRingsByName(type: RingButton, page: Page) {
   await checkHistoryForBondDeletion(page);
 }
 
-test.describe.fixme('Templates - Rings manipulations', () => {
+test.describe('Templates - Rings manipulations', () => {
   // EPMLSOPKET: connecting different rings to rings, applying changes to a single ring, history check
 
   test.beforeEach(async ({ page }) => {

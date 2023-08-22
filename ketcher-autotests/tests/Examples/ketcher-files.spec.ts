@@ -17,7 +17,7 @@ test('opening rnx files', async ({ page }) => {
 });
 
 test('opening smi files', async ({ page }) => {
-  /* 
+  /*
   Test case: EPMLSOPKET-1840
   */
   await page.goto('');

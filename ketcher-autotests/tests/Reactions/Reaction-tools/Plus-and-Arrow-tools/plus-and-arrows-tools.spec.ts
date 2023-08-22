@@ -11,19 +11,19 @@ import {
   selectNestedTool,
   selectTopPanelButton,
   takeEditorScreenshot,
-} from '@utils/canvas';
-import {
   clickInTheMiddleOfTheScreen,
   clickOnTheCanvas,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
   moveMouseToTheMiddleOfTheScreen,
-} from '@utils/clicks';
-import { openFileAndAddToCanvas } from '@utils/files';
-import { DELAY_IN_SECONDS, INPUT_DELAY } from '@utils/globals';
-import { getControlModifier } from '@utils/keyboard';
-import { LeftPanelButton, TopPanelButton } from '@utils/selectors';
-import { Point } from '@utils/types';
+  openFileAndAddToCanvas,
+  DELAY_IN_SECONDS,
+  INPUT_DELAY,
+  getControlModifier,
+  LeftPanelButton,
+  TopPanelButton,
+  Point,
+} from '@utils';
 import { CheckResult } from 'ketcher-core';
 
 const xOffsetFromCenter = -35;
@@ -93,6 +93,7 @@ test.describe('Plus and Arrows tools ', () => {
         await openFileAndAddToCanvas('benzene-and-cyclopentadiene.mol', page);
         await selectNestedTool(page, tool);
         await clickOnTheCanvas(page, xOffsetFromCenter, 0);
+        await delay(DELAY_IN_SECONDS.ONE);
         await takeEditorScreenshot(page);
         await selectTopPanelButton(TopPanelButton.Undo, page);
       });

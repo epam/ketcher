@@ -1,5 +1,5 @@
 import { Page } from '@playwright/test';
-import { pressButton, selectOption } from '@utils/clicks';
+import { pressButton, selectOption } from '@utils';
 import { selectButtonByTitle } from '@utils/clicks/selectButtonByTitle';
 import {
   AtomButton,

@@ -65,7 +65,7 @@ export function fromAtomsAttrs(
 
   aids.forEach((atomId) => {
     Object.keys(Atom.attrlist).forEach((key) => {
-      if (key === 'attpnt' && !(key in attrs)) return;
+      if (key === 'attachmentPoints' && !(key in attrs)) return;
       if (!(key in attrs) && !reset) return;
 
       const value = key in attrs ? attrs[key] : Atom.attrGetDefault(key);
@@ -236,7 +236,7 @@ export function fromAtomMerge(restruct, srcId, dstId) {
 }
 
 export function mergeFragmentsIfNeeded(action, restruct, srcId, dstId) {
-  const frid = atomGetAttr(restruct, srcId, 'fragment');
+  const frid = atomGetAttr(restruct, srcId, 'fragment') as number;
   const frid2 = atomGetAttr(restruct, dstId, 'fragment');
   if (frid2 === frid || typeof frid !== 'number' || typeof frid2 !== 'number') {
     return frid;

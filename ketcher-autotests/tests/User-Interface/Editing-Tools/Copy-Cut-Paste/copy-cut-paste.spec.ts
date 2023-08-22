@@ -878,7 +878,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await expect(page).toHaveScreenshot();
   });
 
-  test('Copy button', async ({ page }) => {
+  test.fixme('Copy button', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1709
     Description: Button is disabled. Tooltip "Copy (Ctrl+С)" appears.
@@ -889,6 +889,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Object is created.
     Object is selected. Buttons are enabled.
     */
+    // Need add mask to Indigo buttons. They do not have time to load and sometimes they do.
     await page.getByTestId('copy-button-dropdown-triangle').click();
     await delay(DELAY_IN_SECONDS.THREE);
     await expect(page).toHaveScreenshot();

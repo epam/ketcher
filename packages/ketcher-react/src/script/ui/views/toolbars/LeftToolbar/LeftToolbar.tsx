@@ -99,7 +99,6 @@ const LeftToolbar = (props: Props) => {
     return visibleItems.length ? (
       <div className={clsx(classes.group, className)}>
         {visibleItems.map((item) => {
-          console.log('items', item, item.id);
           switch (item.id) {
             case 'bond-common':
               return <Bond {...rest} height={height} key={item.id} />;

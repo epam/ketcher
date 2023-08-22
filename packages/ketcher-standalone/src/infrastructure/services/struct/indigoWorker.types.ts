@@ -56,6 +56,7 @@ export enum SupportedFormat {
   CML = 'cml',
   InChI = 'inchi',
   InChIAuxInfo = 'inchi-aux',
+  InChIKey = 'inchi-key',
   Ket = 'ket',
   CDX = 'cdx',
   CDXML = 'cdxml',

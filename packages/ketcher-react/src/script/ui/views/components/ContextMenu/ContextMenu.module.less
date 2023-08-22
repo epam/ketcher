@@ -59,7 +59,7 @@
     }
   }
 
-  :global(.contexify_item):not(:last-child) {
+  :global(.contexify_item):not(.sameGroup,:last-child) {
     &::after {
       content: '';
       display: block;
@@ -71,6 +71,13 @@
   .subMenu {
     :global(.contexify_rightSlot) {
       margin-right: -15px;
+    }
+
+    &::before {
+      content: '';
+      display: block;
+      border-top: 1px solid @border-color;
+      margin: 3px 0;
     }
   }
 }

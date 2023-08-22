@@ -32,7 +32,13 @@ const BondMenuItems: FC<MenuItemsProps> = (props) => {
       {nonQueryBondNames.map((name) => {
         const iconName = getIconName(name);
         return (
-          <Item {...props} id={name} onClick={handleTypeChange} key={name}>
+          <Item
+            className={styles.sameGroup}
+            {...props}
+            id={name}
+            onClick={handleTypeChange}
+            key={name}
+          >
             {iconName && <Icon name={iconName} className={styles.icon} />}
             <span>{formatTitle(tools[name].title)}</span>
           </Item>
@@ -43,7 +49,12 @@ const BondMenuItems: FC<MenuItemsProps> = (props) => {
         {queryBondNames.map((name) => {
           const iconName = getIconName(name);
           return (
-            <Item id={name} onClick={handleTypeChange} key={name}>
+            <Item
+              className={styles.sameGroup}
+              id={name}
+              onClick={handleTypeChange}
+              key={name}
+            >
               {iconName && <Icon name={iconName} className={styles.icon} />}
               <span>{formatTitle(tools[name].title)}</span>
             </Item>

@@ -626,7 +626,7 @@ test.describe('Attachment Point Tool', () => {
     page,
   }) => {
     /*
-    Test case: EPMLSOPKET-15516, EPMLSOPKET-15517
+    Test case: EPMLSOPKET-15516, EPMLSOPKET-15517, EPMLSOPKET-15522
     Description: Openeded structures are displayed with the correct attachment points.
     */
     await openFileAndAddToCanvas(
@@ -646,5 +646,66 @@ test.describe('Attachment Point Tool', () => {
       'Molfiles-V2000/four-attachment-point.mol',
       page,
     );
+  });
+
+  test('Verify that changing primary attachment points to secondary updates the visualization', async ({
+    page,
+  }) => {
+    /*
+    Test case: EPMLSOPKET-15519
+    Description: Visualization updates accordingly, displaying 
+    the attachment point labels near the curve line.
+    */
+    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
+    await clickOnAtom(page, 'C', 3);
+    await page.getByLabel(AttachmentPoint.PRIMARY).check();
+    await pressButton(page, 'Apply');
+    await takeEditorScreenshot(page);
+    await clickOnAtom(page, 'C', 3);
+    await page.getByLabel(AttachmentPoint.PRIMARY).uncheck();
+    await page.getByLabel(AttachmentPoint.SECONDARY).check();
+    await pressButton(page, 'Apply');
+  });
+
+  test('Verify that changing secondary attachment points to primary updates the visualization', async ({
+    page,
+  }) => {
+    /*
+    Test case: EPMLSOPKET-15520
+    Description: visualization updates accordingly, 
+    removing the attachment point labels near the curve line.
+    */
+    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
+    await clickOnAtom(page, 'C', 3);
+    await page.getByLabel(AttachmentPoint.SECONDARY).check();
+    await pressButton(page, 'Apply');
+    await takeEditorScreenshot(page);
+    await clickOnAtom(page, 'C', 3);
+    await page.getByLabel(AttachmentPoint.SECONDARY).uncheck();
+    await page.getByLabel(AttachmentPoint.PRIMARY).check();
+    await pressButton(page, 'Apply');
+  });
+
+  test('Verify that removing all attachment points updates the visualization', async ({
+    page,
+  }) => {
+    /*
+    Test case: EPMLSOPKET-15521
+    Description:  Visualization no longer displays any 
+    attachment point labels near the curve line.
+    */
+    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
+    await clickOnAtom(page, 'C', 3);
+    await page.getByLabel(AttachmentPoint.PRIMARY).check();
+    await page.getByLabel(AttachmentPoint.SECONDARY).check();
+    await pressButton(page, 'Apply');
+    await takeEditorScreenshot(page);
+    await clickOnAtom(page, 'C', 3);
+    await page.getByLabel(AttachmentPoint.PRIMARY).uncheck();
+    await page.getByLabel(AttachmentPoint.SECONDARY).uncheck();
+    await pressButton(page, 'Apply');
   });
 });

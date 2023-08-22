@@ -1,9 +1,13 @@
 import { expect, test } from '@playwright/test';
-import { selectAction, selectTool, takeEditorScreenshot } from '@utils/canvas';
+import {
+  selectAction,
+  selectTool,
+  takeEditorScreenshot,
+  openFileAndAddToCanvas,
+} from '@utils';
 import { getLeftAtomByAttributes } from '@utils/canvas/atoms';
 import { getLeftBondByAttributes } from '@utils/canvas/bonds';
 import { BondType } from '@utils/canvas/types';
-import { openFileAndAddToCanvas } from '@utils/files';
 import { LeftPanelButton, TopPanelButton } from '@utils/selectors';
 import { RxnArrow, RxnPlus } from 'ketcher-core';
 

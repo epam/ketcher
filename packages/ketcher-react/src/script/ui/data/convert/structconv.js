@@ -38,8 +38,8 @@ export function fromElement(selem) {
 
   if (Elements.get(selem.label)) return fromAtom(selem);
 
-  if (!selem.label && 'attpnt' in selem)
-    return { ap: fromApoint(selem.attpnt) };
+  if (!selem.label && 'attachmentPoints' in selem)
+    return { ap: fromApoint(selem.attachmentPoints) };
 
   return selem; // probably generic
 }
@@ -53,7 +53,9 @@ export function toElement(elem) {
   }
   if (elem.type === 'list' || elem.type === 'not-list') return toAtomList(elem);
 
-  if (!elem.label && 'ap' in elem) return { attpnt: toApoint(elem.ap) };
+  if (!elem.label && 'ap' in elem) {
+    return { attachmentPoints: toApoint(elem.ap) };
+  }
 
   if (Elements.get(capitalize(elem.label))) return toAtom(elem);
 

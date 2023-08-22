@@ -48,7 +48,7 @@ const BottomToolbar = (props: Props) => {
   const { active, disableableButtons, indigoVerification, onAction } = rest;
 
   return (
-    <div className={clsx(classes.root, className)}>
+    <div data-testid="bottom-toolbar" className={clsx(classes.root, className)}>
       <Group>
         <TemplatesList
           active={active}

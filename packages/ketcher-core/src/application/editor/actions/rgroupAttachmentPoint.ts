@@ -1,6 +1,6 @@
 import assert from 'assert';
 import { ReStruct } from 'application/render';
-import { Struct } from 'domain/entities';
+import { AttachmentPoints, Struct } from 'domain/entities';
 import {
   RGroupAttachmentPointAdd,
   RGroupAttachmentPointRemove,
@@ -11,22 +11,24 @@ import { fromAtomsAttrs } from '.';
 export function fromRGroupAttachmentPointUpdate(
   restruct: ReStruct,
   atomId: number,
-  attpnt,
+  attachmentPoints: AttachmentPoints | null,
 ) {
   const action = new Action();
   action.mergeWith(fromRGroupAttachmentPointsDeletionByAtom(restruct, atomId));
-  action.mergeWith(fromRGroupAttachmentPointAddition(restruct, attpnt, atomId));
+  action.mergeWith(
+    fromRGroupAttachmentPointAddition(restruct, attachmentPoints, atomId),
+  );
   return action;
 }
 
 export function fromRGroupAttachmentPointAddition(
   restruct: ReStruct,
-  attpnt,
+  attachmentPoints: AttachmentPoints | null,
   atomId: number,
 ) {
   const action = new Action();
-  switch (attpnt) {
-    case 1:
+  switch (attachmentPoints) {
+    case AttachmentPoints.FirstSideOnly:
       action.addOp(
         new RGroupAttachmentPointAdd({
           atomId,
@@ -35,7 +37,7 @@ export function fromRGroupAttachmentPointAddition(
       );
       break;
 
-    case 2:
+    case AttachmentPoints.SecondSideOnly:
       action.addOp(
         new RGroupAttachmentPointAdd({
           atomId,
@@ -44,7 +46,7 @@ export function fromRGroupAttachmentPointAddition(
       );
       break;
 
-    case 3:
+    case AttachmentPoints.BothSides:
       action.addOp(
         new RGroupAttachmentPointAdd({
           atomId,
@@ -82,11 +84,14 @@ export function fromRGroupAttachmentPointDeletion(
   restruct: ReStruct,
   id: number,
 ) {
-  const { atomId, newAttpnt } = getNewAtomAttpnt(restruct.molecule, id);
+  const { atomId, newAttachmentPoints } = getNewAtomAttachmentPoints(
+    restruct.molecule,
+    id,
+  );
   const actionToUpdateAtomsAttrs = fromAtomsAttrs(
     restruct,
     atomId,
-    { attpnt: newAttpnt },
+    { attachmentPoints: newAttachmentPoints },
     null,
   );
 
@@ -98,7 +103,7 @@ export function fromRGroupAttachmentPointDeletion(
     .mergeWith(actionToUpdateAtomsAttrs);
 }
 
-function getNewAtomAttpnt(
+function getNewAtomAttachmentPoints(
   struct: Struct,
   rgroupAttachmentPointToDelete: number,
 ) {
@@ -108,19 +113,17 @@ function getNewAtomAttpnt(
   assert(pointToDelete != null);
   const attachedAtomId = pointToDelete.atomId;
   const attachedAtom = struct.atoms.get(attachedAtomId);
-  const currentAttpnt = attachedAtom?.attpnt;
+  const currentAttachmentPoints = attachedAtom?.attachmentPoints;
 
-  let newAttpnt = 0;
-  if (currentAttpnt === 1 || currentAttpnt === 2) {
-    newAttpnt = 0;
-  } else if (currentAttpnt === 3) {
+  let newAttachmentPoints = AttachmentPoints.None;
+  if (currentAttachmentPoints === AttachmentPoints.BothSides) {
     const pointToDeleteType = pointToDelete.type;
     if (pointToDeleteType === 'primary') {
-      newAttpnt = 2;
+      newAttachmentPoints = AttachmentPoints.SecondSideOnly;
     } else if (pointToDeleteType === 'secondary') {
-      newAttpnt = 1;
+      newAttachmentPoints = AttachmentPoints.FirstSideOnly;
     }
   }
 
-  return { atomId: attachedAtomId, newAttpnt };
+  return { atomId: attachedAtomId, newAttachmentPoints };
 }

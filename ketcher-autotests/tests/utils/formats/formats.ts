@@ -39,6 +39,14 @@ export async function getSmarts(page: Page) {
   return await page.evaluate(() => window.ketcher.getSmarts());
 }
 
+export async function getSdf(page: Page) {
+  return await page.evaluate(() => window.ketcher.getSdf());
+}
+
+export async function getSdfV3000(page: Page) {
+  return await page.evaluate(() => window.ketcher.getSdfV3000());
+}
+
 export async function setMolecule(page: Page, structStr: string) {
   return await page.evaluate(
     (structStr) => window.ketcher.setMolecule(structStr),

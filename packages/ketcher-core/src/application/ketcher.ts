@@ -21,7 +21,7 @@ import {
 } from './formatters';
 import { GenerateImageOptions, StructService } from 'domain/services';
 
-import { Editor } from './editor';
+import { Editor, defaultBondThickness } from './editor';
 import { Indigo } from 'application/indigo';
 import { KetSerializer, MolfileFormat } from 'domain/serializers';
 import { Struct } from 'domain/entities';
@@ -33,6 +33,7 @@ const allowedApiSettings = {
   'general.dearomatize-on-load': 'dearomatize-on-load',
   ignoreChiralFlag: 'ignoreChiralFlag',
   disableQueryElements: 'disableQueryElements',
+  bondThickness: 'bondThickness',
 };
 
 async function prepareStructToRender(
@@ -270,6 +271,8 @@ export class Ketcher {
       );
 
       this.#editor.struct(struct);
+      this.#editor.zoomAccordingContent(struct);
+      this.#editor.centerStruct();
     }, this.eventBus);
   }
 
@@ -301,7 +304,10 @@ export class Ketcher {
 
   async generateImage(
     data: string,
-    options: GenerateImageOptions = { outputFormat: 'png' },
+    options: GenerateImageOptions = {
+      outputFormat: 'png',
+      bondThickness: defaultBondThickness,
+    },
   ): Promise<Blob> {
     let meta = '';
 

@@ -12,12 +12,12 @@ export async function editRGroupAttachmentPoint(
 ) {
   try {
     const newAtom = await editor.event.elementEdit.dispatch({
-      attpnt: atom.attpnt,
+      attachmentPoints: atom.attachmentPoints,
     });
 
-    const previousAttpnt = atom?.attpnt;
-    const currentAttpnt = newAtom.attpnt;
-    if (previousAttpnt !== currentAttpnt) {
+    const previousAttachmentPoints = atom?.attachmentPoints;
+    const currentAttachmentPoints = newAtom.attachmentPoints;
+    if (previousAttachmentPoints !== currentAttachmentPoints) {
       const actionFromAtomsAttrs = fromAtomsAttrs(
         editor.render.ctab,
         atomId,
@@ -28,7 +28,7 @@ export async function editRGroupAttachmentPoint(
         fromRGroupAttachmentPointUpdate(
           editor.render.ctab,
           atomId,
-          currentAttpnt,
+          currentAttachmentPoints,
         );
       const action = actionFromAtomsAttrs.mergeWith(
         actionFromRGroupAttachmentPointUpdate,

@@ -69,6 +69,8 @@ export const OperationType = Object.freeze({
   ADD_HIGHLIGHT: 'Highlight',
   UPDATE_HIGHLIGHT: 'Update highlight',
   REMOVE_HIGHLIGHT: 'Remove highlight',
+  POLYMER_BOND_ADD: 'Add polymer bond',
+  POLYMER_BOND_DELETE: 'Remove polymer bond',
 });
 
 export enum OperationPriority {

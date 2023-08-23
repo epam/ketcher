@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { RaphaelAxisAlignedBoundingBox, RaphaelPaper } from 'raphael';
-import { Atom, Bond, Box2Abs, Vec2 } from 'domain/entities';
+import { Atom, Bond, Box2Abs, HalfBond, Vec2 } from 'domain/entities';
 import assert from 'assert';
 import { ReStruct, LayerMap } from './restruct';
 import Visel from './restruct/visel';
@@ -186,11 +186,26 @@ function drawCIPLabel({
   return cipValuePath;
 }
 
+function updateHalfBondCoordinates(
+  hb1: HalfBond,
+  hb2: HalfBond,
+  xShift: number,
+): [HalfBond, HalfBond] {
+  if (hb1.p.y !== hb2.p.y) return [hb1, hb2];
+  if (hb1.p.x < hb2.p.x && hb1.p.y === hb2.p.y) {
+    hb1.p.x = hb1.p.x + xShift;
+  } else if (hb1.p.x > hb2.p.x) {
+    hb1.p.x = hb1.p.x - xShift;
+  }
+
+  return [hb1, hb2];
+}
 const util = {
   relBox,
   shiftRayBox,
   calcCoordinates,
   drawCIPLabel,
+  updateHalfBondCoordinates,
 };
 
 export default util;

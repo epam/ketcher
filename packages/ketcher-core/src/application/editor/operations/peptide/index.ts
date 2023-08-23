@@ -43,7 +43,7 @@ class PeptideAdd extends BaseOperation {
     const struct = restruct.molecule;
     const newPeptide = new Peptide(peptide, position);
     const peptideRenderer = new PeptideRenderer(newPeptide);
-    struct.peptides.add(newPeptide);
+    struct.peptides.set(newPeptide.id, newPeptide);
     restruct.peptides.set(newPeptide.id, peptideRenderer);
   }
 

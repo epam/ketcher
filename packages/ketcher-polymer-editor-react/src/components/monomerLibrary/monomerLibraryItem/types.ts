@@ -17,6 +17,7 @@ import { MonomerItemType } from 'ketcher-core';
 
 export interface IMonomerItemProps {
   item: MonomerItemType;
+  disabled?: boolean;
   isSelected?: boolean;
   onClick?: VoidFunction;
   onMouseLeave?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;

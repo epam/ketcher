@@ -11,7 +11,7 @@ test.describe('Open Ketcher', () => {
     await page.goto('');
   });
 
-  test.fixme('About floating windows appeared', async ({ page }) => {
+  test('About floating windows appeared', async ({ page }) => {
     /* 
     Test case: EPMLSOPKET-12191
     Description: 'About' floating window appears

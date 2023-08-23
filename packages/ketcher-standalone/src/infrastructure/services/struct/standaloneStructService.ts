@@ -101,6 +101,10 @@ function convertMimeTypeToOutputFormat(
       format = SupportedFormat.InChIAuxInfo;
       break;
     }
+    case ChemicalMimeType.InChIKey: {
+      format = SupportedFormat.InChIKey;
+      break;
+    }
     case ChemicalMimeType.CML: {
       format = SupportedFormat.CML;
       break;
@@ -656,9 +660,11 @@ class IndigoService implements StructService {
     options: GenerateImageOptions = {
       outputFormat: 'png',
       backgroundColor: '',
+      bondThickness: 1,
     },
   ): Promise<string> {
-    const { outputFormat, backgroundColor, ...restOptions } = options;
+    const { outputFormat, backgroundColor, bondThickness, ...restOptions } =
+      options;
     return new Promise((resolve, reject) => {
       const action = ({ data }: OutputMessageWrapper) => {
         const msg: OutputMessage<string> = data;
@@ -678,6 +684,7 @@ class IndigoService implements StructService {
         struct: data,
         outputFormat: outputFormat || 'png',
         backgroundColor,
+        bondThickness,
         options: commandOptions,
       };
 

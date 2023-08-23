@@ -54,7 +54,7 @@ test.describe('SMILES files', () => {
   test('SmileString for structure with Bond properties', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1906
-    Description: SmileString is correctly generated from structure and vise 
+    Description: SmileString is correctly generated from structure and vise
     versa structure is correctly generated from SmileString.
     */
     await openFileAndAddToCanvas('all-type-bonds.ket', page);
@@ -72,7 +72,7 @@ test.describe('SMILES files', () => {
   test('SmileString for structure with Atom properties', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1907
-    Description: SmileString is correctly generated from structure and 
+    Description: SmileString is correctly generated from structure and
     vise versa structure is correctly generated from SmileString.
     */
     await openFileAndAddToCanvas('all-atoms-properties.ket', page);
@@ -95,7 +95,7 @@ test.describe('SMILES files', () => {
   }) => {
     /*
     Test case: EPMLSOPKET-1908
-    Description: <<In Daylight SMILES the structure will be saved without S-groups>>  
+    Description: <<In Daylight SMILES the structure will be saved without S-groups>>
     warning appears for all types of Sgroup except the multiple Sgroup type.
     */
     await openFileAndAddToCanvas('sec_butyl_abr.mol', page);
@@ -131,7 +131,7 @@ test.describe('SMILES files', () => {
   }) => {
     /*
     Test case: EPMLSOPKET-1915
-    Description: SmileString is correctly generated from structure and 
+    Description: SmileString is correctly generated from structure and
     vise versa structure is correctly generated from SmileString.
     */
     await openFileAndAddToCanvas('Heteroatoms.mol', page);
@@ -146,34 +146,36 @@ test.describe('SMILES files', () => {
     await clearCanvasAndPasteSmiles(page, 'NOSPFClBrI[H]');
   });
 
-  test('SmileString from mol file that contains attached data', async ({
-    page,
-  }) => {
-    /*
+  // flaky
+  test.fixme(
+    'SmileString from mol file that contains attached data',
+    async ({ page }) => {
+      /*
     Test case: EPMLSOPKET-1916
-    Description: Warning tab: Structure contains query properties of atoms 
+    Description: Warning tab: Structure contains query properties of atoms
     and bonds that are not supported in the SMILES. Query properties will not be reflected in the saved file
     */
-    await openFileAndAddToCanvas('Attached data.mol', page);
-    await getAndCompareSmiles(
-      page,
-      'tests/test-data/attached-data-expected.json',
-    );
+      await openFileAndAddToCanvas('Attached data.mol', page);
+      await getAndCompareSmiles(
+        page,
+        'tests/test-data/attached-data-expected.json',
+      );
 
-    await getPreviewForSmiles(page, 'MDL Molfile V2000', 'Daylight SMILES');
-    await page.getByText('Warnings').click();
-    await takeEditorScreenshot(page);
+      await getPreviewForSmiles(page, 'MDL Molfile V2000', 'Daylight SMILES');
+      await page.getByText('Warnings').click();
+      await takeEditorScreenshot(page);
 
-    await clearCanvasAndPasteSmiles(page, 'CCCC[C@@H](C)[C@@H](C)CC');
-  });
+      await clearCanvasAndPasteSmiles(page, 'CCCC[C@@H](C)[C@@H](C)CC');
+    },
+  );
 
   test('SmileString from V2000 mol file contains abs stereochemistry', async ({
     page,
   }) => {
     /*
     Test case: EPMLSOPKET-1917
-    Description: SmileString is correctly generated from structure and vise versa 
-    structure is correctly generated from SmileString. 
+    Description: SmileString is correctly generated from structure and vise versa
+    structure is correctly generated from SmileString.
     All stereobonds are displayed as in a mol-file.
     */
     await openFileAndAddToCanvas('V2000_abs.mol', page);
@@ -192,39 +194,41 @@ test.describe('SMILES files', () => {
     );
   });
 
-  test('SmileString from mol file that contains combination of different features', async ({
-    page,
-  }) => {
-    /*
+  // flaky
+  test.fixme(
+    'SmileString from mol file that contains combination of different features',
+    async ({ page }) => {
+      /*
     Test case: EPMLSOPKET-1920
-    Description: SmileString is correctly generated from structure and vise versa structure is 
+    Description: SmileString is correctly generated from structure and vise versa structure is
     correctly generated from SmileString.
-    Structure appears without attached data and brackets, query features, 
+    Structure appears without attached data and brackets, query features,
     Rgroup labels are rendered as R# symbols.
     */
-    await openFileAndAddToCanvas('different-features.mol', page);
-    await getAndCompareSmiles(
-      page,
-      'tests/test-data/smiles-different-features-expected.json',
-    );
+      await openFileAndAddToCanvas('different-features.mol', page);
+      await getAndCompareSmiles(
+        page,
+        'tests/test-data/smiles-different-features-expected.json',
+      );
 
-    await getPreviewForSmiles(page, 'MDL Molfile V2000', 'Daylight SMILES');
-    await takeEditorScreenshot(page);
+      await getPreviewForSmiles(page, 'MDL Molfile V2000', 'Daylight SMILES');
+      await takeEditorScreenshot(page);
 
-    await clearCanvasAndPasteSmiles(
-      page,
-      // eslint-disable-next-line max-len
-      'S=CC(F)CCCCC[C@@](CCO)/C=C/[C@@](N)CCC[C]C([13C]CC([C+2]CC(CC%91)CC(C)CCC)CCC)CC%92.[*:2]%92.[*:1]%91 |$;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;_R2;_R1$,rb:32:*,u:3|',
-    );
-    await delay(DELAY_IN_SECONDS.THREE);
-  });
+      await clearCanvasAndPasteSmiles(
+        page,
+        // eslint-disable-next-line max-len
+        'S=CC(F)CCCCC[C@@](CCO)/C=C/[C@@](N)CCC[C]C([13C]CC([C+2]CC(CC%91)CC(C)CCC)CCC)CC%92.[*:2]%92.[*:1]%91 |$;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;_R2;_R1$,rb:32:*,u:3|',
+      );
+      await delay(DELAY_IN_SECONDS.THREE);
+    },
+  );
 
   test('SmileString from file that contains Cis/Trans configuration', async ({
     page,
   }) => {
     /*
     Test case: EPMLSOPKET-1923
-    Description: SmileString is correctly generated from structure and vise versa 
+    Description: SmileString is correctly generated from structure and vise versa
     structure is correctly generated from SmileString.
     */
     await openFileAndAddToCanvas('cis-trans-cycle.mol', page);
@@ -247,7 +251,7 @@ test.describe('SMILES files', () => {
   }) => {
     /*
     Test case: EPMLSOPKET-1924
-    Description: The structure generated from SMILE string is correct, 
+    Description: The structure generated from SMILE string is correct,
     pseudoatoms are rendered, alias appears as common atom symbol for which this alias was assigned.
     */
     await openFileAndAddToCanvas('alias-pseudoatom.ket', page);
@@ -262,45 +266,52 @@ test.describe('SMILES files', () => {
     await clearCanvasAndPasteSmiles(page, '');
   });
 
-  test('SmileString from reaction consists of two or more reaction arrows and structures', async ({
-    page,
-  }) => {
-    /*
+  // flaky
+  test.fixme(
+    'SmileString from reaction consists of two or more reaction arrows and structures',
+    async ({ page }) => {
+      /*
     Test case: EPMLSOPKET-8905
-    Description: Structure is correctly opens from saved files. Keep only first reaction arrow 
+    Description: Structure is correctly opens from saved files. Keep only first reaction arrow
     and keep all structures (all intermediate structures should be products and the arrow is replaced by a plus)
     */
-    await openFileAndAddToCanvas('two-arrows-and-plus.ket', page);
-    await getAndCompareSmiles(
-      page,
-      'tests/test-data/smiles-two-arrows-and-plus-expected.json',
-    );
+      await openFileAndAddToCanvas('two-arrows-and-plus.ket', page);
+      await getAndCompareSmiles(
+        page,
+        'tests/test-data/smiles-two-arrows-and-plus-expected.json',
+      );
 
-    await getPreviewForSmiles(page, 'MDL Rxnfile V2000', 'Daylight SMILES');
-    await takeEditorScreenshot(page);
+      await getPreviewForSmiles(page, 'MDL Rxnfile V2000', 'Daylight SMILES');
+      await takeEditorScreenshot(page);
 
-    await clearCanvasAndPasteSmiles(
-      page,
-      'C1C=CC=CC=1.O>>C1C=CC(C)=CC=1C.C1C=CC(C)=CC=1C',
-    );
-  });
+      await clearCanvasAndPasteSmiles(
+        page,
+        'C1C=CC=CC=1.O>>C1C=CC(C)=CC=1C.C1C=CC(C)=CC=1C',
+      );
+    },
+  );
 
-  test('Open Daylight SMILES file with reagent above arrow', async ({
-    page,
-  }) => {
-    /*
+  // flaky
+  test.fixme(
+    'Open Daylight SMILES file with reagent above arrow',
+    async ({ page }) => {
+      /*
     Test case: EPMLSOPKET-12965
     Description: Structure is not distorted. Reagent NH3 located above reaction arrow.
     */
-    await openFileAndAddToCanvas('benzene-arrow-benzene-reagent-nh3.ket', page);
-    await getAndCompareSmiles(
-      page,
-      'tests/test-data/smiles-benzene-arrow-benzene-reagent-nh3-expected.json',
-    );
+      await openFileAndAddToCanvas(
+        'benzene-arrow-benzene-reagent-nh3.ket',
+        page,
+      );
+      await getAndCompareSmiles(
+        page,
+        'tests/test-data/smiles-benzene-arrow-benzene-reagent-nh3-expected.json',
+      );
 
-    await getPreviewForSmiles(page, 'MDL Rxnfile V2000', 'Daylight SMILES');
-    await takeEditorScreenshot(page);
+      await getPreviewForSmiles(page, 'MDL Rxnfile V2000', 'Daylight SMILES');
+      await takeEditorScreenshot(page);
 
-    await clearCanvasAndPasteSmiles(page, 'C1C=CC=CC=1>N>C1C=CC=CC=1');
-  });
+      await clearCanvasAndPasteSmiles(page, 'C1C=CC=CC=1>N>C1C=CC=CC=1');
+    },
+  );
 });

@@ -56,6 +56,7 @@ export enum SupportedFormat {
   CML = 'cml',
   InChI = 'inchi',
   InChIAuxInfo = 'inchi-aux',
+  InChIKey = 'inchi-key',
   Ket = 'ket',
   CDX = 'cdx',
   CDXML = 'cdxml',
@@ -95,6 +96,7 @@ export interface GenerateInchIKeyCommandData extends CommandData, WithStruct {}
 export interface GenerateImageCommandData extends CommandData, WithStruct {
   outputFormat: 'png' | 'svg';
   backgroundColor?: string;
+  bondThickness?: number;
 }
 
 export interface LayoutCommandData

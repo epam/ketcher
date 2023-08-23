@@ -531,7 +531,7 @@ test.describe('Attachment Point Tool', () => {
     await selectLeftPanelButton(LeftPanelButton.Erase, page);
     point = await getAtomByIndex(page, { label: 'N' }, 0);
     await page.mouse.move(point.x, point.y);
-    page.keyboard.press('Delete');
+    await page.keyboard.press('Delete');
 
     point = await getAtomByIndex(page, { label: 'L#' }, 0);
     await page.mouse.move(point.x, point.y);

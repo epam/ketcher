@@ -61,55 +61,47 @@ class PresetTool implements Tool {
       throw new Error('monomerPreviewRenderer is not initialized');
     }
 
-    if (!this.rnaBase) {
-      throw new Error('no base in preset');
-    }
-
     if (!this.sugar) {
       throw new Error('no sugar in preset');
     }
-
-    if (!this.phosphate) {
-      throw new Error('no phosphate in preset');
-    }
-
-    fromMonomerAddition(
-      this.editor.renderersContainer,
-      this.rnaBase,
-      new Vec2(
-        this.editor.lastCursorPosition.x -
-          this.rnaBasePreviewRenderer.width / 2,
-        this.editor.lastCursorPosition.y -
-          this.rnaBasePreviewRenderer.height / 2,
-      ),
-    );
 
     fromMonomerAddition(
       this.editor.renderersContainer,
       this.sugar,
       new Vec2(
         this.editor.lastCursorPosition.x - this.sugarPreviewRenderer.width / 2,
-        this.editor.lastCursorPosition.y -
-          this.sugarPreviewRenderer.height / 2 -
-          this.rnaBasePreviewRenderer.height -
-          15,
+        this.editor.lastCursorPosition.y - this.sugarPreviewRenderer.height / 2,
       ),
     );
 
-    fromMonomerAddition(
-      this.editor.renderersContainer,
-      this.phosphate,
-      new Vec2(
-        this.editor.lastCursorPosition.x -
-          this.phosphatePreviewRenderer.width / 2 +
-          this.rnaBasePreviewRenderer?.width +
-          15,
-        this.editor.lastCursorPosition.y -
-          this.phosphatePreviewRenderer.height / 2 -
-          this.rnaBasePreviewRenderer.height -
-          15,
-      ),
-    );
+    if (this.rnaBase && this.rnaBasePreviewRenderer) {
+      fromMonomerAddition(
+        this.editor.renderersContainer,
+        this.rnaBase,
+        new Vec2(
+          this.editor.lastCursorPosition.x -
+            this.rnaBasePreviewRenderer.width / 2,
+          this.editor.lastCursorPosition.y -
+            this.rnaBasePreviewRenderer.height / 2 +
+            this.sugarPreviewRenderer.height +
+            15,
+        ),
+      );
+    }
+
+    if (this.phosphate && this.phosphatePreviewRenderer)
+      fromMonomerAddition(
+        this.editor.renderersContainer,
+        this.phosphate,
+        new Vec2(
+          this.editor.lastCursorPosition.x -
+            this.phosphatePreviewRenderer.width / 2 +
+            this.sugarPreviewRenderer?.width +
+            15,
+          this.editor.lastCursorPosition.y -
+            this.phosphatePreviewRenderer.height / 2,
+        ),
+      );
 
     // this.makeBonds();
 
@@ -126,7 +118,7 @@ class PresetTool implements Tool {
 
     this.rnaBasePreview?.moveAbsolute(
       new Vec2(
-        this.editor.lastCursorPosition.x + this.MONOMER_PREVIEW_OFFSET_X + 2,
+        this.editor.lastCursorPosition.x + this.MONOMER_PREVIEW_OFFSET_X,
         this.editor.lastCursorPosition.y + this.MONOMER_PREVIEW_OFFSET_Y + 18,
       ),
     );
@@ -156,107 +148,122 @@ class PresetTool implements Tool {
   }
 
   public mouseover() {
-    if (!this.sugarPreview) {
+    if (!this.sugar) {
+      throw new Error('no sugar in preset');
+    }
+
+    if (this.sugarPreview) {
+      return;
+    }
+
+    const [Sugar, SugarRenderer] = monomerFactory(this.sugar);
+    this.sugarPreview = new Sugar(this.sugar);
+
+    this.sugarPreviewRenderer = new SugarRenderer(
+      this.sugarPreview,
+      this.MONOMER_PREVIEW_SCALE_FACTOR,
+    );
+
+    this.sugarPreviewRenderer?.show(this.editor.theme);
+
+    if (this.rnaBase) {
       const [RNABase, RNABaseRenderer] = monomerFactory(this.rnaBase);
-      const [Phosphate, PhosphateRenderer] = monomerFactory(this.phosphate);
-      const [Sugar, SugarRenderer] = monomerFactory(this.sugar);
-
       this.rnaBasePreview = new RNABase(this.rnaBase);
-      this.phosphatePreview = new Phosphate(this.phosphate);
-      this.sugarPreview = new Sugar(this.sugar);
-
       this.rnaBasePreviewRenderer = new RNABaseRenderer(
         this.rnaBasePreview,
         this.MONOMER_PREVIEW_SCALE_FACTOR,
       );
-      this.sugarPreviewRenderer = new SugarRenderer(
-        this.sugarPreview,
-        this.MONOMER_PREVIEW_SCALE_FACTOR,
-      );
+
+      this.rnaBasePreviewRenderer?.show(this.editor.theme);
+    }
+
+    if (this.phosphate) {
+      const [Phosphate, PhosphateRenderer] = monomerFactory(this.phosphate);
+
+      this.phosphatePreview = new Phosphate(this.phosphate);
+
       this.phosphatePreviewRenderer = new PhosphateRenderer(
         this.phosphatePreview,
         this.MONOMER_PREVIEW_SCALE_FACTOR,
       );
 
-      this.sugarPreviewRenderer?.show(this.editor.theme);
-      this.rnaBasePreviewRenderer?.show(this.editor.theme);
       this.phosphatePreviewRenderer?.show(this.editor.theme);
     }
   }
 
-  private makeBonds() {
-    const R1AttachmentPoint = this.sugarPreview?.R1AttachmentPoint;
-    const freeAttachmentPoint =
-      this.sugarPreviewRenderer?.monomer?.firstFreeAttachmentPoint;
+  // private makeBonds() {
+  //   const R1AttachmentPoint = this.sugarPreview?.R1AttachmentPoint;
+  //   const freeAttachmentPoint =
+  //     this.sugarPreviewRenderer?.monomer?.firstFreeAttachmentPoint;
 
-    console.log('R1AttachmentPoint: ', R1AttachmentPoint);
-    const R2AttachmentPoint = this.sugarPreview?.R2AttachmentPoint;
-    if (R1AttachmentPoint) {
-      console.log(this.sugarPreview);
-      console.log(this.sugarPreviewRenderer);
-      console.log(this.rnaBasePreview);
-      console.log(this.rnaBasePreviewRenderer);
-      assert(this.sugarPreviewRenderer);
-      console.log(freeAttachmentPoint);
+  //   console.log('R1AttachmentPoint: ', R1AttachmentPoint);
+  //   const R2AttachmentPoint = this.sugarPreview?.R2AttachmentPoint;
+  //   if (R1AttachmentPoint) {
+  //     console.log(this.sugarPreview);
+  //     console.log(this.sugarPreviewRenderer);
+  //     console.log(this.rnaBasePreview);
+  //     console.log(this.rnaBasePreviewRenderer);
+  //     assert(this.sugarPreviewRenderer);
+  //     console.log(freeAttachmentPoint);
 
-      fromPolymerBondAddition(this.editor.renderersContainer, {
-        firstMonomer: this.sugarPreviewRenderer.monomer,
-        startPosition: this.sugarPreviewRenderer.monomer.renderer.center,
-        endPosition: new Vec2(
-          this.sugarPreviewRenderer.monomer.renderer.center.x + 1,
-          this.sugarPreviewRenderer.monomer.renderer.center.y + 1,
-        ),
-      });
-      console.log(
-        'this.sugarPreviewRenderer.monomer.renderer.center: ',
-        this.sugarPreviewRenderer.monomer.renderer.center,
-      );
-      this.bondRenderer =
-        this.sugarPreviewRenderer?.monomer?.getPotentialBond(
-          freeAttachmentPoint,
-        )?.renderer;
+  //     fromPolymerBondAddition(this.editor.renderersContainer, {
+  //       firstMonomer: this.sugarPreviewRenderer.monomer,
+  //       startPosition: this.sugarPreviewRenderer.monomer.renderer.center,
+  //       endPosition: new Vec2(
+  //         this.sugarPreviewRenderer.monomer.renderer.center.x + 1,
+  //         this.sugarPreviewRenderer.monomer.renderer.center.y + 1,
+  //       ),
+  //     });
+  //     console.log(
+  //       'this.sugarPreviewRenderer.monomer.renderer.center: ',
+  //       this.sugarPreviewRenderer.monomer.renderer.center,
+  //     );
+  //     this.bondRenderer =
+  //       this.sugarPreviewRenderer?.monomer?.getPotentialBond(
+  //         freeAttachmentPoint,
+  //       )?.renderer;
 
-      // this.sugarPreview.getPotentialBond(R1AttachmentPoint)?.renderer;
+  //     // this.sugarPreview.getPotentialBond(R1AttachmentPoint)?.renderer;
 
-      this.setPotentialBondToAttachmentPoint(this.rnaBasePreviewRenderer); /// ВОТ ТУТ
-      console.log('bondRenderer', this.bondRenderer);
+  //     this.setPotentialBondToAttachmentPoint(this.rnaBasePreviewRenderer); /// ВОТ ТУТ
+  //     console.log('bondRenderer', this.bondRenderer);
 
-      const firstMonomerAttachmentPoint =
-        this.bondRenderer.polymerBond.firstMonomer.getPotentialAttachmentPointByBond(
-          this.bondRenderer.polymerBond,
-        );
-      const secondMonomerAttachmentPoint =
-        this.rnaBasePreview.availableAttachmentPointForBondEnd;
-      console.log(firstMonomerAttachmentPoint);
-      console.log(secondMonomerAttachmentPoint);
-      console.log(this.rnaBasePreview);
+  //     const firstMonomerAttachmentPoint =
+  //       this.bondRenderer.polymerBond.firstMonomer.getPotentialAttachmentPointByBond(
+  //         this.bondRenderer.polymerBond,
+  //       );
+  //     const secondMonomerAttachmentPoint =
+  //       this.rnaBasePreview.availableAttachmentPointForBondEnd;
+  //     console.log(firstMonomerAttachmentPoint);
+  //     console.log(secondMonomerAttachmentPoint);
+  //     console.log(this.rnaBasePreview);
 
-      BondService.finishBondCreation(
-        firstMonomerAttachmentPoint,
-        secondMonomerAttachmentPoint,
-        this.rnaBasePreview,
-        this.bondRenderer.polymerBond,
-      );
-    }
+  //     BondService.finishBondCreation(
+  //       firstMonomerAttachmentPoint,
+  //       secondMonomerAttachmentPoint,
+  //       this.rnaBasePreview,
+  //       this.bondRenderer.polymerBond,
+  //     );
+  //   }
 
-    this.bondRenderer = undefined;
-  }
+  //   this.bondRenderer = undefined;
+  // }
 
-  private setPotentialBondToAttachmentPoint(
-    monomerRenderer: BaseMonomerRenderer,
-  ) {
-    if (!this.bondRenderer) return;
+  // private setPotentialBondToAttachmentPoint(
+  //   monomerRenderer: BaseMonomerRenderer,
+  // ) {
+  //   if (!this.bondRenderer) return;
 
-    const attachmentPoint =
-      monomerRenderer.monomer.availableAttachmentPointForBondEnd;
+  //   const attachmentPoint =
+  //     monomerRenderer.monomer.availableAttachmentPointForBondEnd;
 
-    if (!attachmentPoint) return;
+  //   if (!attachmentPoint) return;
 
-    monomerRenderer.monomer.setPotentialBond(
-      attachmentPoint,
-      this.bondRenderer.polymerBond,
-    );
-  }
+  //   monomerRenderer.monomer.setPotentialBond(
+  //     attachmentPoint,
+  //     this.bondRenderer.polymerBond,
+  //   );
+  // }
 }
 
 export { PresetTool };

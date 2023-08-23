@@ -23,8 +23,7 @@ test.describe('open files with different formats', () => {
     await takeEditorScreenshot(page);
   });
 
-  // flaky
-  test.fixme('opening rxn files', async ({ page }) => {
+  test('opening rxn files', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1839
     */
@@ -81,7 +80,7 @@ the first one disappears. Couldn't reproduct manually.
     );
     // add second structure from file to canvas
     await selectTopPanelButton(TopPanelButton.Open, page);
-    await openFile('rxn_reaction.rxn', page);
+    await openFile('rxn-reaction.rxn', page);
     await waitForLoad(page, () => {
       pressButton(page, 'Add to Canvas');
     });

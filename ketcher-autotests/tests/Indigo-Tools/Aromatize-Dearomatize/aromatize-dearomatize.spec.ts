@@ -68,9 +68,9 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     async ({ page }) => {
       /*
     Test case: EPMLSOPKET-1870
-    Description: The aromatic structures appear with circle inside the cycles. 
+    Description: The aromatic structures appear with circle inside the cycles.
     Aromatize function affects all canvas.
-    The structures appears in a Kekule form: with interchanged Single and Double bonds. 
+    The structures appears in a Kekule form: with interchanged Single and Double bonds.
     Dearomatize function affects all canvas.
     */
       await openFileAndAddToCanvas('aromatic-structures.mol', page);
@@ -83,9 +83,9 @@ test.describe('Aromatize/Dearomatize Tool', () => {
   test('Cycles with Aromatic Bonds', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1871
-    Description: All bonds in the structures are changed with Aromatic Bonds. 
+    Description: All bonds in the structures are changed with Aromatic Bonds.
     The circle inside the structure appears.
-    Only six-cycle structures appear in a Kekule form: with interchanged Single and Double bonds. 
+    Only six-cycle structures appear in a Kekule form: with interchanged Single and Double bonds.
     All other structures are rendered with a circle inside the cycles.
     */
     await openFileAndAddToCanvas('cycles-with-aromatic-bonds.mol', page);
@@ -99,7 +99,7 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     async ({ page }) => {
       /*
     Test case: EPMLSOPKET-1872
-    Description: Only six-cycle structures appear in a Kekule form: with interchanged Single and Double bonds. 
+    Description: Only six-cycle structures appear in a Kekule form: with interchanged Single and Double bonds.
     All other structures are rendered with a circle inside the cycles. The actions are Undone/Redone.
     */
       await openFileAndAddToCanvas('cycles-with-aromatic-bonds.mol', page);
@@ -116,7 +116,7 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     async ({ page }) => {
       /*
     Test case: EPMLSOPKET-1872
-    Description: The structures are pasted. The structures are rendered with a circle 
+    Description: The structures are pasted. The structures are rendered with a circle
     inside the cycle during any manipulations.
     */
       // test is working but structures moves. will fixes after fixing bug with canvas movement after copy/paste
@@ -132,7 +132,7 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     async ({ page }) => {
       /*
     Test case: EPMLSOPKET-1872
-    Description: The structures are pasted. The structures are rendered with a circle 
+    Description: The structures are pasted. The structures are rendered with a circle
     inside the cycle during any manipulations.
     */
       await openFileAndAddToCanvas('cycles-with-aromatic-bonds.mol', page);
@@ -147,7 +147,7 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     async ({ page }) => {
       /*
     Test case: EPMLSOPKET-1872
-    Description: Atom added to the structure. 
+    Description: Atom added to the structure.
     The structures are rendered with a circle inside the cycle during any manipulations.
     */
       await selectRing(RingButton.Benzene, page);
@@ -164,7 +164,7 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     /*
     Test case: EPMLSOPKET-1877
     Description: The structures are saved as mol-file.
-    The saved mol-file is opened correctly. In Ketcher the saved structures appear 
+    The saved mol-file is opened correctly. In Ketcher the saved structures appear
     with the circle inside the cycles.
     */
     await openFileAndAddToCanvas('aromatic-benzene-v2000.mol', page);
@@ -190,7 +190,7 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     /*
     Test case: EPMLSOPKET-1877
     Description: The structures are saved as mol-file.
-    The saved mol-file is opened correctly. In Ketcher the saved structures appear 
+    The saved mol-file is opened correctly. In Ketcher the saved structures appear
     with the circle inside the cycles.
     */
     await openFileAndAddToCanvas('aromatic-benzene-v3000.mol', page);
@@ -216,7 +216,7 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     /*
     Test case: EPMLSOPKET-1877
     Description: The structures are saved as smiles-file.
-    The saved smiles-file is opened correctly. In Ketcher the saved structures appear 
+    The saved smiles-file is opened correctly. In Ketcher the saved structures appear
     with the circle inside the cycles.
     */
     await openFileAndAddToCanvas('aromatic-benzene-smiles.smi', page);
@@ -233,62 +233,58 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     expect(smiFile).toEqual(smiFileExpected);
   });
 
-  // flaky
-  test.fixme(
-    '(RxnV2000) Save cyclic structures with a circle inside the cycle',
-    async ({ page }) => {
-      /*
+  test('(RxnV2000) Save cyclic structures with a circle inside the cycle', async ({
+    page,
+  }) => {
+    /*
     Test case: EPMLSOPKET-1877
     Description: The structures are saved as rxn-file.
-    The saved rxn-file is opened correctly. In Ketcher the saved structures appear 
+    The saved rxn-file is opened correctly. In Ketcher the saved structures appear
     with the circle inside the cycles.
     */
-      await openFileAndAddToCanvas('aromatic-benzene-rxnv2000.rxn', page);
-      const expectedFile = await getRxn(page, 'v2000');
-      await saveToFile('aromatic-benzene-rxnv2000-expected.rxn', expectedFile);
+    await openFileAndAddToCanvas('aromatic-benzene-rxnv2000.rxn', page);
+    const expectedFile = await getRxn(page, 'v2000');
+    await saveToFile('aromatic-benzene-rxnv2000-expected.rxn', expectedFile);
 
-      const METADATA_STRING_INDEX = [2, 7, 64];
+    const METADATA_STRING_INDEX = [2, 7, 64];
 
-      const { fileExpected: rxnFileExpected, file: rxnFile } =
-        await receiveFileComparisonData({
-          page,
-          expectedFileName:
-            'tests/test-data/aromatic-benzene-rxnv2000-expected.rxn',
-          metaDataIndexes: METADATA_STRING_INDEX,
-        });
+    const { fileExpected: rxnFileExpected, file: rxnFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/aromatic-benzene-rxnv2000-expected.rxn',
+        metaDataIndexes: METADATA_STRING_INDEX,
+      });
 
-      expect(rxnFile).toEqual(rxnFileExpected);
-    },
-  );
+    expect(rxnFile).toEqual(rxnFileExpected);
+  });
 
-  // flaky
-  test.fixme(
-    '(RxnV3000) Save cyclic structures with a circle inside the cycle',
-    async ({ page }) => {
-      /*
+  test('(RxnV3000) Save cyclic structures with a circle inside the cycle', async ({
+    page,
+  }) => {
+    /*
     Test case: EPMLSOPKET-1877
     Description: The structures are saved as rxn-file.
-    The saved rxn-file is opened correctly. In Ketcher the saved structures appear 
+    The saved rxn-file is opened correctly. In Ketcher the saved structures appear
     with the circle inside the cycles.
     */
-      await openFileAndAddToCanvas('aromatic-benzene-rxnv3000.rxn', page);
-      const expectedFile = await getRxn(page, 'v3000');
-      await saveToFile('aromatic-benzene-rxnv3000-expected.rxn', expectedFile);
+    await openFileAndAddToCanvas('aromatic-benzene-rxnv3000.rxn', page);
+    const expectedFile = await getRxn(page, 'v3000');
+    await saveToFile('aromatic-benzene-rxnv3000-expected.rxn', expectedFile);
 
-      const METADATA_STRING_INDEX = [2];
+    const METADATA_STRING_INDEX = [2];
 
-      const { fileExpected: rxnFileExpected, file: rxnFile } =
-        await receiveFileComparisonData({
-          page,
-          expectedFileName:
-            'tests/test-data/aromatic-benzene-rxnv3000-expected.rxn',
-          metaDataIndexes: METADATA_STRING_INDEX,
-          fileFormat: 'v3000',
-        });
+    const { fileExpected: rxnFileExpected, file: rxnFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/aromatic-benzene-rxnv3000-expected.rxn',
+        metaDataIndexes: METADATA_STRING_INDEX,
+        fileFormat: 'v3000',
+      });
 
-      expect(rxnFile).toEqual(rxnFileExpected);
-    },
-  );
+    expect(rxnFile).toEqual(rxnFileExpected);
+  });
 
   test('(Cml file) Save cyclic structures with a circle inside the cycle', async ({
     page,
@@ -296,7 +292,7 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     /*
     Test case: EPMLSOPKET-2943
     Description: The structures are saved as cml-file.
-    The saved cml-file is opened correctly. In Ketcher the saved structures appear 
+    The saved cml-file is opened correctly. In Ketcher the saved structures appear
     with the circle inside the cycles.
     */
     await openFileAndAddToCanvas('aromatic-benzene-cml.cml', page);

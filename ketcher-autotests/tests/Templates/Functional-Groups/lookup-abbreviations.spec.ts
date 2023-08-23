@@ -3,6 +3,7 @@ import {
   DELAY_IN_SECONDS,
   clickInTheMiddleOfTheScreen,
   delay,
+  moveOnAtom,
   takeEditorScreenshot,
 } from '@utils';
 
@@ -157,5 +158,18 @@ test.describe('Lookup Abbreviations tests', () => {
     await newPage.goto('', { waitUntil: 'domcontentloaded' });
     await newPage.bringToFront();
     await page.bringToFront();
+  });
+
+  test.skip('changing atom in a molecule using lookup abbreviation', async ({
+    page,
+  }) => {
+    // EPMLSOPKET-16926
+    // will be added with https://github.com/epam/ketcher/issues/2789
+    await page.getByRole('button', { name: 'Benzene (T)' }).click();
+    await clickInTheMiddleOfTheScreen(page);
+    const atomC = 0;
+    await moveOnAtom(page, 'C', atomC);
+    await page.keyboard.type('mer');
+    await page.keyboard.press('Enter');
   });
 });

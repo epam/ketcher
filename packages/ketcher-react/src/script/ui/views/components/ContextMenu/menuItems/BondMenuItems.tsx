@@ -29,11 +29,15 @@ const BondMenuItems: FC<MenuItemsProps> = (props) => {
           : 'Edit...'}
       </Item>
 
-      {nonQueryBondNames.map((name) => {
+      {nonQueryBondNames.map((name, i) => {
         const iconName = getIconName(name);
+        let classNames =
+          styles.sameGroup +
+          (i === nonQueryBondNames.length - 1 ? styles.devider : '');
+
         return (
           <Item
-            className={styles.sameGroup}
+            className={classNames}
             {...props}
             id={name}
             onClick={handleTypeChange}

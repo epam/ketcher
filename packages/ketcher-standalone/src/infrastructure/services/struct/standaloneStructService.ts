@@ -101,6 +101,10 @@ function convertMimeTypeToOutputFormat(
       format = SupportedFormat.InChIAuxInfo;
       break;
     }
+    case ChemicalMimeType.InChIKey: {
+      format = SupportedFormat.InChIKey;
+      break;
+    }
     case ChemicalMimeType.CML: {
       format = SupportedFormat.CML;
       break;

@@ -40,6 +40,7 @@ export const FloatingTools: React.FC<Props> = ({
     <div
       className={classes.wrapper}
       style={{ left: rotateHandlePosition.x, top: rotateHandlePosition.y }}
+      data-testid="floating-tools"
     >
       {FLOATING_TOOLS.map((name) => {
         const iconName = getIconName(name === 'erase' ? 'delete' : name);

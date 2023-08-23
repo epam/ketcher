@@ -57,7 +57,7 @@ test.describe('SMILES files', () => {
     Description: SmileString is correctly generated from structure and vise
     versa structure is correctly generated from SmileString.
     */
-    await openFileAndAddToCanvas('all-type-bonds.ket', page);
+    await openFileAndAddToCanvas('Ket/all-type-bonds.ket', page);
     await getAndCompareSmiles(
       page,
       'tests/test-data/smiles-all-bonds-expected.json',
@@ -75,7 +75,7 @@ test.describe('SMILES files', () => {
     Description: SmileString is correctly generated from structure and
     vise versa structure is correctly generated from SmileString.
     */
-    await openFileAndAddToCanvas('all-atoms-properties.ket', page);
+    await openFileAndAddToCanvas('Ket/all-atoms-properties.ket', page);
     await getAndCompareSmiles(
       page,
       'tests/test-data/smiles-all-atoms-properties-expected.json',
@@ -254,7 +254,7 @@ test.describe('SMILES files', () => {
     Description: The structure generated from SMILE string is correct,
     pseudoatoms are rendered, alias appears as common atom symbol for which this alias was assigned.
     */
-    await openFileAndAddToCanvas('alias-pseudoatom.ket', page);
+    await openFileAndAddToCanvas('Ket/alias-pseudoatom.ket', page);
     await getAndCompareSmiles(
       page,
       'tests/test-data/smiles-alias-pseudoatom-expected.json',
@@ -275,7 +275,7 @@ test.describe('SMILES files', () => {
     Description: Structure is correctly opens from saved files. Keep only first reaction arrow
     and keep all structures (all intermediate structures should be products and the arrow is replaced by a plus)
     */
-      await openFileAndAddToCanvas('two-arrows-and-plus.ket', page);
+      await openFileAndAddToCanvas('Ket/two-arrows-and-plus.ket', page);
       await getAndCompareSmiles(
         page,
         'tests/test-data/smiles-two-arrows-and-plus-expected.json',
@@ -300,7 +300,7 @@ test.describe('SMILES files', () => {
     Description: Structure is not distorted. Reagent NH3 located above reaction arrow.
     */
       await openFileAndAddToCanvas(
-        'benzene-arrow-benzene-reagent-nh3.ket',
+        'Ket/benzene-arrow-benzene-reagent-nh3.ket',
         page,
       );
       await getAndCompareSmiles(

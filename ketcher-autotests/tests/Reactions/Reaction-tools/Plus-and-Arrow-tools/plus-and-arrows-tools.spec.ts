@@ -443,7 +443,7 @@ test.describe('Plus and Arrows tools ', () => {
 
     test('open file', async ({ page }) => {
       await openFileAndAddToCanvas(
-        'default-reaction-arrow-tool-saving.ket',
+        'Ket/default-reaction-arrow-tool-saving.ket',
         page,
       );
     });
@@ -466,7 +466,7 @@ test.describe('Plus and Arrows tools ', () => {
 
     test('open file', async ({ page }) => {
       await openFileAndAddToCanvas(
-        'non-default-reaction-arrow-tool-saving.ket',
+        'Ket/non-default-reaction-arrow-tool-saving.ket',
         page,
       );
     });

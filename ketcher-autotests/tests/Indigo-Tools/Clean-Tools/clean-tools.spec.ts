@@ -224,7 +224,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
     The Clean Up action is applied correctly and simultaneously
     to the whole structure with stereolabels.
    */
-    await openFileAndAddToCanvas('stereolabels.ket', page);
+    await openFileAndAddToCanvas('Ket/stereolabels.ket', page);
 
     await selectTopPanelButton(TopPanelButton.Clean, page);
     await delay(DELAY_IN_SECONDS.SEVEN);

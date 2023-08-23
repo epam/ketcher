@@ -78,12 +78,12 @@ test('Save file - Save *.ket file', async ({ page }) => {
   );
 
   const expectedFile = await getKet(page);
-  await saveToFile('ket-2934-to-compare-expected.ket', expectedFile);
+  await saveToFile('Ket/ket-2934-to-compare-expected.ket', expectedFile);
 
   const { fileExpected: ketFileExpected, file: ketFile } =
     await receiveFileComparisonData({
       page,
-      expectedFileName: 'tests/test-data/ket-2934-to-compare-expected.ket',
+      expectedFileName: 'tests/test-data/Ket/ket-2934-to-compare-expected.ket',
     });
 
   expect(ketFile).toEqual(ketFileExpected);

@@ -197,7 +197,7 @@ test.describe('Atom Properties', () => {
       'Cancel', 'Apply' and 'X' buttons;
       The 'Atom Properties' header.
     */
-    await openFileAndAddToCanvas('benzene-ring-with-two-atoms.ket', page);
+    await openFileAndAddToCanvas('Ket/benzene-ring-with-two-atoms.ket', page);
     await doubleClickOnAtom(page, 'N', 0);
   });
 
@@ -223,7 +223,7 @@ test.describe('Atom Properties', () => {
       'Cancel', 'Apply' and 'X' buttons;
       The 'Atom Properties' header.
     */
-    await openFileAndAddToCanvas('benzene-ring-with-two-atoms.ket', page);
+    await openFileAndAddToCanvas('Ket/benzene-ring-with-two-atoms.ket', page);
     await moveOnAtom(page, 'O', 0);
     await page.keyboard.press('/');
   });
@@ -234,7 +234,7 @@ test.describe('Atom Properties', () => {
       Description: The 'Label' field contains the correct typed atom symbol.
       The selected carbon atom isn`t changed with 'Na' atom symbol.
     */
-    await openFileAndAddToCanvas('benzene-ring-with-two-atoms.ket', page);
+    await openFileAndAddToCanvas('Ket/benzene-ring-with-two-atoms.ket', page);
     await doubleClickOnAtom(page, 'C', 0);
 
     await selectAtomLabel(page, 'Na', 'Cancel');
@@ -246,7 +246,7 @@ test.describe('Atom Properties', () => {
       Description: The 'Label' field contains the correct typed atom symbol.
       The selected carbon atom is changed with 'Sb' atom symbol.
     */
-    await openFileAndAddToCanvas('benzene-ring-with-two-atoms.ket', page);
+    await openFileAndAddToCanvas('Ket/benzene-ring-with-two-atoms.ket', page);
     await doubleClickOnAtom(page, 'C', 0);
 
     await selectAtomLabel(page, 'Sb', 'Apply');
@@ -259,7 +259,7 @@ test.describe('Atom Properties', () => {
       The 'Label' field has a red frame. The 'Error: Wrong label' tooltip appears
       when the cursor is over the field. The Apply button becomes disabled.
     */
-    await openFileAndAddToCanvas('benzene-ring-with-two-atoms.ket', page);
+    await openFileAndAddToCanvas('Ket/benzene-ring-with-two-atoms.ket', page);
     await doubleClickOnAtom(page, 'N', 0);
 
     await page.getByLabel('Label').fill('J%');
@@ -275,7 +275,7 @@ test.describe('Atom Properties', () => {
       when the cursor is over the field. The Apply button becomes disabled.
       The 'N' atom symbol isn`t changed with an incorrect symbol.
     */
-    await openFileAndAddToCanvas('benzene-ring-with-two-atoms.ket', page);
+    await openFileAndAddToCanvas('Ket/benzene-ring-with-two-atoms.ket', page);
     await doubleClickOnAtom(page, 'N', 0);
 
     await selectAtomLabel(page, 'J%', 'Cancel');
@@ -410,7 +410,7 @@ test.describe('Atom Properties', () => {
       The 'Alias' field contains the correct typed characters.
       The selected carbon atom does not changed.
     */
-    await openFileAndAddToCanvas('benzene-ring-with-two-atoms.ket', page);
+    await openFileAndAddToCanvas('Ket/benzene-ring-with-two-atoms.ket', page);
 
     await doubleClickOnAtom(page, 'C', 0);
 
@@ -424,7 +424,7 @@ test.describe('Atom Properties', () => {
       The 'Alias' field contains the correct typed characters. (for example 'abc123TesREasd!@').
       The selected carbon atom is changed with typed text.
     */
-    await openFileAndAddToCanvas('benzene-ring-with-two-atoms.ket', page);
+    await openFileAndAddToCanvas('Ket/benzene-ring-with-two-atoms.ket', page);
 
     await doubleClickOnAtom(page, 'C', 0);
 
@@ -454,7 +454,7 @@ test.describe('Atom Properties', () => {
       Description: In the opened dialog the 'Number' field contains the correct text (for our example - Carbon = 6).
       Nitrogen = 7, Oxygen = 8
     */
-    await openFileAndAddToCanvas('benzene-ring-with-two-atoms.ket', page);
+    await openFileAndAddToCanvas('Ket/benzene-ring-with-two-atoms.ket', page);
 
     await doubleClickOnAtom(page, 'C', 0);
     await takeEditorScreenshot(page);
@@ -477,7 +477,7 @@ test.describe('Atom Properties', () => {
       The '2' is present in the 'Charge' field.
       The '2-' symbol appears near the selected atom on top-right side.
     */
-    await openFileAndAddToCanvas('benzene-ring-with-two-atoms.ket', page);
+    await openFileAndAddToCanvas('Ket/benzene-ring-with-two-atoms.ket', page);
 
     await doubleClickOnAtom(page, 'C', 0);
     await fillChargeForAtom(page, '1', 'Apply');
@@ -498,7 +498,7 @@ test.describe('Atom Properties', () => {
       The 'Error: Invalid charge value' tooltip appears when the cursor over the field.
       The 'Apply' button becomes disabled.
     */
-    await openFileAndAddToCanvas('benzene-ring-with-two-atoms.ket', page);
+    await openFileAndAddToCanvas('Ket/benzene-ring-with-two-atoms.ket', page);
 
     await doubleClickOnAtom(page, 'C', 0);
     await page.getByLabel('Charge').fill('A');
@@ -569,7 +569,7 @@ test.describe('Atom Properties', () => {
       The 'Isotope' field contains the correct typed value.
       The isotope value does not appear near the carbon atom.
     */
-    await openFileAndAddToCanvas('chain.ket', page);
+    await openFileAndAddToCanvas('Ket/chain.ket', page);
 
     await doubleClickOnAtom(page, 'C', 0);
     await fillIsotopeForAtom(page, '18', 'Cancel');
@@ -582,7 +582,7 @@ test.describe('Atom Properties', () => {
       The 'Isotope' field contains the correct typed value.
       '13' appears near the carbon atom in top-left side.
     */
-    await openFileAndAddToCanvas('chain.ket', page);
+    await openFileAndAddToCanvas('Ket/chain.ket', page);
 
     await doubleClickOnAtom(page, 'C', 1);
     await fillIsotopeForAtom(page, '13', 'Apply');
@@ -594,7 +594,7 @@ test.describe('Atom Properties', () => {
       Description: The 'Isotope' field is filled with '0' by default.
       Field highlight with red and tooltip appears: There must be integer!
     */
-    await openFileAndAddToCanvas('chain.ket', page);
+    await openFileAndAddToCanvas('Ket/chain.ket', page);
 
     await doubleClickOnAtom(page, 'C', 1);
     await page.getByLabel('Isotope').fill('b');
@@ -648,7 +648,7 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-1617
       Description: The 'Isotope' 18O added. Number colored in red as Oxygen atom.
     */
-    await openFileAndAddToCanvas('chain.ket', page);
+    await openFileAndAddToCanvas('Ket/chain.ket', page);
 
     await moveOnAtom(page, 'C', 1);
     await page.mouse.down();
@@ -690,7 +690,7 @@ test.describe('Atom Properties', () => {
       The 'Valence' field contains the selected value.
       The valence value does not appear near the carbon atom.
     */
-    await openFileAndAddToCanvas('chain.ket', page);
+    await openFileAndAddToCanvas('Ket/chain.ket', page);
 
     await doubleClickOnAtom(page, 'C', 0);
     await selectValenceForAtom(page, 'III', 'Cancel');
@@ -703,7 +703,7 @@ test.describe('Atom Properties', () => {
       The 'Valence' field contains the correct typed value.
       'III' appears near the carbon atom in right side.
     */
-    await openFileAndAddToCanvas('chain.ket', page);
+    await openFileAndAddToCanvas('Ket/chain.ket', page);
 
     await doubleClickOnAtom(page, 'C', 1);
     await selectValenceForAtom(page, 'III', 'Apply');
@@ -761,7 +761,7 @@ test.describe('Atom Properties', () => {
       The 'Radical' field contains the selected parameter.
       The radical symbol does not appear near the carbon atom.
     */
-    await openFileAndAddToCanvas('chain.ket', page);
+    await openFileAndAddToCanvas('Ket/chain.ket', page);
 
     await doubleClickOnAtom(page, 'C', 0);
     await selectRadical(page, 'Monoradical', 'Cancel');
@@ -777,7 +777,7 @@ test.describe('Atom Properties', () => {
       Diradical (singlet) - two dots;
       Diradical (triplet) - two caret signs (^^).
     */
-    await openFileAndAddToCanvas('chain.ket', page);
+    await openFileAndAddToCanvas('Ket/chain.ket', page);
 
     await doubleClickOnAtom(page, 'C', 1);
     await selectRadical(page, 'Monoradical', 'Apply');
@@ -823,7 +823,7 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-1634
       Description: All selected atoms is replaced with the typed atom symbols and Radicals.
     */
-    await openFileAndAddToCanvas('chain.ket', page);
+    await openFileAndAddToCanvas('Ket/chain.ket', page);
 
     await moveOnAtom(page, 'C', 0);
     await page.mouse.down();
@@ -881,7 +881,7 @@ test.describe('Atom Properties', () => {
       The 'Ring bond count' field contains the selected value.
       The Ring bond count value does not appear near the carbon atom.
     */
-    await openFileAndAddToCanvas('chain.ket', page);
+    await openFileAndAddToCanvas('Ket/chain.ket', page);
 
     await doubleClickOnAtom(page, 'C', 0);
     await selectRingBondCount(page, 'As drawn', 'Cancel');
@@ -896,7 +896,7 @@ test.describe('Atom Properties', () => {
       The 'Ring bond count' field contains the selected value.
       The selected Ring bond count - rb* - appears below the carbon atom.
     */
-    await openFileAndAddToCanvas('chain.ket', page);
+    await openFileAndAddToCanvas('Ket/chain.ket', page);
 
     await doubleClickOnAtom(page, 'C', 1);
     await selectRingBondCount(page, 'As drawn', 'Apply');
@@ -946,7 +946,7 @@ test.describe('Atom Properties', () => {
       Description: Several atoms are selected.
       All selected atoms are replaced with the correct atom symbol with the correct atom properties.
     */
-    await openFileAndAddToCanvas('chain.ket', page);
+    await openFileAndAddToCanvas('Ket/chain.ket', page);
 
     await moveOnAtom(page, 'C', 0);
     await page.mouse.down();
@@ -972,7 +972,7 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-1638
       Description: Ring bond count atom property is displayed as specified from the menu item.
     */
-    await openFileAndAddToCanvas('chain.ket', page);
+    await openFileAndAddToCanvas('Ket/chain.ket', page);
     await doubleClickOnAtom(page, 'C', 0);
     await selectRingBondCount(page, 'As drawn', 'Apply');
 
@@ -994,7 +994,7 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-1639
       Description: Ring bond count atom property is displayed as specified from the menu item.
     */
-    await openFileAndAddToCanvas('chain.ket', page);
+    await openFileAndAddToCanvas('Ket/chain.ket', page);
     await doubleClickOnAtom(page, 'C', 0);
     await selectRingBondCount(page, 'As drawn', 'Apply');
 
@@ -1033,7 +1033,7 @@ test.describe('Atom Properties', () => {
       The 'H count' drop-down list contains values: 0, 1, 2, 3, 4.
       The value is selected. The 'H count' field contains the selected value.
     */
-    await openFileAndAddToCanvas('chain.ket', page);
+    await openFileAndAddToCanvas('Ket/chain.ket', page);
 
     await doubleClickOnAtom(page, 'C', 0);
     await selectHCount(page, '0', 'Cancel');
@@ -1048,7 +1048,7 @@ test.describe('Atom Properties', () => {
       The 'H count' field contains the selected value.
       The selected hydrogen count value (H2) appears below/above the carbon atom.
     */
-    await openFileAndAddToCanvas('chain.ket', page);
+    await openFileAndAddToCanvas('Ket/chain.ket', page);
 
     await doubleClickOnAtom(page, 'C', 0);
     await selectHCount(page, '2', 'Apply');
@@ -1061,7 +1061,7 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-1640
       Description: The newly selected hydrogen count is assigned to the carbon atom
     */
-    await openFileAndAddToCanvas('chain.ket', page);
+    await openFileAndAddToCanvas('Ket/chain.ket', page);
 
     await doubleClickOnAtom(page, 'C', 0);
     await selectHCount(page, '2', 'Apply');
@@ -1102,7 +1102,7 @@ test.describe('Atom Properties', () => {
       Hydrogen count atom property is displayed as specified from the menu item.
       Nothing happens.
     */
-    await openFileAndAddToCanvas('chain.ket', page);
+    await openFileAndAddToCanvas('Ket/chain.ket', page);
 
     await doubleClickOnAtom(page, 'C', 0);
     await page.getByText('Query specific').click();
@@ -1126,7 +1126,7 @@ test.describe('Atom Properties', () => {
       The 'Substitution count' field contains the selected value.
       The substitution count does not appear near the carbon atom.
     */
-    await openFileAndAddToCanvas('chain.ket', page);
+    await openFileAndAddToCanvas('Ket/chain.ket', page);
 
     await doubleClickOnAtom(page, 'C', 0);
     await selectSubstitutionCount(page, '0', 'Cancel');
@@ -1141,7 +1141,7 @@ test.describe('Atom Properties', () => {
       The 'Substitution count' field contains the selected value.
       The selected substitution count s* appears near the carbon
     */
-    await openFileAndAddToCanvas('chain.ket', page);
+    await openFileAndAddToCanvas('Ket/chain.ket', page);
 
     await doubleClickOnAtom(page, 'C', 0);
     await selectSubstitutionCount(page, '2', 'Apply');
@@ -1154,7 +1154,7 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-1642
       Description: The newly selected Substitution count is assigned to the carbon atom
     */
-    await openFileAndAddToCanvas('chain.ket', page);
+    await openFileAndAddToCanvas('Ket/chain.ket', page);
 
     await doubleClickOnAtom(page, 'C', 0);
     await selectSubstitutionCount(page, '2', 'Apply');
@@ -1199,7 +1199,7 @@ test.describe('Atom Properties', () => {
       Number of nonhydrogen substituents is displayed as AtomSymbol(sN) where N depends on the number selected.
       Nothing is changed.
     */
-    await openFileAndAddToCanvas('chain.ket', page);
+    await openFileAndAddToCanvas('Ket/chain.ket', page);
 
     await doubleClickOnAtom(page, 'C', 0);
     await page.getByText('Query specific').click();
@@ -1221,7 +1221,7 @@ test.describe('Atom Properties', () => {
       The 'Unsaturated' checkbox is present in the 'Query specific' field. The checkbox is not set by default.
       The unsaturated mark does not appear near the carbon atom.
     */
-    await openFileAndAddToCanvas('chain.ket', page);
+    await openFileAndAddToCanvas('Ket/chain.ket', page);
 
     await doubleClickOnAtom(page, 'C', 0);
     await selectUnsaturated(page, 'Cancel');
@@ -1236,7 +1236,7 @@ test.describe('Atom Properties', () => {
       The 'Unsaturated' checkbox is set.
       The 'u' mark appears below the carbon atom.
     */
-    await openFileAndAddToCanvas('chain.ket', page);
+    await openFileAndAddToCanvas('Ket/chain.ket', page);
 
     await doubleClickOnAtom(page, 'C', 3);
     await selectUnsaturated(page, 'Apply');
@@ -1264,7 +1264,7 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-8931
       Description: Modal window opens without errors. All sections are displayed correctly.
     */
-    await openFileAndAddToCanvas('chain.ket', page);
+    await openFileAndAddToCanvas('Ket/chain.ket', page);
 
     await doubleClickOnAtom(page, 'C', 3);
   });
@@ -1290,7 +1290,7 @@ test.describe('Atom Properties', () => {
       "E" symbol appeared in "Atom" field next to "F".
       Selected atom now has "Fe" label.
     */
-    await openFileAndAddToCanvas('chain.ket', page);
+    await openFileAndAddToCanvas('Ket/chain.ket', page);
 
     await moveOnAtom(page, 'C', 3);
     await page.mouse.down();
@@ -1390,7 +1390,7 @@ test.describe('Atom Properties', () => {
       The 'Inversion' field contains the selected value.
       The stereo mark does not appear near the carbon atom.
     */
-    await openFileAndAddToCanvas('chain.ket', page);
+    await openFileAndAddToCanvas('Ket/chain.ket', page);
 
     await doubleClickOnAtom(page, 'C', 0);
     await selectReactionFlagsInversion(page, 'Inverts', 'Cancel');
@@ -1404,7 +1404,7 @@ test.describe('Atom Properties', () => {
       Description: The selected stereo mark appears near the carbon atom for
       Inverts - .Inv, ext.
     */
-      await openFileAndAddToCanvas('chain.ket', page);
+      await openFileAndAddToCanvas('Ket/chain.ket', page);
 
       await doubleClickOnAtom(page, 'C', 3);
       await selectReactionFlagsInversion(page, 'Inverts');
@@ -1420,7 +1420,7 @@ test.describe('Atom Properties', () => {
       Description: The selected stereo mark appears near the carbon atom for
       Retains - .Ret, ext.
     */
-      await openFileAndAddToCanvas('chain.ket', page);
+      await openFileAndAddToCanvas('Ket/chain.ket', page);
 
       await doubleClickOnAtom(page, 'C', 3);
       await selectReactionFlagsInversion(page, 'Retains');

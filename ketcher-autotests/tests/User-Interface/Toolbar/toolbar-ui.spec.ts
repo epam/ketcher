@@ -1,4 +1,4 @@
-import { test } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 import {
   takeEditorScreenshot,
   takeLeftToolbarScreenshot,
@@ -77,5 +77,19 @@ test.describe('Open Ketcher', () => {
 
     await page.goto('/?hiddenControls=clear');
     await takeTopToolbarScreenshot(page);
+  });
+
+  test('Toolbars on the right and bottom: visible when zoomed in', async ({
+    page,
+    browser,
+  }) => {
+    /*
+    Test case: for issue #3094
+    Description: Toolbars (right one and bottom) were not visible if browser zoomed in
+    */
+    await browser.newContext({ deviceScaleFactor: 1.25 });
+    await page.goto('');
+    await page.setViewportSize({ width: 560, height: 380 });
+    await expect(page).toHaveScreenshot();
   });
 });

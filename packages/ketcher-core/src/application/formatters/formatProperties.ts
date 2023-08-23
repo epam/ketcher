@@ -80,6 +80,11 @@ const formatProperties: FormatPropertiesMap = {
     ChemicalMimeType.InChIAuxInfo,
     ['.inchi'],
   ),
+  inChIKey: new SupportedFormatProperties(
+    'inChIKey',
+    ChemicalMimeType.InChIKey,
+    ['.inchi'],
+  ),
   cml: new SupportedFormatProperties(
     'CML',
     ChemicalMimeType.CML,

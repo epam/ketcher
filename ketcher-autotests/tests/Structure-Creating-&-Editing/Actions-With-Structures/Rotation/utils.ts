@@ -1,6 +1,5 @@
 import { Page } from '@playwright/test';
 import { getBondByIndex } from '@utils/canvas/bonds';
-import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
 import {
   BondType,
   TopPanelButton,

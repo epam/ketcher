@@ -1,4 +1,5 @@
-import { test, expect } from '@playwright/test';
+import { test } from '@playwright/test';
+import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 
 test.describe('Macromolecules default presets', () => {
   test.beforeEach(async ({ page }) => {
@@ -9,8 +10,7 @@ test.describe('Macromolecules default presets', () => {
     Test case: #2934 - rna builder: add default presets
     Description: Switch to Polymer Editor
     */
-    await expect(page.getByTestId('PolymerToggler')).toBeVisible();
-    await page.getByTestId('PolymerToggler').click();
+    await turnOnMacromoleculesEditor(page);
     await page.getByText('RNA').click();
 
     await page.getByTestId('cancel-btn').click();
@@ -24,8 +24,7 @@ test.describe('Macromolecules default presets', () => {
     /* 
     Test case: #2507 - Add RNA monomers to canvas (by click)
     */
-    await expect(page.getByTestId('PolymerToggler')).toBeVisible();
-    await page.getByTestId('PolymerToggler').click();
+    await turnOnMacromoleculesEditor(page);
     await page.getByText('RNA').click();
     await page.getByTestId('cancel-btn').click();
 

@@ -6,11 +6,16 @@ const PHOSPHATE_SELECTED_ELEMENT_ID = '#phosphate-selection';
 
 export class PhosphateRenderer extends BaseMonomerRenderer {
   constructor(public monomer: Phosphate, scale?: number) {
-    super(monomer, PHOSPHATE_SELECTED_ELEMENT_ID, scale);
+    super(
+      monomer,
+      PHOSPHATE_SELECTED_ELEMENT_ID,
+      PHOSPHATE_SELECTED_ELEMENT_ID,
+      scale,
+    );
   }
 
   protected appendBody(
-    rootElement: Selection<SVGGElement, this, HTMLElement, never>,
+    rootElement: Selection<SVGGElement, void, HTMLElement, never>,
     theme,
   ) {
     return rootElement

@@ -35,6 +35,7 @@ export interface Tool extends ToolEventHandler {
 }
 
 // export type ToolOptions = MonomerItemType;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type ToolOptions = any;
 
 export type ToolConstructorInterface = {

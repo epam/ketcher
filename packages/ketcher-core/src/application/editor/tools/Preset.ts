@@ -16,7 +16,7 @@
 import { Tool, IRnaPreset } from 'application/editor/tools/Tool';
 import { Sugar } from 'domain/entities/Sugar';
 import { Vec2 } from 'domain/entities';
-import assert from 'assert';
+// import assert from 'assert';
 
 import { CoreEditor, fromMonomerAddition } from 'application/editor';
 import { BaseMonomerRenderer } from 'application/render/renderers';
@@ -24,15 +24,15 @@ import { MonomerItemType } from 'domain/types';
 import { monomerFactory } from '../operations/monomer/monomerFactory';
 import { RNABase } from 'domain/entities/RNABase';
 import { Phosphate } from 'domain/entities/Phosphate';
-import { fromPolymerBondAddition } from 'application/editor/actions/polymerBond';
-import { BondService } from 'domain/services/bond/BondService';
-import { PolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer';
+// import { fromPolymerBondAddition } from 'application/editor/actions/polymerBond';
+// import { BondService } from 'domain/services/bond/BondService';
+// import { PolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer';
 
 class PresetTool implements Tool {
   rnaBase: MonomerItemType | undefined;
   sugar: MonomerItemType | undefined;
   phosphate: MonomerItemType | undefined;
-  private bondRenderer?: PolymerBondRenderer; // only for sugar, in two sides
+  // private bondRenderer?: PolymerBondRenderer; // only for sugar, in two sides
 
   private rnaBasePreview: RNABase | undefined;
   private phosphatePreview: Phosphate | undefined;

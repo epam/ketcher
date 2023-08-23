@@ -94,7 +94,10 @@ the first one disappears. Couldn't reproduct manually.
      */
     // add first stucture from clipboard to canvas
     await selectTopPanelButton(TopPanelButton.Open, page);
-    await openFromFileViaClipboard('Txt/1837-inchi-1.txt', page);
+    await openFromFileViaClipboard(
+      'tests/test-data/Txt/1837-inchi-1.txt',
+      page,
+    );
     await clickInTheMiddleOfTheScreen(page);
   });
 
@@ -105,7 +108,10 @@ the first one disappears. Couldn't reproduct manually.
      */
     // add first stucture from clipboard to canvas
     await selectTopPanelButton(TopPanelButton.Open, page);
-    await openFromFileViaClipboard('Txt/1837-inchi-2.txt', page);
+    await openFromFileViaClipboard(
+      'tests/test-data/Txt/1837-inchi-2.txt',
+      page,
+    );
     await clickInTheMiddleOfTheScreen(page);
   });
 
@@ -116,7 +122,10 @@ the first one disappears. Couldn't reproduct manually.
      */
     // add first structure from clipboard to canvas
     await selectTopPanelButton(TopPanelButton.Open, page);
-    await openFromFileViaClipboard('Txt/1837-inchi-3.txt', page);
+    await openFromFileViaClipboard(
+      'tests/test-data/Txt/1837-inchi-3.txt',
+      page,
+    );
     await clickInTheMiddleOfTheScreen(page);
   });
 

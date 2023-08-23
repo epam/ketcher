@@ -16,7 +16,6 @@ const GetFileMethod: Record<string, keyof Ketcher> = {
   cml: 'getCml',
   inchi: 'getInchi',
   sdf: 'getSdf',
-  sdfV3000: 'getSdfV3000',
 } as const;
 
 type KetcherApiFunction = (format?: string) => Promise<string>;
@@ -36,16 +35,14 @@ async function receiveFile({
 }: {
   page: Page;
   fileName: string;
-  fileFormat?: MolfileFormat | string;
+  fileFormat?: MolfileFormat;
 }): Promise<string[]> {
   const fileExtension = fileName.split('.').pop();
 
-  let methodName = GetFileMethod.ket;
-  if (fileFormat && fileFormat in GetFileMethod) {
-    methodName = GetFileMethod[fileFormat];
-  } else if (fileExtension && fileExtension in GetFileMethod) {
-    methodName = GetFileMethod[fileExtension];
-  }
+  const methodName =
+    fileExtension && fileExtension in GetFileMethod
+      ? GetFileMethod[fileExtension as keyof typeof GetFileMethod]
+      : GetFileMethod.ket;
 
   const pageData = {
     format: fileFormat,
@@ -84,7 +81,7 @@ export async function receiveFileComparisonData({
   page: Page;
   expectedFileName: string;
   metaDataIndexes?: number[];
-  fileFormat?: MolfileFormat | string;
+  fileFormat?: MolfileFormat;
 }): Promise<{
   file: string[];
   fileExpected: string[];

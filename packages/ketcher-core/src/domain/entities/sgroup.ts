@@ -316,9 +316,16 @@ export class SGroup {
    * WHY? When group is contracted we need to understand the represent atom to calculate position.
    * It is not always the attachmentPoint!! if no attachment point - use the first atom
    */
-  getContractedPosition(struct: Struct): { atomId: number; position: Vec2 } {
-    const atomId = this.attachmentPoints[0]?.atomId ?? this.atoms[0];
-    const representAtom = struct.atoms.get(atomId);
+  getContractedPosition(struct: Struct): {
+    atomId: number;
+    position: Vec2;
+  } {
+    let atomId = this.attachmentPoints[0]?.atomId;
+    let representAtom = struct.atoms.get(atomId);
+    if (!representAtom) {
+      atomId = this.atoms[0];
+      representAtom = struct.atoms.get(this.atoms[0]);
+    }
     assert(representAtom != null);
     return { atomId, position: representAtom.pp };
   }

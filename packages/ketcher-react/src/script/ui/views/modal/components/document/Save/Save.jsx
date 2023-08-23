@@ -92,6 +92,7 @@ class SaveDialog extends Component {
           '<----firstDivider--->', // for dividers in select list
           'inChI',
           'inChIAuxInfo',
+          'inChIKey',
           '<----secondDivider--->', // for dividers in select list
           'svg',
           'png',

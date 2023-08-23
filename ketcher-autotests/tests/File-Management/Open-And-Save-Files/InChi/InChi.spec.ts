@@ -152,7 +152,10 @@ test.describe('', () => {
        */
       // add first structure from clipboard to canvas
       await selectTopPanelButton(TopPanelButton.Open, page);
-      await openFromFileViaClipboard('tests/test-data/1975_InChi.txt', page);
+      await openFromFileViaClipboard(
+        'tests/test-data/Txt/1975-inchi.txt',
+        page,
+      );
       await clickInTheMiddleOfTheScreen(page);
     },
   );
@@ -167,7 +170,10 @@ test.describe('', () => {
        */
       // add first structure from clipboard to canvas
       await selectTopPanelButton(TopPanelButton.Open, page);
-      await openFromFileViaClipboard('tests/test-data/1976_InChi.txt', page);
+      await openFromFileViaClipboard(
+        'tests/test-data/Txt/1976-inchi.txt',
+        page,
+      );
       await clickInTheMiddleOfTheScreen(page);
     },
   );

@@ -17,12 +17,15 @@
 export const PhosphateAvatar = () => (
   <>
     <symbol id="phosphate" viewBox="0 0 70 70" width="70" height="70">
-      <rect x="12" y="12.3448" width="56" height="56" rx="30" />
+      <rect width="56" height="56" rx="30" />
     </symbol>
-    <symbol id="phosphate-selection" viewBox="0 0 70 70" width="70" height="70">
+    <symbol
+      id="phosphate-selection"
+      viewBox="-2 -2 75 75"
+      width="70"
+      height="70"
+    >
       <rect
-        x="12"
-        y="12.3448"
         width="56"
         height="56"
         rx="30"

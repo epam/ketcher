@@ -147,6 +147,7 @@ export const RnaAccordion = () => {
 
   const selectPreset = (preset: IRnaPreset) => {
     dispatch(setActivePreset(preset));
+    editor.events.selectPreset.dispatch(preset);
   };
 
   const onClickNewPreset = () => {

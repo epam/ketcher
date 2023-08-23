@@ -16,26 +16,24 @@
 
 export const RNABaseAvatar = () => (
   <>
-    <symbol id="rna-base" viewBox="0 0 70 75" width="70" height="70">
+    <symbol id="rna-base" viewBox="0 0 65 65" width="65" height="95">
       <rect
-        x="7"
-        y="42.3448"
-        width="46"
-        height="46"
+        width="45"
+        height="45"
         rx="2"
-        transform="rotate(-45 7 42.3448)"
+        transform-origin="center"
+        transform="rotate(45)"
       />
     </symbol>
-    <symbol id="rna-base-selection" viewBox="0 0 70 75" width="70" height="70">
+    <symbol id="rna-base-selection" viewBox="0 0 65 65" width="65" height="95">
       <rect
-        x="7"
-        y="42.3448"
-        width="46"
-        height="46"
+        width="45"
+        height="45"
         rx="2"
-        transform="rotate(-45 7 42.3448)"
+        transform-origin="center"
+        transform="rotate(45)"
         stroke="#0097A8"
-        stroke-width="3"
+        strokeWidth="3"
         fill="none"
       />
     </symbol>

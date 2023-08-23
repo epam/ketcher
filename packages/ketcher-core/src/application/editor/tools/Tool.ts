@@ -18,6 +18,14 @@ interface ToolEventHandler {
   mouseover?(event: Event): void;
 }
 
+export interface IRnaPreset {
+  name?: string;
+  base?: MonomerItemType;
+  sugar?: MonomerItemType;
+  phosphate?: MonomerItemType;
+  presetInList?: IRnaPreset;
+}
+
 export interface Tool extends ToolEventHandler {
   cancel?(): void;
 
@@ -26,7 +34,8 @@ export interface Tool extends ToolEventHandler {
   isNotActiveTool?: boolean;
 }
 
-export type ToolOptions = MonomerItemType;
+// export type ToolOptions = MonomerItemType;
+export type ToolOptions = any;
 
 export type ToolConstructorInterface = {
   new (editor, ...args: ToolOptions[]): Tool;

@@ -13,11 +13,6 @@ import { Sugar } from 'domain/entities/Sugar';
 import { Phosphate } from 'domain/entities/Phosphate';
 import { RNABase } from 'domain/entities/RNABase';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
-import {
-  MonomerCodeToGroup,
-  MonomerGroupCodes,
-  MonomerGroups,
-} from '../../shared/constants';
 
 type DerivedClass<T> = new (...args: unknown[]) => T;
 
@@ -48,37 +43,6 @@ export const monomerFactory = (
       MonomerRenderer = RNABaseRenderer;
     }
   }
-
-  // switch (monomer.props.MonomerType) {
-  //   case 'CHEM':
-  //     Monomer = Chem;
-  //     MonomerRenderer = ChemRenderer;
-  //     break;
-  //   case 'PEPTIDE':
-  //     Monomer = Peptide;
-  //     MonomerRenderer = PeptideRenderer;
-  //     break;
-  //   default:
-  // switch (
-  //   MonomerCodeToGroup[monomer.props.MonomerCode as MonomerGroupCodes]
-  // ) {
-  //   case MonomerGroups.SUGARS:
-  //     Monomer = Sugar;
-  //     MonomerRenderer = SugarRenderer;
-  //     break;
-  //   case MonomerGroups.BASES:
-  //     Monomer = RNABase;
-  //     MonomerRenderer = RNABaseRenderer;
-  //     break;
-  //   default:
-  //     Monomer = Phosphate;
-  //     MonomerRenderer = PhosphateRenderer;
-  //     break;
-  // }
-  // break;
-  //     Monomer = Sugar;
-  //     MonomerRenderer = SugarRenderer;
-  // }
 
   return [Monomer, MonomerRenderer];
 };

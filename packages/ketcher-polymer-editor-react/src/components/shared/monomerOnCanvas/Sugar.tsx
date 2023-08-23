@@ -17,12 +17,10 @@
 export const SugarAvatar = () => (
   <>
     <symbol id="sugar" viewBox="0 0 70 70" width="70" height="70">
-      <rect x="12" y="12.3448" width="57" height="57" rx="10" />
+      <rect width="57" height="57" rx="10" />
     </symbol>
-    <symbol id="sugar-selection" viewBox="0 0 75 75" width="75" height="75">
+    <symbol id="sugar-selection" viewBox="0 0 75 75" width="76" height="76">
       <rect
-        x="13.5"
-        y="13.8448"
         width="57"
         height="57"
         rx="8.5"

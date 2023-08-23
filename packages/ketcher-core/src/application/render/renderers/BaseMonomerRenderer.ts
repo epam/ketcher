@@ -1,56 +1,29 @@
 import { BaseRenderer } from './BaseRenderer';
-import { Selection } from 'd3';
 import assert from 'assert';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
+import { D3SvgElementSelection } from 'application/render/types';
+import { DrawingEntity } from 'domain/entities/DrawingEntity';
+import { editorEvents } from 'application/editor/editorEvents';
 
 export abstract class BaseMonomerRenderer extends BaseRenderer {
-  protected rootElement;
-
-  private selectionElement;
-  private bodyElement;
-  private r1AttachmentPoint;
-  private r2AttachmentPoint;
+  private editorEvents: typeof editorEvents;
+  private selectionCircle?: D3SvgElementSelection<SVGCircleElement, void>;
+  private selectionBorder?: D3SvgElementSelection<SVGUseElement, void>;
+  private r1AttachmentPoint?: D3SvgElementSelection<SVGGElement, void>;
+  private r2AttachmentPoint?: D3SvgElementSelection<SVGGElement, void>;
   static isSelectable() {
     return true;
   }
 
-  constructor(
+  protected constructor(
     public monomer: BaseMonomer,
     private monomerSelectedElementId: string,
+    private monomerHoveredElementId: string,
     private scale?: number,
   ) {
-    super();
+    super(monomer as DrawingEntity);
     this.monomer.setRenderer(this);
-  }
-
-  public get rootBBox() {
-    const rootNode = this.rootElement?.node();
-    if (!rootNode) return;
-
-    return rootNode.getBBox();
-  }
-
-  public get width() {
-    return this.rootBBox?.width || 0;
-  }
-
-  public get height() {
-    return this.rootBBox?.height || 0;
-  }
-
-  public get bodyBBox() {
-    const rootNode = this.bodyElement?.node();
-    if (!rootNode) return;
-
-    return rootNode.getBBox();
-  }
-
-  public get bodyWidth() {
-    return this.bodyBBox?.width || 0;
-  }
-
-  public get bodyHeight() {
-    return this.bodyBBox?.height || 0;
+    this.editorEvents = editorEvents;
   }
 
   public get center() {
@@ -78,14 +51,18 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   }
 
   public redrawAttachmentPoints() {
-    assert(this.rootElement);
-    this.removeAttachmentPoints();
-    this.r1AttachmentPoint = this.appendR1AttachmentPoint(this.rootElement);
-    this.r2AttachmentPoint = this.appendR2AttachmentPoint(this.rootElement);
+    if (!this.rootElement) return;
+    if (this.monomer.attachmentPointsVisible) {
+      this.removeAttachmentPoints();
+      this.r1AttachmentPoint = this.appendR1AttachmentPoint(this.rootElement);
+      this.r2AttachmentPoint = this.appendR2AttachmentPoint(this.rootElement);
+    } else {
+      this.removeAttachmentPoints();
+    }
   }
 
   public appendAttachmentPoint(
-    rootElement: Selection<SVGGElement, this, HTMLElement, never>,
+    rootElement: D3SvgElementSelection<SVGGElement, void>,
     position,
     rotation,
     isAttachmentPointPotentiallyUsed,
@@ -132,7 +109,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   }
 
   public appendR1AttachmentPoint(
-    rootElement: Selection<SVGGElement, this, HTMLElement, never>,
+    rootElement: D3SvgElementSelection<SVGGElement, void>,
   ) {
     const attachmentPoint = this.appendAttachmentPoint(
       rootElement,
@@ -147,7 +124,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   }
 
   public appendR2AttachmentPoint(
-    rootElement: Selection<SVGGElement, this, HTMLElement, never>,
+    rootElement: D3SvgElementSelection<SVGGElement, void>,
   ) {
     const attachmentPoint = this.appendAttachmentPoint(
       rootElement,
@@ -162,7 +139,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   }
 
   private appendAttachmentPointLabel(
-    attachmentPointElement: Selection<SVGGElement, this, HTMLElement, never>,
+    attachmentPointElement: D3SvgElementSelection<SVGGElement, void>,
     label: string,
     x,
     y,
@@ -183,7 +160,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   }
 
   private appendRootElement(
-    canvas: Selection<SVGElement, unknown, HTMLElement, never>,
+    canvas: D3SvgElementSelection<SVGSVGElement, void>,
   ) {
     return canvas
       .append('g')
@@ -194,12 +171,10 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
         `translate(${this.monomer.position.x}, ${
           this.monomer.position.y
         }) scale(${this.scale || 1})`,
-      );
+      ) as never as D3SvgElementSelection<SVGGElement, void>;
   }
 
-  private appendLabel(
-    rootElement: Selection<SVGGElement, this, HTMLElement, never>,
-  ) {
+  private appendLabel(rootElement: D3SvgElementSelection<SVGGElement, void>) {
     const textElement = rootElement
       .append('text')
       .text(this.monomer.label)
@@ -208,7 +183,8 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       .attr('line-height', '12px')
       .attr('font-weight', '700')
       .style('cursor', 'pointer')
-      .style('user-select', 'none');
+      .style('user-select', 'none')
+      .attr('pointer-events', 'none');
 
     const textBBox = (textElement.node() as SVGTextElement).getBBox();
 
@@ -217,44 +193,88 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       .attr('y', this.height / 2);
   }
 
-  public appendSelection(
-    rootElement: Selection<SVGGElement, this, HTMLElement, never>,
+  public appendHover(
+    hoverAreaElement: D3SvgElementSelection<SVGGElement, void>,
   ) {
-    if (this.selectionElement) this.selectionElement.remove();
-    return rootElement
-      ?.append('use')
-      .attr('href', this.monomerSelectedElementId);
+    if (this.hoverElement) this.hoverElement.remove();
+    return hoverAreaElement
+      .append('use')
+      .attr('href', this.monomerHoveredElementId)
+      .attr('pointer-events', 'none');
   }
 
-  public removeSelection(
-    rootElement: Selection<SVGGElement, this, HTMLElement, never>,
-  ) {
-    if (!this.selectionElement) return;
-    rootElement?.select(`[href="${this.monomerSelectedElementId}"]`).remove();
+  public removeHover() {
+    if (!this.hoverElement) return;
+    this.hoverElement.remove();
+  }
+
+  public appendSelection() {
+    this.removeSelection();
+
+    this.selectionBorder = this.rootElement
+      ?.append('use')
+      .attr('href', this.monomerSelectedElementId)
+      .attr('stroke', '#57FF8F')
+      .attr('pointer-events', 'none');
+
+    this.selectionCircle = this.canvas
+      ?.insert('circle', ':first-child')
+      .attr('r', '42px')
+      .attr('cx', this.monomer.position.x + this.bodyWidth / 2)
+      .attr('cy', this.monomer.position.y + this.bodyHeight / 2)
+      .attr('fill', '#57FF8F');
+  }
+
+  public removeSelection() {
+    this.selectionCircle?.remove();
+    this.selectionBorder?.remove();
+    this.selectionCircle = undefined;
+    this.selectionBorder = undefined;
   }
 
   protected abstract appendBody(
-    rootElement: Selection<SVGGElement, this, HTMLElement, never>,
+    rootElement: D3SvgElementSelection<SVGGElement, void>,
     theme,
   );
+
+  protected appendHoverAreaElement() {
+    this.hoverAreaElement = this.rootElement;
+  }
+
+  private appendEvents() {
+    assert(this.bodyElement);
+    this.bodyElement
+      .on('mouseover', (event) => {
+        this.editorEvents.mouseOverDrawingEntity.dispatch(event);
+        this.editorEvents.mouseOverMonomer.dispatch(event);
+      })
+      .on('mouseleave', (event) => {
+        this.editorEvents.mouseLeaveDrawingEntity.dispatch(event);
+        this.editorEvents.mouseLeaveMonomer.dispatch(event);
+      })
+      .on('mouseup', (event) => {
+        this.editorEvents.mouseUpMonomer.dispatch(event);
+      });
+  }
 
   public show(theme) {
     this.rootElement = this.rootElement || this.appendRootElement(this.canvas);
     this.bodyElement = this.appendBody(this.rootElement, theme);
+    this.appendEvents();
     this.appendLabel(this.rootElement);
+    this.appendHoverAreaElement();
     if (this.monomer.selected) {
       this.drawSelection();
-      this.redrawAttachmentPoints();
     }
+    this.redrawAttachmentPoints();
   }
 
   public drawSelection() {
     assert(this.rootElement);
     if (this.monomer.selected) {
-      this.selectionElement = this.appendSelection(this.rootElement);
+      this.appendSelection();
     } else {
-      this.removeSelection(this.rootElement);
-      this.selectionElement = null;
+      this.removeSelection();
     }
   }
 
@@ -270,5 +290,6 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   public remove() {
     this.rootElement?.remove();
     this.rootElement = undefined;
+    this.removeSelection();
   }
 }

@@ -31,7 +31,7 @@ const BondMenuItems: FC<MenuItemsProps> = (props) => {
 
       {nonQueryBondNames.map((name, i) => {
         const iconName = getIconName(name);
-        let classNames =
+        const classNames =
           styles.sameGroup +
           (i === nonQueryBondNames.length - 1 ? styles.devider : '');
 

@@ -20,6 +20,7 @@ const BondMenuItems: FC<MenuItemsProps> = (props) => {
   const [handleSGroupEdit, sGroupEditDisabled, sGroupEditHidden] =
     useBondSGroupEdit();
   const handleDelete = useDelete();
+  const bondNamesWithoutEmptyValue = nonQueryBondNames.slice(1);
 
   return (
     <>
@@ -29,7 +30,7 @@ const BondMenuItems: FC<MenuItemsProps> = (props) => {
           : 'Edit...'}
       </Item>
 
-      {nonQueryBondNames.map((name) => {
+      {bondNamesWithoutEmptyValue.map((name) => {
         const iconName = getIconName(name);
         return (
           <Item {...props} id={name} onClick={handleTypeChange} key={name}>

@@ -57,15 +57,8 @@ class ReEnhancedFlag extends ReObject {
   show(restruct: ReStruct, fragmentId: number, options: any): void {
     const render = restruct.render;
     const fragment = restruct.molecule.frags.get(fragmentId);
-    const stereoFlag = fragment?.enhancedStereoFlag;
 
-    if (!stereoFlag) {
-      return;
-    }
-
-    // We don't want to show the ovarall label (flag) in case there are different types
-    // of stereo labels inside the structure ("mixed" and "or" stereo flags indicate that)
-    if (stereoFlag === StereoFlag.Mixed || stereoFlag === StereoFlag.Or) {
+    if (!fragment?.enhancedStereoFlag) {
       return;
     }
 
@@ -85,7 +78,13 @@ class ReEnhancedFlag extends ReObject {
 
     if (options.showStereoFlags && !options.ignoreChiralFlag) {
       this.#path = paper
-        .text(ps.x, ps.y, stereoFlag ? stereoFlagMap[stereoFlag] : '')
+        .text(
+          ps.x,
+          ps.y,
+          fragment.enhancedStereoFlag
+            ? stereoFlagMap[fragment.enhancedStereoFlag]
+            : '',
+        )
         .attr({
           font: options.font,
           'font-size': options.fontsz,

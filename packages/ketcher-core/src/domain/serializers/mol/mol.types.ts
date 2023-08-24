@@ -15,11 +15,11 @@
  ***************************************************************************/
 
 export interface MolSerializerOptions {
-  reactionRelayout: boolean;
-  badHeaderRecover: boolean;
-  ignoreErrors: boolean;
-  noRgroups: boolean;
-  preserveIndigoDesc: boolean;
+  reactionRelayout?: boolean;
+  badHeaderRecover?: boolean;
+  ignoreErrors?: boolean;
+  noRgroups?: boolean;
+  preserveIndigoDesc?: boolean;
   ignoreChiralFlag?: boolean;
 }
 

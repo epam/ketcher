@@ -19,6 +19,9 @@ import { KetSerializer, SdfSerializer } from 'ketcher-core';
 import { appUpdate } from '../options';
 import { storage } from '../../storage-ext';
 import templatesRawData from '../../../../templates/library.sdf';
+import { OptionsManager } from '../../utils/optionsManager';
+
+let cachedInitData: [unknown, unknown, unknown];
 
 export function initLib(lib) {
   return {
@@ -28,7 +31,11 @@ export function initLib(lib) {
 }
 
 const deserializeSdfTemplates = (baseUrl, cacheEl, _fileName) => {
-  const sdfSerializer = new SdfSerializer();
+  const options = {
+    ignoreChiralFlag: OptionsManager.ignoreChiralFlag,
+  };
+
+  const sdfSerializer = new SdfSerializer(options);
   const tmpls = sdfSerializer.deserialize(templatesRawData);
   const prefetch = prefetchRender(tmpls, baseUrl + '/templates/', cacheEl);
 
@@ -45,12 +52,25 @@ const deserializeSdfTemplates = (baseUrl, cacheEl, _fileName) => {
 };
 
 export default function initTmplLib(dispatch, baseUrl, cacheEl) {
+  cachedInitData = [dispatch, baseUrl, cacheEl];
+
   const fileName = 'library.sdf';
+
   return deserializeSdfTemplates(baseUrl, cacheEl, fileName).then((res) => {
-    const lib = res.concat(userTmpls());
+    const lib = res.concat(userTmpls() as []);
     dispatch(initLib(lib));
     dispatch(appUpdate({ templates: true }));
   });
+}
+
+export function reinitializeTemplateLibrary() {
+  if (!cachedInitData) {
+    throw new Error(
+      'The template library must be initialized before it can be reinitialized',
+    );
+  }
+
+  initTmplLib(...cachedInitData);
 }
 
 function userTmpls() {

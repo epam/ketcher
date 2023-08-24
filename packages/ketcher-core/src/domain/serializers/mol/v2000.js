@@ -208,8 +208,8 @@ function parsePropertyLines(ctab, ctabLines, shift, end, sGroups, rLogic) {
         logic.range = ooo;
         rLogic[rgid] = logic;
       } else if (type === 'APO') {
-        if (!props.get('attpnt')) {
-          props.set('attpnt', sGroup.readKeyValuePairs(propertyData));
+        if (!props.get('attachmentPoints')) {
+          props.set('attachmentPoints', sGroup.readKeyValuePairs(propertyData));
         }
       } else if (type === 'ALS') {
         // atom list

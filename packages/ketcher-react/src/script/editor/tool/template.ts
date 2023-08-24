@@ -328,7 +328,7 @@ class TemplateTool implements Tool {
         this.lastPreviewId = getUniqueCiId(ci);
 
         this.previewTimeout = setTimeout(() => {
-          this.showPreview(ci, restruct);
+          this.showPreview(event, ci, restruct);
         }, PREVIEW_DELAY);
       }
 
@@ -658,7 +658,11 @@ class TemplateTool implements Tool {
     }
   }
 
-  showPreview(ci, restruct: ReStruct) {
+  showPreview(
+    event: MouseEvent | { clientX: number; clientY: number },
+    ci,
+    restruct: ReStruct,
+  ) {
     if (ci.map === 'bonds' && !this.isModeFunctionalGroup) {
       // preview for bonds
       this.isPreviewVisible = true;

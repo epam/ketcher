@@ -1,5 +1,4 @@
 import { KETCHER_SAVED_OPTIONS_KEY } from 'src/constants';
-import { storage } from '../storage-ext';
 
 interface SavedOptions {
   ignoreChiralFlag?: boolean;
@@ -8,7 +7,9 @@ interface SavedOptions {
 export class OptionsManager {
   static getOptions(): SavedOptions {
     try {
-      return JSON.parse(storage.getItem(KETCHER_SAVED_OPTIONS_KEY) || '{}');
+      return JSON.parse(
+        localStorage.getItem(KETCHER_SAVED_OPTIONS_KEY) || '{}',
+      );
     } catch (e) {
       return {} as SavedOptions;
     }
@@ -18,7 +19,7 @@ export class OptionsManager {
     if (!settings) {
       return;
     }
-    storage.setItem(KETCHER_SAVED_OPTIONS_KEY, JSON.stringify(settings));
+    localStorage.setItem(KETCHER_SAVED_OPTIONS_KEY, JSON.stringify(settings));
   }
 
   static get ignoreChiralFlag() {

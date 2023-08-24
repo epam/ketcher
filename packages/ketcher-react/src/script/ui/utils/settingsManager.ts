@@ -15,7 +15,6 @@
  ***************************************************************************/
 
 import { KETCHER_SAVED_SETTINGS_KEY } from 'src/constants';
-import { storage } from '../storage-ext';
 
 interface SavedSettings {
   selectionTool?: any;
@@ -24,7 +23,9 @@ interface SavedSettings {
 export class SettingsManager {
   static getSettings(): SavedSettings {
     try {
-      return JSON.parse(storage.getItem(KETCHER_SAVED_SETTINGS_KEY) || '{}');
+      return JSON.parse(
+        localStorage.getItem(KETCHER_SAVED_SETTINGS_KEY) || '{}',
+      );
     } catch (e) {
       return {} as SavedSettings;
     }
@@ -34,7 +35,7 @@ export class SettingsManager {
     if (!settings) {
       return;
     }
-    storage.setItem(KETCHER_SAVED_SETTINGS_KEY, JSON.stringify(settings));
+    localStorage.setItem(KETCHER_SAVED_SETTINGS_KEY, JSON.stringify(settings));
   }
 
   static get selectionTool() {

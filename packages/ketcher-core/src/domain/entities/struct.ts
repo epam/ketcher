@@ -44,6 +44,11 @@ export type Neighbor = {
   bid: number;
 };
 
+export type StructProperty = {
+  key: string;
+  value: string;
+};
+
 function arrayAddIfMissing(array, item) {
   for (let i = 0; i < array.length; ++i) {
     if (array[i] === item) return false;
@@ -732,8 +737,8 @@ export class Struct {
     return components;
   }
 
-  markFragment(idSet: Pile<number>) {
-    const frag = new Fragment();
+  markFragment(idSet: Pile<number>, properties: [StructProperty]) {
+    const frag = new Fragment([], undefined, properties);
     const fid = this.frags.add(frag);
 
     idSet.forEach((aid) => {
@@ -743,10 +748,10 @@ export class Struct {
     });
   }
 
-  markFragments() {
+  markFragments(properties?) {
     const components = this.findConnectedComponents();
     components.forEach((comp) => {
-      this.markFragment(comp);
+      this.markFragment(comp, properties);
     });
   }
 

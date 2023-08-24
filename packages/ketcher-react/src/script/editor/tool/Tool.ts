@@ -24,6 +24,8 @@ export interface Tool extends ToolEventHandler {
   isSelectionRunning?(): boolean;
 
   isNotActiveTool?: boolean;
+
+  updatePreview?(): void;
 }
 
 export type ToolConstructorInterface = {

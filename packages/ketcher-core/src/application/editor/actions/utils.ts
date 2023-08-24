@@ -22,7 +22,7 @@ import { ReStruct } from 'application/render';
 import { selectionKeys } from '../shared/constants';
 import { EditorSelection } from '../editor.types';
 
-type AtomAttributeName = keyof AtomAttributes;
+export type AtomAttributeName = keyof AtomAttributes;
 
 export function atomGetAttr(
   restruct: ReStruct,

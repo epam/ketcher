@@ -21,6 +21,8 @@ import { Elements } from 'domain/constants';
 import { Pile } from './pile';
 import { Struct } from './struct';
 
+type getPickUnion<O, P extends keyof O> = P extends P ? Pick<O, P> : never;
+
 export enum AttachmentPoints {
   None = 0,
   FirstSideOnly = 1,
@@ -75,6 +77,11 @@ export interface AtomAttributes {
   implicitH?: number;
   implicitHCount?: number | null;
 }
+
+export type AtomPropertiesInContextMenu = getPickUnion<
+  AtomAttributes,
+  'hCount' | 'ringBondCount' | 'substitutionCount' | 'unsaturatedAtom'
+>;
 
 export class Atom {
   static PATTERN = {

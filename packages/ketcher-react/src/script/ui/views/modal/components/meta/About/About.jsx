@@ -70,7 +70,7 @@ function AboutDialog(props) {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  Epam Life Sciencies
+                  EPAM Life Sciences
                 </a>
               </dt>
             </div>

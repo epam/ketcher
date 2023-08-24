@@ -33,7 +33,7 @@ const TIMEOUT_MS = 1000;
 export async function selectBond(type: BondTypeName, page: Page) {
   console.log(`selectBond ${type}`);
 
-  const targetSelector = `div[class*="ToolbarMultiToolItem"] button[title^="${type}"]`;
+  const targetSelector = `button[title^="${type}"]`;
 
   // Stops dragging item
   await page.keyboard.press('Escape');

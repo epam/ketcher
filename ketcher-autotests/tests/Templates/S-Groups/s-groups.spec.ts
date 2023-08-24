@@ -1,7 +1,7 @@
 /* eslint-disable no-magic-numbers */
 import { test } from '@playwright/test';
 import {
-  pressButton,
+  waitForKetcherInit,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
 } from '@utils';
@@ -9,26 +9,23 @@ import {
 test.describe('S-Groups', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('');
+    await waitForKetcherInit(page);
   });
 
   test.afterEach(async ({ page }) => {
     await takeEditorScreenshot(page);
   });
 
-  // this test works locally, but do not work in CI for some reason
-  test.fixme(
-    'Open file with several s-groups and check brackets',
-    async ({ page }) => {
-      /*
+  test('Open file with several s-groups and check brackets', async ({
+    page,
+  }) => {
+    /*
     Test case related to issue: https://github.com/epam/ketcher/issues/2389
-    Description: Open file with S-groups (with Unsupported S-group type) and see that brackets in place for all S-Groups except DAT
+    Description: Open file with S-groups (with Unsupported S-group type GEN) and see that brackets in place for all S-Groups except DAT
     */
-      await openFileAndAddToCanvas(
-        'structure-with-s-groups-with-unsupported-s-group-type.rxn',
-        page,
-      );
-      await pressButton(page, 'OK');
-      await takeEditorScreenshot(page);
-    },
-  );
+    await openFileAndAddToCanvas(
+      'structure-with-s-groups-with-unsupported-s-group-type.rxn',
+      page,
+    );
+  });
 });

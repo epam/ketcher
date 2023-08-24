@@ -39,6 +39,13 @@ export async function getSmarts(page: Page) {
   return await page.evaluate(() => window.ketcher.getSmarts());
 }
 
+export async function getSdf(page: Page, fileFormat: MolfileFormat = 'v2000') {
+  return await page.evaluate(
+    (fileFormat) => window.ketcher.getSdf(fileFormat),
+    fileFormat,
+  );
+}
+
 export async function setMolecule(page: Page, structStr: string) {
   return await page.evaluate(
     (structStr) => window.ketcher.setMolecule(structStr),

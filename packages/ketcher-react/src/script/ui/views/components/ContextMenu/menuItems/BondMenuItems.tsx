@@ -34,7 +34,7 @@ const BondMenuItems: FC<MenuItemsProps> = (props) => {
         const iconName = getIconName(name);
         const classNames =
           styles.sameGroup +
-          (i === nonQueryBondNames.length - 1 ? styles.devider : '');
+          (i === bondNamesWithoutEmptyValue.length - 1 ? styles.devider : '');
 
         return (
           <Item

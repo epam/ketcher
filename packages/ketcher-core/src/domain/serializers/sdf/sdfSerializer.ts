@@ -22,9 +22,9 @@ import { MolSerializerOptions } from '../mol';
 
 const DelimeterRegex = /^[^]+?\$\$\$\$$/gm;
 export class SdfSerializer implements Serializer<Array<SdfItem>> {
-  private readonly molSerializerOptions?: MolSerializerOptions;
+  private readonly molSerializerOptions?: Partial<MolSerializerOptions>;
 
-  constructor(options?: MolSerializerOptions) {
+  constructor(options?: Partial<MolSerializerOptions>) {
     this.molSerializerOptions = options;
   }
 

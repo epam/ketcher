@@ -491,7 +491,12 @@ function getBracketParameters(
       tr = Math.max(tr + 0.2, 0);
       tt = Math.max(Math.max(tt, tb) + 0.1, 0);
       const bracketWidth = 0.25;
-      const bracketHeight = 2 + 2 * Math.sin(Math.PI / 6) + tt;
+      let bracketHeight;
+      if (!attachmentPoints.length) {
+        bracketHeight = 1.5 + tt;
+      } else {
+        bracketHeight = 2 + 2 * Math.sin(Math.PI / 6) + tt;
+      }
       brackets.push(
         new BracketParams(
           leftCenter.addScaled(leftDirection, tl),

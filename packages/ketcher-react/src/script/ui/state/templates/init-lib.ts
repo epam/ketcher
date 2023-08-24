@@ -128,6 +128,6 @@ function prefetchRender(tmpls, baseUrl, cacheEl) {
       if (svgContent) cacheEl.innerHTML += svgContent;
     });
 
-    return files.filter((file, i) => !!svgs[i]);
+    return files.filter((_, i) => !!svgs[i]);
   });
 }

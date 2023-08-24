@@ -80,7 +80,7 @@ the first one disappears. Couldn't reproduct manually.
     );
     // add second structure from file to canvas
     await selectTopPanelButton(TopPanelButton.Open, page);
-    await openFile('rxn_reaction.rxn', page);
+    await openFile('rxn-reaction.rxn', page);
     await waitForLoad(page, () => {
       pressButton(page, 'Add to Canvas');
     });

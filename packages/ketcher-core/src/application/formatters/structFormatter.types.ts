@@ -34,6 +34,7 @@ export enum SupportedFormat {
   smarts = 'smarts',
   inChI = 'inChI',
   inChIAuxInfo = 'inChIAuxInfo',
+  inChIKey = 'inChIKey',
   cml = 'cml',
   ket = 'ket',
   cdxml = 'cdxml',

@@ -246,14 +246,14 @@ export class Ketcher {
     );
   }
 
-  async generateInchIKey(): Promise<string> {
+  async getInChIKey(): Promise<string> {
     const struct: string = await getStructure(
       SupportedFormat.ket,
       this.#formatterFactory,
       this.#editor.struct(),
     );
 
-    return this.#structService.generateInchIKey(struct);
+    return this.#structService.getInChIKey(struct);
   }
 
   containsReaction(): boolean {

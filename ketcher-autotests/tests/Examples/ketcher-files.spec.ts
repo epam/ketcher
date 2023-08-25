@@ -12,7 +12,7 @@ test('opening rnx files', async ({ page }) => {
   Test case: EPMLSOPKET-1839
   */
   await page.goto('');
-  await openFileAndAddToCanvas('1839-ketcher.rxn', page);
+  await openFileAndAddToCanvas('Rxn/1839-ketcher.rxn', page);
   await takeEditorScreenshot(page);
 });
 

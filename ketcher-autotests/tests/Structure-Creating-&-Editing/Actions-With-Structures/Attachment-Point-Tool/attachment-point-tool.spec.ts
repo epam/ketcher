@@ -25,6 +25,7 @@ import {
   clickOnAtom,
   screenshotBetweenUndoRedo,
   setAttachmentPoints,
+  AttachmentPoint,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
@@ -74,11 +75,9 @@ test.describe('Attachment Point Tool', () => {
     */
     await openFileAndAddToCanvas('simple-chain.ket', page);
     await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
-    await setAttachmentPoints(
-      page,
-      { label: 'C', index: 3 },
-      { primary: true, secondary: true },
-    );
+    await clickOnAtom(page, 'C', 3);
+    await page.getByLabel(AttachmentPoint.PRIMARY).check();
+    await page.getByLabel(AttachmentPoint.SECONDARY).check();
   });
 
   test('Rendering of Attachment points', async ({ page }) => {

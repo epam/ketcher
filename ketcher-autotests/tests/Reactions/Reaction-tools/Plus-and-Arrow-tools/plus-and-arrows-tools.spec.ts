@@ -689,6 +689,7 @@ test.describe('Plus and Arrows tools ', () => {
        */
 
       await selectLeftPanelButton(LeftPanelButton.ArrowOpenAngleTool, page);
+      await delay(DELAY_IN_SECONDS.ONE);
       await selectLeftPanelButton(LeftPanelButton.ArrowOpenAngleTool, page);
       const button = page.getByTestId(id).first();
       expect(button).toHaveAttribute('title', idToTitle[id]);

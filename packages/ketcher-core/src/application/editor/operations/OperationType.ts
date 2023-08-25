@@ -58,6 +58,7 @@ export const OperationType = Object.freeze({
   RESTORE_DESCRIPTORS_POSITION: 'Restore descriptors position',
   FRAGMENT_ADD: 'Add fragment',
   FRAGMENT_DELETE: 'Delete fragment',
+  FRAGMENT_SET_PROPERTIES: 'Set fragment properties',
   FRAGMENT_STEREO_FLAG: 'Add fragment stereo flag',
   FRAGMENT_ADD_STEREO_ATOM: 'Add stereo atom to fragment',
   FRAGMENT_DELETE_STEREO_ATOM: 'Delete stereo atom from fragment',

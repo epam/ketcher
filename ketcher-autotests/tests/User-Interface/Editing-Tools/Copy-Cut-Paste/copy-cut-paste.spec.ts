@@ -905,6 +905,8 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Description: The 'Cut' button  is disabled if nothing is selected on the canvas.
     The 'Cut (Ctrl+X)' cut the structure.
     */
+    // wait for top panel buttons to show up
+    await delay(DELAY_IN_SECONDS.TWO);
     await expect(page).toHaveScreenshot();
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
@@ -922,6 +924,8 @@ test.describe('Copy/Cut/Paste Actions', () => {
     When user clicks on the 'Paste' button alert message appears.
     Message should have direction to use shortcuts.
     */
+    // wait for top panel buttons to show up
+    await delay(DELAY_IN_SECONDS.TWO);
     await expect(page).toHaveScreenshot();
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);

@@ -711,8 +711,8 @@ function updateLastCursorPosition(editor: Editor, event) {
       editor.render.clientArea.getBoundingClientRect();
 
     editor.lastCursorPosition = {
-      x: event.pageX - clientAreaBoundingBox.x,
-      y: event.pageY - clientAreaBoundingBox.y,
+      x: event.clientX - clientAreaBoundingBox.x,
+      y: event.clientY - clientAreaBoundingBox.y,
     };
   }
 }

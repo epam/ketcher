@@ -40,6 +40,8 @@ export enum SupportedFormat {
   cdxml = 'cdxml',
   cdx = 'cdx',
   binaryCdx = 'binaryCdx',
+  sdf = 'sdf',
+  sdfV3000 = 'sdfV3000',
   unknown = 'unknown',
 }
 

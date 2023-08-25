@@ -39,6 +39,7 @@ export function toRlabel(values) {
 
 export function moleculeToStruct(ketItem: any): Struct {
   const struct = mergeFragmentsToStruct(ketItem, new Struct());
+
   if (ketItem.atoms) {
     ketItem.atoms.forEach((atom) => {
       let atomId: number | null = null;
@@ -73,7 +74,7 @@ export function moleculeToStruct(ketItem: any): Struct {
 
   struct.initHalfBonds();
   struct.initNeighbors();
-  struct.markFragments();
+  struct.markFragments(ketItem.properties);
   struct.bindSGroupsToFunctionalGroups();
 
   return struct;

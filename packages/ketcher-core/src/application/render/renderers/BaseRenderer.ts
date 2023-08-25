@@ -12,4 +12,9 @@ export abstract class BaseRenderer {
   }
 
   public abstract show(theme): void;
+
+  public remove() {
+    this.rootElement?.remove();
+    this.rootElement = undefined;
+  }
 }

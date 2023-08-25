@@ -65,6 +65,8 @@ export type RenderOptions = {
   contractedFunctionalGroupSize: number;
 
   stereoLabelStyle?: StereLabelStyleType;
+
+  previewOpacity: number;
 };
 
 export interface RelativeBox {

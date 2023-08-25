@@ -16,8 +16,10 @@
 import { ToolConstructorInterface } from './Tool';
 import { PeptideTool } from 'application/editor/tools/Peptide';
 import { SelectLasso } from 'application/editor/tools/SelectLasso';
+import { PolymerBond } from 'application/editor/tools/Bond';
 
 export const toolsMap: Record<string, ToolConstructorInterface> = {
   peptide: PeptideTool,
   'select-lasso': SelectLasso,
+  'bond-single': PolymerBond,
 };

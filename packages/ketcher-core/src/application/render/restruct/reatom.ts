@@ -202,7 +202,7 @@ class ReAtom extends ReObject {
     if (atomSymbolShift > 0) {
       return atomPosition.addScaled(
         direction,
-        atomSymbolShift + 2 * renderOptions.lineWidth,
+        atomSymbolShift + 3 * renderOptions.lineWidth,
       );
     } else {
       return atomPosition;
@@ -210,7 +210,7 @@ class ReAtom extends ReObject {
   }
 
   hasAttachmentPoint(): boolean {
-    return Boolean(this.a.attpnt);
+    return Boolean(this.a.attachmentPoints);
   }
 
   show(restruct: ReStruct, aid: number, options: any): void {
@@ -608,8 +608,8 @@ function shouldDisplayStereoLabel(
   }
 }
 
-function isLabelVisible(restruct, options, atom) {
-  const isAttachmentPointAtom = Boolean(atom.a.attpnt);
+function isLabelVisible(restruct, options, atom: ReAtom) {
+  const isAttachmentPointAtom = Boolean(atom.a.attachmentPoints);
   const isCarbon = atom.a.label.toLowerCase() === 'c';
   const visibleTerminal =
     options.showHydrogenLabels !== ShowHydrogenLabels.Off &&
@@ -711,11 +711,13 @@ function buildLabel(
     }
   }
 
+  const { previewOpacity } = options;
   label.path = paper.text(ps.x, ps.y, label.text).attr({
     font: options.font,
     'font-size': options.fontsz,
     fill: atom.color,
     'font-style': atom.a.pseudo ? 'italic' : '',
+    'fill-opacity': atom.a.isPreview ? previewOpacity : 1,
   });
 
   label.rbb = util.relBox(label.path.getBBox());

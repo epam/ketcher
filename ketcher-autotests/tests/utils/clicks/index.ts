@@ -35,14 +35,18 @@ export async function getCoordinatesOfTheMiddleOfTheScreen(page: Page) {
   };
 }
 
-/* Usage: await pressButton(page, 'Add to Canvas') 
+/* Usage: await pressButton(page, 'Add to Canvas')
   Click on specified button in Open Structure dialog
 */
 export function pressButton(page: Page, name = '') {
   return page.getByRole('button', { name }).click();
 }
 
-/* Usage: await pressTab(page, 'Functional Groups') 
+export function selectOption(page: Page, name = '') {
+  return page.getByRole('option', { name }).click();
+}
+
+/* Usage: await pressTab(page, 'Functional Groups')
   Click on specified Tab in Templates dialog
 */
 export function pressTab(page: Page, name = '') {

@@ -76,7 +76,7 @@ export function fromPaste(
     action.mergeWith(
       fromRGroupAttachmentPointAddition(
         restruct,
-        tmpAtom.attpnt,
+        tmpAtom.attachmentPoints,
         operation.data.aid,
       ),
     );

@@ -21,6 +21,13 @@ import { Elements } from 'domain/constants';
 import { Pile } from './pile';
 import { Struct } from './struct';
 
+export enum AttachmentPoints {
+  None = 0,
+  FirstSideOnly = 1,
+  SecondSideOnly = 2,
+  BothSides = 3,
+}
+
 export enum StereoLabel {
   Abs = 'abs',
   And = '&',
@@ -42,18 +49,18 @@ export interface AtomAttributes {
   invRet?: number;
   aam?: number;
   hCount?: number;
+  isPreview?: boolean;
   unsaturatedAtom?: number;
   substitutionCount?: number;
   ringBondCount?: number;
   explicitValence?: number;
   /**
-   *  Values can be `0 | 1 | 2 | 3 | null`.
-   * `1` - has a `primary` R-Group Attachment Point
-   * `2` - has a `secondary` R-Group Attachment Point
-   * `3` - has a `primary` and a `secondary` R-Group Attachment Points
-   * `null` and `0` both mean the atom has no R-Group Attachment Points
+   * Rgroup member attachment points
+   * Its value is indigo-converted `ATTCHPT`
+   * Ref: https://discover.3ds.com/sites/default/files/2020-08/biovia_ctfileformats_2020.pdf P15
+   * Note: value `-1` has been converted to `3` by indigo.
    */
-  attpnt?: any;
+  attachmentPoints?: AttachmentPoints | null;
   rglabel?: string | null;
   charge?: number;
   radical?: number;
@@ -102,8 +109,9 @@ export class Atom {
     invRet: 0,
     exactChangeFlag: 0,
     rglabel: null,
-    attpnt: null,
+    attachmentPoints: null,
     aam: 0,
+    isPreview: false,
     // enhanced stereo
     stereoLabel: null,
     stereoParity: 0,
@@ -113,8 +121,9 @@ export class Atom {
   label: string;
   fragment: number;
   atomList: AtomList | null;
-  attpnt: any;
+  attachmentPoints: AttachmentPoints | null;
   isotope: number;
+  isPreview: boolean;
   hCount: number;
   radical: number;
   cip: CIP | null;
@@ -141,6 +150,11 @@ export class Atom {
   hasImplicitH?: boolean;
   pseudo!: string;
 
+  /** @deprecated */
+  get attpnt() {
+    return this.attachmentPoints;
+  }
+
   constructor(attributes: AtomAttributes) {
     this.label = attributes.label;
     this.fragment = getValueOrDefault(attributes.fragment, -1);
@@ -150,11 +164,18 @@ export class Atom {
     this.cip = getValueOrDefault(attributes.cip, Atom.attrlist.cip);
     this.charge = getValueOrDefault(attributes.charge, Atom.attrlist.charge);
     this.rglabel = getValueOrDefault(attributes.rglabel, Atom.attrlist.rglabel);
-    this.attpnt = getValueOrDefault(attributes.attpnt, Atom.attrlist.attpnt);
+    this.attachmentPoints = getValueOrDefault(
+      attributes.attachmentPoints,
+      Atom.attrlist.attachmentPoints,
+    );
     this.implicitHCount = getValueOrDefault(attributes.implicitHCount, null);
     this.explicitValence = getValueOrDefault(
       attributes.explicitValence,
       Atom.attrlist.explicitValence,
+    );
+    this.isPreview = getValueOrDefault(
+      attributes.isPreview,
+      Atom.attrlist.isPreview,
     );
 
     this.valence = 0;
@@ -234,7 +255,7 @@ export class Atom {
    * then we will be able to remove this hack.
    */
   setRGAttachmentPointForDisplayPurpose() {
-    this.attpnt = 1;
+    this.attachmentPoints = AttachmentPoints.FirstSideOnly;
   }
 
   static getConnectedBondIds(struct: Struct, atomId: number): number[] {
@@ -294,8 +315,11 @@ export class Atom {
   }
 
   isQuery(): boolean {
-    return (
-      this.atomList !== null || this.label === 'A' || this.attpnt || this.hCount
+    return Boolean(
+      this.atomList !== null ||
+        this.label === 'A' ||
+        this.attachmentPoints ||
+        this.hCount,
     );
   }
 
@@ -327,7 +351,7 @@ export class Atom {
     return !!(
       this.invRet ||
       this.exactChangeFlag ||
-      this.attpnt !== null ||
+      this.attachmentPoints !== null ||
       this.aam
     );
   }

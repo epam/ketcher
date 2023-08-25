@@ -1,0 +1,20 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Polymer Bond Renderer should render bond 1`] = `
+<svg
+  height="500"
+  id="polymer-editor-canvas"
+  width="500"
+>
+  <g>
+    <line
+      stroke="#333333"
+      stroke-width="2"
+      x1="10"
+      x2="90"
+      y1="10"
+      y2="100"
+    />
+  </g>
+</svg>
+`;

@@ -172,4 +172,32 @@ test.describe('Lookup Abbreviations tests', () => {
     await page.keyboard.type('mer');
     await page.keyboard.press('Enter');
   });
+
+  test.skip('changing atom in a molecule with a structure from functional groups using lookup abbreviation', async ({
+    page,
+  }) => {
+    // EPMLSOPKET-16928
+    // will be added with https://github.com/epam/ketcher/issues/2789
+    await page.getByRole('button', { name: 'Benzene (T)' }).click();
+    await clickInTheMiddleOfTheScreen(page);
+    const atomC = 0;
+    await moveOnAtom(page, 'C', atomC);
+    await page.keyboard.type('bn');
+    await page.keyboard.press('Enter');
+  });
+
+  test.skip('atom state restores after typing additional letters', async ({
+    page,
+  }) => {
+    // EPMLSOPKET-16928
+    // will be added with https://github.com/epam/ketcher/issues/2789
+    await page.getByRole('button', { name: 'Benzene (T)' }).click();
+    await clickInTheMiddleOfTheScreen(page);
+    const atomC = 0;
+    await moveOnAtom(page, 'C', atomC);
+    await page.keyboard.type('n');
+    // 'N' should be placed on hovered atom
+    await page.keyboard.type('ickel');
+    // state of hovered atom should be restored
+  });
 });

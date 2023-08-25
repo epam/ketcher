@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Atom, Bond, RGroup } from 'domain/entities';
+import { Atom, Bond, RGroup, SGroupAttachmentPoint } from 'domain/entities';
 import {
   AtomAdd,
   AtomAttr,
@@ -38,6 +38,7 @@ import { fromBondStereoUpdate } from './bond';
 import { without } from 'lodash/fp';
 import ReStruct from 'application/render/restruct/restruct';
 import assert from 'assert';
+import { SGroupAttachmentPointRemove } from '../operations/sgroup/sgroupAttachmentPoints';
 
 export function fromAtomAddition(restruct, pos, atom) {
   atom = Object.assign({}, atom);
@@ -222,6 +223,22 @@ export function fromAtomMerge(restruct, srcId, dstId) {
   const sgChanged = removeAtomFromSgroupIfNeeded(action, restruct, srcId);
 
   if (sgChanged) removeSgroupIfNeeded(action, restruct, [srcId]);
+
+  const sgroups = atomGetSGroups(restruct, srcId);
+  sgroups.forEach((sgroupId: number) => {
+    const sgroup = restruct.sgroups.get(sgroupId).item;
+    for (let i = 0; i < sgroup.attachmentPoints.length; ++i) {
+      if (sgroup.attachmentPoints[i].atomId === srcId) {
+        action.addOp(
+          new SGroupAttachmentPointRemove(
+            sgroupId,
+            new SGroupAttachmentPoint(srcId, undefined, undefined),
+          ),
+        );
+        return;
+      }
+    }
+  });
 
   action.addOp(new AtomDelete(srcId));
   const dstAtomNeighbors = restruct.molecule.atomGetNeighbors(dstId);

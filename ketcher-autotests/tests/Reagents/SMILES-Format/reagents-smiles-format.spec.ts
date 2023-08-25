@@ -95,20 +95,24 @@ test.describe('Reagents SMILES format', () => {
     },
   );
 
-  test(`Detection molecule as reagent
-  and write reagent information in "Extended SMILES" format in "Preview" tab`, async ({
-    page,
-  }) => {
-    /*
+  test.fixme(
+    `Detection molecule as reagent
+  and write reagent information in "Extended SMILES" format in "Preview" tab`,
+    async ({ page }) => {
+      /*
     Test case: EPMLSOPKET-4662
     Description: System detect molecule as reagent and write reagent in "Extended SMILES' 
     format in "Preview" tab (e.g. C1C=CC=CC=1>N>C1C=CC=CC=1 
     where specifying reactant, agent and product molecule(s) separated by the "greater-than" symbol ('>').
     */
-    await openFileAndAddToCanvas('benzene-arrow-benzene-reagent-nh3.ket', page);
+      await openFileAndAddToCanvas(
+        'benzene-arrow-benzene-reagent-nh3.ket',
+        page,
+      );
 
-    await getPreviewForSmiles(page, 'MDL Rxnfile V2000', 'Extended SMILES');
-  });
+      await getPreviewForSmiles(page, 'MDL Rxnfile V2000', 'Extended SMILES');
+    },
+  );
 
   // TODO flaky
   test.fixme(

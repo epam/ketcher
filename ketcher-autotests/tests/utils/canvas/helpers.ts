@@ -86,7 +86,7 @@ export async function takeEditorScreenshot(
 }
 
 export async function takeLeftToolbarScreenshot(page: Page) {
-  const editor = page.locator('[class*="LeftToolbar-module_buttons"]');
+  const editor = page.getByTestId('left-toolbar-buttons');
   await delay(DELAY_IN_SECONDS.THREE);
   await expect(editor).toHaveScreenshot();
 }

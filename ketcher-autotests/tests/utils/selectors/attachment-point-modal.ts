@@ -16,10 +16,5 @@ export async function setAttachmentPoints(
   await clickOnAtom(page, atom.label, atom.index);
   await page.getByLabel(AttachmentPoint.PRIMARY).setChecked(primary);
   await page.getByLabel(AttachmentPoint.SECONDARY).setChecked(secondary);
-
-  if (buttonToClick === 'Apply') {
-    await pressButton(page, 'Apply');
-  } else if (buttonToClick === 'Cancel') {
-    await pressButton(page, 'Cancel');
-  }
+  await pressButton(page, buttonToClick);
 }

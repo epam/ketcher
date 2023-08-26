@@ -106,7 +106,7 @@ test.describe('Multiple S-Group tool', () => {
       Test case: EPMLSOPKET-1520
       Description: User is able to edit the Multiple S-group.
     */
-    await openFileAndAddToCanvas('multiple-group.ket', page);
+    await openFileAndAddToCanvas('KET/multiple-group.ket', page);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await clickOnBond(page, BondType.SINGLE, 3, 'right');
     await page.getByText('Edit S-Group...').click();
@@ -120,7 +120,7 @@ test.describe('Multiple S-Group tool', () => {
       Test case: EPMLSOPKET-1521
       Description: User is able to add atom on structure with Multiple S-group.
     */
-    await openFileAndAddToCanvas('multiple-group.ket', page);
+    await openFileAndAddToCanvas('KET/multiple-group.ket', page);
     await selectAtomInToolbar(AtomButton.Oxygen, page);
     await clickOnAtom(page, 'C', 3);
     await resetCurrentTool(page);
@@ -133,7 +133,7 @@ test.describe('Multiple S-Group tool', () => {
       Test case: EPMLSOPKET-1521
       Description: User is able to delete and undo/redo atom on structure with Multiple S-group.
     */
-    await openFileAndAddToCanvas('multiple-group.ket', page);
+    await openFileAndAddToCanvas('KET/multiple-group.ket', page);
     await selectLeftPanelButton(LeftPanelButton.Erase, page);
     await clickOnAtom(page, 'C', 3);
     await takeEditorScreenshot(page);
@@ -148,7 +148,7 @@ test.describe('Multiple S-Group tool', () => {
       Test case: EPMLSOPKET-1521
       Description: User is able to delete whole Chain with Multiple S-Group and undo/redo.
     */
-    await openFileAndAddToCanvas('multiple-group.ket', page);
+    await openFileAndAddToCanvas('KET/multiple-group.ket', page);
     await page.keyboard.press('Control+a');
     await page.getByTestId('delete').click();
     await takeEditorScreenshot(page);
@@ -164,7 +164,7 @@ test.describe('Multiple S-Group tool', () => {
       Description: User is able to add R-Group Label and Undo/Redo on structure with Multiple S-group.
     */
     const rGroupName = 'R8';
-    await openFileAndAddToCanvas('multiple-group.ket', page);
+    await openFileAndAddToCanvas('KET/multiple-group.ket', page);
     await selectLeftPanelButton(LeftPanelButton.R_GroupLabelTool, page);
     await clickOnAtom(page, 'C', 3);
     await page.getByRole('button', { name: rGroupName }).click();
@@ -180,7 +180,7 @@ test.describe('Multiple S-Group tool', () => {
       Test case: EPMLSOPKET-1522
       Description: User is able to copy and paste structure with Multiple S-group.
     */
-    await openFileAndAddToCanvas('multiple-group.ket', page);
+    await openFileAndAddToCanvas('KET/multiple-group.ket', page);
     await copyAndPaste(page);
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
   });
@@ -190,7 +190,7 @@ test.describe('Multiple S-Group tool', () => {
       Test case: EPMLSOPKET-1522
       Description: User is able to cut and paste structure with Multiple S-group.
     */
-    await openFileAndAddToCanvas('multiple-group.ket', page);
+    await openFileAndAddToCanvas('KET/multiple-group.ket', page);
     await cutAndPaste(page);
     await clickInTheMiddleOfTheScreen(page);
   });

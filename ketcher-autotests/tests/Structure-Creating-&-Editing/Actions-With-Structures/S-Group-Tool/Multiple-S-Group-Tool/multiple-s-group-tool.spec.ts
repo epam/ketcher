@@ -60,7 +60,7 @@ test.describe('Multiple S-Group tool', () => {
       Test case: EPMLSOPKET-1506
       Description: The brackets are rendered correctly around Atom
     */
-    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await clickOnAtom(page, 'C', 3);
     await selectMultipleGroup(page, 'Data', 'Multiple group', '88', 'Apply');
@@ -71,7 +71,7 @@ test.describe('Multiple S-Group tool', () => {
       Test case: EPMLSOPKET-1506
       Description: The brackets are rendered correctly around Bond
     */
-    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await clickOnBond(page, BondType.SINGLE, 3);
     await selectMultipleGroup(page, 'Data', 'Multiple group', '88', 'Apply');
@@ -82,7 +82,7 @@ test.describe('Multiple S-Group tool', () => {
       Test case: EPMLSOPKET-1506
       Description: The brackets are rendered correctly around whole structure
     */
-    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await page.keyboard.press('Control+a');
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await selectMultipleGroup(page, 'Data', 'Multiple group', '88', 'Apply');
@@ -91,7 +91,7 @@ test.describe('Multiple S-Group tool', () => {
   test('Brackets rendering for whole s-group structure even with attachment points', async ({
     page,
   }) => {
-    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
     await clickOnAtom(page, 'C', 3);
     await page.getByLabel(AttachmentPoint.PRIMARY).check();
@@ -200,7 +200,7 @@ test.describe('Multiple S-Group tool', () => {
       Test case: EPMLSOPKET-1523
       Description: User is able to save and open structure with Multiple S-group.
     */
-    await openFileAndAddToCanvas('multiple-group-data.ket', page);
+    await openFileAndAddToCanvas('KET/multiple-group-data.ket', page);
     const expectedFile = await getMolfile(page);
     await saveToFile('multiple-group-data-expected.mol', expectedFile);
     const METADATA_STRING_INDEX = [1];
@@ -219,7 +219,7 @@ test.describe('Multiple S-Group tool', () => {
       Description: The fragment we previously clicked on is highlighted with two 
       square brackets and displayed next to bracket 1
     */
-    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await page.keyboard.press('Control+a');
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await selectMultipleGroup(page, 'Data', 'Multiple group', '1', 'Apply');
@@ -231,7 +231,7 @@ test.describe('Multiple S-Group tool', () => {
       Description: The fragment we previously clicked on is highlighted with two 
       square brackets and displayed next to bracket 200
     */
-    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await page.keyboard.press('Control+a');
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await selectMultipleGroup(page, 'Data', 'Multiple group', '200', 'Apply');
@@ -245,7 +245,7 @@ test.describe('Multiple S-Group tool', () => {
       Description: 0 is displayed and warning message "must be >=1" on the right under the highlighted red "Repeat count" field
       The field "Repeat count" is empty and is lit in gray, the "Apply" button is not active
     */
-    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await page.keyboard.press('Control+a');
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await selectMultipleGroup(page, 'Data', 'Multiple group', '0');
@@ -259,7 +259,7 @@ test.describe('Multiple S-Group tool', () => {
       Description: 201 is displayed and warning message "must be <=200" on the right under the highlighted red "Repeat count" field
       The field "Repeat count" is empty and is lit in gray
     */
-    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await page.keyboard.press('Control+a');
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await selectMultipleGroup(page, 'Data', 'Multiple group', '201');
@@ -272,7 +272,7 @@ test.describe('Multiple S-Group tool', () => {
       Test case: EPMLSOPKET-16893
       Description: -1 is displayed and warning message "must be >=1" on the right under the highlighted red "Repeat count" field
     */
-    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await page.keyboard.press('Control+a');
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await selectMultipleGroup(page, 'Data', 'Multiple group', '-1');
@@ -283,7 +283,7 @@ test.describe('Multiple S-Group tool', () => {
       Test case: EPMLSOPKET-16938
       Description: Attachment points should be inside of S-Group
     */
-    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await page.keyboard.press('Control+a');
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await selectMultipleGroup(page, 'Data', 'Multiple group', '200', 'Apply');

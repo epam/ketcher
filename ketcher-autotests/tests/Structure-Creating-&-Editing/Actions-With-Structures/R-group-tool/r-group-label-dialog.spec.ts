@@ -374,7 +374,10 @@ test.describe('R-Group Label Tool', () => {
     */
     const x = 100;
     const y = 100;
-    await openFileAndAddToCanvas('Rxn/chain-with-three-r-groups.rxn', page);
+    await openFileAndAddToCanvas(
+      'Rxn-V2000/chain-with-three-r-groups.rxn',
+      page,
+    );
     await selectBond(BondTypeName.Single, page);
     await page.getByText('R8').hover();
     await dragMouseTo(x, y, page);
@@ -387,7 +390,10 @@ test.describe('R-Group Label Tool', () => {
     */
     const x = 500;
     const y = 500;
-    await openFileAndAddToCanvas('Rxn/chain-with-three-r-groups.rxn', page);
+    await openFileAndAddToCanvas(
+      'Rxn-V2000/chain-with-three-r-groups.rxn',
+      page,
+    );
     await selectLeftPanelButton(LeftPanelButton.Chain, page);
     await page.getByText('R10').hover();
     await dragMouseTo(x, y, page);
@@ -400,7 +406,10 @@ test.describe('R-Group Label Tool', () => {
     */
     const x = 500;
     const y = 500;
-    await openFileAndAddToCanvas('Rxn/chain-with-three-r-groups.rxn', page);
+    await openFileAndAddToCanvas(
+      'Rxn-V2000/chain-with-three-r-groups.rxn',
+      page,
+    );
     await selectRingButton(RingButton.Benzene, page);
     await page.getByText('R10').hover();
     await dragMouseTo(x, y, page);

@@ -177,7 +177,7 @@ test.describe('Open Ketcher', () => {
     /* Test case: EPMLSOPKET-1586
       Description: Create several R-Group members
     */
-    await openFileAndAddToCanvas('3structeres.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/three-structures.mol', page);
 
     await selectRGroups(page, ['R7']);
 

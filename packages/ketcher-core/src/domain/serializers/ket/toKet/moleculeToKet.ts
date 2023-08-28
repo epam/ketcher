@@ -53,6 +53,9 @@ export function moleculeToKet(struct: Struct): any {
   const fragment = struct.frags.get(0);
   if (fragment) {
     ifDef(body, 'stereoFlagPosition', fragment.stereoFlagPosition, null);
+    if (fragment.properties) {
+      body.properties = fragment.properties;
+    }
   }
   return {
     type: 'molecule',

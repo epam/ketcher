@@ -85,6 +85,8 @@ class SaveDialog extends Component {
           'ket',
           this.isRxn ? 'rxn' : 'mol',
           this.isRxn ? 'rxnV3000' : 'molV3000',
+          'sdf',
+          'sdfV3000',
           'smarts',
           'smiles',
           'smilesExt',

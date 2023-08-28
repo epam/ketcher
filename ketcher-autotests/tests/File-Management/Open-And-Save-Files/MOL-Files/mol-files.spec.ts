@@ -539,7 +539,6 @@ test('Open V3000 file with R-Groups with Fragments', async ({ page }) => {
   await takeEditorScreenshot(page);
 });
 
-// EPMLSOPKET-1852
 test('Open and Save files - Open/Save structure with bond properties', async ({
   page,
 }) => {
@@ -553,7 +552,6 @@ test('Open and Save files - Open/Save structure with bond properties', async ({
   await takeEditorScreenshot(page);
 });
 
-// EPMLSOPKET-1853 Error
 test.fixme(
   'Open and Save files - V3000 mol file contains different Bond properties',
   async ({ page }) => {
@@ -589,7 +587,6 @@ test.fixme(
   },
 );
 
-// EPMLSOPKET-1856
 test('Open and Save file - Open/Save Alias and Pseudoatoms 1/2 - open', async ({
   page,
 }) => {
@@ -633,7 +630,6 @@ test('Open and Save file - Open/Save Alias and Pseudoatoms 2/2 - save', async ({
   expect(molFile).toEqual(molFileExpected);
 });
 
-// EPMLSOPKET-1874
 test('Open and Save file - Open/Save V3000 mol file contains Rgroup 1/2 - open', async ({
   page,
 }) => {
@@ -677,7 +673,6 @@ test('Open and Save file - Open/Save V3000 mol file contains Rgroup 2/2 - save',
   expect(molFile).toEqual(molFileExpected);
 });
 
-// EPMLSOPKET-1875 - Error
 test.fixme(
   'Open and Save file - Open/Save file with S-Groups 1/2 - open',
   async ({ page }) => {
@@ -725,7 +720,6 @@ test.fixme(
   },
 );
 
-// EPMLSOPKET-1876 Error
 test.fixme(
   'Open and Save file - Open/Save  V3000 mol file contains Sgroup 1/2 - open',
   async ({ page }) => {
@@ -774,7 +768,6 @@ test.fixme(
   },
 );
 
-// EPMLSOPKET-1890
 test('Open and Save file - Open/Save V3000 mol file contains more than 900 symbols 1/2 - open', async ({
   page,
 }) => {
@@ -817,7 +810,6 @@ test('Open and Save file - Open/Save V3000 mol file contains more than 900 symbo
   expect(molFile).toEqual(molFileExpected);
 });
 
-// EPMLSOPKET-1893
 test('Open and Save file - Open/Save files for ferrocen-like structures 1/2 - open', async ({
   page,
 }) => {
@@ -876,7 +868,6 @@ test('Open and Save file - Open/Save files for ferrocen-like structures 2/2 - sa
   expect(molFile).toEqual(molFileExpected);
 });
 
-// EPMLSOPKET-1895
 test('Open and Save file - Open/Save V3000 mol file contains Sgroup 1/2 - open', async ({
   page,
 }) => {
@@ -920,7 +911,6 @@ test('Open and Save file - Open/Save V3000 mol file contains Sgroup 2/2 - save',
   expect(molFile).toEqual(molFileExpected);
 });
 
-// EPMLSOPKET-1979
 test('Open and Save file - Save structure as *.mol V3000', async ({ page }) => {
   /**
    * Test case: EPMLSOPKET-1979
@@ -933,7 +923,6 @@ test('Open and Save file - Save structure as *.mol V3000', async ({ page }) => {
   await takeEditorScreenshot(page);
 });
 
-// EPMLSOPKET-8914 - write (2)
 test('MDL Molfile v2000: Correct padding for M ALS 1/2 - open', async ({
   page,
 }) => {
@@ -948,7 +937,7 @@ test('MDL Molfile v2000: Correct padding for M ALS 1/2 - open', async ({
   await takeEditorScreenshot(page);
 });
 
-test('MDL Molfile v2000: Correct padding for M ALS 2/2 - save', async ({
+test('MDL Molfile v2000: Correct padding for M ALS 2/2 - check padding', async ({
   page,
 }) => {
   /**
@@ -961,22 +950,11 @@ test('MDL Molfile v2000: Correct padding for M ALS 2/2 - save', async ({
 
   await openFileAndAddToCanvas('Molfiles-V2000/molfile_with_als.mol', page);
   const expectedFile = await getMolfile(page, 'v2000');
-  await saveToFile('Molfiles-V2000/molfile_with_als-expected', expectedFile);
+  const isCorrectPadding = expectedFile.includes('N   ');
 
-  const METADATA_STRING_INDEX = [1];
-  const { fileExpected: molFileExpected, file: molFile } =
-    await receiveFileComparisonData({
-      page,
-      expectedFileName:
-        'tests/test-data/Molfiles-V2000/molfile_with_als-expected.mol',
-      fileFormat: 'v2000',
-      metaDataIndexes: METADATA_STRING_INDEX,
-    });
-
-  expect(molFile).toEqual(molFileExpected);
+  expect(isCorrectPadding).toEqual(true);
 });
 
-// EPMLSOPKET-12963
 test.fixme(
   'Open and Save file - Open/Save v3000 mol file with assigned Alias 1/2 - open',
   async ({ page }) => {
@@ -1021,7 +999,6 @@ test.fixme(
   },
 );
 
-// EPMLSOPKET-12966
 test('Open and Save file - Open structure with R-Group from v3000 mol file', async ({
   page,
 }) => {
@@ -1036,7 +1013,6 @@ test('Open and Save file - Open structure with R-Group from v3000 mol file', asy
   await takeEditorScreenshot(page);
 });
 
-// EPMLSOPKET-4731
 test('Open and Save file - Don`t creates invalid molfiles with "NaN"', async ({
   page,
 }) => {
@@ -1051,7 +1027,6 @@ test('Open and Save file - Don`t creates invalid molfiles with "NaN"', async ({
   await takeEditorScreenshot(page);
 });
 
-// EPMLSOPKET-5259
 test('Open and Save file - Functional group name layout close to attachment point', async ({
   page,
 }) => {

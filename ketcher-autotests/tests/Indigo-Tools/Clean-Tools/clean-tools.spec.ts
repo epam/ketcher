@@ -67,7 +67,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
     During the Layout action structure is rotated 90° counterclockwise.
     After the Clean Up action the structure does not change.
    */
-    await openFileAndAddToCanvas('4-bonds.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/four-bonds.mol', page);
 
     await selectTopPanelButton(TopPanelButton.Layout, page);
     await takeEditorScreenshot(page);

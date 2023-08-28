@@ -15,7 +15,7 @@ import { getSmiles, getInchi } from '@utils/formats';
 
 export async function readFileContents(filePath: string) {
   const resolvedFilePath = path.resolve(process.cwd(), filePath);
-  return await fs.promises.readFile(resolvedFilePath, 'utf8');
+  return fs.promises.readFile(resolvedFilePath, 'utf8');
 }
 
 export async function openFile(filename: string, page: Page) {

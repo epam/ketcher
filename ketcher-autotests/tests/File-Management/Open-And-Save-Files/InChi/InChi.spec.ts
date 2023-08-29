@@ -26,7 +26,10 @@ test.describe('', () => {
        */
       // add first structure from clipboard to canvas
       await selectTopPanelButton(TopPanelButton.Open, page);
-      await openFromFileViaClipboard('tests/test-data/1963_inchi.txt', page);
+      await openFromFileViaClipboard(
+        'tests/test-data/Txt/1963-inchi.txt',
+        page,
+      );
       await clickInTheMiddleOfTheScreen(page);
     },
   );
@@ -41,7 +44,10 @@ test.describe('', () => {
        */
       // add first structure from clipboard to canvas
       await selectTopPanelButton(TopPanelButton.Open, page);
-      await openFromFileViaClipboard('tests/test-data/1967_InChi.txt', page);
+      await openFromFileViaClipboard(
+        'tests/test-data/Txt/1967-inchi.txt',
+        page,
+      );
       await clickInTheMiddleOfTheScreen(page);
     },
   );
@@ -56,7 +62,10 @@ test.describe('', () => {
        */
       // add first structure from clipboard to canvas
       await selectTopPanelButton(TopPanelButton.Open, page);
-      await openFromFileViaClipboard('tests/test-data/1968_InChi.txt', page);
+      await openFromFileViaClipboard(
+        'tests/test-data/Txt/1968-inchi.txt',
+        page,
+      );
       await clickInTheMiddleOfTheScreen(page);
     },
   );
@@ -71,7 +80,10 @@ test.describe('', () => {
        */
       // add first structure from clipboard to canvas
       await selectTopPanelButton(TopPanelButton.Open, page);
-      await openFromFileViaClipboard('tests/test-data/1969_InChi.txt', page);
+      await openFromFileViaClipboard(
+        'tests/test-data/Txt/1969-inchi.txt',
+        page,
+      );
       await clickInTheMiddleOfTheScreen(page);
     },
   );
@@ -86,7 +98,10 @@ test.describe('', () => {
        */
       // add first structure from clipboard to canvas
       await selectTopPanelButton(TopPanelButton.Open, page);
-      await openFromFileViaClipboard('tests/test-data/1970_InChi.txt', page);
+      await openFromFileViaClipboard(
+        'tests/test-data/Txt/1970-inchi.txt',
+        page,
+      );
       await clickInTheMiddleOfTheScreen(page);
     },
   );
@@ -101,7 +116,10 @@ test.describe('', () => {
        */
       // add first structure from clipboard to canvas
       await selectTopPanelButton(TopPanelButton.Open, page);
-      await openFromFileViaClipboard('tests/test-data/1971_InChi.txt', page);
+      await openFromFileViaClipboard(
+        'tests/test-data/Txt/1971-inchi.txt',
+        page,
+      );
       await clickInTheMiddleOfTheScreen(page);
     },
   );
@@ -116,7 +134,10 @@ test.describe('', () => {
        */
       // add first structure from clipboard to canvas
       await selectTopPanelButton(TopPanelButton.Open, page);
-      await openFromFileViaClipboard('tests/test-data/1974_InChi.txt', page);
+      await openFromFileViaClipboard(
+        'tests/test-data/Txt/1974-inchi.txt',
+        page,
+      );
       await clickInTheMiddleOfTheScreen(page);
     },
   );
@@ -131,7 +152,10 @@ test.describe('', () => {
        */
       // add first structure from clipboard to canvas
       await selectTopPanelButton(TopPanelButton.Open, page);
-      await openFromFileViaClipboard('tests/test-data/1975_InChi.txt', page);
+      await openFromFileViaClipboard(
+        'tests/test-data/Txt/1975-inchi.txt',
+        page,
+      );
       await clickInTheMiddleOfTheScreen(page);
     },
   );
@@ -146,7 +170,10 @@ test.describe('', () => {
        */
       // add first structure from clipboard to canvas
       await selectTopPanelButton(TopPanelButton.Open, page);
-      await openFromFileViaClipboard('tests/test-data/1976_InChi.txt', page);
+      await openFromFileViaClipboard(
+        'tests/test-data/Txt/1976-inchi.txt',
+        page,
+      );
       await clickInTheMiddleOfTheScreen(page);
     },
   );

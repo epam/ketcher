@@ -38,8 +38,8 @@ export function atomGetDegree(restruct, aid) {
   return restruct.atoms.get(aid).a.neighbors.length;
 }
 
-export function atomGetSGroups(restruct, aid) {
-  return Array.from(restruct.atoms.get(aid).a.sgs);
+export function atomGetSGroups(restruct, atomId: number): number[] {
+  return Array.from(restruct.atoms.get(atomId).a.sgs);
 }
 
 export function atomGetPos(restruct, id) {

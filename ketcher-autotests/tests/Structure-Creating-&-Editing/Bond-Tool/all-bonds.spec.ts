@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 import { test, expect, Page } from '@playwright/test';
 import {
   AtomButton,
@@ -17,6 +18,16 @@ import {
   DELAY_IN_SECONDS,
   selectNestedTool,
   BondTool,
+  clickOnTheCanvas,
+  selectTopPanelButton,
+  openFileAndAddToCanvas,
+  selectLeftPanelButton,
+  pressButton,
+  STRUCTURE_LIBRARY_BUTTON_NAME,
+  selectFunctionalGroups,
+  FunctionalGroups,
+  selectRingButton,
+  clickOnBond,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import {
@@ -26,6 +37,23 @@ import {
 } from '@utils/canvas/bonds';
 import { BondType } from '@utils/canvas/types';
 import { SelectionType, selectSelection } from '@utils/canvas/selectSelection';
+import { CheckResult } from 'ketcher-core';
+const buttonIdToTitle: CheckResult = {
+  'bond-single': 'Single Bond (1)',
+  'bond-double': 'Double Bond (2)',
+  'bond-triple': 'Triple Bond (3)',
+  'bond-any': 'Any Bond (0)',
+  'bond-aromatic': 'Aromatic Bond (4)',
+  'bond-singledouble': 'Single/Double Bond',
+  'bond-singlearomatic': 'Single/Aromatic Bond',
+  'bond-doublearomatic': 'Double/Aromatic Bond',
+  'bond-dative': 'Dative Bond',
+  'bond-hydrogen': 'Hydrogen Bond',
+  'bond-up': 'Single Up Bond (1)',
+  'bond-down': 'Single Down Bond (1)',
+  'bond-updown': 'Single Up/Down Bond (1)',
+  'bond-crossed': 'Double Cis/Trans Bond (2)',
+};
 
 for (const bondToolKey of Object.keys(BondTool)) {
   let point: { x: number; y: number };
@@ -52,7 +80,7 @@ for (const bondToolKey of Object.keys(BondTool)) {
     });
 
     test(`placing ${bondToolKey} on canvas`, async () => {
-      /*
+      /**
        *   Test cases: EPMLSOPKET-1371, 1380, 1389, 1396, 1404, 1410, 1416, 1422, 1428, 1437, 1444, 1451, 2238, 2244
        */
 
@@ -111,7 +139,7 @@ for (const bondToolKey of Object.keys(BondTool)) {
     });
 
     test(`click on an existing bond using ${bondToolKey}`, async () => {
-      /*
+      /**
        * Test case: EPMLSOPKET-1375, 1383, 1392, 1398, 1406, 1412, 1418, 1424, 1430, 1439, 1446, 1453, 2240, 2246
        */
 
@@ -217,7 +245,7 @@ for (const bondToolKey of Object.keys(BondTool)) {
 
     // TODO:
     test.skip(`Manipulations with ${bondToolKey}`, async () => {
-      /*
+      /**
        * Test case: EPMLSOPKET-1377, 1385, 1394, 1400, 1408, 1414, 1420 1426, 1432, 1441, 1448, 1455, 2242, 2248
        */
       const DELTA_X = 100;
@@ -274,5 +302,104 @@ for (const bondToolKey of Object.keys(BondTool)) {
       await selectRing(RingButton.Cyclohexane, page);
       await page.mouse.click(point.x, point.y);
     });
+
+    test(`Check highlight absence after ${bondToolKey} Bond creation`, async () => {
+      /**
+       *  Test cases: EPMLSOPKET-1374, 1382, 1391, 1397, 1405, 1411, 1417, 1423, 1429, 1438, 1445, 1452, 2239, 2245
+       */
+      await selectNestedTool(page, BondTool[bondToolKey]);
+
+      await clickInTheMiddleOfTheScreen(page);
+    });
+
+    test.describe('Saving and rendering', () => {
+      /**
+       *   Test cases: EPMLSOPKET-1378, 1386, 1395, 1401, 1409, 1415, 1421, 1427, 1433, 1442, 1449, 1456, 2243, 2249
+       */
+      const fileName = `saving-and-rendering-${bondToolKey}-bond.mol`;
+      test(`Save to file`, async () => {
+        await selectNestedTool(page, BondTool[bondToolKey]);
+        await clickOnTheCanvas(page, -200, 0);
+        await clickInTheMiddleOfTheScreen(page);
+        await selectTopPanelButton(TopPanelButton.Save, page);
+        await page.getByRole('button', { name: 'Save', exact: true }).click();
+      });
+
+      test(`Open and edit`, async () => {
+        await openFileAndAddToCanvas(fileName, page);
+        await selectLeftPanelButton(LeftPanelButton.ReactionPlusTool, page);
+        await clickOnTheCanvas(page, 200, 0);
+      });
+    });
+  });
+}
+
+test.describe('Creating', () => {
+  const toolsForTest = [BondTool.SINGLE, BondTool.DOUBLE, BondTool.TRIPPLE];
+  test.beforeEach(async ({ page }) => {
+    await page.goto('', { waitUntil: 'domcontentloaded' });
+  });
+
+  test.afterEach(async ({ page }) => {
+    await takeEditorScreenshot(page);
+  });
+  for (const tool of toolsForTest) {
+    test(`Functional Group with attach ${tool}`, async ({ page }) => {
+      /**
+       *Test case: EPMLSOPKET-10086
+       *Description: A bond is added to a contracted functional group and form a bond
+       */
+      await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+      await page.getByRole('tab', { name: 'Functional Groups' }).click();
+      await selectFunctionalGroups(FunctionalGroups.Boc, page);
+      await clickInTheMiddleOfTheScreen(page);
+      await selectNestedTool(page, tool);
+      await clickInTheMiddleOfTheScreen(page);
+    });
+    test(`creating two (or more) connected ${tool} bonds`, async ({ page }) => {
+      /**
+       * Test cases: EPMLSOPKET - 2920/2921
+       */
+      await clickInTheMiddleOfTheScreen(page);
+      await selectNestedTool(page, tool);
+      await clickInTheMiddleOfTheScreen(page);
+      await clickInTheMiddleOfTheScreen(page);
+    });
+  }
+
+  test('Aromatic Bond tool - Ring inside the cycle structure', async ({
+    page,
+  }) => {
+    /**
+     *Test case: EPMLSOPKET-1436
+     *Description: Aromatic Bond tool - Ring inside the cycle structure
+     */
+    await selectRingButton(RingButton.Cyclohexane, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await selectNestedTool(page, BondTool.AROMATIC);
+    let i = 0;
+    while (i < 6) {
+      await clickOnBond(page, BondType.SINGLE, 0);
+      i++;
+    }
+    await takeEditorScreenshot(page);
+    await selectTopPanelButton(TopPanelButton.Dearomatize, page);
+    await takeEditorScreenshot(page);
+    await selectTopPanelButton(TopPanelButton.Aromatize, page);
+  });
+});
+
+for (const [_, id] of Object.values(BondTool)) {
+  /*
+   *   Test cases: EPMLSOPKET-1367, 2271,
+   */
+  test(`${id} tool: verification`, async ({ page }) => {
+    await page.goto('', { waitUntil: 'domcontentloaded' });
+    await selectLeftPanelButton(LeftPanelButton.SingleBond, page);
+    await selectLeftPanelButton(LeftPanelButton.SingleBond, page);
+    const button = page.getByTestId(id);
+    expect(button).toHaveAttribute('title', buttonIdToTitle[id]);
+    await button.click();
+    await clickInTheMiddleOfTheScreen(page);
   });
 }

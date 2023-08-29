@@ -13,11 +13,13 @@ import {
   resetCurrentTool,
   selectLeftPanelButton,
   LeftPanelButton,
+  waitForKetcherInit,
 } from '@utils';
 
 test.describe('Open Ketcher', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('');
+    await waitForKetcherInit(page);
   });
 
   test('Toolbar palette: full screen verification', async ({ page }) => {

@@ -8,9 +8,14 @@ import { Peptide } from 'domain/entities/Peptide';
 import { Chem } from 'domain/entities/Chem';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 
+type DerivedClass<T> = new (...args: unknown[]) => T;
+
 export const monomerFactory = (
   peptide: MonomerItemType,
-): [Monomer: BaseMonomer, MonomerRenderer: BaseMonomerRenderer] => {
+): [
+  Monomer: typeof BaseMonomer,
+  MonomerRenderer: DerivedClass<BaseMonomerRenderer>,
+] => {
   let Monomer;
   let MonomerRenderer;
   switch (peptide.props.MonomerType) {

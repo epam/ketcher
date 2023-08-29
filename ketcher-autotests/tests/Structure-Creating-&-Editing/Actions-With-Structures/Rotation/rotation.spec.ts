@@ -176,7 +176,7 @@ test.describe('Rotation', () => {
       Test case: EPMLSOPKET-1693
       Description: Reaction is rotated
     */
-    const anyReaction = 'Rxn/rxn-reaction.rxn';
+    const anyReaction = 'Rxn-V2000/rxn-reaction.rxn';
     const coordinatesForRotation = {
       x: 800,
       y: 800,
@@ -192,7 +192,7 @@ test.describe('Rotation', () => {
       Test case: EPMLSOPKET-1694
       Description: Reaction is flipped vertically and horizontally
     */
-    const anyReaction = 'Rxn/rxn-reaction.rxn';
+    const anyReaction = 'Rxn-V2000/rxn-reaction.rxn';
     await openFileAndAddToCanvas(anyReaction, page);
     await page.mouse.move(EMPTY_SPACE_X, EMPTY_SPACE_Y);
     await page.keyboard.press('Alt+v');

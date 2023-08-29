@@ -76,11 +76,11 @@ test.describe('Polymer Bond Tool', () => {
     await page.getByText('CHEM').click();
     await page.getByTestId('hxy___Hexynyl alcohol').click();
 
-    // Create 4 chems on canvas
+    // Create 2 chems on canvas
     await page.mouse.click(300, 300);
     await page.mouse.click(400, 400);
 
-    // Get 4 chems locators
+    // Get 2 chems locators
     const chems = await page.getByText('hxy');
     const chem1 = chems.nth(0);
     const chem2 = chems.nth(1);

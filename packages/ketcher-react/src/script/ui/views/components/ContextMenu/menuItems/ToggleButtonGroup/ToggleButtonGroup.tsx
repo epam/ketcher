@@ -25,7 +25,7 @@ export default function ButtonGroup({
       onClick(propertyKey, value);
       setValue(value);
     },
-    [onClick],
+    [onClick, propertyKey],
   );
 
   return (

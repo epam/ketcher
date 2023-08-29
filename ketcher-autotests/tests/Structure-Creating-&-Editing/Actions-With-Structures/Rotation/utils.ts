@@ -16,7 +16,8 @@ export const COORDINATES_TO_PERFORM_ROTATION = {
 };
 export const EMPTY_SPACE_X = 70;
 export const EMPTY_SPACE_Y = 90;
-export const anyStructure = 'mol/rings-heteroatoms-query-features.mol';
+export const anyStructure =
+  'Molfiles-V2000/rings-heteroatoms-query-features.mol';
 
 export async function rotateToCoordinates(
   page: Page,

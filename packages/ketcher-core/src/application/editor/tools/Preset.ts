@@ -16,23 +16,18 @@
 import { Tool, IRnaPreset } from 'application/editor/tools/Tool';
 import { Sugar } from 'domain/entities/Sugar';
 import { Vec2 } from 'domain/entities';
-// import assert from 'assert';
 
-import { CoreEditor, fromMonomerAddition } from 'application/editor';
+import { fromPresetAddition, CoreEditor } from 'application/editor';
 import { BaseMonomerRenderer } from 'application/render/renderers';
 import { MonomerItemType } from 'domain/types';
 import { monomerFactory } from '../operations/monomer/monomerFactory';
 import { RNABase } from 'domain/entities/RNABase';
 import { Phosphate } from 'domain/entities/Phosphate';
-// import { fromPolymerBondAddition } from 'application/editor/actions/polymerBond';
-// import { BondService } from 'domain/services/bond/BondService';
-// import { PolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer';
 
 class PresetTool implements Tool {
   rnaBase: MonomerItemType | undefined;
   sugar: MonomerItemType | undefined;
   phosphate: MonomerItemType | undefined;
-  // private bondRenderer?: PolymerBondRenderer; // only for sugar, in two sides
 
   private rnaBasePreview: RNABase | undefined;
   private phosphatePreview: Phosphate | undefined;
@@ -65,45 +60,35 @@ class PresetTool implements Tool {
       throw new Error('no sugar in preset');
     }
 
-    fromMonomerAddition(
-      this.editor.renderersContainer,
-      this.sugar,
-      new Vec2(
+    fromPresetAddition(this.editor.renderersContainer, {
+      sugar: this.sugar,
+      sugarPosition: new Vec2(
         this.editor.lastCursorPosition.x - this.sugarPreviewRenderer.width / 2,
         this.editor.lastCursorPosition.y - this.sugarPreviewRenderer.height / 2,
       ),
-    );
-
-    if (this.rnaBase && this.rnaBasePreviewRenderer) {
-      fromMonomerAddition(
-        this.editor.renderersContainer,
-        this.rnaBase,
-        new Vec2(
-          this.editor.lastCursorPosition.x -
-            this.rnaBasePreviewRenderer.width / 2,
-          this.editor.lastCursorPosition.y -
-            this.rnaBasePreviewRenderer.height / 2 +
-            this.sugarPreviewRenderer.height +
-            15,
-        ),
-      );
-    }
-
-    if (this.phosphate && this.phosphatePreviewRenderer)
-      fromMonomerAddition(
-        this.editor.renderersContainer,
-        this.phosphate,
-        new Vec2(
-          this.editor.lastCursorPosition.x -
-            this.phosphatePreviewRenderer.width / 2 +
-            this.sugarPreviewRenderer?.width +
-            15,
-          this.editor.lastCursorPosition.y -
-            this.phosphatePreviewRenderer.height / 2,
-        ),
-      );
-
-    // this.makeBonds();
+      phosphate: this.phosphate,
+      phosphatePosition: this.phosphatePreviewRenderer
+        ? new Vec2(
+            this.editor.lastCursorPosition.x -
+              this.phosphatePreviewRenderer.width / 2 +
+              this.sugarPreviewRenderer?.width +
+              30,
+            this.editor.lastCursorPosition.y -
+              this.phosphatePreviewRenderer.height / 2,
+          )
+        : undefined,
+      rnaBase: this.rnaBase,
+      rnaBasePosition: this.rnaBasePreviewRenderer
+        ? new Vec2(
+            this.editor.lastCursorPosition.x -
+              this.rnaBasePreviewRenderer.width / 2,
+            this.editor.lastCursorPosition.y -
+              this.rnaBasePreviewRenderer.height / 2 +
+              this.sugarPreviewRenderer.height +
+              30,
+          )
+        : undefined,
+    });
 
     this.editor.renderersContainer.update(false);
   }
@@ -190,80 +175,6 @@ class PresetTool implements Tool {
       this.phosphatePreviewRenderer?.show(this.editor.theme);
     }
   }
-
-  // private makeBonds() {
-  //   const R1AttachmentPoint = this.sugarPreview?.R1AttachmentPoint;
-  //   const freeAttachmentPoint =
-  //     this.sugarPreviewRenderer?.monomer?.firstFreeAttachmentPoint;
-
-  //   console.log('R1AttachmentPoint: ', R1AttachmentPoint);
-  //   const R2AttachmentPoint = this.sugarPreview?.R2AttachmentPoint;
-  //   if (R1AttachmentPoint) {
-  //     console.log(this.sugarPreview);
-  //     console.log(this.sugarPreviewRenderer);
-  //     console.log(this.rnaBasePreview);
-  //     console.log(this.rnaBasePreviewRenderer);
-  //     assert(this.sugarPreviewRenderer);
-  //     console.log(freeAttachmentPoint);
-
-  //     fromPolymerBondAddition(this.editor.renderersContainer, {
-  //       firstMonomer: this.sugarPreviewRenderer.monomer,
-  //       startPosition: this.sugarPreviewRenderer.monomer.renderer.center,
-  //       endPosition: new Vec2(
-  //         this.sugarPreviewRenderer.monomer.renderer.center.x + 1,
-  //         this.sugarPreviewRenderer.monomer.renderer.center.y + 1,
-  //       ),
-  //     });
-  //     console.log(
-  //       'this.sugarPreviewRenderer.monomer.renderer.center: ',
-  //       this.sugarPreviewRenderer.monomer.renderer.center,
-  //     );
-  //     this.bondRenderer =
-  //       this.sugarPreviewRenderer?.monomer?.getPotentialBond(
-  //         freeAttachmentPoint,
-  //       )?.renderer;
-
-  //     // this.sugarPreview.getPotentialBond(R1AttachmentPoint)?.renderer;
-
-  //     this.setPotentialBondToAttachmentPoint(this.rnaBasePreviewRenderer); /// ВОТ ТУТ
-  //     console.log('bondRenderer', this.bondRenderer);
-
-  //     const firstMonomerAttachmentPoint =
-  //       this.bondRenderer.polymerBond.firstMonomer.getPotentialAttachmentPointByBond(
-  //         this.bondRenderer.polymerBond,
-  //       );
-  //     const secondMonomerAttachmentPoint =
-  //       this.rnaBasePreview.availableAttachmentPointForBondEnd;
-  //     console.log(firstMonomerAttachmentPoint);
-  //     console.log(secondMonomerAttachmentPoint);
-  //     console.log(this.rnaBasePreview);
-
-  //     BondService.finishBondCreation(
-  //       firstMonomerAttachmentPoint,
-  //       secondMonomerAttachmentPoint,
-  //       this.rnaBasePreview,
-  //       this.bondRenderer.polymerBond,
-  //     );
-  //   }
-
-  //   this.bondRenderer = undefined;
-  // }
-
-  // private setPotentialBondToAttachmentPoint(
-  //   monomerRenderer: BaseMonomerRenderer,
-  // ) {
-  //   if (!this.bondRenderer) return;
-
-  //   const attachmentPoint =
-  //     monomerRenderer.monomer.availableAttachmentPointForBondEnd;
-
-  //   if (!attachmentPoint) return;
-
-  //   monomerRenderer.monomer.setPotentialBond(
-  //     attachmentPoint,
-  //     this.bondRenderer.polymerBond,
-  //   );
-  // }
 }
 
 export { PresetTool };

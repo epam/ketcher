@@ -1,7 +1,7 @@
 import { select, Selection } from 'd3';
 
 export interface IBaseRenderer {
-  show(theme: any): void;
+  show(theme): void;
   remove(): void;
 }
 

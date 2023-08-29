@@ -1,14 +1,10 @@
 import { Selection } from 'd3';
 import { Chem } from 'domain/entities/Chem';
 import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
-import { IBaseMonomerRenderer } from 'application/render/renderers/types';
 
 const CHEM_SELECTED_ELEMENT_ID = '#chem-selection';
 
-export class ChemRenderer
-  extends BaseMonomerRenderer
-  implements IBaseMonomerRenderer
-{
+export class ChemRenderer extends BaseMonomerRenderer {
   constructor(public monomer: Chem, scale?: number) {
     super(monomer, CHEM_SELECTED_ELEMENT_ID, scale);
   }

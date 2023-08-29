@@ -1,5 +1,5 @@
 import { Page } from '@playwright/test';
-import { getLeftToolBarWidth, getTopToolBarHeight } from '@utils';
+import { getLeftToolBarWidth, getTopToolBarHeight } from '..';
 
 export async function getLeftTopBarSize(page: Page) {
   const leftBarWidth = await getLeftToolBarWidth(page);

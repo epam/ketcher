@@ -62,4 +62,42 @@ test.describe('Polymer Bond Tool', () => {
       path: 'tests/Macromolecule-editor/screenshots/polymer-bond-tool3.png',
     });
   });
+
+  test.skip('Create bond between two chems', async ({ page }) => {
+    /* 
+    Test case: #2497 - Adding chems to canvas - Center-to-Center
+    Description: Polymer bond tool
+    */
+
+    await expect(page.getByTestId('PolymerToggler')).toBeVisible();
+    await page.getByTestId('PolymerToggler').click();
+
+    // Choose chems
+    await page.getByText('CHEM').click();
+    await page.getByTestId('hxy___Hexynyl alcohol').click();
+
+    // Create 4 chems on canvas
+    await page.mouse.click(300, 300);
+    await page.mouse.click(400, 400);
+
+    // Get 4 chems locators
+    const chems = await page.getByText('hxy');
+    const chem1 = chems.nth(0);
+    const chem2 = chems.nth(1);
+
+    // Select bond tool
+    await selectSingleBondTool(page);
+
+    // Create bonds between chems, taking screenshots in middle states
+    await chem1.hover();
+    await page.mouse.down();
+    await page.screenshot({
+      path: 'tests/Macromolecule-editor/screenshots/polymer-bond-tool-chem1.png',
+    });
+    await chem2.hover();
+    await page.mouse.up();
+    await page.screenshot({
+      path: 'tests/Macromolecule-editor/screenshots/polymer-bond-tool-chem2.png',
+    });
+  });
 });

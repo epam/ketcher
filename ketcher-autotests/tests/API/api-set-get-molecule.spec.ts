@@ -10,6 +10,7 @@ import {
   receiveFileComparisonData,
   waitForKetcherInit,
   waitForSpinnerFinishedWork,
+  clickInTheMiddleOfTheScreen,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import {
@@ -67,6 +68,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Test case: EPMLSOPKET- 10091
     Description: Aromatic Benzene ring loads as non aromatic Benzene ring
     */
+    await clickInTheMiddleOfTheScreen(page);
     await enableDearomatizeOnLoad(page);
     await waitForSpinnerFinishedWork(
       page,
@@ -229,6 +231,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Test case: EPMLSOPKET- 11854
     Description:  Elements ["Pol", "CYH", "CXH"] disabled and show tooltip: '{elementName}'
     */
+    // Called to make sure the page has been fully loaded
+    await clickInTheMiddleOfTheScreen(page);
     await disableQueryElements(page);
     await selectAtomInToolbar(AtomButton.Extended, page);
   });

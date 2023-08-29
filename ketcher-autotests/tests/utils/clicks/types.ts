@@ -43,4 +43,6 @@ export type AtomLabelType =
   | 'M'
   | 'MH'
   | 'X'
-  | 'XH';
+  | 'XH'
+  | 'Br'
+  | 'P';

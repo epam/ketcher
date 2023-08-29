@@ -15,7 +15,6 @@
  ***************************************************************************/
 import { Tool } from 'application/editor/tools/Tool';
 import { Vec2 } from 'domain/entities';
-import { PeptideRenderer } from 'application/render/renderers/PeptideRenderer';
 import { CoreEditor } from 'application/editor';
 import { BaseMonomerRenderer } from 'application/render/renderers';
 

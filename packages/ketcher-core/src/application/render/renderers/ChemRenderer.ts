@@ -1,9 +1,7 @@
 import { Selection } from 'd3';
 import { Chem } from 'domain/entities/Chem';
-import {
-  BaseMonomerRenderer,
-  IBaseMonomerRenderer,
-} from 'application/render/renderers';
+import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
+import { IBaseMonomerRenderer } from 'application/render/renderers/types';
 
 const CHEM_SELECTED_ELEMENT_ID = '#chem-selection';
 

@@ -14,15 +14,17 @@
  * limitations under the License.
  ***************************************************************************/
 import { Tool } from 'application/editor/tools/Tool';
-import { Peptide } from 'domain/entities/Peptide';
+import { Peptide } from 'domain/entities/Peptide'; // а что с этими импортами?
+import { Chem } from 'domain/entities/Chem';
 import { Vec2 } from 'domain/entities';
 import { CoreEditor, fromPeptideAddition } from 'application/editor';
-import { PeptideRenderer } from 'application/render/renderers/PeptideRenderer';
+import { IBaseMonomerRenderer } from 'application/render/renderers';
 import { MonomerItemType } from 'domain/types';
+import { monomerFactory } from '../operations/peptide/monomerFactory';
 
 class PeptideTool implements Tool {
-  private peptidePreview: Peptide | undefined;
-  private peptidePreviewRenderer: PeptideRenderer | undefined;
+  private peptidePreview: Peptide | Chem | undefined;
+  private peptidePreviewRenderer: IBaseMonomerRenderer | undefined;
   readonly PEPTIDE_PREVIEW_SCALE_FACTOR = 0.4;
   readonly PEPTIDE_PREVIEW_OFFSET_X = 8;
   readonly PEPTIDE_PREVIEW_OFFSET_Y = 12;
@@ -67,12 +69,14 @@ class PeptideTool implements Tool {
 
   public mouseover() {
     if (!this.peptidePreview) {
-      this.peptidePreview = new Peptide(this.peptide);
-      this.peptidePreviewRenderer = new PeptideRenderer(
+      const [Monomer, MonomerRenderer] = monomerFactory(this.peptide);
+
+      this.peptidePreview = new Monomer(this.peptide);
+      this.peptidePreviewRenderer = new MonomerRenderer(
         this.peptidePreview,
         this.PEPTIDE_PREVIEW_SCALE_FACTOR,
       );
-      this.peptidePreviewRenderer.show(this.editor.theme);
+      this.peptidePreviewRenderer?.show(this.editor.theme);
     }
   }
 }

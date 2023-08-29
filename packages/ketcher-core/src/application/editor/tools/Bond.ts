@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 import { Tool } from 'application/editor/tools/Tool';
-import { PeptideRenderer } from 'application/render/renderers/PeptideRenderer';
+import { BaseMonomerRenderer } from 'application/render/renderers';
 import { fromPolymerBondAddition } from 'application/editor/actions/polymerBond';
 import { CoreEditor } from 'application/editor';
 import { PolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer';
@@ -25,7 +25,7 @@ import { Peptide } from 'domain/entities/Peptide';
 
 class PolymerBond implements Tool {
   private bondRenderer?: PolymerBondRenderer;
-  private lastHoveredPeptideRenderer?: PeptideRenderer;
+  private lastHoveredPeptideRenderer?: BaseMonomerRenderer;
   private hoveredBondRenderer?: PolymerBondRenderer;
   constructor(private editor: CoreEditor) {
     this.editor = editor;
@@ -33,7 +33,7 @@ class PolymerBond implements Tool {
 
   mousedown(event) {
     const selectedItem = event.target.__data__;
-    if (selectedItem instanceof PeptideRenderer) {
+    if (selectedItem instanceof BaseMonomerRenderer) {
       const freeAttachmentPoint = selectedItem.monomer.firstFreeAttachmentPoint;
 
       if (!freeAttachmentPoint) {
@@ -69,7 +69,9 @@ class PolymerBond implements Tool {
     );
   }
 
-  private setPotentialBondToAttachmentPoint(peptideRenderer: PeptideRenderer) {
+  private setPotentialBondToAttachmentPoint(
+    peptideRenderer: BaseMonomerRenderer,
+  ) {
     if (!this.bondRenderer) return;
 
     const attachmentPoint =
@@ -86,7 +88,8 @@ class PolymerBond implements Tool {
   mousemove(event) {
     const hoveredElementRenderer = event.toElement.__data__;
     const isBondHovered = hoveredElementRenderer instanceof PolymerBondRenderer;
-    const isPeptideHovered = hoveredElementRenderer instanceof PeptideRenderer;
+    const isPeptideHovered =
+      hoveredElementRenderer instanceof BaseMonomerRenderer;
     const isPeptideSelected = hoveredElementRenderer?.monomer?.selected;
     const isPeptideLastHovered =
       this.lastHoveredPeptideRenderer === hoveredElementRenderer;
@@ -94,7 +97,7 @@ class PolymerBond implements Tool {
     if (isPeptideHovered && !isPeptideSelected && !isPeptideLastHovered) {
       hoveredElementRenderer.monomer.turnOnSelection();
       this.lastHoveredPeptideRenderer = hoveredElementRenderer;
-      this.setPotentialBondToAttachmentPoint(this.lastHoveredPeptideRenderer);
+      this.setPotentialBondToAttachmentPoint(this.lastHoveredPeptideRenderer); /// ВОТ ТУТ
     } else if (
       !isPeptideHovered &&
       this.lastHoveredPeptideRenderer &&
@@ -159,7 +162,8 @@ class PolymerBond implements Tool {
 
   mouseup(event) {
     const hoveredElementRenderer = event.toElement.__data__;
-    const isPeptideHovered = hoveredElementRenderer instanceof PeptideRenderer;
+    const isPeptideHovered =
+      hoveredElementRenderer instanceof BaseMonomerRenderer;
     const isFirstMonomerHovered =
       hoveredElementRenderer ===
       this.bondRenderer?.polymerBond?.firstMonomer?.renderer;

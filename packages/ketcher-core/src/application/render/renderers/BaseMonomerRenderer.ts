@@ -2,8 +2,12 @@ import { BaseRenderer } from './BaseRenderer';
 import { Selection } from 'd3';
 import assert from 'assert';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
+import { IBaseMonomerRenderer } from './types';
 
-export abstract class BaseMonomerRenderer extends BaseRenderer {
+export abstract class BaseMonomerRenderer
+  extends BaseRenderer
+  implements IBaseMonomerRenderer
+{
   protected rootElement;
 
   private selectionElement;

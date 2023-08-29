@@ -1,6 +1,11 @@
 import { select, Selection } from 'd3';
 
-export abstract class BaseRenderer {
+export interface IBaseRenderer {
+  show(theme: any): void;
+  remove(): void;
+}
+
+export abstract class BaseRenderer implements IBaseRenderer {
   public static isSelectable = () => false;
   protected abstract rootElement:
     | Selection<SVGGElement, this, HTMLElement, never>

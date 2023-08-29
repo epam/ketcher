@@ -76,6 +76,10 @@ const MonomerGroup = ({
         editor.events.selectPeptide.dispatch(monomer);
         onItemClick(monomer);
         break;
+      case 'CHEM':
+        editor.events.selectPeptide.dispatch(monomer);
+        onItemClick(monomer);
+        break;
       default:
         onItemClick(monomer);
         break;

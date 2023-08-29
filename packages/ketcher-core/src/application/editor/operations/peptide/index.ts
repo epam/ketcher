@@ -20,9 +20,8 @@ import { ReStruct } from '../../../render';
 
 import { BaseOperation } from '../base';
 import { OperationType } from '../OperationType';
-import { Peptide } from 'domain/entities/Peptide';
-import { PeptideRenderer } from 'application/render/renderers/PeptideRenderer';
 import { MonomerItemType } from 'domain/types';
+import { monomerFactory } from './monomerFactory';
 
 type Data = {
   peptide: MonomerItemType;
@@ -41,8 +40,10 @@ class PeptideAdd extends BaseOperation {
     const { peptide, position } = this.data;
 
     const struct = restruct.molecule;
-    const newPeptide = new Peptide(peptide, position);
-    const peptideRenderer = new PeptideRenderer(newPeptide);
+
+    const [Monomer, MonomerRenderer] = monomerFactory(peptide);
+    const newPeptide = new Monomer(peptide, position);
+    const peptideRenderer = new MonomerRenderer(newPeptide);
     struct.peptides.set(newPeptide.id, newPeptide);
     restruct.peptides.set(newPeptide.id, peptideRenderer);
   }

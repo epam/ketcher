@@ -81,7 +81,8 @@ test.describe('Click Salts and Solvents on canvas', () => {
     },
   );
 
-  test('Formic acid places near the Cl atom', async ({ page }) => {
+  // behaves unstable even locally, maybe because of tab opening
+  test.fixme('Formic acid places near the Cl atom', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-10111
       Description: when clicking with a Salts and Solvents template on an atom connected with

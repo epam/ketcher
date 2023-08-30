@@ -763,12 +763,12 @@ class ReStruct {
           if (
             item instanceof ReSGroup &&
             FunctionalGroup.isContractedFunctionalGroup(
-              item.item.id,
+              item?.item?.id,
               this.molecule.functionalGroups,
             )
           ) {
             const sGroupAtoms = atoms.filter(
-              (atom) => atom.sgroup === item.item.id,
+              (atom) => atom.sgroup === item?.item?.id,
             );
             item.selected = sGroupAtoms.length > 0 && sGroupAtoms[0].selected;
           }

@@ -71,31 +71,26 @@ test.describe('Reagents SMILES format', () => {
     await getPreviewForSmiles(page, 'MDL Rxnfile V2000', 'Daylight SMILES');
   });
 
-  // TODO flaky
-  test.fixme(
-    `Detection molecule as reagent below arrow
-  and write reagent information in "Daylight SMILES" format in "Preview" tab`,
-    async ({ page }) => {
-      /*
+  test(`Detection molecule as reagent below arrow
+  and write reagent information in "Daylight SMILES" format in "Preview" tab`, async ({
+    page,
+  }) => {
+    /*
     Test case: EPMLSOPKET-4661
     Description: System detect molecule as reagent and write reagent in "Daylight SMILES' 
     format in "Preview" tab (e.g. C1(C)C(O)=CC(S)=C(N)C=1>Cl>C1(Br)C(C)=CC(I)=C(O)C=1 
     where specifying reactant, agent and product molecule(s) separated by the "greater-than" symbol ('>').
     */
-      await openFileAndAddToCanvas(
-        'benzene-arrow-benzene-reagent-hcl.ket',
-        page,
-      );
+    await openFileAndAddToCanvas('benzene-arrow-benzene-reagent-hcl.ket', page);
 
-      const smiFileExpected = await readFileContents(
-        'tests/test-data/daylight-smiles-below-expected.smi',
-      );
-      const smiFile = await getSmiles(page);
-      expect(smiFile).toEqual(smiFileExpected);
+    const smiFileExpected = await readFileContents(
+      'tests/test-data/daylight-smiles-below-expected.smi',
+    );
+    const smiFile = await getSmiles(page);
+    expect(smiFile).toEqual(smiFileExpected);
 
-      await getPreviewForSmiles(page, 'MDL Rxnfile V2000', 'Daylight SMILES');
-    },
-  );
+    await getPreviewForSmiles(page, 'MDL Rxnfile V2000', 'Daylight SMILES');
+  });
 
   test(`Detection molecule as reagent
   and write reagent information in "Extended SMILES" format in "Preview" tab @check`, async ({
@@ -112,28 +107,22 @@ test.describe('Reagents SMILES format', () => {
     await getPreviewForSmiles(page, 'MDL Rxnfile V2000', 'Extended SMILES');
   });
 
-  // TODO flaky
-  test.fixme(
-    `Detection molecule as reagent below arrow
-  and write reagent information in "Extended SMILES" format in "Preview" tab`,
-    async ({ page }) => {
-      /*
+  test(`Detection molecule as reagent below arrow
+  and write reagent information in "Extended SMILES" format in "Preview" tab`, async ({
+    page,
+  }) => {
+    /*
     Test case: EPMLSOPKET-4662
     Description: System detect molecule as reagent and write reagent in "Extended SMILES' 
     format in "Preview" tab (e.g. C1(C)C(O)=CC(S)=C(N)C=1>Cl>C1(Br)C(C)=CC(I)=C(O)C=1 
     where specifying reactant, agent and product molecule(s) separated by the "greater-than" symbol ('>').
     */
-      await openFileAndAddToCanvas(
-        'benzene-arrow-benzene-reagent-hcl.ket',
-        page,
-      );
+    await openFileAndAddToCanvas('benzene-arrow-benzene-reagent-hcl.ket', page);
 
-      await getPreviewForSmiles(page, 'MDL Rxnfile V2000', 'Extended SMILES');
-    },
-  );
+    await getPreviewForSmiles(page, 'MDL Rxnfile V2000', 'Extended SMILES');
+  });
 
-  // TODO flaky
-  test.fixme('Open from file in "Daylight SMILES" format', async ({ page }) => {
+  test('Open from file in "Daylight SMILES" format', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-4669
     Description: Reagent 'Cl' above the reaction arrow
@@ -141,8 +130,7 @@ test.describe('Reagents SMILES format', () => {
     await openFileAndAddToCanvas('daylight-smiles-expect.smi', page);
   });
 
-  // TODO flaky
-  test.fixme('Open from file in "Extended SMILES" format', async ({ page }) => {
+  test('Open from file in "Extended SMILES" format', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-4670
     Description: Reagent 'Cl' above the reaction arrow
@@ -150,49 +138,38 @@ test.describe('Reagents SMILES format', () => {
     await openFileAndAddToCanvas('extended-smiles-expect.cxsmi', page);
   });
 
-  test.fixme(
-    'Paste from clipboard in "Daylight SMILES" format',
-    async ({ page }) => {
-      /*
+  test('Paste from clipboard in "Daylight SMILES" format', async ({ page }) => {
+    /*
     Test case: EPMLSOPKET-4667
     Description: Reagent 'Cl' displays below reaction arrow
     */
-      await pasteFromClipboardAndAddToCanvas(
-        page,
-        'C1(C)C(O)=CC(S)=C(N)C=1>Cl>C1(Br)C(C)=CC(I)=C(O)C=1',
-      );
-      await clickInTheMiddleOfTheScreen(page);
-    },
-  );
+    await pasteFromClipboardAndAddToCanvas(
+      page,
+      'C1(C)C(O)=CC(S)=C(N)C=1>Cl>C1(Br)C(C)=CC(I)=C(O)C=1',
+    );
+    await clickInTheMiddleOfTheScreen(page);
+  });
 
-  // TODO flaky
-  test.fixme(
-    'Paste from clipboard in "Extended SMILES" format',
-    async ({ page }) => {
-      /*
+  test('Paste from clipboard in "Extended SMILES" format', async ({ page }) => {
+    /*
     Test case: EPMLSOPKET-4668
     Description: Reagent 'Cl' displays above reaction arrow
     */
-      await pasteFromClipboardAndAddToCanvas(
-        page,
-        'CN(C(Cl)=O)C>Cl>c1ccc(OCCN(C(Cl)=O)C)cc1',
-      );
-      await clickInTheMiddleOfTheScreen(page);
-    },
-  );
+    await pasteFromClipboardAndAddToCanvas(
+      page,
+      'CN(C(Cl)=O)C>Cl>c1ccc(OCCN(C(Cl)=O)C)cc1',
+    );
+    await clickInTheMiddleOfTheScreen(page);
+  });
 
-  // TODO flaky
-  test.fixme(
-    'SMILES import if dearomotize-on-load is true',
-    async ({ page }) => {
-      /*
+  test('SMILES import if dearomotize-on-load is true', async ({ page }) => {
+    /*
     Test case: EPMLSOPKET-5254
     Description: Aromatic Benzene ring transforms into non aromatic Benzene ring
     */
-      await enableDearomatizeOnLoad(page);
-      await setMolecule(page, 'c1ccccc1');
-    },
-  );
+    await enableDearomatizeOnLoad(page);
+    await setMolecule(page, 'c1ccccc1');
+  });
 });
 
 test.describe('Reagents SMILES format', () => {

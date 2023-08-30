@@ -435,7 +435,7 @@ function findClosestSGroup(restruct, pos) {
   restruct.molecule.sgroups.forEach((sg, sgid) => {
     if (sg.isContracted()) return null;
 
-    const d = sg.bracketDir;
+    const d = sg.bracketDirection;
     const n = d.rotateSC(1, 0);
     const pg = new Vec2(Vec2.dot(pos, d), Vec2.dot(pos, n));
 

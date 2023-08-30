@@ -222,6 +222,14 @@ export class Ketcher {
     );
   }
 
+  getSdf(molfileFormat: MolfileFormat = 'v2000'): Promise<string> {
+    const format =
+      molfileFormat === 'v2000'
+        ? SupportedFormat.sdf
+        : SupportedFormat.sdfV3000;
+    return getStructure(format, this.#formatterFactory, this.#editor.struct());
+  }
+
   getCDXml(): Promise<string> {
     return getStructure(
       SupportedFormat.cdxml,

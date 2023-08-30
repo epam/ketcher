@@ -12,7 +12,7 @@ test('opening rnx files', async ({ page }) => {
   Test case: EPMLSOPKET-1839
   */
   await page.goto('');
-  await openFileAndAddToCanvas('1839-ketcher.rxn', page);
+  await openFileAndAddToCanvas('Rxn-V2000/1839-ketcher.rxn', page);
   await takeEditorScreenshot(page);
 });
 
@@ -21,7 +21,7 @@ test('opening smi files', async ({ page }) => {
   Test case: EPMLSOPKET-1840
   */
   await page.goto('');
-  await openFileAndAddToCanvas('1840-cyclopentyl.smi', page);
+  await openFileAndAddToCanvas('SMILES/1840-cyclopentyl.smi', page);
   await takeEditorScreenshot(page);
 });
 
@@ -30,6 +30,6 @@ test('opening inchi files', async ({ page }) => {
   Test case: EPMLSOPKET-1841
   */
   await page.goto('');
-  await openFileAndAddToCanvas('1841-ketcher.inchi', page);
+  await openFileAndAddToCanvas('InChI/1841-ketcher.inchi', page);
   await takeEditorScreenshot(page);
 });

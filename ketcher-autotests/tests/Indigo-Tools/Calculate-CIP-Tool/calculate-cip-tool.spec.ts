@@ -222,7 +222,10 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     Stereo labels disappear after 'Aromatize' action.
     'Undo' action leads to previous structure with stereo labels.
     */
-    await openFileAndAddToCanvas('aromatic-with-stereolabels.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/aromatic-with-stereolabels.mol',
+      page,
+    );
     await selectTopPanelButton(TopPanelButton.Calculate, page);
     await takeEditorScreenshot(page);
 

@@ -28,6 +28,7 @@ export enum ChemicalMimeType {
   CML = 'chemical/x-cml',
   KET = 'chemical/x-indigo-ket',
   UNKNOWN = 'chemical/x-unknown',
+  SDF = 'chemical/x-sdf',
 }
 
 export interface WithStruct {

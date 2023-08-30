@@ -3,10 +3,17 @@ import { test, expect } from '@playwright/test';
 import {
   BondType,
   doubleClickOnBond,
+  dragMouseTo,
+  getCoordinatesOfTheMiddleOfTheScreen,
+  LeftPanelButton,
   openFileAndAddToCanvas,
   pressButton,
   receiveFileComparisonData,
+  RingButton,
   saveToFile,
+  selectAllStructuresOnCanvas,
+  selectLeftPanelButton,
+  selectRingButton,
   takeEditorScreenshot,
 } from '@utils';
 import { getMolfile, getRxn } from '@utils/formats';
@@ -20,7 +27,6 @@ test.describe('Bond Properties', () => {
     await takeEditorScreenshot(page);
   });
 
-  // EPMLSOPKET-1457
   test('ond properties dialog: verification', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-1457
@@ -35,7 +41,6 @@ test.describe('Bond Properties', () => {
     await doubleClickOnBond(page, BondType.DOUBLE, 1);
   });
 
-  // EPMLSOPKET-1458
   test('`Type` field: verification - 1/3 navigate with down and up', async ({
     page,
   }) => {
@@ -115,7 +120,6 @@ test.describe('Bond Properties', () => {
     }
   });
 
-  // EPMLSOPKET-1459
   const types = [
     'Single',
     'Single Up',
@@ -363,9 +367,12 @@ test.describe('Bond Properties', () => {
           no any mark appears on the unmarked bond or mark for reacting center is removed from the marked bond.
           *.rxn file is correctly opened in Ketcher, applied bond property is correctly represented.
           Note: in some applications the 'No center' parameter has the mark - dot, so you see that mark!
+
+          Now it doesn`t work because if we try to save bond with 'Not center' option, 
+          we can`t  open the file
         */
 
-      await openFileAndAddToCanvas('rxn/reaction_4.rxn', page);
+      await openFileAndAddToCanvas('Rxn/reaction_4.rxn', page);
 
       for (let i = 0; i < rCOptions.length - 1; i++) {
         await doubleClickOnBond(page, BondType.SINGLE, i);
@@ -386,16 +393,17 @@ test.describe('Bond Properties', () => {
       await page.getByRole('option', { name: 'Unmarked', exact: true }).click();
       await pressButton(page, 'Apply');
 
-      const expectedFile = await getRxn(page);
-      await saveToFile('rxn/rxn_1463_to_open-expected.rxn', expectedFile);
+      const expectedFile = await getRxn(page, 'v2000');
+      await saveToFile('Rxn/rxn_1463_to_open-expected.rxn', expectedFile);
 
-      const METADATA_STRING_INDEX = [2];
+      const METADATA_STRING_INDEX = [2, 7, 25, 40, 66];
 
       const { fileExpected: rxnFileExpected, file: rxnFile } =
         await receiveFileComparisonData({
           page,
-          expectedFileName: 'tests/test-data/rxn/rxn_1463_to_open-expected.rxn',
+          expectedFileName: 'tests/test-data/Rxn/rxn_1463_to_open-expected.rxn',
           metaDataIndexes: METADATA_STRING_INDEX,
+          fileFormat: 'v2000',
         });
 
       expect(rxnFile).toEqual(rxnFileExpected);
@@ -406,14 +414,186 @@ test.describe('Bond Properties', () => {
     `Change 'Reacting Center' field value - 2/2 open and edit`,
     async ({ page }) => {
       /*
-            Test case: EPMLSOPKET-1463(1)
-            Description: Open and edit
-          */
-      await openFileAndAddToCanvas('rxn/rxn_1463_to_open-expected.rxn', page);
+        Test case: EPMLSOPKET-1463(2)
+        Description: Open and edit
+
+        Now it doesn`t work because if we try to save bond with 'Not center' option, 
+        we can`t  open the file
+    */
+
+      await openFileAndAddToCanvas('Rxn/rxn_1463_to_open-expected.rxn', page);
       await doubleClickOnBond(page, BondType.SINGLE, 8);
       await page.getByText('Unmarked').click();
       await page.getByRole('option', { name: 'Center', exact: true }).click();
       await pressButton(page, 'Apply');
     },
   );
+
+  test('Apply for all selected bonds', async ({ page }) => {
+    /*
+        Test case: EPMLSOPKET-2926
+        Description: All structure is highlighted green color.
+        'Bond properties' window is opened.  
+        All selected bonds are changed with 'Double' bond.
+        'Bond properties' window is opened. 
+        All selected bonds are changed. Bonds that were not selected are not changed.
+        Selected bonds are highlighted green color.
+        'Bond properties' window is opened. 
+        All selected bonds are changed. Bonds that were not selected are not changed.
+        Selected bonds are highlighted green color.
+ */
+
+    await openFileAndAddToCanvas('Molfiles-V2000/mol_2926_to_open.mol', page);
+    await selectAllStructuresOnCanvas(page);
+    await doubleClickOnBond(page, BondType.SINGLE, 1);
+    await page.getByText('Single').click();
+    await page.getByRole('option', { name: 'Double', exact: true }).click();
+    await pressButton(page, 'Apply');
+
+    const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
+    const offset = 100;
+
+    await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
+    await page.mouse.move(x - offset, y - offset);
+    await dragMouseTo(x + offset, y + offset, page);
+
+    await doubleClickOnBond(page, BondType.DOUBLE, 3);
+    await page.getByText('Double').click();
+    await page.getByRole('option', { name: 'Single', exact: true }).click();
+    await pressButton(page, 'Apply');
+
+    await doubleClickOnBond(page, BondType.SINGLE, 1);
+    await page.getByText('Either').click();
+    await page.getByRole('option', { name: 'Chain', exact: true }).click();
+    await pressButton(page, 'Apply');
+
+    await doubleClickOnBond(page, BondType.SINGLE, 1);
+    await page.getByText('Unmarked').click();
+    await page.getByRole('option', { name: 'Center', exact: true }).click();
+    await pressButton(page, 'Apply');
+  });
+
+  test(`Different combinations - 1/3 edit a chain and save .mol file`, async ({
+    page,
+  }) => {
+    /*
+        Test case: EPMLSOPKET-1465
+        Description: User is able to change the bond properties at a time.
+        All selected properties are assigned to the selected bond.
+        *.mol and *.rxn files correctly opened, applied atom property correctly represented.
+    */
+
+    await openFileAndAddToCanvas('Molfiles-V2000/mol_2926_to_open.mol', page);
+
+    await doubleClickOnBond(page, BondType.SINGLE, 1);
+    await page.getByText('Single').click();
+    await page.getByRole('option', { name: 'Double', exact: true }).click();
+    await page.getByText('Either').click();
+    await page.getByRole('option', { name: 'Chain', exact: true }).click();
+    await page.getByText('Unmarked').click();
+    await page.getByRole('option', { name: 'Center', exact: true }).click();
+    await pressButton(page, 'Apply');
+
+    await doubleClickOnBond(page, BondType.SINGLE, 2);
+    await page.getByText('Single').click();
+    await page.getByRole('option', { name: 'Single Up', exact: true }).click();
+    await page.getByText('Either').click();
+    await page.getByRole('option', { name: 'Ring', exact: true }).click();
+    await page.getByText('Unmarked').click();
+    await page.getByRole('option', { name: 'No change', exact: true }).click();
+    await pressButton(page, 'Apply');
+
+    await doubleClickOnBond(page, BondType.SINGLE, 4);
+    await page.getByText('Single').click();
+    await page.getByRole('option', { name: 'Single Up', exact: true }).click();
+    await page.getByText('Either').click();
+    await page.getByRole('option', { name: 'Chain', exact: true }).click();
+    await page.getByText('Unmarked').click();
+    await page
+      .getByRole('option', { name: 'Made/broken', exact: true })
+      .click();
+    await pressButton(page, 'Apply');
+
+    const expectedFile = await getMolfile(page, 'v2000');
+    await saveToFile(
+      'Molfiles-V2000/mol_1465_to_open-expected.mol',
+      expectedFile,
+    );
+    const METADATA_STRING_INDEX = [1];
+
+    const { fileExpected: molFileExpected, file: molFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/Molfiles-V2000/mol_1465_to_open-expected.mol',
+        fileFormat: 'v2000',
+        metaDataIndexes: METADATA_STRING_INDEX,
+      });
+
+    expect(molFile).toEqual(molFileExpected);
+  });
+
+  test(`Different combinations - 2/3 open the saved .mol file`, async ({
+    page,
+  }) => {
+    /*
+        Test case: EPMLSOPKET-1465
+        Description: User is able to change the bond properties at a time.
+        All selected properties are assigned to the selected bond.
+        *.mol and *.rxn files correctly opened, applied atom property correctly represented.
+    */
+
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/mol_1465_to_open-expected.mol',
+      page,
+    );
+    await doubleClickOnBond(page, BondType.SINGLE, 5);
+    await page.getByText('Single').click();
+    await page.getByRole('option', { name: 'Single Up', exact: true }).click();
+    await page.getByText('Either').click();
+    await page.getByRole('option', { name: 'Chain', exact: true }).click();
+    await page.getByText('Unmarked').click();
+    await page.getByRole('option', { name: 'No change', exact: true }).click();
+    await pressButton(page, 'Apply');
+
+    await selectLeftPanelButton(LeftPanelButton.ArrowOpenAngleTool, page);
+    const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
+    await page.mouse.move(x, y + 30);
+    dragMouseTo(x + 100, y + 100, page);
+    await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
+
+    await selectRingButton(RingButton.Benzene, page);
+    await page.mouse.click(x + 150, y + 150);
+
+    const expectedFile = await getRxn(page, 'v2000');
+    await saveToFile('Rxn/rxn_1465_to_open-expected.rxn', expectedFile);
+
+    const METADATA_STRING_INDEX = [2, 7, 34];
+
+    const { fileExpected: rxnFileExpected, file: rxnFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName: 'tests/test-data/Rxn/rxn_1465_to_open-expected.rxn',
+        metaDataIndexes: METADATA_STRING_INDEX,
+        fileFormat: 'v2000',
+      });
+
+    expect(rxnFile).toEqual(rxnFileExpected);
+  });
+
+  test(`Different combinations - 3/3 open the saved *.rxn and edit it`, async ({
+    page,
+  }) => {
+    /*
+        Test case: EPMLSOPKET-1465
+        Description: User is able to change the bond properties at a time.
+        All selected properties are assigned to the selected bond.
+        *.mol and *.rxn files correctly opened, applied atom property correctly represented.
+  */
+    await openFileAndAddToCanvas('Rxn/rxn_1465_to_open-expected.rxn', page);
+    await doubleClickOnBond(page, BondType.SINGLE, 10);
+    await page.getByText('Single').click();
+    await page.getByRole('option', { name: 'Double', exact: true }).click();
+    await pressButton(page, 'Apply');
+  });
 });

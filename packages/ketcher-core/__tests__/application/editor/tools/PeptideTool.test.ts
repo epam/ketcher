@@ -12,7 +12,7 @@ describe('PeptideTool', () => {
     });
     const onShow = jest.fn();
     jest.spyOn(PeptideRenderer.prototype, 'show').mockImplementation(onShow);
-    editor.events.selectPeptide.dispatch(peptideMonomerItem);
+    editor.events.selectMonomer.dispatch(peptideMonomerItem);
     canvas.dispatchEvent(new Event('mouseover', { bubbles: true }));
     expect(onShow).toHaveBeenCalled();
   });
@@ -25,7 +25,7 @@ describe('PeptideTool', () => {
     });
     const onShow = jest.fn();
     jest.spyOn(PeptideRenderer.prototype, 'show').mockImplementation(onShow);
-    editor.events.selectPeptide.dispatch(peptideMonomerItem);
+    editor.events.selectMonomer.dispatch(peptideMonomerItem);
     canvas.dispatchEvent(new Event('mouseover', { bubbles: true }));
     expect(onShow).toHaveBeenCalled();
   });

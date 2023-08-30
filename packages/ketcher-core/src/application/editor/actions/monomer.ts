@@ -13,13 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { ToolConstructorInterface } from './Tool';
-import { MonomerTool } from 'application/editor/tools/Monomer';
-import { SelectLasso } from 'application/editor/tools/SelectLasso';
-import { PolymerBond } from 'application/editor/tools/Bond';
+import { ReStruct } from 'application/render';
+import { Action } from 'application/editor';
+import { MonomerAdd } from 'application/editor/operations/monomer';
+import { Vec2 } from 'domain/entities';
+import { MonomerItemType } from 'domain/types';
 
-export const toolsMap: Record<string, ToolConstructorInterface> = {
-  monomer: MonomerTool,
-  'select-lasso': SelectLasso,
-  'bond-single': PolymerBond,
-};
+export function fromMonomerAddition(
+  renderersContainer: ReStruct,
+  monomer: MonomerItemType,
+  position: Vec2,
+): Action {
+  const action = new Action();
+  action.addOp(new MonomerAdd(monomer, position)).perform(renderersContainer);
+
+  return action;
+}

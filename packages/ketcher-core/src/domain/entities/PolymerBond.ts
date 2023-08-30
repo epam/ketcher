@@ -1,10 +1,10 @@
-import { Peptide } from 'domain/entities/Peptide';
 import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { PolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer';
 import { Vec2 } from 'domain/entities/vec2';
+import { BaseMonomer } from './BaseMonomer';
 
 export class PolymerBond extends DrawingEntity {
-  public secondMonomer?: Peptide;
+  public secondMonomer?: BaseMonomer;
   public renderer?: PolymerBondRenderer;
   public endPosition: Vec2 = new Vec2();
 
@@ -13,11 +13,11 @@ export class PolymerBond extends DrawingEntity {
     this.firstMonomer = firstMonomer;
   }
 
-  public setFirstMonomer(monomer: Peptide) {
+  public setFirstMonomer(monomer: BaseMonomer) {
     this.firstMonomer = monomer;
   }
 
-  public setSecondMonomer(monomer: Peptide) {
+  public setSecondMonomer(monomer: BaseMonomer) {
     this.secondMonomer = monomer;
   }
 

@@ -50,7 +50,7 @@ test.describe('Selection tools', () => {
     Description: Selected bonds and atom labels with more than 1 symbol (e.g. "OH", "CH3")
     are highlighted with rounded rectangles.
     */
-    await openFileAndAddToCanvas('atoms-and-bonds.ket', page);
+    await openFileAndAddToCanvas('KET/atoms-and-bonds.ket', page);
     await page.keyboard.press('Control+a');
   });
 

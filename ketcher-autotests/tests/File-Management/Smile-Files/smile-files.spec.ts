@@ -57,7 +57,7 @@ test.describe('SMILES files', () => {
     Description: SmileString is correctly generated from structure and vise
     versa structure is correctly generated from SmileString.
     */
-    await openFileAndAddToCanvas('all-type-bonds.ket', page);
+    await openFileAndAddToCanvas('KET/all-type-bonds.ket', page);
     await getAndCompareSmiles(
       page,
       'tests/test-data/smiles-all-bonds-expected.json',
@@ -75,7 +75,7 @@ test.describe('SMILES files', () => {
     Description: SmileString is correctly generated from structure and
     vise versa structure is correctly generated from SmileString.
     */
-    await openFileAndAddToCanvas('all-atoms-properties.ket', page);
+    await openFileAndAddToCanvas('KET/all-atoms-properties.ket', page);
     await getAndCompareSmiles(
       page,
       'tests/test-data/smiles-all-atoms-properties-expected.json',
@@ -155,10 +155,10 @@ test.describe('SMILES files', () => {
     Description: Warning tab: Structure contains query properties of atoms
     and bonds that are not supported in the SMILES. Query properties will not be reflected in the saved file
     */
-      await openFileAndAddToCanvas('Attached data.mol', page);
+      await openFileAndAddToCanvas('Molfiles-V2000/attached-data.mol', page);
       await getAndCompareSmiles(
         page,
-        'tests/test-data/attached-data-expected.json',
+        'tests/test-data/JSON/attached-data-expected.json',
       );
 
       await getPreviewForSmiles(page, 'MDL Molfile V2000', 'Daylight SMILES');
@@ -254,7 +254,7 @@ test.describe('SMILES files', () => {
     Description: The structure generated from SMILE string is correct,
     pseudoatoms are rendered, alias appears as common atom symbol for which this alias was assigned.
     */
-    await openFileAndAddToCanvas('alias-pseudoatom.ket', page);
+    await openFileAndAddToCanvas('KET/alias-pseudoatom.ket', page);
     await getAndCompareSmiles(
       page,
       'tests/test-data/smiles-alias-pseudoatom-expected.json',

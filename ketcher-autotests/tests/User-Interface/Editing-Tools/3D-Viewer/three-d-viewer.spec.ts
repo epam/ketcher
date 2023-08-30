@@ -71,7 +71,7 @@ test.describe.fixme('3D Viewer', () => {
     Description: 3D window is opened. Benzene with all stereo bonds is drawn in it.
     The structure isn't changed.
     */
-    await openFileAndAddToCanvas('mol/benzene-stereo.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/benzene-stereo.mol', page);
     await selectTopPanelButton(TopPanelButton.ThreeD, page);
     // delay need to load 3D Viewer
     await delay(DELAY_IN_SECONDS.THREE);
@@ -208,7 +208,7 @@ test.describe.fixme('3D Viewer', () => {
     Description: 3D window is opened. Benzene with all stereo bonds is drawn in it.
     The structure isn't changed.
     */
-      await openFileAndAddToCanvas('mol/benzene-stereo.mol', page);
+      await openFileAndAddToCanvas('Molfiles-V2000/benzene-stereo.mol', page);
       const initialStructureData = await getKet(page);
       await selectTopPanelButton(TopPanelButton.ThreeD, page);
       // delay need to load 3D Viewer

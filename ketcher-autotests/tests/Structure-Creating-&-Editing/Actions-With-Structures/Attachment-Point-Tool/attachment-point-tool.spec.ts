@@ -8,7 +8,6 @@ import {
   DELAY_IN_SECONDS,
   selectNestedTool,
   RgroupTool,
-  AttachmentPoint,
   selectTopPanelButton,
   TopPanelButton,
   selectAtomInToolbar,
@@ -25,6 +24,8 @@ import {
   receiveFileComparisonData,
   clickOnAtom,
   screenshotBetweenUndoRedo,
+  setAttachmentPoints,
+  AttachmentPoint,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
@@ -62,7 +63,7 @@ test.describe('Attachment Point Tool', () => {
     Test case: EPMLSOPKET-1625
     Description: The Attachment Points dialog box is opened.
     */
-    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
     await clickOnAtom(page, 'C', 3);
   });
@@ -72,7 +73,7 @@ test.describe('Attachment Point Tool', () => {
     Test case: EPMLSOPKET-1626
     Description: Check-mark are checked.
     */
-    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
     await clickOnAtom(page, 'C', 3);
     await page.getByLabel(AttachmentPoint.PRIMARY).check();
@@ -84,20 +85,28 @@ test.describe('Attachment Point Tool', () => {
     Test case: EPMLSOPKET-1627
     Description: All four Attachment points added to atoms of chain.
     */
-    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
-    await clickOnAtom(page, 'C', 2);
-    await page.getByLabel(AttachmentPoint.PRIMARY).check();
-    await pressButton(page, 'Apply');
+    await setAttachmentPoints(
+      page,
+      { label: 'C', index: 2 },
+      { primary: true },
+      'Apply',
+    );
 
-    await clickOnAtom(page, 'C', 3);
-    await page.getByLabel(AttachmentPoint.SECONDARY).check();
-    await pressButton(page, 'Apply');
+    await setAttachmentPoints(
+      page,
+      { label: 'C', index: 3 },
+      { secondary: true },
+      'Apply',
+    );
 
-    await clickOnAtom(page, 'C', 4);
-    await page.getByLabel(AttachmentPoint.PRIMARY).check();
-    await page.getByLabel(AttachmentPoint.SECONDARY).check();
-    await pressButton(page, 'Apply');
+    await setAttachmentPoints(
+      page,
+      { label: 'C', index: 4 },
+      { primary: true, secondary: true },
+      'Apply',
+    );
   });
 
   test('Undo/Redo actions', async ({ page }) => {
@@ -106,20 +115,28 @@ test.describe('Attachment Point Tool', () => {
     Description: All four Attachment points added to atoms of chain.
     Undo removes two attachment points and Redo puts them back.
     */
-    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
-    await clickOnAtom(page, 'C', 2);
-    await page.getByLabel(AttachmentPoint.PRIMARY).check();
-    await pressButton(page, 'Apply');
+    await setAttachmentPoints(
+      page,
+      { label: 'C', index: 2 },
+      { primary: true },
+      'Apply',
+    );
 
-    await clickOnAtom(page, 'C', 3);
-    await page.getByLabel(AttachmentPoint.SECONDARY).check();
-    await pressButton(page, 'Apply');
+    await setAttachmentPoints(
+      page,
+      { label: 'C', index: 3 },
+      { secondary: true },
+      'Apply',
+    );
 
-    await clickOnAtom(page, 'C', 4);
-    await page.getByLabel(AttachmentPoint.PRIMARY).check();
-    await page.getByLabel(AttachmentPoint.SECONDARY).check();
-    await pressButton(page, 'Apply');
+    await setAttachmentPoints(
+      page,
+      { label: 'C', index: 4 },
+      { primary: true, secondary: true },
+      'Apply',
+    );
 
     for (let i = 0; i < 2; i++) {
       await selectTopPanelButton(TopPanelButton.Undo, page);
@@ -136,17 +153,23 @@ test.describe('Attachment Point Tool', () => {
     Test case: EPMLSOPKET-1629
     Description: Nothing is changed, the attachment points don't appear.
     */
-    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
-    await clickOnAtom(page, 'C', 2);
-    await page.getByLabel(AttachmentPoint.PRIMARY).check();
-    await pressButton(page, 'Cancel');
+    await setAttachmentPoints(
+      page,
+      { label: 'C', index: 2 },
+      { primary: true },
+      'Cancel',
+    );
 
     await takeEditorScreenshot(page);
 
-    await clickOnAtom(page, 'C', 3);
-    await page.getByLabel(AttachmentPoint.SECONDARY).check();
-    await pressButton(page, 'Cancel');
+    await setAttachmentPoints(
+      page,
+      { label: 'C', index: 3 },
+      { secondary: true },
+      'Cancel',
+    );
   });
 
   test('Click not on atom', async ({ page }) => {
@@ -156,7 +179,7 @@ test.describe('Attachment Point Tool', () => {
     */
     const clickToOutsideStructureX = 100;
     const clickToOutsideStructureY = 100;
-    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
     await page.mouse.click(clickToOutsideStructureX, clickToOutsideStructureY);
   });
@@ -168,26 +191,30 @@ test.describe('Attachment Point Tool', () => {
     Previously created primary attachment point is changed with secondary attachment point.
     Previously modified attachment point is changed with primary attachment point.
     */
-    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
-    await clickOnAtom(page, 'C', 3);
-
-    await page.getByLabel(AttachmentPoint.PRIMARY).check();
-    await pressButton(page, 'Apply');
+    await setAttachmentPoints(
+      page,
+      { label: 'C', index: 3 },
+      { primary: true },
+      'Apply',
+    );
     await takeEditorScreenshot(page);
 
-    await clickOnAtom(page, 'C', 3);
-
-    await page.getByLabel(AttachmentPoint.PRIMARY).uncheck();
-    await page.getByLabel(AttachmentPoint.SECONDARY).check();
-    await pressButton(page, 'Apply');
+    await setAttachmentPoints(
+      page,
+      { label: 'C', index: 3 },
+      { primary: false, secondary: true },
+      'Apply',
+    );
     await takeEditorScreenshot(page);
 
-    await clickOnAtom(page, 'C', 3);
-
-    await page.getByLabel(AttachmentPoint.SECONDARY).uncheck();
-    await page.getByLabel(AttachmentPoint.PRIMARY).check();
-    await pressButton(page, 'Apply');
+    await setAttachmentPoints(
+      page,
+      { label: 'C', index: 3 },
+      { primary: true, secondary: false },
+      'Apply',
+    );
   });
 
   test('Remove attachment points', async ({ page }) => {
@@ -197,18 +224,26 @@ test.describe('Attachment Point Tool', () => {
     */
     await openFileAndAddToCanvas('chain-with-attachment-points.ket', page);
     await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
-    await clickOnAtom(page, 'C', 2);
-    await page.getByLabel(AttachmentPoint.PRIMARY).uncheck();
-    await pressButton(page, 'Apply');
+    await setAttachmentPoints(
+      page,
+      { label: 'C', index: 2 },
+      { primary: false },
+      'Apply',
+    );
 
-    await clickOnAtom(page, 'C', 3);
-    await page.getByLabel(AttachmentPoint.SECONDARY).uncheck();
-    await pressButton(page, 'Apply');
+    await setAttachmentPoints(
+      page,
+      { label: 'C', index: 3 },
+      { secondary: false },
+      'Apply',
+    );
 
-    await clickOnAtom(page, 'C', 5);
-    await page.getByLabel(AttachmentPoint.PRIMARY).uncheck();
-    await page.getByLabel(AttachmentPoint.SECONDARY).uncheck();
-    await pressButton(page, 'Apply');
+    await setAttachmentPoints(
+      page,
+      { label: 'C', index: 5 },
+      { primary: false, secondary: false },
+      'Apply',
+    );
   });
 
   test('Modify atom with Attchment point (add atom)', async ({ page }) => {
@@ -254,18 +289,26 @@ test.describe('Attachment Point Tool', () => {
     await openFileAndAddToCanvas('reaction-with-arrow-and-plus.ket', page);
 
     await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
-    await clickOnAtom(page, 'C', 2);
-    await page.getByLabel(AttachmentPoint.PRIMARY).check();
-    await pressButton(page, 'Apply');
+    await setAttachmentPoints(
+      page,
+      { label: 'C', index: 2 },
+      { primary: true },
+      'Apply',
+    );
 
-    await clickOnAtom(page, 'C', 3);
-    await page.getByLabel(AttachmentPoint.SECONDARY).check();
-    await pressButton(page, 'Apply');
+    await setAttachmentPoints(
+      page,
+      { label: 'C', index: 3 },
+      { secondary: true },
+      'Apply',
+    );
 
-    await clickOnAtom(page, 'C', 5);
-    await page.getByLabel(AttachmentPoint.PRIMARY).check();
-    await page.getByLabel(AttachmentPoint.SECONDARY).check();
-    await pressButton(page, 'Apply');
+    await setAttachmentPoints(
+      page,
+      { label: 'C', index: 5 },
+      { primary: true, secondary: true },
+      'Apply',
+    );
   });
 
   test.fixme('Copy/Paste actions', async ({ page }) => {
@@ -620,5 +663,106 @@ test.describe('Attachment Point Tool', () => {
     for (let i = 0; i < 2; i++) {
       await selectTopPanelButton(TopPanelButton.Undo, page);
     }
+  });
+
+  test('Verify that the attachment point visualization matches the rendering to PNG/SVG mockup(on several structures)', async ({
+    page,
+  }) => {
+    /*
+    Test case: EPMLSOPKET-15516, EPMLSOPKET-15517, EPMLSOPKET-15522
+    Description: Openeded structures are displayed with the correct attachment points.
+    */
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/three-examples-attachment-points.mol',
+      page,
+    );
+  });
+
+  test('Verify that the attachment point visualization matches the rendering to PNG/SVG mockup(on one structure)', async ({
+    page,
+  }) => {
+    /*
+    Test case: EPMLSOPKET-15516, EPMLSOPKET-15518
+    Description: Openeded structure are displayed with the correct attachment points.
+    */
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/four-attachment-point.mol',
+      page,
+    );
+  });
+
+  test('Verify that changing primary attachment points to secondary updates the visualization', async ({
+    page,
+  }) => {
+    /*
+    Test case: EPMLSOPKET-15519
+    Description: Visualization updates accordingly, displaying 
+    the attachment point labels near the curve line.
+    */
+    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
+    await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
+    await setAttachmentPoints(
+      page,
+      { label: 'C', index: 3 },
+      { primary: true },
+      'Apply',
+    );
+    await takeEditorScreenshot(page);
+    await setAttachmentPoints(
+      page,
+      { label: 'C', index: 3 },
+      { primary: false, secondary: true },
+      'Apply',
+    );
+  });
+
+  test('Verify that changing secondary attachment points to primary updates the visualization', async ({
+    page,
+  }) => {
+    /*
+    Test case: EPMLSOPKET-15520
+    Description: visualization updates accordingly, 
+    removing the attachment point labels near the curve line.
+    */
+    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
+    await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
+    await setAttachmentPoints(
+      page,
+      { label: 'C', index: 3 },
+      { secondary: true },
+      'Apply',
+    );
+    await takeEditorScreenshot(page);
+    await setAttachmentPoints(
+      page,
+      { label: 'C', index: 3 },
+      { primary: true, secondary: false },
+      'Apply',
+    );
+  });
+
+  test('Verify that removing all attachment points updates the visualization', async ({
+    page,
+  }) => {
+    /*
+    Test case: EPMLSOPKET-15521
+    Description:  Visualization no longer displays any 
+    attachment point labels near the curve line.
+    */
+    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
+    await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
+    await setAttachmentPoints(
+      page,
+      { label: 'C', index: 3 },
+      { primary: true, secondary: true },
+      'Apply',
+    );
+    await takeEditorScreenshot(page);
+    await setAttachmentPoints(
+      page,
+      { label: 'C', index: 3 },
+      { primary: false, secondary: false },
+      'Apply',
+    );
   });
 });

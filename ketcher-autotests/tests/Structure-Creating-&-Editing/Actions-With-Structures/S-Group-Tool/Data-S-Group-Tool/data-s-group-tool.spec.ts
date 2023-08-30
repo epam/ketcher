@@ -77,7 +77,7 @@ test.describe('Data S-Group tool', () => {
       Test case: EPMLSOPKET-1510
       Description: The Field value appears near bottom right corner of structure.
     */
-    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await page.keyboard.press('Control+a');
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await fillFieldByPlaceholder(page, 'Enter name', 'Test');
@@ -179,7 +179,7 @@ test.describe('Data S-Group tool', () => {
       Test case: EPMLSOPKET-1551
       Description: Data S-Group added to all atoms of Chain
     */
-    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectSGroupProperties(
       page,
       'Fragment',
@@ -195,7 +195,7 @@ test.describe('Data S-Group tool', () => {
       Test case: EPMLSOPKET-1550
       Description: Data S-Group added to all bonds of Chain
     */
-    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectSGroupProperties(
       page,
       'Fragment',
@@ -211,7 +211,7 @@ test.describe('Data S-Group tool', () => {
       Test case: EPMLSOPKET-1552
       Description: Data S-Group added to all structure of Chain
     */
-    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectSGroupProperties(
       page,
       'Fragment',
@@ -227,7 +227,7 @@ test.describe('Data S-Group tool', () => {
       Test case: EPMLSOPKET-12986
       Description: Data S-Group added to all structure of Chain
     */
-    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectSGroupProperties(
       page,
       'Fragment',
@@ -395,7 +395,7 @@ test.describe('Data S-Group tool', () => {
       Test case: EPMLSOPKET-1549
       Description: Openns S-Group menu with filled context field Atom
     */
-    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await clickOnAtom(page, 'C', 3);
   });
@@ -405,7 +405,7 @@ test.describe('Data S-Group tool', () => {
       Test case: EPMLSOPKET-1549
       Description: Openns S-Group menu with filled context field Bond
     */
-    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await clickOnBond(page, BondType.SINGLE, 3);
   });
@@ -417,7 +417,7 @@ test.describe('Data S-Group tool', () => {
       Test case: EPMLSOPKET-1549
       Description: Openns S-Group menu with filled context field Bond
     */
-    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await page.keyboard.press('Control+a');
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
   });

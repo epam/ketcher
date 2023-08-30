@@ -73,7 +73,11 @@ const MonomerGroup = ({
     dispatch(selectTool('monomer'));
     switch (libraryName) {
       case 'PEPTIDE':
-        editor.events.selectPeptide.dispatch(monomer);
+        editor.events.selectMonomer.dispatch(monomer);
+        onItemClick(monomer);
+        break;
+      case 'CHEM':
+        editor.events.selectMonomer.dispatch(monomer);
         onItemClick(monomer);
         break;
       default:

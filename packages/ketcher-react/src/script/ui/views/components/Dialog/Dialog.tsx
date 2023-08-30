@@ -131,7 +131,11 @@ const Dialog: FC<PropsWithChildren & Props> = (props) => {
       >
         {headerContent || <span>{title}</span>}
         <div className={styles.btnContainer}>
-          <button className={styles.buttonTop} onClick={() => exit('Cancel')}>
+          <button
+            className={styles.buttonTop}
+            onClick={() => exit('Cancel')}
+            data-testid={'CloseIcon'}
+          >
             <Icon name={'close'} className={styles.closeButton} />
           </button>
         </div>

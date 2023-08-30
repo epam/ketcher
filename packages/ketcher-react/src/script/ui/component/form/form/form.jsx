@@ -137,7 +137,13 @@ function Field(props) {
   const formField = component ? (
     <Component name={name} schema={desc} {...fieldOpts} {...rest} />
   ) : (
-    <Input name={name} schema={desc} {...fieldOpts} {...rest} />
+    <Input
+      name={name}
+      schema={desc}
+      {...fieldOpts}
+      {...rest}
+      data-testid="FileNameInput"
+    />
   );
 
   if (labelPos === false) return formField;

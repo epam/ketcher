@@ -46,6 +46,9 @@ export function selectOption(page: Page, name = '') {
   return page.getByRole('option', { name }).click();
 }
 
+export function selectOptionByText(page: Page, text = '') {
+  return page.getByText(text, { exact: true }).click();
+}
 /* Usage: await pressTab(page, 'Functional Groups')
   Click on specified Tab in Templates dialog
 */

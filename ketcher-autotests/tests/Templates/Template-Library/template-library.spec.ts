@@ -13,6 +13,7 @@ async function setDisplayStereoFlagsSettingToOn(page: Page) {
   await selectTopPanelButton(TopPanelButton.Settings, page);
   await page.getByText('Stereochemistry', { exact: true }).click();
   await pressButton(page, 'IUPAC style');
+  // Using "On" label style, to always show the stereo labels, so we can see the difference
   await page.getByRole('option', { name: 'On' }).click();
   await pressButton(page, 'Apply');
 }
@@ -49,14 +50,18 @@ test.describe('Templates - Template Library', () => {
   test('Template with chiral flag 0 with ignoreChiralFlag enabled/disabled', async ({
     page,
   }) => {
+    // Phenylalanine mustard was chosen, because it has chiral flag 0, which allows us
+    // to test ignoreChiralFlag, which has an effect on the structure only in this case
     const offsetX = 200;
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
 
     await setDisplayStereoFlagsSettingToOn(page);
 
+    // Enable the setting
     await switchIgnoreChiralFlagSetting(page);
     await placePhenylalanineMustard(page, x - offsetX, y);
 
+    // Disable the setting
     await switchIgnoreChiralFlagSetting(page);
     await placePhenylalanineMustard(page, x + offsetX, y);
   });

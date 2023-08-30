@@ -14,23 +14,33 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { KetSerializer, SdfSerializer } from 'ketcher-core';
+import { KetSerializer, SdfItem, SdfSerializer } from 'ketcher-core';
 
 import { appUpdate } from '../options';
 import { storage } from '../../storage-ext';
 import templatesRawData from '../../../../templates/library.sdf';
 import { OptionsManager } from '../../utils/optionsManager';
+import { AnyAction, Dispatch } from 'redux';
 
-let cachedInitData: [unknown, unknown, unknown];
+let cachedInitData: [Dispatch<AnyAction>, string, Element];
 
-export function initLib(lib) {
+interface TemplateLibrary {
+  type: string;
+  data: { lib: SdfItem[] };
+}
+
+export function initLib(lib: SdfItem[]): TemplateLibrary {
   return {
     type: 'TMPL_INIT',
     data: { lib },
   };
 }
 
-const deserializeSdfTemplates = (baseUrl, cacheEl, _fileName) => {
+const deserializeSdfTemplates = (
+  baseUrl: string,
+  cacheEl: Element,
+  _fileName: string,
+): Promise<SdfItem[]> => {
   const options = {
     ignoreChiralFlag: OptionsManager.ignoreChiralFlag,
   };
@@ -51,19 +61,23 @@ const deserializeSdfTemplates = (baseUrl, cacheEl, _fileName) => {
   );
 };
 
-export default function initTmplLib(dispatch, baseUrl, cacheEl) {
+export default async function initTmplLib(
+  dispatch: Dispatch<AnyAction>,
+  baseUrl: string,
+  cacheEl: Element,
+): Promise<void> {
   cachedInitData = [dispatch, baseUrl, cacheEl];
 
   const fileName = 'library.sdf';
 
   return deserializeSdfTemplates(baseUrl, cacheEl, fileName).then((res) => {
-    const lib = res.concat(userTmpls() as []);
+    const lib = res.concat(userTmpls());
     dispatch(initLib(lib));
-    dispatch(appUpdate({ templates: true }));
+    dispatch(appUpdate({ templates: true }) as unknown as AnyAction);
   });
 }
 
-export function reinitializeTemplateLibrary() {
+export function reinitializeTemplateLibrary(): void {
   if (!cachedInitData) {
     throw new Error(
       'The template library must be initialized before it can be reinitialized',
@@ -73,7 +87,7 @@ export function reinitializeTemplateLibrary() {
   initTmplLib(...cachedInitData);
 }
 
-function userTmpls() {
+function userTmpls(): SdfItem[] {
   const userLib = storage.getItem('ketcher-tmpls');
   if (!Array.isArray(userLib) || userLib.length === 0) return [];
   const ketSerializer = new KetSerializer();
@@ -91,19 +105,19 @@ function userTmpls() {
         return null;
       }
     })
-    .filter((tmpl) => tmpl !== null);
+    .filter((tmpl): tmpl is SdfItem => tmpl !== null);
 }
 
-export function prefetchStatic(url) {
+export function prefetchStatic(url: string): Promise<string> {
   return fetch(url, { credentials: 'same-origin' }).then((resp) => {
     if (resp.ok) return resp.text();
     throw Error('Could not fetch ' + url);
   });
 }
 
-function prefetchSplit(tmpl) {
+function prefetchSplit(tmpl: SdfItem) {
   const pr = tmpl.props.prerender;
-  const res = pr && pr.split('#', 2);
+  const res = pr && `${pr}`.split('#', 2);
 
   return {
     file: pr && res[0],
@@ -111,14 +125,18 @@ function prefetchSplit(tmpl) {
   };
 }
 
-function prefetchRender(tmpls, baseUrl, cacheEl) {
+function prefetchRender(
+  tmpls: SdfItem[],
+  baseUrl: string,
+  cacheEl: Element,
+): Promise<string[]> {
   const files = tmpls.reduce((res, tmpl) => {
     const file = prefetchSplit(tmpl).file;
 
     if (file && res.indexOf(file) === -1) res.push(file);
 
     return res;
-  }, []);
+  }, [] as string[]);
   const fetch = Promise.all(
     files.map((fn) => prefetchStatic(baseUrl + fn).catch(() => null)),
   );

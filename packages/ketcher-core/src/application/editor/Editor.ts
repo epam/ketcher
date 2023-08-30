@@ -20,7 +20,7 @@ function isMouseMainButtonPressed(event: MouseEvent) {
 
 export class CoreEditor {
   public events = {
-    selectPeptide: new Subscription(),
+    selectMonomer: new Subscription(),
     selectTool: new Subscription(),
     error: new Subscription(),
   };
@@ -46,12 +46,12 @@ export class CoreEditor {
   }
 
   private subscribeEvents() {
-    this.events.selectPeptide.add((peptide) => this.onSelectPeptide(peptide));
+    this.events.selectMonomer.add((monomer) => this.onSelectMonomer(monomer));
     this.events.selectTool.add((tool) => this.onSelectTool(tool));
   }
 
-  private onSelectPeptide(peptide: MonomerItemType) {
-    this.selectTool('peptide', peptide);
+  private onSelectMonomer(monomer: MonomerItemType) {
+    this.selectTool('monomer', monomer);
   }
 
   private onSelectTool(tool: string) {

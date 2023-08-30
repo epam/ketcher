@@ -15,17 +15,17 @@
  ***************************************************************************/
 import { ReStruct } from 'application/render';
 import { Action } from 'application/editor';
-import { PeptideAdd } from 'application/editor/operations/peptide';
+import { MonomerAdd } from 'application/editor/operations/monomer';
 import { Vec2 } from 'domain/entities';
 import { MonomerItemType } from 'domain/types';
 
-export function fromPeptideAddition(
+export function fromMonomerAddition(
   renderersContainer: ReStruct,
-  peptide: MonomerItemType,
+  monomer: MonomerItemType,
   position: Vec2,
 ): Action {
   const action = new Action();
-  action.addOp(new PeptideAdd(peptide, position)).perform(renderersContainer);
+  action.addOp(new MonomerAdd(monomer, position)).perform(renderersContainer);
 
   return action;
 }

@@ -14,12 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 import { ToolConstructorInterface } from './Tool';
-import { PeptideTool } from 'application/editor/tools/Peptide';
+import { MonomerTool } from 'application/editor/tools/Monomer';
 import { SelectLasso } from 'application/editor/tools/SelectLasso';
 import { PolymerBond } from 'application/editor/tools/Bond';
 
 export const toolsMap: Record<string, ToolConstructorInterface> = {
-  peptide: PeptideTool,
+  monomer: MonomerTool,
   'select-lasso': SelectLasso,
   'bond-single': PolymerBond,
 };

@@ -20,38 +20,39 @@ import { ReStruct } from '../../../render';
 
 import { BaseOperation } from '../base';
 import { OperationType } from '../OperationType';
-import { Peptide } from 'domain/entities/Peptide';
-import { PeptideRenderer } from 'application/render/renderers/PeptideRenderer';
 import { MonomerItemType } from 'domain/types';
+import { monomerFactory } from './monomerFactory';
 
 type Data = {
-  peptide: MonomerItemType;
+  monomer: MonomerItemType;
   position: Vec2;
 };
 
-class PeptideAdd extends BaseOperation {
+class MonomerAdd extends BaseOperation {
   data: Data;
 
-  constructor(peptide: MonomerItemType, position: Vec2) {
+  constructor(monomer: MonomerItemType, position: Vec2) {
     super(OperationType.ATOM_ADD);
-    this.data = { peptide, position };
+    this.data = { monomer, position };
   }
 
   execute(restruct: ReStruct) {
-    const { peptide, position } = this.data;
+    const { monomer, position } = this.data;
 
     const struct = restruct.molecule;
-    const newPeptide = new Peptide(peptide, position);
-    const peptideRenderer = new PeptideRenderer(newPeptide);
-    struct.peptides.set(newPeptide.id, newPeptide);
-    restruct.peptides.set(newPeptide.id, peptideRenderer);
+
+    const [Monomer, MonomerRenderer] = monomerFactory(monomer);
+    const newMonomer = new Monomer(monomer, position);
+    const monomerRenderer = new MonomerRenderer(newMonomer);
+    struct.monomers.set(newMonomer.id, newMonomer);
+    restruct.monomers.set(newMonomer.id, monomerRenderer);
   }
 
   invert() {
-    const inverted = new PeptideAdd(this.data.peptide, this.data.position);
+    const inverted = new MonomerAdd(this.data.monomer, this.data.position);
     inverted.data = this.data;
     return inverted;
   }
 }
 
-export { PeptideAdd };
+export { MonomerAdd };

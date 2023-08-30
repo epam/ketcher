@@ -19,7 +19,6 @@ test.describe('Left toolbar UI tests', () => {
   test('left toolbar selection tool verification', async ({ page }) => {
     // Test case: EPMLSOPKET-4268
     await page.getByTestId('select-rectangle').click();
-    await page.getByTestId('select-rectangle').click();
     const bodyHeight = await page.evaluate(() => document.body.clientHeight);
     const selectionToolDropdownWidth = 200;
     const screenshot = await page.screenshot({
@@ -107,7 +106,6 @@ test.describe('Left toolbar UI tests', () => {
     await page.getByTestId('bonds').click();
     await page.getByTestId('bonds').click();
     await page.getByTestId('bond-up').click();
-    // await selectBond(BondTypeName.SingleUp, page);
     const bondNumber = 2;
     await clickOnBond(page, BondType.SINGLE, bondNumber);
     await takeLeftToolbarScreenshot(page);

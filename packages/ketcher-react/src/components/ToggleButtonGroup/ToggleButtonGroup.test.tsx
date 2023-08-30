@@ -18,25 +18,24 @@ import { render, fireEvent, screen } from '@testing-library/react';
 import ButtonGroup from './ToggleButtonGroup';
 
 describe('ButtonGroup', () => {
-  const buttons = {
-    labels: ['Label 1', 'Label 2', ''],
-    values: [1, 2, 3],
-  };
+  const buttons = [
+    { label: 'Label 1', value: 1 },
+    { label: 'Label 2', value: 2 },
+    { label: '', value: 3 },
+  ];
   const onClickMock = jest.fn();
-  const actualValue = 2;
-  const propertyKey = 'hCount';
+  const defaultValue = 2;
 
   test('should render buttons with correct labels', () => {
     render(
       <ButtonGroup
         buttons={buttons}
         onClick={onClickMock}
-        actualValue={actualValue}
-        propertyKey={propertyKey}
+        defaultValue={defaultValue}
       />,
     );
 
-    buttons.labels.forEach((label) => {
+    buttons.forEach(({ label }) => {
       const buttonElement = screen.getByText(label || 'none');
       expect(buttonElement).toBeInTheDocument();
     });
@@ -47,18 +46,17 @@ describe('ButtonGroup', () => {
       <ButtonGroup
         buttons={buttons}
         onClick={onClickMock}
-        actualValue={actualValue}
-        propertyKey={propertyKey}
+        defaultValue={defaultValue}
       />,
     );
 
-    buttons.values.forEach((value) => {
+    buttons.forEach(({ value }) => {
       const buttonElement = screen.getByText(
         value !== 3 ? `Label ${value}` : 'none',
       );
       fireEvent.click(buttonElement);
 
-      expect(onClickMock).toHaveBeenCalledWith(propertyKey, value);
+      expect(onClickMock).toHaveBeenCalledWith(value);
     });
   });
 });

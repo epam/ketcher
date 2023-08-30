@@ -8,24 +8,48 @@ import useRGroupAttachmentPointEdit from '../hooks/useRGroupAttachmentPointEdit'
 import { updateSelectedAtoms } from 'src/script/ui/state/modal/atoms';
 import { useAppContext } from 'src/hooks';
 import Editor from 'src/script/editor';
-import ButtonGroup from './ToggleButtonGroup/ToggleButtonGroup';
+import ButtonGroup from '../../../../../../components/ToggleButtonGroup/ToggleButtonGroup';
 import { atomGetAttr, AtomAttributeName } from 'ketcher-core';
 import { atom } from 'src/script/ui/data/schema/struct-schema';
 
+const { ringBondCount, hCount, substitutionCount, unsaturatedAtom } =
+  atom.properties;
 const atomPropertiesForSubMenu: {
   title: string;
   key: AtomAttributeName;
-  enum: number[];
-  enumNames: string[];
+  buttons: { label: string; value: number }[];
 }[] = [
-  { ...atom.properties.ringBondCount, key: 'ringBondCount' },
-  { ...atom.properties.hCount, key: 'hCount' },
-  { ...atom.properties.substitutionCount, key: 'substitutionCount' },
   {
-    ...atom.properties.unsaturatedAtom,
-    enum: [0, 1],
-    enumNames: ['Unsaturated', 'Saturated'],
+    title: ringBondCount.title,
+    key: 'ringBondCount',
+    buttons: ringBondCount.enumNames.map((label, id) => ({
+      label,
+      value: ringBondCount.enum[id],
+    })),
+  },
+  {
+    title: hCount.title,
+    key: 'hCount',
+    buttons: hCount.enumNames.map((label, id) => ({
+      label,
+      value: hCount.enum[id],
+    })),
+  },
+  {
+    title: substitutionCount.title,
+    key: 'substitutionCount',
+    buttons: substitutionCount.enumNames.map((label, id) => ({
+      label,
+      value: substitutionCount.enum[id],
+    })),
+  },
+  {
+    title: unsaturatedAtom.title,
     key: 'unsaturatedAtom',
+    buttons: [
+      { label: 'Unsaturated', value: 1 },
+      { label: 'Saturated', value: 0 },
+    ],
   },
 ];
 
@@ -55,6 +79,7 @@ const AtomMenuItems: FC<MenuItemsProps> = (props) => {
       return Number(atomGetAttr(editor.render.ctab, atomId, key));
     } else return 0;
   };
+
   return (
     <>
       <Item {...props} onClick={handleEdit}>
@@ -80,20 +105,17 @@ const AtomMenuItems: FC<MenuItemsProps> = (props) => {
         label="Query properties"
         style={{ overflow: 'visible' }}
       >
-        {atomPropertiesForSubMenu.map(
-          ({ title, enum: values, enumNames, key }) => {
-            return (
-              <Submenu {...props} label={title} key={key}>
-                <ButtonGroup
-                  buttons={{ labels: enumNames, values }}
-                  actualValue={getPropertyValue(key)}
-                  propertyKey={key}
-                  onClick={updateAtomProperty}
-                ></ButtonGroup>
-              </Submenu>
-            );
-          },
-        )}
+        {atomPropertiesForSubMenu.map(({ title, buttons, key }) => {
+          return (
+            <Submenu {...props} label={title} key={key}>
+              <ButtonGroup<number>
+                buttons={buttons}
+                defaultValue={getPropertyValue(key)}
+                onClick={(value: number) => updateAtomProperty(key, value)}
+              ></ButtonGroup>
+            </Submenu>
+          );
+        })}
       </Submenu>
       <Item {...props} onClick={handleDelete}>
         Delete

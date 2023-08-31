@@ -134,7 +134,7 @@ const Dialog: FC<PropsWithChildren & Props> = (props) => {
           <button
             className={styles.buttonTop}
             onClick={() => exit('Cancel')}
-            data-testid={'CloseIcon'}
+            data-testid={'close-icon'}
           >
             <Icon name={'close'} className={styles.closeButton} />
           </button>

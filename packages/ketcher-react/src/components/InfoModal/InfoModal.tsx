@@ -32,13 +32,13 @@ const InfoModal = ({ message, close }: InfoModalProps): JSX.Element => {
         aria-modal="true"
         aria-labelledby="dialog-label"
         aria-describedby="dialog-content"
-        data-testid="InfoModalWindow"
+        data-testid="info-modal-window"
       >
         <header id="dialog-label">{error.message}</header>
         <div
           className={styles.infoModalBody}
           id="dialog-content"
-          data-testid="InfoModalBody"
+          data-testid="info-modal-body"
         >
           {message}
         </div>

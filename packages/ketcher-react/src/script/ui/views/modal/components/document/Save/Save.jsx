@@ -322,7 +322,7 @@ class SaveDialog extends Component {
           className={classes.previewArea}
           readOnly
           ref={this.textAreaRef}
-          data-testid="PreviewAreaBinary"
+          data-testid="preview-area-binary"
         />
       </div>
     );
@@ -334,7 +334,7 @@ class SaveDialog extends Component {
           className={classes.previewArea}
           readOnly
           ref={this.textAreaRef}
-          data-testid="PreviewAreaText"
+          data-testid="preview-area-text"
         />
       </div>
     );

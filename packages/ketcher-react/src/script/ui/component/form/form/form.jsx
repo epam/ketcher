@@ -142,7 +142,7 @@ function Field(props) {
       schema={desc}
       {...fieldOpts}
       {...rest}
-      data-testid="FileNameInput"
+      data-testid="file-name-input"
     />
   );
 

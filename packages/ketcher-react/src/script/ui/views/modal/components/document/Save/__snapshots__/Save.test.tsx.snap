@@ -25,7 +25,7 @@ Object {
           >
             <button
               class="buttonTop"
-              data-testid="CloseIcon"
+              data-testid="close-icon"
             >
               <icon-close.svg
                 classname="closeButton"
@@ -51,7 +51,7 @@ Object {
                 >
                   <input
                     class="input genericInput"
-                    data-testid="FileNameInput"
+                    data-testid="file-name-input"
                     name="filename"
                     type="text"
                     value=""
@@ -117,7 +117,7 @@ Object {
                 >
                   <a
                     class="active"
-                    data-testid="PreviewTab"
+                    data-testid="preview-tab"
                   >
                     Preview
                   </a>
@@ -129,7 +129,7 @@ Object {
                 >
                   <textarea
                     class="previewArea"
-                    data-testid="PreviewAreaText"
+                    data-testid="preview-area-text"
                     readonly=""
                   />
                 </div>
@@ -376,7 +376,7 @@ Object {
         >
           <button
             class="buttonTop"
-            data-testid="CloseIcon"
+            data-testid="close-icon"
           >
             <icon-close.svg
               classname="closeButton"
@@ -402,7 +402,7 @@ Object {
               >
                 <input
                   class="input genericInput"
-                  data-testid="FileNameInput"
+                  data-testid="file-name-input"
                   name="filename"
                   type="text"
                   value=""
@@ -468,7 +468,7 @@ Object {
               >
                 <a
                   class="active"
-                  data-testid="PreviewTab"
+                  data-testid="preview-tab"
                 >
                   Preview
                 </a>
@@ -480,7 +480,7 @@ Object {
               >
                 <textarea
                   class="previewArea"
-                  data-testid="PreviewAreaText"
+                  data-testid="preview-area-text"
                   readonly=""
                 />
               </div>

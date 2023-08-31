@@ -30,7 +30,7 @@ export const waitForLoad = async (page: Page, callback: VoidFunction) => {
   callback();
 
   if (await page.locator('[role=dialog]').isVisible()) {
-    await page.waitForSelector('[role=dialog][data-testid=InfoModalBody]', {
+    await page.waitForSelector('[role=dialog][data-testid=info-modal-body]', {
       state: 'detached',
     });
   }

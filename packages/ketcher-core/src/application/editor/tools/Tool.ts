@@ -26,9 +26,7 @@ export interface Tool extends ToolEventHandler {
   isNotActiveTool?: boolean;
 }
 
-export type PeptideToolOptions = MonomerItemType;
-
-export type ToolOptions = PeptideToolOptions;
+export type ToolOptions = MonomerItemType;
 
 export type ToolConstructorInterface = {
   new (editor, ...args: ToolOptions[]): Tool;

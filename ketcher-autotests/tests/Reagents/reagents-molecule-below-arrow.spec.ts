@@ -8,9 +8,7 @@ import {
 
 test.describe('Reagents molecule below arrow', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto(
-      'https://rc.test.lifescience.opensource.epam.com/KetcherDemo/index.html',
-    );
+    await page.goto('');
   });
 
   test.afterEach(async ({ page }) => {

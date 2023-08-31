@@ -2,7 +2,6 @@ import { Page, test } from '@playwright/test';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
-  clickInTheMiddleOfTheScreen,
   clickOnAtom,
   selectLeftPanelButton,
   LeftPanelButton,
@@ -23,7 +22,8 @@ test.describe('Lasso tools', () => {
   const selectLasso = async (page: Page) => {
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
     await page.getByTestId('select-lasso').click();
-    await clickInTheMiddleOfTheScreen(page);
+    // eslint-disable-next-line no-magic-numbers
+    await page.mouse.click(20, 20);
   };
 
   test('Using lasso for selection of bonds and atom labels', async ({
@@ -48,7 +48,7 @@ test.describe('Lasso tools', () => {
     await page.keyboard.press('Delete');
   });
 
-  test('(50px to Down) Structure Movement with Arrow Keys (1px move)', async ({
+  test('(50px to Down) Structure Movement with Arrow Keys (1px move) @check', async ({
     page,
   }) => {
     await openFileAndAddToCanvas('two-benzene-with-atoms.ket', page);
@@ -59,7 +59,7 @@ test.describe('Lasso tools', () => {
     }
   });
 
-  test('(50px to Up) Structure Movement with Arrow Keys (1px move)', async ({
+  test('(50px to Up) Structure Movement with Arrow Keys (1px move) @check', async ({
     page,
   }) => {
     await openFileAndAddToCanvas('two-benzene-with-atoms.ket', page);
@@ -70,7 +70,7 @@ test.describe('Lasso tools', () => {
     }
   });
 
-  test('(50px to Right) Structure Movement with Arrow Keys (1px move)', async ({
+  test('(50px to Right) Structure Movement with Arrow Keys (1px move) @check', async ({
     page,
   }) => {
     await openFileAndAddToCanvas('two-benzene-with-atoms.ket', page);
@@ -81,7 +81,7 @@ test.describe('Lasso tools', () => {
     }
   });
 
-  test('(50px to Left) Structure Movement with Arrow Keys (1px move)', async ({
+  test('(50px to Left) Structure Movement with Arrow Keys (1px move) @check', async ({
     page,
   }) => {
     await openFileAndAddToCanvas('two-benzene-with-atoms.ket', page);

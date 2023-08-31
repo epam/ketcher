@@ -1365,20 +1365,27 @@ function radicalBullet(
 
 function bracket(
   paper: RaphaelPaper,
-  d: Vec2,
-  n: Vec2,
-  c: Vec2,
+  bracketAngleDirection: Vec2,
+  bracketDirection: Vec2,
+  bondCenter: Vec2,
   bracketWidth: number,
   bracketHeight: number,
   options: RenderOptions,
+  isBracketContainAttachment = false,
 ) {
   // eslint-disable-line max-params
   bracketWidth = bracketWidth || 0.25;
   bracketHeight = bracketHeight || 1.0;
-  const a0 = c.addScaled(n, -0.5 * bracketHeight);
-  const a1 = c.addScaled(n, 0.5 * bracketHeight);
-  const b0 = a0.addScaled(d, -bracketWidth);
-  const b1 = a1.addScaled(d, -bracketWidth);
+  let a0, a1;
+  if (isBracketContainAttachment) {
+    a0 = bondCenter.addScaled(bracketDirection, -0.2 * bracketHeight);
+    a1 = bondCenter.addScaled(bracketDirection, 0.8 * bracketHeight);
+  } else {
+    a0 = bondCenter.addScaled(bracketDirection, -0.5 * bracketHeight);
+    a1 = bondCenter.addScaled(bracketDirection, 0.5 * bracketHeight);
+  }
+  const b0 = a0.addScaled(bracketAngleDirection, -bracketWidth);
+  const b1 = a1.addScaled(bracketAngleDirection, -bracketWidth);
 
   return paper
     .path(

@@ -1,7 +1,14 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { ReAtom, ReBond } from 'application/render';
+import { ReAtom, ReBond, ReRGroupAttachmentPoint } from 'application/render';
 
-import { Box2Abs, Pool, Struct, Vec2 } from 'domain/entities';
+import {
+  Box2Abs,
+  Loop,
+  Pool,
+  RGroupAttachmentPoint,
+  Struct,
+  Vec2,
+} from 'domain/entities';
 import { mockFn } from 'jest-mock-extended';
 import { MonomerItemType } from 'domain/types';
 import { Peptide } from 'domain/entities/Peptide';
@@ -26,7 +33,7 @@ const mockAtoms = [
     isotope: 0,
     label: 'C',
     neighbors: [14, 0, 11],
-    pp: { x: 8.9, y: 6.324985332956878, z: 0 },
+    pp: new Vec2({ x: 8.9, y: 6.324985332956878, z: 0 }),
     pseudo: '',
     radical: 0,
     rglabel: null,
@@ -56,7 +63,7 @@ const mockAtoms = [
     isotope: 0,
     label: 'C',
     neighbors: [14, 0, 11],
-    pp: { x: 8.9, y: 6.324985332956878, z: 0 },
+    pp: new Vec2({ x: 7.5, y: 5.324985332956878, z: 0 }),
     pseudo: '',
     radical: 0,
     rglabel: null,
@@ -86,7 +93,7 @@ const mockAtoms = [
     isotope: 0,
     label: 'C',
     neighbors: [3, 4],
-    pp: { x: 9.766012701659344, y: 7.825007333521562, z: 0 },
+    pp: new Vec2({ x: 9.766012701659344, y: 7.825007333521562, z: 0 }),
     pseudo: '',
     radical: 0,
     rglabel: null,
@@ -116,7 +123,7 @@ const mockAtoms = [
     isotope: 0,
     label: 'C',
     neighbors: [6, 5],
-    pp: { x: 8.9, y: 8.325014667043122, z: 0 },
+    pp: new Vec2({ x: 8.9, y: 8.325014667043122, z: 0 }),
     pseudo: '',
     radical: 0,
     rglabel: null,
@@ -146,7 +153,7 @@ const mockAtoms = [
     isotope: 0,
     label: 'C',
     neighbors: [8, 7],
-    pp: { x: 8.033987298340657, y: 7.825007333521562, z: 0 },
+    pp: new Vec2({ x: 8.033987298340657, y: 7.825007333521562, z: 0 }),
     pseudo: '',
     radical: 0,
     rglabel: null,
@@ -176,7 +183,7 @@ const mockAtoms = [
     isotope: 0,
     label: 'C',
     neighbors: [12, 10, 9],
-    pp: { x: 8.033987298340657, y: 6.824992666478439, z: 0 },
+    pp: new Vec2({ x: 8.033987298340657, y: 6.824992666478439, z: 0 }),
     pseudo: '',
     radical: 0,
     rglabel: null,
@@ -206,7 +213,7 @@ const mockAtoms = [
     isotope: 0,
     label: 'C',
     neighbors: [13],
-    pp: { x: 7.167958719030767, y: 6.3249981666901975, z: 0 },
+    pp: new Vec2({ x: 7.167958719030767, y: 6.3249981666901975, z: 0 }),
     pseudo: '',
     radical: 0,
     rglabel: null,
@@ -236,7 +243,7 @@ const mockAtoms = [
     isotope: 0,
     label: 'C',
     neighbors: [15],
-    pp: { x: 8.9, y: 5.324985332956878, z: 0 },
+    pp: new Vec2({ x: 8.9, y: 5.324985332956878, z: 0 }),
     pseudo: '',
     radical: 0,
     rglabel: null,
@@ -662,22 +669,24 @@ const molecule = {
   frags,
   halfBonds,
   isReaction: false,
-  loops: { nextId: 0 },
+  loops: new Pool<Loop>(),
   name: '',
-  rgroups: { nextId: 0 },
+  rgroups: new Pool<Loop>(),
   rxnArrows: new Map(),
-  rxnPluses: { nextId: 0 },
+  rxnPluses: new Pool<Loop>(),
   sGroupForest: {
     parent: {},
     children: {
       key: -1,
       value: [],
+      get: mockFn().mockReturnValue([]),
     },
     atomSets: {},
   },
-  sgroups: { nextId: 0 },
-  simpleObjects: { nextId: 0 },
-  texts: { nextId: 0 },
+  sgroups: new Pool<Loop>(),
+  simpleObjects: new Pool<Loop>(),
+  texts: new Pool<Loop>(),
+  rgroupAttachmentPoints: new Pool<RGroupAttachmentPoint>(),
   atomGetNeighbors() {
     return [
       {
@@ -697,20 +706,7 @@ const molecule = {
   bondInitHalfBonds() {},
   atomAddNeighbor() {},
   setImplicitHydrogen() {},
-  getRGroupAttachmentPointsVBoxByAtomIds: mockFn().mockReturnValue(
-    new Box2Abs(
-      new Vec2({
-        x: 6,
-        y: 7,
-        z: 0,
-      }),
-      new Vec2({
-        x: 7,
-        y: 9,
-        z: 0,
-      }),
-    ),
-  ),
+  getRGroupAttachmentPointsByAtomId: mockFn().mockReturnValue([0]),
 };
 
 export const restruct = {
@@ -727,6 +723,21 @@ export const restruct = {
   markAtom() {},
   markBond() {},
   markItem() {},
+  rgroupAttachmentPoints: new Pool<ReRGroupAttachmentPoint>(),
+  getRGroupAttachmentPointsVBoxByAtomIds: mockFn().mockReturnValue(
+    new Box2Abs(
+      new Vec2({
+        x: 6,
+        y: 7,
+        z: 0,
+      }),
+      new Vec2({
+        x: 7,
+        y: 9,
+        z: 0,
+      }),
+    ),
+  ),
 };
 
 molecule.atoms.forEach((atom, aid) => {

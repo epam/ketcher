@@ -18,10 +18,16 @@ async function setDisplayStereoFlagsSettingToOn(page: Page) {
   await pressButton(page, 'Apply');
 }
 
-async function switchIgnoreChiralFlagSetting(page: Page) {
+async function setIgnoreChiralFlagSetting(page: Page, newSetting: boolean) {
   await selectTopPanelButton(TopPanelButton.Settings, page);
   await page.getByText('Stereochemistry', { exact: true }).click();
-  await page.getByText('Ignore the chiral flag').click();
+
+  const checkLocator = page.getByText('Ignore the chiral flag');
+  const isChecked = await checkLocator.isChecked();
+  if (isChecked !== newSetting) {
+    await checkLocator.click();
+  }
+
   await pressButton(page, 'Apply');
 }
 
@@ -57,12 +63,10 @@ test.describe('Templates - Template Library', () => {
 
     await setDisplayStereoFlagsSettingToOn(page);
 
-    // Enable the setting
-    await switchIgnoreChiralFlagSetting(page);
+    await setIgnoreChiralFlagSetting(page, true);
     await placePhenylalanineMustard(page, x - offsetX, y);
 
-    // Disable the setting
-    await switchIgnoreChiralFlagSetting(page);
+    await setIgnoreChiralFlagSetting(page, false);
     await placePhenylalanineMustard(page, x + offsetX, y);
   });
 });

@@ -46,7 +46,7 @@ function createApi(
     recognize: structService.recognize.bind(structService),
     generateImageAsBase64:
       structService.generateImageAsBase64.bind(structService),
-    generateInchIKey: structService.generateInchIKey.bind(structService),
+    getInChIKey: structService.getInChIKey.bind(structService),
   });
 }
 

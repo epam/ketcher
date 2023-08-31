@@ -73,7 +73,7 @@ test.describe('Superatom S-Group tool', () => {
       Test case: EPMLSOPKET-1537
       Description: The brackets are rendered correctly around Atom
     */
-    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await clickOnAtom(page, 'C', 3);
     await addNameToSuperatom(page, 'Name', 'Test@!#$%12345');
@@ -84,7 +84,7 @@ test.describe('Superatom S-Group tool', () => {
       Test case: EPMLSOPKET-1537
       Description: The brackets are rendered correctly around Bond
     */
-    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await clickOnBond(page, BondType.SINGLE, 3);
     await addNameToSuperatom(page, 'Name', 'Test@!#$%12345');
@@ -95,7 +95,7 @@ test.describe('Superatom S-Group tool', () => {
       Test case: EPMLSOPKET-1537
       Description: The brackets are rendered correctly around whole structure
     */
-    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await page.keyboard.press('Control+a');
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await addNameToSuperatom(page, 'Name', 'Test@!#$%12345');

@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { test, expect } from '@playwright/test';
+import { test, expect, Page } from '@playwright/test';
 import {
   BondType,
   doubleClickOnBond,
@@ -17,6 +17,11 @@ import {
   takeEditorScreenshot,
 } from '@utils';
 import { getMolfile, getRxn } from '@utils/formats';
+
+async function selectDoubleOption(page: Page) {
+  await page.getByText('Single').click();
+  await page.getByRole('option', { name: 'Double', exact: true }).click();
+}
 
 test.describe('Bond Properties', () => {
   test.beforeEach(async ({ page }) => {
@@ -158,8 +163,7 @@ test.describe('Bond Properties', () => {
         */
     await openFileAndAddToCanvas('Molfiles-V2000/benzene.mol', page);
     await doubleClickOnBond(page, BondType.SINGLE, 2);
-    await page.getByText('Single').click();
-    await page.getByRole('option', { name: 'Double', exact: true }).click();
+    await selectDoubleOption(page);
     await pressButton(page, 'Apply');
   });
 
@@ -171,8 +175,7 @@ test.describe('Bond Properties', () => {
 
     await openFileAndAddToCanvas('Molfiles-V2000/benzene.mol', page);
     await doubleClickOnBond(page, BondType.SINGLE, 2);
-    await page.getByText('Single').click();
-    await page.getByRole('option', { name: 'Double', exact: true }).click();
+    await selectDoubleOption(page);
     await pressButton(page, 'Apply');
 
     const expectedFile = await getMolfile(page, 'v2000');
@@ -446,8 +449,7 @@ test.describe('Bond Properties', () => {
     await openFileAndAddToCanvas('Molfiles-V2000/mol_2926_to_open.mol', page);
     await selectAllStructuresOnCanvas(page);
     await doubleClickOnBond(page, BondType.SINGLE, 1);
-    await page.getByText('Single').click();
-    await page.getByRole('option', { name: 'Double', exact: true }).click();
+    await selectDoubleOption(page);
     await pressButton(page, 'Apply');
 
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
@@ -486,8 +488,7 @@ test.describe('Bond Properties', () => {
     await openFileAndAddToCanvas('Molfiles-V2000/mol_2926_to_open.mol', page);
 
     await doubleClickOnBond(page, BondType.SINGLE, 1);
-    await page.getByText('Single').click();
-    await page.getByRole('option', { name: 'Double', exact: true }).click();
+    await selectDoubleOption(page);
     await page.getByText('Either').click();
     await page.getByRole('option', { name: 'Chain', exact: true }).click();
     await page.getByText('Unmarked').click();
@@ -592,8 +593,7 @@ test.describe('Bond Properties', () => {
   */
     await openFileAndAddToCanvas('Rxn/rxn_1465_to_open-expected.rxn', page);
     await doubleClickOnBond(page, BondType.SINGLE, 10);
-    await page.getByText('Single').click();
-    await page.getByRole('option', { name: 'Double', exact: true }).click();
+    await selectDoubleOption(page);
     await pressButton(page, 'Apply');
   });
 });

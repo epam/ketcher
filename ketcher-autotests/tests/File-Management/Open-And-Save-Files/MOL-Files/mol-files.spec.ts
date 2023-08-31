@@ -553,12 +553,12 @@ test.describe('', () => {
       {
         testName:
           'Open and Save files - Open/Save structure with bond properties',
-        path: 'Molfiles-V2000/all_bond_properties.mol',
+        path: 'Molfiles-V2000/all-bond-properties.mol',
       },
       {
         testName:
           'Open and Save file - Open/Save Alias and Pseudoatoms 1/2 - open',
-        path: 'Molfiles-V2000/mol_1856_to_open.mol',
+        path: 'Molfiles-V2000/mol-1856-to-open.mol',
       },
       {
         testName:
@@ -568,20 +568,20 @@ test.describe('', () => {
       {
         testName:
           'Open and Save file - Open/Save V3000 mol file contains more than 900 symbols 1/2 - open',
-        path: 'Molfiles-V3000/more_900_atoms.mol',
+        path: 'Molfiles-V3000/more-900-atoms.mol',
       },
       {
         testName:
           'Open and Save file - Open/Save V3000 mol file contains Sgroup 1/2 - open',
-        path: 'Molfiles-V3000/multi_V3000.mol',
+        path: 'Molfiles-V3000/multi-V3000.mol',
       },
       {
         testName: 'Open and Save file - Save structure as *.mol V3000',
-        path: 'Molfiles-V3000/multi_V3000.mol',
+        path: 'Molfiles-V3000/multi-V3000.mol',
       },
       {
         testName: 'MDL Molfile v2000: Correct padding for M ALS 1/2 - open',
-        path: 'Molfiles-V2000/molfile_with_als.mol',
+        path: 'Molfiles-V2000/molfile-with-als.mol',
       },
       {
         testName:
@@ -591,7 +591,7 @@ test.describe('', () => {
       {
         testName:
           'Open and Save file - Don`t creates invalid molfiles with "NaN"',
-        path: 'Molfiles-V2000/mol_4731_to_open.mol',
+        path: 'Molfiles-V2000/mol-4731-to-open.mol',
       },
       {
         testName:
@@ -652,11 +652,11 @@ test.describe('', () => {
      * Description: The saved structure is correctly rendered on the canvas
      * */
 
-    await openFileAndAddToCanvas('Molfiles-V2000/mol_1856_to_open.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/mol-1856-to-open.mol', page);
 
     const expectedFile = await getMolfile(page, 'v2000');
     await saveToFile(
-      'Molfiles-V2000/mol_1856_to_open-expected.mol',
+      'Molfiles-V2000/mol-1856-to-open-expected.mol',
       expectedFile,
     );
 
@@ -665,7 +665,7 @@ test.describe('', () => {
       await receiveFileComparisonData({
         page,
         expectedFileName:
-          'tests/test-data/Molfiles-V2000/mol_1856_to_open-expected.mol',
+          'tests/test-data/Molfiles-V2000/mol-1856-to-open-expected.mol',
         fileFormat: 'v2000',
         metaDataIndexes: METADATA_STRING_INDEX,
       });
@@ -805,10 +805,10 @@ test.describe('', () => {
      * and vise versa molstring is correctly generated from structure.
      * */
 
-    await openFileAndAddToCanvas('Molfiles-V3000/more_900_atoms.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V3000/more-900-atoms.mol', page);
     const expectedFile = await getMolfile(page, 'v3000');
     await saveToFile(
-      'Molfiles-V3000/more_900_atoms-expected.mol',
+      'Molfiles-V3000/more-900-atoms-expected.mol',
       expectedFile,
     );
 
@@ -817,7 +817,7 @@ test.describe('', () => {
       await receiveFileComparisonData({
         page,
         expectedFileName:
-          'tests/test-data/Molfiles-V3000/more_900_atoms-expected.mol',
+          'tests/test-data/Molfiles-V3000/more-900-atoms-expected.mol',
         fileFormat: 'v3000',
         metaDataIndexes: METADATA_STRING_INDEX,
       });
@@ -887,17 +887,17 @@ test.describe('', () => {
      * and vise versa molstring is correctly generated from structure.
      * */
 
-    await openFileAndAddToCanvas('Molfiles-V3000/multi_V3000.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V3000/multi-V3000.mol', page);
 
     const expectedFile = await getMolfile(page, 'v3000');
-    await saveToFile('Molfiles-V3000/multi_V3000-expected.mol', expectedFile);
+    await saveToFile('Molfiles-V3000/multi-V3000-expected.mol', expectedFile);
 
     const METADATA_STRING_INDEX = [1];
     const { fileExpected: molFileExpected, file: molFile } =
       await receiveFileComparisonData({
         page,
         expectedFileName:
-          'tests/test-data/Molfiles-V3000/multi_V3000-expected.mol',
+          'tests/test-data/Molfiles-V3000/multi-V3000-expected.mol',
         fileFormat: 'v3000',
         metaDataIndexes: METADATA_STRING_INDEX,
       });
@@ -914,7 +914,7 @@ test.describe('', () => {
      * Alias is located on the atom to which we assigned it
      * */
 
-    await openFileAndAddToCanvas('Molfiles-V2000/molfile_with_als.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/molfile-with-als.mol', page);
     const expectedFile = await getMolfile(page, 'v2000');
     const isCorrectPadding = expectedFile.includes('N   ');
 

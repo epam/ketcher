@@ -1,9 +1,7 @@
-import { test } from '@playwright/test';
+import { Page, test } from '@playwright/test';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
-  selectRing,
-  RingButton,
   clickInTheMiddleOfTheScreen,
   clickOnAtom,
   selectLeftPanelButton,
@@ -13,8 +11,6 @@ import {
 test.describe('Lasso tools', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('');
-    await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
-    await page.getByRole('button', { name: 'Lasso Selection (Esc)' }).click();
   });
 
   test.afterEach(async ({ page }) => {
@@ -24,38 +20,39 @@ test.describe('Lasso tools', () => {
   const MOVE_PX_50 = 50;
   const MOVE_PX_10 = 10;
 
+  const selectLasso = async (page: Page) => {
+    await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
+    await page.getByTestId('select-lasso').click();
+    await clickInTheMiddleOfTheScreen(page);
+  };
+
   test('Using lasso for selection of bonds and atom labels', async ({
     page,
   }) => {
-    await selectRing(RingButton.Benzene, page);
-    await clickInTheMiddleOfTheScreen(page);
-    await page.getByTestId('select-lasso').click();
+    await openFileAndAddToCanvas('two-benzene-with-atoms.ket', page);
+    await selectLasso(page);
     await page.keyboard.press('Control+a');
   });
 
-  test('Pressing atoms hotkey when atoms are selected', async ({ page }) => {
-    await openFileAndAddToCanvas('two-atoms.ket', page);
+  test('Selection is not reset when using context menu', async ({ page }) => {
+    await openFileAndAddToCanvas('two-benzene-with-atoms.ket', page);
+    await selectLasso(page);
     await page.keyboard.press('Control+a');
-    await page.keyboard.press('o');
+    await clickOnAtom(page, 'C', 0, 'right');
   });
 
   test('Verify deletion of selected atom', async ({ page }) => {
     await openFileAndAddToCanvas('two-benzene-with-atoms.ket', page);
+    await selectLasso(page);
     await clickOnAtom(page, 'C', 0);
     await page.keyboard.press('Delete');
-  });
-
-  test('Selection is not reset when using context menu', async ({ page }) => {
-    await selectRing(RingButton.Benzene, page);
-    await clickInTheMiddleOfTheScreen(page);
-    await page.keyboard.press('Control+a');
-    await clickOnAtom(page, 'C', 0, 'right');
   });
 
   test('(50px to Down) Structure Movement with Arrow Keys (1px move)', async ({
     page,
   }) => {
     await openFileAndAddToCanvas('two-benzene-with-atoms.ket', page);
+    await selectLasso(page);
     await page.keyboard.press('Control+a');
     for (let i = 0; i < MOVE_PX_50; i++) {
       await page.keyboard.press('ArrowDown');
@@ -66,6 +63,7 @@ test.describe('Lasso tools', () => {
     page,
   }) => {
     await openFileAndAddToCanvas('two-benzene-with-atoms.ket', page);
+    await selectLasso(page);
     await page.keyboard.press('Control+a');
     for (let i = 0; i < MOVE_PX_50; i++) {
       await page.keyboard.press('ArrowUp');
@@ -76,6 +74,7 @@ test.describe('Lasso tools', () => {
     page,
   }) => {
     await openFileAndAddToCanvas('two-benzene-with-atoms.ket', page);
+    await selectLasso(page);
     await page.keyboard.press('Control+a');
     for (let i = 0; i < MOVE_PX_50; i++) {
       await page.keyboard.press('ArrowRight');
@@ -86,6 +85,7 @@ test.describe('Lasso tools', () => {
     page,
   }) => {
     await openFileAndAddToCanvas('two-benzene-with-atoms.ket', page);
+    await selectLasso(page);
     await page.keyboard.press('Control+a');
     for (let i = 0; i < MOVE_PX_50; i++) {
       await page.keyboard.press('ArrowLeft');
@@ -96,6 +96,7 @@ test.describe('Lasso tools', () => {
     page,
   }) => {
     await openFileAndAddToCanvas('two-benzene-with-atoms.ket', page);
+    await selectLasso(page);
     await page.keyboard.press('Control+a');
     await page.keyboard.down('Shift');
     for (let i = 0; i < MOVE_PX_10; i++) {
@@ -108,6 +109,7 @@ test.describe('Lasso tools', () => {
     page,
   }) => {
     await openFileAndAddToCanvas('two-benzene-with-atoms.ket', page);
+    await selectLasso(page);
     await page.keyboard.press('Control+a');
     await page.keyboard.down('Shift');
     for (let i = 0; i < MOVE_PX_10; i++) {
@@ -120,6 +122,7 @@ test.describe('Lasso tools', () => {
     page,
   }) => {
     await openFileAndAddToCanvas('two-benzene-with-atoms.ket', page);
+    await selectLasso(page);
     await page.keyboard.press('Control+a');
     await page.keyboard.down('Shift');
     for (let i = 0; i < MOVE_PX_10; i++) {
@@ -132,6 +135,7 @@ test.describe('Lasso tools', () => {
     page,
   }) => {
     await openFileAndAddToCanvas('two-benzene-with-atoms.ket', page);
+    await selectLasso(page);
     await page.keyboard.press('Control+a');
     await page.keyboard.down('Shift');
     for (let i = 0; i < MOVE_PX_10; i++) {

@@ -186,7 +186,7 @@ test.describe('', () => {
   );
 });
 
-test.describe.only('Open and Save InChI file', () => {
+test.describe('Open and Save InChI file', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('');
     await waitForIndigoToLoad(page);

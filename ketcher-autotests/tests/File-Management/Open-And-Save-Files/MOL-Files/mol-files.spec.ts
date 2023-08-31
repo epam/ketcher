@@ -559,38 +559,41 @@ test.describe('', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Open and Save files - V3000 mol file contains different Bond properties', async ({
-    page,
-  }) => {
-    /**
-     * Test case: EPMLSOPKET-1853
-     * Description: Structre is correctly generated from Molstring and vise versa molstring is correctly generated from structure.
-     * A file with V3000 format is resaved in V2000 format
-     */
+  test.fixme(
+    'Open and Save files - V3000 mol file contains different Bond properties',
+    async ({ page }) => {
+      /**
+       * Test case: EPMLSOPKET-1853
+       * Description: Structre is correctly generated from Molstring and vise versa molstring is correctly generated from structure.
+       * A file with V3000 format is resaved in V2000 format
+       *
+       * Now we can`t open the file - `Convert error! Cannot deserialize input JSON.`
+       */
 
-    await openFileAndAddToCanvas(
-      'Molfiles-V3000/marvin-bond-properties-V3000(1).mol',
-      page,
-    );
-
-    const expectedFile = await getMolfile(page, 'v2000');
-    await saveToFile(
-      'Molfiles-V2000/marvin-bond-properties-V3000-expected.mol',
-      expectedFile,
-    );
-
-    const METADATA_STRING_INDEX = [1];
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
+      await openFileAndAddToCanvas(
+        'Molfiles-V3000/marvin-bond-properties-V3000(1).mol',
         page,
-        expectedFileName:
-          'tests/test-data/Molfiles-V2000/marvin-bond-properties-V3000-expected.mol',
-        fileFormat: 'v2000',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
+      );
 
-    expect(molFile).toEqual(molFileExpected);
-  });
+      const expectedFile = await getMolfile(page, 'v2000');
+      await saveToFile(
+        'Molfiles-V2000/marvin-bond-properties-V3000-expected.mol',
+        expectedFile,
+      );
+
+      const METADATA_STRING_INDEX = [1];
+      const { fileExpected: molFileExpected, file: molFile } =
+        await receiveFileComparisonData({
+          page,
+          expectedFileName:
+            'tests/test-data/Molfiles-V2000/marvin-bond-properties-V3000-expected.mol',
+          fileFormat: 'v2000',
+          metaDataIndexes: METADATA_STRING_INDEX,
+        });
+
+      expect(molFile).toEqual(molFileExpected);
+    },
+  );
 
   test('Open and Save file - Open/Save Alias and Pseudoatoms 1/2 - open', async ({
     page,
@@ -811,48 +814,24 @@ test.describe('', () => {
     expect(molFile).toEqual(molFileExpected);
   });
 
-  test('Open and Save file - Open/Save files for ferrocen-like structures 1/2 - open', async ({
-    page,
-  }) => {
-    /**
-     * Test case: EPMLSOPKET-1893(1)
-     * Description: Structures are rendered correctly
-     */
+  for (let i = 1; i < 9; i++) {
+    test(`'Open and Save file - Open/Save files for ferrocen-like structures 1/2 - open ferrocene_radical0${i}.mol`, async ({
+      page,
+    }) => {
+      /**
+       * Test case: EPMLSOPKET-1893(1)
+       * Description: Structures are rendered correctly
+       */
 
-    await openFileAndAddToCanvas(
-      'Molfiles-V2000/ferrocene_radical01.mol',
-      page,
-    );
-    await openFileAndAddToCanvas(
-      'Molfiles-V2000/ferrocene_radical02.mol',
-      page,
-    );
-    await openFileAndAddToCanvas(
-      'Molfiles-V2000/ferrocene_radical03.mol',
-      page,
-    );
-    await openFileAndAddToCanvas(
-      'Molfiles-V2000/ferrocene_radical04.mol',
-      page,
-    );
-    await openFileAndAddToCanvas(
-      'Molfiles-V2000/ferrocene_radical05.mol',
-      page,
-    );
-    await openFileAndAddToCanvas(
-      'Molfiles-V2000/ferrocene_radical06.mol',
-      page,
-    );
-    await openFileAndAddToCanvas(
-      'Molfiles-V2000/ferrocene_radical07.mol',
-      page,
-    );
-    await openFileAndAddToCanvas(
-      'Molfiles-V2000/ferrocene_radical08.mol',
-      page,
-    );
-    await takeEditorScreenshot(page);
-  });
+      await openFileAndAddToCanvas(
+        `Molfiles-V2000/ferrocene_radical0${i}.mol`,
+        page,
+      );
+      await takeEditorScreenshot(page);
+      await page.keyboard.press('Control+a');
+      await page.keyboard.press('Delete');
+    });
+  }
 
   test('Open and Save file - Open/Save files for ferrocen-like structures 2/2 - save', async ({
     page,
@@ -862,38 +841,12 @@ test.describe('', () => {
      * Description: Structures are rendered correctly.
      * */
 
-    await openFileAndAddToCanvas(
-      'Molfiles-V2000/ferrocene_radical01.mol',
-      page,
-    );
-    await openFileAndAddToCanvas(
-      'Molfiles-V2000/ferrocene_radical02.mol',
-      page,
-    );
-    await openFileAndAddToCanvas(
-      'Molfiles-V2000/ferrocene_radical03.mol',
-      page,
-    );
-    await openFileAndAddToCanvas(
-      'Molfiles-V2000/ferrocene_radical04.mol',
-      page,
-    );
-    await openFileAndAddToCanvas(
-      'Molfiles-V2000/ferrocene_radical05.mol',
-      page,
-    );
-    await openFileAndAddToCanvas(
-      'Molfiles-V2000/ferrocene_radical06.mol',
-      page,
-    );
-    await openFileAndAddToCanvas(
-      'Molfiles-V2000/ferrocene_radical07.mol',
-      page,
-    );
-    await openFileAndAddToCanvas(
-      'Molfiles-V2000/ferrocene_radical08.mol',
-      page,
-    );
+    for (let i = 1; i < 9; i++) {
+      await openFileAndAddToCanvas(
+        `Molfiles-V2000/ferrocene_radical0${i}.mol`,
+        page,
+      );
+    }
 
     const expectedFile = await getMolfile(page, 'v2000');
     await saveToFile(

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import ReactDOM from 'react-dom'
 
 const Cursor = ({ Icon, PressedIcon, enableHandTool }) => {
   const [position, setPosition] = useState({
@@ -47,7 +48,7 @@ const Cursor = ({ Icon, PressedIcon, enableHandTool }) => {
 
   if (!enableHandTool) return null
 
-  return React.createPortal(
+  return ReactDOM.createPortal(
     <div
       style={{
         position: 'fixed',

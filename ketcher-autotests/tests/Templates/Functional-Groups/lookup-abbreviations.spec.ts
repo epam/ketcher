@@ -3,6 +3,7 @@ import {
   DELAY_IN_SECONDS,
   clickInTheMiddleOfTheScreen,
   delay,
+  drawBenzeneRing,
   moveOnAtom,
   takeEditorScreenshot,
 } from '@utils';
@@ -191,7 +192,7 @@ test.describe('Lookup Abbreviations tests', () => {
   }) => {
     // EPMLSOPKET-16928
     // will be added with https://github.com/epam/ketcher/issues/2789
-    await page.getByRole('button', { name: 'Benzene (T)' }).click();
+    await drawBenzeneRing(page);
     await clickInTheMiddleOfTheScreen(page);
     const atomC = 0;
     await moveOnAtom(page, 'C', atomC);

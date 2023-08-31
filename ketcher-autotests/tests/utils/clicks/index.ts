@@ -137,3 +137,15 @@ export async function moveOnBond(
   const point = await getBondByIndex(page, { type: bondType }, bondNumber);
   await page.mouse.move(point.x, point.y);
 }
+
+type DropdownIds =
+  | 'bonds'
+  | 'rgroup-label'
+  | 'select-rectangle'
+  | 'reaction-arrow-open-angle'
+  | 'shape-ellipse';
+export async function openDropdown(page: Page, dropdownElementId: DropdownIds) {
+  await page.getByTestId('hand').click();
+  await page.getByTestId(dropdownElementId).click();
+  await page.getByTestId(dropdownElementId).click();
+}

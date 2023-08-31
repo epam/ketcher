@@ -28,6 +28,12 @@ import {
   FunctionalGroups,
   selectRingButton,
   clickOnBond,
+  takeLeftToolbarScreenshot,
+  selectAtomInToolbar,
+  moveOnAtom,
+  drawBenzeneRing,
+  rightClickOnBond,
+  selectOption,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import {
@@ -37,8 +43,9 @@ import {
 } from '@utils/canvas/bonds';
 import { BondType } from '@utils/canvas/types';
 import { SelectionType, selectSelection } from '@utils/canvas/selectSelection';
-import { CheckResult } from 'ketcher-core';
-const buttonIdToTitle: CheckResult = {
+const buttonIdToTitle: {
+  [key: string]: string;
+} = {
   'bond-single': 'Single Bond (1)',
   'bond-double': 'Double Bond (2)',
   'bond-triple': 'Triple Bond (3)',
@@ -142,7 +149,6 @@ for (const bondToolKey of Object.keys(BondTool)) {
       /**
        * Test case: EPMLSOPKET-1375, 1383, 1392, 1398, 1406, 1412, 1418, 1424, 1430, 1439, 1446, 1453, 2240, 2246
        */
-
       await selectTool(LeftPanelButton.Chain, page);
       await moveMouseToTheMiddleOfTheScreen(page);
       point = await getCoordinatesOfTheMiddleOfTheScreen(page);
@@ -308,7 +314,6 @@ for (const bondToolKey of Object.keys(BondTool)) {
        *  Test cases: EPMLSOPKET-1374, 1382, 1391, 1397, 1405, 1411, 1417, 1423, 1429, 1438, 1445, 1452, 2239, 2245
        */
       await selectNestedTool(page, BondTool[bondToolKey]);
-
       await clickInTheMiddleOfTheScreen(page);
     });
 
@@ -331,10 +336,19 @@ for (const bondToolKey of Object.keys(BondTool)) {
         await clickOnTheCanvas(page, 200, 0);
       });
     });
+
+    test(`Check that ${bondToolKey} bond between atoms are centered and drawn symmetrically`, async () => {
+      /**
+       *Test case: EPMLSOPKET-16931
+       *Description: Check that Bonds between atoms are centered and drawn symmetrically
+       */
+      await selectNestedTool(page, BondTool[bondToolKey]);
+      await clickInTheMiddleOfTheScreen(page);
+    });
   });
 }
 
-test.describe('Creating', () => {
+test.describe('Bond Tool', () => {
   const toolsForTest = [BondTool.SINGLE, BondTool.DOUBLE, BondTool.TRIPPLE];
   test.beforeEach(async ({ page }) => {
     await page.goto('', { waitUntil: 'domcontentloaded' });
@@ -343,6 +357,7 @@ test.describe('Creating', () => {
   test.afterEach(async ({ page }) => {
     await takeEditorScreenshot(page);
   });
+
   for (const tool of toolsForTest) {
     test(`Functional Group with attach ${tool}`, async ({ page }) => {
       /**
@@ -356,7 +371,8 @@ test.describe('Creating', () => {
       await selectNestedTool(page, tool);
       await clickInTheMiddleOfTheScreen(page);
     });
-    test(`creating two (or more) connected ${tool} bonds`, async ({ page }) => {
+
+    test(`Creating two (or more) connected ${tool} bonds`, async ({ page }) => {
       /**
        * Test cases: EPMLSOPKET - 2920/2921
        */
@@ -367,9 +383,149 @@ test.describe('Creating', () => {
     });
   }
 
-  test('Aromatic Bond tool - Ring inside the cycle structure', async ({
+  test('Drop down list: verification', async ({ page }) => {
+    /**
+     *Test case: EPMLSOPKET-1366
+     *Description: Drop down list: verification
+     */
+    await selectLeftPanelButton(LeftPanelButton.SingleBond, page);
+    await selectLeftPanelButton(LeftPanelButton.SingleBond, page);
+    const bodyHeight = await page.evaluate(() => document.body.clientHeight);
+    const bondDropdownWidth = 700;
+    const screenshot = await page.screenshot({
+      clip: {
+        x: 0,
+        y: 0,
+        width: bondDropdownWidth,
+        height: bodyHeight,
+      },
+    });
+    expect(screenshot).toMatchSnapshot();
+  });
+
+  test('Hot keys', async ({ page }) => {
+    /**
+     *Test case: EPMLSOPKET-1368
+     *Description: Bond Tool - Hot keys
+     */
+    const hotKeys = ['Digit1', 'Digit2', 'Digit3', 'Digit4', 'Digit0'];
+    for (const hotKey of hotKeys) {
+      await page.keyboard.press(hotKey);
+      await takeLeftToolbarScreenshot(page);
+    }
+  });
+
+  test('Adding custom s-groups to bonds correctly selects bonds', async ({
     page,
   }) => {
+    /**
+     *Test case: EPMLSOPKET-8940
+     *Description: Bond Tool - Adding custom s-groups to bonds correctly selects bonds
+     */
+    await drawBenzeneRing(page);
+    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await clickOnBond(page, BondType.SINGLE, 0);
+  });
+
+  test('Drawing bonds in one direction does not change the bond created in the other direction', async ({
+    page,
+  }) => {
+    /**
+     *Test case: EPMLSOPKET-8922
+     *Description: Bond Tool - Drawing bonds in one direction does not change the bond created in the other direction
+     */
+    const point = { x: -50, y: 0 };
+    await selectAtomInToolbar(AtomButton.Nitrogen, page);
+    await clickInTheMiddleOfTheScreen(page);
+
+    await selectAtomInToolbar(AtomButton.Oxygen, page);
+    await clickOnTheCanvas(page, point.x, point.y);
+    await selectNestedTool(page, BondTool.SINGLE);
+    await moveOnAtom(page, 'N', 0);
+    await page.mouse.down();
+    await moveOnAtom(page, 'O', 0);
+    await page.mouse.up();
+    await selectNestedTool(page, BondTool.DOUBLE);
+    await takeEditorScreenshot(page);
+
+    await moveOnAtom(page, 'O', 0);
+    await page.mouse.down();
+    await moveOnAtom(page, 'N', 0);
+    await page.mouse.up();
+  });
+
+  test('Connecting two atoms with Double Bond and rotate', async ({ page }) => {
+    /**
+     *Test case: EPMLSOPKET-10098
+     *Description: Bond Tool - Connecting two atoms with Double Bond and rotate
+     */
+    const point1 = { x: -50, y: 0 };
+    const yDelta = 100;
+    await selectAtomInToolbar(AtomButton.Nitrogen, page);
+    await clickInTheMiddleOfTheScreen(page);
+
+    await selectAtomInToolbar(AtomButton.Oxygen, page);
+    await clickOnTheCanvas(page, point1.x, point1.y);
+    await selectNestedTool(page, BondTool.SINGLE);
+    await moveOnAtom(page, 'N', 0);
+    await page.mouse.down();
+    await moveOnAtom(page, 'O', 0);
+    await page.mouse.up();
+    await selectNestedTool(page, BondTool.DOUBLE);
+    await moveOnAtom(page, 'O', 0);
+    await page.mouse.down();
+    await moveOnAtom(page, 'N', 0);
+    await page.mouse.up();
+    await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
+    const point2 = await getAtomByIndex(page, { label: 'N' }, 0);
+    await page.mouse.move(point2.x, point2.y);
+    const coordinatesWithShift = point2.y + yDelta;
+    await dragMouseTo(point2.x, coordinatesWithShift, page);
+  });
+
+  test('Multiple bond editing not changes bond types to all selected bonds', async ({
+    page,
+  }) => {
+    /**
+     *Test case: EPMLSOPKET-11853
+     *Description: Bond Tool - Multiple bond editing not changes bond types to all selected bonds
+     */
+    const point = { x: -200, y: -200 };
+    const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
+    await openFileAndAddToCanvas('KET/ketcher-42.ket', page);
+    await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
+    await clickOnTheCanvas(page, point.x, point.y);
+    await dragMouseTo(x + 50, y, page);
+    await takeEditorScreenshot(page);
+    await rightClickOnBond(page, BondType.DOUBLE, 0);
+    await page.getByText('Edit selected bonds...').click();
+    await pressButton(page, 'Either');
+    await selectOption(page, 'Ring');
+    await pressButton(page, 'Apply');
+  });
+
+  test('Add new bonds to the same atom', async ({ page }) => {
+    /**
+     *Test case: EPMLSOPKET-16888
+     *Description: Bond Tool - Add new bonds to the same atom
+     */
+    await selectNestedTool(page, BondTool.DOUBLE);
+    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheScreen(page);
+  });
+
+  test('Change the type of bond by clicking on bond', async ({ page }) => {
+    /**
+     *Test case: EPMLSOPKET-16887
+     *Description: Bond Tool - Change the type of bond by clicking on bond
+     */
+    await selectLeftPanelButton(LeftPanelButton.SingleBond, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
+    await clickOnBond(page, BondType.SINGLE, 0);
+  });
+
+  test('Aromatic - Ring inside the cycle structure', async ({ page }) => {
     /**
      *Test case: EPMLSOPKET-1436
      *Description: Aromatic Bond tool - Ring inside the cycle structure

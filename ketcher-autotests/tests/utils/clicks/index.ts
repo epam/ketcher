@@ -120,6 +120,15 @@ export async function doubleClickOnBond(
   await page.mouse.dblclick(point.x, point.y);
 }
 
+export async function rightClickOnBond(
+  page: Page,
+  bondType: BondType,
+  bondNumber: number,
+) {
+  const point = await getBondByIndex(page, { type: bondType }, bondNumber);
+  await page.mouse.click(point.x, point.y, { button: 'right' });
+}
+
 export async function moveOnAtom(
   page: Page,
   atomLabel: string,

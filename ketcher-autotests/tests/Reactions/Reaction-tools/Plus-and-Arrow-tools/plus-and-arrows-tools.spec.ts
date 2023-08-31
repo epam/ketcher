@@ -24,10 +24,11 @@ import {
   TopPanelButton,
   Point,
 } from '@utils';
-import { CheckResult } from 'ketcher-core';
 
 const xOffsetFromCenter = -35;
-const idToTitle: CheckResult = {
+const idToTitle: {
+  [key: string]: string;
+} = {
   'reaction-arrow-open-angle': 'Arrow Open Angle Tool',
   'reaction-arrow-filled-triangle': 'Arrow Filled Triangle Tool',
   'reaction-arrow-filled-bow': 'Arrow Filled Bow Tool',

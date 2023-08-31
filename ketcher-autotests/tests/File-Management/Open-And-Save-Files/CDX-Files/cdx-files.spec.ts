@@ -6,18 +6,20 @@ import {
   openFileAndAddToCanvas,
   takeEditorScreenshot,
   pasteFromClipboardAndAddToCanvas,
+  waitForIndigoToLoad,
 } from '@utils';
 
 test.describe('CDX files', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('');
+    await waitForIndigoToLoad(page);
   });
 
   test.afterEach(async ({ page }) => {
     await takeEditorScreenshot(page);
   });
 
-  test.fixme('opening cdx files', async ({ page }) => {
+  test('opening cdx files', async ({ page }) => {
     /* 
     Test case: EPMLSOPKET-12514
     Description: Open CDX files

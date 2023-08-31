@@ -11,6 +11,7 @@ import {
   clickInTheMiddleOfTheScreen,
   DELAY_IN_SECONDS,
   waitForLoad,
+  waitForIndigoToLoad,
 } from '@utils';
 import { getSmiles } from '@utils/formats';
 
@@ -45,6 +46,7 @@ async function clearCanvasAndPasteSmiles(page: Page, smiles: string) {
 test.describe('SMILES files', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('');
+    await waitForIndigoToLoad(page);
   });
 
   test.afterEach(async ({ page }) => {
@@ -266,52 +268,45 @@ test.describe('SMILES files', () => {
     await clearCanvasAndPasteSmiles(page, '');
   });
 
-  // flaky
-  test.fixme(
-    'SmileString from reaction consists of two or more reaction arrows and structures',
-    async ({ page }) => {
-      /*
+  test('SmileString from reaction consists of two or more reaction arrows and structures', async ({
+    page,
+  }) => {
+    /*
     Test case: EPMLSOPKET-8905
     Description: Structure is correctly opens from saved files. Keep only first reaction arrow
     and keep all structures (all intermediate structures should be products and the arrow is replaced by a plus)
     */
-      await openFileAndAddToCanvas('two-arrows-and-plus.ket', page);
-      await getAndCompareSmiles(
-        page,
-        'tests/test-data/smiles-two-arrows-and-plus-expected.json',
-      );
+    await openFileAndAddToCanvas('two-arrows-and-plus.ket', page);
+    await getAndCompareSmiles(
+      page,
+      'tests/test-data/smiles-two-arrows-and-plus-expected.json',
+    );
 
-      await getPreviewForSmiles(page, 'MDL Rxnfile V2000', 'Daylight SMILES');
-      await takeEditorScreenshot(page);
+    await getPreviewForSmiles(page, 'MDL Rxnfile V2000', 'Daylight SMILES');
+    await takeEditorScreenshot(page);
 
-      await clearCanvasAndPasteSmiles(
-        page,
-        'C1C=CC=CC=1.O>>C1C=CC(C)=CC=1C.C1C=CC(C)=CC=1C',
-      );
-    },
-  );
+    await clearCanvasAndPasteSmiles(
+      page,
+      'C1C=CC=CC=1.O>>C1C=CC(C)=CC=1C.C1C=CC(C)=CC=1C',
+    );
+  });
 
-  // flaky
-  test.fixme(
-    'Open Daylight SMILES file with reagent above arrow',
-    async ({ page }) => {
-      /*
+  test('Open Daylight SMILES file with reagent above arrow', async ({
+    page,
+  }) => {
+    /*
     Test case: EPMLSOPKET-12965
     Description: Structure is not distorted. Reagent NH3 located above reaction arrow.
     */
-      await openFileAndAddToCanvas(
-        'benzene-arrow-benzene-reagent-nh3.ket',
-        page,
-      );
-      await getAndCompareSmiles(
-        page,
-        'tests/test-data/smiles-benzene-arrow-benzene-reagent-nh3-expected.json',
-      );
+    await openFileAndAddToCanvas('benzene-arrow-benzene-reagent-nh3.ket', page);
+    await getAndCompareSmiles(
+      page,
+      'tests/test-data/smiles-benzene-arrow-benzene-reagent-nh3-expected.json',
+    );
 
-      await getPreviewForSmiles(page, 'MDL Rxnfile V2000', 'Daylight SMILES');
-      await takeEditorScreenshot(page);
+    await getPreviewForSmiles(page, 'MDL Rxnfile V2000', 'Daylight SMILES');
+    await takeEditorScreenshot(page);
 
-      await clearCanvasAndPasteSmiles(page, 'C1C=CC=CC=1>N>C1C=CC=CC=1');
-    },
-  );
+    await clearCanvasAndPasteSmiles(page, 'C1C=CC=CC=1>N>C1C=CC=CC=1');
+  });
 });

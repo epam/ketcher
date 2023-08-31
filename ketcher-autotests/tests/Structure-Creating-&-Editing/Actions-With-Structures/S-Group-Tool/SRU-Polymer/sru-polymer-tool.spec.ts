@@ -73,7 +73,7 @@ test.describe('SRU Polymer tool', () => {
       Test case: EPMLSOPKET-1529
       Description: The brackets are rendered correctly around Atom
     */
-    await openFileAndAddToCanvas('Ket/Ket/simple-chain.ket', page);
+    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await clickOnAtom(page, 'C', 3);
     await selectSruPolymer(
@@ -90,7 +90,7 @@ test.describe('SRU Polymer tool', () => {
       Test case: EPMLSOPKET-1529
       Description: The brackets are rendered correctly around Bond
     */
-    await openFileAndAddToCanvas('Ket/Ket/simple-chain.ket', page);
+    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await clickOnBond(page, BondType.SINGLE, 3);
     await selectSruPolymer(
@@ -107,7 +107,7 @@ test.describe('SRU Polymer tool', () => {
       Test case: EPMLSOPKET-1529
       Description: The brackets are rendered correctly around whole structure
     */
-    await openFileAndAddToCanvas('Ket/Ket/simple-chain.ket', page);
+    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await page.keyboard.press('Control+a');
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await selectSruPolymer(

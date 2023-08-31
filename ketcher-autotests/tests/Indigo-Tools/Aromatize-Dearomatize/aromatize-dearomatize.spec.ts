@@ -73,7 +73,10 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     The structures appears in a Kekule form: with interchanged Single and Double bonds.
     Dearomatize function affects all canvas.
     */
-      await openFileAndAddToCanvas('aromatic-structures.mol', page);
+      await openFileAndAddToCanvas(
+        'Molfiles-V2000/aromatic-structures.mol',
+        page,
+      );
       await selectTopPanelButton(TopPanelButton.Aromatize, page);
       await takeEditorScreenshot(page);
       await selectTopPanelButton(TopPanelButton.Dearomatize, page);
@@ -167,16 +170,23 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     The saved mol-file is opened correctly. In Ketcher the saved structures appear
     with the circle inside the cycles.
     */
-    await openFileAndAddToCanvas('aromatic-benzene-v2000.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/aromatic-benzene-v2000.mol',
+      page,
+    );
     const expectedFile = await getMolfile(page, 'v2000');
-    await saveToFile('aromatic-benzene-v2000-expected.mol', expectedFile);
+    await saveToFile(
+      'Molfiles-V2000/aromatic-benzene-v2000-expected.mol',
+      expectedFile,
+    );
 
     const METADATA_STRING_INDEX = [1];
 
     const { fileExpected: molFileExpected, file: molFile } =
       await receiveFileComparisonData({
         page,
-        expectedFileName: 'tests/test-data/aromatic-benzene-v2000-expected.mol',
+        expectedFileName:
+          'tests/test-data/Molfiles-V2000/aromatic-benzene-v2000-expected.mol',
         fileFormat: 'v2000',
         metaDataIndexes: METADATA_STRING_INDEX,
       });
@@ -193,16 +203,23 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     The saved mol-file is opened correctly. In Ketcher the saved structures appear
     with the circle inside the cycles.
     */
-    await openFileAndAddToCanvas('aromatic-benzene-v3000.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V3000/aromatic-benzene-v3000.mol',
+      page,
+    );
     const expectedFile = await getMolfile(page, 'v3000');
-    await saveToFile('aromatic-benzene-v3000-expected.mol', expectedFile);
+    await saveToFile(
+      'Molfiles-V3000/aromatic-benzene-v3000-expected.mol',
+      expectedFile,
+    );
 
     const METADATA_STRING_INDEX = [1];
 
     const { fileExpected: molFileExpected, file: molFile } =
       await receiveFileComparisonData({
         page,
-        expectedFileName: 'tests/test-data/aromatic-benzene-v3000-expected.mol',
+        expectedFileName:
+          'tests/test-data/Molfiles-V3000/aromatic-benzene-v3000-expected.mol',
         metaDataIndexes: METADATA_STRING_INDEX,
         fileFormat: 'v3000',
       });
@@ -219,15 +236,18 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     The saved smiles-file is opened correctly. In Ketcher the saved structures appear
     with the circle inside the cycles.
     */
-    await openFileAndAddToCanvas('aromatic-benzene-smiles.smi', page);
+    await openFileAndAddToCanvas('SMILES/aromatic-benzene-smiles.smi', page);
     const expectedFile = await getSmiles(page);
-    await saveToFile('aromatic-benzene-smiles-expected.smi', expectedFile);
+    await saveToFile(
+      'SMILES/aromatic-benzene-smiles-expected.smi',
+      expectedFile,
+    );
 
     const { fileExpected: smiFileExpected, file: smiFile } =
       await receiveFileComparisonData({
         page,
         expectedFileName:
-          'tests/test-data/aromatic-benzene-smiles-expected.smi',
+          'tests/test-data/SMILES/aromatic-benzene-smiles-expected.smi',
       });
 
     expect(smiFile).toEqual(smiFileExpected);
@@ -242,9 +262,15 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     The saved rxn-file is opened correctly. In Ketcher the saved structures appear
     with the circle inside the cycles.
     */
-    await openFileAndAddToCanvas('aromatic-benzene-rxnv2000.rxn', page);
+    await openFileAndAddToCanvas(
+      'Rxn-V2000/aromatic-benzene-rxnv2000.rxn',
+      page,
+    );
     const expectedFile = await getRxn(page, 'v2000');
-    await saveToFile('aromatic-benzene-rxnv2000-expected.rxn', expectedFile);
+    await saveToFile(
+      'Rxn-V2000/aromatic-benzene-rxnv2000-expected.rxn',
+      expectedFile,
+    );
 
     const METADATA_STRING_INDEX = [2, 7, 64];
 
@@ -252,7 +278,7 @@ test.describe('Aromatize/Dearomatize Tool', () => {
       await receiveFileComparisonData({
         page,
         expectedFileName:
-          'tests/test-data/aromatic-benzene-rxnv2000-expected.rxn',
+          'tests/test-data/Rxn-V2000/aromatic-benzene-rxnv2000-expected.rxn',
         metaDataIndexes: METADATA_STRING_INDEX,
       });
 
@@ -268,9 +294,15 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     The saved rxn-file is opened correctly. In Ketcher the saved structures appear
     with the circle inside the cycles.
     */
-    await openFileAndAddToCanvas('aromatic-benzene-rxnv3000.rxn', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V3000/aromatic-benzene-rxnv3000.rxn',
+      page,
+    );
     const expectedFile = await getRxn(page, 'v3000');
-    await saveToFile('aromatic-benzene-rxnv3000-expected.rxn', expectedFile);
+    await saveToFile(
+      'Molfiles-V3000/aromatic-benzene-rxnv3000-expected.rxn',
+      expectedFile,
+    );
 
     const METADATA_STRING_INDEX = [2];
 
@@ -278,7 +310,7 @@ test.describe('Aromatize/Dearomatize Tool', () => {
       await receiveFileComparisonData({
         page,
         expectedFileName:
-          'tests/test-data/aromatic-benzene-rxnv3000-expected.rxn',
+          'tests/test-data/Molfiles-V3000/aromatic-benzene-rxnv3000-expected.rxn',
         metaDataIndexes: METADATA_STRING_INDEX,
         fileFormat: 'v3000',
       });
@@ -295,14 +327,15 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     The saved cml-file is opened correctly. In Ketcher the saved structures appear
     with the circle inside the cycles.
     */
-    await openFileAndAddToCanvas('aromatic-benzene-cml.cml', page);
+    await openFileAndAddToCanvas('CML/aromatic-benzene.cml', page);
     const expectedFile = await getCml(page);
-    await saveToFile('aromatic-benzene-cml-expected.cml', expectedFile);
+    await saveToFile('CML/aromatic-benzene-cml-expected.cml', expectedFile);
 
     const { fileExpected: cmlFileExpected, file: cmlFile } =
       await receiveFileComparisonData({
         page,
-        expectedFileName: 'tests/test-data/aromatic-benzene-cml-expected.cml',
+        expectedFileName:
+          'tests/test-data/CML/aromatic-benzene-cml-expected.cml',
       });
 
     expect(cmlFile).toEqual(cmlFileExpected);

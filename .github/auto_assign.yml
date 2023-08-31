@@ -9,7 +9,6 @@ reviewGroups:
     - rrodionov91
   developers:
     - StarlaStarla
-    - aproskurnov
     - vitaepam
     - SashaGraves
     - nanoblit
@@ -17,7 +16,7 @@ reviewGroups:
     - AKZhuk
   QA:
     - Zhirnoff
-    - AleksandraSmolianinova
     - MartaWilliams
     - y-holik
     - AnastasiyaPiatrovaKlu
+    - ViktoriaTkacheva

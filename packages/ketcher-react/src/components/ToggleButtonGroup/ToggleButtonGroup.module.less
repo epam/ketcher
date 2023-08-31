@@ -13,19 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { ReStruct } from 'application/render';
-import { Action } from 'application/editor';
-import { PeptideAdd } from 'application/editor/operations/peptide';
-import { Vec2 } from 'domain/entities';
-import { MonomerItemType } from 'domain/types';
 
-export function fromPeptideAddition(
-  renderersContainer: ReStruct,
-  peptide: MonomerItemType,
-  position: Vec2,
-): Action {
-  const action = new Action();
-  action.addOp(new PeptideAdd(peptide, position)).perform(renderersContainer);
+@import '../../style/mixins.less';
+@import '../../style/variables.less';
 
-  return action;
+.button {
+  .btn();
+
+  cursor: pointer;
+  height: 24px;
+  white-space: nowrap;
+  font-size: 12px;
+  color: @color-grey-6!important;
+  border-color: @color-grey-6!important;
+  text-transform: none!important;
+
+  &:hover {
+    color: @color-spec-button-primary-hover!important;
+  }
 }
+
+.button.selected,
+.button:active {
+  background: @color-primary!important;
+  color: #fff!important;
+
+  &:hover {
+    background-color: @color-spec-button-primary-hover!important;
+  }
+}
+
+

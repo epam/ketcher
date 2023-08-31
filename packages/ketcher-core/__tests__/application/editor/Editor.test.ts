@@ -1,5 +1,5 @@
 import { CoreEditor } from 'application/editor';
-import { PeptideTool } from 'application/editor/tools/Peptide';
+import { MonomerTool } from 'application/editor/tools/Monomer';
 import { createPolymerEditorCanvas } from '../../helpers/dom';
 
 describe('CoreEditor', () => {
@@ -8,9 +8,9 @@ describe('CoreEditor', () => {
     const editor: CoreEditor = new CoreEditor({ canvas, theme: {} });
     const onMousemove = jest.fn();
     jest
-      .spyOn(PeptideTool.prototype, 'mousemove')
+      .spyOn(MonomerTool.prototype, 'mousemove')
       .mockImplementation(onMousemove);
-    editor.selectTool('peptide');
+    editor.selectTool('monomer');
     canvas.dispatchEvent(new Event('mousemove', { bubbles: true }));
     expect(onMousemove).toHaveBeenCalled();
   });

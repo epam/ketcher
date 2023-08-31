@@ -1322,7 +1322,10 @@ test.describe('Atom Properties', () => {
       Description: All possible atom properties are applied to colored atoms. Displayed atom properties have the same color as the atom symbol.
       The selected atoms are copied and pasted to the canvas.
     */
-    await openFileAndAddToCanvas('all-possible-atoms-properties.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/all-possible-atoms-properties.mol',
+      page,
+    );
     await copyAndPaste(page);
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
   });
@@ -1334,10 +1337,13 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-1657
       Description: The structure is saved as *.mol file.
     */
-    await openFileAndAddToCanvas('all-possible-atoms-properties.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/all-possible-atoms-properties.mol',
+      page,
+    );
     const expectedFile = await getMolfile(page, 'v2000');
     await saveToFile(
-      'all-possible-atoms-properties-expected.mol',
+      'Molfiles-V2000/all-possible-atoms-properties-expected.mol',
       expectedFile,
     );
 
@@ -1346,7 +1352,7 @@ test.describe('Atom Properties', () => {
       await receiveFileComparisonData({
         page,
         expectedFileName:
-          'tests/test-data/all-possible-atoms-properties-expected.mol',
+          'tests/test-data/Molfiles-V2000/all-possible-atoms-properties-expected.mol',
         fileFormat: 'v2000',
         metaDataIndexes: METADATA_STRING_INDEX,
       });
@@ -1361,10 +1367,13 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-1656
       Description: The structure is saved as *.rxn file.
     */
-    await openFileAndAddToCanvas('all-possible-atoms-properties.rxn', page);
+    await openFileAndAddToCanvas(
+      'Rxn-V3000/all-possible-atoms-properties.rxn',
+      page,
+    );
     const expectedFile = await getRxn(page, 'v3000');
     await saveToFile(
-      'all-possible-atoms-properties-expected.rxn',
+      'Rxn-V3000/all-possible-atoms-properties-expected.rxn',
       expectedFile,
     );
 
@@ -1373,7 +1382,7 @@ test.describe('Atom Properties', () => {
       await receiveFileComparisonData({
         page,
         expectedFileName:
-          'tests/test-data/all-possible-atoms-properties-expected.rxn',
+          'tests/test-data/Rxn-V3000/all-possible-atoms-properties-expected.rxn',
         fileFormat: 'v3000',
         metaDataIndexes: METADATA_STRING_INDEX,
       });

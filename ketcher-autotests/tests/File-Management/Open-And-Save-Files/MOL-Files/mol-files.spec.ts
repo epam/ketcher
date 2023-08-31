@@ -544,19 +544,68 @@ test.describe('', () => {
     await page.goto('');
   });
 
-  test('Open and Save files - Open/Save structure with bond properties', async ({
-    page,
-  }) => {
-    /**
-     * Test case: EPMLSOPKET-1852
-     * Description: Structure with the correct Bond properties is correctly represented
+  test.describe('', () => {
+    /*
+     * Test case: EPMLSOPKET-1852, 1856, 1874, 1890, 1895, 1979, 8914, 12966, 4731, 5259
+     * Description: The saved structure is correctly rendered on the canvas
      */
+    const files = [
+      {
+        testName:
+          'Open and Save files - Open/Save structure with bond properties',
+        path: 'Molfiles-V2000/all_bond_properties.mol',
+      },
+      {
+        testName:
+          'Open and Save file - Open/Save Alias and Pseudoatoms 1/2 - open',
+        path: 'Molfiles-V2000/mol_1856_to_open.mol',
+      },
+      {
+        testName:
+          'Open and Save file - Open/Save V3000 mol file contains Rgroup 1/2 - open',
+        path: 'Molfiles-V3000/rgroup-V3000.mol',
+      },
+      {
+        testName:
+          'Open and Save file - Open/Save V3000 mol file contains more than 900 symbols 1/2 - open',
+        path: 'Molfiles-V3000/more_900_atoms.mol',
+      },
+      {
+        testName:
+          'Open and Save file - Open/Save V3000 mol file contains Sgroup 1/2 - open',
+        path: 'Molfiles-V3000/multi_V3000.mol',
+      },
+      {
+        testName: 'Open and Save file - Save structure as *.mol V3000',
+        path: 'Molfiles-V3000/multi_V3000.mol',
+      },
+      {
+        testName: 'MDL Molfile v2000: Correct padding for M ALS 1/2 - open',
+        path: 'Molfiles-V2000/molfile_with_als.mol',
+      },
+      {
+        testName:
+          'Open and Save file - Open structure with R-Group from v3000 mol file',
+        path: 'Molfiles-V3000/rgroup-V3000.mol',
+      },
+      {
+        testName:
+          'Open and Save file - Don`t creates invalid molfiles with "NaN"',
+        path: 'Molfiles-V2000/mol_4731_to_open.mol',
+      },
+      {
+        testName:
+          'Open and Save file - Functional group name layout close to attachment point',
+        path: 'Molfiles-V2000/display-abbrev-groups-example.mol',
+      },
+    ];
 
-    await openFileAndAddToCanvas(
-      'Molfiles-V2000/all_bond_properties.mol',
-      page,
-    );
-    await takeEditorScreenshot(page);
+    for (const file of files) {
+      test(`${file.testName}`, async ({ page }) => {
+        await openFileAndAddToCanvas(file.path, page);
+        await takeEditorScreenshot(page);
+      });
+    }
   });
 
   test.fixme(
@@ -595,18 +644,6 @@ test.describe('', () => {
     },
   );
 
-  test('Open and Save file - Open/Save Alias and Pseudoatoms 1/2 - open', async ({
-    page,
-  }) => {
-    /**
-     * Test case: EPMLSOPKET-1856(1)
-     * Description: The saved structure is correctly rendered on the canvas
-     */
-
-    await openFileAndAddToCanvas('Molfiles-V2000/mol_1856_to_open.mol', page);
-    await takeEditorScreenshot(page);
-  });
-
   test('Open and Save file - Open/Save Alias and Pseudoatoms 2/2 - save', async ({
     page,
   }) => {
@@ -634,19 +671,6 @@ test.describe('', () => {
       });
 
     expect(molFile).toEqual(molFileExpected);
-  });
-
-  test('Open and Save file - Open/Save V3000 mol file contains Rgroup 1/2 - open', async ({
-    page,
-  }) => {
-    /**
-     * Test case: EPMLSOPKET-1874(1)
-     * Description: Structure is correctly generated from Molstring
-     * and vise versa molstring is correctly generated from structure.
-     */
-
-    await openFileAndAddToCanvas('Molfiles-V3000/rgroup-V3000.mol', page);
-    await takeEditorScreenshot(page);
   });
 
   test('Open and Save file - Open/Save V3000 mol file contains Rgroup 2/2 - save', async ({
@@ -772,19 +796,6 @@ test.describe('', () => {
     },
   );
 
-  test('Open and Save file - Open/Save V3000 mol file contains more than 900 symbols 1/2 - open', async ({
-    page,
-  }) => {
-    /**
-     * Test case: EPMLSOPKET-1890(1)
-     * Description: Structure is correctly generated from Molstring
-     * and vise versa molstring is correctly generated from structure.
-     */
-
-    await openFileAndAddToCanvas('Molfiles-V3000/more_900_atoms.mol', page);
-    await takeEditorScreenshot(page);
-  });
-
   test('Open and Save file - Open/Save V3000 mol file contains more than 900 symbols 2/2 - save', async ({
     page,
   }) => {
@@ -867,19 +878,6 @@ test.describe('', () => {
     expect(molFile).toEqual(molFileExpected);
   });
 
-  test('Open and Save file - Open/Save V3000 mol file contains Sgroup 1/2 - open', async ({
-    page,
-  }) => {
-    /**
-     * Test case: EPMLSOPKET-1895(1)
-     * Description: Structure is correctly generated from Molstring
-     * and vise versa molstring is correctly generated from structure.
-     */
-
-    await openFileAndAddToCanvas('Molfiles-V3000/multi_V3000.mol', page);
-    await takeEditorScreenshot(page);
-  });
-
   test('Open and Save file - Open/Save V3000 mol file contains Sgroup 2/2 - save', async ({
     page,
   }) => {
@@ -905,31 +903,6 @@ test.describe('', () => {
       });
 
     expect(molFile).toEqual(molFileExpected);
-  });
-
-  test('Open and Save file - Save structure as *.mol V3000', async ({
-    page,
-  }) => {
-    /**
-     * Test case: EPMLSOPKET-1979
-     * Description: Structure is displayed correctly
-     * */
-
-    await openFileAndAddToCanvas('Molfiles-V3000/multi_V3000.mol', page);
-    await takeEditorScreenshot(page);
-  });
-
-  test('MDL Molfile v2000: Correct padding for M ALS 1/2 - open', async ({
-    page,
-  }) => {
-    /**
-     * Test case: EPMLSOPKET-8914(1)
-     * Description: Structure is correctly generated from Molstring
-     * and vise versa molstring is correctly generated from structure.
-     */
-
-    await openFileAndAddToCanvas('Molfiles-V2000/molfile_with_als.mol', page);
-    await takeEditorScreenshot(page);
   });
 
   test('MDL Molfile v2000: Correct padding for M ALS 2/2 - check padding', async ({
@@ -997,44 +970,4 @@ test.describe('', () => {
       expect(molFile).toEqual(molFileExpected);
     },
   );
-
-  test('Open and Save file - Open structure with R-Group from v3000 mol file', async ({
-    page,
-  }) => {
-    /**
-     * Test case: EPMLSOPKET-12966
-     * Description: Structure is displayed correctly
-     * */
-
-    await openFileAndAddToCanvas('Molfiles-V3000/rgroup-V3000.mol', page);
-    await takeEditorScreenshot(page);
-  });
-
-  test('Open and Save file - Don`t creates invalid molfiles with "NaN"', async ({
-    page,
-  }) => {
-    /**
-     * Test case: EPMLSOPKET-4731
-     * Description: Preview doesn't contains NaN
-     * */
-
-    await openFileAndAddToCanvas('Molfiles-V2000/mol_4731_to_open.mol', page);
-    await takeEditorScreenshot(page);
-  });
-
-  test('Open and Save file - Functional group name layout close to attachment point', async ({
-    page,
-  }) => {
-    /**
-     * Test case: EPMLSOPKET-5259
-     * Description: Functional group label is located at the right location
-     * */
-
-    await openFileAndAddToCanvas(
-      'Molfiles-V2000/display-abbrev-groups-example.mol',
-      page,
-    );
-
-    await takeEditorScreenshot(page);
-  });
 });

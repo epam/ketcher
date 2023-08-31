@@ -125,7 +125,7 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     },
   );
 
-  test.only('(Copy/Paste) Manipulations with cyclic structures with a circle inside the cycle', async ({
+  test('(Copy/Paste) Manipulations with cyclic structures with a circle inside the cycle', async ({
     page,
   }) => {
     /*
@@ -142,7 +142,7 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     });
   });
 
-  test.only('(Cut/Paste) Manipulations with cyclic structures with a circle inside the cycle', async ({
+  test('(Cut/Paste) Manipulations with cyclic structures with a circle inside the cycle', async ({
     page,
   }) => {
     /*
@@ -158,7 +158,7 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     });
   });
 
-  test.only('(Add Atom) Manipulations with cyclic structures with a circle inside the cycle', async ({
+  test('(Add Atom) Manipulations with cyclic structures with a circle inside the cycle', async ({
     page,
   }) => {
     /*

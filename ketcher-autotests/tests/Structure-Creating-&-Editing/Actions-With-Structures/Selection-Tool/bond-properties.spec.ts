@@ -375,7 +375,7 @@ test.describe('Bond Properties', () => {
           we can`t  open the file
         */
 
-      await openFileAndAddToCanvas('Rxn/reaction_4.rxn', page);
+      await openFileAndAddToCanvas('Rxn-V2000/reaction-4.rxn', page);
 
       for (let i = 0; i < rCOptions.length - 1; i++) {
         await doubleClickOnBond(page, BondType.SINGLE, i);
@@ -397,14 +397,15 @@ test.describe('Bond Properties', () => {
       await pressButton(page, 'Apply');
 
       const expectedFile = await getRxn(page, 'v2000');
-      await saveToFile('Rxn/rxn_1463_to_open-expected.rxn', expectedFile);
+      await saveToFile('Rxn-V2000/rxn-1463-to-open-expected.rxn', expectedFile);
 
       const METADATA_STRING_INDEX = [2, 7, 25, 40, 66];
 
       const { fileExpected: rxnFileExpected, file: rxnFile } =
         await receiveFileComparisonData({
           page,
-          expectedFileName: 'tests/test-data/Rxn/rxn_1463_to_open-expected.rxn',
+          expectedFileName:
+            'tests/test-data/Rxn-V2000/rxn-1463-to-open-expected.rxn',
           metaDataIndexes: METADATA_STRING_INDEX,
           fileFormat: 'v2000',
         });
@@ -424,7 +425,10 @@ test.describe('Bond Properties', () => {
         we can`t  open the file
     */
 
-      await openFileAndAddToCanvas('Rxn/rxn_1463_to_open-expected.rxn', page);
+      await openFileAndAddToCanvas(
+        'Rxn-V2000/rxn-1463-to-open-expected.rxn',
+        page,
+      );
       await doubleClickOnBond(page, BondType.SINGLE, 8);
       await page.getByText('Unmarked').click();
       await page.getByRole('option', { name: 'Center', exact: true }).click();
@@ -567,14 +571,15 @@ test.describe('Bond Properties', () => {
     await page.mouse.click(x + 150, y + 150);
 
     const expectedFile = await getRxn(page, 'v2000');
-    await saveToFile('Rxn/rxn_1465_to_open-expected.rxn', expectedFile);
+    await saveToFile('Rxn-V2000/rxn-1465-to-open-expected.rxn', expectedFile);
 
     const METADATA_STRING_INDEX = [2, 7, 34];
 
     const { fileExpected: rxnFileExpected, file: rxnFile } =
       await receiveFileComparisonData({
         page,
-        expectedFileName: 'tests/test-data/Rxn/rxn_1465_to_open-expected.rxn',
+        expectedFileName:
+          'tests/test-data/Rxn-V2000/rxn-1465-to-open-expected.rxn',
         metaDataIndexes: METADATA_STRING_INDEX,
         fileFormat: 'v2000',
       });
@@ -591,7 +596,10 @@ test.describe('Bond Properties', () => {
         All selected properties are assigned to the selected bond.
         *.mol and *.rxn files correctly opened, applied atom property correctly represented.
   */
-    await openFileAndAddToCanvas('Rxn/rxn_1465_to_open-expected.rxn', page);
+    await openFileAndAddToCanvas(
+      'Rxn-V2000/rxn-1465-to-open-expected.rxn',
+      page,
+    );
     await doubleClickOnBond(page, BondType.SINGLE, 10);
     await selectDoubleOption(page);
     await pressButton(page, 'Apply');

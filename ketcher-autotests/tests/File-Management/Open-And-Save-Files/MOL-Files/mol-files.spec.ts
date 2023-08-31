@@ -1,4 +1,5 @@
 /* eslint-disable no-magic-numbers */
+import { MolfileFormat } from '@app/../packages/ketcher-core/dist';
 import { expect, test } from '@playwright/test';
 import {
   takeEditorScreenshot,
@@ -650,7 +651,10 @@ test.describe('', () => {
       test(`${file.testName}`, async ({ page }) => {
         await openFileAndAddToCanvas(file.pathToOpen, page);
 
-        const expectedFile = await getMolfile(page, file.format);
+        const expectedFile = await getMolfile(
+          page,
+          file.format as MolfileFormat,
+        );
         await saveToFile(file.pathToExpected, expectedFile);
 
         const METADATA_STRING_INDEX = [1];
@@ -658,7 +662,7 @@ test.describe('', () => {
           await receiveFileComparisonData({
             page,
             expectedFileName: `tests/test-data/${file.pathToExpected}`,
-            fileFormat: file.format,
+            fileFormat: file.format as MolfileFormat,
             metaDataIndexes: METADATA_STRING_INDEX,
           });
 

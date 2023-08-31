@@ -539,28 +539,34 @@ test('Open V3000 file with R-Groups with Fragments', async ({ page }) => {
   await takeEditorScreenshot(page);
 });
 
-test('Open and Save files - Open/Save structure with bond properties', async ({
-  page,
-}) => {
-  /**
-   * Test case: EPMLSOPKET-1852
-   * Description: Structure with the correct Bond properties is correctly represented
-   */
-  await page.goto('');
+test.describe('', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('');
+  });
 
-  await openFileAndAddToCanvas('Molfiles-V2000/all_bond_properties.mol', page);
-  await takeEditorScreenshot(page);
-});
+  test('Open and Save files - Open/Save structure with bond properties', async ({
+    page,
+  }) => {
+    /**
+     * Test case: EPMLSOPKET-1852
+     * Description: Structure with the correct Bond properties is correctly represented
+     */
 
-test.fixme(
-  'Open and Save files - V3000 mol file contains different Bond properties',
-  async ({ page }) => {
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/all_bond_properties.mol',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Open and Save files - V3000 mol file contains different Bond properties', async ({
+    page,
+  }) => {
     /**
      * Test case: EPMLSOPKET-1853
      * Description: Structre is correctly generated from Molstring and vise versa molstring is correctly generated from structure.
      * A file with V3000 format is resaved in V2000 format
      */
-    await page.goto('');
 
     await openFileAndAddToCanvas(
       'Molfiles-V3000/marvin-bond-properties-V3000(1).mol',
@@ -584,125 +590,33 @@ test.fixme(
       });
 
     expect(molFile).toEqual(molFileExpected);
-  },
-);
+  });
 
-test('Open and Save file - Open/Save Alias and Pseudoatoms 1/2 - open', async ({
-  page,
-}) => {
-  /**
-   * Test case: EPMLSOPKET-1856(1)
-   * Description: The saved structure is correctly rendered on the canvas
-   */
-  await page.goto('');
-
-  await openFileAndAddToCanvas('Molfiles-V2000/mol_1856_to_open.mol', page);
-  await takeEditorScreenshot(page);
-});
-
-test('Open and Save file - Open/Save Alias and Pseudoatoms 2/2 - save', async ({
-  page,
-}) => {
-  /**
-   * Test case: EPMLSOPKET-1856(2)
-   * Description: The saved structure is correctly rendered on the canvas
-   * */
-  await page.goto('');
-
-  await openFileAndAddToCanvas('Molfiles-V2000/mol_1856_to_open.mol', page);
-
-  const expectedFile = await getMolfile(page, 'v2000');
-  await saveToFile(
-    'Molfiles-V2000/mol_1856_to_open-expected.mol',
-    expectedFile,
-  );
-
-  const METADATA_STRING_INDEX = [1];
-  const { fileExpected: molFileExpected, file: molFile } =
-    await receiveFileComparisonData({
-      page,
-      expectedFileName:
-        'tests/test-data/Molfiles-V2000/mol_1856_to_open-expected.mol',
-      fileFormat: 'v2000',
-      metaDataIndexes: METADATA_STRING_INDEX,
-    });
-
-  expect(molFile).toEqual(molFileExpected);
-});
-
-test('Open and Save file - Open/Save V3000 mol file contains Rgroup 1/2 - open', async ({
-  page,
-}) => {
-  /**
-   * Test case: EPMLSOPKET-1874(1)
-   * Description: Structure is correctly generated from Molstring
-   * and vise versa molstring is correctly generated from structure.
-   */
-  await page.goto('');
-
-  await openFileAndAddToCanvas('Molfiles-V3000/rgroup-V3000.mol', page);
-  await takeEditorScreenshot(page);
-});
-
-test('Open and Save file - Open/Save V3000 mol file contains Rgroup 2/2 - save', async ({
-  page,
-}) => {
-  /**
-   * Test case: EPMLSOPKET-1874(2)
-   * Description: Structure is correctly generated from Molstring
-   * and vise versa molstring is correctly generated from structure.
-   * A file with V3000 format is resaved in V2000 format (now).
-   * */
-
-  await page.goto('');
-  await openFileAndAddToCanvas('Molfiles-V3000/rgroup-V3000.mol', page);
-
-  const expectedFile = await getMolfile(page, 'v3000');
-  await saveToFile('Molfiles-V3000/rgroup-V3000-expected.mol', expectedFile);
-
-  const METADATA_STRING_INDEX = [1];
-  const { fileExpected: molFileExpected, file: molFile } =
-    await receiveFileComparisonData({
-      page,
-      expectedFileName:
-        'tests/test-data/Molfiles-V3000/rgroup-V3000-expected.mol',
-      fileFormat: 'v3000',
-      metaDataIndexes: METADATA_STRING_INDEX,
-    });
-
-  expect(molFile).toEqual(molFileExpected);
-});
-
-test.fixme(
-  'Open and Save file - Open/Save file with S-Groups 1/2 - open',
-  async ({ page }) => {
+  test('Open and Save file - Open/Save Alias and Pseudoatoms 1/2 - open', async ({
+    page,
+  }) => {
     /**
-     * Test case: EPMLSOPKET-1875(1)
-     * Description: Structure is correctly generated from Molstring
-     * and vise versa molstring is correctly generated from structure.
+     * Test case: EPMLSOPKET-1856(1)
+     * Description: The saved structure is correctly rendered on the canvas
      */
-    await page.goto('');
 
-    await openFileAndAddToCanvas('Molfiles-V2000/sgroup_different.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/mol_1856_to_open.mol', page);
     await takeEditorScreenshot(page);
-  },
-);
+  });
 
-test.fixme(
-  'Open and Save file - Open/Save file with S-Groups 2/2 - save',
-  async ({ page }) => {
+  test('Open and Save file - Open/Save Alias and Pseudoatoms 2/2 - save', async ({
+    page,
+  }) => {
     /**
-     * Test case: EPMLSOPKET-1875(2)
-     * Description: Structure is correctly generated from Molstring
-     * and vise versa molstring is correctly generated from structure.
+     * Test case: EPMLSOPKET-1856(2)
+     * Description: The saved structure is correctly rendered on the canvas
      * */
 
-    await page.goto('');
+    await openFileAndAddToCanvas('Molfiles-V2000/mol_1856_to_open.mol', page);
 
-    await openFileAndAddToCanvas('Molfiles-V2000/sgroup_different.mol', page);
     const expectedFile = await getMolfile(page, 'v2000');
     await saveToFile(
-      'Molfiles-V2000/sgroup_different-expected.mol',
+      'Molfiles-V2000/mol_1856_to_open-expected.mol',
       expectedFile,
     );
 
@@ -711,335 +625,463 @@ test.fixme(
       await receiveFileComparisonData({
         page,
         expectedFileName:
-          'tests/test-data/Molfiles-V2000/sgroup_different-expected.mol',
+          'tests/test-data/Molfiles-V2000/mol_1856_to_open-expected.mol',
         fileFormat: 'v2000',
         metaDataIndexes: METADATA_STRING_INDEX,
       });
 
     expect(molFile).toEqual(molFileExpected);
-  },
-);
+  });
 
-test.fixme(
-  'Open and Save file - Open/Save  V3000 mol file contains Sgroup 1/2 - open',
-  async ({ page }) => {
+  test('Open and Save file - Open/Save V3000 mol file contains Rgroup 1/2 - open', async ({
+    page,
+  }) => {
     /**
-     * Test case: EPMLSOPKET-1876(1)
+     * Test case: EPMLSOPKET-1874(1)
      * Description: Structure is correctly generated from Molstring
      * and vise versa molstring is correctly generated from structure.
-     * Now it is a bug
      */
-    await page.goto('');
 
-    await openFileAndAddToCanvas('Molfiles-V3000/sgroup_different_V3000', page);
+    await openFileAndAddToCanvas('Molfiles-V3000/rgroup-V3000.mol', page);
     await takeEditorScreenshot(page);
-  },
-);
+  });
 
-test.fixme(
-  'Open and Save file - Open/Save  V3000 mol file contains Sgroup 2/2 - save',
-  async ({ page }) => {
+  test('Open and Save file - Open/Save V3000 mol file contains Rgroup 2/2 - save', async ({
+    page,
+  }) => {
     /**
-     * Test case: EPMLSOPKET-1876(2)
-     * Description: A file with V3000 format is resaved in V2000 format.
-     * Now it is a bug
+     * Test case: EPMLSOPKET-1874(2)
+     * Description: Structure is correctly generated from Molstring
+     * and vise versa molstring is correctly generated from structure.
+     * A file with V3000 format is resaved in V2000 format (now).
      * */
 
-    await page.goto('');
+    await openFileAndAddToCanvas('Molfiles-V3000/rgroup-V3000.mol', page);
 
-    await openFileAndAddToCanvas('Molfiles-V3000/sgroup_different_V3000', page);
-    const expectedFile = await getMolfile(page, 'v2000');
-    await saveToFile(
-      'Molfiles-V2000/sgroup_different_V2000-expected.mol',
-      expectedFile,
-    );
-
-    const METADATA_STRING_INDEX = [1];
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Molfiles-V2000/sgroup_different_V2000-expected.mol',
-        fileFormat: 'v2000',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
-
-    expect(molFile).toEqual(molFileExpected);
-  },
-);
-
-test('Open and Save file - Open/Save V3000 mol file contains more than 900 symbols 1/2 - open', async ({
-  page,
-}) => {
-  /**
-   * Test case: EPMLSOPKET-1890(1)
-   * Description: Structure is correctly generated from Molstring
-   * and vise versa molstring is correctly generated from structure.
-   */
-  await page.goto('');
-
-  await openFileAndAddToCanvas('Molfiles-V3000/more_900_atoms.mol', page);
-  await takeEditorScreenshot(page);
-});
-
-test('Open and Save file - Open/Save V3000 mol file contains more than 900 symbols 2/2 - save', async ({
-  page,
-}) => {
-  /**
-   * Test case: EPMLSOPKET-1890(2)
-   * Description: Structure is correctly generated from Molstring
-   * and vise versa molstring is correctly generated from structure.
-   * */
-
-  await page.goto('');
-
-  await openFileAndAddToCanvas('Molfiles-V3000/more_900_atoms.mol', page);
-  const expectedFile = await getMolfile(page, 'v3000');
-  await saveToFile('Molfiles-V3000/more_900_atoms-expected.mol', expectedFile);
-
-  const METADATA_STRING_INDEX = [1];
-  const { fileExpected: molFileExpected, file: molFile } =
-    await receiveFileComparisonData({
-      page,
-      expectedFileName:
-        'tests/test-data/Molfiles-V3000/more_900_atoms-expected.mol',
-      fileFormat: 'v3000',
-      metaDataIndexes: METADATA_STRING_INDEX,
-    });
-
-  expect(molFile).toEqual(molFileExpected);
-});
-
-test('Open and Save file - Open/Save files for ferrocen-like structures 1/2 - open', async ({
-  page,
-}) => {
-  /**
-   * Test case: EPMLSOPKET-1893(1)
-   * Description: Structures are rendered correctly
-   */
-  await page.goto('');
-
-  await openFileAndAddToCanvas('Molfiles-V2000/ferrocene_radical01.mol', page);
-  await openFileAndAddToCanvas('Molfiles-V2000/ferrocene_radical02.mol', page);
-  await openFileAndAddToCanvas('Molfiles-V2000/ferrocene_radical03.mol', page);
-  await openFileAndAddToCanvas('Molfiles-V2000/ferrocene_radical04.mol', page);
-  await openFileAndAddToCanvas('Molfiles-V2000/ferrocene_radical05.mol', page);
-  await openFileAndAddToCanvas('Molfiles-V2000/ferrocene_radical06.mol', page);
-  await openFileAndAddToCanvas('Molfiles-V2000/ferrocene_radical07.mol', page);
-  await openFileAndAddToCanvas('Molfiles-V2000/ferrocene_radical08.mol', page);
-  await takeEditorScreenshot(page);
-});
-
-test('Open and Save file - Open/Save files for ferrocen-like structures 2/2 - save', async ({
-  page,
-}) => {
-  /**
-   * Test case: EPMLSOPKET-1893(2)
-   * Description: Structures are rendered correctly.
-   * */
-
-  await page.goto('');
-
-  await openFileAndAddToCanvas('Molfiles-V2000/ferrocene_radical01.mol', page);
-  await openFileAndAddToCanvas('Molfiles-V2000/ferrocene_radical02.mol', page);
-  await openFileAndAddToCanvas('Molfiles-V2000/ferrocene_radical03.mol', page);
-  await openFileAndAddToCanvas('Molfiles-V2000/ferrocene_radical04.mol', page);
-  await openFileAndAddToCanvas('Molfiles-V2000/ferrocene_radical05.mol', page);
-  await openFileAndAddToCanvas('Molfiles-V2000/ferrocene_radical06.mol', page);
-  await openFileAndAddToCanvas('Molfiles-V2000/ferrocene_radical07.mol', page);
-  await openFileAndAddToCanvas('Molfiles-V2000/ferrocene_radical08.mol', page);
-
-  const expectedFile = await getMolfile(page, 'v2000');
-  await saveToFile(
-    'Molfiles-V2000/ferrocene_radical-8-expected.mol',
-    expectedFile,
-  );
-
-  const METADATA_STRING_INDEX = [1];
-  const { fileExpected: molFileExpected, file: molFile } =
-    await receiveFileComparisonData({
-      page,
-      expectedFileName:
-        'tests/test-data/Molfiles-V2000/ferrocene_radical-8-expected.mol',
-      fileFormat: 'v2000',
-      metaDataIndexes: METADATA_STRING_INDEX,
-    });
-
-  expect(molFile).toEqual(molFileExpected);
-});
-
-test('Open and Save file - Open/Save V3000 mol file contains Sgroup 1/2 - open', async ({
-  page,
-}) => {
-  /**
-   * Test case: EPMLSOPKET-1895(1)
-   * Description: Structure is correctly generated from Molstring
-   * and vise versa molstring is correctly generated from structure.
-   */
-  await page.goto('');
-
-  await openFileAndAddToCanvas('Molfiles-V3000/multi_V3000.mol', page);
-  await takeEditorScreenshot(page);
-});
-
-test('Open and Save file - Open/Save V3000 mol file contains Sgroup 2/2 - save', async ({
-  page,
-}) => {
-  /**
-   * Test case: EPMLSOPKET-1895(2)
-   * Description:Structure is correctly generated from Molstring
-   * and vise versa molstring is correctly generated from structure.
-   * */
-
-  await page.goto('');
-
-  await openFileAndAddToCanvas('Molfiles-V3000/multi_V3000.mol', page);
-
-  const expectedFile = await getMolfile(page, 'v3000');
-  await saveToFile('Molfiles-V3000/multi_V3000-expected.mol', expectedFile);
-
-  const METADATA_STRING_INDEX = [1];
-  const { fileExpected: molFileExpected, file: molFile } =
-    await receiveFileComparisonData({
-      page,
-      expectedFileName:
-        'tests/test-data/Molfiles-V3000/multi_V3000-expected.mol',
-      fileFormat: 'v3000',
-      metaDataIndexes: METADATA_STRING_INDEX,
-    });
-
-  expect(molFile).toEqual(molFileExpected);
-});
-
-test('Open and Save file - Save structure as *.mol V3000', async ({ page }) => {
-  /**
-   * Test case: EPMLSOPKET-1979
-   * Description: Structure is displayed correctly
-   * */
-
-  await page.goto('');
-
-  await openFileAndAddToCanvas('Molfiles-V3000/multi_V3000.mol', page);
-  await takeEditorScreenshot(page);
-});
-
-test('MDL Molfile v2000: Correct padding for M ALS 1/2 - open', async ({
-  page,
-}) => {
-  /**
-   * Test case: EPMLSOPKET-8914(1)
-   * Description: Structure is correctly generated from Molstring
-   * and vise versa molstring is correctly generated from structure.
-   */
-  await page.goto('');
-
-  await openFileAndAddToCanvas('Molfiles-V2000/molfile_with_als.mol', page);
-  await takeEditorScreenshot(page);
-});
-
-test('MDL Molfile v2000: Correct padding for M ALS 2/2 - check padding', async ({
-  page,
-}) => {
-  /**
-   * Test case: EPMLSOPKET-8914(2)
-   * Description: Files opens.
-   * Alias is located on the atom to which we assigned it
-   * */
-
-  await page.goto('');
-
-  await openFileAndAddToCanvas('Molfiles-V2000/molfile_with_als.mol', page);
-  const expectedFile = await getMolfile(page, 'v2000');
-  const isCorrectPadding = expectedFile.includes('N   ');
-
-  expect(isCorrectPadding).toEqual(true);
-});
-
-test.fixme(
-  'Open and Save file - Open/Save v3000 mol file with assigned Alias 1/2 - open',
-  async ({ page }) => {
-    /**
-     * Test case: EPMLSOPKET-12963(1)
-     * Description: Files opens. Alias is located on the atom to which we assigned it
-     * Now it is a bug
-     */
-    await page.goto('');
-
-    await openFileAndAddToCanvas('Molfiles-V3000/mol_12963_to_open.mol', page);
-    await takeEditorScreenshot(page);
-  },
-);
-
-test.fixme(
-  'Open and Save file - Open/Save v3000 mol file with assigned Alias 2/2 - save',
-  async ({ page }) => {
-    /**
-     * Test case: EPMLSOPKET-12963(2)
-     * Description: Files opens. Alias is located on the atom to which we assigned it
-     * Now it is a bug
-     * */
-
-    await page.goto('');
-
-    await openFileAndAddToCanvas('Molfiles-V3000/mol_12963_to_open.mol', page);
     const expectedFile = await getMolfile(page, 'v3000');
-    await saveToFile('Molfiles-V3000/mol_12963_to_open-expected', expectedFile);
+    await saveToFile('Molfiles-V3000/rgroup-V3000-expected.mol', expectedFile);
 
     const METADATA_STRING_INDEX = [1];
     const { fileExpected: molFileExpected, file: molFile } =
       await receiveFileComparisonData({
         page,
         expectedFileName:
-          'tests/test-data/Molfiles-V3000/mol_12963_to_open-expected.mol',
+          'tests/test-data/Molfiles-V3000/rgroup-V3000-expected.mol',
         fileFormat: 'v3000',
         metaDataIndexes: METADATA_STRING_INDEX,
       });
 
     expect(molFile).toEqual(molFileExpected);
-  },
-);
+  });
 
-test('Open and Save file - Open structure with R-Group from v3000 mol file', async ({
-  page,
-}) => {
-  /**
-   * Test case: EPMLSOPKET-12966
-   * Description: Structure is displayed correctly
-   * */
+  test.fixme(
+    'Open and Save file - Open/Save file with S-Groups 1/2 - open',
+    async ({ page }) => {
+      /**
+       * Test case: EPMLSOPKET-1875(1)
+       * Description: Structure is correctly generated from Molstring
+       * and vise versa molstring is correctly generated from structure.
+       */
 
-  await page.goto('');
-
-  await openFileAndAddToCanvas('Molfiles-V3000/rgroup-V3000.mol', page);
-  await takeEditorScreenshot(page);
-});
-
-test('Open and Save file - Don`t creates invalid molfiles with "NaN"', async ({
-  page,
-}) => {
-  /**
-   * Test case: EPMLSOPKET-4731
-   * Description: Preview doesn't contains NaN
-   * */
-
-  await page.goto('');
-
-  await openFileAndAddToCanvas('Molfiles-V2000/mol_4731_to_open.mol', page);
-  await takeEditorScreenshot(page);
-});
-
-test('Open and Save file - Functional group name layout close to attachment point', async ({
-  page,
-}) => {
-  /**
-   * Test case: EPMLSOPKET-5259
-   * Description: Functional group label is located at the right location
-   * */
-  await page.goto('');
-
-  await openFileAndAddToCanvas(
-    'Molfiles-V2000/display-abbrev-groups-example.mol',
-    page,
+      await openFileAndAddToCanvas('Molfiles-V2000/sgroup_different.mol', page);
+      await takeEditorScreenshot(page);
+    },
   );
 
-  await takeEditorScreenshot(page);
+  test.fixme(
+    'Open and Save file - Open/Save file with S-Groups 2/2 - save',
+    async ({ page }) => {
+      /**
+       * Test case: EPMLSOPKET-1875(2)
+       * Description: Structure is correctly generated from Molstring
+       * and vise versa molstring is correctly generated from structure.
+       * */
+
+      await openFileAndAddToCanvas('Molfiles-V2000/sgroup_different.mol', page);
+      const expectedFile = await getMolfile(page, 'v2000');
+      await saveToFile(
+        'Molfiles-V2000/sgroup_different-expected.mol',
+        expectedFile,
+      );
+
+      const METADATA_STRING_INDEX = [1];
+      const { fileExpected: molFileExpected, file: molFile } =
+        await receiveFileComparisonData({
+          page,
+          expectedFileName:
+            'tests/test-data/Molfiles-V2000/sgroup_different-expected.mol',
+          fileFormat: 'v2000',
+          metaDataIndexes: METADATA_STRING_INDEX,
+        });
+
+      expect(molFile).toEqual(molFileExpected);
+    },
+  );
+
+  test.fixme(
+    'Open and Save file - Open/Save  V3000 mol file contains Sgroup 1/2 - open',
+    async ({ page }) => {
+      /**
+       * Test case: EPMLSOPKET-1876(1)
+       * Description: Structure is correctly generated from Molstring
+       * and vise versa molstring is correctly generated from structure.
+       * Now it is a bug
+       */
+
+      await openFileAndAddToCanvas(
+        'Molfiles-V3000/sgroup_different_V3000',
+        page,
+      );
+      await takeEditorScreenshot(page);
+    },
+  );
+
+  test.fixme(
+    'Open and Save file - Open/Save  V3000 mol file contains Sgroup 2/2 - save',
+    async ({ page }) => {
+      /**
+       * Test case: EPMLSOPKET-1876(2)
+       * Description: A file with V3000 format is resaved in V2000 format.
+       * Now it is a bug
+       * */
+
+      await openFileAndAddToCanvas(
+        'Molfiles-V3000/sgroup_different_V3000',
+        page,
+      );
+      const expectedFile = await getMolfile(page, 'v2000');
+      await saveToFile(
+        'Molfiles-V2000/sgroup_different_V2000-expected.mol',
+        expectedFile,
+      );
+
+      const METADATA_STRING_INDEX = [1];
+      const { fileExpected: molFileExpected, file: molFile } =
+        await receiveFileComparisonData({
+          page,
+          expectedFileName:
+            'tests/test-data/Molfiles-V2000/sgroup_different_V2000-expected.mol',
+          fileFormat: 'v2000',
+          metaDataIndexes: METADATA_STRING_INDEX,
+        });
+
+      expect(molFile).toEqual(molFileExpected);
+    },
+  );
+
+  test('Open and Save file - Open/Save V3000 mol file contains more than 900 symbols 1/2 - open', async ({
+    page,
+  }) => {
+    /**
+     * Test case: EPMLSOPKET-1890(1)
+     * Description: Structure is correctly generated from Molstring
+     * and vise versa molstring is correctly generated from structure.
+     */
+
+    await openFileAndAddToCanvas('Molfiles-V3000/more_900_atoms.mol', page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Open and Save file - Open/Save V3000 mol file contains more than 900 symbols 2/2 - save', async ({
+    page,
+  }) => {
+    /**
+     * Test case: EPMLSOPKET-1890(2)
+     * Description: Structure is correctly generated from Molstring
+     * and vise versa molstring is correctly generated from structure.
+     * */
+
+    await openFileAndAddToCanvas('Molfiles-V3000/more_900_atoms.mol', page);
+    const expectedFile = await getMolfile(page, 'v3000');
+    await saveToFile(
+      'Molfiles-V3000/more_900_atoms-expected.mol',
+      expectedFile,
+    );
+
+    const METADATA_STRING_INDEX = [1];
+    const { fileExpected: molFileExpected, file: molFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/Molfiles-V3000/more_900_atoms-expected.mol',
+        fileFormat: 'v3000',
+        metaDataIndexes: METADATA_STRING_INDEX,
+      });
+
+    expect(molFile).toEqual(molFileExpected);
+  });
+
+  test('Open and Save file - Open/Save files for ferrocen-like structures 1/2 - open', async ({
+    page,
+  }) => {
+    /**
+     * Test case: EPMLSOPKET-1893(1)
+     * Description: Structures are rendered correctly
+     */
+
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/ferrocene_radical01.mol',
+      page,
+    );
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/ferrocene_radical02.mol',
+      page,
+    );
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/ferrocene_radical03.mol',
+      page,
+    );
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/ferrocene_radical04.mol',
+      page,
+    );
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/ferrocene_radical05.mol',
+      page,
+    );
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/ferrocene_radical06.mol',
+      page,
+    );
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/ferrocene_radical07.mol',
+      page,
+    );
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/ferrocene_radical08.mol',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Open and Save file - Open/Save files for ferrocen-like structures 2/2 - save', async ({
+    page,
+  }) => {
+    /**
+     * Test case: EPMLSOPKET-1893(2)
+     * Description: Structures are rendered correctly.
+     * */
+
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/ferrocene_radical01.mol',
+      page,
+    );
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/ferrocene_radical02.mol',
+      page,
+    );
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/ferrocene_radical03.mol',
+      page,
+    );
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/ferrocene_radical04.mol',
+      page,
+    );
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/ferrocene_radical05.mol',
+      page,
+    );
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/ferrocene_radical06.mol',
+      page,
+    );
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/ferrocene_radical07.mol',
+      page,
+    );
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/ferrocene_radical08.mol',
+      page,
+    );
+
+    const expectedFile = await getMolfile(page, 'v2000');
+    await saveToFile(
+      'Molfiles-V2000/ferrocene_radical-8-expected.mol',
+      expectedFile,
+    );
+
+    const METADATA_STRING_INDEX = [1];
+    const { fileExpected: molFileExpected, file: molFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/Molfiles-V2000/ferrocene_radical-8-expected.mol',
+        fileFormat: 'v2000',
+        metaDataIndexes: METADATA_STRING_INDEX,
+      });
+
+    expect(molFile).toEqual(molFileExpected);
+  });
+
+  test('Open and Save file - Open/Save V3000 mol file contains Sgroup 1/2 - open', async ({
+    page,
+  }) => {
+    /**
+     * Test case: EPMLSOPKET-1895(1)
+     * Description: Structure is correctly generated from Molstring
+     * and vise versa molstring is correctly generated from structure.
+     */
+
+    await openFileAndAddToCanvas('Molfiles-V3000/multi_V3000.mol', page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Open and Save file - Open/Save V3000 mol file contains Sgroup 2/2 - save', async ({
+    page,
+  }) => {
+    /**
+     * Test case: EPMLSOPKET-1895(2)
+     * Description:Structure is correctly generated from Molstring
+     * and vise versa molstring is correctly generated from structure.
+     * */
+
+    await openFileAndAddToCanvas('Molfiles-V3000/multi_V3000.mol', page);
+
+    const expectedFile = await getMolfile(page, 'v3000');
+    await saveToFile('Molfiles-V3000/multi_V3000-expected.mol', expectedFile);
+
+    const METADATA_STRING_INDEX = [1];
+    const { fileExpected: molFileExpected, file: molFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/Molfiles-V3000/multi_V3000-expected.mol',
+        fileFormat: 'v3000',
+        metaDataIndexes: METADATA_STRING_INDEX,
+      });
+
+    expect(molFile).toEqual(molFileExpected);
+  });
+
+  test('Open and Save file - Save structure as *.mol V3000', async ({
+    page,
+  }) => {
+    /**
+     * Test case: EPMLSOPKET-1979
+     * Description: Structure is displayed correctly
+     * */
+
+    await openFileAndAddToCanvas('Molfiles-V3000/multi_V3000.mol', page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('MDL Molfile v2000: Correct padding for M ALS 1/2 - open', async ({
+    page,
+  }) => {
+    /**
+     * Test case: EPMLSOPKET-8914(1)
+     * Description: Structure is correctly generated from Molstring
+     * and vise versa molstring is correctly generated from structure.
+     */
+
+    await openFileAndAddToCanvas('Molfiles-V2000/molfile_with_als.mol', page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('MDL Molfile v2000: Correct padding for M ALS 2/2 - check padding', async ({
+    page,
+  }) => {
+    /**
+     * Test case: EPMLSOPKET-8914(2)
+     * Description: Files opens.
+     * Alias is located on the atom to which we assigned it
+     * */
+
+    await openFileAndAddToCanvas('Molfiles-V2000/molfile_with_als.mol', page);
+    const expectedFile = await getMolfile(page, 'v2000');
+    const isCorrectPadding = expectedFile.includes('N   ');
+
+    expect(isCorrectPadding).toEqual(true);
+  });
+
+  test.fixme(
+    'Open and Save file - Open/Save v3000 mol file with assigned Alias 1/2 - open',
+    async ({ page }) => {
+      /**
+       * Test case: EPMLSOPKET-12963(1)
+       * Description: Files opens. Alias is located on the atom to which we assigned it
+       * Now it is a bug
+       */
+
+      await openFileAndAddToCanvas(
+        'Molfiles-V3000/mol_12963_to_open.mol',
+        page,
+      );
+      await takeEditorScreenshot(page);
+    },
+  );
+
+  test.fixme(
+    'Open and Save file - Open/Save v3000 mol file with assigned Alias 2/2 - save',
+    async ({ page }) => {
+      /**
+       * Test case: EPMLSOPKET-12963(2)
+       * Description: Files opens. Alias is located on the atom to which we assigned it
+       * Now it is a bug
+       * */
+
+      await openFileAndAddToCanvas(
+        'Molfiles-V3000/mol_12963_to_open.mol',
+        page,
+      );
+      const expectedFile = await getMolfile(page, 'v3000');
+      await saveToFile(
+        'Molfiles-V3000/mol_12963_to_open-expected',
+        expectedFile,
+      );
+
+      const METADATA_STRING_INDEX = [1];
+      const { fileExpected: molFileExpected, file: molFile } =
+        await receiveFileComparisonData({
+          page,
+          expectedFileName:
+            'tests/test-data/Molfiles-V3000/mol_12963_to_open-expected.mol',
+          fileFormat: 'v3000',
+          metaDataIndexes: METADATA_STRING_INDEX,
+        });
+
+      expect(molFile).toEqual(molFileExpected);
+    },
+  );
+
+  test('Open and Save file - Open structure with R-Group from v3000 mol file', async ({
+    page,
+  }) => {
+    /**
+     * Test case: EPMLSOPKET-12966
+     * Description: Structure is displayed correctly
+     * */
+
+    await openFileAndAddToCanvas('Molfiles-V3000/rgroup-V3000.mol', page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Open and Save file - Don`t creates invalid molfiles with "NaN"', async ({
+    page,
+  }) => {
+    /**
+     * Test case: EPMLSOPKET-4731
+     * Description: Preview doesn't contains NaN
+     * */
+
+    await openFileAndAddToCanvas('Molfiles-V2000/mol_4731_to_open.mol', page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Open and Save file - Functional group name layout close to attachment point', async ({
+    page,
+  }) => {
+    /**
+     * Test case: EPMLSOPKET-5259
+     * Description: Functional group label is located at the right location
+     * */
+
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/display-abbrev-groups-example.mol',
+      page,
+    );
+
+    await takeEditorScreenshot(page);
+  });
 });

@@ -547,7 +547,7 @@ test.describe('', () => {
   test.describe('', () => {
     /*
      * Test case: EPMLSOPKET-1852, 1856, 1874, 1890, 1895, 1979, 8914, 12966, 4731, 5259
-     * Description: The saved structure is correctly rendered on the canvas
+     * Description: The structure is correctly rendered on the canvas
      */
     const files = [
       {
@@ -608,6 +608,65 @@ test.describe('', () => {
     }
   });
 
+  // >>>>>>>>>>>>>>>>>>>>
+
+  test.describe('', () => {
+    /*
+     * Test case: EPMLSOPKET-1856, 1874, 1890, 1895
+     * Description: The saved structure is correctly rendered on the canvas
+     */
+    const files = [
+      {
+        testName:
+          'Open and Save file - Open/Save Alias and Pseudoatoms 2/2 - save',
+        pathToOpen: 'Molfiles-V2000/mol-1856-to-open.mol',
+        pathToExpected: 'Molfiles-V2000/mol-1856-to-open-expected.mol',
+        format: 'v2000',
+      },
+      {
+        testName:
+          'Open and Save file - Open/Save V3000 mol file contains Rgroup 2/2 - save',
+        pathToOpen: 'Molfiles-V3000/rgroup-V3000.mol',
+        pathToExpected: 'Molfiles-V3000/rgroup-V3000-expected.mol',
+        format: 'v3000',
+      },
+      {
+        testName:
+          'Open and Save file - Open/Save V3000 mol file contains more than 900 symbols 2/2 - save',
+        pathToOpen: 'Molfiles-V3000/more-900-atoms.mol',
+        pathToExpected: 'Molfiles-V3000/more-900-atoms-expected.mol',
+        format: 'v3000',
+      },
+      {
+        testName:
+          'Open and Save file - Open/Save V3000 mol file contains Sgroup 2/2 - save',
+        pathToOpen: 'Molfiles-V3000/multi-V3000.mol',
+        pathToExpected: 'Molfiles-V3000/multi-V3000-expected.mol',
+        format: 'v3000',
+      },
+    ];
+
+    for (const file of files) {
+      test(`${file.testName}`, async ({ page }) => {
+        await openFileAndAddToCanvas(file.pathToOpen, page);
+
+        const expectedFile = await getMolfile(page, file.format);
+        await saveToFile(file.pathToExpected, expectedFile);
+
+        const METADATA_STRING_INDEX = [1];
+        const { fileExpected: molFileExpected, file: molFile } =
+          await receiveFileComparisonData({
+            page,
+            expectedFileName: `tests/test-data/${file.pathToExpected}`,
+            fileFormat: file.format,
+            metaDataIndexes: METADATA_STRING_INDEX,
+          });
+
+        expect(molFile).toEqual(molFileExpected);
+      });
+    }
+  });
+
   test.fixme(
     'Open and Save files - V3000 mol file contains different Bond properties',
     async ({ page }) => {
@@ -644,63 +703,6 @@ test.describe('', () => {
     },
   );
 
-  test('Open and Save file - Open/Save Alias and Pseudoatoms 2/2 - save', async ({
-    page,
-  }) => {
-    /**
-     * Test case: EPMLSOPKET-1856(2)
-     * Description: The saved structure is correctly rendered on the canvas
-     * */
-
-    await openFileAndAddToCanvas('Molfiles-V2000/mol-1856-to-open.mol', page);
-
-    const expectedFile = await getMolfile(page, 'v2000');
-    await saveToFile(
-      'Molfiles-V2000/mol-1856-to-open-expected.mol',
-      expectedFile,
-    );
-
-    const METADATA_STRING_INDEX = [1];
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Molfiles-V2000/mol-1856-to-open-expected.mol',
-        fileFormat: 'v2000',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
-
-    expect(molFile).toEqual(molFileExpected);
-  });
-
-  test('Open and Save file - Open/Save V3000 mol file contains Rgroup 2/2 - save', async ({
-    page,
-  }) => {
-    /**
-     * Test case: EPMLSOPKET-1874(2)
-     * Description: Structure is correctly generated from Molstring
-     * and vise versa molstring is correctly generated from structure.
-     * A file with V3000 format is resaved in V2000 format (now).
-     * */
-
-    await openFileAndAddToCanvas('Molfiles-V3000/rgroup-V3000.mol', page);
-
-    const expectedFile = await getMolfile(page, 'v3000');
-    await saveToFile('Molfiles-V3000/rgroup-V3000-expected.mol', expectedFile);
-
-    const METADATA_STRING_INDEX = [1];
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Molfiles-V3000/rgroup-V3000-expected.mol',
-        fileFormat: 'v3000',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
-
-    expect(molFile).toEqual(molFileExpected);
-  });
-
   test.fixme(
     'Open and Save file - Open/Save file with S-Groups 1/2 - open',
     async ({ page }) => {
@@ -710,7 +712,7 @@ test.describe('', () => {
        * and vise versa molstring is correctly generated from structure.
        */
 
-      await openFileAndAddToCanvas('Molfiles-V2000/sgroup_different.mol', page);
+      await openFileAndAddToCanvas('Molfiles-V2000/sgroup-different.mol', page);
       await takeEditorScreenshot(page);
     },
   );
@@ -724,10 +726,10 @@ test.describe('', () => {
        * and vise versa molstring is correctly generated from structure.
        * */
 
-      await openFileAndAddToCanvas('Molfiles-V2000/sgroup_different.mol', page);
+      await openFileAndAddToCanvas('Molfiles-V2000/sgroup-different.mol', page);
       const expectedFile = await getMolfile(page, 'v2000');
       await saveToFile(
-        'Molfiles-V2000/sgroup_different-expected.mol',
+        'Molfiles-V2000/sgroup-different-expected.mol',
         expectedFile,
       );
 
@@ -736,7 +738,7 @@ test.describe('', () => {
         await receiveFileComparisonData({
           page,
           expectedFileName:
-            'tests/test-data/Molfiles-V2000/sgroup_different-expected.mol',
+            'tests/test-data/Molfiles-V2000/sgroup-different-expected.mol',
           fileFormat: 'v2000',
           metaDataIndexes: METADATA_STRING_INDEX,
         });
@@ -756,7 +758,7 @@ test.describe('', () => {
        */
 
       await openFileAndAddToCanvas(
-        'Molfiles-V3000/sgroup_different_V3000',
+        'Molfiles-V3000/sgroup-different-V3000',
         page,
       );
       await takeEditorScreenshot(page);
@@ -773,12 +775,12 @@ test.describe('', () => {
        * */
 
       await openFileAndAddToCanvas(
-        'Molfiles-V3000/sgroup_different_V3000',
+        'Molfiles-V3000/sgroup-different-V3000',
         page,
       );
       const expectedFile = await getMolfile(page, 'v2000');
       await saveToFile(
-        'Molfiles-V2000/sgroup_different_V2000-expected.mol',
+        'Molfiles-V2000/sgroup-different-V2000-expected.mol',
         expectedFile,
       );
 
@@ -787,7 +789,7 @@ test.describe('', () => {
         await receiveFileComparisonData({
           page,
           expectedFileName:
-            'tests/test-data/Molfiles-V2000/sgroup_different_V2000-expected.mol',
+            'tests/test-data/Molfiles-V2000/sgroup-different-V2000-expected.mol',
           fileFormat: 'v2000',
           metaDataIndexes: METADATA_STRING_INDEX,
         });
@@ -795,35 +797,6 @@ test.describe('', () => {
       expect(molFile).toEqual(molFileExpected);
     },
   );
-
-  test('Open and Save file - Open/Save V3000 mol file contains more than 900 symbols 2/2 - save', async ({
-    page,
-  }) => {
-    /**
-     * Test case: EPMLSOPKET-1890(2)
-     * Description: Structure is correctly generated from Molstring
-     * and vise versa molstring is correctly generated from structure.
-     * */
-
-    await openFileAndAddToCanvas('Molfiles-V3000/more-900-atoms.mol', page);
-    const expectedFile = await getMolfile(page, 'v3000');
-    await saveToFile(
-      'Molfiles-V3000/more-900-atoms-expected.mol',
-      expectedFile,
-    );
-
-    const METADATA_STRING_INDEX = [1];
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Molfiles-V3000/more-900-atoms-expected.mol',
-        fileFormat: 'v3000',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
-
-    expect(molFile).toEqual(molFileExpected);
-  });
 
   for (let i = 1; i < 9; i++) {
     test(`'Open and Save file - Open/Save files for ferrocen-like structures 1/2 - open ferrocene_radical0${i}.mol`, async ({
@@ -835,7 +808,7 @@ test.describe('', () => {
        */
 
       await openFileAndAddToCanvas(
-        `Molfiles-V2000/ferrocene_radical0${i}.mol`,
+        `Molfiles-V2000/ferrocene-radical0${i}.mol`,
         page,
       );
       await takeEditorScreenshot(page);
@@ -854,14 +827,14 @@ test.describe('', () => {
 
     for (let i = 1; i < 9; i++) {
       await openFileAndAddToCanvas(
-        `Molfiles-V2000/ferrocene_radical0${i}.mol`,
+        `Molfiles-V2000/ferrocene-radical0${i}.mol`,
         page,
       );
     }
 
     const expectedFile = await getMolfile(page, 'v2000');
     await saveToFile(
-      'Molfiles-V2000/ferrocene_radical-8-expected.mol',
+      'Molfiles-V2000/ferrocene-radical-8-expected.mol',
       expectedFile,
     );
 
@@ -870,35 +843,8 @@ test.describe('', () => {
       await receiveFileComparisonData({
         page,
         expectedFileName:
-          'tests/test-data/Molfiles-V2000/ferrocene_radical-8-expected.mol',
+          'tests/test-data/Molfiles-V2000/ferrocene-radical-8-expected.mol',
         fileFormat: 'v2000',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
-
-    expect(molFile).toEqual(molFileExpected);
-  });
-
-  test('Open and Save file - Open/Save V3000 mol file contains Sgroup 2/2 - save', async ({
-    page,
-  }) => {
-    /**
-     * Test case: EPMLSOPKET-1895(2)
-     * Description:Structure is correctly generated from Molstring
-     * and vise versa molstring is correctly generated from structure.
-     * */
-
-    await openFileAndAddToCanvas('Molfiles-V3000/multi-V3000.mol', page);
-
-    const expectedFile = await getMolfile(page, 'v3000');
-    await saveToFile('Molfiles-V3000/multi-V3000-expected.mol', expectedFile);
-
-    const METADATA_STRING_INDEX = [1];
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Molfiles-V3000/multi-V3000-expected.mol',
-        fileFormat: 'v3000',
         metaDataIndexes: METADATA_STRING_INDEX,
       });
 
@@ -931,7 +877,7 @@ test.describe('', () => {
        */
 
       await openFileAndAddToCanvas(
-        'Molfiles-V3000/mol_12963_to_open.mol',
+        'Molfiles-V3000/mol-12963-to-open.mol',
         page,
       );
       await takeEditorScreenshot(page);
@@ -948,12 +894,12 @@ test.describe('', () => {
        * */
 
       await openFileAndAddToCanvas(
-        'Molfiles-V3000/mol_12963_to_open.mol',
+        'Molfiles-V3000/mol-12963-to-open.mol',
         page,
       );
       const expectedFile = await getMolfile(page, 'v3000');
       await saveToFile(
-        'Molfiles-V3000/mol_12963_to_open-expected',
+        'Molfiles-V3000/mol-12963-to-open-expected',
         expectedFile,
       );
 
@@ -962,7 +908,7 @@ test.describe('', () => {
         await receiveFileComparisonData({
           page,
           expectedFileName:
-            'tests/test-data/Molfiles-V3000/mol_12963_to_open-expected.mol',
+            'tests/test-data/Molfiles-V3000/mol-12963-to-open-expected.mol',
           fileFormat: 'v3000',
           metaDataIndexes: METADATA_STRING_INDEX,
         });

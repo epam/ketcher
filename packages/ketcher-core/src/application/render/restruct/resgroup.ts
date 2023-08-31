@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -262,7 +263,6 @@ function SGroupdrawBrackets({
   const crossBondsPerAtom = Object.values(crossBonds);
   const crossBondsValues = crossBondsPerAtom.flat();
   const brackets = getBracketParameters(
-    render.ctab,
     crossBondsPerAtom,
     crossBondsValues,
     attachmentPoints,
@@ -424,16 +424,15 @@ function drawAttachedDat(restruct: ReStruct, sgroup: SGroup): any {
 }
 
 function getBracketParameters(
-  ctab,
-  crossBondsPerAtom,
-  crossBondsValues,
-  attachmentPoints,
-  bracketBox,
-  direction,
-  render,
-  id,
+  crossBondsPerAtom: Array<Array<Bond>>,
+  crossBondsValues: Array<Bond>,
+  attachmentPoints: number[],
+  bracketBox: Box2Abs,
+  direction: Vec2,
+  render: Render,
+  id: number,
 ) {
-  const mol = ctab.molecule;
+  const mol = render.ctab.molecule;
   const brackets: BracketParams[] = [];
   let bracketDirection = direction.rotateSC(1, 0);
 
@@ -467,10 +466,9 @@ function getBracketParameters(
       );
     })();
   } else if (crossBondsValues.length === 2 && crossBondsPerAtom.length === 2) {
-    (() => {
-      // eslint-disable-line max-statements
-      const bond1 = mol.bonds.get(crossBondsValues[0]);
-      const bond2 = mol.bonds.get(crossBondsValues[1]);
+    (function () {
+      const bond1 = mol.bonds.get(Number(crossBondsValues[0]))!;
+      const bond2 = mol.bonds.get(Number(crossBondsValues[1]))!;
       const leftCenter = bond1.getCenter(mol);
       const rightCenter = bond2.getCenter(mol);
       let tl = -1;
@@ -483,9 +481,10 @@ function getBracketParameters(
       const bracketDirection = rightDirection.rotateSC(1, 0);
       const bracketDirectionNegated = bracketDirection.negated();
 
-      mol.sGroupForest.children.get(id).forEach((sgid) => {
-        let boundingBox = render.ctab.sgroups.get(sgid).visel.boundingBox;
-        boundingBox = boundingBox
+      mol?.sGroupForest?.children?.get(id)?.forEach((sgid) => {
+        const reSgroup = mol?.sgroups?.get(sgid) as unknown as ReSGroup;
+        let boundingBox = reSgroup.visel.boundingBox;
+        boundingBox = boundingBox!
           .translate((render.options.offset || new Vec2()).negated())
           .transform(Scale.scaled2obj, render.options);
         tl = Math.max(
@@ -529,25 +528,24 @@ function getBracketParameters(
     })();
   } else {
     (function () {
-      const bondDirections: Vec2[] = [];
       let notTemplateShapeFirstAtom = false;
-      for (let i = 0; i < crossBondsValues.length; ++i) {
-        const bond = mol.bonds.get(crossBondsValues[i]);
-        bondDirections.push(bond.getDir(mol));
-      }
+      const bondDirections: Vec2[] = crossBondsValues.map((value) => {
+        const bond = mol.bonds.get(Number(value))!;
+        return bond.getDir(mol);
+      });
       // if bonds direction is clockwise, then negated
       const needNegated =
         Vec2.crossProduct(bondDirections[0], bondDirections[1]) > 0;
       crossBondsValues = crossBondsValues.sort((id1, id2) => {
-        notTemplateShapeFirstAtom = Math.abs(id1 - id2) === 1;
+        notTemplateShapeFirstAtom = Math.abs(Number(id1) - Number(id2)) === 1;
         return notTemplateShapeFirstAtom && !needNegated ? -1 : 0;
       });
       for (let i = 0; i < crossBondsValues.length; ++i) {
-        const bond = mol.bonds.get(crossBondsValues[i]);
+        const bond = mol.bonds.get(Number(crossBondsValues[i]))!;
         let bondDirection = bond.getDir(mol);
-        let bracketDirection;
-        let bracketAngleDirection;
-        let attachmentDirection;
+        let bracketDirection: Vec2;
+        let bracketAngleDirection: Vec2;
+        let attachmentDirection: Vec2;
         if (attachmentPoints.length !== 2) {
           if (needNegated && notTemplateShapeFirstAtom) {
             bondDirection = bondDirection.negated();
@@ -558,15 +556,11 @@ function getBracketParameters(
               ? bondDirection.rotateSC(1, 0)
               : bondDirection.rotateSC(1, 0).negated();
           bracketAngleDirection = bondDirection;
-        }
-        // if there are 2 attachment points then make brackets parallel to attachments
-        if (
-          attachmentPoints.length === 2 &&
-          attachmentPoints[i] !== undefined
-        ) {
-          attachmentDirection = ctab.rgroupAttachmentPoints.get(
+        } else {
+          // if there are 2 attachment points then make brackets parallel to attachments
+          attachmentDirection = render.ctab.rgroupAttachmentPoints.get(
             attachmentPoints[i],
-          )?.lineDirectionVector;
+          )!.lineDirectionVector;
           bracketDirection = attachmentDirection;
           bracketAngleDirection =
             i === 0

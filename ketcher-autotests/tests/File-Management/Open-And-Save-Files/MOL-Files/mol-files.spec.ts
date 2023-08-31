@@ -618,8 +618,6 @@ test.describe('', () => {
     }
   });
 
-  // >>>>>>>>>>>>>>>>>>>>
-
   test.describe('', () => {
     /*
      * Test case: EPMLSOPKET-1856, 1874, 1890, 1895

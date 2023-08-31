@@ -59,7 +59,7 @@ test.describe('CDXML Enhanced Stereochemistry', () => {
     */
     const anyAtom = 2;
     await openFileAndAddToCanvas('Molfiles-V2000/stereo-test.mol', page);
-    clickOnAtom(page, 'C', anyAtom);
+    await clickOnAtom(page, 'C', anyAtom);
     await selectRadioButtonForNewGroup(page, 'Create new AND Group');
   });
 
@@ -71,7 +71,7 @@ test.describe('CDXML Enhanced Stereochemistry', () => {
     */
     const anyAtom = 2;
     await openFileAndAddToCanvas('Molfiles-V2000/stereo-test.mol', page);
-    clickOnAtom(page, 'C', anyAtom);
+    await clickOnAtom(page, 'C', anyAtom);
     await selectRadioButtonForNewGroup(page, 'Create new OR Group');
   });
 });

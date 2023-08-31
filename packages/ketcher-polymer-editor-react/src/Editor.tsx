@@ -152,6 +152,24 @@ function Editor({ theme }: EditorProps) {
                   strokeWidth="3"
                 />{' '}
               </symbol>
+              <symbol id="chem" viewBox="0 0 59 59" width="59" height="59">
+                <rect width="59" height="59" rx="1.5" fill="#F5F6F7" />
+              </symbol>
+              <symbol
+                id="chem-selection"
+                viewBox="0 0 59 59"
+                width="59"
+                height="59"
+              >
+                <rect
+                  width="59"
+                  height="59"
+                  rx="1.5"
+                  stroke="#0097A8"
+                  fill="none"
+                  strokeWidth="3"
+                />
+              </symbol>
             </defs>
           </svg>
         </Layout.Main>

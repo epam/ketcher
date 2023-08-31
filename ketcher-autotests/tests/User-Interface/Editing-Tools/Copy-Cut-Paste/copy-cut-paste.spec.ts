@@ -22,6 +22,7 @@ import {
   INPUT_DELAY,
   delay,
   DELAY_IN_SECONDS,
+  waitForIndigoToLoad,
 } from '@utils';
 
 const CANVAS_CLICK_X = 300;
@@ -30,6 +31,7 @@ const CANVAS_CLICK_Y = 300;
 test.describe('Copy/Cut/Paste Actions', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('');
+    await waitForIndigoToLoad(page);
   });
 
   test.afterEach(async ({ page }) => {
@@ -451,7 +453,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     const x = 500;
     const y = 300;
-    await openFileAndAddToCanvas('attached.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/attached.mol', page);
     await copyAndPaste(page);
     await page.mouse.click(x, y);
   });
@@ -467,7 +469,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
       // Nitrogen atom can't attach to structure
       const anyAtom = 12;
-      await openFileAndAddToCanvas('attached.mol', page);
+      await openFileAndAddToCanvas('Molfiles-V2000/attached.mol', page);
       await cutAndPaste(page);
       await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
       await selectAtomInToolbar(AtomButton.Nitrogen, page);
@@ -567,7 +569,10 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     const x = 500;
     const y = 200;
-    await openFileAndAddToCanvas('arrows-in-different-directions.rxn', page);
+    await openFileAndAddToCanvas(
+      'Rxn-V2000/arrows-in-different-directions.rxn',
+      page,
+    );
     await copyAndPaste(page);
     await page.mouse.click(x, y);
   });
@@ -580,7 +585,10 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Description: Cut reaction has plus sign and one arrow.
     */
     const anyAtom = 5;
-    await openFileAndAddToCanvas('arrows-in-different-directions.rxn', page);
+    await openFileAndAddToCanvas(
+      'Rxn-V2000/arrows-in-different-directions.rxn',
+      page,
+    );
     await cutAndPaste(page);
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
@@ -657,7 +665,10 @@ test.describe('Copy/Cut/Paste Actions', () => {
     // Bonds not copied when test run under docker
     const x = 100;
     const y = 100;
-    await openFileAndAddToCanvas('all-kinds-of-bonds-test-file.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/all-kinds-of-bonds-test-file.mol',
+      page,
+    );
     await copyAndPaste(page);
     await page.mouse.click(x, y);
   });
@@ -777,7 +788,10 @@ test.describe('Copy/Cut/Paste Actions', () => {
     // Error message when run under docker. But manual test is working.
     const x = 500;
     const y = 100;
-    await openFileAndAddToCanvas('aromatic-structures.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/aromatic-structures.mol',
+      page,
+    );
     await copyAndPaste(page);
     await page.mouse.click(x, y);
   });
@@ -791,7 +805,10 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     // Error message when run under docker. But manual test is working.
     const anyAtom = 5;
-    await openFileAndAddToCanvas('aromatic-structures.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/aromatic-structures.mol',
+      page,
+    );
     await cutAndPaste(page);
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);

@@ -178,7 +178,7 @@ const messageTypeToEventMapping: {
   [Command.Check]: WorkerEvent.Check,
   [Command.Calculate]: WorkerEvent.Calculate,
   [Command.GenerateImageAsBase64]: WorkerEvent.GenerateImageAsBase64,
-  [Command.GenerateInchIKey]: WorkerEvent.GenerateInchIKey,
+  [Command.GetInChIKey]: WorkerEvent.GetInChIKey,
 };
 
 class IndigoService implements StructService {
@@ -198,7 +198,7 @@ class IndigoService implements StructService {
     };
   }
 
-  async generateInchIKey(struct: string): Promise<string> {
+  async getInChIKey(struct: string): Promise<string> {
     return new Promise((resolve, reject) => {
       const action = ({ data }: OutputMessageWrapper) => {
         const msg: OutputMessage<string> = data;
@@ -210,12 +210,12 @@ class IndigoService implements StructService {
       };
 
       const inputMessage: InputMessage<GenerateInchIKeyCommandData> = {
-        type: Command.GenerateInchIKey,
+        type: Command.GetInChIKey,
         data: { struct },
       };
 
-      this.EE.removeListener(WorkerEvent.GenerateInchIKey, action);
-      this.EE.addListener(WorkerEvent.GenerateInchIKey, action);
+      this.EE.removeListener(WorkerEvent.GetInChIKey, action);
+      this.EE.addListener(WorkerEvent.GetInChIKey, action);
 
       this.worker.postMessage(inputMessage);
     });

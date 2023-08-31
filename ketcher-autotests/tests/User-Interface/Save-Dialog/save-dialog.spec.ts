@@ -17,6 +17,6 @@ test.describe('Save dialog dropdown', () => {
     await clickInTheMiddleOfTheScreen(page);
     await page.keyboard.press('Control+s');
     await page.getByText('MDL Molfile V2000').click();
-    expect(page.getByText('inChIKey')).toBeTruthy();
+    expect(page.getByText('InChIKey')).toBeTruthy();
   });
 });

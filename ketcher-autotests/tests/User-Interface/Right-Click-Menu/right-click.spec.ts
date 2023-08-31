@@ -12,6 +12,7 @@ import {
   resetCurrentTool,
   selectLeftPanelButton,
   LeftPanelButton,
+  clickInTheMiddleOfTheScreen,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
@@ -116,6 +117,23 @@ test.describe('Right-click menu', () => {
     await page.mouse.click(point.x, point.y, { button: 'right' });
   });
 
+  test('Check right-click property change for atoms', async ({ page }) => {
+    await openFileAndAddToCanvas('chain.ket', page);
+    const point = await getAtomByIndex(page, { label: 'C' }, 1);
+    await page.mouse.click(point.x, point.y, { button: 'right' });
+    await page.getByText('Query properties').click();
+    await page.getByText('Ring bond count').click();
+    await takeEditorScreenshot(page);
+    await page.getByRole('button', { name: 'As drawn' }).first().click();
+    await page.getByText('Substitution count').click();
+    await takeEditorScreenshot(page);
+    await page.getByRole('button', { name: '6' }).last().click();
+    await page.getByText('Unsaturated').first().click();
+    await takeEditorScreenshot(page);
+    await page.getByRole('button', { name: 'Saturated' }).last().click();
+    await clickInTheMiddleOfTheScreen(page);
+  });
+
   test('Check editing for atoms', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-5880
@@ -162,7 +180,7 @@ test.describe('Right-click menu', () => {
   }) => {
     /*
     Test case: EPMLSOPKET-5884
-    Description: Near the atom with the stereochemistry the '&1' and '&2' is displayed. 
+    Description: Near the atom with the stereochemistry the '&1' and '&2' is displayed.
     And 'Mixed' flag appears. After add Ignore the chiral flag in settings - 'Mixed' flag dissapear.
     */
     await openFileAndAddToCanvas('chain-with-stereo.ket', page);
@@ -188,7 +206,7 @@ test.describe('Right-click menu', () => {
   }) => {
     /*
     Test case: EPMLSOPKET-5885
-    Description: Near the atom with the stereochemistry the '&1' and 'or1' is displayed. 
+    Description: Near the atom with the stereochemistry the '&1' and 'or1' is displayed.
     And 'Mixed' flag appears. After add Ignore the chiral flag in settings - 'Mixed' flag dissapear.
     */
     await openFileAndAddToCanvas('chain-with-stereo.ket', page);

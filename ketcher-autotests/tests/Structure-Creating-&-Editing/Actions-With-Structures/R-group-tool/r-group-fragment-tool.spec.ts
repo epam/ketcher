@@ -128,7 +128,7 @@ test.describe('Open Ketcher', () => {
   });
 
   test('Brackets rendering for whole r-group structure', async ({ page }) => {
-    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectNestedTool(page, RgroupTool.R_GROUP_FRAGMENT);
     await clickOnAtom(page, 'C', atomIndex);
     await page.getByText(rGroupFromFile).click();
@@ -138,7 +138,7 @@ test.describe('Open Ketcher', () => {
   test('Brackets rendering for whole r-group structure even with attachment points', async ({
     page,
   }) => {
-    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
     await clickOnAtom(page, 'C', atomIndex);
     await page.getByLabel(AttachmentPoint.PRIMARY).check();

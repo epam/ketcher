@@ -15,12 +15,12 @@
  ***************************************************************************/
 import { Tool } from 'application/editor/tools/Tool';
 import { Vec2 } from 'domain/entities';
-import { PeptideRenderer } from 'application/render/renderers/PeptideRenderer';
 import { CoreEditor } from 'application/editor';
+import { BaseMonomerRenderer } from 'application/render/renderers';
 
 class SelectLasso implements Tool {
   private isMouseDown = false;
-  private selectedItem?: PeptideRenderer;
+  private selectedItem?: BaseMonomerRenderer;
 
   constructor(private editor: CoreEditor) {
     this.editor = editor;
@@ -33,7 +33,7 @@ class SelectLasso implements Tool {
 
   mousemove(event) {
     if (this.isMouseDown && this.selectedItem) {
-      if (this.selectedItem instanceof PeptideRenderer) {
+      if (this.selectedItem instanceof BaseMonomerRenderer) {
         this.selectedItem.monomer.moveRelative(
           new Vec2(event.movementX, event.movementY),
         );

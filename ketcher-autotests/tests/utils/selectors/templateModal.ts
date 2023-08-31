@@ -163,7 +163,7 @@ export async function selectUserTemplatesAndPlaceInTheMiddle(
 ) {
   await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
   await page.getByRole('tab', { name: 'Template Library' }).click();
-  await page.getByRole('button', { name: 'Aromatics (17)' }).click();
+  await page.getByRole('button', { name: 'Aromatics' }).click();
   await selectUserTemplate(itemToChoose, page);
   await clickInTheMiddleOfTheScreen(page);
 }

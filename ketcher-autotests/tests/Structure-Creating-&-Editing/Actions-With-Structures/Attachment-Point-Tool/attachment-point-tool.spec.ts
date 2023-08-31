@@ -63,7 +63,7 @@ test.describe('Attachment Point Tool', () => {
     Test case: EPMLSOPKET-1625
     Description: The Attachment Points dialog box is opened.
     */
-    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
     await clickOnAtom(page, 'C', 3);
   });
@@ -73,7 +73,7 @@ test.describe('Attachment Point Tool', () => {
     Test case: EPMLSOPKET-1626
     Description: Check-mark are checked.
     */
-    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
     await clickOnAtom(page, 'C', 3);
     await page.getByLabel(AttachmentPoint.PRIMARY).check();
@@ -85,7 +85,7 @@ test.describe('Attachment Point Tool', () => {
     Test case: EPMLSOPKET-1627
     Description: All four Attachment points added to atoms of chain.
     */
-    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
     await setAttachmentPoints(
       page,
@@ -115,7 +115,7 @@ test.describe('Attachment Point Tool', () => {
     Description: All four Attachment points added to atoms of chain.
     Undo removes two attachment points and Redo puts them back.
     */
-    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
     await setAttachmentPoints(
       page,
@@ -153,7 +153,7 @@ test.describe('Attachment Point Tool', () => {
     Test case: EPMLSOPKET-1629
     Description: Nothing is changed, the attachment points don't appear.
     */
-    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
     await setAttachmentPoints(
       page,
@@ -179,7 +179,7 @@ test.describe('Attachment Point Tool', () => {
     */
     const clickToOutsideStructureX = 100;
     const clickToOutsideStructureY = 100;
-    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
     await page.mouse.click(clickToOutsideStructureX, clickToOutsideStructureY);
   });
@@ -191,7 +191,7 @@ test.describe('Attachment Point Tool', () => {
     Previously created primary attachment point is changed with secondary attachment point.
     Previously modified attachment point is changed with primary attachment point.
     */
-    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
     await setAttachmentPoints(
       page,
@@ -699,7 +699,7 @@ test.describe('Attachment Point Tool', () => {
     Description: Visualization updates accordingly, displaying 
     the attachment point labels near the curve line.
     */
-    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
     await setAttachmentPoints(
       page,
@@ -724,7 +724,7 @@ test.describe('Attachment Point Tool', () => {
     Description: visualization updates accordingly, 
     removing the attachment point labels near the curve line.
     */
-    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
     await setAttachmentPoints(
       page,
@@ -749,7 +749,7 @@ test.describe('Attachment Point Tool', () => {
     Description:  Visualization no longer displays any 
     attachment point labels near the curve line.
     */
-    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
     await setAttachmentPoints(
       page,

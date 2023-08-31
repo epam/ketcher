@@ -6,6 +6,7 @@ import {
   receiveFileComparisonData,
   openFileAndAddToCanvas,
   saveToFile,
+  waitForIndigoToLoad,
 } from '@utils';
 import { getMolfile } from '@utils/formats';
 
@@ -552,6 +553,7 @@ test('Open V3000 file with R-Groups with Fragments', async ({ page }) => {
 test.describe('', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('');
+    await waitForIndigoToLoad(page);
   });
 
   test.describe('', () => {
@@ -678,136 +680,129 @@ test.describe('', () => {
     }
   });
 
-  test.fixme(
-    'Open and Save files - V3000 mol file contains different Bond properties',
-    async ({ page }) => {
-      /**
-       * Test case: EPMLSOPKET-1853
-       * Description: Structre is correctly generated from Molstring and vise versa molstring is correctly generated from structure.
-       * A file with V3000 format is resaved in V2000 format
-       *
-       * Now we can`t open the file - `Convert error! Cannot deserialize input JSON.`
-       */
+  test.skip('Open and Save files - V3000 mol file contains different Bond properties', async ({
+    page,
+  }) => {
+    /**
+     * Test case: EPMLSOPKET-1853
+     * Description: Structre is correctly generated from Molstring and vise versa molstring is correctly generated from structure.
+     * A file with V3000 format is resaved in V2000 format
+     *
+     * Now we can`t open the file - `Convert error! Cannot deserialize input JSON.`
+     */
 
-      await openFileAndAddToCanvas(
-        'Molfiles-V3000/marvin-bond-properties-V3000(1).mol',
+    await openFileAndAddToCanvas(
+      'Molfiles-V3000/marvin-bond-properties-V3000(1).mol',
+      page,
+    );
+
+    const expectedFile = await getMolfile(page, 'v2000');
+    await saveToFile(
+      'Molfiles-V2000/marvin-bond-properties-V3000-expected.mol',
+      expectedFile,
+    );
+
+    const METADATA_STRING_INDEX = [1];
+    const { fileExpected: molFileExpected, file: molFile } =
+      await receiveFileComparisonData({
         page,
-      );
+        expectedFileName:
+          'tests/test-data/Molfiles-V2000/marvin-bond-properties-V3000-expected.mol',
+        fileFormat: 'v2000',
+        metaDataIndexes: METADATA_STRING_INDEX,
+      });
 
-      const expectedFile = await getMolfile(page, 'v2000');
-      await saveToFile(
-        'Molfiles-V2000/marvin-bond-properties-V3000-expected.mol',
-        expectedFile,
-      );
+    expect(molFile).toEqual(molFileExpected);
+  });
 
-      const METADATA_STRING_INDEX = [1];
-      const { fileExpected: molFileExpected, file: molFile } =
-        await receiveFileComparisonData({
-          page,
-          expectedFileName:
-            'tests/test-data/Molfiles-V2000/marvin-bond-properties-V3000-expected.mol',
-          fileFormat: 'v2000',
-          metaDataIndexes: METADATA_STRING_INDEX,
-        });
-
-      expect(molFile).toEqual(molFileExpected);
-    },
-  );
-
-  test.fixme(
-    'Open and Save file - Open/Save file with S-Groups 1/2 - open',
-    async ({ page }) => {
-      /**
+  test.skip('Open and Save file - Open/Save file with S-Groups 1/2 - open', async ({
+    page,
+  }) => {
+    /**
        * Test case: EPMLSOPKET-1875(1)
        * Description: Structure is correctly generated from Molstring
        * and vise versa molstring is correctly generated from structure.
+      
+      * Now we can`t open the file - `Convert error! Cannot deserialize input JSON.`
        */
 
-      await openFileAndAddToCanvas('Molfiles-V2000/sgroup-different.mol', page);
-      await takeEditorScreenshot(page);
-    },
-  );
+    await openFileAndAddToCanvas('Molfiles-V2000/sgroup-different.mol', page);
+    await takeEditorScreenshot(page);
+  });
 
-  test.fixme(
-    'Open and Save file - Open/Save file with S-Groups 2/2 - save',
-    async ({ page }) => {
-      /**
-       * Test case: EPMLSOPKET-1875(2)
-       * Description: Structure is correctly generated from Molstring
-       * and vise versa molstring is correctly generated from structure.
-       * */
+  test.skip('Open and Save file - Open/Save file with S-Groups 2/2 - save', async ({
+    page,
+  }) => {
+    /**
+     * Test case: EPMLSOPKET-1875(2)
+     * Description: Structure is correctly generated from Molstring
+     * and vise versa molstring is correctly generated from structure.
+     * */
 
-      await openFileAndAddToCanvas('Molfiles-V2000/sgroup-different.mol', page);
-      const expectedFile = await getMolfile(page, 'v2000');
-      await saveToFile(
-        'Molfiles-V2000/sgroup-different-expected.mol',
-        expectedFile,
-      );
+    await openFileAndAddToCanvas('Molfiles-V2000/sgroup-different.mol', page);
+    const expectedFile = await getMolfile(page, 'v2000');
+    await saveToFile(
+      'Molfiles-V2000/sgroup-different-expected.mol',
+      expectedFile,
+    );
 
-      const METADATA_STRING_INDEX = [1];
-      const { fileExpected: molFileExpected, file: molFile } =
-        await receiveFileComparisonData({
-          page,
-          expectedFileName:
-            'tests/test-data/Molfiles-V2000/sgroup-different-expected.mol',
-          fileFormat: 'v2000',
-          metaDataIndexes: METADATA_STRING_INDEX,
-        });
-
-      expect(molFile).toEqual(molFileExpected);
-    },
-  );
-
-  test.fixme(
-    'Open and Save file - Open/Save  V3000 mol file contains Sgroup 1/2 - open',
-    async ({ page }) => {
-      /**
-       * Test case: EPMLSOPKET-1876(1)
-       * Description: Structure is correctly generated from Molstring
-       * and vise versa molstring is correctly generated from structure.
-       * Now it is a bug
-       */
-
-      await openFileAndAddToCanvas(
-        'Molfiles-V3000/sgroup-different-V3000',
+    const METADATA_STRING_INDEX = [1];
+    const { fileExpected: molFileExpected, file: molFile } =
+      await receiveFileComparisonData({
         page,
-      );
-      await takeEditorScreenshot(page);
-    },
-  );
+        expectedFileName:
+          'tests/test-data/Molfiles-V2000/sgroup-different-expected.mol',
+        fileFormat: 'v2000',
+        metaDataIndexes: METADATA_STRING_INDEX,
+      });
 
-  test.fixme(
-    'Open and Save file - Open/Save  V3000 mol file contains Sgroup 2/2 - save',
-    async ({ page }) => {
-      /**
+    expect(molFile).toEqual(molFileExpected);
+  });
+
+  test.skip('Open and Save file - Open/Save  V3000 mol file contains Sgroup 1/2 - open', async ({
+    page,
+  }) => {
+    /**
+     * Test case: EPMLSOPKET-1876(1)
+     * Description: Structure is correctly generated from Molstring
+     * and vise versa molstring is correctly generated from structure.
+     
+    * Now we can`t open the file - `Convert error! Cannot deserialize input JSON.`
+     */
+
+    await openFileAndAddToCanvas('Molfiles-V3000/sgroup-different-V3000', page);
+    await takeEditorScreenshot(page);
+  });
+
+  test.skip('Open and Save file - Open/Save  V3000 mol file contains Sgroup 2/2 - save', async ({
+    page,
+  }) => {
+    /**
        * Test case: EPMLSOPKET-1876(2)
        * Description: A file with V3000 format is resaved in V2000 format.
-       * Now it is a bug
+           
+      * Now we can`t open the file - `Convert error! Cannot deserialize input JSON.`
        * */
 
-      await openFileAndAddToCanvas(
-        'Molfiles-V3000/sgroup-different-V3000',
+    await openFileAndAddToCanvas('Molfiles-V3000/sgroup-different-V3000', page);
+    const expectedFile = await getMolfile(page, 'v2000');
+    await saveToFile(
+      'Molfiles-V2000/sgroup-different-V2000-expected.mol',
+      expectedFile,
+    );
+
+    const METADATA_STRING_INDEX = [1];
+    const { fileExpected: molFileExpected, file: molFile } =
+      await receiveFileComparisonData({
         page,
-      );
-      const expectedFile = await getMolfile(page, 'v2000');
-      await saveToFile(
-        'Molfiles-V2000/sgroup-different-V2000-expected.mol',
-        expectedFile,
-      );
+        expectedFileName:
+          'tests/test-data/Molfiles-V2000/sgroup-different-V2000-expected.mol',
+        fileFormat: 'v2000',
+        metaDataIndexes: METADATA_STRING_INDEX,
+      });
 
-      const METADATA_STRING_INDEX = [1];
-      const { fileExpected: molFileExpected, file: molFile } =
-        await receiveFileComparisonData({
-          page,
-          expectedFileName:
-            'tests/test-data/Molfiles-V2000/sgroup-different-V2000-expected.mol',
-          fileFormat: 'v2000',
-          metaDataIndexes: METADATA_STRING_INDEX,
-        });
-
-      expect(molFile).toEqual(molFileExpected);
-    },
-  );
+    expect(molFile).toEqual(molFileExpected);
+  });
 
   for (let i = 1; i < 9; i++) {
     test(`'Open and Save file - Open/Save files for ferrocen-like structures 1/2 - open ferrocene_radical0${i}.mol`, async ({
@@ -878,53 +873,42 @@ test.describe('', () => {
     expect(isCorrectPadding).toEqual(true);
   });
 
-  test.fixme(
-    'Open and Save file - Open/Save v3000 mol file with assigned Alias 1/2 - open',
-    async ({ page }) => {
-      /**
-       * Test case: EPMLSOPKET-12963(1)
-       * Description: Files opens. Alias is located on the atom to which we assigned it
-       * Now it is a bug
-       */
+  test.skip('Open and Save file - Open/Save v3000 mol file with assigned Alias 1/2 - open', async ({
+    page,
+  }) => {
+    /**
+     * Test case: EPMLSOPKET-12963(1)
+     * Description: Files opens. Alias is located on the atom to which we assigned it
+     * Now it is a bug
+     */
 
-      await openFileAndAddToCanvas(
-        'Molfiles-V3000/mol-12963-to-open.mol',
+    await openFileAndAddToCanvas('Molfiles-V3000/mol-12963-to-open.mol', page);
+    await takeEditorScreenshot(page);
+  });
+
+  test.skip('Open and Save file - Open/Save v3000 mol file with assigned Alias 2/2 - save', async ({
+    page,
+  }) => {
+    /**
+     * Test case: EPMLSOPKET-12963(2)
+     * Description: Files opens. Alias is located on the atom to which we assigned it
+     * Now it is a bug
+     * */
+
+    await openFileAndAddToCanvas('Molfiles-V3000/mol-12963-to-open.mol', page);
+    const expectedFile = await getMolfile(page, 'v3000');
+    await saveToFile('Molfiles-V3000/mol-12963-to-open-expected', expectedFile);
+
+    const METADATA_STRING_INDEX = [1];
+    const { fileExpected: molFileExpected, file: molFile } =
+      await receiveFileComparisonData({
         page,
-      );
-      await takeEditorScreenshot(page);
-    },
-  );
+        expectedFileName:
+          'tests/test-data/Molfiles-V3000/mol-12963-to-open-expected.mol',
+        fileFormat: 'v3000',
+        metaDataIndexes: METADATA_STRING_INDEX,
+      });
 
-  test.fixme(
-    'Open and Save file - Open/Save v3000 mol file with assigned Alias 2/2 - save',
-    async ({ page }) => {
-      /**
-       * Test case: EPMLSOPKET-12963(2)
-       * Description: Files opens. Alias is located on the atom to which we assigned it
-       * Now it is a bug
-       * */
-
-      await openFileAndAddToCanvas(
-        'Molfiles-V3000/mol-12963-to-open.mol',
-        page,
-      );
-      const expectedFile = await getMolfile(page, 'v3000');
-      await saveToFile(
-        'Molfiles-V3000/mol-12963-to-open-expected',
-        expectedFile,
-      );
-
-      const METADATA_STRING_INDEX = [1];
-      const { fileExpected: molFileExpected, file: molFile } =
-        await receiveFileComparisonData({
-          page,
-          expectedFileName:
-            'tests/test-data/Molfiles-V3000/mol-12963-to-open-expected.mol',
-          fileFormat: 'v3000',
-          metaDataIndexes: METADATA_STRING_INDEX,
-        });
-
-      expect(molFile).toEqual(molFileExpected);
-    },
-  );
+    expect(molFile).toEqual(molFileExpected);
+  });
 });

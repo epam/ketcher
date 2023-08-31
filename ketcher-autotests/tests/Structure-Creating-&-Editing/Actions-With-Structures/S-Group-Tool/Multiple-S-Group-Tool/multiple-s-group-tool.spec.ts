@@ -106,7 +106,7 @@ test.describe('Multiple S-Group tool', () => {
   test('Brackets rendering for s-group structure on atoms with 1 attachment point', async ({
     page,
   }) => {
-    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
     await clickOnAtom(page, 'C', 3);
     await page.getByLabel(AttachmentPoint.PRIMARY).check();
@@ -119,7 +119,7 @@ test.describe('Multiple S-Group tool', () => {
   test('Brackets rendering for s-group structure on 1 atom with 2 attachment points', async ({
     page,
   }) => {
-    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
     await clickOnAtom(page, 'C', 3);
     await page.getByLabel(AttachmentPoint.PRIMARY).check();
@@ -133,7 +133,7 @@ test.describe('Multiple S-Group tool', () => {
   test('Brackets rendering for whole s-group structure with 2 atoms with 1 attachment points each', async ({
     page,
   }) => {
-    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
     await clickOnAtom(page, 'C', 3);
     await page.getByLabel(AttachmentPoint.PRIMARY).check();

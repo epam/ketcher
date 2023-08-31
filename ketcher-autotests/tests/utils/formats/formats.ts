@@ -9,6 +9,10 @@ export async function getCml(page: Page) {
   return await page.evaluate(() => window.ketcher.getCml());
 }
 
+export async function getCdxml(page: Page) {
+  return await page.evaluate(() => window.ketcher.getCDXml());
+}
+
 export async function getSmiles(page: Page) {
   return await page.evaluate(() => window.ketcher.getSmiles());
 }

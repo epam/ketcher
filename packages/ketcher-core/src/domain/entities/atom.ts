@@ -21,6 +21,21 @@ import { Elements } from 'domain/constants';
 import { Pile } from './pile';
 import { Struct } from './struct';
 
+/**
+ * Return unions of Pick.
+ * Difference with <Partial<Pick<O,P>>>  that this type always require at least one property
+ *
+ * Example:
+ * interface O {
+ *   field1 : 1;
+ *   field2: 2;
+ *   field3: 3
+ * }
+ * SubsetOfFields<O, 'field1'| 'field2'>
+ * @returns Pick<O, "field1"> | Pick<O, "field2">
+ */
+type SubsetOfFields<O, P extends keyof O> = P extends P ? Pick<O, P> : never;
+
 export enum AttachmentPoints {
   None = 0,
   FirstSideOnly = 1,
@@ -75,6 +90,11 @@ export interface AtomAttributes {
   implicitH?: number;
   implicitHCount?: number | null;
 }
+
+export type AtomPropertiesInContextMenu = SubsetOfFields<
+  AtomAttributes,
+  'hCount' | 'ringBondCount' | 'substitutionCount' | 'unsaturatedAtom'
+>;
 
 export class Atom {
   static PATTERN = {

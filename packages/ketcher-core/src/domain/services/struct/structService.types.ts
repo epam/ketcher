@@ -174,7 +174,7 @@ export interface StructService {
     options?: StructServiceOptions,
   ) => Promise<CalculateResult>;
   recognize: (blob: Blob, version: string) => Promise<RecognizeResult>;
-  generateInchIKey: (struct: string) => Promise<string>;
+  getInChIKey: (struct: string) => Promise<string>;
   generateImageAsBase64: (
     data: string,
     options?: GenerateImageOptions,

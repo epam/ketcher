@@ -19,14 +19,14 @@ export const SugarAvatar = () => (
     <symbol id="sugar" viewBox="0 0 70 70" width="70" height="70">
       <rect width="57" height="57" rx="10" />
     </symbol>
-    <symbol id="sugar-selection" viewBox="0 0 75 75" width="76" height="76">
+    <symbol id="sugar-selection" viewBox="-2 -2 100 100" width="70" height="70">
       <rect
-        width="57"
-        height="57"
-        rx="8.5"
+        width="78"
+        height="78"
+        rx="10"
         fill="none"
         stroke="#0097A8"
-        strokeWidth="3"
+        strokeWidth="5"
       />
     </symbol>
   </>

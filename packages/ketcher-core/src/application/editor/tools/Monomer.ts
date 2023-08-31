@@ -17,6 +17,8 @@ import { Tool } from 'application/editor/tools/Tool';
 import { Peptide } from 'domain/entities/Peptide';
 import { Chem } from 'domain/entities/Chem';
 import { Sugar } from 'domain/entities/Sugar';
+import { Phosphate } from 'domain/entities/Phosphate';
+import { RNABase } from 'domain/entities/RNABase';
 import { Vec2 } from 'domain/entities';
 import { CoreEditor, fromMonomerAddition } from 'application/editor';
 import { BaseMonomerRenderer } from 'application/render/renderers';
@@ -24,7 +26,14 @@ import { MonomerItemType } from 'domain/types';
 import { monomerFactory } from '../operations/monomer/monomerFactory';
 
 class MonomerTool implements Tool {
-  private monomerPreview: Peptide | Chem | Sugar | undefined;
+  private monomerPreview:
+    | Peptide
+    | Chem
+    | Sugar
+    | RNABase
+    | Phosphate
+    | undefined;
+
   private monomerPreviewRenderer: BaseMonomerRenderer | undefined;
   readonly MONOMER_PREVIEW_SCALE_FACTOR = 0.4;
   readonly MONOMER_PREVIEW_OFFSET_X = 8;

@@ -124,7 +124,6 @@ export const RnaAccordion = () => {
   const dispatch = useDispatch();
   const selectItem = (monomer, groupName) => {
     editor.events.selectMonomer.dispatch(monomer);
-    console.log('monomer: ', monomer);
     if (!isEditMode) return;
 
     dispatch(setActivePresetMonomerGroup({ groupName, groupItem: monomer }));

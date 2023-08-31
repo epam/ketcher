@@ -49,7 +49,7 @@ export class CoreEditor {
 
   private subscribeEvents() {
     this.events.selectMonomer.add((monomer) => this.onSelectMonomer(monomer));
-    this.events.selectPreset.add((preset) => this.onSelectPreset(preset));
+    this.events.selectPreset.add((preset) => this.onSelectRNAPreset(preset));
     this.events.selectTool.add((tool) => this.onSelectTool(tool));
   }
 
@@ -57,7 +57,7 @@ export class CoreEditor {
     this.selectTool('monomer', monomer);
   }
 
-  private onSelectPreset(preset: IRnaPreset) {
+  private onSelectRNAPreset(preset: IRnaPreset) {
     this.selectTool('preset', preset);
   }
 

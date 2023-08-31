@@ -70,6 +70,22 @@ export class BaseMonomer extends DrawingEntity {
     return undefined;
   }
 
+  public get R1AttachmentPoint(): AttachmentPointName | undefined {
+    if (this.attachmentPointsToBonds.R1 === null) {
+      return 'R1';
+    }
+
+    return undefined;
+  }
+
+  public get R2AttachmentPoint(): AttachmentPointName | undefined {
+    if (this.attachmentPointsToBonds.R2 === null) {
+      return 'R2';
+    }
+
+    return undefined;
+  }
+
   public get hasFreeAttachmentPoint() {
     return Boolean(this.firstFreeAttachmentPoint);
   }

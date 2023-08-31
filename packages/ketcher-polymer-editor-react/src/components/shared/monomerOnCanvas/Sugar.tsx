@@ -13,15 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { ToolConstructorInterface } from './Tool';
-import { MonomerTool } from 'application/editor/tools/Monomer';
-import { PresetTool } from 'application/editor/tools/Preset';
-import { SelectLasso } from 'application/editor/tools/SelectLasso';
-import { PolymerBond } from 'application/editor/tools/Bond';
 
-export const toolsMap: Record<string, ToolConstructorInterface> = {
-  monomer: MonomerTool,
-  preset: PresetTool,
-  'select-lasso': SelectLasso,
-  'bond-single': PolymerBond,
-};
+export const SugarAvatar = () => (
+  <>
+    <symbol id="sugar" viewBox="0 0 70 70" width="70" height="70">
+      <rect width="57" height="57" rx="10" />
+    </symbol>
+    <symbol id="sugar-selection" viewBox="-2 -2 100 100" width="70" height="70">
+      <rect
+        width="78"
+        height="78"
+        rx="10"
+        fill="none"
+        stroke="#0097A8"
+        strokeWidth="5"
+      />
+    </symbol>
+  </>
+);

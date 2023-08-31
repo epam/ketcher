@@ -13,15 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { ToolConstructorInterface } from './Tool';
-import { MonomerTool } from 'application/editor/tools/Monomer';
-import { PresetTool } from 'application/editor/tools/Preset';
-import { SelectLasso } from 'application/editor/tools/SelectLasso';
-import { PolymerBond } from 'application/editor/tools/Bond';
 
-export const toolsMap: Record<string, ToolConstructorInterface> = {
-  monomer: MonomerTool,
-  preset: PresetTool,
-  'select-lasso': SelectLasso,
-  'bond-single': PolymerBond,
-};
+export const PhosphateAvatar = () => (
+  <>
+    <symbol id="phosphate" viewBox="0 0 70 70" width="70" height="70">
+      <rect width="56" height="56" rx="30" />
+    </symbol>
+    <symbol
+      id="phosphate-selection"
+      viewBox="-2 -2 75 75"
+      width="70"
+      height="70"
+    >
+      <rect
+        width="56"
+        height="56"
+        rx="30"
+        fill="none"
+        stroke="#0097A8"
+        strokeWidth="3"
+      />
+    </symbol>
+  </>
+);

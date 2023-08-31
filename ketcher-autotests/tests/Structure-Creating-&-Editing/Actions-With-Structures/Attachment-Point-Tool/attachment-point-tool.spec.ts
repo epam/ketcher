@@ -26,6 +26,7 @@ import {
   screenshotBetweenUndoRedo,
   setAttachmentPoints,
   AttachmentPoint,
+  openFile,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';

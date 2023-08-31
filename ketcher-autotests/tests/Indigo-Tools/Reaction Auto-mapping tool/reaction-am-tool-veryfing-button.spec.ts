@@ -41,17 +41,19 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
      * Test case: EPMLSOPKET-1801
      * Description: Not possible when the reaction is absent on canvas
      */
+    const point1 = { x: -230, y: 0 };
+    const point2 = { x: 200, y: 0 };
     await selectNestedTool(page, ReactionMappingTool.AUTOMAP);
     await takeEditorScreenshot(page);
     await openFileAndAddToCanvas('four-structures.mol', page);
     await selectNestedTool(page, ReactionMappingTool.AUTOMAP);
     await takeEditorScreenshot(page);
     await selectLeftPanelButton(LeftPanelButton.ReactionPlusTool, page);
-    await clickOnTheCanvas(page, -230, 0);
+    await clickOnTheCanvas(page, point1.x, point1.y);
     await selectNestedTool(page, ReactionMappingTool.AUTOMAP);
     await takeEditorScreenshot(page);
     await selectLeftPanelButton(LeftPanelButton.ArrowOpenAngleTool, page);
-    await clickOnTheCanvas(page, 200, 0);
+    await clickOnTheCanvas(page, point2.x, point2.y);
     await selectNestedTool(page, ReactionMappingTool.AUTOMAP);
   });
 
@@ -60,11 +62,12 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
      * Test case: EPMLSOPKET-1808
      * Description:  UI dialog
      */
-    await openFileAndAddToCanvas('reaction_2.rxn', page);
+    await openFileAndAddToCanvas('rxn/reaction-2.rxn', page);
     await selectNestedTool(page, ReactionMappingTool.AUTOMAP);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Discard');
   });
+
   test.describe('full reaction on canvas', () => {
     /**
      * Test cases: EPMLSOPKET-1809/EPMLSOPKET-1810/EPMLSOPKET-1811
@@ -74,13 +77,15 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
 
     for (const mode of modes) {
       test(`${mode} mode`, async ({ page }) => {
-        await openFileAndAddToCanvas('reaction_3.rxn', page);
+        const point1 = { x: -250, y: 8 };
+        const point2 = { x: -250, y: 55 };
+        await openFileAndAddToCanvas('Rxn/reaction-3.rxn', page);
         await applyAutoMapMode(page, mode);
         await selectTopPanelButton(TopPanelButton.Undo, page);
         await takeEditorScreenshot(page);
         await selectLeftPanelButton(LeftPanelButton.ReactionMappingTool, page);
-        await clickOnTheCanvas(page, -250, 8);
-        await clickOnTheCanvas(page, -250, 55);
+        await clickOnTheCanvas(page, point1.x, point1.y);
+        await clickOnTheCanvas(page, point2.x, point2.y);
         await takeEditorScreenshot(page);
         await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
         await applyAutoMapMode(page, mode, false);
@@ -150,7 +155,7 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
      * Test cases: EPMLSOPKET-1821
      * Description: Clear mode
      */
-    await openFileAndAddToCanvas('reaction_3.rxn', page);
+    await openFileAndAddToCanvas('Rxn/reaction-3.rxn', page);
     await applyAutoMapMode(page, 'Alter');
     await applyAutoMapMode(page, 'Clear');
     await mapTwoAtoms(

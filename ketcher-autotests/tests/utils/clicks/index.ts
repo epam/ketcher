@@ -3,16 +3,13 @@ import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
 import {
   BondType,
-  DELAY_IN_SECONDS,
   ReactionMappingTool,
-  delay,
   resetCurrentTool,
   selectButtonById,
   selectNestedTool,
   takeEditorScreenshot,
 } from '..';
 import { AtomLabelType } from './types';
-// import { AutoMapOptions } from 'ketcher-core';
 
 type BoundingBox = {
   width: number;
@@ -159,7 +156,6 @@ export async function applyAutoMapMode(
   await selectOption(page, mode);
   await selectButtonById('OK', page);
   if (withScreenshot) {
-    await delay(DELAY_IN_SECONDS.ONE);
     await takeEditorScreenshot(page);
   }
 }

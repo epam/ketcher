@@ -13,15 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { ToolConstructorInterface } from './Tool';
-import { MonomerTool } from 'application/editor/tools/Monomer';
-import { PresetTool } from 'application/editor/tools/Preset';
-import { SelectLasso } from 'application/editor/tools/SelectLasso';
-import { PolymerBond } from 'application/editor/tools/Bond';
 
-export const toolsMap: Record<string, ToolConstructorInterface> = {
-  monomer: MonomerTool,
-  preset: PresetTool,
-  'select-lasso': SelectLasso,
-  'bond-single': PolymerBond,
-};
+export const RNABaseAvatar = () => (
+  <>
+    <symbol id="rna-base" viewBox="0 0 65 65" width="65" height="95">
+      <rect
+        width="45"
+        height="45"
+        rx="2"
+        transform-origin="center"
+        transform="rotate(45)"
+      />
+    </symbol>
+    <symbol id="rna-base-selection" viewBox="0 0 65 65" width="65" height="95">
+      <rect
+        width="45"
+        height="45"
+        rx="2"
+        transform-origin="center"
+        transform="rotate(45)"
+        stroke="#0097A8"
+        strokeWidth="3"
+        fill="none"
+      />
+    </symbol>
+  </>
+);

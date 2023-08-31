@@ -16,6 +16,7 @@
 import { EmptyFunction } from 'helpers';
 import { Card } from './styles';
 import { IRnaPresetItemrops } from './types';
+import { getPresetUniqueKey } from 'state/library';
 
 const RnaPresetItem = ({
   preset,
@@ -24,10 +25,10 @@ const RnaPresetItem = ({
 }: IRnaPresetItemrops) => {
   return (
     <Card
+      data-testid={getPresetUniqueKey(preset)}
       onClick={onClick}
       selected={isSelected}
       code={preset.name}
-      data-testid={preset.name}
       data-rna-preset-item-name={preset.name}
     >
       <span>{preset.name}</span>

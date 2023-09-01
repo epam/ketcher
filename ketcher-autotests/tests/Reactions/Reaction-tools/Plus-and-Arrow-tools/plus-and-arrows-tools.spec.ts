@@ -24,10 +24,11 @@ import {
   TopPanelButton,
   Point,
 } from '@utils';
-import { CheckResult } from 'ketcher-core';
 
 const xOffsetFromCenter = -35;
-const idToTitle: CheckResult = {
+const idToTitle: {
+  [key: string]: string;
+} = {
   'reaction-arrow-open-angle': 'Arrow Open Angle Tool',
   'reaction-arrow-filled-triangle': 'Arrow Filled Triangle Tool',
   'reaction-arrow-filled-bow': 'Arrow Filled Bow Tool',
@@ -443,7 +444,7 @@ test.describe('Plus and Arrows tools ', () => {
 
     test('open file', async ({ page }) => {
       await openFileAndAddToCanvas(
-        'default-reaction-arrow-tool-saving.ket',
+        'Ket/default-reaction-arrow-tool-saving.ket',
         page,
       );
     });
@@ -466,7 +467,7 @@ test.describe('Plus and Arrows tools ', () => {
 
     test('open file', async ({ page }) => {
       await openFileAndAddToCanvas(
-        'non-default-reaction-arrow-tool-saving.ket',
+        'Ket/non-default-reaction-arrow-tool-saving.ket',
         page,
       );
     });

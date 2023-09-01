@@ -24,7 +24,7 @@ test.describe('Reagents molecule below arrow', () => {
       Description: File opens with the reagent HCl below the arrow
     */
       await openFileAndAddToCanvas(
-        'benzene-arrow-benzene-reagent-hcl.rxn',
+        'Rxn-V3000/benzene-arrow-benzene-reagent-hcl.rxn',
         page,
       );
     },
@@ -39,7 +39,7 @@ test.describe('Reagents molecule below arrow', () => {
       Description: File opens with the reagent HCl below the arrow
     */
       await openFileAndAddToCanvas(
-        'benzene-arrow-benzene-reagent-hcl.cdxml',
+        'CDXML/benzene-arrow-benzene-reagent-hcl.cdxml',
         page,
       );
     },

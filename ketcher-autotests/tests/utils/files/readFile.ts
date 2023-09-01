@@ -133,9 +133,9 @@ export async function saveToFile(filename: string, data: string) {
 }
 /*
 Example of usage:
-await openFileAndAddToCanvas('Ket/benzene-arrow-benzene-reagent-hcl.ket', page);
+await openFileAndAddToCanvas('KET/benzene-arrow-benzene-reagent-hcl.ket', page);
 const rxnFile = await getRxn(page, 'v3000');
-await saveToFile('benzene-arrow-benzene-reagent-hcl.rxn', rxnFile); */
+await saveToFile('Rxn-V3000/benzene-arrow-benzene-reagent-hcl.rxn', rxnFile); */
 export async function pasteFromClipboard(page: Page, fillValue: string) {
   await page.getByRole('dialog').getByRole('textbox').fill(fillValue);
 }

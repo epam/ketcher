@@ -308,7 +308,10 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-1594
       Description: The saved *.mol file is opened and can be edited.
     */
-    await openFileAndAddToCanvas('benzene-with-three-atoms.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/benzene-with-three-atoms.mol',
+      page,
+    );
 
     await doubleClickOnAtom(page, 'N', 0);
 
@@ -328,16 +331,22 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-1594
       Description: The structure is saved as *.mol file.
     */
-    await openFileAndAddToCanvas('benzene-with-three-atoms.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/benzene-with-three-atoms.mol',
+      page,
+    );
     const expectedFile = await getMolfile(page, 'v2000');
-    await saveToFile('benzene-with-three-atoms-expected.mol', expectedFile);
+    await saveToFile(
+      'Molfiles-V2000/benzene-with-three-atoms-expected.mol',
+      expectedFile,
+    );
 
     const METADATA_STRING_INDEX = [1];
     const { fileExpected: molFileExpected, file: molFile } =
       await receiveFileComparisonData({
         page,
         expectedFileName:
-          'tests/test-data/benzene-with-three-atoms-expected.mol',
+          'tests/test-data/Molfiles-V2000/benzene-with-three-atoms-expected.mol',
         fileFormat: 'v2000',
         metaDataIndexes: METADATA_STRING_INDEX,
       });
@@ -367,7 +376,10 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-1596
       Description: The appeared symbol is colored with the same color as in Periodic Table and added to two different rings.
     */
-    await openFileAndAddToCanvas('benzene-and-cyclopentadiene.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/benzene-and-cyclopentadiene.mol',
+      page,
+    );
     await page.keyboard.down('Shift');
     await clickOnAtom(page, 'N', 0);
 
@@ -386,16 +398,22 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-1596
       Description: The structure is saved as *.mol file.
     */
-    await openFileAndAddToCanvas('benzene-and-cyclopentadiene.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/benzene-and-cyclopentadiene.mol',
+      page,
+    );
     const expectedFile = await getMolfile(page, 'v2000');
-    await saveToFile('benzene-and-cyclopentadiene-expected.mol', expectedFile);
+    await saveToFile(
+      'Molfiles-V2000/benzene-and-cyclopentadiene-expected.mol',
+      expectedFile,
+    );
 
     const METADATA_STRING_INDEX = [1];
     const { fileExpected: molFileExpected, file: molFile } =
       await receiveFileComparisonData({
         page,
         expectedFileName:
-          'tests/test-data/benzene-and-cyclopentadiene-expected.mol',
+          'tests/test-data/Molfiles-V2000/benzene-and-cyclopentadiene-expected.mol',
         fileFormat: 'v2000',
         metaDataIndexes: METADATA_STRING_INDEX,
       });
@@ -441,7 +459,10 @@ test.describe('Atom Properties', () => {
       The 'Alias' field contains the correct edited text.
       The correct edited alias 'TesREasd!@' and Label ('Sb' for our example) appears for the edited atom.
     */
-    await openFileAndAddToCanvas('benzene-ring-with-alias.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/benzene-ring-with-alias.mol',
+      page,
+    );
 
     await doubleClickOnAtom(page, 'C', 0);
 
@@ -509,15 +530,22 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-1606
       Description: The structure is saved as *.mol file.
     */
-    await openFileAndAddToCanvas('benzene-with-charge.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/benzene-with-charge.mol',
+      page,
+    );
     const expectedFile = await getMolfile(page, 'v2000');
-    await saveToFile('benzene-with-charge-expected.mol', expectedFile);
+    await saveToFile(
+      'Molfiles-V2000/benzene-with-charge-expected.mol',
+      expectedFile,
+    );
 
     const METADATA_STRING_INDEX = [1];
     const { fileExpected: molFileExpected, file: molFile } =
       await receiveFileComparisonData({
         page,
-        expectedFileName: 'tests/test-data/benzene-with-charge-expected.mol',
+        expectedFileName:
+          'tests/test-data/Molfiles-V2000/benzene-with-charge-expected.mol',
         fileFormat: 'v2000',
         metaDataIndexes: METADATA_STRING_INDEX,
       });

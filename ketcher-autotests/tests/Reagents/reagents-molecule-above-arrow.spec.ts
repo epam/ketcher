@@ -25,7 +25,7 @@ test.describe('Reagents molecule above arrow', () => {
       Description: File opens with the reagent NH3 on top of the arrow
     */
       await openFileAndAddToCanvas(
-        'benzene-arrow-benzene-reagent-nh3.rxn',
+        'Rxn-V3000/benzene-arrow-benzene-reagent-nh3.rxn',
         page,
       );
     },
@@ -37,7 +37,7 @@ test.describe('Reagents molecule above arrow', () => {
       Description: File opens with the reagent NH3 on top of the arrow
     */
     await openFileAndAddToCanvas(
-      'benzene-arrow-benzene-reagent-nh3.cdxml',
+      'CDXML/benzene-arrow-benzene-reagent-nh3.cdxml',
       page,
     );
   });

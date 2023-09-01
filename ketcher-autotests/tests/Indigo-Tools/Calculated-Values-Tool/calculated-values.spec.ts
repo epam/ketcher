@@ -184,7 +184,7 @@ test.describe('Calculated Values Tools', () => {
     Description: Calculation of exact mass for the reaction
     should be correct: '[78.047] > [155.957]'.
     */
-    await openFileAndAddToCanvas('benzene-bromination.rxn', page);
+    await openFileAndAddToCanvas('Rxn-V2000/benzene-bromination.rxn', page);
     await selectTopPanelButton(TopPanelButton.Calculated, page);
   });
 

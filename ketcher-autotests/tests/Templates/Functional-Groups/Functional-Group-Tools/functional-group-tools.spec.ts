@@ -468,7 +468,7 @@ test.describe('Templates - Functional Group Tools2', () => {
     Test case: EPMLSOPKET-2917
     Description: Functional Group is expanded on a Benzene ring. No overlapping.
    */
-    await openFileAndAddToCanvas('benzene-bond-fg.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/benzene-bond-fg.mol', page);
     await page.getByText('Boc').click({ button: 'right' });
     await page.getByText('Expand Abbreviation').click();
   });
@@ -497,7 +497,10 @@ test.describe('Templates - Functional Group Tools2', () => {
       y2: 360,
     };
 
-    await openFileAndAddToCanvas('benzene-with-two-bonds.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/benzene-with-two-bonds.mol',
+      page,
+    );
     await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
     await page.getByRole('tab', { name: 'Functional Groups' }).click();
     await selectFunctionalGroups(FunctionalGroups.CO2Et, page);
@@ -517,7 +520,7 @@ test.describe('Templates - Functional Group Tools2', () => {
     Test case: EPMLSOPKET-8927
     Description: The Functional Group is added to all bonds without errors and distortions
    */
-    await openFileAndAddToCanvas('benzene-with-bonds.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/benzene-with-bonds.mol', page);
     await clickInTheMiddleOfTheScreen(page);
     await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
     await page.getByRole('tab', { name: 'Functional Groups' }).click();

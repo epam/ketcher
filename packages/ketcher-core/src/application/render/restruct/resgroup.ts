@@ -329,7 +329,13 @@ function SGroupdrawBrackets({
     );
     set.push(indexPath);
   }
-  if (lowerIndexText) renderIndex(lowerIndexText, 0.5);
+  if (lowerIndexText) {
+    if (isBracketContainAttachment) {
+      renderIndex(lowerIndexText, 0.2);
+    } else {
+      renderIndex(lowerIndexText, 0.5);
+    }
+  }
   if (upperIndexText) renderIndex(upperIndexText, -0.5);
 }
 
@@ -553,26 +559,29 @@ function getBracketParameters(
           bondDirection = i === 0 ? bondDirection : bondDirection.negated();
           bracketDirection =
             i === 0
-              ? bondDirection.rotateSC(1, 0)
-              : bondDirection.rotateSC(1, 0).negated();
+              ? bondDirection.rotateSC(1, 0).negated()
+              : bondDirection.rotateSC(1, 0);
           bracketAngleDirection = bondDirection;
         } else {
+          attachmentPoints = attachmentPoints.sort(
+            (point1, point2) => point1 - point2,
+          );
           // if there are 2 attachment points then make brackets parallel to attachments
           attachmentDirection = render.ctab.rgroupAttachmentPoints.get(
             attachmentPoints[i],
           )!.lineDirectionVector;
-          bracketDirection = attachmentDirection;
+          bracketDirection = attachmentDirection.negated();
           bracketAngleDirection =
             i === 0
-              ? bracketDirection.rotateSC(1, 0).negated()
-              : bracketDirection.rotateSC(1, 0);
+              ? bracketDirection.rotateSC(1, 0)
+              : bracketDirection.rotateSC(1, 0).negated();
         }
         brackets.push(
           new BracketParams(
             bond.getCenter(mol),
             bracketAngleDirection,
             0.2,
-            attachmentPoints.length ? 1.8 : bracketBox.sz().y,
+            attachmentPoints.length ? 1.8 : 1.0,
             bracketDirection,
           ),
         );

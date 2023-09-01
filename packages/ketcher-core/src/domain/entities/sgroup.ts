@@ -467,6 +467,7 @@ export class SGroup {
     remol?: ReStruct,
     render?,
   ): void {
+    const BORDER_EXT = new Vec2(0.05 * 3, 0.05 * 3);
     const PADDING_VECTOR = new Vec2(0.2, 0.4);
     const atoms = sGroup.atoms;
     const crossBonds = crossBondsPerAtom
@@ -501,12 +502,15 @@ export class SGroup {
       if (structBoundingBox) {
         sGroupBoundingBox = sGroupBoundingBox
           ? Box2Abs.union(sGroupBoundingBox, structBoundingBox)
-          : structBoundingBox;
+          : structBoundingBox.extend(BORDER_EXT, BORDER_EXT);
       }
     });
     if (!render) render = window.ketcher!.editor.render;
-    const attachmentPointsVBox =
+    let attachmentPointsVBox =
       render.ctab.getRGroupAttachmentPointsVBoxByAtomIds(atoms);
+    attachmentPointsVBox = attachmentPointsVBox
+      ? attachmentPointsVBox.extend(BORDER_EXT, BORDER_EXT)
+      : attachmentPointsVBox;
     braketBox =
       attachmentPointsVBox && sGroupBoundingBox
         ? Box2Abs.union(sGroupBoundingBox, attachmentPointsVBox)

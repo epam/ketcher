@@ -512,7 +512,7 @@ class Editor implements KetcherEditor {
           this.historyStack.shift();
         }
         this.historyPtr = this.historyStack.length;
-        this.event.change.dispatch(action); // TODO: stoppable here
+        this.event.change.dispatch({ action }); // TODO: stoppable here
       }
       this.render.update(false, null, options);
     }
@@ -525,7 +525,11 @@ class Editor implements KetcherEditor {
     };
   }
 
-  undo() {
+  private async resolveDispatch() {
+    return new Promise((resolve) => setTimeout(resolve, 0));
+  }
+
+  async undo() {
     if (this.historyPtr === 0) {
       throw new Error('Undo stack is empty');
     }
@@ -536,8 +540,10 @@ class Editor implements KetcherEditor {
     this.selection(null);
 
     if (this._tool instanceof toolsMap.paste) {
-      this.event.change.dispatch();
+      this.event.change.dispatch({ isUndoOrRedo: true });
     }
+
+    await this.resolveDispatch();
 
     this._tool?.updatePreview?.();
 
@@ -546,11 +552,11 @@ class Editor implements KetcherEditor {
     const action = stack.perform(this.render.ctab);
 
     this.historyStack[this.historyPtr] = action;
-    this.event.change.dispatch(action);
+    this.event.change.dispatch({ action, isUndoOrRedo: true });
     this.render.update();
   }
 
-  redo() {
+  async redo() {
     if (this.historyPtr === this.historyStack.length) {
       throw new Error('Redo stack is empty');
     }
@@ -562,15 +568,17 @@ class Editor implements KetcherEditor {
     this.selection(null);
 
     if (this._tool instanceof toolsMap.paste) {
-      this.event.change.dispatch();
+      this.event.change.dispatch({ isUndoOrRedo: true });
     }
+
+    await this.resolveDispatch();
 
     this._tool?.updatePreview?.();
 
     const action = this.historyStack[this.historyPtr].perform(this.render.ctab);
     this.historyStack[this.historyPtr] = action;
     this.historyPtr++;
-    this.event.change.dispatch(action);
+    this.event.change.dispatch({ action, isUndoOrRedo: true });
     this.render.update();
   }
 

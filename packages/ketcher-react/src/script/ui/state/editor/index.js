@@ -46,23 +46,37 @@ export default function initEditor(dispatch, getState) {
     // eslint-disable-line no-shadow
     const state = global.currentState;
     const activeTool = state.actionState.activeTool.tool;
-    if (activeTool === 'select') return;
+
+    if (activeTool === 'select') {
+      return;
+    }
+
     const selectMode = state.toolbar.visibleTools.select;
     const resetOption = state.options.settings.resetToSelect;
-    if (resetOption === true || resetOption === activeTool)
+
+    if (resetOption === true || resetOption === activeTool) {
       // example: 'paste'
       dispatch({ type: 'ACTION', action: acts[selectMode].action });
-    else updateAction();
+    } else {
+      updateAction();
+    }
   }
 
   return {
     onInit: (editor) => {
       dispatch({ type: 'INIT', editor });
     },
-    onChange: (action) => {
-      if (action === undefined) sleep(0).then(() => dispatch(resetToSelect));
+    onChange: ({ action, isUndoOrRedo }) => {
+      if (!action) {
+        return;
+      }
+
+      if (isUndoOrRedo) {
+        return updateAction();
+      }
+
       // new tool in reducer
-      else dispatch(resetToSelect);
+      dispatch(resetToSelect);
     },
     onSelectionChange: () => {
       updateAction();

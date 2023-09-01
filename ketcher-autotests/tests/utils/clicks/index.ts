@@ -1,7 +1,14 @@
 import { Page } from '@playwright/test';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
-import { BondType } from '..';
+import {
+  BondType,
+  ReactionMappingTool,
+  resetCurrentTool,
+  selectButtonById,
+  selectNestedTool,
+  takeEditorScreenshot,
+} from '..';
 import { AtomLabelType } from './types';
 
 type BoundingBox = {
@@ -136,4 +143,19 @@ export async function moveOnBond(
 ) {
   const point = await getBondByIndex(page, { type: bondType }, bondNumber);
   await page.mouse.move(point.x, point.y);
+}
+
+export async function applyAutoMapMode(
+  page: Page,
+  mode: string,
+  withScreenshot = true,
+) {
+  await resetCurrentTool(page);
+  await selectNestedTool(page, ReactionMappingTool.AUTOMAP);
+  await pressButton(page, 'Discard');
+  await selectOption(page, mode);
+  await selectButtonById('OK', page);
+  if (withScreenshot) {
+    await takeEditorScreenshot(page);
+  }
 }

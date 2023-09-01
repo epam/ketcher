@@ -175,7 +175,7 @@ test.describe('Plus and Arrows tools ', () => {
      */
     let point: Point;
     test.beforeEach(async ({ page }) => {
-      await openFileAndAddToCanvas('reaction_3.rxn', page);
+      await openFileAndAddToCanvas('Rxn/reaction-3.rxn', page);
       await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
       point = await getCoordinatesOfTheMiddleOfTheScreen(page);
     });
@@ -243,7 +243,7 @@ test.describe('Plus and Arrows tools ', () => {
      */
     let point: Point;
     test.beforeEach(async ({ page }) => {
-      await openFileAndAddToCanvas('reaction_3.rxn', page);
+      await openFileAndAddToCanvas('Rxn/reaction-3.rxn', page);
       await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
       point = await getCoordinatesOfTheMiddleOfTheScreen(page);
     });

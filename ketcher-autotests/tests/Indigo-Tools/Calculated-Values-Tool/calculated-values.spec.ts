@@ -32,7 +32,7 @@ test.describe('Calculated Values Tools', () => {
     Description: The 'Calculated Values' modal window is opened,
     the 'Chemical Formula' field contains 'C7H16' value.
     */
-    await openFileAndAddToCanvas('calculated-values-chain.ket', page);
+    await openFileAndAddToCanvas('Ket/calculated-values-chain.ket', page);
     await selectTopPanelButton(TopPanelButton.Calculated, page);
   });
 
@@ -615,7 +615,7 @@ test.describe('Calculated Values Tools', () => {
     */
     const xDelta = 500;
     const yDelta = 800;
-    await openFileAndAddToCanvas('reaction-arrow.ket', page);
+    await openFileAndAddToCanvas('Ket/reaction-arrow.ket', page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(x - xDelta, y + yDelta, page);
     await selectTopPanelButton(TopPanelButton.Calculated, page);

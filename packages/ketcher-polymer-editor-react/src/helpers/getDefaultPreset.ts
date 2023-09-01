@@ -27,9 +27,9 @@ export const getDefaultPresets = (
   if (ribose && phosphate) {
     presets = defaultBases.map((base) => {
       const nucleotide: IRnaPreset = {
-        base,
-        sugar: ribose,
-        phosphate,
+        base: { ...base, label: base.props.MonomerName },
+        sugar: { ...ribose, label: ribose.props.MonomerName },
+        phosphate: { ...phosphate, label: phosphate.props.MonomerName },
         name: base.props.MonomerName,
       };
       return nucleotide;

@@ -41,7 +41,10 @@ test.describe('Reagents molecule below arrow', () => {
       Test case: EPMLSOPKET-4701
       Description: File is shown in the preview with the HCl reagent below the arrow
     */
-    await openFileAndAddToCanvas('benzene-arrow-benzene-reagent-hcl.ket', page);
+    await openFileAndAddToCanvas(
+      'Ket/benzene-arrow-benzene-reagent-hcl.ket',
+      page,
+    );
     await selectTopPanelButton(TopPanelButton.Save, page);
     await page.getByRole('button', { name: 'MDL Rxnfile V2000' }).click();
     await page.getByRole('option', { name: 'SVG Document' }).click();
@@ -52,7 +55,10 @@ test.describe('Reagents molecule below arrow', () => {
       Test case: EPMLSOPKET-4698
       Description: File is shown in the preview with the HCl reagent below the arrow
     */
-    await openFileAndAddToCanvas('benzene-arrow-benzene-reagent-hcl.ket', page);
+    await openFileAndAddToCanvas(
+      'Ket/benzene-arrow-benzene-reagent-hcl.ket',
+      page,
+    );
 
     await selectTopPanelButton(TopPanelButton.Save, page);
     await page.getByRole('button', { name: 'MDL Rxnfile V2000' }).click();

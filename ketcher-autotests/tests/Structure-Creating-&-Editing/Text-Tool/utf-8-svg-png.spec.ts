@@ -20,7 +20,7 @@ test.describe('Open UTF-8 and save as SVG and PNG', () => {
     Test case: EPMLSOPKET-5252
     Description: A file with UTF-8 encoding opens and, when saved in a SVG preview, contains all characters
   */
-    await openFileAndAddToCanvas('utf-8-svg-png.ket', page);
+    await openFileAndAddToCanvas('Ket/utf-8-svg-png.ket', page);
     await delay(DELAY_IN_SECONDS.THREE);
     await selectTopPanelButton(TopPanelButton.Save, page);
     await page.getByRole('button', { name: 'MDL Rxnfile V2000' }).click();
@@ -34,7 +34,7 @@ test.describe('Open UTF-8 and save as SVG and PNG', () => {
     Test case: EPMLSOPKET-5252
     Description: A file with UTF-8 encoding opens and, when saved in a PNG preview, contains all characters
   */
-    await openFileAndAddToCanvas('utf-8-svg-png.ket', page);
+    await openFileAndAddToCanvas('Ket/utf-8-svg-png.ket', page);
 
     await delay(DELAY_IN_SECONDS.THREE);
     await selectTopPanelButton(TopPanelButton.Save, page);

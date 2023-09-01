@@ -43,7 +43,10 @@ test.describe('Reagents molecule above arrow', () => {
       Test case: EPMLSOPKET-4701
       Description: File is shown in the preview with the NH3 reagent above the arrow
     */
-    await openFileAndAddToCanvas('benzene-arrow-benzene-reagent-nh3.ket', page);
+    await openFileAndAddToCanvas(
+      'Ket/benzene-arrow-benzene-reagent-nh3.ket',
+      page,
+    );
 
     await delay(DELAY_IN_SECONDS.THREE);
     await selectTopPanelButton(TopPanelButton.Save, page);
@@ -56,7 +59,10 @@ test.describe('Reagents molecule above arrow', () => {
       Test case: EPMLSOPKET-4698
       Description: File is shown in the preview with the NH3 reagent above the arrow
     */
-    await openFileAndAddToCanvas('benzene-arrow-benzene-reagent-nh3.ket', page);
+    await openFileAndAddToCanvas(
+      'Ket/benzene-arrow-benzene-reagent-nh3.ket',
+      page,
+    );
     await selectTopPanelButton(TopPanelButton.Save, page);
     await page.getByRole('button', { name: 'MDL Rxnfile V2000' }).click();
     await page.getByRole('option', { name: 'PNG Image' }).click();

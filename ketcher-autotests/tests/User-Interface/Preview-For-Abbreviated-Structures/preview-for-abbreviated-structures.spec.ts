@@ -70,7 +70,7 @@ test.describe('Preview for abbreviated structures: functional groups', () => {
     await takeEditorScreenshot(page);
   });
 
-  test.only('Should remove preview when context menu is shown after right click', async ({
+  test('Should remove preview when context menu is shown after right click', async ({
     page,
   }) => {
     await selectFunctionalGroup(page);

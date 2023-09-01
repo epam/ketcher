@@ -81,8 +81,6 @@ test.describe('Charge tool', () => {
     await moveOnAtom(page, 'C', anyAtom);
     await page.keyboard.press('Shift++');
     await page.mouse.move(x, y);
-    await delay(DELAY_IN_SECONDS.TWO);
-    // the delay is needed here so that the lookup abbreviations menu is not appears
     await page.keyboard.press('Shift++');
   });
 
@@ -101,8 +99,6 @@ test.describe('Charge tool', () => {
     await moveOnAtom(page, 'C', anyAtom);
     await page.keyboard.press('-');
     await page.mouse.move(x, y);
-    await delay(DELAY_IN_SECONDS.TWO);
-    // the delay is needed here so that the lookup abbreviations menu is not appears
     await page.keyboard.press('-');
   });
 });

@@ -54,7 +54,7 @@ test.describe('Reagents CDXML format', () => {
     Description: System detect molecule NH3 above arrow as reagent and write reagent in 'CDXML' format in "Preview" tab
     */
       await openFileAndAddToCanvas(
-        'benzene-arrow-benzene-reagent-nh3.ket',
+        'Ket/benzene-arrow-benzene-reagent-nh3.ket',
         page,
       );
 
@@ -78,7 +78,7 @@ test.describe('Reagents CDXML format', () => {
     Description: System detect molecule HCl below arrow as reagent and write reagent in 'CDXML' format in "Preview" tab
     */
       await openFileAndAddToCanvas(
-        'benzene-arrow-benzene-reagent-hcl.ket',
+        'Ket/benzene-arrow-benzene-reagent-hcl.ket',
         page,
       );
       await delay(DELAY_IN_SECONDS.THREE);
@@ -102,7 +102,10 @@ test.describe('Reagents CDXML format', () => {
     Test case: EPMLSOPKET-4720
     Description: System detect text NH3 as reagent and write reagent in 'CDXML' format in "Preview" tab
     */
-      await openFileAndAddToCanvas('reagent-nh3-text-above-arrow.ket', page);
+      await openFileAndAddToCanvas(
+        'Ket/reagent-nh3-text-above-arrow.ket',
+        page,
+      );
       await delay(DELAY_IN_SECONDS.THREE);
 
       const cdxmlResult = await request.post(`${API_INDIGO_URL}/convert`, {
@@ -124,7 +127,10 @@ test.describe('Reagents CDXML format', () => {
     Test case: EPMLSOPKET-4720
     Description: System detect text HCl below arrow as reagent and write reagent in 'CDXML' format in "Preview" tab
     */
-      await openFileAndAddToCanvas('reagent-hcl-text-below-arrow.ket', page);
+      await openFileAndAddToCanvas(
+        'Ket/reagent-hcl-text-below-arrow.ket',
+        page,
+      );
       await delay(DELAY_IN_SECONDS.THREE);
 
       const cdxmlResult = await request.post(`${API_INDIGO_URL}/convert`, {
@@ -143,7 +149,10 @@ test.describe('Reagents CDXML format', () => {
     Test case: EPMLSOPKET-4721
     Description: File saved in format (e.g. "ketcher.cdxml")
     */
-    await openFileAndAddToCanvas('benzene-arrow-benzene-reagent-nh3.ket', page);
+    await openFileAndAddToCanvas(
+      'Ket/benzene-arrow-benzene-reagent-nh3.ket',
+      page,
+    );
     await delay(DELAY_IN_SECONDS.THREE);
 
     const cdxmlResult = await request.post(`${API_INDIGO_URL}/convert`, {
@@ -173,7 +182,10 @@ test.describe('Reagents CDXML format', () => {
       Test case: EPMLSOPKET-4723
       Description: File opens with the reagent NH3 on top of the arrow
     */
-    await openFileAndAddToCanvas('benzene-arrow-benzene-reagent-nh3.ket', page);
+    await openFileAndAddToCanvas(
+      'Ket/benzene-arrow-benzene-reagent-nh3.ket',
+      page,
+    );
   });
 
   test('Open File CDXML with reagent HCl below arrow', async ({ page }) => {
@@ -181,7 +193,10 @@ test.describe('Reagents CDXML format', () => {
       Test case: EPMLSOPKET-4723
       Description: File opens with the reagent HCl below the arrow
     */
-    await openFileAndAddToCanvas('benzene-arrow-benzene-reagent-hcl.ket', page);
+    await openFileAndAddToCanvas(
+      'Ket/benzene-arrow-benzene-reagent-hcl.ket',
+      page,
+    );
   });
 
   test('Open File CDXML with molecules above and below one arrow', async ({

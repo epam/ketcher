@@ -52,7 +52,7 @@ test.describe('Reagents molecule below arrow', () => {
       Description: File is shown in the preview with the HCl reagent below the arrow
     */
     await openFileAndAddToCanvas(
-      'Ket/benzene-arrow-benzene-reagent-hcl.ket',
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
     await selectTopPanelButton(TopPanelButton.Save, page);
@@ -67,7 +67,7 @@ test.describe('Reagents molecule below arrow', () => {
       Description: File is shown in the preview with the HCl reagent below the arrow
     */
     await openFileAndAddToCanvas(
-      'Ket/benzene-arrow-benzene-reagent-hcl.ket',
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
 

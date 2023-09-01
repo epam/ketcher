@@ -61,7 +61,7 @@ test.describe('Reagents SMILES format', () => {
     where specifying reactant, agent and product molecule(s) separated by the "greater-than" symbol ('>').
     */
     await openFileAndAddToCanvas(
-      'Ket/benzene-arrow-benzene-reagent-nh3.ket',
+      'KET/benzene-arrow-benzene-reagent-nh3.ket',
       page,
     );
 
@@ -106,7 +106,7 @@ test.describe('Reagents SMILES format', () => {
     where specifying reactant, agent and product molecule(s) separated by the "greater-than" symbol ('>').
     */
     await openFileAndAddToCanvas(
-      'Ket/benzene-arrow-benzene-reagent-nh3.ket',
+      'KET/benzene-arrow-benzene-reagent-nh3.ket',
       page,
     );
 
@@ -189,7 +189,7 @@ test.describe('Reagents SMILES format', () => {
     Description: File saved in format (e.g. "ketcher.smi")
     */
     await openFileAndAddToCanvas(
-      'Ket/benzene-arrow-benzene-reagent-nh3.ket',
+      'KET/benzene-arrow-benzene-reagent-nh3.ket',
       page,
     );
 
@@ -208,7 +208,7 @@ test.describe('Reagents SMILES format', () => {
     Description: File saved in format (e.g. "ketcher.cxsmi")
     */
     await openFileAndAddToCanvas(
-      'Ket/benzene-arrow-benzene-reagent-hcl.ket',
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
 

@@ -44,7 +44,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     Test case: EPMLSOPKET-1886
     Description: The structure isn`t changed.
     */
-    await openFileAndAddToCanvas('chain.ket', page);
+    await openFileAndAddToCanvas('Ket/chain.ket', page);
     await selectTopPanelButton(TopPanelButton.Calculate, page);
   });
 
@@ -222,7 +222,10 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     Stereo labels disappear after 'Aromatize' action.
     'Undo' action leads to previous structure with stereo labels.
     */
-    await openFileAndAddToCanvas('aromatic-with-stereolabels.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/aromatic-with-stereolabels.mol',
+      page,
+    );
     await selectTopPanelButton(TopPanelButton.Calculate, page);
     await takeEditorScreenshot(page);
 
@@ -352,13 +355,16 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     */
     await openFileAndAddToCanvas('structure-with-stereo-bonds.mol', page);
     const expectedFile = await getKet(page);
-    await saveToFile('structure-with-stereo-bonds-expected.ket', expectedFile);
+    await saveToFile(
+      'Ket/structure-with-stereo-bonds-expected.ket',
+      expectedFile,
+    );
     await selectTopPanelButton(TopPanelButton.Calculate, page);
     const { file: ketFile, fileExpected: ketFileExpected } =
       await receiveFileComparisonData({
         page,
         expectedFileName:
-          'tests/test-data/structure-with-stereo-bonds-expected.ket',
+          'tests/test-data/Ket/structure-with-stereo-bonds-expected.ket',
       });
 
     expect(ketFile).toEqual(ketFileExpected);

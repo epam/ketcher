@@ -110,6 +110,8 @@ export type CalculateResult = Record<CalculateProps, string | number | boolean>;
 
 export type AutomapMode = 'discard' | 'keep' | 'alter' | 'clear';
 
+export type AutoMapOptions = 'Discard' | 'Keep' | 'Alter' | 'Clear';
+
 export interface AutomapData extends WithStruct, WithOutputFormat {
   mode: AutomapMode;
 }
@@ -174,7 +176,7 @@ export interface StructService {
     options?: StructServiceOptions,
   ) => Promise<CalculateResult>;
   recognize: (blob: Blob, version: string) => Promise<RecognizeResult>;
-  generateInchIKey: (struct: string) => Promise<string>;
+  getInChIKey: (struct: string) => Promise<string>;
   generateImageAsBase64: (
     data: string,
     options?: GenerateImageOptions,

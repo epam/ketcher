@@ -18,6 +18,14 @@ interface ToolEventHandler {
   mouseover?(event: Event): void;
 }
 
+export interface IRnaPreset {
+  name?: string;
+  base?: MonomerItemType;
+  sugar?: MonomerItemType;
+  phosphate?: MonomerItemType;
+  presetInList?: IRnaPreset;
+}
+
 export interface Tool extends ToolEventHandler {
   cancel?(): void;
 
@@ -26,9 +34,10 @@ export interface Tool extends ToolEventHandler {
   isNotActiveTool?: boolean;
 }
 
-export type PeptideToolOptions = MonomerItemType;
-
-export type ToolOptions = PeptideToolOptions;
+// export type ToolOptions = MonomerItemType;
+// !todo
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type ToolOptions = any;
 
 export type ToolConstructorInterface = {
   new (editor, ...args: ToolOptions[]): Tool;

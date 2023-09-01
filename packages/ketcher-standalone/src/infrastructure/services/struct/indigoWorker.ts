@@ -231,14 +231,14 @@ self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
       break;
     }
 
-    case Command.GenerateInchIKey: {
+    case Command.GetInChIKey: {
       const data: GenerateInchIKeyCommandData =
         message.data as GenerateInchIKeyCommandData;
       handle(
         (indigo, indigoOptions) =>
           indigo.convert(data.struct, 'inchi-key', indigoOptions),
         undefined,
-        Command.GenerateInchIKey,
+        Command.GetInChIKey,
       );
       break;
     }

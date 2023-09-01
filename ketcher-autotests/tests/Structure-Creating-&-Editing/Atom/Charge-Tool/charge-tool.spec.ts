@@ -11,8 +11,6 @@ import {
   selectLeftPanelButton,
   LeftPanelButton,
   clickOnAtom,
-  delay,
-  DELAY_IN_SECONDS,
 } from '@utils';
 
 test.describe('Charge tool', () => {

@@ -14,7 +14,7 @@ test.describe('Erase Tool', () => {
     await page.goto('');
     await turnOnMacromoleculesEditor(page);
   });
-  test.skip('Delete monomer bonded with another monomers', async ({ page }) => {
+  test('Delete monomer bonded with another monomers', async ({ page }) => {
     /* 
     Test case: #2370 - "Erase" tool for macromolecules editor
     Description: Erase Tool

@@ -70,9 +70,21 @@ test.describe('Preview for abbreviated structures: functional groups', () => {
     await takeEditorScreenshot(page);
   });
 
+  test.only('Should remove preview when context menu is shown after right click', async ({
+    page,
+  }) => {
+    await selectFunctionalGroup(page);
+    const point = await getRightAtomByAttributes(page, { label: 'C' });
+    await page.mouse.move(point.x, point.y);
+    // delay is required because preview is shown with delay
+    await delay(DELAY_IN_SECONDS.ONE);
+    await takeEditorScreenshot(page);
+    await page.mouse.click(point.x, point.y, { button: 'right' });
+    await takeEditorScreenshot(page);
+  });
+
   test('Should show a preview for a benzene ring on bond', async ({ page }) => {
     const bondId = 2;
-    await selectRingButton(RingButton.Benzene, page);
     const bondPosition = await getBondByIndex(
       page,
       { type: BondType.SINGLE },

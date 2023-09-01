@@ -23,7 +23,6 @@ import {
   BondTool,
   selectNestedTool,
   waitForIndigoToLoad,
-  waitForSpinnerFinishedWork,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';

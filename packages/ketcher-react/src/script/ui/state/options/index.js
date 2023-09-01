@@ -22,6 +22,8 @@ import {
 
 import { pick } from 'lodash/fp';
 import { storage } from '../../storage-ext';
+import { reinitializeTemplateLibrary } from '../templates/init-lib';
+import { KETCHER_SAVED_OPTIONS_KEY } from 'src/constants';
 
 export const initOptionsState = {
   app: {
@@ -59,7 +61,7 @@ export const initOptionsState = {
   },
   settings: Object.assign(
     getDefaultOptions(),
-    validation(storage.getItem('ketcher-opts')),
+    validation(storage.getItem(KETCHER_SAVED_OPTIONS_KEY)),
   ),
   getServerSettings() {
     return pick(SERVER_OPTIONS, this.settings);
@@ -75,7 +77,9 @@ export function appUpdate(data) {
 
 /* SETTINGS */
 export function saveSettings(newSettings) {
-  storage.setItem('ketcher-opts', newSettings);
+  storage.setItem(KETCHER_SAVED_OPTIONS_KEY, newSettings);
+  reinitializeTemplateLibrary();
+
   return {
     type: 'SAVE_SETTINGS',
     data: newSettings,

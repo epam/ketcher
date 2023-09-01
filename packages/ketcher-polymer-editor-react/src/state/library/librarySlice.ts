@@ -16,6 +16,8 @@
 
 import { createSlice, PayloadAction, Slice } from '@reduxjs/toolkit';
 import { Group } from 'components/monomerLibrary/monomerLibraryList/types';
+
+import { IRnaPreset } from 'components/monomerLibrary/RnaBuilder/types';
 import { MonomerItemType, SdfItem } from 'ketcher-core';
 import { LibraryNameType } from 'src/constants';
 
@@ -33,6 +35,12 @@ const initialState: LibraryState = {
 
 export function getMonomerUniqueKey(monomer: MonomerItemType) {
   return `${monomer.props.MonomerName}___${monomer.props.Name}`;
+}
+
+export function getPresetUniqueKey(preset: IRnaPreset) {
+  return `${preset.name}_${preset.base?.label || '.'}_${
+    preset.sugar?.label || '.'
+  }_${preset.phosphate?.label || '.'}`;
 }
 
 export const librarySlice: Slice = createSlice({

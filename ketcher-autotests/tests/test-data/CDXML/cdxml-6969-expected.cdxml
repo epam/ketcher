@@ -46,27 +46,27 @@
             </n>
             <n id="23" NodeType="Fragment">
                 <fragment id="24">
-                    <n id="9" Element="16" NumHydrogens="0" p="247.981888 60.000015">
-                        <t p="247.981888 60.000015" LabelJustification="Left">
+                    <n id="9" Element="16" NumHydrogens="0" p="247.981857 60.000015">
+                        <t p="247.981857 60.000015" LabelJustification="Left">
                             <s font="3" size="10" face="96">S</s>
                         </t>
                     </n>
-                    <n id="10" Element="8" NumHydrogens="0" p="247.981888 30.000000">
-                        <t p="247.981888 30.000000" LabelJustification="Left">
+                    <n id="10" Element="8" NumHydrogens="0" p="247.981857 30.000000">
+                        <t p="247.981857 30.000000" LabelJustification="Left">
                             <s font="3" size="10" face="96">O</s>
                         </t>
                     </n>
-                    <n id="11" Element="8" NumHydrogens="0" p="247.981888 90.000015">
-                        <t p="247.981888 90.000015" LabelJustification="Left">
+                    <n id="11" Element="8" NumHydrogens="0" p="247.981857 90.000015">
+                        <t p="247.981857 90.000015" LabelJustification="Left">
                             <s font="3" size="10" face="96">O</s>
                         </t>
                     </n>
-                    <n id="12" Element="8" NumHydrogens="1" p="277.981873 60.000015">
-                        <t p="277.981873 60.000015" LabelJustification="Left">
+                    <n id="12" Element="8" NumHydrogens="1" p="277.981842 60.000015">
+                        <t p="277.981842 60.000015" LabelJustification="Left">
                             <s font="3" size="10" face="96">OH</s>
                         </t>
                     </n>
-                    <n id="13" p="217.981888 60.000015"/>
+                    <n id="13" p="217.981857 60.000015"/>
                     <b id="17" B="9" E="10" Order="2"/>
                     <b id="18" B="9" E="11" Order="2"/>
                     <b id="19" B="9" E="12"/>

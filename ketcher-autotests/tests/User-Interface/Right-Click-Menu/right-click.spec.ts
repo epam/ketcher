@@ -118,7 +118,7 @@ test.describe('Right-click menu', () => {
   });
 
   test('Check right-click property change for atoms', async ({ page }) => {
-    await openFileAndAddToCanvas('chain.ket', page);
+    await openFileAndAddToCanvas('KET/chain.ket', page);
     const point = await getAtomByIndex(page, { label: 'C' }, 1);
     await page.mouse.click(point.x, point.y, { button: 'right' });
     await page.getByText('Query properties').click();

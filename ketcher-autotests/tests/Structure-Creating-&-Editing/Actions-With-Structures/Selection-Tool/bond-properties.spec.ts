@@ -18,9 +18,13 @@ import {
 } from '@utils';
 import { getMolfile, getRxn } from '@utils/formats';
 
-async function selectDoubleOption(page: Page) {
-  await page.getByText('Single').click();
-  await page.getByRole('option', { name: 'Double', exact: true }).click();
+async function selectOption(
+  page: Page,
+  chosenOption: string,
+  newOption: string,
+) {
+  await page.getByText(chosenOption, { exact: true }).click();
+  await page.getByRole('option', { name: newOption, exact: true }).click();
 }
 
 test.describe('Bond Properties', () => {
@@ -32,7 +36,7 @@ test.describe('Bond Properties', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('ond properties dialog: verification', async ({ page }) => {
+  test('Bond properties dialog: verification', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-1457
       Description: The modal 'Bond Properties' dialog is opened and contains drop-down lists: Type, Topology and Reacting Center.
@@ -150,8 +154,7 @@ test.describe('Bond Properties', () => {
           */
       await openFileAndAddToCanvas('Molfiles-V2000/benzene.mol', page);
       await doubleClickOnBond(page, BondType.DOUBLE, 2);
-      await page.getByText('Double').click();
-      await page.getByRole('option', { name: type, exact: true }).click();
+      await selectOption(page, 'Double', type);
       await pressButton(page, 'Apply');
     });
   }
@@ -163,7 +166,7 @@ test.describe('Bond Properties', () => {
         */
     await openFileAndAddToCanvas('Molfiles-V2000/benzene.mol', page);
     await doubleClickOnBond(page, BondType.SINGLE, 2);
-    await selectDoubleOption(page);
+    await selectOption(page, 'Single', 'Double');
     await pressButton(page, 'Apply');
   });
 
@@ -175,7 +178,7 @@ test.describe('Bond Properties', () => {
 
     await openFileAndAddToCanvas('Molfiles-V2000/benzene.mol', page);
     await doubleClickOnBond(page, BondType.SINGLE, 2);
-    await selectDoubleOption(page);
+    await selectOption(page, 'Single', 'Double');
     await pressButton(page, 'Apply');
 
     const expectedFile = await getMolfile(page, 'v2000');
@@ -257,18 +260,15 @@ test.describe('Bond Properties', () => {
 
     await openFileAndAddToCanvas('Molfiles-V2000/benzene.mol', page);
     await doubleClickOnBond(page, BondType.SINGLE, 2);
-    await page.getByText('Either').click();
-    await page.getByRole('option', { name: 'Ring', exact: true }).click();
+    await selectOption(page, 'Either', 'Ring');
     await pressButton(page, 'Apply');
 
     await doubleClickOnBond(page, BondType.SINGLE, 1);
-    await page.getByText('Either').click();
-    await page.getByRole('option', { name: 'Chain', exact: true }).click();
+    await selectOption(page, 'Either', 'Chain');
     await pressButton(page, 'Apply');
 
     await doubleClickOnBond(page, BondType.DOUBLE, 1);
-    await page.getByText('Either').click();
-    await page.getByRole('option', { name: 'Chain', exact: true }).click();
+    await selectOption(page, 'Either', 'Chain');
     await pressButton(page, 'Apply');
 
     const expectedFile = await getMolfile(page, 'v2000');
@@ -290,8 +290,7 @@ test.describe('Bond Properties', () => {
     );
 
     await doubleClickOnBond(page, BondType.SINGLE, 1);
-    await page.getByText('Chain').click();
-    await page.getByRole('option', { name: 'Either', exact: true }).click();
+    await selectOption(page, 'Chain', 'Either');
     await pressButton(page, 'Apply');
   });
 
@@ -379,21 +378,16 @@ test.describe('Bond Properties', () => {
 
       for (let i = 0; i < rCOptions.length - 1; i++) {
         await doubleClickOnBond(page, BondType.SINGLE, i);
-        await page.getByText('Unmarked').click();
-        await page
-          .getByRole('option', { name: rCOptions[i], exact: true })
-          .click();
+        await selectOption(page, 'Unmarked', rCOptions[i]);
         await pressButton(page, 'Apply');
       }
 
       await doubleClickOnBond(page, BondType.SINGLE, 8);
-      await page.getByText('Unmarked').click();
-      await page.getByRole('option', { name: 'Center', exact: true }).click();
+      await selectOption(page, 'Unmarked', 'Center');
       await pressButton(page, 'Apply');
 
       await doubleClickOnBond(page, BondType.SINGLE, 8);
-      await page.getByText('Center', { exact: true }).click();
-      await page.getByRole('option', { name: 'Unmarked', exact: true }).click();
+      await selectOption(page, 'Center', 'Unmarked');
       await pressButton(page, 'Apply');
 
       const expectedFile = await getRxn(page, 'v2000');
@@ -430,8 +424,7 @@ test.describe('Bond Properties', () => {
         page,
       );
       await doubleClickOnBond(page, BondType.SINGLE, 8);
-      await page.getByText('Unmarked').click();
-      await page.getByRole('option', { name: 'Center', exact: true }).click();
+      await selectOption(page, 'Unmarked', 'Center');
       await pressButton(page, 'Apply');
     },
   );
@@ -453,7 +446,7 @@ test.describe('Bond Properties', () => {
     await openFileAndAddToCanvas('Molfiles-V2000/mol_2926_to_open.mol', page);
     await selectAllStructuresOnCanvas(page);
     await doubleClickOnBond(page, BondType.SINGLE, 1);
-    await selectDoubleOption(page);
+    await selectOption(page, 'Single', 'Double');
     await pressButton(page, 'Apply');
 
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
@@ -464,18 +457,15 @@ test.describe('Bond Properties', () => {
     await dragMouseTo(x + offset, y + offset, page);
 
     await doubleClickOnBond(page, BondType.DOUBLE, 3);
-    await page.getByText('Double').click();
-    await page.getByRole('option', { name: 'Single', exact: true }).click();
+    await selectOption(page, 'Double', 'Single');
     await pressButton(page, 'Apply');
 
     await doubleClickOnBond(page, BondType.SINGLE, 1);
-    await page.getByText('Either').click();
-    await page.getByRole('option', { name: 'Chain', exact: true }).click();
+    await selectOption(page, 'Either', 'Chain');
     await pressButton(page, 'Apply');
 
     await doubleClickOnBond(page, BondType.SINGLE, 1);
-    await page.getByText('Unmarked').click();
-    await page.getByRole('option', { name: 'Center', exact: true }).click();
+    await selectOption(page, 'Unmarked', 'Center');
     await pressButton(page, 'Apply');
   });
 
@@ -492,31 +482,21 @@ test.describe('Bond Properties', () => {
     await openFileAndAddToCanvas('Molfiles-V2000/mol_2926_to_open.mol', page);
 
     await doubleClickOnBond(page, BondType.SINGLE, 1);
-    await selectDoubleOption(page);
-    await page.getByText('Either').click();
-    await page.getByRole('option', { name: 'Chain', exact: true }).click();
-    await page.getByText('Unmarked').click();
-    await page.getByRole('option', { name: 'Center', exact: true }).click();
+    await selectOption(page, 'Single', 'Double');
+    await selectOption(page, 'Either', 'Chain');
+    await selectOption(page, 'Unmarked', 'Center');
     await pressButton(page, 'Apply');
 
     await doubleClickOnBond(page, BondType.SINGLE, 2);
-    await page.getByText('Single').click();
-    await page.getByRole('option', { name: 'Single Up', exact: true }).click();
-    await page.getByText('Either').click();
-    await page.getByRole('option', { name: 'Ring', exact: true }).click();
-    await page.getByText('Unmarked').click();
-    await page.getByRole('option', { name: 'No change', exact: true }).click();
+    await selectOption(page, 'Single', 'Single Up');
+    await selectOption(page, 'Either', 'Ring');
+    await selectOption(page, 'Unmarked', 'No change');
     await pressButton(page, 'Apply');
 
     await doubleClickOnBond(page, BondType.SINGLE, 4);
-    await page.getByText('Single').click();
-    await page.getByRole('option', { name: 'Single Up', exact: true }).click();
-    await page.getByText('Either').click();
-    await page.getByRole('option', { name: 'Chain', exact: true }).click();
-    await page.getByText('Unmarked').click();
-    await page
-      .getByRole('option', { name: 'Made/broken', exact: true })
-      .click();
+    await selectOption(page, 'Single', 'Single Up');
+    await selectOption(page, 'Either', 'Chain');
+    await selectOption(page, 'Unmarked', 'Made/broken');
     await pressButton(page, 'Apply');
 
     const expectedFile = await getMolfile(page, 'v2000');
@@ -553,12 +533,9 @@ test.describe('Bond Properties', () => {
       page,
     );
     await doubleClickOnBond(page, BondType.SINGLE, 5);
-    await page.getByText('Single').click();
-    await page.getByRole('option', { name: 'Single Up', exact: true }).click();
-    await page.getByText('Either').click();
-    await page.getByRole('option', { name: 'Chain', exact: true }).click();
-    await page.getByText('Unmarked').click();
-    await page.getByRole('option', { name: 'No change', exact: true }).click();
+    await selectOption(page, 'Single', 'Single Up');
+    await selectOption(page, 'Either', 'Chain');
+    await selectOption(page, 'Unmarked', 'No change');
     await pressButton(page, 'Apply');
 
     await selectLeftPanelButton(LeftPanelButton.ArrowOpenAngleTool, page);
@@ -601,7 +578,7 @@ test.describe('Bond Properties', () => {
       page,
     );
     await doubleClickOnBond(page, BondType.SINGLE, 10);
-    await selectDoubleOption(page);
+    await selectOption(page, 'Single', 'Double');
     await pressButton(page, 'Apply');
   });
 });

@@ -54,14 +54,14 @@ test.describe('Charge tool', () => {
     Description: Charge Minus and Charge Plus is applied to the structure atom.
     */
     const anyAtom = 0;
-    const anyAtom2 = 2;
+    const anotherAnyAtom = 2;
     await openFileAndAddToCanvas('Molfiles-V2000/heteroatoms.mol', page);
     await selectLeftPanelButton(LeftPanelButton.ChargePlus, page);
     await clickOnAtom(page, 'N', anyAtom);
     await clickOnAtom(page, 'O', anyAtom);
     await selectLeftPanelButton(LeftPanelButton.ChargeMinus, page);
     await clickOnAtom(page, 'S', anyAtom);
-    await clickOnAtom(page, 'O', anyAtom2);
+    await clickOnAtom(page, 'O', anotherAnyAtom);
   });
 
   test('Check that pressing the hot button Charge Plus on an atom applies the correct charge', async ({

@@ -321,7 +321,6 @@ test.describe('Attachment Point Tool', () => {
     await openFileAndAddToCanvas('KET/chain-with-attachment-points.ket', page);
     await copyAndPaste(page);
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
-
     await screenshotBetweenUndoRedo(page);
   });
 

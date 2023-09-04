@@ -218,7 +218,7 @@ test.describe('Superatom S-Group tool', () => {
       Test case: EPMLSOPKET-1541
       Description: User is able to save and open structure with Superatom S-group.
     */
-    await openFileAndAddToCanvas('superatom-all-chain.ket', page);
+    await openFileAndAddToCanvas('KET/superatom-all-chain.ket', page);
     const expectedFile = await getMolfile(page);
     await saveToFile('superatom-all-chain-expected.mol', expectedFile);
     const METADATA_STRING_INDEX = [1];
@@ -238,7 +238,7 @@ test.describe('Superatom S-Group tool', () => {
       Test case: EPMLSOPKET-12990
       Description: User is able to contract/expand/remove abbreviation on structure with Superatom S-group.
     */
-    await openFileAndAddToCanvas('superatom-all-chain.ket', page);
+    await openFileAndAddToCanvas('KET/superatom-all-chain.ket', page);
     await contractExpandRemoveAbbreviation(page, 'Test@!#$%12345');
   });
 
@@ -249,7 +249,7 @@ test.describe('Superatom S-Group tool', () => {
       Test case: EPMLSOPKET-12991
       Description: User is able to contract/expand/remove abbreviation on atom with Superatom S-group.
     */
-    await openFileAndAddToCanvas('superatom-one-atom-on-chain.ket', page);
+    await openFileAndAddToCanvas('KET/superatom-one-atom-on-chain.ket', page);
     await contractExpandRemoveAbbreviation(page, 'Test@!#$%12345');
   });
 });

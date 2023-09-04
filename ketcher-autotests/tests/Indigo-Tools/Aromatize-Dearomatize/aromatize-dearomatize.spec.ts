@@ -15,6 +15,8 @@ import {
   selectAllStructuresOnCanvas,
   receiveFileComparisonData,
   saveToFile,
+  waitForIndigoToLoad,
+  waitForSpinnerFinishedWork,
 } from '@utils';
 import { getCml, getMolfile, getRxn, getSmiles } from '@utils/formats';
 
@@ -24,6 +26,7 @@ const CANVAS_CLICK_Y = 200;
 test.describe('Aromatize/Dearomatize Tool', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('');
+    await waitForIndigoToLoad(page);
   });
 
   test.afterEach(async ({ page }) => {
@@ -77,9 +80,13 @@ test.describe('Aromatize/Dearomatize Tool', () => {
         'Molfiles-V2000/aromatic-structures.mol',
         page,
       );
-      await selectTopPanelButton(TopPanelButton.Aromatize, page);
+      await waitForSpinnerFinishedWork(page, async () => {
+        await selectTopPanelButton(TopPanelButton.Aromatize, page);
+      });
       await takeEditorScreenshot(page);
-      await selectTopPanelButton(TopPanelButton.Dearomatize, page);
+      await waitForSpinnerFinishedWork(page, async () => {
+        await selectTopPanelButton(TopPanelButton.Dearomatize, page);
+      });
     },
   );
 
@@ -106,60 +113,67 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     All other structures are rendered with a circle inside the cycles. The actions are Undone/Redone.
     */
       await openFileAndAddToCanvas('cycles-with-aromatic-bonds.mol', page);
-      await selectTopPanelButton(TopPanelButton.Aromatize, page);
-      await selectTopPanelButton(TopPanelButton.Dearomatize, page);
+      await waitForSpinnerFinishedWork(page, async () => {
+        await selectTopPanelButton(TopPanelButton.Aromatize, page);
+      });
+      await waitForSpinnerFinishedWork(page, async () => {
+        await selectTopPanelButton(TopPanelButton.Dearomatize, page);
+      });
       await selectTopPanelButton(TopPanelButton.Undo, page);
       await takeEditorScreenshot(page);
       await selectTopPanelButton(TopPanelButton.Redo, page);
     },
   );
 
-  test.fixme(
-    '(Copy/Paste) Manipulations with cyclic structures with a circle inside the cycle',
-    async ({ page }) => {
-      /*
+  test('(Copy/Paste) Manipulations with cyclic structures with a circle inside the cycle', async ({
+    page,
+  }) => {
+    /*
     Test case: EPMLSOPKET-1872
     Description: The structures are pasted. The structures are rendered with a circle
     inside the cycle during any manipulations.
     */
-      // test is working but structures moves. will fixes after fixing bug with canvas movement after copy/paste
-      await openFileAndAddToCanvas('cycles-with-aromatic-bonds.mol', page);
-      await copyAndPaste(page);
-      await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    // test is working but structures moves. will fixes after fixing bug with canvas movement after copy/paste
+    await openFileAndAddToCanvas('cycles-with-aromatic-bonds.mol', page);
+    await copyAndPaste(page);
+    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await waitForSpinnerFinishedWork(page, async () => {
       await selectTopPanelButton(TopPanelButton.Aromatize, page);
-    },
-  );
+    });
+  });
 
-  test.fixme(
-    '(Cut/Paste) Manipulations with cyclic structures with a circle inside the cycle',
-    async ({ page }) => {
-      /*
+  test('(Cut/Paste) Manipulations with cyclic structures with a circle inside the cycle', async ({
+    page,
+  }) => {
+    /*
     Test case: EPMLSOPKET-1872
     Description: The structures are pasted. The structures are rendered with a circle
     inside the cycle during any manipulations.
     */
-      await openFileAndAddToCanvas('cycles-with-aromatic-bonds.mol', page);
-      await cutAndPaste(page);
-      await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await openFileAndAddToCanvas('cycles-with-aromatic-bonds.mol', page);
+    await cutAndPaste(page);
+    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await waitForSpinnerFinishedWork(page, async () => {
       await selectTopPanelButton(TopPanelButton.Aromatize, page);
-    },
-  );
+    });
+  });
 
-  test.fixme(
-    '(Add Atom) Manipulations with cyclic structures with a circle inside the cycle',
-    async ({ page }) => {
-      /*
+  test('(Add Atom) Manipulations with cyclic structures with a circle inside the cycle', async ({
+    page,
+  }) => {
+    /*
     Test case: EPMLSOPKET-1872
     Description: Atom added to the structure.
     The structures are rendered with a circle inside the cycle during any manipulations.
     */
-      await selectRing(RingButton.Benzene, page);
-      await clickInTheMiddleOfTheScreen(page);
+    await selectRing(RingButton.Benzene, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await waitForSpinnerFinishedWork(page, async () => {
       await selectTopPanelButton(TopPanelButton.Aromatize, page);
-      await selectAllStructuresOnCanvas(page);
-      await selectAtomInToolbar(AtomButton.Nitrogen, page);
-    },
-  );
+    });
+    await selectAllStructuresOnCanvas(page);
+    await selectAtomInToolbar(AtomButton.Nitrogen, page);
+  });
 
   test('(MolV2000) Save cyclic structures with a circle inside the cycle', async ({
     page,

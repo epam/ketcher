@@ -327,38 +327,37 @@ test.describe('Templates - Functional Group Tools2', () => {
     await pressButton(page, 'Horizontal Flip (Alt+H)');
   });
 
-  test.fixme(
-    'Erase of contracted and expanded Functional Group',
-    async ({ page }) => {
-      /*
+  test('Erase of contracted and expanded Functional Group', async ({
+    page,
+  }) => {
+    /*
     Test case: EPMLSOPKET-2901
     Description: Contracted Functional Group is removed after click with Erase tool;
     Expanded Functional Group is removed if were selected by Rectangle selection;
     EDIT ABBREVIATION window appears if click by Erase tool on expanded FG without selection.
    */
-      await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-      await page.getByRole('tab', { name: 'Functional Groups' }).click();
-      await selectFunctionalGroups(FunctionalGroups.Boc, page);
-      await clickInTheMiddleOfTheScreen(page);
+    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+    await page.getByRole('tab', { name: 'Functional Groups' }).click();
+    await selectFunctionalGroups(FunctionalGroups.Boc, page);
+    await clickInTheMiddleOfTheScreen(page);
 
-      await selectLeftPanelButton(LeftPanelButton.Erase, page);
-      await page.getByText('Boc').first().click();
+    await selectLeftPanelButton(LeftPanelButton.Erase, page);
+    await page.getByText('Boc').first().click();
 
-      await resetCurrentTool(page);
-      await takeEditorScreenshot(page);
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
 
-      await selectTopPanelButton(TopPanelButton.Undo, page);
-      await page.getByText('Boc').first().click();
-      await selectLeftPanelButton(LeftPanelButton.Erase, page);
+    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await page.getByText('Boc').first().click();
+    await selectLeftPanelButton(LeftPanelButton.Erase, page);
 
-      await resetCurrentTool(page);
-      await takeEditorScreenshot(page);
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
 
-      await openFileAndAddToCanvas('functional-group-expanded.mol', page);
-      await page.keyboard.press('Control+a');
-      await page.getByTestId('delete').click();
-    },
-  );
+    await openFileAndAddToCanvas('functional-group-expanded.mol', page);
+    await page.keyboard.press('Control+a');
+    await page.getByTestId('delete').click();
+  });
 
   test('Add Template to the Functional group', async ({ page }) => {
     /*

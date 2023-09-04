@@ -15,11 +15,13 @@
  ***************************************************************************/
 import { ToolConstructorInterface } from './Tool';
 import { MonomerTool } from 'application/editor/tools/Monomer';
+import { PresetTool } from 'application/editor/tools/Preset';
 import { SelectLasso } from 'application/editor/tools/SelectLasso';
 import { PolymerBond } from 'application/editor/tools/Bond';
 
 export const toolsMap: Record<string, ToolConstructorInterface> = {
   monomer: MonomerTool,
+  preset: PresetTool,
   'select-lasso': SelectLasso,
   'bond-single': PolymerBond,
 };

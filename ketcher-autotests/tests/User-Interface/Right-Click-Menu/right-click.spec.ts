@@ -31,7 +31,7 @@ test.describe('Right-click menu', () => {
     Test case: EPMLSOPKET-5872
     Description: The menu has appeared and contains the list of Bonds.
     */
-    await openFileAndAddToCanvas('chain.ket', page);
+    await openFileAndAddToCanvas('KET/chain.ket', page);
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
     await page.mouse.click(point.x, point.y, { button: 'right' });
   });
@@ -41,7 +41,7 @@ test.describe('Right-click menu', () => {
     Test case: EPMLSOPKET-5876
     Description: The menu has appeared and contains the list of Query Bonds.
     */
-    await openFileAndAddToCanvas('chain.ket', page);
+    await openFileAndAddToCanvas('KET/chain.ket', page);
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
     await page.mouse.click(point.x, point.y, { button: 'right' });
     await page.getByText('Query bonds').click();
@@ -52,7 +52,7 @@ test.describe('Right-click menu', () => {
     Test case: EPMLSOPKET-5873
     Description: Single Bond changes on Double Bond.
     */
-    await openFileAndAddToCanvas('chain.ket', page);
+    await openFileAndAddToCanvas('KET/chain.ket', page);
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
     await page.mouse.click(point.x, point.y, { button: 'right' });
     await page.getByText('Edit...').click();
@@ -66,7 +66,7 @@ test.describe('Right-click menu', () => {
     Test case: EPMLSOPKET-5874
     Description: Single Bond changes on Double Bond.
     */
-    await openFileAndAddToCanvas('chain.ket', page);
+    await openFileAndAddToCanvas('KET/chain.ket', page);
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
     await page.mouse.click(point.x, point.y, { button: 'right' });
     await page.getByText('Double', { exact: true }).click();
@@ -77,7 +77,7 @@ test.describe('Right-click menu', () => {
     Test case: EPMLSOPKET-5875
     Description: Bond is deleted
     */
-    await openFileAndAddToCanvas('chain.ket', page);
+    await openFileAndAddToCanvas('KET/chain.ket', page);
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
     await page.mouse.click(point.x, point.y, { button: 'right' });
     await page.getByText('Delete', { exact: true }).click();
@@ -91,7 +91,7 @@ test.describe('Right-click menu', () => {
     Description: Bond is deleted
     */
     let point: { x: number; y: number };
-    await openFileAndAddToCanvas('chain.ket', page);
+    await openFileAndAddToCanvas('KET/chain.ket', page);
     await selectAtomInToolbar(AtomButton.Oxygen, page);
     point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
     await page.mouse.click(point.x, point.y, { button: 'right' });
@@ -112,13 +112,13 @@ test.describe('Right-click menu', () => {
     - Enhanced stereochemistry (Should be grayed out if enhanced stereochemistry can not be added.)
     - Delete
     */
-    await openFileAndAddToCanvas('chain.ket', page);
+    await openFileAndAddToCanvas('KET/chain.ket', page);
     const point = await getAtomByIndex(page, { label: 'C' }, 1);
     await page.mouse.click(point.x, point.y, { button: 'right' });
   });
 
   test('Check right-click property change for atoms', async ({ page }) => {
-    await openFileAndAddToCanvas('chain.ket', page);
+    await openFileAndAddToCanvas('KET/chain.ket', page);
     const point = await getAtomByIndex(page, { label: 'C' }, 1);
     await page.mouse.click(point.x, point.y, { button: 'right' });
     await page.getByText('Query properties').click();
@@ -139,7 +139,7 @@ test.describe('Right-click menu', () => {
     Test case: EPMLSOPKET-5880
     Description: Carbon atom changes to Oxygen.
     */
-    await openFileAndAddToCanvas('chain.ket', page);
+    await openFileAndAddToCanvas('KET/chain.ket', page);
     const point = await getAtomByIndex(page, { label: 'C' }, 1);
     await page.mouse.click(point.x, point.y, { button: 'right' });
     await page.getByText('Edit...').click();
@@ -158,7 +158,7 @@ test.describe('Right-click menu', () => {
     - Enhanced stereochemistry (Should be grayed out if enhanced stereochemistry can not be added.)
     - Delete
     */
-    await openFileAndAddToCanvas('chain-with-stereo.ket', page);
+    await openFileAndAddToCanvas('KET/chain-with-stereo.ket', page);
     const point = await getAtomByIndex(page, { label: 'C' }, 1);
     await page.mouse.click(point.x, point.y, { button: 'right' });
   });
@@ -170,7 +170,7 @@ test.describe('Right-click menu', () => {
     Test case: EPMLSOPKET-5882
     Description: 'Enhanced stereochemistry' is NOT grayed out (User can add Enhanced stereochemistry)
     */
-    await openFileAndAddToCanvas('chain-with-stereo.ket', page);
+    await openFileAndAddToCanvas('KET/chain-with-stereo.ket', page);
     const point = await getAtomByIndex(page, { label: 'C' }, 2);
     await page.mouse.click(point.x, point.y, { button: 'right' });
   });
@@ -183,7 +183,7 @@ test.describe('Right-click menu', () => {
     Description: Near the atom with the stereochemistry the '&1' and '&2' is displayed.
     And 'Mixed' flag appears. After add Ignore the chiral flag in settings - 'Mixed' flag dissapear.
     */
-    await openFileAndAddToCanvas('chain-with-stereo.ket', page);
+    await openFileAndAddToCanvas('KET/chain-with-stereo.ket', page);
     const point = await getAtomByIndex(page, { label: 'C' }, 2);
     await page.mouse.click(point.x, point.y, { button: 'right' });
     await page.getByText('Enhanced stereochemistry...').click();
@@ -209,7 +209,7 @@ test.describe('Right-click menu', () => {
     Description: Near the atom with the stereochemistry the '&1' and 'or1' is displayed.
     And 'Mixed' flag appears. After add Ignore the chiral flag in settings - 'Mixed' flag dissapear.
     */
-    await openFileAndAddToCanvas('chain-with-stereo.ket', page);
+    await openFileAndAddToCanvas('KET/chain-with-stereo.ket', page);
     const point = await getAtomByIndex(page, { label: 'C' }, 2);
     await page.mouse.click(point.x, point.y, { button: 'right' });
     await page.getByText('Enhanced stereochemistry...').click();
@@ -233,7 +233,7 @@ test.describe('Right-click menu', () => {
     Test case: EPMLSOPKET-5883
     Description: Atom is deleted by right-click menu
     */
-    await openFileAndAddToCanvas('chain-with-stereo.ket', page);
+    await openFileAndAddToCanvas('KET/chain-with-stereo.ket', page);
     const point = await getAtomByIndex(page, { label: 'C' }, 2);
     await page.mouse.click(point.x, point.y, { button: 'right' });
     await page.getByText('Delete').click();
@@ -247,7 +247,7 @@ test.describe('Right-click menu', () => {
     Description: Only selected atoms and bonds are deleted. No error is thrown.
     */
     let point: { x: number; y: number };
-    await openFileAndAddToCanvas('chain-with-stereo-and-atoms.ket', page);
+    await openFileAndAddToCanvas('KET/chain-with-stereo-and-atoms.ket', page);
     point = await getAtomByIndex(page, { label: 'N' }, 0);
     await page.keyboard.down('Shift');
     await page.mouse.click(point.x, point.y);
@@ -266,7 +266,7 @@ test.describe('Right-click menu', () => {
     */
     const canvasClickX = 300;
     const canvasClickY = 300;
-    await openFileAndAddToCanvas('chain.ket', page);
+    await openFileAndAddToCanvas('KET/chain.ket', page);
     await selectAtomInToolbar(AtomButton.Oxygen, page);
     const point = await getAtomByIndex(page, { label: 'C' }, 2);
     await page.mouse.click(point.x, point.y, { button: 'right' });
@@ -280,7 +280,7 @@ test.describe('Right-click menu', () => {
     Test case: EPMLSOPKET-10082
     Description: Opens right-click menu for atom
     */
-    await openFileAndAddToCanvas('chain.ket', page);
+    await openFileAndAddToCanvas('KET/chain.ket', page);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     const point = await getAtomByIndex(page, { label: 'C' }, 2);
     await page.mouse.click(point.x, point.y, { button: 'right' });
@@ -293,7 +293,7 @@ test.describe('Right-click menu', () => {
     Test case: EPMLSOPKET-10082
     Description: Opens right-click menu for bond
     */
-    await openFileAndAddToCanvas('chain.ket', page);
+    await openFileAndAddToCanvas('KET/chain.ket', page);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
     await page.mouse.click(point.x, point.y, { button: 'right' });
@@ -306,7 +306,7 @@ test.describe('Right-click menu', () => {
     Test case: EPMLSOPKET-15495
     Description: S-Group for Bond is attached.
     */
-    await openFileAndAddToCanvas('chain.ket', page);
+    await openFileAndAddToCanvas('KET/chain.ket', page);
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
     await page.mouse.click(point.x, point.y, { button: 'right' });
     await page.getByText('Attach S-Group...', { exact: true }).click();
@@ -323,7 +323,7 @@ test.describe('Right-click menu', () => {
     Description: Three selected Carbon atoms changed to Nitrogen atoms.
     */
     let point: { x: number; y: number };
-    await openFileAndAddToCanvas('chain.ket', page);
+    await openFileAndAddToCanvas('KET/chain.ket', page);
     point = await getAtomByIndex(page, { label: 'C' }, 1);
     await page.keyboard.down('Shift');
     await page.mouse.click(point.x, point.y);
@@ -341,14 +341,13 @@ test.describe('Right-click menu', () => {
     await pressButton(page, 'Apply');
   });
 
-  // it seems like the screenshot is being done too early
-  test.fixme('Multiple Bond editing by right-click menu', async ({ page }) => {
+  test('Multiple Bond editing by right-click menu', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-15497
     Description: Three selected Single Bonds changed to Double Bonds.
     */
     let point: { x: number; y: number };
-    await openFileAndAddToCanvas('chain.ket', page);
+    await openFileAndAddToCanvas('KET/chain.ket', page);
     point = await getBondByIndex(page, { type: BondType.SINGLE }, 1);
     await page.keyboard.down('Shift');
     await page.mouse.click(point.x, point.y);

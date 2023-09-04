@@ -273,7 +273,7 @@ test.describe('SRU Polymer tool', () => {
       Test case: EPMLSOPKET-1536
       Description: User is able to save and open structure with SRU polymer S-group.
     */
-    await openFileAndAddToCanvas('sru-polymer-data.ket', page);
+    await openFileAndAddToCanvas('KET/sru-polymer-data.ket', page);
     const expectedFile = await getMolfile(page);
     await saveToFile('sru-polymer-data-expected.mol', expectedFile);
     const METADATA_STRING_INDEX = [1];

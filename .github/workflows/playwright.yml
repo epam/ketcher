@@ -46,6 +46,28 @@ jobs:
         run: cd ketcher-autotests && npm run docker:build
       - name: Run playwright tests in docker
         run: cd ketcher-autotests && npm run docker:test
+
+      # For macromolecule tests
+      - name: Add ENABLE_POLYMER_EDITOR=true
+        run: export ENABLE_POLYMER_EDITOR=true
+      - name: Build all packages
+        run: npm run build:packages && npm run build:example:standalone
+      - name: Run example in standalone mode
+        run: cd example/ && nohup npm run serve:standalone &
+      - name: Create env file
+        run: |
+          cd ketcher-autotests
+          echo "DOCKER=true" > .env
+          echo "KETCHER_URL=$KETCHER_URL" >> .env
+          echo "MODE=$MODE" >> .env
+          echo "IGNORE_UNSTABLE_TESTS=$IGNORE_UNSTABLE_TESTS" >> .env
+          echo "CI_ENVIRONMENT=$CI_ENVIRONMENT" >> .env
+          echo "ENABLE_POLYMER_EDITOR=true" >> .env
+      - name: Build autotests for docker
+        run: cd ketcher-autotests && npm run docker:build
+      - name: Run playwright tests in docker
+        run: cd ketcher-autotests && npm run docker:test
+
       - uses: actions/upload-artifact@v3
         # run even if previous steps fails
         if: always()

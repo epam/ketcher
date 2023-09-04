@@ -18,6 +18,7 @@ import {
   selectTopPanelButton,
   LeftPanelButton,
   selectLeftPanelButton,
+  waitForIndigoToLoad,
 } from '@utils';
 
 async function openRGroupModalForTopAtom(page: Page) {
@@ -53,6 +54,7 @@ async function clickModalButton(page: Page, button: 'Apply' | 'Cancel') {
 test.describe('Open Ketcher', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('');
+    await waitForIndigoToLoad(page);
   });
 
   test.afterEach(async ({ page }) => {
@@ -220,14 +222,14 @@ test.describe('Open Ketcher', () => {
     await page.keyboard.press('Delete');
   });
 
-  test.fixme('Delete R-Group member', async ({ page }) => {
+  test('Delete R-Group member', async ({ page }) => {
     /* Test case: EPMLSOPKET-1590
   Description: Delete R-Group member
   */
     await openFileAndAddToCanvas('R-fragment-structure.mol', page);
 
     await selectNestedTool(page, SelectTool.FRAGMENT_SELECTION);
-    await page.getByText('R8').click();
+    await page.getByText(rGroupFromFile).click();
     await page.keyboard.press('Delete');
     await takeEditorScreenshot(page);
 
@@ -235,7 +237,7 @@ test.describe('Open Ketcher', () => {
     await delay(DELAY_IN_SECONDS.THREE);
 
     await selectLeftPanelButton(LeftPanelButton.Erase, page);
-    await selectRGroup(page, rGroupFromFile);
+    await page.getByText(rGroupFromFile).click();
     await takeEditorScreenshot(page);
 
     await selectTopPanelButton(TopPanelButton.Undo, page);

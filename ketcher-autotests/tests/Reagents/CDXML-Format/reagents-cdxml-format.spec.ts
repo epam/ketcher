@@ -54,7 +54,7 @@ test.describe('Reagents CDXML format', () => {
     Description: System detect molecule NH3 above arrow as reagent and write reagent in 'CDXML' format in "Preview" tab
     */
       await openFileAndAddToCanvas(
-        'Ket/benzene-arrow-benzene-reagent-nh3.ket',
+        'KET/benzene-arrow-benzene-reagent-nh3.ket',
         page,
       );
 
@@ -78,7 +78,7 @@ test.describe('Reagents CDXML format', () => {
     Description: System detect molecule HCl below arrow as reagent and write reagent in 'CDXML' format in "Preview" tab
     */
       await openFileAndAddToCanvas(
-        'Ket/benzene-arrow-benzene-reagent-hcl.ket',
+        'KET/benzene-arrow-benzene-reagent-hcl.ket',
         page,
       );
       await delay(DELAY_IN_SECONDS.THREE);
@@ -103,7 +103,7 @@ test.describe('Reagents CDXML format', () => {
     Description: System detect text NH3 as reagent and write reagent in 'CDXML' format in "Preview" tab
     */
       await openFileAndAddToCanvas(
-        'Ket/reagent-nh3-text-above-arrow.ket',
+        'KET/reagent-nh3-text-above-arrow.ket',
         page,
       );
       await delay(DELAY_IN_SECONDS.THREE);
@@ -128,7 +128,7 @@ test.describe('Reagents CDXML format', () => {
     Description: System detect text HCl below arrow as reagent and write reagent in 'CDXML' format in "Preview" tab
     */
       await openFileAndAddToCanvas(
-        'Ket/reagent-hcl-text-below-arrow.ket',
+        'KET/reagent-hcl-text-below-arrow.ket',
         page,
       );
       await delay(DELAY_IN_SECONDS.THREE);
@@ -150,7 +150,7 @@ test.describe('Reagents CDXML format', () => {
     Description: File saved in format (e.g. "ketcher.cdxml")
     */
     await openFileAndAddToCanvas(
-      'Ket/benzene-arrow-benzene-reagent-nh3.ket',
+      'KET/benzene-arrow-benzene-reagent-nh3.ket',
       page,
     );
     await delay(DELAY_IN_SECONDS.THREE);
@@ -183,7 +183,7 @@ test.describe('Reagents CDXML format', () => {
       Description: File opens with the reagent NH3 on top of the arrow
     */
     await openFileAndAddToCanvas(
-      'Ket/benzene-arrow-benzene-reagent-nh3.ket',
+      'KET/benzene-arrow-benzene-reagent-nh3.ket',
       page,
     );
   });
@@ -194,7 +194,7 @@ test.describe('Reagents CDXML format', () => {
       Description: File opens with the reagent HCl below the arrow
     */
     await openFileAndAddToCanvas(
-      'Ket/benzene-arrow-benzene-reagent-hcl.ket',
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
   });

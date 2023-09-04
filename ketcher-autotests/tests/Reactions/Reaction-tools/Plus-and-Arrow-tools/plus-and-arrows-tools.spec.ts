@@ -176,7 +176,7 @@ test.describe('Plus and Arrows tools ', () => {
      */
     let point: Point;
     test.beforeEach(async ({ page }) => {
-      await openFileAndAddToCanvas('Rxn/reaction-3.rxn', page);
+      await openFileAndAddToCanvas('Rxn-V3000/reaction-3.rxn', page);
       await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
       point = await getCoordinatesOfTheMiddleOfTheScreen(page);
     });
@@ -244,7 +244,7 @@ test.describe('Plus and Arrows tools ', () => {
      */
     let point: Point;
     test.beforeEach(async ({ page }) => {
-      await openFileAndAddToCanvas('Rxn/reaction-3.rxn', page);
+      await openFileAndAddToCanvas('Rxn-V3000/reaction-3.rxn', page);
       await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
       point = await getCoordinatesOfTheMiddleOfTheScreen(page);
     });
@@ -444,7 +444,7 @@ test.describe('Plus and Arrows tools ', () => {
 
     test('open file', async ({ page }) => {
       await openFileAndAddToCanvas(
-        'Ket/default-reaction-arrow-tool-saving.ket',
+        'KET/default-reaction-arrow-tool-saving.ket',
         page,
       );
     });
@@ -467,7 +467,7 @@ test.describe('Plus and Arrows tools ', () => {
 
     test('open file', async ({ page }) => {
       await openFileAndAddToCanvas(
-        'Ket/non-default-reaction-arrow-tool-saving.ket',
+        'KET/non-default-reaction-arrow-tool-saving.ket',
         page,
       );
     });
@@ -563,7 +563,10 @@ test.describe('Plus and Arrows tools ', () => {
       await openFileAndAddToCanvas(`resizing-reaction-arrow-saving.rxn`, page);
       await takeEditorScreenshot(page);
       await selectTopPanelButton(TopPanelButton.Clear, page);
-      await openFileAndAddToCanvas(`resizing-reaction-arrow-saving.ket`, page);
+      await openFileAndAddToCanvas(
+        `KET/resizing-reaction-arrow-saving.ket`,
+        page,
+      );
     });
   });
 

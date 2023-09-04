@@ -705,7 +705,7 @@ function buildLabel(
   options: any,
 ): ElemAttr {
   // eslint-disable-line max-statements
-  let label: any = {};
+  const label: any = {};
   label.text = getLabelText(atom.a);
 
   if (typeof label === 'object') {

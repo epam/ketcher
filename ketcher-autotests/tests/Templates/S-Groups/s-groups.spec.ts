@@ -20,11 +20,12 @@ test.describe('S-Groups', () => {
     page,
   }) => {
     /*
+    Test case: EPMLSOPKET-12967 for Open RXN v2000 file with 'S-Group Properties Type = Multiple group Multi.zip
     Test case related to issue: https://github.com/epam/ketcher/issues/2389
     Description: Open file with S-groups (with Unsupported S-group type GEN) and see that brackets in place for all S-Groups except DAT
     */
     await openFileAndAddToCanvas(
-      'structure-with-s-groups-with-unsupported-s-group-type.rxn',
+      'RXN/structure-with-s-groups-with-unsupported-s-group-type-V2000.rxn',
       page,
     );
   });

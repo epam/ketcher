@@ -127,7 +127,7 @@ test.describe('Plus and Arrows tools ', () => {
     await selectLeftPanelButton(LeftPanelButton.ArrowOpenAngleTool, page);
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
-    dragMouseTo(x + 100, y + 100, page);
+    await dragMouseTo(x + 100, y + 100, page);
     await takeEditorScreenshot(page);
     await copyAndPaste(page);
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);

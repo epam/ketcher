@@ -48,7 +48,6 @@ test.describe('Reagents molecule above arrow', () => {
     */
     await openFileAndAddToCanvas(
       'KET/benzene-arrow-benzene-reagent-nh3.ket',
-      'KET/benzene-arrow-benzene-reagent-nh3.ket',
       page,
     );
 

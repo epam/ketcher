@@ -337,7 +337,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     All enhanced stereochemistry features are present after opening.
     It's possible to edit the stereo marks assignment after opening the saved file.
     */
-    await openFileAndAddToCanvas('mixed-and-stereomarks.ket', page);
+    await openFileAndAddToCanvas('Ket/mixed-and-stereomarks.ket', page);
     const expectedFile = await getKet(page);
     await saveToFile('Ket/mixed-and-stereomarks-expected.ket', expectedFile);
 

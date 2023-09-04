@@ -74,7 +74,7 @@ test.describe('Drag and drop Atom on canvas', () => {
     await dragMouseTo(x, y, page);
   });
 
-  test.fixme('The Nitrogen atom replaces the formic acid', async ({ page }) => {
+  test('The Nitrogen atom replaces the formic acid', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-11833
       Description: when drag & drop an atom on a Salts and Solvents it should replace it

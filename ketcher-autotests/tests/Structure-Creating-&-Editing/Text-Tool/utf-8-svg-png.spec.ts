@@ -6,14 +6,16 @@ import {
   openFileAndAddToCanvas,
   delay,
   DELAY_IN_SECONDS,
+  waitForIndigoToLoad,
 } from '@utils';
 
 test.describe('Open UTF-8 and save as SVG and PNG', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('');
+    await waitForIndigoToLoad(page);
   });
 
-  test.fixme('Open UTF-8 file and save as SVG', async ({ page }) => {
+  test('Open UTF-8 file and save as SVG', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-5252
     Description: A file with UTF-8 encoding opens and, when saved in a SVG preview, contains all characters
@@ -27,7 +29,7 @@ test.describe('Open UTF-8 and save as SVG and PNG', () => {
     await takeEditorScreenshot(page);
   });
 
-  test.fixme('Open UTF-8 file and save as PNG', async ({ page }) => {
+  test('Open UTF-8 file and save as PNG', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-5252
     Description: A file with UTF-8 encoding opens and, when saved in a PNG preview, contains all characters

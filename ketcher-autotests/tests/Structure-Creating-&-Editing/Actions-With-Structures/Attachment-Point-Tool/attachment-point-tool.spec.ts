@@ -224,6 +224,7 @@ test.describe('Attachment Point Tool', () => {
     Description: User is able to remove the attachment points.
     */
     await openFileAndAddToCanvas('KET/chain-with-attachment-points.ket', page);
+    await openFileAndAddToCanvas('KET/chain-with-attachment-points.ket', page);
     await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
     await setAttachmentPoints(
       page,
@@ -253,6 +254,7 @@ test.describe('Attachment Point Tool', () => {
     Description: The attachment point's asterisk is colored with the same color as the atom symbol.
     */
     await openFileAndAddToCanvas('KET/chain-with-attachment-points.ket', page);
+    await openFileAndAddToCanvas('KET/chain-with-attachment-points.ket', page);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickOnAtom(page, 'C', 2);
 
@@ -271,6 +273,7 @@ test.describe('Attachment Point Tool', () => {
     Description: The Not List atom, Any Atom, Group Generics is attached to attachment points.
     */
     await openFileAndAddToCanvas('KET/chain-with-attachment-points.ket', page);
+    await openFileAndAddToCanvas('KET/chain-with-attachment-points.ket', page);
     await selectNotListAtoms(page);
     await clickOnAtom(page, 'C', 2);
 
@@ -287,6 +290,7 @@ test.describe('Attachment Point Tool', () => {
     Description: Attachment points are created correctly if the reaction arrow 
     and plus sign(s) are present on the canvas.
     */
+    await openFileAndAddToCanvas('KET/reaction-with-arrow-and-plus.ket', page);
     await openFileAndAddToCanvas('KET/reaction-with-arrow-and-plus.ket', page);
 
     await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
@@ -319,6 +323,7 @@ test.describe('Attachment Point Tool', () => {
     Undo/Redo actions for each step are correct.
     */
     await openFileAndAddToCanvas('KET/chain-with-attachment-points.ket', page);
+    await openFileAndAddToCanvas('KET/chain-with-attachment-points.ket', page);
     await copyAndPaste(page);
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await screenshotBetweenUndoRedo(page);
@@ -330,6 +335,7 @@ test.describe('Attachment Point Tool', () => {
     Description: Pasted structures are displayed with correct attachment points.
     Undo/Redo actions for each step are correct.
     */
+    await openFileAndAddToCanvas('KET/chain-with-attachment-points.ket', page);
     await openFileAndAddToCanvas('KET/chain-with-attachment-points.ket', page);
     await cutAndPaste(page);
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
@@ -344,6 +350,7 @@ test.describe('Attachment Point Tool', () => {
     Undo/Redo actions for each step are correct.
     */
     await openFileAndAddToCanvas('KET/reaction-with-arrow-and-plus.ket', page);
+    await openFileAndAddToCanvas('KET/reaction-with-arrow-and-plus.ket', page);
     await copyAndPaste(page);
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
   });
@@ -357,6 +364,7 @@ test.describe('Attachment Point Tool', () => {
     const x = 0;
     const y = 300;
     await openFileAndAddToCanvas('KET/reaction-with-arrow-and-plus.ket', page);
+    await openFileAndAddToCanvas('KET/reaction-with-arrow-and-plus.ket', page);
     await cutAndPaste(page);
     await page.mouse.click(x, y);
 
@@ -368,6 +376,7 @@ test.describe('Attachment Point Tool', () => {
     Test case: EPMLSOPKET-1651
     Description: Structure with attachment points saved as .mol file
     */
+    await openFileAndAddToCanvas('KET/chain-with-attachment-points.ket', page);
     await openFileAndAddToCanvas('KET/chain-with-attachment-points.ket', page);
     const expectedFile = await getMolfile(page);
     await saveToFile('chain-with-attachment-points-expected.mol', expectedFile);
@@ -389,6 +398,7 @@ test.describe('Attachment Point Tool', () => {
     Open the saved *.mol file and edit it in any way.
     */
     await openFileAndAddToCanvas('KET/chain-with-attachment-points.ket', page);
+    await openFileAndAddToCanvas('KET/chain-with-attachment-points.ket', page);
     const expectedFile = await getMolfile(page);
     await saveToFile('chain-with-attachment-points-expected.mol', expectedFile);
     const METADATA_STRING_INDEX = [1];
@@ -407,6 +417,7 @@ test.describe('Attachment Point Tool', () => {
     Test case: EPMLSOPKET-1651
     Description: Structure with attachment points saved as .mol file V3000
     */
+    await openFileAndAddToCanvas('KET/chain-with-attachment-points.ket', page);
     await openFileAndAddToCanvas('KET/chain-with-attachment-points.ket', page);
     const expectedFile = await getMolfile(page, 'v3000');
     await saveToFile(
@@ -431,6 +442,7 @@ test.describe('Attachment Point Tool', () => {
     Description: Structure with attachment points saved as .rxn file
     */
     await openFileAndAddToCanvas('KET/reaction-with-arrow-and-plus.ket', page);
+    await openFileAndAddToCanvas('KET/reaction-with-arrow-and-plus.ket', page);
     const expectedFile = await getRxn(page);
     await saveToFile('reaction-with-arrow-and-plus-expected.rxn', expectedFile);
 
@@ -452,6 +464,7 @@ test.describe('Attachment Point Tool', () => {
     Open the saved *.rxn file and edit it in any way.
     */
     await openFileAndAddToCanvas('KET/reaction-with-arrow-and-plus.ket', page);
+    await openFileAndAddToCanvas('KET/reaction-with-arrow-and-plus.ket', page);
     const expectedFile = await getRxn(page);
     await saveToFile('reaction-with-arrow-and-plus-expected.rxn', expectedFile);
     const METADATA_STRING_INDEX = [2, 7, 30, 37];
@@ -470,6 +483,7 @@ test.describe('Attachment Point Tool', () => {
     Test case: EPMLSOPKET-1652
     Description: Structure with attachment points saved as .rxn file V3000
     */
+    await openFileAndAddToCanvas('KET/reaction-with-arrow-and-plus.ket', page);
     await openFileAndAddToCanvas('KET/reaction-with-arrow-and-plus.ket', page);
     const expectedFile = await getRxn(page, 'v3000');
     await saveToFile(
@@ -494,6 +508,7 @@ test.describe('Attachment Point Tool', () => {
     Description: Structure with attachment points saved as .smi file
     */
     await openFileAndAddToCanvas('KET/chain-with-attachment-points.ket', page);
+    await openFileAndAddToCanvas('KET/chain-with-attachment-points.ket', page);
     const expectedFile = await getSmiles(page);
     await saveToFile('chain-with-attachment-points-expected.smi', expectedFile);
     const { fileExpected: smiFileExpected, file: smiFile } =
@@ -515,6 +530,7 @@ test.describe('Attachment Point Tool', () => {
     Click the 'Save As' button, save as CML file.
     Open the saved *.cml file and edit it in any way.
     */
+    await openFileAndAddToCanvas('KET/chain-with-attachment-points.ket', page);
     await openFileAndAddToCanvas('KET/chain-with-attachment-points.ket', page);
     const expectedFile = await getSmiles(page);
     await saveToFile('chain-with-attachment-points-expected.smi', expectedFile);
@@ -558,6 +574,7 @@ test.describe('Attachment Point Tool', () => {
       x: 20,
       y: 160,
     };
+    await openFileAndAddToCanvas('KET/chain-with-attachment-points.ket', page);
     await openFileAndAddToCanvas('KET/chain-with-attachment-points.ket', page);
 
     await page.keyboard.press('Control+a');

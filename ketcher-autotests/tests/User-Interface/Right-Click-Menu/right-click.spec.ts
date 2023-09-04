@@ -341,8 +341,7 @@ test.describe('Right-click menu', () => {
     await pressButton(page, 'Apply');
   });
 
-  // it seems like the screenshot is being done too early
-  test.fixme('Multiple Bond editing by right-click menu', async ({ page }) => {
+  test('Multiple Bond editing by right-click menu', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-15497
     Description: Three selected Single Bonds changed to Double Bonds.

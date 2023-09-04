@@ -57,11 +57,6 @@ jobs:
       - name: Create env file
         run: |
           cd ketcher-autotests
-          echo "DOCKER=true" > .env
-          echo "KETCHER_URL=$KETCHER_URL" >> .env
-          echo "MODE=$MODE" >> .env
-          echo "IGNORE_UNSTABLE_TESTS=$IGNORE_UNSTABLE_TESTS" >> .env
-          echo "CI_ENVIRONMENT=$CI_ENVIRONMENT" >> .env
           echo "ENABLE_POLYMER_EDITOR=true" >> .env
       - name: Build autotests for docker
         run: cd ketcher-autotests && npm run docker:build

@@ -7,6 +7,7 @@ import {
   pressButton,
   waitForLoad,
   getCoordinatesOfTheMiddleOfTheScreen,
+  openFileAndAddToCanvas,
 } from '@utils';
 
 async function openFileWithShift(filename: string, page: Page) {
@@ -41,6 +42,15 @@ test.describe('Indigo Tools - Layout', () => {
     await openFileWithShift(structureWithStereoFlags, page);
     await selectTopPanelButton(TopPanelButton.Layout, page);
     await selectTopPanelButton(TopPanelButton.Layout, page);
+    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('After applying Layout, the structure does not disappear and can be interacted with', async ({
+    page,
+  }) => {
+    // Related Github issue: https://github.com/epam/ketcher/issues/3208
+    await openFileAndAddToCanvas('Molfiles-V2000/sbs_48.mol', page);
     await selectTopPanelButton(TopPanelButton.Layout, page);
     await takeEditorScreenshot(page);
   });

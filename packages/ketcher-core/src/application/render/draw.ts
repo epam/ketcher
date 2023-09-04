@@ -1378,8 +1378,8 @@ function bracket(
   bracketHeight = bracketHeight || 1.0;
   let a0, a1;
   if (isBracketContainAttachment) {
-    a0 = bondCenter.addScaled(bracketDirection, -0.2 * bracketHeight);
-    a1 = bondCenter.addScaled(bracketDirection, 0.8 * bracketHeight);
+    a0 = bondCenter.addScaled(bracketDirection, 0.2 * bracketHeight);
+    a1 = bondCenter.addScaled(bracketDirection, -0.8 * bracketHeight);
   } else {
     a0 = bondCenter.addScaled(bracketDirection, -0.5 * bracketHeight);
     a1 = bondCenter.addScaled(bracketDirection, 0.5 * bracketHeight);

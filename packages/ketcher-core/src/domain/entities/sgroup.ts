@@ -467,6 +467,7 @@ export class SGroup {
     remol?: ReStruct,
     render?,
   ): void {
+    const BORDER_EXT = new Vec2(0.05 * 3, 0.05 * 3);
     const PADDING_VECTOR = new Vec2(0.2, 0.4);
     const atoms = sGroup.atoms;
     const crossBonds = crossBondsPerAtom
@@ -479,9 +480,10 @@ export class SGroup {
       const p2 = mol.bonds.get(crossBonds[1]).getCenter(mol);
       sGroup.bracketDirection = Vec2.diff(p2, p1).normalized();
     }
+    const d = sGroup.bracketDirection;
 
     let braketBox: Box2Abs | null = null;
-    let sGroupBoundingBox = null;
+    const contentBoxes: Array<any> = [];
     const getAtom = (aid) => {
       if (remol && render) {
         return remol.atoms.get(aid);
@@ -498,19 +500,29 @@ export class SGroup {
         position = new Vec2(atom.pp);
         structBoundingBox = new Box2Abs(position, position);
       }
-      if (structBoundingBox) {
-        sGroupBoundingBox = sGroupBoundingBox
-          ? Box2Abs.union(sGroupBoundingBox, structBoundingBox)
-          : structBoundingBox;
-      }
+      contentBoxes.push(structBoundingBox.extend(BORDER_EXT, BORDER_EXT));
+    });
+    contentBoxes.forEach((bba) => {
+      let bbb: Box2Abs | null = null;
+      [bba.p0.x, bba.p1.x].forEach((x) => {
+        [bba.p0.y, bba.p1.y].forEach((y) => {
+          const v = new Vec2(x, y);
+          const p = new Vec2(Vec2.dot(v, d), Vec2.dot(v, d.rotateSC(1, 0)));
+          bbb = !bbb ? new Box2Abs(p, p) : bbb!.include(p);
+        });
+      });
+      braketBox = !braketBox ? bbb : Box2Abs.union(braketBox, bbb!);
     });
     if (!render) render = window.ketcher!.editor.render;
-    const attachmentPointsVBox =
+    let attachmentPointsVBox =
       render.ctab.getRGroupAttachmentPointsVBoxByAtomIds(atoms);
+    attachmentPointsVBox = attachmentPointsVBox
+      ? attachmentPointsVBox.extend(BORDER_EXT, BORDER_EXT)
+      : attachmentPointsVBox;
     braketBox =
-      attachmentPointsVBox && sGroupBoundingBox
-        ? Box2Abs.union(sGroupBoundingBox, attachmentPointsVBox)
-        : sGroupBoundingBox;
+      attachmentPointsVBox && braketBox
+        ? Box2Abs.union(braketBox, attachmentPointsVBox)
+        : braketBox;
     if (braketBox)
       braketBox = (braketBox as Box2Abs).extend(PADDING_VECTOR, PADDING_VECTOR);
     sGroup.bracketBox = braketBox;

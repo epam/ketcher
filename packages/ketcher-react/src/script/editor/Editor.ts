@@ -525,11 +525,7 @@ class Editor implements KetcherEditor {
     };
   }
 
-  private async resolveDispatch() {
-    return new Promise((resolve) => setTimeout(resolve, 0));
-  }
-
-  async undo() {
+  undo() {
     if (this.historyPtr === 0) {
       throw new Error('Undo stack is empty');
     }
@@ -543,8 +539,6 @@ class Editor implements KetcherEditor {
       this.event.change.dispatch({ isUndoOrRedo: true });
     }
 
-    await this.resolveDispatch();
-
     this._tool?.updatePreview?.();
 
     this.historyPtr--;
@@ -556,7 +550,7 @@ class Editor implements KetcherEditor {
     this.render.update();
   }
 
-  async redo() {
+  redo() {
     if (this.historyPtr === this.historyStack.length) {
       throw new Error('Redo stack is empty');
     }
@@ -570,8 +564,6 @@ class Editor implements KetcherEditor {
     if (this._tool instanceof toolsMap.paste) {
       this.event.change.dispatch({ isUndoOrRedo: true });
     }
-
-    await this.resolveDispatch();
 
     this._tool?.updatePreview?.();
 

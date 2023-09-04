@@ -37,7 +37,7 @@ test.describe('Indigo Tools - Layout', () => {
     page,
   }) => {
     // Related Github issue: https://github.com/epam/ketcher/issues/3025
-    const structureWithStereoFlags = 'Ket/structure-with-stereo-flags.ket';
+    const structureWithStereoFlags = 'KET/structure-with-stereo-flags.ket';
     await openFileWithShift(structureWithStereoFlags, page);
     await selectTopPanelButton(TopPanelButton.Layout, page);
     await selectTopPanelButton(TopPanelButton.Layout, page);

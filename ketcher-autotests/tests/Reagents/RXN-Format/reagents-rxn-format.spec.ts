@@ -62,7 +62,7 @@ test.describe('Reagents RXN format', () => {
     Description: Files are compared for reagent presence
     */
     await openFileAndAddToCanvas(
-      'Ket/benzene-arrow-benzene-reagent-nh3.ket',
+      'KET/benzene-arrow-benzene-reagent-nh3.ket',
       page,
     );
     const expectedFile = await getRxn(page, 'v2000');
@@ -96,7 +96,7 @@ test.describe('Reagents RXN format', () => {
     Description: Files are compared for reagent presence
     */
     await openFileAndAddToCanvas(
-      'Ket/benzene-arrow-benzene-reagent-nh3.ket',
+      'KET/benzene-arrow-benzene-reagent-nh3.ket',
       page,
     );
     const expectedFile = await getRxn(page, 'v3000');
@@ -128,7 +128,7 @@ test.describe('Reagents RXN format', () => {
     Description: File saved in format (e.g. "ketcher.rxn")
     */
     await openFileAndAddToCanvas(
-      'Ket/benzene-arrow-benzene-reagent-nh3.ket',
+      'KET/benzene-arrow-benzene-reagent-nh3.ket',
       page,
     );
     const expectedFile = await getRxn(page, 'v2000');
@@ -162,7 +162,7 @@ test.describe('Reagents RXN format', () => {
     Description: File saved in format (e.g. "ketcher.rxn")
     */
     await openFileAndAddToCanvas(
-      'Ket/benzene-arrow-benzene-reagent-nh3.ket',
+      'KET/benzene-arrow-benzene-reagent-nh3.ket',
       page,
     );
     const expectedFile = await getRxn(page, 'v3000');

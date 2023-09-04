@@ -46,7 +46,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     Test case: EPMLSOPKET-1886
     Description: The structure isn`t changed.
     */
-    await openFileAndAddToCanvas('Ket/chain.ket', page);
+    await openFileAndAddToCanvas('KET/chain.ket', page);
     await selectTopPanelButton(TopPanelButton.Calculate, page);
   });
 
@@ -355,7 +355,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await openFileAndAddToCanvas('structure-with-stereo-bonds.mol', page);
     const expectedFile = await getKet(page);
     await saveToFile(
-      'Ket/structure-with-stereo-bonds-expected.ket',
+      'KET/structure-with-stereo-bonds-expected.ket',
       expectedFile,
     );
     await selectTopPanelButton(TopPanelButton.Calculate, page);
@@ -363,7 +363,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       await receiveFileComparisonData({
         page,
         expectedFileName:
-          'tests/test-data/Ket/structure-with-stereo-bonds-expected.ket',
+          'tests/test-data/KET/structure-with-stereo-bonds-expected.ket',
       });
 
     expect(ketFile).toEqual(ketFileExpected);

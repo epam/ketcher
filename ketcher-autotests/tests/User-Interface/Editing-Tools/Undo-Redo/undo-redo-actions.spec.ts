@@ -407,7 +407,7 @@ test.describe('Undo/Redo Actions', () => {
     Undo: the Mapping tool is removed;
     Redo: the Mapping tool is restored.
     */
-    await openFileAndAddToCanvas('Ket/reaction-chain.ket', page);
+    await openFileAndAddToCanvas('KET/reaction-chain.ket', page);
     await selectNestedTool(page, ReactionMappingTool.AUTOMAP);
     await pressButton(page, 'Apply');
     await delay(DELAY_IN_SECONDS.THREE);

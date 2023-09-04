@@ -44,7 +44,7 @@ test.describe('Reagents molecule above arrow', () => {
       Description: File is shown in the preview with the NH3 reagent above the arrow
     */
     await openFileAndAddToCanvas(
-      'Ket/benzene-arrow-benzene-reagent-nh3.ket',
+      'KET/benzene-arrow-benzene-reagent-nh3.ket',
       page,
     );
 
@@ -60,7 +60,7 @@ test.describe('Reagents molecule above arrow', () => {
       Description: File is shown in the preview with the NH3 reagent above the arrow
     */
     await openFileAndAddToCanvas(
-      'Ket/benzene-arrow-benzene-reagent-nh3.ket',
+      'KET/benzene-arrow-benzene-reagent-nh3.ket',
       page,
     );
     await selectTopPanelButton(TopPanelButton.Save, page);

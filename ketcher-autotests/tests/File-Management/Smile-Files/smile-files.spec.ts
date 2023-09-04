@@ -276,7 +276,7 @@ test.describe('SMILES files', () => {
     Description: Structure is correctly opens from saved files. Keep only first reaction arrow
     and keep all structures (all intermediate structures should be products and the arrow is replaced by a plus)
     */
-    await openFileAndAddToCanvas('Ket/two-arrows-and-plus.ket', page);
+    await openFileAndAddToCanvas('KET/two-arrows-and-plus.ket', page);
     await getAndCompareSmiles(
       page,
       'tests/test-data/smiles-two-arrows-and-plus-expected.json',
@@ -299,7 +299,7 @@ test.describe('SMILES files', () => {
     Description: Structure is not distorted. Reagent NH3 located above reaction arrow.
     */
     await openFileAndAddToCanvas(
-      'Ket/benzene-arrow-benzene-reagent-nh3.ket',
+      'KET/benzene-arrow-benzene-reagent-nh3.ket',
       page,
     );
     await getAndCompareSmiles(

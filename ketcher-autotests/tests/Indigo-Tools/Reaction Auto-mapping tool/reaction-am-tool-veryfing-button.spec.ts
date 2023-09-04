@@ -62,7 +62,7 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
      * Test case: EPMLSOPKET-1808
      * Description:  UI dialog
      */
-    await openFileAndAddToCanvas('rxn/reaction-2.rxn', page);
+    await openFileAndAddToCanvas('Rxn-V2000/reaction-2.rxn', page);
     await selectNestedTool(page, ReactionMappingTool.AUTOMAP);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Discard');
@@ -79,7 +79,7 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
       test(`${mode} mode`, async ({ page }) => {
         const point1 = { x: -250, y: 8 };
         const point2 = { x: -250, y: 55 };
-        await openFileAndAddToCanvas('Rxn/reaction-3.rxn', page);
+        await openFileAndAddToCanvas('Rxn-V3000/reaction-3.rxn', page);
         await applyAutoMapMode(page, mode);
         await selectTopPanelButton(TopPanelButton.Undo, page);
         await takeEditorScreenshot(page);
@@ -155,7 +155,7 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
      * Test cases: EPMLSOPKET-1821
      * Description: Clear mode
      */
-    await openFileAndAddToCanvas('Rxn/reaction-3.rxn', page);
+    await openFileAndAddToCanvas('Rxn-V3000/reaction-3.rxn', page);
     await applyAutoMapMode(page, 'Alter');
     await applyAutoMapMode(page, 'Clear');
     await mapTwoAtoms(

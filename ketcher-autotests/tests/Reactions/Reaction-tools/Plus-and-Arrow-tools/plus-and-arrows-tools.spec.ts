@@ -230,7 +230,7 @@ test.describe('Plus and Arrows tools ', () => {
       await page.mouse.move(point.x - 100, point.y - 100);
       await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
       await takeEditorScreenshot(page);
-      await selectTopPanelButton(TopPanelButton.Undo, page);
+      await page.keyboard.press(`Escape`);
       await takeEditorScreenshot(page);
       await selectLeftPanelButton(LeftPanelButton.Erase, page);
       await page.mouse.move(point.x - 300, point.y - 100);
@@ -298,7 +298,7 @@ test.describe('Plus and Arrows tools ', () => {
       await page.mouse.move(point.x - 100, point.y - 100);
       await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
       await takeEditorScreenshot(page);
-      await selectTopPanelButton(TopPanelButton.Undo, page);
+      await page.keyboard.press('Escape');
       await takeEditorScreenshot(page);
       await selectLeftPanelButton(LeftPanelButton.Erase, page);
       await page.mouse.move(point.x - 300, point.y - 100);

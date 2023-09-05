@@ -140,6 +140,18 @@ export async function pasteFromClipboard(page: Page, fillValue: string) {
   await page.getByRole('dialog').getByRole('textbox').fill(fillValue);
 }
 
+export async function openPasteFromClipboard(
+  page: Page,
+  fillStructure: string,
+) {
+  await selectTopPanelButton(TopPanelButton.Open, page);
+  await page.getByText('Paste from clipboard').click();
+  await page.getByRole('dialog').getByRole('textbox').fill(fillStructure);
+  // The 'Add to Canvas' button step is removed.
+  // If you need to use this function in another context and include the button press, you can do so separately.
+  // await waitForLoad(page);
+}
+
 export async function placeFileInTheMiddle(
   filename: string,
   page: Page,

@@ -11,6 +11,7 @@ import {
   FILE_TEST_DATA,
   saveToFile,
   waitForLoad,
+  waitForIndigoToLoad,
 } from '@utils';
 import { getRxn } from '@utils/formats';
 
@@ -61,7 +62,7 @@ test.describe('Reagents RXN format', () => {
     Description: Files are compared for reagent presence
     */
     await openFileAndAddToCanvas(
-      'Ket/benzene-arrow-benzene-reagent-nh3.ket',
+      'KET/benzene-arrow-benzene-reagent-nh3.ket',
       page,
     );
     const expectedFile = await getRxn(page, 'v2000');
@@ -95,7 +96,7 @@ test.describe('Reagents RXN format', () => {
     Description: Files are compared for reagent presence
     */
     await openFileAndAddToCanvas(
-      'Ket/benzene-arrow-benzene-reagent-nh3.ket',
+      'KET/benzene-arrow-benzene-reagent-nh3.ket',
       page,
     );
     const expectedFile = await getRxn(page, 'v3000');
@@ -127,7 +128,7 @@ test.describe('Reagents RXN format', () => {
     Description: File saved in format (e.g. "ketcher.rxn")
     */
     await openFileAndAddToCanvas(
-      'Ket/benzene-arrow-benzene-reagent-nh3.ket',
+      'KET/benzene-arrow-benzene-reagent-nh3.ket',
       page,
     );
     const expectedFile = await getRxn(page, 'v2000');
@@ -161,7 +162,7 @@ test.describe('Reagents RXN format', () => {
     Description: File saved in format (e.g. "ketcher.rxn")
     */
     await openFileAndAddToCanvas(
-      'Ket/benzene-arrow-benzene-reagent-nh3.ket',
+      'KET/benzene-arrow-benzene-reagent-nh3.ket',
       page,
     );
     const expectedFile = await getRxn(page, 'v3000');
@@ -194,28 +195,27 @@ test.describe('Reagents RXN format', () => {
 test.describe('Reagents RXN format', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('');
+    await waitForIndigoToLoad(page);
   });
 
   test.afterEach(async ({ page }) => {
     await takeEditorScreenshot(page);
   });
 
-  test.fixme('Open from file in "RXN V2000" format', async ({ page }) => {
+  test('Open from file in "RXN V2000" format', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-4679
       Description: Reagent 'NH3' above the reaction arrow
       */
-    // will fix when fixed Indigo bug #1205
     await openFileAndAddToCanvas('mdl-rxnfile-v2000-expected.rxn', page);
     await clickInTheMiddleOfTheScreen(page);
   });
 
-  test.fixme('Open from file in "RXN V3000" format', async ({ page }) => {
+  test('Open from file in "RXN V3000" format', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-4680
       Description: Reagent 'NH3' above the reaction arrow
       */
-    // will fix when fixed Indigo bug #1205
     await openFileAndAddToCanvas('mdl-rxnfile-v3000-expected.rxn', page);
     await clickInTheMiddleOfTheScreen(page);
   });
@@ -232,12 +232,11 @@ test.describe('Reagents RXN format', () => {
     await clickInTheMiddleOfTheScreen(page);
   });
 
-  test.fixme('Paste from clipboard in "RXN V3000" format', async ({ page }) => {
+  test('Paste from clipboard in "RXN V3000" format', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-4678
       Description: Reagent 'Cl' displays below reaction arrow
       */
-    // will fix when fixed Indigo bug #1205
     await pasteFromClipboard(
       page,
       FILE_TEST_DATA.benzeneArrowBenzeneReagentHclV3000,

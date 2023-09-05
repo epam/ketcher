@@ -97,7 +97,7 @@ class PolymerBond implements Tool {
     if (isMonomerHovered && !isMonomerSelected && !isMonomerLastHovered) {
       hoveredElementRenderer.monomer.turnOnSelection();
       this.lastHoveredMonomerRenderer = hoveredElementRenderer;
-      this.setPotentialBondToAttachmentPoint(this.lastHoveredMonomerRenderer); /// ВОТ ТУТ
+      this.setPotentialBondToAttachmentPoint(this.lastHoveredMonomerRenderer);
     } else if (
       !isMonomerHovered &&
       this.lastHoveredMonomerRenderer &&

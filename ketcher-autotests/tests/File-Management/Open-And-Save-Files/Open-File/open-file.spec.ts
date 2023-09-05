@@ -10,6 +10,7 @@ import {
   openFileAndAddToCanvas,
   TopPanelButton,
   selectTopPanelButton,
+  waitForIndigoToLoad,
 } from '@utils';
 
 const X_OFFSET = 200;
@@ -17,6 +18,7 @@ const X_OFFSET = 200;
 test.describe('open files with different formats', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('');
+    await waitForIndigoToLoad(page);
   });
 
   test.afterEach(async ({ page }) => {
@@ -70,7 +72,7 @@ the first one disappears. Couldn't reproduct manually.
     await clickOnTheCanvas(page, X_OFFSET, 0);
   });
 
-  test.fixme('Open file - Input .rxn string', async ({ page }) => {
+  test('Open file - Input .rxn string', async ({ page }) => {
     /**
      * Test case: EPMLSOPKET-2860
      * Description: Two structures are added to canvas - one opened from clipboard, another from file

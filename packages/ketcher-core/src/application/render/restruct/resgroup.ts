@@ -299,14 +299,9 @@ function SGroupdrawBrackets({
     }
   }
   const bracketR = brackets[ir];
-  function renderIndex(text: string, shift: number): void {
-    const indexPos = Scale.obj2scaled(
-      bracketR.center.addScaled(
-        bracketR.bracketDirection,
-        shift * bracketR.height,
-      ),
-      render.options,
-    );
+  function renderIndex(text: string): void {
+    const path = ir === 0 ? set[ir].getPath()[1] : set[ir].getPath()[2];
+    const indexPos = new Vec2(path[1], path[2]);
     const indexPath = render.paper.text(indexPos.x, indexPos.y, text).attr({
       font: render.options.font,
       'font-size': render.options.fontszsub,
@@ -329,13 +324,9 @@ function SGroupdrawBrackets({
     set.push(indexPath);
   }
   if (lowerIndexText) {
-    if (isBracketContainAttachment) {
-      renderIndex(lowerIndexText, 0.2);
-    } else {
-      renderIndex(lowerIndexText, 0.5);
-    }
+    renderIndex(lowerIndexText);
   }
-  if (upperIndexText) renderIndex(upperIndexText, -0.5);
+  if (upperIndexText) renderIndex(upperIndexText);
 }
 
 function showValue(

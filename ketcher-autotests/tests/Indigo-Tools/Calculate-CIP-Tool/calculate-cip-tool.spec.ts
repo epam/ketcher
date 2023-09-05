@@ -22,6 +22,7 @@ import {
   saveToFile,
   BondTool,
   selectNestedTool,
+  waitForIndigoToLoad,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
@@ -31,6 +32,7 @@ import { getKet, getMolfile } from '@utils/formats';
 test.describe('Indigo Tools - Calculate CIP Tool', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('');
+    await waitForIndigoToLoad(page);
   });
 
   test.afterEach(async ({ page }) => {
@@ -44,7 +46,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     Test case: EPMLSOPKET-1886
     Description: The structure isn`t changed.
     */
-    await openFileAndAddToCanvas('Ket/chain.ket', page);
+    await openFileAndAddToCanvas('KET/chain.ket', page);
     await selectTopPanelButton(TopPanelButton.Calculate, page);
   });
 
@@ -71,59 +73,56 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await resetCurrentTool(page);
   });
 
-  test.fixme(
-    'Layout/Undo with structure that contain stereo labels',
-    async ({ page }) => {
-      /*
+  test('Layout/Undo with structure that contain stereo labels', async ({
+    page,
+  }) => {
+    /*
     Test case: EPMLSOPKET-1900
     Description: Stereo labels appear near stereobonds after 'Calculate CIP' action.
     Stereo labels disappear after 'Layout' action.
     'Undo' action leads to the previous structure with stereo labels.
     */
-      // will work after bugfix in 2.13-rc.3 bug#3025
-      await openFileAndAddToCanvas('structure-with-stereo-bonds.mol', page);
-      await selectTopPanelButton(TopPanelButton.Calculate, page);
-      await selectTopPanelButton(TopPanelButton.Layout, page);
+    // will work after bugfix in 2.13-rc.3 bug#3025
+    await openFileAndAddToCanvas('structure-with-stereo-bonds.mol', page);
+    await selectTopPanelButton(TopPanelButton.Calculate, page);
+    await selectTopPanelButton(TopPanelButton.Layout, page);
 
-      await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page);
 
-      await selectTopPanelButton(TopPanelButton.Undo, page);
-    },
-  );
+    await selectTopPanelButton(TopPanelButton.Undo, page);
+  });
 
-  test.fixme(
-    'Copy/Paste of structure that contain stereo labels',
-    async ({ page }) => {
-      /*
+  test('Copy/Paste of structure that contain stereo labels', async ({
+    page,
+  }) => {
+    /*
     Test case: EPMLSOPKET-1896
     Description: The structure is copied.
     Stereo labels don't disappear after paste of the structure on the canvas.
     */
-      const x = 300;
-      const y = 300;
-      await openFileAndAddToCanvas('structure-with-stereo-bonds.mol', page);
-      await selectTopPanelButton(TopPanelButton.Calculate, page);
-      await copyAndPaste(page);
-      await page.mouse.click(x, y);
-    },
-  );
+    const x = 300;
+    const y = 300;
+    await openFileAndAddToCanvas('structure-with-stereo-bonds.mol', page);
+    await selectTopPanelButton(TopPanelButton.Calculate, page);
+    await copyAndPaste(page);
+    await page.mouse.click(x, y);
+  });
 
-  test.fixme(
-    'Cut/Paste of structure that contain stereo labels',
-    async ({ page }) => {
-      /*
+  test('Cut/Paste of structure that contain stereo labels', async ({
+    page,
+  }) => {
+    /*
     Test case: EPMLSOPKET-1898
     Description: The structure is cut.
     Stereo labels don't disappear after paste of the structure on the canvas.
     */
-      const x = 300;
-      const y = 300;
-      await openFileAndAddToCanvas('structure-with-stereo-bonds.mol', page);
-      await selectTopPanelButton(TopPanelButton.Calculate, page);
-      await cutAndPaste(page);
-      await page.mouse.click(x, y);
-    },
-  );
+    const x = 300;
+    const y = 300;
+    await openFileAndAddToCanvas('structure-with-stereo-bonds.mol', page);
+    await selectTopPanelButton(TopPanelButton.Calculate, page);
+    await cutAndPaste(page);
+    await page.mouse.click(x, y);
+  });
 
   test('Operation with structure including stereo properties (E/Z labels)', async ({
     page,
@@ -356,7 +355,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await openFileAndAddToCanvas('structure-with-stereo-bonds.mol', page);
     const expectedFile = await getKet(page);
     await saveToFile(
-      'Ket/structure-with-stereo-bonds-expected.ket',
+      'KET/structure-with-stereo-bonds-expected.ket',
       expectedFile,
     );
     await selectTopPanelButton(TopPanelButton.Calculate, page);
@@ -364,7 +363,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       await receiveFileComparisonData({
         page,
         expectedFileName:
-          'tests/test-data/Ket/structure-with-stereo-bonds-expected.ket',
+          'tests/test-data/KET/structure-with-stereo-bonds-expected.ket',
       });
 
     expect(ketFile).toEqual(ketFileExpected);
@@ -397,33 +396,31 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     expect(molFile).toEqual(molFileExpected);
   });
 
-  test.fixme(
-    'Save as .mol V3000 file structure with stereo labels',
-    async ({ page }) => {
-      /*
+  test('Save as .mol V3000 file structure with stereo labels', async ({
+    page,
+  }) => {
+    /*
     Test case: EPMLSOPKET-1911
     Description: The file is saved as .mol V3000 file.
     */
-      await openFileAndAddToCanvas('structure-with-stereo-bonds.mol', page);
-      const expectedFile = await getMolfile(page, 'v3000');
-      await saveToFile(
-        'structure-with-stereo-bonds-expectedV3000.mol',
-        expectedFile,
-      );
-      await selectTopPanelButton(TopPanelButton.Calculate, page);
-      const METADATA_STRING_INDEX = [1];
-      const { file: molFile, fileExpected: molFileExpected } =
-        await receiveFileComparisonData({
-          page,
-          metaDataIndexes: METADATA_STRING_INDEX,
-          expectedFileName:
-            'tests/test-data/structure-with-stereo-bonds-expectedV3000.mol',
-          fileFormat: 'v3000',
-        });
+    await openFileAndAddToCanvas('structure-with-stereo-bonds.mol', page);
+    const expectedFile = await getMolfile(page, 'v3000');
+    await saveToFile(
+      'structure-with-stereo-bonds-expectedV3000.mol',
+      expectedFile,
+    );
+    const METADATA_STRING_INDEX = [1];
+    const { file: molFile, fileExpected: molFileExpected } =
+      await receiveFileComparisonData({
+        page,
+        metaDataIndexes: METADATA_STRING_INDEX,
+        expectedFileName:
+          'tests/test-data/structure-with-stereo-bonds-expectedV3000.mol',
+        fileFormat: 'v3000',
+      });
 
-      expect(molFile).toEqual(molFileExpected);
-    },
-  );
+    expect(molFile).toEqual(molFileExpected);
+  });
 
   test('Save as .smi file structure with stereo labels', async ({ page }) => {
     /*

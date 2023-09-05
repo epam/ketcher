@@ -44,7 +44,7 @@ test.describe('Reagents SMARTS format', () => {
     format in "Preview" tab (e.g. [#6]-1=[#6]-[#6]=[#6]-[#6]=[#6]-1>[#7]>[#6]-1=[#6]-[#6]=[#6]-[#6]=[#6]-1)
     */
     await openFileAndAddToCanvas(
-      'Ket/benzene-arrow-benzene-reagent-nh3.ket',
+      'KET/benzene-arrow-benzene-reagent-nh3.ket',
       page,
     );
 
@@ -69,7 +69,7 @@ test.describe('Reagents SMARTS format', () => {
     )
     */
     await openFileAndAddToCanvas(
-      'Ket/benzene-arrow-benzene-reagent-hcl.ket',
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
 
@@ -129,7 +129,7 @@ test.describe('Reagents SMARTS format', () => {
     Description: File saved in format (e.g. "ketcher.smarts")
     */
     await openFileAndAddToCanvas(
-      'Ket/benzene-arrow-benzene-reagent-nh3.ket',
+      'KET/benzene-arrow-benzene-reagent-nh3.ket',
       page,
     );
 

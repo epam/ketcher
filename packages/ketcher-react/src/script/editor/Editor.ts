@@ -539,8 +539,6 @@ class Editor implements KetcherEditor {
       this.event.change.dispatch({ isUndoOrRedo: true });
     }
 
-    this._tool?.updatePreview?.();
-
     this.historyPtr--;
     const stack = this.historyStack[this.historyPtr];
     const action = stack.perform(this.render.ctab);
@@ -548,6 +546,8 @@ class Editor implements KetcherEditor {
     this.historyStack[this.historyPtr] = action;
     this.event.change.dispatch({ action, isUndoOrRedo: true });
     this.render.update();
+
+    this._tool?.updatePreview?.();
   }
 
   redo() {
@@ -565,13 +565,13 @@ class Editor implements KetcherEditor {
       this.event.change.dispatch({ isUndoOrRedo: true });
     }
 
-    this._tool?.updatePreview?.();
-
     const action = this.historyStack[this.historyPtr].perform(this.render.ctab);
     this.historyStack[this.historyPtr] = action;
     this.historyPtr++;
     this.event.change.dispatch({ action, isUndoOrRedo: true });
     this.render.update();
+
+    this._tool?.updatePreview?.();
   }
 
   subscribe(eventName: any, handler: any) {

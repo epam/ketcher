@@ -19,7 +19,7 @@ env:
   CI_ENVIRONMENT: true
 jobs:
   playwright_tests:
-    timeout-minutes: 120
+    timeout-minutes: 40
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v3

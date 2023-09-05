@@ -48,7 +48,7 @@ describe('should toggle color picker dialog', () => {
       setTimeout(() => {
         userEvent.click(overlay);
         resolve();
-      }, 300);
+      }, 1000);
     });
     expect(await screen.findByTestId('color-picker-field')).toBeInTheDocument();
 

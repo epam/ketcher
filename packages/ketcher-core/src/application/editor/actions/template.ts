@@ -26,16 +26,17 @@ import { fromAromaticTemplateOnBond } from './aromaticFusing';
 import { fromPaste } from './paste';
 import utils from '../shared/utils';
 import { fromSgroupAddition } from './sgroup';
+import { ReStruct } from 'application/render';
 
 const benzeneMoleculeName = 'Benzene';
 const cyclopentadieneMoleculeName = 'Cyclopentadiene';
 const benzeneDoubleBondIndexes = [1, 4];
 
 export function fromTemplateOnCanvas(
-  restruct,
+  restruct: ReStruct,
   template,
-  pos,
-  angle,
+  pos: Vec2,
+  angle = 0,
 ): [Action, { atoms: number[]; bonds: number[] }] {
   const [action, pasteItems] = fromPaste(
     restruct,
@@ -153,6 +154,7 @@ export function fromTemplateOnAtom(
       map.set(id, operation.data.aid);
       pasteItems.atoms.push(operation.data.aid);
     }
+    // new AtomAttr(id, 'isPreview', isPreview).perform(restruct);
   });
 
   if (!isTmplSingleGroup) mergeSgroups(action, restruct, pasteItems.atoms, aid);

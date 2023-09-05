@@ -149,7 +149,11 @@ export class Vec2 {
   }
 
   sub(v: Vec2): Vec2 {
-    return new Vec2(this.x - v.x, this.y - v.y, this.z - v.z);
+    return new Vec2(
+      Number((this.x - v.x).toFixed(8)),
+      Number((this.y - v.y).toFixed(8)),
+      this.z - v.z,
+    );
   }
 
   scaled(s: number): Vec2 {

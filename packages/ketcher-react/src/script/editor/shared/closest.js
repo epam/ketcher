@@ -181,8 +181,11 @@ function findClosestBond(restruct, pos, skip, minDist, options) {
 
   let minCDist = minDist;
 
-  restruct.bonds.forEach((bond, bid) => {
-    if (bid === skipId) return;
+  restruct.bonds.forEach((bond, bondId) => {
+    if (bond.b.isPreview && !bond.hover) {
+      return;
+    }
+    if (bondId === skipId) return;
 
     const p1 = restruct.atoms.get(bond.b.begin).a.pp;
     const p2 = restruct.atoms.get(bond.b.end).a.pp;
@@ -208,7 +211,7 @@ function findClosestBond(restruct, pos, skip, minDist, options) {
 
     if (isPosInsidePolygon) {
       minCDist = cdist;
-      closestBondCenter = bid;
+      closestBondCenter = bondId;
     }
 
     const hb = restruct.molecule.halfBonds.get(bond.b.hb1);
@@ -222,7 +225,7 @@ function findClosestBond(restruct, pos, skip, minDist, options) {
       const dist = Math.abs(Vec2.dot(pos.sub(p1), norm));
 
       if (dist < minDist) {
-        closestBond = bid;
+        closestBond = bondId;
         minDist = dist;
       }
     }
@@ -542,13 +545,17 @@ function findCloseMerge(
   };
 
   const struct = restruct.molecule;
-
   selected.atoms.forEach((aid) => {
-    pos.atoms.set(aid, struct.atoms.get(aid).pp);
+    if (struct.atoms.get(aid)) {
+      pos.atoms.set(aid, struct.atoms.get(aid).pp);
+    }
   });
 
   selected.bonds.forEach((bid) => {
     const bond = struct.bonds.get(bid);
+    if (!struct.bonds.get(bid)) {
+      return;
+    }
     pos.bonds.set(
       bid,
       Vec2.lc2(

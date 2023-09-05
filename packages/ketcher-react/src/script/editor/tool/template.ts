@@ -31,13 +31,15 @@ import {
   Action,
   vectorUtils,
   Bond,
+  fromMultipleMove,
+  BondAttr,
 } from 'ketcher-core';
 import Editor from '../Editor';
 import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems';
 import { MODES } from 'src/constants';
 import { Tool } from './Tool';
 
-export const PREVIEW_DELAY = 300;
+export const PREVIEW_DELAY = 200;
 
 function getBondFlipSign(struct: Struct, bond: Bond): number {
   const xy0 = new Vec2();
@@ -122,12 +124,24 @@ class TemplateTool implements Tool {
   private readonly isSaltOrSolvent: boolean;
   private event: Event | undefined;
 
+  private templateSet: boolean;
+  private pasteItems: any;
+  private eventPos: Vec2;
+  private prevEventPos: Vec2;
+  private createPreviewAction: any;
+
   constructor(editor: Editor, tmpl) {
     this.editor = editor;
     this.isPreviewVisible = false;
     this.previewRemoveAction = new Action();
     this.previewTimeout = null;
     this.lastPreviewId = null;
+
+    this.templateSet = false;
+    this.pasteItems = null;
+    this.eventPos = new Vec2();
+    this.prevEventPos = new Vec2();
+
     this.mode = getTemplateMode(tmpl);
     this.editor.selection(null);
     this.isSaltOrSolvent = SGroup.isSaltOrSolvent(tmpl.struct.name);
@@ -301,10 +315,7 @@ class TemplateTool implements Tool {
       );
       const restruct = this.editor.render.ctab;
       const ci = this.editor.findItem(event, ['atoms', 'bonds']);
-
-      if (!ci) {
-        this.editor.hoverIcon.show();
-      }
+      this.eventPos = this.editor.render.page2obj(event);
 
       const isMouseAwayFromAtomsAndBonds = !ci;
       const isPreviewTargetChanged =
@@ -313,9 +324,6 @@ class TemplateTool implements Tool {
         isMouseAwayFromAtomsAndBonds || isPreviewTargetChanged;
       if (shouldHidePreview) {
         this.hidePreview();
-        if (!this.editor.hoverIcon.isShown) {
-          this.editor.hoverIcon.show();
-        }
       }
 
       const shouldShowPreview =
@@ -328,10 +336,34 @@ class TemplateTool implements Tool {
         this.lastPreviewId = getUniqueCiId(ci);
 
         this.previewTimeout = setTimeout(() => {
+          if (this.createPreviewAction) {
+            const test = this.createPreviewAction.perform(restruct);
+            this.editor.update(test, false);
+            this.templateSet = false;
+          }
           this.showPreview(event, ci, restruct);
         }, PREVIEW_DELAY);
-      }
+      } else {
+        // const mergeItems = getItemsToFuse(this.editor, this.pasteItems);
+        let action: any = null;
+        if (!this.templateSet && shouldHidePreview && !shouldShowPreview) {
+          [action, this.pasteItems] = fromTemplateOnCanvas(
+            restruct,
+            this.template,
+            this.editor.render.page2obj(event),
+          );
+          this.prevEventPos = this.editor.render.page2obj(event);
+          this.createPreviewAction = action;
 
+          this.editor.render.update(action, null, { resizeCanvas: false });
+          this.templateSet = true;
+        } else if (this.pasteItems && shouldHidePreview) {
+          const dist = this.eventPos.sub(this.prevEventPos);
+          this.prevEventPos = this.eventPos;
+          action = fromMultipleMove(restruct, this.pasteItems, dist);
+          this.editor.render.update(action, null, { resizeCanvas: false });
+        }
+      }
       return true;
     }
 
@@ -557,16 +589,21 @@ class TemplateTool implements Tool {
 
       ci = { map: 'atoms', id: sGroupPositionAtomId };
     }
-
     if (!dragCtx.action) {
       if (!ci) {
-        //  ci.type == 'Canvas'
-        [action, pasteItems] = fromTemplateOnCanvas(
+        const result = fromTemplateOnCanvas(
           restruct,
           this.template,
           dragCtx.xy0,
           0,
         );
+        action = result[0];
+        const pasteItems = result[1];
+        for (const bid of pasteItems.bonds || []) {
+          new BondAttr(bid, 'isPreview', false).perform(
+            this.editor.render.ctab,
+          );
+        }
         dragCtx.action = action;
       } else if (ci.map === 'atoms') {
         const degree = restruct.atoms.get(ci.id)?.a.neighbors.length;
@@ -618,6 +655,8 @@ class TemplateTool implements Tool {
 
     this.editor.selection(null);
 
+    console.log(23)
+
     if (!dragCtx.mergeItems && pasteItems && !this.isModeFunctionalGroup) {
       dragCtx.mergeItems = getItemsToFuse(this.editor, pasteItems);
     }
@@ -626,6 +665,7 @@ class TemplateTool implements Tool {
       : fromItemsFuse(restruct, dragCtx.mergeItems);
 
     const completeAction = dragCtx.action;
+    console.log(completeAction && !completeAction.isDummy())
     if (completeAction && !completeAction.isDummy()) {
       this.editor.update(completeAction);
     }
@@ -637,6 +677,11 @@ class TemplateTool implements Tool {
   }
 
   cancel() {
+    if (this.createPreviewAction && this.templateSet) {
+      const test = this.createPreviewAction.perform(this.editor.render.ctab);
+      this.editor.update(test, false);
+      this.templateSet = false;
+    }
     this.hidePreview();
     this.mouseup();
   }

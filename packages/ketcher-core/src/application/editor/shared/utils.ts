@@ -24,7 +24,8 @@ function setFracAngle(angle: number): void {
   FRAC = (Math.PI / 180) * angle;
 }
 
-function calcAngle(pos0: Vec2, pos1: Vec2): number {
+function calcAngle(pos0: Vec2 | null, pos1: Vec2 | null): number {
+  if (!pos0 || !pos1) return 0;
   const v = Vec2.diff(pos1, pos0);
   return Math.atan2(v.y, v.x);
 }

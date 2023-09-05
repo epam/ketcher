@@ -26,8 +26,8 @@ import {
   screenshotBetweenUndoRedo,
   setAttachmentPoints,
   AttachmentPoint,
-  openFile,
 } from '@utils';
+
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
 import { getMolfile, getRxn, getSmiles } from '@utils/formats';
@@ -288,7 +288,6 @@ test.describe('Attachment Point Tool', () => {
     and plus sign(s) are present on the canvas.
     */
     await openFileAndAddToCanvas('KET/reaction-with-arrow-and-plus.ket', page);
-
     await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
     await setAttachmentPoints(
       page,
@@ -312,7 +311,7 @@ test.describe('Attachment Point Tool', () => {
     );
   });
 
-  test.fixme('Copy/Paste actions', async ({ page }) => {
+  test('Copy/Paste actions', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1648
     Description: Pasted structures are displayed with correct attachment points.
@@ -321,11 +320,10 @@ test.describe('Attachment Point Tool', () => {
     await openFileAndAddToCanvas('KET/chain-with-attachment-points.ket', page);
     await copyAndPaste(page);
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
-
     await screenshotBetweenUndoRedo(page);
   });
 
-  test.fixme('Cut/Paste actions', async ({ page }) => {
+  test('Cut/Paste actions', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1648
     Description: Pasted structures are displayed with correct attachment points.
@@ -455,7 +453,6 @@ test.describe('Attachment Point Tool', () => {
     await openFileAndAddToCanvas('KET/reaction-with-arrow-and-plus.ket', page);
     const expectedFile = await getRxn(page);
     await saveToFile('reaction-with-arrow-and-plus-expected.rxn', expectedFile);
-
     const METADATA_STRING_INDEX = [2, 7, 30, 37];
     const { fileExpected: rxnFileExpected, file: rxnFile } =
       await receiveFileComparisonData({
@@ -478,7 +475,6 @@ test.describe('Attachment Point Tool', () => {
       'reaction-with-arrow-and-plus-expectedV3000.rxn',
       expectedFile,
     );
-
     const METADATA_STRING_INDEX = [2];
     const { fileExpected: rxnFileExpected, file: rxnFile } =
       await receiveFileComparisonData({
@@ -499,7 +495,6 @@ test.describe('Attachment Point Tool', () => {
     await openFileAndAddToCanvas('KET/chain-with-attachment-points.ket', page);
     const expectedFile = await getSmiles(page);
     await saveToFile('chain-with-attachment-points-expected.smi', expectedFile);
-
     const { fileExpected: smiFileExpected, file: smiFile } =
       await receiveFileComparisonData({
         page,
@@ -522,7 +517,6 @@ test.describe('Attachment Point Tool', () => {
     await openFileAndAddToCanvas('KET/chain-with-attachment-points.ket', page);
     const expectedFile = await getSmiles(page);
     await saveToFile('chain-with-attachment-points-expected.smi', expectedFile);
-
     const { fileExpected: smiFileExpected, file: smiFile } =
       await receiveFileComparisonData({
         page,
@@ -551,7 +545,6 @@ test.describe('Attachment Point Tool', () => {
 
       await selectTopPanelButton(TopPanelButton.Clean, page);
       await delay(DELAY_IN_SECONDS.SEVEN);
-      await takeEditorScreenshot(page);
     },
   );
 

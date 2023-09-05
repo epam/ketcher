@@ -569,7 +569,7 @@ test.describe('Functional Groups', () => {
     await resetCurrentTool(page);
   });
 
-  test.skip('Hotkey for Atom can replace Functional Groups abbreviation', async ({
+  test('Hotkey for Atom can replace Functional Groups abbreviation', async ({
     page,
   }) => {
     /*
@@ -655,7 +655,7 @@ test.describe('Functional Groups', () => {
     await page.getByText('Expand Abbreviation').click();
   });
 
-  test.skip('After expand a Functional Group hotkeys not stop working', async ({
+  test('After expand a Functional Group hotkeys not stop working', async ({
     page,
   }) => {
     /*

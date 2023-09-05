@@ -62,7 +62,7 @@ test.describe('Lasso Selection tool', () => {
      * Test case: EPMLSOPKET-1338
      * Description: Hover and selection of atom/bond/molecule
      */
-    await openFileAndAddToCanvas('two-benzene-with-atoms.ket', page);
+    await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
     const atomPoint = await getAtomByIndex(page, { label: 'C' }, 0);
     await page.mouse.move(atomPoint.x, atomPoint.y);
     await page.mouse.click(atomPoint.x, atomPoint.y);
@@ -90,7 +90,7 @@ test.describe('Lasso Selection tool', () => {
      * Test case: EPMLSOPKET-1339
      * Description: Atom/bond/molecule is moved to another place. Structure is not changed. Only selected part changed their place.
      */
-    await openFileAndAddToCanvas('two-benzene-with-atoms.ket', page);
+    await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
     await selectLasso(page);
     const point = await selectObjects(page, 100, 100);
     await clickOnAtom(page, 'C', 5);
@@ -102,7 +102,7 @@ test.describe('Lasso Selection tool', () => {
      * Test case: EPMLSOPKET-1340
      * Description: Hover and selection of plus sign and reaction arrow
      */
-    await openFileAndAddToCanvas('reaction_4.rxn', page);
+    await openFileAndAddToCanvas('Rxn-V2000/reaction_4.rxn', page);
     await selectLasso(page);
     const point = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await page.mouse.move(point.x - 270, point.y + 10);
@@ -129,7 +129,7 @@ test.describe('Lasso Selection tool', () => {
      * Test case: EPMLSOPKET-1342
      * Description: Selected structures and components are moved to the another place.
      */
-    await openFileAndAddToCanvas('reaction_4.rxn', page);
+    await openFileAndAddToCanvas('Rxn-V2000/reaction_4.rxn', page);
     await selectLasso(page);
     const point = await selectObjects(page, 300, 200);
     await clickOnAtom(page, 'C', 10);
@@ -141,7 +141,7 @@ test.describe('Lasso Selection tool', () => {
      * Test case: EPMLSOPKET-1343
      * Description: Atoms are fused.
      */
-    await openFileAndAddToCanvas('two-benzene-with-atoms.ket', page);
+    await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
     await selectLasso(page);
     await clickOnAtom(page, 'C', 4);
     const atomPoint = await getAtomByIndex(page, { label: 'C' }, 9);
@@ -185,7 +185,7 @@ test.describe('Lasso Selection tool', () => {
      * Test case: EPMLSOPKET-1345
      * Description: The selected part of the structure or reaction should disappear after pressing the "Delete" button.
      */
-    await openFileAndAddToCanvas('reaction_4.rxn', page);
+    await openFileAndAddToCanvas('Rxn-V2000/reaction_4.rxn', page);
     await selectLasso(page);
     await selectObjects(page, 200, 200);
     await page.keyboard.press('Delete');
@@ -200,7 +200,7 @@ test.describe('Lasso Selection tool', () => {
      * Description: Undo/Redo should work correctly for the actions for the selected objects.
      */
     const centerPoint = await getCoordinatesOfTheMiddleOfTheScreen(page);
-    await openFileAndAddToCanvas('reaction_4.rxn', page);
+    await openFileAndAddToCanvas('Rxn-V2000/reaction_4.rxn', page);
     await selectLasso(page);
 
     await clickOnAtom(page, 'C', 0);

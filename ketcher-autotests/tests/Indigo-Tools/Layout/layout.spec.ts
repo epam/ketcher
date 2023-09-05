@@ -50,7 +50,10 @@ test.describe('Indigo Tools - Layout', () => {
     page,
   }) => {
     // Related Github issue: https://github.com/epam/ketcher/issues/3208
-    await openFileAndAddToCanvas('Molfiles-V2000/sbs_48.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/chloro-ethylamino-dimethyl-propoxy-propan-ol.mol',
+      page,
+    );
     await selectTopPanelButton(TopPanelButton.Layout, page);
     await takeEditorScreenshot(page);
   });

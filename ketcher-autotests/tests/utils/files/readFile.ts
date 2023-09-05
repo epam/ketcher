@@ -135,9 +135,21 @@ export async function saveToFile(filename: string, data: string) {
 Example of usage:
 await openFileAndAddToCanvas('KET/benzene-arrow-benzene-reagent-hcl.ket', page);
 const rxnFile = await getRxn(page, 'v3000');
-await saveToFile('benzene-arrow-benzene-reagent-hcl.rxn', rxnFile); */
+await saveToFile('Rxn-V3000/benzene-arrow-benzene-reagent-hcl.rxn', rxnFile); */
 export async function pasteFromClipboard(page: Page, fillValue: string) {
   await page.getByRole('dialog').getByRole('textbox').fill(fillValue);
+}
+
+export async function openPasteFromClipboard(
+  page: Page,
+  fillStructure: string,
+) {
+  await selectTopPanelButton(TopPanelButton.Open, page);
+  await page.getByText('Paste from clipboard').click();
+  await page.getByRole('dialog').getByRole('textbox').fill(fillStructure);
+  // The 'Add to Canvas' button step is removed.
+  // If you need to use this function in another context and include the button press, you can do so separately.
+  // await waitForLoad(page);
 }
 
 export async function placeFileInTheMiddle(

@@ -62,7 +62,7 @@ export function findStereoAtoms(
     const connectedBonds = Atom.getConnectedBondIds(struct, atomId);
     const connectedWithStereoBond = connectedBonds.some((bondId: number) => {
       const bond = struct.bonds.get(bondId);
-      return bond?.stereo;
+      return bond?.begin === atomId && bond?.stereo;
     });
     return connectedWithStereoBond;
   });

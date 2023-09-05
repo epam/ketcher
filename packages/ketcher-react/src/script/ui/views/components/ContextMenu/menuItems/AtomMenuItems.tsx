@@ -98,7 +98,7 @@ const AtomMenuItems: FC<MenuItemsProps> = (props) => {
         hidden={rgroupAttachmentPointHidden}
         onClick={handleEditRGroupAttachmentPoint}
       >
-        Edit R-Group attachment point...
+        Edit attachment point...
       </Item>
       <Submenu
         {...props}

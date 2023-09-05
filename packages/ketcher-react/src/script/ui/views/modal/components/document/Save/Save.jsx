@@ -322,6 +322,7 @@ class SaveDialog extends Component {
           className={classes.previewArea}
           readOnly
           ref={this.textAreaRef}
+          data-testid="preview-area-binary"
         />
       </div>
     );
@@ -333,6 +334,7 @@ class SaveDialog extends Component {
           className={classes.previewArea}
           readOnly
           ref={this.textAreaRef}
+          data-testid="preview-area-text"
         />
       </div>
     );
@@ -357,7 +359,9 @@ class SaveDialog extends Component {
       <div className={classes.warnings}>
         {warnings.map((warning) => (
           <div className={classes.warningsContainer}>
-            <span className={classes.warningsArr}>{warning}</span>
+            <span className={classes.warningsArr} data-testid="WarningTextArea">
+              {warning}
+            </span>
           </div>
         ))}
       </div>

@@ -22,6 +22,7 @@ import {
   INPUT_DELAY,
   delay,
   DELAY_IN_SECONDS,
+  waitForIndigoToLoad,
 } from '@utils';
 
 const CANVAS_CLICK_X = 300;
@@ -30,6 +31,7 @@ const CANVAS_CLICK_Y = 300;
 test.describe('Copy/Cut/Paste Actions', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('');
+    await waitForIndigoToLoad(page);
   });
 
   test.afterEach(async ({ page }) => {
@@ -681,7 +683,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
       // Error message when run under docker. But manual test is working.
       const x = 100;
       const y = 100;
-      await openFileAndAddToCanvas('stereo-test-structures.ket', page);
+      await openFileAndAddToCanvas('KET/stereo-test-structures.ket', page);
       await copyAndPaste(page);
       await page.mouse.click(x, y);
     },
@@ -696,7 +698,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
       // Error message when run under docker. But manual test is working.
       const anyAtom = 5;
-      await openFileAndAddToCanvas('stereo-test-structures.ket', page);
+      await openFileAndAddToCanvas('KET/stereo-test-structures.ket', page);
       await cutAndPaste(page);
       await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
       await selectAtomInToolbar(AtomButton.Nitrogen, page);
@@ -748,7 +750,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const x = 550;
     const y = 150;
     await openFileAndAddToCanvas(
-      'structure-with-simple-objects-and-text.ket',
+      'KET/structure-with-simple-objects-and-text.ket',
       page,
     );
     await copyAndPaste(page);
@@ -767,7 +769,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
       // Can't attach atom of Nitrogen to structure.
       const anyAtom = 5;
       await openFileAndAddToCanvas(
-        'structure-with-simple-objects-and-text.ket',
+        'KET/structure-with-simple-objects-and-text.ket',
         page,
       );
       await cutAndPaste(page);
@@ -823,7 +825,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     const x = 500;
     const y = 100;
-    await openFileAndAddToCanvas('expanded-and-contracted-fg.ket', page);
+    await openFileAndAddToCanvas('KET/expanded-and-contracted-fg.ket', page);
     await copyAndPaste(page);
     await page.mouse.click(x, y);
   });
@@ -839,7 +841,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
       // Can't attach atom of Nitrogen to the structure.
       const anyAtom = 5;
-      await openFileAndAddToCanvas('expanded-and-contracted-fg.ket', page);
+      await openFileAndAddToCanvas('KET/expanded-and-contracted-fg.ket', page);
       await cutAndPaste(page);
       await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
       await selectAtomInToolbar(AtomButton.Nitrogen, page);

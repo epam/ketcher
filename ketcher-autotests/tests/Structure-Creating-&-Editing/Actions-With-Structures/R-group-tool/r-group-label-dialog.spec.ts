@@ -297,7 +297,7 @@ test.describe('R-Group Label Tool', () => {
     const x = 500;
     const y = 200;
     const anyAtom = 3;
-    await openFileAndAddToCanvas('reaction-with-arrow-and-plus.ket', page);
+    await openFileAndAddToCanvas('KET/reaction-with-arrow-and-plus.ket', page);
     await selectLeftPanelButton(LeftPanelButton.R_GroupLabelTool, page);
     await clickOnAtom(page, 'C', anyAtom);
     await pressButton(page, 'R8');
@@ -318,7 +318,7 @@ test.describe('R-Group Label Tool', () => {
     const x = 500;
     const y = 200;
     const anyAtom = 3;
-    await openFileAndAddToCanvas('reaction-with-arrow-and-plus.ket', page);
+    await openFileAndAddToCanvas('KET/reaction-with-arrow-and-plus.ket', page);
     await selectLeftPanelButton(LeftPanelButton.R_GroupLabelTool, page);
     await clickOnAtom(page, 'C', anyAtom);
     await pressButton(page, 'R8');

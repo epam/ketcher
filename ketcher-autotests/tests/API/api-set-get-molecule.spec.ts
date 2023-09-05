@@ -8,8 +8,9 @@ import {
   DELAY_IN_SECONDS,
   FILE_TEST_DATA,
   receiveFileComparisonData,
-  waitForKetcherInit,
   waitForSpinnerFinishedWork,
+  clickInTheMiddleOfTheScreen,
+  waitForIndigoToLoad,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import {
@@ -31,7 +32,7 @@ function filteredFile(file: string, filteredIndex: number): string {
 test.describe('Tests for API setMolecule/getMolecule', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('');
-    await waitForKetcherInit(page);
+    await waitForIndigoToLoad(page);
   });
 
   test.afterEach(async ({ page }) => {
@@ -67,6 +68,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Test case: EPMLSOPKET- 10091
     Description: Aromatic Benzene ring loads as non aromatic Benzene ring
     */
+    await clickInTheMiddleOfTheScreen(page);
     await enableDearomatizeOnLoad(page);
     await waitForSpinnerFinishedWork(
       page,
@@ -174,6 +176,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     },
   );
 
+  // TO DO: split by two tests; use saveToFile function; do not get molv2000 in one line
   test.fixme(
     'Set and Get Molecule containing chiral centers',
     async ({ page }) => {
@@ -193,7 +196,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       await delay(DELAY_IN_SECONDS.THREE);
 
       const molV2000FileExpected = await readFileContents(
-        'tests/test-data/test-data-for-chiral-centersv2000.json',
+        'tests/test-data/Molfiles-V2000/test-data-for-chiral-centersv2000.mol',
       );
       const molV2000File = await getMolfile(page, 'v2000');
       const filteredmolV2000FileExpected = filteredFile(
@@ -208,7 +211,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       expect(filteredmolV2000File).toEqual(filteredmolV2000FileExpected);
 
       const molV3000FileExpected = await readFileContents(
-        'tests/test-data/test-data-for-chiral-centersv3000.json',
+        'tests/test-data/Molfiles-V3000/test-data-for-chiral-centersv3000.mol',
       );
       const molV3000File = await getMolfile(page, 'v3000');
       const filteredmolV3000FileExpected = filteredFile(
@@ -229,6 +232,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Test case: EPMLSOPKET- 11854
     Description:  Elements ["Pol", "CYH", "CXH"] disabled and show tooltip: '{elementName}'
     */
+    // Called to make sure the page has been fully loaded
+    await clickInTheMiddleOfTheScreen(page);
     await disableQueryElements(page);
     await selectAtomInToolbar(AtomButton.Extended, page);
   });
@@ -442,55 +447,50 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await page.getByText('Contract Abbreviation').click();
   });
 
-  test.fixme(
-    'Add one contracted Functional Group through API ketcher.setMolecule (V3000)',
-    async ({ page }) => {
-      /*
+  test('Add one contracted Functional Group through API ketcher.setMolecule (V3000)', async ({
+    page,
+  }) => {
+    /*
     Test case: EPMLSOPKET-13021
     Description: one contracted Functional Group added through API ketcher.setMolecule.
     Functional Group is able to expand.
     */
-      await waitForSpinnerFinishedWork(
-        page,
-        async () =>
-          await setMolecule(
-            page,
-            FILE_TEST_DATA.oneFunctionalGroupContractedV3000,
-          ),
-      );
+    await waitForSpinnerFinishedWork(
+      page,
+      async () =>
+        await setMolecule(
+          page,
+          FILE_TEST_DATA.oneFunctionalGroupContractedV3000,
+        ),
+    );
 
-      await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page);
 
-      await page.getByText('Boc').click({ button: 'right' });
-      await page.getByText('Expand Abbreviation').click();
-    },
-  );
+    await page.getByText('Boc').click({ button: 'right' });
+    await page.getByText('Expand Abbreviation').click();
+  });
 
-  test.fixme(
-    'Add one expanded Functional Group through API ketcher.setMolecule (V3000)',
-    async ({ page }) => {
-      /*
+  test('Add one expanded Functional Group through API ketcher.setMolecule (V3000)', async ({
+    page,
+  }) => {
+    /*
     Test case: EPMLSOPKET-13022
     Description: one expanded Functional Group added through API ketcher.setMolecule.
     Functional Group is able to contract.
     */
-      await waitForSpinnerFinishedWork(
-        page,
-        async () =>
-          await setMolecule(
-            page,
-            FILE_TEST_DATA.oneFunctionalGroupExpandedV3000,
-          ),
-      );
+    await waitForSpinnerFinishedWork(
+      page,
+      async () =>
+        await setMolecule(page, FILE_TEST_DATA.oneFunctionalGroupExpandedV3000),
+    );
 
-      await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page);
 
-      // eslint-disable-next-line no-magic-numbers
-      const point = await getAtomByIndex(page, { label: 'C' }, 3);
-      await page.mouse.click(point.x, point.y, { button: 'right' });
-      await page.getByText('Contract Abbreviation').click();
-    },
-  );
+    // eslint-disable-next-line no-magic-numbers
+    const point = await getAtomByIndex(page, { label: 'C' }, 3);
+    await page.mouse.click(point.x, point.y, { button: 'right' });
+    await page.getByText('Contract Abbreviation').click();
+  });
 
   test('Add Functional Groups expanded/contracted through API ketcher.setMolecule (.ket)', async ({
     page,

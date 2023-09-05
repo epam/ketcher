@@ -26,6 +26,7 @@ import {
   TextCreate,
   CalcImplicitH,
   FragmentSetProperties,
+  BondAttr,
 } from '../operations';
 import { fromRGroupAttrs, fromUpdateIfThen } from './rgroup';
 
@@ -114,6 +115,7 @@ export function fromPaste(
     action.addOp(operation);
 
     pasteItems.bonds.push(operation.data.bid);
+    new BondAttr(operation.data.bid, 'isPreview', true).perform(restruct);
   });
 
   pasteItems.atoms.forEach((aid) => {

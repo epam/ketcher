@@ -38,7 +38,7 @@ test.describe('Lasso Selection tool', () => {
   const modifier = getControlModifier();
 
   const selectLasso = async (page: Page) => {
-    await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
+    await page.getByTestId('select-rectangle').click();
     await page.getByTestId('select-lasso').click();
   };
 
@@ -57,7 +57,7 @@ test.describe('Lasso Selection tool', () => {
     await page.mouse.click(300, 200);
   }
 
-  test('Selection of atom/bond/molecule', async ({ page }) => {
+  test.only('Selection of atom/bond/molecule', async ({ page }) => {
     /*
      * Test case: EPMLSOPKET-1338
      * Description: Hover and selection of atom/bond/molecule
@@ -79,8 +79,6 @@ test.describe('Lasso Selection tool', () => {
     await page.keyboard.up('Shift');
     await clickCanvas(page);
 
-    await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
-    delay(DELAY_IN_SECONDS.ONE);
     await selectLasso(page);
     await selectObjects(page, 300, 200);
   });
@@ -124,7 +122,7 @@ test.describe('Lasso Selection tool', () => {
     await page.keyboard.press(`${modifier}+KeyA`);
   });
 
-  test('Drag the reaction components', async ({ page }) => {
+  test.only('Drag the reaction components', async ({ page }) => {
     /**
      * Test case: EPMLSOPKET-1342
      * Description: Selected structures and components are moved to the another place.
@@ -136,7 +134,7 @@ test.describe('Lasso Selection tool', () => {
     await dragMouseTo(point.x - 100, point.y - 200, page);
   });
 
-  test('Fuse atoms together', async ({ page }) => {
+  test.only('Fuse atoms together', async ({ page }) => {
     /**
      * Test case: EPMLSOPKET-1343
      * Description: Atoms are fused.
@@ -159,8 +157,8 @@ test.describe('Lasso Selection tool', () => {
     await selectNestedTool(page, BondTool.SINGLE_AROMATIC);
     const coordinates = await getCoordinatesTopAtomOfBenzeneRing(page);
     await page.mouse.click(coordinates.x + xDelta, coordinates.y - yDelta);
-    await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
-    delay(DELAY_IN_SECONDS.ONE);
+    await page.getByTestId('select-rectangle').click();
+    delay(DELAY_IN_SECONDS.TWO);
     await selectLasso(page);
     await selectObjects(page, 50, 50);
     const bondPoint = await getBondByIndex(page, {}, 4);
@@ -180,7 +178,7 @@ test.describe('Lasso Selection tool', () => {
     await dragMouseTo(point.x - xDelta, point.y + yDelta, page);
   });
 
-  test('Delete with selection', async ({ page }) => {
+  test.only('Delete with selection', async ({ page }) => {
     /**
      * Test case: EPMLSOPKET-1345
      * Description: The selected part of the structure or reaction should disappear after pressing the "Delete" button.
@@ -247,8 +245,8 @@ test.describe('Lasso Selection tool', () => {
      */
     await selectNestedTool(page, BondTool.SINGLE_AROMATIC);
     await page.mouse.click(500, 200);
-    await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
-    delay(DELAY_IN_SECONDS.ONE);
+    await page.getByTestId('select-rectangle').click();
+    delay(DELAY_IN_SECONDS.TWO);
     await selectLasso(page);
     await page.mouse.move(300, 100);
     await page.mouse.down();

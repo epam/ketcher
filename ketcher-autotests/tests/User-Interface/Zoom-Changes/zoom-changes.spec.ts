@@ -151,7 +151,10 @@ test.describe('Zoom changes', () => {
     /*
     Test case: EPMLSOPKET-1765
     */
-    await openFileAndAddToCanvas('clean_diffproperties.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/clean-diff-properties.mol',
+      page,
+    );
     const zoomInput = page.getByTestId(TestIdSelectors.ZoomInput);
     zoomInput.click();
     await page.getByText('Zoom in').click();
@@ -185,7 +188,10 @@ test.describe('Zoom changes', () => {
     Test case: EPMLSOPKET-1766
     */
 
-    await openFileAndAddToCanvas('R-all.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/all-kind-of-r-group.mol',
+      page,
+    );
 
     const zoomInput = page.getByTestId(TestIdSelectors.ZoomInput);
     zoomInput.click();

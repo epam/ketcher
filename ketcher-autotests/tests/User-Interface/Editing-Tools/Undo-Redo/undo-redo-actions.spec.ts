@@ -407,7 +407,7 @@ test.describe('Undo/Redo Actions', () => {
     Undo: the Mapping tool is removed;
     Redo: the Mapping tool is restored.
     */
-    await openFileAndAddToCanvas('Ket/reaction-chain.ket', page);
+    await openFileAndAddToCanvas('KET/reaction-chain.ket', page);
     await selectNestedTool(page, ReactionMappingTool.AUTOMAP);
     await pressButton(page, 'Apply');
     await delay(DELAY_IN_SECONDS.THREE);
@@ -556,7 +556,7 @@ test.describe('Undo/Redo Actions', () => {
     }
   });
 
-  test.fixme('Undo/Redo Copy/Past', async ({ page }) => {
+  test.fixme('Undo/Redo Copy/Paste', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1758
     Description: Undo/Redo action should work correctly
@@ -572,7 +572,7 @@ test.describe('Undo/Redo Actions', () => {
     await screenshotBetweenUndoRedo(page);
   });
 
-  test.fixme('Undo/Redo Cut/Past', async ({ page }) => {
+  test.fixme('Undo/Redo Cut/Paste', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1758
     Description: Undo/Redo action should work correctly

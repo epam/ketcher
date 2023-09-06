@@ -1,718 +1,1276 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "ket",
-  "description": "Ketcher format schema",
-  "type": "object",
-  "required": ["root"],
-  "properties": {
-    "root": {
-      "type": "object",
-      "required": ["nodes"],
-      "properties": {
-        "nodes": {
-          "type": "array",
-          "minItems": 0,
-          "items": {
-            "oneOf": [
-              {
-                "$ref": "#/definitions/simpleObject"
-              },
-              {
-                "$ref": "#/definitions/text"
-              },
-              {
-                "$ref": "#/definitions/arrow"
-              },
-              {
-                "$ref": "#/definitions/plus"
-              },
-              {
-                "type": "object",
-                "required": ["$ref"],
-                "properties": {
-                  "$ref": {
-                    "type": "string",
-                    "pattern": "^(mol\\d+|rg[1-9]\\d*)"
-                  }
-                }
-              }
-            ]
-          }
-        }
-      }
-    }
-  },
-  "patternProperties": {
-    "^rg[1-9]\\d*": {
-      "$ref": "#/definitions/rgroup"
-    },
-    "^mol\\d+": {
-      "$ref": "#/definitions/molecule"
-    },
-    "^header$": {
-      "$ref": "#/definitions/header"
-    }
-  },
-  "additionalProperties": false,
-  "definitions": {
-    "header": {
-      "type": "object",
-      "properties": {
-        "moleculeName": {
-          "type": "string"
-        }
-      }
-    },
-    "rsite": {
-      "type": "object",
-      "required": ["type", "location"],
-      "properties": {
-        "type": {
-          "const": "rg-label"
-        },
-        "location": {
-          "type": "array",
-          "minItems": 2,
-          "maxItems": 3,
-          "items": {
-            "type": "number"
-          }
-        },
-        "$refs": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "pattern": "^rg-[1-9]\\d*"
-          }
-        },
-        "attachmentPoints": {
-          "type": "integer",
-          "enum": [0, 1, 2, 3]
-        }
-      }
-    },
-    "atom": {
-      "type": "object",
-      "required": ["label"],
-      "properties": {
-        "label": {
-          "type": "string"
-        },
-        "alias": {
-          "type": "string"
-        },
-        "location": {
-          "type": "array",
-          "minItems": 2,
-          "maxItems": 3,
-          "items": {
-            "type": "number"
-          }
-        },
-        "charge": {
-          "type": "integer",
-          "minimum": -1000,
-          "maximum": 1000
-        },
-        "explicitValence": {
-          "type": "integer",
-          "enum": [-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
-        },
-        "isotope": {
-          "type": "integer",
-          "minimum": 0,
-          "maximum": 1000
-        },
-        "radical": {
-          "type": "integer",
-          "enum": [0, 2, 1, 3]
-        },
-        "attachmentPoints": {
-          "type": "integer",
-          "enum": [0, 1, 2, 3]
-        },
-        "stereoLabel": {
-          "type": "string",
-          "pattern": "(?:(?:^&|or)[0-9]+$)|(?:^abs$)"
-        },
-        "stereoParity": {
-          "type": "integer",
-          "enum": [0, 1, 2, 3]
-        },
-        "ringBondCount": {
-          "type": "integer",
-          "enum": [0, -2, -1, 2, 3, 4]
-        },
-        "substitutionCount": {
-          "type": "integer",
-          "enum": [0, -2, -1, 1, 2, 3, 4, 5, 6]
-        },
-        "unsaturatedAtom": {
-          "type": "boolean"
-        },
-        "hCount": {
-          "type": "integer",
-          "enum": [-1, 0, 1, 2, 3, 4, 5]
-        },
-        "implicitHCount": {
-          "type": "integer",
-          "enum": [0, 1, 2, 3, 4, 5]
-        },
-        "mapping": {
-          "type": "integer",
-          "minimum": 0
-        },
-        "invRet": {
-          "type": "integer",
-          "enum": [0, 1, 2]
-        },
-        "exactChangeFlag": {
-          "type": "boolean"
-        },
-        "cip": {
-          "type": "string",
-          "enum": ["R", "S", "r", "s"]
-        }
-      },
-      "additionalProperties": false
-    },
-    "atomlist": {
-      "type": "object",
-      "required": ["type", "location"],
-      "properties": {
-        "type": {
-          "enum": ["atom-list"]
-        },
-        "notList": {
-          "type": "boolean"
-        },
-        "location": {
-          "type": "array",
-          "minItems": 2,
-          "maxItems": 3,
-          "items": {
-            "type": "number"
-          }
-        },
-        "elements": {
-          "type": "array",
-          "minItems": 1,
-          "items": {
-            "type": "string",
-            "minLength": 1
-          }
-        },
-        "attachmentPoints": {
-          "type": "integer",
-          "enum": [0, 1, 2, 3]
-        }
-      }
-    },
-    "bond": {
-      "type": "object",
-      "required": ["atoms", "type"],
-      "properties": {
-        "type": {
-          "type": "integer",
-          "enum": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
-        },
-        "atoms": {
-          "type": "array",
-          "minItems": 2,
-          "maxItems": 2,
-          "uniqueItems": true,
-          "items": {
-            "type": "integer",
-            "minimum": 0
-          }
-        },
-        "stereo": {
-          "type": "integer",
-          "enum": [0, 1, 3, 4, 6]
-        },
-        "topology": {
-          "type": "integer",
-          "enum": [0, 1, 2]
-        },
-        "center": {
-          "type": "integer",
-          "enum": [0, -1, 1, 2, 4, 8, 12]
-        },
-        "stereobox": {
-          "type": "integer",
-          "enum": [0, 1]
-        },
-        "cip": {
-          "type": "string",
-          "enum": ["Z", "E"]
-        }
-      }
-    },
-    "rgroup": {
-      "type": "object",
-      "required": ["rlogic", "type"],
-      "properties": {
-        "type": {
-          "const": "rgroup"
-        },
-        "rlogic": {
-          "type": "object",
-          "required": ["number"],
-          "properties": {
-            "number": {
-              "type": "integer",
-              "minimum": 1
-            },
-            "range": {
-              "type": "string",
-              "maxLength": 50,
-              "default": ""
-            },
-            "resth": {
-              "type": "boolean",
-              "default": false
-            },
-            "ifthen": {
-              "type": "integer",
-              "minimum": 0,
-              "default": 0
-            }
-          }
-        },
-        "fragments": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/structure"
-          }
-        }
-      },
-      "anyOf": [
-        {
-          "required": ["fragments"]
-        },
-        {
-          "$ref": "#/definitions/structure"
-        }
-      ]
-    },
-    "molecule": {
-      "type": "object",
-      "required": ["type"],
-      "properties": {
-        "type": {
-          "const": "molecule"
-        }
-      },
-      "allOf": [
-        {
-          "$ref": "#/definitions/structure"
-        }
-      ]
-    },
-    "structure": {
-      "type": "object",
-      "required": ["atoms"],
-      "properties": {
-        "stereoFlagPosition": {
-          "type": "object",
-          "required": ["x", "y"],
-          "properties": {
-            "x": {
-              "type": "number"
-            },
-            "y": {
-              "type": "number"
-            }
-          }
-        },
-        "properties": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "key": { "type": "string" },
-              "value": { "type": "string" }
-            }
-          }
-        },
-        "atoms": {
-          "type": "array",
-          "items": {
-            "oneOf": [
-              {
-                "$ref": "#/definitions/atom"
-              },
-              {
-                "$ref": "#/definitions/rsite"
-              },
-              {
-                "$ref": "#/definitions/atomlist"
-              }
-            ]
-          }
-        },
-        "bonds": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/bond"
-          }
-        },
-        "highlight": {
-          "$ref": "#/definitions/subset"
-        },
-        "selection": {
-          "$ref": "#/definitions/subset"
-        },
-        "sgroups": {
-          "$ref": "#/definitions/sgroups"
-        }
-      }
-    },
-    "subset": {
-      "type": "array",
-      "minItems": 1,
-      "maxItems": 2,
-      "items": {
-        "oneOf": [
-          {
-            "type": "object",
-            "required": ["entityType", "items"],
-            "properties": {
-              "entityType": {
-                "type": "string",
-                "const": "atoms"
-              },
-              "items": {
-                "type": "array",
-                "uniqueItems": true,
-                "items": {
-                  "type": "integer",
-                  "minimum": 0
-                }
-              }
-            }
-          },
-          {
-            "type": "object",
-            "required": ["entityType", "items"],
-            "properties": {
-              "entityType": {
-                "type": "string",
-                "const": "bonds"
-              },
-              "items": {
-                "type": "array",
-                "uniqueItems": true,
-                "items": {
-                  "type": "integer",
-                  "minimum": 0
-                }
-              }
-            }
-          }
-        ]
-      }
-    },
-    "sgroups": {
-      "type": "array",
-      "items": {
-        "required": ["atoms", "type"],
-        "type": "object",
-        "properties": {
-          "atoms": {
-            "type": "array",
-            "items": {
-              "type": "integer",
-              "minimum": 0
-            }
-          },
-          "type": {
-            "type": "string",
-            "enum": ["GEN", "MUL", "SRU", "SUP", "DAT"]
-          }
-        },
-        "if": {
-          "properties": {
-            "type": {
-              "const": "MUL"
-            }
-          }
-        },
-        "then": {
-          "required": ["mul"],
-          "properties": {
-            "mul": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 1000
-            }
-          }
-        },
-        "if": {
-          "properties": {
-            "type": {
-              "const": "SRU"
-            }
-          }
-        },
-        "then": {
-          "required": ["subscript", "connectivity"],
-          "properties": {
-            "subscript": {
-              "type": "string",
-              "pattern": "^[a-zA-Z]$"
-            },
-            "connectivity": {
-              "type": "string",
-              "enum": ["HT", "HH", "EU"]
-            }
-          }
-        },
-        "if": {
-          "properties": {
-            "type": {
-              "const": "SUP"
-            }
-          }
-        },
-        "then": {
-          "required": ["type"],
-          "properties": {
-            "type": {
-              "type": "string",
-              "minLength": 1
-            },
-            "expanded": {
-              "type": "boolean"
-            },
-            "id": {
-              "type": "number"
-            },
-            "attachmentPoints": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "required": ["attachmentAtom"],
-                "properties": {
-                  "attachmentAtom": {
-                    "type": "integer",
-                    "minimum": 0
-                  },
-                  "leavingAtom": {
-                    "type": "integer",
-                    "minimum": 0
-                  },
-                  "attachmentId": {
-                    "type": "string",
-                    "minLength": 1,
-                    "maxLength": 2
-                  }
-                }
-              }
-            }
-          }
-        },
-        "if": {
-          "properties": {
-            "type": {
-              "const": "DAT"
-            }
-          }
-        },
-        "then": {
-          "properties": {
-            "context": {
-              "enum": ["Fragment", "Multifragment", "Bond", "Atom", "Group"]
-            },
-            "fieldName": {
-              "type": "string"
-            },
-            "fieldValue": {
-              "type": "string",
-              "minLength": 1
-            },
-            "display": {
-              "type": "boolean"
-            },
-            "placement": {
-              "type": "boolean"
-            },
-            "bonds": {
-              "type": "array",
-              "items": {
-                "type": "integer",
-                "minimum": 0
-              }
-            }
-          }
-        }
-      }
-    },
-    "plus": {
-      "type": "object",
-      "required": ["type", "location"],
-      "properties": {
-        "type": {
-          "const": "plus"
-        },
-        "location": {
-          "type": "array",
-          "minItems": 2,
-          "maxItems": 3,
-          "items": {
-            "type": "number"
-          }
-        }
-      }
-    },
-    "arrow": {
-      "type": "object",
-      "required": ["type", "data"],
-      "properties": {
-        "type": {
-          "const": "arrow"
-        },
-        "data": {
-          "type": "object",
-          "required": ["mode"],
-          "properties": {
-            "mode": {
-              "type": "string"
-            },
-            "pos": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "required": ["x", "y"],
-                "properties": {
-                  "x": {
-                    "type": "number"
-                  },
-                  "y": {
-                    "type": "number"
-                  },
-                  "z": {
-                    "type": "number"
-                  }
-                }
-              }
-            },
-            "height": {
-              "type": "number"
-            }
-          }
-        }
-      }
-    },
-    "simpleObject": {
-      "type": "object",
-      "required": ["type", "data"],
-      "properties": {
-        "type": {
-          "const": "simpleObject"
-        },
-        "data": {
-          "type": "object",
-          "required": ["mode"],
-          "properties": {
-            "mode": {
-              "type": "string",
-              "enum": ["line", "rectangle", "circle", "ellipse", "polyline"]
-            }
-          },
-          "if": {
-            "properties": {
-              "mode": {
-                "const": "polyline"
-              }
-            }
-          },
-          "then": {
-            "required": ["pos"],
-            "properties": {
-              "pos": {
-                "type": "array",
-                "minItems": 2,
-                "items": {
-                  "type": "object",
-                  "required": ["x", "y"],
-                  "properties": {
-                    "x": {
-                      "type": "number"
-                    },
-                    "y": {
-                      "type": "number"
-                    },
-                    "z": {
-                      "type": "number"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "else": {
-            "required": ["pos"],
-            "properties": {
-              "pos": {
-                "type": "array",
-                "minItems": 2,
-                "maxItems": 2,
-                "items": {
-                  "type": "object",
-                  "required": ["x", "y"],
-                  "properties": {
-                    "x": {
-                      "type": "number"
-                    },
-                    "y": {
-                      "type": "number"
-                    },
-                    "z": {
-                      "type": "number"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "text": {
-      "type": "object",
-      "required": ["type", "data"],
-      "properties": {
-        "type": {
-          "const": "text"
-        },
-        "data": {
-          "type": "object",
-          "required": ["content"],
-          "properties": {
-            "content": {
-              "type": "string"
-            },
-            "pos": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "x": {
-                    "type": "number"
-                  },
-                  "y": {
-                    "type": "number"
-                  },
-                  "z": {
-                    "type": "number"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"title": "ket",
+	"description": "Ketcher format schema",
+	"type": "object",
+	"required": [
+		"root"
+	],
+	"properties": {
+		"root": {
+			"type": "object",
+			"required": [
+				"nodes"
+			],
+			"properties": {
+				"nodes": {
+					"type": "array",
+					"minItems": 0,
+					"items": {
+						"oneOf": [
+							{
+								"$ref": "#/definitions/simpleObject"
+							},
+							{
+								"$ref": "#/definitions/text"
+							},
+							{
+								"$ref": "#/definitions/arrow"
+							},
+							{
+								"$ref": "#/definitions/plus"
+							},
+							{
+								"type": "object",
+								"required": [
+									"$ref"
+								],
+								"properties": {
+									"$ref": {
+										"type": "string",
+										"pattern": "^(mol\\d+|rg[1-9]\\d*|group\\d+|monomer\\d+|monomerTemplate-.*)"
+									}
+								}
+							}
+						]
+					}
+				},
+				"connections": {
+					"type": "array",
+					"minItems": 0,
+					"items": {
+						"$ref": "#/definitions/nodesConnection"
+					}
+				},
+				"templatess": {
+					"type": "array",
+					"minItems": 0,
+					"items": {
+						"oneOf": [
+							{
+								"type": "object",
+								"required": [
+									"$ref"
+								],
+								"properties": {
+									"$ref": {
+										"type": "string",
+										"pattern": "^monomerTemplate-.*"
+									}
+								}
+							}
+						]
+					}
+				}
+			}
+		}
+	},
+	"patternProperties": {
+		"^rg[1-9]\\d*": {
+			"$ref": "#/definitions/rgroup"
+		},
+		"^mol\\d+": {
+			"$ref": "#/definitions/molecule"
+		},
+		"^monomerTemplate-.*": {
+			"$ref": "#/definitions/^monomerTemplate-.*"
+		},
+		"^monomer\\d+": {
+			"$ref": "#/definitions/monomer"
+		},
+		"^group\\d+": {
+			"$ref": "#/definitions/group"
+		},
+		"^header$": {
+			"$ref": "#/definitions/header"
+		}
+	},
+	"additionalProperties": false,
+	"definitions": {
+		"header": {
+			"type": "object",
+			"properties": {
+				"moleculeName": {
+					"type": "string"
+				}
+			}
+		},
+		"rsite": {
+			"type": "object",
+			"required": [
+				"type",
+				"location"
+			],
+			"properties": {
+				"type": {
+					"const": "rg-label"
+				},
+				"location": {
+					"type": "array",
+					"minItems": 2,
+					"maxItems": 3,
+					"items": {
+						"type": "number"
+					}
+				},
+				"attachmentOrder": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"required": [
+							"attachmentAtom"
+						],
+						"properties": {
+							"attachmentAtom": {
+								"type": "integer",
+								"minimum": 0
+							},
+							"attachmentId": {
+								"type": "integer",
+								"minimum": 0
+							}
+						}
+					}
+				},
+				"$refs": {
+					"type": "array",
+					"items": {
+						"type": "string",
+						"pattern": "^rg-[1-9]\\d*"
+					}
+				}
+			}
+		},
+		"atom": {
+			"type": "object",
+			"required": [
+				"label"
+			],
+			"properties": {
+				"label": {
+					"type": "string"
+				},
+				"alias": {
+					"type": "string"
+				},
+				"location": {
+					"type": "array",
+					"minItems": 2,
+					"maxItems": 3,
+					"items": {
+						"type": "number"
+					}
+				},
+				"charge": {
+					"type": "integer",
+					"minimum": -1000,
+					"maximum": 1000
+				},
+				"explicitValence": {
+					"type": "integer",
+					"enum": [
+						-1,
+						0,
+						1,
+						2,
+						3,
+						4,
+						5,
+						6,
+						7,
+						8,
+						9,
+						10,
+						11,
+						12
+					]
+				},
+				"isotope": {
+					"type": "integer",
+					"minimum": 0,
+					"maximum": 1000
+				},
+				"radical": {
+					"type": "integer",
+					"enum": [
+						0,
+						2,
+						1,
+						3
+					]
+				},
+				"attachmentPoints": {
+					"type": "integer",
+					"enum": [
+						0,
+						1,
+						2,
+						3
+					]
+				},
+				"stereoLabel": {
+					"type": "string",
+					"pattern": "(?:(?:^&|or)[0-9]+$)|(?:^abs$)"
+				},
+				"stereoParity": {
+					"type": "integer",
+					"enum": [
+						0,
+						1,
+						2,
+						3
+					]
+				},
+				"ringBondCount": {
+					"type": "integer",
+					"enum": [
+						0,
+						-2,
+						-1,
+						2,
+						3,
+						4
+					]
+				},
+				"substitutionCount": {
+					"type": "integer",
+					"enum": [
+						0,
+						-2,
+						-1,
+						1,
+						2,
+						3,
+						4,
+						5,
+						6
+					]
+				},
+				"unsaturatedAtom": {
+					"type": "boolean"
+				},
+				"hCount": {
+					"type": "integer",
+					"enum": [
+						-1,
+						0,
+						1,
+						2,
+						3,
+						4,
+						5
+					]
+				},
+				"implicitHCount": {
+					"type": "integer",
+					"enum": [
+						0,
+						1,
+						2,
+						3,
+						4,
+						5
+					]
+				},
+				"mapping": {
+					"type": "integer",
+					"minimum": 0
+				},
+				"invRet": {
+					"type": "integer",
+					"enum": [
+						0,
+						1,
+						2
+					]
+				},
+				"exactChangeFlag": {
+					"type": "boolean"
+				},
+				"cip": {
+					"type": "string",
+					"enum": [
+						"R",
+						"S",
+						"r",
+						"s"
+					]
+				}
+			},
+			"additionalProperties": false
+		},
+		"atomlist": {
+			"type": "object",
+			"required": [
+				"type",
+				"location"
+			],
+			"properties": {
+				"type": {
+					"enum": [
+						"atom-list"
+					]
+				},
+				"notList": {
+					"type": "boolean"
+				},
+				"location": {
+					"type": "array",
+					"minItems": 2,
+					"maxItems": 3,
+					"items": {
+						"type": "number"
+					}
+				},
+				"elements": {
+					"type": "array",
+					"minItems": 1,
+					"items": {
+						"type": "string",
+						"minLength": 1
+					}
+				},
+				"attachmentPoints": {
+					"type": "integer",
+					"enum": [
+						0,
+						1,
+						2,
+						3
+					]
+				}
+			}
+		},
+		"bond": {
+			"type": "object",
+			"required": [
+				"atoms",
+				"type"
+			],
+			"properties": {
+				"type": {
+					"type": "integer",
+					"minimum": 1,
+					"maximum": 12
+				},
+				"atoms": {
+					"type": "array",
+					"minItems": 2,
+					"maxItems": 2,
+					"uniqueItems": true,
+					"items": {
+						"type": "integer",
+						"minimum": 0
+					}
+				},
+				"stereo": {
+					"type": "integer",
+					"enum": [
+						0,
+						1,
+						3,
+						4,
+						6
+					]
+				},
+				"topology": {
+					"type": "integer",
+					"enum": [
+						0,
+						1,
+						2
+					]
+				},
+				"center": {
+					"type": "integer",
+					"enum": [
+						0,
+						-1,
+						1,
+						2,
+						4,
+						8,
+						12
+					]
+				},
+				"stereobox": {
+					"type": "integer",
+					"enum": [
+						0,
+						1
+					]
+				},
+				"cip": {
+					"type": "string",
+					"enum": [
+						"Z",
+						"E"
+					]
+				}
+			}
+		},
+		"rgroup": {
+			"type": "object",
+			"required": [
+				"rlogic",
+				"type"
+			],
+			"properties": {
+				"type": {
+					"const": "rgroup"
+				},
+				"rlogic": {
+					"type": "object",
+					"required": [
+						"number"
+					],
+					"properties": {
+						"number": {
+							"type": "integer",
+							"minimum": 1
+						},
+						"range": {
+							"type": "string",
+							"maxLength": 50,
+							"default": ""
+						},
+						"resth": {
+							"type": "boolean",
+							"default": false
+						},
+						"ifthen": {
+							"type": "integer",
+							"minimum": 0,
+							"default": 0
+						}
+					}
+				}
+			},
+			"oneOf": [
+				{
+					"properties": {
+						"fragments": {
+							"type": "array",
+							"items": {
+								"$ref": "#/definitions/structure"
+							}
+						}
+					},
+					"required": [
+						"fragments"
+					]
+				},
+				{
+					"allOf": [
+						{
+							"$ref": "#/definitions/structure"
+						}
+					]
+				}
+			]
+		},
+		"molecule": {
+			"type": "object",
+			"required": [
+				"type"
+			],
+			"properties": {
+				"type": {
+					"const": "molecule"
+				}
+			},
+			"allOf": [
+				{
+					"$ref": "#/definitions/structure"
+				}
+			]
+		},
+		"structure": {
+			"type": "object",
+			"required": [
+				"atoms"
+			],
+			"properties": {
+				"stereoFlagPosition": {
+					"type": "object",
+					"required": [
+						"x",
+						"y"
+					],
+					"properties": {
+						"x": {
+							"type": "number"
+						},
+						"y": {
+							"type": "number"
+						}
+					}
+				},
+				"atoms": {
+					"type": "array",
+					"items": {
+						"oneOf": [
+							{
+								"$ref": "#/definitions/atom"
+							},
+							{
+								"$ref": "#/definitions/rsite"
+							},
+							{
+								"$ref": "#/definitions/atomlist"
+							}
+						]
+					}
+				},
+				"bonds": {
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/bond"
+					}
+				},
+				"highlight": {
+					"$ref": "#/definitions/subset"
+				},
+				"selection": {
+					"$ref": "#/definitions/subset"
+				},
+				"sgroups": {
+					"$ref": "#/definitions/sgroups"
+				}
+			}
+		},
+		"subset": {
+			"type": "array",
+			"minItems": 1,
+			"maxItems": 2,
+			"items": {
+				"oneOf": [
+					{
+						"type": "object",
+						"required": [
+							"entityType",
+							"items"
+						],
+						"properties": {
+							"entityType": {
+								"type": "string",
+								"const": "atoms"
+							},
+							"items": {
+								"type": "array",
+								"uniqueItems": true,
+								"items": {
+									"type": "integer",
+									"minimum": 0
+								}
+							}
+						}
+					},
+					{
+						"type": "object",
+						"required": [
+							"entityType",
+							"items"
+						],
+						"properties": {
+							"entityType": {
+								"type": "string",
+								"const": "bonds"
+							},
+							"items": {
+								"type": "array",
+								"uniqueItems": true,
+								"items": {
+									"type": "integer",
+									"minimum": 0
+								}
+							}
+						}
+					}
+				]
+			}
+		},
+		"sgroups": {
+			"type": "array",
+			"items": {
+				"required": [
+					"atoms",
+					"type"
+				],
+				"type": "object",
+				"properties": {
+					"atoms": {
+						"type": "array",
+						"items": {
+							"type": "integer",
+							"minimum": 0
+						}
+					},
+					"type": {
+						"type": "string",
+						"enum": [
+							"GEN",
+							"MUL",
+							"SRU",
+							"SUP",
+							"DAT"
+						]
+					}
+				},
+				"if": {
+					"properties": {
+						"type": {
+							"const": "MUL"
+						}
+					}
+				},
+				"then": {
+					"required": [
+						"mul"
+					],
+					"properties": {
+						"mul": {
+							"type": "integer",
+							"minimum": 1,
+							"maximum": 1000
+						}
+					}
+				},
+				"if": {
+					"properties": {
+						"type": {
+							"const": "SRU"
+						}
+					}
+				},
+				"then": {
+					"required": [
+						"subscript",
+						"connectivity"
+					],
+					"properties": {
+						"subscript": {
+							"type": "string",
+							"pattern": "^[a-zA-Z]$"
+						},
+						"connectivity": {
+							"type": "string",
+							"enum": [
+								"HT",
+								"HH",
+								"EU"
+							]
+						}
+					}
+				},
+				"if": {
+					"properties": {
+						"type": {
+							"const": "SUP"
+						}
+					}
+				},
+				"then": {
+					"required": [
+						"type"
+					],
+					"properties": {
+						"type": {
+							"type": "string",
+							"minLength": 1
+						},
+						"expanded": {
+							"type": "boolean"
+						},
+						"id": {
+							"type": "number"
+						},
+						"attachmentPoints": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"required": [
+									"attachmentAtom"
+								],
+								"properties": {
+									"attachmentAtom": {
+										"type": "integer",
+										"minimum": 0
+									},
+									"leavingAtom": {
+										"type": "integer",
+										"minimum": 0
+									},
+									"attachmentId": {
+										"type": "string",
+										"minLength": 1,
+										"maxLength": 2
+									}
+								}
+							}
+						}
+					}
+				},
+				"if": {
+					"properties": {
+						"type": {
+							"const": "DAT"
+						}
+					}
+				},
+				"then": {
+					"required": [
+						"fieldName"
+					],
+					"properties": {
+						"context": {
+							"enum": [
+								"Fragment",
+								"Multifragment",
+								"Bond",
+								"Atom",
+								"Group"
+							]
+						},
+						"fieldName": {
+							"type": "string"
+						},
+						"fieldValue": {
+							"type": "string",
+							"minLength": 1
+						},
+						"display": {
+							"type": "boolean"
+						},
+						"placement": {
+							"type": "boolean"
+						},
+						"bonds": {
+							"type": "array",
+							"items": {
+								"type": "integer",
+								"minimum": 0
+							}
+						}
+					}
+				}
+			}
+		},
+		"plus": {
+			"type": "object",
+			"required": [
+				"type",
+				"location"
+			],
+			"properties": {
+				"type": {
+					"const": "plus"
+				},
+				"location": {
+					"type": "array",
+					"minItems": 2,
+					"maxItems": 3,
+					"items": {
+						"type": "number"
+					}
+				}
+			}
+		},
+		"arrow": {
+			"type": "object",
+			"required": [
+				"type",
+				"data"
+			],
+			"properties": {
+				"type": {
+					"const": "arrow"
+				},
+				"data": {
+					"type": "object",
+					"required": [
+						"mode"
+					],
+					"properties": {
+						"mode": {
+							"type": "string"
+						},
+						"pos": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"required": [
+									"x",
+									"y"
+								],
+								"properties": {
+									"x": {
+										"type": "number"
+									},
+									"y": {
+										"type": "number"
+									},
+									"z": {
+										"type": "number"
+									}
+								}
+							}
+						},
+						"height": {
+							"type": "number"
+						}
+					}
+				}
+			}
+		},
+		"simpleObject": {
+			"type": "object",
+			"required": [
+				"type",
+				"data"
+			],
+			"properties": {
+				"type": {
+					"const": "simpleObject"
+				},
+				"data": {
+					"type": "object",
+					"required": [
+						"mode"
+					],
+					"properties": {
+						"mode": {
+							"type": "string",
+							"enum": [
+								"line",
+								"rectangle",
+								"circle",
+								"ellipse",
+								"polyline"
+							]
+						}
+					},
+					"if": {
+						"properties": {
+							"mode": {
+								"const": "polyline"
+							}
+						}
+					},
+					"then": {
+						"required": [
+							"pos"
+						],
+						"properties": {
+							"pos": {
+								"type": "array",
+								"minItems": 2,
+								"items": {
+									"type": "object",
+									"required": [
+										"x",
+										"y"
+									],
+									"properties": {
+										"x": {
+											"type": "number"
+										},
+										"y": {
+											"type": "number"
+										},
+										"z": {
+											"type": "number"
+										}
+									}
+								}
+							}
+						}
+					},
+					"else": {
+						"required": [
+							"pos"
+						],
+						"properties": {
+							"pos": {
+								"type": "array",
+								"minItems": 2,
+								"maxItems": 2,
+								"items": {
+									"type": "object",
+									"required": [
+										"x",
+										"y"
+									],
+									"properties": {
+										"x": {
+											"type": "number"
+										},
+										"y": {
+											"type": "number"
+										},
+										"z": {
+											"type": "number"
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"text": {
+			"type": "object",
+			"required": [
+				"type",
+				"data"
+			],
+			"properties": {
+				"type": {
+					"const": "text"
+				},
+				"data": {
+					"type": "object",
+					"required": [
+						"content"
+					],
+					"properties": {
+						"content": {
+							"type": "string"
+						},
+						"pos": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"properties": {
+									"x": {
+										"type": "number"
+									},
+									"y": {
+										"type": "number"
+									},
+									"z": {
+										"type": "number"
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"monomerTemplate": {
+			"type": "object",
+			"required": [
+				"type",
+				"id"
+			],
+			"properties": {
+				"type": {
+					"const": "monomerTemplate"
+				},
+				"monomerClass": {
+					"type": "string",
+					"enum": [
+						"AminoAcid",
+						"Sugar",
+						"Base",
+						"Phosphate",
+						"Terminator",
+						"CHEM",
+						"RNA",
+						"DNA"
+					]
+				},
+				"id": {
+					"type": "string"
+				},
+				"symbol": {
+					"type": "string"
+				},
+				"fullName": {
+					"type": "string"
+				},
+				"naturalAnalog": {
+					"type": "string"
+				},
+				"attachmentPoints": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"required": [
+							"attachmentAtom"
+						],
+						"properties": {
+							"id": {
+								"type": "string",
+								"pattern": "^R[1-9]\\d*"
+							},
+							"attachmentAtom": {
+								"type": "integer",
+								"minimum": 0
+							},
+							"leavingGroup": {
+								"type": "array",
+								"items": {
+									"type": "object",
+									"required": [
+										"atoms"
+									],
+									"properties": {
+										"atoms": {
+											"type": "array",
+											"items": {
+												"type": "integer",
+												"minimum": 0
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			},
+			"allOf": [
+				{
+					"$ref": "#/definitions/structure"
+				}
+			]
+		},
+		"monomer": {
+			"type": "object",
+			"required": [
+				"type"
+			],
+			"properties": {
+				"type": {
+					"const": "monomer"
+				},
+				"templateId": {
+					"type": "string"
+				},
+				"alias": {
+					"type": "string"
+				},
+				"position": {
+					"type": "object",
+					"required": [
+						"x",
+						"y"
+					],
+					"properties": {
+						"x": {
+							"type": "number"
+						},
+						"y": {
+							"type": "number"
+						}
+					}
+				}
+			}
+		},
+		"group": {
+			"type": "object",
+			"required": [
+				"type",
+				"groupClass",
+				"nodes"
+			],
+			"properties": {
+				"type": {
+					"const": "group"
+				},
+				"groupClass": {
+					"type": "string",
+					"enum": [
+						"Generic",
+						"Variant",
+						"RepeatUnit"
+					]
+				},
+				"attachmentPoints": {
+					"type": "array",
+					"minItems": 0,
+					"items": {
+						"type": "object",
+						"required": [
+							"id",
+							"variantList"
+						],
+						"properties": {
+							"id": {
+								"type": "string"
+							},
+							"variantList": {
+								"allOf": [
+									{
+										"$ref": "#/definitions/group"
+									},
+									{
+										"properties": {
+											"groupClass": {
+												"const": "Variant"
+											}
+										},
+										"required": [
+											"groupClass"
+										]
+									}
+								]
+							}
+						}
+					}
+				},
+				"nodes": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"required": [
+							"$ref"
+						],
+						"properties": {
+							"$ref": {
+								"type": "string",
+								"pattern": "^(group\\d+|monomer\\d+|monomerTemplate-.*)"
+							}
+						}
+					}
+				}
+			},
+			"patternProperties": {
+				"^monomer\\d+": {
+					"$ref": "#/definitions/monomer"
+				},
+				"^group\\d+": {
+					"$ref": "#/definitions/group"
+				},
+				"^monomerTemplate-.*": {
+					"$ref": "#/definitions/monomerTemplate"
+				}
+			},
+			"allOf": [
+				{
+					"if": {
+						"properties": {
+							"groupClass": {
+								"const": "Generic"
+							}
+						}
+					},
+					"then": {
+						"properties": {
+							"connections": {
+								"type": "array",
+								"minItems": 0,
+								"items": {
+									"$ref": "#/definitions/nodesConnection"
+								}
+							}
+						}
+					}
+				},
+				{
+					"if": {
+						"properties": {
+							"groupClass": {
+								"const": "RepeatUnit"
+							}
+						}
+					},
+					"then": {
+						"properties": {
+							"repeatRange": {
+								"type": "object",
+								"required": [
+									"from"
+								],
+								"properties": {
+									"from": {
+										"type": "integer"
+									},
+									"to": {
+										"type": "integer"
+									}
+								}
+							}
+						}
+					}
+				},
+				{
+					"if": {
+						"properties": {
+							"groupClass": {
+								"const": "Variant"
+							}
+						}
+					},
+					"then": {
+						"properties": {
+							"ratio": {
+								"type": "integer"
+							},
+							"operator": {
+								"type": "string",
+								"enum": [
+									"xor",
+									"and"
+								]
+							}
+						}
+					}
+				}
+			]
+		},
+		"nodesConnection": {
+			"type": "object",
+			"required": [
+				"type",
+				"endPoint1",
+				"endPoint2"
+			],
+			"properties": {
+				"connectionType": {
+					"type": "string",
+					"enum": [
+						"single",
+						"hydrogen"
+					]
+				},
+				"label": {
+					"type": "string"
+				},
+				"endPoint1": {
+					"$ref": "#/definitions/connectionSite"
+				},
+				"endPoint2": {
+					"$ref": "#/definitions/connectionSite"
+				}
+			}
+		},
+		"connectionSite": {
+			"type": "object",
+			"properties": {
+				"groupId": {
+					"type": "string"
+				},
+				"attachmentPointId": {
+					"type": "string"
+				},
+				"monomerId": {
+					"type": "string"
+				}
+			}
+		}
+	}
 }

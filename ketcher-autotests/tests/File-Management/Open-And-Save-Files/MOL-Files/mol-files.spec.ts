@@ -550,80 +550,69 @@ test('Open V3000 file with R-Groups with Fragments', async ({ page }) => {
   await takeEditorScreenshot(page);
 });
 
-test.describe('', () => {
+test.describe('Open and Save file', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('');
     await waitForIndigoToLoad(page);
   });
 
-  test.describe('', () => {
+  test.describe('Open file', () => {
     /*
      * Test case: EPMLSOPKET-1852, 1856, 1874, 1890, 1895, 1979, 8914, 12966, 4731, 5259, 1875, 1876, 12963
      * Description: The structure is correctly rendered on the canvas
      */
     const files = [
       {
-        testName:
-          'Open and Save files - Open/Save structure with bond properties',
+        testName: 'Open/Save structure with bond properties',
         path: 'Molfiles-V2000/all-bond-properties.mol',
       },
       {
-        testName:
-          'Open and Save file - Open/Save Alias and Pseudoatoms 1/2 - open',
-        path: 'Molfiles-V2000/mol-1856-to-open.mol',
+        testName: 'Open/Save Alias and Pseudoatoms',
+        path: 'Molfiles-V2000/alias-and-pseudoatoms.mol',
       },
       {
-        testName:
-          'Open and Save file - Open/Save V3000 mol file contains Rgroup 1/2 - open',
+        testName: 'Open/Save V3000 mol file contains Rgroup',
         path: 'Molfiles-V3000/rgroup-V3000.mol',
       },
       {
-        testName:
-          'Open and Save file - Open/Save V3000 mol file contains more than 900 symbols 1/2 - open',
+        testName: 'Open/Save V3000 mol file contains more than 900 symbols',
         path: 'Molfiles-V3000/more-900-atoms.mol',
       },
       {
-        testName:
-          'Open and Save file - Open/Save V3000 mol file contains Sgroup 1/2 - open',
+        testName: 'Open/Save V3000 mol file contains Sgroup',
         path: 'Molfiles-V3000/multi-V3000.mol',
       },
       {
-        testName: 'Open and Save file - Save structure as *.mol V3000',
+        testName: 'Save structure as *.mol V3000',
         path: 'Molfiles-V3000/multi-V3000.mol',
       },
       {
-        testName: 'MDL Molfile v2000: Correct padding for M ALS 1/2 - open',
+        testName: 'MDL Molfile v2000: Correct padding for M ALS',
         path: 'Molfiles-V2000/molfile-with-als.mol',
       },
       {
-        testName:
-          'Open and Save file - Open structure with R-Group from v3000 mol file',
+        testName: 'Open structure with R-Group from v3000 mol file',
         path: 'Molfiles-V3000/rgroup-V3000.mol',
       },
       {
-        testName:
-          'Open and Save file - Don`t creates invalid molfiles with "NaN"',
-        path: 'Molfiles-V2000/mol-4731-to-open.mol',
+        testName: 'Don`t creates invalid molfiles with "NaN"',
+        path: 'Molfiles-V2000/benzoic-acid-with-na.mol',
       },
       {
-        testName:
-          'Open and Save file - Functional group name layout close to attachment point',
+        testName: 'Functional group name layout close to attachment point',
         path: 'Molfiles-V2000/display-abbrev-groups-example.mol',
       },
       {
-        testName:
-          'Open and Save file - Open/Save file with S-Groups 1/2 - open',
+        testName: 'Open/Save file with S-Groups',
         path: 'Molfiles-V2000/sgroup-different.mol',
       },
       {
-        testName:
-          'Open and Save file - Open/Save  V3000 mol file contains Sgroup 1/2 - open',
+        testName: 'Open/Save  V3000 mol file contains Sgroup',
         path: 'Molfiles-V3000/sgroup-different-V3000.mol',
       },
       {
-        testName:
-          'Open and Save file - Open/Save v3000 mol file with assigned Alias 1/2 - open',
-        path: 'Molfiles-V3000/mol-12963-to-open.mol',
+        testName: 'Open/Save v3000 mol file with assigned Alias',
+        path: 'Molfiles-V3000/chain-with-alias.mol',
       },
     ];
 
@@ -635,52 +624,46 @@ test.describe('', () => {
     }
   });
 
-  test.describe('', () => {
+  test.describe('Save file', () => {
     /*
      * Test case: EPMLSOPKET-1856, 1874, 1890, 1895, 1875, 1876, 12963
      * Description: The saved structure is correctly rendered on the canvas
      */
     const files = [
       {
-        testName:
-          'Open and Save file - Open/Save Alias and Pseudoatoms 2/2 - save',
-        pathToOpen: 'Molfiles-V2000/mol-1856-to-open.mol',
-        pathToExpected: 'Molfiles-V2000/mol-1856-to-open-expected.mol',
+        testName: 'Open/Save Alias and Pseudoatoms',
+        pathToOpen: 'Molfiles-V2000/alias-and-pseudoatoms.mol',
+        pathToExpected: 'Molfiles-V2000/alias-and-pseudoatoms-expected.mol',
         format: 'v2000',
       },
       {
-        testName:
-          'Open and Save file - Open/Save V3000 mol file contains Rgroup 2/2 - save',
+        testName: 'Open/Save V3000 mol file contains Rgroup',
         pathToOpen: 'Molfiles-V3000/rgroup-V3000.mol',
         pathToExpected: 'Molfiles-V3000/rgroup-V3000-expected.mol',
         format: 'v3000',
       },
       {
-        testName:
-          'Open and Save file - Open/Save V3000 mol file contains more than 900 symbols 2/2 - save',
+        testName: 'Open/Save V3000 mol file contains more than 900 symbols',
         pathToOpen: 'Molfiles-V3000/more-900-atoms.mol',
         pathToExpected: 'Molfiles-V3000/more-900-atoms-expected.mol',
         format: 'v3000',
       },
       {
-        testName:
-          'Open and Save file - Open/Save V3000 mol file contains Sgroup 2/2 - save',
+        testName: 'Open/Save V3000 mol file contains Sgroup',
         pathToOpen: 'Molfiles-V3000/multi-V3000.mol',
         pathToExpected: 'Molfiles-V3000/multi-V3000-expected.mol',
         format: 'v3000',
       },
       {
-        testName:
-          'Open and Save file - Open/Save  V3000 mol file contains Sgroup 2/2 - save',
+        testName: 'Open/Save  V3000 mol file contains Sgroup',
         pathToOpen: 'Molfiles-V3000/sgroup-different-V3000.mol',
         pathToExpected: 'Molfiles-V2000/sgroup-different-V2000-expected.mol',
         format: 'v2000',
       },
       {
-        testName:
-          'Open and Save file - Open/Save v3000 mol file with assigned Alias 2/2 - save',
-        pathToOpen: 'Molfiles-V3000/mol-12963-to-open.mol',
-        pathToExpected: 'Molfiles-V3000/mol-12963-to-open-expected.mol',
+        testName: 'Open/Save v3000 mol file with assigned Alias',
+        pathToOpen: 'Molfiles-V3000/chain-with-alias.mol',
+        pathToExpected: 'Molfiles-V3000/chain-with-alias-expected.mol',
         format: 'v3000',
       },
     ];
@@ -709,7 +692,7 @@ test.describe('', () => {
     }
   });
 
-  test.skip('Open and Save files - V3000 mol file contains different Bond properties', async ({
+  test.skip('V3000 mol file contains different Bond properties', async ({
     page,
   }) => {
     /**
@@ -746,7 +729,7 @@ test.describe('', () => {
   });
 
   for (let i = 1; i < 9; i++) {
-    test(`'Open and Save file - Open/Save files for ferrocen-like structures 1/2 - open ferrocene_radical0${i}.mol`, async ({
+    test(`Open/Save files for ferrocen-like structures 1/2 - open ferrocene_radical0${i}.mol`, async ({
       page,
     }) => {
       /**
@@ -764,7 +747,7 @@ test.describe('', () => {
     });
   }
 
-  test('Open and Save file - Open/Save files for ferrocen-like structures 2/2 - save', async ({
+  test('Open/Save files for ferrocen-like structures 2/2 - save', async ({
     page,
   }) => {
     /**

@@ -52,7 +52,7 @@
 						"$ref": "#/definitions/nodesConnection"
 					}
 				},
-				"templatess": {
+				"templates": {
 					"type": "array",
 					"minItems": 0,
 					"items": {

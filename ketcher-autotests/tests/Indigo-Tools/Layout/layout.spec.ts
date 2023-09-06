@@ -7,6 +7,7 @@ import {
   pressButton,
   waitForLoad,
   getCoordinatesOfTheMiddleOfTheScreen,
+  openFileAndAddToCanvas,
 } from '@utils';
 
 async function openFileWithShift(filename: string, page: Page) {
@@ -27,7 +28,7 @@ test.describe('Indigo Tools - Layout', () => {
 
   test('Center molecule after layout', async ({ page }) => {
     // Related Github issue: https://github.com/epam/ketcher/issues/2078
-    const anyStructure = 'benzene-rings.mol';
+    const anyStructure = 'Molfiles-V2000/benzene-rings.mol';
     await openFileWithShift(anyStructure, page);
     await selectTopPanelButton(TopPanelButton.Layout, page);
     await takeEditorScreenshot(page);
@@ -41,6 +42,18 @@ test.describe('Indigo Tools - Layout', () => {
     await openFileWithShift(structureWithStereoFlags, page);
     await selectTopPanelButton(TopPanelButton.Layout, page);
     await selectTopPanelButton(TopPanelButton.Layout, page);
+    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('After applying Layout, the structure does not disappear and can be interacted with', async ({
+    page,
+  }) => {
+    // Related Github issue: https://github.com/epam/ketcher/issues/3208
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/chloro-ethylamino-dimethyl-propoxy-propan-ol.mol',
+      page,
+    );
     await selectTopPanelButton(TopPanelButton.Layout, page);
     await takeEditorScreenshot(page);
   });

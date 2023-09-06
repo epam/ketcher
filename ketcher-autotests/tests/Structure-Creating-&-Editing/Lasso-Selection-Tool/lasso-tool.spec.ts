@@ -57,7 +57,7 @@ test.describe('Lasso Selection tool', () => {
     await page.mouse.click(300, 200);
   }
 
-  test.only('Selection of atom/bond/molecule', async ({ page }) => {
+  test('Selection of atom/bond/molecule', async ({ page }) => {
     /*
      * Test case: EPMLSOPKET-1338
      * Description: Hover and selection of atom/bond/molecule
@@ -122,7 +122,7 @@ test.describe('Lasso Selection tool', () => {
     await page.keyboard.press(`${modifier}+KeyA`);
   });
 
-  test.only('Drag the reaction components', async ({ page }) => {
+  test('Drag the reaction components', async ({ page }) => {
     /**
      * Test case: EPMLSOPKET-1342
      * Description: Selected structures and components are moved to the another place.
@@ -134,7 +134,7 @@ test.describe('Lasso Selection tool', () => {
     await dragMouseTo(point.x - 100, point.y - 200, page);
   });
 
-  test.only('Fuse atoms together', async ({ page }) => {
+  test('Fuse atoms together', async ({ page }) => {
     /**
      * Test case: EPMLSOPKET-1343
      * Description: Atoms are fused.
@@ -178,7 +178,7 @@ test.describe('Lasso Selection tool', () => {
     await dragMouseTo(point.x - xDelta, point.y + yDelta, page);
   });
 
-  test.only('Delete with selection', async ({ page }) => {
+  test('Delete with selection', async ({ page }) => {
     /**
      * Test case: EPMLSOPKET-1345
      * Description: The selected part of the structure or reaction should disappear after pressing the "Delete" button.

@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Atom, Bond, RGroup } from 'domain/entities';
+import { Atom, Bond, RGroup, SGroupAttachmentPoint } from 'domain/entities';
 import {
   AtomAdd,
   AtomAttr,
@@ -38,6 +38,7 @@ import { fromBondStereoUpdate } from './bond';
 import { without } from 'lodash/fp';
 import ReStruct from 'application/render/restruct/restruct';
 import assert from 'assert';
+import { SGroupAttachmentPointRemove } from '../operations/sgroup/sgroupAttachmentPoints';
 
 export function fromAtomAddition(restruct, pos, atom) {
   atom = Object.assign({}, atom);
@@ -65,7 +66,7 @@ export function fromAtomsAttrs(
 
   aids.forEach((atomId) => {
     Object.keys(Atom.attrlist).forEach((key) => {
-      if (key === 'attpnt' && !(key in attrs)) return;
+      if (key === 'attachmentPoints' && !(key in attrs)) return;
       if (!(key in attrs) && !reset) return;
 
       const value = key in attrs ? attrs[key] : Atom.attrGetDefault(key);
@@ -223,6 +224,22 @@ export function fromAtomMerge(restruct, srcId, dstId) {
 
   if (sgChanged) removeSgroupIfNeeded(action, restruct, [srcId]);
 
+  const sgroups = atomGetSGroups(restruct, srcId);
+  sgroups.forEach((sgroupId: number) => {
+    const sgroup = restruct.sgroups.get(sgroupId).item;
+    for (let i = 0; i < sgroup.attachmentPoints.length; ++i) {
+      if (sgroup.attachmentPoints[i].atomId === srcId) {
+        action.addOp(
+          new SGroupAttachmentPointRemove(
+            sgroupId,
+            new SGroupAttachmentPoint(srcId, undefined, undefined),
+          ),
+        );
+        return;
+      }
+    }
+  });
+
   action.addOp(new AtomDelete(srcId));
   const dstAtomNeighbors = restruct.molecule.atomGetNeighbors(dstId);
   const bond = restruct.molecule.bonds.get(
@@ -236,7 +253,7 @@ export function fromAtomMerge(restruct, srcId, dstId) {
 }
 
 export function mergeFragmentsIfNeeded(action, restruct, srcId, dstId) {
-  const frid = atomGetAttr(restruct, srcId, 'fragment');
+  const frid = atomGetAttr(restruct, srcId, 'fragment') as number;
   const frid2 = atomGetAttr(restruct, dstId, 'fragment');
   if (frid2 === frid || typeof frid !== 'number' || typeof frid2 !== 'number') {
     return frid;

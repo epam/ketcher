@@ -10,6 +10,7 @@ import {
   openFileAndAddToCanvas,
   TopPanelButton,
   selectTopPanelButton,
+  waitForIndigoToLoad,
 } from '@utils';
 
 const X_OFFSET = 200;
@@ -17,6 +18,7 @@ const X_OFFSET = 200;
 test.describe('open files with different formats', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('');
+    await waitForIndigoToLoad(page);
   });
 
   test.afterEach(async ({ page }) => {
@@ -28,21 +30,21 @@ test.describe('open files with different formats', () => {
     Test case: EPMLSOPKET-1839
     */
 
-    await openFileAndAddToCanvas('1839-ketcher.rxn', page);
+    await openFileAndAddToCanvas('Rxn-V2000/1839-ketcher.rxn', page);
   });
 
   test('opening smi files', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1840
     */
-    await openFileAndAddToCanvas('1840-cyclopentyl.smi', page);
+    await openFileAndAddToCanvas('SMILES/1840-cyclopentyl.smi', page);
   });
 
   test('opening inchi files', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1841
     */
-    await openFileAndAddToCanvas('1841-ketcher.inchi', page);
+    await openFileAndAddToCanvas('InChI/1841-ketcher.inchi', page);
   });
 
   /* two structures should be added on the canvas in the following test
@@ -56,7 +58,10 @@ the first one disappears. Couldn't reproduct manually.
      */
     // add first stucture from clipboard to canvas
     await selectTopPanelButton(TopPanelButton.Open, page);
-    await openFromFileViaClipboard('tests/test-data/1840225_mol_1.txt', page);
+    await openFromFileViaClipboard(
+      'tests/test-data/Txt/1840225-mol-1.txt',
+      page,
+    );
     await clickInTheMiddleOfTheScreen(page);
     // add second structure from file to canvas
     await selectTopPanelButton(TopPanelButton.Open, page);
@@ -67,7 +72,7 @@ the first one disappears. Couldn't reproduct manually.
     await clickOnTheCanvas(page, X_OFFSET, 0);
   });
 
-  test.fixme('Open file - Input .rxn string', async ({ page }) => {
+  test('Open file - Input .rxn string', async ({ page }) => {
     /**
      * Test case: EPMLSOPKET-2860
      * Description: Two structures are added to canvas - one opened from clipboard, another from file
@@ -75,12 +80,12 @@ the first one disappears. Couldn't reproduct manually.
     // add first stucture from clipboard to canvas
     await selectTopPanelButton(TopPanelButton.Open, page);
     await openFromFileViaClipboard(
-      'tests/test-data/1879938_rxn_1[1].txt',
+      'tests/test-data/Txt/1879938-rxn-1[1].txt',
       page,
     );
     // add second structure from file to canvas
     await selectTopPanelButton(TopPanelButton.Open, page);
-    await openFile('rxn_reaction.rxn', page);
+    await openFile('Rxn-V2000/rxn-reaction.rxn', page);
     await waitForLoad(page, () => {
       pressButton(page, 'Add to Canvas');
     });
@@ -94,7 +99,10 @@ the first one disappears. Couldn't reproduct manually.
      */
     // add first stucture from clipboard to canvas
     await selectTopPanelButton(TopPanelButton.Open, page);
-    await openFromFileViaClipboard('tests/test-data/1837_InChi_1.txt', page);
+    await openFromFileViaClipboard(
+      'tests/test-data/Txt/1837-inchi-1.txt',
+      page,
+    );
     await clickInTheMiddleOfTheScreen(page);
   });
 
@@ -105,7 +113,10 @@ the first one disappears. Couldn't reproduct manually.
      */
     // add first stucture from clipboard to canvas
     await selectTopPanelButton(TopPanelButton.Open, page);
-    await openFromFileViaClipboard('tests/test-data/1837_InChi_2.txt', page);
+    await openFromFileViaClipboard(
+      'tests/test-data/Txt/1837-inchi-2.txt',
+      page,
+    );
     await clickInTheMiddleOfTheScreen(page);
   });
 
@@ -116,7 +127,10 @@ the first one disappears. Couldn't reproduct manually.
      */
     // add first structure from clipboard to canvas
     await selectTopPanelButton(TopPanelButton.Open, page);
-    await openFromFileViaClipboard('tests/test-data/1837_InChi_3.txt', page);
+    await openFromFileViaClipboard(
+      'tests/test-data/Txt/1837-inchi-3.txt',
+      page,
+    );
     await clickInTheMiddleOfTheScreen(page);
   });
 
@@ -127,7 +141,7 @@ the first one disappears. Couldn't reproduct manually.
      */
     // add first structure from clipboard to canvas
     await selectTopPanelButton(TopPanelButton.Open, page);
-    await openFile('13-AQuery-NotList.mol', page);
+    await openFile('Molfiles-V3000/a-query-notList.mol', page);
     await waitForLoad(page, () => {
       pressButton(page, 'Open as New Project');
     });
@@ -140,7 +154,7 @@ the first one disappears. Couldn't reproduct manually.
      */
     // add first stucture from clipboard to canvas
     await selectTopPanelButton(TopPanelButton.Open, page);
-    await openFile('29DHIS_prohibitatoms.mol', page);
+    await openFile('Molfiles-V3000/dhis-prohibit-atoms.mol', page);
     await waitForLoad(page, () => {
       pressButton(page, 'Open as New Project');
     });

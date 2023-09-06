@@ -59,14 +59,17 @@ export const RnaEditorExpanded = ({
     {
       groupName: MonomerGroups.SUGARS,
       iconName: 'sugar',
+      testId: 'rna-builder-slot--sugar',
     },
     {
       groupName: MonomerGroups.BASES,
       iconName: 'base',
+      testId: 'rna-builder-slot--base',
     },
     {
       groupName: MonomerGroups.PHOSPHATES,
       iconName: 'phosphate',
+      testId: 'rna-builder-slot--phosphate',
     },
   ] as const;
 
@@ -136,7 +139,7 @@ export const RnaEditorExpanded = ({
         />
       </NameContainer>
       <GroupsContainer>
-        {groupsData.map(({ groupName, iconName }) => {
+        {groupsData.map(({ groupName, iconName, testId }) => {
           return (
             <GroupBlock
               key={groupName}
@@ -149,6 +152,7 @@ export const RnaEditorExpanded = ({
                   .MonomerName
               }
               iconName={iconName}
+              testid={testId}
               onClick={() => selectGroup(groupName)}
             />
           );

@@ -59,7 +59,23 @@ function removeNotRenderedStruct(actionTool, group, dispatch) {
 
 let abbreviationLookupTimeoutId: number | undefined;
 const ABBREVIATION_LOOKUP_TYPING_TIMEOUT = 1000;
-const shortcutKeys = ['1', '2', '3', '4', 't'];
+const shortcutKeys = [
+  '1',
+  '2',
+  '3',
+  '4',
+  't',
+  'h',
+  'n',
+  'o',
+  's',
+  'p',
+  'f',
+  'i',
+  'b',
+  '+',
+  '-',
+];
 
 /* HotKeys */
 function keyHandle(dispatch, getState, hotKeys, event) {

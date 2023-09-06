@@ -325,6 +325,16 @@
             }
           }
         },
+        "properties": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "key": { "type": "string" },
+              "value": { "type": "string" }
+            }
+          }
+        },
         "atoms": {
           "type": "array",
           "items": {

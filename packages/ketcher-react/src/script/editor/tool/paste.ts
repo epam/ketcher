@@ -24,11 +24,11 @@ import {
   SGroup,
   Struct,
   Vec2,
+  vectorUtils,
 } from 'ketcher-core';
 import Editor from '../Editor';
 import { dropAndMerge } from './helper/dropAndMerge';
 import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems';
-import utils from '../shared/utils';
 import { filterNotInContractedSGroup } from './helper/filterNotInCollapsedSGroup';
 import { Tool } from './Tool';
 
@@ -130,13 +130,14 @@ class PasteTool implements Tool {
       }
 
       // calc angle
-      let angle = utils.calcAngle(pos0, pos1);
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      let angle = vectorUtils.calcAngle(pos0!, pos1);
 
       if (!event.ctrlKey) {
-        angle = utils.fracAngle(angle, null);
+        angle = vectorUtils.fracAngle(angle, null);
       }
 
-      const degrees = utils.degrees(angle);
+      const degrees = vectorUtils.degrees(angle);
 
       // check if anything changed since last time
       if (
@@ -227,9 +228,7 @@ class PasteTool implements Tool {
       const action = this.action;
       delete this.action;
       if (!this.isSingleContractedGroup || !this.mergeItems) {
-        this.editor.update(
-          dropAndMerge(this.editor, this.mergeItems, action, true),
-        );
+        dropAndMerge(this.editor, this.mergeItems, action, true);
       }
     }
   }
@@ -273,7 +272,7 @@ function prepareTemplateFromSingleGroup(molecule: Struct): Template | null {
 
   const atom = molecule.atoms.get(template.aid);
   if (atom) {
-    template.angle0 = utils.calcAngle(atom.pp, template.xy0); // center tilt
+    template.angle0 = vectorUtils.calcAngle(atom.pp, template.xy0); // center tilt
   }
 
   return template;

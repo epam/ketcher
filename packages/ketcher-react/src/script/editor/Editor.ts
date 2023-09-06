@@ -300,7 +300,7 @@ class Editor implements KetcherEditor {
 
   setOptions(opts: string) {
     const options = JSON.parse(opts);
-    this.event.apiSettings.dispatch({ ...this.options(), ...options });
+    this.event.apiSettings.dispatch({ ...options });
     return this.render.updateOptions(opts);
   }
 
@@ -714,8 +714,8 @@ function updateLastCursorPosition(editor: Editor, event) {
       editor.render.clientArea.getBoundingClientRect();
 
     editor.lastCursorPosition = {
-      x: event.pageX - clientAreaBoundingBox.x,
-      y: event.pageY - clientAreaBoundingBox.y,
+      x: event.clientX - clientAreaBoundingBox.x,
+      y: event.clientY - clientAreaBoundingBox.y,
     };
   }
 }
@@ -803,7 +803,10 @@ function domEventSetup(editor: Editor, clientArea: HTMLElement) {
     editor.event[eventName] = new DOMSubscription();
     const subs = editor.event[eventName];
 
-    target.addEventListener(eventName, subs.dispatch.bind(subs));
+    target.addEventListener(eventName, (...args) => {
+      if (window.isPolymerEditorTurnedOn) return;
+      subs.dispatch(...args);
+    });
 
     subs.add((event) => {
       updateLastCursorPosition(editor, event);

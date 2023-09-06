@@ -1,4 +1,4 @@
-import { test } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 import {
   AtomButton,
   clickInTheMiddleOfTheScreen,
@@ -9,10 +9,12 @@ import {
   selectAtomInToolbar,
   selectLeftPanelButton,
   LeftPanelButton,
+  receiveFileComparisonData,
+  saveToFile,
 } from '@utils';
+import { getCdxml } from '@utils/formats';
 
 test.describe('Tests for API setMolecule/getMolecule', () => {
-  // TODO: need a getCdxml function
   test.beforeEach(async ({ page }) => {
     await page.goto('');
   });
@@ -124,12 +126,21 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     // check that structure opened from file is displayed correctly
   });
 
-  test('Save file - Save *.cdxml file', async ({ page }) => {
+  test('Save/Open file - Save *.cdxml file', async ({ page }) => {
     /**
      * Test case: EPMLSOPKET-6969
-     * Description: Open/Import structure while openning a CDXML file
+     * Description: Open/Import structure CDXML file
      */
-    await openFileAndAddToCanvas('cdxml-6969.cdxml', page);
-    // check that structure opened from file is displayed correctly
+    await openFileAndAddToCanvas('CDXML/cdxml-6969.cdxml', page);
+    const expectedFile = await getCdxml(page);
+    await saveToFile('CDXML/cdxml-6969-expected.cdxml', expectedFile);
+
+    const { fileExpected: cdxmlFileExpected, file: cdxmlFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName: 'tests/test-data/CDXML/cdxml-6969-expected.cdxml',
+      });
+
+    expect(cdxmlFile).toEqual(cdxmlFileExpected);
   });
 });

@@ -1,11 +1,11 @@
-import { Action, Scale, Vec2 } from 'ketcher-core';
+import { Action, Scale, Vec2, vectorUtils } from 'ketcher-core';
 import { throttle } from 'lodash';
 import Editor from '../Editor';
-import utils from '../shared/utils';
 import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems';
 import RotateTool from './rotate';
 import SelectTool from './select';
 import { getDifference, rotatePoint } from './rotate-controller.utils';
+import { normalizeAngle } from '../utils/normalizeAngle';
 
 type RaphaelElement = {
   [key: string]: any;
@@ -367,6 +367,7 @@ class RotateController {
           fill: STYLE.INITIAL_COLOR,
           stroke: 'none',
         });
+        circle.node.setAttribute('data-testid', 'rotation-handle');
 
         const leftArrow = this.paper
           .path(LEFT_ARROW_PATH)
@@ -844,7 +845,7 @@ class RotateController {
     this.snapAngleIndicator = this.paper.set() as RaphaelElement;
     const LINE_LENGTH = 30;
     const TEXT_FONT_SIZE = 12;
-    const relativeSnapAngleInDegrees = utils.degrees(relativeSnapAngle);
+    const relativeSnapAngleInDegrees = vectorUtils.degrees(relativeSnapAngle);
 
     const drawText = (textPosition: Vec2) =>
       this.paper
@@ -867,7 +868,7 @@ class RotateController {
 
     switch (state) {
       case 'noLine': {
-        const textAngle = utils.normalizeAngle(
+        const textAngle = normalizeAngle(
           absoluteSnapAngle - relativeSnapAngle / 2,
         );
         const textPosition = new Vec2(20, 0).rotate(textAngle);

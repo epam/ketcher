@@ -53,6 +53,9 @@ export function moleculeToKet(struct: Struct): any {
   const fragment = struct.frags.get(0);
   if (fragment) {
     ifDef(body, 'stereoFlagPosition', fragment.stereoFlagPosition, null);
+    if (fragment.properties) {
+      body.properties = fragment.properties;
+    }
   }
   return {
     type: 'molecule',
@@ -69,7 +72,7 @@ function atomToKet(source) {
   ifDef(result, 'explicitValence', source.explicitValence, -1);
   ifDef(result, 'isotope', source.isotope, 0);
   ifDef(result, 'radical', source.radical, 0);
-  ifDef(result, 'attachmentPoints', source.attpnt, 0);
+  ifDef(result, 'attachmentPoints', source.attachmentPoints, 0);
   ifDef(result, 'cip', source.cip, '');
   // stereo
   ifDef(result, 'stereoLabel', source.stereoLabel, null);
@@ -93,7 +96,7 @@ function rglabelToKet(source) {
     type: 'rg-label',
   };
   ifDef(result, 'location', [source.pp.x, -source.pp.y, source.pp.z]);
-  ifDef(result, 'attachmentPoints', source.attpnt, 0);
+  ifDef(result, 'attachmentPoints', source.attachmentPoints, 0);
 
   const refsToRGroups = fromRlabel(source.rglabel).map(
     (rgnumber) => `rg-${rgnumber}`,
@@ -108,7 +111,7 @@ function atomListToKet(source) {
     type: 'atom-list',
   };
   ifDef(result, 'location', [source.pp.x, -source.pp.y, source.pp.z]);
-  ifDef(result, 'attachmentPoints', source.attpnt, 0);
+  ifDef(result, 'attachmentPoints', source.attachmentPoints, 0);
   ifDef(result, 'elements', source.atomList.labelList());
   ifDef(result, 'notList', source.atomList.notList, false);
   return result;

@@ -1,8 +1,12 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { ReAtom, ReBond } from 'application/render';
 
-import { Box2Abs, Pool, Vec2 } from 'domain/entities';
+import { Box2Abs, Pool, Struct, Vec2 } from 'domain/entities';
 import { mockFn } from 'jest-mock-extended';
+import { MonomerItemType } from 'domain/types';
+import { Peptide } from 'domain/entities/Peptide';
+import { PeptideRenderer } from 'application/render/renderers/PeptideRenderer';
+import { PolymerBond } from 'domain/entities/PolymerBond';
 
 const mockAtoms = [
   {
@@ -733,3 +737,38 @@ molecule.bonds.forEach((bond, bid) => {
 });
 
 export const singleBond = { type: 1, stereo: 0 };
+
+export const peptideMonomerItem: MonomerItemType = {
+  favorite: false,
+  label: 'Abc',
+  props: {
+    BranchMonomer: '',
+    MonomerCaps: '',
+    MonomerCode: '',
+    MonomerName: '',
+    MonomerType: 'PEPTIDE',
+    Name: '',
+    MonomerNaturalAnalogCode: 'A',
+  },
+  struct: new Struct(),
+};
+
+export const polymerEditorTheme = {
+  monomer: { color: { A: { regular: 'yellow' } } },
+};
+
+export const getFinishedPolymerBond = (x1, y1, x2, y2) => {
+  const peptide = new Peptide(peptideMonomerItem);
+  const peptide2 = new Peptide(peptideMonomerItem);
+  peptide.moveAbsolute(new Vec2(x1, y1));
+  peptide2.moveAbsolute(new Vec2(x2, y2));
+  // eslint-disable-next-line no-new
+  new PeptideRenderer(peptide);
+  // eslint-disable-next-line no-new
+  new PeptideRenderer(peptide2);
+
+  const polymerBond = new PolymerBond(peptide);
+  polymerBond.setSecondMonomer(peptide2);
+
+  return polymerBond;
+};

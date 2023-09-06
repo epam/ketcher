@@ -32,10 +32,20 @@ import { getGlobalStyles } from 'theming/globalStyles';
 import { Layout } from 'components/Layout';
 import { MonomerLibrary } from 'components/monomerLibrary';
 import { Menu } from 'components/menu';
-import { selectEditorActiveTool, selectTool } from 'state/common';
+import {
+  createEditor,
+  selectEditor,
+  selectEditorActiveTool,
+  selectTool,
+} from 'state/common';
 import { loadMonomerLibrary } from 'state/library';
 import { useAppDispatch, useAppSelector } from 'hooks';
-import { openModal } from 'state/modal';
+import {
+  closeErrorTooltip,
+  openErrorTooltip,
+  openModal,
+  selectErrorTooltipText,
+} from 'state/modal';
 import {
   modalComponentList,
   ModalContainer,
@@ -43,15 +53,32 @@ import {
 import { FullscreenButton } from 'components/FullscreenButton';
 import { DeepPartial } from './types';
 import { EditorClassName } from './constants';
+import { Snackbar } from '@mui/material';
+import {
+  StyledIconButton,
+  StyledToast,
+  StyledToastContent,
+} from 'components/shared/StyledToast/styles';
+import {
+  PeptideAvatar,
+  ChemAvatar,
+  SugarAvatar,
+  PhosphateAvatar,
+  RNABaseAvatar,
+} from 'components/shared/monomerOnCanvas';
 
 const muiTheme = createTheme(muiOverrides);
 
-interface EditorProps {
+interface EditorContainerProps {
   onInit?: () => void;
   theme?: DeepPartial<EditorTheme>;
 }
 
-function EditorContainer({ onInit, theme }: EditorProps) {
+interface EditorProps {
+  theme?: DeepPartial<EditorTheme>;
+}
+
+function EditorContainer({ onInit, theme }: EditorContainerProps) {
   const rootElRef = useRef<HTMLDivElement>(null);
   const editorTheme: EditorTheme = theme
     ? merge(defaultTheme, theme)
@@ -70,21 +97,36 @@ function EditorContainer({ onInit, theme }: EditorProps) {
       <ThemeProvider theme={mergedTheme}>
         <Global styles={getGlobalStyles} />
         <div ref={rootElRef} className={EditorClassName}>
-          <Editor />
+          <Editor theme={editorTheme} />
         </div>
       </ThemeProvider>
     </Provider>
   );
 }
 
-function Editor() {
+function Editor({ theme }: EditorProps) {
   const dispatch = useAppDispatch();
-
+  const canvasRef = useRef<SVGSVGElement>(null);
+  const errorTooltipText = useAppSelector(selectErrorTooltipText);
+  const editor = useAppSelector(selectEditor);
   useEffect(() => {
+    dispatch(createEditor({ theme, canvas: canvasRef.current }));
     const serializer = new SdfSerializer();
     const library = serializer.deserialize(monomersData);
     dispatch(loadMonomerLibrary(library));
   }, [dispatch]);
+
+  useEffect(() => {
+    if (editor) {
+      editor.events.error.add((errorText) =>
+        dispatch(openErrorTooltip(errorText)),
+      );
+    }
+  }, [editor]);
+
+  const handleCloseErrorTooltip = () => {
+    dispatch(closeErrorTooltip());
+  };
 
   return (
     <>
@@ -93,7 +135,22 @@ function Editor() {
           <MenuComponent />
         </Layout.Left>
 
-        <Layout.Main></Layout.Main>
+        <Layout.Main>
+          <svg
+            id="polymer-editor-canvas"
+            ref={canvasRef}
+            width="100%"
+            height="100%"
+          >
+            <defs>
+              <PeptideAvatar />
+              <ChemAvatar />
+              <SugarAvatar />
+              <PhosphateAvatar />
+              <RNABaseAvatar />
+            </defs>
+          </svg>
+        </Layout.Main>
 
         <Layout.Right>
           <MonomerLibrary />
@@ -103,6 +160,21 @@ function Editor() {
       <FullscreenButton />
 
       <ModalContainer />
+
+      <Snackbar
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        open={Boolean(errorTooltipText)}
+        onClose={handleCloseErrorTooltip}
+        autoHideDuration={6000}
+      >
+        <StyledToast id="error-tooltip">
+          <StyledToastContent>{errorTooltipText}</StyledToastContent>
+          <StyledIconButton
+            iconName="close"
+            onClick={handleCloseErrorTooltip}
+          ></StyledIconButton>
+        </StyledToast>
+      </Snackbar>
     </>
   );
 }
@@ -110,12 +182,13 @@ function Editor() {
 function MenuComponent() {
   const dispatch = useAppDispatch();
   const activeTool = useAppSelector(selectEditorActiveTool);
-
+  const editor = useAppSelector(selectEditor);
   const menuItemChanged = (name) => {
     if (modalComponentList[name]) {
       dispatch(openModal(name));
     } else {
       dispatch(selectTool(name));
+      editor.events.selectTool.dispatch(name);
     }
   };
 
@@ -147,7 +220,7 @@ function MenuComponent() {
         </Menu.Submenu>
       </Menu.Group>
       <Menu.Group>
-        <Menu.Item itemId="bond-single" />
+        <Menu.Item itemId="bond-single" title="Single Bond (1)" />
       </Menu.Group>
       <Menu.Group divider>
         <Menu.Item itemId="bracket" />

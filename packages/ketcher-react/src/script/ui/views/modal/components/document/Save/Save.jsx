@@ -85,6 +85,8 @@ class SaveDialog extends Component {
           'ket',
           this.isRxn ? 'rxn' : 'mol',
           this.isRxn ? 'rxnV3000' : 'molV3000',
+          'sdf',
+          'sdfV3000',
           'smarts',
           'smiles',
           'smilesExt',
@@ -92,6 +94,7 @@ class SaveDialog extends Component {
           '<----firstDivider--->', // for dividers in select list
           'inChI',
           'inChIAuxInfo',
+          'inChIKey',
           '<----secondDivider--->', // for dividers in select list
           'svg',
           'png',
@@ -136,7 +139,14 @@ class SaveDialog extends Component {
   };
 
   changeType = (type) => {
-    const { struct, server, options, formState, ignoreChiralFlag } = this.props;
+    const {
+      struct,
+      server,
+      options,
+      formState,
+      ignoreChiralFlag,
+      bondThickness,
+    } = this.props;
 
     const errorHandler = this.context.errorHandler;
     if (this.isImageFormat(type)) {
@@ -151,7 +161,7 @@ class SaveDialog extends Component {
       });
       const options = {};
       options.outputFormat = type;
-
+      options.bondThickness = bondThickness;
       return server
         .generateImageAsBase64(structStr, options)
         .then((base64) => {
@@ -312,6 +322,7 @@ class SaveDialog extends Component {
           className={classes.previewArea}
           readOnly
           ref={this.textAreaRef}
+          data-testid="preview-area-binary"
         />
       </div>
     );
@@ -323,6 +334,7 @@ class SaveDialog extends Component {
           className={classes.previewArea}
           readOnly
           ref={this.textAreaRef}
+          data-testid="preview-area-text"
         />
       </div>
     );
@@ -347,7 +359,9 @@ class SaveDialog extends Component {
       <div className={classes.warnings}>
         {warnings.map((warning) => (
           <div className={classes.warningsContainer}>
-            <span className={classes.warningsArr}>{warning}</span>
+            <span className={classes.warningsArr} data-testid="WarningTextArea">
+              {warning}
+            </span>
           </div>
         ))}
       </div>
@@ -356,7 +370,7 @@ class SaveDialog extends Component {
 
   getButtons = () => {
     const { disableControls, imageFormat, isLoading, structStr } = this.state;
-    const formState = this.props.formState;
+    const { formState, bondThickness } = this.props;
     const { filename, format } = formState.result;
     const isCleanStruct = this.props.struct.isBlank();
 
@@ -397,6 +411,7 @@ class SaveDialog extends Component {
           data={structStr}
           filename={filename}
           outputFormat={imageFormat}
+          bondThickness={bondThickness}
           key="save-image-button"
           type={`image/${format}+xml`}
           onSave={this.props.onOk}
@@ -459,6 +474,7 @@ const mapStateToProps = (state) => ({
   formState: state.modal.form,
   moleculeErrors: state.modal.form.moleculeErrors,
   checkState: state.options.check,
+  bondThickness: state.options.settings.bondThickness,
   ignoreChiralFlag: state.editor.render.options.ignoreChiralFlag,
 });
 

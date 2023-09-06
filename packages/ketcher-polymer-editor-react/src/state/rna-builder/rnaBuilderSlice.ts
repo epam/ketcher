@@ -18,7 +18,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { IRnaPreset } from 'components/monomerLibrary/RnaBuilder/types';
 import { RootState } from 'state';
 import { MonomerGroups } from '../../constants';
-import { MonomerItemType } from 'components/monomerLibrary/monomerLibraryItem/types';
+import { MonomerItemType } from 'ketcher-core';
 
 export enum RnaBuilderPresetsItem {
   Presets = 'Presets',

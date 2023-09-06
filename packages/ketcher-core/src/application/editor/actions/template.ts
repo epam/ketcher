@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { Atom, Bond, SGroup, Struct, Vec2 } from 'domain/entities';
-import { AtomAdd, BondAdd, BondAttr, CalcImplicitH } from '../operations';
+import { AtomAdd, AtomAttr, BondAdd, BondAttr, CalcImplicitH } from '../operations';
 import { atomForNewBond, atomGetAttr } from './utils';
 import { fromAtomsAttrs, mergeSgroups } from './atom';
 import { fromBondStereoUpdate, fromBondsAttrs, fromBondAddition } from './bond';
@@ -144,6 +144,7 @@ export function fromTemplateOnAtom(
       action.mergeWith(fromAtomsAttrs(restruct, aid1, attrs, true));
       map.set(id, aid1);
       pasteItems.atoms.push(aid1);
+      new AtomAttr(aid1, 'isPreview', isPreview).perform(restruct);
     } else {
       const v = Vec2.diff(a.pp, xy0).rotate(delta).add(atom.pp);
 
@@ -153,8 +154,10 @@ export function fromTemplateOnAtom(
       action.addOp(operation);
       map.set(id, operation.data.aid);
       pasteItems.atoms.push(operation.data.aid);
+      new AtomAttr(operation.data.aid, 'isPreview', isPreview).perform(
+        restruct,
+      );
     }
-    // new AtomAttr(id, 'isPreview', isPreview).perform(restruct);
   });
 
   if (!isTmplSingleGroup) mergeSgroups(action, restruct, pasteItems.atoms, aid);

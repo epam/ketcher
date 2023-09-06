@@ -33,6 +33,7 @@ import {
   Bond,
   fromMultipleMove,
   BondAttr,
+  AtomAttr,
 } from 'ketcher-core';
 import Editor from '../Editor';
 import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems';
@@ -599,8 +600,13 @@ class TemplateTool implements Tool {
         );
         action = result[0];
         pasteItems = result[1];
-        for (const bid of pasteItems.bonds || []) {
-          new BondAttr(bid, 'isPreview', false).perform(
+        for (const bondId of pasteItems.bonds || []) {
+          new BondAttr(bondId, 'isPreview', false).perform(
+            this.editor.render.ctab,
+          );
+        }
+        for (const atomId of pasteItems.atoms || []) {
+          new AtomAttr(atomId, 'isPreview', false).perform(
             this.editor.render.ctab,
           );
         }

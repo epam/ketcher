@@ -147,6 +147,9 @@ function findClosestAtom(restruct, pos, skip, minDist) {
     ) {
       return null;
     }
+    if (atom.a.isPreview && !atom.hover) {
+      return;
+    }
     if (aid === skipId) return;
 
     const dist = Vec2.dist(pos, atom.a.pp);

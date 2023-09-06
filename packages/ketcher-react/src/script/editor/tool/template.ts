@@ -598,12 +598,13 @@ class TemplateTool implements Tool {
           0,
         );
         action = result[0];
-        const pasteItems = result[1];
+        pasteItems = result[1];
         for (const bid of pasteItems.bonds || []) {
           new BondAttr(bid, 'isPreview', false).perform(
             this.editor.render.ctab,
           );
         }
+        this.editor.update(action, false);
         dragCtx.action = action;
       } else if (ci.map === 'atoms') {
         const degree = restruct.atoms.get(ci.id)?.a.neighbors.length;
@@ -655,7 +656,11 @@ class TemplateTool implements Tool {
 
     this.editor.selection(null);
 
-    console.log(23)
+    if (this.createPreviewAction) {
+      const test = this.createPreviewAction.perform(restruct);
+      this.templateSet = false;
+      this.editor.update(test, false);
+    }
 
     if (!dragCtx.mergeItems && pasteItems && !this.isModeFunctionalGroup) {
       dragCtx.mergeItems = getItemsToFuse(this.editor, pasteItems);
@@ -665,7 +670,6 @@ class TemplateTool implements Tool {
       : fromItemsFuse(restruct, dragCtx.mergeItems);
 
     const completeAction = dragCtx.action;
-    console.log(completeAction && !completeAction.isDummy())
     if (completeAction && !completeAction.isDummy()) {
       this.editor.update(completeAction);
     }

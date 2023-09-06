@@ -24,7 +24,10 @@ test.describe('Reagents molecule above arrow', () => {
       Test case: EPMLSOPKET-4680
       Description: File opens with the reagent NH3 on top of the arrow
     */
-    await openFileAndAddToCanvas('benzene-arrow-benzene-reagent-nh3.rxn', page);
+    await openFileAndAddToCanvas(
+      'Rxn-V3000/benzene-arrow-benzene-reagent-nh3.rxn',
+      page,
+    );
   });
 
   test('Open File CDXML with reagent NH3 above arrow', async ({ page }) => {
@@ -33,7 +36,7 @@ test.describe('Reagents molecule above arrow', () => {
       Description: File opens with the reagent NH3 on top of the arrow
     */
     await openFileAndAddToCanvas(
-      'benzene-arrow-benzene-reagent-nh3.cdxml',
+      'CDXML/benzene-arrow-benzene-reagent-nh3.cdxml',
       page,
     );
   });

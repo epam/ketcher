@@ -108,8 +108,8 @@ export function fromAtomsAttrs(
     // when a heteroatom connects to an aromatic ring it's necessary to add a ImplicitHCount
     // property to this atom to specify the number of hydrogens on it.
     const atom = restruct.molecule.atoms.get(atomId);
-    if (atom === null) return;
-    // assert(atom != null);
+    if (!atom) return;
+    assert(atom != null);
 
     if (Atom.isInAromatizedRing(restruct.molecule, atomId)) {
       action.addOp(

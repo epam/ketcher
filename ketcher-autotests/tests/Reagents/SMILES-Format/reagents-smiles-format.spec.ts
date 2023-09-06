@@ -99,7 +99,7 @@ test.describe('Reagents SMILES format', () => {
   });
 
   test(`Detection molecule as reagent
-  and write reagent information in "Extended SMILES" format in "Preview" tab @check`, async ({
+  and write reagent information in "Extended SMILES" format in "Preview" tab`, async ({
     page,
   }) => {
     /*

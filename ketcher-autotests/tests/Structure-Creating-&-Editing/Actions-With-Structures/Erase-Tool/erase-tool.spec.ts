@@ -22,7 +22,10 @@ test.describe('Erase Tool', () => {
   // TO DO: here in both tests we have some issue with openFileAndAddToCanvas() function it need proper investigation
   test.beforeEach(async ({ page }) => {
     await page.goto('');
-    await openFileAndAddToCanvas('benzene-bromobutane-reaction.rxn', page);
+    await openFileAndAddToCanvas(
+      'Rxn-V2000/benzene-bromobutane-reaction.rxn',
+      page,
+    );
 
     await selectTool(LeftPanelButton.Erase, page);
   });

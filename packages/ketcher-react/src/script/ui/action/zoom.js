@@ -30,7 +30,7 @@ export default {
     hidden: (options) => isHidden(options, 'zoom'),
   },
   'zoom-out': {
-    shortcut: ['Ctrl+_', 'Ctrl+-'],
+    shortcut: ['Ctrl+_', 'Ctrl+-', 'Meta+_', 'Meta+-'],
     title: 'Zoom Out',
     disabled: (editor) => editor.zoom() <= zoomList[0], // unsave
     action: (editor) => {
@@ -41,7 +41,7 @@ export default {
     hidden: (options) => isHidden(options, 'zoom-out'),
   },
   'zoom-in': {
-    shortcut: ['Ctrl+=', 'Ctrl++'],
+    shortcut: ['Ctrl+=', 'Ctrl++', 'Meta+=', 'Meta++'],
     title: 'Zoom In',
     disabled: (editor) => zoomList[zoomList.length - 1] <= editor.zoom(),
     action: (editor) => {

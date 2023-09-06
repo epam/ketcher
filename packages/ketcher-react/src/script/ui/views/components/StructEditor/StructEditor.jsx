@@ -82,7 +82,7 @@ class StructEditor extends Component {
   }
 
   handleWheel = (event) => {
-    if (event.ctrlKey) {
+    if (event.ctrlKey || event.metaKey) {
       event.preventDefault();
 
       const zoomDelta = event.deltaY > 0 ? -1 : 1;

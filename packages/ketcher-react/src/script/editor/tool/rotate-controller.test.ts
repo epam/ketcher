@@ -86,10 +86,12 @@ describe('Rotate controller', () => {
    */
   it('rerenders while zooming', () => {
     const editor = new Editor(document, {});
+    editor.centerStruct = jest.fn();
     editor.rotateController.rerender = jest.fn();
 
     editor.zoom(2);
 
+    expect(editor.centerStruct).toBeCalledTimes(1);
     expect(editor.rotateController.rerender).toBeCalledTimes(1);
   });
 

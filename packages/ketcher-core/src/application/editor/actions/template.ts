@@ -146,7 +146,9 @@ export function fromTemplateOnAtom(
       pasteItems.atoms.push(aid1);
       new AtomAttr(aid1, 'isPreview', isPreview).perform(restruct);
     } else {
-      const v = Vec2.diff(a.pp, xy0).rotate(delta).add(atom.pp);
+      const v = atom
+        ? Vec2.diff(a.pp, xy0).rotate(delta).add(atom.pp)
+        : new Vec2();
 
       const operation = new AtomAdd(attrs, v.get_xy0()).perform(
         restruct,

@@ -363,6 +363,8 @@ class TemplateTool implements Tool {
           this.prevEventPos = this.eventPos;
           action = fromMultipleMove(restruct, this.pasteItems, dist);
           this.editor.render.update(action, null, { resizeCanvas: false });
+          const mergeItems = getItemsToFuse(this.editor, this.pasteItems);
+          this.editor.hover(getHoverToFuse(mergeItems), this);
         }
       }
       return true;

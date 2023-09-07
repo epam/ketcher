@@ -2,10 +2,15 @@ import { render, screen } from '@testing-library/react';
 import { RnaAccordion } from 'components/monomerLibrary/RnaBuilder/RnaAccordion/RnaAccordion';
 import { getMonomerUniqueKey } from 'state/library';
 import { MonomerItemType } from 'ketcher-core';
+import { MONOMER_TYPES } from '../../../../constants';
 
 describe('Test Rna Accordion component', () => {
   it('should render', () => {
-    render(withThemeAndStoreProvider(<RnaAccordion />));
+    render(
+      withThemeAndStoreProvider(
+        <RnaAccordion libraryName={MONOMER_TYPES.RNA} />,
+      ),
+    );
 
     const rnaAccordion = screen.getByTestId('rna-accordion');
 
@@ -26,13 +31,16 @@ describe('Test Rna Accordion component', () => {
       },
     };
     render(
-      withThemeAndStoreProvider(<RnaAccordion />, {
-        library: {
-          searchFilter: '',
-          favorites: {},
-          monomers: [monomerData],
+      withThemeAndStoreProvider(
+        <RnaAccordion libraryName={MONOMER_TYPES.RNA} />,
+        {
+          library: {
+            searchFilter: '',
+            favorites: {},
+            monomers: [monomerData],
+          },
         },
-      }),
+      ),
     );
     const peptidesSummary = screen.getByTestId('summary-Phosphates');
 

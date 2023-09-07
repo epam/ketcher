@@ -23,6 +23,9 @@ export const tabsContent = [
     caption: 'RNA',
     testId: 'RNA_TAB',
     component: RnaBuilder,
+    props: {
+      libraryName: MONOMER_TYPES.RNA,
+    },
   },
   {
     caption: 'CHEM',

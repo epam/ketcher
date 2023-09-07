@@ -35,7 +35,7 @@ export function fromTemplateOnCanvas(
   restruct,
   template,
   pos,
-  angle,
+  angle = 0,
 ): [Action, { atoms: number[]; bonds: number[] }] {
   const [action, pasteItems] = fromPaste(
     restruct,

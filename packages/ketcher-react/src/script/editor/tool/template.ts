@@ -36,6 +36,7 @@ import Editor from '../Editor';
 import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems';
 import { MODES } from 'src/constants';
 import { Tool } from './Tool';
+import TemplatePreview from './preview-controller';
 
 export const PREVIEW_DELAY = 300;
 
@@ -104,30 +105,19 @@ function getAngleFromEvent(event, ci, restruct) {
   return angle;
 }
 
-function getUniqueCiId(ci) {
-  return `${ci.id}-${ci.map}`;
-}
-
 class TemplateTool implements Tool {
   private readonly editor: Editor;
   private readonly mode: any;
   private readonly template: any;
   private readonly findItems: Array<string>;
+  private templatePreview: TemplatePreview | null;
   private dragCtx: any;
-  private isPreviewVisible: boolean;
-  private previewRemoveAction: Action | null;
-  private previewTimeout: ReturnType<typeof setTimeout> | null = null;
-  private lastPreviewId: string | null;
   private targetGroupsIds: Array<number> = [];
   private readonly isSaltOrSolvent: boolean;
   private event: Event | undefined;
 
   constructor(editor: Editor, tmpl) {
     this.editor = editor;
-    this.isPreviewVisible = false;
-    this.previewRemoveAction = new Action();
-    this.previewTimeout = null;
-    this.lastPreviewId = null;
     this.mode = getTemplateMode(tmpl);
     this.editor.selection(null);
     this.isSaltOrSolvent = SGroup.isSaltOrSolvent(tmpl.struct.name);
@@ -138,6 +128,8 @@ class TemplateTool implements Tool {
       aid: parseInt(tmpl.aid) || sGroup?.getAttachmentAtomId() || 0,
       bid: parseInt(tmpl.bid) || 0,
     };
+
+    this.templatePreview = new TemplatePreview(editor, this.template);
 
     const frag = tmpl.struct;
     frag.rescale();
@@ -235,7 +227,7 @@ class TemplateTool implements Tool {
   async mousedown(event: MouseEvent) {
     this.event = event;
 
-    this.hidePreview();
+    this.templatePreview?.hideConnectedPreview();
 
     if (this.functionalGroups.size) {
       this.targetGroupsIds = getGroupIdsFromItemArrays(this.struct, {
@@ -299,38 +291,8 @@ class TemplateTool implements Tool {
         null,
         event,
       );
-      const restruct = this.editor.render.ctab;
-      const ci = this.editor.findItem(event, ['atoms', 'bonds']);
 
-      if (!ci) {
-        this.editor.hoverIcon.show();
-      }
-
-      const isMouseAwayFromAtomsAndBonds = !ci;
-      const isPreviewTargetChanged =
-        ci && this.lastPreviewId !== getUniqueCiId(ci);
-      const shouldHidePreview =
-        isMouseAwayFromAtomsAndBonds || isPreviewTargetChanged;
-      if (shouldHidePreview) {
-        this.hidePreview();
-        if (!this.editor.hoverIcon.isShown) {
-          this.editor.hoverIcon.show();
-        }
-      }
-
-      const shouldShowPreview =
-        ci &&
-        !this.isSaltOrSolvent &&
-        !this.isPreviewVisible &&
-        !this.previewTimeout;
-
-      if (shouldShowPreview) {
-        this.lastPreviewId = getUniqueCiId(ci);
-
-        this.previewTimeout = setTimeout(() => {
-          this.showPreview(event, ci, restruct);
-        }, PREVIEW_DELAY);
-      }
+      this.templatePreview?.movePreview(event);
 
       return true;
     }
@@ -340,15 +302,15 @@ class TemplateTool implements Tool {
       return true;
     }
 
+    const eventPosition = this.editor.render.page2obj(event);
     const dragCtx = this.dragCtx;
     const ci = dragCtx.item;
     let targetPos: Vec2 | null | undefined = null;
-    const eventPos = this.editor.render.page2obj(event);
 
     /* moving when attached to bond */
     if (ci && ci.map === 'bonds' && !this.isModeFunctionalGroup) {
       const bond = this.struct.bonds.get(ci.id);
-      let sign = getSign(this.struct, bond, eventPos);
+      let sign = getSign(this.struct, bond, eventPosition);
 
       if (dragCtx.sign1 * this.template.sign > 0) {
         sign = -sign;
@@ -394,7 +356,7 @@ class TemplateTool implements Tool {
         if (targetPos) {
           extraBond = this.isModeFunctionalGroup
             ? true
-            : Vec2.dist(targetPos, eventPos) > 1;
+            : Vec2.dist(targetPos, eventPosition) > 1;
         }
       }
     }
@@ -404,7 +366,7 @@ class TemplateTool implements Tool {
     }
 
     // calc angle
-    let angle = vectorUtils.calcAngle(targetPos, eventPos);
+    let angle = vectorUtils.calcAngle(targetPos, eventPosition);
 
     if (!event.ctrlKey) {
       angle = vectorUtils.fracAngle(angle, null);
@@ -637,83 +599,12 @@ class TemplateTool implements Tool {
   }
 
   cancel() {
-    this.hidePreview();
+    this.templatePreview?.hideConnectedPreview();
     this.mouseup();
   }
 
   mouseleave(e) {
     this.mouseup(e);
-  }
-
-  hidePreview() {
-    if (this.isPreviewVisible && this.previewRemoveAction) {
-      this.previewRemoveAction.perform(this.editor.render.ctab);
-      this.previewRemoveAction = null;
-      this.isPreviewVisible = false;
-      this.editor.render.update();
-    }
-    if (this.previewTimeout) {
-      clearTimeout(this.previewTimeout);
-      this.previewTimeout = null;
-    }
-  }
-
-  showPreview(
-    event: MouseEvent | { clientX: number; clientY: number },
-    ci,
-    restruct: ReStruct,
-  ) {
-    if (ci.map === 'bonds' && !this.isModeFunctionalGroup) {
-      // preview for bonds
-      this.isPreviewVisible = true;
-      this.editor.hoverIcon.hide();
-      const bond = this.struct.bonds.get(ci.id)!;
-
-      const sign1 = getBondFlipSign(this.struct, bond);
-      const sign2 = this.template.sign;
-      const shouldFlip = sign1 * sign2 > 0;
-
-      const promise = fromTemplateOnBondAction(
-        restruct,
-        this.template,
-        ci.id,
-        this.editor.event,
-        shouldFlip,
-        true,
-        true,
-      ) as Promise<any>;
-
-      promise.then(([action, pasteItems]) => {
-        if (!this.isModeFunctionalGroup) {
-          const mergeItems = getItemsToFuse(this.editor, pasteItems);
-          action = fromItemsFuse(restruct, mergeItems).mergeWith(action);
-          this.editor.update(action, true);
-          this.previewRemoveAction = action;
-        }
-      });
-    } else if (ci.map === 'atoms') {
-      // preview for atoms
-      this.isPreviewVisible = true;
-      this.editor.hoverIcon.hide();
-      const angle = getAngleFromEvent(event, ci, restruct);
-
-      let [action, pasteItems] = fromTemplateOnAtom(
-        restruct,
-        this.template,
-        ci.id,
-        angle,
-        false,
-        true,
-      );
-
-      if (pasteItems && !this.isModeFunctionalGroup) {
-        const mergeItems = getItemsToFuse(this.editor, pasteItems);
-        action = fromItemsFuse(restruct, mergeItems).mergeWith(action);
-      }
-
-      this.editor.update(action, true);
-      this.previewRemoveAction = action;
-    }
   }
 }
 

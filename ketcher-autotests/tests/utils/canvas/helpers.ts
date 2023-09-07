@@ -80,10 +80,8 @@ export async function takeEditorScreenshot(
   page: Page,
   options?: { masks?: Locator[] },
 ) {
-  const maxDelay = 3000;
   const editor = page.getByTestId('ketcher-canvas').first();
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  await waitForRender(page, async () => {}, maxDelay);
+  await waitForRender(page);
   await expect(editor).toHaveScreenshot({ mask: options?.masks });
 }
 

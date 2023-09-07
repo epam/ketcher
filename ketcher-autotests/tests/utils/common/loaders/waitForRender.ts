@@ -1,18 +1,18 @@
 import { Page } from '@playwright/test';
 
 type AnyFunction = (...args: any) => Promise<any>;
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+const emptyFunction: AnyFunction = async () => {};
 
 export const waitForRender = async (
   page: Page,
-  callback: AnyFunction,
-  timeout?: number,
+  callback = emptyFunction,
+  timeout = 3000,
 ) => {
-  console.log('started to wait for render');
   await Promise.all([
     waitForCustomEvent(page, 'renderComplete', timeout),
     callback(),
   ]);
-  console.log('wait for render is finished');
 };
 
 async function waitForCustomEvent(
@@ -26,13 +26,11 @@ async function waitForCustomEvent(
         window.addEventListener(
           eventName,
           () => {
-            console.log('finished by event');
             resolve(true);
           },
           { once: true },
         );
         if (timeout) {
-          console.log('finished by timeout');
           setTimeout(() => resolve(true), timeout);
         }
       });

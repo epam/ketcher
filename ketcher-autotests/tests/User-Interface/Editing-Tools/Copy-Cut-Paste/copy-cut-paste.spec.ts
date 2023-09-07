@@ -23,6 +23,7 @@ import {
   delay,
   DELAY_IN_SECONDS,
   waitForPageInit,
+  waitForIndigoToLoad,
 } from '@utils';
 
 const CANVAS_CLICK_X = 300;
@@ -120,6 +121,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Test case: EPMLSOPKET-1714
     Description: After the clicking the Cut button, the selected object disappears.
     */
+    // Error message appears
     const x = 300;
     const y = 300;
     await openFileAndAddToCanvas('reaction-dif-prop.rxn', page);
@@ -133,6 +135,8 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Test case: EPMLSOPKET-1714
     Description: After the clicking the Cut button, the selected object disappears.
     */
+    // Error Message
+    // Convert error! Given string could not be loaded as (query or plain) molecule or reaction
     const anyAtom = 1;
     const modifier = getControlModifier();
     await openFileAndAddToCanvas('reaction-dif-prop.rxn', page);
@@ -148,6 +152,8 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Test case: EPMLSOPKET-1714
     Description: After the clicking the Cut button, the selected object disappears.
     */
+    // Error Message
+    // Convert error! Given string could not be loaded as (query or plain) molecule or reaction
     const anyBond = 1;
     const modifier = getControlModifier();
     await openFileAndAddToCanvas('reaction-dif-prop.rxn', page);
@@ -158,8 +164,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await screenshotBetweenUndoRedo(page);
   });
 
-  // flaky
-  test.fixme('Cut the reaction with hotkey', async ({ page }) => {
+  test('Cut the reaction with hotkey', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1714
     Description: After the clicking the Cut button, the selected object disappears.
@@ -201,8 +206,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectTopPanelButton(TopPanelButton.Copy, page);
   });
 
-  // flaky
-  test.fixme('Copy the reaction with hotkey', async ({ page }) => {
+  test('Copy the reaction with hotkey', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1715
     Description: After the clicking the Copy button, the selected object not disappears.
@@ -247,9 +251,9 @@ test.describe('Copy/Cut/Paste Actions', () => {
   test.fixme('Copy and paste the Atom from reaction', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1717
-    Description: After the clicking the Copy button, the selected object not disappears.
-    After pasting two same structures located on canvas.
+    Description: Atom from reaction is copy and pasted.
     */
+    // Can't copy and paste atom from reaction
     const x = 500;
     const y = 200;
     const anyAtom = 0;
@@ -894,7 +898,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await expect(page).toHaveScreenshot();
   });
 
-  test.fixme('Copy button', async ({ page }) => {
+  test('Copy button', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1709
     Description: Button is disabled. Tooltip "Copy (Ctrl+С)" appears.
@@ -905,7 +909,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Object is created.
     Object is selected. Buttons are enabled.
     */
-    // Need add mask to Indigo buttons. They do not have time to load and sometimes they do.
+    await waitForIndigoToLoad(page);
     await page.getByTestId('copy-button-dropdown-triangle').click();
     await delay(DELAY_IN_SECONDS.THREE);
     await expect(page).toHaveScreenshot();
@@ -921,8 +925,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Description: The 'Cut' button  is disabled if nothing is selected on the canvas.
     The 'Cut (Ctrl+X)' cut the structure.
     */
-    // wait for top panel buttons to show up
-    await delay(DELAY_IN_SECONDS.TWO);
+    await waitForIndigoToLoad(page);
     await expect(page).toHaveScreenshot();
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
@@ -940,8 +943,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     When user clicks on the 'Paste' button alert message appears.
     Message should have direction to use shortcuts.
     */
-    // wait for top panel buttons to show up
-    await delay(DELAY_IN_SECONDS.TWO);
+    await waitForIndigoToLoad(page);
     await expect(page).toHaveScreenshot();
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);

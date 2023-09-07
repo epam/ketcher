@@ -4,11 +4,12 @@ import {
   AtomButton,
   selectAtomInToolbar,
   clickInTheMiddleOfTheScreen,
+  waitForPageInit,
 } from '@utils';
 
 test.describe('Open Ketcher', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
   test.afterEach(async ({ page }) => {
     await takeEditorScreenshot(page);

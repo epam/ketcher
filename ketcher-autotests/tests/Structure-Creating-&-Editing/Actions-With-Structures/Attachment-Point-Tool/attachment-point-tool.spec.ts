@@ -26,6 +26,7 @@ import {
   screenshotBetweenUndoRedo,
   setAttachmentPoints,
   AttachmentPoint,
+  waitForPageInit,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
@@ -51,7 +52,7 @@ async function selectExtendedTableElements(page: Page, element: string) {
 
 test.describe('Attachment Point Tool', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {

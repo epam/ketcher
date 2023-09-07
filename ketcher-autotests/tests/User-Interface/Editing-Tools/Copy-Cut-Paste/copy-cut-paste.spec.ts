@@ -22,7 +22,7 @@ import {
   INPUT_DELAY,
   delay,
   DELAY_IN_SECONDS,
-  waitForIndigoToLoad,
+  waitForPageInit,
 } from '@utils';
 
 const CANVAS_CLICK_X = 300;
@@ -30,8 +30,7 @@ const CANVAS_CLICK_Y = 300;
 
 test.describe('Copy/Cut/Paste Actions', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
-    await waitForIndigoToLoad(page);
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {
@@ -888,7 +887,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
 
 test.describe('Copy/Cut/Paste Actions', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {

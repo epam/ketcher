@@ -6,7 +6,7 @@ import {
 } from '@playwright/test';
 import { clickInTheMiddleOfTheScreen, pressButton } from '@utils/clicks';
 import { ELEMENT_TITLE } from './types';
-import { DELAY_IN_SECONDS, TopPanelButton } from '..';
+import { DELAY_IN_SECONDS, TopPanelButton, waitForRender } from '..';
 import { selectTopPanelButton } from './tools';
 import { getLeftTopBarSize } from './common/getLeftTopBarSize';
 
@@ -80,8 +80,10 @@ export async function takeEditorScreenshot(
   page: Page,
   options?: { masks?: Locator[] },
 ) {
+  const maxDelay = 3000;
   const editor = page.getByTestId('ketcher-canvas').first();
-  await delay(DELAY_IN_SECONDS.THREE);
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  await waitForRender(page, async () => {}, maxDelay);
   await expect(editor).toHaveScreenshot({ mask: options?.masks });
 }
 

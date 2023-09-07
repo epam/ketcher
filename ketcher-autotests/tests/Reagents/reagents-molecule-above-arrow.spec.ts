@@ -6,13 +6,12 @@ import {
   openFileAndAddToCanvas,
   delay,
   DELAY_IN_SECONDS,
-  waitForIndigoToLoad,
+  waitForPageInit,
 } from '@utils';
 
 test.describe('Reagents molecule above arrow', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
-    await waitForIndigoToLoad(page);
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {

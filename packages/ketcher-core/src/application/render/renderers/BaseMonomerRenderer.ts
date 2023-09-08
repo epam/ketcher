@@ -4,6 +4,7 @@ import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { D3SvgElementSelection } from 'application/render/types';
 import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { editorEvents } from 'application/editor/editorEvents';
+import { Vec2 } from 'domain/entities';
 
 export abstract class BaseMonomerRenderer extends BaseRenderer {
   private editorEvents: typeof editorEvents;
@@ -276,6 +277,13 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     } else {
       this.removeSelection();
     }
+  }
+
+  public moveSelection(offset: Vec2) {
+    assert(this.rootElement);
+    this.monomer.moveRelative(offset);
+    this.appendSelection();
+    this.move();
   }
 
   public move() {

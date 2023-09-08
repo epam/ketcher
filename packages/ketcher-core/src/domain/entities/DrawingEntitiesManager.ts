@@ -14,6 +14,7 @@ import {
 import {
   DrawingEntityHoverOperation,
   DrawingEntitySelectOperation,
+  DrawingEntityMoveOperation,
 } from 'application/editor/operations/drawingEntity';
 import {
   PolymerBondAddOperation,
@@ -112,6 +113,37 @@ export class DrawingEntitiesManager {
         command.addOperation(operation);
       }
     });
+
+    return command;
+  }
+
+  public moveSelectedDrawingEntities(offset: Vec2) {
+    const command = new Command();
+
+    this.monomers.forEach((drawingEntity) => {
+      if (drawingEntity.selected) {
+        command.merge(
+          this.createDrawingEntityMovingCommand(drawingEntity, offset),
+        );
+      }
+    });
+
+    this.polymerBonds.forEach((drawingEntity) => {
+      command.merge(
+        this.createDrawingEntityMovingCommand(drawingEntity, offset),
+      );
+    });
+    return command;
+  }
+
+  public createDrawingEntityMovingCommand(
+    drawingEntity: DrawingEntity,
+    offset: Vec2,
+  ) {
+    const command = new Command();
+
+    const movingCommand = new DrawingEntityMoveOperation(drawingEntity, offset);
+    command.addOperation(movingCommand);
 
     return command;
   }

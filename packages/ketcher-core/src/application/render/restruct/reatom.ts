@@ -708,26 +708,24 @@ function buildLabel(
   const label: any = {};
   label.text = getLabelText(atom.a);
 
-  if (typeof label === 'object') {
-    if (!label.text) {
-      label.text = 'R#';
+  if (!label.text) {
+    label.text = 'R#';
+  }
+
+  if (label.text === atom.a.label) {
+    const element = Elements.get(label.text);
+    if (options.atomColoring && element) {
+      atom.color = ElementColor[label.text] || '#000';
     }
 
-    if (label.text === atom.a.label) {
-      const element = Elements.get(label.text);
-      if (options.atomColoring && element) {
-        atom.color = ElementColor[label.text] || '#000';
-      }
-
-      const { previewOpacity } = options;
-      label.path = paper.text(ps.x, ps.y, label.text).attr({
-        font: options.font,
-        'font-size': options.fontsz,
-        fill: atom.color,
-        'font-style': atom.a.pseudo ? 'italic' : '',
-        'fill-opacity': atom.a.isPreview ? previewOpacity : 1,
-      });
-    }
+    const { previewOpacity } = options;
+    label.path = paper.text(ps.x, ps.y, label.text).attr({
+      font: options.font,
+      'font-size': options.fontsz,
+      fill: atom.color,
+      'font-style': atom.a.pseudo ? 'italic' : '',
+      'fill-opacity': atom.a.isPreview ? previewOpacity : 1,
+    });
   }
 
   label.rbb = util.relBox(label.path.getBBox());

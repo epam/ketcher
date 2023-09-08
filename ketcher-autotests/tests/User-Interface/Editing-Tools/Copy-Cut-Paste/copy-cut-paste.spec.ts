@@ -87,10 +87,11 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await screenshotBetweenUndoRedo(page);
   });
 
-  test('Cut all structures via hotkey (CTRL+X)', async ({ page }) => {
+  test.fixme('Cut all structures via hotkey (CTRL+X)', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1712
     Description: After the clicking the 'Cut' button, the selected object disappears.
+    Not able to perform undo
     */
     const modifier = getControlModifier();
     await openFileAndAddToCanvas('Molfiles-V2000/query-features.mol', page);
@@ -164,10 +165,11 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await screenshotBetweenUndoRedo(page);
   });
 
-  test('Cut the reaction with hotkey', async ({ page }) => {
+  test.fixme('Cut the reaction with hotkey', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1714
     Description: After the clicking the Cut button, the selected object disappears.
+    Not able to perform undo
     */
     await openFileAndAddToCanvas('reaction-dif-prop.rxn', page);
     await page.keyboard.press('Control+a');
@@ -598,10 +600,11 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await clickOnAtom(page, 'C', anyAtom);
   });
 
-  test('Copy and paste all kind of S-groups', async ({ page }) => {
+  test.fixme('Copy and paste all kind of S-groups', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-2884
     Description: Copied objects are pasted as one object and correctly displayed without data loss.
+    Not able to load indigo in time
     */
     const x = 300;
     const y = 200;

@@ -32,7 +32,7 @@ const CANVAS_CLICK_X = 200;
 const CANVAS_CLICK_Y = 200;
 
 async function waitForAtomPropsModal(page: Page) {
-  await expect(await page.getByTestId('atomProps-modal').isVisible()).toBe(
+  await expect(await page.getByTestId('atomProps-dialog').isVisible()).toBe(
     true,
   );
 }

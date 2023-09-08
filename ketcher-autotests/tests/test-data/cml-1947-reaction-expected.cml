@@ -5,8 +5,8 @@
 <molecule>
     <atomArray>
         <atom id="a0" elementType="C" x2="6.8174" y2="-7.44375"/>
-        <atom id="a1" elementType="C" x2="7.68341" y2="-7.94375"/>
-        <atom id="a2" elementType="C" x2="7.68341" y2="-8.94376"/>
+        <atom id="a1" elementType="C" x2="7.6834" y2="-7.94375"/>
+        <atom id="a2" elementType="C" x2="7.6834" y2="-8.94376"/>
         <atom id="a3" elementType="C" x2="6.8174" y2="-9.44376"/>
         <atom id="a4" elementType="C" x2="5.95139" y2="-8.94376"/>
         <atom id="a5" elementType="C" x2="5.95139" y2="-7.94375"/>

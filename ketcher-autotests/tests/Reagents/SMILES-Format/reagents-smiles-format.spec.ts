@@ -7,7 +7,7 @@ import {
   openFileAndAddToCanvas,
   readFileContents,
   pasteFromClipboardAndAddToCanvas,
-  waitForIndigoToLoad,
+  waitForPageInit,
 } from '@utils';
 import {
   getExtendedSmiles,
@@ -42,8 +42,7 @@ async function saveExtendedSmiles(page: Page) {
 
 test.describe('Reagents SMILES format', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
-    await waitForIndigoToLoad(page);
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {
@@ -99,7 +98,7 @@ test.describe('Reagents SMILES format', () => {
   });
 
   test(`Detection molecule as reagent
-  and write reagent information in "Extended SMILES" format in "Preview" tab @check`, async ({
+  and write reagent information in "Extended SMILES" format in "Preview" tab`, async ({
     page,
   }) => {
     /*
@@ -186,7 +185,7 @@ test.describe('Reagents SMILES format', () => {
 
 test.describe('Reagents SMILES format', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test('File saves in "Daylight SMILES" format', async ({ page }) => {

@@ -6,13 +6,12 @@ import {
   openFileAndAddToCanvas,
   takeEditorScreenshot,
   pasteFromClipboardAndAddToCanvas,
-  waitForIndigoToLoad,
 } from '@utils';
+import { waitForPageInit } from '@utils/common/loaders/waitForPageInit';
 
 test.describe('CDX files', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
-    await waitForIndigoToLoad(page);
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {

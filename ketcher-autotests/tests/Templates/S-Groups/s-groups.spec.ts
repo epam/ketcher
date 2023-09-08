@@ -1,15 +1,14 @@
 /* eslint-disable no-magic-numbers */
 import { test } from '@playwright/test';
 import {
-  waitForKetcherInit,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
+  waitForPageInit,
 } from '@utils';
 
 test.describe('S-Groups', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
-    await waitForKetcherInit(page);
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {

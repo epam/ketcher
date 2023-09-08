@@ -6,7 +6,7 @@ import {
 } from '@playwright/test';
 import { clickInTheMiddleOfTheScreen, pressButton } from '@utils/clicks';
 import { ELEMENT_TITLE } from './types';
-import { DELAY_IN_SECONDS, TopPanelButton } from '..';
+import { DELAY_IN_SECONDS, TopPanelButton, waitForRender } from '..';
 import { selectTopPanelButton } from './tools';
 import { getLeftTopBarSize } from './common/getLeftTopBarSize';
 
@@ -81,7 +81,7 @@ export async function takeEditorScreenshot(
   options?: { masks?: Locator[] },
 ) {
   const editor = page.getByTestId('ketcher-canvas').first();
-  await delay(DELAY_IN_SECONDS.THREE);
+  await waitForRender(page);
   await expect(editor).toHaveScreenshot({ mask: options?.masks });
 }
 

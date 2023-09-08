@@ -23,6 +23,7 @@ import {
   LeftPanelButton,
   TopPanelButton,
   Point,
+  waitForPageInit,
 } from '@utils';
 
 const xOffsetFromCenter = -35;
@@ -78,12 +79,15 @@ test.describe('Plus and Arrows tools ', () => {
   const modifier = getControlModifier();
   const CANVAS_CLICK_X = 300;
   const CANVAS_CLICK_Y = 300;
+
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
+
   test.afterEach(async ({ page }) => {
     await takeEditorScreenshot(page);
   });
+
   test.describe('Create reactions', () => {
     /**
      * Test case: EPMLSOPKET-1783

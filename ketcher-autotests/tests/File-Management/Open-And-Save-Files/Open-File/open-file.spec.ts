@@ -10,15 +10,14 @@ import {
   openFileAndAddToCanvas,
   TopPanelButton,
   selectTopPanelButton,
-  waitForIndigoToLoad,
+  waitForPageInit,
 } from '@utils';
 
 const X_OFFSET = 200;
 
 test.describe('open files with different formats', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
-    await waitForIndigoToLoad(page);
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {

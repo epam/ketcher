@@ -5,11 +5,12 @@ import {
   openFromFileViaClipboard,
   selectTopPanelButton,
   TopPanelButton,
+  waitForPageInit,
 } from '@utils';
 
 test.describe('', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {

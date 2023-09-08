@@ -92,8 +92,7 @@ class SelectRectangle implements BaseTool {
 
   mousemove() {
     if (this.moveStarted) {
-      let modelChanges: Command;
-      modelChanges =
+      const modelChanges =
         this.editor.drawingEntitiesManager.moveSelectedDrawingEntities(
           new Vec2(
             this.editor.lastCursorPosition.x - this.mousePositionAfterMove[0],

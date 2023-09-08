@@ -26,6 +26,7 @@ export class RenderersManager {
     assert(drawingEntity.baseRenderer);
     drawingEntity.baseRenderer.drawSelection();
   }
+
   public moveDrawingEntity(drawingEntity: DrawingEntity, offset: Vec2) {
     assert(drawingEntity.baseRenderer);
     drawingEntity.baseRenderer.moveSelection(offset);

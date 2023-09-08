@@ -9,6 +9,7 @@ import { ELEMENT_TITLE } from './types';
 import { DELAY_IN_SECONDS, TopPanelButton, waitForRender } from '..';
 import { selectTopPanelButton } from './tools';
 import { getLeftTopBarSize } from './common/getLeftTopBarSize';
+import { emptyFunction } from '@utils/common/helpers';
 
 export async function drawBenzeneRing(page: Page) {
   await page.getByRole('button', { name: 'Benzene (T)' }).click();
@@ -80,8 +81,9 @@ export async function takeEditorScreenshot(
   page: Page,
   options?: { masks?: Locator[] },
 ) {
+  const maxTimeout = 3000;
   const editor = page.getByTestId('ketcher-canvas').first();
-  await waitForRender(page);
+  await waitForRender(page, emptyFunction, maxTimeout);
   await expect(editor).toHaveScreenshot({ mask: options?.masks });
 }
 

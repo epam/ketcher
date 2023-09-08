@@ -23,6 +23,8 @@ import { BaseTool } from 'application/editor/tools/Tool';
 class SelectRectangle implements BaseTool {
   private brush;
   private brushArea;
+  private moveStarted;
+  private mousePositionAfterMove;
 
   constructor(private editor: CoreEditor) {
     this.editor = editor;
@@ -69,14 +71,48 @@ class SelectRectangle implements BaseTool {
     const renderer = event.target.__data__;
     let modelChanges: Command;
     if (renderer instanceof BaseRenderer) {
-      modelChanges = this.editor.drawingEntitiesManager.selectDrawingEntity(
-        renderer.drawingEntity,
-      );
+      if (renderer.drawingEntity.selected) {
+        this.moveStarted = true;
+        this.mousePositionAfterMove = [
+          this.editor.lastCursorPosition.x,
+          this.editor.lastCursorPosition.y,
+        ];
+        return;
+      } else {
+        modelChanges = this.editor.drawingEntitiesManager.selectDrawingEntity(
+          renderer.drawingEntity,
+        );
+      }
     } else {
       modelChanges =
         this.editor.drawingEntitiesManager.unselectAllDrawingEntities();
     }
     this.editor.renderersContainer.update(modelChanges);
+  }
+
+  mousemove() {
+    if (this.moveStarted) {
+      let modelChanges: Command;
+      modelChanges =
+        this.editor.drawingEntitiesManager.moveSelectedDrawingEntities(
+          new Vec2(
+            this.editor.lastCursorPosition.x - this.mousePositionAfterMove[0],
+            this.editor.lastCursorPosition.y - this.mousePositionAfterMove[1],
+          ),
+        );
+      this.mousePositionAfterMove = [
+        this.editor.lastCursorPosition.x,
+        this.editor.lastCursorPosition.y,
+      ];
+      this.editor.renderersContainer.update(modelChanges);
+    }
+  }
+
+  mouseup(event) {
+    const renderer = event.target.__data__;
+    if (this.moveStarted && renderer.drawingEntity.selected) {
+      this.moveStarted = false;
+    }
   }
 
   mouseOverDrawingEntity(event) {

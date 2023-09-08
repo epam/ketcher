@@ -85,6 +85,7 @@ export abstract class BaseRenderer implements IBaseRenderer {
 
   public abstract show(theme): void;
   public abstract drawSelection(): void;
+  public abstract moveSelection(offset): void;
   protected abstract appendHover(
     hoverArea,
   ): D3SvgElementSelection<SVGUseElement, void> | void;

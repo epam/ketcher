@@ -11,15 +11,16 @@ import {
   getControlModifier,
   pasteFromClipboardAndAddToCanvas,
   openPasteFromClipboard,
-  waitForIndigoToLoad,
   waitForPageInit,
   waitForLoad,
+  waitForInputUpdate,
 } from '@utils';
 
 async function waitForInChiToLoad(page: Page) {
   await waitForLoad(page, async () => {
     await selectOptionByText(page, 'InChI');
   });
+  await waitForInputUpdate(page);
 }
 
 test.describe('', () => {
@@ -196,8 +197,7 @@ test.describe('', () => {
 
 test.describe('Open and Save InChI file', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
-    await waitForIndigoToLoad(page);
+    await waitForPageInit(page);
   });
 
   test('Open and Save file - Save empty InChI File', async ({ page }) => {

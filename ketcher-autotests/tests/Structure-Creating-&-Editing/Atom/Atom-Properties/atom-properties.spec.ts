@@ -24,11 +24,18 @@ import {
   moveOnAtom,
   clickOnAtom,
   waitForPageInit,
+  waitForRender,
 } from '@utils';
 import { getMolfile, getRxn } from '@utils/formats';
 
 const CANVAS_CLICK_X = 200;
 const CANVAS_CLICK_Y = 200;
+
+async function waitForAtomPropsModal(page: Page) {
+  await expect(await page.getByTestId('atomProps-modal').isVisible()).toBe(
+    true,
+  );
+}
 
 async function selectAtomLabel(page: Page, label: string, button: string) {
   await page.getByLabel('Label').fill(label);
@@ -200,6 +207,7 @@ test.describe('Atom Properties', () => {
     */
     await openFileAndAddToCanvas('KET/benzene-ring-with-two-atoms.ket', page);
     await doubleClickOnAtom(page, 'N', 0);
+    await waitForAtomPropsModal(page);
   });
 
   test('Check Atom Properties modal window by hovering and press hotkey /', async ({
@@ -226,7 +234,9 @@ test.describe('Atom Properties', () => {
     */
     await openFileAndAddToCanvas('KET/benzene-ring-with-two-atoms.ket', page);
     await moveOnAtom(page, 'O', 0);
-    await page.keyboard.press('/');
+    await waitForRender(page, async () => {
+      await page.keyboard.press('/');
+    });
   });
 
   test('Change Atom Label on structure and press Cancel', async ({ page }) => {
@@ -250,7 +260,9 @@ test.describe('Atom Properties', () => {
     await openFileAndAddToCanvas('KET/benzene-ring-with-two-atoms.ket', page);
     await doubleClickOnAtom(page, 'C', 0);
 
-    await selectAtomLabel(page, 'Sb', 'Apply');
+    await waitForRender(page, async () => {
+      await selectAtomLabel(page, 'Sb', 'Apply');
+    });
   });
 
   test('Change Atom Label on structure to incorrect', async ({ page }) => {

@@ -1,6 +1,7 @@
 /* eslint-disable no-magic-numbers */
 import { test, expect, Page } from '@playwright/test';
 import {
+  AtomButton,
   DELAY_IN_SECONDS,
   FILE_TEST_DATA,
   RingButton,
@@ -14,12 +15,21 @@ import {
   pressButton,
   receiveFileComparisonData,
   saveToFile,
+  selectAtomInToolbar,
+  selectOptionByText,
   selectRingButton,
   selectTopPanelButton,
   takeEditorScreenshot,
 } from '@utils';
 import { drawReactionWithTwoBenzeneRings } from '@utils/canvas/drawStructures';
-import { getKet, getMolfile, getRxn, getSmiles } from '@utils/formats';
+import {
+  getInChIKey,
+  getKet,
+  getMolfile,
+  getRxn,
+  getSdf,
+  getSmiles,
+} from '@utils/formats';
 
 const RING_OFFSET = 150;
 const ARROW_OFFSET = 20;
@@ -205,6 +215,120 @@ test.describe('Save files', () => {
     await selectTopPanelButton(TopPanelButton.Save, page);
     await page.getByText('MDL Molfile V2000').click();
   });
+
+  test('An atom or structure copied to the clipboard is saved without coordinates', async ({
+    page,
+  }) => {
+    /*
+      Test case: EPMLSOPKET-8921
+      Description: In the save window that opens, in the preview section, 
+      the atom or structure has no coordinates because they were not added to the canvas.
+    */
+    await selectAtomInToolbar(AtomButton.Nitrogen, page);
+    await selectTopPanelButton(TopPanelButton.Save, page);
+
+    const expectedFile = await getMolfile(page, 'v2000');
+    await saveToFile('nitrogen-atom-under-cursor-expected.mol', expectedFile);
+
+    const METADATA_STRING_INDEX = [1];
+
+    const { fileExpected: molFileExpected, file: molFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/nitrogen-atom-under-cursor-expected.mol',
+        fileFormat: 'v2000',
+        metaDataIndexes: METADATA_STRING_INDEX,
+      });
+
+    expect(molFile).toEqual(molFileExpected);
+  });
+
+  test.fixme(
+    'Support for exporting to "InChiKey" file format',
+    async ({ page }) => {
+      /**
+       * Test case: EPMLSOPKET-18030
+       * Description: Save file - InChiKey for Benzene ring on canvas
+       */
+      // Can't select TestId because after press drop-down menu there is no InchIKey.
+      await selectRingButton(RingButton.Benzene, page);
+      await clickInTheMiddleOfTheScreen(page);
+      await selectTopPanelButton(TopPanelButton.Save, page);
+      await pressButton(page, 'MDL Molfile V2000');
+      await selectOptionByText(page, 'InChIKey');
+      const inChistring = await page
+        .getByTestId('preview-area-text')
+        .inputValue();
+      expect(inChistring).toEqual('UHOVQNZJYSORNB-UHFFFAOYSA-N');
+    },
+  );
+
+  test.fixme('Save "InChiKey" file format', async ({ page }) => {
+    /**
+     * Test case: EPMLSOPKET-18031
+     * Description: Save file - InChiKey for Benzene ring on canvas
+     */
+    // After 'getInChIKey' return JSON instead InChIKey
+    await selectRingButton(RingButton.Benzene, page);
+    await clickInTheMiddleOfTheScreen(page);
+    const expectedFile = await getInChIKey(page);
+    await saveToFile('benzene-ring-expected.inchikey', expectedFile);
+
+    const { fileExpected: inchikeyFileExpected, file: inchikeyFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName: 'tests/test-data/benzene-ring-expected.inchikey',
+      });
+
+    expect(inchikeyFile).toEqual(inchikeyFileExpected);
+  });
+
+  test('Support for exporting to "SDF V2000" file format', async ({ page }) => {
+    /*
+      Test case: EPMLSOPKET-18031
+      Description: Structure saves in SDF V2000 format
+    */
+    await openFileAndAddToCanvas('KET/chain.ket', page);
+
+    const expectedFile = await getSdf(page, 'v2000');
+    await saveToFile('SDF/chain-expected.sdf', expectedFile);
+
+    const METADATA_STRING_INDEX = [1];
+
+    const { fileExpected: molFileExpected, file: molFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName: 'tests/test-data/SDF/chain-expected.sdf',
+        fileFormat: 'v2000',
+        metaDataIndexes: METADATA_STRING_INDEX,
+      });
+
+    expect(molFile).toEqual(molFileExpected);
+  });
+
+  test('Support for exporting to "SDF V3000" file format', async ({ page }) => {
+    /*
+      Test case: EPMLSOPKET-18031
+      Description: Structure saves in SDF V3000 format
+    */
+    await openFileAndAddToCanvas('KET/chain.ket', page);
+
+    const expectedFile = await getSdf(page, 'v3000');
+    await saveToFile('SDF/chain-expectedV3000.sdf', expectedFile);
+
+    const METADATA_STRING_INDEX = [1];
+
+    const { fileExpected: molFileExpected, file: molFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName: 'tests/test-data/SDF/chain-expectedV3000.sdf',
+        fileFormat: 'v3000',
+        metaDataIndexes: METADATA_STRING_INDEX,
+      });
+
+    expect(molFile).toEqual(molFileExpected);
+  });
 });
 
 test.describe('Open/Save/Paste files', () => {
@@ -215,6 +339,7 @@ test.describe('Open/Save/Paste files', () => {
   test.afterEach(async ({ page }) => {
     await takeEditorScreenshot(page);
   });
+
   test('Paste the content from mol-string', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-1844

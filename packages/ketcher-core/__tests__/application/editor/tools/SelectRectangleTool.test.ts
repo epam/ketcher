@@ -69,4 +69,26 @@ describe('Select Rectangle Tool', () => {
     canvas.dispatchEvent(new Event('mouseover', { bubbles: true }));
     expect(onShow).toHaveBeenCalled();
   });
+
+  it('should move selected entity', () => {
+    const polymerBond = getFinishedPolymerBond(0, 0, 10, 10);
+    const event = {
+      target: {
+        __data__: polymerBond.renderer,
+      },
+    };
+    const selectRectangleTool = new SelectRectangle(
+      new CoreEditor({
+        theme: polymerEditorTheme,
+        canvas: createPolymerEditorCanvas(),
+      }),
+    );
+    const initialPosition = polymerBond.position;
+
+    expect(polymerBond.selected).toBeFalsy();
+    selectRectangleTool.mousedown(event);
+    selectRectangleTool.mousemove();
+    expect(polymerBond.selected).toBeTruthy();
+    expect(polymerBond.position).not.toEqual(initialPosition);
+  });
 });

@@ -6,8 +6,8 @@ import {
   openFileAndAddToCanvas,
   saveToFile,
   delay,
-  waitForIndigoToLoad,
 } from '@utils';
+import { waitForPageInit } from '@utils/common/loaders/waitForPageInit';
 import { getCml } from '@utils/formats';
 
 async function openFileAddToCanvasTakeScreenshot(page: Page, fileName: string) {
@@ -17,8 +17,7 @@ async function openFileAddToCanvasTakeScreenshot(page: Page, fileName: string) {
 
 test.describe('CML files', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
-    await waitForIndigoToLoad(page);
+    await waitForPageInit(page);
   });
 
   test('Open and Save files - CML - CML for empty canvas', async ({ page }) => {

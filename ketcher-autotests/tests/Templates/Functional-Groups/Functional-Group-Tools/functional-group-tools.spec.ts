@@ -27,6 +27,7 @@ import {
   SelectTool,
   selectNestedTool,
   STRUCTURE_LIBRARY_BUTTON_NAME,
+  waitForPageInit,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
@@ -35,7 +36,7 @@ const X_DELTA = 300;
 
 test.describe('Templates - Functional Group Tools', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {
@@ -250,7 +251,7 @@ test.describe('Templates - Functional Group Tools', () => {
 
 test.describe('Templates - Functional Group Tools2', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {
@@ -541,7 +542,7 @@ test.describe('Templates - Functional Group Tools2', () => {
 
 test.describe('Templates - Functional Group Tools3', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test('Filtering Functional Groups', async ({ page }) => {

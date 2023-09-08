@@ -3,6 +3,7 @@ import {
   getCoordinatesOfTheMiddleOfTheScreen,
   openFileAndAddToCanvas,
   takeEditorScreenshot,
+  waitForPageInit,
 } from '@utils';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
 import {
@@ -24,7 +25,7 @@ import {
 
 test.describe('Rotation', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test('Cancel rotation on right click', async ({ page }) => {
@@ -458,7 +459,7 @@ test.describe('Rotation', () => {
 
 test.describe('Rotation snapping', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test('for 90, 120 and 180 degrees', async ({ page }) => {

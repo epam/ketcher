@@ -11,12 +11,13 @@ import {
   LeftPanelButton,
   receiveFileComparisonData,
   saveToFile,
+  waitForPageInit,
 } from '@utils';
 import { getCdxml } from '@utils/formats';
 
 test.describe('Tests for API setMolecule/getMolecule', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {

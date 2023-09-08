@@ -1,8 +1,9 @@
 import { test, expect } from '@playwright/test';
+import { waitForPageInit } from '@utils/common';
 
 test.describe('Macromolecules default presets', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
   test.skip('Check Guanine in default presets', async ({ page }) => {
     /* 

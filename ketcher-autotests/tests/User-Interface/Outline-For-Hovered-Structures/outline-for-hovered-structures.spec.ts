@@ -3,6 +3,7 @@ import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   getCoordinatesOfTheMiddleOfTheScreen,
+  waitForPageInit,
 } from '@utils';
 
 // shift of coordinates relative to the center, for the hover of the entire structure:
@@ -10,7 +11,7 @@ const screenCenterShift = 50;
 
 test.describe('Outline for hovered structures', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {

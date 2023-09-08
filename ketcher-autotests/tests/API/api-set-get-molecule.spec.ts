@@ -10,7 +10,7 @@ import {
   receiveFileComparisonData,
   waitForSpinnerFinishedWork,
   clickInTheMiddleOfTheScreen,
-  waitForIndigoToLoad,
+  waitForPageInit,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import {
@@ -31,8 +31,7 @@ function filteredFile(file: string, filteredIndex: number): string {
 
 test.describe('Tests for API setMolecule/getMolecule', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
-    await waitForIndigoToLoad(page);
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {

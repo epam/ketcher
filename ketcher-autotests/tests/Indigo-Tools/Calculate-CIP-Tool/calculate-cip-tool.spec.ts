@@ -22,7 +22,7 @@ import {
   saveToFile,
   BondTool,
   selectNestedTool,
-  waitForIndigoToLoad,
+  waitForPageInit,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
@@ -31,8 +31,7 @@ import { getKet, getMolfile } from '@utils/formats';
 
 test.describe('Indigo Tools - Calculate CIP Tool', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
-    await waitForIndigoToLoad(page);
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {
@@ -342,7 +341,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
 
 test.describe('Indigo Tools - Calculate CIP Tool', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test('Check .ket file CIP data must be moved from s-group properties to atom properties', async ({

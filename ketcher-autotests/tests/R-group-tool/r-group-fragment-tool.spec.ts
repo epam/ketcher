@@ -18,7 +18,7 @@ import {
   selectTopPanelButton,
   LeftPanelButton,
   selectLeftPanelButton,
-  waitForIndigoToLoad,
+  waitForPageInit,
 } from '@utils';
 
 async function openRGroupModalForTopAtom(page: Page) {
@@ -53,8 +53,7 @@ async function clickModalButton(page: Page, button: 'Apply' | 'Cancel') {
 
 test.describe('Open Ketcher', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
-    await waitForIndigoToLoad(page);
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {

@@ -11,7 +11,7 @@ import {
   clickInTheMiddleOfTheScreen,
   DELAY_IN_SECONDS,
   waitForLoad,
-  waitForIndigoToLoad,
+  waitForPageInit,
 } from '@utils';
 import { getSmiles } from '@utils/formats';
 
@@ -45,8 +45,7 @@ async function clearCanvasAndPasteSmiles(page: Page, smiles: string) {
 
 test.describe('SMILES files', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
-    await waitForIndigoToLoad(page);
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {

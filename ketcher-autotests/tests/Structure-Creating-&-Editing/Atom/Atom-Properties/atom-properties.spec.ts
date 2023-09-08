@@ -23,6 +23,7 @@ import {
   doubleClickOnAtom,
   moveOnAtom,
   clickOnAtom,
+  waitForPageInit,
 } from '@utils';
 import { getMolfile, getRxn } from '@utils/formats';
 
@@ -168,7 +169,7 @@ async function selectElementFromExtendedTable(
 
 test.describe('Atom Properties', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {

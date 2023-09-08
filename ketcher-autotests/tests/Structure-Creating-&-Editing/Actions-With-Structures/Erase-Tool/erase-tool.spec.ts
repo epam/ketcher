@@ -7,6 +7,7 @@ import {
   openFileAndAddToCanvas,
   LeftPanelButton,
   TopPanelButton,
+  waitForPageInit,
 } from '@utils';
 import { RxnArrow, RxnPlus } from 'ketcher-core';
 
@@ -21,7 +22,7 @@ let point: { x: number; y: number };
 test.describe('Erase Tool', () => {
   // TO DO: here in both tests we have some issue with openFileAndAddToCanvas() function it need proper investigation
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
     await openFileAndAddToCanvas(
       'Rxn-V2000/benzene-bromobutane-reaction.rxn',
       page,

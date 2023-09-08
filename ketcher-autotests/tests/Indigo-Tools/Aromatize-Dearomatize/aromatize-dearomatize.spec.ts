@@ -15,8 +15,8 @@ import {
   selectAllStructuresOnCanvas,
   receiveFileComparisonData,
   saveToFile,
-  waitForIndigoToLoad,
   waitForSpinnerFinishedWork,
+  waitForPageInit,
 } from '@utils';
 import { getCml, getMolfile, getRxn, getSmiles } from '@utils/formats';
 
@@ -25,8 +25,7 @@ const CANVAS_CLICK_Y = 200;
 
 test.describe('Aromatize/Dearomatize Tool', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
-    await waitForIndigoToLoad(page);
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {

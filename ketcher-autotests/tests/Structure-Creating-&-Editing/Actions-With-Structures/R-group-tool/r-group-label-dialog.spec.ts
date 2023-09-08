@@ -19,13 +19,14 @@ import {
   saveToFile,
   BondTypeName,
   selectBond,
+  waitForPageInit,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getRxn, getSmiles } from '@utils/formats';
 
 test.describe('R-Group Label Tool', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {
@@ -429,7 +430,7 @@ test.describe('R-Group Label Tool', () => {
 
 test.describe('R-Group Label Tool', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test('Save as *.rxn file', async ({ page }) => {

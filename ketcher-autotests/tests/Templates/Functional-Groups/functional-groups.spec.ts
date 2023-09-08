@@ -29,7 +29,7 @@ import {
   pressTab,
   FILE_TEST_DATA,
   STRUCTURE_LIBRARY_BUTTON_NAME,
-  waitForIndigoToLoad,
+  waitForPageInit,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { TestIdSelectors } from '@utils/selectors/testIdSelectors';
@@ -76,8 +76,7 @@ async function changeStatusOfAbbreviation(
 
 test.describe('Functional Groups', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
-    await waitForIndigoToLoad(page);
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {
@@ -205,7 +204,7 @@ test.describe('Functional Groups', () => {
 
 test.describe('Functional Groups', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {

@@ -14,11 +14,12 @@ import {
   resetCurrentTool,
   SaltsAndSolvents,
   selectTemplate,
+  waitForPageInit,
 } from '@utils';
 
 test.describe('Click Functional Group on canvas', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {

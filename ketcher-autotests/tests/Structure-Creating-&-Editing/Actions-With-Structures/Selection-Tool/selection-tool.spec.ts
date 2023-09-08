@@ -20,11 +20,12 @@ import {
   fillFieldByPlaceholder,
   dragMouseTo,
   takeLeftToolbarScreenshot,
+  waitForPageInit,
 } from '@utils';
 
 test.describe('Selection tools', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {
@@ -288,7 +289,7 @@ test.describe('Selection tools', () => {
 
 test.describe('Selection tools', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test('Selection tools is not change when user press ESC button', async ({

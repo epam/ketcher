@@ -13,11 +13,12 @@ import {
   selectLeftPanelButton,
   LeftPanelButton,
   mapTwoAtoms,
+  waitForPageInit,
 } from '@utils';
 
 test.describe('Verifying buttons on reaction am tool dropdown', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {

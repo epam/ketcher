@@ -352,7 +352,6 @@ test.describe('R-Group Fragment Tool', () => {
       expectedFile,
     );
 
-    // eslint-disable-next-line no-magic-numbers
     const METADATA_STRING_INDEX = [1];
     const { fileExpected: molFileExpected, file: molFile } =
       await receiveFileComparisonData({

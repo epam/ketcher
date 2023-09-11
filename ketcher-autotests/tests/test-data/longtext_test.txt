@@ -1,0 +1,50 @@
+The PubChem Blog is intended to help you better understand PubChem, explore issues of scientific interest that drive the development of new features, and demonstrate how you can use our resources to help enhance your research.
+
+ We have categorized our blog posts into four types:
+ PubChem Explained – provides perspective on our resources and procedures to help you better understand us and avoid misconceptions and misunderstandings.
+What’s New – introduces new and updated PubChem resources and include specific examples that demonstrate how you can use these to enhance your research.
+Quick Tips & Tricks – explains how to perform specific tasks using our website. Selected topics will be chosen based on questions you have asked and suggestions you have provided.
+Science Features – explores current topics in science and demonstrates how you can find relevant data or resources on our website for further exploration.
+These categorized posts are easily accessible by clicking on the Category buttons under the header graphic at the top of the page.  All posts are archived by month and tagged with keywords relevant to the content. You can navigate these through the links in the right sidebar.
+
+This blog is a complement to our existing education and outreach efforts, such as News and Social Media outlets, and Help Desk user support.
+
+If have any topics or suggestions for blog posts, please let us know.
+
+Be sure to check back with us every week or so, and let us know what you think!
+
+___________________________________
+
+As this is a public forum, we do have some policies that need mentioning. Please note that we reserve the right to modify these policies at any time.
+
+Comment Policy:
+We encourage respectful and constructive dialogue about the information presented in PubChem Blog posts. Please share your thoughts with us and other readers. However, it is important to note that the views expressed within these posted comments do not necessarily reflect those of the United States Federal Government.
+
+This is a moderated blog, and all comments will be reviewed before they are posted to ensure compliance with our comment policy.  Here are some guidelines for comments:
+
+Stay focused – All viewpoints are welcome, but comments should remain relevant to the post you to which are responding. Only comments that relate to the topic under discussion will be posted.
+While we’d love to be able to help out as much as we can, specific questions about or issues with the PubChem web site or data represented within should be sent to the NCBI help desk.
+
+Be respectful – Comments will not be posted if they contain personal attacks, which include discriminatory, racist, offensive, obscene, inflammatory, unlawful or otherwise objectionable statements, language or content.
+Tell the truth – Spreading misleading or false information is prohibited.
+Be careful about including links – Since all posts and comments are visible to anyone that stumbles upon this blog, please don’t link to any data or information that would cause security problems or breach confidentiality agreements
+Please note that we retain the discretion to determine which comments violate our comment policy and reserve the right to not publically post comments that violate our comment policy.
+
+We recognize that the Web is a 24/7 medium, and your comments are welcome at any time. However, given the need to manage federal resources, i.e., your tax dollars, moderating and posting comments should only be expected to occur during regular business hours. Comments submitted after hours or on weekends will be read and posted as early as possible; in most cases, this means the next business day.
+
+Privacy Policy:
+We use the WordPress blog platform to support the PubChem Blog.  This enables visitors to our blog to post comments without the requirement to register, provide names or supply any other personal information. The blog comments are not collected, processed or reported in any way. When visitors provide names or other identifying information, that information will appear along with their comments.
+
+Although WordPress offers some analytics and usage data to the NCBI, these reports do not include any personally identifiable information. The reports are password protected and only available to members of the NCBI Publicity Team and other designated staff for which this information is required to perform their duties. The WordPress Privacy Policy is available at: http://wordpress.org/about/privacy/.
+
+ Linking Policy and Disclaimer of Endorsement:
+PubChem Blog posts often include useful hypertext links or pointers to relevant information on our website and, on occasion, to sites created and maintained by other public and private organizations. We provide these links and pointers solely for our users’ information and convenience. These references are not intended to reflect the opinion of the United States Federal Government, or its officers or employees concerning the significance, priority or importance to be given the referenced entity, product, service or organization. Such references are not an official or personal endorsement of any product, person, or service, and may not be quoted or reproduced for the purpose of stating or implying endorsement or approval of any product, person, or service.
+
+As a Center within the Department of Health and Human Services (HHS), NCBI adheres to the HHS Disclaimer Policy.  In short:
+
+When you select a link to an outside website, you are leaving the HHS domain and are subject to the privacy and security policies of the owners/sponsors of the outside website.
+HHS does not control nor guarantee the accuracy, relevance, timeliness or completeness of information contained on externally linked websites.
+HHS and this blog do not endorse the organizations sponsoring linked websites, and we do not endorse the views they express or the products/services they offer.
+HHS cannot authorize the use of copyrighted materials contained in linked websites. Users must request such authorization from the sponsor of the linked website. Those who provide comments are responsible for the copyright of the text they provide.
+HHS is not responsible for transmissions users receive from linked websites.
+HHS does not guarantee that outside websites comply with Section 508 (Accessibility Requirements) of the Rehabilitation Act.

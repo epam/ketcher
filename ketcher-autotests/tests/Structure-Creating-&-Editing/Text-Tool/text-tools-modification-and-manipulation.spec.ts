@@ -22,6 +22,7 @@ import {
   selectNestedTool,
   SelectTool,
 } from '@utils/canvas/tools/selectNestedTool';
+import { addTextBoxToCanvas } from '@utils/selectors/addTextBoxToCanvas';
 
 test.describe('Text tools test cases', () => {
   test.beforeEach(async ({ page }) => {
@@ -29,9 +30,7 @@ test.describe('Text tools test cases', () => {
   });
   test('Text tool - Modify the created text object', async ({ page }) => {
     // Test case: EPMLSOPKET-2228
-    await selectLeftPanelButton(LeftPanelButton.AddText, page);
-    await clickInTheMiddleOfTheScreen(page);
-    await page.getByRole('dialog').getByRole('textbox').click();
+    await addTextBoxToCanvas(page);
     await page.getByRole('dialog').getByRole('textbox').fill('TEST');
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
@@ -45,9 +44,7 @@ test.describe('Text tools test cases', () => {
   test('Text tool - Delete the created text object', async ({ page }) => {
     // Test case: EPMLSOPKET-2229
     // Delte with Erase tool
-    await selectLeftPanelButton(LeftPanelButton.AddText, page);
-    await clickInTheMiddleOfTheScreen(page);
-    await page.getByRole('dialog').getByRole('textbox').click();
+    await addTextBoxToCanvas(page);
     await page.getByRole('dialog').getByRole('textbox').fill('TEST');
     await pressButton(page, 'Apply');
     await selectLeftPanelButton(LeftPanelButton.Erase, page);
@@ -89,9 +86,7 @@ test.describe('Text tools test cases', () => {
     page,
   }) => {
     // Test case: EPMLSOPKET-2230
-    await selectLeftPanelButton(LeftPanelButton.AddText, page);
-    await clickInTheMiddleOfTheScreen(page);
-    await page.getByRole('dialog').getByRole('textbox').click();
+    await addTextBoxToCanvas(page);
     await page
       .getByRole('dialog')
       .getByRole('textbox')
@@ -115,9 +110,7 @@ test.describe('Text tools test cases', () => {
     page,
   }) => {
     // Test case: EPMLSOPKET-2231 & EPMLSOPKET-2232
-    await selectLeftPanelButton(LeftPanelButton.AddText, page);
-    await clickInTheMiddleOfTheScreen(page);
-    await page.getByRole('dialog').getByRole('textbox').click();
+    await addTextBoxToCanvas(page);
     await page.getByRole('dialog').getByRole('textbox').fill('&&&');
     await pressButton(page, 'Cancel');
     await clickInTheMiddleOfTheScreen(page);
@@ -150,9 +143,7 @@ test.describe('Text tools test cases', () => {
 
   test('Text tool - Delete several created text objects', async ({ page }) => {
     // Test case: EPMLSOPKET-2233
-    await selectLeftPanelButton(LeftPanelButton.AddText, page);
-    await clickInTheMiddleOfTheScreen(page);
-    await page.getByRole('dialog').getByRole('textbox').click();
+    await addTextBoxToCanvas(page);
     await page.getByRole('dialog').getByRole('textbox').fill('&&&');
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
@@ -210,9 +201,7 @@ test.describe('Text tools test cases', () => {
     page,
   }) => {
     // Test case: EPMLSOPKET-2234
-    await selectLeftPanelButton(LeftPanelButton.AddText, page);
-    await clickInTheMiddleOfTheScreen(page);
-    await page.getByRole('dialog').getByRole('textbox').click();
+    await addTextBoxToCanvas(page);
     const text3 = 'Test123';
     await page.getByRole('dialog').getByRole('textbox').fill(text3);
     await pressButton(page, 'Apply');
@@ -232,9 +221,7 @@ test.describe('Text tools test cases', () => {
     page,
   }) => {
     // Add another text object
-    await selectLeftPanelButton(LeftPanelButton.AddText, page);
-    await clickInTheMiddleOfTheScreen(page);
-    await page.getByRole('dialog').getByRole('textbox').click();
+    await addTextBoxToCanvas(page);
     const text4 = 'ABC123';
     await page.getByRole('dialog').getByRole('textbox').fill(text4);
     await pressButton(page, 'Apply');
@@ -261,9 +248,7 @@ test.describe('Text tools test cases', () => {
     page,
   }) => {
     // Test case: EPMLSOPKET-2236
-    await selectLeftPanelButton(LeftPanelButton.AddText, page);
-    await clickInTheMiddleOfTheScreen(page);
-    await page.getByRole('dialog').getByRole('textbox').click();
+    await addTextBoxToCanvas(page);
     await page.getByRole('dialog').getByRole('textbox').fill('OneTwoThree');
     await pressButton(page, 'Apply');
     await selectRing(RingButton.Benzene, page);

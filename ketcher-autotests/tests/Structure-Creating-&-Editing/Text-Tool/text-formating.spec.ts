@@ -2,14 +2,12 @@
 import { test } from '@playwright/test';
 import {
   takeEditorScreenshot,
-  selectLeftPanelButton,
   selectTopPanelButton,
   delay,
 } from '@utils/canvas';
 import { pressButton, clickInTheMiddleOfTheScreen } from '@utils/clicks';
 import {
   TopPanelButton,
-  LeftPanelButton,
   DELAY_IN_SECONDS,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   pasteFromClipboardAndAddToCanvas,
@@ -21,6 +19,7 @@ import {
   SelectTool,
 } from '@utils/canvas/tools/selectNestedTool';
 import { openPasteFromClipboard } from './openPasteFromClipboard';
+import { addTextBoxToCanvas } from '@utils/selectors/addTextBoxToCanvas';
 
 test.describe('Text tools test cases', () => {
   test.beforeEach(async ({ page }) => {
@@ -28,9 +27,7 @@ test.describe('Text tools test cases', () => {
   });
   test('Text tool - Font size', async ({ page }) => {
     // Test case:EPMLSOPKET-2885
-    await selectLeftPanelButton(LeftPanelButton.AddText, page);
-    await clickInTheMiddleOfTheScreen(page);
-    await page.getByRole('dialog').getByRole('textbox').click();
+    await addTextBoxToCanvas(page);
     await page.getByRole('dialog').getByRole('textbox').fill('TEST');
     await page.keyboard.press('Control+a');
     await page.getByRole('button', { name: '13' }).click();
@@ -46,9 +43,7 @@ test.describe('Text tools test cases', () => {
   });
   test('Text tool - Applying styles - Bold', async ({ page }) => {
     // Test case: EPMLSOPKET-2256
-    await selectLeftPanelButton(LeftPanelButton.AddText, page);
-    await clickInTheMiddleOfTheScreen(page);
-    await page.getByRole('dialog').getByRole('textbox').click();
+    await addTextBoxToCanvas(page);
     await page.getByRole('dialog').getByRole('textbox').fill('ABC');
     await page.keyboard.press('Control+a');
     await page.getByRole('button', { name: 'bold' }).click();
@@ -65,9 +60,7 @@ test.describe('Text tools test cases', () => {
 
   test('Text tool - Applying styles - Italic', async ({ page }) => {
     // Test case: EPMLSOPKET-2257
-    await selectLeftPanelButton(LeftPanelButton.AddText, page);
-    await clickInTheMiddleOfTheScreen(page);
-    await page.getByRole('dialog').getByRole('textbox').click();
+    await addTextBoxToCanvas(page);
     await page.getByRole('dialog').getByRole('textbox').fill('ABCDE');
     await page.keyboard.press('Control+a');
     await page.getByRole('button', { name: 'italic' }).click();
@@ -82,9 +75,7 @@ test.describe('Text tools test cases', () => {
   });
   test('Text tool - Applying styles - Subscript', async ({ page }) => {
     // Test case: EPMLSOPKET-2258
-    await selectLeftPanelButton(LeftPanelButton.AddText, page);
-    await clickInTheMiddleOfTheScreen(page);
-    await page.getByRole('dialog').getByRole('textbox').click();
+    await addTextBoxToCanvas(page);
     await page.getByRole('dialog').getByRole('textbox').fill('ABC123');
     await page.keyboard.press('Control+a');
     await page.getByRole('button', { name: 'subscript' }).click();
@@ -100,9 +91,7 @@ test.describe('Text tools test cases', () => {
   });
   test('Text tool -  Applying styles - Superscript', async ({ page }) => {
     // Test case: EPMLSOPKET-2259
-    await selectLeftPanelButton(LeftPanelButton.AddText, page);
-    await clickInTheMiddleOfTheScreen(page);
-    await page.getByRole('dialog').getByRole('textbox').click();
+    await addTextBoxToCanvas(page);
     await page.getByRole('dialog').getByRole('textbox').fill('ABC123');
     await page.keyboard.press('Control+a');
     await page.getByRole('button', { name: 'superscript' }).click();
@@ -119,9 +108,7 @@ test.describe('Text tools test cases', () => {
     page,
   }) => {
     // Test case: EPMLSOPKET-2260
-    await selectLeftPanelButton(LeftPanelButton.AddText, page);
-    await clickInTheMiddleOfTheScreen(page);
-    await page.getByRole('dialog').getByRole('textbox').click();
+    await addTextBoxToCanvas(page);
     await page.getByRole('dialog').getByRole('textbox').fill('TEST123');
     await page.keyboard.press('Control+a');
     await page.getByRole('button', { name: '13' }).click();
@@ -139,9 +126,7 @@ test.describe('Text tools test cases', () => {
   });
   test('Text tool - Save as .ket file', async ({ page }) => {
     // Test case: C
-    await selectLeftPanelButton(LeftPanelButton.AddText, page);
-    await clickInTheMiddleOfTheScreen(page);
-    await page.getByRole('dialog').getByRole('textbox').click();
+    await addTextBoxToCanvas(page);
     await page.getByRole('dialog').getByRole('textbox').fill('TEST321');
     await pressButton(page, 'Apply');
     await page.getByText('TEST321').dblclick();
@@ -164,9 +149,7 @@ test.describe('Text tools test cases', () => {
 
   test('Text tool - Cut/Copy/Paste', async ({ page }) => {
     // Test case: EPMLSOPKET-2272
-    await selectLeftPanelButton(LeftPanelButton.AddText, page);
-    await clickInTheMiddleOfTheScreen(page);
-    await page.getByRole('dialog').getByRole('textbox').click();
+    await addTextBoxToCanvas(page);
     await page.getByRole('dialog').getByRole('textbox').fill('TEXT001');
     await pressButton(page, 'Apply');
     await page.getByText('TEXT001').click();
@@ -198,9 +181,7 @@ test.describe('Text tools test cases', () => {
     page,
   }) => {
     // Test case: EPMLSOPKET-2274
-    await selectLeftPanelButton(LeftPanelButton.AddText, page);
-    await clickInTheMiddleOfTheScreen(page);
-    await page.getByRole('dialog').getByRole('textbox').click();
+    await addTextBoxToCanvas(page);
     await page.getByRole('dialog').getByRole('textbox').fill('TEXT');
     await page.getByRole('dialog').getByRole('textbox').inputValue;
     await pressButton(page, 'Apply');

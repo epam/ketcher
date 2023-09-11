@@ -30,6 +30,7 @@ import {
   FILE_TEST_DATA,
   STRUCTURE_LIBRARY_BUTTON_NAME,
   waitForPageInit,
+  waitForRender,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { TestIdSelectors } from '@utils/selectors/testIdSelectors';
@@ -523,12 +524,16 @@ test.describe('Functional Groups', () => {
     await pressTab(page, 'Functional Groups');
     await selectFunctionalGroups(FunctionalGroups.CN, page);
     point = await getAtomByIndex(page, { label: 'C' }, 0);
-    await page.mouse.click(point.x, point.y);
+    await waitForRender(page, async () => {
+      await page.mouse.click(point.x, point.y);
+    });
 
     await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
     await pressTab(page, 'Functional Groups');
     await selectFunctionalGroups(FunctionalGroups.Ms, page);
-    await page.mouse.click(x, y);
+    await waitForRender(page, async () => {
+      await page.mouse.click(x, y);
+    });
     await resetCurrentTool(page);
   });
 
@@ -596,11 +601,15 @@ test.describe('Functional Groups', () => {
     await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
     await pressTab(page, 'Salts and Solvents');
     await selectSaltsAndSolvents(SaltsAndSolvents.MethaneSulphonicAcid, page);
-    await clickInTheMiddleOfTheScreen(page);
+    await waitForRender(page, async () => {
+      await clickInTheMiddleOfTheScreen(page);
+    });
 
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
     await moveMouseToTheMiddleOfTheScreen(page);
-    await page.keyboard.press('o');
+    await waitForRender(page, async () => {
+      await page.keyboard.press('o');
+    });
     await resetCurrentTool(page);
   });
 
@@ -617,7 +626,9 @@ test.describe('Functional Groups', () => {
     await page.keyboard.press('Shift+t');
     await pressTab(page, 'Functional Groups');
     await page.getByTitle('Boc').click();
-    await clickInTheMiddleOfTheScreen(page);
+    await waitForRender(page, async () => {
+      await clickInTheMiddleOfTheScreen(page);
+    });
     await resetCurrentTool(page);
   });
 

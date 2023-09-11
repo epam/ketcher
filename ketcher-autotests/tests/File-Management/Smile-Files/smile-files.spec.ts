@@ -12,7 +12,6 @@ import {
   DELAY_IN_SECONDS,
   waitForLoad,
   waitForPageInit,
-  waitForInputUpdate,
 } from '@utils';
 import { getSmiles } from '@utils/formats';
 
@@ -24,7 +23,7 @@ async function getPreviewForSmiles(
   await selectTopPanelButton(TopPanelButton.Save, page);
   await page.getByRole('button', { name: formatName }).click();
   await page.getByRole('option', { name: smileType }).click();
-  await waitForInputUpdate(page);
+  await expect(page.getByTestId('preview-area-text')).toContainText('CC');
 }
 
 async function getAndCompareSmiles(page: Page, smilesFilePath: string) {

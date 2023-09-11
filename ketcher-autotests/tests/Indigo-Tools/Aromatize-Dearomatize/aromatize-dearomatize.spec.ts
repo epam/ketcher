@@ -47,9 +47,13 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     Description: Nothing is changed on the canvas because only non-aromatic structures are present on the canvas.
     */
     await openFileAndAddToCanvas('non-aromatic.mol', page);
-    await selectTopPanelButton(TopPanelButton.Aromatize, page);
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Aromatize, page);
+    });
     await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.Dearomatize, page);
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Dearomatize, page);
+    });
   });
 
   test('Non-aromatic structures - interchanged Single and Double bonds', async ({
@@ -60,9 +64,13 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     Description: Nothing is changed on the canvas because only non-aromatic structures are present on the canvas.
     */
     await openFileAndAddToCanvas('non-aromatic-structures.mol', page);
-    await selectTopPanelButton(TopPanelButton.Aromatize, page);
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Aromatize, page);
+    });
     await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.Dearomatize, page);
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Dearomatize, page);
+    });
   });
 
   test('Aromatic structures - interchanged Single and Double bonds', async ({
@@ -97,9 +105,13 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     All other structures are rendered with a circle inside the cycles.
     */
     await openFileAndAddToCanvas('cycles-with-aromatic-bonds.mol', page);
-    await selectTopPanelButton(TopPanelButton.Aromatize, page);
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Aromatize, page);
+    });
     await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.Dearomatize, page);
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Dearomatize, page);
+    });
   });
 
   test('(Undo/Redo) Manipulations with cyclic structures with a circle inside the cycle', async ({

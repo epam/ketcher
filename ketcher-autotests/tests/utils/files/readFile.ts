@@ -41,9 +41,7 @@ export async function openFileAndAddToCanvas(filename: string, page: Page) {
   await waitForLoad(page, async () => {
     await pressButton(page, 'Add to Canvas');
   });
-  await waitForRender(page, async () => {
-    await clickInTheMiddleOfTheScreen(page);
-  });
+  await clickInTheMiddleOfTheScreen(page);
 }
 
 export async function pasteFromClipboardAndAddToCanvas(

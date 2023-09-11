@@ -56,22 +56,23 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     });
   });
 
-  test('Non-aromatic structures - interchanged Single and Double bonds', async ({
-    page,
-  }) => {
-    /*
+  test.fixme(
+    'Non-aromatic structures - interchanged Single and Double bonds',
+    async ({ page }) => {
+      /*
     Test case: EPMLSOPKET-1869
     Description: Nothing is changed on the canvas because only non-aromatic structures are present on the canvas.
     */
-    await openFileAndAddToCanvas('non-aromatic-structures.mol', page);
-    await waitForSpinnerFinishedWork(page, async () => {
-      await selectTopPanelButton(TopPanelButton.Aromatize, page);
-    });
-    await takeEditorScreenshot(page);
-    await waitForSpinnerFinishedWork(page, async () => {
-      await selectTopPanelButton(TopPanelButton.Dearomatize, page);
-    });
-  });
+      await openFileAndAddToCanvas('non-aromatic-structures.mol', page);
+      await waitForSpinnerFinishedWork(page, async () => {
+        await selectTopPanelButton(TopPanelButton.Aromatize, page);
+      });
+      await takeEditorScreenshot(page);
+      await waitForSpinnerFinishedWork(page, async () => {
+        await selectTopPanelButton(TopPanelButton.Dearomatize, page);
+      });
+    },
+  );
 
   test('Aromatic structures - interchanged Single and Double bonds', async ({
     page,

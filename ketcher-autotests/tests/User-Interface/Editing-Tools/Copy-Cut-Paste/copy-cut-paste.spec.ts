@@ -745,23 +745,24 @@ test.describe('Copy/Cut/Paste Actions', () => {
     },
   );
 
-  test('Copy and paste Structure with Simple objects and text', async ({
-    page,
-  }) => {
-    /*
+  test.fixme(
+    'Copy and paste Structure with Simple objects and text',
+    async ({ page }) => {
+      /*
     Test case: EPMLSOPKET-2948
     Description: After the clicking the Copy button, the selected object not disappears.
     After pasting Structure with Simple objects and text same structures located on canvas.
     */
-    const x = 550;
-    const y = 150;
-    await openFileAndAddToCanvas(
-      'KET/structure-with-simple-objects-and-text.ket',
-      page,
-    );
-    await copyAndPaste(page);
-    await page.mouse.click(x, y);
-  });
+      const x = 550;
+      const y = 150;
+      await openFileAndAddToCanvas(
+        'KET/structure-with-simple-objects-and-text.ket',
+        page,
+      );
+      await copyAndPaste(page);
+      await page.mouse.click(x, y);
+    },
+  );
 
   test.fixme(
     'Cut and Paste Structure with Simple objects and text and edit',

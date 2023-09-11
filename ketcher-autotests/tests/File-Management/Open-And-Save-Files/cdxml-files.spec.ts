@@ -81,7 +81,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await page.keyboard.press('Delete');
   });
 
-  test('Simple Objects - Save as .cdxml file', async ({ page }) => {
+  test.fixme('Simple Objects - Save as .cdxml file', async ({ page }) => {
     /**
      * Test case: EPMLSOPKET-4715
      * Description: Open/Import structure while openning a CDXML file

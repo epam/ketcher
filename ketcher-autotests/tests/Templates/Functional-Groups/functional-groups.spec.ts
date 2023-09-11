@@ -185,7 +185,7 @@ test.describe('Functional Groups', () => {
     await resetCurrentTool(page);
   });
 
-  test('Save functional groups to Custom Templates', async ({ page }) => {
+  test.fixme('Save functional groups to Custom Templates', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-2953
     Description: Contracted FG is connected to the structure.

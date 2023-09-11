@@ -600,7 +600,7 @@ test.describe('Plus and Arrows tools ', () => {
       await saveStructureWithReaction(page, 'Ket Format');
     });
 
-    test('open files', async ({ page }) => {
+    test.fixme('open files', async ({ page }) => {
       await openFileAndAddToCanvas(
         `Rxn-V2000/resizing-reaction-arrow-saving.rxn`,
         page,

@@ -58,5 +58,9 @@
     "npm": ">=7.0.0",
     "node": ">=16.0.0",
     "yarn": "YARN IS NO LONGER USED, PLEASE USE NPM\nConversion instructions can be found in DEVNOTES.md"
+  },
+  "overrides": {
+    "minimatch": "^9.0.3",
+    "nth-check": "^2.1.1"
   }
 }

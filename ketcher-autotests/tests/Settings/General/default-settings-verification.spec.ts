@@ -10,7 +10,7 @@ test.describe('Open Ketcher', () => {
     await page.goto('');
   });
 
-  test('Verify defult settings', async ({ page }) => {
+  test('Verify Ketcher settings panel', async ({ page }) => {
     /*
     Test case:EPMLSOPKET-10078 - General settings - Defaul settings verification' & EPMLSOPKET-12973
     */

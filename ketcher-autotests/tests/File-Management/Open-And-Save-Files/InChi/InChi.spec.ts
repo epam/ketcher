@@ -16,7 +16,8 @@ import {
 
 async function selectInChiOption(page: Page) {
   await selectOptionByText(page, 'InChI');
-  await expect(page.getByTestId('preview-area-text')).toContainText('InChI=');
+  const previewInput = page.getByTestId('inChI-preview-area-text');
+  await previewInput.waitFor({ state: 'visible' });
 }
 
 test.describe('', () => {
@@ -205,7 +206,7 @@ test.describe('Open and Save InChI file', () => {
     await pressButton(page, 'MDL Molfile V2000');
     await selectInChiOption(page);
     const inChistring = await page
-      .getByTestId('preview-area-text')
+      .getByTestId('inChI-preview-area-text')
       .inputValue();
     expect(inChistring).toEqual('InChI=1S//');
   });
@@ -222,7 +223,7 @@ test.describe('Open and Save InChI file', () => {
     await pressButton(page, 'MDL Molfile V2000');
     await selectInChiOption(page);
     const inChistring = await page
-      .getByTestId('preview-area-text')
+      .getByTestId('inChI-preview-area-text')
       .inputValue();
     const expectedInChIstring =
       'InChI=1S/C22H36/c1-2-6-16-10-20-14-22-12-18-8-4-3-7-17(18)11-21(22)13-19(20)9-15(16)5-1/h15-22H,1-14H2';
@@ -241,7 +242,7 @@ test.describe('Open and Save InChI file', () => {
     await pressButton(page, 'MDL Molfile V2000');
     await selectInChiOption(page);
     const inChistring = await page
-      .getByTestId('preview-area-text')
+      .getByTestId('inChI-preview-area-text')
       .inputValue();
     const expectedInChIstring =
       'InChI=1S/C11H24/c1-3-5-7-9-11-10-8-6-4-2/h3-11H2,1-2H3';
@@ -263,7 +264,7 @@ test.describe('Open and Save InChI file', () => {
     await pressButton(page, 'MDL Molfile V2000');
     await selectInChiOption(page);
     const inChistring = await page
-      .getByTestId('preview-area-text')
+      .getByTestId('inChI-preview-area-text')
       .inputValue();
     const expectedInChIstring =
       'InChI=1S/C9H14/c1-3-5-7-9-8-6-4-2/h3,5-9H,4H2,1-2H3/b5-3+,8-6+,9-7+';
@@ -282,7 +283,7 @@ test.describe('Open and Save InChI file', () => {
     await pressButton(page, 'MDL Molfile V2000');
     await selectInChiOption(page);
     const inChistring = await page
-      .getByTestId('preview-area-text')
+      .getByTestId('inChI-preview-area-text')
       .inputValue();
     const expectedInChIstring = 'InChI=1S/C9H8/c1-3-5-7-9-8-6-4-2/h3H2,1-2H3';
     expect(inChistring).toEqual(expectedInChIstring);
@@ -300,7 +301,7 @@ test.describe('Open and Save InChI file', () => {
     await pressButton(page, 'MDL Molfile V2000');
     await selectInChiOption(page);
     const inChistring = await page
-      .getByTestId('preview-area-text')
+      .getByTestId('inChI-preview-area-text')
       .inputValue();
     const expectedInChIstring = 'InChI=1S/C6H12/c1-2-4-6-5-3-1/h1-6H2';
     expect(inChistring).toEqual(expectedInChIstring);
@@ -321,7 +322,7 @@ test.describe('Open and Save InChI file', () => {
     await pressButton(page, 'MDL Molfile V2000');
     await selectInChiOption(page);
     const inChistring = await page
-      .getByTestId('preview-area-text')
+      .getByTestId('inChI-preview-area-text')
       .inputValue();
     const expectedInChIstring =
       'InChI=1S/C18H36/c1-13(2)14(3,4)16(7,8)18(11,12)17(9,10)15(13,5)6/h1-12H3';
@@ -340,7 +341,7 @@ test.describe('Open and Save InChI file', () => {
     await pressButton(page, 'MDL Molfile V2000');
     await selectInChiOption(page);
     const inChistring = await page
-      .getByTestId('preview-area-text')
+      .getByTestId('inChI-preview-area-text')
       .inputValue();
     const expectedInChIstring =
       'InChI=1S/C20H24O2/c1-12-10-14-15-4-5-18(22)20(15,3)9-7-16(14)19(2)8-6-13(21)11-17(12)19/h6,8,11,14-16H,1,4-5,7,9-10H2,2-3H3/t14-,15-,16-,19+,20-/m0/s1';
@@ -359,7 +360,7 @@ test.describe('Open and Save InChI file', () => {
     await pressButton(page, 'MDL Molfile V2000');
     await selectInChiOption(page);
     const inChistring = await page
-      .getByTestId('preview-area-text')
+      .getByTestId('inChI-preview-area-text')
       .inputValue();
     const expectedInChIstring =
       'InChI=1S/C26H44/c1-3-7-23(8-4-1)11-15-25(16-12-23)19-21-26(22-20-25)17-13-24(14-18-26)9-5-2-6-10-24/h1-22H2';
@@ -378,7 +379,7 @@ test.describe('Open and Save InChI file', () => {
     await pressButton(page, 'MDL Molfile V2000');
     await selectInChiOption(page);
     const inChistring = await page
-      .getByTestId('preview-area-text')
+      .getByTestId('inChI-preview-area-text')
       .inputValue();
     const modifier = getControlModifier();
     await page.keyboard.press(`${modifier}+KeyC`);
@@ -399,7 +400,7 @@ test.describe('Open and Save InChI file', () => {
     await pressButton(page, 'MDL Molfile V2000');
     await selectInChiOption(page);
     const inChistring = await page
-      .getByTestId('preview-area-text')
+      .getByTestId('inChI-preview-area-text')
       .inputValue();
     const expectedInChIstring =
       'InChI=1S/C6H6.C6H14.C3H8/c1-2-4-6-5-3-1;1-3-5-6-4-2;1-3-2/h1-6H;3-6H2,1-2H3;3H2,1-2H3';

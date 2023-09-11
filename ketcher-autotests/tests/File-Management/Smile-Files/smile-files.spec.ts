@@ -23,7 +23,8 @@ async function getPreviewForSmiles(
   await selectTopPanelButton(TopPanelButton.Save, page);
   await page.getByRole('button', { name: formatName }).click();
   await page.getByRole('option', { name: smileType }).click();
-  await expect(page.getByTestId('preview-area-text')).toContainText('CC');
+  const previewInput = page.getByTestId('smiles-preview-area-text');
+  await previewInput.waitFor({ state: 'visible' });
 }
 
 async function getAndCompareSmiles(page: Page, smilesFilePath: string) {

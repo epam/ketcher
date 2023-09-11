@@ -9,6 +9,7 @@ import {
   saveToFile,
   clickOnAtom,
   waitForPageInit,
+  waitForRender,
 } from '@utils';
 import { getCdxml } from '@utils/formats';
 
@@ -20,7 +21,9 @@ async function selectRadioButtonForNewGroup(
   await selectLeftPanelButton(LeftPanelButton.Stereochemistry, page);
   await page.getByLabel(selectRadioButton).check();
 
-  await pressButton(page, cancelChanges ? 'Cancel' : 'Apply');
+  await waitForRender(page, async () => {
+    await pressButton(page, cancelChanges ? 'Cancel' : 'Apply');
+  });
 }
 
 test.describe('CDXML Enhanced Stereochemistry', () => {

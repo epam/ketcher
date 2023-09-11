@@ -21,6 +21,7 @@ import {
   dragMouseTo,
   takeLeftToolbarScreenshot,
   waitForPageInit,
+  waitForRender,
 } from '@utils';
 
 test.describe('Selection tools', () => {
@@ -148,9 +149,13 @@ test.describe('Selection tools', () => {
     */
     await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+a');
+    await waitForRender(page, async () => {
+      await page.keyboard.press('Control+a');
+    });
     for (let i = 0; i < 50; i++) {
-      await page.keyboard.press('ArrowUp');
+      await waitForRender(page, async () => {
+        await page.keyboard.press('ArrowUp');
+      });
     }
   });
 
@@ -164,9 +169,13 @@ test.describe('Selection tools', () => {
     */
     await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+a');
+    await waitForRender(page, async () => {
+      await page.keyboard.press('Control+a');
+    });
     for (let i = 0; i < 50; i++) {
-      await page.keyboard.press('ArrowRight');
+      await waitForRender(page, async () => {
+        await page.keyboard.press('ArrowRight');
+      });
     }
   });
 
@@ -180,9 +189,13 @@ test.describe('Selection tools', () => {
     */
     await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+a');
+    await waitForRender(page, async () => {
+      await page.keyboard.press('Control+a');
+    });
     for (let i = 0; i < 50; i++) {
-      await page.keyboard.press('ArrowLeft');
+      await waitForRender(page, async () => {
+        await page.keyboard.press('ArrowLeft');
+      });
     }
   });
 
@@ -196,10 +209,14 @@ test.describe('Selection tools', () => {
     */
     await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+a');
+    await waitForRender(page, async () => {
+      await page.keyboard.press('Control+a');
+    });
     await page.keyboard.down('Shift');
     for (let i = 0; i < 10; i++) {
-      await page.keyboard.press('ArrowDown');
+      await waitForRender(page, async () => {
+        await page.keyboard.press('ArrowDown');
+      });
     }
     await page.keyboard.up('Shift');
   });
@@ -214,10 +231,14 @@ test.describe('Selection tools', () => {
     */
     await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+a');
+    await waitForRender(page, async () => {
+      await page.keyboard.press('Control+a');
+    });
     await page.keyboard.down('Shift');
     for (let i = 0; i < 10; i++) {
-      await page.keyboard.press('ArrowUp');
+      await waitForRender(page, async () => {
+        await page.keyboard.press('ArrowUp');
+      });
     }
     await page.keyboard.up('Shift');
   });
@@ -232,10 +253,14 @@ test.describe('Selection tools', () => {
     */
     await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+a');
+    await waitForRender(page, async () => {
+      await page.keyboard.press('Control+a');
+    });
     await page.keyboard.down('Shift');
     for (let i = 0; i < 10; i++) {
-      await page.keyboard.press('ArrowRight');
+      await waitForRender(page, async () => {
+        await page.keyboard.press('ArrowRight');
+      });
     }
     await page.keyboard.up('Shift');
   });
@@ -250,10 +275,14 @@ test.describe('Selection tools', () => {
     */
     await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+a');
+    await waitForRender(page, async () => {
+      await page.keyboard.press('Control+a');
+    });
     await page.keyboard.down('Shift');
     for (let i = 0; i < 10; i++) {
-      await page.keyboard.press('ArrowLeft');
+      await waitForRender(page, async () => {
+        await page.keyboard.press('ArrowLeft');
+      });
     }
     await page.keyboard.up('Shift');
   });

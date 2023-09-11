@@ -24,6 +24,7 @@ import {
   TopPanelButton,
   Point,
   waitForPageInit,
+  waitForRender,
 } from '@utils';
 
 const xOffsetFromCenter = -35;
@@ -189,22 +190,31 @@ test.describe('Plus and Arrows tools ', () => {
     });
 
     test('Select the plus sign and move it', async ({ page }) => {
-      await page.mouse.move(point.x - 150, point.y - 10);
-      await dragMouseTo(point.x - 150, point.y - 40, page);
+      await waitForRender(page, async () => {
+        await page.mouse.move(point.x - 150, point.y - 10);
+        await dragMouseTo(point.x - 150, point.y - 40, page);
+      });
     });
 
     test('Select the plus sign with any reaction component(s) and move them', async ({
       page,
     }) => {
-      await page.mouse.move(point.x - 300, point.y - 100);
-      await dragMouseTo(point.x - 140, point.y + 100, page);
-      await page.mouse.move(point.x - 200, point.y - 20);
-      await dragMouseTo(point.x - 300, point.y - 100, page);
+      await waitForRender(page, async () => {
+        await page.mouse.move(point.x - 300, point.y - 100);
+        await dragMouseTo(point.x - 140, point.y + 100, page);
+      });
+
+      await waitForRender(page, async () => {
+        await page.mouse.move(point.x - 200, point.y - 20);
+        await dragMouseTo(point.x - 300, point.y - 100, page);
+      });
     });
 
     test('Select the whole reaction and move it', async ({ page }) => {
-      await page.keyboard.press(`${modifier}+KeyA`);
-      await page.mouse.move(point.x - 20, point.y - 20);
+      await waitForRender(page, async () => {
+        await page.keyboard.press(`${modifier}+KeyA`);
+        await page.mouse.move(point.x - 20, point.y - 20);
+      });
       await dragMouseTo(point.x - 100, point.y - 100, page);
     });
 
@@ -731,7 +741,9 @@ test.describe('Plus and Arrows tools ', () => {
       const button = page.getByTestId(id).first();
       expect(button).toHaveAttribute('title', idToTitle[id]);
       await button.click();
-      await clickInTheMiddleOfTheScreen(page);
+      await waitForRender(page, async () => {
+        await clickInTheMiddleOfTheScreen(page);
+      });
     });
   }
 });

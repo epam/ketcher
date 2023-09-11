@@ -8,6 +8,7 @@ import {
   LeftPanelButton,
   TopPanelButton,
   waitForPageInit,
+  waitForRender,
 } from '@utils';
 import { RxnArrow, RxnPlus } from 'ketcher-core';
 
@@ -45,7 +46,9 @@ test.describe('Erase Tool', () => {
     const bondsSizeAfterErase = 18;
 
     point = await getLeftAtomByAttributes(page, { label: 'Br' });
-    await page.mouse.click(point.x, point.y);
+    await waitForRender(page, async () => {
+      await page.mouse.click(point.x, point.y);
+    });
 
     const atomSize = await page.evaluate(() => {
       return window.ketcher.editor.struct().atoms.size;
@@ -53,7 +56,9 @@ test.describe('Erase Tool', () => {
     expect(atomSize).toEqual(atomSizeAfterErase);
 
     point = await getLeftBondByAttributes(page, { type: BondType.DOUBLE });
-    await page.mouse.click(point.x, point.y);
+    await waitForRender(page, async () => {
+      await page.mouse.click(point.x, point.y);
+    });
 
     const bondSize = await page.evaluate(() => {
       return window.ketcher.editor.struct().bonds.size;

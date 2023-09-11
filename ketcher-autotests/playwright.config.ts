@@ -44,7 +44,6 @@ function baseURL(): string {
 
 const MAX_NUMBER_OF_RETRIES = 2;
 const MIN_AMOUNT_OF_WORKERS = 2;
-const REDUCED_AMOUNT_OF_CPUS_FOR_STABILITY = 2;
 // const MAX_NUMBER_OF_FAILURES = 3;
 const isCI = process.env.CI_ENVIRONMENT === 'true';
 
@@ -74,12 +73,7 @@ const config: PlaywrightTestConfig = {
   retries: isCI ? MAX_NUMBER_OF_RETRIES : 0,
   /* Opt out of parallel tests on CI. */
   // eslint-disable-next-line no-magic-numbers
-  workers: process.env.CI
-    ? MIN_AMOUNT_OF_WORKERS
-    : Math.max(
-        os.cpus().length - REDUCED_AMOUNT_OF_CPUS_FOR_STABILITY,
-        MIN_AMOUNT_OF_WORKERS,
-      ),
+  workers: process.env.CI ? MIN_AMOUNT_OF_WORKERS : os.cpus().length,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: [
     [

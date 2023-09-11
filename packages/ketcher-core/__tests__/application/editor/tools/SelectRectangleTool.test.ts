@@ -7,6 +7,8 @@ import {
 } from '../../../mock-data';
 import { createPolymerEditorCanvas } from '../../../helpers/dom';
 import { SelectRectangle } from 'application/editor/tools/SelectRectangle';
+import { Vec2 } from 'domain/entities/vec2';
+import { BaseMonomerRenderer } from 'application/render/renderers';
 
 jest.mock('d3', () => {
   return {
@@ -71,24 +73,43 @@ describe('Select Rectangle Tool', () => {
   });
 
   it('should move selected entity', () => {
-    const polymerBond = getFinishedPolymerBond(0, 0, 10, 10);
+    const canvas: SVGSVGElement = createPolymerEditorCanvas();
+    const editor = new CoreEditor({
+      theme: polymerEditorTheme,
+      canvas,
+    });
+
+    const modelChanges = editor.drawingEntitiesManager.addMonomer(
+      peptideMonomerItem,
+      new Vec2(0, 0),
+    );
+    editor.renderersContainer.update(modelChanges);
+    const peptide = Array.from(editor.drawingEntitiesManager.monomers)[0][1];
+    const onMove = jest.fn();
+    jest
+      .spyOn(BaseMonomerRenderer.prototype, 'moveSelection')
+      .mockImplementation(onMove);
+
+    const selectRectangleTool = new SelectRectangle(editor);
+
+    const initialPosition = peptide.position;
     const event = {
       target: {
-        __data__: polymerBond.renderer,
+        __data__: peptide.renderer,
       },
+      pageX: initialPosition.x,
+      pageY: initialPosition.y,
     };
-    const selectRectangleTool = new SelectRectangle(
-      new CoreEditor({
-        theme: polymerEditorTheme,
-        canvas: createPolymerEditorCanvas(),
-      }),
-    );
-    const initialPosition = polymerBond.position;
 
-    expect(polymerBond.selected).toBeFalsy();
+    editor.drawingEntitiesManager.selectDrawingEntity(peptide);
     selectRectangleTool.mousedown(event);
+    editor.lastCursorPosition.x = initialPosition.x + 100;
+    editor.lastCursorPosition.y = initialPosition.y + 100;
+
     selectRectangleTool.mousemove();
-    expect(polymerBond.selected).toBeTruthy();
-    expect(polymerBond.position).not.toEqual(initialPosition);
+    selectRectangleTool.mouseup(event);
+
+    expect(onMove).toHaveBeenCalled();
+    expect(onMove).toHaveBeenCalledWith(new Vec2(100, 100));
   });
 });

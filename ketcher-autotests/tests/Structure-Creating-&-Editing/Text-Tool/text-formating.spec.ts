@@ -6,15 +6,12 @@ import {
   selectTopPanelButton,
   delay,
 } from '@utils/canvas';
-import {
-  pressButton,
-  clickInTheMiddleOfTheScreen,
-  dragMouseTo,
-} from '@utils/clicks';
+import { pressButton, clickInTheMiddleOfTheScreen } from '@utils/clicks';
 import {
   TopPanelButton,
   LeftPanelButton,
   DELAY_IN_SECONDS,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   pasteFromClipboardAndAddToCanvas,
   FILE_TEST_DATA,
   openFileAndAddToCanvas,
@@ -180,7 +177,6 @@ test.describe('Text tools test cases', () => {
     await takeEditorScreenshot(page);
     await selectTopPanelButton(TopPanelButton.Undo, page);
     await selectTopPanelButton(TopPanelButton.Redo, page);
-    // await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
     await selectNestedTool(page, SelectTool.LASSO_SELECTION);
     await page.mouse.move(97, 79);
     await page.mouse.down();

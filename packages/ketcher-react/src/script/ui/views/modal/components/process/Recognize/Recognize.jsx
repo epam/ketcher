@@ -132,6 +132,7 @@ function RecognizeDialog(prop) {
     >
       <div className={classes.topBody}>
         <label className={classes.imagoVersion}>
+          {/* eslint-disable jsx-a11y/label-has-associated-control */}
           Imago version
           <Input
             schema={{
@@ -143,10 +144,12 @@ function RecognizeDialog(prop) {
             value={version}
             onChange={onChangeImago}
           />
+          {/* eslint-enable jsx-a11y/label-has-associated-control */}
         </label>
         <span>Original image</span>
         <span>Recognized structure preview</span>
       </div>
+
       <div className={classes.imagesContainer}>
         <div className={classes.picture}>
           {file && isImage(file) && canPreviewImage && (

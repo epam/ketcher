@@ -1,4 +1,5 @@
 import * as dotenv from 'dotenv';
+import * as os from 'os';
 import { PlaywrightTestConfig, devices } from '@playwright/test';
 import {
   REMOTE_URL,
@@ -13,21 +14,21 @@ dotenv.config();
  */
 
 const ignoredTests = [
-  'API/**',
-  'Examples/**',
-  'File-Management/**',
-  'Indigo-Tools/**',
-  'R-group-tool/**',
-  'Reagents/**',
-  'Structure-Creating-&-Editing/**',
-  // 'Templates/Functional-Groups/click-and-drag-fg-on-canvas.spec.ts',
-  'Templates/Functional-Groups/functional-groups.spec.ts',
-  'Templates/Functional-Groups/Functional-Group-Tools/functional-group-tools.spec.ts',
-  'Templates/Salts-and-Solvents/**',
-  'Templates/User-Templates/**',
-  'User-Interface/**',
+  // 'API/**',
+  // 'File-Management/Smile-Files/smile-files.spec.ts',
+  // 'Examples/**',
+  // 'Indigo-Tools/**',
+  // 'R-group-tool/**',
+  // 'Reagents/**',
+  // 'Structure-Creating-&-Editing/**',
+  // 'Templates/Functional-Groups/functional-groups.spec.ts',
+  // 'Templates/Functional-Groups/Functional-Group-Tools/functional-group-tools.spec.ts',
+  // 'Templates/Salts-and-Solvents/**',
+  // 'Templates/User-Templates/**',
   'utils/**',
 ];
+
+const testDir = './tests';
 
 function baseURL(): string {
   if (!process.env.MODE || !process.env.KETCHER_URL) {
@@ -42,9 +43,12 @@ function baseURL(): string {
 }
 
 const MAX_NUMBER_OF_RETRIES = 2;
+const MIN_AMOUNT_OF_WORKERS = 2;
+// const MAX_NUMBER_OF_FAILURES = 3;
+const isCI = process.env.CI_ENVIRONMENT === 'true';
 
 const config: PlaywrightTestConfig = {
-  testDir: './tests',
+  testDir,
   /* Maximum time one test can run for. */
   timeout: 60_000,
   testIgnore: process.env.IGNORE_UNSTABLE_TESTS ? ignoredTests : undefined,
@@ -60,14 +64,16 @@ const config: PlaywrightTestConfig = {
     // },
     timeout: 10_000,
   },
+  // maxFailures: isCI ? MAX_NUMBER_OF_FAILURES : 0,
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
-  forbidOnly: Boolean(process.env.CI),
+  forbidOnly: isCI,
   /* Retry on CI only */
-  retries: process.env.CI ? MAX_NUMBER_OF_RETRIES : 0,
+  retries: isCI ? MAX_NUMBER_OF_RETRIES : 0,
   /* Opt out of parallel tests on CI. */
-  workers: process.env.CI ? 1 : undefined,
+  // eslint-disable-next-line no-magic-numbers
+  workers: process.env.CI ? MIN_AMOUNT_OF_WORKERS : os.cpus().length,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: [
     [

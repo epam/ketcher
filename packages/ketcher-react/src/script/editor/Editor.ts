@@ -16,12 +16,14 @@
 
 import {
   Action,
+  FloatingToolsParams,
   Editor as KetcherEditor,
   Pile,
   Render,
   Struct,
   Vec2,
   fromDescriptorsAlign,
+  fromMultipleMove,
   fromNewCanvas,
 } from 'ketcher-core';
 import {
@@ -44,6 +46,11 @@ import {
   ToolConstructorInterface,
   ToolEventHandlerName,
 } from './tool/Tool';
+import {
+  getSelectionMap,
+  getStructCenter,
+  recoordinate,
+} from './utils/structLayout';
 
 const SCALE = 40;
 const HISTORY_SIZE = 32; // put me to options
@@ -71,6 +78,7 @@ const highlightTargets = [
   'frags',
   'merge',
   'rgroups',
+  'rgroupAttachmentPoints',
   'sgroups',
   'sgroupData',
   'enhancedFlags',
@@ -101,11 +109,6 @@ function selectStereoFlagsIfNecessary(
   return stereoFlags;
 }
 
-export type FloatingToolsParams = {
-  visible?: boolean;
-  rotateHandlePosition?: { x: number; y: number };
-};
-
 export interface Selection {
   atoms?: Array<number>;
   bonds?: Array<number>;
@@ -113,6 +116,7 @@ export interface Selection {
   rxnPluses?: Array<number>;
   rxnArrows?: Array<number>;
   texts?: Array<number>;
+  rgroupAttachmentPoints?: Array<number>;
 }
 
 class Editor implements KetcherEditor {
@@ -131,6 +135,8 @@ class Editor implements KetcherEditor {
   event: {
     message: Subscription;
     elementEdit: PipelineSubscription;
+    zoomIn: PipelineSubscription;
+    zoomOut: PipelineSubscription;
     bondEdit: PipelineSubscription;
     rgroupEdit: PipelineSubscription;
     sgroupEdit: PipelineSubscription;
@@ -186,6 +192,8 @@ class Editor implements KetcherEditor {
       message: new Subscription(),
       elementEdit: new PipelineSubscription(),
       bondEdit: new PipelineSubscription(),
+      zoomIn: new PipelineSubscription(),
+      zoomOut: new PipelineSubscription(),
       rgroupEdit: new PipelineSubscription(),
       sgroupEdit: new PipelineSubscription(),
       sdataEdit: new PipelineSubscription(),
@@ -206,6 +214,7 @@ class Editor implements KetcherEditor {
     };
 
     domEventSetup(this, clientArea);
+    this.render.paper.canvas.setAttribute('data-testid', 'canvas');
   }
 
   isDitrty(): boolean {
@@ -291,7 +300,7 @@ class Editor implements KetcherEditor {
 
   setOptions(opts: string) {
     const options = JSON.parse(opts);
-    this.event.apiSettings.dispatch({ ...this.options(), ...options });
+    this.event.apiSettings.dispatch({ ...options });
     return this.render.updateOptions(opts);
   }
 
@@ -330,26 +339,76 @@ class Editor implements KetcherEditor {
     return this.render.options.zoom;
   }
 
-  zoomAccordingContent() {
-    this.zoom(1);
-    const clientAreaBoundingBox =
-      this.render.clientArea.getBoundingClientRect();
-    const paper = this.render.paper;
+  centerStruct() {
+    const structure = this.render.ctab;
+    const { scale, offset } = this.render.options;
+    const structCenter = getStructCenter(structure);
+    const { width, height } = this.render.clientArea.getBoundingClientRect();
+    const canvasCenterVector = new Vec2(width, height);
+    const canvasCenter = this.render.view2obj(canvasCenterVector).scaled(0.5);
+    const shiftFactor = 0.4;
+    const shiftVector = canvasCenter
+      .sub(structCenter)
+      .sub(offset.scaled(shiftFactor / scale));
+
+    const structureToMove = getSelectionMap(structure);
+
+    const action = fromMultipleMove(structure, structureToMove, shiftVector);
+    this.update(action, true);
+
+    recoordinate(this, canvasCenter);
+  }
+
+  zoomAccordingContent(struct: Struct) {
     const MIN_ZOOM_VALUE = 0.1;
     const MAX_ZOOM_VALUE = 1;
-    const newZoomValue =
-      paper.height - clientAreaBoundingBox.height >
-      paper.width - clientAreaBoundingBox.width
-        ? clientAreaBoundingBox.height / paper.height
-        : clientAreaBoundingBox.width / paper.width;
+    const MARGIN_IN_PIXELS = 40;
+    const parsedStructCoordBoundingBox = struct.getCoordBoundingBox();
+    const parsedStructSize = new Vec2(
+      parsedStructCoordBoundingBox.max.x - parsedStructCoordBoundingBox.min.x,
+      parsedStructCoordBoundingBox.max.y - parsedStructCoordBoundingBox.min.y,
+    );
+    const parsedStructSizeInPixels = {
+      width:
+        parsedStructSize.x *
+        this.render.options.scale *
+        this.render.options.zoom,
+      height:
+        parsedStructSize.y *
+        this.render.options.scale *
+        this.render.options.zoom,
+    };
+    const clientAreaBoundingBox =
+      this.render.clientArea.getBoundingClientRect();
 
-    if (newZoomValue < MAX_ZOOM_VALUE) {
-      this.zoom(
-        newZoomValue < MIN_ZOOM_VALUE
-          ? MIN_ZOOM_VALUE
-          : Number(newZoomValue.toFixed(2)),
-      );
+    if (
+      parsedStructSizeInPixels.width + MARGIN_IN_PIXELS <
+        clientAreaBoundingBox.width &&
+      parsedStructSizeInPixels.height + MARGIN_IN_PIXELS <
+        clientAreaBoundingBox.height
+    ) {
+      return;
     }
+
+    let newZoomValue =
+      this.render.options.zoom /
+      (parsedStructSizeInPixels.height - clientAreaBoundingBox.height >
+      parsedStructSizeInPixels.width - clientAreaBoundingBox.width
+        ? parsedStructSizeInPixels.height / clientAreaBoundingBox.height
+        : parsedStructSizeInPixels.width / clientAreaBoundingBox.width);
+
+    if (newZoomValue >= MAX_ZOOM_VALUE) {
+      this.zoom(MAX_ZOOM_VALUE);
+      return;
+    }
+
+    newZoomValue -= MARGIN_IN_PIXELS / clientAreaBoundingBox.width;
+
+    this.zoom(
+      newZoomValue < MIN_ZOOM_VALUE
+        ? MIN_ZOOM_VALUE
+        : Number(newZoomValue.toFixed(2)),
+    );
   }
 
   selection(ci?: any) {
@@ -655,8 +714,8 @@ function updateLastCursorPosition(editor: Editor, event) {
       editor.render.clientArea.getBoundingClientRect();
 
     editor.lastCursorPosition = {
-      x: event.pageX - clientAreaBoundingBox.x,
-      y: event.pageY - clientAreaBoundingBox.y,
+      x: event.clientX - clientAreaBoundingBox.x,
+      y: event.clientY - clientAreaBoundingBox.y,
     };
   }
 }
@@ -744,7 +803,10 @@ function domEventSetup(editor: Editor, clientArea: HTMLElement) {
     editor.event[eventName] = new DOMSubscription();
     const subs = editor.event[eventName];
 
-    target.addEventListener(eventName, subs.dispatch.bind(subs));
+    target.addEventListener(eventName, (...args) => {
+      if (window.isPolymerEditorTurnedOn) return;
+      subs.dispatch(...args);
+    });
 
     subs.add((event) => {
       updateLastCursorPosition(editor, event);
@@ -780,23 +842,6 @@ function domEventSetup(editor: Editor, clientArea: HTMLElement) {
       return true;
     }, -1);
   });
-}
-
-function recoordinate(editor: Editor, rp?: Vec2 /* , vp */) {
-  // rp is a point in scaled coordinates, which will be positioned
-  // vp is the point where the reference point should now be (in view coordinates)
-  //    or the center if not set
-  console.assert(rp, 'Reference point not specified');
-  if (rp) {
-    editor.render.setScrollOffset(rp.x, rp.y);
-  } else {
-    editor.render.setScrollOffset(0, 0);
-  }
-}
-
-function getStructCenter(ReStruct, selection?) {
-  const bb = ReStruct.getVBoxObj(selection || {});
-  return Vec2.lc2(bb.p0, 0.5, bb.p1, 0.5);
 }
 
 export { Editor };

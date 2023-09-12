@@ -1,5 +1,23 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Monomer Group should apply correct style if selected 1`] = `
+<div
+  class="css-1vdxjys"
+  data-monomer-item-id="RRMonomerName___RRName"
+  data-testid="RRMonomerName___RRName"
+  disabled=""
+>
+  <span>
+    R
+  </span>
+  <div
+    class="star "
+  >
+    ★
+  </div>
+</div>
+`;
+
 exports[`Monomer Group should render correct with title prop 1`] = `
 Object {
   "asFragment": [Function],
@@ -16,11 +34,13 @@ Object {
           </span>
         </div>
         <div
-          class="css-u8jo8f"
+          class="css-14bnc38"
         >
           <div
-            class="css-ryv5uk"
-            data-testid="R"
+            class="css-yx9nww"
+            data-monomer-item-id="RRMonomerName___RRName"
+            data-testid="RRMonomerName___RRName"
+            disabled=""
           >
             <span>
               R
@@ -32,8 +52,10 @@ Object {
             </div>
           </div>
           <div
-            class="css-17atjlm"
-            data-testid="A"
+            class="css-1yskl7c"
+            data-monomer-item-id="mAMonomerName___mAName"
+            data-testid="mAMonomerName___mAName"
+            disabled=""
           >
             <span>
               m
@@ -45,8 +67,10 @@ Object {
             </div>
           </div>
           <div
-            class="css-kvk3yi"
-            data-testid="D"
+            class="css-1489m9i"
+            data-monomer-item-id="dDMonomerName___dDName"
+            data-testid="dDMonomerName___dDName"
+            disabled=""
           >
             <span>
               d
@@ -58,8 +82,10 @@ Object {
             </div>
           </div>
           <div
-            class="css-ryv5uk"
-            data-testid="R"
+            class="css-yx9nww"
+            data-monomer-item-id="arRMonomerName___arRName"
+            data-testid="arRMonomerName___arRName"
+            disabled=""
           >
             <span>
               ar
@@ -71,8 +97,10 @@ Object {
             </div>
           </div>
           <div
-            class="css-1tniqtk"
-            data-testid="L"
+            class="css-14ne5i5"
+            data-monomer-item-id="LdLMonomerName___LdLRName"
+            data-testid="LdLMonomerName___LdLRName"
+            disabled=""
           >
             <span>
               Ld
@@ -99,11 +127,13 @@ Object {
         </span>
       </div>
       <div
-        class="css-u8jo8f"
+        class="css-14bnc38"
       >
         <div
-          class="css-ryv5uk"
-          data-testid="R"
+          class="css-yx9nww"
+          data-monomer-item-id="RRMonomerName___RRName"
+          data-testid="RRMonomerName___RRName"
+          disabled=""
         >
           <span>
             R
@@ -115,8 +145,10 @@ Object {
           </div>
         </div>
         <div
-          class="css-17atjlm"
-          data-testid="A"
+          class="css-1yskl7c"
+          data-monomer-item-id="mAMonomerName___mAName"
+          data-testid="mAMonomerName___mAName"
+          disabled=""
         >
           <span>
             m
@@ -128,8 +160,10 @@ Object {
           </div>
         </div>
         <div
-          class="css-kvk3yi"
-          data-testid="D"
+          class="css-1489m9i"
+          data-monomer-item-id="dDMonomerName___dDName"
+          data-testid="dDMonomerName___dDName"
+          disabled=""
         >
           <span>
             d
@@ -141,8 +175,10 @@ Object {
           </div>
         </div>
         <div
-          class="css-ryv5uk"
-          data-testid="R"
+          class="css-yx9nww"
+          data-monomer-item-id="arRMonomerName___arRName"
+          data-testid="arRMonomerName___arRName"
+          disabled=""
         >
           <span>
             ar
@@ -154,8 +190,10 @@ Object {
           </div>
         </div>
         <div
-          class="css-1tniqtk"
-          data-testid="L"
+          class="css-14ne5i5"
+          data-monomer-item-id="LdLMonomerName___LdLRName"
+          data-testid="LdLMonomerName___LdLRName"
+          disabled=""
         >
           <span>
             Ld
@@ -232,11 +270,13 @@ Object {
         class="css-1jn33hb"
       >
         <div
-          class="css-u8jo8f"
+          class="css-14bnc38"
         >
           <div
-            class="css-ryv5uk"
-            data-testid="R"
+            class="css-yx9nww"
+            data-monomer-item-id="RRMonomerName___RRName"
+            data-testid="RRMonomerName___RRName"
+            disabled=""
           >
             <span>
               R
@@ -248,8 +288,10 @@ Object {
             </div>
           </div>
           <div
-            class="css-17atjlm"
-            data-testid="A"
+            class="css-1yskl7c"
+            data-monomer-item-id="mAMonomerName___mAName"
+            data-testid="mAMonomerName___mAName"
+            disabled=""
           >
             <span>
               m
@@ -261,8 +303,10 @@ Object {
             </div>
           </div>
           <div
-            class="css-kvk3yi"
-            data-testid="D"
+            class="css-1489m9i"
+            data-monomer-item-id="dDMonomerName___dDName"
+            data-testid="dDMonomerName___dDName"
+            disabled=""
           >
             <span>
               d
@@ -274,8 +318,10 @@ Object {
             </div>
           </div>
           <div
-            class="css-ryv5uk"
-            data-testid="R"
+            class="css-yx9nww"
+            data-monomer-item-id="arRMonomerName___arRName"
+            data-testid="arRMonomerName___arRName"
+            disabled=""
           >
             <span>
               ar
@@ -287,8 +333,10 @@ Object {
             </div>
           </div>
           <div
-            class="css-1tniqtk"
-            data-testid="L"
+            class="css-14ne5i5"
+            data-monomer-item-id="LdLMonomerName___LdLRName"
+            data-testid="LdLMonomerName___LdLRName"
+            disabled=""
           >
             <span>
               Ld
@@ -308,11 +356,13 @@ Object {
       class="css-1jn33hb"
     >
       <div
-        class="css-u8jo8f"
+        class="css-14bnc38"
       >
         <div
-          class="css-ryv5uk"
-          data-testid="R"
+          class="css-yx9nww"
+          data-monomer-item-id="RRMonomerName___RRName"
+          data-testid="RRMonomerName___RRName"
+          disabled=""
         >
           <span>
             R
@@ -324,8 +374,10 @@ Object {
           </div>
         </div>
         <div
-          class="css-17atjlm"
-          data-testid="A"
+          class="css-1yskl7c"
+          data-monomer-item-id="mAMonomerName___mAName"
+          data-testid="mAMonomerName___mAName"
+          disabled=""
         >
           <span>
             m
@@ -337,8 +389,10 @@ Object {
           </div>
         </div>
         <div
-          class="css-kvk3yi"
-          data-testid="D"
+          class="css-1489m9i"
+          data-monomer-item-id="dDMonomerName___dDName"
+          data-testid="dDMonomerName___dDName"
+          disabled=""
         >
           <span>
             d
@@ -350,8 +404,10 @@ Object {
           </div>
         </div>
         <div
-          class="css-ryv5uk"
-          data-testid="R"
+          class="css-yx9nww"
+          data-monomer-item-id="arRMonomerName___arRName"
+          data-testid="arRMonomerName___arRName"
+          disabled=""
         >
           <span>
             ar
@@ -363,8 +419,10 @@ Object {
           </div>
         </div>
         <div
-          class="css-1tniqtk"
-          data-testid="L"
+          class="css-14ne5i5"
+          data-monomer-item-id="LdLMonomerName___LdLRName"
+          data-testid="LdLMonomerName___LdLRName"
+          disabled=""
         >
           <span>
             Ld

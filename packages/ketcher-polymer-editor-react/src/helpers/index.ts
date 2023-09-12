@@ -16,3 +16,5 @@
 
 export {};
 export * from './emptyFunction';
+export * from './calculatePreviewPosition';
+export * from './getDefaultPreset';

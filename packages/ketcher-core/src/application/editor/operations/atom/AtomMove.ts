@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { BaseOperation } from '../base';
-import { OperationType } from '../OperationType';
+import { OperationPriority, OperationType } from '../OperationType';
 import { ReStruct } from '../../../render';
 import { Scale } from 'domain/helpers';
 
@@ -27,7 +27,7 @@ export class AtomMove extends BaseOperation {
   };
 
   constructor(atomId?: any, d?: any, noinvalidate?: any) {
-    super(OperationType.ATOM_MOVE, 2);
+    super(OperationType.ATOM_MOVE, OperationPriority.ATOM_MOVE);
     this.data = { aid: atomId, d, noinvalidate };
   }
 

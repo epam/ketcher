@@ -16,10 +16,11 @@ env:
   KETCHER_URL: http://host.docker.internal:4002
   DOCKER: true
   IGNORE_UNSTABLE_TESTS: true
+  CI_ENVIRONMENT: true
 jobs:
   playwright_tests:
-    timeout-minutes: 60
-    runs-on: ubuntu-22.04
+    timeout-minutes: 40
+    runs-on: self-hosted
     steps:
       - uses: actions/checkout@v3
         with:
@@ -30,7 +31,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
       - name: Build all packages
-        run: npm run build
+        run: npm run build:packages && npm run build:example:standalone
       - name: Run example in standalone mode
         run: cd example/ && nohup npm run serve:standalone &
       - name: Create env file
@@ -40,6 +41,7 @@ jobs:
           echo "KETCHER_URL=$KETCHER_URL" >> .env
           echo "MODE=$MODE" >> .env
           echo "IGNORE_UNSTABLE_TESTS=$IGNORE_UNSTABLE_TESTS" >> .env
+          echo "CI_ENVIRONMENT=$CI_ENVIRONMENT" >> .env
       - name: Build autotests for docker
         run: cd ketcher-autotests && npm run docker:build
       - name: Run playwright tests in docker

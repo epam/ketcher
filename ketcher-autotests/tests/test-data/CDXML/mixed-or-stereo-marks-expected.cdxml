@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE CDXML SYSTEM "http://www.cambridgesoft.com/xml/cdxml.dtd">
+<CDXML BondLength="30.000000" LabelFont="3" CaptionFont="4">
+    <fonttable id="1">
+        <font id="2" charset="utf-8" name="Arial"/>
+        <font id="3" charset="utf-8" name="Times New Roman"/>
+    </fonttable>
+    <colortable>
+        <color r="1" g="1" b="1"/>
+        <color r="0" g="0" b="0"/>
+        <color r="1" g="0" b="0"/>
+        <color r="1" g="1" b="0"/>
+        <color r="0" g="1" b="0"/>
+        <color r="0" g="1" b="1"/>
+        <color r="0" g="0" b="1"/>
+        <color r="1" g="0" b="1"/>
+        <color r="0.5" g="0.5" b="0.5"/>
+    </colortable>
+    <page HeightPages="1" WidthPages="1">
+        <fragment id="4">
+            <n id="5" Element="8" NumHydrogens="1" p="154.096329 30.000000">
+                <t p="154.096329 30.000000" LabelJustification="Left">
+                    <s font="3" size="10" face="96">OH</s>
+                </t>
+            </n>
+            <n id="6" Element="8" NumHydrogens="1" p="154.096329 82.446144">
+                <t p="154.096329 82.446144" LabelJustification="Left">
+                    <s font="3" size="10" face="96">OH</s>
+                </t>
+            </n>
+            <n id="7" Element="8" NumHydrogens="1" p="103.208115 108.751701">
+                <t p="103.208115 108.751701" LabelJustification="Left">
+                    <s font="3" size="10" face="96">OH</s>
+                </t>
+            </n>
+            <n id="8" Element="8" NumHydrogens="1" p="52.317093 82.448914">
+                <t p="52.317093 82.448914" LabelJustification="Left">
+                    <s font="3" size="10" face="96">OH</s>
+                </t>
+            </n>
+            <n id="9" Element="8" NumHydrogens="0" p="103.051468 30.000000">
+                <t p="103.051468 30.000000" LabelJustification="Left">
+                    <s font="3" size="10" face="96">O</s>
+                </t>
+            </n>
+            <n id="10" Element="8" NumHydrogens="1" p="30.000000 46.622429">
+                <t p="30.000000 46.622429" LabelJustification="Left">
+                    <s font="3" size="10" face="96">OH</s>
+                </t>
+            </n>
+            <n id="11" p="128.649414 42.840916" Geometry="Tetrahedral" BondOrdering="5 9 12 5" EnhancedStereoType="Absolute"/>
+            <n id="12" p="128.649414 69.451378" Geometry="Tetrahedral" BondOrdering="6 11 13 5" EnhancedStereoType="Or" EnhancedStereoGroupNum="2"/>
+            <n id="13" p="103.051468 82.448914" Geometry="Tetrahedral" BondOrdering="7 12 14 5" EnhancedStereoType="Absolute"/>
+            <n id="14" p="77.610168 69.456955" Geometry="Tetrahedral" BondOrdering="8 13 15 5" EnhancedStereoType="Or" EnhancedStereoGroupNum="1"/>
+            <n id="15" p="77.610168 42.843719" Geometry="Tetrahedral" BondOrdering="9 14 16 5" EnhancedStereoType="Absolute"/>
+            <n id="16" p="52.317093 30.005592"/>
+            <n id="17" p="302.249481 63.913349"/>
+            <n id="18" p="330.865417 80.435097" Geometry="Tetrahedral" BondOrdering="17 24 19 5" EnhancedStereoType="Or" EnhancedStereoGroupNum="3"/>
+            <n id="19" p="359.484131 63.913349" Geometry="Tetrahedral" BondOrdering="18 25 20 5" EnhancedStereoType="Absolute"/>
+            <n id="20" p="388.102783 80.435097"/>
+            <n id="21" p="416.721466 63.913349"/>
+            <n id="22" Element="8" NumHydrogens="0" p="273.630829 80.435097">
+                <t p="273.630829 80.435097" LabelJustification="Left">
+                    <s font="3" size="10" face="96">O</s>
+                </t>
+            </n>
+            <n id="23" Element="8" NumHydrogens="1" p="302.249481 30.867062">
+                <t p="302.249481 30.867062" LabelJustification="Left">
+                    <s font="3" size="10" face="96">OH</s>
+                </t>
+            </n>
+            <n id="24" Element="7" NumHydrogens="2" p="330.865417 113.478600">
+                <t p="330.865417 113.478600" LabelJustification="Left">
+                    <s font="3" size="10" face="96">NH</s>
+                    <s font="3" size="10" face="32">2</s>
+                </t>
+            </n>
+            <n id="25" p="359.484131 30.867062"/>
+            <b id="26" B="10" E="16"/>
+            <b id="27" B="15" E="9"/>
+            <b id="28" B="9" E="11"/>
+            <b id="29" B="11" E="12"/>
+            <b id="30" B="12" E="13"/>
+            <b id="31" B="13" E="14"/>
+            <b id="32" B="14" E="15"/>
+            <b id="33" B="15" E="16" Display="WedgeBegin"/>
+            <b id="34" B="11" E="5" Display="WedgedHashBegin"/>
+            <b id="35" B="12" E="6" Display="WedgedHashBegin"/>
+            <b id="36" B="13" E="7" Display="WedgedHashBegin"/>
+            <b id="37" B="14" E="8" Display="WedgedHashBegin"/>
+            <b id="38" B="17" E="18"/>
+            <b id="39" B="18" E="19"/>
+            <b id="40" B="19" E="20"/>
+            <b id="41" B="20" E="21"/>
+            <b id="42" B="17" E="22" Order="2"/>
+            <b id="43" B="17" E="23"/>
+            <b id="44" B="18" E="24" Display="WedgedHashBegin"/>
+            <b id="45" B="19" E="25" Display="WedgeBegin"/>
+        </fragment>
+    </page>
+</CDXML>

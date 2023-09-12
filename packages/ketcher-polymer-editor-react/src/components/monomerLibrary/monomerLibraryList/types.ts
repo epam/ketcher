@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { LibraryNameType } from 'src/constants';
-import { MonomerItemType } from '../monomerLibraryItem/types';
+import { MonomerItemType } from 'ketcher-core';
 
 export type Group = {
   groupItems: Array<MonomerItemType>;
@@ -24,5 +24,5 @@ export type Group = {
 
 export interface IMonomerListProps {
   libraryName: LibraryNameType;
-  onItemClick: (item) => void;
+  onItemClick?: (item) => void;
 }

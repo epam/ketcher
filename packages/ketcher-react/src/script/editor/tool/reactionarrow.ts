@@ -25,6 +25,7 @@ import {
 import assert from 'assert';
 import Editor from '../Editor';
 import { Tool } from './Tool';
+import { handleMovingPosibilityCursor } from '../utils';
 
 class ReactionArrowTool implements Tool {
   private readonly mode: RxnArrowMode;
@@ -122,6 +123,11 @@ class ReactionArrowTool implements Tool {
     } else {
       const items = this.editor.findItem(event, ['rxnArrows']);
       this.editor.hover(items, null, event);
+      handleMovingPosibilityCursor(
+        items,
+        this.editor.render.paper.canvas,
+        this.editor.render.options.movingStyle.cursor as string,
+      );
     }
   }
 

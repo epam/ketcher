@@ -5,13 +5,13 @@ import {
   TopPanelButton,
   clickInTheMiddleOfTheScreen,
   pressButton,
-  delay,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   readFileContents,
   FILE_TEST_DATA,
-  DELAY_IN_SECONDS,
   saveToFile,
+  waitForLoad,
+  waitForPageInit,
 } from '@utils';
 import { getRxn } from '@utils/formats';
 
@@ -44,12 +44,14 @@ async function pasteFromClipboard(page: Page, fileFormats: string) {
   await selectTopPanelButton(TopPanelButton.Open, page);
   await page.getByText('Paste from clipboard').click();
   await page.getByRole('dialog').getByRole('textbox').fill(fileFormats);
-  await pressButton(page, 'Add to Canvas');
+  await waitForLoad(page, async () => {
+    await pressButton(page, 'Add to Canvas');
+  });
 }
 
 test.describe('Reagents RXN format', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test('Detection molecule as reagent and write reagent information in "MDL rxnfile V2000" format', async ({
@@ -59,7 +61,10 @@ test.describe('Reagents RXN format', () => {
     Test case: EPMLSOPKET-4671
     Description: Files are compared for reagent presence
     */
-    await openFileAndAddToCanvas('benzene-arrow-benzene-reagent-nh3.ket', page);
+    await openFileAndAddToCanvas(
+      'KET/benzene-arrow-benzene-reagent-nh3.ket',
+      page,
+    );
     const expectedFile = await getRxn(page, 'v2000');
     await saveToFile('mdl-rxnfile-v2000-expected.rxn', expectedFile);
 
@@ -90,7 +95,10 @@ test.describe('Reagents RXN format', () => {
     Test case: EPMLSOPKET-4672
     Description: Files are compared for reagent presence
     */
-    await openFileAndAddToCanvas('benzene-arrow-benzene-reagent-nh3.ket', page);
+    await openFileAndAddToCanvas(
+      'KET/benzene-arrow-benzene-reagent-nh3.ket',
+      page,
+    );
     const expectedFile = await getRxn(page, 'v3000');
     await saveToFile('mdl-rxnfile-v3000-expected.rxn', expectedFile);
 
@@ -119,7 +127,10 @@ test.describe('Reagents RXN format', () => {
     Test case: EPMLSOPKET-4675
     Description: File saved in format (e.g. "ketcher.rxn")
     */
-    await openFileAndAddToCanvas('benzene-arrow-benzene-reagent-nh3.ket', page);
+    await openFileAndAddToCanvas(
+      'KET/benzene-arrow-benzene-reagent-nh3.ket',
+      page,
+    );
     const expectedFile = await getRxn(page, 'v2000');
     await saveToFile('mdl-rxnfile-v2000-expected.rxn', expectedFile);
 
@@ -150,15 +161,18 @@ test.describe('Reagents RXN format', () => {
     Test case: EPMLSOPKET-4676
     Description: File saved in format (e.g. "ketcher.rxn")
     */
-    await openFileAndAddToCanvas('benzene-arrow-benzene-reagent-nh3.ket', page);
+    await openFileAndAddToCanvas(
+      'KET/benzene-arrow-benzene-reagent-nh3.ket',
+      page,
+    );
     const expectedFile = await getRxn(page, 'v3000');
     await saveToFile(
-      'benzene-arrow-benzene-reagent-nh3-expected.rxn',
+      'Rxn-V3000/benzene-arrow-benzene-reagent-nh3-expected.rxn',
       expectedFile,
     );
 
     const rxnFileExpected = await readFileContents(
-      'tests/test-data/benzene-arrow-benzene-reagent-nh3-expected.rxn',
+      'tests/test-data/Rxn-V3000/benzene-arrow-benzene-reagent-nh3-expected.rxn',
     );
     const rxnFile = await getRxn(page, 'v3000');
     // eslint-disable-next-line no-magic-numbers
@@ -180,11 +194,10 @@ test.describe('Reagents RXN format', () => {
 
 test.describe('Reagents RXN format', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {
-    await delay(DELAY_IN_SECONDS.THREE);
     await takeEditorScreenshot(page);
   });
 

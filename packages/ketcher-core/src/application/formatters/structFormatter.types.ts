@@ -34,11 +34,14 @@ export enum SupportedFormat {
   smarts = 'smarts',
   inChI = 'inChI',
   inChIAuxInfo = 'inChIAuxInfo',
+  inChIKey = 'inChIKey',
   cml = 'cml',
   ket = 'ket',
   cdxml = 'cdxml',
   cdx = 'cdx',
   binaryCdx = 'binaryCdx',
+  sdf = 'sdf',
+  sdfV3000 = 'sdfV3000',
   unknown = 'unknown',
 }
 

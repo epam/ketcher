@@ -6,6 +6,7 @@ export const tabsContent = [
   {
     caption: 'Favorites',
     component: MonomerList,
+    testId: 'FAVORITES_TAB',
     props: {
       libraryName: MONOMER_LIBRARY_FAVORITES,
     },
@@ -13,16 +14,22 @@ export const tabsContent = [
   {
     caption: 'Peptides',
     component: MonomerList,
+    testId: 'PEPTIDES_TAB',
     props: {
       libraryName: MONOMER_TYPES.PEPTIDE,
     },
   },
   {
     caption: 'RNA',
+    testId: 'RNA_TAB',
     component: RnaBuilder,
   },
   {
     caption: 'CHEM',
-    component: () => <></>,
+    component: MonomerList,
+    testId: 'CHEM_TAB',
+    props: {
+      libraryName: MONOMER_TYPES.CHEM,
+    },
   },
 ];

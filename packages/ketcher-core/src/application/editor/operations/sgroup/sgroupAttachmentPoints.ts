@@ -1,7 +1,7 @@
 import { BaseOperation } from '../base';
-import { OperationType } from '../OperationType';
+import { OperationPriority, OperationType } from '../OperationType';
 import { ReStruct } from '../../../render';
-import { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
+import { SGroupAttachmentPoint } from 'domain/entities';
 import assert from 'assert';
 
 type Data = {
@@ -13,7 +13,10 @@ export class SGroupAttachmentPointAdd extends BaseOperation {
   data: Data;
 
   constructor(sGroupId: number, attachmentPoint: SGroupAttachmentPoint) {
-    super(OperationType.S_GROUP_ATTACHMENT_POINT_ADD, 3);
+    super(
+      OperationType.S_GROUP_ATTACHMENT_POINT_ADD,
+      OperationPriority.S_GROUP_ATTACHMENT_POINT_ADD,
+    );
     this.data = { sGroupId, attachmentPoint };
   }
 

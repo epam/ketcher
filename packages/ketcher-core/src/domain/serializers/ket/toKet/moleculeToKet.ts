@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { SGroup, Struct } from 'domain/entities';
+import { SGroup, Struct, SGroupAttachmentPoint } from 'domain/entities';
 
 import { ifDef } from 'utilities';
 
@@ -53,6 +53,9 @@ export function moleculeToKet(struct: Struct): any {
   const fragment = struct.frags.get(0);
   if (fragment) {
     ifDef(body, 'stereoFlagPosition', fragment.stereoFlagPosition, null);
+    if (fragment.properties) {
+      body.properties = fragment.properties;
+    }
   }
   return {
     type: 'molecule',
@@ -69,7 +72,7 @@ function atomToKet(source) {
   ifDef(result, 'explicitValence', source.explicitValence, -1);
   ifDef(result, 'isotope', source.isotope, 0);
   ifDef(result, 'radical', source.radical, 0);
-  ifDef(result, 'attachmentPoints', source.attpnt, 0);
+  ifDef(result, 'attachmentPoints', source.attachmentPoints, 0);
   ifDef(result, 'cip', source.cip, '');
   // stereo
   ifDef(result, 'stereoLabel', source.stereoLabel, null);
@@ -93,7 +96,7 @@ function rglabelToKet(source) {
     type: 'rg-label',
   };
   ifDef(result, 'location', [source.pp.x, -source.pp.y, source.pp.z]);
-  ifDef(result, 'attachmentPoints', source.attpnt, 0);
+  ifDef(result, 'attachmentPoints', source.attachmentPoints, 0);
 
   const refsToRGroups = fromRlabel(source.rglabel).map(
     (rgnumber) => `rg-${rgnumber}`,
@@ -108,7 +111,7 @@ function atomListToKet(source) {
     type: 'atom-list',
   };
   ifDef(result, 'location', [source.pp.x, -source.pp.y, source.pp.z]);
-  ifDef(result, 'attachmentPoints', source.attpnt, 0);
+  ifDef(result, 'attachmentPoints', source.attachmentPoints, 0);
   ifDef(result, 'elements', source.atomList.labelList());
   ifDef(result, 'notList', source.atomList.notList, false);
   return result;
@@ -127,7 +130,7 @@ function bondToKet(source) {
   return result;
 }
 
-function sgroupToKet(struct, source) {
+function sgroupToKet(struct, source: SGroup) {
   const result = {};
 
   ifDef(result, 'type', source.type);
@@ -153,6 +156,12 @@ function sgroupToKet(struct, source) {
       ifDef(result, 'name', source.data.name || '');
       ifDef(result, 'expanded', source.data.expanded);
       ifDef(result, 'id', source.id);
+      ifDef(
+        result,
+        'attachmentPoints',
+        source.getAttachmentPoints().map(sgroupAttachmentPointToKet),
+        [],
+      );
       break;
     }
     case 'DAT': {
@@ -168,6 +177,16 @@ function sgroupToKet(struct, source) {
     default:
       break;
   }
+
+  return result;
+}
+
+function sgroupAttachmentPointToKet(source: SGroupAttachmentPoint) {
+  const result = {};
+
+  ifDef(result, 'attachmentAtom', source.atomId);
+  ifDef(result, 'leavingAtom', source.leaveAtomId);
+  ifDef(result, 'attachmentId', source.attachmentId);
 
   return result;
 }

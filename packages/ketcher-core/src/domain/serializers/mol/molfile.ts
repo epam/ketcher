@@ -14,12 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { StereoFlag, Struct } from 'domain/entities';
+import { StereoFlag, Struct, SGroupAttachmentPoint } from 'domain/entities';
 
 import { Elements } from 'domain/constants';
 import common from './common';
 import utils from './utils';
-import { SGroupAttachmentPoint } from 'domain/entities/sGroupAttachmentPoint';
 
 const END_V2000 = '2D 1   1.00000     0.00000     0';
 
@@ -361,8 +360,8 @@ export class Molfile {
           }
         }
       }
-      if (atom.attpnt != null) {
-        aplabelList.push([id, atom.attpnt]);
+      if (atom.attachmentPoints != null) {
+        aplabelList.push([id, atom.attachmentPoints]);
       }
       if (atom.ringBondCount !== 0) {
         rbcountList.push([id, atom.ringBondCount]);
@@ -643,7 +642,11 @@ export class Molfile {
       this.mapping[attachmentPoint.leaveAtomId as number] ?? 0;
     this.writePaddedNumber(leaveAtomId, 3);
     this.writeWhiteSpace(1);
-    this.writePadded(attachmentPoint.additionalData, 2);
+
+    const attachmentId = attachmentPoint.attachmentId
+      ? attachmentPoint.attachmentId.slice(0, 2)
+      : '  ';
+    this.writePadded(attachmentId, 2);
     this.writeCR();
   }
 }

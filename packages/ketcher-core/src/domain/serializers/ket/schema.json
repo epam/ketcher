@@ -278,9 +278,18 @@
               "default": 0
             }
           }
+        },
+        "fragments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/structure"
+          }
         }
       },
-      "allOf": [
+      "anyOf": [
+        {
+          "required": ["fragments"]
+        },
         {
           "$ref": "#/definitions/structure"
         }
@@ -313,6 +322,16 @@
             },
             "y": {
               "type": "number"
+            }
+          }
+        },
+        "properties": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "key": { "type": "string" },
+              "value": { "type": "string" }
             }
           }
         },

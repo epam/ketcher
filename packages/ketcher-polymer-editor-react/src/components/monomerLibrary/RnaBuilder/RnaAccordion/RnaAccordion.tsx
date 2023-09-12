@@ -15,43 +15,83 @@
  ***************************************************************************/
 
 import { MonomerGroup } from 'components/monomerLibrary/monomerLibraryGroup';
-import { Group } from 'components/monomerLibrary/monomerLibraryList/types';
 import { useAppSelector } from 'hooks';
-import { Button, IconName } from 'ketcher-react';
-import { useState } from 'react';
+import { IconName } from 'ketcher-react';
+import { useEffect, useState } from 'react';
 import {
   MonomerCodeToGroup,
   MonomerGroupCodes,
   MonomerGroups,
 } from 'src/constants';
-import { selectFilteredMonomers, selectMonomerGroups } from 'state/library';
+import {
+  getMonomerUniqueKey,
+  selectFilteredMonomers,
+  selectMonomerGroups,
+} from 'state/library';
 import {
   DetailsContainer,
+  DisabledArea,
   RnaAccordionContainer,
   StyledAccordion,
+  StyledButton,
 } from './styles';
 import { Summary } from './Summary';
+import {
+  createNewPreset,
+  RnaBuilderItem,
+  RnaBuilderPresetsItem,
+  selectActivePreset,
+  selectActivePresetMonomerGroup,
+  selectActiveRnaBuilderItem,
+  selectIsEditMode,
+  selectPresets,
+  setActivePreset,
+  setActivePresetMonomerGroup,
+  setActiveRnaBuilderItem,
+  setIsEditMode,
+} from 'state/rna-builder';
+import { useDispatch } from 'react-redux';
+import { RnaPresetItem } from 'components/monomerLibrary/RnaPresetItem';
+import { IRnaPreset } from '../types';
+import {
+  GroupContainer,
+  ItemsContainer,
+} from 'components/monomerLibrary/monomerLibraryGroup/styles';
+import { MonomerItemType } from 'ketcher-core';
+import { selectEditor } from 'state/common';
+
+interface IGroupsDataItem {
+  groupName: RnaBuilderItem;
+  iconName: string;
+  groups: {
+    groupItems: IRnaPreset[] | MonomerItemType[];
+    groupTitle?: string;
+  }[];
+}
 
 export const RnaAccordion = () => {
   const monomers = useAppSelector(selectFilteredMonomers);
+  const activeRnaBuilderItem = useAppSelector(selectActiveRnaBuilderItem);
+  const activePreset = useAppSelector(selectActivePreset);
   const groups = selectMonomerGroups(monomers);
+  const presets = useAppSelector(selectPresets);
+  const isEditMode = useAppSelector(selectIsEditMode);
+  const editor = useAppSelector(selectEditor);
 
-  const [expandedAccordion, setExpandedAccordion] = useState<number | null>(
-    null,
-  );
+  const [expandedAccordion, setExpandedAccordion] =
+    useState<RnaBuilderItem | null>(RnaBuilderPresetsItem.Presets);
 
-  const handleAccordionSummaryClick = (index: number) => {
-    if (expandedAccordion === index) {
+  const handleAccordionSummaryClick = (rnaBuilderItem: RnaBuilderItem) => {
+    if (expandedAccordion === rnaBuilderItem) {
       setExpandedAccordion(null);
-    } else setExpandedAccordion(index);
+    } else setExpandedAccordion(rnaBuilderItem);
   };
 
-  const groupsData = [
+  const groupsData: IGroupsDataItem[] = [
     {
-      children: <Button>New Preset</Button>,
-      groupName: 'Presets',
+      groupName: RnaBuilderPresetsItem.Presets,
       iconName: 'preset',
-      groups: [] as Group[],
+      groups: [{ groupItems: presets }],
     },
     {
       groupName: MonomerGroups.SUGARS,
@@ -81,21 +121,46 @@ export const RnaAccordion = () => {
       ),
     },
   ];
-  const [selectedMonomers, setSelectedMonomers] = useState({});
-
+  const dispatch = useDispatch();
   const selectItem = (monomer, groupName) => {
-    setSelectedMonomers({
-      ...selectedMonomers,
-      [groupName]: monomer.label,
-    });
+    editor.events.selectMonomer.dispatch(monomer);
+    if (!isEditMode) return;
+
+    dispatch(setActivePresetMonomerGroup({ groupName, groupItem: monomer }));
+    dispatch(setActiveRnaBuilderItem(groupName));
+  };
+
+  useEffect(() => {
+    setExpandedAccordion(activeRnaBuilderItem);
+  }, [activeRnaBuilderItem]);
+
+  useEffect(() => {
+    dispatch(
+      setActiveRnaBuilderItem(
+        isEditMode && activePreset.presetInList
+          ? expandedAccordion
+          : RnaBuilderPresetsItem.Presets,
+      ),
+    );
+  }, [isEditMode]);
+
+  const selectPreset = (preset: IRnaPreset) => {
+    dispatch(setActivePreset(preset));
+    editor.events.selectPreset.dispatch(preset);
+  };
+
+  const onClickNewPreset = () => {
+    dispatch(createNewPreset());
+    dispatch(setActiveRnaBuilderItem(RnaBuilderPresetsItem.Presets));
+    dispatch(setIsEditMode(true));
   };
 
   return (
-    <RnaAccordionContainer>
-      {groupsData.map((groupData, i) => {
-        const expanded = expandedAccordion === i;
+    <RnaAccordionContainer data-testid="rna-accordion">
+      {groupsData.map((groupData) => {
+        const expanded = expandedAccordion === groupData.groupName;
         const quantity = groupData.groups.reduce(
-          (acc, group) => acc + group.groupItems.length,
+          (acc, group) => acc + group.groupItems.length || 0,
           0,
         );
         const summary = (
@@ -106,31 +171,62 @@ export const RnaAccordion = () => {
             expanded={expanded}
           />
         );
-        const details = (
-          <DetailsContainer>
-            {groupData.children}
-            {groupData.groups.map(({ groupItems, groupTitle }) => {
-              return (
-                <MonomerGroup
-                  key={groupTitle}
-                  title={groupData.groups.length > 1 ? groupTitle : undefined}
-                  items={groupItems}
-                  selectedMonomerLabel={selectedMonomers[groupData.groupName]}
-                  onItemClick={(monomer) =>
-                    selectItem(monomer, groupData.groupName)
-                  }
-                />
-              );
-            })}
-          </DetailsContainer>
-        );
+        const details =
+          groupData.groupName === RnaBuilderPresetsItem.Presets ? (
+            <DetailsContainer>
+              <StyledButton onClick={() => onClickNewPreset()}>
+                New Preset
+              </StyledButton>
+              <GroupContainer>
+                <ItemsContainer>
+                  {presets.map((preset, index) => {
+                    return (
+                      <RnaPresetItem
+                        key={`${preset.name}${index}`}
+                        preset={preset}
+                        onClick={() => selectPreset(preset)}
+                        isSelected={activePreset?.presetInList === preset}
+                      />
+                    );
+                  })}
+                </ItemsContainer>
+              </GroupContainer>
+              {isEditMode && <DisabledArea />}
+            </DetailsContainer>
+          ) : (
+            <DetailsContainer>
+              {groupData.groups.map(({ groupItems, groupTitle }) => {
+                const monomer = selectActivePresetMonomerGroup(
+                  activePreset,
+                  groupData.groupName,
+                );
+                return (
+                  <MonomerGroup
+                    key={groupTitle}
+                    disabled={!isEditMode}
+                    title={groupData.groups.length > 1 ? groupTitle : undefined}
+                    items={groupItems as MonomerItemType[]}
+                    selectedMonomerUniqueKey={
+                      monomer ? getMonomerUniqueKey(monomer) : undefined
+                    }
+                    onItemClick={(monomer) =>
+                      selectItem(monomer, groupData.groupName)
+                    }
+                  />
+                );
+              })}
+            </DetailsContainer>
+          );
         return (
           <StyledAccordion
             key={groupData.groupName}
+            data-testid="styled-accordion"
             summary={summary}
             details={details}
             expanded={expanded}
-            onSummaryClick={() => handleAccordionSummaryClick(i)}
+            onSummaryClick={() =>
+              handleAccordionSummaryClick(groupData.groupName)
+            }
           />
         );
       })}

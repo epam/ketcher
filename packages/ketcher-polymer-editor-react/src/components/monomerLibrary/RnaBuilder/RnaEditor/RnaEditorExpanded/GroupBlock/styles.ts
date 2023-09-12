@@ -18,25 +18,31 @@ import styled from '@emotion/styled';
 import { Icon } from 'ketcher-react';
 
 export const GroupBlockContainer = styled.div<{
-  disabled?: boolean;
   selected?: boolean;
   empty?: boolean;
+  isEditMode?: boolean;
 }>((props) => ({
   height: '40px',
   position: 'relative',
-  marginLeft: '30px',
+  marginLeft: props.isEditMode ? '30px' : '28.5px',
   display: 'flex',
   alignItems: 'center',
+  border: props.isEditMode
+    ? 'none'
+    : `1.5px solid ${props.theme.ketcher.outline.color}`,
   backgroundColor: props.selected
     ? props.theme.ketcher.color.button.primary.active
-    : props.theme.ketcher.color.background.primary,
+    : props.isEditMode
+    ? props.theme.ketcher.color.background.primary
+    : 'transparent',
   borderRadius: props.theme.ketcher.border.radius.regular,
-  boxShadow: props.theme.ketcher.shadow.regular,
+  boxShadow: props.isEditMode ? props.theme.ketcher.shadow.regular : 'none',
   padding: '5px 10px',
   color: props.selected ? 'white' : 'black',
   gap: '14px',
   cursor: 'pointer',
   outlineOffset: '1px',
+  boxSizing: 'border-box',
 
   ':hover': {
     outline: props.theme.ketcher.outline.small,
@@ -79,24 +85,31 @@ export const GroupName = styled.span((props) => ({
   fontSize: props.theme.ketcher.font.size.small,
 }));
 
-export const MonomerName = styled.span((props) => ({
-  marginTop: '1px',
-  fontSize: props.theme.ketcher.font.size.medium,
-}));
-
-export const GroupIcon = styled(Icon)<{ selected?: boolean; empty?: boolean }>(
+export const MonomerName = styled.span<{ selected?: boolean; empty: boolean }>(
   (props) => ({
-    color: props.empty
-      ? 'transparent'
-      : props.selected
-      ? props.theme.ketcher.color.background.primary
-      : props.theme.ketcher.color.icon.grey,
-    width: '20px',
-    height: '20px',
-    stroke: props.empty
-      ? props.selected
-        ? props.theme.ketcher.color.background.primary
-        : props.theme.ketcher.color.icon.grey
-      : 'none',
+    marginTop: '1px',
+    fontSize: props.theme.ketcher.font.size.medium,
+    color: props.selected
+      ? 'white'
+      : props.empty
+      ? props.theme.ketcher.color.text.lightgrey
+      : props.theme.ketcher.color.text.primary,
   }),
 );
+
+export const GroupIcon = styled(Icon)<{
+  selected?: boolean;
+  empty?: boolean;
+  name?: string;
+}>((props) => ({
+  color: props.empty
+    ? 'transparent'
+    : props.selected
+    ? props.theme.ketcher.color.background.primary
+    : props.theme.ketcher.color.icon.grey,
+  stroke: props.selected
+    ? props.theme.ketcher.color.background.primary
+    : props.theme.ketcher.color.icon.grey,
+  paddingRight:
+    props.name === 'sugar' ? '5px' : props.name === 'phosphate' ? '1px' : 0,
+}));

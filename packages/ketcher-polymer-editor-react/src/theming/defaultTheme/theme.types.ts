@@ -17,11 +17,7 @@
 /* eslint-disable  @typescript-eslint/no-empty-interface */
 import '@emotion/react';
 import { ThemeOptions as MuiThemeOptions } from '@mui/material/styles';
-
-export type MonomerColorScheme = {
-  regular: string;
-  hover: string;
-};
+import { MonomerColorScheme } from 'ketcher-core';
 
 export type EditorTheme = {
   color: {
@@ -40,6 +36,7 @@ export type EditorTheme = {
       light: string;
       dark: string;
       error: string;
+      lightgrey: string;
     };
     tab: {
       regular: string;
@@ -63,6 +60,9 @@ export type EditorTheme = {
         hover: string;
         clicked: string;
         disabled: string;
+      };
+      transparent: {
+        active: string;
       };
       text: {
         primary: string;
@@ -158,7 +158,11 @@ export type EditorTheme = {
     color: string;
     selected: {
       color: string;
+      small: string;
       medium: string;
+    };
+    grey: {
+      small: string;
     };
   };
   transition: {

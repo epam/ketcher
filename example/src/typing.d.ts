@@ -6,6 +6,7 @@ declare global {
     data?: unknown;
   }
   export interface Window {
+    isPolymerEditorTurnedOn: boolean;
     postMessage(
       message: IMessage,
       targetOrigin: string,

@@ -39,19 +39,36 @@ export const ButtonsContainer = styled.div({
   gap: '8px',
 });
 
-export const StyledButton = styled(Button)((props) => ({
-  width: '100%',
-  whiteSpace: 'nowrap',
-  fontSize: props.theme.ketcher.font.size.regular,
-}));
+export const StyledButton = styled(Button)<{ primary?: boolean }>((props) => {
+  return {
+    width: '100%',
+    whiteSpace: 'nowrap',
+    fontSize: props.theme.ketcher.font.size.regular,
+    backgroundColor: props.primary
+      ? props.theme.ketcher.color.button.primary.active
+      : undefined,
+    color:
+      props.primary && !props.disabled
+        ? props.theme.ketcher.color.button.text.primary
+        : props.theme.ketcher.color.text.light,
+    outline:
+      props.primary && !props.disabled
+        ? props.theme.ketcher.outline.selected.small
+        : props.theme.ketcher.outline.grey.small,
+  };
+});
 
 export const NameContainer = styled.div<{ selected?: boolean }>((props) => ({
   position: 'relative',
   borderRadius: props.theme.ketcher.border.radius.regular,
   backgroundColor: props.theme.ketcher.color.background.primary,
   boxShadow: props.theme.ketcher.shadow.regular,
+  cursor: 'pointer',
   overflow: 'hidden',
-  padding: '28px 6px 6px 6px',
+  padding: '0 6px 6px 6px',
+  display: 'flex',
+  alignItems: 'flex-end',
+  height: '48px',
   outline: props.selected
     ? props.theme.ketcher.outline.selected.medium
     : 'none',
@@ -74,4 +91,9 @@ export const NameLine = styled.span<{ selected?: boolean }>((props) => ({
 
 export const NameInput = styled(Input)({
   width: '100%',
+});
+
+export const PresetName = styled.div({
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
 });

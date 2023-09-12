@@ -21,8 +21,11 @@ import ReObject from './reobject';
 import { Scale } from 'domain/helpers';
 import draw from '../draw';
 import util from '../util';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { Render } from '../raphaelRender';
 
 const BORDER_EXT = new Vec2(0.05 * 3, 0.05 * 3);
+const PADDING_VECTOR = new Vec2(0.2, 0.4);
 class ReRGroup extends ReObject {
   constructor(/* RGroup */ rgroup) {
     super('rgroup');
@@ -54,28 +57,52 @@ class ReRGroup extends ReObject {
     return ret;
   }
 
+  /**
+   * @param {Render} render
+   */
   calcBBox(render) {
-    let ret = null;
+    /** @type {Box2Abs | null} */
+    let rGroupBoundingBox = null;
     this.item.frags.forEach((fid) => {
-      const bbf = render.ctab.frags.get(fid).calcBBox(render.ctab, fid, render);
-      if (bbf) ret = ret ? Box2Abs.union(ret, bbf) : bbf;
+      const fragBox = render.ctab.frags
+        .get(fid)
+        .calcBBox(render.ctab, fid, render);
+      if (fragBox) {
+        rGroupBoundingBox = rGroupBoundingBox
+          ? Box2Abs.union(rGroupBoundingBox, fragBox)
+          : fragBox;
+      }
     });
 
-    if (ret) ret = ret.extend(BORDER_EXT, BORDER_EXT);
+    const rGroupAttachmentPointsVBox =
+      render.ctab.getRGroupAttachmentPointsVBoxByAtomIds(this.getAtoms(render));
+    if (rGroupBoundingBox && rGroupAttachmentPointsVBox) {
+      rGroupBoundingBox = Box2Abs.union(
+        rGroupBoundingBox,
+        rGroupAttachmentPointsVBox,
+      );
+    }
 
-    return ret;
+    rGroupBoundingBox = rGroupBoundingBox
+      ? rGroupBoundingBox.extend(BORDER_EXT, BORDER_EXT)
+      : rGroupBoundingBox;
+
+    return rGroupBoundingBox;
   }
 
   // TODO need to review parameter list
   draw(render, options) {
     // eslint-disable-line max-statements
-    const bb = this.calcBBox(render);
+    let bb = this.calcBBox(render);
 
     if (!bb) {
       console.error(
         'Abnormal situation, empty fragments must be destroyed by tools',
       );
       return {};
+    } else {
+      // add a little space between the attachment points and brackets
+      bb = bb.extend(PADDING_VECTOR, PADDING_VECTOR);
     }
 
     const ret = { data: [] };

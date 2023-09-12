@@ -54,7 +54,7 @@ declare module 'subscription' {
   export class PipelineSubscription<
     TDispatchValue = any,
   > extends Subscription<TDispatchValue> {
-    dispatch: (value: TDispatchValue) => any;
+    dispatch: (value?: TDispatchValue) => any;
   }
 
   export class StoppableSubscription<

@@ -14,20 +14,27 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction, Slice } from '@reduxjs/toolkit';
 import { RootState } from 'state';
+import { CoreEditor, MonomerItemType } from 'ketcher-core';
+import { ThemeType } from 'theming/defaultTheme';
+import { DeepPartial } from '../../types';
 
 interface EditorState {
   isReady: boolean | null;
   activeTool: string;
+  editor: CoreEditor | undefined;
+  preview: { monomer: undefined | MonomerItemType; style: string };
 }
 
 const initialState: EditorState = {
   isReady: null,
   activeTool: 'select',
+  editor: undefined,
+  preview: { monomer: undefined, style: '' },
 };
 
-export const editorSlice = createSlice({
+export const editorSlice: Slice = createSlice({
   name: 'editor',
   initialState,
   reducers: {
@@ -43,14 +50,48 @@ export const editorSlice = createSlice({
     selectTool: (state, action: PayloadAction<string>) => {
       state.activeTool = action.payload;
     },
+    createEditor: (
+      state,
+      action: PayloadAction<{
+        theme: DeepPartial<ThemeType>;
+        canvas: SVGSVGElement;
+      }>,
+    ) => {
+      state.editor = new CoreEditor({
+        theme: action.payload.theme,
+        canvas: action.payload.canvas,
+      });
+    },
+    showPreview: (
+      state,
+      action: PayloadAction<
+        | {
+            monomer: undefined | MonomerItemType;
+            style: string;
+          }
+        | undefined
+      >,
+    ) => {
+      state.preview = action.payload || { monomer: undefined, style: '' };
+    },
   },
 });
 
-export const { init, initSuccess, initFailure, selectTool } =
-  editorSlice.actions;
+export const {
+  init,
+  initSuccess,
+  initFailure,
+  selectTool,
+  createEditor,
+  showPreview,
+} = editorSlice.actions;
 
 export const selectEditorIsReady = (state: RootState) => state.editor.isReady;
+export const selectShowPreview = (state: RootState) => state.editor.preview;
 export const selectEditorActiveTool = (state: RootState) =>
   state.editor.activeTool;
+
+export const selectEditor = (state: RootState): CoreEditor =>
+  state.editor.editor;
 
 export const editorReducer = editorSlice.reducer;

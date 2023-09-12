@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
+import assert from 'assert';
 import { Atom, radicalElectrons } from './atom';
 import { EditorSelection } from 'application/editor';
 import { Bond } from './bond';
@@ -34,10 +35,18 @@ import { SimpleObject } from './simpleObject';
 import { Text } from './text';
 import { Vec2 } from './vec2';
 import { Highlight } from './highlight';
+import { RGroupAttachmentPoint } from './rgroupAttachmentPoint';
+import { BaseMonomer } from './BaseMonomer';
+import { PolymerBond } from 'domain/entities/PolymerBond';
 
 export type Neighbor = {
   aid: number;
   bid: number;
+};
+
+export type StructProperty = {
+  key: string;
+  value: string;
 };
 
 function arrayAddIfMissing(array, item) {
@@ -52,6 +61,8 @@ export class Struct {
   atoms: Pool<Atom>;
   bonds: Pool<Bond>;
   sgroups: Pool<SGroup>;
+  monomers: Map<number, BaseMonomer>;
+  polymerBonds: Map<number, PolymerBond>;
   halfBonds: Pool<HalfBond>;
   loops: Pool<Loop>;
   isReaction: boolean;
@@ -59,6 +70,7 @@ export class Struct {
   rxnPluses: Pool<RxnPlus>;
   frags: Pool<Fragment | null>;
   rgroups: Pool<RGroup>;
+  rgroupAttachmentPoints: Pool<RGroupAttachmentPoint>;
   name: string;
   abbreviation?: string;
   sGroupForest: SGroupForest;
@@ -71,6 +83,8 @@ export class Struct {
     this.atoms = new Pool<Atom>();
     this.bonds = new Pool<Bond>();
     this.sgroups = new Pool<SGroup>();
+    this.monomers = new Map<number, BaseMonomer>();
+    this.polymerBonds = new Map<number, PolymerBond>();
     this.halfBonds = new Pool<HalfBond>();
     this.loops = new Pool<Loop>();
     this.isReaction = false;
@@ -78,6 +92,7 @@ export class Struct {
     this.rxnPluses = new Pool<RxnPlus>();
     this.frags = new Pool<Fragment>();
     this.rgroups = new Pool<RGroup>();
+    this.rgroupAttachmentPoints = new Pool<RGroupAttachmentPoint>();
     this.name = '';
     this.abbreviation = '';
     this.sGroupForest = new SGroupForest();
@@ -129,6 +144,7 @@ export class Struct {
     aidMap?: Map<number, number> | null,
     simpleObjectsSet?: Pile<number> | null,
     textsSet?: Pile<number> | null,
+    rgroupAttachmentPointSet?: Pile<number> | null,
   ): Struct {
     return this.mergeInto(
       new Struct(),
@@ -139,6 +155,7 @@ export class Struct {
       aidMap,
       simpleObjectsSet,
       textsSet,
+      rgroupAttachmentPointSet,
     );
   }
 
@@ -182,12 +199,16 @@ export class Struct {
     aidMap?: Map<number, number> | null,
     simpleObjectsSet?: Pile<number> | null,
     textsSet?: Pile<number> | null,
+    rgroupAttachmentPointSet?: Pile<number> | null,
   ): Struct {
     atomSet = atomSet || new Pile<number>(this.atoms.keys());
     bondSet = bondSet || new Pile<number>(this.bonds.keys());
     simpleObjectsSet =
       simpleObjectsSet || new Pile<number>(this.simpleObjects.keys());
     textsSet = textsSet || new Pile<number>(this.texts.keys());
+    rgroupAttachmentPointSet =
+      rgroupAttachmentPointSet ||
+      new Pile<number>(this.rgroupAttachmentPoints.keys());
     aidMap = aidMap || new Map();
 
     bondSet = bondSet.filter((bid) => {
@@ -284,6 +305,12 @@ export class Struct {
 
     textsSet.forEach((id) => {
       cp.texts.add(this.texts.get(id)!.clone());
+    });
+
+    rgroupAttachmentPointSet.forEach((id) => {
+      const rgroupAttachmentPoint = this.rgroupAttachmentPoints.get(id);
+      assert(rgroupAttachmentPoint != null);
+      cp.rgroupAttachmentPoints.add(rgroupAttachmentPoint.clone(aidMap));
     });
 
     if (!dropRxnSymbols) {
@@ -710,8 +737,8 @@ export class Struct {
     return components;
   }
 
-  markFragment(idSet: Pile<number>) {
-    const frag = new Fragment();
+  markFragment(idSet: Pile<number>, properties: [StructProperty]) {
+    const frag = new Fragment([], undefined, properties);
     const fid = this.frags.add(frag);
 
     idSet.forEach((aid) => {
@@ -721,10 +748,10 @@ export class Struct {
     });
   }
 
-  markFragments() {
+  markFragments(properties?) {
     const components = this.findConnectedComponents();
     components.forEach((comp) => {
-      this.markFragment(comp);
+      this.markFragment(comp, properties);
     });
   }
 
@@ -1154,5 +1181,12 @@ export class Struct {
         return sgroup?.getAttachmentAtomId() === atomId;
       }) || []
     );
+  }
+
+  getRGroupAttachmentPointsByAtomId(atomId: number) {
+    const rgroupAttachmentPoints = this.rgroupAttachmentPoints.filter(
+      (_id, attachmentPoint) => attachmentPoint.atomId === atomId,
+    );
+    return [...rgroupAttachmentPoints.keys()];
   }
 }

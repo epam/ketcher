@@ -1,9 +1,10 @@
 import { test, expect } from '@playwright/test';
 import { POLYMER_TOGGLER } from '../../../constants/testIdConstants';
+import { waitForPageInit } from '@utils/common';
 
 test.describe('Open Ketcher', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
   test.skip('Switch to Polymer Editor', async ({ page }) => {
     /* 

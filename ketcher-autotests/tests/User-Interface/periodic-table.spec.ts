@@ -4,11 +4,13 @@ import {
   AtomButton,
   selectAtomInToolbar,
   clickInTheMiddleOfTheScreen,
+  waitForPageInit,
+  waitForRender,
 } from '@utils';
 
 test.describe('Open Ketcher', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
   test.afterEach(async ({ page }) => {
     await takeEditorScreenshot(page);
@@ -38,7 +40,9 @@ test.describe('Open Ketcher', () => {
   for (const atom of atoms) {
     test(`Check atoms ${atom}`, async ({ page }) => {
       await selectAtomInToolbar(atom, page);
-      await clickInTheMiddleOfTheScreen(page);
+      await waitForRender(page, async () => {
+        await clickInTheMiddleOfTheScreen(page);
+      });
     });
   }
 });

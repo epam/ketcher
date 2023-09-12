@@ -25,6 +25,8 @@ import { BaseMonomerRenderer } from 'application/render/renderers';
 import { MonomerItemType } from 'domain/types';
 import { monomerFactory } from '../operations/monomer/monomerFactory';
 import assert from 'assert';
+import { provideEditorSettings } from 'application/editor/editorSettings';
+import { Scale } from 'domain/helpers';
 
 class MonomerTool implements Tool {
   private monomerPreview:
@@ -46,14 +48,17 @@ class MonomerTool implements Tool {
 
   mousedown() {
     assert(this.monomerPreviewRenderer);
-
+    const editorSettings = provideEditorSettings();
     const modelChanges = this.editor.drawingEntitiesManager.addMonomer(
       this.monomer,
-      new Vec2(
-        this.editor.lastCursorPosition.x -
-          this.monomerPreviewRenderer.width / 2,
-        this.editor.lastCursorPosition.y -
-          this.monomerPreviewRenderer.height / 2,
+      Scale.scaled2obj(
+        new Vec2(
+          this.editor.lastCursorPosition.x -
+            this.monomerPreviewRenderer.width / 2,
+          this.editor.lastCursorPosition.y -
+            this.monomerPreviewRenderer.height / 2,
+        ),
+        editorSettings,
       ),
     );
 
@@ -61,10 +66,14 @@ class MonomerTool implements Tool {
   }
 
   mousemove() {
+    const editorSettings = provideEditorSettings();
     this.monomerPreview?.moveAbsolute(
-      new Vec2(
-        this.editor.lastCursorPosition.x + this.MONOMER_PREVIEW_OFFSET_X,
-        this.editor.lastCursorPosition.y + this.MONOMER_PREVIEW_OFFSET_Y,
+      Scale.scaled2obj(
+        new Vec2(
+          this.editor.lastCursorPosition.x + this.MONOMER_PREVIEW_OFFSET_X,
+          this.editor.lastCursorPosition.y + this.MONOMER_PREVIEW_OFFSET_Y,
+        ),
+        editorSettings,
       ),
     );
     this.monomerPreviewRenderer?.move();

@@ -6,7 +6,6 @@ import { monomerFactory } from 'application/editor/operations/monomer/monomerFac
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
 import { PolymerBond } from 'domain/entities/PolymerBond';
-import { Vec2 } from 'domain/entities';
 
 export class RenderersManager {
   private theme;
@@ -27,9 +26,9 @@ export class RenderersManager {
     drawingEntity.baseRenderer.drawSelection();
   }
 
-  public moveDrawingEntity(drawingEntity: DrawingEntity, offset: Vec2) {
+  public moveDrawingEntity(drawingEntity: DrawingEntity) {
     assert(drawingEntity.baseRenderer);
-    drawingEntity.baseRenderer.moveSelection(offset);
+    drawingEntity.baseRenderer.moveSelection();
   }
 
   public addMonomer(monomer: BaseMonomer, callback?: () => void) {

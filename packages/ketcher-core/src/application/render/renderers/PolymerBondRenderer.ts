@@ -32,7 +32,6 @@ export class PolymerBondRenderer extends BaseRenderer {
 
   public moveSelection() {
     assert(this.rootElement);
-    this.polymerBond.moveToLinkedMonomers();
     this.moveStart();
     this.moveEnd();
   }

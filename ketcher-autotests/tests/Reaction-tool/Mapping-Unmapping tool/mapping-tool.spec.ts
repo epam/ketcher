@@ -1,13 +1,11 @@
 import { test } from '@playwright/test';
 import {
-  delay,
   takeEditorScreenshot,
   LeftPanelButton,
   clickInTheMiddleOfTheScreen,
   selectLeftPanelButton,
   selectNestedTool,
   ReactionMappingTool,
-  DELAY_IN_SECONDS,
   openFileAndAddToCanvas,
   selectRingButton,
   RingButton,
@@ -15,12 +13,13 @@ import {
   selectTopPanelButton,
   TopPanelButton,
   dragMouseTo,
+  waitForPageInit,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 
-test.describe('Open Ketcher', () => {
+test.describe('Mapping Tools', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {
@@ -31,22 +30,21 @@ test.describe('Open Ketcher', () => {
     /* Test case: EPMLSOPKET-1799, EPMLSOPKET-8909
     Description:  Click atoms to map atoms in a reaction
     */
-    await openFileAndAddToCanvas('reaction_3.rxn', page);
+    await openFileAndAddToCanvas('Rxn-V2000/reaction-3.rxn', page);
     await selectNestedTool(page, ReactionMappingTool.MAP);
     await page.getByText('CEL');
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
     await dragMouseTo(x, y, page);
   });
 
-  test.describe('mapped_atoms.rxn', () => {
+  test.describe('Mapping Tools', () => {
     test.beforeEach(async ({ page }) => {
-      await openFileAndAddToCanvas('mapped_atoms.rxn', page);
+      await openFileAndAddToCanvas('Rxn-V2000/mapped-atoms.rxn', page);
     });
 
     test('Click the single mapped atom to delete mapping', async ({ page }) => {
       // EPMLSOPKET-1827
       await selectNestedTool(page, ReactionMappingTool.UNMAP);
-      await delay(DELAY_IN_SECONDS.FIVE);
       await page.getByText('CEL');
     });
 
@@ -61,7 +59,7 @@ test.describe('Open Ketcher', () => {
 
   test('No Unmapping after the arrow deleting', async ({ page }) => {
     // EPMLSOPKET-1828
-    await openFileAndAddToCanvas('mapped_rection_benz.rxn', page);
+    await openFileAndAddToCanvas('Rxn-V2000/mapped-rection-benz.rxn', page);
     await selectLeftPanelButton(LeftPanelButton.Erase, page);
     await clickInTheMiddleOfTheScreen(page);
   });
@@ -69,7 +67,7 @@ test.describe('Open Ketcher', () => {
   test('Click atoms to map atoms of reactants or products', async ({
     page,
   }) => {
-    await openFileAndAddToCanvas('reaction_4.rxn', page);
+    await openFileAndAddToCanvas('Rxn-V2000/reaction-4.rxn', page);
     await selectNestedTool(page, ReactionMappingTool.MAP);
     const point = await getAtomByIndex(page, { label: 'Br' }, 0);
     await page.mouse.click(point.x, point.y);
@@ -91,11 +89,12 @@ test.describe('Open Ketcher', () => {
     await selectTopPanelButton(TopPanelButton.Undo, page);
   });
 
-  test.describe('mapped_reaction.rxn', () => {
+  test.describe('Mapping reactions', () => {
     test.beforeEach(async ({ page }) => {
-      await openFileAndAddToCanvas('mapped_reaction.rxn', page);
+      await openFileAndAddToCanvas('Rxn-V2000/mapped-reaction.rxn', page);
       await clickInTheMiddleOfTheScreen(page);
     });
+
     test('Remove the reaction components', async ({ page }) => {
       // EPMLSOPKET-1831
       await selectNestedTool(page, ReactionMappingTool.MAP);

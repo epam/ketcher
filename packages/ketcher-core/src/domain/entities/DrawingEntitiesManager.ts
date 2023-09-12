@@ -122,27 +122,28 @@ export class DrawingEntitiesManager {
 
     this.monomers.forEach((drawingEntity) => {
       if (drawingEntity.selected) {
-        command.merge(
-          this.createDrawingEntityMovingCommand(drawingEntity, offset),
-        );
+        drawingEntity.moveRelative(offset);
+        command.merge(this.createDrawingEntityMovingCommand(drawingEntity));
       }
     });
 
     this.polymerBonds.forEach((drawingEntity) => {
-      command.merge(
-        this.createDrawingEntityMovingCommand(drawingEntity, offset),
-      );
+      if (
+        drawingEntity.selected ||
+        drawingEntity.firstMonomer.selected ||
+        drawingEntity.secondMonomer?.selected
+      ) {
+        drawingEntity.moveToLinkedMonomers();
+        command.merge(this.createDrawingEntityMovingCommand(drawingEntity));
+      }
     });
     return command;
   }
 
-  public createDrawingEntityMovingCommand(
-    drawingEntity: DrawingEntity,
-    offset: Vec2,
-  ) {
+  public createDrawingEntityMovingCommand(drawingEntity: DrawingEntity) {
     const command = new Command();
 
-    const movingCommand = new DrawingEntityMoveOperation(drawingEntity, offset);
+    const movingCommand = new DrawingEntityMoveOperation(drawingEntity);
     command.addOperation(movingCommand);
 
     return command;

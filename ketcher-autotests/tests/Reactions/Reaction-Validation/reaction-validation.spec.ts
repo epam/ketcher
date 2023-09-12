@@ -1,9 +1,13 @@
 /* eslint-disable no-magic-numbers */
 import { expect, test } from '@playwright/test';
 import {
+  AtomButton,
+  clickOnAtom,
   openFileAndAddToCanvas,
   receiveFileComparisonData,
   saveToFile,
+  selectAtomInToolbar,
+  takeEditorScreenshot,
 } from '@utils';
 import { getRxn } from '@utils/formats';
 
@@ -172,5 +176,29 @@ test.describe('Reaction validation', () => {
       });
 
     expect(rxnFile).toEqual(rxnFileExpected);
+  });
+
+  test('Editing reaction with combination of products', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-1492
+    Description: Reaction with combination of products can be edited after opening
+    */
+    const anyAtom = 0;
+    await openFileAndAddToCanvas('KET/combination-of-products.ket', page);
+    await selectAtomInToolbar(AtomButton.Oxygen, page);
+    await clickOnAtom(page, 'C', anyAtom);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Editing reaction with combination of reactants', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-1493
+    Description: Reaction with combination of reactants can be edited after opening
+    */
+    const anyAtom = 0;
+    await openFileAndAddToCanvas('KET/combination-of-reactants.ket', page);
+    await selectAtomInToolbar(AtomButton.Fluorine, page);
+    await clickOnAtom(page, 'C', anyAtom);
+    await takeEditorScreenshot(page);
   });
 });

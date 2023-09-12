@@ -12,6 +12,7 @@ import {
   DELAY_IN_SECONDS,
   waitForLoad,
   waitForPageInit,
+  nonEmptyString,
 } from '@utils';
 import { getSmiles } from '@utils/formats';
 
@@ -25,6 +26,7 @@ async function getPreviewForSmiles(
   await page.getByRole('option', { name: smileType }).click();
   const previewInput = page.getByTestId('smiles-preview-area-text');
   await previewInput.waitFor({ state: 'visible' });
+  await expect(previewInput).toContainText(nonEmptyString);
 }
 
 async function getAndCompareSmiles(page: Page, smilesFilePath: string) {

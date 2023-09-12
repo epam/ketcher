@@ -24,6 +24,7 @@ import {
   selectNestedTool,
   waitForPageInit,
   waitForSpinnerFinishedWork,
+  waitForRender,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
@@ -111,7 +112,9 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await openFileAndAddToCanvas('structure-with-stereo-bonds.mol', page);
     await selectTopPanelButton(TopPanelButton.Calculate, page);
     await copyAndPaste(page);
-    await page.mouse.click(x, y);
+    await waitForRender(page, async () => {
+      await page.mouse.click(x, y);
+    });
   });
 
   test('Cut/Paste of structure that contain stereo labels', async ({

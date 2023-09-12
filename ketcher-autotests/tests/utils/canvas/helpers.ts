@@ -81,7 +81,7 @@ export async function takeEditorScreenshot(
   options?: { masks?: Locator[] },
 ) {
   const editor = page.getByTestId('ketcher-canvas').first();
-  await waitForRender(page);
+  await delay(DELAY_IN_SECONDS.THREE);
   await expect(editor).toHaveScreenshot({ mask: options?.masks });
 }
 

@@ -12,12 +12,14 @@ import {
   pasteFromClipboardAndAddToCanvas,
   openPasteFromClipboard,
   waitForPageInit,
+  nonEmptyString,
 } from '@utils';
 
 async function selectInChiOption(page: Page) {
   await selectOptionByText(page, 'InChI');
   const previewInput = page.getByTestId('inChI-preview-area-text');
   await previewInput.waitFor({ state: 'visible' });
+  await expect(previewInput).toContainText(nonEmptyString);
 }
 
 test.describe('', () => {

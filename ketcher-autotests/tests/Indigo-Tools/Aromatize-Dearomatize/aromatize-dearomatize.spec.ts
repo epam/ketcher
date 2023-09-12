@@ -66,29 +66,28 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     await selectTopPanelButton(TopPanelButton.Dearomatize, page);
   });
 
-  test.fixme(
-    'Aromatic structures - interchanged Single and Double bonds',
-    async ({ page }) => {
-      /*
+  test('Aromatic structures - interchanged Single and Double bonds', async ({
+    page,
+  }) => {
+    /*
     Test case: EPMLSOPKET-1870
     Description: The aromatic structures appear with circle inside the cycles.
     Aromatize function affects all canvas.
     The structures appears in a Kekule form: with interchanged Single and Double bonds.
     Dearomatize function affects all canvas.
     */
-      await openFileAndAddToCanvas(
-        'Molfiles-V2000/aromatic-structures.mol',
-        page,
-      );
-      await waitForSpinnerFinishedWork(page, async () => {
-        await selectTopPanelButton(TopPanelButton.Aromatize, page);
-      });
-      await takeEditorScreenshot(page);
-      await waitForSpinnerFinishedWork(page, async () => {
-        await selectTopPanelButton(TopPanelButton.Dearomatize, page);
-      });
-    },
-  );
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/aromatic-structures.mol',
+      page,
+    );
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Aromatize, page);
+    });
+    await takeEditorScreenshot(page);
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Dearomatize, page);
+    });
+  });
 
   test('Cycles with Aromatic Bonds', async ({ page }) => {
     /*
@@ -104,26 +103,25 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     await selectTopPanelButton(TopPanelButton.Dearomatize, page);
   });
 
-  test.fixme(
-    '(Undo/Redo) Manipulations with cyclic structures with a circle inside the cycle',
-    async ({ page }) => {
-      /*
+  test('(Undo/Redo) Manipulations with cyclic structures with a circle inside the cycle', async ({
+    page,
+  }) => {
+    /*
     Test case: EPMLSOPKET-1872
     Description: Only six-cycle structures appear in a Kekule form: with interchanged Single and Double bonds.
     All other structures are rendered with a circle inside the cycles. The actions are Undone/Redone.
     */
-      await openFileAndAddToCanvas('cycles-with-aromatic-bonds.mol', page);
-      await waitForSpinnerFinishedWork(page, async () => {
-        await selectTopPanelButton(TopPanelButton.Aromatize, page);
-      });
-      await waitForSpinnerFinishedWork(page, async () => {
-        await selectTopPanelButton(TopPanelButton.Dearomatize, page);
-      });
-      await selectTopPanelButton(TopPanelButton.Undo, page);
-      await takeEditorScreenshot(page);
-      await selectTopPanelButton(TopPanelButton.Redo, page);
-    },
-  );
+    await openFileAndAddToCanvas('cycles-with-aromatic-bonds.mol', page);
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Aromatize, page);
+    });
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Dearomatize, page);
+    });
+    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await takeEditorScreenshot(page);
+    await selectTopPanelButton(TopPanelButton.Redo, page);
+  });
 
   test('(Copy/Paste) Manipulations with cyclic structures with a circle inside the cycle', async ({
     page,

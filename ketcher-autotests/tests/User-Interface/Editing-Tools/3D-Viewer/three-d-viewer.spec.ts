@@ -53,7 +53,7 @@ test.describe.fixme('3D Viewer', () => {
     3D window is opened. Benzene with heteroatom is drawn in it. 
     Position of the structure on the canvas isn't changed. 
     */
-    await openFileAndAddToCanvas('benzene-br.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/benzene-br.mol', page);
     await selectTopPanelButton(TopPanelButton.ThreeD, page);
     // delay need to load 3D Viewer
     await delay(DELAY_IN_SECONDS.THREE);
@@ -89,7 +89,10 @@ test.describe.fixme('3D Viewer', () => {
     Description: 3D window is opened. The structure with a circle inside the cycle is displayed in the window. 
     The structure isn't changed.
     */
-    await openFileAndAddToCanvas('benzene-with-aromatic-bonds.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/benzene-with-aromatic-bonds.mol',
+      page,
+    );
     await selectTopPanelButton(TopPanelButton.ThreeD, page);
     // delay need to load 3D Viewer
     await delay(DELAY_IN_SECONDS.THREE);
@@ -182,7 +185,7 @@ test.describe.fixme('3D Viewer', () => {
     3D window is opened. Benzene with heteroatom is drawn in it. 
     Position of the structure on the canvas is changed. 
     */
-      await openFileAndAddToCanvas('benzene-br.mol', page);
+      await openFileAndAddToCanvas('Molfiles-V2000/benzene-br.mol', page);
       const initialStructureData = await getKet(page);
       await selectTopPanelButton(TopPanelButton.ThreeD, page);
       // delay need to load 3D Viewer
@@ -234,7 +237,10 @@ test.describe.fixme('3D Viewer', () => {
     Description: 3D window is opened. The structure with a circle inside the cycle is displayed in the window. 
     The structure is changed.
     */
-      await openFileAndAddToCanvas('benzene-with-aromatic-bonds.mol', page);
+      await openFileAndAddToCanvas(
+        'Molfiles-V2000/benzene-with-aromatic-bonds.mol',
+        page,
+      );
       const initialStructureData = await getKet(page);
       await selectTopPanelButton(TopPanelButton.ThreeD, page);
       // delay need to load 3D Viewer

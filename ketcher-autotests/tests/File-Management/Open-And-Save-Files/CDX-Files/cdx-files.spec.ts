@@ -1,8 +1,6 @@
 import { test } from '@playwright/test';
 import {
   clickInTheMiddleOfTheScreen,
-  TopPanelButton,
-  selectTopPanelButton,
   openFileAndAddToCanvas,
   takeEditorScreenshot,
   pasteFromClipboardAndAddToCanvas,
@@ -27,21 +25,19 @@ test.describe('CDX files', () => {
     await openFileAndAddToCanvas('cdx-expanded-contracted.cdx', page);
   });
 
-  test.fixme('opening cdx files with R-group', async ({ page }) => {
+  test('opening cdx files with R-group', async ({ page }) => {
     /* 
     Test case: EPMLSOPKET-6973
     Description: Open CDX files with R-group
     */
-    await openFileAndAddToCanvas('cdx_file.cdx', page);
+    await openFileAndAddToCanvas('r_group_cdx.cdx', page);
   });
 
-  test.fixme('opening cdx files from clipboard', async ({ page }) => {
+  test('opening cdx files from clipboard', async ({ page }) => {
     /* 
   Test case: EPMLSOPKET-6972
   Description: Open structure created in ChemDraw from clickboard
   */
-    await selectTopPanelButton(TopPanelButton.Open, page);
-    await page.getByText('Paste from clipboard').click();
     await pasteFromClipboardAndAddToCanvas(
       page,
       // eslint-disable-next-line max-len

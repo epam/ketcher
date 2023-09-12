@@ -7,6 +7,7 @@ import {
   STRUCTURE_LIBRARY_BUTTON_NAME,
   takeEditorScreenshot,
   TopPanelButton,
+  waitForPageInit,
 } from '@utils';
 
 async function setDisplayStereoFlagsSettingToOn(page: Page) {
@@ -45,7 +46,7 @@ async function placePhenylalanineMustard(page: Page, x: number, y: number) {
 
 test.describe('Templates - Template Library', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {

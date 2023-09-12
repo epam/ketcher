@@ -17,6 +17,7 @@ import {
   selectTopPanelButton,
   takeEditorScreenshot,
   TopPanelButton,
+  waitForPageInit,
 } from '@utils';
 
 async function createToolTipScreenshot(type: RingButton, page: Page) {
@@ -102,7 +103,7 @@ test.describe('Templates - Rings manipulations', () => {
   // EPMLSOPKET: connecting different rings to rings, applying changes to a single ring, history check
 
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {

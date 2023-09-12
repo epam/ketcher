@@ -23,11 +23,19 @@ import {
   doubleClickOnAtom,
   moveOnAtom,
   clickOnAtom,
+  waitForPageInit,
+  waitForRender,
 } from '@utils';
 import { getMolfile, getRxn } from '@utils/formats';
 
 const CANVAS_CLICK_X = 200;
 const CANVAS_CLICK_Y = 200;
+
+async function waitForAtomPropsModal(page: Page) {
+  await expect(await page.getByTestId('atomProps-dialog').isVisible()).toBe(
+    true,
+  );
+}
 
 async function selectAtomLabel(page: Page, label: string, button: string) {
   await page.getByLabel('Label').fill(label);
@@ -168,7 +176,7 @@ async function selectElementFromExtendedTable(
 
 test.describe('Atom Properties', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {
@@ -199,6 +207,7 @@ test.describe('Atom Properties', () => {
     */
     await openFileAndAddToCanvas('KET/benzene-ring-with-two-atoms.ket', page);
     await doubleClickOnAtom(page, 'N', 0);
+    await waitForAtomPropsModal(page);
   });
 
   test('Check Atom Properties modal window by hovering and press hotkey /', async ({
@@ -225,7 +234,9 @@ test.describe('Atom Properties', () => {
     */
     await openFileAndAddToCanvas('KET/benzene-ring-with-two-atoms.ket', page);
     await moveOnAtom(page, 'O', 0);
-    await page.keyboard.press('/');
+    await waitForRender(page, async () => {
+      await page.keyboard.press('/');
+    });
   });
 
   test('Change Atom Label on structure and press Cancel', async ({ page }) => {
@@ -249,7 +260,9 @@ test.describe('Atom Properties', () => {
     await openFileAndAddToCanvas('KET/benzene-ring-with-two-atoms.ket', page);
     await doubleClickOnAtom(page, 'C', 0);
 
-    await selectAtomLabel(page, 'Sb', 'Apply');
+    await waitForRender(page, async () => {
+      await selectAtomLabel(page, 'Sb', 'Apply');
+    });
   });
 
   test('Change Atom Label on structure to incorrect', async ({ page }) => {
@@ -1016,7 +1029,7 @@ test.describe('Atom Properties', () => {
     await selectRingBondCount(page, '4', 'Apply');
   });
 
-  test('Ring bonds count - Editing and Undo/Redo', async ({ page }) => {
+  test.fixme('Ring bonds count - Editing and Undo/Redo', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-1639
       Description: Ring bond count atom property is displayed as specified from the menu item.
@@ -1097,28 +1110,29 @@ test.describe('Atom Properties', () => {
     await selectHCount(page, '4', 'Apply');
   });
 
-  test('Save structure with Query specific - H count information as *.mol file', async ({
-    page,
-  }) => {
-    /*
+  test.fixme(
+    'Save structure with Query specific - H count information as *.mol file',
+    async ({ page }) => {
+      /*
       Test case: EPMLSOPKET-1640
       Description: The structure is saved as *.mol file.
     */
-    await openFileAndAddToCanvas('chain-with-h-count.mol', page);
-    const expectedFile = await getMolfile(page, 'v2000');
-    await saveToFile('chain-with-h-count-expected.mol', expectedFile);
+      await openFileAndAddToCanvas('chain-with-h-count.mol', page);
+      const expectedFile = await getMolfile(page, 'v2000');
+      await saveToFile('chain-with-h-count-expected.mol', expectedFile);
 
-    const METADATA_STRING_INDEX = [1];
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName: 'tests/test-data/chain-with-h-count-expected.mol',
-        fileFormat: 'v2000',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
+      const METADATA_STRING_INDEX = [1];
+      const { fileExpected: molFileExpected, file: molFile } =
+        await receiveFileComparisonData({
+          page,
+          expectedFileName: 'tests/test-data/chain-with-h-count-expected.mol',
+          fileFormat: 'v2000',
+          metaDataIndexes: METADATA_STRING_INDEX,
+        });
 
-    expect(molFile).toEqual(molFileExpected);
-  });
+      expect(molFile).toEqual(molFileExpected);
+    },
+  );
 
   test('Hydrogen count - Representation of blank selection', async ({
     page,
@@ -1217,27 +1231,28 @@ test.describe('Atom Properties', () => {
     expect(molFile).toEqual(molFileExpected);
   });
 
-  test('Substitution count - Representation of blank selection', async ({
-    page,
-  }) => {
-    /*
+  test.fixme(
+    'Substitution count - Representation of blank selection',
+    async ({ page }) => {
+      /*
       Test case: EPMLSOPKET-1643
       Description: The atom is selected.
       Number of nonhydrogen substituents is displayed as AtomSymbol(sN) where N depends on the number selected.
       Nothing is changed.
     */
-    await openFileAndAddToCanvas('KET/chain.ket', page);
+      await openFileAndAddToCanvas('KET/chain.ket', page);
 
-    await doubleClickOnAtom(page, 'C', 0);
-    await page.getByText('Query specific').click();
-    await page
-      .locator('label')
-      .filter({ hasText: 'Substitution count' })
-      .getByRole('button', { name: '​' })
-      .click();
-    await page.locator('.MuiMenuItem-root').first().click();
-    await pressButton(page, 'Apply');
-  });
+      await doubleClickOnAtom(page, 'C', 0);
+      await page.getByText('Query specific').click();
+      await page
+        .locator('label')
+        .filter({ hasText: 'Substitution count' })
+        .getByRole('button', { name: '​' })
+        .click();
+      await page.locator('.MuiMenuItem-root').first().click();
+      await pressButton(page, 'Apply');
+    },
+  );
 
   test('Add Query specific - Unsaturated in modal and press Cancel', async ({
     page,

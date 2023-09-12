@@ -8,12 +8,13 @@ import {
   saveToFile,
   selectAtomInToolbar,
   takeEditorScreenshot,
+  waitForPageInit,
 } from '@utils';
 import { getRxn } from '@utils/formats';
 
 test.describe('Reaction validation', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test('Saving reaction with more than one pluses', async ({ page }) => {

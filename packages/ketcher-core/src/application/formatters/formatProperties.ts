@@ -81,7 +81,7 @@ const formatProperties: FormatPropertiesMap = {
     ['.inchi'],
   ),
   inChIKey: new SupportedFormatProperties(
-    'inChIKey',
+    'InChIKey',
     ChemicalMimeType.InChIKey,
     ['.inchi'],
   ),
@@ -111,6 +111,19 @@ const formatProperties: FormatPropertiesMap = {
     ChemicalMimeType.CDX,
     ['.cdx'],
     true,
+  ),
+  sdf: new SupportedFormatProperties(
+    'SDF V2000',
+    ChemicalMimeType.SDF,
+    ['.sdf'],
+    true,
+  ),
+  sdfV3000: new SupportedFormatProperties(
+    'SDF V3000',
+    ChemicalMimeType.SDF,
+    ['.sdf'],
+    true,
+    { 'molfile-saving-mode': '3000' },
   ),
   unknown: new SupportedFormatProperties(
     'Unknown',

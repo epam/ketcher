@@ -1,4 +1,5 @@
 import { Struct } from 'domain/entities';
+import { isEqual } from 'lodash';
 import { Render } from './raphaelRender';
 
 /**
@@ -6,6 +7,7 @@ import { Render } from './raphaelRender';
  * Rendering a lot of structures causes great delay
  */
 const renderCache = new Map();
+let previousOptions: any;
 
 export class RenderStruct {
   /**
@@ -30,21 +32,31 @@ export class RenderStruct {
     if (el && struct) {
       const { cachePrefix = '', needCache = true } = options;
       const cacheKey = `${cachePrefix}${struct.name}`;
+
+      if (!isEqual(previousOptions, options)) {
+        renderCache.clear();
+        previousOptions = options;
+      }
+
       if (renderCache.has(cacheKey) && needCache) {
         el.innerHTML = renderCache.get(cacheKey);
         return;
       }
+
       const preparedStruct = this.prepareStruct(struct);
       preparedStruct.initHalfBonds();
       preparedStruct.initNeighbors();
       preparedStruct.setImplicitHydrogen();
       preparedStruct.markFragments();
+
       const rnd = new Render(el, {
         autoScale: true,
         ...options,
       });
+
       preparedStruct.rescale();
       rnd.setMolecule(preparedStruct);
+
       if (needCache) {
         renderCache.set(cacheKey, rnd.clientArea.innerHTML);
       }

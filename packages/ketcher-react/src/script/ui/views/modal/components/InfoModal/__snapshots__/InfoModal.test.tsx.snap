@@ -21,6 +21,7 @@ Object {
           >
             <button
               class="buttonTop"
+              data-testid="close-icon"
             >
               <icon-close.svg
                 classname="closeButton"
@@ -87,6 +88,7 @@ Object {
         >
           <button
             class="buttonTop"
+            data-testid="close-icon"
           >
             <icon-close.svg
               classname="closeButton"
@@ -217,6 +219,7 @@ Object {
           >
             <button
               class="buttonTop"
+              data-testid="close-icon"
             >
               <icon-close.svg
                 classname="closeButton"
@@ -260,6 +263,7 @@ Object {
         >
           <button
             class="buttonTop"
+            data-testid="close-icon"
           >
             <icon-close.svg
               classname="closeButton"

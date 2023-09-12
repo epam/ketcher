@@ -746,7 +746,7 @@ export const peptideMonomerItem: MonomerItemType = {
     MonomerCaps: '',
     MonomerCode: '',
     MonomerName: '',
-    MonomerType: '',
+    MonomerType: 'PEPTIDE',
     Name: '',
     MonomerNaturalAnalogCode: 'A',
   },

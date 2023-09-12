@@ -13,11 +13,12 @@ import {
   resetCurrentTool,
   selectLeftPanelButton,
   LeftPanelButton,
+  waitForPageInit,
 } from '@utils';
 
 test.describe('Open Ketcher', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test('Toolbar palette: full screen verification', async ({ page }) => {
@@ -88,7 +89,7 @@ test.describe('Open Ketcher', () => {
     Description: Toolbars (right one and bottom) were not visible if browser zoomed in
     */
     await browser.newContext({ deviceScaleFactor: 1.25 });
-    await page.goto('');
+    await waitForPageInit(page);
     await page.setViewportSize({ width: 560, height: 380 });
     await expect(page).toHaveScreenshot();
   });

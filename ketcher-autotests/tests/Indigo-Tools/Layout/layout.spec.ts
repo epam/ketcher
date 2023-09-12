@@ -7,6 +7,7 @@ import {
   pressButton,
   waitForLoad,
   getCoordinatesOfTheMiddleOfTheScreen,
+  waitForPageInit,
 } from '@utils';
 
 async function openFileWithShift(filename: string, page: Page) {
@@ -22,12 +23,12 @@ async function openFileWithShift(filename: string, page: Page) {
 
 test.describe('Indigo Tools - Layout', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test('Center molecule after layout', async ({ page }) => {
     // Related Github issue: https://github.com/epam/ketcher/issues/2078
-    const anyStructure = 'benzene-rings.mol';
+    const anyStructure = 'Molfiles-V2000/benzene-rings.mol';
     await openFileWithShift(anyStructure, page);
     await selectTopPanelButton(TopPanelButton.Layout, page);
     await takeEditorScreenshot(page);
@@ -37,7 +38,7 @@ test.describe('Indigo Tools - Layout', () => {
     page,
   }) => {
     // Related Github issue: https://github.com/epam/ketcher/issues/3025
-    const structureWithStereoFlags = 'structure-with-stereo-flags.ket';
+    const structureWithStereoFlags = 'KET/structure-with-stereo-flags.ket';
     await openFileWithShift(structureWithStereoFlags, page);
     await selectTopPanelButton(TopPanelButton.Layout, page);
     await selectTopPanelButton(TopPanelButton.Layout, page);

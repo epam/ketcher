@@ -19,8 +19,8 @@ env:
   CI_ENVIRONMENT: true
 jobs:
   playwright_tests:
-    timeout-minutes: 120
-    runs-on: ubuntu-22.04
+    timeout-minutes: 40
+    runs-on: self-hosted
     steps:
       - uses: actions/checkout@v3
         with:

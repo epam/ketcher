@@ -68,7 +68,7 @@ export async function selectLeftPanelButton(
   await leftPanelButton.click();
 }
 
-export async function selectButtonById(buttonId: BondIds, page: Page) {
+export async function selectButtonById(buttonId: BondIds | 'OK', page: Page) {
   const element = page.getByTestId(buttonId);
   await element.click();
 }

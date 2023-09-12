@@ -25,6 +25,7 @@ Object {
           >
             <button
               class="buttonTop"
+              data-testid="close-icon"
             >
               <icon-close.svg
                 classname="closeButton"
@@ -50,6 +51,7 @@ Object {
                 >
                   <input
                     class="input genericInput"
+                    data-testid="file-name-input"
                     name="filename"
                     type="text"
                     value=""
@@ -115,6 +117,7 @@ Object {
                 >
                   <a
                     class="active"
+                    data-testid="preview-tab"
                   >
                     Preview
                   </a>
@@ -126,6 +129,7 @@ Object {
                 >
                   <textarea
                     class="previewArea"
+                    data-testid="mol-preview-area-text"
                     readonly=""
                   />
                 </div>
@@ -212,6 +216,24 @@ Object {
           <li
             aria-selected="false"
             class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-kk1bwy-MuiButtonBase-root-MuiMenuItem-root"
+            data-value="sdf"
+            role="option"
+            tabindex="-1"
+          >
+            SDF V2000
+          </li>
+          <li
+            aria-selected="false"
+            class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-kk1bwy-MuiButtonBase-root-MuiMenuItem-root"
+            data-value="sdfV3000"
+            role="option"
+            tabindex="-1"
+          >
+            SDF V3000
+          </li>
+          <li
+            aria-selected="false"
+            class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-kk1bwy-MuiButtonBase-root-MuiMenuItem-root"
             data-value="smarts"
             role="option"
             tabindex="-1"
@@ -275,7 +297,7 @@ Object {
             role="option"
             tabindex="-1"
           >
-            inChIKey
+            InChIKey
           </li>
           <hr
             aria-selected="false"
@@ -354,6 +376,7 @@ Object {
         >
           <button
             class="buttonTop"
+            data-testid="close-icon"
           >
             <icon-close.svg
               classname="closeButton"
@@ -379,6 +402,7 @@ Object {
               >
                 <input
                   class="input genericInput"
+                  data-testid="file-name-input"
                   name="filename"
                   type="text"
                   value=""
@@ -444,6 +468,7 @@ Object {
               >
                 <a
                   class="active"
+                  data-testid="preview-tab"
                 >
                   Preview
                 </a>
@@ -455,6 +480,7 @@ Object {
               >
                 <textarea
                   class="previewArea"
+                  data-testid="mol-preview-area-text"
                   readonly=""
                 />
               </div>

@@ -8,7 +8,6 @@ import {
   DELAY_IN_SECONDS,
   selectNestedTool,
   RgroupTool,
-  AttachmentPoint,
   selectTopPanelButton,
   TopPanelButton,
   selectAtomInToolbar,
@@ -25,7 +24,11 @@ import {
   receiveFileComparisonData,
   clickOnAtom,
   screenshotBetweenUndoRedo,
+  setAttachmentPoints,
+  AttachmentPoint,
+  waitForPageInit,
 } from '@utils';
+
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
 import { getMolfile, getRxn, getSmiles } from '@utils/formats';
@@ -50,7 +53,7 @@ async function selectExtendedTableElements(page: Page, element: string) {
 
 test.describe('Attachment Point Tool', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {
@@ -62,7 +65,7 @@ test.describe('Attachment Point Tool', () => {
     Test case: EPMLSOPKET-1625
     Description: The Attachment Points dialog box is opened.
     */
-    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
     await clickOnAtom(page, 'C', 3);
   });
@@ -72,7 +75,7 @@ test.describe('Attachment Point Tool', () => {
     Test case: EPMLSOPKET-1626
     Description: Check-mark are checked.
     */
-    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
     await clickOnAtom(page, 'C', 3);
     await page.getByLabel(AttachmentPoint.PRIMARY).check();
@@ -84,20 +87,28 @@ test.describe('Attachment Point Tool', () => {
     Test case: EPMLSOPKET-1627
     Description: All four Attachment points added to atoms of chain.
     */
-    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
-    await clickOnAtom(page, 'C', 2);
-    await page.getByLabel(AttachmentPoint.PRIMARY).check();
-    await pressButton(page, 'Apply');
+    await setAttachmentPoints(
+      page,
+      { label: 'C', index: 2 },
+      { primary: true },
+      'Apply',
+    );
 
-    await clickOnAtom(page, 'C', 3);
-    await page.getByLabel(AttachmentPoint.SECONDARY).check();
-    await pressButton(page, 'Apply');
+    await setAttachmentPoints(
+      page,
+      { label: 'C', index: 3 },
+      { secondary: true },
+      'Apply',
+    );
 
-    await clickOnAtom(page, 'C', 4);
-    await page.getByLabel(AttachmentPoint.PRIMARY).check();
-    await page.getByLabel(AttachmentPoint.SECONDARY).check();
-    await pressButton(page, 'Apply');
+    await setAttachmentPoints(
+      page,
+      { label: 'C', index: 4 },
+      { primary: true, secondary: true },
+      'Apply',
+    );
   });
 
   test('Undo/Redo actions', async ({ page }) => {
@@ -106,20 +117,28 @@ test.describe('Attachment Point Tool', () => {
     Description: All four Attachment points added to atoms of chain.
     Undo removes two attachment points and Redo puts them back.
     */
-    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
-    await clickOnAtom(page, 'C', 2);
-    await page.getByLabel(AttachmentPoint.PRIMARY).check();
-    await pressButton(page, 'Apply');
+    await setAttachmentPoints(
+      page,
+      { label: 'C', index: 2 },
+      { primary: true },
+      'Apply',
+    );
 
-    await clickOnAtom(page, 'C', 3);
-    await page.getByLabel(AttachmentPoint.SECONDARY).check();
-    await pressButton(page, 'Apply');
+    await setAttachmentPoints(
+      page,
+      { label: 'C', index: 3 },
+      { secondary: true },
+      'Apply',
+    );
 
-    await clickOnAtom(page, 'C', 4);
-    await page.getByLabel(AttachmentPoint.PRIMARY).check();
-    await page.getByLabel(AttachmentPoint.SECONDARY).check();
-    await pressButton(page, 'Apply');
+    await setAttachmentPoints(
+      page,
+      { label: 'C', index: 4 },
+      { primary: true, secondary: true },
+      'Apply',
+    );
 
     for (let i = 0; i < 2; i++) {
       await selectTopPanelButton(TopPanelButton.Undo, page);
@@ -136,17 +155,23 @@ test.describe('Attachment Point Tool', () => {
     Test case: EPMLSOPKET-1629
     Description: Nothing is changed, the attachment points don't appear.
     */
-    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
-    await clickOnAtom(page, 'C', 2);
-    await page.getByLabel(AttachmentPoint.PRIMARY).check();
-    await pressButton(page, 'Cancel');
+    await setAttachmentPoints(
+      page,
+      { label: 'C', index: 2 },
+      { primary: true },
+      'Cancel',
+    );
 
     await takeEditorScreenshot(page);
 
-    await clickOnAtom(page, 'C', 3);
-    await page.getByLabel(AttachmentPoint.SECONDARY).check();
-    await pressButton(page, 'Cancel');
+    await setAttachmentPoints(
+      page,
+      { label: 'C', index: 3 },
+      { secondary: true },
+      'Cancel',
+    );
   });
 
   test('Click not on atom', async ({ page }) => {
@@ -156,7 +181,7 @@ test.describe('Attachment Point Tool', () => {
     */
     const clickToOutsideStructureX = 100;
     const clickToOutsideStructureY = 100;
-    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
     await page.mouse.click(clickToOutsideStructureX, clickToOutsideStructureY);
   });
@@ -168,26 +193,30 @@ test.describe('Attachment Point Tool', () => {
     Previously created primary attachment point is changed with secondary attachment point.
     Previously modified attachment point is changed with primary attachment point.
     */
-    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
-    await clickOnAtom(page, 'C', 3);
-
-    await page.getByLabel(AttachmentPoint.PRIMARY).check();
-    await pressButton(page, 'Apply');
+    await setAttachmentPoints(
+      page,
+      { label: 'C', index: 3 },
+      { primary: true },
+      'Apply',
+    );
     await takeEditorScreenshot(page);
 
-    await clickOnAtom(page, 'C', 3);
-
-    await page.getByLabel(AttachmentPoint.PRIMARY).uncheck();
-    await page.getByLabel(AttachmentPoint.SECONDARY).check();
-    await pressButton(page, 'Apply');
+    await setAttachmentPoints(
+      page,
+      { label: 'C', index: 3 },
+      { primary: false, secondary: true },
+      'Apply',
+    );
     await takeEditorScreenshot(page);
 
-    await clickOnAtom(page, 'C', 3);
-
-    await page.getByLabel(AttachmentPoint.SECONDARY).uncheck();
-    await page.getByLabel(AttachmentPoint.PRIMARY).check();
-    await pressButton(page, 'Apply');
+    await setAttachmentPoints(
+      page,
+      { label: 'C', index: 3 },
+      { primary: true, secondary: false },
+      'Apply',
+    );
   });
 
   test('Remove attachment points', async ({ page }) => {
@@ -195,20 +224,28 @@ test.describe('Attachment Point Tool', () => {
     Test case: EPMLSOPKET-1632
     Description: User is able to remove the attachment points.
     */
-    await openFileAndAddToCanvas('chain-with-attachment-points.ket', page);
+    await openFileAndAddToCanvas('KET/chain-with-attachment-points.ket', page);
     await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
-    await clickOnAtom(page, 'C', 2);
-    await page.getByLabel(AttachmentPoint.PRIMARY).uncheck();
-    await pressButton(page, 'Apply');
+    await setAttachmentPoints(
+      page,
+      { label: 'C', index: 2 },
+      { primary: false },
+      'Apply',
+    );
 
-    await clickOnAtom(page, 'C', 3);
-    await page.getByLabel(AttachmentPoint.SECONDARY).uncheck();
-    await pressButton(page, 'Apply');
+    await setAttachmentPoints(
+      page,
+      { label: 'C', index: 3 },
+      { secondary: false },
+      'Apply',
+    );
 
-    await clickOnAtom(page, 'C', 5);
-    await page.getByLabel(AttachmentPoint.PRIMARY).uncheck();
-    await page.getByLabel(AttachmentPoint.SECONDARY).uncheck();
-    await pressButton(page, 'Apply');
+    await setAttachmentPoints(
+      page,
+      { label: 'C', index: 5 },
+      { primary: false, secondary: false },
+      'Apply',
+    );
   });
 
   test('Modify atom with Attchment point (add atom)', async ({ page }) => {
@@ -216,7 +253,7 @@ test.describe('Attachment Point Tool', () => {
     Test case: EPMLSOPKET-1644
     Description: The attachment point's asterisk is colored with the same color as the atom symbol.
     */
-    await openFileAndAddToCanvas('chain-with-attachment-points.ket', page);
+    await openFileAndAddToCanvas('KET/chain-with-attachment-points.ket', page);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickOnAtom(page, 'C', 2);
 
@@ -234,7 +271,7 @@ test.describe('Attachment Point Tool', () => {
     Test case: EPMLSOPKET-1644
     Description: The Not List atom, Any Atom, Group Generics is attached to attachment points.
     */
-    await openFileAndAddToCanvas('chain-with-attachment-points.ket', page);
+    await openFileAndAddToCanvas('KET/chain-with-attachment-points.ket', page);
     await selectNotListAtoms(page);
     await clickOnAtom(page, 'C', 2);
 
@@ -251,43 +288,49 @@ test.describe('Attachment Point Tool', () => {
     Description: Attachment points are created correctly if the reaction arrow 
     and plus sign(s) are present on the canvas.
     */
-    await openFileAndAddToCanvas('reaction-with-arrow-and-plus.ket', page);
-
+    await openFileAndAddToCanvas('KET/reaction-with-arrow-and-plus.ket', page);
     await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
-    await clickOnAtom(page, 'C', 2);
-    await page.getByLabel(AttachmentPoint.PRIMARY).check();
-    await pressButton(page, 'Apply');
+    await setAttachmentPoints(
+      page,
+      { label: 'C', index: 2 },
+      { primary: true },
+      'Apply',
+    );
 
-    await clickOnAtom(page, 'C', 3);
-    await page.getByLabel(AttachmentPoint.SECONDARY).check();
-    await pressButton(page, 'Apply');
+    await setAttachmentPoints(
+      page,
+      { label: 'C', index: 3 },
+      { secondary: true },
+      'Apply',
+    );
 
-    await clickOnAtom(page, 'C', 5);
-    await page.getByLabel(AttachmentPoint.PRIMARY).check();
-    await page.getByLabel(AttachmentPoint.SECONDARY).check();
-    await pressButton(page, 'Apply');
+    await setAttachmentPoints(
+      page,
+      { label: 'C', index: 5 },
+      { primary: true, secondary: true },
+      'Apply',
+    );
   });
 
-  test.fixme('Copy/Paste actions', async ({ page }) => {
+  test('Copy/Paste actions', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1648
     Description: Pasted structures are displayed with correct attachment points.
     Undo/Redo actions for each step are correct.
     */
-    await openFileAndAddToCanvas('chain-with-attachment-points.ket', page);
+    await openFileAndAddToCanvas('KET/chain-with-attachment-points.ket', page);
     await copyAndPaste(page);
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
-
     await screenshotBetweenUndoRedo(page);
   });
 
-  test.fixme('Cut/Paste actions', async ({ page }) => {
+  test('Cut/Paste actions', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1648
     Description: Pasted structures are displayed with correct attachment points.
     Undo/Redo actions for each step are correct.
     */
-    await openFileAndAddToCanvas('chain-with-attachment-points.ket', page);
+    await openFileAndAddToCanvas('KET/chain-with-attachment-points.ket', page);
     await cutAndPaste(page);
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
 
@@ -300,7 +343,7 @@ test.describe('Attachment Point Tool', () => {
     Description: Pasted structures are displayed with the correct attachment points.
     Undo/Redo actions for each step are correct.
     */
-    await openFileAndAddToCanvas('reaction-with-arrow-and-plus.ket', page);
+    await openFileAndAddToCanvas('KET/reaction-with-arrow-and-plus.ket', page);
     await copyAndPaste(page);
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
   });
@@ -313,19 +356,39 @@ test.describe('Attachment Point Tool', () => {
     */
     const x = 0;
     const y = 300;
-    await openFileAndAddToCanvas('reaction-with-arrow-and-plus.ket', page);
+    await openFileAndAddToCanvas('KET/reaction-with-arrow-and-plus.ket', page);
     await cutAndPaste(page);
     await page.mouse.click(x, y);
 
     await screenshotBetweenUndoRedo(page);
   });
 
-  test('Save as *.mol file', async ({ page }) => {
+  test.fixme('Save as *.mol file', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1651
     Description: Structure with attachment points saved as .mol file
     */
-    await openFileAndAddToCanvas('chain-with-attachment-points.ket', page);
+    await openFileAndAddToCanvas('KET/chain-with-attachment-points.ket', page);
+    const expectedFile = await getMolfile(page);
+    await saveToFile('chain-with-attachment-points-expected.mol', expectedFile);
+    const METADATA_STRING_INDEX = [1];
+    const { fileExpected: molFileExpected, file: molFile } =
+      await receiveFileComparisonData({
+        page,
+        metaDataIndexes: METADATA_STRING_INDEX,
+        expectedFileName:
+          'tests/test-data/chain-with-attachment-points-expected.mol',
+      });
+    expect(molFile).toEqual(molFileExpected);
+  });
+
+  test('Click and Save as *.mol file', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-1747
+    Description: Click the 'Save As' button, and click the 'Save' button.
+    Open the saved *.mol file and edit it in any way.
+    */
+    await openFileAndAddToCanvas('KET/chain-with-attachment-points.ket', page);
     const expectedFile = await getMolfile(page);
     await saveToFile('chain-with-attachment-points-expected.mol', expectedFile);
     const METADATA_STRING_INDEX = [1];
@@ -344,7 +407,7 @@ test.describe('Attachment Point Tool', () => {
     Test case: EPMLSOPKET-1651
     Description: Structure with attachment points saved as .mol file V3000
     */
-    await openFileAndAddToCanvas('chain-with-attachment-points.ket', page);
+    await openFileAndAddToCanvas('KET/chain-with-attachment-points.ket', page);
     const expectedFile = await getMolfile(page, 'v3000');
     await saveToFile(
       'chain-with-attachment-points-expectedV3000.mol',
@@ -362,15 +425,35 @@ test.describe('Attachment Point Tool', () => {
     expect(molFile).toEqual(molFileExpected);
   });
 
-  test('Save as *.rxn file', async ({ page }) => {
+  test.fixme('Save as *.rxn file', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1652
     Description: Structure with attachment points saved as .rxn file
     */
-    await openFileAndAddToCanvas('reaction-with-arrow-and-plus.ket', page);
+    await openFileAndAddToCanvas('KET/reaction-with-arrow-and-plus.ket', page);
     const expectedFile = await getRxn(page);
     await saveToFile('reaction-with-arrow-and-plus-expected.rxn', expectedFile);
 
+    const METADATA_STRING_INDEX = [2, 7, 30, 37];
+    const { fileExpected: rxnFileExpected, file: rxnFile } =
+      await receiveFileComparisonData({
+        page,
+        metaDataIndexes: METADATA_STRING_INDEX,
+        expectedFileName:
+          'tests/test-data/reaction-with-arrow-and-plus-expected.rxn',
+      });
+    expect(rxnFile).toEqual(rxnFileExpected);
+  });
+
+  test('Click and Save as *.rxn file', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-1748
+    Description: Click the 'Save As' button and click the 'Save' button.
+    Open the saved *.rxn file and edit it in any way.
+    */
+    await openFileAndAddToCanvas('KET/reaction-with-arrow-and-plus.ket', page);
+    const expectedFile = await getRxn(page);
+    await saveToFile('reaction-with-arrow-and-plus-expected.rxn', expectedFile);
     const METADATA_STRING_INDEX = [2, 7, 30, 37];
     const { fileExpected: rxnFileExpected, file: rxnFile } =
       await receiveFileComparisonData({
@@ -387,13 +470,12 @@ test.describe('Attachment Point Tool', () => {
     Test case: EPMLSOPKET-1652
     Description: Structure with attachment points saved as .rxn file V3000
     */
-    await openFileAndAddToCanvas('reaction-with-arrow-and-plus.ket', page);
+    await openFileAndAddToCanvas('KET/reaction-with-arrow-and-plus.ket', page);
     const expectedFile = await getRxn(page, 'v3000');
     await saveToFile(
       'reaction-with-arrow-and-plus-expectedV3000.rxn',
       expectedFile,
     );
-
     const METADATA_STRING_INDEX = [2];
     const { fileExpected: rxnFileExpected, file: rxnFile } =
       await receiveFileComparisonData({
@@ -411,10 +493,31 @@ test.describe('Attachment Point Tool', () => {
     Test case: EPMLSOPKET-1653
     Description: Structure with attachment points saved as .smi file
     */
-    await openFileAndAddToCanvas('chain-with-attachment-points.ket', page);
+    await openFileAndAddToCanvas('KET/chain-with-attachment-points.ket', page);
     const expectedFile = await getSmiles(page);
     await saveToFile('chain-with-attachment-points-expected.smi', expectedFile);
+    const { fileExpected: smiFileExpected, file: smiFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/chain-with-attachment-points-expected.smi',
+      });
+    expect(smiFile).toEqual(smiFileExpected);
+  });
 
+  test('Click and Save as *.smi file', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-1749
+    Description: Click the 'Save As' button, save as Smiles file ('Daylight SMILES' format).
+    Open the saved *.smi file and edit it in any way.
+    Click the 'Save As' button, save as InChi file.
+    Open the saved *.inchi file and edit it in any way.
+    Click the 'Save As' button, save as CML file.
+    Open the saved *.cml file and edit it in any way.
+    */
+    await openFileAndAddToCanvas('KET/chain-with-attachment-points.ket', page);
+    const expectedFile = await getSmiles(page);
+    await saveToFile('chain-with-attachment-points-expected.smi', expectedFile);
     const { fileExpected: smiFileExpected, file: smiFile } =
       await receiveFileComparisonData({
         page,
@@ -443,7 +546,6 @@ test.describe('Attachment Point Tool', () => {
 
       await selectTopPanelButton(TopPanelButton.Clean, page);
       await delay(DELAY_IN_SECONDS.SEVEN);
-      await takeEditorScreenshot(page);
     },
   );
 
@@ -456,7 +558,7 @@ test.describe('Attachment Point Tool', () => {
       x: 20,
       y: 160,
     };
-    await openFileAndAddToCanvas('chain-with-attachment-points.ket', page);
+    await openFileAndAddToCanvas('KET/chain-with-attachment-points.ket', page);
 
     await page.keyboard.press('Control+a');
     const coordinates = await getRotationHandleCoordinates(page);
@@ -620,5 +722,106 @@ test.describe('Attachment Point Tool', () => {
     for (let i = 0; i < 2; i++) {
       await selectTopPanelButton(TopPanelButton.Undo, page);
     }
+  });
+
+  test('Verify that the attachment point visualization matches the rendering to PNG/SVG mockup(on several structures)', async ({
+    page,
+  }) => {
+    /*
+    Test case: EPMLSOPKET-15516, EPMLSOPKET-15517, EPMLSOPKET-15522
+    Description: Openeded structures are displayed with the correct attachment points.
+    */
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/three-examples-attachment-points.mol',
+      page,
+    );
+  });
+
+  test('Verify that the attachment point visualization matches the rendering to PNG/SVG mockup(on one structure)', async ({
+    page,
+  }) => {
+    /*
+    Test case: EPMLSOPKET-15516, EPMLSOPKET-15518
+    Description: Openeded structure are displayed with the correct attachment points.
+    */
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/four-attachment-point.mol',
+      page,
+    );
+  });
+
+  test('Verify that changing primary attachment points to secondary updates the visualization', async ({
+    page,
+  }) => {
+    /*
+    Test case: EPMLSOPKET-15519
+    Description: Visualization updates accordingly, displaying 
+    the attachment point labels near the curve line.
+    */
+    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
+    await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
+    await setAttachmentPoints(
+      page,
+      { label: 'C', index: 3 },
+      { primary: true },
+      'Apply',
+    );
+    await takeEditorScreenshot(page);
+    await setAttachmentPoints(
+      page,
+      { label: 'C', index: 3 },
+      { primary: false, secondary: true },
+      'Apply',
+    );
+  });
+
+  test('Verify that changing secondary attachment points to primary updates the visualization', async ({
+    page,
+  }) => {
+    /*
+    Test case: EPMLSOPKET-15520
+    Description: visualization updates accordingly, 
+    removing the attachment point labels near the curve line.
+    */
+    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
+    await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
+    await setAttachmentPoints(
+      page,
+      { label: 'C', index: 3 },
+      { secondary: true },
+      'Apply',
+    );
+    await takeEditorScreenshot(page);
+    await setAttachmentPoints(
+      page,
+      { label: 'C', index: 3 },
+      { primary: true, secondary: false },
+      'Apply',
+    );
+  });
+
+  test('Verify that removing all attachment points updates the visualization', async ({
+    page,
+  }) => {
+    /*
+    Test case: EPMLSOPKET-15521
+    Description:  Visualization no longer displays any 
+    attachment point labels near the curve line.
+    */
+    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
+    await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
+    await setAttachmentPoints(
+      page,
+      { label: 'C', index: 3 },
+      { primary: true, secondary: true },
+      'Apply',
+    );
+    await takeEditorScreenshot(page);
+    await setAttachmentPoints(
+      page,
+      { label: 'C', index: 3 },
+      { primary: false, secondary: false },
+      'Apply',
+    );
   });
 });

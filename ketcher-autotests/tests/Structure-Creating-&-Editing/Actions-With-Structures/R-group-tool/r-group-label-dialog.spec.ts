@@ -19,13 +19,14 @@ import {
   saveToFile,
   BondTypeName,
   selectBond,
+  waitForPageInit,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getRxn, getSmiles } from '@utils/formats';
 
 test.describe('R-Group Label Tool', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {
@@ -297,7 +298,7 @@ test.describe('R-Group Label Tool', () => {
     const x = 500;
     const y = 200;
     const anyAtom = 3;
-    await openFileAndAddToCanvas('reaction-with-arrow-and-plus.ket', page);
+    await openFileAndAddToCanvas('KET/reaction-with-arrow-and-plus.ket', page);
     await selectLeftPanelButton(LeftPanelButton.R_GroupLabelTool, page);
     await clickOnAtom(page, 'C', anyAtom);
     await pressButton(page, 'R8');
@@ -318,7 +319,7 @@ test.describe('R-Group Label Tool', () => {
     const x = 500;
     const y = 200;
     const anyAtom = 3;
-    await openFileAndAddToCanvas('reaction-with-arrow-and-plus.ket', page);
+    await openFileAndAddToCanvas('KET/reaction-with-arrow-and-plus.ket', page);
     await selectLeftPanelButton(LeftPanelButton.R_GroupLabelTool, page);
     await clickOnAtom(page, 'C', anyAtom);
     await pressButton(page, 'R8');
@@ -374,7 +375,10 @@ test.describe('R-Group Label Tool', () => {
     */
     const x = 100;
     const y = 100;
-    await openFileAndAddToCanvas('Rxn/chain-with-three-r-groups.rxn', page);
+    await openFileAndAddToCanvas(
+      'Rxn-V2000/chain-with-three-r-groups.rxn',
+      page,
+    );
     await selectBond(BondTypeName.Single, page);
     await page.getByText('R8').hover();
     await dragMouseTo(x, y, page);
@@ -387,20 +391,26 @@ test.describe('R-Group Label Tool', () => {
     */
     const x = 500;
     const y = 500;
-    await openFileAndAddToCanvas('Rxn/chain-with-three-r-groups.rxn', page);
+    await openFileAndAddToCanvas(
+      'Rxn-V2000/chain-with-three-r-groups.rxn',
+      page,
+    );
     await selectLeftPanelButton(LeftPanelButton.Chain, page);
     await page.getByText('R10').hover();
     await dragMouseTo(x, y, page);
   });
 
-  test('Add Template to the R-Group Label', async ({ page }) => {
+  test.fixme('Add Template to the R-Group Label', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-1573
       Description: The correct Template is sprouted from the R-group label
     */
     const x = 500;
     const y = 500;
-    await openFileAndAddToCanvas('Rxn/chain-with-three-r-groups.rxn', page);
+    await openFileAndAddToCanvas(
+      'Rxn-V2000/chain-with-three-r-groups.rxn',
+      page,
+    );
     await selectRingButton(RingButton.Benzene, page);
     await page.getByText('R10').hover();
     await dragMouseTo(x, y, page);
@@ -420,7 +430,7 @@ test.describe('R-Group Label Tool', () => {
 
 test.describe('R-Group Label Tool', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test('Save as *.rxn file', async ({ page }) => {

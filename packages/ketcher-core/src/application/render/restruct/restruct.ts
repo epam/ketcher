@@ -42,8 +42,8 @@ import { Render } from '../raphaelRender';
 import Visel from './visel';
 import util from '../util';
 import { ReRGroupAttachmentPoint } from './rergroupAttachmentPoint';
-import { PeptideRenderer } from 'application/render/renderers/PeptideRenderer';
 import { PolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer';
+import { BaseMonomerRenderer } from '../renderers';
 
 class ReStruct {
   public static maps = {
@@ -57,7 +57,7 @@ class ReStruct {
     sgroupData: ReDataSGroupData,
     enhancedFlags: ReEnhancedFlag,
     sgroups: ReSGroup,
-    peptides: PeptideRenderer,
+    monomers: BaseMonomerRenderer,
     polymerBonds: PolymerBondRenderer,
     reloops: ReLoop,
     simpleObjects: ReSimpleObject,
@@ -76,7 +76,7 @@ class ReStruct {
   public rgroupAttachmentPoints: Pool<ReRGroupAttachmentPoint> = new Pool();
 
   public sgroups: Map<number, ReSGroup> = new Map();
-  public peptides: Map<number, PeptideRenderer> = new Map();
+  public monomers: Map<number, BaseMonomerRenderer> = new Map();
   public polymerBonds: Map<number, PolymerBondRenderer> = new Map();
   public sgroupData: Map<number, ReDataSGroupData> = new Map();
   public enhancedFlags: Map<number, ReEnhancedFlag> = new Map();
@@ -512,7 +512,7 @@ class ReStruct {
     this.assignConnectedComponents();
     this.initialized = true;
 
-    this.showPeptides();
+    this.showMonomers();
     this.showPolymerBonds();
 
     this.verifyLoops();
@@ -708,10 +708,10 @@ class ReStruct {
     });
   }
 
-  private showPeptides(): void {
-    this.peptides.forEach((peptideRenderer) => {
-      peptideRenderer.remove();
-      peptideRenderer.show((this.render as any).theme);
+  private showMonomers(): void {
+    this.monomers.forEach((monomerRenderer) => {
+      monomerRenderer.remove();
+      monomerRenderer.show((this.render as any).theme);
     });
   }
 
@@ -763,12 +763,12 @@ class ReStruct {
           if (
             item instanceof ReSGroup &&
             FunctionalGroup.isContractedFunctionalGroup(
-              item.item.id,
+              item?.item?.id,
               this.molecule.functionalGroups,
             )
           ) {
             const sGroupAtoms = atoms.filter(
-              (atom) => atom.sgroup === item.item.id,
+              (atom) => atom.sgroup === item?.item?.id,
             );
             item.selected = sGroupAtoms.length > 0 && sGroupAtoms[0].selected;
           }

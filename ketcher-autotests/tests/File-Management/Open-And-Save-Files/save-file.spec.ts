@@ -1,6 +1,11 @@
 /* eslint-disable no-magic-numbers */
 import { test, expect } from '@playwright/test';
-import { drawBenzeneRing, receiveFileComparisonData, saveToFile } from '@utils';
+import {
+  drawBenzeneRing,
+  receiveFileComparisonData,
+  saveToFile,
+  waitForPageInit,
+} from '@utils';
 import { drawReactionWithTwoBenzeneRings } from '@utils/canvas/drawStructures';
 import { getKet, getMolfile, getRxn } from '@utils/formats';
 
@@ -13,7 +18,7 @@ test('Save file - Save *.rxn file', async ({ page }) => {
    * Test case: EPMLSOPKET-1849
    * Description: Reaction is saved correctly in .rxn file
    */
-  await page.goto('');
+  await waitForPageInit(page);
 
   await drawReactionWithTwoBenzeneRings(
     page,
@@ -43,7 +48,7 @@ test('Save file - Save *.mol file', async ({ page }) => {
    * Test case: EPMLSOPKET-1848
    * Description: Structure (benzine ring) is saved correctly to .mol format
    */
-  await page.goto('');
+  await waitForPageInit(page);
 
   await drawBenzeneRing(page);
 
@@ -68,7 +73,7 @@ test('Save file - Save *.ket file', async ({ page }) => {
    * Test case: EPMLSOPKET-2934
    * Description: Sctuctures are saved correctly in .ket file
    */
-  await page.goto('');
+  await waitForPageInit(page);
 
   await drawReactionWithTwoBenzeneRings(
     page,
@@ -78,12 +83,12 @@ test('Save file - Save *.ket file', async ({ page }) => {
   );
 
   const expectedFile = await getKet(page);
-  await saveToFile('ket-2934-to-compare-expected.ket', expectedFile);
+  await saveToFile('KET/ket-2934-to-compare-expected.ket', expectedFile);
 
   const { fileExpected: ketFileExpected, file: ketFile } =
     await receiveFileComparisonData({
       page,
-      expectedFileName: 'tests/test-data/ket-2934-to-compare-expected.ket',
+      expectedFileName: 'tests/test-data/KET/ket-2934-to-compare-expected.ket',
     });
 
   expect(ketFile).toEqual(ketFileExpected);

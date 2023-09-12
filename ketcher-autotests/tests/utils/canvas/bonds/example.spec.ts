@@ -1,5 +1,5 @@
 import { test } from '@playwright/test';
-import { drawElementByTitle } from '@utils';
+import { drawElementByTitle, waitForPageInit } from '@utils';
 import {
   getRightBondByAttributes,
   getBottomBondByAttributes,
@@ -21,7 +21,7 @@ const OFFSET_Y = 300;
 
 // ONLY FOR EXAMPLES, can be deleted later
 test.skip(`BOND`, async ({ page }) => {
-  await page.goto('');
+  await waitForPageInit(page);
   await drawElementByTitle(page, ELEMENT_TITLE.BENZENE, OFFSET_X, OFFSET_Y);
 
   const searchedIndex = 2;
@@ -55,7 +55,7 @@ test.skip(`BOND`, async ({ page }) => {
 });
 
 test.skip(`ATOM`, async ({ page }) => {
-  await page.goto('');
+  await waitForPageInit(page);
   await drawElementByTitle(page, ELEMENT_TITLE.BENZENE, OFFSET_X, OFFSET_Y);
 
   const firstAtom = await getAtomByIndex(page, { label: 'C', valence: 1 }, 0);

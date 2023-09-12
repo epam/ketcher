@@ -1,23 +1,22 @@
 import { test } from '@playwright/test';
 import {
   clickInTheMiddleOfTheScreen,
-  TopPanelButton,
-  selectTopPanelButton,
   openFileAndAddToCanvas,
   takeEditorScreenshot,
   pasteFromClipboardAndAddToCanvas,
 } from '@utils';
+import { waitForPageInit } from '@utils/common/loaders/waitForPageInit';
 
 test.describe('CDX files', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {
     await takeEditorScreenshot(page);
   });
 
-  test.fixme('opening cdx files', async ({ page }) => {
+  test('opening cdx files', async ({ page }) => {
     /* 
     Test case: EPMLSOPKET-12514
     Description: Open CDX files
@@ -25,21 +24,19 @@ test.describe('CDX files', () => {
     await openFileAndAddToCanvas('cdx-expanded-contracted.cdx', page);
   });
 
-  test.fixme('opening cdx files with R-group', async ({ page }) => {
+  test('opening cdx files with R-group', async ({ page }) => {
     /* 
     Test case: EPMLSOPKET-6973
     Description: Open CDX files with R-group
     */
-    await openFileAndAddToCanvas('cdx_file.cdx', page);
+    await openFileAndAddToCanvas('r_group_cdx.cdx', page);
   });
 
-  test.fixme('opening cdx files from clipboard', async ({ page }) => {
+  test('opening cdx files from clipboard', async ({ page }) => {
     /* 
   Test case: EPMLSOPKET-6972
   Description: Open structure created in ChemDraw from clickboard
   */
-    await selectTopPanelButton(TopPanelButton.Open, page);
-    await page.getByText('Paste from clipboard').click();
     await pasteFromClipboardAndAddToCanvas(
       page,
       // eslint-disable-next-line max-len

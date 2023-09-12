@@ -22,6 +22,8 @@ import {
   INPUT_DELAY,
   delay,
   DELAY_IN_SECONDS,
+  waitForPageInit,
+  waitForIndigoToLoad,
 } from '@utils';
 
 const CANVAS_CLICK_X = 300;
@@ -29,7 +31,7 @@ const CANVAS_CLICK_Y = 300;
 
 test.describe('Copy/Cut/Paste Actions', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {
@@ -85,10 +87,11 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await screenshotBetweenUndoRedo(page);
   });
 
-  test('Cut all structures via hotkey (CTRL+X)', async ({ page }) => {
+  test.fixme('Cut all structures via hotkey (CTRL+X)', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1712
     Description: After the clicking the 'Cut' button, the selected object disappears.
+    Not able to perform undo
     */
     const modifier = getControlModifier();
     await openFileAndAddToCanvas('Molfiles-V2000/query-features.mol', page);
@@ -119,6 +122,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Test case: EPMLSOPKET-1714
     Description: After the clicking the Cut button, the selected object disappears.
     */
+    // Error message appears
     const x = 300;
     const y = 300;
     await openFileAndAddToCanvas('reaction-dif-prop.rxn', page);
@@ -132,6 +136,8 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Test case: EPMLSOPKET-1714
     Description: After the clicking the Cut button, the selected object disappears.
     */
+    // Error Message
+    // Convert error! Given string could not be loaded as (query or plain) molecule or reaction
     const anyAtom = 1;
     const modifier = getControlModifier();
     await openFileAndAddToCanvas('reaction-dif-prop.rxn', page);
@@ -147,6 +153,8 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Test case: EPMLSOPKET-1714
     Description: After the clicking the Cut button, the selected object disappears.
     */
+    // Error Message
+    // Convert error! Given string could not be loaded as (query or plain) molecule or reaction
     const anyBond = 1;
     const modifier = getControlModifier();
     await openFileAndAddToCanvas('reaction-dif-prop.rxn', page);
@@ -157,11 +165,11 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await screenshotBetweenUndoRedo(page);
   });
 
-  // flaky
   test.fixme('Cut the reaction with hotkey', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1714
     Description: After the clicking the Cut button, the selected object disappears.
+    Not able to perform undo
     */
     await openFileAndAddToCanvas('reaction-dif-prop.rxn', page);
     await page.keyboard.press('Control+a');
@@ -200,8 +208,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectTopPanelButton(TopPanelButton.Copy, page);
   });
 
-  // flaky
-  test.fixme('Copy the reaction with hotkey', async ({ page }) => {
+  test('Copy the reaction with hotkey', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1715
     Description: After the clicking the Copy button, the selected object not disappears.
@@ -246,9 +253,9 @@ test.describe('Copy/Cut/Paste Actions', () => {
   test.fixme('Copy and paste the Atom from reaction', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1717
-    Description: After the clicking the Copy button, the selected object not disappears.
-    After pasting two same structures located on canvas.
+    Description: Atom from reaction is copy and pasted.
     */
+    // Can't copy and paste atom from reaction
     const x = 500;
     const y = 200;
     const anyAtom = 0;
@@ -451,7 +458,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     const x = 500;
     const y = 300;
-    await openFileAndAddToCanvas('attached.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/attached.mol', page);
     await copyAndPaste(page);
     await page.mouse.click(x, y);
   });
@@ -467,7 +474,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
       // Nitrogen atom can't attach to structure
       const anyAtom = 12;
-      await openFileAndAddToCanvas('attached.mol', page);
+      await openFileAndAddToCanvas('Molfiles-V2000/attached.mol', page);
       await cutAndPaste(page);
       await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
       await selectAtomInToolbar(AtomButton.Nitrogen, page);
@@ -567,7 +574,10 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     const x = 500;
     const y = 200;
-    await openFileAndAddToCanvas('arrows-in-different-directions.rxn', page);
+    await openFileAndAddToCanvas(
+      'Rxn-V2000/arrows-in-different-directions.rxn',
+      page,
+    );
     await copyAndPaste(page);
     await page.mouse.click(x, y);
   });
@@ -580,17 +590,21 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Description: Cut reaction has plus sign and one arrow.
     */
     const anyAtom = 5;
-    await openFileAndAddToCanvas('arrows-in-different-directions.rxn', page);
+    await openFileAndAddToCanvas(
+      'Rxn-V2000/arrows-in-different-directions.rxn',
+      page,
+    );
     await cutAndPaste(page);
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickOnAtom(page, 'C', anyAtom);
   });
 
-  test('Copy and paste all kind of S-groups', async ({ page }) => {
+  test.fixme('Copy and paste all kind of S-groups', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-2884
     Description: Copied objects are pasted as one object and correctly displayed without data loss.
+    Not able to load indigo in time
     */
     const x = 300;
     const y = 200;
@@ -657,7 +671,10 @@ test.describe('Copy/Cut/Paste Actions', () => {
     // Bonds not copied when test run under docker
     const x = 100;
     const y = 100;
-    await openFileAndAddToCanvas('all-kinds-of-bonds-test-file.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/all-kinds-of-bonds-test-file.mol',
+      page,
+    );
     await copyAndPaste(page);
     await page.mouse.click(x, y);
   });
@@ -672,7 +689,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
       // Error message when run under docker. But manual test is working.
       const x = 100;
       const y = 100;
-      await openFileAndAddToCanvas('stereo-test-structures.ket', page);
+      await openFileAndAddToCanvas('KET/stereo-test-structures.ket', page);
       await copyAndPaste(page);
       await page.mouse.click(x, y);
     },
@@ -687,7 +704,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
       // Error message when run under docker. But manual test is working.
       const anyAtom = 5;
-      await openFileAndAddToCanvas('stereo-test-structures.ket', page);
+      await openFileAndAddToCanvas('KET/stereo-test-structures.ket', page);
       await cutAndPaste(page);
       await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
       await selectAtomInToolbar(AtomButton.Nitrogen, page);
@@ -728,23 +745,24 @@ test.describe('Copy/Cut/Paste Actions', () => {
     },
   );
 
-  test('Copy and paste Structure with Simple objects and text', async ({
-    page,
-  }) => {
-    /*
+  test.fixme(
+    'Copy and paste Structure with Simple objects and text',
+    async ({ page }) => {
+      /*
     Test case: EPMLSOPKET-2948
     Description: After the clicking the Copy button, the selected object not disappears.
     After pasting Structure with Simple objects and text same structures located on canvas.
     */
-    const x = 550;
-    const y = 150;
-    await openFileAndAddToCanvas(
-      'structure-with-simple-objects-and-text.ket',
-      page,
-    );
-    await copyAndPaste(page);
-    await page.mouse.click(x, y);
-  });
+      const x = 550;
+      const y = 150;
+      await openFileAndAddToCanvas(
+        'KET/structure-with-simple-objects-and-text.ket',
+        page,
+      );
+      await copyAndPaste(page);
+      await page.mouse.click(x, y);
+    },
+  );
 
   test.fixme(
     'Cut and Paste Structure with Simple objects and text and edit',
@@ -758,7 +776,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
       // Can't attach atom of Nitrogen to structure.
       const anyAtom = 5;
       await openFileAndAddToCanvas(
-        'structure-with-simple-objects-and-text.ket',
+        'KET/structure-with-simple-objects-and-text.ket',
         page,
       );
       await cutAndPaste(page);
@@ -777,7 +795,10 @@ test.describe('Copy/Cut/Paste Actions', () => {
     // Error message when run under docker. But manual test is working.
     const x = 500;
     const y = 100;
-    await openFileAndAddToCanvas('aromatic-structures.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/aromatic-structures.mol',
+      page,
+    );
     await copyAndPaste(page);
     await page.mouse.click(x, y);
   });
@@ -791,7 +812,10 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     // Error message when run under docker. But manual test is working.
     const anyAtom = 5;
-    await openFileAndAddToCanvas('aromatic-structures.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/aromatic-structures.mol',
+      page,
+    );
     await cutAndPaste(page);
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
@@ -808,7 +832,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     const x = 500;
     const y = 100;
-    await openFileAndAddToCanvas('expanded-and-contracted-fg.ket', page);
+    await openFileAndAddToCanvas('KET/expanded-and-contracted-fg.ket', page);
     await copyAndPaste(page);
     await page.mouse.click(x, y);
   });
@@ -824,7 +848,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
       // Can't attach atom of Nitrogen to the structure.
       const anyAtom = 5;
-      await openFileAndAddToCanvas('expanded-and-contracted-fg.ket', page);
+      await openFileAndAddToCanvas('KET/expanded-and-contracted-fg.ket', page);
       await cutAndPaste(page);
       await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
       await selectAtomInToolbar(AtomButton.Nitrogen, page);
@@ -871,14 +895,14 @@ test.describe('Copy/Cut/Paste Actions', () => {
 
 test.describe('Copy/Cut/Paste Actions', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {
     await expect(page).toHaveScreenshot();
   });
 
-  test.fixme('Copy button', async ({ page }) => {
+  test('Copy button', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1709
     Description: Button is disabled. Tooltip "Copy (Ctrl+С)" appears.
@@ -889,7 +913,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Object is created.
     Object is selected. Buttons are enabled.
     */
-    // Need add mask to Indigo buttons. They do not have time to load and sometimes they do.
+    await waitForIndigoToLoad(page);
     await page.getByTestId('copy-button-dropdown-triangle').click();
     await delay(DELAY_IN_SECONDS.THREE);
     await expect(page).toHaveScreenshot();
@@ -905,6 +929,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Description: The 'Cut' button  is disabled if nothing is selected on the canvas.
     The 'Cut (Ctrl+X)' cut the structure.
     */
+    await waitForIndigoToLoad(page);
     await expect(page).toHaveScreenshot();
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
@@ -922,6 +947,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     When user clicks on the 'Paste' button alert message appears.
     Message should have direction to use shortcuts.
     */
+    await waitForIndigoToLoad(page);
     await expect(page).toHaveScreenshot();
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);

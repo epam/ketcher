@@ -1,14 +1,14 @@
 import { fromPolymerBondDeletion } from 'application/editor/actions/polymerBond';
 import { ReStruct } from 'application/render';
 import { PolymerBond } from 'domain/entities/PolymerBond';
-import { Peptide } from 'domain/entities/Peptide';
+import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import assert from 'assert';
 
 export class BondService {
   static deleteBondWithAllLinks(
     renderersContainer: ReStruct,
     polymerBond: PolymerBond,
-    secondMonomer?: Peptide,
+    secondMonomer?: BaseMonomer,
   ) {
     fromPolymerBondDeletion(renderersContainer, polymerBond);
     secondMonomer
@@ -20,7 +20,7 @@ export class BondService {
   static finishBondCreation(
     firstMonomerAttachmentPoint: string,
     secondMonomerAttachmentPoint: string,
-    secondMonomer: Peptide,
+    secondMonomer: BaseMonomer,
     polymerBond: PolymerBond,
   ) {
     polymerBond.setSecondMonomer(secondMonomer);

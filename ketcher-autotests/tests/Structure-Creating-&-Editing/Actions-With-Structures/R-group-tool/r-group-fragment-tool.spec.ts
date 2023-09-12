@@ -22,6 +22,7 @@ import {
   saveToFile,
   copyAndPaste,
   cutAndPaste,
+  waitForPageInit,
 } from '@utils';
 import { getExtendedSmiles, getMolfile } from '@utils/formats';
 
@@ -57,7 +58,7 @@ async function clickModalButton(page: Page, button: 'Apply' | 'Cancel') {
 
 test.describe('Open Ketcher', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {
@@ -128,7 +129,7 @@ test.describe('Open Ketcher', () => {
   });
 
   test('Brackets rendering for whole r-group structure', async ({ page }) => {
-    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectNestedTool(page, RgroupTool.R_GROUP_FRAGMENT);
     await clickOnAtom(page, 'C', atomIndex);
     await page.getByText(rGroupFromFile).click();
@@ -138,7 +139,7 @@ test.describe('Open Ketcher', () => {
   test('Brackets rendering for whole r-group structure even with attachment points', async ({
     page,
   }) => {
-    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
     await clickOnAtom(page, 'C', atomIndex);
     await page.getByLabel(AttachmentPoint.PRIMARY).check();
@@ -177,7 +178,7 @@ test.describe('Open Ketcher', () => {
     /* Test case: EPMLSOPKET-1586
       Description: Create several R-Group members
     */
-    await openFileAndAddToCanvas('3structeres.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/three-structures.mol', page);
 
     await selectRGroups(page, ['R7']);
 
@@ -303,7 +304,7 @@ test.describe('Open Ketcher', () => {
 
 test.describe('R-Group Fragment Tool', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test('Save as *.mol V2000 file', async ({ page }) => {
@@ -351,7 +352,6 @@ test.describe('R-Group Fragment Tool', () => {
       expectedFile,
     );
 
-    // eslint-disable-next-line no-magic-numbers
     const METADATA_STRING_INDEX = [1];
     const { fileExpected: molFileExpected, file: molFile } =
       await receiveFileComparisonData({

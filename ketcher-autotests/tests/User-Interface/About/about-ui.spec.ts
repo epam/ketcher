@@ -4,27 +4,32 @@ import {
   takeEditorScreenshot,
   TopPanelButton,
   clickByLink,
+  waitForPageInit,
 } from '@utils';
 
 test.describe('Open Ketcher', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test('About floating windows appeared', async ({ page }) => {
-    /* 
+    /*
     Test case: EPMLSOPKET-12191
     Description: 'About' floating window appears
     */
     await selectTopPanelButton(TopPanelButton.About, page);
 
     await takeEditorScreenshot(page, {
-      masks: [page.getByTestId('build-time')],
+      masks: [
+        page.getByTestId('build-version'),
+        page.getByTestId('build-time'),
+        page.getByTestId('build-indigo-version'),
+      ],
     });
   });
 
   test('Links in About floating window', async ({ page }) => {
-    /* 
+    /*
     Test case: EPMLSOPKET-12193
     Description: 'About' floating window links check
     */

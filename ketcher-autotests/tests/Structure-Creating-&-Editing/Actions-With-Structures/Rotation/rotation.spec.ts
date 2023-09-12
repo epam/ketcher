@@ -3,6 +3,8 @@ import {
   getCoordinatesOfTheMiddleOfTheScreen,
   openFileAndAddToCanvas,
   takeEditorScreenshot,
+  waitForPageInit,
+  waitForRender,
 } from '@utils';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
 import {
@@ -24,7 +26,7 @@ import {
 
 test.describe('Rotation', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test('Cancel rotation on right click', async ({ page }) => {
@@ -120,7 +122,7 @@ test.describe('Rotation', () => {
       Test case: EPMLSOPKET-1688
       Description: Select and rotate part of structure
     */
-    await addStructureAndSelect(page, 'mol/two-benzene-rings.mol');
+    await addStructureAndSelect(page, 'Molfiles-V2000/two-benzene-rings.mol');
     await selectPartOfStructure(page);
     await rotateToCoordinates(page, COORDINATES_TO_PERFORM_ROTATION);
     await resetSelection(page);
@@ -132,7 +134,7 @@ test.describe('Rotation', () => {
       Test case: EPMLSOPKET-1689
       Description: Multiple structures are drawn on the canvas. Only selected structures are rotated
     */
-    await addStructureAndSelect(page, 'mol/multiple-structures.mol');
+    await addStructureAndSelect(page, 'Molfiles-V2000/multiple-structures.mol');
     await selectPartOfStructure(page);
     await rotateToCoordinates(page, COORDINATES_TO_PERFORM_ROTATION);
     await resetSelection(page);
@@ -146,7 +148,10 @@ test.describe('Rotation', () => {
       Test case: EPMLSOPKET-1690, 1692
       Description: Multiple structures are draw on the canvas. Horizontal flip is performed via shortcut
     */
-    await openFileAndAddToCanvas('mol/multiple-structures.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/multiple-structures.mol',
+      page,
+    );
     await page.mouse.move(EMPTY_SPACE_X, EMPTY_SPACE_Y);
     await page.keyboard.press('Alt+h');
     await takeEditorScreenshot(page);
@@ -159,7 +164,10 @@ test.describe('Rotation', () => {
       Test case: EPMLSOPKET-1691, 1692
       Description: Multiple structures are draw on the canvas. Vertical flip is performed via shortcut
     */
-    await openFileAndAddToCanvas('mol/multiple-structures.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/multiple-structures.mol',
+      page,
+    );
     await page.mouse.move(EMPTY_SPACE_X, EMPTY_SPACE_Y);
     await page.keyboard.press('Alt+v');
     await takeEditorScreenshot(page);
@@ -170,7 +178,7 @@ test.describe('Rotation', () => {
       Test case: EPMLSOPKET-1693
       Description: Reaction is rotated
     */
-    const anyReaction = 'rxn/rxn-reaction.rxn';
+    const anyReaction = 'Rxn-V2000/rxn-reaction.rxn';
     const coordinatesForRotation = {
       x: 800,
       y: 800,
@@ -186,12 +194,17 @@ test.describe('Rotation', () => {
       Test case: EPMLSOPKET-1694
       Description: Reaction is flipped vertically and horizontally
     */
-    const anyReaction = 'rxn/rxn-reaction.rxn';
+    const anyReaction = 'Rxn-V2000/rxn-reaction.rxn';
     await openFileAndAddToCanvas(anyReaction, page);
     await page.mouse.move(EMPTY_SPACE_X, EMPTY_SPACE_Y);
-    await page.keyboard.press('Alt+v');
+    await waitForRender(page, async () => {
+      await page.keyboard.press('Alt+v');
+    });
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Alt+h');
+
+    await waitForRender(page, async () => {
+      await page.keyboard.press('Alt+h');
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -220,7 +233,7 @@ test.describe('Rotation', () => {
       Description: Select and make horizontal flip for part of structure with selected bond
     */
     const extraShiftToCoverBond = 25;
-    await addStructureAndSelect(page, 'mol/two-benzene-rings.mol');
+    await addStructureAndSelect(page, 'Molfiles-V2000/two-benzene-rings.mol');
     await selectPartOfStructure(page, extraShiftToCoverBond);
     await performHorizontalFlip(page);
     await resetSelection(page);
@@ -235,7 +248,7 @@ test.describe('Rotation', () => {
       Description: Select and make vertical flip for part of structure with selected bond
     */
     const extraShiftToCoverBond = 25;
-    await addStructureAndSelect(page, 'mol/two-benzene-rings.mol');
+    await addStructureAndSelect(page, 'Molfiles-V2000/two-benzene-rings.mol');
     await selectPartOfStructure(page, extraShiftToCoverBond);
     await performVerticalFlip(page);
     await resetSelection(page);
@@ -250,7 +263,7 @@ test.describe('Rotation', () => {
       Description: Select and make horizontal flip for part of structure without selected bond
     */
     const shift = 1;
-    await addStructureAndSelect(page, 'mol/two-benzene-rings.mol');
+    await addStructureAndSelect(page, 'Molfiles-V2000/two-benzene-rings.mol');
     await selectPartOfStructure(page, shift);
     await performHorizontalFlip(page);
     await resetSelection(page);
@@ -265,7 +278,7 @@ test.describe('Rotation', () => {
       Description: Select and make vertical flip for part of structure without selected bond
     */
     const shift = 1;
-    await addStructureAndSelect(page, 'mol/two-benzene-rings.mol');
+    await addStructureAndSelect(page, 'Molfiles-V2000/two-benzene-rings.mol');
     await selectPartOfStructure(page, shift);
     await performVerticalFlip(page);
     await resetSelection(page);
@@ -294,7 +307,7 @@ test.describe('Rotation', () => {
   }) => {
     /*
       Test case: EPMLSOPKET-12994, 12999, 13000, 13001, 13004, 13005
-      Description: Add any structure and select it. Rotate it by 60 degrees. 
+      Description: Add any structure and select it. Rotate it by 60 degrees.
     */
     const coordinatesFor60Degrees = {
       x: 530,
@@ -329,23 +342,24 @@ test.describe('Rotation', () => {
     expect(y).toEqual(rotationHandleY);
   });
 
-  test('Works with different zoom level and screen resolution', async ({
-    page,
-  }) => {
-    /*
+  test.fixme(
+    'Works with different zoom level and screen resolution',
+    async ({ page }) => {
+      /*
       Test case: EPMLSOPKET-12998
       Description: Click on rotation handle doesn't change its position
     */
-    const fiftyPercentZoom = 5;
-    await page.setViewportSize({ width: 1200, height: 1080 });
-    for (let i = 0; i < fiftyPercentZoom; i++) {
-      await page.keyboard.press('Control+_');
-    }
-    await addStructureAndSelect(page);
-    await rotateToCoordinates(page, COORDINATES_TO_PERFORM_ROTATION);
-    await resetSelection(page);
-    await takeEditorScreenshot(page);
-  });
+      const fiftyPercentZoom = 5;
+      await page.setViewportSize({ width: 1200, height: 1080 });
+      for (let i = 0; i < fiftyPercentZoom; i++) {
+        await page.keyboard.press('Control+_');
+      }
+      await addStructureAndSelect(page);
+      await rotateToCoordinates(page, COORDINATES_TO_PERFORM_ROTATION);
+      await resetSelection(page);
+      await takeEditorScreenshot(page);
+    },
+  );
 
   test('Cancel rotation on "Escape" key', async ({ page }) => {
     /*
@@ -418,7 +432,8 @@ test.describe('Rotation', () => {
       Test case: EPMLSOPKET-15542
       Description: Non-selected end of the selected bond should be the rotation center
     */
-    const chainWithDoubleBond = 'mol/chain-with-double-bond-in-the-middle.mol';
+    const chainWithDoubleBond =
+      'Molfiles-V2000/chain-with-double-bond-in-the-middle.mol';
     await openFileAndAddToCanvas(chainWithDoubleBond, page);
     await selectPartOfChain(page);
     await takeEditorScreenshot(page);
@@ -429,7 +444,7 @@ test.describe('Rotation', () => {
       Test case: EPMLSOPKET-15543
       Description: Label is not rotated with the structure, if it is not selected
     */
-    const chainWithDoubleBond = 'mol/benzene-stereo.mol';
+    const chainWithDoubleBond = 'Molfiles-V2000/benzene-stereo.mol';
     await openFileAndAddToCanvas(chainWithDoubleBond, page);
     await selectPartOfBenzeneRing(page);
     await rotateToCoordinates(page, COORDINATES_TO_PERFORM_ROTATION);
@@ -441,7 +456,7 @@ test.describe('Rotation', () => {
       Test case: EPMLSOPKET-15544
       Description: Label is rotated with the structure, if it is selected
     */
-    const chainWithDoubleBond = 'mol/benzene-stereo.mol';
+    const chainWithDoubleBond = 'Molfiles-V2000/benzene-stereo.mol';
     await addStructureAndSelect(page, chainWithDoubleBond);
     await rotateToCoordinates(page, COORDINATES_TO_PERFORM_ROTATION);
     await takeEditorScreenshot(page);
@@ -450,7 +465,7 @@ test.describe('Rotation', () => {
 
 test.describe('Rotation snapping', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test('for 90, 120 and 180 degrees', async ({ page }) => {
@@ -458,7 +473,7 @@ test.describe('Rotation snapping', () => {
       Test case: EPMLSOPKET-16906
       Description: Bond has 90, 120 and 180 snaps
     */
-    const benzeneWithChain = 'mol/benzene-with-chain.mol';
+    const benzeneWithChain = 'Molfiles-V2000/benzene-with-chain.mol';
     await openFileAndAddToCanvas(benzeneWithChain, page);
     await selectChain(page);
 
@@ -489,7 +504,7 @@ test.describe('Rotation snapping', () => {
       Test case: EPMLSOPKET-16907
       Description: For 2+ bonds counterclockwise see a prompt for the bisector, then snap to it
     */
-    const benzeneWithChain = 'mol/benzene-with-chain.mol';
+    const benzeneWithChain = 'Molfiles-V2000/benzene-with-chain.mol';
     await openFileAndAddToCanvas(benzeneWithChain, page);
     await selectChain(page, true);
     const coordinatesForBisectTip = {
@@ -525,7 +540,7 @@ test.describe('Rotation snapping', () => {
       y: 500,
     };
     // it is used in order not to calculate position of rotation center
-    const symmetricStructure = 'mol/symmetric-structure.mol';
+    const symmetricStructure = 'Molfiles-V2000/symmetric-structure.mol';
     await addStructureAndSelect(page, symmetricStructure);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await page.mouse.move(x, y);

@@ -11,7 +11,7 @@ import {
   FILE_TEST_DATA,
   saveToFile,
   waitForLoad,
-  waitForIndigoToLoad,
+  waitForPageInit,
 } from '@utils';
 import { getRxn } from '@utils/formats';
 
@@ -51,7 +51,7 @@ async function pasteFromClipboard(page: Page, fileFormats: string) {
 
 test.describe('Reagents RXN format', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test('Detection molecule as reagent and write reagent information in "MDL rxnfile V2000" format', async ({
@@ -194,8 +194,7 @@ test.describe('Reagents RXN format', () => {
 
 test.describe('Reagents RXN format', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
-    await waitForIndigoToLoad(page);
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {

@@ -19,6 +19,7 @@ import {
   clickOnBond,
   screenshotBetweenUndoRedo,
   saveToFile,
+  waitForPageInit,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getMolfile } from '@utils/formats';
@@ -61,7 +62,7 @@ async function contractExpandRemoveAbbreviation(
 
 test.describe('Superatom S-Group tool', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {

@@ -15,6 +15,8 @@ import {
   selectUserTemplatesAndPlaceInTheMiddle,
   getControlModifier,
   STRUCTURE_LIBRARY_BUTTON_NAME,
+  waitForSpinnerFinishedWork,
+  waitForPageInit,
 } from '@utils';
 import { TestIdSelectors } from '@utils/selectors/testIdSelectors';
 
@@ -54,7 +56,7 @@ async function saveToTemplates(page: Page) {
 }
 test.describe('Click User Templates on canvas', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {
@@ -203,8 +205,7 @@ test.describe('Click User Templates on canvas', () => {
     await page.getByPlaceholder('Search by elements...').press('Enter');
   });
 
-  // flaky
-  test.fixme('Create Template with with Reaction arrow', async ({ page }) => {
+  test('Create Template with with Reaction arrow', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-12942
     Description: Creating Template with Reaction arrow validation.
@@ -253,7 +254,7 @@ test.describe('Click User Templates on canvas', () => {
 // These two tests affect other tests or by other tests, so they were moved to a separate describe group
 test.describe('Click User Templates on canvas', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {
@@ -281,7 +282,7 @@ test.describe('Click User Templates on canvas', () => {
     await resetCurrentTool(page);
   });
 
-  test.fixme('Create Template - saving', async ({ page }) => {
+  test('Create Template - saving', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-1722
       Description: saving user template validation
@@ -296,7 +297,9 @@ test.describe('Click User Templates on canvas', () => {
     await page.getByPlaceholder('template').click();
     await page.getByPlaceholder('template').fill('user_template_1');
     await page.getByRole('button', { name: 'Save', exact: true }).click();
-    await selectTopPanelButton(TopPanelButton.Clean, page);
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Clean, page);
+    });
 
     await openStructureLibrary(page);
     await page.getByRole('button', { name: 'User Templates (1)' }).click();

@@ -30,7 +30,7 @@ export const enum Command {
   Check,
   Calculate,
   GenerateImageAsBase64,
-  GenerateInchIKey,
+  GetInChIKey,
 }
 
 export const enum WorkerEvent {
@@ -45,7 +45,7 @@ export const enum WorkerEvent {
   Check = 'check',
   Calculate = 'calculate',
   GenerateImageAsBase64 = 'generateImageAsBase64',
-  GenerateInchIKey = 'generateInchIKey',
+  GetInChIKey = 'getInChIKey',
 }
 
 export enum SupportedFormat {
@@ -56,9 +56,11 @@ export enum SupportedFormat {
   CML = 'cml',
   InChI = 'inchi',
   InChIAuxInfo = 'inchi-aux',
+  InChIKey = 'inchi-key',
   Ket = 'ket',
   CDX = 'cdx',
   CDXML = 'cdxml',
+  SDF = 'sdf',
 }
 
 export interface WithStruct {

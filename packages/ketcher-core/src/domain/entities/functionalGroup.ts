@@ -201,8 +201,9 @@ export class FunctionalGroup {
     functionalGroups: Pool<FunctionalGroup>,
   ) {
     return [...sGroups.values()].some((sGroup) => {
-      const sGroupId = 'item' in sGroup ? sGroup.item.id : sGroup.id;
-      const atomsInSGroup = 'item' in sGroup ? sGroup.item.atoms : sGroup.atoms;
+      const sGroupId = 'item' in sGroup ? sGroup?.item?.id : sGroup.id;
+      const atomsInSGroup =
+        'item' in sGroup ? sGroup?.item?.atoms : sGroup.atoms;
       const isContracted = FunctionalGroup.isContractedFunctionalGroup(
         sGroupId,
         functionalGroups,

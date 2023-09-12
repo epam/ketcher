@@ -222,6 +222,14 @@ export class Ketcher {
     );
   }
 
+  getSdf(molfileFormat: MolfileFormat = 'v2000'): Promise<string> {
+    const format =
+      molfileFormat === 'v2000'
+        ? SupportedFormat.sdf
+        : SupportedFormat.sdfV3000;
+    return getStructure(format, this.#formatterFactory, this.#editor.struct());
+  }
+
   getCDXml(): Promise<string> {
     return getStructure(
       SupportedFormat.cdxml,
@@ -246,14 +254,14 @@ export class Ketcher {
     );
   }
 
-  async generateInchIKey(): Promise<string> {
+  async getInChIKey(): Promise<string> {
     const struct: string = await getStructure(
       SupportedFormat.ket,
       this.#formatterFactory,
       this.#editor.struct(),
     );
 
-    return this.#structService.generateInchIKey(struct);
+    return this.#structService.getInChIKey(struct);
   }
 
   containsReaction(): boolean {

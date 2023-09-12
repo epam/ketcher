@@ -66,7 +66,7 @@ export class SGroup {
   id: number;
   label: number;
   bracketBox: any;
-  bracketDir: Vec2;
+  bracketDirection: Vec2;
   areas: any;
   hover: boolean;
   hovering: any;
@@ -82,6 +82,7 @@ export class SGroup {
   neiAtoms: any;
   pp: Vec2 | null;
   data: any;
+  dataArea: any;
   private readonly attachmentPoints: SGroupAttachmentPoint[];
 
   constructor(type: string) {
@@ -89,7 +90,7 @@ export class SGroup {
     this.id = -1;
     this.label = -1;
     this.bracketBox = null;
-    this.bracketDir = new Vec2(1, 0);
+    this.bracketDirection = new Vec2(1, 0);
     this.areas = [];
 
     this.hover = false;
@@ -316,9 +317,16 @@ export class SGroup {
    * WHY? When group is contracted we need to understand the represent atom to calculate position.
    * It is not always the attachmentPoint!! if no attachment point - use the first atom
    */
-  getContractedPosition(struct: Struct): { atomId: number; position: Vec2 } {
-    const atomId = this.attachmentPoints[0]?.atomId ?? this.atoms[0];
-    const representAtom = struct.atoms.get(atomId);
+  getContractedPosition(struct: Struct): {
+    atomId: number;
+    position: Vec2;
+  } {
+    let atomId = this.attachmentPoints[0]?.atomId;
+    let representAtom = struct.atoms.get(atomId);
+    if (!representAtom) {
+      atomId = this.atoms[0];
+      representAtom = struct.atoms.get(this.atoms[0]);
+    }
     assert(representAtom != null);
     return { atomId, position: representAtom.pp };
   }
@@ -455,7 +463,7 @@ export class SGroup {
   static bracketPos(
     sGroup,
     mol,
-    crossBondsPerAtom: { [key: number]: Array<Bond> },
+    crossBondsPerAtom?: { [key: number]: Array<Bond> },
     remol?: ReStruct,
     render?,
   ): void {
@@ -466,13 +474,13 @@ export class SGroup {
       ? Object.values(crossBondsPerAtom).flat()
       : null;
     if (!crossBonds || crossBonds.length !== 2) {
-      sGroup.bracketDir = new Vec2(1, 0);
+      sGroup.bracketDirection = new Vec2(1, 0);
     } else {
       const p1 = mol.bonds.get(crossBonds[0]).getCenter(mol);
       const p2 = mol.bonds.get(crossBonds[1]).getCenter(mol);
-      sGroup.bracketDir = Vec2.diff(p2, p1).normalized();
+      sGroup.bracketDirection = Vec2.diff(p2, p1).normalized();
     }
-    const d = sGroup.bracketDir;
+    const d = sGroup.bracketDirection;
 
     let braketBox: Box2Abs | null = null;
     const contentBoxes: Array<any> = [];
@@ -729,11 +737,11 @@ export class SGroup {
     sGroups: Map<number, ReSGroup> | Pool<SGroup>,
   ) {
     return [...sGroups.values()].some((sGroupOrReSGroup) => {
-      const sGroup: SGroup =
+      const sGroup: SGroup | undefined =
         'item' in sGroupOrReSGroup ? sGroupOrReSGroup.item : sGroupOrReSGroup;
-      const atomsInSGroup = sGroup.atoms;
+      const atomsInSGroup = sGroup?.atoms;
       return (
-        sGroup.isContracted() &&
+        sGroup?.isContracted() &&
         atomsInSGroup.includes(bond?.begin) &&
         atomsInSGroup.includes(bond?.end)
       );

@@ -14,18 +14,18 @@
  * limitations under the License.
  ***************************************************************************/
 import { Tool } from 'application/editor/tools/Tool';
-import { PeptideRenderer } from 'application/render/renderers/PeptideRenderer';
+import { BaseMonomerRenderer } from 'application/render/renderers';
 import { fromPolymerBondAddition } from 'application/editor/actions/polymerBond';
 import { CoreEditor } from 'application/editor';
 import { PolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer';
 import { Vec2 } from 'domain/entities';
 import assert from 'assert';
 import { BondService } from 'domain/services/bond/BondService';
-import { Peptide } from 'domain/entities/Peptide';
+import { BaseMonomer } from 'domain/entities/BaseMonomer';
 
 class PolymerBond implements Tool {
   private bondRenderer?: PolymerBondRenderer;
-  private lastHoveredPeptideRenderer?: PeptideRenderer;
+  private lastHoveredMonomerRenderer?: BaseMonomerRenderer;
   private hoveredBondRenderer?: PolymerBondRenderer;
   constructor(private editor: CoreEditor) {
     this.editor = editor;
@@ -33,7 +33,7 @@ class PolymerBond implements Tool {
 
   mousedown(event) {
     const selectedItem = event.target.__data__;
-    if (selectedItem instanceof PeptideRenderer) {
+    if (selectedItem instanceof BaseMonomerRenderer) {
       const freeAttachmentPoint = selectedItem.monomer.firstFreeAttachmentPoint;
 
       if (!freeAttachmentPoint) {
@@ -69,15 +69,17 @@ class PolymerBond implements Tool {
     );
   }
 
-  private setPotentialBondToAttachmentPoint(peptideRenderer: PeptideRenderer) {
+  private setPotentialBondToAttachmentPoint(
+    monomerRenderer: BaseMonomerRenderer,
+  ) {
     if (!this.bondRenderer) return;
 
     const attachmentPoint =
-      peptideRenderer.monomer.availableAttachmentPointForBondEnd;
+      monomerRenderer.monomer.availableAttachmentPointForBondEnd;
 
     if (!attachmentPoint) return;
 
-    peptideRenderer.monomer.setPotentialBond(
+    monomerRenderer.monomer.setPotentialBond(
       attachmentPoint,
       this.bondRenderer.polymerBond,
     );
@@ -86,24 +88,25 @@ class PolymerBond implements Tool {
   mousemove(event) {
     const hoveredElementRenderer = event.toElement.__data__;
     const isBondHovered = hoveredElementRenderer instanceof PolymerBondRenderer;
-    const isPeptideHovered = hoveredElementRenderer instanceof PeptideRenderer;
-    const isPeptideSelected = hoveredElementRenderer?.monomer?.selected;
-    const isPeptideLastHovered =
-      this.lastHoveredPeptideRenderer === hoveredElementRenderer;
+    const isMonomerHovered =
+      hoveredElementRenderer instanceof BaseMonomerRenderer;
+    const isMonomerSelected = hoveredElementRenderer?.monomer?.selected;
+    const isMonomerLastHovered =
+      this.lastHoveredMonomerRenderer === hoveredElementRenderer;
 
-    if (isPeptideHovered && !isPeptideSelected && !isPeptideLastHovered) {
+    if (isMonomerHovered && !isMonomerSelected && !isMonomerLastHovered) {
       hoveredElementRenderer.monomer.turnOnSelection();
-      this.lastHoveredPeptideRenderer = hoveredElementRenderer;
-      this.setPotentialBondToAttachmentPoint(this.lastHoveredPeptideRenderer);
+      this.lastHoveredMonomerRenderer = hoveredElementRenderer;
+      this.setPotentialBondToAttachmentPoint(this.lastHoveredMonomerRenderer);
     } else if (
-      !isPeptideHovered &&
-      this.lastHoveredPeptideRenderer &&
-      this.lastHoveredPeptideRenderer !==
+      !isMonomerHovered &&
+      this.lastHoveredMonomerRenderer &&
+      this.lastHoveredMonomerRenderer !==
         this.bondRenderer?.polymerBond?.firstMonomer.renderer
     ) {
-      this.lastHoveredPeptideRenderer.monomer.turnOffSelection();
-      this.lastHoveredPeptideRenderer.monomer.removePotentialBonds();
-      this.lastHoveredPeptideRenderer = undefined;
+      this.lastHoveredMonomerRenderer.monomer.turnOffSelection();
+      this.lastHoveredMonomerRenderer.monomer.removePotentialBonds();
+      this.lastHoveredMonomerRenderer = undefined;
     }
 
     if (this.bondRenderer) {
@@ -122,7 +125,7 @@ class PolymerBond implements Tool {
     this.editor.renderersContainer.update(false);
   }
 
-  private finishBondCreation(secondMonomer: Peptide) {
+  private finishBondCreation(secondMonomer: BaseMonomer) {
     assert(this.bondRenderer);
     if (!secondMonomer.hasFreeAttachmentPoint) {
       this.editor.events.error.dispatch(
@@ -154,17 +157,18 @@ class PolymerBond implements Tool {
       secondMonomer,
       this.bondRenderer.polymerBond,
     );
-    this.lastHoveredPeptideRenderer = undefined;
+    this.lastHoveredMonomerRenderer = undefined;
   }
 
   mouseup(event) {
     const hoveredElementRenderer = event.toElement.__data__;
-    const isPeptideHovered = hoveredElementRenderer instanceof PeptideRenderer;
+    const isMonomerHovered =
+      hoveredElementRenderer instanceof BaseMonomerRenderer;
     const isFirstMonomerHovered =
       hoveredElementRenderer ===
       this.bondRenderer?.polymerBond?.firstMonomer?.renderer;
 
-    if (isPeptideHovered && !isFirstMonomerHovered) {
+    if (isMonomerHovered && !isFirstMonomerHovered) {
       this.finishBondCreation(hoveredElementRenderer.monomer);
     } else if (this.bondRenderer) {
       BondService.deleteBondWithAllLinks(

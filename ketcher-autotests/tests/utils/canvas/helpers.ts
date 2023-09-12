@@ -80,13 +80,13 @@ export async function takeEditorScreenshot(
   page: Page,
   options?: { masks?: Locator[] },
 ) {
-  const editor = page.locator('[class*="App-module_canvas"]');
+  const editor = page.getByTestId('ketcher-canvas').first();
   await delay(DELAY_IN_SECONDS.THREE);
   await expect(editor).toHaveScreenshot({ mask: options?.masks });
 }
 
 export async function takeLeftToolbarScreenshot(page: Page) {
-  const editor = page.locator('[class*="LeftToolbar-module_buttons"]');
+  const editor = page.getByTestId('left-toolbar-buttons');
   await delay(DELAY_IN_SECONDS.THREE);
   await expect(editor).toHaveScreenshot();
 }

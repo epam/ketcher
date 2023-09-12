@@ -141,7 +141,7 @@ export class RemoteStructService implements StructService {
     this.customHeaders = customHeaders;
   }
 
-  generateInchIKey(struct: string): Promise<string> {
+  getInChIKey(struct: string): Promise<string> {
     return indigoCall(
       'POST',
       'indigo/convert',

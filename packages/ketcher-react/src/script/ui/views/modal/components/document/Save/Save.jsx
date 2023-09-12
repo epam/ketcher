@@ -85,6 +85,8 @@ class SaveDialog extends Component {
           'ket',
           this.isRxn ? 'rxn' : 'mol',
           this.isRxn ? 'rxnV3000' : 'molV3000',
+          'sdf',
+          'sdfV3000',
           'smarts',
           'smiles',
           'smilesExt',
@@ -92,6 +94,7 @@ class SaveDialog extends Component {
           '<----firstDivider--->', // for dividers in select list
           'inChI',
           'inChIAuxInfo',
+          'inChIKey',
           '<----secondDivider--->', // for dividers in select list
           'svg',
           'png',
@@ -319,20 +322,25 @@ class SaveDialog extends Component {
           className={classes.previewArea}
           readOnly
           ref={this.textAreaRef}
+          data-testid="preview-area-binary"
         />
       </div>
     );
 
-    const PreviewContent = () => (
-      <div className={classes.previewBackground}>
-        <textarea
-          value={structStr}
-          className={classes.previewArea}
-          readOnly
-          ref={this.textAreaRef}
-        />
-      </div>
-    );
+    const PreviewContent = ({ format }) => {
+      console.log(format);
+      return (
+        <div className={classes.previewBackground}>
+          <textarea
+            value={structStr}
+            className={classes.previewArea}
+            readOnly
+            ref={this.textAreaRef}
+            data-testid={`${format}-preview-area-text`}
+          />
+        </div>
+      );
+    };
 
     if (isLoading) {
       return <LoadingState />;
@@ -341,7 +349,7 @@ class SaveDialog extends Component {
     } else if (this.isBinaryCdxFormat(format)) {
       return <BinaryContent />;
     } else {
-      return <PreviewContent />;
+      return <PreviewContent format={format} />;
     }
   };
 
@@ -354,7 +362,9 @@ class SaveDialog extends Component {
       <div className={classes.warnings}>
         {warnings.map((warning) => (
           <div className={classes.warningsContainer}>
-            <span className={classes.warningsArr}>{warning}</span>
+            <span className={classes.warningsArr} data-testid="WarningTextArea">
+              {warning}
+            </span>
           </div>
         ))}
       </div>

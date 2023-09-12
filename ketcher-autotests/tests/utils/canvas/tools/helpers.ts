@@ -1,4 +1,5 @@
 import { Page } from '@playwright/test';
+import { pressButton, selectOption } from '@utils';
 import { selectButtonByTitle } from '@utils/clicks/selectButtonByTitle';
 import {
   AtomButton,
@@ -67,7 +68,7 @@ export async function selectLeftPanelButton(
   await leftPanelButton.click();
 }
 
-export async function selectButtonById(buttonId: BondIds, page: Page) {
+export async function selectButtonById(buttonId: BondIds | 'OK', page: Page) {
   const element = page.getByTestId(buttonId);
   await element.click();
 }
@@ -75,4 +76,12 @@ export async function selectButtonById(buttonId: BondIds, page: Page) {
 export async function openSimpleObjectsDropdown(page: Page) {
   await page.getByTestId('shape-ellipse').click();
   await page.getByTestId('shape-ellipse').click();
+}
+export async function saveStructureWithReaction(page: Page, format?: string) {
+  await selectTopPanelButton(TopPanelButton.Save, page);
+  if (format) {
+    await pressButton(page, 'MDL Rxnfile V2000');
+    await selectOption(page, format);
+  }
+  await page.getByRole('button', { name: 'Save', exact: true }).click();
 }

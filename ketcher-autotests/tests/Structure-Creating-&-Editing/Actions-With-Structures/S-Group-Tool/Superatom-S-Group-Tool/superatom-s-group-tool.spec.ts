@@ -19,6 +19,7 @@ import {
   clickOnBond,
   screenshotBetweenUndoRedo,
   saveToFile,
+  waitForPageInit,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getMolfile } from '@utils/formats';
@@ -61,7 +62,7 @@ async function contractExpandRemoveAbbreviation(
 
 test.describe('Superatom S-Group tool', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {
@@ -73,7 +74,7 @@ test.describe('Superatom S-Group tool', () => {
       Test case: EPMLSOPKET-1537
       Description: The brackets are rendered correctly around Atom
     */
-    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await clickOnAtom(page, 'C', 3);
     await addNameToSuperatom(page, 'Name', 'Test@!#$%12345');
@@ -84,7 +85,7 @@ test.describe('Superatom S-Group tool', () => {
       Test case: EPMLSOPKET-1537
       Description: The brackets are rendered correctly around Bond
     */
-    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await clickOnBond(page, BondType.SINGLE, 3);
     await addNameToSuperatom(page, 'Name', 'Test@!#$%12345');
@@ -95,7 +96,7 @@ test.describe('Superatom S-Group tool', () => {
       Test case: EPMLSOPKET-1537
       Description: The brackets are rendered correctly around whole structure
     */
-    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await page.keyboard.press('Control+a');
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await addNameToSuperatom(page, 'Name', 'Test@!#$%12345');
@@ -218,7 +219,7 @@ test.describe('Superatom S-Group tool', () => {
       Test case: EPMLSOPKET-1541
       Description: User is able to save and open structure with Superatom S-group.
     */
-    await openFileAndAddToCanvas('superatom-all-chain.ket', page);
+    await openFileAndAddToCanvas('KET/superatom-all-chain.ket', page);
     const expectedFile = await getMolfile(page);
     await saveToFile('superatom-all-chain-expected.mol', expectedFile);
     const METADATA_STRING_INDEX = [1];
@@ -238,7 +239,7 @@ test.describe('Superatom S-Group tool', () => {
       Test case: EPMLSOPKET-12990
       Description: User is able to contract/expand/remove abbreviation on structure with Superatom S-group.
     */
-    await openFileAndAddToCanvas('superatom-all-chain.ket', page);
+    await openFileAndAddToCanvas('KET/superatom-all-chain.ket', page);
     await contractExpandRemoveAbbreviation(page, 'Test@!#$%12345');
   });
 
@@ -249,7 +250,7 @@ test.describe('Superatom S-Group tool', () => {
       Test case: EPMLSOPKET-12991
       Description: User is able to contract/expand/remove abbreviation on atom with Superatom S-group.
     */
-    await openFileAndAddToCanvas('superatom-one-atom-on-chain.ket', page);
+    await openFileAndAddToCanvas('KET/superatom-one-atom-on-chain.ket', page);
     await contractExpandRemoveAbbreviation(page, 'Test@!#$%12345');
   });
 });

@@ -43,6 +43,7 @@ function baseURL(): string {
 }
 
 const MAX_NUMBER_OF_RETRIES = 2;
+const MIN_AMOUNT_OF_WORKERS = 2;
 // const MAX_NUMBER_OF_FAILURES = 3;
 const isCI = process.env.CI_ENVIRONMENT === 'true';
 
@@ -67,15 +68,12 @@ const config: PlaywrightTestConfig = {
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
-  forbidOnly:
-    process.env.CI_ENVIRONMENT === 'false'
-      ? false
-      : Boolean(process.env.CI_ENVIRONMENT),
+  forbidOnly: isCI,
   /* Retry on CI only */
   retries: isCI ? MAX_NUMBER_OF_RETRIES : 0,
   /* Opt out of parallel tests on CI. */
   // eslint-disable-next-line no-magic-numbers
-  workers: process.env.CI ? 2 : os.cpus().length,
+  workers: process.env.CI ? MIN_AMOUNT_OF_WORKERS : os.cpus().length,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: [
     [

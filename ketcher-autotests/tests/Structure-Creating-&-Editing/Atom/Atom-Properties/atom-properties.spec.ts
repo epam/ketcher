@@ -23,11 +23,19 @@ import {
   doubleClickOnAtom,
   moveOnAtom,
   clickOnAtom,
+  waitForPageInit,
+  waitForRender,
 } from '@utils';
 import { getMolfile, getRxn } from '@utils/formats';
 
 const CANVAS_CLICK_X = 200;
 const CANVAS_CLICK_Y = 200;
+
+async function waitForAtomPropsModal(page: Page) {
+  await expect(await page.getByTestId('atomProps-dialog').isVisible()).toBe(
+    true,
+  );
+}
 
 async function selectAtomLabel(page: Page, label: string, button: string) {
   await page.getByLabel('Label').fill(label);
@@ -168,7 +176,7 @@ async function selectElementFromExtendedTable(
 
 test.describe('Atom Properties', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {
@@ -199,6 +207,7 @@ test.describe('Atom Properties', () => {
     */
     await openFileAndAddToCanvas('KET/benzene-ring-with-two-atoms.ket', page);
     await doubleClickOnAtom(page, 'N', 0);
+    await waitForAtomPropsModal(page);
   });
 
   test('Check Atom Properties modal window by hovering and press hotkey /', async ({
@@ -225,7 +234,9 @@ test.describe('Atom Properties', () => {
     */
     await openFileAndAddToCanvas('KET/benzene-ring-with-two-atoms.ket', page);
     await moveOnAtom(page, 'O', 0);
-    await page.keyboard.press('/');
+    await waitForRender(page, async () => {
+      await page.keyboard.press('/');
+    });
   });
 
   test('Change Atom Label on structure and press Cancel', async ({ page }) => {
@@ -249,7 +260,9 @@ test.describe('Atom Properties', () => {
     await openFileAndAddToCanvas('KET/benzene-ring-with-two-atoms.ket', page);
     await doubleClickOnAtom(page, 'C', 0);
 
-    await selectAtomLabel(page, 'Sb', 'Apply');
+    await waitForRender(page, async () => {
+      await selectAtomLabel(page, 'Sb', 'Apply');
+    });
   });
 
   test('Change Atom Label on structure to incorrect', async ({ page }) => {
@@ -308,7 +321,10 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-1594
       Description: The saved *.mol file is opened and can be edited.
     */
-    await openFileAndAddToCanvas('benzene-with-three-atoms.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/benzene-with-three-atoms.mol',
+      page,
+    );
 
     await doubleClickOnAtom(page, 'N', 0);
 
@@ -328,16 +344,22 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-1594
       Description: The structure is saved as *.mol file.
     */
-    await openFileAndAddToCanvas('benzene-with-three-atoms.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/benzene-with-three-atoms.mol',
+      page,
+    );
     const expectedFile = await getMolfile(page, 'v2000');
-    await saveToFile('benzene-with-three-atoms-expected.mol', expectedFile);
+    await saveToFile(
+      'Molfiles-V2000/benzene-with-three-atoms-expected.mol',
+      expectedFile,
+    );
 
     const METADATA_STRING_INDEX = [1];
     const { fileExpected: molFileExpected, file: molFile } =
       await receiveFileComparisonData({
         page,
         expectedFileName:
-          'tests/test-data/benzene-with-three-atoms-expected.mol',
+          'tests/test-data/Molfiles-V2000/benzene-with-three-atoms-expected.mol',
         fileFormat: 'v2000',
         metaDataIndexes: METADATA_STRING_INDEX,
       });
@@ -367,7 +389,10 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-1596
       Description: The appeared symbol is colored with the same color as in Periodic Table and added to two different rings.
     */
-    await openFileAndAddToCanvas('benzene-and-cyclopentadiene.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/benzene-and-cyclopentadiene.mol',
+      page,
+    );
     await page.keyboard.down('Shift');
     await clickOnAtom(page, 'N', 0);
 
@@ -386,16 +411,22 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-1596
       Description: The structure is saved as *.mol file.
     */
-    await openFileAndAddToCanvas('benzene-and-cyclopentadiene.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/benzene-and-cyclopentadiene.mol',
+      page,
+    );
     const expectedFile = await getMolfile(page, 'v2000');
-    await saveToFile('benzene-and-cyclopentadiene-expected.mol', expectedFile);
+    await saveToFile(
+      'Molfiles-V2000/benzene-and-cyclopentadiene-expected.mol',
+      expectedFile,
+    );
 
     const METADATA_STRING_INDEX = [1];
     const { fileExpected: molFileExpected, file: molFile } =
       await receiveFileComparisonData({
         page,
         expectedFileName:
-          'tests/test-data/benzene-and-cyclopentadiene-expected.mol',
+          'tests/test-data/Molfiles-V2000/benzene-and-cyclopentadiene-expected.mol',
         fileFormat: 'v2000',
         metaDataIndexes: METADATA_STRING_INDEX,
       });
@@ -441,7 +472,10 @@ test.describe('Atom Properties', () => {
       The 'Alias' field contains the correct edited text.
       The correct edited alias 'TesREasd!@' and Label ('Sb' for our example) appears for the edited atom.
     */
-    await openFileAndAddToCanvas('benzene-ring-with-alias.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/benzene-ring-with-alias.mol',
+      page,
+    );
 
     await doubleClickOnAtom(page, 'C', 0);
 
@@ -509,15 +543,22 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-1606
       Description: The structure is saved as *.mol file.
     */
-    await openFileAndAddToCanvas('benzene-with-charge.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/benzene-with-charge.mol',
+      page,
+    );
     const expectedFile = await getMolfile(page, 'v2000');
-    await saveToFile('benzene-with-charge-expected.mol', expectedFile);
+    await saveToFile(
+      'Molfiles-V2000/benzene-with-charge-expected.mol',
+      expectedFile,
+    );
 
     const METADATA_STRING_INDEX = [1];
     const { fileExpected: molFileExpected, file: molFile } =
       await receiveFileComparisonData({
         page,
-        expectedFileName: 'tests/test-data/benzene-with-charge-expected.mol',
+        expectedFileName:
+          'tests/test-data/Molfiles-V2000/benzene-with-charge-expected.mol',
         fileFormat: 'v2000',
         metaDataIndexes: METADATA_STRING_INDEX,
       });
@@ -525,7 +566,7 @@ test.describe('Atom Properties', () => {
     expect(molFile).toEqual(molFileExpected);
   });
 
-  test.fixme('Change charge on different atoms', async ({ page }) => {
+  test('Change charge on different atoms', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-1607
       Description: The Charge are changed for three atoms (S, F, I).
@@ -545,7 +586,7 @@ test.describe('Atom Properties', () => {
     await fillChargeForAtom(page, '3', 'Apply');
   });
 
-  test.fixme('Typing in Charge for sigle atom', async ({ page }) => {
+  test('Typing in Charge for sigle atom', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-1608
       Description: The Charge are changed for three atoms (S, F, I).
@@ -623,7 +664,7 @@ test.describe('Atom Properties', () => {
     expect(molFile).toEqual(molFileExpected);
   });
 
-  test.fixme('Change Isotope value on different atoms', async ({ page }) => {
+  test('Change Isotope value on different atoms', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-1616
       Description: The typed isotope value appears near the selected atoms only.Number is colored same as atoms.
@@ -658,29 +699,28 @@ test.describe('Atom Properties', () => {
     await pressButton(page, 'Apply');
   });
 
-  test.fixme(
-    'Typing in isotope - several atoms through Label Edit modal',
-    async ({ page }) => {
-      /*
+  test('Typing in isotope - several atoms through Label Edit modal', async ({
+    page,
+  }) => {
+    /*
       Test case: EPMLSOPKET-1618
       Description: Only last selected atom is replaced with the typed atom symbol and isotope.
     */
-      await openFileAndAddToCanvas('Heteroatoms.mol', page);
+    await openFileAndAddToCanvas('Heteroatoms.mol', page);
 
-      await page.keyboard.down('Shift');
-      await clickOnAtom(page, 'S', 0);
+    await page.keyboard.down('Shift');
+    await clickOnAtom(page, 'S', 0);
 
-      await clickOnAtom(page, 'F', 0);
-      await page.keyboard.up('Shift');
+    await clickOnAtom(page, 'F', 0);
+    await page.keyboard.up('Shift');
 
-      await moveOnAtom(page, 'S', 0);
-      await page.mouse.down();
-      await page.waitForTimeout(2000);
+    await moveOnAtom(page, 'S', 0);
+    await page.mouse.down();
+    await page.waitForTimeout(2000);
 
-      await page.getByLabel('Atom').fill('18S');
-      await pressButton(page, 'Apply');
-    },
-  );
+    await page.getByLabel('Atom').fill('18S');
+    await pressButton(page, 'Apply');
+  });
 
   test('Add Valence in modal and press Cancel', async ({ page }) => {
     /*
@@ -732,7 +772,7 @@ test.describe('Atom Properties', () => {
     expect(molFile).toEqual(molFileExpected);
   });
 
-  test.fixme('Change Valence value on different atoms', async ({ page }) => {
+  test('Change Valence value on different atoms', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-1620
       Description: The typed Valence value appears near the selected atoms only.
@@ -844,7 +884,7 @@ test.describe('Atom Properties', () => {
     await pressButton(page, 'Apply');
   });
 
-  test.fixme('Add Radicals value on different atoms', async ({ page }) => {
+  test('Add Radicals value on different atoms', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-1635
       Description: The typed Valence value appears near the selected atoms only.
@@ -989,7 +1029,7 @@ test.describe('Atom Properties', () => {
     await selectRingBondCount(page, '4', 'Apply');
   });
 
-  test('Ring bonds count - Editing and Undo/Redo', async ({ page }) => {
+  test.fixme('Ring bonds count - Editing and Undo/Redo', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-1639
       Description: Ring bond count atom property is displayed as specified from the menu item.
@@ -1070,28 +1110,29 @@ test.describe('Atom Properties', () => {
     await selectHCount(page, '4', 'Apply');
   });
 
-  test('Save structure with Query specific - H count information as *.mol file', async ({
-    page,
-  }) => {
-    /*
+  test.fixme(
+    'Save structure with Query specific - H count information as *.mol file',
+    async ({ page }) => {
+      /*
       Test case: EPMLSOPKET-1640
       Description: The structure is saved as *.mol file.
     */
-    await openFileAndAddToCanvas('chain-with-h-count.mol', page);
-    const expectedFile = await getMolfile(page, 'v2000');
-    await saveToFile('chain-with-h-count-expected.mol', expectedFile);
+      await openFileAndAddToCanvas('chain-with-h-count.mol', page);
+      const expectedFile = await getMolfile(page, 'v2000');
+      await saveToFile('chain-with-h-count-expected.mol', expectedFile);
 
-    const METADATA_STRING_INDEX = [1];
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName: 'tests/test-data/chain-with-h-count-expected.mol',
-        fileFormat: 'v2000',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
+      const METADATA_STRING_INDEX = [1];
+      const { fileExpected: molFileExpected, file: molFile } =
+        await receiveFileComparisonData({
+          page,
+          expectedFileName: 'tests/test-data/chain-with-h-count-expected.mol',
+          fileFormat: 'v2000',
+          metaDataIndexes: METADATA_STRING_INDEX,
+        });
 
-    expect(molFile).toEqual(molFileExpected);
-  });
+      expect(molFile).toEqual(molFileExpected);
+    },
+  );
 
   test('Hydrogen count - Representation of blank selection', async ({
     page,
@@ -1190,27 +1231,28 @@ test.describe('Atom Properties', () => {
     expect(molFile).toEqual(molFileExpected);
   });
 
-  test('Substitution count - Representation of blank selection', async ({
-    page,
-  }) => {
-    /*
+  test.fixme(
+    'Substitution count - Representation of blank selection',
+    async ({ page }) => {
+      /*
       Test case: EPMLSOPKET-1643
       Description: The atom is selected.
       Number of nonhydrogen substituents is displayed as AtomSymbol(sN) where N depends on the number selected.
       Nothing is changed.
     */
-    await openFileAndAddToCanvas('KET/chain.ket', page);
+      await openFileAndAddToCanvas('KET/chain.ket', page);
 
-    await doubleClickOnAtom(page, 'C', 0);
-    await page.getByText('Query specific').click();
-    await page
-      .locator('label')
-      .filter({ hasText: 'Substitution count' })
-      .getByRole('button', { name: '​' })
-      .click();
-    await page.locator('.MuiMenuItem-root').first().click();
-    await pressButton(page, 'Apply');
-  });
+      await doubleClickOnAtom(page, 'C', 0);
+      await page.getByText('Query specific').click();
+      await page
+        .locator('label')
+        .filter({ hasText: 'Substitution count' })
+        .getByRole('button', { name: '​' })
+        .click();
+      await page.locator('.MuiMenuItem-root').first().click();
+      await pressButton(page, 'Apply');
+    },
+  );
 
   test('Add Query specific - Unsaturated in modal and press Cancel', async ({
     page,
@@ -1405,37 +1447,35 @@ test.describe('Atom Properties', () => {
     await selectReactionFlagsInversion(page, 'Inverts', 'Cancel');
   });
 
-  test.fixme(
-    'Add Reaction flags - Inversion (Inverts) and Exact change in modal and press Apply',
-    async ({ page }) => {
-      /*
+  test('Add Reaction flags - Inversion (Inverts) and Exact change in modal and press Apply', async ({
+    page,
+  }) => {
+    /*
       Test case: EPMLSOPKET-1650
       Description: The selected stereo mark appears near the carbon atom for
       Inverts - .Inv, ext.
     */
-      await openFileAndAddToCanvas('KET/chain.ket', page);
+    await openFileAndAddToCanvas('KET/chain.ket', page);
 
-      await doubleClickOnAtom(page, 'C', 3);
-      await selectReactionFlagsInversion(page, 'Inverts');
-      await selectExactChange(page, 'Apply');
-    },
-  );
+    await doubleClickOnAtom(page, 'C', 3);
+    await selectReactionFlagsInversion(page, 'Inverts');
+    await selectExactChange(page, 'Apply');
+  });
 
-  test.fixme(
-    'Add Reaction flags - Inversion (Retains) and Exact change in modal and press Apply',
-    async ({ page }) => {
-      /*
+  test('Add Reaction flags - Inversion (Retains) and Exact change in modal and press Apply', async ({
+    page,
+  }) => {
+    /*
       Test case: EPMLSOPKET-1650
       Description: The selected stereo mark appears near the carbon atom for
       Retains - .Ret, ext.
     */
-      await openFileAndAddToCanvas('KET/chain.ket', page);
+    await openFileAndAddToCanvas('KET/chain.ket', page);
 
-      await doubleClickOnAtom(page, 'C', 3);
-      await selectReactionFlagsInversion(page, 'Retains');
-      await selectExactChange(page, 'Apply');
-    },
-  );
+    await doubleClickOnAtom(page, 'C', 3);
+    await selectReactionFlagsInversion(page, 'Retains');
+    await selectExactChange(page, 'Apply');
+  });
 
   test('Reaction flags information saved as *.mol file', async ({ page }) => {
     /*

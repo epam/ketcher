@@ -11,7 +11,7 @@ import {
   FILE_TEST_DATA,
   saveToFile,
   waitForLoad,
-  waitForIndigoToLoad,
+  waitForPageInit,
 } from '@utils';
 import { getRxn } from '@utils/formats';
 
@@ -51,7 +51,7 @@ async function pasteFromClipboard(page: Page, fileFormats: string) {
 
 test.describe('Reagents RXN format', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test('Detection molecule as reagent and write reagent information in "MDL rxnfile V2000" format', async ({
@@ -167,12 +167,12 @@ test.describe('Reagents RXN format', () => {
     );
     const expectedFile = await getRxn(page, 'v3000');
     await saveToFile(
-      'benzene-arrow-benzene-reagent-nh3-expected.rxn',
+      'Rxn-V3000/benzene-arrow-benzene-reagent-nh3-expected.rxn',
       expectedFile,
     );
 
     const rxnFileExpected = await readFileContents(
-      'tests/test-data/benzene-arrow-benzene-reagent-nh3-expected.rxn',
+      'tests/test-data/Rxn-V3000/benzene-arrow-benzene-reagent-nh3-expected.rxn',
     );
     const rxnFile = await getRxn(page, 'v3000');
     // eslint-disable-next-line no-magic-numbers
@@ -194,8 +194,7 @@ test.describe('Reagents RXN format', () => {
 
 test.describe('Reagents RXN format', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
-    await waitForIndigoToLoad(page);
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {

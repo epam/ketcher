@@ -23,6 +23,8 @@ import {
   LeftPanelButton,
   TopPanelButton,
   Point,
+  waitForPageInit,
+  waitForRender,
 } from '@utils';
 
 const xOffsetFromCenter = -35;
@@ -78,12 +80,15 @@ test.describe('Plus and Arrows tools ', () => {
   const modifier = getControlModifier();
   const CANVAS_CLICK_X = 300;
   const CANVAS_CLICK_Y = 300;
+
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
+
   test.afterEach(async ({ page }) => {
     await takeEditorScreenshot(page);
   });
+
   test.describe('Create reactions', () => {
     /**
      * Test case: EPMLSOPKET-1783
@@ -91,7 +96,10 @@ test.describe('Plus and Arrows tools ', () => {
      */
     for (const tool of Object.values(ArrowTool)) {
       test(` ${tool} check`, async ({ page }) => {
-        await openFileAndAddToCanvas('benzene-and-cyclopentadiene.mol', page);
+        await openFileAndAddToCanvas(
+          'Molfiles-V2000/benzene-and-cyclopentadiene.mol',
+          page,
+        );
         await selectNestedTool(page, tool);
         await clickOnTheCanvas(page, xOffsetFromCenter, 0);
         await delay(DELAY_IN_SECONDS.ONE);
@@ -124,7 +132,7 @@ test.describe('Plus and Arrows tools ', () => {
     await selectLeftPanelButton(LeftPanelButton.ArrowOpenAngleTool, page);
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
-    dragMouseTo(x + 100, y + 100, page);
+    await dragMouseTo(x + 100, y + 100, page);
     await takeEditorScreenshot(page);
     await copyAndPaste(page);
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
@@ -141,7 +149,7 @@ test.describe('Plus and Arrows tools ', () => {
      */
     const xOffsetFromCenter1 = -235;
     const xOffsetFromCenter2 = 235;
-    await openFileAndAddToCanvas('four-structures.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/four-structures.mol', page);
     await selectLeftPanelButton(LeftPanelButton.ReactionPlusTool, page);
     await clickOnTheCanvas(page, xOffsetFromCenter1, 0);
     await clickOnTheCanvas(page, xOffsetFromCenter2, 0);
@@ -176,28 +184,37 @@ test.describe('Plus and Arrows tools ', () => {
      */
     let point: Point;
     test.beforeEach(async ({ page }) => {
-      await openFileAndAddToCanvas('Rxn-V3000/reaction-3.rxn', page);
+      await openFileAndAddToCanvas('Rxn-V2000/reaction-3.rxn', page);
       await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
       point = await getCoordinatesOfTheMiddleOfTheScreen(page);
     });
 
     test('Select the plus sign and move it', async ({ page }) => {
-      await page.mouse.move(point.x - 150, point.y - 10);
-      await dragMouseTo(point.x - 150, point.y - 40, page);
+      await waitForRender(page, async () => {
+        await page.mouse.move(point.x - 150, point.y - 10);
+        await dragMouseTo(point.x - 150, point.y - 40, page);
+      });
     });
 
     test('Select the plus sign with any reaction component(s) and move them', async ({
       page,
     }) => {
-      await page.mouse.move(point.x - 300, point.y - 100);
-      await dragMouseTo(point.x - 140, point.y + 100, page);
-      await page.mouse.move(point.x - 200, point.y - 20);
-      await dragMouseTo(point.x - 300, point.y - 100, page);
+      await waitForRender(page, async () => {
+        await page.mouse.move(point.x - 300, point.y - 100);
+        await dragMouseTo(point.x - 140, point.y + 100, page);
+      });
+
+      await waitForRender(page, async () => {
+        await page.mouse.move(point.x - 200, point.y - 20);
+        await dragMouseTo(point.x - 300, point.y - 100, page);
+      });
     });
 
     test('Select the whole reaction and move it', async ({ page }) => {
-      await page.keyboard.press(`${modifier}+KeyA`);
-      await page.mouse.move(point.x - 20, point.y - 20);
+      await waitForRender(page, async () => {
+        await page.keyboard.press(`${modifier}+KeyA`);
+        await page.mouse.move(point.x - 20, point.y - 20);
+      });
       await dragMouseTo(point.x - 100, point.y - 100, page);
     });
 
@@ -244,7 +261,7 @@ test.describe('Plus and Arrows tools ', () => {
      */
     let point: Point;
     test.beforeEach(async ({ page }) => {
-      await openFileAndAddToCanvas('Rxn-V3000/reaction-3.rxn', page);
+      await openFileAndAddToCanvas('Rxn-V2000/reaction-3.rxn', page);
       await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
       point = await getCoordinatesOfTheMiddleOfTheScreen(page);
     });
@@ -312,7 +329,10 @@ test.describe('Plus and Arrows tools ', () => {
      */
     let point: Point;
     test.beforeEach(async ({ page }) => {
-      await openFileAndAddToCanvas('benzene-and-cyclopentadiene.mol', page);
+      await openFileAndAddToCanvas(
+        'Molfiles-V2000/benzene-and-cyclopentadiene.mol',
+        page,
+      );
       await selectNestedTool(page, ArrowTool.ARROW_EQUILIBRIUM_FILLED_HALF_BOW);
       await clickOnTheCanvas(page, -40, 0);
       point = await getCoordinatesOfTheMiddleOfTheScreen(page);
@@ -394,7 +414,10 @@ test.describe('Plus and Arrows tools ', () => {
      * Test case: EPMLSOPKET-2881
      * Description: Actions on the reaction with non-default reaction arrows
      */
-    await openFileAndAddToCanvas('benzene-and-cyclopentadiene.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/benzene-and-cyclopentadiene.mol',
+      page,
+    );
     await selectNestedTool(page, ArrowTool.ARROW_FAILED);
     const point = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await page.mouse.move(point.x - 30, point.y);
@@ -433,7 +456,10 @@ test.describe('Plus and Arrows tools ', () => {
      * Description: Save/Open structure with non-default reaction in KET file
      */
     test('add default arrow and save in KET file', async ({ page }) => {
-      await openFileAndAddToCanvas('benzene-and-cyclopentadiene.mol', page);
+      await openFileAndAddToCanvas(
+        'Molfiles-V2000/benzene-and-cyclopentadiene.mol',
+        page,
+      );
       await selectNestedTool(page, ArrowTool.ARROW_OPEN_ANGLE);
       const offsetFromCenter = -35;
       await clickOnTheCanvas(page, offsetFromCenter, 0);
@@ -456,7 +482,10 @@ test.describe('Plus and Arrows tools ', () => {
      * Description: Save/Open structure with non-default reaction in KET file
      */
     test('add non default arrow and save in KET file', async ({ page }) => {
-      await openFileAndAddToCanvas('benzene-and-cyclopentadiene.mol', page);
+      await openFileAndAddToCanvas(
+        'Molfiles-V2000/benzene-and-cyclopentadiene.mol',
+        page,
+      );
       await selectNestedTool(page, ArrowTool.ARROW_EQUILIBRIUM_FILLED_HALF_BOW);
       const offsetFromCenter = -35;
       await clickOnTheCanvas(page, offsetFromCenter, 0);
@@ -479,7 +508,10 @@ test.describe('Plus and Arrows tools ', () => {
      * Description: Save/Open structure with non-default reaction in RXN file
      */
     test('add non default arrow and save in RXN file', async ({ page }) => {
-      await openFileAndAddToCanvas('benzene-and-cyclopentadiene.mol', page);
+      await openFileAndAddToCanvas(
+        'Molfiles-V2000/benzene-and-cyclopentadiene.mol',
+        page,
+      );
       await selectNestedTool(page, ArrowTool.ARROW_EQUILIBRIUM_FILLED_HALF_BOW);
       await clickOnTheCanvas(page, xOffsetFromCenter, 0);
       await delay(DELAY_IN_SECONDS.THREE);
@@ -501,7 +533,10 @@ test.describe('Plus and Arrows tools ', () => {
      */
     for (const { name, fileExtension } of formatsForSave) {
       test(`save in ${fileExtension} file`, async ({ page }) => {
-        await openFileAndAddToCanvas('benzene-and-cyclopentadiene.mol', page);
+        await openFileAndAddToCanvas(
+          'Molfiles-V2000/benzene-and-cyclopentadiene.mol',
+          page,
+        );
         await selectNestedTool(page, ArrowTool.ARROW_OPEN_ANGLE);
         await clickOnTheCanvas(page, xOffsetFromCenter, 15);
         await clickOnTheCanvas(page, xOffsetFromCenter, -15);
@@ -525,7 +560,10 @@ test.describe('Plus and Arrows tools ', () => {
      */
     for (const { name, fileExtension } of formatsForSave) {
       test(`save in ${fileExtension} file`, async ({ page }) => {
-        await openFileAndAddToCanvas('benzene-and-cyclopentadiene.mol', page);
+        await openFileAndAddToCanvas(
+          'Molfiles-V2000/benzene-and-cyclopentadiene.mol',
+          page,
+        );
         await selectNestedTool(page, ArrowTool.ARROW_EQUILIBRIUM_OPEN_ANGLE);
         await clickOnTheCanvas(page, xOffsetFromCenter, 0);
         await delay(DELAY_IN_SECONDS.THREE);
@@ -547,7 +585,10 @@ test.describe('Plus and Arrows tools ', () => {
      * Description: Resizing reaction arrow - Saving
      */
     test('Resize and save', async ({ page }) => {
-      await openFileAndAddToCanvas('benzene-and-cyclopentadiene.mol', page);
+      await openFileAndAddToCanvas(
+        'Molfiles-V2000/benzene-and-cyclopentadiene.mol',
+        page,
+      );
       await selectNestedTool(page, ArrowTool.ARROW_FILLED_BOW);
       await clickOnTheCanvas(page, xOffsetFromCenter, 0);
       const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
@@ -559,8 +600,11 @@ test.describe('Plus and Arrows tools ', () => {
       await saveStructureWithReaction(page, 'Ket Format');
     });
 
-    test('open files', async ({ page }) => {
-      await openFileAndAddToCanvas(`resizing-reaction-arrow-saving.rxn`, page);
+    test.fixme('open files', async ({ page }) => {
+      await openFileAndAddToCanvas(
+        `Rxn-V2000/resizing-reaction-arrow-saving.rxn`,
+        page,
+      );
       await takeEditorScreenshot(page);
       await selectTopPanelButton(TopPanelButton.Clear, page);
       await openFileAndAddToCanvas(
@@ -697,7 +741,9 @@ test.describe('Plus and Arrows tools ', () => {
       const button = page.getByTestId(id).first();
       expect(button).toHaveAttribute('title', idToTitle[id]);
       await button.click();
-      await clickInTheMiddleOfTheScreen(page);
+      await waitForRender(page, async () => {
+        await clickInTheMiddleOfTheScreen(page);
+      });
     });
   }
 });

@@ -9,6 +9,7 @@ import {
   waitForLoad,
   delay,
   takeEditorScreenshot,
+  waitForRender,
 } from '@utils';
 import { MolfileFormat } from 'ketcher-core';
 import { getSmiles, getInchi } from '@utils/formats';
@@ -40,7 +41,9 @@ export async function openFileAndAddToCanvas(filename: string, page: Page) {
   await waitForLoad(page, async () => {
     await pressButton(page, 'Add to Canvas');
   });
-  await clickInTheMiddleOfTheScreen(page);
+  await waitForRender(page, async () => {
+    await clickInTheMiddleOfTheScreen(page);
+  });
 }
 
 export async function pasteFromClipboardAndAddToCanvas(
@@ -135,7 +138,7 @@ export async function saveToFile(filename: string, data: string) {
 Example of usage:
 await openFileAndAddToCanvas('KET/benzene-arrow-benzene-reagent-hcl.ket', page);
 const rxnFile = await getRxn(page, 'v3000');
-await saveToFile('benzene-arrow-benzene-reagent-hcl.rxn', rxnFile); */
+await saveToFile('Rxn-V3000/benzene-arrow-benzene-reagent-hcl.rxn', rxnFile); */
 export async function pasteFromClipboard(page: Page, fillValue: string) {
   await page.getByRole('dialog').getByRole('textbox').fill(fillValue);
 }

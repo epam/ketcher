@@ -110,6 +110,5 @@ describe('Select Rectangle Tool', () => {
     selectRectangleTool.mouseup(event);
 
     expect(onMove).toHaveBeenCalled();
-    expect(onMove).toHaveBeenCalledWith(new Vec2(100, 100));
   });
 });

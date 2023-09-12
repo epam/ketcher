@@ -4,6 +4,7 @@ import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { D3SvgElementSelection } from 'application/render/types';
 import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { editorEvents } from 'application/editor/editorEvents';
+import { Scale } from 'domain/helpers';
 
 export abstract class BaseMonomerRenderer extends BaseRenderer {
   private editorEvents: typeof editorEvents;
@@ -28,8 +29,8 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
 
   public get center() {
     return {
-      x: this.monomer.position.x + this.bodyWidth / 2,
-      y: this.monomer.position.y + this.bodyHeight / 2,
+      x: this.scaledMonomerPosition.x + this.bodyWidth / 2,
+      y: this.scaledMonomerPosition.y + this.bodyHeight / 2,
     };
   }
 
@@ -168,8 +169,8 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       .attr('transition', 'transform 0.2s')
       .attr(
         'transform',
-        `translate(${this.monomer.position.x}, ${
-          this.monomer.position.y
+        `translate(${this.scaledMonomerPosition.x}, ${
+          this.scaledMonomerPosition.y
         }) scale(${this.scale || 1})`,
       ) as never as D3SvgElementSelection<SVGGElement, void>;
   }
@@ -208,6 +209,10 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     this.hoverElement.remove();
   }
 
+  private get scaledMonomerPosition() {
+    return Scale.obj2scaled(this.monomer.position, this.editorSettings);
+  }
+
   public appendSelection() {
     this.removeSelection();
 
@@ -220,8 +225,8 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     this.selectionCircle = this.canvas
       ?.insert('circle', ':first-child')
       .attr('r', '42px')
-      .attr('cx', this.monomer.position.x + this.bodyWidth / 2)
-      .attr('cy', this.monomer.position.y + this.bodyHeight / 2)
+      .attr('cx', this.scaledMonomerPosition.x + this.bodyWidth / 2)
+      .attr('cy', this.scaledMonomerPosition.y + this.bodyHeight / 2)
       .attr('fill', '#57FF8F');
   }
 
@@ -287,8 +292,8 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   public move() {
     this.rootElement?.attr(
       'transform',
-      `translate(${this.monomer.position.x}, ${
-        this.monomer.position.y
+      `translate(${this.scaledMonomerPosition.x}, ${
+        this.scaledMonomerPosition.y
       }) scale(${this.scale || 1})`,
     );
   }

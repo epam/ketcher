@@ -147,6 +147,7 @@ function Editor({ theme }: EditorProps) {
             id="polymer-editor-canvas"
             data-testid="ketcher-canvas"
             ref={canvasRef}
+            data-testid="ketcher-canvas"
             width="100%"
             height="100%"
           >
@@ -230,7 +231,7 @@ function MenuComponent() {
     <Menu onItemClick={menuItemChanged} activeMenuItem={activeTool}>
       <Menu.Group>
         <Menu.Submenu>
-          <Menu.Item itemId="open" />
+          <Menu.Item itemId="open" title="Open..." />
           <Menu.Item itemId="save" />
         </Menu.Submenu>
       </Menu.Group>

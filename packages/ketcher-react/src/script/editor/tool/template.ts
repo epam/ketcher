@@ -31,16 +31,16 @@ import {
   Action,
   vectorUtils,
   Bond,
+  BondAttr,
+  AtomAttr,
 } from 'ketcher-core';
 import Editor from '../Editor';
 import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems';
 import { MODES } from 'src/constants';
 import { Tool } from './Tool';
-import TemplatePreview from './preview-controller';
+import TemplatePreview from './templatePreview';
 
-export const PREVIEW_DELAY = 300;
-
-function getBondFlipSign(struct: Struct, bond: Bond): number {
+export function getBondFlipSign(struct: Struct, bond: Bond): number {
   const xy0 = new Vec2();
   const frid = struct.atoms.get(bond?.begin as number)?.fragment;
   const frIds = struct.getFragmentIds(frid as number);
@@ -81,7 +81,7 @@ function getBondFlipSign(struct: Struct, bond: Bond): number {
   return getSign(struct, bond, v0) || 1;
 }
 
-function getAngleFromEvent(event, ci, restruct) {
+export function getAngleFromEvent(event, ci, restruct) {
   const degree = restruct.atoms.get(ci.id)?.a.neighbors.length;
   let angle;
   if (degree && degree > 1) {
@@ -129,7 +129,11 @@ class TemplateTool implements Tool {
       bid: parseInt(tmpl.bid) || 0,
     };
 
-    this.templatePreview = new TemplatePreview(editor, this.template);
+    this.templatePreview = new TemplatePreview(
+      editor,
+      this.template,
+      this.mode,
+    );
 
     const frag = tmpl.struct;
     frag.rescale();
@@ -160,11 +164,6 @@ class TemplateTool implements Tool {
     if (sGroupSize) {
       this.findItems.push('functionalGroups');
     }
-
-    editor.hoverIcon.label = tmpl.struct.name;
-    editor.hoverIcon.fill = '#000000';
-    editor.hoverIcon.show();
-    editor.hoverIcon.updatePosition();
   }
 
   private get struct() {
@@ -227,7 +226,7 @@ class TemplateTool implements Tool {
   async mousedown(event: MouseEvent) {
     this.event = event;
 
-    this.templatePreview?.hideConnectedPreview();
+    this.templatePreview?.hidePreview();
 
     if (this.functionalGroups.size) {
       this.targetGroupsIds = getGroupIdsFromItemArrays(this.struct, {
@@ -285,7 +284,6 @@ class TemplateTool implements Tool {
 
   mousemove(event) {
     if (!this.dragCtx) {
-      this.editor.hoverIcon.updatePosition();
       this.editor.hover(
         this.editor.findItem(event, this.findItems),
         null,
@@ -530,6 +528,7 @@ class TemplateTool implements Tool {
           0,
         );
         dragCtx.action = action;
+        this.editor.update(action, true);
       } else if (ci.map === 'atoms') {
         const degree = restruct.atoms.get(ci.id)?.a.neighbors.length;
 
@@ -587,6 +586,13 @@ class TemplateTool implements Tool {
       ? fromItemsFuse(restruct, dragCtx.mergeItems).mergeWith(dragCtx.action)
       : fromItemsFuse(restruct, dragCtx.mergeItems);
 
+    for (const id of restruct.molecule.bonds.keys()) {
+      new BondAttr(id, 'isPreview', false).perform(restruct);
+    }
+
+    for (const id of restruct.molecule.atoms.keys()) {
+      new AtomAttr(id, 'isPreview', false).perform(restruct);
+    }
     const completeAction = dragCtx.action;
     if (completeAction && !completeAction.isDummy()) {
       this.editor.update(completeAction);
@@ -599,12 +605,16 @@ class TemplateTool implements Tool {
   }
 
   cancel() {
-    this.templatePreview?.hideConnectedPreview();
+    this.templatePreview?.hidePreview();
     this.mouseup();
   }
 
-  mouseleave(e) {
-    this.mouseup(e);
+  mouseleave() {
+    this.cancel();
+  }
+
+  mouseLeaveClientArea() {
+    this.templatePreview?.hidePreview();
   }
 }
 
@@ -635,7 +645,7 @@ function getTemplateMode(tmpl) {
   return null;
 }
 
-function getSign(molecule, bond, v) {
+export function getSign(molecule, bond, v) {
   const begin = molecule.atoms.get(bond.begin).pp;
   const end = molecule.atoms.get(bond.end).pp;
 

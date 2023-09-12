@@ -42,6 +42,7 @@ export function fromTemplateOnCanvas(
     template.molecule,
     pos,
     angle,
+    true,
   );
 
   action.addOp(new CalcImplicitH(pasteItems.atoms).perform(restruct));

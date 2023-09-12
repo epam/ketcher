@@ -61,14 +61,16 @@ class PasteTool implements Tool {
     this.action = action;
     this.editor.update(this.action, true);
 
-    action.mergeWith(
-      expandSGroupWithMultipleAttachmentPoint(this.editor.render.ctab),
-    );
+    action.mergeWith(expandSGroupWithMultipleAttachmentPoint(this.restruct));
 
     this.editor.update(this.action, true);
 
     this.mergeItems = getItemsToFuse(this.editor, pasteItems);
     this.editor.hover(getHoverToFuse(this.mergeItems), this);
+  }
+
+  private get restruct() {
+    return this.editor.render.ctab;
   }
 
   mousedown(event) {
@@ -81,7 +83,7 @@ class PasteTool implements Tool {
 
     if (this.action) {
       // remove pasted group from canvas to find closest group correctly
-      this.action?.perform(this.editor.render.ctab);
+      this.action?.perform(this.restruct);
     }
 
     const closestGroupItem = this.editor.findItem(event, ['functionalGroups']);
@@ -91,7 +93,7 @@ class PasteTool implements Tool {
     if (!closestGroupItem || SGroup.isSaltOrSolvent(closestGroup?.data.name)) {
       // recreate action and continue as usual
       const [action] = fromPaste(
-        this.editor.render.ctab,
+        this.restruct,
         this.struct,
         this.editor.render.page2obj(event),
       );
@@ -110,7 +112,7 @@ class PasteTool implements Tool {
 
   mousemove(event) {
     if (this.action) {
-      this.action?.perform(this.editor.render.ctab);
+      this.action?.perform(this.restruct);
     }
 
     if (this.dragCtx) {
@@ -149,13 +151,13 @@ class PasteTool implements Tool {
         return;
 
       if (this.dragCtx.action) {
-        this.dragCtx.action.perform(this.editor.render.ctab);
+        this.dragCtx.action.perform(this.restruct);
       }
 
       this.dragCtx.angle = degrees;
 
       const [action] = fromTemplateOnAtom(
-        this.editor.render.ctab,
+        this.restruct,
         prepareTemplateFromSingleGroup(this.struct),
         atomId,
         angle,
@@ -174,7 +176,7 @@ class PasteTool implements Tool {
       });
       // common paste logic
       const [action, pasteItems] = fromPaste(
-        this.editor.render.ctab,
+        this.restruct,
         this.struct,
         this.editor.render.page2obj(event),
       );
@@ -215,10 +217,10 @@ class PasteTool implements Tool {
       delete this.dragCtx;
 
       dragCtx.action = dragCtx.action
-        ? fromItemsFuse(this.editor.render.ctab, dragCtx.mergeItems).mergeWith(
+        ? fromItemsFuse(this.restruct, dragCtx.mergeItems).mergeWith(
             dragCtx.action,
           )
-        : fromItemsFuse(this.editor.render.ctab, dragCtx.mergeItems);
+        : fromItemsFuse(this.restruct, dragCtx.mergeItems);
 
       this.editor.hover(null);
       this.editor.update(dragCtx.action);
@@ -245,6 +247,10 @@ class PasteTool implements Tool {
   }
 
   mouseleave() {
+    this.cancel();
+  }
+
+  mouseLeaveClientArea() {
     this.cancel();
   }
 }

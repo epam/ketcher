@@ -95,4 +95,41 @@ test.describe('Preview for abbreviated structures: functional groups', () => {
     await delay(DELAY_IN_SECONDS.ONE);
     await takeEditorScreenshot(page);
   });
+
+  test('Should show a preview following the mouse cursor', async ({ page }) => {
+    const bondId = 2;
+    const shift = 100;
+    await selectRingButton(RingButton.Benzene, page);
+    const bondPosition = await getBondByIndex(
+      page,
+      { type: BondType.SINGLE },
+      bondId,
+    );
+    const pointAwayFromBond = {
+      x: bondPosition.x + shift,
+      y: bondPosition.y + shift,
+    };
+    await page.mouse.move(pointAwayFromBond.x, pointAwayFromBond.y);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Should show a preview following the mouse cursor and hide it when a bond is hovered over', async ({
+    page,
+  }) => {
+    const bondId = 2;
+    const shift = 100;
+    await selectRingButton(RingButton.Benzene, page);
+    const bondPosition = await getBondByIndex(
+      page,
+      { type: BondType.SINGLE },
+      bondId,
+    );
+    const pointAwayFromBond = {
+      x: bondPosition.x + shift,
+      y: bondPosition.y + shift,
+    };
+    await takeEditorScreenshot(page);
+    await page.mouse.move(pointAwayFromBond.x, pointAwayFromBond.y);
+    await takeEditorScreenshot(page);
+  });
 });

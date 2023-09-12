@@ -6,6 +6,7 @@ import {
   selectRectangleArea,
   selectRectangleSelectionTool,
   selectSingleBondTool,
+  takeEditorScreenshot,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
@@ -77,8 +78,6 @@ test.describe('Rectangle Selection Tool', () => {
     Description: check ability to move items on the canvas
     */
 
-    await turnOnMacromoleculesEditor(page);
-
     // Choose peptide
     await page.getByText('Tza').click();
 
@@ -103,9 +102,7 @@ test.describe('Rectangle Selection Tool', () => {
     await bondTwoMonomers(page, peptide3, peptide2);
     await bondTwoMonomers(page, peptide3, peptide4);
 
-    await page.screenshot({
-      path: 'tests/Macromolecule-editor/screenshots/move-tool.png',
-    });
+    await takeEditorScreenshot(page);
 
     // Move selected monomer
     await selectRectangleSelectionTool(page);
@@ -114,8 +111,6 @@ test.describe('Rectangle Selection Tool', () => {
     await page.mouse.move(400, 400);
     await dragMouseTo(200, 400, page);
 
-    await page.screenshot({
-      path: 'tests/Macromolecule-editor/screenshots/move-tool-expected.png',
-    });
+    await takeEditorScreenshot(page);
   });
 });

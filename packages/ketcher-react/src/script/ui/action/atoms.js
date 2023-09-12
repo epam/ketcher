@@ -24,7 +24,7 @@ export const atomCuts = {
   S: 's',
   P: 'p',
   F: 'f',
-  Cl: 'Shift+c',
+  Cl: 'l',
   Br: 'b',
   I: 'i',
   A: 'a',

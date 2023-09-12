@@ -6,7 +6,7 @@ import {
 } from '@playwright/test';
 import { clickInTheMiddleOfTheScreen, pressButton } from '@utils/clicks';
 import { ELEMENT_TITLE } from './types';
-import { DELAY_IN_SECONDS, TopPanelButton, waitForRender } from '..';
+import { DELAY_IN_SECONDS, TopPanelButton } from '..';
 import { selectTopPanelButton } from './tools';
 import { getLeftTopBarSize } from './common/getLeftTopBarSize';
 

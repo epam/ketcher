@@ -435,6 +435,7 @@ export class DrawingEntitiesManager {
       let monomerAddOperation;
       if (previousMonomer) {
         const polymerBond = new PolymerBond(previousMonomer);
+        this.polymerBonds.set(polymerBond.id, polymerBond);
         monomerAddOperation = new MonomerAddOperation(monomer, () => {
           polymerBond.moveToLinkedMonomers();
         });

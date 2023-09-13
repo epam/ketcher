@@ -1,10 +1,10 @@
 import { test, expect } from '@playwright/test';
-import { selectSingleBondTool } from '@utils';
+import { selectSingleBondTool, waitForPageInit } from '@utils';
 /* eslint-disable no-magic-numbers */
 
 test.describe('Polymer Bond Tool', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
   test.skip('Create bond between two peptides', async ({ page }) => {
     /* 

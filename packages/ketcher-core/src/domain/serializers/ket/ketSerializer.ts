@@ -40,6 +40,8 @@ import { CoreEditor } from 'application/editor';
 import { monomerToDrawingEntity } from 'domain/serializers/ket/fromKet/monomerToDrawingEntity';
 import assert from 'assert';
 import { polymerBondToDrawingEntity } from 'domain/serializers/ket/fromKet/polymerBondToDrawingEntity';
+import { getMonomerUniqueKey } from 'domain/helpers/monomers';
+import { monomerFactory } from 'application/editor/operations/monomer/monomerFactory';
 
 function parseNode(node: any, struct: any) {
   const type = node.type;
@@ -229,8 +231,8 @@ export class KetSerializer implements Serializer<Struct> {
           const template = parsedFileContent.root.templates.find(
             (template) => template.id === node.templateId,
           );
-          const struct = this.fillStruct(template);
           assert(template);
+          const struct = this.fillStruct(template);
           command.merge(monomerToDrawingEntity(node, template, struct));
           break;
         }
@@ -252,5 +254,63 @@ export class KetSerializer implements Serializer<Struct> {
       }
     });
     editor.renderersContainer.update(command);
+  }
+
+  serializeMacromolecules() {
+    const editor = CoreEditor.provideEditorInstance();
+    const fileContent: IKetMacromoleculesContent = {
+      root: {
+        nodes: [],
+        connections: [],
+        templates: [],
+      },
+    };
+    editor.drawingEntitiesManager.monomers.forEach((monomer) => {
+      const templateId = getMonomerUniqueKey(monomer.monomerItem);
+      fileContent.root.nodes.push({
+        type: 'monomer',
+        id: monomer.id.toString(),
+        position: {
+          x: monomer.position.x,
+          y: monomer.position.y,
+        },
+        alias: monomer.label,
+        templateId,
+      });
+      if (
+        !fileContent.root.templates.find(
+          (template) => template.id === templateId,
+        )
+      ) {
+        const [, , monomerClass] = monomerFactory(monomer.monomerItem);
+        fileContent.root.templates.push({
+          type: 'monomerTemplate',
+          monomerClass,
+          naturalAnalogShort:
+            monomer.monomerItem.props.MonomerNaturalAnalogCode,
+          id: templateId,
+          fullName: monomer.monomerItem.props.MonomerName,
+          alias: monomer.monomerItem.label,
+          ...JSON.parse(this.serialize(monomer.monomerItem.struct)),
+        });
+      }
+    });
+
+    editor.drawingEntitiesManager.polymerBonds.forEach((polymerBond) => {
+      fileContent.root.connections.push({
+        connectionType: 'single',
+        endPoint1: {
+          monomerId: polymerBond.firstMonomer.id.toString(),
+          attachmentPointId:
+            polymerBond.firstMonomer.getAttachmentPointByBond(polymerBond),
+        },
+        endPoint2: {
+          monomerId: polymerBond.secondMonomer?.id.toString(),
+          attachmentPointId:
+            polymerBond.secondMonomer?.getAttachmentPointByBond(polymerBond),
+        },
+      });
+    });
+    return fileContent;
   }
 }

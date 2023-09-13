@@ -210,6 +210,8 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   }
 
   private get scaledMonomerPosition() {
+    // we need to convert monomer coordinates(stored in angstroms) to pixels.
+    // it needs to be done in view layer of application (like renderers)
     return Scale.obj2scaled(this.monomer.position, this.editorSettings);
   }
 

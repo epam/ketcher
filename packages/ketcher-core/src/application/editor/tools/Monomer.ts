@@ -51,6 +51,8 @@ class MonomerTool implements Tool {
     const editorSettings = provideEditorSettings();
     const modelChanges = this.editor.drawingEntitiesManager.addMonomer(
       this.monomer,
+      // We convert monomer coordinates from pixels to angstroms
+      // because the model layer (like BaseMonomer) should not work with pixels
       Scale.scaled2obj(
         new Vec2(
           this.editor.lastCursorPosition.x -

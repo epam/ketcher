@@ -147,7 +147,6 @@ function Editor({ theme }: EditorProps) {
             id="polymer-editor-canvas"
             data-testid="ketcher-canvas"
             ref={canvasRef}
-            data-testid="ketcher-canvas"
             width="100%"
             height="100%"
           >

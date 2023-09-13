@@ -17,9 +17,9 @@ export interface IKetGroupNode {
 export type KetNode = IKetMonomerNode | IKetGroupNode;
 
 export interface IKetConnectionEndPoint {
-  monomerId: string;
-  attachmentPointId: string;
-  groupId: string;
+  monomerId?: string;
+  attachmentPointId?: string;
+  groupId?: string;
 }
 
 export interface IKetConnection {
@@ -29,9 +29,11 @@ export interface IKetConnection {
   endPoint2: IKetConnectionEndPoint;
 }
 
+export type monomerClass = 'RNA' | 'PEPTIDE' | 'CHEM' | 'UNKNOWN';
+
 export interface IKetMonomerTemplate {
   type: 'monomerTemplate';
-  monomerClass?: 'RNA' | 'PEPTIDE' | 'CHEM' | 'UNKNOWN';
+  monomerClass?: monomerClass;
   monomerSubClass?:
     | 'AminoAcid'
     | 'Sugar'
@@ -47,6 +49,9 @@ export interface IKetMonomerTemplate {
   alias?: string;
   naturalAnalog?: string;
   attachmentPoints?;
+  root: {
+    nodes;
+  };
 }
 
 export interface IKetMacromoleculesContent {

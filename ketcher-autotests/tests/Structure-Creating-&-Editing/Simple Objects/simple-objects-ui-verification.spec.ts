@@ -1,9 +1,9 @@
 import { test, expect } from '@playwright/test';
-import { openSimpleObjectsDropdown } from '@utils';
+import { openSimpleObjectsDropdown, waitForPageInit } from '@utils';
 
 test.describe('Verifying buttons on Simple Objects', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test('Shape Ellipse tooltip', async ({ page }) => {

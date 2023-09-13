@@ -30,6 +30,12 @@ export class PolymerBondRenderer extends BaseRenderer {
     return this.rootBBox?.height || 0;
   }
 
+  public moveSelection() {
+    assert(this.rootElement);
+    this.moveStart();
+    this.moveEnd();
+  }
+
   public appendBond(rootElement) {
     this.bodyElement = rootElement
       .append('line')

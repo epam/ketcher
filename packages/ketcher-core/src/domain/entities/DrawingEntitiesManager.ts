@@ -14,6 +14,7 @@ import {
 import {
   DrawingEntityHoverOperation,
   DrawingEntitySelectOperation,
+  DrawingEntityMoveOperation,
 } from 'application/editor/operations/drawingEntity';
 import {
   PolymerBondAddOperation,
@@ -112,6 +113,38 @@ export class DrawingEntitiesManager {
         command.addOperation(operation);
       }
     });
+
+    return command;
+  }
+
+  public moveSelectedDrawingEntities(offset: Vec2) {
+    const command = new Command();
+
+    this.monomers.forEach((drawingEntity) => {
+      if (drawingEntity.selected) {
+        drawingEntity.moveRelative(offset);
+        command.merge(this.createDrawingEntityMovingCommand(drawingEntity));
+      }
+    });
+
+    this.polymerBonds.forEach((drawingEntity) => {
+      if (
+        drawingEntity.selected ||
+        drawingEntity.firstMonomer.selected ||
+        drawingEntity.secondMonomer?.selected
+      ) {
+        drawingEntity.moveToLinkedMonomers();
+        command.merge(this.createDrawingEntityMovingCommand(drawingEntity));
+      }
+    });
+    return command;
+  }
+
+  public createDrawingEntityMovingCommand(drawingEntity: DrawingEntity) {
+    const command = new Command();
+
+    const movingCommand = new DrawingEntityMoveOperation(drawingEntity);
+    command.addOperation(movingCommand);
 
     return command;
   }
@@ -402,6 +435,7 @@ export class DrawingEntitiesManager {
       let monomerAddOperation;
       if (previousMonomer) {
         const polymerBond = new PolymerBond(previousMonomer);
+        this.polymerBonds.set(polymerBond.id, polymerBond);
         monomerAddOperation = new MonomerAddOperation(monomer, () => {
           polymerBond.moveToLinkedMonomers();
         });

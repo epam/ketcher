@@ -17,3 +17,10 @@ export class DrawingEntitySelectOperation implements Operation {
     renderersManager.selectDrawingEntity(this.drawingEntity);
   }
 }
+export class DrawingEntityMoveOperation implements Operation {
+  constructor(private drawingEntity: DrawingEntity) {}
+
+  public execute(renderersManager: RenderersManager) {
+    renderersManager.moveDrawingEntity(this.drawingEntity);
+  }
+}

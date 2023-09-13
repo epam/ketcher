@@ -26,6 +26,11 @@ export class RenderersManager {
     drawingEntity.baseRenderer.drawSelection();
   }
 
+  public moveDrawingEntity(drawingEntity: DrawingEntity) {
+    assert(drawingEntity.baseRenderer);
+    drawingEntity.baseRenderer.moveSelection();
+  }
+
   public addMonomer(monomer: BaseMonomer, callback?: () => void) {
     const [, MonomerRenderer] = monomerFactory(monomer.monomerItem);
     const monomerRenderer = new MonomerRenderer(monomer);

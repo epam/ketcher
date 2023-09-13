@@ -278,6 +278,12 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     }
   }
 
+  public moveSelection() {
+    assert(this.rootElement);
+    this.appendSelection();
+    this.move();
+  }
+
   public move() {
     this.rootElement?.attr(
       'transform',

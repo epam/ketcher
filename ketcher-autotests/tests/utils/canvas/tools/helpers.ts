@@ -47,6 +47,30 @@ export async function selectSingleBondTool(page: Page) {
   await bondToolButton.click();
 }
 
+export async function selectEraseTool(page: Page) {
+  const bondToolButton = page.locator(`button[title*="Erase"]`);
+  await bondToolButton.click();
+}
+
+export async function selectRectangleSelectionTool(page: Page) {
+  const bondToolButton = page.locator(`button[title*="select-rectangle"]`);
+  await bondToolButton.click();
+}
+
+export async function selectRectangleArea(
+  page: Page,
+  startX: number,
+  startY: number,
+  endX: number,
+  endY: number,
+) {
+  await selectRectangleSelectionTool(page);
+  await page.mouse.move(startX, startY);
+  await page.mouse.down();
+  await page.mouse.move(endX, endY);
+  await page.mouse.up();
+}
+
 export async function selectTopPanelButton(
   buttonName: TopPanelButton,
   page: Page,

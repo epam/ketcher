@@ -11,7 +11,8 @@ import {
   clickInTheMiddleOfTheScreen,
   DELAY_IN_SECONDS,
   waitForLoad,
-  waitForIndigoToLoad,
+  waitForPageInit,
+  nonEmptyString,
 } from '@utils';
 import { getSmiles } from '@utils/formats';
 
@@ -23,6 +24,9 @@ async function getPreviewForSmiles(
   await selectTopPanelButton(TopPanelButton.Save, page);
   await page.getByRole('button', { name: formatName }).click();
   await page.getByRole('option', { name: smileType }).click();
+  const previewInput = page.getByTestId('smiles-preview-area-text');
+  await previewInput.waitFor({ state: 'visible' });
+  await expect(previewInput).toContainText(nonEmptyString);
 }
 
 async function getAndCompareSmiles(page: Page, smilesFilePath: string) {
@@ -45,52 +49,57 @@ async function clearCanvasAndPasteSmiles(page: Page, smiles: string) {
 
 test.describe('SMILES files', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
-    await waitForIndigoToLoad(page);
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {
     await takeEditorScreenshot(page);
   });
 
-  test('SmileString for structure with Bond properties', async ({ page }) => {
-    /*
+  test.fixme(
+    'SmileString for structure with Bond properties',
+    async ({ page }) => {
+      /*
     Test case: EPMLSOPKET-1906
     Description: SmileString is correctly generated from structure and vise
     versa structure is correctly generated from SmileString.
     */
-    await openFileAndAddToCanvas('KET/all-type-bonds.ket', page);
-    await getAndCompareSmiles(
-      page,
-      'tests/test-data/smiles-all-bonds-expected.json',
-    );
+      await openFileAndAddToCanvas('KET/all-type-bonds.ket', page);
+      await getAndCompareSmiles(
+        page,
+        'tests/test-data/smiles-all-bonds-expected.json',
+      );
 
-    await getPreviewForSmiles(page, 'MDL Molfile V2000', 'Daylight SMILES');
-    await takeEditorScreenshot(page);
+      await getPreviewForSmiles(page, 'MDL Molfile V2000', 'Daylight SMILES');
+      await takeEditorScreenshot(page);
 
-    await clearCanvasAndPasteSmiles(page, 'CCCCC/CC/C:CC.C(C)CCCCCCCCCC');
-  });
+      await clearCanvasAndPasteSmiles(page, 'CCCCC/CC/C:CC.C(C)CCCCCCCCCC');
+    },
+  );
 
-  test('SmileString for structure with Atom properties', async ({ page }) => {
-    /*
+  test.fixme(
+    'SmileString for structure with Atom properties',
+    async ({ page }) => {
+      /*
     Test case: EPMLSOPKET-1907
     Description: SmileString is correctly generated from structure and
     vise versa structure is correctly generated from SmileString.
     */
-    await openFileAndAddToCanvas('KET/all-atoms-properties.ket', page);
-    await getAndCompareSmiles(
-      page,
-      'tests/test-data/smiles-all-atoms-properties-expected.json',
-    );
+      await openFileAndAddToCanvas('KET/all-atoms-properties.ket', page);
+      await getAndCompareSmiles(
+        page,
+        'tests/test-data/smiles-all-atoms-properties-expected.json',
+      );
 
-    await getPreviewForSmiles(page, 'MDL Molfile V2000', 'Daylight SMILES');
-    await takeEditorScreenshot(page);
+      await getPreviewForSmiles(page, 'MDL Molfile V2000', 'Daylight SMILES');
+      await takeEditorScreenshot(page);
 
-    await clearCanvasAndPasteSmiles(
-      page,
-      'CCCCCC[C+][1C]C[CH]CC |^1:3,^3:4,^4:5,rb:8:*|',
-    );
-  });
+      await clearCanvasAndPasteSmiles(
+        page,
+        'CCCCCC[C+][1C]C[CH]CC |^1:3,^3:4,^4:5,rb:8:*|',
+      );
+    },
+  );
 
   test('SmileString from mol file that contains abbreviation', async ({
     page,

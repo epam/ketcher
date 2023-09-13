@@ -6,11 +6,12 @@ import {
   getCoordinatesOfTheMiddleOfTheScreen,
   selectLeftPanelButton,
   takeEditorScreenshot,
+  waitForPageInit,
 } from '@utils';
 
 test.describe('Selection and hover for simple objects', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
   test.afterEach(async ({ page }) => {
     await takeEditorScreenshot(page);

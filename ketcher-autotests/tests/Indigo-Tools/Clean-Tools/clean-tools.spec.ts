@@ -10,11 +10,12 @@ import {
   takeEditorScreenshot,
   DELAY_IN_SECONDS,
   waitForLoad,
+  waitForPageInit,
 } from '@utils';
 
 test.describe('Indigo Tools - Clean Tools', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.fixme('Clean bonds lenght', async ({ page }) => {
@@ -224,7 +225,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
     The Clean Up action is applied correctly and simultaneously
     to the whole structure with stereolabels.
    */
-    await openFileAndAddToCanvas('stereolabels.ket', page);
+    await openFileAndAddToCanvas('KET/stereolabels.ket', page);
 
     await selectTopPanelButton(TopPanelButton.Clean, page);
     await delay(DELAY_IN_SECONDS.SEVEN);

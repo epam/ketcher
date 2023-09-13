@@ -16,8 +16,18 @@
 import { ReStruct } from 'application/render';
 import { Action } from 'application/editor';
 import { MonomerAdd } from 'application/editor/operations/monomer';
+import { PresetAdd } from 'application/editor/operations/monomer/PresetAdd';
 import { Vec2 } from 'domain/entities';
 import { MonomerItemType } from 'domain/types';
+
+type DataPreset = {
+  sugar: MonomerItemType;
+  sugarPosition: Vec2 | undefined;
+  rnaBase: MonomerItemType | undefined;
+  rnaBasePosition: Vec2 | undefined;
+  phosphate: MonomerItemType | undefined;
+  phosphatePosition: Vec2 | undefined;
+};
 
 export function fromMonomerAddition(
   renderersContainer: ReStruct,
@@ -26,6 +36,17 @@ export function fromMonomerAddition(
 ): Action {
   const action = new Action();
   action.addOp(new MonomerAdd(monomer, position)).perform(renderersContainer);
+  return action;
+}
+
+export function fromPresetAddition(
+  renderersContainer: ReStruct,
+  presets: DataPreset,
+): Action {
+  const action = new Action();
+  action
+    .addOp(new PresetAdd(renderersContainer, presets))
+    .perform(renderersContainer);
 
   return action;
 }

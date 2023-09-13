@@ -17,6 +17,7 @@ import {
   takeEditorScreenshot,
   resetCurrentTool,
   STRUCTURE_LIBRARY_BUTTON_NAME,
+  waitForPageInit,
 } from '@utils';
 
 const X_DELTA_ONE = 100;
@@ -24,7 +25,7 @@ const X_DELTA_TWO = 150;
 
 test.describe('Drag and drop Atom on canvas', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {
@@ -74,7 +75,7 @@ test.describe('Drag and drop Atom on canvas', () => {
     await dragMouseTo(x, y, page);
   });
 
-  test.fixme('The Nitrogen atom replaces the formic acid', async ({ page }) => {
+  test('The Nitrogen atom replaces the formic acid', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-11833
       Description: when drag & drop an atom on a Salts and Solvents it should replace it

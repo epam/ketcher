@@ -20,6 +20,7 @@ import {
   selectLeftPanelButton,
   selectRingButton,
   takeEditorScreenshot,
+  waitForPageInit,
 } from '@utils';
 import { getBondByIndex } from '@utils/canvas/bonds';
 import { getMolfile } from '@utils/formats';
@@ -61,7 +62,7 @@ async function selectRepeatPattern(
 
 test.describe('SRU Polymer tool', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {
@@ -273,7 +274,7 @@ test.describe('SRU Polymer tool', () => {
       Test case: EPMLSOPKET-1536
       Description: User is able to save and open structure with SRU polymer S-group.
     */
-    await openFileAndAddToCanvas('sru-polymer-data.ket', page);
+    await openFileAndAddToCanvas('KET/sru-polymer-data.ket', page);
     const expectedFile = await getMolfile(page);
     await saveToFile('sru-polymer-data-expected.mol', expectedFile);
     const METADATA_STRING_INDEX = [1];

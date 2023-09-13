@@ -60,7 +60,7 @@ const SubMenu = ({
   return (
     <RootContainer>
       <VisibleItem>
-        <MenuItem itemId={visibleItemId} />
+        <MenuItem itemId={visibleItemId} title={visibleItemId} />
         {open || (
           <StyledDropdownIcon
             className="dropdown"

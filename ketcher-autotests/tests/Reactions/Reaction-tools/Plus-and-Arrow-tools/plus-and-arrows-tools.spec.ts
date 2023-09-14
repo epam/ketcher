@@ -735,11 +735,8 @@ test.describe('Plus and Arrows tools ', () => {
        * Test case: Test case: EPMLSOPKET - 16947
        * Description:  All Arrows should have correct tooltip
        */
-
       await selectLeftPanelButton(LeftPanelButton.ArrowOpenAngleTool, page);
-      if (!(await page.getByTestId('reaction-arrow-open-angle').isVisible())) {
-        await selectLeftPanelButton(LeftPanelButton.ArrowOpenAngleTool, page);
-      }
+      await selectLeftPanelButton(LeftPanelButton.ArrowOpenAngleTool, page);
       const button = page.getByTestId(id).first();
       expect(button).toHaveAttribute('title', idToTitle[id]);
       await button.click();

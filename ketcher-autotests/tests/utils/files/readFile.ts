@@ -9,8 +9,8 @@ import {
   waitForLoad,
   delay,
   takeEditorScreenshot,
-  waitForSpinnerFinishedWork,
 } from '@utils';
+
 import { MolfileFormat } from 'ketcher-core';
 import { getSmiles, getInchi } from '@utils/formats';
 

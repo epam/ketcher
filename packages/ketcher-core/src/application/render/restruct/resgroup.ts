@@ -300,18 +300,35 @@ function SGroupdrawBrackets({
   }
   const bracketR = brackets[ir];
   function renderIndex(text: string, isLowerText = false): void {
-    let path: number[] = [];
-    const bracketPoint1 = set[ir].getPath()[1];
-    const bracketPoint2 = set[ir].getPath()[2];
+    let path: Vec2;
+    let lowerPath: Vec2;
+    const bracketPoint1 = new Vec2(
+      set[ir].getPath()[1][1],
+      set[ir].getPath()[1][2],
+      0,
+    );
+    const bracketPoint2 = new Vec2(
+      set[ir].getPath()[2][1],
+      set[ir].getPath()[2][2],
+      0,
+    );
+    if (bracketPoint2.y === bracketPoint1.y) {
+      lowerPath =
+        bracketPoint2.x > bracketPoint1.x ? bracketPoint1 : bracketPoint2;
+    } else {
+      lowerPath =
+        bracketPoint2.y > bracketPoint1.y ? bracketPoint2 : bracketPoint1;
+    }
     if (isLowerText) {
-      path =
-        bracketPoint2[2] > bracketPoint1[2] ? bracketPoint2 : bracketPoint1;
+      path = lowerPath;
     } else {
       path =
-        bracketPoint2[2] > bracketPoint1[2] ? bracketPoint1 : bracketPoint2;
+        lowerPath.x === bracketPoint1.x && lowerPath.y === bracketPoint1.y
+          ? bracketPoint2
+          : bracketPoint1;
     }
 
-    const indexPos = new Vec2(path[1], path[2]);
+    const indexPos = new Vec2(path.x, path.y);
     const indexPath = render.paper.text(indexPos.x, indexPos.y, text).attr({
       font: render.options.font,
       'font-size': render.options.fontszsub,

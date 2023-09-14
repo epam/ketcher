@@ -47,13 +47,18 @@ export async function openFileAndAddToCanvas(filename: string, page: Page) {
 export async function pasteFromClipboardAndAddToCanvas(
   page: Page,
   fillStructure: string,
+  needToWait = true,
 ) {
   await selectTopPanelButton(TopPanelButton.Open, page);
   await page.getByText('Paste from clipboard').click();
   await page.getByRole('dialog').getByRole('textbox').fill(fillStructure);
-  await waitForLoad(page, async () => {
+  if (needToWait) {
+    await waitForLoad(page, async () => {
+      await pressButton(page, 'Add to Canvas');
+    });
+  } else {
     await pressButton(page, 'Add to Canvas');
-  });
+  }
 }
 
 export async function receiveMolFileComparisonData(

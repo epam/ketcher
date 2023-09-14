@@ -1,5 +1,10 @@
 import { expect, test } from '@playwright/test';
-import { selectAction, selectTool, takeEditorScreenshot } from '@utils/canvas';
+import {
+  selectAction,
+  selectTool,
+  takeEditorScreenshot,
+  takeLeftToolbarScreenshot,
+} from '@utils/canvas';
 import { getLeftAtomByAttributes } from '@utils/canvas/atoms';
 import { getLeftBondByAttributes } from '@utils/canvas/bonds';
 import { BondType } from '@utils/canvas/types';
@@ -143,5 +148,26 @@ test.describe('Erase Tool', () => {
       return window.ketcher.editor.struct().rxnArrows.size;
     });
     expect(arrowOnCanvas).toEqual(reactionArrow);
+  });
+});
+
+test.describe('Erase Tool', () => {
+  test.beforeEach(async ({ page }) => {
+    await waitForPageInit(page);
+  });
+
+  test.afterEach(async ({ page }) => {
+    await takeLeftToolbarScreenshot(page);
+  });
+
+  test('Toolbar icon verification', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-1362
+    Description: The appropriate icon presents at the Toolbar for Erase tool.
+    */
+    await openFileAndAddToCanvas(
+      'Rxn-V2000/benzene-bromobutane-reaction.rxn',
+      page,
+    );
   });
 });

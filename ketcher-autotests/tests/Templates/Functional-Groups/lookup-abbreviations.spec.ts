@@ -6,11 +6,12 @@ import {
   drawBenzeneRing,
   moveOnAtom,
   takeEditorScreenshot,
+  waitForPageInit,
 } from '@utils';
 
 test.describe('Lookup Abbreviations tests', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {

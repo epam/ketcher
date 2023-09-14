@@ -83,7 +83,7 @@ const formatProperties: FormatPropertiesMap = {
   inChIKey: new SupportedFormatProperties(
     'InChIKey',
     ChemicalMimeType.InChIKey,
-    ['.inchi'],
+    ['.inchikey'],
   ),
   cml: new SupportedFormatProperties(
     'CML',

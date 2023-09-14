@@ -2,13 +2,13 @@
 <cml>
     <molecule>
         <atomArray>
-            <atom id="a0" elementType="C" x2="12.4769" y2="-8.05"/>
-            <atom id="a1" elementType="C" x2="13.3429" y2="-8.55"/>
-            <atom id="a2" elementType="C" x2="14.209" y2="-8.05"/>
-            <atom id="a3" elementType="C" x2="15.075" y2="-8.55"/>
-            <atom id="a4" elementType="C" x2="15.941" y2="-8.05"/>
-            <atom id="a5" elementType="C" x2="16.8071" y2="-8.55"/>
-            <atom id="a6" elementType="C" x2="17.6731" y2="-8.05"/>
+            <atom id="a0" elementType="C" x2="12.1019" y2="-7.29375"/>
+            <atom id="a1" elementType="C" x2="12.9679" y2="-7.79375"/>
+            <atom id="a2" elementType="C" x2="13.834" y2="-7.29375"/>
+            <atom id="a3" elementType="C" x2="14.7" y2="-7.79375"/>
+            <atom id="a4" elementType="C" x2="15.566" y2="-7.29375"/>
+            <atom id="a5" elementType="C" x2="16.4321" y2="-7.79375"/>
+            <atom id="a6" elementType="C" x2="17.2981" y2="-7.29375"/>
         </atomArray>
         <bondArray>
             <bond atomRefs2="a0 a1" order="1"/>

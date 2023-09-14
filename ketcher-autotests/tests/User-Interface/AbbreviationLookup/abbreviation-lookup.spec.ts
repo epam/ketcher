@@ -1,12 +1,16 @@
 import { test, expect } from '@playwright/test';
-import { clickInTheMiddleOfTheScreen, takeEditorScreenshot } from '@utils';
+import {
+  clickInTheMiddleOfTheScreen,
+  takeEditorScreenshot,
+  waitForPageInit,
+} from '@utils';
 
 /*
    Lookup Abbreviations window appears when user starts typing
 */
 test.describe('Lookup Abbreviations window', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test('does not disappear when user switches to new browser tab', async ({

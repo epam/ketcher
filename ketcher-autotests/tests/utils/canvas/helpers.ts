@@ -6,7 +6,7 @@ import {
 } from '@playwright/test';
 import { clickInTheMiddleOfTheScreen, pressButton } from '@utils/clicks';
 import { ELEMENT_TITLE } from './types';
-import { DELAY_IN_SECONDS, TopPanelButton } from '..';
+import { DELAY_IN_SECONDS, TopPanelButton, readFileContents } from '..';
 import { selectTopPanelButton } from './tools';
 import { getLeftTopBarSize } from './common/getLeftTopBarSize';
 
@@ -114,6 +114,61 @@ export async function getEditorScreenshot(
   options?: LocatorScreenshotOptions,
 ) {
   return await page.locator('[class*="App-module_canvas"]').screenshot(options);
+}
+const DECIMAL_PLACES = 1000;
+
+function roundToThirdDecimal(num: number) {
+  return Math.round(num * DECIMAL_PLACES) / DECIMAL_PLACES;
+}
+export async function compareFiles(file1Paths: string[], file2Paths: string[]) {
+  try {
+    const [file1Content, file2Content] = await Promise.all([
+      readFileContents(file1Paths[0]),
+      readFileContents(file2Paths[0]),
+    ]);
+
+    const file1Lines = file1Content.split('\n');
+    const file2Lines = file2Content.split('\n');
+
+    // Check if the lengths of file1Lines and file2Lines differ
+    if (file1Lines.length !== file2Lines.length) {
+      return {
+        areIdentical: false,
+        file1Content,
+        file2Content,
+      };
+    }
+
+    for (let i = 0; i < Math.min(file1Lines.length, file2Lines.length); i++) {
+      const num1 = parseFloat(file1Lines[i]);
+      const num2 = parseFloat(file2Lines[i]);
+
+      if (
+        isNaN(num1) ||
+        isNaN(num2) ||
+        roundToThirdDecimal(num1) !== roundToThirdDecimal(num2)
+      ) {
+        return {
+          areIdentical: false,
+          file1Content,
+          file2Content,
+        };
+      }
+    }
+
+    // If the loop finishes without returning, the files are identical
+    return {
+      areIdentical: true,
+      file1Content,
+      file2Content,
+    };
+  } catch (error) {
+    return {
+      areIdentical: false,
+      file1Content: null,
+      file2Content: null,
+    };
+  }
 }
 
 export async function delay(seconds = 1) {

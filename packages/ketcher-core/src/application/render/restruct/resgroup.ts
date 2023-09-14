@@ -21,6 +21,7 @@ import {
   SGroup,
   Vec2,
   Bond,
+  Struct,
 } from 'domain/entities';
 import { SgContexts } from 'application/editor/shared/constants';
 import ReDataSGroupData from './redatasgroupdata';
@@ -270,7 +271,7 @@ function SGroupdrawBrackets({
     render,
     sgroup.id,
   );
-  let ir = -1;
+  let rightBracketIndex = -1;
   const isBracketContainAttachment =
     crossBondsValues.length === 2 &&
     crossBondsPerAtom.length === 1 &&
@@ -289,27 +290,29 @@ function SGroupdrawBrackets({
     );
     set.push(path);
     if (
-      ir < 0 ||
-      brackets[ir].bracketAngleDirection.x < bracket.bracketAngleDirection.x ||
-      (brackets[ir].bracketAngleDirection.x ===
+      rightBracketIndex < 0 ||
+      brackets[rightBracketIndex].bracketAngleDirection.x <
+        bracket.bracketAngleDirection.x ||
+      (brackets[rightBracketIndex].bracketAngleDirection.x ===
         bracket.bracketAngleDirection.x &&
-        brackets[ir].bracketAngleDirection.y > bracket.bracketAngleDirection.y)
+        brackets[rightBracketIndex].bracketAngleDirection.y >
+          bracket.bracketAngleDirection.y)
     ) {
-      ir = i;
+      rightBracketIndex = i;
     }
   }
-  const bracketR = brackets[ir];
+  const bracketR = brackets[rightBracketIndex];
   function renderIndex(text: string, isLowerText = false): void {
     let path: Vec2;
     let lowerPath: Vec2;
     const bracketPoint1 = new Vec2(
-      set[ir].getPath()[1][1],
-      set[ir].getPath()[1][2],
+      set[rightBracketIndex].getPath()[1][1],
+      set[rightBracketIndex].getPath()[1][2],
       0,
     );
     const bracketPoint2 = new Vec2(
-      set[ir].getPath()[2][1],
-      set[ir].getPath()[2][2],
+      set[rightBracketIndex].getPath()[2][1],
+      set[rightBracketIndex].getPath()[2][2],
       0,
     );
     if (bracketPoint2.y === bracketPoint1.y) {
@@ -457,158 +460,208 @@ function getBracketParameters(
 ) {
   const mol = render.ctab.molecule;
   const brackets: BracketParams[] = [];
-  let bracketDirection = direction.rotateSC(1, 0);
+  const bracketDirection = direction.rotateSC(1, 0);
 
   if (crossBondsValues.length < 2) {
-    (function () {
-      direction = direction || new Vec2(1, 0);
-      bracketDirection = bracketDirection || direction.rotateSC(1, 0);
-      const bracketWidth = Math.min(0.25, bracketBox.sz().x * 0.3);
-      const leftCenter = Vec2.lc2(
-        direction,
-        bracketBox.p0.x,
-        bracketDirection,
-        0.5 * (bracketBox.p0.y + bracketBox.p1.y),
-      );
-      const rightCenter = Vec2.lc2(
-        direction,
-        bracketBox.p1.x,
-        bracketDirection,
-        0.5 * (bracketBox.p0.y + bracketBox.p1.y),
-      );
-      const bracketHeight = bracketBox.sz().y;
-
-      brackets.push(
-        new BracketParams(
-          leftCenter,
-          direction.negated(),
-          bracketWidth,
-          bracketHeight,
-        ),
-        new BracketParams(rightCenter, direction, bracketWidth, bracketHeight),
-      );
-    })();
+    getBracketParamersWithCrossBondsLessThan2(
+      direction,
+      bracketDirection,
+      bracketBox,
+      brackets,
+    );
   } else if (crossBondsValues.length === 2 && crossBondsPerAtom.length === 2) {
-    (function () {
-      const bond1 = mol.bonds.get(Number(crossBondsValues[0]));
-      const bond2 = mol.bonds.get(Number(crossBondsValues[1]));
-      if (bond1 && bond2) {
-        const leftCenter = bond1.getCenter(mol);
-        const rightCenter = bond2.getCenter(mol);
-        let tl = -1;
-        let tr = -1;
-        let tt = -1;
-        let tb = -1;
-        const cc = Vec2.centre(leftCenter, rightCenter);
-        const rightDirection = Vec2.diff(rightCenter, leftCenter).normalized();
-        const leftDirection = rightDirection.negated();
-        const bracketDirection = rightDirection.rotateSC(1, 0);
-        const bracketDirectionNegated = bracketDirection.negated();
-
-        mol?.sGroupForest?.children?.get(id)?.forEach((sgid) => {
-          let boundingBox = render?.ctab?.sgroups?.get(sgid)?.visel.boundingBox;
-          boundingBox =
-            boundingBox
-              ?.translate((render.options.offset || new Vec2()).negated())
-              .transform(Scale.scaled2obj, render.options) || new Box2Abs();
-          tl = Math.max(
-            tl,
-            util.shiftRayBox(leftCenter, leftDirection, boundingBox),
-          );
-          tr = Math.max(
-            tr,
-            util.shiftRayBox(rightCenter, rightDirection, boundingBox),
-          );
-          tt = Math.max(
-            tt,
-            util.shiftRayBox(cc, bracketDirection, boundingBox),
-          );
-          tb = Math.max(
-            tb,
-            util.shiftRayBox(cc, bracketDirectionNegated, boundingBox),
-          );
-        });
-        tl = Math.max(tl + 0.2, 0);
-        tr = Math.max(tr + 0.2, 0);
-        tt = Math.max(Math.max(tt, tb) + 0.1, 0);
-        const bracketWidth = 0.25;
-        let bracketHeight = 1.5 + tt;
-        if (attachmentPoints.length) {
-          bracketHeight = 2 + 2 * Math.sin(Math.PI / 6) + tt;
-        }
-        brackets.push(
-          new BracketParams(
-            leftCenter.addScaled(leftDirection, tl),
-            leftDirection,
-            bracketWidth,
-            bracketHeight,
-          ),
-          new BracketParams(
-            rightCenter.addScaled(rightDirection, tr),
-            rightDirection,
-            bracketWidth,
-            bracketHeight,
-          ),
-        );
-      }
-    })();
+    getBracketParamersWithCrossBondsEquals2(
+      mol,
+      crossBondsValues,
+      id,
+      render,
+      attachmentPoints,
+      brackets,
+    );
   } else {
-    (function () {
-      let notTemplateShapeFirstAtom = false;
-      const bondDirections: Vec2[] = crossBondsValues.map((value) => {
-        const bond = mol.bonds.get(Number(value));
-        return bond?.getDir(mol) || new Vec2();
-      });
-      // if bonds direction is clockwise, then negated
-      const needNegated =
-        Vec2.crossProduct(bondDirections[0], bondDirections[1]) > 0;
-      crossBondsValues = crossBondsValues.sort((id1, id2) => {
-        notTemplateShapeFirstAtom = Math.abs(Number(id1) - Number(id2)) === 1;
-        return notTemplateShapeFirstAtom && !needNegated ? -1 : 0;
-      });
-      for (let i = 0; i < crossBondsValues.length; ++i) {
-        const bond = mol.bonds.get(Number(crossBondsValues[i]));
-        let bondDirection = bond?.getDir(mol) || new Vec2();
-        let bracketDirection: Vec2;
-        let bracketAngleDirection: Vec2;
-        let attachmentDirection: Vec2;
-        if (attachmentPoints.length !== 2) {
-          if (needNegated && notTemplateShapeFirstAtom) {
-            bondDirection = bondDirection.negated();
-          }
-          bondDirection = i === 0 ? bondDirection : bondDirection.negated();
-          bracketDirection =
-            i === 0
-              ? bondDirection.rotateSC(1, 0).negated()
-              : bondDirection.rotateSC(1, 0);
-          bracketAngleDirection = bondDirection;
-        } else {
-          attachmentPoints = attachmentPoints.sort(
-            (point1, point2) => point1 - point2,
-          );
-          // if there are 2 attachment points then make brackets parallel to attachments
-          attachmentDirection =
-            render.ctab.rgroupAttachmentPoints.get(attachmentPoints[i])
-              ?.lineDirectionVector || new Vec2();
-          bracketDirection = attachmentDirection.negated();
-          bracketAngleDirection =
-            i === 0
-              ? bracketDirection.rotateSC(1, 0)
-              : bracketDirection.rotateSC(1, 0).negated();
-        }
-        brackets.push(
-          new BracketParams(
-            bond?.getCenter(mol) || new Vec2(),
-            bracketAngleDirection,
-            0.2,
-            attachmentPoints.length ? 1.8 : 1.0,
-            bracketDirection,
-          ),
-        );
-      }
-    })();
+    getBracketParamersWithCrossBondsMoreThan2(
+      crossBondsValues,
+      mol,
+      attachmentPoints,
+      render,
+      brackets,
+    );
   }
   return brackets;
+}
+
+function getBracketParamersWithCrossBondsMoreThan2(
+  crossBondsValues: Bond[],
+  mol: Struct,
+  attachmentPoints: number[],
+  render: Render,
+  brackets: BracketParams[],
+) {
+  let notTemplateShapeFirstAtom = false;
+  const bondDirections: Vec2[] = crossBondsValues.map((value) => {
+    const bond = mol.bonds.get(Number(value));
+    return bond?.getDir(mol) || new Vec2();
+  });
+  // if bonds direction is clockwise, then negated
+  const needNegated =
+    Vec2.crossProduct(bondDirections[0], bondDirections[1]) > 0;
+  crossBondsValues = crossBondsValues.sort((id1, id2) => {
+    notTemplateShapeFirstAtom = Math.abs(Number(id1) - Number(id2)) === 1;
+    return notTemplateShapeFirstAtom && !needNegated ? -1 : 0;
+  });
+  for (let i = 0; i < crossBondsValues.length; ++i) {
+    const bond = mol.bonds.get(Number(crossBondsValues[i]));
+    let bondDirection = bond?.getDir(mol) || new Vec2();
+    let bracketDirection: Vec2;
+    let bracketAngleDirection: Vec2;
+    let attachmentDirection: Vec2;
+    if (attachmentPoints.length !== 2) {
+      if (needNegated && notTemplateShapeFirstAtom) {
+        bondDirection = bondDirection.negated();
+      }
+      bondDirection = i === 0 ? bondDirection : bondDirection.negated();
+      bracketDirection =
+        i === 0
+          ? bondDirection.rotateSC(1, 0).negated()
+          : bondDirection.rotateSC(1, 0);
+      bracketAngleDirection = bondDirection;
+    } else {
+      attachmentPoints = attachmentPoints.sort(
+        (point1, point2) => point1 - point2,
+      );
+      // if there are 2 attachment points then make brackets parallel to attachments
+      attachmentDirection =
+        render.ctab.rgroupAttachmentPoints.get(attachmentPoints[i])
+          ?.lineDirectionVector || new Vec2();
+      bracketDirection = attachmentDirection.negated();
+      bracketAngleDirection =
+        i === 0
+          ? bracketDirection.rotateSC(1, 0)
+          : bracketDirection.rotateSC(1, 0).negated();
+    }
+    brackets.push(
+      new BracketParams(
+        bond?.getCenter(mol) || new Vec2(),
+        bracketAngleDirection,
+        0.2,
+        attachmentPoints.length ? 1.8 : 1.0,
+        bracketDirection,
+      ),
+    );
+  }
+  return { crossBondsValues, attachmentPoints };
+}
+
+function getBracketParamersWithCrossBondsEquals2(
+  mol: Struct,
+  crossBondsValues: Bond[],
+  id: number,
+  render: Render,
+  attachmentPoints: number[],
+  brackets: BracketParams[],
+) {
+  const bond1 = mol.bonds.get(Number(crossBondsValues[0]));
+  const bond2 = mol.bonds.get(Number(crossBondsValues[1]));
+  if (bond1 && bond2) {
+    const leftCenter = bond1.getCenter(mol);
+    const rightCenter = bond2.getCenter(mol);
+    let leftShift = -1;
+    let rightShift = -1;
+    let bracketShift = -1;
+    let bracketShiftNegated = -1;
+    const centerConnection = Vec2.centre(leftCenter, rightCenter);
+    const rightDirection = Vec2.diff(rightCenter, leftCenter).normalized();
+    const leftDirection = rightDirection.negated();
+    const bracketDirection = rightDirection.rotateSC(1, 0);
+    const bracketDirectionNegated = bracketDirection.negated();
+
+    mol?.sGroupForest?.children?.get(id)?.forEach((sgid) => {
+      let boundingBox = render?.ctab?.sgroups?.get(sgid)?.visel.boundingBox;
+      boundingBox =
+        boundingBox
+          ?.translate((render.options.offset || new Vec2()).negated())
+          .transform(Scale.scaled2obj, render.options) || new Box2Abs();
+      leftShift = Math.max(
+        leftShift,
+        util.shiftRayBox(leftCenter, leftDirection, boundingBox),
+      );
+      rightShift = Math.max(
+        rightShift,
+        util.shiftRayBox(rightCenter, rightDirection, boundingBox),
+      );
+      bracketShift = Math.max(
+        bracketShift,
+        util.shiftRayBox(centerConnection, bracketDirection, boundingBox),
+      );
+      bracketShiftNegated = Math.max(
+        bracketShiftNegated,
+        util.shiftRayBox(
+          centerConnection,
+          bracketDirectionNegated,
+          boundingBox,
+        ),
+      );
+    });
+    leftShift = Math.max(leftShift + 0.2, 0);
+    rightShift = Math.max(rightShift + 0.2, 0);
+    bracketShift = Math.max(
+      Math.max(bracketShift, bracketShiftNegated) + 0.1,
+      0,
+    );
+    const bracketWidth = 0.25;
+    let bracketHeight = 1.5 + bracketShift;
+    if (attachmentPoints.length) {
+      bracketHeight = 2 + 2 * Math.sin(Math.PI / 6) + bracketShift;
+    }
+    brackets.push(
+      new BracketParams(
+        leftCenter.addScaled(leftDirection, leftShift),
+        leftDirection,
+        bracketWidth,
+        bracketHeight,
+      ),
+      new BracketParams(
+        rightCenter.addScaled(rightDirection, rightShift),
+        rightDirection,
+        bracketWidth,
+        bracketHeight,
+      ),
+    );
+  }
+}
+
+function getBracketParamersWithCrossBondsLessThan2(
+  direction: Vec2,
+  bracketDirection: Vec2,
+  bracketBox: Box2Abs,
+  brackets: BracketParams[],
+) {
+  direction = direction || new Vec2(1, 0);
+  bracketDirection = bracketDirection || direction.rotateSC(1, 0);
+  const bracketWidth = Math.min(0.25, bracketBox.sz().x * 0.3);
+  const leftCenter = Vec2.lc2(
+    direction,
+    bracketBox.p0.x,
+    bracketDirection,
+    0.5 * (bracketBox.p0.y + bracketBox.p1.y),
+  );
+  const rightCenter = Vec2.lc2(
+    direction,
+    bracketBox.p1.x,
+    bracketDirection,
+    0.5 * (bracketBox.p0.y + bracketBox.p1.y),
+  );
+  const bracketHeight = bracketBox.sz().y;
+
+  brackets.push(
+    new BracketParams(
+      leftCenter,
+      direction.negated(),
+      bracketWidth,
+      bracketHeight,
+    ),
+    new BracketParams(rightCenter, direction, bracketWidth, bracketHeight),
+  );
 }
 
 /**

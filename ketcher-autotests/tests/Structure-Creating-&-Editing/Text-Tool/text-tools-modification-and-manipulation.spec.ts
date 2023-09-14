@@ -71,7 +71,6 @@ test.describe('Text tools test cases', () => {
     await pressButton(page, 'Cancel');
     await page.getByText('TEST').dblclick();
     await page.getByRole('dialog').getByText('TEST').dblclick();
-    await delay(DELAY_IN_SECONDS.TWO);
     await page.keyboard.press('Delete');
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);

@@ -4,26 +4,31 @@ import {
   takeEditorScreenshot,
   selectTopPanelButton,
   delay,
+  selectLeftPanelButton,
+  selectRectangleSelectionTool,
 } from '@utils/canvas';
 import { pressButton, clickInTheMiddleOfTheScreen } from '@utils/clicks';
 import {
   TopPanelButton,
   DELAY_IN_SECONDS,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  pasteFromClipboardAndAddToCanvas,
   FILE_TEST_DATA,
   openFileAndAddToCanvas,
   openPasteFromClipboard,
+  waitForPageInit,
+  openFromFileViaClipboard,
+  readFileContents,
+  waitForLoad,
 } from '@utils';
 import {
   selectNestedTool,
   SelectTool,
+  ShapeTool,
 } from '@utils/canvas/tools/selectNestedTool';
 import { addTextBoxToCanvas } from '@utils/selectors/addTextBoxToCanvas';
 
 test.describe('Text tools test cases', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
   test('Text tool - Font size', async ({ page }) => {
     // Test case:EPMLSOPKET-2885
@@ -48,12 +53,10 @@ test.describe('Text tools test cases', () => {
     await page.keyboard.press('Control+a');
     await page.getByRole('button', { name: 'bold' }).click();
     await pressButton(page, 'Apply');
-    await delay(DELAY_IN_SECONDS.TWO);
     await takeEditorScreenshot(page);
     await page.getByText('ABC').dblclick();
     await page.keyboard.press('Control+a');
     await page.getByRole('button', { name: 'bold' }).click();
-    await delay(DELAY_IN_SECONDS.TWO);
     await page.getByRole('button', { name: 'bold' }).click();
     await takeEditorScreenshot(page);
   });
@@ -69,7 +72,6 @@ test.describe('Text tools test cases', () => {
     await page.getByText('ABCDE').dblclick();
     await page.keyboard.press('Control+a');
     await page.getByRole('button', { name: 'italic' }).click();
-    await delay(DELAY_IN_SECONDS.TWO);
     await page.getByRole('button', { name: 'italic' }).click();
     await takeEditorScreenshot(page);
   });
@@ -80,12 +82,10 @@ test.describe('Text tools test cases', () => {
     await page.keyboard.press('Control+a');
     await page.getByRole('button', { name: 'subscript' }).click();
     await pressButton(page, 'Apply');
-    await delay(DELAY_IN_SECONDS.TWO);
     await takeEditorScreenshot(page);
     await page.getByText('ABC123').dblclick();
     await page.keyboard.press('Control+a');
     await page.getByRole('button', { name: 'subscript' }).click();
-    await delay(DELAY_IN_SECONDS.TWO);
     await page.getByRole('button', { name: 'subscript' }).click();
     await takeEditorScreenshot(page);
   });
@@ -100,7 +100,6 @@ test.describe('Text tools test cases', () => {
     await page.getByText('ABC123').dblclick();
     await page.keyboard.press('Control+a');
     await page.getByRole('button', { name: 'superscript' }).click();
-    await delay(DELAY_IN_SECONDS.TWO);
     await page.getByRole('button', { name: 'superscript' }).click();
     await takeEditorScreenshot(page);
   });
@@ -125,7 +124,7 @@ test.describe('Text tools test cases', () => {
     await takeEditorScreenshot(page);
   });
   test('Text tool - Save as .ket file', async ({ page }) => {
-    // Test case: C
+    // Test case: EPMLSOPKET-2235
     await addTextBoxToCanvas(page);
     await page.getByRole('dialog').getByRole('textbox').fill('TEST321');
     await pressButton(page, 'Apply');
@@ -133,7 +132,6 @@ test.describe('Text tools test cases', () => {
     await page.keyboard.press('Control+a');
     await page.getByRole('button', { name: '13' }).click();
     await page.getByText('20', { exact: true }).click();
-    await delay(DELAY_IN_SECONDS.TWO);
     await page.getByRole('button', { name: 'bold' }).click();
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
@@ -172,7 +170,6 @@ test.describe('Text tools test cases', () => {
     await page.keyboard.press('Control+v');
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
-    await delay(DELAY_IN_SECONDS.TWO);
     await selectTopPanelButton(TopPanelButton.Undo, page);
     await selectTopPanelButton(TopPanelButton.Redo, page);
     await takeEditorScreenshot(page);
@@ -210,24 +207,33 @@ test.describe('Text tools test cases', () => {
     await page.keyboard.press('Control+a');
     await page.keyboard.press('Delete');
     await pressButton(page, 'Apply');
-    await openFileAndAddToCanvas('longtext_test', page);
-    await selectNestedTool(page, SelectTool.RectangleSelection);
-    await page.mouse.move(97, 79);
-    await page.mouse.down();
-    await page.mouse.move(844, 579);
-    await page.mouse.up();
+    await openFromFileViaTextBox('tests/test-data/Txt/longtext_test.txt', page);
+    await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
 
+  // FIX ME
   test("Text tool - UTF-8 compatible ('Paste from Clipboard')", async ({
     page,
   }) => {
     // Test case: EPMLSOPKET-5253
     await selectTopPanelButton(TopPanelButton.Open, page);
-    // eslint-disable-next-line prettier/prettier
-    await openPasteFromClipboard(page, FILE_TEST_DATA.utfFile);
-    await pressButton(page, 'Add to Canvas');
+    await openFromFileViaClipboard(
+      'tests/test-data/KET/utf-8-svg-png.ket',
+      page,
+    );
+    // await pressButton(page, 'Add to Canvas');
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
 });
+
+export async function openFromFileViaTextBox(filename: string, page: Page) {
+  const fileText = await readFileContents(filename);
+  await page.getByTestId('text').click();
+  await clickInTheMiddleOfTheScreen(page);
+  await page.getByRole('dialog').getByRole('textbox').fill(fileText);
+  await waitForLoad(page, () => {
+    pressButton(page, 'Apply');
+  });
+}

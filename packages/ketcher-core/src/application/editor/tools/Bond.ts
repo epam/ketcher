@@ -13,28 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { Tool } from 'application/editor/tools/Tool';
 import { BaseMonomerRenderer } from 'application/render/renderers';
-import { fromPolymerBondAddition } from 'application/editor/actions/polymerBond';
 import { CoreEditor } from 'application/editor';
 import { PolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer';
 import { Vec2 } from 'domain/entities';
 import assert from 'assert';
-import { BondService } from 'domain/services/bond/BondService';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
+import { BaseTool } from 'application/editor/tools/Tool';
 
-class PolymerBond implements Tool {
+class PolymerBond implements BaseTool {
   private bondRenderer?: PolymerBondRenderer;
-  private lastHoveredMonomerRenderer?: BaseMonomerRenderer;
-  private hoveredBondRenderer?: PolymerBondRenderer;
   constructor(private editor: CoreEditor) {
     this.editor = editor;
   }
 
-  mousedown(event) {
-    const selectedItem = event.target.__data__;
-    if (selectedItem instanceof BaseMonomerRenderer) {
-      const freeAttachmentPoint = selectedItem.monomer.firstFreeAttachmentPoint;
+  public mousedown(event) {
+    const selectedRenderer = event.target.__data__;
+    if (selectedRenderer instanceof BaseMonomerRenderer) {
+      const freeAttachmentPoint =
+        selectedRenderer.monomer.firstFreeAttachmentPoint;
 
       if (!freeAttachmentPoint) {
         this.editor.events.error.dispatch(
@@ -44,85 +41,80 @@ class PolymerBond implements Tool {
       }
       const { top: offsetTop, left: offsetLeft } = this.editor.canvasOffset;
 
-      assert(selectedItem.monomer.renderer);
+      const { polymerBond, command: modelChanges } =
+        this.editor.drawingEntitiesManager.addPolymerBond(
+          selectedRenderer.monomer,
+          selectedRenderer.center,
+          new Vec2(event.clientX - offsetLeft, event.clientY - offsetTop),
+        );
 
-      fromPolymerBondAddition(this.editor.renderersContainer, {
-        firstMonomer: selectedItem.monomer,
-        startPosition: selectedItem.monomer.renderer.center,
-        endPosition: new Vec2(
-          event.clientX - offsetLeft,
-          event.clientY - offsetTop,
-        ),
-      });
-      this.editor.renderersContainer.update(false);
-      this.bondRenderer =
-        selectedItem.monomer.getPotentialBond(freeAttachmentPoint)?.renderer;
+      this.editor.renderersContainer.update(modelChanges);
+      this.bondRenderer = polymerBond.renderer;
     }
   }
 
-  private handleBondDragging(event: MouseEvent) {
-    assert(this.bondRenderer);
-    const { top: offsetTop, left: offsetLeft } = this.editor.canvasOffset;
-    this.bondRenderer.polymerBond.moveBondEndAbsolute(
-      event.clientX - offsetLeft,
-      event.clientY - offsetTop,
-    );
-  }
-
-  private setPotentialBondToAttachmentPoint(
-    monomerRenderer: BaseMonomerRenderer,
-  ) {
-    if (!this.bondRenderer) return;
-
-    const attachmentPoint =
-      monomerRenderer.monomer.availableAttachmentPointForBondEnd;
-
-    if (!attachmentPoint) return;
-
-    monomerRenderer.monomer.setPotentialBond(
-      attachmentPoint,
-      this.bondRenderer.polymerBond,
-    );
-  }
-
-  mousemove(event) {
-    const hoveredElementRenderer = event.toElement.__data__;
-    const isBondHovered = hoveredElementRenderer instanceof PolymerBondRenderer;
-    const isMonomerHovered =
-      hoveredElementRenderer instanceof BaseMonomerRenderer;
-    const isMonomerSelected = hoveredElementRenderer?.monomer?.selected;
-    const isMonomerLastHovered =
-      this.lastHoveredMonomerRenderer === hoveredElementRenderer;
-
-    if (isMonomerHovered && !isMonomerSelected && !isMonomerLastHovered) {
-      hoveredElementRenderer.monomer.turnOnSelection();
-      this.lastHoveredMonomerRenderer = hoveredElementRenderer;
-      this.setPotentialBondToAttachmentPoint(this.lastHoveredMonomerRenderer);
-    } else if (
-      !isMonomerHovered &&
-      this.lastHoveredMonomerRenderer &&
-      this.lastHoveredMonomerRenderer !==
-        this.bondRenderer?.polymerBond?.firstMonomer.renderer
-    ) {
-      this.lastHoveredMonomerRenderer.monomer.turnOffSelection();
-      this.lastHoveredMonomerRenderer.monomer.removePotentialBonds();
-      this.lastHoveredMonomerRenderer = undefined;
+  public mousemove(event) {
+    if (this.bondRenderer) {
+      const { top: offsetTop, left: offsetLeft } = this.editor.canvasOffset;
+      const modelChanges = this.editor.drawingEntitiesManager.movePolymerBond(
+        this.bondRenderer.polymerBond,
+        new Vec2(event.clientX - offsetLeft, event.clientY - offsetTop),
+      );
+      this.editor.renderersContainer.update(modelChanges);
     }
+  }
+
+  public mouseLeavePolymerBond(event) {
+    if (this.bondRenderer) return;
+
+    const renderer: PolymerBondRenderer = event.target.__data__;
+    const modelChanges =
+      this.editor.drawingEntitiesManager.hidePolymerBondInformation(
+        renderer.polymerBond,
+      );
+    this.editor.renderersContainer.update(modelChanges);
+  }
+
+  public mouseOverPolymerBond(event) {
+    if (this.bondRenderer) return;
+
+    const renderer: PolymerBondRenderer = event.target.__data__;
+    const modelChanges =
+      this.editor.drawingEntitiesManager.showPolymerBondInformation(
+        renderer.polymerBond,
+      );
+    this.editor.renderersContainer.update(modelChanges);
+  }
+
+  public mouseOverMonomer(event) {
+    const renderer: BaseMonomerRenderer = event.target.__data__;
+    let modelChanges;
 
     if (this.bondRenderer) {
-      this.handleBondDragging(event);
-    } else if (isBondHovered && hoveredElementRenderer.polymerBond.finished) {
-      this.hoveredBondRenderer = hoveredElementRenderer;
-      this.hoveredBondRenderer.polymerBond.turnOnSelection();
-    } else if (
-      this.hoveredBondRenderer &&
-      this.hoveredBondRenderer.polymerBond.finished
-    ) {
-      this.hoveredBondRenderer.polymerBond.turnOffSelection();
-      this.hoveredBondRenderer = undefined;
+      modelChanges =
+        this.editor.drawingEntitiesManager.intendToFinishBondCreation(
+          renderer.monomer,
+          this.bondRenderer?.polymerBond,
+        );
+    } else {
+      modelChanges =
+        this.editor.drawingEntitiesManager.intendToStartBondCreation(
+          renderer.monomer,
+        );
     }
 
-    this.editor.renderersContainer.update(false);
+    this.editor.renderersContainer.update(modelChanges);
+  }
+
+  public mouseLeaveMonomer(event) {
+    const renderer: BaseMonomerRenderer = event.target.__data__;
+    if (renderer !== this.bondRenderer?.polymerBond?.firstMonomer?.renderer) {
+      const modelChanges =
+        this.editor.drawingEntitiesManager.cancelIntentionToFinishBondCreation(
+          renderer.monomer,
+        );
+      this.editor.renderersContainer.update(modelChanges);
+    }
   }
 
   private finishBondCreation(secondMonomer: BaseMonomer) {
@@ -131,12 +123,9 @@ class PolymerBond implements Tool {
       this.editor.events.error.dispatch(
         "Monomers don't have any connection point available",
       );
-      BondService.deleteBondWithAllLinks(
-        this.editor.renderersContainer,
+      return this.editor.drawingEntitiesManager.cancelPolymerBondCreation(
         this.bondRenderer.polymerBond,
-        secondMonomer,
       );
-      return;
     }
     const firstMonomerAttachmentPoint =
       this.bondRenderer.polymerBond.firstMonomer.getPotentialAttachmentPointByBond(
@@ -151,34 +140,39 @@ class PolymerBond implements Tool {
         'You have connected monomers with attachment points of the same group',
       );
     }
-    BondService.finishBondCreation(
+    return this.editor.drawingEntitiesManager.finishPolymerBondCreation(
+      this.bondRenderer.polymerBond,
+      secondMonomer,
       firstMonomerAttachmentPoint,
       secondMonomerAttachmentPoint,
-      secondMonomer,
-      this.bondRenderer.polymerBond,
     );
-    this.lastHoveredMonomerRenderer = undefined;
   }
 
-  mouseup(event) {
-    const hoveredElementRenderer = event.toElement.__data__;
-    const isMonomerHovered =
-      hoveredElementRenderer instanceof BaseMonomerRenderer;
-    const isFirstMonomerHovered =
-      hoveredElementRenderer ===
-      this.bondRenderer?.polymerBond?.firstMonomer?.renderer;
-
-    if (isMonomerHovered && !isFirstMonomerHovered) {
-      this.finishBondCreation(hoveredElementRenderer.monomer);
-    } else if (this.bondRenderer) {
-      BondService.deleteBondWithAllLinks(
-        this.editor.renderersContainer,
-        this.bondRenderer.polymerBond,
-      );
+  public mouseup() {
+    if (this.bondRenderer) {
+      const modelChanges =
+        this.editor.drawingEntitiesManager.cancelPolymerBondCreation(
+          this.bondRenderer.polymerBond,
+        );
+      this.editor.renderersContainer.update(modelChanges);
+      this.bondRenderer = undefined;
     }
-    this.bondRenderer = undefined;
-    this.editor.renderersContainer.update(false);
   }
+
+  public mouseUpMonomer(event) {
+    const renderer = event.toElement.__data__;
+    const isFirstMonomerHovered =
+      renderer === this.bondRenderer?.polymerBond?.firstMonomer?.renderer;
+
+    if (this.bondRenderer && !isFirstMonomerHovered) {
+      const modelChanges = this.finishBondCreation(renderer.monomer);
+      this.editor.renderersContainer.update(modelChanges);
+      this.bondRenderer = undefined;
+      event.stopPropagation();
+    }
+  }
+
+  public destroy() {}
 }
 
 export { PolymerBond };

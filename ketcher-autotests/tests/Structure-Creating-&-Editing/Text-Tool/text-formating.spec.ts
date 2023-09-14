@@ -4,16 +4,12 @@ import {
   takeEditorScreenshot,
   selectTopPanelButton,
   delay,
-  selectLeftPanelButton,
-  selectRectangleSelectionTool,
 } from '@utils/canvas';
 import { pressButton, clickInTheMiddleOfTheScreen } from '@utils/clicks';
 import {
   TopPanelButton,
   DELAY_IN_SECONDS,
-  FILE_TEST_DATA,
   openFileAndAddToCanvas,
-  openPasteFromClipboard,
   waitForPageInit,
   openFromFileViaClipboard,
   readFileContents,
@@ -22,7 +18,6 @@ import {
 import {
   selectNestedTool,
   SelectTool,
-  ShapeTool,
 } from '@utils/canvas/tools/selectNestedTool';
 import { addTextBoxToCanvas } from '@utils/selectors/addTextBoxToCanvas';
 
@@ -140,8 +135,16 @@ test.describe('Text tools test cases', () => {
     await page.getByLabel('File name:').fill('ketfile01');
     await page.getByRole('button', { name: 'MDL Molfile V2000' }).click();
     await page.getByRole('option', { name: 'Ket Format' }).click();
-    await page.getByRole('button', { name: 'Save', exact: true });
-    await openFileAndAddToCanvas('ketfile01t', page);
+    await page.getByRole('button', { name: 'Save', exact: true }).click();
+    await selectTopPanelButton(TopPanelButton.Clear, page);
+    await selectTopPanelButton(TopPanelButton.Open, page);
+    await openFromFileViaClipboard('tests/test-data/KET/ketfile01.ket', page);
+    await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
+    await page.getByText('TEST321').dblclick();
+    await page.keyboard.press('Control+a');
+    await page.getByRole('button', { name: 'italic' }).click();
+    await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
   });
 
@@ -212,7 +215,6 @@ test.describe('Text tools test cases', () => {
     await takeEditorScreenshot(page);
   });
 
-  // FIX ME
   test("Text tool - UTF-8 compatible ('Paste from Clipboard')", async ({
     page,
   }) => {
@@ -222,7 +224,6 @@ test.describe('Text tools test cases', () => {
       'tests/test-data/KET/utf-8-svg-png.ket',
       page,
     );
-    // await pressButton(page, 'Add to Canvas');
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });

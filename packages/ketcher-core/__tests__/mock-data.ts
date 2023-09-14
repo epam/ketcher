@@ -7,6 +7,7 @@ import { MonomerItemType } from 'domain/types';
 import { Peptide } from 'domain/entities/Peptide';
 import { PeptideRenderer } from 'application/render/renderers/PeptideRenderer';
 import { PolymerBond } from 'domain/entities/PolymerBond';
+import { PolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer';
 
 const mockAtoms = [
   {
@@ -769,6 +770,9 @@ export const getFinishedPolymerBond = (x1, y1, x2, y2) => {
 
   const polymerBond = new PolymerBond(peptide);
   polymerBond.setSecondMonomer(peptide2);
+
+  // eslint-disable-next-line no-new
+  new PolymerBondRenderer(polymerBond);
 
   return polymerBond;
 };

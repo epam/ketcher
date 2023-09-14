@@ -3,11 +3,12 @@ import {
   selectTopPanelButton,
   TopPanelButton,
   takeEditorScreenshot,
+  waitForPageInit,
 } from '@utils';
 
 test.describe('Open Ketcher', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test('Verify Ketcher settings panel', async ({ page }) => {

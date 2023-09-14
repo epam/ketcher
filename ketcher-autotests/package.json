@@ -8,7 +8,7 @@
     "test": "npx playwright test",
     "test:debug": "npx playwright test --debug",
     "test:update": "npx playwright test --update-snapshots",
-    "test:trace": "npx playwright test --trace on --grep @check",
+    "test:trace": "npx playwright test --trace on",
     "check:code": "npm run check:types && npm run check:lint",
     "check:types": "tsc --noEmit",
     "check:lint": "eslint .",
@@ -24,7 +24,7 @@
   "author": "Nitvex",
   "license": "ISC",
   "devDependencies": {
-    "@playwright/test": "^1.36.1",
+    "@playwright/test": "1.37.0",
     "eslint": "^8.44.0",
     "lint-staged": "^13.1.2",
     "prettier": "2.8.4"

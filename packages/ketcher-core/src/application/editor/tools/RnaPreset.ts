@@ -17,14 +17,15 @@ import { Tool, IRnaPreset } from 'application/editor/tools/Tool';
 import { Sugar } from 'domain/entities/Sugar';
 import { Vec2 } from 'domain/entities';
 
-import { fromPresetAddition, CoreEditor } from 'application/editor';
+import { CoreEditor } from 'application/editor';
 import { BaseMonomerRenderer } from 'application/render/renderers';
 import { MonomerItemType } from 'domain/types';
 import { monomerFactory } from '../operations/monomer/monomerFactory';
 import { RNABase } from 'domain/entities/RNABase';
 import { Phosphate } from 'domain/entities/Phosphate';
+import assert from 'assert';
 
-class PresetTool implements Tool {
+class RnaPresetTool implements Tool {
   rnaBase: MonomerItemType | undefined;
   sugar: MonomerItemType | undefined;
   phosphate: MonomerItemType | undefined;
@@ -52,15 +53,13 @@ class PresetTool implements Tool {
   }
 
   mousedown() {
-    if (!this.sugarPreviewRenderer) {
-      throw new Error('monomerPreviewRenderer is not initialized');
-    }
+    assert(
+      this.sugarPreviewRenderer,
+      'monomerPreviewRenderer is not initialized',
+    );
+    assert(this.sugar, 'no sugar in preset');
 
-    if (!this.sugar) {
-      throw new Error('no sugar in preset');
-    }
-
-    fromPresetAddition(this.editor.renderersContainer, {
+    const modelChanges = this.editor.drawingEntitiesManager.addRnaPreset({
       sugar: this.sugar,
       sugarPosition: new Vec2(
         this.editor.lastCursorPosition.x - this.sugarPreviewRenderer.width / 2,
@@ -90,7 +89,7 @@ class PresetTool implements Tool {
         : undefined,
     });
 
-    this.editor.renderersContainer.update(false);
+    this.editor.renderersContainer.update(modelChanges);
   }
 
   mousemove() {
@@ -177,4 +176,4 @@ class PresetTool implements Tool {
   }
 }
 
-export { PresetTool };
+export { RnaPresetTool };

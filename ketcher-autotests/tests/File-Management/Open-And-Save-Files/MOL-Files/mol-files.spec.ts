@@ -607,7 +607,7 @@ test.describe('Open and Save file', () => {
         path: 'Molfiles-V2000/sgroup-different.mol',
       },
       {
-        testName: 'Open/Save  V3000 mol file contains Sgroup',
+        testName: 'Open/Save V3000 mol file contains Sgroup - 2',
         path: 'Molfiles-V3000/sgroup-different-V3000.mol',
       },
       {
@@ -655,7 +655,7 @@ test.describe('Open and Save file', () => {
         format: 'v3000',
       },
       {
-        testName: 'Open/Save  V3000 mol file contains Sgroup',
+        testName: 'Open/Save V3000 mol file contains Sgroup - 2',
         pathToOpen: 'Molfiles-V3000/sgroup-different-V3000.mol',
         pathToExpected: 'Molfiles-V2000/sgroup-different-V2000-expected.mol',
         format: 'v2000',

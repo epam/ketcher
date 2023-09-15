@@ -92,7 +92,7 @@ async function selectHCount(page: Page, hcount: string, button: string) {
   await page.getByText('Query specific').click();
   await page
     .locator('label')
-    .filter({ hasText: 'H count' })
+    .filter({ hasText: 'H count', hasNotText: 'Implicit H count' })
     .getByRole('button', { name: '​' })
     .click();
   await page.getByRole('option', { name: hcount }).click();
@@ -1149,7 +1149,7 @@ test.describe('Atom Properties', () => {
     await page.getByText('Query specific').click();
     await page
       .locator('label')
-      .filter({ hasText: 'H count' })
+      .filter({ hasText: 'H count', hasNotText: 'Implicit H count' })
       .getByRole('button', { name: '​' })
       .click();
     await page.locator('.MuiMenuItem-root').first().click();

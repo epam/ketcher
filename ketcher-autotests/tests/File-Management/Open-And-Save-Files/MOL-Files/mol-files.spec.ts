@@ -7,6 +7,7 @@ import {
   openFileAndAddToCanvas,
   saveToFile,
   waitForPageInit,
+  waitForIndigoToLoad,
 } from '@utils';
 import { getMolfile } from '@utils/formats';
 

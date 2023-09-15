@@ -9,5 +9,9 @@ export const createPolymerEditorCanvas = (): SVGSVGElement => {
   canvas.setAttribute('height', '500');
   document.body.appendChild(canvas);
 
+  canvas.appendChild(
+    document.createElementNS('http://www.w3.org/2000/svg', 'defs'),
+  );
+
   return canvas;
 };

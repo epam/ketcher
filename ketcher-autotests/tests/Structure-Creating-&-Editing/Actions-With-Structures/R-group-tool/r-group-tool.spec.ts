@@ -8,12 +8,13 @@ import {
   screenshotBetweenUndoRedo,
   takeEditorScreenshot,
   takeLeftToolbarScreenshot,
+  waitForPageInit,
 } from '@utils';
 import { getMolfile } from '@utils/formats';
 
 test.describe('R-Group', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {

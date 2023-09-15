@@ -22,7 +22,7 @@ export interface PolymerTogglerProps {
 
 const PolymerToggler = ({ toggle }: PolymerTogglerProps): JSX.Element => {
   return (
-    <label className={styles.switch} data-testid="PolymerToggler">
+    <label className={styles.switch} data-testid="polymer-toggler">
       {/* eslint-disable jsx-a11y/label-has-associated-control */}
       <input type="checkbox" onChange={(e) => toggle(e.target.checked)} />
       <span className={styles.slider} />

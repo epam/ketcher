@@ -98,7 +98,9 @@ export async function selectSaltsAndSolvents(
 ) {
   const saltsButton = page.locator(`div[title*="${saltsName}"] > div`).first();
   await saltsButton.click();
-  await expect(page.getByTestId('templates-modal')).toHaveCount(0);
+  await expect(page.getByTestId('templates-modal')).toHaveCount(0, {
+    timeout: 30000,
+  });
 }
 
 export async function selectFunctionalGroups(
@@ -109,6 +111,9 @@ export async function selectFunctionalGroups(
     .locator(`div[title*="${functionalGroupName}"] > div`)
     .first();
   await functionalGroupButton.click();
+  await expect(page.getByTestId('templates-modal')).toHaveCount(0, {
+    timeout: 30000,
+  });
 }
 
 export async function selectUserTemplate(

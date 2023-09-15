@@ -6,11 +6,11 @@ const SUGAR_SELECTED_ELEMENT_ID = '#sugar-selection';
 
 export class SugarRenderer extends BaseMonomerRenderer {
   constructor(public monomer: Sugar, scale?: number) {
-    super(monomer, SUGAR_SELECTED_ELEMENT_ID, scale);
+    super(monomer, SUGAR_SELECTED_ELEMENT_ID, SUGAR_SELECTED_ELEMENT_ID, scale);
   }
 
   protected appendBody(
-    rootElement: Selection<SVGGElement, this, HTMLElement, never>,
+    rootElement: Selection<SVGGElement, void, HTMLElement, never>,
     theme,
   ) {
     return rootElement

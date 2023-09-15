@@ -8,6 +8,7 @@ import {
   waitForLoad,
   getCoordinatesOfTheMiddleOfTheScreen,
   openFileAndAddToCanvas,
+  waitForPageInit,
 } from '@utils';
 
 async function openFileWithShift(filename: string, page: Page) {
@@ -23,7 +24,7 @@ async function openFileWithShift(filename: string, page: Page) {
 
 test.describe('Indigo Tools - Layout', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test('Center molecule after layout', async ({ page }) => {

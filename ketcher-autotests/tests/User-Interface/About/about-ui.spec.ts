@@ -4,11 +4,12 @@ import {
   takeEditorScreenshot,
   TopPanelButton,
   clickByLink,
+  waitForPageInit,
 } from '@utils';
 
 test.describe('Open Ketcher', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test('About floating windows appeared', async ({ page }) => {

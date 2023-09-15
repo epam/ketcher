@@ -136,3 +136,13 @@ export async function resetAllSettingsToDefault(page: Page) {
   await pressButton(page, 'Reset');
   await pressButton(page, 'Apply');
 }
+
+export async function addMonomerToCanvas(
+  page: Page,
+  monomerFullName: string,
+  positionX: number,
+  positionY: number,
+) {
+  await page.getByTestId(monomerFullName).click();
+  await page.mouse.click(positionX, positionY);
+}

@@ -23,6 +23,7 @@ import {
   fillFieldByPlaceholder,
   screenshotBetweenUndoRedo,
   saveToFile,
+  waitForPageInit,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getCml, getMolfile } from '@utils/formats';
@@ -65,7 +66,7 @@ async function selectSGroupProperties(
 
 test.describe('Data S-Group tool', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {

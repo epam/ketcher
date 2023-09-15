@@ -20,10 +20,11 @@ import { Sugar } from 'domain/entities/Sugar';
 import { Phosphate } from 'domain/entities/Phosphate';
 import { RNABase } from 'domain/entities/RNABase';
 import { Vec2 } from 'domain/entities';
-import { CoreEditor, fromMonomerAddition } from 'application/editor';
+import { CoreEditor } from 'application/editor';
 import { BaseMonomerRenderer } from 'application/render/renderers';
 import { MonomerItemType } from 'domain/types';
 import { monomerFactory } from '../operations/monomer/monomerFactory';
+import assert from 'assert';
 
 class MonomerTool implements Tool {
   private monomerPreview:
@@ -44,12 +45,9 @@ class MonomerTool implements Tool {
   }
 
   mousedown() {
-    if (!this.monomerPreviewRenderer) {
-      throw new Error('monomerPreviewRenderer is not initialized');
-    }
+    assert(this.monomerPreviewRenderer);
 
-    fromMonomerAddition(
-      this.editor.renderersContainer,
+    const modelChanges = this.editor.drawingEntitiesManager.addMonomer(
       this.monomer,
       new Vec2(
         this.editor.lastCursorPosition.x -
@@ -58,7 +56,8 @@ class MonomerTool implements Tool {
           this.monomerPreviewRenderer.height / 2,
       ),
     );
-    this.editor.renderersContainer.update(false);
+
+    this.editor.renderersContainer.update(modelChanges);
   }
 
   mousemove() {

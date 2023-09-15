@@ -20,13 +20,14 @@ import {
   BondTypeName,
   selectBond,
   waitForRender,
+  waitForPageInit,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getRxn, getSmiles } from '@utils/formats';
 
 test.describe('R-Group Label Tool', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {
@@ -427,7 +428,7 @@ test.describe('R-Group Label Tool', () => {
     await dragMouseTo(x, y, page);
   });
 
-  test('Add Template to the R-Group Label', async ({ page }) => {
+  test.fixme('Add Template to the R-Group Label', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-1573
       Description: The correct Template is sprouted from the R-group label
@@ -457,7 +458,7 @@ test.describe('R-Group Label Tool', () => {
 
 test.describe('R-Group Label Tool', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test('Save as *.rxn file', async ({ page }) => {

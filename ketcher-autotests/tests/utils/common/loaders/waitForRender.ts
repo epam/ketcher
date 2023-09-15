@@ -1,11 +1,13 @@
 import { Page } from '@playwright/test';
 
 type AnyFunction = (...args: any) => Promise<any>;
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+const emptyFunction: AnyFunction = async () => {};
 
 export const waitForRender = async (
   page: Page,
-  callback: AnyFunction,
-  timeout?: number,
+  callback = emptyFunction,
+  timeout = 3000,
 ) => {
   await Promise.all([
     waitForCustomEvent(page, 'renderComplete', timeout),

@@ -55,7 +55,7 @@ test.describe('Lasso Selection tool', () => {
     await page.mouse.click(300, 200);
   }
 
-  test('Selection of atom/bond/molecule', async ({ page }) => {
+  test.only('Selection of atom/bond/molecule', async ({ page }) => {
     /*
      * Test case: EPMLSOPKET-1338
      * Description: Hover and selection of atom/bond/molecule

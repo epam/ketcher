@@ -263,6 +263,7 @@ function SGroupdrawBrackets({
   const crossBondsPerAtom = Object.values(crossBonds);
   const crossBondsValues = crossBondsPerAtom.flat();
   const brackets = getBracketParameters(
+    atomSet,
     crossBondsPerAtom,
     crossBondsValues,
     attachmentPoints,
@@ -450,6 +451,7 @@ function drawAttachedDat(restruct: ReStruct, sgroup: SGroup): any {
 }
 
 function getBracketParameters(
+  atomSet: Pile,
   crossBondsPerAtom: Array<Array<Bond>>,
   crossBondsValues: Array<Bond>,
   attachmentPoints: number[],
@@ -478,19 +480,32 @@ function getBracketParameters(
       attachmentPoints,
       brackets,
     );
-  } else {
-    getBracketParamersWithCrossBondsMoreThan2(
+  } else if (crossBondsValues.length === 2 && crossBondsPerAtom.length === 1) {
+    getBracketParamersWithCrossBondsMoreThan2OnOneAtom(
       crossBondsValues,
       mol,
       attachmentPoints,
       render,
       brackets,
     );
+  } else {
+    for (let i = 0; i < crossBondsValues.length; ++i) {
+      const bond = mol.bonds.get(Number(crossBondsValues[i]));
+      const center = bond?.getCenter(mol);
+      const direction = atomSet.has(bond?.begin)
+        ? bond?.getDir(mol)
+        : bond?.getDir(mol).negated();
+      if (center && direction) {
+        brackets.push(
+          new BracketParams(center, direction, 0.2, bracketBox.sz().y),
+        );
+      }
+    }
   }
   return brackets;
 }
 
-function getBracketParamersWithCrossBondsMoreThan2(
+function getBracketParamersWithCrossBondsMoreThan2OnOneAtom(
   crossBondsValues: Bond[],
   mol: Struct,
   attachmentPoints: number[],

@@ -46,7 +46,7 @@ test.describe('Bond Properties', () => {
       Topology - 'Either',
       Reacting Center - 'Unmarked'.
     */
-    await openFileAndAddToCanvas('benzene-ring-with-two-atoms.ket', page);
+    await openFileAndAddToCanvas('KET/benzene-ring-with-two-atoms.ket', page);
     await doubleClickOnBond(page, BondType.DOUBLE, 1);
   });
 

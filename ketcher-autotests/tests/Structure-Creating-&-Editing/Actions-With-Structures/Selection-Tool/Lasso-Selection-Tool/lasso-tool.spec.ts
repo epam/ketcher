@@ -55,7 +55,7 @@ test.describe('Lasso Selection tool', () => {
     await page.mouse.click(300, 200);
   }
 
-  test('Selection of atom/bond/molecule', async ({ page }) => {
+  test.only('Selection of atom/bond/molecule', async ({ page }) => {
     /*
      * Test case: EPMLSOPKET-1338
      * Description: Hover and selection of atom/bond/molecule
@@ -64,17 +64,20 @@ test.describe('Lasso Selection tool', () => {
     const atomPoint = await getAtomByIndex(page, { label: 'C' }, 0);
     await page.mouse.move(atomPoint.x, atomPoint.y);
     await page.mouse.click(atomPoint.x, atomPoint.y);
+    await takeEditorScreenshot(page);
     await clickCanvas(page);
 
     const bondPoint = await getBondByIndex(page, {}, 0);
     await page.mouse.move(bondPoint.x, bondPoint.y);
     await page.mouse.click(bondPoint.x, bondPoint.y);
+    await takeEditorScreenshot(page);
     await clickCanvas(page);
 
     await page.keyboard.down('Shift');
     await page.mouse.click(atomPoint.x, atomPoint.y);
     await page.mouse.click(bondPoint.x, bondPoint.y);
     await page.keyboard.up('Shift');
+    await takeEditorScreenshot(page);
     await clickCanvas(page);
 
     await selectLasso(page);
@@ -98,7 +101,7 @@ test.describe('Lasso Selection tool', () => {
      * Test case: EPMLSOPKET-1340
      * Description: Hover and selection of plus sign and reaction arrow
      */
-    await openFileAndAddToCanvas('Rxn-V2000/reaction_4.rxn', page);
+    await openFileAndAddToCanvas('Rxn-V2000/reaction-4.rxn', page);
     await selectLasso(page);
     const point = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await page.mouse.move(point.x - 270, point.y + 10);
@@ -125,7 +128,7 @@ test.describe('Lasso Selection tool', () => {
      * Test case: EPMLSOPKET-1342
      * Description: Selected structures and components are moved to the another place.
      */
-    await openFileAndAddToCanvas('Rxn-V2000/reaction_4.rxn', page);
+    await openFileAndAddToCanvas('Rxn-V2000/reaction-4.rxn', page);
     await selectLasso(page);
     const point = await selectObjects(page, 300, 200);
     await clickOnAtom(page, 'C', 10);
@@ -183,7 +186,7 @@ test.describe('Lasso Selection tool', () => {
      * Test case: EPMLSOPKET-1345
      * Description: The selected part of the structure or reaction should disappear after pressing the "Delete" button.
      */
-    await openFileAndAddToCanvas('Rxn-V2000/reaction_4.rxn', page);
+    await openFileAndAddToCanvas('Rxn-V2000/reaction-4.rxn', page);
     await selectLasso(page);
     await selectObjects(page, 200, 200);
     await page.keyboard.press('Delete');
@@ -198,7 +201,7 @@ test.describe('Lasso Selection tool', () => {
      * Description: Undo/Redo should work correctly for the actions for the selected objects.
      */
     const centerPoint = await getCoordinatesOfTheMiddleOfTheScreen(page);
-    await openFileAndAddToCanvas('Rxn-V2000/reaction_4.rxn', page);
+    await openFileAndAddToCanvas('Rxn-V2000/reaction-4.rxn', page);
     await selectLasso(page);
 
     await clickOnAtom(page, 'C', 0);

@@ -7,4 +7,5 @@ export type AtomLabelType =
   | 'Cl'
   | 'S'
   | 'F'
-  | 'I';
+  | 'I'
+  | 'Br';

@@ -1,4 +1,5 @@
-import { test } from '@playwright/test';
+/* eslint-disable no-magic-numbers */
+import { test, expect } from '@playwright/test';
 import {
   takeEditorScreenshot,
   LeftPanelButton,
@@ -14,8 +15,13 @@ import {
   TopPanelButton,
   dragMouseTo,
   waitForPageInit,
+  mapTwoAtoms,
+  clickOnAtom,
+  receiveFileComparisonData,
+  saveToFile,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
+import { getRxn } from '@utils/formats';
 
 test.describe('Mapping Tools', () => {
   test.beforeEach(async ({ page }) => {
@@ -32,9 +38,11 @@ test.describe('Mapping Tools', () => {
     */
     await openFileAndAddToCanvas('Rxn-V2000/reaction-3.rxn', page);
     await selectNestedTool(page, ReactionMappingTool.MAP);
-    await page.getByText('CEL');
-    const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await dragMouseTo(x, y, page);
+    await mapTwoAtoms(
+      page,
+      { label: 'C', number: 0 },
+      { label: 'C', number: 10 },
+    );
   });
 
   test.describe('Mapping Tools', () => {
@@ -44,8 +52,9 @@ test.describe('Mapping Tools', () => {
 
     test('Click the single mapped atom to delete mapping', async ({ page }) => {
       // EPMLSOPKET-1827
+      const anyAtom = 0;
       await selectNestedTool(page, ReactionMappingTool.UNMAP);
-      await page.getByText('CEL');
+      await clickOnAtom(page, 'Br', anyAtom);
     });
 
     test('Map ordering', async ({ page }) => {
@@ -79,6 +88,7 @@ test.describe('Mapping Tools', () => {
     page,
   }) => {
     // EPMLSOPKET-12961
+    // Undo not working properly https://github.com/epam/ketcher/issues/2174
     await selectRingButton(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
     await selectNestedTool(page, ReactionMappingTool.MAP);
@@ -103,16 +113,38 @@ test.describe('Mapping Tools', () => {
       await takeEditorScreenshot(page);
 
       await selectTopPanelButton(TopPanelButton.Undo, page);
-      await takeEditorScreenshot(page);
     });
 
-    test('Save the mapped reaction', async ({ page }) => {
+    test('Unmap the mapped reaction', async ({ page }) => {
       // EPMLSOPKET-1830
       await selectNestedTool(page, ReactionMappingTool.UNMAP);
       await page.getByText('CEL').click();
-      await takeEditorScreenshot(page);
-      await selectNestedTool(page, ReactionMappingTool.MAP);
-      await page.getByText('CEL').click();
     });
+  });
+});
+
+test.describe('Mapping reactions', () => {
+  test.beforeEach(async ({ page }) => {
+    await waitForPageInit(page);
+  });
+
+  test('Save as *.rxn file', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-1830
+    Description: Structure with attachment points saved as .rxn file
+    */
+    await openFileAndAddToCanvas('Rxn-V2000/mapped-reaction.rxn', page);
+    const expectedFile = await getRxn(page);
+    await saveToFile('Rxn-V2000/mapped-reaction-expected.rxn', expectedFile);
+
+    const METADATA_STRING_INDEX = [2, 7, 25, 40, 66];
+    const { fileExpected: rxnFileExpected, file: rxnFile } =
+      await receiveFileComparisonData({
+        page,
+        metaDataIndexes: METADATA_STRING_INDEX,
+        expectedFileName:
+          'tests/test-data/Rxn-V2000/mapped-reaction-expected.rxn',
+      });
+    expect(rxnFile).toEqual(rxnFileExpected);
   });
 });

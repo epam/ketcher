@@ -22,6 +22,12 @@ test.describe('Reaction Tools', () => {
   test('Icons and tooltips for Plus Tool', async ({ page }) => {
     await selectLeftPanelButton(LeftPanelButton.ReactionPlusTool, page);
   });
+});
+
+test.describe('Reaction Tools', () => {
+  test.beforeEach(async ({ page }) => {
+    await waitForPageInit(page);
+  });
 
   test('Icons and tooltips for Reaction Mapping tools', async ({ page }) => {
     const mappingTools = [

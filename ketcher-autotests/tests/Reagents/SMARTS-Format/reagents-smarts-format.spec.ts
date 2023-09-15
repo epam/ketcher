@@ -9,6 +9,7 @@ import {
   readFileContents,
   pasteFromClipboard,
   waitForLoad,
+  waitForPageInit,
 } from '@utils';
 import { getSmarts } from '@utils/formats';
 
@@ -27,7 +28,7 @@ async function previewSmarts(page: Page) {
 
 test.describe('Reagents SMARTS format', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {
@@ -120,7 +121,7 @@ test.describe('Reagents SMARTS format', () => {
 
 test.describe('Reagents SMARTS format', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test('File saves in "Daylight SMARTS" format', async ({ page }) => {

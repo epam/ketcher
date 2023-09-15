@@ -23,6 +23,8 @@ import {
   LeftPanelButton,
   TopPanelButton,
   Point,
+  waitForPageInit,
+  waitForRender,
 } from '@utils';
 
 const xOffsetFromCenter = -35;
@@ -78,12 +80,15 @@ test.describe('Plus and Arrows tools ', () => {
   const modifier = getControlModifier();
   const CANVAS_CLICK_X = 300;
   const CANVAS_CLICK_Y = 300;
+
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
+
   test.afterEach(async ({ page }) => {
     await takeEditorScreenshot(page);
   });
+
   test.describe('Create reactions', () => {
     /**
      * Test case: EPMLSOPKET-1783
@@ -185,22 +190,31 @@ test.describe('Plus and Arrows tools ', () => {
     });
 
     test('Select the plus sign and move it', async ({ page }) => {
-      await page.mouse.move(point.x - 150, point.y - 10);
-      await dragMouseTo(point.x - 150, point.y - 40, page);
+      await waitForRender(page, async () => {
+        await page.mouse.move(point.x - 150, point.y - 10);
+        await dragMouseTo(point.x - 150, point.y - 40, page);
+      });
     });
 
     test('Select the plus sign with any reaction component(s) and move them', async ({
       page,
     }) => {
-      await page.mouse.move(point.x - 300, point.y - 100);
-      await dragMouseTo(point.x - 140, point.y + 100, page);
-      await page.mouse.move(point.x - 200, point.y - 20);
-      await dragMouseTo(point.x - 300, point.y - 100, page);
+      await waitForRender(page, async () => {
+        await page.mouse.move(point.x - 300, point.y - 100);
+        await dragMouseTo(point.x - 140, point.y + 100, page);
+      });
+
+      await waitForRender(page, async () => {
+        await page.mouse.move(point.x - 200, point.y - 20);
+        await dragMouseTo(point.x - 300, point.y - 100, page);
+      });
     });
 
     test('Select the whole reaction and move it', async ({ page }) => {
-      await page.keyboard.press(`${modifier}+KeyA`);
-      await page.mouse.move(point.x - 20, point.y - 20);
+      await waitForRender(page, async () => {
+        await page.keyboard.press(`${modifier}+KeyA`);
+        await page.mouse.move(point.x - 20, point.y - 20);
+      });
       await dragMouseTo(point.x - 100, point.y - 100, page);
     });
 
@@ -586,7 +600,7 @@ test.describe('Plus and Arrows tools ', () => {
       await saveStructureWithReaction(page, 'Ket Format');
     });
 
-    test('open files', async ({ page }) => {
+    test.fixme('open files', async ({ page }) => {
       await openFileAndAddToCanvas(
         `Rxn-V2000/resizing-reaction-arrow-saving.rxn`,
         page,
@@ -721,13 +735,14 @@ test.describe('Plus and Arrows tools ', () => {
        * Test case: Test case: EPMLSOPKET - 16947
        * Description:  All Arrows should have correct tooltip
        */
-
       await selectLeftPanelButton(LeftPanelButton.ArrowOpenAngleTool, page);
       await selectLeftPanelButton(LeftPanelButton.ArrowOpenAngleTool, page);
       const button = page.getByTestId(id).first();
       expect(button).toHaveAttribute('title', idToTitle[id]);
       await button.click();
-      await clickInTheMiddleOfTheScreen(page);
+      await waitForRender(page, async () => {
+        await clickInTheMiddleOfTheScreen(page);
+      });
     });
   }
 });

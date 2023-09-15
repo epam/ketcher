@@ -79,6 +79,7 @@ const TemplateTable: FC<TemplateTableProps> = (props) => {
       className={`${classes.tableContent} ${
         titleRows === 1 ? classes.oneRowTitleTable : classes.twoRowsTitleTable
       }`}
+      data-testId="templates-modal"
     >
       {templates.map((tmpl, i) => {
         return (

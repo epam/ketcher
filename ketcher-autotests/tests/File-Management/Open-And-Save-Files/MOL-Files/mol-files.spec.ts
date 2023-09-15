@@ -7,7 +7,6 @@ import {
   openFileAndAddToCanvas,
   saveToFile,
   waitForPageInit,
-  waitForIndigoToLoad,
 } from '@utils';
 import { getMolfile } from '@utils/formats';
 
@@ -552,8 +551,7 @@ test('Open V3000 file with R-Groups with Fragments', async ({ page }) => {
 
 test.describe('Open and Save file', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
-    await waitForIndigoToLoad(page);
+    await waitForPageInit(page);
   });
 
   test.describe('Open file', () => {

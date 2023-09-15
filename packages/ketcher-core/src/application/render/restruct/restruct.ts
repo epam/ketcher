@@ -42,8 +42,6 @@ import { Render } from '../raphaelRender';
 import Visel from './visel';
 import util from '../util';
 import { ReRGroupAttachmentPoint } from './rergroupAttachmentPoint';
-import { PolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer';
-import { BaseMonomerRenderer } from '../renderers';
 
 class ReStruct {
   public static maps = {
@@ -57,8 +55,6 @@ class ReStruct {
     sgroupData: ReDataSGroupData,
     enhancedFlags: ReEnhancedFlag,
     sgroups: ReSGroup,
-    monomers: BaseMonomerRenderer,
-    polymerBonds: PolymerBondRenderer,
     reloops: ReLoop,
     simpleObjects: ReSimpleObject,
     texts: ReText,
@@ -76,8 +72,6 @@ class ReStruct {
   public rgroupAttachmentPoints: Pool<ReRGroupAttachmentPoint> = new Pool();
 
   public sgroups: Map<number, ReSGroup> = new Map();
-  public monomers: Map<number, BaseMonomerRenderer> = new Map();
-  public polymerBonds: Map<number, PolymerBondRenderer> = new Map();
   public sgroupData: Map<number, ReDataSGroupData> = new Map();
   public enhancedFlags: Map<number, ReEnhancedFlag> = new Map();
   private simpleObjects: Map<number, ReSimpleObject> = new Map();
@@ -103,9 +97,7 @@ class ReStruct {
     // eslint-disable-line max-statements
     this.render = render as Render;
     this.molecule = molecule || new Struct();
-    if (!render.skipRaphaelInitialization) {
-      this.initLayers();
-    }
+    this.initLayers();
     this.clearMarks();
     // TODO: eachItem ?
 
@@ -512,9 +504,6 @@ class ReStruct {
     this.assignConnectedComponents();
     this.initialized = true;
 
-    this.showMonomers();
-    this.showPolymerBonds();
-
     this.verifyLoops();
     const updLoops = force || this.structChanged;
     if (updLoops) this.updateLoops();
@@ -705,20 +694,6 @@ class ReStruct {
     this.atomsChanged.forEach((_value, aid) => {
       const atom = this.atoms.get(aid);
       if (atom) atom.show(this, aid, options);
-    });
-  }
-
-  private showMonomers(): void {
-    this.monomers.forEach((monomerRenderer) => {
-      monomerRenderer.remove();
-      monomerRenderer.show((this.render as any).theme);
-    });
-  }
-
-  private showPolymerBonds(): void {
-    this.polymerBonds.forEach((polymerBond) => {
-      polymerBond.remove();
-      polymerBond.show();
     });
   }
 

@@ -1,7 +1,9 @@
 import { getFinishedPolymerBond } from '../../mock-data';
+import { createPolymerEditorCanvas } from '../../helpers/dom';
 
 describe('Polymer Bond', () => {
   it('should be finished if has links to two monomers', () => {
+    createPolymerEditorCanvas();
     const polymerBond = getFinishedPolymerBond(10, 10, 90, 100);
 
     polymerBond.moveToLinkedMonomers();

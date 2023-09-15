@@ -6,11 +6,11 @@ const CHEM_SELECTED_ELEMENT_ID = '#chem-selection';
 
 export class ChemRenderer extends BaseMonomerRenderer {
   constructor(public monomer: Chem, scale?: number) {
-    super(monomer, CHEM_SELECTED_ELEMENT_ID, scale);
+    super(monomer, CHEM_SELECTED_ELEMENT_ID, CHEM_SELECTED_ELEMENT_ID, scale);
   }
 
   protected appendBody(
-    rootElement: Selection<SVGGElement, this, HTMLElement, never>,
+    rootElement: Selection<SVGGElement, void, HTMLElement, never>,
     theme,
   ) {
     return rootElement

@@ -1,7 +1,8 @@
-import { Subscription, DOMSubscription } from 'subscription';
-import { ReStruct } from 'application/render';
-import { Struct, Vec2 } from 'domain/entities';
+import { DOMSubscription } from 'subscription';
+import { Vec2 } from 'domain/entities';
 import {
+  BaseTool,
+  isBaseTool,
   Tool,
   ToolConstructorInterface,
   ToolEventHandlerName,
@@ -9,6 +10,9 @@ import {
 } from 'application/editor/tools/Tool';
 import { toolsMap } from 'application/editor/tools';
 import { MonomerItemType } from 'domain/types';
+import { RenderersManager } from 'application/render/renderers/RenderersManager';
+import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
+import { editorEvents, renderersEvents } from 'application/editor/editorEvents';
 
 interface ICoreEditorConstructorParams {
   theme;
@@ -20,29 +24,23 @@ function isMouseMainButtonPressed(event: MouseEvent) {
 }
 
 export class CoreEditor {
-  public events = {
-    selectMonomer: new Subscription(),
-    selectPreset: new Subscription(),
-    selectTool: new Subscription(),
-    error: new Subscription(),
-  };
+  public events = editorEvents;
 
-  public renderersContainer: ReStruct;
+  public renderersContainer: RenderersManager;
+  public drawingEntitiesManager: DrawingEntitiesManager;
   public lastCursorPosition: Vec2 = new Vec2(0, 0);
-  private canvas: SVGSVGElement;
+  public canvas: SVGSVGElement;
   public canvasOffset: DOMRect;
   public theme;
   // private lastEvent: Event | undefined;
-  private tool?: Tool;
+  private tool?: Tool | BaseTool;
 
   constructor({ theme, canvas }: ICoreEditorConstructorParams) {
     this.theme = theme;
     this.canvas = canvas;
     this.subscribeEvents();
-    this.renderersContainer = new ReStruct(new Struct(), {
-      skipRaphaelInitialization: true,
-      theme,
-    });
+    this.renderersContainer = new RenderersManager({ theme });
+    this.drawingEntitiesManager = new DrawingEntitiesManager();
     this.domEventSetup();
     this.canvasOffset = this.canvas.getBoundingClientRect();
   }
@@ -51,6 +49,12 @@ export class CoreEditor {
     this.events.selectMonomer.add((monomer) => this.onSelectMonomer(monomer));
     this.events.selectPreset.add((preset) => this.onSelectRNAPreset(preset));
     this.events.selectTool.add((tool) => this.onSelectTool(tool));
+
+    renderersEvents.forEach((eventName) => {
+      this.events[eventName].add((event) =>
+        this.useToolIfNeeded(eventName, event),
+      );
+    });
   }
 
   private onSelectMonomer(monomer: MonomerItemType) {
@@ -67,8 +71,13 @@ export class CoreEditor {
 
   public selectTool(name: string, options?) {
     const ToolConstructor: ToolConstructorInterface = toolsMap[name];
+    const oldTool = this.tool;
 
     this.tool = new ToolConstructor(this, options);
+
+    if (isBaseTool(oldTool)) {
+      oldTool?.destroy();
+    }
   }
 
   private domEventSetup() {
@@ -167,7 +176,7 @@ export class CoreEditor {
   }
 
   private useToolIfNeeded(eventHandlerName: ToolEventHandlerName, event) {
-    const editorTool = this.tool;
+    const editorTool = this.tool as Tool;
     if (!editorTool) {
       return false;
     }

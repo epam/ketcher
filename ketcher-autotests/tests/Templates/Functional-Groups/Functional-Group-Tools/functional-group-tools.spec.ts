@@ -27,6 +27,7 @@ import {
   SelectTool,
   selectNestedTool,
   STRUCTURE_LIBRARY_BUTTON_NAME,
+  waitForPageInit,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
@@ -35,7 +36,7 @@ const X_DELTA = 300;
 
 test.describe('Templates - Functional Group Tools', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {
@@ -43,22 +44,19 @@ test.describe('Templates - Functional Group Tools', () => {
     await takeEditorScreenshot(page);
   });
 
-  test.fixme(
-    'Add a Bond to a contracted Functional Group',
-    async ({ page }) => {
-      /*
+  test('Add a Bond to a contracted Functional Group', async ({ page }) => {
+    /*
     Test case: EPMLSOPKET-10086
     Description: A bond is added to a contracted functional group and form a bond
     */
-      await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-      await page.getByRole('tab', { name: 'Functional Groups' }).click();
-      await selectFunctionalGroups(FunctionalGroups.Boc, page);
-      await clickInTheMiddleOfTheScreen(page);
+    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+    await page.getByRole('tab', { name: 'Functional Groups' }).click();
+    await selectFunctionalGroups(FunctionalGroups.Boc, page);
+    await clickInTheMiddleOfTheScreen(page);
 
-      await selectLeftPanelButton(LeftPanelButton.SingleBond, page);
-      await clickInTheMiddleOfTheScreen(page);
-    },
-  );
+    await selectLeftPanelButton(LeftPanelButton.SingleBond, page);
+    await clickInTheMiddleOfTheScreen(page);
+  });
 
   test('Add a Chain to a contracted Functional Group', async ({ page }) => {
     /*
@@ -250,7 +248,7 @@ test.describe('Templates - Functional Group Tools', () => {
 
 test.describe('Templates - Functional Group Tools2', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {
@@ -327,38 +325,37 @@ test.describe('Templates - Functional Group Tools2', () => {
     await pressButton(page, 'Horizontal Flip (Alt+H)');
   });
 
-  test.fixme(
-    'Erase of contracted and expanded Functional Group',
-    async ({ page }) => {
-      /*
+  test('Erase of contracted and expanded Functional Group', async ({
+    page,
+  }) => {
+    /*
     Test case: EPMLSOPKET-2901
     Description: Contracted Functional Group is removed after click with Erase tool;
     Expanded Functional Group is removed if were selected by Rectangle selection;
     EDIT ABBREVIATION window appears if click by Erase tool on expanded FG without selection.
    */
-      await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-      await page.getByRole('tab', { name: 'Functional Groups' }).click();
-      await selectFunctionalGroups(FunctionalGroups.Boc, page);
-      await clickInTheMiddleOfTheScreen(page);
+    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+    await page.getByRole('tab', { name: 'Functional Groups' }).click();
+    await selectFunctionalGroups(FunctionalGroups.Boc, page);
+    await clickInTheMiddleOfTheScreen(page);
 
-      await selectLeftPanelButton(LeftPanelButton.Erase, page);
-      await page.getByText('Boc').first().click();
+    await selectLeftPanelButton(LeftPanelButton.Erase, page);
+    await page.getByText('Boc').first().click();
 
-      await resetCurrentTool(page);
-      await takeEditorScreenshot(page);
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
 
-      await selectTopPanelButton(TopPanelButton.Undo, page);
-      await page.getByText('Boc').first().click();
-      await selectLeftPanelButton(LeftPanelButton.Erase, page);
+    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await page.getByText('Boc').first().click();
+    await selectLeftPanelButton(LeftPanelButton.Erase, page);
 
-      await resetCurrentTool(page);
-      await takeEditorScreenshot(page);
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
 
-      await openFileAndAddToCanvas('functional-group-expanded.mol', page);
-      await page.keyboard.press('Control+a');
-      await page.getByTestId('delete').click();
-    },
-  );
+    await openFileAndAddToCanvas('functional-group-expanded.mol', page);
+    await page.keyboard.press('Control+a');
+    await page.getByTestId('delete').click();
+  });
 
   test('Add Template to the Functional group', async ({ page }) => {
     /*
@@ -468,7 +465,7 @@ test.describe('Templates - Functional Group Tools2', () => {
     Test case: EPMLSOPKET-2917
     Description: Functional Group is expanded on a Benzene ring. No overlapping.
    */
-    await openFileAndAddToCanvas('benzene-bond-fg.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/benzene-bond-fg.mol', page);
     await page.getByText('Boc').click({ button: 'right' });
     await page.getByText('Expand Abbreviation').click();
   });
@@ -497,7 +494,10 @@ test.describe('Templates - Functional Group Tools2', () => {
       y2: 360,
     };
 
-    await openFileAndAddToCanvas('benzene-with-two-bonds.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/benzene-with-two-bonds.mol',
+      page,
+    );
     await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
     await page.getByRole('tab', { name: 'Functional Groups' }).click();
     await selectFunctionalGroups(FunctionalGroups.CO2Et, page);
@@ -517,7 +517,7 @@ test.describe('Templates - Functional Group Tools2', () => {
     Test case: EPMLSOPKET-8927
     Description: The Functional Group is added to all bonds without errors and distortions
    */
-    await openFileAndAddToCanvas('benzene-with-bonds.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/benzene-with-bonds.mol', page);
     await clickInTheMiddleOfTheScreen(page);
     await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
     await page.getByRole('tab', { name: 'Functional Groups' }).click();
@@ -542,7 +542,7 @@ test.describe('Templates - Functional Group Tools2', () => {
 
 test.describe('Templates - Functional Group Tools3', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test('Filtering Functional Groups', async ({ page }) => {
@@ -566,79 +566,69 @@ test.describe('Templates - Functional Group Tools3', () => {
     await takeEditorScreenshot(page);
   });
 
-  test.fixme(
-    'Expand/Remove abbreviation context menu with selected tools',
-    async ({ page }) => {
-      /*
+  test('Expand/Remove abbreviation context menu with selected tools', async ({
+    page,
+  }) => {
+    /*
     Test case: EPMLSOPKET-3933
     Description:  Functional Group-Expand/Remove abbreviation context menu is shown
    */
-      await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-      await page.getByRole('tab', { name: 'Functional Groups' }).click();
-      await selectFunctionalGroups(FunctionalGroups.CO2Et, page);
-      await clickInTheMiddleOfTheScreen(page);
+    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+    await page.getByRole('tab', { name: 'Functional Groups' }).click();
+    await selectFunctionalGroups(FunctionalGroups.CO2Et, page);
+    await clickInTheMiddleOfTheScreen(page);
 
-      await selectLeftPanelToolClickAndScreenshot(
-        LeftPanelButton.HandTool,
-        page,
-      );
-      await selectLeftPanelToolClickAndScreenshot(
-        LeftPanelButton.RectangleSelection,
-        page,
-      );
-      await selectLeftPanelToolClickAndScreenshot(LeftPanelButton.Erase, page);
-      await selectLeftPanelToolClickAndScreenshot(
-        LeftPanelButton.SingleBond,
-        page,
-      );
-      await selectLeftPanelToolClickAndScreenshot(LeftPanelButton.Chain, page);
-      await selectLeftPanelToolClickAndScreenshot(
-        LeftPanelButton.ChargePlus,
-        page,
-      );
-      await selectLeftPanelToolClickAndScreenshot(
-        LeftPanelButton.ChargeMinus,
-        page,
-      );
+    await selectLeftPanelToolClickAndScreenshot(LeftPanelButton.HandTool, page);
+    await selectLeftPanelToolClickAndScreenshot(
+      LeftPanelButton.RectangleSelection,
+      page,
+    );
+    await selectLeftPanelToolClickAndScreenshot(LeftPanelButton.Erase, page);
+    await selectLeftPanelToolClickAndScreenshot(
+      LeftPanelButton.SingleBond,
+      page,
+    );
+    await selectLeftPanelToolClickAndScreenshot(LeftPanelButton.Chain, page);
+    await selectLeftPanelToolClickAndScreenshot(
+      LeftPanelButton.ChargePlus,
+      page,
+    );
+    await selectLeftPanelToolClickAndScreenshot(
+      LeftPanelButton.ChargeMinus,
+      page,
+    );
 
-      await selectLeftPanelToolClickAndScreenshot(
-        LeftPanelButton.S_Group,
-        page,
-      );
-      await selectLeftPanelToolClickAndScreenshot(
-        LeftPanelButton.ReactionPlusTool,
-        page,
-      );
-      await selectLeftPanelToolClickAndScreenshot(
-        LeftPanelButton.ArrowOpenAngleTool,
-        page,
-      );
-      await selectLeftPanelToolClickAndScreenshot(
-        LeftPanelButton.ReactionMappingTool,
-        page,
-      );
-      await selectLeftPanelToolClickAndScreenshot(
-        LeftPanelButton.R_GroupLabelTool,
-        page,
-      );
-      await selectLeftPanelToolClickAndScreenshot(
-        LeftPanelButton.ShapeEllipse,
-        page,
-      );
-      await selectLeftPanelToolClickAndScreenshot(
-        LeftPanelButton.AddText,
-        page,
-      );
+    await selectLeftPanelToolClickAndScreenshot(LeftPanelButton.S_Group, page);
+    await selectLeftPanelToolClickAndScreenshot(
+      LeftPanelButton.ReactionPlusTool,
+      page,
+    );
+    await selectLeftPanelToolClickAndScreenshot(
+      LeftPanelButton.ArrowOpenAngleTool,
+      page,
+    );
+    await selectLeftPanelToolClickAndScreenshot(
+      LeftPanelButton.ReactionMappingTool,
+      page,
+    );
+    await selectLeftPanelToolClickAndScreenshot(
+      LeftPanelButton.R_GroupLabelTool,
+      page,
+    );
+    await selectLeftPanelToolClickAndScreenshot(
+      LeftPanelButton.ShapeEllipse,
+      page,
+    );
+    await selectLeftPanelToolClickAndScreenshot(LeftPanelButton.AddText, page);
 
-      await selectRingButton(RingButton.Benzene, page);
-      await clickInTheMiddleOfTheScreen(page, 'right');
-      await takeEditorScreenshot(page);
+    await selectRingButton(RingButton.Benzene, page);
+    await clickInTheMiddleOfTheScreen(page, 'right');
+    await takeEditorScreenshot(page);
 
-      await selectAtomInToolbar(AtomButton.Nitrogen, page);
-      await clickInTheMiddleOfTheScreen(page, 'right');
-      await takeEditorScreenshot(page);
-    },
-  );
+    await selectAtomInToolbar(AtomButton.Nitrogen, page);
+    await clickInTheMiddleOfTheScreen(page, 'right');
+    await takeEditorScreenshot(page);
+  });
 
   test('Expand/Contract/Remove Abbreviation with multiple FG', async ({
     page,

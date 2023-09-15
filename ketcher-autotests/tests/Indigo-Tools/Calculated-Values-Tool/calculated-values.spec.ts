@@ -13,13 +13,14 @@ import {
   getCoordinatesOfTheMiddleOfTheScreen,
   selectAtomInToolbar,
   AtomButton,
+  waitForPageInit,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
 
 test.describe('Calculated Values Tools', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {
@@ -32,7 +33,7 @@ test.describe('Calculated Values Tools', () => {
     Description: The 'Calculated Values' modal window is opened,
     the 'Chemical Formula' field contains 'C7H16' value.
     */
-    await openFileAndAddToCanvas('calculated-values-chain.ket', page);
+    await openFileAndAddToCanvas('KET/calculated-values-chain.ket', page);
     await selectTopPanelButton(TopPanelButton.Calculated, page);
   });
 
@@ -184,7 +185,7 @@ test.describe('Calculated Values Tools', () => {
     Description: Calculation of exact mass for the reaction
     should be correct: '[78.047] > [155.957]'.
     */
-    await openFileAndAddToCanvas('benzene-bromination.rxn', page);
+    await openFileAndAddToCanvas('Rxn-V2000/benzene-bromination.rxn', page);
     await selectTopPanelButton(TopPanelButton.Calculated, page);
   });
 
@@ -615,7 +616,7 @@ test.describe('Calculated Values Tools', () => {
     */
     const xDelta = 500;
     const yDelta = 800;
-    await openFileAndAddToCanvas('reaction-arrow.ket', page);
+    await openFileAndAddToCanvas('KET/reaction-arrow.ket', page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(x - xDelta, y + yDelta, page);
     await selectTopPanelButton(TopPanelButton.Calculated, page);
@@ -646,7 +647,7 @@ test.describe('Calculated Values Tools', () => {
 
 test.describe('Calculated Values Tools', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test('Structure Check window', async ({ page }) => {

@@ -4,6 +4,7 @@ import {
   receiveFileComparisonData,
   openFileAndAddToCanvas,
   saveToFile,
+  waitForPageInit,
 } from '@utils';
 import { getRxn } from '@utils/formats';
 
@@ -14,7 +15,7 @@ test('Open and Save file - Reaction from file that contains abbreviation 1/2 - o
    * Test case: EPMLSOPKET-1899(1)
    * Description: Reaction with abbreviations is opened and saved correctly
    */
-  await page.goto('');
+  await waitForPageInit(page);
 
   await openFileAndAddToCanvas('sec_butyl_abr.rxn', page);
   // check that structure opened from file is displayed correctly
@@ -28,7 +29,7 @@ test('Open and Save file - Reaction from file that contains abbreviation 2/2 - s
    * Test case: EPMLSOPKET-1899(2)
    * Description: Reaction with abbreviations is opened and saved correctly
    */
-  await page.goto('');
+  await waitForPageInit(page);
 
   await openFileAndAddToCanvas('sec_butyl_abr.rxn', page);
   const expectedFile = await getRxn(page, 'v2000');
@@ -54,7 +55,7 @@ test('Open and Save file - Reaction from file that contains Heteroatoms 1/2 - op
    * Test case: EPMLSOPKET-1904(1)
    * Description: Reaction with heteroatoms is opened and saved correctly
    */
-  await page.goto('');
+  await waitForPageInit(page);
 
   await openFileAndAddToCanvas('Heteroatoms.rxn', page);
   // check that structure opened from file is displayed correctly
@@ -68,7 +69,7 @@ test('Open and Save file - Reaction from file that contains Heteroatoms 2/2 - sa
    * Test case: EPMLSOPKET-1904(2)
    * Description: Reaction with heteroatoms is opened and saved correctly
    */
-  await page.goto('');
+  await waitForPageInit(page);
 
   await openFileAndAddToCanvas('Heteroatoms.rxn', page);
   const expectedFile = await getRxn(page, 'v2000');
@@ -94,7 +95,7 @@ test('Open and Save file - V3000 rxn file contains Rgroup 1/2 - open', async ({
    * Test case: EPMLSOPKET-1902(1)
    * Description: Reaction can be opened correctly from rxn V3000 file
    */
-  await page.goto('');
+  await waitForPageInit(page);
 
   await openFileAndAddToCanvas('Rgroup_V3000.rxn', page);
   // check that structure opened from file is displayed correctly
@@ -108,7 +109,7 @@ test('Open and Save file - V3000 rxn file contains Rgroup 2/2 - save', async ({
    * Test case: EPMLSOPKET-1902(2)
    * Description: Reaction can be saved correctly to rxn V3000 file
    */
-  await page.goto('');
+  await waitForPageInit(page);
 
   await openFileAndAddToCanvas('Rgroup_V3000.rxn', page);
   const expectedFile = await getRxn(page, 'v3000');

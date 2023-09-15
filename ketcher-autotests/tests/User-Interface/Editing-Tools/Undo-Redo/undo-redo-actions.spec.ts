@@ -34,6 +34,7 @@ import {
   BondTool,
   DELAY_IN_SECONDS,
   delay,
+  waitForPageInit,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 
@@ -108,7 +109,7 @@ async function fillAliasForAtom(page: Page, alias: string, button: string) {
 
 test.describe('Undo/Redo Actions', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {
@@ -407,7 +408,7 @@ test.describe('Undo/Redo Actions', () => {
     Undo: the Mapping tool is removed;
     Redo: the Mapping tool is restored.
     */
-    await openFileAndAddToCanvas('reaction-chain.ket', page);
+    await openFileAndAddToCanvas('KET/reaction-chain.ket', page);
     await selectNestedTool(page, ReactionMappingTool.AUTOMAP);
     await pressButton(page, 'Apply');
     await delay(DELAY_IN_SECONDS.THREE);
@@ -556,7 +557,7 @@ test.describe('Undo/Redo Actions', () => {
     }
   });
 
-  test.fixme('Undo/Redo Copy/Past', async ({ page }) => {
+  test.fixme('Undo/Redo Copy/Paste', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1758
     Description: Undo/Redo action should work correctly
@@ -572,7 +573,7 @@ test.describe('Undo/Redo Actions', () => {
     await screenshotBetweenUndoRedo(page);
   });
 
-  test.fixme('Undo/Redo Cut/Past', async ({ page }) => {
+  test.fixme('Undo/Redo Cut/Paste', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1758
     Description: Undo/Redo action should work correctly
@@ -666,7 +667,7 @@ test.describe('Undo/Redo Actions', () => {
 
 test.describe('Undo/Redo Actions', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.fixme('Undo/Redo paste template action', async ({ page }) => {

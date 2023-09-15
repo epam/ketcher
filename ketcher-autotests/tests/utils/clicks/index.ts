@@ -53,6 +53,9 @@ export function selectOption(page: Page, name = '') {
   return page.getByRole('option', { name }).click();
 }
 
+export function selectOptionByText(page: Page, text = '') {
+  return page.getByText(text, { exact: true }).click();
+}
 /* Usage: await pressTab(page, 'Functional Groups')
   Click on specified Tab in Templates dialog
 */
@@ -125,6 +128,15 @@ export async function doubleClickOnBond(
 ) {
   const point = await getBondByIndex(page, { type: bondType }, bondNumber);
   await page.mouse.dblclick(point.x, point.y);
+}
+
+export async function rightClickOnBond(
+  page: Page,
+  bondType: BondType,
+  bondNumber: number,
+) {
+  const point = await getBondByIndex(page, { type: bondType }, bondNumber);
+  await page.mouse.click(point.x, point.y, { button: 'right' });
 }
 
 export async function moveOnAtom(

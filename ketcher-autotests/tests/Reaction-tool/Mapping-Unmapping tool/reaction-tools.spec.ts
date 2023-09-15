@@ -70,6 +70,11 @@ test.describe('Reaction Tools', () => {
     for (const tool of arrowTools) {
       await selectNestedTool(page, tool);
       await takeLeftToolbarScreenshot(page);
+      const toolElementExists = await page.waitForSelector(
+        `your-selector-for-${tool}`,
+        { timeout: 5000 },
+      );
+      await expect(toolElementExists).toBeVisible();
     }
   });
 });

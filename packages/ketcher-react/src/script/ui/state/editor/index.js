@@ -137,6 +137,7 @@ export default function initEditor(dispatch, getState) {
 
     onQuickEdit: (atom) => openDialog(dispatch, 'labelEdit', atom),
     onBondEdit: (bonds) => {
+      console.log('onBondEdit');
       const bondsAttributes = generateCommonProperties(bonds, bonds[0]);
       return openDialog(dispatch, 'bondProps', fromBond(bondsAttributes)).then(
         toBond,

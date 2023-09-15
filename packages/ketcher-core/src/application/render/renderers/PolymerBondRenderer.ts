@@ -4,6 +4,7 @@ import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import assert from 'assert';
 import { D3SvgElementSelection } from 'application/render/types';
 import { editorEvents } from 'application/editor/editorEvents';
+// import { openModal } from 'application/render/modal';
 
 export class PolymerBondRenderer extends BaseRenderer {
   private editorEvents: typeof editorEvents;
@@ -47,6 +48,7 @@ export class PolymerBondRenderer extends BaseRenderer {
       .attr('x2', this.polymerBond.endPosition.x)
       .attr('y2', this.polymerBond.endPosition.y)
       .attr('pointer-events', 'stroke');
+    console.log('appendBond', this.bodyElement);
 
     return this.bodyElement;
   }
@@ -73,6 +75,7 @@ export class PolymerBondRenderer extends BaseRenderer {
     this.rootElement = this.rootElement || this.appendRootElement();
     this.appendHoverAreaElement();
     this.appendBond(this.rootElement);
+    // openModal();
     this.drawSelection();
   }
 

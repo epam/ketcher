@@ -20,6 +20,7 @@ import { Vec2 } from 'domain/entities';
 import assert from 'assert';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { BaseTool } from 'application/editor/tools/Tool';
+import { openModal } from 'application/render/modal';
 
 class PolymerBond implements BaseTool {
   private bondRenderer?: PolymerBondRenderer;
@@ -38,6 +39,8 @@ class PolymerBond implements BaseTool {
           "Selected monomer doesn't have any free attachment points",
         );
         return;
+      } else {
+        openModal();
       }
       const { top: offsetTop, left: offsetLeft } = this.editor.canvasOffset;
 

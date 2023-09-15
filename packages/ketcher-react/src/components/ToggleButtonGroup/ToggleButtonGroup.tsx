@@ -28,7 +28,7 @@ export default function ButtonGroup<T>({
       {buttons.map(({ label, value: buttonValue }) => (
         <ToggleButton
           key={label}
-          value={Number(buttonValue)}
+          value={Number(buttonValue) || ''}
           onClick={(event) => handleChange(event, buttonValue)}
           className={clsx(classes.button, {
             [classes.selected]: buttonValue === value,

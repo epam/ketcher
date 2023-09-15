@@ -14,7 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Atom, AtomAttributes, Bond, Struct, Vec2 } from 'domain/entities';
+import {
+  Atom,
+  AtomAttributes,
+  AtomQueryProperties,
+  Bond,
+  Struct,
+  Vec2,
+} from 'domain/entities';
 
 import closest from '../shared/closest';
 import { difference } from 'lodash';
@@ -23,6 +30,11 @@ import { selectionKeys } from '../shared/constants';
 import { EditorSelection } from '../editor.types';
 
 export type AtomAttributeName = keyof AtomAttributes;
+export type AtomQueryPropertiesName = keyof AtomQueryProperties;
+export type AtomAllAttributeName = AtomAttributeName | AtomQueryPropertiesName;
+export type AtomAllAttributeValue =
+  | AtomAttributes[AtomAttributeName]
+  | AtomQueryProperties[AtomQueryPropertiesName];
 
 export function atomGetAttr(
   restruct: ReStruct,

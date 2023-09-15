@@ -12,7 +12,6 @@ import {
   resetCurrentTool,
   selectLeftPanelButton,
   LeftPanelButton,
-  clickInTheMiddleOfTheScreen,
   waitForPageInit,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
@@ -126,13 +125,12 @@ test.describe('Right-click menu', () => {
     await page.getByText('Ring bond count').click();
     await takeEditorScreenshot(page);
     await page.getByRole('button', { name: 'As drawn' }).first().click();
-    await page.getByText('Substitution count').click();
+    await page.getByText('Aromaticity').click();
     await takeEditorScreenshot(page);
-    await page.getByRole('button', { name: '6' }).last().click();
+    await page.getByRole('button', { name: 'aliphatic' }).click();
     await page.getByText('Unsaturated').first().click();
     await takeEditorScreenshot(page);
-    await page.getByRole('button', { name: 'Saturated' }).last().click();
-    await clickInTheMiddleOfTheScreen(page);
+    await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
   });
 
   test('Check editing for atoms', async ({ page }) => {

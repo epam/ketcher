@@ -9,15 +9,36 @@ import { updateSelectedAtoms } from 'src/script/ui/state/modal/atoms';
 import { useAppContext } from 'src/hooks';
 import Editor from 'src/script/editor';
 import ButtonGroup from '../../../../../../components/ToggleButtonGroup/ToggleButtonGroup';
-import { atomGetAttr, AtomAttributeName } from 'ketcher-core';
+import {
+  atomGetAttr,
+  AtomAttributeName,
+  AtomAllAttributeValue,
+  AtomQueryPropertiesName,
+  AtomQueryProperties,
+  AtomAllAttributeName,
+} from 'ketcher-core';
 import { atom } from 'src/script/ui/data/schema/struct-schema';
 
-const { ringBondCount, hCount, substitutionCount, unsaturatedAtom } =
-  atom.properties;
+const {
+  ringBondCount,
+  hCount,
+  substitutionCount,
+  unsaturatedAtom,
+  implicitHCount,
+} = atom.properties;
+const properties: Array<AtomQueryPropertiesName> = [
+  'aromaticity',
+  'degree',
+  'ringMembership',
+  'ringSize',
+  'connectivity',
+  'ringConnectivity',
+];
+
 const atomPropertiesForSubMenu: {
   title: string;
-  key: AtomAttributeName;
-  buttons: { label: string; value: number }[];
+  key: AtomAllAttributeName;
+  buttons: { label: string; value: AtomAllAttributeValue }[];
 }[] = [
   {
     title: ringBondCount.title,
@@ -51,6 +72,24 @@ const atomPropertiesForSubMenu: {
       { label: 'Saturated', value: 0 },
     ],
   },
+  {
+    title: implicitHCount.title,
+    key: 'implicitHCount',
+    buttons: implicitHCount.enumNames.map((label, id) => ({
+      label,
+      value: implicitHCount.enum[id],
+    })),
+  },
+  ...properties.map((name) => ({
+    title: atom.properties[name].title,
+    key: name,
+    buttons: atom.properties[name].enumNames.map(
+      (label: string, id: number) => ({
+        label,
+        value: atom.properties[name].enum[id],
+      }),
+    ),
+  })),
 ];
 
 const AtomMenuItems: FC<MenuItemsProps> = (props) => {
@@ -65,19 +104,39 @@ const AtomMenuItems: FC<MenuItemsProps> = (props) => {
   const { getKetcherInstance } = useAppContext();
   const editor = getKetcherInstance().editor as Editor;
 
-  const updateAtomProperty = (key: AtomAttributeName, value: number) => {
-    updateSelectedAtoms({
-      atoms: props.propsFromTrigger?.atomIds as number[],
-      editor,
-      changeAtomPromise: Promise.resolve({ [key]: value }),
-    });
-  };
-
-  const getPropertyValue = (key: AtomAttributeName) => {
+  const getPropertyValue = (key: AtomAllAttributeName) => {
+    const { ctab } = editor.render;
     if (props.propsFromTrigger?.atomIds) {
       const atomId = props.propsFromTrigger?.atomIds[0] as number;
-      return Number(atomGetAttr(editor.render.ctab, atomId, key));
-    } else return 0;
+      if (properties.includes(key as AtomQueryPropertiesName)) {
+        return atomGetAttr(ctab, atomId, 'queryProperties')?.[key];
+      } else {
+        return atomGetAttr(ctab, atomId, key as AtomAttributeName);
+      }
+    } else return null;
+  };
+
+  const updateAtomProperty = (
+    key: AtomAllAttributeName,
+    value: AtomAllAttributeValue,
+  ) => {
+    const atomIds = props.propsFromTrigger?.atomIds;
+    if (atomIds) {
+      updateSelectedAtoms({
+        atoms: atomIds,
+        editor,
+        changeAtomPromise: Promise.resolve(
+          properties.includes(key as AtomQueryPropertiesName)
+            ? ({
+                queryProperties: {
+                  ...getPropertyValue('queryProperties'),
+                  [key]: value,
+                },
+              } as AtomQueryProperties)
+            : { [key]: value },
+        ),
+      });
+    }
   };
 
   return (
@@ -108,10 +167,12 @@ const AtomMenuItems: FC<MenuItemsProps> = (props) => {
         {atomPropertiesForSubMenu.map(({ title, buttons, key }) => {
           return (
             <Submenu {...props} label={title} key={key}>
-              <ButtonGroup<number>
+              <ButtonGroup<AtomAllAttributeValue>
                 buttons={buttons}
                 defaultValue={getPropertyValue(key)}
-                onClick={(value: number) => updateAtomProperty(key, value)}
+                onClick={(value: AtomAllAttributeValue) =>
+                  updateAtomProperty(key, value)
+                }
               ></ButtonGroup>
             </Submenu>
           );

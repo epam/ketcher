@@ -1071,29 +1071,87 @@ function getAamText(atom) {
 
 function getQueryAttrsText(atom) {
   let queryAttrsText = '';
-  if (atom.a.ringBondCount !== 0) {
-    if (atom.a.ringBondCount > 0) {
-      queryAttrsText += 'rb' + atom.a.ringBondCount.toString();
-    } else if (atom.a.ringBondCount === -1) queryAttrsText += 'rb0';
-    else if (atom.a.ringBondCount === -2) queryAttrsText += 'rb*';
+
+  const addSemicolon = () => {
+    if (queryAttrsText.length > 0) queryAttrsText += ';';
+  };
+
+  const {
+    ringBondCount,
+    substitutionCount,
+    unsaturatedAtom,
+    hCount,
+    implicitHCount,
+    queryProperties: {
+      aromaticity,
+      degree,
+      ringMembership,
+      ringSize,
+      connectivity,
+      ringConnectivity,
+      chirality,
+      atomicMass,
+    },
+  } = atom.a;
+  if (ringBondCount !== 0) {
+    if (ringBondCount > 0) {
+      queryAttrsText += 'rb' + ringBondCount.toString();
+    } else if (ringBondCount === -1) queryAttrsText += 'rb0';
+    else if (ringBondCount === -2) queryAttrsText += 'rb*';
     else throw new Error('Ring bond count invalid');
   }
-  if (atom.a.substitutionCount !== 0) {
-    if (queryAttrsText.length > 0) queryAttrsText += ',';
-    if (atom.a.substitutionCount > 0) {
-      queryAttrsText += 's' + atom.a.substitutionCount.toString();
-    } else if (atom.a.substitutionCount === -1) queryAttrsText += 's0';
-    else if (atom.a.substitutionCount === -2) queryAttrsText += 's*';
+  if (substitutionCount !== 0) {
+    addSemicolon();
+    if (substitutionCount > 0) {
+      queryAttrsText += 's' + substitutionCount.toString();
+    } else if (substitutionCount === -1) queryAttrsText += 's0';
+    else if (substitutionCount === -2) queryAttrsText += 's*';
     else throw new Error('Substitution count invalid');
   }
-  if (atom.a.unsaturatedAtom > 0) {
-    if (queryAttrsText.length > 0) queryAttrsText += ',';
-    if (atom.a.unsaturatedAtom === 1) queryAttrsText += 'u';
+  if (unsaturatedAtom > 0) {
+    addSemicolon();
+    if (unsaturatedAtom === 1) queryAttrsText += 'u';
     else throw new Error('Unsaturated atom invalid value');
   }
-  if (atom.a.hCount > 0) {
-    if (queryAttrsText.length > 0) queryAttrsText += ',';
-    queryAttrsText += 'H' + (atom.a.hCount - 1).toString();
+  if (hCount > 0) {
+    addSemicolon();
+    queryAttrsText += 'H' + (hCount - 1).toString();
+  }
+  if (implicitHCount !== null) {
+    addSemicolon();
+    queryAttrsText += `h${implicitHCount}`;
+  }
+  if (aromaticity !== null) {
+    addSemicolon();
+    queryAttrsText += aromaticity === 'aromatic' ? 'a' : 'A';
+  }
+  if (Number.isFinite(degree)) {
+    addSemicolon();
+    queryAttrsText += `D${degree}`;
+  }
+  if (Number.isFinite(ringMembership)) {
+    addSemicolon();
+    queryAttrsText += `R${ringMembership}`;
+  }
+  if (Number.isFinite(ringSize)) {
+    addSemicolon();
+    queryAttrsText += `r${ringSize}`;
+  }
+  if (Number.isFinite(connectivity)) {
+    addSemicolon();
+    queryAttrsText += `X${connectivity}`;
+  }
+  if (Number.isFinite(ringConnectivity)) {
+    addSemicolon();
+    queryAttrsText += `x${ringConnectivity}`;
+  }
+  if (chirality !== null) {
+    addSemicolon();
+    queryAttrsText += chirality;
+  }
+  if (Number.isFinite(atomicMass)) {
+    addSemicolon();
+    queryAttrsText += `${atomicMass}`;
   }
   return queryAttrsText;
 }

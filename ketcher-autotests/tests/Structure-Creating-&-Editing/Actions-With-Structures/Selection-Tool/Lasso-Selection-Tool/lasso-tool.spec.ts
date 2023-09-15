@@ -4,8 +4,6 @@ import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   clickOnAtom,
-  selectLeftPanelButton,
-  LeftPanelButton,
   dragMouseTo,
   selectTopPanelButton,
   TopPanelButton,
@@ -142,15 +140,15 @@ test.describe('Lasso Selection tool', () => {
     await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
     await selectLasso(page);
     await clickOnAtom(page, 'C', 4);
-    const atomPoint = await getAtomByIndex(page, { label: 'C' }, 9);
+    const atomPoint = await getAtomByIndex(page, { label: 'C' }, 7);
     await dragMouseTo(atomPoint.x, atomPoint.y, page);
   });
 
   test('Fuse bonds together', async ({ page }) => {
     /**
      * Test case: EPMLSOPKET-2861
-     * Description: When benzene is merged with stereo bond, benzene's bond is not changed.
-     * When stereo bond is merged with benzene, benzene's bond is changed.
+     * Description: When benzene is merged with stereo bond, benzene's bond is changed.
+     * When stereo bond is merged with benzene, benzene's bond is not changed.
      * No new labels (abs, Chiral) appears.
      */
     await drawBenzeneRing(page);
@@ -161,13 +159,15 @@ test.describe('Lasso Selection tool', () => {
     delay(DELAY_IN_SECONDS.TWO);
     await selectLasso(page);
     await selectObjects(page, 50, 50);
-    const bondPoint = await getBondByIndex(page, {}, 4);
+    const bondPoint = await getBondByIndex(page, {}, 3);
     await page.mouse.move(bondPoint.x, bondPoint.y);
     await dragMouseTo(
       coordinates.x + xDelta + 10,
       coordinates.y - yDelta - 10,
       page,
     );
+    await takeEditorScreenshot(page);
+
     await selectTopPanelButton(TopPanelButton.Undo, page);
     const point = await getBondByIndex(
       page,
@@ -175,7 +175,7 @@ test.describe('Lasso Selection tool', () => {
       0,
     );
     await page.mouse.click(point.x, point.y);
-    await dragMouseTo(point.x - xDelta, point.y + yDelta, page);
+    await dragMouseTo(point.x - xDelta + 5, point.y + yDelta + 15, page);
   });
 
   test('Delete with selection', async ({ page }) => {

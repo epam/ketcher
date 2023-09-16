@@ -51,7 +51,7 @@ test.describe('open files with different formats', () => {
 (same as in EPMLSOPKET-1835), however in this test when second structure is added
 the first one disappears. Couldn't reproduct manually.
 */
-  test.fixme('Open file - Input .mol, InChi', async ({ page }) => {
+  test('Open file - Input .mol, InChi', async ({ page }) => {
     /**
      * Test case: EPMLSOPKET-1835
      * Description: Two structures are added to canvas - one opened from clipboard, another from file

@@ -87,7 +87,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await screenshotBetweenUndoRedo(page);
   });
 
-  test.fixme('Cut all structures via hotkey (CTRL+X)', async ({ page }) => {
+  test('Cut all structures via hotkey (CTRL+X)', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1712
     Description: After the clicking the 'Cut' button, the selected object disappears.
@@ -165,7 +165,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await screenshotBetweenUndoRedo(page);
   });
 
-  test.fixme('Cut the reaction with hotkey', async ({ page }) => {
+  test('Cut the reaction with hotkey', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1714
     Description: After the clicking the Cut button, the selected object disappears.
@@ -600,7 +600,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await clickOnAtom(page, 'C', anyAtom);
   });
 
-  test.fixme('Copy and paste all kind of S-groups', async ({ page }) => {
+  test('Copy and paste all kind of S-groups', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-2884
     Description: Copied objects are pasted as one object and correctly displayed without data loss.
@@ -745,24 +745,23 @@ test.describe('Copy/Cut/Paste Actions', () => {
     },
   );
 
-  test.fixme(
-    'Copy and paste Structure with Simple objects and text',
-    async ({ page }) => {
-      /*
+  test('Copy and paste Structure with Simple objects and text', async ({
+    page,
+  }) => {
+    /*
     Test case: EPMLSOPKET-2948
     Description: After the clicking the Copy button, the selected object not disappears.
     After pasting Structure with Simple objects and text same structures located on canvas.
     */
-      const x = 550;
-      const y = 150;
-      await openFileAndAddToCanvas(
-        'KET/structure-with-simple-objects-and-text.ket',
-        page,
-      );
-      await copyAndPaste(page);
-      await page.mouse.click(x, y);
-    },
-  );
+    const x = 550;
+    const y = 150;
+    await openFileAndAddToCanvas(
+      'KET/structure-with-simple-objects-and-text.ket',
+      page,
+    );
+    await copyAndPaste(page);
+    await page.mouse.click(x, y);
+  });
 
   test.fixme(
     'Cut and Paste Structure with Simple objects and text and edit',

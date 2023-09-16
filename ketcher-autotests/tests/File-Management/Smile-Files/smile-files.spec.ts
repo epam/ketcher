@@ -56,50 +56,44 @@ test.describe('SMILES files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test.fixme(
-    'SmileString for structure with Bond properties',
-    async ({ page }) => {
-      /*
+  test('SmileString for structure with Bond properties', async ({ page }) => {
+    /*
     Test case: EPMLSOPKET-1906
     Description: SmileString is correctly generated from structure and vise
     versa structure is correctly generated from SmileString.
     */
-      await openFileAndAddToCanvas('KET/all-type-bonds.ket', page);
-      await getAndCompareSmiles(
-        page,
-        'tests/test-data/smiles-all-bonds-expected.json',
-      );
+    await openFileAndAddToCanvas('KET/all-type-bonds.ket', page);
+    await getAndCompareSmiles(
+      page,
+      'tests/test-data/smiles-all-bonds-expected.json',
+    );
 
-      await getPreviewForSmiles(page, 'MDL Molfile V2000', 'Daylight SMILES');
-      await takeEditorScreenshot(page);
+    await getPreviewForSmiles(page, 'MDL Molfile V2000', 'Daylight SMILES');
+    await takeEditorScreenshot(page);
 
-      await clearCanvasAndPasteSmiles(page, 'CCCCC/CC/C:CC.C(C)CCCCCCCCCC');
-    },
-  );
+    await clearCanvasAndPasteSmiles(page, 'CCCCC/CC/C:CC.C(C)CCCCCCCCCC');
+  });
 
-  test.fixme(
-    'SmileString for structure with Atom properties',
-    async ({ page }) => {
-      /*
+  test('SmileString for structure with Atom properties', async ({ page }) => {
+    /*
     Test case: EPMLSOPKET-1907
     Description: SmileString is correctly generated from structure and
     vise versa structure is correctly generated from SmileString.
     */
-      await openFileAndAddToCanvas('KET/all-atoms-properties.ket', page);
-      await getAndCompareSmiles(
-        page,
-        'tests/test-data/smiles-all-atoms-properties-expected.json',
-      );
+    await openFileAndAddToCanvas('KET/all-atoms-properties.ket', page);
+    await getAndCompareSmiles(
+      page,
+      'tests/test-data/smiles-all-atoms-properties-expected.json',
+    );
 
-      await getPreviewForSmiles(page, 'MDL Molfile V2000', 'Daylight SMILES');
-      await takeEditorScreenshot(page);
+    await getPreviewForSmiles(page, 'MDL Molfile V2000', 'Daylight SMILES');
+    await takeEditorScreenshot(page);
 
-      await clearCanvasAndPasteSmiles(
-        page,
-        'CCCCCC[C+][1C]C[CH]CC |^1:3,^3:4,^4:5,rb:8:*|',
-      );
-    },
-  );
+    await clearCanvasAndPasteSmiles(
+      page,
+      'CCCCCC[C+][1C]C[CH]CC |^1:3,^3:4,^4:5,rb:8:*|',
+    );
+  });
 
   test('SmileString from mol file that contains abbreviation', async ({
     page,

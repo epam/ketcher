@@ -142,7 +142,7 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
       );
     });
 
-    test.fixme('Compare the behavior', async ({ page }) => {
+    test('Compare the behavior', async ({ page }) => {
       /**
        * Test cases: EPMLSOPKET-1819
        * Description: Compare the behavior

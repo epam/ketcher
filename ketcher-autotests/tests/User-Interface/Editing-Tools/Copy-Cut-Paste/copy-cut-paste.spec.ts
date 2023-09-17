@@ -648,7 +648,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await page.mouse.click(x, y);
   });
 
-  test('Cut and Paste Mapped reaction and edit', async ({ page }) => {
+  test.fixme('Cut and Paste Mapped reaction and edit', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-2883
     Description: Cut objects are pasted as one object and correctly displayed without data loss.

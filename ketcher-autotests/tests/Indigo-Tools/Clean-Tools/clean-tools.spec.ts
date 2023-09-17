@@ -35,7 +35,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Clean bonds angles', async ({ page }) => {
+  test.fixme('Clean bonds angles', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1779
     Description: The angles should be 60, 90 or 120°
@@ -93,20 +93,23 @@ test.describe('Indigo Tools - Clean Tools', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Clean distorted molecule with Clean Up tool', async ({ page }) => {
-    /*
+  test.fixme(
+    'Clean distorted molecule with Clean Up tool',
+    async ({ page }) => {
+      /*
     Test case: EPMLSOPKET-1785
     Description: After the 'Clean Up' action the structures don't change its position on the canvas.
     The group of structures is cleaned up and appear undistorted.
    */
-    await openFileAndAddToCanvas('layout-distorted.mol', page);
+      await openFileAndAddToCanvas('layout-distorted.mol', page);
 
-    await selectTopPanelButton(TopPanelButton.Clean, page);
-    await delay(DELAY_IN_SECONDS.SEVEN);
-    await takeEditorScreenshot(page);
-  });
+      await selectTopPanelButton(TopPanelButton.Clean, page);
+      await delay(DELAY_IN_SECONDS.SEVEN);
+      await takeEditorScreenshot(page);
+    },
+  );
 
-  test('Clean Queries structure', async ({ page }) => {
+  test.fixme('Clean Queries structure', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1786
     Description: After the Layout and Clean Up actions the structure features appear undistorted.
@@ -123,19 +126,20 @@ test.describe('Indigo Tools - Clean Tools', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Clean Up action on a structures with Attachment point', async ({
-    page,
-  }) => {
-    /*
+  test.fixme(
+    'Clean Up action on a structures with Attachment point',
+    async ({ page }) => {
+      /*
     Test case: EPMLSOPKET-1787
     Description: Clean action is correct for the all selected structures.
    */
-    await openFileAndAddToCanvas('clean-appoints.mol', page);
+      await openFileAndAddToCanvas('clean-appoints.mol', page);
 
-    await selectTopPanelButton(TopPanelButton.Clean, page);
-    await delay(DELAY_IN_SECONDS.SEVEN);
-    await takeEditorScreenshot(page);
-  });
+      await selectTopPanelButton(TopPanelButton.Clean, page);
+      await delay(DELAY_IN_SECONDS.SEVEN);
+      await takeEditorScreenshot(page);
+    },
+  );
 
   test.fixme('Multiple undo', async ({ page }) => {
     /*

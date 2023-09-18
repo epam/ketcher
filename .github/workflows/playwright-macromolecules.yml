@@ -1,4 +1,4 @@
-name: Playwright Tests
+name: Playwright Tests Macromolecules
 on:
   push:
     branches:
@@ -17,10 +17,11 @@ env:
   DOCKER: true
   IGNORE_UNSTABLE_TESTS: true
   CI_ENVIRONMENT: true
+  ENABLE_POLYMER_EDITOR: true
 jobs:
   playwright_tests:
-    timeout-minutes: 40
-    runs-on: self-hosted
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
         with:
@@ -42,6 +43,7 @@ jobs:
           echo "MODE=$MODE" >> .env
           echo "IGNORE_UNSTABLE_TESTS=$IGNORE_UNSTABLE_TESTS" >> .env
           echo "CI_ENVIRONMENT=$CI_ENVIRONMENT" >> .env
+          echo "ENABLE_POLYMER_EDITOR=$ENABLE_POLYMER_EDITOR" >> .env
       - name: Build autotests for docker
         run: cd ketcher-autotests && npm run docker:build
       - name: Run playwright tests in docker
@@ -53,4 +55,7 @@ jobs:
         with:
           name: playwright-report
           path: ketcher-autotests/playwright-report/
-          retention-days: 30
+          retention-days: 5
+      - name: Remove unused docker images
+        if: always()
+        run: docker system prune -f

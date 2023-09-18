@@ -75,6 +75,7 @@ export class PolymerBondRenderer extends BaseRenderer {
   private getMonomerWidth() {
     return this.polymerBond.firstMonomer.renderer?.bodyWidth ?? 0;
   }
+
   private getMonomerHeight() {
     return this.polymerBond.firstMonomer.renderer?.bodyHeight ?? 0;
   }
@@ -348,6 +349,7 @@ export class PolymerBondRenderer extends BaseRenderer {
     // this.hoverAreaElement.attr('d', this.path);
     // this.selectionElement?.attr('d', this.path);
   }
+
   private moveGraphBondEnd() {
     assert(this.bodyElement);
     assert(this.hoverAreaElement);

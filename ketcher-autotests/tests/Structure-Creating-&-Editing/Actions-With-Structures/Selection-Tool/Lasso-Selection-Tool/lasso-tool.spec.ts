@@ -165,7 +165,6 @@ test.describe('Lasso Selection tool', () => {
     const coordinates = await getCoordinatesTopAtomOfBenzeneRing(page);
     await page.mouse.click(coordinates.x + xDelta, coordinates.y - yDelta);
     await page.getByTestId('select-rectangle').click();
-    delay(DELAY_IN_SECONDS.TWO);
     await selectNestedTool(page, SelectTool.LASSO_SELECTION);
     await selectObjects(page, selectCoords.x, selectCoords.y);
     const bondIndex = 3;
@@ -308,7 +307,6 @@ test.describe('Lasso Selection tool', () => {
     await selectNestedTool(page, BondTool.SINGLE_AROMATIC);
     await page.mouse.click(xAxis, yAxis);
     await page.getByTestId('select-rectangle').click();
-    delay(DELAY_IN_SECONDS.TWO);
     await selectNestedTool(page, SelectTool.LASSO_SELECTION);
     await page.mouse.move(xAxis - xDelta, yAxis - yDelta);
     await page.mouse.down();

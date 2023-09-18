@@ -11,7 +11,6 @@ import {
 
 test.describe('Hot keys', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
     await waitForPageInit(page);
   });
 

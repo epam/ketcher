@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { Page, test } from '@playwright/test';
 import {
   takeEditorScreenshot,
@@ -14,17 +13,17 @@ import {
   getControlModifier,
   BondTool,
   selectNestedTool,
-  delay,
+  SelectTool,
   DELAY_IN_SECONDS,
-  waitForIndigoToLoad,
+  delay,
+  waitForPageInit,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
 
 test.describe('Lasso Selection tool', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
-    await waitForIndigoToLoad(page);
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {
@@ -33,18 +32,9 @@ test.describe('Lasso Selection tool', () => {
 
   const xDelta = 30;
   const yDelta = 60;
+  const xAxis = 300;
+  const yAxis = 200;
   const modifier = getControlModifier();
-
-  const selectLasso = async (page: Page) => {
-    await page.getByTestId('select-rectangle').click();
-    const visible = await page.getByTestId('select-lasso').isVisible();
-    if (visible) {
-      await page.getByTestId('select-lasso').click();
-    } else {
-      await page.getByTestId('select-rectangle').click();
-      await page.getByTestId('select-lasso').click();
-    }
-  };
 
   async function selectObjects(page: Page, xAxis: number, yAxis: number) {
     const point = await getCoordinatesOfTheMiddleOfTheScreen(page);
@@ -58,7 +48,7 @@ test.describe('Lasso Selection tool', () => {
   }
 
   async function clickCanvas(page: Page) {
-    await page.mouse.click(300, 200);
+    await page.mouse.click(xAxis, yAxis);
   }
 
   test('Selection of atom/bond/molecule', async ({ page }) => {
@@ -86,8 +76,8 @@ test.describe('Lasso Selection tool', () => {
     await takeEditorScreenshot(page);
     await clickCanvas(page);
 
-    await selectLasso(page);
-    await selectObjects(page, 300, 200);
+    await selectNestedTool(page, SelectTool.LASSO_SELECTION);
+    await selectObjects(page, xAxis, yAxis);
   });
 
   test('Drag atom/bond/molecule', async ({ page }) => {
@@ -95,10 +85,12 @@ test.describe('Lasso Selection tool', () => {
      * Test case: EPMLSOPKET-1339
      * Description: Atom/bond/molecule is moved to another place. Structure is not changed. Only selected part changed their place.
      */
+    const selectCoords = { x: 100, y: 100 };
     await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
-    await selectLasso(page);
-    const point = await selectObjects(page, 100, 100);
-    await clickOnAtom(page, 'C', 5);
+    await selectNestedTool(page, SelectTool.LASSO_SELECTION);
+    const point = await selectObjects(page, selectCoords.x, selectCoords.y);
+    const atomIndex = 5;
+    await clickOnAtom(page, 'C', atomIndex);
     await dragMouseTo(point.x + xDelta, point.y - yDelta, page);
   });
 
@@ -107,22 +99,24 @@ test.describe('Lasso Selection tool', () => {
      * Test case: EPMLSOPKET-1340
      * Description: Hover and selection of plus sign and reaction arrow
      */
+    const yShift = 5;
+    const shiftCoords = { x: 270, y: 10 };
     await openFileAndAddToCanvas('Rxn-V2000/reaction-4.rxn', page);
-    await selectLasso(page);
+    await selectNestedTool(page, SelectTool.LASSO_SELECTION);
     const point = await getCoordinatesOfTheMiddleOfTheScreen(page);
-    await page.mouse.move(point.x - 270, point.y + 10);
+    await page.mouse.move(point.x - shiftCoords.x, point.y + shiftCoords.y);
     await page.mouse.down();
     await page.mouse.up();
     await clickCanvas(page);
 
-    await page.mouse.move(point.x, point.y + 5);
+    await page.mouse.move(point.x, point.y + yShift);
     await page.mouse.down();
     await page.mouse.up();
     await clickCanvas(page);
 
     await page.keyboard.down('Shift');
-    await page.mouse.click(point.x - 270, point.y + 10);
-    await page.mouse.click(point.x, point.y + 5);
+    await page.mouse.click(point.x - shiftCoords.x, point.y + shiftCoords.y);
+    await page.mouse.click(point.x, point.y + yShift);
     await page.keyboard.up('Shift');
     await clickCanvas(page);
 
@@ -135,10 +129,12 @@ test.describe('Lasso Selection tool', () => {
      * Description: Selected structures and components are moved to the another place.
      */
     await openFileAndAddToCanvas('Rxn-V2000/reaction-4.rxn', page);
-    await selectLasso(page);
-    const point = await selectObjects(page, 300, 200);
-    await clickOnAtom(page, 'C', 10);
-    await dragMouseTo(point.x - 100, point.y - 200, page);
+    await selectNestedTool(page, SelectTool.LASSO_SELECTION);
+    const point = await selectObjects(page, xAxis, yAxis);
+    const atomIndex = 10;
+    const xShift = 100;
+    await clickOnAtom(page, 'C', atomIndex);
+    await dragMouseTo(point.x - xShift, point.y - yAxis, page);
   });
 
   test('Fuse atoms together', async ({ page }) => {
@@ -147,9 +143,11 @@ test.describe('Lasso Selection tool', () => {
      * Description: Atoms are fused.
      */
     await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
-    await selectLasso(page);
-    await clickOnAtom(page, 'C', 4);
-    const atomPoint = await getAtomByIndex(page, { label: 'C' }, 7);
+    await selectNestedTool(page, SelectTool.LASSO_SELECTION);
+    const atomIndex = 4;
+    await clickOnAtom(page, 'C', atomIndex);
+    const aimAtomIndex = 7;
+    const atomPoint = await getAtomByIndex(page, { label: 'C' }, aimAtomIndex);
     await dragMouseTo(atomPoint.x, atomPoint.y, page);
   });
 
@@ -160,19 +158,22 @@ test.describe('Lasso Selection tool', () => {
      * When stereo bond is merged with benzene, benzene's bond is not changed.
      * No new labels (abs, Chiral) appears.
      */
+    const selectCoords = { x: 50, y: 50 };
+    const shiftCoords = { x: 10, y: 10 };
     await drawBenzeneRing(page);
     await selectNestedTool(page, BondTool.SINGLE_AROMATIC);
     const coordinates = await getCoordinatesTopAtomOfBenzeneRing(page);
     await page.mouse.click(coordinates.x + xDelta, coordinates.y - yDelta);
     await page.getByTestId('select-rectangle').click();
     delay(DELAY_IN_SECONDS.TWO);
-    await selectLasso(page);
-    await selectObjects(page, 50, 50);
-    const bondPoint = await getBondByIndex(page, {}, 3);
+    await selectNestedTool(page, SelectTool.LASSO_SELECTION);
+    await selectObjects(page, selectCoords.x, selectCoords.y);
+    const bondIndex = 3;
+    const bondPoint = await getBondByIndex(page, {}, bondIndex);
     await page.mouse.move(bondPoint.x, bondPoint.y);
     await dragMouseTo(
-      coordinates.x + xDelta + 10,
-      coordinates.y - yDelta - 10,
+      coordinates.x + xDelta + shiftCoords.x,
+      coordinates.y - yDelta - shiftCoords.y,
       page,
     );
     await takeEditorScreenshot(page);
@@ -184,7 +185,12 @@ test.describe('Lasso Selection tool', () => {
       0,
     );
     await page.mouse.click(point.x, point.y);
-    await dragMouseTo(point.x - xDelta + 5, point.y + yDelta + 15, page);
+    const shiftCoords2 = { x: 5, y: 15 };
+    await dragMouseTo(
+      point.x - xDelta + shiftCoords2.x,
+      point.y + yDelta + shiftCoords2.y,
+      page,
+    );
   });
 
   test('Delete with selection', async ({ page }) => {
@@ -193,11 +199,12 @@ test.describe('Lasso Selection tool', () => {
      * Description: The selected part of the structure or reaction should disappear after pressing the "Delete" button.
      */
     await openFileAndAddToCanvas('Rxn-V2000/reaction-4.rxn', page);
-    await selectLasso(page);
-    await selectObjects(page, 200, 200);
+    await selectNestedTool(page, SelectTool.LASSO_SELECTION);
+    await selectObjects(page, yAxis, yAxis);
     await page.keyboard.press('Delete');
 
-    await clickOnAtom(page, 'C', 4);
+    const atomIndex = 4;
+    await clickOnAtom(page, 'C', atomIndex);
     await page.keyboard.press('Delete');
   });
 
@@ -206,40 +213,84 @@ test.describe('Lasso Selection tool', () => {
      * Test case: EPMLSOPKET-1345
      * Description: Undo/Redo should work correctly for the actions for the selected objects.
      */
+    const randomCoords = { x: 20, y: 20 };
+    const shiftCoords = { x: 50, y: 50 };
     const centerPoint = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await openFileAndAddToCanvas('Rxn-V2000/reaction-4.rxn', page);
-    await selectLasso(page);
+    await selectNestedTool(page, SelectTool.LASSO_SELECTION);
 
     await clickOnAtom(page, 'C', 0);
     const atomPoint = await getAtomByIndex(page, { label: 'C' }, 0);
-    await dragMouseTo(atomPoint.x - 20, atomPoint.y - 20, page);
+    await dragMouseTo(
+      atomPoint.x - randomCoords.x,
+      atomPoint.y - randomCoords.y,
+      page,
+    );
 
     await selectTopPanelButton(TopPanelButton.Undo, page);
     await selectTopPanelButton(TopPanelButton.Redo, page);
 
-    const bondPoint = await getBondByIndex(page, { type: BondType.SINGLE }, 5);
+    const bondIndex = 5;
+    const bondPoint = await getBondByIndex(
+      page,
+      { type: BondType.SINGLE },
+      bondIndex,
+    );
     await page.mouse.click(bondPoint.x, bondPoint.y);
-    await dragMouseTo(bondPoint.x + 50, bondPoint.y + 50, page);
+    await dragMouseTo(
+      bondPoint.x + shiftCoords.x,
+      bondPoint.y + shiftCoords.y,
+      page,
+    );
 
-    await selectObjects(page, 200, 200);
-    await page.mouse.click(bondPoint.x + 50, bondPoint.y + 50);
-    await dragMouseTo(centerPoint.x + 100, centerPoint.y - 50, page);
+    await selectObjects(page, yAxis, yAxis);
+
+    await page.mouse.click(
+      bondPoint.x + shiftCoords.x,
+      bondPoint.y + shiftCoords.y,
+    );
+    await dragMouseTo(
+      centerPoint.x + randomCoords.x,
+      centerPoint.y - randomCoords.y,
+      page,
+    );
     await selectTopPanelButton(TopPanelButton.Undo, page);
 
-    await page.mouse.move(centerPoint.x - 270, centerPoint.y + 10);
+    const plusSignCoords = [
+      { x: 270, y: 10 },
+      { x: 40, y: 30 },
+    ];
+    await page.mouse.move(
+      centerPoint.x - plusSignCoords[0].x,
+      centerPoint.y + plusSignCoords[0].y,
+    );
     await page.mouse.down();
-    await page.mouse.move(centerPoint.x + 40, centerPoint.y - 30);
+    await page.mouse.move(
+      centerPoint.x + plusSignCoords[1].x,
+      centerPoint.y - plusSignCoords[1].y,
+    );
     await page.mouse.up();
 
-    await page.mouse.move(centerPoint.x, centerPoint.y + 5);
+    const equalSignCoords = [
+      { x: 0, y: 5 },
+      { x: 30, y: 20 },
+    ];
+    await page.mouse.move(
+      centerPoint.x + equalSignCoords[0].x,
+      centerPoint.y + equalSignCoords[0].y,
+    );
     await page.mouse.down();
-    await page.mouse.move(centerPoint.x + 30, centerPoint.y - 20);
+    await page.mouse.move(
+      centerPoint.x + equalSignCoords[1].x,
+      centerPoint.y - equalSignCoords[1].y,
+    );
     await page.mouse.up();
 
-    for (let index = 0; index < 3; index++) {
+    const loopCount = 3;
+    for (let index = 0; index < loopCount; index++) {
       await selectTopPanelButton(TopPanelButton.Undo, page);
     }
-    for (let index = 0; index < 3; index++) {
+    for (let index = 0; index < loopCount; index++) {
       await selectTopPanelButton(TopPanelButton.Redo, page);
     }
   });
@@ -252,16 +303,18 @@ test.describe('Lasso Selection tool', () => {
      * Description: Don't break the selection if the user's cursor goes beyond the canvas.
      * GitHub issue: https://github.com/epam/ketcher/issues/2060
      */
+    const yShift = 100;
+    const xShift = 500;
     await selectNestedTool(page, BondTool.SINGLE_AROMATIC);
-    await page.mouse.click(500, 200);
+    await page.mouse.click(xAxis, yAxis);
     await page.getByTestId('select-rectangle').click();
     delay(DELAY_IN_SECONDS.TWO);
-    await selectLasso(page);
-    await page.mouse.move(300, 100);
+    await selectNestedTool(page, SelectTool.LASSO_SELECTION);
+    await page.mouse.move(xAxis - xDelta, yAxis - yDelta);
     await page.mouse.down();
-    await page.mouse.move(300, -100);
-    await page.mouse.move(800, -100);
-    await page.mouse.move(800, 400);
+    await page.mouse.move(xShift, -yShift);
+    await page.mouse.move(xShift, yAxis + yShift);
+    await page.mouse.move(xAxis - xDelta, yAxis + yShift);
     await page.mouse.up();
   });
 });

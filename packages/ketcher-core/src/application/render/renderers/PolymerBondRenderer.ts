@@ -4,7 +4,7 @@ import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import assert from 'assert';
 import { D3SvgElementSelection } from 'application/render/types';
 import { editorEvents } from 'application/editor/editorEvents';
-import { Vec2 } from 'dist';
+import { Vec2 } from 'domain/entities/vec2';
 
 const LENGTH_LINE_FROM_MONOMER = 16.5;
 const CORNER_LENGTH = 8;

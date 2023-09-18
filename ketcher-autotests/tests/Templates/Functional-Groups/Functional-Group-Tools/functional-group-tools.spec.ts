@@ -27,14 +27,16 @@ import {
   SelectTool,
   selectNestedTool,
   STRUCTURE_LIBRARY_BUTTON_NAME,
+  waitForPageInit,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
+import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
 
 const X_DELTA = 300;
 
 test.describe('Templates - Functional Group Tools', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {
@@ -84,26 +86,40 @@ test.describe('Templates - Functional Group Tools', () => {
     await clickOnAtom(page, 'C', 0);
   });
 
-  test.fixme('Rotate of expanded Functional Group', async ({ page }) => {
+  test('Rotate of expanded Functional Group', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-2900
     Description: All elements of the Functional Group are rotated
    */
+    const COORDINATES_TO_PERFORM_ROTATION = {
+      x: 20,
+      y: 160,
+    };
     await openFileAndAddToCanvas('functional-group-expanded.mol', page);
 
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
-    await clickInTheMiddleOfTheScreen(page);
+    await page.keyboard.press('Control+a');
+    const coordinates = await getRotationHandleCoordinates(page);
+    const { x: rotationHandleX, y: rotationHandleY } = coordinates;
 
-    // const { x, y } = await getRotationHandleCoordinates(page);
-    // await page.mouse.move(x, y);
-    // await dragMouseTo(x - 100, y, page);
+    await page.mouse.move(rotationHandleX, rotationHandleY);
+    await page.mouse.down();
+    await page.mouse.move(
+      COORDINATES_TO_PERFORM_ROTATION.x,
+      COORDINATES_TO_PERFORM_ROTATION.y,
+    );
+    await page.mouse.up();
   });
 
-  test.fixme('Rotate Tool (FG + Other structures)', async ({ page }) => {
+  test('Rotate Tool (FG + Other structures)', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-3935
-    Description: The selected Functional Group is rotated. Benzene ring is not rotated.
+    Description: The selected Functional Group is rotated. Benzene ring is rotated.
    */
+    const COORDINATES_TO_PERFORM_ROTATION = {
+      x: 20,
+      y: 160,
+    };
     await openFileAndAddToCanvas(
       'expand-functional-group-with-benzene.mol',
       page,
@@ -112,9 +128,16 @@ test.describe('Templates - Functional Group Tools', () => {
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
     await page.keyboard.press('Control+a');
 
-    // const { x, y } = await getRotationHandleCoordinates(page);
-    // await page.mouse.move(x, y);
-    // await dragMouseTo(x + 100, y + 100, page);
+    const coordinates = await getRotationHandleCoordinates(page);
+    const { x: rotationHandleX, y: rotationHandleY } = coordinates;
+
+    await page.mouse.move(rotationHandleX, rotationHandleY);
+    await page.mouse.down();
+    await page.mouse.move(
+      COORDINATES_TO_PERFORM_ROTATION.x,
+      COORDINATES_TO_PERFORM_ROTATION.y,
+    );
+    await page.mouse.up();
   });
 
   test('Add Charge to the Functional group', async ({ page }) => {
@@ -225,7 +248,7 @@ test.describe('Templates - Functional Group Tools', () => {
 
 test.describe('Templates - Functional Group Tools2', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {
@@ -442,7 +465,7 @@ test.describe('Templates - Functional Group Tools2', () => {
     Test case: EPMLSOPKET-2917
     Description: Functional Group is expanded on a Benzene ring. No overlapping.
    */
-    await openFileAndAddToCanvas('benzene-bond-fg.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/benzene-bond-fg.mol', page);
     await page.getByText('Boc').click({ button: 'right' });
     await page.getByText('Expand Abbreviation').click();
   });
@@ -471,7 +494,10 @@ test.describe('Templates - Functional Group Tools2', () => {
       y2: 360,
     };
 
-    await openFileAndAddToCanvas('benzene-with-two-bonds.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/benzene-with-two-bonds.mol',
+      page,
+    );
     await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
     await page.getByRole('tab', { name: 'Functional Groups' }).click();
     await selectFunctionalGroups(FunctionalGroups.CO2Et, page);
@@ -491,7 +517,7 @@ test.describe('Templates - Functional Group Tools2', () => {
     Test case: EPMLSOPKET-8927
     Description: The Functional Group is added to all bonds without errors and distortions
    */
-    await openFileAndAddToCanvas('benzene-with-bonds.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/benzene-with-bonds.mol', page);
     await clickInTheMiddleOfTheScreen(page);
     await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
     await page.getByRole('tab', { name: 'Functional Groups' }).click();
@@ -516,7 +542,7 @@ test.describe('Templates - Functional Group Tools2', () => {
 
 test.describe('Templates - Functional Group Tools3', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test('Filtering Functional Groups', async ({ page }) => {

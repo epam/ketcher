@@ -28,6 +28,7 @@ import {
   getIsItemInSelection,
   getMenuPropsForSelection,
 } from './ContextMenuTrigger.utils';
+import TemplateTool from 'src/script/editor/tool/template';
 
 const ContextMenuTrigger: React.FC<PropsWithChildren> = ({ children }) => {
   const { getKetcherInstance } = useAppContext();
@@ -72,6 +73,12 @@ const ContextMenuTrigger: React.FC<PropsWithChildren> = ({ children }) => {
       event.preventDefault();
 
       const editor = getKetcherInstance().editor as Editor;
+
+      const currentTool = editor.tool();
+      if (currentTool instanceof TemplateTool) {
+        currentTool.hidePreview();
+      }
+
       const closestItem = editor.findItem(event, null);
       const selection = editor.selection();
       const { selectedFunctionalGroups, selectedSGroupsIds } =
@@ -98,7 +105,11 @@ const ContextMenuTrigger: React.FC<PropsWithChildren> = ({ children }) => {
           selectedSGroupsIds,
         })
       ) {
-        if (!selection.bonds && !selection.atoms) {
+        if (
+          !selection.bonds &&
+          !selection.atoms &&
+          !selection.rgroupAttachmentPoints
+        ) {
           triggerType = ContextMenuTriggerType.None;
         } else {
           triggerType = ContextMenuTriggerType.Selection;

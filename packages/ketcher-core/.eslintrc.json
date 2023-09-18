@@ -1,6 +1,10 @@
 {
   "root": false,
   "extends": "plugin:jest/recommended",
+  "rules": {
+    "@typescript-eslint/no-empty-function": "off",
+    "no-useless-constructor": "off"
+  },
   "overrides": [
     {
       "files": [
@@ -102,6 +106,7 @@
         "src/application/render/restruct/resimpleObject.ts",
         "src/application/render/restruct/restruct.ts",
         "src/application/render/restruct/retext.ts",
+        "src/application/render/restruct/resgroup.ts",
         "src/domain/entities/atom.ts",
         "src/domain/entities/bond.ts",
         "src/domain/entities/box2Abs.ts",

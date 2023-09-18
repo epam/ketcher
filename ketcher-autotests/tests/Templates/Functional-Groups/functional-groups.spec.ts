@@ -29,6 +29,8 @@ import {
   pressTab,
   FILE_TEST_DATA,
   STRUCTURE_LIBRARY_BUTTON_NAME,
+  waitForPageInit,
+  waitForRender,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { TestIdSelectors } from '@utils/selectors/testIdSelectors';
@@ -75,7 +77,7 @@ async function changeStatusOfAbbreviation(
 
 test.describe('Functional Groups', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {
@@ -183,7 +185,7 @@ test.describe('Functional Groups', () => {
     await resetCurrentTool(page);
   });
 
-  test('Save functional groups to Custom Templates', async ({ page }) => {
+  test.fixme('Save functional groups to Custom Templates', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-2953
     Description: Contracted FG is connected to the structure.
@@ -203,7 +205,7 @@ test.describe('Functional Groups', () => {
 
 test.describe('Functional Groups', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {
@@ -227,7 +229,7 @@ test.describe('Functional Groups', () => {
     Test case: EPMLSOPKET-2894
     Description: Contracted and Expanded functional groups are displayed on the canvas.
     */
-    await openFileAndAddToCanvas('expanded-and-contracted-fg.ket', page);
+    await openFileAndAddToCanvas('KET/expanded-and-contracted-fg.ket', page);
   });
 
   test('Paste from Clipboard with contracted and expanded functional groups', async ({
@@ -249,10 +251,12 @@ test.describe('Functional Groups', () => {
     Test case: EPMLSOPKET-2899
     Description: Expanded functional group are highlight with Selection tool.
     */
-    const x = 570;
-    const y = 320;
+    const x = 600;
+    const y = 400;
+    const smallShift = 10;
     await openFileAndAddToCanvas('functional-group-expanded.mol', page);
     await page.mouse.move(x, y);
+    await page.mouse.move(x + smallShift, y);
   });
 
   test('Add Bond to expanded Functional Group', async ({ page }) => {
@@ -494,8 +498,8 @@ test.describe('Functional Groups', () => {
     await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
     await pressTab(page, 'Salts and Solvents');
     await selectSaltsAndSolvents(SaltsAndSolvents.MethaneSulphonicAcid, page);
-    await clickInTheMiddleOfTheScreen(page);
 
+    await clickInTheMiddleOfTheScreen(page);
     await clickInTheMiddleOfTheScreen(page, 'right');
     await page.getByText('Expand Abbreviation').click();
 
@@ -515,17 +519,21 @@ test.describe('Functional Groups', () => {
     */
     const x = 540;
     const y = 350;
-    await openFileAndAddToCanvas('chain.ket', page);
+    await openFileAndAddToCanvas('KET/chain.ket', page);
     await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
     await pressTab(page, 'Functional Groups');
     await selectFunctionalGroups(FunctionalGroups.CN, page);
     point = await getAtomByIndex(page, { label: 'C' }, 0);
-    await page.mouse.click(point.x, point.y);
+    await waitForRender(page, async () => {
+      await page.mouse.click(point.x, point.y);
+    });
 
     await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
     await pressTab(page, 'Functional Groups');
     await selectFunctionalGroups(FunctionalGroups.Ms, page);
-    await page.mouse.click(x, y);
+    await waitForRender(page, async () => {
+      await page.mouse.click(x, y);
+    });
     await resetCurrentTool(page);
   });
 
@@ -565,7 +573,7 @@ test.describe('Functional Groups', () => {
     await resetCurrentTool(page);
   });
 
-  test.skip('Hotkey for Atom can replace Functional Groups abbreviation', async ({
+  test('Hotkey for Atom can replace Functional Groups abbreviation', async ({
     page,
   }) => {
     /*
@@ -593,11 +601,15 @@ test.describe('Functional Groups', () => {
     await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
     await pressTab(page, 'Salts and Solvents');
     await selectSaltsAndSolvents(SaltsAndSolvents.MethaneSulphonicAcid, page);
-    await clickInTheMiddleOfTheScreen(page);
+    await waitForRender(page, async () => {
+      await clickInTheMiddleOfTheScreen(page);
+    });
 
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
     await moveMouseToTheMiddleOfTheScreen(page);
-    await page.keyboard.press('o');
+    await waitForRender(page, async () => {
+      await page.keyboard.press('o');
+    });
     await resetCurrentTool(page);
   });
 
@@ -608,13 +620,15 @@ test.describe('Functional Groups', () => {
     Test case: EPMLSOPKET-11849
     Description: Structure on canvas not becomes 'undefined' when atom is hovered and Functional Group selected using hotkey.
     */
-    await openFileAndAddToCanvas('chain.ket', page);
+    await openFileAndAddToCanvas('KET/chain.ket', page);
     point = await getAtomByIndex(page, { label: 'C' }, 3);
     await page.mouse.move(point.x, point.y);
     await page.keyboard.press('Shift+t');
     await pressTab(page, 'Functional Groups');
     await page.getByTitle('Boc').click();
-    await clickInTheMiddleOfTheScreen(page);
+    await waitForRender(page, async () => {
+      await clickInTheMiddleOfTheScreen(page);
+    });
     await resetCurrentTool(page);
   });
 
@@ -632,27 +646,26 @@ test.describe('Functional Groups', () => {
     await page.getByText('Contract Abbreviation').click();
   });
 
-  test.fixme(
-    'Check that expanded Functional Groups not overlap each other',
-    async ({ page }) => {
-      /*
+  test('Check that expanded Functional Groups not overlap each other', async ({
+    page,
+  }) => {
+    /*
       Test case: EPMLSOPKET-12977
       Description: Expanded Functional Groups not overlap each other
     */
-      await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-      await pressTab(page, 'Functional Groups');
-      await selectFunctionalGroups(FunctionalGroups.Cbz, page);
-      await clickInTheMiddleOfTheScreen(page);
+    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+    await pressTab(page, 'Functional Groups');
+    await selectFunctionalGroups(FunctionalGroups.Cbz, page);
+    await clickInTheMiddleOfTheScreen(page);
 
-      await drawFGAndDrag(FunctionalGroups.Boc, 50, page);
+    await drawFGAndDrag(FunctionalGroups.Boc, 50, page);
 
-      await page.keyboard.press('Control+a');
-      await clickInTheMiddleOfTheScreen(page, 'right');
-      await page.getByText('Expand Abbreviation').click();
-    },
-  );
+    await page.keyboard.press('Control+a');
+    await clickInTheMiddleOfTheScreen(page, 'right');
+    await page.getByText('Expand Abbreviation').click();
+  });
 
-  test.skip('After expand a Functional Group hotkeys not stop working', async ({
+  test('After expand a Functional Group hotkeys not stop working', async ({
     page,
   }) => {
     /*

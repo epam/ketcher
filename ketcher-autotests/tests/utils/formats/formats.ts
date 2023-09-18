@@ -9,12 +9,20 @@ export async function getCml(page: Page) {
   return await page.evaluate(() => window.ketcher.getCml());
 }
 
+export async function getCdxml(page: Page) {
+  return await page.evaluate(() => window.ketcher.getCDXml());
+}
+
 export async function getSmiles(page: Page) {
   return await page.evaluate(() => window.ketcher.getSmiles());
 }
 
 export async function getInchi(page: Page) {
   return await page.evaluate(() => window.ketcher.getInchi());
+}
+
+export async function getInChIKey(page: Page) {
+  return await page.evaluate(() => window.ketcher.getInChIKey());
 }
 
 export async function getExtendedSmiles(page: Page) {
@@ -37,6 +45,13 @@ export async function getRxn(page: Page, fileFormat?: MolfileFormat) {
 
 export async function getSmarts(page: Page) {
   return await page.evaluate(() => window.ketcher.getSmarts());
+}
+
+export async function getSdf(page: Page, fileFormat: MolfileFormat = 'v2000') {
+  return await page.evaluate(
+    (fileFormat) => window.ketcher.getSdf(fileFormat),
+    fileFormat,
+  );
 }
 
 export async function setMolecule(page: Page, structStr: string) {

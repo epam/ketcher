@@ -35,6 +35,7 @@ export interface BondAttributes {
   end: number;
   begin: number;
   cip?: CIP | null;
+  isPreview?: boolean;
 }
 
 export class Bond {
@@ -100,6 +101,7 @@ export class Bond {
   hb2?: number;
   angle: number;
   center: Vec2;
+  isPreview: boolean;
 
   constructor(attributes: BondAttributes) {
     this.begin = attributes.begin;
@@ -114,6 +116,7 @@ export class Bond {
     this.sb = 0;
     this.sa = 0;
     this.angle = 0;
+    this.isPreview = false;
 
     if (attributes.stereo) this.stereo = attributes.stereo;
     if (attributes.topology) this.topology = attributes.topology;
@@ -231,14 +234,14 @@ export class Bond {
     } = Bond.getFusingConditions(bond, bondBegin, bondEnd);
 
     if (isFusingToSingleBond || isFusingToDoubleBond) {
-      return [1];
+      return [3];
     }
 
     if (isFusingDoubleSingleSingle) {
-      return [2, 3];
+      return [2, 4];
     }
 
-    return [1, 4];
+    return [1, 3];
   }
 
   static attrGetDefault(attr: string) {

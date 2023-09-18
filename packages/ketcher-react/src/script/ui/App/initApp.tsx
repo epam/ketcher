@@ -23,7 +23,7 @@ import { Ketcher, StructService } from 'ketcher-core';
 
 import App from './App.container';
 import { Provider } from 'react-redux';
-import { createRoot } from 'react-dom/client';
+import { Root } from 'react-dom/client';
 import createStore from '../state';
 import { initKeydownListener } from '../state/hotkeys';
 import { initResize } from '../state/toolbar';
@@ -31,6 +31,7 @@ import { initMouseListener } from '../state/mouse';
 
 function initApp(
   element: HTMLDivElement | null,
+  appRoot: Root,
   staticResourcesUrl: string,
   options: any,
   server: StructService,
@@ -41,8 +42,7 @@ function initApp(
   store.dispatch(initMouseListener(element));
   store.dispatch(initResize());
 
-  const root = createRoot(element!);
-  root.render(
+  appRoot.render(
     <Provider store={store}>
       <SettingsContext.Provider value={{ staticResourcesUrl }}>
         <ErrorsContext.Provider value={{ errorHandler: options.errorHandler }}>

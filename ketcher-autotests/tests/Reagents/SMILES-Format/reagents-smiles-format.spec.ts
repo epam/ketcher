@@ -3,12 +3,11 @@ import {
   selectTopPanelButton,
   TopPanelButton,
   clickInTheMiddleOfTheScreen,
-  delay,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   readFileContents,
   pasteFromClipboardAndAddToCanvas,
-  DELAY_IN_SECONDS,
+  waitForPageInit,
 } from '@utils';
 import {
   getExtendedSmiles,
@@ -43,9 +42,7 @@ async function saveExtendedSmiles(page: Page) {
 
 test.describe('Reagents SMILES format', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto(
-      'https://rc.test.lifescience.opensource.epam.com/KetcherDemo/index.html',
-    );
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {
@@ -62,7 +59,10 @@ test.describe('Reagents SMILES format', () => {
     format in "Preview" tab (e.g. C1C=CC=CC=1>N>C1C=CC=CC=1 
     where specifying reactant, agent and product molecule(s) separated by the "greater-than" symbol ('>').
     */
-    await openFileAndAddToCanvas('benzene-arrow-benzene-reagent-nh3.ket', page);
+    await openFileAndAddToCanvas(
+      'KET/benzene-arrow-benzene-reagent-nh3.ket',
+      page,
+    );
 
     const smiFileExpected = await readFileContents(
       'tests/test-data/daylight-smiles-expected.smi',
@@ -71,7 +71,6 @@ test.describe('Reagents SMILES format', () => {
     expect(smiFile).toEqual(smiFileExpected);
 
     await getPreviewForSmiles(page, 'MDL Rxnfile V2000', 'Daylight SMILES');
-    await delay(DELAY_IN_SECONDS.ONE);
   });
 
   test(`Detection molecule as reagent below arrow
@@ -84,7 +83,10 @@ test.describe('Reagents SMILES format', () => {
     format in "Preview" tab (e.g. C1(C)C(O)=CC(S)=C(N)C=1>Cl>C1(Br)C(C)=CC(I)=C(O)C=1 
     where specifying reactant, agent and product molecule(s) separated by the "greater-than" symbol ('>').
     */
-    await openFileAndAddToCanvas('benzene-arrow-benzene-reagent-hcl.ket', page);
+    await openFileAndAddToCanvas(
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
+      page,
+    );
 
     const smiFileExpected = await readFileContents(
       'tests/test-data/daylight-smiles-below-expected.smi',
@@ -105,10 +107,12 @@ test.describe('Reagents SMILES format', () => {
     format in "Preview" tab (e.g. C1C=CC=CC=1>N>C1C=CC=CC=1 
     where specifying reactant, agent and product molecule(s) separated by the "greater-than" symbol ('>').
     */
-    await openFileAndAddToCanvas('benzene-arrow-benzene-reagent-nh3.ket', page);
+    await openFileAndAddToCanvas(
+      'KET/benzene-arrow-benzene-reagent-nh3.ket',
+      page,
+    );
 
     await getPreviewForSmiles(page, 'MDL Rxnfile V2000', 'Extended SMILES');
-    await delay(DELAY_IN_SECONDS.ONE);
   });
 
   test(`Detection molecule as reagent below arrow
@@ -121,10 +125,12 @@ test.describe('Reagents SMILES format', () => {
     format in "Preview" tab (e.g. C1(C)C(O)=CC(S)=C(N)C=1>Cl>C1(Br)C(C)=CC(I)=C(O)C=1 
     where specifying reactant, agent and product molecule(s) separated by the "greater-than" symbol ('>').
     */
-    await openFileAndAddToCanvas('benzene-arrow-benzene-reagent-hcl.ket', page);
+    await openFileAndAddToCanvas(
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
+      page,
+    );
 
     await getPreviewForSmiles(page, 'MDL Rxnfile V2000', 'Extended SMILES');
-    await delay(DELAY_IN_SECONDS.ONE);
   });
 
   test('Open from file in "Daylight SMILES" format', async ({ page }) => {
@@ -153,7 +159,6 @@ test.describe('Reagents SMILES format', () => {
       'C1(C)C(O)=CC(S)=C(N)C=1>Cl>C1(Br)C(C)=CC(I)=C(O)C=1',
     );
     await clickInTheMiddleOfTheScreen(page);
-    await delay(DELAY_IN_SECONDS.ONE);
   });
 
   test('Paste from clipboard in "Extended SMILES" format', async ({ page }) => {
@@ -166,7 +171,6 @@ test.describe('Reagents SMILES format', () => {
       'CN(C(Cl)=O)C>Cl>c1ccc(OCCN(C(Cl)=O)C)cc1',
     );
     await clickInTheMiddleOfTheScreen(page);
-    await delay(DELAY_IN_SECONDS.ONE);
   });
 
   test('SMILES import if dearomotize-on-load is true', async ({ page }) => {
@@ -181,9 +185,7 @@ test.describe('Reagents SMILES format', () => {
 
 test.describe('Reagents SMILES format', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto(
-      'https://rc.test.lifescience.opensource.epam.com/KetcherDemo/index.html',
-    );
+    await waitForPageInit(page);
   });
 
   test('File saves in "Daylight SMILES" format', async ({ page }) => {
@@ -191,7 +193,10 @@ test.describe('Reagents SMILES format', () => {
     Test case: EPMLSOPKET-4665
     Description: File saved in format (e.g. "ketcher.smi")
     */
-    await openFileAndAddToCanvas('benzene-arrow-benzene-reagent-nh3.ket', page);
+    await openFileAndAddToCanvas(
+      'KET/benzene-arrow-benzene-reagent-nh3.ket',
+      page,
+    );
 
     const smiFileExpected = await readFileContents(
       'tests/test-data/daylight-smiles-expected.smi',
@@ -207,7 +212,10 @@ test.describe('Reagents SMILES format', () => {
     Test case: EPMLSOPKET-4666
     Description: File saved in format (e.g. "ketcher.cxsmi")
     */
-    await openFileAndAddToCanvas('benzene-arrow-benzene-reagent-hcl.ket', page);
+    await openFileAndAddToCanvas(
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
+      page,
+    );
 
     const smiFileExpected = await readFileContents(
       'tests/test-data/extended-smiles.cxsmi',

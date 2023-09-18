@@ -1365,32 +1365,60 @@ function radicalBullet(
 
 function bracket(
   paper: RaphaelPaper,
-  d: Vec2,
-  n: Vec2,
-  c: Vec2,
+  bracketAngleDirection: Vec2,
+  bracketDirection: Vec2,
+  bondCenter: Vec2,
   bracketWidth: number,
   bracketHeight: number,
   options: RenderOptions,
+  isBracketContainAttachment = false,
 ) {
   // eslint-disable-line max-params
   bracketWidth = bracketWidth || 0.25;
   bracketHeight = bracketHeight || 1.0;
-  const a0 = c.addScaled(n, -0.5 * bracketHeight);
-  const a1 = c.addScaled(n, 0.5 * bracketHeight);
-  const b0 = a0.addScaled(d, -bracketWidth);
-  const b1 = a1.addScaled(d, -bracketWidth);
+  const halfBracketHeight = 0.5;
+  let bracketPoint0, bracketPoint1;
+  if (isBracketContainAttachment) {
+    const longHalfBracketHeight = -0.8;
+    const shortHalfBracketHeight = 0.2;
+    bracketPoint0 = bondCenter.addScaled(
+      bracketDirection,
+      shortHalfBracketHeight * bracketHeight,
+    );
+    bracketPoint1 = bondCenter.addScaled(
+      bracketDirection,
+      longHalfBracketHeight * bracketHeight,
+    );
+  } else {
+    bracketPoint0 = bondCenter.addScaled(
+      bracketDirection,
+      -halfBracketHeight * bracketHeight,
+    );
+    bracketPoint1 = bondCenter.addScaled(
+      bracketDirection,
+      halfBracketHeight * bracketHeight,
+    );
+  }
+  const bracketArc0 = bracketPoint0.addScaled(
+    bracketAngleDirection,
+    -bracketWidth,
+  );
+  const bracketArc1 = bracketPoint1.addScaled(
+    bracketAngleDirection,
+    -bracketWidth,
+  );
 
   return paper
     .path(
       'M{0},{1}L{2},{3}L{4},{5}L{6},{7}',
-      tfx(b0.x),
-      tfx(b0.y),
-      tfx(a0.x),
-      tfx(a0.y),
-      tfx(a1.x),
-      tfx(a1.y),
-      tfx(b1.x),
-      tfx(b1.y),
+      tfx(bracketArc0.x),
+      tfx(bracketArc0.y),
+      tfx(bracketPoint0.x),
+      tfx(bracketPoint0.y),
+      tfx(bracketPoint1.x),
+      tfx(bracketPoint1.y),
+      tfx(bracketArc1.x),
+      tfx(bracketArc1.y),
     )
     .attr(options.sgroupBracketStyle);
 }
@@ -1496,6 +1524,75 @@ function recenterText(path: Element, relativeBox: RelativeBox) {
   }
 }
 
+function rgroupAttachmentPoint(
+  paper: RaphaelPaper,
+  shiftedAtomPositionVector: Vec2,
+  attachmentPointEnd: Vec2,
+  directionVector: Vec2,
+  options: RenderOptions,
+) {
+  const linePath = paper.path(
+    'M{0},{1}L{2},{3}',
+    tfx(shiftedAtomPositionVector.x),
+    tfx(shiftedAtomPositionVector.y),
+    tfx(attachmentPointEnd.x),
+    tfx(attachmentPointEnd.y),
+  );
+
+  const curvePath = paper.path(
+    getSvgCurveShapeAttachmentPoint(
+      attachmentPointEnd,
+      directionVector,
+      options.scale,
+    ),
+  );
+
+  const resultShape = paper
+    .set([curvePath, linePath])
+    .attr(options.lineattr)
+    .attr({ 'stroke-width': options.lineWidth });
+
+  return resultShape;
+}
+
+function getSvgCurveShapeAttachmentPoint(
+  centerPosition: Vec2,
+  directionVector: Vec2,
+  basicSize: number,
+): string {
+  // declared here https://github.com/epam/ketcher/issues/2165
+  // this path has (0,0) in the position of attachment point atom
+  const attachmentPointSvgPathString = `M13 1.5l-1.5 3.7c-0.3 0.8-1.5 0.8-1.9 0l-1.7-4.4c-0.3-0.8-1.5-0.8-1.9 0l-1.7 4.4c-0.3 0.8-1.5 0.8-1.8 0l-1.8-4.4c-0.3-0.8-1.5-0.8-1.8 0l-1.7 4.4c-0.3 0.8-1.5 0.8-1.9 0l-1.7-4.4c-0.3-0.8-1.5-0.8-1.9 0l-1.6 4.2c-0.3 0.9-1.6 0.8-1.9 0l-1.2-3.5`;
+  const attachmentPointSvgPathSize = 39.8;
+
+  const shapeScale = basicSize / attachmentPointSvgPathSize;
+  const angleDegrees =
+    (Math.atan2(directionVector.y, directionVector.x) * 180) / Math.PI - 90;
+
+  return svgPath(attachmentPointSvgPathString)
+    .rotate(angleDegrees)
+    .scale(shapeScale)
+    .translate(centerPosition.x, centerPosition.y)
+    .toString();
+}
+
+function rgroupAttachmentPointLabel(
+  paper: RaphaelPaper,
+  labelPosition: Vec2,
+  labelText: string,
+  options: RenderOptions,
+  fill,
+) {
+  const labelPath = paper
+    .text(labelPosition.x, labelPosition.y, labelText)
+    .attr({
+      font: options.font,
+      'font-size': options.fontsz * 0.9,
+      fill,
+    });
+  return labelPath;
+}
+
 export default {
   recenterText,
   arrow,
@@ -1527,4 +1624,6 @@ export default {
   rectangleArrowHighlightAndSelection,
   polyline,
   line,
+  rgroupAttachmentPoint,
+  rgroupAttachmentPointLabel,
 };

@@ -29,8 +29,8 @@ export const StyledButton = styled('button', {
   border: '0',
   borderRadius: style.border.radius.regular,
   padding: '1px',
-  height: '28px',
-  width: '28px',
+  minHeight: '28px',
+  minWidth: '28px',
   cursor: 'pointer',
   color: props.isActive ? style.text.color.secondary : style.text.color.primary,
   backgroundColor: props.isActive

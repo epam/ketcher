@@ -4,13 +4,12 @@ import {
   TopPanelButton,
   clickInTheMiddleOfTheScreen,
   pressButton,
-  delay,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   readFileContents,
   pasteFromClipboard,
-  DELAY_IN_SECONDS,
   waitForLoad,
+  waitForPageInit,
 } from '@utils';
 import { getSmarts } from '@utils/formats';
 
@@ -25,28 +24,30 @@ async function previewSmarts(page: Page) {
   await selectTopPanelButton(TopPanelButton.Save, page);
   await page.getByRole('button', { name: 'MDL Rxnfile V2000' }).click();
   await page.getByRole('option', { name: 'Daylight SMARTS' }).click();
-  await delay(DELAY_IN_SECONDS.ONE);
 }
 
 test.describe('Reagents SMARTS format', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {
     await takeEditorScreenshot(page);
   });
 
-  test(`Detection molecule as reagent 
+  test(`Detection molecule as reagent
   and write reagent information in "Daylight SMARTS" format in "Preview" tab`, async ({
     page,
   }) => {
     /*
     Test case: EPMLSOPKET-4681
-    Description: System detect molecule as reagent and write reagent in "Daylight SMARTS' 
-    format in "Preview" tab (e.g. [#6]-1=[#6]-[#6]=[#6]-[#6]=[#6]-1>[#7]>[#6]-1=[#6]-[#6]=[#6]-[#6]=[#6]-1) 
+    Description: System detect molecule as reagent and write reagent in "Daylight SMARTS'
+    format in "Preview" tab (e.g. [#6]-1=[#6]-[#6]=[#6]-[#6]=[#6]-1>[#7]>[#6]-1=[#6]-[#6]=[#6]-[#6]=[#6]-1)
     */
-    await openFileAndAddToCanvas('benzene-arrow-benzene-reagent-nh3.ket', page);
+    await openFileAndAddToCanvas(
+      'KET/benzene-arrow-benzene-reagent-nh3.ket',
+      page,
+    );
 
     const smartsFileExpected = await readFileContents(
       'tests/test-data/expected-smarts-file.smarts',
@@ -63,12 +64,15 @@ test.describe('Reagents SMARTS format', () => {
   }) => {
     /*
     Test case: EPMLSOPKET-4681
-    Description: System detect molecule as reagent and write reagent in "Daylight SMARTS' 
-    format in "Preview" tab (e.g. 
+    Description: System detect molecule as reagent and write reagent in "Daylight SMARTS'
+    format in "Preview" tab (e.g.
       [#6]1(-[#6])-[#6](-[#8])=[#6]-[#6](-[#16])=[#6](-[#7])-[#6]=1>[#17]>[#6]1(-[#35])-[#6](-[#6])=[#6]-[#6](-[#53])=[#6](-[#8])-[#6]=1
-    ) 
+    )
     */
-    await openFileAndAddToCanvas('benzene-arrow-benzene-reagent-hcl.ket', page);
+    await openFileAndAddToCanvas(
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
+      page,
+    );
 
     const smartsFileExpected = await readFileContents(
       'tests/test-data/expected-smarts-below.smarts',
@@ -82,7 +86,7 @@ test.describe('Reagents SMARTS format', () => {
   test('Paste from clipboard in "Daylight SMARTS" format', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-4687
-    Description: Reagent 'Cl' displays below reaction arrow
+    Description: Reagent 'Cl' displays above reaction arrow
     */
     await selectTopPanelButton(TopPanelButton.Open, page);
     await page.getByText('Paste from clipboard').click();
@@ -90,8 +94,8 @@ test.describe('Reagents SMARTS format', () => {
       page,
       '[#6]-[#6]-1=[#6]-[#6](-[#7])=[#6](-[#16])-[#6]=[#6]-1-[#8]>Cl>[#6]-[#6]-1=[#6]-[#6](I)=[#6](-[#8])-[#6]=[#6]-1Br',
     );
-    await waitForLoad(page, () => {
-      pressButton(page, 'Add to Canvas');
+    await waitForLoad(page, async () => {
+      await pressButton(page, 'Add to Canvas');
     });
     await clickInTheMiddleOfTheScreen(page);
   });
@@ -109,7 +113,7 @@ test.describe('Reagents SMARTS format', () => {
   }) => {
     /*
     Test case: EPMLSOPKET-4706
-    Description: Chain is opened with Not List atoms ![Zr,Au,Zn] 
+    Description: Chain is opened with Not List atoms ![Zr,Au,Zn]
     */
     await openFileAndAddToCanvas('not-list-atoms-smarts.smarts', page);
   });
@@ -117,7 +121,7 @@ test.describe('Reagents SMARTS format', () => {
 
 test.describe('Reagents SMARTS format', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test('File saves in "Daylight SMARTS" format', async ({ page }) => {
@@ -125,7 +129,10 @@ test.describe('Reagents SMARTS format', () => {
     Test case: EPMLSOPKET-4685
     Description: File saved in format (e.g. "ketcher.smarts")
     */
-    await openFileAndAddToCanvas('benzene-arrow-benzene-reagent-nh3.ket', page);
+    await openFileAndAddToCanvas(
+      'KET/benzene-arrow-benzene-reagent-nh3.ket',
+      page,
+    );
 
     const smartsFileExpected = await readFileContents(
       'tests/test-data/expected-smarts-file.smarts',

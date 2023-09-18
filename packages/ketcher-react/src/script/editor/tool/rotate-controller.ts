@@ -1,11 +1,11 @@
-import { Action, Scale, Vec2 } from 'ketcher-core';
+import { Action, Scale, Vec2, vectorUtils } from 'ketcher-core';
 import { throttle } from 'lodash';
 import Editor from '../Editor';
-import utils from '../shared/utils';
 import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems';
 import RotateTool from './rotate';
 import SelectTool from './select';
 import { getDifference, rotatePoint } from './rotate-controller.utils';
+import { normalizeAngle } from '../utils/normalizeAngle';
 
 type RaphaelElement = {
   [key: string]: any;
@@ -148,11 +148,11 @@ class RotateController {
 
   private show() {
     const originalCenter = this.rotateTool.getCenter();
-    const visibleAtoms = this.render.ctab.molecule.getSelectedVisibleAtoms(
-      this.editor.selection(),
-    );
+    const selection = this.editor.selection();
+    const visibleAtoms =
+      this.render.ctab.molecule.getSelectedVisibleAtoms(selection);
 
-    const { texts, rxnArrows, rxnPluses } = this.editor.selection() || {};
+    const { texts, rxnArrows, rxnPluses } = selection || {};
 
     const isMoreThanOneItemBeingSelected =
       visibleAtoms.concat(texts || [], rxnArrows || [], rxnPluses || [])
@@ -174,7 +174,8 @@ class RotateController {
       texts,
       rxnArrows,
       rxnPluses,
-      this.editor.selection()?.bonds,
+      selection?.bonds,
+      selection?.rgroupAttachmentPoints,
     );
 
     this.handleCenter = new Vec2(
@@ -270,6 +271,7 @@ class RotateController {
     rxnArrows?: number[],
     rxnPluses?: number[],
     bonds?: number[],
+    rgroupAttachmentPoints?: number[],
   ) {
     const RECT_RADIUS = 20;
     const RECT_PADDING = 10;
@@ -285,6 +287,7 @@ class RotateController {
           atoms: visibleAtoms,
         }),
         bonds,
+        rgroupAttachmentPoints,
       })
       .transform(Scale.obj2scaled, this.render.options)
       .translate(this.render.options.offset || new Vec2());
@@ -364,6 +367,7 @@ class RotateController {
           fill: STYLE.INITIAL_COLOR,
           stroke: 'none',
         });
+        circle.node.setAttribute('data-testid', 'rotation-handle');
 
         const leftArrow = this.paper
           .path(LEFT_ARROW_PATH)
@@ -841,7 +845,7 @@ class RotateController {
     this.snapAngleIndicator = this.paper.set() as RaphaelElement;
     const LINE_LENGTH = 30;
     const TEXT_FONT_SIZE = 12;
-    const relativeSnapAngleInDegrees = utils.degrees(relativeSnapAngle);
+    const relativeSnapAngleInDegrees = vectorUtils.degrees(relativeSnapAngle);
 
     const drawText = (textPosition: Vec2) =>
       this.paper
@@ -864,7 +868,7 @@ class RotateController {
 
     switch (state) {
       case 'noLine': {
-        const textAngle = utils.normalizeAngle(
+        const textAngle = normalizeAngle(
           absoluteSnapAngle - relativeSnapAngle / 2,
         );
         const textPosition = new Vec2(20, 0).rotate(textAngle);

@@ -23,8 +23,15 @@ import { Scale } from 'domain/helpers';
 import defaultOptions from './options';
 import draw from './draw';
 import { RenderOptions } from './render.types';
+import _ from 'lodash';
+
+const notifyRenderComplete = _.debounce(() => {
+  const event = new Event('renderComplete');
+  window.dispatchEvent(event);
+}, 500);
 
 export class Render {
+  public skipRaphaelInitialization = false;
   public readonly clientArea: HTMLElement;
   public readonly paper: RaphaelPaper;
   // TODO https://github.com/epam/ketcher/issues/2631
@@ -265,6 +272,8 @@ export class Render {
         );
         /* eslint-enable no-mixed-operators */
       }
+
+      notifyRenderComplete();
     }
   }
 }

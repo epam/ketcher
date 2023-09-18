@@ -15,11 +15,12 @@ import {
   resetCurrentTool,
   SaltsAndSolvents,
   STRUCTURE_LIBRARY_BUTTON_NAME,
+  waitForPageInit,
 } from '@utils';
 
 test.describe('Click Salts and Solvents on canvas', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {
@@ -74,6 +75,7 @@ test.describe('Click Salts and Solvents on canvas', () => {
     await clickInTheMiddleOfTheScreen(page);
   });
 
+  // behaves unstable even locally, maybe because of tab opening
   test('Formic acid places near the Cl atom', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-10111
@@ -95,26 +97,29 @@ test.describe('Click Salts and Solvents on canvas', () => {
     await clickInTheMiddleOfTheScreen(page);
   });
 
-  test('sulfolane places near the Cbz functional group', async ({ page }) => {
-    /*
+  test.fixme(
+    'sulfolane places near the Cbz functional group',
+    async ({ page }) => {
+      /*
       Test case: EPMLSOPKET-10111
       Description: when clicking with a Salt and Solvents template on an FG connected with bond
        to another atom  it should place Salts and Solvents near FG
     */
-    await selectAtomInToolbar(AtomButton.Oxygen, page);
-    await clickInTheMiddleOfTheScreen(page);
+      await selectAtomInToolbar(AtomButton.Oxygen, page);
+      await clickInTheMiddleOfTheScreen(page);
 
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await page.getByRole('tab', { name: 'Functional Groups' }).click();
-    await selectFunctionalGroups(FunctionalGroups.Cbz, page);
-    await moveMouseToTheMiddleOfTheScreen(page);
-    const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
-    const coordinatesWithShift = x + MAX_BOND_LENGTH;
-    await dragMouseTo(coordinatesWithShift, y, page);
+      await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+      await page.getByRole('tab', { name: 'Functional Groups' }).click();
+      await selectFunctionalGroups(FunctionalGroups.Cbz, page);
+      await moveMouseToTheMiddleOfTheScreen(page);
+      const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
+      const coordinatesWithShift = x + MAX_BOND_LENGTH;
+      await dragMouseTo(coordinatesWithShift, y, page);
 
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await page.getByRole('tab', { name: 'Salts and Solvents' }).click();
-    await selectSaltsAndSolvents(SaltsAndSolvents.Sulfolane, page);
-    await page.mouse.click(coordinatesWithShift, y);
-  });
+      await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+      await page.getByRole('tab', { name: 'Salts and Solvents' }).click();
+      await selectSaltsAndSolvents(SaltsAndSolvents.Sulfolane, page);
+      await page.mouse.click(coordinatesWithShift, y);
+    },
+  );
 });

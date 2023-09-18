@@ -108,6 +108,7 @@ const MenuItemWithDropdown = ({
         0 && (
         <DropDownButton
           onClick={expand}
+          data-testid="copy-button-dropdown-triangle"
           className={`expanded ${topElement?.props.disabled ? 'disabled' : ''}`}
         >
           {!isExpanded && <DropDownArrow name="dropdown" />}

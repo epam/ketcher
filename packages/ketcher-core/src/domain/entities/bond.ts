@@ -234,14 +234,14 @@ export class Bond {
     } = Bond.getFusingConditions(bond, bondBegin, bondEnd);
 
     if (isFusingToSingleBond || isFusingToDoubleBond) {
-      return [1];
+      return [3];
     }
 
     if (isFusingDoubleSingleSingle) {
-      return [2, 3];
+      return [2, 4];
     }
 
-    return [1, 4];
+    return [1, 3];
   }
 
   static attrGetDefault(attr: string) {

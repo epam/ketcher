@@ -82,12 +82,12 @@ const FileDrop = ({
     <div {...getRootProps({ style })}>
       <input {...getInputProps()} />
       <ButtonContainer>
+        {textLabel && <span>{textLabel}</span>}
         <ActionButton
           label={buttonLabel}
           clickHandler={open}
           disabled={disabled}
         />
-        {textLabel && <span>{textLabel}</span>}
       </ButtonContainer>
       {disabled ? <p>{disabledText}</p> : <Icon name={iconName} />}
     </div>

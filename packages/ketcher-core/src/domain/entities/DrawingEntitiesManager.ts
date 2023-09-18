@@ -61,11 +61,11 @@ export class DrawingEntitiesManager {
     return mergedCommand;
   }
 
-  public addMonomer(monomerItem: MonomerItemType, position: Vec2) {
+  public addMonomer(monomerItem: MonomerItemType, position: Vec2, id?: number) {
     const [Monomer] = monomerFactory(monomerItem);
     const monomer = new Monomer(monomerItem, position);
     monomer.moveAbsolute(position);
-    this.monomers.set(monomer.id, monomer);
+    this.monomers.set(id || monomer.id, monomer);
 
     const command = new Command();
     const operation = new MonomerAddOperation(monomer);

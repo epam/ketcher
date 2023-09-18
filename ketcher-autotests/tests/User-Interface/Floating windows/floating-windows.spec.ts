@@ -131,7 +131,10 @@ test.describe('Click and drag FG on canvas', () => {
       Test case: EPMLSOPKET-4008
       Description: Bad data via paste from clipboard 
     */
-    await pasteFromClipboardAndAddToCanvas(page, 'VAAA==');
+    await selectTopPanelButton(TopPanelButton.Open, page);
+    await page.getByText('Paste from clipboard').click();
+    await pasteFromClipboard(page, 'VAAA==');
+    await pressButton(page, 'Add to Canvas');
   });
 
   test('Paste from clipboard as a new project', async ({ page }) => {

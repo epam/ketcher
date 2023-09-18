@@ -35,7 +35,6 @@
     "eject": "react-scripts eject"
   },
   "dependencies": {
-    "@svgr/rollup": "8.0.1",
     "ketcher-core": "*",
     "ketcher-polymer-editor-react": "*",
     "ketcher-react": "*",

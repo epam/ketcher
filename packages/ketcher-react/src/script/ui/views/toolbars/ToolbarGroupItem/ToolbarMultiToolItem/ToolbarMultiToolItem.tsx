@@ -135,7 +135,11 @@ const ToolbarMultiToolItem = (props: Props) => {
   const [Component, portalClassName] = chooseMultiTool(variant);
   const iconName = getIconName(currentId);
   return displayMultiToolItem && iconName ? (
-    <div ref={ref} className={classes.root}>
+    <div
+      ref={ref}
+      className={classes.root}
+      data-testid={`${dataTestId || iconName}-in-toolbar`}
+    >
       <ActionButton
         {...actionButtonProps}
         className={className}

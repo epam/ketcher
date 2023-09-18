@@ -31,7 +31,7 @@ test.describe('Macromolecules custom presets', () => {
     // Press Enter on input
     await page.press('[placeholder="Name your structure"]', 'Enter');
   });
-  test.skip('Add new preset and duplicate it', async ({ page }) => {
+  test('Add new preset and duplicate it', async ({ page }) => {
     // Click on <div> "Sugar Not selected"
     await page.getByTestId(SUGAR).click();
 
@@ -88,7 +88,7 @@ test.describe('Macromolecules custom presets', () => {
     });
   });
 
-  test.skip('Add new preset with two monomers and add it to canvas', async ({
+  test('Add new preset with two monomers and add it to canvas', async ({
     page,
   }) => {
     await waitForPageInit(page);

@@ -25,6 +25,10 @@ export async function getInchi(page: Page) {
   return await page.evaluate(() => window.ketcher.getInchi());
 }
 
+export async function getInChIKey(page: Page) {
+  return await page.evaluate(() => window.ketcher.getInChIKey());
+}
+
 export async function getExtendedSmiles(page: Page) {
   return await page.evaluate(() => window.ketcher.getSmiles(true));
 }

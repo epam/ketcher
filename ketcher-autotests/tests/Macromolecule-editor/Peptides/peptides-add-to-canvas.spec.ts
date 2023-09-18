@@ -6,7 +6,7 @@ import { POLYMER_TOGGLER } from '../../../constants/testIdConstants';
 Test case: #3063 - Add e2e tests for Macromolecule editor
 */
 
-test.skip('Select peptide and drag it to canvas', async ({ page }) => {
+test('Select peptide and drag it to canvas', async ({ page }) => {
   await waitForPageInit(page);
 
   // Click on POLYMER_TOGGLER

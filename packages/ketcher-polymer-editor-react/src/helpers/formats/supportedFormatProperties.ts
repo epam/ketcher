@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 export enum ChemicalMimeType {
+  Ket = 'chemical/x-ket',
   Mol = 'chemical/x-mdl-molfile',
   Helm = 'chemical/x-helm',
 }

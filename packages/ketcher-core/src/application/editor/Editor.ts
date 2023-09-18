@@ -23,6 +23,8 @@ function isMouseMainButtonPressed(event: MouseEvent) {
   return event.button === 0;
 }
 
+let editor;
+
 export class CoreEditor {
   public events = editorEvents;
 
@@ -43,6 +45,12 @@ export class CoreEditor {
     this.drawingEntitiesManager = new DrawingEntitiesManager();
     this.domEventSetup();
     this.canvasOffset = this.canvas.getBoundingClientRect();
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
+    editor = this;
+  }
+
+  static provideEditorInstance(): CoreEditor {
+    return editor;
   }
 
   private subscribeEvents() {

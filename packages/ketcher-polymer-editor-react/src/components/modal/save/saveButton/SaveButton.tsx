@@ -14,32 +14,16 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { saveAs } from 'file-saver';
-
 import { ActionButton } from 'components/shared/actionButton';
-import { ChemicalMimeType } from 'helpers/formats';
 
 type Props = {
   label: string;
-  data: string;
-  filename: string;
-  type: ChemicalMimeType;
   onSave: () => void;
   disabled?: boolean;
 };
 
-export const SaveButton = ({
-  label,
-  data,
-  filename,
-  type,
-  onSave,
-  disabled = false,
-}: Props) => {
+export const SaveButton = ({ label, onSave, disabled = false }: Props) => {
   const handleSave = () => {
-    const blob = new Blob([data], { type });
-    saveAs(blob, filename);
-    console.log('saved');
     onSave();
   };
 

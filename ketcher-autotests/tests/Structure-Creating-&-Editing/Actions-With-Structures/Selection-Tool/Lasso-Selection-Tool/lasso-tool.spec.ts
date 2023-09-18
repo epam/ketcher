@@ -37,7 +37,13 @@ test.describe('Lasso Selection tool', () => {
 
   const selectLasso = async (page: Page) => {
     await page.getByTestId('select-rectangle').click();
-    await page.getByTestId('select-lasso').click();
+    const visible = await page.getByTestId('select-lasso').isVisible();
+    if (visible) {
+      await page.getByTestId('select-lasso').click();
+    } else {
+      await page.getByTestId('select-rectangle').click();
+      await page.getByTestId('select-lasso').click();
+    }
   };
 
   async function selectObjects(page: Page, xAxis: number, yAxis: number) {
@@ -55,7 +61,7 @@ test.describe('Lasso Selection tool', () => {
     await page.mouse.click(300, 200);
   }
 
-  test.only('Selection of atom/bond/molecule', async ({ page }) => {
+  test('Selection of atom/bond/molecule', async ({ page }) => {
     /*
      * Test case: EPMLSOPKET-1338
      * Description: Hover and selection of atom/bond/molecule

@@ -6,7 +6,7 @@ import { POLYMER_TOGGLER } from '../../../constants/testIdConstants';
 Test case: #2497 - Add chem to canvas
 */
 
-test.skip('Select chem and drag it to canvas', async ({ page }) => {
+test('Select chem and drag it to canvas', async ({ page }) => {
   await waitForPageInit(page);
 
   // Click on POLYMER_TOGGLER

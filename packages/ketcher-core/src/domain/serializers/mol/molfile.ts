@@ -64,6 +64,7 @@ export class Molfile {
     ret.initHalfBonds();
     ret.initNeighbors();
     ret.bindSGroupsToFunctionalGroups();
+    ret.markFragments();
 
     return ret;
   }

@@ -4,7 +4,6 @@ import useAtomEdit from '../hooks/useAtomEdit';
 import useAtomStereo from '../hooks/useAtomStereo';
 import useDelete from '../hooks/useDelete';
 import { MenuItemsProps } from '../contextMenu.types';
-import useRGroupAttachmentPointEdit from '../hooks/useRGroupAttachmentPointEdit';
 import { updateSelectedAtoms } from 'src/script/ui/state/modal/atoms';
 import { useAppContext } from 'src/hooks';
 import Editor from 'src/script/editor';
@@ -56,11 +55,6 @@ const atomPropertiesForSubMenu: {
 const AtomMenuItems: FC<MenuItemsProps> = (props) => {
   const [handleEdit] = useAtomEdit();
   const [handleStereo, stereoDisabled] = useAtomStereo();
-  const [
-    handleEditRGroupAttachmentPoint,
-    rgroupAttachmentPointDisabled,
-    rgroupAttachmentPointHidden,
-  ] = useRGroupAttachmentPointEdit();
   const handleDelete = useDelete();
   const { getKetcherInstance } = useAppContext();
   const editor = getKetcherInstance().editor as Editor;
@@ -92,14 +86,6 @@ const AtomMenuItems: FC<MenuItemsProps> = (props) => {
         Enhanced stereochemistry...
       </Item>
 
-      <Item
-        {...props}
-        disabled={rgroupAttachmentPointDisabled}
-        hidden={rgroupAttachmentPointHidden}
-        onClick={handleEditRGroupAttachmentPoint}
-      >
-        Edit attachment point...
-      </Item>
       <Submenu
         {...props}
         label="Query properties"

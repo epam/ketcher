@@ -32,10 +32,13 @@ export function chooseMultiTool(
 ): [ComponentType<MultiToolProps & MultiToolCallProps>, string?] {
   switch (variant) {
     case 'default':
-      return [DefaultMultiTool, defaultClasses.default];
+      return [
+        DefaultMultiTool,
+        `${defaultClasses.default} default-multitool-dropdown`,
+      ];
 
     case 'grouped':
-      return [GroupedMultiTool];
+      return [GroupedMultiTool, 'grouped-multitool-dropdown'];
 
     default:
       throw new Error(`Unsupported variant ${variant}`);

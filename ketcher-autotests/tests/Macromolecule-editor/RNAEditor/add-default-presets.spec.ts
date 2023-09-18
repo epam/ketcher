@@ -6,7 +6,7 @@ test.describe('Macromolecules default presets', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
   });
-  test.skip('Check Guanine in default presets', async ({ page }) => {
+  test('Check Guanine in default presets', async ({ page }) => {
     /* 
     Test case: #2934 - rna builder: add default presets
     Description: Switch to Polymer Editor
@@ -21,7 +21,7 @@ test.describe('Macromolecules default presets', () => {
     });
   });
 
-  test.skip('Add Guanine to canvas', async ({ page }) => {
+  test('Add Guanine to canvas', async ({ page }) => {
     /* 
     Test case: #2507 - Add RNA monomers to canvas (by click)
     */

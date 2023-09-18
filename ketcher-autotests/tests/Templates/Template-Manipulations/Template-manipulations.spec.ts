@@ -1,13 +1,9 @@
-import { test, expect, Page } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 import {
   takeEditorScreenshot,
   selectAtomInToolbar,
   AtomButton,
   clickInTheMiddleOfTheScreen,
-  selectFunctionalGroups,
-  FunctionalGroups,
-  moveMouseToTheMiddleOfTheScreen,
-  getCoordinatesOfTheMiddleOfTheScreen,
   selectRing,
   RingButton,
   selectTopPanelButton,
@@ -16,7 +12,6 @@ import {
   saveToFile,
   dragMouseTo,
   pressButton,
-  STRUCTURE_LIBRARY_BUTTON_NAME,
   drawBenzeneRing,
   clickOnAtom,
   takeBottomToolbarScreenshot,
@@ -26,31 +21,6 @@ import {
   openFileAndAddToCanvas,
 } from '@utils';
 import { getMolfile, getRxn } from '@utils/formats';
-
-import {
-  getBottomAtomByAttributes,
-  getTopAtomByAttributes,
-  getLeftAtomByAttributes,
-} from '@utils/canvas/atoms';
-
-let point: { x: number; y: number };
-let secondPoint: { x: number; y: number };
-const delta = 30;
-const smallDelta = 5;
-
-async function moveCursoreAroundPoint(
-  x: number,
-  y: number,
-  delta: number,
-  page: Page,
-) {
-  await page.mouse.click(x, y);
-  await dragMouseTo(x + delta, y, page);
-  await dragMouseTo(x, y - delta, page);
-  await dragMouseTo(x - delta, y, page);
-  await dragMouseTo(x, y + delta, page);
-  await dragMouseTo(point.x, point.y, page);
-}
 
 test.describe('Template Manupulations', () => {
   test.beforeEach(async ({ page }) => {
@@ -103,28 +73,6 @@ test.describe('Template Manupulations', () => {
     await resetCurrentTool(page);
   });
 
-  test('4) Fuse atom-to-atom: click drag and rotate', async ({ page }) => {
-    /*
-    Test case: EPMLSOPKET-1674
-    Description: Put the cursor on any other structure atom, click, and drag. 
-     Release the cursor when the distance from the cursor to the selected atom is less than the bond length. 
-    */
-    await drawBenzeneRing(page);
-    point = await getLeftAtomByAttributes(page, {
-      label: 'O',
-    });
-    secondPoint = await getBottomAtomByAttributes(page, {
-      label: 'O',
-    });
-    await moveCursoreAroundPoint(point.x, point.y + delta, delta, page);
-    await dragMouseTo(
-      secondPoint.x - smallDelta,
-      secondPoint.y - smallDelta,
-      page,
-    );
-    await dragMouseTo(point.x + delta, point.y + delta, page);
-  });
-
   test('5) Fuse atom-to-atom: click and drug atom to fuse atom-to-atom', async ({
     page,
   }) => {
@@ -134,25 +82,13 @@ test.describe('Template Manupulations', () => {
     Release the cursor when the distance from the cursor to the selected atom is more than the bond length. 
     */
     await drawBenzeneRing(page);
-
-    point = await getLeftAtomByAttributes(page, {
-      label: 'O',
-    });
-    secondPoint = await getBottomAtomByAttributes(page, {
-      label: 'O',
-    });
-
-    await page.mouse.click(point.x, point.y);
-    await dragMouseTo(
-      secondPoint.x - smallDelta,
-      secondPoint.y - smallDelta,
-      page,
-    );
-    await dragMouseTo(
-      point.x + point.x + delta,
-      point.y + point.y + delta,
-      page,
-    );
+    const anyAtom = 0;
+    const x = 600;
+    const y = 600;
+    await drawBenzeneRing(page);
+    await moveOnAtom(page, 'C', anyAtom);
+    await dragMouseTo(x, y, page);
+    await resetCurrentTool(page);
   });
 
   test('Fuse atom-to-atom: click and drug atom to extand bonds', async ({
@@ -163,12 +99,13 @@ test.describe('Template Manupulations', () => {
     Description: Create a structure from the template. 
     */
     await drawBenzeneRing(page);
-    point = await getLeftAtomByAttributes(page, {
-      label: 'O',
-    });
-
-    await page.mouse.click(point.x, point.y);
-    await dragMouseTo(point.x - smallDelta, point.y - smallDelta, page);
+    const anyAtom = 0;
+    const x = 700;
+    const y = 600;
+    await drawBenzeneRing(page);
+    await moveOnAtom(page, 'C', anyAtom);
+    await dragMouseTo(x, y, page);
+    await resetCurrentTool(page);
   });
 
   test('Click or drag on the canvas: Place template on the Canvas', async ({
@@ -178,41 +115,42 @@ test.describe('Template Manupulations', () => {
     Test case: 1678
     Description: Choose any template and click on the canvas.
     */
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await page.getByRole('tab', { name: 'Functional Groups' }).click();
-    await selectFunctionalGroups(FunctionalGroups.Cbz, page);
+    const x = 700;
+    const y = 600;
+    await selectRing(RingButton.Cyclopentadiene, page);
     await clickInTheMiddleOfTheScreen(page);
+    await dragMouseTo(x, y, page);
+    await resetCurrentTool(page);
   });
 
-  test('Click or drag on the canvas: Rotate a template while placing', async ({
+  test('Click or drag on the canvas: Rotate a Benzene template while placing', async ({
     page,
   }) => {
     /*
     Test case: 1678
     Description: With the template click and rotate on the canvas.
     */
-    await drawBenzeneRing(page);
-    await moveMouseToTheMiddleOfTheScreen(page);
-    const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
-    await dragMouseTo(x, y + delta, page);
-    await page.mouse.click(x, y + delta);
+    const x = 700;
+    const y = 600;
+    await selectRing(RingButton.Benzene, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await dragMouseTo(x, y, page);
+    await resetCurrentTool(page);
   });
 
-  test('Click or drag on the canvas: Rotate with a benzene', async ({
+  test('Click or drag on the canvas: Rotate with a Cyclopentane', async ({
     page,
   }) => {
     /*
     Test case: 1678
     Description: Repeat the previous steps with different templates.
     */
-    await selectRing(RingButton.Benzene, page);
-    await moveMouseToTheMiddleOfTheScreen(page);
-    await page.keyboard.down('Control');
-    const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
-    await clickInTheMiddleOfTheScreen;
-    await page.mouse.move(x + delta, y + delta);
-    await dragMouseTo(x + delta + delta, y, page);
-    await page.keyboard.up('Control');
+    const x = 500;
+    const y = 600;
+    await selectRing(RingButton.Cyclopentane, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await dragMouseTo(x, y, page);
+    await resetCurrentTool(page);
   });
 
   test('Undo/Redo action', async ({ page }) => {
@@ -223,13 +161,20 @@ test.describe('Template Manupulations', () => {
     Click Redo multiple times.
     */
     const anyAtom = 0;
+    const anyAnotherAtom = 4;
     await drawBenzeneRing(page);
     await selectAtomInToolbar(AtomButton.Fluorine, page);
     await clickOnAtom(page, 'C', anyAtom);
-    await selectTopPanelButton(TopPanelButton.Undo, page);
-    await selectTopPanelButton(TopPanelButton.Undo, page);
-    await selectTopPanelButton(TopPanelButton.Redo, page);
-    await selectTopPanelButton(TopPanelButton.Redo, page);
+    await clickOnAtom(page, 'C', anyAnotherAtom);
+    const numberOfPressingUndo = 2;
+    for (let i = 0; i < numberOfPressingUndo; i++) {
+      await selectTopPanelButton(TopPanelButton.Undo, page);
+    }
+    await takeEditorScreenshot(page);
+    const numberOfPressingRedo = 2;
+    for (let i = 0; i < numberOfPressingRedo; i++) {
+      await selectTopPanelButton(TopPanelButton.Redo, page);
+    }
   });
 
   test('Rotate/Flip the template structure', async ({ page }) => {

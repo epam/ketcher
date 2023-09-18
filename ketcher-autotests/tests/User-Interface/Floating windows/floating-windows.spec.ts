@@ -10,15 +10,16 @@ import {
   pasteFromClipboard,
   waitForLoad,
   pressButton,
+  waitForPageInit,
+  clickInTheMiddleOfTheScreen,
 } from '@utils';
 
 test.describe('Click and drag FG on canvas', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {
-    // await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });
 
@@ -70,8 +71,6 @@ test.describe('Click and drag FG on canvas', () => {
       Test case: EPMLSOPKET-4002
       Description: verify empty fields in floating window for empty canvas 
     */
-    // await page.getByRole('button',
-    // { name: 'Calculated Values (Alt+C)' }).click();
     await selectTopPanelButton(TopPanelButton.Calculated, page);
   });
 
@@ -95,9 +94,9 @@ test.describe('Click and drag FG on canvas', () => {
   test('Calculated Values', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-4000
-      Description: Chamge dedcimal places
+      Description: Change dedcimal places
     */
-    await openFileAndAddToCanvas('calculated-values-chain.ket', page);
+    await openFileAndAddToCanvas('KET/calculated-values-chain.ket', page);
     await selectTopPanelButton(TopPanelButton.Calculated, page);
     await page.getByText('Decimal places3').first().click();
     await page.getByRole('option', { name: '4' }).click();
@@ -109,7 +108,7 @@ test.describe('Click and drag FG on canvas', () => {
 
   test('Opening text file', async ({ page }) => {
     /*
-      Test case: EPMLSOPKET-4005
+      Test case: EPMLSOPKET-4005, EPMLSOPKET-4009
       Description: open text file via "open file" 
     */
     await selectTopPanelButton(TopPanelButton.Open, page);
@@ -121,42 +120,27 @@ test.describe('Click and drag FG on canvas', () => {
       Test case: EPMLSOPKET-4006
       Description: place structure via paste from clipboard 
     */
-    await selectTopPanelButton(TopPanelButton.Open, page);
-    await page.getByText('Paste from clipboard').click();
-    /*  eslint max-len: ["error", { "ignoreStrings": true }] */
     await pasteFromClipboardAndAddToCanvas(
       page,
-      'VmpDRDAxMDAEAwIBAAAAAAAAAAAAAAAAAAAAAAQCEAClnXYBBmHkAKuSsgHwQBgBAAMOAAIA////////AAAAAAAAAAETAAEAAQABAOIECQBTYW5zU2VyaWYBgAIAAAADgAMAAAAEAhAApR11AQbh4gCrErQB8MAZAQSABAAAAAACCACmm4UBBmHkAAIEAgAGACsEAgABAAAABIAFAAAAAAIIACiYhQHwQBgBAgQCAAcAKwQCAAAAAAAEgAYAAAAAAggApZ12ATJd/gACBAIACAArBAIAAAAAAASABwAAAAACCACnmaMB8EAYAQIEAgAGACsEAgABAAAABIAIAAAAAAIIABC8owEGYeQAAgQCAAYAKwQCAAEAAAAEgAkAAAAAAggAq5KyASdu/gACBAIABgArBAIAAQAAAAWACgAAAAQGBAAGAAAABQYEAAQAAAAABgIAAgABBgIAAAAAAAWACwAAAAQGBAAHAAAABQYEAAUAAAAABgIAAgABBgIAAAAAAAWADAAAAAQGBAAEAAAABQYEAAgAAAAABgIAAQABBgIAAAAAAAWADQAAAAQGBAAFAAAABQYEAAYAAAAABgIAAQABBgIAAAAAAAWADgAAAAQGBAAIAAAABQYEAAkAAAAABgIAAgABBgIAAAAAAAWADwAAAAQGBAAJAAAABQYEAAcAAAAABgIAAQABBgIAAAAAAAAAAAAAAA==',
+      'InChI=1S/C12H16/c1-10-7-8-12(9-10)11-5-3-2-4-6-11/h2-6,10,12H,7-9H2,1H3',
     );
   });
 
   test('Paste from clipboard/bad data', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-4008
-      Description: bad data via paste from clipboard 
+      Description: Bad data via paste from clipboard 
     */
-    await selectTopPanelButton(TopPanelButton.Open, page);
-    await page.getByText('Paste from clipboard').click();
-    await pasteFromClipboardAndAddToCanvas(
-      page,
-      // eslint-disable-next-line max-len
-      'VAAA==',
-    );
+    await pasteFromClipboardAndAddToCanvas(page, 'VAAA==');
   });
 
-  test('Opening text file/placeholder', async ({ page }) => {
-    /*
-      Test case: EPMLSOPKET-4009
-      Description: open text file via "open file", check loading
-    */
-    await selectTopPanelButton(TopPanelButton.Open, page);
-    await openFile('cml-1945.cml', page);
-  });
   test('Paste from clipboard as a new project', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-4011
       Description: place structure via paste from clipboard 
     */
+    await selectTopPanelButton(TopPanelButton.Open, page);
+    await page.getByText('Paste from clipboard').click();
     await pasteFromClipboard(
       page,
       FILE_TEST_DATA.benzeneArrowBenzeneReagentHclV2000,
@@ -164,5 +148,6 @@ test.describe('Click and drag FG on canvas', () => {
     await waitForLoad(page, () => {
       pressButton(page, 'Open as New Project');
     });
+    await clickInTheMiddleOfTheScreen(page);
   });
 });

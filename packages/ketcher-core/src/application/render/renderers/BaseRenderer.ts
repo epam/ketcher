@@ -2,6 +2,7 @@ import { select } from 'd3';
 import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import assert from 'assert';
 import { D3SvgElementSelection } from 'application/render/types';
+import { provideEditorSettings } from 'application/editor/editorSettings';
 
 export interface IBaseRenderer {
   show(theme): void;
@@ -26,6 +27,10 @@ export abstract class BaseRenderer implements IBaseRenderer {
   protected canvas: D3SvgElementSelection<SVGSVGElement, void>;
   protected constructor(public drawingEntity: DrawingEntity) {
     this.canvas = select('#polymer-editor-canvas');
+  }
+
+  protected get editorSettings() {
+    return provideEditorSettings();
   }
 
   public get rootBBox() {

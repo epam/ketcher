@@ -144,7 +144,7 @@ class SGroupTool implements Tool {
         return;
       }
 
-      SGroupTool.sgroupDialog(this.editor, id ?? null);
+      SGroupTool.sgroupDialog(this.editor, id);
       this.isNotActiveTool = true;
     }
   }

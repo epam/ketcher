@@ -1,13 +1,18 @@
-import { Subscription, DOMSubscription } from 'subscription';
-import { ReStruct } from 'application/render';
-import { Struct, Vec2 } from 'domain/entities';
+import { DOMSubscription } from 'subscription';
+import { Vec2 } from 'domain/entities';
 import {
+  BaseTool,
+  isBaseTool,
   Tool,
   ToolConstructorInterface,
   ToolEventHandlerName,
+  IRnaPreset,
 } from 'application/editor/tools/Tool';
 import { toolsMap } from 'application/editor/tools';
 import { MonomerItemType } from 'domain/types';
+import { RenderersManager } from 'application/render/renderers/RenderersManager';
+import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
+import { editorEvents, renderersEvents } from 'application/editor/editorEvents';
 
 interface ICoreEditorConstructorParams {
   theme;
@@ -18,37 +23,54 @@ function isMouseMainButtonPressed(event: MouseEvent) {
   return event.button === 0;
 }
 
-export class CoreEditor {
-  public events = {
-    selectPeptide: new Subscription(),
-    selectTool: new Subscription(),
-  };
+let editor;
 
-  public renderersContainer: ReStruct;
+export class CoreEditor {
+  public events = editorEvents;
+
+  public renderersContainer: RenderersManager;
+  public drawingEntitiesManager: DrawingEntitiesManager;
   public lastCursorPosition: Vec2 = new Vec2(0, 0);
-  private canvas: SVGSVGElement;
+  public canvas: SVGSVGElement;
+  public canvasOffset: DOMRect;
   public theme;
   // private lastEvent: Event | undefined;
-  private tool?: Tool;
+  private tool?: Tool | BaseTool;
 
   constructor({ theme, canvas }: ICoreEditorConstructorParams) {
     this.theme = theme;
     this.canvas = canvas;
     this.subscribeEvents();
-    this.renderersContainer = new ReStruct(new Struct(), {
-      skipRaphaelInitialization: true,
-      theme,
-    });
+    this.renderersContainer = new RenderersManager({ theme });
+    this.drawingEntitiesManager = new DrawingEntitiesManager();
     this.domEventSetup();
+    this.canvasOffset = this.canvas.getBoundingClientRect();
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
+    editor = this;
+  }
+
+  static provideEditorInstance(): CoreEditor {
+    return editor;
   }
 
   private subscribeEvents() {
-    this.events.selectPeptide.add((peptide) => this.onSelectPeptide(peptide));
+    this.events.selectMonomer.add((monomer) => this.onSelectMonomer(monomer));
+    this.events.selectPreset.add((preset) => this.onSelectRNAPreset(preset));
     this.events.selectTool.add((tool) => this.onSelectTool(tool));
+
+    renderersEvents.forEach((eventName) => {
+      this.events[eventName].add((event) =>
+        this.useToolIfNeeded(eventName, event),
+      );
+    });
   }
 
-  private onSelectPeptide(peptide: MonomerItemType) {
-    this.selectTool('peptide', peptide);
+  private onSelectMonomer(monomer: MonomerItemType) {
+    this.selectTool('monomer', monomer);
+  }
+
+  private onSelectRNAPreset(preset: IRnaPreset) {
+    this.selectTool('preset', preset);
   }
 
   private onSelectTool(tool: string) {
@@ -57,8 +79,13 @@ export class CoreEditor {
 
   public selectTool(name: string, options?) {
     const ToolConstructor: ToolConstructorInterface = toolsMap[name];
+    const oldTool = this.tool;
 
     this.tool = new ToolConstructor(this, options);
+
+    if (isBaseTool(oldTool)) {
+      oldTool?.destroy();
+    }
   }
 
   private domEventSetup() {
@@ -157,7 +184,7 @@ export class CoreEditor {
   }
 
   private useToolIfNeeded(eventHandlerName: ToolEventHandlerName, event) {
-    const editorTool = this.tool;
+    const editorTool = this.tool as Tool;
     if (!editorTool) {
       return false;
     }

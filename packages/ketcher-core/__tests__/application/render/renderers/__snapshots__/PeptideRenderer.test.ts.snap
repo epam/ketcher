@@ -6,6 +6,7 @@ exports[`PeptideRenderer should render peptide 1`] = `
   id="polymer-editor-canvas"
   width="500"
 >
+  <defs />
   <g
     transform="translate(0, 0) scale(1)"
     transition="transform 0.2s"
@@ -13,12 +14,15 @@ exports[`PeptideRenderer should render peptide 1`] = `
     <use
       fill="yellow"
       href="#peptide"
+      style="cursor: pointer;"
     />
     <text
       fill="black"
       font-size="12px"
       font-weight="700"
       line-height="12px"
+      pointer-events="none"
+      style="cursor: pointer; user-select: none;"
       x="0"
       y="10"
     >

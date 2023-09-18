@@ -17,13 +17,15 @@ import {
   drawFGAndDrag,
   drawSaltAndDrag,
   STRUCTURE_LIBRARY_BUTTON_NAME,
+  waitForPageInit,
+  waitForRender,
 } from '@utils';
 
 const SHIFT = 50;
 
 test.describe('Click and drag Salts and Solvents on canvas', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {
@@ -57,22 +59,23 @@ test.describe('Click and drag Salts and Solvents on canvas', () => {
     await drawSaltAndDrag(SaltsAndSolvents.AceticAcid, SHIFT, page);
   });
 
-  test.fixme(
-    'Propionic acid appears near Methane sulphonic acid',
-    async ({ page }) => {
-      /*
+  test('Propionic acid appears near Methane sulphonic acid', async ({
+    page,
+  }) => {
+    /*
       Test case: EPMLSOPKET-11557
       Description: when click & drag with a Salts and Solvents on Salts and Solvents
       Salts appears near Salts where the left mouse button was released
     */
-      await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-      await page.getByRole('tab', { name: 'Salts and Solvents' }).click();
-      await selectSaltsAndSolvents(SaltsAndSolvents.MethaneSulphonicAcid, page);
+    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+    await page.getByRole('tab', { name: 'Salts and Solvents' }).click();
+    await selectSaltsAndSolvents(SaltsAndSolvents.MethaneSulphonicAcid, page);
+    await waitForRender(page, async () => {
       await clickInTheMiddleOfTheScreen(page);
+    });
 
-      await drawSaltAndDrag(SaltsAndSolvents.PropionicAcid, SHIFT, page);
-    },
-  );
+    await drawSaltAndDrag(SaltsAndSolvents.PropionicAcid, SHIFT, page);
+  });
 
   test('Isobutanol appears near Oxygen atom', async ({ page }) => {
     /*

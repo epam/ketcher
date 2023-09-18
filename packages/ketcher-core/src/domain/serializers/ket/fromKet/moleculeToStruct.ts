@@ -21,6 +21,7 @@ import {
   Struct,
   SGroupAttachmentPoint,
   RGroupAttachmentPoint,
+  AttachmentPoints,
 } from 'domain/entities';
 
 import { Elements } from 'domain/constants';
@@ -38,6 +39,7 @@ export function toRlabel(values) {
 
 export function moleculeToStruct(ketItem: any): Struct {
   const struct = mergeFragmentsToStruct(ketItem, new Struct());
+
   if (ketItem.atoms) {
     ketItem.atoms.forEach((atom) => {
       let atomId: number | null = null;
@@ -72,7 +74,7 @@ export function moleculeToStruct(ketItem: any): Struct {
 
   struct.initHalfBonds();
   struct.initNeighbors();
-  struct.markFragments();
+  struct.markFragments(ketItem.properties);
   struct.bindSGroupsToFunctionalGroups();
 
   return struct;
@@ -93,7 +95,7 @@ export function atomToStruct(source) {
   ifDef(params, 'isotope', source.isotope);
   ifDef(params, 'radical', source.radical);
   ifDef(params, 'cip', source.cip);
-  ifDef(params, 'attpnt', source.attachmentPoints);
+  ifDef(params, 'attachmentPoints', source.attachmentPoints);
   // stereo
   ifDef(params, 'stereoLabel', source.stereoLabel);
   ifDef(params, 'stereoParity', source.stereoParity);
@@ -120,7 +122,7 @@ export function rglabelToStruct(source) {
     y: -source.location[1],
     z: source.location[2] || 0.0,
   });
-  ifDef(params, 'attpnt', source.attachmentPoints);
+  ifDef(params, 'attachmentPoints', source.attachmentPoints);
   const rglabel = toRlabel(source.$refs.map((el) => parseInt(el.slice(3))));
   ifDef(params, 'rglabel', rglabel);
   return new Atom(params);
@@ -134,7 +136,7 @@ export function atomListToStruct(source) {
     y: -source.location[1],
     z: source.location[2] || 0.0,
   });
-  ifDef(params, 'attpnt', source.attachmentPoints);
+  ifDef(params, 'attachmentPoints', source.attachmentPoints);
   const ids = source.elements
     .map((el) => Elements.get(el)?.number)
     .filter((id) => id);
@@ -148,18 +150,18 @@ export function atomListToStruct(source) {
 function addRGroupAttachmentPointsToStruct(
   struct: Struct,
   attachedAtomId: number,
-  attpnt,
+  attachmentPoints: AttachmentPoints | null,
 ) {
   const rgroupAttachmentPoints: RGroupAttachmentPoint[] = [];
-  if (attpnt === 1) {
+  if (attachmentPoints === AttachmentPoints.FirstSideOnly) {
     rgroupAttachmentPoints.push(
       new RGroupAttachmentPoint(attachedAtomId, 'primary'),
     );
-  } else if (attpnt === 2) {
+  } else if (attachmentPoints === AttachmentPoints.SecondSideOnly) {
     rgroupAttachmentPoints.push(
       new RGroupAttachmentPoint(attachedAtomId, 'secondary'),
     );
-  } else if (attpnt === 3) {
+  } else if (attachmentPoints === AttachmentPoints.BothSides) {
     rgroupAttachmentPoints.push(
       new RGroupAttachmentPoint(attachedAtomId, 'primary'),
     );

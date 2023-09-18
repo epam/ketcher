@@ -14,10 +14,16 @@
  * limitations under the License.
  ***************************************************************************/
 import { ToolConstructorInterface } from './Tool';
-import { PeptideTool } from 'application/editor/tools/Peptide';
-import { SelectLasso } from 'application/editor/tools/SelectLasso';
+import { MonomerTool } from 'application/editor/tools/Monomer';
+import { RnaPresetTool } from 'application/editor/tools/RnaPreset';
+import { SelectRectangle } from 'application/editor/tools/SelectRectangle';
+import { PolymerBond } from 'application/editor/tools/Bond';
+import { EraserTool } from 'application/editor/tools/Erase';
 
 export const toolsMap: Record<string, ToolConstructorInterface> = {
-  peptide: PeptideTool,
-  'select-lasso': SelectLasso,
+  monomer: MonomerTool,
+  preset: RnaPresetTool,
+  'select-rectangle': SelectRectangle,
+  'bond-single': PolymerBond,
+  erase: EraserTool,
 };

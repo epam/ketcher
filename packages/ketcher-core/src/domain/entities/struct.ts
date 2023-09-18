@@ -36,11 +36,17 @@ import { Text } from './text';
 import { Vec2 } from './vec2';
 import { Highlight } from './highlight';
 import { RGroupAttachmentPoint } from './rgroupAttachmentPoint';
-import { Peptide } from 'domain/entities/Peptide';
+import { BaseMonomer } from './BaseMonomer';
+import { PolymerBond } from 'domain/entities/PolymerBond';
 
 export type Neighbor = {
   aid: number;
   bid: number;
+};
+
+export type StructProperty = {
+  key: string;
+  value: string;
 };
 
 function arrayAddIfMissing(array, item) {
@@ -55,7 +61,8 @@ export class Struct {
   atoms: Pool<Atom>;
   bonds: Pool<Bond>;
   sgroups: Pool<SGroup>;
-  peptides: Pool<Peptide>;
+  monomers: Map<number, BaseMonomer>;
+  polymerBonds: Map<number, PolymerBond>;
   halfBonds: Pool<HalfBond>;
   loops: Pool<Loop>;
   isReaction: boolean;
@@ -76,7 +83,8 @@ export class Struct {
     this.atoms = new Pool<Atom>();
     this.bonds = new Pool<Bond>();
     this.sgroups = new Pool<SGroup>();
-    this.peptides = new Pool<Peptide>();
+    this.monomers = new Map<number, BaseMonomer>();
+    this.polymerBonds = new Map<number, PolymerBond>();
     this.halfBonds = new Pool<HalfBond>();
     this.loops = new Pool<Loop>();
     this.isReaction = false;
@@ -729,8 +737,8 @@ export class Struct {
     return components;
   }
 
-  markFragment(idSet: Pile<number>) {
-    const frag = new Fragment();
+  markFragment(idSet: Pile<number>, properties: [StructProperty]) {
+    const frag = new Fragment([], undefined, properties);
     const fid = this.frags.add(frag);
 
     idSet.forEach((aid) => {
@@ -740,10 +748,10 @@ export class Struct {
     });
   }
 
-  markFragments() {
+  markFragments(properties?) {
     const components = this.findConnectedComponents();
     components.forEach((comp) => {
-      this.markFragment(comp);
+      this.markFragment(comp, properties);
     });
   }
 

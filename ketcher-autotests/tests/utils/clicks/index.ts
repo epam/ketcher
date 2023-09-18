@@ -1,7 +1,14 @@
 import { Page } from '@playwright/test';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
-import { BondType } from '..';
+import {
+  BondType,
+  ReactionMappingTool,
+  resetCurrentTool,
+  selectButtonById,
+  selectNestedTool,
+  takeEditorScreenshot,
+} from '..';
 import { AtomLabelType } from './types';
 
 type BoundingBox = {
@@ -35,14 +42,21 @@ export async function getCoordinatesOfTheMiddleOfTheScreen(page: Page) {
   };
 }
 
-/* Usage: await pressButton(page, 'Add to Canvas') 
+/* Usage: await pressButton(page, 'Add to Canvas')
   Click on specified button in Open Structure dialog
 */
 export function pressButton(page: Page, name = '') {
   return page.getByRole('button', { name }).click();
 }
 
-/* Usage: await pressTab(page, 'Functional Groups') 
+export function selectOption(page: Page, name = '') {
+  return page.getByRole('option', { name }).click();
+}
+
+export function selectOptionByText(page: Page, text = '') {
+  return page.getByText(text, { exact: true }).click();
+}
+/* Usage: await pressTab(page, 'Functional Groups')
   Click on specified Tab in Templates dialog
 */
 export function pressTab(page: Page, name = '') {
@@ -116,6 +130,15 @@ export async function doubleClickOnBond(
   await page.mouse.dblclick(point.x, point.y);
 }
 
+export async function rightClickOnBond(
+  page: Page,
+  bondType: BondType,
+  bondNumber: number,
+) {
+  const point = await getBondByIndex(page, { type: bondType }, bondNumber);
+  await page.mouse.click(point.x, point.y, { button: 'right' });
+}
+
 export async function moveOnAtom(
   page: Page,
   atomLabel: string,
@@ -132,4 +155,19 @@ export async function moveOnBond(
 ) {
   const point = await getBondByIndex(page, { type: bondType }, bondNumber);
   await page.mouse.move(point.x, point.y);
+}
+
+export async function applyAutoMapMode(
+  page: Page,
+  mode: string,
+  withScreenshot = true,
+) {
+  await resetCurrentTool(page);
+  await selectNestedTool(page, ReactionMappingTool.AUTOMAP);
+  await pressButton(page, 'Discard');
+  await selectOption(page, mode);
+  await selectButtonById('OK', page);
+  if (withScreenshot) {
+    await takeEditorScreenshot(page);
+  }
 }

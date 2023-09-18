@@ -56,11 +56,14 @@ const SubMenu = ({
     .filter((item) => item);
   const activeOption = options.filter((itemKey) => isActive(itemKey));
   const visibleItemId = activeOption.length ? activeOption[0] : options[0];
+  const visibleItemTitle = subComponents.find(
+    (option) => option.props.itemId === visibleItemId,
+  )?.props.title;
 
   return (
     <RootContainer>
       <VisibleItem>
-        <MenuItem itemId={visibleItemId} />
+        <MenuItem itemId={visibleItemId} title={visibleItemTitle} />
         {open || (
           <StyledDropdownIcon
             className="dropdown"

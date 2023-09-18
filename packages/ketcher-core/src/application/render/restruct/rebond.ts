@@ -114,28 +114,30 @@ class ReBond extends ReObject {
       bond.stereo !== Bond.PATTERN.STEREO.NONE &&
       bond.stereo !== Bond.PATTERN.STEREO.CIS_TRANS;
 
-    // for stereo bonds we slightly change the parameters
-    // to adjust the shape of the selection
-    const addStereoPadding = isStereoBond ? stereoBondWidth / 2 : 0;
+    const addPadding = isStereoBond ? 0 : -2;
 
     // find the points on the line where we will be drawing the curves
     const contourStart = Vec2.getLinePoint(
       halfBondEnd,
       halfBondStart,
-      -bondThickness * 2.5 - addStereoPadding,
+      addPadding,
     );
     const contourEnd = Vec2.getLinePoint(
       halfBondStart,
       halfBondEnd,
-      -bondThickness * 2.5,
+      addPadding,
     );
 
+    const stereoBondStartHeightCoef = 0.5;
+    const bondPadding = 0.5;
     const addStart = isStereoBond
-      ? stereoBondWidth * 0.25
-      : regularSelectionThikness;
+      ? stereoBondWidth * stereoBondStartHeightCoef
+      : regularSelectionThikness + bondPadding;
+    const stereoBondEndHeightCoef = 1;
     const addEnd = isStereoBond
-      ? stereoBondWidth + (regularSelectionThikness * 4) / stereoBondWidth
-      : regularSelectionThikness;
+      ? stereoBondWidth +
+        (regularSelectionThikness * stereoBondEndHeightCoef) / stereoBondWidth
+      : regularSelectionThikness + bondPadding;
 
     const contourPaddedStart = Vec2.getLinePoint(
       contourStart,
@@ -517,12 +519,14 @@ function getBondPath(
   hb2: HalfBond,
   isSnapping: boolean,
 ) {
-  let path = null;
+  let path: any = null;
   const render = restruct.render;
   const struct = restruct.molecule;
   const shiftA = !restruct.atoms.get(hb1.begin)?.showLabel;
   const shiftB = !restruct.atoms.get(hb2.begin)?.showLabel;
-
+  let newHalfBonds: [HalfBond, HalfBond];
+  const xShiftMinus1 = -1;
+  const xShiftPlus1 = 1;
   switch (bond.b.type) {
     case Bond.PATTERN.TYPE.SINGLE:
       switch (bond.b.stereo) {
@@ -635,7 +639,13 @@ function getBondPath(
       break;
     }
     case Bond.PATTERN.TYPE.SINGLE_OR_DOUBLE:
-      path = getSingleOrDoublePath(render, hb1, hb2, isSnapping);
+      newHalfBonds = util.updateHalfBondCoordinates(hb1, hb2, xShiftPlus1);
+      path = getSingleOrDoublePath(
+        render,
+        newHalfBonds[0],
+        newHalfBonds[1],
+        isSnapping,
+      );
       break;
     case Bond.PATTERN.TYPE.SINGLE_OR_AROMATIC:
       path = getBondAromaticPath(
@@ -649,10 +659,11 @@ function getBondPath(
       );
       break;
     case Bond.PATTERN.TYPE.DOUBLE_OR_AROMATIC:
+      newHalfBonds = util.updateHalfBondCoordinates(hb1, hb2, xShiftMinus1);
       path = getBondAromaticPath(
         render,
-        hb1,
-        hb2,
+        newHalfBonds[0],
+        newHalfBonds[1],
         bond,
         shiftA,
         shiftB,
@@ -660,13 +671,21 @@ function getBondPath(
       );
       break;
     case Bond.PATTERN.TYPE.ANY:
-      path = draw.bondAny(render.paper, hb1, hb2, render.options, isSnapping);
+      newHalfBonds = util.updateHalfBondCoordinates(hb1, hb2, xShiftMinus1);
+      path = draw.bondAny(
+        render.paper,
+        newHalfBonds[0],
+        newHalfBonds[1],
+        render.options,
+        isSnapping,
+      );
       break;
     case Bond.PATTERN.TYPE.HYDROGEN:
+      newHalfBonds = util.updateHalfBondCoordinates(hb1, hb2, xShiftPlus1);
       path = draw.bondHydrogen(
         render.paper,
-        hb1,
-        hb2,
+        newHalfBonds[0],
+        newHalfBonds[1],
         render.options,
         isSnapping,
       );
@@ -682,6 +701,10 @@ function getBondPath(
       break;
     default:
       throw new Error('Bond type ' + bond.b.type + ' not supported');
+  }
+  if (path) {
+    const { previewOpacity } = render.options;
+    path.attr({ opacity: bond.b.isPreview ? previewOpacity : 1 });
   }
   return path;
 }

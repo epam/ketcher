@@ -3,12 +3,13 @@ import {
   openFileAndAddToCanvas,
   takeEditorScreenshot,
   selectAction,
+  waitForPageInit,
 } from '@utils';
 import { TopPanelButton } from '@utils/selectors';
 
 test.describe('Paste Tool', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test('InfoModal with hotkey display for Paste action', async ({ page }) => {

@@ -16,7 +16,6 @@
  ***************************************************************************/
 
 import { getDefaultPresets } from './getDefaultPreset';
-import { MonomerItemType } from 'components/monomerLibrary/monomerLibraryItem/types';
 import { IRnaPreset } from 'components/monomerLibrary/RnaBuilder/types';
 import {
   monomers,
@@ -28,6 +27,7 @@ import {
   uracil,
   adenine,
 } from '../testMockData/monomerPresets';
+import { MonomerItemType } from 'ketcher-core';
 
 describe('getDefaultPreset function', () => {
   it('should return empty array if cannot return default nucteotides', () => {

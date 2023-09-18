@@ -202,7 +202,7 @@ class ReAtom extends ReObject {
     if (atomSymbolShift > 0) {
       return atomPosition.addScaled(
         direction,
-        atomSymbolShift + 2 * renderOptions.lineWidth,
+        atomSymbolShift + 3 * renderOptions.lineWidth,
       );
     } else {
       return atomPosition;
@@ -210,7 +210,7 @@ class ReAtom extends ReObject {
   }
 
   hasAttachmentPoint(): boolean {
-    return Boolean(this.a.attpnt);
+    return Boolean(this.a.attachmentPoints);
   }
 
   show(restruct: ReStruct, aid: number, options: any): void {
@@ -413,17 +413,26 @@ class ReAtom extends ReObject {
     // TODO: fragment should not be null
     const fragment = restruct.molecule.frags.get(fragmentId);
 
-    const text =
-      (shouldDisplayStereoLabel(
-        stereoLabel,
-        options.stereoLabelStyle,
-        options.ignoreChiralFlag,
-        fragment?.enhancedStereoFlag,
-      )
-        ? `${stereoLabel}\n`
-        : '') +
-      (queryAttrsText.length > 0 ? `${queryAttrsText}\n` : '') +
-      (aamText.length > 0 ? `.${aamText}.` : '');
+    const displayStereoLabel = shouldDisplayStereoLabel(
+      stereoLabel,
+      options.stereoLabelStyle,
+      options.ignoreChiralFlag,
+      fragment?.enhancedStereoFlag,
+    );
+
+    let text = '';
+
+    if (displayStereoLabel) {
+      text = `${stereoLabel}\n`;
+    }
+
+    if (queryAttrsText.length > 0) {
+      text += `${queryAttrsText}\n`;
+    }
+
+    if (aamText.length > 0) {
+      text += `.${aamText}.`;
+    }
 
     if (text.length > 0) {
       const elem = Elements.get(this.a.label);
@@ -577,6 +586,7 @@ function shouldDisplayStereoLabel(
   if (!stereoLabel) {
     return false;
   }
+
   const stereoLabelType = stereoLabel.match(/\D+/g)[0];
 
   if (ignoreChiralFlag && stereoLabelType === StereoLabel.Abs) {
@@ -587,18 +597,14 @@ function shouldDisplayStereoLabel(
   }
 
   switch (labelStyle) {
-    // Off
     case StereLabelStyleType.Off:
       return false;
-    // On
     case StereLabelStyleType.On:
       return true;
-    // Classic
     case StereLabelStyleType.Classic:
       return !!(
         flag === StereoFlag.Mixed || stereoLabelType === StereoLabel.Or
       );
-    // IUPAC
     case StereLabelStyleType.IUPAC:
       return !!(
         flag === StereoFlag.Mixed && stereoLabelType !== StereoLabel.Abs
@@ -608,8 +614,8 @@ function shouldDisplayStereoLabel(
   }
 }
 
-function isLabelVisible(restruct, options, atom) {
-  const isAttachmentPointAtom = Boolean(atom.a.attpnt);
+function isLabelVisible(restruct, options, atom: ReAtom) {
+  const isAttachmentPointAtom = Boolean(atom.a.attachmentPoints);
   const isCarbon = atom.a.label.toLowerCase() === 'c';
   const visibleTerminal =
     options.showHydrogenLabels !== ShowHydrogenLabels.Off &&
@@ -699,10 +705,12 @@ function buildLabel(
   options: any,
 ): ElemAttr {
   // eslint-disable-line max-statements
-  let label: any = {};
+  const label: any = {};
   label.text = getLabelText(atom.a);
 
-  if (label.text === '') label = 'R#'; // for structures that missed 'M  RGP' tag in molfile
+  if (!label.text) {
+    label.text = 'R#';
+  }
 
   if (label.text === atom.a.label) {
     const element = Elements.get(label.text);
@@ -711,11 +719,13 @@ function buildLabel(
     }
   }
 
+  const { previewOpacity } = options;
   label.path = paper.text(ps.x, ps.y, label.text).attr({
     font: options.font,
     'font-size': options.fontsz,
     fill: atom.color,
     'font-style': atom.a.pseudo ? 'italic' : '',
+    'fill-opacity': atom.a.isPreview ? previewOpacity : 1,
   });
 
   label.rbb = util.relBox(label.path.getBBox());

@@ -23,13 +23,19 @@ import { getMonomerUniqueKey } from 'state/library';
 import { MonomerItemType } from 'ketcher-core';
 import { calculatePreviewPosition } from '../../../helpers';
 import { useAppDispatch, useAppSelector } from 'hooks';
-import { showPreview, selectShowPreview, selectEditor } from 'state/common';
+import {
+  showPreview,
+  selectShowPreview,
+  selectEditor,
+  selectTool,
+} from 'state/common';
 
 const MonomerGroup = ({
   items,
   title,
   selectedMonomerUniqueKey,
   libraryName,
+  disabled,
   onItemClick = EmptyFunction,
 }: IMonomerGroupProps) => {
   const dispatch = useAppDispatch();
@@ -58,16 +64,20 @@ const MonomerGroup = ({
     if (preview.monomer || !e.currentTarget) {
       return;
     }
-
     const cardCoordinates = e.currentTarget.getBoundingClientRect();
     const previewStyle = calculatePreviewPosition(monomer, cardCoordinates);
     debouncedShowPreview({ monomer, style: previewStyle });
   };
 
   const selectMonomer = (monomer: MonomerItemType) => {
+    dispatch(selectTool('monomer'));
     switch (libraryName) {
       case 'PEPTIDE':
-        editor.events.selectPeptide.dispatch(monomer);
+        editor.events.selectMonomer.dispatch(monomer);
+        onItemClick(monomer);
+        break;
+      case 'CHEM':
+        editor.events.selectMonomer.dispatch(monomer);
         onItemClick(monomer);
         break;
       default:
@@ -91,6 +101,7 @@ const MonomerGroup = ({
           return (
             <MonomerItem
               key={key}
+              disabled={disabled}
               item={monomer}
               isSelected={
                 selectedMonomerUniqueKey === getMonomerUniqueKey(monomer)

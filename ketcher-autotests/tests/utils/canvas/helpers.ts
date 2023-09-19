@@ -6,13 +6,21 @@ import {
 } from '@playwright/test';
 import { clickInTheMiddleOfTheScreen, pressButton } from '@utils/clicks';
 import { ELEMENT_TITLE } from './types';
-import { DELAY_IN_SECONDS, TopPanelButton, waitForRender } from '..';
+// import { DELAY_IN_SECONDS, TopPanelButton, waitForRender } from '..';
+import {
+  DELAY_IN_SECONDS,
+  RingButton,
+  TopPanelButton,
+  selectRing,
+  waitForRender,
+} from '..';
 import { selectTopPanelButton } from './tools';
 import { getLeftTopBarSize } from './common/getLeftTopBarSize';
 import { emptyFunction } from '@utils/common/helpers';
 
 export async function drawBenzeneRing(page: Page) {
-  await page.getByRole('button', { name: 'Benzene (T)' }).click();
+  // await page.getByRole('button', { name: 'Benzene (T)' }).click();
+  await selectRing(RingButton.Benzene, page);
   await clickInTheMiddleOfTheScreen(page);
 }
 
@@ -99,6 +107,11 @@ export async function takeTopToolbarScreenshot(page: Page) {
   await expect(editor).toHaveScreenshot();
 }
 
+export async function takeBottomToolbarScreenshot(page: Page) {
+  const editor = page.getByTestId('bottom-toolbar');
+  await delay(DELAY_IN_SECONDS.THREE);
+  await expect(editor).toHaveScreenshot();
+}
 /**
  * Returns an editor screenshot
  * Usage: convenient for temporary comparison of different states

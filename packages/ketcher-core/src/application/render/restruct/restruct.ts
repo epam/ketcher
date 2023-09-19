@@ -90,6 +90,8 @@ class ReStruct {
   private bondsChanged: Map<number, ReEnhancedFlag> = new Map();
   private textsChanged: Map<number, ReText> = new Map();
   private snappingBonds: number[] = [];
+  private monomers: Map<number, ReMonomer> = new Map();
+
   constructor(
     molecule,
     render: Render | { skipRaphaelInitialization: boolean; theme },
@@ -286,7 +288,6 @@ class ReStruct {
   ): void {
     // eslint-disable-line max-params
     if (!path || !this.layers[group].node.parentNode) return;
-
     const paths = Array.isArray(path) ? path : [path];
 
     paths.forEach((path) => {

@@ -93,6 +93,7 @@ export function atomToStruct(source) {
     'ringConnectivity',
     'chirality',
     'atomicMass',
+    'customQuery',
   ];
   ifDef(params, 'label', source.label);
   ifDef(params, 'alias', source.alias);

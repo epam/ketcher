@@ -99,6 +99,10 @@ export function fromAtom(satom) {
     connectivity: satom.queryProperties.connectivity,
     ringConnectivity: satom.queryProperties.ringConnectivity,
     chirality: satom.queryProperties.chirality,
+    customQuery:
+      satom.queryProperties.customQuery === null
+        ? ''
+        : satom.queryProperties.customQuery.toString(),
     atomicMass:
       satom.queryProperties.atomicMass === null
         ? ''
@@ -106,9 +110,50 @@ export function fromAtom(satom) {
   };
 }
 
-export function toAtom(atom) {
+export function toAtom(satom) {
   // TODO merge this to Atom.attrlist?
   //      see ratomtool
+  const {
+    aromaticity,
+    degree,
+    ringMembership,
+    ringSize,
+    connectivity,
+    ringConnectivity,
+    chirality,
+    atomicMass,
+    customQuery,
+    ...atom
+  } = satom;
+  if (customQuery) {
+    return Object.assign({}, atom, {
+      label: capitalize(atom.label),
+      alias: null,
+      charge: 0,
+      isotope: 0,
+      explicitValence: -1,
+      radical: 0,
+      ringBondCount: 0,
+      hCount: 0,
+      substitutionCount: 0,
+      unsaturatedAtom: 0,
+      implicitHCount: null,
+      queryProperties: {
+        aromaticity: null,
+        degree: null,
+        implicitHCount: null,
+        ringMembership: null,
+        ringSize: null,
+        connectivity: null,
+        ringConnectivity: null,
+        chirality: null,
+        atomicMass: null,
+        customQuery,
+      },
+      invRet: 0,
+      exactChangeFlag: 0,
+    });
+  }
   const chargeRegexp = new RegExp(atomSchema.properties.charge.pattern);
   const pch = chargeRegexp.exec(atom.charge);
   const charge = pch ? parseInt(pch[1] + pch[3] + pch[2]) : atom.charge;
@@ -119,15 +164,16 @@ export function toAtom(atom) {
     exactChangeFlag: +(atom.exactChangeFlag ?? false),
     unsaturatedAtom: +(atom.unsaturatedAtom ?? false),
     queryProperties: {
-      aromaticity: atom.aromaticity,
-      degree: atom.degree,
+      aromaticity,
+      degree,
       implicitHCount: atom.implicitHCount,
-      ringMembership: atom.ringMembership,
-      ringSize: atom.ringSize,
-      connectivity: atom.connectivity,
-      ringConnectivity: atom.ringConnectivity,
-      chirality: atom.chirality,
-      atomicMass: atom.atomicMass === '' ? null : Number(atom.atomicMass),
+      ringMembership,
+      ringSize,
+      connectivity,
+      ringConnectivity,
+      chirality,
+      atomicMass: atomicMass === '' ? null : Number(atomicMass),
+      customQuery: customQuery === '' ? null : customQuery,
     },
   });
   if (charge !== undefined) conv.charge = charge;

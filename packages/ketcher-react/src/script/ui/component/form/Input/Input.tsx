@@ -95,7 +95,9 @@ function TextArea({
   innerRef,
   ...rest
 }) {
-  return <textarea value={value} ref={innerRef} onInput={onChange} {...rest} />;
+  return (
+    <textarea value={value ?? ''} ref={innerRef} onInput={onChange} {...rest} />
+  );
 }
 
 TextArea.val = (ev) => ev.target.value;

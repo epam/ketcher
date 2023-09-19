@@ -156,6 +156,12 @@ export const atom = {
       maxLength: 5,
       invalidMessage: 'Invalid atomic mass',
     },
+    customQuery: {
+      title: 'Custom Query',
+      pattern: '[^ ]',
+      type: 'string',
+      invalidMessage: 'Invalid custom query',
+    },
     invRet: {
       title: 'Inversion',
       enum: [0, 1, 2],

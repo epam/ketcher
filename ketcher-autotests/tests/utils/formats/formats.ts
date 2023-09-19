@@ -1,23 +1,23 @@
 import { Page } from '@playwright/test';
 import { MolfileFormat } from 'ketcher-core';
 
-export async function getKet(page: Page) {
+export async function getKet(page: Page): Promise<string> {
   return await page.evaluate(() => window.ketcher.getKet());
 }
 
-export async function getCml(page: Page) {
+export async function getCml(page: Page): Promise<string> {
   return await page.evaluate(() => window.ketcher.getCml());
 }
 
-export async function getCdxml(page: Page) {
+export async function getCdxml(page: Page): Promise<string> {
   return await page.evaluate(() => window.ketcher.getCDXml());
 }
 
-export async function getSmiles(page: Page) {
+export async function getSmiles(page: Page): Promise<string> {
   return await page.evaluate(() => window.ketcher.getSmiles());
 }
 
-export async function getInchi(page: Page) {
+export async function getInchi(page: Page): Promise<string> {
   return await page.evaluate(() => window.ketcher.getInchi());
 }
 
@@ -25,56 +25,71 @@ export async function getInChIKey(page: Page) {
   return await page.evaluate(() => window.ketcher.getInChIKey());
 }
 
-export async function getExtendedSmiles(page: Page) {
+export async function getExtendedSmiles(page: Page): Promise<string> {
   return await page.evaluate(() => window.ketcher.getSmiles(true));
 }
 
-export async function getMolfile(page: Page, fileFormat?: MolfileFormat) {
+export async function getMolfile(
+  page: Page,
+  fileFormat?: MolfileFormat,
+): Promise<string> {
   return await page.evaluate(
     (fileFormat) => window.ketcher.getMolfile(fileFormat),
     fileFormat,
   );
 }
 
-export async function getRxn(page: Page, fileFormat?: MolfileFormat) {
+export async function getRxn(
+  page: Page,
+  fileFormat?: MolfileFormat,
+): Promise<string> {
   return await page.evaluate(
     (fileFormat) => window.ketcher.getRxn(fileFormat),
     fileFormat,
   );
 }
 
-export async function getSmarts(page: Page) {
+export async function getSmarts(page: Page): Promise<string> {
   return await page.evaluate(() => window.ketcher.getSmarts());
 }
 
-export async function getSdf(page: Page, fileFormat: MolfileFormat = 'v2000') {
+export async function getSdf(
+  page: Page,
+  fileFormat: MolfileFormat = 'v2000',
+): Promise<string> {
   return await page.evaluate(
     (fileFormat) => window.ketcher.getSdf(fileFormat),
     fileFormat,
   );
 }
 
-export async function setMolecule(page: Page, structStr: string) {
+export async function setMolecule(
+  page: Page,
+  structStr: string,
+): Promise<void> {
   return await page.evaluate(
     (structStr) => window.ketcher.setMolecule(structStr),
     structStr,
   );
 }
 
-export async function addFragment(page: Page, structStr: string) {
+export async function addFragment(
+  page: Page,
+  structStr: string,
+): Promise<void> {
   return await page.evaluate(
     (structStr) => window.ketcher.setMolecule(structStr),
     structStr,
   );
 }
 
-export async function enableDearomatizeOnLoad(page: Page) {
+export async function enableDearomatizeOnLoad(page: Page): Promise<void> {
   return await page.evaluate(() =>
     window.ketcher.setSettings({ 'general.dearomatize-on-load': 'true' }),
   );
 }
 
-export async function disableQueryElements(page: Page) {
+export async function disableQueryElements(page: Page): Promise<void> {
   return await page.evaluate(() => {
     return window.ketcher.setSettings({
       // TODO fix types for setSettings in Ketcher-core

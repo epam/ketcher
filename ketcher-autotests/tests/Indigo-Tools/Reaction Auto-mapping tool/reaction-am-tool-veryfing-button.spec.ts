@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { test, expect } from '@playwright/test';
 import {
   ReactionMappingTool,

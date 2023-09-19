@@ -14,8 +14,6 @@ import {
   BondTool,
   selectNestedTool,
   SelectTool,
-  DELAY_IN_SECONDS,
-  delay,
   waitForPageInit,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
@@ -101,7 +99,7 @@ test.describe('Lasso Selection tool', () => {
      */
     const yShift = 5;
     const shiftCoords = { x: 270, y: 10 };
-    await openFileAndAddToCanvas('Rxn-V2000/reaction-4.rxn', page);
+    await openFileAndAddToCanvas('Rxn-V2000/benzene-chain-reaction.rxn', page);
     await selectNestedTool(page, SelectTool.LASSO_SELECTION);
     const point = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await page.mouse.move(point.x - shiftCoords.x, point.y + shiftCoords.y);
@@ -128,7 +126,7 @@ test.describe('Lasso Selection tool', () => {
      * Test case: EPMLSOPKET-1342
      * Description: Selected structures and components are moved to the another place.
      */
-    await openFileAndAddToCanvas('Rxn-V2000/reaction-4.rxn', page);
+    await openFileAndAddToCanvas('Rxn-V2000/benzene-chain-reaction.rxn', page);
     await selectNestedTool(page, SelectTool.LASSO_SELECTION);
     const point = await selectObjects(page, xAxis, yAxis);
     const atomIndex = 10;
@@ -197,7 +195,7 @@ test.describe('Lasso Selection tool', () => {
      * Test case: EPMLSOPKET-1345
      * Description: The selected part of the structure or reaction should disappear after pressing the "Delete" button.
      */
-    await openFileAndAddToCanvas('Rxn-V2000/reaction-4.rxn', page);
+    await openFileAndAddToCanvas('Rxn-V2000/benzene-chain-reaction.rxn', page);
     await selectNestedTool(page, SelectTool.LASSO_SELECTION);
     await selectObjects(page, yAxis, yAxis);
     await page.keyboard.press('Delete');
@@ -215,7 +213,7 @@ test.describe('Lasso Selection tool', () => {
     const randomCoords = { x: 20, y: 20 };
     const shiftCoords = { x: 50, y: 50 };
     const centerPoint = await getCoordinatesOfTheMiddleOfTheScreen(page);
-    await openFileAndAddToCanvas('Rxn-V2000/reaction-4.rxn', page);
+    await openFileAndAddToCanvas('Rxn-V2000/benzene-chain-reaction.rxn', page);
     await selectNestedTool(page, SelectTool.LASSO_SELECTION);
 
     await clickOnAtom(page, 'C', 0);

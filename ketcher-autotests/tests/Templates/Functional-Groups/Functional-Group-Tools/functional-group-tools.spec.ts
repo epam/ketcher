@@ -456,7 +456,7 @@ test.describe('Templates - Functional Group Tools2', () => {
 
     await delay(DELAY_IN_SECONDS.THREE);
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
-    await page.getByRole('button', { name: 'Lasso Selection (Esc)' }).click();
+    await page.getByTestId('select-lasso').click();
     await clickInTheMiddleOfTheScreen(page);
   });
 

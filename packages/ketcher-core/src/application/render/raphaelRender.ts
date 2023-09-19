@@ -43,7 +43,11 @@ export class Render {
   private readonly userOpts: RenderOptions;
   private oldCb: Box2Abs | null = null;
 
-  constructor(clientArea: HTMLElement, options: RenderOptions) {
+  constructor(
+    clientArea: HTMLElement,
+    options: RenderOptions,
+    reuseRestructIfExist?: boolean,
+  ) {
     let renderWidth = options.width || clientArea.clientWidth - 10;
     let renderHeight = options.height || clientArea.clientHeight - 10;
     renderWidth = renderWidth > 0 ? renderWidth : 0;
@@ -53,8 +57,15 @@ export class Render {
     this.clientArea = clientArea;
     this.paper = new Raphael(clientArea, renderWidth, renderHeight);
     this.sz = Vec2.ZERO;
-    this.ctab = new ReStruct(new Struct(), this);
     this.options = defaultOptions(this.userOpts);
+    if (reuseRestructIfExist && global.ketcher?.editor?.render?.ctab) {
+      this.ctab = global.ketcher?.editor?.render?.ctab;
+      this.ctab.render = this;
+      this.ctab.initLayers();
+      this.ctab.update(true);
+    } else {
+      this.ctab = new ReStruct(new Struct(), this);
+    }
   }
 
   updateOptions(opts: string) {

@@ -1,5 +1,12 @@
 import { DOMSubscription } from 'subscription';
-import { Vec2 } from 'domain/entities';
+import {
+  Bond,
+  FunctionalGroup,
+  Pile,
+  SGroup,
+  SGroupAttachmentPoint,
+  Vec2,
+} from 'domain/entities';
 import {
   BaseTool,
   isBaseTool,
@@ -13,6 +20,9 @@ import { MonomerItemType } from 'domain/types';
 import { RenderersManager } from 'application/render/renderers/RenderersManager';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import { editorEvents, renderersEvents } from 'application/editor/editorEvents';
+import { Editor } from 'application/editor/editor.types';
+import { ReAtom, ReBond, ReSGroup } from 'application/render';
+import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { PolymerBondRenderer } from 'application/render/renderers';
 
 interface ICoreEditorConstructorParams {
@@ -25,7 +35,6 @@ function isMouseMainButtonPressed(event: MouseEvent) {
 }
 
 let editor;
-
 export class CoreEditor {
   public events = editorEvents;
 
@@ -37,6 +46,7 @@ export class CoreEditor {
   public theme;
   // private lastEvent: Event | undefined;
   private tool?: Tool | BaseTool;
+  private micromoleculesEditor: Editor;
 
   constructor({ theme, canvas }: ICoreEditorConstructorParams) {
     this.theme = theme;
@@ -48,6 +58,7 @@ export class CoreEditor {
     this.canvasOffset = this.canvas.getBoundingClientRect();
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     editor = this;
+    this.micromoleculesEditor = global.ketcher.editor;
   }
 
   static provideEditorInstance(): CoreEditor {
@@ -216,5 +227,63 @@ export class CoreEditor {
     }
 
     return false;
+  }
+
+  public switchToMicromolecules() {
+    const struct = this.micromoleculesEditor.struct();
+    const reStruct = this.micromoleculesEditor.render.ctab;
+    let lastId = 0;
+    let monomerIndex = 0;
+    const monomerToSgroup = new Map<BaseMonomer, SGroup>();
+
+    this.drawingEntitiesManager.monomers.forEach((monomer) => {
+      const sgroup = new SGroup(SGroup.TYPES.SUP);
+      monomerToSgroup.set(monomer, sgroup);
+      sgroup.data.name = monomer.monomerItem.label;
+      sgroup.data.expanded = false;
+      sgroup.id = monomerIndex;
+      sgroup.pp = monomer.position;
+      monomer.monomerItem.struct.atoms.forEach((atom, atomId) => {
+        const atomClone = atom.clone();
+        atomClone.pp = monomer.position.add(atom.pp);
+        atomClone.sgs = new Pile<number>([monomerIndex]);
+        sgroup.atoms.push(atomId + lastId);
+        struct.atoms.set(atomId + lastId, atomClone);
+        if (atom.rglabel) {
+          sgroup.addAttachmentPoint(
+            new SGroupAttachmentPoint(atomId + lastId, undefined, undefined),
+          );
+        }
+        reStruct.atoms.set(atomId + lastId, new ReAtom(atomClone));
+      });
+      struct.sgroups.add(sgroup);
+      struct.sGroupForest.insert(sgroup);
+      monomer.monomerItem.struct.bonds.forEach((bond, bondId) => {
+        const bondClone = bond.clone();
+        bondClone.begin += lastId;
+        bondClone.end += lastId;
+        struct.bonds.set(bondId + lastId, bondClone);
+        reStruct.bonds.set(bondId + lastId, new ReBond(bondClone));
+      });
+      lastId = struct.atoms.size + struct.bonds.size;
+      reStruct.sgroups.set(monomerIndex, new ReSGroup(sgroup));
+      struct.functionalGroups.add(new FunctionalGroup(sgroup));
+      monomerIndex++;
+    });
+
+    this.drawingEntitiesManager.polymerBonds.forEach((polymerBond) => {
+      const bond = new Bond({
+        type: Bond.PATTERN.TYPE.SINGLE,
+        begin: monomerToSgroup
+          .get(polymerBond?.firstMonomer)
+          .getAttachmentAtomId(),
+        end: monomerToSgroup
+          .get(polymerBond?.secondMonomer)
+          .getAttachmentAtomId(),
+      });
+      const bondId = struct.bonds.add(bond);
+      reStruct.bonds.set(bondId, new ReBond(bond));
+    });
+    console.log(struct);
   }
 }

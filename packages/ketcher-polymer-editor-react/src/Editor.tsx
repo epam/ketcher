@@ -116,6 +116,7 @@ function Editor({ theme }: EditorProps) {
     dispatch(createEditor({ theme, canvas: canvasRef.current }));
     const serializer = new SdfSerializer();
     const library = serializer.deserialize(monomersData);
+    console.log(library);
     dispatch(loadMonomerLibrary(library));
 
     return () => {

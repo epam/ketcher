@@ -29,7 +29,6 @@ import {
   Vec2,
   Atom,
   Bond,
-  getDirections,
   isCloseToEdgeOfCanvas,
   isCloseToEdgeOfScreen,
   scrollByVector,
@@ -59,7 +58,8 @@ class SelectTool implements Tool {
   readonly #lassoHelper: LassoHelper;
   private readonly editor: Editor;
   private dragCtx: any;
-  isMousedDown = false;
+  private previousMouseMoveEvent: any;
+  isMouseDown = false;
   readonly isMoving = false;
 
   constructor(editor: Editor, mode: SelectMode) {
@@ -77,7 +77,7 @@ class SelectTool implements Tool {
   }
 
   mousedown(event) {
-    this.isMousedDown = true;
+    this.isMouseDown = true;
     const rnd = this.editor.render;
     const ctab = rnd.ctab;
     const molecule = ctab.molecule;
@@ -150,10 +150,14 @@ class SelectTool implements Tool {
       this.editor.selection(null);
       this.editor.selection(isSelected(selection, ci) ? selection : sel);
     }
+
+    this.moveCanvas();
+
     return true;
   }
 
   mousemove(event) {
+    this.previousMouseMoveEvent = event;
     const editor = this.editor;
     const rnd = editor.render;
     const restruct = editor.render.ctab;
@@ -224,7 +228,6 @@ class SelectTool implements Tool {
       dragCtx.mergeItems = getItemsToFuse(editor, visibleSelectedItems);
       editor.hover(getHoverToFuse(dragCtx.mergeItems));
 
-      resizeCanvas(rnd, event);
       editor.update(dragCtx.action, true, { resizeCanvas: false });
       return true;
     }
@@ -253,10 +256,10 @@ class SelectTool implements Tool {
   }
 
   mouseup(event) {
-    if (!this.isMousedDown) {
+    if (!this.isMouseDown) {
       return;
     }
-    this.isMousedDown = false;
+    this.isMouseDown = false;
 
     const editor = this.editor;
     const selected = editor.selection();
@@ -508,6 +511,26 @@ class SelectTool implements Tool {
       reArrow.isResizing = isResizing;
     }
   }
+
+  private moveCanvas() {
+    const event = this.previousMouseMoveEvent;
+    const render = this.editor.render;
+
+    if (!event) {
+      return;
+    }
+
+    const { isCloseToSomeEdgeOfScreen } = isCloseToEdgeOfScreen(event);
+
+    if (isCloseToSomeEdgeOfScreen) {
+      this.mousemove(event);
+      resizeCanvas(render, event);
+    }
+
+    if (this.isMouseDown) {
+      requestAnimationFrame(() => this.moveCanvas());
+    }
+  }
 }
 
 function resizeCanvas(render, event) {
@@ -517,57 +540,44 @@ function resizeCanvas(render, event) {
     isCloseToTopEdgeOfCanvas,
     isCloseToRightEdgeOfCanvas,
     isCloseToBottomEdgeOfCanvas,
-  } = isCloseToEdgeOfCanvas(event, render.sz);
+  } = isCloseToEdgeOfCanvas(render.clientArea);
   const {
     isCloseToLeftEdgeOfScreen,
     isCloseToTopEdgeOfScreen,
     isCloseToRightEdgeOfScreen,
     isCloseToBottomEdgeOfScreen,
   } = isCloseToEdgeOfScreen(event);
-  const { isMovingLeft, isMovingRight, isMovingTop, isMovingBottom } =
-    getDirections(event);
 
-  if (isCloseToLeftEdgeOfCanvas && isMovingLeft) {
-    shiftAndExtendCanvasByVector(new Vec2(-offset, 0, 0), render);
-  }
+  if (isCloseToLeftEdgeOfScreen) {
+    if (isCloseToLeftEdgeOfCanvas) {
+      shiftAndExtendCanvasByVector(new Vec2(-offset, 0), render);
+    }
 
-  if (isCloseToTopEdgeOfCanvas && isMovingTop) {
-    shiftAndExtendCanvasByVector(new Vec2(0, -offset, 0), render);
-  }
-
-  if (isCloseToRightEdgeOfCanvas && isMovingRight) {
-    shiftAndExtendCanvasByVector(new Vec2(offset, 0, 0), render);
-  }
-
-  if (isCloseToBottomEdgeOfCanvas && isMovingBottom) {
-    shiftAndExtendCanvasByVector(new Vec2(0, offset, 0), render);
-  }
-
-  const isCloseToSomeEdgeOfCanvas = [
-    isCloseToTopEdgeOfCanvas && isMovingTop,
-    isCloseToRightEdgeOfCanvas && isMovingRight,
-    isCloseToBottomEdgeOfCanvas && isMovingBottom,
-    isCloseToLeftEdgeOfCanvas && isMovingLeft,
-  ].some((isCloseToEdge) => isCloseToEdge);
-
-  if (isCloseToSomeEdgeOfCanvas) {
-    return;
-  }
-
-  if (isCloseToTopEdgeOfScreen && isMovingTop) {
-    scrollByVector(new Vec2(0, -offset), render);
-  }
-
-  if (isCloseToBottomEdgeOfScreen && isMovingBottom) {
-    scrollByVector(new Vec2(0, offset), render);
-  }
-
-  if (isCloseToLeftEdgeOfScreen && isMovingLeft) {
     scrollByVector(new Vec2(-offset, 0), render);
   }
 
-  if (isCloseToRightEdgeOfScreen && isMovingRight) {
+  if (isCloseToTopEdgeOfScreen) {
+    if (isCloseToTopEdgeOfCanvas) {
+      shiftAndExtendCanvasByVector(new Vec2(0, -offset), render);
+    }
+
+    scrollByVector(new Vec2(0, -offset), render);
+  }
+
+  if (isCloseToRightEdgeOfScreen) {
+    if (isCloseToRightEdgeOfCanvas) {
+      shiftAndExtendCanvasByVector(new Vec2(offset, 0), render);
+    }
+
     scrollByVector(new Vec2(offset, 0), render);
+  }
+
+  if (isCloseToBottomEdgeOfScreen) {
+    if (isCloseToBottomEdgeOfCanvas) {
+      shiftAndExtendCanvasByVector(new Vec2(0, offset), render);
+    }
+
+    scrollByVector(new Vec2(0, offset), render);
   }
 }
 

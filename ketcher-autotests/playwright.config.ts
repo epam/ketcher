@@ -28,6 +28,22 @@ const ignoredTests = [
   'utils/**',
 ];
 
+const regularTests = [
+  'API/**',
+  'Examples/**',
+  'File-Management/**',
+  'Indigo-Tools/**',
+  'R-group-tool/**',
+  'Reactions/**',
+  'Reagents/**',
+  'Structure-Creating-&-Editing/**',
+  'Templates/**',
+  'User-Interface/**',
+  'utils/**',
+];
+
+const macromoleculeTests = ['Macromolecule-editor/**'];
+
 const testDir = './tests';
 
 function baseURL(): string {
@@ -43,14 +59,28 @@ function baseURL(): string {
 }
 
 const MAX_NUMBER_OF_RETRIES = 2;
+const MIN_AMOUNT_OF_WORKERS = 2;
 // const MAX_NUMBER_OF_FAILURES = 3;
 const isCI = process.env.CI_ENVIRONMENT === 'true';
+
+function getIgnoredFiles(): string[] {
+  let ignored = [] as string[];
+  if (process.env.IGNORE_UNSTABLE_TESTS) {
+    ignored = ignoredTests;
+  }
+  if (process.env.ENABLE_POLYMER_EDITOR === 'true') {
+    ignored = [...ignored, ...regularTests];
+  } else {
+    ignored = [...ignored, ...macromoleculeTests];
+  }
+  return ignored;
+}
 
 const config: PlaywrightTestConfig = {
   testDir,
   /* Maximum time one test can run for. */
   timeout: 60_000,
-  testIgnore: process.env.IGNORE_UNSTABLE_TESTS ? ignoredTests : undefined,
+  testIgnore: getIgnoredFiles(),
   expect: {
     /**
      * Maximum time expect() should wait for the condition to be met.
@@ -67,12 +97,12 @@ const config: PlaywrightTestConfig = {
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
-  forbidOnly: Boolean(process.env.CI_ENVIRONMENT),
+  forbidOnly: isCI,
   /* Retry on CI only */
   retries: isCI ? MAX_NUMBER_OF_RETRIES : 0,
   /* Opt out of parallel tests on CI. */
   // eslint-disable-next-line no-magic-numbers
-  workers: process.env.CI ? 2 : os.cpus().length,
+  workers: process.env.CI ? MIN_AMOUNT_OF_WORKERS : os.cpus().length,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: [
     [

@@ -13,13 +13,14 @@ import {
   getCoordinatesOfTheMiddleOfTheScreen,
   selectAtomInToolbar,
   AtomButton,
+  waitForPageInit,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
 
 test.describe('Calculated Values Tools', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {
@@ -184,7 +185,7 @@ test.describe('Calculated Values Tools', () => {
     Description: Calculation of exact mass for the reaction
     should be correct: '[78.047] > [155.957]'.
     */
-    await openFileAndAddToCanvas('benzene-bromination.rxn', page);
+    await openFileAndAddToCanvas('Rxn-V2000/benzene-bromination.rxn', page);
     await selectTopPanelButton(TopPanelButton.Calculated, page);
   });
 
@@ -646,7 +647,7 @@ test.describe('Calculated Values Tools', () => {
 
 test.describe('Calculated Values Tools', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test('Structure Check window', async ({ page }) => {

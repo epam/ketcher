@@ -73,6 +73,8 @@ const shortcutKeys = [
   'f',
   'i',
   'b',
+  '+',
+  '-',
 ];
 
 /* HotKeys */

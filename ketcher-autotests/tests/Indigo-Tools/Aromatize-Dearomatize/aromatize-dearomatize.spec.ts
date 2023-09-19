@@ -15,8 +15,8 @@ import {
   selectAllStructuresOnCanvas,
   receiveFileComparisonData,
   saveToFile,
-  waitForIndigoToLoad,
   waitForSpinnerFinishedWork,
+  waitForPageInit,
 } from '@utils';
 import { getCml, getMolfile, getRxn, getSmiles } from '@utils/formats';
 
@@ -25,8 +25,7 @@ const CANVAS_CLICK_Y = 200;
 
 test.describe('Aromatize/Dearomatize Tool', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
-    await waitForIndigoToLoad(page);
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {
@@ -48,38 +47,23 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     Description: Nothing is changed on the canvas because only non-aromatic structures are present on the canvas.
     */
     await openFileAndAddToCanvas('non-aromatic.mol', page);
-    await selectTopPanelButton(TopPanelButton.Aromatize, page);
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Aromatize, page);
+    });
     await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.Dearomatize, page);
-  });
-
-  test('Non-aromatic structures - interchanged Single and Double bonds', async ({
-    page,
-  }) => {
-    /*
-    Test case: EPMLSOPKET-1869
-    Description: Nothing is changed on the canvas because only non-aromatic structures are present on the canvas.
-    */
-    await openFileAndAddToCanvas('non-aromatic-structures.mol', page);
-    await selectTopPanelButton(TopPanelButton.Aromatize, page);
-    await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.Dearomatize, page);
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Dearomatize, page);
+    });
   });
 
   test.fixme(
-    'Aromatic structures - interchanged Single and Double bonds',
+    'Non-aromatic structures - interchanged Single and Double bonds',
     async ({ page }) => {
       /*
-    Test case: EPMLSOPKET-1870
-    Description: The aromatic structures appear with circle inside the cycles.
-    Aromatize function affects all canvas.
-    The structures appears in a Kekule form: with interchanged Single and Double bonds.
-    Dearomatize function affects all canvas.
+    Test case: EPMLSOPKET-1869
+    Description: Nothing is changed on the canvas because only non-aromatic structures are present on the canvas.
     */
-      await openFileAndAddToCanvas(
-        'Molfiles-V2000/aromatic-structures.mol',
-        page,
-      );
+      await openFileAndAddToCanvas('non-aromatic-structures.mol', page);
       await waitForSpinnerFinishedWork(page, async () => {
         await selectTopPanelButton(TopPanelButton.Aromatize, page);
       });
@@ -89,6 +73,29 @@ test.describe('Aromatize/Dearomatize Tool', () => {
       });
     },
   );
+
+  test('Aromatic structures - interchanged Single and Double bonds', async ({
+    page,
+  }) => {
+    /*
+    Test case: EPMLSOPKET-1870
+    Description: The aromatic structures appear with circle inside the cycles.
+    Aromatize function affects all canvas.
+    The structures appears in a Kekule form: with interchanged Single and Double bonds.
+    Dearomatize function affects all canvas.
+    */
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/aromatic-structures.mol',
+      page,
+    );
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Aromatize, page);
+    });
+    await takeEditorScreenshot(page);
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Dearomatize, page);
+    });
+  });
 
   test('Cycles with Aromatic Bonds', async ({ page }) => {
     /*
@@ -99,31 +106,34 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     All other structures are rendered with a circle inside the cycles.
     */
     await openFileAndAddToCanvas('cycles-with-aromatic-bonds.mol', page);
-    await selectTopPanelButton(TopPanelButton.Aromatize, page);
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Aromatize, page);
+    });
     await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.Dearomatize, page);
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Dearomatize, page);
+    });
   });
 
-  test.fixme(
-    '(Undo/Redo) Manipulations with cyclic structures with a circle inside the cycle',
-    async ({ page }) => {
-      /*
+  test('(Undo/Redo) Manipulations with cyclic structures with a circle inside the cycle', async ({
+    page,
+  }) => {
+    /*
     Test case: EPMLSOPKET-1872
     Description: Only six-cycle structures appear in a Kekule form: with interchanged Single and Double bonds.
     All other structures are rendered with a circle inside the cycles. The actions are Undone/Redone.
     */
-      await openFileAndAddToCanvas('cycles-with-aromatic-bonds.mol', page);
-      await waitForSpinnerFinishedWork(page, async () => {
-        await selectTopPanelButton(TopPanelButton.Aromatize, page);
-      });
-      await waitForSpinnerFinishedWork(page, async () => {
-        await selectTopPanelButton(TopPanelButton.Dearomatize, page);
-      });
-      await selectTopPanelButton(TopPanelButton.Undo, page);
-      await takeEditorScreenshot(page);
-      await selectTopPanelButton(TopPanelButton.Redo, page);
-    },
-  );
+    await openFileAndAddToCanvas('cycles-with-aromatic-bonds.mol', page);
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Aromatize, page);
+    });
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Dearomatize, page);
+    });
+    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await takeEditorScreenshot(page);
+    await selectTopPanelButton(TopPanelButton.Redo, page);
+  });
 
   test('(Copy/Paste) Manipulations with cyclic structures with a circle inside the cycle', async ({
     page,

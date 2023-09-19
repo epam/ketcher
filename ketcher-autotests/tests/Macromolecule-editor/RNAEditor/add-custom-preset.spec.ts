@@ -7,13 +7,14 @@ import {
   PHOSPHATE,
   BUTTON__ADD_TO_PRESETS,
 } from '../../../constants/testIdConstants';
+import { waitForPageInit } from '@utils/common';
 
 /* 
 Test case: #3063 - Add e2e tests for Macromolecule editor
 */
 test.describe('Macromolecules custom presets', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
 
     // Click on POLYMER_TOGGLER
     await page.getByTestId(POLYMER_TOGGLER).click();
@@ -30,7 +31,7 @@ test.describe('Macromolecules custom presets', () => {
     // Press Enter on input
     await page.press('[placeholder="Name your structure"]', 'Enter');
   });
-  test.skip('Add new preset and duplicate it', async ({ page }) => {
+  test('Add new preset and duplicate it', async ({ page }) => {
     // Click on <div> "Sugar Not selected"
     await page.getByTestId(SUGAR).click();
 
@@ -87,10 +88,10 @@ test.describe('Macromolecules custom presets', () => {
     });
   });
 
-  test.skip('Add new preset with two monomers and add it to canvas', async ({
+  test('Add new preset with two monomers and add it to canvas', async ({
     page,
   }) => {
-    await page.goto('');
+    await waitForPageInit(page);
 
     // Click on POLYMER_TOGGLER
     await page.getByTestId(POLYMER_TOGGLER).click();

@@ -25,6 +25,7 @@ Object {
           >
             <button
               class="buttonTop"
+              data-testid="close-icon"
             >
               <icon-close.svg
                 classname="closeButton"
@@ -50,6 +51,7 @@ Object {
                 >
                   <input
                     class="input genericInput"
+                    data-testid="file-name-input"
                     name="filename"
                     type="text"
                     value=""
@@ -115,6 +117,7 @@ Object {
                 >
                   <a
                     class="active"
+                    data-testid="preview-tab"
                   >
                     Preview
                   </a>
@@ -126,6 +129,7 @@ Object {
                 >
                   <textarea
                     class="previewArea"
+                    data-testid="mol-preview-area-text"
                     readonly=""
                   />
                 </div>
@@ -372,6 +376,7 @@ Object {
         >
           <button
             class="buttonTop"
+            data-testid="close-icon"
           >
             <icon-close.svg
               classname="closeButton"
@@ -397,6 +402,7 @@ Object {
               >
                 <input
                   class="input genericInput"
+                  data-testid="file-name-input"
                   name="filename"
                   type="text"
                   value=""
@@ -462,6 +468,7 @@ Object {
               >
                 <a
                   class="active"
+                  data-testid="preview-tab"
                 >
                   Preview
                 </a>
@@ -473,6 +480,7 @@ Object {
               >
                 <textarea
                   class="previewArea"
+                  data-testid="mol-preview-area-text"
                   readonly=""
                 />
               </div>

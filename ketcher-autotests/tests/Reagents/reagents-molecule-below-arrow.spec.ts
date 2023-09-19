@@ -4,13 +4,12 @@ import {
   TopPanelButton,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
-  waitForIndigoToLoad,
+  waitForPageInit,
 } from '@utils';
 
 test.describe('Reagents molecule below arrow', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
-    await waitForIndigoToLoad(page);
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {
@@ -22,7 +21,10 @@ test.describe('Reagents molecule below arrow', () => {
       Test case: EPMLSOPKET-4723
       Description: File opens with the reagent HCl below the arrow
     */
-    await openFileAndAddToCanvas('benzene-arrow-benzene-reagent-hcl.rxn', page);
+    await openFileAndAddToCanvas(
+      'Rxn-V3000/benzene-arrow-benzene-reagent-hcl.rxn',
+      page,
+    );
   });
 
   test('Open File CDXML with reagent HCl below arrow', async ({ page }) => {
@@ -31,7 +33,7 @@ test.describe('Reagents molecule below arrow', () => {
       Description: File opens with the reagent HCl below the arrow
     */
     await openFileAndAddToCanvas(
-      'benzene-arrow-benzene-reagent-hcl.cdxml',
+      'CDXML/benzene-arrow-benzene-reagent-hcl.cdxml',
       page,
     );
   });

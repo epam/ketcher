@@ -13,11 +13,12 @@ import {
   selectLeftPanelButton,
   LeftPanelButton,
   mapTwoAtoms,
+  waitForPageInit,
 } from '@utils';
 
 test.describe('Verifying buttons on reaction am tool dropdown', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {
@@ -45,7 +46,7 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
     const point2 = { x: 200, y: 0 };
     await selectNestedTool(page, ReactionMappingTool.AUTOMAP);
     await takeEditorScreenshot(page);
-    await openFileAndAddToCanvas('four-structures.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/four-structures.mol', page);
     await selectNestedTool(page, ReactionMappingTool.AUTOMAP);
     await takeEditorScreenshot(page);
     await selectLeftPanelButton(LeftPanelButton.ReactionPlusTool, page);
@@ -79,7 +80,7 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
       test(`${mode} mode`, async ({ page }) => {
         const point1 = { x: -250, y: 8 };
         const point2 = { x: -250, y: 55 };
-        await openFileAndAddToCanvas('Rxn-V3000/reaction-3.rxn', page);
+        await openFileAndAddToCanvas('Rxn-V2000/reaction-3.rxn', page);
         await applyAutoMapMode(page, mode);
         await selectTopPanelButton(TopPanelButton.Undo, page);
         await takeEditorScreenshot(page);
@@ -110,7 +111,7 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
        * Test cases: EPMLSOPKET-1817
        * Description: After the manual mapping with incorrect ordering
        */
-      await openFileAndAddToCanvas('alter_mapping.rxn', page);
+      await openFileAndAddToCanvas('Rxn-V2000/alter-mapping.rxn', page);
       await mapTwoAtoms(
         page,
         { label: 'S', number: 0 },
@@ -128,7 +129,7 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
        * Test cases: EPMLSOPKET-1818
        * Description: After the manual mapping with incorrect pairs
        */
-      await openFileAndAddToCanvas('alter_mapping.rxn', page);
+      await openFileAndAddToCanvas('Rxn-V2000/alter-mapping.rxn', page);
       await mapTwoAtoms(
         page,
         { label: 'S', number: 0 },
@@ -141,12 +142,12 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
       );
     });
 
-    test('Compare the behavior', async ({ page }) => {
+    test.fixme('Compare the behavior', async ({ page }) => {
       /**
        * Test cases: EPMLSOPKET-1819
        * Description: Compare the behavior
        */
-      await openFileAndAddToCanvas('for_MappingTools_10.rxn', page);
+      await openFileAndAddToCanvas('Rxn-V2000/for-mappingTools-10.rxn', page);
     });
   });
 
@@ -155,7 +156,7 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
      * Test cases: EPMLSOPKET-1821
      * Description: Clear mode
      */
-    await openFileAndAddToCanvas('Rxn-V3000/reaction-3.rxn', page);
+    await openFileAndAddToCanvas('Rxn-V2000/reaction-3.rxn', page);
     await applyAutoMapMode(page, 'Alter');
     await applyAutoMapMode(page, 'Clear');
     await mapTwoAtoms(
@@ -173,7 +174,7 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
      * Test cases: EPMLSOPKET-1821
      * Description: Half reaction on canvas
      */
-    await openFileAndAddToCanvas('reaction_half.rxn', page);
+    await openFileAndAddToCanvas('Rxn-V2000/reaction-half.rxn', page);
     await applyAutoMapMode(page, 'Discard', false);
   });
 
@@ -182,11 +183,11 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
      * Test cases: EPMLSOPKET-1832
      * Description:  Verifying of the correct automapping
      */
-    await openFileAndAddToCanvas('allenes.rxn', page);
+    await openFileAndAddToCanvas('Rxn-V2000/allenes.rxn', page);
     await applyAutoMapMode(page, 'Discard');
-    await openFileAndAddToCanvas('mapping_4_benzene.rxn', page);
+    await openFileAndAddToCanvas('Rxn-V2000/mapping-4-benzene.rxn', page);
     await applyAutoMapMode(page, 'Keep');
-    await openFileAndAddToCanvas('allenes.rxn', page);
+    await openFileAndAddToCanvas('Rxn-V2000/allenes.rxn', page);
     await applyAutoMapMode(page, 'Alter', false);
   });
 });

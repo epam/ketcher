@@ -21,7 +21,7 @@ import { FC, useCallback, useState } from 'react';
 
 import { Dialog } from '../../../../components';
 import ElementNumber from './ElementNumber';
-import { Elements } from 'ketcher-core';
+import { AtomAllAttributeName, Elements } from 'ketcher-core';
 import { atom as atomSchema } from '../../../../../data/schema/struct-schema';
 import { capitalize } from 'lodash/fp';
 import classes from './Atom.module.less';
@@ -51,7 +51,26 @@ type Props = AtomProps & {
 };
 
 const atomProps = atomSchema.properties;
-
+const querySpecificFields: Array<{
+  name: AtomAllAttributeName;
+  component?: 'dropdown';
+  labelPos?: 'before' | 'after';
+  className?: string;
+}> = [
+  { name: 'ringBondCount', component: 'dropdown' },
+  { name: 'hCount', component: 'dropdown' },
+  { name: 'substitutionCount', component: 'dropdown' },
+  { name: 'unsaturatedAtom', labelPos: 'before', className: classes.checkbox },
+  { name: 'aromaticity', component: 'dropdown' },
+  { name: 'degree', component: 'dropdown' },
+  { name: 'implicitHCount', component: 'dropdown' },
+  { name: 'ringMembership', component: 'dropdown' },
+  { name: 'ringSize', component: 'dropdown' },
+  { name: 'connectivity', component: 'dropdown' },
+  { name: 'ringConnectivity', component: 'dropdown' },
+  { name: 'chirality', component: 'dropdown' },
+  { name: 'atomicMass' },
+];
 const Atom: FC<Props> = (props: Props) => {
   const {
     formState,
@@ -112,26 +131,20 @@ const Atom: FC<Props> = (props: Props) => {
       groupName: 'Query specific',
       component: (
         <div className={classes.querySpecific}>
-          <Field
-            name="ringBondCount"
-            component={Select}
-            options={getSelectOptionsFromSchema(atomProps.ringBondCount)}
-          />
-          <Field
-            name="hCount"
-            component={Select}
-            options={getSelectOptionsFromSchema(atomProps.hCount)}
-          />
-          <Field
-            name="substitutionCount"
-            component={Select}
-            options={getSelectOptionsFromSchema(atomProps.substitutionCount)}
-          />
-          <Field
-            name="unsaturatedAtom"
-            labelPos="before"
-            className={classes.checkbox}
-          />
+          {querySpecificFields.map((field) => {
+            if (field.component === 'dropdown') {
+              return (
+                <Field
+                  key={field.name}
+                  name={field.name}
+                  component={Select}
+                  options={getSelectOptionsFromSchema(atomProps[field.name])}
+                />
+              );
+            } else {
+              return <Field key={field.name} {...field} />;
+            }
+          })}
         </div>
       ),
     },

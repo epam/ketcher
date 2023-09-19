@@ -4,7 +4,7 @@ import { createPolymerEditorCanvas } from '../../helpers/dom';
 describe('Polymer Bond', () => {
   it('should be finished if has links to two monomers', () => {
     createPolymerEditorCanvas();
-    const polymerBond = getFinishedPolymerBond(10, 10, 90, 100);
+    const polymerBond = getFinishedPolymerBond(0.25, 0.25, 2.25, 2.5);
 
     polymerBond.moveToLinkedMonomers();
 
@@ -16,7 +16,7 @@ describe('Polymer Bond', () => {
   });
 
   it('should change selection', () => {
-    const polymerBond = getFinishedPolymerBond(10, 10, 90, 100);
+    const polymerBond = getFinishedPolymerBond(0.25, 0.25, 2.25, 2.5);
 
     expect(polymerBond.selected).toBe(false);
     polymerBond.turnOnSelection();

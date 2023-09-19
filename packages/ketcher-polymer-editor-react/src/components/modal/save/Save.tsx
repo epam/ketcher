@@ -26,6 +26,8 @@ import { SaveButton } from 'components/modal/save/saveButton';
 import { getPropertiesByFormat, SupportedFormats } from 'helpers/formats';
 import { ActionButton } from 'components/shared/actionButton';
 import { Icon } from 'ketcher-react';
+import { KetSerializer } from 'ketcher-core';
+import { saveAs } from 'file-saver';
 
 interface Props {
   onClose: () => void;
@@ -33,8 +35,8 @@ interface Props {
 }
 
 const options: Array<Option> = [
+  { id: 'ket', label: 'Ket' },
   { id: 'mol', label: 'MDL Molfile V3000' },
-  { id: 'helm', label: 'HELM' },
 ];
 
 const Form = styled.form({
@@ -87,49 +89,11 @@ const ErrorsButton = styled(ActionButton)(({ theme }) => ({
   },
 }));
 
-const structExample = {
-  mol: `
-    -INDIGO-02102212382D
-  
-    0  0  0  0  0  0  0  0  0  0  0 V3000
-  M  V30 BEGIN CTAB
-  M  V30 COUNTS 11 10 0 0 0
-  M  V30 BEGIN ATOM
-  M  V30 1 C 2.75 -5.225 0.0 0
-  M  V30 2 C 3.61603 -5.725 0.0 0
-  M  V30 3 C 4.48205 -5.225 0.0 0
-  M  V30 4 C 5.34808 -5.725 0.0 0
-  M  V30 5 C 6.2141 -5.225 0.0 0
-  M  V30 6 C 7.08013 -5.725 0.0 0
-  M  V30 7 C 7.94615 -5.225 0.0 0
-  M  V30 8 C 8.81218 -5.725 0.0 0
-  M  V30 9 C 9.6782 -5.225 0.0 0
-  M  V30 10 C 10.5442 -5.725 0.0 0
-  M  V30 11 C 11.4103 -5.225 0.0 0
-  M  V30 END ATOM
-  M  V30 BEGIN BOND
-  M  V30 1 1 1 2
-  M  V30 2 1 2 3
-  M  V30 3 1 3 4
-  M  V30 4 1 4 5
-  M  V30 5 1 5 6
-  M  V30 6 1 6 7
-  M  V30 7 1 7 8
-  M  V30 8 1 8 9
-  M  V30 9 1 9 10
-  M  V30 10 1 10 11
-  M  V30 END BOND
-  M  V30 END CTAB
-  M  END
-  `,
-  helm: `PEPTIDE1{A.C.D.F.G.H.K.A.C.D}$PEPTIDE1,PEPTIDE1,3:R3-7:R3`,
-}; // TODO remove when canvas and get struct method are ready
-
 export const Save = ({ onClose, isModalOpen }: Props): JSX.Element => {
   const [currentFileFormat, setCurrentFileFormat] =
-    useState<SupportedFormats>('mol');
+    useState<SupportedFormats>('ket');
   const [currentFileName, setCurrentFileName] = useState('ketcher');
-  const [struct, setStruct] = useState('');
+  const [struct] = useState('');
   const [errors, setErrors] = useState('');
 
   const handleSelectChange = (value) => {
@@ -141,7 +105,12 @@ export const Save = ({ onClose, isModalOpen }: Props): JSX.Element => {
   };
 
   const handleSave = () => {
-    console.log('Saved', structExample);
+    const ketSerializer = new KetSerializer();
+    const serializedKet = ketSerializer.serializeMacromolecules();
+    const blob = new Blob([JSON.stringify(serializedKet)], {
+      type: getPropertiesByFormat(currentFileFormat).mime,
+    });
+    saveAs(blob, getPropertiesByFormat(currentFileFormat).name);
   };
 
   const handleErrorsClick = () => {
@@ -149,10 +118,7 @@ export const Save = ({ onClose, isModalOpen }: Props): JSX.Element => {
   };
 
   useEffect(() => {
-    console.log('Getting and setting struct here...'); // get / convert struct and errors
-    setStruct(structExample[currentFileFormat]);
-
-    if (currentFileFormat === 'mol') {
+    if (currentFileFormat === 'ket') {
       // just an example
       setErrors('some error');
     } else {
@@ -197,13 +163,7 @@ export const Save = ({ onClose, isModalOpen }: Props): JSX.Element => {
 
         <SaveButton
           label="Save as file"
-          data={struct}
-          type={getPropertiesByFormat(currentFileFormat).mime}
           onSave={handleSave}
-          filename={
-            currentFileName +
-            getPropertiesByFormat(currentFileFormat).extensions[0]
-          }
           disabled={!currentFileName}
         />
       </Modal.Footer>

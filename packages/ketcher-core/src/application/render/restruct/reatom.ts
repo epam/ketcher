@@ -405,7 +405,10 @@ class ReAtom extends ReObject {
 
     const stereoLabel = this.a.stereoLabel; // Enhanced Stereo
     const aamText = getAamText(this);
-    const queryAttrsText = !this.a.pseudo ? getQueryAttrsText(this) : '';
+    const isAromatized = Atom.isInAromatizedRing(restruct.molecule, aid);
+    const queryAttrsText = !this.a.pseudo
+      ? getQueryAttrsText(this, isAromatized)
+      : '';
 
     // we render them together to avoid possible collisions
 
@@ -1071,7 +1074,7 @@ function getAamText(atom) {
   return aamText;
 }
 
-function getQueryAttrsText(atom) {
+function getQueryAttrsText(atom, isAromatized: boolean) {
   let queryAttrsText = '';
 
   const addSemicolon = () => {
@@ -1119,7 +1122,7 @@ function getQueryAttrsText(atom) {
     addSemicolon();
     queryAttrsText += 'H' + (hCount - 1).toString();
   }
-  if (implicitHCount !== null) {
+  if (implicitHCount !== null && !isAromatized) {
     addSemicolon();
     queryAttrsText += `h${implicitHCount}`;
   }

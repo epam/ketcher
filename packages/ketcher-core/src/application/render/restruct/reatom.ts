@@ -39,6 +39,7 @@ import draw from '../draw';
 import util from '../util';
 import { tfx } from 'utilities';
 import { RenderOptions } from 'application/render/render.types';
+import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { capitalize } from 'lodash';
 
 interface ElemAttr {
@@ -189,12 +190,17 @@ class ReAtom extends ReObject {
   getShiftedSegmentPosition(
     renderOptions: RenderOptions,
     direction: Vec2,
+    _atomPosition?: Vec2,
   ): Vec2 {
-    const atomPosition = Scale.obj2scaled(this.a.pp, renderOptions);
+    const atomPosition = Scale.obj2scaled(
+      _atomPosition || this.a.pp,
+      renderOptions,
+    );
     let atomSymbolShift = 0;
     const exts = this.visel.exts;
     for (let k = 0; k < exts.length; ++k) {
       const box = exts[k].translate(atomPosition);
+
       atomSymbolShift = Math.max(
         atomSymbolShift,
         util.shiftRayBox(atomPosition, direction, box),
@@ -231,13 +237,20 @@ class ReAtom extends ReObject {
       )
     ) {
       const sgroup = restruct.molecule.getGroupFromAtomId(aid);
+
       const isPositionAtom =
         sgroup?.getContractedPosition(restruct.molecule).atomId === aid;
       if (isPositionAtom) {
-        const path = render.paper.text(ps.x, ps.y, sgroup.data.name).attr({
-          'font-weight': 700,
-          'font-size': 14,
-        });
+        const position =
+          sgroup instanceof MonomerMicromolecule
+            ? Scale.obj2scaled(sgroup.position, render.options)
+            : ps;
+        const path = render.paper
+          .text(position.x, position.y, sgroup.data.name)
+          .attr({
+            'font-weight': 700,
+            'font-size': 14,
+          });
         restruct.addReObjectPath(LayerMap.data, this.visel, path, ps, true);
       }
       return;

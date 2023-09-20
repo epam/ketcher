@@ -20,6 +20,8 @@ import { Point, Vec2 } from './vec2';
 import { Elements } from 'domain/constants';
 import { Pile } from './pile';
 import { Struct } from './struct';
+import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
+import { FunctionalGroup } from 'domain/entities/functionalGroup';
 
 /**
  * Return unions of Pick.
@@ -181,7 +183,7 @@ export class Atom {
   valence: number;
   implicitH: number;
   implicitHCount: number | null;
-  pp: Vec2;
+  _pp: Vec2;
   neighbors: Array<number>;
   sgs: Pile<number>;
   badConn: boolean;
@@ -291,6 +293,34 @@ export class Atom {
         }
       },
     });
+  }
+
+  get pp() {
+    const struct: Struct = global.ketcher.editor.struct();
+    let atomId = -1;
+    struct.atoms.forEach((atom, id) => {
+      if (atom === this) {
+        atomId = id;
+      }
+    });
+    const sgroup = struct.getGroupFromAtomId(atomId);
+    const sgroups = global.ketcher.editor.render.ctab.molecule.sgroups;
+    const functionalGroups =
+      global.ketcher.editor.render.ctab.molecule.functionalGroups;
+    return sgroup instanceof MonomerMicromolecule &&
+      sgroup?.getAttachmentAtomId() === atomId &&
+      FunctionalGroup.isAtomInContractedFunctionalGroup(
+        this,
+        sgroups,
+        functionalGroups,
+        false,
+      )
+      ? sgroup.position
+      : this._pp;
+  }
+
+  set pp(value: Vec2) {
+    this._pp = value;
   }
 
   get isRGroupAttachmentPointEditDisabled() {

@@ -38,6 +38,7 @@ import { Highlight } from './highlight';
 import { RGroupAttachmentPoint } from './rgroupAttachmentPoint';
 import { BaseMonomer } from './BaseMonomer';
 import { PolymerBond } from 'domain/entities/PolymerBond';
+import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 
 export type Neighbor = {
   aid: number;
@@ -61,8 +62,6 @@ export class Struct {
   atoms: Pool<Atom>;
   bonds: Pool<Bond>;
   sgroups: Pool<SGroup>;
-  monomers: Map<number, BaseMonomer>;
-  polymerBonds: Map<number, PolymerBond>;
   halfBonds: Pool<HalfBond>;
   loops: Pool<Loop>;
   isReaction: boolean;
@@ -408,9 +407,18 @@ export class Struct {
 
   halfBondUpdate(halfBondId: number) {
     const halfBond = this.halfBonds.get(halfBondId)!;
-    const startCoords = this.atoms.get(halfBond.begin)!.pp;
-    const endCoords = this.atoms.get(halfBond.end)!.pp;
+    const sgroup1 = this.getGroupFromAtomId(halfBond.begin);
+    const sgroup2 = this.getGroupFromAtomId(halfBond.end);
+    const startCoords =
+      sgroup1 instanceof MonomerMicromolecule
+        ? sgroup1.position
+        : this.atoms.get(halfBond.begin)!.pp;
+    const endCoords =
+      sgroup2 instanceof MonomerMicromolecule
+        ? sgroup2.position
+        : this.atoms.get(halfBond.end)!.pp;
     const coordsDifference = Vec2.diff(endCoords, startCoords).normalized();
+
     halfBond.dir =
       Vec2.dist(endCoords, startCoords) > 1e-4
         ? coordsDifference

@@ -196,8 +196,10 @@ class ReAtom extends ReObject {
       _atomPosition || this.a.pp,
       renderOptions,
     );
+    console.log('atomPosition', atomPosition);
     let atomSymbolShift = 0;
     const exts = this.visel.exts;
+    console.log('exts', exts);
     for (let k = 0; k < exts.length; ++k) {
       const box = exts[k].translate(atomPosition);
 
@@ -206,6 +208,7 @@ class ReAtom extends ReObject {
         util.shiftRayBox(atomPosition, direction, box),
       );
     }
+    console.log('atomSymbolShift', atomSymbolShift);
     if (atomSymbolShift > 0) {
       return atomPosition.addScaled(
         direction,
@@ -251,7 +254,13 @@ class ReAtom extends ReObject {
             'font-weight': 700,
             'font-size': 14,
           });
-        restruct.addReObjectPath(LayerMap.data, this.visel, path, ps, true);
+        restruct.addReObjectPath(
+          LayerMap.data,
+          this.visel,
+          path,
+          position,
+          true,
+        );
       }
       return;
     }

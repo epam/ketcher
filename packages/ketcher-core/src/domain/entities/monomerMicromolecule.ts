@@ -19,7 +19,7 @@ import { Render } from 'application/render';
 import { Struct } from 'domain/entities/struct';
 
 export class MonomerMicromolecule extends SGroup {
-  constructor(type: string, public position: Vec2) {
+  constructor(type: string, public position: Vec2, public monomer) {
     super(type);
   }
 

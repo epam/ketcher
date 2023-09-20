@@ -120,7 +120,6 @@ function Editor({ theme }: EditorProps) {
     dispatch(createEditor({ theme, canvas: canvasRef.current }));
     const serializer = new SdfSerializer();
     const library = serializer.deserialize(monomersData);
-    console.log(library);
     dispatch(loadMonomerLibrary(library));
 
     return () => {
@@ -169,11 +168,11 @@ function Editor({ theme }: EditorProps) {
 
   useEffect(() => {
     if (editor) {
-      editor.events.error.add((errorText) =>
-        dispatch(openErrorTooltip(errorText)),
-      );
-      dispatch(selectTool('select-rectangle'));
-      editor.events.selectTool.dispatch('select-rectangle');
+      editor.events.error.add((errorText) => {
+        dispatch(openErrorTooltip(errorText));
+        dispatch(selectTool('select-rectangle'));
+        editor.events.selectTool.dispatch('select-rectangle');
+      });
     }
   }, [editor]);
 

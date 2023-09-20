@@ -53,7 +53,7 @@ class Form extends Component {
     } = this.props;
     if (
       (schema.key && schema.key !== prevProps.schema.key) ||
-      rest.customValid !== prevProps.customValid
+      (rest.customValid !== prevProps.customValid && schema.title === 'Atom')
     ) {
       this.schema = propSchema(schema, rest);
       this.schema.serialize(result); // hack: valid first state

@@ -172,6 +172,52 @@
         "cip": {
           "type": "string",
           "enum": ["R", "S", "r", "s"]
+        },
+        "queryProperties": {
+          "type": "object",
+          "properties": {
+            "aromaticity": {
+              "type": "string",
+              "enum": ["aromatic", "aliphatic"]
+            },
+            "degree": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 6
+            },
+            "ringMembership": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 5
+            },
+            "ringSize": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 5
+            },
+            "connectivity": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 5
+            },
+            "ringConnectivity": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 5
+            },
+            "atomicMass": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 1000
+            },
+            "chirality": {
+              "type": "string",
+              "enum": ["clockwise", "anticlockwise"]
+            },
+            "customQuery": {
+              "type": "string"
+            }
+          }
         }
       },
       "additionalProperties": false

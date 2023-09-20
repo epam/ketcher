@@ -498,8 +498,8 @@ test.describe('Functional Groups', () => {
     await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
     await pressTab(page, 'Salts and Solvents');
     await selectSaltsAndSolvents(SaltsAndSolvents.MethaneSulphonicAcid, page);
-    await clickInTheMiddleOfTheScreen(page);
 
+    await clickInTheMiddleOfTheScreen(page);
     await clickInTheMiddleOfTheScreen(page, 'right');
     await page.getByText('Expand Abbreviation').click();
 

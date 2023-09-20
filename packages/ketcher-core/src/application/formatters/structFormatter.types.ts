@@ -21,6 +21,7 @@ import { StructServiceOptions } from 'domain/services';
 export interface StructFormatter {
   getStructureFromStructAsync: (struct: Struct) => Promise<string>;
   getStructureFromStringAsync: (stringifiedStruct: string) => Promise<Struct>;
+  parseMacromoleculeString?: (stringifiedStruct: string) => void;
 }
 
 export enum SupportedFormat {

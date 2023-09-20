@@ -1,19 +1,19 @@
-import { test, expect } from '@playwright/test';
+import { test } from '@playwright/test';
 import { selectSingleBondTool, waitForPageInit } from '@utils';
+import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 /* eslint-disable no-magic-numbers */
 
 test.describe('Polymer Bond Tool', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
   });
-  test.skip('Create bond between two peptides', async ({ page }) => {
+  test('Create bond between two peptides', async ({ page }) => {
     /* 
     Test case: #2334 - Create peptide chain (HELM style) - Center-to-Center
     Description: Polymer bond tool
     */
 
-    await expect(page.getByTestId('PolymerToggler')).toBeVisible();
-    await page.getByTestId('PolymerToggler').click();
+    await turnOnMacromoleculesEditor(page);
 
     // Choose peptide
     await page.getByText('Tza').click();
@@ -25,7 +25,7 @@ test.describe('Polymer Bond Tool', () => {
     await page.mouse.click(500, 200);
 
     // Get 4 peptides locators
-    const peptides = await page.getByText('Tza');
+    const peptides = await page.getByText('Tza').locator('..');
     const peptide1 = peptides.nth(0);
     const peptide2 = peptides.nth(1);
     const peptide3 = peptides.nth(2);
@@ -63,14 +63,13 @@ test.describe('Polymer Bond Tool', () => {
     });
   });
 
-  test.skip('Create bond between two chems', async ({ page }) => {
+  test('Create bond between two chems', async ({ page }) => {
     /* 
     Test case: #2497 - Adding chems to canvas - Center-to-Center
     Description: Polymer bond tool
     */
 
-    await expect(page.getByTestId('PolymerToggler')).toBeVisible();
-    await page.getByTestId('PolymerToggler').click();
+    await turnOnMacromoleculesEditor(page);
 
     // Choose chems
     await page.getByText('CHEM').click();
@@ -81,7 +80,7 @@ test.describe('Polymer Bond Tool', () => {
     await page.mouse.click(400, 400);
 
     // Get 2 chems locators
-    const chems = await page.getByText('hxy');
+    const chems = await page.getByText('hxy').locator('..');
     const chem1 = chems.nth(0);
     const chem2 = chems.nth(1);
 

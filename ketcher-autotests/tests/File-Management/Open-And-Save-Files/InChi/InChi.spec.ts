@@ -476,6 +476,7 @@ test.describe('Open and Save InChI file', () => {
     await pasteFromClipboardAndAddToCanvas(
       page,
       '1S/C9H14/c1-3-5-7-9-8-6-4-2/h3,5-9H,4H2,1-2H3/b5-3-,8-6+,9-7+',
+      false,
     );
     const convertErrorMessage = await page
       .getByTestId('info-modal-body')

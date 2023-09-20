@@ -382,12 +382,14 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     Description: CIP data located in file at atom properties section
     */
     await openFileAndAddToCanvas('structure-with-stereo-bonds.mol', page);
+    await waitForRender(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Calculate, page);
+    });
     const expectedFile = await getKet(page);
     await saveToFile(
       'KET/structure-with-stereo-bonds-expected.ket',
       expectedFile,
     );
-    await selectTopPanelButton(TopPanelButton.Calculate, page);
     const { file: ketFile, fileExpected: ketFileExpected } =
       await receiveFileComparisonData({
         page,

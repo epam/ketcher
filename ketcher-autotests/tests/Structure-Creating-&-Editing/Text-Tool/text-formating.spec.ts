@@ -1,15 +1,9 @@
 /* eslint-disable no-magic-numbers */
 import { Page, test } from '@playwright/test';
-import {
-  takeEditorScreenshot,
-  selectTopPanelButton,
-  delay,
-} from '@utils/canvas';
+import { takeEditorScreenshot, selectTopPanelButton } from '@utils/canvas';
 import { pressButton, clickInTheMiddleOfTheScreen } from '@utils/clicks';
 import {
   TopPanelButton,
-  DELAY_IN_SECONDS,
-  openFileAndAddToCanvas,
   waitForPageInit,
   openFromFileViaClipboard,
   readFileContents,
@@ -25,8 +19,14 @@ test.describe('Text tools test cases', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
   });
+
+  test.afterEach(async ({ page }) => {
+    await takeEditorScreenshot(page);
+  });
+
   test('Text tool - Font size', async ({ page }) => {
     // Test case:EPMLSOPKET-2885
+    // Checking if possible is changing font size on the created text object
     await addTextBoxToCanvas(page);
     await page.getByRole('dialog').getByRole('textbox').fill('TEST');
     await page.keyboard.press('Control+a');
@@ -39,10 +39,11 @@ test.describe('Text tools test cases', () => {
     await page.getByRole('button', { name: '20' }).click();
     await page.getByText('10', { exact: true }).click();
     await pressButton(page, 'Apply');
-    await takeEditorScreenshot(page);
   });
+
   test('Text tool - Applying styles - Bold', async ({ page }) => {
     // Test case: EPMLSOPKET-2256
+    // Checking if possible to put bold style on the created text object
     await addTextBoxToCanvas(page);
     await page.getByRole('dialog').getByRole('textbox').fill('ABC');
     await page.keyboard.press('Control+a');
@@ -53,11 +54,11 @@ test.describe('Text tools test cases', () => {
     await page.keyboard.press('Control+a');
     await page.getByRole('button', { name: 'bold' }).click();
     await page.getByRole('button', { name: 'bold' }).click();
-    await takeEditorScreenshot(page);
   });
 
   test('Text tool - Applying styles - Italic', async ({ page }) => {
     // Test case: EPMLSOPKET-2257
+    // Checking if possible to put Italic style on the created text object
     await addTextBoxToCanvas(page);
     await page.getByRole('dialog').getByRole('textbox').fill('ABCDE');
     await page.keyboard.press('Control+a');
@@ -68,10 +69,11 @@ test.describe('Text tools test cases', () => {
     await page.keyboard.press('Control+a');
     await page.getByRole('button', { name: 'italic' }).click();
     await page.getByRole('button', { name: 'italic' }).click();
-    await takeEditorScreenshot(page);
   });
+
   test('Text tool - Applying styles - Subscript', async ({ page }) => {
     // Test case: EPMLSOPKET-2258
+    // Checking if possible to put Subscript style on the created text object
     await addTextBoxToCanvas(page);
     await page.getByRole('dialog').getByRole('textbox').fill('ABC123');
     await page.keyboard.press('Control+a');
@@ -82,10 +84,11 @@ test.describe('Text tools test cases', () => {
     await page.keyboard.press('Control+a');
     await page.getByRole('button', { name: 'subscript' }).click();
     await page.getByRole('button', { name: 'subscript' }).click();
-    await takeEditorScreenshot(page);
   });
+
   test('Text tool -  Applying styles - Superscript', async ({ page }) => {
     // Test case: EPMLSOPKET-2259
+    // Checking if possible to put Superscript style on the created text object
     await addTextBoxToCanvas(page);
     await page.getByRole('dialog').getByRole('textbox').fill('ABC123');
     await page.keyboard.press('Control+a');
@@ -96,12 +99,13 @@ test.describe('Text tools test cases', () => {
     await page.keyboard.press('Control+a');
     await page.getByRole('button', { name: 'superscript' }).click();
     await page.getByRole('button', { name: 'superscript' }).click();
-    await takeEditorScreenshot(page);
   });
+
   test('Text tool - Applying styles - Combination of styles', async ({
     page,
   }) => {
     // Test case: EPMLSOPKET-2260
+    // Checking if possible to put different styles on the created text object
     await addTextBoxToCanvas(page);
     await page.getByRole('dialog').getByRole('textbox').fill('TEST123');
     await page.keyboard.press('Control+a');
@@ -116,10 +120,11 @@ test.describe('Text tools test cases', () => {
     await page.keyboard.press('Control+a');
     await page.getByRole('button', { name: 'subscript' }).click();
     await pressButton(page, 'Apply');
-    await takeEditorScreenshot(page);
   });
+
   test('Text tool - Save as .ket file', async ({ page }) => {
     // Test case: EPMLSOPKET-2235
+    // Checking if possible to put different styles on the created text object
     await addTextBoxToCanvas(page);
     await page.getByRole('dialog').getByRole('textbox').fill('TEST321');
     await pressButton(page, 'Apply');
@@ -150,6 +155,7 @@ test.describe('Text tools test cases', () => {
 
   test('Text tool - Cut/Copy/Paste', async ({ page }) => {
     // Test case: EPMLSOPKET-2272
+    // Checking if user is able to copy/cut/paste the created text objects
     await addTextBoxToCanvas(page);
     await page.getByRole('dialog').getByRole('textbox').fill('TEXT001');
     await pressButton(page, 'Apply');
@@ -168,7 +174,6 @@ test.describe('Text tools test cases', () => {
     await page.mouse.move(844, 579);
     await page.mouse.move(66, 611);
     await page.mouse.up();
-    await delay(DELAY_IN_SECONDS.TWO);
     await selectTopPanelButton(TopPanelButton.Cut, page);
     await page.keyboard.press('Control+v');
     await clickInTheMiddleOfTheScreen(page);
@@ -177,10 +182,12 @@ test.describe('Text tools test cases', () => {
     await selectTopPanelButton(TopPanelButton.Redo, page);
     await takeEditorScreenshot(page);
   });
+
   test('Text tool - Selection of different types of text objects', async ({
     page,
   }) => {
     // Test case: EPMLSOPKET-2274
+    // Checking if its possible to select a text objects of any size by clicking on green frame
     await addTextBoxToCanvas(page);
     await page.getByRole('dialog').getByRole('textbox').fill('TEXT');
     await page.getByRole('dialog').getByRole('textbox').inputValue;
@@ -219,6 +226,7 @@ test.describe('Text tools test cases', () => {
     page,
   }) => {
     // Test case: EPMLSOPKET-5253
+    // Checking if possible is add UTF-8 data format  to canvas
     await selectTopPanelButton(TopPanelButton.Open, page);
     await openFromFileViaClipboard(
       'tests/test-data/KET/utf-8-svg-png.ket',

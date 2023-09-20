@@ -5,6 +5,7 @@ import {
   Pile,
   SGroup,
   SGroupAttachmentPoint,
+  Struct,
   Vec2,
 } from 'domain/entities';
 import {
@@ -19,7 +20,11 @@ import { toolsMap } from 'application/editor/tools';
 import { MonomerItemType } from 'domain/types';
 import { RenderersManager } from 'application/render/renderers/RenderersManager';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
-import { editorEvents, renderersEvents } from 'application/editor/editorEvents';
+import {
+  editorEvents,
+  renderersEvents,
+  resetEditorEvents,
+} from 'application/editor/editorEvents';
 import { PolymerBondRenderer } from 'application/render/renderers';
 import { Editor } from 'application/editor/editor.types';
 import { ReAtom, ReBond, ReSGroup } from 'application/render';
@@ -27,6 +32,8 @@ import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { Scale } from 'domain/helpers';
 import { provideEditorSettings } from 'application/editor/editorSettings';
+import { Command } from 'domain/entities/Command';
+import Sgroup from 'ketcher-react/dist/script/editor/tool/sgroup';
 
 interface ICoreEditorConstructorParams {
   theme;
@@ -39,7 +46,7 @@ function isMouseMainButtonPressed(event: MouseEvent) {
 
 let editor;
 export class CoreEditor {
-  public events = editorEvents;
+  public events;
 
   public renderersContainer: RenderersManager;
   public drawingEntitiesManager: DrawingEntitiesManager;
@@ -54,6 +61,8 @@ export class CoreEditor {
   constructor({ theme, canvas }: ICoreEditorConstructorParams) {
     this.theme = theme;
     this.canvas = canvas;
+    resetEditorEvents();
+    this.events = editorEvents;
     this.subscribeEvents();
     this.renderersContainer = new RenderersManager({ theme });
     this.drawingEntitiesManager = new DrawingEntitiesManager();
@@ -62,6 +71,7 @@ export class CoreEditor {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     editor = this;
     this.micromoleculesEditor = global.ketcher.editor;
+    this.switchToMacromolecules();
   }
 
   static provideEditorInstance(): CoreEditor {
@@ -237,11 +247,10 @@ export class CoreEditor {
     const monomerToSgroup = new Map<BaseMonomer, SGroup>();
 
     this.drawingEntitiesManager.monomers.forEach((monomer) => {
-      const editorSettings = provideEditorSettings();
       const monomerMicromolecule = new MonomerMicromolecule(
         SGroup.TYPES.SUP,
         monomer.position,
-        // Scale.obj2scaled(new Vec2(monomer.renderer.center.x, monomer.renderer.center.y), editorSettings),
+        monomer,
       );
       monomerToSgroup.set(monomer, monomerMicromolecule);
       monomerMicromolecule.data.name = monomer.monomerItem.label;
@@ -289,6 +298,60 @@ export class CoreEditor {
       const bondId = struct.bonds.add(bond);
       reStruct.bonds.set(bondId, new ReBond(bond));
     });
+  }
+
+  private switchToMacromolecules() {
+    const struct = this.micromoleculesEditor.struct();
+    const reStruct = this.micromoleculesEditor.render.ctab;
+    const sgroupToMonomer = new Map<SGroup, BaseMonomer>();
     console.log(struct);
+    let command = new Command();
+    struct.sgroups.forEach((sgroup) => {
+      if (sgroup instanceof MonomerMicromolecule) {
+        const monomerAdditionCommand = this.drawingEntitiesManager.addMonomer(
+          sgroup.monomer.monomerItem,
+          sgroup.position,
+        );
+        command.merge(monomerAdditionCommand);
+        sgroupToMonomer.set(
+          sgroup,
+          monomerAdditionCommand.operations[0].monomer,
+        );
+        // sgroup.atoms.forEach(atomId => {
+        //   const anotherSgroup = struct.getGroupFromAtomId(atomId)
+        //   if (anotherSgroup && )
+        // })
+      }
+    });
+    this.renderersContainer.update(command);
+    command = new Command();
+    struct.bonds.forEach((bond) => {
+      const beginAtomSgroup = struct.getGroupFromAtomId(bond.begin);
+      const endAtomSgroup = struct.getGroupFromAtomId(bond.end);
+      if (
+        beginAtomSgroup?.getAttachmentAtomId() === bond.begin &&
+        endAtomSgroup?.getAttachmentAtomId() === bond.end &&
+        beginAtomSgroup instanceof MonomerMicromolecule &&
+        endAtomSgroup instanceof MonomerMicromolecule
+      ) {
+        const { command: polymerBondAdditionCommand, polymerBond } =
+          this.drawingEntitiesManager.addPolymerBond(
+            sgroupToMonomer.get(beginAtomSgroup),
+            sgroupToMonomer.get(beginAtomSgroup).renderer.center,
+            sgroupToMonomer.get(endAtomSgroup).renderer.center,
+          );
+        command.merge(polymerBondAdditionCommand);
+        command.merge(
+          this.drawingEntitiesManager.finishPolymerBondCreation(
+            polymerBond,
+            sgroupToMonomer.get(endAtomSgroup),
+            'R1',
+            'R2',
+          ),
+        );
+      }
+    });
+    this.renderersContainer.update(command);
+    global.ketcher.editor.clear();
   }
 }

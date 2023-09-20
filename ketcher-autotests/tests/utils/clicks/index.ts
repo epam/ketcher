@@ -157,6 +157,18 @@ export async function moveOnBond(
   await page.mouse.move(point.x, point.y);
 }
 
+type DropdownIds =
+  | 'bonds'
+  | 'rgroup-label'
+  | 'select-rectangle'
+  | 'reaction-arrow-open-angle'
+  | 'shape-ellipse';
+export async function openDropdown(page: Page, dropdownElementId: DropdownIds) {
+  await page.getByTestId('hand').click();
+  await page.getByTestId(dropdownElementId).click();
+  await page.getByTestId(dropdownElementId).click();
+}
+
 export async function applyAutoMapMode(
   page: Page,
   mode: string,

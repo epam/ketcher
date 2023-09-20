@@ -1,0 +1,406 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "type": "monomer",
+                "id": "1",
+                "position": {
+                    "x": 2.5,
+                    "y": 2.5
+                },
+                "templateId": "A"
+            },
+            {
+                "type": "monomer",
+                "id": "2",
+                "position": {
+                    "x": 6.25,
+                    "y": 2.5
+                },
+                "templateId": "A"
+            },
+            {
+                "type": "monomer",
+                "id": "3",
+                "position": {
+                    "x": 10,
+                    "y": 2.5
+                },
+                "templateId": "A"
+            },
+            {
+                "type": "monomer",
+                "id": "4",
+                "position": {
+                    "x": 13.75,
+                    "y": 2.5
+                },
+                "templateId": "B"
+            },
+            {
+                "type": "monomer",
+                "id": "5",
+                "position": {
+                    "x": 13.75,
+                    "y": 6.25
+                },
+                "templateId": "B"
+            },
+            {
+                "type": "monomer",
+                "id": "6",
+                "position": {
+                    "x": 17.5,
+                    "y": 6.25
+                },
+                "templateId": "B"
+            }
+        ],
+        "connections": [
+            {
+                "connectionType": "single",
+                "endPoint1": {
+                    "monomerId": "2",
+                    "attachmentPointId": "R1"
+                },
+                "endPoint2": {
+                    "monomerId": "1",
+                    "attachmentPointId": "R2"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endPoint1": {
+                    "monomerId": "3",
+                    "attachmentPointId": "R1"
+                },
+                "endPoint2": {
+                    "monomerId": "2",
+                    "attachmentPointId": "R2"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endPoint1": {
+                    "monomerId": "4",
+                    "attachmentPointId": "R1"
+                },
+                "endPoint2": {
+                    "monomerId": "3",
+                    "attachmentPointId": "R2"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endPoint1": {
+                    "monomerId": "5",
+                    "attachmentPointId": "R1"
+                },
+                "endPoint2": {
+                    "monomerId": "4",
+                    "attachmentPointId": "R2"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endPoint1": {
+                    "monomerId": "6",
+                    "attachmentPointId": "R1"
+                },
+                "endPoint2": {
+                    "monomerId": "5",
+                    "attachmentPointId": "R2"
+                }
+            }
+        ],
+        "templates": [
+            {
+                "type": "monomerTemplate",
+                "id": "A",
+                "alias": "Ala",
+                "naturalAnalog": "Ala",
+                "naturalAnalogShort": "A",
+                "monomerClass": "PEPTIDE",
+                "monomerSubClass": "AminoAcid",
+"root": {
+        "nodes": [
+            {
+                "$ref": "mol0"
+            }
+        ]
+    },
+    "mol0": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    10.809849152128567,
+                    -7.775074417174608,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    12.540150847871434,
+                    -7.774589229177203,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    11.67663750949124,
+                    -7.274966888850187,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    12.540150847871434,
+                    -8.775532067822148,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    10.809849152128567,
+                    -8.780020056798138,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    11.67882085547956,
+                    -9.275033111149813,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 2,
+                "atoms": [
+                    2,
+                    0
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    3,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    4
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    3
+                ]
+            }
+        ],
+        "sgroups": [
+            {
+                "type": "DAT",
+                "atoms": [
+                    0,
+                    1,
+                    2,
+                    3,
+                    4,
+                    5
+                ],
+                "context": "Fragment",
+                "fieldName": "A",
+                "fieldData": "Test",
+                "bonds": [
+                    0,
+                    1,
+                    2,
+                    3,
+                    4,
+                    5
+                ]
+            }
+        ]
+    }
+
+            },
+            {
+                "type": "monomerTemplate",
+                "id": "B",
+                "alias": "Pho",
+                "naturalAnalog": "Pho",
+                "naturalAnalogShort": "P",
+                "monomerClass": "RNA",
+                "monomerSubClass": "Phosphate",
+"root": {
+        "nodes": [
+            {
+                "$ref": "mol0"
+            }
+        ]
+    },
+    "mol0": {
+        "type": "molecule",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    10.809849152128567,
+                    -7.775074417174608,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    12.540150847871434,
+                    -7.774589229177203,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    11.67663750949124,
+                    -7.274966888850187,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    12.540150847871434,
+                    -8.775532067822148,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    10.809849152128567,
+                    -8.780020056798138,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    11.67882085547956,
+                    -9.275033111149813,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 2,
+                "atoms": [
+                    2,
+                    0
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    3,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    4
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    3
+                ]
+            }
+        ],
+        "sgroups": [
+            {
+                "type": "DAT",
+                "atoms": [
+                    0,
+                    1,
+                    2,
+                    3,
+                    4,
+                    5
+                ],
+                "context": "Fragment",
+                "fieldName": "A",
+                "fieldData": "Test",
+                "bonds": [
+                    0,
+                    1,
+                    2,
+                    3,
+                    4,
+                    5
+                ]
+            }
+        ]
+    }
+            }
+        ]
+    }
+
+}
+
+
+
+
+
+
+
+
+
+
+

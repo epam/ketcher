@@ -2,10 +2,8 @@
 import { expect, test } from '@playwright/test';
 import {
   pressButton,
-  delay,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
-  DELAY_IN_SECONDS,
   selectTopPanelButton,
   TopPanelButton,
   moveMouseToTheMiddleOfTheScreen,
@@ -15,6 +13,9 @@ import {
   RingButton,
   clickInTheMiddleOfTheScreen,
   waitForPageInit,
+  miewApplyButtonIsEnabled,
+  takeTopToolbarScreenshot,
+  waitForRender,
 } from '@utils';
 import { getKet } from '@utils/formats';
 
@@ -39,12 +40,13 @@ test.describe('3D Viewer', () => {
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
     await selectTopPanelButton(TopPanelButton.ThreeD, page);
-    // delay need to load 3D Viewer
-    await delay(DELAY_IN_SECONDS.THREE);
+    await miewApplyButtonIsEnabled(page);
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(x + 20, y, page);
-    await pressButton(page, 'Cancel');
+    await waitForRender(page, async () => {
+      await pressButton(page, 'Cancel');
+    });
   });
 
   test('Structure with Heteroatoms without Save Position', async ({ page }) => {
@@ -56,12 +58,13 @@ test.describe('3D Viewer', () => {
     */
     await openFileAndAddToCanvas('Molfiles-V2000/benzene-br.mol', page);
     await selectTopPanelButton(TopPanelButton.ThreeD, page);
-    // delay need to load 3D Viewer
-    await delay(DELAY_IN_SECONDS.THREE);
+    await miewApplyButtonIsEnabled(page);
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(x - 20, y, page);
-    await pressButton(page, 'Cancel');
+    await waitForRender(page, async () => {
+      await pressButton(page, 'Cancel');
+    });
   });
 
   test('Structure with a Stereobonds without Save Position', async ({
@@ -74,12 +77,13 @@ test.describe('3D Viewer', () => {
     */
     await openFileAndAddToCanvas('Molfiles-V2000/benzene-stereo.mol', page);
     await selectTopPanelButton(TopPanelButton.ThreeD, page);
-    // delay need to load 3D Viewer
-    await delay(DELAY_IN_SECONDS.THREE);
+    await miewApplyButtonIsEnabled(page);
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(x - 20, y, page);
-    await pressButton(page, 'Cancel');
+    await waitForRender(page, async () => {
+      await pressButton(page, 'Cancel');
+    });
   });
 
   test('Structure with Aromatic Bonds without Save Position', async ({
@@ -95,12 +99,13 @@ test.describe('3D Viewer', () => {
       page,
     );
     await selectTopPanelButton(TopPanelButton.ThreeD, page);
-    // delay need to load 3D Viewer
-    await delay(DELAY_IN_SECONDS.THREE);
+    await miewApplyButtonIsEnabled(page);
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(x - 20, y, page);
-    await pressButton(page, 'Cancel');
+    await waitForRender(page, async () => {
+      await pressButton(page, 'Cancel');
+    });
   });
 });
 
@@ -109,18 +114,12 @@ test.describe('3D Viewer', () => {
     await waitForPageInit(page);
   });
 
-  test('Button and tooltip verification', async ({ page }) => {
+  test('Button verification', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1931
     Description: '3D Viewer' button is present on the main toolbar.
     */
-    await selectTopPanelButton(TopPanelButton.ThreeD, page);
-    // delay need to load 3D Viewer
-    await delay(DELAY_IN_SECONDS.THREE);
-    await expect(page).toHaveScreenshot({
-      animations: 'disabled',
-      maxDiffPixelRatio: 0.05,
-    });
+    await takeTopToolbarScreenshot(page);
   });
 
   test('Empty canvas', async ({ page }) => {
@@ -145,6 +144,7 @@ test.describe('3D Viewer', () => {
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
     await selectTopPanelButton(TopPanelButton.ThreeD, page);
+    await miewApplyButtonIsEnabled(page);
     await expect(page).toHaveScreenshot({
       animations: 'disabled',
       maxDiffPixelRatio: 0.05,
@@ -164,10 +164,13 @@ test.describe('3D Viewer', () => {
     await clickInTheMiddleOfTheScreen(page);
     const initialStructureData = await getKet(page);
     await selectTopPanelButton(TopPanelButton.ThreeD, page);
+    await miewApplyButtonIsEnabled(page);
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(x, y + 75, page);
-    await pressButton(page, 'Apply');
+    await waitForRender(page, async () => {
+      await pressButton(page, 'Apply');
+    });
 
     // Get the structure data after making changes
     const changedStructureData = await getKet(page);
@@ -186,12 +189,13 @@ test.describe('3D Viewer', () => {
     await openFileAndAddToCanvas('Molfiles-V2000/benzene-br.mol', page);
     const initialStructureData = await getKet(page);
     await selectTopPanelButton(TopPanelButton.ThreeD, page);
-    // delay need to load 3D Viewer
-    await delay(DELAY_IN_SECONDS.TWO);
+    await miewApplyButtonIsEnabled(page);
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(x + 80, y, page);
-    await pressButton(page, 'Apply');
+    await waitForRender(page, async () => {
+      await pressButton(page, 'Apply');
+    });
 
     // Get the structure data after making changes
     const changedStructureData = await getKet(page);
@@ -209,12 +213,13 @@ test.describe('3D Viewer', () => {
     await openFileAndAddToCanvas('Molfiles-V2000/benzene-stereo.mol', page);
     const initialStructureData = await getKet(page);
     await selectTopPanelButton(TopPanelButton.ThreeD, page);
-    // delay need to load 3D Viewer
-    await delay(DELAY_IN_SECONDS.TWO);
+    await miewApplyButtonIsEnabled(page);
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(x + 75, y, page);
-    await pressButton(page, 'Apply');
+    await waitForRender(page, async () => {
+      await pressButton(page, 'Apply');
+    });
 
     // Get the structure data after making changes
     const changedStructureData = await getKet(page);
@@ -235,12 +240,13 @@ test.describe('3D Viewer', () => {
     );
     const initialStructureData = await getKet(page);
     await selectTopPanelButton(TopPanelButton.ThreeD, page);
-    // delay need to load 3D Viewer
-    await delay(DELAY_IN_SECONDS.TWO);
+    await miewApplyButtonIsEnabled(page);
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(x - 90, y, page);
-    await pressButton(page, 'Apply');
+    await waitForRender(page, async () => {
+      await pressButton(page, 'Apply');
+    });
 
     // Get the structure data after making changes
     const changedStructureData = await getKet(page);

@@ -533,8 +533,10 @@ class SelectTool implements Tool {
     const event = this.previousMouseMoveEvent;
     const render = this.editor.render;
 
+    const oneSecondInMilliseconds = 1000;
     const now = Date.now();
-    const deltaTime = (lastTimestamp === 0 ? 0 : now - lastTimestamp) / 1000;
+    const deltaTime =
+      (lastTimestamp === 0 ? 0 : now - lastTimestamp) / oneSecondInMilliseconds;
     lastTimestamp = Date.now();
 
     if (!event) {

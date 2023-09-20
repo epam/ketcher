@@ -6,6 +6,7 @@ import {
   selectLeftPanelButton,
 } from '@utils/canvas';
 import { clickInTheMiddleOfTheScreen, pressButton } from '@utils/clicks';
+import { waitForPageInit } from '@utils/common';
 import { openFileAndAddToCanvas } from '@utils/files';
 import { DELAY_IN_SECONDS } from '@utils/globals';
 import {
@@ -18,13 +19,11 @@ import { addTextBoxToCanvas } from '@utils/selectors/addTextBoxToCanvas';
 
 test.describe('Clear canvas', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
   test('Clear Canvas - "Clear canvas" button', async ({ page }) => {
-    // Test case:EPMLSOPKET-1702
-    await selectTopPanelButton(TopPanelButton.Clear, page);
+    // Test case: EPMLSOPKET-1702
     await page.getByRole('button', { name: 'Clear Canvas (Ctrl+Del)' }).hover();
-    await delay(DELAY_IN_SECONDS.TWO);
     await page.getByTitle('Clear Canvas (Ctrl+Del)').click();
     await addTextBoxToCanvas(page);
     await page.getByRole('dialog').getByRole('textbox').fill('12345');
@@ -80,7 +79,6 @@ test.describe('Clear canvas', () => {
     await selectTopPanelButton(TopPanelButton.Clear, page);
     await selectTopPanelButton(TopPanelButton.Undo, page);
     await page.keyboard.press('Control+Delete');
-    await delay(DELAY_IN_SECONDS.TWO);
     await selectTopPanelButton(TopPanelButton.Undo, page);
     await selectTopPanelButton(TopPanelButton.Undo, page);
     await selectTopPanelButton(TopPanelButton.Redo, page);
@@ -98,7 +96,6 @@ test.describe('Clear canvas', () => {
     await page.keyboard.press('Control+c');
     await page.keyboard.press('Control+v');
     await takeEditorScreenshot(page);
-    await delay(DELAY_IN_SECONDS.TWO);
     await selectTopPanelButton(TopPanelButton.Clear, page);
     await takeEditorScreenshot(page);
   });

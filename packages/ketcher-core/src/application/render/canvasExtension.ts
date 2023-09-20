@@ -6,6 +6,7 @@ const scrollMultiplier = 1;
 export function isCloseToEdgeOfScreen(event) {
   const { clientX, clientY } = event;
   const body = document.body;
+
   const isCloseToLeftEdgeOfScreen = clientX <= edgeOffset;
   const isCloseToTopEdgeOfScreen = clientY <= edgeOffset;
   const isCloseToRightEdgeOfScreen = body.clientWidth - clientX <= edgeOffset;
@@ -15,6 +16,7 @@ export function isCloseToEdgeOfScreen(event) {
     isCloseToTopEdgeOfScreen ||
     isCloseToRightEdgeOfScreen ||
     isCloseToBottomEdgeOfScreen;
+
   return {
     isCloseToLeftEdgeOfScreen,
     isCloseToTopEdgeOfScreen,
@@ -25,14 +27,22 @@ export function isCloseToEdgeOfScreen(event) {
 }
 
 export function isCloseToEdgeOfCanvas(clientArea) {
-  const isCloseToLeftEdgeOfCanvas = clientArea.scrollLeft <= edgeOffset;
-  const isCloseToTopEdgeOfCanvas = clientArea.scrollTop <= edgeOffset;
+  const {
+    scrollTop,
+    scrollLeft,
+    clientWidth,
+    clientHeight,
+    scrollWidth,
+    scrollHeight,
+  } = clientArea;
+
+  const isCloseToLeftEdgeOfCanvas = scrollLeft <= edgeOffset;
+  const isCloseToTopEdgeOfCanvas = scrollTop <= edgeOffset;
   const isCloseToRightEdgeOfCanvas =
-    clientArea.scrollLeft + clientArea.clientWidth + edgeOffset >=
-    clientArea.scrollWidth;
+    scrollLeft + clientWidth + edgeOffset >= scrollWidth;
   const isCloseToBottomEdgeOfCanvas =
-    clientArea.scrollTop + clientArea.clientHeight + edgeOffset >=
-    clientArea.scrollHeight;
+    scrollTop + clientHeight + edgeOffset >= scrollHeight;
+
   return {
     isCloseToLeftEdgeOfCanvas,
     isCloseToTopEdgeOfCanvas,
@@ -48,24 +58,30 @@ export function calculateCanvasExtension(
 ) {
   const newHorizontalScrollPosition = clientArea.scrollLeft + extensionVector.x;
   const newVerticalScrollPosition = clientArea.scrollTop + extensionVector.y;
+
   let horizontalExtension = 0;
   let verticalExtension = 0;
+
   if (newHorizontalScrollPosition > currentCanvasSize.x) {
     horizontalExtension = newHorizontalScrollPosition - currentCanvasSize.x;
   }
+
   if (newHorizontalScrollPosition < 0) {
     horizontalExtension = Math.abs(newHorizontalScrollPosition);
   }
+
   if (newVerticalScrollPosition > currentCanvasSize.y) {
     verticalExtension = newVerticalScrollPosition - currentCanvasSize.y;
   }
+
   if (newVerticalScrollPosition < 0) {
     verticalExtension = Math.abs(newVerticalScrollPosition);
   }
+
   return new Vec2(horizontalExtension, verticalExtension, 0);
 }
 
-export function shiftAndExtendCanvasByVector(vector: Vec2, render) {
+export function extendCanvasByVector(vector: Vec2, render) {
   const clientArea = render.clientArea;
   const extensionVector = calculateCanvasExtension(
     clientArea,
@@ -80,12 +96,12 @@ export function shiftAndExtendCanvasByVector(vector: Vec2, render) {
     render.setViewBox(render.options.zoom);
   }
 
-  scrollByVector(vector, render);
   render.update(false);
 }
 
-export function scrollByVector(vector: Vec2, render) {
+export function scrollCanvasByVector(vector: Vec2, render) {
   const clientArea = render.clientArea;
+
   clientArea.scrollLeft += (vector.x * render.options.scale) / scrollMultiplier;
   clientArea.scrollTop += (vector.y * render.options.scale) / scrollMultiplier;
 }

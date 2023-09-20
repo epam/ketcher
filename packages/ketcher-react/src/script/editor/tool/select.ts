@@ -31,8 +31,8 @@ import {
   Bond,
   isCloseToEdgeOfCanvas,
   isCloseToEdgeOfScreen,
-  scrollByVector,
-  shiftAndExtendCanvasByVector,
+  scrollCanvasByVector,
+  extendCanvasByVector,
   getItemsToFuse,
   vectorUtils,
 } from 'ketcher-core';
@@ -52,6 +52,22 @@ import { Tool } from './Tool';
 import { handleMovingPosibilityCursor } from '../utils';
 
 type SelectMode = 'lasso' | 'fragment' | 'rectangle';
+
+enum Direction {
+  LEFT,
+  TOP,
+  RIGHT,
+  DOWN,
+}
+
+const canvasOffset = 1;
+
+const directionOffsetMap: Record<Direction, Vec2> = {
+  [Direction.LEFT]: new Vec2(-canvasOffset, 0),
+  [Direction.TOP]: new Vec2(0, -canvasOffset),
+  [Direction.RIGHT]: new Vec2(canvasOffset, 0),
+  [Direction.DOWN]: new Vec2(0, canvasOffset),
+};
 
 class SelectTool implements Tool {
   readonly #mode: SelectMode;
@@ -534,13 +550,13 @@ class SelectTool implements Tool {
 }
 
 function resizeCanvas(render, event) {
-  const offset = 1;
   const {
     isCloseToLeftEdgeOfCanvas,
     isCloseToTopEdgeOfCanvas,
     isCloseToRightEdgeOfCanvas,
     isCloseToBottomEdgeOfCanvas,
   } = isCloseToEdgeOfCanvas(render.clientArea);
+
   const {
     isCloseToLeftEdgeOfScreen,
     isCloseToTopEdgeOfScreen,
@@ -548,36 +564,27 @@ function resizeCanvas(render, event) {
     isCloseToBottomEdgeOfScreen,
   } = isCloseToEdgeOfScreen(event);
 
-  if (isCloseToLeftEdgeOfScreen) {
-    if (isCloseToLeftEdgeOfCanvas) {
-      shiftAndExtendCanvasByVector(new Vec2(-offset, 0), render);
+  const directionChecksMap: Record<Direction, [boolean, boolean]> = {
+    [Direction.LEFT]: [isCloseToLeftEdgeOfScreen, isCloseToLeftEdgeOfCanvas],
+    [Direction.TOP]: [isCloseToTopEdgeOfScreen, isCloseToTopEdgeOfCanvas],
+    [Direction.RIGHT]: [isCloseToRightEdgeOfScreen, isCloseToRightEdgeOfCanvas],
+    [Direction.DOWN]: [
+      isCloseToBottomEdgeOfScreen,
+      isCloseToBottomEdgeOfCanvas,
+    ],
+  };
+
+  for (const [direction, offset] of Object.entries(directionOffsetMap)) {
+    const [isCloseToScreenEdge, isCloseToCanvasEdge] =
+      directionChecksMap[direction];
+
+    if (isCloseToScreenEdge) {
+      if (isCloseToCanvasEdge) {
+        extendCanvasByVector(offset, render);
+      }
+
+      scrollCanvasByVector(offset, render);
     }
-
-    scrollByVector(new Vec2(-offset, 0), render);
-  }
-
-  if (isCloseToTopEdgeOfScreen) {
-    if (isCloseToTopEdgeOfCanvas) {
-      shiftAndExtendCanvasByVector(new Vec2(0, -offset), render);
-    }
-
-    scrollByVector(new Vec2(0, -offset), render);
-  }
-
-  if (isCloseToRightEdgeOfScreen) {
-    if (isCloseToRightEdgeOfCanvas) {
-      shiftAndExtendCanvasByVector(new Vec2(offset, 0), render);
-    }
-
-    scrollByVector(new Vec2(offset, 0), render);
-  }
-
-  if (isCloseToBottomEdgeOfScreen) {
-    if (isCloseToBottomEdgeOfCanvas) {
-      shiftAndExtendCanvasByVector(new Vec2(0, offset), render);
-    }
-
-    scrollByVector(new Vec2(0, offset), render);
   }
 }
 

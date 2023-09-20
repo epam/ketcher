@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { test } from '@playwright/test';
 import {
   takeEditorScreenshot,
@@ -10,6 +9,7 @@ import {
   pressButton,
   clickInTheMiddleOfTheScreen,
   dragMouseTo,
+  clickOnTheCanvas,
 } from '@utils/clicks';
 import {
   TopPanelButton,
@@ -17,6 +17,7 @@ import {
   DELAY_IN_SECONDS,
   selectRing,
   RingButton,
+  waitForPageInit,
 } from '@utils';
 import {
   selectNestedTool,
@@ -26,10 +27,16 @@ import { addTextBoxToCanvas } from '@utils/selectors/addTextBoxToCanvas';
 
 test.describe('Text tools test cases', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
+
+  test.afterEach(async ({ page }) => {
+    await takeEditorScreenshot(page);
+  });
+
   test('Text tool - Modify the created text object', async ({ page }) => {
     // Test case: EPMLSOPKET-2228
+    // Checking if possible is modify created text object by adding some extra symbols
     await addTextBoxToCanvas(page);
     await page.getByRole('dialog').getByRole('textbox').fill('TEST');
     await pressButton(page, 'Apply');
@@ -38,22 +45,21 @@ test.describe('Text tools test cases', () => {
     await page.getByRole('dialog').getByRole('textbox').click();
     await page.getByRole('dialog').getByRole('textbox').fill('TEST123');
     await pressButton(page, 'Apply');
-    await takeEditorScreenshot(page);
   });
 
   test('Text tool - Delete the created text object', async ({ page }) => {
     // Test case: EPMLSOPKET-2229
-    // Delte with Erase tool
+    // Delte created text object with Erase tool
     await addTextBoxToCanvas(page);
     await page.getByRole('dialog').getByRole('textbox').fill('TEST');
     await pressButton(page, 'Apply');
     await selectLeftPanelButton(LeftPanelButton.Erase, page);
     await page.getByText('TEST').click();
-    await takeEditorScreenshot(page);
 
-    // Delete with and Lasso Selection Tool and 'Delete' button on a keyboard.
+    // Delete created text object with and Lasso Selection Tool and 'Delete' button on a keyboard.
     await selectTopPanelButton(TopPanelButton.Undo, page);
     await selectTopPanelButton(TopPanelButton.Redo, page);
+    await delay(DELAY_IN_SECONDS.TWO);
     await selectTopPanelButton(TopPanelButton.Undo, page);
     await takeEditorScreenshot(page);
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
@@ -62,10 +68,11 @@ test.describe('Text tools test cases', () => {
     await page.getByText('TEST').click();
     await page.keyboard.press('Delete');
 
-    // Delete in the text editor field
+    // Delete created text object in the text editor field
     await delay(DELAY_IN_SECONDS.TWO);
     await selectTopPanelButton(TopPanelButton.Undo, page);
     await selectTopPanelButton(TopPanelButton.Redo, page);
+    await delay(DELAY_IN_SECONDS.TWO);
     await selectTopPanelButton(TopPanelButton.Undo, page);
     await page.getByText('TEST').dblclick();
     await pressButton(page, 'Cancel');
@@ -74,17 +81,16 @@ test.describe('Text tools test cases', () => {
     await page.keyboard.press('Delete');
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
-
     await selectTopPanelButton(TopPanelButton.Undo, page);
     await selectTopPanelButton(TopPanelButton.Redo, page);
     await selectTopPanelButton(TopPanelButton.Undo, page);
-    await takeEditorScreenshot(page);
   });
 
   test('Text tool - Create a single text object by pasting text', async ({
     page,
   }) => {
     // Test case: EPMLSOPKET-2230
+    // Checking if possible is create text object by pasting text
     await addTextBoxToCanvas(page);
     await page
       .getByRole('dialog')
@@ -102,13 +108,13 @@ test.describe('Text tools test cases', () => {
       'Ketcher is a tool to draw molecular structures and chemical reactions';
     await page.getByRole('dialog').getByRole('textbox').fill(paseText);
     await pressButton(page, 'Apply');
-    await takeEditorScreenshot(page);
   });
 
   test('Text tool - Create several text objects and modifited them', async ({
     page,
   }) => {
     // Test case: EPMLSOPKET-2231 & EPMLSOPKET-2232
+    // Checking if possible is created few text object and modify them
     await addTextBoxToCanvas(page);
     await page.getByRole('dialog').getByRole('textbox').fill('&&&');
     await pressButton(page, 'Cancel');
@@ -122,7 +128,6 @@ test.describe('Text tools test cases', () => {
       'Ketcher is a tool to draw molecular structures and chemical reactions';
     await page.getByRole('dialog').getByRole('textbox').fill(text1);
     await pressButton(page, 'Apply');
-    await takeEditorScreenshot(page);
 
     await page.getByText('+++').dblclick();
     await page.getByRole('dialog').getByRole('textbox').fill('+++123');
@@ -137,11 +142,11 @@ test.describe('Text tools test cases', () => {
     await page.getByText(text1).dblclick();
     await page.getByRole('dialog').getByRole('textbox').fill(`${text1}123`);
     await pressButton(page, 'Apply');
-    await takeEditorScreenshot(page);
   });
 
   test('Text tool - Delete several created text objects', async ({ page }) => {
     // Test case: EPMLSOPKET-2233
+    // Delete several created ealier text objects with hotkey (Delete) and  'Erase' tool.
     await addTextBoxToCanvas(page);
     await page.getByRole('dialog').getByRole('textbox').fill('&&&');
     await pressButton(page, 'Apply');
@@ -159,6 +164,7 @@ test.describe('Text tools test cases', () => {
     await page.getByText('&&&').click();
     await selectTopPanelButton(TopPanelButton.Undo, page);
     await selectTopPanelButton(TopPanelButton.Redo, page);
+    await delay(DELAY_IN_SECONDS.TWO);
     await selectTopPanelButton(TopPanelButton.Undo, page);
     await takeEditorScreenshot(page);
 
@@ -180,26 +186,36 @@ test.describe('Text tools test cases', () => {
     await page.getByTestId('erase').click();
     await selectTopPanelButton(TopPanelButton.Undo, page);
     await selectTopPanelButton(TopPanelButton.Redo, page);
+    await delay(DELAY_IN_SECONDS.TWO);
     await selectTopPanelButton(TopPanelButton.Undo, page);
     await takeEditorScreenshot(page);
     await selectNestedTool(page, SelectTool.LASSO_SELECTION);
-    await page.mouse.move(97, 79);
+    const a = 97;
+    const b = 79;
+    const c = 943;
+    const d = 114;
+    const e = 844;
+    const f = 579;
+    const g = 66;
+    const h = 611;
+    await page.mouse.move(a, b);
     await page.mouse.down();
-    await page.mouse.move(943, 114);
-    await page.mouse.move(844, 579);
-    await page.mouse.move(66, 611);
+    await page.mouse.move(c, d);
+    await page.mouse.move(e, f);
+    await page.mouse.move(g, h);
     await page.mouse.up();
     await page.keyboard.press('Delete');
     await selectTopPanelButton(TopPanelButton.Undo, page);
     await selectTopPanelButton(TopPanelButton.Redo, page);
+    await delay(DELAY_IN_SECONDS.TWO);
     await selectTopPanelButton(TopPanelButton.Undo, page);
-    await takeEditorScreenshot(page);
   });
 
   test('Text tool - Manipulations with the created text object', async ({
     page,
   }) => {
     // Test case: EPMLSOPKET-2234
+    // Checking if possible to modify created ealier text object and moving it with use Selection Tool
     await addTextBoxToCanvas(page);
     const text3 = 'Test123';
     await page.getByRole('dialog').getByRole('textbox').fill(text3);
@@ -209,17 +225,20 @@ test.describe('Text tools test cases', () => {
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
     await selectNestedTool(page, SelectTool.LASSO_SELECTION);
     await page.getByText(text3).hover();
-    await page.mouse.move(656, 359);
+    const i = 656;
+    const j = 359;
+    const k = 943;
+    const l = 114;
+    await page.mouse.move(i, j);
     await page.mouse.down();
-    await page.mouse.move(943, 114);
+    await page.mouse.move(k, l);
     await page.mouse.up();
-    await takeEditorScreenshot(page);
   });
 
   test('Text tool - Manipulations with the another created text object', async ({
     page,
   }) => {
-    // Add another text object
+    // Checking if possible is perform different manipulations with text objects using different tools (zoom)
     await addTextBoxToCanvas(page);
     const text4 = 'ABC123';
     await page.getByRole('dialog').getByRole('textbox').fill(text4);
@@ -230,9 +249,13 @@ test.describe('Text tools test cases', () => {
     await selectNestedTool(page, SelectTool.FRAGMENT_SELECTION);
     await page.getByText(text4).hover();
     await page.getByText(text4).click();
-    await page.mouse.move(656, 359);
+    const m = 656;
+    const n = 359;
+    const o = 844;
+    const p = 579;
+    await page.mouse.move(m, n);
     await page.mouse.down();
-    await page.mouse.move(844, 579);
+    await page.mouse.move(o, p);
     await page.mouse.up();
     await page.getByTestId('zoom-input').click();
     await page.getByText('Zoom in').click();
@@ -240,13 +263,13 @@ test.describe('Text tools test cases', () => {
     await takeEditorScreenshot(page);
     await page.getByText('Zoom out').click();
     await page.getByText('Zoom out').click();
-    await takeEditorScreenshot(page);
   });
 
   test('Text tool - Selection of a text object and a structure', async ({
     page,
   }) => {
     // Test case: EPMLSOPKET-2236
+    // Checking if all created and selected elements are moved together
     await addTextBoxToCanvas(page);
     await page.getByRole('dialog').getByRole('textbox').fill('OneTwoThree');
     await pressButton(page, 'Apply');
@@ -255,17 +278,28 @@ test.describe('Text tools test cases', () => {
     await takeEditorScreenshot(page);
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
     await selectNestedTool(page, SelectTool.LASSO_SELECTION);
-    await page.mouse.move(97, 79);
+    const a = 97;
+    const b = 79;
+    const c = 943;
+    const d = 114;
+    const e = 844;
+    const f = 579;
+    const g = 66;
+    const h = 611;
+    const i = 656;
+    const j = 359;
+    const k = 906;
+    const l = 245;
+    await page.mouse.move(a, b);
     await page.mouse.down();
-    await page.mouse.move(943, 114);
-    await page.mouse.move(844, 579);
-    await page.mouse.move(66, 611);
+    await page.mouse.move(c, d);
+    await page.mouse.move(e, f);
+    await page.mouse.move(g, h);
     await page.mouse.up();
-    await page.mouse.move(656, 359);
+    await page.mouse.move(i, j);
     await page.mouse.down();
-    await dragMouseTo(906, 245, page);
+    await dragMouseTo(k, l, page);
     await page.mouse.up();
-    await takeEditorScreenshot(page);
   });
 
   // test('Text tool - Restore Down the window', async ({ page }) => {

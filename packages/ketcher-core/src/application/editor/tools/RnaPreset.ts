@@ -24,6 +24,8 @@ import { monomerFactory } from '../operations/monomer/monomerFactory';
 import { RNABase } from 'domain/entities/RNABase';
 import { Phosphate } from 'domain/entities/Phosphate';
 import assert from 'assert';
+import { provideEditorSettings } from 'application/editor/editorSettings';
+import { Scale } from 'domain/helpers';
 
 class RnaPresetTool implements Tool {
   rnaBase: MonomerItemType | undefined;
@@ -53,38 +55,50 @@ class RnaPresetTool implements Tool {
   }
 
   mousedown() {
+    const editorSettings = provideEditorSettings();
+
     assert(
       this.sugarPreviewRenderer,
       'monomerPreviewRenderer is not initialized',
     );
     assert(this.sugar, 'no sugar in preset');
-
     const modelChanges = this.editor.drawingEntitiesManager.addRnaPreset({
       sugar: this.sugar,
-      sugarPosition: new Vec2(
-        this.editor.lastCursorPosition.x - this.sugarPreviewRenderer.width / 2,
-        this.editor.lastCursorPosition.y - this.sugarPreviewRenderer.height / 2,
+      sugarPosition: Scale.scaled2obj(
+        new Vec2(
+          this.editor.lastCursorPosition.x -
+            this.sugarPreviewRenderer.width / 2,
+          this.editor.lastCursorPosition.y -
+            this.sugarPreviewRenderer.height / 2,
+        ),
+        editorSettings,
       ),
       phosphate: this.phosphate,
       phosphatePosition: this.phosphatePreviewRenderer
-        ? new Vec2(
-            this.editor.lastCursorPosition.x -
-              this.phosphatePreviewRenderer.width / 2 +
-              this.sugarPreviewRenderer?.width +
-              30,
-            this.editor.lastCursorPosition.y -
-              this.phosphatePreviewRenderer.height / 2,
+        ? Scale.scaled2obj(
+            new Vec2(
+              this.editor.lastCursorPosition.x -
+                this.phosphatePreviewRenderer.width / 2 +
+                this.sugarPreviewRenderer?.width +
+                30,
+              this.editor.lastCursorPosition.y -
+                this.phosphatePreviewRenderer.height / 2,
+            ),
+            editorSettings,
           )
         : undefined,
       rnaBase: this.rnaBase,
       rnaBasePosition: this.rnaBasePreviewRenderer
-        ? new Vec2(
-            this.editor.lastCursorPosition.x -
-              this.rnaBasePreviewRenderer.width / 2,
-            this.editor.lastCursorPosition.y -
-              this.rnaBasePreviewRenderer.height / 2 +
-              this.sugarPreviewRenderer.height +
-              30,
+        ? Scale.scaled2obj(
+            new Vec2(
+              this.editor.lastCursorPosition.x -
+                this.rnaBasePreviewRenderer.width / 2,
+              this.editor.lastCursorPosition.y -
+                this.rnaBasePreviewRenderer.height / 2 +
+                this.sugarPreviewRenderer.height +
+                30,
+            ),
+            editorSettings,
           )
         : undefined,
     });
@@ -93,24 +107,35 @@ class RnaPresetTool implements Tool {
   }
 
   mousemove() {
+    const editorSettings = provideEditorSettings();
+
     this.sugarPreview?.moveAbsolute(
-      new Vec2(
-        this.editor.lastCursorPosition.x + this.MONOMER_PREVIEW_OFFSET_X,
-        this.editor.lastCursorPosition.y + this.MONOMER_PREVIEW_OFFSET_Y,
+      Scale.scaled2obj(
+        new Vec2(
+          this.editor.lastCursorPosition.x + this.MONOMER_PREVIEW_OFFSET_X,
+          this.editor.lastCursorPosition.y + this.MONOMER_PREVIEW_OFFSET_Y,
+        ),
+        editorSettings,
       ),
     );
 
     this.rnaBasePreview?.moveAbsolute(
-      new Vec2(
-        this.editor.lastCursorPosition.x + this.MONOMER_PREVIEW_OFFSET_X,
-        this.editor.lastCursorPosition.y + this.MONOMER_PREVIEW_OFFSET_Y + 18,
+      Scale.scaled2obj(
+        new Vec2(
+          this.editor.lastCursorPosition.x + this.MONOMER_PREVIEW_OFFSET_X,
+          this.editor.lastCursorPosition.y + this.MONOMER_PREVIEW_OFFSET_Y + 18,
+        ),
+        editorSettings,
       ),
     );
 
     this.phosphatePreview?.moveAbsolute(
-      new Vec2(
-        this.editor.lastCursorPosition.x + this.MONOMER_PREVIEW_OFFSET_X + 18,
-        this.editor.lastCursorPosition.y + this.MONOMER_PREVIEW_OFFSET_Y,
+      Scale.scaled2obj(
+        new Vec2(
+          this.editor.lastCursorPosition.x + this.MONOMER_PREVIEW_OFFSET_X + 18,
+          this.editor.lastCursorPosition.y + this.MONOMER_PREVIEW_OFFSET_Y,
+        ),
+        editorSettings,
       ),
     );
 

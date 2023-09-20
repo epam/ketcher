@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { expect, test } from '@playwright/test';
 import {
   openFileAndAddToCanvas,

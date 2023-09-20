@@ -49,10 +49,10 @@ class SelectRectangle implements BaseTool {
   }
 
   private createBrush() {
+    console.log(this.editor);
     this.brushArea = select(this.editor.canvas)
       .insert('g', ':first-child')
       .attr('id', 'rectangle-selection-area');
-
     const brushed = (mo) => {
       if (mo.selection) {
         this.brushArea.call(this.brush.clear);

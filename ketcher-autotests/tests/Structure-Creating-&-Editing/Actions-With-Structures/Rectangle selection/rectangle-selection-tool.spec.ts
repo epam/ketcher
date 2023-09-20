@@ -74,7 +74,7 @@ test.describe('Rectangle selection tool', () => {
     const atomNumb = 5;
     const moveMouseCordY = 10;
     const moveMouseCordX = 270;
-    await openFileAndAddToCanvas('Rxn-V2000/reaction-4.rxn', page);
+    await openFileAndAddToCanvas('Rxn-V2000/benzene-chain-reaction.rxn', page);
     await page.getByTestId('select-rectangle').click();
     const point = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await page.mouse.move(point.x - moveMouseCordX, point.y + moveMouseCordY);
@@ -100,7 +100,7 @@ test.describe('Rectangle selection tool', () => {
     //  Test case: EPMLSOPKET-
     const objectSelection = 100;
     const moveMouseCordY = 10;
-    await openFileAndAddToCanvas('Rxn-V2000/reaction-4.rxn', page);
+    await openFileAndAddToCanvas('Rxn-V2000/benzene-chain-reaction.rxn', page);
     await page.getByTestId('select-rectangle').click();
     await clickCanvas(page);
     const point = await selectObjects(page, xMark, yMark);
@@ -150,7 +150,7 @@ test.describe('Rectangle selection tool', () => {
   test('Delete with selection', async ({ page }) => {
     //  Test case: EPMLSOPKET-1352
     const atomNumb = 4;
-    await openFileAndAddToCanvas('Rxn-V2000/reaction-4.rxn', page);
+    await openFileAndAddToCanvas('Rxn-V2000/benzene-chain-reaction.rxn', page);
     await page.getByTestId('select-rectangle').click();
     await selectObjects(page, yMark, yMark);
     await page.keyboard.press('Delete');

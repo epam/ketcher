@@ -238,8 +238,3 @@ export async function fillFieldByPlaceholder(
   await page.getByPlaceholder(fieldLabel).click();
   await page.getByPlaceholder(fieldLabel).fill(testValue);
 }
-
-export async function miewApplyButtonIsEnabled(page: Page) {
-  const applyButton = page.getByTestId('miew-modal-button');
-  await expect(applyButton).toBeEnabled();
-}

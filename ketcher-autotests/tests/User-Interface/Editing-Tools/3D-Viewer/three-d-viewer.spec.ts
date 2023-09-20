@@ -13,10 +13,10 @@ import {
   RingButton,
   clickInTheMiddleOfTheScreen,
   waitForPageInit,
-  miewApplyButtonIsEnabled,
   takeTopToolbarScreenshot,
   waitForRender,
 } from '@utils';
+import { miewApplyButtonIsEnabled } from '@utils/common/loaders/waitForMiewApplyButtonIsEnabled';
 import { getKet } from '@utils/formats';
 
 test.describe('3D Viewer', () => {

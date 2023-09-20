@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { Page, expect, test } from '@playwright/test';
 import {
   selectTopPanelButton,
@@ -138,6 +137,7 @@ test.describe('Reagents RXN format', () => {
       'tests/test-data/mdl-rxnfile-v2000-expected.rxn',
     );
     const rxnFile = await getRxn(page, 'v2000');
+    // eslint-disable-next-line no-magic-numbers
     const METADATA_STRING_INDEXES = [2, 7, 25, 43];
 
     const filteredRxnFileExpected = getRxnFileFilteredBySymbols(

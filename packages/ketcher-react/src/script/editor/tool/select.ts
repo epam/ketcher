@@ -60,13 +60,14 @@ enum Direction {
   DOWN,
 }
 
-const canvasOffset = 1;
+let lastTimestamp = 0;
+const canvasOffsetPerSecond = 100;
 
 const directionOffsetMap: Record<Direction, Vec2> = {
-  [Direction.LEFT]: new Vec2(-canvasOffset, 0),
-  [Direction.TOP]: new Vec2(0, -canvasOffset),
-  [Direction.RIGHT]: new Vec2(canvasOffset, 0),
-  [Direction.DOWN]: new Vec2(0, canvasOffset),
+  [Direction.LEFT]: new Vec2(-canvasOffsetPerSecond, 0),
+  [Direction.TOP]: new Vec2(0, -canvasOffsetPerSecond),
+  [Direction.RIGHT]: new Vec2(canvasOffsetPerSecond, 0),
+  [Direction.DOWN]: new Vec2(0, canvasOffsetPerSecond),
 };
 
 class SelectTool implements Tool {
@@ -532,6 +533,10 @@ class SelectTool implements Tool {
     const event = this.previousMouseMoveEvent;
     const render = this.editor.render;
 
+    const now = Date.now();
+    const deltaTime = (lastTimestamp === 0 ? 0 : now - lastTimestamp) / 1000;
+    lastTimestamp = Date.now();
+
     if (!event) {
       return;
     }
@@ -540,7 +545,7 @@ class SelectTool implements Tool {
 
     if (isCloseToSomeEdgeOfScreen) {
       this.mousemove(event);
-      resizeCanvas(render, event);
+      resizeCanvas(render, event, deltaTime);
     }
 
     if (this.isMouseDown) {
@@ -549,7 +554,7 @@ class SelectTool implements Tool {
   }
 }
 
-function resizeCanvas(render, event) {
+function resizeCanvas(render, event, deltaTime: number) {
   const {
     isCloseToLeftEdgeOfCanvas,
     isCloseToTopEdgeOfCanvas,
@@ -578,12 +583,14 @@ function resizeCanvas(render, event) {
     const [isCloseToScreenEdge, isCloseToCanvasEdge] =
       directionChecksMap[direction];
 
+    const scaledOffset = offset.scaled(deltaTime);
+
     if (isCloseToScreenEdge) {
       if (isCloseToCanvasEdge) {
-        extendCanvasByVector(offset, render);
+        extendCanvasByVector(scaledOffset, render);
       }
 
-      scrollCanvasByVector(offset, render);
+      scrollCanvasByVector(scaledOffset, render);
     }
   }
 }

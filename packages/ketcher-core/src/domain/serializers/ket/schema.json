@@ -32,7 +32,32 @@
                 "properties": {
                   "$ref": {
                     "type": "string",
-                    "pattern": "^(mol\\d+|rg[1-9]\\d*)"
+                    "pattern": "^(mol\\d+|rg[1-9]\\d*|group\\d+|monomer\\d+|monomerTemplate-.*)"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "connections": {
+          "type": "array",
+          "minItems": 0,
+          "items": {
+            "$ref": "#/definitions/nodesConnection"
+          }
+        },
+        "templates": {
+          "type": "array",
+          "minItems": 0,
+          "items": {
+            "oneOf": [
+              {
+                "type": "object",
+                "required": ["$ref"],
+                "properties": {
+                  "$ref": {
+                    "type": "string",
+                    "pattern": "^monomerTemplate-.*"
                   }
                 }
               }
@@ -48,6 +73,15 @@
     },
     "^mol\\d+": {
       "$ref": "#/definitions/molecule"
+    },
+    "^monomerTemplate-.*": {
+      "$ref": "#/definitions/^monomerTemplate-.*"
+    },
+    "^monomer\\d+": {
+      "$ref": "#/definitions/monomer"
+    },
+    "^group\\d+": {
+      "$ref": "#/definitions/group"
     },
     "^header$": {
       "$ref": "#/definitions/header"
@@ -78,16 +112,29 @@
             "type": "number"
           }
         },
+        "attachmentOrder": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["attachmentAtom"],
+            "properties": {
+              "attachmentAtom": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "attachmentId": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          }
+        },
         "$refs": {
           "type": "array",
           "items": {
             "type": "string",
             "pattern": "^rg-[1-9]\\d*"
           }
-        },
-        "attachmentPoints": {
-          "type": "integer",
-          "enum": [0, 1, 2, 3]
         }
       }
     },
@@ -260,7 +307,8 @@
       "properties": {
         "type": {
           "type": "integer",
-          "enum": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+          "minimum": 1,
+          "maximum": 12
         },
         "atoms": {
           "type": "array",
@@ -324,20 +372,26 @@
               "default": 0
             }
           }
-        },
-        "fragments": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/structure"
-          }
         }
       },
-      "anyOf": [
+      "oneOf": [
         {
+          "properties": {
+            "fragments": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/structure"
+              }
+            }
+          },
           "required": ["fragments"]
         },
         {
-          "$ref": "#/definitions/structure"
+          "allOf": [
+            {
+              "$ref": "#/definitions/structure"
+            }
+          ]
         }
       ]
     },
@@ -368,16 +422,6 @@
             },
             "y": {
               "type": "number"
-            }
-          }
-        },
-        "properties": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "key": { "type": "string" },
-              "value": { "type": "string" }
             }
           }
         },
@@ -566,6 +610,7 @@
           }
         },
         "then": {
+          "required": ["fieldName"],
           "properties": {
             "context": {
               "enum": ["Fragment", "Multifragment", "Bond", "Atom", "Group"]
@@ -757,6 +802,270 @@
               }
             }
           }
+        }
+      }
+    },
+    "monomerTemplate": {
+      "type": "object",
+      "required": ["type", "id"],
+      "properties": {
+        "type": {
+          "const": "monomerTemplate"
+        },
+        "monomerClass": {
+          "type": "string",
+          "enum": [
+            "AminoAcid",
+            "Sugar",
+            "Base",
+            "Phosphate",
+            "Terminator",
+            "CHEM",
+            "RNA",
+            "DNA"
+          ]
+        },
+        "id": {
+          "type": "string"
+        },
+        "symbol": {
+          "type": "string"
+        },
+        "fullName": {
+          "type": "string"
+        },
+        "naturalAnalog": {
+          "type": "string"
+        },
+        "attachmentPoints": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["attachmentAtom"],
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^R[1-9]\\d*"
+              },
+              "attachmentAtom": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "leavingGroup": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": ["atoms"],
+                  "properties": {
+                    "atoms": {
+                      "type": "array",
+                      "items": {
+                        "type": "integer",
+                        "minimum": 0
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "allOf": [
+        {
+          "$ref": "#/definitions/structure"
+        }
+      ]
+    },
+    "monomer": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": {
+          "const": "monomer"
+        },
+        "templateId": {
+          "type": "string"
+        },
+        "alias": {
+          "type": "string"
+        },
+        "position": {
+          "type": "object",
+          "required": ["x", "y"],
+          "properties": {
+            "x": {
+              "type": "number"
+            },
+            "y": {
+              "type": "number"
+            }
+          }
+        }
+      }
+    },
+    "group": {
+      "type": "object",
+      "required": ["type", "groupClass", "nodes"],
+      "properties": {
+        "type": {
+          "const": "group"
+        },
+        "groupClass": {
+          "type": "string",
+          "enum": ["Generic", "Variant", "RepeatUnit"]
+        },
+        "attachmentPoints": {
+          "type": "array",
+          "minItems": 0,
+          "items": {
+            "type": "object",
+            "required": ["id", "variantList"],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "variantList": {
+                "allOf": [
+                  {
+                    "$ref": "#/definitions/group"
+                  },
+                  {
+                    "properties": {
+                      "groupClass": {
+                        "const": "Variant"
+                      }
+                    },
+                    "required": ["groupClass"]
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "nodes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["$ref"],
+            "properties": {
+              "$ref": {
+                "type": "string",
+                "pattern": "^(group\\d+|monomer\\d+|monomerTemplate-.*)"
+              }
+            }
+          }
+        }
+      },
+      "patternProperties": {
+        "^monomer\\d+": {
+          "$ref": "#/definitions/monomer"
+        },
+        "^group\\d+": {
+          "$ref": "#/definitions/group"
+        },
+        "^monomerTemplate-.*": {
+          "$ref": "#/definitions/monomerTemplate"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "groupClass": {
+                "const": "Generic"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "connections": {
+                "type": "array",
+                "minItems": 0,
+                "items": {
+                  "$ref": "#/definitions/nodesConnection"
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "groupClass": {
+                "const": "RepeatUnit"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "repeatRange": {
+                "type": "object",
+                "required": ["from"],
+                "properties": {
+                  "from": {
+                    "type": "integer"
+                  },
+                  "to": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "groupClass": {
+                "const": "Variant"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "ratio": {
+                "type": "integer"
+              },
+              "operator": {
+                "type": "string",
+                "enum": ["xor", "and"]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "nodesConnection": {
+      "type": "object",
+      "required": ["type", "endPoint1", "endPoint2"],
+      "properties": {
+        "connectionType": {
+          "type": "string",
+          "enum": ["single", "hydrogen"]
+        },
+        "label": {
+          "type": "string"
+        },
+        "endPoint1": {
+          "$ref": "#/definitions/connectionSite"
+        },
+        "endPoint2": {
+          "$ref": "#/definitions/connectionSite"
+        }
+      }
+    },
+    "connectionSite": {
+      "type": "object",
+      "properties": {
+        "groupId": {
+          "type": "string"
+        },
+        "attachmentPointId": {
+          "type": "string"
+        },
+        "monomerId": {
+          "type": "string"
         }
       }
     }

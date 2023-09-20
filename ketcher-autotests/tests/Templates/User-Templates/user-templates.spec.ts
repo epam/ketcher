@@ -16,7 +16,7 @@ import {
   getControlModifier,
   STRUCTURE_LIBRARY_BUTTON_NAME,
   waitForSpinnerFinishedWork,
-  waitForIndigoToLoad,
+  waitForPageInit,
 } from '@utils';
 import { TestIdSelectors } from '@utils/selectors/testIdSelectors';
 
@@ -56,7 +56,7 @@ async function saveToTemplates(page: Page) {
 }
 test.describe('Click User Templates on canvas', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {
@@ -254,8 +254,7 @@ test.describe('Click User Templates on canvas', () => {
 // These two tests affect other tests or by other tests, so they were moved to a separate describe group
 test.describe('Click User Templates on canvas', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
-    await waitForIndigoToLoad(page);
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {

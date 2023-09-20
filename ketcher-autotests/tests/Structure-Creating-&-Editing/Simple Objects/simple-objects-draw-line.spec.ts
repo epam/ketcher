@@ -1,5 +1,5 @@
 import { test } from '@playwright/test';
-import { openSimpleObjectsDropdown } from '@utils';
+import { openSimpleObjectsDropdown, waitForPageInit } from '@utils';
 import { takeEditorScreenshot } from '@utils/canvas';
 import {
   clickInTheMiddleOfTheScreen,
@@ -10,7 +10,7 @@ import {
 test.describe('draw and highlight line', () => {
   // selecting 'Shape Line', drawing it on canvas, highlighting created line
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {

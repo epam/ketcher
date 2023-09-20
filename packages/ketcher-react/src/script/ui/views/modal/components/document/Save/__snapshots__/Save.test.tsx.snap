@@ -129,7 +129,7 @@ Object {
                 >
                   <textarea
                     class="previewArea"
-                    data-testid="preview-area-text"
+                    data-testid="mol-preview-area-text"
                     readonly=""
                   />
                 </div>
@@ -480,7 +480,7 @@ Object {
               >
                 <textarea
                   class="previewArea"
-                  data-testid="preview-area-text"
+                  data-testid="mol-preview-area-text"
                   readonly=""
                 />
               </div>

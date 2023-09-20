@@ -14,12 +14,13 @@ import {
   selectRing,
   RingButton,
   clickInTheMiddleOfTheScreen,
+  waitForPageInit,
 } from '@utils';
 import { getKet } from '@utils/formats';
 
 test.describe.fixme('3D Viewer', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {
@@ -105,7 +106,7 @@ test.describe.fixme('3D Viewer', () => {
 
 test.describe.fixme('3D Viewer', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test('Button and tooltip verification', async ({ page }) => {

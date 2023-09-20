@@ -3,9 +3,10 @@ import { Vec2 } from 'domain/entities/vec2';
 import { AttachmentPointName, MonomerItemType } from 'domain/types';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
+import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 
 export class BaseMonomer extends DrawingEntity {
-  public renderer?: BaseMonomerRenderer;
+  public renderer?: BaseMonomerRenderer = undefined;
   public attachmentPointsToBonds: Record<
     AttachmentPointName,
     PolymerBond | null
@@ -21,6 +22,8 @@ export class BaseMonomer extends DrawingEntity {
     R2: null,
   };
 
+  public attachmentPointsVisible = false;
+
   constructor(private _monomerItem: MonomerItemType, _position?: Vec2) {
     super(_position);
   }
@@ -31,6 +34,14 @@ export class BaseMonomer extends DrawingEntity {
 
   get label() {
     return this.monomerItem.label;
+  }
+
+  public turnOnAttachmentPointsVisibility() {
+    this.attachmentPointsVisible = true;
+  }
+
+  public turnOffAttachmentPointsVisibility() {
+    this.attachmentPointsVisible = false;
   }
 
   public setPotentialBond(
@@ -91,6 +102,7 @@ export class BaseMonomer extends DrawingEntity {
   }
 
   public setRenderer(renderer: BaseMonomerRenderer) {
+    super.setBaseRenderer(renderer as BaseRenderer);
     this.renderer = renderer;
   }
 

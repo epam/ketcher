@@ -11,11 +11,12 @@ import {
   selectLeftPanelButton,
   LeftPanelButton,
   clickOnAtom,
+  waitForPageInit,
 } from '@utils';
 
 test.describe('Charge tool', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {

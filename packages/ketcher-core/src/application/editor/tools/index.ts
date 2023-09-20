@@ -15,13 +15,15 @@
  ***************************************************************************/
 import { ToolConstructorInterface } from './Tool';
 import { MonomerTool } from 'application/editor/tools/Monomer';
-import { PresetTool } from 'application/editor/tools/Preset';
-import { SelectLasso } from 'application/editor/tools/SelectLasso';
+import { RnaPresetTool } from 'application/editor/tools/RnaPreset';
+import { SelectRectangle } from 'application/editor/tools/SelectRectangle';
 import { PolymerBond } from 'application/editor/tools/Bond';
+import { EraserTool } from 'application/editor/tools/Erase';
 
 export const toolsMap: Record<string, ToolConstructorInterface> = {
   monomer: MonomerTool,
-  preset: PresetTool,
-  'select-lasso': SelectLasso,
+  preset: RnaPresetTool,
+  'select-rectangle': SelectRectangle,
   'bond-single': PolymerBond,
+  erase: EraserTool,
 };

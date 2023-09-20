@@ -16,13 +16,14 @@ import {
   resetCurrentTool,
   drawFGAndDrag,
   STRUCTURE_LIBRARY_BUTTON_NAME,
+  waitForPageInit,
 } from '@utils';
 
 const SHIFT = 50;
 
 test.describe('Click and drag FG on canvas', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {

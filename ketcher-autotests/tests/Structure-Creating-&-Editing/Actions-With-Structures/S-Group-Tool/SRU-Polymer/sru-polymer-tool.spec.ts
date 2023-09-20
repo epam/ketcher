@@ -20,6 +20,7 @@ import {
   selectLeftPanelButton,
   selectRingButton,
   takeEditorScreenshot,
+  waitForPageInit,
 } from '@utils';
 import { getBondByIndex } from '@utils/canvas/bonds';
 import { getMolfile } from '@utils/formats';
@@ -61,7 +62,7 @@ async function selectRepeatPattern(
 
 test.describe('SRU Polymer tool', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {

@@ -1,16 +1,17 @@
-import { test, expect } from '@playwright/test';
+import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
+import { test } from '@playwright/test';
+import { waitForPageInit } from '@utils/common';
 
 test.describe('Macromolecules default presets', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
-  test.skip('Check Guanine in default presets', async ({ page }) => {
+  test('Check Guanine in default presets', async ({ page }) => {
     /* 
     Test case: #2934 - rna builder: add default presets
     Description: Switch to Polymer Editor
     */
-    await expect(page.getByTestId('PolymerToggler')).toBeVisible();
-    await page.getByTestId('PolymerToggler').click();
+    await turnOnMacromoleculesEditor(page);
     await page.getByText('RNA').click();
 
     await page.getByTestId('cancel-btn').click();
@@ -20,12 +21,11 @@ test.describe('Macromolecules default presets', () => {
     });
   });
 
-  test.skip('Add Guanine to canvas', async ({ page }) => {
+  test('Add Guanine to canvas', async ({ page }) => {
     /* 
     Test case: #2507 - Add RNA monomers to canvas (by click)
     */
-    await expect(page.getByTestId('PolymerToggler')).toBeVisible();
-    await page.getByTestId('PolymerToggler').click();
+    await turnOnMacromoleculesEditor(page);
     await page.getByText('RNA').click();
     await page.getByTestId('cancel-btn').click();
 

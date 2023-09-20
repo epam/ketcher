@@ -1,13 +1,13 @@
 import { test } from '@playwright/test';
-import { clickInTheMiddleOfTheScreen } from '@utils';
+import { clickInTheMiddleOfTheScreen, waitForPageInit } from '@utils';
 import { POLYMER_TOGGLER } from '../../../constants/testIdConstants';
 
 /* 
 Test case: #2497 - Add chem to canvas
 */
 
-test.skip('Select chem and drag it to canvas', async ({ page }) => {
-  await page.goto('');
+test('Select chem and drag it to canvas', async ({ page }) => {
+  await waitForPageInit(page);
 
   // Click on POLYMER_TOGGLER
   await page.getByTestId(POLYMER_TOGGLER).click();

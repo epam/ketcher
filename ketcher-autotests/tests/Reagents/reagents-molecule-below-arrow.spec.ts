@@ -4,13 +4,12 @@ import {
   TopPanelButton,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
-  waitForIndigoToLoad,
+  waitForPageInit,
 } from '@utils';
 
 test.describe('Reagents molecule below arrow', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
-    await waitForIndigoToLoad(page);
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {

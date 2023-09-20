@@ -72,6 +72,16 @@ export const OperationType = Object.freeze({
   REMOVE_HIGHLIGHT: 'Remove highlight',
   POLYMER_BOND_ADD: 'Add polymer bond',
   POLYMER_BOND_DELETE: 'Remove polymer bond',
+  POLYMER_BOND_MOVE: 'Move polymer bond',
+  POLYMER_BOND_FINISH_CREATION: 'Finish polymer bond creation',
+  POLYMER_BOND_CANCEL_CREATION: 'Cancel polymer bond creation',
+  PEPTIDE_ADD: 'Add peptide',
+  PEPTIDE_REMOVE: 'Remove peptide',
+  PEPTIDE_MOVE: 'Move peptide',
+  PEPTIDE_HOVER: 'Hover peptide',
+  DRAWING_ENTITY_SELECT: 'Select drawing entity',
+  DRAWING_ENTITY_HOVER: 'Hover drawing entity',
+  SHOW_POLYMER_BOND_INFORMATION: 'Show polymer bond information',
 });
 
 export enum OperationPriority {

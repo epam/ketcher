@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { Page, expect, test } from '@playwright/test';
 import {
   selectTopPanelButton,
@@ -11,7 +10,7 @@ import {
   FILE_TEST_DATA,
   saveToFile,
   waitForLoad,
-  waitForIndigoToLoad,
+  waitForPageInit,
 } from '@utils';
 import { getRxn } from '@utils/formats';
 
@@ -51,7 +50,7 @@ async function pasteFromClipboard(page: Page, fileFormats: string) {
 
 test.describe('Reagents RXN format', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test('Detection molecule as reagent and write reagent information in "MDL rxnfile V2000" format', async ({
@@ -138,6 +137,7 @@ test.describe('Reagents RXN format', () => {
       'tests/test-data/mdl-rxnfile-v2000-expected.rxn',
     );
     const rxnFile = await getRxn(page, 'v2000');
+    // eslint-disable-next-line no-magic-numbers
     const METADATA_STRING_INDEXES = [2, 7, 25, 43];
 
     const filteredRxnFileExpected = getRxnFileFilteredBySymbols(
@@ -194,8 +194,7 @@ test.describe('Reagents RXN format', () => {
 
 test.describe('Reagents RXN format', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
-    await waitForIndigoToLoad(page);
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {

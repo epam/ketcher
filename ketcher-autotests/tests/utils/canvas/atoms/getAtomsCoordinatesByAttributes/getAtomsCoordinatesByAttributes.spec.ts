@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { drawElementByTitle } from '@utils';
+import { drawElementByTitle, waitForPageInit } from '@utils';
 import { getAtomsCoordinatesByAttributes } from './getAtomsCoordinatesByAttributes';
 import { SORT_TYPE, ELEMENT_TITLE } from '@utils/canvas/types';
 import {
@@ -23,7 +23,7 @@ test.skip(`should return only coordinates for benzene ring in ascending order`, 
     y2: 300,
   };
 
-  await page.goto('');
+  await waitForPageInit(page);
   await drawElementByTitle(page, ELEMENT_TITLE.HYDROGEN, offset.x1, offset.y1);
   await drawElementByTitle(page, ELEMENT_TITLE.BENZENE, offset.x2, offset.y2);
 
@@ -59,7 +59,7 @@ test.skip(`should throw error in case we draw atom below left/top toolbars`, asy
 }) => {
   const offsetX = -10;
   const offsetY = -10;
-  await page.goto('');
+  await waitForPageInit(page);
 
   // draw atom below from left/top toolbar
   await drawElementByTitle(page, ELEMENT_TITLE.HYDROGEN, offsetX, offsetY);
@@ -84,7 +84,7 @@ test.skip(`should throw error in case we pass incorrect attributes to find atoms
     valence: 532,
   };
 
-  await page.goto('');
+  await waitForPageInit(page);
 
   // draw atom below from left/top toolbar
   await drawElementByTitle(page, ELEMENT_TITLE.HYDROGEN, offsetX, offsetY);

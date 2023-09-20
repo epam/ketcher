@@ -327,17 +327,19 @@ class SaveDialog extends Component {
       </div>
     );
 
-    const PreviewContent = () => (
-      <div className={classes.previewBackground}>
-        <textarea
-          value={structStr}
-          className={classes.previewArea}
-          readOnly
-          ref={this.textAreaRef}
-          data-testid="preview-area-text"
-        />
-      </div>
-    );
+    const PreviewContent = ({ format }) => {
+      return (
+        <div className={classes.previewBackground}>
+          <textarea
+            value={structStr}
+            className={classes.previewArea}
+            readOnly
+            ref={this.textAreaRef}
+            data-testid={`${format}-preview-area-text`}
+          />
+        </div>
+      );
+    };
 
     if (isLoading) {
       return <LoadingState />;
@@ -346,7 +348,7 @@ class SaveDialog extends Component {
     } else if (this.isBinaryCdxFormat(format)) {
       return <BinaryContent />;
     } else {
-      return <PreviewContent />;
+      return <PreviewContent format={format} />;
     }
   };
 

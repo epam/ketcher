@@ -11,6 +11,7 @@ import {
   moveMouseToTheMiddleOfTheScreen,
   BondType,
   DELAY_IN_SECONDS,
+  waitForPageInit,
 } from '@utils';
 import { getRightAtomByAttributes } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
@@ -28,7 +29,7 @@ async function selectFunctionalGroup(page: Page) {
  */
 test.describe('Preview for abbreviated structures: functional groups', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
     // place a benzene ring in the middle of the screen
     await selectRingButton(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);

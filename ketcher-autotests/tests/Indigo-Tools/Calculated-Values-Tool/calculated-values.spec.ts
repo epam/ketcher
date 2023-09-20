@@ -13,13 +13,14 @@ import {
   getCoordinatesOfTheMiddleOfTheScreen,
   selectAtomInToolbar,
   AtomButton,
+  waitForPageInit,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
 
 test.describe('Calculated Values Tools', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {
@@ -646,7 +647,7 @@ test.describe('Calculated Values Tools', () => {
 
 test.describe('Calculated Values Tools', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test('Structure Check window', async ({ page }) => {

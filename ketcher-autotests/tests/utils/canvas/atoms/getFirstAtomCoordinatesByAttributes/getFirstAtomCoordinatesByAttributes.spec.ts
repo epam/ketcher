@@ -3,6 +3,7 @@ import {
   drawElementByTitle,
   getLeftToolBarWidth,
   getTopToolBarHeight,
+  waitForPageInit,
 } from '@utils';
 import { getFirstAtomCoordinatesByAttributes } from './getFirstAtomCoordinatesByAttributes';
 import {
@@ -25,7 +26,7 @@ test.skip(`
   const offsetAtomX = 0;
   const offsetAtomY = 0;
 
-  await page.goto('');
+  await waitForPageInit(page);
 
   const leftBarWidth = await getLeftToolBarWidth(page);
   const topBarHeight = await getTopToolBarHeight(page);
@@ -55,7 +56,7 @@ test.skip(`
   const offsetAtomX = 100;
   const offsetAtomY = 150;
 
-  await page.goto('');
+  await waitForPageInit(page);
 
   const leftBarWidth = await getLeftToolBarWidth(page);
   const topBarHeight = await getTopToolBarHeight(page);
@@ -83,7 +84,7 @@ test.skip(`should find first available atom for complex structures (with multipl
   const offsetAtomX = 100;
   const offsetAtomY = 150;
 
-  await page.goto('');
+  await waitForPageInit(page);
   await drawElementByTitle(
     page,
     ELEMENT_TITLE.BENZENE,
@@ -106,7 +107,7 @@ test.skip(`should find atom by custom attributes`, async ({ page }) => {
   const offsetAtomX = 100;
   const offsetAtomY = 150;
 
-  await page.goto('');
+  await waitForPageInit(page);
   await drawElementByTitle(
     page,
     ELEMENT_TITLE.HYDROGEN,
@@ -135,7 +136,7 @@ test.skip(`should throw an error STRUCTURE_NOT_FOUND_ERROR in case we pass empty
   const offsetAtomX = 100;
   const offsetAtomY = 150;
 
-  await page.goto('');
+  await waitForPageInit(page);
   await drawElementByTitle(
     page,
     ELEMENT_TITLE.HYDROGEN,
@@ -149,7 +150,7 @@ test.skip(`should throw an error STRUCTURE_NOT_FOUND_ERROR in case we pass empty
 });
 
 test.skip(`should throw an error in case canvas IS EMPTY`, async ({ page }) => {
-  await page.goto('');
+  await waitForPageInit(page);
 
   await expect(async () => {
     await getFirstAtomCoordinatesByAttributes(page, {
@@ -167,7 +168,7 @@ test.skip(`should throw an error when the position of the atom below / above top
   // setting incorrect position of the atom (below left/top toolbar)
   const offsetAtomX = -10;
   const offsetAtomY = -10;
-  await page.goto('');
+  await waitForPageInit(page);
 
   await drawElementByTitle(
     page,
@@ -196,7 +197,7 @@ test.skip(`should throw an error in case we pass incorrect attributes`, async ({
     label: 'H',
     valence: 4,
   };
-  await page.goto('');
+  await waitForPageInit(page);
 
   await drawElementByTitle(
     page,

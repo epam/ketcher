@@ -34,6 +34,7 @@ import {
   BondTool,
   DELAY_IN_SECONDS,
   delay,
+  waitForPageInit,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 
@@ -108,7 +109,7 @@ async function fillAliasForAtom(page: Page, alias: string, button: string) {
 
 test.describe('Undo/Redo Actions', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {
@@ -666,7 +667,7 @@ test.describe('Undo/Redo Actions', () => {
 
 test.describe('Undo/Redo Actions', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.fixme('Undo/Redo paste template action', async ({ page }) => {

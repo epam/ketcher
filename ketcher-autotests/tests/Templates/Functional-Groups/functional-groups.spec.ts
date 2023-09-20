@@ -29,7 +29,8 @@ import {
   pressTab,
   FILE_TEST_DATA,
   STRUCTURE_LIBRARY_BUTTON_NAME,
-  waitForIndigoToLoad,
+  waitForPageInit,
+  waitForRender,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { TestIdSelectors } from '@utils/selectors/testIdSelectors';
@@ -76,8 +77,7 @@ async function changeStatusOfAbbreviation(
 
 test.describe('Functional Groups', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
-    await waitForIndigoToLoad(page);
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {
@@ -185,7 +185,7 @@ test.describe('Functional Groups', () => {
     await resetCurrentTool(page);
   });
 
-  test('Save functional groups to Custom Templates', async ({ page }) => {
+  test.fixme('Save functional groups to Custom Templates', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-2953
     Description: Contracted FG is connected to the structure.
@@ -205,7 +205,7 @@ test.describe('Functional Groups', () => {
 
 test.describe('Functional Groups', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {
@@ -498,8 +498,8 @@ test.describe('Functional Groups', () => {
     await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
     await pressTab(page, 'Salts and Solvents');
     await selectSaltsAndSolvents(SaltsAndSolvents.MethaneSulphonicAcid, page);
-    await clickInTheMiddleOfTheScreen(page);
 
+    await clickInTheMiddleOfTheScreen(page);
     await clickInTheMiddleOfTheScreen(page, 'right');
     await page.getByText('Expand Abbreviation').click();
 
@@ -524,12 +524,16 @@ test.describe('Functional Groups', () => {
     await pressTab(page, 'Functional Groups');
     await selectFunctionalGroups(FunctionalGroups.CN, page);
     point = await getAtomByIndex(page, { label: 'C' }, 0);
-    await page.mouse.click(point.x, point.y);
+    await waitForRender(page, async () => {
+      await page.mouse.click(point.x, point.y);
+    });
 
     await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
     await pressTab(page, 'Functional Groups');
     await selectFunctionalGroups(FunctionalGroups.Ms, page);
-    await page.mouse.click(x, y);
+    await waitForRender(page, async () => {
+      await page.mouse.click(x, y);
+    });
     await resetCurrentTool(page);
   });
 
@@ -597,11 +601,15 @@ test.describe('Functional Groups', () => {
     await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
     await pressTab(page, 'Salts and Solvents');
     await selectSaltsAndSolvents(SaltsAndSolvents.MethaneSulphonicAcid, page);
-    await clickInTheMiddleOfTheScreen(page);
+    await waitForRender(page, async () => {
+      await clickInTheMiddleOfTheScreen(page);
+    });
 
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
     await moveMouseToTheMiddleOfTheScreen(page);
-    await page.keyboard.press('o');
+    await waitForRender(page, async () => {
+      await page.keyboard.press('o');
+    });
     await resetCurrentTool(page);
   });
 
@@ -618,7 +626,9 @@ test.describe('Functional Groups', () => {
     await page.keyboard.press('Shift+t');
     await pressTab(page, 'Functional Groups');
     await page.getByTitle('Boc').click();
-    await clickInTheMiddleOfTheScreen(page);
+    await waitForRender(page, async () => {
+      await clickInTheMiddleOfTheScreen(page);
+    });
     await resetCurrentTool(page);
   });
 

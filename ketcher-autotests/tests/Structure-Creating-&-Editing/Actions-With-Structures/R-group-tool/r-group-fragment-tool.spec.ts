@@ -22,6 +22,7 @@ import {
   saveToFile,
   copyAndPaste,
   cutAndPaste,
+  waitForPageInit,
 } from '@utils';
 import { getExtendedSmiles, getMolfile } from '@utils/formats';
 
@@ -57,7 +58,7 @@ async function clickModalButton(page: Page, button: 'Apply' | 'Cancel') {
 
 test.describe('Open Ketcher', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {
@@ -303,7 +304,7 @@ test.describe('Open Ketcher', () => {
 
 test.describe('R-Group Fragment Tool', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test('Save as *.mol V2000 file', async ({ page }) => {
@@ -351,7 +352,6 @@ test.describe('R-Group Fragment Tool', () => {
       expectedFile,
     );
 
-    // eslint-disable-next-line no-magic-numbers
     const METADATA_STRING_INDEX = [1];
     const { fileExpected: molFileExpected, file: molFile } =
       await receiveFileComparisonData({

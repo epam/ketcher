@@ -7,11 +7,12 @@ import {
   clickInTheMiddleOfTheScreen,
   takeEditorScreenshot,
   RingButton,
+  waitForPageInit,
 } from '@utils';
 
 test.describe('S-Group Properties', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {

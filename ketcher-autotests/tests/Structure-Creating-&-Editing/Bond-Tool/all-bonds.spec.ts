@@ -34,6 +34,8 @@ import {
   drawBenzeneRing,
   rightClickOnBond,
   selectOption,
+  waitForKetcherInit,
+  waitForIndigoToLoad,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import {
@@ -71,6 +73,8 @@ for (const bondToolKey of Object.keys(BondTool)) {
     test.beforeAll(async ({ browser }) => {
       page = await browser.newPage();
       await page.goto('', { waitUntil: 'domcontentloaded' });
+      await waitForKetcherInit(page);
+      await waitForIndigoToLoad(page);
     });
 
     test.beforeEach(async () => {

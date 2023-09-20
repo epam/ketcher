@@ -15,11 +15,12 @@ import {
   resetCurrentTool,
   SaltsAndSolvents,
   STRUCTURE_LIBRARY_BUTTON_NAME,
+  waitForPageInit,
 } from '@utils';
 
 test.describe('Click Salts and Solvents on canvas', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {

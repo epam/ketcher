@@ -15,44 +15,44 @@
  ***************************************************************************/
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
-import { Vec2 } from 'domain/entities';
-import { ReStruct } from '../../../render';
+import { RenderersManager } from 'application/render/renderers/RenderersManager';
+import { Peptide } from 'domain/entities/Peptide';
+import { Operation } from 'domain/entities/Operation';
 
-import { BaseOperation } from '../base';
-import { OperationType } from '../OperationType';
-import { MonomerItemType } from 'domain/types';
-import { monomerFactory } from './monomerFactory';
+export class MonomerAddOperation implements Operation {
+  constructor(private peptide: Peptide, private callback?: () => void) {}
 
-type Data = {
-  monomer: MonomerItemType;
-  position: Vec2;
-};
-
-class MonomerAdd extends BaseOperation {
-  data: Data;
-
-  constructor(monomer: MonomerItemType, position: Vec2) {
-    super(OperationType.ATOM_ADD);
-    this.data = { monomer, position };
-  }
-
-  execute(restruct: ReStruct) {
-    const { monomer, position } = this.data;
-
-    const struct = restruct.molecule;
-
-    const [Monomer, MonomerRenderer] = monomerFactory(monomer);
-    const newMonomer = new Monomer(monomer, position);
-    const monomerRenderer = new MonomerRenderer(newMonomer);
-    struct.monomers.set(newMonomer.id, newMonomer);
-    restruct.monomers.set(newMonomer.id, monomerRenderer);
-  }
-
-  invert() {
-    const inverted = new MonomerAdd(this.data.monomer, this.data.position);
-    inverted.data = this.data;
-    return inverted;
+  public execute(renderersManager: RenderersManager) {
+    renderersManager.addMonomer(this.peptide, this.callback);
   }
 }
 
-export { MonomerAdd };
+export class MonomerMoveOperation implements Operation {
+  constructor(private peptide: Peptide) {}
+
+  public execute(renderersManager: RenderersManager) {
+    renderersManager.moveMonomer(this.peptide);
+  }
+}
+
+export class MonomerHoverOperation implements Operation {
+  constructor(
+    private peptide: Peptide,
+    private needRedrawAttachmentPoints: boolean,
+  ) {}
+
+  public execute(renderersManager: RenderersManager) {
+    renderersManager.hoverMonomer(
+      this.peptide,
+      this.needRedrawAttachmentPoints,
+    );
+  }
+}
+
+export class MonomerDeleteOperation implements Operation {
+  constructor(private peptide: Peptide) {}
+
+  public execute(renderersManager: RenderersManager) {
+    renderersManager.deleteMonomer(this.peptide);
+  }
+}

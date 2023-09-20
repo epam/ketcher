@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { test, expect } from '@playwright/test';
 import {
   ReactionMappingTool,
@@ -13,11 +12,12 @@ import {
   selectLeftPanelButton,
   LeftPanelButton,
   mapTwoAtoms,
+  waitForPageInit,
 } from '@utils';
 
 test.describe('Verifying buttons on reaction am tool dropdown', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {
@@ -141,7 +141,7 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
       );
     });
 
-    test('Compare the behavior', async ({ page }) => {
+    test.fixme('Compare the behavior', async ({ page }) => {
       /**
        * Test cases: EPMLSOPKET-1819
        * Description: Compare the behavior

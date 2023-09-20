@@ -62,6 +62,9 @@ export const editorSlice: Slice = createSlice({
         canvas: action.payload.canvas,
       });
     },
+    destroyEditor: (state) => {
+      state.editor = undefined;
+    },
     showPreview: (
       state,
       action: PayloadAction<
@@ -84,6 +87,7 @@ export const {
   selectTool,
   createEditor,
   showPreview,
+  destroyEditor,
 } = editorSlice.actions;
 
 export const selectEditorIsReady = (state: RootState) => state.editor.isReady;

@@ -1,16 +1,16 @@
-/* eslint-disable no-magic-numbers */
 import { expect, test } from '@playwright/test';
 import {
   openFileAndAddToCanvas,
   receiveFileComparisonData,
   saveToFile,
+  waitForPageInit,
 } from '@utils';
 import { getKet } from '@utils/formats';
 
 test('Open KET file with properties and check properties are saved in struct', async ({
   page,
 }) => {
-  await page.goto('');
+  await waitForPageInit(page);
 
   await openFileAndAddToCanvas('KET/ket-with-properties.ket', page);
 
@@ -43,7 +43,7 @@ test('Open KET file with properties and check properties are saved in struct', a
 });
 
 test('Save a structure with properties to KET format', async ({ page }) => {
-  await page.goto('');
+  await waitForPageInit(page);
 
   await openFileAndAddToCanvas('KET/ket-with-properties.ket', page);
 

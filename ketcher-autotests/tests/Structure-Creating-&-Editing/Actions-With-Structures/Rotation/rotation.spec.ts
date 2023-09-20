@@ -3,6 +3,8 @@ import {
   getCoordinatesOfTheMiddleOfTheScreen,
   openFileAndAddToCanvas,
   takeEditorScreenshot,
+  waitForPageInit,
+  waitForRender,
 } from '@utils';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
 import {
@@ -24,7 +26,7 @@ import {
 
 test.describe('Rotation', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test('Cancel rotation on right click', async ({ page }) => {
@@ -195,9 +197,14 @@ test.describe('Rotation', () => {
     const anyReaction = 'Rxn-V2000/rxn-reaction.rxn';
     await openFileAndAddToCanvas(anyReaction, page);
     await page.mouse.move(EMPTY_SPACE_X, EMPTY_SPACE_Y);
-    await page.keyboard.press('Alt+v');
+    await waitForRender(page, async () => {
+      await page.keyboard.press('Alt+v');
+    });
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Alt+h');
+
+    await waitForRender(page, async () => {
+      await page.keyboard.press('Alt+h');
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -458,7 +465,7 @@ test.describe('Rotation', () => {
 
 test.describe('Rotation snapping', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test('for 90, 120 and 180 degrees', async ({ page }) => {

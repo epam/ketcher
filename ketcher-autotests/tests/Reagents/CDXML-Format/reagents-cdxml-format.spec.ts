@@ -10,6 +10,7 @@ import {
   FILE_TEST_DATA,
   DELAY_IN_SECONDS,
   waitForLoad,
+  waitForPageInit,
 } from '@utils';
 
 import NH3TextAboveRequestData from '@tests/test-data/cdxml-nh3-text-above-request-data.json';
@@ -39,7 +40,7 @@ async function pasteCDXML(page: Page, fileFormat: string) {
 
 test.describe('Reagents CDXML format', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {

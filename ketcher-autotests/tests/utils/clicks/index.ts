@@ -8,8 +8,9 @@ import {
   selectButtonById,
   selectNestedTool,
   takeEditorScreenshot,
+  waitForRender,
 } from '..';
-import { AtomLabelType } from './types';
+import { AtomLabelType, DropdownIds, DropdownToolIds } from './types';
 
 type BoundingBox = {
   width: number;
@@ -25,13 +26,15 @@ export async function clickInTheMiddleOfTheScreen(
   button: 'left' | 'right' = 'left',
 ) {
   const body = (await page.locator('body').boundingBox()) as BoundingBox;
-  await page.mouse.click(
-    body.x + body?.width / HALF_DIVIDER,
-    body.y + body?.height / HALF_DIVIDER,
-    {
-      button,
-    },
-  );
+  await waitForRender(page, async () => {
+    await page.mouse.click(
+      body.x + body?.width / HALF_DIVIDER,
+      body.y + body?.height / HALF_DIVIDER,
+      {
+        button,
+      },
+    );
+  });
 }
 
 export async function getCoordinatesOfTheMiddleOfTheScreen(page: Page) {
@@ -82,10 +85,12 @@ export async function clickOnTheCanvas(
   const secondStructureCoordinates = await getCoordinatesOfTheMiddleOfTheScreen(
     page,
   );
-  await page.mouse.click(
-    secondStructureCoordinates.x + xOffsetFromCenter,
-    secondStructureCoordinates.y + yOffsetFromCenter,
-  );
+  await waitForRender(page, async () => {
+    await page.mouse.click(
+      secondStructureCoordinates.x + xOffsetFromCenter,
+      secondStructureCoordinates.y + yOffsetFromCenter,
+    );
+  });
 }
 
 export async function clickByLink(page: Page, url: string) {
@@ -157,16 +162,24 @@ export async function moveOnBond(
   await page.mouse.move(point.x, point.y);
 }
 
-type DropdownIds =
-  | 'bonds'
-  | 'rgroup-label'
-  | 'select-rectangle'
-  | 'reaction-arrow-open-angle'
-  | 'shape-ellipse';
 export async function openDropdown(page: Page, dropdownElementId: DropdownIds) {
   await page.getByTestId('hand').click();
-  await page.getByTestId(dropdownElementId).click();
-  await page.getByTestId(dropdownElementId).click();
+  // There is a bug in Ketcher – if we click on button too fast, dropdown menu is not opened
+  await page
+    .getByTestId(dropdownElementId)
+    .click({ delay: 200, clickCount: 2 });
+}
+
+export async function selectDropdownTool(
+  page: Page,
+  toolName: DropdownIds,
+  toolTypeId: DropdownToolIds,
+) {
+  await openDropdown(page, toolName);
+  const button = page.locator(
+    `.default-multitool-dropdown [data-testid="${toolTypeId}"]`,
+  );
+  await button.click();
 }
 
 export async function applyAutoMapMode(

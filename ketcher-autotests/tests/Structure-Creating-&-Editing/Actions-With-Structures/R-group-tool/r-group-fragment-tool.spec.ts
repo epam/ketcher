@@ -23,6 +23,7 @@ import {
   copyAndPaste,
   cutAndPaste,
   waitForPageInit,
+  selectDropdownTool,
 } from '@utils';
 import { getExtendedSmiles, getMolfile } from '@utils/formats';
 
@@ -140,7 +141,7 @@ test.describe('Open Ketcher', () => {
     page,
   }) => {
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
-    await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
+    await selectDropdownTool(page, 'rgroup-label', 'rgroup-attpoints');
     await clickOnAtom(page, 'C', atomIndex);
     await page.getByLabel(AttachmentPoint.PRIMARY).check();
     await clickModalButton(page, 'Apply');

@@ -2,7 +2,6 @@ import { Page, test } from '@playwright/test';
 import {
   selectPartOfCanvas,
   selectPartOfChain,
-  selectPartOfStructure,
 } from '@tests/Structure-Creating-&-Editing/Actions-With-Structures/Rotation/utils';
 import {
   selectTopPanelButton,
@@ -11,16 +10,16 @@ import {
   openFile,
   pressButton,
   waitForLoad,
-  getCoordinatesOfTheMiddleOfTheScreen,
   openFileAndAddToCanvas,
-  waitForPageInit,
-  takeTopToolbarScreenshot,
   moveOnAtom,
   dragMouseTo,
   selectAtomInToolbar,
   AtomButton,
   clickOnAtom,
   waitForSpinnerFinishedWork,
+  getCoordinatesOfTheMiddleOfTheScreen,
+  waitForPageInit,
+  takeTopToolbarScreenshot,
 } from '@utils';
 
 async function openFileWithShift(filename: string, page: Page) {
@@ -127,6 +126,67 @@ test.describe('Indigo Tools - Layout', () => {
     Description: The Layout action is implemented for the whole canvas.
     */
     await openFileAndAddToCanvas('Molfiles-V2000/distorted-Sgroups.mol', page);
+    await selectPartOfCanvas(page);
+    await selectTopPanelButton(TopPanelButton.Layout, page);
+  });
+
+  test('Layout action on part of structure with R-Group label', async ({
+    page,
+  }) => {
+    /*
+    Test case: EPMLSOPKET-1813
+    Description: The Layout action is implemented for the whole canvas.
+    */
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/distorted-r-group-labels.mol',
+      page,
+    );
+    await selectPartOfCanvas(page);
+    await selectTopPanelButton(TopPanelButton.Layout, page);
+  });
+
+  test('Layout action on part of structure with Attachment point', async ({
+    page,
+  }) => {
+    /*
+    Test case: EPMLSOPKET-1815
+    Description: The action is implemented for the whole canvas.
+    */
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/distorted-structure-attachment-points.mol',
+      page,
+    );
+    await selectPartOfCanvas(page);
+    await selectTopPanelButton(TopPanelButton.Layout, page);
+  });
+
+  test('Layout part of structure of R-Group member with R-Group logic', async ({
+    page,
+  }) => {
+    /*
+    Test case: EPMLSOPKET-1816
+    Description: The action is implemented for the whole canvas.
+    */
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/structure-r-group-logic.mol',
+      page,
+    );
+    await selectPartOfCanvas(page);
+    await selectTopPanelButton(TopPanelButton.Layout, page);
+  });
+
+  test('Layout action on part of structure with Stereobonds', async ({
+    page,
+  }) => {
+    /*
+    Test case: EPMLSOPKET-1822
+    Description: Layout action is correct for the selected part.
+    Non-selected part is invariable.
+    */
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/structure-with-stereobonds.mol',
+      page,
+    );
     await selectPartOfCanvas(page);
     await selectTopPanelButton(TopPanelButton.Layout, page);
   });

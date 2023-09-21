@@ -1,5 +1,8 @@
 import { test } from '@playwright/test';
-import { selectPartOfChain } from '@tests/Structure-Creating-&-Editing/Actions-With-Structures/Rotation/utils';
+import {
+  selectPartOfCanvas,
+  selectPartOfChain,
+} from '@tests/Structure-Creating-&-Editing/Actions-With-Structures/Rotation/utils';
 import {
   selectTopPanelButton,
   openFileAndAddToCanvas,
@@ -9,6 +12,12 @@ import {
   waitForPageInit,
   takeTopToolbarScreenshot,
   waitForSpinnerFinishedWork,
+  moveOnBond,
+  BondType,
+  dragMouseTo,
+  selectAtomInToolbar,
+  AtomButton,
+  clickOnAtom,
 } from '@utils';
 
 test.describe('Indigo Tools - Clean Tools', () => {
@@ -318,6 +327,68 @@ test.describe('Indigo Tools - Clean Tools', () => {
       page,
     );
     await selectPartOfChain(page);
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await selectTopPanelButton(TopPanelButton.Clean, page),
+    );
+  });
+
+  test('Clean Up action on part of structure of R-Group member', async ({
+    page,
+  }) => {
+    /*
+    Test case: EPMLSOPKET-1814
+    Description: Clean action is correct for the selected part.
+    Non-selected part is invariable.
+    */
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/distorted-r-group-structure.mol',
+      page,
+    );
+    await selectPartOfCanvas(page);
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await selectTopPanelButton(TopPanelButton.Clean, page),
+    );
+  });
+
+  test('Sprout bonds to the structure after Clean Up', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-1825
+    Description: User is able to change the structure: sprout the bonds, change the atom symbols, 
+    change the atoms/bonds properties after the Clean Up action.
+    */
+    const x = 300;
+    const y = 300;
+    const anyAtom = 0;
+    await openFileAndAddToCanvas('Molfiles-V2000/toluene.mol', page);
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await selectTopPanelButton(TopPanelButton.Clean, page),
+    );
+    await moveOnBond(page, BondType.SINGLE, 0);
+    await dragMouseTo(x, y, page);
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await selectTopPanelButton(TopPanelButton.Clean, page),
+    );
+    await selectAtomInToolbar(AtomButton.Oxygen, page);
+    await clickOnAtom(page, 'C', anyAtom);
+  });
+
+  test('Clean Up action on part of structure with Stereobonds', async ({
+    page,
+  }) => {
+    /*
+    Test case: EPMLSOPKET-1822
+    Description: Clean action is correct for the selected part.
+    Non-selected part is invariable.
+    */
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/structure-with-stereobonds.mol',
+      page,
+    );
+    await selectPartOfCanvas(page);
     await waitForSpinnerFinishedWork(
       page,
       async () => await selectTopPanelButton(TopPanelButton.Clean, page),

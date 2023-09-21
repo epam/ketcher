@@ -5,6 +5,7 @@ import {
   BondType,
   TopPanelButton,
   getControlModifier,
+  getCoordinatesOfTheMiddleOfTheScreen,
   openFileAndAddToCanvas,
   selectTopPanelButton,
   takeEditorScreenshot,
@@ -76,16 +77,15 @@ export async function selectPartOfStructure(page: Page, shift = 5) {
   await page.mouse.up();
 }
 
-export async function selectPartOfCanvas(page: Page, shift = 10) {
+export async function selectPartOfCanvas(page: Page, shift = 100) {
   const coordinatesToStartSelection = 70;
-  const rightMostAtom = await getAtomByIndex(page, { label: 'C' }, 20);
-  const bottomMostAtom = await getAtomByIndex(page, { label: 'C' }, 0);
+  const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
   await page.mouse.move(
     coordinatesToStartSelection,
     coordinatesToStartSelection,
   );
   await page.mouse.down();
-  await page.mouse.move(rightMostAtom.x + shift, bottomMostAtom.y + shift);
+  await page.mouse.move(x + shift, y + shift);
   await page.mouse.up();
 }
 

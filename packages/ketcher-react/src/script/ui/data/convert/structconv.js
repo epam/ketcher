@@ -91,6 +91,18 @@ export function fromAtom(satom) {
     unsaturatedAtom: !!satom.unsaturatedAtom,
     hCount: satom.hCount,
     stereoParity: satom.stereoParity,
+    implicitHCount: satom.implicitHCount,
+    aromaticity: satom.queryProperties.aromaticity,
+    degree: satom.queryProperties.degree,
+    ringMembership: satom.queryProperties.ringMembership,
+    ringSize: satom.queryProperties.ringSize,
+    connectivity: satom.queryProperties.connectivity,
+    ringConnectivity: satom.queryProperties.ringConnectivity,
+    chirality: satom.queryProperties.chirality,
+    atomicMass:
+      satom.queryProperties.atomicMass === null
+        ? ''
+        : satom.queryProperties.atomicMass.toString(),
   };
 }
 
@@ -106,6 +118,17 @@ export function toAtom(atom) {
     alias: atom.alias || null,
     exactChangeFlag: +(atom.exactChangeFlag ?? false),
     unsaturatedAtom: +(atom.unsaturatedAtom ?? false),
+    queryProperties: {
+      aromaticity: atom.aromaticity,
+      degree: atom.degree,
+      implicitHCount: atom.implicitHCount,
+      ringMembership: atom.ringMembership,
+      ringSize: atom.ringSize,
+      connectivity: atom.connectivity,
+      ringConnectivity: atom.ringConnectivity,
+      chirality: atom.chirality,
+      atomicMass: atom.atomicMass === '' ? null : Number(atom.atomicMass),
+    },
   });
   if (charge !== undefined) conv.charge = charge;
   return conv;

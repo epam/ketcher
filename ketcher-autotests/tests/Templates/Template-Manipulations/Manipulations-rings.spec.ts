@@ -111,13 +111,13 @@ test.describe('Templates - Rings manipulations', () => {
   });
 
   test('Benzene', async ({ page }) => {
-    // EPLMSOCKET-1668
+    // EPLMSOCKET-1669
     await ManipulateRingsByName(RingButton.Benzene, page);
   });
 
   test('Cyclopentadiene', async ({ page }) => {
     // EPLMSOCKET-1675
-    await ManipulateRingsByName(RingButton.Cyclopentane, page);
+    await ManipulateRingsByName(RingButton.Cyclopentadiene, page);
   });
 
   test('Cyclohexane', async ({ page }) => {
@@ -147,6 +147,6 @@ test.describe('Templates - Rings manipulations', () => {
 
   test('Cyclooctane', async ({ page }) => {
     // EPLMSOCKET-1683
-    await ManipulateRingsByName(RingButton.Benzene, page);
+    await ManipulateRingsByName(RingButton.Cyclooctane, page);
   });
 });

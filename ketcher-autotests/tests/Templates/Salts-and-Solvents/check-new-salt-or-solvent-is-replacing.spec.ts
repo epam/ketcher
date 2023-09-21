@@ -11,7 +11,6 @@ import {
   FunctionalGroups,
   selectFunctionalGroups,
 } from '@utils';
-import { Atom } from 'ketcher-core';
 
 test.describe('Open Ketcher', () => {
   test.beforeEach(async ({ page }) => {

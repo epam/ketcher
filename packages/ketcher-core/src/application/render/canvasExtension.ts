@@ -1,7 +1,6 @@
 import { Vec2 } from 'domain/entities';
 
 const edgeOffset = 150;
-const scrollMultiplier = 1;
 
 export function isCloseToEdgeOfScreen(event) {
   const { clientX, clientY } = event;
@@ -102,6 +101,6 @@ export function extendCanvasByVector(vector: Vec2, render) {
 export function scrollCanvasByVector(vector: Vec2, render) {
   const clientArea = render.clientArea;
 
-  clientArea.scrollLeft += (vector.x * render.options.scale) / scrollMultiplier;
-  clientArea.scrollTop += (vector.y * render.options.scale) / scrollMultiplier;
+  clientArea.scrollLeft += vector.x * render.options.scale;
+  clientArea.scrollTop += vector.y * render.options.scale;
 }

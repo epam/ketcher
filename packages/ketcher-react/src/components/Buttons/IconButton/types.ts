@@ -25,8 +25,10 @@ export interface IIconButtonProps {
   disabled?: boolean;
   isActive?: boolean;
   shortcut?: string;
+  testId?: string;
 }
 
 export interface IStyledButtonProps {
   isActive: boolean;
+  testId?: string;
 }

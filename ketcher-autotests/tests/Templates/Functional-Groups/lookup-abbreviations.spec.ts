@@ -23,7 +23,7 @@ test.describe('Lookup Abbreviations tests', () => {
     await clickInTheMiddleOfTheScreen(page);
     await page.keyboard.type('dc');
     const abbreviationLookup = page.getByTestId('AbbreviationLookup');
-    expect(await abbreviationLookup.isVisible()).toBe(true);
+    await expect(abbreviationLookup).toBeVisible();
   });
 
   test('Lookup Abbreviation-selecting template', async ({ page }) => {
@@ -31,7 +31,7 @@ test.describe('Lookup Abbreviations tests', () => {
     await clickInTheMiddleOfTheScreen(page);
     await page.keyboard.type('dc');
     const abbreviationLookup = page.getByTestId('AbbreviationLookup');
-    expect(await abbreviationLookup.isVisible()).toBe(true);
+    await expect(abbreviationLookup).toBeVisible();
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('Enter');
     await clickInTheMiddleOfTheScreen(page);
@@ -46,7 +46,7 @@ test.describe('Lookup Abbreviations tests', () => {
     await delay(DELAY_IN_SECONDS.FIVE);
     await page.keyboard.type('c');
     const abbreviationLookup = page.getByTestId('AbbreviationLookup');
-    expect(await abbreviationLookup.isVisible()).toBe(false);
+    await expect(abbreviationLookup).toHaveCount(0);
   });
 
   test('Lookup Abbreviation-only name displayed', async ({ page }) => {
@@ -54,7 +54,7 @@ test.describe('Lookup Abbreviations tests', () => {
     await clickInTheMiddleOfTheScreen(page);
     await page.keyboard.type('co2me');
     const abbreviationLookup = page.getByTestId('AbbreviationLookup');
-    expect(await abbreviationLookup.isVisible()).toBe(true);
+    await expect(abbreviationLookup).toBeVisible();
   });
 
   test('Lookup Abbreviation-element from Periodic table', async ({ page }) => {
@@ -62,7 +62,7 @@ test.describe('Lookup Abbreviations tests', () => {
     await clickInTheMiddleOfTheScreen(page);
     await page.keyboard.type('br');
     const abbreviationLookup = page.getByTestId('AbbreviationLookup');
-    expect(await abbreviationLookup.isVisible()).toBe(true);
+    await expect(abbreviationLookup).toBeVisible();
   });
 
   test('Lookup Abbreviation-no matching result', async ({ page }) => {
@@ -70,7 +70,7 @@ test.describe('Lookup Abbreviations tests', () => {
     await clickInTheMiddleOfTheScreen(page);
     await page.keyboard.type('xyz');
     const abbreviationLookup = page.getByTestId('AbbreviationLookup');
-    expect(await abbreviationLookup.isVisible()).toBe(true);
+    await expect(abbreviationLookup).toBeVisible();
   });
 
   test('Lookup Abbreviation-displayed message after deleting typed test', async ({
@@ -82,7 +82,7 @@ test.describe('Lookup Abbreviations tests', () => {
     await page.keyboard.press('Control+a');
     await page.keyboard.press('Backspace');
     const abbreviationLookup = page.getByTestId('AbbreviationLookup');
-    expect(await abbreviationLookup.isVisible()).toBe(true);
+    await expect(abbreviationLookup).toBeVisible();
   });
 
   test('Lookup Abbreviation-ME is highlighted based on priority order', async ({
@@ -92,7 +92,7 @@ test.describe('Lookup Abbreviations tests', () => {
     await clickInTheMiddleOfTheScreen(page);
     await page.keyboard.type('me');
     const abbreviationLookup = page.getByTestId('AbbreviationLookup');
-    expect(await abbreviationLookup.isVisible()).toBe(true);
+    await expect(abbreviationLookup).toBeVisible();
   });
 
   test('Lookup Abbreviation-verify suggestions list is sorted according to criteria', async ({
@@ -102,7 +102,7 @@ test.describe('Lookup Abbreviations tests', () => {
     await clickInTheMiddleOfTheScreen(page);
     await page.keyboard.type('mer');
     const abbreviationLookup = page.getByTestId('AbbreviationLookup');
-    expect(await abbreviationLookup.isVisible()).toBe(true);
+    await expect(abbreviationLookup).toBeVisible();
   });
 
   test('Lookup Abbreviation-available option verification', async ({
@@ -115,7 +115,7 @@ test.describe('Lookup Abbreviations tests', () => {
     await page.keyboard.press('Backspace');
     await page.keyboard.type('bro');
     const abbreviationLookup = page.getByTestId('AbbreviationLookup');
-    expect(await abbreviationLookup.isVisible()).toBe(true);
+    await expect(abbreviationLookup).toBeVisible();
   });
 
   test('Lookup Abbreviation-verify suggestions list displayed with a highest similarity', async ({
@@ -125,7 +125,7 @@ test.describe('Lookup Abbreviations tests', () => {
     await clickInTheMiddleOfTheScreen(page);
     await page.keyboard.type('hg');
     const abbreviationLookup = page.getByTestId('AbbreviationLookup');
-    expect(await abbreviationLookup.isVisible()).toBe(true);
+    await expect(abbreviationLookup).toBeVisible();
   });
 
   test('Lookup Abbreviation-element from Periodic table in correct format', async ({
@@ -135,7 +135,7 @@ test.describe('Lookup Abbreviations tests', () => {
     await clickInTheMiddleOfTheScreen(page);
     await page.keyboard.type('ca');
     const abbreviationLookup = page.getByTestId('AbbreviationLookup');
-    expect(await abbreviationLookup.isVisible()).toBe(true);
+    await expect(abbreviationLookup).toBeVisible();
   });
 
   test('Lookup Abbreviation-context window dissapearing after closing it', async ({
@@ -146,7 +146,7 @@ test.describe('Lookup Abbreviations tests', () => {
     await page.keyboard.type('ca');
     await page.keyboard.press('Escape');
     const abbreviationLookup = page.getByTestId('AbbreviationLookup');
-    expect(await abbreviationLookup.isVisible()).toBe(false);
+    await expect(abbreviationLookup).toHaveCount(0);
   });
 
   test('Lookup Abbreviation-opened window does not dissapear after switching tabs', async ({

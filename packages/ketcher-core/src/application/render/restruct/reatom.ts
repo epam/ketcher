@@ -1079,9 +1079,13 @@ function getRingBondCountAttrText(value: number) {
   let attrText: string;
   if (value > 0) {
     attrText = 'rb' + value.toString();
-  } else if (value === -1) attrText = 'rb0';
-  else if (value === -2) attrText = 'rb*';
-  else throw new Error('Ring bond count invalid');
+  } else if (value === -1) {
+    attrText = 'rb0';
+  } else if (value === -2) {
+    attrText = 'rb*';
+  } else {
+    throw new Error('Ring bond count invalid');
+  }
   return attrText;
 }
 
@@ -1089,9 +1093,13 @@ function getSubstitutionCountAttrText(value: number) {
   let attrText: string;
   if (value > 0) {
     attrText = 's' + value.toString();
-  } else if (value === -1) attrText = 's0';
-  else if (value === -2) attrText = 's*';
-  else throw new Error('Substitution count invalid');
+  } else if (value === -1) {
+    attrText = 's0';
+  } else if (value === -2) {
+    attrText = 's*';
+  } else {
+    throw new Error('Substitution count invalid');
+  }
   return attrText;
 }
 
@@ -1178,19 +1186,11 @@ function getQueryAttrsText(atom, isAromatized: boolean) {
     return customQuery;
   }
   if (ringBondCount !== 0) {
-    if (ringBondCount > 0) {
-      queryAttrsText += 'rb' + ringBondCount.toString();
-    } else if (ringBondCount === -1) queryAttrsText += 'rb0';
-    else if (ringBondCount === -2) queryAttrsText += 'rb*';
-    else throw new Error('Ring bond count invalid');
+    queryAttrsText += getRingBondCountAttrText(ringBondCount);
   }
   if (substitutionCount !== 0) {
     addSemicolon();
-    if (substitutionCount > 0) {
-      queryAttrsText += 's' + substitutionCount.toString();
-    } else if (substitutionCount === -1) queryAttrsText += 's0';
-    else if (substitutionCount === -2) queryAttrsText += 's*';
-    else throw new Error('Substitution count invalid');
+    queryAttrsText += getSubstitutionCountAttrText(substitutionCount);
   }
   if (unsaturatedAtom > 0) {
     addSemicolon();

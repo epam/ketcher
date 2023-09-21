@@ -110,7 +110,7 @@ export function fromAtom(satom) {
   };
 }
 
-export function toAtom(satom) {
+export function toAtom(atom) {
   // TODO merge this to Atom.attrlist?
   //      see ratomtool
   const {
@@ -123,11 +123,11 @@ export function toAtom(satom) {
     chirality,
     atomicMass,
     customQuery,
-    ...atom
-  } = satom;
+    ...restAtom
+  } = atom;
   if (customQuery) {
-    return Object.assign({}, atom, {
-      label: capitalize(atom.label),
+    return Object.assign({}, restAtom, {
+      label: capitalize(restAtom.label),
       alias: null,
       charge: 0,
       isotope: 0,
@@ -155,18 +155,18 @@ export function toAtom(satom) {
     });
   }
   const chargeRegexp = new RegExp(atomSchema.properties.charge.pattern);
-  const pch = chargeRegexp.exec(atom.charge);
-  const charge = pch ? parseInt(pch[1] + pch[3] + pch[2]) : atom.charge;
+  const pch = chargeRegexp.exec(restAtom.charge);
+  const charge = pch ? parseInt(pch[1] + pch[3] + pch[2]) : restAtom.charge;
 
-  const conv = Object.assign({}, atom, {
-    label: capitalize(atom.label),
-    alias: atom.alias || null,
-    exactChangeFlag: +(atom.exactChangeFlag ?? false),
-    unsaturatedAtom: +(atom.unsaturatedAtom ?? false),
+  const conv = Object.assign({}, restAtom, {
+    label: capitalize(restAtom.label),
+    alias: restAtom.alias || null,
+    exactChangeFlag: +(restAtom.exactChangeFlag ?? false),
+    unsaturatedAtom: +(restAtom.unsaturatedAtom ?? false),
     queryProperties: {
       aromaticity,
       degree,
-      implicitHCount: atom.implicitHCount,
+      implicitHCount: restAtom.implicitHCount,
       ringMembership,
       ringSize,
       connectivity,

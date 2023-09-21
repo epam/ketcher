@@ -17,7 +17,7 @@ test.describe('Rectangle Selection Tool', () => {
     await page.goto('');
     await turnOnMacromoleculesEditor(page);
   });
-  test.skip('Select monomer and bonds and then erase', async ({ page }) => {
+  test('Select monomer and bonds and then erase', async ({ page }) => {
     /* 
     Test case: #2360 - "Select" tool for Macromolecules editor
     Description: Rectangle Selection Tool
@@ -72,7 +72,7 @@ test.describe('Rectangle Selection Tool', () => {
     });
   });
 
-  test.skip('Move monomer bonded with another monomers', async ({ page }) => {
+  test('Move monomer bonded with another monomers', async ({ page }) => {
     /* 
     Test case: #2367 - move items on the canvas
     Description: check ability to move items on the canvas

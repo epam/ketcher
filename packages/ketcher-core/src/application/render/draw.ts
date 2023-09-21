@@ -1365,32 +1365,60 @@ function radicalBullet(
 
 function bracket(
   paper: RaphaelPaper,
-  d: Vec2,
-  n: Vec2,
-  c: Vec2,
+  bracketAngleDirection: Vec2,
+  bracketDirection: Vec2,
+  bondCenter: Vec2,
   bracketWidth: number,
   bracketHeight: number,
   options: RenderOptions,
+  isBracketContainAttachment = false,
 ) {
   // eslint-disable-line max-params
   bracketWidth = bracketWidth || 0.25;
   bracketHeight = bracketHeight || 1.0;
-  const a0 = c.addScaled(n, -0.5 * bracketHeight);
-  const a1 = c.addScaled(n, 0.5 * bracketHeight);
-  const b0 = a0.addScaled(d, -bracketWidth);
-  const b1 = a1.addScaled(d, -bracketWidth);
+  const halfBracketHeight = 0.5;
+  let bracketPoint0, bracketPoint1;
+  if (isBracketContainAttachment) {
+    const longHalfBracketHeight = -0.8;
+    const shortHalfBracketHeight = 0.2;
+    bracketPoint0 = bondCenter.addScaled(
+      bracketDirection,
+      shortHalfBracketHeight * bracketHeight,
+    );
+    bracketPoint1 = bondCenter.addScaled(
+      bracketDirection,
+      longHalfBracketHeight * bracketHeight,
+    );
+  } else {
+    bracketPoint0 = bondCenter.addScaled(
+      bracketDirection,
+      -halfBracketHeight * bracketHeight,
+    );
+    bracketPoint1 = bondCenter.addScaled(
+      bracketDirection,
+      halfBracketHeight * bracketHeight,
+    );
+  }
+  const bracketArc0 = bracketPoint0.addScaled(
+    bracketAngleDirection,
+    -bracketWidth,
+  );
+  const bracketArc1 = bracketPoint1.addScaled(
+    bracketAngleDirection,
+    -bracketWidth,
+  );
 
   return paper
     .path(
       'M{0},{1}L{2},{3}L{4},{5}L{6},{7}',
-      tfx(b0.x),
-      tfx(b0.y),
-      tfx(a0.x),
-      tfx(a0.y),
-      tfx(a1.x),
-      tfx(a1.y),
-      tfx(b1.x),
-      tfx(b1.y),
+      tfx(bracketArc0.x),
+      tfx(bracketArc0.y),
+      tfx(bracketPoint0.x),
+      tfx(bracketPoint0.y),
+      tfx(bracketPoint1.x),
+      tfx(bracketPoint1.y),
+      tfx(bracketArc1.x),
+      tfx(bracketArc1.y),
     )
     .attr(options.sgroupBracketStyle);
 }

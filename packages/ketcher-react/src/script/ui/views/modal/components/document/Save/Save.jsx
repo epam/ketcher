@@ -328,7 +328,6 @@ class SaveDialog extends Component {
     );
 
     const PreviewContent = ({ format }) => {
-      console.log(format);
       return (
         <div className={classes.previewBackground}>
           <textarea

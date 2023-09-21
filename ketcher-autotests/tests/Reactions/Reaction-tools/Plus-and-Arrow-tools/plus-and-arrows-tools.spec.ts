@@ -25,6 +25,7 @@ import {
   Point,
   waitForPageInit,
   waitForRender,
+  openDropdown,
 } from '@utils';
 
 const xOffsetFromCenter = -35;
@@ -735,10 +736,10 @@ test.describe('Plus and Arrows tools ', () => {
        * Test case: Test case: EPMLSOPKET - 16947
        * Description:  All Arrows should have correct tooltip
        */
-      await selectLeftPanelButton(LeftPanelButton.ArrowOpenAngleTool, page);
-      await selectLeftPanelButton(LeftPanelButton.ArrowOpenAngleTool, page);
-
-      const button = page.getByTestId(id).first();
+      await openDropdown(page, 'reaction-arrow-open-angle');
+      const button = page.locator(
+        `.default-multitool-dropdown [data-testid="${id}"]`,
+      );
       await expect(button).toHaveAttribute('title', idToTitle[id]);
       await button.click();
       await waitForRender(page, async () => {

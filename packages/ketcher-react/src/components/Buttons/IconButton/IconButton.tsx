@@ -26,6 +26,7 @@ export const IconButton = ({
   isActive = false,
   isHidden = false,
   disabled = false,
+  testId,
 }: IIconButtonProps) => {
   const combinedTitle = shortcut ? `${title} (${shortcut})` : title;
 
@@ -40,6 +41,7 @@ export const IconButton = ({
       onClick={onClick}
       disabled={disabled}
       isActive={isActive}
+      data-testid={testId}
     >
       <StyledIcon name={iconName} />
     </StyledButton>

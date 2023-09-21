@@ -18,7 +18,6 @@ import {
   drawSaltAndDrag,
   STRUCTURE_LIBRARY_BUTTON_NAME,
   waitForPageInit,
-  waitForRender,
 } from '@utils';
 
 const SHIFT = 50;
@@ -70,10 +69,7 @@ test.describe('Click and drag Salts and Solvents on canvas', () => {
     await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
     await page.getByRole('tab', { name: 'Salts and Solvents' }).click();
     await selectSaltsAndSolvents(SaltsAndSolvents.MethaneSulphonicAcid, page);
-    await waitForRender(page, async () => {
-      await clickInTheMiddleOfTheScreen(page);
-    });
-
+    await clickInTheMiddleOfTheScreen(page);
     await drawSaltAndDrag(SaltsAndSolvents.PropionicAcid, SHIFT, page);
   });
 

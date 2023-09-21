@@ -1,5 +1,9 @@
 import { Page, test } from '@playwright/test';
-import { selectPartOfChain } from '@tests/Structure-Creating-&-Editing/Actions-With-Structures/Rotation/utils';
+import {
+  selectPartOfCanvas,
+  selectPartOfChain,
+  selectPartOfStructure,
+} from '@tests/Structure-Creating-&-Editing/Actions-With-Structures/Rotation/utils';
 import {
   selectTopPanelButton,
   TopPanelButton,
@@ -11,6 +15,12 @@ import {
   openFileAndAddToCanvas,
   waitForPageInit,
   takeTopToolbarScreenshot,
+  moveOnAtom,
+  dragMouseTo,
+  selectAtomInToolbar,
+  AtomButton,
+  clickOnAtom,
+  waitForSpinnerFinishedWork,
 } from '@utils';
 
 async function openFileWithShift(filename: string, page: Page) {
@@ -86,6 +96,38 @@ test.describe('Indigo Tools - Layout', () => {
       'Molfiles-V2000/chloro-ethylamino-dimethyl-propoxy-propan-ol.mol',
       page,
     );
+    await selectTopPanelButton(TopPanelButton.Layout, page);
+  });
+
+  test('Sprout bonds to the structure after Layout', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-1806
+    Description: User is able to change the structure: sprout the bonds, change the atom symbols, 
+    change the atoms/bonds properties after the Layout action.
+    */
+    const x = 300;
+    const y = 300;
+    const anyAtom = 0;
+    await openFileAndAddToCanvas('Molfiles-V2000/toluene.mol', page);
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Layout, page);
+    });
+    await moveOnAtom(page, 'C', anyAtom);
+    await dragMouseTo(x, y, page);
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Layout, page);
+    });
+    await selectAtomInToolbar(AtomButton.Oxygen, page);
+    await clickOnAtom(page, 'C', anyAtom);
+  });
+
+  test('Layout action on part of structure with S-Group', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-1812
+    Description: The Layout action is implemented for the whole canvas.
+    */
+    await openFileAndAddToCanvas('Molfiles-V2000/distorted-Sgroups.mol', page);
+    await selectPartOfCanvas(page);
     await selectTopPanelButton(TopPanelButton.Layout, page);
   });
 });

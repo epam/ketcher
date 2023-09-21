@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 import { Page } from '@playwright/test';
 import { getBondByIndex } from '@utils/canvas/bonds';
 import {
@@ -66,6 +67,19 @@ export async function selectPartOfStructure(page: Page, shift = 5) {
   const coordinatesToStartSelection = 70;
   const rightMostAtom = await getAtomByIndex(page, { label: 'P' }, 0);
   const bottomMostAtom = await getAtomByIndex(page, { label: 'S' }, 0);
+  await page.mouse.move(
+    coordinatesToStartSelection,
+    coordinatesToStartSelection,
+  );
+  await page.mouse.down();
+  await page.mouse.move(rightMostAtom.x + shift, bottomMostAtom.y + shift);
+  await page.mouse.up();
+}
+
+export async function selectPartOfCanvas(page: Page, shift = 10) {
+  const coordinatesToStartSelection = 70;
+  const rightMostAtom = await getAtomByIndex(page, { label: 'C' }, 20);
+  const bottomMostAtom = await getAtomByIndex(page, { label: 'C' }, 0);
   await page.mouse.move(
     coordinatesToStartSelection,
     coordinatesToStartSelection,

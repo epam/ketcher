@@ -307,4 +307,20 @@ test.describe('Indigo Tools - Clean Tools', () => {
       async () => await selectTopPanelButton(TopPanelButton.Clean, page),
     );
   });
+
+  test('Clean Up cyclic structures', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-1804
+    Description: Clean action is correct for the selected part.
+    */
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/distorted-cyclic-structure.mol',
+      page,
+    );
+    await selectPartOfChain(page);
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await selectTopPanelButton(TopPanelButton.Clean, page),
+    );
+  });
 });

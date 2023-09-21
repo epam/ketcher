@@ -400,8 +400,7 @@ test.describe('Bond Tool', () => {
      *Test case: EPMLSOPKET-1366
      *Description: Drop down list: verification
      */
-    await selectLeftPanelButton(LeftPanelButton.SingleBond, page);
-    await selectLeftPanelButton(LeftPanelButton.SingleBond, page);
+    await openDropdown(page, 'bonds');
     const bodyHeight = await page.evaluate(() => document.body.clientHeight);
     const bondDropdownWidth = 700;
     const screenshot = await page.screenshot({

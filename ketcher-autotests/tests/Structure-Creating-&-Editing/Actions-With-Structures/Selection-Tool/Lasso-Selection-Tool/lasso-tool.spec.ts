@@ -16,6 +16,7 @@ import {
   SelectTool,
   waitForPageInit,
   selectDropdownTool,
+  waitForRender,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
@@ -76,7 +77,9 @@ test.describe('Lasso Selection tool', () => {
     await clickCanvas(page);
 
     await selectDropdownTool(page, 'select-rectangle', 'select-lasso');
-    await selectObjects(page, xAxis, yAxis);
+    await waitForRender(page, async () => {
+      await selectObjects(page, xAxis, yAxis);
+    });
   });
 
   test('Drag atom/bond/molecule', async ({ page }) => {
@@ -160,11 +163,10 @@ test.describe('Lasso Selection tool', () => {
     const selectCoords = { x: 50, y: 50 };
     const shiftCoords = { x: 10, y: 10 };
     await drawBenzeneRing(page);
-    await selectNestedTool(page, BondTool.SINGLE_AROMATIC);
+    await selectDropdownTool(page, 'bonds', 'bond-singlearomatic');
     const coordinates = await getCoordinatesTopAtomOfBenzeneRing(page);
     await page.mouse.click(coordinates.x + xDelta, coordinates.y - yDelta);
-    await page.getByTestId('select-rectangle').click();
-    await selectNestedTool(page, SelectTool.LASSO_SELECTION);
+    await selectDropdownTool(page, 'select-rectangle', 'select-lasso');
     await selectObjects(page, selectCoords.x, selectCoords.y);
     const bondIndex = 3;
     const bondPoint = await getBondByIndex(page, {}, bondIndex);

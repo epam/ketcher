@@ -36,6 +36,7 @@ import {
   selectOption,
   waitForKetcherInit,
   waitForIndigoToLoad,
+  selectDropdownTool,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import {
@@ -327,7 +328,7 @@ for (const bondToolKey of Object.keys(BondTool)) {
        */
       const fileName = `saving-and-rendering-${bondToolKey}-bond.mol`;
       test(`Save to file`, async () => {
-        await selectNestedTool(page, BondTool[bondToolKey]);
+        await selectDropdownTool(page, 'bonds', BondTool[bondToolKey][1]);
         await clickOnTheCanvas(page, -200, 0);
         await clickInTheMiddleOfTheScreen(page);
         await selectTopPanelButton(TopPanelButton.Save, page);

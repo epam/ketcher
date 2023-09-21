@@ -742,9 +742,7 @@ test.describe('Plus and Arrows tools ', () => {
       );
       await expect(button).toHaveAttribute('title', idToTitle[id]);
       await button.click();
-      await waitForRender(page, async () => {
-        await clickInTheMiddleOfTheScreen(page);
-      });
+      await clickInTheMiddleOfTheScreen(page);
     });
   }
 });

@@ -10,7 +10,7 @@ import {
   takeEditorScreenshot,
   waitForRender,
 } from '..';
-import { AtomLabelType } from './types';
+import { AtomLabelType, DropdownIds, DropdownToolIds } from './types';
 
 type BoundingBox = {
   width: number;
@@ -162,12 +162,6 @@ export async function moveOnBond(
   await page.mouse.move(point.x, point.y);
 }
 
-type DropdownIds =
-  | 'bonds'
-  | 'rgroup-label'
-  | 'select-rectangle'
-  | 'reaction-arrow-open-angle'
-  | 'shape-ellipse';
 export async function openDropdown(page: Page, dropdownElementId: DropdownIds) {
   await page.getByTestId('hand').click();
   // There is a bug in Ketcher – if we click on button too fast, dropdown menu is not opened
@@ -179,7 +173,7 @@ export async function openDropdown(page: Page, dropdownElementId: DropdownIds) {
 export async function selectDropdownTool(
   page: Page,
   toolName: DropdownIds,
-  toolTypeId: string,
+  toolTypeId: DropdownToolIds,
 ) {
   await openDropdown(page, toolName);
   const button = page.locator(

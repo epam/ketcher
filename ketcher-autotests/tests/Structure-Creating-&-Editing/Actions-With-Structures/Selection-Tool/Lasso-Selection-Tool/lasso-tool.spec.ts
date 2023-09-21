@@ -15,6 +15,7 @@ import {
   selectNestedTool,
   SelectTool,
   waitForPageInit,
+  selectDropdownTool,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
@@ -74,7 +75,7 @@ test.describe('Lasso Selection tool', () => {
     await takeEditorScreenshot(page);
     await clickCanvas(page);
 
-    await selectNestedTool(page, SelectTool.LASSO_SELECTION);
+    await selectDropdownTool(page, 'select-rectangle', 'select-lasso');
     await selectObjects(page, xAxis, yAxis);
   });
 
@@ -85,7 +86,7 @@ test.describe('Lasso Selection tool', () => {
      */
     const selectCoords = { x: 100, y: 100 };
     await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
-    await selectNestedTool(page, SelectTool.LASSO_SELECTION);
+    await selectDropdownTool(page, 'select-rectangle', 'select-lasso');
     const point = await selectObjects(page, selectCoords.x, selectCoords.y);
     const atomIndex = 5;
     await clickOnAtom(page, 'C', atomIndex);
@@ -100,7 +101,7 @@ test.describe('Lasso Selection tool', () => {
     const yShift = 5;
     const shiftCoords = { x: 270, y: 10 };
     await openFileAndAddToCanvas('Rxn-V2000/benzene-chain-reaction.rxn', page);
-    await selectNestedTool(page, SelectTool.LASSO_SELECTION);
+    await selectDropdownTool(page, 'select-rectangle', 'select-lasso');
     const point = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await page.mouse.move(point.x - shiftCoords.x, point.y + shiftCoords.y);
     await page.mouse.down();
@@ -127,7 +128,7 @@ test.describe('Lasso Selection tool', () => {
      * Description: Selected structures and components are moved to the another place.
      */
     await openFileAndAddToCanvas('Rxn-V2000/benzene-chain-reaction.rxn', page);
-    await selectNestedTool(page, SelectTool.LASSO_SELECTION);
+    await selectDropdownTool(page, 'select-rectangle', 'select-lasso');
     const point = await selectObjects(page, xAxis, yAxis);
     const atomIndex = 10;
     const xShift = 100;
@@ -141,7 +142,7 @@ test.describe('Lasso Selection tool', () => {
      * Description: Atoms are fused.
      */
     await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
-    await selectNestedTool(page, SelectTool.LASSO_SELECTION);
+    await selectDropdownTool(page, 'select-rectangle', 'select-lasso');
     const atomIndex = 4;
     await clickOnAtom(page, 'C', atomIndex);
     const aimAtomIndex = 7;

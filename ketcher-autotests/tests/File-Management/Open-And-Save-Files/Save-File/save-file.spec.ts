@@ -20,6 +20,7 @@ import {
   selectRingButton,
   selectTopPanelButton,
   takeEditorScreenshot,
+  waitForPageInit,
 } from '@utils';
 import { drawReactionWithTwoBenzeneRings } from '@utils/canvas/drawStructures';
 import {
@@ -333,7 +334,7 @@ test.describe('Save files', () => {
 
 test.describe('Open/Save/Paste files', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {

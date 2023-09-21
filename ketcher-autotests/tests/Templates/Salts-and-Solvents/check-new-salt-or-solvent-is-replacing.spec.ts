@@ -8,7 +8,10 @@ import {
   clickInTheMiddleOfTheScreen,
   takeEditorScreenshot,
   STRUCTURE_LIBRARY_BUTTON_NAME,
+  FunctionalGroups,
+  selectFunctionalGroups,
 } from '@utils';
+import { Atom } from 'ketcher-core';
 
 test.describe('Open Ketcher', () => {
   test.beforeEach(async ({ page }) => {
@@ -24,6 +27,33 @@ Test case: EPMLSOPKET-12972 - 'Check that new Salt or Solvent is replacing the p
     await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
     await page.getByRole('tab', { name: 'Salts and Solvents' }).click();
     await selectSaltsAndSolvents(SaltsAndSolvents.AceticAnhydride, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
+
+    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+    await page.getByRole('tab', { name: 'Salts and Solvents' }).click();
+    await selectSaltsAndSolvents(SaltsAndSolvents.AceticAcid, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Salts and Solvents should replace Atoms, Functional Groups, and Salts and Solvents', async ({
+    page,
+  }) => {
+    /*
+Test case: EPMLSOPKET-12969 - 'Check that in all cases, there must be a replacement'
+  */
+    await selectAtomInToolbar(AtomButton.Carbon, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+    await page.getByRole('tab', { name: 'Salts and Solvents' }).click();
+    await selectSaltsAndSolvents(SaltsAndSolvents.AceticAnhydride, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
+
+    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+    await page.getByRole('tab', { name: 'Functional Groups' }).click();
+    await selectFunctionalGroups(FunctionalGroups.Bz, page);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
 

@@ -114,6 +114,7 @@ class TemplatePreview {
     if (shouldShowPreview) {
       this.lastPreviewId = getUniqueCiId(ci);
       this.connectedPreviewTimeout = setTimeout(() => {
+        this.previousPosition = this.position;
         this.hideFloatingPreview();
         this.showConnectedPreview(event, ci);
       }, PREVIEW_DELAY);
@@ -131,7 +132,6 @@ class TemplatePreview {
         this.editor.hover(getHoverToFuse(mergeItems));
       }
     }
-    this.previousPosition = this.position;
   }
 
   private showFloatingPreview(position: Vec2) {

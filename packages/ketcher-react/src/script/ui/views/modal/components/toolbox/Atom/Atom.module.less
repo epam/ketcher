@@ -22,7 +22,7 @@
 @padding-container: 11.5px;
 
 .atomProps {
-  width: @width-x-small;
+  width: @width-small;
   height: 386px;
   display: flex;
   justify-content: space-between;
@@ -31,11 +31,11 @@
   :global(.MuiOutlinedInput-root), input[type='text'] {
     margin-top: 4px;
   }
-  
+
   > header {
     flex-shrink: 0;
     box-shadow: 0 2px 4px 0 @color-accordion-shadow;
-    z-index: 10; 
+    z-index: 10;
   }
 
   > div {
@@ -53,7 +53,6 @@
 .accordionWrapper {
   overflow-y: auto;
   overflow-x: hidden;
-  
   .scrollbar();
 }
 
@@ -70,12 +69,18 @@
 .accordionSummaryWrapper {
   margin: 0;
   padding-left: @padding-container;
-  border-bottom: 1px solid @color-grey-3; 
+  border-bottom: 1px solid @color-grey-3;
   background-color: @color-background-primary;
+
+  &[aria-disabled="true"]{
+    cursor: not-allowed;
+    box-shadow: none;
+    opacity: 0.6;
+  }
 }
 
 .accordionSummary {
-  width: @width-x-small - @padding-container * 2;
+  width: @width-small - @padding-container * 2;
   height: 26px;
   overflow: hidden;
   display: flex;
@@ -88,18 +93,25 @@
   font-weight: 400;
 }
 
+.customQueryWrapper,
 .accordionDetailsWrapper {
   max-height: 1000px;
   transition: max-height 300ms ease-in-out;
   overflow: hidden;
-  width: @width-x-small - @margin-left-right * 2;
+  width: @width-small - @margin-left-right * 2;
   padding: 0 12px;
+
+}
+
+.accordionDetailsWrapper {
+  border-bottom: 1px solid @color-grey-3 ;
 }
 
 .hiddenAccordion{
   max-height: 0;
 }
 
+.customQueryWrapper,
 .accordionDetails{
   position: relative;
   margin-top: @margin-left-right;
@@ -120,7 +132,7 @@
       width: 137px;
       margin: 0 !important;
     }
-  
+
     &.checkbox {
       margin-top: 8px;
       height: 16px;
@@ -131,10 +143,22 @@
   }
 }
 
+.customQueryWrapper{
+  label{
+    justify-content: flex-start!important;
+  }
+
+  textarea[name="customQuery"]{
+    width: 100%;
+    height: 55px;
+    resize: none;
+  }
+}
+
 .reactionFlags,
 .querySpecific {
   label > :last-child > * {
-    width: 77px;
+    width: 137px;
   }
 }
 

@@ -28,6 +28,22 @@ const ignoredTests = [
   'utils/**',
 ];
 
+const regularTests = [
+  'API/**',
+  'Examples/**',
+  'File-Management/**',
+  'Indigo-Tools/**',
+  'R-group-tool/**',
+  'Reactions/**',
+  'Reagents/**',
+  'Structure-Creating-&-Editing/**',
+  'Templates/**',
+  'User-Interface/**',
+  'utils/**',
+];
+
+const macromoleculeTests = ['Macromolecule-editor/**'];
+
 const testDir = './tests';
 
 function baseURL(): string {
@@ -47,11 +63,24 @@ const MIN_AMOUNT_OF_WORKERS = 2;
 // const MAX_NUMBER_OF_FAILURES = 3;
 const isCI = process.env.CI_ENVIRONMENT === 'true';
 
+function getIgnoredFiles(): string[] {
+  let ignored = [] as string[];
+  if (process.env.IGNORE_UNSTABLE_TESTS) {
+    ignored = ignoredTests;
+  }
+  if (process.env.ENABLE_POLYMER_EDITOR === 'true') {
+    ignored = [...ignored, ...regularTests];
+  } else {
+    ignored = [...ignored, ...macromoleculeTests];
+  }
+  return ignored;
+}
+
 const config: PlaywrightTestConfig = {
   testDir,
   /* Maximum time one test can run for. */
   timeout: 60_000,
-  testIgnore: process.env.IGNORE_UNSTABLE_TESTS ? ignoredTests : undefined,
+  testIgnore: getIgnoredFiles(),
   expect: {
     /**
      * Maximum time expect() should wait for the condition to be met.

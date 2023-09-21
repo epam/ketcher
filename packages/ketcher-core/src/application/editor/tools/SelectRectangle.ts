@@ -19,6 +19,8 @@ import { brush as d3Brush, select } from 'd3';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { Command } from 'domain/entities/Command';
 import { BaseTool } from 'application/editor/tools/Tool';
+import { Scale } from 'domain/helpers';
+import { provideEditorSettings } from 'application/editor/editorSettings';
 
 class SelectRectangle implements BaseTool {
   private brush;
@@ -92,11 +94,15 @@ class SelectRectangle implements BaseTool {
 
   mousemove() {
     if (this.moveStarted) {
+      const editorSettings = provideEditorSettings();
       const modelChanges =
         this.editor.drawingEntitiesManager.moveSelectedDrawingEntities(
-          new Vec2(
-            this.editor.lastCursorPosition.x - this.mousePositionAfterMove[0],
-            this.editor.lastCursorPosition.y - this.mousePositionAfterMove[1],
+          Scale.scaled2obj(
+            new Vec2(
+              this.editor.lastCursorPosition.x - this.mousePositionAfterMove[0],
+              this.editor.lastCursorPosition.y - this.mousePositionAfterMove[1],
+            ),
+            editorSettings,
           ),
         );
       this.mousePositionAfterMove = [

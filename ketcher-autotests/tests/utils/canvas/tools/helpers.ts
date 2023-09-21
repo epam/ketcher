@@ -53,7 +53,7 @@ export async function selectEraseTool(page: Page) {
 }
 
 export async function selectRectangleSelectionTool(page: Page) {
-  const bondToolButton = page.locator(`button[title*="select-rectangle"]`);
+  const bondToolButton = page.locator(`button[title*="Select Rectangle"]`);
   await bondToolButton.click();
 }
 

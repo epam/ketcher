@@ -575,7 +575,6 @@ test.describe('Open and Save file', () => {
         testName: 'Open/Save V3000 mol file contains more than 900 symbols',
         path: 'Molfiles-V3000/more-900-atoms.mol',
         isSlow: true,
-        isSlow: true,
       },
       {
         testName: 'Open/Save V3000 mol file contains Sgroup',
@@ -652,7 +651,6 @@ test.describe('Open and Save file', () => {
         pathToOpen: 'Molfiles-V3000/more-900-atoms.mol',
         pathToExpected: 'Molfiles-V3000/more-900-atoms-expected.mol',
         format: 'v3000',
-        isSlow: true,
         isSlow: true,
       },
       {

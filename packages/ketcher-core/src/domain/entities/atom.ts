@@ -68,6 +68,7 @@ export interface AtomQueryProperties {
   ringConnectivity?: number | null;
   chirality?: Chirality | null;
   atomicMass?: number | null;
+  customQuery?: string | null;
 }
 
 export interface AtomAttributes {
@@ -153,6 +154,7 @@ export class Atom {
       ringConnectivity: null,
       chirality: null,
       atomicMass: null,
+      customQuery: null,
     },
     atomList: null,
     invRet: 0,

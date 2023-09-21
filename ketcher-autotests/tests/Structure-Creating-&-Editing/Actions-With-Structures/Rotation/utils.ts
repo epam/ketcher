@@ -77,7 +77,7 @@ export async function selectPartOfStructure(page: Page, shift = 5) {
   await page.mouse.up();
 }
 
-export async function selectPartOfCanvas(page: Page, shift = 100) {
+export async function selectPartOfMolecules(page: Page, shift = 100) {
   const coordinatesToStartSelection = 70;
   const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
   await page.mouse.move(

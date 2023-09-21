@@ -1,7 +1,7 @@
 import { Page, test } from '@playwright/test';
 import {
-  selectPartOfCanvas,
   selectPartOfChain,
+  selectPartOfMolecules,
 } from '@tests/Structure-Creating-&-Editing/Actions-With-Structures/Rotation/utils';
 import {
   selectTopPanelButton,
@@ -126,7 +126,7 @@ test.describe('Indigo Tools - Layout', () => {
     Description: The Layout action is implemented for the whole canvas.
     */
     await openFileAndAddToCanvas('Molfiles-V2000/distorted-Sgroups.mol', page);
-    await selectPartOfCanvas(page);
+    await selectPartOfMolecules(page);
     await selectTopPanelButton(TopPanelButton.Layout, page);
   });
 
@@ -141,7 +141,7 @@ test.describe('Indigo Tools - Layout', () => {
       'Molfiles-V2000/distorted-r-group-labels.mol',
       page,
     );
-    await selectPartOfCanvas(page);
+    await selectPartOfMolecules(page);
     await selectTopPanelButton(TopPanelButton.Layout, page);
   });
 
@@ -156,7 +156,7 @@ test.describe('Indigo Tools - Layout', () => {
       'Molfiles-V2000/distorted-structure-attachment-points.mol',
       page,
     );
-    await selectPartOfCanvas(page);
+    await selectPartOfMolecules(page);
     await selectTopPanelButton(TopPanelButton.Layout, page);
   });
 
@@ -171,7 +171,7 @@ test.describe('Indigo Tools - Layout', () => {
       'Molfiles-V2000/structure-r-group-logic.mol',
       page,
     );
-    await selectPartOfCanvas(page);
+    await selectPartOfMolecules(page);
     await selectTopPanelButton(TopPanelButton.Layout, page);
   });
 
@@ -187,7 +187,7 @@ test.describe('Indigo Tools - Layout', () => {
       'Molfiles-V2000/structure-with-stereobonds.mol',
       page,
     );
-    await selectPartOfCanvas(page);
+    await selectPartOfMolecules(page);
     await selectTopPanelButton(TopPanelButton.Layout, page);
   });
 });

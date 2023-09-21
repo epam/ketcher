@@ -1,7 +1,7 @@
 import { test } from '@playwright/test';
 import {
-  selectPartOfCanvas,
   selectPartOfChain,
+  selectPartOfMolecules,
 } from '@tests/Structure-Creating-&-Editing/Actions-With-Structures/Rotation/utils';
 import {
   selectTopPanelButton,
@@ -345,7 +345,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
       'Molfiles-V2000/distorted-r-group-structure.mol',
       page,
     );
-    await selectPartOfCanvas(page);
+    await selectPartOfMolecules(page);
     await waitForSpinnerFinishedWork(
       page,
       async () => await selectTopPanelButton(TopPanelButton.Clean, page),
@@ -388,7 +388,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
       'Molfiles-V2000/structure-with-stereobonds.mol',
       page,
     );
-    await selectPartOfCanvas(page);
+    await selectPartOfMolecules(page);
     await waitForSpinnerFinishedWork(
       page,
       async () => await selectTopPanelButton(TopPanelButton.Clean, page),

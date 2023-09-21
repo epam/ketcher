@@ -1,10 +1,11 @@
 import { test } from '@playwright/test';
-import { openSimpleObjectsDropdown, waitForPageInit } from '@utils';
+import { waitForPageInit } from '@utils';
 import { takeEditorScreenshot } from '@utils/canvas';
 import {
   clickInTheMiddleOfTheScreen,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
+  openDropdown,
 } from '@utils/clicks';
 
 test.describe('draw and highlight line', () => {
@@ -19,7 +20,7 @@ test.describe('draw and highlight line', () => {
 
   test('drawing and highlighting', async ({ page }) => {
     // test case: EPMLSOPKET-16750
-    await openSimpleObjectsDropdown(page);
+    await openDropdown(page, 'shape-ellipse');
     await page.getByTestId('shape-line').click();
 
     const moveTo = 250;

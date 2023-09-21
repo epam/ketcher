@@ -575,6 +575,7 @@ test.describe('Open and Save file', () => {
         testName: 'Open/Save V3000 mol file contains more than 900 symbols',
         path: 'Molfiles-V3000/more-900-atoms.mol',
         isSlow: true,
+        isSlow: true,
       },
       {
         testName: 'Open/Save V3000 mol file contains Sgroup',
@@ -619,6 +620,9 @@ test.describe('Open and Save file', () => {
         if (file.isSlow) {
           test.setTimeout(120_000);
         }
+        if (file.isSlow) {
+          test.setTimeout(120_000);
+        }
         await openFileAndAddToCanvas(file.path, page);
         await takeEditorScreenshot(page);
       });
@@ -649,6 +653,7 @@ test.describe('Open and Save file', () => {
         pathToExpected: 'Molfiles-V3000/more-900-atoms-expected.mol',
         format: 'v3000',
         isSlow: true,
+        isSlow: true,
       },
       {
         testName: 'Open/Save V3000 mol file contains Sgroup',
@@ -675,6 +680,7 @@ test.describe('Open and Save file', () => {
         if (file.isSlow) {
           test.setTimeout(120_000);
         }
+
         await openFileAndAddToCanvas(file.pathToOpen, page);
 
         const expectedFile = await getMolfile(

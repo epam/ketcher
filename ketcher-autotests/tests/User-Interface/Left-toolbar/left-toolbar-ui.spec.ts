@@ -32,7 +32,7 @@ test.describe('Left toolbar UI tests', () => {
 
   test('left toolbar selection tool verification', async ({ page }) => {
     // Test case: EPMLSOPKET-4268
-    await page.getByTestId('select-rectangle').click();
+    await openDropdown(page, 'select-rectangle');
     const selectionToolDropdownWidth = 200;
     await takeDropdownScreenshot(page, selectionToolDropdownWidth);
   });

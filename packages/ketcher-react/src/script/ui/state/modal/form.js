@@ -44,6 +44,7 @@ export const formsState = {
       ringConnectivity: null,
       chirality: null,
       atomicMass: null,
+      customQuery: null,
     },
   },
   attachmentPoints: {

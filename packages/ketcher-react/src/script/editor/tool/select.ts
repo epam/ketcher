@@ -75,7 +75,7 @@ class SelectTool implements Tool {
   readonly #lassoHelper: LassoHelper;
   private readonly editor: Editor;
   private dragCtx: any;
-  private previousMouseMoveEvent: any;
+  private previousMouseMoveEvent?: MouseEvent;
   isMouseDown = false;
   readonly isMoving = false;
 

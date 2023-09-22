@@ -394,4 +394,58 @@ test.describe('Indigo Tools - Clean Tools', () => {
       async () => await selectTopPanelButton(TopPanelButton.Clean, page),
     );
   });
+
+  test('Not layout rings as circles', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-1824
+    Description: 
+    Layout:
+    The action is implemented for the whole canvas.
+    Clean Up:
+    Clean action is correct for the whole part.
+    Undo/Redo actions are correct. 
+    */
+    await openFileAndAddToCanvas('Molfiles-V2000/big-rings.mol', page);
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await selectTopPanelButton(TopPanelButton.Clean, page),
+    );
+    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await selectTopPanelButton(TopPanelButton.Layout, page),
+    );
+  });
+
+  test('Clean Up action on part of structure with R-Group label', async ({
+    page,
+  }) => {
+    /*
+    Test case: EPMLSOPKET-2876
+    Description: Clean action is correct for the selected R-Group label.
+    Non-selected part is invariable.
+    */
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/distorted-r-group-structure.mol',
+      page,
+    );
+    await page.getByText('R18').click();
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await selectTopPanelButton(TopPanelButton.Clean, page),
+    );
+  });
+
+  test('Clean reaction with Clean Up tool', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-2877
+    Description: After Clean Up action structures are undistorted. 
+    Position of the reaction does not change.
+    */
+    await openFileAndAddToCanvas('Rxn-V2000/distorted-reaction.rxn', page);
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await selectTopPanelButton(TopPanelButton.Clean, page),
+    );
+  });
 });

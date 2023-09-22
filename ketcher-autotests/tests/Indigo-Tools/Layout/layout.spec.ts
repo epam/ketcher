@@ -190,4 +190,17 @@ test.describe('Indigo Tools - Layout', () => {
     await selectPartOfMolecules(page);
     await selectTopPanelButton(TopPanelButton.Layout, page);
   });
+
+  test('Clean reaction with Layout tool', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-2878
+    Description: After Layout action structures are undistorted. 
+    Position of the reaction does not change.
+    */
+    await openFileAndAddToCanvas('Rxn-V2000/distorted-reaction.rxn', page);
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await selectTopPanelButton(TopPanelButton.Layout, page),
+    );
+  });
 });

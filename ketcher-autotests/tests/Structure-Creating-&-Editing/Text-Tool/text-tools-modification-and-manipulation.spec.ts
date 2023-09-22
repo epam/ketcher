@@ -4,25 +4,19 @@ import {
   selectLeftPanelButton,
   selectTopPanelButton,
   delay,
-} from '@utils/canvas';
-import {
-  pressButton,
-  clickInTheMiddleOfTheScreen,
-  dragMouseTo,
-} from '@utils/clicks';
-import {
-  TopPanelButton,
-  LeftPanelButton,
-  DELAY_IN_SECONDS,
-  selectRing,
-  RingButton,
-  waitForPageInit,
-  openFileAndAddToCanvas,
-} from '@utils';
-import {
   selectNestedTool,
   SelectTool,
-} from '@utils/canvas/tools/selectNestedTool';
+  waitForPageInit,
+  pressButton,
+  LeftPanelButton,
+  TopPanelButton,
+  DELAY_IN_SECONDS,
+  openFileAndAddToCanvas,
+  clickInTheMiddleOfTheScreen,
+  dragMouseTo,
+  selectRing,
+  RingButton,
+} from '@utils';
 import { addTextBoxToCanvas } from '@utils/selectors/addTextBoxToCanvas';
 
 test.describe('Text tools test cases', () => {

@@ -126,7 +126,7 @@ export class Bond {
     if (attributes.topology) this.topology = attributes.topology;
     if (attributes.customQuery) {
       this.customQuery = attributes.customQuery;
-      this.type = 8;
+      this.type = Bond.PATTERN.TYPE.ANY;
       this.reactingCenterStatus = null;
       this.topology = null;
     }

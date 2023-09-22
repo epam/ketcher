@@ -26,6 +26,7 @@ import { getSelectOptionsFromSchema } from '../../../../../utils';
 import { bond as bondSchema } from '../../../../../data/schema/struct-schema';
 import classes from './Bond.module.less';
 import { useMemo, useRef, useState } from 'react';
+import { Bond as CoreBond } from 'ketcher-core';
 
 interface BondSettings {
   type: string;
@@ -128,6 +129,7 @@ const Bond = (props: Props) => {
             disabled={!isCustomQuery}
             checkboxValue={isCustomQuery}
             onCheckboxChange={handleCustomQueryCheckBoxChange}
+            data-testid="bond-custom-query"
           />
         </div>
       </Form>
@@ -162,7 +164,7 @@ function getBondCustomQuery(bond: BondSettings) {
   if (queryAttrsText) {
     queryAttrsText += ';';
   }
-  if (topology === 1) {
+  if (topology === CoreBond.PATTERN.TOPOLOGY.RING) {
     queryAttrsText += '@';
   }
   return queryAttrsText;

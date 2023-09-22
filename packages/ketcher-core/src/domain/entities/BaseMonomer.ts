@@ -7,19 +7,16 @@ import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 
 export class BaseMonomer extends DrawingEntity {
   public renderer?: BaseMonomerRenderer = undefined;
-  public attachmentPointsToBonds: Record<
-    AttachmentPointName,
-    PolymerBond | null
+  public attachmentPointsToBonds: Partial<
+    Record<AttachmentPointName, PolymerBond | null>
   > = {
     R1: null,
-    R2: null,
   };
 
   public potentialAttachmentPointsToBonds: {
     [key: string]: PolymerBond | null | undefined;
   } = {
     R1: null,
-    R2: null,
   };
 
   public attachmentPointsVisible = false;
@@ -195,5 +192,17 @@ export class BaseMonomer extends DrawingEntity {
       RnList[label] = null;
     }
     return RnList as Record<AttachmentPointName, PolymerBond | null>;
+  }
+
+  public get startBondAttachmentPoint() {
+    if (this.attachmentPointsToBonds.R2 === null) {
+      return 'R2';
+    }
+
+    if (this.attachmentPointsToBonds.R1 === null) {
+      return 'R1';
+    }
+
+    return this.firstFreeAttachmentPoint;
   }
 }

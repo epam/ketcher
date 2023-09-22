@@ -428,7 +428,7 @@ test.describe('R-Group Label Tool', () => {
     await dragMouseTo(x, y, page);
   });
 
-  test.fixme('Add Template to the R-Group Label', async ({ page }) => {
+  test('Add Template to the R-Group Label', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-1573
       Description: The correct Template is sprouted from the R-group label

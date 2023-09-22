@@ -36,10 +36,10 @@ const regularTests = [
   'R-group-tool/**',
   'Reactions/**',
   'Reagents/**',
+  'Settings/**',
   'Structure-Creating-&-Editing/**',
   'Templates/**',
   'User-Interface/**',
-  'utils/**',
 ];
 
 const macromoleculeTests = ['Macromolecule-editor/**'];

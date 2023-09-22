@@ -619,9 +619,6 @@ test.describe('Open and Save file', () => {
         if (file.isSlow) {
           test.setTimeout(120_000);
         }
-        if (file.isSlow) {
-          test.setTimeout(120_000);
-        }
         await openFileAndAddToCanvas(file.path, page);
         await takeEditorScreenshot(page);
       });

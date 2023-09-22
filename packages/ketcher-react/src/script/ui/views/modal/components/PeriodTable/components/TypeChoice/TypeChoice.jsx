@@ -28,6 +28,7 @@ function TypeChoice({ value, onChange, ...props }) {
     <fieldset className={classes.fieldset}>
       {typeSchema.map((type) => (
         <label key={type.title}>
+          {/* eslint-disable jsx-a11y/label-has-associated-control */}
           <GenericInput
             type="radio"
             value={type.value}
@@ -35,6 +36,7 @@ function TypeChoice({ value, onChange, ...props }) {
             onChange={() => onChange(type.value)}
             {...props}
           />
+          {/* eslint-enable jsx-a11y/label-has-associated-control */}
           {type.title}
         </label>
       ))}

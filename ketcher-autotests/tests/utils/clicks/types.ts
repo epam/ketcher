@@ -7,6 +7,8 @@ export type AtomLabelType =
   | 'Cl'
   | 'S'
   | 'F'
+  | 'Br'
+  | 'P'
   | 'I';
 
 export type DropdownIds =

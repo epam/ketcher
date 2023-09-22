@@ -5,11 +5,12 @@ import {
   selectAtomInToolbar,
   AtomButton,
   clickOnAtom,
+  waitForPageInit,
 } from '@utils';
 
 test.describe('Generic nodes', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
     await openFileAndAddToCanvas('Heteroatoms.mol', page);
   });
 

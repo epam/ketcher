@@ -8,15 +8,15 @@ import {
   AtomButton,
   clickInTheMiddleOfTheScreen,
   clickOnAtom,
+  waitForPageInit,
 } from '@utils';
 
 test.describe('Special nodes', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {
-    // await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });
 

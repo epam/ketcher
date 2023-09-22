@@ -17,6 +17,7 @@
 import { Pile } from './pile';
 import { SGroup } from './sgroup';
 import assert from 'assert';
+import { Struct } from './struct';
 
 export class SGroupForest {
   /** node id -> parent id */
@@ -182,5 +183,20 @@ export function checkOverlapping(struct, atoms) {
     return sgAtoms.length < atoms.length
       ? sgAtoms.findIndex((aid) => atoms.indexOf(aid) === -1) >= 0
       : atoms.findIndex((aid) => sgAtoms.indexOf(aid) === -1) >= 0;
+  });
+}
+
+export function checkQuerySGroupOverlapping(struct: Struct, atoms: number[]) {
+  const sgroups = atoms.reduce((res, aid) => {
+    const atom = struct.atoms.get(aid);
+    return atom ? res.union(atom.sgs) : res;
+  }, new Pile());
+
+  return Array.from(sgroups).some((sid) => {
+    const sg = struct.sgroups.get(sid);
+    if (sg?.type !== 'queryComponent') return false;
+    const sgAtoms = SGroup.getAtoms(struct, sg);
+
+    return atoms.some((aid) => sgAtoms.includes(aid));
   });
 }

@@ -272,6 +272,15 @@ export function fromSgroupAction(
     return fromAtomAction(restruct, newSg, newSourceAtoms);
   }
 
+  if (SGroup.isQuerySGroup(newSg)) {
+    return fromQueryGroupAction(
+      restruct,
+      newSg,
+      newSourceAtoms,
+      Array.from(restruct.atoms.keys()),
+    );
+  }
+
   return {
     action: fromSeveralSgroupAddition(
       restruct,
@@ -298,6 +307,44 @@ function fromAtomAction(restruct, newSg, sourceAtoms) {
       },
     },
   );
+}
+
+function fromQueryGroupAction(restruct, newSg, sourceAtoms, targetAtoms) {
+  const selection: {
+    atoms: number[];
+    bonds: number[];
+  } = {
+    atoms: [],
+    bonds: [],
+  };
+
+  const allFragments = new Pile(
+    sourceAtoms.map((aid) => restruct.atoms.get(aid).a.fragment),
+  );
+
+  Array.from(allFragments).forEach((fragId) => {
+    const atoms = targetAtoms.reduce((res, aid) => {
+      const atom = restruct.atoms.get(aid).a;
+      if (fragId === atom.fragment) res.push(aid);
+
+      return res;
+    }, []);
+
+    const bonds = getAtomsBondIds(restruct.molecule, atoms) as number[];
+
+    selection.atoms = selection.atoms.concat(atoms);
+    selection.bonds = selection.bonds.concat(bonds);
+  });
+
+  return {
+    action: fromSeveralSgroupAddition(
+      restruct,
+      newSg.type,
+      selection.atoms,
+      newSg.attrs,
+    ),
+    selection,
+  };
 }
 
 function fromGroupAction(restruct, newSg, sourceAtoms, targetAtoms) {

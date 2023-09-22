@@ -60,6 +60,7 @@ export class SGroup {
     DAT: 'DAT',
     ANY: 'ANY',
     GEN: 'GEN',
+    queryComponent: 'queryComponent',
   };
 
   type: string;
@@ -756,6 +757,10 @@ export class SGroup {
 
   static isDataSGroup(sGroup: SGroup): boolean {
     return sGroup.type === SGroup.TYPES.DAT;
+  }
+
+  static isQuerySGroup(sGroup: SGroup): boolean {
+    return sGroup.type === SGroup.TYPES.queryComponent;
   }
 
   static isSRUSGroup(sGroup: SGroup): boolean {

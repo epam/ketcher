@@ -133,13 +133,16 @@ function atomListToKet(source) {
 
 function bondToKet(source) {
   const result = {};
-
-  ifDef(result, 'type', source.type);
+  if (source.customQuery) {
+    ifDef(result, 'customQuery', source.customQuery);
+  } else {
+    ifDef(result, 'type', source.type);
+    ifDef(result, 'stereo', source.stereo, 0);
+    ifDef(result, 'topology', source.topology, 0);
+    ifDef(result, 'center', source.reactingCenterStatus, 0);
+    ifDef(result, 'cip', source.cip, '');
+  }
   ifDef(result, 'atoms', [source.begin, source.end]);
-  ifDef(result, 'stereo', source.stereo, 0);
-  ifDef(result, 'topology', source.topology, 0);
-  ifDef(result, 'center', source.reactingCenterStatus, 0);
-  ifDef(result, 'cip', source.cip, '');
 
   return result;
 }

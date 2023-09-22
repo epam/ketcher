@@ -43,7 +43,9 @@ test.describe('Lasso Selection tool', () => {
     await page.mouse.move(point.x + xAxis, point.y - yAxis);
     await page.mouse.move(point.x + xAxis, point.y + yAxis);
     await page.mouse.move(point.x - xAxis, point.y + yAxis);
-    await page.mouse.up();
+    await waitForRender(page, async () => {
+      await page.mouse.up();
+    });
     return point;
   }
 
@@ -77,9 +79,7 @@ test.describe('Lasso Selection tool', () => {
     await clickCanvas(page);
 
     await selectDropdownTool(page, 'select-rectangle', 'select-lasso');
-    await waitForRender(page, async () => {
-      await selectObjects(page, xAxis, yAxis);
-    });
+    await selectObjects(page, xAxis, yAxis);
   });
 
   test('Drag atom/bond/molecule', async ({ page }) => {
@@ -165,7 +165,9 @@ test.describe('Lasso Selection tool', () => {
     await drawBenzeneRing(page);
     await selectDropdownTool(page, 'bonds', 'bond-singlearomatic');
     const coordinates = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await page.mouse.click(coordinates.x + xDelta, coordinates.y - yDelta);
+    await waitForRender(page, async () => {
+      await page.mouse.click(coordinates.x + xDelta, coordinates.y - yDelta);
+    });
     await selectDropdownTool(page, 'select-rectangle', 'select-lasso');
     await selectObjects(page, selectCoords.x, selectCoords.y);
     const bondIndex = 3;

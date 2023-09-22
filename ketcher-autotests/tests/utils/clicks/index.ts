@@ -74,7 +74,9 @@ export async function moveMouseToTheMiddleOfTheScreen(page: Page) {
 export async function dragMouseTo(x: number, y: number, page: Page) {
   await page.mouse.down();
   await page.mouse.move(x, y);
-  await page.mouse.up();
+  await waitForRender(page, async () => {
+    await page.mouse.up();
+  });
 }
 
 export async function clickOnTheCanvas(

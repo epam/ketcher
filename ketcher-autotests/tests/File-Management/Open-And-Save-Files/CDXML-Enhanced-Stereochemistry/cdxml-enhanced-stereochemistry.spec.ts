@@ -148,33 +148,30 @@ test.describe('CDXML Enhanced Stereochemistry', () => {
     expect(cdxmlFile).toEqual(cdxmlFileExpected);
   });
 
-  test.fixme(
-    'Mixed OR stereo marks - Save as *.cdxml file',
-    async ({ page }) => {
-      /*
+  test('Mixed OR stereo marks - Save as *.cdxml file', async ({ page }) => {
+    /*
     Test case: EPMLSOPKET-4726
     Description: The structure is saved/opened correctly as *.cdxml file. 
     All enhanced stereochemistry features are present after opening.
     */
-      await openFileAndAddToCanvas('CDXML/mixed-or-stereo-marks.cdxml', page);
-      const expectedFile = await getCdxml(page);
-      await saveToFile(
-        'CDXML/mixed-or-stereo-marks-expected.cdxml',
-        expectedFile,
-      );
+    await openFileAndAddToCanvas('CDXML/mixed-or-stereo-marks.cdxml', page);
+    const expectedFile = await getCdxml(page);
+    await saveToFile(
+      'CDXML/mixed-or-stereo-marks-expected.cdxml',
+      expectedFile,
+    );
 
-      const { fileExpected: cdxmlFileExpected, file: cdxmlFile } =
-        await receiveFileComparisonData({
-          page,
-          expectedFileName:
-            'tests/test-data/CDXML/mixed-or-stereo-marks-expected.cdxml',
-        });
+    const { fileExpected: cdxmlFileExpected, file: cdxmlFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/CDXML/mixed-or-stereo-marks-expected.cdxml',
+      });
 
-      expect(cdxmlFile).toEqual(cdxmlFileExpected);
-    },
-  );
+    expect(cdxmlFile).toEqual(cdxmlFileExpected);
+  });
 
-  test.fixme('Mixed stereo marks - Save as *.cdxml file', async ({ page }) => {
+  test('Mixed stereo marks - Save as *.cdxml file', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-4727
     Description: The structure is saved/opened correctly as *.cdxml file. 

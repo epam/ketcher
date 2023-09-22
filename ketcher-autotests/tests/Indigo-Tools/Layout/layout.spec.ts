@@ -1,9 +1,5 @@
 import { Page, test } from '@playwright/test';
 import {
-  selectPartOfChain,
-  selectPartOfMolecules,
-} from '@tests/Structure-Creating-&-Editing/Actions-With-Structures/Rotation/utils';
-import {
   selectTopPanelButton,
   TopPanelButton,
   takeEditorScreenshot,
@@ -20,6 +16,8 @@ import {
   getCoordinatesOfTheMiddleOfTheScreen,
   waitForPageInit,
   takeTopToolbarScreenshot,
+  selectPartOfMolecules,
+  selectPartOfChain,
 } from '@utils';
 
 async function openFileWithShift(filename: string, page: Page) {
@@ -66,13 +64,19 @@ test.describe('Indigo Tools - Layout', () => {
       page,
     );
     await selectPartOfChain(page);
-    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await selectTopPanelButton(TopPanelButton.Layout, page),
+    );
   });
 
   test('Center molecule after layout', async ({ page }) => {
     // Related Github issue: https://github.com/epam/ketcher/issues/2078
     await openFileAndAddToCanvas('Molfiles-V2000/benzene-rings.mol', page);
-    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await selectTopPanelButton(TopPanelButton.Layout, page),
+    );
   });
 
   test('Stereo flag is not shifted after clicking layout multiple times', async ({
@@ -95,7 +99,10 @@ test.describe('Indigo Tools - Layout', () => {
       'Molfiles-V2000/chloro-ethylamino-dimethyl-propoxy-propan-ol.mol',
       page,
     );
-    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await selectTopPanelButton(TopPanelButton.Layout, page),
+    );
   });
 
   test('Sprout bonds to the structure after Layout', async ({ page }) => {
@@ -127,7 +134,10 @@ test.describe('Indigo Tools - Layout', () => {
     */
     await openFileAndAddToCanvas('Molfiles-V2000/distorted-Sgroups.mol', page);
     await selectPartOfMolecules(page);
-    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await selectTopPanelButton(TopPanelButton.Layout, page),
+    );
   });
 
   test('Layout action on part of structure with R-Group label', async ({
@@ -142,7 +152,10 @@ test.describe('Indigo Tools - Layout', () => {
       page,
     );
     await selectPartOfMolecules(page);
-    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await selectTopPanelButton(TopPanelButton.Layout, page),
+    );
   });
 
   test('Layout action on part of structure with Attachment point', async ({
@@ -157,7 +170,10 @@ test.describe('Indigo Tools - Layout', () => {
       page,
     );
     await selectPartOfMolecules(page);
-    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await selectTopPanelButton(TopPanelButton.Layout, page),
+    );
   });
 
   test('Layout part of structure of R-Group member with R-Group logic', async ({
@@ -172,7 +188,10 @@ test.describe('Indigo Tools - Layout', () => {
       page,
     );
     await selectPartOfMolecules(page);
-    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await selectTopPanelButton(TopPanelButton.Layout, page),
+    );
   });
 
   test('Layout action on part of structure with Stereobonds', async ({
@@ -188,7 +207,10 @@ test.describe('Indigo Tools - Layout', () => {
       page,
     );
     await selectPartOfMolecules(page);
-    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await selectTopPanelButton(TopPanelButton.Layout, page),
+    );
   });
 
   test('Clean reaction with Layout tool', async ({ page }) => {

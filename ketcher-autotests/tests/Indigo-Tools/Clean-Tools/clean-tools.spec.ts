@@ -1,9 +1,5 @@
 import { test } from '@playwright/test';
 import {
-  selectPartOfChain,
-  selectPartOfMolecules,
-} from '@tests/Structure-Creating-&-Editing/Actions-With-Structures/Rotation/utils';
-import {
   selectTopPanelButton,
   openFileAndAddToCanvas,
   TopPanelButton,
@@ -18,6 +14,8 @@ import {
   selectAtomInToolbar,
   AtomButton,
   clickOnAtom,
+  selectPartOfChain,
+  selectPartOfMolecules,
 } from '@utils';
 
 test.describe('Indigo Tools - Clean Tools', () => {
@@ -50,7 +48,10 @@ test.describe('Indigo Tools - Clean Tools', () => {
     */
     await openFileAndAddToCanvas('different-bond-length.mol', page);
 
-    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await selectTopPanelButton(TopPanelButton.Layout, page),
+    );
     await takeEditorScreenshot(page);
 
     await selectTopPanelButton(TopPanelButton.Undo, page);
@@ -70,7 +71,10 @@ test.describe('Indigo Tools - Clean Tools', () => {
     await openFileAndAddToCanvas('different-angle-fr.mol', page);
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await selectTopPanelButton(TopPanelButton.Layout, page),
+    );
     await takeEditorScreenshot(page);
 
     await selectTopPanelButton(TopPanelButton.Undo, page);
@@ -91,7 +95,10 @@ test.describe('Indigo Tools - Clean Tools', () => {
    */
     await openFileAndAddToCanvas('Molfiles-V2000/four-bonds.mol', page);
 
-    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await selectTopPanelButton(TopPanelButton.Layout, page),
+    );
     await takeEditorScreenshot(page);
 
     await selectTopPanelButton(TopPanelButton.Undo, page);
@@ -111,7 +118,10 @@ test.describe('Indigo Tools - Clean Tools', () => {
    */
     await openFileAndAddToCanvas('layout-distorted.mol', page);
 
-    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await selectTopPanelButton(TopPanelButton.Layout, page),
+    );
   });
 
   test('Clean distorted molecule with Clean Up tool', async ({ page }) => {
@@ -135,7 +145,10 @@ test.describe('Indigo Tools - Clean Tools', () => {
    */
     await openFileAndAddToCanvas('clean-structure.mol', page);
 
-    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await selectTopPanelButton(TopPanelButton.Layout, page),
+    );
     await takeEditorScreenshot(page);
 
     await selectTopPanelButton(TopPanelButton.Undo, page);
@@ -171,7 +184,10 @@ test.describe('Indigo Tools - Clean Tools', () => {
       page,
     );
 
-    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await selectTopPanelButton(TopPanelButton.Layout, page),
+    );
     await takeEditorScreenshot(page);
 
     await selectTopPanelButton(TopPanelButton.Undo, page);
@@ -193,7 +209,10 @@ test.describe('Indigo Tools - Clean Tools', () => {
    */
     await openFileAndAddToCanvas('clean-stereo.mol', page);
 
-    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await selectTopPanelButton(TopPanelButton.Layout, page),
+    );
     await takeEditorScreenshot(page);
 
     await selectTopPanelButton(TopPanelButton.Undo, page);
@@ -214,7 +233,10 @@ test.describe('Indigo Tools - Clean Tools', () => {
    */
     await openFileAndAddToCanvas('clean-rgroups.mol', page);
 
-    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await selectTopPanelButton(TopPanelButton.Layout, page),
+    );
     await takeEditorScreenshot(page);
 
     await selectTopPanelButton(TopPanelButton.Undo, page);
@@ -234,7 +256,10 @@ test.describe('Indigo Tools - Clean Tools', () => {
    */
     await openFileAndAddToCanvas('clean-sgroups.mol', page);
 
-    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await selectTopPanelButton(TopPanelButton.Layout, page),
+    );
     await takeEditorScreenshot(page);
 
     await selectTopPanelButton(TopPanelButton.Undo, page);
@@ -270,7 +295,10 @@ test.describe('Indigo Tools - Clean Tools', () => {
    */
     await openFileAndAddToCanvas('mapping-reaction.rxn', page);
 
-    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await selectTopPanelButton(TopPanelButton.Layout, page),
+    );
     await takeEditorScreenshot(page);
 
     await selectTopPanelButton(TopPanelButton.Undo, page);
@@ -288,7 +316,10 @@ test.describe('Indigo Tools - Clean Tools', () => {
    */
     await openFileAndAddToCanvas('cyclic-structures.mol', page);
 
-    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await selectTopPanelButton(TopPanelButton.Layout, page),
+    );
   });
 
   test('Layout several structures', async ({ page }) => {
@@ -298,7 +329,10 @@ test.describe('Indigo Tools - Clean Tools', () => {
    */
     await openFileAndAddToCanvas('several-structures.mol', page);
 
-    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await selectTopPanelButton(TopPanelButton.Layout, page),
+    );
   });
 
   test('Clean Up part of chain structures', async ({ page }) => {
@@ -443,6 +477,38 @@ test.describe('Indigo Tools - Clean Tools', () => {
     Position of the reaction does not change.
     */
     await openFileAndAddToCanvas('Rxn-V2000/distorted-reaction.rxn', page);
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await selectTopPanelButton(TopPanelButton.Clean, page),
+    );
+  });
+
+  test('Clean Up several structures', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-2879
+    Description: Clean action is correct for the selected part.
+    Non-selected part is invariable.
+    */
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/several-distorted-structures.mol',
+      page,
+    );
+    await selectPartOfMolecules(page);
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await selectTopPanelButton(TopPanelButton.Clean, page),
+    );
+  });
+
+  test('Clean Up action on part of structure with S-Group', async ({
+    page,
+  }) => {
+    /*
+    Test case: EPMLSOPKET-2880
+    Description: The Clean Up action is implemented for the part of selected structures.
+    */
+    await openFileAndAddToCanvas('Molfiles-V2000/distorted-Sgroups.mol', page);
+    await selectPartOfMolecules(page);
     await waitForSpinnerFinishedWork(
       page,
       async () => await selectTopPanelButton(TopPanelButton.Clean, page),

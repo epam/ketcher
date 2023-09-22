@@ -42,6 +42,7 @@ class Form extends Component {
       const initialState = { ...init, init: true };
       onUpdate(initialState, valid, errs);
     }
+    this.updateState = this.updateState.bind(this);
   }
 
   componentDidUpdate(prevProps) {
@@ -53,7 +54,8 @@ class Form extends Component {
     } = this.props;
     if (
       (schema.key && schema.key !== prevProps.schema.key) ||
-      (rest.customValid !== prevProps.customValid && schema.title === 'Atom')
+      (rest.customValid !== prevProps.customValid &&
+        (schema.title === 'Atom' || schema.title === 'Bond'))
     ) {
       this.schema = propSchema(schema, rest);
       this.schema.serialize(result); // hack: valid first state
@@ -196,7 +198,12 @@ function CustomQueryField(props) {
     setAnchorEl(null);
   }, []);
   const handleCheckboxChange = (value) => {
-    onCheckboxChange(value, stateStore.props.result, fieldOpts.onChange);
+    onCheckboxChange(
+      value,
+      stateStore.props.result,
+      fieldOpts.onChange,
+      stateStore.updateState,
+    );
   };
 
   return (

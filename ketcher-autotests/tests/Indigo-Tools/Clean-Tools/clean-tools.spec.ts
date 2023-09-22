@@ -18,7 +18,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
     await waitForPageInit(page);
   });
 
-  test.fixme('Clean bonds lenght', async ({ page }) => {
+  test('Clean bonds lenght', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1778
     Description: The length of the bonds becomes the same

@@ -39,6 +39,7 @@ import {
   selectDropdownTool,
   waitForPageInit,
   openDropdown,
+  waitForRender,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import {
@@ -455,14 +456,18 @@ test.describe('Bond Tool', () => {
     await moveOnAtom(page, 'N', 0);
     await page.mouse.down();
     await moveOnAtom(page, 'O', 0);
-    await page.mouse.up();
+    await waitForRender(page, async () => {
+      await page.mouse.up();
+    });
     await selectDropdownTool(page, 'bonds', 'bond-double');
     await takeEditorScreenshot(page);
 
     await moveOnAtom(page, 'O', 0);
     await page.mouse.down();
     await moveOnAtom(page, 'N', 0);
-    await page.mouse.up();
+    await waitForRender(page, async () => {
+      await page.mouse.up();
+    });
   });
 
   test('Connecting two atoms with Double Bond and rotate', async ({ page }) => {
@@ -481,12 +486,16 @@ test.describe('Bond Tool', () => {
     await moveOnAtom(page, 'N', 0);
     await page.mouse.down();
     await moveOnAtom(page, 'O', 0);
-    await page.mouse.up();
+    await waitForRender(page, async () => {
+      await page.mouse.up();
+    });
     await selectDropdownTool(page, 'bonds', 'bond-double');
     await moveOnAtom(page, 'O', 0);
     await page.mouse.down();
     await moveOnAtom(page, 'N', 0);
-    await page.mouse.up();
+    await waitForRender(page, async () => {
+      await page.mouse.up();
+    });
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
     const point2 = await getAtomByIndex(page, { label: 'N' }, 0);
     await page.mouse.move(point2.x, point2.y);

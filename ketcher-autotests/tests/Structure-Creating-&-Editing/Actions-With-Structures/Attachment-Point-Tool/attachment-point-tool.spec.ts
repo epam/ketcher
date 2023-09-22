@@ -363,7 +363,7 @@ test.describe('Attachment Point Tool', () => {
     await screenshotBetweenUndoRedo(page);
   });
 
-  test.fixme('Save as *.mol file', async ({ page }) => {
+  test('Save as *.mol file', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1651
     Description: Structure with attachment points saved as .mol file
@@ -425,7 +425,7 @@ test.describe('Attachment Point Tool', () => {
     expect(molFile).toEqual(molFileExpected);
   });
 
-  test.fixme('Save as *.rxn file', async ({ page }) => {
+  test('Save as *.rxn file', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1652
     Description: Structure with attachment points saved as .rxn file

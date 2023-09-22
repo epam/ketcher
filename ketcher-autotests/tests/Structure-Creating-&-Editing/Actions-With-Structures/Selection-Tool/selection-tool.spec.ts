@@ -139,47 +139,45 @@ test.describe('Selection tools', () => {
     }
   });
 
-  test.fixme(
-    '(50px to Up) Structure Movement with Arrow Keys (1px move)',
-    async ({ page }) => {
-      /*
+  test('(50px to Up) Structure Movement with Arrow Keys (1px move)', async ({
+    page,
+  }) => {
+    /*
     Test case: EPMLSOPKET-15512
     Description: The selected structure should move 1 pixel in the corresponding
     direction with each key press. In this test to 50px Up.
     */
-      await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
-      await takeEditorScreenshot(page);
+    await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
+    await takeEditorScreenshot(page);
+    await waitForRender(page, async () => {
+      await page.keyboard.press('Control+a');
+    });
+    for (let i = 0; i < 50; i++) {
       await waitForRender(page, async () => {
-        await page.keyboard.press('Control+a');
+        await page.keyboard.press('ArrowUp');
       });
-      for (let i = 0; i < 50; i++) {
-        await waitForRender(page, async () => {
-          await page.keyboard.press('ArrowUp');
-        });
-      }
-    },
-  );
+    }
+  });
 
-  test.fixme(
-    '(50px to Right) Structure Movement with Arrow Keys (1px move)',
-    async ({ page }) => {
-      /*
+  test('(50px to Right) Structure Movement with Arrow Keys (1px move)', async ({
+    page,
+  }) => {
+    /*
     Test case: EPMLSOPKET-15512
     Description: The selected structure should move 1 pixel in the corresponding
     direction with each key press. In this test to 50px Right.
     */
-      await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
-      await takeEditorScreenshot(page);
+    await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
+    await takeEditorScreenshot(page);
+    await waitForRender(page, async () => {
+      await page.keyboard.press('Control+a');
+    });
+    for (let i = 0; i < 50; i++) {
       await waitForRender(page, async () => {
-        await page.keyboard.press('Control+a');
+        await page.keyboard.press('ArrowRight');
       });
-      for (let i = 0; i < 50; i++) {
-        await waitForRender(page, async () => {
-          await page.keyboard.press('ArrowRight');
-        });
-      }
-    },
-  );
+    }
+  });
 
   test('(50px to Left) Structure Movement with Arrow Keys (1px move)', async ({
     page,
@@ -201,74 +199,71 @@ test.describe('Selection tools', () => {
     }
   });
 
-  test.fixme(
-    '(100px to Down with Shift key) Structure Movement with Arrow Keys (10px move)',
-    async ({ page }) => {
-      /*
+  test('(100px to Down with Shift key) Structure Movement with Arrow Keys (10px move)', async ({
+    page,
+  }) => {
+    /*
     Test case: EPMLSOPKET-15512
     Description: The selected structure should move 10 pixel in the corresponding
     direction with each key press with Shift key. In this test to 100px Down.
     */
-      await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
-      await takeEditorScreenshot(page);
+    await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
+    await takeEditorScreenshot(page);
+    await waitForRender(page, async () => {
+      await page.keyboard.press('Control+a');
+    });
+    await page.keyboard.down('Shift');
+    for (let i = 0; i < 10; i++) {
       await waitForRender(page, async () => {
-        await page.keyboard.press('Control+a');
+        await page.keyboard.press('ArrowDown');
       });
-      await page.keyboard.down('Shift');
-      for (let i = 0; i < 10; i++) {
-        await waitForRender(page, async () => {
-          await page.keyboard.press('ArrowDown');
-        });
-      }
-      await page.keyboard.up('Shift');
-    },
-  );
+    }
+    await page.keyboard.up('Shift');
+  });
 
-  test.fixme(
-    '(100px to Up with Shift key) Structure Movement with Arrow Keys (10px move)',
-    async ({ page }) => {
-      /*
+  test('(100px to Up with Shift key) Structure Movement with Arrow Keys (10px move)', async ({
+    page,
+  }) => {
+    /*
     Test case: EPMLSOPKET-15512
     Description: The selected structure should move 10 pixel in the corresponding
     direction with each key press with Shift key. In this test to 100px Up.
     */
-      await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
-      await takeEditorScreenshot(page);
+    await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
+    await takeEditorScreenshot(page);
+    await waitForRender(page, async () => {
+      await page.keyboard.press('Control+a');
+    });
+    await page.keyboard.down('Shift');
+    for (let i = 0; i < 10; i++) {
       await waitForRender(page, async () => {
-        await page.keyboard.press('Control+a');
+        await page.keyboard.press('ArrowUp');
       });
-      await page.keyboard.down('Shift');
-      for (let i = 0; i < 10; i++) {
-        await waitForRender(page, async () => {
-          await page.keyboard.press('ArrowUp');
-        });
-      }
-      await page.keyboard.up('Shift');
-    },
-  );
+    }
+    await page.keyboard.up('Shift');
+  });
 
-  test.fixme(
-    '(100px to Right with Shift key) Structure Movement with Arrow Keys (10px move)',
-    async ({ page }) => {
-      /*
+  test('(100px to Right with Shift key) Structure Movement with Arrow Keys (10px move)', async ({
+    page,
+  }) => {
+    /*
     Test case: EPMLSOPKET-15512
     Description: The selected structure should move 10 pixel in the corresponding
     direction with each key presswith Shift key. In this test to 100px Right.
     */
-      await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
-      await takeEditorScreenshot(page);
+    await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
+    await takeEditorScreenshot(page);
+    await waitForRender(page, async () => {
+      await page.keyboard.press('Control+a');
+    });
+    await page.keyboard.down('Shift');
+    for (let i = 0; i < 10; i++) {
       await waitForRender(page, async () => {
-        await page.keyboard.press('Control+a');
+        await page.keyboard.press('ArrowRight');
       });
-      await page.keyboard.down('Shift');
-      for (let i = 0; i < 10; i++) {
-        await waitForRender(page, async () => {
-          await page.keyboard.press('ArrowRight');
-        });
-      }
-      await page.keyboard.up('Shift');
-    },
-  );
+    }
+    await page.keyboard.up('Shift');
+  });
 
   test('(100px to Left with Shift key) Structure Movement with Arrow Keys (10px move)', async ({
     page,
@@ -391,25 +386,24 @@ test.describe('Selection tools', () => {
     await expect(page).toHaveScreenshot();
   });
 
-  test.fixme(
-    'Canvas Expansion when Structure is Moved Outside Right',
-    async ({ page }) => {
-      /*
+  test('Canvas Expansion when Structure is Moved Outside Right', async ({
+    page,
+  }) => {
+    /*
     Test case: EPMLSOPKET-15515
     Description: The canvas should automatically expand in the direction the structure is being moved.
     */
-      await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
-      await delay(DELAY_IN_SECONDS.TWO);
-      await selectNestedTool(page, SelectTool.FRAGMENT_SELECTION);
-      await clickOnAtom(page, 'N', 0);
-      await page.keyboard.down('Shift');
-      for (let i = 0; i < 80; i++) {
-        await page.keyboard.press('ArrowRight');
-      }
-      await page.keyboard.up('Shift');
-      await expect(page).toHaveScreenshot();
-    },
-  );
+    await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
+    await delay(DELAY_IN_SECONDS.TWO);
+    await selectNestedTool(page, SelectTool.FRAGMENT_SELECTION);
+    await clickOnAtom(page, 'N', 0);
+    await page.keyboard.down('Shift');
+    for (let i = 0; i < 80; i++) {
+      await page.keyboard.press('ArrowRight');
+    }
+    await page.keyboard.up('Shift');
+    await expect(page).toHaveScreenshot();
+  });
 
   test('Canvas Expansion when Structure is Moved Outside Left', async ({
     page,
@@ -430,30 +424,25 @@ test.describe('Selection tools', () => {
     await expect(page).toHaveScreenshot();
   });
 
-  // flaky
-  test.fixme(
-    'Move structure over the border of the canvas',
-    async ({ page }) => {
-      /*
+  test('Move structure over the border of the canvas', async ({ page }) => {
+    /*
     Test case: EPMLSOPKET-10068
     Description: The canvas should automatically expand in the direction the structure is being moved.
     Structure is visible on the canvas.
     */
-      await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
-      await delay(DELAY_IN_SECONDS.TWO);
-      await selectNestedTool(page, SelectTool.FRAGMENT_SELECTION);
-      await clickOnAtom(page, 'N', 0);
-      await page.keyboard.down('Shift');
-      for (let i = 0; i < 100; i++) {
-        await page.keyboard.press('ArrowDown');
-      }
-      await page.keyboard.up('Shift');
-      await expect(page).toHaveScreenshot();
-    },
-  );
+    await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
+    await delay(DELAY_IN_SECONDS.TWO);
+    await selectNestedTool(page, SelectTool.FRAGMENT_SELECTION);
+    await clickOnAtom(page, 'N', 0);
+    await page.keyboard.down('Shift');
+    for (let i = 0; i < 100; i++) {
+      await page.keyboard.press('ArrowDown');
+    }
+    await page.keyboard.up('Shift');
+    await expect(page).toHaveScreenshot();
+  });
 
-  // TODO: flaky
-  test.fixme('Selection Drop-down list', async ({ page }) => {
+  test('Selection Drop-down list', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-10068
     Description: Selection palette should contain Rectangle Selection, Lasso Selection, Fragment Selection tools.

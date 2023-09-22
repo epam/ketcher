@@ -32,6 +32,7 @@
   "dependencies": {
     "dotenv": "^16.0.3",
     "ketcher-core": "*",
+    "playwright": "^1.38.1",
     "playwright-testing": "^1.0.0"
   },
   "lint-staged": {

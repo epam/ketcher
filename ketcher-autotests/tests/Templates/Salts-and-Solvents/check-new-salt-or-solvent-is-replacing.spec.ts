@@ -10,11 +10,12 @@ import {
   STRUCTURE_LIBRARY_BUTTON_NAME,
   FunctionalGroups,
   selectFunctionalGroups,
+  waitForPageInit,
 } from '@utils';
 
 test.describe('Open Ketcher', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test('Verify if the new Salt or Solvent is replacing old one', async ({

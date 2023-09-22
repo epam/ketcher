@@ -14,7 +14,6 @@ import {
   selectRing,
   waitForRender,
 } from '..';
-import { TopPanelButton, waitForRender } from '..';
 import { selectTopPanelButton } from './tools';
 import { getLeftTopBarSize } from './common/getLeftTopBarSize';
 import { emptyFunction } from '@utils/common/helpers';

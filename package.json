@@ -64,5 +64,8 @@
   "overrides": {
     "minimatch": "^9.0.3",
     "nth-check": "^2.1.1"
+  },
+  "dependencies": {
+    "playwright": "^1.38.1"
   }
 }

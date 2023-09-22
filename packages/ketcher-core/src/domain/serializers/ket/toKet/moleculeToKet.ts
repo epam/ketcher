@@ -14,7 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { SGroup, Struct, SGroupAttachmentPoint } from 'domain/entities';
+import {
+  SGroup,
+  Struct,
+  SGroupAttachmentPoint,
+  AtomQueryProperties,
+} from 'domain/entities';
 
 import { ifDef } from 'utilities';
 
@@ -64,7 +69,7 @@ export function moleculeToKet(struct: Struct): any {
 }
 
 function atomToKet(source) {
-  const result = {};
+  const result: { queryProperties?: AtomQueryProperties } = {};
   ifDef(result, 'label', source.label);
   ifDef(result, 'alias', source.alias);
   ifDef(result, 'location', [source.pp.x, -source.pp.y, source.pp.z]);
@@ -83,6 +88,15 @@ function atomToKet(source) {
   ifDef(result, 'substitutionCount', source.substitutionCount, 0);
   ifDef(result, 'unsaturatedAtom', !!source.unsaturatedAtom, false);
   ifDef(result, 'hCount', source.hCount, 0);
+  // query properties
+  if (
+    Object.values(source.queryProperties).some((property) => property !== null)
+  ) {
+    result.queryProperties = {};
+    Object.keys(source.queryProperties).forEach((name) => {
+      ifDef(result.queryProperties, name, source.queryProperties[name]);
+    });
+  }
   // reaction
   ifDef(result, 'mapping', parseInt(source.aam), 0);
   ifDef(result, 'invRet', source.invRet, 0);
@@ -119,13 +133,17 @@ function atomListToKet(source) {
 
 function bondToKet(source) {
   const result = {};
-
-  ifDef(result, 'type', source.type);
-  ifDef(result, 'atoms', [source.begin, source.end]);
-  ifDef(result, 'stereo', source.stereo, 0);
-  ifDef(result, 'topology', source.topology, 0);
-  ifDef(result, 'center', source.reactingCenterStatus, 0);
-  ifDef(result, 'cip', source.cip, '');
+  if (source.customQuery) {
+    ifDef(result, 'atoms', [source.begin, source.end]);
+    ifDef(result, 'customQuery', source.customQuery);
+  } else {
+    ifDef(result, 'type', source.type);
+    ifDef(result, 'atoms', [source.begin, source.end]);
+    ifDef(result, 'stereo', source.stereo, 0);
+    ifDef(result, 'topology', source.topology, 0);
+    ifDef(result, 'center', source.reactingCenterStatus, 0);
+    ifDef(result, 'cip', source.cip, '');
+  }
 
   return result;
 }

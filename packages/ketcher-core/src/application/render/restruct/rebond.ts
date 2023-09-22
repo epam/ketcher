@@ -324,7 +324,7 @@ class ReBond extends ReObject {
       );
     }
     const topology: any = {};
-    topology.path = getTopologyMark(render, this, hb1, hb2);
+    topology.path = getBondMark(render, this, hb1, hb2);
     if (topology.path) {
       topology.rbb = util.relBox(topology.path.getBBox());
       restruct.addReObjectPath(
@@ -1241,7 +1241,7 @@ function getReactingCenterPath(
   return draw.reactingCenter(render.paper, p, render.options);
 }
 
-function getTopologyMark(
+function getBondMark(
   render: Render,
   bond: ReBond,
   hb1: HalfBond,
@@ -1250,10 +1250,15 @@ function getTopologyMark(
   // eslint-disable-line max-statements
   const options = render.options;
   let mark: string | null = null;
-
-  if (bond.b.topology === Bond.PATTERN.TOPOLOGY.RING) mark = 'rng';
-  else if (bond.b.topology === Bond.PATTERN.TOPOLOGY.CHAIN) mark = 'chn';
-  else return null;
+  if (bond.b.customQuery) {
+    mark = bond.b.customQuery;
+  } else if (bond.b.topology === Bond.PATTERN.TOPOLOGY.RING) {
+    mark = 'rng';
+  } else if (bond.b.topology === Bond.PATTERN.TOPOLOGY.CHAIN) {
+    mark = 'chn';
+  } else {
+    return null;
+  }
 
   const a = hb1.p;
   const b = hb2.p;
@@ -1268,7 +1273,7 @@ function getTopologyMark(
   if (bond.b.type === Bond.PATTERN.TYPE.TRIPLE) fixed += options.bondSpace;
   const p = c.add(new Vec2(n.x * (s.x + fixed), n.y * (s.y + fixed)));
 
-  return draw.topologyMark(render.paper, p, mark, options);
+  return draw.bondMark(render.paper, p, mark, options);
 }
 
 function getIdsPath(

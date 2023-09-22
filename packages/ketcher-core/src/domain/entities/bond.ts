@@ -27,8 +27,9 @@ enum CIP {
 }
 
 export interface BondAttributes {
-  reactingCenterStatus?: number;
-  topology?: number;
+  reactingCenterStatus?: number | null;
+  topology?: number | null;
+  customQuery?: string | null;
   stereo?: number;
   xxx?: string;
   type: number;
@@ -84,6 +85,7 @@ export class Bond {
     topology: Bond.PATTERN.TOPOLOGY.EITHER,
     reactingCenterStatus: Bond.PATTERN.REACTING_CENTER.UNMARKED,
     cip: null,
+    customQuery: null,
   };
 
   begin: number;
@@ -91,8 +93,9 @@ export class Bond {
   readonly type: number;
   readonly xxx: string;
   readonly stereo: number;
-  readonly topology: number;
-  readonly reactingCenterStatus: number;
+  readonly topology: number | null;
+  readonly reactingCenterStatus: number | null;
+  customQuery: string | null;
   len: number;
   sb: number;
   sa: number;
@@ -110,6 +113,7 @@ export class Bond {
     this.xxx = attributes.xxx || '';
     this.stereo = Bond.PATTERN.STEREO.NONE;
     this.topology = Bond.PATTERN.TOPOLOGY.EITHER;
+    this.customQuery = null;
     this.reactingCenterStatus = 0;
     this.cip = attributes.cip ?? null;
     this.len = 0;
@@ -120,6 +124,13 @@ export class Bond {
 
     if (attributes.stereo) this.stereo = attributes.stereo;
     if (attributes.topology) this.topology = attributes.topology;
+    if (attributes.customQuery) {
+      this.customQuery = attributes.customQuery;
+      this.type = Bond.PATTERN.TYPE.ANY;
+      this.reactingCenterStatus = null;
+      this.topology = null;
+    }
+
     if (attributes.reactingCenterStatus) {
       this.reactingCenterStatus = attributes.reactingCenterStatus;
     }

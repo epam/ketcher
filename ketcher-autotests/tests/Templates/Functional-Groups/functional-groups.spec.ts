@@ -185,7 +185,7 @@ test.describe('Functional Groups', () => {
     await resetCurrentTool(page);
   });
 
-  test.fixme('Save functional groups to Custom Templates', async ({ page }) => {
+  test('Save functional groups to Custom Templates', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-2953
     Description: Contracted FG is connected to the structure.
@@ -601,10 +601,7 @@ test.describe('Functional Groups', () => {
     await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
     await pressTab(page, 'Salts and Solvents');
     await selectSaltsAndSolvents(SaltsAndSolvents.MethaneSulphonicAcid, page);
-    await waitForRender(page, async () => {
-      await clickInTheMiddleOfTheScreen(page);
-    });
-
+    await clickInTheMiddleOfTheScreen(page);
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
     await moveMouseToTheMiddleOfTheScreen(page);
     await waitForRender(page, async () => {
@@ -626,9 +623,7 @@ test.describe('Functional Groups', () => {
     await page.keyboard.press('Shift+t');
     await pressTab(page, 'Functional Groups');
     await page.getByTitle('Boc').click();
-    await waitForRender(page, async () => {
-      await clickInTheMiddleOfTheScreen(page);
-    });
+    await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
   });
 

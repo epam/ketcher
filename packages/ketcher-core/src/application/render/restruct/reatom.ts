@@ -39,6 +39,7 @@ import draw from '../draw';
 import util from '../util';
 import { tfx } from 'utilities';
 import { RenderOptions } from 'application/render/render.types';
+import { capitalize } from 'lodash';
 
 interface ElemAttr {
   text: string;
@@ -1074,6 +1075,88 @@ function getAamText(atom) {
   return aamText;
 }
 
+function getRingBondCountAttrText(value: number) {
+  let attrText: string;
+  if (value > 0) {
+    attrText = 'rb' + value.toString();
+  } else if (value === -1) {
+    attrText = 'rb0';
+  } else if (value === -2) {
+    attrText = 'rb*';
+  } else {
+    throw new Error('Ring bond count invalid');
+  }
+  return attrText;
+}
+
+function getSubstitutionCountAttrText(value: number) {
+  let attrText: string;
+  if (value > 0) {
+    attrText = 's' + value.toString();
+  } else if (value === -1) {
+    attrText = 's0';
+  } else if (value === -2) {
+    attrText = 's*';
+  } else {
+    throw new Error('Substitution count invalid');
+  }
+  return attrText;
+}
+
+export function getAtomCustomQuery(atom) {
+  let queryAttrsText = '';
+
+  const addSemicolon = () => {
+    if (queryAttrsText.length > 0) queryAttrsText += ';';
+  };
+  const patterns: {
+    [key: string]: (value: string, atom) => string;
+  } = {
+    label: (value, atom) => {
+      if (atom.aromaticity) {
+        return atom.aromaticity === 'aromatic'
+          ? value.toLowerCase()
+          : value.toUpperCase();
+      }
+      const number = Elements.get(capitalize(value))?.number;
+      return `#${number}` || '';
+    },
+    charge: (value) => {
+      if (value === '0') return '';
+      return value.includes('-') ? value : `+${value}`;
+    },
+    explicitValence: (value) => `v${value}`,
+    ringBondCount: (value) =>
+      Number(value) !== 0 ? getRingBondCountAttrText(Number(value)) : '',
+    substitutionCount: (value) =>
+      Number(value) !== 0 ? getSubstitutionCountAttrText(Number(value)) : '',
+    unsaturatedAtom: (value) => (value ? 'u' : ''),
+    hCount: (value) =>
+      Number(value) > 0 ? 'H' + (Number(value) - 1).toString() : '',
+    implicitHCount: (value) => `h${value}`,
+    degree: (value) => `D${value}`,
+    ringMembership: (value) => `R${value}`,
+    ringSize: (value) => `r${value}`,
+    connectivity: (value) => `X${value}`,
+    ringConnectivity: (value) => `x${value}`,
+    chirality: (value) => (value === 'clockwise' ? '@@' : '@'),
+    atomicMass: (value) => value.toString(),
+  };
+
+  for (const propertyName in atom) {
+    const value = atom[propertyName];
+    if (propertyName in patterns && value !== null && value !== -1) {
+      const attrText = patterns[propertyName](value, atom);
+      if (attrText) {
+        addSemicolon();
+      }
+      queryAttrsText += attrText;
+    }
+  }
+
+  return queryAttrsText;
+}
+
 function getQueryAttrsText(atom, isAromatized: boolean) {
   let queryAttrsText = '';
 
@@ -1096,22 +1179,18 @@ function getQueryAttrsText(atom, isAromatized: boolean) {
       ringConnectivity,
       chirality,
       atomicMass,
+      customQuery,
     },
   } = atom.a;
+  if (customQuery) {
+    return customQuery;
+  }
   if (ringBondCount !== 0) {
-    if (ringBondCount > 0) {
-      queryAttrsText += 'rb' + ringBondCount.toString();
-    } else if (ringBondCount === -1) queryAttrsText += 'rb0';
-    else if (ringBondCount === -2) queryAttrsText += 'rb*';
-    else throw new Error('Ring bond count invalid');
+    queryAttrsText += getRingBondCountAttrText(ringBondCount);
   }
   if (substitutionCount !== 0) {
     addSemicolon();
-    if (substitutionCount > 0) {
-      queryAttrsText += 's' + substitutionCount.toString();
-    } else if (substitutionCount === -1) queryAttrsText += 's0';
-    else if (substitutionCount === -2) queryAttrsText += 's*';
-    else throw new Error('Substitution count invalid');
+    queryAttrsText += getSubstitutionCountAttrText(substitutionCount);
   }
   if (unsaturatedAtom > 0) {
     addSemicolon();
@@ -1152,7 +1231,7 @@ function getQueryAttrsText(atom, isAromatized: boolean) {
   }
   if (chirality !== null) {
     addSemicolon();
-    queryAttrsText += chirality;
+    queryAttrsText += chirality === 'clockwise' ? '@@' : '@';
   }
   if (Number.isFinite(atomicMass)) {
     addSemicolon();

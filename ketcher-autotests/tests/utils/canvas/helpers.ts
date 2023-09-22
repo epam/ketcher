@@ -14,6 +14,7 @@ import {
   selectRing,
   waitForRender,
 } from '..';
+import { TopPanelButton, waitForRender } from '..';
 import { selectTopPanelButton } from './tools';
 import { getLeftTopBarSize } from './common/getLeftTopBarSize';
 import { emptyFunction } from '@utils/common/helpers';
@@ -96,14 +97,16 @@ export async function takeEditorScreenshot(
 }
 
 export async function takeLeftToolbarScreenshot(page: Page) {
+  const maxTimeout = 3000;
   const editor = page.getByTestId('left-toolbar-buttons');
-  await delay(DELAY_IN_SECONDS.THREE);
+  await waitForRender(page, emptyFunction, maxTimeout);
   await expect(editor).toHaveScreenshot();
 }
 
 export async function takeTopToolbarScreenshot(page: Page) {
+  const maxTimeout = 3000;
   const editor = page.getByTestId('top-toolbar');
-  await delay(DELAY_IN_SECONDS.THREE);
+  await waitForRender(page, emptyFunction, maxTimeout);
   await expect(editor).toHaveScreenshot();
 }
 

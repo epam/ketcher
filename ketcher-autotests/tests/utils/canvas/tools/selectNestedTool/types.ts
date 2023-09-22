@@ -1,3 +1,5 @@
+import { DropdownToolIds } from '@utils/clicks/types';
+
 /* eslint-disable no-magic-numbers */
 export const TYPE_BOND = 'bond';
 export const TYPE_SELECT = 'select';
@@ -10,7 +12,7 @@ export const TYPE_SHAPE = 'shape';
 export const DEFAULT_BONDS_MAIN_BUTTON_TEST_ID = 'bonds';
 
 // each field define number of presses and DOM element id
-type toolField = [presses: number, domElementId: string];
+type toolField = [presses: number, domElementId: DropdownToolIds];
 
 type toolType = {
   [key: string]: toolField;

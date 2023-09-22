@@ -76,9 +76,9 @@ test.describe('Mapping Tools', () => {
   test('Click atoms to map atoms of reactants or products', async ({
     page,
   }) => {
-    await openFileAndAddToCanvas('Rxn-V2000/reaction-4.rxn', page);
+    await openFileAndAddToCanvas('Rxn-V2000/reaction-3.rxn', page);
     await selectNestedTool(page, ReactionMappingTool.MAP);
-    const point = await getAtomByIndex(page, { label: 'Br' }, 0);
+    const point = await getAtomByIndex(page, { label: 'C' }, 0);
     await page.mouse.click(point.x, point.y);
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
     await dragMouseTo(x, y, page);

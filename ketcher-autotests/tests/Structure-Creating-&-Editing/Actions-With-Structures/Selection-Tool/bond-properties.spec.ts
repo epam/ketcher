@@ -374,7 +374,7 @@ test.describe('Bond Properties', () => {
           we can`t  open the file
         */
 
-      await openFileAndAddToCanvas('Rxn-V2000/reaction-4.rxn', page);
+      await openFileAndAddToCanvas('Rxn-V2000/reaction-3.rxn', page);
 
       for (let i = 0; i < rCOptions.length - 1; i++) {
         await doubleClickOnBond(page, BondType.SINGLE, i);

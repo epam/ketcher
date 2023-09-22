@@ -372,20 +372,19 @@ test('Open and Save file - V3000 *.mol file contains Heteroatoms 2/2 - save', as
   expect(molFile).toEqual(molFileExpected);
 });
 
-test.fixme(
-  'Open and Save file - Open/Save file with Attached data 1/2 - open',
-  async ({ page }) => {
-    /**
-     * Test case: EPMLSOPKET-1880(1)
-     * Description: Structure with heteroatoms is opened from mol v3000 file correctly
-     */
-    await waitForPageInit(page);
+test('Open and Save file - Open/Save file with Attached data 1/2 - open', async ({
+  page,
+}) => {
+  /**
+   * Test case: EPMLSOPKET-1880(1)
+   * Description: Structure with heteroatoms is opened from mol v3000 file correctly
+   */
+  await waitForPageInit(page);
 
-    await openFileAndAddToCanvas('Molfiles-V2000/attached-data.mol', page);
-    // check that structure opened from file is displayed correctly
-    await takeEditorScreenshot(page);
-  },
-);
+  await openFileAndAddToCanvas('Molfiles-V2000/attached-data.mol', page);
+  // check that structure opened from file is displayed correctly
+  await takeEditorScreenshot(page);
+});
 
 test('Open and Save file - Open/Save file with Attached data 2/2 - save', async ({
   page,
@@ -617,6 +616,9 @@ test.describe('Open and Save file', () => {
 
     for (const file of files) {
       test(`${file.testName}`, async ({ page }) => {
+        if (file.isSlow) {
+          test.setTimeout(120_000);
+        }
         if (file.isSlow) {
           test.setTimeout(120_000);
         }

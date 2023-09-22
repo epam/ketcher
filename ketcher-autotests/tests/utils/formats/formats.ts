@@ -13,6 +13,10 @@ export async function getCdxml(page: Page): Promise<string> {
   return await page.evaluate(() => window.ketcher.getCDXml());
 }
 
+export async function getCdx(page: Page) {
+  return await page.evaluate(() => window.ketcher.getCDX());
+}
+
 export async function getSmiles(page: Page): Promise<string> {
   return await page.evaluate(() => window.ketcher.getSmiles());
 }

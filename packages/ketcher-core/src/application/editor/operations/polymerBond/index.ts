@@ -15,47 +15,54 @@
  ***************************************************************************/
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
-import { ReStruct } from '../../../render';
-
-import { BaseOperation } from '../base';
-import { OperationType } from '../OperationType';
 import { PolymerBond } from 'domain/entities/PolymerBond';
-import { PolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer';
+import { RenderersManager } from 'application/render/renderers/RenderersManager';
+import { Operation } from 'domain/entities/Operation';
 
-type Data = {
-  firstMonomer;
-  startPosition;
-  endPosition;
-};
+export class PolymerBondAddOperation implements Operation {
+  constructor(private polymerBond: PolymerBond) {}
 
-class PolymerBondAdd extends BaseOperation {
-  data: Data;
-
-  constructor(data: Data) {
-    super(OperationType.POLYMER_BOND_ADD);
-    this.data = data;
-  }
-
-  execute(restruct: ReStruct) {
-    const { firstMonomer, startPosition, endPosition } = this.data;
-    const struct = restruct.molecule;
-    const polymerBond = new PolymerBond(firstMonomer);
-    const polymerBondRenderer = new PolymerBondRenderer(polymerBond);
-    struct.polymerBonds.set(polymerBond.id, polymerBond);
-    restruct.polymerBonds.set(polymerBond.id, polymerBondRenderer);
-    firstMonomer.setPotentialBond(
-      firstMonomer.firstFreeAttachmentPoint,
-      polymerBond,
-    );
-    polymerBond.moveBondStartAbsolute(startPosition.x, startPosition.y);
-    polymerBond.moveBondEndAbsolute(endPosition.x, endPosition.y);
-  }
-
-  invert() {
-    const inverted = new PolymerBondAdd(this.data.firstMonomer);
-    inverted.data = this.data;
-    return inverted;
+  public execute(renderersManager: RenderersManager) {
+    renderersManager.addPolymerBond(this.polymerBond);
   }
 }
 
-export { PolymerBondAdd };
+export class PolymerBondDeleteOperation implements Operation {
+  constructor(private polymerBond: PolymerBond) {}
+
+  public execute(renderersManager: RenderersManager) {
+    renderersManager.deletePolymerBond(this.polymerBond);
+  }
+}
+
+export class PolymerBondMoveOperation implements Operation {
+  constructor(private polymerBond: PolymerBond) {}
+
+  public execute(renderersManager: RenderersManager) {
+    renderersManager.movePolymerBond(this.polymerBond);
+  }
+}
+
+export class PolymerBondShowInfoOperation implements Operation {
+  constructor(private polymerBond: PolymerBond) {}
+
+  public execute(renderersManager: RenderersManager) {
+    renderersManager.showPolymerBondInformation(this.polymerBond);
+  }
+}
+
+export class PolymerBondCancelCreationOperation implements Operation {
+  constructor(private polymerBond: PolymerBond) {}
+
+  public execute(renderersManager: RenderersManager) {
+    renderersManager.cancelPolymerBondCreation(this.polymerBond);
+  }
+}
+
+export class PolymerBondFinishCreationOperation implements Operation {
+  constructor(private polymerBond: PolymerBond) {}
+
+  public execute(renderersManager: RenderersManager) {
+    renderersManager.finishPolymerBondCreation(this.polymerBond);
+  }
+}

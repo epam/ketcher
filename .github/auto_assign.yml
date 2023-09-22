@@ -5,15 +5,13 @@ addAssignees: author
 reviewGroups:
   core:
     - nitvex
-    - KonstantinEpam23
     - rrodionov91
-  developers:
-    - StarlaStarla
-    - vitaepam
     - SashaGraves
+    - AKZhuk
+  developers:
     - nanoblit
     - chgayane
-    - AKZhuk
+    - OlgaMazurina
   QA:
     - Zhirnoff
     - MartaWilliams

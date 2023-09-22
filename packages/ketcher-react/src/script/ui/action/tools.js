@@ -28,20 +28,20 @@ const toolActions = {
     action: { tool: 'hand' },
     hidden: (options) => isHidden(options, 'hand'),
   },
-  'select-lasso': {
-    title: 'Lasso Selection',
-    shortcut: 'Escape',
-    action: { tool: 'select', opts: 'lasso' },
-  },
   'select-rectangle': {
     title: 'Rectangle Selection',
-    shortcut: 'Escape',
+    shortcut: ['Shift+Tab', 'Escape'],
     action: { tool: 'select', opts: 'rectangle' },
     hidden: (options) => isHidden(options, 'select-rectangle'),
   },
+  'select-lasso': {
+    title: 'Lasso Selection',
+    shortcut: ['Shift+Tab', 'Escape'],
+    action: { tool: 'select', opts: 'lasso' },
+  },
   'select-fragment': {
     title: 'Fragment Selection',
-    shortcut: 'Escape',
+    shortcut: ['Shift+Tab', 'Escape'],
     action: { tool: 'select', opts: 'fragment' },
     hidden: (options) => isHidden(options, 'select-fragment'),
   },

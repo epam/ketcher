@@ -16,13 +16,14 @@ import {
   resetCurrentTool,
   drawFGAndDrag,
   STRUCTURE_LIBRARY_BUTTON_NAME,
+  waitForPageInit,
 } from '@utils';
 
 const SHIFT = 50;
 
 test.describe('Click and drag FG on canvas', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {
@@ -41,7 +42,7 @@ test.describe('Click and drag FG on canvas', () => {
     await drawFGAndDrag(FunctionalGroups.Cbz, SHIFT, page);
   });
 
-  test.skip('Boc forms a bond with Cbz functional group', async ({ page }) => {
+  test('Boc forms a bond with Cbz functional group', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-11551
       Description: when click & drag with an FG on FG it should forms a bond between it

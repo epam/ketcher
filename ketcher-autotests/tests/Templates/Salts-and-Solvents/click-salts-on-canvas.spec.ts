@@ -15,11 +15,12 @@ import {
   resetCurrentTool,
   SaltsAndSolvents,
   STRUCTURE_LIBRARY_BUTTON_NAME,
+  waitForPageInit,
 } from '@utils';
 
 test.describe('Click Salts and Solvents on canvas', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {
@@ -55,7 +56,6 @@ test.describe('Click Salts and Solvents on canvas', () => {
 
       await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
       await page.getByRole('tab', { name: 'Salts and Solvents' }).click();
-      // function can't select Salt
       await selectSaltsAndSolvents(SaltsAndSolvents.Isobutanol, page);
       await clickInTheMiddleOfTheScreen(page);
     },
@@ -82,7 +82,7 @@ test.describe('Click Salts and Solvents on canvas', () => {
   );
 
   // behaves unstable even locally, maybe because of tab opening
-  test.fixme('Formic acid places near the Cl atom', async ({ page }) => {
+  test('Formic acid places near the Cl atom', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-10111
       Description: when clicking with a Salts and Solvents template on an atom connected with

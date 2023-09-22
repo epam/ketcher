@@ -19,7 +19,7 @@ env:
   CI_ENVIRONMENT: true
 jobs:
   playwright_tests:
-    timeout-minutes: 120
+    timeout-minutes: 40
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v3
@@ -46,10 +46,14 @@ jobs:
         run: cd ketcher-autotests && npm run docker:build
       - name: Run playwright tests in docker
         run: cd ketcher-autotests && npm run docker:test
+
       - uses: actions/upload-artifact@v3
         # run even if previous steps fails
         if: always()
         with:
           name: playwright-report
           path: ketcher-autotests/playwright-report/
-          retention-days: 30
+          retention-days: 5
+      - name: Remove unused docker images
+        if: always()
+        run: docker system prune -f

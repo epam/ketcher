@@ -31,8 +31,8 @@ export async function cutAndPaste(page: Page) {
   await page.getByTestId(TestIdSelectors.RectangleSelection).click();
   // to focus in Editor
   await clickInTheMiddleOfTheScreen(page);
-  await page.keyboard.press(`${modifier}+KeyA`);
-  await page.keyboard.press(`${modifier}+KeyX`);
+  await page.keyboard.press(`${modifier}+KeyA`, { delay: INPUT_DELAY });
+  await page.keyboard.press(`${modifier}+KeyX`, { delay: INPUT_DELAY });
   await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
 }
 
@@ -41,8 +41,8 @@ export async function copyAndPaste(page: Page) {
   await page.getByTestId(TestIdSelectors.RectangleSelection).click();
   // to focus in Editor
   await clickInTheMiddleOfTheScreen(page);
-  await page.keyboard.press(`${modifier}+KeyA`);
-  await page.keyboard.press(`${modifier}+KeyC`);
+  await page.keyboard.press(`${modifier}+KeyA`, { delay: INPUT_DELAY });
+  await page.keyboard.press(`${modifier}+KeyC`, { delay: INPUT_DELAY });
   await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
 }
 

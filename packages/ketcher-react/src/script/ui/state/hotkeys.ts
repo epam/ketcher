@@ -73,6 +73,8 @@ const shortcutKeys = [
   'f',
   'i',
   'b',
+  '+',
+  '-',
 ];
 
 /* HotKeys */
@@ -174,9 +176,12 @@ function keyHandle(dispatch, getState, hotKeys, event) {
         });
       } else {
         if (newAction.tool === 'select') {
-          newAction = SettingsManager.getSettings().selectionTool;
+          if (key === 'Escape') {
+            newAction = SettingsManager.getSettings().selectionTool;
+          } else if (index === -1) {
+            newAction = {};
+          }
         }
-
         dispatch(onAction(newAction));
       }
 

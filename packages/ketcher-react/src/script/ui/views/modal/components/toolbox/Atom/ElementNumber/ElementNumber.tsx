@@ -29,8 +29,10 @@ const ElementNumber = (props: Props) => {
 
   return (
     <label>
+      {/* eslint-disable jsx-a11y/label-has-associated-control */}
       <span>Number</span>
       <input type="text" readOnly value={value} />
+      {/* eslint-enable jsx-a11y/label-has-associated-control */}
     </label>
   );
 };

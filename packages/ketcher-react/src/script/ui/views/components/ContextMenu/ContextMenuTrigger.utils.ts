@@ -96,9 +96,12 @@ export function getMenuPropsForClosestItem(
     }
 
     case 'rgroupAttachmentPoints': {
+      const atomId = struct.rgroupAttachmentPoints.get(closestItem.id)?.atomId;
+
       return {
         id: CONTEXT_MENU_ID.FOR_R_GROUP_ATTACHMENT_POINT,
         rgroupAttachmentPoints: [closestItem.id],
+        atomIds: typeof atomId === 'number' ? [atomId] : undefined,
       };
     }
 

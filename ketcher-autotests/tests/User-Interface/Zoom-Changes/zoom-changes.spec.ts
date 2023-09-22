@@ -1,13 +1,14 @@
 import { test, expect } from '@playwright/test';
 import { TestIdSelectors } from '../../utils/selectors/testIdSelectors';
 import { clickInTheMiddleOfTheScreen } from '@utils/clicks';
+import { waitForPageInit } from '@utils/common';
 
 const randomNegativeNumber = -60;
 const randomPositiveNumber = 60;
 
 test.describe('Zoom changes', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   /* Editor is zoomed correctly: */

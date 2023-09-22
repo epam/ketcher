@@ -29,7 +29,7 @@ import { fromSgroupAddition } from './sgroup';
 
 const benzeneMoleculeName = 'Benzene';
 const cyclopentadieneMoleculeName = 'Cyclopentadiene';
-const benzeneDoubleBondIndexes = [1, 4];
+const benzeneDoubleBondIndexes = [2, 4];
 
 export function fromTemplateOnCanvas(
   restruct,

@@ -95,7 +95,9 @@ function TextArea({
   innerRef,
   ...rest
 }) {
-  return <textarea value={value} ref={innerRef} onInput={onChange} {...rest} />;
+  return (
+    <textarea value={value ?? ''} ref={innerRef} onInput={onChange} {...rest} />
+  );
 }
 
 TextArea.val = (ev) => ev.target.value;
@@ -183,6 +185,7 @@ function FieldSet({
       {enumSchema(schema, (title, val) => (
         <li key={title} className={classes.fieldSetItem}>
           <label className={classes.fieldSetLabel}>
+            {/* eslint-disable jsx-a11y/label-has-associated-control */}
             <input
               ref={innerRef}
               type={type}
@@ -196,6 +199,7 @@ function FieldSet({
             {type === 'checkbox' && <span className={classes.checkbox} />}
             {type === 'radio' && <span className={classes.radioButton} />}
             {title}
+            {/* eslint-disable jsx-a11y/label-has-associated-control */}
           </label>
         </li>
       ))}

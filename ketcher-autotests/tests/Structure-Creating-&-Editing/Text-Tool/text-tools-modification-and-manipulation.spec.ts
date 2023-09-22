@@ -9,7 +9,6 @@ import {
   pressButton,
   clickInTheMiddleOfTheScreen,
   dragMouseTo,
-  clickOnTheCanvas,
 } from '@utils/clicks';
 import {
   TopPanelButton,
@@ -18,6 +17,7 @@ import {
   selectRing,
   RingButton,
   waitForPageInit,
+  openFileAndAddToCanvas,
 } from '@utils';
 import {
   selectNestedTool,
@@ -55,24 +55,33 @@ test.describe('Text tools test cases', () => {
     await pressButton(page, 'Apply');
     await selectLeftPanelButton(LeftPanelButton.Erase, page);
     await page.getByText('TEST').click();
-
-    // Delete created text object with and Lasso Selection Tool and 'Delete' button on a keyboard.
     await selectTopPanelButton(TopPanelButton.Undo, page);
     await selectTopPanelButton(TopPanelButton.Redo, page);
     await delay(DELAY_IN_SECONDS.TWO);
     await selectTopPanelButton(TopPanelButton.Undo, page);
-    await takeEditorScreenshot(page);
-    await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
+  });
+
+  // Delete created text object with and Lasso Selection Tool and 'Delete' button on a keyboard
+  test('Delete created text object with Selection Tool and "Delete" button on a keyboard', async ({
+    page,
+  }) => {
+    await openFileAndAddToCanvas('KET/test-EPMLSOPKET-2229.ket', page);
+    // await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
     await selectNestedTool(page, SelectTool.LASSO_SELECTION);
     await page.getByText('TEST').hover();
     await page.getByText('TEST').click();
     await page.keyboard.press('Delete');
-
-    // Delete created text object in the text editor field
     await delay(DELAY_IN_SECONDS.TWO);
     await selectTopPanelButton(TopPanelButton.Undo, page);
     await selectTopPanelButton(TopPanelButton.Redo, page);
     await delay(DELAY_IN_SECONDS.TWO);
+  });
+
+  // Delete created text object in the text editor field
+  test('Delete created text object in the text editor field', async ({
+    page,
+  }) => {
+    await openFileAndAddToCanvas('KET/test-EPMLSOPKET-2229.ket', page);
     await selectTopPanelButton(TopPanelButton.Undo, page);
     await page.getByText('TEST').dblclick();
     await pressButton(page, 'Cancel');
@@ -156,9 +165,10 @@ test.describe('Text tools test cases', () => {
     const text2 = 'Ketcher is a coool tool';
     await page.getByRole('dialog').getByRole('textbox').fill(text2);
     await pressButton(page, 'Apply');
-    await takeEditorScreenshot(page);
+  });
 
-    // Delete with Erase tool
+  test('Delete with Erase tool', async ({ page }) => {
+    await openFileAndAddToCanvas('KET/test-EPMLSOPKET-2233.ket', page);
     await selectLeftPanelButton(LeftPanelButton.Erase, page);
     await page.getByText('&&&').hover();
     await page.getByText('&&&').click();
@@ -166,10 +176,13 @@ test.describe('Text tools test cases', () => {
     await selectTopPanelButton(TopPanelButton.Redo, page);
     await delay(DELAY_IN_SECONDS.TWO);
     await selectTopPanelButton(TopPanelButton.Undo, page);
-    await takeEditorScreenshot(page);
+  });
 
-    // Delete with and Lasso Selection Tool and 'Delete' button on a keyboard.
-    await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
+  test('Delete with and Lasso Selection Tool and "Delete" button on a keyboard', async ({
+    page,
+  }) => {
+    const text2 = 'Ketcher is a coool tool';
+    await openFileAndAddToCanvas('KET/test-EPMLSOPKET-2233.ket', page);
     await selectNestedTool(page, SelectTool.LASSO_SELECTION);
     await page.getByText(text2).hover();
     await page.getByText(text2).click();
@@ -178,9 +191,12 @@ test.describe('Text tools test cases', () => {
     await selectTopPanelButton(TopPanelButton.Redo, page);
     await delay(DELAY_IN_SECONDS.TWO);
     await selectTopPanelButton(TopPanelButton.Undo, page);
-    await takeEditorScreenshot(page);
+  });
 
-    // Delete two objects with Erase and Lasso Selection Tool and 'Delete' button on a keyboard
+  test('Delete two objects with Erase and Lasso Selection Tool and "Delete" button on a keyboard', async ({
+    page,
+  }) => {
+    await openFileAndAddToCanvas('KET/test-EPMLSOPKET-2233.ket', page);
     await clickInTheMiddleOfTheScreen(page);
     await page.keyboard.press('Control+a');
     await page.getByTestId('erase').click();

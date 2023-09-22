@@ -5,7 +5,6 @@ import {
   BondType,
   TopPanelButton,
   getControlModifier,
-  getCoordinatesOfTheMiddleOfTheScreen,
   openFileAndAddToCanvas,
   selectTopPanelButton,
   takeEditorScreenshot,

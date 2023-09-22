@@ -5,7 +5,6 @@ import {
   selectAtomInToolbar,
   clickInTheMiddleOfTheScreen,
   waitForPageInit,
-  waitForRender,
 } from '@utils';
 
 test.describe('Open Ketcher', () => {
@@ -40,9 +39,7 @@ test.describe('Open Ketcher', () => {
   for (const atom of atoms) {
     test(`Check atoms ${atom}`, async ({ page }) => {
       await selectAtomInToolbar(atom, page);
-      await waitForRender(page, async () => {
-        await clickInTheMiddleOfTheScreen(page);
-      });
+      await clickInTheMiddleOfTheScreen(page);
     });
   }
 });

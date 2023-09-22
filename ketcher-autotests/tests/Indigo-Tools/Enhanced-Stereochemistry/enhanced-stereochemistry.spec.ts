@@ -275,35 +275,32 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     await selectRadioButtonForNewGroup(page, 'Create new OR Group');
   });
 
-  test.fixme(
-    'OR stereo marks - Save as *.ket file and edit',
-    async ({ page }) => {
-      /*
+  test('OR stereo marks - Save as *.ket file and edit', async ({ page }) => {
+    /*
     Test case: EPMLSOPKET-2262
     Description: The structure is saved/opened correctly as *.ket file.
     All enhanced stereochemistry features are present after opening.
     It's possible to edit the stereo marks assignment after opening the saved file.
     */
-      await openFileAndAddToCanvas('KET/stereo-or-structure.ket', page);
-      const expectedFile = await getKet(page);
-      await saveToFile('KET/stereo-or-structure-expected.ket', expectedFile);
+    await openFileAndAddToCanvas('KET/stereo-or-structure.ket', page);
+    const expectedFile = await getKet(page);
+    await saveToFile('KET/stereo-or-structure-expected.ket', expectedFile);
 
-      const { fileExpected: ketFileExpected, file: ketFile } =
-        await receiveFileComparisonData({
-          page,
-          expectedFileName:
-            'tests/test-data/KET/stereo-or-structure-expected.ket',
-        });
+    const { fileExpected: ketFileExpected, file: ketFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/KET/stereo-or-structure-expected.ket',
+      });
 
-      expect(ketFile).toEqual(ketFileExpected);
+    expect(ketFile).toEqual(ketFileExpected);
 
-      await clickOnAtom(page, 'C', 1);
-      await selectRadioButtonForNewGroup(page, 'Create new AND Group');
+    await clickOnAtom(page, 'C', 1);
+    await selectRadioButtonForNewGroup(page, 'Create new AND Group');
 
-      await clickOnAtom(page, 'C', 4);
-      await selectRadioButtonForNewGroup(page, 'Create new AND Group');
-    },
-  );
+    await clickOnAtom(page, 'C', 4);
+    await selectRadioButtonForNewGroup(page, 'Create new AND Group');
+  });
 
   test('Mixed stereo marks - Save as *.ket file and edit', async ({ page }) => {
     /*

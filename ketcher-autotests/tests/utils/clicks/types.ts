@@ -15,6 +15,7 @@ export type DropdownIds =
   | 'rgroup-label'
   | 'select-rectangle'
   | 'reaction-arrow-open-angle'
+  | 'reaction-map'
   | 'shape-ellipse';
 
 export type DropdownToolIds =

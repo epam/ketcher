@@ -1,4 +1,3 @@
-/* eslint-disable */
 import {} from '@playwright/test';
 // import { drawElementByTitle, waitForPageInit } from '@utils';
 // import { getAtomsCoordinatesByAttributes } from './getAtomsCoordinatesByAttributes';

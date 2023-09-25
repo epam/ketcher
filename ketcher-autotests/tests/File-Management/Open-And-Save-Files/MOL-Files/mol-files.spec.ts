@@ -698,41 +698,42 @@ test.describe('Open and Save file', () => {
     }
   });
 
-  test.skip('V3000 mol file contains different Bond properties', async ({
-    page,
-  }) => {
-    /**
-     * Test case: EPMLSOPKET-1853
-     * Description: Structre is correctly generated from Molstring and vise versa molstring is correctly generated from structure.
-     * A file with V3000 format is resaved in V2000 format
-     *
-     * Now we can`t open the file - `Convert error! Cannot deserialize input JSON.`
-     * https://github.com/epam/ketcher/issues/2378
-     */
+  test.fixme(
+    'V3000 mol file contains different Bond properties',
+    async ({ page }) => {
+      /**
+       * Test case: EPMLSOPKET-1853
+       * Description: Structre is correctly generated from Molstring and vise versa molstring is correctly generated from structure.
+       * A file with V3000 format is resaved in V2000 format
+       *
+       * Now we can`t open the file - `Convert error! Cannot deserialize input JSON.`
+       * https://github.com/epam/ketcher/issues/2378
+       */
 
-    await openFileAndAddToCanvas(
-      'Molfiles-V3000/marvin-bond-properties-V3000(1).mol',
-      page,
-    );
-
-    const expectedFile = await getMolfile(page, 'v2000');
-    await saveToFile(
-      'Molfiles-V2000/marvin-bond-properties-V3000-expected.mol',
-      expectedFile,
-    );
-
-    const METADATA_STRING_INDEX = [1];
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
+      await openFileAndAddToCanvas(
+        'Molfiles-V3000/marvin-bond-properties-V3000(1).mol',
         page,
-        expectedFileName:
-          'tests/test-data/Molfiles-V2000/marvin-bond-properties-V3000-expected.mol',
-        fileFormat: 'v2000',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
+      );
 
-    expect(molFile).toEqual(molFileExpected);
-  });
+      const expectedFile = await getMolfile(page, 'v2000');
+      await saveToFile(
+        'Molfiles-V2000/marvin-bond-properties-V3000-expected.mol',
+        expectedFile,
+      );
+
+      const METADATA_STRING_INDEX = [1];
+      const { fileExpected: molFileExpected, file: molFile } =
+        await receiveFileComparisonData({
+          page,
+          expectedFileName:
+            'tests/test-data/Molfiles-V2000/marvin-bond-properties-V3000-expected.mol',
+          fileFormat: 'v2000',
+          metaDataIndexes: METADATA_STRING_INDEX,
+        });
+
+      expect(molFile).toEqual(molFileExpected);
+    },
+  );
 
   for (let i = 1; i < 9; i++) {
     test(`Open/Save files for ferrocen-like structures 1/2 - open ferrocene_radical0${i}.mol`, async ({

@@ -71,6 +71,7 @@ export type BondAttributes = {
   topology?: number;
   type?: BondType;
   xxx?: string;
+  customQuery?: string | null;
 };
 
 export type AtomXy = AtomAttributes & { x: number; y: number };

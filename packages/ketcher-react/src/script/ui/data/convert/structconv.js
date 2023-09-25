@@ -277,18 +277,22 @@ function toRlabel(values) {
 export function fromBond(sbond) {
   const type = sbond.type;
   const stereo = sbond.stereo;
+  const isCustomQuery = sbond.customQuery !== null;
   return {
-    type: fromBondType(type, stereo),
-    topology: sbond.topology || 0,
-    center: sbond.reactingCenterStatus || 0,
+    type: isCustomQuery ? '' : fromBondType(type, stereo),
+    topology: sbond.topology,
+    center: sbond.reactingCenterStatus,
+    customQuery: !isCustomQuery ? '' : sbond.customQuery.toString(),
   };
 }
 
 export function toBond(bond) {
+  const isCustomQuery = bond.customQuery !== '';
   return {
     topology: bond.topology,
     reactingCenterStatus: bond.center,
-    ...toBondType(bond.type),
+    customQuery: !isCustomQuery ? null : bond.customQuery,
+    ...toBondType(isCustomQuery ? 'any' : bond.type),
   };
 }
 

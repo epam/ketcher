@@ -69,6 +69,7 @@ export const formsState = {
       type: 'single',
       topology: 0,
       center: 0,
+      customQuery: null,
     },
   },
   check: {

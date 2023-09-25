@@ -15,25 +15,74 @@
  ***************************************************************************/
 
 import { BaseCallProps, BaseProps } from '../../../modal.types';
-import Form, { Field } from '../../../../../component/form/form/form';
+import Form, {
+  CustomQueryField,
+  Field,
+} from '../../../../../component/form/form/form';
 
 import { Dialog } from '../../../../components';
 import Select from '../../../../../component/form/Select';
 import { getSelectOptionsFromSchema } from '../../../../../utils';
 import { bond as bondSchema } from '../../../../../data/schema/struct-schema';
 import classes from './Bond.module.less';
+import { useMemo, useRef, useState } from 'react';
+import { Bond as CoreBond } from 'ketcher-core';
 
-interface BondProps extends BaseProps {
-  center: number;
-  topology: number;
+interface BondSettings {
   type: string;
+  topology: number | null;
+  center: number | null;
+  customQuery: string;
 }
+interface BondProps extends BaseProps, BondSettings {}
 
 type Props = BondProps & BaseCallProps;
 
 const Bond = (props: Props) => {
   const { formState, ...rest } = props;
   const bondProps = bondSchema.properties;
+  const [isCustomQuery, setIsCustomQuery] = useState(Boolean(rest.customQuery));
+  const previousSettings = useRef<BondSettings>({
+    type: 'single',
+    topology: 0,
+    center: 0,
+    customQuery: '',
+  });
+  const customValid = useMemo(
+    () => ({
+      customQuery: (customQuery: string) =>
+        customQueryValid(customQuery, isCustomQuery),
+    }),
+    [isCustomQuery],
+  );
+  const handleCustomQueryCheckBoxChange = (
+    value: boolean,
+    formState: BondSettings,
+    _,
+    updateFormState: (settings: BondSettings) => void,
+  ) => {
+    setIsCustomQuery(value);
+    if (value) {
+      const { type, topology, center, customQuery } = formState;
+      previousSettings.current = {
+        type,
+        topology,
+        center,
+        customQuery,
+      };
+    }
+    updateFormState(
+      value
+        ? {
+            type: '',
+            topology: null,
+            center: null,
+            customQuery: getBondCustomQuery(formState),
+          }
+        : previousSettings.current,
+    );
+  };
+
   return (
     <Dialog
       title="Bond Properties"
@@ -45,26 +94,80 @@ const Bond = (props: Props) => {
       buttons={['Cancel', 'OK']}
       withDivider
     >
-      <Form schema={bondSchema} init={rest} {...formState}>
+      <Form
+        schema={bondSchema}
+        init={rest}
+        {...formState}
+        customValid={customValid}
+      >
         <Field
           name="type"
           component={Select}
           options={getSelectOptionsFromSchema(bondProps.type)}
+          disabled={isCustomQuery}
+          formName="bond-properties"
         />
         <Field
           name="topology"
           component={Select}
           options={getSelectOptionsFromSchema(bondProps.topology)}
+          disabled={isCustomQuery}
+          formName="bond-properties"
         />
         <Field
           name="center"
           component={Select}
           options={getSelectOptionsFromSchema(bondProps.center)}
+          disabled={isCustomQuery}
+          formName="bond-properties"
         />
+        <div className={classes.customQueryWrapper}>
+          <CustomQueryField
+            name="customQuery"
+            labelPos="after"
+            className={classes.checkbox}
+            disabled={!isCustomQuery}
+            checkboxValue={isCustomQuery}
+            onCheckboxChange={handleCustomQueryCheckBoxChange}
+            data-testid="bond-custom-query"
+          />
+        </div>
       </Form>
     </Dialog>
   );
 };
 
+function customQueryValid(customQuery: string, isCustomQuery: boolean) {
+  if (!isCustomQuery) {
+    return true;
+  }
+  const regex = new RegExp(bondSchema.properties.customQuery.pattern);
+  const isValid = regex.test(customQuery);
+  return isValid;
+}
+
+function getBondCustomQuery(bond: BondSettings) {
+  let queryAttrsText = '';
+  const { type, topology } = bond;
+  const bondType = {
+    single: '-',
+    double: '=',
+    triple: '#',
+    aromatic: ':',
+    any: '~',
+    up: '/',
+    down: '\\',
+  };
+  if (type in bondType) {
+    queryAttrsText += bondType[type];
+  }
+  if (queryAttrsText) {
+    queryAttrsText += ';';
+  }
+  if (topology === CoreBond.PATTERN.TOPOLOGY.RING) {
+    queryAttrsText += '@';
+  }
+  return queryAttrsText;
+}
 export type { BondProps };
 export default Bond;

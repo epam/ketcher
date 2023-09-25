@@ -223,6 +223,7 @@ export function bondToStruct(source, atomOffset = 0) {
   ifDef(params, 'reactingCenterStatus', source.center);
   ifDef(params, 'stereo', source.stereo);
   ifDef(params, 'cip', source.cip);
+  ifDef(params, 'customQuery', source.customQuery);
   // if (params.stereo)
   // 	params.stereo = params.stereo > 1 ? params.stereo * 2 : params.stereo;
   // params.xxx = 0;

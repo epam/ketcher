@@ -40,6 +40,7 @@ export enum AtomButton {
   Fluorine = 'Fluorine',
   Chlorine = 'Chlorine',
   Bromine = 'Bromine',
+  Gold = 'Gold',
   Iodine = 'Iodine',
   Platinum = 'Platinum',
   Periodic = 'Periodic',

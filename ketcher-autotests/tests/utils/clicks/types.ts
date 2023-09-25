@@ -8,13 +8,15 @@ export type AtomLabelType =
   | 'S'
   | 'Br'
   | 'F'
-  | 'I';
+  | 'I'
+  | 'Br';
 
 export type DropdownIds =
   | 'bonds'
   | 'rgroup-label'
   | 'select-rectangle'
   | 'reaction-arrow-open-angle'
+  | 'reaction-map'
   | 'shape-ellipse';
 
 export type DropdownToolIds =

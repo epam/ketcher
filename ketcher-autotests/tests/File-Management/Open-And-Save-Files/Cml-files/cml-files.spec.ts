@@ -6,8 +6,8 @@ import {
   openFileAndAddToCanvas,
   saveToFile,
   delay,
+  waitForPageInit,
 } from '@utils';
-import { waitForPageInit } from '@utils/common/loaders/waitForPageInit';
 import { getCml } from '@utils/formats';
 
 async function openFileAddToCanvasTakeScreenshot(page: Page, fileName: string) {

@@ -1,32 +1,24 @@
-import { expect, test } from '@playwright/test';
-import {
-  selectAction,
-  selectTool,
-  takeEditorScreenshot,
-  takeLeftToolbarScreenshot,
-} from '@utils/canvas';
-import { getLeftAtomByAttributes } from '@utils/canvas/atoms';
-import { getLeftBondByAttributes } from '@utils/canvas/bonds';
-import { BondType } from '@utils/canvas/types';
+import { test, expect } from '@playwright/test';
 import {
   openFileAndAddToCanvas,
-  LeftPanelButton,
   TopPanelButton,
+  takeEditorScreenshot,
   waitForPageInit,
   waitForRender,
+  BondType,
+  selectAction,
+  takeLeftToolbarScreenshot,
+  clickOnAtom,
+  clickOnBond,
 } from '@utils';
 import { RxnArrow, RxnPlus } from 'ketcher-core';
-
 function checkElementExists(element: RxnPlus | RxnArrow, errorMsg: string) {
   if (!element) {
     throw new Error(errorMsg);
   }
 }
 
-let point: { x: number; y: number };
-
 test.describe('Erase Tool', () => {
-  // TO DO: here in both tests we have some issue with openFileAndAddToCanvas() function it need proper investigation
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
     await openFileAndAddToCanvas(
@@ -34,14 +26,14 @@ test.describe('Erase Tool', () => {
       page,
     );
 
-    await selectTool(LeftPanelButton.Erase, page);
+    await page.getByTestId('erase').click();
   });
 
   test.afterEach(async ({ page }) => {
     await takeEditorScreenshot(page);
   });
 
-  test.fixme('Erase atom and bond', async ({ page }) => {
+  test('Erase atom and bond', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1363
     Description: Erase tool erases atom and bond
@@ -50,9 +42,8 @@ test.describe('Erase Tool', () => {
     const atomSizeAfterErase = 21;
     const bondsSizeAfterErase = 18;
 
-    point = await getLeftAtomByAttributes(page, { label: 'Br' });
     await waitForRender(page, async () => {
-      await page.mouse.click(point.x, point.y);
+      await clickOnAtom(page, 'Br', 0);
     });
 
     const atomSize = await page.evaluate(() => {
@@ -60,9 +51,9 @@ test.describe('Erase Tool', () => {
     });
     expect(atomSize).toEqual(atomSizeAfterErase);
 
-    point = await getLeftBondByAttributes(page, { type: BondType.DOUBLE });
     await waitForRender(page, async () => {
-      await page.mouse.click(point.x, point.y);
+      // eslint-disable-next-line no-magic-numbers
+      await clickOnBond(page, BondType.SINGLE, 2);
     });
 
     const bondSize = await page.evaluate(() => {
@@ -71,7 +62,7 @@ test.describe('Erase Tool', () => {
     expect(bondSize).toEqual(bondsSizeAfterErase);
   });
 
-  test.fixme('Erase reaction', async ({ page }) => {
+  test('Erase reaction', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1364, 1365
     Description: Erase the reaction arrow and plus signs, undo and redo action

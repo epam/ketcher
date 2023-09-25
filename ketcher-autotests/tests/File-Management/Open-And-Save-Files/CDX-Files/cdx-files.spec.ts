@@ -6,8 +6,8 @@ import {
   pasteFromClipboardAndAddToCanvas,
   receiveFileComparisonData,
   saveToFile,
+  waitForPageInit,
 } from '@utils';
-import { waitForPageInit } from '@utils/common/loaders/waitForPageInit';
 import { getCdx } from '@utils/formats';
 
 test.describe('CDX files', () => {

@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { Page } from '@playwright/test';
 import { getBondByIndex } from '@utils/canvas/bonds';
 import {

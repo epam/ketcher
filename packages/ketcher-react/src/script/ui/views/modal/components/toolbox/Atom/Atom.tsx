@@ -254,6 +254,7 @@ const Atom: FC<Props> = (props: Props) => {
               disabled={!isCustomQuery}
               checkboxValue={isCustomQuery}
               onCheckboxChange={handleCustomQueryCheckBoxChange}
+              data-testid="atom-custom-query"
             />
           </div>
         </div>

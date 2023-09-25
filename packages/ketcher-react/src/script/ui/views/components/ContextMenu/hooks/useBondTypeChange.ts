@@ -14,7 +14,12 @@ const useBondTypeChange = () => {
       const molecule = editor.render.ctab;
       const bondIds = props?.bondIds || [];
       const bondProps = tools[id].action.opts;
-
+      const isCustomQuery = molecule.bonds.get(bondIds[0])?.b.customQuery;
+      if (isCustomQuery) {
+        bondProps.customQuery = null;
+        bondProps.topology = 0;
+        bondProps.reactingCenterStatus = 0;
+      }
       editor.update(fromBondsAttrs(molecule, bondIds, bondProps));
     },
     [getKetcherInstance],

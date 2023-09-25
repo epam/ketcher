@@ -473,13 +473,13 @@ export class DrawingEntitiesManager {
   }
 
   private rearrangeChain(initCoords: Vec2, chain, canvasWidth) {
-    let command = new Command();
+    const command = new Command();
 
     const monomerWidth = chain[0].renderer?.bodyWidth ?? 0;
     const monomerHeight = chain[0].renderer?.bodyHeight ?? 0;
     const heightMonomerWithBomd = monomerHeight + 80;
     chain[0].moveAbsolute(initCoords);
-    let operation = new MonomerMoveOperation(chain[0]);
+    const operation = new MonomerMoveOperation(chain[0]);
     command.addOperation(operation);
 
     for (let i = 1; i < chain.length; i++) {
@@ -500,7 +500,7 @@ export class DrawingEntitiesManager {
           }),
         );
       }
-      let operation = new MonomerMoveOperation(chain[i]);
+      const operation = new MonomerMoveOperation(chain[i]);
       command.addOperation(operation);
     }
     return { command, lastCoord: chain[chain.length - 1].position };
@@ -513,7 +513,7 @@ export class DrawingEntitiesManager {
     }
 
     // найти цепочку этого мономера
-    let monomerChain = [] as BaseMonomer[];
+    const monomerChain = [] as BaseMonomer[];
     let monomerInTheChain = firstMonomer;
     monomerChain.push(monomerInTheChain);
     while (this.getNextMonomer(monomerInTheChain)) {
@@ -529,8 +529,8 @@ export class DrawingEntitiesManager {
     let topLeftMonomerCoords =
       topLeftMonomer.position.x + topLeftMonomer.position.y;
 
-    for (let monomer of monomersList) {
-      let coords = monomer.position.x + monomer.position.y;
+    for (const monomer of monomersList) {
+      const coords = monomer.position.x + monomer.position.y;
       if (coords < topLeftMonomerCoords) {
         topLeftMonomer = monomer;
         topLeftMonomerCoords = coords;
@@ -542,6 +542,7 @@ export class DrawingEntitiesManager {
   private getPrevMonomer(monomer) {
     return monomer.attachmentPointsToBonds.R2?.firstMonomer;
   }
+
   private getNextMonomer(monomer) {
     return monomer.attachmentPointsToBonds.R1?.secondMonomer;
   }
@@ -557,12 +558,12 @@ export class DrawingEntitiesManager {
   }
 
   public reArrangeMonomers(canvasWidth) {
-    let monomersList = Array.from(this.monomers.values());
+    const monomersList = Array.from(this.monomers.values());
 
-    let topLeftMonomer = this.findTopLeftMonomer(monomersList);
+    const topLeftMonomer = this.findTopLeftMonomer(monomersList);
 
     let unusedMonomerList = [...monomersList];
-    let chainsList = [] as BaseMonomer[][];
+    const chainsList = [] as BaseMonomer[][];
     const firstChain = this.findChainByMonomer(topLeftMonomer);
     unusedMonomerList = unusedMonomerList.filter(
       (monomer) => !firstChain.includes(monomer),
@@ -570,7 +571,7 @@ export class DrawingEntitiesManager {
     chainsList.push(firstChain);
 
     // остальные
-    while (!!unusedMonomerList.length) {
+    while (unusedMonomerList.length) {
       const chain = this.findChainByMonomer(unusedMonomerList[0]);
       unusedMonomerList = unusedMonomerList.filter(
         (monomer) => !chain.includes(monomer),
@@ -586,9 +587,9 @@ export class DrawingEntitiesManager {
       y: 40,
       z: 0,
     });
-    let command = new Command();
+    const command = new Command();
     chainsList.forEach((chain) => {
-      let { lastCoord, command: newCommand } = this.rearrangeChain(
+      const { lastCoord, command: newCommand } = this.rearrangeChain(
         initCoords,
         chain,
         canvasWidth,

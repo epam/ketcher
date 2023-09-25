@@ -256,6 +256,9 @@ function MenuComponent() {
       <Menu.Group>
         <Menu.Item itemId="bond-single" title="Single Bond (1)" />
       </Menu.Group>
+      <Menu.Group>
+        <Menu.Item itemId="snake-mode" title="Snake mode (1)" />
+      </Menu.Group>
       <Menu.Group divider>
         <Menu.Item itemId="bracket" />
       </Menu.Group>

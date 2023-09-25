@@ -70,6 +70,14 @@ export class CoreEditor {
   }
 
   public selectTool(name: string, options?) {
+    if (name === 'snake-mode') {
+      let modelChanges = this.drawingEntitiesManager.reArrangeMonomers(
+        this.canvas.width.baseVal.value,
+      );
+      this.renderersContainer.update(modelChanges);
+      modelChanges = this.drawingEntitiesManager.reArrangeBonds();
+      this.renderersContainer.update(modelChanges);
+    }
     const ToolConstructor: ToolConstructorInterface = toolsMap[name];
     const oldTool = this.tool;
 

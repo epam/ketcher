@@ -462,4 +462,136 @@ export class DrawingEntitiesManager {
 
     return command;
   }
+
+  private rearrangeChain(initCoords: Vec2, chain, canvasWidth) {
+    let command = new Command();
+
+    const monomerWidth = chain[0].renderer?.bodyWidth ?? 0;
+    const monomerHeight = chain[0].renderer?.bodyHeight ?? 0;
+    const heightMonomerWithBomd = monomerHeight + 80;
+    chain[0].moveAbsolute(initCoords);
+    let operation = new MonomerMoveOperation(chain[0]);
+    command.addOperation(operation);
+
+    for (let i = 1; i < chain.length; i++) {
+      if (chain[i - 1].position.x + 64 + initCoords.x + 50 + 70 > canvasWidth) {
+        chain[i].moveAbsolute(
+          new Vec2({
+            x: initCoords.x,
+            y: chain[i - 1].position.y + heightMonomerWithBomd,
+            z: initCoords.z,
+          }),
+        );
+      } else {
+        chain[i].moveAbsolute(
+          new Vec2({
+            x: chain[i - 1].position.x + monomerWidth + 50,
+            y: chain[i - 1].position.y,
+            z: initCoords.z,
+          }),
+        );
+      }
+      let operation = new MonomerMoveOperation(chain[i]);
+      command.addOperation(operation);
+    }
+    return { command, lastCoord: chain[chain.length - 1].position };
+  }
+
+  private findChainByMonomer(monomer) {
+    let firstMonomer = monomer;
+    while (this.getPrevMonomer(firstMonomer)) {
+      firstMonomer = this.getPrevMonomer(firstMonomer);
+    }
+
+    // найти цепочку этого мономера
+    let monomerChain = [] as BaseMonomer[];
+    let monomerInTheChain = firstMonomer;
+    monomerChain.push(monomerInTheChain);
+    while (this.getNextMonomer(monomerInTheChain)) {
+      monomerChain.push(this.getNextMonomer(monomerInTheChain));
+      monomerInTheChain = this.getNextMonomer(monomerInTheChain);
+    }
+    return monomerChain;
+  }
+
+  private findTopLeftMonomer(monomersList) {
+    let topLeftMonomer = monomersList[0];
+
+    let topLeftMonomerCoords =
+      topLeftMonomer.position.x + topLeftMonomer.position.y;
+
+    for (let monomer of monomersList) {
+      let coords = monomer.position.x + monomer.position.y;
+      if (coords < topLeftMonomerCoords) {
+        topLeftMonomer = monomer;
+        topLeftMonomerCoords = coords;
+      }
+    }
+    return topLeftMonomer;
+  }
+
+  private getPrevMonomer(monomer) {
+    return monomer.attachmentPointsToBonds.R2?.firstMonomer;
+  }
+  private getNextMonomer(monomer) {
+    return monomer.attachmentPointsToBonds.R1?.secondMonomer;
+  }
+
+  public reArrangeBonds() {
+    const command = new Command();
+
+    this.polymerBonds.forEach((drawingEntity) => {
+      drawingEntity.moveToLinkedMonomers();
+      command.merge(this.createDrawingEntityMovingCommand(drawingEntity));
+    });
+    return command;
+  }
+
+  public reArrangeMonomers(canvasWidth) {
+    let monomersList = Array.from(this.monomers.values());
+
+    let topLeftMonomer = this.findTopLeftMonomer(monomersList);
+
+    let unusedMonomerList = [...monomersList];
+    let chainsList = [] as BaseMonomer[][];
+    const firstChain = this.findChainByMonomer(topLeftMonomer);
+    unusedMonomerList = unusedMonomerList.filter(
+      (monomer) => !firstChain.includes(monomer),
+    );
+    chainsList.push(firstChain);
+
+    // остальные
+    while (!!unusedMonomerList.length) {
+      const chain = this.findChainByMonomer(unusedMonomerList[0]);
+      unusedMonomerList = unusedMonomerList.filter(
+        (monomer) => !chain.includes(monomer),
+      );
+      chainsList.push(chain);
+    }
+
+    const monomerHeight = monomersList[0].renderer?.bodyHeight ?? 0;
+
+    // построить цепочку (назначить координаты мономеров)
+    let initCoords = new Vec2({
+      x: 40,
+      y: 40,
+      z: 0,
+    });
+    let command = new Command();
+    chainsList.forEach((chain) => {
+      let { lastCoord, command: newCommand } = this.rearrangeChain(
+        initCoords,
+        chain,
+        canvasWidth,
+      );
+      initCoords = new Vec2({
+        x: initCoords.x,
+        y: lastCoord.y + monomerHeight + 80,
+        z: 0,
+      });
+      command.merge(newCommand);
+    });
+
+    return command;
+  }
 }

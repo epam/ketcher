@@ -1,4 +1,4 @@
-import { test } from '@playwright/test';
+import { Page, test } from '@playwright/test';
 import {
   takeEditorScreenshot,
   selectLeftPanelButton,
@@ -56,27 +56,24 @@ test.describe('Text tools test cases', () => {
   });
 
   // Delete created text object with and Lasso Selection Tool and 'Delete' button on a keyboard
-  test('Delete created text object with Selection Tool and "Delete" button on a keyboard', async ({
+  test('Text tool - Delete created text object with Selection Tool and "Delete" button on a keyboard', async ({
     page,
   }) => {
     await openFileAndAddToCanvas('KET/test-EPMLSOPKET-2229.ket', page);
-    // await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
     await selectNestedTool(page, SelectTool.LASSO_SELECTION);
-    await page.getByText('TEST').hover();
-    await page.getByText('TEST').click();
+    await page.getByText('TEXT').hover();
+    await page.getByText('TEXT').click();
     await page.keyboard.press('Delete');
-    await delay(DELAY_IN_SECONDS.TWO);
     await selectTopPanelButton(TopPanelButton.Undo, page);
     await selectTopPanelButton(TopPanelButton.Redo, page);
-    await delay(DELAY_IN_SECONDS.TWO);
+    await selectTopPanelButton(TopPanelButton.Undo, page);
   });
 
   // Delete created text object in the text editor field
-  test('Delete created text object in the text editor field', async ({
+  test('Text tool - Delete created text object in the text editor field', async ({
     page,
   }) => {
-    await openFileAndAddToCanvas('KET/test-EPMLSOPKET-2229.ket', page);
-    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await openFileAndAddToCanvas('KET/test-EPMLSOPKET-2229a.ket', page);
     await page.getByText('TEST').dblclick();
     await pressButton(page, 'Cancel');
     await page.getByText('TEST').dblclick();
@@ -102,7 +99,6 @@ test.describe('Text tools test cases', () => {
         'Ketcher is a tool to draw molecular structures and chemical reactions',
       );
     await pressButton(page, 'Cancel');
-    await takeEditorScreenshot(page);
     await page.getByTestId('text').click();
     await clickInTheMiddleOfTheScreen(page);
     await page.getByRole('dialog').getByRole('textbox').click();
@@ -161,7 +157,7 @@ test.describe('Text tools test cases', () => {
     await pressButton(page, 'Apply');
   });
 
-  test('Delete with Erase tool', async ({ page }) => {
+  test('Text tool - Delete with Erase tool', async ({ page }) => {
     await openFileAndAddToCanvas('KET/test-EPMLSOPKET-2233.ket', page);
     await selectLeftPanelButton(LeftPanelButton.Erase, page);
     await page.getByText('&&&').hover();
@@ -172,10 +168,10 @@ test.describe('Text tools test cases', () => {
     await selectTopPanelButton(TopPanelButton.Undo, page);
   });
 
-  test('Delete with and Lasso Selection Tool and "Delete" button on a keyboard', async ({
+  test('Text tool - Delete with and Lasso Selection Tool and "Delete" button on a keyboard', async ({
     page,
   }) => {
-    const text2 = 'Ketcher is a coool tool';
+    const text2 = 'Ketcher is a cool tool';
     await openFileAndAddToCanvas('KET/test-EPMLSOPKET-2233.ket', page);
     await selectNestedTool(page, SelectTool.LASSO_SELECTION);
     await page.getByText(text2).hover();
@@ -187,7 +183,7 @@ test.describe('Text tools test cases', () => {
     await selectTopPanelButton(TopPanelButton.Undo, page);
   });
 
-  test('Delete two objects with Erase and Lasso Selection Tool and "Delete" button on a keyboard', async ({
+  test('Text tool - Delete two objects with Erase and Lasso Selection Tool and "Delete" button on a keyboard', async ({
     page,
   }) => {
     await openFileAndAddToCanvas('KET/test-EPMLSOPKET-2233.ket', page);
@@ -200,20 +196,7 @@ test.describe('Text tools test cases', () => {
     await selectTopPanelButton(TopPanelButton.Undo, page);
     await takeEditorScreenshot(page);
     await selectNestedTool(page, SelectTool.LASSO_SELECTION);
-    const a = 97;
-    const b = 79;
-    const c = 943;
-    const d = 114;
-    const e = 844;
-    const f = 579;
-    const g = 66;
-    const h = 611;
-    await page.mouse.move(a, b);
-    await page.mouse.down();
-    await page.mouse.move(c, d);
-    await page.mouse.move(e, f);
-    await page.mouse.move(g, h);
-    await page.mouse.up();
+    await createSomeStructure(page);
     await page.keyboard.press('Delete');
     await selectTopPanelButton(TopPanelButton.Undo, page);
     await selectTopPanelButton(TopPanelButton.Redo, page);
@@ -232,17 +215,9 @@ test.describe('Text tools test cases', () => {
     await pressButton(page, 'Apply');
     await selectTopPanelButton(TopPanelButton.Undo, page);
     await selectTopPanelButton(TopPanelButton.Redo, page);
-    await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
-    await selectNestedTool(page, SelectTool.LASSO_SELECTION);
+    await page.keyboard.press('Control+a');
     await page.getByText(text3).hover();
-    const i = 656;
-    const j = 359;
-    const k = 943;
-    const l = 114;
-    await page.mouse.move(i, j);
-    await page.mouse.down();
-    await page.mouse.move(k, l);
-    await page.mouse.up();
+    await createSomeMovement(page);
   });
 
   test('Text tool - Manipulations with the another created text object', async ({
@@ -255,22 +230,15 @@ test.describe('Text tools test cases', () => {
     await pressButton(page, 'Apply');
     await selectTopPanelButton(TopPanelButton.Undo, page);
     await selectTopPanelButton(TopPanelButton.Redo, page);
-    await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
-    await selectNestedTool(page, SelectTool.FRAGMENT_SELECTION);
-    await page.getByText(text4).hover();
+    // await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
+    // await selectNestedTool(page, SelectTool.FRAGMENT_SELECTION);
+    // await page.getByText(text4).hover();
+    await page.keyboard.press('Control+a');
     await page.getByText(text4).click();
-    const m = 656;
-    const n = 359;
-    const o = 844;
-    const p = 579;
-    await page.mouse.move(m, n);
-    await page.mouse.down();
-    await page.mouse.move(o, p);
-    await page.mouse.up();
+    await createSomeMovement(page);
     await page.getByTestId('zoom-input').click();
     await page.getByText('Zoom in').click();
     await page.getByText('Zoom in').click();
-    await takeEditorScreenshot(page);
     await page.getByText('Zoom out').click();
     await page.getByText('Zoom out').click();
   });
@@ -288,28 +256,8 @@ test.describe('Text tools test cases', () => {
     await takeEditorScreenshot(page);
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
     await selectNestedTool(page, SelectTool.LASSO_SELECTION);
-    const a = 97;
-    const b = 79;
-    const c = 943;
-    const d = 114;
-    const e = 844;
-    const f = 579;
-    const g = 66;
-    const h = 611;
-    const i = 656;
-    const j = 359;
-    const k = 906;
-    const l = 245;
-    await page.mouse.move(a, b);
-    await page.mouse.down();
-    await page.mouse.move(c, d);
-    await page.mouse.move(e, f);
-    await page.mouse.move(g, h);
-    await page.mouse.up();
-    await page.mouse.move(i, j);
-    await page.mouse.down();
-    await dragMouseTo(k, l, page);
-    await page.mouse.up();
+    await createSomeStructure(page);
+    await createSomeMovement(page);
   });
 
   // test('Text tool - Restore Down the window', async ({ page }) => {
@@ -324,3 +272,31 @@ test.describe('Text tools test cases', () => {
   //   await page.keyboard.press('F11');
   // });
 });
+
+export async function createSomeStructure(page: Page) {
+  const a = 97;
+  const b = 79;
+  const c = 943;
+  const d = 114;
+  const e = 844;
+  const f = 579;
+  const g = 66;
+  const h = 611;
+  await page.mouse.move(a, b);
+  await page.mouse.down();
+  await page.mouse.move(c, d);
+  await page.mouse.move(e, f);
+  await page.mouse.move(g, h);
+  await page.mouse.up();
+}
+
+export async function createSomeMovement(page: Page) {
+  const i = 656;
+  const j = 359;
+  const k = 906;
+  const l = 245;
+  await page.mouse.move(i, j);
+  await page.mouse.down();
+  await dragMouseTo(k, l, page);
+  await page.mouse.up();
+}

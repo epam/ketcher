@@ -1,18 +1,23 @@
-/* eslint-disable no-magic-numbers */
 import { Page, test } from '@playwright/test';
-import { takeEditorScreenshot, selectTopPanelButton } from '@utils/canvas';
-import { pressButton, clickInTheMiddleOfTheScreen } from '@utils/clicks';
 import {
-  TopPanelButton,
-  waitForPageInit,
-  openFromFileViaClipboard,
-  readFileContents,
-  waitForLoad,
-} from '@utils';
-import {
+  takeEditorScreenshot,
+  selectTopPanelButton,
   selectNestedTool,
   SelectTool,
-} from '@utils/canvas/tools/selectNestedTool';
+  waitForPageInit,
+  pressButton,
+  TopPanelButton,
+  clickInTheMiddleOfTheScreen,
+  openFromFileViaClipboard,
+  waitForLoad,
+  readFileContents,
+  saveToFile,
+  openFileAndAddToCanvas,
+  DELAY_IN_SECONDS,
+  delay,
+  selectLeftPanelButton,
+  LeftPanelButton,
+} from '@utils';
 import { addTextBoxToCanvas } from '@utils/selectors/addTextBoxToCanvas';
 
 test.describe('Text tools test cases', () => {
@@ -135,12 +140,7 @@ test.describe('Text tools test cases', () => {
     await page.getByRole('button', { name: 'bold' }).click();
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await page.getByLabel('File name:').click();
-    await page.getByLabel('File name:').fill('ketfile01');
-    await page.getByRole('button', { name: 'MDL Molfile V2000' }).click();
-    await page.getByRole('option', { name: 'Ket Format' }).click();
-    await page.getByRole('button', { name: 'Save', exact: true }).click();
+    await saveToFile('ketfile01.ket', 'ketFile');
     await selectTopPanelButton(TopPanelButton.Clear, page);
     await selectTopPanelButton(TopPanelButton.Open, page);
     await openFromFileViaClipboard('tests/test-data/KET/ketfile01.ket', page);
@@ -150,12 +150,11 @@ test.describe('Text tools test cases', () => {
     await page.keyboard.press('Control+a');
     await page.getByRole('button', { name: 'italic' }).click();
     await pressButton(page, 'Apply');
-    await takeEditorScreenshot(page);
   });
 
   test('Text tool - Cut/Copy/Paste', async ({ page }) => {
     // Test case: EPMLSOPKET-2272
-    // Checking if user is able to copy/cut/paste the created text objects
+    // Checking if user is able to copy and paste the created text objects
     await addTextBoxToCanvas(page);
     await page.getByRole('dialog').getByRole('textbox').fill('TEXT001');
     await pressButton(page, 'Apply');
@@ -165,22 +164,22 @@ test.describe('Text tools test cases', () => {
     await page.keyboard.press('Control+v');
     await page.getByTestId('canvas').click({ position: { x: 250, y: 300 } });
     await takeEditorScreenshot(page);
+  });
+
+  test('Text tool - Checking if user is able to cut and paste the created text objects', async ({
+    page,
+  }) => {
+    await openFileAndAddToCanvas('KET/text-EPMLSOPKET-2272.ket', page);
     await selectTopPanelButton(TopPanelButton.Undo, page);
     await selectTopPanelButton(TopPanelButton.Redo, page);
     await selectNestedTool(page, SelectTool.LASSO_SELECTION);
-    await page.mouse.move(97, 79);
-    await page.mouse.down();
-    await page.mouse.move(943, 114);
-    await page.mouse.move(844, 579);
-    await page.mouse.move(66, 611);
-    await page.mouse.up();
+    await createSomeStructure(page);
     await selectTopPanelButton(TopPanelButton.Cut, page);
     await page.keyboard.press('Control+v');
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await selectTopPanelButton(TopPanelButton.Undo, page);
     await selectTopPanelButton(TopPanelButton.Redo, page);
-    await takeEditorScreenshot(page);
   });
 
   test('Text tool - Selection of different types of text objects', async ({
@@ -188,11 +187,7 @@ test.describe('Text tools test cases', () => {
   }) => {
     // Test case: EPMLSOPKET-2274
     // Checking if its possible to select a text objects of any size by clicking on green frame
-    await addTextBoxToCanvas(page);
-    await page.getByRole('dialog').getByRole('textbox').fill('TEXT');
-    await page.getByRole('dialog').getByRole('textbox').inputValue;
-    await pressButton(page, 'Apply');
-    await page.getByText('TEXT').hover();
+    await openFileAndAddToCanvas('KET/text-file-EPMLSOPKET-2274.ket', page);
     await page.getByText('TEXT').dblclick();
     await page.getByRole('dialog').getByRole('textbox').click();
     await page.keyboard.press('Control+a');
@@ -204,11 +199,7 @@ test.describe('Text tools test cases', () => {
       );
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
-    await page
-      .getByText(
-        'PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP',
-      )
-      .hover();
+    await page.keyboard.press('Control+a');
     await page
       .getByText(
         'PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP',
@@ -219,7 +210,6 @@ test.describe('Text tools test cases', () => {
     await pressButton(page, 'Apply');
     await openFromFileViaTextBox('tests/test-data/Txt/longtext_test.txt', page);
     await clickInTheMiddleOfTheScreen(page);
-    await takeEditorScreenshot(page);
   });
 
   test("Text tool - UTF-8 compatible ('Paste from Clipboard')", async ({
@@ -233,7 +223,6 @@ test.describe('Text tools test cases', () => {
       page,
     );
     await clickInTheMiddleOfTheScreen(page);
-    await takeEditorScreenshot(page);
   });
 });
 
@@ -245,4 +234,21 @@ export async function openFromFileViaTextBox(filename: string, page: Page) {
   await waitForLoad(page, () => {
     pressButton(page, 'Apply');
   });
+}
+
+export async function createSomeStructure(page: Page) {
+  const a = 97;
+  const b = 79;
+  const c = 943;
+  const d = 114;
+  const e = 844;
+  const f = 579;
+  const g = 66;
+  const h = 611;
+  await page.mouse.move(a, b);
+  await page.mouse.down();
+  await page.mouse.move(c, d);
+  await page.mouse.move(e, f);
+  await page.mouse.move(g, h);
+  await page.mouse.up();
 }

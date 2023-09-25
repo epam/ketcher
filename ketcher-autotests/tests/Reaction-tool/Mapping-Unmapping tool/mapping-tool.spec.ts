@@ -5,8 +5,6 @@ import {
   LeftPanelButton,
   clickInTheMiddleOfTheScreen,
   selectLeftPanelButton,
-  selectNestedTool,
-  ReactionMappingTool,
   openFileAndAddToCanvas,
   selectRingButton,
   RingButton,
@@ -19,6 +17,7 @@ import {
   clickOnAtom,
   receiveFileComparisonData,
   saveToFile,
+  selectDropdownTool,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getRxn } from '@utils/formats';
@@ -37,7 +36,7 @@ test.describe('Mapping Tools', () => {
     Description:  Click atoms to map atoms in a reaction
     */
     await openFileAndAddToCanvas('Rxn-V2000/reaction-3.rxn', page);
-    await selectNestedTool(page, ReactionMappingTool.MAP);
+    await selectDropdownTool(page, 'reaction-map', 'reaction-map');
     await mapTwoAtoms(
       page,
       { label: 'C', number: 0 },
@@ -53,12 +52,12 @@ test.describe('Mapping Tools', () => {
     test('Click the single mapped atom to delete mapping', async ({ page }) => {
       // EPMLSOPKET-1827
       const anyAtom = 0;
-      await selectNestedTool(page, ReactionMappingTool.UNMAP);
+      await selectDropdownTool(page, 'reaction-map', 'reaction-unmap');
       await clickOnAtom(page, 'Br', anyAtom);
     });
 
     test('Map ordering', async ({ page }) => {
-      await selectNestedTool(page, ReactionMappingTool.MAP);
+      await selectDropdownTool(page, 'reaction-map', 'reaction-map');
       await page.getByText('ALK').click();
       await page.getByText('ABH').click();
       await page.getByText('CHC').click();
@@ -77,7 +76,7 @@ test.describe('Mapping Tools', () => {
     page,
   }) => {
     await openFileAndAddToCanvas('Rxn-V2000/reaction-3.rxn', page);
-    await selectNestedTool(page, ReactionMappingTool.MAP);
+    await selectDropdownTool(page, 'reaction-map', 'reaction-map');
     const point = await getAtomByIndex(page, { label: 'C' }, 0);
     await page.mouse.click(point.x, point.y);
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
@@ -91,7 +90,7 @@ test.describe('Mapping Tools', () => {
     // Undo not working properly https://github.com/epam/ketcher/issues/2174
     await selectRingButton(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectNestedTool(page, ReactionMappingTool.MAP);
+    await selectDropdownTool(page, 'reaction-map', 'reaction-map');
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
     await page.mouse.click(x, y);
     await takeEditorScreenshot(page);
@@ -107,7 +106,7 @@ test.describe('Mapping Tools', () => {
 
     test('Remove the reaction components', async ({ page }) => {
       // EPMLSOPKET-1831
-      await selectNestedTool(page, ReactionMappingTool.MAP);
+      await selectDropdownTool(page, 'reaction-map', 'reaction-map');
       await page.getByText('CEL').click();
       await page.keyboard.press('Delete');
       await takeEditorScreenshot(page);
@@ -117,7 +116,7 @@ test.describe('Mapping Tools', () => {
 
     test('Unmap the mapped reaction', async ({ page }) => {
       // EPMLSOPKET-1830
-      await selectNestedTool(page, ReactionMappingTool.UNMAP);
+      await selectDropdownTool(page, 'reaction-map', 'reaction-unmap');
       await page.getByText('CEL').click();
     });
   });

@@ -30,16 +30,16 @@ import { MODES } from 'src/constants';
 import { getAngleFromEvent, getBondFlipSign } from './template';
 
 const PREVIEW_DELAY = 300;
-type CiType = { map: string; id: number; dist: number };
+type ClosestItemType = { map: string; id: number; dist: number };
 
-function getUniqueCiId(ci: CiType) {
+function getUniqueCiId(ci: ClosestItemType) {
   return `${ci.id}-${ci.map}`;
 }
 
 class TemplatePreview {
   private readonly editor: Editor;
   private readonly template;
-  private readonly mode;
+  private readonly mode: 'fg' | null;
   private floatingPreviewAction: Action | null;
   private connectedPreviewAction: Action | null;
   private connectedPreviewTimeout: ReturnType<typeof setTimeout> | null = null;
@@ -84,7 +84,10 @@ class TemplatePreview {
   }
 
   private getPreviewTarget() {
-    const ci: CiType | null = this.editor.findItem(event, ['atoms', 'bonds']);
+    const ci: ClosestItemType | null = this.editor.findItem(event, [
+      'atoms',
+      'bonds',
+    ]);
 
     if (ci && this.restruct.molecule[ci.map].get(ci.id)?.isPreview === false) {
       return ci;
@@ -93,7 +96,7 @@ class TemplatePreview {
     }
   }
 
-  movePreview(event: MouseEvent) {
+  movePreview(event: PointerEvent) {
     this.position = this.editor.render.page2obj(event);
 
     const ci = this.getPreviewTarget();
@@ -122,15 +125,23 @@ class TemplatePreview {
       if (!this.floatingPreview) {
         this.showFloatingPreview(this.position);
         this.previousPosition = this.position;
-        this.editor.render.update(true, null, { resizeCanvas: false });
+        this.editor.render.update(false, null, { resizeCanvas: false });
       } else {
         const dist = this.position.sub(this.previousPosition);
         this.previousPosition = this.position;
         fromMultipleMove(this.restruct, this.floatingPreview, dist);
-        this.editor.render.update(true, null, { resizeCanvas: false });
-        const mergeItems = getItemsToFuse(this.editor, this.floatingPreview);
-        this.editor.hover(getHoverToFuse(mergeItems));
+        this.editor.render.update(false, null, { resizeCanvas: false });
+        this.hoverFusedItems(ci, event);
       }
+    }
+  }
+
+  private hoverFusedItems(ci: ClosestItemType | null, event: PointerEvent) {
+    if (this.mode === 'fg') {
+      this.editor.hover(ci, null, event);
+    } else {
+      const mergeItems = getItemsToFuse(this.editor, this.floatingPreview);
+      this.editor.hover(getHoverToFuse(mergeItems));
     }
   }
 
@@ -165,7 +176,7 @@ class TemplatePreview {
     }
   }
 
-  private showConnectedPreview(event: MouseEvent, ci: CiType) {
+  private showConnectedPreview(event: MouseEvent, ci: ClosestItemType) {
     if (ci.map === 'bonds' && !this.isModeFunctionalGroup) {
       const bond = this.struct.bonds.get(ci.id);
 

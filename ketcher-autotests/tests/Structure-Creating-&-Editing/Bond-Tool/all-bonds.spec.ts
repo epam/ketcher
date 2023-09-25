@@ -259,7 +259,7 @@ for (const bondToolKey of Object.keys(BondTool)) {
     });
 
     // TODO:
-    test.skip(`Manipulations with ${bondToolKey}`, async () => {
+    test.fixme(`Manipulations with ${bondToolKey}`, async () => {
       /**
        * Test case: EPMLSOPKET-1377, 1385, 1394, 1400, 1408, 1414, 1420 1426, 1432, 1441, 1448, 1455, 2242, 2248
        */

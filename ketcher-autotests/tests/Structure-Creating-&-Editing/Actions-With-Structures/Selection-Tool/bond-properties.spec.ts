@@ -351,10 +351,10 @@ test.describe('Bond Properties', () => {
     'Unmarked',
   ];
 
-  test.fixme(
-    `Change 'Reacting Center' field value - 1/2 edit and save`,
-    async ({ page }) => {
-      /*
+  test(`Change 'Reacting Center' field value - 1/2 edit and save`, async ({
+    page,
+  }) => {
+    /*
           Test case: EPMLSOPKET-1463(1)
           Description: * Any bond can be marked with any Reacting Center mark selected in the 'Reacting Center' list.
           The next mark should appear on the selected bond:
@@ -374,39 +374,38 @@ test.describe('Bond Properties', () => {
           we can`t  open the file
         */
 
-      await openFileAndAddToCanvas('Rxn-V2000/reaction-3.rxn', page);
+    await openFileAndAddToCanvas('Rxn-V2000/reaction-3.rxn', page);
 
-      for (let i = 0; i < rCOptions.length - 1; i++) {
-        await doubleClickOnBond(page, BondType.SINGLE, i);
-        await selectOption(page, 'Unmarked', rCOptions[i]);
-        await pressButton(page, 'Apply');
-      }
-
-      await doubleClickOnBond(page, BondType.SINGLE, 8);
-      await selectOption(page, 'Unmarked', 'Center');
+    for (let i = 0; i < rCOptions.length - 1; i++) {
+      await doubleClickOnBond(page, BondType.SINGLE, i);
+      await selectOption(page, 'Unmarked', rCOptions[i]);
       await pressButton(page, 'Apply');
+    }
 
-      await doubleClickOnBond(page, BondType.SINGLE, 8);
-      await selectOption(page, 'Center', 'Unmarked');
-      await pressButton(page, 'Apply');
+    await doubleClickOnBond(page, BondType.SINGLE, 8);
+    await selectOption(page, 'Unmarked', 'Center');
+    await pressButton(page, 'Apply');
 
-      const expectedFile = await getRxn(page, 'v2000');
-      await saveToFile('Rxn-V2000/rxn-1463-to-open-expected.rxn', expectedFile);
+    await doubleClickOnBond(page, BondType.SINGLE, 8);
+    await selectOption(page, 'Center', 'Unmarked');
+    await pressButton(page, 'Apply');
 
-      const METADATA_STRING_INDEX = [2, 7, 25, 40, 66];
+    const expectedFile = await getRxn(page, 'v2000');
+    await saveToFile('Rxn-V2000/rxn-1463-to-open-expected.rxn', expectedFile);
 
-      const { fileExpected: rxnFileExpected, file: rxnFile } =
-        await receiveFileComparisonData({
-          page,
-          expectedFileName:
-            'tests/test-data/Rxn-V2000/rxn-1463-to-open-expected.rxn',
-          metaDataIndexes: METADATA_STRING_INDEX,
-          fileFormat: 'v2000',
-        });
+    const METADATA_STRING_INDEX = [2, 7, 25, 38];
 
-      expect(rxnFile).toEqual(rxnFileExpected);
-    },
-  );
+    const { fileExpected: rxnFileExpected, file: rxnFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/Rxn-V2000/rxn-1463-to-open-expected.rxn',
+        metaDataIndexes: METADATA_STRING_INDEX,
+        fileFormat: 'v2000',
+      });
+
+    expect(rxnFile).toEqual(rxnFileExpected);
+  });
 
   test.fixme(
     `Change 'Reacting Center' field value - 2/2 open and edit`,
@@ -417,6 +416,7 @@ test.describe('Bond Properties', () => {
 
         Now it doesn`t work because if we try to save bond with 'Not center' option, 
         we can`t  open the file
+        https://github.com/epam/ketcher/issues/2378
     */
 
       await openFileAndAddToCanvas(

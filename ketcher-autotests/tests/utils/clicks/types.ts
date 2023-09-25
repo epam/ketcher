@@ -6,6 +6,7 @@ export type AtomLabelType =
   | 'L#'
   | 'Cl'
   | 'S'
+  | 'Br'
   | 'F'
   | 'I'
   | 'Br';

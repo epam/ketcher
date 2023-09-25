@@ -275,27 +275,28 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await selectTopPanelButton(TopPanelButton.ThreeD, page);
   });
 
-  test.fixme(
-    '(Erase bond with stereo labels and Undo) Manipulations with structure with stereo labels',
-    async ({ page }) => {
-      /*
+  test('(Erase bond with stereo labels and Undo) Manipulations with structure with stereo labels', async ({
+    page,
+  }) => {
+    /*
     Test case: EPMLSOPKET-1925
     Description: Stereo labels appear near stereobonds after 'Calculate CIP' action.
     Bond with stereo label is deleted after removing by the 'Erase' tool.
     'Undo' action leads to the previous structure with stereo labels.
     */
-      await openFileAndAddToCanvas('structure-with-stereo-bonds.mol', page);
-      await waitForRender(page, async () => {
-        await selectTopPanelButton(TopPanelButton.Calculate, page);
-      });
-      await selectLeftPanelButton(LeftPanelButton.Erase, page);
+    await openFileAndAddToCanvas('structure-with-stereo-bonds.mol', page);
+    await waitForRender(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Calculate, page);
+    });
+    await waitForRender(page, async () => {
       await clickOnBond(page, BondType.SINGLE, 3);
+    });
+    await page.keyboard.press('Delete');
 
-      await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page);
 
-      await selectTopPanelButton(TopPanelButton.Undo, page);
-    },
-  );
+    await selectTopPanelButton(TopPanelButton.Undo, page);
+  });
 
   test('(Erase atom with stereo labels and Undo) Manipulations with structure with stereo labels', async ({
     page,

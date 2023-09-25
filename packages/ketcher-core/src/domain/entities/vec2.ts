@@ -287,4 +287,22 @@ export class Vec2 {
   static oxAngleForVector(v1: Vec2, v2: Vec2): number {
     return Math.atan2(v2.y - v1.y, v2.x - v1.x);
   }
+
+  static findSecondPoint(
+    startPoint: { x: number; y: number },
+    lineLength: number,
+    lineAngleRadians: number,
+  ) {
+    const cos = Math.cos(lineAngleRadians);
+    const sin = Math.sin(lineAngleRadians);
+
+    const deltaX = lineLength * cos;
+    const deltaY = lineLength * sin;
+
+    const endPoint = {
+      x: startPoint.x + deltaX,
+      y: startPoint.y + deltaY,
+    };
+    return endPoint;
+  }
 }

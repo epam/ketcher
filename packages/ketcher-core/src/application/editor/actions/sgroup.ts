@@ -273,7 +273,7 @@ export function fromSgroupAction(
   }
 
   if (SGroup.isQuerySGroup(newSg)) {
-    return fromQueryGroupAction(
+    return fromQuerySGroupAction(
       restruct,
       newSg,
       newSourceAtoms,
@@ -309,7 +309,7 @@ function fromAtomAction(restruct, newSg, sourceAtoms) {
   );
 }
 
-function fromQueryGroupAction(restruct, newSg, sourceAtoms, targetAtoms) {
+function fromQuerySGroupAction(restruct, newSg, sourceAtoms, targetAtoms) {
   const selection: {
     atoms: number[];
     bonds: number[];

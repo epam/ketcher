@@ -531,7 +531,7 @@ class SGroupTool implements Tool {
             return;
           }
           const result = isQuerySGroup
-            ? createQueryComponent(id, editor, newSg, selection, sg)
+            ? createQuerySGroup(id, editor, newSg, selection, sg)
             : fromContextType(id, editor, newSg, selection);
 
           result && editor.update(result.action);
@@ -544,7 +544,7 @@ class SGroupTool implements Tool {
   }
 }
 
-function createQueryComponent(
+function createQuerySGroup(
   id: number | null,
   editor: Editor,
   newSg,

@@ -137,8 +137,15 @@ function Field(props) {
   const desc = rest.schema || schema.properties[name];
   const { dataError, ...fieldOpts } = stateStore.field(name, onChange);
   const Component = component;
+  console.log(Component, rest);
   const formField = component ? (
-    <Component name={name} schema={desc} {...fieldOpts} {...rest} />
+    <Component
+      name={name}
+      schema={desc}
+      className={className}
+      {...fieldOpts}
+      {...rest}
+    />
   ) : (
     <Input
       name={name}

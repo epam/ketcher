@@ -79,12 +79,15 @@ export async function getCoordinatesTopAtomOfBenzeneRing(page: Page) {
 
 export async function takeEditorScreenshot(
   page: Page,
-  options?: { masks?: Locator[] },
+  options?: { masks?: Locator[]; maxDiffPixelRatio?: number },
 ) {
   const maxTimeout = 3000;
   const editor = page.getByTestId('ketcher-canvas').first();
   await waitForRender(page, emptyFunction, maxTimeout);
-  await expect(editor).toHaveScreenshot({ mask: options?.masks });
+  await expect(editor).toHaveScreenshot({
+    mask: options?.masks,
+    maxDiffPixelRatio: options?.maxDiffPixelRatio,
+  });
 }
 
 export async function takeLeftToolbarScreenshot(page: Page) {

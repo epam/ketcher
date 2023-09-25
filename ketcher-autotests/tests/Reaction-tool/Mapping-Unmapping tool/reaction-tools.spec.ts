@@ -1,11 +1,11 @@
 import { test } from '@playwright/test';
 import {
-  takeLeftToolbarScreenshot,
   LeftPanelButton,
   selectLeftPanelButton,
   waitForPageInit,
   openDropdown,
-  takeEditorScreenshot,
+  takeMultitoolDropdownScreenshot,
+  takeLeftToolbarScreenshot,
 } from '@utils';
 
 test.describe('Reaction Tools', () => {
@@ -28,7 +28,7 @@ test.describe('Reaction Tools', () => {
   });
 
   test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
+    await takeMultitoolDropdownScreenshot(page);
   });
 
   test('Icons for Reaction Mapping tools', async ({ page }) => {

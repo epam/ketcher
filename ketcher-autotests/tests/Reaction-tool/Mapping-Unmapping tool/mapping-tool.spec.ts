@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { test, expect } from '@playwright/test';
 import {
   takeEditorScreenshot,
@@ -136,6 +135,7 @@ test.describe('Mapping reactions', () => {
     const expectedFile = await getRxn(page);
     await saveToFile('Rxn-V2000/mapped-reaction-expected.rxn', expectedFile);
 
+    // eslint-disable-next-line no-magic-numbers
     const METADATA_STRING_INDEX = [2, 7, 25, 40, 66];
     const { fileExpected: rxnFileExpected, file: rxnFile } =
       await receiveFileComparisonData({

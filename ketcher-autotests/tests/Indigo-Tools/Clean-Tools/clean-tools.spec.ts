@@ -459,11 +459,12 @@ test.describe('Indigo Tools - Clean Tools', () => {
     Description: Clean action is correct for the selected R-Group label.
     Non-selected part is invariable.
     */
+    const rGroupLabel = 'R18';
     await openFileAndAddToCanvas(
       'Molfiles-V2000/distorted-r-group-structure.mol',
       page,
     );
-    await page.getByText('R18').click();
+    await page.getByText(rGroupLabel).click();
     await waitForSpinnerFinishedWork(
       page,
       async () => await selectTopPanelButton(TopPanelButton.Clean, page),

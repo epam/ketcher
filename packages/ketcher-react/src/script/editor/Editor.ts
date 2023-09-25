@@ -362,7 +362,7 @@ class Editor implements KetcherEditor {
   zoomAccordingContent(struct: Struct) {
     const MIN_ZOOM_VALUE = 0.1;
     const MAX_ZOOM_VALUE = 1;
-    const MARGIN_IN_PIXELS = 40;
+    const MARGIN_IN_PIXELS = 60;
     const parsedStructCoordBoundingBox = struct.getCoordBoundingBox();
     const parsedStructSize = new Vec2(
       parsedStructCoordBoundingBox.max.x - parsedStructCoordBoundingBox.min.x,

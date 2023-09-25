@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { test } from '@playwright/test';
 import {
   selectFunctionalGroups,
@@ -456,7 +455,7 @@ test.describe('Templates - Functional Group Tools2', () => {
 
     await delay(DELAY_IN_SECONDS.THREE);
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
-    await page.getByRole('button', { name: 'Lasso Selection (Esc)' }).click();
+    await page.getByTestId('select-lasso').click();
     await clickInTheMiddleOfTheScreen(page);
   });
 
@@ -573,6 +572,8 @@ test.describe('Templates - Functional Group Tools3', () => {
     Test case: EPMLSOPKET-3933
     Description:  Functional Group-Expand/Remove abbreviation context menu is shown
    */
+    const timeout = 120_000;
+    test.setTimeout(timeout);
     await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
     await page.getByRole('tab', { name: 'Functional Groups' }).click();
     await selectFunctionalGroups(FunctionalGroups.CO2Et, page);

@@ -35,6 +35,7 @@ const regularTests = [
   'Indigo-Tools/**',
   'R-group-tool/**',
   'Reactions/**',
+  'Reaction-tool/**',
   'Reagents/**',
   'Settings/**',
   'Structure-Creating-&-Editing/**',

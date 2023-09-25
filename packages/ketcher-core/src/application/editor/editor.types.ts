@@ -32,7 +32,7 @@ export type FloatingToolsParams = {
 export interface Editor {
   isDitrty: () => boolean;
   setOrigin: () => void;
-  struct: (struct?: Struct) => Struct;
+  struct: (struct?: Struct, recoordinate?: boolean) => Struct;
   structToAddFragment: (struct: Struct) => Struct;
   subscribe: (eventName: string, handler: (data?: any) => any) => any;
   unsubscribe: (eventName: string, subscriber: any) => void;

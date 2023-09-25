@@ -150,6 +150,7 @@ export function serverTransform(method, data, struct) {
           load(loadedStruct, {
             rescale: method === 'layout',
             reactionRelayout: method === 'clean',
+            center: !['aromatize', 'dearomatize'].includes(method),
           }),
         );
       })

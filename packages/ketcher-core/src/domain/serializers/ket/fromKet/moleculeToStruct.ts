@@ -22,6 +22,7 @@ import {
   SGroupAttachmentPoint,
   RGroupAttachmentPoint,
   AttachmentPoints,
+  AtomQueryProperties,
 } from 'domain/entities';
 
 import { Elements } from 'domain/constants';
@@ -83,6 +84,17 @@ export function moleculeToStruct(ketItem: any): Struct {
 export function atomToStruct(source) {
   const params: any = {};
 
+  const queryAttribute: Array<keyof AtomQueryProperties> = [
+    'aromaticity',
+    'degree',
+    'ringMembership',
+    'connectivity',
+    'ringSize',
+    'ringConnectivity',
+    'chirality',
+    'atomicMass',
+    'customQuery',
+  ];
   ifDef(params, 'label', source.label);
   ifDef(params, 'alias', source.alias);
   ifDef(params, 'pp', {
@@ -105,6 +117,20 @@ export function atomToStruct(source) {
   ifDef(params, 'substitutionCount', source.substitutionCount);
   ifDef(params, 'unsaturatedAtom', Number(Boolean(source.unsaturatedAtom)));
   ifDef(params, 'hCount', source.hCount);
+  if (
+    source.queryProperties &&
+    Object.values(source.queryProperties).some((property) => property !== null)
+  ) {
+    params.queryProperties = {};
+    queryAttribute.forEach((attributeName) => {
+      ifDef(
+        params.queryProperties,
+        attributeName,
+        source.queryProperties[attributeName],
+      );
+    });
+  }
+
   // reaction
   ifDef(params, 'aam', source.mapping);
   ifDef(params, 'invRet', source.invRet);
@@ -197,6 +223,7 @@ export function bondToStruct(source, atomOffset = 0) {
   ifDef(params, 'reactingCenterStatus', source.center);
   ifDef(params, 'stereo', source.stereo);
   ifDef(params, 'cip', source.cip);
+  ifDef(params, 'customQuery', source.customQuery);
   // if (params.stereo)
   // 	params.stereo = params.stereo > 1 ? params.stereo * 2 : params.stereo;
   // params.xxx = 0;

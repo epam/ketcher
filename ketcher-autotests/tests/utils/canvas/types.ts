@@ -4,6 +4,20 @@ export enum SORT_TYPE {
   ASC_X = 'ASC_X',
   ASC_Y = 'ASC_Y',
 }
+export type Aromaticity = 'aromatic' | 'aliphatic';
+export type Chirality = 'clockwise' | 'anticlockwise';
+
+export interface AtomQueryProperties {
+  aromaticity?: Aromaticity | null;
+  degree?: number | null;
+  ringMembership?: number | null;
+  ringSize?: number | null;
+  connectivity?: number | null;
+  ringConnectivity?: number | null;
+  chirality?: Chirality | null;
+  atomicMass?: number | null;
+  customQuery?: string | null;
+}
 
 export type AtomAttributes = {
   label?: string;
@@ -15,6 +29,7 @@ export type AtomAttributes = {
   explicitValence?: number;
   implicitH?: number;
   ringBondCount?: number;
+  implicitHCount?: number | null;
   substitutionCount?: number;
   unsaturatedAtom?: number;
   hCount?: number;
@@ -25,6 +40,7 @@ export type AtomAttributes = {
   stereoParity?: number;
   badConn?: boolean;
   pseudo?: string;
+  queryProperties?: AtomQueryProperties;
 };
 
 // need to get this type from Bond class in ketcher-core package
@@ -55,6 +71,7 @@ export type BondAttributes = {
   topology?: number;
   type?: BondType;
   xxx?: string;
+  customQuery?: string | null;
 };
 
 export type AtomXy = AtomAttributes & { x: number; y: number };

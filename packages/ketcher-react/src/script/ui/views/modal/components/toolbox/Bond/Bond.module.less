@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
- @import '../../../../../../../style/variables.less';
+@import '../../../../../../../style/variables.less';
 
 .bond {
   width: @width-small;
@@ -32,7 +32,42 @@
     color: @color-text-secondary;
 
     & > span {
-      margin-bottom: 4px
+      margin-bottom: 4px;
+    }
+  }
+
+  [aria-haspopup='listbox'][aria-disabled='true'] {
+    cursor: not-allowed !important;
+    border: 1px solid @color-border-input!important;
+    background-color: @color-grey-3!important;
+  }
+}
+
+.customQueryWrapper {
+  label {
+    align-items: center;
+    flex-direction: row;
+
+    & > span {
+      margin-bottom: 0;
+    }
+  }
+
+  textarea[name='customQuery'] {
+    width: 100%;
+    height: 55px;
+    resize: none;
+  }
+}
+
+/* stylelint-disable selector-pseudo-class-no-unknown, no-descending-specificity */
+:global(.dropdown-bond-properties) {
+  &_center,
+  &_topology,
+  &_type {
+    &:not([data-value]),
+    &[data-value=''] {
+      display: none !important;
     }
   }
 }

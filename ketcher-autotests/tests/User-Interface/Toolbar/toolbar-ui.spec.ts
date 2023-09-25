@@ -55,7 +55,7 @@ test.describe('Open Ketcher', () => {
     await resetCurrentTool(page);
 
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
-    await page.getByRole('button', { name: 'Lasso Selection (Esc)' }).click();
+    await page.getByTestId('select-lasso').click();
     await clickInTheMiddleOfTheScreen(page);
     await takeTopToolbarScreenshot(page);
   });

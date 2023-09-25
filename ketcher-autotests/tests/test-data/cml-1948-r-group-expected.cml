@@ -2,75 +2,75 @@
 <cml>
     <molecule>
         <atomArray>
-            <atom id="a0" elementType="S" x2="0.0520929" y2="-10.3222"/>
-            <atom id="a1" elementType="C" x2="0.918196" y2="-10.8221"/>
-            <atom id="a2" elementType="C" x2="1.7842" y2="-10.3222"/>
-            <atom id="a3" elementType="C" mrvQueryProps="u1;" x2="2.6502" y2="-10.8221"/>
-            <atom id="a4" elementType="C" x2="3.51631" y2="-10.3222" exactChange="1"/>
-            <atom id="a5" elementType="C" x2="4.38231" y2="-10.8221"/>
-            <atom id="a6" elementType="C" x2="5.24831" y2="-10.3222"/>
-            <atom id="a7" elementType="C" x2="6.11441" y2="-10.8221"/>
-            <atom id="a8" elementType="C" x2="6.98042" y2="-10.3222">
+            <atom id="a0" elementType="S" x2="1.8684" y2="-10.3002"/>
+            <atom id="a1" elementType="C" x2="2.7345" y2="-10.8001"/>
+            <atom id="a2" elementType="C" x2="3.60051" y2="-10.3002"/>
+            <atom id="a3" elementType="C" mrvQueryProps="u1;" x2="4.46651" y2="-10.8001"/>
+            <atom id="a4" elementType="C" x2="5.33261" y2="-10.3002" exactChange="1"/>
+            <atom id="a5" elementType="C" x2="6.19862" y2="-10.8001"/>
+            <atom id="a6" elementType="C" x2="7.06462" y2="-10.3002"/>
+            <atom id="a7" elementType="C" x2="7.93072" y2="-10.8001"/>
+            <atom id="a8" elementType="C" x2="8.79673" y2="-10.3002">
                 <atomParity atomRefs4="a7 a38 a9 a8">1</atomParity>
             </atom>
-            <atom id="a9" elementType="C" x2="7.84652" y2="-10.8221"/>
-            <atom id="a10" elementType="C" x2="8.71262" y2="-10.3222"/>
-            <atom id="a11" elementType="C" x2="9.57863" y2="-10.8221">
+            <atom id="a9" elementType="C" x2="9.66283" y2="-10.8001"/>
+            <atom id="a10" elementType="C" x2="10.5289" y2="-10.3002"/>
+            <atom id="a11" elementType="C" x2="11.3949" y2="-10.8001">
                 <atomParity atomRefs4="a10 a41 a12 a11">1</atomParity>
             </atom>
-            <atom id="a12" elementType="C" x2="10.4447" y2="-10.3222"/>
-            <atom id="a13" elementType="C" x2="11.3107" y2="-10.8221"/>
-            <atom id="a14" elementType="C" x2="12.1768" y2="-10.3222"/>
-            <atom id="a15" elementType="C" mrvQueryProps="H0" x2="13.0428" y2="-10.8221"/>
-            <atom id="a16" elementType="C" x2="13.9088" y2="-10.3222"/>
-            <atom id="a17" elementType="C" mrvQueryProps="s*;" x2="14.7749" y2="-10.8221"/>
-            <atom id="a18" elementType="C" x2="15.6409" y2="-10.3222"/>
-            <atom id="a19" elementType="R" rgroupRef="2" x2="16.507" y2="-10.8221"/>
-            <atom id="a20" elementType="C" isotope="13" isotopeNumber="13" x2="13.9088" y2="-9.32209"/>
-            <atom id="a21" elementType="C" x2="14.7749" y2="-8.82208"/>
-            <atom id="a22" elementType="C" x2="14.7749" y2="-7.82198"/>
-            <atom id="a23" elementType="C" spinMultiplicity="1" radical="divalent1" x2="15.6409" y2="-7.32198"/>
-            <atom id="a24" elementType="C" x2="15.6409" y2="-6.32207"/>
-            <atom id="a25" elementType="C" x2="16.507" y2="-5.82207"/>
-            <atom id="a26" elementType="C" formalCharge="2" x2="13.9088" y2="-7.32198"/>
-            <atom id="a27" elementType="C" x2="13.0428" y2="-7.82198"/>
-            <atom id="a28" elementType="C" x2="12.1768" y2="-7.32198" reactionStereo="Inv">
+            <atom id="a12" elementType="C" x2="12.261" y2="-10.3002"/>
+            <atom id="a13" elementType="C" x2="13.127" y2="-10.8001"/>
+            <atom id="a14" elementType="C" x2="13.9931" y2="-10.3002"/>
+            <atom id="a15" elementType="C" mrvQueryProps="H0" x2="14.8591" y2="-10.8001"/>
+            <atom id="a16" elementType="C" x2="15.7252" y2="-10.3002"/>
+            <atom id="a17" elementType="C" mrvQueryProps="s*;" x2="16.5913" y2="-10.8001"/>
+            <atom id="a18" elementType="C" x2="17.4573" y2="-10.3002"/>
+            <atom id="a19" elementType="R" rgroupRef="2" x2="18.3233" y2="-10.8001"/>
+            <atom id="a20" elementType="C" isotope="13" isotopeNumber="13" x2="15.7252" y2="-9.30005"/>
+            <atom id="a21" elementType="C" x2="16.5913" y2="-8.80005"/>
+            <atom id="a22" elementType="C" x2="16.5913" y2="-7.79995"/>
+            <atom id="a23" elementType="C" spinMultiplicity="1" radical="divalent1" x2="17.4573" y2="-7.29995"/>
+            <atom id="a24" elementType="C" x2="17.4573" y2="-6.30004"/>
+            <atom id="a25" elementType="C" x2="18.3233" y2="-5.80004"/>
+            <atom id="a26" elementType="C" formalCharge="2" x2="15.7252" y2="-7.29995"/>
+            <atom id="a27" elementType="C" x2="14.8591" y2="-7.79995"/>
+            <atom id="a28" elementType="C" x2="13.9931" y2="-7.29995" reactionStereo="Inv">
                 <atomParity atomRefs4="a27 a34 a29 a28">1</atomParity>
             </atom>
-            <atom id="a29" elementType="C" x2="11.3107" y2="-7.82198"/>
-            <atom id="a30" elementType="C" x2="10.4447" y2="-7.32198"/>
-            <atom id="a31" elementType="C" x2="9.57863" y2="-7.82198"/>
-            <atom id="a32" elementType="C" mrvQueryProps="rb*;" x2="8.71262" y2="-7.32198"/>
-            <atom id="a33" elementType="C" x2="7.84652" y2="-7.82198"/>
-            <atom id="a34" elementType="C" x2="12.1768" y2="-6.32207"/>
-            <atom id="a35" elementType="C" x2="11.3107" y2="-5.82207"/>
-            <atom id="a36" elementType="R" rgroupRef="1" x2="11.3107" y2="-4.82197"/>
-            <atom id="a37" elementType="C" x2="10.4447" y2="-6.32207"/>
-            <atom id="a38" elementType="C" x2="6.98042" y2="-9.32209"/>
-            <atom id="a39" elementType="C" x2="6.11441" y2="-8.82208"/>
-            <atom id="a40" elementType="O" x2="6.11441" y2="-7.82198"/>
-            <atom id="a41" elementType="N" x2="9.57863" y2="-11.8221"/>
-            <atom id="a42" elementType="F" x2="1.7842" y2="-9.32209"/>
-            <atom id="a43" elementType="C" x2="15.6409" y2="-9.32209">
+            <atom id="a29" elementType="C" x2="13.127" y2="-7.79995"/>
+            <atom id="a30" elementType="C" x2="12.261" y2="-7.29995"/>
+            <atom id="a31" elementType="C" x2="11.3949" y2="-7.79995"/>
+            <atom id="a32" elementType="C" mrvQueryProps="rb*;" x2="10.5289" y2="-7.29995"/>
+            <atom id="a33" elementType="C" x2="9.66283" y2="-7.79995"/>
+            <atom id="a34" elementType="C" x2="13.9931" y2="-6.30004"/>
+            <atom id="a35" elementType="C" x2="13.127" y2="-5.80004"/>
+            <atom id="a36" elementType="R" rgroupRef="1" x2="13.127" y2="-4.79994"/>
+            <atom id="a37" elementType="C" x2="12.261" y2="-6.30004"/>
+            <atom id="a38" elementType="C" x2="8.79673" y2="-9.30005"/>
+            <atom id="a39" elementType="C" x2="7.93072" y2="-8.80005"/>
+            <atom id="a40" elementType="O" x2="7.93072" y2="-7.79995"/>
+            <atom id="a41" elementType="N" x2="11.3949" y2="-11.8001"/>
+            <atom id="a42" elementType="F" x2="3.60051" y2="-9.30005"/>
+            <atom id="a43" elementType="C" x2="17.4573" y2="-9.30005">
                 <atomParity atomRefs4="a-1 a21 a44 a43">1</atomParity>
             </atom>
-            <atom id="a44" elementType="C" x2="16.507" y2="-8.82208"/>
-            <atom id="a45" elementType="C" x2="17.373" y2="-9.32209"/>
-            <atom id="a46" elementType="C" x2="18.2391" y2="-8.82208"/>
-            <atom id="a47" elementType="C" x2="19.1051" y2="-9.32209"/>
-            <atom id="a48" elementType="C" x2="19.9711" y2="-8.82208"/>
-            <atom id="a49" elementType="C" x2="20.8371" y2="-9.32209"/>
-            <atom id="a50" elementType="C" x2="21.7032" y2="-8.82208"/>
-            <atom id="a51" elementType="C" x2="22.5692" y2="-9.32209"/>
-            <atom id="a52" elementType="C" x2="23.4352" y2="-8.82208"/>
-            <atom id="a53" elementType="C" x2="24.3012" y2="-9.32209"/>
-            <atom id="a54" elementType="C" x2="25.1673" y2="-8.82208"/>
-            <atom id="a55" elementType="C" x2="26.0333" y2="-9.32209"/>
-            <atom id="a56" elementType="C" x2="26.8993" y2="-8.82208"/>
-            <atom id="a57" elementType="C" mrvQueryProps="L!C!Si!Ge!As: " x2="27.7653" y2="-9.32209"/>
-            <atom id="a58" elementType="C" mrvAlias="CYC" x2="19.9711" y2="-7.82208"/>
-            <atom id="a59" elementType="C" mrvPseudo="X" x2="23.4352" y2="-7.82208"/>
-            <atom id="a60" elementType="B" mrvQueryProps="L,B,C,N,P: " x2="25.1673" y2="-7.82208"/>
+            <atom id="a44" elementType="C" x2="18.3233" y2="-8.80005"/>
+            <atom id="a45" elementType="C" x2="19.1893" y2="-9.30005"/>
+            <atom id="a46" elementType="C" x2="20.0554" y2="-8.80005"/>
+            <atom id="a47" elementType="C" x2="20.9214" y2="-9.30005"/>
+            <atom id="a48" elementType="C" x2="21.7874" y2="-8.80005"/>
+            <atom id="a49" elementType="C" x2="22.6534" y2="-9.30005"/>
+            <atom id="a50" elementType="C" x2="23.5195" y2="-8.80005"/>
+            <atom id="a51" elementType="C" x2="24.3855" y2="-9.30005"/>
+            <atom id="a52" elementType="C" x2="25.2515" y2="-8.80005"/>
+            <atom id="a53" elementType="C" x2="26.1175" y2="-9.30005"/>
+            <atom id="a54" elementType="C" x2="26.9836" y2="-8.80005"/>
+            <atom id="a55" elementType="C" x2="27.8496" y2="-9.30005"/>
+            <atom id="a56" elementType="C" x2="28.7156" y2="-8.80005"/>
+            <atom id="a57" elementType="C" mrvQueryProps="L!C!Si!Ge!As: " x2="29.5816" y2="-9.30005"/>
+            <atom id="a58" elementType="C" mrvAlias="CYC" x2="21.7874" y2="-7.80005"/>
+            <atom id="a59" elementType="C" mrvPseudo="X" x2="25.2515" y2="-7.80005"/>
+            <atom id="a60" elementType="B" mrvQueryProps="L,B,C,N,P: " x2="26.9836" y2="-7.80005"/>
         </atomArray>
         <bondArray>
             <bond atomRefs2="a0 a1" order="2"/>

@@ -36,6 +36,10 @@ import {
   selectOption,
   waitForKetcherInit,
   waitForIndigoToLoad,
+  selectDropdownTool,
+  waitForPageInit,
+  openDropdown,
+  waitForRender,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import {
@@ -45,6 +49,7 @@ import {
 } from '@utils/canvas/bonds';
 import { BondType } from '@utils/canvas/types';
 import { SelectionType, selectSelection } from '@utils/canvas/selectSelection';
+import { DropdownToolIds } from '@utils/clicks/types';
 const buttonIdToTitle: {
   [key: string]: string;
 } = {
@@ -254,7 +259,7 @@ for (const bondToolKey of Object.keys(BondTool)) {
     });
 
     // TODO:
-    test.skip(`Manipulations with ${bondToolKey}`, async () => {
+    test.fixme(`Manipulations with ${bondToolKey}`, async () => {
       /**
        * Test case: EPMLSOPKET-1377, 1385, 1394, 1400, 1408, 1414, 1420 1426, 1432, 1441, 1448, 1455, 2242, 2248
        */
@@ -327,7 +332,7 @@ for (const bondToolKey of Object.keys(BondTool)) {
        */
       const fileName = `saving-and-rendering-${bondToolKey}-bond.mol`;
       test(`Save to file`, async () => {
-        await selectNestedTool(page, BondTool[bondToolKey]);
+        await selectDropdownTool(page, 'bonds', BondTool[bondToolKey][1]);
         await clickOnTheCanvas(page, -200, 0);
         await clickInTheMiddleOfTheScreen(page);
         await selectTopPanelButton(TopPanelButton.Save, page);
@@ -353,9 +358,13 @@ for (const bondToolKey of Object.keys(BondTool)) {
 }
 
 test.describe('Bond Tool', () => {
-  const toolsForTest = [BondTool.SINGLE, BondTool.DOUBLE, BondTool.TRIPPLE];
+  const toolsForTest: DropdownToolIds[] = [
+    'bond-single',
+    'bond-double',
+    'bond-triple',
+  ];
   test.beforeEach(async ({ page }) => {
-    await page.goto('', { waitUntil: 'domcontentloaded' });
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {
@@ -372,7 +381,7 @@ test.describe('Bond Tool', () => {
       await page.getByRole('tab', { name: 'Functional Groups' }).click();
       await selectFunctionalGroups(FunctionalGroups.Boc, page);
       await clickInTheMiddleOfTheScreen(page);
-      await selectNestedTool(page, tool);
+      await selectDropdownTool(page, 'bonds', tool);
       await clickInTheMiddleOfTheScreen(page);
     });
 
@@ -381,7 +390,7 @@ test.describe('Bond Tool', () => {
        * Test cases: EPMLSOPKET - 2920/2921
        */
       await clickInTheMiddleOfTheScreen(page);
-      await selectNestedTool(page, tool);
+      await selectDropdownTool(page, 'bonds', tool);
       await clickInTheMiddleOfTheScreen(page);
       await clickInTheMiddleOfTheScreen(page);
     });
@@ -392,8 +401,7 @@ test.describe('Bond Tool', () => {
      *Test case: EPMLSOPKET-1366
      *Description: Drop down list: verification
      */
-    await selectLeftPanelButton(LeftPanelButton.SingleBond, page);
-    await selectLeftPanelButton(LeftPanelButton.SingleBond, page);
+    await openDropdown(page, 'bonds');
     const bodyHeight = await page.evaluate(() => document.body.clientHeight);
     const bondDropdownWidth = 700;
     const screenshot = await page.screenshot({
@@ -444,18 +452,22 @@ test.describe('Bond Tool', () => {
 
     await selectAtomInToolbar(AtomButton.Oxygen, page);
     await clickOnTheCanvas(page, point.x, point.y);
-    await selectNestedTool(page, BondTool.SINGLE);
+    await selectDropdownTool(page, 'bonds', 'bond-single');
     await moveOnAtom(page, 'N', 0);
     await page.mouse.down();
     await moveOnAtom(page, 'O', 0);
-    await page.mouse.up();
-    await selectNestedTool(page, BondTool.DOUBLE);
+    await waitForRender(page, async () => {
+      await page.mouse.up();
+    });
+    await selectDropdownTool(page, 'bonds', 'bond-double');
     await takeEditorScreenshot(page);
 
     await moveOnAtom(page, 'O', 0);
     await page.mouse.down();
     await moveOnAtom(page, 'N', 0);
-    await page.mouse.up();
+    await waitForRender(page, async () => {
+      await page.mouse.up();
+    });
   });
 
   test('Connecting two atoms with Double Bond and rotate', async ({ page }) => {
@@ -470,16 +482,20 @@ test.describe('Bond Tool', () => {
 
     await selectAtomInToolbar(AtomButton.Oxygen, page);
     await clickOnTheCanvas(page, point1.x, point1.y);
-    await selectNestedTool(page, BondTool.SINGLE);
+    await selectDropdownTool(page, 'bonds', 'bond-single');
     await moveOnAtom(page, 'N', 0);
     await page.mouse.down();
     await moveOnAtom(page, 'O', 0);
-    await page.mouse.up();
-    await selectNestedTool(page, BondTool.DOUBLE);
+    await waitForRender(page, async () => {
+      await page.mouse.up();
+    });
+    await selectDropdownTool(page, 'bonds', 'bond-double');
     await moveOnAtom(page, 'O', 0);
     await page.mouse.down();
     await moveOnAtom(page, 'N', 0);
-    await page.mouse.up();
+    await waitForRender(page, async () => {
+      await page.mouse.up();
+    });
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
     const point2 = await getAtomByIndex(page, { label: 'N' }, 0);
     await page.mouse.move(point2.x, point2.y);
@@ -554,11 +570,10 @@ for (const [_, id] of Object.values(BondTool)) {
    *   Test cases: EPMLSOPKET-1367, 2271,
    */
   test(`${id} tool: verification`, async ({ page }) => {
-    await page.goto('', { waitUntil: 'domcontentloaded' });
-    await selectLeftPanelButton(LeftPanelButton.SingleBond, page);
-    await selectLeftPanelButton(LeftPanelButton.SingleBond, page);
+    await waitForPageInit(page);
+    await openDropdown(page, 'bonds');
     const button = page.getByTestId(id);
-    expect(button).toHaveAttribute('title', buttonIdToTitle[id]);
+    await expect(button).toHaveAttribute('title', buttonIdToTitle[id]);
     await button.click();
     await clickInTheMiddleOfTheScreen(page);
   });

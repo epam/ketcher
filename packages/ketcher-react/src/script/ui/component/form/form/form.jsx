@@ -42,18 +42,21 @@ class Form extends Component {
       const initialState = { ...init, init: true };
       onUpdate(initialState, valid, errs);
     }
+    this.updateState = this.updateState.bind(this);
   }
 
   componentDidUpdate(prevProps) {
     const {
       schema,
       result,
-      /* eslint-disable @typescript-eslint/no-unused-vars */
-      customValid,
       /* eslint-enable @typescript-eslint/no-unused-vars */
       ...rest
     } = this.props;
-    if (schema.key && schema.key !== prevProps.schema.key) {
+    if (
+      (schema.key && schema.key !== prevProps.schema.key) ||
+      (rest.customValid !== prevProps.customValid &&
+        (schema.title === 'Atom' || schema.title === 'Bond'))
+    ) {
       this.schema = propSchema(schema, rest);
       this.schema.serialize(result); // hack: valid first state
       this.updateState(result);
@@ -174,6 +177,74 @@ function Field(props) {
   );
 }
 
+function CustomQueryField(props) {
+  const {
+    name,
+    onChange,
+    labelPos,
+    className,
+    onCheckboxChange,
+    checkboxValue,
+    ...rest
+  } = props;
+  const [anchorEl, setAnchorEl] = useState(null);
+  const { schema, stateStore } = useFormContext();
+  const desc = rest.schema || schema.properties[name];
+  const { dataError, ...fieldOpts } = stateStore.field(name, onChange);
+  const handlePopoverOpen = useCallback((event) => {
+    setAnchorEl(event.currentTarget);
+  }, []);
+  const handlePopoverClose = useCallback(() => {
+    setAnchorEl(null);
+  }, []);
+  const handleCheckboxChange = (value) => {
+    onCheckboxChange(
+      value,
+      stateStore.props.result,
+      fieldOpts.onChange,
+      stateStore.updateState,
+    );
+  };
+
+  return (
+    <>
+      <Label className={className} title={desc.title} labelPos={labelPos}>
+        <Input
+          name="customQueryCheckBox"
+          schema={{ default: false, type: 'boolean' }}
+          value={checkboxValue}
+          onChange={handleCheckboxChange}
+        />
+      </Label>
+      <span
+        onMouseEnter={handlePopoverOpen}
+        onMouseLeave={handlePopoverClose}
+        className={clsx({
+          [classes.dataError]: dataError,
+          [classes.inputWrapper]: true,
+        })}
+      >
+        <Input
+          type="textarea"
+          data-testid="atomCustomQuery"
+          name={name}
+          schema={desc}
+          {...fieldOpts}
+          {...rest}
+        />
+      </span>
+      {dataError && anchorEl && (
+        <ErrorPopover
+          anchorEl={anchorEl}
+          open={!!anchorEl}
+          error={dataError}
+          onClose={handlePopoverClose}
+        />
+      )}
+    </>
+  );
+}
+
 const SelectOneOf = (props) => {
   const { title, name, schema, ...prop } = props;
 
@@ -279,4 +350,4 @@ function getErrorsObj(errors) {
   return errs;
 }
 
-export { Field, SelectOneOf };
+export { Field, CustomQueryField, SelectOneOf };

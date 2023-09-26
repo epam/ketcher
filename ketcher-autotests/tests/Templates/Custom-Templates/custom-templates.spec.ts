@@ -67,6 +67,22 @@ test.describe('Open Ketcher', () => {
     await takeEditorScreenshot(page);
   });
 
+  test('Check automatically reset the search filter', async ({ page }) => {
+    /*
+   Test case: EPMLSOPKET-8906 
+    Enter the abbreviation in the search box (e.g. DMF)
+    Close 'Custom Templates' window
+    Open 'Custom Templates' window
+   */
+    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+    await page.getByPlaceholder('Search by elements...').fill('DMF');
+    await page.getByPlaceholder('Search by elements...').press('Enter');
+    await takeEditorScreenshot(page);
+    await page.getByTestId('close-icon').click();
+    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+    await takeEditorScreenshot(page);
+  });
+
   test('Adding template to canvas', async ({ page }) => {
     /*
    Test case: EPMLSOPKET-1667 

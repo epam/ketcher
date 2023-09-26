@@ -25,6 +25,7 @@ interface EditorState {
   activeTool: string;
   editor: CoreEditor | undefined;
   preview: { monomer: undefined | MonomerItemType; style: string };
+  snakeMode: boolean;
 }
 
 const initialState: EditorState = {
@@ -32,6 +33,7 @@ const initialState: EditorState = {
   activeTool: 'select',
   editor: undefined,
   preview: { monomer: undefined, style: '' },
+  snakeMode: false,
 };
 
 export const editorSlice: Slice = createSlice({
@@ -50,6 +52,11 @@ export const editorSlice: Slice = createSlice({
     selectTool: (state, action: PayloadAction<string>) => {
       state.activeTool = action.payload;
     },
+
+    selectMode: (state, action: PayloadAction<boolean>) => {
+      state.snakeMode = action.payload;
+    },
+
     createEditor: (
       state,
       action: PayloadAction<{
@@ -85,6 +92,7 @@ export const {
   initSuccess,
   initFailure,
   selectTool,
+  selectMode,
   createEditor,
   showPreview,
   destroyEditor,
@@ -94,6 +102,8 @@ export const selectEditorIsReady = (state: RootState) => state.editor.isReady;
 export const selectShowPreview = (state: RootState) => state.editor.preview;
 export const selectEditorActiveTool = (state: RootState) =>
   state.editor.activeTool;
+export const selectEditorBondMode = (state: RootState) =>
+  state.editor.snakeMode;
 
 export const selectEditor = (state: RootState): CoreEditor =>
   state.editor.editor;

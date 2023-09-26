@@ -90,6 +90,7 @@ export enum FunctionalGroups {
 export enum TemplateLibrary {
   Azulene = 'Azulene',
   Naphtalene = 'Naphtalene',
+  Anthracene = 'Anthracene',
 }
 
 export async function selectSaltsAndSolvents(

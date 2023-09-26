@@ -6,6 +6,7 @@ import {
   waitForPageInit,
   selectUserTemplatesAndPlaceInTheMiddle,
   TemplateLibrary,
+  clickInTheMiddleOfTheScreen,
 } from '@utils';
 
 test.describe('Open Ketcher', () => {
@@ -49,6 +50,35 @@ test.describe('Open Ketcher', () => {
     await page.getByRole('tab', { name: 'Salts and Solvents' }).click();
     await page.getByTestId('close-icon').click();
     await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+    await takeEditorScreenshot(page);
+  });
+
+  test('When switching between tabs-the focus is active', async ({ page }) => {
+    /*
+   Test case: EPMLSOPKET-8908 
+   Launch Ketcher
+   Open 'Custom Templates'
+   Switch between tabs
+   */
+    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+    await page.getByRole('tab', { name: 'Salts and Solvents' }).click();
+    await page.getByRole('tab', { name: 'Functional Groups' }).click();
+    await page.getByRole('tab', { name: 'Salts and Solvents' }).click();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Adding template to canvas', async ({ page }) => {
+    /*
+   Test case: EPMLSOPKET-1667 
+   Click the 'Custom Templates' button.
+   Choose a template from any folder.
+   Click to add the selected template on the canvas.
+   */
+    await selectUserTemplatesAndPlaceInTheMiddle(
+      TemplateLibrary.Anthracene,
+      page,
+    );
+    await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
 });

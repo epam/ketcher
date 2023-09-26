@@ -1,4 +1,4 @@
-import { test } from '@playwright/test';
+import { Page, test } from '@playwright/test';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
@@ -7,6 +7,18 @@ import {
   clickOnAtom,
   waitForPageInit,
 } from '@utils';
+import { AtomExtendedType, AtomLabelType } from '@utils/clicks/types';
+
+async function selectExtendedAtom(
+  page: Page,
+  extendedAtom: AtomExtendedType,
+  atomToClick: AtomLabelType,
+) {
+  await selectAtomInToolbar(AtomButton.Extended, page);
+  await page.getByRole('button', { name: extendedAtom, exact: true }).click();
+  await page.getByTestId('OK').click();
+  await clickOnAtom(page, atomToClick, 0);
+}
 
 test.describe('Generic nodes', () => {
   test.beforeEach(async ({ page }) => {
@@ -22,40 +34,18 @@ test.describe('Generic nodes', () => {
     /*
         Test case: EPMLSOPKET-1503
       */
-    await selectAtomInToolbar(AtomButton.Extended, page);
-    await page.getByRole('button', { name: 'G', exact: true }).click();
-    await page.getByTestId('OK').click();
-    await clickOnAtom(page, 'O', 0);
-
-    await selectAtomInToolbar(AtomButton.Extended, page);
-    await page.getByRole('button', { name: 'GH', exact: true }).click();
-    await page.getByTestId('OK').click();
-    await clickOnAtom(page, 'S', 0);
-
-    await selectAtomInToolbar(AtomButton.Extended, page);
-    await page.getByRole('button', { name: 'G*', exact: true }).click();
-    await page.getByTestId('OK').click();
-    await clickOnAtom(page, 'F', 0);
-
-    await selectAtomInToolbar(AtomButton.Extended, page);
-    await page.getByRole('button', { name: 'GH*', exact: true }).click();
-    await page.getByTestId('OK').click();
-    await clickOnAtom(page, 'I', 0);
+    await selectExtendedAtom(page, 'G', 'O');
+    await selectExtendedAtom(page, 'GH', 'S');
+    await selectExtendedAtom(page, 'G*', 'F');
+    await selectExtendedAtom(page, 'GH*', 'I');
   });
 
   test('Acylic atoms adding to the atom of structure', async ({ page }) => {
     /*
         Test case: EPMLSOPKET-1505
       */
-    await selectAtomInToolbar(AtomButton.Extended, page);
-    await page.getByRole('button', { name: 'ACY', exact: true }).click();
-    await page.getByTestId('OK').click();
-    await clickOnAtom(page, 'S', 0);
-
-    await selectAtomInToolbar(AtomButton.Extended, page);
-    await page.getByRole('button', { name: 'ACH', exact: true }).click();
-    await page.getByTestId('OK').click();
-    await clickOnAtom(page, 'F', 0);
+    await selectExtendedAtom(page, 'ACY', 'S');
+    await selectExtendedAtom(page, 'ACH', 'F');
   });
 
   test('Acylic Carbo atoms adding to the atom of structure', async ({
@@ -64,45 +54,14 @@ test.describe('Generic nodes', () => {
     /*
         Test case: EPMLSOPKET-1508
       */
-    await selectAtomInToolbar(AtomButton.Extended, page);
-    await page.getByRole('button', { name: 'ABC', exact: true }).click();
-    await page.getByTestId('OK').click();
-    await clickOnAtom(page, 'S', 0);
-
-    await selectAtomInToolbar(AtomButton.Extended, page);
-    await page.getByRole('button', { name: 'ABH', exact: true }).click();
-    await page.getByTestId('OK').click();
-    await clickOnAtom(page, 'F', 0);
-
-    await selectAtomInToolbar(AtomButton.Extended, page);
-    await page.getByRole('button', { name: 'AYH', exact: true }).click();
-    await page.getByTestId('OK').click();
-    await clickOnAtom(page, 'I', 0);
-
-    await selectAtomInToolbar(AtomButton.Extended, page);
-    await page.getByRole('button', { name: 'AYL', exact: true }).click();
-    await page.getByTestId('OK').click();
-    await clickOnAtom(page, 'O', 0);
-
-    await selectAtomInToolbar(AtomButton.Extended, page);
-    await page.getByRole('button', { name: 'ALK', exact: true }).click();
-    await page.getByTestId('OK').click();
-    await clickOnAtom(page, 'H', 0);
-
-    await selectAtomInToolbar(AtomButton.Extended, page);
-    await page.getByRole('button', { name: 'ALH', exact: true }).click();
-    await page.getByTestId('OK').click();
-    await clickOnAtom(page, 'P', 0);
-
-    await selectAtomInToolbar(AtomButton.Extended, page);
-    await page.getByRole('button', { name: 'AEL', exact: true }).click();
-    await page.getByTestId('OK').click();
-    await clickOnAtom(page, 'Br', 0);
-
-    await selectAtomInToolbar(AtomButton.Extended, page);
-    await page.getByRole('button', { name: 'AEH', exact: true }).click();
-    await page.getByTestId('OK').click();
-    await clickOnAtom(page, 'Cl', 0);
+    await selectExtendedAtom(page, 'ABC', 'S');
+    await selectExtendedAtom(page, 'ABH', 'F');
+    await selectExtendedAtom(page, 'AYH', 'I');
+    await selectExtendedAtom(page, 'AYL', 'O');
+    await selectExtendedAtom(page, 'ALK', 'H');
+    await selectExtendedAtom(page, 'ALH', 'P');
+    await selectExtendedAtom(page, 'AEL', 'Br');
+    await selectExtendedAtom(page, 'AEH', 'Cl');
   });
 
   test('Acylic Hetero atoms adding to the atom of structure', async ({
@@ -111,50 +70,20 @@ test.describe('Generic nodes', () => {
     /*
         Test case: EPMLSOPKET-1512
       */
-    await selectAtomInToolbar(AtomButton.Extended, page);
-    await page.getByRole('button', { name: 'AHC', exact: true }).click();
-    await page.getByTestId('OK').click();
-    await clickOnAtom(page, 'S', 0);
-
-    await selectAtomInToolbar(AtomButton.Extended, page);
-    await page.getByRole('button', { name: 'AHH', exact: true }).click();
-    await page.getByTestId('OK').click();
-    await clickOnAtom(page, 'O', 0);
-
-    await selectAtomInToolbar(AtomButton.Extended, page);
-    await page.getByRole('button', { name: 'AOX', exact: true }).click();
-    await page.getByTestId('OK').click();
-    await clickOnAtom(page, 'Br', 0);
-
-    await selectAtomInToolbar(AtomButton.Extended, page);
-    await page.getByRole('button', { name: 'AOH', exact: true }).click();
-    await page.getByTestId('OK').click();
-    await clickOnAtom(page, 'Cl', 0);
+    await selectExtendedAtom(page, 'AHC', 'S');
+    await selectExtendedAtom(page, 'AHH', 'O');
+    await selectExtendedAtom(page, 'AOX', 'Br');
+    await selectExtendedAtom(page, 'AOH', 'Cl');
   });
 
   test('Cyclic atoms adding to the atom of structure', async ({ page }) => {
     /*
         Test case: EPMLSOPKET-1516
       */
-    await selectAtomInToolbar(AtomButton.Extended, page);
-    await page.getByRole('button', { name: 'CYC', exact: true }).click();
-    await page.getByTestId('OK').click();
-    await clickOnAtom(page, 'S', 0);
-
-    await selectAtomInToolbar(AtomButton.Extended, page);
-    await page.getByRole('button', { name: 'CYH', exact: true }).click();
-    await page.getByTestId('OK').click();
-    await clickOnAtom(page, 'O', 0);
-
-    await selectAtomInToolbar(AtomButton.Extended, page);
-    await page.getByRole('button', { name: 'CXX', exact: true }).click();
-    await page.getByTestId('OK').click();
-    await clickOnAtom(page, 'Cl', 0);
-
-    await selectAtomInToolbar(AtomButton.Extended, page);
-    await page.getByRole('button', { name: 'CXH', exact: true }).click();
-    await page.getByTestId('OK').click();
-    await clickOnAtom(page, 'Br', 0);
+    await selectExtendedAtom(page, 'CYC', 'S');
+    await selectExtendedAtom(page, 'CYH', 'O');
+    await selectExtendedAtom(page, 'CXX', 'Cl');
+    await selectExtendedAtom(page, 'CXH', 'Br');
   });
 
   test('Cyclic Carbo atoms adding to the atom of structure', async ({
@@ -163,45 +92,14 @@ test.describe('Generic nodes', () => {
     /*
         Test case: EPMLSOPKET-1524
       */
-    await selectAtomInToolbar(AtomButton.Extended, page);
-    await page.getByRole('button', { name: 'CBC', exact: true }).click();
-    await page.getByTestId('OK').click();
-    await clickOnAtom(page, 'S', 0);
-
-    await selectAtomInToolbar(AtomButton.Extended, page);
-    await page.getByRole('button', { name: 'CBH', exact: true }).click();
-    await page.getByTestId('OK').click();
-    await clickOnAtom(page, 'O', 0);
-
-    await selectAtomInToolbar(AtomButton.Extended, page);
-    await page.getByRole('button', { name: 'ARY', exact: true }).click();
-    await page.getByTestId('OK').click();
-    await clickOnAtom(page, 'Cl', 0);
-
-    await selectAtomInToolbar(AtomButton.Extended, page);
-    await page.getByRole('button', { name: 'ARH', exact: true }).click();
-    await page.getByTestId('OK').click();
-    await clickOnAtom(page, 'Br', 0);
-
-    await selectAtomInToolbar(AtomButton.Extended, page);
-    await page.getByRole('button', { name: 'CAL', exact: true }).click();
-    await page.getByTestId('OK').click();
-    await clickOnAtom(page, 'H', 0);
-
-    await selectAtomInToolbar(AtomButton.Extended, page);
-    await page.getByRole('button', { name: 'CAH', exact: true }).click();
-    await page.getByTestId('OK').click();
-    await clickOnAtom(page, 'P', 0);
-
-    await selectAtomInToolbar(AtomButton.Extended, page);
-    await page.getByRole('button', { name: 'CEL', exact: true }).click();
-    await page.getByTestId('OK').click();
-    await clickOnAtom(page, 'I', 0);
-
-    await selectAtomInToolbar(AtomButton.Extended, page);
-    await page.getByRole('button', { name: 'CEH', exact: true }).click();
-    await page.getByTestId('OK').click();
-    await clickOnAtom(page, 'N', 0);
+    await selectExtendedAtom(page, 'CBC', 'S');
+    await selectExtendedAtom(page, 'CBH', 'O');
+    await selectExtendedAtom(page, 'ARY', 'Cl');
+    await selectExtendedAtom(page, 'ARH', 'Br');
+    await selectExtendedAtom(page, 'CAL', 'H');
+    await selectExtendedAtom(page, 'CAH', 'P');
+    await selectExtendedAtom(page, 'CEL', 'I');
+    await selectExtendedAtom(page, 'CEH', 'N');
   });
 
   test('Cyclic Hetero atoms adding to the atom of structure', async ({
@@ -210,24 +108,9 @@ test.describe('Generic nodes', () => {
     /*
         Test case: EPMLSOPKET-1526
       */
-    await selectAtomInToolbar(AtomButton.Extended, page);
-    await page.getByRole('button', { name: 'CHC', exact: true }).click();
-    await page.getByTestId('OK').click();
-    await clickOnAtom(page, 'S', 0);
-
-    await selectAtomInToolbar(AtomButton.Extended, page);
-    await page.getByRole('button', { name: 'CHH', exact: true }).click();
-    await page.getByTestId('OK').click();
-    await clickOnAtom(page, 'O', 0);
-
-    await selectAtomInToolbar(AtomButton.Extended, page);
-    await page.getByRole('button', { name: 'HAR', exact: true }).click();
-    await page.getByTestId('OK').click();
-    await clickOnAtom(page, 'Cl', 0);
-
-    await selectAtomInToolbar(AtomButton.Extended, page);
-    await page.getByRole('button', { name: 'HAH', exact: true }).click();
-    await page.getByTestId('OK').click();
-    await clickOnAtom(page, 'Br', 0);
+    await selectExtendedAtom(page, 'CHC', 'S');
+    await selectExtendedAtom(page, 'CHH', 'O');
+    await selectExtendedAtom(page, 'HAR', 'Cl');
+    await selectExtendedAtom(page, 'HAH', 'Br');
   });
 });

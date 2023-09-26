@@ -4,6 +4,8 @@ import {
   takeEditorScreenshot,
   STRUCTURE_LIBRARY_BUTTON_NAME,
   waitForPageInit,
+  selectUserTemplatesAndPlaceInTheMiddle,
+  TemplateLibrary,
 } from '@utils';
 
 test.describe('Open Ketcher', () => {
@@ -16,6 +18,27 @@ test.describe('Open Ketcher', () => {
    Test case: EPMLSOPKET-1697 - 'The 'Template Library' tab is opened by default.'
   */
     await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+    await takeEditorScreenshot(page);
+  });
+
+  // test('Custom Templates - Button and tooltip', async ({ page }) => {
+  // /*
+  //  Test case: EPMLSOPKET-2886 - 'Structure Library (Shift + T)' tooltip appears.'
+  // */
+  // await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+  // });
+
+  test('Custom Templates - Template Library folders content', async ({
+    page,
+  }) => {
+    /*
+   Test case: EPMLSOPKET-1698 - Any structure is saved by the user as a template.
+   Click the 'Custom Template' button.
+   Click on some template folders.
+   Check any structures
+   Open the 'User Templates' folder'
+  */
+    await selectUserTemplatesAndPlaceInTheMiddle(TemplateLibrary.Azulene, page);
     await takeEditorScreenshot(page);
   });
 

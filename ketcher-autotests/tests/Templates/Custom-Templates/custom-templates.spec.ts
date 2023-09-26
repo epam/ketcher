@@ -14,12 +14,15 @@ test.describe('Open Ketcher', () => {
     await waitForPageInit(page);
   });
 
+  test.afterEach(async ({ page }) => {
+    await takeEditorScreenshot(page);
+  });
+
   test('Custom Templates - Template Library folders', async ({ page }) => {
     /*
    Test case: EPMLSOPKET-1697 - 'The 'Template Library' tab is opened by default.'
   */
     await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await takeEditorScreenshot(page);
   });
 
   test('Custom Templates - Template Library folders content', async ({
@@ -33,7 +36,6 @@ test.describe('Open Ketcher', () => {
    Open the 'User Templates' folder'
   */
     await selectUserTemplatesAndPlaceInTheMiddle(TemplateLibrary.Azulene, page);
-    await takeEditorScreenshot(page);
   });
 
   test('Custom Templates - Window UI', async ({ page }) => {
@@ -50,7 +52,6 @@ test.describe('Open Ketcher', () => {
     await page.getByRole('tab', { name: 'Salts and Solvents' }).click();
     await page.getByTestId('close-icon').click();
     await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await takeEditorScreenshot(page);
   });
 
   test('When switching between tabs-the focus is active', async ({ page }) => {
@@ -64,7 +65,6 @@ test.describe('Open Ketcher', () => {
     await page.getByRole('tab', { name: 'Salts and Solvents' }).click();
     await page.getByRole('tab', { name: 'Functional Groups' }).click();
     await page.getByRole('tab', { name: 'Salts and Solvents' }).click();
-    await takeEditorScreenshot(page);
   });
 
   test('Check automatically reset the search filter', async ({ page }) => {
@@ -80,7 +80,6 @@ test.describe('Open Ketcher', () => {
     await takeEditorScreenshot(page);
     await page.getByTestId('close-icon').click();
     await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await takeEditorScreenshot(page);
   });
 
   test('Adding template to canvas', async ({ page }) => {
@@ -95,6 +94,5 @@ test.describe('Open Ketcher', () => {
       page,
     );
     await clickInTheMiddleOfTheScreen(page);
-    await takeEditorScreenshot(page);
   });
 });

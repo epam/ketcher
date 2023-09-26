@@ -20,8 +20,6 @@ import { Point, Vec2 } from './vec2';
 import { Elements } from 'domain/constants';
 import { Pile } from './pile';
 import { Struct } from './struct';
-import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
-import { FunctionalGroup } from 'domain/entities/functionalGroup';
 
 /**
  * Return unions of Pick.

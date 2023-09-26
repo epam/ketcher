@@ -19,6 +19,7 @@ export type MonomerItemType = {
     MonomerCaps?: string;
     MonomerCode?: string;
     MonomerType?: string;
+    isMicromoleculeFragment?: boolean;
   };
 };
 

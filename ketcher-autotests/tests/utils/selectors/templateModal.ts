@@ -238,3 +238,18 @@ export async function fillFieldByPlaceholder(
   await page.getByPlaceholder(fieldLabel).click();
   await page.getByPlaceholder(fieldLabel).fill(testValue);
 }
+
+export async function selectAtomsFromPeriodicTable(
+  page: Page,
+  selectlisting: 'List' | 'Not List',
+  elements: string[],
+) {
+  await page.getByTestId('period-table').click();
+  await page.getByText(selectlisting, { exact: true }).click();
+
+  for (const element of elements) {
+    await pressButton(page, element);
+  }
+
+  await page.getByTestId('OK').click();
+}

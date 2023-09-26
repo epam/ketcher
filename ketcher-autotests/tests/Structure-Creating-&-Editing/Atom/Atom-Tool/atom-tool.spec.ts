@@ -1,5 +1,5 @@
 import { MAX_BOND_LENGTH } from '@constants/index';
-import { test } from '@playwright/test';
+import { test, expect, Page } from '@playwright/test';
 import {
   pressButton,
   takeEditorScreenshot,
@@ -14,7 +14,27 @@ import {
   getCoordinatesOfTheMiddleOfTheScreen,
   dragMouseTo,
   waitForRender,
+  selectAtomsFromPeriodicTable,
+  resetCurrentTool,
+  moveOnAtom,
+  selectEraseTool,
+  screenshotBetweenUndoRedo,
+  selectPartOfMolecules,
+  copyAndPaste,
+  cutAndPaste,
+  saveToFile,
+  receiveFileComparisonData,
 } from '@utils';
+import { getMolfile, getRxn } from '@utils/formats';
+
+async function clickAtomShortcut(page: Page, labelKey: string) {
+  await waitForRender(page, async () => {
+    await page.keyboard.press(labelKey);
+  });
+  await waitForRender(page, async () => {
+    await clickInTheMiddleOfTheScreen(page);
+  });
+}
 
 test.describe('Atom Tool', () => {
   test.beforeEach(async ({ page }) => {
@@ -36,6 +56,20 @@ test.describe('Atom Tool', () => {
     await pressButton(page, 'Cancel');
   });
 
+  test('Extended table dialog', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-1467
+    Description: "Extended Table"  contains:
+    - the "Extended Table" title;
+    - "Atom Generics" section;
+    - "Group Generics" section with "Acyclic" and "Cyclic" sections;
+    - "Special Nodes" section;
+    - "Cancel" and "Add" buttons are at the right bottom corner of the window: "Cancel" is always active, "Add" becomes active when any symbol is selected;
+    - "x" button is at the top right corner of the window.
+    */
+    await page.getByTestId('extended-table').click();
+  });
+
   test('Periodic table-selecting Atom in palette', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1434
@@ -55,6 +89,7 @@ test.describe('Atom Tool', () => {
     /*
     Test case: EPMLSOPKET-1450
     Description: The structure is illustrated as H3Si-SH.
+    For now it is working incorrect https://github.com/epam/ketcher/issues/3362
     */
     await selectAtomInToolbar(AtomButton.Sulfur, page);
     await clickInTheMiddleOfTheScreen(page);
@@ -69,6 +104,362 @@ test.describe('Atom Tool', () => {
     await waitForRender(page, async () => {
       await clickInTheMiddleOfTheScreen(page);
     });
+  });
+
+  test('Creating a List from Periodic table', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-1464
+    Description: The selected atom symbols appear on the canvas with square brackets, for example [C, N, O]. 
+    All listed atom symbols should be colored with black.
+    */
+    await selectAtomsFromPeriodicTable(page, 'List', [
+      'Au 79',
+      'In 49',
+      'Am 95',
+    ]);
+    await clickInTheMiddleOfTheScreen(page);
+    await resetCurrentTool(page);
+  });
+
+  test('Adding a List from Periodic table to structure', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-1464
+    Description: The selected atom symbols appear on structure with square brackets, for example [C, N, O]. 
+    All listed atom symbols should be colored with black.
+    */
+    const anyAtom = 2;
+    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
+    await selectAtomsFromPeriodicTable(page, 'List', [
+      'Au 79',
+      'In 49',
+      'Am 95',
+    ]);
+    await clickOnAtom(page, 'C', anyAtom);
+    await resetCurrentTool(page);
+  });
+
+  test('Creating a Not List from Periodic table', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-1466
+    Description: The selected atom symbols appear on the canvas with square brackets, for example ![C, N, O]. 
+    All listed atom symbols should be colored with black.
+    */
+    await selectAtomsFromPeriodicTable(page, 'Not List', [
+      'Ti 22',
+      'V 23',
+      'Cs 55',
+    ]);
+    await clickInTheMiddleOfTheScreen(page);
+    await resetCurrentTool(page);
+  });
+
+  test('Adding a Not List from Periodic table to structure', async ({
+    page,
+  }) => {
+    /*
+    Test case: EPMLSOPKET-1466
+    Description: The selected atom symbols appear on structure with square brackets, for example ![C, N, O]. 
+    All listed atom symbols should be colored with black.
+    */
+    const anyAtom = 2;
+    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
+    await selectAtomsFromPeriodicTable(page, 'Not List', [
+      'V 23',
+      'Ti 22',
+      'Cs 55',
+    ]);
+    await clickOnAtom(page, 'C', anyAtom);
+    await resetCurrentTool(page);
+  });
+
+  test('Select Generics from Extended table', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-1485
+    Description: The selected button is highlighted. Several dialog buttons can`t be selected. 
+    The "Add" button becomes enabled when any generic group is selected.
+    */
+    await page.getByTestId('extended-table').click();
+    await page.getByRole('button', { name: 'AH', exact: true }).click();
+  });
+
+  test('Manipulation with structures with different atoms, List/Not List and Generic Group - Move whole structure', async ({
+    page,
+  }) => {
+    /*
+    Test case: EPMLSOPKET-1527
+    Description: The whole structure is moved.
+    */
+    const x = 300;
+    const y = 300;
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/structure-list-notlist.mol',
+      page,
+    );
+    await page.keyboard.press('Control+a');
+    await moveOnAtom(page, 'C', 0);
+    await dragMouseTo(x, y, page);
+  });
+
+  test('Delete Generic atom from structure', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-1527
+    Description: AH Generic is deleted from structure.
+    */
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/structure-list-notlist.mol',
+      page,
+    );
+    await selectEraseTool(page);
+    await page.getByText('AH').click();
+    await screenshotBetweenUndoRedo(page);
+  });
+
+  test('Erase part of structure with List/Not List and Generic Group', async ({
+    page,
+  }) => {
+    /*
+    Test case: EPMLSOPKET-1527
+    Description: Part of structure with List/Not List and Generic Group is deleted.
+    */
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/structure-list-notlist.mol',
+      page,
+    );
+    await selectPartOfMolecules(page);
+    await waitForRender(page, async () => {
+      await page.getByTestId('erase').click();
+    });
+    await screenshotBetweenUndoRedo(page);
+  });
+
+  test('Zoom In and Zoom Out of structure with List/Not List and Generic Group', async ({
+    page,
+  }) => {
+    /*
+    Test case: EPMLSOPKET-1527
+    Description: Structure with List/Not List and Generic Group is Zoom In and Zoom Out.
+    */
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/structure-list-notlist.mol',
+      page,
+    );
+    // eslint-disable-next-line no-magic-numbers
+    for (let i = 0; i < 5; i++) {
+      await waitForRender(page, async () => {
+        await page.keyboard.press('Control+_');
+      });
+    }
+    await takeEditorScreenshot(page);
+
+    // eslint-disable-next-line no-magic-numbers
+    for (let i = 0; i < 5; i++) {
+      await waitForRender(page, async () => {
+        await page.keyboard.press('Control+=');
+      });
+    }
+  });
+
+  test('Copy and paste structure with List/Not List and Generic Group', async ({
+    page,
+  }) => {
+    /*
+    Test case: EPMLSOPKET-1528
+    Description: Structure with List/Not List and Generic Group is copy and pasted.
+    */
+    const x = 300;
+    const y = 300;
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/structure-list-notlist.mol',
+      page,
+    );
+    await copyAndPaste(page);
+    await page.mouse.click(x, y);
+  });
+
+  test('Cut and paste structure with List/Not List and Generic Group', async ({
+    page,
+  }) => {
+    /*
+    Test case: EPMLSOPKET-1528
+    Description: Structure with List/Not List and Generic Group is cut and pasted.
+    */
+    const x = 300;
+    const y = 300;
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/structure-list-notlist.mol',
+      page,
+    );
+    await cutAndPaste(page);
+    await page.mouse.click(x, y);
+  });
+
+  test('Colored atoms - save as mol-file and render', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-1533
+    Description: Structure is represented with correctly colored atoms.
+    */
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/chain-with-colored-atoms.mol',
+      page,
+    );
+    const expectedFile = await getMolfile(page, 'v2000');
+    await saveToFile(
+      'Molfiles-V2000/chain-with-colored-atoms-expected.mol',
+      expectedFile,
+    );
+
+    const METADATA_STRING_INDEX = [1];
+    const { fileExpected: molFileExpected, file: molFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/Molfiles-V2000/chain-with-colored-atoms-expected.mol',
+        fileFormat: 'v2000',
+        metaDataIndexes: METADATA_STRING_INDEX,
+      });
+
+    expect(molFile).toEqual(molFileExpected);
+  });
+
+  test('Colored atoms - save as rxn-file and render', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-1534
+    Description: Structure is represented with correctly colored atoms.
+    */
+    await openFileAndAddToCanvas(
+      'Rxn-V2000/reaction-with-colored-atoms.rxn',
+      page,
+    );
+    const expectedFile = await getRxn(page, 'v2000');
+    await saveToFile(
+      'Rxn-V2000/reaction-with-colored-atoms-expected.rxn',
+      expectedFile,
+    );
+    // eslint-disable-next-line no-magic-numbers
+    const METADATA_STRING_INDEX = [2, 7, 30];
+    const { fileExpected: rxnFileExpected, file: rxnFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/Rxn-V2000/reaction-with-colored-atoms-expected.rxn',
+        fileFormat: 'v2000',
+        metaDataIndexes: METADATA_STRING_INDEX,
+      });
+
+    expect(rxnFile).toEqual(rxnFileExpected);
+  });
+
+  test('List/Not List - save as mol-file and render', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-1577
+    Description: The saved *.mol file is opened in Ketcher. 
+    Structure is represented with correct List and Not List atom symbols
+    */
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/structure-list-notlist.mol',
+      page,
+    );
+    const expectedFile = await getMolfile(page, 'v2000');
+    await saveToFile(
+      'Molfiles-V2000/structure-list-notlist-expected.mol',
+      expectedFile,
+    );
+
+    const METADATA_STRING_INDEX = [1];
+    const { fileExpected: molFileExpected, file: molFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/Molfiles-V2000/structure-list-notlist-expected.mol',
+        fileFormat: 'v2000',
+        metaDataIndexes: METADATA_STRING_INDEX,
+      });
+
+    expect(molFile).toEqual(molFileExpected);
+  });
+
+  test('List/Not List - save as rxn-file and render', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-1578
+    Description: The saved *.rxn file is opened in Ketcher. 
+    The reaction is represented with correct List and Not List atom symbols.
+    */
+    await openFileAndAddToCanvas('Rxn-V2000/reaction-list-notlist.rxn', page);
+    const expectedFile = await getRxn(page, 'v2000');
+    await saveToFile(
+      'Rxn-V2000/reaction-list-notlist-expected.rxn',
+      expectedFile,
+    );
+    // eslint-disable-next-line no-magic-numbers
+    const METADATA_STRING_INDEX = [2, 7, 32];
+    const { fileExpected: rxnFileExpected, file: rxnFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/Rxn-V2000/reaction-list-notlist-expected.rxn',
+        fileFormat: 'v2000',
+        metaDataIndexes: METADATA_STRING_INDEX,
+      });
+
+    expect(rxnFile).toEqual(rxnFileExpected);
+  });
+
+  test('Generic Groups - save as rxn-file and render', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-1580
+    Description: The saved *.rxn file is opened in Ketcher. 
+    The reaction is represented with correct Generic Groups. 
+    */
+    await openFileAndAddToCanvas(
+      'Rxn-V2000/reaction-with-group-generics.rxn',
+      page,
+    );
+    const expectedFile = await getRxn(page, 'v2000');
+    await saveToFile(
+      'Rxn-V2000/reaction-with-group-generics-expected.rxn',
+      expectedFile,
+    );
+    // eslint-disable-next-line no-magic-numbers
+    const METADATA_STRING_INDEX = [2, 7, 30];
+    const { fileExpected: rxnFileExpected, file: rxnFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/Rxn-V2000/reaction-with-group-generics-expected.rxn',
+        fileFormat: 'v2000',
+        metaDataIndexes: METADATA_STRING_INDEX,
+      });
+
+    expect(rxnFile).toEqual(rxnFileExpected);
+  });
+
+  test('Generic Groups - save as mol-file and render', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-1579
+    Description: The saved *.mol file is opened in Ketcher. 
+    Structure is represented with correct Generic Groups
+    */
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/chain-with-group-generics.mol',
+      page,
+    );
+    const expectedFile = await getMolfile(page, 'v2000');
+    await saveToFile(
+      'Molfiles-V2000/chain-with-group-generics-expected.mol',
+      expectedFile,
+    );
+
+    const METADATA_STRING_INDEX = [1];
+    const { fileExpected: molFileExpected, file: molFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/Molfiles-V2000/chain-with-group-generics-expected.mol',
+        fileFormat: 'v2000',
+        metaDataIndexes: METADATA_STRING_INDEX,
+      });
+
+    expect(molFile).toEqual(molFileExpected);
   });
 });
 
@@ -156,5 +547,21 @@ test.describe('Atom Tool', () => {
     await selectAtomInToolbar(AtomButton.Gold, page);
     await clickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page);
+  });
+
+  test('Click on the keyboard shortcut related to the molecule', async ({
+    page,
+  }) => {
+    /*
+    Test case: EPMLSOPKET-5262
+    Description: The selected atom appeared on the canvas
+    */
+    const atomShortcuts = ['a', 'q', 'r', 'k', 'm', 'x'];
+
+    for (const labelKey of atomShortcuts) {
+      await clickAtomShortcut(page, labelKey);
+      await resetCurrentTool(page);
+      await takeEditorScreenshot(page);
+    }
   });
 });

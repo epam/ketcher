@@ -107,6 +107,15 @@ export async function selectSaltsAndSolvents(
   });
 }
 
+export async function selectSaltsAndSolventsGroup(
+  saltsAndSolventsGroupName: SaltsAndSolvents,
+  page: Page,
+) {
+  await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+  await page.getByRole('tab', { name: 'Salts and Solvents' }).click();
+  await selectSaltsAndSolvents(saltsAndSolventsGroupName, page);
+}
+
 export async function selectFunctionalGroups(
   functionalGroupName: FunctionalGroups,
   page: Page,
@@ -122,6 +131,15 @@ export async function selectFunctionalGroups(
   await expect(page.getByTestId('templates-modal')).toHaveCount(0, {
     timeout: 20000,
   });
+}
+
+export async function selectFunctionalGroup(
+  functionalGroupName: FunctionalGroups,
+  page: Page,
+) {
+  await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+  await page.getByRole('tab', { name: 'Functional Groups' }).click();
+  await selectFunctionalGroups(functionalGroupName, page);
 }
 
 export async function selectUserTemplate(

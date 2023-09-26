@@ -21,13 +21,6 @@ test.describe('Open Ketcher', () => {
     await takeEditorScreenshot(page);
   });
 
-  // test('Custom Templates - Button and tooltip', async ({ page }) => {
-  // /*
-  //  Test case: EPMLSOPKET-2886 - 'Structure Library (Shift + T)' tooltip appears.'
-  // */
-  // await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-  // });
-
   test('Custom Templates - Template Library folders content', async ({
     page,
   }) => {

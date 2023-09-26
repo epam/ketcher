@@ -2,15 +2,13 @@ import { test } from '@playwright/test';
 import {
   selectAtomInToolbar,
   AtomButton,
-  pressButton,
-  selectSaltsAndSolvents,
   SaltsAndSolvents,
   clickInTheMiddleOfTheScreen,
   takeEditorScreenshot,
-  STRUCTURE_LIBRARY_BUTTON_NAME,
   FunctionalGroups,
-  selectFunctionalGroups,
   waitForPageInit,
+  selectFunctionalGroup,
+  selectSaltsAndSolventsGroup,
 } from '@utils';
 
 test.describe('Open Ketcher', () => {
@@ -24,15 +22,11 @@ test.describe('Open Ketcher', () => {
     /*
 Test case: EPMLSOPKET-12972 - 'Check that new Salt or Solvent is replacing the previously added one'
   */
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await page.getByRole('tab', { name: 'Salts and Solvents' }).click();
-    await selectSaltsAndSolvents(SaltsAndSolvents.AceticAnhydride, page);
+    await selectSaltsAndSolventsGroup(SaltsAndSolvents.AceticAnhydride, page);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
 
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await page.getByRole('tab', { name: 'Salts and Solvents' }).click();
-    await selectSaltsAndSolvents(SaltsAndSolvents.AceticAcid, page);
+    await selectSaltsAndSolventsGroup(SaltsAndSolvents.AceticAcid, page);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
@@ -45,21 +39,15 @@ Test case: EPMLSOPKET-12969 - 'Check that in all cases, there must be a replacem
   */
     await selectAtomInToolbar(AtomButton.Carbon, page);
     await clickInTheMiddleOfTheScreen(page);
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await page.getByRole('tab', { name: 'Salts and Solvents' }).click();
-    await selectSaltsAndSolvents(SaltsAndSolvents.AceticAnhydride, page);
+    await selectSaltsAndSolventsGroup(SaltsAndSolvents.AceticAcid, page);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
 
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await page.getByRole('tab', { name: 'Functional Groups' }).click();
-    await selectFunctionalGroups(FunctionalGroups.Bz, page);
+    await selectFunctionalGroup(FunctionalGroups.Bz, page);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
 
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await page.getByRole('tab', { name: 'Salts and Solvents' }).click();
-    await selectSaltsAndSolvents(SaltsAndSolvents.AceticAcid, page);
+    await selectSaltsAndSolventsGroup(SaltsAndSolvents.AceticAcid, page);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
@@ -70,9 +58,10 @@ Test case: EPMLSOPKET-12969 - 'Check that in all cases, there must be a replacem
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickInTheMiddleOfTheScreen(page);
 
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await page.getByRole('tab', { name: 'Salts and Solvents' }).click();
-    await selectSaltsAndSolvents(SaltsAndSolvents.MethaneSulphonicAcid, page);
+    await selectSaltsAndSolventsGroup(
+      SaltsAndSolvents.MethaneSulphonicAcid,
+      page,
+    );
     await clickInTheMiddleOfTheScreen(page);
   });
 });

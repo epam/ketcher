@@ -11,7 +11,6 @@ import {
   DELAY_IN_SECONDS,
   AttachmentPoint,
   openFileAndAddToCanvas,
-  SelectTool,
   pressButton,
   clickOnAtom,
   TopPanelButton,
@@ -24,6 +23,7 @@ import {
   cutAndPaste,
   waitForPageInit,
   selectDropdownTool,
+  waitForRender,
 } from '@utils';
 import { getExtendedSmiles, getMolfile } from '@utils/formats';
 
@@ -41,7 +41,7 @@ async function openRGroupModalForTopAtom(page: Page) {
 const rGroupFromFile = 'R8';
 const atomIndex = 3;
 async function selectRGroups(page: Page, rGroups: string[]) {
-  await selectNestedTool(page, RgroupTool.R_GROUP_FRAGMENT);
+  await selectDropdownTool(page, 'rgroup-label', 'rgroup-fragment');
   await page.getByText(rGroupFromFile).click();
   for (const rgroup of rGroups) {
     await pressButton(page, rgroup);
@@ -227,26 +227,28 @@ test.describe('Open Ketcher', () => {
     await page.keyboard.press('Delete');
   });
 
-  test.fixme('Delete R-Group member', async ({ page }) => {
+  test('Delete R-Group member', async ({ page }) => {
     /* Test case: EPMLSOPKET-1590
   Description: Delete R-Group member
   */
     await openFileAndAddToCanvas('R-fragment-structure.mol', page);
 
-    await selectNestedTool(page, SelectTool.FRAGMENT_SELECTION);
+    await selectDropdownTool(page, 'select-rectangle', 'select-fragment');
     await page.getByText('R8').click();
     await page.keyboard.press('Delete');
     await takeEditorScreenshot(page);
 
-    await selectTopPanelButton(TopPanelButton.Undo, page);
-    await delay(DELAY_IN_SECONDS.THREE);
+    await waitForRender(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Undo, page);
+    });
 
     await selectLeftPanelButton(LeftPanelButton.Erase, page);
-    await selectRGroup(page, rGroupFromFile);
+    await page.getByText('R8').click();
     await takeEditorScreenshot(page);
 
-    await selectTopPanelButton(TopPanelButton.Undo, page);
-    await delay(DELAY_IN_SECONDS.THREE);
+    await waitForRender(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Undo, page);
+    });
 
     await page.keyboard.press('Control+a');
     await page.keyboard.press('Control+Delete');
@@ -266,41 +268,35 @@ test.describe('Open Ketcher', () => {
     await selectTopPanelButton(TopPanelButton.Layout, page);
   });
 
-  test.fixme(
-    'Copy/Paste actions Structure with R-Group label',
-    async ({ page }) => {
-      /*
+  test('Copy/Paste actions Structure with R-Group label', async ({ page }) => {
+    /*
       Test case: EPMLSOPKET-1601
       Description: User is able to Copy/Paste structure with R-group label.
     */
-      const x = 200;
-      const y = 200;
-      await openFileAndAddToCanvas(
-        'Molfiles-V2000/r1-several-structures.mol',
-        page,
-      );
-      await copyAndPaste(page);
-      await page.mouse.click(x, y);
-    },
-  );
+    const x = 300;
+    const y = 300;
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/r1-several-structures.mol',
+      page,
+    );
+    await copyAndPaste(page);
+    await page.mouse.click(x, y);
+  });
 
-  test.fixme(
-    'Cut/Paste actions Structure with R-Group label',
-    async ({ page }) => {
-      /*
+  test('Cut/Paste actions Structure with R-Group label', async ({ page }) => {
+    /*
       Test case: EPMLSOPKET-1601
       Description: User is able to Cut/Paste the structure with R-group label.
     */
-      const x = 500;
-      const y = 200;
-      await openFileAndAddToCanvas(
-        'Molfiles-V2000/r1-several-structures.mol',
-        page,
-      );
-      await cutAndPaste(page);
-      await page.mouse.click(x, y);
-    },
-  );
+    const x = 500;
+    const y = 200;
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/r1-several-structures.mol',
+      page,
+    );
+    await cutAndPaste(page);
+    await page.mouse.click(x, y);
+  });
 });
 
 test.describe('R-Group Fragment Tool', () => {

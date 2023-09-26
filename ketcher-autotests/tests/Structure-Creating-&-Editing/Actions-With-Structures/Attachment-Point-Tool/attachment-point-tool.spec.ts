@@ -2,10 +2,8 @@
 import { Page, expect, test } from '@playwright/test';
 import {
   pressButton,
-  delay,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
-  DELAY_IN_SECONDS,
   selectNestedTool,
   RgroupTool,
   selectTopPanelButton,
@@ -27,6 +25,8 @@ import {
   setAttachmentPoints,
   AttachmentPoint,
   waitForPageInit,
+  waitForRender,
+  waitForSpinnerFinishedWork,
 } from '@utils';
 
 import { getAtomByIndex } from '@utils/canvas/atoms';
@@ -337,26 +337,33 @@ test.describe('Attachment Point Tool', () => {
     await screenshotBetweenUndoRedo(page);
   });
 
-  test.fixme('Copy/Paste reaction with Attachment point', async ({ page }) => {
+  test('Copy/Paste reaction with Attachment point', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1646
     Description: Pasted structures are displayed with the correct attachment points.
-    Undo/Redo actions for each step are correct.
     */
-    await openFileAndAddToCanvas('KET/reaction-with-arrow-and-plus.ket', page);
+    const x = 500;
+    const y = 200;
+    await openFileAndAddToCanvas(
+      'KET/reaction-with-attachment-points.ket',
+      page,
+    );
     await copyAndPaste(page);
-    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await page.mouse.click(x, y);
   });
 
-  test.fixme('Cut/Paste reaction with Attachment point', async ({ page }) => {
+  test('Cut/Paste reaction with Attachment point', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1646
     Description: Pasted structures are displayed with the correct attachment points.
     Undo/Redo actions for each step are correct.
     */
-    const x = 0;
-    const y = 300;
-    await openFileAndAddToCanvas('KET/reaction-with-arrow-and-plus.ket', page);
+    const x = 500;
+    const y = 200;
+    await openFileAndAddToCanvas(
+      'KET/reaction-with-attachment-points.ket',
+      page,
+    );
     await cutAndPaste(page);
     await page.mouse.click(x, y);
 
@@ -526,28 +533,6 @@ test.describe('Attachment Point Tool', () => {
       });
     expect(smiFile).toEqual(smiFileExpected);
   });
-
-  test.fixme(
-    'Clean Up and Layout distorted chain with attachment points',
-    async ({ page }) => {
-      /*
-    Test case: EPMLSOPKET-1654
-    Description: The structures are cleaned correctly without attachment point(s) loss.
-    */
-      await openFileAndAddToCanvas(
-        'distorted-chain-with-attachment-points.mol',
-        page,
-      );
-
-      await selectTopPanelButton(TopPanelButton.Layout, page);
-      await takeEditorScreenshot(page);
-
-      await selectTopPanelButton(TopPanelButton.Undo, page);
-
-      await selectTopPanelButton(TopPanelButton.Clean, page);
-      await delay(DELAY_IN_SECONDS.SEVEN);
-    },
-  );
 
   test('Rotate structure with attachment points', async ({ page }) => {
     /*
@@ -823,5 +808,41 @@ test.describe('Attachment Point Tool', () => {
       { primary: false, secondary: false },
       'Apply',
     );
+  });
+});
+
+test.describe('Attachment Point Tool', () => {
+  test.beforeEach(async ({ page }) => {
+    await waitForPageInit(page);
+  });
+
+  test.afterEach(async ({ page }) => {
+    await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
+  });
+
+  test('Clean Up and Layout distorted chain with attachment points', async ({
+    page,
+  }) => {
+    /*
+    Test case: EPMLSOPKET-1654
+    Description: The structures are cleaned correctly without attachment point(s) loss.
+    */
+    await openFileAndAddToCanvas(
+      'distorted-chain-with-attachment-points.mol',
+      page,
+    );
+
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Layout, page);
+    });
+    await takeEditorScreenshot(page);
+
+    await waitForRender(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Undo, page);
+    });
+
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Clean, page);
+    });
   });
 });

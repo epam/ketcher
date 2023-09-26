@@ -36,6 +36,7 @@ export const FileControls = ({
         iconName="open"
         shortcut={shortcuts.open}
         isHidden={hiddenButtons.includes('open')}
+        testId="open-file-button"
       />
       <TopToolbarIconButton
         title="Save as..."
@@ -43,6 +44,7 @@ export const FileControls = ({
         iconName="save"
         shortcut={shortcuts.save}
         isHidden={hiddenButtons.includes('save')}
+        testId="save-file-button"
       />
     </>
   );

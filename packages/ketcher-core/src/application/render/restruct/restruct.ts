@@ -473,7 +473,6 @@ class ReStruct {
         this.structChanged = this.structChanged || mapChanged.get(id) > 0;
       });
     });
-
     // TODO: when to update sgroup?
     this.sgroups.forEach((sgroup) => {
       this.clearVisel(sgroup.visel);
@@ -691,7 +690,6 @@ class ReStruct {
   private showAtoms(): void {
     // eslint-disable-line max-statements
     const options = this.render.options;
-
     this.atomsChanged.forEach((_value, aid) => {
       const atom = this.atoms.get(aid);
       if (atom) atom.show(this, aid, options);

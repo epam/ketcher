@@ -24,13 +24,13 @@ test.describe('Open Ketcher', () => {
   });
 
   test('Save button tooltip', async ({ page }) => {
-    // Test case: EPMLSOPKET-1833
+    // Test case: EPMLSOPKET-1842
     const button = page.getByTestId('save-file-button');
     await expect(button).toHaveAttribute('title', 'Save as... (Ctrl+S)');
   });
 
   test('Save button UI', async ({ page }) => {
-    // Test case: EPMLSOPKET-1834
+    // Test case: EPMLSOPKET-1843
     await page.getByTitle('Save as...').click();
     await takeEditorScreenshot(page, {
       masks: [page.locator('[class*="Save-module_previewArea__-0SLb"] > span')],

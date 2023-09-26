@@ -90,7 +90,6 @@ class ReStruct {
   private bondsChanged: Map<number, ReEnhancedFlag> = new Map();
   private textsChanged: Map<number, ReText> = new Map();
   private snappingBonds: number[] = [];
-  private monomers: Map<number, ReMonomer> = new Map();
 
   constructor(
     molecule,

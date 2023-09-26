@@ -99,27 +99,29 @@ class TemplatePreview {
   movePreview(event: PointerEvent) {
     this.position = this.editor.render.page2obj(event);
 
-    const ci = this.getPreviewTarget();
-    const isMouseAwayFromAtomsAndBonds = !ci;
+    const previewTarget = this.getPreviewTarget();
+    const isMouseAwayFromAtomsAndBonds = !previewTarget;
     const isPreviewTargetChanged =
-      ci && this.lastPreviewId !== getUniqueCiId(ci);
+      previewTarget && this.lastPreviewId !== getUniqueCiId(previewTarget);
 
     const shouldHidePreview =
       isMouseAwayFromAtomsAndBonds || isPreviewTargetChanged;
 
     const shouldShowPreview =
-      ci && !this.connectedPreviewAction && !this.connectedPreviewTimeout;
+      previewTarget &&
+      !this.connectedPreviewAction &&
+      !this.connectedPreviewTimeout;
 
     if (shouldHidePreview) {
       this.hideConnectedPreview();
     }
 
     if (shouldShowPreview) {
-      this.lastPreviewId = getUniqueCiId(ci);
+      this.lastPreviewId = getUniqueCiId(previewTarget);
       this.connectedPreviewTimeout = setTimeout(() => {
         this.previousPosition = this.position;
         this.hideFloatingPreview();
-        this.showConnectedPreview(event, ci);
+        this.showConnectedPreview(event, previewTarget);
       }, PREVIEW_DELAY);
     } else if (shouldHidePreview) {
       if (!this.floatingPreview) {
@@ -127,18 +129,28 @@ class TemplatePreview {
         this.previousPosition = this.position;
         this.editor.render.update(false, null, { resizeCanvas: false });
       } else {
-        const dist = this.position.sub(this.previousPosition);
-        this.previousPosition = this.position;
-        fromMultipleMove(this.restruct, this.floatingPreview, dist);
-        this.editor.render.update(false, null, { resizeCanvas: false });
-        this.hoverFusedItems(ci, event);
+        this.moveFloatingPreview(previewTarget, event);
       }
     }
   }
 
-  private hoverFusedItems(ci: ClosestItemType | null, event: PointerEvent) {
+  private moveFloatingPreview(
+    previewTarget: ClosestItemType | null,
+    event: PointerEvent,
+  ) {
+    const dist = this.position.sub(this.previousPosition);
+    this.previousPosition = this.position;
+    fromMultipleMove(this.restruct, this.floatingPreview, dist);
+    this.editor.render.update(false, null, { resizeCanvas: false });
+    this.hoverFusedItems(previewTarget, event);
+  }
+
+  private hoverFusedItems(
+    closestItem: ClosestItemType | null,
+    event: PointerEvent,
+  ) {
     if (this.mode === 'fg') {
-      this.editor.hover(ci, null, event);
+      this.editor.hover(closestItem, null, event);
     } else {
       const mergeItems = getItemsToFuse(this.editor, this.floatingPreview);
       this.editor.hover(getHoverToFuse(mergeItems));

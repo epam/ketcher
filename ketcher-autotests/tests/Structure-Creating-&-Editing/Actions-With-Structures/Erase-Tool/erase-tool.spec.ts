@@ -1,30 +1,32 @@
-import { expect, test } from '@playwright/test';
-import { selectAction, selectTool, takeEditorScreenshot } from '@utils/canvas';
-import { getLeftAtomByAttributes } from '@utils/canvas/atoms';
-import { getLeftBondByAttributes } from '@utils/canvas/bonds';
-import { BondType } from '@utils/canvas/types';
+import { test, expect } from '@playwright/test';
 import {
   openFileAndAddToCanvas,
-  LeftPanelButton,
   TopPanelButton,
+  takeEditorScreenshot,
+  waitForPageInit,
+  waitForRender,
+  BondType,
+  selectAction,
+  takeLeftToolbarScreenshot,
+  clickOnAtom,
+  clickOnBond,
 } from '@utils';
 import { RxnArrow, RxnPlus } from 'ketcher-core';
-
 function checkElementExists(element: RxnPlus | RxnArrow, errorMsg: string) {
   if (!element) {
     throw new Error(errorMsg);
   }
 }
 
-let point: { x: number; y: number };
-
 test.describe('Erase Tool', () => {
-  // TO DO: here in both tests we have some issue with openFileAndAddToCanvas() function it need proper investigation
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
-    await openFileAndAddToCanvas('benzene-bromobutane-reaction.rxn', page);
+    await waitForPageInit(page);
+    await openFileAndAddToCanvas(
+      'Rxn-V2000/benzene-bromobutane-reaction.rxn',
+      page,
+    );
 
-    await selectTool(LeftPanelButton.Erase, page);
+    await page.getByTestId('erase').click();
   });
 
   test.afterEach(async ({ page }) => {
@@ -40,16 +42,19 @@ test.describe('Erase Tool', () => {
     const atomSizeAfterErase = 21;
     const bondsSizeAfterErase = 18;
 
-    point = await getLeftAtomByAttributes(page, { label: 'Br' });
-    await page.mouse.click(point.x, point.y);
+    await waitForRender(page, async () => {
+      await clickOnAtom(page, 'Br', 0);
+    });
 
     const atomSize = await page.evaluate(() => {
       return window.ketcher.editor.struct().atoms.size;
     });
     expect(atomSize).toEqual(atomSizeAfterErase);
 
-    point = await getLeftBondByAttributes(page, { type: BondType.DOUBLE });
-    await page.mouse.click(point.x, point.y);
+    await waitForRender(page, async () => {
+      // eslint-disable-next-line no-magic-numbers
+      await clickOnBond(page, BondType.SINGLE, 2);
+    });
 
     const bondSize = await page.evaluate(() => {
       return window.ketcher.editor.struct().bonds.size;
@@ -57,7 +62,7 @@ test.describe('Erase Tool', () => {
     expect(bondSize).toEqual(bondsSizeAfterErase);
   });
 
-  test.fixme('Erase reaction', async ({ page }) => {
+  test('Erase reaction', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1364, 1365
     Description: Erase the reaction arrow and plus signs, undo and redo action
@@ -134,5 +139,26 @@ test.describe('Erase Tool', () => {
       return window.ketcher.editor.struct().rxnArrows.size;
     });
     expect(arrowOnCanvas).toEqual(reactionArrow);
+  });
+});
+
+test.describe('Erase Tool', () => {
+  test.beforeEach(async ({ page }) => {
+    await waitForPageInit(page);
+  });
+
+  test.afterEach(async ({ page }) => {
+    await takeLeftToolbarScreenshot(page);
+  });
+
+  test('Toolbar icon verification', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-1362
+    Description: The appropriate icon presents at the Toolbar for Erase tool.
+    */
+    await openFileAndAddToCanvas(
+      'Rxn-V2000/benzene-bromobutane-reaction.rxn',
+      page,
+    );
   });
 });

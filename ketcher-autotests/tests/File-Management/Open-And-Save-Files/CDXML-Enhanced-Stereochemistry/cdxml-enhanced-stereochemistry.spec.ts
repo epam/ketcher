@@ -8,6 +8,8 @@ import {
   receiveFileComparisonData,
   saveToFile,
   clickOnAtom,
+  waitForPageInit,
+  waitForRender,
 } from '@utils';
 import { getCdxml } from '@utils/formats';
 
@@ -19,12 +21,14 @@ async function selectRadioButtonForNewGroup(
   await selectLeftPanelButton(LeftPanelButton.Stereochemistry, page);
   await page.getByLabel(selectRadioButton).check();
 
-  await pressButton(page, cancelChanges ? 'Cancel' : 'Apply');
+  await waitForRender(page, async () => {
+    await pressButton(page, cancelChanges ? 'Cancel' : 'Apply');
+  });
 }
 
 test.describe('CDXML Enhanced Stereochemistry', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {
@@ -78,7 +82,7 @@ test.describe('CDXML Enhanced Stereochemistry', () => {
 
 test.describe('CDXML Enhanced Stereochemistry', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test('AND stereo marks - Save as *.cdxml file', async ({ page }) => {

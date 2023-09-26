@@ -238,7 +238,7 @@ function MenuComponent() {
     <Menu onItemClick={menuItemChanged} activeMenuItems={activeMenuItems}>
       <Menu.Group>
         <Menu.Submenu>
-          <Menu.Item itemId="open" />
+          <Menu.Item itemId="open" title="Open..." />
           <Menu.Item itemId="save" />
         </Menu.Submenu>
       </Menu.Group>

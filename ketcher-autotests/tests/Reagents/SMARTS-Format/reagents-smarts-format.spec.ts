@@ -9,6 +9,7 @@ import {
   readFileContents,
   pasteFromClipboard,
   waitForLoad,
+  waitForPageInit,
 } from '@utils';
 import { getSmarts } from '@utils/formats';
 
@@ -27,7 +28,7 @@ async function previewSmarts(page: Page) {
 
 test.describe('Reagents SMARTS format', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {
@@ -44,7 +45,7 @@ test.describe('Reagents SMARTS format', () => {
     format in "Preview" tab (e.g. [#6]-1=[#6]-[#6]=[#6]-[#6]=[#6]-1>[#7]>[#6]-1=[#6]-[#6]=[#6]-[#6]=[#6]-1)
     */
     await openFileAndAddToCanvas(
-      'Ket/benzene-arrow-benzene-reagent-nh3.ket',
+      'KET/benzene-arrow-benzene-reagent-nh3.ket',
       page,
     );
 
@@ -69,7 +70,7 @@ test.describe('Reagents SMARTS format', () => {
     )
     */
     await openFileAndAddToCanvas(
-      'Ket/benzene-arrow-benzene-reagent-hcl.ket',
+      'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
 
@@ -120,7 +121,7 @@ test.describe('Reagents SMARTS format', () => {
 
 test.describe('Reagents SMARTS format', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test('File saves in "Daylight SMARTS" format', async ({ page }) => {
@@ -129,7 +130,7 @@ test.describe('Reagents SMARTS format', () => {
     Description: File saved in format (e.g. "ketcher.smarts")
     */
     await openFileAndAddToCanvas(
-      'Ket/benzene-arrow-benzene-reagent-nh3.ket',
+      'KET/benzene-arrow-benzene-reagent-nh3.ket',
       page,
     );
 

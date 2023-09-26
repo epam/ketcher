@@ -16,12 +16,13 @@ import {
   resetCurrentTool,
   STRUCTURE_LIBRARY_BUTTON_NAME,
   moveOnAtom,
+  waitForPageInit,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 
 test.describe('Click and drag Atom on canvas', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {

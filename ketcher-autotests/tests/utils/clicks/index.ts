@@ -8,8 +8,9 @@ import {
   selectButtonById,
   selectNestedTool,
   takeEditorScreenshot,
+  waitForRender,
 } from '..';
-import { AtomLabelType } from './types';
+import { AtomLabelType, DropdownIds, DropdownToolIds } from './types';
 
 type BoundingBox = {
   width: number;
@@ -25,13 +26,15 @@ export async function clickInTheMiddleOfTheScreen(
   button: 'left' | 'right' = 'left',
 ) {
   const body = (await page.locator('body').boundingBox()) as BoundingBox;
-  await page.mouse.click(
-    body.x + body?.width / HALF_DIVIDER,
-    body.y + body?.height / HALF_DIVIDER,
-    {
-      button,
-    },
-  );
+  await waitForRender(page, async () => {
+    await page.mouse.click(
+      body.x + body?.width / HALF_DIVIDER,
+      body.y + body?.height / HALF_DIVIDER,
+      {
+        button,
+      },
+    );
+  });
 }
 
 export async function getCoordinatesOfTheMiddleOfTheScreen(page: Page) {
@@ -53,6 +56,9 @@ export function selectOption(page: Page, name = '') {
   return page.getByRole('option', { name }).click();
 }
 
+export function selectOptionByText(page: Page, text = '') {
+  return page.getByText(text, { exact: true }).click();
+}
 /* Usage: await pressTab(page, 'Functional Groups')
   Click on specified Tab in Templates dialog
 */
@@ -68,7 +74,9 @@ export async function moveMouseToTheMiddleOfTheScreen(page: Page) {
 export async function dragMouseTo(x: number, y: number, page: Page) {
   await page.mouse.down();
   await page.mouse.move(x, y);
-  await page.mouse.up();
+  await waitForRender(page, async () => {
+    await page.mouse.up();
+  });
 }
 
 export async function clickOnTheCanvas(
@@ -79,10 +87,12 @@ export async function clickOnTheCanvas(
   const secondStructureCoordinates = await getCoordinatesOfTheMiddleOfTheScreen(
     page,
   );
-  await page.mouse.click(
-    secondStructureCoordinates.x + xOffsetFromCenter,
-    secondStructureCoordinates.y + yOffsetFromCenter,
-  );
+  await waitForRender(page, async () => {
+    await page.mouse.click(
+      secondStructureCoordinates.x + xOffsetFromCenter,
+      secondStructureCoordinates.y + yOffsetFromCenter,
+    );
+  });
 }
 
 export async function clickByLink(page: Page, url: string) {
@@ -152,6 +162,26 @@ export async function moveOnBond(
 ) {
   const point = await getBondByIndex(page, { type: bondType }, bondNumber);
   await page.mouse.move(point.x, point.y);
+}
+
+export async function openDropdown(page: Page, dropdownElementId: DropdownIds) {
+  await page.getByTestId('hand').click();
+  // There is a bug in Ketcher – if we click on button too fast, dropdown menu is not opened
+  await page
+    .getByTestId(dropdownElementId)
+    .click({ delay: 200, clickCount: 2 });
+}
+
+export async function selectDropdownTool(
+  page: Page,
+  toolName: DropdownIds,
+  toolTypeId: DropdownToolIds,
+) {
+  await openDropdown(page, toolName);
+  const button = page.locator(
+    `.default-multitool-dropdown [data-testid="${toolTypeId}"]`,
+  );
+  await button.click();
 }
 
 export async function applyAutoMapMode(

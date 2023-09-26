@@ -3,6 +3,8 @@ import {
   getCoordinatesOfTheMiddleOfTheScreen,
   openFileAndAddToCanvas,
   takeEditorScreenshot,
+  waitForPageInit,
+  waitForRender,
 } from '@utils';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
 import {
@@ -24,7 +26,7 @@ import {
 
 test.describe('Rotation', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test('Cancel rotation on right click', async ({ page }) => {
@@ -195,9 +197,14 @@ test.describe('Rotation', () => {
     const anyReaction = 'Rxn-V2000/rxn-reaction.rxn';
     await openFileAndAddToCanvas(anyReaction, page);
     await page.mouse.move(EMPTY_SPACE_X, EMPTY_SPACE_Y);
-    await page.keyboard.press('Alt+v');
+    await waitForRender(page, async () => {
+      await page.keyboard.press('Alt+v');
+    });
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Alt+h');
+
+    await waitForRender(page, async () => {
+      await page.keyboard.press('Alt+h');
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -335,24 +342,23 @@ test.describe('Rotation', () => {
     expect(y).toEqual(rotationHandleY);
   });
 
-  test.fixme(
-    'Works with different zoom level and screen resolution',
-    async ({ page }) => {
-      /*
+  test('Works with different zoom level and screen resolution', async ({
+    page,
+  }) => {
+    /*
       Test case: EPMLSOPKET-12998
       Description: Click on rotation handle doesn't change its position
     */
-      const fiftyPercentZoom = 5;
-      await page.setViewportSize({ width: 1200, height: 1080 });
-      for (let i = 0; i < fiftyPercentZoom; i++) {
-        await page.keyboard.press('Control+_');
-      }
-      await addStructureAndSelect(page);
-      await rotateToCoordinates(page, COORDINATES_TO_PERFORM_ROTATION);
-      await resetSelection(page);
-      await takeEditorScreenshot(page);
-    },
-  );
+    const fiftyPercentZoom = 5;
+    await page.setViewportSize({ width: 1200, height: 1080 });
+    for (let i = 0; i < fiftyPercentZoom; i++) {
+      await page.keyboard.press('Control+_');
+    }
+    await addStructureAndSelect(page);
+    await rotateToCoordinates(page, COORDINATES_TO_PERFORM_ROTATION);
+    await resetSelection(page);
+    await takeEditorScreenshot(page);
+  });
 
   test('Cancel rotation on "Escape" key', async ({ page }) => {
     /*
@@ -458,7 +464,7 @@ test.describe('Rotation', () => {
 
 test.describe('Rotation snapping', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test('for 90, 120 and 180 degrees', async ({ page }) => {

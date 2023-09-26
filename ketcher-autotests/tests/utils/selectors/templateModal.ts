@@ -1,4 +1,4 @@
-import { Page } from '@playwright/test';
+import { Page, expect } from '@playwright/test';
 import {
   LeftPanelButton,
   clickInTheMiddleOfTheScreen,
@@ -96,8 +96,15 @@ export async function selectSaltsAndSolvents(
   saltsName: SaltsAndSolvents,
   page: Page,
 ) {
+  const amountOfSaltsAndSolvents = 124;
   const saltsButton = page.locator(`div[title*="${saltsName}"] > div`).first();
+  await expect(
+    page.locator('[data-testid*="templates-modal"] > div'),
+  ).toHaveCount(amountOfSaltsAndSolvents);
   await saltsButton.click();
+  await expect(page.getByTestId('templates-modal')).toHaveCount(0, {
+    timeout: 20000,
+  });
 }
 
 export async function selectFunctionalGroups(
@@ -107,7 +114,14 @@ export async function selectFunctionalGroups(
   const functionalGroupButton = page
     .locator(`div[title*="${functionalGroupName}"] > div`)
     .first();
+  const amountOfFunctionalGroups = 62;
+  await expect(
+    page.locator('[data-testid*="templates-modal"] > div'),
+  ).toHaveCount(amountOfFunctionalGroups);
   await functionalGroupButton.click();
+  await expect(page.getByTestId('templates-modal')).toHaveCount(0, {
+    timeout: 20000,
+  });
 }
 
 export async function selectUserTemplate(

@@ -53,7 +53,7 @@ export async function selectEraseTool(page: Page) {
 }
 
 export async function selectRectangleSelectionTool(page: Page) {
-  const bondToolButton = page.locator(`button[title*="select-rectangle"]`);
+  const bondToolButton = page.locator(`button[title*="Select Rectangle"]`);
   await bondToolButton.click();
 }
 
@@ -97,10 +97,6 @@ export async function selectButtonById(buttonId: BondIds | 'OK', page: Page) {
   await element.click();
 }
 
-export async function openSimpleObjectsDropdown(page: Page) {
-  await page.getByTestId('shape-ellipse').click();
-  await page.getByTestId('shape-ellipse').click();
-}
 export async function saveStructureWithReaction(page: Page, format?: string) {
   await selectTopPanelButton(TopPanelButton.Save, page);
   if (format) {

@@ -21,6 +21,7 @@ import {
   clickOnAtom,
   BondTool,
   selectNestedTool,
+  waitForPageInit,
 } from '@utils';
 import { getKet, getMolfile } from '@utils/formats';
 
@@ -86,7 +87,7 @@ async function selectRadioButtonForNewGroup(
 
 test.describe('Enhanced Stereochemistry Tool', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {
@@ -202,7 +203,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     - the selected stereocenters have different stereo marks.
     */
     await openFileAndAddToCanvas(
-      'Ket/different-marks-stereostructure.ket',
+      'KET/different-marks-stereostructure.ket',
       page,
     );
     await selectLeftPanelButton(LeftPanelButton.Stereochemistry, page);
@@ -254,15 +255,15 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     All enhanced stereochemistry features are present after opening.
     It's possible to edit the stereo marks assignment after opening the saved file.
     */
-    await openFileAndAddToCanvas('Ket/stereo-and-structure.ket', page);
+    await openFileAndAddToCanvas('KET/stereo-and-structure.ket', page);
     const expectedFile = await getKet(page);
-    await saveToFile('Ket/stereo-and-structure-expected.ket', expectedFile);
+    await saveToFile('KET/stereo-and-structure-expected.ket', expectedFile);
 
     const { fileExpected: ketFileExpected, file: ketFile } =
       await receiveFileComparisonData({
         page,
         expectedFileName:
-          'tests/test-data/Ket/stereo-and-structure-expected.ket',
+          'tests/test-data/KET/stereo-and-structure-expected.ket',
       });
 
     expect(ketFile).toEqual(ketFileExpected);
@@ -281,15 +282,15 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     All enhanced stereochemistry features are present after opening.
     It's possible to edit the stereo marks assignment after opening the saved file.
     */
-    await openFileAndAddToCanvas('Ket/stereo-or-structure.ket', page);
+    await openFileAndAddToCanvas('KET/stereo-or-structure.ket', page);
     const expectedFile = await getKet(page);
-    await saveToFile('Ket/stereo-or-structure-expected.ket', expectedFile);
+    await saveToFile('KET/stereo-or-structure-expected.ket', expectedFile);
 
     const { fileExpected: ketFileExpected, file: ketFile } =
       await receiveFileComparisonData({
         page,
         expectedFileName:
-          'tests/test-data/Ket/stereo-or-structure-expected.ket',
+          'tests/test-data/KET/stereo-or-structure-expected.ket',
       });
 
     expect(ketFile).toEqual(ketFileExpected);
@@ -308,15 +309,15 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     All enhanced stereochemistry features are present after opening.
     It's possible to edit the stereo marks assignment after opening the saved file.
     */
-    await openFileAndAddToCanvas('Ket/stereo-mixed-structure.ket', page);
+    await openFileAndAddToCanvas('KET/stereo-mixed-structure.ket', page);
     const expectedFile = await getKet(page);
-    await saveToFile('Ket/stereo-mixed-structure-expected.ket', expectedFile);
+    await saveToFile('KET/stereo-mixed-structure-expected.ket', expectedFile);
 
     const { fileExpected: ketFileExpected, file: ketFile } =
       await receiveFileComparisonData({
         page,
         expectedFileName:
-          'tests/test-data/Ket/stereo-mixed-structure-expected.ket',
+          'tests/test-data/KET/stereo-mixed-structure-expected.ket',
       });
 
     expect(ketFile).toEqual(ketFileExpected);
@@ -337,15 +338,15 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     All enhanced stereochemistry features are present after opening.
     It's possible to edit the stereo marks assignment after opening the saved file.
     */
-    await openFileAndAddToCanvas('mixed-and-stereomarks.ket', page);
+    await openFileAndAddToCanvas('KET/mixed-and-stereomarks.ket', page);
     const expectedFile = await getKet(page);
-    await saveToFile('Ket/mixed-and-stereomarks-expected.ket', expectedFile);
+    await saveToFile('KET/mixed-and-stereomarks-expected.ket', expectedFile);
 
     const { fileExpected: ketFileExpected, file: ketFile } =
       await receiveFileComparisonData({
         page,
         expectedFileName:
-          'tests/test-data/Ket/mixed-and-stereomarks-expected.ket',
+          'tests/test-data/KET/mixed-and-stereomarks-expected.ket',
       });
 
     expect(ketFile).toEqual(ketFileExpected);
@@ -366,15 +367,15 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     All enhanced stereochemistry features are present after opening.
     It's possible to edit the stereo marks assignment after opening the saved file.
     */
-    await openFileAndAddToCanvas('Ket/mixed-or-stereomarks.ket', page);
+    await openFileAndAddToCanvas('KET/mixed-or-stereomarks.ket', page);
     const expectedFile = await getKet(page);
-    await saveToFile('Ket/mixed-or-stereomarks-expected.ket', expectedFile);
+    await saveToFile('KET/mixed-or-stereomarks-expected.ket', expectedFile);
 
     const { fileExpected: ketFileExpected, file: ketFile } =
       await receiveFileComparisonData({
         page,
         expectedFileName:
-          'tests/test-data/Ket/mixed-or-stereomarks-expected.ket',
+          'tests/test-data/KET/mixed-or-stereomarks-expected.ket',
       });
 
     expect(ketFile).toEqual(ketFileExpected);
@@ -392,7 +393,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     Description: The '&1' and 'or1' and 'abs' stereo marks appear next to the selected stereocenter.
     */
     await openFileAndAddToCanvas(
-      'Ket/different-marks-stereostructure.ket',
+      'KET/different-marks-stereostructure.ket',
       page,
     );
     await selectLabelDisplayAtStereogenicCenters(page, 'Classic');
@@ -404,7 +405,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     Description: The '&1' and 'or1' and 'abs' stereo marks appear next to the selected stereocenter.
     */
     await openFileAndAddToCanvas(
-      'Ket/different-marks-stereostructure.ket',
+      'KET/different-marks-stereostructure.ket',
       page,
     );
     await selectLabelDisplayAtStereogenicCenters(page, 'On');
@@ -416,7 +417,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     Description: Only stereo flag displays near the structure.
     */
     await openFileAndAddToCanvas(
-      'Ket/different-marks-stereostructure.ket',
+      'KET/different-marks-stereostructure.ket',
       page,
     );
     await selectLabelDisplayAtStereogenicCenters(page, 'Off');
@@ -428,7 +429,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     Description: When 'Off' is selected - Stereobonds and stereo labels are displayed in black.
     */
     await openFileAndAddToCanvas(
-      'Ket/different-marks-stereostructure.ket',
+      'KET/different-marks-stereostructure.ket',
       page,
     );
     await selectColorOfStereogenicCenters(page, 'Off');
@@ -440,7 +441,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     Description: When 'Labels and Bonds' is selected - Stereobonds and stereo labels are displayed in color.
     */
     await openFileAndAddToCanvas(
-      'Ket/different-marks-stereostructure.ket',
+      'KET/different-marks-stereostructure.ket',
       page,
     );
     await selectColorOfStereogenicCenters(page, 'Labels and Bonds');
@@ -453,7 +454,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     and stereo labels are displayed in black.
     */
     await openFileAndAddToCanvas(
-      'Ket/different-marks-stereostructure.ket',
+      'KET/different-marks-stereostructure.ket',
       page,
     );
     await selectColorOfStereogenicCenters(page, 'Bonds Only');
@@ -559,7 +560,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     'Add to OR [ ] Group' setting becomes available when at least
     one OR group has been created on the canvas.
     */
-    await openFileAndAddToCanvas('Ket/mixed-and-or-structure.ket', page);
+    await openFileAndAddToCanvas('KET/mixed-and-or-structure.ket', page);
     await selectLeftPanelButton(LeftPanelButton.Stereochemistry, page);
   });
 
@@ -569,7 +570,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     Description: Labels (&) are colored and color intensity is decreasing with the number.
     */
     await openFileAndAddToCanvas(
-      'Ket/mixed-with-eight-stereocenters.ket',
+      'KET/mixed-with-eight-stereocenters.ket',
       page,
     );
     await takeEditorScreenshot(page);
@@ -592,7 +593,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     Description: Stereo flag - Mixed2
     */
     await editMixedFlagText(page, 'Mixed2');
-    await openFileAndAddToCanvas('Ket/mixed-and-stereomarks.ket', page);
+    await openFileAndAddToCanvas('KET/mixed-and-stereomarks.ket', page);
   });
 
   test('No overlapping of Stereo flag and structure', async ({ page }) => {

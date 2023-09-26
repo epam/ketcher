@@ -15,6 +15,7 @@ import {
   DrawingEntityHoverOperation,
   DrawingEntitySelectOperation,
   DrawingEntityMoveOperation,
+  DrawingEntityRedrawOperation,
 } from 'application/editor/operations/drawingEntity';
 import {
   PolymerBondAddOperation,
@@ -144,6 +145,15 @@ export class DrawingEntitiesManager {
     const command = new Command();
 
     const movingCommand = new DrawingEntityMoveOperation(drawingEntity);
+    command.addOperation(movingCommand);
+
+    return command;
+  }
+
+  public createDrawingEntityRedrawCommand(drawingEntity: DrawingEntity) {
+    const command = new Command();
+
+    const movingCommand = new DrawingEntityRedrawOperation(drawingEntity);
     command.addOperation(movingCommand);
 
     return command;
@@ -538,12 +548,12 @@ export class DrawingEntitiesManager {
     return monomer.attachmentPointsToBonds.R1?.secondMonomer;
   }
 
-  public reArrangeBonds() {
+  public redrawBonds() {
     const command = new Command();
 
     this.polymerBonds.forEach((drawingEntity) => {
       drawingEntity.moveToLinkedMonomers();
-      command.merge(this.createDrawingEntityMovingCommand(drawingEntity));
+      command.merge(this.createDrawingEntityRedrawCommand(drawingEntity));
     });
     return command;
   }

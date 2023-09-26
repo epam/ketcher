@@ -1,11 +1,9 @@
 import { test, expect } from '@playwright/test';
 import {
-  pressButton,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   TopPanelButton,
   waitForPageInit,
-  waitForLoad,
   selectTopPanelButton,
   saveToFile,
   receiveFileComparisonData,

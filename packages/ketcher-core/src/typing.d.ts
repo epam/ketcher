@@ -11,6 +11,6 @@ declare global {
   }
 
   export interface Element {
-    __data__: BaseRenderer;
+    __data__?: BaseRenderer;
   }
 }

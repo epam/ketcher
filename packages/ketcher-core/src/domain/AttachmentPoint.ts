@@ -4,7 +4,7 @@ import { D3SvgElementSelection } from 'application/render/types';
 import { BaseMonomer } from './entities/BaseMonomer';
 import assert from 'assert';
 import {
-  canvas_to_monomer_coordinates,
+  canvasToMonomerCoordinates,
   findLabelPoint,
   getSearchFunction,
 } from './helpers/attachmentPointCalculations';
@@ -165,21 +165,21 @@ export class AttachmentPoint {
 
     const [pointOnBorder, pointOfAttachment, labelPoint] =
       this.catchThePoint(angleDegrees);
-    const attachmentToBorderCoordinates = canvas_to_monomer_coordinates(
+    const attachmentToBorderCoordinates = canvasToMonomerCoordinates(
       pointOnBorder,
       this.centerOFMonomer,
       this.bodyWidth,
       this.bodyHeight,
     );
 
-    const attachmentPointCoordinates = canvas_to_monomer_coordinates(
+    const attachmentPointCoordinates = canvasToMonomerCoordinates(
       pointOfAttachment,
       this.centerOFMonomer,
       this.bodyWidth,
       this.bodyHeight,
     );
 
-    const labelCoordinates = canvas_to_monomer_coordinates(
+    const labelCoordinates = canvasToMonomerCoordinates(
       labelPoint,
       this.centerOFMonomer,
       this.bodyWidth,

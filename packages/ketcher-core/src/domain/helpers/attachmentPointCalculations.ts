@@ -1,7 +1,7 @@
 import { Vec2 } from 'domain/entities/vec2';
 
 // eslint-disable-next-line camelcase
-export function canvas_to_monomer_coordinates(
+export function canvasToMonomerCoordinates(
   coordinatesOnCanvas,
   centerOFMonomer: { x: number; y: number },
   monomerWidth: number,

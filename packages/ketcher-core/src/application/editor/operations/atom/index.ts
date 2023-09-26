@@ -57,7 +57,6 @@ class AtomAdd extends BaseOperation {
     }
 
     const { aid } = this.data;
-
     // notifyAtomAdded
     const atomData = new ReAtom(struct.atoms.get(aid)!);
 

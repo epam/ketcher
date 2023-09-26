@@ -16,7 +16,7 @@ import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { monomerClass } from 'application/formatters/types/ket';
 
 type DerivedClass<T> = new (...args: unknown[]) => T;
-const MONOMER_CONST = {
+export const MONOMER_CONST = {
   PEPTIDE: 'PEPTIDE',
   CHEM: 'CHEM',
   RNA: 'RNA',

@@ -60,10 +60,18 @@ class ReBond extends ReObject {
 
   static bondRecalc(bond: ReBond, restruct: ReStruct, options: any): void {
     const render = restruct.render;
-    const atom1 = restruct.atoms.get(bond.b.begin);
-    const atom2 = restruct.atoms.get(bond.b.end);
     const sgroup1 = restruct.molecule.getGroupFromAtomId(bond.b.begin);
     const sgroup2 = restruct.molecule.getGroupFromAtomId(bond.b.end);
+    const atom1 = restruct.atoms.get(
+      sgroup1 instanceof MonomerMicromolecule
+        ? sgroup1.getAttachmentAtomId()
+        : bond.b.begin,
+    );
+    const atom2 = restruct.atoms.get(
+      sgroup2 instanceof MonomerMicromolecule
+        ? sgroup2.getAttachmentAtomId()
+        : bond.b.end,
+    );
 
     if (
       !atom1 ||

@@ -290,7 +290,6 @@ export class Struct {
     });
 
     this.functionalGroups.forEach((fg) => {
-      console.error('here');
       fg = FunctionalGroup.clone(fg);
       cp.functionalGroups.add(fg);
     });

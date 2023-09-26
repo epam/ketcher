@@ -76,6 +76,10 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     let position;
     let x;
     let y;
+    let length;
+    let y2;
+    let cx;
+    let cy;
 
     switch (number) {
       case 0:
@@ -96,11 +100,29 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
         x = -7;
         y = -22;
         break;
-      default:
+      case 3:
         rotation = 270;
         position = { x: this.bodyWidth / 2, y: this.bodyHeight };
         x = -5;
         y = 30;
+        break;
+      case 4:
+        rotation = 60;
+        position = { x: this.bodyWidth / 5, y: 5 };
+        x = -10;
+        y = -20;
+        y2 = 5;
+        cx = -20;
+        cy = 5;
+        break;
+      default:
+        rotation = 150;
+        position = { x: (this.bodyWidth / 5) * 4, y: 5 };
+        x = 20;
+        y = -18;
+        y2 = 5;
+        cx = -20;
+        cy = 5;
     }
 
     let atP;
@@ -124,6 +146,10 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
         AttachmentPointName,
         x,
         y,
+        length,
+        y2,
+        cx,
+        cy,
       );
     }
 

@@ -28,6 +28,8 @@ import {
   PolymerBondShowInfoOperation,
 } from 'application/editor/operations/polymerBond';
 import { monomerFactory } from 'application/editor/operations/monomer/monomerFactory';
+import { provideEditorSettings } from 'application/editor/editorSettings';
+import { Scale } from 'domain/helpers';
 
 type RnaPresetAdditionParams = {
   sugar: MonomerItemType;
@@ -484,36 +486,50 @@ export class DrawingEntitiesManager {
 
   private rearrangeChain(initCoords: Vec2, chain, canvasWidth) {
     const command = new Command();
-
+    const editorSettings = provideEditorSettings();
     const monomerWidth = chain[0].renderer?.bodyWidth ?? 0;
     const monomerHeight = chain[0].renderer?.bodyHeight ?? 0;
-    const heightMonomerWithBomd = monomerHeight + 80;
-    chain[0].moveAbsolute(initCoords);
+    const heightMonomerWithBond = monomerHeight + 80;
+    chain[0].moveAbsolute(Scale.scaled2obj(initCoords, editorSettings));
     const operation = new MonomerMoveOperation(chain[0]);
     command.addOperation(operation);
 
     for (let i = 1; i < chain.length; i++) {
-      if (chain[i - 1].position.x + 64 + initCoords.x + 50 + 70 > canvasWidth) {
+      let prevPosition = Scale.obj2scaled(
+        chain[i - 1].position,
+        editorSettings,
+      );
+      if (prevPosition.x + 64 + initCoords.x + 50 + 70 > canvasWidth) {
         chain[i].moveAbsolute(
-          new Vec2({
-            x: initCoords.x,
-            y: chain[i - 1].position.y + heightMonomerWithBomd,
-            z: initCoords.z,
-          }),
+          Scale.scaled2obj(
+            new Vec2({
+              x: initCoords.x,
+              y: prevPosition.y + heightMonomerWithBond,
+              z: initCoords.z,
+            }),
+            editorSettings,
+          ),
         );
       } else {
         chain[i].moveAbsolute(
-          new Vec2({
-            x: chain[i - 1].position.x + monomerWidth + 50,
-            y: chain[i - 1].position.y,
-            z: initCoords.z,
-          }),
+          Scale.scaled2obj(
+            new Vec2({
+              x: prevPosition.x + monomerWidth + 50,
+              y: prevPosition.y,
+              z: initCoords.z,
+            }),
+            editorSettings,
+          ),
         );
       }
       const operation = new MonomerMoveOperation(chain[i]);
       command.addOperation(operation);
     }
-    return { command, lastCoord: chain[chain.length - 1].position };
+    const lastCoord = Scale.obj2scaled(
+      chain[chain.length - 1].position,
+      editorSettings,
+    );
+    return { command, lastCoord };
   }
 
   private findChainByMonomer(monomer) {

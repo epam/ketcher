@@ -5,15 +5,19 @@ import {
   SaltsAndSolvents,
   clickInTheMiddleOfTheScreen,
   takeEditorScreenshot,
-  FunctionalGroups,
   waitForPageInit,
+  FunctionalGroups,
   selectFunctionalGroup,
   selectSaltsAndSolventsGroup,
 } from '@utils';
 
-test.describe('Open Ketcher', () => {
+test.describe('Salts and Solvents replacement', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
+  });
+
+  test.afterEach(async ({ page }) => {
+    await takeEditorScreenshot(page);
   });
 
   test('Verify if the new Salt or Solvent is replacing old one', async ({
@@ -28,7 +32,6 @@ Test case: EPMLSOPKET-12972 - 'Check that new Salt or Solvent is replacing the p
 
     await selectSaltsAndSolventsGroup(SaltsAndSolvents.AceticAcid, page);
     await clickInTheMiddleOfTheScreen(page);
-    await takeEditorScreenshot(page);
   });
 
   test('Salts and Solvents should replace Atoms, Functional Groups, and Salts and Solvents', async ({
@@ -49,7 +52,6 @@ Test case: EPMLSOPKET-12969 - 'Check that in all cases, there must be a replacem
 
     await selectSaltsAndSolventsGroup(SaltsAndSolvents.AceticAcid, page);
     await clickInTheMiddleOfTheScreen(page);
-    await takeEditorScreenshot(page);
   });
 
   test('Verify if Methan Sulphonic Acid replace the Nitrogen atom', async ({

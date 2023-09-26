@@ -18,12 +18,16 @@ export class PolymerBondRenderer extends BaseRenderer {
   private editorEvents: typeof editorEvents;
   private selectionElement;
   private path = '';
-  private isSnake = true;
+  private static isSnake = false;
 
   constructor(public polymerBond: PolymerBond) {
     super(polymerBond as DrawingEntity);
     this.polymerBond.setRenderer(this);
     this.editorEvents = editorEvents;
+  }
+
+  static setSnakeMode(isSnakeMode) {
+    PolymerBondRenderer.isSnake = isSnakeMode;
   }
 
   public get rootBBox() {
@@ -48,7 +52,7 @@ export class PolymerBondRenderer extends BaseRenderer {
   }
 
   public appendBond(rootElement) {
-    if (this.isSnake) {
+    if (PolymerBondRenderer.isSnake) {
       this.appendSnakeBond(rootElement);
     } else {
       this.appendBondGraph(rootElement);
@@ -329,7 +333,7 @@ export class PolymerBondRenderer extends BaseRenderer {
   }
 
   public moveEnd() {
-    if (this.isSnake) {
+    if (PolymerBondRenderer.isSnake) {
       this.moveSnakeBondEnd();
     } else {
       this.moveGraphBondEnd();
@@ -367,7 +371,7 @@ export class PolymerBondRenderer extends BaseRenderer {
   }
 
   public moveStart() {
-    if (this.isSnake) {
+    if (PolymerBondRenderer.isSnake) {
       this.moveSnakeBondStart();
     } else {
       this.moveGraphBondStart();

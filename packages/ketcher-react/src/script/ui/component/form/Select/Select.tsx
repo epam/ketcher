@@ -93,6 +93,7 @@ const Select = ({
               className={clsx({
                 [`dropdown-${formName}_${name}`]: formName,
               })}
+              data-testid={`${option.label}-option`}
             >
               {option.label}
             </MenuItem>

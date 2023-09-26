@@ -15,7 +15,6 @@
  ***************************************************************************/
 import { SGroup } from 'domain/entities/sgroup';
 import { Vec2 } from 'domain/entities/vec2';
-import { Render } from 'application/render';
 import { Struct } from 'domain/entities/struct';
 
 export class MonomerMicromolecule extends SGroup {

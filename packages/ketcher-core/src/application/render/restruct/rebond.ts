@@ -64,12 +64,12 @@ class ReBond extends ReObject {
     const sgroup2 = restruct.molecule.getGroupFromAtomId(bond.b.end);
     const atom1 = restruct.atoms.get(
       sgroup1 instanceof MonomerMicromolecule
-        ? sgroup1.getAttachmentAtomId()
+        ? (sgroup1.getAttachmentAtomId() as number)
         : bond.b.begin,
     );
     const atom2 = restruct.atoms.get(
       sgroup2 instanceof MonomerMicromolecule
-        ? sgroup2.getAttachmentAtomId()
+        ? (sgroup2.getAttachmentAtomId() as number)
         : bond.b.end,
     );
 

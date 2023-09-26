@@ -36,8 +36,6 @@ import { Text } from './text';
 import { Vec2 } from './vec2';
 import { Highlight } from './highlight';
 import { RGroupAttachmentPoint } from './rgroupAttachmentPoint';
-import { BaseMonomer } from './BaseMonomer';
-import { PolymerBond } from 'domain/entities/PolymerBond';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 
 export type Neighbor = {
@@ -82,8 +80,6 @@ export class Struct {
     this.atoms = new Pool<Atom>();
     this.bonds = new Pool<Bond>();
     this.sgroups = new Pool<SGroup>();
-    this.monomers = new Map<number, BaseMonomer>();
-    this.polymerBonds = new Map<number, PolymerBond>();
     this.halfBonds = new Pool<HalfBond>();
     this.loops = new Pool<Loop>();
     this.isReaction = false;

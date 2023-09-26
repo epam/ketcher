@@ -112,6 +112,12 @@ export async function takeTopToolbarScreenshot(page: Page) {
   await expect(editor).toHaveScreenshot();
 }
 
+export async function takeBottomToolbarScreenshot(page: Page) {
+  const editor = page.getByTestId('bottom-toolbar');
+  await delay(DELAY_IN_SECONDS.THREE);
+  await expect(editor).toHaveScreenshot();
+}
+
 export async function takeMultitoolDropdownScreenshot(page: Page) {
   const dropdown = page.locator('.default-multitool-dropdown');
   await expect(dropdown).toHaveScreenshot();

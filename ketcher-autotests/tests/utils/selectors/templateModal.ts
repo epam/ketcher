@@ -91,6 +91,7 @@ export enum TemplateLibrary {
   Azulene = 'Azulene',
   Naphtalene = 'Naphtalene',
   Anthracene = 'Anthracene',
+  Arabinofuranose = 'Arabinofuranose',
 }
 
 export async function selectSaltsAndSolvents(

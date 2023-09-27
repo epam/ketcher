@@ -7,6 +7,8 @@ import {
   selectUserTemplatesAndPlaceInTheMiddle,
   TemplateLibrary,
   clickInTheMiddleOfTheScreen,
+  selectTemplate,
+  selectUserTemplate,
 } from '@utils';
 
 test.describe('Open Ketcher', () => {
@@ -94,5 +96,21 @@ test.describe('Open Ketcher', () => {
       page,
     );
     await clickInTheMiddleOfTheScreen(page);
+  });
+
+  test('The scroll should not be displayed in the edit', async ({ page }) => {
+    /*
+   Test case: EPMLSOPKET-4736 
+   Launch Ketcher
+   Open Templates window
+   Open alpha-D-Sugars tab of Templates window
+   Click on Edit button in right down corner of template (e.g. alpha-D-Arabinofuranose)
+   */
+    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+    await page.getByRole('tab', { name: 'Template Library' }).click();
+    await page.getByRole('button', { name: 'Aromatics (18)' }).click();
+    await page.getByTitle('Azulene').getByRole('button').click();
+    await takeEditorScreenshot(page);
+    await page.getByRole('button', { name: 'Edit' }).click();
   });
 });

@@ -33,7 +33,7 @@ test.describe('Open Ketcher', () => {
     // Test case: EPMLSOPKET-1843
     await page.getByTitle('Save as...').click();
     await takeEditorScreenshot(page, {
-      masks: [page.locator('[class*="Save-module_previewArea__-0SLb"] > span')],
+      masks: [page.getByTestId('mol-preview-area-text')],
     });
   });
 

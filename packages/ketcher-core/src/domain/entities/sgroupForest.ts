@@ -169,34 +169,33 @@ export class SGroupForest {
   }
 }
 
-export function checkOverlapping(struct, atoms) {
-  const sgroups = atoms.reduce((res, aid) => {
-    const atom = struct.atoms.get(aid);
-    return res.union(atom.sgs);
-  }, new Pile());
+export function checkOverlapping(
+  struct: Struct,
+  atoms: number[] = [],
+  sGroupType: 'queryComponent' | 'common',
+) {
+  const searchFunction = {
+    common: (sid: number) => {
+      const sg = struct.sgroups.get(sid);
+      if (sg?.type === 'DAT') return false;
+      const sgAtoms = SGroup.getAtoms(struct, sg);
 
-  return Array.from(sgroups).some((sid) => {
-    const sg = struct.sgroups.get(sid);
-    if (sg.type === 'DAT') return false;
-    const sgAtoms = SGroup.getAtoms(struct, sg);
+      return sgAtoms.length < atoms.length
+        ? sgAtoms.findIndex((aid) => atoms.indexOf(aid) === -1) >= 0
+        : atoms.findIndex((aid) => sgAtoms.indexOf(aid) === -1) >= 0;
+    },
+    queryComponent: (sid: number) => {
+      const sg = struct.sgroups.get(sid);
+      if (sg?.type !== 'queryComponent') return false;
+      const sgAtoms = SGroup.getAtoms(struct, sg);
 
-    return sgAtoms.length < atoms.length
-      ? sgAtoms.findIndex((aid) => atoms.indexOf(aid) === -1) >= 0
-      : atoms.findIndex((aid) => sgAtoms.indexOf(aid) === -1) >= 0;
-  });
-}
-
-export function checkQuerySGroupOverlapping(struct: Struct, atoms: number[]) {
+      return atoms.some((aid) => sgAtoms.includes(aid));
+    },
+  };
   const sgroups = atoms.reduce((res, aid) => {
     const atom = struct.atoms.get(aid);
     return atom ? res.union(atom.sgs) : res;
   }, new Pile());
 
-  return Array.from(sgroups).some((sid) => {
-    const sg = struct.sgroups.get(sid);
-    if (sg?.type !== 'queryComponent') return false;
-    const sgAtoms = SGroup.getAtoms(struct, sg);
-
-    return atoms.some((aid) => sgAtoms.includes(aid));
-  });
+  return Array.from(sgroups).some(searchFunction[sGroupType]);
 }

@@ -25,7 +25,6 @@ import {
   SGroup,
   Pool,
   expandSGroupWithMultipleAttachmentPoint,
-  checkQuerySGroupOverlapping,
 } from 'ketcher-core';
 
 import LassoHelper from './helper/lasso';
@@ -496,7 +495,7 @@ class SGroupTool implements Tool {
         if (
           !isDataSGroup && // when data s-group separates
           !isQuerySGroup &&
-          checkOverlapping(struct, selection.atoms || [])
+          checkOverlapping(struct, selection.atoms, 'common')
         ) {
           editor.event.message.dispatch({
             error: 'Partial S-group overlapping is not allowed.',
@@ -531,7 +530,7 @@ class SGroupTool implements Tool {
             return;
           }
           const result = isQuerySGroup
-            ? createQuerySGroup(id, editor, newSg, selection, sg)
+            ? createQueryComponentSGroup(id, editor, newSg, selection, sg)
             : fromContextType(id, editor, newSg, selection);
 
           result && editor.update(result.action);
@@ -544,7 +543,7 @@ class SGroupTool implements Tool {
   }
 }
 
-function createQuerySGroup(
+function createQueryComponentSGroup(
   id: number | null,
   editor: Editor,
   newSg,
@@ -559,7 +558,7 @@ function createQuerySGroup(
     }
     selection = { atoms: sg.atoms || [] };
   }
-  if (checkQuerySGroupOverlapping(struct, selection.atoms || [])) {
+  if (checkOverlapping(struct, selection.atoms, 'queryComponent')) {
     editor.errorHandler?.(
       'Cannot create a query component: one fragment can only be part of one query component',
     );

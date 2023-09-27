@@ -273,10 +273,10 @@ export function fromSgroupAction(
   }
 
   if (SGroup.isQuerySGroup(newSg)) {
-    return fromQuerySGroupAction(
+    return fromQueryComponentSGroupAction(
       restruct,
       newSg,
-      newSourceAtoms,
+      newSourceAtoms as number[],
       Array.from(restruct.atoms.keys()),
     );
   }
@@ -309,7 +309,15 @@ function fromAtomAction(restruct, newSg, sourceAtoms) {
   );
 }
 
-function fromQuerySGroupAction(restruct, newSg, sourceAtoms, targetAtoms) {
+function fromQueryComponentSGroupAction(
+  restruct: Restruct,
+  newSg: {
+    type: string;
+    attrs: object;
+  },
+  sourceAtoms: number[],
+  targetAtoms: number[],
+) {
   const selection: {
     atoms: number[];
     bonds: number[];
@@ -319,13 +327,13 @@ function fromQuerySGroupAction(restruct, newSg, sourceAtoms, targetAtoms) {
   };
 
   const allFragments = new Pile(
-    sourceAtoms.map((aid) => restruct.atoms.get(aid).a.fragment),
+    sourceAtoms.map((aid) => restruct.atoms.get(aid)?.a.fragment),
   );
 
   Array.from(allFragments).forEach((fragId) => {
-    const atoms = targetAtoms.reduce((res, aid) => {
-      const atom = restruct.atoms.get(aid).a;
-      if (fragId === atom.fragment) res.push(aid);
+    const atoms = targetAtoms.reduce((res: number[], aid: number) => {
+      const atom = restruct.atoms.get(aid)?.a;
+      if (fragId === atom?.fragment) res.push(aid);
 
       return res;
     }, []);

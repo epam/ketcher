@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { test, Page } from '@playwright/test';
+import { test, Page, expect } from '@playwright/test';
 import { BondType } from '@utils/canvas/types';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { selectButtonByTitle } from '@utils/clicks/selectButtonByTitle';
@@ -20,9 +20,9 @@ import {
   waitForPageInit,
 } from '@utils';
 
-async function createToolTipScreenshot(type: RingButton, page: Page) {
-  await page.getByRole('button', { name: type }).hover();
-  await takeEditorScreenshot(page);
+async function checkTooltip(type: RingButton, page: Page) {
+  const templateButton = page.getByRole('button', { name: type });
+  await expect(templateButton).toHaveAttribute('title', `${type} (T)`);
 }
 
 async function placeTwoRingsMergedByAtom(type: RingButton, page: Page) {
@@ -78,9 +78,8 @@ async function checkHistoryForBondDeletion(page: Page) {
   await selectTopPanelButton(TopPanelButton.Undo, page);
 }
 
-async function ManipulateRingsByName(type: RingButton, page: Page) {
-  // checking the tooltip
-  await createToolTipScreenshot(type, page);
+async function manipulateRingsByName(type: RingButton, page: Page) {
+  await checkTooltip(type, page);
   await placeTwoRingsMergedByAtom(type, page);
   await takeEditorScreenshot(page);
   await selectTopPanelButton(TopPanelButton.Clear, page);
@@ -110,43 +109,13 @@ test.describe('Templates - Rings manipulations', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Benzene', async ({ page }) => {
-    // EPLMSOCKET-1668
-    await ManipulateRingsByName(RingButton.Benzene, page);
-  });
+  const templates = Object.values(RingButton);
 
-  test('Cyclopentadiene', async ({ page }) => {
-    // EPLMSOCKET-1675
-    await ManipulateRingsByName(RingButton.Cyclopentane, page);
-  });
-
-  test('Cyclohexane', async ({ page }) => {
-    // EPLMSOCKET-1677
-    await ManipulateRingsByName(RingButton.Cyclohexane, page);
-  });
-
-  test('Cyclopentane', async ({ page }) => {
-    // EPLMSOCKET-1679
-    await ManipulateRingsByName(RingButton.Cyclopentane, page);
-  });
-
-  test('Cyclopropane', async ({ page }) => {
-    // EPLMSOCKET-1680
-    await ManipulateRingsByName(RingButton.Cyclopropane, page);
-  });
-
-  test('Cyclobutane', async ({ page }) => {
-    // EPLMSOCKET-1681
-    await ManipulateRingsByName(RingButton.Cyclobutane, page);
-  });
-
-  test('Cycloheptane', async ({ page }) => {
-    // EPLMSOCKET-1682
-    await ManipulateRingsByName(RingButton.Cycloheptane, page);
-  });
-
-  test('Cyclooctane', async ({ page }) => {
-    // EPLMSOCKET-1683
-    await ManipulateRingsByName(RingButton.Benzene, page);
-  });
+  for (const template of templates) {
+    test(template, async ({ page }) => {
+      // EPLMSOPCKET-1668, EPLMSOPCKET-1675, EPLMSOPCKET-1677, EPLMSOPCKET-1679, EPLMSOPCKET-1680, EPLMSOPCKET-1681
+      // EPLMSOPCKET-1682, EPLMSOPCKET-1683
+      await manipulateRingsByName(template, page);
+    });
+  }
 });

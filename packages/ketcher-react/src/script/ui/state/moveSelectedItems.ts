@@ -3,7 +3,7 @@ import {
   Vec2,
   EditorSelection,
   fromMultipleMove,
-  scrollByVector,
+  scrollCanvasByVector,
   ReAtom,
 } from 'ketcher-core';
 
@@ -41,7 +41,7 @@ export function moveSelectedItems(
   editor.update(action, false, { resizeCanvas: true });
   const isClose = isCloseToTheEdgeOfCanvas(selectedItems, editor, key);
   if (isClose) {
-    scrollByVector(distinationVector, editor.render);
+    scrollCanvasByVector(distinationVector, editor.render);
   }
   editor.rotateController.rerender();
 }

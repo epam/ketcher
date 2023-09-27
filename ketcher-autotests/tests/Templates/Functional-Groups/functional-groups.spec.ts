@@ -591,7 +591,7 @@ test.describe('Functional Groups', () => {
     await resetCurrentTool(page);
   });
 
-  test.skip('Hotkey for Atom can replace Salts and Solvents abbreviation', async ({
+  test('Hotkey for Atom can replace Salts and Solvents abbreviation', async ({
     page,
   }) => {
     /*

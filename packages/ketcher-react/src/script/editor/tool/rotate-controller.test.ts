@@ -213,7 +213,7 @@ describe('Rotate controller', () => {
     selectTool.mouseup(new MouseEvent('mouseup'));
 
     expect(updateRender).toBeCalled();
-    expect(selectTool.isMousedDown).toBe(false);
+    expect(selectTool.isMouseDown).toBe(false);
 
     expect(editor.historyStack).toHaveLength(0);
   });

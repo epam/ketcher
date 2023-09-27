@@ -19,7 +19,7 @@ test.describe('Open Ketcher', () => {
 
   test('Open button UI', async ({ page }) => {
     // Test case: EPMLSOPKET-1834
-    await page.getByTitle('Open...').click();
+    await selectTopPanelButton(TopPanelButton.Open, page);
     await takeEditorScreenshot(page);
   });
 
@@ -31,7 +31,8 @@ test.describe('Open Ketcher', () => {
 
   test('Save button UI', async ({ page }) => {
     // Test case: EPMLSOPKET-1843
-    await page.getByTitle('Save as...').click();
+    // await page.getByTitle('Save as...').click();
+    await selectTopPanelButton(TopPanelButton.Save, page);
     await takeEditorScreenshot(page, {
       masks: [page.getByTestId('mol-preview-area-text')],
     });

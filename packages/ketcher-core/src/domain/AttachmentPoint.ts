@@ -58,7 +58,7 @@ export class AttachmentPoint {
     }
 
     const attachmentPointElement = rootElement
-      ?.append('g')
+      ?.insert('g', ':first-child')
       .attr('transform', `translate(${position.x}, ${position.y})`);
 
     const attachmentPointRotationGroup = attachmentPointElement

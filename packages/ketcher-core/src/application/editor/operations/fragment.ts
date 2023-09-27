@@ -18,22 +18,26 @@
 import { ReEnhancedFlag, ReFrag, ReStruct } from '../../render';
 
 import { BaseOperation } from './base';
-import { Fragment } from 'domain/entities';
+import { Fragment, StructProperty } from 'domain/entities';
 import { OperationType } from './OperationType';
 
 // todo: separate classes: now here is circular dependency in `invert` method
 
 class FragmentAdd extends BaseOperation {
   frid: any;
+  properties?: Array<StructProperty>;
 
-  constructor(fragmentId?: any) {
+  constructor(fragmentId?: any, properties?: Array<StructProperty>) {
     super(OperationType.FRAGMENT_ADD);
     this.frid = typeof fragmentId === 'undefined' ? null : fragmentId;
+    if (properties) {
+      this.properties = properties;
+    }
   }
 
   execute(restruct: ReStruct) {
     const struct = restruct.molecule;
-    const frag = new Fragment();
+    const frag = new Fragment([], null, this.properties);
 
     if (this.frid === null) {
       this.frid = struct.frags.add(frag);
@@ -47,6 +51,34 @@ class FragmentAdd extends BaseOperation {
 
   invert() {
     return new FragmentDelete(this.frid);
+  }
+}
+
+class FragmentSetProperties extends BaseOperation {
+  frid: any;
+  properties?: Array<StructProperty>;
+
+  constructor(fragmentId: any, properties?: Array<StructProperty>) {
+    super(OperationType.FRAGMENT_SET_PROPERTIES);
+    this.frid = fragmentId;
+    this.properties = properties;
+  }
+
+  execute(restruct: ReStruct) {
+    const struct = restruct.molecule;
+    const frag = struct.frags.get(this.frid);
+
+    if (frag) {
+      if (this.properties) {
+        frag.properties = this.properties;
+      } else {
+        delete frag?.properties;
+      }
+    }
+  }
+
+  invert() {
+    return new FragmentSetProperties(this.frid, undefined);
   }
 }
 
@@ -79,4 +111,4 @@ class FragmentDelete extends BaseOperation {
   }
 }
 
-export { FragmentAdd, FragmentDelete };
+export { FragmentAdd, FragmentDelete, FragmentSetProperties };

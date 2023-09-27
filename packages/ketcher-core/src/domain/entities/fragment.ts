@@ -18,7 +18,7 @@ import { Point, Vec2 } from './vec2';
 
 import { Bond } from './bond';
 import { StereoLabel } from './atom';
-import { Struct } from './struct';
+import { Struct, StructProperty } from './struct';
 
 export enum StereoFlag {
   Mixed = 'MIXED',
@@ -73,6 +73,7 @@ function calcStereoFlag(
 export class Fragment {
   #enhancedStereoFlag?: StereoFlag;
   stereoFlagPosition?: Vec2;
+  properties?: Array<StructProperty>;
   #stereoAtoms: Array<number>;
 
   get stereoAtoms(): Array<number> {
@@ -83,11 +84,17 @@ export class Fragment {
     return this.#enhancedStereoFlag;
   }
 
-  constructor(stereoAtoms: Array<number> = [], stereoFlagPosition?: Point) {
+  constructor(
+    stereoAtoms: Array<number> = [],
+    stereoFlagPosition?: Point | null,
+    properties?: Array<StructProperty>,
+  ) {
     if (stereoFlagPosition) {
       this.stereoFlagPosition = new Vec2(stereoFlagPosition);
     }
-
+    if (properties) {
+      this.properties = properties;
+    }
     this.#stereoAtoms = stereoAtoms;
   }
 
@@ -103,7 +110,11 @@ export class Fragment {
 
   clone(aidMap: Map<number, number>) {
     const stereoAtoms = this.#stereoAtoms.map((aid) => aidMap.get(aid)!);
-    const fr = new Fragment(stereoAtoms, this.stereoFlagPosition);
+    const fr = new Fragment(
+      stereoAtoms,
+      this.stereoFlagPosition,
+      this.properties,
+    );
     fr.#enhancedStereoFlag = this.#enhancedStereoFlag;
     return fr;
   }

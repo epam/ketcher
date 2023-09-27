@@ -11,3 +11,4 @@
 - [ ] PR is linked with the issue
 - [ ] base branch (master or release/xx) is correct
 - [ ] task status changed to "Code review"
+- [ ] reviewers are notified about the pull request

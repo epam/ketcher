@@ -24,10 +24,10 @@ import {
   getItemsToFuse,
   FunctionalGroup,
   SGroup,
+  vectorUtils,
 } from 'ketcher-core';
 
 import { atomLongtapEvent } from './atom';
-import utils from '../shared/utils';
 import Editor from '../Editor';
 import { Tool } from './Tool';
 
@@ -171,8 +171,8 @@ class ChainTool implements Tool {
       const sectCount = Math.ceil(Vec2.diff(pos1, pos0).length());
 
       const angle = event.ctrlKey
-        ? utils.calcAngle(pos0, pos1)
-        : utils.fracAngle(pos0, pos1);
+        ? vectorUtils.calcAngle(pos0, pos1)
+        : vectorUtils.fracAngle(pos0, pos1);
 
       const [action, newItems] = fromChain(
         restruct,

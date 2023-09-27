@@ -8,7 +8,6 @@ describe('Save Dialog should be rendered correctly', () => {
     const view = renderWithMockContext(<Save />);
 
     userEvent.click(screen.getByText('MDL Molfile V2000'));
-
     await screen.findByText('MDL Molfile V3000');
 
     expect(view).toMatchSnapshot();

@@ -147,7 +147,10 @@ function findClosestAtom(restruct, pos, skip, minDist) {
     ) {
       return null;
     }
-    if (aid === skipId) return;
+    const isSkippedAtom = aid === skipId || atom.a.isPreview;
+    if (isSkippedAtom) {
+      return;
+    }
 
     const dist = Vec2.dist(pos, atom.a.pp);
 
@@ -182,7 +185,10 @@ function findClosestBond(restruct, pos, skip, minDist, options) {
   let minCDist = minDist;
 
   restruct.bonds.forEach((bond, bid) => {
-    if (bid === skipId) return;
+    const isSkippedBond = bid === skipId || bond.b.isPreview;
+    if (isSkippedBond) {
+      return;
+    }
 
     const p1 = restruct.atoms.get(bond.b.begin).a.pp;
     const p2 = restruct.atoms.get(bond.b.end).a.pp;
@@ -435,7 +441,7 @@ function findClosestSGroup(restruct, pos) {
   restruct.molecule.sgroups.forEach((sg, sgid) => {
     if (sg.isContracted()) return null;
 
-    const d = sg.bracketDir;
+    const d = sg.bracketDirection;
     const n = d.rotateSC(1, 0);
     const pg = new Vec2(Vec2.dot(pos, d), Vec2.dot(pos, n));
 

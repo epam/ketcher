@@ -64,6 +64,7 @@ export class Molfile {
     ret.initHalfBonds();
     ret.initNeighbors();
     ret.bindSGroupsToFunctionalGroups();
+    ret.markFragments();
 
     return ret;
   }
@@ -360,8 +361,8 @@ export class Molfile {
           }
         }
       }
-      if (atom.attpnt != null) {
-        aplabelList.push([id, atom.attpnt]);
+      if (atom.attachmentPoints != null) {
+        aplabelList.push([id, atom.attachmentPoints]);
       }
       if (atom.ringBondCount !== 0) {
         rbcountList.push([id, atom.ringBondCount]);

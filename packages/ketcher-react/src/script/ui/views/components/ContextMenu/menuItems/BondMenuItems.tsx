@@ -20,6 +20,7 @@ const BondMenuItems: FC<MenuItemsProps> = (props) => {
   const [handleSGroupEdit, sGroupEditDisabled, sGroupEditHidden] =
     useBondSGroupEdit();
   const handleDelete = useDelete();
+  const bondNamesWithoutEmptyValue = nonQueryBondNames.slice(1);
 
   return (
     <>
@@ -29,10 +30,20 @@ const BondMenuItems: FC<MenuItemsProps> = (props) => {
           : 'Edit...'}
       </Item>
 
-      {nonQueryBondNames.map((name) => {
+      {bondNamesWithoutEmptyValue.map((name, i) => {
         const iconName = getIconName(name);
+        const classNames =
+          styles.sameGroup +
+          (i === bondNamesWithoutEmptyValue.length - 1 ? styles.devider : '');
+
         return (
-          <Item {...props} id={name} onClick={handleTypeChange} key={name}>
+          <Item
+            className={classNames}
+            {...props}
+            id={name}
+            onClick={handleTypeChange}
+            key={name}
+          >
             {iconName && <Icon name={iconName} className={styles.icon} />}
             <span>{formatTitle(tools[name].title)}</span>
           </Item>
@@ -43,7 +54,12 @@ const BondMenuItems: FC<MenuItemsProps> = (props) => {
         {queryBondNames.map((name) => {
           const iconName = getIconName(name);
           return (
-            <Item id={name} onClick={handleTypeChange} key={name}>
+            <Item
+              className={styles.sameGroup}
+              id={name}
+              onClick={handleTypeChange}
+              key={name}
+            >
               {iconName && <Icon name={iconName} className={styles.icon} />}
               <span>{formatTitle(tools[name].title)}</span>
             </Item>

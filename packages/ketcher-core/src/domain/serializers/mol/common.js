@@ -289,7 +289,7 @@ function bracketsToMolfile(mol, sg, idstr) {
   const crossBonds = SGroup.getCrossBonds(mol, atomSet);
   SGroup.bracketPos(sg, mol, crossBonds);
   const bb = sg.bracketBox;
-  const d = sg.bracketDir;
+  const d = sg.bracketDirection;
   const n = d.rotateSC(1, 0);
   const brackets = SGroup.getBracketParameters(
     mol,

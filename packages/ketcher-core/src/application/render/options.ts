@@ -115,6 +115,8 @@ function defaultOptions(options: RenderOptions): RenderOptions {
     },
     atomSelectionPlateRadius: labelFontSize,
     contractedFunctionalGroupSize: 50,
+
+    previewOpacity: 0.5,
   };
 
   return Object.assign({}, defaultOptions, options);

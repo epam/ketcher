@@ -32,6 +32,7 @@ export const GroupBlock = ({
   monomerName,
   selected,
   onClick,
+  testid,
 }: IGroupBlockProps) => {
   const isEditMode = useAppSelector(selectIsEditMode);
 
@@ -41,6 +42,7 @@ export const GroupBlock = ({
       onClick={onClick}
       empty={!monomerName}
       isEditMode={isEditMode}
+      data-testid={testid}
     >
       <GroupIcon empty={!monomerName} selected={selected} name={iconName} />
       <TextContainer>

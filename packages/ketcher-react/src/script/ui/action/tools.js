@@ -28,20 +28,20 @@ const toolActions = {
     action: { tool: 'hand' },
     hidden: (options) => isHidden(options, 'hand'),
   },
-  'select-lasso': {
-    title: 'Lasso Selection',
-    shortcut: 'Escape',
-    action: { tool: 'select', opts: 'lasso' },
-  },
   'select-rectangle': {
     title: 'Rectangle Selection',
-    shortcut: 'Escape',
+    shortcut: ['Shift+Tab', 'Escape'],
     action: { tool: 'select', opts: 'rectangle' },
     hidden: (options) => isHidden(options, 'select-rectangle'),
   },
+  'select-lasso': {
+    title: 'Lasso Selection',
+    shortcut: ['Shift+Tab', 'Escape'],
+    action: { tool: 'select', opts: 'lasso' },
+  },
   'select-fragment': {
     title: 'Fragment Selection',
-    shortcut: 'Escape',
+    shortcut: ['Shift+Tab', 'Escape'],
     action: { tool: 'select', opts: 'fragment' },
     hidden: (options) => isHidden(options, 'select-fragment'),
   },
@@ -113,7 +113,7 @@ const toolActions = {
     hidden: (options) => isHidden(options, 'reaction-arrow-open-angle'),
   },
   'reaction-arrow-filled-triangle': {
-    title: 'Arrow Filled Triangle',
+    title: 'Arrow Filled Triangle Tool',
     action: { tool: 'reactionarrow', opts: RxnArrowMode.FilledTriangle },
     hidden: (options) => isHidden(options, 'reaction-arrow-filled-triangle'),
   },

@@ -1,5 +1,6 @@
 import { RaphaelPaper } from 'raphael';
 import {
+  AttachmentPoints,
   Bond,
   RGroupAttachmentPoint,
   RGroupAttachmentPointType,
@@ -254,7 +255,7 @@ class ReRGroupAttachmentPoint extends ReObject {
 
   private isTrisectionAttachmentPoint(): boolean {
     // in this case we should split the attachment point vector to two vectors
-    return this.reAtom.a.attpnt === 3;
+    return this.reAtom.a.attachmentPoints === AttachmentPoints.BothSides;
   }
 }
 
@@ -312,10 +313,11 @@ function newVectorFromAngle(angle: number): Vec2 {
 }
 
 function isAttachmentPointLabelRequired(restruct: ReStruct) {
-  // in case of having 2 or 3 attachment point type we have to render
-  // 2 - Secondary type
-  // 3 - Both Primary and Secondary - should be considered as two Attachment points
-  return restruct.molecule.atoms.some(({ attpnt }) => [2, 3].includes(attpnt));
+  return restruct.molecule.atoms.some(
+    ({ attachmentPoints }) =>
+      attachmentPoints === AttachmentPoints.SecondSideOnly ||
+      attachmentPoints === AttachmentPoints.BothSides,
+  );
 }
 
 function getAttachmentDirectionForOnlyOneBond(

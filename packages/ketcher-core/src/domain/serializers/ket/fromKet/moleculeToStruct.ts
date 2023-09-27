@@ -21,6 +21,8 @@ import {
   Struct,
   SGroupAttachmentPoint,
   RGroupAttachmentPoint,
+  AttachmentPoints,
+  AtomQueryProperties,
 } from 'domain/entities';
 
 import { Elements } from 'domain/constants';
@@ -38,6 +40,7 @@ export function toRlabel(values) {
 
 export function moleculeToStruct(ketItem: any): Struct {
   const struct = mergeFragmentsToStruct(ketItem, new Struct());
+
   if (ketItem.atoms) {
     ketItem.atoms.forEach((atom) => {
       let atomId: number | null = null;
@@ -72,7 +75,7 @@ export function moleculeToStruct(ketItem: any): Struct {
 
   struct.initHalfBonds();
   struct.initNeighbors();
-  struct.markFragments();
+  struct.markFragments(ketItem.properties);
   struct.bindSGroupsToFunctionalGroups();
 
   return struct;
@@ -81,6 +84,17 @@ export function moleculeToStruct(ketItem: any): Struct {
 export function atomToStruct(source) {
   const params: any = {};
 
+  const queryAttribute: Array<keyof AtomQueryProperties> = [
+    'aromaticity',
+    'degree',
+    'ringMembership',
+    'connectivity',
+    'ringSize',
+    'ringConnectivity',
+    'chirality',
+    'atomicMass',
+    'customQuery',
+  ];
   ifDef(params, 'label', source.label);
   ifDef(params, 'alias', source.alias);
   ifDef(params, 'pp', {
@@ -93,7 +107,7 @@ export function atomToStruct(source) {
   ifDef(params, 'isotope', source.isotope);
   ifDef(params, 'radical', source.radical);
   ifDef(params, 'cip', source.cip);
-  ifDef(params, 'attpnt', source.attachmentPoints);
+  ifDef(params, 'attachmentPoints', source.attachmentPoints);
   // stereo
   ifDef(params, 'stereoLabel', source.stereoLabel);
   ifDef(params, 'stereoParity', source.stereoParity);
@@ -103,6 +117,20 @@ export function atomToStruct(source) {
   ifDef(params, 'substitutionCount', source.substitutionCount);
   ifDef(params, 'unsaturatedAtom', Number(Boolean(source.unsaturatedAtom)));
   ifDef(params, 'hCount', source.hCount);
+  if (
+    source.queryProperties &&
+    Object.values(source.queryProperties).some((property) => property !== null)
+  ) {
+    params.queryProperties = {};
+    queryAttribute.forEach((attributeName) => {
+      ifDef(
+        params.queryProperties,
+        attributeName,
+        source.queryProperties[attributeName],
+      );
+    });
+  }
+
   // reaction
   ifDef(params, 'aam', source.mapping);
   ifDef(params, 'invRet', source.invRet);
@@ -120,7 +148,7 @@ export function rglabelToStruct(source) {
     y: -source.location[1],
     z: source.location[2] || 0.0,
   });
-  ifDef(params, 'attpnt', source.attachmentPoints);
+  ifDef(params, 'attachmentPoints', source.attachmentPoints);
   const rglabel = toRlabel(source.$refs.map((el) => parseInt(el.slice(3))));
   ifDef(params, 'rglabel', rglabel);
   return new Atom(params);
@@ -134,7 +162,7 @@ export function atomListToStruct(source) {
     y: -source.location[1],
     z: source.location[2] || 0.0,
   });
-  ifDef(params, 'attpnt', source.attachmentPoints);
+  ifDef(params, 'attachmentPoints', source.attachmentPoints);
   const ids = source.elements
     .map((el) => Elements.get(el)?.number)
     .filter((id) => id);
@@ -148,18 +176,18 @@ export function atomListToStruct(source) {
 function addRGroupAttachmentPointsToStruct(
   struct: Struct,
   attachedAtomId: number,
-  attpnt,
+  attachmentPoints: AttachmentPoints | null,
 ) {
   const rgroupAttachmentPoints: RGroupAttachmentPoint[] = [];
-  if (attpnt === 1) {
+  if (attachmentPoints === AttachmentPoints.FirstSideOnly) {
     rgroupAttachmentPoints.push(
       new RGroupAttachmentPoint(attachedAtomId, 'primary'),
     );
-  } else if (attpnt === 2) {
+  } else if (attachmentPoints === AttachmentPoints.SecondSideOnly) {
     rgroupAttachmentPoints.push(
       new RGroupAttachmentPoint(attachedAtomId, 'secondary'),
     );
-  } else if (attpnt === 3) {
+  } else if (attachmentPoints === AttachmentPoints.BothSides) {
     rgroupAttachmentPoints.push(
       new RGroupAttachmentPoint(attachedAtomId, 'primary'),
     );
@@ -195,6 +223,7 @@ export function bondToStruct(source, atomOffset = 0) {
   ifDef(params, 'reactingCenterStatus', source.center);
   ifDef(params, 'stereo', source.stereo);
   ifDef(params, 'cip', source.cip);
+  ifDef(params, 'customQuery', source.customQuery);
   // if (params.stereo)
   // 	params.stereo = params.stereo > 1 ? params.stereo * 2 : params.stereo;
   // params.xxx = 0;

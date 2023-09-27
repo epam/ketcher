@@ -176,6 +176,7 @@ export const ZoomControls = ({
       >
         <DropDownContent>
           <ZoomInput
+            data-testid="zoom-value"
             onZoomSubmit={onZoomSubmit}
             inputRef={inputRef}
             currentZoom={currentZoom}

@@ -28,15 +28,28 @@ export function identifyStructFormat(
     }
   } catch (er) {} // eslint-disable-line
 
-  if (sanitizedString.indexOf('$RXN') !== -1) {
+  const isRXN = sanitizedString.includes('$RXN');
+  const isSDF = sanitizedString.includes('\n$$$$');
+  const isV2000 = sanitizedString.includes('V2000');
+  const isV3000 = sanitizedString.includes('V3000');
+
+  if (isRXN) {
     return SupportedFormat.rxn;
   }
 
-  if (sanitizedString.indexOf('V2000') !== -1) {
+  if (isSDF) {
+    if (isV2000) {
+      return SupportedFormat.sdf;
+    } else {
+      return SupportedFormat.sdfV3000;
+    }
+  }
+
+  if (isV2000) {
     return SupportedFormat.mol;
   }
 
-  if (sanitizedString.indexOf('V3000') !== -1) {
+  if (isV3000) {
     return SupportedFormat.molV3000;
   }
 

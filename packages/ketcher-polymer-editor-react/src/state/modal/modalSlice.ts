@@ -19,11 +19,13 @@ import { RootState } from 'state';
 interface ModalState {
   name: string | null;
   isOpen: boolean;
+  errorTooltipText: string;
 }
 
 const initialState: ModalState = {
   name: null,
   isOpen: false,
+  errorTooltipText: '',
 };
 
 export const modalSlice = createSlice({
@@ -38,14 +40,23 @@ export const modalSlice = createSlice({
       state.name = null;
       state.isOpen = false;
     },
+    openErrorTooltip: (state, action: PayloadAction<string>) => {
+      state.errorTooltipText = action.payload;
+    },
+    closeErrorTooltip: (state) => {
+      state.errorTooltipText = '';
+    },
   },
 });
 
-export const { openModal, closeModal } = modalSlice.actions;
+export const { openModal, closeModal, openErrorTooltip, closeErrorTooltip } =
+  modalSlice.actions;
 
 export const selectModalName = (state: RootState): string | null =>
   state.modal.name;
 export const selectModalIsOpen = (state: RootState): boolean =>
   state.modal.isOpen;
+export const selectErrorTooltipText = (state: RootState): boolean =>
+  state.modal.errorTooltipText;
 
 export const modalReducer = modalSlice.reducer;

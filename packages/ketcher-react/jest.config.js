@@ -12,6 +12,7 @@ module.exports = {
     '\\.(css|less|sdf)$': 'identity-obj-proxy',
     '^src(.*)$': '<rootDir>/src/$1',
     '^components$': '<rootDir>/src/components',
+    '^d3$': '<rootDir>/../../node_modules/d3/dist/d3.min.js',
   },
   setupFilesAfterEnv: ['<rootDir>/src/setupTests.ts'],
 };

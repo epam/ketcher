@@ -300,7 +300,7 @@ class Editor implements KetcherEditor {
 
   setOptions(opts: string) {
     const options = JSON.parse(opts);
-    this.event.apiSettings.dispatch({ ...this.options(), ...options });
+    this.event.apiSettings.dispatch({ ...options });
     return this.render.updateOptions(opts);
   }
 
@@ -362,7 +362,7 @@ class Editor implements KetcherEditor {
   zoomAccordingContent(struct: Struct) {
     const MIN_ZOOM_VALUE = 0.1;
     const MAX_ZOOM_VALUE = 1;
-    const MARGIN_IN_PIXELS = 40;
+    const MARGIN_IN_PIXELS = 60;
     const parsedStructCoordBoundingBox = struct.getCoordBoundingBox();
     const parsedStructSize = new Vec2(
       parsedStructCoordBoundingBox.max.x - parsedStructCoordBoundingBox.min.x,
@@ -714,8 +714,8 @@ function updateLastCursorPosition(editor: Editor, event) {
       editor.render.clientArea.getBoundingClientRect();
 
     editor.lastCursorPosition = {
-      x: event.pageX - clientAreaBoundingBox.x,
-      y: event.pageY - clientAreaBoundingBox.y,
+      x: event.clientX - clientAreaBoundingBox.x,
+      y: event.clientY - clientAreaBoundingBox.y,
     };
   }
 }
@@ -803,7 +803,10 @@ function domEventSetup(editor: Editor, clientArea: HTMLElement) {
     editor.event[eventName] = new DOMSubscription();
     const subs = editor.event[eventName];
 
-    target.addEventListener(eventName, subs.dispatch.bind(subs));
+    target.addEventListener(eventName, (...args) => {
+      if (window.isPolymerEditorTurnedOn) return;
+      subs.dispatch(...args);
+    });
 
     subs.add((event) => {
       updateLastCursorPosition(editor, event);

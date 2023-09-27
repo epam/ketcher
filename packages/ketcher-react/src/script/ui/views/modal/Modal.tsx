@@ -52,6 +52,7 @@ function Modal(props: Props) {
     <div
       className={clsx(classes.modalOverlay, selectClasses.selectContainer)}
       ref={containerRef}
+      data-testid={`${modal.name}-dialog`}
     >
       <Component
         className={clsx({

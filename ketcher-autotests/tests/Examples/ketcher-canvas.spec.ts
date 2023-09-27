@@ -15,11 +15,12 @@ import {
   clickOnAtom,
   BondTool,
   selectNestedTool,
+  waitForPageInit,
 } from '@utils';
 
 test.describe('Drawing atom, Benzene ring, Single and Double Bond', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {
@@ -47,7 +48,7 @@ test.describe('Drawing atom, Benzene ring, Single and Double Bond', () => {
     await clickOnAtom(page, 'C', 2);
   });
 
-  test.fixme('single bond tool', async ({ page }) => {
+  test('single bond tool', async ({ page }) => {
     /*
      *   Test case: EPMLSOPKET-1371
      */

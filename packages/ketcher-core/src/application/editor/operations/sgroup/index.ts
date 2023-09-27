@@ -71,12 +71,16 @@ class SGroupCreate extends BaseOperation {
       sgroup.data.name = name;
     }
 
-    restruct.sgroups.set(sgid, new ReSGroup(struct.sgroups.get(sgid)));
-    if (
-      FunctionalGroup.isFunctionalGroup(sgroup) ||
-      SGroup.isSuperAtom(sgroup)
-    ) {
-      restruct.molecule.functionalGroups.add(new FunctionalGroup(sgroup));
+    const existingSGroup = struct.sgroups.get(sgid);
+
+    if (existingSGroup) {
+      restruct.sgroups.set(sgid, new ReSGroup(existingSGroup));
+      if (
+        FunctionalGroup.isFunctionalGroup(sgroup) ||
+        SGroup.isSuperAtom(sgroup)
+      ) {
+        restruct.molecule.functionalGroups.add(new FunctionalGroup(sgroup));
+      }
     }
     this.data.sgid = sgid;
   }
@@ -102,16 +106,16 @@ class SGroupDelete extends BaseOperation {
     const sgroup = restruct.sgroups.get(sgid);
     const sgroupData = restruct.sgroupData.get(sgid);
     if (!sgroup) return;
-    this.data.type = sgroup.item.type;
-    this.data.pp = sgroup.item.pp;
+    this.data.type = sgroup?.item?.type;
+    this.data.pp = sgroup?.item?.pp;
 
-    if (sgroup.item.type === 'DAT' && sgroupData) {
+    if (sgroup?.item?.type === 'DAT' && sgroupData) {
       restruct.clearVisel(sgroupData.visel);
       restruct.sgroupData.delete(sgid);
     }
 
     restruct.clearVisel(sgroup.visel);
-    if (sgroup.item.atoms.length !== 0) {
+    if (sgroup?.item?.atoms?.length !== 0) {
       throw new Error('S-Group not empty!');
     }
 

@@ -14,12 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { Root } from 'react-dom/client';
 import { ButtonsConfig, KetcherBuilder } from './builders';
 
 import { StructServiceProvider } from 'ketcher-core';
 
 interface Config {
   element: HTMLDivElement | null;
+  appRoot: Root;
   staticResourcesUrl: string;
   structServiceProvider: StructServiceProvider;
   buttons?: ButtonsConfig;
@@ -28,6 +30,7 @@ interface Config {
 
 async function buildKetcherAsync({
   element,
+  appRoot,
   staticResourcesUrl,
   structServiceProvider,
   buttons,
@@ -39,6 +42,7 @@ async function buildKetcherAsync({
   builder.appendServiceMode(structServiceProvider.mode);
   await builder.appendUiAsync(
     element,
+    appRoot,
     staticResourcesUrl,
     errorHandler,
     buttons,

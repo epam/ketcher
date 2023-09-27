@@ -18,13 +18,20 @@ import { SdfItem, StructAssociatedData } from './sdf.types';
 
 import { MolSerializer } from '../mol/molSerializer';
 import { Serializer } from '../serializers.types';
+import { MolSerializerOptions } from '../mol';
 
 const DelimeterRegex = /^[^]+?\$\$\$\$$/gm;
 export class SdfSerializer implements Serializer<Array<SdfItem>> {
+  private readonly molSerializerOptions?: Partial<MolSerializerOptions>;
+
+  constructor(options?: Partial<MolSerializerOptions>) {
+    this.molSerializerOptions = options;
+  }
+
   deserialize(content: string): Array<SdfItem> {
     let m: any;
     const result: Array<SdfItem> = [];
-    const molSerializer = new MolSerializer();
+    const molSerializer = new MolSerializer(this.molSerializerOptions);
     while ((m = DelimeterRegex.exec(content)) !== null) {
       const chunk = m[0].replace(/\r/g, '').trim(); // TODO: normalize newline?
       const end = chunk.indexOf('M  END');
@@ -55,7 +62,7 @@ export class SdfSerializer implements Serializer<Array<SdfItem>> {
   }
 
   serialize(sdfItems: Array<SdfItem>): string {
-    const molSerializer = new MolSerializer();
+    const molSerializer = new MolSerializer(this.molSerializerOptions);
     return sdfItems.reduce((res, item) => {
       res += molSerializer.serialize(item.struct);
 

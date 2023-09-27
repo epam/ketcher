@@ -25,6 +25,7 @@ Object {
           >
             <button
               class="buttonTop"
+              data-testid="close-icon"
             >
               <icon-close.svg
                 classname="closeButton"
@@ -50,6 +51,7 @@ Object {
                 >
                   <input
                     class="input genericInput"
+                    data-testid="file-name-input"
                     name="filename"
                     type="text"
                     value=""
@@ -57,7 +59,7 @@ Object {
                 </span>
               </label>
               <label
-                class=""
+                class="file-format-list"
               >
                 <span>
                   File format:
@@ -66,7 +68,7 @@ Object {
                   class="inputWrapper"
                 >
                   <div
-                    class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary Mui-focused selectContainer css-1yk1gt9-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root"
+                    class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary Mui-focused selectContainer file-format-list css-1yk1gt9-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root"
                   >
                     <div
                       aria-expanded="true"
@@ -115,6 +117,7 @@ Object {
                 >
                   <a
                     class="active"
+                    data-testid="preview-tab"
                   >
                     Preview
                   </a>
@@ -126,6 +129,7 @@ Object {
                 >
                   <textarea
                     class="previewArea"
+                    data-testid="mol-preview-area-text"
                     readonly=""
                   />
                 </div>
@@ -185,6 +189,7 @@ Object {
           <li
             aria-selected="false"
             class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-kk1bwy-MuiButtonBase-root-MuiMenuItem-root"
+            data-testid="Ket Format-option"
             data-value="ket"
             role="option"
             tabindex="-1"
@@ -194,6 +199,7 @@ Object {
           <li
             aria-selected="true"
             class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters Mui-selected MuiMenuItem-root MuiMenuItem-gutters Mui-selected css-kk1bwy-MuiButtonBase-root-MuiMenuItem-root"
+            data-testid="MDL Molfile V2000-option"
             data-value="mol"
             role="option"
             tabindex="0"
@@ -203,6 +209,7 @@ Object {
           <li
             aria-selected="false"
             class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-kk1bwy-MuiButtonBase-root-MuiMenuItem-root"
+            data-testid="MDL Molfile V3000-option"
             data-value="molV3000"
             role="option"
             tabindex="-1"
@@ -212,6 +219,27 @@ Object {
           <li
             aria-selected="false"
             class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-kk1bwy-MuiButtonBase-root-MuiMenuItem-root"
+            data-testid="SDF V2000-option"
+            data-value="sdf"
+            role="option"
+            tabindex="-1"
+          >
+            SDF V2000
+          </li>
+          <li
+            aria-selected="false"
+            class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-kk1bwy-MuiButtonBase-root-MuiMenuItem-root"
+            data-testid="SDF V3000-option"
+            data-value="sdfV3000"
+            role="option"
+            tabindex="-1"
+          >
+            SDF V3000
+          </li>
+          <li
+            aria-selected="false"
+            class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-kk1bwy-MuiButtonBase-root-MuiMenuItem-root"
+            data-testid="Daylight SMARTS-option"
             data-value="smarts"
             role="option"
             tabindex="-1"
@@ -221,6 +249,7 @@ Object {
           <li
             aria-selected="false"
             class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-kk1bwy-MuiButtonBase-root-MuiMenuItem-root"
+            data-testid="Daylight SMILES-option"
             data-value="smiles"
             role="option"
             tabindex="-1"
@@ -230,6 +259,7 @@ Object {
           <li
             aria-selected="false"
             class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-kk1bwy-MuiButtonBase-root-MuiMenuItem-root"
+            data-testid="Extended SMILES-option"
             data-value="smilesExt"
             role="option"
             tabindex="-1"
@@ -239,6 +269,7 @@ Object {
           <li
             aria-selected="false"
             class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-kk1bwy-MuiButtonBase-root-MuiMenuItem-root"
+            data-testid="CML-option"
             data-value="cml"
             role="option"
             tabindex="-1"
@@ -253,6 +284,7 @@ Object {
           <li
             aria-selected="false"
             class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-kk1bwy-MuiButtonBase-root-MuiMenuItem-root"
+            data-testid="InChI-option"
             data-value="inChI"
             role="option"
             tabindex="-1"
@@ -262,11 +294,22 @@ Object {
           <li
             aria-selected="false"
             class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-kk1bwy-MuiButtonBase-root-MuiMenuItem-root"
+            data-testid="InChI AuxInfo-option"
             data-value="inChIAuxInfo"
             role="option"
             tabindex="-1"
           >
             InChI AuxInfo
+          </li>
+          <li
+            aria-selected="false"
+            class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-kk1bwy-MuiButtonBase-root-MuiMenuItem-root"
+            data-testid="InChIKey-option"
+            data-value="inChIKey"
+            role="option"
+            tabindex="-1"
+          >
+            InChIKey
           </li>
           <hr
             aria-selected="false"
@@ -276,6 +319,7 @@ Object {
           <li
             aria-selected="false"
             class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-kk1bwy-MuiButtonBase-root-MuiMenuItem-root"
+            data-testid="SVG Document-option"
             data-value="svg"
             role="option"
             tabindex="-1"
@@ -285,6 +329,7 @@ Object {
           <li
             aria-selected="false"
             class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-kk1bwy-MuiButtonBase-root-MuiMenuItem-root"
+            data-testid="PNG Image-option"
             data-value="png"
             role="option"
             tabindex="-1"
@@ -294,6 +339,7 @@ Object {
           <li
             aria-selected="false"
             class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-kk1bwy-MuiButtonBase-root-MuiMenuItem-root"
+            data-testid="CDXML-option"
             data-value="cdxml"
             role="option"
             tabindex="-1"
@@ -303,6 +349,7 @@ Object {
           <li
             aria-selected="false"
             class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-kk1bwy-MuiButtonBase-root-MuiMenuItem-root"
+            data-testid="Base64 CDX-option"
             data-value="cdx"
             role="option"
             tabindex="-1"
@@ -312,6 +359,7 @@ Object {
           <li
             aria-selected="false"
             class="MuiButtonBase-root MuiMenuItem-root MuiMenuItem-gutters MuiMenuItem-root MuiMenuItem-gutters css-kk1bwy-MuiButtonBase-root-MuiMenuItem-root"
+            data-testid="CDX-option"
             data-value="binaryCdx"
             role="option"
             tabindex="-1"
@@ -345,6 +393,7 @@ Object {
         >
           <button
             class="buttonTop"
+            data-testid="close-icon"
           >
             <icon-close.svg
               classname="closeButton"
@@ -370,6 +419,7 @@ Object {
               >
                 <input
                   class="input genericInput"
+                  data-testid="file-name-input"
                   name="filename"
                   type="text"
                   value=""
@@ -377,7 +427,7 @@ Object {
               </span>
             </label>
             <label
-              class=""
+              class="file-format-list"
             >
               <span>
                 File format:
@@ -386,7 +436,7 @@ Object {
                 class="inputWrapper"
               >
                 <div
-                  class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary Mui-focused selectContainer css-1yk1gt9-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root"
+                  class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary Mui-focused selectContainer file-format-list css-1yk1gt9-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root"
                 >
                   <div
                     aria-expanded="true"
@@ -435,6 +485,7 @@ Object {
               >
                 <a
                   class="active"
+                  data-testid="preview-tab"
                 >
                   Preview
                 </a>
@@ -446,6 +497,7 @@ Object {
               >
                 <textarea
                   class="previewArea"
+                  data-testid="mol-preview-area-text"
                   readonly=""
                 />
               </div>

@@ -14,7 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { SGroup, Struct, SGroupAttachmentPoint } from 'domain/entities';
+import {
+  SGroup,
+  Struct,
+  SGroupAttachmentPoint,
+  AtomQueryProperties,
+} from 'domain/entities';
 
 import { ifDef } from 'utilities';
 
@@ -53,6 +58,9 @@ export function moleculeToKet(struct: Struct): any {
   const fragment = struct.frags.get(0);
   if (fragment) {
     ifDef(body, 'stereoFlagPosition', fragment.stereoFlagPosition, null);
+    if (fragment.properties) {
+      body.properties = fragment.properties;
+    }
   }
   return {
     type: 'molecule',
@@ -61,7 +69,7 @@ export function moleculeToKet(struct: Struct): any {
 }
 
 function atomToKet(source) {
-  const result = {};
+  const result: { queryProperties?: AtomQueryProperties } = {};
   ifDef(result, 'label', source.label);
   ifDef(result, 'alias', source.alias);
   ifDef(result, 'location', [source.pp.x, -source.pp.y, source.pp.z]);
@@ -69,7 +77,7 @@ function atomToKet(source) {
   ifDef(result, 'explicitValence', source.explicitValence, -1);
   ifDef(result, 'isotope', source.isotope, 0);
   ifDef(result, 'radical', source.radical, 0);
-  ifDef(result, 'attachmentPoints', source.attpnt, 0);
+  ifDef(result, 'attachmentPoints', source.attachmentPoints, 0);
   ifDef(result, 'cip', source.cip, '');
   // stereo
   ifDef(result, 'stereoLabel', source.stereoLabel, null);
@@ -80,6 +88,15 @@ function atomToKet(source) {
   ifDef(result, 'substitutionCount', source.substitutionCount, 0);
   ifDef(result, 'unsaturatedAtom', !!source.unsaturatedAtom, false);
   ifDef(result, 'hCount', source.hCount, 0);
+  // query properties
+  if (
+    Object.values(source.queryProperties).some((property) => property !== null)
+  ) {
+    result.queryProperties = {};
+    Object.keys(source.queryProperties).forEach((name) => {
+      ifDef(result.queryProperties, name, source.queryProperties[name]);
+    });
+  }
   // reaction
   ifDef(result, 'mapping', parseInt(source.aam), 0);
   ifDef(result, 'invRet', source.invRet, 0);
@@ -93,7 +110,7 @@ function rglabelToKet(source) {
     type: 'rg-label',
   };
   ifDef(result, 'location', [source.pp.x, -source.pp.y, source.pp.z]);
-  ifDef(result, 'attachmentPoints', source.attpnt, 0);
+  ifDef(result, 'attachmentPoints', source.attachmentPoints, 0);
 
   const refsToRGroups = fromRlabel(source.rglabel).map(
     (rgnumber) => `rg-${rgnumber}`,
@@ -108,7 +125,7 @@ function atomListToKet(source) {
     type: 'atom-list',
   };
   ifDef(result, 'location', [source.pp.x, -source.pp.y, source.pp.z]);
-  ifDef(result, 'attachmentPoints', source.attpnt, 0);
+  ifDef(result, 'attachmentPoints', source.attachmentPoints, 0);
   ifDef(result, 'elements', source.atomList.labelList());
   ifDef(result, 'notList', source.atomList.notList, false);
   return result;
@@ -116,13 +133,17 @@ function atomListToKet(source) {
 
 function bondToKet(source) {
   const result = {};
-
-  ifDef(result, 'type', source.type);
-  ifDef(result, 'atoms', [source.begin, source.end]);
-  ifDef(result, 'stereo', source.stereo, 0);
-  ifDef(result, 'topology', source.topology, 0);
-  ifDef(result, 'center', source.reactingCenterStatus, 0);
-  ifDef(result, 'cip', source.cip, '');
+  if (source.customQuery) {
+    ifDef(result, 'atoms', [source.begin, source.end]);
+    ifDef(result, 'customQuery', source.customQuery);
+  } else {
+    ifDef(result, 'type', source.type);
+    ifDef(result, 'atoms', [source.begin, source.end]);
+    ifDef(result, 'stereo', source.stereo, 0);
+    ifDef(result, 'topology', source.topology, 0);
+    ifDef(result, 'center', source.reactingCenterStatus, 0);
+    ifDef(result, 'cip', source.cip, '');
+  }
 
   return result;
 }

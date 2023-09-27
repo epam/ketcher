@@ -90,9 +90,12 @@ class ReStruct {
   private bondsChanged: Map<number, ReEnhancedFlag> = new Map();
   private textsChanged: Map<number, ReText> = new Map();
   private snappingBonds: number[] = [];
-  constructor(molecule, render: Render) {
+  constructor(
+    molecule,
+    render: Render | { skipRaphaelInitialization: boolean; theme },
+  ) {
     // eslint-disable-line max-statements
-    this.render = render;
+    this.render = render as Render;
     this.molecule = molecule || new Struct();
     this.initLayers();
     this.clearMarks();
@@ -463,7 +466,9 @@ class ReStruct {
       const mapChanged = this[map + 'Changed'];
 
       mapChanged.forEach((_value, id) => {
-        this.clearVisel(this[map].get(id).visel);
+        if (this[map].get(id).visel) {
+          this.clearVisel(this[map].get(id).visel);
+        }
         this.structChanged = this.structChanged || mapChanged.get(id) > 0;
       });
     });
@@ -733,12 +738,12 @@ class ReStruct {
           if (
             item instanceof ReSGroup &&
             FunctionalGroup.isContractedFunctionalGroup(
-              item.item.id,
+              item?.item?.id,
               this.molecule.functionalGroups,
             )
           ) {
             const sGroupAtoms = atoms.filter(
-              (atom) => atom.sgroup === item.item.id,
+              (atom) => atom.sgroup === item?.item?.id,
             );
             item.selected = sGroupAtoms.length > 0 && sGroupAtoms[0].selected;
           }

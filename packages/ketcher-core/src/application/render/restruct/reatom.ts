@@ -39,6 +39,7 @@ import draw from '../draw';
 import util from '../util';
 import { tfx } from 'utilities';
 import { RenderOptions } from 'application/render/render.types';
+import { capitalize } from 'lodash';
 
 interface ElemAttr {
   text: string;
@@ -202,7 +203,7 @@ class ReAtom extends ReObject {
     if (atomSymbolShift > 0) {
       return atomPosition.addScaled(
         direction,
-        atomSymbolShift + 2 * renderOptions.lineWidth,
+        atomSymbolShift + 3 * renderOptions.lineWidth,
       );
     } else {
       return atomPosition;
@@ -210,7 +211,7 @@ class ReAtom extends ReObject {
   }
 
   hasAttachmentPoint(): boolean {
-    return Boolean(this.a.attpnt);
+    return Boolean(this.a.attachmentPoints);
   }
 
   show(restruct: ReStruct, aid: number, options: any): void {
@@ -242,7 +243,7 @@ class ReAtom extends ReObject {
       return;
     }
 
-    this.hydrogenOnTheLeft = setHydrogenPos(restruct.molecule, this);
+    this.hydrogenOnTheLeft = shouldHydrogenBeOnLeft(restruct.molecule, this);
     this.showLabel = isLabelVisible(restruct, render.options, this);
     this.color = 'black'; // reset color
 
@@ -405,7 +406,10 @@ class ReAtom extends ReObject {
 
     const stereoLabel = this.a.stereoLabel; // Enhanced Stereo
     const aamText = getAamText(this);
-    const queryAttrsText = !this.a.pseudo ? getQueryAttrsText(this) : '';
+    const isAromatized = Atom.isInAromatizedRing(restruct.molecule, aid);
+    const queryAttrsText = !this.a.pseudo
+      ? getQueryAttrsText(this, isAromatized)
+      : '';
 
     // we render them together to avoid possible collisions
 
@@ -413,17 +417,26 @@ class ReAtom extends ReObject {
     // TODO: fragment should not be null
     const fragment = restruct.molecule.frags.get(fragmentId);
 
-    const text =
-      (shouldDisplayStereoLabel(
-        stereoLabel,
-        options.stereoLabelStyle,
-        options.ignoreChiralFlag,
-        fragment?.enhancedStereoFlag,
-      )
-        ? `${stereoLabel}\n`
-        : '') +
-      (queryAttrsText.length > 0 ? `${queryAttrsText}\n` : '') +
-      (aamText.length > 0 ? `.${aamText}.` : '');
+    const displayStereoLabel = shouldDisplayStereoLabel(
+      stereoLabel,
+      options.stereoLabelStyle,
+      options.ignoreChiralFlag,
+      fragment?.enhancedStereoFlag,
+    );
+
+    let text = '';
+
+    if (displayStereoLabel) {
+      text = `${stereoLabel}\n`;
+    }
+
+    if (queryAttrsText.length > 0) {
+      text += `${queryAttrsText}\n`;
+    }
+
+    if (aamText.length > 0) {
+      text += `.${aamText}.`;
+    }
 
     if (text.length > 0) {
       const elem = Elements.get(this.a.label);
@@ -577,6 +590,7 @@ function shouldDisplayStereoLabel(
   if (!stereoLabel) {
     return false;
   }
+
   const stereoLabelType = stereoLabel.match(/\D+/g)[0];
 
   if (ignoreChiralFlag && stereoLabelType === StereoLabel.Abs) {
@@ -587,18 +601,14 @@ function shouldDisplayStereoLabel(
   }
 
   switch (labelStyle) {
-    // Off
     case StereLabelStyleType.Off:
       return false;
-    // On
     case StereLabelStyleType.On:
       return true;
-    // Classic
     case StereLabelStyleType.Classic:
       return !!(
         flag === StereoFlag.Mixed || stereoLabelType === StereoLabel.Or
       );
-    // IUPAC
     case StereLabelStyleType.IUPAC:
       return !!(
         flag === StereoFlag.Mixed && stereoLabelType !== StereoLabel.Abs
@@ -608,8 +618,8 @@ function shouldDisplayStereoLabel(
   }
 }
 
-function isLabelVisible(restruct, options, atom) {
-  const isAttachmentPointAtom = Boolean(atom.a.attpnt);
+function isLabelVisible(restruct, options, atom: ReAtom) {
+  const isAttachmentPointAtom = Boolean(atom.a.attachmentPoints);
   const isCarbon = atom.a.label.toLowerCase() === 'c';
   const visibleTerminal =
     options.showHydrogenLabels !== ShowHydrogenLabels.Off &&
@@ -672,8 +682,7 @@ function displayHydrogen(hydrogenLabels: ShowHydrogenLabels, atom: ReAtom) {
   );
 }
 
-function setHydrogenPos(struct, atom) {
-  // check where should the hydrogen be put on the left of the label
+function shouldHydrogenBeOnLeft(struct, atom) {
   if (atom.a.neighbors.length === 0) {
     if (atom.a.label === 'D' || atom.a.label === 'T') {
       return false;
@@ -683,24 +692,14 @@ function setHydrogenPos(struct, atom) {
     }
   }
 
-  let yl = 1;
-  let yr = 1;
-  let nl = 0;
-  let nr = 0;
+  if (atom.a.neighbors.length === 1) {
+    const neighbor = atom.a.neighbors[0];
+    const neighborDirection = struct.halfBonds.get(neighbor).dir;
 
-  atom.a.neighbors.forEach((nei) => {
-    const d = struct.halfBonds.get(nei).dir;
+    return neighborDirection.x > 0;
+  }
 
-    if (d.x <= 0) {
-      yl = Math.min(yl, Math.abs(d.y));
-      nl++;
-    } else {
-      yr = Math.min(yr, Math.abs(d.y));
-      nr++;
-    }
-  });
-
-  return yl < 0.51 || yr < 0.51 ? yr < yl : nr > nl;
+  return false;
 }
 
 function buildLabel(
@@ -710,10 +709,12 @@ function buildLabel(
   options: any,
 ): ElemAttr {
   // eslint-disable-line max-statements
-  let label: any = {};
+  const label: any = {};
   label.text = getLabelText(atom.a);
 
-  if (label.text === '') label = 'R#'; // for structures that missed 'M  RGP' tag in molfile
+  if (!label.text) {
+    label.text = 'R#';
+  }
 
   if (label.text === atom.a.label) {
     const element = Elements.get(label.text);
@@ -722,11 +723,13 @@ function buildLabel(
     }
   }
 
+  const { previewOpacity } = options;
   label.path = paper.text(ps.x, ps.y, label.text).attr({
     font: options.font,
     'font-size': options.fontsz,
     fill: atom.color,
     'font-style': atom.a.pseudo ? 'italic' : '',
+    'fill-opacity': atom.a.isPreview ? previewOpacity : 1,
   });
 
   label.rbb = util.relBox(label.path.getBBox());
@@ -1072,31 +1075,167 @@ function getAamText(atom) {
   return aamText;
 }
 
-function getQueryAttrsText(atom) {
+function getRingBondCountAttrText(value: number) {
+  let attrText: string;
+  if (value > 0) {
+    attrText = 'rb' + value.toString();
+  } else if (value === -1) {
+    attrText = 'rb0';
+  } else if (value === -2) {
+    attrText = 'rb*';
+  } else {
+    throw new Error('Ring bond count invalid');
+  }
+  return attrText;
+}
+
+function getSubstitutionCountAttrText(value: number) {
+  let attrText: string;
+  if (value > 0) {
+    attrText = 's' + value.toString();
+  } else if (value === -1) {
+    attrText = 's0';
+  } else if (value === -2) {
+    attrText = 's*';
+  } else {
+    throw new Error('Substitution count invalid');
+  }
+  return attrText;
+}
+
+export function getAtomCustomQuery(atom) {
   let queryAttrsText = '';
-  if (atom.a.ringBondCount !== 0) {
-    if (atom.a.ringBondCount > 0) {
-      queryAttrsText += 'rb' + atom.a.ringBondCount.toString();
-    } else if (atom.a.ringBondCount === -1) queryAttrsText += 'rb0';
-    else if (atom.a.ringBondCount === -2) queryAttrsText += 'rb*';
-    else throw new Error('Ring bond count invalid');
+
+  const addSemicolon = () => {
+    if (queryAttrsText.length > 0) queryAttrsText += ';';
+  };
+  const patterns: {
+    [key: string]: (value: string, atom) => string;
+  } = {
+    label: (value, atom) => {
+      if (atom.aromaticity) {
+        return atom.aromaticity === 'aromatic'
+          ? value.toLowerCase()
+          : value.toUpperCase();
+      }
+      const number = Elements.get(capitalize(value))?.number;
+      return `#${number}` || '';
+    },
+    charge: (value) => {
+      if (value === '0') return '';
+      return value.includes('-') ? value : `+${value}`;
+    },
+    explicitValence: (value) => `v${value}`,
+    ringBondCount: (value) =>
+      Number(value) !== 0 ? getRingBondCountAttrText(Number(value)) : '',
+    substitutionCount: (value) =>
+      Number(value) !== 0 ? getSubstitutionCountAttrText(Number(value)) : '',
+    unsaturatedAtom: (value) => (value ? 'u' : ''),
+    hCount: (value) =>
+      Number(value) > 0 ? 'H' + (Number(value) - 1).toString() : '',
+    implicitHCount: (value) => `h${value}`,
+    degree: (value) => `D${value}`,
+    ringMembership: (value) => `R${value}`,
+    ringSize: (value) => `r${value}`,
+    connectivity: (value) => `X${value}`,
+    ringConnectivity: (value) => `x${value}`,
+    chirality: (value) => (value === 'clockwise' ? '@@' : '@'),
+    atomicMass: (value) => value.toString(),
+  };
+
+  for (const propertyName in atom) {
+    const value = atom[propertyName];
+    if (propertyName in patterns && value !== null && value !== -1) {
+      const attrText = patterns[propertyName](value, atom);
+      if (attrText) {
+        addSemicolon();
+      }
+      queryAttrsText += attrText;
+    }
   }
-  if (atom.a.substitutionCount !== 0) {
-    if (queryAttrsText.length > 0) queryAttrsText += ',';
-    if (atom.a.substitutionCount > 0) {
-      queryAttrsText += 's' + atom.a.substitutionCount.toString();
-    } else if (atom.a.substitutionCount === -1) queryAttrsText += 's0';
-    else if (atom.a.substitutionCount === -2) queryAttrsText += 's*';
-    else throw new Error('Substitution count invalid');
+
+  return queryAttrsText;
+}
+
+function getQueryAttrsText(atom, isAromatized: boolean) {
+  let queryAttrsText = '';
+
+  const addSemicolon = () => {
+    if (queryAttrsText.length > 0) queryAttrsText += ';';
+  };
+
+  const {
+    ringBondCount,
+    substitutionCount,
+    unsaturatedAtom,
+    hCount,
+    implicitHCount,
+    queryProperties: {
+      aromaticity,
+      degree,
+      ringMembership,
+      ringSize,
+      connectivity,
+      ringConnectivity,
+      chirality,
+      atomicMass,
+      customQuery,
+    },
+  } = atom.a;
+  if (customQuery) {
+    return customQuery;
   }
-  if (atom.a.unsaturatedAtom > 0) {
-    if (queryAttrsText.length > 0) queryAttrsText += ',';
-    if (atom.a.unsaturatedAtom === 1) queryAttrsText += 'u';
+  if (ringBondCount !== 0) {
+    queryAttrsText += getRingBondCountAttrText(ringBondCount);
+  }
+  if (substitutionCount !== 0) {
+    addSemicolon();
+    queryAttrsText += getSubstitutionCountAttrText(substitutionCount);
+  }
+  if (unsaturatedAtom > 0) {
+    addSemicolon();
+    if (unsaturatedAtom === 1) queryAttrsText += 'u';
     else throw new Error('Unsaturated atom invalid value');
   }
-  if (atom.a.hCount > 0) {
-    if (queryAttrsText.length > 0) queryAttrsText += ',';
-    queryAttrsText += 'H' + (atom.a.hCount - 1).toString();
+  if (hCount > 0) {
+    addSemicolon();
+    queryAttrsText += 'H' + (hCount - 1).toString();
+  }
+  if (implicitHCount !== null && !isAromatized) {
+    addSemicolon();
+    queryAttrsText += `h${implicitHCount}`;
+  }
+  if (aromaticity !== null) {
+    addSemicolon();
+    queryAttrsText += aromaticity === 'aromatic' ? 'a' : 'A';
+  }
+  if (Number.isFinite(degree)) {
+    addSemicolon();
+    queryAttrsText += `D${degree}`;
+  }
+  if (Number.isFinite(ringMembership)) {
+    addSemicolon();
+    queryAttrsText += `R${ringMembership}`;
+  }
+  if (Number.isFinite(ringSize)) {
+    addSemicolon();
+    queryAttrsText += `r${ringSize}`;
+  }
+  if (Number.isFinite(connectivity)) {
+    addSemicolon();
+    queryAttrsText += `X${connectivity}`;
+  }
+  if (Number.isFinite(ringConnectivity)) {
+    addSemicolon();
+    queryAttrsText += `x${ringConnectivity}`;
+  }
+  if (chirality !== null) {
+    addSemicolon();
+    queryAttrsText += chirality === 'clockwise' ? '@@' : '@';
+  }
+  if (Number.isFinite(atomicMass)) {
+    addSemicolon();
+    queryAttrsText += `${atomicMass}`;
   }
   return queryAttrsText;
 }

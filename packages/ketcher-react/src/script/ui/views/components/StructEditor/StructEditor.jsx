@@ -246,7 +246,11 @@ class StructEditor extends Component {
     const { clientX = 0, clientY = 0 } = this.state;
 
     return (
-      <Tag className={clsx(classes.canvas, className)} {...props}>
+      <Tag
+        className={clsx(classes.canvas, className)}
+        {...props}
+        data-testid="ketcher-canvas"
+      >
         <ContextMenuTrigger>
           <div
             ref={this.editorRef}

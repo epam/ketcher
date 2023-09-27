@@ -42,7 +42,7 @@ function AboutDialog(props) {
       <div className={classes.body}>
         <div className={classes.verionsInfo}>
           <dl className={classes.ketcherVersionInfo}>
-            <dt>
+            <dt data-testid="build-version">
               <a
                 href={props.overviewLink}
                 target="_blank"
@@ -70,7 +70,7 @@ function AboutDialog(props) {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  Epam Life Sciencies
+                  EPAM Life Sciences
                 </a>
               </dt>
             </div>
@@ -86,7 +86,7 @@ function AboutDialog(props) {
               </a>
               {props.indigoMachine && <div>{props.indigoMachine}</div>}
             </div>
-            <div>
+            <div data-testid="build-indigo-version">
               {props.indigoVersion ? (
                 <Fragment>
                   <dd>Version {indigoInfo[0]}</dd>

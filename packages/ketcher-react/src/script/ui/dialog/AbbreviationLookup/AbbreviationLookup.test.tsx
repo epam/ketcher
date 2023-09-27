@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 
 import { AbbreviationLookup } from './AbbreviationLookup';
 import {
@@ -90,7 +90,7 @@ describe('AbbreviationLookup', () => {
       wrapper: KetcherWrapper,
     });
     const input = screen.getByRole('combobox');
-    input.blur();
+    act(() => input.blur());
 
     expect(mockedDispatch).toHaveBeenCalledWith(closeAbbreviationLookup());
   });

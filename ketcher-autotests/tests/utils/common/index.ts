@@ -1,1 +1,1 @@
-export { waitForLoad } from '@utils/common/waitForLoad/waitForLoad';
+export * from './loaders';

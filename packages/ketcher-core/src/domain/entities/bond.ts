@@ -27,14 +27,16 @@ enum CIP {
 }
 
 export interface BondAttributes {
-  reactingCenterStatus?: number;
-  topology?: number;
+  reactingCenterStatus?: number | null;
+  topology?: number | null;
+  customQuery?: string | null;
   stereo?: number;
   xxx?: string;
   type: number;
   end: number;
   begin: number;
   cip?: CIP | null;
+  isPreview?: boolean;
 }
 
 export class Bond {
@@ -83,6 +85,7 @@ export class Bond {
     topology: Bond.PATTERN.TOPOLOGY.EITHER,
     reactingCenterStatus: Bond.PATTERN.REACTING_CENTER.UNMARKED,
     cip: null,
+    customQuery: null,
   };
 
   begin: number;
@@ -90,8 +93,9 @@ export class Bond {
   readonly type: number;
   readonly xxx: string;
   readonly stereo: number;
-  readonly topology: number;
-  readonly reactingCenterStatus: number;
+  readonly topology: number | null;
+  readonly reactingCenterStatus: number | null;
+  customQuery: string | null;
   len: number;
   sb: number;
   sa: number;
@@ -100,6 +104,7 @@ export class Bond {
   hb2?: number;
   angle: number;
   center: Vec2;
+  isPreview: boolean;
 
   constructor(attributes: BondAttributes) {
     this.begin = attributes.begin;
@@ -108,15 +113,24 @@ export class Bond {
     this.xxx = attributes.xxx || '';
     this.stereo = Bond.PATTERN.STEREO.NONE;
     this.topology = Bond.PATTERN.TOPOLOGY.EITHER;
+    this.customQuery = null;
     this.reactingCenterStatus = 0;
     this.cip = attributes.cip ?? null;
     this.len = 0;
     this.sb = 0;
     this.sa = 0;
     this.angle = 0;
+    this.isPreview = false;
 
     if (attributes.stereo) this.stereo = attributes.stereo;
     if (attributes.topology) this.topology = attributes.topology;
+    if (attributes.customQuery) {
+      this.customQuery = attributes.customQuery;
+      this.type = Bond.PATTERN.TYPE.ANY;
+      this.reactingCenterStatus = null;
+      this.topology = null;
+    }
+
     if (attributes.reactingCenterStatus) {
       this.reactingCenterStatus = attributes.reactingCenterStatus;
     }
@@ -231,14 +245,14 @@ export class Bond {
     } = Bond.getFusingConditions(bond, bondBegin, bondEnd);
 
     if (isFusingToSingleBond || isFusingToDoubleBond) {
-      return [1];
+      return [3];
     }
 
     if (isFusingDoubleSingleSingle) {
-      return [2, 3];
+      return [2, 4];
     }
 
-    return [1, 4];
+    return [1, 3];
   }
 
   static attrGetDefault(attr: string) {

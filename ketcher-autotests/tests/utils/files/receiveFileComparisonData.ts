@@ -15,6 +15,7 @@ const GetFileMethod: Record<string, keyof Ketcher> = {
   cdxml: 'getCDXml' as keyof Ketcher,
   cml: 'getCml',
   inchi: 'getInchi',
+  sdf: 'getSdf',
 } as const;
 
 type KetcherApiFunction = (format?: string) => Promise<string>;

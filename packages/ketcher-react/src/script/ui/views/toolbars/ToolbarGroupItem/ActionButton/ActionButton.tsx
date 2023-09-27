@@ -32,6 +32,7 @@ interface ActionButtonProps {
   disableableButtons: string[];
   indigoVerification: boolean;
   className?: string;
+  dataTestId?: string;
 }
 
 interface ActionButtonCallProps {
@@ -50,6 +51,7 @@ const ActionButton = (props: Props) => {
     indigoVerification,
     className,
     onAction,
+    dataTestId,
   } = props;
 
   if (status.hidden) {
@@ -69,7 +71,7 @@ const ActionButton = (props: Props) => {
 
   return (
     <button
-      data-testid={name}
+      data-testid={dataTestId || name}
       disabled={disabled}
       onClick={handleClick}
       title={shortcut ? `${action?.title} (${shortcut})` : action?.title}

@@ -14,12 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 import { EmptyFunction } from 'helpers';
-import { useAppDispatch, useAppSelector } from 'hooks';
+import { useAppDispatch } from 'hooks';
 import { useState } from 'react';
 import { getMonomerUniqueKey, toggleMonomerFavorites } from 'state/library';
 import { Card } from './styles';
 import { IMonomerItemProps } from './types';
-import { selectIsEditMode } from 'state/rna-builder';
 import { MONOMER_TYPES } from '../../../constants';
 
 const MonomerItem = ({
@@ -27,11 +26,11 @@ const MonomerItem = ({
   onMouseLeave,
   onMouseMove,
   isSelected,
+  disabled,
   onClick = EmptyFunction,
 }: IMonomerItemProps) => {
   const [favorite, setFavorite] = useState(item.favorite);
   const dispatch = useAppDispatch();
-  const isEditMode = useAppSelector(selectIsEditMode);
   const colorCode =
     item.props.MonomerType === MONOMER_TYPES.CHEM
       ? item.props.MonomerType
@@ -41,7 +40,7 @@ const MonomerItem = ({
     <Card
       onClick={onClick}
       selected={isSelected}
-      disabled={!isEditMode}
+      disabled={disabled}
       data-testid={getMonomerUniqueKey(item)}
       data-monomer-item-id={getMonomerUniqueKey(item)}
       code={colorCode}

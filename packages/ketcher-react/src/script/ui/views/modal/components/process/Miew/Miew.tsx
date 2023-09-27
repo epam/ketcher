@@ -161,6 +161,7 @@ const MiewDialog = ({
           onClick={exportCML}
           className={classes.applyButton}
           disabled={!isInitialized}
+          data-testid="miew-modal-button"
         >
           Apply
         </button>,

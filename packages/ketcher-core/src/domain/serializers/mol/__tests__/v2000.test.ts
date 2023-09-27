@@ -520,8 +520,8 @@ describe('parseCTabV2000', () => {
 
       const struct = molParsers.parseCTabV2000(lines, createCountsLine(2));
 
-      expect(struct.atoms.get(0)!.attpnt).toBe(1);
-      expect(struct.atoms.get(1)!.attpnt).toBe(2);
+      expect(struct.atoms.get(0)!.attachmentPoints).toBe(1);
+      expect(struct.atoms.get(1)!.attachmentPoints).toBe(2);
     });
 
     it('should parse atom list', () => {

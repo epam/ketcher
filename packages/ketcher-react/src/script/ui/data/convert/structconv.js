@@ -38,8 +38,8 @@ export function fromElement(selem) {
 
   if (Elements.get(selem.label)) return fromAtom(selem);
 
-  if (!selem.label && 'attpnt' in selem)
-    return { ap: fromApoint(selem.attpnt) };
+  if (!selem.label && 'attachmentPoints' in selem)
+    return { ap: fromApoint(selem.attachmentPoints) };
 
   return selem; // probably generic
 }
@@ -53,7 +53,9 @@ export function toElement(elem) {
   }
   if (elem.type === 'list' || elem.type === 'not-list') return toAtomList(elem);
 
-  if (!elem.label && 'ap' in elem) return { attpnt: toApoint(elem.ap) };
+  if (!elem.label && 'ap' in elem) {
+    return { attachmentPoints: toApoint(elem.ap) };
+  }
 
   if (Elements.get(capitalize(elem.label))) return toAtom(elem);
 
@@ -89,21 +91,90 @@ export function fromAtom(satom) {
     unsaturatedAtom: !!satom.unsaturatedAtom,
     hCount: satom.hCount,
     stereoParity: satom.stereoParity,
+    implicitHCount: satom.implicitHCount,
+    aromaticity: satom.queryProperties.aromaticity,
+    degree: satom.queryProperties.degree,
+    ringMembership: satom.queryProperties.ringMembership,
+    ringSize: satom.queryProperties.ringSize,
+    connectivity: satom.queryProperties.connectivity,
+    ringConnectivity: satom.queryProperties.ringConnectivity,
+    chirality: satom.queryProperties.chirality,
+    customQuery:
+      satom.queryProperties.customQuery === null
+        ? ''
+        : satom.queryProperties.customQuery.toString(),
+    atomicMass:
+      satom.queryProperties.atomicMass === null
+        ? ''
+        : satom.queryProperties.atomicMass.toString(),
   };
 }
 
 export function toAtom(atom) {
   // TODO merge this to Atom.attrlist?
   //      see ratomtool
+  const {
+    aromaticity,
+    degree,
+    ringMembership,
+    ringSize,
+    connectivity,
+    ringConnectivity,
+    chirality,
+    atomicMass,
+    customQuery,
+    ...restAtom
+  } = atom;
+  if (customQuery) {
+    return Object.assign({}, restAtom, {
+      label: capitalize(restAtom.label),
+      alias: null,
+      charge: 0,
+      isotope: 0,
+      explicitValence: -1,
+      radical: 0,
+      ringBondCount: 0,
+      hCount: 0,
+      substitutionCount: 0,
+      unsaturatedAtom: 0,
+      implicitHCount: null,
+      queryProperties: {
+        aromaticity: null,
+        degree: null,
+        implicitHCount: null,
+        ringMembership: null,
+        ringSize: null,
+        connectivity: null,
+        ringConnectivity: null,
+        chirality: null,
+        atomicMass: null,
+        customQuery,
+      },
+      invRet: 0,
+      exactChangeFlag: 0,
+    });
+  }
   const chargeRegexp = new RegExp(atomSchema.properties.charge.pattern);
-  const pch = chargeRegexp.exec(atom.charge);
-  const charge = pch ? parseInt(pch[1] + pch[3] + pch[2]) : atom.charge;
+  const pch = chargeRegexp.exec(restAtom.charge);
+  const charge = pch ? parseInt(pch[1] + pch[3] + pch[2]) : restAtom.charge;
 
-  const conv = Object.assign({}, atom, {
-    label: capitalize(atom.label),
-    alias: atom.alias || null,
-    exactChangeFlag: +(atom.exactChangeFlag ?? false),
-    unsaturatedAtom: +(atom.unsaturatedAtom ?? false),
+  const conv = Object.assign({}, restAtom, {
+    label: capitalize(restAtom.label),
+    alias: restAtom.alias || null,
+    exactChangeFlag: +(restAtom.exactChangeFlag ?? false),
+    unsaturatedAtom: +(restAtom.unsaturatedAtom ?? false),
+    queryProperties: {
+      aromaticity,
+      degree,
+      implicitHCount: restAtom.implicitHCount,
+      ringMembership,
+      ringSize,
+      connectivity,
+      ringConnectivity,
+      chirality,
+      atomicMass: atomicMass === '' ? null : Number(atomicMass),
+      customQuery: customQuery === '' ? null : customQuery,
+    },
   });
   if (charge !== undefined) conv.charge = charge;
   return conv;
@@ -206,18 +277,22 @@ function toRlabel(values) {
 export function fromBond(sbond) {
   const type = sbond.type;
   const stereo = sbond.stereo;
+  const isCustomQuery = sbond.customQuery !== null;
   return {
-    type: fromBondType(type, stereo),
-    topology: sbond.topology || 0,
-    center: sbond.reactingCenterStatus || 0,
+    type: isCustomQuery ? '' : fromBondType(type, stereo),
+    topology: sbond.topology,
+    center: sbond.reactingCenterStatus,
+    customQuery: !isCustomQuery ? '' : sbond.customQuery.toString(),
   };
 }
 
 export function toBond(bond) {
+  const isCustomQuery = bond.customQuery !== '';
   return {
     topology: bond.topology,
     reactingCenterStatus: bond.center,
-    ...toBondType(bond.type),
+    customQuery: !isCustomQuery ? null : bond.customQuery,
+    ...toBondType(isCustomQuery ? 'any' : bond.type),
   };
 }
 

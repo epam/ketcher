@@ -29,19 +29,20 @@ import { fromSgroupAddition } from './sgroup';
 
 const benzeneMoleculeName = 'Benzene';
 const cyclopentadieneMoleculeName = 'Cyclopentadiene';
-const benzeneDoubleBondIndexes = [1, 4];
+const benzeneDoubleBondIndexes = [2, 4];
 
 export function fromTemplateOnCanvas(
   restruct,
   template,
   pos,
-  angle,
+  angle = 0,
 ): [Action, { atoms: number[]; bonds: number[] }] {
   const [action, pasteItems] = fromPaste(
     restruct,
     template.molecule,
     pos,
     angle,
+    true,
   );
 
   action.addOp(new CalcImplicitH(pasteItems.atoms).perform(restruct));
@@ -93,6 +94,7 @@ export function fromTemplateOnAtom(
   aid,
   angle,
   extraBond,
+  isPreview = false,
 ): [Action, { atoms: number[]; bonds: number[] }] {
   let action = new Action();
 
@@ -163,6 +165,7 @@ export function fromTemplateOnAtom(
       bond,
     ).perform(restruct) as BondAdd;
     action.addOp(operation);
+    new BondAttr(operation.data.bid, 'isPreview', isPreview).perform(restruct);
 
     pasteItems.bonds.push(operation.data.bid);
   });
@@ -175,7 +178,10 @@ export function fromTemplateOnAtom(
       restruct,
       sg.type,
       sgAtoms,
-      sg.data,
+      {
+        ...sg.data,
+        expanded: isPreview ? true : sg.data.expanded,
+      },
       newsgid,
       attachmentPoints,
       atom.pp,
@@ -207,11 +213,12 @@ export function fromTemplateOnBondAction(
   events,
   flip,
   force,
+  isPreview = false,
 ) {
   if (!force) return fromTemplateOnBond(restruct, template, bid, flip);
 
   const simpleFusing = (restruct, template, bid) =>
-    fromTemplateOnBond(restruct, template, bid, flip); // eslint-disable-line
+    fromTemplateOnBond(restruct, template, bid, flip, isPreview); // eslint-disable-line
   /* aromatic merge (Promise) */
   return fromAromaticTemplateOnBond(
     restruct,
@@ -260,7 +267,7 @@ function getConnectingBond(
   return null;
 }
 
-function fromTemplateOnBond(restruct, template, bid, flip) {
+function fromTemplateOnBond(restruct, template, bid, flip, isPreview = false) {
   // TODO: refactor function !!
   const action = new Action();
 
@@ -339,6 +346,7 @@ function fromTemplateOnBond(restruct, template, bid, flip) {
       atomsMap.get(tBond.begin),
       atomsMap.get(tBond.end),
     );
+    let previewBondId = null;
     if (existId === null) {
       const operation = new BondAdd(
         atomsMap.get(tBond.begin),
@@ -347,6 +355,7 @@ function fromTemplateOnBond(restruct, template, bid, flip) {
       ).perform(restruct) as BondAdd;
       action.addOp(operation);
       const newBondId = operation.data.bid;
+      previewBondId = newBondId;
 
       if (isFusingBenzeneBySpecialRules) {
         const isBenzeneTemplate = tmpl.name === benzeneMoleculeName;
@@ -390,7 +399,11 @@ function fromTemplateOnBond(restruct, template, bid, flip) {
           new BondAttr(bid, 'type', fusingBondType).perform(restruct),
         );
       }
+      previewBondId = bid;
     }
+    action.addOp(
+      new BondAttr(previewBondId, 'isPreview', isPreview).perform(restruct),
+    );
   });
 
   if (pasteItems.atoms.length) {

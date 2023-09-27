@@ -1,9 +1,9 @@
 import { test, expect } from '@playwright/test';
 import { molV2000 } from '@tests/test-data/molV2000-result';
-import { clickInTheMiddleOfTheScreen } from '@utils';
+import { clickInTheMiddleOfTheScreen, waitForPageInit } from '@utils';
 
 test('getting molV2000 from Ketcher API', async ({ page }) => {
-  await page.goto('');
+  await waitForPageInit(page);
 
   await page.getByRole('button', { name: 'Benzene (T)' }).click();
 

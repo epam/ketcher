@@ -67,7 +67,11 @@ const RightToolbar = (props: Props) => {
   };
 
   return (
-    <div className={clsx(classes.root, className)} ref={ref}>
+    <div
+      data-testid="right-toolbar"
+      className={clsx(classes.root, className)}
+      ref={ref}
+    >
       <div ref={scrollRef} className={classes.buttons}>
         <div ref={startRef}>
           <Group

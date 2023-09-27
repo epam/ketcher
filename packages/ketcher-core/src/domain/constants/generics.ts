@@ -267,3 +267,18 @@ export const Generics: GenericsType = {
     },
   },
 };
+
+function getGenericsList(generics) {
+  if (Array.isArray(generics) && !generics[0]?.items) {
+    return generics.map((item) => item.label);
+  } else {
+    let result: string[] = [];
+    for (const subobj of Object.values(generics)) {
+      if (typeof generics === 'string') continue;
+      result = [...result, ...getGenericsList(subobj)];
+    }
+    return result;
+  }
+}
+
+export const genericsList = getGenericsList(Generics);

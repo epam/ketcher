@@ -161,10 +161,11 @@ function getBondCustomQuery(bond: BondSettings) {
   if (type in bondType) {
     queryAttrsText += bondType[type];
   }
-  if (queryAttrsText) {
-    queryAttrsText += ';';
-  }
+
   if (topology === CoreBond.PATTERN.TOPOLOGY.RING) {
+    if (queryAttrsText) {
+      queryAttrsText += ';';
+    }
     queryAttrsText += '@';
   }
   return queryAttrsText;

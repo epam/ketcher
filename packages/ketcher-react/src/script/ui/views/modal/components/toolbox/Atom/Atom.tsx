@@ -20,22 +20,24 @@ import Form, {
   Field,
   CustomQueryField,
 } from '../../../../../component/form/form/form';
-import { FC, useCallback, useMemo, useState } from 'react';
+import { FC, useMemo, useState } from 'react';
 
 import { Dialog } from '../../../../components';
-import ElementNumber from './ElementNumber';
-import {
-  AtomAllAttributeName,
-  Elements,
-  getAtomCustomQuery,
-} from 'ketcher-core';
+import { AtomAllAttributeName, getAtomCustomQuery } from 'ketcher-core';
 import { atom as atomSchema } from '../../../../../data/schema/struct-schema';
-import { capitalize } from 'lodash/fp';
 import classes from './Atom.module.less';
 import Select from '../../../../../component/form/Select';
 import { getSelectOptionsFromSchema } from '../../../../../utils';
 import clsx from 'clsx';
 import { Icon } from 'components';
+import {
+  AtomListValid,
+  atomValid,
+  chargeValid,
+  customQueryValid,
+  pseudoAtomValid,
+} from './helper';
+import AtomElement from './AtomElement/AtomElement';
 
 interface AtomProps extends BaseCallProps, BaseProps {
   alias: string;
@@ -56,6 +58,7 @@ interface AtomProps extends BaseCallProps, BaseProps {
 
 type Props = AtomProps & {
   isMultipleAtoms?: boolean;
+  isRestoredModal: boolean;
 };
 
 const atomProps = atomSchema.properties;
@@ -79,6 +82,7 @@ const querySpecificFields: Array<{
   { name: 'chirality', component: 'dropdown' },
   { name: 'atomicMass' },
 ];
+
 const Atom: FC<Props> = (props: Props) => {
   const {
     formState,
@@ -86,14 +90,13 @@ const Atom: FC<Props> = (props: Props) => {
     stereoParity,
     /* eslint-enable @typescript-eslint/no-unused-vars */
     isMultipleAtoms = false,
+    isRestoredModal,
     ...rest
   } = props;
-  const [currentLabel, setCurrentLabel] = useState<string>(rest.label);
   const [isCustomQuery, setIsCustomQuery] = useState(Boolean(rest.customQuery));
   const [expandedAccordions, setExpandedAccordions] = useState<string[]>(
     isCustomQuery ? [] : ['General'],
   );
-
   const handleAccordionChange = (accordion) => () => {
     if (isCustomQuery) return;
     const isExpand = !expandedAccordions.includes(accordion);
@@ -116,39 +119,35 @@ const Atom: FC<Props> = (props: Props) => {
     setIsCustomQuery(value);
     setExpandedAccordions([]);
   };
-  const onLabelChangeCallback = useCallback((newValue) => {
-    setCurrentLabel(newValue);
-  }, []);
 
-  const customValid = useMemo(
-    () => ({
-      label: (label: string) => atomValid(label, isMultipleAtoms),
-      charge: (charge) => chargeValid(charge, isMultipleAtoms),
-      customQuery: (customQuery: string) =>
-        customQueryValid(customQuery, isCustomQuery),
-    }),
-    [isCustomQuery, isMultipleAtoms],
-  );
+  const customValid = useMemo(() => {
+    const atomType = formState.result.atomType;
+    return {
+      label: (label: string) =>
+        atomValid(label, isMultipleAtoms, atomType, isCustomQuery),
+      pseudo: (value: string) =>
+        pseudoAtomValid(value, atomType, isCustomQuery),
+      atomList: (value: string) =>
+        AtomListValid(value, atomType, isCustomQuery),
+      charge: (charge) => chargeValid(charge, isMultipleAtoms, isCustomQuery),
+      customQuery: (value: string) => customQueryValid(value, isCustomQuery),
+    };
+  }, [formState.result.atomType, isCustomQuery, isMultipleAtoms]);
 
   const itemGroups = [
     {
       groupName: 'General',
       component: (
         <div>
-          <Field name="label" onChange={onLabelChangeCallback} autoFocus />
-          <ElementNumber label={currentLabel} />
-
+          <AtomElement formState={formState} className=""></AtomElement>
           <Field name="alias" />
-
           <Field name="charge" maxLength="5" />
           <Field name="isotope" />
-
           <Field
             name="explicitValence"
             component={Select}
             options={getSelectOptionsFromSchema(atomProps.explicitValence)}
           />
-
           <Field
             name="radical"
             component={Select}
@@ -211,7 +210,7 @@ const Atom: FC<Props> = (props: Props) => {
       <Form
         schema={atomSchema}
         customValid={customValid}
-        init={rest}
+        init={isRestoredModal ? null : rest}
         {...formState}
       >
         <div className={classes.accordionWrapper}>
@@ -262,33 +261,6 @@ const Atom: FC<Props> = (props: Props) => {
     </Dialog>
   );
 };
-
-function atomValid(label: string, isMultipleAtoms: boolean) {
-  const isChemicalElement = !!Elements.get(capitalize(label));
-  if (isMultipleAtoms) {
-    return label === '' || isChemicalElement;
-  }
-  return label && isChemicalElement;
-}
-
-function chargeValid(charge, isMultipleAtoms: boolean) {
-  const regex = new RegExp(atomSchema.properties.charge.pattern);
-  const result = regex.exec(charge);
-  const isValidCharge = result && (result[1] === '' || result[3] === '');
-  if (isMultipleAtoms) {
-    return charge === '0' || charge === 0 || charge === '' || isValidCharge;
-  }
-  return isValidCharge;
-}
-
-function customQueryValid(customQuery: string, isCustomQuery: boolean) {
-  if (!isCustomQuery) {
-    return true;
-  }
-  const regex = new RegExp(atomSchema.properties.customQuery.pattern);
-  const isValid = regex.test(customQuery);
-  return isValid;
-}
 
 export type { AtomProps };
 export default Atom;

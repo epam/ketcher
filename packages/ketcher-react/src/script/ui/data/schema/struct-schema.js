@@ -23,11 +23,32 @@ export const atom = {
   type: 'object',
   required: ['label'],
   properties: {
+    atomType: {
+      title: 'Atom Type',
+      enum: ['single', 'list', 'pseudo'],
+      enumNames: ['Single', 'List', 'Special'],
+      default: 'single',
+    },
     label: {
       title: 'Label',
       type: 'string', // TODO:should really be enum of elements
       maxLength: 3,
       invalidMessage: 'Wrong label',
+    },
+    atomList: {
+      title: 'List',
+      type: 'string',
+      invalidMessage: 'Invalid atom list',
+    },
+    notList: {
+      title: 'Not list',
+      type: 'boolean',
+      default: false,
+    },
+    pseudo: {
+      title: 'Special',
+      type: 'string',
+      invalidMessage: 'Invalid special atom',
     },
     alias: {
       title: 'Alias',

@@ -1,6 +1,5 @@
 import { test } from '@playwright/test';
 import {
-  selectFunctionalGroups,
   selectTopPanelButton,
   TopPanelButton,
   FunctionalGroups,
@@ -13,7 +12,6 @@ import {
   takeEditorScreenshot,
   selectLeftPanelButton,
   LeftPanelButton,
-  delay,
   selectRingButton,
   RingButton,
   selectAtomInToolbar,
@@ -21,12 +19,11 @@ import {
   resetCurrentTool,
   selectLeftPanelToolClickAndScreenshot,
   attachOnTopOfBenzeneBonds,
-  DELAY_IN_SECONDS,
   clickOnAtom,
-  SelectTool,
-  selectNestedTool,
   STRUCTURE_LIBRARY_BUTTON_NAME,
   waitForPageInit,
+  selectFunctionalGroup,
+  selectDropdownTool,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
@@ -48,9 +45,7 @@ test.describe('Templates - Functional Group Tools', () => {
     Test case: EPMLSOPKET-10086
     Description: A bond is added to a contracted functional group and form a bond
     */
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await page.getByRole('tab', { name: 'Functional Groups' }).click();
-    await selectFunctionalGroups(FunctionalGroups.Boc, page);
+    await selectFunctionalGroup(FunctionalGroups.Boc, page);
     await clickInTheMiddleOfTheScreen(page);
 
     await selectLeftPanelButton(LeftPanelButton.SingleBond, page);
@@ -62,9 +57,7 @@ test.describe('Templates - Functional Group Tools', () => {
     Test case: EPMLSOPKET-10087
     Description: A chain is added to a contracted functional group and form a bond
     */
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await page.getByRole('tab', { name: 'Functional Groups' }).click();
-    await selectFunctionalGroups(FunctionalGroups.FMOC, page);
+    await selectFunctionalGroup(FunctionalGroups.FMOC, page);
     await clickInTheMiddleOfTheScreen(page);
 
     await selectLeftPanelButton(LeftPanelButton.Chain, page);
@@ -79,10 +72,10 @@ test.describe('Templates - Functional Group Tools', () => {
     Test case: EPMLSOPKET-2889
     Description: All the Functional Group elements are selected and highlighted on the canvas
    */
+    const anyAtom = 0;
     await openFileAndAddToCanvas('functional-group-expanded.mol', page);
-    await delay(DELAY_IN_SECONDS.TWO);
-    await selectNestedTool(page, SelectTool.FRAGMENT_SELECTION);
-    await clickOnAtom(page, 'C', 0);
+    await selectDropdownTool(page, 'select-rectangle', 'select-fragment');
+    await clickOnAtom(page, 'C', anyAtom);
   });
 
   test('Rotate of expanded Functional Group', async ({ page }) => {
@@ -162,9 +155,7 @@ test.describe('Templates - Functional Group Tools', () => {
     Test case: EPMLSOPKET-8938
     Description: A duplicate is not created, the original Functional Group is dragged with the cursor
    */
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await page.getByRole('tab', { name: 'Functional Groups' }).click();
-    await selectFunctionalGroups(FunctionalGroups.CO2Et, page);
+    await selectFunctionalGroup(FunctionalGroups.CO2Et, page);
     await clickInTheMiddleOfTheScreen(page);
 
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
@@ -196,13 +187,13 @@ test.describe('Templates - Functional Group Tools', () => {
    */
     const x = 650;
     const y = 650;
+    const anyAtom = 1;
     await openFileAndAddToCanvas('expanded-fg-CO2Et.mol', page);
 
     await selectLeftPanelButton(LeftPanelButton.Chain, page);
     await clickInTheMiddleOfTheScreen(page);
     await pressButton(page, 'Remove Abbreviation');
-    await clickOnAtom(page, 'O', 1);
-    // const coordinatesWithShift = y + Y_DELTA;
+    await clickOnAtom(page, 'O', anyAtom);
     await dragMouseTo(x, y, page);
   });
 
@@ -230,9 +221,7 @@ test.describe('Templates - Functional Group Tools', () => {
     FG is contracted.
     FG is removed (ungrouped and displayed in expanded view).
    */
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await page.getByRole('tab', { name: 'Functional Groups' }).click();
-    await selectFunctionalGroups(FunctionalGroups.CO2Et, page);
+    await selectFunctionalGroup(FunctionalGroups.CO2Et, page);
     await clickInTheMiddleOfTheScreen(page);
 
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
@@ -333,9 +322,7 @@ test.describe('Templates - Functional Group Tools2', () => {
     Expanded Functional Group is removed if were selected by Rectangle selection;
     EDIT ABBREVIATION window appears if click by Erase tool on expanded FG without selection.
    */
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await page.getByRole('tab', { name: 'Functional Groups' }).click();
-    await selectFunctionalGroups(FunctionalGroups.Boc, page);
+    await selectFunctionalGroup(FunctionalGroups.Boc, page);
     await clickInTheMiddleOfTheScreen(page);
 
     await selectLeftPanelButton(LeftPanelButton.Erase, page);
@@ -386,9 +373,7 @@ test.describe('Templates - Functional Group Tools2', () => {
     3)Functional group is ungrouped and displayed in expanded view.
     The 'Remove Abbreviation' option does not remove the atoms and bonds.
    */
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await page.getByRole('tab', { name: 'Functional Groups' }).click();
-    await selectFunctionalGroups(FunctionalGroups.Boc, page);
+    await selectFunctionalGroup(FunctionalGroups.Boc, page);
     await clickInTheMiddleOfTheScreen(page);
 
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
@@ -415,9 +400,7 @@ test.describe('Templates - Functional Group Tools2', () => {
     Description: 'Expand/Contract Abbreviation' button can work several times on the same FG.
     Undo/Redo actions are correct expand and contract Functional Group.
    */
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await page.getByRole('tab', { name: 'Functional Groups' }).click();
-    await selectFunctionalGroups(FunctionalGroups.CO2Et, page);
+    await selectFunctionalGroup(FunctionalGroups.CO2Et, page);
     await clickInTheMiddleOfTheScreen(page);
 
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
@@ -453,9 +436,7 @@ test.describe('Templates - Functional Group Tools2', () => {
 
     await openFileAndAddToCanvas('functional-group-expanded.mol', page);
 
-    await delay(DELAY_IN_SECONDS.THREE);
-    await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
-    await page.getByTestId('select-lasso').click();
+    await selectDropdownTool(page, 'select-rectangle', 'select-lasso');
     await clickInTheMiddleOfTheScreen(page);
   });
 
@@ -497,15 +478,11 @@ test.describe('Templates - Functional Group Tools2', () => {
       'Molfiles-V2000/benzene-with-two-bonds.mol',
       page,
     );
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await page.getByRole('tab', { name: 'Functional Groups' }).click();
-    await selectFunctionalGroups(FunctionalGroups.CO2Et, page);
+    await selectFunctionalGroup(FunctionalGroups.CO2Et, page);
     await page.mouse.click(clickCoordines.x1, clickCoordines.y1);
     await resetCurrentTool(page);
 
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await page.getByRole('tab', { name: 'Functional Groups' }).click();
-    await selectFunctionalGroups(FunctionalGroups.CPh3, page);
+    await selectFunctionalGroup(FunctionalGroups.CPh3, page);
     await page.mouse.click(clickCoordines.x2, clickCoordines.y2);
   });
 
@@ -518,9 +495,7 @@ test.describe('Templates - Functional Group Tools2', () => {
    */
     await openFileAndAddToCanvas('Molfiles-V2000/benzene-with-bonds.mol', page);
     await clickInTheMiddleOfTheScreen(page);
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await page.getByRole('tab', { name: 'Functional Groups' }).click();
-    await selectFunctionalGroups(FunctionalGroups.Ac, page);
+    await selectFunctionalGroup(FunctionalGroups.Ac, page);
     await attachOnTopOfBenzeneBonds(page);
   });
 
@@ -529,9 +504,7 @@ test.describe('Templates - Functional Group Tools2', () => {
     Test case: EPMLSOPKET-3994
     Description: The FG is replaced by Nitrogen atom
    */
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await page.getByRole('tab', { name: 'Functional Groups' }).click();
-    await selectFunctionalGroups(FunctionalGroups.FMOC, page);
+    await selectFunctionalGroup(FunctionalGroups.FMOC, page);
     await clickInTheMiddleOfTheScreen(page);
 
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
@@ -574,9 +547,7 @@ test.describe('Templates - Functional Group Tools3', () => {
    */
     const timeout = 120_000;
     test.setTimeout(timeout);
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await page.getByRole('tab', { name: 'Functional Groups' }).click();
-    await selectFunctionalGroups(FunctionalGroups.CO2Et, page);
+    await selectFunctionalGroup(FunctionalGroups.CO2Et, page);
     await clickInTheMiddleOfTheScreen(page);
 
     await selectLeftPanelToolClickAndScreenshot(LeftPanelButton.HandTool, page);
@@ -680,20 +651,16 @@ test.describe('Templates - Functional Group Tools3', () => {
       y2: 360,
     };
 
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await page.getByRole('tab', { name: 'Functional Groups' }).click();
-    await selectFunctionalGroups(FunctionalGroups.Bn, page);
+    await selectFunctionalGroup(FunctionalGroups.Bn, page);
     await page.mouse.click(clickCoordines.x1, clickCoordines.y1);
     await resetCurrentTool(page);
 
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await page.getByRole('tab', { name: 'Functional Groups' }).click();
-    await selectFunctionalGroups(FunctionalGroups.Bn, page);
+    await selectFunctionalGroup(FunctionalGroups.Boc, page);
     await page.mouse.click(clickCoordines.x2, clickCoordines.y2);
     await resetCurrentTool(page);
 
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
-    await page.getByText('Bn').first().click({ button: 'right' });
+    await page.getByText('Bn').click({ button: 'right' });
     await page.getByText('Expand Abbreviation').click();
 
     await selectTopPanelButton(TopPanelButton.Aromatize, page);
@@ -703,7 +670,7 @@ test.describe('Templates - Functional Group Tools3', () => {
     await takeEditorScreenshot(page);
   });
 
-  test.only('Check layout and cleanup buttons tool on FG', async ({ page }) => {
+  test('Check layout and cleanup buttons tool on FG', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-2955
     Description: Two FG's are added,
@@ -719,15 +686,11 @@ test.describe('Templates - Functional Group Tools3', () => {
       y2: 360,
     };
 
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await page.getByRole('tab', { name: 'Functional Groups' }).click();
-    await selectFunctionalGroups(FunctionalGroups.CCl3, page);
+    await selectFunctionalGroup(FunctionalGroups.CCl3, page);
     await page.mouse.click(clickCoordines.x1, clickCoordines.y1);
     await resetCurrentTool(page);
 
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await page.getByRole('tab', { name: 'Functional Groups' }).click();
-    await selectFunctionalGroups(FunctionalGroups.C2H5, page);
+    await selectFunctionalGroup(FunctionalGroups.C2H5, page);
     await page.mouse.click(clickCoordines.x2, clickCoordines.y2);
     await resetCurrentTool(page);
 

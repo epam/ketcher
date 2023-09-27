@@ -111,4 +111,31 @@ test.describe('Open Ketcher', () => {
     await takeEditorScreenshot(page);
     await page.getByRole('button', { name: 'Edit' }).click();
   });
+  test('Edit templates - Close window', async ({ page }) => {
+    /*
+   Test case: EPMLSOPKET-1700 
+   Click the 'Custom Template' button.
+   Click 'Edit' button for any template.
+   Click the 'X' button at the top right corner.
+   Click 'Edit' button for the same template.
+   Click the 'Cancel' button.
+   Click 'Edit' button for the same template.
+   Make any change(s) in the window. Click the 'Apply' button.
+   */
+    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+    await page.getByRole('tab', { name: 'Template Library' }).click();
+    await page.getByRole('button', { name: 'Aromatics (18)' }).click();
+    await page.getByTitle('Azulene').getByRole('button').click();
+    await page.getByTestId('close-icon').click();
+    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+    await page.getByRole('tab', { name: 'Template Library' }).click();
+    await page.getByRole('button', { name: 'Aromatics (18)' }).click();
+    await page.getByTitle('Azulene').getByRole('button').click();
+    await page.getByRole('button', { name: 'Cancel' }).click();
+    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+    await page.getByRole('tab', { name: 'Template Library' }).click();
+    await page.getByRole('button', { name: 'Aromatics (18)' }).click();
+    await page.getByTitle('Azulene').getByRole('button').click();
+    await page.getByRole('button', { name: 'Edit' }).click();
+  });
 });

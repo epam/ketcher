@@ -127,12 +127,10 @@ test.describe('Open Ketcher', () => {
     await page.getByRole('button', { name: 'Aromatics (18)' }).click();
     await page.getByTitle('Azulene').getByRole('button').click();
     await page.getByTestId('close-icon').click();
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
     await page.getByRole('tab', { name: 'Template Library' }).click();
     await page.getByRole('button', { name: 'Aromatics (18)' }).click();
     await page.getByTitle('Azulene').getByRole('button').click();
     await page.getByRole('button', { name: 'Cancel' }).click();
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
     await page.getByRole('tab', { name: 'Template Library' }).click();
     await page.getByRole('button', { name: 'Aromatics (18)' }).click();
     await page.getByTitle('Azulene').getByRole('button').click();

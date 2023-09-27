@@ -7,8 +7,6 @@ import {
   selectUserTemplatesAndPlaceInTheMiddle,
   TemplateLibrary,
   clickInTheMiddleOfTheScreen,
-  selectTemplate,
-  selectUserTemplate,
 } from '@utils';
 
 test.describe('Open Ketcher', () => {

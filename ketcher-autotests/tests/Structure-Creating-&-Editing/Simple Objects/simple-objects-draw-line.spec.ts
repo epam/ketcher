@@ -52,9 +52,10 @@ async function separetingAndMovingLines(page: Page) {
   await dragMouseTo(c, d, page);
   await page.mouse.click(e, f);
   await dragMouseTo(g, h, page);
+  await takeEditorScreenshot(page);
+  await clickInTheMiddleOfTheScreen(page);
   await selectDropdownTool(page, 'select-rectangle', 'select-lasso');
   await createSomeStructure(page);
-  await takeEditorScreenshot(page);
   await page.mouse.click(i, j);
   await dragMouseTo(k, l, page);
 }

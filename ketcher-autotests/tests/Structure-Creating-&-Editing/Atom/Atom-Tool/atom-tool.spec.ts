@@ -24,6 +24,10 @@ import {
   cutAndPaste,
   saveToFile,
   receiveFileComparisonData,
+  selectLeftPanelButton,
+  LeftPanelButton,
+  selectTopPanelButton,
+  TopPanelButton,
 } from '@utils';
 import { getMolfile, getRxn } from '@utils/formats';
 
@@ -239,20 +243,21 @@ test.describe('Atom Tool', () => {
     Test case: EPMLSOPKET-1527
     Description: Structure with List/Not List and Generic Group is Zoom In and Zoom Out.
     */
+    const numberOfPressZoomOut = 5;
+    const numberOfPressZoomIn = 5;
     await openFileAndAddToCanvas(
       'Molfiles-V2000/structure-list-notlist.mol',
       page,
     );
-    // eslint-disable-next-line no-magic-numbers
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < numberOfPressZoomOut; i++) {
       await waitForRender(page, async () => {
         await page.keyboard.press('Control+_');
       });
     }
+
     await takeEditorScreenshot(page);
 
-    // eslint-disable-next-line no-magic-numbers
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < numberOfPressZoomIn; i++) {
       await waitForRender(page, async () => {
         await page.keyboard.press('Control+=');
       });
@@ -461,6 +466,53 @@ test.describe('Atom Tool', () => {
 
     expect(molFile).toEqual(molFileExpected);
   });
+
+  test('Select part of structure and press Atom in toolbar', async ({
+    page,
+  }) => {
+    /*
+    Test case: EPMLSOPKET-12982
+    Description: Atoms appears on selected part of structure.
+    */
+    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
+    await selectPartOfMolecules(page);
+    await selectAtomInToolbar(AtomButton.Oxygen, page);
+  });
+
+  test('Deleting an atom that is bonded to another atom not deleting second atom', async ({
+    page,
+  }) => {
+    /*
+    Test case: EPMLSOPKET-10071
+    Description: Only one atom should be removed and the other should remain
+    */
+    const numberOfAtom = 0;
+    await selectAtomInToolbar(AtomButton.Bromine, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await selectAtomInToolbar(AtomButton.Nitrogen, page);
+    await moveMouseToTheMiddleOfTheScreen(page);
+    const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
+    const coordinatesWithShift = x + MAX_BOND_LENGTH;
+    await dragMouseTo(coordinatesWithShift, y, page);
+    await selectLeftPanelButton(LeftPanelButton.Erase, page);
+    await clickOnAtom(page, 'Br', numberOfAtom);
+    await takeEditorScreenshot(page);
+    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await clickOnAtom(page, 'N', numberOfAtom);
+  });
+
+  test('Deleting of one middle atom from a bunch of three not deleting another two atoms', async ({
+    page,
+  }) => {
+    /*
+    Test case: EPMLSOPKET-10072
+    Description: Deleting of one middle atom from a bunch of three not deleting another two atoms
+    */
+    const numberOfAtom = 0;
+    await openFileAndAddToCanvas('KET/three-bonded-atoms.ket', page);
+    await selectLeftPanelButton(LeftPanelButton.Erase, page);
+    await clickOnAtom(page, 'N', numberOfAtom);
+  });
 });
 
 test.describe('Atom Tool', () => {
@@ -563,5 +615,22 @@ test.describe('Atom Tool', () => {
       await resetCurrentTool(page);
       await takeEditorScreenshot(page);
     }
+  });
+
+  test('Default colours of atom symbols', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-1344, EPMLSOPKET-1341
+    Description: 
+    "H" and "C" are #000000, black.
+    "N" is #304FF7, blue.
+    "O" is #FF0D0D, red.
+    "S" is #C99A19, yellow.
+    "P" is #FF8000, brick red.
+    "F" is #78BC42, grass green.
+    "Cl" is #1FD01F, light green.
+    "Br" is #A62929, red-brown.
+    "I" is #940094, purple.
+    */
+    await takeRightToolbarScreenshot(page);
   });
 });

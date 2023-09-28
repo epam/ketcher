@@ -85,6 +85,7 @@ export enum FunctionalGroups {
   SO2H = 'SO2H',
   SO3 = 'SO3',
   SO3H = 'SO3H',
+  Tf = 'Tf',
 }
 
 export enum TemplateLibrary {

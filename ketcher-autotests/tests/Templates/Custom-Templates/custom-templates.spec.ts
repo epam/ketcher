@@ -7,6 +7,8 @@ import {
   selectUserTemplatesAndPlaceInTheMiddle,
   TemplateLibrary,
   clickInTheMiddleOfTheScreen,
+  selectFunctionalGroup,
+  FunctionalGroups,
 } from '@utils';
 
 test.describe('Open Ketcher', () => {
@@ -65,6 +67,17 @@ test.describe('Open Ketcher', () => {
     await page.getByRole('tab', { name: 'Salts and Solvents' }).click();
     await page.getByRole('tab', { name: 'Functional Groups' }).click();
     await page.getByRole('tab', { name: 'Salts and Solvents' }).click();
+  });
+
+  test('Thumbnail images are readable in Template Dialog', async ({ page }) => {
+    /*
+   Test case: EPMLSOPKET-8932 
+   Open template dialog
+   Switch to "Functional Groups" tab
+   Observe some large structure
+   */
+    await selectFunctionalGroup(FunctionalGroups.Tf, page);
+    await clickInTheMiddleOfTheScreen(page);
   });
 
   test('Check automatically reset the search filter', async ({ page }) => {

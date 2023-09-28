@@ -319,14 +319,23 @@ export class PolymerBondRenderer extends BaseRenderer {
   public drawSelection() {
     if (this.polymerBond.selected) {
       this.selectionElement?.remove();
-      this.selectionElement = this.rootElement
-        ?.insert('line', ':first-child')
-        .attr('stroke', '#57FF8F')
-        .attr('x1', this.polymerBond.startPosition.x)
-        .attr('y1', this.polymerBond.startPosition.y)
-        .attr('x2', this.polymerBond.endPosition.x)
-        .attr('y2', this.polymerBond.endPosition.y)
-        .attr('stroke-width', '10');
+      if (PolymerBondRenderer.isSnake) {
+        this.selectionElement = this.rootElement
+          ?.insert('path', ':first-child')
+          .attr('stroke', '#57FF8F')
+          .attr('stroke-width', 10)
+          .attr('fill-opacity', 0)
+          .attr('d', this.path);
+      } else {
+        this.selectionElement = this.rootElement
+          ?.insert('line', ':first-child')
+          .attr('stroke', '#57FF8F')
+          .attr('x1', this.polymerBond.startPosition.x)
+          .attr('y1', this.polymerBond.startPosition.y)
+          .attr('x2', this.polymerBond.endPosition.x)
+          .attr('y2', this.polymerBond.endPosition.y)
+          .attr('stroke-width', '10');
+      }
     } else {
       this.selectionElement?.remove();
     }
@@ -349,9 +358,8 @@ export class PolymerBondRenderer extends BaseRenderer {
     assert(this.hoverAreaElement);
     this.bodyElement.attr('d', this.path);
 
-    // fix
-    // this.hoverAreaElement.attr('d', this.path);
-    // this.selectionElement?.attr('d', this.path);
+    this.hoverAreaElement.attr('d', this.path);
+    this.selectionElement?.attr('d', this.path);
   }
 
   private moveGraphBondEnd() {
@@ -387,9 +395,8 @@ export class PolymerBondRenderer extends BaseRenderer {
     assert(this.hoverAreaElement);
     this.bodyElement.attr('d', this.path);
 
-    // fix
-    // this.hoverAreaElement.attr('d', this.path);
-    // this.selectionElement.attr('d', this.path);
+    this.hoverAreaElement.attr('d', this.path);
+    this.selectionElement?.attr('d', this.path);
   }
 
   private moveGraphBondStart() {

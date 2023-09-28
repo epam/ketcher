@@ -6,11 +6,12 @@ import { D3SvgElementSelection } from 'application/render/types';
 import { editorEvents } from 'application/editor/editorEvents';
 import { Vec2 } from 'domain/entities/vec2';
 
-const LENGTH_LINE_FROM_MONOMER = 16.5;
+const LINE_FROM_MONOMER_LENGTH = 10;
+const VERTICAL_LINE_LENGTH = 42;
 const CORNER_LENGTH = 8;
 const DOUBLE_CORNER_LENGTH = CORNER_LENGTH * 2;
 enum LINE_DIRECTION {
-  Horizontal = 'horizontal',
+  Horizontal = 'Horizontal',
   Vertical = 'Vertical',
 }
 
@@ -88,7 +89,7 @@ export class PolymerBondRenderer extends BaseRenderer {
     if (this.isSecondMonomerBottomRight(startPosition, endPosition)) {
       this.addLine(
         LINE_DIRECTION.Horizontal,
-        LENGTH_LINE_FROM_MONOMER + this.getMonomerWidth() / 2,
+        LINE_FROM_MONOMER_LENGTH + this.getMonomerWidth() / 2,
         startPosition,
       );
       this.addLineFromLeftToBottom();
@@ -102,13 +103,13 @@ export class PolymerBondRenderer extends BaseRenderer {
         endPosition.x -
           startPosition.x -
           CORNER_LENGTH * 2 -
-          LENGTH_LINE_FROM_MONOMER -
+          LINE_FROM_MONOMER_LENGTH -
           this.getMonomerWidth() / 2,
       );
     } else if (this.isSecondMonomerTopRight(startPosition, endPosition)) {
       this.addLine(
         LINE_DIRECTION.Horizontal,
-        LENGTH_LINE_FROM_MONOMER + this.getMonomerWidth() / 2,
+        LINE_FROM_MONOMER_LENGTH + this.getMonomerWidth() / 2,
         startPosition,
       );
       this.addLineFromLeftToTop();
@@ -125,24 +126,24 @@ export class PolymerBondRenderer extends BaseRenderer {
         endPosition.x -
           startPosition.x -
           CORNER_LENGTH * 2 -
-          LENGTH_LINE_FROM_MONOMER -
+          LINE_FROM_MONOMER_LENGTH -
           this.getMonomerWidth() / 2,
       );
     } else if (this.isSecondMonomerBottomLeft(startPosition, endPosition)) {
       this.addLine(
         LINE_DIRECTION.Horizontal,
-        LENGTH_LINE_FROM_MONOMER + this.getMonomerWidth() / 2,
+        LINE_FROM_MONOMER_LENGTH + this.getMonomerWidth() / 2,
         startPosition,
       );
       this.addLineFromLeftToBottom();
-      this.addLine(LINE_DIRECTION.Vertical, this.getMonomerHeight());
+      this.addLine(LINE_DIRECTION.Vertical, VERTICAL_LINE_LENGTH);
       this.addLineFromTopToLeft();
       this.addLine(
         LINE_DIRECTION.Horizontal,
         -(
           startPosition.x -
           endPosition.x +
-          LENGTH_LINE_FROM_MONOMER * 2 +
+          LINE_FROM_MONOMER_LENGTH * 2 +
           this.getMonomerWidth()
         ),
       );
@@ -152,17 +153,17 @@ export class PolymerBondRenderer extends BaseRenderer {
         endPosition.y -
           startPosition.y -
           CORNER_LENGTH * 4 -
-          this.getMonomerHeight(),
+          VERTICAL_LINE_LENGTH,
       );
       this.addLineFromTopToRight();
       this.addLine(
         LINE_DIRECTION.Horizontal,
-        LENGTH_LINE_FROM_MONOMER + this.getMonomerWidth() / 2,
+        LINE_FROM_MONOMER_LENGTH + this.getMonomerWidth() / 2,
       );
     } else if (this.isSecondMonomerTopLeft(startPosition, endPosition)) {
       this.addLine(
         LINE_DIRECTION.Horizontal,
-        LENGTH_LINE_FROM_MONOMER + this.getMonomerWidth() / 2,
+        LINE_FROM_MONOMER_LENGTH + this.getMonomerWidth() / 2,
         startPosition,
       );
       this.addLineFromLeftToBottom();
@@ -173,7 +174,7 @@ export class PolymerBondRenderer extends BaseRenderer {
         -(
           startPosition.x -
           endPosition.x +
-          LENGTH_LINE_FROM_MONOMER * 2 +
+          LINE_FROM_MONOMER_LENGTH * 2 +
           this.getMonomerWidth()
         ),
       );
@@ -186,7 +187,7 @@ export class PolymerBondRenderer extends BaseRenderer {
       this.addLineFromBottomToRight();
       this.addLine(
         LINE_DIRECTION.Horizontal,
-        LENGTH_LINE_FROM_MONOMER + this.getMonomerWidth() / 2,
+        LINE_FROM_MONOMER_LENGTH + this.getMonomerWidth() / 2,
       );
     } else {
       this.addRandomLine(startPosition, endPosition);
@@ -197,7 +198,7 @@ export class PolymerBondRenderer extends BaseRenderer {
     return (
       startPosition.y - endPosition.y > this.getMonomerHeight() &&
       endPosition.x - startPosition.x >
-        DOUBLE_CORNER_LENGTH + LENGTH_LINE_FROM_MONOMER + this.getMonomerWidth()
+        DOUBLE_CORNER_LENGTH + LINE_FROM_MONOMER_LENGTH + this.getMonomerWidth()
     );
   }
 
@@ -205,7 +206,7 @@ export class PolymerBondRenderer extends BaseRenderer {
     return (
       endPosition.y - startPosition.y > this.getMonomerHeight() &&
       endPosition.x - startPosition.x >
-        DOUBLE_CORNER_LENGTH + LENGTH_LINE_FROM_MONOMER + this.getMonomerWidth()
+        DOUBLE_CORNER_LENGTH + LINE_FROM_MONOMER_LENGTH + this.getMonomerWidth()
     );
   }
 
@@ -213,7 +214,7 @@ export class PolymerBondRenderer extends BaseRenderer {
     return (
       endPosition.y - startPosition.y > this.getMonomerHeight() &&
       endPosition.x - startPosition.x <=
-        DOUBLE_CORNER_LENGTH + LENGTH_LINE_FROM_MONOMER + this.getMonomerWidth()
+        DOUBLE_CORNER_LENGTH + LINE_FROM_MONOMER_LENGTH + this.getMonomerWidth()
     );
   }
 
@@ -221,7 +222,7 @@ export class PolymerBondRenderer extends BaseRenderer {
     return (
       startPosition.y - endPosition.y > -2 * this.getMonomerHeight() &&
       endPosition.x - startPosition.x <=
-        DOUBLE_CORNER_LENGTH + LENGTH_LINE_FROM_MONOMER + this.getMonomerWidth()
+        LINE_FROM_MONOMER_LENGTH + this.getMonomerWidth()
     );
   }
 

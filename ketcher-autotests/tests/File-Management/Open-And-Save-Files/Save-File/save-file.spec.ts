@@ -20,6 +20,8 @@ import {
   selectRingButton,
   selectTopPanelButton,
   takeEditorScreenshot,
+  waitForPageInit,
+  waitForSpinnerFinishedWork,
 } from '@utils';
 import { drawReactionWithTwoBenzeneRings } from '@utils/canvas/drawStructures';
 import {
@@ -333,7 +335,7 @@ test.describe('Save files', () => {
 
 test.describe('Open/Save/Paste files', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {
@@ -349,7 +351,9 @@ test.describe('Open/Save/Paste files', () => {
       page,
       FILE_TEST_DATA.benzeneArrowBenzeneReagentHclV2000,
     );
-    await pressButton(page, 'Add to Canvas');
+    await waitForSpinnerFinishedWork(page, async () => {
+      await pressButton(page, 'Add to Canvas');
+    });
     await clickInTheMiddleOfTheScreen(page);
   });
 

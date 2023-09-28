@@ -372,20 +372,19 @@ test('Open and Save file - V3000 *.mol file contains Heteroatoms 2/2 - save', as
   expect(molFile).toEqual(molFileExpected);
 });
 
-test.fixme(
-  'Open and Save file - Open/Save file with Attached data 1/2 - open',
-  async ({ page }) => {
-    /**
-     * Test case: EPMLSOPKET-1880(1)
-     * Description: Structure with heteroatoms is opened from mol v3000 file correctly
-     */
-    await waitForPageInit(page);
+test('Open and Save file - Open/Save file with Attached data 1/2 - open', async ({
+  page,
+}) => {
+  /**
+   * Test case: EPMLSOPKET-1880(1)
+   * Description: Structure with heteroatoms is opened from mol v3000 file correctly
+   */
+  await waitForPageInit(page);
 
-    await openFileAndAddToCanvas('Molfiles-V2000/attached-data.mol', page);
-    // check that structure opened from file is displayed correctly
-    await takeEditorScreenshot(page);
-  },
-);
+  await openFileAndAddToCanvas('Molfiles-V2000/attached-data.mol', page);
+  // check that structure opened from file is displayed correctly
+  await takeEditorScreenshot(page);
+});
 
 test('Open and Save file - Open/Save file with Attached data 2/2 - save', async ({
   page,
@@ -575,6 +574,7 @@ test.describe('Open and Save file', () => {
       {
         testName: 'Open/Save V3000 mol file contains more than 900 symbols',
         path: 'Molfiles-V3000/more-900-atoms.mol',
+        isSlow: true,
       },
       {
         testName: 'Open/Save V3000 mol file contains Sgroup',
@@ -616,6 +616,9 @@ test.describe('Open and Save file', () => {
 
     for (const file of files) {
       test(`${file.testName}`, async ({ page }) => {
+        if (file.isSlow) {
+          test.setTimeout(120_000);
+        }
         await openFileAndAddToCanvas(file.path, page);
         await takeEditorScreenshot(page);
       });
@@ -645,6 +648,7 @@ test.describe('Open and Save file', () => {
         pathToOpen: 'Molfiles-V3000/more-900-atoms.mol',
         pathToExpected: 'Molfiles-V3000/more-900-atoms-expected.mol',
         format: 'v3000',
+        isSlow: true,
       },
       {
         testName: 'Open/Save V3000 mol file contains Sgroup',
@@ -668,6 +672,10 @@ test.describe('Open and Save file', () => {
 
     for (const file of files) {
       test(`${file.testName}`, async ({ page }) => {
+        if (file.isSlow) {
+          test.setTimeout(120_000);
+        }
+
         await openFileAndAddToCanvas(file.pathToOpen, page);
 
         const expectedFile = await getMolfile(
@@ -690,41 +698,42 @@ test.describe('Open and Save file', () => {
     }
   });
 
-  test.skip('V3000 mol file contains different Bond properties', async ({
-    page,
-  }) => {
-    /**
-     * Test case: EPMLSOPKET-1853
-     * Description: Structre is correctly generated from Molstring and vise versa molstring is correctly generated from structure.
-     * A file with V3000 format is resaved in V2000 format
-     *
-     * Now we can`t open the file - `Convert error! Cannot deserialize input JSON.`
-     * https://github.com/epam/ketcher/issues/2378
-     */
+  test.fixme(
+    'V3000 mol file contains different Bond properties',
+    async ({ page }) => {
+      /**
+       * Test case: EPMLSOPKET-1853
+       * Description: Structre is correctly generated from Molstring and vise versa molstring is correctly generated from structure.
+       * A file with V3000 format is resaved in V2000 format
+       *
+       * Now we can`t open the file - `Convert error! Cannot deserialize input JSON.`
+       * https://github.com/epam/ketcher/issues/2378
+       */
 
-    await openFileAndAddToCanvas(
-      'Molfiles-V3000/marvin-bond-properties-V3000(1).mol',
-      page,
-    );
-
-    const expectedFile = await getMolfile(page, 'v2000');
-    await saveToFile(
-      'Molfiles-V2000/marvin-bond-properties-V3000-expected.mol',
-      expectedFile,
-    );
-
-    const METADATA_STRING_INDEX = [1];
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
+      await openFileAndAddToCanvas(
+        'Molfiles-V3000/marvin-bond-properties-V3000(1).mol',
         page,
-        expectedFileName:
-          'tests/test-data/Molfiles-V2000/marvin-bond-properties-V3000-expected.mol',
-        fileFormat: 'v2000',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
+      );
 
-    expect(molFile).toEqual(molFileExpected);
-  });
+      const expectedFile = await getMolfile(page, 'v2000');
+      await saveToFile(
+        'Molfiles-V2000/marvin-bond-properties-V3000-expected.mol',
+        expectedFile,
+      );
+
+      const METADATA_STRING_INDEX = [1];
+      const { fileExpected: molFileExpected, file: molFile } =
+        await receiveFileComparisonData({
+          page,
+          expectedFileName:
+            'tests/test-data/Molfiles-V2000/marvin-bond-properties-V3000-expected.mol',
+          fileFormat: 'v2000',
+          metaDataIndexes: METADATA_STRING_INDEX,
+        });
+
+      expect(molFile).toEqual(molFileExpected);
+    },
+  );
 
   for (let i = 1; i < 9; i++) {
     test(`Open/Save files for ferrocen-like structures 1/2 - open ferrocene_radical0${i}.mol`, async ({

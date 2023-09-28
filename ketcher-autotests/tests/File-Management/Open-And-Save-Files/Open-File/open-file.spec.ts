@@ -11,7 +11,6 @@ import {
   TopPanelButton,
   selectTopPanelButton,
   waitForPageInit,
-  waitForRender,
 } from '@utils';
 
 const X_OFFSET = 200;
@@ -51,7 +50,7 @@ test.describe('open files with different formats', () => {
 (same as in EPMLSOPKET-1835), however in this test when second structure is added
 the first one disappears. Couldn't reproduct manually.
 */
-  test.fixme('Open file - Input .mol, InChi', async ({ page }) => {
+  test('Open file - Input .mol, InChi', async ({ page }) => {
     /**
      * Test case: EPMLSOPKET-1835
      * Description: Two structures are added to canvas - one opened from clipboard, another from file
@@ -62,18 +61,15 @@ the first one disappears. Couldn't reproduct manually.
       'tests/test-data/Txt/1840225-mol-1.txt',
       page,
     );
-    await waitForRender(page, async () => {
-      await clickInTheMiddleOfTheScreen(page);
-    });
+    await clickInTheMiddleOfTheScreen(page);
+
     // add second structure from file to canvas
     await selectTopPanelButton(TopPanelButton.Open, page);
     await openFile('glutamine.mol', page);
     await waitForLoad(page, async () => {
       await pressButton(page, 'Add to Canvas');
     });
-    await waitForRender(page, async () => {
-      await clickOnTheCanvas(page, X_OFFSET, 0);
-    });
+    await clickOnTheCanvas(page, X_OFFSET, 0);
   });
 
   test('Open file - Input .rxn string', async ({ page }) => {
@@ -93,9 +89,7 @@ the first one disappears. Couldn't reproduct manually.
     await waitForLoad(page, async () => {
       await pressButton(page, 'Add to Canvas');
     });
-    await waitForRender(page, async () => {
-      await clickOnTheCanvas(page, 0, -X_OFFSET);
-    });
+    await clickOnTheCanvas(page, 0, -X_OFFSET);
   });
 
   test('Open file - Input InChi-string 1/3', async ({ page }) => {
@@ -109,9 +103,7 @@ the first one disappears. Couldn't reproduct manually.
       'tests/test-data/Txt/1837-inchi-1.txt',
       page,
     );
-    await waitForRender(page, async () => {
-      await clickInTheMiddleOfTheScreen(page);
-    });
+    await clickInTheMiddleOfTheScreen(page);
   });
 
   test('Open file - Input InChi-string 2/3', async ({ page }) => {
@@ -125,9 +117,7 @@ the first one disappears. Couldn't reproduct manually.
       'tests/test-data/Txt/1837-inchi-2.txt',
       page,
     );
-    await waitForRender(page, async () => {
-      await clickInTheMiddleOfTheScreen(page);
-    });
+    await clickInTheMiddleOfTheScreen(page);
   });
 
   test('Open file - Input InChi-string 3/3', async ({ page }) => {
@@ -141,9 +131,7 @@ the first one disappears. Couldn't reproduct manually.
       'tests/test-data/Txt/1837-inchi-3.txt',
       page,
     );
-    await waitForRender(page, async () => {
-      await clickInTheMiddleOfTheScreen(page);
-    });
+    await clickInTheMiddleOfTheScreen(page);
   });
 
   test('Open file - Open *.mol file 1/2', async ({ page }) => {

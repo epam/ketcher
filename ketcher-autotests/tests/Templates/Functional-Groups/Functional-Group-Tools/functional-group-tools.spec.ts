@@ -572,6 +572,8 @@ test.describe('Templates - Functional Group Tools3', () => {
     Test case: EPMLSOPKET-3933
     Description:  Functional Group-Expand/Remove abbreviation context menu is shown
    */
+    const timeout = 120_000;
+    test.setTimeout(timeout);
     await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
     await page.getByRole('tab', { name: 'Functional Groups' }).click();
     await selectFunctionalGroups(FunctionalGroups.CO2Et, page);

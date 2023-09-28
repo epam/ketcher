@@ -156,6 +156,12 @@ export const atom = {
       maxLength: 5,
       invalidMessage: 'Invalid atomic mass',
     },
+    customQuery: {
+      title: 'Custom Query',
+      pattern: '[^ ]',
+      type: 'string',
+      invalidMessage: 'Invalid custom query',
+    },
     invRet: {
       title: 'Inversion',
       enum: [0, 1, 2],
@@ -259,14 +265,21 @@ export const bond = {
     },
     topology: {
       title: 'Topology',
-      enum: [0, 1, 2],
-      enumNames: ['Either', 'Ring', 'Chain'],
+      enum: [null, 0, 1, 2],
+      enumNames: ['', 'Either', 'Ring', 'Chain'],
       default: 0,
+    },
+    customQuery: {
+      title: 'Custom Query',
+      pattern: '[^ ]',
+      type: 'string',
+      invalidMessage: 'Invalid custom query',
     },
     center: {
       title: 'Reacting Center',
-      enum: [0, -1, 1, 2, 4, 8, 12], // 5, 9, 13
+      enum: [null, 0, -1, 1, 2, 4, 8, 12], // 5, 9, 13
       enumNames: [
+        '',
         'Unmarked',
         'Not center',
         'Center',

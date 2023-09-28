@@ -4,6 +4,7 @@ import {
   clickOnBond,
   drawBenzeneRing,
   openDropdown,
+  selectDropdownTool,
   takeLeftToolbarScreenshot,
 } from '@utils';
 
@@ -32,7 +33,7 @@ test.describe('Left toolbar UI tests', () => {
 
   test('left toolbar selection tool verification', async ({ page }) => {
     // Test case: EPMLSOPKET-4268
-    await page.getByTestId('select-rectangle').click();
+    await openDropdown(page, 'select-rectangle');
     const selectionToolDropdownWidth = 200;
     await takeDropdownScreenshot(page, selectionToolDropdownWidth);
   });
@@ -68,8 +69,7 @@ test.describe('Left toolbar UI tests', () => {
   test('stereochemistry ui verification', async ({ page }) => {
     // Test case: EPMLSOPKET-8918
     await drawBenzeneRing(page);
-    await openDropdown(page, 'bonds');
-    await page.getByTestId('bond-up').click();
+    await selectDropdownTool(page, 'bonds', 'bond-up');
     const bondNumber = 2;
     await clickOnBond(page, BondType.SINGLE, bondNumber);
     await takeLeftToolbarScreenshot(page);

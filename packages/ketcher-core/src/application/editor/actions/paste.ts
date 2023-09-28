@@ -26,6 +26,8 @@ import {
   TextCreate,
   CalcImplicitH,
   FragmentSetProperties,
+  BondAttr,
+  AtomAttr,
 } from '../operations';
 import { fromRGroupAttrs, fromUpdateIfThen } from './rgroup';
 
@@ -39,6 +41,7 @@ export function fromPaste(
   pstruct,
   point,
   angle = 0,
+  isPreview = false,
 ): [Action, { atoms: number[]; bonds: number[] }] {
   const xy0 = getStructCenter(pstruct);
   const offset = Vec2.diff(point, xy0);
@@ -114,10 +117,12 @@ export function fromPaste(
     action.addOp(operation);
 
     pasteItems.bonds.push(operation.data.bid);
+    new BondAttr(operation.data.bid, 'isPreview', isPreview).perform(restruct);
   });
 
   pasteItems.atoms.forEach((aid) => {
     action.addOp(new CalcImplicitH([aid]).perform(restruct));
+    new AtomAttr(aid, 'isPreview', isPreview).perform(restruct);
   });
 
   pstruct.sgroups.forEach((sg: SGroup) => {

@@ -25,6 +25,7 @@ import {
   waitForPageInit,
   waitForSpinnerFinishedWork,
   waitForRender,
+  clickOnBond,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
@@ -274,26 +275,28 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await selectTopPanelButton(TopPanelButton.ThreeD, page);
   });
 
-  test.fixme(
-    '(Erase bond with stereo labels and Undo) Manipulations with structure with stereo labels',
-    async ({ page }) => {
-      /*
+  test('(Erase bond with stereo labels and Undo) Manipulations with structure with stereo labels', async ({
+    page,
+  }) => {
+    /*
     Test case: EPMLSOPKET-1925
     Description: Stereo labels appear near stereobonds after 'Calculate CIP' action.
     Bond with stereo label is deleted after removing by the 'Erase' tool.
     'Undo' action leads to the previous structure with stereo labels.
     */
-      await openFileAndAddToCanvas('structure-with-stereo-bonds.mol', page);
+    await openFileAndAddToCanvas('structure-with-stereo-bonds.mol', page);
+    await waitForRender(page, async () => {
       await selectTopPanelButton(TopPanelButton.Calculate, page);
-      await selectLeftPanelButton(LeftPanelButton.Erase, page);
-      const point = await getBondByIndex(page, { type: BondType.SINGLE }, 3);
-      await page.mouse.click(point.x, point.y);
+    });
+    await waitForRender(page, async () => {
+      await clickOnBond(page, BondType.SINGLE, 3);
+    });
+    await page.keyboard.press('Delete');
 
-      await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page);
 
-      await selectTopPanelButton(TopPanelButton.Undo, page);
-    },
-  );
+    await selectTopPanelButton(TopPanelButton.Undo, page);
+  });
 
   test('(Erase atom with stereo labels and Undo) Manipulations with structure with stereo labels', async ({
     page,
@@ -400,33 +403,32 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     expect(ketFile).toEqual(ketFileExpected);
   });
 
-  test.fixme(
-    'Save as .mol V2000 file structure with stereo labels',
-    async ({ page }) => {
-      /*
+  test('Save as .mol V2000 file structure with stereo labels', async ({
+    page,
+  }) => {
+    /*
     Test case: EPMLSOPKET-1911
     Description: The file is saved as .mol V2000 file.
     */
-      await openFileAndAddToCanvas('structure-with-stereo-bonds.mol', page);
-      const expectedFile = await getMolfile(page, 'v2000');
-      await saveToFile(
-        'structure-with-stereo-bonds-expectedV2000.mol',
-        expectedFile,
-      );
-      await selectTopPanelButton(TopPanelButton.Calculate, page);
-      const METADATA_STRING_INDEX = [1];
-      const { file: molFile, fileExpected: molFileExpected } =
-        await receiveFileComparisonData({
-          page,
-          metaDataIndexes: METADATA_STRING_INDEX,
-          expectedFileName:
-            'tests/test-data/structure-with-stereo-bonds-expectedV2000.mol',
-          fileFormat: 'v2000',
-        });
+    await openFileAndAddToCanvas('structure-with-stereo-bonds.mol', page);
+    const expectedFile = await getMolfile(page, 'v2000');
+    await saveToFile(
+      'structure-with-stereo-bonds-expectedV2000.mol',
+      expectedFile,
+    );
+    await selectTopPanelButton(TopPanelButton.Calculate, page);
+    const METADATA_STRING_INDEX = [1];
+    const { file: molFile, fileExpected: molFileExpected } =
+      await receiveFileComparisonData({
+        page,
+        metaDataIndexes: METADATA_STRING_INDEX,
+        expectedFileName:
+          'tests/test-data/structure-with-stereo-bonds-expectedV2000.mol',
+        fileFormat: 'v2000',
+      });
 
-      expect(molFile).toEqual(molFileExpected);
-    },
-  );
+    expect(molFile).toEqual(molFileExpected);
+  });
 
   test('Save as .mol V3000 file structure with stereo labels', async ({
     page,

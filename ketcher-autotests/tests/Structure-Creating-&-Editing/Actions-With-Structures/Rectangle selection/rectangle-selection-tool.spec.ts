@@ -97,7 +97,7 @@ test.describe('Rectangle selection tool', () => {
   });
 
   test('Reaction components dragging', async ({ page }) => {
-    //  Test case: EPMLSOPKET-
+    //  Test case: EPMLSOPKET-1350
     const objectSelection = 100;
     const moveMouseCordY = 10;
     await openFileAndAddToCanvas('Rxn-V2000/benzene-chain-reaction.rxn', page);

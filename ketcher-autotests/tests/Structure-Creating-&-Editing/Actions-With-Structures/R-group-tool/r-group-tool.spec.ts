@@ -37,13 +37,12 @@ test.describe('R-Group', () => {
     await takeLeftToolbarScreenshot(page);
   });
 
-  test.fixme('Copy and paste R-Group structure', async ({ page }) => {
+  test('Copy and paste R-Group structure', async ({ page }) => {
     /*
   Test case: EPMLSOPKET-1671
   Description: All Rgroup members, Rgroup definition, occurence, brackets, 
   attachment points are rendered correctly in any structure drawing application.
   */
-    // Error when test is running by playwright. Manually it's working.
     const x = 500;
     const y = 200;
     await openFileAndAddToCanvas(
@@ -55,13 +54,12 @@ test.describe('R-Group', () => {
     await screenshotBetweenUndoRedo(page);
   });
 
-  test.fixme('Cut and Paste R-Group structure', async ({ page }) => {
+  test('Cut and Paste R-Group structure', async ({ page }) => {
     /*
   Test case: EPMLSOPKET-1671
   Description: All Rgroup members, Rgroup definition, occurence, brackets, 
   attachment points are rendered correctly in any structure drawing application.
   */
-    // Error when test is running by playwright. Manually it's working.
     const x = 300;
     const y = 300;
     await openFileAndAddToCanvas(

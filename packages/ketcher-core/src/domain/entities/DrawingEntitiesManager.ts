@@ -29,6 +29,11 @@ import { monomerFactory } from 'application/editor/operations/monomer/monomerFac
 import { provideEditorSettings } from 'application/editor/editorSettings';
 import { Scale } from 'domain/helpers';
 
+const HORIZONTAL_DISTANCE_FROM_MONOMER = 20;
+const VERTICAL_DISTANCE_FROM_MONOMER = 50;
+const DISTANCE_FROM_RIGHT = 70;
+const DISTANCE_BETWEEN_MONOMERS = 30;
+
 type RnaPresetAdditionParams = {
   sugar: MonomerItemType;
   sugarPosition: Vec2;
@@ -481,7 +486,8 @@ export class DrawingEntitiesManager {
     const editorSettings = provideEditorSettings();
     const monomerWidth = chain[0].renderer?.bodyWidth ?? 0;
     const monomerHeight = chain[0].renderer?.bodyHeight ?? 0;
-    const heightMonomerWithBond = monomerHeight + 80;
+    const heightMonomerWithBond =
+      monomerHeight + VERTICAL_DISTANCE_FROM_MONOMER;
     chain[0].moveAbsolute(Scale.scaled2obj(initCoords, editorSettings));
     const operation = new MonomerMoveOperation(chain[0]);
     command.addOperation(operation);
@@ -491,7 +497,14 @@ export class DrawingEntitiesManager {
         chain[i - 1].position,
         editorSettings,
       );
-      if (prevPosition.x + 64 + initCoords.x + 50 + 70 > canvasWidth) {
+      if (
+        prevPosition.x +
+          DISTANCE_BETWEEN_MONOMERS +
+          initCoords.x +
+          HORIZONTAL_DISTANCE_FROM_MONOMER +
+          DISTANCE_FROM_RIGHT >
+        canvasWidth
+      ) {
         chain[i].moveAbsolute(
           Scale.scaled2obj(
             new Vec2({
@@ -506,7 +519,10 @@ export class DrawingEntitiesManager {
         chain[i].moveAbsolute(
           Scale.scaled2obj(
             new Vec2({
-              x: prevPosition.x + monomerWidth + 50,
+              x:
+                prevPosition.x +
+                monomerWidth +
+                HORIZONTAL_DISTANCE_FROM_MONOMER,
               y: prevPosition.y,
               z: initCoords.z,
             }),
@@ -530,7 +546,6 @@ export class DrawingEntitiesManager {
       firstMonomer = this.getPrevMonomer(firstMonomer);
     }
 
-    // найти цепочку этого мономера
     const monomerChain = [] as BaseMonomer[];
     let monomerInTheChain = firstMonomer;
     monomerChain.push(monomerInTheChain);
@@ -588,7 +603,6 @@ export class DrawingEntitiesManager {
     );
     chainsList.push(firstChain);
 
-    // остальные
     while (unusedMonomerList.length) {
       const chain = this.findChainByMonomer(unusedMonomerList[0]);
       unusedMonomerList = unusedMonomerList.filter(
@@ -598,8 +612,6 @@ export class DrawingEntitiesManager {
     }
 
     const monomerHeight = monomersList[0].renderer?.bodyHeight ?? 0;
-
-    // построить цепочку (назначить координаты мономеров)
     let initCoords = new Vec2({
       x: 40,
       y: 40,
@@ -614,7 +626,7 @@ export class DrawingEntitiesManager {
       );
       initCoords = new Vec2({
         x: initCoords.x,
-        y: lastCoord.y + monomerHeight + 80,
+        y: lastCoord.y + monomerHeight + VERTICAL_DISTANCE_FROM_MONOMER,
         z: 0,
       });
       command.merge(newCommand);

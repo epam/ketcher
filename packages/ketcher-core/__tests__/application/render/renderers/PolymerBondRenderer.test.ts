@@ -3,8 +3,7 @@ import { getFinishedPolymerBond } from '../../../mock-data';
 import { PolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer';
 
 describe('Polymer Bond Renderer', () => {
-  // Remove skip later!
-  it.skip('should render bond', () => {
+  it('should render bond', () => {
     const canvas: SVGSVGElement = createPolymerEditorCanvas();
     const polymerBond = getFinishedPolymerBond(0.25, 0.25, 2.25, 2.5);
     polymerBond.moveToLinkedMonomers();

@@ -22,7 +22,6 @@ import {
   clickOnAtom,
   STRUCTURE_LIBRARY_BUTTON_NAME,
   waitForPageInit,
-  selectFunctionalGroup,
   selectDropdownTool,
   selectFunctionalGroups,
 } from '@utils';

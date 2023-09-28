@@ -129,6 +129,7 @@ export class AttachmentPoint {
       .attr('x2', attachmentPointCoordinates.x)
       .attr('y2', attachmentPointCoordinates.y)
       .attr('stroke', stroke)
+      .attr('stroke-linecap', 'round')
       .attr('stroke-width', '2px');
 
     attachmentPointElement

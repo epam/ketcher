@@ -92,18 +92,8 @@ export function getSearchFunction(initialAngle, canvasOffset, monomer) {
     );
 
     // exit recursion
-    if (diff.length() < 4) {
-      // there is small inaccurancy about 2 pixels in this calculations,
-      // so we fix it with additional length from point.
-
-      const deltaXO = 2 * Math.cos(angleRadians);
-      const deltaYO = 2 * Math.sin(angleRadians);
-      const newCoordStartWithOffset = {
-        x: secondPoint.x + deltaXO,
-        y: secondPoint.y + deltaYO,
-      };
-
-      return newCoordStartWithOffset;
+    if (diff.length() < 1.2) {
+      return secondPoint;
     }
 
     const newLength = Math.round(diff.length() / 2);

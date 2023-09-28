@@ -377,8 +377,6 @@ test.describe('Bond Tool', () => {
        *Test case: EPMLSOPKET-10086
        *Description: A bond is added to a contracted functional group and form a bond
        */
-      await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-      await page.getByRole('tab', { name: 'Functional Groups' }).click();
       await selectFunctionalGroups(FunctionalGroups.Boc, page);
       await clickInTheMiddleOfTheScreen(page);
       await selectDropdownTool(page, 'bonds', tool);

@@ -52,8 +52,6 @@ test.describe('Click and drag Atom on canvas', () => {
       Test case: EPMLSOPKET-10116
       Description: when click & drag with an atom on functional group it should forms a bond between it
     */
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await page.getByRole('tab', { name: 'Functional Groups' }).click();
     await selectFunctionalGroups(FunctionalGroups.Cbz, page);
     await clickInTheMiddleOfTheScreen(page);
 
@@ -112,8 +110,6 @@ test.describe('Click and drag Atom on canvas', () => {
     await selectAtomInToolbar(AtomButton.Bromine, page);
     await clickInTheMiddleOfTheScreen(page);
 
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await page.getByRole('tab', { name: 'Functional Groups' }).click();
     await selectFunctionalGroups(FunctionalGroups.Cbz, page);
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);

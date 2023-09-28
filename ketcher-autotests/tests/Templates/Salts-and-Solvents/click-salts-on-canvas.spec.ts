@@ -45,8 +45,6 @@ test.describe('Click Salts and Solvents on canvas', () => {
       Test case: EPMLSOPKET-10110
       Description: when clicking with a Salts and Solvents on a FG it should replace it
     */
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await page.getByRole('tab', { name: 'Functional Groups' }).click();
     await selectFunctionalGroups(FunctionalGroups.Boc, page);
     await clickInTheMiddleOfTheScreen(page);
 
@@ -96,8 +94,6 @@ test.describe('Click Salts and Solvents on canvas', () => {
     await selectAtomInToolbar(AtomButton.Oxygen, page);
     await clickInTheMiddleOfTheScreen(page);
 
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await page.getByRole('tab', { name: 'Functional Groups' }).click();
     await selectFunctionalGroups(FunctionalGroups.Cbz, page);
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);

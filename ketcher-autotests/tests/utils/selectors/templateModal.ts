@@ -117,10 +117,12 @@ export async function selectFunctionalGroups(
   functionalGroupName: FunctionalGroups,
   page: Page,
 ) {
+  const amountOfFunctionalGroups = 62;
+  await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+  await page.getByRole('tab', { name: 'Functional Groups' }).click();
   const functionalGroupButton = page
     .locator(`div[title*="${functionalGroupName}"] > div`)
     .first();
-  const amountOfFunctionalGroups = 62;
   await expect(
     page.locator('[data-testid*="templates-modal"] > div'),
   ).toHaveCount(amountOfFunctionalGroups);
@@ -128,15 +130,6 @@ export async function selectFunctionalGroups(
   await expect(page.getByTestId('templates-modal')).toHaveCount(0, {
     timeout: 20000,
   });
-}
-
-export async function selectFunctionalGroup(
-  functionalGroupName: FunctionalGroups,
-  page: Page,
-) {
-  await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-  await page.getByRole('tab', { name: 'Functional Groups' }).click();
-  await selectFunctionalGroups(functionalGroupName, page);
 }
 
 export async function selectUserTemplate(
@@ -157,8 +150,6 @@ export async function drawFGAndDrag(
   shift: number,
   page: Page,
 ) {
-  await selectTemplate(page);
-  await page.getByRole('tab', { name: 'Functional Groups' }).click();
   await selectFunctionalGroups(itemToChoose, page);
   await moveMouseToTheMiddleOfTheScreen(page);
   const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);

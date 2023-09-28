@@ -34,8 +34,6 @@ test.describe('Click Functional Group on canvas', () => {
     */
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectTemplate(page);
-    await page.getByRole('tab', { name: 'Functional Groups' }).click();
     await selectFunctionalGroups(FunctionalGroups.Boc, page);
     await clickInTheMiddleOfTheScreen(page);
   });
@@ -45,11 +43,9 @@ test.describe('Click Functional Group on canvas', () => {
       Test case: EPMLSOPKET-10106
       Description: when clicking with an FG template on an FG it should replace it
     */
-    await selectTemplate(page);
-    await page.getByRole('tab', { name: 'Functional Groups' }).click();
     await selectFunctionalGroups(FunctionalGroups.Boc, page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectTemplate(page);
+
     await selectFunctionalGroups(FunctionalGroups.Cbz, page);
     await clickInTheMiddleOfTheScreen(page);
   });
@@ -61,8 +57,7 @@ test.describe('Click Functional Group on canvas', () => {
     */
     await selectSaltsAndSolvents(SaltsAndSolvents.MethaneSulphonicAcid, page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectTemplate(page);
-    await page.getByRole('tab', { name: 'Functional Groups' }).click();
+
     await selectFunctionalGroups(FunctionalGroups.CCl3, page);
     await clickInTheMiddleOfTheScreen(page);
   });
@@ -82,8 +77,6 @@ test.describe('Click Functional Group on canvas', () => {
     await dragMouseTo(coordinatesWithShift, y, page);
     await resetCurrentTool(page);
 
-    await selectTemplate(page);
-    await page.getByRole('tab', { name: 'Functional Groups' }).click();
     await selectFunctionalGroups(FunctionalGroups.CO2tBu, page);
     await clickInTheMiddleOfTheScreen(page);
   });
@@ -96,16 +89,12 @@ test.describe('Click Functional Group on canvas', () => {
     await selectAtomInToolbar(AtomButton.Oxygen, page);
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectTemplate(page);
-    await page.getByRole('tab', { name: 'Functional Groups' }).click();
     await selectFunctionalGroups(FunctionalGroups.Cbz, page);
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     const coordinatesWithShift = x + MAX_BOND_LENGTH;
     await dragMouseTo(coordinatesWithShift, y, page);
 
-    await selectTemplate(page);
-    await page.getByRole('tab', { name: 'Functional Groups' }).click();
     await selectFunctionalGroups(FunctionalGroups.Ms, page);
     await page.mouse.click(coordinatesWithShift, y);
   });

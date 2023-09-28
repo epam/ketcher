@@ -47,8 +47,6 @@ test.describe('Click Atom on canvas', () => {
       Test case: EPMLSOPKET-10100
       Description: when clicking with an atom on a FG template it should replace it
     */
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await page.getByRole('tab', { name: 'Functional Groups' }).click();
     await selectFunctionalGroups(FunctionalGroups.FMOC, page);
     await clickInTheMiddleOfTheScreen(page);
 
@@ -94,8 +92,6 @@ test.describe('Click Atom on canvas', () => {
     await selectAtomInToolbar(AtomButton.Oxygen, page);
     await clickInTheMiddleOfTheScreen(page);
 
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await page.getByRole('tab', { name: 'Functional Groups' }).click();
     await selectFunctionalGroups(FunctionalGroups.Cbz, page);
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);

@@ -48,8 +48,6 @@ test.describe('Click and drag FG on canvas', () => {
       Test case: EPMLSOPKET-11551
       Description: when click & drag with an FG on FG it should forms a bond between it
     */
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await page.getByRole('tab', { name: 'Functional Groups' }).click();
     await selectFunctionalGroups(FunctionalGroups.Cbz, page);
     await clickInTheMiddleOfTheScreen(page);
 
@@ -97,8 +95,6 @@ test.describe('Click and drag FG on canvas', () => {
       Description: when click & drag with an FG on an FG connected with bond to another FG
       it should forms a bond
     */
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await page.getByRole('tab', { name: 'Functional Groups' }).click();
     await selectFunctionalGroups(FunctionalGroups.FMOC, page);
     await clickInTheMiddleOfTheScreen(page);
 

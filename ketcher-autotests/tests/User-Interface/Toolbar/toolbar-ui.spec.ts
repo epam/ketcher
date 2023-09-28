@@ -6,8 +6,6 @@ import {
   FunctionalGroups,
   clickInTheMiddleOfTheScreen,
   selectFunctionalGroups,
-  pressButton,
-  STRUCTURE_LIBRARY_BUTTON_NAME,
   DELAY_IN_SECONDS,
   delay,
   resetCurrentTool,
@@ -47,8 +45,6 @@ test.describe('Open Ketcher', () => {
         */
     await takeTopToolbarScreenshot(page);
 
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await page.getByRole('tab', { name: 'Functional Groups' }).click();
     await selectFunctionalGroups(FunctionalGroups.Bn, page);
     await clickInTheMiddleOfTheScreen(page);
     await takeTopToolbarScreenshot(page);

@@ -495,7 +495,7 @@ export class DrawingEntitiesManager {
     command.addOperation(operation);
 
     for (let i = 1; i < chain.length; i++) {
-      let prevPosition = Scale.obj2scaled(
+      const prevPosition = Scale.obj2scaled(
         chain[i - 1].position,
         editorSettings,
       );

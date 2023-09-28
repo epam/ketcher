@@ -2,12 +2,10 @@ import { test } from '@playwright/test';
 import {
   selectAtomInToolbar,
   AtomButton,
-  pressButton,
   selectSaltsAndSolvents,
   SaltsAndSolvents,
   clickInTheMiddleOfTheScreen,
   takeEditorScreenshot,
-  STRUCTURE_LIBRARY_BUTTON_NAME,
   waitForPageInit,
 } from '@utils';
 

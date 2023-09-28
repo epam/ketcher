@@ -3,7 +3,6 @@ import { test } from '@playwright/test';
 import {
   selectAtomInToolbar,
   AtomButton,
-  pressButton,
   selectFunctionalGroups,
   FunctionalGroups,
   selectSaltsAndSolvents,
@@ -15,7 +14,6 @@ import {
   takeEditorScreenshot,
   resetCurrentTool,
   drawFGAndDrag,
-  STRUCTURE_LIBRARY_BUTTON_NAME,
   waitForPageInit,
   waitForRender,
 } from '@utils';

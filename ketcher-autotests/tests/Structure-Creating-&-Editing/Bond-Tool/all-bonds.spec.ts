@@ -23,7 +23,6 @@ import {
   openFileAndAddToCanvas,
   selectLeftPanelButton,
   pressButton,
-  STRUCTURE_LIBRARY_BUTTON_NAME,
   selectFunctionalGroups,
   FunctionalGroups,
   selectRingButton,

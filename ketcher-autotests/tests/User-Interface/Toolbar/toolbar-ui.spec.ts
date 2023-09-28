@@ -6,8 +6,6 @@ import {
   FunctionalGroups,
   clickInTheMiddleOfTheScreen,
   selectFunctionalGroups,
-  pressButton,
-  STRUCTURE_LIBRARY_BUTTON_NAME,
   DELAY_IN_SECONDS,
   delay,
   resetCurrentTool,

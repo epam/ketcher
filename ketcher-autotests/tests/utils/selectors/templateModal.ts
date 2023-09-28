@@ -7,7 +7,6 @@ import {
   moveMouseToTheMiddleOfTheScreen,
   selectLeftPanelButton,
   takeEditorScreenshot,
-  selectTemplate,
   STRUCTURE_LIBRARY_BUTTON_NAME,
   pressButton,
 } from '@utils';

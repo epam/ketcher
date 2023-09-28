@@ -7,14 +7,12 @@ import {
   moveMouseToTheMiddleOfTheScreen,
   selectAtomInToolbar,
   takeEditorScreenshot,
-  pressButton,
   AtomButton,
   selectFunctionalGroups,
   selectSaltsAndSolvents,
   FunctionalGroups,
   resetCurrentTool,
   SaltsAndSolvents,
-  STRUCTURE_LIBRARY_BUTTON_NAME,
   waitForPageInit,
 } from '@utils';
 

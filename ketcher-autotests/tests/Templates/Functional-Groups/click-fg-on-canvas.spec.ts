@@ -13,7 +13,6 @@ import {
   FunctionalGroups,
   resetCurrentTool,
   SaltsAndSolvents,
-  selectTemplate,
   waitForPageInit,
 } from '@utils';
 

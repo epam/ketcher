@@ -8,13 +8,11 @@ import {
   selectAtomInToolbar,
   takeEditorScreenshot,
   AtomButton,
-  pressButton,
   selectFunctionalGroups,
   selectSaltsAndSolvents,
   SaltsAndSolvents,
   FunctionalGroups,
   resetCurrentTool,
-  STRUCTURE_LIBRARY_BUTTON_NAME,
   waitForPageInit,
 } from '@utils';
 

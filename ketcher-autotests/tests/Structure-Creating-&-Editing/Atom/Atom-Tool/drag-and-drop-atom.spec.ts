@@ -4,7 +4,6 @@ import {
   AtomButton,
   clickInTheMiddleOfTheScreen,
   dragMouseTo,
-  pressButton,
   moveMouseToTheMiddleOfTheScreen,
   selectFunctionalGroups,
   selectSaltsAndSolvents,
@@ -16,7 +15,6 @@ import {
   selectLeftPanelButton,
   takeEditorScreenshot,
   resetCurrentTool,
-  STRUCTURE_LIBRARY_BUTTON_NAME,
   waitForPageInit,
 } from '@utils';
 

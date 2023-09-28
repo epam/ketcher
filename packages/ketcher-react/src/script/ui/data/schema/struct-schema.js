@@ -94,6 +94,74 @@ export const atom = {
       type: 'boolean',
       default: false,
     },
+    aromaticity: {
+      title: 'Aromaticity',
+      enum: [null, 'aromatic', 'aliphatic'],
+      enumNames: ['', 'aromatic', 'aliphatic'],
+      default: 0,
+    },
+    degree: {
+      title: 'Degree',
+      enum: [null, 0, 1, 2, 3, 4, 5, 6],
+      enumNames: ['', '0', '1', '2', '3', '4', '5', '6'],
+      default: 0,
+    },
+    implicitHCount: {
+      title: 'Implicit H count',
+      enum: [null, 0, 1, 2, 3, 4],
+      enumNames: ['', '0', '1', '2', '3', '4'],
+      default: 0,
+    },
+    ringMembership: {
+      title: 'Ring membership',
+      enum: [null, 0, 1, 2, 3, 4, 5],
+      enumNames: ['', '0', '1', '2', '3', '4', '5'],
+      default: 0,
+    },
+    ringSize: {
+      title: 'Ring size',
+      enum: [null, 0, 1, 2, 3, 4, 5],
+      enumNames: ['', '0', '1', '2', '3', '4', '5'],
+      default: 0,
+    },
+    connectivity: {
+      title: 'Connectivity',
+      enum: [null, 0, 1, 2, 3, 4, 5],
+      enumNames: ['', '0', '1', '2', '3', '4', '5'],
+      default: 0,
+    },
+    ringConnectivity1: {
+      title: 'Ring connectivity',
+      enum: [null, 0, 1, 2, 3, 4, 5],
+      enumNames: ['', '0', '1', '2', '3', '4', '5'],
+      default: 0,
+    },
+    ringConnectivity: {
+      title: 'Ring connectivity',
+      enum: [null, 0, 1, 2, 3, 4, 5],
+      enumNames: ['', '0', '1', '2', '3', '4', '5'],
+      default: null,
+    },
+    chirality: {
+      title: 'Chirality',
+      enum: [null, 'clockwise', 'anticlockwise'],
+      enumNames: ['', 'anticlockwise', 'clockwise'],
+      default: 0,
+    },
+    atomicMass: {
+      title: 'Atomic mass',
+      type: 'string',
+      pattern: '^([+]?)([0-9]{1,3}|1000)([+-]?)$|(^$)',
+      default: '',
+      maxLength: 5,
+      invalidMessage: 'Invalid atomic mass',
+    },
+    customQuery: {
+      title: 'Custom Query',
+      pattern: '[^ ]',
+      type: 'string',
+      invalidMessage: 'Invalid custom query',
+    },
     invRet: {
       title: 'Inversion',
       enum: [0, 1, 2],
@@ -197,14 +265,21 @@ export const bond = {
     },
     topology: {
       title: 'Topology',
-      enum: [0, 1, 2],
-      enumNames: ['Either', 'Ring', 'Chain'],
+      enum: [null, 0, 1, 2],
+      enumNames: ['', 'Either', 'Ring', 'Chain'],
       default: 0,
+    },
+    customQuery: {
+      title: 'Custom Query',
+      pattern: '[^ ]',
+      type: 'string',
+      invalidMessage: 'Invalid custom query',
     },
     center: {
       title: 'Reacting Center',
-      enum: [0, -1, 1, 2, 4, 8, 12], // 5, 9, 13
+      enum: [null, 0, -1, 1, 2, 4, 8, 12], // 5, 9, 13
       enumNames: [
+        '',
         'Unmarked',
         'Not center',
         'Center',
@@ -286,6 +361,14 @@ const sgroup = {
         },
       },
       required: ['name'],
+    },
+    {
+      key: 'queryComponent',
+      title: 'Query component',
+      type: 'object',
+      properties: {
+        type: { enum: ['queryComponent'] },
+      },
     },
   ],
 };

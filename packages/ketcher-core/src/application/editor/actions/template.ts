@@ -29,19 +29,20 @@ import { fromSgroupAddition } from './sgroup';
 
 const benzeneMoleculeName = 'Benzene';
 const cyclopentadieneMoleculeName = 'Cyclopentadiene';
-const benzeneDoubleBondIndexes = [1, 4];
+const benzeneDoubleBondIndexes = [2, 4];
 
 export function fromTemplateOnCanvas(
   restruct,
   template,
   pos,
-  angle,
+  angle = 0,
 ): [Action, { atoms: number[]; bonds: number[] }] {
   const [action, pasteItems] = fromPaste(
     restruct,
     template.molecule,
     pos,
     angle,
+    true,
   );
 
   action.addOp(new CalcImplicitH(pasteItems.atoms).perform(restruct));

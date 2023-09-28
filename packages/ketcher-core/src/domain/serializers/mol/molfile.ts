@@ -14,7 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { StereoFlag, Struct, SGroupAttachmentPoint } from 'domain/entities';
+import {
+  StereoFlag,
+  Struct,
+  SGroupAttachmentPoint,
+  SGroup,
+} from 'domain/entities';
 
 import { Elements } from 'domain/constants';
 import common from './common';
@@ -64,6 +69,7 @@ export class Molfile {
     ret.initHalfBonds();
     ret.initNeighbors();
     ret.bindSGroupsToFunctionalGroups();
+    ret.markFragments();
 
     return ret;
   }
@@ -436,6 +442,10 @@ export class Molfile {
       // each group on its own
       const id = sgmapback[sGroupIdInCTab];
       const sgroup = this.molecule!.sgroups.get(id)!;
+      if (SGroup.isQuerySGroup(sgroup)) {
+        console.warn('Query group does not support in mol format');
+        continue;
+      }
       this.write('M  STY');
       this.writePaddedNumber(1, 3);
       this.writeWhiteSpace(1);
@@ -506,7 +516,8 @@ export class Molfile {
 
     const expandedGroups: number[] = [];
     this.molecule!.sgroups.forEach((sg) => {
-      if (sg.isExpanded()) expandedGroups.push(sg.id + 1);
+      if (sg.isExpanded() && !SGroup.isQuerySGroup(sg))
+        expandedGroups.push(sg.id + 1);
     });
 
     if (expandedGroups.length) {

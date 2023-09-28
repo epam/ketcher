@@ -60,6 +60,7 @@ export class SGroup {
     DAT: 'DAT',
     ANY: 'ANY',
     GEN: 'GEN',
+    queryComponent: 'queryComponent',
   };
 
   type: string;
@@ -519,10 +520,9 @@ export class SGroup {
     attachmentPointsVBox = attachmentPointsVBox
       ? attachmentPointsVBox.extend(BORDER_EXT, BORDER_EXT)
       : attachmentPointsVBox;
-
     braketBox =
       attachmentPointsVBox && braketBox
-        ? Box2Abs.union(attachmentPointsVBox, braketBox)
+        ? Box2Abs.union(braketBox, attachmentPointsVBox)
         : braketBox;
     if (braketBox)
       braketBox = (braketBox as Box2Abs).extend(PADDING_VECTOR, PADDING_VECTOR);
@@ -757,6 +757,10 @@ export class SGroup {
 
   static isDataSGroup(sGroup: SGroup): boolean {
     return sGroup.type === SGroup.TYPES.DAT;
+  }
+
+  static isQuerySGroup(sGroup: SGroup): boolean {
+    return sGroup.type === SGroup.TYPES.queryComponent;
   }
 
   static isSRUSGroup(sGroup: SGroup): boolean {

@@ -3,7 +3,6 @@ import { test } from '@playwright/test';
 import {
   selectAtomInToolbar,
   AtomButton,
-  pressButton,
   selectFunctionalGroups,
   FunctionalGroups,
   selectSaltsAndSolvents,
@@ -15,8 +14,8 @@ import {
   takeEditorScreenshot,
   resetCurrentTool,
   drawFGAndDrag,
-  STRUCTURE_LIBRARY_BUTTON_NAME,
   waitForPageInit,
+  waitForRender,
 } from '@utils';
 
 const SHIFT = 50;
@@ -47,29 +46,27 @@ test.describe('Click and drag FG on canvas', () => {
       Test case: EPMLSOPKET-11551
       Description: when click & drag with an FG on FG it should forms a bond between it
     */
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await page.getByRole('tab', { name: 'Functional Groups' }).click();
     await selectFunctionalGroups(FunctionalGroups.Cbz, page);
     await clickInTheMiddleOfTheScreen(page);
 
     await drawFGAndDrag(FunctionalGroups.Boc, SHIFT, page);
   });
 
-  test.skip('Boc appears near FormicAcid where the left mouse button was released', async ({
-    page,
-  }) => {
-    /*
+  test.fixme(
+    'Boc appears near FormicAcid where the left mouse button was released',
+    async ({ page }) => {
+      /*
       Test case: EPMLSOPKET-11552
       Description: when click & drag with an FG on Salts and Solvents
       FG appears near Salt and Solvents where the left mouse button was released
+      Bug: https://github.com/epam/ketcher/issues/2278
     */
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await page.getByRole('tab', { name: 'Salts and Solvents' }).click();
-    await selectSaltsAndSolvents(SaltsAndSolvents.FormicAcid, page);
-    await clickInTheMiddleOfTheScreen(page);
+      await selectSaltsAndSolvents(SaltsAndSolvents.FormicAcid, page);
+      await clickInTheMiddleOfTheScreen(page);
 
-    await drawFGAndDrag(FunctionalGroups.Boc, SHIFT, page);
-  });
+      await drawFGAndDrag(FunctionalGroups.Boc, SHIFT, page);
+    },
+  );
 
   test('CF3 forms a bond with Oxygen atom', async ({ page }) => {
     /*
@@ -96,14 +93,16 @@ test.describe('Click and drag FG on canvas', () => {
       Description: when click & drag with an FG on an FG connected with bond to another FG
       it should forms a bond
     */
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await page.getByRole('tab', { name: 'Functional Groups' }).click();
     await selectFunctionalGroups(FunctionalGroups.FMOC, page);
     await clickInTheMiddleOfTheScreen(page);
 
-    await drawFGAndDrag(FunctionalGroups.CO2Et, SHIFT, page);
+    await waitForRender(page, async () => {
+      await drawFGAndDrag(FunctionalGroups.CO2Et, SHIFT, page);
+    });
     await resetCurrentTool(page);
 
-    await drawFGAndDrag(FunctionalGroups.Ms, -SHIFT, page);
+    await waitForRender(page, async () => {
+      await drawFGAndDrag(FunctionalGroups.Ms, -SHIFT, page);
+    });
   });
 });

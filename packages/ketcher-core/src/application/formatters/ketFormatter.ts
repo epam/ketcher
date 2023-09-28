@@ -33,4 +33,8 @@ export class KetFormatter implements StructFormatter {
   async getStructureFromStringAsync(content: string): Promise<Struct> {
     return this.#ketSerializer.deserialize(content);
   }
+
+  parseMacromoleculeString(content: string): void {
+    this.#ketSerializer.deserializeMacromolecule(content);
+  }
 }

@@ -15,16 +15,11 @@ test.describe('Attachment Point Tool', () => {
     await waitForPageInit(page);
   });
 
-  // test.afterEach(async ({ page }) => {
-  //   await takeEditorScreenshot(page);
-  // });
-
   test('Opening *.mol V2000 file with S-Group containing Attachment point', async ({
     page,
   }) => {
     // Test case: EPMLSOPKET-18024
     await openFileAndAddToCanvas('s-group-with-attachment-points.mol', page);
-    // check that structure opened from file is displayed correctly
     await takeEditorScreenshot(page);
   });
 
@@ -33,7 +28,6 @@ test.describe('Attachment Point Tool', () => {
   }) => {
     // Test case: EPMLSOPKET-18026
     await openFileAndAddToCanvas('s-group-with-attachment-points.ket', page);
-    // check that structure opened from file is displayed correctly
     await takeEditorScreenshot(page);
   });
 
@@ -46,16 +40,23 @@ test.describe('Attachment Point Tool', () => {
       page,
     );
     const expectedFile = await getKet(page);
-    await saveToFile('KET/test-EPMLSOPKET-18025.ket', expectedFile);
+    await saveToFile(
+      'KET/S-Group structure with Attachment point-EPMLSOPKET-18025.ket',
+      expectedFile,
+    );
 
     const { fileExpected: ketFileExpected, file: ketFile } =
       await receiveFileComparisonData({
         page,
-        expectedFileName: 'tests/test-data/KET/test-EPMLSOPKET-18025.ket',
+        expectedFileName:
+          'tests/test-data/KET/S-Group structure with Attachment point-EPMLSOPKET-18025.ket',
       });
     expect(ketFile).toEqual(ketFileExpected);
     await selectTopPanelButton(TopPanelButton.Clear, page);
-    await openFileAndAddToCanvas('KET/test-EPMLSOPKET-18025.ket', page);
+    await openFileAndAddToCanvas(
+      'KET/S-Group structure with Attachment point-EPMLSOPKET-18025.ket',
+      page,
+    );
     await page.keyboard.press('Control+a');
     await page.keyboard.press('Control++');
     await takeEditorScreenshot(page);

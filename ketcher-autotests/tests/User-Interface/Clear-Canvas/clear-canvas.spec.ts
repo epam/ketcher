@@ -5,8 +5,6 @@ import {
   openFileAndAddToCanvas,
   DELAY_IN_SECONDS,
   TopPanelButton,
-  LeftPanelButton,
-  selectLeftPanelButton,
   selectRing,
   RingButton,
   clickInTheMiddleOfTheScreen,
@@ -100,18 +98,4 @@ test.describe('Clear canvas', () => {
     await selectTopPanelButton(TopPanelButton.Redo, page);
     await selectTopPanelButton(TopPanelButton.Redo, page);
   });
-
-  // test('Clear Canvas - Pressing Clear Canvas with Reaction Arrow under mouse cursor not causes errors in DevTool console', async ({
-  //   page,
-  // }) => {
-  //   // await page.keyboard.press('Control+Shift+j');
-  //   await selectLeftPanelButton(LeftPanelButton.ArrowOpenAngleTool, page);
-  //   await clickInTheMiddleOfTheScreen(page);
-  //   await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
-  //   await clickInTheMiddleOfTheScreen(page);
-  //   await page.keyboard.press('Control+c');
-  //   await page.keyboard.press('Control+v');
-  //   await takeEditorScreenshot(page);
-  //   await selectTopPanelButton(TopPanelButton.Clear, page);
-  // });
 });

@@ -452,8 +452,6 @@ test.describe('Functional Groups', () => {
     Test case: EPMLSOPKET-13010
     Description: Selection highlight all abbreviation.
     */
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await pressTab(page, 'Salts and Solvents');
     await selectSaltsAndSolvents(SaltsAndSolvents.MethaneSulphonicAcid, page);
     await clickInTheMiddleOfTheScreen(page);
 
@@ -468,8 +466,6 @@ test.describe('Functional Groups', () => {
     Test case: EPMLSOPKET-8920
     Description: Selection highlight appears immediately after hover over text.
     */
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await pressTab(page, 'Salts and Solvents');
     await selectSaltsAndSolvents(SaltsAndSolvents.MethaneSulphonicAcid, page);
     await clickInTheMiddleOfTheScreen(page);
 
@@ -495,8 +491,6 @@ test.describe('Functional Groups', () => {
     Test case: EPMLSOPKET-8928
     Description: When Adding 'Atom' by hotkey to expanded Salts and Solvents system display 'Edit Abbreviation' pop-up window.
     */
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await pressTab(page, 'Salts and Solvents');
     await selectSaltsAndSolvents(SaltsAndSolvents.MethaneSulphonicAcid, page);
 
     await clickInTheMiddleOfTheScreen(page);
@@ -562,8 +556,6 @@ test.describe('Functional Groups', () => {
     Test case: EPMLSOPKET-11844
     Description: Hotkey (Del) delete Salts and Solvents abbreviation.
     */
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await pressTab(page, 'Salts and Solvents');
     await selectSaltsAndSolvents(SaltsAndSolvents.MethaneSulphonicAcid, page);
     await clickInTheMiddleOfTheScreen(page);
 
@@ -598,8 +590,6 @@ test.describe('Functional Groups', () => {
     Test case: EPMLSOPKET-11845
     Description: Hotkey for Atom (e.g. N) replace Salts and Solvents abbreviation.
     */
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await pressTab(page, 'Salts and Solvents');
     await selectSaltsAndSolvents(SaltsAndSolvents.MethaneSulphonicAcid, page);
     await clickInTheMiddleOfTheScreen(page);
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);

@@ -65,8 +65,6 @@ test.describe('Click and drag FG on canvas', () => {
       FG appears near Salt and Solvents where the left mouse button was released
       Bug: https://github.com/epam/ketcher/issues/2278
     */
-      await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-      await page.getByRole('tab', { name: 'Salts and Solvents' }).click();
       await selectSaltsAndSolvents(SaltsAndSolvents.FormicAcid, page);
       await clickInTheMiddleOfTheScreen(page);
 

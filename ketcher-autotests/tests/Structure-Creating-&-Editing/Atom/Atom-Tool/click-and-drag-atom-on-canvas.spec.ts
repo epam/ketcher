@@ -72,8 +72,6 @@ test.describe('Click and drag Atom on canvas', () => {
       Description: when click & drag with an atom on salts
       and solvents atom appears where the left mouse button was released without a connection
     */
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await page.getByRole('tab', { name: 'Salts and Solvents' }).click();
     await selectSaltsAndSolvents(SaltsAndSolvents.FormicAcid, page);
     await clickInTheMiddleOfTheScreen(page);
 

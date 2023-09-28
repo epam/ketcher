@@ -59,8 +59,6 @@ test.describe('Click Functional Group on canvas', () => {
       Test case: EPMLSOPKET-10107
       Description: when clicking with an FG template on a Salts and Solvents it should replace it
     */
-    await selectTemplate(page);
-    await page.getByRole('tab', { name: 'Salts and Solvents' }).click();
     await selectSaltsAndSolvents(SaltsAndSolvents.MethaneSulphonicAcid, page);
     await clickInTheMiddleOfTheScreen(page);
     await selectTemplate(page);

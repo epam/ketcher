@@ -66,8 +66,6 @@ test.describe('Click and drag Salts and Solvents on canvas', () => {
       Description: when click & drag with a Salts and Solvents on Salts and Solvents
       Salts appears near Salts where the left mouse button was released
     */
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await page.getByRole('tab', { name: 'Salts and Solvents' }).click();
     await selectSaltsAndSolvents(SaltsAndSolvents.MethaneSulphonicAcid, page);
     await clickInTheMiddleOfTheScreen(page);
     await drawSaltAndDrag(SaltsAndSolvents.PropionicAcid, SHIFT, page);

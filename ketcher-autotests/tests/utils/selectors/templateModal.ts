@@ -95,11 +95,15 @@ export enum TemplateLibrary {
 }
 
 export async function selectSaltsAndSolvents(
-  saltsName: SaltsAndSolvents,
+  saltsAndSolventsGroupName: SaltsAndSolvents,
   page: Page,
 ) {
   const amountOfSaltsAndSolvents = 124;
-  const saltsButton = page.locator(`div[title*="${saltsName}"] > div`).first();
+  await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+  await page.getByRole('tab', { name: 'Salts and Solvents' }).click();
+  const saltsButton = page
+    .locator(`div[title*="${saltsAndSolventsGroupName}"] > div`)
+    .first();
   await expect(
     page.locator('[data-testid*="templates-modal"] > div'),
   ).toHaveCount(amountOfSaltsAndSolvents);
@@ -107,15 +111,6 @@ export async function selectSaltsAndSolvents(
   await expect(page.getByTestId('templates-modal')).toHaveCount(0, {
     timeout: 20000,
   });
-}
-
-export async function selectSaltsAndSolventsGroup(
-  saltsAndSolventsGroupName: SaltsAndSolvents,
-  page: Page,
-) {
-  await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-  await page.getByRole('tab', { name: 'Salts and Solvents' }).click();
-  await selectSaltsAndSolvents(saltsAndSolventsGroupName, page);
 }
 
 export async function selectFunctionalGroups(
@@ -179,8 +174,6 @@ export async function drawSaltAndDrag(
   shift: number,
   page: Page,
 ) {
-  await selectTemplate(page);
-  await page.getByRole('tab', { name: 'Salts and Solvents' }).click();
   await selectSaltsAndSolvents(itemToChoose, page);
   await moveMouseToTheMiddleOfTheScreen(page);
   const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);

@@ -80,8 +80,6 @@ test.describe('Drag and drop Atom on canvas', () => {
       Test case: EPMLSOPKET-11833
       Description: when drag & drop an atom on a Salts and Solvents it should replace it
     */
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await page.getByRole('tab', { name: 'Salts and Solvents' }).click();
     await selectSaltsAndSolvents(SaltsAndSolvents.FormicAcid, page);
     await clickInTheMiddleOfTheScreen(page);
 

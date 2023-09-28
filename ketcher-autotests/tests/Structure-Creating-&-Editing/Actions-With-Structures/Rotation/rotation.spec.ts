@@ -342,24 +342,23 @@ test.describe('Rotation', () => {
     expect(y).toEqual(rotationHandleY);
   });
 
-  test.fixme(
-    'Works with different zoom level and screen resolution',
-    async ({ page }) => {
-      /*
+  test('Works with different zoom level and screen resolution', async ({
+    page,
+  }) => {
+    /*
       Test case: EPMLSOPKET-12998
       Description: Click on rotation handle doesn't change its position
     */
-      const fiftyPercentZoom = 5;
-      await page.setViewportSize({ width: 1200, height: 1080 });
-      for (let i = 0; i < fiftyPercentZoom; i++) {
-        await page.keyboard.press('Control+_');
-      }
-      await addStructureAndSelect(page);
-      await rotateToCoordinates(page, COORDINATES_TO_PERFORM_ROTATION);
-      await resetSelection(page);
-      await takeEditorScreenshot(page);
-    },
-  );
+    const fiftyPercentZoom = 5;
+    await page.setViewportSize({ width: 1200, height: 1080 });
+    for (let i = 0; i < fiftyPercentZoom; i++) {
+      await page.keyboard.press('Control+_');
+    }
+    await addStructureAndSelect(page);
+    await rotateToCoordinates(page, COORDINATES_TO_PERFORM_ROTATION);
+    await resetSelection(page);
+    await takeEditorScreenshot(page);
+  });
 
   test('Cancel rotation on "Escape" key', async ({ page }) => {
     /*

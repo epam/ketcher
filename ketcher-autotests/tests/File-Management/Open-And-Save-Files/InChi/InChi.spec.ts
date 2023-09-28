@@ -409,28 +409,25 @@ test.describe('Open and Save InChI file', () => {
     expect(inChistring).toEqual(expectedInChIstring);
   });
 
-  test.fixme(
-    'Open and Save file - InChI String - For reaction',
-    async ({ page }) => {
-      /**
-       * Test case: EPMLSOPKET-1929
-       * Description: Open and Save file - InChi string for reaction
-       */
-      await openFileAndAddToCanvas(
-        'KET/cyclohexane-connecting-arrow-with-benzene.ket',
-        page,
-      );
-      await selectTopPanelButton(TopPanelButton.Save, page);
-      await pressButton(page, 'MDL Rxnfile V2000');
-      await selectInChiOption(page);
-      const convertErrorMessage = await page
-        .getByTestId('info-modal-body')
-        .textContent();
-      const expectedErrorMessage =
-        'Convert error!\ncore: <reaction> is not a molecule';
-      expect(convertErrorMessage).toEqual(expectedErrorMessage);
-    },
-  );
+  test('Open and Save file - InChI String - For reaction', async ({ page }) => {
+    /**
+     * Test case: EPMLSOPKET-1929
+     * Description: Open and Save file - InChi string for reaction
+     */
+    await openFileAndAddToCanvas(
+      'KET/cyclohexane-connecting-arrow-with-benzene.ket',
+      page,
+    );
+    await selectTopPanelButton(TopPanelButton.Save, page);
+    await pressButton(page, 'MDL Rxnfile V2000');
+    await page.getByRole('option', { name: 'InChI', exact: true }).click();
+    const convertErrorMessage = await page
+      .getByTestId('info-modal-body')
+      .textContent();
+    const expectedErrorMessage =
+      'Convert error!\ncore: <reaction> is not a molecule';
+    expect(convertErrorMessage).toEqual(expectedErrorMessage);
+  });
 
   test('Open and Save file - InChi string - for Sgroup', async ({ page }) => {
     /**
@@ -489,45 +486,41 @@ test.describe('Open and Save InChI file', () => {
     expect(convertErrorMessage).toEqual(expectedErrorMessage);
   });
 
-  test.fixme(
-    'Open and Save file - InChI String - Pseudoatom',
-    async ({ page }) => {
-      /**
-       * Test case: EPMLSOPKET-1962
-       * Description: Open and Save file - InChI String - Pseudoatom
-       */
-      await openFileAndAddToCanvas('KET/chain-with-generic-group.ket', page);
-      await selectTopPanelButton(TopPanelButton.Save, page);
-      await pressButton(page, 'MDL Molfile V2000');
-      await selectInChiOption(page);
-      const convertErrorMessage = await page
-        .getByTestId('info-modal-body')
-        .textContent();
-      const expectedErrorMessage =
-        'Convert error!\ninchi-wrapper: Molecule with pseudoatom (AHC) cannot be converted into InChI';
-      expect(convertErrorMessage).toEqual(expectedErrorMessage);
-    },
-  );
+  test('Open and Save file - InChI String - Pseudoatom', async ({ page }) => {
+    /**
+     * Test case: EPMLSOPKET-1962
+     * Description: Open and Save file - InChI String - Pseudoatom
+     */
+    await openFileAndAddToCanvas('KET/chain-with-generic-group.ket', page);
+    await selectTopPanelButton(TopPanelButton.Save, page);
+    await pressButton(page, 'MDL Molfile V2000');
+    await page.getByRole('option', { name: 'InChI', exact: true }).click();
+    const convertErrorMessage = await page
+      .getByTestId('info-modal-body')
+      .textContent();
+    const expectedErrorMessage =
+      'Convert error!\ninchi-wrapper: Molecule with pseudoatom (AHC) cannot be converted into InChI';
+    expect(convertErrorMessage).toEqual(expectedErrorMessage);
+  });
 
-  test.fixme(
-    'Open and Save file - InChI String for invalid atom symbol or special symbol',
-    async ({ page }) => {
-      /**
-       * Test case: EPMLSOPKET-1938
-       * Description: Open and Save file - InChI String for invalid atom symbol or special symbol
-       */
-      await openFileAndAddToCanvas('KET/chain-with-generic-group.ket', page);
-      await selectTopPanelButton(TopPanelButton.Save, page);
-      await pressButton(page, 'MDL Molfile V2000');
-      await selectInChiOption(page);
-      const convertErrorMessage = await page
-        .getByTestId('info-modal-body')
-        .textContent();
-      const expectedErrorMessage =
-        'Convert error!\ninchi-wrapper: Molecule with pseudoatom (AHC) cannot be converted into InChI';
-      expect(convertErrorMessage).toEqual(expectedErrorMessage);
-    },
-  );
+  test('Open and Save file - InChI String for invalid atom symbol or special symbol', async ({
+    page,
+  }) => {
+    /**
+     * Test case: EPMLSOPKET-1938
+     * Description: Open and Save file - InChI String for invalid atom symbol or special symbol
+     */
+    await openFileAndAddToCanvas('KET/chain-with-generic-group.ket', page);
+    await selectTopPanelButton(TopPanelButton.Save, page);
+    await pressButton(page, 'MDL Molfile V2000');
+    await page.getByRole('option', { name: 'InChI', exact: true }).click();
+    const convertErrorMessage = await page
+      .getByTestId('info-modal-body')
+      .textContent();
+    const expectedErrorMessage =
+      'Convert error!\ninchi-wrapper: Molecule with pseudoatom (AHC) cannot be converted into InChI';
+    expect(convertErrorMessage).toEqual(expectedErrorMessage);
+  });
 
   test('Open and Save file - Generate structure from InChI String - inserting incorrect name and Cancel or X button', async ({
     page,
@@ -544,23 +537,20 @@ test.describe('Open and Save InChI file', () => {
     // await press
   });
 
-  test.fixme(
-    'Open and Save file - InChi string for Rgroup',
-    async ({ page }) => {
-      /**
-       * Test case: EPMLSOPKET-1930
-       * Description: Open and Save file - InChi string for Rgroup
-       */
-      await openFileAndAddToCanvas('KET/structure-with-R-Group.ket', page);
-      await selectTopPanelButton(TopPanelButton.Save, page);
-      await pressButton(page, 'MDL Molfile V2000');
-      await selectInChiOption(page);
-      const convertErrorMessage = await page
-        .getByTestId('info-modal-body')
-        .textContent();
-      const expectedErrorMessage =
-        'Convert error!\ninchi-wrapper: Molecule with RGroups cannot be converted into InChI';
-      expect(convertErrorMessage).toEqual(expectedErrorMessage);
-    },
-  );
+  test('Open and Save file - InChi string for Rgroup', async ({ page }) => {
+    /**
+     * Test case: EPMLSOPKET-1930
+     * Description: Open and Save file - InChi string for Rgroup
+     */
+    await openFileAndAddToCanvas('KET/structure-with-R-Group.ket', page);
+    await selectTopPanelButton(TopPanelButton.Save, page);
+    await pressButton(page, 'MDL Molfile V2000');
+    await page.getByRole('option', { name: 'InChI', exact: true }).click();
+    const convertErrorMessage = await page
+      .getByTestId('info-modal-body')
+      .textContent();
+    const expectedErrorMessage =
+      'Convert error!\ninchi-wrapper: Molecule with RGroups cannot be converted into InChI';
+    expect(convertErrorMessage).toEqual(expectedErrorMessage);
+  });
 });

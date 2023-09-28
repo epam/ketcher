@@ -40,13 +40,22 @@ export enum AtomButton {
   Fluorine = 'Fluorine',
   Chlorine = 'Chlorine',
   Bromine = 'Bromine',
-  Gold = 'Gold',
   Iodine = 'Iodine',
+  Gold = 'Gold',
   Platinum = 'Platinum',
   Periodic = 'Periodic',
   Any = 'Any',
   Extended = 'Extended',
 }
+
+export type Atoms = Exclude<
+  AtomButton,
+  | AtomButton.Gold
+  | AtomButton.Platinum
+  | AtomButton.Periodic
+  | AtomButton.Any
+  | AtomButton.Extended
+>;
 
 export enum TopPanelButton {
   Clear = 'Clear',

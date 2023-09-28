@@ -28,16 +28,16 @@ import {
   LeftPanelButton,
   selectTopPanelButton,
   TopPanelButton,
+  drawBenzeneRing,
+  getCoordinatesTopAtomOfBenzeneRing,
 } from '@utils';
 import { getMolfile, getRxn } from '@utils/formats';
 
+const X_DELTA_ONE = 100;
+
 async function clickAtomShortcut(page: Page, labelKey: string) {
-  await waitForRender(page, async () => {
-    await page.keyboard.press(labelKey);
-  });
-  await waitForRender(page, async () => {
-    await clickInTheMiddleOfTheScreen(page);
-  });
+  await page.keyboard.press(labelKey);
+  await clickInTheMiddleOfTheScreen(page);
 }
 
 test.describe('Atom Tool', () => {
@@ -296,6 +296,26 @@ test.describe('Atom Tool', () => {
     );
     await cutAndPaste(page);
     await page.mouse.click(x, y);
+  });
+
+  test('Drag and drop Bromine atom on Benzene ring-Merging atom-to-atom', async ({
+    page,
+  }) => {
+    /*
+      Test case: EPMLSOPKET-1581
+      Description: when drag & drop an atom on an atom it should replace it
+    */
+    await drawBenzeneRing(page);
+
+    const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
+    const bromineCoordinates = { x: x + X_DELTA_ONE, y };
+
+    await selectAtomInToolbar(AtomButton.Bromine, page);
+    await page.mouse.click(bromineCoordinates.x, bromineCoordinates.y);
+
+    await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
+    await page.mouse.move(bromineCoordinates.x, bromineCoordinates.y);
+    await dragMouseTo(x, y, page);
   });
 
   test('Colored atoms - save as mol-file and render', async ({ page }) => {
@@ -611,9 +631,11 @@ test.describe('Atom Tool', () => {
     const atomShortcuts = ['a', 'q', 'r', 'k', 'm', 'x'];
 
     for (const labelKey of atomShortcuts) {
-      await clickAtomShortcut(page, labelKey);
-      await resetCurrentTool(page);
-      await takeEditorScreenshot(page);
+      await waitForRender(page, async () => {
+        await clickAtomShortcut(page, labelKey);
+        await resetCurrentTool(page);
+        await takeEditorScreenshot(page);
+      });
     }
   });
 
@@ -632,5 +654,79 @@ test.describe('Atom Tool', () => {
     "I" is #940094, purple.
     */
     await takeRightToolbarScreenshot(page);
+  });
+
+  test('Add atoms from right toolbar to Benzene ring', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-1354, EPMLSOPKET-1361, EPMLSOPKET-1369, EPMLSOPKET-1370, 
+    EPMLSOPKET-1372, EPMLSOPKET-1373, EPMLSOPKET-1379, EPMLSOPKET-1387, EPMLSOPKET-1388, EPMLSOPKET-1402
+    Description: Atom added to Benzene ring.
+    */
+    const anyAtom = 0;
+    const atomsNames: AtomButton[] = Object.values(AtomButton).filter(
+      (name) =>
+        ![
+          AtomButton.Gold,
+          AtomButton.Platinum,
+          AtomButton.Periodic,
+          AtomButton.Any,
+          AtomButton.Extended,
+        ].includes(name),
+    );
+
+    for (const atomName of atomsNames) {
+      await drawBenzeneRing(page);
+      await selectAtomInToolbar(atomName, page);
+      await clickOnAtom(page, 'C', anyAtom);
+      await takeEditorScreenshot(page);
+    }
+  });
+
+  test('Add atoms by hotkey to Benzene ring', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-1354, EPMLSOPKET-1361, EPMLSOPKET-1369, EPMLSOPKET-1370, 
+    EPMLSOPKET-1372, EPMLSOPKET-1373, EPMLSOPKET-1379, EPMLSOPKET-1387, EPMLSOPKET-1388, EPMLSOPKET-1402
+    Description: Atom added to Benzene ring.
+    */
+    const anyAtom = 2;
+    const atomsNames = ['h', 'c', 'n', 'o', 's', 'p', 'f', 'b', 'i'];
+
+    for (const atomName of atomsNames) {
+      await drawBenzeneRing(page);
+      await resetCurrentTool(page);
+      await clickOnAtom(page, 'C', anyAtom);
+      await page.keyboard.press(atomName);
+      await takeEditorScreenshot(page);
+    }
+  });
+
+  test('Select Atom and drag on Benzene ring', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-1354, EPMLSOPKET-1361, EPMLSOPKET-1369, EPMLSOPKET-1370, 
+    EPMLSOPKET-1372, EPMLSOPKET-1373, EPMLSOPKET-1379, EPMLSOPKET-1387, EPMLSOPKET-1388, EPMLSOPKET-1402
+    Description: Atom added to Benzene ring.
+    */
+    const anyAtom = 2;
+    const atomsNames: AtomButton[] = Object.values(AtomButton).filter(
+      (name) =>
+        ![
+          AtomButton.Gold,
+          AtomButton.Platinum,
+          AtomButton.Periodic,
+          AtomButton.Any,
+          AtomButton.Extended,
+        ].includes(name),
+    );
+
+    for (const atomName of atomsNames) {
+      await drawBenzeneRing(page);
+      await selectAtomInToolbar(atomName, page);
+      await moveOnAtom(page, 'C', anyAtom);
+      const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
+      const coordinatesWithShift = y - MAX_BOND_LENGTH;
+      await dragMouseTo(x, coordinatesWithShift, page);
+      await takeEditorScreenshot(page);
+      await selectTopPanelButton(TopPanelButton.Undo, page);
+    }
   });
 });

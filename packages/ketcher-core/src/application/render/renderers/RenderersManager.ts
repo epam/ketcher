@@ -43,6 +43,7 @@ export class RenderersManager {
 
   public moveMonomer(monomer: BaseMonomer) {
     monomer.renderer?.move();
+    monomer.renderer?.drawSelection();
   }
 
   public deleteMonomer(monomer: BaseMonomer) {

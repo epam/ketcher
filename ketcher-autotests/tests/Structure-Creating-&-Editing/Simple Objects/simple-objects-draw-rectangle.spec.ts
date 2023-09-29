@@ -127,6 +127,7 @@ test.describe('Draw Rectangle', () => {
   test('Simple Object - Edit the Rectangle - changing size', async ({
     page,
   }) => {
+    // Test case: EPMLSOPKET-1973
     const m = 584;
     const n = 371;
     const o = 830;

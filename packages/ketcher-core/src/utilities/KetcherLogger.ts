@@ -4,24 +4,24 @@ export enum LogLevel {
   LOG = 2,
 }
 
-export interface LogInfo {
-  isLoggingEnabled?: boolean;
+export interface LogSettings {
+  enabled?: boolean;
   showTrace?: boolean;
-  logLevel?: LogLevel;
+  level?: LogLevel;
 }
 
 export class KetcherLogger {
-  static get settings(): LogInfo {
+  static get settings(): LogSettings {
     if (!window?.ketcher) {
       throw new Error(
         'Ketcher needs to be initialized before KetcherLogger is used',
       );
     }
 
-    return window.ketcher.logInfo;
+    return window.ketcher.logging;
   }
 
-  static set settings(info: LogInfo) {
+  static set settings(info: LogSettings) {
     for (const [key, value] of Object.entries(info)) {
       this.settings[key] = value;
     }
@@ -66,7 +66,7 @@ export class KetcherLogger {
   }
 
   private static isMinimumLogLevel(requiredLevel: LogLevel): boolean {
-    const { isLoggingEnabled, logLevel } = this.settings;
+    const { enabled: isLoggingEnabled, level: logLevel } = this.settings;
 
     if (!isLoggingEnabled || logLevel == null) {
       return false;

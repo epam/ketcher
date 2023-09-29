@@ -75,8 +75,8 @@ const App = () => {
           window.ketcher = ketcher;
 
           KetcherLogger.settings = {
-            isLoggingEnabled: true,
-            logLevel: LogLevel.LOG,
+            enabled: true,
+            level: LogLevel.LOG,
             showTrace: false,
           };
 

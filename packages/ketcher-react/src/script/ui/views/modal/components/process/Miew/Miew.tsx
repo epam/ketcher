@@ -137,11 +137,8 @@ const MiewDialog = ({
           miew.setOptions(miewOpts);
           setIsIsInitialized(true);
         })
-        .catch((ex) => {
-          KetcherLogger.showExceptionLocation(
-            'Miew.tsx::MiewDialog::onMiewInit',
-          );
-          console.error(ex.message);
+        .catch((e) => {
+          KetcherLogger.error('Miew.tsx::MiewDialog::onMiewInit', e);
         });
     },
     [miewOpts, server, struct],

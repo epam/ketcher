@@ -24,10 +24,8 @@ export const storage = {
     try {
       const storage = global.localStorage;
       return storage;
-    } catch (ex) {
-      KetcherLogger.showExceptionLocation(
-        'storage-ext.js::storage::isAvailable',
-      );
+    } catch (e) {
+      KetcherLogger.error('storage-ext.js::storage::isAvailable', e);
       return false;
     }
   },
@@ -35,9 +33,9 @@ export const storage = {
     let item = null;
     try {
       item = JSON.parse(localStorage.getItem(key));
-    } catch (ex) {
-      KetcherLogger.showExceptionLocation('storage-ext.js::storage::getItem');
-      console.info('LocalStorage:', ex.name);
+    } catch (e) {
+      KetcherLogger.error('storage-ext.js::storage::getItem', e);
+      console.info('LocalStorage:', e.name);
     }
     return item;
   },
@@ -46,9 +44,9 @@ export const storage = {
     try {
       localStorage.setItem(key, JSON.stringify(data));
       isSet = true;
-    } catch (ex) {
-      KetcherLogger.showExceptionLocation('storage-ext.js::storage::setItem');
-      console.info('LocalStorage:', ex.name);
+    } catch (e) {
+      KetcherLogger.error('storage-ext.js::storage::setItem', e);
+      console.info('LocalStorage:', e.name);
       isSet = false;
     }
     return isSet;

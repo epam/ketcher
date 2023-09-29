@@ -195,9 +195,7 @@ export default function initEditor(dispatch, getState) {
         serverOpts,
         struct,
       ).catch((e) => {
-        KetcherLogger.showExceptionLocation(
-          'index.js::initEditor::onAromatizeStruct',
-        );
+        KetcherLogger.error('index.js::initEditor::onAromatizeStruct', e);
         state.editor.errorHandler(e);
       });
     },
@@ -211,9 +209,7 @@ export default function initEditor(dispatch, getState) {
         serverOpts,
         struct,
       ).catch((e) => {
-        KetcherLogger.showExceptionLocation(
-          'index.js::initEditor::onDearomatizeStruct',
-        );
+        KetcherLogger.error('index.js::initEditor::onDearomatizeStruct', e);
         state.editor.errorHandler(e);
       });
     },

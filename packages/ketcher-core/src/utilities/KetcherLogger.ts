@@ -1,7 +1,8 @@
 export enum LogLevel {
   ERROR = 0,
   WARN = 1,
-  LOG = 2,
+  INFO = 2,
+  LOG = 3,
 }
 
 export interface LogSettings {
@@ -27,7 +28,7 @@ export class KetcherLogger {
     }
   }
 
-  static log(message: unknown): void {
+  static log(...messages: unknown[]): void {
     if (!this.isMinimumLogLevel(LogLevel.LOG)) {
       return;
     }
@@ -35,34 +36,40 @@ export class KetcherLogger {
     const { showTrace } = this.settings;
 
     if (showTrace) {
-      window.console.trace(message);
+      window.console.trace(messages);
     } else {
-      window.console.log(message);
+      window.console.log(messages);
     }
   }
 
-  static warn(warning: unknown): void {
+  static info(...messages: unknown[]): void {
+    if (!this.isMinimumLogLevel(LogLevel.INFO)) {
+      return;
+    }
+
+    const { showTrace } = this.settings;
+
+    if (showTrace) {
+      window.console.trace(messages);
+    } else {
+      window.console.info(messages);
+    }
+  }
+
+  static warn(...warnings: unknown[]): void {
     if (!this.isMinimumLogLevel(LogLevel.WARN)) {
       return;
     }
 
-    window.console.warn(warning);
+    window.console.warn(warnings);
   }
 
-  static error(error: unknown): void {
+  static error(...errors: unknown[]): void {
     if (!this.isMinimumLogLevel(LogLevel.ERROR)) {
       return;
     }
 
-    window.console.error(error);
-  }
-
-  static showExceptionLocation(errorLocation: string): void {
-    if (!this.isMinimumLogLevel(LogLevel.ERROR)) {
-      return;
-    }
-
-    window.console.error(`An exception occured in: ${errorLocation}`);
+    window.console.error(errors);
   }
 
   private static isMinimumLogLevel(minimumLevel: LogLevel): boolean {

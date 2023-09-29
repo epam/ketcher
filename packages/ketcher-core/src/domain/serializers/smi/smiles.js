@@ -71,11 +71,9 @@ Smiles.prototype.saveMolecule = function (struct, ignoreErrors) {
     if (sg.type === 'MUL') {
       try {
         SGroup.prepareMulForSaving(sg, struct);
-      } catch (ex) {
-        KetcherLogger.showExceptionLocation(
-          'smiles.js::Smiles.prototype.saveMolecule',
-        );
-        throw Error('Bad s-group (' + ex.message + ')');
+      } catch (error) {
+        KetcherLogger.error('smiles.js::Smiles.prototype.saveMolecule', error);
+        throw Error('Bad s-group (' + error.message + ')');
       }
     }
     // 'SMILES data format doesn\'t support s-groups'
@@ -250,10 +248,8 @@ Smiles.prototype.saveMolecule = function (struct, ignoreErrors) {
         this.atoms[atomIdx].chirality = 1;
       } else this.atoms[atomIdx].chirality = 2;
     });
-  } catch (ex) {
-    KetcherLogger.showExceptionLocation(
-      'smiles.js::Smiles.prototype.saveMolecule',
-    );
+  } catch (e) {
+    KetcherLogger.error('smiles.js::Smiles.prototype.saveMolecule', e);
     // TODO: add error handler call
   }
 

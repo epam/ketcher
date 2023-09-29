@@ -28,8 +28,9 @@ export class SettingsManager {
         localStorage.getItem(KETCHER_SAVED_SETTINGS_KEY) || '{}',
       );
     } catch (e) {
-      KetcherLogger.showExceptionLocation(
+      KetcherLogger.error(
         'settingsManager.ts::SettingsManager::getSettings',
+        e,
       );
       return {} as SavedSettings;
     }

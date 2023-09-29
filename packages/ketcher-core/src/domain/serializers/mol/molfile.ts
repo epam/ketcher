@@ -89,12 +89,10 @@ export class Molfile {
 
         try {
           common.prepareForSaving[sgroup.type](sgroup, mol);
-        } catch (ex: any) {
-          KetcherLogger.showExceptionLocation(
-            'molfile.ts::Molfile::prepareSGroups',
-          );
-          if (!skipErrors || typeof ex.id !== 'number') {
-            throw new Error(`Error: ${ex.message}`);
+        } catch (e: any) {
+          KetcherLogger.error('molfile.ts::Molfile::prepareSGroups', e);
+          if (!skipErrors || typeof e.id !== 'number') {
+            throw new Error(`Error: ${e.message}`);
           }
           errorIgnore = true;
         }

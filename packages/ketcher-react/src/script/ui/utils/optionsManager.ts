@@ -12,9 +12,7 @@ export class OptionsManager {
         localStorage.getItem(KETCHER_SAVED_OPTIONS_KEY) || '{}',
       );
     } catch (e) {
-      KetcherLogger.showExceptionLocation(
-        'optionsManager.ts::OptionsManager::getOptions',
-      );
+      KetcherLogger.error('optionsManager.ts::OptionsManager::getOptions', e);
       return {} as SavedOptions;
     }
   }

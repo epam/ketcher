@@ -309,8 +309,8 @@ export function atomLongtapEvent(tool, render) {
           : fromAtomAddition(render.ctab, dragCtx.xy0, newatom);
         editor.update(action);
       })
-      .catch(() => {
-        KetcherLogger.showExceptionLocation('atom.ts::atomLongtapEvent');
+      .catch((e) => {
+        KetcherLogger.error('atom.ts::atomLongtapEvent', e);
       }); // w/o changes
   }, 750);
 

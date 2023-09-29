@@ -41,10 +41,8 @@ async function copyImageToClipboard() {
     });
     const item = new ClipboardItem({ [image.type]: image }); // eslint-disable-line no-undef
     await navigator.clipboard.write([item]);
-  } catch {
-    KetcherLogger.showExceptionLocation(
-      'copyImageToClipboard.js::copyImageToClipboard',
-    );
+  } catch (e) {
+    KetcherLogger.error('copyImageToClipboard.js::copyImageToClipboard', e);
     errorHandler('This feature is not available in your browser');
   }
 }

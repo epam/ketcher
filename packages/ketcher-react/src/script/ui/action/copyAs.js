@@ -56,8 +56,8 @@ export default function copyAs(type) {
     } else {
       navigator.clipboard.writeText(structData);
     }
-  } catch {
-    KetcherLogger.showExceptionLocation('copyAs.js::copyAs');
+  } catch (e) {
+    KetcherLogger.error('copyAs.js::copyAs', e);
     errorHandler('This feature is not available in your browser');
   }
 }

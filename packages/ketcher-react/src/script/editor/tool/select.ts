@@ -467,10 +467,8 @@ class SelectTool implements Tool {
             editor.update(fromTextUpdating(struct, ci.id, content));
           }
         })
-        .catch(() => {
-          KetcherLogger.showExceptionLocation(
-            'select.ts::SelectTool::dblclick',
-          );
+        .catch((e) => {
+          KetcherLogger.error('select.ts::SelectTool::dblclick', e);
         });
     }
     return true;

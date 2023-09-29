@@ -67,11 +67,9 @@ const SaveButton = (props: SaveButtonProps) => {
           saver(data, filename, type);
           onSave();
         });
-      } catch (error) {
-        KetcherLogger.showExceptionLocation(
-          'savebutton.tsx::SaveButton::saveFile',
-        );
-        onError(error);
+      } catch (e) {
+        KetcherLogger.error('savebutton.tsx::SaveButton::saveFile', e);
+        onError(e);
       }
     }
   };
@@ -88,11 +86,9 @@ const SaveButton = (props: SaveButtonProps) => {
           saveAs(blob, `${filename}.${outputFormat}`);
           onSave();
         })
-        .catch((error) => {
-          KetcherLogger.showExceptionLocation(
-            'savebutton.tsx::SaveButton::saveImage',
-          );
-          onError(error);
+        .catch((e) => {
+          KetcherLogger.error('savebutton.tsx::SaveButton::saveImage', e);
+          onError(e);
         });
     }
   };

@@ -174,9 +174,7 @@ class SaveDialog extends Component {
           });
         })
         .catch((e) => {
-          KetcherLogger.showExceptionLocation(
-            'Save.jsx::SaveDialog::changeType',
-          );
+          KetcherLogger.error('Save.jsx::SaveDialog::changeType', e);
           errorHandler(e);
           this.props.onResetForm(formState);
           return e;

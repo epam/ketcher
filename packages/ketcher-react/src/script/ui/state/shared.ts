@@ -183,10 +183,10 @@ export function load(struct: Struct, options?) {
 
       dispatch(setAnalyzingFile(false));
       dispatch({ type: 'MODAL_CLOSE' });
-    } catch (err: any) {
-      KetcherLogger.showExceptionLocation('shared.ts::load');
+    } catch (e: any) {
+      KetcherLogger.error('shared.ts::load', e);
       dispatch(setAnalyzingFile(false));
-      err && errorHandler && errorHandler(err.message);
+      e && errorHandler && errorHandler(e.message);
     } finally {
       emitEventRequestIsFinished();
     }

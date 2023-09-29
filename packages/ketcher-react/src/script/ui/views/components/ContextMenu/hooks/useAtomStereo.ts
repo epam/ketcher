@@ -25,10 +25,8 @@ const useAtomStereo = () => {
         );
 
         action && editor.update(action);
-      } catch (error) {
-        KetcherLogger.showExceptionLocation(
-          'useAtomStereo.ts::useAtomStereo::handler',
-        );
+      } catch (e) {
+        KetcherLogger.error('useAtomStereo.ts::useAtomStereo::handler', e);
         noOperation();
       }
     },

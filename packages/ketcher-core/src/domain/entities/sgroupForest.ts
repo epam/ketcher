@@ -148,9 +148,7 @@ export class SGroupForest {
       assert(this.parent.has(id), 'sgid is not in the forest');
       assert(this.children.has(id), 'sgid is not in the forest');
     } catch (e) {
-      KetcherLogger.showExceptionLocation(
-        'sgroupForest.ts::SGroupForest::remove',
-      );
+      KetcherLogger.error('sgroupForest.ts::SGroupForest::remove', e);
       console.info('error: sgid is not in the forest');
     }
 

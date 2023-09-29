@@ -149,8 +149,8 @@ function propsDialog(
         editor.update(fromTextUpdating(editor.render.ctab, id!, content));
       }
     })
-    .catch(() => {
-      KetcherLogger.showExceptionLocation('text.ts::propsDialog');
+    .catch((e) => {
+      KetcherLogger.error('text.ts::propsDialog', e);
     });
 }
 

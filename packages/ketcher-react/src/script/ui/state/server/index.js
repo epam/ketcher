@@ -94,7 +94,7 @@ export function check(optsTypes) {
         dispatch(checkErrors(res));
       })
       .catch((e) => {
-        KetcherLogger.showExceptionLocation('index.js::check');
+        KetcherLogger.error('index.js::check', e);
         editor.errorHandler(e);
       });
   };
@@ -130,7 +130,7 @@ export function analyse() {
         }),
       )
       .catch((e) => {
-        KetcherLogger.showExceptionLocation('index.js::analyse');
+        KetcherLogger.error('index.js::analyse', e);
         editor.errorHandler(e);
       });
   };
@@ -156,7 +156,7 @@ export function serverTransform(method, data, struct) {
         );
       })
       .catch((e) => {
-        KetcherLogger.showExceptionLocation('index.js::serverTransform');
+        KetcherLogger.error('index.js::serverTransform', e);
         state.editor.errorHandler(e);
       })
       .finally(() => {

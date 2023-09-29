@@ -126,8 +126,8 @@ function copy(cb, data) {
         curFmt = fmt;
         cb.setData(fmt, data[fmt]);
       });
-    } catch (ex) {
-      KetcherLogger.showExceptionLocation('cliparea.jsx::copy');
+    } catch (e) {
+      KetcherLogger.error('cliparea.jsx::copy', e);
       console.info(`Could not write exact type ${curFmt}`);
     }
   }
@@ -155,9 +155,9 @@ export function exec(action) {
   if (enabled) {
     try {
       enabled = document.execCommand(action) || window.ClipboardEvent || ieCb;
-    } catch (ex) {
+    } catch (e) {
       // FF < 41
-      KetcherLogger.showExceptionLocation('cliparea.jsx::exec');
+      KetcherLogger.error('cliparea.jsx::exec', e);
       enabled = false;
     }
   }

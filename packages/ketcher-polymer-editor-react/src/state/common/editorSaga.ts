@@ -31,7 +31,7 @@ function* fetchData() {
     yield call(fetchDataCall);
     yield put(initSuccess(editorSlice));
   } catch (e) {
-    KetcherLogger.showExceptionLocation('editorSaga.ts::fetchData');
+    KetcherLogger.error('editorSaga.ts::fetchData', e);
     yield put(initFailure(editorSlice));
   }
 }

@@ -27,10 +27,8 @@ export function identifyStructFormat(
     if (JSON.parse(sanitizedString)) {
       return SupportedFormat.ket;
     }
-  } catch (er) {
-    KetcherLogger.showExceptionLocation(
-      'identifyStructFormat.ts::identifyStructFromat',
-    );
+  } catch (e) {
+    KetcherLogger.error('identifyStructFormat.ts::identifyStructFromat', e);
   } // eslint-disable-line
 
   const isRXN = sanitizedString.includes('$RXN');

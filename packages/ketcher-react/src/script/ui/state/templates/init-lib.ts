@@ -106,8 +106,8 @@ function userTmpls(): SdfItem[] {
           struct: ketSerializer.deserialize(tmpl.struct),
           props: tmpl.props,
         };
-      } catch (ex) {
-        KetcherLogger.showExceptionLocation('init-lib.ts::userTmpls');
+      } catch (e) {
+        KetcherLogger.error('init-lib.ts::userTmpls', e);
         return null;
       }
     })
@@ -145,8 +145,8 @@ function prefetchRender(
   }, [] as string[]);
   const fetch = Promise.all(
     files.map((fn) =>
-      prefetchStatic(baseUrl + fn).catch(() => {
-        KetcherLogger.showExceptionLocation('init-lib.ts::prefetchRender');
+      prefetchStatic(baseUrl + fn).catch((e) => {
+        KetcherLogger.error('init-lib.ts::prefetchRender', e);
       }),
     ),
   );

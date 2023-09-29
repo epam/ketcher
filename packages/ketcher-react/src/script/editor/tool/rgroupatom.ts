@@ -133,8 +133,8 @@ function propsDialog(editor, id, pos) {
         editor.update(fromAtomsAttrs(editor.render.ctab, id, elem, false));
       }
     })
-    .catch(() => {
-      KetcherLogger.showExceptionLocation('rgroupatom.ts:propsDialog');
+    .catch((e) => {
+      KetcherLogger.error('rgroupatom.ts:propsDialog', e);
     }); // w/o changes
 }
 

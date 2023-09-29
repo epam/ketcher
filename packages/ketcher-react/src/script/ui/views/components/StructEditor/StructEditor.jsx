@@ -120,9 +120,10 @@ class StructEditor extends Component {
         try {
           const parsedInfo = JSON.parse(msg.info);
           el.innerHTML = `Atom Id: ${parsedInfo.atomid}, Bond Id: ${parsedInfo.bondid}`;
-        } catch {
-          KetcherLogger.showExceptionLocation(
+        } catch (e) {
+          KetcherLogger.error(
             'StructEditor.jsx::StructEditor::componentDidMount',
+            e,
           );
           el.innerHTML = msg.info;
         }

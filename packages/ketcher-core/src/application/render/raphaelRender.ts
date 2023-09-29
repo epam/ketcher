@@ -65,7 +65,7 @@ export class Render {
         return this.options;
       }
     } catch (e) {
-      KetcherLogger.showExceptionLocation('raphaelRenderer.ts::updateOptions');
+      KetcherLogger.error('raphaelRenderer.ts::updateOptions', e);
       console.log('Not a valid settings object');
     }
     return false;

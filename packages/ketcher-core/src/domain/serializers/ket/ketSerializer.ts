@@ -194,9 +194,10 @@ export class KetSerializer implements Serializer<Struct> {
     let parsedFileContent: IKetMacromoleculesContent;
     try {
       parsedFileContent = JSON.parse(fileContent);
-    } catch (error) {
-      KetcherLogger.showExceptionLocation(
+    } catch (e) {
+      KetcherLogger.error(
         'ketSerializer.ts::KetSerializer::parseAndValidateMacromolecules',
+        e,
       );
       editor.events.error.dispatch('Error during file parsing');
       return { error: true };

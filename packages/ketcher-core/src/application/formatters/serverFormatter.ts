@@ -71,16 +71,14 @@ export class ServerFormatter implements StructFormatter {
       );
 
       return convertResult.struct;
-    } catch (error: any) {
+    } catch (e: any) {
       let message;
-      if (error.message === 'Server is not compatible') {
+      if (e.message === 'Server is not compatible') {
         message = `${formatProperties.name} is not supported.`;
       } else {
-        message = `Convert error!\n${error.message || error}`;
+        message = `Convert error!\n${e.message || e}`;
       }
-      KetcherLogger.showExceptionLocation(
-        'serverFormatter.ts::getStructureFromStructAsync',
-      );
+      KetcherLogger.error('serverFormatter.ts::getStructureFromStructAsync', e);
       throw new Error(message);
     }
   }
@@ -111,12 +109,13 @@ export class ServerFormatter implements StructFormatter {
         parsedStruct.rescale();
       }
       return parsedStruct;
-    } catch (error: any) {
-      if (error.message !== 'Server is not compatible') {
-        KetcherLogger.showExceptionLocation(
+    } catch (e: any) {
+      if (e.message !== 'Server is not compatible') {
+        KetcherLogger.error(
           'serverFormatter.ts::getStructureFromStringAsync',
+          e,
         );
-        throw Error(`Convert error!\n${error.message || error}`);
+        throw Error(`Convert error!\n${e.message || e}`);
       }
 
       const formatError =

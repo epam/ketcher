@@ -337,7 +337,7 @@ function clipData(editor) {
     // res['chemical/x-daylight-smiles'] = smiles.stringify(struct);
     return res;
   } catch (e: any) {
-    KetcherLogger.showExceptionLocation('hotkeys.ts::clipData');
+    KetcherLogger.error('hotkeys.ts::clipData', e);
     errorHandler(e.message);
   }
 

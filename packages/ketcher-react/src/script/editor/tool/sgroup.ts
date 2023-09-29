@@ -538,11 +538,8 @@ class SGroupTool implements Tool {
           editor.selection(null);
         }
       })
-      .catch((error) => {
-        KetcherLogger.showExceptionLocation(
-          'sgroup.ts::SGroupTool::sgroupDialog',
-        );
-        console.error(error);
+      .catch((e) => {
+        KetcherLogger.error('sgroup.ts::SGroupTool::sgroupDialog', e);
       });
   }
 }

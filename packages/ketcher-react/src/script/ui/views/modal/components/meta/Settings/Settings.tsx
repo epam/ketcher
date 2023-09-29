@@ -330,8 +330,8 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   onOpenFile: (newOpts) => {
     try {
       dispatch(updateFormState({ result: JSON.parse(newOpts) }));
-    } catch (ex) {
-      KetcherLogger.showExceptionLocation('Settings.tsx::mapDispatchToProps');
+    } catch (e) {
+      KetcherLogger.error('Settings.tsx::mapDispatchToProps', e);
       console.info('Bad file');
     }
   },

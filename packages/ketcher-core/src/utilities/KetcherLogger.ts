@@ -21,9 +21,9 @@ export class KetcherLogger {
     return window.ketcher.logging;
   }
 
-  static set settings(info: LogSettings) {
-    for (const [key, value] of Object.entries(info)) {
-      this.settings[key] = value;
+  static set settings(newSettings: LogSettings) {
+    for (const [settingName, settingValue] of Object.entries(newSettings)) {
+      this.settings[settingName] = settingValue;
     }
   }
 
@@ -65,13 +65,13 @@ export class KetcherLogger {
     window.console.error(`An exception occured in: ${errorLocation}`);
   }
 
-  private static isMinimumLogLevel(requiredLevel: LogLevel): boolean {
-    const { enabled: isLoggingEnabled, level: logLevel } = this.settings;
+  private static isMinimumLogLevel(minimumLevel: LogLevel): boolean {
+    const { enabled, level } = this.settings;
 
-    if (!isLoggingEnabled || logLevel == null) {
+    if (!enabled || level == null) {
       return false;
     }
 
-    return logLevel >= requiredLevel;
+    return level >= minimumLevel;
   }
 }

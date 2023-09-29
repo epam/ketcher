@@ -2,7 +2,6 @@ import { test } from '@playwright/test';
 import {
   selectSingleBondTool,
   selectSnakeBondTool,
-  takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
@@ -11,10 +10,6 @@ import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 test.describe('Snake Bond Tool', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-  });
-
-  test.afterEach(async ({ page }) => {
-    await takeEditorScreenshot(page);
   });
 
   test('Create snake bond between peptides', async ({ page }) => {
@@ -53,6 +48,11 @@ test.describe('Snake Bond Tool', () => {
     await page.mouse.down();
     await peptide4.hover();
     await page.mouse.up();
+
+    await page.screenshot({
+      path: 'tests/Macromolecule-editor/screenshots/create-snake-bond-between-peptides.png',
+      fullPage: true,
+    });
   });
 
   test('Check snake mode arrange', async ({ page }) => {
@@ -140,6 +140,11 @@ test.describe('Snake Bond Tool', () => {
     await page.mouse.up();
 
     await selectSnakeBondTool(page);
+
+    await page.screenshot({
+      path: 'tests/Macromolecule-editor/screenshots/check-snake-mode-arrange.png',
+      fullPage: true,
+    });
   });
 
   test('Check finding right chain sequence using snake mode', async ({
@@ -188,8 +193,16 @@ test.describe('Snake Bond Tool', () => {
     await peptide3.hover();
     await page.mouse.up();
 
-    await takeEditorScreenshot(page);
+    await page.screenshot({
+      path: 'tests/Macromolecule-editor/screenshots/check-finding-right-chain-sequence-1.png',
+      fullPage: true,
+    });
 
     await selectSnakeBondTool(page);
+
+    await page.screenshot({
+      path: 'tests/Macromolecule-editor/screenshots/check-finding-right-chain-sequence-2.png',
+      fullPage: true,
+    });
   });
 });

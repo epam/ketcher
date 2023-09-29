@@ -19,6 +19,7 @@ import { StereoFlag, Struct, SGroupAttachmentPoint } from 'domain/entities';
 import { Elements } from 'domain/constants';
 import common from './common';
 import utils from './utils';
+import { KetcherLogger } from 'utilities';
 
 const END_V2000 = '2D 1   1.00000     0.00000     0';
 
@@ -84,6 +85,9 @@ export class Molfile {
         try {
           common.prepareForSaving[sgroup.type](sgroup, mol);
         } catch (ex: any) {
+          KetcherLogger.showExceptionLocation(
+            'molfile.ts::Molfile::prepareSGroups',
+          );
           if (!skipErrors || typeof ex.id !== 'number') {
             throw new Error(`Error: ${ex.message}`);
           }

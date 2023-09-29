@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { KetcherLogger } from 'utilities';
 import { SupportedFormat } from './structFormatter.types';
 
 export function identifyStructFormat(
@@ -26,7 +27,11 @@ export function identifyStructFormat(
     if (JSON.parse(sanitizedString)) {
       return SupportedFormat.ket;
     }
-  } catch (er) {} // eslint-disable-line
+  } catch (er) {
+    KetcherLogger.showExceptionLocation(
+      'identifyStructFormat.ts::identifyStructFromat',
+    );
+  } // eslint-disable-line
 
   const isRXN = sanitizedString.includes('$RXN');
   const isSDF = sanitizedString.includes('\n$$$$');

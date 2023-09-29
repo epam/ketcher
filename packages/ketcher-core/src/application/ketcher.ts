@@ -27,7 +27,7 @@ import { KetSerializer, MolfileFormat } from 'domain/serializers';
 import { Struct } from 'domain/entities';
 import assert from 'assert';
 import { EventEmitter } from 'events';
-import { runAsyncAction } from 'utilities';
+import { LogInfo, runAsyncAction } from 'utilities';
 
 const allowedApiSettings = {
   'general.dearomatize-on-load': 'dearomatize-on-load',
@@ -80,6 +80,7 @@ function getStructure(
 }
 
 export class Ketcher {
+  logInfo: LogInfo = {};
   #structService: StructService;
   #formatterFactory: FormatterFactory;
   #editor: Editor;

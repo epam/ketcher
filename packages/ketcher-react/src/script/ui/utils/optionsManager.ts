@@ -1,3 +1,4 @@
+import { KetcherLogger } from 'ketcher-core';
 import { KETCHER_SAVED_OPTIONS_KEY } from 'src/constants';
 
 interface SavedOptions {
@@ -11,6 +12,9 @@ export class OptionsManager {
         localStorage.getItem(KETCHER_SAVED_OPTIONS_KEY) || '{}',
       );
     } catch (e) {
+      KetcherLogger.showExceptionLocation(
+        'optionsManager.ts::OptionsManager::getOptions',
+      );
       return {} as SavedOptions;
     }
   }

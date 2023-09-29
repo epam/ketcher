@@ -18,6 +18,7 @@ import { lazy, Suspense, useCallback, useRef, useState } from 'react';
 import { Dialog, LoadingCircles } from '../../../../components';
 import {
   FormatterFactory,
+  KetcherLogger,
   Struct,
   StructService,
   SupportedFormat,
@@ -136,7 +137,12 @@ const MiewDialog = ({
           miew.setOptions(miewOpts);
           setIsIsInitialized(true);
         })
-        .catch((ex) => console.error(ex.message));
+        .catch((ex) => {
+          KetcherLogger.showExceptionLocation(
+            'Miew.tsx::MiewDialog::onMiewInit',
+          );
+          console.error(ex.message);
+        });
     },
     [miewOpts, server, struct],
   );

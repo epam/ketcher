@@ -22,6 +22,7 @@ import {
   fromTextCreation,
   fromTextDeletion,
   fromTextUpdating,
+  KetcherLogger,
 } from 'ketcher-core';
 import { Tool } from './Tool';
 import { handleMovingPosibilityCursor } from '../utils';
@@ -148,7 +149,9 @@ function propsDialog(
         editor.update(fromTextUpdating(editor.render.ctab, id!, content));
       }
     })
-    .catch(() => null);
+    .catch(() => {
+      KetcherLogger.showExceptionLocation('text.ts::propsDialog');
+    });
 }
 
 export default TextTool;

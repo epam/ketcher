@@ -14,6 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { KetcherLogger } from 'ketcher-core';
+
 /* local storage */
 export const storage = {
   warningMessage:
@@ -23,6 +25,9 @@ export const storage = {
       const storage = global.localStorage;
       return storage;
     } catch (ex) {
+      KetcherLogger.showExceptionLocation(
+        'storage-ext.js::storage::isAvailable',
+      );
       return false;
     }
   },
@@ -31,6 +36,7 @@ export const storage = {
     try {
       item = JSON.parse(localStorage.getItem(key));
     } catch (ex) {
+      KetcherLogger.showExceptionLocation('storage-ext.js::storage::getItem');
       console.info('LocalStorage:', ex.name);
     }
     return item;
@@ -41,6 +47,7 @@ export const storage = {
       localStorage.setItem(key, JSON.stringify(data));
       isSet = true;
     } catch (ex) {
+      KetcherLogger.showExceptionLocation('storage-ext.js::storage::setItem');
       console.info('LocalStorage:', ex.name);
       isSet = false;
     }

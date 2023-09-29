@@ -16,7 +16,7 @@
 
 import initTmplLib, { initLib } from './init-lib';
 
-import { KetSerializer } from 'ketcher-core';
+import { KetcherLogger, KetSerializer } from 'ketcher-core';
 import { omit } from 'lodash/fp';
 import { openDialog } from '../modal';
 import { storage } from '../../storage-ext';
@@ -96,7 +96,11 @@ export function editTmpl(tmpl) {
         },
         () => null,
       )
-      .then(() => openDialog(dispatch, 'templates').catch(() => null));
+      .then(() =>
+        openDialog(dispatch, 'templates').catch(() => {
+          KetcherLogger.showExceptionLocation('index.ts::editTmpl');
+        }),
+      );
   };
 }
 
@@ -132,7 +136,9 @@ export function saveUserTmpl(struct) {
         dispatch(initLib(lib));
         updateLocalStore(lib);
       })
-      .catch(() => null);
+      .catch(() => {
+        KetcherLogger.showExceptionLocation('index.ts::saveUserTmpl');
+      });
   };
 }
 

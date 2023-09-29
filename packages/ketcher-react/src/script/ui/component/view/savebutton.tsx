@@ -13,7 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { OutputFormatType, defaultBondThickness } from 'ketcher-core';
+import {
+  OutputFormatType,
+  defaultBondThickness,
+  KetcherLogger,
+} from 'ketcher-core';
 import { saveAs } from 'file-saver';
 
 import React, { PropsWithChildren } from 'react';
@@ -64,6 +68,9 @@ const SaveButton = (props: SaveButtonProps) => {
           onSave();
         });
       } catch (error) {
+        KetcherLogger.showExceptionLocation(
+          'savebutton.tsx::SaveButton::saveFile',
+        );
         onError(error);
       }
     }
@@ -82,6 +89,9 @@ const SaveButton = (props: SaveButtonProps) => {
           onSave();
         })
         .catch((error) => {
+          KetcherLogger.showExceptionLocation(
+            'savebutton.tsx::SaveButton::saveImage',
+          );
           onError(error);
         });
     }

@@ -3,6 +3,7 @@ import {
   Editor,
   fromAtomsAttrs,
   fromRGroupAttachmentPointUpdate,
+  KetcherLogger,
 } from 'ketcher-core';
 
 export async function editRGroupAttachmentPoint(
@@ -36,6 +37,9 @@ export async function editRGroupAttachmentPoint(
       editor.update(action);
     }
   } catch (_error) {
+    KetcherLogger.showExceptionLocation(
+      'apoint.utils.ts::editRGroupAttachmentPoint',
+    );
     // close modal without any operations
   }
 }

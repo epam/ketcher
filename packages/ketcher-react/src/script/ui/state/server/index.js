@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { ChemicalMimeType, KetSerializer } from 'ketcher-core';
+import { ChemicalMimeType, KetcherLogger, KetSerializer } from 'ketcher-core';
 import { appUpdate, setStruct } from '../options';
 import { omit, without } from 'lodash/fp';
 
@@ -94,6 +94,7 @@ export function check(optsTypes) {
         dispatch(checkErrors(res));
       })
       .catch((e) => {
+        KetcherLogger.showExceptionLocation('index.js::check');
         editor.errorHandler(e);
       });
   };
@@ -129,6 +130,7 @@ export function analyse() {
         }),
       )
       .catch((e) => {
+        KetcherLogger.showExceptionLocation('index.js::analyse');
         editor.errorHandler(e);
       });
   };
@@ -154,6 +156,7 @@ export function serverTransform(method, data, struct) {
         );
       })
       .catch((e) => {
+        KetcherLogger.showExceptionLocation('index.js::serverTransform');
         state.editor.errorHandler(e);
       })
       .finally(() => {

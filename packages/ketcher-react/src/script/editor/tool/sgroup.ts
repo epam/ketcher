@@ -25,6 +25,7 @@ import {
   SGroup,
   Pool,
   expandSGroupWithMultipleAttachmentPoint,
+  KetcherLogger,
 } from 'ketcher-core';
 
 import LassoHelper from './helper/lasso';
@@ -528,6 +529,9 @@ class SGroupTool implements Tool {
         }
       })
       .catch((error) => {
+        KetcherLogger.showExceptionLocation(
+          'sgroup.ts::SGroupTool::sgroupDialog',
+        );
         console.error(error);
       });
   }

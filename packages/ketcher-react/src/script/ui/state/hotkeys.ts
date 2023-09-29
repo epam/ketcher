@@ -21,6 +21,7 @@ import {
   MolSerializer,
   formatProperties,
   ChemicalMimeType,
+  KetcherLogger,
 } from 'ketcher-core';
 import { debounce, isEqual } from 'lodash/fp';
 import { load, onAction, removeStructAction } from './shared';
@@ -336,6 +337,7 @@ function clipData(editor) {
     // res['chemical/x-daylight-smiles'] = smiles.stringify(struct);
     return res;
   } catch (e: any) {
+    KetcherLogger.showExceptionLocation('hotkeys.ts::clipData');
     errorHandler(e.message);
   }
 

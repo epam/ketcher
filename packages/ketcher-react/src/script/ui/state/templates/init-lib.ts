@@ -14,7 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { KetSerializer, SdfItem, SdfSerializer } from 'ketcher-core';
+import {
+  KetcherLogger,
+  KetSerializer,
+  SdfItem,
+  SdfSerializer,
+} from 'ketcher-core';
 
 import { appUpdate } from '../options';
 import { storage } from '../../storage-ext';
@@ -102,6 +107,7 @@ function userTmpls(): SdfItem[] {
           props: tmpl.props,
         };
       } catch (ex) {
+        KetcherLogger.showExceptionLocation('init-lib.ts::userTmpls');
         return null;
       }
     })
@@ -138,7 +144,11 @@ function prefetchRender(
     return res;
   }, [] as string[]);
   const fetch = Promise.all(
-    files.map((fn) => prefetchStatic(baseUrl + fn).catch(() => null)),
+    files.map((fn) =>
+      prefetchStatic(baseUrl + fn).catch(() => {
+        KetcherLogger.showExceptionLocation('init-lib.ts::prefetchRender');
+      }),
+    ),
   );
 
   return fetch.then((svgs) => {

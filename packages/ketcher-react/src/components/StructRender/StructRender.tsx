@@ -14,7 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { MolSerializer, RenderStruct, Struct } from 'ketcher-core';
+import {
+  KetcherLogger,
+  MolSerializer,
+  RenderStruct,
+  Struct,
+} from 'ketcher-core';
 import { useEffect, useRef } from 'react';
 import { Container } from './styles';
 import { IStructRenderProps } from './types';
@@ -27,6 +32,7 @@ const normalizeStruct = (molV2000StringOrStruct: string | Struct) => {
   try {
     return new MolSerializer().deserialize(molV2000StringOrStruct);
   } catch (e) {
+    KetcherLogger.showExceptionLocation('StructRenderer.tsx::normalizeStruct');
     throw Error('Could not parse Struct');
   }
 };

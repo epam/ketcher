@@ -27,6 +27,7 @@ import {
   fromSgroupDeletion,
   ElementColor,
   vectorUtils,
+  KetcherLogger,
 } from 'ketcher-core';
 
 import Editor from '../Editor';
@@ -308,7 +309,9 @@ export function atomLongtapEvent(tool, render) {
           : fromAtomAddition(render.ctab, dragCtx.xy0, newatom);
         editor.update(action);
       })
-      .catch(() => null); // w/o changes
+      .catch(() => {
+        KetcherLogger.showExceptionLocation('atom.ts::atomLongtapEvent');
+      }); // w/o changes
   }, 750);
 
   dragCtx.stopTapping = function () {

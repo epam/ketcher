@@ -18,6 +18,7 @@ import { MolSerializerOptions } from './mol.types';
 import { Molfile } from './molfile';
 import { Serializer } from '../serializers.types';
 import { Struct } from 'domain/entities';
+import { KetcherLogger } from 'utilities';
 
 export class MolSerializer implements Serializer<Struct> {
   static DefaultOptions: MolSerializerOptions = {
@@ -47,6 +48,9 @@ export class MolSerializer implements Serializer<Struct> {
     try {
       return molfile.parseCTFile(parseCTFileParams);
     } catch (ex) {
+      KetcherLogger.showExceptionLocation(
+        'molSerializer::MolSerializer::deserialize',
+      );
       if (this.options.badHeaderRecover) {
         try {
           // check whether there's an extra empty line on top
@@ -56,7 +60,9 @@ export class MolSerializer implements Serializer<Struct> {
             molfileLines: lines.slice(1),
           });
         } catch (ex1) {
-          //
+          KetcherLogger.showExceptionLocation(
+            'molSerializer::MolSerializer::deserialize',
+          );
         }
         try {
           // check for a missing first line
@@ -66,7 +72,9 @@ export class MolSerializer implements Serializer<Struct> {
             molfileLines: [''].concat(lines),
           });
         } catch (ex2) {
-          //
+          KetcherLogger.showExceptionLocation(
+            'molSerializer::MolSerializer::deserialize',
+          );
         }
       }
       throw ex;

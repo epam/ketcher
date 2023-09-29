@@ -17,6 +17,7 @@
 import { Component, createRef } from 'react';
 import clsx from 'clsx';
 import classes from './cliparea.module.less';
+import { KetcherLogger } from 'ketcher-core';
 
 const ieCb = window.clipboardData;
 
@@ -126,6 +127,7 @@ function copy(cb, data) {
         cb.setData(fmt, data[fmt]);
       });
     } catch (ex) {
+      KetcherLogger.showExceptionLocation('cliparea.jsx::copy');
       console.info(`Could not write exact type ${curFmt}`);
     }
   }
@@ -155,6 +157,7 @@ export function exec(action) {
       enabled = document.execCommand(action) || window.ClipboardEvent || ieCb;
     } catch (ex) {
       // FF < 41
+      KetcherLogger.showExceptionLocation('cliparea.jsx::exec');
       enabled = false;
     }
   }

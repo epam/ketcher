@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { KetcherLogger } from 'ketcher-core';
 import { KETCHER_SAVED_SETTINGS_KEY } from 'src/constants';
 
 interface SavedSettings {
@@ -27,6 +28,9 @@ export class SettingsManager {
         localStorage.getItem(KETCHER_SAVED_SETTINGS_KEY) || '{}',
       );
     } catch (e) {
+      KetcherLogger.showExceptionLocation(
+        'settingsManager.ts::SettingsManager::getSettings',
+      );
       return {} as SavedSettings;
     }
   }

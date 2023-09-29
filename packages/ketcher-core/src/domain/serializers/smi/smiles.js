@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import { Atom, Bond, Pile, SGroup } from 'domain/entities';
+import { KetcherLogger } from 'utilities';
 
 import CisTrans from './cis_trans';
 import Dfs from './dfs';
@@ -71,6 +72,9 @@ Smiles.prototype.saveMolecule = function (struct, ignoreErrors) {
       try {
         SGroup.prepareMulForSaving(sg, struct);
       } catch (ex) {
+        KetcherLogger.showExceptionLocation(
+          'smiles.js::Smiles.prototype.saveMolecule',
+        );
         throw Error('Bad s-group (' + ex.message + ')');
       }
     }
@@ -247,6 +251,9 @@ Smiles.prototype.saveMolecule = function (struct, ignoreErrors) {
       } else this.atoms[atomIdx].chirality = 2;
     });
   } catch (ex) {
+    KetcherLogger.showExceptionLocation(
+      'smiles.js::Smiles.prototype.saveMolecule',
+    );
     // TODO: add error handler call
   }
 

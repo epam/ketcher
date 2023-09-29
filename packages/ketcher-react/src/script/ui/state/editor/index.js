@@ -26,7 +26,7 @@ import {
   toStereoLabel,
 } from '../../data/convert/structconv';
 
-import { Elements } from 'ketcher-core';
+import { Elements, KetcherLogger } from 'ketcher-core';
 import acts from '../../action';
 import { debounce } from 'lodash/fp';
 import { openDialog } from '../modal';
@@ -194,7 +194,12 @@ export default function initEditor(dispatch, getState) {
         'aromatize',
         serverOpts,
         struct,
-      ).catch((e) => state.editor.errorHandler(e));
+      ).catch((e) => {
+        KetcherLogger.showExceptionLocation(
+          'index.js::initEditor::onAromatizeStruct',
+        );
+        state.editor.errorHandler(e);
+      });
     },
     onDearomatizeStruct: (struct) => {
       const state = getState();
@@ -205,7 +210,12 @@ export default function initEditor(dispatch, getState) {
         'dearomatize',
         serverOpts,
         struct,
-      ).catch((e) => state.editor.errorHandler(e));
+      ).catch((e) => {
+        KetcherLogger.showExceptionLocation(
+          'index.js::initEditor::onDearomatizeStruct',
+        );
+        state.editor.errorHandler(e);
+      });
     },
     onMouseDown: () => {
       updateAction();

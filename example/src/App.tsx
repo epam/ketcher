@@ -6,6 +6,8 @@ import {
   Ketcher,
   RemoteStructServiceProvider,
   StructServiceProvider,
+  KetcherLogger,
+  LogLevel,
 } from 'ketcher-core';
 import { PolymerToggler } from './PolymerToggler';
 
@@ -71,6 +73,13 @@ const App = () => {
         structServiceProvider={structServiceProvider}
         onInit={(ketcher: Ketcher) => {
           window.ketcher = ketcher;
+
+          KetcherLogger.settings = {
+            isLoggingEnabled: true,
+            logLevel: LogLevel.LOG,
+            showTrace: false,
+          };
+
           window.parent.postMessage(
             {
               eventType: 'init',

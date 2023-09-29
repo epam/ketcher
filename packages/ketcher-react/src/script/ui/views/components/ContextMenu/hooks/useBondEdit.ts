@@ -5,6 +5,7 @@ import { updateSelectedBonds } from 'src/script/ui/state/modal/bonds';
 import { mapBondIdsToBonds } from 'src/script/editor/tool/select';
 import { ItemEventParams } from '../contextMenu.types';
 import { noOperation } from '../utils';
+import { KetcherLogger } from 'ketcher-core';
 
 const useBondEdit = () => {
   const { getKetcherInstance } = useAppContext();
@@ -19,6 +20,9 @@ const useBondEdit = () => {
         const changeBondPromise = await editor.event.bondEdit.dispatch(bonds);
         updateSelectedBonds({ bonds: bondIds, changeBondPromise, editor });
       } catch (error) {
+        KetcherLogger.showExceptionLocation(
+          'useBondEdit.ts::useBondEdit::handler',
+        );
         noOperation();
       }
     },

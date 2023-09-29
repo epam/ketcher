@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { KetcherLogger } from 'ketcher-core';
 import { put, takeEvery, call } from 'redux-saga/effects';
 import { editorSlice, init, initFailure, initSuccess } from 'state/common';
 
@@ -30,6 +31,7 @@ function* fetchData() {
     yield call(fetchDataCall);
     yield put(initSuccess(editorSlice));
   } catch (e) {
+    KetcherLogger.showExceptionLocation('editorSaga.ts::fetchData');
     yield put(initFailure(editorSlice));
   }
 }

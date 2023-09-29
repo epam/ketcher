@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import EventEmitter from 'events';
+import { KetcherLogger } from './KetcherLogger';
 
 export enum KetcherAsyncEvents {
   LOADING = 'LOADING',
@@ -32,6 +33,7 @@ export const runAsyncAction = async <T = any>(
     eventEmitter.emit(KetcherAsyncEvents.SUCCESS);
     return res;
   } catch {
+    KetcherLogger.showExceptionLocation('runAsyncAction.ts::runAsyncAction');
     eventEmitter.emit(KetcherAsyncEvents.FAILURE);
     return undefined;
   }

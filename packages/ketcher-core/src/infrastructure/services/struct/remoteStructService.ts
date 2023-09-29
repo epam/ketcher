@@ -41,6 +41,7 @@ import {
   StructService,
   StructServiceOptions,
 } from 'domain/services';
+import { KetcherLogger } from 'utilities';
 
 function pollDeferred(process, complete, timeGap, startTimeGap) {
   return new Promise((resolve, reject) => {
@@ -51,6 +52,9 @@ function pollDeferred(process, complete, timeGap, startTimeGap) {
             if (complete(val)) resolve(val);
             else setTimeout(iterate, timeGap);
           } catch (e) {
+            KetcherLogger.showExceptionLocation(
+              'remoteStructService.ts::pollDeferred',
+            );
             reject(e);
           }
         },
@@ -168,6 +172,9 @@ export class RemoteStructService implements StructService {
       imagoVersions = response.imago_versions;
       isAvailable = true;
     } catch (e) {
+      KetcherLogger.showExceptionLocation(
+        'remoteStructService.ts::RemoteStructService::info',
+      );
       indigoVersion = '';
       imagoVersions = [];
       isAvailable = false;

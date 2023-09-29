@@ -4,6 +4,7 @@ import {
   AtomPropertiesInContextMenu,
   AtomQueryProperties,
   fromAtomsAttrs,
+  KetcherLogger,
 } from 'ketcher-core';
 import { updateOnlyChangedProperties } from './utils';
 
@@ -45,6 +46,8 @@ export function updateSelectedAtoms({
         });
         editor.update(action);
       })
-      .catch(() => null);
+      .catch(() => {
+        KetcherLogger.showExceptionLocation('atoms.ts::updateSelectedAtoms');
+      });
   }
 }

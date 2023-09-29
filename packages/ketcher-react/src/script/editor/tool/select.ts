@@ -35,6 +35,7 @@ import {
   extendCanvasByVector,
   getItemsToFuse,
   vectorUtils,
+  KetcherLogger,
 } from 'ketcher-core';
 
 import LassoHelper from './helper/lasso';
@@ -466,7 +467,11 @@ class SelectTool implements Tool {
             editor.update(fromTextUpdating(struct, ci.id, content));
           }
         })
-        .catch(() => null);
+        .catch(() => {
+          KetcherLogger.showExceptionLocation(
+            'select.ts::SelectTool::dblclick',
+          );
+        });
     }
     return true;
   }

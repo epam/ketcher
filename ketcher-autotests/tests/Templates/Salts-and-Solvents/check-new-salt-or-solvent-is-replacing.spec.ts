@@ -2,6 +2,7 @@ import { test } from '@playwright/test';
 import {
   selectAtomInToolbar,
   AtomButton,
+  selectSaltsAndSolvents,
   SaltsAndSolvents,
   clickInTheMiddleOfTheScreen,
   takeEditorScreenshot,
@@ -51,6 +52,11 @@ Test case: EPMLSOPKET-12969 - 'Check that in all cases, there must be a replacem
     await takeEditorScreenshot(page);
 
     await selectSaltsAndSolventsGroup(SaltsAndSolvents.AceticAcid, page);
+    await selectSaltsAndSolvents(SaltsAndSolvents.AceticAnhydride, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
+
+    await selectSaltsAndSolvents(SaltsAndSolvents.AceticAcid, page);
     await clickInTheMiddleOfTheScreen(page);
   });
 
@@ -64,6 +70,7 @@ Test case: EPMLSOPKET-12969 - 'Check that in all cases, there must be a replacem
       SaltsAndSolvents.MethaneSulphonicAcid,
       page,
     );
+    await selectSaltsAndSolvents(SaltsAndSolvents.MethaneSulphonicAcid, page);
     await clickInTheMiddleOfTheScreen(page);
   });
 });

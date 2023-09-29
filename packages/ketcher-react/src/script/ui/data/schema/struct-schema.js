@@ -362,6 +362,14 @@ const sgroup = {
       },
       required: ['name'],
     },
+    {
+      key: 'queryComponent',
+      title: 'Query component',
+      type: 'object',
+      properties: {
+        type: { enum: ['queryComponent'] },
+      },
+    },
   ],
 };
 export const sgroupMap = mapOf(sgroup, 'type');

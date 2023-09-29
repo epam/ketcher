@@ -22,8 +22,8 @@ test.describe('S-Group Properties', () => {
   test('Checking S-Group drop-down types', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-1502
-      Description: Checking S-Group drop-down types 'Type' drop-down list with Data, 
-      Multiple group, SRU polymer and Superatom items. Data item is selected by default;
+      Description: Checking S-Group drop-down types 'Type' drop-down list with Data,
+      Multiple group, SRU polymer, Superatom and Query Component items. Data item is selected by default;
     */
     await selectRingButton(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
@@ -73,6 +73,20 @@ test.describe('S-Group Properties', () => {
     await page.getByPlaceholder('Enter name').fill(testName);
     await page.getByPlaceholder('Enter value').click();
     await page.getByPlaceholder('Enter value').fill(testValue);
+
+    await takeEditorScreenshot(page);
+    await page.getByRole('button', { name: 'Apply' }).click();
+  });
+
+  test('A query component  is created', async ({ page }) => {
+    await selectRingButton(RingButton.Benzene, page);
+    await clickInTheMiddleOfTheScreen(page);
+
+    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
+    await page.mouse.click(x, y);
+    await page.getByRole('button', { name: 'Data' }).click();
+    await page.getByRole('option', { name: 'Query component' }).click();
 
     await takeEditorScreenshot(page);
     await page.getByRole('button', { name: 'Apply' }).click();

@@ -4,13 +4,10 @@ import {
   selectRingButton,
   clickInTheMiddleOfTheScreen,
   RingButton,
-  selectTemplate,
   selectFunctionalGroups,
   FunctionalGroups,
-  delay,
   moveMouseToTheMiddleOfTheScreen,
   BondType,
-  DELAY_IN_SECONDS,
   waitForPageInit,
 } from '@utils';
 import { getRightAtomByAttributes } from '@utils/canvas/atoms';
@@ -18,8 +15,6 @@ import { getBondByIndex } from '@utils/canvas/bonds';
 
 async function selectFunctionalGroup(page: Page) {
   // select a functional group from structure library
-  await selectTemplate(page);
-  await page.getByRole('tab', { name: 'Functional Groups' }).click();
   await selectFunctionalGroups(FunctionalGroups.Boc, page);
 }
 
@@ -41,8 +36,6 @@ test.describe('Preview for abbreviated structures: functional groups', () => {
     await selectFunctionalGroup(page);
     const point = await getRightAtomByAttributes(page, { label: 'C' });
     await page.mouse.move(point.x, point.y);
-    // delay is required because preview is shown with delay
-    await delay(DELAY_IN_SECONDS.ONE);
     await takeEditorScreenshot(page);
   });
 
@@ -52,8 +45,6 @@ test.describe('Preview for abbreviated structures: functional groups', () => {
     await selectFunctionalGroup(page);
     const point = await getRightAtomByAttributes(page, { label: 'C' });
     await page.mouse.move(point.x, point.y);
-    // delay is required because preview is shown with delay
-    await delay(DELAY_IN_SECONDS.ONE);
     await moveMouseToTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
@@ -64,8 +55,6 @@ test.describe('Preview for abbreviated structures: functional groups', () => {
     await selectFunctionalGroup(page);
     const point = await getRightAtomByAttributes(page, { label: 'C' });
     await page.mouse.move(point.x, point.y);
-    // delay is required because preview is shown with delay
-    await delay(DELAY_IN_SECONDS.ONE);
     await page.mouse.click(point.x, point.y);
     await moveMouseToTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
@@ -77,8 +66,6 @@ test.describe('Preview for abbreviated structures: functional groups', () => {
     await selectFunctionalGroup(page);
     const point = await getRightAtomByAttributes(page, { label: 'C' });
     await page.mouse.move(point.x, point.y);
-    // delay is required because preview is shown with delay
-    await delay(DELAY_IN_SECONDS.ONE);
     await takeEditorScreenshot(page);
     await page.mouse.click(point.x, point.y, { button: 'right' });
     await takeEditorScreenshot(page);
@@ -92,8 +79,6 @@ test.describe('Preview for abbreviated structures: functional groups', () => {
       bondId,
     );
     await page.mouse.move(bondPosition.x, bondPosition.y);
-    // delay is required because preview is shown with delay
-    await delay(DELAY_IN_SECONDS.ONE);
     await takeEditorScreenshot(page);
   });
 

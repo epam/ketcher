@@ -361,7 +361,7 @@ class SaveDialog extends Component {
     return warnings.length ? (
       <div className={classes.warnings}>
         {warnings.map((warning) => (
-          <div className={classes.warningsContainer}>
+          <div className={classes.warningsContainer} key={warning}>
             <span className={classes.warningsArr} data-testid="WarningTextArea">
               {warning}
             </span>

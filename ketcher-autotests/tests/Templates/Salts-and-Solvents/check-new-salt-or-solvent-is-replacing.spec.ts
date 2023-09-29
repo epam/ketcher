@@ -8,8 +8,7 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
   FunctionalGroups,
-  selectFunctionalGroup,
-  selectSaltsAndSolventsGroup,
+  selectFunctionalGroups,
 } from '@utils';
 
 test.describe('Salts and Solvents replacement', () => {
@@ -27,11 +26,12 @@ test.describe('Salts and Solvents replacement', () => {
     /*
 Test case: EPMLSOPKET-12972 - 'Check that new Salt or Solvent is replacing the previously added one'
   */
-    await selectSaltsAndSolventsGroup(SaltsAndSolvents.AceticAnhydride, page);
+    await selectSaltsAndSolvents(SaltsAndSolvents.AceticAnhydride, page);
     await clickInTheMiddleOfTheScreen(page);
+
     await takeEditorScreenshot(page);
 
-    await selectSaltsAndSolventsGroup(SaltsAndSolvents.AceticAcid, page);
+    await selectSaltsAndSolvents(SaltsAndSolvents.AceticAcid, page);
     await clickInTheMiddleOfTheScreen(page);
   });
 
@@ -43,15 +43,14 @@ Test case: EPMLSOPKET-12969 - 'Check that in all cases, there must be a replacem
   */
     await selectAtomInToolbar(AtomButton.Carbon, page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectSaltsAndSolventsGroup(SaltsAndSolvents.AceticAcid, page);
+    await selectSaltsAndSolvents(SaltsAndSolvents.AceticAcid, page);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
 
-    await selectFunctionalGroup(FunctionalGroups.Bz, page);
+    await selectFunctionalGroups(FunctionalGroups.Bz, page);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
 
-    await selectSaltsAndSolventsGroup(SaltsAndSolvents.AceticAcid, page);
     await selectSaltsAndSolvents(SaltsAndSolvents.AceticAnhydride, page);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
@@ -66,10 +65,6 @@ Test case: EPMLSOPKET-12969 - 'Check that in all cases, there must be a replacem
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectSaltsAndSolventsGroup(
-      SaltsAndSolvents.MethaneSulphonicAcid,
-      page,
-    );
     await selectSaltsAndSolvents(SaltsAndSolvents.MethaneSulphonicAcid, page);
     await clickInTheMiddleOfTheScreen(page);
   });

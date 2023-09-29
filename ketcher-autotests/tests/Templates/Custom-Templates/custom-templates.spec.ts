@@ -7,6 +7,8 @@ import {
   selectUserTemplatesAndPlaceInTheMiddle,
   TemplateLibrary,
   clickInTheMiddleOfTheScreen,
+  selectFunctionalGroups,
+  FunctionalGroups,
 } from '@utils';
 
 test.describe('Open Ketcher', () => {
@@ -74,9 +76,7 @@ test.describe('Open Ketcher', () => {
    Switch to "Functional Groups" tab
    Observe some large structure
    */
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await page.getByRole('tab', { name: 'Functional Groups' }).click();
-    await page.getByText('Tf').click();
+    await selectFunctionalGroups(FunctionalGroups.Tf, page);
     await clickInTheMiddleOfTheScreen(page);
   });
 

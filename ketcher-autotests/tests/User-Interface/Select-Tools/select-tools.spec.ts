@@ -13,7 +13,6 @@ import {
   selectDropdownTool,
 } from '@utils';
 import { getBondByIndex } from '@utils/canvas/bonds';
-// import { drawReactionWithTwoBenzeneRings } from '@utils/canvas/drawStructures';
 
 test.describe('Select tools tests', () => {
   test.beforeEach(async ({ page }) => {

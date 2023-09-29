@@ -40,7 +40,7 @@ test.describe('Clear canvas', () => {
 
   test('Clear Canvas - Undo/Redo', async ({ page }) => {
     // Test case: EPMLSOPKET-1704
-    await openFileAndAddToCanvas('reaction-dif-prop.rxn', page);
+    await openFileAndAddToCanvas('Rxn-V2000/reaction-dif-prop.rxn', page);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await selectTopPanelButton(TopPanelButton.Clear, page);
@@ -54,7 +54,7 @@ test.describe('Clear canvas', () => {
     page,
   }) => {
     // Test case:EPMLSOPKET-1705
-    await openFileAndAddToCanvas('ketcher.ket', page);
+    await openFileAndAddToCanvas('KET/ketcher.ket', page);
     await clickInTheMiddleOfTheScreen(page);
     await selectTopPanelButton(TopPanelButton.Clear, page);
   });
@@ -64,7 +64,7 @@ test.describe('Clear canvas', () => {
   }) => {
     // Test case:EPMLSOPKET-1705
     // Checking clearing canvas with hotkey
-    await openFileAndAddToCanvas('ketcher.ket', page);
+    await openFileAndAddToCanvas('KET/ketcher.ket', page);
     await page.keyboard.press('Control+Delete');
   });
 
@@ -88,7 +88,7 @@ test.describe('Clear canvas', () => {
     page,
   }) => {
     // Test case: EPMLSOPKET-1706
-    await openFileAndAddToCanvas('chain-with-r-group.smi', page);
+    await openFileAndAddToCanvas('SMILES/chain-with-r-group.smi', page);
     await clickInTheMiddleOfTheScreen(page);
     await selectTopPanelButton(TopPanelButton.Clear, page);
     await selectTopPanelButton(TopPanelButton.Undo, page);

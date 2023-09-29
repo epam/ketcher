@@ -31,7 +31,6 @@ test.describe('Open Ketcher', () => {
 
   test('Save button UI', async ({ page }) => {
     // Test case: EPMLSOPKET-1843
-    // await page.getByTitle('Save as...').click();
     await selectTopPanelButton(TopPanelButton.Save, page);
     await takeEditorScreenshot(page, {
       masks: [page.getByTestId('mol-preview-area-text')],

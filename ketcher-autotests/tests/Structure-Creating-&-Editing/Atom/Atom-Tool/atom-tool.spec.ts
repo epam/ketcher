@@ -31,6 +31,7 @@ import {
   drawBenzeneRing,
   getCoordinatesTopAtomOfBenzeneRing,
 } from '@utils';
+import { atomsNames } from '@utils/canvas/atoms/excludedAtoms';
 import { getMolfile, getRxn } from '@utils/formats';
 
 const X_DELTA_ONE = 100;
@@ -529,19 +530,11 @@ test.describe('Atom Tool', () => {
     Test case: EPMLSOPKET-1435
     Description: The additional button with the selected atom symbol appears on the Atom Palette
     */
-    const elementNames = [
-      'Si 14',
-      'Au 79',
-      'In 49',
-      'Am 95',
-      'Se 34',
-      'Pu 94',
-      'Rn 86',
-    ];
+    const elementNames = ['Si', 'Au', 'In', 'Am', 'Se', 'Pu', 'Rn'];
 
     for (const elementName of elementNames) {
       await selectAtomInToolbar(AtomButton.Periodic, page);
-      await page.getByRole('button', { name: elementName }).click();
+      await page.click(`button[data-testid="${elementName}-button"]`);
       await page.getByTestId('OK').click();
     }
 
@@ -554,20 +547,11 @@ test.describe('Atom Tool', () => {
     Description: The first additional atom symbol is replaced with the new one. 
     The 8th button isn't added. In our test 'Si' replaces by 'Db'.
     */
-    const elementNames = [
-      'Si 14',
-      'Au 79',
-      'In 49',
-      'Am 95',
-      'Se 34',
-      'Pu 94',
-      'Rn 86',
-      'Db 105',
-    ];
+    const elementNames = ['Si', 'Au', 'In', 'Am', 'Se', 'Pu', 'Rn', 'Db'];
 
     for (const elementName of elementNames) {
       await selectAtomInToolbar(AtomButton.Periodic, page);
-      await page.getByRole('button', { name: elementName }).click();
+      await page.click(`button[data-testid="${elementName}-button"]`);
       await page.getByTestId('OK').click();
     }
 
@@ -582,19 +566,11 @@ test.describe('Atom Tool', () => {
     Description: The additional button with the selected atom symbol appears on the Atom Palette.
     Additional atom can be added to structure.
     */
-    const elementNames = [
-      'Si 14',
-      'Au 79',
-      'In 49',
-      'Am 95',
-      'Se 34',
-      'Pu 94',
-      'Rn 86',
-    ];
+    const elementNames = ['Si', 'Au', 'In', 'Am', 'Se', 'Pu', 'Rn'];
 
     for (const elementName of elementNames) {
       await selectAtomInToolbar(AtomButton.Periodic, page);
-      await page.getByRole('button', { name: elementName }).click();
+      await page.click(`button[data-testid="${elementName}-button"]`);
       await page.getByTestId('OK').click();
     }
 
@@ -647,16 +623,6 @@ test.describe('Atom Tool', () => {
     Description: Atom added to Benzene ring.
     */
     const anyAtom = 0;
-    const atomsNames: AtomButton[] = Object.values(AtomButton).filter(
-      (name) =>
-        ![
-          AtomButton.Gold,
-          AtomButton.Platinum,
-          AtomButton.Periodic,
-          AtomButton.Any,
-          AtomButton.Extended,
-        ].includes(name),
-    );
 
     for (const atomName of atomsNames) {
       await drawBenzeneRing(page);
@@ -691,16 +657,6 @@ test.describe('Atom Tool', () => {
     Description: Atom added to Benzene ring.
     */
     const anyAtom = 2;
-    const atomsNames: AtomButton[] = Object.values(AtomButton).filter(
-      (name) =>
-        ![
-          AtomButton.Gold,
-          AtomButton.Platinum,
-          AtomButton.Periodic,
-          AtomButton.Any,
-          AtomButton.Extended,
-        ].includes(name),
-    );
 
     for (const atomName of atomsNames) {
       await drawBenzeneRing(page);

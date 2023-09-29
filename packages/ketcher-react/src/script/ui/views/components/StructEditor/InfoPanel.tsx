@@ -90,6 +90,8 @@ const InfoPanel: FC<InfoPanelProps> = (props) => {
   useEffect(() => {
     if (sGroup && SGroup.isDataSGroup(sGroup)) {
       setSGroupData(`${sGroup.data?.fieldName}=${sGroup.data?.fieldValue}`);
+    } else if (sGroup && SGroup.isQuerySGroup(sGroup)) {
+      setSGroupData('Query component');
     } else {
       setSGroupData(null);
     }
@@ -116,7 +118,11 @@ const InfoPanel: FC<InfoPanelProps> = (props) => {
   const width = size.x;
   const height = size.y;
 
-  const showMolecule = molecule && sGroup && !SGroup.isDataSGroup(sGroup);
+  const showMolecule =
+    molecule &&
+    sGroup &&
+    !SGroup.isDataSGroup(sGroup) &&
+    !SGroup.isQuerySGroup(sGroup);
 
   return showMolecule ? (
     <div

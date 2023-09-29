@@ -71,7 +71,7 @@ test.describe('Special nodes', () => {
 
 test.describe('Special node', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {

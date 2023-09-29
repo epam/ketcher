@@ -30,7 +30,7 @@ import {
 import LassoHelper from './helper/lasso';
 import { isEqual } from 'lodash/fp';
 import { selMerge } from './select';
-import Editor from '../Editor';
+import Editor, { Selection } from '../Editor';
 import { Tool } from './Tool';
 
 const searchMaps = [
@@ -465,7 +465,7 @@ class SGroupTool implements Tool {
     this.editor.selection(null);
   }
 
-  static sgroupDialog(editor, id) {
+  static sgroupDialog(editor: Editor, id: number | null) {
     const restruct = editor.render.ctab;
     const struct = restruct.molecule;
     const selection = editor.selection() || {};
@@ -490,9 +490,12 @@ class SGroupTool implements Tool {
     Promise.resolve(res)
       .then((newSg) => {
         // TODO: check before signal
+        const isQuerySGroup = SGroup.isQuerySGroup(newSg);
+        const isDataSGroup = SGroup.isDataSGroup(newSg);
         if (
-          newSg.type !== 'DAT' && // when data s-group separates
-          checkOverlapping(struct, selection.atoms || [])
+          !isDataSGroup && // when data s-group separates
+          !isQuerySGroup &&
+          checkOverlapping(struct, selection.atoms, 'common')
         ) {
           editor.event.message.dispatch({
             error: 'Partial S-group overlapping is not allowed.',
@@ -500,12 +503,17 @@ class SGroupTool implements Tool {
         } else {
           if (
             !sg &&
-            newSg.type !== 'DAT' &&
+            !isDataSGroup &&
+            !isQuerySGroup &&
             (!selection.atoms || selection.atoms.length === 0)
-          )
+          ) {
             return;
+          }
 
-          const isDataSg = sg && sg.getAttrs().context === newSg.attrs.context;
+          const isDataSg =
+            sg &&
+            sg.getAttrs().context === newSg.attrs.context &&
+            !isQuerySGroup;
 
           if (isDataSg) {
             const action = fromSeveralSgroupAddition(
@@ -521,15 +529,41 @@ class SGroupTool implements Tool {
             editor.selection(selection);
             return;
           }
+          const result = isQuerySGroup
+            ? createQueryComponentSGroup(id, editor, newSg, selection, sg)
+            : fromContextType(id, editor, newSg, selection);
 
-          const result = fromContextType(id, editor, newSg, selection);
-          editor.update(result.action);
+          result && editor.update(result.action);
           editor.selection(null);
         }
       })
       .catch((error) => {
         console.error(error);
       });
+  }
+}
+
+function createQueryComponentSGroup(
+  id: number | null,
+  editor: Editor,
+  newSg,
+  selection: Selection,
+  sg: SGroup | null | undefined,
+) {
+  const struct = editor.render.ctab.molecule;
+  if (!selection.atoms && sg) {
+    if (!sg.atoms) {
+      editor.errorHandler?.('Cannot convert to a query component');
+      return;
+    }
+    selection = { atoms: sg.atoms || [] };
+  }
+  if (checkOverlapping(struct, selection.atoms, 'queryComponent')) {
+    editor.errorHandler?.(
+      'Cannot create a query component: one fragment can only be part of one query component',
+    );
+  } else {
+    return fromContextType(id, editor, newSg, selection);
   }
 }
 

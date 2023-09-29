@@ -76,7 +76,7 @@ const ContextMenuTrigger: React.FC<PropsWithChildren> = ({ children }) => {
 
       const currentTool = editor.tool();
       if (currentTool instanceof TemplateTool) {
-        currentTool.hidePreview();
+        currentTool.cancel();
       }
 
       const closestItem = editor.findItem(event, null);

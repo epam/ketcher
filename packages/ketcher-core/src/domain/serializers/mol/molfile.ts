@@ -24,6 +24,7 @@ import {
 import { Elements } from 'domain/constants';
 import common from './common';
 import utils from './utils';
+import { KetcherLogger } from 'utilities';
 
 const END_V2000 = '2D 1   1.00000     0.00000     0';
 
@@ -88,9 +89,10 @@ export class Molfile {
 
         try {
           common.prepareForSaving[sgroup.type](sgroup, mol);
-        } catch (ex: any) {
-          if (!skipErrors || typeof ex.id !== 'number') {
-            throw new Error(`Error: ${ex.message}`);
+        } catch (e: any) {
+          KetcherLogger.error('molfile.ts::Molfile::prepareSGroups', e);
+          if (!skipErrors || typeof e.id !== 'number') {
+            throw new Error(`Error: ${e.message}`);
           }
           errorIgnore = true;
         }

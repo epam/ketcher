@@ -8,6 +8,7 @@ import {
   FunctionalGroup,
   Atom,
   Action,
+  KetcherLogger,
 } from 'ketcher-core';
 import { STRUCT_TYPE } from 'src/constants';
 import { openDialog } from './modal';
@@ -159,7 +160,12 @@ function handleAtomPropsDialog({
 
         editor.update(updatedAtom);
       })
-      .catch(() => null);
+      .catch((e) => {
+        KetcherLogger.error(
+          'handleHotkeysOverItem.ts::handleAtomPropsDialog',
+          e,
+        );
+      });
   }
 }
 
@@ -184,7 +190,12 @@ function handleBondPropsDialog({
 
       editor.update(updatedBond);
     })
-    .catch(() => null);
+    .catch((e) => {
+      KetcherLogger.error(
+        'handleHoutkeysOverItem.ts::handleBondPropsDialog',
+        e,
+      );
+    });
 }
 
 function handleTool({
@@ -346,7 +357,9 @@ async function handleRGroupAtomTool({ hoveredItemId, editor }: HandlersProps) {
         fromAtomsAttrs(editor.render.ctab, hoveredItemId, element, false),
       );
     }
-  } catch (error) {} // w/o changes
+  } catch (e) {
+    KetcherLogger.error('handleHotkeysOverItem.ts::handleRGroupAtomTool', e);
+  } // w/o changes
 }
 
 function getFunctionalGroupIdByItem(

@@ -26,6 +26,7 @@ import {
   getPropertiesByFormat,
   getPropertiesByImgFormat,
   b64toBlob,
+  KetcherLogger,
 } from 'ketcher-core';
 
 import { Dialog } from '../../../../components';
@@ -173,6 +174,7 @@ class SaveDialog extends Component {
           });
         })
         .catch((e) => {
+          KetcherLogger.error('Save.jsx::SaveDialog::changeType', e);
           errorHandler(e);
           this.props.onResetForm(formState);
           return e;

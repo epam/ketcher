@@ -425,13 +425,18 @@ class ReAtom extends ReObject {
     );
 
     let text = '';
-
+    let tooltip = '';
     if (displayStereoLabel) {
       text = `${stereoLabel}\n`;
     }
 
     if (queryAttrsText.length > 0) {
-      text += `${queryAttrsText}\n`;
+      if (queryAttrsText.length > 8) {
+        tooltip += `${queryAttrsText}\n`;
+        text += `${queryAttrsText.substring(0, 8)}...\n`;
+      } else {
+        text += `${queryAttrsText}\n`;
+      }
     }
 
     if (aamText.length > 0) {
@@ -455,6 +460,9 @@ class ReAtom extends ReObject {
         const opacity = getStereoAtomOpacity(render.options, stereoLabel);
         aamPath.node.childNodes[0].setAttribute('fill-opacity', opacity);
       }
+      tooltip &&
+        aamPath.node.childNodes[0].setAttribute('data-tooltip', tooltip);
+
       const aamBox = util.relBox(aamPath.getBBox());
       draw.recenterText(aamPath, aamBox);
       const visel = this.visel;
@@ -709,8 +717,10 @@ function buildLabel(
   options: any,
 ): ElemAttr {
   // eslint-disable-line max-statements
-  const label: any = {};
-  label.text = getLabelText(atom.a);
+  const label: any = {
+    text: getLabelText(atom.a),
+    tooltip: null,
+  };
 
   if (!label.text) {
     label.text = 'R#';
@@ -724,6 +734,10 @@ function buildLabel(
   }
 
   const { previewOpacity } = options;
+  if (label.text?.length > 8) {
+    label.tooltip = label.text;
+    label.text = `${label.text?.substring(0, 8)}...`;
+  }
   label.path = paper.text(ps.x, ps.y, label.text).attr({
     font: options.font,
     'font-size': options.fontsz,
@@ -731,6 +745,9 @@ function buildLabel(
     'font-style': atom.a.pseudo ? 'italic' : '',
     'fill-opacity': atom.a.isPreview ? previewOpacity : 1,
   });
+
+  label.tooltip &&
+    label.path.node.childNodes[0].setAttribute('data-tooltip', label.tooltip);
 
   label.rbb = util.relBox(label.path.getBBox());
   draw.recenterText(label.path, label.rbb);

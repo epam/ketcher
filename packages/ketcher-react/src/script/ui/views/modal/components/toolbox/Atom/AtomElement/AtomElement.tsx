@@ -25,6 +25,7 @@ const AtomElement = ({ formState }: BaseProps) => {
       (el) => {
         onChange(el.values?.join(',') || el.label);
       },
+      () => null, // onCancel handler
     );
   };
 
@@ -32,6 +33,7 @@ const AtomElement = ({ formState }: BaseProps) => {
     single: (
       <>
         <FieldWithModal
+          key="atomLabel"
           name="label"
           onEdit={(onChange: ChangeFunction) =>
             openNestedDialog(

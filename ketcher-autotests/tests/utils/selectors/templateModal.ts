@@ -10,6 +10,7 @@ import {
   STRUCTURE_LIBRARY_BUTTON_NAME,
   pressButton,
 } from '@utils';
+import { ElementLabel } from 'ketcher-core';
 
 export enum SaltsAndSolvents {
   AceticAcid = 'acetic acid',
@@ -245,13 +246,13 @@ export async function fillFieldByPlaceholder(
 export async function selectAtomsFromPeriodicTable(
   page: Page,
   selectlisting: 'List' | 'Not List',
-  elements: string[],
+  elements: ElementLabel[],
 ) {
   await page.getByTestId('period-table').click();
   await page.getByText(selectlisting, { exact: true }).click();
 
   for (const element of elements) {
-    await pressButton(page, element);
+    await page.getByTestId(`${element}-button`).click();
   }
 
   await page.getByTestId('OK').click();

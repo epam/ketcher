@@ -25,6 +25,7 @@ function Atom({ el, shortcut, selected, ...props }) {
         selected,
       })}
       value={el.number}
+      data-testid={`${el.label}-button`}
       {...props}
     >
       <span>{el.label}</span>

@@ -116,11 +116,7 @@ test.describe('Atom Tool', () => {
     Description: The selected atom symbols appear on the canvas with square brackets, for example [C, N, O]. 
     All listed atom symbols should be colored with black.
     */
-    await selectAtomsFromPeriodicTable(page, 'List', [
-      'Au 79',
-      'In 49',
-      'Am 95',
-    ]);
+    await selectAtomsFromPeriodicTable(page, 'List', ['Au', 'In', 'Am']);
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
   });
@@ -133,11 +129,7 @@ test.describe('Atom Tool', () => {
     */
     const anyAtom = 2;
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
-    await selectAtomsFromPeriodicTable(page, 'List', [
-      'Au 79',
-      'In 49',
-      'Am 95',
-    ]);
+    await selectAtomsFromPeriodicTable(page, 'List', ['Au', 'In', 'Am']);
     await clickOnAtom(page, 'C', anyAtom);
     await resetCurrentTool(page);
   });
@@ -148,11 +140,7 @@ test.describe('Atom Tool', () => {
     Description: The selected atom symbols appear on the canvas with square brackets, for example ![C, N, O]. 
     All listed atom symbols should be colored with black.
     */
-    await selectAtomsFromPeriodicTable(page, 'Not List', [
-      'Ti 22',
-      'V 23',
-      'Cs 55',
-    ]);
+    await selectAtomsFromPeriodicTable(page, 'Not List', ['Ti', 'V', 'Cs']);
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
   });
@@ -167,11 +155,7 @@ test.describe('Atom Tool', () => {
     */
     const anyAtom = 2;
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
-    await selectAtomsFromPeriodicTable(page, 'Not List', [
-      'V 23',
-      'Ti 22',
-      'Cs 55',
-    ]);
+    await selectAtomsFromPeriodicTable(page, 'Not List', ['V', 'Ti', 'Cs']);
     await clickOnAtom(page, 'C', anyAtom);
     await resetCurrentTool(page);
   });

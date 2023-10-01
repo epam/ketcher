@@ -22,10 +22,10 @@ test.describe('Special nodes', () => {
 
   const atoms = ['H+', 'D', 'T', 'R', 'Pol'];
   for (const atom of atoms) {
-    test.skip(`${atom} calculated values`, async ({ page }) => {
+    test(`${atom} calculated values`, async ({ page }) => {
       // Test case: EPMLSOPKET-1469, 1741, 1473, 1481, 1483
       // Description: verify Calculated values for atoms
-      // Skipped because of current Calculate Values function issue
+      // results of this test are not fully correct. when calculte values function is fixed - update scrshots
       await selectAtomInToolbar(AtomButton.Extended, page);
       await page.getByRole('button', { name: atom, exact: true }).click();
       await page.getByTestId('OK').click();

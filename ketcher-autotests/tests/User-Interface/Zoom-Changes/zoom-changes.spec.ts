@@ -1,20 +1,28 @@
-import { test } from '@playwright/test';
+import { test, expect, Page } from '@playwright/test';
 import {
   resetCurrentTool,
   takeTopToolbarScreenshot,
   takeEditorScreenshot,
   selectTopPanelButton,
   clickInTheMiddleOfTheScreen,
-  pressButton,
-  STRUCTURE_LIBRARY_BUTTON_NAME,
   selectFunctionalGroups,
   FunctionalGroups,
   selectUserTemplatesAndPlaceInTheMiddle,
   TemplateLibrary,
   TopPanelButton,
   openFileAndAddToCanvas,
+  waitForPageInit,
 } from '@utils';
 import { TestIdSelectors } from '@utils/selectors/testIdSelectors';
+
+async function checkZoomLevel(page: Page, zoomLevel: string) {
+  const zoomInput = page.getByTestId(TestIdSelectors.ZoomInput);
+  const zoomInputValue = await zoomInput.evaluate(
+    (el: HTMLElement) => el.innerText,
+  );
+
+  expect(zoomInputValue).toBe(zoomLevel);
+}
 
 const randomNegativeNumber = -60;
 const randomPositiveNumber = 60;
@@ -27,65 +35,54 @@ test.describe('Zoom changes', () => {
   /* Editor is zoomed correctly: */
   /* Zoom in */
   test('when using ctrl + mouse scroll up', async ({ page }) => {
+    const numberOfMouseWheelScroll = 2;
+
     await clickInTheMiddleOfTheScreen(page);
 
     await page.keyboard.down('Control');
-    await page.mouse.wheel(0, randomNegativeNumber);
-    await page.mouse.wheel(0, randomNegativeNumber);
+    for (let i = 0; i < numberOfMouseWheelScroll; i++) {
+      await page.mouse.wheel(0, randomNegativeNumber);
+    }
     await page.keyboard.up('Control');
 
-    const zoomInput = page.getByTestId(TestIdSelectors.ZoomInput);
-    const zoomInputValue = await zoomInput.evaluate(
-      (el: HTMLElement) => el.innerText,
-    );
-
-    expect(zoomInputValue).toBe('120%');
+    await checkZoomLevel(page, '120%');
   });
 
   /* Zoom out */
   test('when using ctrl + mouse scroll down', async ({ page }) => {
+    const numberOfMouseWheelScroll = 2;
+
     await clickInTheMiddleOfTheScreen(page);
 
     await page.keyboard.down('Control');
-    await page.mouse.wheel(0, randomPositiveNumber);
-    await page.mouse.wheel(0, randomPositiveNumber);
+    for (let i = 0; i < numberOfMouseWheelScroll; i++) {
+      await page.mouse.wheel(0, randomPositiveNumber);
+    }
     await page.keyboard.up('Control');
 
-    const zoomInput = page.getByTestId(TestIdSelectors.ZoomInput);
-    const zoomInputValue = await zoomInput.evaluate(
-      (el: HTMLElement) => el.innerText,
-    );
-
-    expect(zoomInputValue).toBe('80%');
+    await checkZoomLevel(page, '80%');
   });
 
   test('Zoom In button verification', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1761
     */
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await page.getByRole('tab', { name: 'Functional Groups' }).click();
     await selectFunctionalGroups(FunctionalGroups.CO2Et, page);
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
 
-    await takeTopToolbarScreenshot(page);
-    await takeEditorScreenshot(page);
-
-    const zoomInput = page.getByTestId(TestIdSelectors.ZoomInput);
-    zoomInput.click();
+    await page.getByText('CO2Et').click({ button: 'right' });
+    await page.getByText('Expand Abbreviation').click();
+    await page.getByTestId('zoom-input').click();
     await page.getByText('Zoom in').click();
 
-    await takeTopToolbarScreenshot(page);
-    await takeEditorScreenshot(page);
+    await checkZoomLevel(page, '110%');
   });
 
   test('Zoom Out button verification', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1762
     */
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await page.getByRole('tab', { name: 'Functional Groups' }).click();
     await selectFunctionalGroups(FunctionalGroups.CO2Et, page);
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
@@ -93,12 +90,10 @@ test.describe('Zoom changes', () => {
     await takeTopToolbarScreenshot(page);
     await takeEditorScreenshot(page);
 
-    const zoomInput = page.getByTestId(TestIdSelectors.ZoomInput);
-    zoomInput.click();
+    await page.getByTestId('zoom-input').click();
     await page.getByText('Zoom out').click();
 
-    await takeTopToolbarScreenshot(page);
-    await takeEditorScreenshot(page);
+    await checkZoomLevel(page, '90%');
   });
 
   test('Zoom in&out structure verification', async ({ page }) => {
@@ -108,13 +103,9 @@ test.describe('Zoom changes', () => {
     await selectUserTemplatesAndPlaceInTheMiddle(TemplateLibrary.Azulene, page);
     await resetCurrentTool(page);
 
-    const zoomInput = page.getByTestId(TestIdSelectors.ZoomInput);
-    zoomInput.click();
+    await page.getByTestId('zoom-input').click();
     await page.getByText('Zoom in').click();
-    const zoomInputValue = await zoomInput.evaluate(
-      (el: HTMLElement) => el.innerText,
-    );
-    expect(zoomInputValue).toBe('110%');
+    await checkZoomLevel(page, '110%');
 
     await takeTopToolbarScreenshot(page);
     await takeEditorScreenshot(page);
@@ -128,22 +119,20 @@ test.describe('Zoom changes', () => {
     await selectTopPanelButton(TopPanelButton.Redo, page);
     await takeTopToolbarScreenshot(page);
     await takeEditorScreenshot(page);
+  });
 
-    await resetCurrentTool(page);
-    await selectTopPanelButton(TopPanelButton.Clear, page);
-    await resetCurrentTool(page);
-
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await page.getByRole('tab', { name: 'Functional Groups' }).click();
+  test('Zoom in&out structure verification.', async ({ page }) => {
+    /*
+      Test case: EPMLSOPKET-1763, EPMLSOPKET-1764
+      */
     await selectFunctionalGroups(FunctionalGroups.CO2Et, page);
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
 
-    await page.keyboard.press('+');
-    const zoomInputValueOne = await zoomInput.evaluate(
-      (el: HTMLElement) => el.innerText,
-    );
-    expect(zoomInputValueOne).toBe('110%');
+    await page.keyboard.press('Control+=');
+    await page.getByTestId('zoom-input').click();
+    await page.getByText('Zoom in').click();
+    await checkZoomLevel(page, '120%');
   });
 
   test('Zoom actions for structures with query features', async ({ page }) => {
@@ -154,32 +143,19 @@ test.describe('Zoom changes', () => {
       'Molfiles-V2000/clean-diff-properties.mol',
       page,
     );
-    const zoomInput = page.getByTestId(TestIdSelectors.ZoomInput);
-    zoomInput.click();
+    await page.getByTestId('zoom-input').click();
     await page.getByText('Zoom in').click();
+    await checkZoomLevel(page, '110%');
     await takeTopToolbarScreenshot(page);
-    const zoomInputValue = await zoomInput.evaluate(
-      (el: HTMLElement) => el.innerText,
-    );
-    expect(zoomInputValue).toBe('110%');
 
     await page.getByText('Zoom in').click();
-    const zoomInputValueOne = await zoomInput.evaluate(
-      (el: HTMLElement) => el.innerText,
-    );
-    expect(zoomInputValueOne).toBe('120%');
+    await checkZoomLevel(page, '120%');
 
     await page.getByText('Zoom out').click();
-    const zoomInputValueTwo = await zoomInput.evaluate(
-      (el: HTMLElement) => el.innerText,
-    );
-    expect(zoomInputValueTwo).toBe('110%');
+    await checkZoomLevel(page, '110%');
 
     await page.getByText('Zoom out').click();
-    const zoomInputValueThree = await zoomInput.evaluate(
-      (el: HTMLElement) => el.innerText,
-    );
-    expect(zoomInputValueThree).toBe('100%');
+    await checkZoomLevel(page, '100%');
   });
 
   test('Zoom actions for structures with Rgroup', async ({ page }) => {
@@ -192,34 +168,25 @@ test.describe('Zoom changes', () => {
       page,
     );
 
-    const zoomInput = page.getByTestId(TestIdSelectors.ZoomInput);
-    zoomInput.click();
+    await page.getByTestId('zoom-input').click();
     await page.getByText('Zoom in').click();
-    const zoomInputValue = await zoomInput.evaluate(
-      (el: HTMLElement) => el.innerText,
-    );
-    expect(zoomInputValue).toBe('110%');
+    await checkZoomLevel(page, '110%');
+
     await takeEditorScreenshot(page);
 
     await page.getByText('Zoom in').click();
-    const zoomInputValueOne = await zoomInput.evaluate(
-      (el: HTMLElement) => el.innerText,
-    );
-    expect(zoomInputValueOne).toBe('120%');
+    await checkZoomLevel(page, '120%');
+
     await takeEditorScreenshot(page);
 
     await page.getByText('Zoom out').click();
-    const zoomInputValueTwo = await zoomInput.evaluate(
-      (el: HTMLElement) => el.innerText,
-    );
-    expect(zoomInputValueTwo).toBe('110%');
+    await checkZoomLevel(page, '110%');
+
     await takeEditorScreenshot(page);
 
     await page.getByText('Zoom out').click();
-    const zoomInputValueThree = await zoomInput.evaluate(
-      (el: HTMLElement) => el.innerText,
-    );
-    expect(zoomInputValueThree).toBe('100%');
+    await checkZoomLevel(page, '100%');
+
     await takeEditorScreenshot(page);
   });
 });

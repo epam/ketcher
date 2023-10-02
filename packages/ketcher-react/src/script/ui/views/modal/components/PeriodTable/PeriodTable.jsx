@@ -115,7 +115,9 @@ class Table extends Component {
         buttonsNameMap={{ OK: 'Add' }}
         needMargin={false}
         footerContent={
-          <TypeChoice value={this.state.type} onChange={this.changeType} />
+          !this.props.isNestedModal ? (
+            <TypeChoice value={this.state.type} onChange={this.changeType} />
+          ) : null
         }
       >
         <div className={classes.periodTable}>
@@ -163,7 +165,14 @@ const mapDispatchToProps = (dispatch, ownProps) => {
       if (!result.type || result.type === 'atom') {
         dispatch(addAtoms(result.label));
       }
-      dispatch(onAction({ tool: 'atom', opts: toElement(result) }));
+      if (!ownProps.isNestedModal) {
+        dispatch(
+          onAction({
+            tool: 'atom',
+            opts: toElement(result),
+          }),
+        );
+      }
       ownProps.onOk(result);
     },
   };

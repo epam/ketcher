@@ -86,7 +86,9 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispatchToProps = (dispatch, ownProps) => {
   return {
     onOk: (result) => {
-      dispatch(onAction({ tool: 'atom', opts: toElement(result) }));
+      if (!ownProps.isNestedModal) {
+        dispatch(onAction({ tool: 'atom', opts: toElement(result) }));
+      }
       ownProps.onOk(result);
     },
   };

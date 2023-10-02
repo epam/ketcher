@@ -6,7 +6,6 @@ import {
   LeftPanelButton,
   clickInTheMiddleOfTheScreen,
   pressButton,
-  delay,
   resetCurrentTool,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
@@ -21,7 +20,6 @@ import {
   selectSaltsAndSolvents,
   SaltsAndSolvents,
   drawFGAndDrag,
-  DELAY_IN_SECONDS,
   pressTab,
   FILE_TEST_DATA,
   STRUCTURE_LIBRARY_BUTTON_NAME,
@@ -151,8 +149,9 @@ test.describe('Functional Groups', () => {
       page,
     );
     await copyAndPaste(page);
-    await delay(DELAY_IN_SECONDS.THREE);
-    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await waitForRender(page, async () => {
+      await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    });
   });
 
   test('Cut/Paste action with contracted functional group', async ({
@@ -678,5 +677,21 @@ test.describe('Functional Groups', () => {
     await page.getByText('Expand Abbreviation').click();
 
     await page.keyboard.press('n');
+  });
+
+  test('Add a custom structure to a canvas with an expanded functional group and contract it', async ({
+    page,
+  }) => {
+    /*
+    Test case: EPMLSOPKET-12978
+    Description: Functional Group contract and remove abbreviation
+    */
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/custom-structure-with-expanded-fg.mol',
+      page,
+    );
+
+    await page.getByText('CO2Et').click({ button: 'right' });
+    await page.getByText('Contract Abbreviation').click();
   });
 });

@@ -407,9 +407,7 @@ class ReAtom extends ReObject {
     const stereoLabel = this.a.stereoLabel; // Enhanced Stereo
     const aamText = getAamText(this);
     const isAromatized = Atom.isInAromatizedRing(restruct.molecule, aid);
-    const queryAttrsText = !this.a.pseudo
-      ? getQueryAttrsText(this, isAromatized)
-      : '';
+    const queryAttrsText = getQueryAttrsText(this, isAromatized);
 
     // we render them together to avoid possible collisions
 
@@ -1103,6 +1101,28 @@ function getSubstitutionCountAttrText(value: number) {
   return attrText;
 }
 
+function getAtomLabelAttrText(value: string, atom) {
+  const { atomType, atomList, notList } = atom;
+  if (atomType === 'single') {
+    if (atom.aromaticity) {
+      return atom.aromaticity === 'aromatic'
+        ? value.toLowerCase()
+        : value.toUpperCase();
+    }
+    const number = Elements.get(capitalize(value))?.number || '';
+    return number ? `#${number}` : '';
+  } else if (atomType === 'list' && atomList !== '') {
+    return atomList
+      .split(',')
+      .map((el: string) => {
+        const number = Elements.get(capitalize(el))?.number || '';
+        return `${notList ? '!' : ''}#${number}`;
+      })
+      .join(notList ? ';' : ',');
+  } else {
+    return '';
+  }
+}
 export function getAtomCustomQuery(atom) {
   let queryAttrsText = '';
 
@@ -1112,15 +1132,7 @@ export function getAtomCustomQuery(atom) {
   const patterns: {
     [key: string]: (value: string, atom) => string;
   } = {
-    label: (value, atom) => {
-      if (atom.aromaticity) {
-        return atom.aromaticity === 'aromatic'
-          ? value.toLowerCase()
-          : value.toUpperCase();
-      }
-      const number = Elements.get(capitalize(value))?.number;
-      return `#${number}` || '';
-    },
+    label: getAtomLabelAttrText,
     charge: (value) => {
       if (value === '0') return '';
       return value.includes('-') ? value : `+${value}`;

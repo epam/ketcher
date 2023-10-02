@@ -30,7 +30,7 @@ test.describe('Reagents CML format', () => {
     );
     const expectedFile = await getCml(page);
     await saveToFile(
-      'benzene-arrow-benzene-reagent-nh3-expected.cml',
+      'CML/benzene-arrow-benzene-reagent-nh3-expected.cml',
       expectedFile,
     );
 
@@ -38,7 +38,7 @@ test.describe('Reagents CML format', () => {
       await receiveFileComparisonData({
         page,
         expectedFileName:
-          'tests/test-data/benzene-arrow-benzene-reagent-nh3-expected.cml',
+          'tests/test-data/CML/benzene-arrow-benzene-reagent-nh3-expected.cml',
       });
 
     expect(cmlFile).toEqual(cmlFileExpected);
@@ -50,7 +50,7 @@ test.describe('Reagents CML format', () => {
     results of this test case are not correct. bug - https://github.com/epam/ketcher/issues/1933
     */
     await openFileAndAddToCanvas(
-      'benzene-arrow-benzene-reagent-nh3-expected.cml',
+      'CML/benzene-arrow-benzene-reagent-nh3-expected.cml',
       page,
     );
   });

@@ -9,13 +9,10 @@ export type Chirality = 'clockwise' | 'anticlockwise';
 
 export interface AtomQueryProperties {
   aromaticity?: Aromaticity | null;
-  degree?: number | null;
   ringMembership?: number | null;
   ringSize?: number | null;
   connectivity?: number | null;
-  ringConnectivity?: number | null;
   chirality?: Chirality | null;
-  atomicMass?: number | null;
   customQuery?: string | null;
 }
 

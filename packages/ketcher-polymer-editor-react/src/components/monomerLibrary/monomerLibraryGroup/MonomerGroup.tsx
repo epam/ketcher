@@ -72,15 +72,11 @@ const MonomerGroup = ({
   const selectMonomer = (monomer: MonomerItemType) => {
     dispatch(selectTool('monomer'));
 
-    if (
-      libraryName != null &&
-      ['FAVORITES', 'PEPTIDE', 'CHEM'].includes(libraryName)
-    ) {
+    if (['FAVORITES', 'PEPTIDE', 'CHEM'].includes(libraryName ?? '')) {
       editor.events.selectMonomer.dispatch(monomer);
-      onItemClick(monomer);
-    } else {
-      onItemClick(monomer);
     }
+
+    onItemClick(monomer);
   };
 
   return (

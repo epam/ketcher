@@ -39,8 +39,6 @@ class PolymerBond implements BaseTool {
           "Selected monomer doesn't have any free attachment points",
         );
         return;
-      } else {
-        openModal();
       }
       const { top: offsetTop, left: offsetLeft } = this.editor.canvasOffset;
 
@@ -168,10 +166,24 @@ class PolymerBond implements BaseTool {
       renderer === this.bondRenderer?.polymerBond?.firstMonomer?.renderer;
 
     if (this.bondRenderer && !isFirstMonomerHovered) {
-      const modelChanges = this.finishBondCreation(renderer.monomer);
-      this.editor.renderersContainer.update(modelChanges);
-      this.bondRenderer = undefined;
-      event.stopPropagation();
+      const firstMonomer = this.bondRenderer?.polymerBond?.firstMonomer;
+      const secondMonomer = renderer.monomer;
+      console.log('firstMonomer', firstMonomer.constructor.name);
+      console.log('secondMonomer', secondMonomer.constructor.name);
+      const rnaTypes = ['Sugar', 'RNABase', 'Phosphate'];
+      if (
+        firstMonomer.constructor.name === 'Chem' ||
+        (firstMonomer.constructor.name === 'Peptide' &&
+          rnaTypes.includes(secondMonomer.constructor.name))
+      ) {
+        openModal();
+      } else {
+        // TO DO: This part of the code must be executed also when modal was open and user clicked there 'Connect'
+        const modelChanges = this.finishBondCreation(renderer.monomer);
+        this.editor.renderersContainer.update(modelChanges);
+        this.bondRenderer = undefined;
+        event.stopPropagation();
+      }
     }
   }
 

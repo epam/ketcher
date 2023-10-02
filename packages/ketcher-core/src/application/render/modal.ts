@@ -1,54 +1,3 @@
-// class Modal {
-//   private modal: HTMLElement;
-//   private modalContent: HTMLElement;
-
-//   constructor() {
-//     this.modal = document.createElement('div');
-//     this.modal.className = 'modal';
-//     this.modal.style.display = 'none';
-
-//     this.modalContent = document.createElement('div');
-//     this.modalContent.className = 'modal-content';
-
-//     const closeModalButton = document.createElement('span');
-//     closeModalButton.className = 'close';
-//     closeModalButton.innerHTML = '&times;';
-
-//     closeModalButton.addEventListener('click', () => {
-//       this.close();
-//     });
-
-//     this.modalContent.appendChild(closeModalButton);
-
-//     const modalText = document.createElement('p');
-//     modalText.textContent = 'This is a modal window.';
-//     this.modalContent.appendChild(modalText);
-
-//     this.modal.appendChild(this.modalContent);
-
-//     document.body.appendChild(this.modal);
-
-//     window.addEventListener('click', (event) => {
-//       if (event.target === this.modal) {
-//         this.close();
-//       }
-//     });
-//   }
-
-//   open() {
-//     this.modal.style.display = 'block';
-//   }
-
-//   close() {
-//     this.modal.style.display = 'none';
-//   }
-// }
-
-// export default Modal;
-// import { createTheme } from '@mui/material/styles';
-
-// const theme = createTheme();
-
 export function openModal() {
   const modalRoot = document.createElement('div');
   modalRoot.id = 'modal-root';
@@ -58,7 +7,13 @@ export function openModal() {
   modalRoot?.appendChild(modalElement);
 
   const handleClose = () => {
+    // TO DO: emit bond removal
     modalRoot?.removeChild(modalElement);
+  };
+
+  const handleConfirm = () => {
+    // TO DO: emit bond creation
+    console.log('Confirm');
   };
 
   const modal = document.createElement('div');
@@ -67,6 +22,7 @@ export function openModal() {
   const modalContent = document.createElement('div');
   modalContent.className = 'modal-content';
 
+  // TO DO: Move all styles to proper places at least into constants below
   modalContent.innerHTML = `
       <div style="padding: 12px; min-height: calc(100% - 52px); border-bottom: 1px solid #e1e5ea; display: flex;">
         <div style="">
@@ -82,7 +38,7 @@ export function openModal() {
       </div>
       <footer style="display: flex; justify-content: space-between; max-width: 100%; padding: 16px 12px 12px; gap: 8px;">
         <button id="closeButton" style="display: inline-flex; justify-content: center; align-items: center; outline: none; min-width: 70px; line-height: 14px; height: 24px; border-radius: 4px; font-size: 12px; color: #585858; border: 1px solid #585858; background-color: #ffffff; text-transform: none; font-weight: 400;">Cancel</button>
-        <input type="button" disabled style="display: inline-flex; justify-content: center; align-items: center; outline: none; min-width: 70px; line-height: 14px; height: 24px; border-radius: 4px; font-size: 12px; color: #ffffff; background-color: #167782; border: 1px solid transparent;" title="Bond will be added to canvas" value="Connect">
+        <button id="confirmButton" style="display: inline-flex; justify-content: center; align-items: center; outline: none; min-width: 70px; line-height: 14px; height: 24px; border-radius: 4px; font-size: 12px; color: #ffffff; background-color: #167782; border: 1px solid transparent;" title="Bond will be added to canvas">Connect</button>
       </footer>
     `;
 
@@ -135,4 +91,8 @@ export function openModal() {
   // Add event listener for close button
   const closeButton = document.getElementById('closeButton');
   closeButton?.addEventListener('click', handleClose);
+
+  // Add event listener for close button
+  const confirmButton = document.getElementById('confirmButton');
+  confirmButton?.addEventListener('click', handleConfirm);
 }

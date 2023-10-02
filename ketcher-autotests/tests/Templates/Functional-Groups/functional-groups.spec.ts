@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { Page, test } from '@playwright/test';
 import {
   selectFunctionalGroups,
@@ -13,14 +12,11 @@ import {
   openFileAndAddToCanvas,
   TopPanelButton,
   selectTopPanelButton,
-  getControlModifier,
   pasteFromClipboardAndAddToCanvas,
   selectAtomInToolbar,
   AtomButton,
   selectRing,
   RingButton,
-  selectNestedTool,
-  RgroupTool,
   moveMouseToTheMiddleOfTheScreen,
   selectSaltsAndSolvents,
   SaltsAndSolvents,
@@ -31,33 +27,19 @@ import {
   STRUCTURE_LIBRARY_BUTTON_NAME,
   waitForPageInit,
   waitForRender,
+  copyAndPaste,
+  cutAndPaste,
+  selectDropdownTool,
+  clickOnAtom,
+  moveOnAtom,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
-import { TestIdSelectors } from '@utils/selectors/testIdSelectors';
 let point: { x: number; y: number };
 
 const CANVAS_CLICK_X = 300;
 const CANVAS_CLICK_Y = 300;
 
-async function cutAndPaste(page: Page) {
-  const modifier = getControlModifier();
-  await page.getByTestId(TestIdSelectors.RectangleSelection).click();
-  // to focus in Editor
-  await clickInTheMiddleOfTheScreen(page);
-  await page.keyboard.press(`${modifier}+KeyA`);
-  await page.keyboard.press(`${modifier}+KeyX`);
-  await page.keyboard.press(`${modifier}+KeyV`);
-}
-
-async function copyAndPaste(page: Page) {
-  const modifier = getControlModifier();
-  await page.getByTestId(TestIdSelectors.RectangleSelection).click();
-  // to focus in Editor
-  await clickInTheMiddleOfTheScreen(page);
-  await page.keyboard.press(`${modifier}+KeyA`);
-  await page.keyboard.press(`${modifier}+KeyC`);
-  await page.keyboard.press(`${modifier}+KeyV`);
-}
+const anyAtom = 3;
 
 async function saveToTemplates(page: Page) {
   await selectTopPanelButton(TopPanelButton.Save, page);
@@ -91,7 +73,10 @@ test.describe('Functional Groups', () => {
     Test case: EPMLSOPKET-2890
     Description: Functional Group contract and remove abbreviation
     */
-    await openFileAndAddToCanvas('functional-groups-expanded.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/functional-groups-expanded.mol',
+      page,
+    );
 
     await changeStatusOfAbbreviation(page, 'Contract Abbreviation');
     await takeEditorScreenshot(page);
@@ -107,7 +92,10 @@ test.describe('Functional Groups', () => {
     Test case: EPMLSOPKET-2891
     Description: Functional Group expand and remove abbreviation
     */
-    await openFileAndAddToCanvas('functional-group-contracted.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/functional-group-contracted.mol',
+      page,
+    );
 
     await changeStatusOfAbbreviation(page, 'Expand Abbreviation');
     await takeEditorScreenshot(page);
@@ -130,7 +118,10 @@ test.describe('Functional Groups', () => {
     Test case: EPMLSOPKET-2897
     Description: Functional group is copied and pasted as expanded.
     */
-    await openFileAndAddToCanvas('functional-groups-expanded.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/functional-groups-expanded.mol',
+      page,
+    );
     await copyAndPaste(page);
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
   });
@@ -140,7 +131,10 @@ test.describe('Functional Groups', () => {
     Test case: EPMLSOPKET-2897
     Description: Functional group is cut and pasted as expanded.
     */
-    await openFileAndAddToCanvas('functional-groups-expanded.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/functional-groups-expanded.mol',
+      page,
+    );
     await cutAndPaste(page);
     await clickInTheMiddleOfTheScreen(page);
   });
@@ -152,7 +146,10 @@ test.describe('Functional Groups', () => {
     Test case: EPMLSOPKET-2898
     Description: Functional group is copied and pasted as expanded.
     */
-    await openFileAndAddToCanvas('functional-group-contracted.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/functional-group-contracted.mol',
+      page,
+    );
     await copyAndPaste(page);
     await delay(DELAY_IN_SECONDS.THREE);
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
@@ -165,7 +162,10 @@ test.describe('Functional Groups', () => {
     Test case: EPMLSOPKET-2898
     Description: Functional group is cut and pasted as expanded.
     */
-    await openFileAndAddToCanvas('functional-group-contracted.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/functional-group-contracted.mol',
+      page,
+    );
     await cutAndPaste(page);
     await clickInTheMiddleOfTheScreen(page);
   });
@@ -175,7 +175,7 @@ test.describe('Functional Groups', () => {
     Test case: EPMLSOPKET-2916
     Description: Contracted FG is connected to the structure.
     */
-    await openFileAndAddToCanvas('structure-co2et.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/structure-co2et.mol', page);
     await selectFunctionalGroups(FunctionalGroups.CO2Et, page);
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
@@ -186,7 +186,7 @@ test.describe('Functional Groups', () => {
     Test case: EPMLSOPKET-2953
     Description: Contracted FG is connected to the structure.
     */
-    await openFileAndAddToCanvas('custom-template.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/custom-template.mol', page);
 
     await saveToTemplates(page);
 
@@ -215,7 +215,10 @@ test.describe('Functional Groups', () => {
     Test case: EPMLSOPKET-2893
     Description: Contracted and Expanded functional groups are displayed on the canvas.
     */
-    await openFileAndAddToCanvas('V3000-contracted-and-expanded-fg.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V3000/V3000-contracted-and-expanded-fg.mol',
+      page,
+    );
   });
 
   test('Open from .ket file with contracted and expanded functional groups', async ({
@@ -250,7 +253,10 @@ test.describe('Functional Groups', () => {
     const x = 600;
     const y = 400;
     const smallShift = 10;
-    await openFileAndAddToCanvas('functional-group-expanded.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/functional-group-expanded.mol',
+      page,
+    );
     await page.mouse.move(x, y);
     await page.mouse.move(x + smallShift, y);
   });
@@ -260,10 +266,12 @@ test.describe('Functional Groups', () => {
     Test case: EPMLSOPKET-5236
     Description: When Adding 'Bond' to expanded Functional Group system display 'Edit Abbreviation' pop-up window.
     */
-    await openFileAndAddToCanvas('functional-group-expanded.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/functional-group-expanded.mol',
+      page,
+    );
     await selectLeftPanelButton(LeftPanelButton.SingleBond, page);
-    point = await getAtomByIndex(page, { label: 'C' }, 3);
-    await page.mouse.click(point.x, point.y);
+    await clickOnAtom(page, 'C', anyAtom);
   });
 
   test('Add Atom to expanded Functional Group', async ({ page }) => {
@@ -271,10 +279,12 @@ test.describe('Functional Groups', () => {
     Test case: EPMLSOPKET-5238
     Description: When Adding 'Atom' to expanded Functional Group system display 'Edit Abbreviation' pop-up window.
     */
-    await openFileAndAddToCanvas('functional-group-expanded.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/functional-group-expanded.mol',
+      page,
+    );
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
-    point = await getAtomByIndex(page, { label: 'C' }, 3);
-    await page.mouse.click(point.x, point.y);
+    await clickOnAtom(page, 'C', anyAtom);
   });
 
   test('Add Chain to expanded Functional Group', async ({ page }) => {
@@ -282,10 +292,12 @@ test.describe('Functional Groups', () => {
     Test case: EPMLSOPKET-5237
     Description: When Adding 'Chain' to expanded Functional Group system display 'Edit Abbreviation' pop-up window.
     */
-    await openFileAndAddToCanvas('functional-group-expanded.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/functional-group-expanded.mol',
+      page,
+    );
     await selectLeftPanelButton(LeftPanelButton.Chain, page);
-    point = await getAtomByIndex(page, { label: 'C' }, 3);
-    await page.mouse.click(point.x, point.y);
+    await clickOnAtom(page, 'C', anyAtom);
   });
 
   test('Add Template to expanded Functional Group', async ({ page }) => {
@@ -293,10 +305,12 @@ test.describe('Functional Groups', () => {
     Test case: EPMLSOPKET-5239
     Description: When Adding 'Template' to expanded Functional Group system display 'Edit Abbreviation' pop-up window.
     */
-    await openFileAndAddToCanvas('functional-group-expanded.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/functional-group-expanded.mol',
+      page,
+    );
     await selectRing(RingButton.Benzene, page);
-    point = await getAtomByIndex(page, { label: 'C' }, 3);
-    await page.mouse.click(point.x, point.y);
+    await clickOnAtom(page, 'C', anyAtom);
   });
 
   test('Add Charge Plus to expanded Functional Group', async ({ page }) => {
@@ -304,10 +318,12 @@ test.describe('Functional Groups', () => {
     Test case: EPMLSOPKET-5240
     Description: When Adding 'Charge Plus' to expanded Functional Group system display 'Edit Abbreviation' pop-up window.
     */
-    await openFileAndAddToCanvas('functional-group-expanded.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/functional-group-expanded.mol',
+      page,
+    );
     await selectLeftPanelButton(LeftPanelButton.ChargePlus, page);
-    point = await getAtomByIndex(page, { label: 'C' }, 3);
-    await page.mouse.click(point.x, point.y);
+    await clickOnAtom(page, 'C', anyAtom);
   });
 
   test('Add Charge Minus to expanded Functional Group', async ({ page }) => {
@@ -315,10 +331,12 @@ test.describe('Functional Groups', () => {
     Test case: EPMLSOPKET-5241
     Description: When Adding 'Charge Minus' to expanded Functional Group system display 'Edit Abbreviation' pop-up window.
     */
-    await openFileAndAddToCanvas('functional-group-expanded.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/functional-group-expanded.mol',
+      page,
+    );
     await selectLeftPanelButton(LeftPanelButton.ChargeMinus, page);
-    point = await getAtomByIndex(page, { label: 'C' }, 3);
-    await page.mouse.click(point.x, point.y);
+    await clickOnAtom(page, 'C', anyAtom);
   });
 
   test('Add Erase to expanded Functional Group', async ({ page }) => {
@@ -326,10 +344,12 @@ test.describe('Functional Groups', () => {
     Test case: EPMLSOPKET-5242
     Description: When Adding 'Erase' to expanded Functional Group system display 'Edit Abbreviation' pop-up window.
     */
-    await openFileAndAddToCanvas('functional-group-expanded.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/functional-group-expanded.mol',
+      page,
+    );
     await selectLeftPanelButton(LeftPanelButton.Erase, page);
-    point = await getAtomByIndex(page, { label: 'C' }, 3);
-    await page.mouse.click(point.x, point.y);
+    await clickOnAtom(page, 'C', anyAtom);
   });
 
   test('Click S-Group tool to expanded Functional Group', async ({ page }) => {
@@ -337,7 +357,10 @@ test.describe('Functional Groups', () => {
     Test case: EPMLSOPKET-3937
     Description: When click 'S-Group tool to expanded Functional Group system display 'Edit Abbreviation' pop-up window.
     */
-    await openFileAndAddToCanvas('functional-group-expanded.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/functional-group-expanded.mol',
+      page,
+    );
     await page.keyboard.press('Control+a');
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
   });
@@ -349,7 +372,10 @@ test.describe('Functional Groups', () => {
     Test case: EPMLSOPKET-13009
     Description: When click 'S-Group tool to contracted Functional Group system display 'Edit Abbreviation' pop-up window.
     */
-    await openFileAndAddToCanvas('functional-group-contracted.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/functional-group-contracted.mol',
+      page,
+    );
     await page.keyboard.press('Control+a');
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
   });
@@ -361,10 +387,12 @@ test.describe('Functional Groups', () => {
     Test case: EPMLSOPKET-5244
     Description: When Adding 'R-Group Label Tool' to expanded Functional Group system display 'Edit Abbreviation' pop-up window.
     */
-    await openFileAndAddToCanvas('functional-group-expanded.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/functional-group-expanded.mol',
+      page,
+    );
     await selectLeftPanelButton(LeftPanelButton.R_GroupLabelTool, page);
-    point = await getAtomByIndex(page, { label: 'C' }, 3);
-    await page.mouse.click(point.x, point.y);
+    await clickOnAtom(page, 'C', anyAtom);
   });
 
   test('Add R-Group Fragment Tool to expanded Functional Group', async ({
@@ -374,10 +402,12 @@ test.describe('Functional Groups', () => {
     Test case: EPMLSOPKET-5244
     Description: When Adding 'R-Group Fragment Tool' to expanded Functional Group system display 'Edit Abbreviation' pop-up window.
     */
-    await openFileAndAddToCanvas('functional-group-expanded.mol', page);
-    await selectNestedTool(page, RgroupTool.R_GROUP_FRAGMENT);
-    point = await getAtomByIndex(page, { label: 'C' }, 3);
-    await page.mouse.click(point.x, point.y);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/functional-group-expanded.mol',
+      page,
+    );
+    await selectDropdownTool(page, 'rgroup-label', 'rgroup-fragment');
+    await clickOnAtom(page, 'C', anyAtom);
   });
 
   test('Add Attachment Point Tool to expanded Functional Group', async ({
@@ -387,10 +417,12 @@ test.describe('Functional Groups', () => {
     Test case: EPMLSOPKET-5244
     Description: When Adding 'Attachment Point Tool' to expanded Functional Group system display 'Edit Abbreviation' pop-up window.
     */
-    await openFileAndAddToCanvas('functional-group-expanded.mol', page);
-    await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
-    point = await getAtomByIndex(page, { label: 'C' }, 3);
-    await page.mouse.click(point.x, point.y);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/functional-group-expanded.mol',
+      page,
+    );
+    await selectDropdownTool(page, 'rgroup-label', 'rgroup-attpoints');
+    await clickOnAtom(page, 'C', anyAtom);
   });
 
   test('Ordinary elements should not show explicit valences (SO3H)', async ({
@@ -468,9 +500,11 @@ test.describe('Functional Groups', () => {
     Test case: EPMLSOPKET-8928
     Description: When Adding 'Atom' by hotkey to expanded Functional Group system display 'Edit Abbreviation' pop-up window.
     */
-    await openFileAndAddToCanvas('functional-group-expanded.mol', page);
-    point = await getAtomByIndex(page, { label: 'C' }, 3);
-    await page.mouse.move(point.x, point.y);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/functional-group-expanded.mol',
+      page,
+    );
+    await moveOnAtom(page, 'C', anyAtom);
     await page.keyboard.press('n');
   });
 
@@ -590,8 +624,7 @@ test.describe('Functional Groups', () => {
     Description: Structure on canvas not becomes 'undefined' when atom is hovered and Functional Group selected using hotkey.
     */
     await openFileAndAddToCanvas('KET/chain.ket', page);
-    point = await getAtomByIndex(page, { label: 'C' }, 3);
-    await page.mouse.move(point.x, point.y);
+    await moveOnAtom(page, 'C', anyAtom);
     await page.keyboard.press('Shift+t');
     await pressTab(page, 'Functional Groups');
     await page.getByTitle('Boc').click();
@@ -604,7 +637,7 @@ test.describe('Functional Groups', () => {
     Test case: EPMLSOPKET-11851
     Description: Unknown superatom expand and contract.
     */
-    await openFileAndAddToCanvas('unknown-superatom.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/unknown-superatom.mol', page);
     await clickInTheMiddleOfTheScreen(page, 'right');
     await page.getByText('Expand Abbreviation').click();
     await takeEditorScreenshot(page);
@@ -623,6 +656,7 @@ test.describe('Functional Groups', () => {
     await selectFunctionalGroups(FunctionalGroups.Cbz, page);
     await clickInTheMiddleOfTheScreen(page);
 
+    // eslint-disable-next-line no-magic-numbers
     await drawFGAndDrag(FunctionalGroups.Boc, 50, page);
 
     await page.keyboard.press('Control+a');

@@ -73,7 +73,10 @@ test.describe('Templates - Functional Group Tools', () => {
     Description: All the Functional Group elements are selected and highlighted on the canvas
    */
     const anyAtom = 0;
-    await openFileAndAddToCanvas('functional-group-expanded.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/functional-group-expanded.mol',
+      page,
+    );
     await selectDropdownTool(page, 'select-rectangle', 'select-fragment');
     await clickOnAtom(page, 'C', anyAtom);
   });
@@ -87,7 +90,10 @@ test.describe('Templates - Functional Group Tools', () => {
       x: 20,
       y: 160,
     };
-    await openFileAndAddToCanvas('functional-group-expanded.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/functional-group-expanded.mol',
+      page,
+    );
 
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
     await page.keyboard.press('Control+a');
@@ -252,7 +258,10 @@ test.describe('Templates - Functional Group Tools2', () => {
     Description: EDIT ABBREVIATION window appears after click by Bond tool on expanded FG and
     after click Cancel in modal window FG still have brackets.
    */
-    await openFileAndAddToCanvas('functional-group-expanded.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/functional-group-expanded.mol',
+      page,
+    );
 
     await selectLeftPanelButton(LeftPanelButton.SingleBond, page);
     const point = await getAtomByIndex(page, { label: 'C' }, 0);
@@ -338,7 +347,10 @@ test.describe('Templates - Functional Group Tools2', () => {
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
 
-    await openFileAndAddToCanvas('functional-group-expanded.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/functional-group-expanded.mol',
+      page,
+    );
     await page.keyboard.press('Control+a');
     await page.getByTestId('delete').click();
   });
@@ -350,7 +362,10 @@ test.describe('Templates - Functional Group Tools2', () => {
     After click Remove abbreviation in modal window user can add Template to structure.
    */
     let point: { x: number; y: number };
-    await openFileAndAddToCanvas('functional-group-expanded.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/functional-group-expanded.mol',
+      page,
+    );
 
     await selectRingButton(RingButton.Benzene, page);
     point = await getAtomByIndex(page, { label: 'C' }, 0);
@@ -425,7 +440,10 @@ test.describe('Templates - Functional Group Tools2', () => {
     Test case: EPMLSOPKET-2888
     Description: All the Functional Group elements are selected and highlighted on the canvas
    */
-    await openFileAndAddToCanvas('functional-group-expanded.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/functional-group-expanded.mol',
+      page,
+    );
 
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
     await clickInTheMiddleOfTheScreen(page);
@@ -434,7 +452,10 @@ test.describe('Templates - Functional Group Tools2', () => {
 
     await selectTopPanelButton(TopPanelButton.Clear, page);
 
-    await openFileAndAddToCanvas('functional-group-expanded.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/functional-group-expanded.mol',
+      page,
+    );
 
     await selectDropdownTool(page, 'select-rectangle', 'select-lasso');
     await clickInTheMiddleOfTheScreen(page);

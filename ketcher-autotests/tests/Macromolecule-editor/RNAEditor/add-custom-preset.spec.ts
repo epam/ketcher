@@ -1,4 +1,4 @@
-import { test } from '@playwright/test';
+import { Page, test } from '@playwright/test';
 import {
   POLYMER_TOGGLER,
   RNA_TAB,
@@ -12,76 +12,64 @@ import { waitForPageInit } from '@utils/common';
 /* 
 Test case: #3063 - Add e2e tests for Macromolecule editor
 */
+async function createRNA(page: Page) {
+  await page.getByTestId(POLYMER_TOGGLER).click();
+  await page.getByTestId(RNA_TAB).click();
+  await page.fill('[placeholder="Name your structure"]', 'MyRNA');
+  await page.press('[placeholder="Name your structure"]', 'Enter');
+}
+
+async function selectRNAComponents(
+  page: Page,
+  {
+    sugar,
+    base,
+    phosphate,
+  }: {
+    sugar: string;
+    base: string;
+    phosphate: string;
+  },
+) {
+  await page.getByTestId(SUGAR).click();
+  await page.getByTestId(sugar).click();
+
+  await page.getByTestId(BASE).click();
+  await page.getByTestId(base).click();
+
+  await page.getByTestId(PHOSPHATE).click();
+  await page.getByTestId(phosphate).click();
+}
+
 test.describe('Macromolecules custom presets', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-
-    // Click on POLYMER_TOGGLER
-    await page.getByTestId(POLYMER_TOGGLER).click();
-
-    // Click on <button> "RNA"
-    await page.getByTestId(RNA_TAB).click();
-
-    // Click on <input> [placeholder="Name your structure"]
-    await page.click('[placeholder="Name your structure"]');
-
-    // Fill "MyRNA" on <input> [placeholder="Name your structure"]
-    await page.fill('[placeholder="Name your structure"]', 'MyRNA');
-
-    // Press Enter on input
-    await page.press('[placeholder="Name your structure"]', 'Enter');
+    await createRNA(page);
   });
+
   test('Add new preset and duplicate it', async ({ page }) => {
-    // Click on <div> "Sugar Not selected"
-    await page.getByTestId(SUGAR).click();
+    await selectRNAComponents(page, {
+      sugar: '25R___2,5-Ribose',
+      base: 'baA___N-benzyl-adenine',
+      phosphate: 'bP___Boranophosphate',
+    });
 
-    // Click on <div> "25R ★"
-    await page.click('[data-testid="25R___2,5-Ribose"]');
-
-    // Click on <div> "Base Not selected"
-    await page.getByTestId(BASE).click();
-
-    // Click on <div> "baA ★"
-    await page.click('[data-testid="baA___N-benzyl-adenine"]');
-
-    // Click on <div> "Phosphate Not selected"
-    await page.getByTestId(PHOSPHATE).click();
-
-    // Click on <div> "bP ★"
-    await page.click('[data-testid="bP___Boranophosphate"]');
-
-    // Click on <button> "Add to Presets"
     await page.getByTestId(BUTTON__ADD_TO_PRESETS).click();
 
     await page.screenshot({
       path: 'tests/Macromolecule-editor/screenshots/add-custom-preset-add.png',
     });
 
-    // Click on <button> "Duplicate and Edit"
-    await page.click('[data-testid="duplicate-btn"]');
+    await page.getByTestId('duplicate-btn').click();
 
-    // Click on <div> "Sugar 25R"
-    await page.getByTestId(SUGAR).click();
+    await selectRNAComponents(page, {
+      sugar: "12ddR___1',2'-Di-Deoxy-Ribose",
+      base: 'A___Adenine',
+      phosphate: 'P___Phosphate',
+    });
 
-    // Click on <div> "dR ★"
-    await page.click('[data-testid="dR___D-Arginine"]');
+    await page.getByTestId('save-btn');
 
-    // Click on <div> "Base baA"
-    await page.getByTestId(BASE).click();
-
-    // Click on <span> "cl2A"
-    await page.click('text=cl2A');
-
-    // Click on <div> "Phosphate bP"
-    await page.getByTestId(PHOSPHATE).click();
-
-    // Click on <div> "Smp ★"
-    await page.click('[data-testid="Smp___(Sp)-Methylphosphonate"]');
-
-    // Click on <button> "Save"
-    await page.click('[data-testid="save-btn"]');
-
-    // Take full page screenshot
     await page.screenshot({
       path: 'tests/Macromolecule-editor/screenshots/add-custom-preset-duplicate.png',
       fullPage: true,

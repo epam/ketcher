@@ -112,7 +112,10 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const x = 500;
     const y = 200;
     const anyAtom = 12;
-    await openFileAndAddToCanvas('clean-diffproperties.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/clean-diffproperties.mol',
+      page,
+    );
     await cutAndPaste(page);
     await page.mouse.click(x, y);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
@@ -238,7 +241,10 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const x = 300;
     const y = 300;
     const anyAtom = 12;
-    await openFileAndAddToCanvas('clean-diffproperties.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/clean-diffproperties.mol',
+      page,
+    );
     await copyAndPaste(page);
     await page.mouse.click(x, y);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
@@ -320,7 +326,10 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const y = 200;
     const x2 = 200;
     const y2 = 300;
-    await openFileAndAddToCanvas('clean-diffproperties.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/clean-diffproperties.mol',
+      page,
+    );
     await copyAndPaste(page);
     await page.mouse.click(x, y);
     await page.keyboard.press('Control+v');

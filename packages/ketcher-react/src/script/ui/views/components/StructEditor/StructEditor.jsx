@@ -28,6 +28,7 @@ import Cursor from '../Cursor';
 import { ContextMenu, ContextMenuTrigger } from '../ContextMenu';
 
 import InfoPanel from './InfoPanel';
+import { KetcherLogger } from 'ketcher-core';
 
 // TODO: need to update component after making refactoring of store
 function setupEditor(editor, props, oldProps = {}) {
@@ -119,7 +120,11 @@ class StructEditor extends Component {
         try {
           const parsedInfo = JSON.parse(msg.info);
           el.innerHTML = `Atom Id: ${parsedInfo.atomid}, Bond Id: ${parsedInfo.bondid}`;
-        } catch {
+        } catch (e) {
+          KetcherLogger.error(
+            'StructEditor.jsx::StructEditor::componentDidMount',
+            e,
+          );
           el.innerHTML = msg.info;
         }
         el.classList.add(classes.visible);

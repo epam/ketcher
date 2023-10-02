@@ -18,6 +18,7 @@ import { Pile } from './pile';
 import { SGroup } from './sgroup';
 import assert from 'assert';
 import { Struct } from './struct';
+import { KetcherLogger } from 'utilities';
 
 export class SGroupForest {
   /** node id -> parent id */
@@ -147,6 +148,7 @@ export class SGroupForest {
       assert(this.parent.has(id), 'sgid is not in the forest');
       assert(this.children.has(id), 'sgid is not in the forest');
     } catch (e) {
+      KetcherLogger.error('sgroupForest.ts::SGroupForest::remove', e);
       console.info('error: sgid is not in the forest');
     }
 

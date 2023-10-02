@@ -97,6 +97,13 @@ export async function takeLeftToolbarScreenshot(page: Page) {
   await expect(editor).toHaveScreenshot();
 }
 
+export async function takeRightToolbarScreenshot(page: Page) {
+  const maxTimeout = 3000;
+  const editor = page.getByTestId('right-toolbar');
+  await waitForRender(page, emptyFunction, maxTimeout);
+  await expect(editor).toHaveScreenshot();
+}
+
 export async function takeTopToolbarScreenshot(page: Page) {
   const maxTimeout = 3000;
   const editor = page.getByTestId('top-toolbar');

@@ -70,14 +70,11 @@ const querySpecificFields: Array<{
   { name: 'substitutionCount', component: 'dropdown' },
   { name: 'unsaturatedAtom', labelPos: 'before', className: classes.checkbox },
   { name: 'aromaticity', component: 'dropdown' },
-  { name: 'degree', component: 'dropdown' },
   { name: 'implicitHCount', component: 'dropdown' },
   { name: 'ringMembership', component: 'dropdown' },
   { name: 'ringSize', component: 'dropdown' },
   { name: 'connectivity', component: 'dropdown' },
-  { name: 'ringConnectivity', component: 'dropdown' },
   { name: 'chirality', component: 'dropdown' },
-  { name: 'atomicMass' },
 ];
 const Atom: FC<Props> = (props: Props) => {
   const {

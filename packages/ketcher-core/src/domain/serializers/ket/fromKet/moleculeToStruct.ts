@@ -86,13 +86,10 @@ export function atomToStruct(source) {
 
   const queryAttribute: Array<keyof AtomQueryProperties> = [
     'aromaticity',
-    'degree',
     'ringMembership',
     'connectivity',
     'ringSize',
-    'ringConnectivity',
     'chirality',
-    'atomicMass',
     'customQuery',
   ];
   ifDef(params, 'label', source.label);

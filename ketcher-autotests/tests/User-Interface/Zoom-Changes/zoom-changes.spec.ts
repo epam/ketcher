@@ -1,21 +1,20 @@
-import { test, expect } from '@playwright/test';
-import { TestIdSelectors } from '../../utils/selectors/testIdSelectors';
-import { clickInTheMiddleOfTheScreen, pressButton } from '@utils/clicks';
-import {
-  FunctionalGroups,
-  STRUCTURE_LIBRARY_BUTTON_NAME,
-  TemplateLibrary,
-  TopPanelButton,
-  selectFunctionalGroups,
-  selectUserTemplatesAndPlaceInTheMiddle,
-} from '@utils/selectors';
+import { test } from '@playwright/test';
 import {
   resetCurrentTool,
-  selectTopPanelButton,
-  takeEditorScreenshot,
   takeTopToolbarScreenshot,
-} from '@utils/canvas';
-import { openFileAndAddToCanvas } from '@utils/files';
+  takeEditorScreenshot,
+  selectTopPanelButton,
+  clickInTheMiddleOfTheScreen,
+  pressButton,
+  STRUCTURE_LIBRARY_BUTTON_NAME,
+  selectFunctionalGroups,
+  FunctionalGroups,
+  selectUserTemplatesAndPlaceInTheMiddle,
+  TemplateLibrary,
+  TopPanelButton,
+  openFileAndAddToCanvas,
+} from '@utils';
+import { TestIdSelectors } from '@utils/selectors/testIdSelectors';
 
 const randomNegativeNumber = -60;
 const randomPositiveNumber = 60;

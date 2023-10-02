@@ -76,7 +76,10 @@ export function toElement(elem) {
     return toAtom(elem);
   }
 
-  if (Elements.get(capitalize(elem.label)) || elem.customQuery !== '') {
+  if (
+    Elements.get(capitalize(elem.label)) ||
+    (elem.customQuery && elem.customQuery !== '')
+  ) {
     elem.label = capitalize(elem.label);
     elem.pseudo = null;
     elem.atomList = null;

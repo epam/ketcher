@@ -94,7 +94,6 @@ test.describe('Atom Tool', () => {
     /*
     Test case: EPMLSOPKET-1450
     Description: The structure is illustrated as H3Si-SH.
-    For now it is working incorrect https://github.com/epam/ketcher/issues/3362
     */
     await selectAtomInToolbar(AtomButton.Sulfur, page);
     await clickInTheMiddleOfTheScreen(page);
@@ -114,7 +113,7 @@ test.describe('Atom Tool', () => {
   test('Creating a List from Periodic table', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1464
-    Description: The selected atom symbols appear on the canvas with square brackets, for example [C, N, O]. 
+    Description: The selected atom symbols appear on the canvas with square brackets, for example [C, N, O].
     All listed atom symbols should be colored with black.
     */
     await selectAtomsFromPeriodicTable(page, 'List', ['Au', 'In', 'Am']);
@@ -125,7 +124,7 @@ test.describe('Atom Tool', () => {
   test('Adding a List from Periodic table to structure', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1464
-    Description: The selected atom symbols appear on structure with square brackets, for example [C, N, O]. 
+    Description: The selected atom symbols appear on structure with square brackets, for example [C, N, O].
     All listed atom symbols should be colored with black.
     */
     const anyAtom = 2;
@@ -138,7 +137,7 @@ test.describe('Atom Tool', () => {
   test('Creating a Not List from Periodic table', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1466
-    Description: The selected atom symbols appear on the canvas with square brackets, for example ![C, N, O]. 
+    Description: The selected atom symbols appear on the canvas with square brackets, for example ![C, N, O].
     All listed atom symbols should be colored with black.
     */
     await selectAtomsFromPeriodicTable(page, 'Not List', ['Ti', 'V', 'Cs']);
@@ -151,7 +150,7 @@ test.describe('Atom Tool', () => {
   }) => {
     /*
     Test case: EPMLSOPKET-1466
-    Description: The selected atom symbols appear on structure with square brackets, for example ![C, N, O]. 
+    Description: The selected atom symbols appear on structure with square brackets, for example ![C, N, O].
     All listed atom symbols should be colored with black.
     */
     const anyAtom = 2;
@@ -164,7 +163,7 @@ test.describe('Atom Tool', () => {
   test('Select Generics from Extended table', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1485
-    Description: The selected button is highlighted. Several dialog buttons can`t be selected. 
+    Description: The selected button is highlighted. Several dialog buttons can`t be selected.
     The "Add" button becomes enabled when any generic group is selected.
     */
     await page.getByTestId('extended-table').click();
@@ -362,7 +361,7 @@ test.describe('Atom Tool', () => {
   test('List/Not List - save as mol-file and render', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1577
-    Description: The saved *.mol file is opened in Ketcher. 
+    Description: The saved *.mol file is opened in Ketcher.
     Structure is represented with correct List and Not List atom symbols
     */
     await openFileAndAddToCanvas(
@@ -391,7 +390,7 @@ test.describe('Atom Tool', () => {
   test('List/Not List - save as rxn-file and render', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1578
-    Description: The saved *.rxn file is opened in Ketcher. 
+    Description: The saved *.rxn file is opened in Ketcher.
     The reaction is represented with correct List and Not List atom symbols.
     */
     await openFileAndAddToCanvas('Rxn-V2000/reaction-list-notlist.rxn', page);
@@ -417,8 +416,8 @@ test.describe('Atom Tool', () => {
   test('Generic Groups - save as rxn-file and render', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1580
-    Description: The saved *.rxn file is opened in Ketcher. 
-    The reaction is represented with correct Generic Groups. 
+    Description: The saved *.rxn file is opened in Ketcher.
+    The reaction is represented with correct Generic Groups.
     */
     await openFileAndAddToCanvas(
       'Rxn-V2000/reaction-with-group-generics.rxn',
@@ -446,7 +445,7 @@ test.describe('Atom Tool', () => {
   test('Generic Groups - save as mol-file and render', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1579
-    Description: The saved *.mol file is opened in Ketcher. 
+    Description: The saved *.mol file is opened in Ketcher.
     Structure is represented with correct Generic Groups
     */
     await openFileAndAddToCanvas(
@@ -544,7 +543,7 @@ test.describe('Atom Tool', () => {
   test('Addition 8th element buttons to right atom panel', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1435
-    Description: The first additional atom symbol is replaced with the new one. 
+    Description: The first additional atom symbol is replaced with the new one.
     The 8th button isn't added. In our test 'Si' replaces by 'Db'.
     */
     const elementNames = ['Si', 'Au', 'In', 'Am', 'Se', 'Pu', 'Rn', 'Db'];
@@ -602,7 +601,7 @@ test.describe('Atom Tool', () => {
   test('Default colours of atom symbols', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1344, EPMLSOPKET-1341
-    Description: 
+    Description:
     "H" and "C" are #000000, black.
     "N" is #304FF7, blue.
     "O" is #FF0D0D, red.
@@ -618,7 +617,7 @@ test.describe('Atom Tool', () => {
 
   test('Add atoms from right toolbar to Benzene ring', async ({ page }) => {
     /*
-    Test case: EPMLSOPKET-1354, EPMLSOPKET-1361, EPMLSOPKET-1369, EPMLSOPKET-1370, 
+    Test case: EPMLSOPKET-1354, EPMLSOPKET-1361, EPMLSOPKET-1369, EPMLSOPKET-1370,
     EPMLSOPKET-1372, EPMLSOPKET-1373, EPMLSOPKET-1379, EPMLSOPKET-1387, EPMLSOPKET-1388, EPMLSOPKET-1402
     Description: Atom added to Benzene ring.
     */
@@ -634,7 +633,7 @@ test.describe('Atom Tool', () => {
 
   test('Add atoms by hotkey to Benzene ring', async ({ page }) => {
     /*
-    Test case: EPMLSOPKET-1354, EPMLSOPKET-1361, EPMLSOPKET-1369, EPMLSOPKET-1370, 
+    Test case: EPMLSOPKET-1354, EPMLSOPKET-1361, EPMLSOPKET-1369, EPMLSOPKET-1370,
     EPMLSOPKET-1372, EPMLSOPKET-1373, EPMLSOPKET-1379, EPMLSOPKET-1387, EPMLSOPKET-1388, EPMLSOPKET-1402
     Description: Atom added to Benzene ring.
     */
@@ -652,7 +651,7 @@ test.describe('Atom Tool', () => {
 
   test('Select Atom and drag on Benzene ring', async ({ page }) => {
     /*
-    Test case: EPMLSOPKET-1354, EPMLSOPKET-1361, EPMLSOPKET-1369, EPMLSOPKET-1370, 
+    Test case: EPMLSOPKET-1354, EPMLSOPKET-1361, EPMLSOPKET-1369, EPMLSOPKET-1370,
     EPMLSOPKET-1372, EPMLSOPKET-1373, EPMLSOPKET-1379, EPMLSOPKET-1387, EPMLSOPKET-1388, EPMLSOPKET-1402
     Description: Atom added to Benzene ring.
     */

@@ -29,7 +29,7 @@ import OpenButton from '../../../../../component/view/openbutton';
 import { SaveButton } from '../../../../../component/view/savebutton';
 import Select from '../../../../../component/form/Select';
 import Accordion from './Accordion';
-import { StructService } from 'ketcher-core';
+import { KetcherLogger, StructService } from 'ketcher-core';
 import SystemFonts from '../../../../../component/form/systemfonts';
 import classes from './Settings.module.less';
 import { connect } from 'react-redux';
@@ -330,7 +330,8 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   onOpenFile: (newOpts) => {
     try {
       dispatch(updateFormState({ result: JSON.parse(newOpts) }));
-    } catch (ex) {
+    } catch (e) {
+      KetcherLogger.error('Settings.tsx::mapDispatchToProps', e);
       console.info('Bad file');
     }
   },

@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { KetSerializer, MolSerializer } from 'ketcher-core';
+import { KetcherLogger, KetSerializer, MolSerializer } from 'ketcher-core';
 
 export default function copyAs(type) {
   const state = global.currentState;
@@ -56,7 +56,8 @@ export default function copyAs(type) {
     } else {
       navigator.clipboard.writeText(structData);
     }
-  } catch {
+  } catch (e) {
+    KetcherLogger.error('copyAs.js::copyAs', e);
     errorHandler('This feature is not available in your browser');
   }
 }

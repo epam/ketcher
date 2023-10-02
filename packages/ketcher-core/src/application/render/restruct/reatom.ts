@@ -1146,13 +1146,10 @@ export function getAtomCustomQuery(atom) {
     hCount: (value) =>
       Number(value) > 0 ? 'H' + (Number(value) - 1).toString() : '',
     implicitHCount: (value) => `h${value}`,
-    degree: (value) => `D${value}`,
     ringMembership: (value) => `R${value}`,
     ringSize: (value) => `r${value}`,
     connectivity: (value) => `X${value}`,
-    ringConnectivity: (value) => `x${value}`,
     chirality: (value) => (value === 'clockwise' ? '@@' : '@'),
-    atomicMass: (value) => value.toString(),
   };
 
   for (const propertyName in atom) {
@@ -1184,13 +1181,10 @@ function getQueryAttrsText(atom, isAromatized: boolean) {
     implicitHCount,
     queryProperties: {
       aromaticity,
-      degree,
       ringMembership,
       ringSize,
       connectivity,
-      ringConnectivity,
       chirality,
-      atomicMass,
       customQuery,
     },
   } = atom.a;
@@ -1221,10 +1215,6 @@ function getQueryAttrsText(atom, isAromatized: boolean) {
     addSemicolon();
     queryAttrsText += aromaticity === 'aromatic' ? 'a' : 'A';
   }
-  if (Number.isFinite(degree)) {
-    addSemicolon();
-    queryAttrsText += `D${degree}`;
-  }
   if (Number.isFinite(ringMembership)) {
     addSemicolon();
     queryAttrsText += `R${ringMembership}`;
@@ -1237,17 +1227,9 @@ function getQueryAttrsText(atom, isAromatized: boolean) {
     addSemicolon();
     queryAttrsText += `X${connectivity}`;
   }
-  if (Number.isFinite(ringConnectivity)) {
-    addSemicolon();
-    queryAttrsText += `x${ringConnectivity}`;
-  }
   if (chirality !== null) {
     addSemicolon();
     queryAttrsText += chirality === 'clockwise' ? '@@' : '@';
-  }
-  if (Number.isFinite(atomicMass)) {
-    addSemicolon();
-    queryAttrsText += `${atomicMass}`;
   }
   return queryAttrsText;
 }

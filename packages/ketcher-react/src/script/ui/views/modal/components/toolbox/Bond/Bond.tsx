@@ -149,24 +149,31 @@ function customQueryValid(customQuery: string, isCustomQuery: boolean) {
 function getBondCustomQuery(bond: BondSettings) {
   let queryAttrsText = '';
   const { type, topology } = bond;
-  const bondType = {
-    single: '-',
-    double: '=',
-    triple: '#',
-    aromatic: ':',
-    any: '~',
-    up: '/',
-    down: '\\',
+  const patterns = {
+    bondType: {
+      single: '-',
+      double: '=',
+      triple: '#',
+      aromatic: ':',
+      any: '~',
+      up: '/',
+      down: '\\',
+    },
+    topology: {
+      [CoreBond.PATTERN.TOPOLOGY.RING]: '@',
+      [CoreBond.PATTERN.TOPOLOGY.CHAIN]: '!@',
+    },
   };
-  if (type in bondType) {
-    queryAttrsText += bondType[type];
+
+  if (type in patterns.bondType) {
+    queryAttrsText += patterns.bondType[type];
   }
 
-  if (topology === CoreBond.PATTERN.TOPOLOGY.RING) {
+  if (topology && topology in patterns.topology) {
     if (queryAttrsText) {
       queryAttrsText += ';';
     }
-    queryAttrsText += '@';
+    queryAttrsText += patterns.topology[topology];
   }
   return queryAttrsText;
 }

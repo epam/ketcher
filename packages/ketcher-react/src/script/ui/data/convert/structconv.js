@@ -128,20 +128,14 @@ export function fromAtom(satom) {
     stereoParity: satom.stereoParity,
     implicitHCount: satom.implicitHCount,
     aromaticity: satom.queryProperties.aromaticity,
-    degree: satom.queryProperties.degree,
     ringMembership: satom.queryProperties.ringMembership,
     ringSize: satom.queryProperties.ringSize,
     connectivity: satom.queryProperties.connectivity,
-    ringConnectivity: satom.queryProperties.ringConnectivity,
     chirality: satom.queryProperties.chirality,
     customQuery:
       satom.queryProperties.customQuery === null
         ? ''
         : satom.queryProperties.customQuery.toString(),
-    atomicMass:
-      satom.queryProperties.atomicMass === null
-        ? ''
-        : satom.queryProperties.atomicMass.toString(),
   };
 }
 
@@ -150,13 +144,10 @@ export function toAtom(atom) {
   //      see ratomtool
   const {
     aromaticity = null,
-    degree = null,
     ringMembership = null,
     ringSize = null,
     connectivity = null,
-    ringConnectivity = null,
     chirality = null,
-    atomicMass = '',
     customQuery = '',
     ...restAtom
   } = atom;
@@ -177,14 +168,11 @@ export function toAtom(atom) {
       implicitHCount: null,
       queryProperties: {
         aromaticity: null,
-        degree: null,
         implicitHCount: null,
         ringMembership: null,
         ringSize: null,
         connectivity: null,
-        ringConnectivity: null,
         chirality: null,
-        atomicMass: null,
         customQuery,
       },
       invRet: 0,
@@ -201,14 +189,11 @@ export function toAtom(atom) {
     unsaturatedAtom: +(restAtom.unsaturatedAtom ?? false),
     queryProperties: {
       aromaticity,
-      degree,
       implicitHCount: restAtom.implicitHCount,
       ringMembership,
       ringSize,
       connectivity,
-      ringConnectivity,
       chirality,
-      atomicMass: atomicMass === '' ? null : Number(atomicMass),
       customQuery: customQuery === '' ? null : customQuery,
     },
   });

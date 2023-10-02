@@ -28,11 +28,9 @@ const {
 } = atom.properties;
 const properties: Array<AtomQueryPropertiesName> = [
   'aromaticity',
-  'degree',
   'ringMembership',
   'ringSize',
   'connectivity',
-  'ringConnectivity',
 ];
 
 const atomPropertiesForSubMenu: {

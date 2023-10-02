@@ -14,7 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { FormatterFactory, Ketcher, defaultBondThickness } from 'ketcher-core';
+import {
+  FormatterFactory,
+  Ketcher,
+  defaultBondThickness,
+  KetcherLogger,
+} from 'ketcher-core';
 
 async function copyImageToClipboard() {
   const state = global.currentState;
@@ -36,7 +41,8 @@ async function copyImageToClipboard() {
     });
     const item = new ClipboardItem({ [image.type]: image }); // eslint-disable-line no-undef
     await navigator.clipboard.write([item]);
-  } catch {
+  } catch (e) {
+    KetcherLogger.error('copyImageToClipboard.js::copyImageToClipboard', e);
     errorHandler('This feature is not available in your browser');
   }
 }

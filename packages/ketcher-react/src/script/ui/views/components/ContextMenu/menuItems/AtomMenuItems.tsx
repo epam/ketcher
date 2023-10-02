@@ -17,6 +17,7 @@ import {
   AtomAllAttributeName,
 } from 'ketcher-core';
 import { atom } from 'src/script/ui/data/schema/struct-schema';
+import styles from '../ContextMenu.module.less';
 
 const {
   ringBondCount,
@@ -150,7 +151,12 @@ const AtomMenuItems: FC<MenuItemsProps> = (props) => {
       >
         {atomPropertiesForSubMenu.map(({ title, buttons, key }) => {
           return (
-            <Submenu {...props} label={title} key={key}>
+            <Submenu
+              {...props}
+              label={title}
+              key={key}
+              className={styles.sameGroup}
+            >
               <ButtonGroup<AtomAllAttributeValue>
                 buttons={buttons}
                 defaultValue={getPropertyValue(key)}

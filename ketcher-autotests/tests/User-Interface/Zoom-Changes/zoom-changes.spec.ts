@@ -21,7 +21,7 @@ const randomPositiveNumber = 60;
 
 test.describe('Zoom changes', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   /* Editor is zoomed correctly: */

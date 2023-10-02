@@ -35,6 +35,13 @@ export const formsState = {
       radical: 0,
       ringBondCount: 0,
       substitutionCount: 0,
+      aromaticity: null,
+      implicitHCount: null,
+      ringMembership: null,
+      ringSize: null,
+      connectivity: null,
+      chirality: null,
+      customQuery: null,
     },
   },
   attachmentPoints: {
@@ -59,6 +66,7 @@ export const formsState = {
       type: 'single',
       topology: 0,
       center: 0,
+      customQuery: null,
     },
   },
   check: {

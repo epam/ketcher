@@ -56,6 +56,18 @@ enum CIP {
   r = 'r',
 }
 
+export type Aromaticity = 'aromatic' | 'aliphatic';
+export type Chirality = 'clockwise' | 'anticlockwise';
+
+export interface AtomQueryProperties {
+  aromaticity?: Aromaticity | null;
+  ringMembership?: number | null;
+  ringSize?: number | null;
+  connectivity?: number | null;
+  chirality?: Chirality | null;
+  customQuery?: string | null;
+}
+
 export interface AtomAttributes {
   stereoParity?: number;
   stereoLabel?: string | null;
@@ -68,6 +80,7 @@ export interface AtomAttributes {
   unsaturatedAtom?: number;
   substitutionCount?: number;
   ringBondCount?: number;
+  queryProperties?: AtomQueryProperties;
   explicitValence?: number;
   /**
    * Rgroup member attachment points
@@ -93,7 +106,11 @@ export interface AtomAttributes {
 
 export type AtomPropertiesInContextMenu = SubsetOfFields<
   AtomAttributes,
-  'hCount' | 'ringBondCount' | 'substitutionCount' | 'unsaturatedAtom'
+  | 'hCount'
+  | 'ringBondCount'
+  | 'substitutionCount'
+  | 'unsaturatedAtom'
+  | 'implicitHCount'
 >;
 
 export class Atom {
@@ -125,6 +142,14 @@ export class Atom {
     substitutionCount: 0,
     unsaturatedAtom: 0,
     hCount: 0,
+    queryProperties: {
+      aromaticity: null,
+      ringMembership: null,
+      ringSize: null,
+      connectivity: null,
+      chirality: null,
+      customQuery: null,
+    },
     atomList: null,
     invRet: 0,
     exactChangeFlag: 0,
@@ -150,6 +175,7 @@ export class Atom {
   charge: number;
   explicitValence: number;
   ringBondCount: number;
+  queryProperties: AtomQueryProperties;
   unsaturatedAtom: number;
   substitutionCount: number;
   valence: number;
@@ -221,6 +247,13 @@ export class Atom {
       Atom.attrlist.unsaturatedAtom,
     );
     this.hCount = getValueOrDefault(attributes.hCount, Atom.attrlist.hCount);
+    this.queryProperties = {};
+    for (const property in Atom.attrlist.queryProperties) {
+      this.queryProperties[property] = getValueOrDefault(
+        attributes.queryProperties?.[property],
+        Atom.attrlist.queryProperties[property],
+      );
+    }
 
     // reaction
     this.aam = getValueOrDefault(attributes.aam, Atom.attrlist.aam);

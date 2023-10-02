@@ -1,12 +1,16 @@
 import { test, expect } from '@playwright/test';
-import { clickInTheMiddleOfTheScreen, takeEditorScreenshot } from '@utils';
+import {
+  clickInTheMiddleOfTheScreen,
+  takeEditorScreenshot,
+  waitForPageInit,
+} from '@utils';
 
 /*
    Lookup Abbreviations window appears when user starts typing
 */
 test.describe('Lookup Abbreviations window', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test('does not disappear when user switches to new browser tab', async ({
@@ -33,6 +37,7 @@ test.describe('Lookup Abbreviations window', () => {
   test('is not shown, when pressing "1" multiple times to change bond type', async ({
     page,
   }) => {
+    // EPMLSOPKET-16922, EPMLSOPKET-16923
     await clickInTheMiddleOfTheScreen(page);
     await page.keyboard.type('1');
     await page.keyboard.type('1');
@@ -44,6 +49,7 @@ test.describe('Lookup Abbreviations window', () => {
   test('is not shown, when pressing "t" multiple times to change template', async ({
     page,
   }) => {
+    // EPMLSOPKET-16924
     await clickInTheMiddleOfTheScreen(page);
     await page.keyboard.type('t');
     await page.keyboard.type('t');

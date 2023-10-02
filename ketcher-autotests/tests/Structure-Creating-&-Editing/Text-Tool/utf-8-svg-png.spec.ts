@@ -6,13 +6,12 @@ import {
   openFileAndAddToCanvas,
   delay,
   DELAY_IN_SECONDS,
-  waitForIndigoToLoad,
+  waitForPageInit,
 } from '@utils';
 
 test.describe('Open UTF-8 and save as SVG and PNG', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
-    await waitForIndigoToLoad(page);
+    await waitForPageInit(page);
   });
 
   test('Open UTF-8 file and save as SVG', async ({ page }) => {

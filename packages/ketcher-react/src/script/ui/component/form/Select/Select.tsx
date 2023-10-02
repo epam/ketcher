@@ -34,6 +34,8 @@ interface Props {
   value?: string;
   multiple?: boolean;
   disabled?: boolean;
+  formName?: string;
+  name?: string;
 }
 
 const ChevronIcon = ({ className }) => (
@@ -47,6 +49,8 @@ const Select = ({
   multiple = false,
   disabled,
   options,
+  formName,
+  name,
 }: Props) => {
   const [currentValue, setCurrentValue] = useState<Option>();
 
@@ -86,6 +90,10 @@ const Select = ({
               value={option.value}
               key={option.value}
               disableRipple={true}
+              className={clsx({
+                [`dropdown-${formName}_${name}`]: formName,
+              })}
+              data-testid={`${option.label}-option`}
             >
               {option.label}
             </MenuItem>

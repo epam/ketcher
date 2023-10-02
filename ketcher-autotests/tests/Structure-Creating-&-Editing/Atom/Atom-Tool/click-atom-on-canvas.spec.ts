@@ -8,18 +8,17 @@ import {
   selectAtomInToolbar,
   takeEditorScreenshot,
   AtomButton,
-  pressButton,
   selectFunctionalGroups,
   selectSaltsAndSolvents,
   SaltsAndSolvents,
   FunctionalGroups,
   resetCurrentTool,
-  STRUCTURE_LIBRARY_BUTTON_NAME,
+  waitForPageInit,
 } from '@utils';
 
 test.describe('Click Atom on canvas', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {
@@ -46,8 +45,6 @@ test.describe('Click Atom on canvas', () => {
       Test case: EPMLSOPKET-10100
       Description: when clicking with an atom on a FG template it should replace it
     */
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await page.getByRole('tab', { name: 'Functional Groups' }).click();
     await selectFunctionalGroups(FunctionalGroups.FMOC, page);
     await clickInTheMiddleOfTheScreen(page);
 
@@ -60,8 +57,6 @@ test.describe('Click Atom on canvas', () => {
       Test case: EPMLSOPKET-10101
       Description: when clicking with an atom on a Salts and Solvents it should replace it
     */
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await page.getByRole('tab', { name: 'Salts and Solvents' }).click();
     await selectSaltsAndSolvents(SaltsAndSolvents.FormicAcid, page);
     await clickInTheMiddleOfTheScreen(page);
 
@@ -95,8 +90,6 @@ test.describe('Click Atom on canvas', () => {
     await selectAtomInToolbar(AtomButton.Oxygen, page);
     await clickInTheMiddleOfTheScreen(page);
 
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await page.getByRole('tab', { name: 'Functional Groups' }).click();
     await selectFunctionalGroups(FunctionalGroups.Cbz, page);
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);

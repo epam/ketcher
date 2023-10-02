@@ -26,6 +26,7 @@ import {
   getPropertiesByFormat,
   getPropertiesByImgFormat,
   b64toBlob,
+  KetcherLogger,
 } from 'ketcher-core';
 
 import { Dialog } from '../../../../components';
@@ -173,6 +174,7 @@ class SaveDialog extends Component {
           });
         })
         .catch((e) => {
+          KetcherLogger.error('Save.jsx::SaveDialog::changeType', e);
           errorHandler(e);
           this.props.onResetForm(formState);
           return e;
@@ -278,6 +280,7 @@ class SaveDialog extends Component {
               this.saveSchema.properties.format,
             )}
             component={Select}
+            className="file-format-list"
           />
         </Form>
         <Tabs
@@ -327,17 +330,19 @@ class SaveDialog extends Component {
       </div>
     );
 
-    const PreviewContent = () => (
-      <div className={classes.previewBackground}>
-        <textarea
-          value={structStr}
-          className={classes.previewArea}
-          readOnly
-          ref={this.textAreaRef}
-          data-testid="preview-area-text"
-        />
-      </div>
-    );
+    const PreviewContent = ({ format }) => {
+      return (
+        <div className={classes.previewBackground}>
+          <textarea
+            value={structStr}
+            className={classes.previewArea}
+            readOnly
+            ref={this.textAreaRef}
+            data-testid={`${format}-preview-area-text`}
+          />
+        </div>
+      );
+    };
 
     if (isLoading) {
       return <LoadingState />;
@@ -346,7 +351,7 @@ class SaveDialog extends Component {
     } else if (this.isBinaryCdxFormat(format)) {
       return <BinaryContent />;
     } else {
-      return <PreviewContent />;
+      return <PreviewContent format={format} />;
     }
   };
 
@@ -358,7 +363,7 @@ class SaveDialog extends Component {
     return warnings.length ? (
       <div className={classes.warnings}>
         {warnings.map((warning) => (
-          <div className={classes.warningsContainer}>
+          <div className={classes.warningsContainer} key={warning}>
             <span className={classes.warningsArr} data-testid="WarningTextArea">
               {warning}
             </span>

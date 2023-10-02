@@ -13,13 +13,15 @@ import {
   getCoordinatesOfTheMiddleOfTheScreen,
   selectAtomInToolbar,
   AtomButton,
+  waitForPageInit,
+  waitForSpinnerFinishedWork,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
 
 test.describe('Calculated Values Tools', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {
@@ -129,7 +131,9 @@ test.describe('Calculated Values Tools', () => {
     await page.mouse.click(point.x, point.y);
     await page.keyboard.up('Shift');
 
-    await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Calculated, page);
+    });
   });
 
   test('One structure on canvas (Benzene ring)', async ({ page }) => {
@@ -646,7 +650,7 @@ test.describe('Calculated Values Tools', () => {
 
 test.describe('Calculated Values Tools', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test('Structure Check window', async ({ page }) => {

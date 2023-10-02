@@ -11,7 +11,8 @@ import {
   clickInTheMiddleOfTheScreen,
   DELAY_IN_SECONDS,
   waitForLoad,
-  waitForIndigoToLoad,
+  waitForPageInit,
+  nonEmptyString,
 } from '@utils';
 import { getSmiles } from '@utils/formats';
 
@@ -23,6 +24,9 @@ async function getPreviewForSmiles(
   await selectTopPanelButton(TopPanelButton.Save, page);
   await page.getByRole('button', { name: formatName }).click();
   await page.getByRole('option', { name: smileType }).click();
+  const previewInput = page.getByTestId('smiles-preview-area-text');
+  await previewInput.waitFor({ state: 'visible' });
+  await expect(previewInput).toContainText(nonEmptyString);
 }
 
 async function getAndCompareSmiles(page: Page, smilesFilePath: string) {
@@ -45,8 +49,7 @@ async function clearCanvasAndPasteSmiles(page: Page, smiles: string) {
 
 test.describe('SMILES files', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
-    await waitForIndigoToLoad(page);
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {

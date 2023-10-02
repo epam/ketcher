@@ -6,20 +6,17 @@ import {
   FunctionalGroups,
   clickInTheMiddleOfTheScreen,
   selectFunctionalGroups,
-  pressButton,
-  STRUCTURE_LIBRARY_BUTTON_NAME,
   DELAY_IN_SECONDS,
   delay,
   resetCurrentTool,
   selectLeftPanelButton,
   LeftPanelButton,
-  waitForIndigoToLoad,
+  waitForPageInit,
 } from '@utils';
 
 test.describe('Open Ketcher', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
-    await waitForIndigoToLoad(page);
+    await waitForPageInit(page);
   });
 
   test('Toolbar palette: full screen verification', async ({ page }) => {
@@ -48,15 +45,13 @@ test.describe('Open Ketcher', () => {
         */
     await takeTopToolbarScreenshot(page);
 
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await page.getByRole('tab', { name: 'Functional Groups' }).click();
     await selectFunctionalGroups(FunctionalGroups.Bn, page);
     await clickInTheMiddleOfTheScreen(page);
     await takeTopToolbarScreenshot(page);
     await resetCurrentTool(page);
 
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
-    await page.getByRole('button', { name: 'Lasso Selection (Esc)' }).click();
+    await page.getByTestId('select-lasso').click();
     await clickInTheMiddleOfTheScreen(page);
     await takeTopToolbarScreenshot(page);
   });
@@ -90,7 +85,7 @@ test.describe('Open Ketcher', () => {
     Description: Toolbars (right one and bottom) were not visible if browser zoomed in
     */
     await browser.newContext({ deviceScaleFactor: 1.25 });
-    await page.goto('');
+    await waitForPageInit(page);
     await page.setViewportSize({ width: 560, height: 380 });
     await expect(page).toHaveScreenshot();
   });

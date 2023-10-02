@@ -3,11 +3,12 @@ import {
   clickInTheMiddleOfTheScreen,
   RingButton,
   selectRingButton,
+  waitForPageInit,
 } from '@utils';
 
 test.describe('Save dialog dropdown', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test('should render opened file format dropdown when the closed dropdown is clicked', async ({

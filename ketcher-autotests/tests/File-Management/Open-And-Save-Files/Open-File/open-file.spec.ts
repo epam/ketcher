@@ -10,15 +10,14 @@ import {
   openFileAndAddToCanvas,
   TopPanelButton,
   selectTopPanelButton,
-  waitForIndigoToLoad,
+  waitForPageInit,
 } from '@utils';
 
 const X_OFFSET = 200;
 
 test.describe('open files with different formats', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
-    await waitForIndigoToLoad(page);
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {
@@ -63,11 +62,12 @@ the first one disappears. Couldn't reproduct manually.
       page,
     );
     await clickInTheMiddleOfTheScreen(page);
+
     // add second structure from file to canvas
     await selectTopPanelButton(TopPanelButton.Open, page);
     await openFile('glutamine.mol', page);
-    await waitForLoad(page, () => {
-      pressButton(page, 'Add to Canvas');
+    await waitForLoad(page, async () => {
+      await pressButton(page, 'Add to Canvas');
     });
     await clickOnTheCanvas(page, X_OFFSET, 0);
   });
@@ -86,8 +86,8 @@ the first one disappears. Couldn't reproduct manually.
     // add second structure from file to canvas
     await selectTopPanelButton(TopPanelButton.Open, page);
     await openFile('Rxn-V2000/rxn-reaction.rxn', page);
-    await waitForLoad(page, () => {
-      pressButton(page, 'Add to Canvas');
+    await waitForLoad(page, async () => {
+      await pressButton(page, 'Add to Canvas');
     });
     await clickOnTheCanvas(page, 0, -X_OFFSET);
   });
@@ -142,8 +142,8 @@ the first one disappears. Couldn't reproduct manually.
     // add first structure from clipboard to canvas
     await selectTopPanelButton(TopPanelButton.Open, page);
     await openFile('Molfiles-V3000/a-query-notList.mol', page);
-    await waitForLoad(page, () => {
-      pressButton(page, 'Open as New Project');
+    await waitForLoad(page, async () => {
+      await pressButton(page, 'Open as New Project');
     });
   });
 
@@ -155,8 +155,8 @@ the first one disappears. Couldn't reproduct manually.
     // add first stucture from clipboard to canvas
     await selectTopPanelButton(TopPanelButton.Open, page);
     await openFile('Molfiles-V3000/dhis-prohibit-atoms.mol', page);
-    await waitForLoad(page, () => {
-      pressButton(page, 'Open as New Project');
+    await waitForLoad(page, async () => {
+      await pressButton(page, 'Open as New Project');
     });
   });
 });

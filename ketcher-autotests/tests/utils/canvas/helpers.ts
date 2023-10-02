@@ -6,9 +6,10 @@ import {
 } from '@playwright/test';
 import { clickInTheMiddleOfTheScreen, pressButton } from '@utils/clicks';
 import { ELEMENT_TITLE } from './types';
-import { DELAY_IN_SECONDS, TopPanelButton } from '..';
+import { TopPanelButton, waitForRender } from '..';
 import { selectTopPanelButton } from './tools';
 import { getLeftTopBarSize } from './common/getLeftTopBarSize';
+import { emptyFunction } from '@utils/common/helpers';
 
 export async function drawBenzeneRing(page: Page) {
   await page.getByRole('button', { name: 'Benzene (T)' }).click();
@@ -78,25 +79,42 @@ export async function getCoordinatesTopAtomOfBenzeneRing(page: Page) {
 
 export async function takeEditorScreenshot(
   page: Page,
-  options?: { masks?: Locator[] },
+  options?: { masks?: Locator[]; maxDiffPixelRatio?: number },
 ) {
+  const maxTimeout = 3000;
   const editor = page.getByTestId('ketcher-canvas').first();
-  await delay(DELAY_IN_SECONDS.THREE);
-  await expect(editor).toHaveScreenshot({ mask: options?.masks });
+  await waitForRender(page, emptyFunction, maxTimeout);
+  await expect(editor).toHaveScreenshot({
+    mask: options?.masks,
+    maxDiffPixelRatio: options?.maxDiffPixelRatio,
+  });
 }
 
 export async function takeLeftToolbarScreenshot(page: Page) {
+  const maxTimeout = 3000;
   const editor = page.getByTestId('left-toolbar-buttons');
-  await delay(DELAY_IN_SECONDS.THREE);
+  await waitForRender(page, emptyFunction, maxTimeout);
+  await expect(editor).toHaveScreenshot();
+}
+
+export async function takeRightToolbarScreenshot(page: Page) {
+  const maxTimeout = 3000;
+  const editor = page.getByTestId('right-toolbar');
+  await waitForRender(page, emptyFunction, maxTimeout);
   await expect(editor).toHaveScreenshot();
 }
 
 export async function takeTopToolbarScreenshot(page: Page) {
+  const maxTimeout = 3000;
   const editor = page.getByTestId('top-toolbar');
-  await delay(DELAY_IN_SECONDS.THREE);
+  await waitForRender(page, emptyFunction, maxTimeout);
   await expect(editor).toHaveScreenshot();
 }
 
+export async function takeMultitoolDropdownScreenshot(page: Page) {
+  const dropdown = page.locator('.default-multitool-dropdown');
+  await expect(dropdown).toHaveScreenshot();
+}
 /**
  * Returns an editor screenshot
  * Usage: convenient for temporary comparison of different states
@@ -133,4 +151,14 @@ export async function resetAllSettingsToDefault(page: Page) {
   await selectTopPanelButton(TopPanelButton.Settings, page);
   await pressButton(page, 'Reset');
   await pressButton(page, 'Apply');
+}
+
+export async function addMonomerToCanvas(
+  page: Page,
+  monomerFullName: string,
+  positionX: number,
+  positionY: number,
+) {
+  await page.getByTestId(monomerFullName).click();
+  await page.mouse.click(positionX, positionY);
 }

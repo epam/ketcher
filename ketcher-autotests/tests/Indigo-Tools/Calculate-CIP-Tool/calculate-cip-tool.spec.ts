@@ -22,7 +22,10 @@ import {
   saveToFile,
   BondTool,
   selectNestedTool,
-  waitForIndigoToLoad,
+  waitForPageInit,
+  waitForSpinnerFinishedWork,
+  waitForRender,
+  clickOnBond,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
@@ -31,8 +34,7 @@ import { getKet, getMolfile } from '@utils/formats';
 
 test.describe('Indigo Tools - Calculate CIP Tool', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
-    await waitForIndigoToLoad(page);
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {
@@ -47,7 +49,9 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     Description: The structure isn`t changed.
     */
     await openFileAndAddToCanvas('KET/chain.ket', page);
-    await selectTopPanelButton(TopPanelButton.Calculate, page);
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Calculate, page);
+    });
   });
 
   test('Operation with structure including stereo properties (R/S labels)', async ({
@@ -58,7 +62,9 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     Description: (R) and (S) stereo labels appear near stereobonds.
     */
     await openFileAndAddToCanvas('structure-with-stereo-bonds.mol', page);
-    await selectTopPanelButton(TopPanelButton.Calculate, page);
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Calculate, page);
+    });
   });
 
   test('Operation with empty canvas', async ({ page }) => {
@@ -67,7 +73,9 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     Description: Nothing happens on the canvas when it is empty.
     Ketcher functions work correctly after clicking the 'Calculate CIP' button on the empty canvas.
     */
-    await selectTopPanelButton(TopPanelButton.Calculate, page);
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Calculate, page);
+    });
     await selectRingButton(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
@@ -105,7 +113,9 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await openFileAndAddToCanvas('structure-with-stereo-bonds.mol', page);
     await selectTopPanelButton(TopPanelButton.Calculate, page);
     await copyAndPaste(page);
-    await page.mouse.click(x, y);
+    await waitForRender(page, async () => {
+      await page.mouse.click(x, y);
+    });
   });
 
   test('Cut/Paste of structure that contain stereo labels', async ({
@@ -132,7 +142,9 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     Description: (E) and (Z) stereo labels appear near stereobonds.
     */
     await openFileAndAddToCanvas('structures-with-stereo-bonds-ez.mol', page);
-    await selectTopPanelButton(TopPanelButton.Calculate, page);
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Calculate, page);
+    });
   });
 
   test('(1 structure) Calculate files that contain stereo labels (various structure combinations)', async ({
@@ -143,7 +155,9 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     Description: Stereo labels appear near stereobonds.
     */
     await openFileAndAddToCanvas('structure-with-stereo-bonds-1.mol', page);
-    await selectTopPanelButton(TopPanelButton.Calculate, page);
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Calculate, page);
+    });
   });
 
   test('(2 structure) Calculate files that contain stereo labels (various structure combinations)', async ({
@@ -154,7 +168,9 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     Description: Stereo labels appear near stereobonds.
     */
     await openFileAndAddToCanvas('structure-with-stereo-bonds-2.mol', page);
-    await selectTopPanelButton(TopPanelButton.Calculate, page);
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Calculate, page);
+    });
   });
 
   test('(3 structure) Calculate files that contain stereo labels (various structure combinations)', async ({
@@ -165,7 +181,9 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     Description: Stereo labels appear near stereobonds.
     */
     await openFileAndAddToCanvas('structure-with-stereo-bonds-3.mol', page);
-    await selectTopPanelButton(TopPanelButton.Calculate, page);
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Calculate, page);
+    });
   });
 
   test('(4 structure) Calculate files that contain stereo labels (various structure combinations)', async ({
@@ -176,7 +194,9 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     Description: Stereo labels appear near stereobonds.
     */
     await openFileAndAddToCanvas('structure-with-stereo-bonds-4.mol', page);
-    await selectTopPanelButton(TopPanelButton.Calculate, page);
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Calculate, page);
+    });
   });
 
   test('(5 structure) Calculate files that contain stereo labels (various structure combinations)', async ({
@@ -187,7 +207,9 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     Description: Stereo labels appear near stereobonds.
     */
     await openFileAndAddToCanvas('structure-with-stereo-bonds-5.mol', page);
-    await selectTopPanelButton(TopPanelButton.Calculate, page);
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Calculate, page);
+    });
   });
 
   test('(6 structure) Calculate files that contain stereo labels (various structure combinations)', async ({
@@ -198,7 +220,9 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     Description: Stereo labels appear near stereobonds.
     */
     await openFileAndAddToCanvas('structure-with-stereo-bonds-6.mol', page);
-    await selectTopPanelButton(TopPanelButton.Calculate, page);
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Calculate, page);
+    });
   });
 
   test('(7 structure) Calculate files that contain stereo labels (various structure combinations)', async ({
@@ -209,7 +233,9 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     Description: Stereo labels appear near stereobonds.
     */
     await openFileAndAddToCanvas('structure-with-stereo-bonds-7.mol', page);
-    await selectTopPanelButton(TopPanelButton.Calculate, page);
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Calculate, page);
+    });
   });
 
   test('Aromatize/Undo with structure that contain stereo labels', async ({
@@ -225,10 +251,14 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       'Molfiles-V2000/aromatic-with-stereolabels.mol',
       page,
     );
-    await selectTopPanelButton(TopPanelButton.Calculate, page);
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Calculate, page);
+    });
     await takeEditorScreenshot(page);
 
-    await selectTopPanelButton(TopPanelButton.Aromatize, page);
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Aromatize, page);
+    });
     await takeEditorScreenshot(page);
 
     await selectTopPanelButton(TopPanelButton.Undo, page);
@@ -245,26 +275,28 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await selectTopPanelButton(TopPanelButton.ThreeD, page);
   });
 
-  test.fixme(
-    '(Erase bond with stereo labels and Undo) Manipulations with structure with stereo labels',
-    async ({ page }) => {
-      /*
+  test('(Erase bond with stereo labels and Undo) Manipulations with structure with stereo labels', async ({
+    page,
+  }) => {
+    /*
     Test case: EPMLSOPKET-1925
     Description: Stereo labels appear near stereobonds after 'Calculate CIP' action.
     Bond with stereo label is deleted after removing by the 'Erase' tool.
     'Undo' action leads to the previous structure with stereo labels.
     */
-      await openFileAndAddToCanvas('structure-with-stereo-bonds.mol', page);
+    await openFileAndAddToCanvas('structure-with-stereo-bonds.mol', page);
+    await waitForRender(page, async () => {
       await selectTopPanelButton(TopPanelButton.Calculate, page);
-      await selectLeftPanelButton(LeftPanelButton.Erase, page);
-      const point = await getBondByIndex(page, { type: BondType.SINGLE }, 3);
-      await page.mouse.click(point.x, point.y);
+    });
+    await waitForRender(page, async () => {
+      await clickOnBond(page, BondType.SINGLE, 3);
+    });
+    await page.keyboard.press('Delete');
 
-      await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page);
 
-      await selectTopPanelButton(TopPanelButton.Undo, page);
-    },
-  );
+    await selectTopPanelButton(TopPanelButton.Undo, page);
+  });
 
   test('(Erase atom with stereo labels and Undo) Manipulations with structure with stereo labels', async ({
     page,
@@ -342,7 +374,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
 
 test.describe('Indigo Tools - Calculate CIP Tool', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test('Check .ket file CIP data must be moved from s-group properties to atom properties', async ({
@@ -353,12 +385,14 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     Description: CIP data located in file at atom properties section
     */
     await openFileAndAddToCanvas('structure-with-stereo-bonds.mol', page);
+    await waitForRender(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Calculate, page);
+    });
     const expectedFile = await getKet(page);
     await saveToFile(
       'KET/structure-with-stereo-bonds-expected.ket',
       expectedFile,
     );
-    await selectTopPanelButton(TopPanelButton.Calculate, page);
     const { file: ketFile, fileExpected: ketFileExpected } =
       await receiveFileComparisonData({
         page,

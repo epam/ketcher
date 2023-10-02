@@ -23,6 +23,13 @@ import { Scale } from 'domain/helpers';
 import defaultOptions from './options';
 import draw from './draw';
 import { RenderOptions } from './render.types';
+import _ from 'lodash';
+import { KetcherLogger } from 'utilities';
+
+const notifyRenderComplete = _.debounce(() => {
+  const event = new Event('renderComplete');
+  window.dispatchEvent(event);
+}, 500);
 
 export class Render {
   public skipRaphaelInitialization = false;
@@ -58,6 +65,7 @@ export class Render {
         return this.options;
       }
     } catch (e) {
+      KetcherLogger.error('raphaelRenderer.ts::updateOptions', e);
       console.log('Not a valid settings object');
     }
     return false;
@@ -266,6 +274,8 @@ export class Render {
         );
         /* eslint-enable no-mixed-operators */
       }
+
+      notifyRenderComplete();
     }
   }
 }

@@ -14,7 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { AtomAttributes, Bond, Struct, Vec2 } from 'domain/entities';
+import {
+  Atom,
+  AtomAttributes,
+  AtomQueryProperties,
+  Bond,
+  Struct,
+  Vec2,
+} from 'domain/entities';
 
 import closest from '../shared/closest';
 import { difference } from 'lodash';
@@ -23,6 +30,11 @@ import { selectionKeys } from '../shared/constants';
 import { EditorSelection } from '../editor.types';
 
 export type AtomAttributeName = keyof AtomAttributes;
+export type AtomQueryPropertiesName = keyof AtomQueryProperties;
+export type AtomAllAttributeName = AtomAttributeName | AtomQueryPropertiesName;
+export type AtomAllAttributeValue =
+  | AtomAttributes[AtomAttributeName]
+  | AtomQueryProperties[AtomQueryPropertiesName];
 
 export function atomGetAttr(
   restruct: ReStruct,
@@ -46,12 +58,26 @@ export function atomGetPos(restruct, id) {
   return restruct.molecule.atoms.get(id).pp;
 }
 
-export function findStereoAtoms(struct, aids: number[] | undefined): number[] {
-  if (!aids) {
+export function findStereoAtoms(
+  struct: Struct,
+  atomIds: number[] | undefined,
+): number[] {
+  if (!atomIds) {
     return [] as number[];
   }
 
-  return aids.filter((aid) => struct.atoms.get(aid).stereoLabel !== null);
+  return atomIds.filter((atomId: number) => {
+    const atom = struct.atoms.get(atomId);
+    if (atom?.stereoLabel !== null) {
+      return true;
+    }
+    const connectedBonds = Atom.getConnectedBondIds(struct, atomId);
+    const connectedWithStereoBond = connectedBonds.some((bondId: number) => {
+      const bond = struct.bonds.get(bondId);
+      return bond?.begin === atomId && bond?.stereo;
+    });
+    return connectedWithStereoBond;
+  });
 }
 
 export function structSelection(struct): EditorSelection {

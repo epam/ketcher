@@ -20,10 +20,13 @@ import { Sugar } from 'domain/entities/Sugar';
 import { Phosphate } from 'domain/entities/Phosphate';
 import { RNABase } from 'domain/entities/RNABase';
 import { Vec2 } from 'domain/entities';
-import { CoreEditor, fromMonomerAddition } from 'application/editor';
+import { CoreEditor } from 'application/editor';
 import { BaseMonomerRenderer } from 'application/render/renderers';
 import { MonomerItemType } from 'domain/types';
 import { monomerFactory } from '../operations/monomer/monomerFactory';
+import assert from 'assert';
+import { provideEditorSettings } from 'application/editor/editorSettings';
+import { Scale } from 'domain/helpers';
 
 class MonomerTool implements Tool {
   private monomerPreview:
@@ -44,28 +47,35 @@ class MonomerTool implements Tool {
   }
 
   mousedown() {
-    if (!this.monomerPreviewRenderer) {
-      throw new Error('monomerPreviewRenderer is not initialized');
-    }
-
-    fromMonomerAddition(
-      this.editor.renderersContainer,
+    assert(this.monomerPreviewRenderer);
+    const editorSettings = provideEditorSettings();
+    const modelChanges = this.editor.drawingEntitiesManager.addMonomer(
       this.monomer,
-      new Vec2(
-        this.editor.lastCursorPosition.x -
-          this.monomerPreviewRenderer.width / 2,
-        this.editor.lastCursorPosition.y -
-          this.monomerPreviewRenderer.height / 2,
+      // We convert monomer coordinates from pixels to angstroms
+      // because the model layer (like BaseMonomer) should not work with pixels
+      Scale.scaled2obj(
+        new Vec2(
+          this.editor.lastCursorPosition.x -
+            this.monomerPreviewRenderer.width / 2,
+          this.editor.lastCursorPosition.y -
+            this.monomerPreviewRenderer.height / 2,
+        ),
+        editorSettings,
       ),
     );
-    this.editor.renderersContainer.update(false);
+
+    this.editor.renderersContainer.update(modelChanges);
   }
 
   mousemove() {
+    const editorSettings = provideEditorSettings();
     this.monomerPreview?.moveAbsolute(
-      new Vec2(
-        this.editor.lastCursorPosition.x + this.MONOMER_PREVIEW_OFFSET_X,
-        this.editor.lastCursorPosition.y + this.MONOMER_PREVIEW_OFFSET_Y,
+      Scale.scaled2obj(
+        new Vec2(
+          this.editor.lastCursorPosition.x + this.MONOMER_PREVIEW_OFFSET_X,
+          this.editor.lastCursorPosition.y + this.MONOMER_PREVIEW_OFFSET_Y,
+        ),
+        editorSettings,
       ),
     );
     this.monomerPreviewRenderer?.move();

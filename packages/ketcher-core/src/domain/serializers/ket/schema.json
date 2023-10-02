@@ -172,6 +172,37 @@
         "cip": {
           "type": "string",
           "enum": ["R", "S", "r", "s"]
+        },
+        "queryProperties": {
+          "type": "object",
+          "properties": {
+            "aromaticity": {
+              "type": "string",
+              "enum": ["aromatic", "aliphatic"]
+            },
+            "ringMembership": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 5
+            },
+            "ringSize": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 5
+            },
+            "connectivity": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 5
+            },
+            "chirality": {
+              "type": "string",
+              "enum": ["clockwise", "anticlockwise"]
+            },
+            "customQuery": {
+              "type": "string"
+            }
+          }
         }
       },
       "additionalProperties": false
@@ -210,12 +241,8 @@
     },
     "bond": {
       "type": "object",
-      "required": ["atoms", "type"],
+      "required": ["atoms"],
       "properties": {
-        "type": {
-          "type": "integer",
-          "enum": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
-        },
         "atoms": {
           "type": "array",
           "minItems": 2,
@@ -226,18 +253,6 @@
             "minimum": 0
           }
         },
-        "stereo": {
-          "type": "integer",
-          "enum": [0, 1, 3, 4, 6]
-        },
-        "topology": {
-          "type": "integer",
-          "enum": [0, 1, 2]
-        },
-        "center": {
-          "type": "integer",
-          "enum": [0, -1, 1, 2, 4, 8, 12]
-        },
         "stereobox": {
           "type": "integer",
           "enum": [0, 1]
@@ -246,7 +261,38 @@
           "type": "string",
           "enum": ["Z", "E"]
         }
-      }
+      },
+      "oneOf": [
+        {
+          "required": ["type"],
+          "properties": {
+            "type": {
+              "type": "integer",
+              "enum": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+            },
+            "stereo": {
+              "type": "integer",
+              "enum": [0, 1, 3, 4, 6]
+            },
+            "topology": {
+              "type": "integer",
+              "enum": [0, 1, 2]
+            },
+            "center": {
+              "type": "integer",
+              "enum": [0, -1, 1, 2, 4, 8, 12]
+            }
+          }
+        },
+        {
+          "required": ["customQuery"],
+          "properties": {
+            "customQuery": {
+              "type": "string"
+            }
+          }
+        }
+      ]
     },
     "rgroup": {
       "type": "object",
@@ -428,7 +474,7 @@
           },
           "type": {
             "type": "string",
-            "enum": ["GEN", "MUL", "SRU", "SUP", "DAT"]
+            "enum": ["GEN", "MUL", "SRU", "SUP", "DAT", "queryComponent"]
           }
         },
         "if": {

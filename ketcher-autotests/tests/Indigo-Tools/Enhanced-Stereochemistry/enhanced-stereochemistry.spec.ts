@@ -21,6 +21,7 @@ import {
   clickOnAtom,
   BondTool,
   selectNestedTool,
+  waitForPageInit,
 } from '@utils';
 import { getKet, getMolfile } from '@utils/formats';
 
@@ -86,7 +87,7 @@ async function selectRadioButtonForNewGroup(
 
 test.describe('Enhanced Stereochemistry Tool', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {

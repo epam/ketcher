@@ -21,6 +21,7 @@ import {
   MolSerializer,
   formatProperties,
   ChemicalMimeType,
+  KetcherLogger,
 } from 'ketcher-core';
 import { debounce, isEqual } from 'lodash/fp';
 import { load, onAction, removeStructAction } from './shared';
@@ -176,9 +177,12 @@ function keyHandle(dispatch, getState, hotKeys, event) {
         });
       } else {
         if (newAction.tool === 'select') {
-          newAction = SettingsManager.getSettings().selectionTool;
+          if (key === 'Escape') {
+            newAction = SettingsManager.getSettings().selectionTool;
+          } else if (index === -1) {
+            newAction = {};
+          }
         }
-
         dispatch(onAction(newAction));
       }
 
@@ -333,6 +337,7 @@ function clipData(editor) {
     // res['chemical/x-daylight-smiles'] = smiles.stringify(struct);
     return res;
   } catch (e: any) {
+    KetcherLogger.error('hotkeys.ts::clipData', e);
     errorHandler(e.message);
   }
 

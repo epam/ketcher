@@ -23,6 +23,7 @@ import {
   selectNestedTool,
   AttachmentPoint,
   setAttachmentPoints,
+  waitForPageInit,
 } from '@utils';
 import { getMolfile } from '@utils/formats';
 
@@ -48,7 +49,7 @@ async function selectMultipleGroup(
 
 test.describe('Multiple S-Group tool', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {

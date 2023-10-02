@@ -6,11 +6,16 @@ const RNABASE_SELECTED_ELEMENT_ID = '#rna-base-selection';
 
 export class RNABaseRenderer extends BaseMonomerRenderer {
   constructor(public monomer: RNABase, scale?: number) {
-    super(monomer, RNABASE_SELECTED_ELEMENT_ID, scale);
+    super(
+      monomer,
+      RNABASE_SELECTED_ELEMENT_ID,
+      RNABASE_SELECTED_ELEMENT_ID,
+      scale,
+    );
   }
 
   protected appendBody(
-    rootElement: Selection<SVGGElement, this, HTMLElement, never>,
+    rootElement: Selection<SVGGElement, void, HTMLElement, never>,
     theme,
   ) {
     return rootElement

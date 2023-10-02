@@ -32,9 +32,10 @@ test.describe('Zoom changes', () => {
     await waitForPageInit(page);
   });
 
-  /* Editor is zoomed correctly: */
-  /* Zoom in */
   test('when using ctrl + mouse scroll up', async ({ page }) => {
+    /* 
+    Description: Editor is zoomed correctly: Zoom In to 120%
+    */
     const numberOfMouseWheelScroll = 2;
 
     await clickInTheMiddleOfTheScreen(page);
@@ -48,8 +49,10 @@ test.describe('Zoom changes', () => {
     await checkZoomLevel(page, '120%');
   });
 
-  /* Zoom out */
   test('when using ctrl + mouse scroll down', async ({ page }) => {
+    /* 
+    Description: Editor is zoomed correctly: Zoom Out to 80%
+    */
     const numberOfMouseWheelScroll = 2;
 
     await clickInTheMiddleOfTheScreen(page);
@@ -87,16 +90,15 @@ test.describe('Zoom changes', () => {
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
 
-    await takeTopToolbarScreenshot(page);
-    await takeEditorScreenshot(page);
-
+    await page.getByText('CO2Et').click({ button: 'right' });
+    await page.getByText('Expand Abbreviation').click();
     await page.getByTestId('zoom-input').click();
     await page.getByText('Zoom out').click();
 
     await checkZoomLevel(page, '90%');
   });
 
-  test('Zoom in&out structure verification', async ({ page }) => {
+  test('Zoom In and Undo/Redo structure verification', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1763, EPMLSOPKET-1764
     */
@@ -106,9 +108,6 @@ test.describe('Zoom changes', () => {
     await page.getByTestId('zoom-input').click();
     await page.getByText('Zoom in').click();
     await checkZoomLevel(page, '110%');
-
-    await takeTopToolbarScreenshot(page);
-    await takeEditorScreenshot(page);
 
     await resetCurrentTool(page);
     await selectTopPanelButton(TopPanelButton.Undo, page);
@@ -121,7 +120,7 @@ test.describe('Zoom changes', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Zoom in&out structure verification.', async ({ page }) => {
+  test('Zoom In by hotkey structure verification.', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-1763, EPMLSOPKET-1764
       */
@@ -146,7 +145,6 @@ test.describe('Zoom changes', () => {
     await page.getByTestId('zoom-input').click();
     await page.getByText('Zoom in').click();
     await checkZoomLevel(page, '110%');
-    await takeTopToolbarScreenshot(page);
 
     await page.getByText('Zoom in').click();
     await checkZoomLevel(page, '120%');

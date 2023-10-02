@@ -24,6 +24,7 @@ import {
   waitForPageInit,
   selectDropdownTool,
   selectFunctionalGroups,
+  moveOnAtom,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
@@ -723,6 +724,37 @@ test.describe('Templates - Functional Group Tools3', () => {
     await takeEditorScreenshot(page);
 
     await selectTopPanelButton(TopPanelButton.Clean, page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check structure on canvas when atom is hovered and Functional Group selected using hotkey', async ({
+    page,
+  }) => {
+    /*
+    Test case: EPMLSOPKET-12970
+    Description: Structure on canvas remains unchanged
+   */
+    const anyAtom = 2;
+    const x = 300;
+    const y = 300;
+    await openFileAndAddToCanvas('KET/chain.ket', page);
+    await moveOnAtom(page, 'C', anyAtom);
+    await page.keyboard.press('Shift+f');
+    await page.getByText('Boc').click();
+    await page.mouse.click(x, y);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Hotkeys for atoms work on Functional Groups abbreviations', async ({
+    page,
+  }) => {
+    /*
+    Test case: EPMLSOPKET-15503
+    Description: Oxygen atoms replace a Functional Groups abbreviations on canvas
+   */
+    await selectFunctionalGroups(FunctionalGroups.Boc, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await page.keyboard.press('n');
     await takeEditorScreenshot(page);
   });
 });

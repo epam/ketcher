@@ -104,7 +104,6 @@ export function toElement(elem) {
 
 export function fromAtom(satom) {
   const alias = satom.alias || '';
-  const charge = satom.charge.toString();
   const atomType = satom.atomList
     ? 'list'
     : satom.pseudo === satom.label
@@ -118,8 +117,8 @@ export function fromAtom(satom) {
     notList: satom.atomList?.notList || false,
     pseudo: satom.pseudo,
     label: satom.label,
-    charge,
-    isotope: satom.isotope,
+    charge: satom.charge === null ? '' : satom.charge.toString(),
+    isotope: satom.isotope === null ? '' : satom.isotope.toString(),
     explicitValence: satom.explicitValence,
     radical: satom.radical,
     invRet: satom.invRet,
@@ -160,8 +159,8 @@ export function toAtom(atom) {
       atomList: null,
       pseudo: null,
       alias: null,
-      charge: 0,
-      isotope: 0,
+      charge: null,
+      isotope: null,
       explicitValence: -1,
       radical: 0,
       ringBondCount: 0,
@@ -187,6 +186,8 @@ export function toAtom(atom) {
   const charge = pch ? parseInt(pch[1] + pch[3] + pch[2]) : restAtom.charge;
 
   const conv = Object.assign({}, restAtom, {
+    isotope: restAtom.isotope ? Number(restAtom.isotope) : null,
+    charge: restAtom.charge ? Number(charge) : null,
     alias: restAtom.alias || null,
     exactChangeFlag: +(restAtom.exactChangeFlag ?? false),
     unsaturatedAtom: +(restAtom.unsaturatedAtom ?? false),
@@ -200,7 +201,7 @@ export function toAtom(atom) {
       customQuery: customQuery === '' ? null : customQuery,
     },
   });
-  if (charge !== undefined) conv.charge = charge;
+
   return conv;
 }
 

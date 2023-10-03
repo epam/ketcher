@@ -27,11 +27,11 @@ export const formsState = {
     valid: true,
     result: {
       label: '',
-      charge: 0,
+      charge: null,
       explicitValence: -1,
       hCount: 0,
       invRet: 0,
-      isotope: 0,
+      isotope: null,
       radical: 0,
       ringBondCount: 0,
       substitutionCount: 0,

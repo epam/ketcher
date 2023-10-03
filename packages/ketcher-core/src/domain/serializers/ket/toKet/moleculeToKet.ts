@@ -73,9 +73,9 @@ function atomToKet(source) {
   ifDef(result, 'label', source.label);
   ifDef(result, 'alias', source.alias);
   ifDef(result, 'location', [source.pp.x, -source.pp.y, source.pp.z]);
-  ifDef(result, 'charge', source.charge, 0);
+  ifDef(result, 'charge', source.charge);
   ifDef(result, 'explicitValence', source.explicitValence, -1);
-  ifDef(result, 'isotope', source.isotope, 0);
+  ifDef(result, 'isotope', source.isotope);
   ifDef(result, 'radical', source.radical, 0);
   ifDef(result, 'attachmentPoints', source.attachmentPoints, 0);
   ifDef(result, 'cip', source.cip, '');

@@ -60,7 +60,7 @@ export const atom = {
       type: 'string',
       pattern: '^([+-]?)([0-9]{1,3}|1000)([+-]?)$',
       maxLength: 5,
-      default: '0',
+      default: '',
       invalidMessage: 'Invalid charge value',
     },
     explicitValence: {
@@ -71,10 +71,11 @@ export const atom = {
     },
     isotope: {
       title: 'Isotope (atomic mass)',
-      type: 'integer',
-      minimum: 0,
-      default: 0,
-      invalidMessage: 'There must be integer',
+      type: 'string',
+      pattern: '^([0-9]{1,3}|1000)$|(^$)',
+      default: '',
+      maxLength: 5,
+      invalidMessage: 'Invalid isotope value',
     },
     radical: {
       title: 'Radical',

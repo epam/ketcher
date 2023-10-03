@@ -63,7 +63,6 @@ test.describe('Click and drag FG on canvas', () => {
     */
     await selectSaltsAndSolvents(SaltsAndSolvents.FormicAcid, page);
     await clickInTheMiddleOfTheScreen(page);
-
     await drawFGAndDrag(FunctionalGroups.Boc, SHIFT, page);
   });
 

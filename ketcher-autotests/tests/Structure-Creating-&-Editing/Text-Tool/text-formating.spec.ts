@@ -26,22 +26,22 @@ async function openFromFileViaTextBox(filename: string, page: Page) {
   });
 }
 
-async function createSomeStructure(page: Page) {
-  const a = 97;
-  const b = 79;
-  const c = 943;
-  const d = 114;
-  const e = 844;
-  const f = 579;
-  const g = 66;
-  const h = 611;
-  await page.mouse.move(a, b);
-  await page.mouse.down();
-  await page.mouse.move(c, d);
-  await page.mouse.move(e, f);
-  await page.mouse.move(g, h);
-  await page.mouse.up();
-}
+// async function createSomeStructure(page: Page) {
+//   const a = 97;
+//   const b = 79;
+//   const c = 943;
+//   const d = 114;
+//   const e = 844;
+//   const f = 579;
+//   const g = 66;
+//   const h = 611;
+//   await page.mouse.move(a, b);
+//   await page.mouse.down();
+//   await page.mouse.move(c, d);
+//   await page.mouse.move(e, f);
+//   await page.mouse.move(g, h);
+//   await page.mouse.up();
+// }
 
 test.describe('Text tools test cases', () => {
   test.beforeEach(async ({ page }) => {

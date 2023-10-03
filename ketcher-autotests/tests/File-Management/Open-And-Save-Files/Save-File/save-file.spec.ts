@@ -24,14 +24,7 @@ import {
   waitForSpinnerFinishedWork,
 } from '@utils';
 import { drawReactionWithTwoBenzeneRings } from '@utils/canvas/drawStructures';
-import {
-  getInChIKey,
-  getKet,
-  getMolfile,
-  getRxn,
-  getSdf,
-  getSmiles,
-} from '@utils/formats';
+import { getKet, getMolfile, getRxn, getSdf, getSmiles } from '@utils/formats';
 
 const RING_OFFSET = 150;
 const ARROW_OFFSET = 20;

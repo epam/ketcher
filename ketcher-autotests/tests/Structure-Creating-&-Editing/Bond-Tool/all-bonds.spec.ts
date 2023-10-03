@@ -40,7 +40,6 @@ import {
   waitForPageInit,
   openDropdown,
   waitForRender,
-  waitForSpinnerFinishedWork,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import {

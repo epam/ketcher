@@ -44,6 +44,17 @@ export async function openFileAndAddToCanvas(filename: string, page: Page) {
   await clickInTheMiddleOfTheScreen(page);
 }
 
+export async function filteredFile(
+  file: string,
+  filteredIndex: number,
+): Promise<string> {
+  return file
+    .split('\n')
+    .filter((_str, index) => index > filteredIndex)
+    .join('\n')
+    .replace(/\s+/g, '');
+}
+
 export async function pasteFromClipboardAndAddToCanvas(
   page: Page,
   fillStructure: string,

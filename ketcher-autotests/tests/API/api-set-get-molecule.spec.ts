@@ -21,14 +21,6 @@ import {
   setMolecule,
 } from '@utils/formats';
 
-function filteredFile(file: string, filteredIndex: number): string {
-  return file
-    .split('\n')
-    .filter((_str, index) => index > filteredIndex)
-    .join('\n')
-    .replace(/\s+/g, '');
-}
-
 test.describe('Tests for API setMolecule/getMolecule', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);

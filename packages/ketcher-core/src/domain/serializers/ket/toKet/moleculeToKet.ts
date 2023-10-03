@@ -148,7 +148,7 @@ function bondToKet(source) {
   return result;
 }
 
-function sgroupToKet(struct, source: SGroup) {
+function sgroupToKet(struct: Struct, source: SGroup) {
   const result = {};
 
   ifDef(result, 'type', source.type);
@@ -159,6 +159,9 @@ function sgroupToKet(struct, source: SGroup) {
       break;
     case 'MUL': {
       ifDef(result, 'mul', source.data.mul || 1);
+      break;
+    }
+    case 'queryComponent': {
       break;
     }
     case 'SRU': {

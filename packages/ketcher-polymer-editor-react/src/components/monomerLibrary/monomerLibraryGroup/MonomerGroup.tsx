@@ -71,19 +71,12 @@ const MonomerGroup = ({
 
   const selectMonomer = (monomer: MonomerItemType) => {
     dispatch(selectTool('monomer'));
-    switch (libraryName) {
-      case 'PEPTIDE':
-        editor.events.selectMonomer.dispatch(monomer);
-        onItemClick(monomer);
-        break;
-      case 'CHEM':
-        editor.events.selectMonomer.dispatch(monomer);
-        onItemClick(monomer);
-        break;
-      default:
-        onItemClick(monomer);
-        break;
+
+    if (['FAVORITES', 'PEPTIDE', 'CHEM'].includes(libraryName ?? '')) {
+      editor.events.selectMonomer.dispatch(monomer);
     }
+
+    onItemClick(monomer);
   };
 
   return (

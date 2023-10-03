@@ -1,5 +1,6 @@
 import { test } from '@playwright/test';
 import { clickInTheMiddleOfTheScreen, waitForPageInit } from '@utils';
+import { ALANINE } from '@utils/selectors/macromoleculeEditor';
 import { POLYMER_TOGGLER } from '../../../constants/testIdConstants';
 
 /* 
@@ -13,7 +14,7 @@ test('Select peptide and drag it to canvas', async ({ page }) => {
   await page.getByTestId(POLYMER_TOGGLER).click();
 
   // Click on <div> "A ★"
-  await page.click('[data-testid="A___Alanine"]');
+  await page.click(ALANINE);
 
   // Click on <svg> #polymer-editor-canvas
   await clickInTheMiddleOfTheScreen(page);

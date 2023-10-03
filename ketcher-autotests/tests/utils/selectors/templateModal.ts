@@ -7,10 +7,10 @@ import {
   moveMouseToTheMiddleOfTheScreen,
   selectLeftPanelButton,
   takeEditorScreenshot,
-  selectTemplate,
   STRUCTURE_LIBRARY_BUTTON_NAME,
   pressButton,
 } from '@utils';
+import { ElementLabel } from 'ketcher-core';
 
 export enum SaltsAndSolvents {
   AceticAcid = 'acetic acid',
@@ -90,14 +90,20 @@ export enum FunctionalGroups {
 export enum TemplateLibrary {
   Azulene = 'Azulene',
   Naphtalene = 'Naphtalene',
+  Anthracene = 'Anthracene',
+  Arabinofuranose = 'Arabinofuranose',
 }
 
 export async function selectSaltsAndSolvents(
-  saltsName: SaltsAndSolvents,
+  saltsAndSolventsGroupName: SaltsAndSolvents,
   page: Page,
 ) {
   const amountOfSaltsAndSolvents = 124;
-  const saltsButton = page.locator(`div[title*="${saltsName}"] > div`).first();
+  await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+  await page.getByRole('tab', { name: 'Salts and Solvents' }).click();
+  const saltsButton = page
+    .locator(`div[title*="${saltsAndSolventsGroupName}"] > div`)
+    .first();
   await expect(
     page.locator('[data-testid*="templates-modal"] > div'),
   ).toHaveCount(amountOfSaltsAndSolvents);
@@ -111,10 +117,12 @@ export async function selectFunctionalGroups(
   functionalGroupName: FunctionalGroups,
   page: Page,
 ) {
+  const amountOfFunctionalGroups = 62;
+  await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+  await page.getByRole('tab', { name: 'Functional Groups' }).click();
   const functionalGroupButton = page
     .locator(`div[title*="${functionalGroupName}"] > div`)
     .first();
-  const amountOfFunctionalGroups = 62;
   await expect(
     page.locator('[data-testid*="templates-modal"] > div'),
   ).toHaveCount(amountOfFunctionalGroups);
@@ -142,8 +150,6 @@ export async function drawFGAndDrag(
   shift: number,
   page: Page,
 ) {
-  await selectTemplate(page);
-  await page.getByRole('tab', { name: 'Functional Groups' }).click();
   await selectFunctionalGroups(itemToChoose, page);
   await moveMouseToTheMiddleOfTheScreen(page);
   const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
@@ -159,8 +165,6 @@ export async function drawSaltAndDrag(
   shift: number,
   page: Page,
 ) {
-  await selectTemplate(page);
-  await page.getByRole('tab', { name: 'Salts and Solvents' }).click();
   await selectSaltsAndSolvents(itemToChoose, page);
   await moveMouseToTheMiddleOfTheScreen(page);
   const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
@@ -237,4 +241,19 @@ export async function fillFieldByPlaceholder(
 ) {
   await page.getByPlaceholder(fieldLabel).click();
   await page.getByPlaceholder(fieldLabel).fill(testValue);
+}
+
+export async function selectAtomsFromPeriodicTable(
+  page: Page,
+  selectlisting: 'List' | 'Not List',
+  elements: ElementLabel[],
+) {
+  await page.getByTestId('period-table').click();
+  await page.getByText(selectlisting, { exact: true }).click();
+
+  for (const element of elements) {
+    await page.getByTestId(`${element}-button`).click();
+  }
+
+  await page.getByTestId('OK').click();
 }

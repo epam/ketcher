@@ -3,7 +3,6 @@ import { test } from '@playwright/test';
 import {
   selectAtomInToolbar,
   AtomButton,
-  pressButton,
   selectFunctionalGroups,
   FunctionalGroups,
   selectSaltsAndSolvents,
@@ -16,7 +15,6 @@ import {
   takeEditorScreenshot,
   drawFGAndDrag,
   drawSaltAndDrag,
-  STRUCTURE_LIBRARY_BUTTON_NAME,
   waitForPageInit,
 } from '@utils';
 
@@ -50,8 +48,6 @@ test.describe('Click and drag Salts and Solvents on canvas', () => {
       Description: when click & drag with a Salts and Solvents on Functional Group
       Salts appears near FG where the left mouse button was released
     */
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await page.getByRole('tab', { name: 'Functional Groups' }).click();
     await selectFunctionalGroups(FunctionalGroups.Cbz, page);
     await clickInTheMiddleOfTheScreen(page);
 
@@ -66,8 +62,6 @@ test.describe('Click and drag Salts and Solvents on canvas', () => {
       Description: when click & drag with a Salts and Solvents on Salts and Solvents
       Salts appears near Salts where the left mouse button was released
     */
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await page.getByRole('tab', { name: 'Salts and Solvents' }).click();
     await selectSaltsAndSolvents(SaltsAndSolvents.MethaneSulphonicAcid, page);
     await clickInTheMiddleOfTheScreen(page);
     await drawSaltAndDrag(SaltsAndSolvents.PropionicAcid, SHIFT, page);
@@ -100,8 +94,6 @@ test.describe('Click and drag Salts and Solvents on canvas', () => {
       on a FG connected with bond to another FG Salts appears
       near FG where the left mouse button was released
     */
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await page.getByRole('tab', { name: 'Functional Groups' }).click();
     await selectFunctionalGroups(FunctionalGroups.FMOC, page);
     await clickInTheMiddleOfTheScreen(page);
 

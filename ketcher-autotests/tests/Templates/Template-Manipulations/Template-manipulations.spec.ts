@@ -20,6 +20,8 @@ import {
   waitForPageInit,
   resetCurrentTool,
   openFileAndAddToCanvas,
+  drawCyclopentadieneRing,
+  drawCyclohexaneRing,
 } from '@utils';
 import { getMolfile, getRxn } from '@utils/formats';
 
@@ -240,7 +242,7 @@ test.describe('Template Manupulations', () => {
     expect(RxnFile).toEqual(RxnFileExpected);
   });
 
-  test('Double cyclopentadiene ring - If connect to a single bond with two atoms then replace double bond by single bond for the fusion', async ({
+  test('If connect to a single bond with two atoms then replace double bond by single bond for the fusion', async ({
     page,
   }) => {
     /*
@@ -248,14 +250,11 @@ test.describe('Template Manupulations', () => {
     Add cyclopentadiene ring on canvas
     Add another cyclopentadiene ring to a single bond with two atoms, where each atom is connected to any atom with a double bond
     */
-    // await page.getByText('Cyclopentadiene').click();
-    // await page.getByRole('button', { name: 'N', exact: true }).click();
-    // await page.getByTestId('canvas').getByText('N').click();
-    // await page.getByTestId('canvas').getByText('N').click();
-    // await page.getByTestId('canvas').getByText('N').nth(1).click();
-    // await page.getByTestId('canvas').getByText('N').nth(2).click();
-    // await page.getByTestId('canvas').getByText('N').nth(3).click();
-    // await page.getByText('Cyclopentadiene').click();
+    await drawCyclopentadieneRing(page);
+    await selectAtomInToolbar(AtomButton.Nitrogen, page);
+    await clickOnAtom(page, 'C', 0);
+    await clickOnAtom(page, 'C', 3);
+    await selectRing(RingButton.Cyclopentadiene, page);
   });
 
   test('Double cyclopentadiene ring - If connect to a double bond with two atom then cyclopentadiene rotate rand use double bond for the fusion', async ({
@@ -266,10 +265,11 @@ test.describe('Template Manupulations', () => {
     Add Benzene ring on canvas
     Add cyclopentadiene ring to to a double bond with two atom, where each atom is connected to any atom with a single bond
     */
-    // const anyAtom = 0;
-    // await drawBenzeneRing(page);
-    // await selectAtomInToolbar(AtomButton.Oxygen, page);
-    // await clickOnAtom(page, 'C', anyAtom);
+    await drawBenzeneRing(page);
+    await selectAtomInToolbar(AtomButton.Nitrogen, page);
+    await clickOnAtom(page, 'C', 0);
+    await clickOnAtom(page, 'C', 3);
+    await selectRing(RingButton.Cyclopentadiene, page);
   });
 
   test('Double cyclopentadiene ring-if connect to a single bond with two atoms-but one atom is connected with a single bond and another with a double bond', async ({
@@ -280,9 +280,10 @@ test.describe('Template Manupulations', () => {
     Add Cyclohexane ring on canvas and add double bond on it and atom
     Add cyclopentadiene ring to a single bond with two atoms, but one atom is connected with a single bond and another with a double bond
     */
-    // const anyAtom = 0;
-    // await drawBenzeneRing(page);
-    // await selectAtomInToolbar(AtomButton.Oxygen, page);
-    // await clickOnAtom(page, 'C', anyAtom);
+    await drawCyclohexaneRing(page);
+    await selectAtomInToolbar(AtomButton.Nitrogen, page);
+    await clickOnAtom(page, 'C', 0);
+    await clickOnAtom(page, 'C', 4);
+    await selectRing(RingButton.Cyclopentadiene, page);
   });
 });

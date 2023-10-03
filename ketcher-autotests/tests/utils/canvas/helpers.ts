@@ -24,6 +24,18 @@ export async function drawBenzeneRing(page: Page) {
   await clickInTheMiddleOfTheScreen(page);
 }
 
+export async function drawCyclohexaneRing(page: Page) {
+  // await page.getByRole('button', { name: 'Cyclohexane (T)' }).click();
+  await selectRing(RingButton.Cyclohexane, page);
+  await clickInTheMiddleOfTheScreen(page);
+}
+
+export async function drawCyclopentadieneRing(page: Page) {
+  // await page.getByRole('button', { name: 'Cyclopentadiene (T)' }).click();
+  await selectRing(RingButton.Cyclopentadiene, page);
+  await clickInTheMiddleOfTheScreen(page);
+}
+
 export async function drawElementByTitle(
   page: Page,
   elementTitle: string = ELEMENT_TITLE.HYDROGEN,
@@ -60,6 +72,32 @@ export async function getTopToolBarHeight(page: Page): Promise<number> {
 }
 
 export async function getCoordinatesTopAtomOfBenzeneRing(page: Page) {
+  const { carbonAtoms, scale, offset } = await page.evaluate(() => {
+    const allAtoms = [...window.ketcher.editor.struct().atoms.values()];
+    const onlyCarbons = allAtoms.filter((a) => a.label === 'C');
+    return {
+      carbonAtoms: onlyCarbons,
+      scale: window.ketcher.editor.options().scale,
+      offset: window.ketcher?.editor?.options()?.offset,
+    };
+  });
+  let min = {
+    x: Infinity,
+    y: Infinity,
+  };
+  for (const carbonAtom of carbonAtoms) {
+    if (carbonAtom.pp.y < min.y) {
+      min = carbonAtom.pp;
+    }
+  }
+  const { leftBarWidth, topBarHeight } = await getLeftTopBarSize(page);
+  return {
+    x: min.x * scale + offset.x + leftBarWidth,
+    y: min.y * scale + offset.y + topBarHeight,
+  };
+}
+
+export async function getCoordinatesTopAtomOfCyclopentadieneRing(page: Page) {
   const { carbonAtoms, scale, offset } = await page.evaluate(() => {
     const allAtoms = [...window.ketcher.editor.struct().atoms.values()];
     const onlyCarbons = allAtoms.filter((a) => a.label === 'C');

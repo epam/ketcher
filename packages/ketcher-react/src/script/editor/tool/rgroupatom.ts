@@ -19,6 +19,7 @@ import {
   fromAtomAddition,
   fromAtomsAttrs,
   FunctionalGroup,
+  KetcherLogger,
 } from 'ketcher-core';
 import Editor from '../Editor';
 import { Tool } from './Tool';
@@ -132,7 +133,9 @@ function propsDialog(editor, id, pos) {
         editor.update(fromAtomsAttrs(editor.render.ctab, id, elem, false));
       }
     })
-    .catch(() => null); // w/o changes
+    .catch((e) => {
+      KetcherLogger.error('rgroupatom.ts:propsDialog', e);
+    }); // w/o changes
 }
 
 export default RGroupAtomTool;

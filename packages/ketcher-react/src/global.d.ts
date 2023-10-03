@@ -5,4 +5,8 @@ declare global {
     ketcher?: Ketcher;
     isPolymerEditorTurnedOn: boolean;
   }
+
+  export interface Element {
+    __data__?: never;
+  }
 }

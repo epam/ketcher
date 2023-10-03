@@ -54,7 +54,6 @@ test.describe('Clear canvas', () => {
     // Test case:EPMLSOPKET-1705
     await openFileAndAddToCanvas('KET/ketcher.ket', page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectTopPanelButton(TopPanelButton.Clear, page);
   });
 
   test('Clear Canvas - Structure is opened from ket-file + hothey', async ({

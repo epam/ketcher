@@ -20,7 +20,6 @@ async function checkZoomLevel(page: Page, zoomLevel: string) {
   const zoomInputValue = await zoomInput.evaluate(
     (el: HTMLElement) => el.innerText,
   );
-
   expect(zoomInputValue).toBe(zoomLevel);
 }
 
@@ -77,7 +76,7 @@ test.describe('Zoom changes', () => {
     await page.getByText('CO2Et').click({ button: 'right' });
     await page.getByText('Expand Abbreviation').click();
     await page.getByTestId('zoom-input').click();
-    await page.getByText('Zoom in').click();
+    await page.getByTestId('zoom-in').click();
 
     await checkZoomLevel(page, '110%');
   });
@@ -93,7 +92,7 @@ test.describe('Zoom changes', () => {
     await page.getByText('CO2Et').click({ button: 'right' });
     await page.getByText('Expand Abbreviation').click();
     await page.getByTestId('zoom-input').click();
-    await page.getByText('Zoom out').click();
+    await page.getByTestId('zoom-out').click();
 
     await checkZoomLevel(page, '90%');
   });
@@ -106,7 +105,7 @@ test.describe('Zoom changes', () => {
     await resetCurrentTool(page);
 
     await page.getByTestId('zoom-input').click();
-    await page.getByText('Zoom in').click();
+    await page.getByTestId('zoom-in').click();
     await checkZoomLevel(page, '110%');
 
     await resetCurrentTool(page);
@@ -130,7 +129,7 @@ test.describe('Zoom changes', () => {
 
     await page.keyboard.press('Control+=');
     await page.getByTestId('zoom-input').click();
-    await page.getByText('Zoom in').click();
+    await page.getByTestId('zoom-in').click();
     await checkZoomLevel(page, '120%');
   });
 
@@ -143,16 +142,16 @@ test.describe('Zoom changes', () => {
       page,
     );
     await page.getByTestId('zoom-input').click();
-    await page.getByText('Zoom in').click();
+    await page.getByTestId('zoom-in').click();
     await checkZoomLevel(page, '110%');
 
-    await page.getByText('Zoom in').click();
+    await page.getByTestId('zoom-in').click();
     await checkZoomLevel(page, '120%');
 
-    await page.getByText('Zoom out').click();
+    await page.getByTestId('zoom-out').click();
     await checkZoomLevel(page, '110%');
 
-    await page.getByText('Zoom out').click();
+    await page.getByTestId('zoom-out').click();
     await checkZoomLevel(page, '100%');
   });
 
@@ -167,22 +166,22 @@ test.describe('Zoom changes', () => {
     );
 
     await page.getByTestId('zoom-input').click();
-    await page.getByText('Zoom in').click();
+    await page.getByTestId('zoom-in').click();
     await checkZoomLevel(page, '110%');
 
     await takeEditorScreenshot(page);
 
-    await page.getByText('Zoom in').click();
+    await page.getByTestId('zoom-in').click();
     await checkZoomLevel(page, '120%');
 
     await takeEditorScreenshot(page);
 
-    await page.getByText('Zoom out').click();
+    await page.getByTestId('zoom-out').click();
     await checkZoomLevel(page, '110%');
 
     await takeEditorScreenshot(page);
 
-    await page.getByText('Zoom out').click();
+    await page.getByTestId('zoom-out').click();
     await checkZoomLevel(page, '100%');
 
     await takeEditorScreenshot(page);

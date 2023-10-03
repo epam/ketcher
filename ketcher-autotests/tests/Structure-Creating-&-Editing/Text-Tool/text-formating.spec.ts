@@ -2,8 +2,6 @@ import { Page, test } from '@playwright/test';
 import {
   takeEditorScreenshot,
   selectTopPanelButton,
-  selectNestedTool,
-  SelectTool,
   waitForPageInit,
   pressButton,
   TopPanelButton,

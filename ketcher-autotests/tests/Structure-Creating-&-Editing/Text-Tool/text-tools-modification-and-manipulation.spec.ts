@@ -15,9 +15,6 @@ import {
   selectRing,
   RingButton,
   selectDropdownTool,
-  selectNestedTool,
-  SelectTool,
-  resetCurrentTool,
   waitForRender,
 } from '@utils';
 import { addTextBoxToCanvas } from '@utils/selectors/addTextBoxToCanvas';

@@ -143,7 +143,9 @@ export function setFunctionalGroupsTooltip({
       ?.sgroups.get(closestCollapsibleStructures.id);
     const isSGroupPresent = sGroup?.hovering;
     const isShowingTooltip =
-      !sGroup?.data.expanded || SGroup.isDataSGroup(sGroup);
+      !sGroup?.data.expanded ||
+      SGroup.isDataSGroup(sGroup) ||
+      SGroup.isQuerySGroup(sGroup);
     if (isSGroupPresent && isShowingTooltip) {
       const groupName = sGroup.data.name;
       const groupStruct = makeStruct(editor, sGroup);

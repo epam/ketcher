@@ -24,6 +24,7 @@ import defaultOptions from './options';
 import draw from './draw';
 import { RenderOptions } from './render.types';
 import _ from 'lodash';
+import { KetcherLogger } from 'utilities';
 
 const notifyRenderComplete = _.debounce(() => {
   const event = new Event('renderComplete');
@@ -64,6 +65,7 @@ export class Render {
         return this.options;
       }
     } catch (e) {
+      KetcherLogger.error('raphaelRenderer.ts::updateOptions', e);
       console.log('Not a valid settings object');
     }
     return false;

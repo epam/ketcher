@@ -120,8 +120,6 @@ test.describe('Functional Groups', () => {
     Test case: EPMLSOPKET-2895
     Description: Contracted functional group is on the canvas. FG added on canvas near cursor.
     */
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await pressTab(page, 'Functional Groups');
     await selectFunctionalGroups(FunctionalGroups.FMOC, page);
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
@@ -178,8 +176,6 @@ test.describe('Functional Groups', () => {
     Description: Contracted FG is connected to the structure.
     */
     await openFileAndAddToCanvas('structure-co2et.mol', page);
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await pressTab(page, 'Functional Groups');
     await selectFunctionalGroups(FunctionalGroups.CO2Et, page);
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
@@ -404,8 +400,6 @@ test.describe('Functional Groups', () => {
     Test case: EPMLSOPKET-8915
     Description: Ordinary elements should not show explicit valences for 'S'.
     */
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await pressTab(page, 'Functional Groups');
     await selectFunctionalGroups(FunctionalGroups.SO3H, page);
     await clickInTheMiddleOfTheScreen(page);
 
@@ -420,8 +414,6 @@ test.describe('Functional Groups', () => {
     Test case: EPMLSOPKET-8915
     Description: Ordinary elements should not show explicit valences for 'P'.
     */
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await pressTab(page, 'Functional Groups');
     await selectFunctionalGroups(FunctionalGroups.PO4H2, page);
     await clickInTheMiddleOfTheScreen(page);
 
@@ -436,8 +428,6 @@ test.describe('Functional Groups', () => {
     Test case: EPMLSOPKET-8916
     Description: Selection highlight all abbreviation.
     */
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await pressTab(page, 'Functional Groups');
     await selectFunctionalGroups(FunctionalGroups.PhCOOH, page);
     await clickInTheMiddleOfTheScreen(page);
 
@@ -452,8 +442,6 @@ test.describe('Functional Groups', () => {
     Test case: EPMLSOPKET-13010
     Description: Selection highlight all abbreviation.
     */
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await pressTab(page, 'Salts and Solvents');
     await selectSaltsAndSolvents(SaltsAndSolvents.MethaneSulphonicAcid, page);
     await clickInTheMiddleOfTheScreen(page);
 
@@ -468,8 +456,6 @@ test.describe('Functional Groups', () => {
     Test case: EPMLSOPKET-8920
     Description: Selection highlight appears immediately after hover over text.
     */
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await pressTab(page, 'Salts and Solvents');
     await selectSaltsAndSolvents(SaltsAndSolvents.MethaneSulphonicAcid, page);
     await clickInTheMiddleOfTheScreen(page);
 
@@ -495,8 +481,6 @@ test.describe('Functional Groups', () => {
     Test case: EPMLSOPKET-8928
     Description: When Adding 'Atom' by hotkey to expanded Salts and Solvents system display 'Edit Abbreviation' pop-up window.
     */
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await pressTab(page, 'Salts and Solvents');
     await selectSaltsAndSolvents(SaltsAndSolvents.MethaneSulphonicAcid, page);
 
     await clickInTheMiddleOfTheScreen(page);
@@ -520,16 +504,12 @@ test.describe('Functional Groups', () => {
     const x = 540;
     const y = 350;
     await openFileAndAddToCanvas('KET/chain.ket', page);
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await pressTab(page, 'Functional Groups');
     await selectFunctionalGroups(FunctionalGroups.CN, page);
     point = await getAtomByIndex(page, { label: 'C' }, 0);
     await waitForRender(page, async () => {
       await page.mouse.click(point.x, point.y);
     });
 
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await pressTab(page, 'Functional Groups');
     await selectFunctionalGroups(FunctionalGroups.Ms, page);
     await waitForRender(page, async () => {
       await page.mouse.click(x, y);
@@ -544,8 +524,6 @@ test.describe('Functional Groups', () => {
     Test case: EPMLSOPKET-11844
     Description: Hotkey (Del) delete Functional Groups abbreviation.
     */
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await pressTab(page, 'Functional Groups');
     await selectFunctionalGroups(FunctionalGroups.Boc, page);
     await clickInTheMiddleOfTheScreen(page);
 
@@ -562,8 +540,6 @@ test.describe('Functional Groups', () => {
     Test case: EPMLSOPKET-11844
     Description: Hotkey (Del) delete Salts and Solvents abbreviation.
     */
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await pressTab(page, 'Salts and Solvents');
     await selectSaltsAndSolvents(SaltsAndSolvents.MethaneSulphonicAcid, page);
     await clickInTheMiddleOfTheScreen(page);
 
@@ -580,8 +556,6 @@ test.describe('Functional Groups', () => {
     Test case: EPMLSOPKET-11845
     Description: Hotkey for Atom (e.g. N) replace Functional Group abbreviation.
     */
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await pressTab(page, 'Functional Groups');
     await selectFunctionalGroups(FunctionalGroups.Boc, page);
     await clickInTheMiddleOfTheScreen(page);
 
@@ -598,8 +572,6 @@ test.describe('Functional Groups', () => {
     Test case: EPMLSOPKET-11845
     Description: Hotkey for Atom (e.g. N) replace Salts and Solvents abbreviation.
     */
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await pressTab(page, 'Salts and Solvents');
     await selectSaltsAndSolvents(SaltsAndSolvents.MethaneSulphonicAcid, page);
     await clickInTheMiddleOfTheScreen(page);
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
@@ -648,8 +620,6 @@ test.describe('Functional Groups', () => {
       Test case: EPMLSOPKET-12977
       Description: Expanded Functional Groups not overlap each other
     */
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await pressTab(page, 'Functional Groups');
     await selectFunctionalGroups(FunctionalGroups.Cbz, page);
     await clickInTheMiddleOfTheScreen(page);
 
@@ -667,8 +637,6 @@ test.describe('Functional Groups', () => {
       Test case: EPMLSOPKET-12987
       Description: After expand a Functional Group hotkeys not stop working
     */
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await pressTab(page, 'Functional Groups');
     await selectFunctionalGroups(FunctionalGroups.Cbz, page);
     await clickInTheMiddleOfTheScreen(page);
 

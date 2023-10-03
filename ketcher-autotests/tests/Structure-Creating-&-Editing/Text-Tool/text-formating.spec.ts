@@ -13,12 +13,37 @@ import {
   readFileContents,
   saveToFile,
   openFileAndAddToCanvas,
-  DELAY_IN_SECONDS,
-  delay,
-  selectLeftPanelButton,
-  LeftPanelButton,
+  copyAndPaste,
+  cutAndPaste,
 } from '@utils';
 import { addTextBoxToCanvas } from '@utils/selectors/addTextBoxToCanvas';
+
+async function openFromFileViaTextBox(filename: string, page: Page) {
+  const fileText = await readFileContents(filename);
+  await page.getByTestId('text').click();
+  await clickInTheMiddleOfTheScreen(page);
+  await page.getByRole('dialog').getByRole('textbox').fill(fileText);
+  await waitForLoad(page, () => {
+    pressButton(page, 'Apply');
+  });
+}
+
+async function createSomeStructure(page: Page) {
+  const a = 97;
+  const b = 79;
+  const c = 943;
+  const d = 114;
+  const e = 844;
+  const f = 579;
+  const g = 66;
+  const h = 611;
+  await page.mouse.move(a, b);
+  await page.mouse.down();
+  await page.mouse.move(c, d);
+  await page.mouse.move(e, f);
+  await page.mouse.move(g, h);
+  await page.mouse.up();
+}
 
 test.describe('Text tools test cases', () => {
   test.beforeEach(async ({ page }) => {
@@ -142,6 +167,9 @@ test.describe('Text tools test cases', () => {
     await takeEditorScreenshot(page);
     await saveToFile('ketfile01.ket', 'ketFile');
     await selectTopPanelButton(TopPanelButton.Clear, page);
+  });
+
+  test('Text tool - Open saved .ket file', async ({ page }) => {
     await selectTopPanelButton(TopPanelButton.Open, page);
     await openFromFileViaClipboard('tests/test-data/KET/ketfile01.ket', page);
     await clickInTheMiddleOfTheScreen(page);
@@ -155,27 +183,24 @@ test.describe('Text tools test cases', () => {
   test('Text tool - Cut/Copy/Paste', async ({ page }) => {
     // Test case: EPMLSOPKET-2272
     // Checking if user is able to copy and paste the created text objects
+    const x = 250;
+    const y = 300;
     await addTextBoxToCanvas(page);
     await page.getByRole('dialog').getByRole('textbox').fill('TEXT001');
     await pressButton(page, 'Apply');
-    await page.getByText('TEXT001').click();
-    await selectTopPanelButton(TopPanelButton.Copy, page);
-    await clickInTheMiddleOfTheScreen(page);
-    await page.keyboard.press('Control+v');
-    await page.getByTestId('canvas').click({ position: { x: 250, y: 300 } });
+    await copyAndPaste(page);
+    await page.getByTestId('canvas').click({ position: { x, y } });
     await takeEditorScreenshot(page);
   });
 
   test('Text tool - Checking if user is able to cut and paste the created text objects', async ({
     page,
   }) => {
-    await openFileAndAddToCanvas('KET/text-EPMLSOPKET-2272.ket', page);
+    // Opening a file with created ealier text (task EPMLSOPKET-2272 ) and doing copy/paste action on it
+    await openFileAndAddToCanvas('KET/two-text-objects.ket', page);
     await selectTopPanelButton(TopPanelButton.Undo, page);
     await selectTopPanelButton(TopPanelButton.Redo, page);
-    await selectNestedTool(page, SelectTool.LASSO_SELECTION);
-    await createSomeStructure(page);
-    await selectTopPanelButton(TopPanelButton.Cut, page);
-    await page.keyboard.press('Control+v');
+    await cutAndPaste(page);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await selectTopPanelButton(TopPanelButton.Undo, page);
@@ -187,7 +212,7 @@ test.describe('Text tools test cases', () => {
   }) => {
     // Test case: EPMLSOPKET-2274
     // Checking if its possible to select a text objects of any size by clicking on green frame
-    await openFileAndAddToCanvas('KET/text-file-EPMLSOPKET-2274.ket', page);
+    await openFileAndAddToCanvas('KET/text-object.ket', page);
     await page.getByText('TEXT').dblclick();
     await page.getByRole('dialog').getByRole('textbox').click();
     await page.keyboard.press('Control+a');
@@ -225,30 +250,3 @@ test.describe('Text tools test cases', () => {
     await clickInTheMiddleOfTheScreen(page);
   });
 });
-
-export async function openFromFileViaTextBox(filename: string, page: Page) {
-  const fileText = await readFileContents(filename);
-  await page.getByTestId('text').click();
-  await clickInTheMiddleOfTheScreen(page);
-  await page.getByRole('dialog').getByRole('textbox').fill(fileText);
-  await waitForLoad(page, () => {
-    pressButton(page, 'Apply');
-  });
-}
-
-export async function createSomeStructure(page: Page) {
-  const a = 97;
-  const b = 79;
-  const c = 943;
-  const d = 114;
-  const e = 844;
-  const f = 579;
-  const g = 66;
-  const h = 611;
-  await page.mouse.move(a, b);
-  await page.mouse.down();
-  await page.mouse.move(c, d);
-  await page.mouse.move(e, f);
-  await page.mouse.move(g, h);
-  await page.mouse.up();
-}

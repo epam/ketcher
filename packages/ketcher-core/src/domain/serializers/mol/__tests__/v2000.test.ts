@@ -137,7 +137,7 @@ describe('parseCTabV2000', () => {
       expect(struct.atoms.get(1)!.charge).toBe(+3);
       expect(struct.atoms.get(2)!.charge).toBe(+2);
       expect(struct.atoms.get(3)!.charge).toBe(+1);
-      expect(struct.atoms.get(4)!.charge).toBe(0);
+      expect(struct.atoms.get(4)!.charge).toBe(null);
       expect(struct.atoms.get(5)!.charge).toBe(-1);
       expect(struct.atoms.get(6)!.charge).toBe(-2);
       expect(struct.atoms.get(7)!.charge).toBe(-3);

@@ -53,9 +53,7 @@ function parseAtomLine(atomLine) {
 
     // obsolete
     massDifference: utils.parseDecimalInt(atomSplit[5]),
-    charge: utils.parseDecimalInt(atomSplit[6])
-      ? utils.fmtInfo.chargeMap[utils.parseDecimalInt(atomSplit[6])]
-      : null,
+    charge: utils.fmtInfo.chargeMap[utils.parseDecimalInt(atomSplit[6])],
 
     // query
     hCount: utils.parseDecimalInt(utils.parseDecimalInt(atomSplit[8])),

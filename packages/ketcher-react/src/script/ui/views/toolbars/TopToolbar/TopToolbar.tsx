@@ -149,6 +149,7 @@ export const TopToolbar = ({
         iconName="clear"
         shortcut={shortcuts.clear}
         isHidden={hiddenButtons.includes('clear')}
+        testId="clear-canvas-button"
       />
       <FileControls
         onFileOpen={onFileOpen}

@@ -28,7 +28,8 @@
   justify-content: space-between;
   overflow: hidden;
 
-  :global(.MuiOutlinedInput-root), input[type='text'] {
+  :global(.MuiOutlinedInput-root),
+  input[type='text'] {
     margin-top: 4px;
   }
 
@@ -42,7 +43,7 @@
     margin: 0;
     background-color: @color-primary-light;
     flex-grow: 1;
-    }
+  }
 
   > footer {
     box-shadow: 0 -2px 4px 0 @color-accordion-shadow;
@@ -62,7 +63,7 @@
   transition: transform 300ms ease-in-out;
 }
 
-.turnedIcon{
+.turnedIcon {
   transform: rotate(0deg);
 }
 
@@ -72,7 +73,7 @@
   border-bottom: 1px solid @color-grey-3;
   background-color: @color-background-primary;
 
-  &[aria-disabled="true"]{
+  &[aria-disabled='true'] {
     cursor: not-allowed;
     box-shadow: none;
     opacity: 0.6;
@@ -100,19 +101,18 @@
   overflow: hidden;
   width: @width-small - @margin-left-right * 2;
   padding: 0 12px;
-
 }
 
 .accordionDetailsWrapper {
-  border-bottom: 1px solid @color-grey-3 ;
+  border-bottom: 1px solid @color-grey-3;
 }
 
-.hiddenAccordion{
+.hiddenAccordion {
   max-height: 0;
 }
 
 .customQueryWrapper,
-.accordionDetails{
+.accordionDetails {
   position: relative;
   margin-top: @margin-left-right;
   color: @color-text-primary;
@@ -127,7 +127,7 @@
     margin-bottom: 4px;
     color: @color-text-secondary;
 
-    >:last-child > *,
+    > :last-child > *,
     > input {
       width: 137px;
       margin: 0 !important;
@@ -143,12 +143,12 @@
   }
 }
 
-.customQueryWrapper{
-  label{
-    justify-content: flex-start!important;
+.customQueryWrapper {
+  label {
+    justify-content: flex-start !important;
   }
 
-  textarea[name="customQuery"]{
+  textarea[name='customQuery'] {
     width: 100%;
     height: 55px;
     resize: none;

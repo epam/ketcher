@@ -3,7 +3,6 @@ import { test } from '@playwright/test';
 import {
   selectAtomInToolbar,
   AtomButton,
-  pressButton,
   selectFunctionalGroups,
   FunctionalGroups,
   selectSaltsAndSolvents,
@@ -16,7 +15,6 @@ import {
   takeEditorScreenshot,
   drawFGAndDrag,
   drawSaltAndDrag,
-  STRUCTURE_LIBRARY_BUTTON_NAME,
   waitForPageInit,
 } from '@utils';
 
@@ -44,35 +42,30 @@ test.describe('Click and drag Salts and Solvents on canvas', () => {
     await drawSaltAndDrag(SaltsAndSolvents.FormicAcid, SHIFT, page);
   });
 
-  test.fixme('Acetic acid appears near Cbz', async ({ page }) => {
+  test('Acetic acid appears near Cbz', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-11556
       Description: when click & drag with a Salts and Solvents on Functional Group
       Salts appears near FG where the left mouse button was released
     */
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await page.getByRole('tab', { name: 'Functional Groups' }).click();
     await selectFunctionalGroups(FunctionalGroups.Cbz, page);
     await clickInTheMiddleOfTheScreen(page);
 
     await drawSaltAndDrag(SaltsAndSolvents.AceticAcid, SHIFT, page);
   });
 
-  test.fixme(
-    'Propionic acid appears near Methane sulphonic acid',
-    async ({ page }) => {
-      /*
+  test('Propionic acid appears near Methane sulphonic acid', async ({
+    page,
+  }) => {
+    /*
       Test case: EPMLSOPKET-11557
       Description: when click & drag with a Salts and Solvents on Salts and Solvents
       Salts appears near Salts where the left mouse button was released
     */
-      await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-      await page.getByRole('tab', { name: 'Salts and Solvents' }).click();
-      await selectSaltsAndSolvents(SaltsAndSolvents.MethaneSulphonicAcid, page);
-      await clickInTheMiddleOfTheScreen(page);
-      await drawSaltAndDrag(SaltsAndSolvents.PropionicAcid, SHIFT, page);
-    },
-  );
+    await selectSaltsAndSolvents(SaltsAndSolvents.MethaneSulphonicAcid, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await drawSaltAndDrag(SaltsAndSolvents.PropionicAcid, SHIFT, page);
+  });
 
   test('Isobutanol appears near Oxygen atom', async ({ page }) => {
     /*
@@ -94,24 +87,19 @@ test.describe('Click and drag Salts and Solvents on canvas', () => {
     await drawSaltAndDrag(SaltsAndSolvents.Isobutanol, -SHIFT, page);
   });
 
-  test.fixme(
-    'AceticAcid appears near FMOC Functional Group',
-    async ({ page }) => {
-      /*
+  test('AceticAcid appears near FMOC Functional Group', async ({ page }) => {
+    /*
       Test case: EPMLSOPKET-11559
       Description: when click & drag with a Salts and Solvents
       on a FG connected with bond to another FG Salts appears
       near FG where the left mouse button was released
     */
-      await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-      await page.getByRole('tab', { name: 'Functional Groups' }).click();
-      await selectFunctionalGroups(FunctionalGroups.FMOC, page);
-      await clickInTheMiddleOfTheScreen(page);
+    await selectFunctionalGroups(FunctionalGroups.FMOC, page);
+    await clickInTheMiddleOfTheScreen(page);
 
-      await drawFGAndDrag(FunctionalGroups.Boc, SHIFT, page);
-      await resetCurrentTool(page);
-      // test fails because can't select AceticAcid
-      await drawSaltAndDrag(SaltsAndSolvents.AceticAcid, SHIFT, page);
-    },
-  );
+    await drawFGAndDrag(FunctionalGroups.Boc, SHIFT, page);
+    await resetCurrentTool(page);
+    // test fails because can't select AceticAcid
+    await drawSaltAndDrag(SaltsAndSolvents.AceticAcid, SHIFT, page);
+  });
 });

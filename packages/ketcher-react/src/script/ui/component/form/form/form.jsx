@@ -28,6 +28,7 @@ import { getSelectOptionsFromSchema } from '../../../utils';
 import { updateFormState } from '../../../state/modal/form';
 import { useFormContext } from '../../../../../hooks';
 import { cloneDeep } from 'lodash';
+import { IconButton } from 'components';
 
 class Form extends Component {
   constructor(props) {
@@ -42,6 +43,7 @@ class Form extends Component {
       const initialState = { ...init, init: true };
       onUpdate(initialState, valid, errs);
     }
+    this.updateState = this.updateState.bind(this);
   }
 
   componentDidUpdate(prevProps) {
@@ -53,7 +55,8 @@ class Form extends Component {
     } = this.props;
     if (
       (schema.key && schema.key !== prevProps.schema.key) ||
-      (rest.customValid !== prevProps.customValid && schema.title === 'Atom')
+      (rest.customValid !== prevProps.customValid &&
+        (schema.title === 'Atom' || schema.title === 'Bond'))
     ) {
       this.schema = propSchema(schema, rest);
       this.schema.serialize(result); // hack: valid first state
@@ -136,7 +139,13 @@ function Field(props) {
   const { dataError, ...fieldOpts } = stateStore.field(name, onChange);
   const Component = component;
   const formField = component ? (
-    <Component name={name} schema={desc} {...fieldOpts} {...rest} />
+    <Component
+      name={name}
+      schema={desc}
+      className={className}
+      {...fieldOpts}
+      {...rest}
+    />
   ) : (
     <Input
       name={name}
@@ -175,6 +184,57 @@ function Field(props) {
   );
 }
 
+function FieldWithModal(props) {
+  const { name, onChange, labelPos, className, onEdit, ...rest } = props;
+  const [anchorEl, setAnchorEl] = useState(null);
+  const { schema, stateStore } = useFormContext();
+  const desc = rest.schema || schema.properties[name];
+  const { dataError, ...fieldOpts } = stateStore.field(name, onChange);
+  const handlePopoverOpen = useCallback((event) => {
+    setAnchorEl(event.currentTarget);
+  }, []);
+  const handlePopoverClose = useCallback(() => {
+    setAnchorEl(null);
+  }, []);
+
+  return (
+    <Label
+      className={className}
+      error={dataError}
+      title={rest.title || desc.title}
+      labelPos={labelPos}
+      tooltip={rest?.tooltip}
+    >
+      <span
+        className={clsx({
+          [classes.dataError]: dataError,
+          [classes.inputWithEditButtonWrapper]: true,
+          [classes.inputWrapper]: true,
+        })}
+        onMouseEnter={handlePopoverOpen}
+        onMouseLeave={handlePopoverClose}
+      >
+        <Input name={name} schema={desc} {...fieldOpts} {...rest} />
+        <IconButton
+          onClick={() => {
+            onEdit(fieldOpts.onChange);
+          }}
+          iconName="edit"
+          className={classes.editButton}
+        />
+      </span>
+      {dataError && anchorEl && (
+        <ErrorPopover
+          anchorEl={anchorEl}
+          open={!!anchorEl}
+          error={dataError}
+          onClose={handlePopoverClose}
+        />
+      )}
+    </Label>
+  );
+}
+
 function CustomQueryField(props) {
   const {
     name,
@@ -196,7 +256,12 @@ function CustomQueryField(props) {
     setAnchorEl(null);
   }, []);
   const handleCheckboxChange = (value) => {
-    onCheckboxChange(value, stateStore.props.result, fieldOpts.onChange);
+    onCheckboxChange(
+      value,
+      stateStore.props.result,
+      fieldOpts.onChange,
+      stateStore.updateState,
+    );
   };
 
   return (
@@ -343,4 +408,4 @@ function getErrorsObj(errors) {
   return errs;
 }
 
-export { Field, CustomQueryField, SelectOneOf };
+export { Field, CustomQueryField, FieldWithModal, SelectOneOf };

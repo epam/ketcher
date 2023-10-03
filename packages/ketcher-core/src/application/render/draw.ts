@@ -1314,7 +1314,7 @@ function reactingCenter(
   return paper.path(pathDesc).attr(options.lineattr);
 }
 
-function topologyMark(
+function bondMark(
   paper: RaphaelPaper,
   point: Vec2,
   mark: string | null,
@@ -1612,7 +1612,7 @@ export default {
   bondHydrogen,
   bondDative,
   reactingCenter,
-  topologyMark,
+  bondMark,
   radicalCap,
   radicalBullet,
   bracket,

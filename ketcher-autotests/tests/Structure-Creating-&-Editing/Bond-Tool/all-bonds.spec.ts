@@ -23,7 +23,6 @@ import {
   openFileAndAddToCanvas,
   selectLeftPanelButton,
   pressButton,
-  STRUCTURE_LIBRARY_BUTTON_NAME,
   selectFunctionalGroups,
   FunctionalGroups,
   selectRingButton,
@@ -259,7 +258,7 @@ for (const bondToolKey of Object.keys(BondTool)) {
     });
 
     // TODO:
-    test.skip(`Manipulations with ${bondToolKey}`, async () => {
+    test.fixme(`Manipulations with ${bondToolKey}`, async () => {
       /**
        * Test case: EPMLSOPKET-1377, 1385, 1394, 1400, 1408, 1414, 1420 1426, 1432, 1441, 1448, 1455, 2242, 2248
        */
@@ -377,8 +376,6 @@ test.describe('Bond Tool', () => {
        *Test case: EPMLSOPKET-10086
        *Description: A bond is added to a contracted functional group and form a bond
        */
-      await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-      await page.getByRole('tab', { name: 'Functional Groups' }).click();
       await selectFunctionalGroups(FunctionalGroups.Boc, page);
       await clickInTheMiddleOfTheScreen(page);
       await selectDropdownTool(page, 'bonds', tool);

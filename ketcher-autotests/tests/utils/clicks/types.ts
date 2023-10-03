@@ -7,13 +7,52 @@ export type AtomLabelType =
   | 'Cl'
   | 'S'
   | 'F'
+  | 'Br'
+  | 'P'
   | 'I';
+
+export type AtomExtendedType =
+  | 'G'
+  | 'GH'
+  | 'G*'
+  | 'GH*'
+  | 'ACY'
+  | 'ACH'
+  | 'ABC'
+  | 'ABH'
+  | 'AYH'
+  | 'AYL'
+  | 'ALK'
+  | 'ALH'
+  | 'AEL'
+  | 'AEH'
+  | 'AHC'
+  | 'AHH'
+  | 'AOX'
+  | 'AOH'
+  | 'CYC'
+  | 'CYH'
+  | 'CXX'
+  | 'CXH'
+  | 'CBC'
+  | 'CBH'
+  | 'ARY'
+  | 'ARH'
+  | 'CAL'
+  | 'CAH'
+  | 'CEL'
+  | 'CEH'
+  | 'CHC'
+  | 'CHH'
+  | 'HAR'
+  | 'HAH';
 
 export type DropdownIds =
   | 'bonds'
   | 'rgroup-label'
   | 'select-rectangle'
   | 'reaction-arrow-open-angle'
+  | 'reaction-map'
   | 'shape-ellipse';
 
 export type DropdownToolIds =

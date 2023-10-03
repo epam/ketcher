@@ -133,18 +133,22 @@ function atomListToKet(source) {
 
 function bondToKet(source) {
   const result = {};
-
-  ifDef(result, 'type', source.type);
-  ifDef(result, 'atoms', [source.begin, source.end]);
-  ifDef(result, 'stereo', source.stereo, 0);
-  ifDef(result, 'topology', source.topology, 0);
-  ifDef(result, 'center', source.reactingCenterStatus, 0);
-  ifDef(result, 'cip', source.cip, '');
+  if (source.customQuery) {
+    ifDef(result, 'atoms', [source.begin, source.end]);
+    ifDef(result, 'customQuery', source.customQuery);
+  } else {
+    ifDef(result, 'type', source.type);
+    ifDef(result, 'atoms', [source.begin, source.end]);
+    ifDef(result, 'stereo', source.stereo, 0);
+    ifDef(result, 'topology', source.topology, 0);
+    ifDef(result, 'center', source.reactingCenterStatus, 0);
+    ifDef(result, 'cip', source.cip, '');
+  }
 
   return result;
 }
 
-function sgroupToKet(struct, source: SGroup) {
+function sgroupToKet(struct: Struct, source: SGroup) {
   const result = {};
 
   ifDef(result, 'type', source.type);
@@ -155,6 +159,9 @@ function sgroupToKet(struct, source: SGroup) {
       break;
     case 'MUL': {
       ifDef(result, 'mul', source.data.mul || 1);
+      break;
+    }
+    case 'queryComponent': {
       break;
     }
     case 'SRU': {

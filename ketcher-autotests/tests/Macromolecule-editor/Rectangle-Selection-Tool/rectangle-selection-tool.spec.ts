@@ -28,17 +28,35 @@ test.describe('Rectangle Selection Tool', () => {
     // Create 4 peptides on canvas
     const MONOMER_NAME = 'Tza___3-thiazolylalanine';
     const MONOMER_ALIAS = 'Tza';
-    await addMonomerToCanvas(page, MONOMER_NAME, 300, 300);
-    await addMonomerToCanvas(page, MONOMER_NAME, 400, 400);
-    await addMonomerToCanvas(page, MONOMER_NAME, 500, 500);
-    await addMonomerToCanvas(page, MONOMER_NAME, 500, 200);
 
-    // Get 4 peptides locators
-    const peptides = await page.getByText(MONOMER_ALIAS).locator('..');
-    const peptide1 = peptides.nth(0);
-    const peptide2 = peptides.nth(1);
-    const peptide3 = peptides.nth(2);
-    const peptide4 = peptides.nth(3);
+    const peptide1 = await addMonomerToCanvas(
+      page,
+      MONOMER_NAME,
+      MONOMER_ALIAS,
+      300,
+      300,
+    );
+    const peptide2 = await addMonomerToCanvas(
+      page,
+      MONOMER_NAME,
+      MONOMER_ALIAS,
+      400,
+      400,
+    );
+    const peptide3 = await addMonomerToCanvas(
+      page,
+      MONOMER_NAME,
+      MONOMER_ALIAS,
+      500,
+      500,
+    );
+    const peptide4 = await addMonomerToCanvas(
+      page,
+      MONOMER_NAME,
+      MONOMER_ALIAS,
+      500,
+      200,
+    );
 
     // Select bond tool
     await selectSingleBondTool(page);

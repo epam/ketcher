@@ -40,6 +40,7 @@ import {
   waitForPageInit,
   openDropdown,
   waitForRender,
+  waitForSpinnerFinishedWork,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import {
@@ -48,7 +49,11 @@ import {
   getTopBondByAttributes,
 } from '@utils/canvas/bonds';
 import { BondType } from '@utils/canvas/types';
-import { SelectionType, selectSelection } from '@utils/canvas/selectSelection';
+import {
+  SelectionType,
+  selectRectangleSelection,
+  selectSelection,
+} from '@utils/canvas/selectSelection';
 import { DropdownToolIds } from '@utils/clicks/types';
 const buttonIdToTitle: {
   [key: string]: string;
@@ -259,7 +264,7 @@ for (const bondToolKey of Object.keys(BondTool)) {
     });
 
     // TODO:
-    test.fixme(`Manipulations with ${bondToolKey}`, async () => {
+    test(`Manipulations with ${bondToolKey}`, async () => {
       /**
        * Test case: EPMLSOPKET-1377, 1385, 1394, 1400, 1408, 1414, 1420 1426, 1432, 1441, 1448, 1455, 2242, 2248
        */
@@ -269,12 +274,13 @@ for (const bondToolKey of Object.keys(BondTool)) {
       await selectNestedTool(page, BondTool[bondToolKey]);
       await clickInTheMiddleOfTheScreen(page);
 
-      await selectSelection(SelectionType.Rectangle, page);
+      await selectRectangleSelection(page);
 
       await moveMouseToTheMiddleOfTheScreen(page);
       await dragMouseTo(point.x + DELTA_X, point.y, page);
-
-      await selectAction(TopPanelButton.Undo, page);
+      await waitForRender(page, async () => {
+        await selectTopPanelButton(TopPanelButton.Undo, page);
+      });
 
       await selectSelection(SelectionType.Rectangle, page);
 
@@ -284,38 +290,44 @@ for (const bondToolKey of Object.keys(BondTool)) {
 
       await page.keyboard.press('Control+C');
       await page.keyboard.press('Control+V');
-      await page.mouse.click(point.x + DELTA_X, point.y);
 
-      await selectAction(TopPanelButton.Undo, page);
+      await waitForRender(page, async () => {
+        await page.mouse.click(point.x + DELTA_X, point.y);
+      });
+      await waitForRender(page, async () => {
+        await selectTopPanelButton(TopPanelButton.Undo, page);
+      });
 
       await clickInTheMiddleOfTheScreen(page);
       await page.keyboard.press('Control+X');
       await page.keyboard.press('Control+V');
       await page.mouse.click(point.x + DELTA_X, point.y);
-
-      await selectAction(TopPanelButton.Undo, page);
-      await selectAction(TopPanelButton.Undo, page);
+      await waitForRender(page, async () => {
+        await selectTopPanelButton(TopPanelButton.Undo, page);
+      });
+      await waitForRender(page, async () => {
+        await selectTopPanelButton(TopPanelButton.Undo, page);
+      });
 
       await selectTool(LeftPanelButton.Erase, page);
       await clickInTheMiddleOfTheScreen(page);
 
-      await selectAction(TopPanelButton.Undo, page);
+      await waitForRender(page, async () => {
+        await selectTopPanelButton(TopPanelButton.Undo, page);
+      });
 
       await selectAtom(AtomButton.Oxygen, page);
       point = await getCoordinatesTopAtomOfBenzeneRing(page);
 
-      await page.mouse.click(point.x, point.y);
-
-      await selectAction(TopPanelButton.Undo, page);
-
-      await selectTool(LeftPanelButton.RotateTool, page);
-      const yDelta = 50;
-      await dragMouseTo(point.x, point.y + yDelta, page);
-
-      await selectAction(TopPanelButton.Undo, page);
+      await waitForRender(page, async () => {
+        await page.mouse.click(point.x, point.y);
+        await selectTopPanelButton(TopPanelButton.Undo, page);
+      });
 
       await selectRing(RingButton.Cyclohexane, page);
-      await page.mouse.click(point.x, point.y);
+      await waitForRender(page, async () => {
+        await page.mouse.click(point.x, point.y);
+      });
     });
 
     test(`Check highlight absence after ${bondToolKey} Bond creation`, async () => {

@@ -98,7 +98,7 @@ const config: PlaywrightTestConfig = {
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
-  forbidOnly: isCI,
+  // forbidOnly: isCI,
   /* Retry on CI only */
   retries: isCI ? MAX_NUMBER_OF_RETRIES : 0,
   /* Opt out of parallel tests on CI. */

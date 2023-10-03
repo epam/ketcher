@@ -20,7 +20,6 @@ import { getBondByIndex } from '@utils/canvas/bonds';
 
 test.describe('Rectangle selection tool', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
     await waitForPageInit(page);
   });
 

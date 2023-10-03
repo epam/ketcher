@@ -26,7 +26,7 @@ test.describe('Attachment Point Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Opening the *.ket file with S-Group containing "Attachment point" instruction', async ({
+  test('Opening the *.ket file with S-Group containing "Attachment point"', async ({
     page,
   }) => {
     // Test case: EPMLSOPKET-18026
@@ -42,7 +42,7 @@ test.describe('Attachment Point Tool', () => {
   }) => {
     // Test case: EPMLSOPKET-18025
     await openFileAndAddToCanvas(
-      'Molfiles-V2000/test-EPMLSOPKET-18025.mol',
+      'Molfiles-V2000/s-group-with-attachment-points.mol',
       page,
     );
     const expectedFile = await getKet(page);
@@ -59,6 +59,11 @@ test.describe('Attachment Point Tool', () => {
       });
     expect(ketFile).toEqual(ketFileExpected);
     await selectTopPanelButton(TopPanelButton.Clear, page);
+  });
+
+  test('Opening saved .ket file and doing some action on it', async ({
+    page,
+  }) => {
     await openFileAndAddToCanvas(
       'KET/S-Group-structure-with-Attachment-point.ket',
       page,

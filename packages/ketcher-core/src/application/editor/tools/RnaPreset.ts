@@ -80,7 +80,7 @@ class RnaPresetTool implements Tool {
               this.editor.lastCursorPosition.x -
                 this.phosphatePreviewRenderer.width / 2 +
                 this.sugarPreviewRenderer?.width +
-                30,
+                45,
               this.editor.lastCursorPosition.y -
                 this.phosphatePreviewRenderer.height / 2,
             ),
@@ -96,7 +96,7 @@ class RnaPresetTool implements Tool {
               this.editor.lastCursorPosition.y -
                 this.rnaBasePreviewRenderer.height / 2 +
                 this.sugarPreviewRenderer.height +
-                30,
+                45,
             ),
             editorSettings,
           )

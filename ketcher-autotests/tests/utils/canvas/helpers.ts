@@ -157,9 +157,15 @@ export async function takeTopToolbarScreenshot(page: Page) {
   await expect(editor).toHaveScreenshot();
 }
 
+
 export async function takeBottomToolbarScreenshot(page: Page) {
   const editor = page.getByTestId('bottom-toolbar');
   await delay(DELAY_IN_SECONDS.THREE);
+  
+export async function takePolymerEditorScreenshot(page: Page) {
+  const maxTimeout = 3000;
+  const editor = page.locator('.Ketcher-polymer-editor-root');
+  await waitForRender(page, emptyFunction, maxTimeout);
   await expect(editor).toHaveScreenshot();
 }
 
@@ -167,6 +173,7 @@ export async function takeMultitoolDropdownScreenshot(page: Page) {
   const dropdown = page.locator('.default-multitool-dropdown');
   await expect(dropdown).toHaveScreenshot();
 }
+
 /**
  * Returns an editor screenshot
  * Usage: convenient for temporary comparison of different states

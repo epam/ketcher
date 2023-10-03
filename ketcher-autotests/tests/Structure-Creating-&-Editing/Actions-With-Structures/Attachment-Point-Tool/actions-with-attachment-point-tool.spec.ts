@@ -2,9 +2,7 @@ import { test, expect } from '@playwright/test';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
-  TopPanelButton,
   waitForPageInit,
-  selectTopPanelButton,
   saveToFile,
   receiveFileComparisonData,
 } from '@utils';
@@ -58,7 +56,6 @@ test.describe('Attachment Point Tool', () => {
           'tests/test-data/KET/S-Group-structure-with-Attachment-point.ket',
       });
     expect(ketFile).toEqual(ketFileExpected);
-    await selectTopPanelButton(TopPanelButton.Clear, page);
   });
 
   test('Opening saved .ket file and doing some action on it', async ({

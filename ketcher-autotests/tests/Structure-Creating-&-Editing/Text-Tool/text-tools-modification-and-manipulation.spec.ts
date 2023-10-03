@@ -18,6 +18,7 @@ import {
   selectNestedTool,
   SelectTool,
   resetCurrentTool,
+  waitForRender,
 } from '@utils';
 import { addTextBoxToCanvas } from '@utils/selectors/addTextBoxToCanvas';
 
@@ -253,23 +254,30 @@ test.describe('Text tools test cases', () => {
     page,
   }) => {
     // Checking if possible is perform different manipulations with text objects using different tools (zoom)
-    await addTextBoxToCanvas(page);
+    const numberOfPressZoomOut = 2;
+    const numberOfPressZoomIn = 2;
     const text4 = 'ABC123';
+    await addTextBoxToCanvas(page);
     await page.getByRole('dialog').getByRole('textbox').fill(text4);
     await pressButton(page, 'Apply');
     await selectTopPanelButton(TopPanelButton.Undo, page);
     await selectTopPanelButton(TopPanelButton.Redo, page);
-    // await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
-    // await selectNestedTool(page, SelectTool.FRAGMENT_SELECTION);
-    // await page.getByText(text4).hover();
     await page.keyboard.press('Control+a');
     await page.getByText(text4).click();
     await createSomeMovement(page);
-    await page.getByTestId('zoom-input').click();
-    await page.getByText('Zoom in').click();
-    await page.getByText('Zoom in').click();
-    await page.getByText('Zoom out').click();
-    await page.getByText('Zoom out').click();
+    for (let i = 0; i < numberOfPressZoomIn; i++) {
+      await waitForRender(page, async () => {
+        await page.keyboard.press('Control+=');
+      });
+    }
+
+    await takeEditorScreenshot(page);
+
+    for (let i = 0; i < numberOfPressZoomOut; i++) {
+      await waitForRender(page, async () => {
+        await page.keyboard.press('Control+_');
+      });
+    }
   });
 
   test('Text tool - Selection of a text object and a structure', async ({

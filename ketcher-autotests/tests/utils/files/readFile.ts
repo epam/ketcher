@@ -148,19 +148,6 @@ export async function saveToFile(filename: string, data: string) {
     );
   }
 }
-// export async function roundAndCompareStrings(str1: string, str2: string, decimalPlaces = 2) {
-//   const roundNumber = (number: string) => parseFloat(number).toFixed(decimalPlaces);
-
-//   // Replace numbers with rounded versions
-//   const roundedStr1 = str1.replace(/-?\d+(\.\d+)?/g, (match: string | undefined) =>
-//     match ? roundNumber(match) : ''
-//   );
-//   const roundedStr2 = str2.replace(/-?\d+(\.\d+)?/g, (match: string | undefined) =>
-//     match ? roundNumber(match) : ''
-//   );
-
-//   return roundedStr1 === roundedStr2;
-// }
 
 /*
 Example of usage:

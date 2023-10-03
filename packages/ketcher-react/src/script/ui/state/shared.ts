@@ -24,6 +24,7 @@ import {
   SupportedFormat,
   emitEventRequestIsFinished,
   Editor,
+  KetcherLogger,
 } from 'ketcher-core';
 
 import { supportedSGroupTypes } from './constants';
@@ -182,9 +183,10 @@ export function load(struct: Struct, options?) {
 
       dispatch(setAnalyzingFile(false));
       dispatch({ type: 'MODAL_CLOSE' });
-    } catch (err: any) {
+    } catch (e: any) {
+      KetcherLogger.error('shared.ts::load', e);
       dispatch(setAnalyzingFile(false));
-      err && errorHandler && errorHandler(err.message);
+      e && errorHandler && errorHandler(e.message);
     } finally {
       emitEventRequestIsFinished();
     }

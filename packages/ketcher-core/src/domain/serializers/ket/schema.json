@@ -180,11 +180,6 @@
               "type": "string",
               "enum": ["aromatic", "aliphatic"]
             },
-            "degree": {
-              "type": "integer",
-              "minimum": 0,
-              "maximum": 6
-            },
             "ringMembership": {
               "type": "integer",
               "minimum": 0,
@@ -199,16 +194,6 @@
               "type": "integer",
               "minimum": 0,
               "maximum": 5
-            },
-            "ringConnectivity": {
-              "type": "integer",
-              "minimum": 0,
-              "maximum": 5
-            },
-            "atomicMass": {
-              "type": "integer",
-              "minimum": 0,
-              "maximum": 1000
             },
             "chirality": {
               "type": "string",

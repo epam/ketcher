@@ -42,6 +42,7 @@ import assert from 'assert';
 import { polymerBondToDrawingEntity } from 'domain/serializers/ket/fromKet/polymerBondToDrawingEntity';
 import { getMonomerUniqueKey } from 'domain/helpers/monomers';
 import { monomerFactory } from 'application/editor/operations/monomer/monomerFactory';
+import { KetcherLogger } from 'utilities';
 
 function parseNode(node: any, struct: any) {
   const type = node.type;
@@ -193,7 +194,11 @@ export class KetSerializer implements Serializer<Struct> {
     let parsedFileContent: IKetMacromoleculesContent;
     try {
       parsedFileContent = JSON.parse(fileContent);
-    } catch (error) {
+    } catch (e) {
+      KetcherLogger.error(
+        'ketSerializer.ts::KetSerializer::parseAndValidateMacromolecules',
+        e,
+      );
       editor.events.error.dispatch('Error during file parsing');
       return { error: true };
     }

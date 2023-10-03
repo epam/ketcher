@@ -275,4 +275,34 @@ export class Vec2 {
   oxAngle(): number {
     return Math.atan2(this.y, this.x);
   }
+
+  static radians_to_degrees(radians) {
+    return radians * (180 / Math.PI);
+  }
+
+  static degrees_to_radians(degrees) {
+    return (degrees * Math.PI) / 180;
+  }
+
+  static oxAngleForVector(v1: Vec2, v2: Vec2): number {
+    return Math.atan2(v2.y - v1.y, v2.x - v1.x);
+  }
+
+  static findSecondPoint(
+    startPoint: { x: number; y: number },
+    lineLength: number,
+    lineAngleRadians: number,
+  ) {
+    const cos = Math.cos(lineAngleRadians);
+    const sin = Math.sin(lineAngleRadians);
+
+    const deltaX = lineLength * cos;
+    const deltaY = lineLength * sin;
+
+    const endPoint = {
+      x: startPoint.x + deltaX,
+      y: startPoint.y + deltaY,
+    };
+    return endPoint;
+  }
 }

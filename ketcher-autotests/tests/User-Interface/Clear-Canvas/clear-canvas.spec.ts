@@ -3,13 +3,11 @@ import {
   pressButton,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
-  DELAY_IN_SECONDS,
   TopPanelButton,
   selectRing,
   RingButton,
   clickInTheMiddleOfTheScreen,
   selectTopPanelButton,
-  delay,
   waitForPageInit,
 } from '@utils';
 import { addTextBoxToCanvas } from '@utils/selectors/addTextBoxToCanvas';
@@ -70,13 +68,14 @@ test.describe('Clear canvas', () => {
 
   test('Clear Canvas - Hotkeys', async ({ page }) => {
     // Test case:EPMLSOPKET-2864
+    const x = 500;
+    const y = 250;
     await addTextBoxToCanvas(page);
     await clickInTheMiddleOfTheScreen(page);
     await page.getByRole('dialog').getByRole('textbox').fill('one two three');
     await pressButton(page, 'Apply');
     await selectRing(RingButton.Benzene, page);
-    await page.getByTestId('canvas').click({ position: { x: 500, y: 250 } });
-    await delay(DELAY_IN_SECONDS.TWO);
+    await page.getByTestId('canvas').click({ position: { x, y } });
     await takeEditorScreenshot(page);
     await page.keyboard.press('Control+Delete');
     await openFileAndAddToCanvas('ketcher.mol', page);

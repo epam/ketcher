@@ -391,28 +391,20 @@ test.describe('Templates - Functional Group Tools2', () => {
     The 'Remove Abbreviation' option does not remove the atoms and bonds.
    */
     await selectFunctionalGroups(FunctionalGroups.Boc, page);
-    await waitForRender(page, async () => {
-      await clickInTheMiddleOfTheScreen(page);
-    });
+    await clickInTheMiddleOfTheScreen(page);
 
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
-    await waitForRender(page, async () => {
-      await clickInTheMiddleOfTheScreen(page, 'right');
-    });
+    await clickInTheMiddleOfTheScreen(page, 'right');
     await page.getByText('Expand Abbreviation').click();
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
 
-    await waitForRender(page, async () => {
-      await clickInTheMiddleOfTheScreen(page, 'right');
-    });
+    await clickInTheMiddleOfTheScreen(page, 'right');
     await page.getByText('Contract Abbreviation').click();
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
 
-    await waitForRender(page, async () => {
-      await clickInTheMiddleOfTheScreen(page, 'right');
-    });
+    await clickInTheMiddleOfTheScreen(page, 'right');
     await page.getByText('Remove Abbreviation').click();
     await resetCurrentTool(page);
   });

@@ -53,9 +53,7 @@ test.describe('Click User Templates on canvas', () => {
       Description: open template
     */
     await selectUserTemplatesAndPlaceInTheMiddle(TemplateLibrary.Azulene, page);
-    await waitForRender(page, async () => {
-      await clickInTheMiddleOfTheScreen(page);
-    });
+    await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
   });
 
@@ -257,18 +255,14 @@ test.describe('Click User Templates on canvas', () => {
       page,
       'C12(C(C3CN4CN5C6(CCN78CCC(C9CCCN9)C7CNN68)CCC5C4N3)CC3N1NCC3)CCCN2',
     );
-    await waitForRender(page, async () => {
-      await clickInTheMiddleOfTheScreen(page);
-    });
+    await clickInTheMiddleOfTheScreen(page);
     await saveToTemplates(page);
 
     await selectTopPanelButton(TopPanelButton.Clear, page);
     await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
     await page.getByRole('button', { name: 'User Templates (1)' }).click();
     await page.getByText('0NNNNHNHNNHNNHNH').click();
-    await waitForRender(page, async () => {
-      await clickInTheMiddleOfTheScreen(page);
-    });
+    await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
   });
 

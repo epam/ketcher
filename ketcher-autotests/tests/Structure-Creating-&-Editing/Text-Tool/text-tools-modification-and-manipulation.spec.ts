@@ -268,16 +268,4 @@ test.describe('Text tools test cases', () => {
     await page.mouse.up();
     await takeEditorScreenshot(page);
   });
-
-  // test('Text tool - Restore Down the window', async ({ page }) => {
-  // Test case: EPMLSOPKET-2237
-  //   await clickInTheMiddleOfTheScreen(page);
-  //   await page.keyboard.press('F11');
-  //   await delay(DELAY_IN_SECONDS.TWO);
-  //   await page.getByTestId('text').focus();
-  //   await page.getByTestId('text').hover();
-  //   await takeEditorScreenshot(page);
-  //   await delay(DELAY_IN_SECONDS.TWO);
-  //   await page.keyboard.press('F11');
-  // });
 });

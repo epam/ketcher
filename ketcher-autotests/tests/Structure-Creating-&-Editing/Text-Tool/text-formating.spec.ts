@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { Page, test } from '@playwright/test';
+import { test } from '@playwright/test';
 import {
   takeEditorScreenshot,
   selectTopPanelButton,
@@ -10,7 +10,6 @@ import {
   TopPanelButton,
   DELAY_IN_SECONDS,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  pasteFromClipboardAndAddToCanvas,
   FILE_TEST_DATA,
   openFileAndAddToCanvas,
   openPasteFromClipboard,

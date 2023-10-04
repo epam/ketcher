@@ -77,6 +77,18 @@ export async function getCoordinatesTopAtomOfBenzeneRing(page: Page) {
   };
 }
 
+export async function takePageScreenshot(
+  page: Page,
+  options?: { masks?: Locator[]; maxDiffPixelRatio?: number },
+) {
+  const maxTimeout = 3000;
+  await waitForRender(page, emptyFunction, maxTimeout);
+  await expect(page).toHaveScreenshot({
+    mask: options?.masks,
+    maxDiffPixelRatio: options?.maxDiffPixelRatio,
+  });
+}
+
 export async function takeEditorScreenshot(
   page: Page,
   options?: { masks?: Locator[]; maxDiffPixelRatio?: number },
@@ -107,13 +119,6 @@ export async function takeRightToolbarScreenshot(page: Page) {
 export async function takeTopToolbarScreenshot(page: Page) {
   const maxTimeout = 3000;
   const editor = page.getByTestId('top-toolbar');
-  await waitForRender(page, emptyFunction, maxTimeout);
-  await expect(editor).toHaveScreenshot();
-}
-
-export async function takePolymerEditorScreenshot(page: Page) {
-  const maxTimeout = 3000;
-  const editor = page.locator('.Ketcher-polymer-editor-root');
   await waitForRender(page, emptyFunction, maxTimeout);
   await expect(editor).toHaveScreenshot();
 }

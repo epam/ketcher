@@ -1143,9 +1143,13 @@ export function getAtomCustomQuery(atom) {
     label: getAtomLabelAttrText,
     charge: (value) => {
       if (value === '') return value;
-      const pch = /^([+-]?)([0-9]{1,3}|1000)([+-]?)$/.exec(value);
-      const t = pch ? parseInt(pch[1] + pch[3] + pch[2]).toString() : value;
-      return t[0] !== '-' ? `+${t}` : t;
+      const regExpResult = /^([+-]?)([0-9]{1,3}|1000)([+-]?)$/.exec(value);
+      const charge = regExpResult
+        ? parseInt(
+            regExpResult[1] + regExpResult[3] + regExpResult[2],
+          ).toString()
+        : value;
+      return charge[0] !== '-' ? `+${charge}` : charge;
     },
     explicitValence: (value) => `v${value}`,
     ringBondCount: (value) =>

@@ -37,6 +37,8 @@ let point: { x: number; y: number };
 const CANVAS_CLICK_X = 300;
 const CANVAS_CLICK_Y = 300;
 
+const MAX_BOND_LENGTH = 50;
+
 const anyAtom = 3;
 
 async function saveToTemplates(page: Page) {
@@ -80,7 +82,9 @@ test.describe('Functional Groups', () => {
     await takeEditorScreenshot(page);
 
     await page.getByText('Bz').click({ button: 'right' });
-    await page.getByText('Remove Abbreviation').click();
+    await waitForRender(page, async () => {
+      await page.getByText('Remove Abbreviation').click();
+    });
   });
 
   test('Open from V2000 file with contracted functional group', async ({
@@ -435,7 +439,9 @@ test.describe('Functional Groups', () => {
     await clickInTheMiddleOfTheScreen(page);
 
     await clickInTheMiddleOfTheScreen(page, 'right');
-    await page.getByText('Expand Abbreviation').click();
+    await waitForRender(page, async () => {
+      await page.getByText('Expand Abbreviation').click();
+    });
   });
 
   test('Ordinary elements should not show explicit valences (PO4H2)', async ({
@@ -449,7 +455,9 @@ test.describe('Functional Groups', () => {
     await clickInTheMiddleOfTheScreen(page);
 
     await clickInTheMiddleOfTheScreen(page, 'right');
-    await page.getByText('Expand Abbreviation').click();
+    await waitForRender(page, async () => {
+      await page.getByText('Expand Abbreviation').click();
+    });
   });
 
   test('Selection highlight is displayed correctly for functional groups with longer names', async ({
@@ -518,7 +526,9 @@ test.describe('Functional Groups', () => {
 
     await clickInTheMiddleOfTheScreen(page);
     await clickInTheMiddleOfTheScreen(page, 'right');
-    await page.getByText('Expand Abbreviation').click();
+    await waitForRender(page, async () => {
+      await page.getByText('Expand Abbreviation').click();
+    });
 
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
     point = await getAtomByIndex(page, { label: 'S' }, 0);
@@ -638,11 +648,15 @@ test.describe('Functional Groups', () => {
     */
     await openFileAndAddToCanvas('Molfiles-V2000/unknown-superatom.mol', page);
     await clickInTheMiddleOfTheScreen(page, 'right');
-    await page.getByText('Expand Abbreviation').click();
+    await waitForRender(page, async () => {
+      await page.getByText('Expand Abbreviation').click();
+    });
     await takeEditorScreenshot(page);
 
     await clickInTheMiddleOfTheScreen(page, 'right');
-    await page.getByText('Contract Abbreviation').click();
+    await waitForRender(page, async () => {
+      await page.getByText('Contract Abbreviation').click();
+    });
   });
 
   test('Check that expanded Functional Groups not overlap each other', async ({
@@ -655,12 +669,13 @@ test.describe('Functional Groups', () => {
     await selectFunctionalGroups(FunctionalGroups.Cbz, page);
     await clickInTheMiddleOfTheScreen(page);
 
-    // eslint-disable-next-line no-magic-numbers
-    await drawFGAndDrag(FunctionalGroups.Boc, 50, page);
+    await drawFGAndDrag(FunctionalGroups.Boc, MAX_BOND_LENGTH, page);
 
     await page.keyboard.press('Control+a');
     await clickInTheMiddleOfTheScreen(page, 'right');
-    await page.getByText('Expand Abbreviation').click();
+    await waitForRender(page, async () => {
+      await page.getByText('Expand Abbreviation').click();
+    });
   });
 
   test('After expand a Functional Group hotkeys not stop working', async ({
@@ -674,7 +689,9 @@ test.describe('Functional Groups', () => {
     await clickInTheMiddleOfTheScreen(page);
 
     await clickInTheMiddleOfTheScreen(page, 'right');
-    await page.getByText('Expand Abbreviation').click();
+    await waitForRender(page, async () => {
+      await page.getByText('Expand Abbreviation').click();
+    });
 
     await page.keyboard.press('n');
   });
@@ -692,7 +709,9 @@ test.describe('Functional Groups', () => {
     );
 
     await page.getByText('CO2Et').click({ button: 'right' });
-    await page.getByText('Contract Abbreviation').click();
+    await waitForRender(page, async () => {
+      await page.getByText('Contract Abbreviation').click();
+    });
   });
 
   test('After expand a Functional Group hotkeys for atoms not stop working', async ({
@@ -709,10 +728,10 @@ test.describe('Functional Groups', () => {
     await clickInTheMiddleOfTheScreen(page);
 
     await resetCurrentTool(page);
+    await page.getByText('Boc').click({ button: 'right' });
     await waitForRender(page, async () => {
-      await page.getByText('Boc').click({ button: 'right' });
+      await page.getByText('Expand Abbreviation').click();
     });
-    await page.getByText('Expand Abbreviation').click();
     await page.keyboard.press('n');
     await waitForRender(page, async () => {
       await page.mouse.click(x, y);

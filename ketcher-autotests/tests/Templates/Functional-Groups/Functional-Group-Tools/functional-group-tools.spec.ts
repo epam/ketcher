@@ -150,7 +150,9 @@ test.describe('Templates - Functional Group Tools', () => {
 
     await selectLeftPanelButton(LeftPanelButton.ChargeMinus, page);
     await clickInTheMiddleOfTheScreen(page);
-    await pressButton(page, 'Remove Abbreviation');
+    await waitForRender(page, async () => {
+      await pressButton(page, 'Remove Abbreviation');
+    });
 
     await selectLeftPanelButton(LeftPanelButton.ChargePlus, page);
     await clickInTheMiddleOfTheScreen(page);
@@ -183,7 +185,9 @@ test.describe('Templates - Functional Group Tools', () => {
 
     await selectLeftPanelButton(LeftPanelButton.SingleBond, page);
     await clickInTheMiddleOfTheScreen(page);
-    await pressButton(page, 'Remove Abbreviation');
+    await waitForRender(page, async () => {
+      await pressButton(page, 'Remove Abbreviation');
+    });
     await clickInTheMiddleOfTheScreen(page);
   });
 
@@ -200,7 +204,9 @@ test.describe('Templates - Functional Group Tools', () => {
 
     await selectLeftPanelButton(LeftPanelButton.Chain, page);
     await clickInTheMiddleOfTheScreen(page);
-    await pressButton(page, 'Remove Abbreviation');
+    await waitForRender(page, async () => {
+      await pressButton(page, 'Remove Abbreviation');
+    });
     await clickOnAtom(page, 'O', anyAtom);
     await dragMouseTo(x, y, page);
   });
@@ -215,7 +221,9 @@ test.describe('Templates - Functional Group Tools', () => {
 
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickInTheMiddleOfTheScreen(page);
-    await pressButton(page, 'Remove Abbreviation');
+    await waitForRender(page, async () => {
+      await pressButton(page, 'Remove Abbreviation');
+    });
     await clickInTheMiddleOfTheScreen(page);
   });
 
@@ -234,7 +242,9 @@ test.describe('Templates - Functional Group Tools', () => {
 
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
     await page.getByText('CO2Et').first().click({ button: 'right' });
-    await page.getByText('Remove Abbreviation').click();
+    await waitForRender(page, async () => {
+      await page.getByText('Remove Abbreviation').click();
+    });
 
     await selectTopPanelButton(TopPanelButton.Undo, page);
     await resetCurrentTool(page);
@@ -372,7 +382,9 @@ test.describe('Templates - Functional Group Tools2', () => {
     await selectRingButton(RingButton.Benzene, page);
     point = await getAtomByIndex(page, { label: 'C' }, 0);
     await page.mouse.click(point.x, point.y);
-    await pressButton(page, 'Remove Abbreviation');
+    await waitForRender(page, async () => {
+      await pressButton(page, 'Remove Abbreviation');
+    });
 
     await takeEditorScreenshot(page);
 
@@ -395,17 +407,23 @@ test.describe('Templates - Functional Group Tools2', () => {
 
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
     await clickInTheMiddleOfTheScreen(page, 'right');
-    await page.getByText('Expand Abbreviation').click();
+    await waitForRender(page, async () => {
+      await page.getByText('Expand Abbreviation').click();
+    });
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
 
     await clickInTheMiddleOfTheScreen(page, 'right');
-    await page.getByText('Contract Abbreviation').click();
+    await waitForRender(page, async () => {
+      await page.getByText('Contract Abbreviation').click();
+    });
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
 
     await clickInTheMiddleOfTheScreen(page, 'right');
-    await page.getByText('Remove Abbreviation').click();
+    await waitForRender(page, async () => {
+      await page.getByText('Remove Abbreviation').click();
+    });
     await resetCurrentTool(page);
   });
 
@@ -422,12 +440,16 @@ test.describe('Templates - Functional Group Tools2', () => {
 
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
     await clickInTheMiddleOfTheScreen(page, 'right');
-    await page.getByText('Expand Abbreviation').click();
+    await waitForRender(page, async () => {
+      await page.getByText('Expand Abbreviation').click();
+    });
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
 
     await clickInTheMiddleOfTheScreen(page, 'right');
-    await page.getByText('Contract Abbreviation').click();
+    await waitForRender(page, async () => {
+      await page.getByText('Contract Abbreviation').click();
+    });
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
 
@@ -470,7 +492,9 @@ test.describe('Templates - Functional Group Tools2', () => {
    */
     await openFileAndAddToCanvas('Molfiles-V2000/benzene-bond-fg.mol', page);
     await page.getByText('Boc').click({ button: 'right' });
-    await page.getByText('Expand Abbreviation').click();
+    await waitForRender(page, async () => {
+      await page.getByText('Expand Abbreviation').click();
+    });
   });
 
   test('Contract Functional Group on a structure', async ({ page }) => {
@@ -483,7 +507,9 @@ test.describe('Templates - Functional Group Tools2', () => {
       page,
     );
     await clickInTheMiddleOfTheScreen(page, 'right');
-    await page.getByText('Contract Abbreviation').click();
+    await waitForRender(page, async () => {
+      await page.getByText('Contract Abbreviation').click();
+    });
   });
 
   test('Bond between Functional Group and structure not disappears after adding Functional Group again', async ({
@@ -642,18 +668,24 @@ test.describe('Templates - Functional Group Tools3', () => {
     );
     await page.keyboard.press('Control+a');
     await page.getByText('Boc').click({ button: 'right' });
-    await page.getByText('Expand Abbreviation').click();
+    await waitForRender(page, async () => {
+      await page.getByText('Expand Abbreviation').click();
+    });
     await takeEditorScreenshot(page);
 
     await page.keyboard.press('Control+a');
     await clickInTheMiddleOfTheScreen(page, 'right');
-    await page.getByText('Contract Abbreviation').click();
+    await waitForRender(page, async () => {
+      await page.getByText('Contract Abbreviation').click();
+    });
     await takeEditorScreenshot(page);
 
     await page.keyboard.press('Control+a');
     const point = await getAtomByIndex(page, { label: 'C' }, 0);
     await page.mouse.click(point.x, point.y, { button: 'right' });
-    await page.getByText('Remove Abbreviation').click();
+    await waitForRender(page, async () => {
+      await page.getByText('Remove Abbreviation').click();
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -690,7 +722,9 @@ test.describe('Templates - Functional Group Tools3', () => {
 
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
     await page.getByText('Bn').click({ button: 'right' });
-    await page.getByText('Expand Abbreviation').click();
+    await waitForRender(page, async () => {
+      await page.getByText('Expand Abbreviation').click();
+    });
 
     await selectTopPanelButton(TopPanelButton.Aromatize, page);
     await takeEditorScreenshot(page);
@@ -725,7 +759,9 @@ test.describe('Templates - Functional Group Tools3', () => {
 
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
     await page.getByText('CCl3').click({ button: 'right' });
-    await page.getByText('Expand Abbreviation').click();
+    await waitForRender(page, async () => {
+      await page.getByText('Expand Abbreviation').click();
+    });
 
     await waitForRender(page, async () => {
       await selectTopPanelButton(TopPanelButton.Layout, page);

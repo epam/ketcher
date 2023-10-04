@@ -110,7 +110,10 @@ export function getSearchFunction(initialAngle, canvasOffset, monomer) {
 
     let newAngle;
 
-    if ((newPoint as Element).__data__ === monomer.renderer) {
+    if (
+      (newPoint as Element).__data__?.bodyElement ===
+      monomer.renderer.bodyElement
+    ) {
       newAngle = initialAngle;
     } else {
       newAngle = initialAngle - 180;

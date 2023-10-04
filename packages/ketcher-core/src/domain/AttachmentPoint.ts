@@ -44,6 +44,10 @@ export class AttachmentPoint {
     label: string,
     x,
     y,
+    length = AttachmentPoint.attachmentPointLength,
+    y2 = 0,
+    cx = -12,
+    cy = 0,
   ) {
     let fill = this.colors.fill;
     let stroke = this.colors.stroke;
@@ -65,16 +69,16 @@ export class AttachmentPoint {
       .append('line')
       .attr('x1', 0)
       .attr('y1', 0)
-      .attr('x2', -AttachmentPoint.attachmentPointLength)
-      .attr('y2', 0)
+      .attr('x2', -length)
+      .attr('y2', y2)
       .attr('stroke', stroke)
       .attr('stroke-width', '2px');
 
     attachmentPointRotationGroup
       .append('circle')
       .attr('r', 6)
-      .attr('cx', -12)
-      .attr('cy', 0)
+      .attr('cx', cx)
+      .attr('cy', cy)
       .attr('stroke', fill === 'white' ? '#0097A8' : 'white')
       .attr('stroke-width', '1px')
       .attr('fill', fill);

@@ -391,20 +391,28 @@ test.describe('Templates - Functional Group Tools2', () => {
     The 'Remove Abbreviation' option does not remove the atoms and bonds.
    */
     await selectFunctionalGroups(FunctionalGroups.Boc, page);
-    await clickInTheMiddleOfTheScreen(page);
+    await waitForRender(page, async () => {
+      await clickInTheMiddleOfTheScreen(page);
+    });
 
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
-    await clickInTheMiddleOfTheScreen(page, 'right');
+    await waitForRender(page, async () => {
+      await clickInTheMiddleOfTheScreen(page, 'right');
+    });
     await page.getByText('Expand Abbreviation').click();
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
 
-    await clickInTheMiddleOfTheScreen(page, 'right');
+    await waitForRender(page, async () => {
+      await clickInTheMiddleOfTheScreen(page, 'right');
+    });
     await page.getByText('Contract Abbreviation').click();
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
 
-    await clickInTheMiddleOfTheScreen(page, 'right');
+    await waitForRender(page, async () => {
+      await clickInTheMiddleOfTheScreen(page, 'right');
+    });
     await page.getByText('Remove Abbreviation').click();
     await resetCurrentTool(page);
   });
@@ -792,6 +800,17 @@ test.describe('Templates - Functional Group Tools3', () => {
     await waitForRender(page, async () => {
       await clickOnAtom(page, 'C', anyAtom);
     });
+    await takeEditorScreenshot(page);
+  });
+
+  test('Contracted Functional Group in 3D Viewer', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-3938
+    Description: Contracted Functional Group shown as expanded in 3D view
+   */
+    await selectFunctionalGroups(FunctionalGroups.Boc, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await selectTopPanelButton(TopPanelButton.ThreeD, page);
     await takeEditorScreenshot(page);
   });
 });

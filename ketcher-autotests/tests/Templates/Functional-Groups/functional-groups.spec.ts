@@ -694,4 +694,28 @@ test.describe('Functional Groups', () => {
     await page.getByText('CO2Et').click({ button: 'right' });
     await page.getByText('Contract Abbreviation').click();
   });
+
+  test('After expand a Functional Group hotkeys for atoms not stop working', async ({
+    page,
+  }) => {
+    /*
+    Test case: EPMLSOPKET-12988
+    Description: After pressing hotkey 'N' it can be placed on canvas.
+    Test working not properly. We have open bug https://github.com/epam/ketcher/issues/2591
+    */
+    const x = 300;
+    const y = 300;
+    await selectFunctionalGroups(FunctionalGroups.Boc, page);
+    await clickInTheMiddleOfTheScreen(page);
+
+    await resetCurrentTool(page);
+    await waitForRender(page, async () => {
+      await page.getByText('Boc').click({ button: 'right' });
+    });
+    await page.getByText('Expand Abbreviation').click();
+    await page.keyboard.press('n');
+    await waitForRender(page, async () => {
+      await page.mouse.click(x, y);
+    });
+  });
 });

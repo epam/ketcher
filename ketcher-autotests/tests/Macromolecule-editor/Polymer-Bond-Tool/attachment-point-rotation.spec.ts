@@ -65,8 +65,10 @@ test.describe('Check attachment point rotation', () => {
     Description: when monomers are moved, attachment points move also
     */
 
-    await addMonomerToCanvas(page, 'Tza', 300, 300);
-    await addMonomerToCanvas(page, 'Tza', 400, 400);
+    const MONOMER_NAME = 'Tza___3-thiazolylalanine';
+
+    await addMonomerToCanvas(page, MONOMER_NAME, 300, 300);
+    await addMonomerToCanvas(page, MONOMER_NAME, 400, 400);
 
     // Get 4 peptides locators
     const peptides = await page.getByText('Tza').locator('..');

@@ -137,7 +137,6 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
   }) => {
     /*
      * Test case: EPMLSOPKET-4702 (creating file)
-     * Test can be related to existing bug: https://github.com/epam/ketcher/issues/3153
      */
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
 
@@ -181,9 +180,6 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
     await page.mouse.click(x + shiftForSecondHydrogen, y, {
       button: 'left',
     });
-
-    const expectedKetFile = await getKet(page);
-    await saveToFile('KET/ket-4702-to-compare.ket', expectedKetFile);
   });
 
   test('Open/Import structure as a KET file - open KET file', async ({
@@ -191,14 +187,17 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
   }) => {
     /*
      * Test case: EPMLSOPKET-4702 (opening file)
-     * Test is failing due to existing bug: https://github.com/epam/ketcher/issues/3153
+     * Test is related to the existing bug: https://github.com/epam/ketcher/issues/3153
      */
     await openFileAndAddToCanvas('KET/ket-4702-to-compare.ket', page);
+
+    const expectedKetFile = await getKet(page);
+    await saveToFile('KET/ket-4702-expected.ket', expectedKetFile);
 
     const { fileExpected: ketFileExpected, file: ketFile } =
       await receiveFileComparisonData({
         page,
-        expectedFileName: 'tests/test-data/KET/ket-4702-to-compare.ket',
+        expectedFileName: 'tests/test-data/KET/ket-4702-expected.ket',
       });
 
     expect(ketFile).toEqual(ketFileExpected);

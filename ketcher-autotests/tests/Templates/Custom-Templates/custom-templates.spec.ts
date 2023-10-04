@@ -9,6 +9,7 @@ import {
   clickInTheMiddleOfTheScreen,
   selectFunctionalGroups,
   FunctionalGroups,
+  selectUserTemplatesAndRename,
 } from '@utils';
 
 test.describe('Open Ketcher', () => {
@@ -148,5 +149,20 @@ test.describe('Open Ketcher', () => {
     await page.getByRole('button', { name: 'Aromatics (18)' }).click();
     await page.getByTitle('Azulene').getByRole('button').click();
     await page.getByRole('button', { name: 'Edit' }).click();
+  });
+
+  test('Edit templates - Template Name', async ({ page }) => {
+    /*
+   Test case: EPMLSOPKET-1701 
+   Click the 'Custom Template' button.
+   Paste in the 'Molecule name' field text (more than 128 symbols).
+   */
+    await selectUserTemplatesAndRename(TemplateLibrary.Azulene, page);
+    await page.getByPlaceholder('template').click();
+    await page
+      .getByPlaceholder('template')
+      .fill(
+        'My new template for everyone who want to create new table with more than 128 symbols of elements like Azulene with merged Cyclopentadiene',
+      );
   });
 });

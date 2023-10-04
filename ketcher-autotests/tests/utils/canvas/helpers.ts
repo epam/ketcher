@@ -10,6 +10,8 @@ import { ELEMENT_TITLE } from './types';
 import {
   DELAY_IN_SECONDS,
   RingButton,
+  STRUCTURE_LIBRARY_BUTTON_NAME,
+  TemplateLibrary,
   TopPanelButton,
   selectRing,
   waitForRender,
@@ -34,6 +36,17 @@ export async function drawCyclopentadieneRing(page: Page) {
   // await page.getByRole('button', { name: 'Cyclopentadiene (T)' }).click();
   await selectRing(RingButton.Cyclopentadiene, page);
   await clickInTheMiddleOfTheScreen(page);
+}
+
+export async function selectUserTemplatesAndRename(
+  itemToChoose: TemplateLibrary,
+  page: Page,
+) {
+  await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+  await page.getByRole('tab', { name: 'Template Library' }).click();
+  await page.getByRole('button', { name: 'Aromatics (18)' }).click();
+  await page.getByTitle(itemToChoose).getByRole('button').click();
+  await page.getByPlaceholder('template').click();
 }
 
 export async function drawElementByTitle(
@@ -157,11 +170,11 @@ export async function takeTopToolbarScreenshot(page: Page) {
   await expect(editor).toHaveScreenshot();
 }
 
-
 export async function takeBottomToolbarScreenshot(page: Page) {
   const editor = page.getByTestId('bottom-toolbar');
   await delay(DELAY_IN_SECONDS.THREE);
-  
+}
+
 export async function takePolymerEditorScreenshot(page: Page) {
   const maxTimeout = 3000;
   const editor = page.locator('.Ketcher-polymer-editor-root');

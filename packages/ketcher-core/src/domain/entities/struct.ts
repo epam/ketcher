@@ -290,6 +290,7 @@ export class Struct {
     });
 
     this.functionalGroups.forEach((fg) => {
+      if (fg.relatedSGroup.atoms.some((aid) => !atomSet!.has(aid))) return;
       fg = FunctionalGroup.clone(fg);
       cp.functionalGroups.add(fg);
     });

@@ -1,6 +1,7 @@
 import { DOMSubscription } from 'subscription';
 import {
   Bond,
+  FunctionalGroup,
   Pile,
   SGroup,
   SGroupAttachmentPoint,
@@ -123,9 +124,15 @@ export class CoreEditor {
     }
   }
 
-  private domEventSetup() {
+  public unsubscribeEvents() {
+    for (const eventName in this.events) {
+      this.events[eventName].handlers = [];
+    }
+  }
+
+  get trackedDomEvents() {
     const trackedDomEvents: {
-      target: Node;
+      target: Element | Document;
       eventName: string;
       toolEventHandler: ToolEventHandlerName;
     }[] = [
@@ -171,7 +178,11 @@ export class CoreEditor {
       },
     ];
 
-    trackedDomEvents.forEach(({ target, eventName, toolEventHandler }) => {
+    return trackedDomEvents;
+  }
+
+  private domEventSetup() {
+    this.trackedDomEvents.forEach(({ target, eventName, toolEventHandler }) => {
       this.events[eventName] = new DOMSubscription();
       const subs = this.events[eventName];
 
@@ -239,6 +250,7 @@ export class CoreEditor {
   }
 
   public switchToMicromolecules() {
+    this.unsubscribeEvents();
     const struct = this.micromoleculesEditor.struct();
     const reStruct = this.micromoleculesEditor.render.ctab;
     let lastId = 0;
@@ -287,9 +299,8 @@ export class CoreEditor {
         lastId = struct.atoms.size + struct.bonds.size;
         reStruct.sgroups.set(sgroupId, new ReSGroup(monomerMicromolecule));
 
-        // struct.functionalGroups.add(new FunctionalGroup(monomerMicromolecule));
+        struct.functionalGroups.add(new FunctionalGroup(monomerMicromolecule));
       }
-      console.log(struct.clone());
     });
 
     this.drawingEntitiesManager.polymerBonds.forEach((polymerBond) => {

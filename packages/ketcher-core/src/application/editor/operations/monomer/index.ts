@@ -20,7 +20,7 @@ import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { Operation } from 'domain/entities/Operation';
 
 export class MonomerAddOperation implements Operation {
-  constructor(private monomer: BaseMonomer, private callback?: () => void) {}
+  constructor(public monomer: BaseMonomer, private callback?: () => void) {}
 
   public execute(renderersManager: RenderersManager) {
     renderersManager.addMonomer(this.monomer, this.callback);

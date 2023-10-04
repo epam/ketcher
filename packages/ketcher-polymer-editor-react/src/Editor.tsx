@@ -120,6 +120,7 @@ function Editor({ theme }: EditorProps) {
 
     return () => {
       dispatch(destroyEditor(null));
+      dispatch(loadMonomerLibrary([]));
     };
   }, [dispatch]);
 

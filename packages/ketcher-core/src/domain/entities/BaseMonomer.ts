@@ -181,11 +181,6 @@ export class BaseMonomer extends DrawingEntity {
         return false;
       }
     });
-    if (!atomsWithRn.size) {
-      throw new Error(
-        `No attachment points for ${this.monomerItem.label} found`,
-      );
-    }
     const RnList = {};
     for (let i = 1; i <= atomsWithRn.size; i++) {
       const label = `R${i}`;

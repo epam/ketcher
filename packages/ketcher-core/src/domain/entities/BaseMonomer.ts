@@ -170,28 +170,23 @@ export class BaseMonomer extends DrawingEntity {
     return Boolean(this.getPotentialBondByAttachmentPoint(attachmentPointName));
   }
 
-  private getAttachmentPointDict(): Record<
-    AttachmentPointName,
-    PolymerBond | null
+  private getAttachmentPointDict(): Partial<
+    Record<AttachmentPointName, PolymerBond | null>
   > {
-    const atomsWithRn = this.monomerItem.struct.atoms.filter((_, value) => {
-      if (value.rglabel) {
-        return true;
-      } else {
-        return false;
-      }
+    const attachmentAtoms = this.monomerItem.struct.atoms.filter((_, value) => {
+      return Boolean(value.rglabel);
     });
-    if (!atomsWithRn.size) {
+    if (!attachmentAtoms.size) {
       throw new Error(
         `No attachment points for ${this.monomerItem.label} found`,
       );
     }
     const RnList = {};
-    for (let i = 1; i <= atomsWithRn.size; i++) {
+    for (let i = 1; i <= attachmentAtoms.size; i++) {
       const label = `R${i}`;
       RnList[label] = null;
     }
-    return RnList as Record<AttachmentPointName, PolymerBond | null>;
+    return RnList;
   }
 
   public get startBondAttachmentPoint() {

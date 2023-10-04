@@ -11,7 +11,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   private editorEvents: typeof editorEvents;
   private selectionCircle?: D3SvgElementSelection<SVGCircleElement, void>;
   private selectionBorder?: D3SvgElementSelection<SVGUseElement, void>;
-  private RnAttachmentPointList:
+  private attachmentPointElements:
     | D3SvgElementSelection<SVGGElement, void>[]
     | [] = [];
 
@@ -64,7 +64,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
           this.monomer.listOfAttachmentPoints[i],
           i,
         );
-        this.RnAttachmentPointList.push(atPoint as never);
+        this.attachmentPointElements.push(atPoint as never);
       }
     } else {
       this.removeAttachmentPoints();
@@ -157,10 +157,10 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   }
 
   public removeAttachmentPoints() {
-    this.RnAttachmentPointList.forEach((item) => {
+    this.attachmentPointElements.forEach((item) => {
       item.remove();
     });
-    this.RnAttachmentPointList = [];
+    this.attachmentPointElements = [];
   }
 
   private appendRootElement(

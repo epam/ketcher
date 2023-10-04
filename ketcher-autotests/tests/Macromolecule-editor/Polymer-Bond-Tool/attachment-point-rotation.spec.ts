@@ -6,6 +6,7 @@ import {
   selectSingleBondTool,
   takePageScreenshot,
   waitForPageInit,
+  takeEditorScreenshot,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
@@ -53,7 +54,7 @@ test.describe('Check attachment point rotation', () => {
     // Hover 2nd peptide
     await peptide2.hover();
 
-    await takePageScreenshot(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Move monomer bonded with another monomers and check attachment points', async ({
@@ -64,12 +65,8 @@ test.describe('Check attachment point rotation', () => {
     Description: when monomers are moved, attachment points move also
     */
 
-    // Choose peptide
-    await page.getByText('Tza').click();
-
-    // Create 4 peptides on canvas
-    await page.mouse.click(300, 300);
-    await page.mouse.click(400, 400);
+    await addMonomerToCanvas(page, 'Tza', 300, 300);
+    await addMonomerToCanvas(page, 'Tza', 400, 400);
 
     // Get 4 peptides locators
     const peptides = await page.getByText('Tza').locator('..');
@@ -85,7 +82,7 @@ test.describe('Check attachment point rotation', () => {
     // Hover 1th peptide
     await peptide1.hover();
 
-    await takePageScreenshot(page);
+    await takeEditorScreenshot(page);
 
     // Move selected monomer
     await selectRectangleSelectionTool(page);
@@ -98,6 +95,6 @@ test.describe('Check attachment point rotation', () => {
     // Hover 1th peptide
     await peptide1.hover();
 
-    await takePageScreenshot(page);
+    await takeEditorScreenshot(page);
   });
 });

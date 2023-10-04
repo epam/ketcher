@@ -8,6 +8,7 @@ import {
   BUTTON__ADD_TO_PRESETS,
 } from '../../../constants/testIdConstants';
 import { waitForPageInit } from '@utils/common';
+import { takePageScreenshot } from '@utils';
 
 /* 
 Test case: #3063 - Add e2e tests for Macromolecule editor
@@ -56,9 +57,7 @@ test.describe('Macromolecules custom presets', () => {
 
     await page.getByTestId(BUTTON__ADD_TO_PRESETS).click();
 
-    await page.screenshot({
-      path: 'tests/Macromolecule-editor/screenshots/add-custom-preset-add.png',
-    });
+    await takePageScreenshot(page);
 
     await page.getByTestId('duplicate-btn').click();
 
@@ -70,10 +69,7 @@ test.describe('Macromolecules custom presets', () => {
 
     await page.getByTestId('save-btn').click();
 
-    await page.screenshot({
-      path: 'tests/Macromolecule-editor/screenshots/add-custom-preset-duplicate.png',
-      fullPage: true,
-    });
+    await takePageScreenshot(page);
   });
 
   test('Add new preset with two monomers and add it to canvas', async ({
@@ -114,9 +110,6 @@ test.describe('Macromolecules custom presets', () => {
     await page.click('[data-testid="MyRNA_baA_25R_."]');
 
     await page.click('#polymer-editor-canvas');
-    await page.screenshot({
-      path: 'tests/Macromolecule-editor/screenshots/add-custom-preset-add-to-canvas.png',
-      fullPage: true,
-    });
+    await takePageScreenshot(page);
   });
 });

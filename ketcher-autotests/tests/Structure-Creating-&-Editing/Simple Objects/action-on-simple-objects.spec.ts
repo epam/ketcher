@@ -1,4 +1,4 @@
-import { Page, test } from '@playwright/test';
+import { Page, test, expect } from '@playwright/test';
 import {
   LeftPanelButton,
   openFileAndAddToCanvas,
@@ -15,8 +15,12 @@ import {
   copyAndPaste,
   selectTopPanelButton,
   TopPanelButton,
-  clickOnTheCanvas,
+  saveToFile,
+  receiveFileComparisonData,
+  pressButton,
+  STRUCTURE_LIBRARY_BUTTON_NAME,
 } from '@utils';
+import { getKet } from '@utils/formats';
 
 const ellipseWidth = 120;
 const ellipseHeight = 100;
@@ -66,6 +70,32 @@ async function createSomeMove(page: Page) {
   await page.mouse.move(c, d);
   await page.mouse.move(e, f);
   await page.mouse.up();
+}
+
+async function simpleObjectWithBenzene(page: Page) {
+  const a = 727;
+  const b = 359;
+  const c = 61;
+  const d = 100;
+  await openFileAndAddToCanvas('KET/simple-objects.ket', page);
+  await page.keyboard.press('Control+a');
+  await page.mouse.move(a, b);
+  await page.mouse.down();
+  await dragMouseTo(c, d, page);
+  await waitForRender(page, async () => {
+    await page.keyboard.press('Control+a');
+    await page.keyboard.press('Control+_');
+  });
+  await clickInTheMiddleOfTheScreen(page);
+  await drawBenzeneRing(page);
+}
+
+async function saveToTemplates(page: Page) {
+  await selectTopPanelButton(TopPanelButton.Save, page);
+  await page.getByRole('button', { name: 'Save to Templates' }).click();
+  await page.getByPlaceholder('template').click();
+  await page.getByPlaceholder('template').fill('My New Template');
+  await page.getByRole('button', { name: 'Save', exact: true }).click();
 }
 
 test.describe('Action on simples objects', () => {
@@ -148,6 +178,7 @@ test.describe('Action on simples objects', () => {
     page,
   }) => {
     // Test case: EPMLSOPKET-1984
+    // Copy/ Cut/ Paste action on a file with simple objects
     const numberOfPressZoomOut = 5;
     const numberOfUndo = 3;
     const numberOfRedo = 3;
@@ -169,5 +200,39 @@ test.describe('Action on simples objects', () => {
     for (let i = 0; i < numberOfRedo; i++) {
       await selectTopPanelButton(TopPanelButton.Redo, page);
     }
+  });
+
+  test('Simple Objects - Adding structure into simple objects', async ({
+    page,
+  }) => {
+    // Test case: EPMLSOPKET-1982
+    // Open file with simple object and adding some structure
+    await simpleObjectWithBenzene(page);
+  });
+
+  test('Simple objects - Open and save as .ket file', async ({ page }) => {
+    await openFileAndAddToCanvas('KET/simple-objects-with-changes.ket', page);
+    const expectedFile = await getKet(page);
+    await saveToFile(
+      'KET/simple-objects-with-changes-expected.ket',
+      expectedFile,
+    );
+
+    const { fileExpected: ketFileExpected, file: ketFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/KET/simple-objects-with-changes-expected.ket',
+      });
+
+    expect(ketFile).toEqual(ketFileExpected);
+  });
+
+  test('Simple Objects - Save to Templates', async ({ page }) => {
+    await simpleObjectWithBenzene(page);
+    await saveToTemplates(page);
+    await selectTopPanelButton(TopPanelButton.Clear, page);
+    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+    await page.getByRole('button', { name: 'User Templates (1)' }).click();
   });
 });

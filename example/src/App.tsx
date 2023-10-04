@@ -71,6 +71,7 @@ const App = () => {
         structServiceProvider={structServiceProvider}
         onInit={(ketcher: Ketcher) => {
           window.ketcher = ketcher;
+
           window.parent.postMessage(
             {
               eventType: 'init',

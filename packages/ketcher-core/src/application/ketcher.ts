@@ -27,7 +27,7 @@ import { KetSerializer, MolfileFormat } from 'domain/serializers';
 import { Struct } from 'domain/entities';
 import assert from 'assert';
 import { EventEmitter } from 'events';
-import { runAsyncAction } from 'utilities';
+import { LogSettings, LogLevel, runAsyncAction } from 'utilities';
 
 const allowedApiSettings = {
   'general.dearomatize-on-load': 'dearomatize-on-load',
@@ -80,6 +80,7 @@ function getStructure(
 }
 
 export class Ketcher {
+  logging: LogSettings;
   #structService: StructService;
   #formatterFactory: FormatterFactory;
   #editor: Editor;
@@ -108,6 +109,11 @@ export class Ketcher {
     this.#formatterFactory = formatterFactory;
     this.#indigo = new Indigo(this.#structService);
     this.#eventBus = new EventEmitter();
+    this.logging = {
+      enabled: false,
+      level: LogLevel.ERROR,
+      showTrace: false,
+    };
   }
 
   get indigo() {

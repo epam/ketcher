@@ -87,6 +87,7 @@ const prepareForSaving = {
   SUP: prepareSupForSaving,
   DAT: prepareDatForSaving,
   GEN: prepareGenForSaving,
+  queryComponent: prepareQueryComponentForSaving,
 };
 
 function prepareSruForSaving(sgroup, mol) {
@@ -135,6 +136,10 @@ function prepareSupForSaving(sgroup, mol) {
 }
 
 function prepareGenForSaving(_sgroup, _mol) {
+  // eslint-disable-line no-unused-vars
+}
+
+function prepareQueryComponentForSaving(_sgroup, _mol) {
   // eslint-disable-line no-unused-vars
 }
 

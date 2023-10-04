@@ -1,11 +1,13 @@
 import { test, expect } from '@playwright/test';
 import { POLYMER_TOGGLER } from '../../../constants/testIdConstants';
 import { waitForPageInit } from '@utils/common';
+import { takePageScreenshot } from '@utils';
 
 test.describe('Open Ketcher', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
   });
+
   test('Switch to Polymer Editor', async ({ page }) => {
     /* 
     Test case: #2496 - chem monomer library
@@ -25,8 +27,6 @@ test.describe('Open Ketcher', () => {
     await page.getByTestId(POLYMER_TOGGLER).click();
     await page.getByText('CHEM').click();
     await expect(page.getByText('A6OH')).toBeVisible();
-    await page.screenshot({
-      path: 'tests/Macromolecule-editor/screenshots/chem-library.png',
-    });
+    await takePageScreenshot(page);
   });
 });

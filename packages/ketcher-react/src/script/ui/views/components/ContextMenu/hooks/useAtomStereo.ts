@@ -1,4 +1,4 @@
-import { findStereoAtoms } from 'ketcher-core';
+import { findStereoAtoms, KetcherLogger } from 'ketcher-core';
 import { useCallback, useRef } from 'react';
 import { useAppContext } from 'src/hooks';
 import Editor from 'src/script/editor';
@@ -25,7 +25,8 @@ const useAtomStereo = () => {
         );
 
         action && editor.update(action);
-      } catch (error) {
+      } catch (e) {
+        KetcherLogger.error('useAtomStereo.ts::useAtomStereo::handler', e);
         noOperation();
       }
     },

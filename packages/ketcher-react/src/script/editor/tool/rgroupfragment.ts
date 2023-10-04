@@ -20,6 +20,7 @@ import {
   fromRGroupFragment,
   fromUpdateIfThen,
   FunctionalGroup,
+  KetcherLogger,
 } from 'ketcher-core';
 import Editor from '../Editor';
 import { Tool } from './Tool';
@@ -140,7 +141,9 @@ class RGroupFragmentTool implements Tool {
 
         editor.update(action);
       })
-      .catch(() => null); // w/o changes
+      .catch((e) => {
+        KetcherLogger.error('rgroupfragment.ts::RGroupFragmentTool::click', e);
+      }); // w/o changes
 
     return true;
   }

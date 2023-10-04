@@ -39,7 +39,7 @@ export class PolymerBondRenderer extends BaseRenderer {
   public appendBond(rootElement) {
     this.bodyElement = rootElement
       .append('line')
-      .attr('stroke', this.polymerBond.finished ? '#333333' : '#0097A8')
+      .attr('stroke', this.polymerBond.finished ? '#333333' : '#0097A8') // here
       .attr('stroke-width', 2)
       .attr('class', 'selection-area')
       .attr('x1', this.polymerBond.startPosition.x)

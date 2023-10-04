@@ -29,6 +29,7 @@ import { ReStruct } from 'application/render';
 import { selectionKeys } from '../shared/constants';
 import { EditorSelection } from '../editor.types';
 
+export type AtomType = 'single' | 'list' | 'pseudo';
 export type AtomAttributeName = keyof AtomAttributes;
 export type AtomQueryPropertiesName = keyof AtomQueryProperties;
 export type AtomAllAttributeName = AtomAttributeName | AtomQueryPropertiesName;

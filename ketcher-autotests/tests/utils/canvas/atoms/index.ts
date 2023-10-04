@@ -6,6 +6,7 @@ import { getLeftAtomByAttributes } from './getLeftAtomByAttributes/getLeftAtomBy
 // eslint-disable-next-line max-len
 import { getFirstAtomCoordinatesByAttributes } from './getFirstAtomCoordinatesByAttributes/getFirstAtomCoordinatesByAttributes';
 import { getAtomsCoordinatesByAttributes } from './getAtomsCoordinatesByAttributes/getAtomsCoordinatesByAttributes';
+export * from '@utils/canvas/atoms';
 
 export {
   getAtomByIndex,

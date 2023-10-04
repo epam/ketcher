@@ -92,6 +92,9 @@ class ReSGroup extends ReObject {
           SGroupdrawBracketsOptions.lowerIndexText = sgroup.data.mul;
           break;
         }
+        case 'queryComponent': {
+          break;
+        }
         case 'SRU': {
           let connectivity: string = sgroup.data.connectivity || 'eu';
           if (connectivity === 'ht') connectivity = '';
@@ -118,7 +121,13 @@ class ReSGroup extends ReObject {
       }
 
       // DAT S-Groups do not have brackets
-      const sgroupTypesWithBrackets = ['MUL', 'SRU', 'SUP', 'GEN'];
+      const sgroupTypesWithBrackets = [
+        'MUL',
+        'SRU',
+        'SUP',
+        'GEN',
+        'queryComponent',
+      ];
       if (sgroupTypesWithBrackets.includes(sgroup.type)) {
         SGroupdrawBrackets(SGroupdrawBracketsOptions);
       }

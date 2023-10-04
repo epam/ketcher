@@ -17,6 +17,8 @@
 import { Pile } from './pile';
 import { SGroup } from './sgroup';
 import assert from 'assert';
+import { Struct } from './struct';
+import { KetcherLogger } from 'utilities';
 
 export class SGroupForest {
   /** node id -> parent id */
@@ -146,6 +148,7 @@ export class SGroupForest {
       assert(this.parent.has(id), 'sgid is not in the forest');
       assert(this.children.has(id), 'sgid is not in the forest');
     } catch (e) {
+      KetcherLogger.error('sgroupForest.ts::SGroupForest::remove', e);
       console.info('error: sgid is not in the forest');
     }
 
@@ -168,19 +171,33 @@ export class SGroupForest {
   }
 }
 
-export function checkOverlapping(struct, atoms) {
+export function checkOverlapping(
+  struct: Struct,
+  atoms: number[] = [],
+  sGroupType: 'queryComponent' | 'common',
+) {
+  const searchFunction = {
+    common: (sid: number) => {
+      const sg = struct.sgroups.get(sid);
+      if (sg?.type === 'DAT') return false;
+      const sgAtoms = SGroup.getAtoms(struct, sg);
+
+      return sgAtoms.length < atoms.length
+        ? sgAtoms.findIndex((aid) => atoms.indexOf(aid) === -1) >= 0
+        : atoms.findIndex((aid) => sgAtoms.indexOf(aid) === -1) >= 0;
+    },
+    queryComponent: (sid: number) => {
+      const sg = struct.sgroups.get(sid);
+      if (sg?.type !== 'queryComponent') return false;
+      const sgAtoms = SGroup.getAtoms(struct, sg);
+
+      return atoms.some((aid) => sgAtoms.includes(aid));
+    },
+  };
   const sgroups = atoms.reduce((res, aid) => {
     const atom = struct.atoms.get(aid);
-    return res.union(atom.sgs);
+    return atom ? res.union(atom.sgs) : res;
   }, new Pile());
 
-  return Array.from(sgroups).some((sid) => {
-    const sg = struct.sgroups.get(sid);
-    if (sg.type === 'DAT') return false;
-    const sgAtoms = SGroup.getAtoms(struct, sg);
-
-    return sgAtoms.length < atoms.length
-      ? sgAtoms.findIndex((aid) => atoms.indexOf(aid) === -1) >= 0
-      : atoms.findIndex((aid) => sgAtoms.indexOf(aid) === -1) >= 0;
-  });
+  return Array.from(sgroups).some(searchFunction[sGroupType]);
 }

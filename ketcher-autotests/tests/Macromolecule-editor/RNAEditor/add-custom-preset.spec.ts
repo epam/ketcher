@@ -68,7 +68,7 @@ test.describe('Macromolecules custom presets', () => {
       phosphate: 'P___Phosphate',
     });
 
-    await page.getByTestId('save-btn');
+    await page.getByTestId('save-btn').click();
 
     await page.screenshot({
       path: 'tests/Macromolecule-editor/screenshots/add-custom-preset-duplicate.png',

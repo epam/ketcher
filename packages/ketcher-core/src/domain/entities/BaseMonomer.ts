@@ -176,17 +176,12 @@ export class BaseMonomer extends DrawingEntity {
     const attachmentAtoms = this.monomerItem.struct.atoms.filter((_, value) => {
       return Boolean(value.rglabel);
     });
-    if (!attachmentAtoms.size) {
-      throw new Error(
-        `No attachment points for ${this.monomerItem.label} found`,
-      );
-    }
-    const RnList = {};
+    const attachmentPointNameToBond = {};
     for (let i = 1; i <= attachmentAtoms.size; i++) {
       const label = `R${i}`;
-      RnList[label] = null;
+      attachmentPointNameToBond[label] = null;
     }
-    return RnList;
+    return attachmentPointNameToBond;
   }
 
   public get startBondAttachmentPoint() {

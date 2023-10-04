@@ -605,6 +605,10 @@ export class DrawingEntitiesManager {
       (monomer) => monomer instanceof Peptide || monomer instanceof Chem,
     );
 
+    if (monomersList.length === 0) {
+      return;
+    }
+
     const topLeftMonomer = this.findTopLeftMonomer(monomersList);
 
     let unusedMonomerList = [...monomersList];

@@ -281,6 +281,14 @@ export class CoreEditor {
           const atomId = struct.atoms.add(atomClone);
           atomIdsMap[previousAtomId] = atomId;
           monomerMicromolecule.atoms.push(atomId);
+          if (
+            Number(atom.rglabel) === 4 &&
+            !monomer.monomerItem.struct.atoms.find(
+              (_, atom) => Number(atom.rglabel) === 3,
+            )
+          ) {
+            atomClone.rglabel = '3';
+          }
           if (atom.rglabel) {
             monomerMicromolecule.addAttachmentPoint(
               new SGroupAttachmentPoint(atomId, undefined, undefined),

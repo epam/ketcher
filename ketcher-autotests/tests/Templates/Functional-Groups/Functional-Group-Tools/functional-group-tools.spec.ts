@@ -789,9 +789,7 @@ test.describe('Templates - Functional Group Tools3', () => {
     await waitForRender(page, async () => {
       await page.keyboard.press('Control+v');
     });
-    await waitForRender(page, async () => {
-      await clickOnAtom(page, 'C', anyAtom);
-    });
+    await clickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page);
   });
 

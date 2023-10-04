@@ -11,8 +11,10 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   private editorEvents: typeof editorEvents;
   private selectionCircle?: D3SvgElementSelection<SVGCircleElement, void>;
   private selectionBorder?: D3SvgElementSelection<SVGUseElement, void>;
-  private r1AttachmentPoint?: D3SvgElementSelection<SVGGElement, void>;
-  private r2AttachmentPoint?: D3SvgElementSelection<SVGGElement, void>;
+  private RnAttachmentPointList:
+    | D3SvgElementSelection<SVGGElement, void>[]
+    | [] = [];
+
   static isSelectable() {
     return true;
   }
@@ -56,76 +58,83 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     if (!this.rootElement) return;
     if (this.monomer.attachmentPointsVisible) {
       this.removeAttachmentPoints();
-      this.r1AttachmentPoint = this.appendR1AttachmentPoint(this.rootElement);
-      this.r2AttachmentPoint = this.appendR2AttachmentPoint(this.rootElement);
+
+      for (let i = 0; i < this.monomer.listOfAttachmentPoints.length; i++) {
+        const atPoint = this.appendAttachmentPoint(
+          this.monomer.listOfAttachmentPoints[i],
+          i,
+        );
+        this.RnAttachmentPointList.push(atPoint as never);
+      }
     } else {
       this.removeAttachmentPoints();
     }
   }
 
-  public appendR1AttachmentPoint(
-    rootElement: D3SvgElementSelection<SVGGElement, void>,
-  ) {
-    let attachmentPoint;
+  public appendAttachmentPoint(AttachmentPointName, number) {
+    let rotation;
+    let position;
+    let x;
+    let y;
 
-    if (this.monomer.isAttachmentPointUsed('R1')) {
-      const r1attachmentPoint = new AttachmentPoint(
-        rootElement as D3SvgElementSelection<SVGGElement, void>,
+    switch (number) {
+      case 0:
+        rotation = 0;
+        position = { x: 0, y: this.bodyHeight / 2 };
+        x = -18;
+        y = -10;
+        break;
+      case 1:
+        rotation = 180;
+        position = { x: this.bodyWidth, y: this.bodyHeight / 2 };
+        x = 5;
+        y = -10;
+        break;
+      case 2:
+        rotation = 90;
+        position = { x: this.bodyWidth / 2, y: 0 };
+        x = -7;
+        y = -22;
+        break;
+      default:
+        rotation = 270;
+        position = { x: this.bodyWidth / 2, y: this.bodyHeight };
+        x = -5;
+        y = 30;
+    }
+
+    let atP;
+
+    if (this.monomer.isAttachmentPointUsed(AttachmentPointName)) {
+      const attPointInstance = new AttachmentPoint(
+        this.rootElement as D3SvgElementSelection<SVGGElement, void>,
         this.monomer,
         this.bodyWidth,
         this.bodyHeight,
         this.canvas,
-        'R1',
+        AttachmentPointName,
       );
-      attachmentPoint = r1attachmentPoint.getElement();
+      atP = attPointInstance.getElement();
     } else {
-      attachmentPoint = AttachmentPoint.appendAttachmentPointUnused(
-        rootElement as D3SvgElementSelection<SVGGElement, void>,
-        { x: 0, y: this.bodyHeight / 2 },
-        0,
-        this.monomer.isAttachmentPointPotentiallyUsed('R1'),
-        'R1',
-        -18,
-        -10,
+      atP = AttachmentPoint.appendAttachmentPointUnused(
+        this.rootElement as D3SvgElementSelection<SVGGElement, void>,
+        position,
+        rotation,
+        this.monomer.isAttachmentPointPotentiallyUsed(AttachmentPointName),
+        AttachmentPointName,
+        x,
+        y,
       );
     }
 
-    return attachmentPoint;
-  }
-
-  public appendR2AttachmentPoint(
-    rootElement: D3SvgElementSelection<SVGGElement, void>,
-  ) {
-    let attachmentPoint;
-
-    if (this.monomer.isAttachmentPointUsed('R2')) {
-      const r2attachmentPoint = new AttachmentPoint(
-        rootElement as D3SvgElementSelection<SVGGElement, void>,
-        this.monomer,
-        this.bodyWidth,
-        this.bodyHeight,
-        this.canvas,
-        'R2',
-      );
-      attachmentPoint = r2attachmentPoint.getElement();
-    } else {
-      attachmentPoint = AttachmentPoint.appendAttachmentPointUnused(
-        rootElement as D3SvgElementSelection<SVGGElement, void>,
-        { x: this.bodyWidth, y: this.bodyHeight / 2 },
-        180,
-        this.monomer.isAttachmentPointPotentiallyUsed('R2'),
-        'R2',
-        5,
-        -10,
-      );
-    }
-
-    return attachmentPoint;
+    return atP;
   }
 
   public removeAttachmentPoints() {
-    this.r1AttachmentPoint?.remove();
-    this.r2AttachmentPoint?.remove();
+    this.RnAttachmentPointList.forEach((item) => {
+      item.remove();
+    });
+    this.RnAttachmentPointList = [];
   }
 
   private appendRootElement(

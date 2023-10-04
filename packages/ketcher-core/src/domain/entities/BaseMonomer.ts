@@ -26,6 +26,9 @@ export class BaseMonomer extends DrawingEntity {
 
   constructor(private _monomerItem: MonomerItemType, _position?: Vec2) {
     super(_position);
+
+    this.attachmentPointsToBonds = this.getAttachmentPointDict();
+    this.potentialAttachmentPointsToBonds = this.getAttachmentPointDict();
   }
 
   get monomerItem() {
@@ -34,6 +37,10 @@ export class BaseMonomer extends DrawingEntity {
 
   get label() {
     return this.monomerItem.label;
+  }
+
+  public get listOfAttachmentPoints() {
+    return Object.keys(this.attachmentPointsToBonds);
   }
 
   public turnOnAttachmentPointsVisibility() {
@@ -143,9 +150,7 @@ export class BaseMonomer extends DrawingEntity {
   }
 
   public get availableAttachmentPointForBondEnd() {
-    return this.isAttachmentPointUsed('R2')
-      ? this.firstFreeAttachmentPoint
-      : 'R2';
+    return this.firstFreeAttachmentPoint;
   }
 
   public getBondByAttachmentPoint(attachmentPointName: AttachmentPointName) {
@@ -166,5 +171,29 @@ export class BaseMonomer extends DrawingEntity {
     attachmentPointName: AttachmentPointName,
   ) {
     return Boolean(this.getPotentialBondByAttachmentPoint(attachmentPointName));
+  }
+
+  private getAttachmentPointDict(): Record<
+    AttachmentPointName,
+    PolymerBond | null
+  > {
+    const atomsWithRn = this.monomerItem.struct.atoms.filter((_, value) => {
+      if (value.rglabel) {
+        return true;
+      } else {
+        return false;
+      }
+    });
+    if (!atomsWithRn.size) {
+      throw new Error(
+        `No attachment points for ${this.monomerItem.label} found`,
+      );
+    }
+    const RnList = {};
+    for (let i = 1; i <= atomsWithRn.size; i++) {
+      const label = `R${i}`;
+      RnList[label] = null;
+    }
+    return RnList as Record<AttachmentPointName, PolymerBond | null>;
   }
 }

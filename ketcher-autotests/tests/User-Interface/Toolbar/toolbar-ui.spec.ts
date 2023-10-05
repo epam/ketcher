@@ -6,8 +6,6 @@ import {
   FunctionalGroups,
   clickInTheMiddleOfTheScreen,
   selectFunctionalGroups,
-  DELAY_IN_SECONDS,
-  delay,
   resetCurrentTool,
   selectLeftPanelButton,
   LeftPanelButton,
@@ -40,7 +38,6 @@ test.describe('Open Ketcher', () => {
         Description: Help button tooltip verification
         */
     await page.getByTitle('Help (?)').first().hover();
-    await delay(DELAY_IN_SECONDS.THREE);
     await takeTopToolbarScreenshot(page);
     await takeEditorScreenshot(page);
   });

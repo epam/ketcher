@@ -18,8 +18,10 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
+import { clickOnArrow } from '@utils/canvas/arrow-signes/getArrow';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
+import { clickOnPlus } from '@utils/canvas/plus-signes/getPluses';
 
 const xMark = 300;
 const yMark = 200;
@@ -46,36 +48,12 @@ test.describe('Fragment selection tool', () => {
     await clickOnAtom(page, 'C', 1);
   });
 
-  test('Reaction components selection', async ({ page }) => {
+  test('Reaction component selection', async ({ page }) => {
     //  Test case: EPMLSOPKET-1349
-    const atomNumber = 5;
-    const moveMouseCoordinatesY = 10;
-    const moveMouseCoordinatesX = 270;
-    await openFileAndAddToCanvas('reaction_4.rxn', page);
-    await selectDropdownTool(page, 'select-rectangle', 'select-fragment');
-    const point = await getCoordinatesOfTheMiddleOfTheScreen(page);
-    await page.mouse.move(
-      point.x - moveMouseCoordinatesX,
-      point.y + moveMouseCoordinatesY,
-    );
-    await page.mouse.down();
-    await page.mouse.up();
-    await clickCanvas(page);
-
-    await page.mouse.move(point.x, point.y + atomNumber);
-    await page.mouse.down();
-    await page.mouse.up();
-    await clickCanvas(page);
-
-    await page.keyboard.down('Shift');
-    await page.mouse.click(
-      point.x - moveMouseCoordinatesX,
-      point.y + moveMouseCoordinatesY,
-    );
-    await page.mouse.click(point.x, point.y + atomNumber);
-    await page.keyboard.up('Shift');
-    await clickCanvas(page);
-
-    await page.keyboard.press(`${modifier}+KeyA`);
+    await openFileAndAddToCanvas('RXN-V2000/reaction_4.rxn', page);
+    // await clickOnPlus(page, 1);
+    // await takeEditorScreenshot(page);
+    await clickOnArrow(page, 0);
+    await takeEditorScreenshot(page);
   });
 });

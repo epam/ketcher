@@ -1,8 +1,14 @@
-import { SORT_TYPE, AtomXy, BondXy } from '@utils/canvas/types';
+import {
+  SORT_TYPE,
+  AtomXy,
+  BondXy,
+  PlusXy,
+  ArrowXy,
+} from '@utils/canvas/types';
 
 export function sortItems(
   sortBy: SORT_TYPE,
-  coords: (AtomXy | BondXy)[],
+  coords: (AtomXy | BondXy | PlusXy | ArrowXy)[],
 ): (AtomXy | BondXy)[] {
   const currentItems = [...coords];
   switch (sortBy) {

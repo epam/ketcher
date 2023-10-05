@@ -73,6 +73,8 @@ function atomToKet(source) {
 
   if (source.label !== 'L#') {
     ifDef(result, 'label', source.label);
+    // reaction
+    ifDef(result, 'mapping', parseInt(source.aam), 0);
   } else if (source.atomList) {
     result.type = 'atom-list';
     ifDef(result, 'elements', source.atomList.labelList());
@@ -105,8 +107,6 @@ function atomToKet(source) {
       ifDef(result.queryProperties, name, source.queryProperties[name]);
     });
   }
-  // reaction
-  ifDef(result, 'mapping', parseInt(source.aam), 0);
   ifDef(result, 'invRet', source.invRet, 0);
   ifDef(result, 'exactChangeFlag', !!source.exactChangeFlag, false);
   ifDef(result, 'implicitHCount', source.implicitHCount);

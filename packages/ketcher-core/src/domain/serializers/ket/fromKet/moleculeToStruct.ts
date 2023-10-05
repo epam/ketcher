@@ -100,6 +100,8 @@ export function atomToStruct(source) {
     });
   } else {
     ifDef(params, 'label', source.label);
+    // reaction
+    ifDef(params, 'aam', source.mapping);
   }
   ifDef(params, 'alias', source.alias);
   ifDef(params, 'pp', {
@@ -137,7 +139,6 @@ export function atomToStruct(source) {
   }
 
   // reaction
-  ifDef(params, 'aam', source.mapping);
   ifDef(params, 'invRet', source.invRet);
   ifDef(params, 'exactChangeFlag', Number(Boolean(source.exactChangeFlag)));
   // implicit hydrogens

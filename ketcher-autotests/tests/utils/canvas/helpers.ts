@@ -136,6 +136,18 @@ export async function getCoordinatesTopAtomOfCyclopentadieneRing(page: Page) {
   };
 }
 
+export async function takePageScreenshot(
+  page: Page,
+  options?: { masks?: Locator[]; maxDiffPixelRatio?: number },
+) {
+  const maxTimeout = 3000;
+  await waitForRender(page, emptyFunction, maxTimeout);
+  await expect(page).toHaveScreenshot({
+    mask: options?.masks,
+    maxDiffPixelRatio: options?.maxDiffPixelRatio,
+  });
+}
+
 export async function takeEditorScreenshot(
   page: Page,
   options?: { masks?: Locator[]; maxDiffPixelRatio?: number },

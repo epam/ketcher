@@ -195,7 +195,10 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
      * Test case: EPMLSOPKET-4702 (opening file)
      * Test is related to the existing bug: https://github.com/epam/ketcher/issues/3153
      */
-    await openFileAndAddToCanvas('KET/ket-4702-to-compare.ket', page);
+    await openFileAndAddToCanvas(
+      'KET/hydrogen-plus-oxygen-arrow-hydrogen.ket',
+      page,
+    );
 
     const expectedKetFile = await getKet(page);
     await saveToFile('KET/ket-4702-expected.ket', expectedKetFile);

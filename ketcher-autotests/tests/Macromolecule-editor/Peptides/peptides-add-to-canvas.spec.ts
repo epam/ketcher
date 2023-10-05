@@ -1,6 +1,8 @@
 import { test } from '@playwright/test';
 import {
   clickInTheMiddleOfTheScreen,
+  moveMouseToTheMiddleOfTheScreen,
+  selectSingleBondTool,
   takePageScreenshot,
   waitForPageInit,
 } from '@utils';
@@ -22,10 +24,8 @@ test.describe('Peptide', () => {
   });
 
   test('Select peptide and drag it to canvas', async ({ page }) => {
-    const coords = { x: 100, y: 100 };
     await page.click(ALANINE);
     await clickInTheMiddleOfTheScreen(page);
-    await page.mouse.move(coords.x, coords.y);
   });
 
   test('Add monomer preview on canvas', async ({ page }) => {
@@ -35,5 +35,7 @@ test.describe('Peptide', () => {
     */
     await page.click(ALANINE);
     await clickInTheMiddleOfTheScreen(page);
+    await selectSingleBondTool(page);
+    await moveMouseToTheMiddleOfTheScreen(page);
   });
 });

@@ -4,6 +4,8 @@ import {
   dragMouseTo,
   selectRectangleSelectionTool,
   selectSingleBondTool,
+  takePageScreenshot,
+  waitForPageInit,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
@@ -11,7 +13,7 @@ import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 
 test.describe('Check attachment point rotation', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
     await turnOnMacromoleculesEditor(page);
   });
   test('Select monomer and bonds and then hover monomer', async ({ page }) => {
@@ -46,16 +48,12 @@ test.describe('Check attachment point rotation', () => {
     // Hover 1th peptide
     await peptide1.hover();
 
-    await page.screenshot({
-      path: 'tests/Macromolecule-editor/screenshots/attachment-point-rotation-1.png',
-    });
+    await takePageScreenshot(page);
 
     // Hover 2nd peptide
     await peptide2.hover();
 
-    await page.screenshot({
-      path: 'tests/Macromolecule-editor/screenshots/attachment-point-rotation-2.png',
-    });
+    await takePageScreenshot(page);
   });
 
   test('Move monomer bonded with another monomers and check attachment points', async ({
@@ -87,9 +85,7 @@ test.describe('Check attachment point rotation', () => {
     // Hover 1th peptide
     await peptide1.hover();
 
-    await page.screenshot({
-      path: 'tests/Macromolecule-editor/screenshots/attachment-point-rotation-3.png',
-    });
+    await takePageScreenshot(page);
 
     // Move selected monomer
     await selectRectangleSelectionTool(page);
@@ -102,8 +98,6 @@ test.describe('Check attachment point rotation', () => {
     // Hover 1th peptide
     await peptide1.hover();
 
-    await page.screenshot({
-      path: 'tests/Macromolecule-editor/screenshots/attachment-point-rotation-4.png',
-    });
+    await takePageScreenshot(page);
   });
 });

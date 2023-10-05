@@ -85,7 +85,7 @@ test.describe('Clear canvas', () => {
     await page.getByTestId('canvas').click({ position: { x, y } });
     await takeEditorScreenshot(page);
     await page.keyboard.press('Control+Delete');
-    await openFileAndAddToCanvas('ketcher.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/ketcher.mol', page);
     await takeEditorScreenshot(page);
     await page.keyboard.press('Control+Delete');
   });

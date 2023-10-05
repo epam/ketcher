@@ -1,4 +1,4 @@
-import { Ketcher } from 'ketcher-core';
+import { BaseRenderer, Ketcher } from 'ketcher-core';
 
 declare global {
   export interface Window {
@@ -7,6 +7,6 @@ declare global {
   }
 
   export interface Element {
-    __data__?: never;
+    __data__?: BaseRenderer;
   }
 }

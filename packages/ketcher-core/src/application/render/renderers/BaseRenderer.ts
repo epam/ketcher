@@ -12,7 +12,7 @@ export interface IBaseRenderer {
 export abstract class BaseRenderer implements IBaseRenderer {
   protected rootElement?: D3SvgElementSelection<SVGGElement, void>;
 
-  protected bodyElement?: D3SvgElementSelection<SVGElement, this>;
+  public bodyElement?: D3SvgElementSelection<SVGElement, this>;
 
   protected hoverElement?: D3SvgElementSelection<
     SVGUseElement & SVGGElement,

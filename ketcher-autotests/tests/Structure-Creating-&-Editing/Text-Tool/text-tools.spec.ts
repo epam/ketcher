@@ -1,30 +1,24 @@
 import { test, expect } from '@playwright/test';
 import {
-  delay,
+  LeftPanelButton,
+  clickInTheMiddleOfTheScreen,
+  pressButton,
   selectLeftPanelButton,
   takeEditorScreenshot,
-  takeLeftToolbarScreenshot,
-} from '@utils/canvas';
-import { clickInTheMiddleOfTheScreen } from '@utils/clicks';
-import { DELAY_IN_SECONDS } from '@utils/globals';
-import { LeftPanelButton } from '@utils/selectors';
+  waitForPageInit,
+} from '@utils';
+import { addTextBoxToCanvas } from '@utils/selectors/addTextBoxToCanvas';
 
 test.describe('Text tools test cases', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
-  test('Text tool - Button and tooltip: verification', async ({ page }) => {
+  test('Clear Canvas - checking button tooltip', async ({ page }) => {
     // Test case: EPMLSOPKET-2225
-    const textToolButton = page.getByTestId('text');
-    textToolButton.hover();
-    await delay(DELAY_IN_SECONDS.TWO);
-    await selectLeftPanelButton(LeftPanelButton.ChargeMinus, page);
-    textToolButton.hover();
-    await delay(DELAY_IN_SECONDS.TWO);
-
-    expect(textToolButton).toHaveAttribute('title', 'Add text (Alt+T)');
-    await takeLeftToolbarScreenshot(page);
+    await selectLeftPanelButton(LeftPanelButton.AddText, page);
+    const button = page.getByTestId('text');
+    await expect(button).toHaveAttribute('title', 'Add text (Alt+T)');
   });
 
   test('Text tool - UI', async ({ page }) => {
@@ -37,18 +31,13 @@ test.describe('Text tools test cases', () => {
 
   test('Text tool - Create a single text object', async ({ page }) => {
     // Test case: EPMLSOPKET-2227
-    const textToolButton = page.getByTestId('text');
-    textToolButton.click();
-    await clickInTheMiddleOfTheScreen(page);
-    const textInput = await page.getByRole('textbox');
-    textInput.type('test');
-    await page.getByTestId('Cancel').click();
-
+    await addTextBoxToCanvas(page);
+    await page.getByRole('dialog').getByRole('textbox').fill('Ketcher');
+    await pressButton(page, 'Cancel');
     await takeEditorScreenshot(page);
-
-    textToolButton.click();
-    textInput.type('test');
-
+    await addTextBoxToCanvas(page);
+    await page.getByRole('dialog').getByRole('textbox').fill('Ketcher');
+    await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
   });
 });

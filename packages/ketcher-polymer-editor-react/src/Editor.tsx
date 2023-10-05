@@ -14,10 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 import { Provider } from 'react-redux';
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { Global, ThemeProvider } from '@emotion/react';
 import { createTheme } from '@mui/material/styles';
-import { merge } from 'lodash';
+import { debounce, merge } from 'lodash';
 import { SdfSerializer } from 'ketcher-core';
 import monomersData from './data/monomers.sdf';
 
@@ -38,6 +38,7 @@ import {
   selectEditor,
   selectEditorActiveTool,
   selectTool,
+  showPreview,
 } from 'state/common';
 import { loadMonomerLibrary } from 'state/library';
 import { useAppDispatch, useAppSelector } from 'hooks';
@@ -67,6 +68,8 @@ import {
   PhosphateAvatar,
   RNABaseAvatar,
 } from 'components/shared/monomerOnCanvas';
+import { calculatePreviewPosition } from 'helpers';
+import StyledPreview from 'components/shared/MonomerPreview';
 
 const muiTheme = createTheme(muiOverrides);
 
@@ -121,6 +124,16 @@ function Editor({ theme }: EditorProps) {
     };
   }, [dispatch]);
 
+  const dispatchShowPreview = useCallback(
+    (payload) => dispatch(showPreview(payload)),
+    [dispatch],
+  );
+
+  const debouncedShowPreview = useMemo(
+    () => debounce((p) => dispatchShowPreview(p), 500),
+    [dispatchShowPreview],
+  );
+
   useEffect(() => {
     if (editor) {
       editor.events.error.add((errorText) =>
@@ -128,8 +141,30 @@ function Editor({ theme }: EditorProps) {
       );
       dispatch(selectTool('select-rectangle'));
       editor.events.selectTool.dispatch('select-rectangle');
+      editor.events.mouseOverMonomer.add((e) => {
+        handleOpenPreview(e);
+      });
+      editor.events.mouseLeaveMonomer.add(() => {
+        handleClosePreview();
+      });
     }
   }, [editor]);
+
+  const handleOpenPreview = (e) => {
+    const monomer = e.target.__data__.monomer.monomerItem;
+    const cardCoordinates = e.target.getBoundingClientRect();
+    const top = calculatePreviewPosition(monomer, cardCoordinates);
+    const previewStyle = {
+      top,
+      left: `${cardCoordinates.left + cardCoordinates.width / 2}px`,
+    };
+    debouncedShowPreview({ monomer, style: previewStyle });
+  };
+
+  const handleClosePreview = () => {
+    debouncedShowPreview.cancel();
+    dispatch(showPreview(undefined));
+  };
 
   const handleCloseErrorTooltip = () => {
     dispatch(closeErrorTooltip());
@@ -190,11 +225,9 @@ function Editor({ theme }: EditorProps) {
           <MonomerLibrary />
         </Layout.Right>
       </Layout>
-
       <FullscreenButton />
-
+      <StyledPreview className="polymer-library-preview" /> //
       <ModalContainer />
-
       <Snackbar
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
         open={Boolean(errorTooltipText)}

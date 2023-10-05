@@ -66,7 +66,8 @@ const MonomerGroup = ({
     }
     const cardCoordinates = e.currentTarget.getBoundingClientRect();
     const previewStyle = calculatePreviewPosition(monomer, cardCoordinates);
-    debouncedShowPreview({ monomer, style: previewStyle });
+    const style = { top: previewStyle, right: '-88px' };
+    debouncedShowPreview({ monomer, style });
   };
 
   const selectMonomer = (monomer: MonomerItemType) => {

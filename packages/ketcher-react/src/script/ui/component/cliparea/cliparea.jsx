@@ -47,20 +47,24 @@ class ClipArea extends Component {
         if (event.shiftKey && !isActiveElement(event.target))
           event.preventDefault();
       },
-      copy: (event) => {
+      copy: async (event) => {
         if (this.props.focused() && this.props.onCopy) {
-          const data = this.props.onCopy();
+          const data = await this.props.onCopy();
 
-          if (data) copy(event.clipboardData, data);
+          if (data) {
+            await copy(data);
+          }
 
           event.preventDefault();
         }
       },
-      cut: (event) => {
+      cut: async (event) => {
         if (this.props.focused() && this.props.onCut) {
-          const data = this.props.onCut();
+          const data = await this.props.onCut();
 
-          if (data) copy(event.clipboardData, data);
+          if (data) {
+            await copy(data);
+          }
 
           event.preventDefault();
         }
@@ -135,21 +139,12 @@ function autoselect(cliparea) {
   cliparea.select();
 }
 
-function copy(cb, data) {
-  if (!cb && ieCb) {
-    ieCb.setData('text', data['text/plain']);
-  } else {
-    let curFmt = null;
-    cb.setData('text/plain', data['text/plain']);
-    try {
-      Object.keys(data).forEach((fmt) => {
-        curFmt = fmt;
-        cb.setData(fmt, data[fmt]);
-      });
-    } catch (e) {
-      KetcherLogger.error('cliparea.jsx::copy', e);
-      console.info(`Could not write exact type ${curFmt}`);
-    }
+async function copy(data) {
+  try {
+    await navigator.clipboard.writeText(data['text/plain']);
+  } catch (e) {
+    KetcherLogger.error('cliparea.jsx::copy', e);
+    console.info(`Could not write exact type ${data && data.toString()}`);
   }
 }
 

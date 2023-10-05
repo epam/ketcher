@@ -46,6 +46,11 @@ export class RenderersManager {
     monomer.renderer?.drawSelection();
   }
 
+  public redrawDrawingEntity(drawingEntity: DrawingEntity) {
+    drawingEntity.baseRenderer?.remove();
+    drawingEntity.baseRenderer?.show(this.theme);
+  }
+
   public deleteMonomer(monomer: BaseMonomer) {
     monomer.renderer?.remove();
     this.monomers.delete(monomer.id);

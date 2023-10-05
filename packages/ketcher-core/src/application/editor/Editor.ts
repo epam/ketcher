@@ -79,16 +79,14 @@ export class CoreEditor {
     this.selectTool(tool);
   }
 
-  private onSelectMode(isSnakeMode: string) {
+  // todo we need to create abstraction layer for modes in future similar to the tools layer
+  private onSelectMode(isSnakeMode: boolean) {
     PolymerBondRenderer.setSnakeMode(isSnakeMode);
     let modelChanges;
-    if (isSnakeMode) {
-      modelChanges = this.drawingEntitiesManager.reArrangeMonomers(
-        this.canvas.width.baseVal.value,
-      );
-      this.renderersContainer.update(modelChanges);
-    }
-    modelChanges = this.drawingEntitiesManager.redrawBonds();
+    modelChanges = this.drawingEntitiesManager.reArrangeChain(
+      this.canvas.width.baseVal.value,
+      isSnakeMode,
+    );
     this.renderersContainer.update(modelChanges);
   }
 

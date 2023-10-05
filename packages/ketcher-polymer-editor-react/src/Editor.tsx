@@ -239,7 +239,7 @@ function Editor({ theme }: EditorProps) {
         </Layout.Right>
       </Layout>
       <FullscreenButton />
-      <StyledPreview className="polymer-library-preview" /> //
+      <StyledPreview className="polymer-library-preview" />
       <ModalContainer />
       <Snackbar
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}

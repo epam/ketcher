@@ -9,6 +9,7 @@ import {
   clickInTheMiddleOfTheScreen,
   selectTopPanelButton,
   waitForPageInit,
+  waitForRender,
 } from '@utils';
 
 async function addTextBoxToCanvas(page: Page) {
@@ -48,9 +49,11 @@ test.describe('Clear canvas', () => {
     await takeEditorScreenshot(page);
     await selectTopPanelButton(TopPanelButton.Clear, page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectTopPanelButton(TopPanelButton.Undo, page);
-    await selectTopPanelButton(TopPanelButton.Redo, page);
-    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await waitForRender(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Undo, page);
+      await selectTopPanelButton(TopPanelButton.Redo, page);
+      await selectTopPanelButton(TopPanelButton.Undo, page);
+    });
   });
 
   test('Clear Canvas - Structure is opened from ket-file ', async ({

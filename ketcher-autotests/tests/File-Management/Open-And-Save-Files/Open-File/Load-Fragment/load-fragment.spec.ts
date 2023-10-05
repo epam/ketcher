@@ -137,6 +137,12 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
   }) => {
     /*
      * Test case: EPMLSOPKET-4702 (creating file)
+     * Description: Creating a reaction using elements from vertical tool bars
+     * Hydrogen tool is applied and element is moved on the left
+     * Reaction Plus tool is applied and element is moved on the left
+     * Oxygen tool is applied and element is moved on the left
+     * Arrow Open Angle tool is applied
+     * Hydrogen tool is applied again and placed on the right
      */
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     const shiftForHydrogen = 150;

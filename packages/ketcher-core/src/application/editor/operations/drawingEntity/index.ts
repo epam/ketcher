@@ -28,7 +28,6 @@ export class DrawingEntityRedrawOperation implements Operation {
   constructor(private drawingEntity: DrawingEntity) {}
 
   public execute(renderersManager: RenderersManager) {
-    renderersManager.deletePolymerBond(this.drawingEntity);
-    renderersManager.addPolymerBond(this.drawingEntity);
+    renderersManager.redrawDrawingEntity(this.drawingEntity);
   }
 }

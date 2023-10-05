@@ -101,7 +101,7 @@ export const atom = {
     },
     hCount: {
       title: 'H count',
-      enum: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+      enum: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
       enumNames: ['', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
       default: 0,
     },

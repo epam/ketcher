@@ -1151,7 +1151,7 @@ export function getAtomCustomQuery(atom) {
         : value;
       return charge[0] !== '-' ? `+${charge}` : charge;
     },
-    explicitValence: (value) => `v${value}`,
+    explicitValence: (value) => (Number(value) !== -1 ? `v${value}` : ''),
     ringBondCount: (value) =>
       Number(value) !== 0 ? getRingBondCountAttrText(Number(value)) : '',
     substitutionCount: (value) =>
@@ -1168,7 +1168,7 @@ export function getAtomCustomQuery(atom) {
 
   for (const propertyName in atom) {
     const value = atom[propertyName];
-    if (propertyName in patterns && value !== null && value !== -1) {
+    if (propertyName in patterns && value !== null) {
       const attrText = patterns[propertyName](value, atom);
       if (attrText) {
         addSemicolon();

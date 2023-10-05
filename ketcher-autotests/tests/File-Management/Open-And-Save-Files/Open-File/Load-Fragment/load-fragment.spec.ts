@@ -52,18 +52,18 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
     const startY = 260;
     const endX = 765;
     const endY = 460;
+
+    const xForMouseClick = 555;
+    const yForMouseClick = 420;
+    const xForMoveElement = 200;
+    const yForMoveElement = 180;
+
     await selectDropdownTool(page, 'select-rectangle', 'select-rectangle');
     await page.mouse.move(startX, startY);
     await page.mouse.down();
     await page.mouse.move(endX, endY);
     await page.mouse.up();
-
-    const xForMouseClick = 555;
-    const yForMouseClick = 420;
     await page.mouse.move(xForMouseClick, yForMouseClick);
-
-    const xForMoveElement = 200;
-    const yForMoveElement = 180;
     await dragMouseTo(xForMoveElement, yForMoveElement, page);
 
     await openFileAndAddToCanvas('Rxn-V2000/reaction-3.rxn', page);
@@ -139,13 +139,17 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
      * Test case: EPMLSOPKET-4702 (creating file)
      */
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
+    const shiftForHydrogen = 150;
+    const shiftForReactionPlus = 100;
+    const shiftForOxygen = 40;
+    const shiftForCoordinatesToResetArrowOpenAngleTool = 100;
+    const shiftForSecondHydrogen = 120;
 
     await selectAtomInToolbar(AtomButton.Hydrogen, page);
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
 
     await moveMouseToTheMiddleOfTheScreen(page);
-    const shiftForHydrogen = 150;
     await dragMouseTo(x - shiftForHydrogen, y, page);
     await resetCurrentTool(page);
 
@@ -154,7 +158,6 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
     await resetCurrentTool(page);
 
     await moveMouseToTheMiddleOfTheScreen(page);
-    const shiftForReactionPlus = 100;
     await dragMouseTo(x - shiftForReactionPlus, y, page);
     await clickInTheMiddleOfTheScreen(page);
 
@@ -163,7 +166,6 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
     await resetCurrentTool(page);
 
     await moveMouseToTheMiddleOfTheScreen(page);
-    const shiftForOxygen = 40;
     await dragMouseTo(x - shiftForOxygen, y, page);
     await resetCurrentTool(page);
 
@@ -171,12 +173,10 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
 
-    const shiftForCoordinatesToResetArrowOpenAngleTool = 100;
     await page.mouse.move(x, y + shiftForCoordinatesToResetArrowOpenAngleTool);
     await page.mouse.click;
 
     await selectAtomInToolbar(AtomButton.Hydrogen, page);
-    const shiftForSecondHydrogen = 120;
     await page.mouse.click(x + shiftForSecondHydrogen, y, {
       button: 'left',
     });

@@ -113,6 +113,7 @@ function Editor({ theme }: EditorProps) {
   const canvasRef = useRef<SVGSVGElement>(null);
   const errorTooltipText = useAppSelector(selectErrorTooltipText);
   const editor = useAppSelector(selectEditor);
+  const activeTool = useAppSelector(selectEditorActiveTool);
   useEffect(() => {
     dispatch(createEditor({ theme, canvas: canvasRef.current }));
     const serializer = new SdfSerializer();
@@ -141,25 +142,37 @@ function Editor({ theme }: EditorProps) {
       );
       dispatch(selectTool('select-rectangle'));
       editor.events.selectTool.dispatch('select-rectangle');
-      editor.events.mouseOverMonomer.add((e) => {
-        handleOpenPreview(e);
-      });
-      editor.events.mouseLeaveMonomer.add(() => {
-        handleClosePreview();
-      });
     }
   }, [editor]);
 
-  const handleOpenPreview = (e) => {
-    const monomer = e.target.__data__.monomer.monomerItem;
-    const cardCoordinates = e.target.getBoundingClientRect();
-    const top = calculatePreviewPosition(monomer, cardCoordinates);
-    const previewStyle = {
-      top,
-      left: `${cardCoordinates.left + cardCoordinates.width / 2}px`,
-    };
-    debouncedShowPreview({ monomer, style: previewStyle });
-  };
+  useEffect(() => {
+    editor?.events.mouseOverMonomer.add((e) => {
+      handleOpenPreview(e);
+    });
+    editor?.events.mouseLeaveMonomer.add(() => {
+      handleClosePreview();
+    });
+  }, [editor, activeTool]);
+
+  const handleOpenPreview = useCallback(
+    (e) => {
+      const tools = ['erase', 'select-rectangle', 'bond-single'];
+      if (!tools.includes(activeTool)) {
+        handleClosePreview();
+        return;
+      }
+      const monomer = e.target.__data__.monomer.monomerItem;
+
+      const cardCoordinates = e.target.getBoundingClientRect();
+      const top = calculatePreviewPosition(monomer, cardCoordinates);
+      const previewStyle = {
+        top,
+        left: `${cardCoordinates.left + cardCoordinates.width / 2}px`,
+      };
+      debouncedShowPreview({ monomer, style: previewStyle });
+    },
+    [activeTool],
+  );
 
   const handleClosePreview = () => {
     debouncedShowPreview.cancel();

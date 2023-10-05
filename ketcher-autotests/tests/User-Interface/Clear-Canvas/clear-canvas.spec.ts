@@ -9,6 +9,7 @@ import {
   clickInTheMiddleOfTheScreen,
   selectTopPanelButton,
   waitForPageInit,
+  waitForRender,
 } from '@utils';
 import { addTextBoxToCanvas } from '@utils/selectors/addTextBoxToCanvas';
 
@@ -43,9 +44,11 @@ test.describe('Clear canvas', () => {
     await takeEditorScreenshot(page);
     await selectTopPanelButton(TopPanelButton.Clear, page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectTopPanelButton(TopPanelButton.Undo, page);
-    await selectTopPanelButton(TopPanelButton.Redo, page);
-    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await waitForRender(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Undo, page);
+      await selectTopPanelButton(TopPanelButton.Redo, page);
+      await selectTopPanelButton(TopPanelButton.Undo, page);
+    });
   });
 
   test('Clear Canvas - Structure is opened from ket-file ', async ({
@@ -91,9 +94,11 @@ test.describe('Clear canvas', () => {
     await selectTopPanelButton(TopPanelButton.Clear, page);
     await selectTopPanelButton(TopPanelButton.Undo, page);
     await page.keyboard.press('Control+Delete');
-    await selectTopPanelButton(TopPanelButton.Undo, page);
-    await selectTopPanelButton(TopPanelButton.Undo, page);
-    await selectTopPanelButton(TopPanelButton.Redo, page);
-    await selectTopPanelButton(TopPanelButton.Redo, page);
+    await waitForRender(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Undo, page);
+      await selectTopPanelButton(TopPanelButton.Undo, page);
+      await selectTopPanelButton(TopPanelButton.Redo, page);
+      await selectTopPanelButton(TopPanelButton.Redo, page);
+    });
   });
 });

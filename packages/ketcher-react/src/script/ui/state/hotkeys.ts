@@ -18,9 +18,12 @@ import * as clipArea from '../component/cliparea/cliparea';
 
 import {
   KetSerializer,
-  MolSerializer,
   formatProperties,
   ChemicalMimeType,
+  ketcherProvider,
+  SupportedFormat,
+  Editor,
+  getStructure,
 } from 'ketcher-core';
 import { debounce, isEqual } from 'lodash/fp';
 import { load, onAction, removeStructAction } from './shared';
@@ -271,18 +274,18 @@ export function initClipboard(dispatch) {
       const state = global.currentState;
       return !state.modal;
     },
-    onCut() {
+    async onCut() {
       const state = global.currentState;
       const editor = state.editor;
-      const data = clipData(editor);
+      const data = await clipData(editor);
       if (data) debAction({ tool: 'eraser', opts: 1 });
       else editor.selection(null);
       return data;
     },
-    onCopy() {
+    async onCopy() {
       const state = global.currentState;
       const editor = state.editor;
-      const data = clipData(editor);
+      const data = await clipData(editor);
       editor.selection(null);
       return data;
     },
@@ -299,7 +302,7 @@ export function initClipboard(dispatch) {
   };
 }
 
-function clipData(editor) {
+async function clipData(editor: Editor) {
   const res = {};
   const struct = editor.structSelected();
   const errorHandler = editor.errorHandler;
@@ -308,30 +311,37 @@ function clipData(editor) {
   const simpleObjectOrText = Boolean(
     struct.simpleObjects.size || struct.texts.size,
   );
-  if (simpleObjectOrText && isIE) {
+  if (simpleObjectOrText && isIE && errorHandler) {
     errorHandler(
       'The structure you are trying to copy contains Simple object or/and Text object.' +
         'To copy Simple object or Text object in Internet Explorer try "Copy as KET" button',
     );
     return null;
   }
-  const molSerializer = new MolSerializer();
   try {
     const serializer = new KetSerializer();
     const ket = serializer.serialize(struct);
+    const ketcherInstance = ketcherProvider.getKetcher();
+
+    const data = await getStructure(
+      SupportedFormat.molAuto,
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      ketcherInstance!.formatterFactory,
+      struct,
+    );
+
     res[ChemicalMimeType.KET] = ket;
 
     const type = struct.isReaction
       ? ChemicalMimeType.Mol
       : ChemicalMimeType.Rxn;
-    const data = molSerializer.serialize(struct);
+
     res['text/plain'] = data;
     res[type] = data;
 
-    // res['chemical/x-daylight-smiles'] = smiles.stringify(struct);
     return res;
   } catch (e: any) {
-    errorHandler(e.message);
+    errorHandler && errorHandler(e.message);
   }
 
   return null;

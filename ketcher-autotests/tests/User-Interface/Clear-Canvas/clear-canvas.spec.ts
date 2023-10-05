@@ -99,9 +99,11 @@ test.describe('Clear canvas', () => {
     await selectTopPanelButton(TopPanelButton.Clear, page);
     await selectTopPanelButton(TopPanelButton.Undo, page);
     await page.keyboard.press('Control+Delete');
-    await selectTopPanelButton(TopPanelButton.Undo, page);
-    await selectTopPanelButton(TopPanelButton.Undo, page);
-    await selectTopPanelButton(TopPanelButton.Redo, page);
-    await selectTopPanelButton(TopPanelButton.Redo, page);
+    await waitForRender(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Undo, page);
+      await selectTopPanelButton(TopPanelButton.Undo, page);
+      await selectTopPanelButton(TopPanelButton.Redo, page);
+      await selectTopPanelButton(TopPanelButton.Redo, page);
+    });
   });
 });

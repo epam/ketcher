@@ -3,12 +3,10 @@ import {
   takeEditorScreenshot,
   selectLeftPanelButton,
   selectTopPanelButton,
-  delay,
   waitForPageInit,
   pressButton,
   LeftPanelButton,
   TopPanelButton,
-  DELAY_IN_SECONDS,
   openFileAndAddToCanvas,
   clickInTheMiddleOfTheScreen,
   dragMouseTo,
@@ -77,10 +75,11 @@ test.describe('Text tools test cases', () => {
     await pressButton(page, 'Apply');
     await selectLeftPanelButton(LeftPanelButton.Erase, page);
     await page.getByText('TEST').click();
-    await selectTopPanelButton(TopPanelButton.Undo, page);
-    await selectTopPanelButton(TopPanelButton.Redo, page);
-    await delay(DELAY_IN_SECONDS.TWO);
-    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await waitForRender(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Undo, page);
+      await selectTopPanelButton(TopPanelButton.Redo, page);
+      await selectTopPanelButton(TopPanelButton.Undo, page);
+    });
   });
 
   // Delete created text object with and Lasso Selection Tool and 'Delete' button on a keyboard
@@ -92,9 +91,11 @@ test.describe('Text tools test cases', () => {
     await page.getByText('TEXT').hover();
     await page.getByText('TEXT').click();
     await page.keyboard.press('Delete');
-    await selectTopPanelButton(TopPanelButton.Undo, page);
-    await selectTopPanelButton(TopPanelButton.Redo, page);
-    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await waitForRender(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Undo, page);
+      await selectTopPanelButton(TopPanelButton.Redo, page);
+      await selectTopPanelButton(TopPanelButton.Undo, page);
+    });
   });
 
   // Delete created text object in the text editor field
@@ -109,9 +110,11 @@ test.describe('Text tools test cases', () => {
     await page.keyboard.press('Delete');
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.Undo, page);
-    await selectTopPanelButton(TopPanelButton.Redo, page);
-    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await waitForRender(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Undo, page);
+      await selectTopPanelButton(TopPanelButton.Redo, page);
+      await selectTopPanelButton(TopPanelButton.Undo, page);
+    });
   });
 
   test('Text tool - Create a single text object by pasting text', async ({
@@ -192,9 +195,11 @@ test.describe('Text tools test cases', () => {
     await selectLeftPanelButton(LeftPanelButton.Erase, page);
     await page.getByText('&&&').hover();
     await page.getByText('&&&').click();
-    await selectTopPanelButton(TopPanelButton.Undo, page);
-    await selectTopPanelButton(TopPanelButton.Redo, page);
-    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await waitForRender(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Undo, page);
+      await selectTopPanelButton(TopPanelButton.Redo, page);
+      await selectTopPanelButton(TopPanelButton.Undo, page);
+    });
   });
 
   test('Text tool - Delete with and Lasso Selection Tool and "Delete" button on a keyboard', async ({
@@ -206,10 +211,11 @@ test.describe('Text tools test cases', () => {
     await page.getByText(text2).hover();
     await page.getByText(text2).click();
     await page.keyboard.press('Delete');
-    await selectTopPanelButton(TopPanelButton.Undo, page);
-    await selectTopPanelButton(TopPanelButton.Redo, page);
-    await delay(DELAY_IN_SECONDS.TWO);
-    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await waitForRender(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Undo, page);
+      await selectTopPanelButton(TopPanelButton.Redo, page);
+      await selectTopPanelButton(TopPanelButton.Undo, page);
+    });
   });
 
   test('Text tool - Delete two objects with Erase and Lasso Selection Tool and "Delete" button on a keyboard', async ({
@@ -226,9 +232,11 @@ test.describe('Text tools test cases', () => {
     await selectDropdownTool(page, 'select-rectangle', 'select-lasso');
     await createSomeStructure(page);
     await page.keyboard.press('Delete');
-    await selectTopPanelButton(TopPanelButton.Undo, page);
-    await selectTopPanelButton(TopPanelButton.Redo, page);
-    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await waitForRender(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Undo, page);
+      await selectTopPanelButton(TopPanelButton.Redo, page);
+      await selectTopPanelButton(TopPanelButton.Undo, page);
+    });
   });
 
   test('Text tool - Manipulations with the created text object', async ({
@@ -244,7 +252,9 @@ test.describe('Text tools test cases', () => {
     await selectTopPanelButton(TopPanelButton.Redo, page);
     await page.keyboard.press('Control+a');
     await page.getByText(text3).hover();
-    await createSomeMovement(page);
+    await waitForRender(page, async () => {
+      await createSomeMovement(page);
+    });
   });
 
   test('Text tool - Manipulations with the another created text object', async ({
@@ -288,10 +298,14 @@ test.describe('Text tools test cases', () => {
     await page.getByRole('dialog').getByRole('textbox').fill('OneTwoThree');
     await pressButton(page, 'Apply');
     await selectRing(RingButton.Benzene, page);
-    await page.getByTestId('canvas').click({ position: { x, y } });
+    await waitForRender(page, async () => {
+      await page.getByTestId('canvas').click({ position: { x, y } });
+    });
     await takeEditorScreenshot(page);
     await selectDropdownTool(page, 'select-rectangle', 'select-lasso');
     await createSomeStructure(page);
-    await createSomeMovement(page);
+    await waitForRender(page, async () => {
+      await createSomeMovement(page);
+    });
   });
 });

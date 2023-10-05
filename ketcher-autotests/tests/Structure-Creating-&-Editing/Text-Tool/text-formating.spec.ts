@@ -13,6 +13,7 @@ import {
   openFileAndAddToCanvas,
   copyAndPaste,
   cutAndPaste,
+  waitForRender,
 } from '@utils';
 import { addTextBoxToCanvas } from '@utils/selectors/addTextBoxToCanvas';
 
@@ -147,7 +148,9 @@ test.describe('Text tools test cases', () => {
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
     await saveToFile('ketfile01.ket', 'ketFile');
-    await selectTopPanelButton(TopPanelButton.Clear, page);
+    await waitForRender(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Clear, page);
+    });
   });
 
   test('Text tool - Open saved .ket file', async ({ page }) => {
@@ -158,7 +161,9 @@ test.describe('Text tools test cases', () => {
     await page.getByText('TEST321').dblclick();
     await page.keyboard.press('Control+a');
     await page.getByRole('button', { name: 'italic' }).click();
-    await pressButton(page, 'Apply');
+    await waitForRender(page, async () => {
+      await pressButton(page, 'Apply');
+    });
   });
 
   test('Text tool - Cut/Copy/Paste', async ({ page }) => {
@@ -171,7 +176,6 @@ test.describe('Text tools test cases', () => {
     await pressButton(page, 'Apply');
     await copyAndPaste(page);
     await page.getByTestId('canvas').click({ position: { x, y } });
-    await takeEditorScreenshot(page);
   });
 
   test('Text tool - Checking if user is able to cut and paste the created text objects', async ({
@@ -184,8 +188,10 @@ test.describe('Text tools test cases', () => {
     await cutAndPaste(page);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.Undo, page);
-    await selectTopPanelButton(TopPanelButton.Redo, page);
+    await waitForRender(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Undo, page);
+      await selectTopPanelButton(TopPanelButton.Redo, page);
+    });
   });
 
   test('Text tool - Selection of different types of text objects', async ({

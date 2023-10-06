@@ -286,4 +286,17 @@ test.describe('Template Manupulations', () => {
     await clickOnAtom(page, 'C', 4);
     await selectRing(RingButton.Cyclopentadiene, page);
   });
+  test('Double cyclopentadiene ring - if all bonds are single', async ({
+    page,
+  }) => {
+    /*
+    Test case: EPMLSOPKET-15507
+    Add Cyclohexane ring on canvas and add on it an atom
+    Add cyclopentadiene ring to a single bond
+    */
+    await drawCyclohexaneRing(page);
+    await selectAtomInToolbar(AtomButton.Nitrogen, page);
+    await clickOnAtom(page, 'C', 0);
+    await selectRing(RingButton.Cyclopentadiene, page);
+  });
 });

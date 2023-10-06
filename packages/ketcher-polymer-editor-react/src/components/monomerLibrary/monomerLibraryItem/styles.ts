@@ -15,12 +15,15 @@
  ***************************************************************************/
 import styled from '@emotion/styled';
 
-export const Card = styled.div<{ code: string; isSelected?: boolean }>`
+export const Card = styled.div<{
+  code?: string;
+  selected?: boolean;
+  disabled?: boolean;
+}>`
   background: white;
-  width: 58px;
   height: 48px;
   text-align: center;
-  cursor: pointer;
+  cursor: ${({ disabled }) => (disabled ? 'default' : 'pointer')};
   display: flex;
   justify-content: center;
   align-items: center;
@@ -31,8 +34,12 @@ export const Card = styled.div<{ code: string; isSelected?: boolean }>`
   border-radius: 4px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
   margin: 0;
-  margin-bottom: 8px;
   user-select: none;
+  border-color: ${({ theme }) => theme.ketcher.color.button.primary.active};
+  border-width: ${({ selected }) => (selected ? '0px 2px 2px' : '0px')};
+  border-style: solid;
+  box-sizing: border-box;
+  z-index: ${({ selected }) => (selected ? 2 : undefined)};
 
   .hidden & .star {
     visibility: hidden !important;
@@ -42,10 +49,10 @@ export const Card = styled.div<{ code: string; isSelected?: boolean }>`
     outline: 1px solid #b4b9d6;
     &::after {
       content: '';
-      background: ${({ code, theme, isSelected }) =>
-        isSelected
+      background: ${({ code, theme, selected }) =>
+        selected
           ? theme.ketcher.color.button.primary.active
-          : theme.ketcher.monomer.color[code]?.hover};
+          : theme.ketcher.monomer.color[code as string]?.hover};
     }
     > .star {
       visibility: visible;
@@ -60,15 +67,15 @@ export const Card = styled.div<{ code: string; isSelected?: boolean }>`
     left: 0;
     width: 100%;
     height: 8px;
-    background: ${({ code, theme, isSelected }) =>
-      isSelected
+    background: ${({ code, theme, selected }) =>
+      selected
         ? theme.ketcher.color.button.primary.active
-        : theme.ketcher.monomer.color[code]?.regular};
+        : theme.ketcher.monomer.color[code as string]?.regular};
   }
   > span {
     position: absolute;
-    bottom: 6px;
-    left: 6px;
+    bottom: ${({ selected }) => (selected ? '4px' : '6px')};
+    left: ${({ selected }) => (selected ? '4px' : '6px')};
     text-overflow: ellipsis;
     max-width: calc(100% - 12px);
     overflow: hidden;

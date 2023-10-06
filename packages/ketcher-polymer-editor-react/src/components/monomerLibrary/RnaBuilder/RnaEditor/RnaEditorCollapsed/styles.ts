@@ -15,7 +15,6 @@
  ***************************************************************************/
 
 import styled from '@emotion/styled';
-import { Icon } from 'ketcher-react';
 
 export const RnaEditorCollapsedContainer = styled.div({
   display: 'flex',
@@ -25,27 +24,17 @@ export const RnaEditorCollapsedContainer = styled.div({
   padding: '10px',
 });
 
-export const MonomerFullName = styled.span((props) => ({
-  fontSize: props.theme.ketcher.font.size.small,
-}));
-
-export const MonomerName = styled.span((props) => ({
+export const MonomerName = styled.span<{ grey?: boolean }>((props) => ({
   fontSize: props.theme.ketcher.font.size.medium,
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  color: props.grey
+    ? props.theme.ketcher.color.text.lightgrey
+    : props.theme.ketcher.color.text.primary,
 }));
 
 export const TextContainer = styled.div({
   display: 'flex',
-  flexDirection: 'column',
-  gap: '4px',
+  alignItems: 'center',
+  width: '100%',
 });
-
-export const EditIcon = styled(Icon)((props) => ({
-  width: '24px',
-  height: '24px',
-  cursor: 'pointer',
-  color: props.theme.ketcher.color.text.primary,
-
-  ':hover': {
-    color: props.theme.ketcher.color.text.secondary,
-  },
-}));

@@ -71,6 +71,7 @@ export const SystemControls = ({
         iconName="settings"
         disabled={disabledButtons.includes('settings')}
         isHidden={hiddenButtons.includes('settings')}
+        testId="settings-button"
       />
       <TopToolbarIconButton
         title={`Help (${shortcutStr(['?', '&', 'Shift+/'])})`}
@@ -78,6 +79,7 @@ export const SystemControls = ({
         iconName="help"
         disabled={disabledButtons.includes('help')}
         isHidden={hiddenButtons.includes('help')}
+        testId="help-button"
       />
       {/* @TODO Temporary About button, when design is ready, reimplement */}
       <TopToolbarIconButton
@@ -86,6 +88,7 @@ export const SystemControls = ({
         iconName="about"
         disabled={disabledButtons.includes('about')}
         isHidden={hiddenButtons.includes('about')}
+        testId="about-button"
       />
       <TopToolbarIconButton
         title="Fullscreen mode"
@@ -93,6 +96,7 @@ export const SystemControls = ({
         iconName={getIfFullScreen() ? 'fullscreen-exit' : 'fullscreen-enter'}
         disabled={disabledButtons.includes('fullscreen')}
         isHidden={hiddenButtons.includes('fullscreen')}
+        testId="fullscreen-mode-button"
       />
     </ControlsPanel>
   );

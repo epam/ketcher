@@ -1,4 +1,4 @@
-import { Atom, radicalElectrons } from 'domain/entities/atom';
+import { Atom, AttachmentPoints, radicalElectrons } from 'domain/entities/atom';
 
 describe('radicalElectrons', () => {
   it('should return 1 if passed radical is Douplet (value = 2)', () => {
@@ -23,7 +23,7 @@ describe('Atom', () => {
     aam: 0,
     alias: null,
     atomList: null,
-    attpnt: null,
+    attachmentPoints: null,
     badConn: false,
     charge: 0,
     exactChangeFlag: 0,
@@ -141,12 +141,12 @@ describe('Atom', () => {
       expect(atom.isQuery()).toBe(true);
     });
 
-    it('should return truthy value if params have attpnt prop', () => {
-      const paramsWithAttpnt = {
+    it('should return truthy value if params have attachmentPoints prop', () => {
+      const paramsWithAttachmentPoints = {
         ...hydrogenParams,
-        attpnt: 'test',
+        attachmentPoints: AttachmentPoints.FirstSideOnly,
       };
-      const atom = new Atom(paramsWithAttpnt);
+      const atom = new Atom(paramsWithAttachmentPoints);
       expect(atom.isQuery()).toBeTruthy();
     });
 
@@ -194,6 +194,8 @@ describe('Atom', () => {
     const plainCarbonParams = {
       ...hydrogenParams,
       label: 'C',
+      charge: null,
+      isotope: null,
     };
 
     it('should return true if it is plain carbon', () => {
@@ -206,7 +208,7 @@ describe('Atom', () => {
       expect(atom.isPlainCarbon()).toBe(false);
     });
 
-    it('should return false if it  is carbon and isotope != 0', () => {
+    it('should return false if it  is carbon and isotope != null', () => {
       const carbonWithIsotopeParam = {
         ...plainCarbonParams,
         isotope: 1,
@@ -224,7 +226,7 @@ describe('Atom', () => {
       expect(atom.isPlainCarbon()).toBe(false);
     });
 
-    it('should return false if it  is carbon and charge != 0', () => {
+    it('should return false if it  is carbon and charge != null', () => {
       const carbonWithChargeParam = {
         ...plainCarbonParams,
         charge: 1,
@@ -346,13 +348,13 @@ describe('Atom', () => {
       expect(atom.hasRxnProps()).toBe(true);
     });
 
-    it('should return true if atom has attPnt > 0', () => {
-      const paramsWithAttpnt = {
+    it('should return true if atom has attachmentPoints > 0', () => {
+      const paramsWithAttachmentPoints = {
         ...hydrogenParams,
-        attpnt: 1,
+        attachmentPoints: AttachmentPoints.FirstSideOnly,
       };
 
-      const atom = new Atom(paramsWithAttpnt);
+      const atom = new Atom(paramsWithAttachmentPoints);
       expect(atom.hasRxnProps()).toBe(true);
     });
 
@@ -376,7 +378,7 @@ describe('Atom', () => {
     it('should return true and set inplicitH = 0 if atom is query', () => {
       const queryAtomParams = {
         ...hydrogenParams,
-        attpnt: 5,
+        attachmentPoints: AttachmentPoints.FirstSideOnly,
         implicitH: 10,
       };
       const atom = new Atom(queryAtomParams);

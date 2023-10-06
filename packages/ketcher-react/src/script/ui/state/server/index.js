@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { ChemicalMimeType, KetSerializer } from 'ketcher-core';
+import { ChemicalMimeType, KetcherLogger, KetSerializer } from 'ketcher-core';
 import { appUpdate, setStruct } from '../options';
 import { omit, without } from 'lodash/fp';
 
@@ -94,6 +94,7 @@ export function check(optsTypes) {
         dispatch(checkErrors(res));
       })
       .catch((e) => {
+        KetcherLogger.error('index.js::check', e);
         editor.errorHandler(e);
       });
   };
@@ -129,6 +130,7 @@ export function analyse() {
         }),
       )
       .catch((e) => {
+        KetcherLogger.error('index.js::analyse', e);
         editor.errorHandler(e);
       });
   };
@@ -154,6 +156,7 @@ export function serverTransform(method, data, struct) {
         );
       })
       .catch((e) => {
+        KetcherLogger.error('index.js::serverTransform', e);
         state.editor.errorHandler(e);
       })
       .finally(() => {
@@ -161,6 +164,14 @@ export function serverTransform(method, data, struct) {
       });
     // TODO: notification
   };
+}
+
+/*
+  Indigo doesn't perform layout for enhancedFlags and just preserves their positions
+  That results in structure being aligned and moved, but flags left as is.
+*/
+function resetStereoFlagsPosition(struct) {
+  struct.frags.forEach((fragment) => (fragment.stereoFlagPosition = undefined));
 }
 
 // TODO: serverCall function should not be exported
@@ -178,6 +189,9 @@ export function serverCall(editor, server, method, options, struct) {
     selectedAtoms = (
       selection.atoms ? selection.atoms : editor.explicitSelected().atoms
     ).map((aid) => aidMap.get(aid));
+  }
+  if (method === 'layout') {
+    resetStereoFlagsPosition(currentStruct);
   }
   const ketSerializer = new KetSerializer();
   return server.then(() =>

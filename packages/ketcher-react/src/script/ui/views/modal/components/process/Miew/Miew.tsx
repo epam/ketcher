@@ -18,6 +18,7 @@ import { lazy, Suspense, useCallback, useRef, useState } from 'react';
 import { Dialog, LoadingCircles } from '../../../../components';
 import {
   FormatterFactory,
+  KetcherLogger,
   Struct,
   StructService,
   SupportedFormat,
@@ -136,7 +137,9 @@ const MiewDialog = ({
           miew.setOptions(miewOpts);
           setIsIsInitialized(true);
         })
-        .catch((ex) => console.error(ex.message));
+        .catch((e) => {
+          KetcherLogger.error('Miew.tsx::MiewDialog::onMiewInit', e);
+        });
     },
     [miewOpts, server, struct],
   );
@@ -161,6 +164,7 @@ const MiewDialog = ({
           onClick={exportCML}
           className={classes.applyButton}
           disabled={!isInitialized}
+          data-testid="miew-modal-button"
         >
           Apply
         </button>,

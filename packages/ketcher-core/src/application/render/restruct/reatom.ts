@@ -38,8 +38,8 @@ import { Scale } from 'domain/helpers';
 import draw from '../draw';
 import util from '../util';
 import { tfx } from 'utilities';
-import svgPath from 'svgpath';
 import { RenderOptions } from 'application/render/render.types';
+import { capitalize } from 'lodash';
 
 interface ElemAttr {
   text: string;
@@ -101,32 +101,9 @@ class ReAtom extends ReObject {
     return new Box2Abs(this.a.pp, this.a.pp);
   }
 
-  /**
-   * Why?
-   * We need to return Bounding box for the attachment points for this atom,
-   * to be able to correctly calculate boundaries for autoscaling and positioning
-   */
-  getVBoxObjOfAttachmentPoint(render: Render): Box2Abs | null {
-    let accumulatedBBox: Box2Abs | null = null;
-    const directionVectors = this.getAttachmentPointDirectionVectors(
-      render.ctab.molecule,
-    );
-    directionVectors.forEach((directionVector) => {
-      const attachmentPointEndPosition = this.a.pp.add(directionVector);
-      const attachmentPointEndBoundingBox = new Box2Abs(
-        attachmentPointEndPosition,
-        attachmentPointEndPosition,
-      );
-      accumulatedBBox = accumulatedBBox
-        ? Box2Abs.union(accumulatedBBox, attachmentPointEndBoundingBox)
-        : attachmentPointEndBoundingBox;
-    });
-    return accumulatedBBox;
-  }
-
   drawHover(render: Render) {
     const ret = this.makeHoverPlate(render);
-    render.ctab.addReObjectPath(LayerMap.hovering, this.visel, ret);
+    render.ctab.addReObjectPath(LayerMap.atom, this.visel, ret);
     return ret;
   }
 
@@ -226,7 +203,7 @@ class ReAtom extends ReObject {
     if (atomSymbolShift > 0) {
       return atomPosition.addScaled(
         direction,
-        atomSymbolShift + 2 * renderOptions.lineWidth,
+        atomSymbolShift + 3 * renderOptions.lineWidth,
       );
     } else {
       return atomPosition;
@@ -234,56 +211,7 @@ class ReAtom extends ReObject {
   }
 
   hasAttachmentPoint(): boolean {
-    return Boolean(this.a.attpnt);
-  }
-
-  private isTrisectionAttachmentPoint(): boolean {
-    // in this case we should split the attachment point vector to two vectors
-    return this.a.attpnt === 3;
-  }
-
-  private getAttachmentPointDirectionVectors(struct: Struct): Vec2[] {
-    if (!this.hasAttachmentPoint()) {
-      return [];
-    }
-    if (this.isTrisectionAttachmentPoint()) {
-      return trisectionLargestSector(this, struct);
-    } else {
-      const hasOnlyOneBond = this.a.neighbors.length === 1;
-      const directionVector = hasOnlyOneBond
-        ? getAttachmentDirectionForOnlyOneBond(this, struct)
-        : bisectLargestSector(this, struct);
-      return [directionVector];
-    }
-  }
-
-  showAttachmentPoints(restruct: ReStruct): void {
-    const directionVectors = this.getAttachmentPointDirectionVectors(
-      restruct.molecule,
-    );
-    directionVectors.forEach((directionVector, index) => {
-      showAttachmentPointShape(
-        this,
-        restruct.render,
-        directionVector,
-        restruct.addReObjectPath.bind(restruct),
-      );
-
-      const showLabel = isAttachmentPointLabelRequired(restruct);
-      if (showLabel) {
-        // in case of isTrisectionRequired (trisection case) we should show labels '1' and '2' for those separated vectors
-        const labelText = String(
-          this.isTrisectionAttachmentPoint() ? index + 1 : this.a.attpnt,
-        );
-        showAttachmentPointLabel(
-          this,
-          restruct.render,
-          directionVector,
-          restruct.addReObjectPath.bind(restruct),
-          labelText,
-        );
-      }
-    });
+    return Boolean(this.a.attachmentPoints);
   }
 
   show(restruct: ReStruct, aid: number, options: any): void {
@@ -315,9 +243,9 @@ class ReAtom extends ReObject {
       return;
     }
 
-    this.hydrogenOnTheLeft = setHydrogenPos(restruct.molecule, this);
+    this.hydrogenOnTheLeft = shouldHydrogenBeOnLeft(restruct.molecule, this);
     this.showLabel = isLabelVisible(restruct, render.options, this);
-    this.color = 'black'; // reset colour
+    this.color = 'black'; // reset color
 
     let delta;
     let rightMargin;
@@ -383,7 +311,7 @@ class ReAtom extends ReObject {
           true,
         );
       }
-      if (this.a.isotope !== 0) {
+      if (this.a.isotope !== null) {
         const isotope = showIsotope(this, render, leftMargin);
         leftMargin -= isotope.rbb.width + delta;
         restruct.addReObjectPath(
@@ -428,7 +356,7 @@ class ReAtom extends ReObject {
         }
       }
 
-      if (this.a.charge !== 0 && options.showCharge) {
+      if (this.a.charge !== null && options.showCharge) {
         const charge = showCharge(this, render, rightMargin);
         rightMargin += charge.rbb.width + delta;
         restruct.addReObjectPath(
@@ -478,7 +406,8 @@ class ReAtom extends ReObject {
 
     const stereoLabel = this.a.stereoLabel; // Enhanced Stereo
     const aamText = getAamText(this);
-    const queryAttrsText = !this.a.pseudo ? getQueryAttrsText(this) : '';
+    const isAromatized = Atom.isInAromatizedRing(restruct.molecule, aid);
+    const queryAttrsText = getQueryAttrsText(this, isAromatized);
 
     // we render them together to avoid possible collisions
 
@@ -486,17 +415,26 @@ class ReAtom extends ReObject {
     // TODO: fragment should not be null
     const fragment = restruct.molecule.frags.get(fragmentId);
 
-    const text =
-      (shouldDisplayStereoLabel(
-        stereoLabel,
-        options.stereoLabelStyle,
-        options.ignoreChiralFlag,
-        fragment?.enhancedStereoFlag,
-      )
-        ? `${stereoLabel}\n`
-        : '') +
-      (queryAttrsText.length > 0 ? `${queryAttrsText}\n` : '') +
-      (aamText.length > 0 ? `.${aamText}.` : '');
+    const displayStereoLabel = shouldDisplayStereoLabel(
+      stereoLabel,
+      options.stereoLabelStyle,
+      options.ignoreChiralFlag,
+      fragment?.enhancedStereoFlag,
+    );
+
+    let text = '';
+
+    if (displayStereoLabel) {
+      text = `${stereoLabel}\n`;
+    }
+
+    if (queryAttrsText.length > 0) {
+      text += `${queryAttrsText}\n`;
+    }
+
+    if (aamText.length > 0) {
+      text += `.${aamText}.`;
+    }
 
     if (text.length > 0) {
       const elem = Elements.get(this.a.label);
@@ -519,7 +457,7 @@ class ReAtom extends ReObject {
       draw.recenterText(aamPath, aamBox);
       const visel = this.visel;
       let t = 3;
-      let dir = bisectLargestSector(this, restruct.molecule);
+      let dir = this.bisectLargestSector(restruct.molecule);
       // estimate the shift to clear the atom label
       for (let i = 0; i < visel.exts.length; ++i) {
         t = Math.max(t, util.shiftRayBox(ps, dir, visel.exts[i].translate(ps)));
@@ -563,6 +501,40 @@ class ReAtom extends ReObject {
         visel: this.visel,
       });
     }
+  }
+
+  getLargestSectorFromNeighbors(struct: Struct): {
+    neighborAngle: number;
+    largestAngle: number;
+  } {
+    let angles: Array<number> = [];
+    this.a.neighbors.forEach((halfBondId) => {
+      const halfBond = struct.halfBonds.get(halfBondId);
+      halfBond && angles.push(halfBond.ang);
+    });
+    angles = angles.sort((a, b) => a - b);
+    const largeAngles: Array<number> = [];
+    for (let i = 0; i < angles.length - 1; ++i) {
+      largeAngles.push(angles[(i + 1) % angles.length] - angles[i]);
+    }
+    largeAngles.push(angles[0] - angles[angles.length - 1] + 2 * Math.PI);
+    let largestAngle = 0;
+    let neighborAngle = -Math.PI / 2;
+    for (let i = 0; i < angles.length; ++i) {
+      if (largeAngles[i] > largestAngle) {
+        largestAngle = largeAngles[i];
+        neighborAngle = angles[i];
+      }
+    }
+
+    return { neighborAngle, largestAngle };
+  }
+
+  bisectLargestSector(struct: Struct): Vec2 {
+    const { largestAngle, neighborAngle } =
+      this.getLargestSectorFromNeighbors(struct);
+    const bisectAngle = neighborAngle + largestAngle / 2;
+    return newVectorFromAngle(bisectAngle);
   }
 }
 
@@ -616,6 +588,7 @@ function shouldDisplayStereoLabel(
   if (!stereoLabel) {
     return false;
   }
+
   const stereoLabelType = stereoLabel.match(/\D+/g)[0];
 
   if (ignoreChiralFlag && stereoLabelType === StereoLabel.Abs) {
@@ -626,18 +599,14 @@ function shouldDisplayStereoLabel(
   }
 
   switch (labelStyle) {
-    // Off
     case StereLabelStyleType.Off:
       return false;
-    // On
     case StereLabelStyleType.On:
       return true;
-    // Classic
     case StereLabelStyleType.Classic:
       return !!(
         flag === StereoFlag.Mixed || stereoLabelType === StereoLabel.Or
       );
-    // IUPAC
     case StereLabelStyleType.IUPAC:
       return !!(
         flag === StereoFlag.Mixed && stereoLabelType !== StereoLabel.Abs
@@ -647,8 +616,8 @@ function shouldDisplayStereoLabel(
   }
 }
 
-function isLabelVisible(restruct, options, atom) {
-  const isAttachmentPointAtom = atom.a.attpnt != null;
+function isLabelVisible(restruct, options, atom: ReAtom) {
+  const isAttachmentPointAtom = Boolean(atom.a.attachmentPoints);
   const isCarbon = atom.a.label.toLowerCase() === 'c';
   const visibleTerminal =
     options.showHydrogenLabels !== ShowHydrogenLabels.Off &&
@@ -667,9 +636,9 @@ function isLabelVisible(restruct, options, atom) {
     options.carbonExplicitly ||
     options.showHydrogenLabels === ShowHydrogenLabels.On ||
     atom.a.alias ||
-    atom.a.isotope !== 0 ||
+    atom.a.isotope !== null ||
     atom.a.radical !== 0 ||
-    atom.a.charge !== 0 ||
+    atom.a.charge !== null ||
     atom.a.explicitValence >= 0 ||
     atom.a.atomList !== null ||
     atom.a.rglabel !== null ||
@@ -711,8 +680,7 @@ function displayHydrogen(hydrogenLabels: ShowHydrogenLabels, atom: ReAtom) {
   );
 }
 
-function setHydrogenPos(struct, atom) {
-  // check where should the hydrogen be put on the left of the label
+function shouldHydrogenBeOnLeft(struct, atom) {
   if (atom.a.neighbors.length === 0) {
     if (atom.a.label === 'D' || atom.a.label === 'T') {
       return false;
@@ -722,24 +690,14 @@ function setHydrogenPos(struct, atom) {
     }
   }
 
-  let yl = 1;
-  let yr = 1;
-  let nl = 0;
-  let nr = 0;
+  if (atom.a.neighbors.length === 1) {
+    const neighbor = atom.a.neighbors[0];
+    const neighborDirection = struct.halfBonds.get(neighbor).dir;
 
-  atom.a.neighbors.forEach((nei) => {
-    const d = struct.halfBonds.get(nei).dir;
+    return neighborDirection.x > 0;
+  }
 
-    if (d.x <= 0) {
-      yl = Math.min(yl, Math.abs(d.y));
-      nl++;
-    } else {
-      yr = Math.min(yr, Math.abs(d.y));
-      nr++;
-    }
-  });
-
-  return yl < 0.51 || yr < 0.51 ? yr < yl : nr > nl;
+  return false;
 }
 
 function buildLabel(
@@ -749,10 +707,12 @@ function buildLabel(
   options: any,
 ): ElemAttr {
   // eslint-disable-line max-statements
-  let label: any = {};
+  const label: any = {};
   label.text = getLabelText(atom.a);
 
-  if (label.text === '') label = 'R#'; // for structures that missed 'M  RGP' tag in molfile
+  if (!label.text) {
+    label.text = 'R#';
+  }
 
   if (label.text === atom.a.label) {
     const element = Elements.get(label.text);
@@ -761,11 +721,13 @@ function buildLabel(
     }
   }
 
+  const { previewOpacity } = options;
   label.path = paper.text(ps.x, ps.y, label.text).attr({
     font: options.font,
     'font-size': options.fontsz,
     fill: atom.color,
     'font-style': atom.a.pseudo ? 'italic' : '',
+    'fill-opacity': atom.a.isPreview ? previewOpacity : 1,
   });
 
   label.rbb = util.relBox(label.path.getBBox());
@@ -882,7 +844,7 @@ function showIsotope(
   const options = render.options;
   const delta = 0.5 * options.lineWidth;
   const isotope: any = {};
-  isotope.text = atom.a.isotope.toString();
+  isotope.text = atom.a.isotope === null ? '' : atom.a.isotope.toString();
   isotope.path = render.paper.text(ps.x, ps.y, isotope.text).attr({
     font: options.font,
     'font-size': options.fontszsub,
@@ -911,10 +873,14 @@ function showCharge(
   const delta = 0.5 * options.lineWidth;
   const charge: any = {};
   charge.text = '';
-  const absCharge = Math.abs(atom.a.charge);
-  if (absCharge !== 1) charge.text = absCharge.toString();
-  if (atom.a.charge < 0) charge.text += '\u2013';
-  else charge.text += '+';
+  if (atom.a.charge !== null) {
+    const absCharge = Math.abs(atom.a.charge);
+    if (absCharge !== 1) charge.text = absCharge.toString();
+    if (atom.a.charge < 0) charge.text += '\u2013';
+    else charge.text += '+';
+  } else {
+    charge.text = '';
+  }
 
   charge.path = render.paper.text(ps.x, ps.y, charge.text).attr({
     font: options.font,
@@ -1111,31 +1077,173 @@ function getAamText(atom) {
   return aamText;
 }
 
-function getQueryAttrsText(atom) {
+function getRingBondCountAttrText(value: number) {
+  let attrText: string;
+  if (value > 0) {
+    attrText = 'rb' + value.toString();
+  } else if (value === -1) {
+    attrText = 'rb0';
+  } else if (value === -2) {
+    attrText = 'rb*';
+  } else {
+    throw new Error('Ring bond count invalid');
+  }
+  return attrText;
+}
+
+function getSubstitutionCountAttrText(value: number) {
+  let attrText: string;
+  if (value > 0) {
+    attrText = 's' + value.toString();
+  } else if (value === -1) {
+    attrText = 's0';
+  } else if (value === -2) {
+    attrText = 's*';
+  } else {
+    throw new Error('Substitution count invalid');
+  }
+  return attrText;
+}
+
+function getAtomLabelAttrText(value: string, atom) {
+  const { atomType, atomList, notList, isotope } = atom;
+  if (atomType === 'single') {
+    let labelText = isotope || '';
+    if (atom.aromaticity) {
+      labelText +=
+        atom.aromaticity === 'aromatic'
+          ? value.toLowerCase()
+          : value.toUpperCase();
+      return labelText;
+    }
+    const number = Elements.get(capitalize(value))?.number;
+    labelText += number ? `#${number}` : value;
+    return labelText;
+  } else if (atomType === 'list' && atomList !== '') {
+    return atomList
+      .split(',')
+      .map((el: string) => {
+        const number = Elements.get(capitalize(el))?.number || '';
+        return `${notList ? '!' : ''}#${number}`;
+      })
+      .join(notList ? ';' : ',');
+  } else {
+    return '';
+  }
+}
+export function getAtomCustomQuery(atom) {
   let queryAttrsText = '';
-  if (atom.a.ringBondCount !== 0) {
-    if (atom.a.ringBondCount > 0) {
-      queryAttrsText += 'rb' + atom.a.ringBondCount.toString();
-    } else if (atom.a.ringBondCount === -1) queryAttrsText += 'rb0';
-    else if (atom.a.ringBondCount === -2) queryAttrsText += 'rb*';
-    else throw new Error('Ring bond count invalid');
+
+  const addSemicolon = () => {
+    if (queryAttrsText.length > 0) queryAttrsText += ';';
+  };
+  const patterns: {
+    [key: string]: (value: string, atom) => string;
+  } = {
+    label: getAtomLabelAttrText,
+    charge: (value) => {
+      if (value === '') return value;
+      const regExpResult = /^([+-]?)([0-9]{1,3}|1000)([+-]?)$/.exec(value);
+      const charge = regExpResult
+        ? parseInt(
+            regExpResult[1] + regExpResult[3] + regExpResult[2],
+          ).toString()
+        : value;
+      return charge[0] !== '-' ? `+${charge}` : charge;
+    },
+    explicitValence: (value) => (Number(value) !== -1 ? `v${value}` : ''),
+    ringBondCount: (value) =>
+      Number(value) !== 0 ? getRingBondCountAttrText(Number(value)) : '',
+    substitutionCount: (value) =>
+      Number(value) !== 0 ? getSubstitutionCountAttrText(Number(value)) : '',
+    unsaturatedAtom: (value) => (value ? 'u' : ''),
+    hCount: (value) =>
+      Number(value) > 0 ? 'H' + (Number(value) - 1).toString() : '',
+    implicitHCount: (value) => `h${value}`,
+    ringMembership: (value) => `R${value}`,
+    ringSize: (value) => `r${value}`,
+    connectivity: (value) => `X${value}`,
+    chirality: (value) => (value === 'clockwise' ? '@@' : '@'),
+  };
+
+  for (const propertyName in atom) {
+    const value = atom[propertyName];
+    if (propertyName in patterns && value !== null) {
+      const attrText = patterns[propertyName](value, atom);
+      if (attrText) {
+        addSemicolon();
+      }
+      queryAttrsText += attrText;
+    }
   }
-  if (atom.a.substitutionCount !== 0) {
-    if (queryAttrsText.length > 0) queryAttrsText += ',';
-    if (atom.a.substitutionCount > 0) {
-      queryAttrsText += 's' + atom.a.substitutionCount.toString();
-    } else if (atom.a.substitutionCount === -1) queryAttrsText += 's0';
-    else if (atom.a.substitutionCount === -2) queryAttrsText += 's*';
-    else throw new Error('Substitution count invalid');
+
+  return queryAttrsText;
+}
+
+function getQueryAttrsText(atom, isAromatized: boolean) {
+  let queryAttrsText = '';
+
+  const addSemicolon = () => {
+    if (queryAttrsText.length > 0) queryAttrsText += ';';
+  };
+
+  const {
+    ringBondCount,
+    substitutionCount,
+    unsaturatedAtom,
+    hCount,
+    implicitHCount,
+    queryProperties: {
+      aromaticity,
+      ringMembership,
+      ringSize,
+      connectivity,
+      chirality,
+      customQuery,
+    },
+  } = atom.a;
+  if (customQuery) {
+    return customQuery;
   }
-  if (atom.a.unsaturatedAtom > 0) {
-    if (queryAttrsText.length > 0) queryAttrsText += ',';
-    if (atom.a.unsaturatedAtom === 1) queryAttrsText += 'u';
+  if (ringBondCount !== 0) {
+    queryAttrsText += getRingBondCountAttrText(ringBondCount);
+  }
+  if (substitutionCount !== 0) {
+    addSemicolon();
+    queryAttrsText += getSubstitutionCountAttrText(substitutionCount);
+  }
+  if (unsaturatedAtom > 0) {
+    addSemicolon();
+    if (unsaturatedAtom === 1) queryAttrsText += 'u';
     else throw new Error('Unsaturated atom invalid value');
   }
-  if (atom.a.hCount > 0) {
-    if (queryAttrsText.length > 0) queryAttrsText += ',';
-    queryAttrsText += 'H' + (atom.a.hCount - 1).toString();
+  if (hCount > 0) {
+    addSemicolon();
+    queryAttrsText += 'H' + (hCount - 1).toString();
+  }
+  if (implicitHCount !== null && !isAromatized) {
+    addSemicolon();
+    queryAttrsText += `h${implicitHCount}`;
+  }
+  if (aromaticity !== null) {
+    addSemicolon();
+    queryAttrsText += aromaticity === 'aromatic' ? 'a' : 'A';
+  }
+  if (Number.isFinite(ringMembership)) {
+    addSemicolon();
+    queryAttrsText += `R${ringMembership}`;
+  }
+  if (Number.isFinite(ringSize)) {
+    addSemicolon();
+    queryAttrsText += `r${ringSize}`;
+  }
+  if (Number.isFinite(connectivity)) {
+    addSemicolon();
+    queryAttrsText += `X${connectivity}`;
+  }
+  if (chirality !== null) {
+    addSemicolon();
+    queryAttrsText += chirality === 'clockwise' ? '@@' : '@';
   }
   return queryAttrsText;
 }
@@ -1146,184 +1254,8 @@ function pathAndRBoxTranslate(path, rbb, x, y) {
   rbb.y += y;
 }
 
-function bisectLargestSector(atom: ReAtom, struct: Struct): Vec2 {
-  const { largestAngle, neighborAngle } = getLargestSectorFromNeighbors(
-    atom,
-    struct,
-  );
-  const bisectAngle = neighborAngle + largestAngle / 2;
-  return newVectorFromAngle(bisectAngle);
-}
-
-function getAttachmentDirectionForOnlyOneBond(
-  atom: ReAtom,
-  struct: Struct,
-): Vec2 {
-  const DEGREE_120_FOR_ONE_BOND = (2 * Math.PI) / 3;
-  const DEGREE_180_FOR_TRIPLE_BOND = Math.PI;
-  const onlyNeighbor = atom.a.neighbors[0];
-  // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
-  const neighbour = struct.halfBonds.get(onlyNeighbor)!;
-  const angle = neighbour.ang;
-  const isTripleBond =
-    struct.bonds.get(neighbour.bid)?.type === Bond.PATTERN.TYPE.TRIPLE;
-  const finalAngle =
-    angle +
-    (isTripleBond ? DEGREE_180_FOR_TRIPLE_BOND : DEGREE_120_FOR_ONE_BOND);
-  return newVectorFromAngle(finalAngle);
-}
-
-function trisectionLargestSector(atom: ReAtom, struct: Struct): [Vec2, Vec2] {
-  const { largestAngle, neighborAngle } = getLargestSectorFromNeighbors(
-    atom,
-    struct,
-  );
-  const firstTrisectorAngle = neighborAngle + largestAngle / 3;
-  const secondTrisectorAngle = neighborAngle + (largestAngle * 2) / 3;
-
-  return [
-    newVectorFromAngle(firstTrisectorAngle),
-    newVectorFromAngle(secondTrisectorAngle),
-  ];
-}
-
 function newVectorFromAngle(angle: number): Vec2 {
   return new Vec2(Math.cos(angle), Math.sin(angle));
-}
-
-function getLargestSectorFromNeighbors(
-  atom: ReAtom,
-  struct: Struct,
-): { neighborAngle: number; largestAngle: number } {
-  let angles: Array<number> = [];
-  atom.a.neighbors.forEach((hbid) => {
-    const hb = struct.halfBonds.get(hbid);
-    hb && angles.push(hb.ang);
-  });
-  angles = angles.sort((a, b) => a - b);
-  const da: Array<number> = [];
-  for (let i = 0; i < angles.length - 1; ++i) {
-    da.push(angles[(i + 1) % angles.length] - angles[i]);
-  }
-  da.push(angles[0] - angles[angles.length - 1] + 2 * Math.PI);
-  let daMax = 0;
-  let ang = -Math.PI / 2;
-  for (let i = 0; i < angles.length; ++i) {
-    if (da[i] > daMax) {
-      daMax = da[i];
-      ang = angles[i];
-    }
-  }
-
-  return { neighborAngle: ang, largestAngle: daMax };
-}
-
-function getSvgCurveShapeAttachmentPoint(
-  centerPosition: Vec2,
-  directionVector: Vec2,
-  basicSize: number,
-): string {
-  // declared here https://github.com/epam/ketcher/issues/2165
-  // this path has (0,0) in the position of attachment point atom
-  const attachmentPointSvgPathString = `M13 1.5l-1.5 3.7c-0.3 0.8-1.5 0.8-1.9 0l-1.7-4.4c-0.3-0.8-1.5-0.8-1.9 0l-1.7 4.4c-0.3 0.8-1.5 0.8-1.8 0l-1.8-4.4c-0.3-0.8-1.5-0.8-1.8 0l-1.7 4.4c-0.3 0.8-1.5 0.8-1.9 0l-1.7-4.4c-0.3-0.8-1.5-0.8-1.9 0l-1.6 4.2c-0.3 0.9-1.6 0.8-1.9 0l-1.2-3.5`;
-  const attachmentPointSvgPathSize = 39.8;
-
-  const shapeScale = basicSize / attachmentPointSvgPathSize;
-  const angleDegrees =
-    (Math.atan2(directionVector.y, directionVector.x) * 180) / Math.PI - 90;
-
-  return svgPath(attachmentPointSvgPathString)
-    .rotate(angleDegrees)
-    .scale(shapeScale)
-    .translate(centerPosition.x, centerPosition.y)
-    .toString();
-}
-
-function showAttachmentPointShape(
-  atom: ReAtom,
-  { options, paper }: Render,
-  directionVector: Vec2,
-  addReObjectPath: InstanceType<typeof ReStruct>['addReObjectPath'],
-): void {
-  const atomPositionVector = Scale.obj2scaled(atom.a.pp, options);
-  const shiftedAtomPositionVector = atom.getShiftedSegmentPosition(
-    options,
-    directionVector,
-  );
-  const attachmentPointEnd = atomPositionVector.addScaled(
-    directionVector,
-    options.scale * 0.85,
-  );
-
-  const linePath = paper.path(
-    'M{0},{1}L{2},{3}',
-    tfx(shiftedAtomPositionVector.x),
-    tfx(shiftedAtomPositionVector.y),
-    tfx(attachmentPointEnd.x),
-    tfx(attachmentPointEnd.y),
-  );
-
-  const curvePath = paper.path(
-    getSvgCurveShapeAttachmentPoint(
-      attachmentPointEnd,
-      directionVector,
-      options.scale,
-    ),
-  );
-
-  const resultShape = paper
-    .set([curvePath, linePath])
-    .attr(options.lineattr)
-    .attr({ 'stroke-width': options.lineWidth });
-
-  addReObjectPath(
-    LayerMap.indices,
-    atom.visel,
-    resultShape,
-    atomPositionVector,
-  );
-}
-
-function getLabelPositionForAttachmentPoint(
-  atomPositionVector: Vec2,
-  directionVector: Vec2,
-  shapeHeight: number,
-): Vec2 {
-  const normal = directionVector.rotateSC(1, 0);
-  return atomPositionVector
-    .addScaled(normal, 0.17 * shapeHeight)
-    .addScaled(directionVector, shapeHeight * 0.7);
-}
-
-function showAttachmentPointLabel(
-  atom: ReAtom,
-  { options, paper }: Render,
-  directionVector: Vec2,
-  addReObjectPath: InstanceType<typeof ReStruct>['addReObjectPath'],
-  labelText: string,
-): void {
-  const atomPositionVector = Scale.obj2scaled(atom.a.pp, options);
-  const labelPosition = getLabelPositionForAttachmentPoint(
-    atomPositionVector,
-    directionVector,
-    options.scale,
-  );
-  const labelPath = paper
-    .text(labelPosition.x, labelPosition.y, labelText)
-    .attr({
-      font: options.font,
-      'font-size': options.fontsz * 0.9,
-      fill: atom.color,
-    });
-
-  addReObjectPath(LayerMap.indices, atom.visel, labelPath, atomPositionVector);
-}
-
-export function isAttachmentPointLabelRequired(restruct: ReStruct) {
-  // in case of having 2 or 3 attachment point type we have to render
-  // 2 - Secondary type
-  // 3 - Both Primary and Secondary - should be considered as two Attachment points
-  return restruct.molecule.atoms.some(({ attpnt }) => [2, 3].includes(attpnt));
 }
 
 export default ReAtom;

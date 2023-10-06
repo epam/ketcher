@@ -66,9 +66,7 @@ export const useSubscriptionOnEvents = () => {
       unsubscribe(getKetcherInstance());
     };
 
-    window.addEventListener(KETCHER_INIT_EVENT_NAME, () => {
-      subscribeOnInit();
-    });
+    window.addEventListener(KETCHER_INIT_EVENT_NAME, subscribeOnInit);
     return () => {
       unsubscribeOnUnMount();
       window.removeEventListener(KETCHER_INIT_EVENT_NAME, subscribeOnInit);

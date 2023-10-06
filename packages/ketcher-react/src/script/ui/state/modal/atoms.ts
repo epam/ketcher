@@ -1,4 +1,11 @@
-import { Action, Atom, fromAtomsAttrs } from 'ketcher-core';
+import {
+  Action,
+  Atom,
+  AtomPropertiesInContextMenu,
+  AtomQueryProperties,
+  fromAtomsAttrs,
+  KetcherLogger,
+} from 'ketcher-core';
 import { updateOnlyChangedProperties } from './utils';
 
 export function isAtomsArray(selectedElements: Atom | Atom[]): boolean {
@@ -15,7 +22,9 @@ export function updateSelectedAtoms({
 }: {
   atoms: number[];
   editor;
-  changeAtomPromise: Promise<Atom>;
+  changeAtomPromise:
+    | Promise<Atom>
+    | PromiseLike<AtomPropertiesInContextMenu | AtomQueryProperties>;
 }) {
   const action = new Action();
   const struct = editor.render.ctab;
@@ -37,6 +46,8 @@ export function updateSelectedAtoms({
         });
         editor.update(action);
       })
-      .catch(() => null);
+      .catch((e) => {
+        KetcherLogger.error('atoms.ts::updateSelectedAtoms', e);
+      });
   }
 }

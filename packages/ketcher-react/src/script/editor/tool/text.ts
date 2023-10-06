@@ -22,8 +22,10 @@ import {
   fromTextCreation,
   fromTextDeletion,
   fromTextUpdating,
+  KetcherLogger,
 } from 'ketcher-core';
 import { Tool } from './Tool';
+import { handleMovingPosibilityCursor } from '../utils';
 
 interface Result {
   content: string;
@@ -69,7 +71,14 @@ class TextTool implements Tool {
       );
       this.editor.update(this.dragCtx.action, true);
     } else {
+      const item = this.editor.findItem(event, ['texts']);
       this.editor.hover(this.editor.findItem(event, ['texts']), null, event);
+
+      handleMovingPosibilityCursor(
+        item,
+        this.editor.render.paper.canvas,
+        this.editor.render.options.movingStyle.cursor as string,
+      );
     }
   }
 
@@ -140,7 +149,9 @@ function propsDialog(
         editor.update(fromTextUpdating(editor.render.ctab, id!, content));
       }
     })
-    .catch(() => null);
+    .catch((e) => {
+      KetcherLogger.error('text.ts::propsDialog', e);
+    });
 }
 
 export default TextTool;

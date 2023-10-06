@@ -24,7 +24,7 @@ export const Summary = ({
   iconName,
 }: ISummaryProps) => {
   return (
-    <SummaryContainer>
+    <SummaryContainer data-testid={`summary-${groupName}`}>
       <StyledIcon name={iconName} />
       <SummaryText>
         {groupName} ({quantity})

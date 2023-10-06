@@ -29,18 +29,18 @@ import {
   Vec2,
   Atom,
   Bond,
-  getDirections,
   isCloseToEdgeOfCanvas,
   isCloseToEdgeOfScreen,
-  scrollByVector,
-  shiftAndExtendCanvasByVector,
+  scrollCanvasByVector,
+  extendCanvasByVector,
   getItemsToFuse,
+  vectorUtils,
+  KetcherLogger,
 } from 'ketcher-core';
 
 import LassoHelper from './helper/lasso';
 import { atomLongtapEvent } from './atom';
 import SGroupTool from './sgroup';
-import utils from '../shared/utils';
 import { xor } from 'lodash/fp';
 import { Editor } from '../Editor';
 import { dropAndMerge } from './helper/dropAndMerge';
@@ -50,15 +50,35 @@ import { updateSelectedBonds } from 'src/script/ui/state/modal/bonds';
 import { hasAtomsOutsideCanvas } from './helper/isAtomOutSideCanvas';
 import { filterNotInContractedSGroup } from './helper/filterNotInCollapsedSGroup';
 import { Tool } from './Tool';
+import { handleMovingPosibilityCursor } from '../utils';
 
 type SelectMode = 'lasso' | 'fragment' | 'rectangle';
+
+enum Direction {
+  LEFT,
+  TOP,
+  RIGHT,
+  DOWN,
+}
+
+let lastTimestamp = 0;
+const canvasOffsetPerSecond = 100;
+
+const directionOffsetMap: Record<Direction, Vec2> = {
+  [Direction.LEFT]: new Vec2(-canvasOffsetPerSecond, 0),
+  [Direction.TOP]: new Vec2(0, -canvasOffsetPerSecond),
+  [Direction.RIGHT]: new Vec2(canvasOffsetPerSecond, 0),
+  [Direction.DOWN]: new Vec2(0, canvasOffsetPerSecond),
+};
 
 class SelectTool implements Tool {
   readonly #mode: SelectMode;
   readonly #lassoHelper: LassoHelper;
   private readonly editor: Editor;
   private dragCtx: any;
-  isMousedDown = false;
+  private previousMouseMoveEvent?: MouseEvent;
+  isMouseDown = false;
+  readonly isMoving = false;
 
   constructor(editor: Editor, mode: SelectMode) {
     this.editor = editor;
@@ -75,7 +95,7 @@ class SelectTool implements Tool {
   }
 
   mousedown(event) {
-    this.isMousedDown = true;
+    this.isMouseDown = true;
     const rnd = this.editor.render;
     const ctab = rnd.ctab;
     const molecule = ctab.molecule;
@@ -148,10 +168,14 @@ class SelectTool implements Tool {
       this.editor.selection(null);
       this.editor.selection(isSelected(selection, ci) ? selection : sel);
     }
+
+    this.moveCanvas();
+
     return true;
   }
 
   mousemove(event) {
+    this.previousMouseMoveEvent = event;
     const editor = this.editor;
     const rnd = editor.render;
     const restruct = editor.render.ctab;
@@ -170,8 +194,8 @@ class SelectTool implements Tool {
       if (shouldDisplayDegree) {
         // moving selected objects
         const pos = rnd.page2obj(event);
-        const angle = utils.calcAngle(dragCtx.xy0, pos);
-        const degrees = utils.degrees(angle);
+        const angle = vectorUtils.calcAngle(dragCtx.xy0, pos);
+        const degrees = vectorUtils.degrees(angle);
         editor.event.message.dispatch({ info: degrees + 'º' });
       }
       /* end */
@@ -222,7 +246,6 @@ class SelectTool implements Tool {
       dragCtx.mergeItems = getItemsToFuse(editor, visibleSelectedItems);
       editor.hover(getHoverToFuse(dragCtx.mergeItems));
 
-      resizeCanvas(rnd, event);
       editor.update(dragCtx.action, true, { resizeCanvas: false });
       return true;
     }
@@ -238,16 +261,23 @@ class SelectTool implements Tool {
     const maps = getMapsForClosestItem(
       this.#lassoHelper.fragment || event.ctrlKey,
     );
-    editor.hover(editor.findItem(event, maps, null), null, event);
+    const item = editor.findItem(event, maps, null);
+    editor.hover(item, null, event);
+
+    handleMovingPosibilityCursor(
+      item,
+      this.editor.render.paper.canvas,
+      this.editor.render.options.movingStyle.cursor as string,
+    );
 
     return true;
   }
 
   mouseup(event) {
-    if (!this.isMousedDown) {
+    if (!this.isMouseDown) {
       return;
     }
-    this.isMousedDown = false;
+    this.isMouseDown = false;
 
     const editor = this.editor;
     const selected = editor.selection();
@@ -267,7 +297,7 @@ class SelectTool implements Tool {
       selectedSgroups[selectedSgroups.length - 1],
     );
     const isDraggingSaltOrSolventOnStructure = SGroup.isSaltOrSolvent(
-      possibleSaltOrSolvent?.item.data.name,
+      possibleSaltOrSolvent?.item?.data?.name,
     );
     const isDraggingCustomSgroupOnStructure =
       SGroup.isSuperAtom(possibleSaltOrSolvent?.item) &&
@@ -437,7 +467,9 @@ class SelectTool implements Tool {
             editor.update(fromTextUpdating(struct, ci.id, content));
           }
         })
-        .catch(() => null);
+        .catch((e) => {
+          KetcherLogger.error('select.ts::SelectTool::dblclick', e);
+        });
     }
     return true;
   }
@@ -480,9 +512,9 @@ class SelectTool implements Tool {
     if (dragCtx?.mergeItems) {
       const mergeAtoms = Array.from(dragCtx.mergeItems.atoms.values());
       const mergeBonds = Array.from(dragCtx.mergeItems.bonds.values());
-      const sgroupsOnCanvas = Array.from(sgroups.values()).map(
-        ({ item }) => item,
-      );
+      const sgroupsOnCanvas = Array.from(sgroups.values())
+        .map(({ item }) => item)
+        .filter((sgroup): sgroup is SGroup => !!sgroup);
       isDraggingOnSaltOrSolventAtom = mergeAtoms.some((atomId) =>
         SGroup.isAtomInSaltOrSolvent(atomId as number, sgroupsOnCanvas),
       );
@@ -499,66 +531,72 @@ class SelectTool implements Tool {
       reArrow.isResizing = isResizing;
     }
   }
+
+  private moveCanvas() {
+    const event = this.previousMouseMoveEvent;
+    const render = this.editor.render;
+
+    const oneSecondInMilliseconds = 1000;
+    const now = Date.now();
+    const deltaTime =
+      (lastTimestamp === 0 ? 0 : now - lastTimestamp) / oneSecondInMilliseconds;
+    lastTimestamp = Date.now();
+
+    if (!event) {
+      return;
+    }
+
+    const { isCloseToSomeEdgeOfScreen } = isCloseToEdgeOfScreen(event);
+
+    if (isCloseToSomeEdgeOfScreen) {
+      this.mousemove(event);
+      resizeCanvas(render, event, deltaTime);
+    }
+
+    if (this.isMouseDown) {
+      requestAnimationFrame(() => this.moveCanvas());
+    }
+  }
 }
 
-function resizeCanvas(render, event) {
-  const offset = 1;
+function resizeCanvas(render, event, deltaTime: number) {
   const {
     isCloseToLeftEdgeOfCanvas,
     isCloseToTopEdgeOfCanvas,
     isCloseToRightEdgeOfCanvas,
     isCloseToBottomEdgeOfCanvas,
-  } = isCloseToEdgeOfCanvas(event, render.sz);
+  } = isCloseToEdgeOfCanvas(render.clientArea);
+
   const {
     isCloseToLeftEdgeOfScreen,
     isCloseToTopEdgeOfScreen,
     isCloseToRightEdgeOfScreen,
     isCloseToBottomEdgeOfScreen,
   } = isCloseToEdgeOfScreen(event);
-  const { isMovingLeft, isMovingRight, isMovingTop, isMovingBottom } =
-    getDirections(event);
 
-  if (isCloseToLeftEdgeOfCanvas && isMovingLeft) {
-    shiftAndExtendCanvasByVector(new Vec2(-offset, 0, 0), render);
-  }
+  const directionChecksMap: Record<Direction, [boolean, boolean]> = {
+    [Direction.LEFT]: [isCloseToLeftEdgeOfScreen, isCloseToLeftEdgeOfCanvas],
+    [Direction.TOP]: [isCloseToTopEdgeOfScreen, isCloseToTopEdgeOfCanvas],
+    [Direction.RIGHT]: [isCloseToRightEdgeOfScreen, isCloseToRightEdgeOfCanvas],
+    [Direction.DOWN]: [
+      isCloseToBottomEdgeOfScreen,
+      isCloseToBottomEdgeOfCanvas,
+    ],
+  };
 
-  if (isCloseToTopEdgeOfCanvas && isMovingTop) {
-    shiftAndExtendCanvasByVector(new Vec2(0, -offset, 0), render);
-  }
+  for (const [direction, offset] of Object.entries(directionOffsetMap)) {
+    const [isCloseToScreenEdge, isCloseToCanvasEdge] =
+      directionChecksMap[direction];
 
-  if (isCloseToRightEdgeOfCanvas && isMovingRight) {
-    shiftAndExtendCanvasByVector(new Vec2(offset, 0, 0), render);
-  }
+    const scaledOffset = offset.scaled(deltaTime);
 
-  if (isCloseToBottomEdgeOfCanvas && isMovingBottom) {
-    shiftAndExtendCanvasByVector(new Vec2(0, offset, 0), render);
-  }
+    if (isCloseToScreenEdge) {
+      if (isCloseToCanvasEdge) {
+        extendCanvasByVector(scaledOffset, render);
+      }
 
-  const isCloseToSomeEdgeOfCanvas = [
-    isCloseToTopEdgeOfCanvas && isMovingTop,
-    isCloseToRightEdgeOfCanvas && isMovingRight,
-    isCloseToBottomEdgeOfCanvas && isMovingBottom,
-    isCloseToLeftEdgeOfCanvas && isMovingLeft,
-  ].some((isCloseToEdge) => isCloseToEdge);
-
-  if (isCloseToSomeEdgeOfCanvas) {
-    return;
-  }
-
-  if (isCloseToTopEdgeOfScreen && isMovingTop) {
-    scrollByVector(new Vec2(0, -offset), render);
-  }
-
-  if (isCloseToBottomEdgeOfScreen && isMovingBottom) {
-    scrollByVector(new Vec2(0, offset), render);
-  }
-
-  if (isCloseToLeftEdgeOfScreen && isMovingLeft) {
-    scrollByVector(new Vec2(-offset, 0), render);
-  }
-
-  if (isCloseToRightEdgeOfScreen && isMovingRight) {
-    scrollByVector(new Vec2(offset, 0), render);
+      scrollCanvasByVector(scaledOffset, render);
+    }
   }
 }
 
@@ -645,6 +683,7 @@ function getMapsForClosestItem(selectFragment: boolean) {
     'functionalGroups',
     'sgroupData',
     'rgroups',
+    'rgroupAttachmentPoints',
     'rxnArrows',
     'rxnPluses',
     'enhancedFlags',
@@ -664,10 +703,7 @@ function getResizingProps(
   return [editor.render.ctab, dragCtx.item.id, diff, current, dragCtx.item.ref];
 }
 
-function getNewSelectedItems(
-  editor: Editor,
-  selectedSgroups: number[],
-): { atoms: number[]; bonds: number[] } {
+function getNewSelectedItems(editor: Editor, selectedSgroups: number[]) {
   const newSelected: Record<'atoms' | 'bonds', number[]> = {
     atoms: [],
     bonds: [],

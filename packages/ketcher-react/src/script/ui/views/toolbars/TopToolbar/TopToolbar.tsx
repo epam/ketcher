@@ -138,13 +138,18 @@ export const TopToolbar = ({
   const { ref: resizeRef, width = 50 } = useResizeObserver<HTMLDivElement>();
 
   return (
-    <ControlsPanel className={className} ref={resizeRef}>
+    <ControlsPanel
+      className={className}
+      ref={resizeRef}
+      data-testid="top-toolbar"
+    >
       <TopToolbarIconButton
         title="Clear Canvas"
         onClick={onClear}
         iconName="clear"
         shortcut={shortcuts.clear}
         isHidden={hiddenButtons.includes('clear')}
+        testId="clear-canvas-button"
       />
       <FileControls
         onFileOpen={onFileOpen}

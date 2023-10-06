@@ -1,6 +1,5 @@
 function castAtomPropToType(property, value) {
   const typesMapping = {
-    charge: Number,
     exactChangeFlag: Number,
     unsaturatedAtom: Number,
   };

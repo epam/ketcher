@@ -21,6 +21,28 @@ import { Elements } from 'domain/constants';
 import { Pile } from './pile';
 import { Struct } from './struct';
 
+/**
+ * Return unions of Pick.
+ * Difference with <Partial<Pick<O,P>>>  that this type always require at least one property
+ *
+ * Example:
+ * interface O {
+ *   field1 : 1;
+ *   field2: 2;
+ *   field3: 3
+ * }
+ * SubsetOfFields<O, 'field1'| 'field2'>
+ * @returns Pick<O, "field1"> | Pick<O, "field2">
+ */
+type SubsetOfFields<O, P extends keyof O> = P extends P ? Pick<O, P> : never;
+
+export enum AttachmentPoints {
+  None = 0,
+  FirstSideOnly = 1,
+  SecondSideOnly = 2,
+  BothSides = 3,
+}
+
 export enum StereoLabel {
   Abs = 'abs',
   And = '&',
@@ -34,6 +56,18 @@ enum CIP {
   r = 'r',
 }
 
+export type Aromaticity = 'aromatic' | 'aliphatic';
+export type Chirality = 'clockwise' | 'anticlockwise';
+
+export interface AtomQueryProperties {
+  aromaticity?: Aromaticity | null;
+  ringMembership?: number | null;
+  ringSize?: number | null;
+  connectivity?: number | null;
+  chirality?: Chirality | null;
+  customQuery?: string | null;
+}
+
 export interface AtomAttributes {
   stereoParity?: number;
   stereoLabel?: string | null;
@@ -42,16 +76,24 @@ export interface AtomAttributes {
   invRet?: number;
   aam?: number;
   hCount?: number;
+  isPreview?: boolean;
   unsaturatedAtom?: number;
   substitutionCount?: number;
   ringBondCount?: number;
+  queryProperties?: AtomQueryProperties;
   explicitValence?: number;
-  attpnt?: any;
+  /**
+   * Rgroup member attachment points
+   * Its value is indigo-converted `ATTCHPT`
+   * Ref: https://discover.3ds.com/sites/default/files/2020-08/biovia_ctfileformats_2020.pdf P15
+   * Note: value `-1` has been converted to `3` by indigo.
+   */
+  attachmentPoints?: AttachmentPoints | null;
   rglabel?: string | null;
-  charge?: number;
+  charge?: number | null;
   radical?: number;
   cip?: CIP | null;
-  isotope?: number;
+  isotope?: number | null;
   alias?: string | null;
   pseudo?: string;
   atomList?: AtomListParams | null;
@@ -61,6 +103,15 @@ export interface AtomAttributes {
   implicitH?: number;
   implicitHCount?: number | null;
 }
+
+export type AtomPropertiesInContextMenu = SubsetOfFields<
+  AtomAttributes,
+  | 'hCount'
+  | 'ringBondCount'
+  | 'substitutionCount'
+  | 'unsaturatedAtom'
+  | 'implicitHCount'
+>;
 
 export class Atom {
   static PATTERN = {
@@ -82,21 +133,30 @@ export class Atom {
   static attrlist = {
     alias: null,
     label: 'C',
-    isotope: 0,
+    isotope: null,
     radical: 0,
     cip: null,
-    charge: 0,
+    charge: null,
     explicitValence: -1,
     ringBondCount: 0,
     substitutionCount: 0,
     unsaturatedAtom: 0,
     hCount: 0,
+    queryProperties: {
+      aromaticity: null,
+      ringMembership: null,
+      ringSize: null,
+      connectivity: null,
+      chirality: null,
+      customQuery: null,
+    },
     atomList: null,
     invRet: 0,
     exactChangeFlag: 0,
     rglabel: null,
-    attpnt: null,
+    attachmentPoints: null,
     aam: 0,
+    isPreview: false,
     // enhanced stereo
     stereoLabel: null,
     stereoParity: 0,
@@ -106,14 +166,16 @@ export class Atom {
   label: string;
   fragment: number;
   atomList: AtomList | null;
-  attpnt: any;
-  isotope: number;
+  attachmentPoints: AttachmentPoints | null;
+  isotope: number | null;
+  isPreview: boolean;
   hCount: number;
   radical: number;
   cip: CIP | null;
-  charge: number;
+  charge: number | null;
   explicitValence: number;
   ringBondCount: number;
+  queryProperties: AtomQueryProperties;
   unsaturatedAtom: number;
   substitutionCount: number;
   valence: number;
@@ -134,6 +196,11 @@ export class Atom {
   hasImplicitH?: boolean;
   pseudo!: string;
 
+  /** @deprecated */
+  get attpnt() {
+    return this.attachmentPoints;
+  }
+
   constructor(attributes: AtomAttributes) {
     this.label = attributes.label;
     this.fragment = getValueOrDefault(attributes.fragment, -1);
@@ -143,11 +210,18 @@ export class Atom {
     this.cip = getValueOrDefault(attributes.cip, Atom.attrlist.cip);
     this.charge = getValueOrDefault(attributes.charge, Atom.attrlist.charge);
     this.rglabel = getValueOrDefault(attributes.rglabel, Atom.attrlist.rglabel);
-    this.attpnt = getValueOrDefault(attributes.attpnt, Atom.attrlist.attpnt);
+    this.attachmentPoints = getValueOrDefault(
+      attributes.attachmentPoints,
+      Atom.attrlist.attachmentPoints,
+    );
     this.implicitHCount = getValueOrDefault(attributes.implicitHCount, null);
     this.explicitValence = getValueOrDefault(
       attributes.explicitValence,
       Atom.attrlist.explicitValence,
+    );
+    this.isPreview = getValueOrDefault(
+      attributes.isPreview,
+      Atom.attrlist.isPreview,
     );
 
     this.valence = 0;
@@ -173,6 +247,13 @@ export class Atom {
       Atom.attrlist.unsaturatedAtom,
     );
     this.hCount = getValueOrDefault(attributes.hCount, Atom.attrlist.hCount);
+    this.queryProperties = {};
+    for (const property in Atom.attrlist.queryProperties) {
+      this.queryProperties[property] = getValueOrDefault(
+        attributes.queryProperties?.[property],
+        Atom.attrlist.queryProperties[property],
+      );
+    }
 
     // reaction
     this.aam = getValueOrDefault(attributes.aam, Atom.attrlist.aam);
@@ -212,6 +293,10 @@ export class Atom {
     });
   }
 
+  get isRGroupAttachmentPointEditDisabled() {
+    return this.label === 'R#' && this.rglabel !== null;
+  }
+
   /**
    * Trick: used for cloned struct for tooltips, for preview, for templates
    *
@@ -223,7 +308,7 @@ export class Atom {
    * then we will be able to remove this hack.
    */
   setRGAttachmentPointForDisplayPurpose() {
-    this.attpnt = 1;
+    this.attachmentPoints = AttachmentPoints.FirstSideOnly;
   }
 
   static getConnectedBondIds(struct: Struct, atomId: number): number[] {
@@ -283,8 +368,11 @@ export class Atom {
   }
 
   isQuery(): boolean {
-    return (
-      this.atomList !== null || this.label === 'A' || this.attpnt || this.hCount
+    return Boolean(
+      this.atomList !== null ||
+        this.label === 'A' ||
+        this.attachmentPoints ||
+        this.hCount,
     );
   }
 
@@ -295,9 +383,9 @@ export class Atom {
   isPlainCarbon(): boolean {
     return (
       this.label === 'C' &&
-      this.isotope === 0 &&
+      this.isotope === null &&
       this.radical === 0 &&
-      this.charge === 0 &&
+      this.charge === null &&
       this.explicitValence < 0 &&
       this.ringBondCount === 0 &&
       this.substitutionCount === 0 &&
@@ -316,14 +404,14 @@ export class Atom {
     return !!(
       this.invRet ||
       this.exactChangeFlag ||
-      this.attpnt !== null ||
+      this.attachmentPoints !== null ||
       this.aam
     );
   }
 
   calcValence(connectionCount: number): boolean {
     const label = this.label;
-    const charge = this.charge;
+    const charge = this.charge || 0;
     if (this.isQuery()) {
       this.implicitH = 0;
       return true;
@@ -569,7 +657,7 @@ export class Atom {
   }
 
   calcValenceMinusHyd(conn: number): number {
-    const charge = this.charge;
+    const charge = this.charge || 0;
     const label = this.label;
     const element = Elements.get(this.label);
     if (!element) {

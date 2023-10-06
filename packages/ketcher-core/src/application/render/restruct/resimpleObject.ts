@@ -35,6 +35,8 @@ interface StyledPath {
 }
 class ReSimpleObject extends ReObject {
   private item: any;
+  private selectionSet: any;
+  private selectionPointsSet: any;
 
   constructor(simpleObject: any) {
     super('simpleObject');
@@ -189,6 +191,18 @@ class ReSimpleObject extends ReObject {
     return refPoints;
   }
 
+  getHoverPathStyle(
+    path: any,
+    render: Render,
+    isOuterShapeOfHoverPath: boolean,
+  ) {
+    if (isOuterShapeOfHoverPath) {
+      return path.attr(render.options.hoverStyle);
+    } else {
+      return path.attr({ ...render.options.hoverStyle, fill: '#fff' });
+    }
+  }
+
   hoverPath(render: Render): Array<StyledPath> {
     const point: Array<Vec2> = [];
 
@@ -197,7 +211,7 @@ class ReSimpleObject extends ReObject {
     });
     const scaleFactor = render.options.scale;
 
-    const path: Array<any> = [];
+    const paths: Array<StyledPath> = [];
 
     // TODO: It seems that inheritance will be the better approach here
     switch (this.item.mode) {
@@ -205,48 +219,53 @@ class ReSimpleObject extends ReObject {
         const rad = Vec2.diff(point[1], point[0]);
         const rx = rad.x / 2;
         const ry = rad.y / 2;
-        path.push(
-          render.paper.ellipse(
-            tfx(point[0].x + rx),
-            tfx(point[0].y + ry),
-            tfx(Math.abs(rx) + scaleFactor / 8),
-            tfx(Math.abs(ry) + scaleFactor / 8),
-          ),
+        const outerEllipse = render.paper.ellipse(
+          tfx(point[0].x + rx),
+          tfx(point[0].y + ry),
+          tfx(Math.abs(rx) + scaleFactor / 8),
+          tfx(Math.abs(ry) + scaleFactor / 8),
         );
+        paths.push({
+          path: this.getHoverPathStyle(outerEllipse, render, true),
+          stylesApplied: true,
+        });
         if (
           Math.abs(rx) - scaleFactor / 8 > 0 &&
           Math.abs(ry) - scaleFactor / 8 > 0
         ) {
-          path.push(
-            render.paper.ellipse(
-              tfx(point[0].x + rx),
-              tfx(point[0].y + ry),
-              tfx(Math.abs(rx) - scaleFactor / 8),
-              tfx(Math.abs(ry) - scaleFactor / 8),
-            ),
+          const innerEllipse = render.paper.ellipse(
+            tfx(point[0].x + rx),
+            tfx(point[0].y + ry),
+            tfx(Math.abs(rx) - scaleFactor / 8),
+            tfx(Math.abs(ry) - scaleFactor / 8),
           );
+          paths.push({
+            path: this.getHoverPathStyle(innerEllipse, render, false),
+            stylesApplied: true,
+          });
         }
         break;
       }
 
       case SimpleObjectMode.rectangle: {
-        path.push(
-          render.paper.rect(
-            tfx(Math.min(point[0].x, point[1].x) - scaleFactor / 8),
-            tfx(Math.min(point[0].y, point[1].y) - scaleFactor / 8),
-            tfx(
-              Math.max(point[0].x, point[1].x) -
-                Math.min(point[0].x, point[1].x) +
-                scaleFactor / 4,
-            ),
-            tfx(
-              Math.max(point[0].y, point[1].y) -
-                Math.min(point[0].y, point[1].y) +
-                scaleFactor / 4,
-            ),
+        const outerRect = render.paper.rect(
+          tfx(Math.min(point[0].x, point[1].x) - scaleFactor / 8),
+          tfx(Math.min(point[0].y, point[1].y) - scaleFactor / 8),
+          tfx(
+            Math.max(point[0].x, point[1].x) -
+              Math.min(point[0].x, point[1].x) +
+              scaleFactor / 4,
+          ),
+          tfx(
+            Math.max(point[0].y, point[1].y) -
+              Math.min(point[0].y, point[1].y) +
+              scaleFactor / 4,
           ),
         );
-
+        paths.push({
+          path: this.getHoverPathStyle(outerRect, render, true),
+          stylesApplied: true,
+        });
         if (
           Math.max(point[0].x, point[1].x) -
             Math.min(point[0].x, point[1].x) -
@@ -257,22 +276,24 @@ class ReSimpleObject extends ReObject {
             scaleFactor / 4 >
             0
         ) {
-          path.push(
-            render.paper.rect(
-              tfx(Math.min(point[0].x, point[1].x) + scaleFactor / 8),
-              tfx(Math.min(point[0].y, point[1].y) + scaleFactor / 8),
-              tfx(
-                Math.max(point[0].x, point[1].x) -
-                  Math.min(point[0].x, point[1].x) -
-                  scaleFactor / 4,
-              ),
-              tfx(
-                Math.max(point[0].y, point[1].y) -
-                  Math.min(point[0].y, point[1].y) -
-                  scaleFactor / 4,
-              ),
+          const innerRect = render.paper.rect(
+            tfx(Math.min(point[0].x, point[1].x) + scaleFactor / 8),
+            tfx(Math.min(point[0].y, point[1].y) + scaleFactor / 8),
+            tfx(
+              Math.max(point[0].x, point[1].x) -
+                Math.min(point[0].x, point[1].x) -
+                scaleFactor / 4,
+            ),
+            tfx(
+              Math.max(point[0].y, point[1].y) -
+                Math.min(point[0].y, point[1].y) -
+                scaleFactor / 4,
             ),
           );
+          paths.push({
+            path: this.getHoverPathStyle(innerRect, render, false),
+            stylesApplied: true,
+          });
         }
 
         break;
@@ -320,8 +341,10 @@ class ReSimpleObject extends ReObject {
           p0.x + ((k * scaleFactor) / 8) * Math.sin(angle),
           p0.y - ((k * scaleFactor) / 8) * Math.cos(angle),
         );
-
-        path.push(render.paper.path(poly));
+        paths.push({
+          path: this.getHoverPathStyle(render.paper.path(poly), render, true),
+          stylesApplied: true,
+        });
         break;
       }
       default: {
@@ -329,11 +352,7 @@ class ReSimpleObject extends ReObject {
       }
     }
 
-    const enhPaths: Array<StyledPath> = path.map((p) => {
-      return { path: p, stylesApplied: false };
-    });
-
-    return enhPaths;
+    return paths;
   }
 
   drawHover(render: Render): Array<any> {
@@ -355,21 +374,33 @@ class ReSimpleObject extends ReObject {
 
     const refPoints = this.getReferencePoints();
     const scaleFactor = restruct.render.options.scale;
-    const selectionSet = restruct.render.paper.set();
-    selectionSet.push(
+    this.selectionSet = restruct.render.paper.set();
+    this.selectionPointsSet = restruct.render.paper.set();
+    this.selectionSet.push(
       generatePath(this.item.mode, paper, pos).attr(
-        styles.hoverStyleSimpleObject,
+        styles.selectionStyleSimpleObject,
       ),
     );
     refPoints.forEach((rp) => {
       const scaledRP = Scale.obj2scaled(rp, restruct.render.options);
-      selectionSet.push(
+      this.selectionPointsSet.push(
         restruct.render.paper
           .circle(scaledRP.x, scaledRP.y, scaleFactor / 8)
           .attr({ fill: 'black' }),
       );
     });
-    return selectionSet;
+    restruct.addReObjectPath(
+      LayerMap.selectionPlate,
+      this.visel,
+      this.selectionPointsSet,
+    );
+    return this.selectionSet;
+  }
+
+  togglePoints(displayFlag: boolean) {
+    displayFlag
+      ? this.selectionPointsSet?.show()
+      : this.selectionPointsSet?.hide();
   }
 
   show(restruct: ReStruct, options: any): void {

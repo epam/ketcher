@@ -18,6 +18,7 @@ module.exports = {
     '^assets(.*)$': '<rootDir>/src/assets/$1',
     '^helpers(.*)$': '<rootDir>/src/helpers/$1',
     '\\.sdf$': '<rootDir>/textFileTransformer.js',
+    '^d3$': '<rootDir>/../../node_modules/d3/dist/d3.min.js',
   },
   setupFilesAfterEnv: ['<rootDir>/src/setupTests.tsx'],
 };

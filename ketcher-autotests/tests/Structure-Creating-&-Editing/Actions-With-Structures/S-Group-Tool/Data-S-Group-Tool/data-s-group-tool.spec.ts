@@ -5,7 +5,6 @@ import {
   LeftPanelButton,
   selectLeftPanelButton,
   clickInTheMiddleOfTheScreen,
-  delay,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   pressButton,
@@ -21,13 +20,12 @@ import {
   cutAndPaste,
   clickOnBond,
   clickOnAtom,
-  DELAY_IN_SECONDS,
   fillFieldByPlaceholder,
   screenshotBetweenUndoRedo,
   saveToFile,
+  waitForPageInit,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
-import { getBondByIndex } from '@utils/canvas/bonds';
 import { getCml, getMolfile } from '@utils/formats';
 
 const CANVAS_CLICK_X = 600;
@@ -68,11 +66,10 @@ async function selectSGroupProperties(
 
 test.describe('Data S-Group tool', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {
-    await delay(DELAY_IN_SECONDS.THREE);
     await takeEditorScreenshot(page);
   });
 
@@ -81,7 +78,7 @@ test.describe('Data S-Group tool', () => {
       Test case: EPMLSOPKET-1510
       Description: The Field value appears near bottom right corner of structure.
     */
-    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await page.keyboard.press('Control+a');
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await fillFieldByPlaceholder(page, 'Enter name', 'Test');
@@ -133,7 +130,7 @@ test.describe('Data S-Group tool', () => {
       Test case: EPMLSOPKET-1511
       Description: User is able to edit the Data S-group.
     */
-    await openFileAndAddToCanvas('chain-with-name-and-value.ket', page);
+    await openFileAndAddToCanvas('KET/chain-with-name-and-value.ket', page);
     await editSGroupProperties(page, '33', 'Data', 'Multiple group', '1');
   });
 
@@ -142,7 +139,7 @@ test.describe('Data S-Group tool', () => {
       Test case: EPMLSOPKET-1514
       Description: User is able to copy and paste structure with Data S-group.
     */
-    await openFileAndAddToCanvas('chain-with-name-and-value.ket', page);
+    await openFileAndAddToCanvas('KET/chain-with-name-and-value.ket', page);
     await copyAndPaste(page);
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
   });
@@ -152,7 +149,7 @@ test.describe('Data S-Group tool', () => {
       Test case: EPMLSOPKET-1514
       Description: User is able to cut and paste structure with Data S-group.
     */
-    await openFileAndAddToCanvas('chain-with-name-and-value.ket', page);
+    await openFileAndAddToCanvas('KET/chain-with-name-and-value.ket', page);
     await cutAndPaste(page);
     await clickInTheMiddleOfTheScreen(page);
   });
@@ -183,7 +180,7 @@ test.describe('Data S-Group tool', () => {
       Test case: EPMLSOPKET-1551
       Description: Data S-Group added to all atoms of Chain
     */
-    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectSGroupProperties(
       page,
       'Fragment',
@@ -199,7 +196,7 @@ test.describe('Data S-Group tool', () => {
       Test case: EPMLSOPKET-1550
       Description: Data S-Group added to all bonds of Chain
     */
-    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectSGroupProperties(
       page,
       'Fragment',
@@ -215,7 +212,7 @@ test.describe('Data S-Group tool', () => {
       Test case: EPMLSOPKET-1552
       Description: Data S-Group added to all structure of Chain
     */
-    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectSGroupProperties(
       page,
       'Fragment',
@@ -231,7 +228,7 @@ test.describe('Data S-Group tool', () => {
       Test case: EPMLSOPKET-12986
       Description: Data S-Group added to all structure of Chain
     */
-    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectSGroupProperties(
       page,
       'Fragment',
@@ -247,7 +244,7 @@ test.describe('Data S-Group tool', () => {
       Test case: EPMLSOPKET-1553
       Description: Data S-Group added to only structures. Not to plus sign and arrow.
     */
-    await openFileAndAddToCanvas('reaction-with-arrow-and-plus.ket', page);
+    await openFileAndAddToCanvas('KET/reaction-with-arrow-and-plus.ket', page);
     await selectSGroupProperties(
       page,
       'Fragment',
@@ -266,7 +263,7 @@ test.describe('Data S-Group tool', () => {
       Test case: EPMLSOPKET-1553
       Description: Data S-Group attached to only on atoms of structures. Not to plus sign and arrow.
     */
-    await openFileAndAddToCanvas('reaction-with-arrow-and-plus.ket', page);
+    await openFileAndAddToCanvas('KET/reaction-with-arrow-and-plus.ket', page);
     await selectSGroupProperties(
       page,
       'Fragment',
@@ -283,7 +280,7 @@ test.describe('Data S-Group tool', () => {
       Test case: EPMLSOPKET-1543
       Description: User is able to edit the Data S-group Field name and Field Value.
     */
-    await openFileAndAddToCanvas('chain-with-name-and-value.ket', page);
+    await openFileAndAddToCanvas('KET/chain-with-name-and-value.ket', page);
     await selectSGroupProperties(
       page,
       'Fragment',
@@ -299,7 +296,7 @@ test.describe('Data S-Group tool', () => {
       Test case: EPMLSOPKET-1544
       Description: User is able to add atom on structure with Data S-group.
     */
-    await openFileAndAddToCanvas('chain-with-name-and-value.ket', page);
+    await openFileAndAddToCanvas('KET/chain-with-name-and-value.ket', page);
     await selectAtomInToolbar(AtomButton.Oxygen, page);
     await clickOnAtom(page, 'C', 3);
     await resetCurrentTool(page);
@@ -312,7 +309,7 @@ test.describe('Data S-Group tool', () => {
       Test case: EPMLSOPKET-1544
       Description: User is able to delete and undo/redo atom on structure with Data S-group.
     */
-    await openFileAndAddToCanvas('chain-with-name-and-value.ket', page);
+    await openFileAndAddToCanvas('KET/chain-with-name-and-value.ket', page);
     await selectLeftPanelButton(LeftPanelButton.Erase, page);
     await clickOnAtom(page, 'C', 3);
     await takeEditorScreenshot(page);
@@ -327,7 +324,7 @@ test.describe('Data S-Group tool', () => {
       Test case: EPMLSOPKET-1544
       Description: User is able to add R-Group Label and Undo/Redo on structure with Data S-group.
     */
-    await openFileAndAddToCanvas('chain-with-name-and-value.ket', page);
+    await openFileAndAddToCanvas('KET/chain-with-name-and-value.ket', page);
     await selectLeftPanelButton(LeftPanelButton.R_GroupLabelTool, page);
     await clickOnAtom(page, 'C', 3);
     await pressButton(page, 'R8');
@@ -345,9 +342,9 @@ test.describe('Data S-Group tool', () => {
       Test case: EPMLSOPKET-1544
       Description: User is able to delete whole Chain with Data S-Group and undo/redo.
     */
-    await openFileAndAddToCanvas('chain-with-name-and-value.ket', page);
+    await openFileAndAddToCanvas('KET/chain-with-name-and-value.ket', page);
     await page.keyboard.press('Control+a');
-    await selectLeftPanelButton(LeftPanelButton.Erase, page);
+    await page.getByTestId('delete').click();
     await takeEditorScreenshot(page);
 
     await screenshotBetweenUndoRedo(page);
@@ -360,7 +357,7 @@ test.describe('Data S-Group tool', () => {
       Test case: EPMLSOPKET-1513
       Description: User is able to delete and undo/redo by hotkeys atom on structure with Data S-group.
     */
-    await openFileAndAddToCanvas('chain-with-name-and-value.ket', page);
+    await openFileAndAddToCanvas('KET/chain-with-name-and-value.ket', page);
     const point = await getAtomByIndex(page, { label: 'C' }, 3);
     await page.mouse.move(point.x, point.y);
     await page.keyboard.press('Delete');
@@ -399,7 +396,7 @@ test.describe('Data S-Group tool', () => {
       Test case: EPMLSOPKET-1549
       Description: Openns S-Group menu with filled context field Atom
     */
-    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await clickOnAtom(page, 'C', 3);
   });
@@ -409,7 +406,7 @@ test.describe('Data S-Group tool', () => {
       Test case: EPMLSOPKET-1549
       Description: Openns S-Group menu with filled context field Bond
     */
-    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await clickOnBond(page, BondType.SINGLE, 3);
   });
@@ -421,7 +418,7 @@ test.describe('Data S-Group tool', () => {
       Test case: EPMLSOPKET-1549
       Description: Openns S-Group menu with filled context field Bond
     */
-    await openFileAndAddToCanvas('simple-chain.ket', page);
+    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await page.keyboard.press('Control+a');
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
   });
@@ -433,8 +430,7 @@ test.describe('Data S-Group tool', () => {
       Test case: EPMLSOPKET-8907
       Description: Hover over created S-Group displays tooltip for Benzene ring with Nitrogen atom
     */
-    await openFileAndAddToCanvas('benzene-with-data-s-group.ket', page);
-    const point = await getBondByIndex(page, { type: BondType.SINGLE }, 2);
-    await page.mouse.move(point.x, point.y);
+    await openFileAndAddToCanvas('KET/benzene-with-data-s-group.ket', page);
+    await clickInTheMiddleOfTheScreen(page);
   });
 });

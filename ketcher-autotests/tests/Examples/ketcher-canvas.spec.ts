@@ -10,15 +10,17 @@ import {
   getCoordinatesOfTheMiddleOfTheScreen,
   moveMouseToTheMiddleOfTheScreen,
   selectAtomInToolbar,
-  selectSingleBondTool,
   takeEditorScreenshot,
   resetCurrentTool,
   clickOnAtom,
+  BondTool,
+  selectNestedTool,
+  waitForPageInit,
 } from '@utils';
 
 test.describe('Drawing atom, Benzene ring, Single and Double Bond', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {
@@ -41,7 +43,7 @@ test.describe('Drawing atom, Benzene ring, Single and Double Bond', () => {
   test('drawing benzene ring, then adding single bond', async ({ page }) => {
     await drawBenzeneRing(page);
 
-    await selectSingleBondTool(page);
+    await selectBond(BondTypeName.Single, page);
 
     await clickOnAtom(page, 'C', 2);
   });
@@ -60,7 +62,7 @@ test.describe('Drawing atom, Benzene ring, Single and Double Bond', () => {
     /*
      *   Test case: EPMLSOPKET-1380
      */
-    await selectBond(BondTypeName.Double, page);
+    await selectNestedTool(page, BondTool.DOUBLE);
 
     await clickInTheMiddleOfTheScreen(page);
   });

@@ -13,7 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+import { MonomerItemType } from 'ketcher-core';
 
 export interface IExpandIconProps {
   expanded: boolean;
+}
+
+export interface IRnaPreset {
+  name?: string;
+  base?: MonomerItemType;
+  sugar?: MonomerItemType;
+  phosphate?: MonomerItemType;
+  presetInList?: IRnaPreset;
 }

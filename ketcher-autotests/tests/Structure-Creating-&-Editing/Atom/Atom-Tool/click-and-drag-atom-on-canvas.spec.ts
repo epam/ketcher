@@ -3,7 +3,6 @@ import { test } from '@playwright/test';
 import {
   selectAtomInToolbar,
   AtomButton,
-  pressButton,
   selectFunctionalGroups,
   FunctionalGroups,
   selectSaltsAndSolvents,
@@ -14,12 +13,14 @@ import {
   moveMouseToTheMiddleOfTheScreen,
   takeEditorScreenshot,
   resetCurrentTool,
-  STRUCTURE_LIBRARY_BUTTON_NAME,
+  moveOnAtom,
+  waitForPageInit,
 } from '@utils';
+import { getAtomByIndex } from '@utils/canvas/atoms';
 
 test.describe('Click and drag Atom on canvas', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {
@@ -49,8 +50,6 @@ test.describe('Click and drag Atom on canvas', () => {
       Test case: EPMLSOPKET-10116
       Description: when click & drag with an atom on functional group it should forms a bond between it
     */
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await page.getByRole('tab', { name: 'Functional Groups' }).click();
     await selectFunctionalGroups(FunctionalGroups.Cbz, page);
     await clickInTheMiddleOfTheScreen(page);
 
@@ -69,8 +68,6 @@ test.describe('Click and drag Atom on canvas', () => {
       Description: when click & drag with an atom on salts
       and solvents atom appears where the left mouse button was released without a connection
     */
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await page.getByRole('tab', { name: 'Salts and Solvents' }).click();
     await selectSaltsAndSolvents(SaltsAndSolvents.FormicAcid, page);
     await clickInTheMiddleOfTheScreen(page);
 
@@ -111,8 +108,6 @@ test.describe('Click and drag Atom on canvas', () => {
     await selectAtomInToolbar(AtomButton.Bromine, page);
     await clickInTheMiddleOfTheScreen(page);
 
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await page.getByRole('tab', { name: 'Functional Groups' }).click();
     await selectFunctionalGroups(FunctionalGroups.Cbz, page);
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
@@ -122,5 +117,41 @@ test.describe('Click and drag Atom on canvas', () => {
     await selectAtomInToolbar(AtomButton.Oxygen, page);
     await moveMouseToTheMiddleOfTheScreen(page);
     await page.mouse.click(coordinatesWithShift, y);
+  });
+
+  test('Hydrogen appears to the right on the inner atoms of a chain', async ({
+    page,
+  }) => {
+    /*
+      Test case: EPMLSOPKET-10120
+      Description: when building a chain, hydrogen appears to the right side of the inner atoms
+    */
+
+    const directions: { x: number; y: number }[] = [
+      { x: MAX_BOND_LENGTH, y: 0 },
+      { x: 0, y: MAX_BOND_LENGTH },
+      { x: 0, y: MAX_BOND_LENGTH },
+      { x: MAX_BOND_LENGTH, y: 0 },
+    ];
+
+    await selectAtomInToolbar(AtomButton.Phosphorus, page);
+
+    await clickInTheMiddleOfTheScreen(page);
+
+    for (const [idx, direction] of directions.entries()) {
+      await moveOnAtom(page, 'P', idx);
+
+      const previousAtomPosition = await getAtomByIndex(
+        page,
+        { label: 'P' },
+        idx,
+      );
+
+      await dragMouseTo(
+        previousAtomPosition.x + direction.x,
+        previousAtomPosition.y + direction.y,
+        page,
+      );
+    }
   });
 });

@@ -87,6 +87,7 @@ const prepareForSaving = {
   SUP: prepareSupForSaving,
   DAT: prepareDatForSaving,
   GEN: prepareGenForSaving,
+  queryComponent: prepareQueryComponentForSaving,
 };
 
 function prepareSruForSaving(sgroup, mol) {
@@ -135,6 +136,10 @@ function prepareSupForSaving(sgroup, mol) {
 }
 
 function prepareGenForSaving(_sgroup, _mol) {
+  // eslint-disable-line no-unused-vars
+}
+
+function prepareQueryComponentForSaving(_sgroup, _mol) {
   // eslint-disable-line no-unused-vars
 }
 
@@ -289,7 +294,7 @@ function bracketsToMolfile(mol, sg, idstr) {
   const crossBonds = SGroup.getCrossBonds(mol, atomSet);
   SGroup.bracketPos(sg, mol, crossBonds);
   const bb = sg.bracketBox;
-  const d = sg.bracketDir;
+  const d = sg.bracketDirection;
   const n = d.rotateSC(1, 0);
   const brackets = SGroup.getBracketParameters(
     mol,

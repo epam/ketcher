@@ -14,7 +14,15 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Fragment, FunctionalGroup, Vec2, Scale, SGroup } from 'ketcher-core';
+import {
+  Fragment,
+  FunctionalGroup,
+  Vec2,
+  Scale,
+  SGroup,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  ReStruct,
+} from 'ketcher-core';
 
 const SELECTION_DISTANCE_COEFFICIENT = 0.4;
 const SELECTION_WITHIN_TEXT = 0;
@@ -30,6 +38,7 @@ const findMaps = {
   rxnPluses: findClosestRxnPlus,
   frags: findClosestFrag,
   rgroups: findClosestRGroup,
+  rgroupAttachmentPoints: findClosestRgroupAttachmentPoints,
   simpleObjects: findClosestSimpleObject,
   texts: findClosestText,
 };
@@ -138,7 +147,10 @@ function findClosestAtom(restruct, pos, skip, minDist) {
     ) {
       return null;
     }
-    if (aid === skipId) return;
+    const isSkippedAtom = aid === skipId || atom.a.isPreview;
+    if (isSkippedAtom) {
+      return;
+    }
 
     const dist = Vec2.dist(pos, atom.a.pp);
 
@@ -173,7 +185,10 @@ function findClosestBond(restruct, pos, skip, minDist, options) {
   let minCDist = minDist;
 
   restruct.bonds.forEach((bond, bid) => {
-    if (bid === skipId) return;
+    const isSkippedBond = bid === skipId || bond.b.isPreview;
+    if (isSkippedBond) {
+      return;
+    }
 
     const p1 = restruct.atoms.get(bond.b.begin).a.pp;
     const p2 = restruct.atoms.get(bond.b.end).a.pp;
@@ -348,6 +363,42 @@ function findClosestRGroup(restruct, pos, skip, minDist) {
   return ret;
 }
 
+/**
+ * @param {ReStruct} restruct
+ * @param {Vec2} cursorPosition
+ * @param {number} minDistToOtherItems
+ */
+function findClosestRgroupAttachmentPoints(
+  restruct,
+  cursorPosition,
+  _skip,
+  minDistToOtherItems,
+) {
+  let minDist = minDistToOtherItems ?? Number.POSITIVE_INFINITY;
+  /** @type {number | undefined} */
+  let closestItemId;
+
+  restruct.visibleRGroupAttachmentPoints.forEach((reItem, id) => {
+    const itemOutlinePoints = reItem.getOutlinePoints();
+    const isCursorInsideOutline =
+      cursorPosition.isInsidePolygon(itemOutlinePoints);
+    if (isCursorInsideOutline) {
+      const dist = reItem.getDistanceTo(cursorPosition);
+      if (dist < minDist) {
+        minDist = dist;
+        closestItemId = id;
+      }
+    }
+  });
+
+  return closestItemId === undefined
+    ? null
+    : {
+        id: closestItemId,
+        dist: minDist,
+      };
+}
+
 function findClosestRxnArrow(restruct, pos) {
   let minDist = null;
   let refPoint = null;
@@ -390,7 +441,7 @@ function findClosestSGroup(restruct, pos) {
   restruct.molecule.sgroups.forEach((sg, sgid) => {
     if (sg.isContracted()) return null;
 
-    const d = sg.bracketDir;
+    const d = sg.bracketDirection;
     const n = d.rotateSC(1, 0);
     const pg = new Vec2(Vec2.dot(pos, d), Vec2.dot(pos, n));
 

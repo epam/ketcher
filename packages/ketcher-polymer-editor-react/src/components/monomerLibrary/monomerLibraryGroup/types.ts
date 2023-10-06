@@ -13,11 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { MonomerItemType } from '../monomerLibraryItem/types';
+import { LibraryNameType } from '../../../constants';
+import { MonomerItemType } from 'ketcher-core';
 
 export interface IMonomerGroupProps {
   items: MonomerItemType[];
   onItemClick?: (item: MonomerItemType) => void;
   title?: string;
-  selectedMonomerLabel?: string;
+  libraryName?: LibraryNameType;
+  disabled?: boolean;
+  selectedMonomerUniqueKey?: string;
 }

@@ -21,6 +21,7 @@ import {
   MolSerializer,
   formatProperties,
   ChemicalMimeType,
+  KetcherLogger,
 } from 'ketcher-core';
 import { debounce, isEqual } from 'lodash/fp';
 import { load, onAction, removeStructAction } from './shared';
@@ -59,6 +60,23 @@ function removeNotRenderedStruct(actionTool, group, dispatch) {
 
 let abbreviationLookupTimeoutId: number | undefined;
 const ABBREVIATION_LOOKUP_TYPING_TIMEOUT = 1000;
+const shortcutKeys = [
+  '1',
+  '2',
+  '3',
+  '4',
+  't',
+  'h',
+  'n',
+  'o',
+  's',
+  'p',
+  'f',
+  'i',
+  'b',
+  '+',
+  '-',
+];
 
 /* HotKeys */
 function keyHandle(dispatch, getState, hotKeys, event) {
@@ -76,7 +94,12 @@ function keyHandle(dispatch, getState, hotKeys, event) {
   let group: any = null;
 
   if (key && key.length === 1) {
-    if (selectAbbreviationLookupValue(state)) {
+    const currentlyPressedKeys = selectAbbreviationLookupValue(state);
+    const isShortcutKey = shortcutKeys.includes(key?.toLowerCase());
+    const isTheSameKey = key === currentlyPressedKeys;
+    const isAbbreviationLookupShown =
+      (!isTheSameKey || !isShortcutKey) && currentlyPressedKeys;
+    if (isAbbreviationLookupShown) {
       dispatch(showAbbreviationLookup(event.key));
       clearTimeout(abbreviationLookupTimeoutId);
       abbreviationLookupTimeoutId = undefined;
@@ -154,9 +177,12 @@ function keyHandle(dispatch, getState, hotKeys, event) {
         });
       } else {
         if (newAction.tool === 'select') {
-          newAction = SettingsManager.getSettings().selectionTool;
+          if (key === 'Escape') {
+            newAction = SettingsManager.getSettings().selectionTool;
+          } else if (index === -1) {
+            newAction = {};
+          }
         }
-
         dispatch(onAction(newAction));
       }
 
@@ -274,7 +300,7 @@ export function initClipboard(dispatch) {
         data['text/plain'];
 
       if (structStr || !rxnTextPlain.test(data['text/plain']))
-        loadStruct(structStr, { fragment: true });
+        loadStruct(structStr, { fragment: true, isPaste: true });
     },
   };
 }
@@ -311,6 +337,7 @@ function clipData(editor) {
     // res['chemical/x-daylight-smiles'] = smiles.stringify(struct);
     return res;
   } catch (e: any) {
+    KetcherLogger.error('hotkeys.ts::clipData', e);
     errorHandler(e.message);
   }
 

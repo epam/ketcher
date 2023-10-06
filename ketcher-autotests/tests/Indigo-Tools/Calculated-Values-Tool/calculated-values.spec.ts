@@ -5,8 +5,6 @@ import {
   openFileAndAddToCanvas,
   TopPanelButton,
   takeEditorScreenshot,
-  DELAY_IN_SECONDS,
-  delay,
   BondType,
   dragMouseTo,
   selectRingButton,
@@ -15,17 +13,18 @@ import {
   getCoordinatesOfTheMiddleOfTheScreen,
   selectAtomInToolbar,
   AtomButton,
+  waitForPageInit,
+  waitForSpinnerFinishedWork,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
 
 test.describe('Calculated Values Tools', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {
-    await delay(DELAY_IN_SECONDS.THREE);
     await takeEditorScreenshot(page);
   });
 
@@ -35,7 +34,7 @@ test.describe('Calculated Values Tools', () => {
     Description: The 'Calculated Values' modal window is opened,
     the 'Chemical Formula' field contains 'C7H16' value.
     */
-    await openFileAndAddToCanvas('calculated-values-chain.ket', page);
+    await openFileAndAddToCanvas('KET/calculated-values-chain.ket', page);
     await selectTopPanelButton(TopPanelButton.Calculated, page);
   });
 
@@ -132,7 +131,9 @@ test.describe('Calculated Values Tools', () => {
     await page.mouse.click(point.x, point.y);
     await page.keyboard.up('Shift');
 
-    await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Calculated, page);
+    });
   });
 
   test('One structure on canvas (Benzene ring)', async ({ page }) => {
@@ -187,7 +188,7 @@ test.describe('Calculated Values Tools', () => {
     Description: Calculation of exact mass for the reaction
     should be correct: '[78.047] > [155.957]'.
     */
-    await openFileAndAddToCanvas('benzene-bromination.rxn', page);
+    await openFileAndAddToCanvas('Rxn-V2000/benzene-bromination.rxn', page);
     await selectTopPanelButton(TopPanelButton.Calculated, page);
   });
 
@@ -269,7 +270,10 @@ test.describe('Calculated Values Tools', () => {
     Description: If the selected object contains the attachment points (or nothing is selected)
     all fields contain the 'Cannot calculate properties for RGroups' message.
     */
-    await openFileAndAddToCanvas('attachment-points-structure.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/attachment-points-structure.mol',
+      page,
+    );
     await selectTopPanelButton(TopPanelButton.Calculated, page);
   });
 
@@ -283,7 +287,10 @@ test.describe('Calculated Values Tools', () => {
     */
     const xDelta = 100;
     const yDelta = 100;
-    await openFileAndAddToCanvas('attachment-points-structure.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/attachment-points-structure.mol',
+      page,
+    );
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(x + xDelta, y + yDelta, page);
     await selectTopPanelButton(TopPanelButton.Calculated, page);
@@ -374,7 +381,7 @@ test.describe('Calculated Values Tools', () => {
     Description: If the selected object contains the Query Feature all fields contain the 'Cannot
     calculate properties for structures with query features' message.
     */
-    await openFileAndAddToCanvas('a-query-non-hsub.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V3000/a-query-non-hsub.mol', page);
     await selectTopPanelButton(TopPanelButton.Calculated, page);
   });
 
@@ -386,7 +393,10 @@ test.describe('Calculated Values Tools', () => {
     Description: If the selected object contains the Query Feature all fields contain the 'Cannot
     calculate properties for structures with query features' message.
     */
-    await openFileAndAddToCanvas('a-query-unsaturated.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V3000/a-query-unsaturated.mol',
+      page,
+    );
     await selectTopPanelButton(TopPanelButton.Calculated, page);
   });
 
@@ -398,7 +408,7 @@ test.describe('Calculated Values Tools', () => {
     Description: If the selected object contains the Query Feature all fields contain the 'Cannot
     calculate properties for structures with query features' message.
     */
-    await openFileAndAddToCanvas('a-query-ring-bonds.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V3000/a-query-ring-bonds.mol', page);
     await selectTopPanelButton(TopPanelButton.Calculated, page);
   });
 
@@ -410,7 +420,7 @@ test.describe('Calculated Values Tools', () => {
     Description: If the selected object contains the Query Feature all fields contain the 'Cannot
     calculate properties for structures with query features' message.
     */
-    await openFileAndAddToCanvas('a-query-aq.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V3000/a-query-aq.mol', page);
     await selectTopPanelButton(TopPanelButton.Calculated, page);
   });
 
@@ -422,7 +432,7 @@ test.describe('Calculated Values Tools', () => {
     Description: If the selected object contains the Query Feature all fields contain the 'Cannot
     calculate properties for structures with query features' message.
     */
-    await openFileAndAddToCanvas('a-query-atom-list.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V3000/a-query-atom-list.mol', page);
     await selectTopPanelButton(TopPanelButton.Calculated, page);
   });
 
@@ -434,7 +444,7 @@ test.describe('Calculated Values Tools', () => {
     Description: If the selected object contains the Query Feature all fields contain the 'Cannot
     calculate properties for structures with query features' message.
     */
-    await openFileAndAddToCanvas('a-query-not-list.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V3000/a-query-not-list.mol', page);
     await selectTopPanelButton(TopPanelButton.Calculated, page);
   });
 
@@ -446,7 +456,7 @@ test.describe('Calculated Values Tools', () => {
     Description: If the Query Feature(s) is absent in the selected object the calculation is
     represented in the common way (as simple structure).
     */
-    await openFileAndAddToCanvas('a-query-non-hsub.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V3000/a-query-non-hsub.mol', page);
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
     await page.mouse.click(point.x, point.y);
     await selectTopPanelButton(TopPanelButton.Calculated, page);
@@ -460,7 +470,10 @@ test.describe('Calculated Values Tools', () => {
     Description: If the Query Feature(s) is absent in the selected object the calculation is
     represented in the common way (as simple structure).
     */
-    await openFileAndAddToCanvas('a-query-unsaturated.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V3000/a-query-unsaturated.mol',
+      page,
+    );
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
     await page.mouse.click(point.x, point.y);
     await selectTopPanelButton(TopPanelButton.Calculated, page);
@@ -474,7 +487,7 @@ test.describe('Calculated Values Tools', () => {
     Description: If the Query Feature(s) is absent in the selected object the calculation is
     represented in the common way (as simple structure).
     */
-    await openFileAndAddToCanvas('a-query-ring-bonds.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V3000/a-query-ring-bonds.mol', page);
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
     await page.mouse.click(point.x, point.y);
     await selectTopPanelButton(TopPanelButton.Calculated, page);
@@ -488,7 +501,7 @@ test.describe('Calculated Values Tools', () => {
     Description: If the Query Feature(s) is absent in the selected object the calculation is
     represented in the common way (as simple structure).
     */
-    await openFileAndAddToCanvas('a-query-aq.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V3000/a-query-aq.mol', page);
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
     await page.mouse.click(point.x, point.y);
     await selectTopPanelButton(TopPanelButton.Calculated, page);
@@ -502,7 +515,7 @@ test.describe('Calculated Values Tools', () => {
     Description: If the Query Feature(s) is absent in the selected object the calculation is
     represented in the common way (as simple structure).
     */
-    await openFileAndAddToCanvas('a-query-atom-list.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V3000/a-query-atom-list.mol', page);
     const point = await getAtomByIndex(page, { label: 'C' }, 0);
     await page.mouse.click(point.x, point.y);
     await selectTopPanelButton(TopPanelButton.Calculated, page);
@@ -516,7 +529,7 @@ test.describe('Calculated Values Tools', () => {
     Description: If the Query Feature(s) is absent in the selected object the calculation is
     represented in the common way (as simple structure).
     */
-    await openFileAndAddToCanvas('a-query-not-list.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V3000/a-query-not-list.mol', page);
     const point = await getAtomByIndex(page, { label: 'C' }, 0);
     await page.mouse.click(point.x, point.y);
     await selectTopPanelButton(TopPanelButton.Calculated, page);
@@ -606,7 +619,7 @@ test.describe('Calculated Values Tools', () => {
     */
     const xDelta = 500;
     const yDelta = 800;
-    await openFileAndAddToCanvas('reaction-arrow.ket', page);
+    await openFileAndAddToCanvas('KET/reaction-arrow.ket', page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(x - xDelta, y + yDelta, page);
     await selectTopPanelButton(TopPanelButton.Calculated, page);
@@ -637,7 +650,7 @@ test.describe('Calculated Values Tools', () => {
 
 test.describe('Calculated Values Tools', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test('Structure Check window', async ({ page }) => {

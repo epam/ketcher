@@ -1,7 +1,7 @@
 import { screen } from '@testing-library/react';
 import InfoModal from './InfoModal';
 import { shortcut } from './constants';
-import { renderWithMockStore } from './mockStore';
+import { renderWithMockStore } from './InfoModal.test.utils';
 
 describe('InfoModal should be rendered correctly', () => {
   it('should render default error message for Cut and Copy actions', () => {

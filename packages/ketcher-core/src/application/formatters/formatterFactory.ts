@@ -89,6 +89,7 @@ export class FormatterFactory {
       case SupportedFormat.cml:
       case SupportedFormat.inChIAuxInfo:
       case SupportedFormat.inChI:
+      case SupportedFormat.inChIKey:
       case SupportedFormat.molV3000:
       case SupportedFormat.smiles:
       case SupportedFormat.rxnV3000:

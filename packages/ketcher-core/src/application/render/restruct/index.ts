@@ -16,6 +16,7 @@
 // ReStruct is to store all the auxiliary information for
 //  Struct while rendering
 
+import ReObject from './reobject';
 import ReAtom from './reatom';
 import ReBond from './rebond';
 import ReEnhancedFlag from './reenhancedFlag';
@@ -30,7 +31,9 @@ import ReText from './retext';
 
 export * from './generalEnumTypes';
 export * from './reatom';
+export * from './rergroupAttachmentPoint';
 export {
+  ReObject,
   ReAtom,
   ReBond,
   ReRxnPlus,

@@ -36,7 +36,7 @@ import { Action } from './action';
 import { fromAtomsFragmentAttr } from './atom';
 import { getRelSGroupsBySelection } from './utils';
 
-export function fromMultipleMove(restruct, lists, d) {
+export function fromMultipleMove(restruct, lists, d: Vec2) {
   d = new Vec2(d);
 
   const action = new Action();

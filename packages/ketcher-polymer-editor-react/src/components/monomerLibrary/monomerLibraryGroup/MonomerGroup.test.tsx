@@ -18,6 +18,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { Struct } from 'ketcher-core';
 
 import { MonomerGroup } from './MonomerGroup';
+import { getMonomerUniqueKey } from 'state/library';
 
 describe('Monomer Group', () => {
   const mockGroupProps = {
@@ -28,6 +29,7 @@ describe('Monomer Group', () => {
           MonomerNaturalAnalogCode: 'R',
           MonomerName: 'RRMonomerName',
           Name: 'RRName',
+          MonomerType: 'RNA',
         },
         struct: new Struct(),
       },
@@ -37,6 +39,7 @@ describe('Monomer Group', () => {
           MonomerNaturalAnalogCode: 'A',
           MonomerName: 'mAMonomerName',
           Name: 'mAName',
+          MonomerType: 'CHEM',
         },
         struct: new Struct(),
       },
@@ -46,6 +49,7 @@ describe('Monomer Group', () => {
           MonomerNaturalAnalogCode: 'D',
           MonomerName: 'dDMonomerName',
           Name: 'dDName',
+          MonomerType: 'RNA',
         },
         struct: new Struct(),
       },
@@ -55,6 +59,7 @@ describe('Monomer Group', () => {
           MonomerNaturalAnalogCode: 'R',
           MonomerName: 'arRMonomerName',
           Name: 'arRName',
+          MonomerType: 'RNA',
         },
         struct: new Struct(),
       },
@@ -64,6 +69,7 @@ describe('Monomer Group', () => {
           MonomerNaturalAnalogCode: 'L',
           MonomerName: 'LdLMonomerName',
           Name: 'LdLRName',
+          MonomerType: 'CHEM',
         },
         struct: new Struct(),
       },
@@ -118,5 +124,20 @@ describe('Monomer Group', () => {
     const item = screen.getByText('Ld');
     fireEvent.click(item);
     expect(onItemClick).toBeCalled();
+  });
+  it('should apply correct style if selected', () => {
+    const firstMonomer = mockGroupProps.groupItems[0];
+    render(
+      withThemeAndStoreProvider(
+        <MonomerGroup
+          items={mockGroupProps.groupItems}
+          title={mockGroupProps.groupTitle}
+          selectedMonomerUniqueKey={getMonomerUniqueKey(firstMonomer)}
+          onItemClick={onItemClick}
+        />,
+      ),
+    );
+    const item = screen.getByTestId(getMonomerUniqueKey(firstMonomer));
+    expect(item).toMatchSnapshot();
   });
 });

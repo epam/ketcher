@@ -50,10 +50,14 @@ const App = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [showPolymerEditor, setShowPolymerEditor] = useState(false);
 
+  const togglePolymerEditor = (toggleValue: boolean) => {
+    setShowPolymerEditor(toggleValue);
+    window.isPolymerEditorTurnedOn = toggleValue;
+  };
   return showPolymerEditor ? (
     <>
       <PolymerEditor />
-      <PolymerToggler toggle={setShowPolymerEditor} />
+      <PolymerToggler toggle={togglePolymerEditor} />
     </>
   ) : (
     <>
@@ -67,6 +71,7 @@ const App = () => {
         structServiceProvider={structServiceProvider}
         onInit={(ketcher: Ketcher) => {
           window.ketcher = ketcher;
+
           window.parent.postMessage(
             {
               eventType: 'init',
@@ -75,7 +80,7 @@ const App = () => {
           );
         }}
       />
-      {enablePolymerEditor && <PolymerToggler toggle={setShowPolymerEditor} />}
+      {enablePolymerEditor && <PolymerToggler toggle={togglePolymerEditor} />}
       {hasError && (
         <InfoModal
           message={errorMessage}

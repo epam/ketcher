@@ -16,26 +16,34 @@
 import { EmptyFunction } from 'helpers';
 import { useAppDispatch } from 'hooks';
 import { useState } from 'react';
-import { toggleMonomerFavorites } from 'state/library';
+import { getMonomerUniqueKey, toggleMonomerFavorites } from 'state/library';
 import { Card } from './styles';
 import { IMonomerItemProps } from './types';
+import { MONOMER_TYPES } from '../../../constants';
 
 const MonomerItem = ({
   item,
   onMouseLeave,
   onMouseMove,
   isSelected,
+  disabled,
   onClick = EmptyFunction,
 }: IMonomerItemProps) => {
   const [favorite, setFavorite] = useState(item.favorite);
   const dispatch = useAppDispatch();
+  const colorCode =
+    item.props.MonomerType === MONOMER_TYPES.CHEM
+      ? item.props.MonomerType
+      : item.props.MonomerNaturalAnalogCode;
 
   return (
     <Card
       onClick={onClick}
-      isSelected={isSelected}
-      code={item.props.MonomerNaturalAnalogCode}
-      data-testid={item.props.MonomerNaturalAnalogCode}
+      selected={isSelected}
+      disabled={disabled}
+      data-testid={getMonomerUniqueKey(item)}
+      data-monomer-item-id={getMonomerUniqueKey(item)}
+      code={colorCode}
       onMouseLeave={onMouseLeave}
       onMouseMove={onMouseMove}
     >

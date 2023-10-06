@@ -7,6 +7,7 @@ export enum CONTEXT_MENU_ID {
   FOR_ATOMS = 'context-menu-for-atoms',
   FOR_SELECTION = 'context-menu-for-selection',
   FOR_FUNCTIONAL_GROUPS = 'context-menu-for-functional-groups',
+  FOR_R_GROUP_ATTACHMENT_POINT = 'context-menu-for-rgroup-attachment-point',
 }
 
 export type ItemData = unknown;
@@ -17,6 +18,7 @@ export type ContextMenuShowProps = {
   bondIds?: number[];
   atomIds?: number[];
   extraItemsSelected?: boolean;
+  rgroupAttachmentPoints?: number[];
 } | null;
 
 export interface MenuItemsProps {

@@ -1,4 +1,4 @@
-import { Action, Bond, fromBondsAttrs } from 'ketcher-core';
+import { Action, Bond, fromBondsAttrs, KetcherLogger } from 'ketcher-core';
 import { updateOnlyChangedProperties } from './utils';
 
 export function updateSelectedBonds({
@@ -33,6 +33,8 @@ export function updateSelectedBonds({
         });
         editor.update(action);
       })
-      .catch(() => null);
+      .catch((e) => {
+        KetcherLogger.error('bonds.ts::updateSelectedBonds', e);
+      });
   }
 }

@@ -4,6 +4,32 @@
  *
  **/
 
+export enum BondTypeId {
+  BondSingle = 'bond-single',
+  BondDouble = 'bond-double',
+  BondTriple = 'bond-triple',
+  BondDown = 'bond-down',
+}
+
+export type BondIds =
+  | BondTypeId.BondSingle
+  | BondTypeId.BondDouble
+  | BondTypeId.BondTriple
+  | 'bond-dative'
+  | 'bond-stereo'
+  | 'bond-up'
+  | BondTypeId.BondDown
+  | 'bond-updown'
+  | 'bond-crossed'
+  | 'bond-query'
+  | 'bond-special'
+  | 'bond-any'
+  | 'bond-hydrogen'
+  | 'bond-aromatic'
+  | 'bond-singledouble'
+  | 'bond-singlearomatic'
+  | 'bond-doublearomatic';
+
 export enum AtomButton {
   Hydrogen = 'Hydrogen',
   Carbon = 'Carbon',
@@ -15,11 +41,21 @@ export enum AtomButton {
   Chlorine = 'Chlorine',
   Bromine = 'Bromine',
   Iodine = 'Iodine',
+  Gold = 'Gold',
   Platinum = 'Platinum',
   Periodic = 'Periodic',
   Any = 'Any',
   Extended = 'Extended',
 }
+
+export type Atoms = Exclude<
+  AtomButton,
+  | AtomButton.Gold
+  | AtomButton.Platinum
+  | AtomButton.Periodic
+  | AtomButton.Any
+  | AtomButton.Extended
+>;
 
 export enum TopPanelButton {
   Clear = 'Clear',

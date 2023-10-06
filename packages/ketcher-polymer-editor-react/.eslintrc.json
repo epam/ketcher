@@ -15,7 +15,8 @@
     "jsx-a11y/no-autofocus": "warn",
     "jsx-a11y/no-noninteractive-element-interactions": "warn",
     "jsx-a11y/alt-text": "warn",
-    "jsx-a11y/click-events-have-key-events": "warn"
+    "jsx-a11y/click-events-have-key-events": "warn",
+    "@typescript-eslint/no-non-null-assertion": "warn"
   },
   "overrides": [
     {

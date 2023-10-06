@@ -58,8 +58,8 @@ export const allButtons = [
   // text group
   'text',
   // right
-  'enhanced-stereo'
-]
+  'enhanced-stereo',
+];
 
 // A map of keys to labels for a dropdown
 export const buttonLabelMap = {
@@ -80,7 +80,7 @@ export const buttonLabelMap = {
   'reaction-plus': 'Reaction Plus Tool',
   arrows: 'Arrows',
   'reaction-arrow-open-angle': 'Arrow Open Angle',
-  'reaction-arrow-filled-triangle': 'Arrow Filled Triangle',
+  'reaction-arrow-filled-triangle': 'Arrow Filled Triangle Tool',
   'reaction-arrow-filled-bow': 'Arrow Filled Bow',
   'reaction-arrow-dashed-open-angle': 'Arrow Dashed Open Angle',
   'reaction-arrow-failed': 'Arrow Failed',
@@ -120,8 +120,8 @@ export const buttonLabelMap = {
   'shape-line': 'Shape Line',
   text: 'Add Text Tool',
   'enhanced-stereo': 'Stereochemistry',
-  fullscreen: 'Full screen mode'
-}
+  fullscreen: 'Full screen mode',
+};
 
 // Keys of buttons we initially hide in our demo app
 export const initiallyHidden = [
@@ -133,5 +133,5 @@ export const initiallyHidden = [
   'cip',
   'check',
   'analyse',
-  'recognize'
-]
+  'recognize',
+];

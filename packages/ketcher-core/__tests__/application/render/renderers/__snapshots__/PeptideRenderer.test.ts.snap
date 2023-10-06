@@ -1,0 +1,33 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`PeptideRenderer should render peptide 1`] = `
+<svg
+  height="500"
+  id="polymer-editor-canvas"
+  width="500"
+>
+  <defs />
+  <g
+    transform="translate(0, 0) scale(1)"
+    transition="transform 0.2s"
+  >
+    <use
+      fill="yellow"
+      href="#peptide"
+      style="cursor: pointer;"
+    />
+    <text
+      fill="black"
+      font-size="12px"
+      font-weight="700"
+      line-height="12px"
+      pointer-events="none"
+      style="cursor: pointer; user-select: none;"
+      x="0"
+      y="10"
+    >
+      Abc
+    </text>
+  </g>
+</svg>
+`;

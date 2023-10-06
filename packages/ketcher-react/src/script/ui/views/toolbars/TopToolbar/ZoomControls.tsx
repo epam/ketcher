@@ -158,7 +158,9 @@ export const ZoomControls = ({
   return (
     <ElementAndDropdown ref={containerRef}>
       <DropDownButton onClick={onExpand}>
-        <ZoomLabel>{Math.round(currentZoom)}%</ZoomLabel>
+        <ZoomLabel data-testid="zoom-input">
+          {Math.round(currentZoom)}%
+        </ZoomLabel>
         <Icon name="chevron" />
       </DropDownButton>
 
@@ -174,6 +176,7 @@ export const ZoomControls = ({
       >
         <DropDownContent>
           <ZoomInput
+            data-testid="zoom-value"
             onZoomSubmit={onZoomSubmit}
             inputRef={inputRef}
             currentZoom={currentZoom}
@@ -181,6 +184,7 @@ export const ZoomControls = ({
           />
           {!hiddenButtons.includes('zoom-out') && (
             <ZoomControlButton
+              data-testid="zoom-out"
               title="Zoom Out"
               onClick={onZoomOut}
               disabled={disabledButtons.includes('zoom-out')}
@@ -191,6 +195,7 @@ export const ZoomControls = ({
           )}
           {!hiddenButtons.includes('zoom-in') && (
             <ZoomControlButton
+              data-testid="zoom-in"
               title="Zoom In"
               onClick={onZoomIn}
               disabled={disabledButtons.includes('zoom-in')}
@@ -199,7 +204,11 @@ export const ZoomControls = ({
               <ShortcutLabel>{shortcuts['zoom-in']}</ShortcutLabel>
             </ZoomControlButton>
           )}
-          <ZoomControlButton title="Zoom 100%" onClick={resetZoom}>
+          <ZoomControlButton
+            data-testid="zoom-default"
+            title="Zoom 100%"
+            onClick={resetZoom}
+          >
             <span>Zoom 100%</span>
             <ShortcutLabel>{shortcuts.zoom}</ShortcutLabel>
           </ZoomControlButton>

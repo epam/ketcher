@@ -137,6 +137,7 @@ const Open: FC<Props> = (props) => {
       className={classes.open}
       params={rest}
       result={() => null}
+      data-testid="openStructureModal"
       footerContent={
         withFooterContent ? (
           <FooterContent

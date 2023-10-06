@@ -26,6 +26,7 @@ import {
   getPropertiesByFormat,
   getPropertiesByImgFormat,
   b64toBlob,
+  KetcherLogger,
 } from 'ketcher-core';
 
 import { Dialog } from '../../../../components';
@@ -78,24 +79,30 @@ class SaveDialog extends Component {
     };
     this.isRxn = this.props.struct.hasRxnArrow();
     this.textAreaRef = createRef();
-    const formats = [this.isRxn ? 'rxn' : 'mol', 'smiles', 'ket'];
-    if (this.props.server)
-      formats.push(
-        this.isRxn ? 'rxnV3000' : 'molV3000',
-        'smilesExt',
-        'smarts',
-        'cml',
-        '<----firstDivider--->', // for dividers in select list
-        'inChI',
-        'inChIAuxInfo',
-        '<----secondDivider--->', // for dividers in select list
-        'svg',
-        'png',
-        'cdxml',
-        'cdx',
-        'binaryCdx',
-      );
-    // TODO: pass the necessary divider not like list element
+
+    const formats = !this.props.server
+      ? ['ket', this.isRxn ? 'rxn' : 'mol', 'smiles']
+      : [
+          'ket',
+          this.isRxn ? 'rxn' : 'mol',
+          this.isRxn ? 'rxnV3000' : 'molV3000',
+          'sdf',
+          'sdfV3000',
+          'smarts',
+          'smiles',
+          'smilesExt',
+          'cml',
+          '<----firstDivider--->', // for dividers in select list
+          'inChI',
+          'inChIAuxInfo',
+          'inChIKey',
+          '<----secondDivider--->', // for dividers in select list
+          'svg',
+          'png',
+          'cdxml',
+          'cdx',
+          'binaryCdx',
+        ];
 
     this.saveSchema = saveSchema;
     this.saveSchema.properties.format = Object.assign(
@@ -133,7 +140,14 @@ class SaveDialog extends Component {
   };
 
   changeType = (type) => {
-    const { struct, server, options, formState, ignoreChiralFlag } = this.props;
+    const {
+      struct,
+      server,
+      options,
+      formState,
+      ignoreChiralFlag,
+      bondThickness,
+    } = this.props;
 
     const errorHandler = this.context.errorHandler;
     if (this.isImageFormat(type)) {
@@ -148,7 +162,7 @@ class SaveDialog extends Component {
       });
       const options = {};
       options.outputFormat = type;
-
+      options.bondThickness = bondThickness;
       return server
         .generateImageAsBase64(structStr, options)
         .then((base64) => {
@@ -160,6 +174,7 @@ class SaveDialog extends Component {
           });
         })
         .catch((e) => {
+          KetcherLogger.error('Save.jsx::SaveDialog::changeType', e);
           errorHandler(e);
           this.props.onResetForm(formState);
           return e;
@@ -265,6 +280,7 @@ class SaveDialog extends Component {
               this.saveSchema.properties.format,
             )}
             component={Select}
+            className="file-format-list"
           />
         </Form>
         <Tabs
@@ -309,20 +325,24 @@ class SaveDialog extends Component {
           className={classes.previewArea}
           readOnly
           ref={this.textAreaRef}
+          data-testid="preview-area-binary"
         />
       </div>
     );
 
-    const PreviewContent = () => (
-      <div className={classes.previewBackground}>
-        <textarea
-          value={structStr}
-          className={classes.previewArea}
-          readOnly
-          ref={this.textAreaRef}
-        />
-      </div>
-    );
+    const PreviewContent = ({ format }) => {
+      return (
+        <div className={classes.previewBackground}>
+          <textarea
+            value={structStr}
+            className={classes.previewArea}
+            readOnly
+            ref={this.textAreaRef}
+            data-testid={`${format}-preview-area-text`}
+          />
+        </div>
+      );
+    };
 
     if (isLoading) {
       return <LoadingState />;
@@ -331,7 +351,7 @@ class SaveDialog extends Component {
     } else if (this.isBinaryCdxFormat(format)) {
       return <BinaryContent />;
     } else {
-      return <PreviewContent />;
+      return <PreviewContent format={format} />;
     }
   };
 
@@ -343,8 +363,10 @@ class SaveDialog extends Component {
     return warnings.length ? (
       <div className={classes.warnings}>
         {warnings.map((warning) => (
-          <div className={classes.warningsContainer}>
-            <span className={classes.warningsArr}>{warning}</span>
+          <div className={classes.warningsContainer} key={warning}>
+            <span className={classes.warningsArr} data-testid="WarningTextArea">
+              {warning}
+            </span>
           </div>
         ))}
       </div>
@@ -353,7 +375,7 @@ class SaveDialog extends Component {
 
   getButtons = () => {
     const { disableControls, imageFormat, isLoading, structStr } = this.state;
-    const formState = this.props.formState;
+    const { formState, bondThickness } = this.props;
     const { filename, format } = formState.result;
     const isCleanStruct = this.props.struct.isBlank();
 
@@ -394,6 +416,7 @@ class SaveDialog extends Component {
           data={structStr}
           filename={filename}
           outputFormat={imageFormat}
+          bondThickness={bondThickness}
           key="save-image-button"
           type={`image/${format}+xml`}
           onSave={this.props.onOk}
@@ -456,6 +479,7 @@ const mapStateToProps = (state) => ({
   formState: state.modal.form,
   moleculeErrors: state.modal.form.moleculeErrors,
   checkState: state.options.check,
+  bondThickness: state.options.settings.bondThickness,
   ignoreChiralFlag: state.editor.render.options.ignoreChiralFlag,
 });
 

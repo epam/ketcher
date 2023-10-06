@@ -1,8 +1,8 @@
-import { useState } from 'react'
-import styled from '@emotion/styled'
+import { useState } from 'react';
+import styled from '@emotion/styled';
 
-import { PanelButton } from './shared/Buttons'
-import { Button } from '@mui/material'
+import { PanelButton } from './shared/Buttons';
+import { Button } from '@mui/material';
 
 const Form = styled('form')`
   margin-top: 10px;
@@ -15,7 +15,7 @@ const Form = styled('form')`
     font-size: 12px;
     text-transform: none;
   }
-`
+`;
 
 const FileNameBox = styled('div')`
   margin-top: 5px;
@@ -23,53 +23,51 @@ const FileNameBox = styled('div')`
   color: rgba(0, 0, 0, 0.6);
   font-size: 13px;
   text-align: left;
-`
+`;
 
 const parseFile = (file): Promise<string> =>
   new Promise((resolve, reject) => {
-    const reader = new FileReader()
+    const reader = new FileReader();
 
-    reader.readAsText(file, 'UTF-8')
+    reader.readAsText(file, 'UTF-8');
 
     reader.onload = function (evt) {
-      const fileContent = evt?.target?.result
-      console.log('Parsed file:')
-      console.log(fileContent)
+      const fileContent = evt?.target?.result;
       if (typeof fileContent === 'string') {
-        resolve(fileContent)
+        resolve(fileContent);
       }
-      resolve('')
-    }
+      resolve('');
+    };
     reader.onerror = function (err) {
-      reject(err)
-    }
-  })
+      reject(err);
+    };
+  });
 
 const submitHandler = (event) => {
-  event.preventDefault()
-  let file = event.target[0].files[0]
+  event.preventDefault();
+  let file = event.target[0].files[0];
 
   parseFile(file).then((str) => {
-    KetcherFunctions.renderFromCtab(str)
-  })
-}
+    KetcherFunctions.renderFromCtab(str);
+  });
+};
 
 interface FileInputProps {
-  printToTerminal: (str: string) => void
+  printToTerminal: (str: string) => void;
 }
 
 export const FileInputForm = ({ printToTerminal }: FileInputProps) => {
-  const [chosenFile, setFile] = useState('')
+  const [chosenFile, setFile] = useState('');
 
   const chooseFileHandler = (event) => {
-    const file: File = event.target.files[0]
-    setFile(file.name)
+    const file: File = event.target.files[0];
+    setFile(file.name);
 
     parseFile(file).then((str) => {
-      let message = 'Selected file content:' + str
-      printToTerminal(message)
-    })
-  }
+      let message = 'Selected file content:' + str;
+      printToTerminal(message);
+    });
+  };
 
   return (
     <>
@@ -103,5 +101,5 @@ export const FileInputForm = ({ printToTerminal }: FileInputProps) => {
         <span>{chosenFile}</span>
       </FileNameBox>
     </>
-  )
-}
+  );
+};

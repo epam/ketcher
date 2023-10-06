@@ -18,6 +18,7 @@ import {
   AtomDelete,
   BondDelete,
   CalcImplicitH,
+  RGroupAttachmentPointRemove,
   RxnArrowDelete,
   RxnPlusDelete,
   SimpleObjectDelete,
@@ -31,6 +32,7 @@ import assert from 'assert';
 import { atomGetDegree, formatSelection } from './utils';
 import { fromBondStereoUpdate } from '../actions/bond';
 import { fromFragmentSplit } from './fragment';
+import { fromRGroupAttachmentPointDeletion } from './rgroupAttachmentPoint';
 
 export function fromOneAtomDeletion(restruct, atomId: number) {
   return fromFragmentDeletion(restruct, { atoms: [atomId] });
@@ -130,6 +132,7 @@ export function fromFragmentDeletion(restruct, rawSelection) {
     );
   });
 
+  const removedRGroupAttachmentPoints: number[] = [];
   selection.atoms.forEach((aid) => {
     const frid3 = restruct.molecule.atoms.get(aid).fragment;
     if (frids.indexOf(frid3) < 0) frids.push(frid3);
@@ -139,6 +142,13 @@ export function fromFragmentDeletion(restruct, rawSelection) {
     }
 
     action.addOp(new AtomDelete(aid));
+
+    const attachmentPointsToDelete =
+      restruct.molecule.getRGroupAttachmentPointsByAtomId(aid);
+    attachmentPointsToDelete.forEach((id) => {
+      action.addOp(new RGroupAttachmentPointRemove(id));
+      removedRGroupAttachmentPoints.push(id);
+    });
   });
 
   removeSgroupIfNeeded(action, restruct, atomsToRemove);
@@ -159,8 +169,19 @@ export function fromFragmentDeletion(restruct, rawSelection) {
     action.addOp(new TextDelete(id));
   });
 
+  const actionToDeleteRGroupAttachmentPoints = new Action();
+  selection.rgroupAttachmentPoints.forEach((id) => {
+    if (!removedRGroupAttachmentPoints.includes(id)) {
+      actionToDeleteRGroupAttachmentPoints.mergeWith(
+        fromRGroupAttachmentPointDeletion(restruct, id),
+      );
+    }
+  });
+
   action = action.perform(restruct);
-  action.mergeWith(actionRemoveBonds);
+  action
+    .mergeWith(actionRemoveBonds)
+    .mergeWith(actionToDeleteRGroupAttachmentPoints);
 
   const rgForRemove: Array<number> = frids.map(
     (frid) => RGroup.findRGroupByFragment(restruct.molecule.rgroups, frid)!,

@@ -17,6 +17,7 @@
 import {
   ChangeEvent,
   CSSProperties,
+  FocusEvent,
   KeyboardEvent,
   MutableRefObject,
   SyntheticEvent,
@@ -137,8 +138,10 @@ export const AbbreviationLookup = ({ options }: Props) => {
     event.stopPropagation();
   };
 
-  const handleBlur = () => {
-    closePanel();
+  const handleBlur = (event: FocusEvent<HTMLInputElement>) => {
+    if (event.target !== document.activeElement) {
+      closePanel();
+    }
   };
 
   return (

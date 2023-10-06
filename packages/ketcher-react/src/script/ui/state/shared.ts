@@ -23,6 +23,8 @@ import {
   Struct,
   SupportedFormat,
   emitEventRequestIsFinished,
+  Editor,
+  KetcherLogger,
 } from 'ketcher-core';
 
 import { supportedSGroupTypes } from './constants';
@@ -96,13 +98,13 @@ export function removeStructAction(): {
 export function load(struct: Struct, options?) {
   return async (dispatch, getState) => {
     const state = getState();
-    const editor = state.editor;
+    const editor = state.editor as Editor;
     const server = state.server;
     const errorHandler = editor.errorHandler;
-
     options = options || {};
-    options = {
-      ...options,
+    let { isPaste, ...otherOptions } = options;
+    otherOptions = {
+      ...otherOptions,
       'dearomatize-on-load': editor.options()['dearomatize-on-load'],
       ignoreChiralFlag: editor.options().ignoreChiralFlag,
     };
@@ -110,8 +112,8 @@ export function load(struct: Struct, options?) {
     dispatch(setAnalyzingFile(true));
 
     try {
-      const parsedStruct = await parseStruct(struct, server, options);
-      const { fragment } = options;
+      const parsedStruct = await parseStruct(struct, server, otherOptions);
+      const { fragment } = otherOptions;
       const hasUnsupportedGroups = parsedStruct.sgroups.some(
         (sGroup) => !supportedSGroupTypes[sGroup.type],
       );
@@ -129,7 +131,11 @@ export function load(struct: Struct, options?) {
         // NB: reset id
         const oldStruct = editor.struct().clone();
         parsedStruct.sgroups.forEach((sg, sgId) => {
-          const offset = SGroup.getOffset(oldStruct.sgroups.get(sgId));
+          const sgroup = oldStruct.sgroups.get(sgId);
+          if (!sgroup) {
+            throw Error('Incorrect sgroupId provided');
+          }
+          const offset = SGroup.getOffset(sgroup);
           const atomSet = new Pile(sg.atoms);
           const crossBonds = SGroup.getCrossBonds(parsedStruct, atomSet);
           SGroup.bracketPos(sg, parsedStruct, crossBonds);
@@ -170,13 +176,17 @@ export function load(struct: Struct, options?) {
         editor.struct(parsedStruct);
       }
 
-      editor.zoomAccordingContent();
+      editor.zoomAccordingContent(parsedStruct);
+      if (!isPaste) {
+        editor.centerStruct();
+      }
 
       dispatch(setAnalyzingFile(false));
       dispatch({ type: 'MODAL_CLOSE' });
-    } catch (err: any) {
+    } catch (e: any) {
+      KetcherLogger.error('shared.ts::load', e);
       dispatch(setAnalyzingFile(false));
-      err && errorHandler(err.message);
+      e && errorHandler && errorHandler(e.message);
     } finally {
       emitEventRequestIsFinished();
     }

@@ -4,7 +4,6 @@ import {
   AtomButton,
   clickInTheMiddleOfTheScreen,
   dragMouseTo,
-  pressButton,
   moveMouseToTheMiddleOfTheScreen,
   selectFunctionalGroups,
   selectSaltsAndSolvents,
@@ -16,7 +15,7 @@ import {
   selectLeftPanelButton,
   takeEditorScreenshot,
   resetCurrentTool,
-  STRUCTURE_LIBRARY_BUTTON_NAME,
+  waitForPageInit,
 } from '@utils';
 
 const X_DELTA_ONE = 100;
@@ -24,7 +23,7 @@ const X_DELTA_TWO = 150;
 
 test.describe('Drag and drop Atom on canvas', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {
@@ -58,8 +57,6 @@ test.describe('Drag and drop Atom on canvas', () => {
       Test case: EPMLSOPKET-11832
       Description: when drag & drop an atom on a FG it should replace it
     */
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await page.getByRole('tab', { name: 'Functional Groups' }).click();
     await selectFunctionalGroups(FunctionalGroups.FMOC, page);
     await clickInTheMiddleOfTheScreen(page);
 
@@ -79,8 +76,6 @@ test.describe('Drag and drop Atom on canvas', () => {
       Test case: EPMLSOPKET-11833
       Description: when drag & drop an atom on a Salts and Solvents it should replace it
     */
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await page.getByRole('tab', { name: 'Salts and Solvents' }).click();
     await selectSaltsAndSolvents(SaltsAndSolvents.FormicAcid, page);
     await clickInTheMiddleOfTheScreen(page);
 
@@ -128,13 +123,9 @@ test.describe('Drag and drop Atom on canvas', () => {
       Description: when drag & drop with an atom on a FG connected
       with bond to another FG it should replace it
     */
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await page.getByRole('tab', { name: 'Functional Groups' }).click();
     await selectFunctionalGroups(FunctionalGroups.FMOC, page);
     await clickInTheMiddleOfTheScreen(page);
 
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await page.getByRole('tab', { name: 'Functional Groups' }).click();
     await selectFunctionalGroups(FunctionalGroups.Cbz, page);
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);

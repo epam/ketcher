@@ -19,4 +19,6 @@ export const supportedSGroupTypes = {
   SRU: 'SRU',
   SUP: 'SUP',
   DAT: 'DAT',
+  GEN: 'GEN',
+  queryComponent: 'queryComponent',
 } as const;

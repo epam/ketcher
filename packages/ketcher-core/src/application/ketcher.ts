@@ -21,18 +21,19 @@ import {
 } from './formatters';
 import { GenerateImageOptions, StructService } from 'domain/services';
 
-import { Editor } from './editor';
+import { Editor, defaultBondThickness } from './editor';
 import { Indigo } from 'application/indigo';
 import { KetSerializer, MolfileFormat } from 'domain/serializers';
 import { Struct } from 'domain/entities';
 import assert from 'assert';
 import { EventEmitter } from 'events';
-import { runAsyncAction } from 'utilities';
+import { LogSettings, LogLevel, runAsyncAction } from 'utilities';
 
 const allowedApiSettings = {
   'general.dearomatize-on-load': 'dearomatize-on-load',
   ignoreChiralFlag: 'ignoreChiralFlag',
   disableQueryElements: 'disableQueryElements',
+  bondThickness: 'bondThickness',
 };
 
 async function prepareStructToRender(
@@ -79,6 +80,7 @@ function getStructure(
 }
 
 export class Ketcher {
+  logging: LogSettings;
   #structService: StructService;
   #formatterFactory: FormatterFactory;
   #editor: Editor;
@@ -107,6 +109,11 @@ export class Ketcher {
     this.#formatterFactory = formatterFactory;
     this.#indigo = new Indigo(this.#structService);
     this.#eventBus = new EventEmitter();
+    this.logging = {
+      enabled: false,
+      level: LogLevel.ERROR,
+      showTrace: false,
+    };
   }
 
   get indigo() {
@@ -221,6 +228,14 @@ export class Ketcher {
     );
   }
 
+  getSdf(molfileFormat: MolfileFormat = 'v2000'): Promise<string> {
+    const format =
+      molfileFormat === 'v2000'
+        ? SupportedFormat.sdf
+        : SupportedFormat.sdfV3000;
+    return getStructure(format, this.#formatterFactory, this.#editor.struct());
+  }
+
   getCDXml(): Promise<string> {
     return getStructure(
       SupportedFormat.cdxml,
@@ -245,14 +260,14 @@ export class Ketcher {
     );
   }
 
-  async generateInchIKey(): Promise<string> {
+  async getInChIKey(): Promise<string> {
     const struct: string = await getStructure(
       SupportedFormat.ket,
       this.#formatterFactory,
       this.#editor.struct(),
     );
 
-    return this.#structService.generateInchIKey(struct);
+    return this.#structService.getInChIKey(struct);
   }
 
   containsReaction(): boolean {
@@ -270,6 +285,8 @@ export class Ketcher {
       );
 
       this.#editor.struct(struct);
+      this.#editor.zoomAccordingContent(struct);
+      this.#editor.centerStruct();
     }, this.eventBus);
   }
 
@@ -301,7 +318,10 @@ export class Ketcher {
 
   async generateImage(
     data: string,
-    options: GenerateImageOptions = { outputFormat: 'png' },
+    options: GenerateImageOptions = {
+      outputFormat: 'png',
+      bondThickness: defaultBondThickness,
+    },
   ): Promise<Blob> {
     let meta = '';
 

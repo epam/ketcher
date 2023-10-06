@@ -6,6 +6,7 @@ import {
   openFileAndAddToCanvas,
   saveToFile,
   delay,
+  waitForPageInit,
 } from '@utils';
 import { getCml } from '@utils/formats';
 
@@ -16,7 +17,7 @@ async function openFileAddToCanvasTakeScreenshot(page: Page, fileName: string) {
 
 test.describe('CML files', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test('Open and Save files - CML - CML for empty canvas', async ({ page }) => {

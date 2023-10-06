@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { defaultBondThickness } from 'application/editor';
 import {
   AromatizeData,
   AromatizeResult,
@@ -40,6 +41,7 @@ import {
   StructService,
   StructServiceOptions,
 } from 'domain/services';
+import { KetcherLogger } from 'utilities';
 
 function pollDeferred(process, complete, timeGap, startTimeGap) {
   return new Promise((resolve, reject) => {
@@ -49,8 +51,9 @@ function pollDeferred(process, complete, timeGap, startTimeGap) {
           try {
             if (complete(val)) resolve(val);
             else setTimeout(iterate, timeGap);
-          } catch (e) {
-            reject(e);
+          } catch (error) {
+            KetcherLogger.error('remoteStructService.ts::pollDeferred', error);
+            reject(error);
           }
         },
         (err) => reject(err),
@@ -140,7 +143,7 @@ export class RemoteStructService implements StructService {
     this.customHeaders = customHeaders;
   }
 
-  generateInchIKey(struct: string): Promise<string> {
+  getInChIKey(struct: string): Promise<string> {
     return indigoCall(
       'POST',
       'indigo/convert',
@@ -167,6 +170,10 @@ export class RemoteStructService implements StructService {
       imagoVersions = response.imago_versions;
       isAvailable = true;
     } catch (e) {
+      KetcherLogger.error(
+        'remoteStructService.ts::RemoteStructService::info',
+        e,
+      );
       indigoVersion = '';
       imagoVersions = [];
       isAvailable = false;
@@ -325,14 +332,22 @@ export class RemoteStructService implements StructService {
     options?: GenerateImageOptions,
   ): Promise<string> {
     const outputFormat: OutputFormatType = options?.outputFormat || 'png';
+    const bondThickness: number =
+      options?.bondThickness || defaultBondThickness;
+
     return indigoCall(
       'POST',
       'indigo/render',
       this.apiPath,
       this.defaultOptions,
       this.customHeaders,
-    )({ struct: data }, { 'render-output-format': outputFormat }, (response) =>
-      response.then((resp) => resp.text()),
+    )(
+      { struct: data },
+      {
+        'render-output-format': outputFormat,
+        'render-bond-line-width': bondThickness,
+      },
+      (response) => response.then((resp) => resp.text()),
     );
   }
 }

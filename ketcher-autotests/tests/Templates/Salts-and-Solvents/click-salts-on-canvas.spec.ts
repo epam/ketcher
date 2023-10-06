@@ -7,19 +7,18 @@ import {
   moveMouseToTheMiddleOfTheScreen,
   selectAtomInToolbar,
   takeEditorScreenshot,
-  pressButton,
   AtomButton,
   selectFunctionalGroups,
   selectSaltsAndSolvents,
   FunctionalGroups,
   resetCurrentTool,
   SaltsAndSolvents,
-  STRUCTURE_LIBRARY_BUTTON_NAME,
+  waitForPageInit,
 } from '@utils';
 
 test.describe('Click Salts and Solvents on canvas', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {
@@ -35,8 +34,6 @@ test.describe('Click Salts and Solvents on canvas', () => {
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickInTheMiddleOfTheScreen(page);
 
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await page.getByRole('tab', { name: 'Salts and Solvents' }).click();
     await selectSaltsAndSolvents(SaltsAndSolvents.Glycerol, page);
     await clickInTheMiddleOfTheScreen(page);
   });
@@ -46,13 +43,9 @@ test.describe('Click Salts and Solvents on canvas', () => {
       Test case: EPMLSOPKET-10110
       Description: when clicking with a Salts and Solvents on a FG it should replace it
     */
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await page.getByRole('tab', { name: 'Functional Groups' }).click();
     await selectFunctionalGroups(FunctionalGroups.Boc, page);
     await clickInTheMiddleOfTheScreen(page);
 
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await page.getByRole('tab', { name: 'Salts and Solvents' }).click();
     await selectSaltsAndSolvents(SaltsAndSolvents.Isobutanol, page);
     await clickInTheMiddleOfTheScreen(page);
   });
@@ -63,17 +56,14 @@ test.describe('Click Salts and Solvents on canvas', () => {
       Description: when clicking with a Salts and Solvents template on a Salts and Solvents
       it should replace it
     */
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await page.getByRole('tab', { name: 'Salts and Solvents' }).click();
     await selectSaltsAndSolvents(SaltsAndSolvents.MethaneSulphonicAcid, page);
     await clickInTheMiddleOfTheScreen(page);
 
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await page.getByRole('tab', { name: 'Salts and Solvents' }).click();
     await selectSaltsAndSolvents(SaltsAndSolvents.TButanol, page);
     await clickInTheMiddleOfTheScreen(page);
   });
 
+  // behaves unstable even locally, maybe because of tab opening
   test('Formic acid places near the Cl atom', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-10111
@@ -89,8 +79,6 @@ test.describe('Click Salts and Solvents on canvas', () => {
     const coordinatesWithShift = x + MAX_BOND_LENGTH;
     await dragMouseTo(coordinatesWithShift, y, page);
 
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await page.getByRole('tab', { name: 'Salts and Solvents' }).click();
     await selectSaltsAndSolvents(SaltsAndSolvents.FormicAcid, page);
     await clickInTheMiddleOfTheScreen(page);
   });
@@ -104,16 +92,12 @@ test.describe('Click Salts and Solvents on canvas', () => {
     await selectAtomInToolbar(AtomButton.Oxygen, page);
     await clickInTheMiddleOfTheScreen(page);
 
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await page.getByRole('tab', { name: 'Functional Groups' }).click();
     await selectFunctionalGroups(FunctionalGroups.Cbz, page);
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     const coordinatesWithShift = x + MAX_BOND_LENGTH;
     await dragMouseTo(coordinatesWithShift, y, page);
 
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-    await page.getByRole('tab', { name: 'Salts and Solvents' }).click();
     await selectSaltsAndSolvents(SaltsAndSolvents.Sulfolane, page);
     await page.mouse.click(coordinatesWithShift, y);
   });

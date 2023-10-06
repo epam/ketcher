@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { KetcherLogger } from 'utilities';
 import { SupportedFormat } from './structFormatter.types';
 
 export function identifyStructFormat(
@@ -26,17 +27,32 @@ export function identifyStructFormat(
     if (JSON.parse(sanitizedString)) {
       return SupportedFormat.ket;
     }
-  } catch (er) {} // eslint-disable-line
+  } catch (e) {
+    KetcherLogger.error('identifyStructFormat.ts::identifyStructFromat', e);
+  } // eslint-disable-line
 
-  if (sanitizedString.indexOf('$RXN') !== -1) {
+  const isRXN = sanitizedString.includes('$RXN');
+  const isSDF = sanitizedString.includes('\n$$$$');
+  const isV2000 = sanitizedString.includes('V2000');
+  const isV3000 = sanitizedString.includes('V3000');
+
+  if (isRXN) {
     return SupportedFormat.rxn;
   }
 
-  if (sanitizedString.indexOf('V2000') !== -1) {
+  if (isSDF) {
+    if (isV2000) {
+      return SupportedFormat.sdf;
+    } else {
+      return SupportedFormat.sdfV3000;
+    }
+  }
+
+  if (isV2000) {
     return SupportedFormat.mol;
   }
 
-  if (sanitizedString.indexOf('V3000') !== -1) {
+  if (isV3000) {
     return SupportedFormat.molV3000;
   }
 

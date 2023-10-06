@@ -19,6 +19,7 @@ import {
   fromAtomAddition,
   fromAtomsAttrs,
   FunctionalGroup,
+  KetcherLogger,
 } from 'ketcher-core';
 import Editor from '../Editor';
 import { Tool } from './Tool';
@@ -38,7 +39,9 @@ class RGroupAtomTool implements Tool {
 
     if (ci) {
       const atom = struct.atoms.get(ci.id);
-      if (atom?.attpnt === null) this.editor.hover(ci, null, event);
+      if (atom?.attachmentPoints === null) {
+        this.editor.hover(ci, null, event);
+      }
     } else {
       this.editor.hover(null);
     }
@@ -89,7 +92,9 @@ class RGroupAtomTool implements Tool {
       const atom = struct.atoms.get(ci.id);
       this.editor.hover(this.editor.findItem(event, ['atoms']), null, event);
 
-      if (atom?.attpnt !== null) return;
+      if (atom?.attachmentPoints !== null) {
+        return;
+      }
 
       propsDialog(this.editor, ci.id, null);
       return true;
@@ -119,7 +124,7 @@ function propsDialog(editor, id, pos) {
         editor.update(fromAtomAddition(editor.render.ctab, pos, elem));
       } else if (rglabel !== elem.rglabel) {
         elem.aam = atom.aam; // WTF??
-        elem.attpnt = atom.attpnt;
+        elem.attachmentPoints = atom.attachmentPoints;
 
         if (!elem.rglabel && label !== 'R#') {
           elem.label = label;
@@ -128,7 +133,9 @@ function propsDialog(editor, id, pos) {
         editor.update(fromAtomsAttrs(editor.render.ctab, id, elem, false));
       }
     })
-    .catch(() => null); // w/o changes
+    .catch((e) => {
+      KetcherLogger.error('rgroupatom.ts:propsDialog', e);
+    }); // w/o changes
 }
 
 export default RGroupAtomTool;

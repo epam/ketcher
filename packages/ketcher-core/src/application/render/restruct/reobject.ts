@@ -33,10 +33,16 @@ class ReObject {
 
   changeSelectionStyle(options: any) {
     const { hoverStyle } = options;
-    this.hovering?.attr({
-      fill: this.selected ? hoverStyle.fillSelected : hoverStyle.fill,
-      'fill-opacity': this.selected ? 1 : 0,
-    });
+    if (this.visel.type === 'simpleObject') {
+      this.hovering?.attr({
+        'fill-opacity': this.selected ? 1 : 0,
+      });
+    } else {
+      this.hovering?.attr({
+        fill: hoverStyle.fill,
+        'fill-opacity': this.selected ? 1 : 0,
+      });
+    }
   }
 
   getVBoxObj(render: Render): Box2Abs | null {

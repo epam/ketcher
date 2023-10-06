@@ -22,11 +22,13 @@ export enum ChemicalMimeType {
   DaylightSmarts = 'chemical/x-daylight-smarts',
   InChI = 'chemical/x-inchi',
   InChIAuxInfo = 'chemical/x-inchi-aux',
+  InChIKey = 'chemical/x-inchi-key',
   CDX = 'chemical/x-cdx',
   CDXML = 'chemical/x-cdxml',
   CML = 'chemical/x-cml',
   KET = 'chemical/x-indigo-ket',
   UNKNOWN = 'chemical/x-unknown',
+  SDF = 'chemical/x-sdf',
 }
 
 export interface WithStruct {
@@ -108,6 +110,8 @@ export type CalculateResult = Record<CalculateProps, string | number | boolean>;
 
 export type AutomapMode = 'discard' | 'keep' | 'alter' | 'clear';
 
+export type AutoMapOptions = 'Discard' | 'Keep' | 'Alter' | 'Clear';
+
 export interface AutomapData extends WithStruct, WithOutputFormat {
   mode: AutomapMode;
 }
@@ -130,6 +134,7 @@ export type OutputFormatType = 'png' | 'svg';
 export interface GenerateImageOptions extends StructServiceOptions {
   outputFormat: OutputFormatType;
   backgroundColor?: string;
+  bondThickness: number;
 }
 
 export interface StructService {
@@ -171,7 +176,7 @@ export interface StructService {
     options?: StructServiceOptions,
   ) => Promise<CalculateResult>;
   recognize: (blob: Blob, version: string) => Promise<RecognizeResult>;
-  generateInchIKey: (struct: string) => Promise<string>;
+  getInChIKey: (struct: string) => Promise<string>;
   generateImageAsBase64: (
     data: string,
     options?: GenerateImageOptions,

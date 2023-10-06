@@ -15,14 +15,17 @@
  ***************************************************************************/
 
 import { BaseOperation } from './base';
-import { OperationType } from './OperationType';
+import { OperationPriority, OperationType } from './OperationType';
 import { ReStruct } from '../../render';
 
 export class FragmentStereoFlag extends BaseOperation {
   frid: number;
 
   constructor(fragmentId: number) {
-    super(OperationType.FRAGMENT_STEREO_FLAG, 6);
+    super(
+      OperationType.FRAGMENT_STEREO_FLAG,
+      OperationPriority.FRAGMENT_STEREO_FLAG,
+    );
     this.frid = fragmentId;
   }
 

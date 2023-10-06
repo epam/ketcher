@@ -16,7 +16,7 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
 import { BaseOperation } from '../base';
-import { OperationType } from '../OperationType';
+import { OperationPriority, OperationType } from '../OperationType';
 import { ReStruct } from '../../../render';
 
 // todo: separate classes: now here is circular dependency in `invert` method
@@ -31,7 +31,10 @@ class SGroupAddToHierarchy extends BaseOperation {
   data: Data;
 
   constructor(sgroupId?: any, parent?: any, children?: any) {
-    super(OperationType.S_GROUP_ADD_TO_HIERACHY, 100);
+    super(
+      OperationType.S_GROUP_ADD_TO_HIERACHY,
+      OperationPriority.S_GROUP_ADD_TO_HIERACHY,
+    );
     this.data = { sgid: sgroupId, parent, children };
   }
 

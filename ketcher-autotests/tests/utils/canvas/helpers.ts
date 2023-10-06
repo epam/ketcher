@@ -6,9 +6,10 @@ import {
 } from '@playwright/test';
 import { clickInTheMiddleOfTheScreen, pressButton } from '@utils/clicks';
 import { ELEMENT_TITLE } from './types';
-import { TopPanelButton } from '..';
+import { TopPanelButton, waitForRender } from '..';
 import { selectTopPanelButton } from './tools';
 import { getLeftTopBarSize } from './common/getLeftTopBarSize';
+import { emptyFunction } from '@utils/common/helpers';
 
 export async function drawBenzeneRing(page: Page) {
   await page.getByRole('button', { name: 'Benzene (T)' }).click();
@@ -29,8 +30,7 @@ export async function drawElementByTitle(
 }
 
 export async function getLeftToolBarWidth(page: Page): Promise<number> {
-  const leftBar = await page.locator('[class^="LeftToolbar-module_root"]');
-  const leftBarSize = await leftBar.boundingBox();
+  const leftBarSize = await page.getByTestId('left-toolbar').boundingBox();
 
   // we can get padding / margin values of left toolbar through x property
   if (leftBarSize?.width) {
@@ -41,8 +41,7 @@ export async function getLeftToolBarWidth(page: Page): Promise<number> {
 }
 
 export async function getTopToolBarHeight(page: Page): Promise<number> {
-  const topBar = await page.locator('[class^="App-module_top"]');
-  const topBarSize = await topBar.boundingBox();
+  const topBarSize = await page.getByTestId('top-toolbar').boundingBox();
 
   // we can get padding / margin values of top toolbar through y property
   if (topBarSize?.height) {
@@ -78,17 +77,55 @@ export async function getCoordinatesTopAtomOfBenzeneRing(page: Page) {
   };
 }
 
+export async function takePageScreenshot(
+  page: Page,
+  options?: { masks?: Locator[]; maxDiffPixelRatio?: number },
+) {
+  const maxTimeout = 3000;
+  await waitForRender(page, emptyFunction, maxTimeout);
+  await expect(page).toHaveScreenshot({
+    mask: options?.masks,
+    maxDiffPixelRatio: options?.maxDiffPixelRatio,
+  });
+}
+
 export async function takeEditorScreenshot(
   page: Page,
-  options?: { masks?: Locator[] },
+  options?: { masks?: Locator[]; maxDiffPixelRatio?: number },
 ) {
-  const editor = page.locator('[class*="App-module_canvas"]');
-  await expect(editor).toHaveScreenshot({ mask: options?.masks });
+  const maxTimeout = 3000;
+  const editor = page.getByTestId('ketcher-canvas').first();
+  await waitForRender(page, emptyFunction, maxTimeout);
+  await expect(editor).toHaveScreenshot({
+    mask: options?.masks,
+    maxDiffPixelRatio: options?.maxDiffPixelRatio,
+  });
 }
 
 export async function takeLeftToolbarScreenshot(page: Page) {
-  const editor = page.locator('[class*="LeftToolbar-module_buttons"]');
+  const maxTimeout = 3000;
+  const editor = page.getByTestId('left-toolbar-buttons');
+  await waitForRender(page, emptyFunction, maxTimeout);
   await expect(editor).toHaveScreenshot();
+}
+
+export async function takeRightToolbarScreenshot(page: Page) {
+  const maxTimeout = 3000;
+  const editor = page.getByTestId('right-toolbar');
+  await waitForRender(page, emptyFunction, maxTimeout);
+  await expect(editor).toHaveScreenshot();
+}
+
+export async function takeTopToolbarScreenshot(page: Page) {
+  const maxTimeout = 3000;
+  const editor = page.getByTestId('top-toolbar');
+  await waitForRender(page, emptyFunction, maxTimeout);
+  await expect(editor).toHaveScreenshot();
+}
+
+export async function takeMultitoolDropdownScreenshot(page: Page) {
+  const dropdown = page.locator('.default-multitool-dropdown');
+  await expect(dropdown).toHaveScreenshot();
 }
 
 /**
@@ -127,4 +164,14 @@ export async function resetAllSettingsToDefault(page: Page) {
   await selectTopPanelButton(TopPanelButton.Settings, page);
   await pressButton(page, 'Reset');
   await pressButton(page, 'Apply');
+}
+
+export async function addMonomerToCanvas(
+  page: Page,
+  monomerFullName: string,
+  positionX: number,
+  positionY: number,
+) {
+  await page.getByTestId(monomerFullName).click();
+  await page.mouse.click(positionX, positionY);
 }

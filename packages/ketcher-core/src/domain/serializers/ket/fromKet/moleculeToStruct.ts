@@ -20,6 +20,9 @@ import {
   SGroup,
   Struct,
   SGroupAttachmentPoint,
+  RGroupAttachmentPoint,
+  AttachmentPoints,
+  AtomQueryProperties,
 } from 'domain/entities';
 
 import { Elements } from 'domain/constants';
@@ -37,11 +40,23 @@ export function toRlabel(values) {
 
 export function moleculeToStruct(ketItem: any): Struct {
   const struct = mergeFragmentsToStruct(ketItem, new Struct());
+
   if (ketItem.atoms) {
     ketItem.atoms.forEach((atom) => {
-      if (atom.type === 'rg-label') struct.atoms.add(rglabelToStruct(atom));
-      if (atom.type === 'atom-list') struct.atoms.add(atomListToStruct(atom));
-      if (!atom.type) struct.atoms.add(atomToStruct(atom));
+      let atomId: number | null = null;
+      if (atom.type === 'rg-label') {
+        atomId = struct.atoms.add(rglabelToStruct(atom));
+      }
+      if (!atom.type || atom.type === 'atom-list') {
+        atomId = struct.atoms.add(atomToStruct(atom));
+      }
+      if (atomId !== null) {
+        addRGroupAttachmentPointsToStruct(
+          struct,
+          atomId,
+          atom.attachmentPoints,
+        );
+      }
     });
   }
 
@@ -57,7 +72,7 @@ export function moleculeToStruct(ketItem: any): Struct {
 
   struct.initHalfBonds();
   struct.initNeighbors();
-  struct.markFragments();
+  struct.markFragments(ketItem.properties);
   struct.bindSGroupsToFunctionalGroups();
 
   return struct;
@@ -66,7 +81,28 @@ export function moleculeToStruct(ketItem: any): Struct {
 export function atomToStruct(source) {
   const params: any = {};
 
-  ifDef(params, 'label', source.label);
+  const queryAttribute: Array<keyof AtomQueryProperties> = [
+    'aromaticity',
+    'ringMembership',
+    'connectivity',
+    'ringSize',
+    'chirality',
+    'customQuery',
+  ];
+  if (source.type === 'atom-list') {
+    params.label = 'L#';
+    const ids = source.elements
+      .map((el) => Elements.get(el)?.number)
+      .filter((id) => id);
+    ifDef(params, 'atomList', {
+      ids,
+      notList: source.notList,
+    });
+  } else {
+    ifDef(params, 'label', source.label);
+    // reaction
+    ifDef(params, 'aam', source.mapping);
+  }
   ifDef(params, 'alias', source.alias);
   ifDef(params, 'pp', {
     x: source.location[0],
@@ -78,7 +114,7 @@ export function atomToStruct(source) {
   ifDef(params, 'isotope', source.isotope);
   ifDef(params, 'radical', source.radical);
   ifDef(params, 'cip', source.cip);
-  ifDef(params, 'attpnt', source.attachmentPoints);
+  ifDef(params, 'attachmentPoints', source.attachmentPoints);
   // stereo
   ifDef(params, 'stereoLabel', source.stereoLabel);
   ifDef(params, 'stereoParity', source.stereoParity);
@@ -88,8 +124,21 @@ export function atomToStruct(source) {
   ifDef(params, 'substitutionCount', source.substitutionCount);
   ifDef(params, 'unsaturatedAtom', Number(Boolean(source.unsaturatedAtom)));
   ifDef(params, 'hCount', source.hCount);
+  if (
+    source.queryProperties &&
+    Object.values(source.queryProperties).some((property) => property !== null)
+  ) {
+    params.queryProperties = {};
+    queryAttribute.forEach((attributeName) => {
+      ifDef(
+        params.queryProperties,
+        attributeName,
+        source.queryProperties[attributeName],
+      );
+    });
+  }
+
   // reaction
-  ifDef(params, 'aam', source.mapping);
   ifDef(params, 'invRet', source.invRet);
   ifDef(params, 'exactChangeFlag', Number(Boolean(source.exactChangeFlag)));
   // implicit hydrogens
@@ -105,29 +154,37 @@ export function rglabelToStruct(source) {
     y: -source.location[1],
     z: source.location[2] || 0.0,
   });
-  ifDef(params, 'attpnt', source.attachmentPoints);
+  ifDef(params, 'attachmentPoints', source.attachmentPoints);
   const rglabel = toRlabel(source.$refs.map((el) => parseInt(el.slice(3))));
   ifDef(params, 'rglabel', rglabel);
   return new Atom(params);
 }
 
-export function atomListToStruct(source) {
-  const params: any = {};
-  params.label = 'L#';
-  ifDef(params, 'pp', {
-    x: source.location[0],
-    y: -source.location[1],
-    z: source.location[2] || 0.0,
+function addRGroupAttachmentPointsToStruct(
+  struct: Struct,
+  attachedAtomId: number,
+  attachmentPoints: AttachmentPoints | null,
+) {
+  const rgroupAttachmentPoints: RGroupAttachmentPoint[] = [];
+  if (attachmentPoints === AttachmentPoints.FirstSideOnly) {
+    rgroupAttachmentPoints.push(
+      new RGroupAttachmentPoint(attachedAtomId, 'primary'),
+    );
+  } else if (attachmentPoints === AttachmentPoints.SecondSideOnly) {
+    rgroupAttachmentPoints.push(
+      new RGroupAttachmentPoint(attachedAtomId, 'secondary'),
+    );
+  } else if (attachmentPoints === AttachmentPoints.BothSides) {
+    rgroupAttachmentPoints.push(
+      new RGroupAttachmentPoint(attachedAtomId, 'primary'),
+    );
+    rgroupAttachmentPoints.push(
+      new RGroupAttachmentPoint(attachedAtomId, 'secondary'),
+    );
+  }
+  rgroupAttachmentPoints.forEach((rgroupAttachmentPoint) => {
+    struct.rgroupAttachmentPoints.add(rgroupAttachmentPoint);
   });
-  ifDef(params, 'attpnt', source.attachmentPoints);
-  const ids = source.elements
-    .map((el) => Elements.get(el)?.number)
-    .filter((id) => id);
-  ifDef(params, 'atomList', {
-    ids,
-    notList: source.notList,
-  });
-  return new Atom(params);
 }
 
 /**
@@ -153,6 +210,7 @@ export function bondToStruct(source, atomOffset = 0) {
   ifDef(params, 'reactingCenterStatus', source.center);
   ifDef(params, 'stereo', source.stereo);
   ifDef(params, 'cip', source.cip);
+  ifDef(params, 'customQuery', source.customQuery);
   // if (params.stereo)
   // 	params.stereo = params.stereo > 1 ? params.stereo * 2 : params.stereo;
   // params.xxx = 0;

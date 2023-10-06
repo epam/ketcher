@@ -28,6 +28,7 @@ import Cursor from '../Cursor';
 import { ContextMenu, ContextMenuTrigger } from '../ContextMenu';
 
 import InfoPanel from './InfoPanel';
+import { KetcherLogger } from 'ketcher-core';
 
 // TODO: need to update component after making refactoring of store
 function setupEditor(editor, props, oldProps = {}) {
@@ -81,6 +82,20 @@ class StructEditor extends Component {
       this.updateFloatingToolsPositionOnScroll.bind(this);
   }
 
+  handleWheel = (event) => {
+    if (event.ctrlKey) {
+      event.preventDefault();
+
+      const zoomDelta = event.deltaY > 0 ? -1 : 1;
+
+      if (zoomDelta === 1) {
+        this.props.onZoomIn();
+      } else {
+        this.props.onZoomOut();
+      }
+    }
+  };
+
   shouldComponentUpdate(nextProps, nextState) {
     return (
       this.props.indigoVerification !== nextProps.indigoVerification ||
@@ -105,7 +120,11 @@ class StructEditor extends Component {
         try {
           const parsedInfo = JSON.parse(msg.info);
           el.innerHTML = `Atom Id: ${parsedInfo.atomid}, Bond Id: ${parsedInfo.bondid}`;
-        } catch {
+        } catch (e) {
+          KetcherLogger.error(
+            'StructEditor.jsx::StructEditor::componentDidMount',
+            e,
+          );
           el.innerHTML = msg.info;
         }
         el.classList.add(classes.visible);
@@ -181,10 +200,13 @@ class StructEditor extends Component {
     this.editor.event.message.dispatch({
       info: JSON.stringify(this.props.toolOpts),
     });
+
+    this.editorRef.current.addEventListener('wheel', this.handleWheel);
   }
 
   componentWillUnmount() {
     removeEditorHandlers(this.editor, this.props);
+    this.editorRef.current.removeEventListener('wheel', this.handleWheel);
   }
 
   updateFloatingToolsPositionOnScroll() {
@@ -207,6 +229,8 @@ class StructEditor extends Component {
       onEnhancedStereoEdit,
       onQuickEdit,
       onBondEdit,
+      onZoomIn,
+      onZoomOut,
       onRgroupEdit,
       onSgroupEdit,
       onRemoveFG,
@@ -227,7 +251,11 @@ class StructEditor extends Component {
     const { clientX = 0, clientY = 0 } = this.state;
 
     return (
-      <Tag className={clsx(classes.canvas, className)} {...props}>
+      <Tag
+        className={clsx(classes.canvas, className)}
+        {...props}
+        data-testid="ketcher-canvas"
+      >
         <ContextMenuTrigger>
           <div
             ref={this.editorRef}

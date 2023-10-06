@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import { useEffect, useState } from 'react';
+import clsx from 'clsx';
 
 import Input from '../Input/Input';
 import Select from '../Select';
@@ -25,7 +26,14 @@ const selectOptions = getSelectOptionsFromSchema({
   enum: ['cm', 'px', 'pt', 'inch'],
 });
 
-const MeasureInput = ({ schema, value, onChange, name, ...rest }) => {
+const MeasureInput = ({
+  schema,
+  value,
+  onChange,
+  name,
+  className,
+  ...rest
+}) => {
   const [measure, setMeasure] = useState('px');
   const [cust, setCust] = useState(value || schema.default);
 
@@ -61,7 +69,7 @@ const MeasureInput = ({ schema, value, onChange, name, ...rest }) => {
   const desc = schema || schema.properties[name];
 
   return (
-    <div className={styles.measureInput} {...rest}>
+    <div className={clsx(styles.measureInput, className)} {...rest}>
       <span>{rest.title || desc.title}</span>
       <div style={{ display: 'flex' }}>
         <Input

@@ -25,18 +25,23 @@ import {
   SimpleObjectAdd,
   TextCreate,
   CalcImplicitH,
+  FragmentSetProperties,
+  BondAttr,
+  AtomAttr,
 } from '../operations';
 import { fromRGroupAttrs, fromUpdateIfThen } from './rgroup';
 
 import { Action } from './action';
 import { SGroup, Struct, Vec2 } from 'domain/entities';
 import { fromSgroupAddition } from './sgroup';
+import { fromRGroupAttachmentPointAddition } from './rgroupAttachmentPoint';
 
 export function fromPaste(
   restruct,
   pstruct,
   point,
   angle = 0,
+  isPreview = false,
 ): [Action, { atoms: number[]; bonds: number[] }] {
   const xy0 = getStructCenter(pstruct);
   const offset = Vec2.diff(point, xy0);
@@ -56,7 +61,11 @@ export function fromPaste(
     if (!fridMap.has(atom.fragment)) {
       fridMap.set(
         atom.fragment,
-        (action.addOp(new FragmentAdd().perform(restruct)) as FragmentAdd).frid,
+        (
+          action.addOp(
+            new FragmentAdd(null, atom.fragment.properties).perform(restruct),
+          ) as FragmentAdd
+        ).frid,
       );
     }
 
@@ -71,10 +80,25 @@ export function fromPaste(
     aidMap.set(aid, operation.data.aid);
 
     pasteItems.atoms.push(operation.data.aid);
+
+    action.mergeWith(
+      fromRGroupAttachmentPointAddition(
+        restruct,
+        tmpAtom.attachmentPoints,
+        operation.data.aid,
+      ),
+    );
   });
 
   pstruct.frags.forEach((frag, frid) => {
     if (!frag) return;
+    if (frag.properties) {
+      action.addOp(
+        new FragmentSetProperties(fridMap.get(frid), frag.properties).perform(
+          restruct,
+        ),
+      );
+    }
     frag.stereoAtoms.forEach((aid) =>
       action.addOp(
         new FragmentAddStereoAtom(fridMap.get(frid), aidMap.get(aid)).perform(
@@ -93,10 +117,12 @@ export function fromPaste(
     action.addOp(operation);
 
     pasteItems.bonds.push(operation.data.bid);
+    new BondAttr(operation.data.bid, 'isPreview', isPreview).perform(restruct);
   });
 
   pasteItems.atoms.forEach((aid) => {
     action.addOp(new CalcImplicitH([aid]).perform(restruct));
+    new AtomAttr(aid, 'isPreview', isPreview).perform(restruct);
   });
 
   pstruct.sgroups.forEach((sg: SGroup) => {

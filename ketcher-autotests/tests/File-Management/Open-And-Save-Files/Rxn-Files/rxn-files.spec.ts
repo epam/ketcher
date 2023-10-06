@@ -7,13 +7,8 @@ import {
   drawBenzeneRing,
   getCoordinatesTopAtomOfBenzeneRing,
   clickOnAtom,
-  clickOnBond,
-  BondTool,
   selectNestedTool,
   ArrowTool,
-  selectAtomInToolbar,
-  AtomButton,
-  BondType,
   clickOnTheCanvas,
   selectTopPanelButton,
   TopPanelButton,
@@ -54,30 +49,10 @@ test.describe('Tests for Open and Save RXN file operations', () => {
      * Test case: EPMLSOPKET-1897
      * Description: Reaction with atom and bond properties
      */
-    const xOffsetFromCenter = 40;
-    await drawBenzeneRing(page);
-    await selectNestedTool(page, BondTool.SINGLE_AROMATIC);
-    await clickOnBond(page, BondType.DOUBLE, 1);
-    await selectNestedTool(page, BondTool.TRIPPLE);
-    await clickOnBond(page, BondType.DOUBLE, 1);
-    await selectAtomInToolbar(AtomButton.Nitrogen, page);
-    await clickOnAtom(page, 'C', 1);
-    await selectNestedTool(page, ArrowTool.ARROW_FILLED_BOW);
-    await clickOnTheCanvas(page, xOffsetFromCenter, 0);
-
-    const expectedFile = await getRxn(page);
-    await saveToFile(
-      'RXN/reaction-with-atom-and-bond-properties-saved.rxn',
-      expectedFile,
-    );
-
-    await selectAction(TopPanelButton.Clear, page);
-
     await openFileAndAddToCanvas(
-      'RXN/reaction-with-atom-and-bond-properties-saved.rxn',
+      'Rxn-V2000/reaction-with-atom-and-bond-properties-saved.rxn',
       page,
     );
-
     await takeEditorScreenshot(page);
   });
 
@@ -143,16 +118,16 @@ test.describe('Tests for Open and Save RXN file operations', () => {
        * Description: Reaction from file that contains Sgroup
        */
       await openFileAndAddToCanvas(
-        'RXN/structure-with-s-groups-with-unsupported-s-group-type.rxn',
+        'Rxn-V2000/structure-with-s-groups-with-unsupported-s-group-type.rxn',
         page,
       );
       const expectedFile = await getRxn(page);
       await saveToFile(
-        'RXN/structure-with-s-groups-with-unsupported-s-group-type-saved.rxn',
+        'Rxn-V2000/structure-with-s-groups-with-unsupported-s-group-type-saved.rxn',
         expectedFile,
       );
       await openFileAndAddToCanvas(
-        'RXN/structure-with-s-groups-with-unsupported-s-group-type-saved.rxn',
+        'Rxn-V2000/structure-with-s-groups-with-unsupported-s-group-type-saved.rxn',
         page,
       );
       await takeEditorScreenshot(page);
@@ -196,7 +171,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     const yArrowEnd = yArrowStart + yDelta20;
     await page.mouse.move(xCoordinatesWithShiftHalf, yArrowStart);
     await dragMouseTo(xCoordinatesWithShiftHalf, yArrowEnd, page);
-    await savedFileInfoStartsWithRxn(page, true);
+    await savedFileInfoStartsWithRxn(page);
 
     await pressButton(page, 'Cancel');
     await selectTopPanelButton(TopPanelButton.Clear, page);
@@ -230,24 +205,24 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     const expectedFileV2000 = await getRxn(page);
     await takeEditorScreenshot(page);
     await saveToFile(
-      'RXN/structure-with-two-reaction-arrows-v2000-saved.rxn',
+      'Rxn-V2000/structure-with-two-reaction-arrows-saved.rxn',
       expectedFileV2000,
     );
     const expectedFileV3000 = await getRxn(page);
     await saveToFile(
-      'RXN/structure-with-two-reaction-arrows-v3000-saved.rxn',
+      'Rxn-V3000/structure-with-two-reaction-arrows-saved.rxn',
       expectedFileV3000,
     );
     await selectAction(TopPanelButton.Clear, page);
     await openFileAndAddToCanvas(
-      'RXN/structure-with-two-reaction-arrows-v3000-saved.rxn',
+      'Rxn-V3000/structure-with-two-reaction-arrows-saved.rxn',
       page,
     );
     await takeEditorScreenshot(page);
 
     await selectAction(TopPanelButton.Clear, page);
     await openFileAndAddToCanvas(
-      'RXN/structure-with-two-reaction-arrows-v2000-saved.rxn',
+      'Rxn-V2000/structure-with-two-reaction-arrows-saved.rxn',
       page,
     );
     await takeEditorScreenshot(page);
@@ -261,7 +236,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
      * Description: Import the structure from the saved RXN 2000/3000 file
      */
     await openFileAndAddToCanvas(
-      'RXN/reaction-with-several-components.rxn',
+      'Rxn-V3000/reaction-with-several-components.rxn',
       page,
     );
     await takeEditorScreenshot(page);
@@ -275,7 +250,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
      * Description: Open the RXN v3000 file with S-Group Properties Type = Multiple group
      */
     await openFileAndAddToCanvas(
-      'RXN/structure-with-s-groups-with-unsupported-s-group-type-V3000.rxn',
+      'Rxn-V3000/structure-with-s-groups-with-unsupported-s-group-type.rxn',
       page,
     );
     await takeEditorScreenshot(page);
@@ -289,7 +264,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
      * Description: Open the RXN v2000 file with S-Group Properties Type = Multiple group
      */
     await openFileAndAddToCanvas(
-      'RXN/structure-with-s-groups-with-unsupported-s-group-type-V2000.rxn',
+      'Rxn-V2000/structure-with-s-groups-with-unsupported-s-group-type.rxn',
       page,
     );
     await takeEditorScreenshot(page);

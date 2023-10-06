@@ -9,7 +9,6 @@ import {
   waitForSpinnerFinishedWork,
   clickInTheMiddleOfTheScreen,
   waitForPageInit,
-  openFileAndAddToCanvas,
   saveToFile,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
@@ -177,10 +176,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       async () =>
         await setMolecule(page, 'CC(=O)O[C@@H](C)[C@H](O)Cn1cnc2c1ncnc2N'),
     );
-    await openFileAndAddToCanvas(
-      'Molfiles-V2000/test-data-for-chiral-centersv2000.mol',
-      page,
-    );
+
     const molV2000File = await getMolfile(page, 'v2000');
     await saveToFile(
       'Molfiles-V2000/test-data-for-chiral-centersv2000-expected.mol',
@@ -212,11 +208,6 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       page,
       async () =>
         await setMolecule(page, 'CC(=O)O[C@@H](C)[C@H](O)Cn1cnc2c1ncnc2N'),
-    );
-
-    await openFileAndAddToCanvas(
-      'Molfiles-V3000/test-data-for-chiral-centersv3000.mol',
-      page,
     );
     const molV3000File = await getMolfile(page, 'v3000');
     await saveToFile(

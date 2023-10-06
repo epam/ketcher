@@ -18,10 +18,10 @@ export interface AtomQueryProperties {
 
 export type AtomAttributes = {
   label?: string;
-  charge?: number;
+  charge?: number | null;
   valence?: number;
   fragment?: number;
-  isotope?: number;
+  isotope?: number | null;
   radical?: number;
   explicitValence?: number;
   implicitH?: number;

@@ -24,7 +24,6 @@ test.describe('Clear canvas', () => {
 
   test('Clear Canvas - checking button tooltip', async ({ page }) => {
     // Test case: EPMLSOPKET-1702
-    await selectTopPanelButton(TopPanelButton.Clear, page);
     const button = page.getByTestId('clear-canvas-button');
     await expect(button).toHaveAttribute('title', 'Clear Canvas (Ctrl+Del)');
   });

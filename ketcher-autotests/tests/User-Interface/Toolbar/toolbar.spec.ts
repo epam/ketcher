@@ -4,11 +4,12 @@ import {
   takeEditorScreenshot,
   takeLeftToolbarScreenshot,
   TopPanelButton,
+  waitForPageInit,
 } from '@utils';
 
-test.describe('Open Ketcher', () => {
+test.describe('Toolbar palette and settings', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test('Settings: UI verification', async ({ page }) => {

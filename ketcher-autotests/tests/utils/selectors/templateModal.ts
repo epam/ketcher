@@ -107,11 +107,11 @@ export async function selectSaltsAndSolvents(
     .first();
   await expect(
     page.locator('[data-testid*="templates-modal"] > div'),
-  ).toHaveCount(amountOfSaltsAndSolvents);
-  await saltsButton.click();
-  await expect(page.getByTestId('templates-modal')).toHaveCount(0, {
-    timeout: 20000,
+  ).toHaveCount(amountOfSaltsAndSolvents, {
+    timeout: 30000,
   });
+  await saltsButton.click();
+  await expect(page.getByTestId('templates-modal')).toHaveCount(0);
 }
 
 export async function selectSaltsAndSolventsGroup(
@@ -135,11 +135,11 @@ export async function selectFunctionalGroups(
     .first();
   await expect(
     page.locator('[data-testid*="templates-modal"] > div'),
-  ).toHaveCount(amountOfFunctionalGroups);
-  await functionalGroupButton.click();
-  await expect(page.getByTestId('templates-modal')).toHaveCount(0, {
-    timeout: 20000,
+  ).toHaveCount(amountOfFunctionalGroups, {
+    timeout: 30000,
   });
+  await functionalGroupButton.click();
+  await expect(page.getByTestId('templates-modal')).toHaveCount(0);
 }
 
 export async function selectFunctionalGroup(

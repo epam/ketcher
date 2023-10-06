@@ -109,7 +109,7 @@ const fmtInfo = {
   atomListHeaderPartition: [3, 1, 1, 4, 1, 1],
   atomListHeaderLength: 11, // = atomListHeaderPartition.reduce(function(a,b) { return a + b; }, 0)
   atomListHeaderItemLength: 4,
-  chargeMap: [0, +3, +2, +1, 0, -1, -2, -3],
+  chargeMap: [null, +3, +2, +1, null, -1, -2, -3],
   valenceMap: [undefined, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 0],
   implicitHydrogenMap: [undefined, 0, 1, 2, 3, 4],
   v30atomPropMap: {

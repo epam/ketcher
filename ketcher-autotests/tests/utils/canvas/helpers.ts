@@ -6,14 +6,47 @@ import {
 } from '@playwright/test';
 import { clickInTheMiddleOfTheScreen, pressButton } from '@utils/clicks';
 import { ELEMENT_TITLE } from './types';
-import { TopPanelButton, waitForRender } from '..';
+// import { DELAY_IN_SECONDS, TopPanelButton, waitForRender } from '..';
+import {
+  DELAY_IN_SECONDS,
+  RingButton,
+  STRUCTURE_LIBRARY_BUTTON_NAME,
+  TemplateLibrary,
+  TopPanelButton,
+  selectRing,
+  waitForRender,
+} from '..';
 import { selectTopPanelButton } from './tools';
 import { getLeftTopBarSize } from './common/getLeftTopBarSize';
 import { emptyFunction } from '@utils/common/helpers';
 
 export async function drawBenzeneRing(page: Page) {
-  await page.getByRole('button', { name: 'Benzene (T)' }).click();
+  // await page.getByRole('button', { name: 'Benzene (T)' }).click();
+  await selectRing(RingButton.Benzene, page);
   await clickInTheMiddleOfTheScreen(page);
+}
+
+export async function drawCyclohexaneRing(page: Page) {
+  // await page.getByRole('button', { name: 'Cyclohexane (T)' }).click();
+  await selectRing(RingButton.Cyclohexane, page);
+  await clickInTheMiddleOfTheScreen(page);
+}
+
+export async function drawCyclopentadieneRing(page: Page) {
+  // await page.getByRole('button', { name: 'Cyclopentadiene (T)' }).click();
+  await selectRing(RingButton.Cyclopentadiene, page);
+  await clickInTheMiddleOfTheScreen(page);
+}
+
+export async function selectUserTemplatesAndRename(
+  itemToChoose: TemplateLibrary,
+  page: Page,
+) {
+  await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+  await page.getByRole('tab', { name: 'Template Library' }).click();
+  await page.getByRole('button', { name: 'Aromatics (18)' }).click();
+  await page.getByTitle(itemToChoose).getByRole('button').click();
+  await page.getByPlaceholder('template').click();
 }
 
 export async function drawElementByTitle(
@@ -52,6 +85,32 @@ export async function getTopToolBarHeight(page: Page): Promise<number> {
 }
 
 export async function getCoordinatesTopAtomOfBenzeneRing(page: Page) {
+  const { carbonAtoms, scale, offset } = await page.evaluate(() => {
+    const allAtoms = [...window.ketcher.editor.struct().atoms.values()];
+    const onlyCarbons = allAtoms.filter((a) => a.label === 'C');
+    return {
+      carbonAtoms: onlyCarbons,
+      scale: window.ketcher.editor.options().scale,
+      offset: window.ketcher?.editor?.options()?.offset,
+    };
+  });
+  let min = {
+    x: Infinity,
+    y: Infinity,
+  };
+  for (const carbonAtom of carbonAtoms) {
+    if (carbonAtom.pp.y < min.y) {
+      min = carbonAtom.pp;
+    }
+  }
+  const { leftBarWidth, topBarHeight } = await getLeftTopBarSize(page);
+  return {
+    x: min.x * scale + offset.x + leftBarWidth,
+    y: min.y * scale + offset.y + topBarHeight,
+  };
+}
+
+export async function getCoordinatesTopAtomOfCyclopentadieneRing(page: Page) {
   const { carbonAtoms, scale, offset } = await page.evaluate(() => {
     const allAtoms = [...window.ketcher.editor.struct().atoms.values()];
     const onlyCarbons = allAtoms.filter((a) => a.label === 'C');
@@ -119,6 +178,18 @@ export async function takeRightToolbarScreenshot(page: Page) {
 export async function takeTopToolbarScreenshot(page: Page) {
   const maxTimeout = 3000;
   const editor = page.getByTestId('top-toolbar');
+  await waitForRender(page, emptyFunction, maxTimeout);
+  await expect(editor).toHaveScreenshot();
+}
+
+export async function takeBottomToolbarScreenshot(page: Page) {
+  page.getByTestId('bottom-toolbar');
+  await delay(DELAY_IN_SECONDS.THREE);
+}
+
+export async function takePolymerEditorScreenshot(page: Page) {
+  const maxTimeout = 3000;
+  const editor = page.locator('.Ketcher-polymer-editor-root');
   await waitForRender(page, emptyFunction, maxTimeout);
   await expect(editor).toHaveScreenshot();
 }

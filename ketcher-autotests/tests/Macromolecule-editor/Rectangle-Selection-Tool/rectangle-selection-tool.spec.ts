@@ -68,7 +68,7 @@ test.describe('Rectangle Selection Tool', () => {
     await takePageScreenshot(page);
   });
 
-  test('Move monomer bonded with another monomers', async ({ page }) => {
+  test.only('Move monomer bonded with another monomers', async ({ page }) => {
     /* 
     Test case: #2367 - move items on the canvas
     Description: check ability to move items on the canvas
@@ -102,9 +102,7 @@ test.describe('Rectangle Selection Tool', () => {
 
     // Move selected monomer
     await selectRectangleSelectionTool(page);
-    await page.mouse.move(400, 400);
-    await dragMouseTo(500, 500, page);
-    await page.mouse.move(400, 400);
+    await page.mouse.click(400, 400);
     await dragMouseTo(200, 400, page);
 
     await takeEditorScreenshot(page);

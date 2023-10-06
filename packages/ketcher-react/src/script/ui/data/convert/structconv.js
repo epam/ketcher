@@ -56,8 +56,37 @@ export function toElement(elem) {
   if (!elem.label && 'ap' in elem) {
     return { attachmentPoints: toApoint(elem.ap) };
   }
+  if (elem.atomType === 'list') {
+    elem.label = 'L#';
+    elem.pseudo = null;
+    elem.atomList = new AtomList({
+      notList: elem.notList,
+      ids: elem.atomList?.split(',').map((el) => Elements.get(el).number) || [],
+    });
+    delete elem.notList;
+    delete elem.atomType;
+    return toAtom(elem);
+  }
 
-  if (Elements.get(capitalize(elem.label))) return toAtom(elem);
+  if (elem.atomType === 'pseudo') {
+    elem.label = elem.pseudo;
+    elem.atomList = null;
+    delete elem.notList;
+    delete elem.atomType;
+    return toAtom(elem);
+  }
+
+  if (
+    Elements.get(capitalize(elem.label)) ||
+    (elem.customQuery && elem.customQuery !== '')
+  ) {
+    elem.label = capitalize(elem.label);
+    elem.pseudo = null;
+    elem.atomList = null;
+    delete elem.notList;
+    delete elem.atomType;
+    return toAtom(elem);
+  }
 
   if (
     elem.label === 'A' ||
@@ -75,13 +104,21 @@ export function toElement(elem) {
 
 export function fromAtom(satom) {
   const alias = satom.alias || '';
-  const charge = satom.charge.toString();
-
+  const atomType = satom.atomList
+    ? 'list'
+    : satom.pseudo === satom.label
+    ? 'pseudo'
+    : 'single';
   return {
     alias,
+    atomType,
+    atomList:
+      satom.atomList?.ids.map((i) => Elements.get(i).label).join(',') || '',
+    notList: satom.atomList?.notList || false,
+    pseudo: satom.pseudo,
     label: satom.label,
-    charge,
-    isotope: satom.isotope,
+    charge: satom.charge === null ? '' : satom.charge.toString(),
+    isotope: satom.isotope === null ? '' : satom.isotope.toString(),
     explicitValence: satom.explicitValence,
     radical: satom.radical,
     invRet: satom.invRet,
@@ -91,23 +128,80 @@ export function fromAtom(satom) {
     unsaturatedAtom: !!satom.unsaturatedAtom,
     hCount: satom.hCount,
     stereoParity: satom.stereoParity,
+    implicitHCount: satom.implicitHCount,
+    aromaticity: satom.queryProperties.aromaticity,
+    ringMembership: satom.queryProperties.ringMembership,
+    ringSize: satom.queryProperties.ringSize,
+    connectivity: satom.queryProperties.connectivity,
+    chirality: satom.queryProperties.chirality,
+    customQuery:
+      satom.queryProperties.customQuery === null
+        ? ''
+        : satom.queryProperties.customQuery.toString(),
   };
 }
 
 export function toAtom(atom) {
   // TODO merge this to Atom.attrlist?
   //      see ratomtool
+  const {
+    aromaticity = null,
+    ringMembership = null,
+    ringSize = null,
+    connectivity = null,
+    chirality = null,
+    customQuery = '',
+    ...restAtom
+  } = atom;
+  if (customQuery && customQuery !== '') {
+    return Object.assign({}, restAtom, {
+      label: 'A',
+      atomList: null,
+      pseudo: null,
+      alias: null,
+      charge: null,
+      isotope: null,
+      explicitValence: -1,
+      radical: 0,
+      ringBondCount: 0,
+      hCount: 0,
+      substitutionCount: 0,
+      unsaturatedAtom: 0,
+      implicitHCount: null,
+      queryProperties: {
+        aromaticity: null,
+        implicitHCount: null,
+        ringMembership: null,
+        ringSize: null,
+        connectivity: null,
+        chirality: null,
+        customQuery,
+      },
+      invRet: 0,
+      exactChangeFlag: 0,
+    });
+  }
   const chargeRegexp = new RegExp(atomSchema.properties.charge.pattern);
-  const pch = chargeRegexp.exec(atom.charge);
-  const charge = pch ? parseInt(pch[1] + pch[3] + pch[2]) : atom.charge;
+  const pch = chargeRegexp.exec(restAtom.charge);
+  const charge = pch ? parseInt(pch[1] + pch[3] + pch[2]) : restAtom.charge;
 
-  const conv = Object.assign({}, atom, {
-    label: capitalize(atom.label),
-    alias: atom.alias || null,
-    exactChangeFlag: +(atom.exactChangeFlag ?? false),
-    unsaturatedAtom: +(atom.unsaturatedAtom ?? false),
+  const conv = Object.assign({}, restAtom, {
+    isotope: restAtom.isotope ? Number(restAtom.isotope) : null,
+    charge: restAtom.charge ? Number(charge) : null,
+    alias: restAtom.alias || null,
+    exactChangeFlag: +(restAtom.exactChangeFlag ?? false),
+    unsaturatedAtom: +(restAtom.unsaturatedAtom ?? false),
+    queryProperties: {
+      aromaticity,
+      implicitHCount: restAtom.implicitHCount,
+      ringMembership,
+      ringSize,
+      connectivity,
+      chirality,
+      customQuery: customQuery === '' ? null : customQuery,
+    },
   });
-  if (charge !== undefined) conv.charge = charge;
+
   return conv;
 }
 
@@ -208,18 +302,22 @@ function toRlabel(values) {
 export function fromBond(sbond) {
   const type = sbond.type;
   const stereo = sbond.stereo;
+  const isCustomQuery = sbond.customQuery !== null;
   return {
-    type: fromBondType(type, stereo),
-    topology: sbond.topology || 0,
-    center: sbond.reactingCenterStatus || 0,
+    type: isCustomQuery ? '' : fromBondType(type, stereo),
+    topology: sbond.topology,
+    center: sbond.reactingCenterStatus,
+    customQuery: !isCustomQuery ? '' : sbond.customQuery.toString(),
   };
 }
 
 export function toBond(bond) {
+  const isCustomQuery = bond.customQuery !== '';
   return {
     topology: bond.topology,
     reactingCenterStatus: bond.center,
-    ...toBondType(bond.type),
+    customQuery: !isCustomQuery ? null : bond.customQuery,
+    ...toBondType(isCustomQuery ? 'any' : bond.type),
   };
 }
 

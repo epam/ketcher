@@ -27,6 +27,7 @@ import { StructFormatter, SupportedFormat } from './structFormatter.types';
 import { KetSerializer } from 'domain/serializers';
 import { Struct } from 'domain/entities';
 import { getPropertiesByFormat } from './formatProperties';
+import { KetcherLogger } from 'utilities';
 
 type ConvertPromise = (
   data: ConvertData,
@@ -70,13 +71,14 @@ export class ServerFormatter implements StructFormatter {
       );
 
       return convertResult.struct;
-    } catch (error: any) {
+    } catch (e: any) {
       let message;
-      if (error.message === 'Server is not compatible') {
+      if (e.message === 'Server is not compatible') {
         message = `${formatProperties.name} is not supported.`;
       } else {
-        message = `Convert error!\n${error.message || error}`;
+        message = `Convert error!\n${e.message || e}`;
       }
+      KetcherLogger.error('serverFormatter.ts::getStructureFromStructAsync', e);
       throw new Error(message);
     }
   }
@@ -107,9 +109,13 @@ export class ServerFormatter implements StructFormatter {
         parsedStruct.rescale();
       }
       return parsedStruct;
-    } catch (error: any) {
-      if (error.message !== 'Server is not compatible') {
-        throw Error(`Convert error!\n${error.message || error}`);
+    } catch (e: any) {
+      if (e.message !== 'Server is not compatible') {
+        KetcherLogger.error(
+          'serverFormatter.ts::getStructureFromStringAsync',
+          e,
+        );
+        throw Error(`Convert error!\n${e.message || e}`);
       }
 
       const formatError =

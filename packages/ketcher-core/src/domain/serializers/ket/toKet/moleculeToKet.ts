@@ -14,7 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { SGroup, Struct, SGroupAttachmentPoint } from 'domain/entities';
+import {
+  SGroup,
+  Struct,
+  SGroupAttachmentPoint,
+  AtomQueryProperties,
+} from 'domain/entities';
 
 import { ifDef } from 'utilities';
 
@@ -35,7 +40,6 @@ export function moleculeToKet(struct: Struct): any {
   const body: any = {
     atoms: Array.from(struct.atoms.values()).map((atom) => {
       if (atom.label === 'R#') return rglabelToKet(atom);
-      if (atom.label === 'L#') return atomListToKet(atom);
       return atomToKet(atom);
     }),
   };
@@ -64,13 +68,24 @@ export function moleculeToKet(struct: Struct): any {
 }
 
 function atomToKet(source) {
-  const result = {};
-  ifDef(result, 'label', source.label);
+  const result: { queryProperties?: AtomQueryProperties; type?: 'atom-list' } =
+    {};
+
+  if (source.label !== 'L#') {
+    ifDef(result, 'label', source.label);
+    // reaction
+    ifDef(result, 'mapping', parseInt(source.aam), 0);
+  } else if (source.atomList) {
+    result.type = 'atom-list';
+    ifDef(result, 'elements', source.atomList.labelList());
+    ifDef(result, 'notList', source.atomList.notList, false);
+  }
+
   ifDef(result, 'alias', source.alias);
   ifDef(result, 'location', [source.pp.x, -source.pp.y, source.pp.z]);
-  ifDef(result, 'charge', source.charge, 0);
+  ifDef(result, 'charge', source.charge);
   ifDef(result, 'explicitValence', source.explicitValence, -1);
-  ifDef(result, 'isotope', source.isotope, 0);
+  ifDef(result, 'isotope', source.isotope);
   ifDef(result, 'radical', source.radical, 0);
   ifDef(result, 'attachmentPoints', source.attachmentPoints, 0);
   ifDef(result, 'cip', source.cip, '');
@@ -83,8 +98,15 @@ function atomToKet(source) {
   ifDef(result, 'substitutionCount', source.substitutionCount, 0);
   ifDef(result, 'unsaturatedAtom', !!source.unsaturatedAtom, false);
   ifDef(result, 'hCount', source.hCount, 0);
-  // reaction
-  ifDef(result, 'mapping', parseInt(source.aam), 0);
+  // query properties
+  if (
+    Object.values(source.queryProperties).some((property) => property !== null)
+  ) {
+    result.queryProperties = {};
+    Object.keys(source.queryProperties).forEach((name) => {
+      ifDef(result.queryProperties, name, source.queryProperties[name]);
+    });
+  }
   ifDef(result, 'invRet', source.invRet, 0);
   ifDef(result, 'exactChangeFlag', !!source.exactChangeFlag, false);
   ifDef(result, 'implicitHCount', source.implicitHCount);
@@ -106,31 +128,24 @@ function rglabelToKet(source) {
   return result;
 }
 
-function atomListToKet(source) {
-  const result = {
-    type: 'atom-list',
-  };
-  ifDef(result, 'location', [source.pp.x, -source.pp.y, source.pp.z]);
-  ifDef(result, 'attachmentPoints', source.attachmentPoints, 0);
-  ifDef(result, 'elements', source.atomList.labelList());
-  ifDef(result, 'notList', source.atomList.notList, false);
-  return result;
-}
-
 function bondToKet(source) {
   const result = {};
-
-  ifDef(result, 'type', source.type);
-  ifDef(result, 'atoms', [source.begin, source.end]);
-  ifDef(result, 'stereo', source.stereo, 0);
-  ifDef(result, 'topology', source.topology, 0);
-  ifDef(result, 'center', source.reactingCenterStatus, 0);
-  ifDef(result, 'cip', source.cip, '');
+  if (source.customQuery) {
+    ifDef(result, 'atoms', [source.begin, source.end]);
+    ifDef(result, 'customQuery', source.customQuery);
+  } else {
+    ifDef(result, 'type', source.type);
+    ifDef(result, 'atoms', [source.begin, source.end]);
+    ifDef(result, 'stereo', source.stereo, 0);
+    ifDef(result, 'topology', source.topology, 0);
+    ifDef(result, 'center', source.reactingCenterStatus, 0);
+    ifDef(result, 'cip', source.cip, '');
+  }
 
   return result;
 }
 
-function sgroupToKet(struct, source: SGroup) {
+function sgroupToKet(struct: Struct, source: SGroup) {
   const result = {};
 
   ifDef(result, 'type', source.type);
@@ -141,6 +156,9 @@ function sgroupToKet(struct, source: SGroup) {
       break;
     case 'MUL': {
       ifDef(result, 'mul', source.data.mul || 1);
+      break;
+    }
+    case 'queryComponent': {
       break;
     }
     case 'SRU': {

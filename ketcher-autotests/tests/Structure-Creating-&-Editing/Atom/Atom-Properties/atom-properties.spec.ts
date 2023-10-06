@@ -92,7 +92,7 @@ async function selectHCount(page: Page, hcount: string, button: string) {
   await page.getByText('Query specific').click();
   await page
     .locator('label')
-    .filter({ hasText: 'H count' })
+    .filter({ hasText: 'H count', hasNotText: 'Implicit H count' })
     .getByRole('button', { name: '​' })
     .click();
   await page.getByRole('option', { name: hcount }).click();
@@ -193,8 +193,8 @@ test.describe('Atom Properties', () => {
       Label type-in field, filled with the data for the clicked atom;
       information 'Number' field with a number of atoms in the Periodic table, filled with the data for the clicked atom;
       Alias type-in field;
-      Charge type-in field, filled with "0" by default;
-      Isotope type-in field, filled with "0" by default;
+      Charge type-in field;
+      Isotope type-in field;
       Valence drop-down list (with the following values: blank, I, II, III, IV, V, VI, VII, VIII);
       Radical drop-down list (with the following values: blank, Monoradical, Diradical (singlet), Diradical (triplet)).
       'Query specific' tab with:
@@ -220,8 +220,8 @@ test.describe('Atom Properties', () => {
       Label type-in field, filled with the data for the clicked atom;
       information 'Number' field with a number of atoms in the Periodic table, filled with the data for the clicked atom;
       Alias type-in field;
-      Charge type-in field, filled with "0" by default;
-      Isotope type-in field, filled with "0" by default;
+      Charge type-in field;
+      Isotope type-in field;
       Valence drop-down list (with the following values: blank, I, II, III, IV, V, VI, VII, VIII);
       Radical drop-down list (with the following values: blank, Monoradical, Diradical (singlet), Diradical (triplet)).
       'Query specific' tab with:
@@ -1029,7 +1029,7 @@ test.describe('Atom Properties', () => {
     await selectRingBondCount(page, '4', 'Apply');
   });
 
-  test.fixme('Ring bonds count - Editing and Undo/Redo', async ({ page }) => {
+  test('Ring bonds count - Editing and Undo/Redo', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-1639
       Description: Ring bond count atom property is displayed as specified from the menu item.
@@ -1110,29 +1110,28 @@ test.describe('Atom Properties', () => {
     await selectHCount(page, '4', 'Apply');
   });
 
-  test.fixme(
-    'Save structure with Query specific - H count information as *.mol file',
-    async ({ page }) => {
-      /*
+  test('Save structure with Query specific - H count information as *.mol file', async ({
+    page,
+  }) => {
+    /*
       Test case: EPMLSOPKET-1640
       Description: The structure is saved as *.mol file.
     */
-      await openFileAndAddToCanvas('chain-with-h-count.mol', page);
-      const expectedFile = await getMolfile(page, 'v2000');
-      await saveToFile('chain-with-h-count-expected.mol', expectedFile);
+    await openFileAndAddToCanvas('chain-with-h-count.mol', page);
+    const expectedFile = await getMolfile(page, 'v2000');
+    await saveToFile('chain-with-h-count-expected.mol', expectedFile);
 
-      const METADATA_STRING_INDEX = [1];
-      const { fileExpected: molFileExpected, file: molFile } =
-        await receiveFileComparisonData({
-          page,
-          expectedFileName: 'tests/test-data/chain-with-h-count-expected.mol',
-          fileFormat: 'v2000',
-          metaDataIndexes: METADATA_STRING_INDEX,
-        });
+    const METADATA_STRING_INDEX = [1];
+    const { fileExpected: molFileExpected, file: molFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName: 'tests/test-data/chain-with-h-count-expected.mol',
+        fileFormat: 'v2000',
+        metaDataIndexes: METADATA_STRING_INDEX,
+      });
 
-      expect(molFile).toEqual(molFileExpected);
-    },
-  );
+    expect(molFile).toEqual(molFileExpected);
+  });
 
   test('Hydrogen count - Representation of blank selection', async ({
     page,
@@ -1149,7 +1148,7 @@ test.describe('Atom Properties', () => {
     await page.getByText('Query specific').click();
     await page
       .locator('label')
-      .filter({ hasText: 'H count' })
+      .filter({ hasText: 'H count', hasNotText: 'Implicit H count' })
       .getByRole('button', { name: '​' })
       .click();
     await page.locator('.MuiMenuItem-root').first().click();
@@ -1231,28 +1230,27 @@ test.describe('Atom Properties', () => {
     expect(molFile).toEqual(molFileExpected);
   });
 
-  test.fixme(
-    'Substitution count - Representation of blank selection',
-    async ({ page }) => {
-      /*
+  test('Substitution count - Representation of blank selection', async ({
+    page,
+  }) => {
+    /*
       Test case: EPMLSOPKET-1643
       Description: The atom is selected.
       Number of nonhydrogen substituents is displayed as AtomSymbol(sN) where N depends on the number selected.
       Nothing is changed.
     */
-      await openFileAndAddToCanvas('KET/chain.ket', page);
+    await openFileAndAddToCanvas('KET/chain.ket', page);
 
-      await doubleClickOnAtom(page, 'C', 0);
-      await page.getByText('Query specific').click();
-      await page
-        .locator('label')
-        .filter({ hasText: 'Substitution count' })
-        .getByRole('button', { name: '​' })
-        .click();
-      await page.locator('.MuiMenuItem-root').first().click();
-      await pressButton(page, 'Apply');
-    },
-  );
+    await doubleClickOnAtom(page, 'C', 0);
+    await page.getByText('Query specific').click();
+    await page
+      .locator('label')
+      .filter({ hasText: 'Substitution count' })
+      .getByRole('button', { name: '​' })
+      .click();
+    await page.locator('.MuiMenuItem-root').first().click();
+    await pressButton(page, 'Apply');
+  });
 
   test('Add Query specific - Unsaturated in modal and press Cancel', async ({
     page,

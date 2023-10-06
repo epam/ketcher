@@ -19,13 +19,20 @@ import {
   SupportedFormatProperties,
 } from './supportedFormatProperties';
 
-export type SupportedFormats = 'mol' | 'helm';
+export type SupportedFormats = 'mol' | 'ket';
 
 type FormatProperties = {
   [key in SupportedFormats]: SupportedFormatProperties;
 };
 
 const formatProperties: FormatProperties = {
+  ket: new SupportedFormatProperties(
+    'Ket file',
+    ChemicalMimeType.Ket,
+    ['.ket'],
+    true,
+    {},
+  ),
   mol: new SupportedFormatProperties(
     'MDL Molfile V3000',
     ChemicalMimeType.Mol,
@@ -33,7 +40,6 @@ const formatProperties: FormatProperties = {
     true,
     { 'molfile-saving-mode': '3000' },
   ),
-  helm: new SupportedFormatProperties('HELM', ChemicalMimeType.Helm, ['.helm']),
 };
 
 export const getPropertiesByFormat = (format: SupportedFormats) => {

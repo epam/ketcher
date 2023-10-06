@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { expect, test } from '@playwright/test';
 import {
   openFileAndAddToCanvas,
@@ -27,7 +26,9 @@ test('Open KET file with properties and check properties are saved in struct', a
     return;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion, @typescript-eslint/no-explicit-any
   const [firstFragmentProperties] = firstFragment.properties! as any;
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion, @typescript-eslint/no-explicit-any
   const [secondFragmentProperties] = secondFragment.properties! as any;
 
   const [firstFragmentPropKey] = Object.keys(firstFragmentProperties);

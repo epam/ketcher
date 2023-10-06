@@ -37,6 +37,7 @@ interface DialogParamsCallProps {
 
 export interface DialogParams extends DialogParamsCallProps {
   className?: string;
+  isNestedModal?: boolean;
 }
 
 interface DialogProps {

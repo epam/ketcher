@@ -6,7 +6,7 @@ import {
 } from '@playwright/test';
 import { clickInTheMiddleOfTheScreen, pressButton } from '@utils/clicks';
 import { ELEMENT_TITLE } from './types';
-import { DELAY_IN_SECONDS, TopPanelButton, waitForRender } from '..';
+import { TopPanelButton, waitForRender } from '..';
 import { selectTopPanelButton } from './tools';
 import { getLeftTopBarSize } from './common/getLeftTopBarSize';
 import { emptyFunction } from '@utils/common/helpers';
@@ -77,26 +77,55 @@ export async function getCoordinatesTopAtomOfBenzeneRing(page: Page) {
   };
 }
 
+export async function takePageScreenshot(
+  page: Page,
+  options?: { masks?: Locator[]; maxDiffPixelRatio?: number },
+) {
+  const maxTimeout = 3000;
+  await waitForRender(page, emptyFunction, maxTimeout);
+  await expect(page).toHaveScreenshot({
+    mask: options?.masks,
+    maxDiffPixelRatio: options?.maxDiffPixelRatio,
+  });
+}
+
 export async function takeEditorScreenshot(
   page: Page,
-  options?: { masks?: Locator[] },
+  options?: { masks?: Locator[]; maxDiffPixelRatio?: number },
 ) {
   const maxTimeout = 3000;
   const editor = page.getByTestId('ketcher-canvas').first();
   await waitForRender(page, emptyFunction, maxTimeout);
-  await expect(editor).toHaveScreenshot({ mask: options?.masks });
+  await expect(editor).toHaveScreenshot({
+    mask: options?.masks,
+    maxDiffPixelRatio: options?.maxDiffPixelRatio,
+  });
 }
 
 export async function takeLeftToolbarScreenshot(page: Page) {
+  const maxTimeout = 3000;
   const editor = page.getByTestId('left-toolbar-buttons');
-  await delay(DELAY_IN_SECONDS.THREE);
+  await waitForRender(page, emptyFunction, maxTimeout);
+  await expect(editor).toHaveScreenshot();
+}
+
+export async function takeRightToolbarScreenshot(page: Page) {
+  const maxTimeout = 3000;
+  const editor = page.getByTestId('right-toolbar');
+  await waitForRender(page, emptyFunction, maxTimeout);
   await expect(editor).toHaveScreenshot();
 }
 
 export async function takeTopToolbarScreenshot(page: Page) {
+  const maxTimeout = 3000;
   const editor = page.getByTestId('top-toolbar');
-  await delay(DELAY_IN_SECONDS.THREE);
+  await waitForRender(page, emptyFunction, maxTimeout);
   await expect(editor).toHaveScreenshot();
+}
+
+export async function takeMultitoolDropdownScreenshot(page: Page) {
+  const dropdown = page.locator('.default-multitool-dropdown');
+  await expect(dropdown).toHaveScreenshot();
 }
 
 /**

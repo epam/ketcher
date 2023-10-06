@@ -1,9 +1,7 @@
 import { test, expect } from '@playwright/test';
 import {
-  LeftPanelButton,
   clickInTheMiddleOfTheScreen,
   pressButton,
-  selectLeftPanelButton,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
@@ -14,9 +12,12 @@ test.describe('Text tools test cases', () => {
     await waitForPageInit(page);
   });
 
+  test.afterEach(async ({ page }) => {
+    await takeEditorScreenshot(page);
+  });
+
   test('Text tool - Button and tooltip: verification', async ({ page }) => {
     // Test case: EPMLSOPKET-2225
-    await selectLeftPanelButton(LeftPanelButton.AddText, page);
     const button = page.getByTestId('text');
     await expect(button).toHaveAttribute('title', 'Add text (Alt+T)');
   });
@@ -26,7 +27,6 @@ test.describe('Text tools test cases', () => {
     // Verify if the text box displayed properly all elements
     await page.getByTestId('text').click();
     await clickInTheMiddleOfTheScreen(page);
-    await takeEditorScreenshot(page);
   });
 
   test('Text tool - Create a single text object', async ({ page }) => {
@@ -39,6 +39,5 @@ test.describe('Text tools test cases', () => {
     await addTextBoxToCanvas(page);
     await page.getByRole('dialog').getByRole('textbox').fill('Ketcher');
     await pressButton(page, 'Apply');
-    await takeEditorScreenshot(page);
   });
 });

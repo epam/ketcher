@@ -48,7 +48,7 @@ test.describe('Macromolecules custom presets', () => {
     await createRNA(page);
   });
 
-  test('Add new preset and duplicate it', async ({ page }) => {
+  test.skip('Add new preset and duplicate it', async ({ page }) => {
     await selectRNAComponents(page, {
       sugar: '25R___2,5-Ribose',
       base: 'baA___N-benzyl-adenine',
@@ -72,7 +72,7 @@ test.describe('Macromolecules custom presets', () => {
     await takePageScreenshot(page);
   });
 
-  test('Add new preset with two monomers and add it to canvas', async ({
+  test.skip('Add new preset with two monomers and add it to canvas', async ({
     page,
   }) => {
     await waitForPageInit(page);

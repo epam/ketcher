@@ -509,7 +509,7 @@ export class DrawingEntitiesManager {
         chain[i - 1].position,
         editorSettings,
       );
-      let isMonomerFitCanvas =
+      const isMonomerFitCanvas =
         prevPosition.x +
           DISTANCE_BETWEEN_MONOMERS +
           initCoords.x +
@@ -556,14 +556,15 @@ export class DrawingEntitiesManager {
   private findChainByMonomer(monomer: BaseMonomer) {
     let firstMonomer = monomer;
     while (this.getPrevMonomer(firstMonomer)) {
-      firstMonomer = this.getPrevMonomer(firstMonomer)!;
+      firstMonomer = this.getPrevMonomer(firstMonomer) ?? firstMonomer;
     }
 
     const monomerChain = [] as BaseMonomer[];
     let monomerInTheChain = firstMonomer;
     monomerChain.push(monomerInTheChain);
     while (this.getNextMonomer(monomerInTheChain)) {
-      monomerInTheChain = this.getNextMonomer(monomerInTheChain)!;
+      monomerInTheChain =
+        this.getNextMonomer(monomerInTheChain) ?? firstMonomer;
       monomerChain.push(monomerInTheChain);
     }
     return monomerChain;

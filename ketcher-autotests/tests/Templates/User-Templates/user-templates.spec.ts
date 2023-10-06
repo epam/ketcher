@@ -3,57 +3,41 @@ import { STRUCTURE_LIBRARY_BUTTON_TEST_ID } from '@tests/Templates/templates.cos
 import {
   clickInTheMiddleOfTheScreen,
   pressButton,
-  delay,
   resetCurrentTool,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   TopPanelButton,
   selectTopPanelButton,
   pasteFromClipboardAndAddToCanvas,
-  DELAY_IN_SECONDS,
   TemplateLibrary,
   selectUserTemplatesAndPlaceInTheMiddle,
-  getControlModifier,
   STRUCTURE_LIBRARY_BUTTON_NAME,
   waitForSpinnerFinishedWork,
   waitForPageInit,
+  copyAndPaste,
+  cutAndPaste,
+  waitForRender,
+  drawBenzeneRing,
+  clickOnAtom,
 } from '@utils';
-import { TestIdSelectors } from '@utils/selectors/testIdSelectors';
 
 const CANVAS_CLICK_X = 300;
 const CANVAS_CLICK_Y = 300;
-
-async function cutAndPaste(page: Page) {
-  const modifier = getControlModifier();
-  await page.getByTestId(TestIdSelectors.RectangleSelection).click();
-  // to focus in Editor
-  await clickInTheMiddleOfTheScreen(page);
-  await page.keyboard.press(`${modifier}+KeyA`);
-  await page.keyboard.press(`${modifier}+KeyX`);
-  await page.keyboard.press(`${modifier}+KeyV`);
-}
-
-async function copyAndPaste(page: Page) {
-  const modifier = getControlModifier();
-  await page.getByTestId(TestIdSelectors.RectangleSelection).click();
-  // to focus in Editor
-  await clickInTheMiddleOfTheScreen(page);
-  await page.keyboard.press(`${modifier}+KeyA`);
-  await page.keyboard.press(`${modifier}+KeyC`);
-  await page.keyboard.press(`${modifier}+KeyV`);
-}
 
 async function openStructureLibrary(page: Page) {
   await page.getByTestId(STRUCTURE_LIBRARY_BUTTON_TEST_ID).click();
 }
 
-async function saveToTemplates(page: Page) {
+async function saveToTemplates(page: Page, shouldSave = true) {
   await selectTopPanelButton(TopPanelButton.Save, page);
   await page.getByRole('button', { name: 'Save to Templates' }).click();
   await page.getByPlaceholder('template').click();
   await page.getByPlaceholder('template').fill('My Template');
-  await page.getByRole('button', { name: 'Save', exact: true }).click();
+  if (shouldSave) {
+    await page.getByRole('button', { name: 'Save', exact: true }).click();
+  }
 }
+
 test.describe('Click User Templates on canvas', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
@@ -246,8 +230,9 @@ test.describe('Click User Templates on canvas', () => {
     */
     await openFileAndAddToCanvas('templates.mol', page);
     await cutAndPaste(page);
-    await delay(DELAY_IN_SECONDS.TWO);
-    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await waitForRender(page, async () => {
+      await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    });
   });
 });
 
@@ -270,7 +255,6 @@ test.describe('Click User Templates on canvas', () => {
       page,
       'C12(C(C3CN4CN5C6(CCN78CCC(C9CCCN9)C7CNN68)CCC5C4N3)CC3N1NCC3)CCCN2',
     );
-    await delay(DELAY_IN_SECONDS.THREE);
     await clickInTheMiddleOfTheScreen(page);
     await saveToTemplates(page);
 
@@ -280,6 +264,17 @@ test.describe('Click User Templates on canvas', () => {
     await page.getByText('0NNNNHNHNNHNNHNH').click();
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
+  });
+
+  test('Check  scrollbar in the structure field is present for long structures', async ({
+    page,
+  }) => {
+    /*
+      Test case: EPMLSOPKET-1721
+      Description: The scrollbar in the structure field is present.
+    */
+    await openFileAndAddToCanvas('Molfiles-V2000/long-structure.mol', page);
+    await saveToTemplates(page, false);
   });
 
   test('Create Template - saving', async ({ page }) => {
@@ -304,5 +299,24 @@ test.describe('Click User Templates on canvas', () => {
     await openStructureLibrary(page);
     await page.getByRole('button', { name: 'User Templates (1)' }).click();
     await page.getByText('user_template_1').click();
+  });
+
+  test('Attach created template to atom of structure on canvas', async ({
+    page,
+  }) => {
+    /*
+      Test case: EPMLSOPKET-1729
+      Description: Template attached to structure on canvas.
+    */
+    const anyAtom = 2;
+    await openFileAndAddToCanvas('Molfiles-V2000/long-structure.mol', page);
+    await saveToTemplates(page);
+
+    await selectTopPanelButton(TopPanelButton.Clear, page);
+    await drawBenzeneRing(page);
+    await openStructureLibrary(page);
+    await page.getByRole('button', { name: 'User Templates (1)' }).click();
+    await page.getByText('My Template').click();
+    await clickOnAtom(page, 'C', anyAtom);
   });
 });

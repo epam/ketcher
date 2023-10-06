@@ -39,8 +39,8 @@ function deserialize(value) {
   ); // TODO: radical on last place
   if (match) {
     const label = match[2] === '*' ? 'A' : capitalize(match[2]);
-    let charge = 0;
-    let isotope = 0;
+    let charge = null;
+    let isotope = null;
     let radical = 0;
 
     if (match[1]) isotope = parseInt(match[1]);

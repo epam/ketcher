@@ -106,7 +106,9 @@ export async function clickOnBond(
   buttonSelect?: 'left' | 'right' | 'middle',
 ) {
   const point = await getBondByIndex(page, { type: bondType }, bondNumber);
-  await page.mouse.click(point.x, point.y, { button: buttonSelect });
+  await waitForRender(page, async () => {
+    await page.mouse.click(point.x, point.y, { button: buttonSelect });
+  });
 }
 
 export async function clickOnAtom(
@@ -116,7 +118,9 @@ export async function clickOnAtom(
   buttonSelect?: 'left' | 'right' | 'middle',
 ) {
   const point = await getAtomByIndex(page, { label: atomLabel }, atomNumber);
-  await page.mouse.click(point.x, point.y, { button: buttonSelect });
+  await waitForRender(page, async () => {
+    await page.mouse.click(point.x, point.y, { button: buttonSelect });
+  });
 }
 
 export async function doubleClickOnAtom(
@@ -125,7 +129,9 @@ export async function doubleClickOnAtom(
   atomNumber: number,
 ) {
   const point = await getAtomByIndex(page, { label: atomLabel }, atomNumber);
-  await page.mouse.dblclick(point.x, point.y);
+  await waitForRender(page, async () => {
+    await page.mouse.dblclick(point.x, point.y);
+  });
 }
 
 export async function doubleClickOnBond(
@@ -134,7 +140,9 @@ export async function doubleClickOnBond(
   bondNumber: number,
 ) {
   const point = await getBondByIndex(page, { type: bondType }, bondNumber);
-  await page.mouse.dblclick(point.x, point.y);
+  await waitForRender(page, async () => {
+    await page.mouse.dblclick(point.x, point.y);
+  });
 }
 
 export async function rightClickOnBond(

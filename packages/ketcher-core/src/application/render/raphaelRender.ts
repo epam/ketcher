@@ -22,7 +22,7 @@ import { ReStruct } from './restruct';
 import { Scale } from 'domain/helpers';
 import defaultOptions from './options';
 import draw from './draw';
-import { RenderOptions } from './render.types';
+import { RenderOptions, ViewBox } from './render.types';
 import _ from 'lodash';
 import { KetcherLogger } from 'utilities';
 
@@ -42,6 +42,7 @@ export class Render {
   public options: RenderOptions;
   private readonly userOpts: RenderOptions;
   private oldCb: Box2Abs | null = null;
+  private viewBox: ViewBox;
 
   constructor(clientArea: HTMLElement, options: RenderOptions) {
     let renderWidth = options.width || clientArea.clientWidth - 10;
@@ -54,6 +55,12 @@ export class Render {
     this.paper = new Raphael(clientArea, renderWidth, renderHeight);
     this.sz = new Vec2(renderWidth, renderHeight);
     this.ctab = new ReStruct(new Struct(), this);
+    this.viewBox = {
+      minX: 0,
+      minY: 0,
+      width: renderWidth,
+      height: renderHeight,
+    };
     this.options = defaultOptions(this.userOpts);
   }
 
@@ -143,10 +150,16 @@ export class Render {
 
     const zoomedWidth = this.sz.x * zoom;
     const zoomedHeight = this.sz.y * zoom;
+    // @yuleicul Fixme: minX and minY !== 0 after resetting zoom
     const viewBoxX = this.sz.x / 2 - zoomedWidth / 2;
     const viewBoxY = this.sz.y / 2 - zoomedWidth / 2;
 
-    this.setViewBox(viewBoxX, viewBoxY, zoomedWidth, zoomedHeight);
+    this.setViewBox({
+      minX: viewBoxX,
+      minY: viewBoxY,
+      width: zoomedWidth,
+      height: zoomedHeight,
+    });
   }
 
   setScrollOffset(x: number, y: number) {
@@ -183,10 +196,14 @@ export class Render {
   /**
    * See https://developer.mozilla.org/zh-CN/docs/Web/SVG/Attribute/viewBox
    */
-  setViewBox(minX: number, minY: number, width: number, height: number) {
+  setViewBox(func: (viewBox: ViewBox) => ViewBox): void;
+  setViewBox(viewBox: ViewBox): void;
+  setViewBox(arg: ViewBox | ((viewBox: ViewBox) => ViewBox)): void {
+    const newViewBox = typeof arg === 'function' ? arg(this.viewBox) : arg;
+    this.viewBox = newViewBox;
     this.paper.canvas.setAttribute(
       'viewBox',
-      `${minX} ${minY} ${width} ${height}`,
+      `${newViewBox.minX} ${newViewBox.minY} ${newViewBox.width} ${newViewBox.height}`,
     );
   }
 
@@ -248,7 +265,6 @@ export class Render {
       } else {
         const sz1 = bb.sz();
         const marg = this.options.autoScaleMargin;
-        const mv = new Vec2(marg, marg);
         const csz = viewSz;
         if (marg && (csz.x < 2 * marg + 1 || csz.y < 2 * marg + 1)) {
           throw new Error('View box too small for the given margin');
@@ -262,15 +278,6 @@ export class Render {
         if (isBondsLengthFit || isForceDownscale) {
           rescale = 1;
         }
-        const sz2 = sz1.add(mv.scaled(2 * rescale));
-        /* eslint-disable no-mixed-operators */
-        this.paper.setViewBox(
-          bb.pos().x - marg * rescale - (csz.x * rescale - sz2.x) / 2,
-          bb.pos().y - marg * rescale - (csz.y * rescale - sz2.y) / 2,
-          csz.x * rescale,
-          csz.y * rescale,
-        );
-        /* eslint-enable no-mixed-operators */
       }
 
       notifyRenderComplete();

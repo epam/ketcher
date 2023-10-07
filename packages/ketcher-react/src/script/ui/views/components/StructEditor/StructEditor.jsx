@@ -93,8 +93,41 @@ class StructEditor extends Component {
       } else {
         this.props.onZoomOut();
       }
+    } else {
+      this.scrollCanvas(event);
     }
   };
+
+  /**
+   * @param {WheelEvent} event
+   */
+  scrollCanvas(event) {
+    if (event.shiftKey) {
+      this.handleHorizontalScroll(event);
+    } else {
+      this.handleVerticalScroll(event);
+    }
+  }
+
+  /**
+   * @param {WheelEvent} event
+   */
+  handleHorizontalScroll(event) {
+    this.editor.render.setViewBox((prev) => ({
+      ...prev,
+      minX: prev.minX - event.wheelDelta,
+    }));
+  }
+
+  /**
+   * @param {WheelEvent} event
+   */
+  handleVerticalScroll(event) {
+    this.editor.render.setViewBox((prev) => ({
+      ...prev,
+      minY: prev.minY - event.wheelDelta,
+    }));
+  }
 
   shouldComponentUpdate(nextProps, nextState) {
     return (

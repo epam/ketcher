@@ -108,18 +108,10 @@ export class Render {
 
   obj2view(vector: Vec2, isRelative?: boolean) {
     let p = Scale.obj2scaled(vector, this.options);
-    p = isRelative
-      ? p
-      : p
-          .add(this.options.offset)
-          .sub(this.scrollPos().scaled(1 / this.options.zoom));
+    p = isRelative ? p : p.add(this.options.offset);
     p = p.scaled(this.options.zoom);
 
     return p;
-  }
-
-  scrollPos() {
-    return new Vec2(this.clientArea.scrollLeft, this.clientArea.scrollTop);
   }
 
   page2obj(event: MouseEvent | { clientX: number; clientY: number }) {
@@ -237,7 +229,6 @@ export class Render {
     const changes = this.ctab.update(force);
     this.ctab.setSelection(); // [MK] redraw the selection bits where necessary
     if (changes) {
-      const scale = this.options.scale;
       const bb = this.ctab
         .getVBoxObj()
         .transform(Scale.obj2scaled, this.options)
@@ -249,24 +240,9 @@ export class Render {
 
       const isAutoScale = this.options.autoScale || this.options.downScale;
       if (!isAutoScale) {
-        const ext = Vec2.UNIT.scaled(scale);
-        const eb = bb.sz().length() > 0 ? bb.extend(ext, ext) : bb;
-        const vb = new Box2Abs(
-          this.scrollPos(),
-          viewSz.sub(Vec2.UNIT.scaled(20)),
-        );
-        const cb = Box2Abs.union(vb, eb);
         if (!this.oldCb) this.oldCb = new Box2Abs();
 
-        const delta = this.oldCb.p0.sub(cb.p0).ceil();
-
         this.options.offset = this.options.offset || new Vec2();
-        const shouldScrollCanvas =
-          (delta.x !== 0 || delta.y !== 0) && options.resizeCanvas;
-        if (shouldScrollCanvas) {
-          this.setOffset(this.options.offset.add(delta));
-          this.ctab.translate(delta);
-        }
       } else {
         const sz1 = bb.sz();
         const marg = this.options.autoScaleMargin;

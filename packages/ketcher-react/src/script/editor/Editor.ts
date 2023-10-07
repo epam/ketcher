@@ -324,15 +324,11 @@ class Editor implements KetcherEditor {
   }
 
   zoom(value?: any) {
-    if (arguments.length === 0) {
+    if (arguments.length === 0 || this.render.options.zoom === value) {
       return this.render.options.zoom;
     }
 
     this.render.setZoom(value);
-
-    const selection = this.selection();
-    const structCenter = getStructCenter(this.render.ctab, selection);
-    recoordinate(this, structCenter);
 
     this.render.update();
     this.rotateController.rerender();

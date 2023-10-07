@@ -126,7 +126,6 @@ export class Render {
       newSize.x * this.options.zoom,
       newSize.y * this.options.zoom,
     );
-    this.setViewBox();
   }
 
   setOffset(newOffset: Vec2): void {
@@ -143,8 +142,13 @@ export class Render {
     // when scaling the canvas down it may happen that the scaled canvas is smaller than the view window
     // don't forget to call setScrollOffset after zooming (or use extendCanvas directly)
     this.options.zoom = zoom;
-    this.paper.setSize(this.sz.x * zoom, this.sz.y * zoom);
-    this.setViewBox();
+
+    const zoomedWidth = this.sz.x * zoom;
+    const zoomedHeight = this.sz.y * zoom;
+    const viewBoxX = this.sz.x / 2 - zoomedWidth / 2;
+    const viewBoxY = this.sz.y / 2 - zoomedWidth / 2;
+
+    this.setViewBox(viewBoxX, viewBoxY, zoomedWidth, zoomedHeight);
   }
 
   setScrollOffset(x: number, y: number) {
@@ -160,6 +164,7 @@ export class Render {
     ).scaled(1 / this.options.zoom);
     if (e.x > 0 || e.y > 0) {
       this.setPaperSize(this.sz.add(e));
+      // remove setpaper size except for initial
       const d = new Vec2(x < 0 ? -x : 0, y < 0 ? -y : 0).scaled(
         1 / this.options.zoom,
       );
@@ -178,10 +183,13 @@ export class Render {
     this.update(false);
   }
 
-  setViewBox() {
+  /**
+   * See https://developer.mozilla.org/zh-CN/docs/Web/SVG/Attribute/viewBox
+   */
+  setViewBox(minX: number, minY: number, width: number, height: number) {
     this.paper.canvas.setAttribute(
       'viewBox',
-      '0 0 ' + this.sz.x + ' ' + this.sz.y,
+      `${minX} ${minY} ${width} ${height}`,
     );
   }
 
@@ -226,7 +234,7 @@ export class Render {
         const eb = bb.sz().length() > 0 ? bb.extend(ext, ext) : bb;
         const vb = new Box2Abs(
           this.scrollPos(),
-          viewSz.scaled(1 / this.options.zoom).sub(Vec2.UNIT.scaled(20)),
+          viewSz.sub(Vec2.UNIT.scaled(20)),
         );
         const cb = Box2Abs.union(vb, eb);
         if (!this.oldCb) this.oldCb = new Box2Abs();

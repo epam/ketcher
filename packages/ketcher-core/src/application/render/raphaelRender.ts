@@ -52,7 +52,7 @@ export class Render {
     this.userOpts = options;
     this.clientArea = clientArea;
     this.paper = new Raphael(clientArea, renderWidth, renderHeight);
-    this.sz = Vec2.ZERO;
+    this.sz = new Vec2(renderWidth, renderHeight);
     this.ctab = new ReStruct(new Struct(), this);
     this.options = defaultOptions(this.userOpts);
   }
@@ -120,12 +120,10 @@ export class Render {
     return this.view2obj(pp);
   }
 
+  // TODO: @yuleicul remove or handle media size change
   setPaperSize(newSize: Vec2) {
     this.sz = newSize;
-    this.paper.setSize(
-      newSize.x * this.options.zoom,
-      newSize.y * this.options.zoom,
-    );
+    this.paper.setSize(newSize.x, newSize.y);
   }
 
   setOffset(newOffset: Vec2): void {
@@ -163,7 +161,6 @@ export class Render {
       cy + Math.abs(y),
     ).scaled(1 / this.options.zoom);
     if (e.x > 0 || e.y > 0) {
-      this.setPaperSize(this.sz.add(e));
       // remove setpaper size except for initial
       const d = new Vec2(x < 0 ? -x : 0, y < 0 ? -y : 0).scaled(
         1 / this.options.zoom,
@@ -239,14 +236,7 @@ export class Render {
         const cb = Box2Abs.union(vb, eb);
         if (!this.oldCb) this.oldCb = new Box2Abs();
 
-        const sz = cb.sz().floor();
         const delta = this.oldCb.p0.sub(cb.p0).ceil();
-        const shouldResizeCanvas =
-          (!this.sz || sz.x !== this.sz.x || sz.y !== this.sz.y) &&
-          options.resizeCanvas;
-        if (shouldResizeCanvas) {
-          this.setPaperSize(sz);
-        }
 
         this.options.offset = this.options.offset || new Vec2();
         const shouldScrollCanvas =

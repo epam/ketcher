@@ -90,16 +90,20 @@ export class Render {
     return draw.selectionRectangle(this.paper, point0, point1, this.options);
   }
 
+  // @yuleicul Todo: rename to Coordinate.viewBoxToCanvas
+  view2Canvas(viewPoint: Vec2) {
+    const offset = new Vec2(this.viewBox.minX, this.viewBox.minY);
+    const viewPointInCanvas = viewPoint.add(offset);
+    return viewPointInCanvas;
+  }
+
   // @yuleicul Todo: maybe rename to Coordinate.viewBoxToPrimitive/prototype/original
   /**
    * @see ./__docs__/viewBoxToProto.png
    */
   view2obj(viewPoint: Vec2) {
-    const offset = new Vec2(this.viewBox.minX, this.viewBox.minY);
-    const viewPointInCanvas = viewPoint.add(offset);
-
     // @yuleicul Todo: maybe rename to Coordinate.canvasToPrimitive/prototype/original
-    return Scale.scaled2obj(viewPointInCanvas, this.options);
+    return Scale.scaled2obj(this.view2Canvas(viewPoint), this.options);
   }
 
   obj2view(vector: Vec2, isRelative?: boolean) {

@@ -76,12 +76,9 @@ export class HoverIcon {
   }
 
   updatePosition() {
-    const render = this.editor.render;
     const { x, y } = this.editor.lastCursorPosition;
     const currentPosition = new Vec2(x, y);
-    const scrollPosition = render.scrollPos();
-    const zoom = render.options.zoom;
-    const newPosition = currentPosition.add(scrollPosition).scaled(1 / zoom);
+    const newPosition = this.editor.render.view2Canvas(currentPosition);
     this.element.attr({
       x: newPosition.x,
       y: newPosition.y,

@@ -91,6 +91,9 @@ export class Render {
   }
 
   // @yuleicul Todo: maybe rename to Coordinate.viewBoxToPrimitive/prototype/original
+  /**
+   * @see ./__docs__/viewBoxToProto.png
+   */
   view2obj(viewPoint: Vec2) {
     const offset = new Vec2(this.viewBox.minX, this.viewBox.minY);
     const viewPointInCanvas = viewPoint.add(offset);
@@ -192,7 +195,7 @@ export class Render {
   }
 
   /**
-   * See https://developer.mozilla.org/zh-CN/docs/Web/SVG/Attribute/viewBox
+   * @see https://developer.mozilla.org/zh-CN/docs/Web/SVG/Attribute/viewBox
    */
   setViewBox(func: (viewBox: ViewBox) => ViewBox): void;
   setViewBox(viewBox: ViewBox): void;

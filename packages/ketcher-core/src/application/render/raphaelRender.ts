@@ -90,15 +90,13 @@ export class Render {
     return draw.selectionRectangle(this.paper, point0, point1, this.options);
   }
 
-  view2obj(point: Vec2, isRelative?: boolean) {
-    let scroll = this.scrollPos();
+  // @yuleicul Todo: maybe rename to Coordinate.viewBoxToPrimitive/prototype/original
+  view2obj(viewPoint: Vec2) {
+    const offset = new Vec2(this.viewBox.minX, this.viewBox.minY);
+    const viewPointInCanvas = viewPoint.add(offset);
 
-    point = point.scaled(1 / this.options.zoom);
-    scroll = scroll.scaled(1 / this.options.zoom);
-
-    point = isRelative ? point : point.add(scroll).sub(this.options.offset);
-
-    return Scale.scaled2obj(point, this.options);
+    // @yuleicul Todo: maybe rename to Coordinate.canvasToPrimitive/prototype/original
+    return Scale.scaled2obj(viewPointInCanvas, this.options);
   }
 
   obj2view(vector: Vec2, isRelative?: boolean) {

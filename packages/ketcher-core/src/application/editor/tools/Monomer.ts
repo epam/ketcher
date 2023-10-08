@@ -53,7 +53,7 @@ class MonomerTool implements Tool {
       this.monomer,
       // We convert monomer coordinates from pixels to angstroms
       // because the model layer (like BaseMonomer) should not work with pixels
-      Scale.scaled2obj(
+      Scale.canvasToProto(
         new Vec2(
           this.editor.lastCursorPosition.x -
             this.monomerPreviewRenderer.width / 2,
@@ -70,7 +70,7 @@ class MonomerTool implements Tool {
   mousemove() {
     const editorSettings = provideEditorSettings();
     this.monomerPreview?.moveAbsolute(
-      Scale.scaled2obj(
+      Scale.canvasToProto(
         new Vec2(
           this.editor.lastCursorPosition.x + this.MONOMER_PREVIEW_OFFSET_X,
           this.editor.lastCursorPosition.y + this.MONOMER_PREVIEW_OFFSET_Y,

@@ -131,7 +131,7 @@ class ReRxnArrow extends ReObject {
     const selectionSet = restruct.render.paper.set();
 
     refPoints.forEach((rp) => {
-      const scaledRP = Scale.obj2scaled(rp, restruct.render.options);
+      const scaledRP = Scale.protoToCanvas(rp, restruct.render.options);
       selectionSet.push(
         restruct.render.paper
           .circle(scaledRP.x, scaledRP.y, scaleFactor / 8)
@@ -163,7 +163,7 @@ class ReRxnArrow extends ReObject {
         ? item.height * options.scale
         : 0;
     const pos = item.pos.map((p) => {
-      return Scale.obj2scaled(p, options) || new Vec2();
+      return Scale.protoToCanvas(p, options) || new Vec2();
     });
     const { length, angle } = this.getArrowParams(
       pos[0].x,

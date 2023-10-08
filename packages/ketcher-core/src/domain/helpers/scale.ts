@@ -20,15 +20,15 @@ export interface ScaleOptions {
   scale: number;
 }
 
-function scaled2obj(v: Vec2, options: ScaleOptions): Vec2 {
-  return v.scaled(1 / options.scale);
+function canvasToProto(point: Vec2, options: ScaleOptions): Vec2 {
+  return point.scaled(1 / options.scale);
 }
 
-function obj2scaled(v: Vec2, options: ScaleOptions): Vec2 {
-  return v.scaled(options.scale);
+function protoToCanvas(vector: Vec2, options: ScaleOptions): Vec2 {
+  return vector.scaled(options.scale);
 }
 
 export const Scale = {
-  scaled2obj,
-  obj2scaled,
+  canvasToProto,
+  protoToCanvas,
 };

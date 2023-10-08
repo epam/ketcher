@@ -209,7 +209,7 @@ function findClosestBond(restruct, pos, skip, minDist, options) {
 
     const { render } = restruct;
     const hitboxPoints = bond.getSelectionPoints(render);
-    const position = Scale.obj2scaled(pos, options);
+    const position = Scale.protoToCanvas(pos, options);
     const isPosInsidePolygon = position.isInsidePolygon(hitboxPoints);
 
     if (isPosInsidePolygon) {
@@ -481,7 +481,7 @@ function findClosestFG(restruct, pos, skip) {
 
     const { startX, startY, width, height } =
       reSGroup.getTextHighlightDimensions(0, restruct.render);
-    const { x, y } = Scale.obj2scaled(pos, restruct.render.options);
+    const { x, y } = Scale.protoToCanvas(pos, restruct.render.options);
     if (rectangleContainsPoint(startX, startY, width, height, x, y)) {
       const centerX = startX + width / 2;
       const centerY = startY + height / 2;

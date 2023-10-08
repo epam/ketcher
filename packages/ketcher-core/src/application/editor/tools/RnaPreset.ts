@@ -63,7 +63,7 @@ class RnaPresetTool implements Tool {
 
     const modelChanges = this.editor.drawingEntitiesManager.addRnaPreset({
       sugar: this.sugar,
-      sugarPosition: Scale.scaled2obj(
+      sugarPosition: Scale.canvasToProto(
         new Vec2(
           this.editor.lastCursorPosition.x -
             this.sugarPreviewRenderer.width / 2,
@@ -74,7 +74,7 @@ class RnaPresetTool implements Tool {
       ),
       phosphate: this.phosphate,
       phosphatePosition: this.phosphatePreviewRenderer
-        ? Scale.scaled2obj(
+        ? Scale.canvasToProto(
             new Vec2(
               this.editor.lastCursorPosition.x -
                 this.phosphatePreviewRenderer.width / 2 +
@@ -88,7 +88,7 @@ class RnaPresetTool implements Tool {
         : undefined,
       rnaBase: this.rnaBase,
       rnaBasePosition: this.rnaBasePreviewRenderer
-        ? Scale.scaled2obj(
+        ? Scale.canvasToProto(
             new Vec2(
               this.editor.lastCursorPosition.x -
                 this.rnaBasePreviewRenderer.width / 2,
@@ -109,7 +109,7 @@ class RnaPresetTool implements Tool {
     const editorSettings = provideEditorSettings();
 
     this.sugarPreview?.moveAbsolute(
-      Scale.scaled2obj(
+      Scale.canvasToProto(
         new Vec2(
           this.editor.lastCursorPosition.x + this.MONOMER_PREVIEW_OFFSET_X,
           this.editor.lastCursorPosition.y + this.MONOMER_PREVIEW_OFFSET_Y,
@@ -119,7 +119,7 @@ class RnaPresetTool implements Tool {
     );
 
     this.rnaBasePreview?.moveAbsolute(
-      Scale.scaled2obj(
+      Scale.canvasToProto(
         new Vec2(
           this.editor.lastCursorPosition.x + this.MONOMER_PREVIEW_OFFSET_X,
           this.editor.lastCursorPosition.y + this.MONOMER_PREVIEW_OFFSET_Y + 18,
@@ -129,7 +129,7 @@ class RnaPresetTool implements Tool {
     );
 
     this.phosphatePreview?.moveAbsolute(
-      Scale.scaled2obj(
+      Scale.canvasToProto(
         new Vec2(
           this.editor.lastCursorPosition.x + this.MONOMER_PREVIEW_OFFSET_X + 18,
           this.editor.lastCursorPosition.y + this.MONOMER_PREVIEW_OFFSET_Y,

@@ -42,14 +42,14 @@ function getPanelPosition(
   if (sGroup) {
     // calculate width and height
     const groupBoundingBox = sGroup.areas[0];
-    const start = Scale.obj2scaled(groupBoundingBox.p0, render.options);
-    const end = Scale.obj2scaled(groupBoundingBox.p1, render.options);
+    const start = Scale.protoToCanvas(groupBoundingBox.p0, render.options);
+    const end = Scale.protoToCanvas(groupBoundingBox.p1, render.options);
     width = end.x - start.x;
     height = end.y - start.y;
     // calculate initial position
     const { position } = sGroup.getContractedPosition(render.ctab.molecule);
-    const panelPosition = Scale.obj2scaled(position, {
-      scale: render.options.scale * render.options.zoom,
+    const panelPosition = Scale.protoToCanvas(position, {
+      scale: render.options.scale,
     });
     x = panelPosition.x - width / 2 - HOVER_PANEL_PADDING;
     y = panelPosition.y + HOVER_PANEL_PADDING;

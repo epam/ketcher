@@ -16,6 +16,7 @@
 
 import {
   Action,
+  CoordinateTransformation,
   FloatingToolsParams,
   Editor as KetcherEditor,
   Pile,
@@ -341,7 +342,10 @@ class Editor implements KetcherEditor {
     const structCenter = getStructCenter(structure);
     const { width, height } = this.render.clientArea.getBoundingClientRect();
     const canvasCenterVector = new Vec2(width, height);
-    const canvasCenter = this.render.view2obj(canvasCenterVector).scaled(0.5);
+    const canvasCenter = CoordinateTransformation.viewBoxToProto(
+      canvasCenterVector,
+      this.render,
+    ).scaled(0.5);
     const shiftFactor = 0.4;
     const shiftVector = canvasCenter
       .sub(structCenter)

@@ -141,7 +141,7 @@ class ReText extends ReObject {
   show(restruct: ReStruct, _id: number, options: any): void {
     const render = restruct.render;
     const paper = render.paper;
-    const paperScale = Scale.obj2scaled(this.item.position!, options);
+    const paperScale = Scale.protoToCanvas(this.item.position!, options);
 
     let shiftY = 0;
     this.paths = [];

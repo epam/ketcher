@@ -113,8 +113,8 @@ class ReAtom extends ReObject {
     const padding = fontsz * radiusScaleFactor;
     const radius = fontsz * radiusScaleFactor * 2;
     const box = this.getVBoxObj(restruct.render)!;
-    const ps1 = Scale.obj2scaled(box.p0, restruct.render.options);
-    const ps2 = Scale.obj2scaled(box.p1, restruct.render.options);
+    const ps1 = Scale.protoToCanvas(box.p0, restruct.render.options);
+    const ps2 = Scale.protoToCanvas(box.p1, restruct.render.options);
     const width = ps2.x - ps1.x;
     const height = fontsz * 1.23;
     return paper.rect(
@@ -129,7 +129,7 @@ class ReAtom extends ReObject {
   getUnlabeledSelectionContour(render: Render) {
     const { paper, options } = render;
     const { atomSelectionPlateRadius } = options;
-    const ps = Scale.obj2scaled(this.a.pp, options);
+    const ps = Scale.protoToCanvas(this.a.pp, options);
     return paper.circle(ps.x, ps.y, atomSelectionPlateRadius);
   }
 
@@ -190,7 +190,7 @@ class ReAtom extends ReObject {
     renderOptions: RenderOptions,
     direction: Vec2,
   ): Vec2 {
-    const atomPosition = Scale.obj2scaled(this.a.pp, renderOptions);
+    const atomPosition = Scale.protoToCanvas(this.a.pp, renderOptions);
     let atomSymbolShift = 0;
     const exts = this.visel.exts;
     for (let k = 0; k < exts.length; ++k) {
@@ -220,7 +220,7 @@ class ReAtom extends ReObject {
     const sgroups = restruct.molecule.sgroups;
     const functionalGroups = restruct.molecule.functionalGroups;
     const render = restruct.render;
-    const ps = Scale.obj2scaled(this.a.pp, render.options);
+    const ps = Scale.protoToCanvas(this.a.pp, render.options);
 
     if (
       FunctionalGroup.isAtomInContractedFunctionalGroup(
@@ -485,7 +485,7 @@ class ReAtom extends ReObject {
     if (isHighlighted) {
       const style = { fill: highlightColor, stroke: 'none' };
 
-      const ps = Scale.obj2scaled(this.a.pp, restruct.render.options);
+      const ps = Scale.protoToCanvas(this.a.pp, restruct.render.options);
       const path = render.paper
         .circle(ps.x, ps.y, options.atomSelectionPlateRadius * 0.8)
         .attr(style);
@@ -772,7 +772,7 @@ function getLabelText(atom) {
 }
 
 function showHydroIndex(atom, render, implh, rightMargin): ElemAttr {
-  const ps = Scale.obj2scaled(atom.a.pp, render.options);
+  const ps = Scale.protoToCanvas(atom.a.pp, render.options);
   const options = render.options;
   const delta = 0.5 * options.lineWidth;
   const hydroIndex: any = {};
@@ -796,7 +796,7 @@ function showHydroIndex(atom, render, implh, rightMargin): ElemAttr {
 }
 
 function showRadical(atom: ReAtom, render: Render): Omit<ElemAttr, 'text'> {
-  const ps: Vec2 = Scale.obj2scaled(atom.a.pp, render.options);
+  const ps: Vec2 = Scale.protoToCanvas(atom.a.pp, render.options);
   const options = render.options;
   const paper: any = render.paper;
   const radical: any = {};
@@ -840,7 +840,7 @@ function showIsotope(
   render: Render,
   leftMargin: number,
 ): ElemAttr {
-  const ps = Scale.obj2scaled(atom.a.pp, render.options);
+  const ps = Scale.protoToCanvas(atom.a.pp, render.options);
   const options = render.options;
   const delta = 0.5 * options.lineWidth;
   const isotope: any = {};
@@ -868,7 +868,7 @@ function showCharge(
   render: Render,
   rightMargin: number,
 ): ElemAttr {
-  const ps = Scale.obj2scaled(atom.a.pp, render.options);
+  const ps = Scale.protoToCanvas(atom.a.pp, render.options);
   const options = render.options;
   const delta = 0.5 * options.lineWidth;
   const charge: any = {};
@@ -922,7 +922,7 @@ function showExplicitValence(
     13: 'XIII',
     14: 'XIV',
   };
-  const ps = Scale.obj2scaled(atom.a.pp, render.options);
+  const ps = Scale.protoToCanvas(atom.a.pp, render.options);
   const options = render.options;
   const delta = 0.5 * options.lineWidth;
   const valence: any = {};
@@ -968,7 +968,7 @@ function showHydrogen(
   // eslint-disable-line max-statements
   let hydroIndex: any = data.hydroIndex;
   const hydrogenLeft = atom.hydrogenOnTheLeft;
-  const ps = Scale.obj2scaled(atom.a.pp, render.options);
+  const ps = Scale.protoToCanvas(atom.a.pp, render.options);
   const options = render.options;
   const delta = 0.5 * options.lineWidth;
   const hydrogen = data.hydrogen;
@@ -1042,7 +1042,7 @@ function showWarning(
   leftMargin,
   rightMargin,
 ): { rbb: DOMRect; path: any } {
-  const ps = Scale.obj2scaled(atom.a.pp, render.options);
+  const ps = Scale.protoToCanvas(atom.a.pp, render.options);
   const delta = 0.5 * render.options.lineWidth;
   const warning: any = {};
   const y = ps.y + atom.label.rbb.height / 2 + delta;

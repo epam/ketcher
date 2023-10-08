@@ -25,6 +25,7 @@ import draw from './draw';
 import { RenderOptions, ViewBox } from './render.types';
 import _ from 'lodash';
 import { KetcherLogger } from 'utilities';
+import { CoordinateTransformation } from './coordinateTransformation';
 
 const notifyRenderComplete = _.debounce(() => {
   const event = new Event('renderComplete');
@@ -40,9 +41,9 @@ export class Render {
   // TODO https://github.com/epam/ketcher/issues/2630
   public ctab: ReStruct;
   public options: RenderOptions;
+  public viewBox: ViewBox;
   private readonly userOpts: RenderOptions;
   private oldCb: Box2Abs | null = null;
-  private viewBox: ViewBox;
 
   constructor(clientArea: HTMLElement, options: RenderOptions) {
     let renderWidth = options.width || clientArea.clientWidth - 10;
@@ -90,38 +91,9 @@ export class Render {
     return draw.selectionRectangle(this.paper, point0, point1, this.options);
   }
 
-  // @yuleicul Todo: rename to Coordinate.viewBoxToCanvas
-  view2Canvas(viewPoint: Vec2) {
-    const offset = new Vec2(this.viewBox.minX, this.viewBox.minY);
-    const viewPointInCanvas = viewPoint.add(offset);
-    return viewPointInCanvas;
-  }
-
-  // @yuleicul Todo: maybe rename to Coordinate.viewBoxToPrimitive/prototype/original
-  /**
-   * @see ./__docs__/viewBoxToProto.png
-   */
-  view2obj(viewPoint: Vec2) {
-    // @yuleicul Todo: maybe rename to Coordinate.canvasToPrimitive/prototype/original
-    return Scale.scaled2obj(this.view2Canvas(viewPoint), this.options);
-  }
-
-  obj2view(vector: Vec2, isRelative?: boolean) {
-    let p = Scale.obj2scaled(vector, this.options);
-    p = isRelative ? p : p.add(this.options.offset);
-    p = p.scaled(this.options.zoom);
-
-    return p;
-  }
-
+  // @yuleicul Todo: refactor all references of `page2obj` to `CoordinateTransformation.pageEventToProto(event, this)`
   page2obj(event: MouseEvent | { clientX: number; clientY: number }) {
-    const clientArea = this.clientArea;
-
-    const { top: offsetTop, left: offsetLeft } =
-      clientArea.getBoundingClientRect();
-
-    const pp = new Vec2(event.clientX - offsetLeft, event.clientY - offsetTop);
-    return this.view2obj(pp);
+    return CoordinateTransformation.pageEventToProto(event, this);
   }
 
   // TODO: @yuleicul remove or handle media size change
@@ -225,7 +197,7 @@ export class Render {
     if (changes) {
       const bb = this.ctab
         .getVBoxObj()
-        .transform(Scale.obj2scaled, this.options)
+        .transform(Scale.protoToCanvas, this.options)
         .translate(this.options.offset || new Vec2());
 
       if (this.options.downScale) {

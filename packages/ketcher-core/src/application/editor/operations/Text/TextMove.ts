@@ -48,7 +48,7 @@ export class TextMove extends BaseOperation {
     item.setPos(renderItem.getReferencePoints());
 
     renderItem.visel.translate(
-      Scale.obj2scaled(difference, restruct.render.options),
+      Scale.protoToCanvas(difference, restruct.render.options),
     );
 
     this.data.d = difference.negated();

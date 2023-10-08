@@ -67,7 +67,7 @@ class ReEnhancedFlag extends ReObject {
       : Fragment.getDefaultStereoFlagPosition(restruct.molecule, fragmentId)!;
 
     const paper = render.paper;
-    const ps = Scale.obj2scaled(position, options);
+    const ps = Scale.protoToCanvas(position, options);
 
     const stereoFlagMap = {
       [StereoFlag.Abs]: options.absFlagLabel,

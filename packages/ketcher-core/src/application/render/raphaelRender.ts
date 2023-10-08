@@ -211,13 +211,7 @@ export class Render {
     this.update(false);
   }
 
-  update(
-    force = false,
-    viewSz: Vec2 | null = null,
-    options = {
-      resizeCanvas: true,
-    },
-  ) {
+  update(force = false, viewSz: Vec2 | null = null) {
     // eslint-disable-line max-statements
     viewSz =
       viewSz ||
@@ -246,6 +240,7 @@ export class Render {
       } else {
         const sz1 = bb.sz();
         const marg = this.options.autoScaleMargin;
+        const mv = new Vec2(marg, marg);
         const csz = viewSz;
         if (marg && (csz.x < 2 * marg + 1 || csz.y < 2 * marg + 1)) {
           throw new Error('View box too small for the given margin');
@@ -259,6 +254,13 @@ export class Render {
         if (isBondsLengthFit || isForceDownscale) {
           rescale = 1;
         }
+        const sz2 = sz1.add(mv.scaled(2 * rescale));
+        this.paper.setViewBox(
+          bb.pos().x - marg * rescale - (csz.x * rescale - sz2.x) / 2,
+          bb.pos().y - marg * rescale - (csz.y * rescale - sz2.y) / 2,
+          csz.x * rescale,
+          csz.y * rescale,
+        );
       }
 
       notifyRenderComplete();

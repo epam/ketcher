@@ -105,7 +105,7 @@ class StructEditor extends Component {
     if (event.shiftKey) {
       this.handleHorizontalScroll(event);
     } else {
-      this.handleVerticalScroll(event);
+      this.handleScroll(event);
     }
   }
 
@@ -120,12 +120,14 @@ class StructEditor extends Component {
   }
 
   /**
+   * For mouse wheel and touchpad
    * @param {WheelEvent} event
    */
-  handleVerticalScroll(event) {
+  handleScroll(event) {
     this.editor.render.setViewBox((prev) => ({
       ...prev,
-      minY: prev.minY - event.wheelDelta,
+      minX: prev.minX + event.deltaX,
+      minY: prev.minY + event.deltaY,
     }));
   }
 

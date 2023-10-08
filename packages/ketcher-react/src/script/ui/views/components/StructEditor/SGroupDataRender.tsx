@@ -1,12 +1,14 @@
 import { useEffect, useRef, useState, FC } from 'react';
-import { Vec2, Render, SGroup, Struct } from 'ketcher-core';
+import {
+  Vec2,
+  Render,
+  SGroup,
+  Struct,
+  CoordinateTransformation,
+} from 'ketcher-core';
 import clsx from 'clsx';
 import classes from './InfoPanel.module.less';
-import {
-  calculateMiddleCoordsForRect,
-  calculateScrollOffsetX,
-  calculateScrollOffsetY,
-} from './helpers';
+import { calculateMiddleCoordsForRect } from './helpers';
 
 const BAR_PANEL_SIZE = 32;
 const LEFT_PADDING_MULTIPLIER = 3;
@@ -67,10 +69,11 @@ function getPanelPositionRelativeToRect(
     y = middleRightSide.y - height / 2;
   }
 
-  x += calculateScrollOffsetX(render);
-  y += calculateScrollOffsetY(render);
-
-  return new Vec2(x, y);
+  const panelPositionInViewBox = CoordinateTransformation.canvasToViewBox(
+    new Vec2(x, y),
+    render.viewBox,
+  );
+  return panelPositionInViewBox;
 }
 
 interface SGroupDataRenderProps {

@@ -467,7 +467,7 @@ class Editor implements KetcherEditor {
       this.rotateController.clean();
     }
 
-    this.render.update(false, null, { resizeCanvas: false });
+    this.render.update(false, null);
     return this._selection; // eslint-disable-line
   }
 
@@ -493,18 +493,14 @@ class Editor implements KetcherEditor {
     });
   }
 
-  update(
-    action: Action | true,
-    ignoreHistory?: boolean,
-    options = { resizeCanvas: true },
-  ) {
+  update(action: Action | true, ignoreHistory?: boolean) {
     setFunctionalGroupsTooltip({
       editor: this,
       isShow: false,
     });
 
     if (action === true) {
-      this.render.update(true, null, options); // force
+      this.render.update(true, null); // force
     } else {
       if (!ignoreHistory && !action.isDummy()) {
         this.historyStack.splice(this.historyPtr, HISTORY_SIZE + 1, action);
@@ -514,7 +510,7 @@ class Editor implements KetcherEditor {
         this.historyPtr = this.historyStack.length;
         this.event.change.dispatch(action); // TODO: stoppable here
       }
-      this.render.update(false, null, options);
+      this.render.update(false, null);
     }
   }
 

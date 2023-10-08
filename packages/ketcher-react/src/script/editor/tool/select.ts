@@ -47,7 +47,6 @@ import { dropAndMerge } from './helper/dropAndMerge';
 import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems';
 import { updateSelectedAtoms } from 'src/script/ui/state/modal/atoms';
 import { updateSelectedBonds } from 'src/script/ui/state/modal/bonds';
-import { hasAtomsOutsideCanvas } from './helper/isAtomOutSideCanvas';
 import { filterNotInContractedSGroup } from './helper/filterNotInCollapsedSGroup';
 import { Tool } from './Tool';
 import { handleMovingPosibilityCursor } from '../utils';
@@ -246,7 +245,7 @@ class SelectTool implements Tool {
       dragCtx.mergeItems = getItemsToFuse(editor, visibleSelectedItems);
       editor.hover(getHoverToFuse(dragCtx.mergeItems));
 
-      editor.update(dragCtx.action, true, { resizeCanvas: false });
+      editor.update(dragCtx.action, true);
       return true;
     }
 
@@ -314,22 +313,11 @@ class SelectTool implements Tool {
     /* end */
 
     if (this.dragCtx?.item) {
-      const atoms = Array.from(editor.struct().atoms.values());
-      const shouldResizeCanvas = hasAtomsOutsideCanvas(
-        atoms,
-        editor.render,
-        editor.options().scale,
-      );
       if (this.dragCtx.item.map === 'rxnArrows') {
         this.updateArrowResizingState(this.dragCtx.item.id, false);
         this.editor.update(true);
       }
-      dropAndMerge(
-        editor,
-        this.dragCtx.mergeItems,
-        this.dragCtx.action,
-        shouldResizeCanvas,
-      );
+      dropAndMerge(editor, this.dragCtx.mergeItems, this.dragCtx.action);
       delete this.dragCtx;
     } else if (this.#lassoHelper.running()) {
       // TODO it catches more events than needed, to be re-factored

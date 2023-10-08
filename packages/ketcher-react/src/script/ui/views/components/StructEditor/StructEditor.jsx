@@ -78,8 +78,6 @@ class StructEditor extends Component {
     };
     this.editorRef = createRef();
     this.logRef = createRef();
-    this.updateFloatingToolsPositionOnScroll =
-      this.updateFloatingToolsPositionOnScroll.bind(this);
   }
 
   handleWheel = (event) => {
@@ -95,6 +93,7 @@ class StructEditor extends Component {
       }
     } else {
       this.scrollCanvas(event);
+      this.editor.rotateController.updateFloatingToolsPosition();
     }
   };
 
@@ -244,10 +243,6 @@ class StructEditor extends Component {
     this.editorRef.current.removeEventListener('wheel', this.handleWheel);
   }
 
-  updateFloatingToolsPositionOnScroll() {
-    this.editor.rotateController.updateFloatingToolsPosition();
-  }
-
   render() {
     const {
       Tag = 'div',
@@ -295,7 +290,6 @@ class StructEditor extends Component {
           <div
             ref={this.editorRef}
             className={clsx(classes.intermediateCanvas)}
-            onScroll={this.updateFloatingToolsPositionOnScroll}
           >
             {/* svg here */}
           </div>

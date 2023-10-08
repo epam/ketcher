@@ -189,11 +189,9 @@ class RotateController {
       rectStartY - STYLE.HANDLE_MARGIN - STYLE.HANDLE_RADIUS,
     );
 
-    const handleCenterInViewport = CoordinateTransformation.protoToViewBox(
-      this.handleCenter
-        .sub(this.render.options.offset)
-        .scaled(1 / this.render.options.scale),
-      this.render,
+    const handleCenterInViewport = CoordinateTransformation.canvasToViewBox(
+      this.handleCenter,
+      this.render.viewBox,
     );
     this.editor.event.updateFloatingTools.dispatch({
       visible: true,
@@ -813,11 +811,9 @@ class RotateController {
       return;
     }
 
-    const handleCenterInViewport = CoordinateTransformation.protoToViewBox(
-      this.handleCenter
-        .sub(this.render.options.offset)
-        .scaled(1 / this.render.options.scale),
-      this.render,
+    const handleCenterInViewport = CoordinateTransformation.canvasToViewBox(
+      this.handleCenter,
+      this.render.viewBox,
     );
     this.editor.event.updateFloatingTools.dispatch({
       rotateHandlePosition: handleCenterInViewport,

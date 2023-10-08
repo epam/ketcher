@@ -191,7 +191,7 @@ class RotateController {
 
     const handleCenterInViewport = CoordinateTransformation.canvasToViewBox(
       this.handleCenter,
-      this.render.viewBox,
+      this.render,
     );
     this.editor.event.updateFloatingTools.dispatch({
       visible: true,
@@ -813,7 +813,7 @@ class RotateController {
 
     const handleCenterInViewport = CoordinateTransformation.canvasToViewBox(
       this.handleCenter,
-      this.render.viewBox,
+      this.render,
     );
     this.editor.event.updateFloatingTools.dispatch({
       rotateHandlePosition: handleCenterInViewport,

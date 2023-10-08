@@ -1,28 +1,27 @@
 import { Vec2 } from 'domain/entities';
 import { Render } from './raphaelRender';
-import { ViewBox } from './render.types';
 import { Scale } from 'domain/helpers';
 
-const canvasToViewBox = (point: Vec2, renderViewBox: ViewBox) => {
-  const offset = new Vec2(renderViewBox.minX, renderViewBox.minY);
-  return point.sub(offset);
+const canvasToViewBox = (point: Vec2, render: Render) => {
+  const offset = new Vec2(render.viewBox.minX, render.viewBox.minY);
+  return point.sub(offset).scaled(render.options.zoom);
 };
 
 const protoToViewBox = (vector: Vec2, render: Render) => {
   const pointInCanvas = Scale.protoToCanvas(vector, render.options);
-  return canvasToViewBox(pointInCanvas, render.viewBox);
+  return canvasToViewBox(pointInCanvas, render);
 };
 
 /**
  * @see ./__docs__/viewBoxToCanvas.png
  */
-const viewBoxToCanvas = (point: Vec2, renderViewBox: ViewBox) => {
-  const offset = new Vec2(renderViewBox.minX, renderViewBox.minY);
-  return point.add(offset);
+const viewBoxToCanvas = (point: Vec2, render: Render) => {
+  const offset = new Vec2(render.viewBox.minX, render.viewBox.minY);
+  return point.scaled(1 / render.options.zoom).add(offset);
 };
 
 const viewBoxToProto = (point: Vec2, render: Render) => {
-  const pointInCanvas = viewBoxToCanvas(point, render.viewBox);
+  const pointInCanvas = viewBoxToCanvas(point, render);
   return Scale.canvasToProto(pointInCanvas, render.options);
 };
 
@@ -40,7 +39,7 @@ const pageEventToProto = (
   render: Render,
 ) => {
   const pointInViewBox = pageEventToViewBox(event, render.clientArea);
-  const pointInCanvas = viewBoxToCanvas(pointInViewBox, render.viewBox);
+  const pointInCanvas = viewBoxToCanvas(pointInViewBox, render);
   return Scale.canvasToProto(pointInCanvas, render.options);
 };
 

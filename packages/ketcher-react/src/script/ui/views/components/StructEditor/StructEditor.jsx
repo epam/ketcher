@@ -114,7 +114,7 @@ class StructEditor extends Component {
   handleHorizontalScroll(event) {
     this.editor.render.setViewBox((prev) => ({
       ...prev,
-      minX: prev.minX - event.wheelDelta,
+      minX: prev.minX - event.wheelDelta / this.editor.zoom(),
     }));
   }
 
@@ -125,8 +125,8 @@ class StructEditor extends Component {
   handleScroll(event) {
     this.editor.render.setViewBox((prev) => ({
       ...prev,
-      minX: prev.minX + event.deltaX,
-      minY: prev.minY + event.deltaY,
+      minX: prev.minX + event.deltaX / this.editor.zoom(),
+      minY: prev.minY + event.deltaY / this.editor.zoom(),
     }));
   }
 

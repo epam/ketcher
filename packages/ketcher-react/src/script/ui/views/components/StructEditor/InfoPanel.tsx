@@ -54,9 +54,10 @@ function getPanelPosition(
     height = end.y - start.y;
     // calculate initial position
     const { position } = sGroup.getContractedPosition(render.ctab.molecule);
-    const panelPosition = Scale.protoToCanvas(position, {
-      scale: render.options.scale,
-    });
+    const panelPosition = CoordinateTransformation.protoToViewBox(
+      position,
+      render,
+    );
     x = panelPosition.x - width / 2 - HOVER_PANEL_PADDING;
     y = panelPosition.y + HOVER_PANEL_PADDING;
     // adjust position to keep inside viewport
@@ -71,11 +72,6 @@ function getPanelPosition(
     if (clientY > viewportBottomLimit) {
       y = panelPosition.y - height - HOVER_PANEL_PADDING * 3;
     }
-    // adjust position to current viewBox
-    ({ x, y } = CoordinateTransformation.canvasToViewBox(
-      new Vec2(x, y),
-      render.viewBox,
-    ));
   }
 
   return [new Vec2(x, y), new Vec2(width, height)];

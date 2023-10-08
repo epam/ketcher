@@ -117,8 +117,8 @@ export class Render {
     // don't forget to call setScrollOffset after zooming (or use extendCanvas directly)
     this.options.zoom = zoom;
 
-    const zoomedWidth = this.sz.x * zoom;
-    const zoomedHeight = this.sz.y * zoom;
+    const zoomedWidth = this.sz.x / zoom;
+    const zoomedHeight = this.sz.y / zoom;
     // @yuleicul Fixme: minX and minY !== 0 after resetting zoom
     const viewBoxX = this.sz.x / 2 - zoomedWidth / 2;
     const viewBoxY = this.sz.y / 2 - zoomedWidth / 2;

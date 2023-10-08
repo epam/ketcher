@@ -71,7 +71,7 @@ function getPanelPositionRelativeToRect(
 
   const panelPositionInViewBox = CoordinateTransformation.canvasToViewBox(
     new Vec2(x, y),
-    render.viewBox,
+    render,
   );
   return panelPositionInViewBox;
 }

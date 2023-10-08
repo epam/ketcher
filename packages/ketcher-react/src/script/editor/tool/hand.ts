@@ -55,7 +55,9 @@ class HandTool implements Tool {
     this.endPos = new Vec2(clientX, clientY);
 
     const rnd = this.editor.render;
-    const diff = Vec2.diff(this.endPos, this.begPos);
+    const diff = Vec2.diff(this.endPos, this.begPos).scaled(
+      1 / rnd.options.zoom,
+    );
     this.begPos = this.endPos;
     rnd.setViewBox((prev) => ({
       ...prev,

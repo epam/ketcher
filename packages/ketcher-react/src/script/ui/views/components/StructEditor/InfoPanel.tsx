@@ -15,10 +15,16 @@
  ***************************************************************************/
 
 import { useState, useEffect, FC } from 'react';
-import { Scale, Vec2, Render, Struct, SGroup } from 'ketcher-core';
+import {
+  Scale,
+  Vec2,
+  Render,
+  Struct,
+  SGroup,
+  CoordinateTransformation,
+} from 'ketcher-core';
 
 import SGroupDataRender from './SGroupDataRender';
-import { calculateScrollOffsetX, calculateScrollOffsetY } from './helpers';
 import { functionGroupInfoSelector } from '../../../state/functionalGroups/selectors';
 import { connect } from 'react-redux';
 import clsx from 'clsx';
@@ -65,9 +71,11 @@ function getPanelPosition(
     if (clientY > viewportBottomLimit) {
       y = panelPosition.y - height - HOVER_PANEL_PADDING * 3;
     }
-    // adjust position to current scroll offset
-    x += calculateScrollOffsetX(render);
-    y += calculateScrollOffsetY(render);
+    // adjust position to current viewBox
+    ({ x, y } = CoordinateTransformation.canvasToViewBox(
+      new Vec2(x, y),
+      render.viewBox,
+    ));
   }
 
   return [new Vec2(x, y), new Vec2(width, height)];

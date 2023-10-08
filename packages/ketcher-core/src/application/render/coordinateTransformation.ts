@@ -46,6 +46,7 @@ const pageEventToProto = (
 
 export const CoordinateTransformation = {
   protoToViewBox,
+  canvasToViewBox,
   viewBoxToCanvas,
   viewBoxToProto,
   pageEventToProto,

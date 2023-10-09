@@ -290,6 +290,7 @@ export class Struct {
     });
 
     this.functionalGroups.forEach((fg) => {
+      if (fg.relatedSGroup.atoms.some((aid) => !atomSet!.has(aid))) return;
       fg = FunctionalGroup.clone(fg);
       cp.functionalGroups.add(fg);
     });
@@ -755,6 +756,11 @@ export class Struct {
   markFragments(properties?) {
     const components = this.findConnectedComponents();
     components.forEach((comp) => {
+      const [firstAtom] = comp;
+      const sgroup = this.getGroupFromAtomId(firstAtom);
+      if (sgroup instanceof MonomerMicromolecule) {
+        return;
+      }
       this.markFragment(comp, properties);
     });
   }
@@ -775,6 +781,9 @@ export class Struct {
     });
 
     this.sgroups.forEach((item) => {
+      if (item instanceof MonomerMicromolecule) {
+        return;
+      }
       item.pp = item.pp ? item.pp.scaled(scale) : null;
     });
 

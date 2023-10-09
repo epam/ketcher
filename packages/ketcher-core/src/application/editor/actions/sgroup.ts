@@ -37,6 +37,7 @@ import {
 } from 'application/editor/operations/sgroup/sgroupAttachmentPoints';
 import Restruct from 'application/render/restruct/restruct';
 import assert from 'assert';
+import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 
 export function fromSeveralSgroupAddition(
   restruct: Restruct,
@@ -114,7 +115,10 @@ export function expandSGroupWithMultipleAttachmentPoint(restruct) {
   const struct = restruct.molecule;
 
   struct.sgroups.forEach((sgroup: SGroup) => {
-    if (sgroup.isNotContractible(struct)) {
+    if (
+      sgroup.isNotContractible(struct) &&
+      !(sgroup instanceof MonomerMicromolecule)
+    ) {
       action.mergeWith(
         setExpandSGroup(restruct, sgroup.id, {
           expanded: true,
@@ -185,6 +189,7 @@ export function fromSgroupAddition(
   pp?,
   expanded?,
   name?,
+  oldSgroup,
 ) {
   // eslint-disable-line
   let action = new Action();
@@ -194,7 +199,7 @@ export function fromSgroupAddition(
   sgid = sgid - 0 === sgid ? sgid : restruct.molecule.sgroups.newId();
 
   if (type === 'SUP') {
-    action.addOp(new SGroupCreate(sgid, type, pp, expanded, name));
+    action.addOp(new SGroupCreate(sgid, type, pp, expanded, name, oldSgroup));
   } else {
     action.addOp(new SGroupCreate(sgid, type, pp));
   }

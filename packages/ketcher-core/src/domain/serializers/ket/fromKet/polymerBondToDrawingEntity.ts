@@ -1,29 +1,31 @@
 import { IKetConnection } from 'application/formatters/types/ket';
-import { CoreEditor } from 'application/editor';
 import { Command } from 'domain/entities/Command';
-import assert from 'assert';
+import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
+import { Scale } from 'domain/helpers';
+import { provideEditorSettings } from 'application/editor/editorSettings';
+import { Vec2 } from 'domain/entities';
 
-export function polymerBondToDrawingEntity(connection: IKetConnection) {
-  const editor = CoreEditor.provideEditorInstance();
+export function polymerBondToDrawingEntity(
+  connection: IKetConnection,
+  drawingEntitiesManager: DrawingEntitiesManager,
+) {
   const command = new Command();
-  const firstMonomer = editor.drawingEntitiesManager.monomers.get(
+  const firstMonomer = drawingEntitiesManager.monomers.get(
     Number(connection.endPoint1.monomerId),
   );
-  const secondMonomer = editor.drawingEntitiesManager.monomers.get(
+  const secondMonomer = drawingEntitiesManager.monomers.get(
     Number(connection.endPoint2.monomerId),
   );
 
-  assert(firstMonomer?.renderer);
-  assert(secondMonomer?.renderer);
   const { command: bondAdditionCommand, polymerBond } =
-    editor.drawingEntitiesManager.addPolymerBond(
+    drawingEntitiesManager.addPolymerBond(
       firstMonomer,
-      firstMonomer.renderer.center,
-      secondMonomer.renderer.center,
+      firstMonomer?.position,
+      secondMonomer?.position,
     );
   command.merge(bondAdditionCommand);
   command.merge(
-    editor.drawingEntitiesManager.finishPolymerBondCreation(
+    drawingEntitiesManager.finishPolymerBondCreation(
       polymerBond,
       secondMonomer,
       connection.endPoint1.attachmentPointId,

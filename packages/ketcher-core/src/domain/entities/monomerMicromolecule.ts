@@ -20,10 +20,11 @@ import { Struct } from 'domain/entities/struct';
 export class MonomerMicromolecule extends SGroup {
   constructor(type: string, public position: Vec2, public monomer) {
     super(type);
+    this.pp = this.position;
   }
 
   public override getContractedPosition(struct: Struct) {
     const sgroupContractedPosition = super.getContractedPosition(struct);
-    return { position: this.position, atomId: sgroupContractedPosition.atomId };
+    return { position: this.pp, atomId: sgroupContractedPosition.atomId };
   }
 }

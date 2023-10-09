@@ -226,6 +226,7 @@ export class DrawingEntitiesManager {
       firstMonomer.startBondAttachmentPoint,
       polymerBond,
     );
+    console.log(startPosition);
     polymerBond.moveBondStartAbsolute(startPosition.x, startPosition.y);
     polymerBond.moveBondEndAbsolute(endPosition.x, endPosition.y);
 
@@ -295,7 +296,6 @@ export class DrawingEntitiesManager {
     polymerBond.setSecondMonomer(secondMonomer);
     polymerBond.firstMonomer.setBond(firstMonomerAttachmentPoint, polymerBond);
     assert(polymerBond.secondMonomer);
-    assert(secondMonomer.renderer);
     polymerBond.secondMonomer.setBond(
       secondMonomerAttachmentPoint,
       polymerBond,

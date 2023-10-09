@@ -3,10 +3,17 @@ import { Chem } from 'domain/entities/Chem';
 import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
 
 const CHEM_SELECTED_ELEMENT_ID = '#chem-selection';
+const CHEM_SYMBOL_ELEMENT_ID = '#chem';
 
 export class ChemRenderer extends BaseMonomerRenderer {
   constructor(public monomer: Chem, scale?: number) {
-    super(monomer, CHEM_SELECTED_ELEMENT_ID, CHEM_SELECTED_ELEMENT_ID, scale);
+    super(
+      monomer,
+      CHEM_SELECTED_ELEMENT_ID,
+      CHEM_SELECTED_ELEMENT_ID,
+      scale,
+      CHEM_SYMBOL_ELEMENT_ID,
+    );
   }
 
   protected appendBody(
@@ -16,7 +23,7 @@ export class ChemRenderer extends BaseMonomerRenderer {
     return rootElement
       .append('use')
       .data([this])
-      .attr('href', '#chem')
+      .attr('href', CHEM_SYMBOL_ELEMENT_ID)
       .style('cursor', 'pointer')
       .attr('stroke', theme.monomer.color.CHEM.regular);
   }

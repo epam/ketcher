@@ -1,4 +1,4 @@
-import { test, expect, Page } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 import {
   pressButton,
   takeEditorScreenshot,
@@ -11,12 +11,7 @@ import {
   waitForPageInit,
   waitForRender,
 } from '@utils';
-
-async function addTextBoxToCanvas(page: Page) {
-  await page.getByTitle('Add text (Alt+T)').click();
-  await clickInTheMiddleOfTheScreen(page);
-  await page.getByRole('dialog').getByRole('textbox').click();
-}
+import { addTextBoxToCanvas } from '@utils/addTextBoxToCanvas';
 
 test.describe('Clear canvas', () => {
   test.beforeEach(async ({ page }) => {

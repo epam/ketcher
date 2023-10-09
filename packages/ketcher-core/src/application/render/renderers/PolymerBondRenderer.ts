@@ -4,7 +4,8 @@ import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import assert from 'assert';
 import { D3SvgElementSelection } from 'application/render/types';
 import { editorEvents } from 'application/editor/editorEvents';
-import { Vec2 } from 'domain/entities/vec2';
+import { Scale } from 'domain/helpers';
+import { Vec2 } from 'domain/entities';
 import { Peptide } from 'domain/entities/Peptide';
 import { Chem } from 'domain/entities/Chem';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
@@ -82,6 +83,25 @@ export class PolymerBondRenderer extends BaseRenderer {
 
   public get height() {
     return this.rootBBox?.height || 0;
+  }
+
+  private get scaledPosition() {
+    // we need to convert monomer coordinates(stored in angstroms) to pixels.
+    // it needs to be done in view layer of application (like renderers)
+    const startPositionInPixels = Scale.obj2scaled(
+      this.polymerBond.startPosition,
+      this.editorSettings,
+    );
+
+    const endPositionInPixels = Scale.obj2scaled(
+      this.polymerBond.endPosition,
+      this.editorSettings,
+    );
+
+    return {
+      startPosition: startPositionInPixels,
+      endPosition: endPositionInPixels,
+    };
   }
 
   public moveSelection() {
@@ -383,10 +403,10 @@ export class PolymerBondRenderer extends BaseRenderer {
       .attr('stroke', this.polymerBond.finished ? '#333333' : '#0097A8')
       .attr('stroke-width', 2)
       .attr('class', 'selection-area')
-      .attr('x1', this.polymerBond.startPosition.x)
-      .attr('y1', this.polymerBond.startPosition.y)
-      .attr('x2', this.polymerBond.endPosition.x)
-      .attr('y2', this.polymerBond.endPosition.y)
+      .attr('x1', this.scaledPosition.startPosition.x)
+      .attr('y1', this.scaledPosition.startPosition.y)
+      .attr('x2', this.scaledPosition.endPosition.x)
+      .attr('y2', this.scaledPosition.endPosition.y)
       .attr('pointer-events', 'stroke');
 
     return this.bodyElement;
@@ -431,10 +451,10 @@ export class PolymerBondRenderer extends BaseRenderer {
         this.selectionElement = this.rootElement
           ?.insert('line', ':first-child')
           .attr('stroke', '#57FF8F')
-          .attr('x1', this.polymerBond.startPosition.x)
-          .attr('y1', this.polymerBond.startPosition.y)
-          .attr('x2', this.polymerBond.endPosition.x)
-          .attr('y2', this.polymerBond.endPosition.y)
+          .attr('x1', this.scaledPosition.startPosition.x)
+          .attr('y1', this.scaledPosition.startPosition.y)
+          .attr('x2', this.scaledPosition.endPosition.x)
+          .attr('y2', this.scaledPosition.endPosition.y)
           .attr('stroke-width', '10');
       }
     } else {
@@ -467,16 +487,16 @@ export class PolymerBondRenderer extends BaseRenderer {
     assert(this.bodyElement);
     assert(this.hoverAreaElement);
     this.bodyElement
-      .attr('x2', this.polymerBond.endPosition.x)
-      .attr('y2', this.polymerBond.endPosition.y);
+      .attr('x2', this.scaledPosition.endPosition.x)
+      .attr('y2', this.scaledPosition.endPosition.y);
 
     this.hoverAreaElement
-      .attr('x2', this.polymerBond.endPosition.x)
-      .attr('y2', this.polymerBond.endPosition.y);
+      .attr('x2', this.scaledPosition.endPosition.x)
+      .attr('y2', this.scaledPosition.endPosition.y);
 
     this.selectionElement
-      ?.attr('x2', this.polymerBond.endPosition.x)
-      ?.attr('y2', this.polymerBond.endPosition.y);
+      ?.attr('x2', this.scaledPosition.endPosition.x)
+      ?.attr('y2', this.scaledPosition.endPosition.y);
   }
 
   public moveStart() {
@@ -504,16 +524,16 @@ export class PolymerBondRenderer extends BaseRenderer {
     assert(this.bodyElement);
     assert(this.hoverAreaElement);
     this.bodyElement
-      .attr('x1', this.polymerBond.startPosition.x)
-      .attr('y1', this.polymerBond.startPosition.y);
+      .attr('x1', this.scaledPosition.startPosition.x)
+      .attr('y1', this.scaledPosition.startPosition.y);
 
     this.hoverAreaElement
-      .attr('x1', this.polymerBond.startPosition.x)
-      .attr('y1', this.polymerBond.startPosition.y);
+      .attr('x1', this.scaledPosition.startPosition.x)
+      .attr('y1', this.scaledPosition.startPosition.y);
 
     this.selectionElement
-      ?.attr('x1', this.polymerBond.startPosition.x)
-      ?.attr('y1', this.polymerBond.startPosition.y);
+      ?.attr('x1', this.scaledPosition.startPosition.x)
+      ?.attr('y1', this.scaledPosition.startPosition.y);
   }
 
   protected appendHoverAreaElement() {
@@ -532,10 +552,10 @@ export class PolymerBondRenderer extends BaseRenderer {
       )) = this.rootElement
         ?.append('line')
         .attr('stroke', 'transparent')
-        .attr('x1', this.polymerBond.startPosition.x)
-        .attr('y1', this.polymerBond.startPosition.y)
-        .attr('x2', this.polymerBond.endPosition.x)
-        .attr('y2', this.polymerBond.endPosition.y)
+        .attr('x1', this.scaledPosition.startPosition.x)
+        .attr('y1', this.scaledPosition.startPosition.y)
+        .attr('x2', this.scaledPosition.endPosition.x)
+        .attr('y2', this.scaledPosition.endPosition.y)
         .attr('stroke-width', '10');
     }
   }

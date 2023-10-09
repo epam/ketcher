@@ -34,8 +34,8 @@ export class PolymerBond extends DrawingEntity {
 
   public moveToLinkedMonomers() {
     assert(this.firstMonomer.renderer);
-    const firstMonomerCenter = this.firstMonomer.renderer.center;
-    const secondMonomerCenter = this.secondMonomer?.renderer?.center;
+    const firstMonomerCenter = this.firstMonomer.position;
+    const secondMonomerCenter = this.secondMonomer?.position;
     this.moveBondStartAbsolute(firstMonomerCenter.x, firstMonomerCenter.y);
     if (secondMonomerCenter) {
       this.moveBondEndAbsolute(secondMonomerCenter.x, secondMonomerCenter.y);

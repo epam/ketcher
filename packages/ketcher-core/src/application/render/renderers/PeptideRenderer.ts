@@ -4,6 +4,7 @@ import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRen
 
 const PEPTIDE_SELECTED_ELEMENT_ID = '#peptide-selection';
 const PEPTIDE_HOVERED_ELEMENT_ID = '#peptide-hover';
+const PEPTIDE_SYMBOL_ELEMENT_ID = '#peptide';
 
 export class PeptideRenderer extends BaseMonomerRenderer {
   constructor(public monomer: Peptide, scale?: number) {
@@ -12,6 +13,7 @@ export class PeptideRenderer extends BaseMonomerRenderer {
       PEPTIDE_SELECTED_ELEMENT_ID,
       PEPTIDE_HOVERED_ELEMENT_ID,
       scale,
+      PEPTIDE_SYMBOL_ELEMENT_ID,
     );
   }
 
@@ -22,7 +24,7 @@ export class PeptideRenderer extends BaseMonomerRenderer {
     return rootElement
       .append('use')
       .data([this])
-      .attr('href', '#peptide')
+      .attr('href', PEPTIDE_SYMBOL_ELEMENT_ID)
       .style('cursor', 'pointer')
       .attr(
         'fill',

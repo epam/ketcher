@@ -4,15 +4,15 @@ import {
 } from 'application/formatters/types/ket';
 import { Struct, Vec2 } from 'domain/entities';
 import { CoreEditor } from 'application/editor';
+import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 
 export function monomerToDrawingEntity(
   node: IKetMonomerNode,
   template: IKetMonomerTemplate,
   struct: Struct,
+  drawingEntitiesManager: DrawingEntitiesManager,
 ) {
-  const editor = CoreEditor.provideEditorInstance();
-
-  return editor.drawingEntitiesManager.addMonomer(
+  return drawingEntitiesManager.addMonomer(
     {
       struct,
       label: template.alias || template.id,

@@ -38,8 +38,8 @@ class RnaPresetTool implements Tool {
   private phosphatePreviewRenderer: BaseMonomerRenderer | undefined;
   private sugarPreviewRenderer: BaseMonomerRenderer | undefined;
   readonly MONOMER_PREVIEW_SCALE_FACTOR = 0.25;
-  readonly MONOMER_PREVIEW_OFFSET_X = 8;
-  readonly MONOMER_PREVIEW_OFFSET_Y = 12;
+  readonly MONOMER_PREVIEW_OFFSET_X = 45;
+  readonly MONOMER_PREVIEW_OFFSET_Y = 45;
   constructor(private editor: CoreEditor, preset: IRnaPreset) {
     this.editor = editor;
     if (preset?.base) {
@@ -65,10 +65,8 @@ class RnaPresetTool implements Tool {
       sugar: this.sugar,
       sugarPosition: Scale.canvasToModel(
         new Vec2(
-          this.editor.lastCursorPosition.x -
-            this.sugarPreviewRenderer.width / 2,
-          this.editor.lastCursorPosition.y -
-            this.sugarPreviewRenderer.height / 2,
+          this.editor.lastCursorPosition.x,
+          this.editor.lastCursorPosition.y,
         ),
         editorSettings,
       ),
@@ -76,12 +74,10 @@ class RnaPresetTool implements Tool {
       phosphatePosition: this.phosphatePreviewRenderer
         ? Scale.canvasToModel(
             new Vec2(
-              this.editor.lastCursorPosition.x -
-                this.phosphatePreviewRenderer.width / 2 +
+              this.editor.lastCursorPosition.x +
                 this.sugarPreviewRenderer?.width +
                 45,
-              this.editor.lastCursorPosition.y -
-                this.phosphatePreviewRenderer.height / 2,
+              this.editor.lastCursorPosition.y,
             ),
             editorSettings,
           )
@@ -90,10 +86,8 @@ class RnaPresetTool implements Tool {
       rnaBasePosition: this.rnaBasePreviewRenderer
         ? Scale.canvasToModel(
             new Vec2(
-              this.editor.lastCursorPosition.x -
-                this.rnaBasePreviewRenderer.width / 2,
-              this.editor.lastCursorPosition.y -
-                this.rnaBasePreviewRenderer.height / 2 +
+              this.editor.lastCursorPosition.x,
+              this.editor.lastCursorPosition.y +
                 this.sugarPreviewRenderer.height +
                 45,
             ),
@@ -121,8 +115,8 @@ class RnaPresetTool implements Tool {
     this.rnaBasePreview?.moveAbsolute(
       Scale.canvasToModel(
         new Vec2(
-          this.editor.lastCursorPosition.x + this.MONOMER_PREVIEW_OFFSET_X,
-          this.editor.lastCursorPosition.y + this.MONOMER_PREVIEW_OFFSET_Y + 18,
+          this.editor.lastCursorPosition.x + this.MONOMER_PREVIEW_OFFSET_X + 2,
+          this.editor.lastCursorPosition.y + this.MONOMER_PREVIEW_OFFSET_Y + 20,
         ),
         editorSettings,
       ),

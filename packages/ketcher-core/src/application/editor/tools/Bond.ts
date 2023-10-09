@@ -30,10 +30,10 @@ class PolymerBond implements BaseTool {
   public mousedown(event) {
     const selectedRenderer = event.target.__data__;
     if (selectedRenderer instanceof BaseMonomerRenderer) {
-      const freeAttachmentPoint =
-        selectedRenderer.monomer.firstFreeAttachmentPoint;
+      const startAttachmentPoint =
+        selectedRenderer.monomer.startBondAttachmentPoint;
 
-      if (!freeAttachmentPoint) {
+      if (!startAttachmentPoint) {
         this.editor.events.error.dispatch(
           "Selected monomer doesn't have any free attachment points",
         );

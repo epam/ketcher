@@ -59,6 +59,7 @@
     "ketcher-core": "*",
     "ketcher-react": "*",
     "lodash": "^4.17.21",
+    "react-contexify": "^6.0.0",
     "react-dropzone": "^11.7.1",
     "react-redux": "^7.2.1",
     "redux": "^4.0.5",

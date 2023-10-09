@@ -99,6 +99,16 @@ export const rnaBuilderSlice = createSlice({
       if (!state.activePreset) return;
       state.activePreset.presetInList = newPreset;
     },
+    deletePreset: (state, action: PayloadAction<IRnaPreset>) => {
+      const preset = action.payload;
+
+      if (preset.presetInList) {
+        const presetIndexInList = state.presets.findIndex(
+          (presetInList) => presetInList.name === preset.presetInList?.name,
+        );
+        state.presets.splice(presetIndexInList, 1);
+      }
+    },
     setIsEditMode: (state, action: PayloadAction<boolean>) => {
       state.isEditMode = action.payload;
     },
@@ -182,6 +192,7 @@ export const {
   setActiveRnaBuilderItem,
   setActivePresetMonomerGroup,
   savePreset,
+  deletePreset,
   createNewPreset,
   setIsEditMode,
   setHasUniqueNameError,

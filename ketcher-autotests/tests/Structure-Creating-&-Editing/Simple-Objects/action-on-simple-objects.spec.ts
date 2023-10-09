@@ -72,22 +72,16 @@ async function createSomeMove(page: Page) {
   await page.mouse.up();
 }
 
-async function simpleObjectWithBenzene(page: Page) {
+async function simpleObjects(page: Page) {
   const a = 727;
   const b = 359;
-  const c = 61;
-  const d = 100;
+  const c = 83;
+  const d = 207;
   await openFileAndAddToCanvas('KET/simple-objects.ket', page);
   await page.keyboard.press('Control+a');
   await page.mouse.move(a, b);
   await page.mouse.down();
   await dragMouseTo(c, d, page);
-  await waitForRender(page, async () => {
-    await page.keyboard.press('Control+a');
-    await page.keyboard.press('Control+_');
-  });
-  await clickInTheMiddleOfTheScreen(page);
-  await drawBenzeneRing(page);
 }
 
 async function saveToTemplates(page: Page) {
@@ -134,7 +128,9 @@ test.describe('Action on simples objects', () => {
     await setZoomInputValue(page, '200');
     await clickInTheMiddleOfTheScreen(page);
     await setupEllipse(page);
-    await setZoomInputValue(page, '100');
+    await waitForRender(page, async () => {
+      await setZoomInputValue(page, '100');
+    });
   });
 
   test('Simple objest - Simple Objects and Structures selection', async ({
@@ -157,8 +153,10 @@ test.describe('Action on simples objects', () => {
     await drawBenzeneRing(page);
     await takeEditorScreenshot(page);
     await selectDropdownTool(page, 'select-rectangle', 'select-lasso');
-    await page.mouse.click(e, f);
-    await dragMouseTo(g, h, page);
+    await waitForRender(page, async () => {
+      await page.mouse.click(e, f);
+      await dragMouseTo(g, h, page);
+    });
   });
 
   test('Simple object - Delete Simple Objects', async ({ page }) => {
@@ -202,12 +200,16 @@ test.describe('Action on simples objects', () => {
     }
   });
 
-  test('Simple Objects - Adding structure into simple objects', async ({
+  test('Simple Objects - Adding structure to simple objects', async ({
     page,
   }) => {
     // Test case: EPMLSOPKET-1982
     // Open file with simple object and adding some structure
-    await simpleObjectWithBenzene(page);
+    await simpleObjects(page);
+    await clickInTheMiddleOfTheScreen(page);
+    await waitForRender(page, async () => {
+      await drawBenzeneRing(page);
+    });
   });
 
   test('Simple objects - Open and save as .ket file', async ({ page }) => {
@@ -229,7 +231,9 @@ test.describe('Action on simples objects', () => {
   });
 
   test('Simple Objects - Save to Templates', async ({ page }) => {
-    await simpleObjectWithBenzene(page);
+    await simpleObjects(page);
+    await clickInTheMiddleOfTheScreen(page);
+    await drawBenzeneRing(page);
     await saveToTemplates(page);
     await selectTopPanelButton(TopPanelButton.Clear, page);
     await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);

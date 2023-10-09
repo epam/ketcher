@@ -184,6 +184,35 @@ export class PolymerBondRenderer extends BaseRenderer {
         LINE_DIRECTION.Horizontal,
         LINE_FROM_MONOMER_LENGTH + this.getMonomerWidth() / 2,
       );
+    } else if (this.isSecondMonomerLeft(startPosition, endPosition)) {
+      this.addLine(
+        LINE_DIRECTION.Horizontal,
+        LINE_FROM_MONOMER_LENGTH + this.getMonomerWidth() / 2,
+        startPosition,
+      );
+      this.addLineFromLeftToBottom();
+      this.addLine(
+        LINE_DIRECTION.Vertical,
+        endPosition.y - startPosition.y + this.getMonomerHeight(),
+      );
+      this.addLineFromTopToLeft();
+      this.addLine(
+        LINE_DIRECTION.Horizontal,
+        -(
+          startPosition.x -
+          endPosition.x +
+          LINE_FROM_MONOMER_LENGTH * 2 +
+          this.getMonomerWidth()
+        ),
+      );
+
+      this.addLineFromRightToUp();
+      this.addLine(LINE_DIRECTION.Vertical, -this.getMonomerHeight());
+      this.addLineFromBottomToRight();
+      this.addLine(
+        LINE_DIRECTION.Horizontal,
+        LINE_FROM_MONOMER_LENGTH + this.getMonomerWidth() / 2,
+      );
     } else {
       this.addRandomLine(startPosition, endPosition);
     }
@@ -191,7 +220,7 @@ export class PolymerBondRenderer extends BaseRenderer {
 
   private isSecondMonomerTopRight(startPosition, endPosition): boolean {
     return (
-      startPosition.y - endPosition.y > this.getMonomerHeight() &&
+      startPosition.y - endPosition.y > DOUBLE_CORNER_LENGTH &&
       endPosition.x - startPosition.x >
         DOUBLE_CORNER_LENGTH + LINE_FROM_MONOMER_LENGTH + this.getMonomerWidth()
     );
@@ -199,7 +228,7 @@ export class PolymerBondRenderer extends BaseRenderer {
 
   private isSecondMonomerBottomRight(startPosition, endPosition): boolean {
     return (
-      endPosition.y - startPosition.y > this.getMonomerHeight() &&
+      endPosition.y - startPosition.y > DOUBLE_CORNER_LENGTH &&
       endPosition.x - startPosition.x >
         DOUBLE_CORNER_LENGTH + LINE_FROM_MONOMER_LENGTH + this.getMonomerWidth()
     );
@@ -207,7 +236,8 @@ export class PolymerBondRenderer extends BaseRenderer {
 
   private isSecondMonomerBottomLeft(startPosition, endPosition): boolean {
     return (
-      endPosition.y - startPosition.y > this.getMonomerHeight() &&
+      endPosition.y - startPosition.y >=
+        2 * (VERTICAL_LINE_LENGTH + DOUBLE_CORNER_LENGTH) &&
       endPosition.x - startPosition.x <=
         DOUBLE_CORNER_LENGTH + LINE_FROM_MONOMER_LENGTH + this.getMonomerWidth()
     );
@@ -215,9 +245,18 @@ export class PolymerBondRenderer extends BaseRenderer {
 
   private isSecondMonomerTopLeft(startPosition, endPosition): boolean {
     return (
-      startPosition.y - endPosition.y > -2 * this.getMonomerHeight() &&
+      startPosition.y - endPosition.y > 0 &&
       endPosition.x - startPosition.x <=
-        LINE_FROM_MONOMER_LENGTH + this.getMonomerWidth()
+        DOUBLE_CORNER_LENGTH + LINE_FROM_MONOMER_LENGTH + this.getMonomerWidth()
+    );
+  }
+  private isSecondMonomerLeft(startPosition, endPosition): boolean {
+    return (
+      startPosition.y - endPosition.y < 0 &&
+      startPosition.y - endPosition.y >
+        -2 * (VERTICAL_LINE_LENGTH + DOUBLE_CORNER_LENGTH) &&
+      endPosition.x - startPosition.x <=
+        DOUBLE_CORNER_LENGTH + LINE_FROM_MONOMER_LENGTH + this.getMonomerWidth()
     );
   }
 
@@ -307,8 +346,8 @@ export class PolymerBondRenderer extends BaseRenderer {
 
   public show() {
     this.rootElement = this.rootElement || this.appendRootElement();
-    this.appendHoverAreaElement();
     this.appendBond(this.rootElement);
+    this.appendHoverAreaElement();
     this.drawSelection();
   }
 
@@ -412,16 +451,27 @@ export class PolymerBondRenderer extends BaseRenderer {
   }
 
   protected appendHoverAreaElement() {
-    (<D3SvgElementSelection<SVGLineElement, void> | undefined>(
-      this.hoverAreaElement
-    )) = this.rootElement
-      ?.append('line')
-      .attr('stroke', 'transparent')
-      .attr('x1', this.polymerBond.startPosition.x)
-      .attr('y1', this.polymerBond.startPosition.y)
-      .attr('x2', this.polymerBond.endPosition.x)
-      .attr('y2', this.polymerBond.endPosition.y)
-      .attr('stroke-width', '10');
+    if (PolymerBondRenderer.isSnake) {
+      (<D3SvgElementSelection<SVGPathElement, void> | undefined>(
+        this.hoverAreaElement
+      )) = this.rootElement
+        ?.append('path')
+        .attr('stroke', 'transparent')
+        .attr('d', this.path)
+        .attr('fill-opacity', 0)
+        .attr('stroke-width', '10');
+    } else {
+      (<D3SvgElementSelection<SVGLineElement, void> | undefined>(
+        this.hoverAreaElement
+      )) = this.rootElement
+        ?.append('line')
+        .attr('stroke', 'transparent')
+        .attr('x1', this.polymerBond.startPosition.x)
+        .attr('y1', this.polymerBond.startPosition.y)
+        .attr('x2', this.polymerBond.endPosition.x)
+        .attr('y2', this.polymerBond.endPosition.y)
+        .attr('stroke-width', '10');
+    }
   }
 
   public appendHover() {

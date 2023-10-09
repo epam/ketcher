@@ -3,6 +3,7 @@ import { Phosphate } from 'domain/entities/Phosphate';
 import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
 
 const PHOSPHATE_SELECTED_ELEMENT_ID = '#phosphate-selection';
+const PHOSPHATE_SYMBOL_ELEMENT_ID = '#phosphate';
 
 export class PhosphateRenderer extends BaseMonomerRenderer {
   constructor(public monomer: Phosphate, scale?: number) {
@@ -11,6 +12,7 @@ export class PhosphateRenderer extends BaseMonomerRenderer {
       PHOSPHATE_SELECTED_ELEMENT_ID,
       PHOSPHATE_SELECTED_ELEMENT_ID,
       scale,
+      PHOSPHATE_SYMBOL_ELEMENT_ID,
     );
   }
 
@@ -21,7 +23,7 @@ export class PhosphateRenderer extends BaseMonomerRenderer {
     return rootElement
       .append('use')
       .data([this])
-      .attr('href', '#phosphate')
+      .attr('href', PHOSPHATE_SYMBOL_ELEMENT_ID)
       .style('cursor', 'pointer')
       .attr(
         'fill',

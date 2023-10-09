@@ -35,6 +35,7 @@ import { Action } from './action';
 import { SGroup, Struct, Vec2 } from 'domain/entities';
 import { fromSgroupAddition } from './sgroup';
 import { fromRGroupAttachmentPointAddition } from './rgroupAttachmentPoint';
+import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 
 export function fromPaste(
   restruct,
@@ -58,7 +59,12 @@ export function fromPaste(
   };
 
   pstruct.atoms.forEach((atom, aid) => {
-    if (!fridMap.has(atom.fragment)) {
+    const sgroup = pstruct.getGroupFromAtomId(aid);
+
+    if (
+      !fridMap.has(atom.fragment) &&
+      !(sgroup instanceof MonomerMicromolecule)
+    ) {
       fridMap.set(
         atom.fragment,
         (
@@ -129,7 +135,10 @@ export function fromPaste(
     const newsgid = restruct.molecule.sgroups.newId();
     const sgAtoms = sg.atoms.map((aid) => aidMap.get(aid));
     const attachmentPoints = sg.cloneAttachmentPoints(aidMap);
-    if (sg.isNotContractible(pstruct)) {
+    if (
+      sg.isNotContractible(pstruct) &&
+      !(sg instanceof MonomerMicromolecule)
+    ) {
       sg.setAttr('expanded', true);
     }
     const sgAction = fromSgroupAddition(
@@ -142,6 +151,7 @@ export function fromPaste(
       sg.pp ? sg.pp.add(offset) : null,
       sg.type === 'SUP' ? sg.isExpanded() : null,
       sg.data.name,
+      sg,
     );
     sgAction.operations.reverse().forEach((oper) => {
       action.addOp(oper);

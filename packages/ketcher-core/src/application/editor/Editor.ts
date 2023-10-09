@@ -1,9 +1,11 @@
 import { DOMSubscription } from 'subscription';
 import {
   Bond,
+  FunctionalGroup,
   Pile,
   SGroup,
   SGroupAttachmentPoint,
+  Struct,
   Vec2,
 } from 'domain/entities';
 import {
@@ -25,7 +27,7 @@ import {
 } from 'application/editor/editorEvents';
 import { PolymerBondRenderer } from 'application/render/renderers';
 import { Editor } from 'application/editor/editor.types';
-import { ReAtom, ReBond, ReSGroup } from 'application/render';
+import { ReAtom, ReBond, ReSGroup, ReStruct } from 'application/render';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { Command } from 'domain/entities/Command';
@@ -120,12 +122,15 @@ export class CoreEditor {
     }
   }
 
-  private domEventSetup() {
-    const trackedDomEvents: {
-      target: Node;
-      eventName: string;
-      toolEventHandler: ToolEventHandlerName;
-    }[] = [
+  public unsubscribeEvents() {
+    for (const eventName in this.events) {
+      this.events[eventName].handlers = [];
+    }
+    console.log(this.events);
+  }
+
+  get trackedDomEvents() {
+    const trackedDomEvents = [
       {
         target: this.canvas,
         eventName: 'click',
@@ -168,7 +173,11 @@ export class CoreEditor {
       },
     ];
 
-    trackedDomEvents.forEach(({ target, eventName, toolEventHandler }) => {
+    return trackedDomEvents;
+  }
+
+  private domEventSetup() {
+    this.trackedDomEvents.forEach(({ target, eventName, toolEventHandler }) => {
       this.events[eventName] = new DOMSubscription();
       const subs = this.events[eventName];
 
@@ -235,13 +244,15 @@ export class CoreEditor {
     return false;
   }
 
-  public switchToMicromolecules() {
-    const struct = this.micromoleculesEditor.struct();
-    const reStruct = this.micromoleculesEditor.render.ctab;
+  public static convertDrawingEntitiesToStruct(
+    drawingEntitiesManager: DrawingEntitiesManager,
+    struct: Struct,
+    reStruct?: ReStruct,
+  ) {
     let lastId = 0;
     const monomerToSgroup = new Map<BaseMonomer, SGroup>();
     const monomerToLastIndex = new Map<BaseMonomer, number>();
-    this.drawingEntitiesManager.monomers.forEach((monomer) => {
+    drawingEntitiesManager.monomers.forEach((monomer) => {
       if (monomer.monomerItem.props.isMicromoleculeFragment) {
         monomer.monomerItem.struct.mergeInto(struct);
       } else {
@@ -271,7 +282,7 @@ export class CoreEditor {
               new SGroupAttachmentPoint(atomId, undefined, undefined),
             );
           }
-          reStruct.atoms.set(atomId, new ReAtom(atomClone));
+          reStruct?.atoms.set(atomId, new ReAtom(atomClone));
         });
         struct.sGroupForest.insert(monomerMicromolecule);
         monomer.monomerItem.struct.bonds.forEach((bond) => {
@@ -279,17 +290,16 @@ export class CoreEditor {
           bondClone.begin = atomIdsMap[bondClone.begin];
           bondClone.end = atomIdsMap[bondClone.end];
           const bondId = struct.bonds.add(bondClone);
-          reStruct.bonds.set(bondId, new ReBond(bondClone));
+          reStruct?.bonds.set(bondId, new ReBond(bondClone));
         });
         lastId = struct.atoms.size + struct.bonds.size;
-        reStruct.sgroups.set(sgroupId, new ReSGroup(monomerMicromolecule));
+        reStruct?.sgroups.set(sgroupId, new ReSGroup(monomerMicromolecule));
 
-        // struct.functionalGroups.add(new FunctionalGroup(monomerMicromolecule));
+        struct.functionalGroups.add(new FunctionalGroup(monomerMicromolecule));
       }
-      console.log(struct.clone());
     });
 
-    this.drawingEntitiesManager.polymerBonds.forEach((polymerBond) => {
+    drawingEntitiesManager.polymerBonds.forEach((polymerBond) => {
       const bond = new Bond({
         type: Bond.PATTERN.TYPE.SINGLE,
         begin: monomerToSgroup
@@ -317,18 +327,21 @@ export class CoreEditor {
           }),
       });
       const bondId = struct.bonds.add(bond);
-      reStruct.bonds.set(bondId, new ReBond(bond));
+      reStruct?.bonds.set(bondId, new ReBond(bond));
     });
-    reStruct.render.setMolecule(struct);
+
+    return { struct, reStruct };
   }
 
-  private switchToMacromolecules() {
-    const struct = this.micromoleculesEditor.struct();
+  public static convertStructToDrawingEntities(
+    struct: Struct,
+    drawingEntitiesManager: DrawingEntitiesManager,
+  ) {
     const sgroupToMonomer = new Map<SGroup, BaseMonomer>();
     let command = new Command();
     struct.sgroups.forEach((sgroup) => {
       if (sgroup instanceof MonomerMicromolecule) {
-        const monomerAdditionCommand = this.drawingEntitiesManager.addMonomer(
+        const monomerAdditionCommand = drawingEntitiesManager.addMonomer(
           sgroup.monomer.monomerItem,
           sgroup.position,
         );
@@ -343,7 +356,7 @@ export class CoreEditor {
     struct.frags.forEach((_fragment, fragmentId) => {
       const fragmentStruct = struct.getFragment(fragmentId);
       const fragmentBbox = fragmentStruct.getCoordBoundingBox();
-      const monomerAdditionCommand = this.drawingEntitiesManager.addMonomer(
+      const monomerAdditionCommand = drawingEntitiesManager.addMonomer(
         {
           struct: fragmentStruct,
           label: 'F' + fragmentNumber,
@@ -365,8 +378,6 @@ export class CoreEditor {
       command.merge(monomerAdditionCommand);
       fragmentNumber++;
     });
-    this.renderersContainer.update(command);
-    command = new Command();
     struct.bonds.forEach((bond) => {
       const beginAtomSgroup = struct.getGroupFromAtomId(bond.begin);
       const endAtomSgroup = struct.getGroupFromAtomId(bond.end);
@@ -390,14 +401,14 @@ export class CoreEditor {
         endAtomSgroup instanceof MonomerMicromolecule
       ) {
         const { command: polymerBondAdditionCommand, polymerBond } =
-          this.drawingEntitiesManager.addPolymerBond(
+          drawingEntitiesManager.addPolymerBond(
             sgroupToMonomer.get(beginAtomSgroup),
-            sgroupToMonomer.get(beginAtomSgroup)?.renderer?.center,
-            sgroupToMonomer.get(endAtomSgroup)?.renderer?.center,
+            sgroupToMonomer.get(beginAtomSgroup)?.position,
+            sgroupToMonomer.get(endAtomSgroup)?.position,
           );
         command.merge(polymerBondAdditionCommand);
         command.merge(
-          this.drawingEntitiesManager.finishPolymerBondCreation(
+          drawingEntitiesManager.finishPolymerBondCreation(
             polymerBond,
             sgroupToMonomer.get(endAtomSgroup),
             'R' + beginAtomAttachmentPointNumber,
@@ -406,7 +417,29 @@ export class CoreEditor {
         );
       }
     });
-    this.renderersContainer.update(command);
+
+    return { drawingEntitiesManager, modelChanges: command };
+  }
+
+  public switchToMicromolecules() {
+    this.unsubscribeEvents();
+    const struct = this.micromoleculesEditor.struct();
+    const reStruct = this.micromoleculesEditor.render.ctab;
+    CoreEditor.convertDrawingEntitiesToStruct(
+      this.drawingEntitiesManager,
+      struct,
+      reStruct,
+    );
+    reStruct.render.setMolecule(struct);
+  }
+
+  private switchToMacromolecules() {
+    const struct = this.micromoleculesEditor.struct();
+    const { modelChanges } = CoreEditor.convertStructToDrawingEntities(
+      struct,
+      this.drawingEntitiesManager,
+    );
+    this.renderersContainer.update(modelChanges);
     global.ketcher.editor.clear();
   }
 }

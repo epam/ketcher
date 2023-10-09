@@ -18,7 +18,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { ViewSwitcher } from './ViewSwitcher';
 import { ActionButton } from 'components/shared/actionButton';
 import { FileOpener, fileOpener } from './fileOpener';
-import { KetSerializer } from 'ketcher-core';
+import { CoreEditor, KetSerializer } from 'ketcher-core';
 
 export interface Props {
   onClose: () => void;
@@ -36,7 +36,11 @@ const onOk = ({ struct, fragment }) => {
     console.log('add fragment');
   }
   const ketSerializer = new KetSerializer();
-  ketSerializer.deserializeMacromolecule(struct);
+  const editor = CoreEditor.provideEditorInstance();
+  const { drawingEntitiesManager, modelChanges } =
+    ketSerializer.deserializeToDrawingEntities(struct);
+  editor.drawingEntitiesManager = drawingEntitiesManager;
+  editor.renderersContainer.update(modelChanges);
 };
 const isAnalyzingFile = false;
 const errorHandler = (error) => console.log(error);

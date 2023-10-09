@@ -35,6 +35,6 @@ export class KetFormatter implements StructFormatter {
   }
 
   parseMacromoleculeString(content: string): void {
-    this.#ketSerializer.deserializeMacromolecule(content);
+    this.#ketSerializer.deserializeMicromolecule(content);
   }
 }

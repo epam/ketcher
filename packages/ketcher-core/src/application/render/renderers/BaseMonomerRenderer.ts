@@ -135,6 +135,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
         this.bodyHeight,
         this.canvas,
         AttachmentPointName,
+        BaseRenderer.isSnake,
       );
       atP = attPointInstance.getElement();
     } else {

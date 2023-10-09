@@ -32,7 +32,7 @@ import { provideEditorSettings } from 'application/editor/editorSettings';
 import { Scale } from 'domain/helpers';
 
 const HORIZONTAL_DISTANCE_FROM_MONOMER = 20;
-const VERTICAL_DISTANCE_FROM_MONOMER = 50;
+const VERTICAL_DISTANCE_FROM_MONOMER = 75; // исправить!
 const DISTANCE_FROM_RIGHT = 70;
 const DISTANCE_BETWEEN_MONOMERS = 30;
 
@@ -587,11 +587,11 @@ export class DrawingEntitiesManager {
   }
 
   private getPrevMonomer(monomer: BaseMonomer) {
-    return monomer.attachmentPointsToBonds.R2?.firstMonomer;
+    return monomer.attachmentPointsToBonds.R1?.firstMonomer;
   }
 
   private getNextMonomer(monomer: BaseMonomer) {
-    return monomer.attachmentPointsToBonds.R1?.secondMonomer;
+    return monomer.attachmentPointsToBonds.R2?.secondMonomer;
   }
 
   public reArrangeChain(canvasWidth: number, isSnakeMode: boolean) {

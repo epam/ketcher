@@ -31,7 +31,7 @@ import { getDefaultPresets } from 'src/helpers/getDefaultPreset';
 import { StyledButton } from 'components/monomerLibrary/RnaBuilder/RnaAccordion/styles';
 import { IRnaPreset } from 'components/monomerLibrary/RnaBuilder/types';
 
-export const RnaBuilder = () => {
+export const RnaBuilder = ({ libraryName }) => {
   const dispatch = useAppDispatch();
   const hasError = useAppSelector(selectHasUniqueNameError);
   const monomers = useAppSelector(selectFilteredMonomers);
@@ -48,7 +48,7 @@ export const RnaBuilder = () => {
   return (
     <RnaBuilderContainer>
       <RnaEditor />
-      <RnaAccordion />
+      <RnaAccordion libraryName={libraryName} />
       <Modal isOpen={hasError} title="Error Message" onClose={closeErrorModal}>
         <Modal.Content>
           Preset with name "{activePreset?.name}" already exists. Please choose

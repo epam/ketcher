@@ -193,8 +193,8 @@ test.describe('Atom Properties', () => {
       Label type-in field, filled with the data for the clicked atom;
       information 'Number' field with a number of atoms in the Periodic table, filled with the data for the clicked atom;
       Alias type-in field;
-      Charge type-in field, filled with "0" by default;
-      Isotope type-in field, filled with "0" by default;
+      Charge type-in field;
+      Isotope type-in field;
       Valence drop-down list (with the following values: blank, I, II, III, IV, V, VI, VII, VIII);
       Radical drop-down list (with the following values: blank, Monoradical, Diradical (singlet), Diradical (triplet)).
       'Query specific' tab with:
@@ -220,8 +220,8 @@ test.describe('Atom Properties', () => {
       Label type-in field, filled with the data for the clicked atom;
       information 'Number' field with a number of atoms in the Periodic table, filled with the data for the clicked atom;
       Alias type-in field;
-      Charge type-in field, filled with "0" by default;
-      Isotope type-in field, filled with "0" by default;
+      Charge type-in field;
+      Isotope type-in field;
       Valence drop-down list (with the following values: blank, I, II, III, IV, V, VI, VII, VIII);
       Radical drop-down list (with the following values: blank, Monoradical, Diradical (singlet), Diradical (triplet)).
       'Query specific' tab with:

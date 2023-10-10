@@ -18,31 +18,33 @@ import {
 import { addTextBoxToCanvas } from '@utils/selectors/addTextBoxToCanvas';
 
 async function createSomeStructure(page: Page) {
-  const a = 97;
-  const b = 79;
-  const c = 943;
-  const d = 114;
-  const e = 844;
-  const f = 579;
-  const g = 66;
-  const h = 611;
-  await page.mouse.move(a, b);
+  const point = { x: 97, y: 79 };
+  const point1 = { x: 943, y: 114 };
+  const point2 = { x: 844, y: 579 };
+  const point3 = { x: 66, y: 611 };
+  await page.mouse.move(point.x, point.y);
   await page.mouse.down();
-  await page.mouse.move(c, d);
-  await page.mouse.move(e, f);
-  await page.mouse.move(g, h);
+  await page.mouse.move(point1.x, point1.y);
+  await page.mouse.move(point2.x, point2.y);
+  await page.mouse.move(point3.x, point3.y);
   await page.mouse.up();
 }
 
 async function createSomeMovement(page: Page) {
-  const i = 656;
-  const j = 359;
-  const k = 906;
-  const l = 245;
-  await page.mouse.move(i, j);
+  const point = { x: 656, y: 359 };
+  const point1 = { x: 906, y: 245 };
+  await page.mouse.move(point.x, point.y);
   await page.mouse.down();
-  await dragMouseTo(k, l, page);
+  await dragMouseTo(point1.x, point1.y, page);
   await page.mouse.up();
+}
+
+async function performUndoRedo(page: Page) {
+  await waitForRender(page, async () => {
+    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await selectTopPanelButton(TopPanelButton.Redo, page);
+    await selectTopPanelButton(TopPanelButton.Undo, page);
+  });
 }
 
 test.describe('Text tools test cases', () => {
@@ -56,7 +58,7 @@ test.describe('Text tools test cases', () => {
 
   test('Text tool - Modify the created text object', async ({ page }) => {
     // Test case: EPMLSOPKET-2228
-    // Checking if possible is modify created text object by adding some extra symbols
+    // Verify if possible is modify created text object by adding some extra symbols
     await addTextBoxToCanvas(page);
     await page.getByRole('dialog').getByRole('textbox').fill('TEST');
     await pressButton(page, 'Apply');
@@ -75,11 +77,7 @@ test.describe('Text tools test cases', () => {
     await pressButton(page, 'Apply');
     await selectLeftPanelButton(LeftPanelButton.Erase, page);
     await page.getByText('TEST').click();
-    await waitForRender(page, async () => {
-      await selectTopPanelButton(TopPanelButton.Undo, page);
-      await selectTopPanelButton(TopPanelButton.Redo, page);
-      await selectTopPanelButton(TopPanelButton.Undo, page);
-    });
+    await performUndoRedo(page);
   });
 
   // Delete created text object with and Lasso Selection Tool and 'Delete' button on a keyboard
@@ -91,11 +89,7 @@ test.describe('Text tools test cases', () => {
     await page.getByText('TEXT').hover();
     await page.getByText('TEXT').click();
     await page.keyboard.press('Delete');
-    await waitForRender(page, async () => {
-      await selectTopPanelButton(TopPanelButton.Undo, page);
-      await selectTopPanelButton(TopPanelButton.Redo, page);
-      await selectTopPanelButton(TopPanelButton.Undo, page);
-    });
+    await performUndoRedo(page);
   });
 
   // Delete created text object in the text editor field
@@ -110,18 +104,14 @@ test.describe('Text tools test cases', () => {
     await page.keyboard.press('Delete');
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
-    await waitForRender(page, async () => {
-      await selectTopPanelButton(TopPanelButton.Undo, page);
-      await selectTopPanelButton(TopPanelButton.Redo, page);
-      await selectTopPanelButton(TopPanelButton.Undo, page);
-    });
+    await performUndoRedo(page);
   });
 
   test('Text tool - Create a single text object by pasting text', async ({
     page,
   }) => {
     // Test case: EPMLSOPKET-2230
-    // Checking if possible is create text object by pasting text
+    // Verify if possible is create text object by pasting text
     await addTextBoxToCanvas(page);
     await page
       .getByRole('dialog')
@@ -146,7 +136,7 @@ test.describe('Text tools test cases', () => {
     const x = 150;
     const y = 145;
     // Test case: EPMLSOPKET-2231 & EPMLSOPKET-2232
-    // Checking if possible is created few text object and modify them
+    // Verify if possible is created few text object and modify them
     await addTextBoxToCanvas(page);
     await page.getByRole('dialog').getByRole('textbox').fill('&&&');
     await pressButton(page, 'Cancel');
@@ -195,11 +185,7 @@ test.describe('Text tools test cases', () => {
     await selectLeftPanelButton(LeftPanelButton.Erase, page);
     await page.getByText('&&&').hover();
     await page.getByText('&&&').click();
-    await waitForRender(page, async () => {
-      await selectTopPanelButton(TopPanelButton.Undo, page);
-      await selectTopPanelButton(TopPanelButton.Redo, page);
-      await selectTopPanelButton(TopPanelButton.Undo, page);
-    });
+    await performUndoRedo(page);
   });
 
   test('Text tool - Delete with and Lasso Selection Tool and "Delete" button on a keyboard', async ({
@@ -211,11 +197,7 @@ test.describe('Text tools test cases', () => {
     await page.getByText(text2).hover();
     await page.getByText(text2).click();
     await page.keyboard.press('Delete');
-    await waitForRender(page, async () => {
-      await selectTopPanelButton(TopPanelButton.Undo, page);
-      await selectTopPanelButton(TopPanelButton.Redo, page);
-      await selectTopPanelButton(TopPanelButton.Undo, page);
-    });
+    await performUndoRedo(page);
   });
 
   test('Text tool - Delete two objects with Erase and Lasso Selection Tool and "Delete" button on a keyboard', async ({
@@ -225,25 +207,19 @@ test.describe('Text tools test cases', () => {
     await clickInTheMiddleOfTheScreen(page);
     await page.keyboard.press('Control+a');
     await page.getByTestId('erase').click();
-    await selectTopPanelButton(TopPanelButton.Undo, page);
-    await selectTopPanelButton(TopPanelButton.Redo, page);
-    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await performUndoRedo(page);
     await takeEditorScreenshot(page);
     await selectDropdownTool(page, 'select-rectangle', 'select-lasso');
     await createSomeStructure(page);
     await page.keyboard.press('Delete');
-    await waitForRender(page, async () => {
-      await selectTopPanelButton(TopPanelButton.Undo, page);
-      await selectTopPanelButton(TopPanelButton.Redo, page);
-      await selectTopPanelButton(TopPanelButton.Undo, page);
-    });
+    await performUndoRedo(page);
   });
 
   test('Text tool - Manipulations with the created text object', async ({
     page,
   }) => {
     // Test case: EPMLSOPKET-2234
-    // Checking if possible to modify created ealier text object and moving it with use Selection Tool
+    // Verify if possible is to modify created ealier text object and moving it with use Selection Tool
     await addTextBoxToCanvas(page);
     const text3 = 'Test123';
     await page.getByRole('dialog').getByRole('textbox').fill(text3);
@@ -260,7 +236,7 @@ test.describe('Text tools test cases', () => {
   test('Text tool - Manipulations with the another created text object', async ({
     page,
   }) => {
-    // Checking if possible is perform different manipulations with text objects using different tools (zoom)
+    // Verify if possible is perform different manipulations with text objects using different tools (zoom)
     const numberOfPressZoomOut = 2;
     const numberOfPressZoomIn = 2;
     const text4 = 'ABC123';
@@ -293,7 +269,7 @@ test.describe('Text tools test cases', () => {
     const x = 500;
     const y = 250;
     // Test case: EPMLSOPKET-2236
-    // Checking if all created and selected elements are moved together
+    // Verify if all created and selected elements are moved together
     await addTextBoxToCanvas(page);
     await page.getByRole('dialog').getByRole('textbox').fill('OneTwoThree');
     await pressButton(page, 'Apply');

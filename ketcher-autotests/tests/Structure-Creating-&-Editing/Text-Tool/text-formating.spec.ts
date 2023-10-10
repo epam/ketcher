@@ -1,4 +1,4 @@
-import { Page, test } from '@playwright/test';
+import { Page, test, expect } from '@playwright/test';
 import {
   takeEditorScreenshot,
   selectTopPanelButton,
@@ -14,7 +14,9 @@ import {
   copyAndPaste,
   cutAndPaste,
   waitForRender,
+  receiveFileComparisonData,
 } from '@utils';
+import { getKet } from '@utils/formats';
 import { addTextBoxToCanvas } from '@utils/selectors/addTextBoxToCanvas';
 
 async function openFromFileViaTextBox(filename: string, page: Page) {
@@ -38,7 +40,7 @@ test.describe('Text tools test cases', () => {
 
   test('Text tool - Font size', async ({ page }) => {
     // Test case:EPMLSOPKET-2885
-    // Checking if possible is changing font size on the created text object
+    // Verify if possible is changing font size on the created text object
     await addTextBoxToCanvas(page);
     await page.getByRole('dialog').getByRole('textbox').fill('TEST');
     await page.keyboard.press('Control+a');
@@ -55,7 +57,7 @@ test.describe('Text tools test cases', () => {
 
   test('Text tool - Applying styles - Bold', async ({ page }) => {
     // Test case: EPMLSOPKET-2256
-    // Checking if possible to put bold style on the created text object
+    // Verify if possible to put bold style on the created text object
     await addTextBoxToCanvas(page);
     await page.getByRole('dialog').getByRole('textbox').fill('ABC');
     await page.keyboard.press('Control+a');
@@ -70,7 +72,7 @@ test.describe('Text tools test cases', () => {
 
   test('Text tool - Applying styles - Italic', async ({ page }) => {
     // Test case: EPMLSOPKET-2257
-    // Checking if possible to put Italic style on the created text object
+    // Verify if possible to put Italic style on the created text object
     await addTextBoxToCanvas(page);
     await page.getByRole('dialog').getByRole('textbox').fill('ABCDE');
     await page.keyboard.press('Control+a');
@@ -85,7 +87,7 @@ test.describe('Text tools test cases', () => {
 
   test('Text tool - Applying styles - Subscript', async ({ page }) => {
     // Test case: EPMLSOPKET-2258
-    // Checking if possible to put Subscript style on the created text object
+    // Verify if possible to put Subscript style on the created text object
     await addTextBoxToCanvas(page);
     await page.getByRole('dialog').getByRole('textbox').fill('ABC123');
     await page.keyboard.press('Control+a');
@@ -100,7 +102,7 @@ test.describe('Text tools test cases', () => {
 
   test('Text tool -  Applying styles - Superscript', async ({ page }) => {
     // Test case: EPMLSOPKET-2259
-    // Checking if possible to put Superscript style on the created text object
+    // Verify if possible to put Superscript style on the created text object
     await addTextBoxToCanvas(page);
     await page.getByRole('dialog').getByRole('textbox').fill('ABC123');
     await page.keyboard.press('Control+a');
@@ -117,7 +119,7 @@ test.describe('Text tools test cases', () => {
     page,
   }) => {
     // Test case: EPMLSOPKET-2260
-    // Checking if possible to put different styles on the created text object
+    // Verify if possible to put different styles on the created text object
     await addTextBoxToCanvas(page);
     await page.getByRole('dialog').getByRole('textbox').fill('TEST123');
     await page.keyboard.press('Control+a');
@@ -134,9 +136,11 @@ test.describe('Text tools test cases', () => {
     await pressButton(page, 'Apply');
   });
 
-  test('Text tool - Save as .ket file', async ({ page }) => {
+  test('Text tool - Create text object and save it as .ket file', async ({
+    page,
+  }) => {
     // Test case: EPMLSOPKET-2235
-    // Checking if possible to put different styles on the created text object
+    // Verify if possible to put different styles on the created text object
     await addTextBoxToCanvas(page);
     await page.getByRole('dialog').getByRole('textbox').fill('TEST321');
     await pressButton(page, 'Apply');
@@ -146,14 +150,25 @@ test.describe('Text tools test cases', () => {
     await page.getByText('20', { exact: true }).click();
     await page.getByRole('button', { name: 'bold' }).click();
     await pressButton(page, 'Apply');
-    await takeEditorScreenshot(page);
-    await saveToFile('ketfile01.ket', 'ketFile');
-    await waitForRender(page, async () => {
-      await selectTopPanelButton(TopPanelButton.Clear, page);
-    });
+  });
+
+  test('Text Tool - Saving text object as a .ket file', async ({ page }) => {
+    // Test case: EPMLSOPKET-2235
+    await openFileAndAddToCanvas('KET/ketfile01.ket', page);
+    const expectedFile = await getKet(page);
+    await saveToFile('KET/ketfile01-expected.ket', expectedFile);
+
+    const { fileExpected: ketFileExpected, file: ketFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName: 'tests/test-data/KET/ketfile01-expected.ket',
+      });
+
+    expect(ketFile).toEqual(ketFileExpected);
   });
 
   test('Text tool - Open saved .ket file', async ({ page }) => {
+    // Test case: EPMLSOPKET-2235
     await selectTopPanelButton(TopPanelButton.Open, page);
     await openFromFileViaClipboard('tests/test-data/KET/ketfile01.ket', page);
     await clickInTheMiddleOfTheScreen(page);
@@ -168,14 +183,14 @@ test.describe('Text tools test cases', () => {
 
   test('Text tool - Cut/Copy/Paste', async ({ page }) => {
     // Test case: EPMLSOPKET-2272
-    // Checking if user is able to copy and paste the created text objects
+    // Verify if user is able to copy and paste the created text objects
     const x = 250;
     const y = 300;
     await addTextBoxToCanvas(page);
     await page.getByRole('dialog').getByRole('textbox').fill('TEXT001');
     await pressButton(page, 'Apply');
     await copyAndPaste(page);
-    await page.getByTestId('canvas').click({ position: { x, y } });
+    await page.mouse.click(x, y);
   });
 
   test('Text tool - Checking if user is able to cut and paste the created text objects', async ({
@@ -198,7 +213,7 @@ test.describe('Text tools test cases', () => {
     page,
   }) => {
     // Test case: EPMLSOPKET-2274
-    // Checking if its possible to select a text objects of any size by clicking on green frame
+    // Verify if its possible to select a text objects of any size by clicking on green frame
     await openFileAndAddToCanvas('KET/text-object.ket', page);
     await page.getByText('TEXT').dblclick();
     await page.getByRole('dialog').getByRole('textbox').click();
@@ -228,7 +243,7 @@ test.describe('Text tools test cases', () => {
     page,
   }) => {
     // Test case: EPMLSOPKET-5253
-    // Checking if possible is add UTF-8 data format  to canvas
+    // Verify if possible is add UTF-8 data format  to canvas
     await selectTopPanelButton(TopPanelButton.Open, page);
     await openFromFileViaClipboard(
       'tests/test-data/KET/utf-8-svg-png.ket',

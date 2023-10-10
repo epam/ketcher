@@ -6,11 +6,12 @@ import {
   openDropdown,
   selectDropdownTool,
   takeLeftToolbarScreenshot,
+  waitForPageInit,
 } from '@utils';
 
 test.describe('Left toolbar UI tests', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test('left toolbar ui verification', async ({ page }) => {

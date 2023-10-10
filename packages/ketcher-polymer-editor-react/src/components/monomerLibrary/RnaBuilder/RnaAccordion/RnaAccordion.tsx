@@ -27,6 +27,7 @@ import {
   getMonomerUniqueKey,
   selectFilteredMonomers,
   selectMonomerGroups,
+  selectMonomersInCategory,
 } from 'state/library';
 import {
   DetailsContainer,
@@ -69,11 +70,12 @@ interface IGroupsDataItem {
   }[];
 }
 
-export const RnaAccordion = () => {
+export const RnaAccordion = ({ libraryName }) => {
   const monomers = useAppSelector(selectFilteredMonomers);
+  const items = selectMonomersInCategory(monomers, libraryName);
   const activeRnaBuilderItem = useAppSelector(selectActiveRnaBuilderItem);
   const activePreset = useAppSelector(selectActivePreset);
-  const groups = selectMonomerGroups(monomers);
+  const groups = selectMonomerGroups(items);
   const presets = useAppSelector(selectPresets);
   const isEditMode = useAppSelector(selectIsEditMode);
   const editor = useAppSelector(selectEditor);

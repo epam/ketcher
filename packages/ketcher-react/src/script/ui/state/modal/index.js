@@ -49,12 +49,21 @@ function modalReducer(state = null, action) {
 
   switch (type) {
     case 'MODAL_CLOSE':
+      if (state?.parentModal) {
+        state.parentModal.prop = {
+          ...state.parentModal.prop,
+          ...state.parentModal.form.result,
+          isRestoredModal: true,
+        };
+        return state.parentModal;
+      }
       return null;
     case 'MODAL_OPEN':
       return {
         name: data.name,
         form: formsState[data.name] || null,
         prop: data.prop || null,
+        parentModal: data.prop?.isNestedModal ? state : null,
       };
     default:
       return state;

@@ -10,6 +10,7 @@ import {
   STRUCTURE_LIBRARY_BUTTON_NAME,
   pressButton,
 } from '@utils';
+import { ElementLabel } from 'ketcher-core';
 
 export enum SaltsAndSolvents {
   AceticAcid = 'acetic acid',
@@ -105,11 +106,11 @@ export async function selectSaltsAndSolvents(
     .first();
   await expect(
     page.locator('[data-testid*="templates-modal"] > div'),
-  ).toHaveCount(amountOfSaltsAndSolvents);
-  await saltsButton.click();
-  await expect(page.getByTestId('templates-modal')).toHaveCount(0, {
-    timeout: 20000,
+  ).toHaveCount(amountOfSaltsAndSolvents, {
+    timeout: 30000,
   });
+  await saltsButton.click();
+  await expect(page.getByTestId('templates-modal')).toHaveCount(0);
 }
 
 export async function selectFunctionalGroups(
@@ -124,11 +125,11 @@ export async function selectFunctionalGroups(
     .first();
   await expect(
     page.locator('[data-testid*="templates-modal"] > div'),
-  ).toHaveCount(amountOfFunctionalGroups);
-  await functionalGroupButton.click();
-  await expect(page.getByTestId('templates-modal')).toHaveCount(0, {
-    timeout: 20000,
+  ).toHaveCount(amountOfFunctionalGroups, {
+    timeout: 30000,
   });
+  await functionalGroupButton.click();
+  await expect(page.getByTestId('templates-modal')).toHaveCount(0);
 }
 
 export async function selectUserTemplate(
@@ -240,4 +241,19 @@ export async function fillFieldByPlaceholder(
 ) {
   await page.getByPlaceholder(fieldLabel).click();
   await page.getByPlaceholder(fieldLabel).fill(testValue);
+}
+
+export async function selectAtomsFromPeriodicTable(
+  page: Page,
+  selectlisting: 'List' | 'Not List',
+  elements: ElementLabel[],
+) {
+  await page.getByTestId('period-table').click();
+  await page.getByText(selectlisting, { exact: true }).click();
+
+  for (const element of elements) {
+    await page.getByTestId(`${element}-button`).click();
+  }
+
+  await page.getByTestId('OK').click();
 }

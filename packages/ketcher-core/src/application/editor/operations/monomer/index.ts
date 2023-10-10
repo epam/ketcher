@@ -16,19 +16,19 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
 import { RenderersManager } from 'application/render/renderers/RenderersManager';
-import { Peptide } from 'domain/entities/Peptide';
+import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { Operation } from 'domain/entities/Operation';
 
 export class MonomerAddOperation implements Operation {
-  constructor(private peptide: Peptide, private callback?: () => void) {}
+  constructor(private monomer: BaseMonomer, private callback?: () => void) {}
 
   public execute(renderersManager: RenderersManager) {
-    renderersManager.addMonomer(this.peptide, this.callback);
+    renderersManager.addMonomer(this.monomer, this.callback);
   }
 }
 
 export class MonomerMoveOperation implements Operation {
-  constructor(private peptide: Peptide) {}
+  constructor(private peptide: BaseMonomer) {}
 
   public execute(renderersManager: RenderersManager) {
     renderersManager.moveMonomer(this.peptide);
@@ -37,7 +37,7 @@ export class MonomerMoveOperation implements Operation {
 
 export class MonomerHoverOperation implements Operation {
   constructor(
-    private peptide: Peptide,
+    private peptide: BaseMonomer,
     private needRedrawAttachmentPoints: boolean,
   ) {}
 
@@ -50,7 +50,7 @@ export class MonomerHoverOperation implements Operation {
 }
 
 export class MonomerDeleteOperation implements Operation {
-  constructor(private peptide: Peptide) {}
+  constructor(private peptide: BaseMonomer) {}
 
   public execute(renderersManager: RenderersManager) {
     renderersManager.deleteMonomer(this.peptide);

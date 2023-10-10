@@ -24,6 +24,7 @@ import {
   SupportedFormat,
   emitEventRequestIsFinished,
   Editor,
+  KetcherLogger,
 } from 'ketcher-core';
 
 import { supportedSGroupTypes } from './constants';
@@ -131,10 +132,7 @@ export function load(struct: Struct, options?) {
         const oldStruct = editor.struct().clone();
         parsedStruct.sgroups.forEach((sg, sgId) => {
           const sgroup = oldStruct.sgroups.get(sgId);
-          if (!sgroup) {
-            throw Error('Incorrect sgroupId provided');
-          }
-          const offset = SGroup.getOffset(sgroup);
+          const offset = sgroup ? SGroup.getOffset(sgroup) : null;
           const atomSet = new Pile(sg.atoms);
           const crossBonds = SGroup.getCrossBonds(parsedStruct, atomSet);
           SGroup.bracketPos(sg, parsedStruct, crossBonds);
@@ -182,9 +180,10 @@ export function load(struct: Struct, options?) {
 
       dispatch(setAnalyzingFile(false));
       dispatch({ type: 'MODAL_CLOSE' });
-    } catch (err: any) {
+    } catch (e: any) {
+      KetcherLogger.error('shared.ts::load', e);
       dispatch(setAnalyzingFile(false));
-      err && errorHandler && errorHandler(err.message);
+      e && errorHandler && errorHandler(e.message);
     } finally {
       emitEventRequestIsFinished();
     }

@@ -24,6 +24,7 @@ import {
 import { Elements } from 'domain/constants';
 import common from './common';
 import utils from './utils';
+import { KetcherLogger } from 'utilities';
 
 const END_V2000 = '2D 1   1.00000     0.00000     0';
 
@@ -88,9 +89,10 @@ export class Molfile {
 
         try {
           common.prepareForSaving[sgroup.type](sgroup, mol);
-        } catch (ex: any) {
-          if (!skipErrors || typeof ex.id !== 'number') {
-            throw new Error(`Error: ${ex.message}`);
+        } catch (e: any) {
+          KetcherLogger.error('molfile.ts::Molfile::prepareSGroups', e);
+          if (!skipErrors || typeof e.id !== 'number') {
+            throw new Error(`Error: ${e.message}`);
           }
           errorIgnore = true;
         }
@@ -349,10 +351,10 @@ export class Molfile {
     const substcountList: NumberTuple[] = [];
 
     this.molecule!.atoms.forEach((atom, id) => {
-      if (atom.charge !== 0) {
+      if (atom.charge !== 0 && atom.charge !== null) {
         chargeList.push([id, atom.charge]);
       }
-      if (atom.isotope !== 0) {
+      if (atom.isotope !== 0 && atom.isotope !== null) {
         isotopeList.push([id, atom.isotope]);
       }
       if (atom.radical !== 0) {

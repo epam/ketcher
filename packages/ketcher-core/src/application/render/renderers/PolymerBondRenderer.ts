@@ -250,6 +250,7 @@ export class PolymerBondRenderer extends BaseRenderer {
         DOUBLE_CORNER_LENGTH + LINE_FROM_MONOMER_LENGTH + this.getMonomerWidth()
     );
   }
+
   private isSecondMonomerLeft(startPosition, endPosition): boolean {
     return (
       startPosition.y - endPosition.y < 0 &&

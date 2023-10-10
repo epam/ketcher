@@ -134,6 +134,10 @@ const config: PlaywrightTestConfig = {
         ...devices['Desktop Chrome'],
         launchOptions: {
           headless: true,
+          args: [
+            '--unsafely-treat-insecure-origin-as-secure=http://host.docker.internal:4002',
+            '--disable-web-security',
+          ],
         },
       },
     },

@@ -44,7 +44,7 @@ import {
   scrollToSelectedPreset,
 } from 'components/monomerLibrary/RnaBuilder/RnaEditor/RnaEditor';
 import { getMonomerUniqueKey } from 'state/library';
-import { useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 
 export const RnaEditorExpanded = ({
   name,
@@ -89,7 +89,7 @@ export const RnaEditorExpanded = ({
     }
   }, [activeMonomerGroup, activePresetFullName, editedPresetName]);
 
-  onChangeName = (event) => {
+  onChangeName = (event: ChangeEvent<HTMLInputElement>) => {
     if (isEditMode) {
       const newPresetName = event.target.value;
       setPresetName(newPresetName);

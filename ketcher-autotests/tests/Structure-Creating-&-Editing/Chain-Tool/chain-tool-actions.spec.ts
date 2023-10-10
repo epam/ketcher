@@ -13,6 +13,7 @@ import {
   receiveFileComparisonData,
   clickOnAtom,
   waitForRender,
+  clickInTheMiddleOfTheScreen,
 } from '@utils';
 import { getMolfile } from '@utils/formats';
 
@@ -99,6 +100,7 @@ test.describe('Chain Tool verification', () => {
       await dragMouseTo(c, d, page);
       await page.keyboard.press('Delete');
     });
+    await clickInTheMiddleOfTheScreen(page);
   });
 
   test('Chain Tool - order of Hydrogen symbol in abbreviation of the atoms when adding them to the structure', async ({

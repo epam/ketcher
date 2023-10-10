@@ -26,6 +26,7 @@ import { RenderOptions, ViewBox } from './render.types';
 import _ from 'lodash';
 import { KetcherLogger } from 'utilities';
 import { CoordinateTransformation } from './coordinateTransformation';
+import { Scrollbar } from './scrollbar';
 
 const notifyRenderComplete = _.debounce(() => {
   const event = new Event('renderComplete');
@@ -44,6 +45,7 @@ export class Render {
   public viewBox!: ViewBox;
   private readonly userOpts: RenderOptions;
   private oldCb: Box2Abs | null = null;
+  private scrollbar: Scrollbar;
 
   constructor(clientArea: HTMLElement, options: RenderOptions) {
     let renderWidth = options.width || clientArea.clientWidth - 10;
@@ -56,13 +58,14 @@ export class Render {
     this.paper = new Raphael(clientArea, renderWidth, renderHeight);
     this.sz = new Vec2(renderWidth, renderHeight);
     this.ctab = new ReStruct(new Struct(), this);
+    this.options = defaultOptions(this.userOpts);
+    this.scrollbar = new Scrollbar(this);
     this.setViewBox({
       minX: 0,
       minY: 0,
       width: renderWidth,
       height: renderHeight,
     });
-    this.options = defaultOptions(this.userOpts);
   }
 
   updateOptions(opts: string) {
@@ -195,6 +198,7 @@ export class Render {
       'viewBox',
       `${newViewBox.minX} ${newViewBox.minY} ${newViewBox.width} ${newViewBox.height}`,
     );
+    this.scrollbar.update();
   }
 
   setMolecule(struct: Struct) {
@@ -256,6 +260,7 @@ export class Render {
         );
       }
 
+      this.scrollbar.update();
       notifyRenderComplete();
     }
   }

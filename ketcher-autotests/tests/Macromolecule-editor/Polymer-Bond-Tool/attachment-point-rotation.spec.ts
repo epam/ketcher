@@ -34,6 +34,7 @@ test.describe('Check attachment point rotation', () => {
       MONOMER_ALIAS,
       300,
       300,
+      0,
     );
 
     const peptide2 = await addMonomerToCanvas(
@@ -42,6 +43,7 @@ test.describe('Check attachment point rotation', () => {
       MONOMER_ALIAS,
       400,
       400,
+      1,
     );
 
     const peptide3 = await addMonomerToCanvas(
@@ -50,6 +52,7 @@ test.describe('Check attachment point rotation', () => {
       MONOMER_ALIAS,
       500,
       500,
+      2,
     );
 
     const peptide4 = await addMonomerToCanvas(
@@ -58,6 +61,7 @@ test.describe('Check attachment point rotation', () => {
       MONOMER_ALIAS,
       500,
       200,
+      3,
     );
 
     // Select bond tool
@@ -97,6 +101,7 @@ test.describe('Check attachment point rotation', () => {
       MONOMER_ALIAS,
       300,
       300,
+      0,
     );
     const peptide2 = await addMonomerToCanvas(
       page,
@@ -104,6 +109,7 @@ test.describe('Check attachment point rotation', () => {
       MONOMER_ALIAS,
       400,
       400,
+      1,
     );
 
     // Select bond tool

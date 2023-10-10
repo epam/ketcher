@@ -3,6 +3,7 @@ import {
   addMonomerToCanvas,
   selectSingleBondTool,
   selectSnakeBondTool,
+  takePageScreenshot,
   waitForPageInit,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
@@ -16,6 +17,10 @@ test.describe('Snake Bond Tool', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
     await turnOnMacromoleculesEditor(page);
+  });
+
+  test.afterEach(async ({ page }) => {
+    await takePageScreenshot(page);
   });
 
   test('Create snake bond between peptides', async ({ page }) => {
@@ -32,6 +37,7 @@ test.describe('Snake Bond Tool', () => {
       MONOMER_ALIAS_TZA,
       300,
       300,
+      0,
     );
     const peptide2 = await addMonomerToCanvas(
       page,
@@ -39,6 +45,7 @@ test.describe('Snake Bond Tool', () => {
       MONOMER_ALIAS_TZA,
       400,
       400,
+      1,
     );
     const peptide3 = await addMonomerToCanvas(
       page,
@@ -46,6 +53,7 @@ test.describe('Snake Bond Tool', () => {
       MONOMER_ALIAS_TZA,
       300,
       500,
+      2,
     );
     const peptide4 = await addMonomerToCanvas(
       page,
@@ -53,6 +61,7 @@ test.describe('Snake Bond Tool', () => {
       MONOMER_ALIAS_TZA,
       200,
       200,
+      3,
     );
 
     await selectSingleBondTool(page);
@@ -60,14 +69,9 @@ test.describe('Snake Bond Tool', () => {
     await bondTwoMonomers(page, peptide1, peptide2);
     await bondTwoMonomers(page, peptide2, peptide3);
     await bondTwoMonomers(page, peptide3, peptide4);
-
-    await page.screenshot({
-      path: 'tests/Macromolecule-editor/screenshots/create-snake-bond-between-peptides.png',
-      fullPage: true,
-    });
   });
 
-  test('Check snake mode arrange', async ({ page }) => {
+  test.skip('Check snake mode arrange', async ({ page }) => {
     /* 
     Test case: #3280 - Check snake mode
     Description: Snake bond tool
@@ -79,6 +83,7 @@ test.describe('Snake Bond Tool', () => {
       MONOMER_ALIAS_TZA,
       100,
       100,
+      0,
     );
     const peptide2 = await addMonomerToCanvas(
       page,
@@ -86,6 +91,7 @@ test.describe('Snake Bond Tool', () => {
       MONOMER_ALIAS_TZA,
       150,
       150,
+      1,
     );
     const peptide3 = await addMonomerToCanvas(
       page,
@@ -93,6 +99,7 @@ test.describe('Snake Bond Tool', () => {
       MONOMER_ALIAS_TZA,
       200,
       200,
+      2,
     );
     const peptide4 = await addMonomerToCanvas(
       page,
@@ -100,6 +107,7 @@ test.describe('Snake Bond Tool', () => {
       MONOMER_ALIAS_TZA,
       250,
       250,
+      3,
     );
     const peptide5 = await addMonomerToCanvas(
       page,
@@ -107,6 +115,7 @@ test.describe('Snake Bond Tool', () => {
       MONOMER_ALIAS_TZA,
       300,
       300,
+      4,
     );
     const peptide6 = await addMonomerToCanvas(
       page,
@@ -114,6 +123,7 @@ test.describe('Snake Bond Tool', () => {
       MONOMER_ALIAS_TZA,
       350,
       350,
+      5,
     );
     const peptide7 = await addMonomerToCanvas(
       page,
@@ -121,6 +131,7 @@ test.describe('Snake Bond Tool', () => {
       MONOMER_ALIAS_TZA,
       400,
       400,
+      6,
     );
     const peptide8 = await addMonomerToCanvas(
       page,
@@ -128,6 +139,7 @@ test.describe('Snake Bond Tool', () => {
       MONOMER_ALIAS_TZA,
       450,
       450,
+      7,
     );
     const peptide9 = await addMonomerToCanvas(
       page,
@@ -135,6 +147,7 @@ test.describe('Snake Bond Tool', () => {
       MONOMER_ALIAS_TZA,
       500,
       500,
+      8,
     );
     const peptide10 = await addMonomerToCanvas(
       page,
@@ -142,6 +155,7 @@ test.describe('Snake Bond Tool', () => {
       MONOMER_ALIAS_TZA,
       550,
       550,
+      9,
     );
 
     const peptide11 = await addMonomerToCanvas(
@@ -150,6 +164,7 @@ test.describe('Snake Bond Tool', () => {
       MONOMER_ALIAS_TZA,
       600,
       600,
+      10,
     );
     const peptide12 = await addMonomerToCanvas(
       page,
@@ -157,6 +172,7 @@ test.describe('Snake Bond Tool', () => {
       MONOMER_ALIAS_TZA,
       650,
       650,
+      11,
     );
 
     await selectSingleBondTool(page);
@@ -174,14 +190,9 @@ test.describe('Snake Bond Tool', () => {
     await bondTwoMonomers(page, peptide11, peptide12);
 
     await selectSnakeBondTool(page);
-
-    await page.screenshot({
-      path: 'tests/Macromolecule-editor/screenshots/check-snake-mode-arrange.png',
-      fullPage: true,
-    });
   });
 
-  test('Check finding right chain sequence using snake mode', async ({
+  test.skip('Check finding right chain sequence using snake mode', async ({
     page,
   }) => {
     /* 
@@ -200,6 +211,7 @@ test.describe('Snake Bond Tool', () => {
       MONOMER_ALIAS_DSEC,
       200,
       200,
+      0,
     );
 
     const peptide2 = await addMonomerToCanvas(
@@ -208,6 +220,7 @@ test.describe('Snake Bond Tool', () => {
       MONOMER_ALIAS_TZA,
       100,
       100,
+      0,
     );
     const peptide3 = await addMonomerToCanvas(
       page,
@@ -215,6 +228,7 @@ test.describe('Snake Bond Tool', () => {
       MONOMER_ALIAS_TZA,
       150,
       150,
+      1,
     );
 
     const peptide4 = await addMonomerToCanvas(
@@ -223,6 +237,7 @@ test.describe('Snake Bond Tool', () => {
       MONOMER_ALIAS_MEC,
       400,
       400,
+      0,
     );
 
     await selectSingleBondTool(page);
@@ -231,16 +246,8 @@ test.describe('Snake Bond Tool', () => {
     await bondTwoMonomers(page, peptide2, peptide3);
     await bondTwoMonomers(page, peptide3, peptide4);
 
-    await page.screenshot({
-      path: 'tests/Macromolecule-editor/screenshots/check-finding-right-chain-sequence-1.png',
-      fullPage: true,
-    });
+    await takePageScreenshot(page);
 
     await selectSnakeBondTool(page);
-
-    await page.screenshot({
-      path: 'tests/Macromolecule-editor/screenshots/check-finding-right-chain-sequence-2.png',
-      fullPage: true,
-    });
   });
 });

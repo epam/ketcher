@@ -49,22 +49,21 @@ export const RnaBuilder = ({ libraryName }) => {
     dispatch(setDefaultPresets(defaultPresets));
   }, [dispatch]);
 
-  const duplicatePreset = (preset?: IRnaPreset) => {
-    const currentPreset = preset || activePreset;
+  const duplicatePreset = () => {
     const duplicatedPreset = {
-      ...currentPreset,
+      ...activePreset,
       presetInList: undefined,
-      name: `${currentPreset.name}_Copy`,
+      name: `${activePreset.name}_Copy`,
       default: false,
     };
     dispatch(setActivePreset(duplicatedPreset));
     dispatch(savePreset(duplicatedPreset));
-    setIsEditMode(true);
+    dispatch(setIsEditMode(true));
     scrollToSelectedPreset(activePreset.name);
   };
 
   const activateEditMode = () => {
-    setIsEditMode(true);
+    dispatch(setIsEditMode(true));
   };
 
   return (

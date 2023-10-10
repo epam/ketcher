@@ -98,17 +98,6 @@ export const RnaAccordion = ({
     } else setExpandedAccordion(rnaBuilderItem);
   };
 
-  const handleContextMenu = (preset: IRnaPreset) => (event: TriggerEvent) => {
-    show({
-      event,
-      props: {
-        duplicatePreset,
-        activateEditMode,
-        preset,
-      },
-    });
-  };
-
   const groupsData: IGroupsDataItem[] = [
     {
       groupName: RnaBuilderPresetsItem.Presets,
@@ -150,6 +139,17 @@ export const RnaAccordion = ({
 
     dispatch(setActivePresetMonomerGroup({ groupName, groupItem: monomer }));
     dispatch(setActiveRnaBuilderItem(groupName));
+  };
+
+  const handleContextMenu = (preset: IRnaPreset) => (event: TriggerEvent) => {
+    dispatch(setActivePreset(preset));
+    show({
+      event,
+      props: {
+        duplicatePreset,
+        activateEditMode,
+      },
+    });
   };
 
   useEffect(() => {

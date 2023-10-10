@@ -17,7 +17,13 @@ import { Modal } from 'components/shared/modal';
 import { useCallback } from 'react';
 import { ActionButton } from 'components/shared/actionButton';
 import { useAppDispatch, useAppSelector } from 'hooks';
-import { deletePreset, selectActivePreset } from 'state/rna-builder';
+import {
+  deletePreset,
+  selectActivePreset,
+  selectPresets,
+  setActivePreset,
+  setIsEditMode,
+} from 'state/rna-builder';
 
 export interface Props {
   onClose: () => void;
@@ -26,6 +32,7 @@ export interface Props {
 
 const Delete = ({ isModalOpen, onClose }: Props) => {
   const dispatch = useAppDispatch();
+  const presets = useAppSelector(selectPresets);
   const activePreset = useAppSelector(selectActivePreset);
   const onCloseCallback = useCallback(() => {
     onClose();
@@ -38,6 +45,10 @@ const Delete = ({ isModalOpen, onClose }: Props) => {
   const deleteHandler = () => {
     onCloseCallback();
     dispatch(deletePreset(activePreset));
+    dispatch(setIsEditMode(false));
+    if (presets.length !== 0) {
+      dispatch(setActivePreset(presets[0]));
+    }
   };
 
   return (

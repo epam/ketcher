@@ -1,18 +1,13 @@
-import {
-  Item,
-  ItemParams,
-  Menu,
-  PredicateParams,
-  Separator,
-} from 'react-contexify';
+import { Item, ItemParams, Menu, Separator } from 'react-contexify';
 import { openModal } from 'state/modal';
-import { useAppDispatch } from 'hooks';
+import { useAppDispatch, useAppSelector } from 'hooks';
 import { ReactElement } from 'react';
 import { CONTEXT_MENU_ID } from './types';
-import { setActivePreset } from 'state/rna-builder';
+import { selectActivePreset } from 'state/rna-builder';
 
 export const RNAContextMenu = () => {
   const dispatch = useAppDispatch();
+  const activePreset = useAppSelector(selectActivePreset);
   const RNAMenus = [
     { name: 'duplicateandedit', title: 'Duplicate and Edit' },
     { name: 'edit', title: 'Edit', seperator: true },
@@ -20,24 +15,21 @@ export const RNAContextMenu = () => {
   ];
 
   const isItemDisabled = (name: string) => {
-    return ({ props }: PredicateParams) => {
-      if (name === 'deletepreset' && props.preset?.default) {
-        return true;
-      }
-      return false;
-    };
+    if (name === 'deletepreset' && activePreset.default) {
+      return true;
+    }
+    return false;
   };
 
   const handleMenuChange = ({ id, props }: ItemParams) => {
     switch (id) {
       case 'duplicateandedit':
-        props.duplicatePreset(props.preset);
+        props.duplicatePreset();
         break;
       case 'edit':
         props.activateEditMode();
         break;
       case 'deletepreset':
-        dispatch(setActivePreset(props.preset));
         dispatch(openModal('delete'));
         break;
     }

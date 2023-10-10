@@ -408,11 +408,11 @@ export class Struct {
     const sgroup2 = this.getGroupFromAtomId(halfBond.end);
     const startCoords =
       sgroup1 instanceof MonomerMicromolecule
-        ? sgroup1.position
+        ? sgroup1.pp
         : this.atoms.get(halfBond.begin)!.pp;
     const endCoords =
       sgroup2 instanceof MonomerMicromolecule
-        ? sgroup2.position
+        ? sgroup2.pp
         : this.atoms.get(halfBond.end)!.pp;
     const coordsDifference = Vec2.diff(endCoords, startCoords).normalized();
 
@@ -1202,5 +1202,10 @@ export class Struct {
       (_id, attachmentPoint) => attachmentPoint.atomId === atomId,
     );
     return [...rgroupAttachmentPoints.keys()];
+  }
+
+  isAtomFromMacromolecule(atomId: number) {
+    const sgroup = this.getGroupFromAtomId(atomId);
+    return sgroup instanceof MonomerMicromolecule;
   }
 }

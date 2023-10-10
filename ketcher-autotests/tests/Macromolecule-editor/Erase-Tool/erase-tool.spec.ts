@@ -4,6 +4,7 @@ import {
   selectEraseTool,
   selectSingleBondTool,
   takeEditorScreenshot,
+  waitForPageInit,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
@@ -11,9 +12,10 @@ import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 
 test.describe('Erase Tool', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
     await turnOnMacromoleculesEditor(page);
   });
+
   test('Delete monomer bonded with another monomers', async ({ page }) => {
     /* 
     Test case: #2370 - "Erase" tool for macromolecules editor

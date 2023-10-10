@@ -5,6 +5,8 @@ import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import assert from 'assert';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
+import { Sugar } from 'domain/entities/Sugar';
+import { Phosphate } from 'domain/entities/Phosphate';
 import {
   MonomerAddOperation,
   MonomerDeleteOperation,
@@ -217,7 +219,7 @@ export class DrawingEntitiesManager {
     const polymerBond = new PolymerBond(firstMonomer);
     this.polymerBonds.set(polymerBond.id, polymerBond);
     firstMonomer.setPotentialBond(
-      firstMonomer.firstFreeAttachmentPoint,
+      firstMonomer.startBondAttachmentPoint,
       polymerBond,
     );
     polymerBond.moveBondStartAbsolute(startPosition.x, startPosition.y);
@@ -458,16 +460,22 @@ export class DrawingEntitiesManager {
         });
         command.addOperation(monomerAddOperation);
         polymerBond.setSecondMonomer(monomer);
-        assert(previousMonomer.firstFreeAttachmentPoint);
-        assert(monomer.availableAttachmentPointForBondEnd);
-        previousMonomer.setBond(
-          previousMonomer.firstFreeAttachmentPoint,
-          polymerBond,
-        );
-        monomer.setBond(
-          monomer.availableAttachmentPointForBondEnd,
-          polymerBond,
-        );
+
+        // requirements are: Base(R1)-(R3)Sugar(R1)-(R2)Phosphate
+        const attPointStart = previousMonomer.R1AttachmentPoint;
+        let attPointEnd;
+
+        if (monomer instanceof Sugar) {
+          attPointEnd = monomer.isAttachmentPointUsed('R3') ? undefined : 'R3';
+        } else if (monomer instanceof Phosphate) {
+          attPointEnd = monomer.R2AttachmentPoint;
+        }
+
+        assert(attPointStart);
+        assert(attPointEnd);
+
+        previousMonomer.setBond(attPointStart, polymerBond);
+        monomer.setBond(attPointEnd, polymerBond);
         const operation = new PolymerBondAddOperation(polymerBond);
         command.addOperation(operation);
       } else {

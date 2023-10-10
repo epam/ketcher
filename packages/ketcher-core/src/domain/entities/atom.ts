@@ -61,13 +61,10 @@ export type Chirality = 'clockwise' | 'anticlockwise';
 
 export interface AtomQueryProperties {
   aromaticity?: Aromaticity | null;
-  degree?: number | null;
   ringMembership?: number | null;
   ringSize?: number | null;
   connectivity?: number | null;
-  ringConnectivity?: number | null;
   chirality?: Chirality | null;
-  atomicMass?: number | null;
   customQuery?: string | null;
 }
 
@@ -93,10 +90,10 @@ export interface AtomAttributes {
    */
   attachmentPoints?: AttachmentPoints | null;
   rglabel?: string | null;
-  charge?: number;
+  charge?: number | null;
   radical?: number;
   cip?: CIP | null;
-  isotope?: number;
+  isotope?: number | null;
   alias?: string | null;
   pseudo?: string;
   atomList?: AtomListParams | null;
@@ -136,10 +133,10 @@ export class Atom {
   static attrlist = {
     alias: null,
     label: 'C',
-    isotope: 0,
+    isotope: null,
     radical: 0,
     cip: null,
-    charge: 0,
+    charge: null,
     explicitValence: -1,
     ringBondCount: 0,
     substitutionCount: 0,
@@ -147,13 +144,10 @@ export class Atom {
     hCount: 0,
     queryProperties: {
       aromaticity: null,
-      degree: null,
       ringMembership: null,
       ringSize: null,
       connectivity: null,
-      ringConnectivity: null,
       chirality: null,
-      atomicMass: null,
       customQuery: null,
     },
     atomList: null,
@@ -173,12 +167,12 @@ export class Atom {
   fragment: number;
   atomList: AtomList | null;
   attachmentPoints: AttachmentPoints | null;
-  isotope: number;
+  isotope: number | null;
   isPreview: boolean;
   hCount: number;
   radical: number;
   cip: CIP | null;
-  charge: number;
+  charge: number | null;
   explicitValence: number;
   ringBondCount: number;
   queryProperties: AtomQueryProperties;
@@ -389,9 +383,9 @@ export class Atom {
   isPlainCarbon(): boolean {
     return (
       this.label === 'C' &&
-      this.isotope === 0 &&
+      this.isotope === null &&
       this.radical === 0 &&
-      this.charge === 0 &&
+      this.charge === null &&
       this.explicitValence < 0 &&
       this.ringBondCount === 0 &&
       this.substitutionCount === 0 &&
@@ -417,7 +411,7 @@ export class Atom {
 
   calcValence(connectionCount: number): boolean {
     const label = this.label;
-    const charge = this.charge;
+    const charge = this.charge || 0;
     if (this.isQuery()) {
       this.implicitH = 0;
       return true;
@@ -663,7 +657,7 @@ export class Atom {
   }
 
   calcValenceMinusHyd(conn: number): number {
-    const charge = this.charge;
+    const charge = this.charge || 0;
     const label = this.label;
     const element = Elements.get(this.label);
     if (!element) {

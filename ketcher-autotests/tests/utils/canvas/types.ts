@@ -9,22 +9,19 @@ export type Chirality = 'clockwise' | 'anticlockwise';
 
 export interface AtomQueryProperties {
   aromaticity?: Aromaticity | null;
-  degree?: number | null;
   ringMembership?: number | null;
   ringSize?: number | null;
   connectivity?: number | null;
-  ringConnectivity?: number | null;
   chirality?: Chirality | null;
-  atomicMass?: number | null;
   customQuery?: string | null;
 }
 
 export type AtomAttributes = {
   label?: string;
-  charge?: number;
+  charge?: number | null;
   valence?: number;
   fragment?: number;
-  isotope?: number;
+  isotope?: number | null;
   radical?: number;
   explicitValence?: number;
   implicitH?: number;

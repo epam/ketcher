@@ -311,7 +311,7 @@ class ReAtom extends ReObject {
           true,
         );
       }
-      if (this.a.isotope !== 0) {
+      if (this.a.isotope !== null) {
         const isotope = showIsotope(this, render, leftMargin);
         leftMargin -= isotope.rbb.width + delta;
         restruct.addReObjectPath(
@@ -356,7 +356,7 @@ class ReAtom extends ReObject {
         }
       }
 
-      if (this.a.charge !== 0 && options.showCharge) {
+      if (this.a.charge !== null && options.showCharge) {
         const charge = showCharge(this, render, rightMargin);
         rightMargin += charge.rbb.width + delta;
         restruct.addReObjectPath(
@@ -407,9 +407,7 @@ class ReAtom extends ReObject {
     const stereoLabel = this.a.stereoLabel; // Enhanced Stereo
     const aamText = getAamText(this);
     const isAromatized = Atom.isInAromatizedRing(restruct.molecule, aid);
-    const queryAttrsText = !this.a.pseudo
-      ? getQueryAttrsText(this, isAromatized)
-      : '';
+    const queryAttrsText = getQueryAttrsText(this, isAromatized);
 
     // we render them together to avoid possible collisions
 
@@ -638,9 +636,9 @@ function isLabelVisible(restruct, options, atom: ReAtom) {
     options.carbonExplicitly ||
     options.showHydrogenLabels === ShowHydrogenLabels.On ||
     atom.a.alias ||
-    atom.a.isotope !== 0 ||
+    atom.a.isotope !== null ||
     atom.a.radical !== 0 ||
-    atom.a.charge !== 0 ||
+    atom.a.charge !== null ||
     atom.a.explicitValence >= 0 ||
     atom.a.atomList !== null ||
     atom.a.rglabel !== null ||
@@ -846,7 +844,7 @@ function showIsotope(
   const options = render.options;
   const delta = 0.5 * options.lineWidth;
   const isotope: any = {};
-  isotope.text = atom.a.isotope.toString();
+  isotope.text = atom.a.isotope === null ? '' : atom.a.isotope.toString();
   isotope.path = render.paper.text(ps.x, ps.y, isotope.text).attr({
     font: options.font,
     'font-size': options.fontszsub,
@@ -875,10 +873,14 @@ function showCharge(
   const delta = 0.5 * options.lineWidth;
   const charge: any = {};
   charge.text = '';
-  const absCharge = Math.abs(atom.a.charge);
-  if (absCharge !== 1) charge.text = absCharge.toString();
-  if (atom.a.charge < 0) charge.text += '\u2013';
-  else charge.text += '+';
+  if (atom.a.charge !== null) {
+    const absCharge = Math.abs(atom.a.charge);
+    if (absCharge !== 1) charge.text = absCharge.toString();
+    if (atom.a.charge < 0) charge.text += '\u2013';
+    else charge.text += '+';
+  } else {
+    charge.text = '';
+  }
 
   charge.path = render.paper.text(ps.x, ps.y, charge.text).attr({
     font: options.font,
@@ -1103,6 +1105,32 @@ function getSubstitutionCountAttrText(value: number) {
   return attrText;
 }
 
+function getAtomLabelAttrText(value: string, atom) {
+  const { atomType, atomList, notList, isotope } = atom;
+  if (atomType === 'single') {
+    let labelText = isotope || '';
+    if (atom.aromaticity) {
+      labelText +=
+        atom.aromaticity === 'aromatic'
+          ? value.toLowerCase()
+          : value.toUpperCase();
+      return labelText;
+    }
+    const number = Elements.get(capitalize(value))?.number;
+    labelText += number ? `#${number}` : value;
+    return labelText;
+  } else if (atomType === 'list' && atomList !== '') {
+    return atomList
+      .split(',')
+      .map((el: string) => {
+        const number = Elements.get(capitalize(el))?.number || '';
+        return `${notList ? '!' : ''}#${number}`;
+      })
+      .join(notList ? ';' : ',');
+  } else {
+    return '';
+  }
+}
 export function getAtomCustomQuery(atom) {
   let queryAttrsText = '';
 
@@ -1112,20 +1140,18 @@ export function getAtomCustomQuery(atom) {
   const patterns: {
     [key: string]: (value: string, atom) => string;
   } = {
-    label: (value, atom) => {
-      if (atom.aromaticity) {
-        return atom.aromaticity === 'aromatic'
-          ? value.toLowerCase()
-          : value.toUpperCase();
-      }
-      const number = Elements.get(capitalize(value))?.number;
-      return `#${number}` || '';
-    },
+    label: getAtomLabelAttrText,
     charge: (value) => {
-      if (value === '0') return '';
-      return value.includes('-') ? value : `+${value}`;
+      if (value === '') return value;
+      const regExpResult = /^([+-]?)([0-9]{1,3}|1000)([+-]?)$/.exec(value);
+      const charge = regExpResult
+        ? parseInt(
+            regExpResult[1] + regExpResult[3] + regExpResult[2],
+          ).toString()
+        : value;
+      return charge[0] !== '-' ? `+${charge}` : charge;
     },
-    explicitValence: (value) => `v${value}`,
+    explicitValence: (value) => (Number(value) !== -1 ? `v${value}` : ''),
     ringBondCount: (value) =>
       Number(value) !== 0 ? getRingBondCountAttrText(Number(value)) : '',
     substitutionCount: (value) =>
@@ -1134,18 +1160,15 @@ export function getAtomCustomQuery(atom) {
     hCount: (value) =>
       Number(value) > 0 ? 'H' + (Number(value) - 1).toString() : '',
     implicitHCount: (value) => `h${value}`,
-    degree: (value) => `D${value}`,
     ringMembership: (value) => `R${value}`,
     ringSize: (value) => `r${value}`,
     connectivity: (value) => `X${value}`,
-    ringConnectivity: (value) => `x${value}`,
     chirality: (value) => (value === 'clockwise' ? '@@' : '@'),
-    atomicMass: (value) => value.toString(),
   };
 
   for (const propertyName in atom) {
     const value = atom[propertyName];
-    if (propertyName in patterns && value !== null && value !== -1) {
+    if (propertyName in patterns && value !== null) {
       const attrText = patterns[propertyName](value, atom);
       if (attrText) {
         addSemicolon();
@@ -1172,13 +1195,10 @@ function getQueryAttrsText(atom, isAromatized: boolean) {
     implicitHCount,
     queryProperties: {
       aromaticity,
-      degree,
       ringMembership,
       ringSize,
       connectivity,
-      ringConnectivity,
       chirality,
-      atomicMass,
       customQuery,
     },
   } = atom.a;
@@ -1209,10 +1229,6 @@ function getQueryAttrsText(atom, isAromatized: boolean) {
     addSemicolon();
     queryAttrsText += aromaticity === 'aromatic' ? 'a' : 'A';
   }
-  if (Number.isFinite(degree)) {
-    addSemicolon();
-    queryAttrsText += `D${degree}`;
-  }
   if (Number.isFinite(ringMembership)) {
     addSemicolon();
     queryAttrsText += `R${ringMembership}`;
@@ -1225,17 +1241,9 @@ function getQueryAttrsText(atom, isAromatized: boolean) {
     addSemicolon();
     queryAttrsText += `X${connectivity}`;
   }
-  if (Number.isFinite(ringConnectivity)) {
-    addSemicolon();
-    queryAttrsText += `x${ringConnectivity}`;
-  }
   if (chirality !== null) {
     addSemicolon();
     queryAttrsText += chirality === 'clockwise' ? '@@' : '@';
-  }
-  if (Number.isFinite(atomicMass)) {
-    addSemicolon();
-    queryAttrsText += `${atomicMass}`;
   }
   return queryAttrsText;
 }

@@ -141,22 +141,22 @@
         },
         "ringBondCount": {
           "type": "integer",
-          "enum": [0, -2, -1, 2, 3, 4]
+          "enum": [0, -2, -1, 2, 3, 4, 6, 7, 8, 9]
         },
         "substitutionCount": {
           "type": "integer",
-          "enum": [0, -2, -1, 1, 2, 3, 4, 5, 6]
+          "enum": [0, -2, -1, 1, 2, 3, 4, 5, 6, 7, 8, 9]
         },
         "unsaturatedAtom": {
           "type": "boolean"
         },
         "hCount": {
           "type": "integer",
-          "enum": [-1, 0, 1, 2, 3, 4, 5]
+          "enum": [-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
         },
         "implicitHCount": {
           "type": "integer",
-          "enum": [0, 1, 2, 3, 4, 5]
+          "enum": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
         },
         "mapping": {
           "type": "integer",
@@ -180,35 +180,20 @@
               "type": "string",
               "enum": ["aromatic", "aliphatic"]
             },
-            "degree": {
-              "type": "integer",
-              "minimum": 0,
-              "maximum": 6
-            },
             "ringMembership": {
               "type": "integer",
               "minimum": 0,
-              "maximum": 5
+              "maximum": 9
             },
             "ringSize": {
               "type": "integer",
               "minimum": 0,
-              "maximum": 5
+              "maximum": 9
             },
             "connectivity": {
               "type": "integer",
               "minimum": 0,
-              "maximum": 5
-            },
-            "ringConnectivity": {
-              "type": "integer",
-              "minimum": 0,
-              "maximum": 5
-            },
-            "atomicMass": {
-              "type": "integer",
-              "minimum": 0,
-              "maximum": 1000
+              "maximum": 9
             },
             "chirality": {
               "type": "string",

@@ -23,7 +23,6 @@ import { MonomerItemType } from 'domain/types';
 import { monomerFactory } from '../operations/monomer/monomerFactory';
 import { RNABase } from 'domain/entities/RNABase';
 import { Phosphate } from 'domain/entities/Phosphate';
-import assert from 'assert';
 import { provideEditorSettings } from 'application/editor/editorSettings';
 import { Scale } from 'domain/helpers';
 
@@ -57,11 +56,11 @@ class RnaPresetTool implements Tool {
   mousedown() {
     const editorSettings = provideEditorSettings();
 
-    assert(
-      this.sugarPreviewRenderer,
-      'monomerPreviewRenderer is not initialized',
-    );
-    assert(this.sugar, 'no sugar in preset');
+    if (!this.sugar || !this.sugarPreviewRenderer) {
+      this.editor.events.error.dispatch('No sugar in RNA preset found');
+      return;
+    }
+
     const modelChanges = this.editor.drawingEntitiesManager.addRnaPreset({
       sugar: this.sugar,
       sugarPosition: Scale.scaled2obj(
@@ -80,7 +79,7 @@ class RnaPresetTool implements Tool {
               this.editor.lastCursorPosition.x -
                 this.phosphatePreviewRenderer.width / 2 +
                 this.sugarPreviewRenderer?.width +
-                30,
+                45,
               this.editor.lastCursorPosition.y -
                 this.phosphatePreviewRenderer.height / 2,
             ),
@@ -96,7 +95,7 @@ class RnaPresetTool implements Tool {
               this.editor.lastCursorPosition.y -
                 this.rnaBasePreviewRenderer.height / 2 +
                 this.sugarPreviewRenderer.height +
-                30,
+                45,
             ),
             editorSettings,
           )
@@ -158,7 +157,8 @@ class RnaPresetTool implements Tool {
 
   public mouseover() {
     if (!this.sugar) {
-      throw new Error('no sugar in preset');
+      this.editor.events.error.dispatch('No sugar in RNA preset found');
+      return;
     }
 
     if (this.sugarPreview) {

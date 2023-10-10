@@ -47,10 +47,7 @@ export function moleculeToStruct(ketItem: any): Struct {
       if (atom.type === 'rg-label') {
         atomId = struct.atoms.add(rglabelToStruct(atom));
       }
-      if (atom.type === 'atom-list') {
-        atomId = struct.atoms.add(atomListToStruct(atom));
-      }
-      if (!atom.type) {
+      if (!atom.type || atom.type === 'atom-list') {
         atomId = struct.atoms.add(atomToStruct(atom));
       }
       if (atomId !== null) {
@@ -86,16 +83,26 @@ export function atomToStruct(source) {
 
   const queryAttribute: Array<keyof AtomQueryProperties> = [
     'aromaticity',
-    'degree',
     'ringMembership',
     'connectivity',
     'ringSize',
-    'ringConnectivity',
     'chirality',
-    'atomicMass',
     'customQuery',
   ];
-  ifDef(params, 'label', source.label);
+  if (source.type === 'atom-list') {
+    params.label = 'L#';
+    const ids = source.elements
+      .map((el) => Elements.get(el)?.number)
+      .filter((id) => id);
+    ifDef(params, 'atomList', {
+      ids,
+      notList: source.notList,
+    });
+  } else {
+    ifDef(params, 'label', source.label);
+    // reaction
+    ifDef(params, 'aam', source.mapping);
+  }
   ifDef(params, 'alias', source.alias);
   ifDef(params, 'pp', {
     x: source.location[0],
@@ -132,7 +139,6 @@ export function atomToStruct(source) {
   }
 
   // reaction
-  ifDef(params, 'aam', source.mapping);
   ifDef(params, 'invRet', source.invRet);
   ifDef(params, 'exactChangeFlag', Number(Boolean(source.exactChangeFlag)));
   // implicit hydrogens
@@ -151,25 +157,6 @@ export function rglabelToStruct(source) {
   ifDef(params, 'attachmentPoints', source.attachmentPoints);
   const rglabel = toRlabel(source.$refs.map((el) => parseInt(el.slice(3))));
   ifDef(params, 'rglabel', rglabel);
-  return new Atom(params);
-}
-
-export function atomListToStruct(source) {
-  const params: any = {};
-  params.label = 'L#';
-  ifDef(params, 'pp', {
-    x: source.location[0],
-    y: -source.location[1],
-    z: source.location[2] || 0.0,
-  });
-  ifDef(params, 'attachmentPoints', source.attachmentPoints);
-  const ids = source.elements
-    .map((el) => Elements.get(el)?.number)
-    .filter((id) => id);
-  ifDef(params, 'atomList', {
-    ids,
-    notList: source.notList,
-  });
   return new Atom(params);
 }
 

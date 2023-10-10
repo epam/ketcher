@@ -1,16 +1,15 @@
 import { expect, test } from '@playwright/test';
 import {
   AtomButton,
-  delay,
   readFileContents,
   selectAtomInToolbar,
   takeEditorScreenshot,
-  DELAY_IN_SECONDS,
   FILE_TEST_DATA,
   receiveFileComparisonData,
   waitForSpinnerFinishedWork,
   clickInTheMiddleOfTheScreen,
   waitForPageInit,
+  saveToFile,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import {
@@ -20,14 +19,6 @@ import {
   getMolfile,
   setMolecule,
 } from '@utils/formats';
-
-function filteredFile(file: string, filteredIndex: number): string {
-  return file
-    .split('\n')
-    .filter((_str, index) => index > filteredIndex)
-    .join('\n')
-    .replace(/\s+/g, '');
-}
 
 test.describe('Tests for API setMolecule/getMolecule', () => {
   test.beforeEach(async ({ page }) => {
@@ -148,83 +139,94 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     );
   });
 
-  test.fixme(
-    'Set and Get Molecule using V3000 Molfile format',
-    async ({ page }) => {
-      /*
+  test('Set and Get Molecule using V3000 Molfile format', async ({ page }) => {
+    /*
     Test case: EPMLSOPKET- 10095
     Description:  Molecule set and get using V3000 format
     */
-      const ignoredLineIndigo = 1;
-      const orEnantiomer = await readFileContents(
-        'tests/test-data/or-enantiomer.mol',
-      );
-      await waitForSpinnerFinishedWork(
+    const ignoredLineIndigo = 1;
+    const orEnantiomer = await readFileContents(
+      'tests/test-data/or-enantiomer.mol',
+    );
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await setMolecule(page, orEnantiomer),
+    );
+
+    const { fileExpected: molFileExpected, file: molFile } =
+      await receiveFileComparisonData({
         page,
-        async () => await setMolecule(page, orEnantiomer),
-      );
+        expectedFileName: 'tests/test-data/test-data-for-enatiomer.mol',
+        metaDataIndexes: [ignoredLineIndigo],
+        fileFormat: 'v3000',
+      });
+    expect(molFile).toEqual(molFileExpected);
+  });
 
-      const { fileExpected: molFileExpected, file: molFile } =
-        await receiveFileComparisonData({
-          page,
-          expectedFileName: 'tests/test-data/test-data-for-enatiomer.mol',
-          metaDataIndexes: [ignoredLineIndigo],
-          fileFormat: 'v3000',
-        });
-      expect(molFile).toEqual(molFileExpected);
-    },
-  );
-
-  // TO DO: split by two tests; use saveToFile function; do not get molv2000 in one line
-  test.fixme(
-    'Set and Get Molecule containing chiral centers',
-    async ({ page }) => {
-      /*
+  test('Set and Get Molecule containing chiral centers V2000', async ({
+    page,
+  }) => {
+    /*
     Test case: EPMLSOPKET- 10097
-    Description:  Molecule set and get with chiral centers
+    Description:  Molecule set and get with chiral centers V2000
     */
-      const indexOfLineWithIndigo = 2;
-      const indexOfLineWithKetcher = 2;
 
-      await waitForSpinnerFinishedWork(
+    await waitForSpinnerFinishedWork(
+      page,
+      async () =>
+        await setMolecule(page, 'CC(=O)O[C@@H](C)[C@H](O)Cn1cnc2c1ncnc2N'),
+    );
+
+    const molV2000File = await getMolfile(page, 'v2000');
+    await saveToFile(
+      'Molfiles-V2000/test-data-for-chiral-centersv2000-expected.mol',
+      molV2000File,
+    );
+    const METADATA_STRING_INDEX = [1];
+
+    const { fileExpected: molFileExpected, file: molFile } =
+      await receiveFileComparisonData({
         page,
-        async () =>
-          await setMolecule(page, 'CC(=O)O[C@@H](C)[C@H](O)Cn1cnc2c1ncnc2N'),
-      );
+        expectedFileName:
+          'tests/test-data/Molfiles-V2000/test-data-for-chiral-centersv2000-expected.mol',
+        fileFormat: 'v2000',
+        metaDataIndexes: METADATA_STRING_INDEX,
+      });
 
-      await delay(DELAY_IN_SECONDS.THREE);
+    expect(molFile).toEqual(molFileExpected);
+  });
 
-      const molV2000FileExpected = await readFileContents(
-        'tests/test-data/Molfiles-V2000/test-data-for-chiral-centersv2000.mol',
-      );
-      const molV2000File = await getMolfile(page, 'v2000');
-      const filteredmolV2000FileExpected = filteredFile(
-        molV2000FileExpected,
-        indexOfLineWithKetcher,
-      );
-      const filteredmolV2000File = filteredFile(
-        molV2000File,
-        indexOfLineWithKetcher,
-      );
+  test('Set and Get Molecule containing chiral centers V3000', async ({
+    page,
+  }) => {
+    /*
+    Test case: EPMLSOPKET- 10097
+    Description:  Molecule set and get with chiral centers V3000
+    */
 
-      expect(filteredmolV2000File).toEqual(filteredmolV2000FileExpected);
+    await waitForSpinnerFinishedWork(
+      page,
+      async () =>
+        await setMolecule(page, 'CC(=O)O[C@@H](C)[C@H](O)Cn1cnc2c1ncnc2N'),
+    );
+    const molV3000File = await getMolfile(page, 'v3000');
+    await saveToFile(
+      'Molfiles-V3000/test-data-for-chiral-centersv3000-expected.mol',
+      molV3000File,
+    );
+    const METADATA_STRING_INDEX = [1];
 
-      const molV3000FileExpected = await readFileContents(
-        'tests/test-data/Molfiles-V3000/test-data-for-chiral-centersv3000.mol',
-      );
-      const molV3000File = await getMolfile(page, 'v3000');
-      const filteredmolV3000FileExpected = filteredFile(
-        molV3000FileExpected,
-        indexOfLineWithIndigo,
-      );
-      const filteredmolV3000File = filteredFile(
-        molV3000File,
-        indexOfLineWithIndigo,
-      );
+    const { fileExpected: molFileExpected, file: molFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/Molfiles-V3000/test-data-for-chiral-centersv3000-expected.mol',
+        fileFormat: 'v3000',
+        metaDataIndexes: METADATA_STRING_INDEX,
+      });
 
-      expect(filteredmolV3000File).toEqual(filteredmolV3000FileExpected);
-    },
-  );
+    expect(molFile).toEqual(molFileExpected);
+  });
 
   test('Check DisableQueryElements parameter', async ({ page }) => {
     /*

@@ -10,19 +10,15 @@ import {
 } from '@utils/clicks';
 
 async function createSomeStructure(page: Page) {
-  const a = 97;
-  const b = 79;
-  const c = 943;
-  const d = 114;
-  const e = 844;
-  const f = 579;
-  const g = 66;
-  const h = 611;
-  await page.mouse.move(a, b);
+  const point = { x: 97, y: 79 };
+  const point1 = { x: 943, y: 114 };
+  const point2 = { x: 844, y: 579 };
+  const point3 = { x: 66, y: 611 };
+  await page.mouse.move(point.x, point.y);
   await page.mouse.down();
-  await page.mouse.move(c, d);
-  await page.mouse.move(e, f);
-  await page.mouse.move(g, h);
+  await page.mouse.move(point1.x, point1.y);
+  await page.mouse.move(point2.x, point2.y);
+  await page.mouse.move(point3.x, point3.y);
   await page.mouse.up();
 }
 
@@ -36,28 +32,22 @@ async function createSomeMovement(page: Page) {
 }
 
 async function separetingAndMovingLines(page: Page) {
-  const a = 296;
-  const b = 478;
-  const c = 740;
-  const d = 393;
-  const e = 529;
-  const f = 409;
-  const g = 267;
-  const h = 518;
-  const i = 534;
-  const j = 467;
-  const k = 588;
-  const l = 277;
-  await page.mouse.click(a, b);
-  await dragMouseTo(c, d, page);
-  await page.mouse.click(e, f);
-  await dragMouseTo(g, h, page);
+  const point = { x: 296, y: 478 };
+  const point1 = { x: 740, y: 393 };
+  const point2 = { x: 529, y: 409 };
+  const point3 = { x: 267, y: 518 };
+  const point4 = { x: 534, y: 467 };
+  const point5 = { x: 588, y: 277 };
+  await page.mouse.click(point.x, point.y);
+  await dragMouseTo(point1.x, point1.y, page);
+  await page.mouse.click(point2.x, point2.y);
+  await dragMouseTo(point3.x, point3.y, page);
   await takeEditorScreenshot(page);
   await clickInTheMiddleOfTheScreen(page);
   await selectDropdownTool(page, 'select-rectangle', 'select-lasso');
   await createSomeStructure(page);
-  await page.mouse.click(i, j);
-  await dragMouseTo(k, l, page);
+  await page.mouse.click(point4.x, point4.y);
+  await dragMouseTo(point5.x, point5.y, page);
 }
 
 const setupLine = async (page: Page) => {
@@ -98,39 +88,33 @@ test.describe('draw and highlight line', () => {
   test('Simple Objects - Edit Line - Moving', async ({ page }) => {
     // Test case: EPMLSOPKET-1957
     // Moving the line on the canvas
-    const a = 686;
-    const b = 358;
-    const c = 125;
-    const d = 161;
+    const point = { x: 686, y: 358 };
+    const point1 = { x: 125, y: 161 };
     const LineCoordinates = await setupLine(page);
     await clickInTheMiddleOfTheScreen(page);
     await page.mouse.move(LineCoordinates.x, LineCoordinates.y);
-    await page.mouse.click(a, b);
-    await dragMouseTo(c, d, page);
+    await page.mouse.click(point.x, point.y);
+    await dragMouseTo(point1.x, point1.y, page);
   });
 
   test('Simple Objects - Edit Line - changing size', async ({ page }) => {
-    const a = 251;
-    const b = 363;
-    const c = 757;
-    const d = 362;
+    const point = { x: 251, y: 363 };
+    const point1 = { x: 757, y: 362 };
     await setupLine(page);
     await page.keyboard.press('Control+a');
-    await dragMouseTo(a, b, page);
+    await dragMouseTo(point.x, point.y, page);
     await takeEditorScreenshot(page);
-    await dragMouseTo(c, d, page);
+    await dragMouseTo(point1.x, point1.y, page);
   });
 
   test('Simple Objects - Edit Line - changing directions', async ({ page }) => {
-    const a = 302;
-    const b = 510;
-    const c = 397;
-    const d = 220;
+    const point = { x: 302, y: 510 };
+    const point1 = { x: 397, y: 220 };
     await setupLine(page);
     await page.keyboard.press('Control+a');
-    await dragMouseTo(a, b, page);
+    await dragMouseTo(point.x, point.y, page);
     await takeEditorScreenshot(page);
-    await dragMouseTo(c, d, page);
+    await dragMouseTo(point1.x, point1.y, page);
   });
 
   test('Simple Objects - Edit Line - highlighting and changing directions', async ({

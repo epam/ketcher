@@ -42,46 +42,37 @@ async function setZoomInputValue(page: Page, value: string) {
 }
 
 async function createSomeStructure(page: Page) {
-  const a = 97;
-  const b = 79;
-  const c = 943;
-  const d = 114;
-  const e = 844;
-  const f = 579;
-  const g = 66;
-  const h = 611;
-  await page.mouse.move(a, b);
+  const point = { x: 97, y: 79 };
+  const point1 = { x: 943, y: 114 };
+  const point2 = { x: 844, y: 579 };
+  const point3 = { x: 66, y: 611 };
+  await page.mouse.move(point.x, point.y);
   await page.mouse.down();
-  await page.mouse.move(c, d);
-  await page.mouse.move(e, f);
-  await page.mouse.move(g, h);
+  await page.mouse.move(point1.x, point1.y);
+  await page.mouse.move(point2.x, point2.y);
+  await page.mouse.move(point3.x, point3.y);
   await page.mouse.up();
 }
 
 async function createSomeMove(page: Page) {
-  const a = 330;
-  const b = 324;
-  const c = 720;
-  const d = 335;
-  const e = 706;
-  const f = 530;
-  await page.mouse.move(a, b);
+  const point = { x: 330, y: 324 };
+  const point1 = { x: 720, y: 335 };
+  const point2 = { x: 706, y: 530 };
+  await page.mouse.move(point.x, point.y);
   await page.mouse.down();
-  await page.mouse.move(c, d);
-  await page.mouse.move(e, f);
+  await page.mouse.move(point1.x, point1.y);
+  await page.mouse.move(point2.x, point2.y);
   await page.mouse.up();
 }
 
 async function simpleObjects(page: Page) {
-  const a = 727;
-  const b = 359;
-  const c = 83;
-  const d = 207;
+  const point = { x: 727, y: 359 };
+  const point1 = { x: 83, y: 207 };
   await openFileAndAddToCanvas('KET/simple-objects.ket', page);
   await page.keyboard.press('Control+a');
-  await page.mouse.move(a, b);
+  await page.mouse.move(point.x, point.y);
   await page.mouse.down();
-  await dragMouseTo(c, d, page);
+  await dragMouseTo(point1.x, point1.y, page);
 }
 
 async function saveToTemplates(page: Page) {
@@ -138,24 +129,20 @@ test.describe('Action on simples objects', () => {
   }) => {
     // Test case: EPMLSOPKET-1981
     // Move the elements by dragging and dropping
-    const a = 639;
-    const b = 359;
-    const c = 401;
-    const d = 179;
-    const e = 492;
-    const f = 184;
-    const g = 306;
-    const h = 224;
+    const point = { x: 639, y: 359 };
+    const point1 = { x: 401, y: 179 };
+    const point2 = { x: 492, y: 184 };
+    const point3 = { x: 306, y: 224 };
     await setupEllipse(page);
-    await page.mouse.move(a, b);
+    await page.mouse.move(point.x, point.y);
     await page.mouse.down();
-    await dragMouseTo(c, d, page);
+    await dragMouseTo(point1.x, point1.y, page);
     await drawBenzeneRing(page);
     await takeEditorScreenshot(page);
     await selectDropdownTool(page, 'select-rectangle', 'select-lasso');
     await waitForRender(page, async () => {
-      await page.mouse.click(e, f);
-      await dragMouseTo(g, h, page);
+      await page.mouse.click(point2.x, point2.y);
+      await dragMouseTo(point3.x, point3.y, page);
     });
   });
 

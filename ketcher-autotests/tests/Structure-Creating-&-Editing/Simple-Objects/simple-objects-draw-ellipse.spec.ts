@@ -25,46 +25,36 @@ const setupEllipse = async (page: Page) => {
 };
 
 async function createSomeStructure(page: Page) {
-  const a = 97;
-  const b = 79;
-  const c = 943;
-  const d = 114;
-  const e = 844;
-  const f = 579;
-  const g = 66;
-  const h = 611;
-  await page.mouse.move(a, b);
+  const point = { x: 97, y: 79 };
+  const point1 = { x: 943, y: 114 };
+  const point2 = { x: 844, y: 579 };
+  const point3 = { x: 66, y: 611 };
+  await page.mouse.move(point.x, point.y);
   await page.mouse.down();
-  await page.mouse.move(c, d);
-  await page.mouse.move(e, f);
-  await page.mouse.move(g, h);
+  await page.mouse.move(point1.x, point1.y);
+  await page.mouse.move(point2.x, point2.y);
+  await page.mouse.move(point3.x, point3.y);
   await page.mouse.up();
 }
 
 async function separetingAndMovingEllipse(page: Page) {
-  const a = 665;
-  const b = 365;
-  const c = 530;
-  const d = 344;
-  const e = 850;
-  const f = 367;
-  const g = 870;
-  const h = 262;
-  const i = 509;
-  const j = 367;
-  const k = 464;
-  const l = 239;
-  await page.mouse.click(a, b);
-  await dragMouseTo(c, d, page);
-  await page.mouse.click(e, f);
-  await dragMouseTo(g, h, page);
+  const point = { x: 665, y: 365 };
+  const point1 = { x: 530, y: 344 };
+  const point2 = { x: 850, y: 367 };
+  const point3 = { x: 840, y: 262 };
+  const point4 = { x: 509, y: 367 };
+  const point5 = { x: 464, y: 239 };
+  await page.mouse.click(point.x, point.y);
+  await dragMouseTo(point1.x, point1.y, page);
+  await page.mouse.click(point2.x, point2.y);
+  await dragMouseTo(point3.x, point3.y, page);
   await takeEditorScreenshot(page);
   await clickInTheMiddleOfTheScreen(page);
   await selectDropdownTool(page, 'select-rectangle', 'select-lasso');
   await createSomeStructure(page);
-  await page.mouse.click(i, j);
+  await page.mouse.click(point4.x, point4.y);
   await page.mouse.down();
-  await dragMouseTo(k, l, page);
+  await dragMouseTo(point5.x, point5.y, page);
 }
 test.describe('Draw Ellipse', () => {
   test.beforeEach(async ({ page }) => {
@@ -85,40 +75,46 @@ test.describe('Draw Ellipse', () => {
   });
 
   test('Simple Objects - Edit a Ellipse  - moving object', async ({ page }) => {
-    const a = 645;
-    const b = 367;
-    const c = 759;
-    const d = 183;
+    // const a = 645;
+    // const b = 367;
+    // const c = 759;
+    // const d = 183;
+    const point = { x: 645, y: 367 };
+    const point1 = { x: 759, y: 183 };
     await setupEllipse(page);
     await clickInTheMiddleOfTheScreen(page);
     await page.keyboard.press('Control+a');
-    await page.mouse.click(a, b);
-    await dragMouseTo(c, d, page);
+    await page.mouse.click(point.x, point.y);
+    await dragMouseTo(point1.x, point1.y, page);
   });
 
   test('Simple Objects - Edit a Ellipse  - changing sizes of the object', async ({
     page,
   }) => {
     // Test case: EPMLSOPKET-1960
-    const a = 332;
-    const b = 401;
-    const c = 692;
-    const d = 410;
-    const e = 690;
-    const f = 410;
-    const g = 220;
-    const h = 200;
+    // const a = 332;
+    // const b = 401;
+    // const c = 692;
+    // const d = 410;
+    // const e = 690;
+    // const f = 410;
+    // const g = 220;
+    // const h = 200;
+    const point = { x: 332, y: 401 };
+    const point1 = { x: 692, y: 410 };
+    const point2 = { x: 690, y: 410 };
+    const point3 = { x: 220, y: 200 };
     await setupEllipse(page);
     await clickInTheMiddleOfTheScreen(page);
-    await dragMouseTo(a, b, page);
+    await dragMouseTo(point.x, point.y, page);
     await takeEditorScreenshot(page);
-    await dragMouseTo(c, d, page);
+    await dragMouseTo(point1.x, point1.y, page);
     await clickInTheMiddleOfTheScreen(page);
     await selectDropdownTool(page, 'select-rectangle', 'select-lasso');
     await createSomeStructure(page);
-    await page.mouse.move(e, f);
+    await page.mouse.move(point2.x, point2.y);
     await page.mouse.down();
-    await dragMouseTo(g, h, page);
+    await dragMouseTo(point3.x, point3.y, page);
   });
 
   test('Simple Objects - Draw a lot of ellipses', async ({ page }) => {

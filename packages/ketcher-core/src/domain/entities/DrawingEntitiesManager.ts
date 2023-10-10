@@ -17,6 +17,7 @@ import {
   DrawingEntityHoverOperation,
   DrawingEntitySelectOperation,
   DrawingEntityMoveOperation,
+  DrawingEntityRedrawOperation,
 } from 'application/editor/operations/drawingEntity';
 import {
   PolymerBondAddOperation,
@@ -27,6 +28,13 @@ import {
   PolymerBondShowInfoOperation,
 } from 'application/editor/operations/polymerBond';
 import { monomerFactory } from 'application/editor/operations/monomer/monomerFactory';
+import { provideEditorSettings } from 'application/editor/editorSettings';
+import { Scale } from 'domain/helpers';
+
+const HORIZONTAL_DISTANCE_FROM_MONOMER = 20;
+const VERTICAL_DISTANCE_FROM_MONOMER = 50;
+const DISTANCE_FROM_RIGHT = 70;
+const DISTANCE_BETWEEN_MONOMERS = 30;
 
 type RnaPresetAdditionParams = {
   sugar: MonomerItemType;
@@ -147,6 +155,15 @@ export class DrawingEntitiesManager {
 
     const movingCommand = new DrawingEntityMoveOperation(drawingEntity);
     command.addOperation(movingCommand);
+
+    return command;
+  }
+
+  public createDrawingEntityRedrawCommand(drawingEntity: DrawingEntity) {
+    const command = new Command();
+
+    const redrawCommand = new DrawingEntityRedrawOperation(drawingEntity);
+    command.addOperation(redrawCommand);
 
     return command;
   }
@@ -467,6 +484,176 @@ export class DrawingEntitiesManager {
       }
 
       previousMonomer = monomer;
+    });
+
+    return command;
+  }
+
+  private rearrangeChain(
+    initCoords: Vec2,
+    chain: BaseMonomer[],
+    canvasWidth: number,
+  ) {
+    const command = new Command();
+    const editorSettings = provideEditorSettings();
+    const monomerWidth = chain[0].renderer?.bodyWidth ?? 0;
+    const monomerHeight = chain[0].renderer?.bodyHeight ?? 0;
+    const heightMonomerWithBond =
+      monomerHeight + VERTICAL_DISTANCE_FROM_MONOMER;
+    chain[0].moveAbsolute(Scale.scaled2obj(initCoords, editorSettings));
+    const operation = new MonomerMoveOperation(chain[0]);
+    command.addOperation(operation);
+
+    for (let i = 1; i < chain.length; i++) {
+      const prevPosition = Scale.obj2scaled(
+        chain[i - 1].position,
+        editorSettings,
+      );
+      const isMonomerFitCanvas =
+        prevPosition.x +
+          DISTANCE_BETWEEN_MONOMERS +
+          initCoords.x +
+          HORIZONTAL_DISTANCE_FROM_MONOMER +
+          DISTANCE_FROM_RIGHT >
+        canvasWidth;
+
+      if (isMonomerFitCanvas) {
+        chain[i].moveAbsolute(
+          Scale.scaled2obj(
+            new Vec2({
+              x: initCoords.x,
+              y: prevPosition.y + heightMonomerWithBond,
+              z: initCoords.z,
+            }),
+            editorSettings,
+          ),
+        );
+      } else {
+        chain[i].moveAbsolute(
+          Scale.scaled2obj(
+            new Vec2({
+              x:
+                prevPosition.x +
+                monomerWidth +
+                HORIZONTAL_DISTANCE_FROM_MONOMER,
+              y: prevPosition.y,
+              z: initCoords.z,
+            }),
+            editorSettings,
+          ),
+        );
+      }
+      const operation = new MonomerMoveOperation(chain[i]);
+      command.addOperation(operation);
+    }
+    const lastCoord = Scale.obj2scaled(
+      chain[chain.length - 1].position,
+      editorSettings,
+    );
+    return { command, lastCoord };
+  }
+
+  private findChainByMonomer(monomer: BaseMonomer) {
+    let firstMonomer = monomer;
+    while (this.getPrevMonomer(firstMonomer)) {
+      firstMonomer = this.getPrevMonomer(firstMonomer) ?? firstMonomer;
+    }
+
+    const monomerChain = [] as BaseMonomer[];
+    let monomerInTheChain = firstMonomer;
+    monomerChain.push(monomerInTheChain);
+    while (this.getNextMonomer(monomerInTheChain)) {
+      monomerInTheChain =
+        this.getNextMonomer(monomerInTheChain) ?? firstMonomer;
+      monomerChain.push(monomerInTheChain);
+    }
+    return monomerChain;
+  }
+
+  private findTopLeftMonomer(monomersList: BaseMonomer[]) {
+    let topLeftMonomer = monomersList[0];
+
+    let topLeftMonomerCoords =
+      topLeftMonomer.position.x + topLeftMonomer.position.y;
+
+    for (const monomer of monomersList) {
+      const coords = monomer.position.x + monomer.position.y;
+      if (coords < topLeftMonomerCoords) {
+        topLeftMonomer = monomer;
+        topLeftMonomerCoords = coords;
+      }
+    }
+    return topLeftMonomer;
+  }
+
+  private getPrevMonomer(monomer: BaseMonomer) {
+    return monomer.attachmentPointsToBonds.R2?.firstMonomer;
+  }
+
+  private getNextMonomer(monomer: BaseMonomer) {
+    return monomer.attachmentPointsToBonds.R1?.secondMonomer;
+  }
+
+  public reArrangeChain(canvasWidth: number, isSnakeMode: boolean) {
+    const command = new Command();
+    if (isSnakeMode) {
+      command.merge(this.reArrangeMonomers(canvasWidth));
+    }
+    command.merge(this.redrawBonds());
+
+    return command;
+  }
+
+  public redrawBonds() {
+    const command = new Command();
+
+    this.polymerBonds.forEach((drawingEntity) => {
+      drawingEntity.moveToLinkedMonomers();
+      command.merge(this.createDrawingEntityRedrawCommand(drawingEntity));
+    });
+    return command;
+  }
+
+  public reArrangeMonomers(canvasWidth: number) {
+    const monomersList = Array.from(this.monomers.values());
+
+    const topLeftMonomer = this.findTopLeftMonomer(monomersList);
+
+    let unusedMonomerList = [...monomersList];
+    const chainsList = [] as BaseMonomer[][];
+    const firstChain = this.findChainByMonomer(topLeftMonomer);
+    unusedMonomerList = unusedMonomerList.filter(
+      (monomer) => !firstChain.includes(monomer),
+    );
+    chainsList.push(firstChain);
+
+    while (unusedMonomerList.length) {
+      const chain = this.findChainByMonomer(unusedMonomerList[0]);
+      unusedMonomerList = unusedMonomerList.filter(
+        (monomer) => !chain.includes(monomer),
+      );
+      chainsList.push(chain);
+    }
+
+    const monomerHeight = monomersList[0].renderer?.bodyHeight ?? 0;
+    let initCoords = new Vec2({
+      x: 40,
+      y: 40,
+      z: 0,
+    });
+    const command = new Command();
+    chainsList.forEach((chain) => {
+      const { lastCoord, command: newCommand } = this.rearrangeChain(
+        initCoords,
+        chain,
+        canvasWidth,
+      );
+      initCoords = new Vec2({
+        x: initCoords.x,
+        y: lastCoord.y + monomerHeight + VERTICAL_DISTANCE_FROM_MONOMER,
+        z: 0,
+      });
+      command.merge(newCommand);
     });
 
     return command;

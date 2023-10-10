@@ -169,9 +169,15 @@ export async function resetAllSettingsToDefault(page: Page) {
 export async function addMonomerToCanvas(
   page: Page,
   monomerFullName: string,
+  alias: string,
   positionX: number,
   positionY: number,
+  index: number,
 ) {
   await page.getByTestId(monomerFullName).click();
   await page.mouse.click(positionX, positionY);
+
+  return await page
+    .locator(`//\*[name() = 'g' and ./\*[name()='text' and .='${alias}']]`)
+    .nth(index);
 }

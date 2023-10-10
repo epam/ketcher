@@ -75,10 +75,6 @@ test.describe('Draw Ellipse', () => {
   });
 
   test('Simple Objects - Edit a Ellipse  - moving object', async ({ page }) => {
-    // const a = 645;
-    // const b = 367;
-    // const c = 759;
-    // const d = 183;
     const point = { x: 645, y: 367 };
     const point1 = { x: 759, y: 183 };
     await setupEllipse(page);
@@ -92,14 +88,6 @@ test.describe('Draw Ellipse', () => {
     page,
   }) => {
     // Test case: EPMLSOPKET-1960
-    // const a = 332;
-    // const b = 401;
-    // const c = 692;
-    // const d = 410;
-    // const e = 690;
-    // const f = 410;
-    // const g = 220;
-    // const h = 200;
     const point = { x: 332, y: 401 };
     const point1 = { x: 692, y: 410 };
     const point2 = { x: 690, y: 410 };

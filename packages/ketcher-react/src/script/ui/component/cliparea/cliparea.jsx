@@ -131,7 +131,7 @@ async function copy(data) {
     await navigator.clipboard.writeText(data['text/plain']);
   } catch (e) {
     KetcherLogger.error('cliparea.jsx::copy', e);
-    console.info(`Could not write exact type ${data && data.toString()}`);
+    console.info(`Could not write exact type ${JSON.stringify(data)}`);
   }
 }
 

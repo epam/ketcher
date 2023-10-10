@@ -281,6 +281,9 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     const x = 500;
     const y = 200;
+    await page.evaluate(() => {
+      window.ketcher.logging.enabled = true;
+    });
     await openFileAndAddToCanvas('reaction-dif-prop.rxn', page);
     await copyAndPaste(page);
     await waitForRender(page, async () => {

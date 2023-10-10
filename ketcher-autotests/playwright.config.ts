@@ -120,7 +120,7 @@ const config: PlaywrightTestConfig = {
     viewport: { width: 1920, height: 1080 },
     /* Base URL to use in actions like `await page.goto('/')`. */
     baseURL: baseURL(),
-    permissions: ['clipboard-write'],
+    permissions: ['clipboard-write', 'clipboard-read'],
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
@@ -132,8 +132,13 @@ const config: PlaywrightTestConfig = {
       name: 'chromium',
       use: {
         ...devices['Desktop Chrome'],
+        ignoreHTTPSErrors: true,
         launchOptions: {
           headless: true,
+          args: [
+            '--unsafely-treat-insecure-origin-as-secure="http://host.docker.internal:4002"',
+            '--disable-web-security',
+          ],
         },
       },
     },

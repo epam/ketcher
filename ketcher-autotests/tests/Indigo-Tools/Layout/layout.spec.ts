@@ -225,4 +225,29 @@ test.describe('Indigo Tools - Layout', () => {
       async () => await selectTopPanelButton(TopPanelButton.Layout, page),
     );
   });
+
+  test('Structures are displayed in the middle of the screen after clicks "Layout" button', async ({
+    page,
+  }) => {
+    /*
+    Test case: EPMLSOPKET-17665, EPMLSOPKET-10084
+    Description: After Layout the structures are displayed orderly in the middle of the screen.
+    */
+    await openFileAndAddToCanvas('KET/four-benzene-at-edges.ket', page);
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await selectTopPanelButton(TopPanelButton.Layout, page),
+    );
+  });
+
+  test('Molecular structures are displayed in the middle of the canvas after clicks "Ctrl+L"', async ({
+    page,
+  }) => {
+    /*
+    Test case: EPMLSOPKET-17666
+    Description: After Layout the structures are displayed orderly in the middle of the screen.
+    */
+    await openFileAndAddToCanvas('KET/four-benzene-at-edges.ket', page);
+    await page.keyboard.press('Control+l');
+  });
 });

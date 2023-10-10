@@ -17,6 +17,8 @@ import {
   waitForRender,
   selectAtomInToolbar,
   AtomButton,
+  selectTopPanelButton,
+  TopPanelButton,
 } from '@utils';
 
 test.describe('Open Ketcher', () => {
@@ -146,7 +148,7 @@ test.describe('Open Ketcher', () => {
 
   test('Check top toolbar icons', async ({ page }) => {
     /*
-    Test case: EPMLSOPKET - 15545
+    Test case: EPMLSOPKET - 15545, EPMLSOPKET - 4229
     Description: 
     Top toolbar according to mockup design.
     */
@@ -166,5 +168,19 @@ test.describe('Open Ketcher', () => {
       await page.keyboard.press('Shift+Tab');
       await takeLeftToolbarScreenshot(page);
     }
+  });
+
+  test('Verify Aromatize and Dearomatize icons', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET - 16942, EPMLSOPKET - 16943
+    Description: 
+    Aromatize and Dearomatize icons are on top toolbar and can make Aromatize and Dearomatize actions
+    */
+    await takeTopToolbarScreenshot(page);
+    await drawBenzeneRing(page);
+    await selectTopPanelButton(TopPanelButton.Aromatize, page);
+    await takeEditorScreenshot(page);
+    await selectTopPanelButton(TopPanelButton.Dearomatize, page);
+    await takeEditorScreenshot(page);
   });
 });

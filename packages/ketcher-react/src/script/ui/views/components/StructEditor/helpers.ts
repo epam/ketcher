@@ -31,3 +31,8 @@ export const calculateMiddleCoordsForRect = (
 
   return middleCoordForRectangleSides;
 };
+
+export const getSmoothScrollDelta = (delta: number, zoom: number) => {
+  const SMOOTH_FACTOR = 0.4;
+  return (delta / zoom) * SMOOTH_FACTOR;
+};

@@ -34,12 +34,19 @@ const pageEventToViewBox = (
   return new Vec2(event.clientX - offsetLeft, event.clientY - offsetTop);
 };
 
-const pageEventToProto = (
+const pageEventToCanvas = (
   event: MouseEvent | { clientX: number; clientY: number },
   render: Render,
 ) => {
   const pointInViewBox = pageEventToViewBox(event, render.clientArea);
-  const pointInCanvas = viewBoxToCanvas(pointInViewBox, render);
+  return viewBoxToCanvas(pointInViewBox, render);
+};
+
+const pageEventToProto = (
+  event: MouseEvent | { clientX: number; clientY: number },
+  render: Render,
+) => {
+  const pointInCanvas = pageEventToCanvas(event, render);
   return Scale.canvasToProto(pointInCanvas, render.options);
 };
 
@@ -48,5 +55,6 @@ export const CoordinateTransformation = {
   canvasToViewBox,
   viewBoxToCanvas,
   viewBoxToProto,
+  pageEventToCanvas,
   pageEventToProto,
 };

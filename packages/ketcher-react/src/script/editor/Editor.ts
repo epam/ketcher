@@ -324,12 +324,12 @@ class Editor implements KetcherEditor {
     return this.render.options;
   }
 
-  zoom(value?: any) {
+  zoom(value?: any, event?: WheelEvent) {
     if (arguments.length === 0 || this.render.options.zoom === value) {
       return this.render.options.zoom;
     }
 
-    this.render.setZoom(value);
+    this.render.setZoom(value, event);
 
     this.render.update();
     this.rotateController.rerender();

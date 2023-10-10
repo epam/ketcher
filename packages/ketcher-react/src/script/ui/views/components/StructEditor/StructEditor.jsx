@@ -29,6 +29,7 @@ import { ContextMenu, ContextMenuTrigger } from '../ContextMenu';
 
 import InfoPanel from './InfoPanel';
 import { KetcherLogger } from 'ketcher-core';
+import { getSmoothScrollDelta } from './helpers';
 
 // TODO: need to update component after making refactoring of store
 function setupEditor(editor, props, oldProps = {}) {
@@ -87,9 +88,9 @@ class StructEditor extends Component {
       const zoomDelta = event.deltaY > 0 ? -1 : 1;
 
       if (zoomDelta === 1) {
-        this.props.onZoomIn();
+        this.props.onZoomIn(event);
       } else {
-        this.props.onZoomOut();
+        this.props.onZoomOut(event);
       }
     } else {
       this.scrollCanvas(event);
@@ -114,7 +115,8 @@ class StructEditor extends Component {
   handleHorizontalScroll(event) {
     this.editor.render.setViewBox((prev) => ({
       ...prev,
-      minX: prev.minX - event.wheelDelta / this.editor.zoom(),
+      minX:
+        prev.minX - getSmoothScrollDelta(event.wheelDelta, this.editor.zoom()),
     }));
   }
 
@@ -125,8 +127,8 @@ class StructEditor extends Component {
   handleScroll(event) {
     this.editor.render.setViewBox((prev) => ({
       ...prev,
-      minX: prev.minX + event.deltaX / this.editor.zoom(),
-      minY: prev.minY + event.deltaY / this.editor.zoom(),
+      minX: prev.minX + getSmoothScrollDelta(event.deltaX, this.editor.zoom()),
+      minY: prev.minY + getSmoothScrollDelta(event.deltaY, this.editor.zoom()),
     }));
   }
 

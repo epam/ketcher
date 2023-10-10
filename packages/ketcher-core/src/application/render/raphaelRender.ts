@@ -41,7 +41,7 @@ export class Render {
   // TODO https://github.com/epam/ketcher/issues/2630
   public ctab: ReStruct;
   public options: RenderOptions;
-  public viewBox: ViewBox;
+  public viewBox!: ViewBox;
   private readonly userOpts: RenderOptions;
   private oldCb: Box2Abs | null = null;
 
@@ -56,12 +56,12 @@ export class Render {
     this.paper = new Raphael(clientArea, renderWidth, renderHeight);
     this.sz = new Vec2(renderWidth, renderHeight);
     this.ctab = new ReStruct(new Struct(), this);
-    this.viewBox = {
+    this.setViewBox({
       minX: 0,
       minY: 0,
       width: renderWidth,
       height: renderHeight,
-    };
+    });
     this.options = defaultOptions(this.userOpts);
   }
 
@@ -112,23 +112,44 @@ export class Render {
     this.options.offset = newOffset;
   }
 
-  setZoom(zoom: number) {
-    // when scaling the canvas down it may happen that the scaled canvas is smaller than the view window
-    // don't forget to call setScrollOffset after zooming (or use extendCanvas directly)
-    this.options.zoom = zoom;
-
+  setZoom(zoom: number, event?: WheelEvent) {
     const zoomedWidth = this.sz.x / zoom;
     const zoomedHeight = this.sz.y / zoom;
-    // @yuleicul Fixme: minX and minY !== 0 after resetting zoom
-    const viewBoxX = this.sz.x / 2 - zoomedWidth / 2;
-    const viewBoxY = this.sz.y / 2 - zoomedWidth / 2;
-
+    const [viewBoxX, viewBoxY] = event
+      ? this.zoomOnMouse(event, zoomedWidth, zoomedHeight)
+      : this.zoomOnCanvasCenter(zoomedWidth, zoomedHeight);
     this.setViewBox({
       minX: viewBoxX,
       minY: viewBoxY,
       width: zoomedWidth,
       height: zoomedHeight,
     });
+
+    this.options.zoom = zoom;
+  }
+
+  private zoomOnCanvasCenter(zoomedWidth: number, zoomedHeight: number) {
+    const fixedPoint = new Vec2(
+      this.viewBox.minX + this.viewBox.width / 2,
+      this.viewBox.minY + this.viewBox.height / 2,
+    );
+    const viewBoxX = fixedPoint.x - zoomedWidth / 2;
+    const viewBoxY = fixedPoint.y - zoomedHeight / 2;
+    return [viewBoxX, viewBoxY];
+  }
+
+  private zoomOnMouse(
+    event: WheelEvent,
+    zoomedWidth: number,
+    zoomedHeight: number,
+  ) {
+    const fixedPoint = CoordinateTransformation.pageEventToCanvas(event, this);
+    const widthRatio = (fixedPoint.x - this.viewBox.minX) / this.viewBox.width;
+    const heightRatio =
+      (fixedPoint.y - this.viewBox.minY) / this.viewBox.height;
+    const viewBoxX = fixedPoint.x - zoomedWidth * widthRatio;
+    const viewBoxY = fixedPoint.y - zoomedHeight * heightRatio;
+    return [viewBoxX, viewBoxY];
   }
 
   setScrollOffset(x: number, y: number) {

@@ -351,10 +351,10 @@ export class Molfile {
     const substcountList: NumberTuple[] = [];
 
     this.molecule!.atoms.forEach((atom, id) => {
-      if (atom.charge !== 0) {
+      if (atom.charge !== 0 && atom.charge !== null) {
         chargeList.push([id, atom.charge]);
       }
-      if (atom.isotope !== 0) {
+      if (atom.isotope !== 0 && atom.isotope !== null) {
         isotopeList.push([id, atom.isotope]);
       }
       if (atom.radical !== 0) {

@@ -194,6 +194,8 @@ describe('Atom', () => {
     const plainCarbonParams = {
       ...hydrogenParams,
       label: 'C',
+      charge: null,
+      isotope: null,
     };
 
     it('should return true if it is plain carbon', () => {
@@ -206,7 +208,7 @@ describe('Atom', () => {
       expect(atom.isPlainCarbon()).toBe(false);
     });
 
-    it('should return false if it  is carbon and isotope != 0', () => {
+    it('should return false if it  is carbon and isotope != null', () => {
       const carbonWithIsotopeParam = {
         ...plainCarbonParams,
         isotope: 1,
@@ -224,7 +226,7 @@ describe('Atom', () => {
       expect(atom.isPlainCarbon()).toBe(false);
     });
 
-    it('should return false if it  is carbon and charge != 0', () => {
+    it('should return false if it  is carbon and charge != null', () => {
       const carbonWithChargeParam = {
         ...plainCarbonParams,
         charge: 1,

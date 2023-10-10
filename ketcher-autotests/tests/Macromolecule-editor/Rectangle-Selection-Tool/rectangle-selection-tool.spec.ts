@@ -35,6 +35,7 @@ test.describe('Rectangle Selection Tool', () => {
       MONOMER_ALIAS,
       300,
       300,
+      0,
     );
     const peptide2 = await addMonomerToCanvas(
       page,
@@ -42,6 +43,7 @@ test.describe('Rectangle Selection Tool', () => {
       MONOMER_ALIAS,
       400,
       400,
+      1,
     );
     const peptide3 = await addMonomerToCanvas(
       page,
@@ -49,6 +51,7 @@ test.describe('Rectangle Selection Tool', () => {
       MONOMER_ALIAS,
       500,
       500,
+      2,
     );
     const peptide4 = await addMonomerToCanvas(
       page,
@@ -56,6 +59,7 @@ test.describe('Rectangle Selection Tool', () => {
       MONOMER_ALIAS,
       500,
       200,
+      3,
     );
 
     // Select bond tool

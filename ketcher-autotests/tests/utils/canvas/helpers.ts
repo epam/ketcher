@@ -172,8 +172,11 @@ export async function addMonomerToCanvas(
   alias: string,
   positionX: number,
   positionY: number,
+  index: number,
 ) {
   await page.getByTestId(monomerFullName).click();
   await page.mouse.click(positionX, positionY);
-  return await page.getByText(alias).locator('..').last();
+  return await page
+    .locator(`//\*[name() = 'g' and ./\*[name()='text' and .='${alias}']]`)
+    .nth(index);
 }

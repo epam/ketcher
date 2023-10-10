@@ -52,21 +52,19 @@ test.describe('Click and drag FG on canvas', () => {
     await drawFGAndDrag(FunctionalGroups.Boc, SHIFT, page);
   });
 
-  test.fixme(
-    'Boc appears near FormicAcid where the left mouse button was released',
-    async ({ page }) => {
-      /*
+  test('Boc appears near FormicAcid where the left mouse button was released', async ({
+    page,
+  }) => {
+    /*
       Test case: EPMLSOPKET-11552
       Description: when click & drag with an FG on Salts and Solvents
       FG appears near Salt and Solvents where the left mouse button was released
       Bug: https://github.com/epam/ketcher/issues/2278
     */
-      await selectSaltsAndSolvents(SaltsAndSolvents.FormicAcid, page);
-      await clickInTheMiddleOfTheScreen(page);
-
-      await drawFGAndDrag(FunctionalGroups.Boc, SHIFT, page);
-    },
-  );
+    await selectSaltsAndSolvents(SaltsAndSolvents.FormicAcid, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await drawFGAndDrag(FunctionalGroups.Boc, SHIFT, page);
+  });
 
   test('CF3 forms a bond with Oxygen atom', async ({ page }) => {
     /*

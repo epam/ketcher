@@ -185,6 +185,14 @@ export class AttachmentPoint {
 
     if (!this.isUsed) {
       angleDegrees = this.initialAngle;
+    } else if (this.isSnake) {
+      const flip =
+        this.monomer.id ===
+        this.monomer.attachmentPointsToBonds[this.attachmentPointName]
+          ?.firstMonomer?.id;
+
+      const angleRadians = flip ? Math.PI : 0;
+      angleDegrees = Vec2.radians_to_degrees(angleRadians);
     } else {
       const angleRadians = this.rotateToAngle(
         this.monomer.attachmentPointsToBonds[this.attachmentPointName],

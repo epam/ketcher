@@ -22,16 +22,11 @@ export class PolymerBondRenderer extends BaseRenderer {
   private editorEvents: typeof editorEvents;
   private selectionElement;
   private path = '';
-  private static isSnake = false;
 
   constructor(public polymerBond: PolymerBond) {
     super(polymerBond as DrawingEntity);
     this.polymerBond.setRenderer(this);
     this.editorEvents = editorEvents;
-  }
-
-  static setSnakeMode(isSnakeMode) {
-    PolymerBondRenderer.isSnake = isSnakeMode;
   }
 
   get attachmentPointsForSnakeBond() {

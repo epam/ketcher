@@ -14,12 +14,14 @@ test.describe('Macromolecules delete RNA presets', () => {
     await gotoRNA(page);
   });
 
+  test.afterEach(async ({ page }) => {
+    await takePageScreenshot(page);
+  });
+
   test.skip('Should not delete default RNA preset', async ({ page }) => {
     await page.getByTestId('cancel-btn').click();
 
     await page.getByTestId('A_A_R_P').click({ button: 'right' });
-
-    await takePageScreenshot(page);
   });
 
   test.skip('Delete copy RNA preset', async ({ page }) => {
@@ -37,7 +39,5 @@ test.describe('Macromolecules delete RNA presets', () => {
     await takePageScreenshot(page);
 
     await page.getByTitle('Delete').click();
-
-    await takePageScreenshot(page);
   });
 });

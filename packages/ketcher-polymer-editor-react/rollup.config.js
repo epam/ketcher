@@ -91,7 +91,7 @@ const config = {
     string({
       include: '**/*.sdf',
     }),
-    ...(isProduction ? [strip({ include: includePattern })] : []),
+    // ...(isProduction ? [strip({ include: includePattern })] : []),
   ],
 };
 

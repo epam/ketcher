@@ -25,6 +25,7 @@ import {
   SupportedFormat,
   Editor,
   getStructure,
+  runAsyncAction,
 } from 'ketcher-core';
 import { debounce, isEqual } from 'lodash/fp';
 import { load, onAction, removeStructAction } from './shared';
@@ -281,19 +282,28 @@ export function initClipboard(dispatch) {
       return !state.modal;
     },
     async onCut() {
-      const state = global.currentState;
-      const editor = state.editor;
-      const data = await clipData(editor);
-      if (data) debAction({ tool: 'eraser', opts: 1 });
-      else editor.selection(null);
-      return data;
+      const ketcherInstance = ketcherProvider.getKetcher();
+      const result = await runAsyncAction(async () => {
+        const state = global.currentState;
+        const editor = state.editor;
+
+        const data = await clipData(editor);
+        if (data) debAction({ tool: 'eraser', opts: 1 });
+        else editor.selection(null);
+        return data;
+      }, ketcherInstance.eventBus);
+      return result;
     },
     async onCopy() {
-      const state = global.currentState;
-      const editor = state.editor;
-      const data = await clipData(editor);
-      editor.selection(null);
-      return data;
+      const ketcherInstance = ketcherProvider.getKetcher();
+      const result = await runAsyncAction(async () => {
+        const state = global.currentState;
+        const editor = state.editor;
+        const data = await clipData(editor);
+        editor.selection(null);
+        return data;
+      }, ketcherInstance.eventBus);
+      return result;
     },
     onPaste(data) {
       const structStr =
@@ -331,8 +341,7 @@ async function clipData(editor: Editor) {
 
     const data = await getStructure(
       SupportedFormat.molAuto,
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      ketcherInstance!.formatterFactory,
+      ketcherInstance.formatterFactory,
       struct,
     );
 

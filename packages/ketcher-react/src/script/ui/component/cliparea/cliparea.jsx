@@ -23,6 +23,11 @@ const ieCb = window.clipboardData;
 
 export const CLIP_AREA_BASE_CLASS = 'cliparea';
 
+function notifyCopyCut() {
+  const event = new Event('copyOrCutComplete');
+  window.dispatchEvent(event);
+}
+
 class ClipArea extends Component {
   constructor(props) {
     super(props);
@@ -55,6 +60,7 @@ class ClipArea extends Component {
           }
 
           event.preventDefault();
+          notifyCopyCut();
         }
       },
       cut: async (event) => {
@@ -66,6 +72,7 @@ class ClipArea extends Component {
           }
 
           event.preventDefault();
+          notifyCopyCut();
         }
       },
       paste: (event) => {

@@ -12,7 +12,8 @@ class KetcherProvider {
   }
 
   getKetcher() {
-    return this.ketcherInstance;
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    return this.ketcherInstance!;
   }
 }
 

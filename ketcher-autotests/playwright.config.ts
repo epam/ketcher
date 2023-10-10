@@ -120,6 +120,7 @@ const config: PlaywrightTestConfig = {
     viewport: { width: 1920, height: 1080 },
     /* Base URL to use in actions like `await page.goto('/')`. */
     baseURL: baseURL(),
+    permissions: ['clipboard-write'],
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',

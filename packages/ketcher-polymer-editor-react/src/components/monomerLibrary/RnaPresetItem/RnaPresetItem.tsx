@@ -22,11 +22,13 @@ const RnaPresetItem = ({
   preset,
   isSelected,
   onClick = EmptyFunction,
+  onContextMenu = EmptyFunction,
 }: IRnaPresetItemrops) => {
   return (
     <Card
       data-testid={getPresetUniqueKey(preset)}
       onClick={onClick}
+      onContextMenu={onContextMenu}
       selected={isSelected}
       code={preset.name}
       data-rna-preset-item-name={preset.name}

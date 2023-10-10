@@ -48,7 +48,7 @@ export const scrollToSelectedMonomer = (monomerId) => {
   scrollToElement(`[data-monomer-item-id="${monomerId}"]`);
 };
 
-export const RnaEditor = () => {
+export const RnaEditor = ({ duplicatePreset, activateEditMode }) => {
   const activePreset = useAppSelector(selectActivePreset);
   const presets = useAppSelector(selectPresets);
   const isEditMode = useAppSelector(selectIsEditMode);
@@ -101,10 +101,6 @@ export const RnaEditor = () => {
     }, 0);
   };
 
-  const activateEditMode = () => {
-    setIsEditMode(true);
-  };
-
   const cancelEdit = () => {
     if (presets.length === 0) {
       dispatch(createNewPreset());
@@ -115,18 +111,6 @@ export const RnaEditor = () => {
       dispatch(setActivePreset(presets[0]));
     }
     setIsEditMode(false);
-  };
-
-  const duplicatePreset = () => {
-    const duplicatedPreset = {
-      ...activePreset,
-      presetInList: undefined,
-      name: `${activePreset.name}_Copy`,
-    };
-    dispatch(setActivePreset(duplicatedPreset));
-    dispatch(savePreset(duplicatedPreset));
-    setIsEditMode(true);
-    scrollToSelectedPreset(activePreset.name);
   };
 
   return (

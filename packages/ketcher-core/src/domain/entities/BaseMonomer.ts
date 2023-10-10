@@ -150,6 +150,30 @@ export class BaseMonomer extends DrawingEntity {
     return this.firstFreeAttachmentPoint;
   }
 
+  public get usedAttachmentPointsNamesList() {
+    const list: string[] = [];
+    for (const attachmentPointName in this.attachmentPointsToBonds) {
+      if (
+        this.isAttachmentPointUsed(attachmentPointName as AttachmentPointName)
+      ) {
+        list.push(attachmentPointName);
+      }
+    }
+    return list;
+  }
+
+  public get unUsedAttachmentPointsNamesList() {
+    const list: string[] = [];
+    for (const attachmentPointName in this.attachmentPointsToBonds) {
+      if (
+        !this.isAttachmentPointUsed(attachmentPointName as AttachmentPointName)
+      ) {
+        list.push(attachmentPointName);
+      }
+    }
+    return list;
+  }
+
   public getBondByAttachmentPoint(attachmentPointName: AttachmentPointName) {
     return this.attachmentPointsToBonds[attachmentPointName];
   }

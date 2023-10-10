@@ -12,20 +12,20 @@ exports[`Polymer Bond Renderer should render bond 1`] = `
     <line
       stroke="transparent"
       stroke-width="10"
-      x1="10"
-      x2="90"
-      y1="10"
-      y2="100"
+      x1="400"
+      x2="3600"
+      y1="400"
+      y2="4000"
     />
     <line
       class="selection-area"
       pointer-events="stroke"
       stroke="#333333"
       stroke-width="2"
-      x1="10"
-      x2="90"
-      y1="10"
-      y2="100"
+      x1="400"
+      x2="3600"
+      y1="400"
+      y2="4000"
     />
   </g>
   <defs />

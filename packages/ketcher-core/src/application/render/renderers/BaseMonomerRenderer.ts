@@ -6,6 +6,7 @@ import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { editorEvents } from 'application/editor/editorEvents';
 import { Scale } from 'domain/helpers';
 import { AttachmentPoint } from 'domain/AttachmentPoint';
+import { AttachmentPointName } from 'domain/types';
 
 export abstract class BaseMonomerRenderer extends BaseRenderer {
   private editorEvents: typeof editorEvents;
@@ -28,6 +29,13 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     super(monomer as DrawingEntity);
     this.monomer.setRenderer(this);
     this.editorEvents = editorEvents;
+  }
+
+  private isSnakeBondForAttachmentPoint(
+    attachmentPointName: AttachmentPointName,
+  ) {
+    return this.monomer.attachmentPointsToBonds[attachmentPointName]?.renderer
+      ?.isSnake;
   }
 
   public get center() {
@@ -135,7 +143,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
         this.bodyHeight,
         this.canvas,
         AttachmentPointName,
-        BaseRenderer.isSnake,
+        this.isSnakeBondForAttachmentPoint(AttachmentPointName),
       );
       atP = attPointInstance.getElement();
     } else {

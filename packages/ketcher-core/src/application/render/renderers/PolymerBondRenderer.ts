@@ -26,6 +26,35 @@ export class PolymerBondRenderer extends BaseRenderer {
     this.editorEvents = editorEvents;
   }
 
+  get attachmentPointsForSnakeBond() {
+    return ['R1', 'R2'];
+  }
+
+  get isSnake() {
+    const firstMonomerAttachmentPoint =
+      this.polymerBond.firstMonomer.getAttachmentPointByBond(this.polymerBond);
+    const secondMonomerAttachmentPoint =
+      this.polymerBond.secondMonomer?.getAttachmentPointByBond(
+        this.polymerBond,
+      );
+    const firstMonomerPotentialAttachmentPoint =
+      this.polymerBond.firstMonomer.getPotentialAttachmentPointByBond(
+        this.polymerBond,
+      );
+    return (
+      BaseRenderer.isSnakeMode &&
+      ((this.attachmentPointsForSnakeBond.includes(
+        firstMonomerAttachmentPoint as string,
+      ) &&
+        this.attachmentPointsForSnakeBond.includes(
+          secondMonomerAttachmentPoint as string,
+        )) ||
+        this.attachmentPointsForSnakeBond.includes(
+          firstMonomerPotentialAttachmentPoint as string,
+        ))
+    );
+  }
+
   public get rootBBox() {
     const rootNode = this.rootElement?.node();
     if (!rootNode) return;
@@ -48,7 +77,7 @@ export class PolymerBondRenderer extends BaseRenderer {
   }
 
   public appendBond(rootElement) {
-    if (PolymerBondRenderer.isSnake) {
+    if (this.isSnake) {
       this.appendSnakeBond(rootElement);
     } else {
       this.appendBondGraph(rootElement);
@@ -355,7 +384,7 @@ export class PolymerBondRenderer extends BaseRenderer {
   public drawSelection() {
     if (this.polymerBond.selected) {
       this.selectionElement?.remove();
-      if (PolymerBondRenderer.isSnake) {
+      if (this.isSnake) {
         this.selectionElement = this.rootElement
           ?.insert('path', ':first-child')
           .attr('stroke', '#57FF8F')
@@ -378,7 +407,7 @@ export class PolymerBondRenderer extends BaseRenderer {
   }
 
   public moveEnd() {
-    if (PolymerBondRenderer.isSnake) {
+    if (this.isSnake) {
       this.moveSnakeBondEnd();
     } else {
       this.moveGraphBondEnd();
@@ -415,7 +444,7 @@ export class PolymerBondRenderer extends BaseRenderer {
   }
 
   public moveStart() {
-    if (PolymerBondRenderer.isSnake) {
+    if (this.isSnake) {
       this.moveSnakeBondStart();
     } else {
       this.moveGraphBondStart();
@@ -452,7 +481,7 @@ export class PolymerBondRenderer extends BaseRenderer {
   }
 
   protected appendHoverAreaElement() {
-    if (PolymerBondRenderer.isSnake) {
+    if (this.isSnake) {
       (<D3SvgElementSelection<SVGPathElement, void> | undefined>(
         this.hoverAreaElement
       )) = this.rootElement

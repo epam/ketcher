@@ -30,6 +30,8 @@ import {
 import { monomerFactory } from 'application/editor/operations/monomer/monomerFactory';
 import { provideEditorSettings } from 'application/editor/editorSettings';
 import { Scale } from 'domain/helpers';
+import { Peptide } from 'domain/entities/Peptide';
+import { Chem } from 'domain/entities/Chem';
 
 const HORIZONTAL_DISTANCE_FROM_MONOMER = 40;
 const VERTICAL_DISTANCE_FROM_MONOMER = 60;
@@ -615,7 +617,9 @@ export class DrawingEntitiesManager {
   }
 
   public reArrangeMonomers(canvasWidth: number) {
-    const monomersList = Array.from(this.monomers.values());
+    const monomersList = Array.from(this.monomers.values()).filter(
+      (monomer) => monomer instanceof Peptide || monomer instanceof Chem,
+    );
 
     const topLeftMonomer = this.findTopLeftMonomer(monomersList);
 

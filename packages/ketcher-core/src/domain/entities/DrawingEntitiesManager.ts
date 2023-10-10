@@ -31,8 +31,8 @@ import { monomerFactory } from 'application/editor/operations/monomer/monomerFac
 import { provideEditorSettings } from 'application/editor/editorSettings';
 import { Scale } from 'domain/helpers';
 
-const HORIZONTAL_DISTANCE_FROM_MONOMER = 30;
-const VERTICAL_DISTANCE_FROM_MONOMER = 55;
+const HORIZONTAL_DISTANCE_FROM_MONOMER = 40;
+const VERTICAL_DISTANCE_FROM_MONOMER = 60;
 const DISTANCE_FROM_RIGHT = 70;
 const DISTANCE_BETWEEN_MONOMERS = 30;
 

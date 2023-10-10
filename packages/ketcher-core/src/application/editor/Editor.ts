@@ -1,5 +1,6 @@
 import { DOMSubscription } from 'subscription';
 import {
+  Atom,
   Bond,
   FunctionalGroup,
   Pile,
@@ -10,11 +11,11 @@ import {
 } from 'domain/entities';
 import {
   BaseTool,
+  IRnaPreset,
   isBaseTool,
   Tool,
   ToolConstructorInterface,
   ToolEventHandlerName,
-  IRnaPreset,
 } from 'application/editor/tools/Tool';
 import { toolsMap } from 'application/editor/tools';
 import { MonomerItemType } from 'domain/types';
@@ -32,6 +33,8 @@ import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { Command } from 'domain/entities/Command';
 import { MONOMER_CONST } from 'application/editor/operations/monomer/monomerFactory';
+import { PolymerBond } from 'domain/entities/PolymerBond';
+import assert from 'assert';
 
 interface ICoreEditorConstructorParams {
   theme;
@@ -126,7 +129,6 @@ export class CoreEditor {
     for (const eventName in this.events) {
       this.events[eventName].handlers = [];
     }
-    console.log(this.events);
   }
 
   get trackedDomEvents() {
@@ -244,46 +246,90 @@ export class CoreEditor {
     return false;
   }
 
+  private static convertMonomerToMonomerMicromolecule(
+    monomer: BaseMonomer,
+    struct: Struct,
+  ) {
+    const monomerMicromolecule = new MonomerMicromolecule(
+      SGroup.TYPES.SUP,
+      monomer,
+    );
+    const sgroupId = struct.sgroups.add(monomerMicromolecule);
+
+    monomerMicromolecule.data.name = monomer.monomerItem.label;
+    monomerMicromolecule.data.expanded = false;
+    monomerMicromolecule.id = sgroupId;
+    monomerMicromolecule.pp = monomer.position;
+
+    return monomerMicromolecule;
+  }
+
+  private static addMonomerAtomToStruct(
+    atom: Atom,
+    monomer: BaseMonomer,
+    monomerMicromolecule: MonomerMicromolecule,
+    struct: Struct,
+  ) {
+    const atomClone = atom.clone();
+    atomClone.pp = monomer.position.add(atom.pp);
+    atomClone.sgs = new Pile<number>([monomerMicromolecule.id]);
+    atomClone.fragment = -1;
+    const atomId = struct.atoms.add(atomClone);
+    monomerMicromolecule.atoms.push(atomId);
+    if (atom.rglabel) {
+      monomerMicromolecule.addAttachmentPoint(
+        new SGroupAttachmentPoint(atomId, undefined, undefined),
+      );
+    }
+
+    return { atomId, atom: atomClone };
+  }
+
+  private static findAttachmentPointAtom(
+    sgroup: SGroup,
+    polymerBond: PolymerBond,
+    monomer: BaseMonomer,
+    struct: Struct,
+  ) {
+    return sgroup.atoms.find(
+      (atomId) =>
+        Number(struct.atoms.get(atomId)?.rglabel) ===
+        Number(monomer.getAttachmentPointByBond(polymerBond)?.replace('R', '')),
+    );
+  }
+
   public static convertDrawingEntitiesToStruct(
     drawingEntitiesManager: DrawingEntitiesManager,
     struct: Struct,
     reStruct?: ReStruct,
   ) {
-    let lastId = 0;
     const monomerToSgroup = new Map<BaseMonomer, SGroup>();
-    const monomerToLastIndex = new Map<BaseMonomer, number>();
     drawingEntitiesManager.monomers.forEach((monomer) => {
       if (monomer.monomerItem.props.isMicromoleculeFragment) {
         monomer.monomerItem.struct.mergeInto(struct);
       } else {
-        const monomerMicromolecule = new MonomerMicromolecule(
-          SGroup.TYPES.SUP,
-          monomer.position,
-          monomer,
-        );
         const atomIdsMap = {};
+        const monomerMicromolecule = this.convertMonomerToMonomerMicromolecule(
+          monomer,
+          struct,
+        );
         monomerToSgroup.set(monomer, monomerMicromolecule);
-        monomerToLastIndex.set(monomer, lastId);
-        const sgroupId = struct.sgroups.add(monomerMicromolecule);
-        monomerMicromolecule.data.name = monomer.monomerItem.label;
-        monomerMicromolecule.data.expanded = false;
-        monomerMicromolecule.id = sgroupId;
-        monomerMicromolecule.pp = monomer.position;
-        monomer.monomerItem.struct.atoms.forEach((atom, previousAtomId) => {
-          const atomClone = atom.clone();
-          atomClone.pp = monomer.position.add(atom.pp);
-          atomClone.sgs = new Pile<number>([sgroupId]);
-          atomClone.fragment = -1;
-          const atomId = struct.atoms.add(atomClone);
-          atomIdsMap[previousAtomId] = atomId;
-          monomerMicromolecule.atoms.push(atomId);
-          if (atom.rglabel) {
-            monomerMicromolecule.addAttachmentPoint(
-              new SGroupAttachmentPoint(atomId, undefined, undefined),
-            );
-          }
-          reStruct?.atoms.set(atomId, new ReAtom(atomClone));
+        reStruct?.sgroups.set(
+          monomerMicromolecule.id,
+          new ReSGroup(monomerMicromolecule),
+        );
+
+        monomer.monomerItem.struct.atoms.forEach((oldAtom, oldAtomId) => {
+          const { atom, atomId } = this.addMonomerAtomToStruct(
+            oldAtom,
+            monomer,
+            monomerMicromolecule,
+            struct,
+          );
+          atomIdsMap[oldAtomId] = atomId;
+          reStruct?.atoms.set(atomId, new ReAtom(atom));
         });
+
         struct.sGroupForest.insert(monomerMicromolecule);
         monomer.monomerItem.struct.bonds.forEach((bond) => {
           const bondClone = bond.clone();
@@ -292,39 +338,27 @@ export class CoreEditor {
           const bondId = struct.bonds.add(bondClone);
           reStruct?.bonds.set(bondId, new ReBond(bondClone));
         });
-        lastId = struct.atoms.size + struct.bonds.size;
-        reStruct?.sgroups.set(sgroupId, new ReSGroup(monomerMicromolecule));
 
         struct.functionalGroups.add(new FunctionalGroup(monomerMicromolecule));
       }
     });
 
     drawingEntitiesManager.polymerBonds.forEach((polymerBond) => {
+      assert(polymerBond.secondMonomer);
       const bond = new Bond({
         type: Bond.PATTERN.TYPE.SINGLE,
-        begin: monomerToSgroup
-          .get(polymerBond.firstMonomer)
-          ?.atoms.find(
-            (atomId) =>
-              Number(struct.atoms.get(atomId)?.rglabel) ===
-              Number(
-                polymerBond.firstMonomer
-                  .getAttachmentPointByBond(polymerBond)
-                  ?.replace('R', ''),
-              ),
-          ),
-        end: monomerToSgroup
-          .get(polymerBond.secondMonomer as BaseMonomer)
-          ?.atoms.find((atomId) => {
-            return (
-              Number(struct.atoms.get(atomId)?.rglabel) ===
-              Number(
-                polymerBond.secondMonomer
-                  ?.getAttachmentPointByBond(polymerBond)
-                  ?.replace('R', ''),
-              )
-            );
-          }),
+        begin: this.findAttachmentPointAtom(
+          monomerToSgroup.get(polymerBond.firstMonomer) as SGroup,
+          polymerBond,
+          polymerBond.firstMonomer,
+          struct,
+        ),
+        end: this.findAttachmentPointAtom(
+          monomerToSgroup.get(polymerBond.secondMonomer) as SGroup,
+          polymerBond,
+          polymerBond.secondMonomer,
+          struct,
+        ),
       });
       const bondId = struct.bonds.add(bond);
       reStruct?.bonds.set(bondId, new ReBond(bond));
@@ -333,49 +367,79 @@ export class CoreEditor {
     return { struct, reStruct };
   }
 
+  private static convertMonomerMicromoleculeToMonomer(
+    monomerMicromolecule: MonomerMicromolecule,
+    drawingEntitiesManager: DrawingEntitiesManager,
+    sgroupToMonomer: Map<SGroup, BaseMonomer>,
+  ) {
+    const command = new Command();
+    const monomerAdditionCommand = drawingEntitiesManager.addMonomer(
+      monomerMicromolecule.monomer.monomerItem,
+      monomerMicromolecule.pp as Vec2,
+    );
+    command.merge(monomerAdditionCommand);
+    sgroupToMonomer.set(
+      monomerMicromolecule,
+      monomerAdditionCommand.operations[0].monomer as BaseMonomer,
+    );
+
+    return command;
+  }
+
+  private static convertFragmentToChem(
+    fragmentNumber: number,
+    fragmentStruct: Struct,
+    drawingEntitiesManager: DrawingEntitiesManager,
+  ) {
+    const fragmentBbox = fragmentStruct.getCoordBoundingBox();
+    return drawingEntitiesManager.addMonomer(
+      {
+        struct: fragmentStruct,
+        label: 'F' + fragmentNumber,
+        colorScheme: undefined,
+        favorite: false,
+        props: {
+          Name: 'F' + fragmentNumber,
+          MonomerNaturalAnalogCode: '',
+          MonomerName: 'F' + fragmentNumber,
+          MonomerType: MONOMER_CONST.CHEM,
+          isMicromoleculeFragment: true,
+        },
+      },
+      new Vec2(
+        fragmentBbox.max.x - (fragmentBbox.max.x - fragmentBbox.min.x) / 2,
+        fragmentBbox.max.y - (fragmentBbox.max.y - fragmentBbox.min.y) / 2,
+      ),
+    );
+  }
+
   public static convertStructToDrawingEntities(
     struct: Struct,
     drawingEntitiesManager: DrawingEntitiesManager,
   ) {
     const sgroupToMonomer = new Map<SGroup, BaseMonomer>();
-    let command = new Command();
+    const command = new Command();
     struct.sgroups.forEach((sgroup) => {
       if (sgroup instanceof MonomerMicromolecule) {
-        const monomerAdditionCommand = drawingEntitiesManager.addMonomer(
-          sgroup.monomer.monomerItem,
-          sgroup.position,
-        );
-        command.merge(monomerAdditionCommand);
-        sgroupToMonomer.set(
-          sgroup,
-          monomerAdditionCommand.operations[0].monomer as BaseMonomer,
+        command.merge(
+          this.convertMonomerMicromoleculeToMonomer(
+            sgroup,
+            drawingEntitiesManager,
+            sgroupToMonomer,
+          ),
         );
       }
     });
     let fragmentNumber = 1;
     struct.frags.forEach((_fragment, fragmentId) => {
       const fragmentStruct = struct.getFragment(fragmentId);
-      const fragmentBbox = fragmentStruct.getCoordBoundingBox();
-      const monomerAdditionCommand = drawingEntitiesManager.addMonomer(
-        {
-          struct: fragmentStruct,
-          label: 'F' + fragmentNumber,
-          colorScheme: undefined,
-          favorite: false,
-          props: {
-            Name: 'F' + fragmentNumber,
-            MonomerNaturalAnalogCode: '',
-            MonomerName: 'F' + fragmentNumber,
-            MonomerType: MONOMER_CONST.CHEM,
-            isMicromoleculeFragment: true,
-          },
-        },
-        new Vec2(
-          fragmentBbox.max.x - (fragmentBbox.max.x - fragmentBbox.min.x) / 2,
-          fragmentBbox.max.y - (fragmentBbox.max.y - fragmentBbox.min.y) / 2,
+      command.merge(
+        this.convertFragmentToChem(
+          fragmentNumber,
+          fragmentStruct,
+          drawingEntitiesManager,
         ),
       );
-      command.merge(monomerAdditionCommand);
       fragmentNumber++;
     });
     struct.bonds.forEach((bond) => {

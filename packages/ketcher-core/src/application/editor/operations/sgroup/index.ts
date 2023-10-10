@@ -60,11 +60,7 @@ class SGroupCreate extends BaseOperation {
     const { sgid, pp, expanded, name, oldSgroup } = this.data;
     const sgroup =
       oldSgroup instanceof MonomerMicromolecule
-        ? new MonomerMicromolecule(
-            SGroup.TYPES.SUP,
-            new Vec2(pp),
-            oldSgroup.monomer,
-          )
+        ? new MonomerMicromolecule(SGroup.TYPES.SUP, oldSgroup.monomer)
         : new SGroup(this.data.type);
 
     sgroup.id = sgid;

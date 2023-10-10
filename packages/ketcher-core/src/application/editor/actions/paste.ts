@@ -59,12 +59,7 @@ export function fromPaste(
   };
 
   pstruct.atoms.forEach((atom, aid) => {
-    const sgroup = pstruct.getGroupFromAtomId(aid);
-
-    if (
-      !fridMap.has(atom.fragment) &&
-      !(sgroup instanceof MonomerMicromolecule)
-    ) {
+    if (!fridMap.has(atom.fragment) && !pstruct.isAtomFromMacromolecule(aid)) {
       fridMap.set(
         atom.fragment,
         (

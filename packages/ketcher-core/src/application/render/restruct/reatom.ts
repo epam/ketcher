@@ -243,7 +243,7 @@ class ReAtom extends ReObject {
       if (isPositionAtom) {
         const position =
           sgroup instanceof MonomerMicromolecule
-            ? Scale.obj2scaled(sgroup.position, render.options)
+            ? Scale.obj2scaled(sgroup.pp, render.options)
             : ps;
         const path = render.paper
           .text(position.x, position.y, sgroup.data.name)

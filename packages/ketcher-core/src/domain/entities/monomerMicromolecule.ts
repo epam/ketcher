@@ -14,16 +14,16 @@
  * limitations under the License.
  ***************************************************************************/
 import { SGroup } from 'domain/entities/sgroup';
-import { Vec2 } from 'domain/entities/vec2';
 import { Struct } from 'domain/entities/struct';
+import assert from 'assert';
 
 export class MonomerMicromolecule extends SGroup {
-  constructor(type: string, public position: Vec2, public monomer) {
+  constructor(type: string, public monomer) {
     super(type);
-    this.pp = this.position;
   }
 
   public override getContractedPosition(struct: Struct) {
+    assert(this.pp);
     const sgroupContractedPosition = super.getContractedPosition(struct);
     return { position: this.pp, atomId: sgroupContractedPosition.atomId };
   }

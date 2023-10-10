@@ -11,12 +11,9 @@ import {
   selectDropdownTool,
   saveToFile,
   receiveFileComparisonData,
+  clickOnAtom,
+  waitForRender,
 } from '@utils';
-import {
-  // getAtomByIndex,
-  // getBottomAtomByAttributes,
-  getRightAtomByAttributes,
-} from '@utils/canvas/atoms';
 import { getMolfile } from '@utils/formats';
 
 const DELTA = 200;
@@ -61,9 +58,8 @@ test.describe('Chain Tool verification', () => {
     const center = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await moveMouseToTheMiddleOfTheScreen(page);
     await dragMouseTo(center.x + DELTA, center.y, page);
-    // await selectDropdownTool(page, 'select-rectangle', 'select-lasso');
-    await getRightAtomByAttributes(page, { label: 'C' });
-    // await getAtomByIndex(page, { label: 'C' }, 1);
+    await selectDropdownTool(page, 'select-rectangle', 'select-lasso');
+    await clickOnAtom(page, 'C', 0);
     await page.keyboard.press('n');
   });
 
@@ -98,8 +94,32 @@ test.describe('Chain Tool verification', () => {
     );
     await selectDropdownTool(page, 'select-rectangle', 'select-lasso');
     await createSomeStructure(page);
-    await page.mouse.click(a, b);
-    await dragMouseTo(c, d, page);
-    await page.keyboard.press('Delete');
+    await waitForRender(page, async () => {
+      await page.mouse.click(a, b);
+      await dragMouseTo(c, d, page);
+      await page.keyboard.press('Delete');
+    });
+  });
+
+  test('Chain Tool - order of Hydrogen symbol in abbreviation of the atoms when adding them to the structure', async ({
+    page,
+  }) => {
+    // Test case: EPMLSOPKET-16949
+    // Verify selecting and chaning atom type on chain
+    const a = 2;
+    const b = 4;
+    const c = 6;
+    await selectTool(LeftPanelButton.Chain, page);
+    const center = await getCoordinatesOfTheMiddleOfTheScreen(page);
+    await moveMouseToTheMiddleOfTheScreen(page);
+    await dragMouseTo(center.x + DELTA, center.y, page);
+    await selectDropdownTool(page, 'select-rectangle', 'select-lasso');
+    await page.keyboard.down('Shift');
+    await clickOnAtom(page, 'C', 0);
+    await clickOnAtom(page, 'C', a);
+    await clickOnAtom(page, 'C', b);
+    await clickOnAtom(page, 'C', c);
+    await page.keyboard.up('Shift');
+    await page.keyboard.press('p');
   });
 });

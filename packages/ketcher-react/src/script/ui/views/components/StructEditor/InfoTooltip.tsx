@@ -21,11 +21,12 @@ import classes from './InfoPanel.module.less';
 import { connect } from 'react-redux';
 import clsx from 'clsx';
 import { TOOLTIP_DELAY } from 'src/script/editor/utils/functionalGroupsTooltip';
+import { debounce } from 'lodash';
 
 const HOVER_PANEL_PADDING = 20;
 const tooltipOffset = {
   x: 30,
-  y: 100,
+  y: 30,
 };
 
 interface CursorPosition {
@@ -43,7 +44,6 @@ function getPanelPosition(
   render: Render,
 ): CursorPosition {
   const width = 140;
-  const height = 50;
 
   // adjust position to keep inside viewport
   const viewportRightLimit = render?.clientArea?.clientWidth - width / 2;
@@ -54,7 +54,7 @@ function getPanelPosition(
     position.x = position.x - width - HOVER_PANEL_PADDING;
   }
   if (position.y < 0) {
-    position.y = position.y + height + HOVER_PANEL_PADDING;
+    position.y = position.y + HOVER_PANEL_PADDING;
   }
 
   return position;
@@ -69,23 +69,19 @@ const InfoTooltip: FC<InfoPanelProps> = (props) => {
     x: null,
     y: null,
   });
-  const [tooltipTimer, setTooltipTimer] = useState<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    const showTooltip = (event: MouseEvent) => {
+    const debouncedShowTooltip = debounce((event: MouseEvent) => {
       const target = event.target as HTMLElement;
       const tooltip = target.dataset.tooltip;
       if (tooltip) {
-        const tooltipTimer = setTimeout(() => {
-          setTooltip(tooltip);
-          setPosition({
-            x: event.clientX,
-            y: event.clientY,
-          });
-        }, TOOLTIP_DELAY);
-        setTooltipTimer(tooltipTimer);
+        setTooltip(tooltip);
+        setPosition({
+          x: event.clientX,
+          y: event.clientY,
+        });
       }
-    };
+    }, TOOLTIP_DELAY);
 
     const hideTooltip = (event: MouseEvent) => {
       const target = event.target as HTMLElement;
@@ -96,19 +92,16 @@ const InfoTooltip: FC<InfoPanelProps> = (props) => {
           x: null,
           y: null,
         });
-        if (tooltipTimer) {
-          clearTimeout(tooltipTimer);
-        }
       }
     };
 
-    document.addEventListener('mouseover', showTooltip);
+    document.addEventListener('mouseover', debouncedShowTooltip);
     document.addEventListener('mouseout', hideTooltip);
     return () => {
-      document.removeEventListener('mouseover', showTooltip);
+      document.removeEventListener('mouseover', debouncedShowTooltip);
       document.removeEventListener('mouseout', hideTooltip);
     };
-  }, [tooltipTimer]);
+  }, []);
 
   if (!tooltip || !position.x || !position.y) {
     return null;
@@ -119,14 +112,14 @@ const InfoTooltip: FC<InfoPanelProps> = (props) => {
   return (
     <div
       id="atomInfoTooltip"
+      role="tooltip"
       style={{
         left: shiftedPosition.x + 'px',
         top: shiftedPosition.y + 'px',
       }}
-      className={clsx(classes.infoPanel, classes.infoTooltip, className, '')}
-    >
-      {tooltip}
-    </div>
+      className={clsx(classes.infoTooltip, className)}
+      dangerouslySetInnerHTML={{ __html: tooltip }}
+    />
   );
 };
 

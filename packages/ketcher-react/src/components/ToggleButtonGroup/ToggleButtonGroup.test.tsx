@@ -19,9 +19,9 @@ import ButtonGroup from './ToggleButtonGroup';
 
 describe('ButtonGroup', () => {
   const buttons = [
-    { label: 'Label 1', value: 1 },
-    { label: 'Label 2', value: 2 },
-    { label: '', value: 3 },
+    { label: 'Label 1', value: 1, testId: 'testId_1' },
+    { label: 'Label 2', value: 2, testId: 'testId_2' },
+    { label: '', value: 3, testId: 'testId_3' },
   ];
   const onClickMock = jest.fn();
   const defaultValue = 2;

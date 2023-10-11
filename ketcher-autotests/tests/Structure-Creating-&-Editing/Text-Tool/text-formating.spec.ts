@@ -29,6 +29,54 @@ async function openFromFileViaTextBox(filename: string, page: Page) {
   });
 }
 
+async function applyBold(page: Page, text: string, buttonName: string) {
+  await page.getByRole('dialog').getByRole('textbox').fill(text);
+  await page.keyboard.press('Control+a');
+  await page.getByRole('button', { name: buttonName }).click();
+  await pressButton(page, 'Apply');
+  await takeEditorScreenshot(page);
+  await page.getByText(text).dblclick();
+  await page.keyboard.press('Control+a');
+  await page.getByRole('button', { name: buttonName }).click();
+  await page.getByRole('button', { name: buttonName }).click();
+}
+
+async function applyItalic(page: Page, text: string, buttonName: string) {
+  await page.getByRole('dialog').getByRole('textbox').fill(text);
+  await page.keyboard.press('Control+a');
+  await page.getByRole('button', { name: buttonName }).click();
+  await pressButton(page, 'Apply');
+  await takeEditorScreenshot(page);
+  await page.getByText(text).dblclick();
+  await page.keyboard.press('Control+a');
+  await page.getByRole('button', { name: buttonName }).click();
+  await page.getByRole('button', { name: buttonName }).click();
+}
+
+async function applySubscript(page: Page, text: string, buttonName: string) {
+  await page.getByRole('dialog').getByRole('textbox').fill(text);
+  await page.keyboard.press('Control+a');
+  await page.getByRole('button', { name: buttonName }).click();
+  await pressButton(page, 'Apply');
+  await takeEditorScreenshot(page);
+  await page.getByText(text).dblclick();
+  await page.keyboard.press('Control+a');
+  await page.getByRole('button', { name: buttonName }).click();
+  await page.getByRole('button', { name: buttonName }).click();
+}
+
+async function applySuperscript(page: Page, text: string, buttonName: string) {
+  await page.getByRole('dialog').getByRole('textbox').fill(text);
+  await page.keyboard.press('Control+a');
+  await page.getByRole('button', { name: buttonName }).click();
+  await pressButton(page, 'Apply');
+  await takeEditorScreenshot(page);
+  await page.getByText(text).dblclick();
+  await page.keyboard.press('Control+a');
+  await page.getByRole('button', { name: buttonName }).click();
+  await page.getByRole('button', { name: buttonName }).click();
+}
+
 test.describe('Text tools test cases', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
@@ -59,60 +107,28 @@ test.describe('Text tools test cases', () => {
     // Test case: EPMLSOPKET-2256
     // Verify if possible to put bold style on the created text object
     await addTextBoxToCanvas(page);
-    await page.getByRole('dialog').getByRole('textbox').fill('ABC');
-    await page.keyboard.press('Control+a');
-    await page.getByRole('button', { name: 'bold' }).click();
-    await pressButton(page, 'Apply');
-    await takeEditorScreenshot(page);
-    await page.getByText('ABC').dblclick();
-    await page.keyboard.press('Control+a');
-    await page.getByRole('button', { name: 'bold' }).click();
-    await page.getByRole('button', { name: 'bold' }).click();
+    await applyBold(page, 'ABC', 'bold');
   });
 
   test('Text tool - Applying styles - Italic', async ({ page }) => {
     // Test case: EPMLSOPKET-2257
     // Verify if possible to put Italic style on the created text object
     await addTextBoxToCanvas(page);
-    await page.getByRole('dialog').getByRole('textbox').fill('ABCDE');
-    await page.keyboard.press('Control+a');
-    await page.getByRole('button', { name: 'italic' }).click();
-    await pressButton(page, 'Apply');
-    await takeEditorScreenshot(page);
-    await page.getByText('ABCDE').dblclick();
-    await page.keyboard.press('Control+a');
-    await page.getByRole('button', { name: 'italic' }).click();
-    await page.getByRole('button', { name: 'italic' }).click();
+    await applyItalic(page, 'ABCDE', 'italic');
   });
 
   test('Text tool - Applying styles - Subscript', async ({ page }) => {
     // Test case: EPMLSOPKET-2258
     // Verify if possible to put Subscript style on the created text object
     await addTextBoxToCanvas(page);
-    await page.getByRole('dialog').getByRole('textbox').fill('ABC123');
-    await page.keyboard.press('Control+a');
-    await page.getByRole('button', { name: 'subscript' }).click();
-    await pressButton(page, 'Apply');
-    await takeEditorScreenshot(page);
-    await page.getByText('ABC123').dblclick();
-    await page.keyboard.press('Control+a');
-    await page.getByRole('button', { name: 'subscript' }).click();
-    await page.getByRole('button', { name: 'subscript' }).click();
+    await applySubscript(page, 'ABC123', 'subscript');
   });
 
   test('Text tool -  Applying styles - Superscript', async ({ page }) => {
     // Test case: EPMLSOPKET-2259
     // Verify if possible to put Superscript style on the created text object
     await addTextBoxToCanvas(page);
-    await page.getByRole('dialog').getByRole('textbox').fill('ABC123');
-    await page.keyboard.press('Control+a');
-    await page.getByRole('button', { name: 'superscript' }).click();
-    await pressButton(page, 'Apply');
-    await takeEditorScreenshot(page);
-    await page.getByText('ABC123').dblclick();
-    await page.keyboard.press('Control+a');
-    await page.getByRole('button', { name: 'superscript' }).click();
-    await page.getByRole('button', { name: 'superscript' }).click();
+    await applySuperscript(page, 'ABC123', 'superscript');
   });
 
   test('Text tool - Applying styles - Combination of styles', async ({

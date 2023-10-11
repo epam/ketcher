@@ -81,7 +81,7 @@ test.describe('Chain Tool verification', () => {
     page,
   }) => {
     // Test case: EPMLSOPKET-16949
-    // Verify selecting and chaning atom type on chain
+    // Verify selecting and changing atom type on chain
     const bondNumber = 2;
     const bondNumber1 = 4;
     const bondNumber2 = 6;

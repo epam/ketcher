@@ -124,9 +124,7 @@ test.describe('Rectangle Selection Tool', () => {
 
     // Move selected monomer
     await selectRectangleSelectionTool(page);
-    await page.mouse.move(400, 400);
-    await dragMouseTo(500, 500, page);
-    await page.mouse.move(400, 400);
+    await page.mouse.click(400, 400);
     await dragMouseTo(200, 400, page);
 
     await takeEditorScreenshot(page);

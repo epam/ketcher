@@ -311,5 +311,6 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     this.rootElement?.remove();
     this.rootElement = undefined;
     this.removeSelection();
+    this.editorEvents.mouseLeaveMonomer.dispatch();
   }
 }

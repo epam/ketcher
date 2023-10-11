@@ -163,7 +163,6 @@ test.describe('Action on simples objects', () => {
     page,
   }) => {
     // Test case: EPMLSOPKET-1984
-    // Copy/ Cut/ Paste action on a file with simple objects
     const numberOfPressZoomOut = 5;
     const numberOfUndo = 3;
     const numberOfRedo = 3;
@@ -200,6 +199,7 @@ test.describe('Action on simples objects', () => {
   });
 
   test('Simple objects - Open and save as .ket file', async ({ page }) => {
+    // Test case: EPMLSOPKET-1982
     await openFileAndAddToCanvas('KET/simple-objects-with-changes.ket', page);
     const expectedFile = await getKet(page);
     await saveToFile(
@@ -218,6 +218,7 @@ test.describe('Action on simples objects', () => {
   });
 
   test('Simple Objects - Save to Templates', async ({ page }) => {
+    // Test case: EPMLSOPKET-14027
     await simpleObjects(page);
     await clickInTheMiddleOfTheScreen(page);
     await drawBenzeneRing(page);

@@ -62,6 +62,7 @@ const setupLine = async (page: Page) => {
 };
 
 test.describe('draw and highlight line', () => {
+  // Test case: EPMLSOPKET-16105
   // selecting 'Shape Line', drawing it on canvas, highlighting created line
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
@@ -98,6 +99,7 @@ test.describe('draw and highlight line', () => {
   });
 
   test('Simple Objects - Edit Line - changing size', async ({ page }) => {
+    // Test case: EPMLSOPKET-1957
     const point = { x: 251, y: 363 };
     const point1 = { x: 757, y: 362 };
     await setupLine(page);
@@ -108,6 +110,7 @@ test.describe('draw and highlight line', () => {
   });
 
   test('Simple Objects - Edit Line - changing directions', async ({ page }) => {
+    // Test case: EPMLSOPKET-1957
     const point = { x: 302, y: 510 };
     const point1 = { x: 397, y: 220 };
     await setupLine(page);
@@ -118,6 +121,7 @@ test.describe('draw and highlight line', () => {
   });
 
   test('Simple Objects - Edit Line - highlighting and changing directions', async ({
+    // // test case: EPMLSOPKET-16750
     page,
   }) => {
     await setupLine(page);

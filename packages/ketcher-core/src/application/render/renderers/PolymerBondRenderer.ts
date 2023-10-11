@@ -5,6 +5,9 @@ import assert from 'assert';
 import { D3SvgElementSelection } from 'application/render/types';
 import { editorEvents } from 'application/editor/editorEvents';
 import { Vec2 } from 'domain/entities/vec2';
+import { Peptide } from 'domain/entities/Peptide';
+import { Chem } from 'domain/entities/Chem';
+import { BaseMonomer } from 'domain/entities/BaseMonomer';
 
 const LINE_FROM_MONOMER_LENGTH = 10;
 const VERTICAL_LINE_LENGTH = 42;
@@ -30,7 +33,18 @@ export class PolymerBondRenderer extends BaseRenderer {
     return ['R1', 'R2'];
   }
 
+  private isSnakeBondAvailableForMonomer(monomer?: BaseMonomer) {
+    return monomer instanceof Peptide || monomer instanceof Chem;
+  }
+
   get isSnake() {
+    if (
+      !this.isSnakeBondAvailableForMonomer(this.polymerBond.firstMonomer) ||
+      (this.polymerBond.secondMonomer &&
+        !this.isSnakeBondAvailableForMonomer(this.polymerBond.secondMonomer))
+    ) {
+      return false;
+    }
     const firstMonomerAttachmentPoint =
       this.polymerBond.firstMonomer.getAttachmentPointByBond(this.polymerBond);
     const secondMonomerAttachmentPoint =

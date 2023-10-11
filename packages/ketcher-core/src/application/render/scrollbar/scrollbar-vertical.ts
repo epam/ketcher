@@ -3,7 +3,11 @@ import { Render } from '../raphaelRender';
 import { ScrollOffset } from './scroll-offset';
 import { Scrollbar } from './scrollbar';
 import { RaphaelRectAttr } from './types';
-import { getUserFriendlyScrollOffset, getZoomedValue } from './utils';
+import {
+  getUserFriendlyScrollOffset,
+  getUserFriendlyViewBoxDelta,
+  getZoomedValue,
+} from './utils';
 
 export class VerticalScrollbar extends Scrollbar {
   #scrollOffset: ScrollOffset;
@@ -50,5 +54,22 @@ export class VerticalScrollbar extends Scrollbar {
       height: length,
       r: getZoomedValue(this.RADIUS, this.render.options),
     };
+  }
+
+  onDragMove(
+    _dx: number,
+    dy: number,
+    _x: number,
+    _y: number,
+    _event: MouseEvent,
+  ): void {
+    if (!this.viewBoxBeforeDrag) {
+      return;
+    }
+
+    this.render.setViewBox({
+      ...this.viewBoxBeforeDrag,
+      minY: this.viewBoxBeforeDrag.minY + getUserFriendlyViewBoxDelta(dy),
+    });
   }
 }

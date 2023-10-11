@@ -1,5 +1,5 @@
-import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import { test } from '@playwright/test';
+import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import { takePageScreenshot, waitForPageInit } from '@utils';
 
 test.describe('Macromolecules default presets', () => {

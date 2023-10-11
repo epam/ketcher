@@ -12,6 +12,7 @@ import {
   checkFor0and360,
 } from 'domain/helpers/attachmentPointCalculations';
 import { AttachmentPoint } from 'domain/AttachmentPoint';
+import { AttachmentPointName } from 'domain/types';
 
 export abstract class BaseMonomerRenderer extends BaseRenderer {
   private editorEvents: typeof editorEvents;
@@ -37,6 +38,13 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     super(monomer as DrawingEntity);
     this.monomer.setRenderer(this);
     this.editorEvents = editorEvents;
+  }
+
+  private isSnakeBondForAttachmentPoint(
+    attachmentPointName: AttachmentPointName,
+  ) {
+    return this.monomer.attachmentPointsToBonds[attachmentPointName]?.renderer
+      ?.isSnake;
   }
 
   public get center() {
@@ -142,6 +150,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       this.monomer.isAttachmentPointUsed(AttachmentPointName),
       this.monomer.isAttachmentPointPotentiallyUsed(AttachmentPointName),
       customAngle || rotation,
+      this.isSnakeBondForAttachmentPoint(AttachmentPointName),
     );
     const attachmentPointElement = attPointInstance.getElement();
     const angle = attPointInstance.getAngle();

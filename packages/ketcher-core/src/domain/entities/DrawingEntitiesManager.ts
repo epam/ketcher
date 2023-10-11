@@ -30,9 +30,11 @@ import {
 import { monomerFactory } from 'application/editor/operations/monomer/monomerFactory';
 import { provideEditorSettings } from 'application/editor/editorSettings';
 import { Scale } from 'domain/helpers';
+import { Peptide } from 'domain/entities/Peptide';
+import { Chem } from 'domain/entities/Chem';
 
-const HORIZONTAL_DISTANCE_FROM_MONOMER = 20;
-const VERTICAL_DISTANCE_FROM_MONOMER = 50;
+const HORIZONTAL_DISTANCE_FROM_MONOMER = 40;
+const VERTICAL_DISTANCE_FROM_MONOMER = 60;
 const DISTANCE_FROM_RIGHT = 70;
 const DISTANCE_BETWEEN_MONOMERS = 30;
 
@@ -587,11 +589,11 @@ export class DrawingEntitiesManager {
   }
 
   private getPrevMonomer(monomer: BaseMonomer) {
-    return monomer.attachmentPointsToBonds.R2?.firstMonomer;
+    return monomer.attachmentPointsToBonds.R1?.firstMonomer;
   }
 
   private getNextMonomer(monomer: BaseMonomer) {
-    return monomer.attachmentPointsToBonds.R1?.secondMonomer;
+    return monomer.attachmentPointsToBonds.R2?.secondMonomer;
   }
 
   public reArrangeChain(canvasWidth: number, isSnakeMode: boolean) {
@@ -615,7 +617,9 @@ export class DrawingEntitiesManager {
   }
 
   public reArrangeMonomers(canvasWidth: number) {
-    const monomersList = Array.from(this.monomers.values());
+    const monomersList = Array.from(this.monomers.values()).filter(
+      (monomer) => monomer instanceof Peptide || monomer instanceof Chem,
+    );
 
     const topLeftMonomer = this.findTopLeftMonomer(monomersList);
 

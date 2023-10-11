@@ -38,6 +38,66 @@ export class AttachmentPoint {
   private isUsed: boolean;
   private fill: string;
   private stroke: string;
+  private isSnake;
+
+  public static appendAttachmentPointUnused(
+    rootElement: D3SvgElementSelection<SVGGElement, void>,
+    position,
+    rotation,
+    isAttachmentPointPotentiallyUsed,
+    label: string,
+    x,
+    y,
+    length = AttachmentPoint.attachmentPointLength,
+    y2 = 0,
+    cx = -12,
+    cy = 0,
+  ) {
+    let fill = this.colors.fill;
+    let stroke = this.colors.stroke;
+
+    if (isAttachmentPointPotentiallyUsed) {
+      fill = this.colors.fillPotentially;
+      stroke = this.colors.strokePotentially;
+    }
+
+    const attachmentPointElement = rootElement
+      ?.insert('g', ':first-child')
+      .attr('transform', `translate(${position.x}, ${position.y})`);
+
+    const attachmentPointRotationGroup = attachmentPointElement
+      .append('g')
+      .attr('transform', `rotate(${rotation})`);
+
+    attachmentPointRotationGroup
+      .append('line')
+      .attr('x1', 0)
+      .attr('y1', 0)
+      .attr('x2', -length)
+      .attr('y2', y2)
+      .attr('stroke', stroke)
+      .attr('stroke-width', '2px');
+
+    attachmentPointRotationGroup
+      .append('circle')
+      .attr('r', 6)
+      .attr('cx', cx)
+      .attr('cy', cy)
+      .attr('stroke', fill === 'white' ? '#0097A8' : 'white')
+      .attr('stroke-width', '1px')
+      .attr('fill', fill);
+
+    attachmentPointElement
+      .append('text')
+      .text(label)
+      .attr('x', x)
+      .attr('y', y)
+      .style('font-size', '12px')
+      .style('fill', '#585858')
+      .style('user-select', 'none');
+
+    return attachmentPointElement;
+  }
 
   constructor(
     rootElement: D3SvgElementSelection<SVGGElement, void>,
@@ -49,6 +109,7 @@ export class AttachmentPoint {
     isUsed,
     isPotentiallyUsed,
     angle = 0,
+    isSnake,
   ) {
     this.rootElement = rootElement;
     this.monomer = monomer;
@@ -70,6 +131,7 @@ export class AttachmentPoint {
       this.fill = AttachmentPoint.colors.fill;
       this.stroke = AttachmentPoint.colors.stroke;
     }
+    this.isSnake = isSnake;
 
     this.appendAttachmentPoint();
   }
@@ -133,6 +195,56 @@ export class AttachmentPoint {
 
       angleDegrees = Vec2.radians_to_degrees(angleRadians);
     }
+
+    const [pointOnBorder, pointOfAttachment, labelPoint] =
+      this.catchThePoint(angleDegrees);
+    const attachmentToBorderCoordinates = canvasToMonomerCoordinates(
+      pointOnBorder,
+      this.centerOFMonomer,
+      this.bodyWidth,
+      this.bodyHeight,
+    );
+
+    const attachmentPointCoordinates = canvasToMonomerCoordinates(
+      pointOfAttachment,
+      this.centerOFMonomer,
+      this.bodyWidth,
+      this.bodyHeight,
+    );
+
+    const labelCoordinates = canvasToMonomerCoordinates(
+      labelPoint,
+      this.centerOFMonomer,
+      this.bodyWidth,
+      this.bodyHeight,
+    );
+
+    const attachmentPoint = this.renderAttachmentPointByCoordinates(
+      attachmentToBorderCoordinates,
+      attachmentPointCoordinates,
+      labelCoordinates,
+    );
+
+    this.element = attachmentPoint;
+    return attachmentPoint;
+  }
+
+  public appendAttachmentPointToBond() {
+    let angleRadians: number;
+    const flip =
+      this.monomer.id ===
+      this.monomer.attachmentPointsToBonds[this.attachmentPointName]
+        ?.firstMonomer?.id;
+    if (this.isSnake) {
+      angleRadians = flip ? Math.PI : 0;
+    } else {
+      angleRadians = this.rotateToAngle(
+        this.monomer.attachmentPointsToBonds[this.attachmentPointName],
+        flip,
+      );
+    }
+
+    const angleDegrees = Vec2.radians_to_degrees(angleRadians);
 
     const [pointOnBorder, pointOfAttachment, labelPoint] =
       this.catchThePoint(angleDegrees);

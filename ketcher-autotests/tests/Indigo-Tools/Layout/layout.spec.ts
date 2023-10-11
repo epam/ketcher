@@ -250,4 +250,23 @@ test.describe('Indigo Tools - Layout', () => {
     await openFileAndAddToCanvas('KET/four-benzene-at-edges.ket', page);
     await page.keyboard.press('Control+l');
   });
+
+  test('Layout action on part of structure with different properties', async ({
+    page,
+  }) => {
+    /*
+    Test case: EPMLSOPKET-1823
+    Description: Layout action is implemented for the whole canvas.
+    Test working incorrect because we have a bug https://github.com/epam/Indigo/issues/388
+    */
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/clean-different-properties.mol',
+      page,
+    );
+    await selectPartOfMolecules(page);
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await selectTopPanelButton(TopPanelButton.Layout, page),
+    );
+  });
 });

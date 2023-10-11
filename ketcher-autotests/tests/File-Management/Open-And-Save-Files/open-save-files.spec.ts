@@ -38,22 +38,22 @@ test.describe('Open Ketcher', () => {
   });
 
   const fileFormats = [
-    'Ket Format-option',
-    'MDL Molfile V2000-option',
-    'MDL Molfile V3000-option',
-    'SDF V2000-option',
-    'SDF V3000-option',
-    'Daylight SMARTS-option',
-    'Extended SMILES-option',
-    'CML-option',
-    'InChI-option',
-    'InChI AuxInfo-option',
-    'InChIKey-option',
-    'SVG Document-option',
-    'PNG Image-option',
-    'CDXML-option',
-    'Base64 CDX-option',
-    'CDX-option',
+    'format-Ket Format-option',
+    'format-MDL Molfile V2000-option',
+    'format-MDL Molfile V3000-option',
+    'format-SDF V2000-option',
+    'format-SDF V3000-option',
+    'format-Daylight SMARTS-option',
+    'format-Extended SMILES-option',
+    'format-CML-option',
+    'format-InChI-option',
+    'format-InChI AuxInfo-option',
+    'format-InChIKey-option',
+    'format-SVG Document-option',
+    'format-PNG Image-option',
+    'format-CDXML-option',
+    'format-Base64 CDX-option',
+    'format-CDX-option',
   ];
   for (const fileFormat of fileFormats) {
     test(`dropdown options check_${fileFormat}`, async ({ page }) => {

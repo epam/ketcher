@@ -68,12 +68,12 @@ test.describe('Chain Tool verification', () => {
 
   test('Chain tool - edit saved file', async ({ page }) => {
     // Moving and deleting part of the chain on the canvas
-    const x = 3;
+    const bondNumber = 3;
     await openFileAndAddToCanvas(
       'Molfiles-V2000/chains-expected-file.mol',
       page,
     );
-    await clickOnBond(page, BondType.SINGLE, x);
+    await clickOnBond(page, BondType.SINGLE, bondNumber);
     await page.keyboard.press('Delete');
   });
 
@@ -82,9 +82,9 @@ test.describe('Chain Tool verification', () => {
   }) => {
     // Test case: EPMLSOPKET-16949
     // Verify selecting and chaning atom type on chain
-    const a = 2;
-    const b = 4;
-    const c = 6;
+    const bondNumber = 2;
+    const bondNumber1 = 4;
+    const bondNumber2 = 6;
     await selectTool(LeftPanelButton.Chain, page);
     const center = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await moveMouseToTheMiddleOfTheScreen(page);
@@ -92,9 +92,9 @@ test.describe('Chain Tool verification', () => {
     await selectDropdownTool(page, 'select-rectangle', 'select-lasso');
     await page.keyboard.down('Shift');
     await clickOnAtom(page, 'C', 0);
-    await clickOnAtom(page, 'C', a);
-    await clickOnAtom(page, 'C', b);
-    await clickOnAtom(page, 'C', c);
+    await clickOnAtom(page, 'C', bondNumber);
+    await clickOnAtom(page, 'C', bondNumber1);
+    await clickOnAtom(page, 'C', bondNumber2);
     await page.keyboard.up('Shift');
     await page.keyboard.press('p');
   });

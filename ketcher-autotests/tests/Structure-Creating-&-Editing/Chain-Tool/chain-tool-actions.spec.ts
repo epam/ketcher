@@ -1,4 +1,4 @@
-import { test, expect, Page } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
@@ -12,29 +12,12 @@ import {
   saveToFile,
   receiveFileComparisonData,
   clickOnAtom,
-  waitForRender,
-  clickInTheMiddleOfTheScreen,
+  clickOnBond,
+  BondType,
 } from '@utils';
 import { getMolfile } from '@utils/formats';
 
 const DELTA = 200;
-
-async function createSomeStructure(page: Page) {
-  const a = 97;
-  const b = 79;
-  const c = 943;
-  const d = 114;
-  const e = 844;
-  const f = 579;
-  const g = 66;
-  const h = 611;
-  await page.mouse.move(a, b);
-  await page.mouse.down();
-  await page.mouse.move(c, d);
-  await page.mouse.move(e, f);
-  await page.mouse.move(g, h);
-  await page.mouse.up();
-}
 
 test.describe('Chain Tool verification', () => {
   test.beforeEach(async ({ page }) => {
@@ -85,22 +68,13 @@ test.describe('Chain Tool verification', () => {
 
   test('Chain tool - edit saved file', async ({ page }) => {
     // Moving and deleting part of the chain on the canvas
-    const a = 512;
-    const b = 185;
-    const c = 224;
-    const d = 128;
+    const x = 3;
     await openFileAndAddToCanvas(
       'Molfiles-V2000/chains-expected-file.mol',
       page,
     );
-    await selectDropdownTool(page, 'select-rectangle', 'select-lasso');
-    await createSomeStructure(page);
-    await waitForRender(page, async () => {
-      await page.mouse.click(a, b);
-      await dragMouseTo(c, d, page);
-      await page.keyboard.press('Delete');
-    });
-    await clickInTheMiddleOfTheScreen(page);
+    await clickOnBond(page, BondType.SINGLE, x);
+    await page.keyboard.press('Delete');
   });
 
   test('Chain Tool - order of Hydrogen symbol in abbreviation of the atoms when adding them to the structure', async ({

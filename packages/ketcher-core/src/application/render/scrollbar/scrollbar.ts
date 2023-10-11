@@ -18,7 +18,7 @@ export abstract class Scrollbar {
     this.render = render;
   }
 
-  protected update() {
+  update() {
     this.bar = this.hasOffset() ? this.redraw() : this.hide();
   }
 

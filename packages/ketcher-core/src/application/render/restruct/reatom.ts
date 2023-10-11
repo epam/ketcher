@@ -243,6 +243,8 @@ class ReAtom extends ReObject {
       return;
     }
 
+    const isAromatized = Atom.isInAromatizedRing(restruct.molecule, aid);
+    const queryAttrsText = getQueryAttrsText(this, isAromatized);
     this.hydrogenOnTheLeft = shouldHydrogenBeOnLeft(restruct.molecule, this);
     this.showLabel = isLabelVisible(restruct, render.options, this);
     this.color = 'black'; // reset color
@@ -256,8 +258,15 @@ class ReAtom extends ReObject {
     let label;
     let index: any = null;
 
-    if (this.showLabel) {
-      label = buildLabel(this, render.paper, ps, options);
+    if (this.showLabel || queryAttrsText) {
+      label = buildLabel(
+        this,
+        render.paper,
+        ps,
+        options,
+        queryAttrsText,
+        this.showLabel,
+      );
       delta = 0.5 * options.lineWidth;
       rightMargin =
         (label.rbb.width / 2) * (options.zoom > 1 ? 1 : options.zoom);
@@ -406,8 +415,6 @@ class ReAtom extends ReObject {
 
     const stereoLabel = this.a.stereoLabel; // Enhanced Stereo
     const aamText = getAamText(this);
-    const isAromatized = Atom.isInAromatizedRing(restruct.molecule, aid);
-    const queryAttrsText = getQueryAttrsText(this, isAromatized);
 
     // we render them together to avoid possible collisions
 
@@ -423,18 +430,8 @@ class ReAtom extends ReObject {
     );
 
     let text = '';
-    let tooltip = '';
     if (displayStereoLabel) {
       text = `${stereoLabel}\n`;
-    }
-
-    if (queryAttrsText.length > 0) {
-      if (queryAttrsText.length > 8) {
-        tooltip += `${queryAttrsText}\n`;
-        text += `${queryAttrsText.substring(0, 8)}...\n`;
-      } else {
-        text += `${queryAttrsText}\n`;
-      }
     }
 
     if (aamText.length > 0) {
@@ -458,8 +455,6 @@ class ReAtom extends ReObject {
         const opacity = getStereoAtomOpacity(render.options, stereoLabel);
         aamPath.node.childNodes[0].setAttribute('fill-opacity', opacity);
       }
-      tooltip &&
-        aamPath.node.childNodes[0].setAttribute('data-tooltip', tooltip);
 
       const aamBox = util.relBox(aamPath.getBBox());
       draw.recenterText(aamPath, aamBox);
@@ -707,14 +702,29 @@ function shouldHydrogenBeOnLeft(struct, atom) {
 
   return false;
 }
+function buildTooltip(atom: ReAtom, queryAttrsText: string) {
+  const isCustomQuery = Boolean(atom.a?.queryProperties.customQuery);
+
+  let tooltip = '';
+  if (!isCustomQuery) {
+    tooltip += `<p>${getLabelText(atom.a)}</p>`;
+  }
+  if (queryAttrsText) {
+    tooltip += `<p>${queryAttrsText}</p>`;
+  }
+  return tooltip.split(/(?<=[;,])/).join(' ');
+}
 
 function buildLabel(
   atom: ReAtom,
   paper: any,
   ps: Vec2,
   options: any,
+  queryAttrsText: string,
+  showLabel: boolean,
 ): ElemAttr {
   // eslint-disable-line max-statements
+  const isCustomQuery = Boolean(atom.a?.queryProperties.customQuery);
   const label: any = {
     text: getLabelText(atom.a),
     tooltip: null,
@@ -724,6 +734,10 @@ function buildLabel(
     label.text = 'R#';
   }
 
+  if (isCustomQuery || !showLabel) {
+    label.text = '';
+  }
+
   if (label.text === atom.a.label) {
     const element = Elements.get(label.text);
     if (options.atomColoring && element) {
@@ -731,11 +745,16 @@ function buildLabel(
     }
   }
 
-  const { previewOpacity } = options;
+  if (queryAttrsText) {
+    label.text += label.text ? `;${queryAttrsText}` : queryAttrsText;
+  }
+
   if (label.text?.length > 8) {
-    label.tooltip = label.text;
+    label.tooltip = buildTooltip(atom, queryAttrsText);
     label.text = `${label.text?.substring(0, 8)}...`;
   }
+
+  const { previewOpacity } = options;
   label.path = paper.text(ps.x, ps.y, label.text).attr({
     font: options.font,
     'font-size': options.fontsz,
@@ -766,7 +785,11 @@ function buildLabel(
 }
 
 function getLabelText(atom) {
-  if (atom.atomList !== null) return atom.atomList.label();
+  if (atom.atomList !== null) {
+    return atom.atomList.notList
+      ? atom.atomList.label()
+      : atom.atomList.label().slice(1, -1);
+  }
 
   if (atom.pseudo) return atom.pseudo;
 
@@ -1214,7 +1237,7 @@ export function getAtomCustomQuery(atom) {
   return queryAttrsText;
 }
 
-function getQueryAttrsText(atom, isAromatized: boolean) {
+function getQueryAttrsText(atom, isAromatized: boolean): string {
   let queryAttrsText = '';
 
   const addSemicolon = () => {

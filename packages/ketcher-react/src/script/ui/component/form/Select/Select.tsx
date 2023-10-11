@@ -75,6 +75,7 @@ const Select = ({
       disabled={disabled}
       MenuProps={{ className: styles.dropdownList }}
       IconComponent={ChevronIcon}
+      data-testid={`${name}-dropdown`}
     >
       {options &&
         options.map((option) => {
@@ -93,7 +94,7 @@ const Select = ({
               className={clsx({
                 [`dropdown-${formName}_${name}`]: formName,
               })}
-              data-testid={`${option.label}-option`}
+              data-testid={`${name}-${option.label}-option`}
             >
               {option.label}
             </MenuItem>

@@ -1,13 +1,11 @@
 import { test } from '@playwright/test';
 import {
-  doubleClickOnAtom,
   selectRing,
   resetCurrentTool,
   takeEditorScreenshot,
   waitForPageInit,
   RingButton,
   clickInTheMiddleOfTheScreen,
-  waitForRender,
   getCoordinatesOfTheMiddleOfTheScreen,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
@@ -21,6 +19,8 @@ test.describe('Click Atom on canvas', () => {
     await takeEditorScreenshot(page);
   });
 
+  const testIdForQueryProperties = 'query-properties';
+
   test('Query Specific under Atom Properties - right click - list of properties', async ({
     page,
   }) => {
@@ -33,7 +33,7 @@ test.describe('Click Atom on canvas', () => {
 
     const point = await getAtomByIndex(page, { label: 'C' }, 1);
     await page.mouse.click(point.x, point.y, { button: 'right' });
-    await page.getByText('Query properties').click();
+    await page.getByTestId(testIdForQueryProperties).click();
   });
 
   test('Query Specific under Atom Properties - right click - values for properties', async ({
@@ -52,46 +52,23 @@ test.describe('Click Atom on canvas', () => {
 
     const point = await getAtomByIndex(page, { label: 'C' }, 1);
     await page.mouse.click(point.x, point.y, { button: 'right' });
-    await page.getByText('Query properties').click();
-    await page.getByText('Ring bond count').click();
+    await page.getByTestId(testIdForQueryProperties).click();
+    await page.getByTestId('context-menu-Ring bond count').click();
     await takeEditorScreenshot(page);
-    await page.getByText('H count').first().click();
+    await page.getByTestId('context-menu-H count').first().click();
     await takeEditorScreenshot(page);
-    await page.getByText('Substitution count').click();
+    await page.getByTestId('context-menu-Substitution count').click();
     await takeEditorScreenshot(page);
-    await page.getByText('Unsaturated').first().click();
+    await page.getByTestId('context-menu-Unsaturated').first().click();
     await takeEditorScreenshot(page);
-    await page.getByText('Implicit H count').click();
+    await page.getByTestId('context-menu-Implicit H count').click();
     await takeEditorScreenshot(page);
-    await page.getByText('Aromaticity').click();
+    await page.getByTestId('context-menu-Aromaticity').click();
     await takeEditorScreenshot(page);
-    await page.getByText('Ring membership').click();
+    await page.getByTestId('context-menu-Ring membership').click();
     await takeEditorScreenshot(page);
-    await page.getByText('Ring size').click();
+    await page.getByTestId('context-menu-Ring size').click();
     await takeEditorScreenshot(page);
-    await page.getByText('Connectivity').click();
-  });
-
-  test('Query Specific under Atom Properties - list of properties', async ({
-    page,
-  }) => {
-    /*
-      Description: Checking if list of properties at Query Specific under Atom Properties is correct.
-    */
-    const deltaX = 0;
-    const deltaY = 80;
-    const titleOfGeneralTab = 'General';
-    const titleOfQuerySpecificTab = 'Query specific';
-
-    await selectRing(RingButton.Benzene, page);
-    await clickInTheMiddleOfTheScreen(page);
-    await resetCurrentTool(page);
-
-    await doubleClickOnAtom(page, 'C', 1);
-    await page.getByText(titleOfGeneralTab).click();
-    await page.getByText(titleOfQuerySpecificTab).click();
-    await waitForRender(page, async () => {
-      await page.mouse.wheel(deltaX, deltaY);
-    });
+    await page.getByTestId('context-menu-Connectivity').click();
   });
 });

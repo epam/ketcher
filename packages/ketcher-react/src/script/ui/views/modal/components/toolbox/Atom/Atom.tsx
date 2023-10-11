@@ -219,6 +219,7 @@ const Atom: FC<Props> = (props: Props) => {
                   onClick={handleAccordionChange(groupName)}
                   className={classes.accordionSummaryWrapper}
                   aria-disabled={isCustomQuery}
+                  data-testid={`accordion-${groupName}`}
                 >
                   <div className={classes.accordionSummary}>
                     <span>{groupName}</span>

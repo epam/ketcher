@@ -36,7 +36,11 @@ const properties: Array<AtomQueryPropertiesName> = [
 const atomPropertiesForSubMenu: {
   title: string;
   key: AtomAllAttributeName;
-  buttons: { label: string; value: AtomAllAttributeValue }[];
+  buttons: {
+    label: string;
+    value: AtomAllAttributeValue;
+    testId: string;
+  }[];
 }[] = [
   {
     title: ringBondCount.title,
@@ -44,6 +48,7 @@ const atomPropertiesForSubMenu: {
     buttons: ringBondCount.enumNames.map((label, id) => ({
       label,
       value: ringBondCount.enum[id],
+      testId: `ringBondCount-${ringBondCount.enumNames[id]}`,
     })),
   },
   {
@@ -52,6 +57,7 @@ const atomPropertiesForSubMenu: {
     buttons: hCount.enumNames.map((label, id) => ({
       label,
       value: hCount.enum[id],
+      testId: `hCount-${hCount.enumNames[id]}`,
     })),
   },
   {
@@ -60,14 +66,23 @@ const atomPropertiesForSubMenu: {
     buttons: substitutionCount.enumNames.map((label, id) => ({
       label,
       value: substitutionCount.enum[id],
+      testId: `substitutionCount-${substitutionCount.enumNames[id]}`,
     })),
   },
   {
     title: unsaturatedAtom.title,
     key: 'unsaturatedAtom',
     buttons: [
-      { label: 'Unsaturated', value: 1 },
-      { label: 'Saturated', value: 0 },
+      {
+        label: 'Unsaturated',
+        value: 1,
+        testId: `unsaturatedAtom-unsaturated`,
+      },
+      {
+        label: 'Saturated',
+        value: 0,
+        testId: `unsaturatedAtom-saturated`,
+      },
     ],
   },
   {
@@ -76,6 +91,7 @@ const atomPropertiesForSubMenu: {
     buttons: implicitHCount.enumNames.map((label, id) => ({
       label,
       value: implicitHCount.enum[id],
+      testId: `implicitHCount-${implicitHCount.enumNames[id]}`,
     })),
   },
   ...properties.map((name) => ({
@@ -85,6 +101,7 @@ const atomPropertiesForSubMenu: {
       (label: string, id: number) => ({
         label,
         value: atom.properties[name].enum[id],
+        testId: `${atom.properties[name]}-${atom.properties[name].enumNames[id]}`,
       }),
     ),
   })),
@@ -147,6 +164,7 @@ const AtomMenuItems: FC<MenuItemsProps> = (props) => {
       <Submenu
         {...props}
         label="Query properties"
+        data-testid="query-properties"
         style={{ overflow: 'visible' }}
       >
         {atomPropertiesForSubMenu.map(({ title, buttons, key }) => {
@@ -154,6 +172,7 @@ const AtomMenuItems: FC<MenuItemsProps> = (props) => {
             <Submenu
               {...props}
               label={title}
+              data-testid={`context-menu-${title}`}
               key={key}
               className={styles.sameGroup}
             >

@@ -8,7 +8,7 @@ export default function ButtonGroup<T>({
   onClick,
   defaultValue,
 }: {
-  buttons: { label: string; value: T }[];
+  buttons: { label: string; value: T; testId: string }[];
   onClick: (value: T) => void;
   defaultValue: T;
 }) {
@@ -25,7 +25,7 @@ export default function ButtonGroup<T>({
 
   return (
     <ToggleButtonGroup exclusive>
-      {buttons.map(({ label, value: buttonValue }) => (
+      {buttons.map(({ label, value: buttonValue, testId }) => (
         <ToggleButton
           key={label}
           value={Number(buttonValue) || ''}
@@ -33,6 +33,7 @@ export default function ButtonGroup<T>({
           className={clsx(classes.button, {
             [classes.selected]: buttonValue === value,
           })}
+          data-testid={testId}
         >
           {label || 'none'}
         </ToggleButton>

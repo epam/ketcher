@@ -26,7 +26,7 @@ import { RenderOptions, ViewBox } from './render.types';
 import _ from 'lodash';
 import { KetcherLogger } from 'utilities';
 import { CoordinateTransformation } from './coordinateTransformation';
-import { Scrollbar } from './scrollbar';
+import { ScrollbarContainer } from './scrollbar';
 
 const notifyRenderComplete = _.debounce(() => {
   const event = new Event('renderComplete');
@@ -45,7 +45,7 @@ export class Render {
   public viewBox!: ViewBox;
   private readonly userOpts: RenderOptions;
   private oldCb: Box2Abs | null = null;
-  private scrollbar: Scrollbar;
+  private scrollbar: ScrollbarContainer;
 
   constructor(clientArea: HTMLElement, options: RenderOptions) {
     let renderWidth = options.width || clientArea.clientWidth - 10;
@@ -59,7 +59,7 @@ export class Render {
     this.sz = new Vec2(renderWidth, renderHeight);
     this.ctab = new ReStruct(new Struct(), this);
     this.options = defaultOptions(this.userOpts);
-    this.scrollbar = new Scrollbar(this);
+    this.scrollbar = new ScrollbarContainer(this);
     this.setViewBox({
       minX: 0,
       minY: 0,

@@ -1,129 +1,47 @@
 import { Render } from '../raphaelRender';
-import { RaphaelElement } from './scrollbar.types';
-import { ScrollOffset } from './scroll-offset';
-import { clamp } from 'lodash';
+import { RaphaelElement, RaphaelRectAttr } from './types';
 
-const MIN_LENGTH = 40;
-const RADIUS = 2;
-const MARGIN = 5;
-const WIDTH = 4;
-const DIST_TO_EDGE = 5;
-const COLOR = '#b2bbc3';
+export abstract class Scrollbar {
+  protected bar: RaphaelElement | null = null;
+  protected render: Render;
 
-export class Scrollbar {
-  #render: Render;
-  #scrollOffset: ScrollOffset;
-  #verticalBar: RaphaelElement | null = null;
-  #horizontalBar: RaphaelElement | null = null;
+  protected MIN_LENGTH = 40;
+  protected RADIUS = 2;
+  protected MARGIN = 5;
+  protected WIDTH = 4;
+  protected DIST_TO_EDGE = 5;
+  protected COLOR = '#b2bbc3';
 
-  constructor(render: Render) {
-    this.#render = render;
-    this.#scrollOffset = new ScrollOffset(render);
+  protected constructor(render: Render) {
+    this.render = render;
   }
 
-  getZoomedValue(value: number) {
-    return value / this.#render.options.zoom;
+  protected update() {
+    this.bar = this.hasOffset() ? this.redraw() : this.hide();
   }
 
-  drawVerticalBar() {
-    const minX =
-      this.#render.viewBox.minX +
-      this.#render.viewBox.width -
-      this.getZoomedValue(DIST_TO_EDGE);
-    const minY =
-      this.#render.viewBox.minY +
-      clamp(
-        this.#scrollOffset.up,
-        this.getZoomedValue(MARGIN),
-        this.#render.viewBox.height - this.getZoomedValue(MIN_LENGTH + MARGIN),
-      );
-    const maxY =
-      this.#render.viewBox.minY +
-      this.#render.viewBox.height -
-      clamp(
-        this.#scrollOffset.down,
-        this.getZoomedValue(MARGIN),
-        this.#render.viewBox.height,
-      );
-    const length = Math.max(maxY - minY, this.getZoomedValue(MIN_LENGTH));
-
-    return this.#render.paper
-      .rect(
-        minX,
-        minY,
-        this.getZoomedValue(WIDTH),
-        length,
-        this.getZoomedValue(RADIUS),
-      )
-      .attr({
-        stroke: COLOR,
-        fill: COLOR,
-      });
+  protected redraw() {
+    return this.bar ? this.updateAttr() : this.draw();
   }
 
-  drawHorizontalBar() {
-    const minX =
-      this.#render.viewBox.minX +
-      clamp(
-        this.#scrollOffset.left,
-        this.getZoomedValue(MARGIN),
-        this.#render.viewBox.width - this.getZoomedValue(MIN_LENGTH + MARGIN),
-      );
-    const minY =
-      this.#render.viewBox.minY +
-      this.#render.viewBox.height -
-      this.getZoomedValue(DIST_TO_EDGE);
-    const maxX =
-      this.#render.viewBox.minX +
-      this.#render.viewBox.width -
-      clamp(
-        this.#scrollOffset.right,
-        this.getZoomedValue(MARGIN),
-        this.#render.viewBox.width,
-      );
-    const length = Math.max(maxX - minX, this.getZoomedValue(MIN_LENGTH));
-
-    return this.#render.paper
-      .rect(
-        minX,
-        minY,
-        length,
-        this.getZoomedValue(WIDTH),
-        this.getZoomedValue(RADIUS),
-      )
-      .attr({
-        stroke: COLOR,
-        fill: COLOR,
-      });
+  protected updateAttr() {
+    const attr = this.getDynamicAttr();
+    return this.bar?.attr(attr);
   }
 
-  update() {
-    this.#scrollOffset.update();
-    this.#verticalBar = this.#scrollOffset.hasVerticalOffset()
-      ? this.redrawVerticalBar()
-      : this.hideVerticalBar();
-    this.#horizontalBar = this.#scrollOffset.hasHorizontalOffset()
-      ? this.redrawHorizontalBar()
-      : this.hideHorizontalBar();
-  }
-
-  redrawVerticalBar() {
-    this.#verticalBar?.remove();
-    return this.drawVerticalBar();
-  }
-
-  hideVerticalBar() {
-    this.#verticalBar?.remove();
+  protected hide() {
+    this.bar?.remove();
     return null;
   }
 
-  redrawHorizontalBar() {
-    this.#horizontalBar?.remove();
-    return this.drawHorizontalBar();
+  protected draw() {
+    const { x, y, width, height, r } = this.getDynamicAttr();
+    return this.render.paper.rect(x, y, width, height, r).attr({
+      stroke: this.COLOR,
+      fill: this.COLOR,
+    });
   }
 
-  hideHorizontalBar() {
-    this.#horizontalBar?.remove();
-    return null;
-  }
+  abstract hasOffset(): boolean;
+  abstract getDynamicAttr(): RaphaelRectAttr;
 }

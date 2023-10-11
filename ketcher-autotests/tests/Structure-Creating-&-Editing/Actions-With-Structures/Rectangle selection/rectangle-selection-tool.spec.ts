@@ -39,9 +39,9 @@ test.describe('Rectangle selection tool', () => {
     return point;
   }
 
-  const emptySpace = { x: 300, y: 200 };
+  const selectionCoords = { x: 300, y: 200 };
   async function clickCanvas(page: Page) {
-    await page.mouse.click(emptySpace.x, emptySpace.y);
+    await page.mouse.click(selectionCoords.x, selectionCoords.y);
   }
 
   test('Structure selection with rectangle selection tool', async ({
@@ -51,7 +51,7 @@ test.describe('Rectangle selection tool', () => {
     await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
     await page.getByTestId('select-rectangle').click();
     await clickCanvas(page);
-    await selectObjects(page, emptySpace.x, emptySpace.y);
+    await selectObjects(page, selectionCoords.x, selectionCoords.y);
   });
 
   test('Drag structure', async ({ page }) => {
@@ -100,9 +100,17 @@ test.describe('Rectangle selection tool', () => {
     await openFileAndAddToCanvas('Rxn-V2000/benzene-chain-reaction.rxn', page);
     await page.getByTestId('select-rectangle').click();
     await clickCanvas(page);
-    const point = await selectObjects(page, emptySpace.x, emptySpace.y);
+    const point = await selectObjects(
+      page,
+      selectionCoords.x,
+      selectionCoords.y,
+    );
     await clickOnAtom(page, 'C', moveMouseCoordinatesY);
-    await dragMouseTo(point.x - objectSelection, point.y - emptySpace.y, page);
+    await dragMouseTo(
+      point.x - objectSelection,
+      point.y - selectionCoords.y,
+      page,
+    );
   });
 
   test('Fusing atoms together', async ({ page }) => {
@@ -140,7 +148,8 @@ test.describe('Rectangle selection tool', () => {
     const atomNumber = 4;
     await openFileAndAddToCanvas('Rxn-V2000/benzene-chain-reaction.rxn', page);
     await page.getByTestId('select-rectangle').click();
-    await selectObjects(page, emptySpace.y, emptySpace.y);
+    // double Y coordinates for selectiing single structure
+    await selectObjects(page, selectionCoords.y, selectionCoords.y);
     await page.keyboard.press('Delete');
     await clickOnAtom(page, 'C', atomNumber);
     await page.keyboard.press('Delete');

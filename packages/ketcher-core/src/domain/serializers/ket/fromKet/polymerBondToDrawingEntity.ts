@@ -15,6 +15,8 @@ export function polymerBondToDrawingEntity(connection: IKetConnection) {
 
   assert(firstMonomer?.renderer);
   assert(secondMonomer?.renderer);
+  assert(connection.endPoint1.attachmentPointId);
+  assert(connection.endPoint2.attachmentPointId);
   const { command: bondAdditionCommand, polymerBond } =
     editor.drawingEntitiesManager.addPolymerBond(
       firstMonomer,

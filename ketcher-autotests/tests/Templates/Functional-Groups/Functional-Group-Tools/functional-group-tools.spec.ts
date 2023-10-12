@@ -829,6 +829,30 @@ test.describe('Templates - Functional Group Tools3', () => {
     await takeEditorScreenshot(page);
   });
 
+  test('Attach cutted Functional Group to atoms of structure', async ({
+    page,
+  }) => {
+    /*
+    Test case: EPMLSOPKET-18058
+    Description: Can attach cutted Functional Group to atoms of structure
+    Test not working proberly right now. Bug https://github.com/epam/ketcher/issues/2660
+   */
+    const anyAtom = 4;
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/functional-group-and-benzene.mol',
+      page,
+    );
+    await page.getByText('Boc').click();
+    await waitForRender(page, async () => {
+      await page.keyboard.press('Control+x');
+    });
+    await waitForRender(page, async () => {
+      await page.keyboard.press('Control+v');
+    });
+    await clickOnAtom(page, 'C', anyAtom);
+    await takeEditorScreenshot(page);
+  });
+
   test('Contracted Functional Group in 3D Viewer', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-3938

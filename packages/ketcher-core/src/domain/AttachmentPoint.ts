@@ -243,7 +243,12 @@ export class AttachmentPoint {
       this.monomer.id ===
       this.monomer.attachmentPointsToBonds[this.attachmentPointName]
         ?.firstMonomer?.id;
-    if (this.isSnake) {
+    if (
+      this.isSnake &&
+      !this.monomer.attachmentPointsToBonds[
+        this.attachmentPointName
+      ]?.renderer.isMonomersOnSameHorizontalLine()
+    ) {
       angleRadians = flip ? Math.PI : 0;
     } else {
       angleRadians = this.rotateToAngle(

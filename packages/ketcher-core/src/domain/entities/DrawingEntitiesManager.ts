@@ -339,14 +339,32 @@ export class DrawingEntitiesManager {
 
   public intendToFinishBondCreation(monomer: BaseMonomer, bond: PolymerBond) {
     const command = new Command();
-
     monomer.turnOnHover();
     monomer.turnOnAttachmentPointsVisibility();
-    if (monomer.availableAttachmentPointForBondEnd) {
-      monomer.setPotentialBond(
-        monomer.availableAttachmentPointForBondEnd,
-        bond,
-      );
+    const availableAttachmentPointForBondEnd =
+      monomer.availableAttachmentPointForBondEnd;
+    if (availableAttachmentPointForBondEnd) {
+      monomer.setPotentialBond(availableAttachmentPointForBondEnd, bond);
+    }
+
+    if (
+      availableAttachmentPointForBondEnd === 'R2' &&
+      !bond.firstMonomer.isAttachmentPointUsed('R1')
+    ) {
+      bond.firstMonomer.removePotentialBonds();
+      bond.firstMonomer.setPotentialBond('R1', bond);
+      const operation = new MonomerHoverOperation(bond.firstMonomer, true);
+      command.addOperation(operation);
+    }
+
+    if (
+      !monomer.isAttachmentPointUsed('R2') &&
+      bond.firstMonomer.getPotentialAttachmentPointByBond(bond) === 'R1'
+    ) {
+      monomer.removePotentialBonds();
+      monomer.setPotentialBond('R2', bond);
+      const operation = new MonomerHoverOperation(bond.firstMonomer, true);
+      command.addOperation(operation);
     }
 
     const operation = new MonomerHoverOperation(monomer, true);
@@ -356,8 +374,27 @@ export class DrawingEntitiesManager {
     return command;
   }
 
-  public cancelIntentionToFinishBondCreation(monomer: BaseMonomer) {
+  public cancelIntentionToFinishBondCreation(
+    monomer: BaseMonomer,
+    polymerBond?: PolymerBond,
+  ) {
     const command = new Command();
+    assert(polymerBond);
+    if (
+      polymerBond &&
+      polymerBond.firstMonomer.getPotentialAttachmentPointByBond(
+        polymerBond,
+      ) === 'R1' &&
+      !polymerBond.firstMonomer.isAttachmentPointUsed('R2')
+    ) {
+      polymerBond.firstMonomer.removePotentialBonds();
+      polymerBond.firstMonomer.setPotentialBond('R2', polymerBond);
+      const operation = new MonomerHoverOperation(
+        polymerBond.firstMonomer,
+        true,
+      );
+      command.addOperation(operation);
+    }
 
     monomer.turnOffHover();
     monomer.turnOffAttachmentPointsVisibility();
@@ -497,6 +534,7 @@ export class DrawingEntitiesManager {
     monomer: BaseMonomer,
     initialPosition: Vec2,
     canvasWidth: number,
+    lastMonomer?: BaseMonomer,
     isNextChain = false,
   ) {
     const command = new Command();
@@ -519,10 +557,20 @@ export class DrawingEntitiesManager {
 
     for (const attachmentPointName in monomer.attachmentPointsToBonds) {
       const polymerBond = monomer.attachmentPointsToBonds[attachmentPointName];
-      if (!polymerBond || attachmentPointName === 'R1') {
+      if (!polymerBond) {
         continue;
       }
-      if (attachmentPointName === 'R2') {
+      const nextMonomer =
+        polymerBond.secondMonomer === monomer
+          ? polymerBond.firstMonomer
+          : polymerBond.secondMonomer;
+      if (attachmentPointName === 'R1' || nextMonomer === lastMonomer) {
+        continue;
+      }
+      if (
+        attachmentPointName === 'R2' &&
+        nextMonomer.getAttachmentPointByBond(polymerBond) === 'R1'
+      ) {
         const isMonomerFitCanvas =
           newPosition.x +
             monomerWidth +
@@ -533,33 +581,36 @@ export class DrawingEntitiesManager {
         let rearrangeResult;
         if (isMonomerFitCanvas) {
           rearrangeResult = this.rearrangeChain(
-            polymerBond.secondMonomer,
+            nextMonomer,
             new Vec2({
               x:
                 newPosition.x + monomerWidth + HORIZONTAL_DISTANCE_FROM_MONOMER,
               y: newPosition.y,
             }),
             canvasWidth,
+            monomer,
           );
         } else {
           rearrangeResult = this.rearrangeChain(
-            polymerBond.secondMonomer,
+            nextMonomer,
             new Vec2({
               x: MONOMER_START_X_POSITION,
               y: newPosition.y + heightMonomerWithBond,
             }),
             canvasWidth,
+            monomer,
           );
         }
         lastPosition = rearrangeResult.lastPosition;
         command.merge(rearrangeResult.command);
       } else {
         const diff = Vec2.diff(oldMonomerPosition, monomer.position);
-        const pos = Vec2.diff(polymerBond.secondMonomer.position, diff);
+        const pos = Vec2.diff(nextMonomer.position, diff);
         const rearrangeResult = this.rearrangeChain(
-          polymerBond.secondMonomer,
+          nextMonomer,
           Scale.obj2scaled(pos, editorSettings),
           canvasWidth,
+          monomer,
         );
         command.merge(rearrangeResult.command);
       }
@@ -594,7 +645,18 @@ export class DrawingEntitiesManager {
     );
 
     const firstMonomersInChains = monomersList.filter((monomer) => {
-      return !monomer.attachmentPointsToBonds.R1;
+      const polymerBond = monomer.getBondByAttachmentPoint('R2');
+      const nextMonomer =
+        polymerBond?.firstMonomer === monomer
+          ? polymerBond.secondMonomer
+          : polymerBond?.firstMonomer;
+      return (
+        !monomer.attachmentPointsToBonds.R1 &&
+        monomer.attachmentPointsToBonds.R2 &&
+        nextMonomer?.getAttachmentPointByBond(
+          monomer.attachmentPointsToBonds.R2,
+        ) === 'R1'
+      );
     });
     firstMonomersInChains.sort((monomer1, monomer2) => {
       if (
@@ -617,6 +679,7 @@ export class DrawingEntitiesManager {
         monomer,
         lastPosition,
         canvasWidth,
+        undefined,
         monomerIndex !== 0,
       );
       command.merge(rearrangeResult.command);

@@ -1,55 +1,5 @@
 import { Vec2 } from 'domain/entities';
 
-const edgeOffset = 150;
-
-export function isCloseToEdgeOfScreen(event) {
-  const { clientX, clientY } = event;
-  const body = document.body;
-
-  const isCloseToLeftEdgeOfScreen = clientX <= edgeOffset;
-  const isCloseToTopEdgeOfScreen = clientY <= edgeOffset;
-  const isCloseToRightEdgeOfScreen = body.clientWidth - clientX <= edgeOffset;
-  const isCloseToBottomEdgeOfScreen = body.clientHeight - clientY <= edgeOffset;
-  const isCloseToSomeEdgeOfScreen =
-    isCloseToLeftEdgeOfScreen ||
-    isCloseToTopEdgeOfScreen ||
-    isCloseToRightEdgeOfScreen ||
-    isCloseToBottomEdgeOfScreen;
-
-  return {
-    isCloseToLeftEdgeOfScreen,
-    isCloseToTopEdgeOfScreen,
-    isCloseToRightEdgeOfScreen,
-    isCloseToBottomEdgeOfScreen,
-    isCloseToSomeEdgeOfScreen,
-  };
-}
-
-export function isCloseToEdgeOfCanvas(clientArea) {
-  const {
-    scrollTop,
-    scrollLeft,
-    clientWidth,
-    clientHeight,
-    scrollWidth,
-    scrollHeight,
-  } = clientArea;
-
-  const isCloseToLeftEdgeOfCanvas = scrollLeft <= edgeOffset;
-  const isCloseToTopEdgeOfCanvas = scrollTop <= edgeOffset;
-  const isCloseToRightEdgeOfCanvas =
-    scrollLeft + clientWidth + edgeOffset >= scrollWidth;
-  const isCloseToBottomEdgeOfCanvas =
-    scrollTop + clientHeight + edgeOffset >= scrollHeight;
-
-  return {
-    isCloseToLeftEdgeOfCanvas,
-    isCloseToTopEdgeOfCanvas,
-    isCloseToRightEdgeOfCanvas,
-    isCloseToBottomEdgeOfCanvas,
-  };
-}
-
 export function calculateCanvasExtension(
   clientArea,
   currentCanvasSize,
@@ -80,24 +30,7 @@ export function calculateCanvasExtension(
   return new Vec2(horizontalExtension, verticalExtension, 0);
 }
 
-export function extendCanvasByVector(vector: Vec2, render) {
-  const clientArea = render.clientArea;
-  const extensionVector = calculateCanvasExtension(
-    clientArea,
-    render.sz.scaled(render.options.zoom),
-    vector,
-  ).scaled(1 / render.options.zoom);
-
-  if (extensionVector.x > 0 || extensionVector.y > 0) {
-    render.setPaperSize(render.sz.add(extensionVector));
-    render.setOffset(render.options.offset.add(vector));
-    render.ctab.translate(vector);
-    render.setViewBox(render.options.zoom);
-  }
-
-  render.update(false);
-}
-
+// @yuleicul todo: clear
 export function scrollCanvasByVector(vector: Vec2, render) {
   const clientArea = render.clientArea;
 

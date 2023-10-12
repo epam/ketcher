@@ -24,17 +24,12 @@ import {
   clickOnAtom,
   waitForPageInit,
   waitForRender,
+  waitForAtomPropsModal,
 } from '@utils';
 import { getMolfile, getRxn } from '@utils/formats';
 
 const CANVAS_CLICK_X = 200;
 const CANVAS_CLICK_Y = 200;
-
-async function waitForAtomPropsModal(page: Page) {
-  await expect(await page.getByTestId('atomProps-dialog').isVisible()).toBe(
-    true,
-  );
-}
 
 async function selectAtomLabel(page: Page, label: string, button: string) {
   await page.getByLabel('Label').fill(label);

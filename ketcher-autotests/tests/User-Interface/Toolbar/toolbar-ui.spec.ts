@@ -20,6 +20,7 @@ import {
   selectTopPanelButton,
   TopPanelButton,
 } from '@utils';
+import { waitForLoadAndRender } from '@utils/common/loaders/waitForLoad/waitForLoad';
 
 test.describe('Open Ketcher', () => {
   test.beforeEach(async ({ page }) => {
@@ -178,9 +179,13 @@ test.describe('Open Ketcher', () => {
     */
     await takeTopToolbarScreenshot(page);
     await drawBenzeneRing(page);
-    await selectTopPanelButton(TopPanelButton.Aromatize, page);
+    await waitForLoadAndRender(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Aromatize, page);
+    });
     await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.Dearomatize, page);
+    await waitForLoadAndRender(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Dearomatize, page);
+    });
     await takeEditorScreenshot(page);
   });
 });

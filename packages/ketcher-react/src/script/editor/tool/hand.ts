@@ -59,12 +59,12 @@ class HandTool implements Tool {
       1 / rnd.options.zoom,
     );
     this.begPos = this.endPos;
+
     rnd.setViewBox((prev) => ({
       ...prev,
       minX: prev.minX - diff.x,
       minY: prev.minY - diff.y,
     }));
-    rnd.update(false);
   }
 
   mouseup(event) {

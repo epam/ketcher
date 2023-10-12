@@ -9,7 +9,7 @@ import { Peptide } from 'domain/entities/Peptide';
 import { Chem } from 'domain/entities/Chem';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 
-const LINE_FROM_MONOMER_LENGTH = 10;
+const LINE_FROM_MONOMER_LENGTH = 15;
 const VERTICAL_LINE_LENGTH = 42;
 const CORNER_LENGTH = 8;
 const DOUBLE_CORNER_LENGTH = CORNER_LENGTH * 2;
@@ -102,7 +102,7 @@ export class PolymerBondRenderer extends BaseRenderer {
   public appendSnakeBond(rootElement) {
     const startPosition = this.polymerBond.startPosition;
     const endPosition = this.polymerBond.endPosition;
-    this.updateSnakeBondPath(startPosition, endPosition);
+    this.updateSnakeBondPath(endPosition, startPosition);
 
     this.bodyElement = rootElement
       .append('path')
@@ -123,7 +123,23 @@ export class PolymerBondRenderer extends BaseRenderer {
     return this.polymerBond.firstMonomer.renderer?.bodyHeight ?? 0;
   }
 
+  public isMonomersOnSameHorizontalLine() {
+    return (
+      this.polymerBond.secondMonomer &&
+      this.polymerBond.firstMonomer.position.y -
+        this.polymerBond.secondMonomer.position.y <
+        0.5 &&
+      this.polymerBond.firstMonomer.position.y -
+        this.polymerBond.secondMonomer.position.y >
+        -0.5
+    );
+  }
+
   private updateSnakeBondPath(startPosition, endPosition) {
+    if (this.isMonomersOnSameHorizontalLine()) {
+      this.addRandomLine(startPosition, endPosition);
+      return;
+    }
     if (this.isSecondMonomerBottomRight(startPosition, endPosition)) {
       this.addLine(
         LINE_DIRECTION.Horizontal,

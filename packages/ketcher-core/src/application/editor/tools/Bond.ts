@@ -112,6 +112,7 @@ class PolymerBond implements BaseTool {
       const modelChanges =
         this.editor.drawingEntitiesManager.cancelIntentionToFinishBondCreation(
           renderer.monomer,
+          this.bondRenderer?.polymerBond,
         );
       this.editor.renderersContainer.update(modelChanges);
     }

@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { Page, expect, test } from '@playwright/test';
 import {
   openFileAndAddToCanvas,
@@ -299,6 +298,8 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-1594
       Description: The appeared symbol is colored with the same color as in the Periodic Table.
     */
+    const anyAtom = 2;
+    const secondAnyAtom = 3;
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
@@ -307,11 +308,11 @@ test.describe('Atom Properties', () => {
 
     await selectAtomLabel(page, 'N', 'Apply');
 
-    await doubleClickOnAtom(page, 'C', 2);
+    await doubleClickOnAtom(page, 'C', anyAtom);
 
     await selectAtomLabel(page, 'O', 'Apply');
 
-    await doubleClickOnAtom(page, 'C', 3);
+    await doubleClickOnAtom(page, 'C', secondAnyAtom);
 
     await selectAtomLabel(page, 'Cl', 'Apply');
   });
@@ -689,11 +690,12 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-1617
       Description: The 'Isotope' 18O added. Number colored in red as Oxygen atom.
     */
+    const timeout = 2000;
     await openFileAndAddToCanvas('KET/chain.ket', page);
 
     await moveOnAtom(page, 'C', 1);
     await page.mouse.down();
-    await page.waitForTimeout(2000);
+    await page.waitForTimeout(timeout);
 
     await page.getByLabel('Atom').fill('18O');
     await pressButton(page, 'Apply');
@@ -706,6 +708,7 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-1618
       Description: Only last selected atom is replaced with the typed atom symbol and isotope.
     */
+    const timeout = 2000;
     await openFileAndAddToCanvas('Heteroatoms.mol', page);
 
     await page.keyboard.down('Shift');
@@ -716,7 +719,7 @@ test.describe('Atom Properties', () => {
 
     await moveOnAtom(page, 'S', 0);
     await page.mouse.down();
-    await page.waitForTimeout(2000);
+    await page.waitForTimeout(timeout);
 
     await page.getByLabel('Atom').fill('18S');
     await pressButton(page, 'Apply');
@@ -851,8 +854,9 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-1633
       Description: The saved *.mol file is opened correctly with applied atom properties and can be edited.
     */
+    const anyAtom = 2;
     await openFileAndAddToCanvas('chain-with-radicals.mol', page);
-    await doubleClickOnAtom(page, 'C', 2);
+    await doubleClickOnAtom(page, 'C', anyAtom);
     await selectRadical(page, 'Diradical (triplet)', 'Apply');
   });
 
@@ -863,23 +867,26 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-1634
       Description: All selected atoms is replaced with the typed atom symbols and Radicals.
     */
+    const timeout = 2000;
+    const anyAtom = 2;
+    const secondAnyAtom = 4;
     await openFileAndAddToCanvas('KET/chain.ket', page);
 
     await moveOnAtom(page, 'C', 0);
     await page.mouse.down();
-    await page.waitForTimeout(2000);
+    await page.waitForTimeout(timeout);
     await page.getByLabel('Atom').fill('O.');
     await pressButton(page, 'Apply');
 
-    await clickOnAtom(page, 'C', 2);
+    await clickOnAtom(page, 'C', anyAtom);
     await page.mouse.down();
-    await page.waitForTimeout(2000);
+    await page.waitForTimeout(timeout);
     await page.getByLabel('Atom').fill('N:');
     await pressButton(page, 'Apply');
 
-    await moveOnAtom(page, 'C', 4);
+    await moveOnAtom(page, 'C', secondAnyAtom);
     await page.mouse.down();
-    await page.waitForTimeout(2000);
+    await page.waitForTimeout(timeout);
     await page.getByLabel('Atom').fill('F^^');
     await pressButton(page, 'Apply');
   });
@@ -973,8 +980,9 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-1636
       Description: The saved *.mol file is opened correctly with applied atom properties and can be edited.
     */
+    const anyAtom = 2;
     await openFileAndAddToCanvas('chain-with-ring-bond-count.mol', page);
-    await doubleClickOnAtom(page, 'C', 2);
+    await doubleClickOnAtom(page, 'C', anyAtom);
     await selectRingBondCount(page, '3', 'Apply');
   });
 
@@ -986,23 +994,26 @@ test.describe('Atom Properties', () => {
       Description: Several atoms are selected.
       All selected atoms are replaced with the correct atom symbol with the correct atom properties.
     */
+    const timeout = 2000;
+    const anyAtom = 2;
+    const secondAnyAtom = 4;
     await openFileAndAddToCanvas('KET/chain.ket', page);
 
     await moveOnAtom(page, 'C', 0);
     await page.mouse.down();
-    await page.waitForTimeout(2000);
+    await page.waitForTimeout(timeout);
     await page.getByLabel('Atom').fill('15s^^2-');
     await pressButton(page, 'Apply');
 
-    await clickOnAtom(page, 'C', 2);
+    await clickOnAtom(page, 'C', anyAtom);
     await page.mouse.down();
-    await page.waitForTimeout(2000);
+    await page.waitForTimeout(timeout);
     await page.getByLabel('Atom').fill('209Pb:2+');
     await pressButton(page, 'Apply');
 
-    await moveOnAtom(page, 'C', 4);
+    await moveOnAtom(page, 'C', secondAnyAtom);
     await page.mouse.down();
-    await page.waitForTimeout(2000);
+    await page.waitForTimeout(timeout);
     await page.getByLabel('Atom').fill('22F.3+');
     await pressButton(page, 'Apply');
   });
@@ -1012,6 +1023,9 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-1638
       Description: Ring bond count atom property is displayed as specified from the menu item.
     */
+    const anyAtom = 2;
+    const secondAnyAtom = 3;
+    const thirdAnyAtom = 4;
     await openFileAndAddToCanvas('KET/chain.ket', page);
     await doubleClickOnAtom(page, 'C', 0);
     await selectRingBondCount(page, 'As drawn', 'Apply');
@@ -1019,13 +1033,13 @@ test.describe('Atom Properties', () => {
     await doubleClickOnAtom(page, 'C', 1);
     await selectRingBondCount(page, '0', 'Apply');
 
-    await doubleClickOnAtom(page, 'C', 2);
+    await doubleClickOnAtom(page, 'C', anyAtom);
     await selectRingBondCount(page, '2', 'Apply');
 
-    await doubleClickOnAtom(page, 'C', 3);
+    await doubleClickOnAtom(page, 'C', secondAnyAtom);
     await selectRingBondCount(page, '3', 'Apply');
 
-    await doubleClickOnAtom(page, 'C', 4);
+    await doubleClickOnAtom(page, 'C', thirdAnyAtom);
     await selectRingBondCount(page, '4', 'Apply');
   });
 
@@ -1034,6 +1048,10 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-1639
       Description: Ring bond count atom property is displayed as specified from the menu item.
     */
+    const anyAtom = 2;
+    const secondAnyAtom = 3;
+    const thirdAnyAtom = 4;
+    const numberOfPress = 2;
     await openFileAndAddToCanvas('KET/chain.ket', page);
     await doubleClickOnAtom(page, 'C', 0);
     await selectRingBondCount(page, 'As drawn', 'Apply');
@@ -1041,24 +1059,24 @@ test.describe('Atom Properties', () => {
     await doubleClickOnAtom(page, 'C', 1);
     await selectRingBondCount(page, '0', 'Apply');
 
-    await doubleClickOnAtom(page, 'C', 2);
+    await doubleClickOnAtom(page, 'C', anyAtom);
     await selectRingBondCount(page, '2', 'Apply');
 
-    await doubleClickOnAtom(page, 'C', 3);
+    await doubleClickOnAtom(page, 'C', secondAnyAtom);
     await selectRingBondCount(page, '3', 'Apply');
 
-    await doubleClickOnAtom(page, 'C', 4);
+    await doubleClickOnAtom(page, 'C', thirdAnyAtom);
     await selectRingBondCount(page, '4', 'Apply');
 
     await doubleClickOnAtom(page, 'C', 0);
     await selectRingBondCount(page, '3', 'Apply');
 
-    for (let i = 0; i < 2; i++) {
+    for (let i = 0; i < numberOfPress; i++) {
       await selectTopPanelButton(TopPanelButton.Undo, page);
     }
     await takeEditorScreenshot(page);
 
-    for (let i = 0; i < 2; i++) {
+    for (let i = 0; i < numberOfPress; i++) {
       await selectTopPanelButton(TopPanelButton.Redo, page);
     }
   });
@@ -1276,9 +1294,10 @@ test.describe('Atom Properties', () => {
       The 'Unsaturated' checkbox is set.
       The 'u' mark appears below the carbon atom.
     */
+    const anyAtom = 3;
     await openFileAndAddToCanvas('KET/chain.ket', page);
 
-    await doubleClickOnAtom(page, 'C', 3);
+    await doubleClickOnAtom(page, 'C', anyAtom);
     await selectUnsaturated(page, 'Apply');
   });
 
@@ -1289,9 +1308,10 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-1649
       Description: The 'Unsaturated' dissapear from structure.
     */
+    const anyAtom = 3;
     await openFileAndAddToCanvas('chain-with-unsaturated.mol', page);
 
-    await doubleClickOnAtom(page, 'C', 3);
+    await doubleClickOnAtom(page, 'C', anyAtom);
     await page.getByText('Query specific').click();
     await page.getByLabel('Unsaturated').uncheck();
     await pressButton(page, 'Apply');
@@ -1304,9 +1324,10 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-8931
       Description: Modal window opens without errors. All sections are displayed correctly.
     */
+    const anyAtom = 3;
     await openFileAndAddToCanvas('KET/chain.ket', page);
 
-    await doubleClickOnAtom(page, 'C', 3);
+    await doubleClickOnAtom(page, 'C', anyAtom);
   });
 
   test('Click Single Bond on Atom of Phosphorus', async ({ page }) => {
@@ -1330,11 +1351,13 @@ test.describe('Atom Properties', () => {
       "E" symbol appeared in "Atom" field next to "F".
       Selected atom now has "Fe" label.
     */
+    const timeout = 2000;
+    const anyAtom = 3;
     await openFileAndAddToCanvas('KET/chain.ket', page);
 
-    await moveOnAtom(page, 'C', 3);
+    await moveOnAtom(page, 'C', anyAtom);
     await page.mouse.down();
-    await page.waitForTimeout(2000);
+    await page.waitForTimeout(timeout);
     await page.getByLabel('Atom').fill('FE');
     await pressButton(page, 'Apply');
   });
@@ -1417,6 +1440,7 @@ test.describe('Atom Properties', () => {
       expectedFile,
     );
 
+    // eslint-disable-next-line no-magic-numbers
     const METADATA_STRING_INDEX = [2];
     const { fileExpected: molFileExpected, file: molFile } =
       await receiveFileComparisonData({
@@ -1453,9 +1477,10 @@ test.describe('Atom Properties', () => {
       Description: The selected stereo mark appears near the carbon atom for
       Inverts - .Inv, ext.
     */
+    const anyAtom = 3;
     await openFileAndAddToCanvas('KET/chain.ket', page);
 
-    await doubleClickOnAtom(page, 'C', 3);
+    await doubleClickOnAtom(page, 'C', anyAtom);
     await selectReactionFlagsInversion(page, 'Inverts');
     await selectExactChange(page, 'Apply');
   });
@@ -1468,9 +1493,10 @@ test.describe('Atom Properties', () => {
       Description: The selected stereo mark appears near the carbon atom for
       Retains - .Ret, ext.
     */
+    const anyAtom = 3;
     await openFileAndAddToCanvas('KET/chain.ket', page);
 
-    await doubleClickOnAtom(page, 'C', 3);
+    await doubleClickOnAtom(page, 'C', anyAtom);
     await selectReactionFlagsInversion(page, 'Retains');
     await selectExactChange(page, 'Apply');
   });

@@ -129,7 +129,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     const x = 300;
     const y = 300;
-    await openFileAndAddToCanvas('reaction-dif-prop.rxn', page);
+    await openFileAndAddToCanvas('Rxn-V2000/reaction-dif-prop.rxn', page);
     await cutAndPaste(page);
     await page.mouse.click(x, y);
     await screenshotBetweenUndoRedo(page);
@@ -142,7 +142,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     const anyAtom = 1;
     const modifier = getControlModifier();
-    await openFileAndAddToCanvas('reaction-dif-prop.rxn', page);
+    await openFileAndAddToCanvas('Rxn-V2000/reaction-dif-prop.rxn', page);
     await waitForRender(page, async () => {
       await clickOnAtom(page, 'C', anyAtom);
     });
@@ -163,7 +163,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     const anyBond = 1;
     const modifier = getControlModifier();
-    await openFileAndAddToCanvas('reaction-dif-prop.rxn', page);
+    await openFileAndAddToCanvas('Rxn-V2000/reaction-dif-prop.rxn', page);
     await waitForRender(page, async () => {
       await clickOnBond(page, BondType.SINGLE, anyBond);
     });
@@ -183,7 +183,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Description: After the clicking the Cut button, the selected object disappears.
     Not able to perform undo
     */
-    await openFileAndAddToCanvas('reaction-dif-prop.rxn', page);
+    await openFileAndAddToCanvas('Rxn-V2000/reaction-dif-prop.rxn', page);
     await page.keyboard.press('Control+a');
     await page.keyboard.press('Control+x');
     await screenshotBetweenUndoRedo(page);
@@ -259,7 +259,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     const x = 500;
     const y = 200;
-    await openFileAndAddToCanvas('reaction-dif-prop.rxn', page);
+    await openFileAndAddToCanvas('Rxn-V2000/reaction-dif-prop.rxn', page);
     await copyAndPaste(page);
     await page.mouse.click(x, y);
   });
@@ -273,7 +273,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const y = 300;
     const anyAtom = 0;
     const modifier = getControlModifier();
-    await openFileAndAddToCanvas('reaction-dif-prop.rxn', page);
+    await openFileAndAddToCanvas('Rxn-V2000/reaction-dif-prop.rxn', page);
     await waitForRender(page, async () => {
       await clickOnAtom(page, 'C', anyAtom);
     });
@@ -294,7 +294,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     const x = 500;
     const y = 200;
-    await openFileAndAddToCanvas('reaction-dif-prop.rxn', page);
+    await openFileAndAddToCanvas('Rxn-V2000/reaction-dif-prop.rxn', page);
     await waitForRender(page, async () => {
       await clickOnBond(page, BondType.SINGLE, 0);
     });
@@ -311,7 +311,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     const x = 500;
     const y = 200;
-    await openFileAndAddToCanvas('reaction-dif-prop.rxn', page);
+    await openFileAndAddToCanvas('Rxn-V2000/reaction-dif-prop.rxn', page);
     await copyAndPaste(page);
     await page.mouse.click(x, y);
   });

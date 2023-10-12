@@ -35,8 +35,6 @@ import {
   selectActivePresetMonomerGroup,
   selectActiveRnaBuilderItem,
   selectIsPresetReadyToSave,
-  selectPresetFullName,
-  setActivePresetName,
   setActiveRnaBuilderItem,
 } from 'state/rna-builder';
 import { useAppSelector } from 'hooks';
@@ -45,7 +43,6 @@ import {
   scrollToSelectedPreset,
 } from 'components/monomerLibrary/RnaBuilder/RnaEditor/RnaEditor';
 import { getMonomerUniqueKey } from 'state/library';
-import { ChangeEvent, useEffect, useState } from 'react';
 
 export const RnaEditorExpanded = ({
   name,
@@ -77,31 +74,6 @@ export const RnaEditorExpanded = ({
   ] as const;
 
   const activeMonomerGroup = useAppSelector(selectActiveRnaBuilderItem);
-  const activePresetFullName = selectPresetFullName(activePreset);
-  const [presetName, setPresetName] = useState(name || '');
-  const [editedPresetName, setEditedPresetName] = useState(false);
-  useEffect(() => {
-    if (
-      activeMonomerGroup !== RnaBuilderPresetsItem.Presets &&
-      !editedPresetName &&
-      !presetName.trim()
-    ) {
-      setPresetName((currentPresetName) => {
-        const newName = activePresetFullName || currentPresetName;
-        dispatch(setActivePresetName(newName));
-        return newName;
-      });
-    }
-  }, [activeMonomerGroup, activePresetFullName, editedPresetName, presetName]);
-
-  onChangeName = (event: ChangeEvent<HTMLInputElement>) => {
-    if (isEditMode) {
-      const newPresetName = event.target.value;
-      dispatch(setActivePresetName(newPresetName));
-      setPresetName(newPresetName);
-      setEditedPresetName(newPresetName.trim() !== '');
-    }
-  };
 
   const scrollToActiveItemInLibrary = (selectedGroup) => {
     if (selectedGroup === RnaBuilderPresetsItem.Presets) {
@@ -155,7 +127,7 @@ export const RnaEditorExpanded = ({
       >
         {isEditMode ? (
           <NameInput
-            value={presetName}
+            value={name}
             placeholder="Name your structure"
             onChange={onChangeName}
           />

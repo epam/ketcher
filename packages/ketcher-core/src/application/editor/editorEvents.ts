@@ -6,6 +6,7 @@ export const editorEvents = {
   selectPreset: new Subscription(),
   selectTool: new Subscription(),
   error: new Subscription(),
+  openMonomerConnectionModal: new Subscription(),
   mouseOverPolymerBond: new Subscription(),
   mouseLeavePolymerBond: new Subscription(),
   mouseOverMonomer: new Subscription(),

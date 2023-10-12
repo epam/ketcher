@@ -67,6 +67,7 @@ import {
   PhosphateAvatar,
   RNABaseAvatar,
 } from 'components/shared/monomerOnCanvas';
+import { BaseMonomer } from 'ketcher-core/dist/domain/entities/BaseMonomer';
 
 const muiTheme = createTheme(muiOverrides);
 
@@ -128,6 +129,29 @@ function Editor({ theme }: EditorProps) {
       );
       dispatch(selectTool('select-rectangle'));
       editor.events.selectTool.dispatch('select-rectangle');
+      editor.events.openMonomerConnectionModal.add(
+        (
+          firstMonomer: BaseMonomer,
+          secondMonomer: BaseMonomer,
+          onCreateBond: (
+            secondMonomer: BaseMonomer,
+            firstAttchmentPointName: string,
+            secondAttachmentPointName: string,
+          ) => void,
+          onCancelBondCreation: () => void,
+        ) =>
+          dispatch(
+            openModal({
+              name: 'monomerConnection',
+              additionalProps: {
+                firstMonomer,
+                secondMonomer,
+                onCreateBond,
+                onCancelBondCreation,
+              },
+            }),
+          ),
+      );
     }
   }, [editor]);
 

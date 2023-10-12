@@ -15,8 +15,24 @@
  ***************************************************************************/
 import { Open } from 'components/modal/Open';
 import { Save } from 'components/modal/save';
+import {
+  MonomerConnection,
+  MonomerConnectionProps,
+} from 'components/modal/monomerConnection';
 
-export const modalComponentList: Record<string, typeof Open | typeof Save> = {
+export interface RequiredModalProps {
+  onClose: () => void;
+  isModalOpen: boolean;
+}
+
+export type AdditionalModalProps = Partial<MonomerConnectionProps>;
+
+type PossibleModal = (
+  props: RequiredModalProps & AdditionalModalProps,
+) => React.ReactElement;
+
+export const modalComponentList: Record<string, PossibleModal> = {
   open: Open,
   save: Save,
+  monomerConnection: MonomerConnection,
 };

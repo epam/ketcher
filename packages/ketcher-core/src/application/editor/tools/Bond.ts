@@ -20,10 +20,11 @@ import { Vec2 } from 'domain/entities';
 import assert from 'assert';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { BaseTool } from 'application/editor/tools/Tool';
-import { openModal } from 'application/render/modal';
 
 class PolymerBond implements BaseTool {
   private bondRenderer?: PolymerBondRenderer;
+  private isBondConnectionModalOpen = false;
+
   constructor(private editor: CoreEditor) {
     this.editor = editor;
   }
@@ -118,76 +119,161 @@ class PolymerBond implements BaseTool {
     }
   }
 
-  private finishBondCreation(secondMonomer: BaseMonomer) {
-    assert(this.bondRenderer);
-    if (!secondMonomer.hasFreeAttachmentPoint) {
-      this.editor.events.error.dispatch(
-        "Monomers don't have any connection point available",
-      );
-      return this.editor.drawingEntitiesManager.cancelPolymerBondCreation(
-        this.bondRenderer.polymerBond,
-      );
-    }
-    const firstMonomerAttachmentPoint =
-      this.bondRenderer.polymerBond.firstMonomer.getPotentialAttachmentPointByBond(
-        this.bondRenderer.polymerBond,
-      );
-    const secondMonomerAttachmentPoint =
-      secondMonomer.availableAttachmentPointForBondEnd;
-    assert(firstMonomerAttachmentPoint);
-    assert(secondMonomerAttachmentPoint);
-    if (firstMonomerAttachmentPoint === secondMonomerAttachmentPoint) {
-      this.editor.events.error.dispatch(
-        'You have connected monomers with attachment points of the same group',
-      );
-    }
-    return this.editor.drawingEntitiesManager.finishPolymerBondCreation(
-      this.bondRenderer.polymerBond,
-      secondMonomer,
-      firstMonomerAttachmentPoint,
-      secondMonomerAttachmentPoint,
-    );
-  }
-
   public mouseup() {
-    if (this.bondRenderer) {
-      const modelChanges =
-        this.editor.drawingEntitiesManager.cancelPolymerBondCreation(
-          this.bondRenderer.polymerBond,
-        );
-      this.editor.renderersContainer.update(modelChanges);
-      this.bondRenderer = undefined;
+    if (this.isBondConnectionModalOpen) {
+      return;
     }
+
+    this.handleBondCreationCancellation();
   }
 
   public mouseUpMonomer(event) {
-    const renderer = event.toElement.__data__;
-    const isFirstMonomerHovered =
-      renderer === this.bondRenderer?.polymerBond?.firstMonomer?.renderer;
+    const thisMonomer = this.bondRenderer?.polymerBond?.firstMonomer;
 
-    if (this.bondRenderer && !isFirstMonomerHovered) {
-      const firstMonomer = this.bondRenderer?.polymerBond?.firstMonomer;
-      const secondMonomer = renderer.monomer;
-      console.log('firstMonomer', firstMonomer.constructor.name);
-      console.log('secondMonomer', secondMonomer.constructor.name);
-      const rnaTypes = ['Sugar', 'RNABase', 'Phosphate'];
-      if (
-        firstMonomer.constructor.name === 'Chem' ||
-        (firstMonomer.constructor.name === 'Peptide' &&
-          rnaTypes.includes(secondMonomer.constructor.name))
-      ) {
-        openModal();
-      } else {
-        // TO DO: This part of the code must be executed also when modal was open and user clicked there 'Connect'
-        const modelChanges = this.finishBondCreation(renderer.monomer);
-        this.editor.renderersContainer.update(modelChanges);
-        this.bondRenderer = undefined;
-        event.stopPropagation();
-      }
+    if (!this.bondRenderer || !thisMonomer) {
+      return;
+    }
+
+    const renderer = event.toElement.__data__;
+    const isThisMonomerHovered = renderer === thisMonomer.renderer;
+
+    if (isThisMonomerHovered) {
+      return;
+    }
+
+    const otherMonomer = renderer.monomer;
+
+    const stopPropagation = this.tryToConnectMonomers(
+      thisMonomer,
+      otherMonomer,
+    );
+
+    if (stopPropagation) {
+      event.stopPropagation();
     }
   }
 
+  private tryToConnectMonomers(
+    firstMonomer: BaseMonomer,
+    secondMonomer: BaseMonomer,
+  ): boolean {
+    assert(this.bondRenderer);
+
+    if (!firstMonomer.hasValidTypeToConnectWith(secondMonomer)) {
+      this.editor.events.error.dispatch(
+        'Monomers have incompatible types and cannot be bonded',
+      );
+      this.editor.drawingEntitiesManager.cancelPolymerBondCreation(
+        this.bondRenderer.polymerBond,
+      );
+
+      return false;
+    }
+
+    if (
+      !firstMonomer.hasFreeAttachmentPoint ||
+      !secondMonomer.hasFreeAttachmentPoint
+    ) {
+      this.editor.events.error.dispatch(
+        "Monomers don't have any available attachment points",
+      );
+      this.editor.drawingEntitiesManager.cancelPolymerBondCreation(
+        this.bondRenderer.polymerBond,
+      );
+
+      return false;
+    }
+
+    if (
+      firstMonomer.isExactlyOneAttachmentPointFree &&
+      secondMonomer.isExactlyOneAttachmentPointFree
+    ) {
+      const firstAttachmentPoint =
+        firstMonomer.getPotentialAttachmentPointByBond(
+          this.bondRenderer.polymerBond,
+        );
+      const secondAttachmentPoint =
+        secondMonomer.availableAttachmentPointForBondEnd;
+
+      assert(typeof firstAttachmentPoint === 'string');
+      assert(typeof secondAttachmentPoint === 'string');
+
+      errorIfAttachmentPointsAreOfSameGroup(
+        firstAttachmentPoint,
+        secondAttachmentPoint,
+      );
+
+      this.handleBondCreation(
+        secondMonomer,
+        firstAttachmentPoint,
+        secondAttachmentPoint,
+      );
+
+      return true;
+    }
+
+    this.isBondConnectionModalOpen = true;
+
+    this.editor.events.openMonomerConnectionModal.dispatch(
+      firstMonomer,
+      secondMonomer,
+      this.handleBondCreation,
+      this.handleBondCreationCancellation,
+    );
+
+    return false;
+  }
+
+  private handleBondCreation = (
+    secondMonomer: BaseMonomer,
+    firstAttachmentPoint: string,
+    secondAttachmentPoint: string,
+  ): void => {
+    assert(this.bondRenderer);
+
+    const modelChanges =
+      this.editor.drawingEntitiesManager.finishPolymerBondCreation(
+        this.bondRenderer.polymerBond,
+        secondMonomer,
+        firstAttachmentPoint,
+        secondAttachmentPoint,
+      );
+
+    this.editor.renderersContainer.update(modelChanges);
+
+    this.isBondConnectionModalOpen = false;
+    this.bondRenderer = undefined;
+  };
+
+  private handleBondCreationCancellation = (): void => {
+    if (!this.bondRenderer) {
+      return;
+    }
+
+    const modelChanges =
+      this.editor.drawingEntitiesManager.cancelPolymerBondCreation(
+        this.bondRenderer.polymerBond,
+      );
+    this.editor.renderersContainer.update(modelChanges);
+    this.bondRenderer = undefined;
+  };
+
   public destroy() {}
+}
+
+export function errorIfAttachmentPointsAreOfSameGroup(
+  firstAttachmentPoint: string,
+  secondAttachmentPoint: string,
+): boolean {
+  if (firstAttachmentPoint === secondAttachmentPoint) {
+    CoreEditor.provideEditorInstance().events.error.dispatch(
+      'You have connected monomers with attachment points of the same group',
+    );
+
+    return true;
+  }
+
+  return false;
 }
 
 export { PolymerBond };

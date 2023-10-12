@@ -71,6 +71,24 @@ export class BaseMonomer extends DrawingEntity {
     return undefined;
   }
 
+  public hasValidTypeToConnectWith(otherMonomer: BaseMonomer): boolean {
+    const rnaTypes = ['Sugar', 'RNABase', 'Phosphate'];
+
+    const thisMonomerType = this.constructor.name;
+    const otherMonomerType = otherMonomer.constructor.name;
+
+    if (
+      thisMonomerType === 'Chem' ||
+      otherMonomerType === 'Chem' ||
+      (thisMonomerType === 'Peptide' && rnaTypes.includes(otherMonomerType)) ||
+      (rnaTypes.includes(thisMonomerType) && otherMonomerType === 'Peptide')
+    ) {
+      return true;
+    }
+
+    return false;
+  }
+
   public get firstFreeAttachmentPoint() {
     for (const attachmentPoint in this.attachmentPointsToBonds) {
       if (this.attachmentPointsToBonds[attachmentPoint] === null) {
@@ -79,6 +97,14 @@ export class BaseMonomer extends DrawingEntity {
     }
 
     return undefined;
+  }
+
+  public get isExactlyOneAttachmentPointFree(): boolean {
+    return (
+      Object.entries(this.attachmentPointsToBonds).filter(
+        ([_, bond]) => bond == null,
+      ).length === 1
+    );
   }
 
   public get R1AttachmentPoint(): AttachmentPointName | undefined {

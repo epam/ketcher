@@ -7,7 +7,7 @@ import { useState } from 'react';
 import { RequiredModalProps } from '../modalContainer';
 import { CoreEditor } from 'ketcher-core';
 
-export interface MonomerConnectionProps extends RequiredModalProps {
+export interface MonomerConnectionOnlyProps {
   firstMonomer?: BaseMonomer;
   secondMonomer?: BaseMonomer;
   onCreateBond?: (
@@ -17,6 +17,9 @@ export interface MonomerConnectionProps extends RequiredModalProps {
   ) => void;
   onCancelBondCreation?: () => void;
 }
+
+export type MonomerConnectionProps = MonomerConnectionOnlyProps &
+  RequiredModalProps;
 
 const StyledModal = styled(Modal)({
   '& .MuiPaper-root': {

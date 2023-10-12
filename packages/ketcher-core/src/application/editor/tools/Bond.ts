@@ -214,12 +214,12 @@ class PolymerBond implements BaseTool {
 
     this.isBondConnectionModalOpen = true;
 
-    this.editor.events.openMonomerConnectionModal.dispatch(
+    this.editor.events.openMonomerConnectionModal.dispatch({
       firstMonomer,
       secondMonomer,
-      this.handleBondCreation,
-      this.handleBondCreationCancellation,
-    );
+      onCreateBond: this.handleBondCreation,
+      onCancelBondCreation: this.handleBondCreationCancellation,
+    });
 
     return false;
   }

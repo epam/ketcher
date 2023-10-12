@@ -238,11 +238,13 @@ class StructEditor extends Component {
     });
 
     this.editorRef.current.addEventListener('wheel', this.handleWheel);
+    this.editor.render.observeCanvasResize();
   }
 
   componentWillUnmount() {
     removeEditorHandlers(this.editor, this.props);
     this.editorRef.current.removeEventListener('wheel', this.handleWheel);
+    this.editor.render.unobserveCanvasResize();
   }
 
   render() {

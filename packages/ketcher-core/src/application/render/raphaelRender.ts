@@ -46,27 +46,39 @@ export class Render {
   private readonly userOpts: RenderOptions;
   private oldCb: Box2Abs | null = null;
   private scrollbar: ScrollbarContainer;
+  private resizeObserver: ResizeObserver | null = null;
 
   constructor(clientArea: HTMLElement, options: RenderOptions) {
-    let renderWidth = options.width || clientArea.clientWidth - 10;
-    let renderHeight = options.height || clientArea.clientHeight - 10;
-    renderWidth = renderWidth > 0 ? renderWidth : 0;
-    renderHeight = renderHeight > 0 ? renderHeight : 0;
-
     this.userOpts = options;
     this.clientArea = clientArea;
-    this.paper = new Raphael(clientArea, renderWidth, renderHeight);
-    this.sz = new Vec2(renderWidth, renderHeight);
+    this.paper = new Raphael(clientArea, '100%', '100%');
+    this.sz = this.getCanvasSizeVector();
     this.ctab = new ReStruct(new Struct(), this);
     this.options = defaultOptions(this.userOpts);
     this.scrollbar = new ScrollbarContainer(this);
     this.setViewBox({
       minX: 0,
       minY: 0,
-      width: renderWidth,
-      height: renderHeight,
+      width: this.sz.x,
+      height: this.sz.y,
     });
   }
+
+  observeCanvasResize = () => {
+    this.resizeObserver = new ResizeObserver(() => {
+      this.sz = new Vec2(
+        this.clientArea.clientWidth,
+        this.clientArea.clientHeight,
+      );
+      this.resizeViewBox();
+    });
+
+    this.resizeObserver.observe(this.paper.canvas);
+  };
+
+  unobserveCanvasResize = () => {
+    this.resizeObserver?.unobserve(this.paper.canvas);
+  };
 
   updateOptions(opts: string) {
     try {
@@ -99,12 +111,6 @@ export class Render {
     return CoordinateTransformation.pageEventToProto(event, this);
   }
 
-  // TODO: @yuleicul remove or handle media size change
-  setPaperSize(newSize: Vec2) {
-    this.sz = newSize;
-    this.paper.setSize(newSize.x, newSize.y);
-  }
-
   setOffset(newOffset: Vec2): void {
     const delta = new Vec2(
       newOffset.x - this.options.offset.x,
@@ -129,6 +135,21 @@ export class Render {
     });
 
     this.options.zoom = zoom;
+  }
+
+  private getCanvasSizeVector() {
+    return new Vec2(this.clientArea.clientWidth, this.clientArea.clientHeight);
+  }
+
+  resizeViewBox() {
+    this.sz = this.getCanvasSizeVector();
+    const newWidth = this.sz.x / this.options.zoom;
+    const newHeight = this.sz.y / this.options.zoom;
+    this.setViewBox((prev) => ({
+      ...prev,
+      width: newWidth,
+      height: newHeight,
+    }));
   }
 
   private zoomOnCanvasCenter(zoomedWidth: number, zoomedHeight: number) {

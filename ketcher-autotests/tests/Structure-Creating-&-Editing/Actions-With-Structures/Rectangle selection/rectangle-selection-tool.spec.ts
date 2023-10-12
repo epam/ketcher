@@ -7,6 +7,7 @@ import {
   getControlModifier,
   getCoordinatesOfTheMiddleOfTheScreen,
   openFileAndAddToCanvas,
+  selectDropdownTool,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
@@ -145,13 +146,20 @@ test.describe('Rectangle selection tool', () => {
 
   test('Delete with selection', async ({ page }) => {
     //  Test case: EPMLSOPKET-1352
-    const atomNumber = 4;
+
+    async function selectReactionLeftPart() {
+      const shift = 5;
+      const emptySpace = { x: 100, y: 100 };
+      const mostRightAtom = await getAtomByIndex(page, { label: 'Br' }, 0);
+      await page.mouse.move(emptySpace.x, emptySpace.y);
+      await dragMouseTo(mostRightAtom.x + shift, mostRightAtom.y + shift, page);
+    }
+    const atomOnTheRightSide = 14;
     await openFileAndAddToCanvas('Rxn-V2000/benzene-chain-reaction.rxn', page);
-    await page.getByTestId('select-rectangle').click();
-    // double Y coordinates for selectiing single structure
-    await selectObjects(page, selectionCoords.y, selectionCoords.y);
+    await selectDropdownTool(page, 'select-rectangle', 'select-rectangle');
+    await selectReactionLeftPart();
     await page.keyboard.press('Delete');
-    await clickOnAtom(page, 'C', atomNumber);
+    await clickOnAtom(page, 'C', atomOnTheRightSide);
     await page.keyboard.press('Delete');
   });
 });

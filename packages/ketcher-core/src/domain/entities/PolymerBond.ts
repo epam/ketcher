@@ -42,12 +42,6 @@ export class PolymerBond extends DrawingEntity {
     }
   }
 
-  public flipMonomers() {
-    const firstMonomer = this.firstMonomer;
-    this.firstMonomer = this.secondMonomer;
-    this.secondMonomer = firstMonomer;
-  }
-
   public moveBondStartAbsolute(x, y) {
     this.moveAbsolute(new Vec2(x, y));
   }

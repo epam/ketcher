@@ -133,7 +133,9 @@ class PolymerBond implements BaseTool {
         this.bondRenderer.polymerBond,
       );
     const secondMonomerAttachmentPoint =
-      secondMonomer.availableAttachmentPointForBondEnd;
+      secondMonomer.getPotentialAttachmentPointByBond(
+        this.bondRenderer.polymerBond,
+      );
     assert(firstMonomerAttachmentPoint);
     assert(secondMonomerAttachmentPoint);
     if (firstMonomerAttachmentPoint === secondMonomerAttachmentPoint) {

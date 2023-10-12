@@ -102,7 +102,7 @@ export class PolymerBondRenderer extends BaseRenderer {
   public appendSnakeBond(rootElement) {
     const startPosition = this.polymerBond.startPosition;
     const endPosition = this.polymerBond.endPosition;
-    this.updateSnakeBondPath(endPosition, startPosition);
+    this.updateSnakeBondPath(startPosition, endPosition);
 
     this.bodyElement = rootElement
       .append('path')

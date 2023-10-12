@@ -339,14 +339,22 @@ export class DrawingEntitiesManager {
 
   public intendToFinishBondCreation(monomer: BaseMonomer, bond: PolymerBond) {
     const command = new Command();
-
     monomer.turnOnHover();
     monomer.turnOnAttachmentPointsVisibility();
-    if (monomer.availableAttachmentPointForBondEnd) {
-      monomer.setPotentialBond(
-        monomer.availableAttachmentPointForBondEnd,
-        bond,
-      );
+    const availableAttachmentPointForBondEnd =
+      monomer.availableAttachmentPointForBondEnd;
+    if (availableAttachmentPointForBondEnd) {
+      monomer.setPotentialBond(availableAttachmentPointForBondEnd, bond);
+    }
+
+    if (
+      availableAttachmentPointForBondEnd === 'R2' &&
+      !bond.firstMonomer.isAttachmentPointUsed('R1')
+    ) {
+      bond.firstMonomer.removePotentialBonds();
+      bond.firstMonomer.setPotentialBond('R1', bond);
+      const operation = new MonomerHoverOperation(bond.firstMonomer, true);
+      command.addOperation(operation);
     }
 
     const operation = new MonomerHoverOperation(monomer, true);
@@ -356,8 +364,27 @@ export class DrawingEntitiesManager {
     return command;
   }
 
-  public cancelIntentionToFinishBondCreation(monomer: BaseMonomer) {
+  public cancelIntentionToFinishBondCreation(
+    monomer: BaseMonomer,
+    polymerBond: PolymerBond,
+  ) {
     const command = new Command();
+
+    if (
+      polymerBond &&
+      polymerBond.firstMonomer.getPotentialAttachmentPointByBond(
+        polymerBond,
+      ) === 'R1' &&
+      !polymerBond.firstMonomer.isAttachmentPointUsed('R2')
+    ) {
+      polymerBond.firstMonomer.removePotentialBonds();
+      polymerBond.firstMonomer.setPotentialBond('R2', polymerBond);
+      const operation = new MonomerHoverOperation(
+        polymerBond.firstMonomer,
+        true,
+      );
+      command.addOperation(operation);
+    }
 
     monomer.turnOffHover();
     monomer.turnOffAttachmentPointsVisibility();
@@ -519,10 +546,17 @@ export class DrawingEntitiesManager {
 
     for (const attachmentPointName in monomer.attachmentPointsToBonds) {
       const polymerBond = monomer.attachmentPointsToBonds[attachmentPointName];
-      if (!polymerBond || attachmentPointName === 'R1') {
+      if (
+        !polymerBond ||
+        attachmentPointName === 'R1' ||
+        monomer === polymerBond.secondMonomer
+      ) {
         continue;
       }
-      if (attachmentPointName === 'R2') {
+      if (
+        attachmentPointName === 'R2' &&
+        polymerBond.secondMonomer.getAttachmentPointByBond(polymerBond) === 'R1'
+      ) {
         const isMonomerFitCanvas =
           newPosition.x +
             monomerWidth +
@@ -594,7 +628,13 @@ export class DrawingEntitiesManager {
     );
 
     const firstMonomersInChains = monomersList.filter((monomer) => {
-      return !monomer.attachmentPointsToBonds.R1;
+      return (
+        !monomer.attachmentPointsToBonds.R1 &&
+        monomer.attachmentPointsToBonds.R2 &&
+        monomer.attachmentPointsToBonds.R2.secondMonomer?.getAttachmentPointByBond(
+          monomer.attachmentPointsToBonds.R2,
+        ) === 'R1'
+      );
     });
     firstMonomersInChains.sort((monomer1, monomer2) => {
       if (

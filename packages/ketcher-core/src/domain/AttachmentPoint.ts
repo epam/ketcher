@@ -35,6 +35,7 @@ export class AttachmentPoint {
   private centerOFMonomer: { x: number; y: number };
   private element;
   private initialAngle;
+  private isSnake;
 
   public static appendAttachmentPointUnused(
     rootElement: D3SvgElementSelection<SVGGElement, void>,
@@ -102,6 +103,7 @@ export class AttachmentPoint {
     bodyHeight,
     canvas,
     RN,
+    isSnake,
   ) {
     this.rootElement = rootElement;
     this.monomer = monomer;
@@ -110,6 +112,7 @@ export class AttachmentPoint {
     this.canvasOffset = canvas.node().getBoundingClientRect();
     this.attachmentPointName = RN;
     this.centerOFMonomer = monomer.renderer.center;
+    this.isSnake = isSnake;
 
     this.appendAttachmentPointToBond();
   }
@@ -159,12 +162,24 @@ export class AttachmentPoint {
   }
 
   public appendAttachmentPointToBond() {
-    const angleRadians = this.rotateToAngle(
-      this.monomer.attachmentPointsToBonds[this.attachmentPointName],
+    let angleRadians: number;
+    const flip =
       this.monomer.id ===
-        this.monomer.attachmentPointsToBonds[this.attachmentPointName]
-          ?.firstMonomer?.id,
-    );
+      this.monomer.attachmentPointsToBonds[this.attachmentPointName]
+        ?.firstMonomer?.id;
+    if (
+      this.isSnake &&
+      !this.monomer.attachmentPointsToBonds[
+        this.attachmentPointName
+      ]?.renderer.isMonomersOnSameHorizontalLine()
+    ) {
+      angleRadians = flip ? Math.PI : 0;
+    } else {
+      angleRadians = this.rotateToAngle(
+        this.monomer.attachmentPointsToBonds[this.attachmentPointName],
+        flip,
+      );
+    }
 
     const angleDegrees = Vec2.radians_to_degrees(angleRadians);
 

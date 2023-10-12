@@ -266,7 +266,9 @@ class IndigoService implements StructService {
           reject(msg.error);
         }
       };
-
+      if (options?.['input-format']) {
+        delete options['input-format'];
+      }
       const commandOptions: CommandOptions = {
         ...this.defaultOptions,
         ...options,
@@ -315,6 +317,7 @@ class IndigoService implements StructService {
       const commandOptions: CommandOptions = {
         ...this.defaultOptions,
         ...options,
+        'output-content-type': 'application/json',
       };
 
       const commandData: LayoutCommandData = {

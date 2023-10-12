@@ -292,7 +292,7 @@ export function initClipboard(dispatch) {
       editor.selection(null);
       return data;
     },
-    onPaste(data) {
+    onPaste(data, isSmarts: boolean) {
       const structStr =
         data[ChemicalMimeType.KET] ||
         data[ChemicalMimeType.Mol] ||
@@ -300,7 +300,13 @@ export function initClipboard(dispatch) {
         data['text/plain'];
 
       if (structStr || !rxnTextPlain.test(data['text/plain']))
-        loadStruct(structStr, { fragment: true, isPaste: true });
+        isSmarts
+          ? loadStruct(structStr, {
+              fragment: true,
+              isPaste: true,
+              'input-format': ChemicalMimeType.DaylightSmarts,
+            })
+          : loadStruct(structStr, { fragment: true, isPaste: true });
     },
   };
 }

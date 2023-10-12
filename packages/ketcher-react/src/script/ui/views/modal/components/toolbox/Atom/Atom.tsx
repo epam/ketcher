@@ -165,6 +165,7 @@ const Atom: FC<Props> = (props: Props) => {
                   name={field.name}
                   component={Select}
                   options={getSelectOptionsFromSchema(atomProps[field.name])}
+                  data-testId={field.name}
                 />
               );
             } else {
@@ -214,7 +215,7 @@ const Atom: FC<Props> = (props: Props) => {
           {itemGroups.map(({ groupName, component }) => {
             const shouldGroupBeRended = expandedAccordions.includes(groupName);
             return (
-              <div key={groupName}>
+              <div key={groupName} data-testid={`${groupName}-section`}>
                 <div
                   onClick={handleAccordionChange(groupName)}
                   className={classes.accordionSummaryWrapper}

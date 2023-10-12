@@ -24,6 +24,7 @@ import {
   drawCyclohexaneRing,
   selectLeftPanelButton,
   LeftPanelButton,
+  addCyclopentadieneRingWithTwoAtoms,
 } from '@utils';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
 import { getMolfile, getRxn } from '@utils/formats';
@@ -128,9 +129,8 @@ test.describe('Template Manupulations', () => {
     await page.keyboard.press('Control+a');
     const { x: rotationHandleX, y: rotationHandleY } =
       await getRotationHandleCoordinates(page);
-    await page.mouse.move(rotationHandleX, rotationHandleY);
-    await page.mouse.down();
-    await page.mouse.move(rotationHandleX, rotationHandleY - shift);
+    await dragMouseTo(rotationHandleX, rotationHandleY, page);
+    await dragMouseTo(rotationHandleX, rotationHandleY - shift, page);
   });
 
   test('Click or drag on the canvas: Place template on the Canvas', async ({
@@ -252,7 +252,6 @@ test.describe('Template Manupulations', () => {
     await openFileAndAddToCanvas('Rxn-V2000/templates-reaction.rxn', page);
     const expectedFile = await getRxn(page, 'v2000');
     await saveToFile('Rxn-V2000/templates-reaction-expected.rxn', expectedFile);
-    // eslint-disable-next-line no-magic-numbers
     const METADATA_STRINGS_INDEXES = [2, 7, 43, 63];
     const { file: RxnFile, fileExpected: RxnFileExpected } =
       await receiveFileComparisonData({
@@ -273,9 +272,7 @@ test.describe('Template Manupulations', () => {
     Add another cyclopentadiene ring to a single bond with two atoms, where each atom is connected to any atom with a double bond
     */
     await drawCyclopentadieneRing(page);
-    await selectAtomInToolbar(AtomButton.Nitrogen, page);
-    await clickOnAtom(page, 'C', 0);
-    await clickOnAtom(page, 'C', 3);
+    await addCyclopentadieneRingWithTwoAtoms(page);
     await selectRing(RingButton.Cyclopentadiene, page);
   });
 
@@ -288,9 +285,7 @@ test.describe('Template Manupulations', () => {
     Add cyclopentadiene ring to to a double bond with two atom, where each atom is connected to any atom with a single bond
     */
     await drawBenzeneRing(page);
-    await selectAtomInToolbar(AtomButton.Nitrogen, page);
-    await clickOnAtom(page, 'C', 0);
-    await clickOnAtom(page, 'C', 3);
+    await addCyclopentadieneRingWithTwoAtoms(page);
     await selectRing(RingButton.Cyclopentadiene, page);
   });
 

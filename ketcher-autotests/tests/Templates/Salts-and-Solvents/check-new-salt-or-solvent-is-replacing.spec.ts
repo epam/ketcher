@@ -9,6 +9,7 @@ import {
   waitForPageInit,
   FunctionalGroups,
   selectFunctionalGroups,
+  putAceticAcidOnCanvasByClickingInTheMiddleOfTheScreen,
 } from '@utils';
 
 test.describe('Salts and Solvents replacement', () => {
@@ -28,11 +29,8 @@ Test case: EPMLSOPKET-12972 - 'Check that new Salt or Solvent is replacing the p
   */
     await selectSaltsAndSolvents(SaltsAndSolvents.AceticAnhydride, page);
     await clickInTheMiddleOfTheScreen(page);
-
     await takeEditorScreenshot(page);
-
-    await selectSaltsAndSolvents(SaltsAndSolvents.AceticAcid, page);
-    await clickInTheMiddleOfTheScreen(page);
+    await putAceticAcidOnCanvasByClickingInTheMiddleOfTheScreen(page);
   });
 
   test('Salts and Solvents should replace Atoms, Functional Groups, and Salts and Solvents', async ({
@@ -43,8 +41,7 @@ Test case: EPMLSOPKET-12969 - 'Check that in all cases, there must be a replacem
   */
     await selectAtomInToolbar(AtomButton.Carbon, page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectSaltsAndSolvents(SaltsAndSolvents.AceticAcid, page);
-    await clickInTheMiddleOfTheScreen(page);
+    await putAceticAcidOnCanvasByClickingInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
 
     await selectFunctionalGroups(FunctionalGroups.Bz, page);
@@ -55,8 +52,7 @@ Test case: EPMLSOPKET-12969 - 'Check that in all cases, there must be a replacem
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
 
-    await selectSaltsAndSolvents(SaltsAndSolvents.AceticAcid, page);
-    await clickInTheMiddleOfTheScreen(page);
+    await putAceticAcidOnCanvasByClickingInTheMiddleOfTheScreen(page);
   });
 
   test('Verify if Methan Sulphonic Acid replace the Nitrogen atom', async ({

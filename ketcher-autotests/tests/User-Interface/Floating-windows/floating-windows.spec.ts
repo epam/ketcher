@@ -28,7 +28,7 @@ test.describe('Click and drag FG on canvas', () => {
       Test case: EPMLSOPKET-3998
       Description: verify the floating window with calculated values 
     */
-    await openFileAndAddToCanvas('bicycle.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/bicycle.mol', page);
     await selectTopPanelButton(TopPanelButton.Calculated, page);
   });
 
@@ -37,7 +37,7 @@ test.describe('Click and drag FG on canvas', () => {
       Test case: EPMLSOPKET-3999(1)
       Description: verify 0 decimal places after the dot for calculated values 
     */
-    await openFileAndAddToCanvas('bicycle.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/bicycle.mol', page);
     await selectTopPanelButton(TopPanelButton.Calculated, page);
     await page
       .getByRole('listitem')
@@ -54,7 +54,7 @@ test.describe('Click and drag FG on canvas', () => {
       Test case: EPMLSOPKET-3999(2)
       Description: verify 7 decimal places after the dot for calculated values 
     */
-    await openFileAndAddToCanvas('bicycle.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/bicycle.mol', page);
     await selectTopPanelButton(TopPanelButton.Calculated, page);
     await page
       .getByRole('listitem')

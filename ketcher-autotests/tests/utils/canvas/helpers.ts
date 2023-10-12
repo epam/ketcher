@@ -4,10 +4,14 @@ import {
   expect,
   Locator,
 } from '@playwright/test';
-import { clickInTheMiddleOfTheScreen, pressButton } from '@utils/clicks';
-import { ELEMENT_TITLE } from './types';
-// import { DELAY_IN_SECONDS, TopPanelButton, waitForRender } from '..';
 import {
+  clickInTheMiddleOfTheScreen,
+  clickOnAtom,
+  pressButton,
+} from '@utils/clicks';
+import { ELEMENT_TITLE } from './types';
+import {
+  AtomButton,
   DELAY_IN_SECONDS,
   RingButton,
   STRUCTURE_LIBRARY_BUTTON_NAME,
@@ -16,24 +20,21 @@ import {
   selectRing,
   waitForRender,
 } from '..';
-import { selectTopPanelButton } from './tools';
+import { selectAtomInToolbar, selectTopPanelButton } from './tools';
 import { getLeftTopBarSize } from './common/getLeftTopBarSize';
 import { emptyFunction } from '@utils/common/helpers';
 
 export async function drawBenzeneRing(page: Page) {
-  // await page.getByRole('button', { name: 'Benzene (T)' }).click();
   await selectRing(RingButton.Benzene, page);
   await clickInTheMiddleOfTheScreen(page);
 }
 
 export async function drawCyclohexaneRing(page: Page) {
-  // await page.getByRole('button', { name: 'Cyclohexane (T)' }).click();
   await selectRing(RingButton.Cyclohexane, page);
   await clickInTheMiddleOfTheScreen(page);
 }
 
 export async function drawCyclopentadieneRing(page: Page) {
-  // await page.getByRole('button', { name: 'Cyclopentadiene (T)' }).click();
   await selectRing(RingButton.Cyclopentadiene, page);
   await clickInTheMiddleOfTheScreen(page);
 }
@@ -47,6 +48,19 @@ export async function selectUserTemplatesAndRename(
   await page.getByRole('button', { name: 'Aromatics (18)' }).click();
   await page.getByTitle(itemToChoose).getByRole('button').click();
   await page.getByPlaceholder('template').click();
+}
+
+export async function selectAzuleneOnTemplateLibrary(page: Page) {
+  await page.getByRole('tab', { name: 'Template Library' }).click();
+  await page.getByRole('button', { name: 'Aromatics (18)' }).click();
+  await page.getByTitle('Azulene').getByRole('button').click();
+}
+
+export async function addCyclopentadieneRingWithTwoAtoms(page: Page) {
+  await selectAtomInToolbar(AtomButton.Nitrogen, page);
+  await clickOnAtom(page, 'C', 0);
+  const anyAtom = 3;
+  await clickOnAtom(page, 'C', anyAtom);
 }
 
 export async function drawElementByTitle(

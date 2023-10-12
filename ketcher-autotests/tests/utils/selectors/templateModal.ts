@@ -123,6 +123,13 @@ export async function selectSaltsAndSolventsGroup(
   await selectSaltsAndSolvents(saltsAndSolventsGroupName, page);
 }
 
+export async function putAceticAcidOnCanvasByClickingInTheMiddleOfTheScreen(
+  page: Page,
+) {
+  await selectSaltsAndSolvents(SaltsAndSolvents.AceticAcid, page);
+  await clickInTheMiddleOfTheScreen(page);
+}
+
 export async function selectFunctionalGroups(
   functionalGroupName: FunctionalGroups,
   page: Page,

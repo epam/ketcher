@@ -47,7 +47,7 @@ test.describe('Select tools tests', () => {
     */
     await drawBenzeneRing(page);
     await selectDropdownTool(page, 'select-rectangle', 'select-fragment');
-    // eslint-disable-next-line no-magic-numbers
-    await clickOnAtom(page, 'C', 4);
+    const atomWithQueryFeatures = 4;
+    await clickOnAtom(page, 'C', atomWithQueryFeatures);
   });
 });

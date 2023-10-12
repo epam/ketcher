@@ -357,6 +357,16 @@ export class DrawingEntitiesManager {
       command.addOperation(operation);
     }
 
+    if (
+      !monomer.isAttachmentPointUsed('R2') &&
+      bond.firstMonomer.getPotentialAttachmentPointByBond(bond) === 'R1'
+    ) {
+      monomer.removePotentialBonds();
+      monomer.setPotentialBond('R2', bond);
+      const operation = new MonomerHoverOperation(bond.firstMonomer, true);
+      command.addOperation(operation);
+    }
+
     const operation = new MonomerHoverOperation(monomer, true);
 
     command.addOperation(operation);
@@ -366,10 +376,10 @@ export class DrawingEntitiesManager {
 
   public cancelIntentionToFinishBondCreation(
     monomer: BaseMonomer,
-    polymerBond: PolymerBond,
+    polymerBond?: PolymerBond,
   ) {
     const command = new Command();
-
+    assert(polymerBond);
     if (
       polymerBond &&
       polymerBond.firstMonomer.getPotentialAttachmentPointByBond(
@@ -524,6 +534,7 @@ export class DrawingEntitiesManager {
     monomer: BaseMonomer,
     initialPosition: Vec2,
     canvasWidth: number,
+    lastMonomer?: BaseMonomer,
     isNextChain = false,
   ) {
     const command = new Command();
@@ -546,16 +557,19 @@ export class DrawingEntitiesManager {
 
     for (const attachmentPointName in monomer.attachmentPointsToBonds) {
       const polymerBond = monomer.attachmentPointsToBonds[attachmentPointName];
-      if (
-        !polymerBond ||
-        attachmentPointName === 'R1' ||
-        monomer === polymerBond.secondMonomer
-      ) {
+      if (!polymerBond) {
+        continue;
+      }
+      const nextMonomer =
+        polymerBond.secondMonomer === monomer
+          ? polymerBond.firstMonomer
+          : polymerBond.secondMonomer;
+      if (attachmentPointName === 'R1' || nextMonomer === lastMonomer) {
         continue;
       }
       if (
         attachmentPointName === 'R2' &&
-        polymerBond.secondMonomer.getAttachmentPointByBond(polymerBond) === 'R1'
+        nextMonomer.getAttachmentPointByBond(polymerBond) === 'R1'
       ) {
         const isMonomerFitCanvas =
           newPosition.x +
@@ -567,33 +581,36 @@ export class DrawingEntitiesManager {
         let rearrangeResult;
         if (isMonomerFitCanvas) {
           rearrangeResult = this.rearrangeChain(
-            polymerBond.secondMonomer,
+            nextMonomer,
             new Vec2({
               x:
                 newPosition.x + monomerWidth + HORIZONTAL_DISTANCE_FROM_MONOMER,
               y: newPosition.y,
             }),
             canvasWidth,
+            monomer,
           );
         } else {
           rearrangeResult = this.rearrangeChain(
-            polymerBond.secondMonomer,
+            nextMonomer,
             new Vec2({
               x: MONOMER_START_X_POSITION,
               y: newPosition.y + heightMonomerWithBond,
             }),
             canvasWidth,
+            monomer,
           );
         }
         lastPosition = rearrangeResult.lastPosition;
         command.merge(rearrangeResult.command);
       } else {
         const diff = Vec2.diff(oldMonomerPosition, monomer.position);
-        const pos = Vec2.diff(polymerBond.secondMonomer.position, diff);
+        const pos = Vec2.diff(nextMonomer.position, diff);
         const rearrangeResult = this.rearrangeChain(
-          polymerBond.secondMonomer,
+          nextMonomer,
           Scale.obj2scaled(pos, editorSettings),
           canvasWidth,
+          monomer,
         );
         command.merge(rearrangeResult.command);
       }
@@ -628,10 +645,15 @@ export class DrawingEntitiesManager {
     );
 
     const firstMonomersInChains = monomersList.filter((monomer) => {
+      const polymerBond = monomer.getBondByAttachmentPoint('R2');
+      const nextMonomer =
+        polymerBond?.firstMonomer === monomer
+          ? polymerBond.secondMonomer
+          : polymerBond?.firstMonomer;
       return (
         !monomer.attachmentPointsToBonds.R1 &&
         monomer.attachmentPointsToBonds.R2 &&
-        monomer.attachmentPointsToBonds.R2.secondMonomer?.getAttachmentPointByBond(
+        nextMonomer?.getAttachmentPointByBond(
           monomer.attachmentPointsToBonds.R2,
         ) === 'R1'
       );
@@ -657,6 +679,7 @@ export class DrawingEntitiesManager {
         monomer,
         lastPosition,
         canvasWidth,
+        undefined,
         monomerIndex !== 0,
       );
       command.merge(rearrangeResult.command);

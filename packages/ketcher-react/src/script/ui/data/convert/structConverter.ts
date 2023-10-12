@@ -15,6 +15,8 @@
  ***************************************************************************/
 
 import {
+  Atom,
+  Bond,
   RxnArrowMode,
   StereoFlag,
   Struct,
@@ -32,10 +34,29 @@ export function couldBeSaved(
   const rxnArrowsSize = struct.rxnArrows.size;
   const hasRxnArrow = struct.hasRxnArrow();
 
-  if (format === 'smiles' || format === 'smarts') {
-    warnings.push(
-      `Structure contains query properties of atoms and bonds that are not supported in the ${format?.toUpperCase()}. Query properties will not be reflected in the file saved.`,
+  if (format === 'smarts') {
+    const arrayOfAtoms: Array<Atom> = Array.from(struct.atoms.values());
+    const arrayOfBonds: Array<Bond> = Array.from(struct.bonds.values());
+    console.log(arrayOfAtoms);
+
+    const hasAtomUnsupportedProperties = arrayOfAtoms.some(
+      (atom) =>
+        atom.radical ||
+        atom.unsaturatedAtom ||
+        atom.exactChangeFlag ||
+        atom.invRet,
     );
+    const hasBondUnsupportedProperties = arrayOfBonds.some(
+      (bond) =>
+        bond.reactingCenterStatus ||
+        bond.type === Bond.PATTERN.TYPE.DATIVE ||
+        bond.type === Bond.PATTERN.TYPE.HYDROGEN,
+    );
+    if (hasBondUnsupportedProperties || hasAtomUnsupportedProperties) {
+      warnings.push(
+        `Structure contains query properties of atoms and bonds that are not supported in the SMARTS. Query properties will not be reflected in the file saved.`,
+      );
+    }
   }
 
   if (format === 'smiles') {

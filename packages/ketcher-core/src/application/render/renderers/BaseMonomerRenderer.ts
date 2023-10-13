@@ -34,8 +34,13 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   private isSnakeBondForAttachmentPoint(
     attachmentPointName: AttachmentPointName,
   ) {
-    return this.monomer.attachmentPointsToBonds[attachmentPointName]?.renderer
-      ?.isSnake;
+    return (
+      this.monomer.attachmentPointsToBonds[attachmentPointName]?.renderer
+        ?.isSnake &&
+      !this.monomer.attachmentPointsToBonds[
+        attachmentPointName
+      ]?.renderer?.isMonomersOnSameHorizontalLine()
+    );
   }
 
   public get center() {

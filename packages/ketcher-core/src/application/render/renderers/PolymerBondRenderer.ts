@@ -22,7 +22,7 @@ export class PolymerBondRenderer extends BaseRenderer {
   private editorEvents: typeof editorEvents;
   private selectionElement;
   private path = '';
-
+  private previousStateOfIsMonomersOnSameHorisontalLine: boolean | undefined;
   constructor(public polymerBond: PolymerBond) {
     super(polymerBond as DrawingEntity);
     this.polymerBond.setRenderer(this);
@@ -85,13 +85,23 @@ export class PolymerBondRenderer extends BaseRenderer {
   }
 
   public moveSelection() {
-    assert(this.rootElement);
-    this.moveStart();
-    this.moveEnd();
+    if (
+      this.previousStateOfIsMonomersOnSameHorisontalLine !==
+      this.isMonomersOnSameHorizontalLine()
+    ) {
+      this.remove();
+      this.show();
+    } else {
+      assert(this.rootElement);
+      this.moveStart();
+      this.moveEnd();
+    }
+    this.previousStateOfIsMonomersOnSameHorisontalLine =
+      this.isMonomersOnSameHorizontalLine();
   }
 
   public appendBond(rootElement) {
-    if (this.isSnake) {
+    if (this.isSnake && !this.isMonomersOnSameHorizontalLine()) {
       this.appendSnakeBond(rootElement);
     } else {
       this.appendBondGraph(rootElement);
@@ -136,10 +146,6 @@ export class PolymerBondRenderer extends BaseRenderer {
   }
 
   private updateSnakeBondPath(startPosition, endPosition) {
-    if (this.isMonomersOnSameHorizontalLine()) {
-      this.addRandomLine(startPosition, endPosition);
-      return;
-    }
     if (this.isSecondMonomerBottomRight(startPosition, endPosition)) {
       this.addLine(
         LINE_DIRECTION.Horizontal,
@@ -437,7 +443,7 @@ export class PolymerBondRenderer extends BaseRenderer {
   }
 
   public moveEnd() {
-    if (this.isSnake) {
+    if (this.isSnake && !this.isMonomersOnSameHorizontalLine()) {
       this.moveSnakeBondEnd();
     } else {
       this.moveGraphBondEnd();
@@ -474,7 +480,7 @@ export class PolymerBondRenderer extends BaseRenderer {
   }
 
   public moveStart() {
-    if (this.isSnake) {
+    if (this.isSnake && !this.isMonomersOnSameHorizontalLine()) {
       this.moveSnakeBondStart();
     } else {
       this.moveGraphBondStart();
@@ -511,7 +517,7 @@ export class PolymerBondRenderer extends BaseRenderer {
   }
 
   protected appendHoverAreaElement() {
-    if (this.isSnake) {
+    if (this.isSnake && !this.isMonomersOnSameHorizontalLine()) {
       (<D3SvgElementSelection<SVGPathElement, void> | undefined>(
         this.hoverAreaElement
       )) = this.rootElement

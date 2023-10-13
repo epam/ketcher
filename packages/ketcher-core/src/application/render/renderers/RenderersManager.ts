@@ -85,7 +85,7 @@ export class RenderersManager {
 
   public finishPolymerBondCreation(polymerBond) {
     assert(polymerBond.secondMonomer);
-    polymerBond.renderer?.moveEnd();
+    polymerBond.renderer?.moveSelection();
     polymerBond.renderer?.redrawHover();
     polymerBond.firstMonomer.renderer?.redrawAttachmentPoints();
     polymerBond.firstMonomer.renderer?.drawSelection();

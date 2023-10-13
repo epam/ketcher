@@ -65,9 +65,9 @@ class PolymerBond implements BaseTool {
   }
 
   public mouseLeavePolymerBond(event) {
-    if (this.bondRenderer) return;
-
     const renderer: PolymerBondRenderer = event.target.__data__;
+    if (this.bondRenderer || !renderer.polymerBond) return;
+
     const modelChanges =
       this.editor.drawingEntitiesManager.hidePolymerBondInformation(
         renderer.polymerBond,

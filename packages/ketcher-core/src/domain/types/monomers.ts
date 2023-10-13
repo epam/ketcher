@@ -22,4 +22,6 @@ export type MonomerItemType = {
   };
 };
 
-export type AttachmentPointName = 'R1' | 'R2';
+export const attachmentPointNames = ['R1', 'R2'] as const;
+
+export type AttachmentPointName = typeof attachmentPointNames[number];

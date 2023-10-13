@@ -3,7 +3,7 @@ import { ActionButton } from 'components/shared/actionButton';
 import { Modal } from 'components/shared/modal';
 import { BaseMonomer } from 'ketcher-core/dist/domain/entities/BaseMonomer';
 import { StructRender } from 'ketcher-react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { RequiredModalProps } from '../modalContainer';
 import { CoreEditor } from 'ketcher-core';
 
@@ -90,24 +90,18 @@ const MonomerConnection = ({
   secondMonomer,
   onCreateBond,
   onCancelBondCreation,
-}: MonomerConnectionProps) => {
+}: MonomerConnectionProps): React.ReactElement => {
   if (!firstMonomer || !secondMonomer) {
     throw new Error('Monomers must exist!');
   }
 
-  const firstMonomerBonds = firstMonomer.attachmentPointsToBonds;
-  const secondMonomerBonds = secondMonomer.attachmentPointsToBonds;
+  const firstBonds = firstMonomer.attachmentPointsToBonds;
+  const secondBonds = secondMonomer.attachmentPointsToBonds;
 
-  const [firstAttachmentPoint, setFirstAttachmentPoint] = useState<
-    string | null
-  >(getDefaultAttachmentPoint(firstMonomerBonds));
-  const [secondAttachmentPoint, setSecondAttachmentPoint] = useState<
-    string | null
-  >(getDefaultAttachmentPoint(secondMonomerBonds));
-
-  if (!firstMonomerBonds || !secondMonomerBonds) {
-    throw new Error('Bonds must exist!');
-  }
+  const [firstSelectedAttachmentPoint, setFirstSelectedAttachmentPoint] =
+    useState<string | null>(getDefaultAttachmentPoint(firstBonds));
+  const [secondSelectedAttachmentPoint, setSecondSelectedAttachmentPoint] =
+    useState<string | null>(getDefaultAttachmentPoint(secondBonds));
 
   if (!onCreateBond) {
     throw new Error('onCreateBond handler must exist!');
@@ -123,11 +117,11 @@ const MonomerConnection = ({
   };
 
   const tryConnectingMonomers = () => {
-    if (!firstAttachmentPoint || !secondAttachmentPoint) {
+    if (!firstSelectedAttachmentPoint || !secondSelectedAttachmentPoint) {
       throw new Error('Attachment points cannot be falsy');
     }
 
-    if (firstAttachmentPoint === secondAttachmentPoint) {
+    if (firstSelectedAttachmentPoint === secondSelectedAttachmentPoint) {
       CoreEditor.provideEditorInstance().events.error.dispatch(
         "You can't connect monomers by attachment points of the same group",
       );
@@ -137,8 +131,8 @@ const MonomerConnection = ({
 
     onCreateBond(
       secondMonomer,
-      firstAttachmentPoint || '',
-      secondAttachmentPoint || '',
+      firstSelectedAttachmentPoint || '',
+      secondSelectedAttachmentPoint || '',
     );
     onClose();
   };
@@ -152,26 +146,18 @@ const MonomerConnection = ({
       <Modal.Content>
         <Row>
           <Column>
-            <MonomerName>{firstMonomer.monomerItem.props.Name}</MonomerName>
-            <StyledStructRender struct={firstMonomer.monomerItem.struct} />
-            <AttachmentPointList>
-              {convertBondsToAttchmentPointButtons(
-                firstMonomerBonds,
-                setFirstAttachmentPoint,
-                firstAttachmentPoint,
-              )}
-            </AttachmentPointList>
+            <AttachmentPointSelectionPanel
+              monomer={firstMonomer}
+              selectedAttachmentPoint={firstSelectedAttachmentPoint}
+              onSelectAttachmentPoint={setFirstSelectedAttachmentPoint}
+            />
           </Column>
           <Column>
-            <MonomerName>{secondMonomer.monomerItem.props.Name}</MonomerName>
-            <StyledStructRender struct={secondMonomer.monomerItem.struct} />
-            <AttachmentPointList>
-              {convertBondsToAttchmentPointButtons(
-                secondMonomerBonds,
-                setSecondAttachmentPoint,
-                secondAttachmentPoint,
-              )}
-            </AttachmentPointList>
+            <AttachmentPointSelectionPanel
+              monomer={secondMonomer}
+              selectedAttachmentPoint={secondSelectedAttachmentPoint}
+              onSelectAttachmentPoint={setSecondSelectedAttachmentPoint}
+            />
           </Column>
         </Row>
       </Modal.Content>
@@ -184,7 +170,9 @@ const MonomerConnection = ({
         />
         <ActionButton
           label="Connect"
-          disabled={!firstAttachmentPoint || !secondAttachmentPoint}
+          disabled={
+            !firstSelectedAttachmentPoint || !secondSelectedAttachmentPoint
+          }
           clickHandler={tryConnectingMonomers}
         />
       </Modal.Footer>
@@ -192,15 +180,37 @@ const MonomerConnection = ({
   );
 };
 
-function convertBondsToAttchmentPointButtons(
-  bonds: Record<string, unknown>,
-  attachmentPointSetter: (name: string) => void,
-  selectedAttachmentPoint: string | null,
-): React.ReactElement {
+interface AttachmentPointSelectionPanelProps {
+  monomer: BaseMonomer;
+  selectedAttachmentPoint: string | null;
+  onSelectAttachmentPoint: (attachmentPoint: string) => void;
+}
+
+function AttachmentPointSelectionPanel({
+  monomer,
+  selectedAttachmentPoint,
+  onSelectAttachmentPoint,
+}: AttachmentPointSelectionPanelProps): React.ReactElement {
+  const bonds = monomer.attachmentPointsToBonds;
+
+  const connectedAttachmentPoints = useMemo(
+    () => getConnectedAttachmentPoints(bonds),
+    [bonds],
+  );
+
   return (
     <>
-      {Object.entries(bonds).map(([attachmentPoint, bond]) => {
-        return (
+      <MonomerName>{monomer.monomerItem.props.Name}</MonomerName>
+      <StyledStructRender
+        struct={monomer.monomerItem.struct}
+        options={{
+          connectedMonomerAttachmentPoints: connectedAttachmentPoints,
+          currentlySelectedMonomerAttachmentPoint:
+            selectedAttachmentPoint ?? undefined,
+        }}
+      />
+      <AttachmentPointList>
+        {Object.entries(bonds).map(([attachmentPoint, bond]) => (
           <AttachmentPoint key={attachmentPoint}>
             <ActionButton
               label={attachmentPoint}
@@ -209,35 +219,36 @@ function convertBondsToAttchmentPointButtons(
                   ? 'primary'
                   : 'secondary'
               }
-              clickHandler={() => attachmentPointSetter(attachmentPoint)}
+              clickHandler={() => onSelectAttachmentPoint(attachmentPoint)}
               disabled={Boolean(bond)}
             />
             <AttachmentPointName>H</AttachmentPointName>
           </AttachmentPoint>
-        );
-      })}
+        ))}
+      </AttachmentPointList>
     </>
   );
+}
+
+function getConnectedAttachmentPoints(
+  bonds: Record<string, unknown>,
+): string[] {
+  return Object.entries(bonds)
+    .filter(([_, bond]) => Boolean(bond))
+    .map(([attachmentPoint]) => attachmentPoint);
 }
 
 function getDefaultAttachmentPoint(
   bonds: Record<string, unknown>,
 ): string | null {
-  let defaultAttachmentPoint = '';
+  const possibleAttachmentPoints = Object.entries(bonds).filter(
+    ([_, bond]) => bond == null,
+  );
 
-  const isExactlyOneAttachmentPointFree =
-    Object.entries(bonds).filter(([attachmentPoint, bond]) => {
-      const isBondFree = bond == null;
+  if (possibleAttachmentPoints.length === 1) {
+    const [attachmentPointName] = possibleAttachmentPoints[0];
 
-      if (isBondFree) {
-        defaultAttachmentPoint = attachmentPoint;
-      }
-
-      return isBondFree;
-    }).length === 1;
-
-  if (isExactlyOneAttachmentPointFree) {
-    return defaultAttachmentPoint;
+    return attachmentPointName;
   }
 
   return null;

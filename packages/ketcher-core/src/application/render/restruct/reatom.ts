@@ -40,6 +40,7 @@ import util from '../util';
 import { tfx } from 'utilities';
 import { RenderOptions } from 'application/render/render.types';
 import { capitalize } from 'lodash';
+import { attachmentPointNames } from 'domain/types';
 
 interface ElemAttr {
   text: string;
@@ -266,6 +267,16 @@ class ReAtom extends ReObject {
       implh = Math.floor(this.a.implicitH);
       isHydrogen = label.text === 'H';
       isHydrogenIsotope = label.text === 'D' || label.text === 'T';
+
+      if (label.background) {
+        restruct.addReObjectPath(
+          LayerMap.data,
+          this.visel,
+          label.background,
+          ps,
+          true,
+        );
+      }
       restruct.addReObjectPath(LayerMap.data, this.visel, label.path, ps, true);
     }
     if (options.showAtomIds) {
@@ -716,6 +727,8 @@ function buildLabel(
     label.text = 'R#';
   }
 
+  const isMonomerAttachmentPoint = attachmentPointNames.includes(label.text);
+
   if (label.text === atom.a.label) {
     const element = Elements.get(label.text);
     if (options.atomColoring && element) {
@@ -731,6 +744,20 @@ function buildLabel(
     'font-style': atom.a.pseudo ? 'italic' : '',
     'fill-opacity': atom.a.isPreview ? previewOpacity : 1,
   });
+
+  if (isMonomerAttachmentPoint) {
+    const backgroundSize = options.fontsz * 2;
+
+    label.background = paper
+      .rect(
+        ps.x - backgroundSize / 2,
+        ps.y - backgroundSize / 2,
+        backgroundSize,
+        backgroundSize,
+        10,
+      )
+      .attr({ fill: '#167782' });
+  }
 
   label.rbb = util.relBox(label.path.getBBox());
   draw.recenterText(label.path, label.rbb);

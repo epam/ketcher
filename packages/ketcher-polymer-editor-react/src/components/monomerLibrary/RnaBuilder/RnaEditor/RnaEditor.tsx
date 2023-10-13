@@ -126,14 +126,20 @@ export const RnaEditor = () => {
   };
 
   const cancelEdit = () => {
-    if (presets.length === 0) {
+    if (presets.length === 0 || !activePreset.presetInList) {
       dispatch(createNewPreset());
-      return;
+    } else {
+      dispatch(setActivePreset(activePreset.presetInList));
     }
 
-    if (!activePreset.presetInList) {
+    if (
+      !activePreset.presetInList &&
+      activeMonomerGroup !== RnaBuilderPresetsItem.Presets
+    ) {
+      dispatch(setActiveRnaBuilderItem(RnaBuilderPresetsItem.Presets));
       dispatch(setActivePreset(presets[0]));
     }
+
     setIsEditMode(false);
   };
 

@@ -131,11 +131,7 @@ export const RnaEditor = () => {
       dispatch(setActivePreset(activePreset.presetInList));
     }
 
-    if (
-      !activePreset.presetInList &&
-      activeMonomerGroup !== RnaBuilderPresetsItem.Presets
-    ) {
-      dispatch(setActiveRnaBuilderItem(RnaBuilderPresetsItem.Presets));
+    if (!activePreset.presetInList) {
       dispatch(setActivePreset(presets[0]));
     }
 

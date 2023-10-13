@@ -9,8 +9,8 @@ export const RNAContextMenu = () => {
   const dispatch = useAppDispatch();
   const activePreset = useAppSelector(selectActivePreset);
   const RNAMenus = [
-    { name: 'duplicateandedit', title: 'Duplicate and Edit' },
-    { name: 'edit', title: 'Edit', seperator: true },
+    { name: 'duplicateandedit', title: 'Duplicate and Edit...' },
+    { name: 'edit', title: 'Edit...', seperator: true },
     { name: 'deletepreset', title: 'Delete Preset' },
   ];
 
@@ -57,5 +57,9 @@ export const RNAContextMenu = () => {
     return items;
   };
 
-  return <Menu id={CONTEXT_MENU_ID.FOR_RNA}>{assembleMenuItems()}</Menu>;
+  return (
+    <Menu style={{ minWidth: '160px' }} id={CONTEXT_MENU_ID.FOR_RNA}>
+      {assembleMenuItems()}
+    </Menu>
+  );
 };

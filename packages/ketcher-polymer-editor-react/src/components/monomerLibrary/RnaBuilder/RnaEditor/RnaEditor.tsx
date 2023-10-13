@@ -90,7 +90,6 @@ export const RnaEditor = () => {
     ) {
       setPresetName(activePresetFullName);
       dispatch(setActivePresetName(activePresetFullName));
-      console.log('presetname', activePresetFullName);
     }
   }, [activeMonomerGroup, activePresetFullName, editedPresetName]);
 

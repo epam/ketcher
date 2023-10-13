@@ -89,8 +89,6 @@ test.describe('Check attachment point rotation', () => {
     // Move selected monomer
     await selectRectangleSelectionTool(page);
     await page.mouse.move(400, 400);
-    await dragMouseTo(500, 500, page);
-    await page.mouse.move(400, 400);
     await dragMouseTo(200, 400, page);
 
     await selectSingleBondTool(page);

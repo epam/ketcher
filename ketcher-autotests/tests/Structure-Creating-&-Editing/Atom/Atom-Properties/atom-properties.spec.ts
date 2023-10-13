@@ -1,4 +1,4 @@
-import { Page, expect, test } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import {
   openFileAndAddToCanvas,
   takeEditorScreenshot,
@@ -25,148 +25,28 @@ import {
   waitForPageInit,
   waitForRender,
   waitForAtomPropsModal,
+  drawBenzeneRing,
 } from '@utils';
 import { getMolfile, getRxn } from '@utils/formats';
+import {
+  selectAtomLabel,
+  fillAliasForAtom,
+  fillChargeForAtom,
+  fillIsotopeForAtom,
+  selectValenceForAtom,
+  selectRadical,
+  selectRingBondCount,
+  selectHCount,
+  selectSubstitutionCount,
+  selectUnsaturated,
+  selectReactionFlagsInversion,
+  selectExactChange,
+  selectThreeAtomsFromPeriodicTable,
+  selectElementFromExtendedTable,
+} from './utils';
 
 const CANVAS_CLICK_X = 200;
 const CANVAS_CLICK_Y = 200;
-
-async function selectAtomLabel(page: Page, label: string, button: string) {
-  await page.getByLabel('Label').fill(label);
-  await pressButton(page, button);
-}
-
-async function fillAliasForAtom(page: Page, alias: string, button: string) {
-  await page.getByLabel('Alias').fill(alias);
-  await pressButton(page, button);
-}
-
-async function fillChargeForAtom(page: Page, charge: string, button: string) {
-  await page.getByLabel('Charge').fill(charge);
-  await pressButton(page, button);
-}
-
-async function fillIsotopeForAtom(page: Page, isotope: string, button: string) {
-  await page.getByLabel('Isotope').fill(isotope);
-  await pressButton(page, button);
-}
-
-async function selectValenceForAtom(
-  page: Page,
-  valence: string,
-  button: string,
-) {
-  await page.locator('label').filter({ hasText: 'Valence' }).click();
-  await page.getByRole('option', { name: valence, exact: true }).click();
-  await pressButton(page, button);
-}
-
-async function selectRadical(page: Page, radical: string, button: string) {
-  await page.locator('label').filter({ hasText: 'Radical' }).click();
-  await page.getByRole('option', { name: radical }).click();
-  await pressButton(page, button);
-}
-
-async function selectRingBondCount(
-  page: Page,
-  ringbondcount: string,
-  button: string,
-) {
-  await page.getByText('Query specific').click();
-  await page
-    .locator('label')
-    .filter({ hasText: 'Ring bond count' })
-    .getByRole('button', { name: '​' })
-    .click();
-  await page.getByRole('option', { name: ringbondcount }).click();
-  await pressButton(page, button);
-}
-
-async function selectHCount(page: Page, hcount: string, button: string) {
-  await page.getByText('Query specific').click();
-  await page
-    .locator('label')
-    .filter({ hasText: 'H count', hasNotText: 'Implicit H count' })
-    .getByRole('button', { name: '​' })
-    .click();
-  await page.getByRole('option', { name: hcount }).click();
-  await pressButton(page, button);
-}
-
-async function selectSubstitutionCount(
-  page: Page,
-  substitutioncount: string,
-  button: string,
-) {
-  await page.getByText('Query specific').click();
-  await page
-    .locator('label')
-    .filter({ hasText: 'Substitution count' })
-    .getByRole('button', { name: '​' })
-    .click();
-  await page.getByRole('option', { name: substitutioncount }).click();
-  await pressButton(page, button);
-}
-
-async function selectUnsaturated(page: Page, button: string) {
-  await page.getByText('Query specific').click();
-  await page.getByLabel('Unsaturated').check();
-  await pressButton(page, button);
-}
-
-async function selectReactionFlagsInversion(
-  page: Page,
-  inversion: string,
-  finalizationButtonName?: 'Apply' | 'Cancel',
-) {
-  await page.getByText('Reaction flags').click();
-  await page
-    .locator('label')
-    .filter({ hasText: 'Inversion' })
-    .getByRole('button', { name: '​' })
-    .click();
-  await page.getByRole('option', { name: inversion }).click();
-  if (finalizationButtonName) {
-    pressButton(page, finalizationButtonName);
-  }
-}
-
-async function selectExactChange(
-  page: Page,
-  finalizationButtonName?: 'Apply' | 'Cancel',
-) {
-  await page.getByText('Reaction flags').click();
-  await page.getByLabel('Exact change').check();
-  if (finalizationButtonName) {
-    pressButton(page, finalizationButtonName);
-  }
-}
-
-async function selectThreeAtomsFromPeriodicTable(
-  page: Page,
-  selectlisting: 'List' | 'Not List',
-  atom1: string,
-  atom2: string,
-  atom3: string,
-  button: string,
-) {
-  await selectAtomInToolbar(AtomButton.Periodic, page);
-  await page.getByText(selectlisting, { exact: true }).click();
-  await pressButton(page, atom1);
-  await pressButton(page, atom2);
-  await pressButton(page, atom3);
-  await page.getByRole('button', { name: button, exact: true }).click();
-}
-
-async function selectElementFromExtendedTable(
-  page: Page,
-  element: string,
-  button: string,
-) {
-  await selectAtomInToolbar(AtomButton.Extended, page);
-  await page.getByRole('button', { name: element, exact: true }).click();
-  await page.getByRole('button', { name: button, exact: true }).click();
-}
 
 test.describe('Atom Properties', () => {
   test.beforeEach(async ({ page }) => {
@@ -1571,5 +1451,73 @@ test.describe('Atom Properties', () => {
     await clickInTheMiddleOfTheScreen(page);
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
     await page.getByText('GH*').first().dblclick();
+  });
+
+  test('"Query properties" section with the contents of the "Query specific" drop-down list inside the "Edit" section', async ({
+    page,
+  }) => {
+    /*
+      Test case: EPMLSOPKET-18033
+      Description: All options match with the options from the ""Query specific"" drop-down list inside the ""Edit"" section.
+    */
+    const optionsToClick = [
+      'Ring bond count',
+      'H count',
+      'Substitution count',
+      'Unsaturated',
+      'Implicit H count',
+      'Aromaticity',
+      'Ring membership',
+      'Ring size',
+      'Connectivity',
+    ];
+
+    const anyAtom = 2;
+    await drawBenzeneRing(page);
+    await clickOnAtom(page, 'C', anyAtom, 'right');
+    await page.getByText('Query properties').click();
+
+    for (const option of optionsToClick) {
+      if (option === 'Unsaturated') {
+        await page
+          .locator('div')
+          .filter({ hasText: /^Unsaturated$/ })
+          .nth(0)
+          .click();
+      } else if (option === 'H count') {
+        await page.getByText(option, { exact: true }).click();
+      } else {
+        await page.getByText(option).click();
+      }
+      await takeEditorScreenshot(page);
+    }
+  });
+
+  test('The selection of an option inside the "Ring bond count" sub-section', async ({
+    page,
+  }) => {
+    /*
+      Test case: EPMLSOPKET-18034
+      Description: All Ring bond count options added to Benzene structure.
+    */
+    const anyAtom = 2;
+    const secondAnyAtom = 4;
+    const thirdAnyAtom = 5;
+    await drawBenzeneRing(page);
+    await clickOnAtom(page, 'C', anyAtom, 'right');
+    await page.getByText('Query properties').click();
+    await page.getByText('Ring bond count').click();
+    await page.getByRole('button', { name: 'As drawn' }).first().click();
+    await resetCurrentTool(page);
+    await clickOnAtom(page, 'C', secondAnyAtom, 'right');
+    await page.getByText('Query properties').click();
+    await page.getByText('Ring bond count').click();
+    await page.locator('button:nth-child(5)').first().click();
+    await resetCurrentTool(page);
+    await clickOnAtom(page, 'C', thirdAnyAtom, 'right');
+    await page.getByText('Query properties').click();
+    await page.getByText('Ring bond count').click();
+    await page.locator('button:nth-child(11)').first().click();
+    await resetCurrentTool(page);
   });
 });

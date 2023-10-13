@@ -22,4 +22,4 @@ export type MonomerItemType = {
   };
 };
 
-export type AttachmentPointName = 'R1' | 'R2';
+export type AttachmentPointName = 'R1' | 'R2' | 'R3' | 'R4';

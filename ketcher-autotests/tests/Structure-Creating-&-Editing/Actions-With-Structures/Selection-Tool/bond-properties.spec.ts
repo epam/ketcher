@@ -407,10 +407,10 @@ test.describe('Bond Properties', () => {
     expect(rxnFile).toEqual(rxnFileExpected);
   });
 
-  test.fixme(
-    `Change 'Reacting Center' field value - 2/2 open and edit`,
-    async ({ page }) => {
-      /*
+  test.skip(`Change 'Reacting Center' field value - 2/2 open and edit`, async ({
+    page,
+  }) => {
+    /*
         Test case: EPMLSOPKET-1463(2)
         Description: Open and edit
 
@@ -419,15 +419,14 @@ test.describe('Bond Properties', () => {
         https://github.com/epam/ketcher/issues/2378
     */
 
-      await openFileAndAddToCanvas(
-        'Rxn-V2000/rxn-1463-to-open-expected.rxn',
-        page,
-      );
-      await doubleClickOnBond(page, BondType.SINGLE, 8);
-      await selectOption(page, 'Unmarked', 'Center');
-      await pressButton(page, 'Apply');
-    },
-  );
+    await openFileAndAddToCanvas(
+      'Rxn-V2000/rxn-1463-to-open-expected.rxn',
+      page,
+    );
+    await doubleClickOnBond(page, BondType.SINGLE, 8);
+    await selectOption(page, 'Unmarked', 'Center');
+    await pressButton(page, 'Apply');
+  });
 
   test('Apply for all selected bonds', async ({ page }) => {
     /*

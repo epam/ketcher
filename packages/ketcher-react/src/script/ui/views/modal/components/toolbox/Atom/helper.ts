@@ -50,7 +50,7 @@ export function chargeValid(
   const regex = new RegExp(atomSchema.properties.charge.pattern);
   const result = regex.exec(charge);
   const isValidCharge = result && (result[1] === '' || result[3] === '');
-  if (isCustomQuery) {
+  if (isCustomQuery || charge === '') {
     return true;
   }
   if (isMultipleAtoms) {

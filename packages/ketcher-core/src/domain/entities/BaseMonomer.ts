@@ -7,25 +7,25 @@ import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 
 export class BaseMonomer extends DrawingEntity {
   public renderer?: BaseMonomerRenderer = undefined;
-  public attachmentPointsToBonds: Record<
-    AttachmentPointName,
-    PolymerBond | null
+  public attachmentPointsToBonds: Partial<
+    Record<AttachmentPointName, PolymerBond | null>
   > = {
     R1: null,
-    R2: null,
   };
 
   public potentialAttachmentPointsToBonds: {
     [key: string]: PolymerBond | null | undefined;
   } = {
     R1: null,
-    R2: null,
   };
 
   public attachmentPointsVisible = false;
 
   constructor(private _monomerItem: MonomerItemType, _position?: Vec2) {
     super(_position);
+
+    this.attachmentPointsToBonds = this.getAttachmentPointDict();
+    this.potentialAttachmentPointsToBonds = this.getAttachmentPointDict();
   }
 
   get monomerItem() {
@@ -34,6 +34,10 @@ export class BaseMonomer extends DrawingEntity {
 
   get label() {
     return this.monomerItem.label;
+  }
+
+  public get listOfAttachmentPoints() {
+    return Object.keys(this.attachmentPointsToBonds);
   }
 
   public turnOnAttachmentPointsVisibility() {
@@ -143,9 +147,7 @@ export class BaseMonomer extends DrawingEntity {
   }
 
   public get availableAttachmentPointForBondEnd() {
-    return this.isAttachmentPointUsed('R2')
-      ? this.firstFreeAttachmentPoint
-      : 'R2';
+    return this.firstFreeAttachmentPoint;
   }
 
   public getBondByAttachmentPoint(attachmentPointName: AttachmentPointName) {
@@ -166,5 +168,31 @@ export class BaseMonomer extends DrawingEntity {
     attachmentPointName: AttachmentPointName,
   ) {
     return Boolean(this.getPotentialBondByAttachmentPoint(attachmentPointName));
+  }
+
+  private getAttachmentPointDict(): Partial<
+    Record<AttachmentPointName, PolymerBond | null>
+  > {
+    const attachmentAtoms = this.monomerItem.struct.atoms.filter((_, value) => {
+      return Boolean(value.rglabel);
+    });
+    const attachmentPointNameToBond = {};
+    for (let i = 1; i <= attachmentAtoms.size; i++) {
+      const label = `R${i}`;
+      attachmentPointNameToBond[label] = null;
+    }
+    return attachmentPointNameToBond;
+  }
+
+  public get startBondAttachmentPoint() {
+    if (this.attachmentPointsToBonds.R2 === null) {
+      return 'R2';
+    }
+
+    if (this.attachmentPointsToBonds.R1 === null) {
+      return 'R1';
+    }
+
+    return this.firstFreeAttachmentPoint;
   }
 }

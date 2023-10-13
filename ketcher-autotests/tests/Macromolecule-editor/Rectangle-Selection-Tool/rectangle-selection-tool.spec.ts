@@ -7,6 +7,8 @@ import {
   selectRectangleSelectionTool,
   selectSingleBondTool,
   takeEditorScreenshot,
+  takePageScreenshot,
+  waitForPageInit,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
@@ -14,7 +16,7 @@ import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 
 test.describe('Rectangle Selection Tool', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
     await turnOnMacromoleculesEditor(page);
   });
   test('Select monomer and bonds and then erase', async ({ page }) => {
@@ -46,9 +48,7 @@ test.describe('Rectangle Selection Tool', () => {
     await bondTwoMonomers(page, peptide3, peptide2);
     await bondTwoMonomers(page, peptide3, peptide4);
 
-    await page.screenshot({
-      path: 'tests/Macromolecule-editor/screenshots/rectangle-selection-tool.png',
-    });
+    await takePageScreenshot(page);
 
     await selectRectangleSelectionTool(page);
 
@@ -60,16 +60,12 @@ test.describe('Rectangle Selection Tool', () => {
 
     await selectRectangleArea(page, startX, startY, endX, endY);
 
-    await page.screenshot({
-      path: 'tests/Macromolecule-editor/screenshots/rectangle-selection-tool2.png',
-    });
+    await takePageScreenshot(page);
 
     // Erase selected elements
     await selectEraseTool(page);
 
-    await page.screenshot({
-      path: 'tests/Macromolecule-editor/screenshots/rectangle-selection-tool3.png',
-    });
+    await takePageScreenshot(page);
   });
 
   test('Move monomer bonded with another monomers', async ({ page }) => {

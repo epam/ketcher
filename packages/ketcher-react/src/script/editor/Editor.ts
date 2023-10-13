@@ -16,11 +16,11 @@
 
 import {
   Action,
-  CoordinateTransformation,
   FloatingToolsParams,
   Editor as KetcherEditor,
   Pile,
   Render,
+  Scale,
   Struct,
   Vec2,
   fromDescriptorsAlign,
@@ -338,25 +338,21 @@ class Editor implements KetcherEditor {
 
   centerStruct() {
     const structure = this.render.ctab;
-    const { scale, offset } = this.render.options;
     const structCenter = getStructCenter(structure);
-    const { width, height } = this.render.clientArea.getBoundingClientRect();
-    const canvasCenterVector = new Vec2(width, height);
-    const canvasCenter = CoordinateTransformation.viewBoxToProto(
-      canvasCenterVector,
-      this.render,
-    ).scaled(0.5);
-    const shiftFactor = 0.4;
-    const shiftVector = canvasCenter
-      .sub(structCenter)
-      .sub(offset.scaled(shiftFactor / scale));
+    const viewBoxCenter = new Vec2(
+      this.render.viewBox.minX + this.render.viewBox.width / 2,
+      this.render.viewBox.minY + this.render.viewBox.height / 2,
+    );
+    const viewBoxCenterInProto = Scale.canvasToProto(
+      viewBoxCenter,
+      this.render.options,
+    );
+    const shiftVector = viewBoxCenterInProto.sub(structCenter);
 
     const structureToMove = getSelectionMap(structure);
 
     const action = fromMultipleMove(structure, structureToMove, shiftVector);
     this.update(action, true);
-
-    recoordinate(this, canvasCenter);
   }
 
   zoomAccordingContent(struct: Struct) {

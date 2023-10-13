@@ -1,4 +1,3 @@
-/* eslint-disable no-magic-numbers */
 import { test, expect } from '@playwright/test';
 import {
   takeEditorScreenshot,
@@ -15,7 +14,6 @@ import {
   pressButton,
   drawBenzeneRing,
   clickOnAtom,
-  takeBottomToolbarScreenshot,
   moveOnAtom,
   waitForPageInit,
   resetCurrentTool,
@@ -25,6 +23,8 @@ import {
   selectLeftPanelButton,
   LeftPanelButton,
   addCyclopentadieneRingWithTwoAtoms,
+  TemplateLibrary,
+  openEditDialogForTemplate,
 } from '@utils';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
 import { getMolfile, getRxn } from '@utils/formats';
@@ -40,7 +40,8 @@ test.describe('Template Manupulations', () => {
     Description: Look at the bottom of the application.
     Choose any template.
     */
-    await takeBottomToolbarScreenshot(page);
+    await openEditDialogForTemplate(page, TemplateLibrary.Naphtalene);
+    await takeEditorScreenshot(page);
   });
 });
 
@@ -252,6 +253,7 @@ test.describe('Template Manupulations', () => {
     await openFileAndAddToCanvas('Rxn-V2000/templates-reaction.rxn', page);
     const expectedFile = await getRxn(page, 'v2000');
     await saveToFile('Rxn-V2000/templates-reaction-expected.rxn', expectedFile);
+    // eslint-disable-next-line no-magic-numbers
     const METADATA_STRINGS_INDEXES = [2, 7, 43, 63];
     const { file: RxnFile, fileExpected: RxnFileExpected } =
       await receiveFileComparisonData({
@@ -300,7 +302,8 @@ test.describe('Template Manupulations', () => {
     await drawCyclohexaneRing(page);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickOnAtom(page, 'C', 0);
-    await clickOnAtom(page, 'C', 4);
+    const anyAtom = 4;
+    await clickOnAtom(page, 'C', anyAtom);
     await selectRing(RingButton.Cyclopentadiene, page);
   });
   test('Double cyclopentadiene ring - if all bonds are single', async ({

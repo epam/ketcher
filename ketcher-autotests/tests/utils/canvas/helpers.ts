@@ -12,7 +12,6 @@ import {
 import { ELEMENT_TITLE } from './types';
 import {
   AtomButton,
-  DELAY_IN_SECONDS,
   RingButton,
   STRUCTURE_LIBRARY_BUTTON_NAME,
   TemplateLibrary,
@@ -39,9 +38,10 @@ export async function drawCyclopentadieneRing(page: Page) {
   await clickInTheMiddleOfTheScreen(page);
 }
 
-export async function selectUserTemplatesAndRename(
-  itemToChoose: TemplateLibrary,
+export async function openEditDialogForTemplate(
   page: Page,
+  itemToChoose: TemplateLibrary,
+  _newName?: string,
 ) {
   await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
   await page.getByRole('tab', { name: 'Template Library' }).click();
@@ -124,7 +124,7 @@ export async function getCoordinatesTopAtomOfBenzeneRing(page: Page) {
   };
 }
 
-export async function getCoordinatesTopAtomOfCyclopentadieneRing(page: Page) {
+export async function getCoordinatesOfTopMostCarbon(page: Page) {
   const { carbonAtoms, scale, offset } = await page.evaluate(() => {
     const allAtoms = [...window.ketcher.editor.struct().atoms.values()];
     const onlyCarbons = allAtoms.filter((a) => a.label === 'C');
@@ -194,11 +194,6 @@ export async function takeTopToolbarScreenshot(page: Page) {
   const editor = page.getByTestId('top-toolbar');
   await waitForRender(page, emptyFunction, maxTimeout);
   await expect(editor).toHaveScreenshot();
-}
-
-export async function takeBottomToolbarScreenshot(page: Page) {
-  page.getByTestId('bottom-toolbar');
-  await delay(DELAY_IN_SECONDS.THREE);
 }
 
 export async function takePolymerEditorScreenshot(page: Page) {

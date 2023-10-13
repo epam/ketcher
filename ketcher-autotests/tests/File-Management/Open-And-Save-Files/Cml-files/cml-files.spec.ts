@@ -42,15 +42,15 @@ test.describe('CML files', () => {
      * Test case: EPMLSOPKET-1945
      * Description: Saved cml file with structure is compering with paste cml structure golden file
      */
-    await openFileAddToCanvasTakeScreenshot(page, 'cml-1945.cml');
+    await openFileAddToCanvasTakeScreenshot(page, 'CML/cml-molecule.cml');
     // check that structure opened from file is displayed correctly
 
     const expectedFile = await getCml(page);
-    await saveToFile('cml-1945-expected.cml', expectedFile);
+    await saveToFile('CML/cml-molecule-expected.cml', expectedFile);
     const { file: cmlFile, fileExpected: cmlFileExpected } =
       await receiveFileComparisonData({
         page,
-        expectedFileName: 'tests/test-data/cml-1945-expected.cml',
+        expectedFileName: 'tests/test-data/CML/cml-molecul-expected.cml',
       });
     // comparing cml file with golden cml file
 

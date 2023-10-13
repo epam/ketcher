@@ -9,7 +9,7 @@ import {
   clickInTheMiddleOfTheScreen,
   selectFunctionalGroups,
   FunctionalGroups,
-  selectUserTemplatesAndRename,
+  openEditDialogForTemplate,
   selectAzuleneOnTemplateLibrary,
 } from '@utils';
 
@@ -152,12 +152,39 @@ test.describe('Open Ketcher', () => {
    Click the 'Custom Template' button.
    Paste in the 'Molecule name' field text (more than 128 symbols).
    */
-    await selectUserTemplatesAndRename(TemplateLibrary.Azulene, page);
+    await openEditDialogForTemplate(page, TemplateLibrary.Azulene);
     await page.getByPlaceholder('template').click();
     await page
       .getByPlaceholder('template')
       .fill(
         'My new template for everyone who want to create new table with more than 128 symbols of elements like Azulene with merged Cyclopentadiene',
       );
+  });
+
+  test('Edit templates -  Greek symbols in Template Name', async ({ page }) => {
+    /*
+   Test case: EPMLSOPKET-1707 
+   Description: The edited template has the 'γ-template name' (Greek symbol) name in the Template Library.
+   */
+    await openEditDialogForTemplate(page, TemplateLibrary.Azulene);
+    await page.getByPlaceholder('template').click();
+    await page.getByPlaceholder('template').fill('γ-template name');
+    await page.getByRole('button', { name: 'Aromatics (18)' }).click();
+  });
+
+  test('Edit templates -  Attachment atom and bond', async ({ page }) => {
+    /*
+   Test case: EPMLSOPKET-1708
+   Description: The info text 'Atom Id: xx; Bond Id: yy' contains the ids of the new attachment atom and bond.
+   */
+    await openEditDialogForTemplate(page, TemplateLibrary.Azulene);
+    await page.getByRole('dialog').getByTestId('canvas').click();
+    await page.getByRole('button', { name: 'Edit' }).click();
+    await openEditDialogForTemplate(page, TemplateLibrary.Azulene);
+    await page.getByTitle('Azulene').getByRole('button').click();
+    await page.getByRole('dialog').getByTestId('canvas').click();
+    await page.locator('svg > path:nth-child(18)').click();
+    await page.getByRole('button', { name: 'Edit' }).click();
+    await openEditDialogForTemplate(page, TemplateLibrary.Azulene);
   });
 });

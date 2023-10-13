@@ -114,15 +114,6 @@ export async function selectSaltsAndSolvents(
   await expect(page.getByTestId('templates-modal')).toHaveCount(0);
 }
 
-export async function selectSaltsAndSolventsGroup(
-  saltsAndSolventsGroupName: SaltsAndSolvents,
-  page: Page,
-) {
-  await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
-  await page.getByRole('tab', { name: 'Salts and Solvents' }).click();
-  await selectSaltsAndSolvents(saltsAndSolventsGroupName, page);
-}
-
 export async function putAceticAcidOnCanvasByClickingInTheMiddleOfTheScreen(
   page: Page,
 ) {

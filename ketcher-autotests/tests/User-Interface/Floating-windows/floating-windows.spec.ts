@@ -112,7 +112,7 @@ test.describe('Click and drag FG on canvas', () => {
       Description: open text file via "open file" 
     */
     await selectTopPanelButton(TopPanelButton.Open, page);
-    await openFile('cml-1945.cml', page);
+    await openFile('CML/cml-molecule.cml', page);
   });
 
   test('Paste from clipboard', async ({ page }) => {

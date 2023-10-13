@@ -1,27 +1,16 @@
 import { Page, test } from '@playwright/test';
 import {
-  BondTool,
-  BondType,
-  TopPanelButton,
   clickOnAtom,
+  doubleClickOnAtom,
   dragMouseTo,
-  drawBenzeneRing,
   getControlModifier,
-  getCoordinatesOfTheMiddleOfTheScreen,
-  getCoordinatesTopAtomOfBenzeneRing,
-  openDropdown,
   openFileAndAddToCanvas,
   selectDropdownTool,
-  selectFragmentSelectionTool,
-  selectNestedTool,
-  selectRectangleSelectionTool,
-  selectTopPanelButton,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
 import { clickOnArrow } from '@utils/canvas/arrow-signes/getArrow';
 import { getAtomByIndex } from '@utils/canvas/atoms';
-import { getBondByIndex } from '@utils/canvas/bonds';
 import { clickOnPlus } from '@utils/canvas/plus-signes/getPluses';
 
 const xMark = 300;
@@ -45,7 +34,6 @@ test.describe('Fragment selection tool', () => {
     // Test case: EPMLSOPKET-1355
     await openFileAndAddToCanvas('glutamine.mol', page);
     await selectDropdownTool(page, 'select-rectangle', 'select-fragment');
-    // await clickCanvas(page);
     await clickOnAtom(page, 'C', 1);
   });
 
@@ -56,6 +44,21 @@ test.describe('Fragment selection tool', () => {
     await clickOnPlus(page, 1);
     await takeEditorScreenshot(page);
     await clickOnArrow(page, 0);
+  });
+
+  test('Select and drag reaction components', async ({ page }) => {
+    //  Test case: EPMLSOPKET-1357
+    async function selectObjects() {
+      await page.keyboard.down('Shift');
+      await clickOnPlus(page, 1);
+      await clickOnArrow(page, 0);
+      const atomToClick = 7;
+      await doubleClickOnAtom(page, 'C', atomToClick);
+    }
+    await openFileAndAddToCanvas('RXN-V2000/reaction_4.rxn', page);
+    await selectDropdownTool(page, 'select-rectangle', 'select-fragment');
+    await selectObjects();
+    await dragMouseTo(xMark, yMark, page);
   });
 
   test('Fuse atoms together', async ({ page }) => {
@@ -75,7 +78,5 @@ test.describe('Fragment selection tool', () => {
     await selectDropdownTool(page, 'select-rectangle', 'select-fragment');
     await clickOnAtom(page, 'Br', 0);
     await page.keyboard.press('Delete');
-    // await clickOnAtom(page, 'C', atomNumber);
-    // await page.keyboard.press('Delete');
   });
 });

@@ -43,6 +43,15 @@ import {
   selectExactChange,
   selectThreeAtomsFromPeriodicTable,
   selectElementFromExtendedTable,
+  selectRingBondCountOption,
+  selectHCountOption,
+  selectSubstitutionCountOption,
+  selectUnsaturatedOption,
+  selectImplicitHCountOption,
+  selectAromaticityOption,
+  selectRingMembershipOption,
+  selectRingSizeOption,
+  selectConnectivityOption,
 } from './utils';
 
 const CANVAS_CLICK_X = 200;
@@ -447,7 +456,10 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-1607
       Description: The Charge are changed for three atoms (S, F, I).
     */
-    await openFileAndAddToCanvas('Heteroatoms.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/heteroatoms-structure.mol',
+      page,
+    );
 
     await page.keyboard.down('Shift');
     await clickOnAtom(page, 'S', 0);
@@ -467,7 +479,10 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-1608
       Description: The Charge are changed for three atoms (S, F, I).
     */
-    await openFileAndAddToCanvas('Heteroatoms.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/heteroatoms-structure.mol',
+      page,
+    );
 
     await doubleClickOnAtom(page, 'S', 0);
     await fillChargeForAtom(page, '1', 'Apply');
@@ -545,7 +560,10 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-1616
       Description: The typed isotope value appears near the selected atoms only.Number is colored same as atoms.
     */
-    await openFileAndAddToCanvas('Heteroatoms.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/heteroatoms-structure.mol',
+      page,
+    );
 
     await page.keyboard.down('Shift');
     await clickOnAtom(page, 'S', 0);
@@ -584,7 +602,10 @@ test.describe('Atom Properties', () => {
       Description: Only last selected atom is replaced with the typed atom symbol and isotope.
     */
     const timeout = 2000;
-    await openFileAndAddToCanvas('Heteroatoms.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/heteroatoms-structure.mol',
+      page,
+    );
 
     await page.keyboard.down('Shift');
     await clickOnAtom(page, 'S', 0);
@@ -656,7 +677,10 @@ test.describe('Atom Properties', () => {
       Description: The typed Valence value appears near the selected atoms only.
       Number is colored same as atoms.
     */
-    await openFileAndAddToCanvas('Heteroatoms.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/heteroatoms-structure.mol',
+      page,
+    );
 
     await page.keyboard.down('Shift');
     await clickOnAtom(page, 'S', 0);
@@ -772,7 +796,10 @@ test.describe('Atom Properties', () => {
       Description: The typed Valence value appears near the selected atoms only.
       Number is colored same as atoms.
     */
-    await openFileAndAddToCanvas('Heteroatoms.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/heteroatoms-structure.mol',
+      page,
+    );
 
     await page.keyboard.down('Shift');
     await clickOnAtom(page, 'S', 0);
@@ -831,16 +858,22 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-1636
       Description: The structure is saved as *.mol file.
     */
-    await openFileAndAddToCanvas('chain-with-ring-bond-count.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/chain-with-ring-bond-count.mol',
+      page,
+    );
     const expectedFile = await getMolfile(page, 'v2000');
-    await saveToFile('chain-with-ring-bond-count-expected.mol', expectedFile);
+    await saveToFile(
+      'Molfiles-V2000/chain-with-ring-bond-count-expected.mol',
+      expectedFile,
+    );
 
     const METADATA_STRING_INDEX = [1];
     const { fileExpected: molFileExpected, file: molFile } =
       await receiveFileComparisonData({
         page,
         expectedFileName:
-          'tests/test-data/chain-with-ring-bond-count-expected.mol',
+          'tests/test-data/Molfiles-V2000/chain-with-ring-bond-count-expected.mol',
         fileFormat: 'v2000',
         metaDataIndexes: METADATA_STRING_INDEX,
       });
@@ -856,7 +889,10 @@ test.describe('Atom Properties', () => {
       Description: The saved *.mol file is opened correctly with applied atom properties and can be edited.
     */
     const anyAtom = 2;
-    await openFileAndAddToCanvas('chain-with-ring-bond-count.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/chain-with-ring-bond-count.mol',
+      page,
+    );
     await doubleClickOnAtom(page, 'C', anyAtom);
     await selectRingBondCount(page, '3', 'Apply');
   });
@@ -1010,15 +1046,19 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-1640
       Description: The structure is saved as *.mol file.
     */
-    await openFileAndAddToCanvas('chain-with-h-count.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/chain-with-h-count.mol', page);
     const expectedFile = await getMolfile(page, 'v2000');
-    await saveToFile('chain-with-h-count-expected.mol', expectedFile);
+    await saveToFile(
+      'Molfiles-V2000/chain-with-h-count-expected.mol',
+      expectedFile,
+    );
 
     const METADATA_STRING_INDEX = [1];
     const { fileExpected: molFileExpected, file: molFile } =
       await receiveFileComparisonData({
         page,
-        expectedFileName: 'tests/test-data/chain-with-h-count-expected.mol',
+        expectedFileName:
+          'tests/test-data/Molfiles-V2000/chain-with-h-count-expected.mol',
         fileFormat: 'v2000',
         metaDataIndexes: METADATA_STRING_INDEX,
       });
@@ -1103,10 +1143,13 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-1640
       Description: The structure is saved as *.mol file.
     */
-    await openFileAndAddToCanvas('chain-with-substitution-count.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/chain-with-substitution-count.mol',
+      page,
+    );
     const expectedFile = await getMolfile(page, 'v2000');
     await saveToFile(
-      'chain-with-substitution-count-expected.mol',
+      'Molfiles-V2000/chain-with-substitution-count-expected.mol',
       expectedFile,
     );
 
@@ -1115,7 +1158,7 @@ test.describe('Atom Properties', () => {
       await receiveFileComparisonData({
         page,
         expectedFileName:
-          'tests/test-data/chain-with-substitution-count-expected.mol',
+          'tests/test-data/Molfiles-V2000/chain-with-substitution-count-expected.mol',
         fileFormat: 'v2000',
         metaDataIndexes: METADATA_STRING_INDEX,
       });
@@ -1184,7 +1227,10 @@ test.describe('Atom Properties', () => {
       Description: The 'Unsaturated' dissapear from structure.
     */
     const anyAtom = 3;
-    await openFileAndAddToCanvas('chain-with-unsaturated.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/chain-with-unsaturated.mol',
+      page,
+    );
 
     await doubleClickOnAtom(page, 'C', anyAtom);
     await page.getByText('Query specific').click();
@@ -1242,7 +1288,10 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-1661
       Description: Mapping labels are colored with the same color as the colored atoms.
     */
-    await openFileAndAddToCanvas('reaction-with-three-colored-atoms.rxn', page);
+    await openFileAndAddToCanvas(
+      'Rxn-V2000/reaction-with-three-colored-atoms.rxn',
+      page,
+    );
     await selectLeftPanelButton(LeftPanelButton.ReactionMappingTool, page);
 
     await clickOnAtom(page, 'N', 0);
@@ -1381,16 +1430,22 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-1650
       Description: The structure is saved as *.mol file.
     */
-    await openFileAndAddToCanvas('chain-with-rection-flags.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/chain-with-rection-flags.mol',
+      page,
+    );
     const expectedFile = await getMolfile(page, 'v2000');
-    await saveToFile('chain-with-rection-flags-expected.mol', expectedFile);
+    await saveToFile(
+      'Molfiles-V2000/chain-with-rection-flags-expected.mol',
+      expectedFile,
+    );
 
     const METADATA_STRING_INDEX = [1];
     const { fileExpected: molFileExpected, file: molFile } =
       await receiveFileComparisonData({
         page,
         expectedFileName:
-          'tests/test-data/chain-with-rection-flags-expected.mol',
+          'tests/test-data/Molfiles-V2000/chain-with-rection-flags-expected.mol',
         fileFormat: 'v2000',
         metaDataIndexes: METADATA_STRING_INDEX,
       });
@@ -1500,24 +1555,230 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-18034
       Description: All Ring bond count options added to Benzene structure.
     */
-    const anyAtom = 2;
-    const secondAnyAtom = 4;
-    const thirdAnyAtom = 5;
+    // eslint-disable-next-line no-magic-numbers
+    const atomIndices = [2, 4, 5];
+    // eslint-disable-next-line no-magic-numbers
+    const optionIndices = [2, 5, 11];
+
     await drawBenzeneRing(page);
-    await clickOnAtom(page, 'C', anyAtom, 'right');
-    await page.getByText('Query properties').click();
-    await page.getByText('Ring bond count').click();
-    await page.getByRole('button', { name: 'As drawn' }).first().click();
-    await resetCurrentTool(page);
-    await clickOnAtom(page, 'C', secondAnyAtom, 'right');
-    await page.getByText('Query properties').click();
-    await page.getByText('Ring bond count').click();
-    await page.locator('button:nth-child(5)').first().click();
-    await resetCurrentTool(page);
-    await clickOnAtom(page, 'C', thirdAnyAtom, 'right');
-    await page.getByText('Query properties').click();
-    await page.getByText('Ring bond count').click();
-    await page.locator('button:nth-child(11)').first().click();
-    await resetCurrentTool(page);
+
+    for (let i = 0; i < atomIndices.length; i++) {
+      await selectRingBondCountOption(page, atomIndices[i], optionIndices[i]);
+    }
+  });
+
+  test('The selection of an option inside the "H count" sub-section', async ({
+    page,
+  }) => {
+    /*
+      Test case: EPMLSOPKET-18035
+      Description: All H count options added to Benzene structure.
+    */
+    // eslint-disable-next-line no-magic-numbers
+    const atomIndices = [2, 4, 5];
+    // eslint-disable-next-line no-magic-numbers
+    const optionIndices = [2, 5, 11];
+
+    await drawBenzeneRing(page);
+
+    for (let i = 0; i < atomIndices.length; i++) {
+      await selectHCountOption(page, atomIndices[i], optionIndices[i]);
+    }
+  });
+
+  test('The selection of an option inside the "Substitution count" sub-section', async ({
+    page,
+  }) => {
+    /*
+      Test case: EPMLSOPKET-18036
+      Description: All Substitution count options added to Benzene structure.
+    */
+    // eslint-disable-next-line no-magic-numbers
+    const atomIndices = [2, 4, 5];
+    // eslint-disable-next-line no-magic-numbers
+    const optionIndices = [2, 5, 11];
+
+    await drawBenzeneRing(page);
+
+    for (let i = 0; i < atomIndices.length; i++) {
+      await selectSubstitutionCountOption(
+        page,
+        atomIndices[i],
+        optionIndices[i],
+      );
+    }
+  });
+
+  test('The selection of an option inside the "Unsaturated" sub-section', async ({
+    page,
+  }) => {
+    /*
+      Test case: EPMLSOPKET-18070
+      Description: All Unsaturated options added to Benzene structure.
+    */
+    // eslint-disable-next-line no-magic-numbers
+    const atomIndices = [2, 4];
+    const selectedOption = ['Unsaturated', 'Saturated'];
+
+    await openFileAndAddToCanvas('KET/benzene-unsaturated.ket', page);
+
+    for (let i = 0; i < atomIndices.length; i++) {
+      await selectUnsaturatedOption(
+        page,
+        atomIndices[i],
+        selectedOption[i],
+        i === 0,
+      );
+    }
+  });
+
+  test('The selection of an option inside the "Implicit H count" sub-section', async ({
+    page,
+  }) => {
+    /*
+      Test case: EPMLSOPKET-18067
+      Description: All Implicit H count options added to Benzene structure.
+    */
+    // eslint-disable-next-line no-magic-numbers
+    const atomIndices = [2, 4, 5];
+    // eslint-disable-next-line no-magic-numbers
+    const optionIndices = [2, 5, 11];
+
+    await drawBenzeneRing(page);
+
+    for (let i = 0; i < atomIndices.length; i++) {
+      await selectImplicitHCountOption(page, atomIndices[i], optionIndices[i]);
+    }
+  });
+
+  test('The selection of an option inside the "Aromaticity" sub-section', async ({
+    page,
+  }) => {
+    /*
+      Test case: EPMLSOPKET-18068
+      Description: All Aromaticity options added to Benzene structure.
+    */
+    // eslint-disable-next-line no-magic-numbers
+    const atomIndices = [2, 4];
+    const selectedOption = ['aromatic', 'aliphatic'];
+
+    await drawBenzeneRing(page);
+
+    for (let i = 0; i < atomIndices.length; i++) {
+      await selectAromaticityOption(page, atomIndices[i], selectedOption[i]);
+    }
+  });
+
+  test('The selection of an option inside the "Ring membership" sub-section', async ({
+    page,
+  }) => {
+    /*
+      Test case: EPMLSOPKET-18069
+      Description: All Ring membership options added to Benzene structure.
+    */
+    // eslint-disable-next-line no-magic-numbers
+    const atomIndices = [2, 4, 5];
+    // eslint-disable-next-line no-magic-numbers
+    const optionIndices = [2, 5, 11];
+
+    await drawBenzeneRing(page);
+
+    for (let i = 0; i < atomIndices.length; i++) {
+      await selectRingMembershipOption(page, atomIndices[i], optionIndices[i]);
+    }
+  });
+
+  test('The selection of an option inside the "Ring size" sub-section', async ({
+    page,
+  }) => {
+    /*
+      Test case: EPMLSOPKET-18071
+      Description: All Ring size options added to Benzene structure.
+    */
+    // eslint-disable-next-line no-magic-numbers
+    const atomIndices = [2, 4, 5];
+    // eslint-disable-next-line no-magic-numbers
+    const optionIndices = [2, 5, 11];
+
+    await drawBenzeneRing(page);
+
+    for (let i = 0; i < atomIndices.length; i++) {
+      await selectRingSizeOption(page, atomIndices[i], optionIndices[i]);
+    }
+  });
+
+  test('The selection of an option inside the "Connectivity" sub-section', async ({
+    page,
+  }) => {
+    /*
+      Test case: EPMLSOPKET-18075
+      Description: All Connectivity options added to Benzene structure.
+    */
+    // eslint-disable-next-line no-magic-numbers
+    const atomIndices = [2, 4, 5];
+    // eslint-disable-next-line no-magic-numbers
+    const optionIndices = [2, 5, 11];
+
+    await drawBenzeneRing(page);
+
+    for (let i = 0; i < atomIndices.length; i++) {
+      await selectConnectivityOption(page, atomIndices[i], optionIndices[i]);
+    }
+  });
+
+  test('Combination of different options from different sub-sections inside the "Query properties"', async ({
+    page,
+  }) => {
+    /*
+      Test case: EPMLSOPKET-18038
+      Description: All combinations options added to Benzene structure.
+    */
+    // eslint-disable-next-line no-magic-numbers
+    const anyAtom = [0, 1, 2, 3, 4, 5];
+    // eslint-disable-next-line no-magic-numbers
+    const optionIndex = [3, 2, 3, 'Unsaturated', 7, 'aliphatic'];
+
+    await drawBenzeneRing(page);
+
+    for (let i = 0; i < anyAtom.length; i++) {
+      const atomIndex = anyAtom[i];
+      const option = optionIndex[i];
+
+      switch (i) {
+        case 0:
+          await selectRingBondCountOption(page, atomIndex, option as number);
+          break;
+        case 1:
+          await selectHCountOption(page, atomIndex, option as number);
+          break;
+        // eslint-disable-next-line no-magic-numbers
+        case 2:
+          await selectSubstitutionCountOption(
+            page,
+            atomIndex,
+            option as number,
+          );
+          break;
+        // eslint-disable-next-line no-magic-numbers
+        case 3:
+          await selectUnsaturatedOption(
+            page,
+            atomIndex,
+            option as string,
+            true,
+          );
+          break;
+        // eslint-disable-next-line no-magic-numbers
+        case 4:
+          await selectImplicitHCountOption(page, atomIndex, option as number);
+          break;
+        // eslint-disable-next-line no-magic-numbers
+        case 5:
+          await selectAromaticityOption(page, atomIndex, option as string);
+          break;
+        default:
+          break;
+      }
+    }
   });
 });

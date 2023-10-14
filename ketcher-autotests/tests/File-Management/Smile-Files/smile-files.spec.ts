@@ -137,7 +137,10 @@ test.describe('SMILES files', () => {
     Description: SmileString is correctly generated from structure and
     vise versa structure is correctly generated from SmileString.
     */
-    await openFileAndAddToCanvas('Heteroatoms.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/heteroatoms-structure.mol',
+      page,
+    );
     await getAndCompareSmiles(
       page,
       'tests/test-data/smiles-heteroatoms-expected.json',

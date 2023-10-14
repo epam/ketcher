@@ -347,4 +347,29 @@ test.describe('SMILES files', () => {
     */
     await pasteFromClipboardAndAddToCanvas(page, 'C1=C(C)C(=O)C[S@]1=O');
   });
+
+  test('Single Up, Single Down and Single Up/Down stereobonds is preserved after pasting a SMILES structure', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/Indigo/issues/1300
+    Description: The Single Up, Single Down and Single Up/Down  stereo bonds is on the structure
+    The test result is not what it should be. The behavior requires further clarification.
+    Single Down bond changes to Single Up and two other stereobonds dissapear.
+    */
+    await pasteFromClipboardAndAddToCanvas(page, 'C1[S@](=O)CC(=O)[C@@]=1C');
+  });
+
+  test('Enhanced stereo labels on atropisomers are not lost when opening saved Extended SMILES', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/Indigo/issues/1257
+    Description: Stereo information for bond and atom is kept
+    */
+    await openFileAndAddToCanvas(
+      'Extended-SMILES/atropoisomer-enhanced-stereo.cxsmi',
+      page,
+    );
+  });
 });

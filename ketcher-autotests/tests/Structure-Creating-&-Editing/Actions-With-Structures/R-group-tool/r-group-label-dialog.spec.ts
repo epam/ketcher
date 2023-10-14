@@ -294,7 +294,7 @@ test.describe('R-Group Label Tool', () => {
     */
     const x = 500;
     const y = 200;
-    await openFileAndAddToCanvas('chain-r1.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/chain-r1.mol', page);
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
     await page.getByText('R1').click();
     await dragMouseTo(x, y, page);
@@ -307,7 +307,7 @@ test.describe('R-Group Label Tool', () => {
     */
     const x = 500;
     const y = 200;
-    await openFileAndAddToCanvas('chain-r1.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/chain-r1.mol', page);
     await page.keyboard.press('Control+a');
     await page.getByText('R1').click();
     await dragMouseTo(x, y, page);

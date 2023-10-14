@@ -29,7 +29,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
      * Test case: EPMLSOPKET-2956
      * Description: Open/Import structure while openning a CDXML file
      */
-    await openFileAndAddToCanvas('cdxml-2956.cdxml', page);
+    await openFileAndAddToCanvas('CDXML/cdxml-2956.cdxml', page);
     // check that structure opened from file is displayed correctly
   });
 
@@ -38,7 +38,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
      * Test case: EPMLSOPKET-3086
      * Description: Open/Import structure while openning a CDXML file
      */
-    await openFileAndAddToCanvas('cdxml-3086.cdxml', page);
+    await openFileAndAddToCanvas('CDXML/cdxml-3086.cdxml', page);
     // check that structure opened from file is displayed correctly
   });
 
@@ -68,7 +68,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
      * Test case: EPMLSOPKET-4713
      * Description: Open/Import structure while openning a CDXML file
      */
-    await openFileAndAddToCanvas('cdxml-4713.cdxml', page);
+    await openFileAndAddToCanvas('CDXML/cdxml-4713.cdxml', page);
   });
 
   test('Text tool - Save as .cdxml file', async ({ page }) => {
@@ -76,7 +76,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
      * Test case: EPMLSOPKET-4714
      * Description: Open/Import structure while openning a CDXML file
      */
-    await openFileAndAddToCanvas('cdxml-4714.cdxml', page);
+    await openFileAndAddToCanvas('CDXML/cdxml-4714.cdxml', page);
     await page.keyboard.press('Control+a');
     await page.keyboard.press('Delete');
   });
@@ -86,7 +86,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
      * Test case: EPMLSOPKET-4715
      * Description: Open/Import structure while openning a CDXML file
      */
-    await openFileAndAddToCanvas('cdxml-4715.cdxml', page);
+    await openFileAndAddToCanvas('CDXML/cdxml-4715.cdxml', page);
     await page.keyboard.press('Control+a');
     await page.keyboard.press('Delete');
   });
@@ -98,7 +98,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
      * Test case: EPMLSOPKET-4716
      * Description: Open/Import structure while openning a CDXML file
      */
-    await openFileAndAddToCanvas('cdxml-4716.cdxml', page);
+    await openFileAndAddToCanvas('CDXML/cdxml-4716.cdxml', page);
 
     await selectTopPanelButton(TopPanelButton.Clear, page);
     await takeEditorScreenshot(page);
@@ -114,7 +114,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
      * Test case: EPMLSOPKET-4717
      * Description: Open/Import structure while openning a CDXML file
      */
-    await openFileAndAddToCanvas('cdxml-4717.cdxml', page);
+    await openFileAndAddToCanvas('CDXML/cdxml-4717.cdxml', page);
     // check that structure opened from file is displayed correctly
   });
 
@@ -123,7 +123,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
      * Test case: EPMLSOPKET-4718
      * Description: Open/Import structure while openning a CDXML file
      */
-    await openFileAndAddToCanvas('cdxml-4718-structures.cdxml', page);
+    await openFileAndAddToCanvas('CDXML/cdxml-4718-structures.cdxml', page);
     // check that structure opened from file is displayed correctly
   });
 

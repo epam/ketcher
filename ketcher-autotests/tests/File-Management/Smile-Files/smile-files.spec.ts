@@ -13,6 +13,7 @@ import {
   waitForLoad,
   waitForPageInit,
   nonEmptyString,
+  pasteFromClipboardAndAddToCanvas,
 } from '@utils';
 import { getSmiles } from '@utils/formats';
 
@@ -316,5 +317,34 @@ test.describe('SMILES files', () => {
     await takeEditorScreenshot(page);
 
     await clearCanvasAndPasteSmiles(page, 'C1C=CC=CC=1>N>C1C=CC=CC=1');
+  });
+
+  test('Open SMILE file with S-Group Properties', async ({ page }) => {
+    /*
+    Test case: https://github.com/epam/Indigo/issues/1040
+    Description: SMILE file opens and have S-Group Properties
+    */
+    await openFileAndAddToCanvas(
+      'SMILES/structure-with-s-group-properties.smi',
+      page,
+    );
+    await getAndCompareSmiles(
+      page,
+      'tests/test-data/SMILES/structure-with-s-group-properties.smi',
+    );
+    await page.getByText('info2').dblclick();
+    await takeEditorScreenshot(page);
+
+    await clearCanvasAndPasteSmiles(page, 'CCC |SgD:1:atropisomer:info2::::|');
+  });
+
+  test('Stereobond is preserved after pasting a SMILES structure', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/Indigo/issues/1300
+    Description: The Single Down stereo bond is on the structure
+    */
+    await pasteFromClipboardAndAddToCanvas(page, 'C1=C(C)C(=O)C[S@]1=O');
   });
 });

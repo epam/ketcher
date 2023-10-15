@@ -615,7 +615,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await clickOnAtom(page, 'C', anyAtom);
   });
 
-  test.only('Copy and paste all kind of S-groups', async ({ page }) => {
+  test('Copy and paste all kind of S-groups', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-2884
     Description: Copied objects are pasted as one object and correctly displayed without data loss.

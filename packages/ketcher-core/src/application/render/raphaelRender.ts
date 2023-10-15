@@ -212,7 +212,7 @@ export class Render {
       const isAutoScale = this.options.autoScale || this.options.downScale;
       if (!isAutoScale) {
         if (!this.oldCb) this.oldCb = new Box2Abs();
-
+        this.scrollbar.update();
         this.options.offset = this.options.offset || new Vec2();
       } else {
         const sz1 = bb.sz();
@@ -240,7 +240,6 @@ export class Render {
         );
       }
 
-      this.scrollbar.update();
       notifyRenderComplete();
     }
   }

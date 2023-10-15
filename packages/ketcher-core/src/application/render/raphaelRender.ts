@@ -51,7 +51,11 @@ export class Render {
   constructor(clientArea: HTMLElement, options: RenderOptions) {
     this.userOpts = options;
     this.clientArea = clientArea;
-    this.paper = new Raphael(clientArea, '100%', '100%');
+    this.paper = new Raphael(
+      clientArea,
+      options.width || '100%',
+      options.height || '100%',
+    );
     this.sz = this.getCanvasSizeVector();
     this.ctab = new ReStruct(new Struct(), this);
     this.options = defaultOptions(this.userOpts);

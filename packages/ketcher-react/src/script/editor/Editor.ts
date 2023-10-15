@@ -47,11 +47,7 @@ import {
   ToolConstructorInterface,
   ToolEventHandlerName,
 } from './tool/Tool';
-import {
-  getSelectionMap,
-  getStructCenter,
-  recoordinate,
-} from './utils/structLayout';
+import { getSelectionMap, getStructCenter } from './utils/structLayout';
 
 const SCALE = 40;
 const HISTORY_SIZE = 32; // put me to options
@@ -272,9 +268,7 @@ class Editor implements KetcherEditor {
   renderAndRecoordinateStruct(struct: Struct) {
     const action = fromNewCanvas(this.render.ctab, struct);
     this.update(action);
-
-    const structCenter = getStructCenter(this.render.ctab);
-    recoordinate(this, structCenter);
+    this.centerStruct();
     return this.render.ctab.molecule;
   }
 

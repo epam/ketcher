@@ -111,16 +111,6 @@ export class Render {
     return CoordinateTransformation.pageEventToProto(event, this);
   }
 
-  setOffset(newOffset: Vec2): void {
-    const delta = new Vec2(
-      newOffset.x - this.options.offset.x,
-      newOffset.y - this.options.offset.y,
-    );
-    this.clientArea.scrollLeft += delta.x;
-    this.clientArea.scrollTop += delta.y;
-    this.options.offset = newOffset;
-  }
-
   setZoom(zoom: number, event?: WheelEvent) {
     const zoomedWidth = this.sz.x / zoom;
     const zoomedHeight = this.sz.y / zoom;
@@ -174,37 +164,6 @@ export class Render {
     const viewBoxX = fixedPoint.x - zoomedWidth * widthRatio;
     const viewBoxY = fixedPoint.y - zoomedHeight * heightRatio;
     return [viewBoxX, viewBoxY];
-  }
-
-  setScrollOffset(x: number, y: number) {
-    const clientArea = this.clientArea;
-    const cx = clientArea.clientWidth;
-    const cy = clientArea.clientHeight;
-    const e = calcExtend(
-      this.sz.scaled(this.options.zoom),
-      x,
-      y,
-      cx + Math.abs(x),
-      cy + Math.abs(y),
-    ).scaled(1 / this.options.zoom);
-    if (e.x > 0 || e.y > 0) {
-      // remove setpaper size except for initial
-      const d = new Vec2(x < 0 ? -x : 0, y < 0 ? -y : 0).scaled(
-        1 / this.options.zoom,
-      );
-      if (d.x > 0 || d.y > 0) {
-        this.ctab.translate(d);
-        this.setOffset(this.options.offset.add(d));
-      }
-    }
-    // clientArea.scrollLeft = x
-    // clientArea.scrollTop = y
-    clientArea.scrollLeft = x * this.options.scale;
-    clientArea.scrollTop = y * this.options.scale;
-    // TODO: store drag position in scaled systems
-    // scrollLeft = clientArea.scrollLeft;
-    // scrollTop = clientArea.scrollTop;
-    this.update(false);
   }
 
   /**
@@ -285,24 +244,4 @@ export class Render {
       notifyRenderComplete();
     }
   }
-}
-
-function calcExtend(
-  canvasSize: Vec2,
-  x0: number,
-  y0: number,
-  newXSize: number,
-  newYSize: number,
-): Vec2 {
-  // eslint-disable-line max-params
-  let ex = x0 < 0 ? -x0 : 0;
-  let ey = y0 < 0 ? -y0 : 0;
-
-  if (canvasSize.x < newXSize) {
-    ex += newXSize - canvasSize.x;
-  }
-  if (canvasSize.y < newYSize) {
-    ey += newYSize - canvasSize.y;
-  }
-  return new Vec2(ex, ey);
 }

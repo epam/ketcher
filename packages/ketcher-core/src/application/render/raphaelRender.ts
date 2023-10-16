@@ -110,7 +110,7 @@ export class Render {
     return draw.selectionRectangle(this.paper, point0, point1, this.options);
   }
 
-  // @yuleicul Todo: refactor all references of `page2obj` to `CoordinateTransformation.pageEventToProto(event, this)`
+  /** @deprecated recommend using `CoordinateTransformation.pageEventToProto` instead */
   page2obj(event: MouseEvent | { clientX: number; clientY: number }) {
     return CoordinateTransformation.pageEventToProto(event, this);
   }

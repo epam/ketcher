@@ -12,9 +12,6 @@ const protoToViewBox = (vector: Vec2, render: Render) => {
   return canvasToViewBox(pointInCanvas, render);
 };
 
-/**
- * @see ./__docs__/viewBoxToCanvas.png
- */
 const viewBoxToCanvas = (point: Vec2, render: Render) => {
   const offset = new Vec2(render.viewBox.minX, render.viewBox.minY);
   return point.scaled(1 / render.options.zoom).add(offset);
@@ -50,6 +47,7 @@ const pageEventToProto = (
   return Scale.canvasToProto(pointInCanvas, render.options);
 };
 
+/** @see ./__docs__/ketcher-coordinates.png */
 export const CoordinateTransformation = {
   protoToViewBox,
   canvasToViewBox,

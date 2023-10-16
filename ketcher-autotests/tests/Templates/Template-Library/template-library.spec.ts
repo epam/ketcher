@@ -1,14 +1,17 @@
-import { Page, test } from '@playwright/test';
+import { Page, test, expect } from '@playwright/test';
 import {
+  clickInTheMiddleOfTheScreen,
+  FunctionalGroups,
   getCoordinatesOfTheMiddleOfTheScreen,
   pressButton,
-  resetCurrentTool,
+  selectFunctionalGroups,
   selectTopPanelButton,
   STRUCTURE_LIBRARY_BUTTON_NAME,
   takeEditorScreenshot,
   TopPanelButton,
   waitForPageInit,
 } from '@utils';
+import { STRUCTURE_LIBRARY_BUTTON_TEST_ID } from '../templates.costants';
 
 async function setDisplayStereoFlagsSettingToOn(page: Page) {
   await selectTopPanelButton(TopPanelButton.Settings, page);
@@ -44,13 +47,28 @@ async function placePhenylalanineMustard(page: Page, x: number, y: number) {
   await page.mouse.click(x, y);
 }
 
+async function openStructureLibrary(page: Page) {
+  await page.getByTestId(STRUCTURE_LIBRARY_BUTTON_TEST_ID).click();
+}
+
+async function openFunctionalGroup(page: Page) {
+  await openStructureLibrary(page);
+  await page.getByText('Functional Group').click();
+}
+
+async function editStructureTemplate(page: Page, group: string, text: string) {
+  const editStructureButton = page.getByTitle(text).getByRole('button');
+  await openStructureLibrary(page);
+  await page.getByText(group).click();
+  await editStructureButton.click();
+}
+
 test.describe('Templates - Template Library', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
   });
 
   test.afterEach(async ({ page }) => {
-    await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });
 
@@ -69,5 +87,78 @@ test.describe('Templates - Template Library', () => {
 
     await setIgnoreChiralFlagSetting(page, false);
     await placePhenylalanineMustard(page, x + offsetX, y);
+  });
+
+  test('Template Library — Structure Library UI', async ({ page }) => {
+    // Test case: EPMLSOPKET-4265
+    // Overview Templates Library structure
+    await openStructureLibrary(page);
+  });
+
+  test('Open Structure Library tooltip', async ({ page }) => {
+    // Test case: EPMLSOPKET-4265
+    // Verify Structure LIbrary tooltip
+    const button = page.getByTestId('template-lib');
+    await expect(button).toHaveAttribute(
+      'title',
+      'Structure Library (Shift+T)',
+    );
+  });
+
+  test('Templates — Template Library', async ({ page }) => {
+    // Test case: EPMLSOPKET-4266
+    // Verify correct display of Template Library
+    const deltaX = 0;
+    const deltaY = 220;
+    const x = 638;
+    const y = 524;
+    await openStructureLibrary(page);
+    await takeEditorScreenshot(page);
+    await page.mouse.move(x, y);
+    await page.mouse.wheel(deltaX, deltaY);
+  });
+
+  test('Templates — Functional groups tab', async ({ page }) => {
+    // Test case: EPMLSOPKET-4267
+    // Verify Functional Group tab
+    await openFunctionalGroup(page);
+  });
+
+  test('Templates — Functional groups - adding structure', async ({ page }) => {
+    // Test case: EPMLSOPKET-4267
+    // Add sturucture from Functional Group into canvas
+    await selectFunctionalGroups(FunctionalGroups.FMOC, page);
+    await clickInTheMiddleOfTheScreen(page);
+  });
+
+  test('Template Library - Edit templates', async ({ page }) => {
+    // Test case: EPMLSOPKET-1699
+    // Verify correct display of Temple Edit window
+    await editStructureTemplate(page, 'β-D-Sugars', 'β-D-Allopyranose');
+  });
+
+  test('Template Library - Edit templates - name field with no character', async ({
+    page,
+  }) => {
+    // Test case: EPMLSOPKET-1699
+    // Verify validation if name field not containe any characters
+    await editStructureTemplate(page, 'β-D-Sugars', 'β-D-Allopyranose');
+    await page.getByTestId('file-name-input').click();
+    await page.keyboard.press('Control+a');
+    await page.keyboard.press('Delete');
+  });
+
+  test('Template Library - Edit templates - name with just spaces', async ({
+    page,
+  }) => {
+    // Test case: EPMLSOPKET-1699
+    // Verify if structure name won't change if field will containe just spaces
+    await editStructureTemplate(page, 'β-D-Sugars', 'β-D-Allopyranose');
+    await page.getByTestId('file-name-input').click();
+    await page.keyboard.press('Control+a');
+    await page.keyboard.press('Delete');
+    await page.getByTestId('file-name-input').fill('   ');
+    await page.getByRole('button', { name: 'Edit', exact: true }).click();
+    await page.getByText('β-D-Sugars').click();
   });
 });

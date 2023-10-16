@@ -1,9 +1,11 @@
 import { Vec2 } from 'domain/entities/vec2';
 
+export type Coordinates = { x: number; y: number };
+
 // eslint-disable-next-line camelcase
 export function canvasToMonomerCoordinates(
-  coordinatesOnCanvas,
-  centerOFMonomer: { x: number; y: number },
+  coordinatesOnCanvas: Coordinates,
+  centerOFMonomer: Coordinates,
   monomerWidth: number,
   monomerHeight: number,
 ) {
@@ -20,7 +22,12 @@ export function canvasToMonomerCoordinates(
   return monomerCoord;
 }
 
-export function findLabelPoint(pointOnBorder, angle, lineLength, lineOffset) {
+export function findLabelPoint(
+  pointOnBorder: Coordinates,
+  angle: number,
+  lineLength: number,
+  lineOffset: number,
+) {
   // based on https://ru.stackoverflow.com/a/1442905
 
   const angleRadians = Vec2.degrees_to_radians(angle);
@@ -76,7 +83,11 @@ export function findLabelPoint(pointOnBorder, angle, lineLength, lineOffset) {
   return [labelCoordinates, pointOfAttachment];
 }
 
-export function getSearchFunction(initialAngle, canvasOffset, monomer) {
+export function getSearchFunction(
+  initialAngle: number,
+  canvasOffset: Coordinates,
+  monomer,
+) {
   return function findPointOnMonomerBorder(
     coordStart,
     length,
@@ -181,7 +192,7 @@ export enum attachmentPointNumberToAngle {
 
 export const sectorsList = [45, 90, 135, 180, 225, 270, 315, 0, 360];
 
-export function checkFor0and360(sectorsList) {
+export function checkFor0and360(sectorsList: number[]) {
   if (!sectorsList.includes(0) && sectorsList.includes(360)) {
     return sectorsList.filter((item) => item !== 360);
   }

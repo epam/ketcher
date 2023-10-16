@@ -151,12 +151,12 @@ export class BaseMonomer extends DrawingEntity {
   }
 
   public get usedAttachmentPointsNamesList() {
-    const list: string[] = [];
+    const list: AttachmentPointName[] = [];
     for (const attachmentPointName in this.attachmentPointsToBonds) {
       if (
         this.isAttachmentPointUsed(attachmentPointName as AttachmentPointName)
       ) {
-        list.push(attachmentPointName);
+        list.push(attachmentPointName as AttachmentPointName);
       }
     }
     return list;

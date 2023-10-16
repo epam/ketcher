@@ -1,12 +1,14 @@
 import { Vec2 } from 'domain/entities/vec2';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { D3SvgElementSelection } from 'application/render/types';
+import { Selection } from 'd3';
 import { BaseMonomer } from './entities/BaseMonomer';
 import assert from 'assert';
 import {
   canvasToMonomerCoordinates,
   findLabelPoint,
   getSearchFunction,
+  Coordinates,
 } from './helpers/attachmentPointCalculations';
 
 export class AttachmentPoint {
@@ -31,9 +33,9 @@ export class AttachmentPoint {
   private bodyWidth: number;
   private bodyHeight: number;
   private attachmentPointName: string;
-  private canvasOffset: { x: number; y: number };
-  private centerOFMonomer: { x: number; y: number };
-  private element;
+  private canvasOffset: Coordinates;
+  private centerOFMonomer: Coordinates;
+  private element: Selection<SVGGElement, void, HTMLElement, never> | undefined;
   private initialAngle: number;
   private isUsed: boolean;
   private fill: string;
@@ -46,7 +48,7 @@ export class AttachmentPoint {
     bodyWidth,
     bodyHeight,
     canvas,
-    RN,
+    attachmentPointName,
     isUsed,
     isPotentiallyUsed,
     angle = 0,
@@ -57,7 +59,7 @@ export class AttachmentPoint {
     this.bodyWidth = bodyWidth;
     this.bodyHeight = bodyHeight;
     this.canvasOffset = canvas.node().getBoundingClientRect();
-    this.attachmentPointName = RN;
+    this.attachmentPointName = attachmentPointName;
     this.centerOFMonomer = monomer.renderer.center;
     this.isSnake = isSnake;
     this.isUsed = isUsed;
@@ -78,9 +80,9 @@ export class AttachmentPoint {
   }
 
   private renderAttachmentPointByCoordinates(
-    attachmentOnBorder,
-    attachmentPointCoordinates,
-    labelCoordinatesOnMonomer,
+    attachmentOnBorder: Coordinates,
+    attachmentPointCoordinates: Coordinates,
+    labelCoordinatesOnMonomer: Coordinates,
   ) {
     const fill = this.fill;
     const stroke = this.stroke;
@@ -138,14 +140,14 @@ export class AttachmentPoint {
       ]?.renderer.isMonomersOnSameHorizontalLine()
     ) {
       angleRadians = flip ? Math.PI : 0;
-      angleDegrees = Vec2.radians_to_degrees(angleRadians);
+      angleDegrees = Vec2.radiansToDegrees(angleRadians);
     } else {
       const angleRadians = this.rotateToAngle(
         this.monomer.attachmentPointsToBonds[this.attachmentPointName],
         flip,
       );
 
-      angleDegrees = Vec2.radians_to_degrees(angleRadians);
+      angleDegrees = Vec2.radiansToDegrees(angleRadians);
     }
 
     const [pointOnBorder, pointOfAttachment, labelPoint] =
@@ -198,7 +200,7 @@ export class AttachmentPoint {
     return angleRadians;
   }
 
-  private catchThePoint(rotationAngle: number): { x: number; y: number }[] {
+  private catchThePoint(rotationAngle: number): Coordinates[] {
     assert(this.monomer.renderer);
 
     const currentMonomerCenter = {

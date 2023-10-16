@@ -10,6 +10,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Icon } from 'ketcher-react';
 import { scrollbarThin } from 'theming/mixins';
+import { Separator } from 'react-contexify';
 
 interface ModalProps {
   children: JSX.Element | Array<JSX.Element>;
@@ -21,7 +22,7 @@ interface ModalProps {
 }
 
 const Header = styled(DialogTitle)(({ theme }) => ({
-  margin: '12px 11px 12px 16px',
+  margin: '12px 11px 0px 16px',
   padding: 0,
   display: 'flex',
   alignItems: 'center',
@@ -29,7 +30,7 @@ const Header = styled(DialogTitle)(({ theme }) => ({
   fontFamily: `${theme.ketcher.font.family.inter}`,
   fontSize: `${theme.ketcher.font.size.medium}`,
   fontWeight: `${theme.ketcher.font.weight.regular}`,
-  textTransform: 'uppercase',
+  textTransform: 'capitalize',
 }));
 
 const Title = styled.div({
@@ -113,6 +114,7 @@ export const Modal = ({
           </IconButton>
         )}
       </Header>
+      <Separator></Separator>
 
       {subcomponents.Content}
 

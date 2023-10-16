@@ -528,7 +528,7 @@ export class DrawingEntitiesManager {
 
   private findChainByMonomer(
     monomer: BaseMonomer,
-    monomerChain = [],
+    monomerChain: BaseMonomer[] = [],
     previousMonomer?: BaseMonomer,
   ) {
     monomerChain.push(monomer);
@@ -689,10 +689,11 @@ export class DrawingEntitiesManager {
       }
     });
 
-    const filteredFirstMonomersInChains = [];
+    const filteredFirstMonomersInChains: BaseMonomer[] = [];
 
     firstMonomersInChains.forEach((monomer, monomerIndex) => {
-      const currentMonomerChain = this.findChainByMonomer(monomer);
+      const currentMonomerChain: BaseMonomer[] =
+        this.findChainByMonomer(monomer);
       let isFirstMonomerInChain = true;
       firstMonomersInChains.forEach(
         (potentialFirstMonomer, potentialFirstMonomerIndex) => {

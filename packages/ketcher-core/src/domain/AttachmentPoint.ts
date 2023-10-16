@@ -36,7 +36,7 @@ export class AttachmentPoint {
   private canvasOffset: Coordinates;
   private centerOFMonomer: Coordinates;
   private element: Selection<SVGGElement, void, HTMLElement, never> | undefined;
-  private initialAngle: number;
+  private initialAngle = 0;
   private isUsed: boolean;
   private fill: string;
   private stroke: string;

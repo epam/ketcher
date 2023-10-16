@@ -93,6 +93,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       const [attachmentPointElement, angle] = this.appendAttachmentPoint(item);
       this.attachmentPointElements.push(attachmentPointElement as never);
 
+      assert(angle);
       // remove this sector from list of free sectors
       const newList = this.freeSectorsList.filter((item) => {
         return (

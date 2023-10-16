@@ -66,6 +66,7 @@ export class RenderersManager {
   public movePolymerBond(polymerBond: PolymerBond) {
     polymerBond.renderer?.moveStart();
     polymerBond.renderer?.moveEnd();
+    polymerBond.renderer?.drawSelection();
   }
 
   public showPolymerBondInformation(polymerBond) {

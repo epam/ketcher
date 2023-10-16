@@ -420,7 +420,7 @@ export class PolymerBondRenderer extends BaseRenderer {
   public drawSelection() {
     if (this.polymerBond.selected) {
       this.selectionElement?.remove();
-      if (this.isSnake) {
+      if (this.isSnake && !this.isMonomersOnSameHorizontalLine()) {
         this.selectionElement = this.rootElement
           ?.insert('path', ':first-child')
           .attr('stroke', '#57FF8F')

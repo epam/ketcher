@@ -638,7 +638,7 @@ export class DrawingEntitiesManager {
     return { command, lastPosition };
   }
 
-  public reArrangeChain(canvasWidth: number, isSnakeMode: boolean) {
+  public reArrangeChains(canvasWidth: number, isSnakeMode: boolean) {
     const command = new Command();
     if (isSnakeMode) {
       command.merge(this.reArrangeMonomers(canvasWidth));

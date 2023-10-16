@@ -13,6 +13,7 @@ import {
   LeftPanelButton,
   mapTwoAtoms,
   waitForPageInit,
+  clickOnAtom,
 } from '@utils';
 
 test.describe('Verifying buttons on reaction am tool dropdown', () => {
@@ -77,15 +78,15 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
 
     for (const mode of modes) {
       test(`${mode} mode`, async ({ page }) => {
-        const point1 = { x: -250, y: 8 };
-        const point2 = { x: -250, y: 55 };
+        const atomNumber1 = 1;
+        const atomNumber2 = 2;
         await openFileAndAddToCanvas('Rxn-V2000/reaction-3.rxn', page);
         await applyAutoMapMode(page, mode);
         await selectTopPanelButton(TopPanelButton.Undo, page);
         await takeEditorScreenshot(page);
         await selectLeftPanelButton(LeftPanelButton.ReactionMappingTool, page);
-        await clickOnTheCanvas(page, point1.x, point1.y);
-        await clickOnTheCanvas(page, point2.x, point2.y);
+        await clickOnAtom(page, 'C', atomNumber1);
+        await clickOnAtom(page, 'C', atomNumber2);
         await takeEditorScreenshot(page);
         await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
         await applyAutoMapMode(page, mode, false);
@@ -182,11 +183,23 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
      * Test cases: EPMLSOPKET-1832
      * Description:  Verifying of the correct automapping
      */
+    const yOffsetFromCenter1 = 100;
+    const yOffsetFromCenter2 = 300;
     await openFileAndAddToCanvas('Rxn-V2000/allenes.rxn', page);
     await applyAutoMapMode(page, 'Discard');
-    await openFileAndAddToCanvas('Rxn-V2000/mapping-4-benzene.rxn', page);
+    await openFileAndAddToCanvas(
+      'Rxn-V2000/mapping-4-benzene.rxn',
+      page,
+      0,
+      yOffsetFromCenter1,
+    );
     await applyAutoMapMode(page, 'Keep');
-    await openFileAndAddToCanvas('Rxn-V2000/allenes.rxn', page);
+    await openFileAndAddToCanvas(
+      'Rxn-V2000/allenes.rxn',
+      page,
+      0,
+      yOffsetFromCenter2,
+    );
     await applyAutoMapMode(page, 'Alter', false);
   });
 });

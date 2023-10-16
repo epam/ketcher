@@ -34,6 +34,7 @@ import {
   DisabledArea,
   RnaAccordionContainer,
   StyledAccordion,
+  StyledAccordionWrapper,
   StyledButton,
 } from './styles';
 import { Summary } from './Summary';
@@ -241,7 +242,22 @@ export const RnaAccordion = ({
               })}
             </DetailsContainer>
           );
-        return (
+        const presetsExpanded =
+          groupData.groupName === RnaBuilderPresetsItem.Presets && expanded;
+
+        return presetsExpanded ? (
+          <StyledAccordionWrapper key={groupData.groupName}>
+            <StyledAccordion
+              data-testid="styled-accordion"
+              summary={summary}
+              details={details}
+              expanded={expanded}
+              onSummaryClick={() =>
+                handleAccordionSummaryClick(groupData.groupName)
+              }
+            />
+          </StyledAccordionWrapper>
+        ) : (
           <StyledAccordion
             key={groupData.groupName}
             data-testid="styled-accordion"

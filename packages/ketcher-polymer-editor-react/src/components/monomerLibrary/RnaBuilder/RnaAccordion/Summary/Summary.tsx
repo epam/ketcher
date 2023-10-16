@@ -29,7 +29,7 @@ export const Summary = ({
       <SummaryText>
         {groupName} ({quantity})
       </SummaryText>
-      <StyledIcon name="chevron" expanded={expanded} />
+      <StyledIcon name="chevron" expanded={!expanded} />
     </SummaryContainer>
   );
 };

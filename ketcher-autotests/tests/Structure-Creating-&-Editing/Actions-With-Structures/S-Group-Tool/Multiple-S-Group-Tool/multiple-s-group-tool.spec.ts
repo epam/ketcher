@@ -47,7 +47,7 @@ async function selectMultipleGroup(
   }
 }
 
-async function applyNumberInRepeatCount(
+async function setNumberInRepeatCount(
   page: Page,
   value: string,
   buttonToClick?: 'Apply' | 'Cancel',
@@ -316,27 +316,27 @@ test.describe('Multiple S-Group tool', () => {
     // Test case: EPMLSOPKET-18027
     // Verify minimum value of the Repeat count field
     await openFileAndAddToCanvas('Molfiles-V2000/templates.mol', page);
-    await applyNumberInRepeatCount(page, '1', 'Apply');
+    await setNumberInRepeatCount(page, '1', 'Apply');
   });
 
   test('Multiple Group - Limit on maximum count', async ({ page }) => {
     // Test case: EPMLSOPKET- EPMLSOPKET-18028
     // Verify maximum value of the Repeat count field
     await openFileAndAddToCanvas('Molfiles-V2000/templates.mol', page);
-    await applyNumberInRepeatCount(page, '200', 'Apply');
+    await setNumberInRepeatCount(page, '200', 'Apply');
   });
 
   test('Multiple Group - Limit higher than maximum count', async ({ page }) => {
     // Test case: EPMLSOPKET-18028
     // Verify system anserw after putting a number higher than limit
     await openFileAndAddToCanvas('Molfiles-V2000/templates.mol', page);
-    await applyNumberInRepeatCount(page, '201');
+    await setNumberInRepeatCount(page, '201');
   });
 
   test('Multiple Group - Value in the valid range', async ({ page }) => {
     // Test case: EPMLSOPKET-18029
     // Verify value in the valid range
     await openFileAndAddToCanvas('Molfiles-V2000/templates.mol', page);
-    await applyNumberInRepeatCount(page, '50', 'Apply');
+    await setNumberInRepeatCount(page, '50', 'Apply');
   });
 });

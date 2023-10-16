@@ -1174,7 +1174,6 @@ export function getAtomCustomQuery(atom) {
     explicitValence: (value) => (Number(value) !== -1 ? `v${value}` : ''),
     ringBondCount: (value) => getRingConnectivity(Number(value)),
     substitutionCount: (value) => getDegree(Number(value)),
-    unsaturatedAtom: (value) => (value ? 'u' : ''),
     hCount: (value) =>
       Number(value) > 0 ? 'H' + (Number(value) - 1).toString() : '',
     implicitHCount: (value) => `h${value}`,

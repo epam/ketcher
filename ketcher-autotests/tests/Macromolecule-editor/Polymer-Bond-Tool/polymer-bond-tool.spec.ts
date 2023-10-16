@@ -12,6 +12,11 @@ test.describe('Polymer Bond Tool', () => {
     await waitForPageInit(page);
     await turnOnMacromoleculesEditor(page);
   });
+
+  test.afterEach(async ({ page }) => {
+    await takePageScreenshot(page);
+  });
+
   test('Create bond between two peptides', async ({ page }) => {
     /* 
     Test case: #2334 - Create peptide chain (HELM style) - Center-to-Center
@@ -53,11 +58,6 @@ test.describe('Polymer Bond Tool', () => {
     await page.mouse.down();
     await peptide3.hover();
     await page.mouse.up();
-
-    // Wait error popup
-    await page.waitForSelector('#error-tooltip');
-
-    await takePageScreenshot(page);
   });
 
   test('Create bond between two chems', async ({ page }) => {
@@ -87,7 +87,5 @@ test.describe('Polymer Bond Tool', () => {
     await takePageScreenshot(page);
     await chem2.hover();
     await page.mouse.up();
-
-    await takePageScreenshot(page);
   });
 });

@@ -26,14 +26,12 @@ export async function setHCount(page: Page, hCount: queryNumberValues) {
   await page.getByRole('option', { name: hCount }).click();
 }
 
-export async function setAromaticity(page: Page, aromaticity: aromaticity) {
-  await page.getByTestId('aromaticity-input').click();
-  await page.getByRole('option', { name: aromaticity }).click();
-}
-
-export async function setCustomQuery(page: Page, customQuery: string) {
-  await page.getByTestId('custom-query-checkbox').check();
-  await page.getByTestId('custom-query-value').fill(customQuery);
+export async function setSubstitutionCount(
+  page: Page,
+  substitutionCount: queryNumberValues,
+) {
+  await page.getByTestId('substitutionCount-input').click();
+  await page.getByRole('option', { name: substitutionCount }).click();
 }
 
 export async function setImplicitHCount(
@@ -42,6 +40,37 @@ export async function setImplicitHCount(
 ) {
   await page.getByTestId('implicitHCount-input').click();
   await page.getByRole('option', { name: implicitHCount }).click();
+}
+
+export async function setRingMembership(
+  page: Page,
+  ringMembership: queryNumberValues,
+) {
+  await page.getByTestId('ringMembership-input').click();
+  await page.getByRole('option', { name: ringMembership }).click();
+}
+
+export async function setRingSize(page: Page, ringSize: queryNumberValues) {
+  await page.getByTestId('ringSize-input').click();
+  await page.getByRole('option', { name: ringSize }).click();
+}
+
+export async function setConnectivity(
+  page: Page,
+  connectivity: queryNumberValues,
+) {
+  await page.getByTestId('connectivity-input').click();
+  await page.getByRole('option', { name: connectivity }).click();
+}
+
+export async function setAromaticity(page: Page, aromaticity: aromaticity) {
+  await page.getByTestId('aromaticity-input').click();
+  await page.getByRole('option', { name: aromaticity }).click();
+}
+
+export async function setCustomQuery(page: Page, customQuery: string) {
+  await page.getByTestId('custom-query-checkbox').check();
+  await page.getByTestId('custom-query-value').fill(customQuery);
 }
 
 export async function setChirality(page: Page, chirality: chirality) {

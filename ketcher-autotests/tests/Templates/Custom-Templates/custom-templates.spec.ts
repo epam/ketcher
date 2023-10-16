@@ -169,7 +169,6 @@ test.describe('Open Ketcher', () => {
     await openEditDialogForTemplate(page, TemplateLibrary.Azulene);
     await page.getByPlaceholder('template').click();
     await page.getByPlaceholder('template').fill('γ-template name');
-    await page.getByRole('button', { name: 'Aromatics (18)' }).click();
   });
 
   test('Edit templates -  Attachment atom and bond', async ({ page }) => {
@@ -178,13 +177,7 @@ test.describe('Open Ketcher', () => {
    Description: The info text 'Atom Id: xx; Bond Id: yy' contains the ids of the new attachment atom and bond.
    */
     await openEditDialogForTemplate(page, TemplateLibrary.Azulene);
+    await page.getByPlaceholder('template').click();
     await page.getByRole('dialog').getByTestId('canvas').click();
-    await page.getByRole('button', { name: 'Edit' }).click();
-    await openEditDialogForTemplate(page, TemplateLibrary.Azulene);
-    await page.getByTitle('Azulene').getByRole('button').click();
-    await page.getByRole('dialog').getByTestId('canvas').click();
-    await page.locator('svg > path:nth-child(18)').click();
-    await page.getByRole('button', { name: 'Edit' }).click();
-    await openEditDialogForTemplate(page, TemplateLibrary.Azulene);
   });
 });

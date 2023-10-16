@@ -50,7 +50,7 @@ test.describe('CML files', () => {
     const { file: cmlFile, fileExpected: cmlFileExpected } =
       await receiveFileComparisonData({
         page,
-        expectedFileName: 'tests/test-data/CML/cml-molecul-expected.cml',
+        expectedFileName: 'tests/test-data/CML/cml-molecule-expected.cml',
       });
     // comparing cml file with golden cml file
 

@@ -25,6 +25,8 @@ import {
   addCyclopentadieneRingWithTwoAtoms,
   TemplateLibrary,
   openEditDialogForTemplate,
+  clickOnBond,
+  BondType,
 } from '@utils';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
 import { getMolfile, getRxn } from '@utils/formats';
@@ -318,5 +320,23 @@ test.describe('Template Manupulations', () => {
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickOnAtom(page, 'C', 0);
     await selectRing(RingButton.Cyclopentadiene, page);
+  });
+
+  test('Adding the template to the existing structure', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-4735
+    Click on the Cyclopentadiene atom in the existing structure to add the same template.
+    To add the structure connected with a single bond click & drag.
+    */
+    await drawCyclopentadieneRing(page);
+    await clickOnBond(page, BondType.SINGLE, 0);
+    await clickOnBond(page, BondType.SINGLE, 1);
+    // eslint-disable-next-line no-magic-numbers
+    await clickOnBond(page, BondType.SINGLE, 2);
+    await clickOnBond(page, BondType.SINGLE, 1);
+    await clickOnBond(page, BondType.SINGLE, 0);
+    const coordinates = await getRotationHandleCoordinates(page);
+    const { x: rotationHandleX, y: rotationHandleY } = coordinates;
+    await page.mouse.move(rotationHandleX, rotationHandleY);
   });
 });

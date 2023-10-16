@@ -70,10 +70,16 @@ Object {
             class="MuiDialogContent-root css-1n1tez8-MuiDialogContent-root"
           >
             <div>
-              You are about to delete "
-              name
-              " RNA preset. This operation cannot be undone.
+              You are about to delete
             </div>
+            <p>
+              "
+              name
+              " RNA preset.
+            </p>
+            <p>
+              This operation cannot be undone.
+            </p>
           </div>
           <div
             class="MuiDialogActions-root MuiDialogActions-spacing css-1codpvf-MuiDialogActions-root"

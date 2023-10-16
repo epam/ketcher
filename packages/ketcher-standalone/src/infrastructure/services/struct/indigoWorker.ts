@@ -109,15 +109,18 @@ self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
     case Command.Layout: {
       const data: LayoutCommandData = message.data as LayoutCommandData;
       handle(
-        (indigo, indigoOptions) => {
-          const response = indigo.layout(
-            data.struct,
-            data.format,
-            indigoOptions,
-          );
-          const { struct } = JSON.parse(response);
-          return struct;
-        },
+        (indigo, indigoOptions) =>
+          indigo.layout(data.struct, data.format, indigoOptions),
+        // TODO uncomment then indigo will support input-format option
+        // (indigo, indigoOptions) => {
+        //   const response = indigo.layout(
+        //     data.struct,
+        //     data.format,
+        //     indigoOptions,
+        //   );
+        //   const { struct } = JSON.parse(response);
+        //   return struct;
+        // },
         data.options,
         Command.Layout,
       );

@@ -313,11 +313,14 @@ class IndigoService implements StructService {
           reject(msg.error);
         }
       };
-
+      // TODO remove then indigo will support input-format option
+      if (options?.['input-format']) {
+        delete options['input-format'];
+      }
       const commandOptions: CommandOptions = {
         ...this.defaultOptions,
         ...options,
-        'output-content-type': 'application/json',
+        //  'output-content-type': 'application/json', // TODO uncomment then indigo will support input-format option
       };
 
       const commandData: LayoutCommandData = {

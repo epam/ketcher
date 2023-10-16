@@ -102,7 +102,8 @@ export function load(struct: Struct, options?) {
     const server = state.server;
     const errorHandler = editor.errorHandler;
     options = options || {};
-    let { isPaste, ...otherOptions } = options;
+    let { center, ...otherOptions } = options;
+    center = center ?? true;
     otherOptions = {
       ...otherOptions,
       'dearomatize-on-load': editor.options()['dearomatize-on-load'],
@@ -170,11 +171,11 @@ export function load(struct: Struct, options?) {
           dispatch(onAction({ tool: 'paste', opts: parsedStruct }));
         }
       } else {
-        editor.struct(parsedStruct);
+        editor.struct(parsedStruct, center);
       }
 
       editor.zoomAccordingContent(parsedStruct);
-      if (!isPaste) {
+      if (center) {
         editor.centerStruct();
       }
 

@@ -18,10 +18,10 @@ import { AlignDescriptors, CanvasLoad } from '../operations';
 
 import { Action } from './action';
 
-export function fromNewCanvas(restruct, struct) {
+export function fromNewCanvas(restruct, struct, resetOffset = true) {
   const action = new Action();
 
-  action.addOp(new CanvasLoad(struct));
+  action.addOp(new CanvasLoad(struct, resetOffset));
   return action.perform(restruct);
 }
 

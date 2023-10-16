@@ -185,10 +185,12 @@ export class Render {
     );
   }
 
-  setMolecule(struct: Struct) {
+  setMolecule(struct: Struct, resetOffset = true) {
     this.paper.clear();
     this.ctab = new ReStruct(struct, this);
-    this.options.offset = new Vec2();
+    if (resetOffset) {
+      this.options.offset = new Vec2();
+    }
     this.update(false);
   }
 

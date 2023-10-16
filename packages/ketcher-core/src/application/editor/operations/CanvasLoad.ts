@@ -22,18 +22,19 @@ import { Struct } from 'domain/entities';
 export class CanvasLoad extends BaseOperation {
   data: {
     struct?: Struct;
+    resetOffset: boolean;
   };
 
-  constructor(struct?: Struct) {
+  constructor(struct?: Struct, resetOffset = true) {
     super(OperationType.CANVAS_LOAD);
-    this.data = { struct };
+    this.data = { struct, resetOffset };
   }
 
   execute(restruct: ReStruct) {
     const oldStruct = restruct.molecule;
     restruct.clearVisels(); // TODO: What is it?
     if (this.data.struct) {
-      restruct.render.setMolecule(this.data.struct);
+      restruct.render.setMolecule(this.data.struct, this.data.resetOffset);
     }
 
     this.data.struct = oldStruct;

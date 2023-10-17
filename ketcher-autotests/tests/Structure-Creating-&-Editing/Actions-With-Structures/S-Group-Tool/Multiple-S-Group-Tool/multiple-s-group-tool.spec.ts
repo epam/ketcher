@@ -323,7 +323,7 @@ test.describe('Multiple S-Group tool', () => {
 
   test('Multiple Group - Limit higher than maximum count', async ({ page }) => {
     // Test case: EPMLSOPKET-18028
-    // Verify system anserw after putting a number higher than limit
+    // Verify system answer after putting a number higher than limit
     await openFileAndAddToCanvas('Molfiles-V2000/templates.mol', page);
     await changeRepeatCountValue(page, '201');
   });

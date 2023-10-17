@@ -1,10 +1,10 @@
 import { BaseRenderer } from './BaseRenderer';
-import assert from 'assert';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { D3SvgElementSelection } from 'application/render/types';
 import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { editorEvents } from 'application/editor/editorEvents';
 import { Scale } from 'domain/helpers';
+import assert from 'assert';
 import {
   attachmentPointNumberToAngle,
   anglesToSector,
@@ -93,14 +93,16 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       const [attachmentPointElement, angle] = this.appendAttachmentPoint(item);
       this.attachmentPointElements.push(attachmentPointElement as never);
 
-      assert(angle);
-      // remove this sector from list of free sectors
-      const newList = this.freeSectorsList.filter((item) => {
-        return (
-          anglesToSector[item].min > angle || anglesToSector[item].max <= angle
-        );
-      });
-      this.freeSectorsList = checkFor0and360(newList);
+      if (typeof angle === 'number') {
+        // remove this sector from list of free sectors
+        const newList = this.freeSectorsList.filter((item) => {
+          return (
+            anglesToSector[item].min > angle ||
+            anglesToSector[item].max <= angle
+          );
+        });
+        this.freeSectorsList = checkFor0and360(newList);
+      }
     });
 
     const unrenderedAtPoints: string[] = [];

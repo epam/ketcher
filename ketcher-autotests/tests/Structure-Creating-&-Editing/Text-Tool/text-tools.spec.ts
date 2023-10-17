@@ -16,20 +16,20 @@ test.describe('Text tools test cases', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Text tool - Button and tooltip: verification', async ({ page }) => {
+  test(' Button and tooltip: verification', async ({ page }) => {
     // Test case: EPMLSOPKET-2225
     const button = page.getByTestId('text');
     await expect(button).toHaveAttribute('title', 'Add text (Alt+T)');
   });
 
-  test('Text tool - UI', async ({ page }) => {
+  test('UI', async ({ page }) => {
     // Test case: EPMLSOPKET-2226
     // Verify if the text box displayed properly all elements
     await page.getByTestId('text').click();
     await clickInTheMiddleOfTheScreen(page);
   });
 
-  test('Text tool - Create a single text object', async ({ page }) => {
+  test(' Create a single text object', async ({ page }) => {
     // Test case: EPMLSOPKET-2227
     // Verify action of adding text object to canvas
     await addTextBoxToCanvas(page);

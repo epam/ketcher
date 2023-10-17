@@ -86,7 +86,7 @@ test.describe('Text tools test cases', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Text tool - Font size', async ({ page }) => {
+  test(' Font size', async ({ page }) => {
     // Test case:EPMLSOPKET-2885
     // Verify if possible is changing font size on the created text object
     await addTextBoxToCanvas(page);
@@ -103,37 +103,35 @@ test.describe('Text tools test cases', () => {
     await pressButton(page, 'Apply');
   });
 
-  test('Text tool - Applying styles - Bold', async ({ page }) => {
+  test(' Applying styles - Bold', async ({ page }) => {
     // Test case: EPMLSOPKET-2256
     // Verify if possible to put bold style on the created text object
     await addTextBoxToCanvas(page);
     await applyBold(page, 'ABC', 'bold');
   });
 
-  test('Text tool - Applying styles - Italic', async ({ page }) => {
+  test(' Applying styles - Italic', async ({ page }) => {
     // Test case: EPMLSOPKET-2257
     // Verify if possible to put Italic style on the created text object
     await addTextBoxToCanvas(page);
     await applyItalic(page, 'ABCDE', 'italic');
   });
 
-  test('Text tool - Applying styles - Subscript', async ({ page }) => {
+  test(' Applying styles - Subscript', async ({ page }) => {
     // Test case: EPMLSOPKET-2258
     // Verify if possible to put Subscript style on the created text object
     await addTextBoxToCanvas(page);
     await applySubscript(page, 'ABC123', 'subscript');
   });
 
-  test('Text tool -  Applying styles - Superscript', async ({ page }) => {
+  test('Applying styles - Superscript', async ({ page }) => {
     // Test case: EPMLSOPKET-2259
     // Verify if possible to put Superscript style on the created text object
     await addTextBoxToCanvas(page);
     await applySuperscript(page, 'ABC123', 'superscript');
   });
 
-  test('Text tool - Applying styles - Combination of styles', async ({
-    page,
-  }) => {
+  test('Applying styles - Combination of styles', async ({ page }) => {
     // Test case: EPMLSOPKET-2260
     // Verify if possible to put different styles on the created text object
     await addTextBoxToCanvas(page);
@@ -152,9 +150,7 @@ test.describe('Text tools test cases', () => {
     await pressButton(page, 'Apply');
   });
 
-  test('Text tool - Create text object and save it as .ket file', async ({
-    page,
-  }) => {
+  test('Create text object and save it as .ket file', async ({ page }) => {
     // Test case: EPMLSOPKET-2235
     // Verify if possible to put different styles on the created text object
     await addTextBoxToCanvas(page);
@@ -168,7 +164,7 @@ test.describe('Text tools test cases', () => {
     await pressButton(page, 'Apply');
   });
 
-  test('Text Tool - Saving text object as a .ket file', async ({ page }) => {
+  test('Saving text object as a .ket file', async ({ page }) => {
     // Test case: EPMLSOPKET-2235
     await openFileAndAddToCanvas('KET/ketfile01.ket', page);
     const expectedFile = await getKet(page);
@@ -183,7 +179,7 @@ test.describe('Text tools test cases', () => {
     expect(ketFile).toEqual(ketFileExpected);
   });
 
-  test('Text tool - Open saved .ket file', async ({ page }) => {
+  test('Open saved .ket file', async ({ page }) => {
     // Test case: EPMLSOPKET-2235
     await selectTopPanelButton(TopPanelButton.Open, page);
     await openFromFileViaClipboard('tests/test-data/KET/ketfile01.ket', page);
@@ -197,7 +193,7 @@ test.describe('Text tools test cases', () => {
     });
   });
 
-  test('Text tool - Cut/Copy/Paste', async ({ page }) => {
+  test(' Cut/Copy/Paste', async ({ page }) => {
     // Test case: EPMLSOPKET-2272
     // Verify if user is able to copy and paste the created text objects
     const x = 250;
@@ -209,7 +205,7 @@ test.describe('Text tools test cases', () => {
     await page.mouse.click(x, y);
   });
 
-  test('Text tool - Checking if user is able to cut and paste the created text objects', async ({
+  test(' Checking if user is able to cut and paste the created text objects', async ({
     page,
   }) => {
     // Opening a file with created ealier text (task EPMLSOPKET-2272 ) and doing copy/paste action on it
@@ -225,9 +221,7 @@ test.describe('Text tools test cases', () => {
     });
   });
 
-  test('Text tool - Selection of different types of text objects', async ({
-    page,
-  }) => {
+  test(' Selection of different types of text objects', async ({ page }) => {
     // Test case: EPMLSOPKET-2274
     // Verify if its possible to select a text objects of any size by clicking on green frame
     await openFileAndAddToCanvas('KET/text-object.ket', page);
@@ -255,9 +249,7 @@ test.describe('Text tools test cases', () => {
     await clickInTheMiddleOfTheScreen(page);
   });
 
-  test("Text tool - UTF-8 compatible ('Paste from Clipboard')", async ({
-    page,
-  }) => {
+  test('UTF-8 compatible ("Paste from Clipboard")', async ({ page }) => {
     // Test case: EPMLSOPKET-5253
     // Verify if possible is add UTF-8 data format  to canvas
     await selectTopPanelButton(TopPanelButton.Open, page);

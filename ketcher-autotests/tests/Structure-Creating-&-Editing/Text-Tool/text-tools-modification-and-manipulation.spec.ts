@@ -56,7 +56,7 @@ test.describe('Text tools test cases', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Text tool - Modify the created text object', async ({ page }) => {
+  test(' Modify the created text object', async ({ page }) => {
     // Test case: EPMLSOPKET-2228
     // Verify if possible is modify created text object by adding some extra symbols
     await addTextBoxToCanvas(page);
@@ -69,7 +69,7 @@ test.describe('Text tools test cases', () => {
     await pressButton(page, 'Apply');
   });
 
-  test('Text tool - Delete the created text object', async ({ page }) => {
+  test(' Delete the created text object', async ({ page }) => {
     // Test case: EPMLSOPKET-2229
     // Delte created text object with Erase tool
     await addTextBoxToCanvas(page);
@@ -81,7 +81,7 @@ test.describe('Text tools test cases', () => {
   });
 
   // Delete created text object with and Lasso Selection Tool and 'Delete' button on a keyboard
-  test('Text tool - Delete created text object with Selection Tool and "Delete" button on a keyboard', async ({
+  test(' Delete created text object with Selection Tool and "Delete" button on a keyboard', async ({
     page,
   }) => {
     await openFileAndAddToCanvas('KET/text-object-for-test.ket', page);
@@ -93,7 +93,7 @@ test.describe('Text tools test cases', () => {
   });
 
   // Delete created text object in the text editor field
-  test('Text tool - Delete created text object in the text editor field', async ({
+  test(' Delete created text object in the text editor field', async ({
     page,
   }) => {
     await openFileAndAddToCanvas('KET/test-text-object.ket', page);
@@ -107,9 +107,7 @@ test.describe('Text tools test cases', () => {
     await performUndoRedo(page);
   });
 
-  test('Text tool - Create a single text object by pasting text', async ({
-    page,
-  }) => {
+  test('Create a single text object by pasting text', async ({ page }) => {
     // Test case: EPMLSOPKET-2230
     // Verify if possible is create text object by pasting text
     await addTextBoxToCanvas(page);
@@ -130,9 +128,7 @@ test.describe('Text tools test cases', () => {
     await pressButton(page, 'Apply');
   });
 
-  test('Text tool - Create several text objects and modifited them', async ({
-    page,
-  }) => {
+  test('Create several text objects and modifited them', async ({ page }) => {
     const x = 150;
     const y = 145;
     // Test case: EPMLSOPKET-2231 & EPMLSOPKET-2232
@@ -166,7 +162,7 @@ test.describe('Text tools test cases', () => {
     await pressButton(page, 'Apply');
   });
 
-  test('Text tool - Delete several created text objects', async ({ page }) => {
+  test(' Delete several created text objects', async ({ page }) => {
     // Test case: EPMLSOPKET-2233
     // Delete several created ealier text objects with hotkey (Delete) and  'Erase' tool.
     await addTextBoxToCanvas(page);
@@ -188,7 +184,7 @@ test.describe('Text tools test cases', () => {
     await performUndoRedo(page);
   });
 
-  test('Text tool - Delete with and Lasso Selection Tool and "Delete" button on a keyboard', async ({
+  test('Delete with and Lasso Selection Tool and "Delete" button on a keyboard', async ({
     page,
   }) => {
     const text2 = 'Ketcher is a cool tool';
@@ -200,7 +196,7 @@ test.describe('Text tools test cases', () => {
     await performUndoRedo(page);
   });
 
-  test('Text tool - Delete two objects with Erase and Lasso Selection Tool and "Delete" button on a keyboard', async ({
+  test(' Delete two objects with Erase and Lasso Selection Tool and "Delete" button on a keyboard', async ({
     page,
   }) => {
     await openFileAndAddToCanvas('KET/two-different-text-objects.ket', page);
@@ -215,9 +211,7 @@ test.describe('Text tools test cases', () => {
     await performUndoRedo(page);
   });
 
-  test('Text tool - Manipulations with the created text object', async ({
-    page,
-  }) => {
+  test(' Manipulations with the created text object', async ({ page }) => {
     // Test case: EPMLSOPKET-2234
     // Verify if possible is to modify created ealier text object and moving it with use Selection Tool
     await addTextBoxToCanvas(page);
@@ -233,7 +227,7 @@ test.describe('Text tools test cases', () => {
     });
   });
 
-  test('Text tool - Manipulations with the another created text object', async ({
+  test(' Manipulations with the another created text object', async ({
     page,
   }) => {
     // Verify if possible is perform different manipulations with text objects using different tools (zoom)
@@ -263,9 +257,7 @@ test.describe('Text tools test cases', () => {
     }
   });
 
-  test('Text tool - Selection of a text object and a structure', async ({
-    page,
-  }) => {
+  test(' Selection of a text object and a structure', async ({ page }) => {
     const x = 500;
     const y = 250;
     // Test case: EPMLSOPKET-2236

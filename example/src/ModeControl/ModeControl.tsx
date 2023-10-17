@@ -121,13 +121,14 @@ export const ModeControl = ({ toggle, isPolymerEditor }: ModeProps) => {
   const modeIcon = isPolymerEditor ? 'macromolecules-mode' : 'molecules-mode';
 
   return (
-    <ElementAndDropdown
-      data-testid="polymer-toggler"
-      title={`Molecules vs Macromolecules mode\ndescription`}
-    >
-      <DropDownButton onClick={onExpand} ref={btnRef}>
+    <ElementAndDropdown title={`Molecules vs Macromolecules mode\ndescription`}>
+      <DropDownButton
+        data-testid="polymer-toggler"
+        onClick={onExpand}
+        ref={btnRef}
+      >
         <Icon name={modeIcon} />
-        <ModeLabel data-testid="mode-toggler">{modeLabel}</ModeLabel>
+        <ModeLabel>{modeLabel}</ModeLabel>
         <StyledIcon name="chevron" expanded={isExpanded} />
       </DropDownButton>
 
@@ -144,6 +145,7 @@ export const ModeControl = ({ toggle, isPolymerEditor }: ModeProps) => {
       >
         <DropDownContent>
           <ModeControlButton
+            data-testid="molecules_mode"
             onClick={() => {
               toggle(false);
               onClose();
@@ -155,6 +157,7 @@ export const ModeControl = ({ toggle, isPolymerEditor }: ModeProps) => {
           </ModeControlButton>
 
           <ModeControlButton
+            data-testid="macromolecules_mode"
             onClick={() => {
               toggle(true);
               onClose();

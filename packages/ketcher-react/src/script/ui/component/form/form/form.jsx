@@ -164,13 +164,13 @@ function Field(props) {
       title={rest.title || desc.title}
       labelPos={labelPos}
       tooltip={rest?.tooltip}
-      data-testId={props['data-testId']}
+      data-testid={props['data-testid']}
     >
       <span
         className={classes.inputWrapper}
         onMouseEnter={handlePopoverOpen}
         onMouseLeave={handlePopoverClose}
-        data-testId={props['data-testId'] + '-input'}
+        data-testid={props['data-testid'] + '-input'}
       >
         {formField}
       </span>
@@ -274,7 +274,7 @@ function CustomQueryField(props) {
           schema={{ default: false, type: 'boolean' }}
           value={checkboxValue}
           onChange={handleCheckboxChange}
-          data-testId="custom-query-checkbox"
+          data-testid="custom-query-checkbox"
         />
       </Label>
       <span
@@ -290,7 +290,7 @@ function CustomQueryField(props) {
           data-testid="atomCustomQuery"
           name={name}
           schema={desc}
-          data-testId="custom-query-value"
+          data-testid="custom-query-value"
           {...fieldOpts}
           {...rest}
         />

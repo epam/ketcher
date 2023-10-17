@@ -11,8 +11,8 @@ export class ChemRenderer extends BaseMonomerRenderer {
       monomer,
       CHEM_SELECTED_ELEMENT_ID,
       CHEM_SELECTED_ELEMENT_ID,
-      scale,
       CHEM_SYMBOL_ELEMENT_ID,
+      scale,
     );
   }
 

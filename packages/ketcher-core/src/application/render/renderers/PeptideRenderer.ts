@@ -12,8 +12,8 @@ export class PeptideRenderer extends BaseMonomerRenderer {
       monomer,
       PEPTIDE_SELECTED_ELEMENT_ID,
       PEPTIDE_HOVERED_ELEMENT_ID,
-      scale,
       PEPTIDE_SYMBOL_ELEMENT_ID,
+      scale,
     );
   }
 

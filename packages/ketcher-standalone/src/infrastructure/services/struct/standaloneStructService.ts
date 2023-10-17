@@ -181,7 +181,7 @@ const messageTypeToEventMapping: {
   [Command.GetInChIKey]: WorkerEvent.GetInChIKey,
 };
 
-let worker;
+let worker: IndigoWorker;
 
 class IndigoService implements StructService {
   private readonly defaultOptions: StructServiceOptions;

@@ -332,7 +332,7 @@ export class KetSerializer implements Serializer<Struct> {
 
   serializeMacromolecules(
     struct: Struct,
-    drawingEntitiesManager?: DrawingEntitiesManager,
+    drawingEntitiesManager: DrawingEntitiesManager,
   ) {
     const fileContent: IKetMacromoleculesContent = {
       root: {
@@ -407,8 +407,6 @@ export class KetSerializer implements Serializer<Struct> {
     struct: Struct,
     drawingEntitiesManager = new DrawingEntitiesManager(),
   ) {
-    let fileContent = {};
-    console.log(struct.sgroups.get(0));
     CoreEditor.convertStructToDrawingEntities(struct, drawingEntitiesManager);
     const { serializedMacromolecules, micromoleculesStruct } =
       this.serializeMacromolecules(new Struct(), drawingEntitiesManager);
@@ -417,7 +415,7 @@ export class KetSerializer implements Serializer<Struct> {
       this.serializeMicromolecules(micromoleculesStruct),
     );
 
-    fileContent = {
+    const fileContent = {
       ...serializedMicromoleculesStruct,
       ...serializedMacromolecules,
     };

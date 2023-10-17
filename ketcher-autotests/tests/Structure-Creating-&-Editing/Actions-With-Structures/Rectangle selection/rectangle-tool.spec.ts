@@ -74,12 +74,6 @@ test.describe('Rectangle selection tool', () => {
     await openFileAndAddToCanvas('Rxn-V2000/benzene-chain-reaction.rxn', page);
     await page.getByTestId('select-rectangle').click();
     const point = await getCoordinatesOfTheMiddleOfTheScreen(page);
-    await page.mouse.click(
-      point.x - moveMouseCoordinatesX,
-      point.y + moveMouseCoordinatesY,
-    );
-    await clickCanvas(page);
-    await page.mouse.click(point.x, point.y + atomNumber);
     await clickCanvas(page);
 
     await page.keyboard.down('Shift');

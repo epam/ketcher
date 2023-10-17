@@ -132,7 +132,11 @@ export class CoreEditor {
   }
 
   get trackedDomEvents() {
-    const trackedDomEvents = [
+    const trackedDomEvents: {
+      target: Element | Document;
+      eventName: string;
+      toolEventHandler: ToolEventHandlerName;
+    }[] = [
       {
         target: this.canvas,
         eventName: 'click',
@@ -413,6 +417,10 @@ export class CoreEditor {
     );
   }
 
+  public static getAttachmentPointNumber(atomId: number, struct: Struct) {
+    return struct.atoms.get(atomId)?.rglabel;
+  }
+
   public static convertStructToDrawingEntities(
     struct: Struct,
     drawingEntitiesManager: DrawingEntitiesManager,
@@ -445,22 +453,15 @@ export class CoreEditor {
     struct.bonds.forEach((bond) => {
       const beginAtomSgroup = struct.getGroupFromAtomId(bond.begin);
       const endAtomSgroup = struct.getGroupFromAtomId(bond.end);
-      const beginAtomAttachmentPointNumber = struct.atoms.get(
-        bond.begin,
-      )?.rglabel;
-      const endAtomAttachmentPointNumber = struct.atoms.get(bond.end)?.rglabel;
+      const beginAtomAttachmentPointNumber =
+        CoreEditor.getAttachmentPointNumber(bond.begin, struct);
+      const endAtomAttachmentPointNumber = CoreEditor.getAttachmentPointNumber(
+        bond.end,
+        struct,
+      );
       if (
         beginAtomAttachmentPointNumber &&
         endAtomAttachmentPointNumber &&
-        beginAtomSgroup?.atoms.find(
-          (atomId) =>
-            struct.atoms.get(atomId)?.rglabel ===
-            beginAtomAttachmentPointNumber,
-        ) === bond.begin &&
-        endAtomSgroup?.atoms.find(
-          (atomId) =>
-            struct.atoms.get(atomId)?.rglabel === endAtomAttachmentPointNumber,
-        ) === bond.end &&
         beginAtomSgroup instanceof MonomerMicromolecule &&
         endAtomSgroup instanceof MonomerMicromolecule
       ) {

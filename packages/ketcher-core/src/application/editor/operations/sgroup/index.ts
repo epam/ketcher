@@ -21,7 +21,6 @@ import { ReSGroup, ReStruct } from '../../../render';
 import { BaseOperation } from '../base';
 import { OperationPriority, OperationType } from '../OperationType';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
-import sgroup from 'ketcher-react/dist/script/editor/tool/sgroup';
 
 // todo: separate classes: now here is circular dependency in `invert` method
 
@@ -31,6 +30,7 @@ type Data = {
   pp?: any;
   expanded?: boolean;
   name?: string;
+  oldSgroup?: SGroup;
 };
 
 class SGroupCreate extends BaseOperation {

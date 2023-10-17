@@ -43,6 +43,12 @@ export class RenderersManager {
 
   public moveMonomer(monomer: BaseMonomer) {
     monomer.renderer?.move();
+    monomer.renderer?.drawSelection();
+  }
+
+  public redrawDrawingEntity(drawingEntity: DrawingEntity) {
+    drawingEntity.baseRenderer?.remove();
+    drawingEntity.baseRenderer?.show(this.theme);
   }
 
   public deleteMonomer(monomer: BaseMonomer) {
@@ -60,6 +66,7 @@ export class RenderersManager {
   public movePolymerBond(polymerBond: PolymerBond) {
     polymerBond.renderer?.moveStart();
     polymerBond.renderer?.moveEnd();
+    polymerBond.renderer?.drawSelection();
   }
 
   public showPolymerBondInformation(polymerBond) {
@@ -79,7 +86,7 @@ export class RenderersManager {
 
   public finishPolymerBondCreation(polymerBond) {
     assert(polymerBond.secondMonomer);
-    polymerBond.renderer?.moveEnd();
+    polymerBond.renderer?.moveSelection();
     polymerBond.renderer?.redrawHover();
     polymerBond.firstMonomer.renderer?.redrawAttachmentPoints();
     polymerBond.firstMonomer.renderer?.drawSelection();

@@ -52,10 +52,14 @@ function baseURL(): string {
     return DEFAULT_KETCHER_STANDALONE_URL;
   }
 
+  const localDomains = ['://localhost:', '://host.docker.internal:'];
+  if (localDomains.some((d) => process.env.KETCHER_URL?.includes(d))) {
+    return process.env.KETCHER_URL;
+  }
+
   if (process.env.MODE === MODES.STANDALONE) {
     return `${process.env.KETCHER_URL}${STANDALONE_URL}`;
   }
-
   return `${process.env.KETCHER_URL}${REMOTE_URL}`;
 }
 
@@ -133,12 +137,9 @@ const config: PlaywrightTestConfig = {
       use: {
         ...devices['Desktop Chrome'],
         ignoreHTTPSErrors: true,
+        bypassCSP: true,
         launchOptions: {
           headless: true,
-          args: [
-            '--unsafely-treat-insecure-origin-as-secure="http://host.docker.internal:4002"',
-            '--disable-web-security',
-          ],
         },
       },
     },

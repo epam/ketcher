@@ -70,7 +70,7 @@ export async function setAromaticity(page: Page, aromaticity: aromaticity) {
 
 export async function setCustomQuery(page: Page, customQuery: string) {
   await page.getByTestId('custom-query-checkbox').check();
-  await page.getByTestId('custom-query-value').fill(customQuery);
+  await page.getByTestId('atom-custom-query').fill(customQuery);
 }
 
 export async function setChirality(page: Page, chirality: chirality) {

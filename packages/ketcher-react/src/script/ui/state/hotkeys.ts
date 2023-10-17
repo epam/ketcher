@@ -26,6 +26,7 @@ import {
   Editor,
   getStructure,
   runAsyncAction,
+  MolSerializer,
 } from 'ketcher-core';
 import { debounce, isEqual } from 'lodash/fp';
 import { load, onAction, removeStructAction } from './shared';
@@ -281,6 +282,14 @@ export function initClipboard(dispatch) {
       const state = global.currentState;
       return !state.modal;
     },
+    onLegacyCut() {
+      const state = global.currentState;
+      const editor = state.editor;
+      const data = legacyClipData(editor);
+      if (data) debAction({ tool: 'eraser', opts: 1 });
+      else editor.selection(null);
+      return data;
+    },
     async onCut() {
       const ketcherInstance = ketcherProvider.getKetcher();
       const result = await runAsyncAction(async () => {
@@ -293,6 +302,13 @@ export function initClipboard(dispatch) {
         return data;
       }, ketcherInstance.eventBus);
       return result;
+    },
+    onLegacyCopy() {
+      const state = global.currentState;
+      const editor = state.editor;
+      const data = legacyClipData(editor);
+      editor.selection(null);
+      return data;
     },
     async onCopy() {
       const ketcherInstance = ketcherProvider.getKetcher();
@@ -318,12 +334,13 @@ export function initClipboard(dispatch) {
   };
 }
 
-async function clipData(editor: Editor) {
-  const res = {};
+function isAbleToCopy(editor: Editor): boolean {
   const struct = editor.structSelected();
   const errorHandler = editor.errorHandler;
 
-  if (struct.isBlank()) return null;
+  if (struct.isBlank()) {
+    return false;
+  }
   const simpleObjectOrText = Boolean(
     struct.simpleObjects.size || struct.texts.size,
   );
@@ -332,8 +349,21 @@ async function clipData(editor: Editor) {
       'The structure you are trying to copy contains Simple object or/and Text object.' +
         'To copy Simple object or Text object in Internet Explorer try "Copy as KET" button',
     );
+    return false;
+  }
+
+  return true;
+}
+
+async function clipData(editor: Editor) {
+  if (!isAbleToCopy(editor)) {
     return null;
   }
+
+  const res = {};
+  const struct = editor.structSelected();
+  const errorHandler = editor.errorHandler;
+
   try {
     const serializer = new KetSerializer();
     const ket = serializer.serialize(struct);
@@ -357,6 +387,36 @@ async function clipData(editor: Editor) {
     return res;
   } catch (e: any) {
     KetcherLogger.error('hotkeys.ts::clipData', e);
+    errorHandler && errorHandler(e.message);
+  }
+
+  return null;
+}
+
+function legacyClipData(editor: Editor) {
+  if (!isAbleToCopy(editor)) {
+    return null;
+  }
+
+  const res = {};
+  const struct = editor.structSelected();
+  const errorHandler = editor.errorHandler;
+  const molSerializer = new MolSerializer();
+  try {
+    const serializer = new KetSerializer();
+    const ket = serializer.serialize(struct);
+    res[ChemicalMimeType.KET] = ket;
+
+    const type = struct.isReaction
+      ? ChemicalMimeType.Mol
+      : ChemicalMimeType.Rxn;
+    const data = molSerializer.serialize(struct);
+    res['text/plain'] = data;
+    res[type] = data;
+
+    return res;
+  } catch (e: any) {
+    KetcherLogger.error('hotkeys.ts::legacyClipData', e);
     errorHandler && errorHandler(e.message);
   }
 

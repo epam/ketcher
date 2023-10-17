@@ -32,6 +32,8 @@
     "stylelint:fix": "stylelint \"./**/*.{css,less}\" --formatter verbose --fix",
     "serve:remote": "STATIC_FILES_PATH=dist/remote PORT=4001 node ./serve.js",
     "serve:standalone": "STATIC_FILES_PATH=dist/standalone PORT=4002 node ./serve.js",
+    "serve:remote-old": "serve -s dist/remote -l 4002",
+    "serve:standalone-old": "serve -s dist/standalone -l 4002",
     "eject": "react-scripts eject"
   },
   "dependencies": {
@@ -64,6 +66,7 @@
     "prettier": "^2.5.1",
     "react-app-rewired": "^2.2.1",
     "react-scripts": "^5.0.1",
+    "serve": "^14.2.1",
     "shx": "^0.3.3",
     "source-map-loader": "^3.0.1",
     "stylelint": "13.13.1",

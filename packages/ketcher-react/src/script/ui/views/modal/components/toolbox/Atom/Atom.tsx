@@ -165,7 +165,7 @@ const Atom: FC<Props> = (props: Props) => {
                   name={field.name}
                   component={Select}
                   options={getSelectOptionsFromSchema(atomProps[field.name])}
-                  data-testId={field.name}
+                  data-testid={field.name}
                 />
               );
             } else {

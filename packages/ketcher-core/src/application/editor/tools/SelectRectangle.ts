@@ -21,6 +21,7 @@ import { Command } from 'domain/entities/Command';
 import { BaseTool } from 'application/editor/tools/Tool';
 import { Scale } from 'domain/helpers';
 import { provideEditorSettings } from 'application/editor/editorSettings';
+import Coordinates from '../shared/coordinates';
 
 class SelectRectangle implements BaseTool {
   private brush;
@@ -38,10 +39,16 @@ class SelectRectangle implements BaseTool {
       if (!selection) return;
 
       requestAnimationFrame(() => {
+        const topLeftPoint = Coordinates.pageToView(
+          new Vec2(selection[0][0], selection[0][1]),
+        );
+        const bottomRightPoint = Coordinates.pageToView(
+          new Vec2(selection[1][0], selection[1][1]),
+        );
         const modelChanges =
           this.editor.drawingEntitiesManager.selectIfLocatedInRectangle(
-            new Vec2(selection[0][0], selection[0][1]),
-            new Vec2(selection[1][0], selection[1][1]),
+            topLeftPoint,
+            bottomRightPoint,
           );
         this.editor.renderersContainer.update(modelChanges);
       });

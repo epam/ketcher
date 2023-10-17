@@ -146,9 +146,14 @@ function Editor({ theme }: EditorProps) {
           <svg
             id="polymer-editor-canvas"
             data-testid="ketcher-canvas"
+            preserveAspectRatio="xMidYMid meet"
             ref={canvasRef}
             width="100%"
             height="100%"
+            style={{
+              overflow: 'hidden',
+              overflowClipMargin: 'content-box',
+            }}
           >
             <defs>
               <PeptideAvatar />
@@ -183,6 +188,7 @@ function Editor({ theme }: EditorProps) {
               <PhosphateAvatar />
               <RNABaseAvatar />
             </defs>
+            <g className="drawn-structures"></g>
           </svg>
         </Layout.Main>
 
@@ -220,10 +226,14 @@ function MenuComponent() {
   const menuItemChanged = (name) => {
     if (modalComponentList[name]) {
       dispatch(openModal(name));
-    } else {
+      return;
+    } else if (name !== 'zoom-in' && name !== 'zoom-out') {
       dispatch(selectTool(name));
       editor.events.selectTool.dispatch(name);
+      return;
     }
+
+    editor.events.zoomChange.dispatch(7);
   };
 
   return (
@@ -260,6 +270,8 @@ function MenuComponent() {
         <Menu.Item itemId="bracket" />
       </Menu.Group>
       <Menu.Group>
+        <Menu.Item itemId="zoom-in" />
+        <Menu.Item itemId="zoom-out" />
         <Menu.Item itemId="settings" />
         <Menu.Item itemId="help" />
       </Menu.Group>

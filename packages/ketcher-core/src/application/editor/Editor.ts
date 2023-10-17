@@ -13,6 +13,7 @@ import { MonomerItemType } from 'domain/types';
 import { RenderersManager } from 'application/render/renderers/RenderersManager';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import { editorEvents, renderersEvents } from 'application/editor/editorEvents';
+import { zoomProvider } from './tools/Zoom';
 
 interface ICoreEditorConstructorParams {
   theme;
@@ -34,6 +35,8 @@ export class CoreEditor {
   public canvas: SVGSVGElement;
   public canvasOffset: DOMRect;
   public theme;
+  public zoom;
+  // public zoom: ZoomTool;
   // private lastEvent: Event | undefined;
   private tool?: Tool | BaseTool;
 
@@ -45,8 +48,12 @@ export class CoreEditor {
     this.drawingEntitiesManager = new DrawingEntitiesManager();
     this.domEventSetup();
     this.canvasOffset = this.canvas.getBoundingClientRect();
+    this.zoom = zoomProvider.getZoomTool(this.drawingEntitiesManager);
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     editor = this;
+    // window.ketcher.macromolecules = {
+    //   editor: this,
+    // };
   }
 
   static provideEditorInstance(): CoreEditor {
@@ -56,6 +63,7 @@ export class CoreEditor {
   private subscribeEvents() {
     this.events.selectMonomer.add((monomer) => this.onSelectMonomer(monomer));
     this.events.selectPreset.add((preset) => this.onSelectRNAPreset(preset));
+    this.events.zoomChange.add((zoomLevel) => this.onZoomChange(zoomLevel));
     this.events.selectTool.add((tool) => this.onSelectTool(tool));
 
     renderersEvents.forEach((eventName) => {
@@ -67,6 +75,11 @@ export class CoreEditor {
 
   private onSelectMonomer(monomer: MonomerItemType) {
     this.selectTool('monomer', monomer);
+  }
+
+  private onZoomChange(zoomLevel: number) {
+    // change to zoom action
+    this.selectTool('zoom', zoomLevel);
   }
 
   private onSelectRNAPreset(preset: IRnaPreset) {

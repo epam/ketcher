@@ -53,7 +53,7 @@ export class PolymerBondRenderer extends BaseRenderer {
 
   private appendRootElement() {
     return this.canvas
-      .insert('g', '#polymer-editor-canvas defs')
+      .insert('g', `:first-child`)
       .data([this])
       .on('mouseover', (event) => {
         this.editorEvents.mouseOverPolymerBond.dispatch(event);

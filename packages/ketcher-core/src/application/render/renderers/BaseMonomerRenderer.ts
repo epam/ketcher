@@ -4,8 +4,9 @@ import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { D3SvgElementSelection } from 'application/render/types';
 import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { editorEvents } from 'application/editor/editorEvents';
-import { Scale } from 'domain/helpers';
 import { AttachmentPoint } from 'domain/AttachmentPoint';
+import { zoomProvider } from 'application/editor/tools/Zoom';
+import Coordinates from 'application/editor/shared/coordinates';
 
 export abstract class BaseMonomerRenderer extends BaseRenderer {
   private editorEvents: typeof editorEvents;
@@ -31,9 +32,10 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   }
 
   public get center() {
+    const zoom = zoomProvider.getZoomTool().zoomLevel;
     return {
-      x: this.scaledMonomerPosition.x + this.bodyWidth / 2,
-      y: this.scaledMonomerPosition.y + this.bodyHeight / 2,
+      x: this.scaledMonomerPosition.x + this.bodyWidth / zoom / 2,
+      y: this.scaledMonomerPosition.y + this.bodyHeight / zoom / 2,
     };
   }
 
@@ -215,7 +217,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   private get scaledMonomerPosition() {
     // we need to convert monomer coordinates(stored in angstroms) to pixels.
     // it needs to be done in view layer of application (like renderers)
-    return Scale.obj2scaled(this.monomer.position, this.editorSettings);
+    return Coordinates.modelToPage(this.monomer.position);
   }
 
   public appendSelection() {
@@ -230,8 +232,8 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     this.selectionCircle = this.canvas
       ?.insert('circle', ':first-child')
       .attr('r', '42px')
-      .attr('cx', this.scaledMonomerPosition.x + this.bodyWidth / 2)
-      .attr('cy', this.scaledMonomerPosition.y + this.bodyHeight / 2)
+      .attr('cx', this.center.x)
+      .attr('cy', this.center.y)
       .attr('fill', '#57FF8F');
   }
 

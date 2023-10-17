@@ -3,6 +3,11 @@ import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import assert from 'assert';
 import { D3SvgElementSelection } from 'application/render/types';
 import { provideEditorSettings } from 'application/editor/editorSettings';
+import {
+  canvasSelector,
+  drawnStructuresSelector,
+} from 'application/editor/constants';
+import { Vec2 } from 'domain/entities';
 
 export interface IBaseRenderer {
   show(theme): void;
@@ -24,9 +29,11 @@ export abstract class BaseRenderer implements IBaseRenderer {
     void
   >;
 
+  protected canvasWrapper: D3SvgElementSelection<SVGSVGElement, void>;
   protected canvas: D3SvgElementSelection<SVGSVGElement, void>;
   protected constructor(public drawingEntity: DrawingEntity) {
-    this.canvas = select('#polymer-editor-canvas');
+    this.canvasWrapper = select(canvasSelector);
+    this.canvas = select(drawnStructuresSelector);
   }
 
   protected get editorSettings() {
@@ -58,15 +65,19 @@ export abstract class BaseRenderer implements IBaseRenderer {
 
   public get bodyBBox() {
     const rootNode = this.bodyElement?.node();
-    const canvasNode = this.canvas.node();
-    assert(canvasNode);
+    const canvasWrapperNode = this.canvasWrapper.node();
+    assert(canvasWrapperNode);
     if (!rootNode) return;
-    const canvasBbox = canvasNode.getBoundingClientRect();
+    const canvasBbox = canvasWrapperNode.getBoundingClientRect();
     const rootBbox = rootNode.getBoundingClientRect();
+    const position = new Vec2(
+      rootBbox.x - canvasBbox.x,
+      rootBbox.y - canvasBbox.y,
+    );
 
     return {
-      x: rootBbox.x - canvasBbox.x,
-      y: rootBbox.y - canvasBbox.y,
+      x: position.x,
+      y: position.y,
       width: rootBbox.width,
       height: rootBbox.height,
     };

@@ -277,9 +277,9 @@ function MenuComponent() {
         <Menu.Item itemId="bracket" />
       </Menu.Group>
       <Menu.Group>
-        <Menu.Item itemId="zoom-in" />
-        <Menu.Item itemId="zoom-out" />
-        <Menu.Item itemId="zoom-reset" />
+        <Menu.Item itemId="zoom-in" title="Zoom In" />
+        <Menu.Item itemId="zoom-out" title="Zoom Out" />
+        <Menu.Item itemId="zoom-reset" title="Reset Zoom" />
         <Menu.Item itemId="settings" />
         <Menu.Item itemId="help" />
       </Menu.Group>

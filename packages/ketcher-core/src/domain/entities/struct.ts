@@ -408,11 +408,11 @@ export class Struct {
     const sgroup2 = this.getGroupFromAtomId(halfBond.end);
     const startCoords =
       sgroup1 instanceof MonomerMicromolecule
-        ? sgroup1.pp
+        ? (sgroup1.pp as Vec2)
         : this.atoms.get(halfBond.begin)!.pp;
     const endCoords =
       sgroup2 instanceof MonomerMicromolecule
-        ? sgroup2.pp
+        ? (sgroup2.pp as Vec2)
         : this.atoms.get(halfBond.end)!.pp;
     const coordsDifference = Vec2.diff(endCoords, startCoords).normalized();
 

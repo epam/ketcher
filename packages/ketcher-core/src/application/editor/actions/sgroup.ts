@@ -189,7 +189,7 @@ export function fromSgroupAddition(
   pp?,
   expanded?,
   name?,
-  oldSgroup,
+  oldSgroup?,
 ) {
   // eslint-disable-line
   let action = new Action();

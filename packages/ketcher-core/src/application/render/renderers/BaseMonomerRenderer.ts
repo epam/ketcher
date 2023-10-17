@@ -35,8 +35,8 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     public monomer: BaseMonomer,
     private monomerSelectedElementId: string,
     private monomerHoveredElementId: string,
+    monomerSymbolElementId: string,
     private scale?: number,
-    private monomerSymbolElementId: string,
   ) {
     super(monomer as DrawingEntity);
     this.monomer.setRenderer(this);
@@ -47,6 +47,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   }
 
   public get monomerSymbolBoundingClientRect() {
+    assert(this.monomerSymbolElement);
     return this.monomerSymbolElement.getBoundingClientRect();
   }
 

@@ -1,9 +1,6 @@
 import { IKetConnection } from 'application/formatters/types/ket';
 import { Command } from 'domain/entities/Command';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
-import { Scale } from 'domain/helpers';
-import { provideEditorSettings } from 'application/editor/editorSettings';
-import { Vec2 } from 'domain/entities';
 
 export function polymerBondToDrawingEntity(
   connection: IKetConnection,

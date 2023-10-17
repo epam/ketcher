@@ -62,6 +62,7 @@ export interface PanelProps {
   onFullscreen: VoidFunction;
   onAbout: VoidFunction;
   onHelp: VoidFunction;
+  togglerComponent?: JSX.Element;
 }
 
 const collapseLimit = 650;
@@ -134,6 +135,7 @@ export const TopToolbar = ({
   onFullscreen,
   onAbout,
   onHelp,
+  togglerComponent,
 }: PanelProps) => {
   const { ref: resizeRef, width = 50 } = useResizeObserver<HTMLDivElement>();
 
@@ -190,6 +192,9 @@ export const TopToolbar = ({
         indigoVerification={indigoVerification}
         isCollapsed={width < collapseLimit}
       />
+      {togglerComponent}
+      <Divider />
+
       <SystemControls
         onHistoryClick={() => {
           console.log('History button clicked'); // @TODO Implement handler when History log is ready

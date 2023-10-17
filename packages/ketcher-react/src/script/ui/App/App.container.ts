@@ -23,7 +23,14 @@ const mapDispatchToProps: AppCallProps = {
   checkServer,
 };
 
-const AppContainer = connect(null, mapDispatchToProps)(App);
+const AppContainer = connect<
+  {},
+  AppCallProps,
+  { togglerComponent?: JSX.Element }
+>(
+  null,
+  mapDispatchToProps,
+)(App);
 
 export { AppContainer };
 export default AppContainer;

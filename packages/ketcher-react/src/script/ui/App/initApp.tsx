@@ -36,6 +36,7 @@ function initApp(
   options: any,
   server: StructService,
   setEditor: (editor: any) => void,
+  togglerComponent?: JSX.Element,
 ) {
   const store = createStore(options, server, setEditor);
   store.dispatch(initKeydownListener(element));
@@ -51,7 +52,7 @@ function initApp(
               getKetcherInstance: () => (window as any).ketcher as Ketcher,
             }}
           >
-            <App />
+            <App togglerComponent={togglerComponent} />
           </AppContext.Provider>
         </ErrorsContext.Provider>
       </SettingsContext.Provider>

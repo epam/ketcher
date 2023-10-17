@@ -78,13 +78,19 @@ const muiTheme = createTheme(muiOverrides);
 interface EditorContainerProps {
   onInit?: () => void;
   theme?: DeepPartial<EditorTheme>;
+  togglerComponent: JSX.Element;
 }
 
 interface EditorProps {
   theme?: DeepPartial<EditorTheme>;
+  togglerComponent: JSX.Element;
 }
 
-function EditorContainer({ onInit, theme }: EditorContainerProps) {
+function EditorContainer({
+  onInit,
+  theme,
+  togglerComponent,
+}: EditorContainerProps) {
   const rootElRef = useRef<HTMLDivElement>(null);
   const editorTheme: EditorTheme = theme
     ? merge(defaultTheme, theme)
@@ -103,14 +109,14 @@ function EditorContainer({ onInit, theme }: EditorContainerProps) {
       <ThemeProvider theme={mergedTheme}>
         <Global styles={getGlobalStyles} />
         <div ref={rootElRef} className={EditorClassName}>
-          <Editor theme={editorTheme} />
+          <Editor theme={editorTheme} togglerComponent={togglerComponent} />
         </div>
       </ThemeProvider>
     </Provider>
   );
 }
 
-function Editor({ theme }: EditorProps) {
+function Editor({ theme, togglerComponent }: EditorProps) {
   const dispatch = useAppDispatch();
   const canvasRef = useRef<SVGSVGElement>(null);
   const errorTooltipText = useAppSelector(selectErrorTooltipText);
@@ -193,6 +199,8 @@ function Editor({ theme }: EditorProps) {
   return (
     <>
       <Layout>
+        <Layout.Top>{togglerComponent}</Layout.Top>
+
         <Layout.Left>
           <MenuComponent />
         </Layout.Left>

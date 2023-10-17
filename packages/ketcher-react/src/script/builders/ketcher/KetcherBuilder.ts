@@ -59,6 +59,7 @@ class KetcherBuilder {
     staticResourcesUrl: string,
     errorHandler: (message: string) => void,
     buttons?: ButtonsConfig,
+    togglerComponent?: JSX.Element,
   ): Promise<void> {
     const { structService } = this;
 
@@ -76,6 +77,7 @@ class KetcherBuilder {
         },
         structService!,
         resolve,
+        togglerComponent,
       );
     });
 

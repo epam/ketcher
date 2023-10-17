@@ -37,7 +37,6 @@ const setupEllipse = async (page: Page) => {
 async function setZoomInputValue(page: Page, value: string) {
   await page.getByTestId('zoom-input').click();
   await page.getByTestId('top-toolbar').getByRole('textbox').fill(value);
-  // await page.getByTestId('zoom-value').fill(value);
   await page.keyboard.press('Enter');
 }
 

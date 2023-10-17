@@ -17,6 +17,7 @@
 import { Component, createRef } from 'react';
 import clsx from 'clsx';
 import classes from './cliparea.module.less';
+import { isClipboardAPIAvailable, notifyCopyCut } from './clipboardUtils';
 
 const ieCb = window.clipboardData;
 
@@ -45,25 +46,47 @@ class ClipArea extends Component {
         if (event.shiftKey && !isActiveElement(event.target))
           event.preventDefault();
       },
-      copy: async (event) => {
-        if (this.props.focused() && this.props.onCopy) {
-          const data = await this.props.onCopy();
-
+      copy: (event) => {
+        if (!this.props.focused()) {
+          return;
+        }
+        if (isClipboardAPIAvailable()) {
+          this.props.onCopy().then((data) => {
+            if (!data) {
+              return;
+            }
+            copy(data).then(() => {
+              event.preventDefault();
+              notifyCopyCut();
+            });
+          });
+        } else {
+          const data = this.props.onLegacyCopy();
           if (data) {
-            await copy(data);
+            legacyCopy(event.clipboardData, data);
           }
-
           event.preventDefault();
         }
       },
       cut: async (event) => {
-        if (this.props.focused() && this.props.onCut) {
-          const data = await this.props.onCut();
-
+        if (!this.props.focused()) {
+          return;
+        }
+        if (isClipboardAPIAvailable()) {
+          this.props.onCut().then((data) => {
+            if (!data) {
+              return;
+            }
+            copy(data).then(() => {
+              event.preventDefault();
+              notifyCopyCut();
+            });
+          });
+        } else {
+          const data = this.props.onLegacyCut();
           if (data) {
-            await copy(data);
+            legacyCopy(event.clipboardData, data);
           }
-
           event.preventDefault();
         }
       },
@@ -123,6 +146,24 @@ async function copy(data) {
     await navigator.clipboard.writeText(data['text/plain']);
   } catch (e) {
     console.info(`Could not write exact type ${data && data.toString()}`);
+  }
+}
+
+function legacyCopy(clipboardData, data) {
+  if (!clipboardData && ieCb) {
+    ieCb.setData('text', data['text/plain']);
+  } else {
+    let curFmt = null;
+    clipboardData.setData('text/plain', data['text/plain']);
+    try {
+      Object.keys(data).forEach((fmt) => {
+        curFmt = fmt;
+        clipboardData.setData(fmt, data[fmt]);
+      });
+    } catch (e) {
+      console.error('cliparea.jsx::legacyCopy', e);
+      console.info(`Could not write exact type ${curFmt}`);
+    }
   }
 }
 

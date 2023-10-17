@@ -82,12 +82,16 @@ class ReBond extends ReObject {
       return;
     }
     const p1 = Scale.modelToCanvas(
-      sgroup1 instanceof MonomerMicromolecule ? sgroup1.pp : atom1.a.pp,
+      sgroup1 instanceof MonomerMicromolecule
+        ? (sgroup1.pp as Vec2)
+        : atom1.a.pp,
       render.options,
     );
 
     const p2 = Scale.modelToCanvas(
-      sgroup2 instanceof MonomerMicromolecule ? sgroup2.pp : atom2.a.pp,
+      sgroup2 instanceof MonomerMicromolecule
+        ? (sgroup2.pp as Vec2)
+        : atom2.a.pp,
       render.options,
     );
     const hb1 = restruct.molecule.halfBonds.get(bond.b.hb1);

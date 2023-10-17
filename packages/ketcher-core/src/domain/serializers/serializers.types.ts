@@ -17,6 +17,4 @@
 export interface Serializer<T> {
   deserialize: (content: string) => T;
   serialize: (struct: T) => string;
-  deserializeMicromolecule?: (content: string) => void;
-  serializeMicromolecules?: (content: string) => void;
 }

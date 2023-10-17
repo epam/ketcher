@@ -11,8 +11,8 @@ export class SugarRenderer extends BaseMonomerRenderer {
       monomer,
       SUGAR_SELECTED_ELEMENT_ID,
       SUGAR_SELECTED_ELEMENT_ID,
-      scale,
       SUGAR_SYMBOL_ELEMENT_ID,
+      scale,
     );
   }
 

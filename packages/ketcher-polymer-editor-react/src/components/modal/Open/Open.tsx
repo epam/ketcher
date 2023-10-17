@@ -19,6 +19,7 @@ import { ViewSwitcher } from './ViewSwitcher';
 import { ActionButton } from 'components/shared/actionButton';
 import { FileOpener, fileOpener } from './fileOpener';
 import { CoreEditor, KetSerializer } from 'ketcher-core';
+import assert from 'assert';
 
 export interface Props {
   onClose: () => void;
@@ -37,10 +38,10 @@ const onOk = ({ struct, fragment }) => {
   }
   const ketSerializer = new KetSerializer();
   const editor = CoreEditor.provideEditorInstance();
-  const { drawingEntitiesManager, modelChanges } =
-    ketSerializer.deserializeToDrawingEntities(struct);
-  editor.drawingEntitiesManager = drawingEntitiesManager;
-  editor.renderersContainer.update(modelChanges);
+  const deserialisedKet = ketSerializer.deserializeToDrawingEntities(struct);
+  assert(deserialisedKet);
+  editor.drawingEntitiesManager = deserialisedKet.drawingEntitiesManager;
+  editor.renderersContainer.update(deserialisedKet.modelChanges);
 };
 const isAnalyzingFile = false;
 const errorHandler = (error) => console.log(error);

@@ -26,7 +26,6 @@ import { Pool, SGroupAttachmentPoint } from 'domain/entities';
 import { ReSGroup } from 'application/render';
 import { SgContexts } from 'application/editor/shared/constants';
 import assert from 'assert';
-import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 
 export class SGroupBracketParams {
   readonly c: Vec2;

@@ -226,14 +226,10 @@ function MenuComponent() {
   const menuItemChanged = (name) => {
     if (modalComponentList[name]) {
       dispatch(openModal(name));
-      return;
-    } else if (name !== 'zoom-in' && name !== 'zoom-out') {
+    } else if (!['zoom-in', 'zoom-out', 'zoom-reset'].includes(name)) {
       dispatch(selectTool(name));
       editor.events.selectTool.dispatch(name);
-      return;
     }
-
-    editor.events.zoomChange.dispatch(7);
   };
 
   return (
@@ -272,6 +268,7 @@ function MenuComponent() {
       <Menu.Group>
         <Menu.Item itemId="zoom-in" />
         <Menu.Item itemId="zoom-out" />
+        <Menu.Item itemId="zoom-reset" />
         <Menu.Item itemId="settings" />
         <Menu.Item itemId="help" />
       </Menu.Group>

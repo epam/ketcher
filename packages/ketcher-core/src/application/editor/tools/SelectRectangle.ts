@@ -37,12 +37,11 @@ class SelectRectangle implements BaseTool {
     this.brush.on('brush', (brushEvent) => {
       const selection = brushEvent.selection;
       if (!selection) return;
-
       requestAnimationFrame(() => {
-        const topLeftPoint = Coordinates.pageToView(
+        const topLeftPoint = Coordinates.viewToPage(
           new Vec2(selection[0][0], selection[0][1]),
         );
-        const bottomRightPoint = Coordinates.pageToView(
+        const bottomRightPoint = Coordinates.viewToPage(
           new Vec2(selection[1][0], selection[1][1]),
         );
         const modelChanges =

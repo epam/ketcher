@@ -20,6 +20,7 @@ import { Vec2 } from 'domain/entities';
 import assert from 'assert';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { BaseTool } from 'application/editor/tools/Tool';
+import Coordinates from '../shared/coordinates';
 
 class PolymerBond implements BaseTool {
   private bondRenderer?: PolymerBondRenderer;
@@ -39,13 +40,17 @@ class PolymerBond implements BaseTool {
         );
         return;
       }
-      const { top: offsetTop, left: offsetLeft } = this.editor.canvasOffset;
-
+      const zoomedCoordinates = Coordinates.viewToPage(
+        new Vec2(
+          this.editor.lastCursorPosition.x,
+          this.editor.lastCursorPosition.y,
+        ),
+      );
       const { polymerBond, command: modelChanges } =
         this.editor.drawingEntitiesManager.addPolymerBond(
           selectedRenderer.monomer,
           selectedRenderer.center,
-          new Vec2(event.clientX - offsetLeft, event.clientY - offsetTop),
+          zoomedCoordinates,
         );
 
       this.editor.renderersContainer.update(modelChanges);
@@ -53,12 +58,17 @@ class PolymerBond implements BaseTool {
     }
   }
 
-  public mousemove(event) {
+  public mousemove() {
     if (this.bondRenderer) {
-      const { top: offsetTop, left: offsetLeft } = this.editor.canvasOffset;
+      const zoomCoordinates = Coordinates.viewToPage(
+        new Vec2(
+          this.editor.lastCursorPosition.x,
+          this.editor.lastCursorPosition.y,
+        ),
+      );
       const modelChanges = this.editor.drawingEntitiesManager.movePolymerBond(
         this.bondRenderer.polymerBond,
-        new Vec2(event.clientX - offsetLeft, event.clientY - offsetTop),
+        zoomCoordinates,
       );
       this.editor.renderersContainer.update(modelChanges);
     }

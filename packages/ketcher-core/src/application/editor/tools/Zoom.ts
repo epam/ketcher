@@ -13,8 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-// import { CoreEditor } from 'application/editor';
-import { zoom, select, ZoomTransform } from 'd3';
+import { zoom, select, ZoomTransform, ZoomBehavior } from 'd3';
 import { BaseTool } from 'application/editor/tools/Tool';
 import { canvasSelector, drawnStructuresSelector } from '../constants';
 import { D3SvgElementSelection } from 'application/render/types';
@@ -24,59 +23,80 @@ import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 class ZoomTool implements BaseTool {
   private canvas: D3SvgElementSelection<SVGSVGElement, void>;
   private canvasWrapper: D3SvgElementSelection<SVGSVGElement, void>;
+  private zoom: ZoomBehavior<SVGSVGElement, void>;
   private zoomLevel: number;
   private zoomTransform: ZoomTransform;
-  private drawingEntitiesManager: DrawingEntitiesManager;
-  // private zoomCenterShift: Vec2;
+  drawingEntitiesManager: DrawingEntitiesManager;
 
-  constructor(drawingEntitiesManager: DrawingEntitiesManager) {
-    // this.editor = editor;
+  // eslint-disable-next-line no-use-before-define
+  private static _instance: ZoomTool;
+  public static get instance() {
+    return ZoomTool._instance;
+  }
+
+  private constructor(drawingEntitiesManager: DrawingEntitiesManager) {
     this.canvasWrapper = select(canvasSelector);
     this.canvas = select(drawnStructuresSelector);
+
     this.zoomLevel = 1;
     this.zoomTransform = new ZoomTransform(1, 0, 0);
     this.drawingEntitiesManager = drawingEntitiesManager;
-    // this.zoomCenterShift = new Vec2(0, 0);
+
+    this.zoom = zoom<SVGSVGElement, void>()
+      .scaleExtent([0.2, 4])
+      .on('zoom', this.zoomAction.bind(this));
+    this.canvasWrapper.call(this.zoom);
     this.addScrollZooming();
-    // console.log(this.editor);
+  }
+
+  static getInstance(drawingEntitiesManager: DrawingEntitiesManager) {
+    if (!ZoomTool._instance) {
+      ZoomTool._instance = new ZoomTool(drawingEntitiesManager);
+    }
+    return ZoomTool._instance;
   }
 
   setZoom(zoomLevel: number) {
     this.zoomLevel = zoomLevel;
   }
 
+  getZoomLevel() {
+    return this.zoomLevel;
+  }
+
   setZoomTransform(transform: ZoomTransform) {
     this.zoomTransform = transform;
   }
 
-  // setZoomCenterShift(zoomCenterShift: Vec2) {
-  //   this.zoomCenterShift = zoomCenterShift;
-  // }
+  zoomAction({ transform }) {
+    this.canvas.attr('transform', transform);
+    this.zoomLevel = transform.k;
+    this.zoomTransform = transform;
+  }
 
   addScrollZooming() {
-    const boundingBox = this.canvasWrapper.node()?.getBBox();
-    if (!boundingBox) {
-      return;
-    }
     this.canvasWrapper.call(
-      zoom<SVGSVGElement, void>()
-        .extent([
-          [0, 0],
-          [boundingBox.width, boundingBox.height],
-        ])
-        .scaleExtent([0.2, 4])
+      this.zoom
         .filter((e) => e.type === 'wheel')
-        .on('zoom', ({ transform }) => {
-          // this.drawingEntitiesManager.allEntities.forEach(([_, entity]) => {
-          //   entity.moveAbsolute(this.invertZoom(entity.position));
-          // });
-          this.canvas.attr('transform', transform);
-          this.zoomLevel = transform.k;
-          this.zoomTransform = transform;
-          // console.log(this.drawingEntitiesManager.allEntities);
-          // this.zoomCenterShift = new Vec2(transform.x, transform.y);
-        }),
+        .on('zoom', this.zoomAction.bind(this)),
     );
+  }
+
+  subscribeMenuZoom() {
+    const zoomStep = 0.1;
+    select('.zoom-in').on('click', () => {
+      this.zoom.scaleTo(this.canvasWrapper, this.zoomLevel + zoomStep);
+    });
+    select('.zoom-out').on('click', () => {
+      this.zoom.scaleTo(this.canvasWrapper, this.zoomLevel - zoomStep);
+    });
+    select('.zoom-reset').on('click', () => {
+      this.zoom.transform(this.canvasWrapper, new ZoomTransform(1, 0, 0));
+    });
+  }
+
+  zoomExtraElement() {
+    this.zoom.scaleTo(this.canvasWrapper, this.zoomLevel);
   }
 
   scaleCoordinates(position: Vec2) {
@@ -95,38 +115,7 @@ class ZoomTool implements BaseTool {
     return value / this.zoomLevel;
   }
 
-  // scaleCoordinates = (position: Vec2) => {
-  //   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  //   const canvas = this.canvas.node()!.getBBox();
-  //   const centerX = canvas.width / 2 + this.zoomCenterShift.x;
-  //   const centerY = canvas.height / 2 + this.zoomCenterShift.y;
-  //   // let centerX, centerY;
-  //   // if (center) {
-  //   //   centerX = center.x;
-  //   //   centerY = center.y;
-  //   // } else {
-  //   //   centerX = canvas.width / 2;
-  //   //   centerY = canvas.height / 2;
-  //   // }
-  //   const relX = position.x - centerX;
-  //   const relY = position.y - centerY;
-  //   const scaledX = relX * this.zoomLevel;
-  //   const scaledY = relY * this.zoomLevel;
-  //   return new Vec2({ x: scaledX + centerX, y: scaledY + centerY });
-  // };
-
   destroy() {}
 }
 
-let ZoomToolInstance;
-
-const zoomProvider = {
-  getZoomTool: (drawingEntitiesManager?: DrawingEntitiesManager) => {
-    if (!ZoomToolInstance && drawingEntitiesManager) {
-      ZoomToolInstance = new ZoomTool(drawingEntitiesManager);
-    }
-    return ZoomToolInstance;
-  },
-};
-
-export { ZoomTool, zoomProvider };
+export default ZoomTool;

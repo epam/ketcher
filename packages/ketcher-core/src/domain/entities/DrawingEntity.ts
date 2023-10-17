@@ -1,8 +1,6 @@
 import { Vec2 } from 'domain/entities/vec2';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import assert from 'assert';
-import { zoomProvider } from 'application/editor/tools/Zoom';
-import Coordinates from 'application/editor/shared/coordinates';
 let id = 1;
 
 export abstract class DrawingEntity {
@@ -52,12 +50,9 @@ export abstract class DrawingEntity {
   ) {
     assert(this.baseRenderer);
     const prevSelectedValue = this.selected;
-    const zoom = zoomProvider.getZoomTool().zoomLevel;
-    const center = Coordinates.pageToView(
-      new Vec2(
-        this.baseRenderer.bodyX + (this.baseRenderer.bodyWidth * zoom) / 2,
-        this.baseRenderer.bodyY + (this.baseRenderer.bodyHeight * zoom) / 2,
-      ),
+    const center = new Vec2(
+      this.baseRenderer.bodyX + this.baseRenderer.bodyWidth / 2,
+      this.baseRenderer.bodyY + this.baseRenderer.bodyHeight / 2,
     );
     const centerX = center.x;
     const centerY = center.y;

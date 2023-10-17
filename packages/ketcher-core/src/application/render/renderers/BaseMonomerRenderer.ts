@@ -5,8 +5,8 @@ import { D3SvgElementSelection } from 'application/render/types';
 import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { editorEvents } from 'application/editor/editorEvents';
 import { AttachmentPoint } from 'domain/AttachmentPoint';
-import { zoomProvider } from 'application/editor/tools/Zoom';
 import Coordinates from 'application/editor/shared/coordinates';
+import { Vec2 } from 'domain/entities';
 
 export abstract class BaseMonomerRenderer extends BaseRenderer {
   private editorEvents: typeof editorEvents;
@@ -32,11 +32,10 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   }
 
   public get center() {
-    const zoom = zoomProvider.getZoomTool().zoomLevel;
-    return {
-      x: this.scaledMonomerPosition.x + this.bodyWidth / zoom / 2,
-      y: this.scaledMonomerPosition.y + this.bodyHeight / zoom / 2,
-    };
+    return new Vec2(
+      this.scaledMonomerPosition.x + this.bodyWidth / 2,
+      this.scaledMonomerPosition.y + this.bodyHeight / 2,
+    );
   }
 
   public get textColor() {

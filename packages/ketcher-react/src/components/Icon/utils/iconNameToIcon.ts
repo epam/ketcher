@@ -127,6 +127,7 @@ import TransformFlipVIcon from '../../../assets/icons/files/transform-flip-v.svg
 import UndoIcon from '../../../assets/icons/files/undo.svg';
 import ZoomInIcon from '../../../assets/icons/files/zoom-in.svg';
 import ZoomOutIcon from '../../../assets/icons/files/zoom-out.svg';
+import ZoomResetIcon from '../../../assets/icons/files/zoom-reset.svg';
 import TextSpecialSymbolsIcon from '../../../assets/icons/files/text-special-symbols.svg';
 import Save1Icon from '../../../assets/icons/files/save-1.svg';
 import Open1Icon from '../../../assets/icons/files/open-1.svg';
@@ -380,6 +381,7 @@ export const iconNameToIcon = {
   undo: UndoIcon,
   'zoom-in': ZoomInIcon,
   'zoom-out': ZoomOutIcon,
+  'zoom-reset': ZoomResetIcon,
   'shape-ellipse': ShapeEllipseIcon,
   'shape-rectangle': ShapeRectangleIcon,
   'shape-polyline': ShapePolylineIcon,

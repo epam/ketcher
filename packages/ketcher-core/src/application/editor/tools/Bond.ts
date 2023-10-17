@@ -165,6 +165,26 @@ class PolymerBond implements BaseTool {
       renderer === this.bondRenderer?.polymerBond?.firstMonomer?.renderer;
 
     if (this.bondRenderer && !isFirstMonomerHovered) {
+      const firstMonomer = this.bondRenderer?.polymerBond?.firstMonomer;
+      const secondMonomer = renderer.monomer;
+
+      for (const key in secondMonomer.attachmentPointsToBonds) {
+        const bond = secondMonomer.attachmentPointsToBonds[key];
+        if (bond !== null) {
+          if (
+            (bond.firstMonomer === firstMonomer &&
+              bond.secondMonomer === secondMonomer) ||
+            (bond.firstMonomer === secondMonomer &&
+              bond.secondMonomer === firstMonomer)
+          ) {
+            this.editor.events.error.dispatch(
+              "There can't be more than 1 bond between the first and the second monomer",
+            );
+            return;
+          }
+        }
+      }
+
       const modelChanges = this.finishBondCreation(renderer.monomer);
       this.editor.renderersContainer.update(modelChanges);
       this.bondRenderer = undefined;

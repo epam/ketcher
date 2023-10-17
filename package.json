@@ -63,6 +63,7 @@
   },
   "overrides": {
     "minimatch": "^9.0.3",
-    "nth-check": "^2.1.1"
+    "nth-check": "^2.1.1",
+    "postcss": "8.4.31"
   }
 }

@@ -20,7 +20,7 @@ import {
   setRingMembership,
   setRingSize,
   setSubstitutionCount,
-} from './utils';
+} from '../utils';
 
 async function drawStructure(page: Page) {
   await selectBond(BondTypeName.Single, page);
@@ -29,7 +29,7 @@ async function drawStructure(page: Page) {
   await clickInTheMiddleOfTheScreen(page);
 }
 
-test.describe('Query features', () => {
+test.describe('Checking query specific attributes in SMARTS format', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
     await drawStructure(page);
@@ -44,6 +44,16 @@ test.describe('Query features', () => {
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
     await checkSmartsValue(page, '[#6](-[#6])(-[#6;x2])-[#6]');
+  });
+
+  test('Setting ring bond count - As drawn', async ({ page }) => {
+    /**
+     * That test will fail until https://github.com/epam/Indigo/issues/1331 is fixed
+     */
+    await setRingBondCount(page, 'As drawn');
+    await pressButton(page, 'Apply');
+    await takeEditorScreenshot(page);
+    await checkSmartsValue(page, '[#6](-[#6])(-[#6;x0])-[#6]');
   });
 
   test('Setting H count', async ({ page }) => {
@@ -111,11 +121,21 @@ test.describe('Query features', () => {
     await checkSmartsValue(page, '[#6](-[#6])(-[#6;X8])-[#6]');
   });
 
-  test('Setting chirality', async ({ page }) => {
+  test('Setting chirality - anticlockwise', async ({ page }) => {
     /**
      * TODO: add expected SMARTS representative when https://github.com/epam/Indigo/issues/1328 would be fixed
      */
     await setChirality(page, 'anticlockwise');
+    await pressButton(page, 'Apply');
+    await takeEditorScreenshot(page);
+    await checkSmartsValue(page, '');
+  });
+
+  test('Setting chirality - clockwise', async ({ page }) => {
+    /**
+     * TODO: add expected SMARTS representative when https://github.com/epam/Indigo/issues/1328 would be fixed
+     */
+    await setChirality(page, 'clockwise');
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
     await checkSmartsValue(page, '');

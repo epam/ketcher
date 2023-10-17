@@ -290,7 +290,6 @@ function CustomQueryField(props) {
           data-testid="atomCustomQuery"
           name={name}
           schema={desc}
-          data-testid="custom-query-value"
           {...fieldOpts}
           {...rest}
         />

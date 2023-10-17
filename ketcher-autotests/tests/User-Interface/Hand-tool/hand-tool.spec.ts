@@ -27,8 +27,7 @@ test.describe('Hand tool', () => {
     // Test case: EPMLSOPKET-4240
     const button = page.getByTestId('hand');
     await expect(button).toHaveAttribute('title', 'Hand tool (Ctrl+Alt+H)');
-    // await page.getByTestId('hand').click;
-    await selectNestedTool(page, SelectTool.HAND);
+    await button.click();
     await moveMouseToTheMiddleOfTheScreen(page);
     await expect(page).toHaveScreenshot();
   });

@@ -7,6 +7,7 @@ import { editorEvents } from 'application/editor/editorEvents';
 import { AttachmentPoint } from 'domain/AttachmentPoint';
 import Coordinates from 'application/editor/shared/coordinates';
 import { Vec2 } from 'domain/entities';
+import { AttachmentPointName } from 'domain/types';
 
 export abstract class BaseMonomerRenderer extends BaseRenderer {
   private editorEvents: typeof editorEvents;
@@ -29,6 +30,18 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     super(monomer as DrawingEntity);
     this.monomer.setRenderer(this);
     this.editorEvents = editorEvents;
+  }
+
+  private isSnakeBondForAttachmentPoint(
+    attachmentPointName: AttachmentPointName,
+  ) {
+    return (
+      this.monomer.attachmentPointsToBonds[attachmentPointName]?.renderer
+        ?.isSnake &&
+      !this.monomer.attachmentPointsToBonds[
+        attachmentPointName
+      ]?.renderer?.isMonomersOnSameHorizontalLine()
+    );
   }
 
   public get center() {
@@ -136,6 +149,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
         this.bodyHeight,
         this.canvas,
         AttachmentPointName,
+        this.isSnakeBondForAttachmentPoint(AttachmentPointName),
       );
       atP = attPointInstance.getElement();
     } else {

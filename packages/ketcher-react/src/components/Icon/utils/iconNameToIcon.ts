@@ -124,6 +124,7 @@ import TextSubscript from '../../../assets/icons/files/text-subscript.svg';
 import TextSuperscript from '../../../assets/icons/files/text-superscript.svg';
 import TransformFlipHIcon from '../../../assets/icons/files/transform-flip-h.svg';
 import TransformFlipVIcon from '../../../assets/icons/files/transform-flip-v.svg';
+import SnakeModeIcon from '../../../assets/icons/files/snake-mode.svg';
 import UndoIcon from '../../../assets/icons/files/undo.svg';
 import ZoomInIcon from '../../../assets/icons/files/zoom-in.svg';
 import ZoomOutIcon from '../../../assets/icons/files/zoom-out.svg';
@@ -371,6 +372,7 @@ export const iconNameToIcon = {
   'template-7': Template7Icon,
   'template-dialog': TemplateDialogIcon,
   'template-lib': TemplateLibIcon,
+  'snake-mode': SnakeModeIcon,
   text: TextIcon,
   'text-bold': TextBold,
   'text-italic': TextItalic,

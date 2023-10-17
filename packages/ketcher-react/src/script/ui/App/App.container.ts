@@ -24,7 +24,7 @@ const mapDispatchToProps: AppCallProps = {
 };
 
 const AppContainer = connect<
-  {},
+  Record<string, never>,
   AppCallProps,
   { togglerComponent?: JSX.Element }
 >(

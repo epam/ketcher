@@ -121,7 +121,7 @@ test.describe('draw and highlight line', () => {
   });
 
   test('Simple Objects - Edit Line - highlighting and changing directions', async ({
-    // // test case: EPMLSOPKET-16750
+    // Test case: EPMLSOPKET-16750
     page,
   }) => {
     await setupLine(page);

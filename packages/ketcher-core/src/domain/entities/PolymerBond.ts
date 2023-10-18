@@ -2,7 +2,6 @@ import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { PolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer';
 import { Vec2 } from 'domain/entities/vec2';
 import { BaseMonomer } from './BaseMonomer';
-import assert from 'assert';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 
 export class PolymerBond extends DrawingEntity {
@@ -33,7 +32,6 @@ export class PolymerBond extends DrawingEntity {
   }
 
   public moveToLinkedMonomers() {
-    assert(this.firstMonomer.renderer);
     const firstMonomerCenter = this.firstMonomer.position;
     const secondMonomerCenter = this.secondMonomer?.position;
     this.moveBondStartAbsolute(firstMonomerCenter.x, firstMonomerCenter.y);

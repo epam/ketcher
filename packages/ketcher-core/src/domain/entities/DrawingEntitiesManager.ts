@@ -37,8 +37,8 @@ const HORIZONTAL_DISTANCE_FROM_MONOMER = 50;
 const VERTICAL_DISTANCE_FROM_MONOMER = 60;
 const DISTANCE_FROM_RIGHT = 70;
 const DISTANCE_BETWEEN_MONOMERS = 30;
-const MONOMER_START_X_POSITION = 40;
-const MONOMER_START_Y_POSITION = 40;
+const MONOMER_START_X_POSITION = 70;
+const MONOMER_START_Y_POSITION = 70;
 
 type RnaPresetAdditionParams = {
   sugar: MonomerItemType;
@@ -226,7 +226,6 @@ export class DrawingEntitiesManager {
       firstMonomer.startBondAttachmentPoint,
       polymerBond,
     );
-    console.log(startPosition);
     polymerBond.moveBondStartAbsolute(startPosition.x, startPosition.y);
     polymerBond.moveBondEndAbsolute(endPosition.x, endPosition.y);
 

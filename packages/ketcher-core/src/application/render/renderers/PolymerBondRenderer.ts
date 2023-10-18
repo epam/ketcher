@@ -130,8 +130,8 @@ export class PolymerBondRenderer extends BaseRenderer {
   }
 
   public appendSnakeBond(rootElement) {
-    const startPosition = this.polymerBond.startPosition;
-    const endPosition = this.polymerBond.endPosition;
+    const startPosition = this.scaledPosition.startPosition;
+    const endPosition = this.scaledPosition.endPosition;
     this.updateSnakeBondPath(startPosition, endPosition);
 
     this.bodyElement = rootElement
@@ -471,8 +471,8 @@ export class PolymerBondRenderer extends BaseRenderer {
   }
 
   private moveSnakeBondEnd() {
-    const startPosition = this.polymerBond.startPosition;
-    const endPosition = this.polymerBond.endPosition;
+    const startPosition = this.scaledPosition.startPosition;
+    const endPosition = this.scaledPosition.endPosition;
     this.updateSnakeBondPath(startPosition, endPosition);
 
     assert(this.bodyElement);
@@ -508,8 +508,8 @@ export class PolymerBondRenderer extends BaseRenderer {
   }
 
   private moveSnakeBondStart() {
-    const startPosition = this.polymerBond.startPosition;
-    const endPosition = this.polymerBond.endPosition;
+    const startPosition = this.scaledPosition.startPosition;
+    const endPosition = this.scaledPosition.endPosition;
     this.updateSnakeBondPath(startPosition, endPosition);
 
     assert(this.bodyElement);

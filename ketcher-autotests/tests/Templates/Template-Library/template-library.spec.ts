@@ -90,7 +90,7 @@ test.describe('Templates - Template Library', () => {
     await placePhenylalanineMustard(page, x + offsetX, y);
   });
 
-  test('Template Library — Structure Library UI', async ({ page }) => {
+  test('Structure Library UI', async ({ page }) => {
     // Test case: EPMLSOPKET-4265
     // Overview Templates Library structure
     await openStructureLibrary(page);
@@ -106,7 +106,7 @@ test.describe('Templates - Template Library', () => {
     );
   });
 
-  test('Templates — Template Library', async ({ page }) => {
+  test('Template Library', async ({ page }) => {
     // Test case: EPMLSOPKET-4266
     // Verify correct display of Template Library
     const deltaX = 0;
@@ -119,41 +119,37 @@ test.describe('Templates - Template Library', () => {
     await page.mouse.wheel(deltaX, deltaY);
   });
 
-  test('Templates — Functional groups tab', async ({ page }) => {
+  test(' Functional groups tab', async ({ page }) => {
     // Test case: EPMLSOPKET-4267
     // Verify Functional Group tab
     await openFunctionalGroup(page);
   });
 
-  test('Templates — Functional groups - adding structure', async ({ page }) => {
+  test(' Functional groups - adding structure', async ({ page }) => {
     // Test case: EPMLSOPKET-4267
     // Add sturucture from Functional Group into canvas
     await selectFunctionalGroups(FunctionalGroups.FMOC, page);
     await clickInTheMiddleOfTheScreen(page);
   });
 
-  test('Template Library - Edit templates', async ({ page }) => {
+  test('Edit templates', async ({ page }) => {
     // Test case: EPMLSOPKET-1699
-    // Verify correct display of Temple Edit window
+    // Verify correct display of Template Edit window
     await editStructureTemplate(page, 'β-D-Sugars', 'β-D-Allopyranose');
   });
 
-  test('Template Library - Edit templates - name field with no character', async ({
-    page,
-  }) => {
+  test('Edit templates - name field with no character', async ({ page }) => {
     // Test case: EPMLSOPKET-1699
-    // Verify validation if name field not containe any characters
+    // Verify validation if name field not contain any characters
     await editStructureTemplate(page, 'β-D-Sugars', 'β-D-Allopyranose');
     await page.getByTestId('file-name-input').click();
     await page.keyboard.press('Control+a');
     await page.keyboard.press('Delete');
   });
 
-  test('Template Library - Edit templates - name with just spaces', async ({
-    page,
-  }) => {
+  test(' Edit templates - name with just spaces', async ({ page }) => {
     // Test case: EPMLSOPKET-1699
-    // Verify if structure name won't change if field will containe just spaces
+    // Verify if structure name won't change if field will contain just spaces
     await editStructureTemplate(page, 'β-D-Sugars', 'β-D-Allopyranose');
     await page.getByTestId('file-name-input').click();
     await page.keyboard.press('Control+a');
@@ -163,9 +159,7 @@ test.describe('Templates - Template Library', () => {
     await page.getByText('β-D-Sugars').click();
   });
 
-  test('Template Library - Text field 128 characters limit test ', async ({
-    page,
-  }) => {
+  test(' Text field 128 characters limit test ', async ({ page }) => {
     // Verify maximum character validation on the name field
     const textField = page.getByTestId('file-name-input');
     const number = 129;

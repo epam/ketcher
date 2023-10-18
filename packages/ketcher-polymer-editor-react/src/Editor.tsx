@@ -37,7 +37,9 @@ import {
   destroyEditor,
   selectEditor,
   selectEditorActiveTool,
+  selectEditorBondMode,
   selectTool,
+  selectMode,
 } from 'state/common';
 import { loadMonomerLibrary } from 'state/library';
 import { useAppDispatch, useAppSelector } from 'hooks';
@@ -202,7 +204,9 @@ function Editor({ theme }: EditorProps) {
         autoHideDuration={6000}
       >
         <StyledToast id="error-tooltip">
-          <StyledToastContent>{errorTooltipText}</StyledToastContent>
+          <StyledToastContent data-testid="error-tooltip">
+            {errorTooltipText}
+          </StyledToastContent>
           <StyledIconButton
             iconName="close"
             onClick={handleCloseErrorTooltip}
@@ -216,10 +220,16 @@ function Editor({ theme }: EditorProps) {
 function MenuComponent() {
   const dispatch = useAppDispatch();
   const activeTool = useAppSelector(selectEditorActiveTool);
+  const isSnakeMode = useAppSelector(selectEditorBondMode);
   const editor = useAppSelector(selectEditor);
+  const activeMenuItems = [activeTool];
+  if (isSnakeMode) activeMenuItems.push('snake-mode');
   const menuItemChanged = (name) => {
     if (modalComponentList[name]) {
       dispatch(openModal(name));
+    } else if (name === 'snake-mode') {
+      dispatch(selectMode(!isSnakeMode));
+      editor.events.selectMode.dispatch(!isSnakeMode);
     } else {
       dispatch(selectTool(name));
       editor.events.selectTool.dispatch(name);
@@ -227,7 +237,7 @@ function MenuComponent() {
   };
 
   return (
-    <Menu onItemClick={menuItemChanged} activeMenuItem={activeTool}>
+    <Menu onItemClick={menuItemChanged} activeMenuItems={activeMenuItems}>
       <Menu.Group>
         <Menu.Submenu>
           <Menu.Item itemId="open" title="Open..." />
@@ -255,6 +265,9 @@ function MenuComponent() {
       </Menu.Group>
       <Menu.Group>
         <Menu.Item itemId="bond-single" title="Single Bond (1)" />
+      </Menu.Group>
+      <Menu.Group>
+        <Menu.Item itemId="snake-mode" title="Snake mode" />
       </Menu.Group>
       <Menu.Group divider>
         <Menu.Item itemId="bracket" />

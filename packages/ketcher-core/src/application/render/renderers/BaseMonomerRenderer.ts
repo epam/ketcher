@@ -1,18 +1,30 @@
 import { BaseRenderer } from './BaseRenderer';
-import assert from 'assert';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { D3SvgElementSelection } from 'application/render/types';
 import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { editorEvents } from 'application/editor/editorEvents';
 import { Scale } from 'domain/helpers';
+import assert from 'assert';
+import {
+  attachmentPointNumberToAngle,
+  anglesToSector,
+  sectorsList,
+  checkFor0and360,
+} from 'domain/helpers/attachmentPointCalculations';
 import { AttachmentPoint } from 'domain/AttachmentPoint';
+import { AttachmentPointName } from 'domain/types';
 
 export abstract class BaseMonomerRenderer extends BaseRenderer {
   private editorEvents: typeof editorEvents;
   private selectionCircle?: D3SvgElementSelection<SVGCircleElement, void>;
   private selectionBorder?: D3SvgElementSelection<SVGUseElement, void>;
-  private r1AttachmentPoint?: D3SvgElementSelection<SVGGElement, void>;
-  private r2AttachmentPoint?: D3SvgElementSelection<SVGGElement, void>;
+
+  private freeSectorsList: number[] = sectorsList;
+
+  private attachmentPointElements:
+    | D3SvgElementSelection<SVGGElement, void>[]
+    | [] = [];
+
   static isSelectable() {
     return true;
   }
@@ -26,6 +38,18 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     super(monomer as DrawingEntity);
     this.monomer.setRenderer(this);
     this.editorEvents = editorEvents;
+  }
+
+  private isSnakeBondForAttachmentPoint(
+    attachmentPointName: AttachmentPointName,
+  ) {
+    return (
+      this.monomer.attachmentPointsToBonds[attachmentPointName]?.renderer
+        ?.isSnake &&
+      !this.monomer.attachmentPointsToBonds[
+        attachmentPointName
+      ]?.renderer?.isMonomersOnSameHorizontalLine()
+    );
   }
 
   public get center() {
@@ -56,76 +80,98 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     if (!this.rootElement) return;
     if (this.monomer.attachmentPointsVisible) {
       this.removeAttachmentPoints();
-      this.r1AttachmentPoint = this.appendR1AttachmentPoint(this.rootElement);
-      this.r2AttachmentPoint = this.appendR2AttachmentPoint(this.rootElement);
+      this.drawAttachmentPoints();
     } else {
       this.removeAttachmentPoints();
     }
   }
 
-  public appendR1AttachmentPoint(
-    rootElement: D3SvgElementSelection<SVGGElement, void>,
-  ) {
-    let attachmentPoint;
+  public drawAttachmentPoints() {
+    // draw used attachment points
 
-    if (this.monomer.isAttachmentPointUsed('R1')) {
-      const r1attachmentPoint = new AttachmentPoint(
-        rootElement as D3SvgElementSelection<SVGGElement, void>,
-        this.monomer,
-        this.bodyWidth,
-        this.bodyHeight,
-        this.canvas,
-        'R1',
-      );
-      attachmentPoint = r1attachmentPoint.getElement();
-    } else {
-      attachmentPoint = AttachmentPoint.appendAttachmentPointUnused(
-        rootElement as D3SvgElementSelection<SVGGElement, void>,
-        { x: 0, y: this.bodyHeight / 2 },
-        0,
-        this.monomer.isAttachmentPointPotentiallyUsed('R1'),
-        'R1',
-        -18,
-        -10,
-      );
-    }
+    this.monomer.usedAttachmentPointsNamesList.forEach((item) => {
+      const [attachmentPointElement, angle] = this.appendAttachmentPoint(item);
+      this.attachmentPointElements.push(attachmentPointElement as never);
 
-    return attachmentPoint;
+      if (typeof angle === 'number') {
+        // remove this sector from list of free sectors
+        const newList = this.freeSectorsList.filter((item) => {
+          return (
+            anglesToSector[item].min > angle ||
+            anglesToSector[item].max <= angle
+          );
+        });
+        this.freeSectorsList = checkFor0and360(newList);
+      }
+    });
+
+    const unrenderedAtPoints: string[] = [];
+
+    // draw free attachment points
+    this.monomer.unUsedAttachmentPointsNamesList.forEach((item) => {
+      const properAngleForFreeAttachmentPoint =
+        attachmentPointNumberToAngle[item];
+
+      // if this angle is free for unused att point, draw it
+      if (this.freeSectorsList.includes(properAngleForFreeAttachmentPoint)) {
+        const [attachmentPointElement, _] = this.appendAttachmentPoint(
+          item,
+          properAngleForFreeAttachmentPoint,
+        );
+        this.attachmentPointElements.push(attachmentPointElement as never);
+
+        // remove this sector from list
+        const newList = this.freeSectorsList.filter((item) => {
+          return item !== properAngleForFreeAttachmentPoint;
+        });
+        this.freeSectorsList = checkFor0and360(newList);
+      } else {
+        // if this sector is already taken - add name to unrendered list
+        unrenderedAtPoints.push(item);
+      }
+    });
+
+    unrenderedAtPoints.forEach((item) => {
+      const customAngle = this.freeSectorsList.shift();
+      const [attachmentPointElement, _] = this.appendAttachmentPoint(
+        item,
+        customAngle,
+      );
+      this.attachmentPointElements.push(attachmentPointElement as never);
+    });
   }
 
-  public appendR2AttachmentPoint(
-    rootElement: D3SvgElementSelection<SVGGElement, void>,
-  ) {
-    let attachmentPoint;
+  public appendAttachmentPoint(AttachmentPointName, customAngle?: number) {
+    let rotation;
 
-    if (this.monomer.isAttachmentPointUsed('R2')) {
-      const r2attachmentPoint = new AttachmentPoint(
-        rootElement as D3SvgElementSelection<SVGGElement, void>,
-        this.monomer,
-        this.bodyWidth,
-        this.bodyHeight,
-        this.canvas,
-        'R2',
-      );
-      attachmentPoint = r2attachmentPoint.getElement();
-    } else {
-      attachmentPoint = AttachmentPoint.appendAttachmentPointUnused(
-        rootElement as D3SvgElementSelection<SVGGElement, void>,
-        { x: this.bodyWidth, y: this.bodyHeight / 2 },
-        180,
-        this.monomer.isAttachmentPointPotentiallyUsed('R2'),
-        'R2',
-        5,
-        -10,
-      );
+    if (!this.monomer.isAttachmentPointUsed(AttachmentPointName)) {
+      rotation = attachmentPointNumberToAngle[AttachmentPointName];
     }
 
-    return attachmentPoint;
+    const attPointInstance = new AttachmentPoint(
+      this.rootElement as D3SvgElementSelection<SVGGElement, void>,
+      this.monomer,
+      this.bodyWidth,
+      this.bodyHeight,
+      this.canvas,
+      AttachmentPointName,
+      this.monomer.isAttachmentPointUsed(AttachmentPointName),
+      this.monomer.isAttachmentPointPotentiallyUsed(AttachmentPointName),
+      customAngle || rotation,
+      this.isSnakeBondForAttachmentPoint(AttachmentPointName),
+    );
+    const attachmentPointElement = attPointInstance.getElement();
+    const angle = attPointInstance.getAngle();
+
+    return [attachmentPointElement, angle];
   }
 
   public removeAttachmentPoints() {
-    this.r1AttachmentPoint?.remove();
-    this.r2AttachmentPoint?.remove();
+    this.attachmentPointElements.forEach((item) => {
+      item.remove();
+    });
+    this.attachmentPointElements = [];
+    this.freeSectorsList = sectorsList;
   }
 
   private appendRootElement(

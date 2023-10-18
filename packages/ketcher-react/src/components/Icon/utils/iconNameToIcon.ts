@@ -124,6 +124,7 @@ import TextSubscript from '../../../assets/icons/files/text-subscript.svg';
 import TextSuperscript from '../../../assets/icons/files/text-superscript.svg';
 import TransformFlipHIcon from '../../../assets/icons/files/transform-flip-h.svg';
 import TransformFlipVIcon from '../../../assets/icons/files/transform-flip-v.svg';
+import SnakeModeIcon from '../../../assets/icons/files/snake-mode.svg';
 import UndoIcon from '../../../assets/icons/files/undo.svg';
 import ZoomInIcon from '../../../assets/icons/files/zoom-in.svg';
 import ZoomOutIcon from '../../../assets/icons/files/zoom-out.svg';
@@ -210,6 +211,7 @@ import Base from '../../../assets/icons/files/base.svg';
 import Phosphate from '../../../assets/icons/files/phosphate.svg';
 import Preset from '../../../assets/icons/files/preset.svg';
 import EditFilled from '../../../assets/icons/files/edit-filled.svg';
+import VerticalDots from '../../../assets/icons/files/vertical-dots.svg';
 
 export const iconNameToIcon = {
   α,
@@ -370,6 +372,7 @@ export const iconNameToIcon = {
   'template-7': Template7Icon,
   'template-dialog': TemplateDialogIcon,
   'template-lib': TemplateLibIcon,
+  'snake-mode': SnakeModeIcon,
   text: TextIcon,
   'text-bold': TextBold,
   'text-italic': TextItalic,
@@ -420,4 +423,5 @@ export const iconNameToIcon = {
   phosphate: Phosphate,
   preset: Preset,
   'edit-filled': EditFilled,
+  'vertical-dots': VerticalDots,
 } as const;

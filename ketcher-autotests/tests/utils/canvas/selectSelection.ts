@@ -11,10 +11,6 @@ export enum SelectionType {
   Fragment = 'Fragment',
 }
 
-/**
- * Opens Selection toolbar and selects Selection option
- * Usage: await selectSelection(SelectionType.Rectangle, page)
- **/
 export async function selectSelection(type: SelectionType, page: Page) {
   await page
     .locator(
@@ -24,6 +20,56 @@ export async function selectSelection(type: SelectionType, page: Page) {
 
   await page
     .locator(`div[class^="ToolbarMultiToolItem"] button[title^="${type}"]`)
+    .first()
+    .click();
+}
+
+/**
+ * Opens Selection toolbar and selects Rectangle Selection option
+ * Usage: await selectRectangleSelection(page)
+ **/
+export async function selectRectangleSelection(page: Page) {
+  await page
+    .locator(
+      'div[class*="LeftToolbar-module_buttons"] button[title*="Selection"]',
+    )
+    .dblclick();
+
+  await page
+    .locator(`div[class^="ToolbarMultiToolItem"] button[title^="Rectangle"]`)
+    .nth(1) // Select the second matched element (zero-based index)
+    .click();
+}
+
+/**
+ * Opens Selection toolbar and selects Lasso Selection option
+ * Usage: await selectLassoSelection(page)
+ **/
+export async function selectLassoSelection(page: Page) {
+  await page
+    .locator(
+      'div[class*="LeftToolbar-module_buttons"] button[title*="Selection"]',
+    )
+    .dblclick();
+
+  await page
+    .locator(`div[class^="ToolbarMultiToolItem"] button[title^="Lasso"]`)
+    .click();
+}
+
+/**
+ * Opens Selection toolbar and selects Fragment Selection option
+ * Usage: await selectFragmentSelection(page)
+ **/
+export async function selectFragmentSelection(page: Page) {
+  await page
+    .locator(
+      'div[class*="LeftToolbar-module_buttons"] button[title*="Selection"]',
+    )
+    .dblclick();
+
+  await page
+    .locator(`div[class^="ToolbarMultiToolItem"] button[title^="Fragment"]`)
     .click();
 }
 

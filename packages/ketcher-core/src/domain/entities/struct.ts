@@ -945,12 +945,13 @@ export class Struct {
 
   calcImplicitHydrogen(aid: number) {
     const atom = this.atoms.get(aid)!;
+    const charge = atom.charge || 0;
     const [conn, isAromatic] = this.calcConn(atom);
     let correctConn = conn;
     atom.badConn = false;
 
     if (isAromatic) {
-      if (atom.label === 'C' && atom.charge === 0) {
+      if (atom.label === 'C' && charge === 0) {
         if (conn === 3) {
           atom.implicitH = -radicalElectrons(atom.radical);
           return;
@@ -960,10 +961,10 @@ export class Struct {
           return;
         }
       } else if (
-        (atom.label === 'O' && atom.charge === 0) ||
-        (atom.label === 'N' && atom.charge === 0 && conn === 3) ||
-        (atom.label === 'N' && atom.charge === 1 && conn === 3) ||
-        (atom.label === 'S' && atom.charge === 0 && conn === 3)
+        (atom.label === 'O' && charge === 0) ||
+        (atom.label === 'N' && charge === 0 && conn === 3) ||
+        (atom.label === 'N' && charge === 1 && conn === 3) ||
+        (atom.label === 'S' && charge === 0 && conn === 3)
       ) {
         atom.implicitH = 0;
         return;

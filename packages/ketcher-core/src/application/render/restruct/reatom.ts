@@ -642,7 +642,7 @@ function buildLabel(
   let label: any = {}
   label.text = getLabelText(atom.a)
 
-  if (label.text === '') label = 'R#' // for structures that missed 'M  RGP' tag in molfile
+  if (label.text === '') label.text = 'R#' // for structures that missed 'M  RGP' tag in molfile
 
   if (label.text === atom.a.label) {
     const element = Elements.get(label.text)

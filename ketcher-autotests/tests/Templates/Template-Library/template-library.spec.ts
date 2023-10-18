@@ -111,11 +111,11 @@ test.describe('Templates - Template Library', () => {
     // Verify correct display of Template Library
     const deltaX = 0;
     const deltaY = 220;
-    const x = 638;
-    const y = 524;
+    const anyX = 638;
+    const anyY = 524;
     await openStructureLibrary(page);
     await takeEditorScreenshot(page);
-    await page.mouse.move(x, y);
+    await page.mouse.move(anyX, anyY);
     await page.mouse.wheel(deltaX, deltaY);
   });
 

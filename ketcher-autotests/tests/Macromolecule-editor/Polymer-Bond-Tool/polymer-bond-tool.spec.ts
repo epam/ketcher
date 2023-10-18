@@ -90,7 +90,13 @@ test.describe('Polymer Bond Tool', () => {
     await chem2.hover();
     await page.mouse.up();
   });
+});
 
+test.describe('Signle Bond Tool', () => {
+  test.beforeEach(async ({ page }) => {
+    await waitForPageInit(page);
+    await turnOnMacromoleculesEditor(page);
+  });
   test('Select monomers and pass a bond', async ({ page }) => {
     /* 
       Test case: Macro: #3385 - Overlapping of bonds between 2 monomers
@@ -100,11 +106,22 @@ test.describe('Polymer Bond Tool', () => {
       */
     const MONOMER_NAME = 'Tza___3-thiazolylalanine';
     const MONOMER_ALIAS = 'Tza';
-    await addMonomerToCanvas(page, MONOMER_NAME, 300, 300);
-    await addMonomerToCanvas(page, MONOMER_NAME, 500, 500);
-    const peptides = await page.getByText(MONOMER_ALIAS).locator('..');
-    const peptide1 = peptides.nth(0);
-    const peptide2 = peptides.nth(1);
+    const peptide1 = await addMonomerToCanvas(
+      page,
+      MONOMER_NAME,
+      MONOMER_ALIAS,
+      300,
+      300,
+      0,
+    );
+    const peptide2 = await addMonomerToCanvas(
+      page,
+      MONOMER_NAME,
+      MONOMER_ALIAS,
+      400,
+      400,
+      1,
+    );
     await selectSingleBondTool(page);
     await bondTwoMonomers(page, peptide1, peptide2);
     await bondTwoMonomers(page, peptide2, peptide1);

@@ -6,8 +6,16 @@ import {
 } from '@playwright/test';
 import { clickInTheMiddleOfTheScreen, pressButton } from '@utils/clicks';
 import { ELEMENT_TITLE } from './types';
-import { TopPanelButton, waitForRender } from '..';
-import { selectTopPanelButton } from './tools';
+import {
+  Bases,
+  DropDown,
+  Phosphates,
+  Sugars,
+  TopPanelButton,
+  selectMonomer,
+  waitForRender,
+} from '..';
+import { selectRectangleSelectionTool, selectTopPanelButton } from './tools';
 import { getLeftTopBarSize } from './common/getLeftTopBarSize';
 import { emptyFunction } from '@utils/common/helpers';
 
@@ -179,4 +187,14 @@ export async function addMonomerToCanvas(
   return await page
     .locator(`//\*[name() = 'g' and ./\*[name()='text' and .='${alias}']]`)
     .nth(index);
+}
+
+export async function addMonomerToCenterOfCanvas(
+  monomersDropDown: DropDown,
+  monomerType: Sugars | Bases | Phosphates,
+  page: Page,
+) {
+  await selectMonomer(monomersDropDown, monomerType, page);
+  await clickInTheMiddleOfTheScreen(page);
+  await selectRectangleSelectionTool(page);
 }

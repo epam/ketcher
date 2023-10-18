@@ -9,6 +9,7 @@ import {
   takeEditorScreenshot,
   STRUCTURE_LIBRARY_BUTTON_NAME,
   pressButton,
+  selectRectangleSelectionTool,
 } from '@utils';
 import { ElementLabel } from 'ketcher-core';
 
@@ -92,6 +93,57 @@ export enum TemplateLibrary {
   Naphtalene = 'Naphtalene',
   Anthracene = 'Anthracene',
   Arabinofuranose = 'Arabinofuranose',
+}
+
+export enum Sugars {
+  TwelveddR = "12ddR___1',2'-Di-Deoxy-Ribose",
+  TwentyFiveR = '25R___2,5-Ribose',
+  ThreeA6 = "3A6___6-amino-hexanol (3' end)",
+}
+
+export async function selectSugar(sugarName: Sugars, page: Page) {
+  await page.getByTestId('RNA-TAB').click();
+  await page.getByTestId('summary-Sugars').click();
+  await page.getByTestId(sugarName.toString()).click();
+}
+
+export enum Bases {
+  Adenine = 'A___Adenine',
+  NBebnzylAdenine = 'baA___N-benzyl-adenine',
+  TClampOMe = 'clA___T-clamp OMe',
+}
+
+export async function selectBase(baseName: Bases, page: Page) {
+  await page.getByTestId('RNA-TAB').click();
+  await page.getByTestId('summary-Bases').click();
+  await page.getByTestId(baseName.toString()).click();
+}
+
+export enum Phosphates {
+  Test6Ph = 'Test-6-Ph___Test-6-AP-Phosphate',
+  Phosphate = 'P___Phosphate',
+  Boranophosphate = 'bP___Boranophosphate',
+}
+
+export async function selectPhosphate(phosphateName: Phosphates, page: Page) {
+  await page.getByTestId('RNA-TAB').click();
+  await page.getByTestId('summary-Phosphates').click();
+  await page.getByTestId(phosphateName.toString()).click();
+}
+
+export enum DropDown {
+  SugarsDropDown = 'summary-Sugars',
+  BasesDropDown = 'summary-Bases',
+  PhosphatesDropDown = 'summary-Phosphates',
+}
+export async function selectMonomer(
+  monomersDropDown: DropDown,
+  monomerType: Sugars | Bases | Phosphates,
+  page: Page,
+) {
+  await page.getByTestId('RNA-TAB').click();
+  await page.getByTestId(monomersDropDown).click();
+  await page.getByTestId(monomerType.toString()).click();
 }
 
 export async function selectSaltsAndSolvents(

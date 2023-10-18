@@ -61,6 +61,7 @@ const MonomerGroup = ({
     monomer: MonomerItemType,
     e: React.MouseEvent<HTMLDivElement, MouseEvent>,
   ) => {
+    handleItemMouseLeave();
     if (preview.monomer || !e.currentTarget) {
       return;
     }

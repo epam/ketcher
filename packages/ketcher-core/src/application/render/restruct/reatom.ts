@@ -201,7 +201,7 @@ class ReAtom extends ReObject {
           if (sg.atoms.includes(aid)) sgroupName = sg.data.name
         }
         const path = render.paper.text(ps.x, ps.y, sgroupName).attr({
-          'font-weight': 700,
+          'font-weight': '700',
           'font-size': 14
         })
         restruct.addReObjectPath(LayerMap.data, this.visel, path, ps, true)

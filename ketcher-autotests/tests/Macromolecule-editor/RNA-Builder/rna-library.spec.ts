@@ -6,6 +6,9 @@ import {
   Phosphates,
   Sugars,
   addMonomerToCenterOfCanvas,
+  clickInTheMiddleOfTheScreen,
+  selectMonomer,
+  selectRectangleSelectionTool,
   takePageScreenshot,
   waitForPageInit,
 } from '@utils';
@@ -114,6 +117,38 @@ test.describe('RNA Library', () => {
       Phosphates.Test6Ph,
       page,
     );
+    await takePageScreenshot(page);
+  });
+
+  test('Add Custom preset to Presets section', async ({ page }) => {
+    /* 
+    Test case: #2507 - Add RNA monomers to canvas
+    Description: Custom presets added to Presets section.
+    */
+    await selectMonomer(DropDown.SugarsDropDown, Sugars.TwelveddR, page);
+    await selectMonomer(DropDown.BasesDropDown, Bases.Adenine, page);
+    await selectMonomer(DropDown.PhosphatesDropDown, Phosphates.Test6Ph, page);
+    await page.getByTestId('add-to-presets-btn').click();
+    await page.getByTestId('12ddR(A)Test-6-Ph_A_12ddR_Test-6-Ph').click();
+    await takePageScreenshot(page);
+  });
+
+  test('Add Custom preset to Canvas', async ({ page }) => {
+    /* 
+    Test case: #2507 - Add RNA monomers to canvas
+    Description: Custom presets added to Canvas.
+    */
+    await selectMonomer(DropDown.SugarsDropDown, Sugars.ThreeA6, page);
+    await selectMonomer(DropDown.BasesDropDown, Bases.NBebnzylAdenine, page);
+    await selectMonomer(
+      DropDown.PhosphatesDropDown,
+      Phosphates.Boranophosphate,
+      page,
+    );
+    await page.getByTestId('add-to-presets-btn').click();
+    await page.getByTestId('3A6(baA)bP_baA_3A6_bP').click();
+    await clickInTheMiddleOfTheScreen(page);
+    await selectRectangleSelectionTool(page);
     await takePageScreenshot(page);
   });
 });

@@ -1,9 +1,10 @@
-import { Item, ItemParams, Menu, Separator } from 'react-contexify';
+import { Item, ItemParams, Separator } from 'react-contexify';
 import { openModal } from 'state/modal';
 import { useAppDispatch, useAppSelector } from 'hooks';
 import { ReactElement } from 'react';
 import { CONTEXT_MENU_ID } from './types';
 import { selectActivePreset } from 'state/rna-builder';
+import { StyledMenu } from './styles';
 
 export const RNAContextMenu = () => {
   const dispatch = useAppDispatch();
@@ -58,8 +59,6 @@ export const RNAContextMenu = () => {
   };
 
   return (
-    <Menu style={{ minWidth: '160px' }} id={CONTEXT_MENU_ID.FOR_RNA}>
-      {assembleMenuItems()}
-    </Menu>
+    <StyledMenu id={CONTEXT_MENU_ID.FOR_RNA}>{assembleMenuItems()}</StyledMenu>
   );
 };

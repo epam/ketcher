@@ -58,9 +58,11 @@ const Delete = ({ isModalOpen, onClose }: Props) => {
       onClose={onCloseCallback}
     >
       <Modal.Content>
-        <div>You are about to delete</div>
-        <p>"{activePreset.name}" RNA preset.</p>
-        <p>This operation cannot be undone.</p>
+        <div>
+          <div>You are about to delete</div>
+          <div>"{activePreset.name}" RNA preset.</div>
+          <div>This operation cannot be undone.</div>
+        </div>
       </Modal.Content>
       <Modal.Footer>
         <ActionButton

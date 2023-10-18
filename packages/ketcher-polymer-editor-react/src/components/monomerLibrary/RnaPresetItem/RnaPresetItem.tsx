@@ -18,6 +18,7 @@ import { Card } from './styles';
 import { IRnaPresetItemrops } from './types';
 import { getPresetUniqueKey } from 'state/library';
 import { useState } from 'react';
+import { StyledIcon } from '../RnaBuilder/RnaAccordion/Summary/styles';
 
 const RnaPresetItem = ({
   preset,
@@ -32,6 +33,7 @@ const RnaPresetItem = ({
   const onMouseOut = () => {
     setShowDots(false);
   };
+
   return (
     <Card
       data-testid={getPresetUniqueKey(preset)}
@@ -44,7 +46,11 @@ const RnaPresetItem = ({
       data-rna-preset-item-name={preset.name}
     >
       <span>{preset.name}</span>
-      <div className={showDots ? 'dots' : 'dots hidden'}>&#x22EE;</div>
+      <StyledIcon
+        name="vertical-dots"
+        className={showDots ? 'dots' : 'dots hidden'}
+        onClick={onContextMenu}
+      ></StyledIcon>
     </Card>
   );
 };

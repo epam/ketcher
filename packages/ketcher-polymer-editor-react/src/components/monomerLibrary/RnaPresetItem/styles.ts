@@ -24,9 +24,8 @@ export const Card = styled(MonomerCard)<{ code?: string; selected?: boolean }>`
   }
   .dots {
     visibility: visible;
-    font-size: 20px;
     position: absolute;
-    right: 10px;
+    right: 2px;
     top: 10px;
   }
   .hidden {

@@ -17,7 +17,7 @@
 import { MonomerGroup } from 'components/monomerLibrary/monomerLibraryGroup';
 import { useAppSelector } from 'hooks';
 import { IconName } from 'ketcher-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, MouseEvent } from 'react';
 import {
   MonomerCodeToGroup,
   MonomerGroupCodes,
@@ -63,7 +63,7 @@ import { MonomerItemType } from 'ketcher-core';
 import { selectEditor } from 'state/common';
 import { RNAContextMenu } from 'components/contextMenu/RNAContextMenu';
 import { CONTEXT_MENU_ID } from 'components/contextMenu/types';
-import { TriggerEvent, useContextMenu } from 'react-contexify';
+import { useContextMenu } from 'react-contexify';
 
 interface IGroupsDataItem {
   groupName: RnaBuilderItem;
@@ -142,7 +142,7 @@ export const RnaAccordion = ({
     dispatch(setActiveRnaBuilderItem(groupName));
   };
 
-  const handleContextMenu = (preset: IRnaPreset) => (event: TriggerEvent) => {
+  const handleContextMenu = (preset: IRnaPreset) => (event: MouseEvent) => {
     dispatch(setActivePreset(preset));
     show({
       event,

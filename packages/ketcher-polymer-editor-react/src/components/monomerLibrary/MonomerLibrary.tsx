@@ -163,7 +163,10 @@ const MonomerLibrary = () => {
         </MonomerLibrarySearch>
       </MonomerLibraryHeader>
       <Tabs tabs={tabsContent} />
-      <StyledPreview className="polymer-library-preview" />
+      <StyledPreview
+        className="polymer-library-preview"
+        data-testid="polymer-library-preview"
+      />
     </MonomerLibraryContainer>
   );
 };

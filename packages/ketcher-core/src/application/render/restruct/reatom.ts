@@ -200,7 +200,7 @@ class ReAtom extends ReObject {
         for (const sg of sgroups.values()) {
           if (sg.atoms.includes(aid)) sgroupName = sg.data.name
         }
-        // @ts-expect-error
+        // @ts-expect-error "font-weight" should be number issue
         const path = render.paper.text(ps.x, ps.y, sgroupName).attr({
           'font-weight': 700,
           'font-size': 14

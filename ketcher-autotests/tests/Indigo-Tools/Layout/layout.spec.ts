@@ -225,4 +225,48 @@ test.describe('Indigo Tools - Layout', () => {
       async () => await selectTopPanelButton(TopPanelButton.Layout, page),
     );
   });
+
+  test('Structures are displayed in the middle of the screen after clicks "Layout" button', async ({
+    page,
+  }) => {
+    /*
+    Test case: EPMLSOPKET-17665, EPMLSOPKET-10084
+    Description: After Layout the structures are displayed orderly in the middle of the screen.
+    */
+    await openFileAndAddToCanvas('KET/four-benzene-at-edges.ket', page);
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await selectTopPanelButton(TopPanelButton.Layout, page),
+    );
+  });
+
+  test('Molecular structures are displayed in the middle of the canvas after clicks "Ctrl+L"', async ({
+    page,
+  }) => {
+    /*
+    Test case: EPMLSOPKET-17666
+    Description: After Layout the structures are displayed orderly in the middle of the screen.
+    */
+    await openFileAndAddToCanvas('KET/four-benzene-at-edges.ket', page);
+    await page.keyboard.press('Control+l');
+  });
+
+  test('Layout action on part of structure with different properties', async ({
+    page,
+  }) => {
+    /*
+    Test case: EPMLSOPKET-1823
+    Description: Layout action is implemented for the whole canvas.
+    Test working incorrect because we have a bug https://github.com/epam/Indigo/issues/388
+    */
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/clean-different-properties.mol',
+      page,
+    );
+    await selectPartOfMolecules(page);
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await selectTopPanelButton(TopPanelButton.Layout, page),
+    );
+  });
 });

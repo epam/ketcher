@@ -24,3 +24,10 @@ export class DrawingEntityMoveOperation implements Operation {
     renderersManager.moveDrawingEntity(this.drawingEntity);
   }
 }
+export class DrawingEntityRedrawOperation implements Operation {
+  constructor(private drawingEntity: DrawingEntity) {}
+
+  public execute(renderersManager: RenderersManager) {
+    renderersManager.redrawDrawingEntity(this.drawingEntity);
+  }
+}

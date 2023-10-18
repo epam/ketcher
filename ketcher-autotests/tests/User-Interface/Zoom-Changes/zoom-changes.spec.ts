@@ -12,6 +12,8 @@ import {
   TopPanelButton,
   openFileAndAddToCanvas,
   waitForPageInit,
+  openFromFileViaClipboard,
+  drawBenzeneRing,
 } from '@utils';
 import { TestIdSelectors } from '@utils/selectors/testIdSelectors';
 
@@ -33,6 +35,7 @@ test.describe('Zoom changes', () => {
 
   test('when using ctrl + mouse scroll up', async ({ page }) => {
     /* 
+    Test case: EPMLSOPKET-16880
     Description: Editor is zoomed correctly: Zoom In to 120%
     */
     const numberOfMouseWheelScroll = 2;
@@ -50,6 +53,7 @@ test.describe('Zoom changes', () => {
 
   test('when using ctrl + mouse scroll down', async ({ page }) => {
     /* 
+    Test case: EPMLSOPKET-16880
     Description: Editor is zoomed correctly: Zoom Out to 80%
     */
     const numberOfMouseWheelScroll = 2;
@@ -133,6 +137,19 @@ test.describe('Zoom changes', () => {
     await checkZoomLevel(page, '120%');
   });
 
+  test('Zoom Out by hotkey structure verification.', async ({ page }) => {
+    /*
+      Test case: EPMLSOPKET-18056
+      */
+    await drawBenzeneRing(page);
+    await resetCurrentTool(page);
+
+    await page.keyboard.press('Control+-');
+    await page.getByTestId('zoom-input').click();
+    await page.getByTestId('zoom-out').click();
+    await checkZoomLevel(page, '80%');
+  });
+
   test('Zoom actions for structures with query features', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1765
@@ -185,5 +202,34 @@ test.describe('Zoom changes', () => {
     await checkZoomLevel(page, '100%');
 
     await takeEditorScreenshot(page);
+  });
+
+  test('Automatically adjust zoom when opening a structure from a file', async ({
+    page,
+  }) => {
+    /*
+      Test case: EPMLSOPKET-17662, EPMLSOPKET-16882
+      Description: The correct structure fits on the canvas, and the zoom percentage 
+      has decreased on the "Zoom panel"
+    */
+    await openFileAndAddToCanvas('Molfiles-V2000/long-chain.mol', page);
+    await expect(page).toHaveScreenshot();
+  });
+
+  test('Automatically adjust zoom when pasting a structure from a file', async ({
+    page,
+  }) => {
+    /*
+      Test case: EPMLSOPKET-17663
+      Description: The correct structure fits on the canvas, and the zoom percentage 
+      has decreased on the "Zoom panel"
+    */
+    await selectTopPanelButton(TopPanelButton.Open, page);
+    await openFromFileViaClipboard(
+      'tests/test-data/Molfiles-V2000/long-chain.mol',
+      page,
+    );
+    await clickInTheMiddleOfTheScreen(page);
+    await expect(page).toHaveScreenshot();
   });
 });

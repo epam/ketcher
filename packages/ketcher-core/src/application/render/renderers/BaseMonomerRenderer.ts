@@ -272,6 +272,9 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
         this.editorEvents.mouseOverDrawingEntity.dispatch(event);
         this.editorEvents.mouseOverMonomer.dispatch(event);
       })
+      .on('mousemove', (event) => {
+        this.editorEvents.mouseOnMoveMonomer.dispatch(event);
+      })
       .on('mouseleave', (event) => {
         this.editorEvents.mouseLeaveDrawingEntity.dispatch(event);
         this.editorEvents.mouseLeaveMonomer.dispatch(event);

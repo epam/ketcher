@@ -154,6 +154,10 @@ function Editor({ theme }: EditorProps) {
     editor?.events.mouseLeaveMonomer.add(() => {
       handleClosePreview();
     });
+    editor?.events.mouseOnMoveMonomer.add((e) => {
+      handleClosePreview();
+      handleOpenPreview(e);
+    });
   }, [editor, activeTool]);
 
   const handleOpenPreview = useCallback(

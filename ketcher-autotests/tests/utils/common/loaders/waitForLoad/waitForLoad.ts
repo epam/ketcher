@@ -1,4 +1,5 @@
 import { Page } from '@playwright/test';
+import { waitForRender } from '@utils/common';
 
 // const evaluateCallback = (REQUEST_IS_FINISHED: string) => {
 //   const MAX_TIME_TO_WAIT = 10000;
@@ -37,3 +38,11 @@ export const waitForLoad = async (page: Page, callback: VoidFunction) => {
     await page.waitForSelector('.loading-spinner', { state: 'detached' });
   }
 };
+
+export async function waitForLoadAndRender(page: Page, callback: VoidFunction) {
+  await waitForRender(page, async () => {
+    await waitForLoad(page, async () => {
+      await callback();
+    });
+  });
+}

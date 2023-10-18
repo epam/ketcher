@@ -38,7 +38,7 @@ const enablePolymerEditor = process.env.ENABLE_POLYMER_EDITOR === 'true';
 type PolymerType = ({
   togglerComponent,
 }: {
-  togglerComponent: JSX.Element;
+  togglerComponent?: JSX.Element;
 }) => JSX.Element | null;
 
 let PolymerEditor: PolymerType = () => null;
@@ -59,12 +59,12 @@ const App = () => {
     window.isPolymerEditorTurnedOn = toggleValue;
   };
 
-  const togglerComponent = (
+  const togglerComponent = enablePolymerEditor ? (
     <ModeControl
       toggle={togglePolymerEditor}
       isPolymerEditor={showPolymerEditor}
     />
-  );
+  ) : undefined;
 
   return showPolymerEditor ? (
     <>

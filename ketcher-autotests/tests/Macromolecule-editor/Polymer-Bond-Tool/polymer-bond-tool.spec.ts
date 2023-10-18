@@ -1,10 +1,12 @@
-import { test } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 import {
   selectSingleBondTool,
   waitForPageInit,
   takePageScreenshot,
+  addMonomerToCanvas,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
+import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 /* eslint-disable no-magic-numbers */
 
 test.describe('Polymer Bond Tool', () => {
@@ -89,5 +91,29 @@ test.describe('Polymer Bond Tool', () => {
     await page.mouse.up();
 
     await takePageScreenshot(page);
+  });
+
+  test('Select monomers and pass a bond', async ({ page }) => {
+    /* 
+      Test case: Macro: #3385 - Overlapping of bonds between 2 monomers
+      https://github.com/epam/ketcher/issues/3385 
+      Description: The system shall unable user to create more
+      than 1 bond between the first and the second monomer
+      */
+    const MONOMER_NAME = 'Tza___3-thiazolylalanine';
+    const MONOMER_ALIAS = 'Tza';
+    await addMonomerToCanvas(page, MONOMER_NAME, 300, 300);
+    await addMonomerToCanvas(page, MONOMER_NAME, 500, 500);
+    const peptides = await page.getByText(MONOMER_ALIAS).locator('..');
+    const peptide1 = peptides.nth(0);
+    const peptide2 = peptides.nth(1);
+    await selectSingleBondTool(page);
+    await bondTwoMonomers(page, peptide1, peptide2);
+    await bondTwoMonomers(page, peptide2, peptide1);
+    await page.waitForSelector('#error-tooltip');
+    const errorTooltip = await page.getByTestId('error-tooltip').innerText();
+    const errorMessage =
+      "There can't be more than 1 bond between the first and the second monomer";
+    expect(errorTooltip).toEqual(errorMessage);
   });
 });

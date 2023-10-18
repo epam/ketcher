@@ -9,7 +9,6 @@ import {
   takeEditorScreenshot,
   STRUCTURE_LIBRARY_BUTTON_NAME,
   pressButton,
-  selectRectangleSelectionTool,
 } from '@utils';
 import { ElementLabel } from 'ketcher-core';
 

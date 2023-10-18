@@ -6,11 +6,6 @@ import {
   Phosphates,
   Sugars,
   addMonomerToCenterOfCanvas,
-  clickInTheMiddleOfTheScreen,
-  selectBase,
-  selectPhosphate,
-  selectRectangleSelectionTool,
-  selectSugar,
   takePageScreenshot,
   waitForPageInit,
 } from '@utils';

@@ -56,6 +56,16 @@ export async function selectAzuleneOnTemplateLibrary(page: Page) {
   await page.getByTitle('Azulene').getByRole('button').click();
 }
 
+export async function selectAnyStructuresFromAromaticsTable(
+  page: Page,
+  itemToChoose: TemplateLibrary,
+) {
+  await page.getByRole('tab', { name: 'Template Library' }).click();
+  await page.getByRole('button', { name: 'Aromatics (18)' }).click();
+  await page.getByTitle(itemToChoose).getByRole('button').click();
+  await clickInTheMiddleOfTheScreen(page);
+}
+
 export async function addCyclopentadieneRingWithTwoAtoms(page: Page) {
   await selectAtomInToolbar(AtomButton.Nitrogen, page);
   await clickOnAtom(page, 'C', 0);

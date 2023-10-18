@@ -1,4 +1,4 @@
-import { test } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 import {
   pressButton,
   takeEditorScreenshot,
@@ -204,5 +204,23 @@ test.describe('Open Ketcher', () => {
     await clickOnTheCanvas(page, point.x, point.y);
     await selectBond(BondTypeName.Single, page);
     await clickOnAtom(page, 'C', 0);
+  });
+});
+
+test.describe('Open Ketcher', () => {
+  test.beforeEach(async ({ page }) => {
+    await waitForPageInit(page);
+  });
+  test('Custom Templates - Button and tooltip', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-2886
+    Description:
+    'Structure Library (Shift + T)' tooltip appears when Hover over the 'SL'.
+    */
+    const button = page.getByTestId('template-lib');
+    await expect(button).toHaveAttribute(
+      'title',
+      'Structure Library (Shift+T)',
+    );
   });
 });

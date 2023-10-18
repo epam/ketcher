@@ -9,7 +9,9 @@ import {
   clickInTheMiddleOfTheScreen,
   selectMonomer,
   selectRectangleSelectionTool,
-  takePageScreenshot,
+  takeEditorScreenshot,
+  takeMonomerLibraryScreenshot,
+  takePresetsScreenshot,
   waitForPageInit,
 } from '@utils';
 
@@ -28,7 +30,9 @@ test.describe('RNA Library', () => {
     Bases(160)(collapsed), Phosphates(32)(collapsed)
     */
     await page.getByTestId('RNA-TAB').click();
-    await takePageScreenshot(page);
+    await takeMonomerLibraryScreenshot(page, {
+      masks: [page.getByTestId('polymer-toggler')],
+    });
   });
 
   test('Collapse RNA Builder', async ({ page }) => {
@@ -42,7 +46,9 @@ test.describe('RNA Library', () => {
       .filter({ hasText: /^RNA Builder$/ })
       .getByRole('button')
       .click();
-    await takePageScreenshot(page);
+    await takeMonomerLibraryScreenshot(page, {
+      masks: [page.getByTestId('polymer-toggler')],
+    });
   });
 
   const testData = [
@@ -74,7 +80,9 @@ test.describe('RNA Library', () => {
       */
       await page.getByTestId('RNA-TAB').click();
       await page.getByTestId(`summary-${data.component}`).click();
-      await takePageScreenshot(page);
+      await takeMonomerLibraryScreenshot(page, {
+        masks: [page.getByTestId('polymer-toggler')],
+      });
     });
   }
 
@@ -89,7 +97,7 @@ test.describe('RNA Library', () => {
       Sugars.TwelveddR,
       page,
     );
-    await takePageScreenshot(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Add Base monomer to canvas', async ({ page }) => {
@@ -103,7 +111,7 @@ test.describe('RNA Library', () => {
       Bases.Adenine,
       page,
     );
-    await takePageScreenshot(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Add Phosphate monomer to canvas', async ({ page }) => {
@@ -117,7 +125,7 @@ test.describe('RNA Library', () => {
       Phosphates.Test6Ph,
       page,
     );
-    await takePageScreenshot(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Add Custom preset to Presets section', async ({ page }) => {
@@ -130,7 +138,9 @@ test.describe('RNA Library', () => {
     await selectMonomer(DropDown.PhosphatesDropDown, Phosphates.Test6Ph, page);
     await page.getByTestId('add-to-presets-btn').click();
     await page.getByTestId('12ddR(A)Test-6-Ph_A_12ddR_Test-6-Ph').click();
-    await takePageScreenshot(page);
+    await takePresetsScreenshot(page, {
+      masks: [page.getByTestId('polymer-toggler')],
+    });
   });
 
   test('Add Custom preset to Canvas', async ({ page }) => {
@@ -149,6 +159,62 @@ test.describe('RNA Library', () => {
     await page.getByTestId('3A6(baA)bP_baA_3A6_bP').click();
     await clickInTheMiddleOfTheScreen(page);
     await selectRectangleSelectionTool(page);
-    await takePageScreenshot(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Add to presets (different combinations: Sugar+Base', async ({
+    page,
+  }) => {
+    /*
+    Test case: #2507 - Add RNA monomers to canvas
+    Description: Custom presets added to Presets section.
+    */
+    await selectMonomer(DropDown.SugarsDropDown, Sugars.TwelveddR, page);
+    await selectMonomer(DropDown.BasesDropDown, Bases.Adenine, page);
+    await page.getByTestId('add-to-presets-btn').click();
+    await page.getByTestId('12ddR(A)_A_12ddR_.').click();
+    await takePresetsScreenshot(page, {
+      masks: [page.getByTestId('polymer-toggler')],
+    });
+  });
+
+  test('Add to presets (different combinations: Sugar+Phosphate', async ({
+    page,
+  }) => {
+    /*
+    Test case: #2507 - Add RNA monomers to canvas
+    Description: Custom presets added to Presets section.
+    */
+    await selectMonomer(DropDown.SugarsDropDown, Sugars.TwelveddR, page);
+    await selectMonomer(
+      DropDown.PhosphatesDropDown,
+      Phosphates.Boranophosphate,
+      page,
+    );
+    await page.getByTestId('add-to-presets-btn').click();
+    await page.getByTestId('12ddR()bP_._12ddR_bP').click();
+    await takePresetsScreenshot(page, {
+      masks: [page.getByTestId('polymer-toggler')],
+    });
+  });
+
+  test('Add to presets (different combinations: Base+Phosphate', async ({
+    page,
+  }) => {
+    /*
+    Test case: #2507 - Add RNA monomers to canvas
+    Description: Custom presets added to Presets section.
+    */
+    await selectMonomer(DropDown.BasesDropDown, Bases.Adenine, page);
+    await selectMonomer(
+      DropDown.PhosphatesDropDown,
+      Phosphates.Boranophosphate,
+      page,
+    );
+    await page.getByTestId('add-to-presets-btn').click();
+    await page.getByTestId('(A)bP_A_._bP').click();
+    await takePresetsScreenshot(page, {
+      masks: [page.getByTestId('polymer-toggler')],
+    });
   });
 });

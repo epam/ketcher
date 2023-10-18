@@ -204,7 +204,9 @@ function Editor({ theme }: EditorProps) {
         autoHideDuration={6000}
       >
         <StyledToast id="error-tooltip">
-          <StyledToastContent>{errorTooltipText}</StyledToastContent>
+          <StyledToastContent data-testid="error-tooltip">
+            {errorTooltipText}
+          </StyledToastContent>
           <StyledIconButton
             iconName="close"
             onClick={handleCloseErrorTooltip}

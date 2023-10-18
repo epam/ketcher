@@ -31,6 +31,7 @@ export const getDefaultPresets = (
         sugar: { ...ribose, label: ribose.props.MonomerName },
         phosphate: { ...phosphate, label: phosphate.props.MonomerName },
         name: base.props.MonomerName,
+        default: true,
       };
       return nucleotide;
     });

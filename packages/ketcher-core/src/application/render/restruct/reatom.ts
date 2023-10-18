@@ -1091,6 +1091,26 @@ function getRingBondCountAttrText(value: number) {
   return attrText;
 }
 
+function getRingConnectivity(value: number) {
+  if (value > 0) {
+    return 'x' + value.toString();
+  } else if (value === -1 || value === -2) {
+    return 'x0';
+  } else {
+    return '';
+  }
+}
+
+function getDegree(value: number) {
+  if (value > 0) {
+    return 'D' + value.toString();
+  } else if (value === -1 || value === -2) {
+    return 'D0';
+  } else {
+    return '';
+  }
+}
+
 function getSubstitutionCountAttrText(value: number) {
   let attrText: string;
   if (value > 0) {
@@ -1152,11 +1172,8 @@ export function getAtomCustomQuery(atom) {
       return charge[0] !== '-' ? `+${charge}` : charge;
     },
     explicitValence: (value) => (Number(value) !== -1 ? `v${value}` : ''),
-    ringBondCount: (value) =>
-      Number(value) !== 0 ? getRingBondCountAttrText(Number(value)) : '',
-    substitutionCount: (value) =>
-      Number(value) !== 0 ? getSubstitutionCountAttrText(Number(value)) : '',
-    unsaturatedAtom: (value) => (value ? 'u' : ''),
+    ringBondCount: (value) => getRingConnectivity(Number(value)),
+    substitutionCount: (value) => getDegree(Number(value)),
     hCount: (value) =>
       Number(value) > 0 ? 'H' + (Number(value) - 1).toString() : '',
     implicitHCount: (value) => `h${value}`,

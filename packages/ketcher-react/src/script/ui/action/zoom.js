@@ -26,7 +26,10 @@ export default {
   zoom: {
     shortcut: ['Mod+0'],
     selected: (editor) => editor.zoom(),
-    action: (editor) => editor.zoom(1),
+    action: (editor) => {
+      editor.zoom(1);
+      editor.tool()?.mousemove(editor.lastEvent);
+    },
     hidden: (options) => isHidden(options, 'zoom'),
   },
   'zoom-out': {
@@ -37,6 +40,7 @@ export default {
       const zoom = editor.zoom();
       const i = findLastIndex((z) => z <= zoom, zoomList);
       editor.zoom(zoomList[zoomList[i] === zoom && i > 0 ? i - 1 : i], event);
+      editor.tool()?.mousemove(editor.lastEvent);
     },
     hidden: (options) => isHidden(options, 'zoom-out'),
   },
@@ -51,6 +55,7 @@ export default {
         zoomList[zoomList[i] === zoom && i < zoomList.length - 1 ? i + 1 : i],
         event,
       );
+      editor.tool()?.mousemove(editor.lastEvent);
     },
     hidden: (options) => isHidden(options, 'zoom-in'),
   },

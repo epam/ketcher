@@ -75,7 +75,7 @@ test.describe('Check attachment point rotation', () => {
     await peptide1.hover();
 
     // Get rid of flakiness because of preview
-    await delay();
+    await page.waitForSelector('.polymer-library-preview');
 
     await takePageScreenshot(page);
 
@@ -83,7 +83,7 @@ test.describe('Check attachment point rotation', () => {
     await peptide2.hover();
 
     // Get rid of flakiness because of preview
-    await delay();
+    await page.waitForSelector('.polymer-library-preview');
 
     await takeEditorScreenshot(page);
   });

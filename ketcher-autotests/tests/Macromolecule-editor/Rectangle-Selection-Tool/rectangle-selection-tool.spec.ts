@@ -70,6 +70,9 @@ test.describe('Rectangle Selection Tool', () => {
     await bondTwoMonomers(page, peptide3, peptide2);
     await bondTwoMonomers(page, peptide3, peptide4);
 
+    // Get rid of flakiness because of preview
+    const coords = [100, 100];
+    await page.mouse.move(coords[0], coords[1]);
     await takePageScreenshot(page);
 
     await selectRectangleSelectionTool(page);
@@ -82,13 +85,14 @@ test.describe('Rectangle Selection Tool', () => {
 
     await selectRectangleArea(page, startX, startY, endX, endY);
 
+    // Get rid of flakiness because of preview
+    await page.mouse.move(coords[0], coords[1]);
     await takePageScreenshot(page);
 
     // Erase selected elements
     await selectEraseTool(page);
 
     // Get rid of flakiness because of preview
-    const coords = [100, 100];
     await page.mouse.move(coords[0], coords[1]);
 
     await takePageScreenshot(page);

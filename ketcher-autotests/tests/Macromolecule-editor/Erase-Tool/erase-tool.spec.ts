@@ -67,6 +67,10 @@ test.describe('Erase Tool', () => {
     await bondTwoMonomers(page, peptide3, peptide2);
     await bondTwoMonomers(page, peptide3, peptide4);
 
+    // Get rid of flakiness because of preview
+    const coords = [100, 100];
+    await page.mouse.move(coords[0], coords[1]);
+
     await takeEditorScreenshot(page);
 
     await selectEraseTool(page);
@@ -75,7 +79,6 @@ test.describe('Erase Tool', () => {
     await peptide3.click();
 
     // Get rid of flakiness because of preview
-    const coords = [100, 100];
     await page.mouse.move(coords[0], coords[1]);
 
     await takeEditorScreenshot(page);

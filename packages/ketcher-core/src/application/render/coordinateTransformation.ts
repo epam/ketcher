@@ -2,27 +2,22 @@ import { Vec2 } from 'domain/entities';
 import { Render } from './raphaelRender';
 import { Scale } from 'domain/helpers';
 
-const canvasToViewBox = (point: Vec2, render: Render) => {
+const canvasToView = (point: Vec2, render: Render) => {
   const offset = new Vec2(render.viewBox.minX, render.viewBox.minY);
   return point.sub(offset).scaled(render.options.zoom);
 };
 
-const protoToViewBox = (vector: Vec2, render: Render) => {
+const modelToView = (vector: Vec2, render: Render) => {
   const pointInCanvas = Scale.protoToCanvas(vector, render.options);
-  return canvasToViewBox(pointInCanvas, render);
+  return canvasToView(pointInCanvas, render);
 };
 
-const viewBoxToCanvas = (point: Vec2, render: Render) => {
+const viewToCanvas = (point: Vec2, render: Render) => {
   const offset = new Vec2(render.viewBox.minX, render.viewBox.minY);
   return point.scaled(1 / render.options.zoom).add(offset);
 };
 
-const viewBoxToProto = (point: Vec2, render: Render) => {
-  const pointInCanvas = viewBoxToCanvas(point, render);
-  return Scale.canvasToProto(pointInCanvas, render.options);
-};
-
-const pageEventToViewBox = (
+const pageEventToView = (
   event: MouseEvent | { clientX: number; clientY: number },
   renderClientArea: HTMLElement,
 ) => {
@@ -35,11 +30,11 @@ const pageEventToCanvas = (
   event: MouseEvent | { clientX: number; clientY: number },
   render: Render,
 ) => {
-  const pointInViewBox = pageEventToViewBox(event, render.clientArea);
-  return viewBoxToCanvas(pointInViewBox, render);
+  const pointInViewBox = pageEventToView(event, render.clientArea);
+  return viewToCanvas(pointInViewBox, render);
 };
 
-const pageEventToProto = (
+const pageEventToModel = (
   event: MouseEvent | { clientX: number; clientY: number },
   render: Render,
 ) => {
@@ -47,12 +42,11 @@ const pageEventToProto = (
   return Scale.canvasToProto(pointInCanvas, render.options);
 };
 
-/** @see ./__docs__/ketcher-coordinates.png */
+/** @see ./__docs__/origins-of-different-coordinate-systems.png */
 export const CoordinateTransformation = {
-  protoToViewBox,
-  canvasToViewBox,
-  viewBoxToCanvas,
-  viewBoxToProto,
+  modelToView,
+  canvasToView,
+  viewToCanvas,
   pageEventToCanvas,
-  pageEventToProto,
+  pageEventToModel,
 };

@@ -110,9 +110,9 @@ export class Render {
     return draw.selectionRectangle(this.paper, point0, point1, this.options);
   }
 
-  /** @deprecated recommend using `CoordinateTransformation.pageEventToProto` instead */
+  /** @deprecated recommend using `CoordinateTransformation.pageEventToModel` instead */
   page2obj(event: MouseEvent | { clientX: number; clientY: number }) {
-    return CoordinateTransformation.pageEventToProto(event, this);
+    return CoordinateTransformation.pageEventToModel(event, this);
   }
 
   setZoom(zoom: number, event?: WheelEvent) {

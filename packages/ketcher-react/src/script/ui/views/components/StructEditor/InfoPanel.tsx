@@ -54,7 +54,7 @@ function getPanelPosition(
     height = end.y - start.y;
     // calculate initial position
     const { position } = sGroup.getContractedPosition(render.ctab.molecule);
-    const panelPosition = CoordinateTransformation.protoToViewBox(
+    const panelPosition = CoordinateTransformation.modelToView(
       position,
       render,
     );

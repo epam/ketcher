@@ -189,7 +189,7 @@ class RotateController {
       rectStartY - STYLE.HANDLE_MARGIN - STYLE.HANDLE_RADIUS,
     );
 
-    const handleCenterInViewport = CoordinateTransformation.canvasToViewBox(
+    const handleCenterInViewport = CoordinateTransformation.canvasToView(
       this.handleCenter,
       this.render,
     );
@@ -811,7 +811,7 @@ class RotateController {
       return;
     }
 
-    const handleCenterInViewport = CoordinateTransformation.canvasToViewBox(
+    const handleCenterInViewport = CoordinateTransformation.canvasToView(
       this.handleCenter,
       this.render,
     );

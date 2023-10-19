@@ -33,33 +33,19 @@ describe('CoordinateTransformation', () => {
     clientY: pointInViewBox.y + CLIENT_AREA_TOP,
   };
 
-  test('canvasToViewBox', () => {
-    const point = CoordinateTransformation.canvasToViewBox(
-      pointInCanvas,
-      render,
-    );
+  test('canvasToView', () => {
+    const point = CoordinateTransformation.canvasToView(pointInCanvas, render);
     expect(point).toStrictEqual(pointInViewBox);
   });
 
-  test('protoToViewBox', () => {
-    const point = CoordinateTransformation.protoToViewBox(protoPoint, render);
+  test('modelToView', () => {
+    const point = CoordinateTransformation.modelToView(protoPoint, render);
     expect(point).toStrictEqual(pointInViewBox);
   });
 
-  test('viewBoxToCanvas', () => {
-    const point = CoordinateTransformation.viewBoxToCanvas(
-      pointInViewBox,
-      render,
-    );
+  test('viewToCanvas', () => {
+    const point = CoordinateTransformation.viewToCanvas(pointInViewBox, render);
     expect(point).toStrictEqual(pointInCanvas);
-  });
-
-  test('viewBoxToProto', () => {
-    const point = CoordinateTransformation.viewBoxToProto(
-      pointInViewBox,
-      render,
-    );
-    expect(point).toStrictEqual(protoPoint);
   });
 
   test('pageEventToCanvas', () => {
@@ -67,8 +53,8 @@ describe('CoordinateTransformation', () => {
     expect(point).toStrictEqual(pointInCanvas);
   });
 
-  test('pageEventToProto', () => {
-    const point = CoordinateTransformation.pageEventToProto(pageEvent, render);
+  test('pageEventToModel', () => {
+    const point = CoordinateTransformation.pageEventToModel(pageEvent, render);
     expect(point).toStrictEqual(protoPoint);
   });
 });

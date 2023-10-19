@@ -83,7 +83,7 @@ export class HoverIcon {
   updatePosition() {
     const { x, y } = this.editor.lastCursorPosition;
     const currentPosition = new Vec2(x, y);
-    const newPosition = CoordinateTransformation.viewBoxToCanvas(
+    const newPosition = CoordinateTransformation.viewToCanvas(
       currentPosition,
       this.editor.render,
     );

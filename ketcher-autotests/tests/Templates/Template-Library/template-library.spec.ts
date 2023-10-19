@@ -1,6 +1,7 @@
 import { Page, test, expect } from '@playwright/test';
 import {
   clickInTheMiddleOfTheScreen,
+  copyAndPaste,
   FunctionalGroups,
   getCoordinatesOfTheMiddleOfTheScreen,
   pressButton,

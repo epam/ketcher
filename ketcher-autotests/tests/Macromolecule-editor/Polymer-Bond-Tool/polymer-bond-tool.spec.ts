@@ -19,7 +19,7 @@ test.describe('Polymer Bond Tool', () => {
     await takePageScreenshot(page);
   });
 
-  test.only('Create bond between two peptides', async ({ page }) => {
+  test('Create bond between two peptides', async ({ page }) => {
     /* 
     Test case: #2334 - Create peptide chain (HELM style) - Center-to-Center
     Description: Polymer bond tool

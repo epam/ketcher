@@ -13,6 +13,7 @@ import {
   waitForRender,
 } from '@utils';
 import { STRUCTURE_LIBRARY_BUTTON_TEST_ID } from '../templates.costants';
+import { editStructureTemplate, openFunctionalGroup } from '@utils/templates';
 
 async function setDisplayStereoFlagsSettingToOn(page: Page) {
   await selectTopPanelButton(TopPanelButton.Settings, page);
@@ -52,16 +53,38 @@ async function openStructureLibrary(page: Page) {
   await page.getByTestId(STRUCTURE_LIBRARY_BUTTON_TEST_ID).click();
 }
 
-async function openFunctionalGroup(page: Page) {
-  await openStructureLibrary(page);
-  await page.getByText('Functional Group').click();
-}
+// async function openFunctionalGroup(page: Page) {
+//   await openStructureLibrary(page);
+//   await page.getByText('Functional Group').click();
+// }
 
-async function editStructureTemplate(page: Page, group: string, text: string) {
-  const editStructureButton = page.getByTitle(text).getByRole('button');
-  await openStructureLibrary(page);
-  await page.getByText(group).click();
-  await editStructureButton.click();
+// async function editStructureTemplate(page: Page, group: string, text: string) {
+//   const editStructureButton = page.getByTitle(text).getByRole('button');
+//   await openStructureLibrary(page);
+//   await page.getByText(group).click();
+//   await editStructureButton.click();
+// }
+
+// async function editStructureTemplate(
+//   page: Page,
+//   templateCategory: string,
+//   templateName: string,
+// ) {
+//   const editStructureButton = page.getByTitle(templateName).getByRole('button');
+//   await openStructureLibrary(page);
+//   await page.getByText(templateCategory).click();
+//   await editStructureButton.click();
+// }
+
+async function editAndClearTemplateName(
+  page: Page,
+  templateCategory: string,
+  templateName: string,
+) {
+  await editStructureTemplate(page, templateCategory, templateName);
+  await page.getByTestId('file-name-input').click();
+  await page.keyboard.press('Control+a');
+  await page.keyboard.press('Delete');
 }
 
 test.describe('Templates - Template Library', () => {
@@ -119,15 +142,15 @@ test.describe('Templates - Template Library', () => {
     await page.mouse.wheel(deltaX, deltaY);
   });
 
-  test(' Functional groups tab', async ({ page }) => {
+  test('Functional groups tab', async ({ page }) => {
     // Test case: EPMLSOPKET-4267
     // Verify Functional Group tab
     await openFunctionalGroup(page);
   });
 
-  test(' Functional groups - adding structure', async ({ page }) => {
+  test('Functional groups - adding structure', async ({ page }) => {
     // Test case: EPMLSOPKET-4267
-    // Add sturucture from Functional Group into canvas
+    // Add structure from Functional Group into canvas
     await selectFunctionalGroups(FunctionalGroups.FMOC, page);
     await clickInTheMiddleOfTheScreen(page);
   });
@@ -141,33 +164,24 @@ test.describe('Templates - Template Library', () => {
   test('Edit templates - name field with no character', async ({ page }) => {
     // Test case: EPMLSOPKET-1699
     // Verify validation if name field not contain any characters
-    await editStructureTemplate(page, 'β-D-Sugars', 'β-D-Allopyranose');
-    await page.getByTestId('file-name-input').click();
-    await page.keyboard.press('Control+a');
-    await page.keyboard.press('Delete');
+    await editAndClearTemplateName(page, 'β-D-Sugars', 'β-D-Allopyranose');
   });
 
-  test(' Edit templates - name with just spaces', async ({ page }) => {
+  test('Edit templates - name with just spaces', async ({ page }) => {
     // Test case: EPMLSOPKET-1699
     // Verify if structure name won't change if field will contain just spaces
-    await editStructureTemplate(page, 'β-D-Sugars', 'β-D-Allopyranose');
-    await page.getByTestId('file-name-input').click();
-    await page.keyboard.press('Control+a');
-    await page.keyboard.press('Delete');
+    await editAndClearTemplateName(page, 'β-D-Sugars', 'β-D-Allopyranose');
     await page.getByTestId('file-name-input').fill('   ');
     await page.getByRole('button', { name: 'Edit', exact: true }).click();
     await page.getByText('β-D-Sugars').click();
   });
 
-  test(' Text field 128 characters limit test ', async ({ page }) => {
+  test('Text field 128 characters limit test ', async ({ page }) => {
     // Verify maximum character validation on the name field
     const textField = page.getByTestId('file-name-input');
     const number = 129;
     const inputText = 'A'.repeat(number);
-    await editStructureTemplate(page, 'β-D-Sugars', 'β-D-Allopyranose');
-    await page.getByTestId('file-name-input').click();
-    await page.keyboard.press('Control+a');
-    await page.keyboard.press('Delete');
+    await editAndClearTemplateName(page, 'β-D-Sugars', 'β-D-Allopyranose');
     await waitForRender(page, async () => {
       await textField.type(inputText);
     });

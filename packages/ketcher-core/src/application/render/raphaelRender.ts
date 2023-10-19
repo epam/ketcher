@@ -110,9 +110,9 @@ export class Render {
     return draw.selectionRectangle(this.paper, point0, point1, this.options);
   }
 
-  /** @deprecated recommend using `CoordinateTransformation.pageEventToModel` instead */
+  /** @deprecated recommend using `CoordinateTransformation.pageToModel` instead */
   page2obj(event: MouseEvent | { clientX: number; clientY: number }) {
-    return CoordinateTransformation.pageEventToModel(event, this);
+    return CoordinateTransformation.pageToModel(event, this);
   }
 
   setZoom(zoom: number, event?: WheelEvent) {
@@ -161,7 +161,7 @@ export class Render {
     zoomedWidth: number,
     zoomedHeight: number,
   ) {
-    const fixedPoint = CoordinateTransformation.pageEventToCanvas(event, this);
+    const fixedPoint = CoordinateTransformation.pageToCanvas(event, this);
     const widthRatio = (fixedPoint.x - this.viewBox.minX) / this.viewBox.width;
     const heightRatio =
       (fixedPoint.y - this.viewBox.minY) / this.viewBox.height;

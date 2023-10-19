@@ -48,13 +48,13 @@ describe('CoordinateTransformation', () => {
     expect(point).toStrictEqual(pointInCanvas);
   });
 
-  test('pageEventToCanvas', () => {
-    const point = CoordinateTransformation.pageEventToCanvas(pageEvent, render);
+  test('pageToCanvas', () => {
+    const point = CoordinateTransformation.pageToCanvas(pageEvent, render);
     expect(point).toStrictEqual(pointInCanvas);
   });
 
-  test('pageEventToModel', () => {
-    const point = CoordinateTransformation.pageEventToModel(pageEvent, render);
+  test('pageToModel', () => {
+    const point = CoordinateTransformation.pageToModel(pageEvent, render);
     expect(point).toStrictEqual(protoPoint);
   });
 });

@@ -509,7 +509,7 @@ class SelectTool implements Tool {
 
   private isCloseToEdgeOfCanvas(event: MouseEvent) {
     const EDGE_OFFSET = 50;
-    const mousePositionInCanvas = CoordinateTransformation.pageEventToCanvas(
+    const mousePositionInCanvas = CoordinateTransformation.pageToCanvas(
       event,
       this.editor.render,
     );

@@ -17,7 +17,7 @@ const viewToCanvas = (point: Vec2, render: Render) => {
   return point.scaled(1 / render.options.zoom).add(offset);
 };
 
-const pageEventToView = (
+const pageToView = (
   event: MouseEvent | { clientX: number; clientY: number },
   renderClientArea: HTMLElement,
 ) => {
@@ -26,19 +26,19 @@ const pageEventToView = (
   return new Vec2(event.clientX - offsetLeft, event.clientY - offsetTop);
 };
 
-const pageEventToCanvas = (
+const pageToCanvas = (
   event: MouseEvent | { clientX: number; clientY: number },
   render: Render,
 ) => {
-  const pointInViewBox = pageEventToView(event, render.clientArea);
+  const pointInViewBox = pageToView(event, render.clientArea);
   return viewToCanvas(pointInViewBox, render);
 };
 
-const pageEventToModel = (
+const pageToModel = (
   event: MouseEvent | { clientX: number; clientY: number },
   render: Render,
 ) => {
-  const pointInCanvas = pageEventToCanvas(event, render);
+  const pointInCanvas = pageToCanvas(event, render);
   return Scale.canvasToProto(pointInCanvas, render.options);
 };
 
@@ -47,6 +47,6 @@ export const CoordinateTransformation = {
   modelToView,
   canvasToView,
   viewToCanvas,
-  pageEventToCanvas,
-  pageEventToModel,
+  pageToCanvas,
+  pageToModel,
 };

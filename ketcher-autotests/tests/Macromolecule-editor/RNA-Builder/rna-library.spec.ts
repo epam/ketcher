@@ -24,7 +24,7 @@ test.describe('RNA Library', () => {
 
   test('Check the RNA components panel', async ({ page }) => {
     /* 
-    Test case: #2748 - RNA Builder. Accordion component
+    Test case: #2748, #2751 - RNA Builder. Accordion component
     Description: Check the RNA components panel. 
     RNA panel consist of:
     RNA Builder(expanded), Presets(5)(expanded), Sugars(199)(collapsed), 
@@ -38,7 +38,7 @@ test.describe('RNA Library', () => {
 
   test('Collapse RNA Builder', async ({ page }) => {
     /* 
-    Test case: #2748 - RNA Builder. Accordion component
+    Test case: #2748, #2751 - RNA Builder. Accordion component
     Description: After click on arrow RNA Builder collapsed.
     */
     await page.getByTestId('RNA-TAB').click();
@@ -77,7 +77,7 @@ test.describe('RNA Library', () => {
   for (const data of testData) {
     test(`Check ${data.component} component`, async ({ page }) => {
       /* 
-      Test case: #2748 - RNA Builder. Accordion component
+      Test case: #2748, #2751 - RNA Builder. Accordion component
       */
       await page.getByTestId('RNA-TAB').click();
       await page.getByTestId(`summary-${data.component}`).click();
@@ -327,5 +327,27 @@ test.describe('RNA Library', () => {
     await page.getByTestId('bP___Boranophosphate').click();
     await selectRectangleSelectionTool(page);
     await takeRNABuilderScreenshot(page);
+  });
+
+  test('Highlight Sugar, Phosphate and Base in Library, once it chosen in RNA Builder', async ({
+    page,
+  }) => {
+    /* 
+    Test case: #2759 - Edit RNA mode
+    Description: Sugar, Phosphate and Base highlighted in Library.
+    */
+    const monomers = [
+      { type: 'sugar', name: "3A6___6-amino-hexanol (3' end)" },
+      { type: 'base', name: 'baA___N-benzyl-adenine' },
+      { type: 'phosphate', name: 'bP___Boranophosphate' },
+    ];
+
+    for (const monomer of monomers) {
+      await page.getByTestId('RNA-TAB').click();
+      await page.getByTestId(`rna-builder-slot--${monomer.type}`).click();
+      await page.getByTestId(monomer.name).click();
+      await selectRectangleSelectionTool(page);
+      await takeMonomerLibraryScreenshot(page);
+    }
   });
 });

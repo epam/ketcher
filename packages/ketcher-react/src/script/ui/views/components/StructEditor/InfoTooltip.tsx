@@ -73,35 +73,39 @@ const InfoTooltip: FC<InfoPanelProps> = (props) => {
   });
 
   useEffect(() => {
-    const debouncedShowTooltip = debounce((event: MouseEvent) => {
-      const target = event.target as HTMLElement;
-      const tooltip = target.dataset.tooltip;
-      if (tooltip) {
+    const debouncedShowTooltip = debounce(
+      (event: MouseEvent, tooltip: string) => {
         setTooltip(tooltip);
         setPosition({
           x: event.clientX,
           y: event.clientY,
         });
-      }
-    }, TOOLTIP_DELAY);
+      },
+      TOOLTIP_DELAY,
+    );
+    const hideTooltip = () => {
+      setTooltip(null);
+      setPosition({
+        x: null,
+        y: null,
+      });
+    };
 
-    const hideTooltip = (event: MouseEvent) => {
+    const toggleTooltip = (event: MouseEvent) => {
       const target = event.target as HTMLElement;
       const tooltip = target.dataset.tooltip;
+
       if (tooltip) {
-        setTooltip(null);
-        setPosition({
-          x: null,
-          y: null,
-        });
+        debouncedShowTooltip(event, tooltip);
+      } else {
+        debouncedShowTooltip.cancel();
+        hideTooltip();
       }
     };
 
-    document.addEventListener('mouseover', debouncedShowTooltip);
-    document.addEventListener('mouseout', hideTooltip);
+    document.addEventListener('mouseover', toggleTooltip);
     return () => {
-      document.removeEventListener('mouseover', debouncedShowTooltip);
-      document.removeEventListener('mouseout', hideTooltip);
+      document.removeEventListener('mouseover', toggleTooltip);
     };
   }, []);
 

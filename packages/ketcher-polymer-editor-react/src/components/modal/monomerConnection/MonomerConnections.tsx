@@ -3,9 +3,10 @@ import { ActionButton } from 'components/shared/actionButton';
 import { Modal } from 'components/shared/modal';
 import { BaseMonomer } from 'ketcher-core/dist/domain/entities/BaseMonomer';
 import { StructRender } from 'ketcher-react';
+import { useAppSelector } from 'hooks';
+import { selectEditor } from 'state/common';
 import { useMemo, useState } from 'react';
 import { RequiredModalProps } from '../modalContainer';
-import { CoreEditor } from 'ketcher-core';
 
 export interface MonomerConnectionOnlyProps {
   firstMonomer?: BaseMonomer;
@@ -91,6 +92,8 @@ const MonomerConnection = ({
   onCreateBond,
   onCancelBondCreation,
 }: MonomerConnectionProps): React.ReactElement => {
+  const editor = useAppSelector(selectEditor);
+
   if (!firstMonomer || !secondMonomer) {
     throw new Error('Monomers must exist!');
   }
@@ -112,28 +115,22 @@ const MonomerConnection = ({
   }
 
   const cancelBondCreationAndClose = () => {
-    onCancelBondCreation();
+    editor.events.cancelBondCreationViaModal.dispatch();
     onClose();
   };
 
-  const tryConnectingMonomers = () => {
+  const connectMonomers = () => {
     if (!firstSelectedAttachmentPoint || !secondSelectedAttachmentPoint) {
       throw new Error('Attachment points cannot be falsy');
     }
 
-    if (firstSelectedAttachmentPoint === secondSelectedAttachmentPoint) {
-      CoreEditor.provideEditorInstance().events.error.dispatch(
-        "You can't connect monomers by attachment points of the same group",
-      );
-
-      return;
-    }
-
-    onCreateBond(
+    editor.events.createBondViaModal.dispatch({
+      firstMonomer,
       secondMonomer,
-      firstSelectedAttachmentPoint || '',
-      secondSelectedAttachmentPoint || '',
-    );
+      firstSelectedAttachmentPoint,
+      secondSelectedAttachmentPoint,
+    });
+
     onClose();
   };
 
@@ -173,7 +170,7 @@ const MonomerConnection = ({
           disabled={
             !firstSelectedAttachmentPoint || !secondSelectedAttachmentPoint
           }
-          clickHandler={tryConnectingMonomers}
+          clickHandler={connectMonomers}
         />
       </Modal.Footer>
     </StyledModal>

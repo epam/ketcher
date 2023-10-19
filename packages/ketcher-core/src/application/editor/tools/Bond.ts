@@ -119,118 +119,94 @@ class PolymerBond implements BaseTool {
     }
   }
 
+  private finishBondCreation(secondMonomer: BaseMonomer) {
+    assert(this.bondRenderer);
+    if (!secondMonomer.hasFreeAttachmentPoint) {
+      this.editor.events.error.dispatch(
+        "Monomers don't have any connection point available",
+      );
+      return this.editor.drawingEntitiesManager.cancelPolymerBondCreation(
+        this.bondRenderer.polymerBond,
+      );
+    }
+    const firstMonomerAttachmentPoint =
+      this.bondRenderer.polymerBond.firstMonomer.getPotentialAttachmentPointByBond(
+        this.bondRenderer.polymerBond,
+      );
+    const secondMonomerAttachmentPoint =
+      secondMonomer.availableAttachmentPointForBondEnd;
+    assert(firstMonomerAttachmentPoint);
+    assert(secondMonomerAttachmentPoint);
+    if (firstMonomerAttachmentPoint === secondMonomerAttachmentPoint) {
+      this.editor.events.error.dispatch(
+        'You have connected monomers with attachment points of the same group',
+      );
+    }
+    return this.editor.drawingEntitiesManager.finishPolymerBondCreation(
+      this.bondRenderer.polymerBond,
+      secondMonomer,
+      firstMonomerAttachmentPoint,
+      secondMonomerAttachmentPoint,
+    );
+  }
+
   public mouseup() {
     if (this.isBondConnectionModalOpen) {
       return;
     }
-
-    this.handleBondCreationCancellation();
+    if (this.bondRenderer) {
+      const modelChanges =
+        this.editor.drawingEntitiesManager.cancelPolymerBondCreation(
+          this.bondRenderer.polymerBond,
+        );
+      this.editor.renderersContainer.update(modelChanges);
+      this.bondRenderer = undefined;
+    }
   }
 
   public mouseUpMonomer(event) {
-    const thisMonomer = this.bondRenderer?.polymerBond?.firstMonomer;
-
-    if (!this.bondRenderer || !thisMonomer) {
-      return;
-    }
-
     const renderer = event.toElement.__data__;
-    const isThisMonomerHovered = renderer === thisMonomer.renderer;
+    const isFirstMonomerHovered =
+      renderer === this.bondRenderer?.polymerBond?.firstMonomer?.renderer;
 
-    if (isThisMonomerHovered) {
-      return;
-    }
+    if (this.bondRenderer && !isFirstMonomerHovered) {
+      const firstMonomer = this.bondRenderer?.polymerBond?.firstMonomer;
+      const secondMonomer = renderer.monomer;
 
-    const otherMonomer = renderer.monomer;
+      const showModal = true; // ! here goes logic for choose when we invoke modal
+      if (showModal) {
+        this.isBondConnectionModalOpen = true;
 
-    const stopPropagation = this.tryToConnectMonomers(
-      thisMonomer,
-      otherMonomer,
-    );
-
-    if (stopPropagation) {
+        this.editor.events.openMonomerConnectionModal.dispatch({
+          firstMonomer,
+          secondMonomer,
+          onCreateBond: this.handleBondCreation,
+          onCancelBondCreation: this.handleBondCreationCancellation,
+        });
+        return;
+      }
+      // This logic so far is only for no-modal connections. Maybe then we can chain it after modal invoke
+      const modelChanges = this.finishBondCreation(renderer.monomer);
+      this.editor.renderersContainer.update(modelChanges);
+      this.bondRenderer = undefined;
       event.stopPropagation();
     }
   }
 
-  private tryToConnectMonomers(
-    firstMonomer: BaseMonomer,
-    secondMonomer: BaseMonomer,
-  ): boolean {
+  public handleBondCreation = (payload: {
+    firstMonomer: BaseMonomer;
+    secondMonomer: BaseMonomer;
+    firstAttachmentPoint: string;
+    secondAttachmentPoint: string;
+  }): void => {
     assert(this.bondRenderer);
 
-    if (!firstMonomer.hasValidTypeToConnectWith(secondMonomer)) {
-      this.editor.events.error.dispatch(
-        'Monomers have incompatible types and cannot be bonded',
-      );
-      this.editor.drawingEntitiesManager.cancelPolymerBondCreation(
-        this.bondRenderer.polymerBond,
-      );
-
-      return false;
-    }
-
-    if (
-      !firstMonomer.hasFreeAttachmentPoint ||
-      !secondMonomer.hasFreeAttachmentPoint
-    ) {
-      this.editor.events.error.dispatch(
-        "Monomers don't have any available attachment points",
-      );
-      this.editor.drawingEntitiesManager.cancelPolymerBondCreation(
-        this.bondRenderer.polymerBond,
-      );
-
-      return false;
-    }
-
-    if (
-      firstMonomer.isExactlyOneAttachmentPointFree &&
-      secondMonomer.isExactlyOneAttachmentPointFree
-    ) {
-      const firstAttachmentPoint =
-        firstMonomer.getPotentialAttachmentPointByBond(
-          this.bondRenderer.polymerBond,
-        );
-      const secondAttachmentPoint =
-        secondMonomer.availableAttachmentPointForBondEnd;
-
-      assert(typeof firstAttachmentPoint === 'string');
-      assert(typeof secondAttachmentPoint === 'string');
-
-      errorIfAttachmentPointsAreOfSameGroup(
-        firstAttachmentPoint,
-        secondAttachmentPoint,
-      );
-
-      this.handleBondCreation(
-        secondMonomer,
-        firstAttachmentPoint,
-        secondAttachmentPoint,
-      );
-
-      return true;
-    }
-
-    this.isBondConnectionModalOpen = true;
-
-    this.editor.events.openMonomerConnectionModal.dispatch({
+    const {
       firstMonomer,
       secondMonomer,
-      onCreateBond: this.handleBondCreation,
-      onCancelBondCreation: this.handleBondCreationCancellation,
-    });
-
-    return false;
-  }
-
-  private handleBondCreation = (
-    secondMonomer: BaseMonomer,
-    firstAttachmentPoint: string,
-    secondAttachmentPoint: string,
-  ): void => {
-    assert(this.bondRenderer);
-
+      firstAttachmentPoint,
+      secondAttachmentPoint,
+    } = payload;
     const modelChanges =
       this.editor.drawingEntitiesManager.finishPolymerBondCreation(
         this.bondRenderer.polymerBond,
@@ -240,12 +216,16 @@ class PolymerBond implements BaseTool {
       );
 
     this.editor.renderersContainer.update(modelChanges);
-
+    if (firstAttachmentPoint === secondAttachmentPoint) {
+      this.editor.events.error.dispatch(
+        'You have connected monomers with attachment points of the same group',
+      );
+    }
     this.isBondConnectionModalOpen = false;
     this.bondRenderer = undefined;
   };
 
-  private handleBondCreationCancellation = (): void => {
+  public handleBondCreationCancellation = (): void => {
     if (!this.bondRenderer) {
       return;
     }
@@ -259,21 +239,6 @@ class PolymerBond implements BaseTool {
   };
 
   public destroy() {}
-}
-
-export function errorIfAttachmentPointsAreOfSameGroup(
-  firstAttachmentPoint: string,
-  secondAttachmentPoint: string,
-): boolean {
-  if (firstAttachmentPoint === secondAttachmentPoint) {
-    CoreEditor.provideEditorInstance().events.error.dispatch(
-      'You have connected monomers with attachment points of the same group',
-    );
-
-    return true;
-  }
-
-  return false;
 }
 
 export { PolymerBond };

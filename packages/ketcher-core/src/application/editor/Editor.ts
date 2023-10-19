@@ -8,6 +8,7 @@ import {
   ToolEventHandlerName,
   IRnaPreset,
 } from 'application/editor/tools/Tool';
+import { PolymerBond } from 'application/editor/tools/Bond';
 import { toolsMap } from 'application/editor/tools';
 import { MonomerItemType } from 'domain/types';
 import { RenderersManager } from 'application/render/renderers/RenderersManager';
@@ -57,6 +58,10 @@ export class CoreEditor {
     this.events.selectMonomer.add((monomer) => this.onSelectMonomer(monomer));
     this.events.selectPreset.add((preset) => this.onSelectRNAPreset(preset));
     this.events.selectTool.add((tool) => this.onSelectTool(tool));
+    this.events.createBondViaModal.add((payload) => this.onCreateBond(payload));
+    this.events.cancelBondCreationViaModal.add(() =>
+      this.onCancelBondCreation(),
+    );
 
     renderersEvents.forEach((eventName) => {
       this.events[eventName].add((event) =>
@@ -75,6 +80,18 @@ export class CoreEditor {
 
   private onSelectTool(tool: string) {
     this.selectTool(tool);
+  }
+
+  private onCreateBond(payload) {
+    if (this.tool instanceof PolymerBond) {
+      this.tool.handleBondCreation(payload);
+    }
+  }
+
+  private onCancelBondCreation() {
+    if (this.tool instanceof PolymerBond) {
+      this.tool.handleBondCreationCancellation();
+    }
   }
 
   public selectTool(name: string, options?) {

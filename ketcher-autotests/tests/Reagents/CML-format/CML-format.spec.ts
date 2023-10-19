@@ -5,6 +5,11 @@ import {
   waitForPageInit,
   saveToFile,
   receiveFileComparisonData,
+  FILE_TEST_DATA,
+  clickInTheMiddleOfTheScreen,
+  pasteFromClipboardAndAddToCanvas,
+  selectTopPanelButton,
+  TopPanelButton,
 } from '@utils';
 import { getCml } from '@utils/formats';
 
@@ -53,5 +58,34 @@ test.describe('Reagents CML format', () => {
       'CML/benzene-arrow-benzene-reagent-nh3-expected.cml',
       page,
     );
+  });
+
+  test('Detection molecule as reagent and write reagent information in CML format in "Preview" tab', async ({
+    page,
+  }) => {
+    /*
+    Test case: EPMLSOPKET-14791
+    results of this test case are not correct. bug - https://github.com/epam/ketcher/issues/1933
+    */
+    await openFileAndAddToCanvas(
+      'CML/reagents-below-and-above-arrow.cml',
+      page,
+    );
+    await selectTopPanelButton(TopPanelButton.Save, page);
+    await page.getByRole('button', { name: 'MDL Molfile V2000' }).click();
+    await page.getByRole('option', { name: 'CML' }).click();
+  });
+
+  test('Paste from clipboard in "CML" format', async ({ page }) => {
+    /*
+      Test case: EPMLSOPKET-14794
+      Description: Reagents 'NH3' displays above reaction arrow and HF below.
+      results of this test case are not correct. bug - https://github.com/epam/ketcher/issues/1933
+      */
+    await pasteFromClipboardAndAddToCanvas(
+      page,
+      FILE_TEST_DATA.reagentsBelowAndAboveArrowCml,
+    );
+    await clickInTheMiddleOfTheScreen(page);
   });
 });

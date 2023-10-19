@@ -4,8 +4,6 @@ import {
   TopPanelButton,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
-  delay,
-  DELAY_IN_SECONDS,
   waitForPageInit,
 } from '@utils';
 
@@ -50,7 +48,6 @@ test.describe('Reagents molecule above arrow', () => {
       page,
     );
 
-    await delay(DELAY_IN_SECONDS.THREE);
     await selectTopPanelButton(TopPanelButton.Save, page);
     await page.getByRole('button', { name: 'MDL Rxnfile V2000' }).click();
     await page.getByRole('option', { name: 'SVG Document' }).click();
@@ -68,5 +65,50 @@ test.describe('Reagents molecule above arrow', () => {
     await selectTopPanelButton(TopPanelButton.Save, page);
     await page.getByRole('button', { name: 'MDL Rxnfile V2000' }).click();
     await page.getByRole('option', { name: 'PNG Image' }).click();
+  });
+
+  test('Detection text as reagent and render reagent information in PNG format in "Preview" tab', async ({
+    page,
+  }) => {
+    /*
+      Test case: EPMLSOPKET-4697
+      Description: File is shown in the preview with the NH3 text reagent above the arrow and HBr below.
+    */
+    await openFileAndAddToCanvas(
+      'KET/text-reagents-below-and-above-arrow.ket',
+      page,
+    );
+    await selectTopPanelButton(TopPanelButton.Save, page);
+    await page.getByRole('button', { name: 'MDL Rxnfile V2000' }).click();
+    await page.getByRole('option', { name: 'PNG Image' }).click();
+  });
+
+  test('Detection text as reagent and render reagent information in SVG format in "Preview" tab', async ({
+    page,
+  }) => {
+    /*
+      Test case: EPMLSOPKET-4700
+      Description: File is shown in the preview with the NH3 text reagent above the arrow and HBr below.
+    */
+    await openFileAndAddToCanvas(
+      'KET/text-reagents-below-and-above-arrow.ket',
+      page,
+    );
+    await selectTopPanelButton(TopPanelButton.Save, page);
+    await page.getByRole('button', { name: 'MDL Rxnfile V2000' }).click();
+    await page.getByRole('option', { name: 'SVG Document' }).click();
+  });
+
+  test('Check that text nodes do not loses after save to SVG', async ({
+    page,
+  }) => {
+    /*
+      Test case: EPMLSOPKET-4705
+      Description: File is shown in the preview with correct text nodes.
+    */
+    await openFileAndAddToCanvas('KET/text-nodes-on-reaction.ket', page);
+    await selectTopPanelButton(TopPanelButton.Save, page);
+    await page.getByRole('button', { name: 'MDL Rxnfile V2000' }).click();
+    await page.getByRole('option', { name: 'SVG Document' }).click();
   });
 });

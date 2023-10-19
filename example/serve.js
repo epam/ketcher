@@ -13,6 +13,7 @@ app.get('*', function (req, res) {
   res.sendfile(staticFilesPath + '/index.html');
 });
 
+// Install mkcert on linux https://kifarunix.com/create-locally-trusted-ssl-certificates-with-mkcert-on-ubuntu-20-04/?expand_article=1
 // https://web.dev/articles/how-to-use-local-https#setup
 const options = {
   key: fs.readFileSync('./localhost-key.pem'),

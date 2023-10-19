@@ -201,10 +201,14 @@ export class BaseMonomer extends DrawingEntity {
       return Boolean(value.rglabel);
     });
     const attachmentPointNameToBond = {};
-    for (let i = 1; i <= attachmentAtoms.size; i++) {
-      const label = `R${i}`;
-      attachmentPointNameToBond[label] = null;
-    }
+
+    attachmentAtoms.forEach((atom, _) => {
+      const label = atom.rglabel;
+      if (label) {
+        attachmentPointNameToBond[`R${label}`] = null;
+      }
+    });
+
     return attachmentPointNameToBond;
   }
 

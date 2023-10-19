@@ -17,7 +17,7 @@
 import { MonomerGroup } from 'components/monomerLibrary/monomerLibraryGroup';
 import { useAppSelector } from 'hooks';
 import { IconName } from 'ketcher-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, MouseEvent } from 'react';
 import {
   MonomerCodeToGroup,
   MonomerGroupCodes,
@@ -61,6 +61,9 @@ import {
 } from 'components/monomerLibrary/monomerLibraryGroup/styles';
 import { MonomerItemType } from 'ketcher-core';
 import { selectEditor } from 'state/common';
+import { RNAContextMenu } from 'components/contextMenu/RNAContextMenu';
+import { CONTEXT_MENU_ID } from 'components/contextMenu/types';
+import { useContextMenu } from 'react-contexify';
 
 interface IGroupsDataItem {
   groupName: RnaBuilderItem;
@@ -71,7 +74,11 @@ interface IGroupsDataItem {
   }[];
 }
 
-export const RnaAccordion = ({ libraryName }) => {
+export const RnaAccordion = ({
+  libraryName,
+  duplicatePreset,
+  activateEditMode,
+}) => {
   const monomers = useAppSelector(selectFilteredMonomers);
   const items = selectMonomersInCategory(monomers, libraryName);
   const activeRnaBuilderItem = useAppSelector(selectActiveRnaBuilderItem);
@@ -83,6 +90,8 @@ export const RnaAccordion = ({ libraryName }) => {
 
   const [expandedAccordion, setExpandedAccordion] =
     useState<RnaBuilderItem | null>(RnaBuilderPresetsItem.Presets);
+
+  const { show } = useContextMenu({ id: CONTEXT_MENU_ID.FOR_RNA });
 
   const handleAccordionSummaryClick = (rnaBuilderItem: RnaBuilderItem) => {
     if (expandedAccordion === rnaBuilderItem) {
@@ -131,6 +140,17 @@ export const RnaAccordion = ({ libraryName }) => {
 
     dispatch(setActivePresetMonomerGroup({ groupName, groupItem: monomer }));
     dispatch(setActiveRnaBuilderItem(groupName));
+  };
+
+  const handleContextMenu = (preset: IRnaPreset) => (event: MouseEvent) => {
+    dispatch(setActivePreset(preset));
+    show({
+      event,
+      props: {
+        duplicatePreset,
+        activateEditMode,
+      },
+    });
   };
 
   useEffect(() => {
@@ -188,11 +208,13 @@ export const RnaAccordion = ({ libraryName }) => {
                         key={`${preset.name}${index}`}
                         preset={preset}
                         onClick={() => selectPreset(preset)}
+                        onContextMenu={handleContextMenu(preset)}
                         isSelected={activePreset?.presetInList === preset}
                       />
                     );
                   })}
                 </ItemsContainer>
+                <RNAContextMenu />
               </GroupContainer>
               {isEditMode && <DisabledArea />}
             </DetailsContainer>

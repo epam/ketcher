@@ -19,34 +19,55 @@ interface ModalProps {
   onClose: VoidFunction;
   className?: string;
 }
+const StyledDialog = styled(Dialog)`
+  .MuiPaper-root {
+    width: 304px;
+  }
+`;
 
 const Header = styled(DialogTitle)(({ theme }) => ({
-  margin: '12px 11px 12px 16px',
-  padding: 0,
+  padding: '2px 4px 2px 12px;',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
   fontFamily: `${theme.ketcher.font.family.inter}`,
   fontSize: `${theme.ketcher.font.size.medium}`,
-  fontWeight: `${theme.ketcher.font.weight.regular}`,
-  textTransform: 'uppercase',
+  fontWeight: 500,
+  letterSpacing: '1.1px',
+  textTransform: 'capitalize',
+  borderBottom: '1px solid rgba(202, 211, 221, 1)',
 }));
 
 const Title = styled.div({
   marginRight: '10px',
+  fontSize: '14px',
 });
 
-const Content = styled(DialogContent)(({ theme }) => ({
-  margin: '0 16px 16px',
-  padding: 0,
-
-  ...scrollbarThin(theme),
-}));
-
-const Footer = styled(DialogActions)({
-  margin: '0 16px 16px',
-  padding: 0,
+const StyledIcon = styled(Icon)({
+  width: '16px',
+  height: '16px',
+  color: 'rgba(51, 51, 51, 1)',
 });
+
+const Content = styled(DialogContent)`
+  padding: 10px 12px;
+  padding-top: 10px !important;
+  font-size: ${({ theme }) => theme.ketcher.font.size.medium};
+  letter-spacing: 1.25px;
+  line-height: 17px;
+  ${({ theme }) => scrollbarThin(theme)};
+`;
+
+const Footer = styled(DialogActions)`
+  height: 52px;
+  margin: 0 12px;
+  padding: 0;
+  .MuiButtonBase-root {
+    border-radius: 4px;
+    width: 72px;
+    font-size: ${({ theme }) => theme.ketcher.font.size.medium};
+  }
+`;
 
 type ModalSubcomponent = 'Content' | 'Footer';
 
@@ -96,7 +117,7 @@ export const Modal = ({
   });
 
   return (
-    <Dialog
+    <StyledDialog
       BackdropProps={backdropProps}
       PaperProps={paperProps}
       open={isOpen}
@@ -109,7 +130,7 @@ export const Modal = ({
         <Title>{title}</Title>
         {showCloseButton && (
           <IconButton title={'Close window'} onClick={onClose}>
-            <Icon name={'close'} />
+            <StyledIcon name={'close'} />
           </IconButton>
         )}
       </Header>
@@ -117,7 +138,7 @@ export const Modal = ({
       {subcomponents.Content}
 
       {subcomponents.Footer}
-    </Dialog>
+    </StyledDialog>
   );
 };
 

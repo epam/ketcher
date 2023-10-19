@@ -87,6 +87,10 @@ test.describe('Rectangle Selection Tool', () => {
     // Erase selected elements
     await selectEraseTool(page);
 
+    // Get rid of flakiness because of preview
+    const coords = [100, 100];
+    await page.mouse.move(coords[0], coords[1]);
+
     await takePageScreenshot(page);
   });
 

@@ -74,6 +74,10 @@ test.describe('Erase Tool', () => {
     // Delete peptide linked with two other peptides by bonds
     await peptide3.click();
 
+    // Get rid of flakiness because of preview
+    const coords = [100, 100];
+    await page.mouse.move(coords[0], coords[1]);
+
     await takeEditorScreenshot(page);
   });
 });

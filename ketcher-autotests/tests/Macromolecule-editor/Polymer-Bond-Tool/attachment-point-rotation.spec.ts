@@ -7,7 +7,6 @@ import {
   takePageScreenshot,
   waitForPageInit,
   takeEditorScreenshot,
-  delay,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';

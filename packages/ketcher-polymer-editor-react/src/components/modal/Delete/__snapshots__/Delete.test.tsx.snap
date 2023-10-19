@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Modal component should render correctly 1`] = `
+exports[`Delete component should render correctly 1`] = `
 Object {
   "asFragment": [Function],
   "baseElement": <body
@@ -41,7 +41,7 @@ Object {
             <div
               class="css-lvyu5j"
             >
-              title
+              Delete RNA Preset
             </div>
             <button
               class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-78trlr-MuiButtonBase-root-MuiIconButton-root"
@@ -72,7 +72,45 @@ Object {
           <div
             class="MuiDialogContent-root css-1n1tez8-MuiDialogContent-root"
           >
-            Content
+            <div>
+              You are about to delete
+            </div>
+            <p>
+              "
+              name
+              " RNA preset.
+            </p>
+            <p>
+              This operation cannot be undone.
+            </p>
+          </div>
+          <div
+            class="MuiDialogActions-root MuiDialogActions-spacing css-1codpvf-MuiDialogActions-root"
+          >
+            <button
+              class="MuiButtonBase-root css-1sac61a-MuiButtonBase-root"
+              role="button"
+              tabindex="0"
+              title="Cancel"
+              type="button"
+            >
+              Cancel
+              <span
+                class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+              />
+            </button>
+            <button
+              class="MuiButtonBase-root css-7phceu-MuiButtonBase-root"
+              role="button"
+              tabindex="0"
+              title="Delete"
+              type="button"
+            >
+              Delete
+              <span
+                class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+              />
+            </button>
           </div>
         </div>
       </div>

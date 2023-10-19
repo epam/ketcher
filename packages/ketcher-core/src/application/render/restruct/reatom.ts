@@ -1275,9 +1275,9 @@ export function getAtomCustomQuery(atom) {
     chirality: (value) => (value === 'clockwise' ? '@@' : '@'),
   };
 
-  for (const propertyName in atom) {
+  for (const propertyName in patterns) {
     const value = atom[propertyName];
-    if (propertyName in patterns && value !== null) {
+    if (propertyName in atom && value !== null) {
       const attrText = patterns[propertyName](value, atom);
       if (attrText) {
         addSemicolon();

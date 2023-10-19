@@ -12,6 +12,7 @@ import {
   takeEditorScreenshot,
   takeMonomerLibraryScreenshot,
   takePresetsScreenshot,
+  takeRNABuilderScreenshot,
   waitForPageInit,
 } from '@utils';
 
@@ -130,7 +131,7 @@ test.describe('RNA Library', () => {
 
   test('Add Custom preset to Presets section', async ({ page }) => {
     /* 
-    Test case: #2507 - Add RNA monomers to canvas
+    Test case: #2759 - Edit RNA mode
     Description: Custom presets added to Presets section.
     */
     await selectMonomer(DropDown.SugarsDropDown, Sugars.TwelveddR, page);
@@ -166,7 +167,7 @@ test.describe('RNA Library', () => {
     page,
   }) => {
     /*
-    Test case: #2507 - Add RNA monomers to canvas
+    Test case: #2759 - Edit RNA mode
     Description: Custom presets added to Presets section.
     */
     await selectMonomer(DropDown.SugarsDropDown, Sugars.TwelveddR, page);
@@ -182,7 +183,7 @@ test.describe('RNA Library', () => {
     page,
   }) => {
     /*
-    Test case: #2507 - Add RNA monomers to canvas
+    Test case: #2759 - Edit RNA mode
     Description: Custom presets added to Presets section.
     */
     await selectMonomer(DropDown.SugarsDropDown, Sugars.TwelveddR, page);
@@ -202,7 +203,7 @@ test.describe('RNA Library', () => {
     page,
   }) => {
     /*
-    Test case: #2507 - Add RNA monomers to canvas
+    Test case: #2759 - Edit RNA mode
     Description: Custom presets added to Presets section.
     */
     await selectMonomer(DropDown.BasesDropDown, Bases.Adenine, page);
@@ -216,5 +217,115 @@ test.describe('RNA Library', () => {
     await takePresetsScreenshot(page, {
       masks: [page.getByTestId('polymer-toggler')],
     });
+  });
+
+  test('Add Custom preset to Presets section and Edit', async ({ page }) => {
+    /* 
+    Test case: #2759 - Edit RNA mode
+    Description: Custom presets added to Presets section and can be edited.
+    */
+    await selectMonomer(DropDown.SugarsDropDown, Sugars.TwelveddR, page);
+    await selectMonomer(DropDown.BasesDropDown, Bases.Adenine, page);
+    await selectMonomer(DropDown.PhosphatesDropDown, Phosphates.Test6Ph, page);
+    await page.getByTestId('add-to-presets-btn').click();
+    await page.getByTestId('12ddR(A)Test-6-Ph_A_12ddR_Test-6-Ph').click({
+      button: 'right',
+    });
+    await page.getByTestId('edit').locator('div').click();
+    await page.getByTestId('rna-builder-slot--base').click();
+    await page.getByTestId('baA___N-benzyl-adenine').click();
+    await page.getByTestId('save-btn').click();
+    await page.getByTestId('12ddR(baA)Test-6-Ph_baA_12ddR_Test-6-Ph').click();
+    await takePresetsScreenshot(page, {
+      masks: [page.getByTestId('polymer-toggler')],
+    });
+  });
+
+  test('Add Custom preset to Presets section then Duplicate and Edit', async ({
+    page,
+  }) => {
+    /* 
+    Test case: #2759 - Edit RNA mode
+    Description: Custom presets added to Presets section then can be duplicated and edited.
+    */
+    await selectMonomer(DropDown.SugarsDropDown, Sugars.TwelveddR, page);
+    await selectMonomer(DropDown.BasesDropDown, Bases.Adenine, page);
+    await selectMonomer(DropDown.PhosphatesDropDown, Phosphates.Test6Ph, page);
+    await page.getByTestId('add-to-presets-btn').click();
+    await page.getByTestId('12ddR(A)Test-6-Ph_A_12ddR_Test-6-Ph').click({
+      button: 'right',
+    });
+    await page.getByTestId('duplicateandedit').locator('div').click();
+    await page.getByTestId('12ddR(A)Test-6-Ph_Copy_A_12ddR_Test-6-Ph').click({
+      button: 'right',
+    });
+    await page.getByTestId('edit').locator('div').click();
+    await page.getByTestId('rna-builder-slot--phosphate').click();
+    await page.getByTestId('P___Phosphate').click();
+    await page.getByTestId('save-btn').click();
+    await page.getByTestId('12ddR(A)P_A_12ddR_P').click();
+    await takePresetsScreenshot(page, {
+      masks: [page.getByTestId('polymer-toggler')],
+    });
+  });
+
+  test('Add Custom preset to Presets section and Delete', async ({ page }) => {
+    /* 
+    Test case: #2759 - Edit RNA mode
+    Description: Custom presets added to Presets section and can be deleted.
+    */
+    await selectMonomer(DropDown.SugarsDropDown, Sugars.TwelveddR, page);
+    await selectMonomer(DropDown.BasesDropDown, Bases.Adenine, page);
+    await selectMonomer(DropDown.PhosphatesDropDown, Phosphates.Test6Ph, page);
+    await page.getByTestId('add-to-presets-btn').click();
+    await page.getByTestId('12ddR(A)Test-6-Ph_A_12ddR_Test-6-Ph').click({
+      button: 'right',
+    });
+    await page.getByTestId('deletepreset').locator('div').click();
+    await page.getByRole('button', { name: 'Delete' }).click();
+    await takePresetsScreenshot(page, {
+      masks: [page.getByTestId('polymer-toggler')],
+    });
+  });
+
+  test('Add Custom preset to Presets section and Rename', async ({ page }) => {
+    /* 
+    Test case: #2759 - Edit RNA mode
+    Description: Custom presets added to Presets section and can be renamed.
+    */
+    await selectMonomer(DropDown.SugarsDropDown, Sugars.TwentyFiveR, page);
+    await selectMonomer(DropDown.BasesDropDown, Bases.NBebnzylAdenine, page);
+    await selectMonomer(
+      DropDown.PhosphatesDropDown,
+      Phosphates.Boranophosphate,
+      page,
+    );
+    await page.getByTestId('add-to-presets-btn').click();
+    await page.getByTestId('25R(baA)bP_baA_25R_bP').click({
+      button: 'right',
+    });
+    await page.getByTestId('edit').locator('div').click();
+    await page.getByPlaceholder('Name your structure').click();
+    await page.getByPlaceholder('Name your structure').fill('TestMonomers');
+    await page.getByTestId('save-btn').click();
+    await takePresetsScreenshot(page, {
+      masks: [page.getByTestId('polymer-toggler')],
+    });
+  });
+
+  test('Autofilling RNA name when selects RNA parts', async ({ page }) => {
+    /* 
+    Test case: #2759 - Edit RNA mode
+    Description: RNA name autofilling when selects RNA parts.
+    */
+    await page.getByTestId('RNA-TAB').click();
+    await page.getByTestId('rna-builder-slot--sugar').click();
+    await page.getByTestId("3A6___6-amino-hexanol (3' end)").click();
+    await page.getByTestId('rna-builder-slot--base').click();
+    await page.getByTestId('baA___N-benzyl-adenine').click();
+    await page.getByTestId('rna-builder-slot--phosphate').click();
+    await page.getByTestId('bP___Boranophosphate').click();
+    await selectRectangleSelectionTool(page);
+    await takeRNABuilderScreenshot(page);
   });
 });

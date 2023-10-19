@@ -161,7 +161,7 @@ export const atom = {
     },
     chirality: {
       title: 'Chirality',
-      enum: [null, 'clockwise', 'anticlockwise'],
+      enum: [null, 'anticlockwise', 'clockwise'],
       enumNames: ['', 'anticlockwise', 'clockwise'],
       default: 0,
     },

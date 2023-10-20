@@ -7,6 +7,7 @@ import {
   Sugars,
   addMonomerToCenterOfCanvas,
   clickInTheMiddleOfTheScreen,
+  moveMouseToTheMiddleOfTheScreen,
   selectMonomer,
   selectRectangleSelectionTool,
   takeEditorScreenshot,
@@ -349,5 +350,54 @@ test.describe('RNA Library', () => {
       await selectRectangleSelectionTool(page);
       await takeMonomerLibraryScreenshot(page);
     }
+  });
+
+  test('Add Sugar-Base Combination to Canvas', async ({ page }) => {
+    /* 
+    Test case: #2507 - Add RNA monomers to canvas
+    Description: Sugar-Base Combination added to Canvas.
+    */
+    await selectMonomer(DropDown.SugarsDropDown, Sugars.ThreeA6, page);
+    await selectMonomer(DropDown.BasesDropDown, Bases.NBebnzylAdenine, page);
+    await page.getByTestId('add-to-presets-btn').click();
+    await page.getByTestId('3A6(baA)_baA_3A6_.').click();
+    await clickInTheMiddleOfTheScreen(page);
+    await selectRectangleSelectionTool(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Add Sugar-Phosphate Combination to Canvas', async ({ page }) => {
+    /* 
+    Test case: #2507 - Add RNA monomers to canvas
+    Description: Sugar-Phosphate Combination added to Canvas.
+    */
+    await selectMonomer(DropDown.SugarsDropDown, Sugars.ThreeA6, page);
+    await selectMonomer(
+      DropDown.PhosphatesDropDown,
+      Phosphates.Boranophosphate,
+      page,
+    );
+    await page.getByTestId('add-to-presets-btn').click();
+    await page.getByTestId('3A6()bP_._3A6_bP').click();
+    await clickInTheMiddleOfTheScreen(page);
+    await selectRectangleSelectionTool(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Can not Add Base-Phosphate Combination to Canvas', async ({ page }) => {
+    /* 
+    Test case: #2507 - Add RNA monomers to canvas
+    Description: Base-Phosphate Combination not added to Canvas.
+    */
+    await selectMonomer(DropDown.BasesDropDown, Bases.NBebnzylAdenine, page);
+    await selectMonomer(
+      DropDown.PhosphatesDropDown,
+      Phosphates.Boranophosphate,
+      page,
+    );
+    await page.getByTestId('add-to-presets-btn').click();
+    await page.getByTestId('(baA)bP_baA_._bP').click();
+    await moveMouseToTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
   });
 });

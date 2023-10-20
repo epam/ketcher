@@ -49,7 +49,6 @@ const pageToModel = (
  * `page` - The part of the document you're viewing which is currently visible in the window.
  * `view` - The part of the canvas you're viewing which is currently visible in the window.
  * */
-
 export const CoordinateTransformation = {
   modelToView,
   canvasToView,

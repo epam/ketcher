@@ -26,7 +26,7 @@ import { SaveButton } from 'components/modal/save/saveButton';
 import { getPropertiesByFormat, SupportedFormats } from 'helpers/formats';
 import { ActionButton } from 'components/shared/actionButton';
 import { Icon } from 'ketcher-react';
-import { CoreEditor, KetSerializer, Struct } from 'ketcher-core';
+import { CoreEditor, KetSerializer } from 'ketcher-core';
 import { saveAs } from 'file-saver';
 
 interface Props {

@@ -39,7 +39,7 @@ export class AtomMove extends BaseOperation {
     atom!.pp.add_(d); // eslint-disable-line no-underscore-dangle
     const reatom = restruct.atoms.get(aid);
     if (reatom) {
-      const scaled = Scale.protoToCanvas(d, restruct.render.options);
+      const scaled = Scale.modelToCanvas(d, restruct.render.options);
       reatom.visel.translate(scaled);
     }
 

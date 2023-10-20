@@ -184,7 +184,7 @@ class ReRGroupAttachmentPoint extends ReObject {
   private getHoverPlatePath(options: RenderOptions) {
     const outlinePoints = this.getOutlinePoints();
     const scaledOutlinePoints = outlinePoints.map((point) =>
-      Scale.protoToCanvas(point, options),
+      Scale.modelToCanvas(point, options),
     );
     const [
       topLeftPadPoint,
@@ -266,7 +266,7 @@ function showAttachmentPointShape(
   addReObjectPath: InstanceType<typeof ReStruct>['addReObjectPath'],
   visel: Visel,
 ): void {
-  const atomPositionVector = Scale.protoToCanvas(atom.a.pp, options);
+  const atomPositionVector = Scale.modelToCanvas(atom.a.pp, options);
   const shiftedAtomPositionVector = atom.getShiftedSegmentPosition(
     options,
     directionVector,
@@ -346,7 +346,7 @@ function showAttachmentPointLabel(
   labelText: string,
   visel: Visel,
 ): void {
-  const atomPositionVector = Scale.protoToCanvas(atom.a.pp, options);
+  const atomPositionVector = Scale.modelToCanvas(atom.a.pp, options);
   const labelPosition = getLabelPositionForAttachmentPoint(
     atomPositionVector,
     directionVector,

@@ -337,7 +337,7 @@ class Editor implements KetcherEditor {
       this.render.viewBox.minX + this.render.viewBox.width / 2,
       this.render.viewBox.minY + this.render.viewBox.height / 2,
     );
-    const viewBoxCenterInProto = Scale.canvasToProto(
+    const viewBoxCenterInProto = Scale.canvasToModel(
       viewBoxCenter,
       this.render.options,
     );

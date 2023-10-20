@@ -62,7 +62,7 @@ class ReFrag extends ReObject {
         if (!render) render = global._ui_editor.render; // eslint-disable-line
         bba = bba
           .translate((render.options.offset || new Vec2()).negated())
-          .transform(Scale.canvasToProto, render.options);
+          .transform(Scale.canvasToModel, render.options);
       }
       ret = ret ? Box2Abs.union(ret, bba) : bba;
     });
@@ -76,11 +76,11 @@ class ReFrag extends ReObject {
     const bb = this.calcBBox(render.ctab, fid, render);
 
     if (bb) {
-      const p0 = Scale.protoToCanvas(
+      const p0 = Scale.modelToCanvas(
         new Vec2(bb.p0.x, bb.p0.y),
         render.options,
       );
-      const p1 = Scale.protoToCanvas(
+      const p1 = Scale.modelToCanvas(
         new Vec2(bb.p1.x, bb.p1.y),
         render.options,
       );

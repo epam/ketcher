@@ -43,7 +43,7 @@ class ReLoop extends ReObject {
     loop.hbs.forEach((hbid) => {
       const hb = molecule.halfBonds.get(hbid);
       const bond = restruct.bonds.get(hb.bid);
-      const apos = Scale.protoToCanvas(
+      const apos = Scale.modelToCanvas(
         restruct.atoms.get(hb.begin).a.pp,
         options,
       );
@@ -65,11 +65,11 @@ class ReLoop extends ReObject {
     this.radius = -1;
     loop.hbs.forEach((hbid) => {
       const hb = molecule.halfBonds.get(hbid);
-      const apos = Scale.protoToCanvas(
+      const apos = Scale.modelToCanvas(
         restruct.atoms.get(hb.begin).a.pp,
         options,
       );
-      const bpos = Scale.protoToCanvas(
+      const bpos = Scale.modelToCanvas(
         restruct.atoms.get(hb.end).a.pp,
         options,
       );
@@ -96,7 +96,7 @@ class ReLoop extends ReObject {
         );
         const halfAngle = (Math.PI - angle) / 2;
         const dir = hbb.dir.rotate(halfAngle);
-        const pi = Scale.protoToCanvas(
+        const pi = Scale.modelToCanvas(
           restruct.atoms.get(hbb.begin).a.pp,
           options,
         );

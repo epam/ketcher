@@ -25,11 +25,11 @@ export class ScrollOffset {
 
   getAbsBoundingBox(): Box2Abs {
     const protoBoundingBox = this.#render.ctab.getVBoxObj();
-    const boundingBoxMinXY = Scale.protoToCanvas(
+    const boundingBoxMinXY = Scale.modelToCanvas(
       protoBoundingBox.p0,
       this.#render.options,
     );
-    const boundingBoxMaxXY = Scale.protoToCanvas(
+    const boundingBoxMaxXY = Scale.modelToCanvas(
       protoBoundingBox.p1,
       this.#render.options,
     );

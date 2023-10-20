@@ -154,7 +154,7 @@ class ReSGroup extends ReObject {
         const sGroupTextBoundingBox =
           reSGroupAtom?.visel.boundingBox || reSGroupAtom?.visel.oldBoundingBox;
         if (sGroupTextBoundingBox) {
-          const { x, y } = Scale.protoToCanvas(position, render.options);
+          const { x, y } = Scale.modelToCanvas(position, render.options);
           const { p0, p1 } = sGroupTextBoundingBox;
           width = p1.x - p0.x + padding * 2;
           height = p1.y - p0.y + padding * 2;
@@ -290,9 +290,9 @@ function SGroupdrawBrackets({
     const bracket = brackets[i];
     const path = draw.bracket(
       render.paper,
-      Scale.protoToCanvas(bracket.bracketAngleDirection, render.options),
-      Scale.protoToCanvas(bracket.bracketDirection, render.options),
-      Scale.protoToCanvas(bracket.center, render.options),
+      Scale.modelToCanvas(bracket.bracketAngleDirection, render.options),
+      Scale.modelToCanvas(bracket.bracketDirection, render.options),
+      Scale.modelToCanvas(bracket.center, render.options),
       bracket.width,
       bracket.height,
       render.options,
@@ -424,7 +424,7 @@ function drawAbsoluteDat(restruct: ReStruct, sgroup: SGroup): any {
   set.push(name);
 
   const sbox = Box2Abs.fromRelBox(util.relBox(name.getBBox()));
-  sgroup.dataArea = sbox.transform(Scale.canvasToProto, render.options);
+  sgroup.dataArea = sbox.transform(Scale.canvasToModel, render.options);
 
   if (!restruct.sgroupData.has(sgroup.id)) {
     restruct.sgroupData.set(sgroup.id, new ReDataSGroupData(sgroup));
@@ -442,7 +442,7 @@ function drawAttachedDat(restruct: ReStruct, sgroup: SGroup): any {
   SGroup.getAtoms(restruct, sgroup).forEach((aid) => {
     const atom = restruct.atoms.get(aid);
     if (atom) {
-      const p = Scale.protoToCanvas(atom.a.pp, options);
+      const p = Scale.modelToCanvas(atom.a.pp, options);
       const bb = atom.visel.boundingBox;
       if (bb !== null) p.x = Math.max(p.x, bb.p1.x);
       p.x += options.lineWidth; // shift a bit to the right
@@ -451,7 +451,7 @@ function drawAttachedDat(restruct: ReStruct, sgroup: SGroup): any {
       nameI.translateAbs(0.5 * boxI.width, -0.3 * boxI.height);
       set.push(nameI);
       let sboxI = Box2Abs.fromRelBox(util.relBox(nameI.getBBox()));
-      sboxI = sboxI.transform(Scale.canvasToProto, render.options);
+      sboxI = sboxI.transform(Scale.canvasToModel, render.options);
       sgroup.areas.push(sboxI);
     }
   });
@@ -604,7 +604,7 @@ function getBracketParamersWithCrossBondsEquals2(
       boundingBox =
         boundingBox
           ?.translate((render.options.offset || new Vec2()).negated())
-          .transform(Scale.canvasToProto, render.options) || new Box2Abs();
+          .transform(Scale.canvasToModel, render.options) || new Box2Abs();
       leftShift = Math.max(
         leftShift,
         util.shiftRayBox(leftCenter, leftDirection, boundingBox),
@@ -706,7 +706,7 @@ function getHighlighPathInfo(
   size: number;
 } {
   const options = render.options;
-  let bracketBox = sgroup.bracketBox.transform(Scale.protoToCanvas, options);
+  let bracketBox = sgroup.bracketBox.transform(Scale.modelToCanvas, options);
   const lineWidth = options.lineWidth;
   const vext = new Vec2(lineWidth * 4, lineWidth * 6);
   bracketBox = bracketBox.extend(vext, vext);

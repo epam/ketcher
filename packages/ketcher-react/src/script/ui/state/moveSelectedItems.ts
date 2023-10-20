@@ -32,7 +32,7 @@ export function moveSelectedItems(
   const getFasterStep = (vec: Vec2) => vec.scaled(10);
   const selectedItems = editor.explicitSelected();
   const destinationVectorInCanvas = destinationVectorMapping[key];
-  const destinationVector = Scale.canvasToProto(
+  const destinationVector = Scale.canvasToModel(
     destinationVectorInCanvas,
     editor.render.options,
   );
@@ -99,7 +99,7 @@ function isCloseToTheEdgeOfCanvas(
     theMostLeftAtom
   ) {
     const getScreenCoordinates = (atom: ReAtom) =>
-      Scale.protoToCanvas(atom.a.pp, editor.render.options);
+      Scale.modelToCanvas(atom.a.pp, editor.render.options);
     const theMostTopAtomYCoordinate = getScreenCoordinates(theMostTopAtom).y;
     const theMostBottomAtomYCoordinate =
       getScreenCoordinates(theMostBottomAtom).y;

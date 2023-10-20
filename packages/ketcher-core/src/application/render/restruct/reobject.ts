@@ -51,7 +51,7 @@ class ReObject {
     if (render.options.offset) {
       vbox = vbox.translate(render.options.offset.negated());
     }
-    return vbox.transform(Scale.canvasToProto, render.options);
+    return vbox.transform(Scale.canvasToModel, render.options);
   }
 
   setHover(hover: boolean, render: Render): void {

@@ -71,8 +71,8 @@ class ReBond extends ReObject {
       return;
     }
 
-    const p1 = Scale.protoToCanvas(atom1.a.pp, render.options);
-    const p2 = Scale.protoToCanvas(atom2.a.pp, render.options);
+    const p1 = Scale.modelToCanvas(atom1.a.pp, render.options);
+    const p2 = Scale.modelToCanvas(atom2.a.pp, render.options);
     const hb1 = restruct.molecule.halfBonds.get(bond.b.hb1);
     const hb2 = restruct.molecule.halfBonds.get(bond.b.hb2);
 
@@ -413,7 +413,7 @@ class ReBond extends ReObject {
         'stroke-linecap': 'round',
       };
 
-      const c = Scale.protoToCanvas(this.b.center, restruct.render.options);
+      const c = Scale.modelToCanvas(this.b.center, restruct.render.options);
 
       const highlightPath = getHighlightPath(restruct, hb1, hb2);
       highlightPath.attr(style);

@@ -294,7 +294,7 @@ class RotateController {
         bonds,
         rgroupAttachmentPoints,
       })
-      .transform(Scale.protoToCanvas, this.render.options)
+      .transform(Scale.modelToCanvas, this.render.options)
       .translate(this.render.options.offset || new Vec2());
 
     const rectStartX =

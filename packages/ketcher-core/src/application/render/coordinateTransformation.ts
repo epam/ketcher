@@ -8,7 +8,7 @@ const canvasToView = (point: Vec2, render: Render) => {
 };
 
 const modelToView = (vector: Vec2, render: Render) => {
-  const pointInCanvas = Scale.protoToCanvas(vector, render.options);
+  const pointInCanvas = Scale.modelToCanvas(vector, render.options);
   return canvasToView(pointInCanvas, render);
 };
 
@@ -39,7 +39,7 @@ const pageToModel = (
   render: Render,
 ) => {
   const pointInCanvas = pageToCanvas(event, render);
-  return Scale.canvasToProto(pointInCanvas, render.options);
+  return Scale.canvasToModel(pointInCanvas, render.options);
 };
 
 /**

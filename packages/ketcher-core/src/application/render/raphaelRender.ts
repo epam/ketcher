@@ -206,7 +206,7 @@ export class Render {
     if (changes) {
       const bb = this.ctab
         .getVBoxObj()
-        .transform(Scale.protoToCanvas, this.options)
+        .transform(Scale.modelToCanvas, this.options)
         .translate(this.options.offset || new Vec2());
 
       if (this.options.downScale) {

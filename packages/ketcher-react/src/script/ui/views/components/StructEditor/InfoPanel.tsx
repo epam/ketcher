@@ -48,8 +48,8 @@ function getPanelPosition(
   if (sGroup) {
     // calculate width and height
     const groupBoundingBox = sGroup.areas[0];
-    const start = Scale.protoToCanvas(groupBoundingBox.p0, render.options);
-    const end = Scale.protoToCanvas(groupBoundingBox.p1, render.options);
+    const start = Scale.modelToCanvas(groupBoundingBox.p0, render.options);
+    const end = Scale.modelToCanvas(groupBoundingBox.p1, render.options);
     width = end.x - start.x;
     height = end.y - start.y;
     // calculate initial position

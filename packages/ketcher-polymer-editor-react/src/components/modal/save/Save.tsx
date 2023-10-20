@@ -108,7 +108,7 @@ export const Save = ({ onClose, isModalOpen }: Props): JSX.Element => {
     const ketSerializer = new KetSerializer();
     const editor = CoreEditor.provideEditorInstance();
     const serializedKet = ketSerializer.serialize(
-      new Struct(),
+      editor.drawingEntitiesManager.micromoleculesHiddenEntities.clone(),
       editor.drawingEntitiesManager,
     );
     const blob = new Blob([serializedKet], {

@@ -4,8 +4,10 @@ import {
   Bond,
   FunctionalGroup,
   Pile,
+  Pool,
   SGroup,
   SGroupAttachmentPoint,
+  SGroupForest,
   Struct,
   Vec2,
 } from 'domain/entities';
@@ -308,6 +310,9 @@ export class CoreEditor {
     reStruct?: ReStruct,
   ) {
     const monomerToSgroup = new Map<BaseMonomer, SGroup>();
+
+    drawingEntitiesManager.micromoleculesHiddenEntities.mergeInto(struct);
+    drawingEntitiesManager.clearMicromoleculesHiddenEntities();
     drawingEntitiesManager.monomers.forEach((monomer) => {
       if (monomer.monomerItem.props.isMicromoleculeFragment) {
         monomer.monomerItem.struct.mergeInto(struct);
@@ -482,6 +487,7 @@ export class CoreEditor {
         );
       }
     });
+    drawingEntitiesManager.setMicromoleculesHiddenEntities(struct);
 
     return { drawingEntitiesManager, modelChanges: command };
   }

@@ -42,7 +42,14 @@ const pageToModel = (
   return Scale.canvasToProto(pointInCanvas, render.options);
 };
 
-/** @see ./__docs__/origins-of-different-coordinate-systems.png */
+/**
+ * @see ./__docs__/Coordinate-Origins.png
+ * `model` - The original coordinates of entities.
+ * `canvas` - The scaled `model`. The real coordinates Raphael uses to draw entities.
+ * `page` - The part of the document you're viewing which is currently visible in the window.
+ * `view` - The part of the canvas you're viewing which is currently visible in the window.
+ * */
+
 export const CoordinateTransformation = {
   modelToView,
   canvasToView,

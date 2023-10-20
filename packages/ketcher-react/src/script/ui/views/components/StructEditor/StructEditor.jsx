@@ -100,6 +100,7 @@ class StructEditor extends Component {
     }
   };
 
+  // TODO https://github.com/epam/ketcher/issues/3472
   /**
    * @param {WheelEvent} event
    */

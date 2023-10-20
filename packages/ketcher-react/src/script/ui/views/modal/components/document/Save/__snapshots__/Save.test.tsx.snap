@@ -52,7 +52,7 @@ Object {
                 >
                   <input
                     class="input genericInput"
-                    data-testid="file-name-input"
+                    data-testid="filename-input"
                     name="filename"
                     type="text"
                     value=""
@@ -422,7 +422,7 @@ Object {
               >
                 <input
                   class="input genericInput"
-                  data-testid="file-name-input"
+                  data-testid="filename-input"
                   name="filename"
                   type="text"
                   value=""

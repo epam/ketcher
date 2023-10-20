@@ -754,6 +754,7 @@ export class DrawingEntitiesManager {
     this.micromoleculesHiddenEntities.functionalGroups = new Pool();
     this.micromoleculesHiddenEntities.sGroupForest = new SGroupForest();
     this.micromoleculesHiddenEntities.frags = new Pool();
+    this.micromoleculesHiddenEntities.rgroupAttachmentPoints = new Pool();
   }
 
   public clearMicromoleculesHiddenEntities() {

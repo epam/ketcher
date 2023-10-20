@@ -241,10 +241,12 @@ class ReAtom extends ReObject {
       const isPositionAtom =
         sgroup?.getContractedPosition(restruct.molecule).atomId === aid;
       if (isPositionAtom) {
-        const position =
+        const position = Scale.modelToCanvas(
           sgroup instanceof MonomerMicromolecule
-            ? Scale.obj2scaled(sgroup.pp as Vec2, render.options)
-            : ps;
+            ? (sgroup.pp as Vec2)
+            : this.a.pp,
+          render.options,
+        );
         const path = render.paper
           .text(position.x, position.y, sgroup.data.name)
           .attr({

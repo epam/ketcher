@@ -16,7 +16,6 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
 import { RenderersManager } from 'application/render/renderers/RenderersManager';
-import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { Operation } from 'domain/entities/Operation';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 

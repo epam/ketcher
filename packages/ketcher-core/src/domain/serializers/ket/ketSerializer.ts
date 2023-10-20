@@ -42,7 +42,6 @@ import assert from 'assert';
 import { polymerBondToDrawingEntity } from 'domain/serializers/ket/fromKet/polymerBondToDrawingEntity';
 import { getMonomerUniqueKey } from 'domain/helpers/monomers';
 import {
-  monomerFactory,
   MONOMER_CONST,
   monomerFactory,
 } from 'application/editor/operations/monomer/monomerFactory';
@@ -221,9 +220,11 @@ export class KetSerializer implements Serializer<Struct> {
     if (error) {
       return { error: true };
     }
-    parsedFileContent.root.connections.forEach((connection: IKetConnection) => {
-      this.validateConnectionTypeAndEndpoints(connection, editor);
-    });
+    parsedFileContent.root.connections?.forEach(
+      (connection: IKetConnection) => {
+        this.validateConnectionTypeAndEndpoints(connection, editor);
+      },
+    );
     return { error, parsedFileContent };
   }
 
@@ -310,7 +311,7 @@ export class KetSerializer implements Serializer<Struct> {
       fragmentNumber++;
     });
 
-    parsedFileContent.root.connections.forEach((connection) => {
+    parsedFileContent.root.connections?.forEach((connection) => {
       switch (connection.connectionType) {
         case 'single': {
           const bondAdditionCommand = polymerBondToDrawingEntity(

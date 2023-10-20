@@ -34,6 +34,27 @@ jest.mock('d3', () => {
         style() {
           return this;
         },
+        on() {},
+      };
+    },
+    ZoomTransform: jest.fn().mockImplementation(() => {
+      return {};
+    }),
+    zoom() {
+      return {
+        scaleExtent() {
+          return {
+            on() {
+              return {
+                filter() {
+                  return {
+                    on() {},
+                  };
+                },
+              };
+            },
+          };
+        },
       };
     },
   };

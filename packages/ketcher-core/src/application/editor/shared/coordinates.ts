@@ -1,7 +1,11 @@
 import { Vec2 } from 'domain/entities';
 import { provideEditorSettings } from '../editorSettings';
 import ZoomTool from '../tools/Zoom';
-
+/**
+ * page coordinates refers to the origional Coordinates
+ * view coordinates refers to the zoomed Coordinates
+ * modal refers to the angstroms
+ */
 class Coordinates {
   static pageToModel(position: Vec2) {
     const settings = provideEditorSettings();

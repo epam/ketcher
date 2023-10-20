@@ -138,8 +138,8 @@ const Atom: FC<Props> = (props: Props) => {
         <div>
           <AtomElement formState={formState} className=""></AtomElement>
           <Field name="alias" />
-          <Field name="charge" maxLength="5" />
-          <Field name="isotope" />
+          <Field name="charge" maxLength={atomProps.charge.maxLength} />
+          <Field name="isotope" maxLength={atomProps.isotope.maxLength} />
           <Field
             name="explicitValence"
             component={Select}

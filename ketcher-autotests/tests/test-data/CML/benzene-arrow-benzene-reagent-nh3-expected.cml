@@ -4,12 +4,12 @@
 <reactantList>
 <molecule>
     <atomArray>
-        <atom id="a0" elementType="C" x2="10.0723" y2="-7.78757"/>
-        <atom id="a1" elementType="C" x2="11.8027" y2="-7.78709"/>
-        <atom id="a2" elementType="C" x2="10.9391" y2="-7.28747"/>
-        <atom id="a3" elementType="C" x2="11.8027" y2="-8.78803"/>
-        <atom id="a4" elementType="C" x2="10.0723" y2="-8.79252"/>
-        <atom id="a5" elementType="C" x2="10.9413" y2="-9.28753"/>
+        <atom id="a0" elementType="C" x2="9.69735" y2="-7.48757"/>
+        <atom id="a1" elementType="C" x2="11.4277" y2="-7.48709"/>
+        <atom id="a2" elementType="C" x2="10.5641" y2="-6.98747"/>
+        <atom id="a3" elementType="C" x2="11.4277" y2="-8.48803"/>
+        <atom id="a4" elementType="C" x2="9.69735" y2="-8.49252"/>
+        <atom id="a5" elementType="C" x2="10.5663" y2="-8.98753"/>
     </atomArray>
     <bondArray>
         <bond atomRefs2="a2 a0" order="2">
@@ -30,12 +30,12 @@
 <productList>
 <molecule>
     <atomArray>
-        <atom id="a0" elementType="C" x2="18.3473" y2="-7.81257"/>
-        <atom id="a1" elementType="C" x2="20.0777" y2="-7.81209"/>
-        <atom id="a2" elementType="C" x2="19.2141" y2="-7.31247"/>
-        <atom id="a3" elementType="C" x2="20.0777" y2="-8.81303"/>
-        <atom id="a4" elementType="C" x2="18.3473" y2="-8.81752"/>
-        <atom id="a5" elementType="C" x2="19.2163" y2="-9.31253"/>
+        <atom id="a0" elementType="C" x2="17.9723" y2="-7.51257"/>
+        <atom id="a1" elementType="C" x2="19.7027" y2="-7.51209"/>
+        <atom id="a2" elementType="C" x2="18.8391" y2="-7.01247"/>
+        <atom id="a3" elementType="C" x2="19.7027" y2="-8.51303"/>
+        <atom id="a4" elementType="C" x2="17.9723" y2="-8.51752"/>
+        <atom id="a5" elementType="C" x2="18.8413" y2="-9.01253"/>
     </atomArray>
     <bondArray>
         <bond atomRefs2="a2 a0" order="2">
@@ -56,7 +56,7 @@
 <spectatorList>
 <molecule>
     <atomArray>
-        <atom id="a0" elementType="N" x2="14.8375" y2="-7.8875"/>
+        <atom id="a0" elementType="N" x2="14.4625" y2="-7.5875"/>
     </atomArray>
 </molecule>
 </spectatorList>

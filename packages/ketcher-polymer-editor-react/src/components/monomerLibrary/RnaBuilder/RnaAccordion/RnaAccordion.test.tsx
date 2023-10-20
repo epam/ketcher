@@ -4,11 +4,17 @@ import { getMonomerUniqueKey } from 'state/library';
 import { MonomerItemType } from 'ketcher-core';
 import { MONOMER_TYPES } from '../../../../constants';
 
+const duplicatePreset = jest.fn();
+const activateEditMode = jest.fn();
 describe('Test Rna Accordion component', () => {
   it('should render', () => {
     render(
       withThemeAndStoreProvider(
-        <RnaAccordion libraryName={MONOMER_TYPES.RNA} />,
+        <RnaAccordion
+          libraryName={MONOMER_TYPES.RNA}
+          duplicatePreset={duplicatePreset}
+          activateEditMode={activateEditMode}
+        />,
       ),
     );
 
@@ -32,7 +38,11 @@ describe('Test Rna Accordion component', () => {
     };
     render(
       withThemeAndStoreProvider(
-        <RnaAccordion libraryName={MONOMER_TYPES.RNA} />,
+        <RnaAccordion
+          libraryName={MONOMER_TYPES.RNA}
+          duplicatePreset={duplicatePreset}
+          activateEditMode={activateEditMode}
+        />,
         {
           library: {
             searchFilter: '',

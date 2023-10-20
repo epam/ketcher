@@ -32,6 +32,9 @@ import { provideEditorSettings } from 'application/editor/editorSettings';
 import { Scale } from 'domain/helpers';
 import { Peptide } from 'domain/entities/Peptide';
 import { Chem } from 'domain/entities/Chem';
+import { Struct } from 'domain/entities/struct';
+import { Pool } from 'domain/entities/pool';
+import { SGroupForest } from 'domain/entities/sgroupForest';
 
 const HORIZONTAL_DISTANCE_FROM_MONOMER = 50;
 const VERTICAL_DISTANCE_FROM_MONOMER = 60;
@@ -52,7 +55,7 @@ type RnaPresetAdditionParams = {
 export class DrawingEntitiesManager {
   public monomers: Map<number, BaseMonomer> = new Map();
   public polymerBonds: Map<number, PolymerBond> = new Map();
-
+  public micromoleculesHiddenEntities: Struct = new Struct();
   get selectedEntities() {
     return this.allEntities.filter(
       ([, drawingEntity]) => drawingEntity.selected,
@@ -739,5 +742,21 @@ export class DrawingEntitiesManager {
     });
 
     return command;
+  }
+
+  public setMicromoleculesHiddenEntities(struct: Struct) {
+    struct.mergeInto(this.micromoleculesHiddenEntities);
+    this.micromoleculesHiddenEntities.atoms = new Pool();
+    this.micromoleculesHiddenEntities.bonds = new Pool();
+    this.micromoleculesHiddenEntities.halfBonds = new Pool();
+    this.micromoleculesHiddenEntities.sgroups = new Pool();
+    this.micromoleculesHiddenEntities.rgroups = new Pool();
+    this.micromoleculesHiddenEntities.functionalGroups = new Pool();
+    this.micromoleculesHiddenEntities.sGroupForest = new SGroupForest();
+    this.micromoleculesHiddenEntities.frags = new Pool();
+  }
+
+  public clearMicromoleculesHiddenEntities() {
+    this.micromoleculesHiddenEntities = new Struct();
   }
 }

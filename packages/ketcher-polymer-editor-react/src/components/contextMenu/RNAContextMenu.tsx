@@ -16,7 +16,7 @@ export const RNAContextMenu = () => {
   ];
 
   const isItemDisabled = (name: string) => {
-    if (name === 'deletepreset' && activePreset?.default) {
+    if (['deletepreset', 'edit'].includes(name) && activePreset?.default) {
       return true;
     }
     return false;

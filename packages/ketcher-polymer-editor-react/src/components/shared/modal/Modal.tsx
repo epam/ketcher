@@ -22,6 +22,8 @@ interface ModalProps {
 const StyledDialog = styled(Dialog)`
   .MuiPaper-root {
     width: 304px;
+    background: #ffffff !important;
+    border-radius: 4px !important;
   }
 `;
 
@@ -55,6 +57,7 @@ const Content = styled(DialogContent)`
   font-size: ${({ theme }) => theme.ketcher.font.size.medium};
   letter-spacing: 1.25px;
   line-height: 17px;
+  color: #000000;
   ${({ theme }) => scrollbarThin(theme)};
 `;
 
@@ -64,8 +67,7 @@ const Footer = styled(DialogActions)`
   padding: 0;
   .MuiButtonBase-root {
     border-radius: 4px;
-    width: 72px;
-    font-size: ${({ theme }) => theme.ketcher.font.size.medium};
+    font-size: ${({ theme }) => theme.ketcher.font.size.regular};
   }
 `;
 

@@ -142,17 +142,6 @@ export const RnaAccordion = ({
     dispatch(setActiveRnaBuilderItem(groupName));
   };
 
-  const handleContextMenu = (preset: IRnaPreset) => (event: MouseEvent) => {
-    dispatch(setActivePreset(preset));
-    show({
-      event,
-      props: {
-        duplicatePreset,
-        activateEditMode,
-      },
-    });
-  };
-
   useEffect(() => {
     setExpandedAccordion(activeRnaBuilderItem);
   }, [activeRnaBuilderItem]);
@@ -167,7 +156,7 @@ export const RnaAccordion = ({
     );
   }, [isEditMode]);
 
-  const selectPreset = (preset: IRnaPreset) => {
+  const selectPreset = (preset: IRnaPreset) => () => {
     dispatch(setActivePreset(preset));
     editor.events.selectPreset.dispatch(preset);
   };
@@ -176,6 +165,37 @@ export const RnaAccordion = ({
     dispatch(createNewPreset());
     dispatch(setActiveRnaBuilderItem(RnaBuilderPresetsItem.Presets));
     dispatch(setIsEditMode(true));
+  };
+
+  const getMenuPosition = (currentPresetCard: HTMLElement) => {
+    const isDivCard = currentPresetCard instanceof HTMLDivElement;
+    if (!isDivCard && currentPresetCard.parentElement) {
+      currentPresetCard = currentPresetCard.parentElement;
+    }
+    const boundingBox = currentPresetCard.getBoundingClientRect();
+    const parentBox = currentPresetCard.offsetParent?.getBoundingClientRect();
+    const contextMenuWidth = 140;
+    let x = boundingBox.right - contextMenuWidth;
+    const y = boundingBox.y + boundingBox.height / 2;
+    if (parentBox?.x && parentBox?.x > x) {
+      x = boundingBox.x;
+    }
+    return {
+      x,
+      y,
+    };
+  };
+
+  const handleContextMenu = (preset: IRnaPreset) => (event: MouseEvent) => {
+    dispatch(setActivePreset(preset));
+    show({
+      event,
+      props: {
+        duplicatePreset,
+        activateEditMode,
+      },
+      position: getMenuPosition(event.currentTarget as HTMLElement),
+    });
   };
 
   return (
@@ -207,7 +227,7 @@ export const RnaAccordion = ({
                       <RnaPresetItem
                         key={`${preset.name}${index}`}
                         preset={preset}
-                        onClick={() => selectPreset(preset)}
+                        onClick={selectPreset(preset)}
                         onContextMenu={handleContextMenu(preset)}
                         isSelected={activePreset?.presetInList === preset}
                       />

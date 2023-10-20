@@ -15,9 +15,11 @@
  ***************************************************************************/
 
 import { IRnaPreset } from '../RnaBuilder/types';
+import { MouseEvent } from 'react';
 
 export interface IRnaPresetItemrops {
   preset: IRnaPreset;
   isSelected?: boolean;
   onClick?: VoidFunction;
+  onContextMenu?: (event: MouseEvent) => void;
 }

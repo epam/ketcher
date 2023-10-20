@@ -212,6 +212,7 @@ import Base from '../../../assets/icons/files/base.svg';
 import Phosphate from '../../../assets/icons/files/phosphate.svg';
 import Preset from '../../../assets/icons/files/preset.svg';
 import EditFilled from '../../../assets/icons/files/edit-filled.svg';
+import VerticalDots from '../../../assets/icons/files/vertical-dots.svg';
 
 export const iconNameToIcon = {
   α,
@@ -424,4 +425,5 @@ export const iconNameToIcon = {
   phosphate: Phosphate,
   preset: Preset,
   'edit-filled': EditFilled,
+  'vertical-dots': VerticalDots,
 } as const;

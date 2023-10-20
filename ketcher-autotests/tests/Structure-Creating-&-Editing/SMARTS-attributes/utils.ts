@@ -37,7 +37,7 @@ export async function setSubstitutionCount(
 }
 
 export async function setUnsaturated(page: Page) {
-  await page.getByTestId('file-name-input').check();
+  await page.getByTestId('unsaturatedAtom-input').check();
 }
 
 export async function setImplicitHCount(

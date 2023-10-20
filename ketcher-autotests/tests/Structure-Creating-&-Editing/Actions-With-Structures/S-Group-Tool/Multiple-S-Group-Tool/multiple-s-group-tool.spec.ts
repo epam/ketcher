@@ -52,7 +52,7 @@ async function changeRepeatCountValue(page: Page, value: string) {
   await selectLeftPanelButton(LeftPanelButton.S_Group, page);
   await page.getByRole('button', { name: 'Data' }).click();
   await page.getByTestId('Multiple group-option').click();
-  await page.getByTestId('file-name-input').fill(value);
+  await page.getByTestId('filename-input').fill(value);
 }
 
 test.describe('Multiple S-Group tool', () => {

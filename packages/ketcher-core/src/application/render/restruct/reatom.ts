@@ -1202,13 +1202,6 @@ function getAtomLabelAttrText(value: string, atom) {
   }
   if (atomType === 'single') {
     let labelText = '';
-    if (atom.aromaticity) {
-      labelText +=
-        atom.aromaticity === 'aromatic'
-          ? value.toLowerCase()
-          : value.toUpperCase();
-      return labelText;
-    }
     const number = Elements.get(capitalize(value))?.number;
     labelText += number ? `#${number}` : '';
     return labelText;
@@ -1253,6 +1246,7 @@ export function getAtomCustomQuery(atom) {
   } = {
     label: getAtomLabelAttrText,
     isotope: (value) => value,
+    aromaticity: (value) => (value === 'aromatic' ? 'a' : 'A'),
     charge: (value) => {
       if (value === '') return value;
       const regExpResult = /^([+-]?)([0-9]{1,3}|1000)([+-]?)$/.exec(value);

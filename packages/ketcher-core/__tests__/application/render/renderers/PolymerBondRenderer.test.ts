@@ -4,7 +4,7 @@ import { PolymerBondRenderer } from 'application/render/renderers/PolymerBondRen
 
 describe('Polymer Bond Renderer', () => {
   it('should render bond', () => {
-    const canvas: SVGSVGElement = createPolymerEditorCanvas();
+    const canvas = createPolymerEditorCanvas();
     const polymerBond = getFinishedPolymerBond(10, 10, 90, 100);
     polymerBond.moveToLinkedMonomers();
     const polymerBondRenderer = new PolymerBondRenderer(polymerBond);

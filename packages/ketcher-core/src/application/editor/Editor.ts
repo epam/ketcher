@@ -519,12 +519,12 @@ export class CoreEditor {
   }
 
   private switchToMacromolecules() {
-    const struct = this.micromoleculesEditor.struct();
+    const struct = this.micromoleculesEditor?.struct() || new Struct();
     const { modelChanges } = CoreEditor.convertStructToDrawingEntities(
       struct,
       this.drawingEntitiesManager,
     );
     this.renderersContainer.update(modelChanges);
-    global.ketcher.editor.clear();
+    global.ketcher.editor?.clear();
   }
 }

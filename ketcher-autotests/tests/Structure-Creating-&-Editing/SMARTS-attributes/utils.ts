@@ -16,6 +16,8 @@ type queryNumberValues =
 type aromaticity = 'aromatic' | 'aliphatic' | '';
 type chirality = 'clockwise' | 'anticlockwise' | '';
 
+// Query specific attributes:
+
 export async function setRingBondCount(page: Page, value: string) {
   await page.getByTestId('ringBondCount-input').click();
   await page.getByRole('option', { name: value }).click();
@@ -32,6 +34,10 @@ export async function setSubstitutionCount(
 ) {
   await page.getByTestId('substitutionCount-input').click();
   await page.getByRole('option', { name: substitutionCount }).click();
+}
+
+export async function setUnsaturated(page: Page) {
+  await page.getByTestId('file-name-input').check();
 }
 
 export async function setImplicitHCount(
@@ -68,14 +74,35 @@ export async function setAromaticity(page: Page, aromaticity: aromaticity) {
   await page.getByRole('option', { name: aromaticity }).click();
 }
 
-export async function setCustomQuery(page: Page, customQuery: string) {
+export async function setChirality(page: Page, chirality: chirality) {
+  await page.getByTestId('chirality-input').click();
+  await page.getByRole('option', { name: chirality, exact: true }).click();
+}
+
+// Custom query - atom properties:
+
+export async function setCustomQueryForAtom(page: Page, customQuery: string) {
   await page.getByTestId('custom-query-checkbox').check();
   await page.getByTestId('atom-custom-query').fill(customQuery);
 }
 
-export async function setChirality(page: Page, chirality: chirality) {
-  await page.getByTestId('chirality-input').click();
-  await page.getByRole('option', { name: chirality, exact: true }).click();
+// Custom query - bond properties:
+
+export async function setCustomQueryForBond(page: Page, customQuery: string) {
+  await page.getByTestId('custom-query-checkbox').check();
+  await page.getByTestId('bond-custom-query').fill(customQuery);
+}
+
+// Bond attributes:
+
+export async function setBondType(page: Page, bondTypeTestId: string) {
+  await page.getByTestId('type-input').click();
+  await page.getByTestId(bondTypeTestId).click();
+}
+
+export async function setBondTopology(page: Page, bondTopologyTestId: string) {
+  await page.getByTestId('topology-input').click();
+  await page.getByTestId(bondTopologyTestId).click();
 }
 
 export async function checkSmartsValue(page: Page, value: string) {
@@ -84,4 +111,15 @@ export async function checkSmartsValue(page: Page, value: string) {
   await page.getByRole('option', { name: 'Daylight SMARTS' }).click();
   const smartsInput = page.getByTestId('smarts-preview-area-text');
   await expect(smartsInput).toHaveValue(value);
+}
+
+export async function checkSmartsWarnings(page: Page) {
+  const value =
+    'Structure contains query properties of atoms and bonds that are not supported in the SMARTS. Query properties will not be reflected in the file saved.';
+  await page.getByTestId('warnings-tab').click();
+  const warningTextArea = await page.getByTestId('WarningTextArea');
+  const warningText = await warningTextArea.evaluate(
+    (node) => node.textContent,
+  );
+  expect(warningText).toEqual(value);
 }

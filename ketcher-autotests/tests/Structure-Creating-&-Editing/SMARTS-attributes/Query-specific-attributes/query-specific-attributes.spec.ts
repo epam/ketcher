@@ -11,6 +11,7 @@ import {
 } from '@utils';
 import {
   checkSmartsValue,
+  checkSmartsWarnings,
   setAromaticity,
   setChirality,
   setConnectivity,
@@ -20,6 +21,7 @@ import {
   setRingMembership,
   setRingSize,
   setSubstitutionCount,
+  setUnsaturated,
 } from '../utils';
 
 async function drawStructure(page: Page) {
@@ -31,10 +33,11 @@ async function drawStructure(page: Page) {
 
 test.describe('Checking query specific attributes in SMARTS format', () => {
   test.beforeEach(async ({ page }) => {
+    const numberOfAtom = 0;
     await waitForPageInit(page);
     await drawStructure(page);
     await page.keyboard.press('Escape');
-    await doubleClickOnAtom(page, 'C', 0);
+    await doubleClickOnAtom(page, 'C', numberOfAtom);
     await waitForAtomPropsModal(page);
     await page.getByTestId('Query specific-section').click();
   });
@@ -70,34 +73,39 @@ test.describe('Checking query specific attributes in SMARTS format', () => {
     await checkSmartsValue(page, '[#6](-[#6])(-[#6;D4])-[#6]');
   });
 
+  test('Setting unsaturated', async ({ page }) => {
+    await setUnsaturated(page);
+    await pressButton(page, 'Apply');
+    await takeEditorScreenshot(page);
+    await checkSmartsValue(
+      page,
+      '[#6](-[#6])(-[#6;$([*,#1]=,#,:[*,#1])])-[#6]',
+    );
+    await checkSmartsWarnings(page);
+  });
+
   test('Setting aromacity - aromatic', async ({ page }) => {
-    /**
-     * TODO: add expected SMARTS representative when https://github.com/epam/Indigo/issues/1329 would be fixed
-     */
     await setAromaticity(page, 'aromatic');
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
-    await checkSmartsValue(page, '');
+    await checkSmartsValue(page, '[#6](-[#6])(-[c])-[#6]');
   });
 
   test('Setting aromacity - aliphatic', async ({ page }) => {
-    /**
-     * TODO: add expected SMARTS representative when https://github.com/epam/Indigo/issues/1329 would be fixed
-     */
     await setAromaticity(page, 'aliphatic');
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
-    await checkSmartsValue(page, '');
+    await checkSmartsValue(page, '[#6](-[#6])(-[C])-[#6]');
   });
 
   test('Setting implicit H count', async ({ page }) => {
     /**
-     * TODO: add expected SMARTS representative when https://github.com/epam/Indigo/issues/1330 would be fixed
+     * That test will fail until https://github.com/epam/Indigo/issues/1330 is fixed
      */
     await setImplicitHCount(page, '5');
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
-    await checkSmartsValue(page, '');
+    await checkSmartsValue(page, '[#6](-[#6])(-[#6;h5])-[#6]');
   });
 
   test('Setting ring membership', async ({ page }) => {
@@ -122,22 +130,16 @@ test.describe('Checking query specific attributes in SMARTS format', () => {
   });
 
   test('Setting chirality - anticlockwise', async ({ page }) => {
-    /**
-     * TODO: add expected SMARTS representative when https://github.com/epam/Indigo/issues/1328 would be fixed
-     */
     await setChirality(page, 'anticlockwise');
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
-    await checkSmartsValue(page, '');
+    await checkSmartsValue(page, '[#6](-[#6])(-[#6;@@])-[#6]');
   });
 
   test('Setting chirality - clockwise', async ({ page }) => {
-    /**
-     * TODO: add expected SMARTS representative when https://github.com/epam/Indigo/issues/1328 would be fixed
-     */
     await setChirality(page, 'clockwise');
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
-    await checkSmartsValue(page, '');
+    await checkSmartsValue(page, '[#6](-[#6])(-[#6;@])-[#6]');
   });
 });

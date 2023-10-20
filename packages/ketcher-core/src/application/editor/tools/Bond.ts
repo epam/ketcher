@@ -43,7 +43,7 @@ class PolymerBond implements BaseTool {
       }
       const { top: offsetTop, left: offsetLeft } = this.editor.canvasOffset;
       const editorSettings = provideEditorSettings();
-      const endPosition = Scale.scaled2obj(
+      const endPosition = Scale.canvasToModel(
         new Vec2(event.clientX - offsetLeft, event.clientY - offsetTop),
         editorSettings,
       );
@@ -63,7 +63,7 @@ class PolymerBond implements BaseTool {
     if (this.bondRenderer) {
       const { top: offsetTop, left: offsetLeft } = this.editor.canvasOffset;
       const editorSettings = provideEditorSettings();
-      const newEndPosition = Scale.scaled2obj(
+      const newEndPosition = Scale.canvasToModel(
         new Vec2(event.clientX - offsetLeft, event.clientY - offsetTop),
         editorSettings,
       );

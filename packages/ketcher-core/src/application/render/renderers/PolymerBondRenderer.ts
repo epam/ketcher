@@ -88,12 +88,12 @@ export class PolymerBondRenderer extends BaseRenderer {
   private get scaledPosition() {
     // we need to convert monomer coordinates(stored in angstroms) to pixels.
     // it needs to be done in view layer of application (like renderers)
-    const startPositionInPixels = Scale.obj2scaled(
+    const startPositionInPixels = Scale.modelToCanvas(
       this.polymerBond.startPosition,
       this.editorSettings,
     );
 
-    const endPositionInPixels = Scale.obj2scaled(
+    const endPositionInPixels = Scale.modelToCanvas(
       this.polymerBond.endPosition,
       this.editorSettings,
     );

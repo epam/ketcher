@@ -1,9 +1,11 @@
 import { Vec2 } from 'domain/entities/vec2';
 
+export type Coordinates = { x: number; y: number };
+
 // eslint-disable-next-line camelcase
 export function canvasToMonomerCoordinates(
-  coordinatesOnCanvas,
-  centerOFMonomer: { x: number; y: number },
+  coordinatesOnCanvas: Coordinates,
+  centerOFMonomer: Coordinates,
   monomerWidth: number,
   monomerHeight: number,
 ) {
@@ -20,7 +22,12 @@ export function canvasToMonomerCoordinates(
   return monomerCoord;
 }
 
-export function findLabelPoint(pointOnBorder, angle, lineLength, lineOffset) {
+export function findLabelPoint(
+  pointOnBorder: Coordinates,
+  angle: number,
+  lineLength: number,
+  lineOffset: number,
+) {
   // based on https://ru.stackoverflow.com/a/1442905
 
   const angleRadians = Vec2.degrees_to_radians(angle);
@@ -76,7 +83,11 @@ export function findLabelPoint(pointOnBorder, angle, lineLength, lineOffset) {
   return [labelCoordinates, pointOfAttachment];
 }
 
-export function getSearchFunction(initialAngle, canvasOffset, monomer) {
+export function getSearchFunction(
+  initialAngle: number,
+  canvasOffset: Coordinates,
+  monomer,
+) {
   return function findPointOnMonomerBorder(
     coordStart,
     length,
@@ -109,8 +120,7 @@ export function getSearchFunction(initialAngle, canvasOffset, monomer) {
     ) as Element;
 
     let newAngle;
-
-    if (newPoint.__data__?.bodyElement === monomer.renderer.bodyElement) {
+    if (newPoint === monomer.renderer.bodyElement.node()) {
       newAngle = initialAngle;
     } else {
       newAngle = initialAngle - 180;
@@ -118,4 +128,75 @@ export function getSearchFunction(initialAngle, canvasOffset, monomer) {
 
     return findPointOnMonomerBorder(newCoordStart, newLength, newAngle);
   };
+}
+
+export const anglesToSector = {
+  '45': {
+    min: 23,
+    max: 68,
+    center: 45,
+  },
+  '90': {
+    min: 68,
+    max: 113,
+    center: 90,
+  },
+  '135': {
+    min: 113,
+    max: 148,
+    center: 135,
+  },
+  '180': {
+    min: 148,
+    max: 203,
+    center: 180,
+  },
+  '225': {
+    min: 203,
+    max: 248,
+    center: 225,
+  },
+  '270': {
+    min: 248,
+    max: 293,
+    center: 270,
+  },
+  '315': {
+    min: 293,
+    max: 228,
+    center: 315,
+  },
+  '360': {
+    min: 338,
+    max: 360,
+    center: 360,
+  },
+  '0': {
+    min: 0,
+    max: 23,
+    center: 0,
+  },
+};
+
+export enum attachmentPointNumberToAngle {
+  'R1' = 0,
+  'R2' = 180,
+  'R3' = 90,
+  'R4' = 270,
+  'R5' = 45,
+  'R6' = 135,
+  'R7' = 315,
+  'R8' = 225,
+}
+
+export const sectorsList = [45, 90, 135, 180, 225, 270, 315, 0, 360];
+
+export function checkFor0and360(sectorsList: number[]) {
+  if (!sectorsList.includes(0) && sectorsList.includes(360)) {
+    return sectorsList.filter((item) => item !== 360);
+  }
+  if (!sectorsList.includes(360) && sectorsList.includes(0)) {
+    return sectorsList.filter((item) => item !== 0);
+  }
+  return sectorsList;
 }

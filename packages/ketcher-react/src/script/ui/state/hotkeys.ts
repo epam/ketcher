@@ -158,7 +158,9 @@ function keyHandle(dispatch, getState, hotKeys, event) {
     removeNotRenderedStruct(actionTool, group, dispatch);
 
     if (clipArea.actions.indexOf(actName) === -1) {
-      let newAction = actions[actName].action;
+      let newAction = ['zoom-in', 'zoom-out'].includes(actName)
+        ? actions[actName].action()
+        : actions[actName].action;
       const hoveredItem = getHoveredItem(render.ctab);
       // check if atom is currently hovered over
       // in this case we do not want to activate the corresponding tool

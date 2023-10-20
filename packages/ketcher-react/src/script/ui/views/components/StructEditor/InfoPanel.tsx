@@ -15,10 +15,16 @@
  ***************************************************************************/
 
 import { useState, useEffect, FC } from 'react';
-import { Scale, Vec2, Render, Struct, SGroup } from 'ketcher-core';
+import {
+  Scale,
+  Vec2,
+  Render,
+  Struct,
+  SGroup,
+  CoordinateTransformation,
+} from 'ketcher-core';
 
 import SGroupDataRender from './SGroupDataRender';
-import { calculateScrollOffsetX, calculateScrollOffsetY } from './helpers';
 import { functionGroupInfoSelector } from '../../../state/functionalGroups/selectors';
 import { connect } from 'react-redux';
 import clsx from 'clsx';
@@ -42,15 +48,16 @@ function getPanelPosition(
   if (sGroup) {
     // calculate width and height
     const groupBoundingBox = sGroup.areas[0];
-    const start = Scale.obj2scaled(groupBoundingBox.p0, render.options);
-    const end = Scale.obj2scaled(groupBoundingBox.p1, render.options);
+    const start = Scale.modelToCanvas(groupBoundingBox.p0, render.options);
+    const end = Scale.modelToCanvas(groupBoundingBox.p1, render.options);
     width = end.x - start.x;
     height = end.y - start.y;
     // calculate initial position
     const { position } = sGroup.getContractedPosition(render.ctab.molecule);
-    const panelPosition = Scale.obj2scaled(position, {
-      scale: render.options.scale * render.options.zoom,
-    });
+    const panelPosition = CoordinateTransformation.modelToView(
+      position,
+      render,
+    );
     x = panelPosition.x - width / 2 - HOVER_PANEL_PADDING;
     y = panelPosition.y + HOVER_PANEL_PADDING;
     // adjust position to keep inside viewport
@@ -65,9 +72,6 @@ function getPanelPosition(
     if (clientY > viewportBottomLimit) {
       y = panelPosition.y - height - HOVER_PANEL_PADDING * 3;
     }
-    // adjust position to current scroll offset
-    x += calculateScrollOffsetX(render);
-    y += calculateScrollOffsetY(render);
   }
 
   return [new Vec2(x, y), new Vec2(width, height)];

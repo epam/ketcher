@@ -41,12 +41,12 @@ import { monomerToDrawingEntity } from 'domain/serializers/ket/fromKet/monomerTo
 import assert from 'assert';
 import { polymerBondToDrawingEntity } from 'domain/serializers/ket/fromKet/polymerBondToDrawingEntity';
 import { getMonomerUniqueKey } from 'domain/helpers/monomers';
-import { monomerFactory } from 'application/editor/operations/monomer/monomerFactory';
-import { KetcherLogger } from 'utilities';
 import {
+  monomerFactory,
   MONOMER_CONST,
   monomerFactory,
 } from 'application/editor/operations/monomer/monomerFactory';
+import { KetcherLogger } from 'utilities';
 import { Chem } from 'domain/entities/Chem';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 
@@ -230,7 +230,9 @@ export class KetSerializer implements Serializer<Struct> {
   deserializeToStruct(fileContent: string) {
     const struct = new Struct();
     const deserializedContent = this.deserializeToDrawingEntities(fileContent);
+
     assert(deserializedContent);
+
     CoreEditor.convertDrawingEntitiesToStruct(
       deserializedContent?.drawingEntitiesManager,
       struct,
@@ -323,6 +325,10 @@ export class KetSerializer implements Serializer<Struct> {
       }
     });
 
+    drawingEntitiesManager.setMicromoleculesHiddenEntities(
+      deserializedMicromolecules,
+    );
+
     return { modelChanges: command, drawingEntitiesManager };
   }
 
@@ -341,6 +347,7 @@ export class KetSerializer implements Serializer<Struct> {
         templates: [],
       },
     };
+
     drawingEntitiesManager.monomers.forEach((monomer) => {
       if (
         monomer instanceof Chem &&
@@ -397,6 +404,8 @@ export class KetSerializer implements Serializer<Struct> {
       });
     });
 
+    drawingEntitiesManager.micromoleculesHiddenEntities.mergeInto(struct);
+
     return {
       serializedMacromolecules: fileContent,
       micromoleculesStruct: struct,
@@ -408,6 +417,7 @@ export class KetSerializer implements Serializer<Struct> {
     drawingEntitiesManager = new DrawingEntitiesManager(),
   ) {
     CoreEditor.convertStructToDrawingEntities(struct, drawingEntitiesManager);
+
     const { serializedMacromolecules, micromoleculesStruct } =
       this.serializeMacromolecules(new Struct(), drawingEntitiesManager);
 

@@ -81,19 +81,15 @@ class ReBond extends ReObject {
     ) {
       return;
     }
-    const p1 = Scale.modelToCanvas(
+    const p1 =
       sgroup1 instanceof MonomerMicromolecule
         ? (sgroup1.pp as Vec2)
-        : atom1.a.pp,
-      render.options,
-    );
+        : atom1.a.pp;
 
-    const p2 = Scale.modelToCanvas(
+    const p2 =
       sgroup2 instanceof MonomerMicromolecule
         ? (sgroup2.pp as Vec2)
-        : atom2.a.pp,
-      render.options,
-    );
+        : atom2.a.pp;
     const hb1 = restruct.molecule.halfBonds.get(bond.b.hb1);
     const hb2 = restruct.molecule.halfBonds.get(bond.b.hb2);
 
@@ -103,8 +99,8 @@ class ReBond extends ReObject {
     hb2.p = atom2.getShiftedSegmentPosition(options, hb2.dir, p2);
     bond.b.center = Vec2.lc2(p1, 0.5, p2, 0.5);
     bond.b.len = Vec2.dist(
-      Scale.obj2scaled(p1, render.options),
-      Scale.obj2scaled(p2, render.options),
+      Scale.modelToCanvas(p1, render.options),
+      Scale.modelToCanvas(p2, render.options),
     );
     bond.b.sb = options.lineWidth * 5;
     /* eslint-disable no-mixed-operators */

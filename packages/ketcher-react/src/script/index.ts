@@ -52,4 +52,5 @@ async function buildKetcherAsync({
 }
 
 export type { Config, ButtonsConfig };
+export * from './providers';
 export default buildKetcherAsync;

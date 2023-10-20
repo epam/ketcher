@@ -25,8 +25,8 @@ import { TextInputField } from 'components/shared/textInputField';
 import { SaveButton } from 'components/modal/save/saveButton';
 import { getPropertiesByFormat, SupportedFormats } from 'helpers/formats';
 import { ActionButton } from 'components/shared/actionButton';
-import { Icon } from 'ketcher-react';
-import { KetSerializer } from 'ketcher-core';
+import { Icon, IndigoProvider } from 'ketcher-react';
+import { ChemicalMimeType, KetSerializer, StructService } from 'ketcher-core';
 import { saveAs } from 'file-saver';
 
 interface Props {
@@ -95,9 +95,22 @@ export const Save = ({ onClose, isModalOpen }: Props): JSX.Element => {
   const [currentFileName, setCurrentFileName] = useState('ketcher');
   const [struct] = useState('');
   const [errors, setErrors] = useState('');
+  const indigo = IndigoProvider.getIndigo() as StructService;
 
-  const handleSelectChange = (value) => {
+  const handleSelectChange = async (value) => {
     setCurrentFileFormat(value);
+    const ketSerializer = new KetSerializer();
+    const serializedKet = ketSerializer.serializeMacromolecules();
+    try {
+      console.log('sending', JSON.stringify(serializedKet));
+      const result = await indigo.convert({
+        struct: JSON.stringify(serializedKet),
+        output_format: ChemicalMimeType.Mol,
+      });
+      console.log(result);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const handleInputChange = (value) => {

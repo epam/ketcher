@@ -28,6 +28,7 @@ import { Editor } from '../../editor';
 import createApi from '../../api';
 import { initApp } from '../../ui';
 import { Root } from 'react-dom/client';
+import { IndigoProvider } from 'src/script/providers';
 
 class KetcherBuilder {
   private structService: StructService | null;
@@ -115,6 +116,8 @@ class KetcherBuilder {
     if (initialMol) {
       ketcher.setMolecule(initialMol);
     }
+
+    IndigoProvider.setIndigo(this.structService);
 
     return ketcher;
   }

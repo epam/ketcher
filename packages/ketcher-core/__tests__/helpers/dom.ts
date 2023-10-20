@@ -13,5 +13,12 @@ export const createPolymerEditorCanvas = (): SVGSVGElement => {
     document.createElementNS('http://www.w3.org/2000/svg', 'defs'),
   );
 
+  const g: SVGGElement = document.createElementNS(
+    'http://www.w3.org/2000/svg',
+    'g',
+  );
+  g.setAttribute('class', 'drawn-structures');
+  canvas.appendChild(g);
+
   return canvas;
 };

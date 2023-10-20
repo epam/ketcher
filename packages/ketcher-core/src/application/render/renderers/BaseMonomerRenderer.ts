@@ -1,10 +1,16 @@
 import { BaseRenderer } from './BaseRenderer';
-import assert from 'assert';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { D3SvgElementSelection } from 'application/render/types';
 import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { editorEvents } from 'application/editor/editorEvents';
 import { Scale } from 'domain/helpers';
+import assert from 'assert';
+import {
+  attachmentPointNumberToAngle,
+  anglesToSector,
+  sectorsList,
+  checkFor0and360,
+} from 'domain/helpers/attachmentPointCalculations';
 import { AttachmentPoint } from 'domain/AttachmentPoint';
 import { AttachmentPointName } from 'domain/types';
 
@@ -12,6 +18,9 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   private editorEvents: typeof editorEvents;
   private selectionCircle?: D3SvgElementSelection<SVGCircleElement, void>;
   private selectionBorder?: D3SvgElementSelection<SVGUseElement, void>;
+
+  private freeSectorsList: number[] = sectorsList;
+
   private attachmentPointElements:
     | D3SvgElementSelection<SVGGElement, void>[]
     | [] = [];
@@ -71,103 +80,90 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     if (!this.rootElement) return;
     if (this.monomer.attachmentPointsVisible) {
       this.removeAttachmentPoints();
-
-      for (let i = 0; i < this.monomer.listOfAttachmentPoints.length; i++) {
-        const atPoint = this.appendAttachmentPoint(
-          this.monomer.listOfAttachmentPoints[i],
-          i,
-        );
-        this.attachmentPointElements.push(atPoint as never);
-      }
+      this.drawAttachmentPoints();
     } else {
       this.removeAttachmentPoints();
     }
   }
 
-  public appendAttachmentPoint(AttachmentPointName, number) {
+  public drawAttachmentPoints() {
+    // draw used attachment points
+
+    this.monomer.usedAttachmentPointsNamesList.forEach((item) => {
+      const [attachmentPointElement, angle] = this.appendAttachmentPoint(item);
+      this.attachmentPointElements.push(attachmentPointElement as never);
+
+      if (typeof angle === 'number') {
+        // remove this sector from list of free sectors
+        const newList = this.freeSectorsList.filter((item) => {
+          return (
+            anglesToSector[item].min > angle ||
+            anglesToSector[item].max <= angle
+          );
+        });
+        this.freeSectorsList = checkFor0and360(newList);
+      }
+    });
+
+    const unrenderedAtPoints: string[] = [];
+
+    // draw free attachment points
+    this.monomer.unUsedAttachmentPointsNamesList.forEach((item) => {
+      const properAngleForFreeAttachmentPoint =
+        attachmentPointNumberToAngle[item];
+
+      // if this angle is free for unused att point, draw it
+      if (this.freeSectorsList.includes(properAngleForFreeAttachmentPoint)) {
+        const [attachmentPointElement, _] = this.appendAttachmentPoint(
+          item,
+          properAngleForFreeAttachmentPoint,
+        );
+        this.attachmentPointElements.push(attachmentPointElement as never);
+
+        // remove this sector from list
+        const newList = this.freeSectorsList.filter((item) => {
+          return item !== properAngleForFreeAttachmentPoint;
+        });
+        this.freeSectorsList = checkFor0and360(newList);
+      } else {
+        // if this sector is already taken - add name to unrendered list
+        unrenderedAtPoints.push(item);
+      }
+    });
+
+    unrenderedAtPoints.forEach((item) => {
+      const customAngle = this.freeSectorsList.shift();
+      const [attachmentPointElement, _] = this.appendAttachmentPoint(
+        item,
+        customAngle,
+      );
+      this.attachmentPointElements.push(attachmentPointElement as never);
+    });
+  }
+
+  public appendAttachmentPoint(AttachmentPointName, customAngle?: number) {
     let rotation;
-    let position;
-    let x;
-    let y;
-    let length;
-    let y2;
-    let cx;
-    let cy;
 
-    switch (number) {
-      case 0:
-        rotation = 0;
-        position = { x: 0, y: this.bodyHeight / 2 };
-        x = -18;
-        y = -10;
-        break;
-      case 1:
-        rotation = 180;
-        position = { x: this.bodyWidth, y: this.bodyHeight / 2 };
-        x = 5;
-        y = -10;
-        break;
-      case 2:
-        rotation = 90;
-        position = { x: this.bodyWidth / 2, y: 0 };
-        x = -7;
-        y = -22;
-        break;
-      case 3:
-        rotation = 270;
-        position = { x: this.bodyWidth / 2, y: this.bodyHeight };
-        x = -5;
-        y = 30;
-        break;
-      case 4:
-        rotation = 60;
-        position = { x: this.bodyWidth / 5, y: 5 };
-        x = -10;
-        y = -20;
-        y2 = 5;
-        cx = -20;
-        cy = 5;
-        break;
-      default:
-        rotation = 150;
-        position = { x: (this.bodyWidth / 5) * 4, y: 5 };
-        x = 20;
-        y = -18;
-        y2 = 5;
-        cx = -20;
-        cy = 5;
+    if (!this.monomer.isAttachmentPointUsed(AttachmentPointName)) {
+      rotation = attachmentPointNumberToAngle[AttachmentPointName];
     }
 
-    let atP;
+    const attPointInstance = new AttachmentPoint(
+      this.rootElement as D3SvgElementSelection<SVGGElement, void>,
+      this.monomer,
+      this.bodyWidth,
+      this.bodyHeight,
+      this.canvas,
+      AttachmentPointName,
+      this.monomer.isAttachmentPointUsed(AttachmentPointName),
+      this.monomer.isAttachmentPointPotentiallyUsed(AttachmentPointName),
+      customAngle || rotation,
+      this.isSnakeBondForAttachmentPoint(AttachmentPointName),
+    );
+    const attachmentPointElement = attPointInstance.getElement();
+    const angle = attPointInstance.getAngle();
 
-    if (this.monomer.isAttachmentPointUsed(AttachmentPointName)) {
-      const attPointInstance = new AttachmentPoint(
-        this.rootElement as D3SvgElementSelection<SVGGElement, void>,
-        this.monomer,
-        this.bodyWidth,
-        this.bodyHeight,
-        this.canvas,
-        AttachmentPointName,
-        this.isSnakeBondForAttachmentPoint(AttachmentPointName),
-      );
-      atP = attPointInstance.getElement();
-    } else {
-      atP = AttachmentPoint.appendAttachmentPointUnused(
-        this.rootElement as D3SvgElementSelection<SVGGElement, void>,
-        position,
-        rotation,
-        this.monomer.isAttachmentPointPotentiallyUsed(AttachmentPointName),
-        AttachmentPointName,
-        x,
-        y,
-        length,
-        y2,
-        cx,
-        cy,
-      );
-    }
-
-    return atP;
+    return [attachmentPointElement, angle];
   }
 
   public removeAttachmentPoints() {
@@ -175,6 +171,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       item.remove();
     });
     this.attachmentPointElements = [];
+    this.freeSectorsList = sectorsList;
   }
 
   private appendRootElement(

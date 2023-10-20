@@ -15,8 +15,13 @@
  ***************************************************************************/
 import { Open } from 'components/modal/Open';
 import { Save } from 'components/modal/save';
+import { Delete } from 'components/modal/Delete';
 
-export const modalComponentList: Record<string, typeof Open | typeof Save> = {
+export const modalComponentList: Record<
+  string,
+  typeof Open | typeof Save | typeof Delete
+> = {
   open: Open,
   save: Save,
+  delete: Delete,
 };

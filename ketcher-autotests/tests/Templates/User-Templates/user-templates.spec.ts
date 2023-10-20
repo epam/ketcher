@@ -266,7 +266,7 @@ test.describe('Click User Templates on canvas', () => {
     await resetCurrentTool(page);
   });
 
-  test('Check  scrollbar in the structure field is present for long structures', async ({
+  test('Check scrollbar in the structure field is present for long structures', async ({
     page,
   }) => {
     /*

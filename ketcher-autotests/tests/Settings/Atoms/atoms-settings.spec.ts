@@ -1,0 +1,88 @@
+import { Page, test } from '@playwright/test';
+import {
+  selectTopPanelButton,
+  TopPanelButton,
+  takeEditorScreenshot,
+  waitForPageInit,
+  pressButton,
+  drawBenzeneRing,
+  clickInTheMiddleOfTheScreen,
+  openFileAndAddToCanvas,
+} from '@utils';
+
+async function setHydrogenLabelsOn(page: Page) {
+  await selectTopPanelButton(TopPanelButton.Settings, page);
+  await page.getByText('Atoms', { exact: true }).click();
+  const deltaX = 0;
+  const deltaY = 60;
+  const anyX = 638;
+  const anyY = 524;
+  await page.mouse.move(anyX, anyY);
+  await page.mouse.wheel(deltaX, deltaY);
+  await page.getByRole('button', { name: 'Terminal and Hetero' }).click();
+  await page.getByTestId('On-option').click();
+  await pressButton(page, 'Apply');
+}
+async function selectExtendedTableElements(page: Page, element: string) {
+  await page.getByTestId('extended-table').click();
+  await page.getByRole('button', { name: element, exact: true }).click();
+  await page.getByRole('button', { name: 'Add', exact: true }).click();
+}
+async function atomDefaultSettings(page: Page) {
+  await selectTopPanelButton(TopPanelButton.Settings, page);
+  await page.getByText('Atoms', { exact: true }).click();
+  const deltaX = 0;
+  const deltaY = 150;
+  const anyX = 638;
+  const anyY = 524;
+  await page.mouse.move(anyX, anyY);
+  await page.mouse.wheel(deltaX, deltaY);
+}
+
+test.describe('Atom Settings', () => {
+  test.beforeEach(async ({ page }) => {
+    await waitForPageInit(page);
+  });
+
+  test.afterEach(async ({ page }) => {
+    await takeEditorScreenshot(page);
+  });
+
+  test('Set "on" for Show hydrogen labels', async ({ page }) => {
+    // Test case: EPMLSOPKET-10080
+    // Verify appear of hydrogen labels on the molecules after changing setting to 'on'
+    await drawBenzeneRing(page);
+    await setHydrogenLabelsOn(page);
+  });
+
+  test('Display Special nodes "Deuterium", "Tritium" when "Show hydrogen labels" = "Terminal and Hetero"', async ({
+    page,
+  }) => {
+    // Test case: EPMLSOPKET-10081
+    // Verify if hydrogen labels appear on 'D' and 'T' -> (DH, TH) when default settings are set
+    const pointX = 250;
+    const pointY = 250;
+    await selectExtendedTableElements(page, 'D');
+    await page.mouse.click(pointX, pointY);
+    await selectExtendedTableElements(page, 'T');
+    await clickInTheMiddleOfTheScreen(page);
+  });
+
+  test('”Terminal and Hetero” is set for default for “Show hydrogen labels”', async ({
+    page,
+  }) => {
+    // Test case: EPMLSOPKET-10076 and EPMLSOPKET-10079
+    // Verify the default setting for “Show hydrogen labels”
+    await atomDefaultSettings(page);
+  });
+
+  test('Non-terminal hetero atom when "Show hydrogen labels" = Terminal and Hetero', async ({
+    page,
+  }) => {
+    // Test case:EPMLSOPKET-10083
+    // Verify if the non-terminal atom will Show hydrogen labels when set on Terminal and Hetero
+    await atomDefaultSettings(page);
+    await pressButton(page, 'Apply');
+    await openFileAndAddToCanvas('KET/chain-with-atoms.ket', page);
+  });
+});

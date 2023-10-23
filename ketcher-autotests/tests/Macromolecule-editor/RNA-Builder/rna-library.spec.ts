@@ -15,6 +15,7 @@ import {
   takePresetsScreenshot,
   takeRNABuilderScreenshot,
   waitForPageInit,
+  waitForRender,
 } from '@utils';
 
 test.describe('RNA Library', () => {
@@ -347,9 +348,8 @@ test.describe('RNA Library', () => {
       await page.getByTestId('RNA-TAB').click();
       await page.getByTestId(`rna-builder-slot--${monomer.type}`).click();
       await page.getByTestId(monomer.name).click();
-      await selectRectangleSelectionTool(page);
-      await takeMonomerLibraryScreenshot(page);
     }
+    await takeMonomerLibraryScreenshot(page);
   });
 
   test('Add Sugar-Base Combination to Canvas', async ({ page }) => {

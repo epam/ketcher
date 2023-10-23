@@ -122,6 +122,8 @@ function Editor({ theme, togglerComponent }: EditorProps) {
   const errorTooltipText = useAppSelector(selectErrorTooltipText);
   const editor = useAppSelector(selectEditor);
   const activeTool = useAppSelector(selectEditorActiveTool);
+  let keyboardEventListener;
+
   useEffect(() => {
     dispatch(createEditor({ theme, canvas: canvasRef.current }));
     const serializer = new SdfSerializer();
@@ -131,6 +133,7 @@ function Editor({ theme, togglerComponent }: EditorProps) {
     return () => {
       dispatch(destroyEditor(null));
       dispatch(loadMonomerLibrary([]));
+      document.removeEventListener('keydown', keyboardEventListener);
     };
   }, [dispatch]);
 
@@ -148,9 +151,19 @@ function Editor({ theme, togglerComponent }: EditorProps) {
     if (editor) {
       editor.events.error.add((errorText) => {
         dispatch(openErrorTooltip(errorText));
-        dispatch(selectTool('select-rectangle'));
-        editor.events.selectTool.dispatch('select-rectangle');
       });
+      dispatch(selectTool('select-rectangle'));
+      editor.events.selectTool.dispatch('select-rectangle');
+
+      if (!keyboardEventListener) {
+        keyboardEventListener = (e: KeyboardEvent) => {
+          if (e.key === 'Escape') {
+            dispatch(selectTool('select-rectangle'));
+            editor.events.selectTool.dispatch('select-rectangle');
+          }
+        };
+        document.addEventListener('keydown', keyboardEventListener);
+      }
     }
   }, [editor]);
 
@@ -167,25 +180,17 @@ function Editor({ theme, togglerComponent }: EditorProps) {
     });
   }, [editor, activeTool]);
 
-  const handleOpenPreview = useCallback(
-    (e) => {
-      const tools = ['erase', 'select-rectangle', 'bond-single'];
-      if (!tools.includes(activeTool)) {
-        handleClosePreview();
-        return;
-      }
-      const monomer = e.target.__data__.monomer.monomerItem;
+  const handleOpenPreview = useCallback((e) => {
+    const monomer = e.target.__data__.monomer.monomerItem;
 
-      const cardCoordinates = e.target.getBoundingClientRect();
-      const top = calculatePreviewPosition(monomer, cardCoordinates);
-      const previewStyle = {
-        top,
-        left: `${cardCoordinates.left + cardCoordinates.width / 2}px`,
-      };
-      debouncedShowPreview({ monomer, style: previewStyle });
-    },
-    [activeTool],
-  );
+    const cardCoordinates = e.target.getBoundingClientRect();
+    const top = calculatePreviewPosition(monomer, cardCoordinates);
+    const previewStyle = {
+      top,
+      left: `${cardCoordinates.left + cardCoordinates.width / 2}px`,
+    };
+    debouncedShowPreview({ monomer, style: previewStyle });
+  }, []);
 
   const handleClosePreview = () => {
     debouncedShowPreview.cancel();
@@ -272,42 +277,18 @@ function MenuComponent() {
   return (
     <Menu onItemClick={menuItemChanged} activeMenuItems={activeMenuItems}>
       <Menu.Group>
-        <Menu.Submenu>
-          <Menu.Item itemId="open" title="Open..." />
-          <Menu.Item itemId="save" />
-        </Menu.Submenu>
-      </Menu.Group>
-      <Menu.Group>
-        <Menu.Item itemId="undo" />
+        <Menu.Item itemId="open" title="Open..." />
+        <Menu.Item itemId="save" />
       </Menu.Group>
       <Menu.Group>
         <Menu.Item itemId="erase" title="Erase" />
-        <Menu.Submenu vertical>
-          <Menu.Item itemId="select-rectangle" title="Select Rectangle" />
-          <Menu.Item itemId="select-lasso" />
-          <Menu.Item itemId="select-fragment" />
-        </Menu.Submenu>
-        <Menu.Submenu>
-          <Menu.Item itemId="shape-rectangle" />
-          <Menu.Item itemId="shape-ellipse" />
-        </Menu.Submenu>
-        <Menu.Submenu>
-          <Menu.Item itemId="transform-flip-h" />
-          <Menu.Item itemId="transform-flip-v" />
-        </Menu.Submenu>
+        <Menu.Item itemId="select-rectangle" title="Select Rectangle" />
       </Menu.Group>
       <Menu.Group>
         <Menu.Item itemId="bond-single" title="Single Bond (1)" />
       </Menu.Group>
       <Menu.Group>
         <Menu.Item itemId="snake-mode" title="Snake mode" />
-      </Menu.Group>
-      <Menu.Group divider>
-        <Menu.Item itemId="bracket" />
-      </Menu.Group>
-      <Menu.Group>
-        <Menu.Item itemId="settings" />
-        <Menu.Item itemId="help" />
       </Menu.Group>
     </Menu>
   );

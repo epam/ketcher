@@ -25,6 +25,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   private attachmentPointElements:
     | D3SvgElementSelection<SVGGElement, void>[]
     | [] = [];
+
   private monomerSymbolElement?: SVGUseElement | SVGRectElement;
 
   static isSelectable() {

@@ -3,6 +3,7 @@ import { STRUCTURE_LIBRARY_BUTTON_TEST_ID } from '@tests/Templates/templates.cos
 import {
   clickInTheMiddleOfTheScreen,
   copyAndPaste,
+  cutAndPaste,
   pressButton,
   selectTopPanelButton,
   takeEditorScreenshot,
@@ -63,6 +64,18 @@ test.describe('Ignore Chiral Flag', () => {
     await templateFromLAminoAcidsCategory(page);
     await copyAndPaste(page);
     await page.mouse.click(pointx, pointy);
+  });
+
+  test('Verify absence "Enhanced Stereochemistry" group Label Behavior with Cut/Paste', async ({
+    page,
+  }) => {
+    // Test case: EPMLSOPKET-16921
+    const pointy = 204;
+    const pointz = 211;
+    await applyIgnoreChiralFlag(page);
+    await templateFromLAminoAcidsCategory(page);
+    await cutAndPaste(page);
+    await page.mouse.click(pointy, pointz);
   });
 
   test('Verify absence "Enhanced Stereochemistry" group Label Behavior with Undo', async ({

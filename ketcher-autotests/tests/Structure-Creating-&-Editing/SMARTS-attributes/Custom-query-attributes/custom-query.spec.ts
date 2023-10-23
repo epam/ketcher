@@ -19,6 +19,8 @@ async function drawStructure(page: Page) {
 }
 
 test.describe('Checking custom query in SMARTS format', () => {
+  const defaultFileFormat = 'MDL Molfile V2000';
+
   test.beforeEach(async ({ page }) => {
     const numberOfAtom = 0;
     await waitForPageInit(page);
@@ -33,7 +35,11 @@ test.describe('Checking custom query in SMARTS format', () => {
     await setCustomQueryForAtom(page, customQuery);
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
-    await checkSmartsValue(page, '[#6](-[#6])(-[#6;x9])-[#6]');
+    await checkSmartsValue(
+      page,
+      defaultFileFormat,
+      '[#6](-[#6])(-[#6;x9])-[#6]',
+    );
   });
 
   test('Setting custom query - few attributes and logical AND low precedence', async ({
@@ -43,7 +49,11 @@ test.describe('Checking custom query in SMARTS format', () => {
     await setCustomQueryForAtom(page, customQuery);
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
-    await checkSmartsValue(page, '[#6](-[#6])(-[x5;D0;h9;r3])-[#6]');
+    await checkSmartsValue(
+      page,
+      defaultFileFormat,
+      '[#6](-[#6])(-[x5;D0;h9;r3])-[#6]',
+    );
   });
 
   test('Setting custom query - logical NOT and AND low precedence', async ({
@@ -53,7 +63,11 @@ test.describe('Checking custom query in SMARTS format', () => {
     await setCustomQueryForAtom(page, customQuery);
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
-    await checkSmartsValue(page, '[#6](-[#6])(-[!C;R3])-[#6]');
+    await checkSmartsValue(
+      page,
+      defaultFileFormat,
+      '[#6](-[#6])(-[!C;R3])-[#6]',
+    );
   });
 
   test('Setting custom query - logical AND and OR', async ({ page }) => {
@@ -61,7 +75,11 @@ test.describe('Checking custom query in SMARTS format', () => {
     await setCustomQueryForAtom(page, customQuery);
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
-    await checkSmartsValue(page, '[#6](-[#6])(-[x2&D3,D2])-[#6]');
+    await checkSmartsValue(
+      page,
+      defaultFileFormat,
+      '[#6](-[#6])(-[x2&D3,D2])-[#6]',
+    );
   });
 
   test('Setting custom query - logical OR for aliphatic atoms', async ({
@@ -74,6 +92,10 @@ test.describe('Checking custom query in SMARTS format', () => {
     await setCustomQueryForAtom(page, customQuery);
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
-    await checkSmartsValue(page, '[#6](-[#6])(-[#9,#17,#35,#53;A])-[#6]');
+    await checkSmartsValue(
+      page,
+      defaultFileFormat,
+      '[#6](-[#6])(-[#9,#17,#35,#53;A])-[#6]',
+    );
   });
 });

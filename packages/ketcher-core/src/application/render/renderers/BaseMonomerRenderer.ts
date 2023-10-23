@@ -226,7 +226,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   private get scaledMonomerPosition() {
     // we need to convert monomer coordinates(stored in angstroms) to pixels.
     // it needs to be done in view layer of application (like renderers)
-    return Scale.obj2scaled(this.monomer.position, this.editorSettings);
+    return Scale.modelToCanvas(this.monomer.position, this.editorSettings);
   }
 
   public appendSelection() {
@@ -268,6 +268,9 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       .on('mouseover', (event) => {
         this.editorEvents.mouseOverDrawingEntity.dispatch(event);
         this.editorEvents.mouseOverMonomer.dispatch(event);
+      })
+      .on('mousemove', (event) => {
+        this.editorEvents.mouseOnMoveMonomer.dispatch(event);
       })
       .on('mouseleave', (event) => {
         this.editorEvents.mouseLeaveDrawingEntity.dispatch(event);
@@ -319,5 +322,6 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     this.rootElement?.remove();
     this.rootElement = undefined;
     this.removeSelection();
+    this.editorEvents.mouseLeaveMonomer.dispatch();
   }
 }

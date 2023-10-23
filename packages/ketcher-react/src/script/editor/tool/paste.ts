@@ -181,7 +181,7 @@ class PasteTool implements Tool {
         this.editor.render.page2obj(event),
       );
       this.action = action;
-      this.editor.update(this.action, true, { resizeCanvas: false });
+      this.editor.update(this.action, true);
       const visiblePasteItems = filterNotInContractedSGroup(
         pasteItems,
         this.editor.struct(),
@@ -230,7 +230,7 @@ class PasteTool implements Tool {
       const action = this.action;
       delete this.action;
       if (!this.isSingleContractedGroup || !this.mergeItems) {
-        dropAndMerge(this.editor, this.mergeItems, action, true);
+        dropAndMerge(this.editor, this.mergeItems, action);
       }
     }
   }

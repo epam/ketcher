@@ -77,7 +77,7 @@ test.describe('Templates - Template Library', () => {
   }) => {
     // Phenylalanine mustard was chosen, because it has chiral flag 0, which allows us
     // to test ignoreChiralFlag, which has an effect on the structure only in this case
-    const offsetX = 200;
+    const offsetX = 300;
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
 
     await setDisplayStereoFlagsSettingToOn(page);

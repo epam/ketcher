@@ -8,6 +8,10 @@ import {
   drawBenzeneRing,
   clickInTheMiddleOfTheScreen,
   openFileAndAddToCanvas,
+  resetCurrentTool,
+  selectRing,
+  RingButton,
+  getAtomByIndex,
 } from '@utils';
 
 async function setHydrogenLabelsOn(page: Page) {
@@ -37,6 +41,30 @@ async function atomDefaultSettings(page: Page) {
   const anyY = 524;
   await page.mouse.move(anyX, anyY);
   await page.mouse.wheel(deltaX, deltaY);
+}
+
+async function ringBondCountQuery(page: Page, menuItem: string) {
+  await page.getByText(menuItem).click();
+  await page.locator('button:nth-child(5)').first().click();
+}
+
+async function substitutionCountQuery(page: Page, menuItem: string) {
+  await page.getByText(menuItem).click();
+  await page.getByRole('button', { name: 'As drawn' }).nth(1).click();
+}
+
+async function aromacitilityQuery(page: Page, menuItem: string) {
+  await page.getByText(menuItem).click();
+  await page.getByRole('button', { name: 'aromatic' }).click();
+}
+
+async function ringSizeQuery(page: Page, menuItem: string) {
+  await page.getByText(menuItem).click();
+  await page
+    .locator(
+      'div:nth-child(8) > .contexify > .MuiToggleButtonGroup-root > button:nth-child(9)',
+    )
+    .click();
 }
 
 test.describe('Atom Settings', () => {
@@ -84,5 +112,25 @@ test.describe('Atom Settings', () => {
     await atomDefaultSettings(page);
     await pressButton(page, 'Apply');
     await openFileAndAddToCanvas('KET/chain-with-atoms.ket', page);
+  });
+
+  test(' Add simple atom query primitives to the query specific properties', async ({
+    page,
+  }) => {
+    const pointX = 200;
+    const pointY = 200;
+
+    await selectRing(RingButton.Benzene, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await resetCurrentTool(page);
+
+    const point = await getAtomByIndex(page, { label: 'C' }, 1);
+    await page.mouse.click(point.x, point.y, { button: 'right' });
+    await page.getByText('Query properties').click();
+    await ringBondCountQuery(page, 'Ring bond count');
+    await substitutionCountQuery(page, 'Substitution count');
+    await aromacitilityQuery(page, 'Aromaticity');
+    await ringSizeQuery(page, 'Ring size');
+    await page.mouse.click(pointX, pointY);
   });
 });

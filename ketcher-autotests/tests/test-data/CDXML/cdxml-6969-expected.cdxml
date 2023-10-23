@@ -20,14 +20,14 @@
         <fragment id="4">
             <n id="21" NodeType="Fragment">
                 <fragment id="22">
-                    <n id="5" p="55.981895 60.750004"/>
-                    <n id="6" Element="1" p="30.000000 75.749947">
-                        <t p="30.000000 75.749947" LabelJustification="Left">
+                    <n id="5" p="55.981895 60.749989"/>
+                    <n id="6" Element="1" p="30.000000 75.749931">
+                        <t p="30.000000 75.749931" LabelJustification="Left">
                             <s font="3" size="10" face="96">H</s>
                         </t>
                     </n>
-                    <n id="7" Element="8" NumHydrogens="1" p="81.961754 75.749947">
-                        <t p="81.961754 75.749947" LabelJustification="Left">
+                    <n id="7" Element="8" NumHydrogens="1" p="81.961754 75.749931">
+                        <t p="81.961754 75.749931" LabelJustification="Left">
                             <s font="3" size="10" face="96">OH</s>
                         </t>
                     </n>
@@ -46,8 +46,8 @@
             </n>
             <n id="23" NodeType="Fragment">
                 <fragment id="24">
-                    <n id="9" Element="16" NumHydrogens="0" p="247.981857 60.000015">
-                        <t p="247.981857 60.000015" LabelJustification="Left">
+                    <n id="9" Element="16" NumHydrogens="0" p="247.981857 60.000000">
+                        <t p="247.981857 60.000000" LabelJustification="Left">
                             <s font="3" size="10" face="96">S</s>
                         </t>
                     </n>
@@ -56,17 +56,17 @@
                             <s font="3" size="10" face="96">O</s>
                         </t>
                     </n>
-                    <n id="11" Element="8" NumHydrogens="0" p="247.981857 90.000015">
-                        <t p="247.981857 90.000015" LabelJustification="Left">
+                    <n id="11" Element="8" NumHydrogens="0" p="247.981857 90.000000">
+                        <t p="247.981857 90.000000" LabelJustification="Left">
                             <s font="3" size="10" face="96">O</s>
                         </t>
                     </n>
-                    <n id="12" Element="8" NumHydrogens="1" p="277.981842 60.000015">
-                        <t p="277.981842 60.000015" LabelJustification="Left">
+                    <n id="12" Element="8" NumHydrogens="1" p="277.981842 60.000000">
+                        <t p="277.981842 60.000000" LabelJustification="Left">
                             <s font="3" size="10" face="96">OH</s>
                         </t>
                     </n>
-                    <n id="13" p="217.981857 60.000015"/>
+                    <n id="13" p="217.981857 60.000000"/>
                     <b id="17" B="9" E="10" Order="2"/>
                     <b id="18" B="9" E="11" Order="2"/>
                     <b id="19" B="9" E="12"/>

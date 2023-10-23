@@ -26,17 +26,21 @@ export default {
   zoom: {
     shortcut: ['Mod+0'],
     selected: (editor) => editor.zoom(),
-    action: (editor) => editor.zoom(1),
+    action: (editor) => {
+      editor.zoom(1);
+      editor.tool()?.mousemove(editor.lastEvent);
+    },
     hidden: (options) => isHidden(options, 'zoom'),
   },
   'zoom-out': {
     shortcut: ['Ctrl+_', 'Ctrl+-'],
     title: 'Zoom Out',
     disabled: (editor) => editor.zoom() <= zoomList[0], // unsave
-    action: (editor) => {
+    action: (event) => (editor) => {
       const zoom = editor.zoom();
       const i = findLastIndex((z) => z <= zoom, zoomList);
-      editor.zoom(zoomList[zoomList[i] === zoom && i > 0 ? i - 1 : i]);
+      editor.zoom(zoomList[zoomList[i] === zoom && i > 0 ? i - 1 : i], event);
+      editor.tool()?.mousemove(editor.lastEvent);
     },
     hidden: (options) => isHidden(options, 'zoom-out'),
   },
@@ -44,12 +48,14 @@ export default {
     shortcut: ['Ctrl+=', 'Ctrl++'],
     title: 'Zoom In',
     disabled: (editor) => zoomList[zoomList.length - 1] <= editor.zoom(),
-    action: (editor) => {
+    action: (event) => (editor) => {
       const zoom = editor.zoom();
       const i = findIndex((z) => z >= zoom, zoomList);
       editor.zoom(
         zoomList[zoomList[i] === zoom && i < zoomList.length - 1 ? i + 1 : i],
+        event,
       );
+      editor.tool()?.mousemove(editor.lastEvent);
     },
     hidden: (options) => isHidden(options, 'zoom-in'),
   },

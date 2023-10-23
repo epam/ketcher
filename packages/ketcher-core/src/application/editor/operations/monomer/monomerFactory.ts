@@ -42,7 +42,8 @@ export const monomerFactory = (
 
   if (
     monomer.props.MonomerType === MONOMER_CONST.CHEM ||
-    monomer.props.MonomerType === MONOMER_CONST.RNA
+    (monomer.props.MonomerType === MONOMER_CONST.RNA &&
+      monomer.props.MonomerClass === MONOMER_CONST.DNA)
   ) {
     Monomer = Chem;
     MonomerRenderer = ChemRenderer;

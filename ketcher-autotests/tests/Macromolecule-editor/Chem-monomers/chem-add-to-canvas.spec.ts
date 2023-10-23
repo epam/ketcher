@@ -5,6 +5,7 @@ import {
   waitForPageInit,
 } from '@utils';
 import { POLYMER_TOGGLER } from '../../../constants/testIdConstants';
+import { hideMonomerPreview } from '@utils/macromolecules';
 
 /* 
 Test case: #2497 - Add chem to canvas
@@ -23,6 +24,7 @@ test('Select chem and drag it to canvas', async ({ page }) => {
 
   // Click on <svg> #polymer-editor-canvas
   await clickInTheMiddleOfTheScreen(page);
+  await hideMonomerPreview(page);
 
   await takeEditorScreenshot(page);
 });

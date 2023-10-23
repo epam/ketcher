@@ -80,7 +80,7 @@ function getIgnoredFiles(): string[] {
 const config: PlaywrightTestConfig = {
   testDir,
   /* Maximum time one test can run for. */
-  timeout: 60_000,
+  timeout: 20_000,
   testIgnore: getIgnoredFiles(),
   expect: {
     /**

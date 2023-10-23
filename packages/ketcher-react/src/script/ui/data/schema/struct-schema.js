@@ -58,8 +58,8 @@ export const atom = {
     charge: {
       title: 'Charge',
       type: 'string',
-      pattern: '^([+-]?)([0-9]{1,3}|1000)([+-]?)$',
-      maxLength: 5,
+      pattern: '^([+-]?)([0-9]{1,3})([+-]?)$',
+      maxLength: 4,
       default: '',
       invalidMessage: 'Invalid charge value',
     },
@@ -72,9 +72,9 @@ export const atom = {
     isotope: {
       title: 'Isotope (atomic mass)',
       type: 'string',
-      pattern: '^([0-9]{1,3}|1000)$|(^$)',
+      pattern: '^[0-9]{1,3}$|(^$)',
       default: '',
-      maxLength: 5,
+      maxLength: 3,
       invalidMessage: 'Invalid isotope value',
     },
     radical: {
@@ -161,7 +161,7 @@ export const atom = {
     },
     chirality: {
       title: 'Chirality',
-      enum: [null, 'clockwise', 'anticlockwise'],
+      enum: [null, 'anticlockwise', 'clockwise'],
       enumNames: ['', 'anticlockwise', 'clockwise'],
       default: 0,
     },

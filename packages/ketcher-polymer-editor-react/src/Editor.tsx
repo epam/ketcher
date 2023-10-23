@@ -229,13 +229,18 @@ function MenuComponent() {
       dispatch(selectMode(!isSnakeMode));
       editor.events.selectMode.dispatch(!isSnakeMode);
     } else {
-      dispatch(selectTool(name));
+      if (name !== 'clear') {
+        dispatch(selectTool(name));
+      }
       editor.events.selectTool.dispatch(name);
     }
   };
 
   return (
     <Menu onItemClick={menuItemChanged} activeMenuItems={activeMenuItems}>
+      <Menu.Group>
+        <Menu.Item itemId="clear" title="Clear Canvas" />
+      </Menu.Group>
       <Menu.Group>
         <Menu.Submenu>
           <Menu.Item itemId="open" title="Open..." />

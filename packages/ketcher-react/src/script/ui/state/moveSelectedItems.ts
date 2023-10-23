@@ -3,12 +3,12 @@ import {
   Vec2,
   EditorSelection,
   fromMultipleMove,
-  scrollCanvasByVector,
   ReAtom,
+  Scale,
 } from 'ketcher-core';
 
 type ArrowKey = 'ArrowUp' | 'ArrowDown' | 'ArrowRight' | 'ArrowLeft';
-const distinationVectorMapping: { [key in ArrowKey]: Vec2 } = {
+const destinationVectorMapping: { [key in ArrowKey]: Vec2 } = {
   ArrowUp: new Vec2(0, -1),
   ArrowDown: new Vec2(0, 1),
   ArrowRight: new Vec2(1, 0),
@@ -29,24 +29,34 @@ export function moveSelectedItems(
   key: ArrowKey,
   isShiftPressed: boolean,
 ) {
-  const stepFactor = 1 / editor.options().scale;
-  const fasterStepFactor = stepFactor * 10;
+  const getFasterStep = (vec: Vec2) => vec.scaled(10);
   const selectedItems = editor.explicitSelected();
-  const distinationVector = distinationVectorMapping[key];
+  const destinationVectorInCanvas = destinationVectorMapping[key];
+  const destinationVector = Scale.canvasToModel(
+    destinationVectorInCanvas,
+    editor.render.options,
+  );
   const action = fromMultipleMove(
     editor.render.ctab,
     selectedItems,
-    distinationVector.scaled(isShiftPressed ? fasterStepFactor : stepFactor),
+    isShiftPressed ? getFasterStep(destinationVector) : destinationVector,
   );
   editor.update(action, false, { resizeCanvas: true });
   const isClose = isCloseToTheEdgeOfCanvas(selectedItems, editor, key);
   if (isClose) {
-    scrollCanvasByVector(distinationVector, editor.render);
+    const moveStep = isShiftPressed
+      ? getFasterStep(destinationVectorInCanvas)
+      : destinationVectorInCanvas;
+    editor.render.setViewBox((prev) => ({
+      ...prev,
+      minX: prev.minX + moveStep.x,
+      minY: prev.minY + moveStep.y,
+    }));
   }
   editor.rotateController.rerender();
 }
 
-const edgeOffset = 150;
+const EDGE_OFFSET = 50;
 
 function isCloseToTheEdgeOfCanvas(
   selectedItems: EditorSelection,
@@ -88,23 +98,25 @@ function isCloseToTheEdgeOfCanvas(
     theMostRightAtom &&
     theMostLeftAtom
   ) {
-    const scale = editor.options().scale;
-    const offset = editor.render.options.offset;
-    const body = document.body;
     const getScreenCoordinates = (atom: ReAtom) =>
-      atom.a.pp.scaled(scale).add(offset);
+      Scale.modelToCanvas(atom.a.pp, editor.render.options);
     const theMostTopAtomYCoordinate = getScreenCoordinates(theMostTopAtom).y;
     const theMostBottomAtomYCoordinate =
       getScreenCoordinates(theMostBottomAtom).y;
     const theMostRightAtomXCoordinate =
       getScreenCoordinates(theMostRightAtom).x;
     const theMostLeftAtomXCoordinate = getScreenCoordinates(theMostLeftAtom).x;
-    const isCloseToTop = theMostTopAtomYCoordinate <= edgeOffset;
+
+    const viewBox = editor.render.viewBox;
+    const isCloseToTop =
+      theMostTopAtomYCoordinate <= viewBox.minY + EDGE_OFFSET;
     const isCloseToBottom =
-      body.clientHeight - theMostBottomAtomYCoordinate <= edgeOffset;
-    const isCloseToLeft = theMostLeftAtomXCoordinate <= edgeOffset;
+      theMostBottomAtomYCoordinate >=
+      viewBox.minY + viewBox.height - EDGE_OFFSET;
+    const isCloseToLeft =
+      theMostLeftAtomXCoordinate <= viewBox.minX + EDGE_OFFSET;
     const isCloseToRight =
-      body.clientWidth - theMostRightAtomXCoordinate <= edgeOffset;
+      theMostRightAtomXCoordinate >= viewBox.minX + viewBox.width - EDGE_OFFSET;
     return (
       (isCloseToTop && key === 'ArrowUp') ||
       (isCloseToBottom && key === 'ArrowDown') ||

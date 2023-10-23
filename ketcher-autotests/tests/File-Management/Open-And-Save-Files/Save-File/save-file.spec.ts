@@ -20,6 +20,7 @@ import {
   selectRingButton,
   selectTopPanelButton,
   takeEditorScreenshot,
+  waitForIndigoToLoad,
   waitForPageInit,
   waitForSpinnerFinishedWork,
 } from '@utils';
@@ -245,6 +246,7 @@ test.describe('Save files', () => {
      * Description: Save file - InChiKey for Benzene ring on canvas
      */
     // Can't select TestId because after press drop-down menu there is no InchIKey.
+    await waitForIndigoToLoad(page);
     await selectRingButton(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
     await selectTopPanelButton(TopPanelButton.Save, page);

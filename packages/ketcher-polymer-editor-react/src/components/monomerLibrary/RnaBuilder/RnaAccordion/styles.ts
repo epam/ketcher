@@ -20,11 +20,17 @@ import { Accordion, Button } from 'ketcher-react';
 export const RnaAccordionContainer = styled.div({
   display: 'flex',
   flexDirection: 'column',
-  justifyContent: 'flex-end',
+  justifyContent: 'flex-start',
   overflow: 'hidden',
+  height: '100%',
 });
 
 export const StyledAccordion = styled(Accordion)({
+  minHeight: '32px',
+});
+
+export const StyledAccordionWrapper = styled.div({
+  flexGrow: 2,
   minHeight: '32px',
 });
 

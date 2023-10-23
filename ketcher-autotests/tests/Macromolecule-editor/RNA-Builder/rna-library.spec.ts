@@ -336,6 +336,7 @@ test.describe('RNA Library', () => {
     /* 
     Test case: #2759 - Edit RNA mode
     Description: Sugar, Phosphate and Base highlighted in Library.
+    Test is not working properly. Need fix bug https://github.com/epam/ketcher/issues/3489
     */
     const monomers = [
       { type: 'sugar', name: "3A6___6-amino-hexanol (3' end)" },
@@ -347,8 +348,8 @@ test.describe('RNA Library', () => {
       await page.getByTestId('RNA-TAB').click();
       await page.getByTestId(`rna-builder-slot--${monomer.type}`).click();
       await page.getByTestId(monomer.name).click();
+      await takeMonomerLibraryScreenshot(page);
     }
-    await takeMonomerLibraryScreenshot(page);
   });
 
   test('Add Sugar-Base Combination to Canvas', async ({ page }) => {

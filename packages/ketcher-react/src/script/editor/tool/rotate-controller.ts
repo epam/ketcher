@@ -1,4 +1,10 @@
-import { Action, Scale, Vec2, vectorUtils } from 'ketcher-core';
+import {
+  Action,
+  CoordinateTransformation,
+  Scale,
+  Vec2,
+  vectorUtils,
+} from 'ketcher-core';
 import { throttle } from 'lodash';
 import Editor from '../Editor';
 import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems';
@@ -183,10 +189,9 @@ class RotateController {
       rectStartY - STYLE.HANDLE_MARGIN - STYLE.HANDLE_RADIUS,
     );
 
-    const handleCenterInViewport = this.render.obj2view(
-      this.handleCenter
-        .sub(this.render.options.offset)
-        .scaled(1 / this.render.options.scale),
+    const handleCenterInViewport = CoordinateTransformation.canvasToView(
+      this.handleCenter,
+      this.render,
     );
     this.editor.event.updateFloatingTools.dispatch({
       visible: true,
@@ -289,7 +294,7 @@ class RotateController {
         bonds,
         rgroupAttachmentPoints,
       })
-      .transform(Scale.obj2scaled, this.render.options)
+      .transform(Scale.modelToCanvas, this.render.options)
       .translate(this.render.options.offset || new Vec2());
 
     const rectStartX =
@@ -806,10 +811,9 @@ class RotateController {
       return;
     }
 
-    const handleCenterInViewport = this.render.obj2view(
-      this.handleCenter
-        .sub(this.render.options.offset)
-        .scaled(1 / this.render.options.scale),
+    const handleCenterInViewport = CoordinateTransformation.canvasToView(
+      this.handleCenter,
+      this.render,
     );
     this.editor.event.updateFloatingTools.dispatch({
       rotateHandlePosition: handleCenterInViewport,

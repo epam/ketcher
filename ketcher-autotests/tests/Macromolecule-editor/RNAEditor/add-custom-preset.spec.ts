@@ -8,7 +8,7 @@ import {
   BUTTON__ADD_TO_PRESETS,
 } from '../../../constants/testIdConstants';
 import { waitForPageInit } from '@utils/common';
-import { takePageScreenshot } from '@utils';
+import { moveMouseToTheMiddleOfTheScreen, takePageScreenshot } from '@utils';
 
 /* 
 Test case: #3063 - Add e2e tests for Macromolecule editor
@@ -54,7 +54,7 @@ test.describe('Macromolecules custom presets', () => {
       base: 'baA___N-benzyl-adenine',
       phosphate: 'bP___Boranophosphate',
     });
-
+    await moveMouseToTheMiddleOfTheScreen(page);
     await page.getByTestId(BUTTON__ADD_TO_PRESETS).click();
 
     await takePageScreenshot(page);

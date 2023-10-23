@@ -77,10 +77,16 @@ class ClipArea extends Component {
       keydown: async (event) => {
         if (this.props.focused() && this.props.onPaste) {
           if (isControlKey(event) && event.altKey && event.code === 'KeyV') {
-            const clipboardData = await navigator.clipboard.read();
-            const data = await pasteByKeydown(clipboardData);
-            if (data) {
-              this.props.onPaste(data, true);
+            if (navigator.clipboard?.read) {
+              const clipboardData = await navigator.clipboard.read();
+              const data = await pasteByKeydown(clipboardData);
+              if (data) {
+                this.props.onPaste(data, true);
+              }
+            } else {
+              window.ketcher.editor.errorHandler?.(
+                "Your browser doesn't support pasting clipboard content via Ctrl-Alt-V. Please use Google Chrome browser or load SMARTS structure from .smarts file instead.",
+              );
             }
           }
         }

@@ -126,9 +126,13 @@ export async function setValence(page: Page, valenceOption: string) {
 
 // Other
 
-export async function checkSmartsValue(page: Page, value: string) {
+export async function checkSmartsValue(
+  page: Page,
+  defaultFileFormat: string,
+  value: string,
+) {
   await selectTopPanelButton(TopPanelButton.Save, page);
-  await page.getByRole('button', { name: 'MDL Molfile V2000' }).click();
+  await page.getByRole('button', { name: defaultFileFormat }).click();
   await page.getByRole('option', { name: 'Daylight SMARTS' }).click();
   const smartsInput = page.getByTestId('smarts-preview-area-text');
   await expect(smartsInput).toHaveValue(value);

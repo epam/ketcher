@@ -15,7 +15,6 @@ import {
   takePresetsScreenshot,
   takeRNABuilderScreenshot,
   waitForPageInit,
-  waitForRender,
 } from '@utils';
 
 test.describe('RNA Library', () => {

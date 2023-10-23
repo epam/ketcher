@@ -170,7 +170,7 @@ function Field(props) {
         className={classes.inputWrapper}
         onMouseEnter={handlePopoverOpen}
         onMouseLeave={handlePopoverClose}
-        data-testid={props['data-testid'] + '-input'}
+        data-testid={props['data-testid'] + '-input-span'}
       >
         {formField}
       </span>

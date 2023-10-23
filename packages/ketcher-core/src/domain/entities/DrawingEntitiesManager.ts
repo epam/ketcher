@@ -567,7 +567,7 @@ export class DrawingEntitiesManager {
           initialPosition.y + heightMonomerWithBond,
         )
       : initialPosition;
-    monomer.moveAbsolute(Scale.scaled2obj(newPosition, editorSettings));
+    monomer.moveAbsolute(Scale.canvasToModel(newPosition, editorSettings));
     const operation = new MonomerMoveOperation(monomer);
     command.addOperation(operation);
     let lastPosition = newPosition;
@@ -627,7 +627,7 @@ export class DrawingEntitiesManager {
         const pos = Vec2.diff(nextMonomer.position, diff);
         const rearrangeResult = this.rearrangeChain(
           nextMonomer,
-          Scale.obj2scaled(pos, editorSettings),
+          Scale.modelToCanvas(pos, editorSettings),
           canvasWidth,
           monomer,
         );

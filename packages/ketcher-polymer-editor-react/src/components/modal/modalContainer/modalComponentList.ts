@@ -15,24 +15,29 @@
  ***************************************************************************/
 import { Open } from 'components/modal/Open';
 import { Save } from 'components/modal/save';
+import { Delete } from 'components/modal/Delete';
 import {
   MonomerConnection,
-  MonomerConnectionProps,
+  // MonomerConnectionProps,
 } from 'components/modal/monomerConnection';
 
-export interface RequiredModalProps {
-  onClose: () => void;
-  isModalOpen: boolean;
-}
+// export interface RequiredModalProps {
+//   onClose: () => void;
+//   isModalOpen: boolean;
+// }
 
-export type AdditionalModalProps = Partial<MonomerConnectionProps>;
+// export type AdditionalModalProps = Partial<MonomerConnectionProps>;
 
-type PossibleModal = (
-  props: RequiredModalProps & AdditionalModalProps,
-) => React.ReactElement;
+// type PossibleModal = (
+//   props: RequiredModalProps & AdditionalModalProps,
+// ) => React.ReactElement;
 
-export const modalComponentList: Record<string, PossibleModal> = {
+export const modalComponentList: Record<
+  string,
+  typeof Open | typeof Save | typeof Delete | typeof MonomerConnection
+> = {
   open: Open,
   save: Save,
+  delete: Delete,
   monomerConnection: MonomerConnection,
 };

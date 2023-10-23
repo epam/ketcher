@@ -176,6 +176,23 @@ class PolymerBond implements BaseTool {
       const firstMonomer = this.bondRenderer?.polymerBond?.firstMonomer;
       const secondMonomer = renderer.monomer;
 
+      for (const attachmentPoint in secondMonomer.attachmentPointsToBonds) {
+        const bond = secondMonomer.attachmentPointsToBonds[attachmentPoint];
+        if (!bond) {
+          continue;
+        }
+        const alreadyHasBond =
+          (bond.firstMonomer === firstMonomer &&
+            bond.secondMonomer === secondMonomer) ||
+          (bond.firstMonomer === secondMonomer &&
+            bond.secondMonomer === firstMonomer);
+        if (alreadyHasBond) {
+          this.editor.events.error.dispatch(
+            "There can't be more than 1 bond between the first and the second monomer",
+          );
+          return;
+        }
+      }
       const showModal = true; // ! here goes logic for choose when we invoke modal
       if (showModal) {
         this.isBondConnectionModalOpen = true;
@@ -188,6 +205,7 @@ class PolymerBond implements BaseTool {
         });
         return;
       }
+
       // This logic so far is only for no-modal connections. Maybe then we can chain it after modal invoke
       const modelChanges = this.finishBondCreation(renderer.monomer);
       this.editor.renderersContainer.update(modelChanges);

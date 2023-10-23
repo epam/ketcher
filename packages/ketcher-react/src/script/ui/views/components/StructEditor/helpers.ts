@@ -1,4 +1,4 @@
-import { Render, Point } from 'ketcher-core';
+import { Point } from 'ketcher-core';
 
 const X_COORD_INDEX = 0;
 const Y_COORD_INDEX = 1;
@@ -32,10 +32,7 @@ export const calculateMiddleCoordsForRect = (
   return middleCoordForRectangleSides;
 };
 
-export const calculateScrollOffsetX = (render: Render) => {
-  return render?.options.offset?.x - render?.clientArea?.scrollLeft;
-};
-
-export const calculateScrollOffsetY = (render: Render) => {
-  return render?.options?.offset?.y - render?.clientArea?.scrollTop;
+export const getSmoothScrollDelta = (delta: number, zoom: number) => {
+  const SMOOTH_FACTOR = 0.4;
+  return (delta / zoom) * SMOOTH_FACTOR;
 };

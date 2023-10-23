@@ -25,4 +25,5 @@ export interface IRnaPreset {
   sugar?: MonomerItemType;
   phosphate?: MonomerItemType;
   presetInList?: IRnaPreset;
+  default?: boolean;
 }

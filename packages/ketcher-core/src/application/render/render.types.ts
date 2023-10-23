@@ -84,3 +84,10 @@ export interface ArrowItem {
   pos: Vec2[];
   height: number;
 }
+
+export type ViewBox = {
+  minX: number;
+  minY: number;
+  width: number;
+  height: number;
+};

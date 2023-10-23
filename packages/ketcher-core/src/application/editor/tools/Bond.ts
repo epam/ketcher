@@ -193,7 +193,7 @@ class PolymerBond implements BaseTool {
           return;
         }
       }
-      const showModal = true; // ! here goes logic for choose when we invoke modal
+      const showModal = false; // ! here goes logic for choose when we invoke modal
       if (showModal) {
         this.isBondConnectionModalOpen = true;
 

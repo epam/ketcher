@@ -10,19 +10,20 @@ import {
   pasteFromClipboard,
   waitForLoad,
   waitForPageInit,
+  clickOnFileFormatDropdown,
 } from '@utils';
 import { getSmarts } from '@utils/formats';
 
 async function saveSmarts(page: Page) {
   await selectTopPanelButton(TopPanelButton.Save, page);
-  await page.getByRole('button', { name: 'MDL Rxnfile V2000' }).click();
+  await clickOnFileFormatDropdown(page);
   await page.getByRole('option', { name: 'Daylight SMARTS' }).click();
   await page.getByRole('button', { name: 'Save', exact: true }).click();
 }
 
 async function previewSmarts(page: Page) {
   await selectTopPanelButton(TopPanelButton.Save, page);
-  await page.getByRole('button', { name: 'MDL Rxnfile V2000' }).click();
+  await clickOnFileFormatDropdown(page);
   await page.getByRole('option', { name: 'Daylight SMARTS' }).click();
 }
 

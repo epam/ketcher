@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 import {
   clickInTheMiddleOfTheScreen,
+  clickOnFileFormatDropdown,
   RingButton,
   selectRingButton,
   waitForPageInit,
@@ -17,7 +18,7 @@ test.describe('Save dialog dropdown', () => {
     await selectRingButton(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
     await page.keyboard.press('Control+s');
-    await page.getByText('MDL Molfile V2000').click();
+    await clickOnFileFormatDropdown(page);
     expect(page.getByText('InChIKey')).toBeTruthy();
   });
 });

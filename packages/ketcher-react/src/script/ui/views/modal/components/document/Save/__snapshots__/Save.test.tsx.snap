@@ -67,6 +67,7 @@ Object {
                 >
                   <div
                     class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary Mui-focused selectContainer css-1yk1gt9-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root"
+                    data-testid="file-format-dropdown"
                   >
                     <div
                       aria-controls=":r0:"
@@ -416,6 +417,7 @@ Object {
               >
                 <div
                   class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary Mui-focused selectContainer css-1yk1gt9-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root"
+                  data-testid="file-format-dropdown"
                 >
                   <div
                     aria-controls=":r0:"

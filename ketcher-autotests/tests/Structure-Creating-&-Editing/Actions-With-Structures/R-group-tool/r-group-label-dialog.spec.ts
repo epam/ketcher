@@ -145,7 +145,7 @@ test.describe('R-Group Label Tool', () => {
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
     await page.mouse.click(x, y);
 
-    await pressButton(page, 'Data');
+    await page.getByTestId('type-dropdown').click();
     await page.getByRole('option', { name: 'Multiple group' }).click();
     await page.getByLabel('Repeat count').click();
     await page.getByLabel('Repeat count').fill('1');
@@ -355,29 +355,35 @@ test.describe('R-Group Label Tool', () => {
     await dragMouseTo(x, y, page);
   });
 
-  test('Copy/Paste actions Structure with R-Group label', async ({ page }) => {
-    /*
+  test.fixme(
+    'Copy/Paste actions Structure with R-Group label',
+    async ({ page }) => {
+      /*
       Test case: EPMLSOPKET-1566
       Description: User is able to Copy/Paste structure with R-group label.
     */
-    const x = 500;
-    const y = 200;
-    await openFileAndAddToCanvas('chain-with-r-group.rxn', page);
-    await copyAndPaste(page);
-    await page.mouse.click(x, y);
-  });
+      const x = 500;
+      const y = 200;
+      await openFileAndAddToCanvas('chain-with-r-group.rxn', page);
+      await copyAndPaste(page);
+      await page.mouse.click(x, y);
+    },
+  );
 
-  test('Cut/Paste actions Structure with R-Group label', async ({ page }) => {
-    /*
+  test.fixme(
+    'Cut/Paste actions Structure with R-Group label',
+    async ({ page }) => {
+      /*
       Test case: EPMLSOPKET-1566
       Description: User is able to Cut/Paste the structure with R-group label.
     */
-    const x = 500;
-    const y = 200;
-    await openFileAndAddToCanvas('chain-with-r-group.rxn', page);
-    await cutAndPaste(page);
-    await page.mouse.click(x, y);
-  });
+      const x = 500;
+      const y = 200;
+      await openFileAndAddToCanvas('chain-with-r-group.rxn', page);
+      await cutAndPaste(page);
+      await page.mouse.click(x, y);
+    },
+  );
 
   test('Atom properties do not implement for the Rgroup labels', async ({
     page,

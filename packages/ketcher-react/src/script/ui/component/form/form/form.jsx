@@ -169,7 +169,7 @@ function Field(props) {
 }
 
 const SelectOneOf = (props) => {
-  const { title, name, schema, ...prop } = props;
+  const { title, name, schema, testId, ...prop } = props;
 
   const selectDesc = {
     title,
@@ -189,6 +189,7 @@ const SelectOneOf = (props) => {
       title={title}
       {...prop}
       component={Select}
+      testId={testId}
     />
   );
 };

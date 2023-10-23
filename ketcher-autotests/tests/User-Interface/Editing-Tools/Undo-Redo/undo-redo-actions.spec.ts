@@ -48,11 +48,11 @@ async function selectBondProperties(
   bondReactingCenter: string,
   finalizationButton: string,
 ) {
-  await page.getByRole('button', { name: 'Single', exact: true }).click();
+  await page.getByTestId('bond-type-dropdown').click();
   await page.getByRole('option', { name: bondType, exact: true }).click();
-  await page.getByRole('button', { name: 'Either' }).click();
+  await page.getByTestId('bond-topology-dropdown').click();
   await page.getByRole('option', { name: bondTopology }).click();
-  await page.getByRole('button', { name: 'Unmarked' }).click();
+  await page.getByTestId('bond-reacting-center-dropdown').click();
   await page
     .getByRole('option', { name: bondReactingCenter, exact: true })
     .click();

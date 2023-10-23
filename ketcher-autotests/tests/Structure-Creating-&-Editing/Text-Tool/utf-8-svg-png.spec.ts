@@ -7,6 +7,7 @@ import {
   delay,
   DELAY_IN_SECONDS,
   waitForPageInit,
+  clickOnFileFormatDropdown,
 } from '@utils';
 
 test.describe('Open UTF-8 and save as SVG and PNG', () => {
@@ -22,7 +23,7 @@ test.describe('Open UTF-8 and save as SVG and PNG', () => {
     await openFileAndAddToCanvas('KET/utf-8-svg-png.ket', page);
     await delay(DELAY_IN_SECONDS.THREE);
     await selectTopPanelButton(TopPanelButton.Save, page);
-    await page.getByRole('button', { name: 'MDL Rxnfile V2000' }).click();
+    await clickOnFileFormatDropdown(page);
     await page.getByRole('option', { name: 'SVG Document' }).click();
 
     await takeEditorScreenshot(page);
@@ -37,7 +38,7 @@ test.describe('Open UTF-8 and save as SVG and PNG', () => {
 
     await delay(DELAY_IN_SECONDS.THREE);
     await selectTopPanelButton(TopPanelButton.Save, page);
-    await page.getByRole('button', { name: 'MDL Rxnfile V2000' }).click();
+    await clickOnFileFormatDropdown(page);
     await page.getByRole('option', { name: 'PNG Image' }).click();
 
     await takeEditorScreenshot(page);

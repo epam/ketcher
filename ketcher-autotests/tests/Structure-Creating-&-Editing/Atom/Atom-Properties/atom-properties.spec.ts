@@ -72,22 +72,14 @@ async function selectRingBondCount(
   button: string,
 ) {
   await page.getByText('Query specific').click();
-  await page
-    .locator('label')
-    .filter({ hasText: 'Ring bond count' })
-    .getByRole('button', { name: '​' })
-    .click();
+  await page.getByTestId('ring-bond-count-dropdown').click();
   await page.getByRole('option', { name: ringbondcount }).click();
   await pressButton(page, button);
 }
 
 async function selectHCount(page: Page, hcount: string, button: string) {
   await page.getByText('Query specific').click();
-  await page
-    .locator('label')
-    .filter({ hasText: 'H count' })
-    .getByRole('button', { name: '​' })
-    .click();
+  await page.getByTestId('h-count-dropdown').click();
   await page.getByRole('option', { name: hcount }).click();
   await pressButton(page, button);
 }
@@ -98,11 +90,7 @@ async function selectSubstitutionCount(
   button: string,
 ) {
   await page.getByText('Query specific').click();
-  await page
-    .locator('label')
-    .filter({ hasText: 'Substitution count' })
-    .getByRole('button', { name: '​' })
-    .click();
+  await page.getByTestId('substitution-count-dropdown').click();
   await page.getByRole('option', { name: substitutioncount }).click();
   await pressButton(page, button);
 }
@@ -119,11 +107,7 @@ async function selectReactionFlagsInversion(
   finalizationButtonName?: 'Apply' | 'Cancel',
 ) {
   await page.getByText('Reaction flags').click();
-  await page
-    .locator('label')
-    .filter({ hasText: 'Inversion' })
-    .getByRole('button', { name: '​' })
-    .click();
+  await page.getByTestId('inversion-dropdown').click();
   await page.getByRole('option', { name: inversion }).click();
   if (finalizationButtonName) {
     pressButton(page, finalizationButtonName);

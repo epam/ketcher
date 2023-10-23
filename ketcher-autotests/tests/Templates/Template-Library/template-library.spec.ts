@@ -13,7 +13,7 @@ import {
 async function setDisplayStereoFlagsSettingToOn(page: Page) {
   await selectTopPanelButton(TopPanelButton.Settings, page);
   await page.getByText('Stereochemistry', { exact: true }).click();
-  await pressButton(page, 'IUPAC style');
+  await page.getByTestId('stereo-label-style-dropdown').click();
   // Using "On" label style, to always show the stereo labels, so we can see the difference
   await page.getByRole('option', { name: 'On' }).click();
   await pressButton(page, 'Apply');

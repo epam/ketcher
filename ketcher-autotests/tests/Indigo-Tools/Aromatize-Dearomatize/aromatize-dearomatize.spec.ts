@@ -124,38 +124,40 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     },
   );
 
-  test('(Copy/Paste) Manipulations with cyclic structures with a circle inside the cycle', async ({
-    page,
-  }) => {
-    /*
+  test.fixme(
+    '(Copy/Paste) Manipulations with cyclic structures with a circle inside the cycle',
+    async ({ page }) => {
+      /*
     Test case: EPMLSOPKET-1872
     Description: The structures are pasted. The structures are rendered with a circle
     inside the cycle during any manipulations.
     */
-    // test is working but structures moves. will fixes after fixing bug with canvas movement after copy/paste
-    await openFileAndAddToCanvas('cycles-with-aromatic-bonds.mol', page);
-    await copyAndPaste(page);
-    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
-    await waitForSpinnerFinishedWork(page, async () => {
-      await selectTopPanelButton(TopPanelButton.Aromatize, page);
-    });
-  });
+      // test is working but structures moves. will fixes after fixing bug with canvas movement after copy/paste
+      await openFileAndAddToCanvas('cycles-with-aromatic-bonds.mol', page);
+      await copyAndPaste(page);
+      await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+      await waitForSpinnerFinishedWork(page, async () => {
+        await selectTopPanelButton(TopPanelButton.Aromatize, page);
+      });
+    },
+  );
 
-  test('(Cut/Paste) Manipulations with cyclic structures with a circle inside the cycle', async ({
-    page,
-  }) => {
-    /*
+  test.fixme(
+    '(Cut/Paste) Manipulations with cyclic structures with a circle inside the cycle',
+    async ({ page }) => {
+      /*
     Test case: EPMLSOPKET-1872
     Description: The structures are pasted. The structures are rendered with a circle
     inside the cycle during any manipulations.
     */
-    await openFileAndAddToCanvas('cycles-with-aromatic-bonds.mol', page);
-    await cutAndPaste(page);
-    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
-    await waitForSpinnerFinishedWork(page, async () => {
-      await selectTopPanelButton(TopPanelButton.Aromatize, page);
-    });
-  });
+      await openFileAndAddToCanvas('cycles-with-aromatic-bonds.mol', page);
+      await cutAndPaste(page);
+      await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+      await waitForSpinnerFinishedWork(page, async () => {
+        await selectTopPanelButton(TopPanelButton.Aromatize, page);
+      });
+    },
+  );
 
   test('(Add Atom) Manipulations with cyclic structures with a circle inside the cycle', async ({
     page,

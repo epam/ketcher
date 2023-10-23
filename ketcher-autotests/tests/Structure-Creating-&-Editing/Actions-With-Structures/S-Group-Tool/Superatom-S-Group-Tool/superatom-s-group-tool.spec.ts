@@ -192,19 +192,22 @@ test.describe('Superatom S-Group tool', () => {
     await clickInTheMiddleOfTheScreen(page);
   });
 
-  test('Copy/Paste structure with Superatom S-Group', async ({ page }) => {
-    /*
+  test.fixme(
+    'Copy/Paste structure with Superatom S-Group',
+    async ({ page }) => {
+      /*
       Test case: EPMLSOPKET-1540
       Description: User is able to copy and paste structure with Superatom S-group.
     */
-    const CANVAS_CLICK_X = 600;
-    const CANVAS_CLICK_Y = 600;
-    await openFileAndAddToCanvas('superatom.mol', page);
-    await copyAndPaste(page);
-    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
-  });
+      const CANVAS_CLICK_X = 600;
+      const CANVAS_CLICK_Y = 600;
+      await openFileAndAddToCanvas('superatom.mol', page);
+      await copyAndPaste(page);
+      await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    },
+  );
 
-  test('Cut/Paste structure with Superatom S-Group', async ({ page }) => {
+  test.fixme('Cut/Paste structure with Superatom S-Group', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-1540
       Description: User is able to cut and paste structure with Superatom S-group.

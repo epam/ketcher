@@ -56,6 +56,7 @@ const Automap = (props: Props) => {
           options={getSelectOptionsFromSchema(automapSchema.properties.mode)}
           {...props}
           component={Select}
+          testId="reaction-automapping-mode-dropdown"
         />
       </Form>
     </Dialog>

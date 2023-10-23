@@ -167,6 +167,7 @@ const SettingsDialog = (props: Props) => {
           name="stereoLabelStyle"
           component={Select}
           options={getSelectOptionsFromSchema(settingsProps?.stereoLabelStyle)}
+          testId="stereo-label-style-dropdown"
         />
         <Field name="colorOfAbsoluteCenters" component={ColorPicker} />
         <Field name="colorOfAndCenters" component={ColorPicker} />
@@ -177,6 +178,7 @@ const SettingsDialog = (props: Props) => {
           options={getSelectOptionsFromSchema(
             settingsProps?.colorStereogenicCenters,
           )}
+          testId="color-stereogenic-centers-dropdown"
         />
         <Field name="autoFadeOfStereoLabels" />
         <Field name="absFlagLabel" />

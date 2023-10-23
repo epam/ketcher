@@ -278,6 +278,7 @@ class SaveDialog extends Component {
               this.saveSchema.properties.format,
             )}
             component={Select}
+            testId="file-format-dropdown"
           />
         </Form>
         <Tabs

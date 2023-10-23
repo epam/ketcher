@@ -508,7 +508,7 @@ test.describe('R-Group Label Tool', () => {
     Test case: EPMLSOPKET-1568
     Description: User is able to save the structure with R-group label as .smi file
     */
-    await openFileAndAddToCanvas('chain-with-r-group.smi', page);
+    await openFileAndAddToCanvas('SMILES/chain-with-r-group.smi', page);
     const expectedFile = await getSmiles(page);
     await saveToFile('chain-with-r-group-expected.smi', expectedFile);
 

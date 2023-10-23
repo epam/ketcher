@@ -7,6 +7,7 @@ export const editorEvents = {
   selectTool: new Subscription(),
   createBondViaModal: new Subscription(),
   cancelBondCreationViaModal: new Subscription(),
+  selectMode: new Subscription(),
   error: new Subscription(),
   openMonomerConnectionModal: new Subscription(),
   mouseOverPolymerBond: new Subscription(),

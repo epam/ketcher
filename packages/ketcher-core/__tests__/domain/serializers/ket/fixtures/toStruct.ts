@@ -374,7 +374,7 @@ export const textKet = `{
                               "y": -9.850043392181398,
                               "z": 0
                             }
-                          ]  
+                          ]
                     }
                 }
             ]
@@ -765,7 +765,7 @@ export const preparedKet = `{
                               "y": -9.850043392181398,
                               "z": 0
                             }
-                          ]  
+                          ]
                     }
                 }
             ]
@@ -774,6 +774,8 @@ export const preparedKet = `{
             "type": "molecule",
             "atoms": [
                 {
+                    "charge": 0,
+                    "isotope": 0,
                     "label": "C",
                     "location": [
                         8,
@@ -782,6 +784,8 @@ export const preparedKet = `{
                     ]
                 },
                 {
+                    "charge": 0,
+                    "isotope": 0,
                     "label": "C",
                     "location": [
                         8.866012701659344,
@@ -801,6 +805,8 @@ export const preparedKet = `{
                     ]
                 },
                 {
+                    "charge": 0,
+                    "isotope": 0,
                     "label": "C",
                     "location": [
                         8,
@@ -809,6 +815,8 @@ export const preparedKet = `{
                     ]
                 },
                 {
+                    "charge": 0,
+                    "isotope": 0,
                     "label": "C",
                     "location": [
                         7.133987298340656,

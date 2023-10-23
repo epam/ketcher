@@ -23,11 +23,32 @@ export const atom = {
   type: 'object',
   required: ['label'],
   properties: {
+    atomType: {
+      title: 'Atom Type',
+      enum: ['single', 'list', 'pseudo'],
+      enumNames: ['Single', 'List', 'Special'],
+      default: 'single',
+    },
     label: {
       title: 'Label',
       type: 'string', // TODO:should really be enum of elements
       maxLength: 3,
       invalidMessage: 'Wrong label',
+    },
+    atomList: {
+      title: 'List',
+      type: 'string',
+      invalidMessage: 'Invalid atom list',
+    },
+    notList: {
+      title: 'Not list',
+      type: 'boolean',
+      default: false,
+    },
+    pseudo: {
+      title: 'Special',
+      type: 'string',
+      invalidMessage: 'Invalid special atom',
     },
     alias: {
       title: 'Alias',
@@ -39,7 +60,7 @@ export const atom = {
       type: 'string',
       pattern: '^([+-]?)([0-9]{1,3}|1000)([+-]?)$',
       maxLength: 5,
-      default: '0',
+      default: '',
       invalidMessage: 'Invalid charge value',
     },
     explicitValence: {
@@ -50,10 +71,11 @@ export const atom = {
     },
     isotope: {
       title: 'Isotope (atomic mass)',
-      type: 'integer',
-      minimum: 0,
-      default: 0,
-      invalidMessage: 'There must be integer',
+      type: 'string',
+      pattern: '^([0-9]{1,3}|1000)$|(^$)',
+      default: '',
+      maxLength: 5,
+      invalidMessage: 'Invalid isotope value',
     },
     radical: {
       title: 'Radical',
@@ -79,7 +101,7 @@ export const atom = {
     },
     hCount: {
       title: 'H count',
-      enum: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+      enum: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
       enumNames: ['', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
       default: 0,
     },

@@ -112,7 +112,10 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const x = 500;
     const y = 200;
     const anyAtom = 12;
-    await openFileAndAddToCanvas('clean-diffproperties.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/clean-diff-properties.mol',
+      page,
+    );
     await cutAndPaste(page);
     await page.mouse.click(x, y);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
@@ -126,7 +129,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     const x = 300;
     const y = 300;
-    await openFileAndAddToCanvas('reaction-dif-prop.rxn', page);
+    await openFileAndAddToCanvas('Rxn-V2000/reaction-dif-prop.rxn', page);
     await cutAndPaste(page);
     await page.mouse.click(x, y);
     await screenshotBetweenUndoRedo(page);
@@ -139,7 +142,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     const anyAtom = 1;
     const modifier = getControlModifier();
-    await openFileAndAddToCanvas('reaction-dif-prop.rxn', page);
+    await openFileAndAddToCanvas('Rxn-V2000/reaction-dif-prop.rxn', page);
     await waitForRender(page, async () => {
       await clickOnAtom(page, 'C', anyAtom);
     });
@@ -160,7 +163,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     const anyBond = 1;
     const modifier = getControlModifier();
-    await openFileAndAddToCanvas('reaction-dif-prop.rxn', page);
+    await openFileAndAddToCanvas('Rxn-V2000/reaction-dif-prop.rxn', page);
     await waitForRender(page, async () => {
       await clickOnBond(page, BondType.SINGLE, anyBond);
     });
@@ -180,7 +183,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Description: After the clicking the Cut button, the selected object disappears.
     Not able to perform undo
     */
-    await openFileAndAddToCanvas('reaction-dif-prop.rxn', page);
+    await openFileAndAddToCanvas('Rxn-V2000/reaction-dif-prop.rxn', page);
     await page.keyboard.press('Control+a');
     await page.keyboard.press('Control+x');
     await screenshotBetweenUndoRedo(page);
@@ -227,7 +230,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await page.keyboard.press('Control+c');
   });
 
-  test.fixme('Copy and Paste structure and edit', async ({ page }) => {
+  test('Copy and Paste structure and edit', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1716
     Description: The correct structure is pasted on the canvas.
@@ -238,7 +241,10 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const x = 300;
     const y = 300;
     const anyAtom = 12;
-    await openFileAndAddToCanvas('clean-diffproperties.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/clean-diff-properties.mol',
+      page,
+    );
     await copyAndPaste(page);
     await page.mouse.click(x, y);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
@@ -253,7 +259,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     const x = 500;
     const y = 200;
-    await openFileAndAddToCanvas('reaction-dif-prop.rxn', page);
+    await openFileAndAddToCanvas('Rxn-V2000/reaction-dif-prop.rxn', page);
     await copyAndPaste(page);
     await page.mouse.click(x, y);
   });
@@ -267,7 +273,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const y = 300;
     const anyAtom = 0;
     const modifier = getControlModifier();
-    await openFileAndAddToCanvas('reaction-dif-prop.rxn', page);
+    await openFileAndAddToCanvas('Rxn-V2000/reaction-dif-prop.rxn', page);
     await waitForRender(page, async () => {
       await clickOnAtom(page, 'C', anyAtom);
     });
@@ -288,7 +294,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     const x = 500;
     const y = 200;
-    await openFileAndAddToCanvas('reaction-dif-prop.rxn', page);
+    await openFileAndAddToCanvas('Rxn-V2000/reaction-dif-prop.rxn', page);
     await waitForRender(page, async () => {
       await clickOnBond(page, BondType.SINGLE, 0);
     });
@@ -305,7 +311,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     const x = 500;
     const y = 200;
-    await openFileAndAddToCanvas('reaction-dif-prop.rxn', page);
+    await openFileAndAddToCanvas('Rxn-V2000/reaction-dif-prop.rxn', page);
     await copyAndPaste(page);
     await page.mouse.click(x, y);
   });
@@ -320,7 +326,10 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const y = 200;
     const x2 = 200;
     const y2 = 300;
-    await openFileAndAddToCanvas('clean-diffproperties.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/clean-diff-properties.mol',
+      page,
+    );
     await copyAndPaste(page);
     await page.mouse.click(x, y);
     await page.keyboard.press('Control+v');
@@ -340,25 +349,24 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await page.mouse.click(x, y);
   });
 
-  test.fixme(
-    'Cut and Paste the Generic S-Group structure and edit',
-    async ({ page }) => {
-      /*
+  test('Cut and Paste the Generic S-Group structure and edit', async ({
+    page,
+  }) => {
+    /*
     Test case: EPMLSOPKET-1726
     Description: The correct structure is pasted on the canvas.
     All Generic S-Group are correctly rendered.
     User is able to edit the pasted structure.
     */
-      const x = 300;
-      const y = 200;
-      const anyAtom = 12;
-      await openFileAndAddToCanvas('generic-groups.mol', page);
-      await cutAndPaste(page);
-      await page.mouse.click(x, y);
-      await selectAtomInToolbar(AtomButton.Nitrogen, page);
-      await clickOnAtom(page, 'C', anyAtom);
-    },
-  );
+    const x = 300;
+    const y = 200;
+    const anyAtom = 12;
+    await openFileAndAddToCanvas('generic-groups.mol', page);
+    await cutAndPaste(page);
+    await page.mouse.click(x, y);
+    await selectAtomInToolbar(AtomButton.Nitrogen, page);
+    await clickOnAtom(page, 'C', anyAtom);
+  });
 
   test('Copy and paste and  Edit the pasted Structure', async ({ page }) => {
     /*
@@ -406,7 +414,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await page.mouse.click(x, y);
   });
 
-  test.fixme('Cut and Paste R-Group structure', async ({ page }) => {
+  test('Cut and Paste R-Group structure', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1724
     Description: The correct structure is pasted on the canvas.
@@ -441,26 +449,23 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await page.mouse.click(x, y);
   });
 
-  test.fixme(
-    'Cut and Paste the S-Group structure and edit',
-    async ({ page }) => {
-      /*
+  test('Cut and Paste the S-Group structure and edit', async ({ page }) => {
+    /*
     Test case: EPMLSOPKET-1725
     Description: The correct structure is pasted on the canvas.
     All Generic S-Group are correctly rendered.
     User is able to edit the pasted structure.
     */
-      // Can't add atom to structure
-      const x = 300;
-      const y = 200;
-      const anyAtom = 12;
-      await openFileAndAddToCanvas('s-group-features.mol', page);
-      await cutAndPaste(page);
-      await page.mouse.click(x, y);
-      await selectAtomInToolbar(AtomButton.Nitrogen, page);
-      await clickOnAtom(page, 'C', anyAtom);
-    },
-  );
+    // Can't add atom to structure
+    const x = 300;
+    const y = 200;
+    const anyAtom = 12;
+    await openFileAndAddToCanvas('s-group-features.mol', page);
+    await cutAndPaste(page);
+    await page.mouse.click(x, y);
+    await selectAtomInToolbar(AtomButton.Nitrogen, page);
+    await clickOnAtom(page, 'C', anyAtom);
+  });
 
   test('Copy and paste the structure with attached data', async ({ page }) => {
     /*
@@ -475,24 +480,23 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await page.mouse.click(x, y);
   });
 
-  test.fixme(
-    'Cut and Paste structure with attached data and edit',
-    async ({ page }) => {
-      /*
+  test('Cut and Paste structure with attached data and edit', async ({
+    page,
+  }) => {
+    /*
     Test case: EPMLSOPKET-1727
     Description: The correct structure is pasted on the canvas.
     All attached data are correctly rendered.
     User is able to edit the pasted structure.
     */
-      // Nitrogen atom can't attach to structure
-      const anyAtom = 12;
-      await openFileAndAddToCanvas('Molfiles-V2000/attached.mol', page);
-      await cutAndPaste(page);
-      await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
-      await selectAtomInToolbar(AtomButton.Nitrogen, page);
-      await clickOnAtom(page, 'C', anyAtom);
-    },
-  );
+    // Nitrogen atom can't attach to structure
+    const anyAtom = 12;
+    await openFileAndAddToCanvas('Molfiles-V2000/attached.mol', page);
+    await cutAndPaste(page);
+    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await selectAtomInToolbar(AtomButton.Nitrogen, page);
+    await clickOnAtom(page, 'C', anyAtom);
+  });
 
   test('Copy and paste Stereo structure with Chiral flag', async ({ page }) => {
     /*
@@ -536,7 +540,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await page.mouse.click(x, y);
   });
 
-  test.fixme('Cut and Paste reaction by hotkeys and edit', async ({ page }) => {
+  test('Cut and Paste reaction by hotkeys and edit', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1730
     Description: Copied objects are pasted correctly.
@@ -627,25 +631,22 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await page.mouse.click(x, y);
   });
 
-  test.fixme(
-    'Cut and Paste all kind of S-groups and edit',
-    async ({ page }) => {
-      /*
+  test('Cut and Paste all kind of S-groups and edit', async ({ page }) => {
+    /*
     Test case: EPMLSOPKET-2884
     Description: Cut objects are pasted as one object and correctly displayed without data loss.
     */
-      // Can't attach atom of Nitrogen to structure.
-      const anyAtom = 5;
-      await openFileAndAddToCanvas(
-        'structure-with-all-kinds-of-s-groups.mol',
-        page,
-      );
-      await cutAndPaste(page);
-      await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
-      await selectAtomInToolbar(AtomButton.Nitrogen, page);
-      await clickOnAtom(page, 'C', anyAtom);
-    },
-  );
+    // Can't attach atom of Nitrogen to structure.
+    const anyAtom = 5;
+    await openFileAndAddToCanvas(
+      'structure-with-all-kinds-of-s-groups.mol',
+      page,
+    );
+    await cutAndPaste(page);
+    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await selectAtomInToolbar(AtomButton.Nitrogen, page);
+    await clickOnAtom(page, 'C', anyAtom);
+  });
 
   test('Copy and paste Mapped reaction', async ({ page }) => {
     /*
@@ -766,27 +767,26 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await page.mouse.click(x, y);
   });
 
-  test.fixme(
-    'Cut and Paste Structure with Simple objects and text and edit',
-    async ({ page }) => {
-      /*
+  test('Cut and Paste Structure with Simple objects and text and edit', async ({
+    page,
+  }) => {
+    /*
     Test case: EPMLSOPKET-2948
     Description: The correct structure is pasted on the canvas.
     All Structure with Simple objects and text are correctly rendered.
     User is able to edit the pasted structure.
     */
-      // Can't attach atom of Nitrogen to structure.
-      const anyAtom = 5;
-      await openFileAndAddToCanvas(
-        'KET/structure-with-simple-objects-and-text.ket',
-        page,
-      );
-      await cutAndPaste(page);
-      await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
-      await selectAtomInToolbar(AtomButton.Nitrogen, page);
-      await clickOnAtom(page, 'C', anyAtom);
-    },
-  );
+    // Can't attach atom of Nitrogen to structure.
+    const anyAtom = 5;
+    await openFileAndAddToCanvas(
+      'KET/structure-with-simple-objects-and-text.ket',
+      page,
+    );
+    await cutAndPaste(page);
+    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await selectAtomInToolbar(AtomButton.Nitrogen, page);
+    await clickOnAtom(page, 'C', anyAtom);
+  });
 
   test('Copy and paste Aromatic structure', async ({ page }) => {
     /*
@@ -804,7 +804,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await page.mouse.click(x, y);
   });
 
-  test.fixme('Cut and Paste Aromatic structure and edit', async ({ page }) => {
+  test('Cut and Paste Aromatic structure and edit', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-2949
     Description: The correct structure is pasted on the canvas.

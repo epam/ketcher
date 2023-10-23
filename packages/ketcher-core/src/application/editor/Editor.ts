@@ -14,6 +14,7 @@ import { MonomerItemType } from 'domain/types';
 import { RenderersManager } from 'application/render/renderers/RenderersManager';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import { editorEvents, renderersEvents } from 'application/editor/editorEvents';
+import { PolymerBondRenderer } from 'application/render/renderers';
 
 interface ICoreEditorConstructorParams {
   theme;
@@ -62,6 +63,7 @@ export class CoreEditor {
     this.events.cancelBondCreationViaModal.add(() =>
       this.onCancelBondCreation(),
     );
+    this.events.selectMode.add((isSnakeMode) => this.onSelectMode(isSnakeMode));
 
     renderersEvents.forEach((eventName) => {
       this.events[eventName].add((event) =>
@@ -92,6 +94,16 @@ export class CoreEditor {
     if (this.tool instanceof PolymerBond) {
       this.tool.handleBondCreationCancellation();
     }
+  }
+
+  // todo we need to create abstraction layer for modes in future similar to the tools layer
+  private onSelectMode(isSnakeMode: boolean) {
+    PolymerBondRenderer.setSnakeMode(isSnakeMode);
+    const modelChanges = this.drawingEntitiesManager.reArrangeChains(
+      this.canvas.width.baseVal.value,
+      isSnakeMode,
+    );
+    this.renderersContainer.update(modelChanges);
   }
 
   public selectTool(name: string, options?) {

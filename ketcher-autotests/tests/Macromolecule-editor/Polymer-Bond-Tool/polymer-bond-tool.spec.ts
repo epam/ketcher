@@ -1,20 +1,27 @@
 import { test } from '@playwright/test';
-import { selectSingleBondTool, waitForPageInit } from '@utils';
+import {
+  selectSingleBondTool,
+  waitForPageInit,
+  takePageScreenshot,
+} from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 /* eslint-disable no-magic-numbers */
 
 test.describe('Polymer Bond Tool', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
+    await turnOnMacromoleculesEditor(page);
   });
+
+  test.afterEach(async ({ page }) => {
+    await takePageScreenshot(page);
+  });
+
   test('Create bond between two peptides', async ({ page }) => {
     /* 
     Test case: #2334 - Create peptide chain (HELM style) - Center-to-Center
     Description: Polymer bond tool
     */
-
-    await turnOnMacromoleculesEditor(page);
-
     // Choose peptide
     await page.getByText('Tza').click();
 
@@ -37,14 +44,11 @@ test.describe('Polymer Bond Tool', () => {
     // Create bonds between peptides, taking screenshots in middle states
     await peptide1.hover();
     await page.mouse.down();
-    await page.screenshot({
-      path: 'tests/Macromolecule-editor/screenshots/polymer-bond-tool.png',
-    });
+
+    await takePageScreenshot(page);
     await peptide2.hover();
     await page.mouse.up();
-    await page.screenshot({
-      path: 'tests/Macromolecule-editor/screenshots/polymer-bond-tool2.png',
-    });
+    await takePageScreenshot(page);
 
     await page.mouse.down();
     await peptide3.hover();
@@ -54,13 +58,6 @@ test.describe('Polymer Bond Tool', () => {
     await page.mouse.down();
     await peptide3.hover();
     await page.mouse.up();
-
-    // Wait error popup
-    await page.waitForSelector('#error-tooltip');
-
-    await page.screenshot({
-      path: 'tests/Macromolecule-editor/screenshots/polymer-bond-tool3.png',
-    });
   });
 
   test('Create bond between two chems', async ({ page }) => {
@@ -68,9 +65,6 @@ test.describe('Polymer Bond Tool', () => {
     Test case: #2497 - Adding chems to canvas - Center-to-Center
     Description: Polymer bond tool
     */
-
-    await turnOnMacromoleculesEditor(page);
-
     // Choose chems
     await page.getByText('CHEM').click();
     await page.getByTestId('hxy___Hexynyl alcohol').click();
@@ -90,13 +84,8 @@ test.describe('Polymer Bond Tool', () => {
     // Create bonds between chems, taking screenshots in middle states
     await chem1.hover();
     await page.mouse.down();
-    await page.screenshot({
-      path: 'tests/Macromolecule-editor/screenshots/polymer-bond-tool-chem1.png',
-    });
+    await takePageScreenshot(page);
     await chem2.hover();
     await page.mouse.up();
-    await page.screenshot({
-      path: 'tests/Macromolecule-editor/screenshots/polymer-bond-tool-chem2.png',
-    });
   });
 });

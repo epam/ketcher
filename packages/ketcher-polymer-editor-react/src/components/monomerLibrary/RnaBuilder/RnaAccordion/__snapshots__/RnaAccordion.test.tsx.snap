@@ -71,7 +71,7 @@ exports[`Test Rna Accordion component should render 1`] = `
       </div>
     </div>
     <div
-      class="css-1m9d4g"
+      class="css-2kwivx"
     >
       <div
         class="css-9bccu"
@@ -104,18 +104,19 @@ exports[`Test Rna Accordion component should render 1`] = `
         <svg
           class="css-1qr96ji"
           fill="none"
-          height="16"
-          viewBox="0 0 16 16"
-          width="16"
+          height="20"
+          stroke-width="2"
+          viewBox="0 0 20 20"
+          width="20"
           xmlns="http://www.w3.org/2000/svg"
         >
           <rect
             fill="currentColor"
-            height="13.333"
+            height="18"
             rx="1"
-            width="13.333"
-            x="1.332"
-            y="1.333"
+            width="18"
+            x="1"
+            y="1"
           />
         </svg>
         <span
@@ -142,7 +143,7 @@ exports[`Test Rna Accordion component should render 1`] = `
       </div>
     </div>
     <div
-      class="css-xy55ii"
+      class="css-4wpvad"
     >
       <div
         class="css-9bccu"
@@ -162,18 +163,30 @@ exports[`Test Rna Accordion component should render 1`] = `
         <svg
           class="css-1qr96ji"
           fill="none"
-          height="17"
-          viewBox="0 0 18 17"
-          width="18"
+          height="25"
+          stroke-width="2"
+          transform="translate(-3)"
+          viewBox="0 0 26 25"
+          width="26"
           xmlns="http://www.w3.org/2000/svg"
         >
           <rect
             fill="currentColor"
-            height="12"
+            height="15.013"
             rx="1"
-            transform="rotate(45 9 0)"
-            width="12"
-            x="9"
+            transform="rotate(45 13 1.414)"
+            width="15.013"
+            x="13"
+            y="1.414"
+          />
+          <rect
+            height="15.013"
+            rx="1"
+            stroke="currentColor"
+            transform="rotate(45 13 1.414)"
+            width="15.013"
+            x="13"
+            y="1.414"
           />
         </svg>
         <span
@@ -200,7 +213,7 @@ exports[`Test Rna Accordion component should render 1`] = `
       </div>
     </div>
     <div
-      class="css-xy55ii"
+      class="css-4wpvad"
     >
       <div
         class="css-9bccu"
@@ -221,17 +234,27 @@ exports[`Test Rna Accordion component should render 1`] = `
           class="css-1qr96ji"
           fill="none"
           height="24"
+          stroke-width="2"
+          transform="translate(-2)"
           viewBox="0 0 24 24"
           width="24"
           xmlns="http://www.w3.org/2000/svg"
         >
           <rect
             fill="currentColor"
-            height="20"
-            rx="10"
-            width="20"
-            x="2"
-            y="2"
+            height="18"
+            rx="9"
+            width="18"
+            x="3"
+            y="3"
+          />
+          <rect
+            height="18"
+            rx="9"
+            stroke="currentColor"
+            width="18"
+            x="3"
+            y="3"
           />
         </svg>
         <span
@@ -258,7 +281,7 @@ exports[`Test Rna Accordion component should render 1`] = `
       </div>
     </div>
     <div
-      class="css-xy55ii"
+      class="css-4wpvad"
     >
       <div
         class="css-9bccu"

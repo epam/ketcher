@@ -27,12 +27,14 @@ import {
   getMonomerUniqueKey,
   selectFilteredMonomers,
   selectMonomerGroups,
+  selectMonomersInCategory,
 } from 'state/library';
 import {
   DetailsContainer,
   DisabledArea,
   RnaAccordionContainer,
   StyledAccordion,
+  StyledAccordionWrapper,
   StyledButton,
 } from './styles';
 import { Summary } from './Summary';
@@ -69,11 +71,12 @@ interface IGroupsDataItem {
   }[];
 }
 
-export const RnaAccordion = () => {
+export const RnaAccordion = ({ libraryName }) => {
   const monomers = useAppSelector(selectFilteredMonomers);
+  const items = selectMonomersInCategory(monomers, libraryName);
   const activeRnaBuilderItem = useAppSelector(selectActiveRnaBuilderItem);
   const activePreset = useAppSelector(selectActivePreset);
-  const groups = selectMonomerGroups(monomers);
+  const groups = selectMonomerGroups(items);
   const presets = useAppSelector(selectPresets);
   const isEditMode = useAppSelector(selectIsEditMode);
   const editor = useAppSelector(selectEditor);
@@ -217,7 +220,22 @@ export const RnaAccordion = () => {
               })}
             </DetailsContainer>
           );
-        return (
+        const presetsExpanded =
+          groupData.groupName === RnaBuilderPresetsItem.Presets && expanded;
+
+        return presetsExpanded ? (
+          <StyledAccordionWrapper key={groupData.groupName}>
+            <StyledAccordion
+              data-testid="styled-accordion"
+              summary={summary}
+              details={details}
+              expanded={expanded}
+              onSummaryClick={() =>
+                handleAccordionSummaryClick(groupData.groupName)
+              }
+            />
+          </StyledAccordionWrapper>
+        ) : (
           <StyledAccordion
             key={groupData.groupName}
             data-testid="styled-accordion"

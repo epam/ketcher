@@ -1,5 +1,9 @@
 import { test } from '@playwright/test';
-import { clickInTheMiddleOfTheScreen, waitForPageInit } from '@utils';
+import {
+  clickInTheMiddleOfTheScreen,
+  takePageScreenshot,
+  waitForPageInit,
+} from '@utils';
 import { POLYMER_TOGGLER } from '../../../constants/testIdConstants';
 
 /* 
@@ -20,9 +24,5 @@ test('Select chem and drag it to canvas', async ({ page }) => {
   // Click on <svg> #polymer-editor-canvas
   await clickInTheMiddleOfTheScreen(page);
 
-  // Take full page screenshot
-  await page.screenshot({
-    path: 'tests/Macromolecule-editor/screenshots/chem-add-to-canvas.png',
-    fullPage: true,
-  });
+  await takePageScreenshot(page);
 });

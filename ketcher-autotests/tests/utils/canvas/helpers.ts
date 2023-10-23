@@ -77,6 +77,18 @@ export async function getCoordinatesTopAtomOfBenzeneRing(page: Page) {
   };
 }
 
+export async function takePageScreenshot(
+  page: Page,
+  options?: { masks?: Locator[]; maxDiffPixelRatio?: number },
+) {
+  const maxTimeout = 3000;
+  await waitForRender(page, emptyFunction, maxTimeout);
+  await expect(page).toHaveScreenshot({
+    mask: options?.masks,
+    maxDiffPixelRatio: options?.maxDiffPixelRatio,
+  });
+}
+
 export async function takeEditorScreenshot(
   page: Page,
   options?: { masks?: Locator[]; maxDiffPixelRatio?: number },
@@ -115,6 +127,7 @@ export async function takeMultitoolDropdownScreenshot(page: Page) {
   const dropdown = page.locator('.default-multitool-dropdown');
   await expect(dropdown).toHaveScreenshot();
 }
+
 /**
  * Returns an editor screenshot
  * Usage: convenient for temporary comparison of different states
@@ -156,9 +169,14 @@ export async function resetAllSettingsToDefault(page: Page) {
 export async function addMonomerToCanvas(
   page: Page,
   monomerFullName: string,
+  alias: string,
   positionX: number,
   positionY: number,
+  index: number,
 ) {
   await page.getByTestId(monomerFullName).click();
   await page.mouse.click(positionX, positionY);
+  return await page
+    .locator(`//\*[name() = 'g' and ./\*[name()='text' and .='${alias}']]`)
+    .nth(index);
 }

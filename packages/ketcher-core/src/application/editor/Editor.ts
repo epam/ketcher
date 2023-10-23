@@ -203,7 +203,7 @@ export class CoreEditor {
     // this.lastEvent = event;
     const conditions = [
       eventHandlerName in editorTool,
-      this.canvas.contains(event.target) || editorTool.isSelectionRunning?.(),
+      this.canvas.contains(event?.target) || editorTool.isSelectionRunning?.(),
       // isContextMenuClosed(editor.contextMenu),
     ];
 

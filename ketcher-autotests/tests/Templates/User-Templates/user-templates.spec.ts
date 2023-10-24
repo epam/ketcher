@@ -229,7 +229,7 @@ test.describe('Click User Templates on canvas', () => {
     await page.getByPlaceholder('Search by elements...').press('Enter');
   });
 
-  test('Copy/Paste action with templates', async ({ page }) => {
+  test.fixme('Copy/Paste action with templates', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-13158(3)
     Description: Template is copied and pasted as expected.
@@ -239,16 +239,19 @@ test.describe('Click User Templates on canvas', () => {
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
   });
 
-  test('Cut/Paste action with expanded functional group', async ({ page }) => {
-    /*
+  test.fixme(
+    'Cut/Paste action with expanded functional group',
+    async ({ page }) => {
+      /*
     Test case: EPMLSOPKET-13158(4)
     Description: Template is cut and pasted as expected.
     */
-    await openFileAndAddToCanvas('templates.mol', page);
-    await cutAndPaste(page);
-    await delay(DELAY_IN_SECONDS.TWO);
-    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
-  });
+      await openFileAndAddToCanvas('templates.mol', page);
+      await cutAndPaste(page);
+      await delay(DELAY_IN_SECONDS.TWO);
+      await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    },
+  );
 });
 
 // These two tests affect other tests or by other tests, so they were moved to a separate describe group

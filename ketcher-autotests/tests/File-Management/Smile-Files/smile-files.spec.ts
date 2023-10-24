@@ -12,16 +12,13 @@ import {
   DELAY_IN_SECONDS,
   waitForLoad,
   waitForPageInit,
+  clickOnFileFormatDropdown,
 } from '@utils';
 import { getSmiles } from '@utils/formats';
 
-async function getPreviewForSmiles(
-  page: Page,
-  formatName: string,
-  smileType: string,
-) {
+async function getPreviewForSmiles(page: Page, smileType: string) {
   await selectTopPanelButton(TopPanelButton.Save, page);
-  await page.getByRole('button', { name: formatName }).click();
+  await clickOnFileFormatDropdown(page);
   await page.getByRole('option', { name: smileType }).click();
 }
 
@@ -64,7 +61,7 @@ test.describe('SMILES files', () => {
       'tests/test-data/smiles-all-bonds-expected.json',
     );
 
-    await getPreviewForSmiles(page, 'MDL Molfile V2000', 'Daylight SMILES');
+    await getPreviewForSmiles(page, 'Daylight SMILES');
     await takeEditorScreenshot(page);
 
     await clearCanvasAndPasteSmiles(page, 'CCCCC/CC/C:CC.C(C)CCCCCCCCCC');
@@ -82,7 +79,7 @@ test.describe('SMILES files', () => {
       'tests/test-data/smiles-all-atoms-properties-expected.json',
     );
 
-    await getPreviewForSmiles(page, 'MDL Molfile V2000', 'Daylight SMILES');
+    await getPreviewForSmiles(page, 'Daylight SMILES');
     await takeEditorScreenshot(page);
 
     await clearCanvasAndPasteSmiles(
@@ -100,7 +97,7 @@ test.describe('SMILES files', () => {
     warning appears for all types of Sgroup except the multiple Sgroup type.
     */
     await openFileAndAddToCanvas('sec_butyl_abr.mol', page);
-    await getPreviewForSmiles(page, 'MDL Molfile V2000', 'Daylight SMILES');
+    await getPreviewForSmiles(page, 'Daylight SMILES');
     await delay(DELAY_IN_SECONDS.TWO);
     await page.getByText('Warnings').click();
   });
@@ -118,7 +115,7 @@ test.describe('SMILES files', () => {
       'tests/test-data/sgroups-diff-symyx-expected.json',
     );
 
-    await getPreviewForSmiles(page, 'MDL Molfile V2000', 'Daylight SMILES');
+    await getPreviewForSmiles(page, 'Daylight SMILES');
     await takeEditorScreenshot(page);
 
     await clearCanvasAndPasteSmiles(
@@ -141,7 +138,7 @@ test.describe('SMILES files', () => {
       'tests/test-data/smiles-heteroatoms-expected.json',
     );
 
-    await getPreviewForSmiles(page, 'MDL Molfile V2000', 'Daylight SMILES');
+    await getPreviewForSmiles(page, 'Daylight SMILES');
     await takeEditorScreenshot(page);
 
     await clearCanvasAndPasteSmiles(page, 'NOSPFClBrI[H]');
@@ -162,7 +159,7 @@ test.describe('SMILES files', () => {
         'tests/test-data/JSON/attached-data-expected.json',
       );
 
-      await getPreviewForSmiles(page, 'MDL Molfile V2000', 'Daylight SMILES');
+      await getPreviewForSmiles(page, 'Daylight SMILES');
       await page.getByText('Warnings').click();
       await takeEditorScreenshot(page);
 
@@ -185,7 +182,7 @@ test.describe('SMILES files', () => {
       'tests/test-data/smiles-v2000-abs-expected.json',
     );
 
-    await getPreviewForSmiles(page, 'MDL Molfile V2000', 'Daylight SMILES');
+    await getPreviewForSmiles(page, 'Daylight SMILES');
     await takeEditorScreenshot(page);
 
     await clearCanvasAndPasteSmiles(
@@ -212,7 +209,7 @@ test.describe('SMILES files', () => {
         'tests/test-data/smiles-different-features-expected.json',
       );
 
-      await getPreviewForSmiles(page, 'MDL Molfile V2000', 'Daylight SMILES');
+      await getPreviewForSmiles(page, 'Daylight SMILES');
       await takeEditorScreenshot(page);
 
       await clearCanvasAndPasteSmiles(
@@ -238,7 +235,7 @@ test.describe('SMILES files', () => {
       'tests/test-data/smiles-cis-trans-cycle-expected.json',
     );
 
-    await getPreviewForSmiles(page, 'MDL Molfile V2000', 'Daylight SMILES');
+    await getPreviewForSmiles(page, 'Daylight SMILES');
     await takeEditorScreenshot(page);
 
     await clearCanvasAndPasteSmiles(
@@ -261,7 +258,7 @@ test.describe('SMILES files', () => {
       'tests/test-data/smiles-alias-pseudoatom-expected.json',
     );
 
-    await getPreviewForSmiles(page, 'MDL Molfile V2000', 'Daylight SMILES');
+    await getPreviewForSmiles(page, 'Daylight SMILES');
     await takeEditorScreenshot(page);
 
     await clearCanvasAndPasteSmiles(page, '');
@@ -281,7 +278,7 @@ test.describe('SMILES files', () => {
       'tests/test-data/smiles-two-arrows-and-plus-expected.json',
     );
 
-    await getPreviewForSmiles(page, 'MDL Rxnfile V2000', 'Daylight SMILES');
+    await getPreviewForSmiles(page, 'Daylight SMILES');
     await takeEditorScreenshot(page);
 
     await clearCanvasAndPasteSmiles(
@@ -306,7 +303,7 @@ test.describe('SMILES files', () => {
       'tests/test-data/smiles-benzene-arrow-benzene-reagent-nh3-expected.json',
     );
 
-    await getPreviewForSmiles(page, 'MDL Rxnfile V2000', 'Daylight SMILES');
+    await getPreviewForSmiles(page, 'Daylight SMILES');
     await takeEditorScreenshot(page);
 
     await clearCanvasAndPasteSmiles(page, 'C1C=CC=CC=1>N>C1C=CC=CC=1');

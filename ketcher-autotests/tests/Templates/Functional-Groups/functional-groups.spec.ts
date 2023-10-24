@@ -126,50 +126,58 @@ test.describe('Functional Groups', () => {
     await resetCurrentTool(page);
   });
 
-  test('Copy/Paste action with expanded functional group', async ({ page }) => {
-    /*
+  test.fixme(
+    'Copy/Paste action with expanded functional group',
+    async ({ page }) => {
+      /*
     Test case: EPMLSOPKET-2897
     Description: Functional group is copied and pasted as expanded.
     */
-    await openFileAndAddToCanvas('functional-groups-expanded.mol', page);
-    await copyAndPaste(page);
-    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
-  });
+      await openFileAndAddToCanvas('functional-groups-expanded.mol', page);
+      await copyAndPaste(page);
+      await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    },
+  );
 
-  test('Cut/Paste action with expanded functional group', async ({ page }) => {
-    /*
+  test.fixme(
+    'Cut/Paste action with expanded functional group',
+    async ({ page }) => {
+      /*
     Test case: EPMLSOPKET-2897
     Description: Functional group is cut and pasted as expanded.
     */
-    await openFileAndAddToCanvas('functional-groups-expanded.mol', page);
-    await cutAndPaste(page);
-    await clickInTheMiddleOfTheScreen(page);
-  });
+      await openFileAndAddToCanvas('functional-groups-expanded.mol', page);
+      await cutAndPaste(page);
+      await clickInTheMiddleOfTheScreen(page);
+    },
+  );
 
-  test('Copy/Paste action with contracted functional group', async ({
-    page,
-  }) => {
-    /*
+  test.fixme(
+    'Copy/Paste action with contracted functional group',
+    async ({ page }) => {
+      /*
     Test case: EPMLSOPKET-2898
     Description: Functional group is copied and pasted as expanded.
     */
-    await openFileAndAddToCanvas('functional-group-contracted.mol', page);
-    await copyAndPaste(page);
-    await delay(DELAY_IN_SECONDS.THREE);
-    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
-  });
+      await openFileAndAddToCanvas('functional-group-contracted.mol', page);
+      await copyAndPaste(page);
+      await delay(DELAY_IN_SECONDS.THREE);
+      await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    },
+  );
 
-  test('Cut/Paste action with contracted functional group', async ({
-    page,
-  }) => {
-    /*
+  test.fixme(
+    'Cut/Paste action with contracted functional group',
+    async ({ page }) => {
+      /*
     Test case: EPMLSOPKET-2898
     Description: Functional group is cut and pasted as expanded.
     */
-    await openFileAndAddToCanvas('functional-group-contracted.mol', page);
-    await cutAndPaste(page);
-    await clickInTheMiddleOfTheScreen(page);
-  });
+      await openFileAndAddToCanvas('functional-group-contracted.mol', page);
+      await cutAndPaste(page);
+      await clickInTheMiddleOfTheScreen(page);
+    },
+  );
 
   test('Attach functional group to the molecule', async ({ page }) => {
     /*

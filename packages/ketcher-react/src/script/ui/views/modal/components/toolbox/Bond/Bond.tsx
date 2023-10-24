@@ -50,16 +50,19 @@ const Bond = (props: Props) => {
           name="type"
           component={Select}
           options={getSelectOptionsFromSchema(bondProps.type)}
+          testId="bond-type-dropdown"
         />
         <Field
           name="topology"
           component={Select}
           options={getSelectOptionsFromSchema(bondProps.topology)}
+          testId="bond-topology-dropdown"
         />
         <Field
           name="center"
           component={Select}
           options={getSelectOptionsFromSchema(bondProps.center)}
+          testId="bond-reacting-center-dropdown"
         />
       </Form>
     </Dialog>

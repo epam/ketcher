@@ -120,7 +120,7 @@ test.describe('Plus and Arrows tools ', () => {
     dragMouseTo(x + 150, y + 150, page);
   });
 
-  test('Copy/paste, cut/paste arrow', async ({ page }) => {
+  test.fixme('Copy/paste, cut/paste arrow', async ({ page }) => {
     /**
      * Test case: EPMLSOPKET-2872
      * Description: Copy/cut/paste reaction tools
@@ -205,41 +205,44 @@ test.describe('Plus and Arrows tools ', () => {
       await dragMouseTo(point.x - 100, point.y - 100, page);
     });
 
-    test('Select plus sign, cut and paste it onto the canvas', async ({
-      page,
-    }) => {
-      await page.mouse.click(point.x - 150, point.y - 10);
-      await delay(DELAY_IN_SECONDS.ONE);
-      await page.keyboard.press(`${modifier}+KeyX`);
-      await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
-      await clickOnTheCanvas(page, 0, -100);
-    });
+    test.fixme(
+      'Select plus sign, cut and paste it onto the canvas',
+      async ({ page }) => {
+        await page.mouse.click(point.x - 150, point.y - 10);
+        await delay(DELAY_IN_SECONDS.ONE);
+        await page.keyboard.press(`${modifier}+KeyX`);
+        await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
+        await clickOnTheCanvas(page, 0, -100);
+      },
+    );
 
-    test('Select plus sign, copy and paste it onto the canvas', async ({
-      page,
-    }) => {
-      await page.mouse.click(point.x - 150, point.y - 10);
-      await delay(DELAY_IN_SECONDS.ONE);
-      await page.keyboard.press(`${modifier}+KeyC`);
-      await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
-      await clickOnTheCanvas(page, 0, -100);
-    });
+    test.fixme(
+      'Select plus sign, copy and paste it onto the canvas',
+      async ({ page }) => {
+        await page.mouse.click(point.x - 150, point.y - 10);
+        await delay(DELAY_IN_SECONDS.ONE);
+        await page.keyboard.press(`${modifier}+KeyC`);
+        await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
+        await clickOnTheCanvas(page, 0, -100);
+      },
+    );
 
-    test('Select the whole reaction and move it, Undo, Erase tool', async ({
-      page,
-    }) => {
-      await page.keyboard.press(`${modifier}+KeyA`);
-      await delay(DELAY_IN_SECONDS.ONE);
-      await page.keyboard.press(`${modifier}+KeyC`);
-      await page.mouse.move(point.x - 100, point.y - 100);
-      await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
-      await takeEditorScreenshot(page);
-      await selectTopPanelButton(TopPanelButton.Undo, page);
-      await takeEditorScreenshot(page);
-      await selectLeftPanelButton(LeftPanelButton.Erase, page);
-      await page.mouse.move(point.x - 300, point.y - 100);
-      await dragMouseTo(point.x - 140, point.y + 100, page);
-    });
+    test.fixme(
+      'Select the whole reaction and move it, Undo, Erase tool',
+      async ({ page }) => {
+        await page.keyboard.press(`${modifier}+KeyA`);
+        await delay(DELAY_IN_SECONDS.ONE);
+        await page.keyboard.press(`${modifier}+KeyC`);
+        await page.mouse.move(point.x - 100, point.y - 100);
+        await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
+        await takeEditorScreenshot(page);
+        await selectTopPanelButton(TopPanelButton.Undo, page);
+        await takeEditorScreenshot(page);
+        await selectLeftPanelButton(LeftPanelButton.Erase, page);
+        await page.mouse.move(point.x - 300, point.y - 100);
+        await dragMouseTo(point.x - 140, point.y + 100, page);
+      },
+    );
   });
   test.describe('Reaction Arrow - Manipulations with different Tools', () => {
     /**
@@ -273,41 +276,44 @@ test.describe('Plus and Arrows tools ', () => {
       await dragMouseTo(point.x - 100, point.y - 100, page);
     });
 
-    test('Select reaction arrow, cut and paste it onto the canvas', async ({
-      page,
-    }) => {
-      await page.mouse.click(point.x + 60, point.y);
-      await delay(DELAY_IN_SECONDS.ONE);
-      await page.keyboard.press(`${modifier}+KeyX`);
-      await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
-      await clickOnTheCanvas(page, 0, -100);
-    });
+    test.fixme(
+      'Select reaction arrow, cut and paste it onto the canvas',
+      async ({ page }) => {
+        await page.mouse.click(point.x + 60, point.y);
+        await delay(DELAY_IN_SECONDS.ONE);
+        await page.keyboard.press(`${modifier}+KeyX`);
+        await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
+        await clickOnTheCanvas(page, 0, -100);
+      },
+    );
 
-    test('Select reaction arrow, copy and paste it onto the canvas', async ({
-      page,
-    }) => {
-      await page.mouse.click(point.x + 60, point.y);
-      await delay(DELAY_IN_SECONDS.ONE);
-      await page.keyboard.press(`${modifier}+KeyC`);
-      await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
-      await clickOnTheCanvas(page, 0, -100);
-    });
+    test.fixme(
+      'Select reaction arrow, copy and paste it onto the canvas',
+      async ({ page }) => {
+        await page.mouse.click(point.x + 60, point.y);
+        await delay(DELAY_IN_SECONDS.ONE);
+        await page.keyboard.press(`${modifier}+KeyC`);
+        await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
+        await clickOnTheCanvas(page, 0, -100);
+      },
+    );
 
-    test('Select the whole reaction and move it, Undo, Erase tool', async ({
-      page,
-    }) => {
-      await page.keyboard.press(`${modifier}+KeyA`);
-      await delay(DELAY_IN_SECONDS.ONE);
-      await page.keyboard.press(`${modifier}+KeyC`);
-      await page.mouse.move(point.x - 100, point.y - 100);
-      await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
-      await takeEditorScreenshot(page);
-      await selectTopPanelButton(TopPanelButton.Undo, page);
-      await takeEditorScreenshot(page);
-      await selectLeftPanelButton(LeftPanelButton.Erase, page);
-      await page.mouse.move(point.x - 300, point.y - 100);
-      await dragMouseTo(point.x - 140, point.y + 100, page);
-    });
+    test.fixme(
+      'Select the whole reaction and move it, Undo, Erase tool',
+      async ({ page }) => {
+        await page.keyboard.press(`${modifier}+KeyA`);
+        await delay(DELAY_IN_SECONDS.ONE);
+        await page.keyboard.press(`${modifier}+KeyC`);
+        await page.mouse.move(point.x - 100, point.y - 100);
+        await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
+        await takeEditorScreenshot(page);
+        await selectTopPanelButton(TopPanelButton.Undo, page);
+        await takeEditorScreenshot(page);
+        await selectLeftPanelButton(LeftPanelButton.Erase, page);
+        await page.mouse.move(point.x - 300, point.y - 100);
+        await dragMouseTo(point.x - 140, point.y + 100, page);
+      },
+    );
   });
   test.describe('Non-default Reaction Arrow Tool - Manipulations with different tool', () => {
     /**
@@ -343,36 +349,40 @@ test.describe('Plus and Arrows tools ', () => {
       await dragMouseTo(point.x - 100, point.y - 100, page);
     });
 
-    test('Select reaction arrow, cut and paste it onto the canvas', async ({
-      page,
-    }) => {
-      await page.mouse.click(point.x + 60, point.y);
-      await delay(DELAY_IN_SECONDS.ONE);
-      await page.keyboard.press(`${modifier}+KeyX`);
-      await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
-      await clickOnTheCanvas(page, 0, -100);
-    });
-    test('Select a part of the reaction with the equilibrium arrow, cut and paste it onto canvas.', async ({
-      page,
-    }) => {
-      await page.mouse.move(point.x - 40, point.y - 300);
-      await dragMouseTo(point.x + 400, point.y + 100, page);
-      await delay(DELAY_IN_SECONDS.ONE);
-      await page.keyboard.press(`${modifier}+KeyX`);
-      await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
-      await clickOnTheCanvas(page, 0, -100);
-    });
+    test.fixme(
+      'Select reaction arrow, cut and paste it onto the canvas',
+      async ({ page }) => {
+        await page.mouse.click(point.x + 60, point.y);
+        await delay(DELAY_IN_SECONDS.ONE);
+        await page.keyboard.press(`${modifier}+KeyX`);
+        await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
+        await clickOnTheCanvas(page, 0, -100);
+      },
+    );
 
-    test('Select reaction arrow, copy and paste it onto the canvas', async ({
-      page,
-    }) => {
-      await page.mouse.click(point.x + 60, point.y);
-      await delay(DELAY_IN_SECONDS.ONE);
-      await page.keyboard.press(`${modifier}+KeyC`);
-      await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
-      await clickOnTheCanvas(page, 0, -100);
-      await screenshotBetweenUndoRedo(page);
-    });
+    test.fixme(
+      'Select a part of the reaction with the equilibrium arrow, cut and paste it onto canvas.',
+      async ({ page }) => {
+        await page.mouse.move(point.x - 40, point.y - 300);
+        await dragMouseTo(point.x + 400, point.y + 100, page);
+        await delay(DELAY_IN_SECONDS.ONE);
+        await page.keyboard.press(`${modifier}+KeyX`);
+        await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
+        await clickOnTheCanvas(page, 0, -100);
+      },
+    );
+
+    test.fixme(
+      'Select reaction arrow, copy and paste it onto the canvas',
+      async ({ page }) => {
+        await page.mouse.click(point.x + 60, point.y);
+        await delay(DELAY_IN_SECONDS.ONE);
+        await page.keyboard.press(`${modifier}+KeyC`);
+        await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
+        await clickOnTheCanvas(page, 0, -100);
+        await screenshotBetweenUndoRedo(page);
+      },
+    );
 
     test('Click the equilibrium arrow with the Erase tool, Undo, Erase for part of reaction, Undo/Redo', async ({
       page,

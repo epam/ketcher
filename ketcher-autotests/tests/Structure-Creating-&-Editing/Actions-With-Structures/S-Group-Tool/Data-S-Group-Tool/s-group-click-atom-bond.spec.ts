@@ -31,7 +31,7 @@ test.describe('S-Group Properties', () => {
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
     await page.mouse.click(x, y);
-    await page.getByRole('button', { name: 'Data' }).click();
+    await page.getByTestId('type-dropdown').click();
   });
 
   test('A superatom named `Test` is created', async ({ page }) => {
@@ -45,7 +45,7 @@ test.describe('S-Group Properties', () => {
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
     await page.mouse.click(x, y);
-    await page.getByRole('button', { name: 'Data' }).click();
+    await page.getByTestId('type-dropdown').click();
     await page.getByRole('option', { name: 'Superatom' }).click();
     await page.getByLabel('Name').click();
     await page.getByLabel('Name').fill('Test');

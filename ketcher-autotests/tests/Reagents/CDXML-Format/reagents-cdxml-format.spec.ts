@@ -11,6 +11,7 @@ import {
   DELAY_IN_SECONDS,
   waitForLoad,
   waitForPageInit,
+  clickOnFileFormatDropdown,
 } from '@utils';
 
 import NH3TextAboveRequestData from '@tests/test-data/cdxml-nh3-text-above-request-data.json';
@@ -25,7 +26,7 @@ import { API_INDIGO_URL } from '@constants';
 
 async function previewCDXML(page: Page) {
   await selectTopPanelButton(TopPanelButton.Save, page);
-  await page.getByRole('button', { name: 'MDL Rxnfile V2000' }).click();
+  await clickOnFileFormatDropdown(page);
   await page.getByRole('option', { name: 'CDXML' }).click();
 }
 
@@ -164,7 +165,7 @@ test.describe('Reagents CDXML format', () => {
     expect(cdxmlFromIndigo).toEqual(NH3MoleculeAboveTestData);
 
     await selectTopPanelButton(TopPanelButton.Save, page);
-    await page.getByRole('button', { name: 'MDL Rxnfile V2000' }).click();
+    await clickOnFileFormatDropdown(page);
     await page.getByRole('option', { name: 'CDXML' }).click();
     await page.getByRole('button', { name: 'Save', exact: true }).click();
   });

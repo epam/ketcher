@@ -1,5 +1,5 @@
 import { Page } from '@playwright/test';
-import { pressButton, selectOption } from '@utils';
+import { clickOnFileFormatDropdown, selectOption } from '@utils';
 import { selectButtonByTitle } from '@utils/clicks/selectButtonByTitle';
 import {
   AtomButton,
@@ -80,7 +80,7 @@ export async function openSimpleObjectsDropdown(page: Page) {
 export async function saveStructureWithReaction(page: Page, format?: string) {
   await selectTopPanelButton(TopPanelButton.Save, page);
   if (format) {
-    await pressButton(page, 'MDL Rxnfile V2000');
+    await clickOnFileFormatDropdown(page);
     await selectOption(page, format);
   }
   await page.getByRole('button', { name: 'Save', exact: true }).click();

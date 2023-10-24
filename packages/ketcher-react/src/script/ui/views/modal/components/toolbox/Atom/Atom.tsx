@@ -116,21 +116,25 @@ const Atom: FC<Props> = (props: Props) => {
             name="ringBondCount"
             component={Select}
             options={getSelectOptionsFromSchema(atomProps.ringBondCount)}
+            testId="ring-bond-count-dropdown"
           />
           <Field
             name="hCount"
             component={Select}
             options={getSelectOptionsFromSchema(atomProps.hCount)}
+            testId="h-count-dropdown"
           />
           <Field
             name="substitutionCount"
             component={Select}
             options={getSelectOptionsFromSchema(atomProps.substitutionCount)}
+            testId="substitution-count-dropdown"
           />
           <Field
             name="unsaturatedAtom"
             labelPos="before"
             className={classes.checkbox}
+            testId="unsaturated-atom"
           />
         </div>
       ),
@@ -143,6 +147,7 @@ const Atom: FC<Props> = (props: Props) => {
             name="invRet"
             component={Select}
             options={getSelectOptionsFromSchema(atomProps.invRet)}
+            testId="inversion-dropdown"
           />
           <Field
             name="exactChangeFlag"

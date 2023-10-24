@@ -42,6 +42,10 @@ export async function getCoordinatesOfTheMiddleOfTheScreen(page: Page) {
   };
 }
 
+export function clickOnFileFormatDropdown(page: Page) {
+  return page.getByTestId('file-format-dropdown').click();
+}
+
 /* Usage: await pressButton(page, 'Add to Canvas')
   Click on specified button in Open Structure dialog
 */
@@ -161,7 +165,7 @@ export async function applyAutoMapMode(
 ) {
   await resetCurrentTool(page);
   await selectNestedTool(page, ReactionMappingTool.AUTOMAP);
-  await pressButton(page, 'Discard');
+  await page.getByTestId('reaction-automapping-mode-dropdown').click();
   await selectOption(page, mode);
   await selectButtonById('OK', page);
   if (withScreenshot) {

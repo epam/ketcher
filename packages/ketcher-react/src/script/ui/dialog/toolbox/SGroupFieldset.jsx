@@ -38,12 +38,15 @@ const content = (type) =>
             key={`${type}-${prop}`}
             component={Select}
             options={getSelectOptionsFromSchema(schemes[type].properties[prop])}
+            testId={prop}
           />
         );
       }
 
       const props = propMapping[prop] || {};
-      return <Field name={prop} key={`${type}-${prop}`} {...props} />;
+      return (
+        <Field name={prop} key={`${type}-${prop}`} testId={prop} {...props} />
+      );
     });
 
 function SGroupFieldset({ formState }) {

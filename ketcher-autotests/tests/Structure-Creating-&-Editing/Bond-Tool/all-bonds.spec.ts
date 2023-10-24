@@ -499,7 +499,7 @@ test.describe('Bond Tool', () => {
     await takeEditorScreenshot(page);
     await rightClickOnBond(page, BondType.DOUBLE, 0);
     await page.getByText('Edit selected bonds...').click();
-    await pressButton(page, 'Either');
+    await page.getByTestId('bond-topology-dropdown').click();
     await selectOption(page, 'Ring');
     await pressButton(page, 'Apply');
   });

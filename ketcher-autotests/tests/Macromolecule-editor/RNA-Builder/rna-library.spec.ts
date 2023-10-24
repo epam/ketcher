@@ -10,6 +10,7 @@ import {
   moveMouseToTheMiddleOfTheScreen,
   selectMonomer,
   selectRectangleSelectionTool,
+  selectSingleBondTool,
   takeEditorScreenshot,
   takeMonomerLibraryScreenshot,
   takePresetsScreenshot,
@@ -398,6 +399,136 @@ test.describe('RNA Library', () => {
     await page.getByTestId('add-to-presets-btn').click();
     await page.getByTestId('(baA)bP_baA_._bP').click();
     await moveMouseToTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Add Sugar and Base Combination to Canvas and connect with bond', async ({
+    page,
+  }) => {
+    /* 
+    Test case: #2507 - Add RNA monomers to canvas
+    Description: Sugar and Base Combination added to Canvas and connect with bond.
+    */
+    const x = 800;
+    const y = 350;
+    const bondLine = await page.locator('g[pointer-events="stroke"]');
+    const sugars = await page.getByText('3A6').locator('..');
+    const sugar1 = sugars.nth(0);
+    const bases = await page.getByText('baA').locator('..');
+    const base1 = bases.nth(0);
+    await selectMonomer(DropDown.SugarsDropDown, Sugars.ThreeA6, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await selectMonomer(DropDown.BasesDropDown, Bases.NBebnzylAdenine, page);
+    await page.mouse.click(x, y);
+    await selectSingleBondTool(page);
+    await sugar1.hover();
+    await page.mouse.down();
+    await base1.hover();
+    await page.mouse.up();
+    await bondLine.hover();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Add Sugar and Phosphate Combination to Canvas and connect with bond', async ({
+    page,
+  }) => {
+    /* 
+    Test case: #2507 - Add RNA monomers to canvas
+    Description: Sugar and Phosphate Combination added to Canvas and connect with bond.
+    */
+    const x = 800;
+    const y = 350;
+    const bondLine = await page.locator('g[pointer-events="stroke"]');
+    const sugars = await page.getByText('3A6').locator('..');
+    const sugar1 = sugars.nth(0);
+    const phosphates = await page.getByText('P').locator('..');
+    const phosphate1 = phosphates.nth(0);
+    await selectMonomer(DropDown.SugarsDropDown, Sugars.ThreeA6, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await selectMonomer(
+      DropDown.PhosphatesDropDown,
+      Phosphates.Phosphate,
+      page,
+    );
+    await page.mouse.click(x, y);
+    await selectSingleBondTool(page);
+    await sugar1.hover();
+    await page.mouse.down();
+    await phosphate1.hover();
+    await page.mouse.up();
+    await bondLine.hover();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Add Base and Phosphate Combination to Canvas and connect with bond', async ({
+    page,
+  }) => {
+    /* 
+    Test case: #2507 - Add RNA monomers to canvas
+    Description: Base and Phosphate Combination added to Canvas and connect with bond.
+    */
+    const x = 800;
+    const y = 350;
+    const bondLine = await page.locator('g[pointer-events="stroke"]');
+    const bases = await page.getByText('baA').locator('..');
+    const base1 = bases.nth(0);
+    const phosphates = await page.getByText('P').locator('..');
+    const phosphate1 = phosphates.nth(0);
+    await selectMonomer(DropDown.BasesDropDown, Bases.NBebnzylAdenine, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await selectMonomer(
+      DropDown.PhosphatesDropDown,
+      Phosphates.Phosphate,
+      page,
+    );
+    await page.mouse.click(x, y);
+    await selectSingleBondTool(page);
+    await base1.hover();
+    await page.mouse.down();
+    await phosphate1.hover();
+    await page.mouse.up();
+    await bondLine.hover();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Add Sugar-Base-Phosphate Combination to Canvas and connect with bond', async ({
+    page,
+  }) => {
+    /* 
+    Test case: #2507 - Add RNA monomers to canvas
+    Description: Sugar-Base-Phosphate Combination added to Canvas and connect with bond.
+    */
+    const x = 800;
+    const y = 350;
+    const x1 = 650;
+    const y1 = 150;
+    const bondLine = await page.locator('g[pointer-events="stroke"]').first();
+    const sugars = await page.getByText('3A6').locator('..');
+    const sugar1 = sugars.nth(0);
+    const bases = await page.getByText('baA').locator('..');
+    const base1 = bases.nth(0);
+    const phosphates = await page.getByText('P').locator('..');
+    const phosphate1 = phosphates.nth(0);
+    await selectMonomer(DropDown.SugarsDropDown, Sugars.ThreeA6, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await selectMonomer(DropDown.BasesDropDown, Bases.NBebnzylAdenine, page);
+    await page.mouse.click(x, y);
+    await selectMonomer(
+      DropDown.PhosphatesDropDown,
+      Phosphates.Phosphate,
+      page,
+    );
+    await page.mouse.click(x1, y1);
+    await selectSingleBondTool(page);
+    await sugar1.hover();
+    await page.mouse.down();
+    await base1.hover();
+    await page.mouse.up();
+    await sugar1.hover();
+    await page.mouse.down();
+    await phosphate1.hover();
+    await page.mouse.up();
+    await bondLine.hover();
     await takeEditorScreenshot(page);
   });
 });

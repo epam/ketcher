@@ -50,12 +50,8 @@ export abstract class DrawingEntity {
   ) {
     assert(this.baseRenderer);
     const prevSelectedValue = this.selected;
-    const center = new Vec2(
-      this.baseRenderer.bodyX + this.baseRenderer.bodyWidth / 2,
-      this.baseRenderer.bodyY + this.baseRenderer.bodyHeight / 2,
-    );
-    const centerX = center.x;
-    const centerY = center.y;
+    const centerX = this.baseRenderer.bodyX + this.baseRenderer.bodyWidth / 2;
+    const centerY = this.baseRenderer.bodyY + this.baseRenderer.bodyHeight / 2;
     if (
       rectangleBottomRightPoint.x > centerX &&
       rectangleBottomRightPoint.y > centerY &&

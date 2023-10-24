@@ -154,7 +154,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       this.monomer,
       this.bodyWidth,
       this.bodyHeight,
-      this.canvas,
+      this.canvasWrapper,
       AttachmentPointName,
       this.monomer.isAttachmentPointUsed(AttachmentPointName),
       this.monomer.isAttachmentPointPotentiallyUsed(AttachmentPointName),
@@ -270,6 +270,9 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
         this.editorEvents.mouseOverDrawingEntity.dispatch(event);
         this.editorEvents.mouseOverMonomer.dispatch(event);
       })
+      .on('mousemove', (event) => {
+        this.editorEvents.mouseOnMoveMonomer.dispatch(event);
+      })
       .on('mouseleave', (event) => {
         this.editorEvents.mouseLeaveDrawingEntity.dispatch(event);
         this.editorEvents.mouseLeaveMonomer.dispatch(event);
@@ -320,5 +323,6 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     this.rootElement?.remove();
     this.rootElement = undefined;
     this.removeSelection();
+    this.editorEvents.mouseLeaveMonomer.dispatch();
   }
 }

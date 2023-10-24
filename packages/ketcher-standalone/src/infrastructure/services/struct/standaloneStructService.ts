@@ -300,12 +300,23 @@ class IndigoService implements StructService {
     const format = convertMimeTypeToOutputFormat(outputFormat);
 
     return new Promise((resolve, reject) => {
-      const action = ({ data }: OutputMessageWrapper) => {
+      const action = ({
+        data,
+      }: OutputMessageWrapper<{
+        struct: string;
+        format: string;
+        original_format: ChemicalMimeType;
+      }>) => {
         console.log('layout action', data);
-        const msg: OutputMessage<string> = data;
+        const msg: OutputMessage<{
+          struct: string;
+          format: string;
+          original_format: ChemicalMimeType;
+        }> = data;
         if (!msg.hasError) {
+          const { struct } = msg.payload;
           const result: LayoutResult = {
-            struct: msg.payload,
+            struct,
             format: ChemicalMimeType.Mol,
           };
           resolve(result);

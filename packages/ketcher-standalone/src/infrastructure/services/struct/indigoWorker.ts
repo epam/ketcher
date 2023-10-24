@@ -115,8 +115,7 @@ self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
             data.format,
             indigoOptions,
           );
-          const { struct } = JSON.parse(response);
-          return struct;
+          return JSON.parse(response);
         },
         data.options,
         Command.Layout,

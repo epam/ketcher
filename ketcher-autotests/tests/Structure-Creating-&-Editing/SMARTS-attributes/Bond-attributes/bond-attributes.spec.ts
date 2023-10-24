@@ -68,6 +68,10 @@ test.describe('Checking bond attributes in SMARTS format', () => {
   });
 
   test('Setting bond type - single up/down', async ({ page }) => {
+    test.fail();
+    /**
+     * This test will fail until https://github.com/epam/Indigo/issues/1371 is fixed
+     */
     await setBondType(page, 'Single Up/Down-option');
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
@@ -82,6 +86,10 @@ test.describe('Checking bond attributes in SMARTS format', () => {
   });
 
   test('Setting bond type - double cis/trans', async ({ page }) => {
+    test.fail();
+    /**
+     * This test will fail until https://github.com/epam/Indigo/issues/1371 is fixed
+     */
     await setBondType(page, 'Double Cis/Trans-option');
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
@@ -172,7 +180,6 @@ test.describe('Checking bond attributes in SMARTS format', () => {
   });
 
   test('Setting bond topology - chain', async ({ page }) => {
-    // That test will fail until https://github.com/epam/Indigo/issues/1349 is fixed
     await setBondTopology(page, 'Chain-option');
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
@@ -186,8 +193,9 @@ test.describe('Checking bond attributes in SMARTS format', () => {
   // Custom query for bond
 
   test('Setting custom query - any OR double', async ({ page }) => {
+    test.fail();
     /**
-     * This test will fail until https://github.com/epam/Indigo/issues/1351 is fixed
+     * This test will fail until https://github.com/epam/Indigo/issues/1372 is fixed
      */
     await setCustomQueryForBond(page, '~,=');
     await pressButton(page, 'Apply');

@@ -48,7 +48,7 @@ Object {
                 </span>
                 <span
                   class="inputWrapper"
-                  data-testid="undefined-input"
+                  data-testid="undefined-input-span"
                 >
                   <input
                     class="input genericInput"
@@ -67,7 +67,7 @@ Object {
                 </span>
                 <span
                   class="inputWrapper"
-                  data-testid="undefined-input"
+                  data-testid="undefined-input-span"
                 >
                   <div
                     class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary Mui-focused selectContainer file-format-list css-1yk1gt9-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root"
@@ -418,7 +418,7 @@ Object {
               </span>
               <span
                 class="inputWrapper"
-                data-testid="undefined-input"
+                data-testid="undefined-input-span"
               >
                 <input
                   class="input genericInput"
@@ -437,7 +437,7 @@ Object {
               </span>
               <span
                 class="inputWrapper"
-                data-testid="undefined-input"
+                data-testid="undefined-input-span"
               >
                 <div
                   class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary Mui-focused selectContainer file-format-list css-1yk1gt9-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root"

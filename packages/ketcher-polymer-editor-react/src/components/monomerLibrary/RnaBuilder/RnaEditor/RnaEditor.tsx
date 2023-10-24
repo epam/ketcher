@@ -29,6 +29,7 @@ import {
   RnaBuilderPresetsItem,
   savePreset,
   selectActivePreset,
+  selectActiveRnaBuilderItem,
   selectIsEditMode,
   selectPresetFullName,
   selectPresets,
@@ -53,6 +54,9 @@ export const RnaEditor = ({ duplicatePreset, activateEditMode }) => {
   const presets = useAppSelector(selectPresets);
   const isEditMode = useAppSelector(selectIsEditMode);
   const activePresetFullName = selectPresetFullName(activePreset);
+  const activeMonomerGroup = useAppSelector(selectActiveRnaBuilderItem);
+  const [, setPresetName] = useState('');
+  const [editedPresetName, setEditedPresetName] = useState(false);
 
   const dispatch = useAppDispatch();
   const hasPresets = presets.length !== 0;
@@ -79,8 +83,23 @@ export const RnaEditor = ({ duplicatePreset, activateEditMode }) => {
     setExpanded(!expanded);
   };
 
-  const changeName = (event: ChangeEvent<HTMLInputElement>) => {
-    dispatch(setActivePresetName(event.target.value));
+  useEffect(() => {
+    if (
+      activeMonomerGroup !== RnaBuilderPresetsItem.Presets &&
+      !editedPresetName
+    ) {
+      setPresetName(activePresetFullName);
+      dispatch(setActivePresetName(activePresetFullName));
+    }
+  }, [activeMonomerGroup, activePresetFullName, editedPresetName]);
+
+  const onChangeName = (event: ChangeEvent<HTMLInputElement>) => {
+    if (isEditMode) {
+      const newPresetName = event.target.value;
+      dispatch(setActivePresetName(newPresetName));
+      setPresetName(newPresetName);
+      setEditedPresetName(newPresetName.trim() !== '');
+    }
   };
 
   const saveActivePreset = () => {
@@ -102,14 +121,16 @@ export const RnaEditor = ({ duplicatePreset, activateEditMode }) => {
   };
 
   const cancelEdit = () => {
-    if (presets.length === 0) {
+    if (presets.length === 0 || !activePreset.presetInList) {
       dispatch(createNewPreset());
-      return;
+    } else {
+      dispatch(setActivePreset(activePreset.presetInList));
     }
 
     if (!activePreset.presetInList) {
       dispatch(setActivePreset(presets[0]));
     }
+
     setIsEditMode(false);
   };
 
@@ -126,7 +147,7 @@ export const RnaEditor = ({ duplicatePreset, activateEditMode }) => {
           <RnaEditorExpanded
             name={activePreset.name}
             isEditMode={isEditMode}
-            onChangeName={changeName}
+            onChangeName={onChangeName}
             onSave={saveActivePreset}
             onCancel={cancelEdit}
             onEdit={activateEditMode}

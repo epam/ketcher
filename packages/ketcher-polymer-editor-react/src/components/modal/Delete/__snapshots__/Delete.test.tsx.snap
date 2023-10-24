@@ -35,7 +35,7 @@ Object {
           style="min-width: 20vw; background: rgb(245, 245, 245); border-radius: 8px; color: rgb(51, 51, 51);"
         >
           <h2
-            class="MuiTypography-root MuiTypography-h6 MuiDialogTitle-root css-1x5ms5d-MuiTypography-root-MuiDialogTitle-root"
+            class="MuiTypography-root MuiTypography-h6 MuiDialogTitle-root css-1pbuetl-MuiTypography-root-MuiDialogTitle-root"
             id=":r0:"
           >
             <div
@@ -67,13 +67,22 @@ Object {
             </button>
           </h2>
           <div
+            class="contexify_separator"
+          />
+          <div
             class="MuiDialogContent-root css-1n1tez8-MuiDialogContent-root"
           >
             <div>
-              You are about to delete "
-              name
-              " RNA preset. This operation cannot be undone.
+              You are about to delete
             </div>
+            <p>
+              "
+              name
+              " RNA preset.
+            </p>
+            <p>
+              This operation cannot be undone.
+            </p>
           </div>
           <div
             class="MuiDialogActions-root MuiDialogActions-spacing css-1codpvf-MuiDialogActions-root"
@@ -91,7 +100,7 @@ Object {
               />
             </button>
             <button
-              class="MuiButtonBase-root css-19hmuzh-MuiButtonBase-root"
+              class="MuiButtonBase-root css-7phceu-MuiButtonBase-root"
               role="button"
               tabindex="0"
               title="Delete"

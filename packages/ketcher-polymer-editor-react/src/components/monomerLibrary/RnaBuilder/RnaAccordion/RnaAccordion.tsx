@@ -17,7 +17,7 @@
 import { MonomerGroup } from 'components/monomerLibrary/monomerLibraryGroup';
 import { useAppSelector } from 'hooks';
 import { IconName } from 'ketcher-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, MouseEvent } from 'react';
 import {
   MonomerCodeToGroup,
   MonomerGroupCodes,
@@ -34,6 +34,7 @@ import {
   DisabledArea,
   RnaAccordionContainer,
   StyledAccordion,
+  StyledAccordionWrapper,
   StyledButton,
 } from './styles';
 import { Summary } from './Summary';
@@ -62,7 +63,7 @@ import { MonomerItemType } from 'ketcher-core';
 import { selectEditor } from 'state/common';
 import { RNAContextMenu } from 'components/contextMenu/RNAContextMenu';
 import { CONTEXT_MENU_ID } from 'components/contextMenu/types';
-import { TriggerEvent, useContextMenu } from 'react-contexify';
+import { useContextMenu } from 'react-contexify';
 
 interface IGroupsDataItem {
   groupName: RnaBuilderItem;
@@ -141,17 +142,6 @@ export const RnaAccordion = ({
     dispatch(setActiveRnaBuilderItem(groupName));
   };
 
-  const handleContextMenu = (preset: IRnaPreset) => (event: TriggerEvent) => {
-    dispatch(setActivePreset(preset));
-    show({
-      event,
-      props: {
-        duplicatePreset,
-        activateEditMode,
-      },
-    });
-  };
-
   useEffect(() => {
     setExpandedAccordion(activeRnaBuilderItem);
   }, [activeRnaBuilderItem]);
@@ -166,7 +156,7 @@ export const RnaAccordion = ({
     );
   }, [isEditMode]);
 
-  const selectPreset = (preset: IRnaPreset) => {
+  const selectPreset = (preset: IRnaPreset) => () => {
     dispatch(setActivePreset(preset));
     editor.events.selectPreset.dispatch(preset);
   };
@@ -175,6 +165,37 @@ export const RnaAccordion = ({
     dispatch(createNewPreset());
     dispatch(setActiveRnaBuilderItem(RnaBuilderPresetsItem.Presets));
     dispatch(setIsEditMode(true));
+  };
+
+  const getMenuPosition = (currentPresetCard: HTMLElement) => {
+    const isDivCard = currentPresetCard instanceof HTMLDivElement;
+    if (!isDivCard && currentPresetCard.parentElement) {
+      currentPresetCard = currentPresetCard.parentElement;
+    }
+    const boundingBox = currentPresetCard.getBoundingClientRect();
+    const parentBox = currentPresetCard.offsetParent?.getBoundingClientRect();
+    const contextMenuWidth = 140;
+    let x = boundingBox.right - contextMenuWidth;
+    const y = boundingBox.y + boundingBox.height / 2;
+    if (parentBox?.x && parentBox?.x > x) {
+      x = boundingBox.x;
+    }
+    return {
+      x,
+      y,
+    };
+  };
+
+  const handleContextMenu = (preset: IRnaPreset) => (event: MouseEvent) => {
+    dispatch(setActivePreset(preset));
+    show({
+      event,
+      props: {
+        duplicatePreset,
+        activateEditMode,
+      },
+      position: getMenuPosition(event.currentTarget as HTMLElement),
+    });
   };
 
   return (
@@ -206,7 +227,7 @@ export const RnaAccordion = ({
                       <RnaPresetItem
                         key={`${preset.name}${index}`}
                         preset={preset}
-                        onClick={() => selectPreset(preset)}
+                        onClick={selectPreset(preset)}
                         onContextMenu={handleContextMenu(preset)}
                         isSelected={activePreset?.presetInList === preset}
                       />
@@ -241,7 +262,22 @@ export const RnaAccordion = ({
               })}
             </DetailsContainer>
           );
-        return (
+        const presetsExpanded =
+          groupData.groupName === RnaBuilderPresetsItem.Presets && expanded;
+
+        return presetsExpanded ? (
+          <StyledAccordionWrapper key={groupData.groupName}>
+            <StyledAccordion
+              data-testid="styled-accordion"
+              summary={summary}
+              details={details}
+              expanded={expanded}
+              onSummaryClick={() =>
+                handleAccordionSummaryClick(groupData.groupName)
+              }
+            />
+          </StyledAccordionWrapper>
+        ) : (
           <StyledAccordion
             key={groupData.groupName}
             data-testid="styled-accordion"

@@ -72,7 +72,7 @@ export const defaultTheme: EditorTheme = {
         disabled: 'rgba(0, 131, 143, 0.4)',
       },
       secondary: {
-        active: '#717171',
+        active: '#585858',
         hover: '#333333',
         clicked: '#AEAEAE',
         disabled: 'rgba(113, 113, 113, 0.4)',

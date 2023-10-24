@@ -81,8 +81,8 @@ class ReactionMapTool implements Tool {
     if (p1 && p2) {
       const rnd = this.editor.render;
       this.line = rnd.selectionLine(
-        Scale.obj2scaled(p1, rnd.options).add(rnd.options.offset),
-        Scale.obj2scaled(p2, rnd.options).add(rnd.options.offset),
+        Scale.modelToCanvas(p1, rnd.options).add(rnd.options.offset),
+        Scale.modelToCanvas(p2, rnd.options).add(rnd.options.offset),
       );
     }
   }

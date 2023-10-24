@@ -59,8 +59,9 @@ const Delete = ({ isModalOpen, onClose }: Props) => {
     >
       <Modal.Content>
         <div>
-          You are about to delete "{activePreset.name}" RNA preset. This
-          operation cannot be undone.
+          <div>You are about to delete</div>
+          <div>"{activePreset.name}" RNA preset.</div>
+          <div>This operation cannot be undone.</div>
         </div>
       </Modal.Content>
       <Modal.Footer>

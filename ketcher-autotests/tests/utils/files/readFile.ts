@@ -9,6 +9,7 @@ import {
   waitForLoad,
   delay,
   takeEditorScreenshot,
+  clickOnTheCanvas,
 } from '@utils';
 
 import { MolfileFormat } from 'ketcher-core';
@@ -35,13 +36,26 @@ export async function openFile(filename: string, page: Page) {
  * Open file and put in center of canvas
  * Should be used to prevent extra delay() calls in test cases
  */
-export async function openFileAndAddToCanvas(filename: string, page: Page) {
+export async function openFileAndAddToCanvas(
+  filename: string,
+  page: Page,
+  xOffsetFromCenter?: number,
+  yOffsetFromCenter?: number,
+) {
   await selectTopPanelButton(TopPanelButton.Open, page);
   await openFile(filename, page);
   await waitForLoad(page, async () => {
     await pressButton(page, 'Add to Canvas');
   });
-  await clickInTheMiddleOfTheScreen(page);
+
+  if (
+    typeof xOffsetFromCenter === 'number' &&
+    typeof yOffsetFromCenter === 'number'
+  ) {
+    await clickOnTheCanvas(page, xOffsetFromCenter, yOffsetFromCenter);
+  } else {
+    await clickInTheMiddleOfTheScreen(page);
+  }
 }
 
 export async function filteredFile(

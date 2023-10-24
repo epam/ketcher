@@ -1,21 +1,22 @@
-import { Item, ItemParams, Menu, Separator } from 'react-contexify';
+import { Item, ItemParams, Separator } from 'react-contexify';
 import { openModal } from 'state/modal';
 import { useAppDispatch, useAppSelector } from 'hooks';
 import { ReactElement } from 'react';
 import { CONTEXT_MENU_ID } from './types';
 import { selectActivePreset } from 'state/rna-builder';
+import { StyledMenu } from './styles';
 
 export const RNAContextMenu = () => {
   const dispatch = useAppDispatch();
   const activePreset = useAppSelector(selectActivePreset);
   const RNAMenus = [
-    { name: 'duplicateandedit', title: 'Duplicate and Edit' },
-    { name: 'edit', title: 'Edit', seperator: true },
+    { name: 'duplicateandedit', title: 'Duplicate and Edit...' },
+    { name: 'edit', title: 'Edit...', seperator: true },
     { name: 'deletepreset', title: 'Delete Preset' },
   ];
 
   const isItemDisabled = (name: string) => {
-    if (name === 'deletepreset' && activePreset?.default) {
+    if (['deletepreset', 'edit'].includes(name) && activePreset?.default) {
       return true;
     }
     return false;
@@ -57,5 +58,7 @@ export const RNAContextMenu = () => {
     return items;
   };
 
-  return <Menu id={CONTEXT_MENU_ID.FOR_RNA}>{assembleMenuItems()}</Menu>;
+  return (
+    <StyledMenu id={CONTEXT_MENU_ID.FOR_RNA}>{assembleMenuItems()}</StyledMenu>
+  );
 };

@@ -1,10 +1,12 @@
-import { test } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 import {
   selectSingleBondTool,
   waitForPageInit,
   takePageScreenshot,
+  addMonomerToCanvas,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
+import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 /* eslint-disable no-magic-numbers */
 
 test.describe('Polymer Bond Tool', () => {
@@ -12,6 +14,11 @@ test.describe('Polymer Bond Tool', () => {
     await waitForPageInit(page);
     await turnOnMacromoleculesEditor(page);
   });
+
+  test.afterEach(async ({ page }) => {
+    await takePageScreenshot(page);
+  });
+
   test('Create bond between two peptides', async ({ page }) => {
     /* 
     Test case: #2334 - Create peptide chain (HELM style) - Center-to-Center
@@ -36,15 +43,21 @@ test.describe('Polymer Bond Tool', () => {
     // Select bond tool
     await selectSingleBondTool(page);
 
+    await takePageScreenshot(page);
+
     // Create bonds between peptides, taking screenshots in middle states
     await peptide1.hover();
     await page.mouse.down();
-
-    await takePageScreenshot(page);
     await peptide2.hover();
     await page.mouse.up();
+
+    // Get rid of preview
+    const coords = [100, 100];
+    await page.mouse.move(coords[0], coords[1]);
+
     await takePageScreenshot(page);
 
+    await peptide2.hover();
     await page.mouse.down();
     await peptide3.hover();
     await page.mouse.up();
@@ -54,10 +67,8 @@ test.describe('Polymer Bond Tool', () => {
     await peptide3.hover();
     await page.mouse.up();
 
-    // Wait error popup
-    await page.waitForSelector('#error-tooltip');
-
-    await takePageScreenshot(page);
+    // Get rid of preview
+    await page.mouse.move(coords[0], coords[1]);
   });
 
   test('Create bond between two chems', async ({ page }) => {
@@ -87,7 +98,46 @@ test.describe('Polymer Bond Tool', () => {
     await takePageScreenshot(page);
     await chem2.hover();
     await page.mouse.up();
+  });
+});
 
-    await takePageScreenshot(page);
+test.describe('Signle Bond Tool', () => {
+  test.beforeEach(async ({ page }) => {
+    await waitForPageInit(page);
+    await turnOnMacromoleculesEditor(page);
+  });
+  test('Select monomers and pass a bond', async ({ page }) => {
+    /* 
+      Test case: Macro: #3385 - Overlapping of bonds between 2 monomers
+      https://github.com/epam/ketcher/issues/3385 
+      Description: The system shall unable user to create more
+      than 1 bond between the first and the second monomer
+      */
+    const MONOMER_NAME = 'Tza___3-thiazolylalanine';
+    const MONOMER_ALIAS = 'Tza';
+    const peptide1 = await addMonomerToCanvas(
+      page,
+      MONOMER_NAME,
+      MONOMER_ALIAS,
+      300,
+      300,
+      0,
+    );
+    const peptide2 = await addMonomerToCanvas(
+      page,
+      MONOMER_NAME,
+      MONOMER_ALIAS,
+      400,
+      400,
+      1,
+    );
+    await selectSingleBondTool(page);
+    await bondTwoMonomers(page, peptide1, peptide2);
+    await bondTwoMonomers(page, peptide2, peptide1);
+    await page.waitForSelector('#error-tooltip');
+    const errorTooltip = await page.getByTestId('error-tooltip').innerText();
+    const errorMessage =
+      "There can't be more than 1 bond between the first and the second monomer";
+    expect(errorTooltip).toEqual(errorMessage);
   });
 });

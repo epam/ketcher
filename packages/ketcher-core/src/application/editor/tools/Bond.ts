@@ -65,9 +65,9 @@ class PolymerBond implements BaseTool {
   }
 
   public mouseLeavePolymerBond(event) {
-    if (this.bondRenderer) return;
-
     const renderer: PolymerBondRenderer = event.target.__data__;
+    if (this.bondRenderer || !renderer.polymerBond) return;
+
     const modelChanges =
       this.editor.drawingEntitiesManager.hidePolymerBondInformation(
         renderer.polymerBond,
@@ -112,6 +112,7 @@ class PolymerBond implements BaseTool {
       const modelChanges =
         this.editor.drawingEntitiesManager.cancelIntentionToFinishBondCreation(
           renderer.monomer,
+          this.bondRenderer?.polymerBond,
         );
       this.editor.renderersContainer.update(modelChanges);
     }
@@ -132,7 +133,9 @@ class PolymerBond implements BaseTool {
         this.bondRenderer.polymerBond,
       );
     const secondMonomerAttachmentPoint =
-      secondMonomer.availableAttachmentPointForBondEnd;
+      secondMonomer.getPotentialAttachmentPointByBond(
+        this.bondRenderer.polymerBond,
+      );
     assert(firstMonomerAttachmentPoint);
     assert(secondMonomerAttachmentPoint);
     if (firstMonomerAttachmentPoint === secondMonomerAttachmentPoint) {
@@ -165,6 +168,27 @@ class PolymerBond implements BaseTool {
       renderer === this.bondRenderer?.polymerBond?.firstMonomer?.renderer;
 
     if (this.bondRenderer && !isFirstMonomerHovered) {
+      const firstMonomer = this.bondRenderer?.polymerBond?.firstMonomer;
+      const secondMonomer = renderer.monomer;
+
+      for (const attachmentPoint in secondMonomer.attachmentPointsToBonds) {
+        const bond = secondMonomer.attachmentPointsToBonds[attachmentPoint];
+        if (!bond) {
+          continue;
+        }
+        const alreadyHasBond =
+          (bond.firstMonomer === firstMonomer &&
+            bond.secondMonomer === secondMonomer) ||
+          (bond.firstMonomer === secondMonomer &&
+            bond.secondMonomer === firstMonomer);
+        if (alreadyHasBond) {
+          this.editor.events.error.dispatch(
+            "There can't be more than 1 bond between the first and the second monomer",
+          );
+          return;
+        }
+      }
+
       const modelChanges = this.finishBondCreation(renderer.monomer);
       this.editor.renderersContainer.update(modelChanges);
       this.bondRenderer = undefined;

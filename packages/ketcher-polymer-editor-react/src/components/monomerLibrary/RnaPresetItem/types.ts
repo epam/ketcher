@@ -14,12 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { TriggerEvent } from 'react-contexify';
 import { IRnaPreset } from '../RnaBuilder/types';
+import { MouseEvent } from 'react';
 
 export interface IRnaPresetItemrops {
   preset: IRnaPreset;
   isSelected?: boolean;
   onClick?: VoidFunction;
-  onContextMenu?: (event: TriggerEvent) => void;
+  onContextMenu?: (event: MouseEvent) => void;
 }

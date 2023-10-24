@@ -35,7 +35,7 @@ Object {
           style="min-width: 20vw; background: rgb(245, 245, 245); border-radius: 8px; color: rgb(51, 51, 51);"
         >
           <h2
-            class="MuiTypography-root MuiTypography-h6 MuiDialogTitle-root css-1x5ms5d-MuiTypography-root-MuiDialogTitle-root"
+            class="MuiTypography-root MuiTypography-h6 MuiDialogTitle-root css-1pbuetl-MuiTypography-root-MuiDialogTitle-root"
             id=":r0:"
           >
             <div
@@ -58,7 +58,7 @@ Object {
               >
                 <path
                   d="M13.462 12.046l6.37 6.37-1.413 1.415-6.371-6.371-6.327 6.326-1.414-1.414 6.327-6.326-6.372-6.372L5.676 4.26l6.372 6.372 6.417-6.418 1.414 1.414-6.417 6.418z"
-                  fill="#333"
+                  fill="currentColor"
                 />
               </svg>
               <span
@@ -66,6 +66,9 @@ Object {
               />
             </button>
           </h2>
+          <div
+            class="contexify_separator"
+          />
           <div
             class="MuiDialogContent-root css-1n1tez8-MuiDialogContent-root"
           >

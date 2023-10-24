@@ -113,7 +113,11 @@ export const RnaEditorExpanded = ({
     );
   } else {
     mainButton = (
-      <StyledButton data-testid="edit-btn" onClick={onEdit}>
+      <StyledButton
+        data-testid="edit-btn"
+        onClick={onEdit}
+        disabled={activePreset.default}
+      >
         Edit
       </StyledButton>
     );

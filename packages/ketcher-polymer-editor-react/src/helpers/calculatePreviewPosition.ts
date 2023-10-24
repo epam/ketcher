@@ -30,9 +30,9 @@ export const calculatePreviewPosition = (
     }
 
     const top =
-      target.top > preview.height + preview.gap
-        ? target.top - preview.gap - preview.height - preview.topPadding
-        : target.bottom + preview.gap - preview.topPadding;
+      target.top > preview.height + preview.gap + preview.topPadding
+        ? target.top - preview.gap - preview.height
+        : target.bottom + preview.gap;
 
     const newStyle = `${top}px`;
 

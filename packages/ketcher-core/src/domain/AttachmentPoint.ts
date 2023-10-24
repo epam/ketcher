@@ -1,12 +1,14 @@
 import { Vec2 } from 'domain/entities/vec2';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { D3SvgElementSelection } from 'application/render/types';
+import { Selection } from 'd3';
 import { BaseMonomer } from './entities/BaseMonomer';
 import assert from 'assert';
 import {
   canvasToMonomerCoordinates,
   findLabelPoint,
   getSearchFunction,
+  Coordinates,
 } from './helpers/attachmentPointCalculations';
 
 export class AttachmentPoint {
@@ -31,69 +33,14 @@ export class AttachmentPoint {
   private bodyWidth: number;
   private bodyHeight: number;
   private attachmentPointName: string;
-  private canvasOffset: { x: number; y: number };
-  private centerOFMonomer: { x: number; y: number };
-  private element;
-  private initialAngle;
-
-  public static appendAttachmentPointUnused(
-    rootElement: D3SvgElementSelection<SVGGElement, void>,
-    position,
-    rotation,
-    isAttachmentPointPotentiallyUsed,
-    label: string,
-    x,
-    y,
-    length = AttachmentPoint.attachmentPointLength,
-    y2 = 0,
-    cx = -12,
-    cy = 0,
-  ) {
-    let fill = this.colors.fill;
-    let stroke = this.colors.stroke;
-
-    if (isAttachmentPointPotentiallyUsed) {
-      fill = this.colors.fillPotentially;
-      stroke = this.colors.strokePotentially;
-    }
-
-    const attachmentPointElement = rootElement
-      ?.insert('g', ':first-child')
-      .attr('transform', `translate(${position.x}, ${position.y})`);
-
-    const attachmentPointRotationGroup = attachmentPointElement
-      .append('g')
-      .attr('transform', `rotate(${rotation})`);
-
-    attachmentPointRotationGroup
-      .append('line')
-      .attr('x1', 0)
-      .attr('y1', 0)
-      .attr('x2', -length)
-      .attr('y2', y2)
-      .attr('stroke', stroke)
-      .attr('stroke-width', '2px');
-
-    attachmentPointRotationGroup
-      .append('circle')
-      .attr('r', 6)
-      .attr('cx', cx)
-      .attr('cy', cy)
-      .attr('stroke', fill === 'white' ? '#0097A8' : 'white')
-      .attr('stroke-width', '1px')
-      .attr('fill', fill);
-
-    attachmentPointElement
-      .append('text')
-      .text(label)
-      .attr('x', x)
-      .attr('y', y)
-      .style('font-size', '12px')
-      .style('fill', '#585858')
-      .style('user-select', 'none');
-
-    return attachmentPointElement;
-  }
+  private canvasOffset: Coordinates;
+  private centerOFMonomer: Coordinates;
+  private element: Selection<SVGGElement, void, HTMLElement, never> | undefined;
+  private initialAngle = 0;
+  private isUsed: boolean;
+  private fill: string;
+  private stroke: string;
+  private isSnake;
 
   constructor(
     rootElement: D3SvgElementSelection<SVGGElement, void>,
@@ -101,26 +48,44 @@ export class AttachmentPoint {
     bodyWidth,
     bodyHeight,
     canvas,
-    RN,
+    attachmentPointName,
+    isUsed,
+    isPotentiallyUsed,
+    angle = 0,
+    isSnake,
   ) {
     this.rootElement = rootElement;
     this.monomer = monomer;
     this.bodyWidth = bodyWidth;
     this.bodyHeight = bodyHeight;
     this.canvasOffset = canvas.node().getBoundingClientRect();
-    this.attachmentPointName = RN;
+    this.attachmentPointName = attachmentPointName;
     this.centerOFMonomer = monomer.renderer.center;
+    this.isSnake = isSnake;
+    this.isUsed = isUsed;
+    this.initialAngle = angle;
 
-    this.appendAttachmentPointToBond();
+    if (isUsed) {
+      this.fill = AttachmentPoint.colors.fillUsed;
+      this.stroke = AttachmentPoint.colors.strokeUsed;
+    } else if (isPotentiallyUsed) {
+      this.fill = AttachmentPoint.colors.fillPotentially;
+      this.stroke = AttachmentPoint.colors.strokePotentially;
+    } else {
+      this.fill = AttachmentPoint.colors.fill;
+      this.stroke = AttachmentPoint.colors.stroke;
+    }
+
+    this.appendAttachmentPoint();
   }
 
-  private renderUsedAttachmentPointByCoordinates(
-    attachmentOnBorder,
-    attachmentPointCoordinates,
-    labelCoordinatesOnMonomer,
+  private renderAttachmentPointByCoordinates(
+    attachmentOnBorder: Coordinates,
+    attachmentPointCoordinates: Coordinates,
+    labelCoordinatesOnMonomer: Coordinates,
   ) {
-    const fill = AttachmentPoint.colors.fillUsed;
-    const stroke = AttachmentPoint.colors.strokeUsed;
+    const fill = this.fill;
+    const stroke = this.stroke;
 
     const attachmentPoint = this.rootElement.insert('g', ':first-child');
 
@@ -141,7 +106,7 @@ export class AttachmentPoint {
       .attr('r', 6)
       .attr('cx', attachmentPointCoordinates.x)
       .attr('cy', attachmentPointCoordinates.y)
-      .attr('stroke', 'white')
+      .attr('stroke', fill === 'white' ? '#0097A8' : 'white')
       .attr('stroke-width', '1px')
       .attr('fill', fill);
 
@@ -158,15 +123,32 @@ export class AttachmentPoint {
     return attachmentPoint;
   }
 
-  public appendAttachmentPointToBond() {
-    const angleRadians = this.rotateToAngle(
-      this.monomer.attachmentPointsToBonds[this.attachmentPointName],
+  public appendAttachmentPoint() {
+    let angleDegrees;
+    let angleRadians: number;
+    const flip =
       this.monomer.id ===
-        this.monomer.attachmentPointsToBonds[this.attachmentPointName]
-          ?.firstMonomer?.id,
-    );
+      this.monomer.attachmentPointsToBonds[this.attachmentPointName]
+        ?.firstMonomer?.id;
 
-    const angleDegrees = Vec2.radians_to_degrees(angleRadians);
+    if (!this.isUsed) {
+      angleDegrees = this.initialAngle;
+    } else if (
+      this.isSnake &&
+      !this.monomer.attachmentPointsToBonds[
+        this.attachmentPointName
+      ]?.renderer.isMonomersOnSameHorizontalLine()
+    ) {
+      angleRadians = flip ? Math.PI : 0;
+      angleDegrees = Vec2.radiansToDegrees(angleRadians);
+    } else {
+      const angleRadians = this.rotateToAngle(
+        this.monomer.attachmentPointsToBonds[this.attachmentPointName],
+        flip,
+      );
+
+      angleDegrees = Vec2.radiansToDegrees(angleRadians);
+    }
 
     const [pointOnBorder, pointOfAttachment, labelPoint] =
       this.catchThePoint(angleDegrees);
@@ -191,7 +173,7 @@ export class AttachmentPoint {
       this.bodyHeight,
     );
 
-    const attachmentPoint = this.renderUsedAttachmentPointByCoordinates(
+    const attachmentPoint = this.renderAttachmentPointByCoordinates(
       attachmentToBorderCoordinates,
       attachmentPointCoordinates,
       labelCoordinates,
@@ -218,7 +200,7 @@ export class AttachmentPoint {
     return angleRadians;
   }
 
-  private catchThePoint(rotationAngle: number): { x: number; y: number }[] {
+  private catchThePoint(rotationAngle: number): Coordinates[] {
     assert(this.monomer.renderer);
 
     const currentMonomerCenter = {
@@ -226,10 +208,10 @@ export class AttachmentPoint {
       y: this.monomer.renderer.center.y,
     };
 
-    this.initialAngle = rotationAngle - 180;
+    this.initialAngle = rotationAngle;
 
     const findPointOnMonomerBorder = getSearchFunction(
-      this.initialAngle,
+      this.initialAngle - 180,
       this.canvasOffset,
       this.monomer,
     );
@@ -241,7 +223,7 @@ export class AttachmentPoint {
 
     const [labelPoint, pointOfAttachment] = findLabelPoint(
       pointOnBorder,
-      this.initialAngle,
+      this.initialAngle - 180,
       AttachmentPoint.attachmentPointLength,
       AttachmentPoint.labelOffset,
     );
@@ -250,5 +232,12 @@ export class AttachmentPoint {
 
   public getElement() {
     return this.element;
+  }
+
+  public getAngle() {
+    if (this.initialAngle < 0 && this.isUsed) {
+      return this.initialAngle + 360;
+    }
+    return this.initialAngle;
   }
 }

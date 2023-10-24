@@ -20,6 +20,11 @@ import { Vec2 } from 'domain/entities';
 import assert from 'assert';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { BaseTool } from 'application/editor/tools/Tool';
+import { Chem } from 'domain/entities/Chem';
+import { Peptide } from 'domain/entities/Peptide';
+import { Sugar } from 'domain/entities/Sugar';
+import { RNABase } from 'domain/entities/RNABase';
+import { Phosphate } from 'domain/entities/Phosphate';
 
 class PolymerBond implements BaseTool {
   private bondRenderer?: PolymerBondRenderer;
@@ -193,7 +198,7 @@ class PolymerBond implements BaseTool {
           return;
         }
       }
-      const showModal = true; // ! here goes logic for choose when we invoke modal
+      const showModal = this.shouldInvokeModal(firstMonomer, secondMonomer);
       if (showModal) {
         this.isBondConnectionModalOpen = true;
 
@@ -221,7 +226,6 @@ class PolymerBond implements BaseTool {
     assert(this.bondRenderer);
 
     const {
-      firstMonomer,
       secondMonomer,
       firstSelectedAttachmentPoint,
       secondSelectedAttachmentPoint,
@@ -258,6 +262,39 @@ class PolymerBond implements BaseTool {
   };
 
   public destroy() {}
+
+  private shouldInvokeModal(
+    firstMonomer: BaseMonomer,
+    secondMonomer: BaseMonomer,
+  ) {
+    if (
+      firstMonomer.unUsedAttachmentPointsNamesList.length === 1 &&
+      secondMonomer.unUsedAttachmentPointsNamesList.length === 1
+    ) {
+      return false;
+    }
+    if (!secondMonomer.hasFreeAttachmentPoint) {
+      return false;
+    }
+
+    if (firstMonomer instanceof Chem || secondMonomer instanceof Chem) {
+      return true;
+    }
+    const rnaMonomerClasses = [Sugar, RNABase, Phosphate];
+    const firstMonomerIsRNA = rnaMonomerClasses.find(
+      (RNAClass) => firstMonomer instanceof RNAClass,
+    );
+    const secondMonomerIsRNA = rnaMonomerClasses.find(
+      (RNAClass) => secondMonomer instanceof RNAClass,
+    );
+    if (
+      (firstMonomerIsRNA && secondMonomer instanceof Peptide) ||
+      (secondMonomerIsRNA && firstMonomer instanceof Peptide)
+    ) {
+      return true;
+    }
+    return false;
+  }
 }
 
 export { PolymerBond };

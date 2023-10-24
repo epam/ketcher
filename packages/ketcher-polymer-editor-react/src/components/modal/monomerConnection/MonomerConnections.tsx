@@ -14,7 +14,7 @@ import {
   AttachmentPointName,
   MonomerName,
 } from './styledComponents';
-import { MonomerConnectionProps } from './types';
+import { MonomerConnectionProps } from '../modalContainer/types';
 
 const StyledModal = styled(Modal)({
   '& .MuiPaper-root': {

@@ -109,8 +109,14 @@ self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
     case Command.Layout: {
       const data: LayoutCommandData = message.data as LayoutCommandData;
       handle(
-        (indigo, indigoOptions) =>
-          indigo.layout(data.struct, data.format, indigoOptions),
+        (indigo, indigoOptions) => {
+          const response = indigo.layout(
+            data.struct,
+            data.format,
+            indigoOptions,
+          );
+          return JSON.parse(response);
+        },
         data.options,
         Command.Layout,
       );

@@ -1,6 +1,6 @@
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import { test } from '@playwright/test';
-import { takePageScreenshot, waitForPageInit } from '@utils';
+import { takeEditorScreenshot, waitForPageInit } from '@utils';
 
 test.describe('Macromolecules default presets', () => {
   test.beforeEach(async ({ page }) => {
@@ -17,7 +17,7 @@ test.describe('Macromolecules default presets', () => {
 
     await page.getByTestId('cancel-btn').click();
     await page.getByTestId('G_G_R_P').click();
-    await takePageScreenshot(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Add Guanine to canvas', async ({ page }) => {
@@ -30,6 +30,6 @@ test.describe('Macromolecules default presets', () => {
     await page.click('[data-testid="G_G_R_P"]');
 
     await page.click('#polymer-editor-canvas');
-    await takePageScreenshot(page);
+    await takeEditorScreenshot(page);
   });
 });

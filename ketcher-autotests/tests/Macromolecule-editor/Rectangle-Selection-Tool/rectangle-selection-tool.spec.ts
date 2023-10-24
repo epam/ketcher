@@ -73,7 +73,7 @@ test.describe('Rectangle Selection Tool', () => {
     // Get rid of flakiness because of preview
     const coords = [100, 100];
     await page.mouse.move(coords[0], coords[1]);
-    await takePageScreenshot(page);
+    await takeEditorScreenshot(page);
 
     await selectRectangleSelectionTool(page);
 
@@ -87,7 +87,7 @@ test.describe('Rectangle Selection Tool', () => {
 
     // Get rid of flakiness because of preview
     await page.mouse.move(coords[0], coords[1]);
-    await takePageScreenshot(page);
+    await takeEditorScreenshot(page);
 
     // Erase selected elements
     await selectEraseTool(page);
@@ -95,7 +95,7 @@ test.describe('Rectangle Selection Tool', () => {
     // Get rid of flakiness because of preview
     await page.mouse.move(coords[0], coords[1]);
 
-    await takePageScreenshot(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Move monomer bonded with another monomers', async ({ page }) => {

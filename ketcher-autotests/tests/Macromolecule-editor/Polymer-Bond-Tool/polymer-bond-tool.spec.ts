@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import {
   selectSingleBondTool,
   waitForPageInit,
-  takePageScreenshot,
+  takeEditorScreenshot,
   addMonomerToCanvas,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
@@ -16,7 +16,7 @@ test.describe('Polymer Bond Tool', () => {
   });
 
   test.afterEach(async ({ page }) => {
-    await takePageScreenshot(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Create bond between two peptides', async ({ page }) => {
@@ -43,7 +43,7 @@ test.describe('Polymer Bond Tool', () => {
     // Select bond tool
     await selectSingleBondTool(page);
 
-    await takePageScreenshot(page);
+    await takeEditorScreenshot(page);
 
     // Create bonds between peptides, taking screenshots in middle states
     await peptide1.hover();
@@ -55,7 +55,7 @@ test.describe('Polymer Bond Tool', () => {
     const coords = [100, 100];
     await page.mouse.move(coords[0], coords[1]);
 
-    await takePageScreenshot(page);
+    await takeEditorScreenshot(page);
 
     await peptide2.hover();
     await page.mouse.down();
@@ -95,7 +95,7 @@ test.describe('Polymer Bond Tool', () => {
     // Create bonds between chems, taking screenshots in middle states
     await chem1.hover();
     await page.mouse.down();
-    await takePageScreenshot(page);
+    await takeEditorScreenshot(page);
     await chem2.hover();
     await page.mouse.up();
   });

@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { AdditionalModalProps } from 'components/modal/modalContainer';
+import { AdditionalModalProps } from 'components/modal/modalContainer/types';
 import { RootState } from 'state';
 
 interface ModalState {

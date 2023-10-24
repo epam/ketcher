@@ -15,6 +15,7 @@ import { RenderersManager } from 'application/render/renderers/RenderersManager'
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import { editorEvents, renderersEvents } from 'application/editor/editorEvents';
 import { PolymerBondRenderer } from 'application/render/renderers';
+import { BaseMonomer } from 'domain/entities/BaseMonomer';
 
 interface ICoreEditorConstructorParams {
   theme;
@@ -84,7 +85,12 @@ export class CoreEditor {
     this.selectTool(tool);
   }
 
-  private onCreateBond(payload) {
+  private onCreateBond(payload: {
+    firstMonomer: BaseMonomer;
+    secondMonomer: BaseMonomer;
+    firstSelectedAttachmentPoint: string;
+    secondSelectedAttachmentPoint: string;
+  }) {
     if (this.tool instanceof PolymerBond) {
       this.tool.handleBondCreation(payload);
     }

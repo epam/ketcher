@@ -193,15 +193,13 @@ class PolymerBond implements BaseTool {
           return;
         }
       }
-      const showModal = false; // ! here goes logic for choose when we invoke modal
+      const showModal = true; // ! here goes logic for choose when we invoke modal
       if (showModal) {
         this.isBondConnectionModalOpen = true;
 
         this.editor.events.openMonomerConnectionModal.dispatch({
           firstMonomer,
           secondMonomer,
-          onCreateBond: this.handleBondCreation,
-          onCancelBondCreation: this.handleBondCreationCancellation,
         });
         return;
       }
@@ -217,27 +215,27 @@ class PolymerBond implements BaseTool {
   public handleBondCreation = (payload: {
     firstMonomer: BaseMonomer;
     secondMonomer: BaseMonomer;
-    firstAttachmentPoint: string;
-    secondAttachmentPoint: string;
+    firstSelectedAttachmentPoint: string;
+    secondSelectedAttachmentPoint: string;
   }): void => {
     assert(this.bondRenderer);
 
     const {
       firstMonomer,
       secondMonomer,
-      firstAttachmentPoint,
-      secondAttachmentPoint,
+      firstSelectedAttachmentPoint,
+      secondSelectedAttachmentPoint,
     } = payload;
     const modelChanges =
       this.editor.drawingEntitiesManager.finishPolymerBondCreation(
         this.bondRenderer.polymerBond,
         secondMonomer,
-        firstAttachmentPoint,
-        secondAttachmentPoint,
+        firstSelectedAttachmentPoint,
+        secondSelectedAttachmentPoint,
       );
 
     this.editor.renderersContainer.update(modelChanges);
-    if (firstAttachmentPoint === secondAttachmentPoint) {
+    if (firstSelectedAttachmentPoint === secondSelectedAttachmentPoint) {
       this.editor.events.error.dispatch(
         'You have connected monomers with attachment points of the same group',
       );

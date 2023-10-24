@@ -6,21 +6,15 @@ import { StructRender } from 'ketcher-react';
 import { useAppSelector } from 'hooks';
 import { selectEditor } from 'state/common';
 import { useMemo, useState } from 'react';
-import { RequiredModalProps } from '../modalContainer';
-
-export interface MonomerConnectionOnlyProps {
-  firstMonomer?: BaseMonomer;
-  secondMonomer?: BaseMonomer;
-  onCreateBond?: (
-    secondMonomer: BaseMonomer,
-    firstAttchmentPointName: string,
-    secondAttachmentPointName: string,
-  ) => void;
-  onCancelBondCreation?: () => void;
-}
-
-export type MonomerConnectionProps = MonomerConnectionOnlyProps &
-  RequiredModalProps;
+import {
+  Row,
+  Column,
+  AttachmentPointList,
+  AttachmentPoint,
+  AttachmentPointName,
+  MonomerName,
+} from './styledComponents';
+import { MonomerConnectionProps } from './types';
 
 const StyledModal = styled(Modal)({
   '& .MuiPaper-root': {
@@ -33,18 +27,6 @@ const StyledModal = styled(Modal)({
   },
 });
 
-const Row = styled.div({
-  display: 'flex',
-  alignItems: 'start',
-  justifyContent: 'space-between',
-});
-
-const Column = styled.div({
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '10px',
-});
-
 export const StyledStructRender = styled(StructRender)(({ theme }) => ({
   height: '200px',
   width: '200px',
@@ -52,45 +34,11 @@ export const StyledStructRender = styled(StructRender)(({ theme }) => ({
   borderRadius: theme.ketcher.border.radius.regular,
 }));
 
-const AttachmentPointList = styled.div({
-  display: 'flex',
-  flexWrap: 'wrap',
-  justifyContent: 'start',
-  gap: '10px',
-});
-
-const AttachmentPoint = styled.div({
-  flexBasis: 'calc(100% / 3 - 10px * 2 / 3)', // 2 - gaps, 3 - buttons
-  display: 'flex',
-  flexDirection: 'column',
-  rowGap: '5px',
-});
-
-const AttachmentPointName = styled.span(({ theme }) => ({
-  margin: 0,
-  padding: 0,
-  textAlign: 'center',
-  display: 'block',
-  fontSize: theme.ketcher.font.size.regular,
-  fontWeight: theme.ketcher.font.weight.regular,
-}));
-
-const MonomerName = styled.h3(({ theme }) => ({
-  margin: 0,
-  padding: 0,
-  textAlign: 'center',
-  display: 'block',
-  fontSize: theme.ketcher.font.size.regular,
-  fontWeight: theme.ketcher.font.weight.regular,
-}));
-
 const MonomerConnection = ({
   onClose,
   isModalOpen,
   firstMonomer,
   secondMonomer,
-  onCreateBond,
-  onCancelBondCreation,
 }: MonomerConnectionProps): React.ReactElement => {
   const editor = useAppSelector(selectEditor);
 
@@ -105,14 +53,6 @@ const MonomerConnection = ({
     useState<string | null>(getDefaultAttachmentPoint(firstBonds));
   const [secondSelectedAttachmentPoint, setSecondSelectedAttachmentPoint] =
     useState<string | null>(getDefaultAttachmentPoint(secondBonds));
-
-  if (!onCreateBond) {
-    throw new Error('onCreateBond handler must exist!');
-  }
-
-  if (!onCancelBondCreation) {
-    throw new Error('onCancelBondCreation handler must exist!');
-  }
 
   const cancelBondCreationAndClose = () => {
     editor.events.cancelBondCreationViaModal.dispatch();

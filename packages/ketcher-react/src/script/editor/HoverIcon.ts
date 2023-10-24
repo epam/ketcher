@@ -1,4 +1,9 @@
-import { type ElementLabel, type AtomColor, Vec2 } from 'ketcher-core';
+import {
+  type ElementLabel,
+  type AtomColor,
+  Vec2,
+  CoordinateTransformation,
+} from 'ketcher-core';
 import Editor from './Editor';
 
 const HOVER_ICON_OPACITY = 0.7;
@@ -76,12 +81,12 @@ export class HoverIcon {
   }
 
   updatePosition() {
-    const render = this.editor.render;
     const { x, y } = this.editor.lastCursorPosition;
     const currentPosition = new Vec2(x, y);
-    const scrollPosition = render.scrollPos();
-    const zoom = render.options.zoom;
-    const newPosition = currentPosition.add(scrollPosition).scaled(1 / zoom);
+    const newPosition = CoordinateTransformation.viewToCanvas(
+      currentPosition,
+      this.editor.render,
+    );
     this.element.attr({
       x: newPosition.x,
       y: newPosition.y,

@@ -20,7 +20,7 @@ import { Accordion, Button } from 'ketcher-react';
 export const RnaAccordionContainer = styled.div({
   display: 'flex',
   flexDirection: 'column',
-  justifyContent: 'flex-end',
+  justifyContent: 'flex-start',
   overflow: 'hidden',
   height: '100%',
 });

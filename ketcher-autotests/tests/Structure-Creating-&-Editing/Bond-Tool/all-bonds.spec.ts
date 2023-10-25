@@ -39,6 +39,9 @@ import {
   waitForPageInit,
   openDropdown,
   waitForRender,
+  waitForCopy,
+  waitForPaste,
+  waitForCut,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import {
@@ -284,10 +287,16 @@ for (const bondToolKey of Object.keys(BondTool)) {
 
       point = await getLeftBondByAttributes(page, { reactingCenterStatus: 0 });
 
-      await page.mouse.click(point.x, point.y);
+      await waitForRender(page, async () => {
+        await page.mouse.click(point.x, point.y);
+      });
 
-      await page.keyboard.press('Control+C');
-      await page.keyboard.press('Control+V');
+      await waitForCopy(page, async () => {
+        await page.keyboard.press('Control+C');
+      });
+      await waitForPaste(page, async () => {
+        await page.keyboard.press('Control+V');
+      });
 
       await waitForRender(page, async () => {
         await page.mouse.click(point.x + DELTA_X, point.y);
@@ -297,13 +306,16 @@ for (const bondToolKey of Object.keys(BondTool)) {
       });
 
       await clickInTheMiddleOfTheScreen(page);
-      await page.keyboard.press('Control+X');
-      await page.keyboard.press('Control+V');
-      await page.mouse.click(point.x + DELTA_X, point.y);
-      await waitForRender(page, async () => {
-        await selectTopPanelButton(TopPanelButton.Undo, page);
+      await waitForCut(page, async () => {
+        await page.keyboard.press('Control+X');
       });
+      await waitForPaste(page, async () => {
+        await page.keyboard.press('Control+V');
+      });
+
       await waitForRender(page, async () => {
+        await page.mouse.click(point.x + DELTA_X, point.y);
+        await selectTopPanelButton(TopPanelButton.Undo, page);
         await selectTopPanelButton(TopPanelButton.Undo, page);
       });
 

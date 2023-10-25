@@ -92,8 +92,10 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     */
     // will work after bugfix in 2.13-rc.3 bug#3025
     await openFileAndAddToCanvas('structure-with-stereo-bonds.mol', page);
-    await selectTopPanelButton(TopPanelButton.Calculate, page);
-    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Calculate, page);
+      await selectTopPanelButton(TopPanelButton.Layout, page);
+    });
 
     await takeEditorScreenshot(page);
 
@@ -111,7 +113,9 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     const x = 300;
     const y = 300;
     await openFileAndAddToCanvas('structure-with-stereo-bonds.mol', page);
-    await selectTopPanelButton(TopPanelButton.Calculate, page);
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Calculate, page);
+    });
     await copyAndPaste(page);
     await waitForRender(page, async () => {
       await page.mouse.click(x, y);
@@ -129,7 +133,9 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     const x = 300;
     const y = 300;
     await openFileAndAddToCanvas('structure-with-stereo-bonds.mol', page);
-    await selectTopPanelButton(TopPanelButton.Calculate, page);
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Calculate, page);
+    });
     await cutAndPaste(page);
     await page.mouse.click(x, y);
   });

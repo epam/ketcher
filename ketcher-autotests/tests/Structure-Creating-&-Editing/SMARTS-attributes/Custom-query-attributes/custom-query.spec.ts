@@ -85,6 +85,7 @@ test.describe('Checking custom query in SMARTS format', () => {
   test('Setting custom query - logical OR for aliphatic atoms', async ({
     page,
   }) => {
+    test.fail();
     /**
      * This test will fail until https://github.com/epam/Indigo/issues/1337 is fixed
      */

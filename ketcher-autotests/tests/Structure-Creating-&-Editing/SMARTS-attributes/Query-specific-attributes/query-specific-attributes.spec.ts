@@ -56,9 +56,6 @@ test.describe('Checking query specific attributes in SMARTS format', () => {
   });
 
   test('Setting ring bond count - As drawn', async ({ page }) => {
-    /**
-     * That test will fail until https://github.com/epam/Indigo/issues/1331 is fixed
-     */
     await setRingBondCount(page, 'As drawn');
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
@@ -118,9 +115,6 @@ test.describe('Checking query specific attributes in SMARTS format', () => {
   });
 
   test('Setting implicit H count', async ({ page }) => {
-    /**
-     * That test will fail until https://github.com/epam/Indigo/issues/1330 is fixed
-     */
     await setImplicitHCount(page, '5');
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);

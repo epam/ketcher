@@ -80,6 +80,8 @@ class ReAtom extends ReObject {
     rectangle: any;
   };
 
+  highlightedLabel = true;
+
   constructor(atom: Atom) {
     super('atom');
     this.a = atom; // TODO rename a to item
@@ -141,6 +143,10 @@ class ReAtom extends ReObject {
     return hasLabel
       ? this.getLabeledSelectionContour(render)
       : this.getUnlabeledSelectionContour(render);
+  }
+
+  highlightLabel(val: boolean) {
+    this.highlightedLabel = val;
   }
 
   makeHoverPlate(render: Render) {
@@ -733,6 +739,9 @@ function buildLabel(
       atom.color = ElementColor[label.text] || '#000';
     }
   }
+  if (atom.highlightedLabel && isMonomerAttachmentPoint) {
+    atom.color = '#FFF';
+  }
 
   const { previewOpacity } = options;
   label.path = paper.text(ps.x, ps.y, label.text).attr({
@@ -743,7 +752,7 @@ function buildLabel(
     'fill-opacity': atom.a.isPreview ? previewOpacity : 1,
   });
 
-  if (isMonomerAttachmentPoint) {
+  if (atom.highlightedLabel && isMonomerAttachmentPoint) {
     const backgroundSize = options.fontsz * 2;
 
     label.background = paper

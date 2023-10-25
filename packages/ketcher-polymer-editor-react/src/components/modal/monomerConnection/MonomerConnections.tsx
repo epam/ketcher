@@ -13,6 +13,7 @@ import {
   AttachmentPoint,
   AttachmentPointName,
   MonomerName,
+  ConnectionSymbol,
 } from './styledComponents';
 import { MonomerConnectionProps } from '../modalContainer/types';
 
@@ -30,8 +31,9 @@ const StyledModal = styled(Modal)({
 export const StyledStructRender = styled(StructRender)(({ theme }) => ({
   height: '200px',
   width: '200px',
-  border: `1px solid ${theme.ketcher.color.button.secondary.active}`,
+  border: `${theme.ketcher.outline.medium}`,
   borderRadius: theme.ketcher.border.radius.regular,
+  padding: 2,
 }));
 
 const MonomerConnection = ({
@@ -89,6 +91,7 @@ const MonomerConnection = ({
               onSelectAttachmentPoint={setFirstSelectedAttachmentPoint}
             />
           </Column>
+          <ConnectionSymbol />
           <Column>
             <AttachmentPointSelectionPanel
               monomer={secondMonomer}

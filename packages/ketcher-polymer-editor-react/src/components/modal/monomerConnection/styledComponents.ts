@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 
 export const Row = styled.div({
   display: 'flex',
-  alignItems: 'start',
+  alignItems: 'center',
   justifyContent: 'space-between',
 });
 
@@ -10,6 +10,7 @@ export const Column = styled.div({
   display: 'flex',
   flexDirection: 'column',
   gap: '10px',
+  alignItems: 'center',
 });
 
 export const AttachmentPointList = styled.div({
@@ -42,4 +43,14 @@ export const MonomerName = styled.h3(({ theme }) => ({
   display: 'block',
   fontSize: theme.ketcher.font.size.regular,
   fontWeight: theme.ketcher.font.weight.regular,
+}));
+
+export const ConnectionSymbol = styled.div(({ theme }) => ({
+  width: 20,
+  height: 3,
+  display: 'block',
+  color: theme.ketcher.color.button.secondary.hover,
+  backgroundColor: theme.ketcher.color.button.secondary.hover,
+  borderRadius: 20,
+  marginBottom: 30,
 }));

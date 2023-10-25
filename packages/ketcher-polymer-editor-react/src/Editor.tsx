@@ -70,7 +70,7 @@ import {
   PhosphateAvatar,
   RNABaseAvatar,
 } from 'components/shared/monomerOnCanvas';
-import { MonomerConnectionOnlyProps } from 'components/modal/monomerConnection';
+import { MonomerConnectionOnlyProps } from 'components/modal/modalContainer/types';
 import { calculatePreviewPosition } from 'helpers';
 import StyledPreview from 'components/shared/MonomerPreview';
 

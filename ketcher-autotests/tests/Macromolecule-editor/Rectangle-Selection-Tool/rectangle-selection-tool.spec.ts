@@ -7,7 +7,6 @@ import {
   selectRectangleSelectionTool,
   selectSingleBondTool,
   takeEditorScreenshot,
-  takePageScreenshot,
   waitForPageInit,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';

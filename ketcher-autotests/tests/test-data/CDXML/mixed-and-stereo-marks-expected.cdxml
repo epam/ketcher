@@ -48,7 +48,7 @@
                     <s font="3" size="10" face="96">OH</s>
                 </t>
             </n>
-            <n id="11" p="128.647324 42.840645" Geometry="Tetrahedral" BondOrdering="5 9 12 5" EnhancedStereoType="Absolute"/>
+            <n id="11" p="128.647324 42.840656" Geometry="Tetrahedral" BondOrdering="5 9 12 5" EnhancedStereoType="Absolute"/>
             <n id="12" p="128.647324 69.450546" Geometry="Tetrahedral" BondOrdering="6 11 13 5" EnhancedStereoType="Absolute"/>
             <n id="13" p="103.049927 82.447800" Geometry="Tetrahedral" BondOrdering="7 12 14 5" EnhancedStereoType="Absolute"/>
             <n id="14" p="77.609169 69.456123" Geometry="Tetrahedral" BondOrdering="8 13 15 5" EnhancedStereoType="And" EnhancedStereoGroupNum="1"/>

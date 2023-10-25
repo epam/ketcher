@@ -258,10 +258,11 @@ class ReAtom extends ReObject {
 
     if (isSmartPropertiesExist) {
       const customQueryText =
+        this.a.queryProperties.customQuery ||
         getAtomCustomQuery({
           ...this.a,
           ...this.a.queryProperties,
-        }) || (this.a.queryProperties.customQuery as string);
+        });
       const label = showSmartsLabel(this, render, customQueryText);
       restruct.addReObjectPath(LayerMap.data, this.visel, label.path, ps, true);
     } else if (this.showLabel) {
@@ -1089,8 +1090,10 @@ function showSmartsLabel(atom: ReAtom, render: Render, text: string): ElemAttr {
   });
   label.rbb = util.relBox(label.path.getBBox());
   draw.recenterText(label.path, label.rbb);
-  pathAndRBoxTranslate(label.path, label.rbb, 0, 0);
-
+  const xShift =
+    ((atom.hydrogenOnTheLeft ? -1 : 1) * (label.rbb.width - label.rbb.height)) /
+    2;
+  pathAndRBoxTranslate(label.path, label.rbb, xShift, 0);
   if (tooltip) {
     addTooltip(label, tooltip);
   }

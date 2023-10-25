@@ -146,4 +146,17 @@ function getPropertiesByFormat(format: SupportedFormat) {
   return formatProperties[format];
 }
 
-export { formatProperties, getPropertiesByFormat, getPropertiesByImgFormat };
+function getFormatMimeTypeByFileName(fileName: string) {
+  const fileExtension = '.' + fileName.split('.').pop();
+  const format = Object.values(formatProperties).find((properties) => {
+    return properties.extensions.includes(fileExtension);
+  });
+  return format?.mime;
+}
+
+export {
+  formatProperties,
+  getPropertiesByFormat,
+  getPropertiesByImgFormat,
+  getFormatMimeTypeByFileName,
+};

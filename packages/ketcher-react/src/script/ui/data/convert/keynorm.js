@@ -82,6 +82,10 @@ function normalizeKeyEvent(event, base = false) {
     : modifiers(KN.base[event.keyCode], event, true);
 }
 
+export function isControlKey(event) {
+  return mac ? event.metaKey : event.ctrlKey;
+}
+
 function keyNorm(obj) {
   if (obj instanceof KeyboardEvent)
     // eslint-disable-line no-undef

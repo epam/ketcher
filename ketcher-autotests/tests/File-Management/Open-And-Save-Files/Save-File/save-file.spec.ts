@@ -43,7 +43,7 @@ async function getPreviewForSmiles(
 
 test.describe('Save files', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test('Save file - Save *.rxn file', async ({ page }) => {

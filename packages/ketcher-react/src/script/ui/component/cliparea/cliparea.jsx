@@ -18,6 +18,7 @@ import { Component, createRef } from 'react';
 import clsx from 'clsx';
 import classes from './cliparea.module.less';
 import { KetcherLogger } from 'ketcher-core';
+import { isControlKey } from '../../data/convert/keynorm';
 
 const ieCb = window.clipboardData;
 
@@ -71,6 +72,25 @@ class ClipArea extends Component {
           if (data) this.props.onPaste(data);
 
           event.preventDefault();
+        }
+      },
+      keydown: async (event) => {
+        if (!this.props.focused() || !this.props.onPaste) {
+          return;
+        }
+
+        if (isControlKey(event) && event.altKey && event.code === 'KeyV') {
+          if (navigator.clipboard?.read) {
+            const clipboardData = await navigator.clipboard.read();
+            const data = await pasteByKeydown(clipboardData);
+            if (data) {
+              this.props.onPaste(data, true);
+            }
+          } else {
+            window.ketcher.editor.errorHandler?.(
+              "Your browser doesn't support pasting clipboard content via Ctrl-Alt-V. Please use Google Chrome browser or load SMARTS structure from .smarts file instead.",
+            );
+          }
         }
       },
     };
@@ -144,6 +164,19 @@ function paste(cb, formats) {
       if (d) res[fmt] = d;
       return res;
     }, data);
+  }
+  return data;
+}
+
+async function pasteByKeydown(clipboardData) {
+  const data = {};
+  if (!clipboardData && ieCb) {
+    data['text/plain'] = ieCb.getData('text');
+  } else {
+    for (const item of clipboardData) {
+      const textPlain = await item.getType('text/plain');
+      data['text/plain'] = await textPlain.text();
+    }
   }
   return data;
 }

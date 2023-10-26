@@ -4,6 +4,7 @@ import { AttachmentPointName, MonomerItemType } from 'domain/types';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
+import { convertAttachmentPointNumberToLabel } from 'domain/helpers/attachmentPointCalculations';
 
 export class BaseMonomer extends DrawingEntity {
   public renderer?: BaseMonomerRenderer = undefined;
@@ -226,10 +227,8 @@ export class BaseMonomer extends DrawingEntity {
     const attachmentPointNameToBond = {};
 
     attachmentAtoms.forEach((atom, _) => {
-      const label = atom.rglabel;
-      if (label) {
-        attachmentPointNameToBond[`R${label}`] = null;
-      }
+      const label = convertAttachmentPointNumberToLabel(Number(atom.rglabel));
+      attachmentPointNameToBond[label] = null;
     });
 
     return attachmentPointNameToBond;

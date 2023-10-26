@@ -281,10 +281,13 @@ function MenuComponent() {
       dispatch(selectMode(!isSnakeMode));
       editor.events.selectMode.dispatch(!isSnakeMode);
     } else {
-      if (name !== 'clear') {
+      editor.events.selectTool.dispatch(name);
+      if (name === 'clear') {
+        dispatch(selectTool('select-rectangle'));
+        editor.events.selectTool.dispatch('select-rectangle');
+      } else {
         dispatch(selectTool(name));
       }
-      editor.events.selectTool.dispatch(name);
     }
   };
 

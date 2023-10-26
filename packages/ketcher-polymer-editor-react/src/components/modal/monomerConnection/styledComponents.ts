@@ -2,8 +2,8 @@ import styled from '@emotion/styled';
 
 export const Row = styled.div({
   display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
+  alignItems: 'flex-start',
+  justifyContent: 'space-evenly',
 });
 
 export const Column = styled.div({
@@ -18,10 +18,12 @@ export const AttachmentPointList = styled.div({
   flexWrap: 'wrap',
   justifyContent: 'start',
   gap: '10px',
+  alignSelf: 'flex-start',
+  width: 192,
 });
 
 export const AttachmentPoint = styled.div({
-  flexBasis: 'calc(100% / 3 - 10px * 2 / 3)', // 2 - gaps, 3 - buttons
+  width: 'calc(192px / 3 - 10px * 2 / 3)', // 2 - gaps, 3 - buttons
   display: 'flex',
   flexDirection: 'column',
   rowGap: '5px',
@@ -52,5 +54,5 @@ export const ConnectionSymbol = styled.div(({ theme }) => ({
   color: theme.ketcher.color.button.secondary.hover,
   backgroundColor: theme.ketcher.color.button.secondary.hover,
   borderRadius: 20,
-  marginBottom: 30,
+  margin: '150px 20px 0',
 }));

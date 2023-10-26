@@ -35,6 +35,8 @@ class ZoomTool implements BaseTool {
   }
 
   private constructor(drawingEntitiesManager: DrawingEntitiesManager) {
+    const minZoomscale = 0.2;
+    const maxZoomscale = 4;
     this.canvasWrapper = select(canvasSelector);
     this.canvas = select(drawnStructuresSelector);
 
@@ -43,7 +45,7 @@ class ZoomTool implements BaseTool {
     this.drawingEntitiesManager = drawingEntitiesManager;
 
     this.zoom = zoom<SVGSVGElement, void>()
-      .scaleExtent([0.2, 4])
+      .scaleExtent([minZoomscale, maxZoomscale])
       .on('zoom', this.zoomAction.bind(this));
     this.canvasWrapper.call(this.zoom);
     this.addScrollZooming();

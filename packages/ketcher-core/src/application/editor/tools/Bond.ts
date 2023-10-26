@@ -60,7 +60,7 @@ class PolymerBond implements BaseTool {
 
   public mousemove() {
     if (this.bondRenderer) {
-      const zoomCoordinates = Coordinates.viewToPage(
+      const zoomedCoordinates = Coordinates.viewToPage(
         new Vec2(
           this.editor.lastCursorPosition.x,
           this.editor.lastCursorPosition.y,
@@ -68,7 +68,7 @@ class PolymerBond implements BaseTool {
       );
       const modelChanges = this.editor.drawingEntitiesManager.movePolymerBond(
         this.bondRenderer.polymerBond,
-        zoomCoordinates,
+        zoomedCoordinates,
       );
       this.editor.renderersContainer.update(modelChanges);
     }

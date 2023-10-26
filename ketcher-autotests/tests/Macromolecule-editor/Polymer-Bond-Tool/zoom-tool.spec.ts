@@ -2,6 +2,7 @@ import { Locator, test } from '@playwright/test';
 import {
   LeftPanelButton,
   addMonomerToCanvas,
+  selectRectangleArea,
   selectRectangleSelectionTool,
   selectSingleBondTool,
   selectTool,
@@ -143,22 +144,34 @@ test.describe('Zoom Tool', () => {
     await selectTool(LeftPanelButton.ZoomIn, page);
     await selectTool(LeftPanelButton.ZoomIn, page);
     await selectRectangleSelectionTool(page);
-    await page.mouse.move(selectionStart.x, selectionStart.y);
-    await page.mouse.down();
-    await page.mouse.move(selectionEnd.x, selectionEnd.y);
+    await selectRectangleArea(
+      page,
+      selectionStart.x,
+      selectionStart.y,
+      selectionEnd.x,
+      selectionEnd.y,
+    );
     await takePageScreenshot(page);
 
     await selectTool(LeftPanelButton.ZoomReset, page);
-    await page.mouse.move(selectionStart.x, selectionStart.y);
-    await page.mouse.down();
-    await page.mouse.move(selectionEnd.x, selectionEnd.y);
+    await selectRectangleArea(
+      page,
+      selectionStart.x,
+      selectionStart.y,
+      selectionEnd.x,
+      selectionEnd.y,
+    );
     await takePageScreenshot(page);
 
     await selectTool(LeftPanelButton.ZoomOut, page);
     await selectTool(LeftPanelButton.ZoomOut, page);
-    await page.mouse.move(selectionStart.x, selectionStart.y);
-    await page.mouse.down();
-    await page.mouse.move(selectionEnd.x, selectionEnd.y);
+    await selectRectangleArea(
+      page,
+      selectionStart.x,
+      selectionStart.y,
+      selectionEnd.x,
+      selectionEnd.y,
+    );
     await takePageScreenshot(page);
   });
 
@@ -169,21 +182,33 @@ test.describe('Zoom Tool', () => {
     const selectionEnd = { x: 400, y: 400 };
     await page.mouse.wheel(deltas.x, deltas.y);
     await selectRectangleSelectionTool(page);
-    await page.mouse.move(selectionStart.x, selectionStart.y);
-    await page.mouse.down();
-    await page.mouse.move(selectionEnd.x, selectionEnd.y);
+    await selectRectangleArea(
+      page,
+      selectionStart.x,
+      selectionStart.y,
+      selectionEnd.x,
+      selectionEnd.y,
+    );
     await takePageScreenshot(page);
 
     await page.mouse.wheel(deltas.x, -deltas.y);
-    await page.mouse.move(selectionStart.x, selectionStart.y);
-    await page.mouse.down();
-    await page.mouse.move(selectionEnd.x, selectionEnd.y);
+    await selectRectangleArea(
+      page,
+      selectionStart.x,
+      selectionStart.y,
+      selectionEnd.x,
+      selectionEnd.y,
+    );
     await takePageScreenshot(page);
 
     await page.mouse.wheel(deltas.x, -deltas.y);
-    await page.mouse.move(selectionStart.x, selectionStart.y);
-    await page.mouse.down();
-    await page.mouse.move(selectionEnd.x, selectionEnd.y);
+    await selectRectangleArea(
+      page,
+      selectionStart.x,
+      selectionStart.y,
+      selectionEnd.x,
+      selectionEnd.y,
+    );
     await takePageScreenshot(page);
   });
 });

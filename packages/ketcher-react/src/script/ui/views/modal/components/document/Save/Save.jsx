@@ -231,7 +231,16 @@ class SaveDialog extends Component {
     }
 
     if (moleculeErrors) {
-      warnings.push(...Object.values(moleculeErrors));
+      const filteredMoleculeErrors = Object.values(moleculeErrors).filter(
+        (error) => {
+          if (format === 'smarts' || format === 'ket') {
+            return !error.includes('Structure contains query features');
+          } else {
+            return true;
+          }
+        },
+      );
+      warnings.push(...Object.values(filteredMoleculeErrors));
     }
     return warnings;
   };

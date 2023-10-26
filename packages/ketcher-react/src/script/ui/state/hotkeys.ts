@@ -158,7 +158,9 @@ function keyHandle(dispatch, getState, hotKeys, event) {
     removeNotRenderedStruct(actionTool, group, dispatch);
 
     if (clipArea.actions.indexOf(actName) === -1) {
-      let newAction = actions[actName].action;
+      let newAction = ['zoom-in', 'zoom-out'].includes(actName)
+        ? actions[actName].action()
+        : actions[actName].action;
       const hoveredItem = getHoveredItem(render.ctab);
       // check if atom is currently hovered over
       // in this case we do not want to activate the corresponding tool
@@ -292,7 +294,7 @@ export function initClipboard(dispatch) {
       editor.selection(null);
       return data;
     },
-    onPaste(data) {
+    onPaste(data, isSmarts: boolean) {
       const structStr =
         data[ChemicalMimeType.KET] ||
         data[ChemicalMimeType.Mol] ||
@@ -300,7 +302,13 @@ export function initClipboard(dispatch) {
         data['text/plain'];
 
       if (structStr || !rxnTextPlain.test(data['text/plain']))
-        loadStruct(structStr, { fragment: true, isPaste: true });
+        isSmarts
+          ? loadStruct(structStr, {
+              fragment: true,
+              isPaste: true,
+              'input-format': ChemicalMimeType.DaylightSmarts,
+            })
+          : loadStruct(structStr, { fragment: true, isPaste: true });
     },
   };
 }

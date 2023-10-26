@@ -33,14 +33,18 @@ test.describe('Zoom changes', () => {
     await waitForPageInit(page);
   });
 
-  test('when using ctrl + mouse scroll up', async ({ page }) => {
+  test('Zoom in on the position of mouse when using `ctrl` and mouse wheel to scroll up', async ({
+    page,
+  }) => {
     /* 
     Test case: EPMLSOPKET-16880
     Description: Editor is zoomed correctly: Zoom In to 120%
     */
     const numberOfMouseWheelScroll = 2;
 
+    await selectFunctionalGroups(FunctionalGroups.CO2Et, page);
     await clickInTheMiddleOfTheScreen(page);
+    await resetCurrentTool(page);
 
     await page.keyboard.down('Control');
     for (let i = 0; i < numberOfMouseWheelScroll; i++) {
@@ -49,16 +53,21 @@ test.describe('Zoom changes', () => {
     await page.keyboard.up('Control');
 
     await checkZoomLevel(page, '120%');
+    await takeEditorScreenshot(page);
   });
 
-  test('when using ctrl + mouse scroll down', async ({ page }) => {
+  test('Zoom out on the position of mouse when using `ctrl` and mouse wheel to scroll down', async ({
+    page,
+  }) => {
     /* 
     Test case: EPMLSOPKET-16880
     Description: Editor is zoomed correctly: Zoom Out to 80%
     */
     const numberOfMouseWheelScroll = 2;
 
+    await selectFunctionalGroups(FunctionalGroups.CO2Et, page);
     await clickInTheMiddleOfTheScreen(page);
+    await resetCurrentTool(page);
 
     await page.keyboard.down('Control');
     for (let i = 0; i < numberOfMouseWheelScroll; i++) {
@@ -67,6 +76,7 @@ test.describe('Zoom changes', () => {
     await page.keyboard.up('Control');
 
     await checkZoomLevel(page, '80%');
+    await takeEditorScreenshot(page);
   });
 
   test('Zoom In button verification', async ({ page }) => {
@@ -83,6 +93,7 @@ test.describe('Zoom changes', () => {
     await page.getByTestId('zoom-in').click();
 
     await checkZoomLevel(page, '110%');
+    await takeEditorScreenshot(page);
   });
 
   test('Zoom Out button verification', async ({ page }) => {
@@ -99,6 +110,7 @@ test.describe('Zoom changes', () => {
     await page.getByTestId('zoom-out').click();
 
     await checkZoomLevel(page, '90%');
+    await takeEditorScreenshot(page);
   });
 
   test('Zoom In and Undo/Redo structure verification', async ({ page }) => {
@@ -135,6 +147,7 @@ test.describe('Zoom changes', () => {
     await page.getByTestId('zoom-input').click();
     await page.getByTestId('zoom-in').click();
     await checkZoomLevel(page, '120%');
+    await takeEditorScreenshot(page);
   });
 
   test('Zoom Out by hotkey structure verification.', async ({ page }) => {
@@ -148,6 +161,7 @@ test.describe('Zoom changes', () => {
     await page.getByTestId('zoom-input').click();
     await page.getByTestId('zoom-out').click();
     await checkZoomLevel(page, '80%');
+    await takeEditorScreenshot(page);
   });
 
   test('Zoom actions for structures with query features', async ({ page }) => {

@@ -165,7 +165,7 @@ test.describe('Checking query specific attributes in SMARTS format', () => {
     await checkSmartsValue(
       page,
       defaultFileFormat,
-      '[#6](-[#6])(-[#6;@@])-[#6]',
+      '[#6](-[#6])(-[#6;@])-[#6]',
     );
   });
 
@@ -176,7 +176,7 @@ test.describe('Checking query specific attributes in SMARTS format', () => {
     await checkSmartsValue(
       page,
       defaultFileFormat,
-      '[#6](-[#6])(-[#6;@])-[#6]',
+      '[#6](-[#6])(-[#6;@@])-[#6]',
     );
   });
 });

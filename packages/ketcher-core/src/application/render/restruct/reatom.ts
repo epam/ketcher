@@ -80,8 +80,6 @@ class ReAtom extends ReObject {
     rectangle: any;
   };
 
-  highlightedLabel = true;
-
   constructor(atom: Atom) {
     super('atom');
     this.a = atom; // TODO rename a to item
@@ -143,10 +141,6 @@ class ReAtom extends ReObject {
     return hasLabel
       ? this.getLabeledSelectionContour(render)
       : this.getUnlabeledSelectionContour(render);
-  }
-
-  highlightLabel(val: boolean) {
-    this.highlightedLabel = val;
   }
 
   makeHoverPlate(render: Render) {
@@ -731,16 +725,24 @@ function buildLabel(
     label.text = 'R#';
   }
 
-  const isMonomerAttachmentPoint = attachmentPointNames.includes(label.text);
-
   if (label.text === atom.a.label) {
     const element = Elements.get(label.text);
     if (options.atomColoring && element) {
       atom.color = ElementColor[label.text] || '#000';
     }
   }
-  if (atom.highlightedLabel && isMonomerAttachmentPoint) {
+
+  const isMonomerAttachmentPoint = attachmentPointNames.includes(label.text);
+  const isMonomerAttachmentPointSelected =
+    options.currentlySelectedMonomerAttachmentPoint === label.text;
+  const isMonomerAttachmentPointUsed =
+    options.connectedMonomerAttachmentPoints?.includes(label.text);
+
+  if (isMonomerAttachmentPoint && isMonomerAttachmentPointSelected) {
     atom.color = '#FFF';
+  }
+  if (isMonomerAttachmentPoint && isMonomerAttachmentPointUsed) {
+    atom.color = '#666';
   }
 
   const { previewOpacity } = options;
@@ -752,7 +754,12 @@ function buildLabel(
     'fill-opacity': atom.a.isPreview ? previewOpacity : 1,
   });
 
-  if (atom.highlightedLabel && isMonomerAttachmentPoint) {
+  if (isMonomerAttachmentPoint) {
+    const fill = isMonomerAttachmentPointSelected
+      ? '#167782'
+      : isMonomerAttachmentPointUsed
+      ? '#E1E5EA'
+      : '#FFF';
     const backgroundSize = options.fontsz * 2;
 
     label.background = paper
@@ -763,7 +770,7 @@ function buildLabel(
         backgroundSize,
         10,
       )
-      .attr({ fill: '#167782' });
+      .attr({ fill });
   }
 
   label.rbb = util.relBox(label.path.getBBox());

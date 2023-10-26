@@ -1,15 +1,12 @@
 import { test } from '@playwright/test';
 import {
   addPeptideOnCanvas,
+  takeLibrariesScreenshot,
   takePageScreenshot,
   takePeptideLibraryScreenshot,
   waitForPageInit,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
-
-/* 
-Test case: #3063 - Add e2e tests for Macromolecule editor
-*/
 
 test.describe('Peptide library testing', () => {
   test.beforeEach(async ({ page }) => {
@@ -18,7 +15,7 @@ test.describe('Peptide library testing', () => {
   });
 
   test('Monomer library', async ({ page }) => {
-    await takePageScreenshot(page);
+    await takeLibrariesScreenshot(page);
   });
 
   test('Structure displaying in library', async ({ page }) => {
@@ -31,16 +28,12 @@ test.describe('Peptide library testing', () => {
   test('Placing betaAlanine on canvas', async ({ page }) => {
     // placing molecule on canvas and molecule selected state check
     await addPeptideOnCanvas(page, 'Bal___beta-Alanine');
-    // await clickInTheMiddleOfTheScreen(page);
-    // await selectRectangleSelectionTool(page);
-    // await page.waitForSelector('peptide').hover();
-    // await page.getByText('Bal').first().hover();
-    // await moveMouseToTheMiddleOfTheScreen(page);
     await takePageScreenshot(page);
   });
 
   test('add molecule in favourites', async ({ page }) => {
-    // favourites check
+    // favourites check. there is a bug - favourite sign (star) is golden when hovered(should be dark grey)
+    // https://github.com/epam/ketcher/issues/3477
     (await page.waitForSelector('.star')).click();
     await takePeptideLibraryScreenshot(page);
   });

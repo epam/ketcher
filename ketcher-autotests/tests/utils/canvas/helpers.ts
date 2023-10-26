@@ -198,3 +198,16 @@ export async function takePeptideLibraryScreenshot(
     maxDiffPixelRatio: options?.maxDiffPixelRatio,
   });
 }
+
+export async function takeLibrariesScreenshot(
+  page: Page,
+  options?: { masks?: Locator[]; maxDiffPixelRatio?: number },
+) {
+  const maxTimeout = 3000;
+  const editor = page.locator('[class*="shown monomer-library"]');
+  await waitForRender(page, emptyFunction, maxTimeout);
+  await expect(editor).toHaveScreenshot({
+    mask: options?.masks,
+    maxDiffPixelRatio: options?.maxDiffPixelRatio,
+  });
+}

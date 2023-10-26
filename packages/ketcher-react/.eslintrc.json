@@ -96,6 +96,7 @@
         "src/script/ui/views/AppClipArea.tsx",
         "src/script/ui/views/components/Dialog/Dialog.tsx",
         "src/script/ui/views/components/StructEditor/InfoPanel.tsx",
+        "src/script/ui/views/components/StructEditor/InfoTooltip.tsx",
         "src/script/ui/views/modal/Modal.tsx",
         "src/script/ui/views/modal/components/Text/Text.tsx",
         "src/script/ui/views/modal/components/document/Open/Open.tsx",

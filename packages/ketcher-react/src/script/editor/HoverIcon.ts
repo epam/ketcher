@@ -13,6 +13,10 @@ export class HoverIcon {
   _fill: AtomColor | '';
   _label: ElementLabel | '';
   isShown: boolean;
+  /**
+   Is required for the case, when mouse moved outside the canvas, then loading of structure
+   happens and icon needs to be shown above loader.
+   */
   shouldBeShownWhenMouseBack: boolean;
   editor: Editor;
 

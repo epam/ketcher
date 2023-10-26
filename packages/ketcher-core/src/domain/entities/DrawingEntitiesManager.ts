@@ -383,6 +383,7 @@ export class DrawingEntitiesManager {
       polymerBond.firstMonomer.getPotentialAttachmentPointByBond(
         polymerBond,
       ) === 'R1' &&
+      polymerBond.firstMonomer.hasAttachmentPoint('R2') &&
       !polymerBond.firstMonomer.isAttachmentPointUsed('R2')
     ) {
       polymerBond.firstMonomer.removePotentialBonds();

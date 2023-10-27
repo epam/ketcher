@@ -26,6 +26,7 @@ import {
   Editor,
   getStructure,
   MolSerializer,
+  runAsyncAction,
 } from 'ketcher-core';
 import { debounce, isEqual } from 'lodash/fp';
 import { load, onAction, removeStructAction } from './shared';
@@ -290,12 +291,17 @@ export function initClipboard(dispatch) {
       return data;
     },
     async onCut() {
-      const state = global.currentState;
-      const editor = state.editor;
-      const data = await clipData(editor);
-      if (data) debAction({ tool: 'eraser', opts: 1 });
-      else editor.selection(null);
-      return data;
+      const ketcherInstance = ketcherProvider.getKetcher();
+      const result = await runAsyncAction(async () => {
+        const state = global.currentState;
+        const editor = state.editor;
+
+        const data = await clipData(editor);
+        if (data) debAction({ tool: 'eraser', opts: 1 });
+        else editor.selection(null);
+        return data;
+      }, ketcherInstance.eventBus);
+      return result;
     },
     onLegacyCopy() {
       const state = global.currentState;
@@ -305,29 +311,78 @@ export function initClipboard(dispatch) {
       return data;
     },
     async onCopy() {
-      const state = global.currentState;
-      const editor = state.editor;
-      const data = await clipData(editor);
-      editor.selection(null);
-      return data;
+      const ketcherInstance = ketcherProvider.getKetcher();
+      const result = await runAsyncAction(async () => {
+        const state = global.currentState;
+        const editor = state.editor;
+        const data = await clipData(editor);
+        editor.selection(null);
+        return data;
+      }, ketcherInstance.eventBus);
+      return result;
     },
-    onPaste(data, isSmarts: boolean) {
+    async onPaste(data, isSmarts: boolean) {
+      const ketcherInstance = ketcherProvider.getKetcher();
+      const result = await runAsyncAction(async () => {
+        const structStr = await getStructStringFromClipboardData(data);
+        if (structStr || !rxnTextPlain.test(data['text/plain'])) {
+          if (isSmarts) {
+            loadStruct(structStr, {
+              fragment: true,
+              isPaste: true,
+              'input-format': ChemicalMimeType.DaylightSmarts,
+            });
+          } else {
+            loadStruct(structStr, { fragment: true, isPaste: true });
+          }
+        }
+      }, ketcherInstance.eventBus);
+      return result;
+    },
+    onLegacyPaste(data, isSmarts: boolean) {
       const structStr =
         data[ChemicalMimeType.KET] ||
         data[ChemicalMimeType.Mol] ||
         data[ChemicalMimeType.Rxn] ||
         data['text/plain'];
 
-      if (structStr || !rxnTextPlain.test(data['text/plain']))
-        isSmarts
-          ? loadStruct(structStr, {
-              fragment: true,
-              isPaste: true,
-              'input-format': ChemicalMimeType.DaylightSmarts,
-            })
-          : loadStruct(structStr, { fragment: true, isPaste: true });
+      if (structStr || !rxnTextPlain.test(data['text/plain'])) {
+        if (isSmarts) {
+          loadStruct(structStr, {
+            fragment: true,
+            isPaste: true,
+            'input-format': ChemicalMimeType.DaylightSmarts,
+          });
+        } else {
+          loadStruct(structStr, { fragment: true, isPaste: true });
+        }
+      }
     },
   };
+}
+
+async function safelyGetMimeType(
+  clipboardItem: ClipboardItem,
+  mimeType: string,
+) {
+  try {
+    const result = await clipboardItem.getType(mimeType);
+    return result;
+  } catch {
+    return '';
+  }
+}
+
+async function getStructStringFromClipboardData(
+  data: ClipboardItem[],
+): Promise<string> {
+  const clipboardItem = data[0] as ClipboardItem;
+  const structStr =
+    (await safelyGetMimeType(clipboardItem, `web ${ChemicalMimeType.KET}`)) ||
+    (await safelyGetMimeType(clipboardItem, `web ${ChemicalMimeType.Mol}`)) ||
+    (await safelyGetMimeType(clipboardItem, `web ${ChemicalMimeType.Rxn}`)) ||
+    (await safelyGetMimeType(clipboardItem, 'text/plain'));
+  return structStr === '' ? '' : structStr.text();
 }
 
 function isAbleToCopy(editor: Editor): boolean {
@@ -367,8 +422,7 @@ async function clipData(editor: Editor) {
 
     const data = await getStructure(
       SupportedFormat.molAuto,
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      ketcherInstance!.formatterFactory,
+      ketcherInstance.formatterFactory,
       struct,
     );
 

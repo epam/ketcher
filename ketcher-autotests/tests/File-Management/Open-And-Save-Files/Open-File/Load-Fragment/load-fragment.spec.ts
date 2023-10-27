@@ -79,37 +79,57 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
     await openFileAndAddToCanvas('SMILES/1840-cyclopentyl.smi', page);
   });
 
-  test('Open file - Input SMILE-string', async ({ page }) => {
+  test('Open file - Input SMILE-string - check the preview', async ({
+    page,
+  }) => {
     /*
      * Test case: EPMLSOPKET-1836
      */
     const smileString = 'C1=CC=CC=C1';
-    const secondSmileString = 'C1=CC=CC=C1>>C1=CC=CC=C1';
-    const thirdSmileString = 'CCCCCC';
+    await openPasteFromClipboard(page, smileString);
+  });
+
+  test('Open file - Input SMILE-string - open as new project', async ({
+    page,
+  }) => {
+    /*
+     * Test case: EPMLSOPKET-1836
+     */
+    const smileString = 'C1=CC=CC=C1';
+
+    await openPasteFromClipboard(page, smileString);
+    await waitForLoad(page, async () => {
+      await pressButton(page, 'Open as New Project');
+    });
+  });
+
+  test('Open file - Input SMILE-string with arrow symbol - open as new project', async ({
+    page,
+  }) => {
+    /*
+     * Test case: EPMLSOPKET-1836
+     */
+    const smileStringWithArrowSymbol = 'C1=CC=CC=C1>>C1=CC=CC=C1';
+
+    await openPasteFromClipboard(page, smileStringWithArrowSymbol);
+    await waitForLoad(page, async () => {
+      await pressButton(page, 'Open as New Project');
+    });
+  });
+
+  test('Open file - Input SMILE-string and try to add incorrect one', async ({
+    page,
+  }) => {
+    /*
+     * Test case: EPMLSOPKET-1836
+     */
+    const smileString = 'CCCCCC';
     const incorrectSmileString = 'CCCCC0';
 
     await openPasteFromClipboard(page, smileString);
     await waitForLoad(page, async () => {
-      await pressButton(page, 'Cancel');
-    });
-
-    await openPasteFromClipboard(page, smileString);
-    await waitForLoad(page, async () => {
       await pressButton(page, 'Open as New Project');
     });
-    await takeEditorScreenshot(page);
-
-    await openPasteFromClipboard(page, secondSmileString);
-    await waitForLoad(page, async () => {
-      await pressButton(page, 'Open as New Project');
-    });
-    await takeEditorScreenshot(page);
-
-    await openPasteFromClipboard(page, thirdSmileString);
-    await waitForLoad(page, async () => {
-      await pressButton(page, 'Open as New Project');
-    });
-    await takeEditorScreenshot(page);
 
     await openPasteFromClipboard(page, incorrectSmileString);
     await pressButton(page, 'Open as New Project');
@@ -151,30 +171,46 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
     const shiftForOxygen = 5;
     const shiftForSecondHydrogen = 200;
 
-    await selectAtomInToolbar(AtomButton.Hydrogen, page);
-    await clickInTheMiddleOfTheScreen(page);
-    await moveElement(page, 'H', 0, shiftForHydrogen, 0);
+    async function addAndMoveHydrogen() {
+      await selectAtomInToolbar(AtomButton.Hydrogen, page);
+      await clickInTheMiddleOfTheScreen(page);
+      await moveElement(page, 'H', 0, shiftForHydrogen, 0);
+    }
 
-    await selectLeftPanelButton(LeftPanelButton.ReactionPlusTool, page);
-    await clickInTheMiddleOfTheScreen(page);
-    await resetCurrentTool(page);
+    async function addAndMovePlusSymbol() {
+      await selectLeftPanelButton(LeftPanelButton.ReactionPlusTool, page);
+      await clickInTheMiddleOfTheScreen(page);
+      await resetCurrentTool(page);
 
-    await moveMouseToTheMiddleOfTheScreen(page);
-    await dragMouseTo(x - shiftForReactionPlus, y, page);
-    await clickInTheMiddleOfTheScreen(page);
+      await moveMouseToTheMiddleOfTheScreen(page);
+      await dragMouseTo(x - shiftForReactionPlus, y, page);
+      await clickInTheMiddleOfTheScreen(page);
+    }
 
-    await selectAtomInToolbar(AtomButton.Oxygen, page);
-    await clickInTheMiddleOfTheScreen(page);
-    await moveElement(page, 'O', 0, shiftForOxygen, 0);
+    async function addAndMoveOxygen() {
+      await selectAtomInToolbar(AtomButton.Oxygen, page);
+      await clickInTheMiddleOfTheScreen(page);
+      await moveElement(page, 'O', 0, shiftForOxygen, 0);
+    }
 
-    await selectLeftPanelButton(LeftPanelButton.ArrowOpenAngleTool, page);
-    await clickInTheMiddleOfTheScreen(page);
-    await resetCurrentTool(page);
+    async function addArrowSymbol() {
+      await selectLeftPanelButton(LeftPanelButton.ArrowOpenAngleTool, page);
+      await clickInTheMiddleOfTheScreen(page);
+      await resetCurrentTool(page);
+    }
 
-    await selectAtomInToolbar(AtomButton.Hydrogen, page);
-    await page.mouse.click(x + shiftForSecondHydrogen, y, {
-      button: 'left',
-    });
+    async function addSecondHydrogen() {
+      await selectAtomInToolbar(AtomButton.Hydrogen, page);
+      await page.mouse.click(x + shiftForSecondHydrogen, y, {
+        button: 'left',
+      });
+    }
+
+    await addAndMoveHydrogen();
+    await addAndMovePlusSymbol();
+    await addAndMoveOxygen();
+    await addArrowSymbol();
+    await addSecondHydrogen();
   });
 
   test('Open/Import structure as a KET file - open KET file', async ({
@@ -190,12 +226,16 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
     );
 
     const expectedKetFile = await getKet(page);
-    await saveToFile('KET/ket-4702-expected.ket', expectedKetFile);
+    await saveToFile(
+      'KET/hydrogen-plus-oxygen-arrow-hydrogen-expected.ket',
+      expectedKetFile,
+    );
 
     const { fileExpected: ketFileExpected, file: ketFile } =
       await receiveFileComparisonData({
         page,
-        expectedFileName: 'tests/test-data/KET/ket-4702-expected.ket',
+        expectedFileName:
+          'tests/test-data/KET/hydrogen-plus-oxygen-arrow-hydrogen-expected.ket',
       });
 
     expect(ketFile).toEqual(ketFileExpected);

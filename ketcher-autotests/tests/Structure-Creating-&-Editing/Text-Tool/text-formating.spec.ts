@@ -28,8 +28,13 @@ async function openFromFileViaTextBox(filename: string, page: Page) {
     pressButton(page, 'Apply');
   });
 }
+type buttonType = 'bold' | 'italic' | 'subscript' | 'superscript';
 
-async function applyTextFormat(page: Page, text: string, buttonName: string) {
+async function applyTextFormat(
+  page: Page,
+  text: string,
+  buttonName: buttonType,
+) {
   await page.getByRole('dialog').getByRole('textbox').fill(text);
   await page.keyboard.press('Control+a');
   await page.getByRole('button', { name: buttonName }).click();

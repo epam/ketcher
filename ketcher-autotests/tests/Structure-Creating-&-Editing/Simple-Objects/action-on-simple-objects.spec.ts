@@ -153,17 +153,13 @@ test.describe('Action on simples objects', () => {
         await page.keyboard.press('Control+_');
       });
     }
-    await waitForRender(page, async () => {
-      await copyAndPaste(page);
-    });
+    await copyAndPaste(page);
     await page.mouse.click(anyPointX, anyPointY);
     await takeEditorScreenshot(page);
     for (let i = 0; i < numberOfPress; i++) {
       await selectTopPanelButton(TopPanelButton.Undo, page);
     }
-    await waitForRender(page, async () => {
-      await cutAndPaste(page);
-    });
+    await cutAndPaste(page);
     await page.mouse.click(anyPointX, anyPointY);
     await takeEditorScreenshot(page);
     for (let i = 0; i < numberOfPress; i++) {

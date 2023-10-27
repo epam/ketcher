@@ -113,8 +113,8 @@ class ReAtom extends ReObject {
     const padding = fontsz * radiusScaleFactor;
     const radius = fontsz * radiusScaleFactor * 2;
     const box = this.getVBoxObj(restruct.render)!;
-    const ps1 = Scale.obj2scaled(box.p0, restruct.render.options);
-    const ps2 = Scale.obj2scaled(box.p1, restruct.render.options);
+    const ps1 = Scale.modelToCanvas(box.p0, restruct.render.options);
+    const ps2 = Scale.modelToCanvas(box.p1, restruct.render.options);
     const width = ps2.x - ps1.x;
     const height = fontsz * 1.23;
     return paper.rect(
@@ -129,13 +129,13 @@ class ReAtom extends ReObject {
   getUnlabeledSelectionContour(render: Render) {
     const { paper, options } = render;
     const { atomSelectionPlateRadius } = options;
-    const ps = Scale.obj2scaled(this.a.pp, options);
+    const ps = Scale.modelToCanvas(this.a.pp, options);
     return paper.circle(ps.x, ps.y, atomSelectionPlateRadius);
   }
 
   getSelectionContour(render: Render) {
     const hasLabel =
-      (this.a.pseudo && this.a.pseudo.length > 1) ||
+      (this.a.pseudo && this.a.pseudo.length > 1 && !getQueryAttrsText(this)) ||
       (this.showLabel && this.a.implicitH !== 0);
     return hasLabel
       ? this.getLabeledSelectionContour(render)
@@ -190,7 +190,7 @@ class ReAtom extends ReObject {
     renderOptions: RenderOptions,
     direction: Vec2,
   ): Vec2 {
-    const atomPosition = Scale.obj2scaled(this.a.pp, renderOptions);
+    const atomPosition = Scale.modelToCanvas(this.a.pp, renderOptions);
     let atomSymbolShift = 0;
     const exts = this.visel.exts;
     for (let k = 0; k < exts.length; ++k) {
@@ -220,7 +220,7 @@ class ReAtom extends ReObject {
     const sgroups = restruct.molecule.sgroups;
     const functionalGroups = restruct.molecule.functionalGroups;
     const render = restruct.render;
-    const ps = Scale.obj2scaled(this.a.pp, render.options);
+    const ps = Scale.modelToCanvas(this.a.pp, render.options);
 
     if (
       FunctionalGroup.isAtomInContractedFunctionalGroup(
@@ -252,20 +252,27 @@ class ReAtom extends ReObject {
     let leftMargin;
     let implh;
     let isHydrogen;
-    let isHydrogenIsotope;
     let label;
     let index: any = null;
+    const isSmartPropertiesExist = checkIsSmartPropertiesExist(this.a);
 
-    if (this.showLabel) {
-      label = buildLabel(this, render.paper, ps, options);
+    if (isSmartPropertiesExist) {
+      const customQueryText =
+        this.a.queryProperties.customQuery ||
+        getAtomCustomQuery({
+          ...this.a,
+          ...this.a.queryProperties,
+        });
+      const label = showSmartsLabel(this, render, customQueryText);
+      restruct.addReObjectPath(LayerMap.data, this.visel, label.path, ps, true);
+    } else if (this.showLabel) {
+      const data = buildLabel(this, render.paper, ps, options);
       delta = 0.5 * options.lineWidth;
-      rightMargin =
-        (label.rbb.width / 2) * (options.zoom > 1 ? 1 : options.zoom);
-      leftMargin =
-        (-label.rbb.width / 2) * (options.zoom > 1 ? 1 : options.zoom);
+      label = data.label;
+      rightMargin = data.rightMargin;
+      leftMargin = data.leftMargin;
       implh = Math.floor(this.a.implicitH);
       isHydrogen = label.text === 'H';
-      isHydrogenIsotope = label.text === 'D' || label.text === 'T';
       restruct.addReObjectPath(LayerMap.data, this.visel, label.path, ps, true);
     }
     if (options.showAtomIds) {
@@ -287,7 +294,7 @@ class ReAtom extends ReObject {
       restruct.addReObjectPath(LayerMap.indices, this.visel, index.path, ps);
     }
 
-    if (this.showLabel && (!this.a.pseudo || isHydrogenIsotope)) {
+    if (this.showLabel && !isSmartPropertiesExist) {
       let hydroIndex: any = null;
       if (isHydrogen && implh > 0) {
         hydroIndex = showHydroIndex(this, render, implh, rightMargin);
@@ -406,8 +413,7 @@ class ReAtom extends ReObject {
 
     const stereoLabel = this.a.stereoLabel; // Enhanced Stereo
     const aamText = getAamText(this);
-    const isAromatized = Atom.isInAromatizedRing(restruct.molecule, aid);
-    const queryAttrsText = getQueryAttrsText(this, isAromatized);
+    const queryAttrsText = getQueryAttrsText(this);
 
     // we render them together to avoid possible collisions
 
@@ -436,7 +442,7 @@ class ReAtom extends ReObject {
       text += `.${aamText}.`;
     }
 
-    if (text.length > 0) {
+    if (text.length > 0 && !isSmartPropertiesExist) {
       const elem = Elements.get(this.a.label);
       const aamPath = render.paper.text(ps.x, ps.y, text).attr({
         font: options.font,
@@ -485,7 +491,7 @@ class ReAtom extends ReObject {
     if (isHighlighted) {
       const style = { fill: highlightColor, stroke: 'none' };
 
-      const ps = Scale.obj2scaled(this.a.pp, restruct.render.options);
+      const ps = Scale.modelToCanvas(this.a.pp, restruct.render.options);
       const path = render.paper
         .circle(ps.x, ps.y, options.atomSelectionPlateRadius * 0.8)
         .attr(style);
@@ -699,17 +705,26 @@ function shouldHydrogenBeOnLeft(struct, atom) {
 
   return false;
 }
+function addTooltip(label: ElemAttr, text: string) {
+  const tooltip = `<p>${text.split(/(?<=[;,])/).join(' ')}</p>`;
+  label?.path.node.childNodes[0].setAttribute('data-tooltip', tooltip);
+}
 
 function buildLabel(
   atom: ReAtom,
   paper: any,
   ps: Vec2,
   options: any,
-): ElemAttr {
+): {
+  rightMargin: number;
+  leftMargin: number;
+  label: ElemAttr;
+} {
   // eslint-disable-line max-statements
-  const label: any = {};
-  label.text = getLabelText(atom.a);
-
+  const label: any = {
+    text: getLabelText(atom.a),
+  };
+  let tooltip: string | null = null;
   if (!label.text) {
     label.text = 'R#';
   }
@@ -721,6 +736,11 @@ function buildLabel(
     }
   }
 
+  if (label.text?.length > 8) {
+    tooltip = label.text;
+    label.text = `${label.text?.substring(0, 8)}...`;
+  }
+
   const { previewOpacity } = options;
   label.path = paper.text(ps.x, ps.y, label.text).attr({
     font: options.font,
@@ -730,22 +750,35 @@ function buildLabel(
     'fill-opacity': atom.a.isPreview ? previewOpacity : 1,
   });
 
+  if (tooltip) {
+    addTooltip(label, tooltip);
+  }
+
   label.rbb = util.relBox(label.path.getBBox());
   draw.recenterText(label.path, label.rbb);
+  let rightMargin =
+    (label.rbb.width / 2) * (options.zoom > 1 ? 1 : options.zoom); //
+  let leftMargin =
+    (-label.rbb.width / 2) * (options.zoom > 1 ? 1 : options.zoom);
 
   if (atom.a.atomList !== null) {
+    const xShift =
+      ((atom.hydrogenOnTheLeft ? -1 : 1) *
+        (label.rbb.width - label.rbb.height)) /
+      2;
     pathAndRBoxTranslate(
       label.path,
       label.rbb,
-      ((atom.hydrogenOnTheLeft ? -1 : 1) *
-        (label.rbb.width - label.rbb.height)) /
-        2,
+      xShift,
+
       0,
     );
+    rightMargin += xShift;
+    leftMargin += xShift;
   }
 
   atom.label = label;
-  return label;
+  return { label, rightMargin, leftMargin };
 }
 
 function getLabelText(atom) {
@@ -772,7 +805,7 @@ function getLabelText(atom) {
 }
 
 function showHydroIndex(atom, render, implh, rightMargin): ElemAttr {
-  const ps = Scale.obj2scaled(atom.a.pp, render.options);
+  const ps = Scale.modelToCanvas(atom.a.pp, render.options);
   const options = render.options;
   const delta = 0.5 * options.lineWidth;
   const hydroIndex: any = {};
@@ -796,7 +829,7 @@ function showHydroIndex(atom, render, implh, rightMargin): ElemAttr {
 }
 
 function showRadical(atom: ReAtom, render: Render): Omit<ElemAttr, 'text'> {
-  const ps: Vec2 = Scale.obj2scaled(atom.a.pp, render.options);
+  const ps: Vec2 = Scale.modelToCanvas(atom.a.pp, render.options);
   const options = render.options;
   const paper: any = render.paper;
   const radical: any = {};
@@ -840,7 +873,7 @@ function showIsotope(
   render: Render,
   leftMargin: number,
 ): ElemAttr {
-  const ps = Scale.obj2scaled(atom.a.pp, render.options);
+  const ps = Scale.modelToCanvas(atom.a.pp, render.options);
   const options = render.options;
   const delta = 0.5 * options.lineWidth;
   const isotope: any = {};
@@ -868,7 +901,7 @@ function showCharge(
   render: Render,
   rightMargin: number,
 ): ElemAttr {
-  const ps = Scale.obj2scaled(atom.a.pp, render.options);
+  const ps = Scale.modelToCanvas(atom.a.pp, render.options);
   const options = render.options;
   const delta = 0.5 * options.lineWidth;
   const charge: any = {};
@@ -922,7 +955,7 @@ function showExplicitValence(
     13: 'XIII',
     14: 'XIV',
   };
-  const ps = Scale.obj2scaled(atom.a.pp, render.options);
+  const ps = Scale.modelToCanvas(atom.a.pp, render.options);
   const options = render.options;
   const delta = 0.5 * options.lineWidth;
   const valence: any = {};
@@ -968,7 +1001,7 @@ function showHydrogen(
   // eslint-disable-line max-statements
   let hydroIndex: any = data.hydroIndex;
   const hydrogenLeft = atom.hydrogenOnTheLeft;
-  const ps = Scale.obj2scaled(atom.a.pp, render.options);
+  const ps = Scale.modelToCanvas(atom.a.pp, render.options);
   const options = render.options;
   const delta = 0.5 * options.lineWidth;
   const hydrogen = data.hydrogen;
@@ -1036,13 +1069,45 @@ function showHydrogen(
   return Object.assign(data, { hydrogen, hydroIndex });
 }
 
+function showSmartsLabel(atom: ReAtom, render: Render, text: string): ElemAttr {
+  // eslint-disable-line max-statements
+  const ps = Scale.modelToCanvas(atom.a.pp, render.options);
+  const options = render.options;
+  const label = {} as ElemAttr;
+  let tooltip: string | null = null;
+
+  if (text.length > 8) {
+    tooltip = text;
+    label.text = `${text.substring(0, 8)}...`;
+  } else {
+    label.text = text;
+  }
+
+  label.path = render.paper.text(ps.x, ps.y, label.text).attr({
+    font: options.font,
+    'font-size': options.fontsz,
+    fill: atom.color,
+  });
+  label.rbb = util.relBox(label.path.getBBox());
+  draw.recenterText(label.path, label.rbb);
+  const xShift =
+    ((atom.hydrogenOnTheLeft ? -1 : 1) * (label.rbb.width - label.rbb.height)) /
+    2;
+  pathAndRBoxTranslate(label.path, label.rbb, xShift, 0);
+  if (tooltip) {
+    addTooltip(label, tooltip);
+  }
+
+  return label;
+}
+
 function showWarning(
   atom,
   render,
   leftMargin,
   rightMargin,
 ): { rbb: DOMRect; path: any } {
-  const ps = Scale.obj2scaled(atom.a.pp, render.options);
+  const ps = Scale.modelToCanvas(atom.a.pp, render.options);
   const delta = 0.5 * render.options.lineWidth;
   const warning: any = {};
   const y = ps.y + atom.label.rbb.height / 2 + delta;
@@ -1091,6 +1156,26 @@ function getRingBondCountAttrText(value: number) {
   return attrText;
 }
 
+function getRingConnectivity(value: number) {
+  if (value > 0) {
+    return 'x' + value.toString();
+  } else if (value === -1 || value === -2) {
+    return 'x0';
+  } else {
+    return '';
+  }
+}
+
+function getDegree(value: number) {
+  if (value > 0) {
+    return 'D' + value.toString();
+  } else if (value === -1 || value === -2) {
+    return 'D0';
+  } else {
+    return '';
+  }
+}
+
 function getSubstitutionCountAttrText(value: number) {
   let attrText: string;
   if (value > 0) {
@@ -1105,32 +1190,54 @@ function getSubstitutionCountAttrText(value: number) {
   return attrText;
 }
 
+export function getAtomType(atom: Atom) {
+  return atom.atomList
+    ? 'list'
+    : atom.pseudo === atom.label
+    ? 'pseudo'
+    : 'single';
+}
+
 function getAtomLabelAttrText(value: string, atom) {
-  const { atomType, atomList, notList, isotope } = atom;
+  let { atomType, atomList, notList } = atom;
+  if (!atomType) {
+    atomType = getAtomType(atom);
+  }
   if (atomType === 'single') {
-    let labelText = isotope || '';
-    if (atom.aromaticity) {
-      labelText +=
-        atom.aromaticity === 'aromatic'
-          ? value.toLowerCase()
-          : value.toUpperCase();
-      return labelText;
-    }
+    let labelText = '';
     const number = Elements.get(capitalize(value))?.number;
-    labelText += number ? `#${number}` : value;
+    labelText += number ? `#${number}` : '';
     return labelText;
   } else if (atomType === 'list' && atomList !== '') {
-    return atomList
-      .split(',')
-      .map((el: string) => {
+    let atomNumbers: [];
+    if (atomList.ids) {
+      notList = atomList.notList;
+      atomNumbers = atomList.ids.map(
+        (number: string) => `${notList ? '!' : ''}#${number}`,
+      );
+    } else {
+      atomNumbers = atomList.split(',').map((el: string) => {
         const number = Elements.get(capitalize(el))?.number || '';
         return `${notList ? '!' : ''}#${number}`;
-      })
-      .join(notList ? ';' : ',');
+      });
+    }
+    return atomNumbers.join(notList ? ';' : ',');
   } else {
     return '';
   }
 }
+export function checkIsSmartPropertiesExist(atom) {
+  const smartsSpecificProperties = [
+    'ringMembership',
+    'ringSize',
+    'connectivity',
+    'chirality',
+    'aromaticity',
+    'customQuery',
+  ];
+  return smartsSpecificProperties.some((name) => atom.queryProperties?.[name]);
+}
+
 export function getAtomCustomQuery(atom) {
   let queryAttrsText = '';
 
@@ -1141,6 +1248,8 @@ export function getAtomCustomQuery(atom) {
     [key: string]: (value: string, atom) => string;
   } = {
     label: getAtomLabelAttrText,
+    isotope: (value) => value,
+    aromaticity: (value) => (value === 'aromatic' ? 'a' : 'A'),
     charge: (value) => {
       if (value === '') return value;
       const regExpResult = /^([+-]?)([0-9]{1,3}|1000)([+-]?)$/.exec(value);
@@ -1152,11 +1261,8 @@ export function getAtomCustomQuery(atom) {
       return charge[0] !== '-' ? `+${charge}` : charge;
     },
     explicitValence: (value) => (Number(value) !== -1 ? `v${value}` : ''),
-    ringBondCount: (value) =>
-      Number(value) !== 0 ? getRingBondCountAttrText(Number(value)) : '',
-    substitutionCount: (value) =>
-      Number(value) !== 0 ? getSubstitutionCountAttrText(Number(value)) : '',
-    unsaturatedAtom: (value) => (value ? 'u' : ''),
+    ringBondCount: (value) => getRingConnectivity(Number(value)),
+    substitutionCount: (value) => getDegree(Number(value)),
     hCount: (value) =>
       Number(value) > 0 ? 'H' + (Number(value) - 1).toString() : '',
     implicitHCount: (value) => `h${value}`,
@@ -1166,9 +1272,9 @@ export function getAtomCustomQuery(atom) {
     chirality: (value) => (value === 'clockwise' ? '@@' : '@'),
   };
 
-  for (const propertyName in atom) {
+  for (const propertyName in patterns) {
     const value = atom[propertyName];
-    if (propertyName in patterns && value !== null) {
+    if (propertyName in atom && value !== null) {
       const attrText = patterns[propertyName](value, atom);
       if (attrText) {
         addSemicolon();
@@ -1180,31 +1286,15 @@ export function getAtomCustomQuery(atom) {
   return queryAttrsText;
 }
 
-function getQueryAttrsText(atom, isAromatized: boolean) {
+function getQueryAttrsText(atom): string {
   let queryAttrsText = '';
 
   const addSemicolon = () => {
     if (queryAttrsText.length > 0) queryAttrsText += ';';
   };
 
-  const {
-    ringBondCount,
-    substitutionCount,
-    unsaturatedAtom,
-    hCount,
-    implicitHCount,
-    queryProperties: {
-      aromaticity,
-      ringMembership,
-      ringSize,
-      connectivity,
-      chirality,
-      customQuery,
-    },
-  } = atom.a;
-  if (customQuery) {
-    return customQuery;
-  }
+  const { ringBondCount, substitutionCount, unsaturatedAtom, hCount } = atom.a;
+
   if (ringBondCount !== 0) {
     queryAttrsText += getRingBondCountAttrText(ringBondCount);
   }
@@ -1220,30 +1310,6 @@ function getQueryAttrsText(atom, isAromatized: boolean) {
   if (hCount > 0) {
     addSemicolon();
     queryAttrsText += 'H' + (hCount - 1).toString();
-  }
-  if (implicitHCount !== null && !isAromatized) {
-    addSemicolon();
-    queryAttrsText += `h${implicitHCount}`;
-  }
-  if (aromaticity !== null) {
-    addSemicolon();
-    queryAttrsText += aromaticity === 'aromatic' ? 'a' : 'A';
-  }
-  if (Number.isFinite(ringMembership)) {
-    addSemicolon();
-    queryAttrsText += `R${ringMembership}`;
-  }
-  if (Number.isFinite(ringSize)) {
-    addSemicolon();
-    queryAttrsText += `r${ringSize}`;
-  }
-  if (Number.isFinite(connectivity)) {
-    addSemicolon();
-    queryAttrsText += `X${connectivity}`;
-  }
-  if (chirality !== null) {
-    addSemicolon();
-    queryAttrsText += chirality === 'clockwise' ? '@@' : '@';
   }
   return queryAttrsText;
 }

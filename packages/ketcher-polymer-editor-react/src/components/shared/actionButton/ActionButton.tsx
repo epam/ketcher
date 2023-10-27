@@ -30,8 +30,8 @@ const baseButtonStyle = css({
 const PrimaryButton = styled(MuiButton)(
   ({ theme }) => ({
     backgroundColor: theme.ketcher.color.button.primary.active,
-    color: theme.ketcher.color.text.light,
-    border: 'none',
+    border: `1px solid ${theme.ketcher.color.button.primary.active}`,
+    color: 'rgb(245, 245, 245)',
     fontWeight: theme.ketcher.font.weight.regular,
 
     '&:hover': {

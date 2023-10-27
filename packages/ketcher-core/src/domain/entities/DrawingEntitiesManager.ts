@@ -17,6 +17,7 @@ import {
   DrawingEntityHoverOperation,
   DrawingEntitySelectOperation,
   DrawingEntityMoveOperation,
+  DrawingEntityRedrawOperation,
 } from 'application/editor/operations/drawingEntity';
 import {
   PolymerBondAddOperation,
@@ -27,6 +28,17 @@ import {
   PolymerBondShowInfoOperation,
 } from 'application/editor/operations/polymerBond';
 import { monomerFactory } from 'application/editor/operations/monomer/monomerFactory';
+import { provideEditorSettings } from 'application/editor/editorSettings';
+import { Scale } from 'domain/helpers';
+import { Peptide } from 'domain/entities/Peptide';
+import { Chem } from 'domain/entities/Chem';
+
+const HORIZONTAL_DISTANCE_FROM_MONOMER = 50;
+const VERTICAL_DISTANCE_FROM_MONOMER = 60;
+const DISTANCE_FROM_RIGHT = 70;
+const DISTANCE_BETWEEN_MONOMERS = 30;
+const MONOMER_START_X_POSITION = 40;
+const MONOMER_START_Y_POSITION = 40;
 
 type RnaPresetAdditionParams = {
   sugar: MonomerItemType;
@@ -147,6 +159,15 @@ export class DrawingEntitiesManager {
 
     const movingCommand = new DrawingEntityMoveOperation(drawingEntity);
     command.addOperation(movingCommand);
+
+    return command;
+  }
+
+  public createDrawingEntityRedrawCommand(drawingEntity: DrawingEntity) {
+    const command = new Command();
+
+    const redrawCommand = new DrawingEntityRedrawOperation(drawingEntity);
+    command.addOperation(redrawCommand);
 
     return command;
   }
@@ -282,10 +303,7 @@ export class DrawingEntitiesManager {
     polymerBond.firstMonomer.removePotentialBonds();
     polymerBond.secondMonomer.removePotentialBonds();
 
-    polymerBond.moveBondEndAbsolute(
-      secondMonomer.renderer.center.x,
-      secondMonomer.renderer.center.y,
-    );
+    polymerBond.moveToLinkedMonomers();
 
     polymerBond.firstMonomer.turnOffSelection();
     polymerBond.firstMonomer.turnOffHover();
@@ -318,14 +336,32 @@ export class DrawingEntitiesManager {
 
   public intendToFinishBondCreation(monomer: BaseMonomer, bond: PolymerBond) {
     const command = new Command();
-
     monomer.turnOnHover();
     monomer.turnOnAttachmentPointsVisibility();
-    if (monomer.availableAttachmentPointForBondEnd) {
-      monomer.setPotentialBond(
-        monomer.availableAttachmentPointForBondEnd,
-        bond,
-      );
+    const availableAttachmentPointForBondEnd =
+      monomer.availableAttachmentPointForBondEnd;
+    if (availableAttachmentPointForBondEnd) {
+      monomer.setPotentialBond(availableAttachmentPointForBondEnd, bond);
+    }
+
+    if (
+      availableAttachmentPointForBondEnd === 'R2' &&
+      !bond.firstMonomer.isAttachmentPointUsed('R1')
+    ) {
+      bond.firstMonomer.removePotentialBonds();
+      bond.firstMonomer.setPotentialBond('R1', bond);
+      const operation = new MonomerHoverOperation(bond.firstMonomer, true);
+      command.addOperation(operation);
+    }
+
+    if (
+      !monomer.isAttachmentPointUsed('R2') &&
+      bond.firstMonomer.getPotentialAttachmentPointByBond(bond) === 'R1'
+    ) {
+      monomer.removePotentialBonds();
+      monomer.setPotentialBond('R2', bond);
+      const operation = new MonomerHoverOperation(bond.firstMonomer, true);
+      command.addOperation(operation);
     }
 
     const operation = new MonomerHoverOperation(monomer, true);
@@ -335,8 +371,26 @@ export class DrawingEntitiesManager {
     return command;
   }
 
-  public cancelIntentionToFinishBondCreation(monomer: BaseMonomer) {
+  public cancelIntentionToFinishBondCreation(
+    monomer: BaseMonomer,
+    polymerBond?: PolymerBond,
+  ) {
     const command = new Command();
+    if (
+      polymerBond &&
+      polymerBond.firstMonomer.getPotentialAttachmentPointByBond(
+        polymerBond,
+      ) === 'R1' &&
+      !polymerBond.firstMonomer.isAttachmentPointUsed('R2')
+    ) {
+      polymerBond.firstMonomer.removePotentialBonds();
+      polymerBond.firstMonomer.setPotentialBond('R2', polymerBond);
+      const operation = new MonomerHoverOperation(
+        polymerBond.firstMonomer,
+        true,
+      );
+      command.addOperation(operation);
+    }
 
     monomer.turnOffHover();
     monomer.turnOffAttachmentPointsVisibility();
@@ -467,6 +521,210 @@ export class DrawingEntitiesManager {
       }
 
       previousMonomer = monomer;
+    });
+
+    return command;
+  }
+
+  private findChainByMonomer(
+    monomer: BaseMonomer,
+    monomerChain: BaseMonomer[] = [],
+    previousMonomer?: BaseMonomer,
+  ) {
+    monomerChain.push(monomer);
+    for (const attachmentPointName in monomer.attachmentPointsToBonds) {
+      const polymerBond = monomer.attachmentPointsToBonds[attachmentPointName];
+      if (polymerBond) {
+        const nextMonomer =
+          monomer === polymerBond.firstMonomer
+            ? polymerBond.secondMonomer
+            : polymerBond.firstMonomer;
+        if (previousMonomer !== nextMonomer) {
+          this.findChainByMonomer(nextMonomer, monomerChain, monomer);
+        }
+      }
+    }
+    return monomerChain;
+  }
+
+  private rearrangeChain(
+    monomer: BaseMonomer,
+    initialPosition: Vec2,
+    canvasWidth: number,
+    lastMonomer?: BaseMonomer,
+    isNextChain = false,
+  ) {
+    const command = new Command();
+    const editorSettings = provideEditorSettings();
+    const monomerWidth = monomer.renderer?.bodyWidth ?? 0;
+    const monomerHeight = monomer.renderer?.bodyHeight ?? 0;
+    const heightMonomerWithBond =
+      monomerHeight + VERTICAL_DISTANCE_FROM_MONOMER;
+    const oldMonomerPosition = monomer.position;
+    const newPosition = isNextChain
+      ? new Vec2(
+          MONOMER_START_X_POSITION,
+          initialPosition.y + heightMonomerWithBond,
+        )
+      : initialPosition;
+    monomer.moveAbsolute(Scale.canvasToModel(newPosition, editorSettings));
+    const operation = new MonomerMoveOperation(monomer);
+    command.addOperation(operation);
+    let lastPosition = newPosition;
+
+    for (const attachmentPointName in monomer.attachmentPointsToBonds) {
+      const polymerBond = monomer.attachmentPointsToBonds[attachmentPointName];
+      if (!polymerBond) {
+        continue;
+      }
+      const nextMonomer =
+        polymerBond.secondMonomer === monomer
+          ? polymerBond.firstMonomer
+          : polymerBond.secondMonomer;
+      if (nextMonomer === lastMonomer) {
+        continue;
+      }
+      if (
+        (attachmentPointName === 'R2' &&
+          nextMonomer.getAttachmentPointByBond(polymerBond) === 'R1') ||
+        (attachmentPointName === 'R1' &&
+          nextMonomer.getAttachmentPointByBond(polymerBond) === 'R2')
+      ) {
+        const isMonomerFitCanvas =
+          newPosition.x +
+            monomerWidth +
+            DISTANCE_BETWEEN_MONOMERS +
+            HORIZONTAL_DISTANCE_FROM_MONOMER +
+            DISTANCE_FROM_RIGHT <
+          canvasWidth;
+        let rearrangeResult;
+        if (isMonomerFitCanvas) {
+          rearrangeResult = this.rearrangeChain(
+            nextMonomer,
+            new Vec2({
+              x:
+                newPosition.x + monomerWidth + HORIZONTAL_DISTANCE_FROM_MONOMER,
+              y: newPosition.y,
+            }),
+            canvasWidth,
+            monomer,
+          );
+        } else {
+          rearrangeResult = this.rearrangeChain(
+            nextMonomer,
+            new Vec2({
+              x: MONOMER_START_X_POSITION,
+              y: newPosition.y + heightMonomerWithBond,
+            }),
+            canvasWidth,
+            monomer,
+          );
+        }
+        lastPosition = rearrangeResult.lastPosition;
+        command.merge(rearrangeResult.command);
+      } else {
+        const diff = Vec2.diff(oldMonomerPosition, monomer.position);
+        const pos = Vec2.diff(nextMonomer.position, diff);
+        const rearrangeResult = this.rearrangeChain(
+          nextMonomer,
+          Scale.modelToCanvas(pos, editorSettings),
+          canvasWidth,
+          monomer,
+        );
+        command.merge(rearrangeResult.command);
+      }
+    }
+
+    return { command, lastPosition };
+  }
+
+  public reArrangeChains(canvasWidth: number, isSnakeMode: boolean) {
+    const command = new Command();
+    if (isSnakeMode) {
+      command.merge(this.reArrangeMonomers(canvasWidth));
+    }
+    command.merge(this.redrawBonds());
+
+    return command;
+  }
+
+  public redrawBonds() {
+    const command = new Command();
+
+    this.polymerBonds.forEach((drawingEntity) => {
+      drawingEntity.moveToLinkedMonomers();
+      command.merge(this.createDrawingEntityRedrawCommand(drawingEntity));
+    });
+    return command;
+  }
+
+  public reArrangeMonomers(canvasWidth: number) {
+    const monomersList = Array.from(this.monomers.values()).filter(
+      (monomer) => monomer instanceof Peptide || monomer instanceof Chem,
+    );
+
+    const firstMonomersInChains = monomersList.filter((monomer) => {
+      const polymerBond = monomer.getBondByAttachmentPoint('R2');
+      const nextMonomer =
+        polymerBond?.firstMonomer === monomer
+          ? polymerBond.secondMonomer
+          : polymerBond?.firstMonomer;
+      return (
+        !monomer.attachmentPointsToBonds.R1 &&
+        monomer.attachmentPointsToBonds.R2 &&
+        nextMonomer?.getAttachmentPointByBond(
+          monomer.attachmentPointsToBonds.R2,
+        ) === 'R1'
+      );
+    });
+
+    firstMonomersInChains.sort((monomer1, monomer2) => {
+      if (
+        monomer2.position.x + monomer2.position.y <
+        monomer1.position.x + monomer1.position.y
+      ) {
+        return -1;
+      } else {
+        return 1;
+      }
+    });
+
+    const filteredFirstMonomersInChains: BaseMonomer[] = [];
+
+    firstMonomersInChains.forEach((monomer, monomerIndex) => {
+      const currentMonomerChain: BaseMonomer[] =
+        this.findChainByMonomer(monomer);
+      let isFirstMonomerInChain = true;
+      firstMonomersInChains.forEach(
+        (potentialFirstMonomer, potentialFirstMonomerIndex) => {
+          if (
+            potentialFirstMonomerIndex > monomerIndex &&
+            currentMonomerChain.includes(potentialFirstMonomer)
+          ) {
+            isFirstMonomerInChain = false;
+          }
+        },
+      );
+      if (isFirstMonomerInChain) {
+        filteredFirstMonomersInChains.push(monomer);
+      }
+    });
+    const command = new Command();
+    let lastPosition = new Vec2({
+      x: MONOMER_START_X_POSITION,
+      y: MONOMER_START_Y_POSITION,
+    });
+
+    filteredFirstMonomersInChains.reverse().forEach((monomer, monomerIndex) => {
+      const rearrangeResult = this.rearrangeChain(
+        monomer,
+        lastPosition,
+        canvasWidth,
+        undefined,
+        monomerIndex !== 0,
+      );
+      command.merge(rearrangeResult.command);
+      lastPosition = rearrangeResult.lastPosition;
     });
 
     return command;

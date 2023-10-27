@@ -14,10 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 import { Provider } from 'react-redux';
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { Global, ThemeProvider } from '@emotion/react';
 import { createTheme } from '@mui/material/styles';
-import { merge } from 'lodash';
+import { debounce, merge } from 'lodash';
 import { SdfSerializer } from 'ketcher-core';
 import monomersData from './data/monomers.sdf';
 
@@ -37,7 +37,10 @@ import {
   destroyEditor,
   selectEditor,
   selectEditorActiveTool,
+  selectEditorBondMode,
   selectTool,
+  showPreview,
+  selectMode,
 } from 'state/common';
 import { loadMonomerLibrary } from 'state/library';
 import { useAppDispatch, useAppSelector } from 'hooks';
@@ -67,6 +70,8 @@ import {
   PhosphateAvatar,
   RNABaseAvatar,
 } from 'components/shared/monomerOnCanvas';
+import { calculatePreviewPosition } from 'helpers';
+import StyledPreview from 'components/shared/MonomerPreview';
 
 const muiTheme = createTheme(muiOverrides);
 
@@ -110,6 +115,7 @@ function Editor({ theme }: EditorProps) {
   const canvasRef = useRef<SVGSVGElement>(null);
   const errorTooltipText = useAppSelector(selectErrorTooltipText);
   const editor = useAppSelector(selectEditor);
+  const activeTool = useAppSelector(selectEditorActiveTool);
   useEffect(() => {
     dispatch(createEditor({ theme, canvas: canvasRef.current }));
     const serializer = new SdfSerializer();
@@ -121,6 +127,16 @@ function Editor({ theme }: EditorProps) {
     };
   }, [dispatch]);
 
+  const dispatchShowPreview = useCallback(
+    (payload) => dispatch(showPreview(payload)),
+    [dispatch],
+  );
+
+  const debouncedShowPreview = useMemo(
+    () => debounce((p) => dispatchShowPreview(p), 500),
+    [dispatchShowPreview],
+  );
+
   useEffect(() => {
     if (editor) {
       editor.events.error.add((errorText) =>
@@ -130,6 +146,44 @@ function Editor({ theme }: EditorProps) {
       editor.events.selectTool.dispatch('select-rectangle');
     }
   }, [editor]);
+
+  useEffect(() => {
+    editor?.events.mouseOverMonomer.add((e) => {
+      handleOpenPreview(e);
+    });
+    editor?.events.mouseLeaveMonomer.add(() => {
+      handleClosePreview();
+    });
+    editor?.events.mouseOnMoveMonomer.add((e) => {
+      handleClosePreview();
+      handleOpenPreview(e);
+    });
+  }, [editor, activeTool]);
+
+  const handleOpenPreview = useCallback(
+    (e) => {
+      const tools = ['erase', 'select-rectangle', 'bond-single'];
+      if (!tools.includes(activeTool)) {
+        handleClosePreview();
+        return;
+      }
+      const monomer = e.target.__data__.monomer.monomerItem;
+
+      const cardCoordinates = e.target.getBoundingClientRect();
+      const top = calculatePreviewPosition(monomer, cardCoordinates);
+      const previewStyle = {
+        top,
+        left: `${cardCoordinates.left + cardCoordinates.width / 2}px`,
+      };
+      debouncedShowPreview({ monomer, style: previewStyle });
+    },
+    [activeTool],
+  );
+
+  const handleClosePreview = () => {
+    debouncedShowPreview.cancel();
+    dispatch(showPreview(undefined));
+  };
 
   const handleCloseErrorTooltip = () => {
     dispatch(closeErrorTooltip());
@@ -190,11 +244,9 @@ function Editor({ theme }: EditorProps) {
           <MonomerLibrary />
         </Layout.Right>
       </Layout>
-
       <FullscreenButton />
-
+      <StyledPreview className="polymer-library-preview" />
       <ModalContainer />
-
       <Snackbar
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
         open={Boolean(errorTooltipText)}
@@ -202,7 +254,9 @@ function Editor({ theme }: EditorProps) {
         autoHideDuration={6000}
       >
         <StyledToast id="error-tooltip">
-          <StyledToastContent>{errorTooltipText}</StyledToastContent>
+          <StyledToastContent data-testid="error-tooltip">
+            {errorTooltipText}
+          </StyledToastContent>
           <StyledIconButton
             iconName="close"
             onClick={handleCloseErrorTooltip}
@@ -216,10 +270,16 @@ function Editor({ theme }: EditorProps) {
 function MenuComponent() {
   const dispatch = useAppDispatch();
   const activeTool = useAppSelector(selectEditorActiveTool);
+  const isSnakeMode = useAppSelector(selectEditorBondMode);
   const editor = useAppSelector(selectEditor);
+  const activeMenuItems = [activeTool];
+  if (isSnakeMode) activeMenuItems.push('snake-mode');
   const menuItemChanged = (name) => {
     if (modalComponentList[name]) {
       dispatch(openModal(name));
+    } else if (name === 'snake-mode') {
+      dispatch(selectMode(!isSnakeMode));
+      editor.events.selectMode.dispatch(!isSnakeMode);
     } else {
       dispatch(selectTool(name));
       editor.events.selectTool.dispatch(name);
@@ -227,7 +287,7 @@ function MenuComponent() {
   };
 
   return (
-    <Menu onItemClick={menuItemChanged} activeMenuItem={activeTool}>
+    <Menu onItemClick={menuItemChanged} activeMenuItems={activeMenuItems}>
       <Menu.Group>
         <Menu.Submenu>
           <Menu.Item itemId="open" title="Open..." />
@@ -255,6 +315,9 @@ function MenuComponent() {
       </Menu.Group>
       <Menu.Group>
         <Menu.Item itemId="bond-single" title="Single Bond (1)" />
+      </Menu.Group>
+      <Menu.Group>
+        <Menu.Item itemId="snake-mode" title="Snake mode" />
       </Menu.Group>
       <Menu.Group divider>
         <Menu.Item itemId="bracket" />

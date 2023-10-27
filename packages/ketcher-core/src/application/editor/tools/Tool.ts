@@ -23,6 +23,8 @@ interface ToolEventHandler {
 
   mouseOverMonomer?(event: Event): void;
 
+  mouseOnMoveMonomer?(event: Event): void;
+
   mouseLeaveMonomer?(event: Event): void;
 
   mouseOverDrawingEntity?(event: Event): void;

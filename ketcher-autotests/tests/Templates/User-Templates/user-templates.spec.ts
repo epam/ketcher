@@ -218,7 +218,7 @@ test.describe('Click User Templates on canvas', () => {
     Test case: EPMLSOPKET-13158(3)
     Description: Template is copied and pasted as expected.
     */
-    await openFileAndAddToCanvas('templates.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/templates.mol', page);
     await copyAndPaste(page);
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
   });
@@ -228,7 +228,7 @@ test.describe('Click User Templates on canvas', () => {
     Test case: EPMLSOPKET-13158(4)
     Description: Template is cut and pasted as expected.
     */
-    await openFileAndAddToCanvas('templates.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/templates.mol', page);
     await cutAndPaste(page);
     await waitForRender(page, async () => {
       await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
@@ -266,7 +266,7 @@ test.describe('Click User Templates on canvas', () => {
     await resetCurrentTool(page);
   });
 
-  test('Check  scrollbar in the structure field is present for long structures', async ({
+  test('Check scrollbar in the structure field is present for long structures', async ({
     page,
   }) => {
     /*

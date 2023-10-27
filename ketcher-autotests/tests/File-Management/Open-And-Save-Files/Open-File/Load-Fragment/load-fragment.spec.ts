@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, Page } from '@playwright/test';
 import {
   AtomButton,
   clickInTheMiddleOfTheScreen,
@@ -12,14 +12,30 @@ import {
   selectLeftPanelButton,
   dragMouseTo,
   LeftPanelButton,
-  selectDropdownTool,
   getCoordinatesOfTheMiddleOfTheScreen,
   moveMouseToTheMiddleOfTheScreen,
   resetCurrentTool,
   receiveFileComparisonData,
   saveToFile,
+  moveOnAtom,
 } from '@utils';
 import { getKet } from '@utils/formats';
+
+async function moveElement(
+  page: Page,
+  atomLabel: string,
+  atomNumber: number,
+  xShiftForElement = 350,
+  yShiftForElement = 150,
+) {
+  const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
+  const pointXToMoveElement = x - xShiftForElement;
+  const pointYToMoveElement = y - yShiftForElement;
+
+  await page.getByTestId('hand').click();
+  await moveOnAtom(page, atomLabel, atomNumber);
+  await dragMouseTo(pointXToMoveElement, pointYToMoveElement, page);
+}
 
 test.describe('load as fragment (Add to Canvas) srtuctures from files with different formats', () => {
   test.beforeEach(async ({ page }) => {
@@ -37,6 +53,7 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
      * Test case: EPMLSOPKET-1854
      */
     await openFileAndAddToCanvas('Molfiles-V2000/glutamine.mol', page);
+    await moveElement(page, 'O', 0);
     await openFileAndAddToCanvas('Molfiles-V2000/cyclopentyl.mol', page);
   });
 
@@ -47,25 +64,7 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
      * Test case: EPMLSOPKET-1860
      */
     await openFileAndAddToCanvas('Molfiles-V2000/cyclopentyl.mol', page);
-    // Coordinates for rectangle selection
-    const startX = 525;
-    const startY = 260;
-    const endX = 765;
-    const endY = 460;
-
-    const xForMouseClick = 555;
-    const yForMouseClick = 420;
-    const xForMoveElement = 200;
-    const yForMoveElement = 180;
-
-    await selectDropdownTool(page, 'select-rectangle', 'select-rectangle');
-    await page.mouse.move(startX, startY);
-    await page.mouse.down();
-    await page.mouse.move(endX, endY);
-    await page.mouse.up();
-    await page.mouse.move(xForMouseClick, yForMouseClick);
-    await dragMouseTo(xForMoveElement, yForMoveElement, page);
-
+    await moveElement(page, 'C', 0);
     await openFileAndAddToCanvas('Rxn-V2000/reaction-3.rxn', page);
   });
 
@@ -76,6 +75,7 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
      * Test case: EPMLSOPKET-1861
      */
     await openFileAndAddToCanvas('Molfiles-V2000/glutamine.mol', page);
+    await moveElement(page, 'O', 0);
     await openFileAndAddToCanvas('SMILES/1840-cyclopentyl.smi', page);
   });
 
@@ -129,6 +129,7 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
      * Test case: EPMLSOPKET-2933
      */
     await openFileAndAddToCanvas('Molfiles-V2000/glutamine.mol', page);
+    await moveElement(page, 'O', 0);
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
   });
 
@@ -145,19 +146,14 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
      * Hydrogen tool is applied again and placed on the right
      */
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
-    const shiftForHydrogen = 150;
+    const shiftForHydrogen = 200;
     const shiftForReactionPlus = 100;
-    const shiftForOxygen = 40;
-    const shiftForCoordinatesToResetArrowOpenAngleTool = 100;
-    const shiftForSecondHydrogen = 120;
+    const shiftForOxygen = 5;
+    const shiftForSecondHydrogen = 200;
 
     await selectAtomInToolbar(AtomButton.Hydrogen, page);
     await clickInTheMiddleOfTheScreen(page);
-    await resetCurrentTool(page);
-
-    await moveMouseToTheMiddleOfTheScreen(page);
-    await dragMouseTo(x - shiftForHydrogen, y, page);
-    await resetCurrentTool(page);
+    await moveElement(page, 'H', 0, shiftForHydrogen, 0);
 
     await selectLeftPanelButton(LeftPanelButton.ReactionPlusTool, page);
     await clickInTheMiddleOfTheScreen(page);
@@ -169,18 +165,11 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
 
     await selectAtomInToolbar(AtomButton.Oxygen, page);
     await clickInTheMiddleOfTheScreen(page);
-    await resetCurrentTool(page);
-
-    await moveMouseToTheMiddleOfTheScreen(page);
-    await dragMouseTo(x - shiftForOxygen, y, page);
-    await resetCurrentTool(page);
+    await moveElement(page, 'O', 0, shiftForOxygen, 0);
 
     await selectLeftPanelButton(LeftPanelButton.ArrowOpenAngleTool, page);
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
-
-    await page.mouse.move(x, y + shiftForCoordinatesToResetArrowOpenAngleTool);
-    await page.mouse.click;
 
     await selectAtomInToolbar(AtomButton.Hydrogen, page);
     await page.mouse.click(x + shiftForSecondHydrogen, y, {

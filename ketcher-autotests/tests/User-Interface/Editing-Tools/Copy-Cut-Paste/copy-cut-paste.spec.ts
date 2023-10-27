@@ -555,6 +555,25 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await clickOnAtom(page, 'C', anyAtom);
   });
 
+  test('Copy/Cut/Paste reaction at the same canvas', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-1739
+    Description: The whole reaction is copied and pasted correctly.
+    Select any reaction component. Copy/Paste the structure into the canvas.
+    Select the other reaction component. Cut/Paste it into the canvas.
+    Select the whole reaction. Cut/Paste it into the canvas.
+    */
+    const anyAtom = 8;
+    await openFileAndAddToCanvas('Rxn-V2000/rxn-reaction.rxn', page);
+    await cutAndPaste(page);
+    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await openFileAndAddToCanvas('Rxn-V2000/allenes.rxn', page);
+    await cutAndPaste(page);
+    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await selectAtomInToolbar(AtomButton.Nitrogen, page);
+    await clickOnAtom(page, 'C', anyAtom);
+  });
+
   test('Copy and paste reaction with changed arrow', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-2873

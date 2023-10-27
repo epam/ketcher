@@ -85,6 +85,7 @@ export enum FunctionalGroups {
   SO2H = 'SO2H',
   SO3 = 'SO3',
   SO3H = 'SO3H',
+  Tf = 'Tf',
 }
 
 export enum TemplateLibrary {
@@ -113,6 +114,13 @@ export async function selectSaltsAndSolvents(
   await expect(page.getByTestId('templates-modal')).toHaveCount(0);
 }
 
+export async function putAceticAcidOnCanvasByClickingInTheMiddleOfTheScreen(
+  page: Page,
+) {
+  await selectSaltsAndSolvents(SaltsAndSolvents.AceticAcid, page);
+  await clickInTheMiddleOfTheScreen(page);
+}
+
 export async function selectFunctionalGroups(
   functionalGroupName: FunctionalGroups,
   page: Page,
@@ -130,6 +138,15 @@ export async function selectFunctionalGroups(
   });
   await functionalGroupButton.click();
   await expect(page.getByTestId('templates-modal')).toHaveCount(0);
+}
+
+export async function selectFunctionalGroup(
+  functionalGroupName: FunctionalGroups,
+  page: Page,
+) {
+  await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+  await page.getByRole('tab', { name: 'Functional Groups' }).click();
+  await selectFunctionalGroups(functionalGroupName, page);
 }
 
 export async function selectUserTemplate(

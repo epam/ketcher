@@ -7,12 +7,20 @@ import {
   LeftPanelButton,
   BondType,
   waitForPageInit,
+  takeEditorScreenshot,
+  drawBenzeneRing,
+  clickOnAtom,
+  selectDropdownTool,
 } from '@utils';
 import { getBondByIndex } from '@utils/canvas/bonds';
 
 test.describe('Select tools tests', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
+  });
+
+  test.afterEach(async ({ page }) => {
+    await takeEditorScreenshot(page);
   });
 
   test('when add molecula and choose select tools and move cursor to edge it should show specific pointer', async ({
@@ -27,5 +35,19 @@ test.describe('Select tools tests', () => {
 
     const cursor = await page.getByTestId('canvas').getAttribute('cursor');
     expect(cursor).toBe('all-scroll');
+  });
+
+  test('When the structure is pasted or dragged', async ({ page }) => {
+    /*
+      Test case: EPMLSOPKET-8939
+      Select 'Benzene' from Templates
+      Paste it on canvas
+      Select 'Benzene' from Templates and paste over 'Benzene'
+      Place two 'Benzene' on the canvas and drag one onto the other
+    */
+    await drawBenzeneRing(page);
+    await selectDropdownTool(page, 'select-rectangle', 'select-fragment');
+    const atomWithQueryFeatures = 4;
+    await clickOnAtom(page, 'C', atomWithQueryFeatures);
   });
 });

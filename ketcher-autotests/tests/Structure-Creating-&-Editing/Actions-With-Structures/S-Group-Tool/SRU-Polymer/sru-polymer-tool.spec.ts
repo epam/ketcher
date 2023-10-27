@@ -247,31 +247,25 @@ test.describe('SRU Polymer tool', () => {
     await screenshotBetweenUndoRedo(page);
   });
 
-  test.fixme(
-    'Copy/Paste structure with SRU polymer S-Group',
-    async ({ page }) => {
-      /*
+  test('Copy/Paste structure with SRU polymer S-Group', async ({ page }) => {
+    /*
       Test case: EPMLSOPKET-1535
       Description: User is able to copy and paste structure with SRU polymer S-group.
     */
-      await openFileAndAddToCanvas('sru-polymer.mol', page);
-      await copyAndPaste(page);
-      await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
-    },
-  );
+    await openFileAndAddToCanvas('sru-polymer.mol', page);
+    await copyAndPaste(page);
+    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+  });
 
-  test.fixme(
-    'Cut/Paste structure with SRU polymer S-Group',
-    async ({ page }) => {
-      /*
+  test('Cut/Paste structure with SRU polymer S-Group', async ({ page }) => {
+    /*
       Test case: EPMLSOPKET-1535
       Description: User is able to cut and paste structure with SRU polymer S-group.
     */
-      await openFileAndAddToCanvas('sru-polymer.mol', page);
-      await cutAndPaste(page);
-      await clickInTheMiddleOfTheScreen(page);
-    },
-  );
+    await openFileAndAddToCanvas('sru-polymer.mol', page);
+    await cutAndPaste(page);
+    await clickInTheMiddleOfTheScreen(page);
+  });
 
   test('Save/Open SRU polymer S-Group', async ({ page }) => {
     /*

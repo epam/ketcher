@@ -29,7 +29,7 @@ import {
 const CANVAS_CLICK_X = 300;
 const CANVAS_CLICK_Y = 300;
 
-test.describe.fixme('Copy/Cut/Paste Actions', () => {
+test.describe('Copy/Cut/Paste Actions', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
   });
@@ -889,7 +889,7 @@ test.describe.fixme('Copy/Cut/Paste Actions', () => {
   );
 });
 
-test.describe.fixme('Copy/Cut/Paste Actions', () => {
+test.describe('Copy/Cut/Paste Actions', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
   });

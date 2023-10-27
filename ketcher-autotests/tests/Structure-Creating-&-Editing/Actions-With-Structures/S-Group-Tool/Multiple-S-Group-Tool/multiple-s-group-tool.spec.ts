@@ -176,7 +176,7 @@ test.describe('Multiple S-Group tool', () => {
     await screenshotBetweenUndoRedo(page);
   });
 
-  test.fixme('Copy/Paste structure with Multiple S-Group', async ({ page }) => {
+  test('Copy/Paste structure with Multiple S-Group', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-1522
       Description: User is able to copy and paste structure with Multiple S-group.
@@ -186,7 +186,7 @@ test.describe('Multiple S-Group tool', () => {
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
   });
 
-  test.fixme('Cut/Paste structure with Multiple S-Group', async ({ page }) => {
+  test('Cut/Paste structure with Multiple S-Group', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-1522
       Description: User is able to cut and paste structure with Multiple S-group.

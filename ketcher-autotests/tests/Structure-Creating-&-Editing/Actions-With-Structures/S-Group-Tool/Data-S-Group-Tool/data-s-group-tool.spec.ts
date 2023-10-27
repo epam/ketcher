@@ -132,7 +132,7 @@ test.describe('Data S-Group tool', () => {
     await editSGroupProperties(page, '33', 'Multiple group', '1');
   });
 
-  test.fixme('Copy/Paste structure with S-Group', async ({ page }) => {
+  test('Copy/Paste structure with S-Group', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-1514
       Description: User is able to copy and paste structure with Data S-group.
@@ -142,7 +142,7 @@ test.describe('Data S-Group tool', () => {
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
   });
 
-  test.fixme('Cut/Paste structure with S-Group', async ({ page }) => {
+  test('Cut/Paste structure with S-Group', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-1514
       Description: User is able to cut and paste structure with Data S-group.

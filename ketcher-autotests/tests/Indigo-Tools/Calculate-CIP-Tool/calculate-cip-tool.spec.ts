@@ -91,39 +91,37 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await selectTopPanelButton(TopPanelButton.Undo, page);
   });
 
-  test.fixme(
-    'Copy/Paste of structure that contain stereo labels',
-    async ({ page }) => {
-      /*
+  test('Copy/Paste of structure that contain stereo labels', async ({
+    page,
+  }) => {
+    /*
     Test case: EPMLSOPKET-1896
     Description: The structure is copied.
     Stereo labels don't disappear after paste of the structure on the canvas.
     */
-      const x = 300;
-      const y = 300;
-      await openFileAndAddToCanvas('structure-with-stereo-bonds.mol', page);
-      await selectTopPanelButton(TopPanelButton.Calculate, page);
-      await copyAndPaste(page);
-      await page.mouse.click(x, y);
-    },
-  );
+    const x = 300;
+    const y = 300;
+    await openFileAndAddToCanvas('structure-with-stereo-bonds.mol', page);
+    await selectTopPanelButton(TopPanelButton.Calculate, page);
+    await copyAndPaste(page);
+    await page.mouse.click(x, y);
+  });
 
-  test.fixme(
-    'Cut/Paste of structure that contain stereo labels',
-    async ({ page }) => {
-      /*
+  test('Cut/Paste of structure that contain stereo labels', async ({
+    page,
+  }) => {
+    /*
     Test case: EPMLSOPKET-1898
     Description: The structure is cut.
     Stereo labels don't disappear after paste of the structure on the canvas.
     */
-      const x = 300;
-      const y = 300;
-      await openFileAndAddToCanvas('structure-with-stereo-bonds.mol', page);
-      await selectTopPanelButton(TopPanelButton.Calculate, page);
-      await cutAndPaste(page);
-      await page.mouse.click(x, y);
-    },
-  );
+    const x = 300;
+    const y = 300;
+    await openFileAndAddToCanvas('structure-with-stereo-bonds.mol', page);
+    await selectTopPanelButton(TopPanelButton.Calculate, page);
+    await cutAndPaste(page);
+    await page.mouse.click(x, y);
+  });
 
   test('Operation with structure including stereo properties (E/Z labels)', async ({
     page,

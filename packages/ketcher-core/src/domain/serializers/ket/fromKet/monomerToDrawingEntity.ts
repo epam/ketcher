@@ -18,13 +18,17 @@ export function monomerToDrawingEntity(
       colorScheme: undefined,
       favorite: false,
       props: {
+        id: template.id,
         Name: template.fullName || template.alias || template.id,
         MonomerNaturalAnalogCode: template.naturalAnalogShort,
         MonomerName: template.fullName || template.alias || template.id,
-        MonomerType: template.monomerClass,
+        MonomerFullName: template.fullName,
+        MonomerType: template.class,
+        MonomerClassHELM: template.classHELM,
       },
+      attachmentPoints: template.attachmentPoints,
+      seqId: node.seqid,
     },
     new Vec2(node.position.x, node.position.y),
-    Number(node.id),
   );
 }

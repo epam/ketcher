@@ -30,7 +30,7 @@ export class PeptideRenderer extends BaseMonomerRenderer {
         'fill',
         theme.monomer.color[
           this.monomer.monomerItem.props.MonomerNaturalAnalogCode
-        ].regular,
+        ]?.regular,
       );
   }
 }

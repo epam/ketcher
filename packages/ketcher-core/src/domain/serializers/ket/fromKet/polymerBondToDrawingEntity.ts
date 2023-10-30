@@ -1,17 +1,22 @@
 import { IKetConnection } from 'application/formatters/types/ket';
 import { Command } from 'domain/entities/Command';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
+import assert from 'assert';
 
 export function polymerBondToDrawingEntity(
   connection: IKetConnection,
   drawingEntitiesManager: DrawingEntitiesManager,
+  monomerIdsMap: { [monomerIdFromKet: string]: number },
 ) {
   const command = new Command();
+  // TODO remove assertion when group connections will be supported on indigo side
+  assert(connection.endpoint1.monomerId);
+  assert(connection.endpoint2.monomerId);
   const firstMonomer = drawingEntitiesManager.monomers.get(
-    Number(connection.endPoint1.monomerId),
+    Number(monomerIdsMap[connection.endpoint1.monomerId]),
   );
   const secondMonomer = drawingEntitiesManager.monomers.get(
-    Number(connection.endPoint2.monomerId),
+    Number(monomerIdsMap[connection.endpoint2.monomerId]),
   );
 
   const { command: bondAdditionCommand, polymerBond } =
@@ -25,8 +30,8 @@ export function polymerBondToDrawingEntity(
     drawingEntitiesManager.finishPolymerBondCreation(
       polymerBond,
       secondMonomer,
-      connection.endPoint1.attachmentPointId,
-      connection.endPoint2.attachmentPointId,
+      connection.endpoint1.attachmentPointId,
+      connection.endpoint2.attachmentPointId,
     ),
   );
   return command;

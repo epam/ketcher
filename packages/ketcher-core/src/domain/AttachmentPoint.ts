@@ -228,6 +228,7 @@ export class AttachmentPoint {
       AttachmentPoint.attachmentPointLength,
       AttachmentPoint.labelOffset,
       AttachmentPoint.labelSize,
+      this.isUsed,
     );
     return [pointOnBorder, pointOfAttachment, labelPoint];
   }

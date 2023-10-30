@@ -28,6 +28,7 @@ export function findLabelPoint(
   lineLength: number,
   lineOffset: number,
   labelSize: { x: number; y: number },
+  isUsed: boolean,
 ) {
   // based on https://ru.stackoverflow.com/a/1442905
 
@@ -64,10 +65,12 @@ export function findLabelPoint(
 
   let addedOrtogonalOffset = 0;
   let addedParallelOffset = lineOffset + Math.max(labelSize.x, labelSize.y) + 2;
-  if (angle >= -270 && angle <= 0) {
-    addedOrtogonalOffset = 10;
-  } else if (angle >= -360 && angle < -270) {
-    addedOrtogonalOffset = -10;
+  if (isUsed) {
+    if (angle >= -270 && angle <= 0) {
+      addedOrtogonalOffset = 10;
+    } else if (angle >= -360 && angle < -270) {
+      addedOrtogonalOffset = -10;
+    }
   }
 
   const ortogonalOffset = {

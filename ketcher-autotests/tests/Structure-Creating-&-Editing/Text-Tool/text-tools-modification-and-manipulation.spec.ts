@@ -17,7 +17,7 @@ import {
 } from '@utils';
 import { addTextBoxToCanvas } from '@utils/selectors/addTextBoxToCanvas';
 
-async function createSomeStructure(page: Page) {
+async function selectStructureWithSelectionTool(page: Page) {
   const point = { x: 97, y: 79 };
   const point1 = { x: 943, y: 114 };
   const point2 = { x: 844, y: 579 };
@@ -30,7 +30,7 @@ async function createSomeStructure(page: Page) {
   await page.mouse.up();
 }
 
-async function createSomeMovement(page: Page) {
+async function moveStructureToNewPosition(page: Page) {
   const point = { x: 656, y: 359 };
   const point1 = { x: 906, y: 245 };
   await page.mouse.move(point.x, point.y);
@@ -206,7 +206,7 @@ test.describe('Text tools test cases', () => {
     await performUndoRedo(page);
     await takeEditorScreenshot(page);
     await selectDropdownTool(page, 'select-rectangle', 'select-lasso');
-    await createSomeStructure(page);
+    await selectStructureWithSelectionTool(page);
     await page.keyboard.press('Delete');
     await performUndoRedo(page);
   });
@@ -223,7 +223,7 @@ test.describe('Text tools test cases', () => {
     await page.keyboard.press('Control+a');
     await page.getByText(text3).hover();
     await waitForRender(page, async () => {
-      await createSomeMovement(page);
+      await moveStructureToNewPosition(page);
     });
   });
 
@@ -241,7 +241,7 @@ test.describe('Text tools test cases', () => {
     await selectTopPanelButton(TopPanelButton.Redo, page);
     await page.keyboard.press('Control+a');
     await page.getByText(text4).click();
-    await createSomeMovement(page);
+    await moveStructureToNewPosition(page);
     for (let i = 0; i < numberOfPressZoomIn; i++) {
       await waitForRender(page, async () => {
         await page.keyboard.press('Control+=');
@@ -271,9 +271,9 @@ test.describe('Text tools test cases', () => {
     });
     await takeEditorScreenshot(page);
     await selectDropdownTool(page, 'select-rectangle', 'select-lasso');
-    await createSomeStructure(page);
+    await selectStructureWithSelectionTool(page);
     await waitForRender(page, async () => {
-      await createSomeMovement(page);
+      await moveStructureToNewPosition(page);
     });
   });
 });

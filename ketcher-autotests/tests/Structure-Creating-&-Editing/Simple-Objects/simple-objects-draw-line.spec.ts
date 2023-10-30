@@ -9,7 +9,7 @@ import {
   selectDropdownTool,
 } from '@utils/clicks';
 
-async function createSomeStructure(page: Page) {
+async function selectLineWithSelectionTool(page: Page) {
   const point = { x: 97, y: 79 };
   const point1 = { x: 943, y: 114 };
   const point2 = { x: 844, y: 579 };
@@ -22,12 +22,12 @@ async function createSomeStructure(page: Page) {
   await page.mouse.up();
 }
 
-async function createSomeMovement(page: Page) {
-  const k = 759;
-  const l = 183;
+async function moveLineToNewPosition(page: Page) {
+  const x = 759;
+  const y = 183;
   await clickInTheMiddleOfTheScreen(page);
   await page.mouse.down();
-  await dragMouseTo(k, l, page);
+  await dragMouseTo(x, y, page);
   await page.mouse.up();
 }
 
@@ -45,7 +45,7 @@ async function separetingAndMovingLines(page: Page) {
   await takeEditorScreenshot(page);
   await clickInTheMiddleOfTheScreen(page);
   await selectDropdownTool(page, 'select-rectangle', 'select-lasso');
-  await createSomeStructure(page);
+  await selectLineWithSelectionTool(page);
   await page.mouse.click(point4.x, point4.y);
   await dragMouseTo(point5.x, point5.y, page);
 }
@@ -126,9 +126,9 @@ test.describe('draw and highlight line', () => {
   }) => {
     await setupLine(page);
     await selectDropdownTool(page, 'select-rectangle', 'select-lasso');
-    await createSomeStructure(page);
+    await selectLineWithSelectionTool(page);
     await takeEditorScreenshot(page);
-    await createSomeMovement(page);
+    await moveLineToNewPosition(page);
   });
 
   test('Simple Objects - Draw a lot of lines - moving and separeting crossed lines', async ({

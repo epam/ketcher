@@ -11,6 +11,7 @@ import {
   clickOnAtom,
   clickOnBond,
 } from '@utils';
+import { getLeftTopBarSize } from '@utils/canvas/common/getLeftTopBarSize';
 import { RxnArrow, RxnPlus } from 'ketcher-core';
 function checkElementExists(element: RxnPlus | RxnArrow, errorMsg: string) {
   if (!element) {
@@ -72,7 +73,7 @@ test.describe('Erase Tool', () => {
     const reactionArrow = 1;
     const plusAfterDelete = 1;
     const reactionPlus = 2;
-    const barHeight = 36;
+    const { leftBarWidth, topBarHeight } = await getLeftTopBarSize(page);
 
     const { plusElement, scale } = await page.evaluate(() => {
       const [plusElement] = window.ketcher.editor.struct().rxnPluses.values();
@@ -85,8 +86,8 @@ test.describe('Erase Tool', () => {
     checkElementExists(plusElement, 'Plus not found');
 
     const plusPnt = {
-      x: plusElement.pp.x * scale + barHeight,
-      y: plusElement.pp.y * scale + barHeight,
+      x: plusElement.pp.x * scale + leftBarWidth,
+      y: plusElement.pp.y * scale + topBarHeight,
     };
 
     await page.mouse.click(plusPnt.x, plusPnt.y);

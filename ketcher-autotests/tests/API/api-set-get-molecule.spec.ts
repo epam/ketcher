@@ -153,6 +153,9 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       async () => await setMolecule(page, orEnantiomer),
     );
 
+    const expectedFile = await getMolfile(page, 'v3000');
+    await saveToFile('test-data-for-enatiomer.mol', expectedFile);
+
     const { fileExpected: molFileExpected, file: molFile } =
       await receiveFileComparisonData({
         page,

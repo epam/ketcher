@@ -150,7 +150,7 @@ export class RxnArrowResize extends Base {
       item.pos[1].add_(d);
     }
 
-    reItem.visel.translate(Scale.obj2scaled(d, restruct.render.options));
+    reItem.visel.translate(Scale.modelToCanvas(d, restruct.render.options));
     this.data.d = d.negated();
 
     if (!this.data.noinvalidate) {

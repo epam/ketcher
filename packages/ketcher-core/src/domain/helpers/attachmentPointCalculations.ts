@@ -64,7 +64,8 @@ export function findLabelPoint(
   // find vector for Label, using normalized vector and length
 
   let addedOrtogonalOffset = 0;
-  let addedParallelOffset = lineOffset + Math.max(labelSize.x, labelSize.y) + 2;
+  const addedParallelOffset =
+    lineOffset + Math.max(labelSize.x, labelSize.y) + 2;
   if (isUsed) {
     if (angle >= -270 && angle <= 0) {
       addedOrtogonalOffset = 10;

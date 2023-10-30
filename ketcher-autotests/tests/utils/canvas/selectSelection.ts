@@ -3,7 +3,7 @@ import { TestIdSelectors } from '@utils/selectors/testIdSelectors';
 import { getControlModifier } from '@utils/keyboard';
 import { clickInTheMiddleOfTheScreen } from '@utils/clicks';
 import { INPUT_DELAY } from '@utils/globals';
-import { waitForRender } from '..';
+import { waitForCopy, waitForRender } from '..';
 
 export enum SelectionType {
   Rectangle = 'Rectangle',
@@ -73,17 +73,32 @@ export async function selectFragmentSelection(page: Page) {
     .click();
 }
 
+export async function cutAll(page: Page) {
+  const modifier = getControlModifier();
+  await waitForRender(page, async () => {
+    await page.keyboard.press(`${modifier}+KeyA`, { delay: INPUT_DELAY });
+  });
+  await waitForCopy(page, async () => {
+    await page.keyboard.press(`${modifier}+KeyX`, { delay: INPUT_DELAY });
+  });
+}
+
+export async function copyAll(page: Page) {
+  const modifier = getControlModifier();
+  await waitForRender(page, async () => {
+    await page.keyboard.press(`${modifier}+KeyA`, { delay: INPUT_DELAY });
+  });
+  await waitForCopy(page, async () => {
+    await page.keyboard.press(`${modifier}+KeyC`, { delay: INPUT_DELAY });
+  });
+}
+
 export async function cutAndPaste(page: Page) {
   const modifier = getControlModifier();
   await page.getByTestId(TestIdSelectors.RectangleSelection).click();
   // to focus in Editor
   await clickInTheMiddleOfTheScreen(page);
-  await waitForRender(page, async () => {
-    await page.keyboard.press(`${modifier}+KeyA`, { delay: INPUT_DELAY });
-  });
-  await waitForRender(page, async () => {
-    await page.keyboard.press(`${modifier}+KeyX`, { delay: INPUT_DELAY });
-  });
+  await cutAll(page);
   await waitForRender(page, async () => {
     await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
   });
@@ -94,12 +109,7 @@ export async function copyAndPaste(page: Page) {
   await page.getByTestId(TestIdSelectors.RectangleSelection).click();
   // to focus in Editor
   await clickInTheMiddleOfTheScreen(page);
-  await waitForRender(page, async () => {
-    await page.keyboard.press(`${modifier}+KeyA`, { delay: INPUT_DELAY });
-  });
-  await waitForRender(page, async () => {
-    await page.keyboard.press(`${modifier}+KeyC`, { delay: INPUT_DELAY });
-  });
+  await copyAll(page);
   await waitForRender(page, async () => {
     await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
   });

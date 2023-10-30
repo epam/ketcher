@@ -1,7 +1,7 @@
 import { Vec2 } from 'domain/entities/vec2';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { D3SvgElementSelection } from 'application/render/types';
-import { Selection } from 'd3';
+import { Selection, line } from 'd3';
 import { BaseMonomer } from './entities/BaseMonomer';
 import assert from 'assert';
 import {
@@ -19,6 +19,7 @@ export class AttachmentPoint {
   );
 
   static labelOffset = 7;
+  static radius = 6;
   static colors = {
     fillUsed: '#FF7A00',
     fill: 'white',
@@ -36,6 +37,10 @@ export class AttachmentPoint {
   private canvasOffset: Coordinates;
   private centerOFMonomer: Coordinates;
   private element: Selection<SVGGElement, void, HTMLElement, never> | undefined;
+  private hoverableArea:
+    | Selection<SVGGElement, void, HTMLElement, never>
+    | undefined;
+
   private initialAngle = 0;
   private isUsed: boolean;
   private fill: string;
@@ -103,7 +108,7 @@ export class AttachmentPoint {
 
     attachmentPointElement
       .append('circle')
-      .attr('r', 6)
+      .attr('r', AttachmentPoint.radius)
       .attr('cx', attachmentPointCoordinates.x)
       .attr('cy', attachmentPointCoordinates.y)
       .attr('stroke', fill === 'white' ? '#0097A8' : 'white')
@@ -121,6 +126,61 @@ export class AttachmentPoint {
       .style('user-select', 'none');
 
     return attachmentPoint;
+  }
+
+  private renderHoverableArea(
+    monomerCenter: Coordinates,
+    attachmentPointCenter: Coordinates,
+    angleDegrees: number,
+  ) {
+    if (!this.element) {
+      return;
+    }
+
+    const rotation = angleDegrees + 90;
+    const halfWidth = 20;
+
+    const areaHeight = Math.sqrt(
+      (monomerCenter.x - attachmentPointCenter.x) ** 2 +
+        (monomerCenter.y - attachmentPointCenter.y) ** 2,
+    );
+
+    const points: Coordinates[] = [
+      { x: -AttachmentPoint.radius, y: 0 },
+      { x: AttachmentPoint.radius, y: 0 },
+      {
+        x: halfWidth,
+        y: -areaHeight,
+      },
+      {
+        x: -halfWidth,
+        y: -areaHeight,
+      },
+      { x: -AttachmentPoint.radius, y: 0 },
+    ];
+
+    const lineFunction = line<Coordinates>()
+      .x(function (point) {
+        return point.x;
+      })
+      .y(function (point) {
+        return point.y;
+      });
+
+    const hoverableAreaElement = this.element.append('g');
+
+    hoverableAreaElement
+      .append('path')
+      .attr('d', lineFunction(points) + 'z')
+      .attr('stroke', 'black')
+      .attr('stroke-width', '1px')
+      .attr('fill', '#0097A8')
+      .attr(
+        'transform',
+        `translate(${attachmentPointCenter.x},${attachmentPointCenter.y})rotate(${rotation})`,
+      );
+
+    return hoverableAreaElement;
   }
 
   public appendAttachmentPoint() {
@@ -152,6 +212,14 @@ export class AttachmentPoint {
 
     const [pointOnBorder, pointOfAttachment, labelPoint] =
       this.catchThePoint(angleDegrees);
+
+    const attachmentToCenterCoordinates = canvasToMonomerCoordinates(
+      this.centerOFMonomer,
+      this.centerOFMonomer,
+      this.bodyWidth,
+      this.bodyHeight,
+    );
+
     const attachmentToBorderCoordinates = canvasToMonomerCoordinates(
       pointOnBorder,
       this.centerOFMonomer,
@@ -180,6 +248,15 @@ export class AttachmentPoint {
     );
 
     this.element = attachmentPoint;
+
+    const hoverableArea = this.renderHoverableArea(
+      attachmentToCenterCoordinates,
+      attachmentPointCoordinates,
+      angleDegrees,
+    );
+
+    this.hoverableArea = hoverableArea;
+
     return attachmentPoint;
   }
 
@@ -232,6 +309,10 @@ export class AttachmentPoint {
 
   public getElement() {
     return this.element;
+  }
+
+  public getHoverableArea() {
+    return this.hoverableArea;
   }
 
   public getAngle() {

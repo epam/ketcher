@@ -14,7 +14,7 @@ export function monomerToDrawingEntity(
   return drawingEntitiesManager.addMonomer(
     {
       struct,
-      label: node.id,
+      label: template.alias || template.id,
       colorScheme: undefined,
       favorite: false,
       props: {

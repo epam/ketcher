@@ -257,7 +257,6 @@ export class BaseMonomer extends DrawingEntity {
         ] = null;
       },
     );
-    console.log(attachmentPointDictionnary);
     return attachmentPointDictionnary;
   }
 
@@ -307,20 +306,12 @@ export class BaseMonomer extends DrawingEntity {
   public getAttachmentPointDictFromAtoms(): Partial<
     Record<AttachmentPointName, PolymerBond | null>
   > {
-    const attachmentAtoms = this.monomerItem.struct.atoms.filter((_, value) => {
-      return Boolean(value.rglabel);
-    });
     const attachmentPointNameToBond = {};
 
-    attachmentAtoms.forEach((atom, _) => {
-      const label = convertAttachmentPointNumberToLabel(Number(atom.rglabel));
+    this.attachmentAtoms.forEach(({ rglabel }, _) => {
+      const label = convertAttachmentPointNumberToLabel(Number(rglabel));
       attachmentPointNameToBond[label] = null;
     });
-
-    for (let i = 1; i <= this.attachmentAtoms.length; i++) {
-      const label = `R${i}`;
-      attachmentPointNameToBond[label] = null;
-    }
 
     return attachmentPointNameToBond;
   }

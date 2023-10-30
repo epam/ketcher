@@ -14,7 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { AtomList, Bond, Elements, StereoLabel } from 'ketcher-core';
+import {
+  AtomList,
+  Bond,
+  Elements,
+  StereoLabel,
+  getAtomType,
+} from 'ketcher-core';
 
 import { atom as atomSchema } from '../schema/struct-schema';
 import { capitalize } from 'lodash/fp';
@@ -104,11 +110,7 @@ export function toElement(elem) {
 
 export function fromAtom(satom) {
   const alias = satom.alias || '';
-  const atomType = satom.atomList
-    ? 'list'
-    : satom.pseudo === satom.label
-    ? 'pseudo'
-    : 'single';
+  const atomType = getAtomType(satom);
   return {
     alias,
     atomType,

@@ -415,6 +415,24 @@ test.describe('RNA Library', () => {
     await takeRNABuilderScreenshot(page);
   });
 
+  test('Add names to RNA manually', async ({ page }) => {
+    /* 
+    Test case: #2759 - Edit RNA mode
+    Description: RNA name added.
+    */
+    await page.getByTestId('RNA-TAB').click();
+    await page.getByTestId('rna-builder-slot--sugar').click();
+    await page.getByTestId('25R___2,5-Ribose').click();
+    await page.getByTestId('rna-builder-slot--base').click();
+    await page.getByTestId('A___Adenine').click();
+    await page.getByTestId('rna-builder-slot--phosphate').click();
+    await page.getByTestId('Test-6-Ph___Test-6-AP-Phosphate').click();
+    await page.getByPlaceholder('Name your structure').click();
+    await page.getByPlaceholder('Name your structure').fill('cTest');
+    await page.getByTestId('add-to-presets-btn').click();
+    await takeRNABuilderScreenshot(page);
+  });
+
   test('Highlight Sugar, Phosphate and Base in Library, once it chosen in RNA Builder', async ({
     page,
   }) => {

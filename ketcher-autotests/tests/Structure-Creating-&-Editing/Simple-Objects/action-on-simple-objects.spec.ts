@@ -19,6 +19,7 @@ import {
   receiveFileComparisonData,
   pressButton,
   STRUCTURE_LIBRARY_BUTTON_NAME,
+  cutAndPaste,
 } from '@utils';
 import { getKet } from '@utils/formats';
 
@@ -40,31 +41,7 @@ async function setZoomInputValue(page: Page, value: string) {
   await page.keyboard.press('Enter');
 }
 
-async function createSomeStructure(page: Page) {
-  const point = { x: 97, y: 79 };
-  const point1 = { x: 943, y: 114 };
-  const point2 = { x: 844, y: 579 };
-  const point3 = { x: 66, y: 611 };
-  await page.mouse.move(point.x, point.y);
-  await page.mouse.down();
-  await page.mouse.move(point1.x, point1.y);
-  await page.mouse.move(point2.x, point2.y);
-  await page.mouse.move(point3.x, point3.y);
-  await page.mouse.up();
-}
-
-async function createSomeMove(page: Page) {
-  const point = { x: 330, y: 324 };
-  const point1 = { x: 720, y: 335 };
-  const point2 = { x: 706, y: 530 };
-  await page.mouse.move(point.x, point.y);
-  await page.mouse.down();
-  await page.mouse.move(point1.x, point1.y);
-  await page.mouse.move(point2.x, point2.y);
-  await page.mouse.up();
-}
-
-async function simpleObjects(page: Page) {
+async function selectAndMoveSimpleObjects(page: Page) {
   const point = { x: 727, y: 359 };
   const point1 = { x: 83, y: 207 };
   await openFileAndAddToCanvas('KET/simple-objects.ket', page);
@@ -117,7 +94,6 @@ test.describe('Action on simples objects', () => {
     await setupEllipse(page);
     await setZoomInputValue(page, '200');
     await clickInTheMiddleOfTheScreen(page);
-    await setupEllipse(page);
     await waitForRender(page, async () => {
       await setZoomInputValue(page, '100');
     });
@@ -145,16 +121,21 @@ test.describe('Action on simples objects', () => {
     });
   });
 
-  test('Simple object - Delete Simple Objects', async ({ page }) => {
+  test('Simple object - Delete Simple Objects with Delete button', async ({
+    page,
+  }) => {
     // Test case: EPMLSOPKET-1983
     await openFileAndAddToCanvas('KET/simple-objects.ket', page);
-    await page.keyboard.press('Control+-');
-    await page.keyboard.press('Control+-');
-    await selectDropdownTool(page, 'select-rectangle', 'select-lasso');
-    await createSomeMove(page);
+    await page.keyboard.press('Control+a');
     await page.keyboard.press('Delete');
-    await takeEditorScreenshot(page);
-    await createSomeStructure(page);
+  });
+
+  test('Simple object - Delete Simple Objects with Backspace button', async ({
+    page,
+  }) => {
+    // Test case: EPMLSOPKET-1983
+    await openFileAndAddToCanvas('KET/simple-objects.ket', page);
+    await page.keyboard.press('Control+a');
     await page.keyboard.press('Backspace');
   });
 
@@ -163,8 +144,9 @@ test.describe('Action on simples objects', () => {
   }) => {
     // Test case: EPMLSOPKET-1984
     const numberOfPressZoomOut = 5;
-    const numberOfUndo = 3;
-    const numberOfRedo = 3;
+    const numberOfPress = 1;
+    const anyPointX = 200;
+    const anyPointY = 200;
     await openFileAndAddToCanvas('KET/simple-objects.ket', page);
     for (let i = 0; i < numberOfPressZoomOut; i++) {
       await waitForRender(page, async () => {
@@ -172,16 +154,16 @@ test.describe('Action on simples objects', () => {
       });
     }
     await copyAndPaste(page);
-    await clickInTheMiddleOfTheScreen(page);
-    await copyAndPaste(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await page.mouse.click(anyPointX, anyPointY);
     await takeEditorScreenshot(page);
-    for (let i = 0; i < numberOfUndo; i++) {
+    for (let i = 0; i < numberOfPress; i++) {
       await selectTopPanelButton(TopPanelButton.Undo, page);
     }
-    await clickInTheMiddleOfTheScreen(page);
-    for (let i = 0; i < numberOfRedo; i++) {
-      await selectTopPanelButton(TopPanelButton.Redo, page);
+    await cutAndPaste(page);
+    await page.mouse.click(anyPointX, anyPointY);
+    await takeEditorScreenshot(page);
+    for (let i = 0; i < numberOfPress; i++) {
+      await selectTopPanelButton(TopPanelButton.Undo, page);
     }
   });
 
@@ -190,8 +172,7 @@ test.describe('Action on simples objects', () => {
   }) => {
     // Test case: EPMLSOPKET-1982
     // Open file with simple object and adding some structure
-    await simpleObjects(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await selectAndMoveSimpleObjects(page);
     await waitForRender(page, async () => {
       await drawBenzeneRing(page);
     });
@@ -218,7 +199,7 @@ test.describe('Action on simples objects', () => {
 
   test('Simple Objects - Save to Templates', async ({ page }) => {
     // Test case: EPMLSOPKET-14027
-    await simpleObjects(page);
+    await selectAndMoveSimpleObjects(page);
     await clickInTheMiddleOfTheScreen(page);
     await drawBenzeneRing(page);
     await saveToTemplates(page);

@@ -22,7 +22,7 @@ export type MonomerItemType = {
     MonomerCaps?: string;
     MonomerCode?: string;
     MonomerType?: string;
-    MonomerClassHELM?: string;
+    MonomerClass?: string;
     isMicromoleculeFragment?: boolean;
   };
   attachmentPoints?: IKetAttachmentPoint[];

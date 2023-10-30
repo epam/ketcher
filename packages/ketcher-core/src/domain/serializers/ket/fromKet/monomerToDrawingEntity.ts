@@ -14,7 +14,7 @@ export function monomerToDrawingEntity(
   return drawingEntitiesManager.addMonomer(
     {
       struct,
-      label: template.alias || template.id,
+      label: node.id,
       colorScheme: undefined,
       favorite: false,
       props: {
@@ -23,8 +23,8 @@ export function monomerToDrawingEntity(
         MonomerNaturalAnalogCode: template.naturalAnalogShort,
         MonomerName: template.fullName || template.alias || template.id,
         MonomerFullName: template.fullName,
-        MonomerType: template.class,
-        MonomerClassHELM: template.classHELM,
+        MonomerType: template.classHELM,
+        MonomerClass: template.class,
       },
       attachmentPoints: template.attachmentPoints,
       seqId: node.seqid,

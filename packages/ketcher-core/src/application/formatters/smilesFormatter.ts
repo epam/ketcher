@@ -57,4 +57,8 @@ export class SmilesFormatter implements StructFormatter {
 
     return serverFormatter.getStructureFromStringAsync(stringifiedStruct);
   }
+
+  static isContainsCoordinates(smiles: string) {
+    return /\([\d.,;-]+\)/.test(smiles);
+  }
 }

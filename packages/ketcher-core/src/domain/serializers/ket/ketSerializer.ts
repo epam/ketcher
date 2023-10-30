@@ -42,10 +42,7 @@ import { monomerToDrawingEntity } from 'domain/serializers/ket/fromKet/monomerTo
 import assert from 'assert';
 import { polymerBondToDrawingEntity } from 'domain/serializers/ket/fromKet/polymerBondToDrawingEntity';
 import { getMonomerUniqueKey } from 'domain/helpers/monomers';
-import {
-  MONOMER_CONST,
-  monomerFactory,
-} from 'application/editor/operations/monomer/monomerFactory';
+import { MONOMER_CONST } from 'application/editor/operations/monomer/monomerFactory';
 import { KetcherLogger } from 'utilities';
 import { Chem } from 'domain/entities/Chem';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
@@ -437,18 +434,13 @@ export class KetSerializer implements Serializer<Struct> {
         const templateNameWithPrefix = setMonomerTemplatePrefix(templateId);
 
         if (!fileContent[templateNameWithPrefix]) {
-          const [, , monomerClass] = monomerFactory(monomer.monomerItem);
           fileContent[templateNameWithPrefix] = {
             ...JSON.parse(
               this.serializeMicromolecules(monomer.monomerItem.struct),
             ).mol0,
             type: 'monomerTemplate',
-            class:
-              monomerClass === MONOMER_CONST.CHEM &&
-              monomer.monomerItem.props.MonomerType === MONOMER_CONST.DNA
-                ? MONOMER_CONST.DNA
-                : monomerClass,
-            classHELM: monomer.monomerItem.props.MonomerClassHELM,
+            class: monomer.monomerItem.props.MonomerClass,
+            classHELM: monomer.monomerItem.props.MonomerType,
             naturalAnalogShort:
               monomer.monomerItem.props.MonomerNaturalAnalogCode,
             id: templateId,

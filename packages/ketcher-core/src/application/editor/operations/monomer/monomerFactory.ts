@@ -17,6 +17,7 @@ import { monomerClass } from 'application/formatters/types/ket';
 
 type DerivedClass<T> = new (...args: unknown[]) => T;
 export const MONOMER_CONST = {
+  AMINO_ACID: 'AminoAcid',
   PEPTIDE: 'PEPTIDE',
   CHEM: 'CHEM',
   RNA: 'RNA',
@@ -41,7 +42,7 @@ export const monomerFactory = (
 
   if (
     monomer.props.MonomerType === MONOMER_CONST.CHEM ||
-    monomer.props.MonomerType === MONOMER_CONST.DNA
+    monomer.props.MonomerType === MONOMER_CONST.RNA
   ) {
     Monomer = Chem;
     MonomerRenderer = ChemRenderer;

@@ -17,11 +17,11 @@ import {
   setValence,
 } from '../utils';
 
-async function drawStructure(page: Page) {
+async function drawStructure(page: Page, numberOfClicks: number) {
   await selectBond(BondTypeName.Single, page);
-  await clickInTheMiddleOfTheScreen(page);
-  await clickInTheMiddleOfTheScreen(page);
-  await clickInTheMiddleOfTheScreen(page);
+  for (let i = 0; i < numberOfClicks; i++) {
+    await clickInTheMiddleOfTheScreen(page);
+  }
 }
 
 test.describe('Checking atom properties attributes in SMARTS format', () => {
@@ -29,8 +29,9 @@ test.describe('Checking atom properties attributes in SMARTS format', () => {
 
   test.beforeEach(async ({ page }) => {
     const numberOfAtom = 0;
+    const numberOfBondsAtStructure = 3;
     await waitForPageInit(page);
-    await drawStructure(page);
+    await drawStructure(page, numberOfBondsAtStructure);
     await page.keyboard.press('Escape');
     await doubleClickOnAtom(page, 'C', numberOfAtom);
     await waitForAtomPropsModal(page);

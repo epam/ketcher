@@ -97,7 +97,9 @@ export function rglabelToStruct(source) {
     z: source.location[2] || 0.0
   })
   ifDef(params, 'attpnt', source.attachmentPoints)
-  const rglabel = toRlabel(source.$refs.map((el) => parseInt(el.slice(3))))
+  const rglabel = toRlabel(
+    source.$refs?.map((el) => parseInt(el.slice(3))) ?? []
+  )
   ifDef(params, 'rglabel', rglabel)
   return new Atom(params)
 }

@@ -134,7 +134,7 @@ test.describe('Check attachment point rotation', () => {
     await selectSingleBondTool(page);
     // Hover 1th peptide
     await peptide1.hover();
-
+    await page.getByTestId('polymer-library-preview');
     await takeEditorScreenshot(page);
   });
 });

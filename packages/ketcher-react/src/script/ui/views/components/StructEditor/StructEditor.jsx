@@ -30,6 +30,7 @@ import { ContextMenu, ContextMenuTrigger } from '../ContextMenu';
 import InfoPanel from './InfoPanel';
 import { KetcherLogger } from 'ketcher-core';
 import { getSmoothScrollDelta } from './helpers';
+import InfoTooltip from './InfoTooltip';
 
 // TODO: need to update component after making refactoring of store
 function setupEditor(editor, props, oldProps = {}) {
@@ -323,6 +324,7 @@ class StructEditor extends Component {
           groupStruct={this.props.groupStruct}
           sGroup={this.props.sGroup}
         />
+        <InfoTooltip render={this.props.render} />
 
         <FloatingToolContainer />
 

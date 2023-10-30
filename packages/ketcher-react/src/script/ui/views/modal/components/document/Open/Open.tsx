@@ -22,6 +22,7 @@ import Recognize from '../../process/Recognize/Recognize';
 import { fileOpener } from '../../../../../utils/';
 import { DialogActionButton } from './components/DialogActionButton';
 import { ViewSwitcher } from './components/ViewSwitcher';
+import { getFormatMimeTypeByFileName } from 'ketcher-core';
 
 interface OpenProps {
   server: any;
@@ -115,7 +116,8 @@ const Open: FC<Props> = (props) => {
   const { onOk } = rest;
 
   const copyHandler = () => {
-    onOk({ structStr, fragment: true });
+    const format = getFormatMimeTypeByFileName(fileName);
+    onOk({ structStr, fragment: true, 'input-format': format });
   };
 
   const openHandler = () => {

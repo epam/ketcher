@@ -262,7 +262,9 @@ test.describe('Atom Tool', () => {
       page,
     );
     await copyAndPaste(page);
-    await page.mouse.click(x, y);
+    await waitForRender(page, async () => {
+      await page.mouse.click(x, y);
+    });
   });
 
   test('Cut and paste structure with List/Not List and Generic Group', async ({
@@ -279,7 +281,9 @@ test.describe('Atom Tool', () => {
       page,
     );
     await cutAndPaste(page);
-    await page.mouse.click(x, y);
+    await waitForRender(page, async () => {
+      await page.mouse.click(x, y);
+    });
   });
 
   test('Drag and drop Bromine atom on Benzene ring-Merging atom-to-atom', async ({

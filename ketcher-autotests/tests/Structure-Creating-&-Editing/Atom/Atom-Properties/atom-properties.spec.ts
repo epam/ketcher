@@ -1367,7 +1367,9 @@ test.describe('Atom Properties', () => {
       page,
     );
     await copyAndPaste(page);
-    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await waitForRender(page, async () => {
+      await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    });
   });
 
   test('All atom properties information saved as *.mol file', async ({

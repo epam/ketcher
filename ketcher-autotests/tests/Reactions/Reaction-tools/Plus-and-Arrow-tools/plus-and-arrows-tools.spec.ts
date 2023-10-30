@@ -26,6 +26,10 @@ import {
   waitForPageInit,
   waitForRender,
   openDropdown,
+  copyAll,
+  waitForPaste,
+  waitForCopy,
+  waitForCut,
 } from '@utils';
 
 const xOffsetFromCenter = -35;
@@ -222,31 +226,41 @@ test.describe('Plus and Arrows tools ', () => {
     test('Select plus sign, cut and paste it onto the canvas', async ({
       page,
     }) => {
-      await page.mouse.click(point.x - 150, point.y - 10);
-      await delay(DELAY_IN_SECONDS.ONE);
-      await page.keyboard.press(`${modifier}+KeyX`);
-      await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
+      await waitForRender(page, async () => {
+        await page.mouse.click(point.x - 150, point.y - 10);
+      });
+      await waitForCut(page, async () => {
+        await page.keyboard.press(`${modifier}+KeyX`);
+      });
+      await waitForPaste(page, async () => {
+        await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
+      });
       await clickOnTheCanvas(page, 0, -100);
     });
 
     test('Select plus sign, copy and paste it onto the canvas', async ({
       page,
     }) => {
-      await page.mouse.click(point.x - 150, point.y - 10);
-      await delay(DELAY_IN_SECONDS.ONE);
-      await page.keyboard.press(`${modifier}+KeyC`);
-      await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
+      await waitForRender(page, async () => {
+        await page.mouse.click(point.x - 150, point.y - 10);
+      });
+      await waitForCopy(page, async () => {
+        await page.keyboard.press(`${modifier}+KeyC`);
+      });
+      await waitForPaste(page, async () => {
+        await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
+      });
       await clickOnTheCanvas(page, 0, -100);
     });
 
     test('Select the whole reaction and move it, Undo, Erase tool', async ({
       page,
     }) => {
-      await page.keyboard.press(`${modifier}+KeyA`);
-      await delay(DELAY_IN_SECONDS.ONE);
-      await page.keyboard.press(`${modifier}+KeyC`);
+      await copyAll(page);
       await page.mouse.move(point.x - 100, point.y - 100);
-      await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
+      await waitForPaste(page, async () => {
+        await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
+      });
       await takeEditorScreenshot(page);
       await selectTopPanelButton(TopPanelButton.Undo, page);
       await takeEditorScreenshot(page);
@@ -290,31 +304,41 @@ test.describe('Plus and Arrows tools ', () => {
     test('Select reaction arrow, cut and paste it onto the canvas', async ({
       page,
     }) => {
-      await page.mouse.click(point.x + 60, point.y);
-      await delay(DELAY_IN_SECONDS.ONE);
-      await page.keyboard.press(`${modifier}+KeyX`);
-      await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
+      await waitForRender(page, async () => {
+        await page.mouse.click(point.x + 60, point.y);
+      });
+      await waitForCut(page, async () => {
+        await page.keyboard.press(`${modifier}+KeyX`);
+      });
+      await waitForPaste(page, async () => {
+        await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
+      });
       await clickOnTheCanvas(page, 0, -100);
     });
 
     test('Select reaction arrow, copy and paste it onto the canvas', async ({
       page,
     }) => {
-      await page.mouse.click(point.x + 60, point.y);
-      await delay(DELAY_IN_SECONDS.ONE);
-      await page.keyboard.press(`${modifier}+KeyC`);
-      await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
+      await waitForRender(page, async () => {
+        await page.mouse.click(point.x + 60, point.y);
+      });
+      await waitForCopy(page, async () => {
+        await page.keyboard.press(`${modifier}+KeyC`);
+      });
+      await waitForPaste(page, async () => {
+        await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
+      });
       await clickOnTheCanvas(page, 0, -100);
     });
 
     test('Select the whole reaction and move it, Undo, Erase tool', async ({
       page,
     }) => {
-      await page.keyboard.press(`${modifier}+KeyA`);
-      await delay(DELAY_IN_SECONDS.ONE);
-      await page.keyboard.press(`${modifier}+KeyC`);
+      await copyAll(page);
       await page.mouse.move(point.x - 100, point.y - 100);
-      await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
+      await waitForPaste(page, async () => {
+        await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
+      });
       await takeEditorScreenshot(page);
       await selectTopPanelButton(TopPanelButton.Undo, page);
       await takeEditorScreenshot(page);
@@ -363,10 +387,15 @@ test.describe('Plus and Arrows tools ', () => {
     test('Select reaction arrow, cut and paste it onto the canvas', async ({
       page,
     }) => {
-      await page.mouse.click(point.x + 60, point.y);
-      await delay(DELAY_IN_SECONDS.ONE);
-      await page.keyboard.press(`${modifier}+KeyX`);
-      await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
+      await waitForRender(page, async () => {
+        await page.mouse.click(point.x + 60, point.y);
+      });
+      await waitForCut(page, async () => {
+        await page.keyboard.press(`${modifier}+KeyX`);
+      });
+      await waitForPaste(page, async () => {
+        await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
+      });
       await clickOnTheCanvas(page, 0, -100);
     });
 
@@ -376,18 +405,27 @@ test.describe('Plus and Arrows tools ', () => {
       await page.mouse.move(point.x - 40, point.y - 300);
       await dragMouseTo(point.x + 400, point.y + 100, page);
       await delay(DELAY_IN_SECONDS.ONE);
-      await page.keyboard.press(`${modifier}+KeyX`);
-      await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
+      await waitForCut(page, async () => {
+        await page.keyboard.press(`${modifier}+KeyX`);
+      });
+      await waitForPaste(page, async () => {
+        await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
+      });
       await clickOnTheCanvas(page, 0, -100);
     });
 
     test('Select reaction arrow, copy and paste it onto the canvas', async ({
       page,
     }) => {
-      await page.mouse.click(point.x + 60, point.y);
-      await delay(DELAY_IN_SECONDS.ONE);
-      await page.keyboard.press(`${modifier}+KeyC`);
-      await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
+      await waitForRender(page, async () => {
+        await page.mouse.click(point.x + 60, point.y);
+      });
+      await waitForCopy(page, async () => {
+        await page.keyboard.press(`${modifier}+KeyC`);
+      });
+      await waitForPaste(page, async () => {
+        await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
+      });
       await clickOnTheCanvas(page, 0, -100);
       await screenshotBetweenUndoRedo(page);
     });
@@ -636,9 +674,12 @@ test.describe('Plus and Arrows tools ', () => {
 
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
     await clickInTheMiddleOfTheScreen(page);
-    await delay(DELAY_IN_SECONDS.ONE);
-    await page.keyboard.press(`${modifier}+KeyC`);
-    await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
+    await waitForCopy(page, async () => {
+      await page.keyboard.press(`${modifier}+KeyC`);
+    });
+    await waitForPaste(page, async () => {
+      await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
+    });
     await selectTopPanelButton(TopPanelButton.Clear, page);
   });
 

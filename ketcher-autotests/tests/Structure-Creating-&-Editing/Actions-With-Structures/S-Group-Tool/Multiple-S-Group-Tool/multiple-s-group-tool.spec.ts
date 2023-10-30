@@ -24,6 +24,7 @@ import {
   AttachmentPoint,
   setAttachmentPoints,
   waitForPageInit,
+  waitForRender,
 } from '@utils';
 import { getMolfile } from '@utils/formats';
 
@@ -191,7 +192,9 @@ test.describe('Multiple S-Group tool', () => {
     */
     await openFileAndAddToCanvas('KET/multiple-group.ket', page);
     await copyAndPaste(page);
-    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await waitForRender(page, async () => {
+      await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    });
   });
 
   test('Cut/Paste structure with Multiple S-Group', async ({ page }) => {

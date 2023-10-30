@@ -35,6 +35,7 @@ import {
   DELAY_IN_SECONDS,
   delay,
   waitForPageInit,
+  waitForRender,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 
@@ -569,7 +570,9 @@ test.describe('Undo/Redo Actions', () => {
     await page.getByLabel(AttachmentPoint.SECONDARY).check();
     await pressButton(page, 'Apply');
     await copyAndPaste(page);
-    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await waitForRender(page, async () => {
+      await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    });
     await screenshotBetweenUndoRedo(page);
   });
 
@@ -585,8 +588,9 @@ test.describe('Undo/Redo Actions', () => {
     await page.getByLabel(AttachmentPoint.SECONDARY).check();
     await pressButton(page, 'Apply');
     await cutAndPaste(page);
-    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
-    await delay(DELAY_IN_SECONDS.TWO);
+    await waitForRender(page, async () => {
+      await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    });
     await screenshotBetweenUndoRedo(page);
   });
 

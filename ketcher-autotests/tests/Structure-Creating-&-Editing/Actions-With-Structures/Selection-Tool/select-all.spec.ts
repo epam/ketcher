@@ -10,6 +10,7 @@ import {
   selectAllStructuresOnCanvas,
   selectLeftPanelButton,
   takeEditorScreenshot,
+  waitForRender,
 } from '@utils';
 
 test.describe('Select all', () => {
@@ -47,7 +48,9 @@ test.describe('Select all', () => {
     await openFileAndAddToCanvas('Molfiles-V2000/three-structures.mol', page);
     await selectAllStructuresOnCanvas(page);
     await cutAndPaste(page);
-    await page.mouse.click(offset, offset);
+    await waitForRender(page, async () => {
+      await page.mouse.click(offset, offset);
+    });
   });
 
   test('Select all using hot-key - 3/4 copy and paste', async ({ page }) => {
@@ -60,7 +63,9 @@ test.describe('Select all', () => {
     await openFileAndAddToCanvas('Molfiles-V2000/three-structures.mol', page);
     await selectAllStructuresOnCanvas(page);
     await copyAndPaste(page);
-    await page.mouse.click(offset, offset);
+    await waitForRender(page, async () => {
+      await page.mouse.click(offset, offset);
+    });
   });
 
   test('Select all using hot-key - 4/4 delete', async ({ page }) => {

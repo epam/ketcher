@@ -9,6 +9,7 @@ import {
   takeEditorScreenshot,
   takeLeftToolbarScreenshot,
   waitForPageInit,
+  waitForRender,
 } from '@utils';
 import { getMolfile } from '@utils/formats';
 
@@ -50,7 +51,9 @@ test.describe('R-Group', () => {
       page,
     );
     await copyAndPaste(page);
-    await page.mouse.click(x, y);
+    await waitForRender(page, async () => {
+      await page.mouse.click(x, y);
+    });
     await screenshotBetweenUndoRedo(page);
   });
 
@@ -67,7 +70,9 @@ test.describe('R-Group', () => {
       page,
     );
     await cutAndPaste(page);
-    await page.mouse.click(x, y);
+    await waitForRender(page, async () => {
+      await page.mouse.click(x, y);
+    });
     await screenshotBetweenUndoRedo(page);
   });
 

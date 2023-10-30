@@ -131,7 +131,9 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await openFileAndAddToCanvas('structure-with-stereo-bonds.mol', page);
     await selectTopPanelButton(TopPanelButton.Calculate, page);
     await cutAndPaste(page);
-    await page.mouse.click(x, y);
+    await waitForRender(page, async () => {
+      await page.mouse.click(x, y);
+    });
   });
 
   test('Operation with structure including stereo properties (E/Z labels)', async ({

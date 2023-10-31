@@ -274,7 +274,6 @@ class ReAtom extends ReObject {
       leftMargin = data.leftMargin;
       implh = Math.floor(this.a.implicitH);
       isHydrogen = label.text === 'H';
-      isHydrogenIsotope = label.text === 'D' || label.text === 'T';
 
       if (label.background) {
         restruct.addReObjectPath(

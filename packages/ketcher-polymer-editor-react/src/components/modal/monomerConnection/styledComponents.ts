@@ -19,7 +19,7 @@ export const AttachmentPointList = styled.div({
   justifyContent: 'start',
   gap: '10px',
   alignSelf: 'flex-start',
-  width: 150,
+  width: 197,
 });
 
 export const AttachmentPoint = styled.div({

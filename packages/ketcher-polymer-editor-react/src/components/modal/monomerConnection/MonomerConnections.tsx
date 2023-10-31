@@ -33,7 +33,13 @@ export const StyledStructRender = styled(StructRender)(({ theme }) => ({
   width: '200px',
   border: `${theme.ketcher.outline.medium}`,
   borderRadius: theme.ketcher.border.radius.regular,
-  padding: 2,
+  padding: 5,
+}));
+export const ActionButtonLeft = styled(ActionButton)(() => ({
+  marginRight: 'auto',
+}));
+export const ActionButtonAttachmentPoint = styled(ActionButton)(() => ({
+  borderRadius: 5,
 }));
 
 const MonomerConnection = ({
@@ -103,7 +109,7 @@ const MonomerConnection = ({
       </Modal.Content>
 
       <Modal.Footer>
-        <ActionButton
+        <ActionButtonLeft
           label="Cancel"
           styleType="secondary"
           clickHandler={cancelBondCreationAndClose}
@@ -138,6 +144,15 @@ function AttachmentPointSelectionPanel({
     [bonds],
   );
 
+  const monomerLeavingGroupsArray =
+    monomer.monomerItem.props.MonomerCaps?.split(',');
+  const monomerLeavingGroups: { [key: string]: string } | undefined =
+    monomerLeavingGroupsArray?.reduce((acc, item) => {
+      const [attachmentPoint, leavingGroup] = item.slice(1).split(']');
+      acc[attachmentPoint] = leavingGroup;
+      return acc;
+    }, {});
+
   return (
     <>
       <MonomerName>{monomer.monomerItem.props.Name}</MonomerName>
@@ -152,7 +167,7 @@ function AttachmentPointSelectionPanel({
       <AttachmentPointList>
         {Object.entries(bonds).map(([attachmentPoint, bond]) => (
           <AttachmentPoint key={attachmentPoint}>
-            <ActionButton
+            <ActionButtonAttachmentPoint
               label={attachmentPoint}
               styleType={
                 attachmentPoint === selectedAttachmentPoint
@@ -162,7 +177,11 @@ function AttachmentPointSelectionPanel({
               clickHandler={() => onSelectAttachmentPoint(attachmentPoint)}
               disabled={Boolean(bond)}
             />
-            <AttachmentPointName>H</AttachmentPointName>
+            <AttachmentPointName>
+              {monomerLeavingGroups
+                ? monomerLeavingGroups[attachmentPoint]
+                : 'H'}
+            </AttachmentPointName>
           </AttachmentPoint>
         ))}
       </AttachmentPointList>

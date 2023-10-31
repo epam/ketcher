@@ -7,13 +7,15 @@ import { useAppSelector } from 'hooks';
 import { selectEditor } from 'state/common';
 import { useMemo, useState } from 'react';
 import {
-  Row,
-  Column,
   AttachmentPointList,
   AttachmentPoint,
   AttachmentPointName,
   MonomerName,
   ConnectionSymbol,
+  AttachmentPointSelectionContainer,
+  AttachmentPointsRow,
+  MonomerNamesRow,
+  ModalContent,
 } from './styledComponents';
 import { MonomerConnectionProps } from '../modalContainer/types';
 
@@ -89,23 +91,27 @@ const MonomerConnection = ({
       onClose={cancelBondCreationAndClose}
     >
       <Modal.Content>
-        <Row>
-          <Column>
+        <ModalContent>
+          <MonomerNamesRow>
+            <MonomerName>{firstMonomer.monomerItem.props.Name}</MonomerName>
+            <MonomerName>{secondMonomer.monomerItem.props.Name}</MonomerName>
+          </MonomerNamesRow>
+          <AttachmentPointsRow>
             <AttachmentPointSelectionPanel
               monomer={firstMonomer}
               selectedAttachmentPoint={firstSelectedAttachmentPoint}
               onSelectAttachmentPoint={setFirstSelectedAttachmentPoint}
             />
-          </Column>
-          <ConnectionSymbol />
-          <Column>
+
+            <ConnectionSymbol />
+
             <AttachmentPointSelectionPanel
               monomer={secondMonomer}
               selectedAttachmentPoint={secondSelectedAttachmentPoint}
               onSelectAttachmentPoint={setSecondSelectedAttachmentPoint}
             />
-          </Column>
-        </Row>
+          </AttachmentPointsRow>
+        </ModalContent>
       </Modal.Content>
 
       <Modal.Footer>
@@ -154,8 +160,7 @@ function AttachmentPointSelectionPanel({
     }, {});
 
   return (
-    <>
-      <MonomerName>{monomer.monomerItem.props.Name}</MonomerName>
+    <AttachmentPointSelectionContainer>
       <StyledStructRender
         struct={monomer.monomerItem.struct}
         options={{
@@ -185,7 +190,7 @@ function AttachmentPointSelectionPanel({
           </AttachmentPoint>
         ))}
       </AttachmentPointList>
-    </>
+    </AttachmentPointSelectionContainer>
   );
 }
 

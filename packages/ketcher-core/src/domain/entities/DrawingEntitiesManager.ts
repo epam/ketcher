@@ -750,7 +750,6 @@ export class DrawingEntitiesManager {
     this.micromoleculesHiddenEntities.bonds = new Pool();
     this.micromoleculesHiddenEntities.halfBonds = new Pool();
     this.micromoleculesHiddenEntities.sgroups = new Pool();
-    this.micromoleculesHiddenEntities.rgroups = new Pool();
     this.micromoleculesHiddenEntities.functionalGroups = new Pool();
     this.micromoleculesHiddenEntities.sGroupForest = new SGroupForest();
     this.micromoleculesHiddenEntities.frags = new Pool();

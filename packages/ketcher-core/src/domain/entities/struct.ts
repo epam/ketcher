@@ -243,7 +243,6 @@ export class Struct {
         cp.rgroups.set(rgid, rgroup.clone(fidMap));
       }
     });
-
     // atoms in not RGroup
     this.atoms.forEach((atom, aid) => {
       if (atomSet!.has(aid) && rgroupsIds.indexOf(atom.fragment) === -1) {

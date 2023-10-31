@@ -24,6 +24,7 @@ import { Editor } from 'application/editor';
 import { FormatterFactory } from 'application/formatters';
 import { Ketcher } from './ketcher';
 import assert from 'assert';
+import { ketcherProvider } from './utils';
 
 export const DefaultStructServiceOptions = {
   'smart-layout': true,
@@ -62,6 +63,7 @@ export class KetcherBuilder {
     );
     ketcher[this.#structServiceProvider.mode] = true;
 
+    ketcherProvider.setKetcherInstance(ketcher);
     return ketcher;
   }
 }

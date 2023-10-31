@@ -75,6 +75,15 @@ export class DrawingEntitiesManager {
     return mergedCommand;
   }
 
+  public deleteAllEntities() {
+    const mergedCommand = new Command();
+    this.allEntities.forEach(([, drawingEntity]) => {
+      const command = this.deleteDrawingEntity(drawingEntity);
+      mergedCommand.merge(command);
+    });
+    return mergedCommand;
+  }
+
   public addMonomer(monomerItem: MonomerItemType, position: Vec2, id?: number) {
     const [Monomer] = monomerFactory(monomerItem);
     const monomer = new Monomer(monomerItem, position);

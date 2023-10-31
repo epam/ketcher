@@ -13,19 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { ToolConstructorInterface } from './Tool';
-import { MonomerTool } from 'application/editor/tools/Monomer';
-import { RnaPresetTool } from 'application/editor/tools/RnaPreset';
-import { SelectRectangle } from 'application/editor/tools/SelectRectangle';
-import { PolymerBond } from 'application/editor/tools/Bond';
-import { EraserTool } from 'application/editor/tools/Erase';
-import { ClearTool } from 'application/editor/tools/Clear';
+import { CoreEditor } from 'application/editor';
+import { BaseTool } from 'application/editor/tools/Tool';
 
-export const toolsMap: Record<string, ToolConstructorInterface> = {
-  monomer: MonomerTool,
-  preset: RnaPresetTool,
-  'select-rectangle': SelectRectangle,
-  'bond-single': PolymerBond,
-  erase: EraserTool,
-  clear: ClearTool,
-};
+class ClearTool implements BaseTool {
+  constructor(private editor: CoreEditor) {
+    this.editor = editor;
+    const modelChanges = this.editor.drawingEntitiesManager.deleteAllEntities();
+    this.editor.renderersContainer.update(modelChanges);
+  }
+
+  destroy() {}
+}
+
+export { ClearTool };

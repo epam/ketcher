@@ -5,11 +5,8 @@ import {
   waitForPageInit,
   TopPanelButton,
   readFileContents,
-  openFileAndAddToCanvas,
-  waitForRender,
   openFile,
   pressButton,
-  waitForLoad,
 } from '@utils';
 
 async function openFileViaClipboard(filename: string, page: Page) {

@@ -81,14 +81,16 @@ class ReBond extends ReObject {
     hb1.p = atom1.getShiftedSegmentPosition(options, hb1.dir);
     hb2.p = atom2.getShiftedSegmentPosition(options, hb2.dir);
 
+    hb1.p = hb1.p.x > Math.max(p1.x, p2.x) ? p2 : hb1.p;
+    hb2.p = hb2.p.x > Math.max(p1.x, p2.x) ? p1 : hb2.p;
+    hb1.p = hb1.p.x < Math.min(p1.x, p2.x) ? p1 : hb1.p;
+    hb2.p = hb2.p.x < Math.min(p1.x, p2.x) ? p1 : hb2.p;
+
     if (p1.x < p2.x && hb1.p.x > hb2.p.x) {
       hb1.p = hb2.p;
+    } else if (p1.x > p2.x && hb1.p.x < hb2.p.x) {
+      hb2.p = hb1.p;
     }
-
-    if (p1.x > p2.x && hb1.p.x < hb2.p.x) {
-      hb2.p.x = hb1.p.x;
-    }
-
     bond.b.center = Vec2.lc2(atom1.a.pp, 0.5, atom2.a.pp, 0.5);
     bond.b.len = Vec2.dist(p1, p2);
     bond.b.sb = options.lineWidth * 5;

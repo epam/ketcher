@@ -21,6 +21,29 @@ import {
 } from '@utils';
 import { getKet } from '@utils/formats';
 
+const testCasesForOpeningFiles = [
+  {
+    firstFile: 'Molfiles-V2000/glutamine.mol',
+    secondFile: 'Molfiles-V2000/cyclopentyl.mol',
+    atomType: 'O',
+  },
+  {
+    firstFile: 'Molfiles-V2000/cyclopentyl.mol',
+    secondFile: 'Rxn-V2000/reaction-3.rxn',
+    atomType: 'C',
+  },
+  {
+    firstFile: 'Molfiles-V2000/glutamine.mol',
+    secondFile: 'SMILES/1840-cyclopentyl.smi',
+    atomType: 'O',
+  },
+  {
+    firstFile: 'Molfiles-V2000/glutamine.mol',
+    secondFile: 'KET/simple-chain.ket',
+    atomType: 'O',
+  },
+];
+
 async function moveElement(
   page: Page,
   atomLabel: string,
@@ -46,38 +69,20 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
     await takeEditorScreenshot(page);
   });
 
-  test('Load Fragment - Load as fragment (Add to Canvas) - mol-files', async ({
-    page,
-  }) => {
-    /*
-     * Test case: EPMLSOPKET-1854
-     */
-    await openFileAndAddToCanvas('Molfiles-V2000/glutamine.mol', page);
-    await moveElement(page, 'O', 0);
-    await openFileAndAddToCanvas('Molfiles-V2000/cyclopentyl.mol', page);
-  });
-
-  test('Load Fragment - Load as fragment (Add to Canvas) - rxn-files', async ({
-    page,
-  }) => {
-    /*
-     * Test case: EPMLSOPKET-1860
-     */
-    await openFileAndAddToCanvas('Molfiles-V2000/cyclopentyl.mol', page);
-    await moveElement(page, 'C', 0);
-    await openFileAndAddToCanvas('Rxn-V2000/reaction-3.rxn', page);
-  });
-
-  test('Load Fragment - Load as fragment (Add to Canvas) - smi-files', async ({
-    page,
-  }) => {
-    /*
-     * Test case: EPMLSOPKET-1861
-     */
-    await openFileAndAddToCanvas('Molfiles-V2000/glutamine.mol', page);
-    await moveElement(page, 'O', 0);
-    await openFileAndAddToCanvas('SMILES/1840-cyclopentyl.smi', page);
-  });
+  for (const testCase of testCasesForOpeningFiles) {
+    const index = -1;
+    const fileExtension = testCase.secondFile.split('.').at(index);
+    test(`Load Fragment - Load as fragment (Add to Canvas) - ${fileExtension}-files`, async ({
+      page,
+    }) => {
+      /*
+       * Test case: EPMLSOPKET-1860, EPMLSOPKET-1854, EPMLSOPKET-1861, EPMLSOPKET-2933
+       */
+      await openFileAndAddToCanvas(testCase.firstFile, page);
+      await moveElement(page, testCase.atomType, 0);
+      await openFileAndAddToCanvas(testCase.secondFile, page);
+    });
+  }
 
   test('Open file - Input SMILE-string - check the preview', async ({
     page,
@@ -144,15 +149,6 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
     expect(convertErrorMessage).toEqual(expectedErrorMessage);
   });
 
-  test('Open file - Open *.ket file', async ({ page }) => {
-    /*
-     * Test case: EPMLSOPKET-2933
-     */
-    await openFileAndAddToCanvas('Molfiles-V2000/glutamine.mol', page);
-    await moveElement(page, 'O', 0);
-    await openFileAndAddToCanvas('KET/simple-chain.ket', page);
-  });
-
   test('Open/Import structure as a KET file - create KET file', async ({
     page,
   }) => {
@@ -168,7 +164,7 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     const shiftForHydrogen = 200;
     const shiftForReactionPlus = 100;
-    const shiftForOxygen = 5;
+    const shiftForOxygen = 15;
     const shiftForSecondHydrogen = 200;
 
     async function addAndMoveHydrogen() {

@@ -17,7 +17,6 @@ import {
   saveToFile,
   waitForSpinnerFinishedWork,
   waitForPageInit,
-  waitForRender,
 } from '@utils';
 import { getCml, getMolfile, getRxn, getSmiles } from '@utils/formats';
 
@@ -146,9 +145,7 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     // test is working but structures moves. will fixes after fixing bug with canvas movement after copy/paste
     await openFileAndAddToCanvas('cycles-with-aromatic-bonds.mol', page);
     await copyAndPaste(page);
-    await waitForRender(page, async () => {
-      await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
-    });
+    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await waitForSpinnerFinishedWork(page, async () => {
       await selectTopPanelButton(TopPanelButton.Aromatize, page);
     });
@@ -164,9 +161,7 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     */
     await openFileAndAddToCanvas('cycles-with-aromatic-bonds.mol', page);
     await cutAndPaste(page);
-    await waitForRender(page, async () => {
-      await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
-    });
+    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await waitForSpinnerFinishedWork(page, async () => {
       await selectTopPanelButton(TopPanelButton.Aromatize, page);
     });

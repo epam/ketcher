@@ -125,9 +125,7 @@ test.describe('Functional Groups', () => {
       page,
     );
     await copyAndPaste(page);
-    await waitForRender(page, async () => {
-      await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
-    });
+    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
   });
 
   test('Cut/Paste action with expanded functional group', async ({ page }) => {

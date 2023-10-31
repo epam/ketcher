@@ -3,7 +3,7 @@ import { TestIdSelectors } from '@utils/selectors/testIdSelectors';
 import { getControlModifier } from '@utils/keyboard';
 import { clickInTheMiddleOfTheScreen } from '@utils/clicks';
 import { INPUT_DELAY } from '@utils/globals';
-import { waitForCopy, waitForCut, waitForPaste, waitForRender } from '..';
+import { waitForCopy, waitForRender } from '..';
 
 export enum SelectionType {
   Rectangle = 'Rectangle',
@@ -78,7 +78,7 @@ export async function cutAll(page: Page) {
   await waitForRender(page, async () => {
     await page.keyboard.press(`${modifier}+KeyA`, { delay: INPUT_DELAY });
   });
-  await waitForCut(page, async () => {
+  await waitForCopy(page, async () => {
     await page.keyboard.press(`${modifier}+KeyX`, { delay: INPUT_DELAY });
   });
 }
@@ -99,7 +99,7 @@ export async function cutAndPaste(page: Page) {
   // to focus in Editor
   await clickInTheMiddleOfTheScreen(page);
   await cutAll(page);
-  await waitForPaste(page, async () => {
+  await waitForRender(page, async () => {
     await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
   });
 }
@@ -110,7 +110,7 @@ export async function copyAndPaste(page: Page) {
   // to focus in Editor
   await clickInTheMiddleOfTheScreen(page);
   await copyAll(page);
-  await waitForPaste(page, async () => {
+  await waitForRender(page, async () => {
     await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
   });
 }

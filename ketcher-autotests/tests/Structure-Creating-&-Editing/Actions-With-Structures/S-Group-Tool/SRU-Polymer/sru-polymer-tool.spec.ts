@@ -21,7 +21,6 @@ import {
   selectRingButton,
   takeEditorScreenshot,
   waitForPageInit,
-  waitForRender,
 } from '@utils';
 import { getBondByIndex } from '@utils/canvas/bonds';
 import { getMolfile } from '@utils/formats';
@@ -257,9 +256,7 @@ test.describe('SRU Polymer tool', () => {
     */
     await openFileAndAddToCanvas('sru-polymer.mol', page);
     await copyAndPaste(page);
-    await waitForRender(page, async () => {
-      await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
-    });
+    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
   });
 
   test('Cut/Paste structure with SRU polymer S-Group', async ({ page }) => {

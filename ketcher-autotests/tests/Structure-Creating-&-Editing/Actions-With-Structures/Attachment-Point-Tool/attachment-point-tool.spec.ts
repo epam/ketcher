@@ -320,9 +320,7 @@ test.describe('Attachment Point Tool', () => {
     */
     await openFileAndAddToCanvas('KET/chain-with-attachment-points.ket', page);
     await copyAndPaste(page);
-    await waitForRender(page, async () => {
-      await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
-    });
+    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await screenshotBetweenUndoRedo(page);
   });
 
@@ -334,9 +332,7 @@ test.describe('Attachment Point Tool', () => {
     */
     await openFileAndAddToCanvas('KET/chain-with-attachment-points.ket', page);
     await cutAndPaste(page);
-    await waitForRender(page, async () => {
-      await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
-    });
+    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
 
     await screenshotBetweenUndoRedo(page);
   });
@@ -353,9 +349,7 @@ test.describe('Attachment Point Tool', () => {
       page,
     );
     await copyAndPaste(page);
-    await waitForRender(page, async () => {
-      await page.mouse.click(x, y);
-    });
+    await page.mouse.click(x, y);
   });
 
   test('Cut/Paste reaction with Attachment point', async ({ page }) => {
@@ -371,9 +365,7 @@ test.describe('Attachment Point Tool', () => {
       page,
     );
     await cutAndPaste(page);
-    await waitForRender(page, async () => {
-      await page.mouse.click(x, y);
-    });
+    await page.mouse.click(x, y);
 
     await screenshotBetweenUndoRedo(page);
   });

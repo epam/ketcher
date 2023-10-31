@@ -24,7 +24,6 @@ import {
   screenshotBetweenUndoRedo,
   saveToFile,
   waitForPageInit,
-  waitForRender,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getCml, getMolfile } from '@utils/formats';
@@ -142,9 +141,7 @@ test.describe('Data S-Group tool', () => {
     */
     await openFileAndAddToCanvas('KET/chain-with-name-and-value.ket', page);
     await copyAndPaste(page);
-    await waitForRender(page, async () => {
-      await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
-    });
+    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
   });
 
   test('Cut/Paste structure with S-Group', async ({ page }) => {

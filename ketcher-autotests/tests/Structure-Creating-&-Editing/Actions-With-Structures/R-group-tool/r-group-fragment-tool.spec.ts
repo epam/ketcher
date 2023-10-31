@@ -280,9 +280,7 @@ test.describe('Open Ketcher', () => {
       page,
     );
     await copyAndPaste(page);
-    await waitForRender(page, async () => {
-      await page.mouse.click(x, y);
-    });
+    await page.mouse.click(x, y);
   });
 
   test('Cut/Paste actions Structure with R-Group label', async ({ page }) => {
@@ -297,9 +295,7 @@ test.describe('Open Ketcher', () => {
       page,
     );
     await cutAndPaste(page);
-    await waitForRender(page, async () => {
-      await page.mouse.click(x, y);
-    });
+    await page.mouse.click(x, y);
   });
 });
 

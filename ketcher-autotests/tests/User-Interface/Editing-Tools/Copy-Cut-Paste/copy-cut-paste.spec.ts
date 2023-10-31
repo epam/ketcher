@@ -23,13 +23,9 @@ import {
   delay,
   DELAY_IN_SECONDS,
   waitForPageInit,
+  waitForIndigoToLoad,
   waitForRender,
   resetCurrentTool,
-  cutAll,
-  waitForCut,
-  waitForPaste,
-  waitForCopy,
-  copyAll,
 } from '@utils';
 
 const CANVAS_CLICK_X = 300;
@@ -54,9 +50,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await openFileAndAddToCanvas('Molfiles-V2000/query-features.mol', page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(x + xDelta, y + yDelta, page);
-    await waitForCut(page, async () => {
-      await selectTopPanelButton(TopPanelButton.Cut, page);
-    });
+    await selectTopPanelButton(TopPanelButton.Cut, page);
     await screenshotBetweenUndoRedo(page);
   });
 
@@ -67,9 +61,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     await openFileAndAddToCanvas('Molfiles-V2000/query-features.mol', page);
     await page.keyboard.press('Control+a');
-    await waitForCut(page, async () => {
-      await selectTopPanelButton(TopPanelButton.Cut, page);
-    });
+    await selectTopPanelButton(TopPanelButton.Cut, page);
     await screenshotBetweenUndoRedo(page);
   });
 
@@ -81,9 +73,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const anyAtom = 3;
     await openFileAndAddToCanvas('Molfiles-V2000/query-features.mol', page);
     await clickOnAtom(page, 'C', anyAtom);
-    await waitForCut(page, async () => {
-      await selectTopPanelButton(TopPanelButton.Cut, page);
-    });
+    await selectTopPanelButton(TopPanelButton.Cut, page);
     await screenshotBetweenUndoRedo(page);
   });
 
@@ -95,9 +85,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const anyBond = 0;
     await openFileAndAddToCanvas('Molfiles-V2000/query-features.mol', page);
     await clickOnBond(page, BondType.TRIPLE, anyBond);
-    await waitForCut(page, async () => {
-      await selectTopPanelButton(TopPanelButton.Cut, page);
-    });
+    await selectTopPanelButton(TopPanelButton.Cut, page);
     await screenshotBetweenUndoRedo(page);
   });
 
@@ -107,8 +95,10 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Description: After the clicking the 'Cut' button, the selected object disappears.
     Not able to perform undo
     */
+    const modifier = getControlModifier();
     await openFileAndAddToCanvas('Molfiles-V2000/query-features.mol', page);
-    await cutAll(page);
+    await page.keyboard.press(`${modifier}+KeyA`);
+    await page.keyboard.press(`${modifier}+KeyX`);
     await screenshotBetweenUndoRedo(page);
   });
 
@@ -127,9 +117,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
       page,
     );
     await cutAndPaste(page);
-    await waitForRender(page, async () => {
-      await page.mouse.click(x, y);
-    });
+    await page.mouse.click(x, y);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickOnAtom(page, 'C', anyAtom);
   });
@@ -143,9 +131,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const y = 300;
     await openFileAndAddToCanvas('Rxn-V2000/reaction-dif-prop.rxn', page);
     await cutAndPaste(page);
-    await waitForRender(page, async () => {
-      await page.mouse.click(x, y);
-    });
+    await page.mouse.click(x, y);
     await screenshotBetweenUndoRedo(page);
   });
 
@@ -160,15 +146,13 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await waitForRender(page, async () => {
       await clickOnAtom(page, 'C', anyAtom);
     });
-    await waitForCut(page, async () => {
+    await waitForRender(page, async () => {
       await page.keyboard.press(`${modifier}+KeyX`, { delay: INPUT_DELAY });
     });
-    await waitForPaste(page, async () => {
+    await waitForRender(page, async () => {
       await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
     });
-    await waitForRender(page, async () => {
-      await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
-    });
+    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await screenshotBetweenUndoRedo(page);
   });
 
@@ -183,15 +167,13 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await waitForRender(page, async () => {
       await clickOnBond(page, BondType.SINGLE, anyBond);
     });
-    await waitForCut(page, async () => {
+    await waitForRender(page, async () => {
       await page.keyboard.press(`${modifier}+KeyX`, { delay: INPUT_DELAY });
     });
-    await waitForPaste(page, async () => {
+    await waitForRender(page, async () => {
       await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
     });
-    await waitForRender(page, async () => {
-      await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
-    });
+    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await screenshotBetweenUndoRedo(page);
   });
 
@@ -202,7 +184,8 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Not able to perform undo
     */
     await openFileAndAddToCanvas('Rxn-V2000/reaction-dif-prop.rxn', page);
-    await cutAll(page);
+    await page.keyboard.press('Control+a');
+    await page.keyboard.press('Control+x');
     await screenshotBetweenUndoRedo(page);
   });
 
@@ -213,9 +196,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     await openFileAndAddToCanvas('Molfiles-V2000/query-features.mol', page);
     await page.keyboard.press('Control+a');
-    await waitForCopy(page, async () => {
-      await selectTopPanelButton(TopPanelButton.Copy, page);
-    });
+    await selectTopPanelButton(TopPanelButton.Copy, page);
   });
 
   test('Copy the Atom from reaction', async ({ page }) => {
@@ -226,9 +207,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const anyAtom = 0;
     await openFileAndAddToCanvas('Molfiles-V2000/query-features.mol', page);
     await clickOnAtom(page, 'C', anyAtom);
-    await waitForCopy(page, async () => {
-      await selectTopPanelButton(TopPanelButton.Copy, page);
-    });
+    await selectTopPanelButton(TopPanelButton.Copy, page);
   });
 
   test('Copy the Bond from reaction', async ({ page }) => {
@@ -238,9 +217,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     await openFileAndAddToCanvas('Molfiles-V2000/query-features.mol', page);
     await clickOnBond(page, BondType.SINGLE, 0);
-    await waitForCopy(page, async () => {
-      await selectTopPanelButton(TopPanelButton.Copy, page);
-    });
+    await selectTopPanelButton(TopPanelButton.Copy, page);
   });
 
   test('Copy the reaction with hotkey', async ({ page }) => {
@@ -249,7 +226,8 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Description: After the clicking the Copy button, the selected object not disappears.
     */
     await openFileAndAddToCanvas('Molfiles-V2000/query-features.mol', page);
-    await copyAll(page);
+    await page.keyboard.press('Control+a');
+    await page.keyboard.press('Control+c');
   });
 
   test('Copy and Paste structure and edit', async ({ page }) => {
@@ -268,9 +246,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
       page,
     );
     await copyAndPaste(page);
-    await waitForRender(page, async () => {
-      await page.mouse.click(x, y);
-    });
+    await page.mouse.click(x, y);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickOnAtom(page, 'C', anyAtom);
   });
@@ -301,15 +277,13 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await waitForRender(page, async () => {
       await clickOnAtom(page, 'C', anyAtom);
     });
-    await waitForCopy(page, async () => {
+    await waitForRender(page, async () => {
       await page.keyboard.press(`${modifier}+KeyC`, { delay: INPUT_DELAY });
     });
-    await waitForPaste(page, async () => {
+    await waitForRender(page, async () => {
       await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
     });
-    await waitForRender(page, async () => {
-      await page.mouse.click(x, y);
-    });
+    await page.mouse.click(x, y);
   });
 
   test('Copy and paste the Bond from reaction', async ({ page }) => {
@@ -324,15 +298,9 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await waitForRender(page, async () => {
       await clickOnBond(page, BondType.SINGLE, 0);
     });
-    await waitForCopy(page, async () => {
-      await page.keyboard.press('Control+c');
-    });
-    await waitForPaste(page, async () => {
-      await page.keyboard.press('Control+v');
-    });
-    await waitForRender(page, async () => {
-      await page.mouse.click(x, y);
-    });
+    await page.keyboard.press('Control+c');
+    await page.keyboard.press('Control+v');
+    await page.mouse.click(x, y);
   });
 
   test('Copy and paste the reaction with hotkey', async ({ page }) => {
@@ -345,9 +313,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const y = 200;
     await openFileAndAddToCanvas('Rxn-V2000/reaction-dif-prop.rxn', page);
     await copyAndPaste(page);
-    await waitForRender(page, async () => {
-      await page.mouse.click(x, y);
-    });
+    await page.mouse.click(x, y);
   });
 
   test('Multiple Paste action', async ({ page }) => {
@@ -365,15 +331,9 @@ test.describe('Copy/Cut/Paste Actions', () => {
       page,
     );
     await copyAndPaste(page);
-    await waitForRender(page, async () => {
-      await page.mouse.click(x, y);
-    });
-    await waitForPaste(page, async () => {
-      await page.keyboard.press('Control+v');
-    });
-    await waitForRender(page, async () => {
-      await page.mouse.click(x2, y2);
-    });
+    await page.mouse.click(x, y);
+    await page.keyboard.press('Control+v');
+    await page.mouse.click(x2, y2);
   });
 
   test('Copy and paste the Generic S-Group structure', async ({ page }) => {
@@ -386,9 +346,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const y = 300;
     await openFileAndAddToCanvas('generic-groups.mol', page);
     await copyAndPaste(page);
-    await waitForRender(page, async () => {
-      await page.mouse.click(x, y);
-    });
+    await page.mouse.click(x, y);
   });
 
   test('Cut and Paste the Generic S-Group structure and edit', async ({
@@ -405,9 +363,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const anyAtom = 12;
     await openFileAndAddToCanvas('generic-groups.mol', page);
     await cutAndPaste(page);
-    await waitForRender(page, async () => {
-      await page.mouse.click(x, y);
-    });
+    await page.mouse.click(x, y);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickOnAtom(page, 'C', anyAtom);
   });
@@ -423,9 +379,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const anyAtom = 12;
     await openFileAndAddToCanvas('Molfiles-V2000/query-features.mol', page);
     await copyAndPaste(page);
-    await waitForRender(page, async () => {
-      await page.mouse.click(x, y);
-    });
+    await page.mouse.click(x, y);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickOnAtom(page, 'C', anyAtom);
   });
@@ -442,9 +396,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const anyAtom = 12;
     await openFileAndAddToCanvas('Molfiles-V2000/query-features.mol', page);
     await cutAndPaste(page);
-    await waitForRender(page, async () => {
-      await page.mouse.click(x, y);
-    });
+    await page.mouse.click(x, y);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickOnAtom(page, 'C', anyAtom);
   });
@@ -459,9 +411,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const y = 200;
     await openFileAndAddToCanvas('R-Group-structure.mol', page);
     await copyAndPaste(page);
-    await waitForRender(page, async () => {
-      await page.mouse.click(x, y);
-    });
+    await page.mouse.click(x, y);
   });
 
   test('Cut and Paste R-Group structure', async ({ page }) => {
@@ -477,9 +427,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const anyAtom = 5;
     await openFileAndAddToCanvas('R-Group-structure.mol', page);
     await cutAndPaste(page);
-    await waitForRender(page, async () => {
-      await page.mouse.click(x, y);
-    });
+    await page.mouse.click(x, y);
     await waitForRender(page, async () => {
       await selectAtomInToolbar(AtomButton.Nitrogen, page);
     });
@@ -498,9 +446,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const y = 300;
     await openFileAndAddToCanvas('s-group-features.mol', page);
     await copyAndPaste(page);
-    await waitForRender(page, async () => {
-      await page.mouse.click(x, y);
-    });
+    await page.mouse.click(x, y);
   });
 
   test('Cut and Paste the S-Group structure and edit', async ({ page }) => {
@@ -516,9 +462,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const anyAtom = 12;
     await openFileAndAddToCanvas('s-group-features.mol', page);
     await cutAndPaste(page);
-    await waitForRender(page, async () => {
-      await page.mouse.click(x, y);
-    });
+    await page.mouse.click(x, y);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickOnAtom(page, 'C', anyAtom);
   });
@@ -533,9 +477,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const y = 300;
     await openFileAndAddToCanvas('Molfiles-V2000/attached.mol', page);
     await copyAndPaste(page);
-    await waitForRender(page, async () => {
-      await page.mouse.click(x, y);
-    });
+    await page.mouse.click(x, y);
   });
 
   test('Cut and Paste structure with attached data and edit', async ({
@@ -551,9 +493,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const anyAtom = 12;
     await openFileAndAddToCanvas('Molfiles-V2000/attached.mol', page);
     await cutAndPaste(page);
-    await waitForRender(page, async () => {
-      await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
-    });
+    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickOnAtom(page, 'C', anyAtom);
   });
@@ -568,9 +508,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const y = 300;
     await openFileAndAddToCanvas('chiral-structure.mol', page);
     await copyAndPaste(page);
-    await waitForRender(page, async () => {
-      await page.mouse.click(x, y);
-    });
+    await page.mouse.click(x, y);
   });
 
   test('Cut and Paste structure with Stereo and Chiral flag and edit', async ({
@@ -584,9 +522,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const anyAtom = 12;
     await openFileAndAddToCanvas('chiral-structure.mol', page);
     await cutAndPaste(page);
-    await waitForRender(page, async () => {
-      await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
-    });
+    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickOnAtom(page, 'C', anyAtom);
   });
@@ -601,9 +537,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const y = 200;
     await openFileAndAddToCanvas('reaction.rxn', page);
     await copyAndPaste(page);
-    await waitForRender(page, async () => {
-      await page.mouse.click(x, y);
-    });
+    await page.mouse.click(x, y);
   });
 
   test('Cut and Paste reaction by hotkeys and edit', async ({ page }) => {
@@ -616,9 +550,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const anyAtom = 12;
     await openFileAndAddToCanvas('reaction.rxn', page);
     await cutAndPaste(page);
-    await waitForRender(page, async () => {
-      await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
-    });
+    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickOnAtom(page, 'C', anyAtom);
   });
@@ -632,9 +564,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const y = 200;
     await openFileAndAddToCanvas('structure-with-failed-arrow.rxn', page);
     await copyAndPaste(page);
-    await waitForRender(page, async () => {
-      await page.mouse.click(x, y);
-    });
+    await page.mouse.click(x, y);
   });
 
   test('Cut and Paste reaction with changed arrow and edit', async ({
@@ -647,9 +577,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const anyAtom = 5;
     await openFileAndAddToCanvas('structure-with-failed-arrow.rxn', page);
     await cutAndPaste(page);
-    await waitForRender(page, async () => {
-      await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
-    });
+    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickOnAtom(page, 'C', anyAtom);
   });
@@ -666,9 +594,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
       page,
     );
     await copyAndPaste(page);
-    await waitForRender(page, async () => {
-      await page.mouse.click(x, y);
-    });
+    await page.mouse.click(x, y);
   });
 
   test('Cut and Paste reaction with multiple arrows and edit', async ({
@@ -684,9 +610,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
       page,
     );
     await cutAndPaste(page);
-    await waitForRender(page, async () => {
-      await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
-    });
+    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickOnAtom(page, 'C', anyAtom);
   });
@@ -704,9 +628,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
       page,
     );
     await copyAndPaste(page);
-    await waitForRender(page, async () => {
-      await page.mouse.click(x, y);
-    });
+    await page.mouse.click(x, y);
   });
 
   test('Cut and Paste all kind of S-groups and edit', async ({ page }) => {
@@ -721,9 +643,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
       page,
     );
     await cutAndPaste(page);
-    await waitForRender(page, async () => {
-      await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
-    });
+    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickOnAtom(page, 'C', anyAtom);
   });
@@ -737,9 +657,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const y = 200;
     await openFileAndAddToCanvas('mapped-structure.rxn', page);
     await copyAndPaste(page);
-    await waitForRender(page, async () => {
-      await page.mouse.click(x, y);
-    });
+    await page.mouse.click(x, y);
   });
 
   test('Cut and Paste Mapped reaction and edit', async ({ page }) => {
@@ -752,9 +670,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const anyAtom = 5;
     await openFileAndAddToCanvas('mapped-structure.rxn', page);
     await cutAndPaste(page);
-    await waitForRender(page, async () => {
-      await page.mouse.click(x, y);
-    });
+    await page.mouse.click(x, y);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickOnAtom(page, 'C', anyAtom);
   });
@@ -771,9 +687,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
       page,
     );
     await copyAndPaste(page);
-    await waitForRender(page, async () => {
-      await page.mouse.click(x, y);
-    });
+    await page.mouse.click(x, y);
   });
 
   test('Copy and paste structure with Stereochemistry', async ({ page }) => {
@@ -785,9 +699,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const y = 200;
     await openFileAndAddToCanvas('KET/stereo-test-structures.ket', page);
     await copyAndPaste(page);
-    await waitForRender(page, async () => {
-      await page.mouse.click(x, y);
-    });
+    await page.mouse.click(x, y);
   });
 
   test('Cut and Paste structure with Stereochemistry and edit', async ({
@@ -800,9 +712,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const anyAtom = 5;
     await openFileAndAddToCanvas('KET/stereo-test-structures.ket', page);
     await cutAndPaste(page);
-    await waitForRender(page, async () => {
-      await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
-    });
+    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickOnAtom(page, 'C', anyAtom);
     await resetCurrentTool(page);
@@ -819,9 +729,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const y = 200;
     await openFileAndAddToCanvas('complex-r-group-structure.mol', page);
     await copyAndPaste(page);
-    await waitForRender(page, async () => {
-      await page.mouse.click(x, y);
-    });
+    await page.mouse.click(x, y);
   });
 
   test('Cut and Paste complex R-Group structure and edit', async ({ page }) => {
@@ -835,9 +743,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const anyAtom = 5;
     await openFileAndAddToCanvas('complex-r-group-structure.mol', page);
     await cutAndPaste(page);
-    await waitForRender(page, async () => {
-      await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
-    });
+    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickOnAtom(page, 'C', anyAtom);
     await resetCurrentTool(page);
@@ -858,9 +764,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
       page,
     );
     await copyAndPaste(page);
-    await waitForRender(page, async () => {
-      await page.mouse.click(x, y);
-    });
+    await page.mouse.click(x, y);
   });
 
   test('Cut and Paste Structure with Simple objects and text and edit', async ({
@@ -879,9 +783,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
       page,
     );
     await cutAndPaste(page);
-    await waitForRender(page, async () => {
-      await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
-    });
+    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickOnAtom(page, 'C', anyAtom);
   });
@@ -899,9 +801,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
       page,
     );
     await copyAndPaste(page);
-    await waitForRender(page, async () => {
-      await page.mouse.click(x, y);
-    });
+    await page.mouse.click(x, y);
   });
 
   test('Cut and Paste Aromatic structure and edit', async ({ page }) => {
@@ -917,9 +817,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
       page,
     );
     await cutAndPaste(page);
-    await waitForRender(page, async () => {
-      await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
-    });
+    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await selectAtomInToolbar(AtomButton.Oxygen, page);
     await clickOnAtom(page, 'C', anyAtom);
     await resetCurrentTool(page);
@@ -937,9 +835,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const y = 100;
     await openFileAndAddToCanvas('KET/expanded-and-contracted-fg.ket', page);
     await copyAndPaste(page);
-    await waitForRender(page, async () => {
-      await page.mouse.click(x, y);
-    });
+    await page.mouse.click(x, y);
   });
 
   test('Cut and Paste expanded and contracted Functional Froups and edit', async ({
@@ -954,9 +850,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const anyAtom = 5;
     await openFileAndAddToCanvas('KET/expanded-and-contracted-fg.ket', page);
     await cutAndPaste(page);
-    await waitForRender(page, async () => {
-      await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
-    });
+    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickOnAtom(page, 'C', anyAtom);
   });
@@ -973,9 +867,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const y = 100;
     await openFileAndAddToCanvas('expanded-and-contracted-salts.mol', page);
     await copyAndPaste(page);
-    await waitForRender(page, async () => {
-      await page.mouse.click(x, y);
-    });
+    await page.mouse.click(x, y);
   });
 
   test('Cut and Paste expanded and contracted Salts and Solvents and edit', async ({
@@ -990,9 +882,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const anyAtom = 0;
     await openFileAndAddToCanvas('expanded-and-contracted-salts.mol', page);
     await cutAndPaste(page);
-    await waitForRender(page, async () => {
-      await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
-    });
+    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickOnAtom(page, 'S', anyAtom);
   });
@@ -1038,9 +928,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await clickInTheMiddleOfTheScreen(page);
     await page.keyboard.press('Control+a');
     await expect(page).toHaveScreenshot();
-    await waitForCut(page, async () => {
-      await selectTopPanelButton(TopPanelButton.Cut, page);
-    });
+    await selectTopPanelButton(TopPanelButton.Cut, page);
   });
 
   test('Paste button', async ({ page }) => {
@@ -1056,11 +944,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
     await page.keyboard.press('Control+a');
-    await waitForCut(page, async () => {
-      await selectTopPanelButton(TopPanelButton.Cut, page);
-    });
-    await waitForPaste(page, async () => {
-      await selectTopPanelButton(TopPanelButton.Paste, page);
-    });
+    await selectTopPanelButton(TopPanelButton.Cut, page);
+    await selectTopPanelButton(TopPanelButton.Paste, page);
   });
 });

@@ -164,7 +164,7 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     const shiftForHydrogen = 200;
     const shiftForReactionPlus = 100;
-    const shiftForOxygen = 15;
+    const shiftForOxygen = 5;
     const shiftForSecondHydrogen = 200;
 
     async function addAndMoveHydrogen() {

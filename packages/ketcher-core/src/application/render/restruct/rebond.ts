@@ -1250,8 +1250,13 @@ function getBondMark(
   // eslint-disable-line max-statements
   const options = render.options;
   let mark: string | null = null;
+  let tooltip: string | null = null;
   if (bond.b.customQuery) {
     mark = bond.b.customQuery;
+    if (bond.b.customQuery.length > 8) {
+      tooltip = bond.b.customQuery;
+      mark = `${bond.b.customQuery.substring(0, 8)}...`;
+    }
   } else if (bond.b.topology === Bond.PATTERN.TOPOLOGY.RING) {
     mark = 'rng';
   } else if (bond.b.topology === Bond.PATTERN.TOPOLOGY.CHAIN) {
@@ -1272,8 +1277,10 @@ function getBondMark(
   const s = new Vec2(2, 1).scaled(options.bondSpace);
   if (bond.b.type === Bond.PATTERN.TYPE.TRIPLE) fixed += options.bondSpace;
   const p = c.add(new Vec2(n.x * (s.x + fixed), n.y * (s.y + fixed)));
+  const path = draw.bondMark(render.paper, p, mark, options);
+  tooltip && path.node.childNodes[0].setAttribute('data-tooltip', tooltip);
 
-  return draw.bondMark(render.paper, p, mark, options);
+  return path;
 }
 
 function getIdsPath(

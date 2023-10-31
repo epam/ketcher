@@ -17,7 +17,7 @@
 import { Component, createRef } from 'react';
 import clsx from 'clsx';
 import classes from './cliparea.module.less';
-import { KetcherLogger } from 'ketcher-core';
+import { KetcherLogger, notifyRequestCompleted } from 'ketcher-core';
 import { isControlKey } from '../../data/convert/keynorm';
 import { isClipboardAPIAvailable, notifyCopyCut } from './clipboardUtils';
 
@@ -103,7 +103,7 @@ class ClipArea extends Component {
             }
             this.props.onPaste(data).then(() => {
               event.preventDefault();
-              notifyCopyCut();
+              notifyRequestCompleted();
             });
           });
         } else {

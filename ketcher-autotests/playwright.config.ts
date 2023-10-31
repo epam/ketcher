@@ -52,11 +52,6 @@ function baseURL(): string {
     return DEFAULT_KETCHER_STANDALONE_URL;
   }
 
-  const localDomains = ['://localhost:', '://host.docker.internal:'];
-  if (localDomains.some((d) => process.env.KETCHER_URL?.includes(d))) {
-    return process.env.KETCHER_URL;
-  }
-
   if (process.env.MODE === MODES.STANDALONE) {
     return `${process.env.KETCHER_URL}${STANDALONE_URL}`;
   }
@@ -126,8 +121,6 @@ const config: PlaywrightTestConfig = {
     /* Base URL to use in actions like `await page.goto('/')`. */
     baseURL: baseURL(),
 
-    permissions: ['clipboard-write', 'clipboard-read'],
-
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
   },
@@ -138,8 +131,6 @@ const config: PlaywrightTestConfig = {
       name: 'chromium',
       use: {
         ...devices['Desktop Chrome'],
-        ignoreHTTPSErrors: true,
-        bypassCSP: true,
         launchOptions: {
           headless: true,
         },

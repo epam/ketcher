@@ -899,15 +899,16 @@ test.describe('Copy/Cut/Paste Actions', () => {
 
   test('Copy button', async ({ page }) => {
     /*
-      Test case: EPMLSOPKET-1709
-      Description: Button is disabled. Tooltip "Copy (Ctrl+С)" appears.
-      List of buttons and coincidental tooltips is displayed:
-      Copy as MOL (Ctrl+M);
-      Copy as KET (Ctrl+Shift+K);
-      Copy Image (Ctrl+Shift+F)
-      Object is created.
-      Object is selected. Buttons are enabled.
+    Test case: EPMLSOPKET-1709
+    Description: Button is disabled. Tooltip "Copy (Ctrl+С)" appears.
+    List of buttons and coincidental tooltips is displayed:
+    Copy as MOL (Ctrl+M);
+    Copy as KET (Ctrl+Shift+K);
+    Copy Image (Ctrl+Shift+F)
+    Object is created.
+    Object is selected. Buttons are enabled.
     */
+    await waitForIndigoToLoad(page);
     await page.getByTestId('copy-button-dropdown-triangle').click();
     await delay(DELAY_IN_SECONDS.THREE);
     await expect(page).toHaveScreenshot();
@@ -919,10 +920,11 @@ test.describe('Copy/Cut/Paste Actions', () => {
 
   test('Cut button', async ({ page }) => {
     /*
-      Test case: EPMLSOPKET-1710
-      Description: The 'Cut' button  is disabled if nothing is selected on the canvas.
-      The 'Cut (Ctrl+X)' cut the structure.
+    Test case: EPMLSOPKET-1710
+    Description: The 'Cut' button  is disabled if nothing is selected on the canvas.
+    The 'Cut (Ctrl+X)' cut the structure.
     */
+    await waitForIndigoToLoad(page);
     await expect(page).toHaveScreenshot();
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
@@ -933,13 +935,14 @@ test.describe('Copy/Cut/Paste Actions', () => {
 
   test('Paste button', async ({ page }) => {
     /*
-      Test case: EPMLSOPKET-1711
-      Description: The 'Paste' button is always enabled.
-      The 'Paste (Ctrl+V)' tooltip appears when user moves the cursor over the button.
-      Note: in Chrome, FF and Edge the Paste action can be implemented with Ctrl+V buttons only!
-      When user clicks on the 'Paste' button alert message appears.
-      Message should have direction to use shortcuts.
+    Test case: EPMLSOPKET-1711
+    Description: The 'Paste' button is always enabled.
+    The 'Paste (Ctrl+V)' tooltip appears when user moves the cursor over the button.
+    Note: in Chrome, FF and Edge the Paste action can be implemented with Ctrl+V buttons only!
+    When user clicks on the 'Paste' button alert message appears.
+    Message should have direction to use shortcuts.
     */
+    await waitForIndigoToLoad(page);
     await expect(page).toHaveScreenshot();
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);

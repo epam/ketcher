@@ -30,10 +30,8 @@
     "test:prettier": "prettier --check \"./**/*.{js,ts,jsx,tsx,json}\"",
     "prettier:write": "prettier --write \"./**/*.{js,jsx,json,ts,tsx}\"",
     "stylelint:fix": "stylelint \"./**/*.{css,less}\" --formatter verbose --fix",
-    "serve:remote": "STATIC_FILES_PATH=dist/remote PORT=4001 node ./serve.js",
-    "serve:standalone": "STATIC_FILES_PATH=dist/standalone PORT=4002 node ./serve.js",
-    "serve:remote-old": "serve -s dist/remote -l 4001",
-    "serve:standalone-old": "serve -s dist/standalone -l 4002",
+    "serve:remote": "serve -s dist/remote -l 4001",
+    "serve:standalone": "serve -s dist/standalone -l 4002",
     "eject": "react-scripts eject"
   },
   "dependencies": {
@@ -60,7 +58,6 @@
     "cross-env": "^7.0.3",
     "customize-cra": "^1.0.0",
     "eslint": "^8.44.0",
-    "express": "^4.18.2",
     "git-revision-webpack-plugin": "^3.0.6",
     "html-replace-webpack-plugin": "^2.5.6",
     "npm-run-all": "^4.1.5",

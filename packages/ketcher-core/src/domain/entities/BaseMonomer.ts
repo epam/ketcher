@@ -38,7 +38,14 @@ export class BaseMonomer extends DrawingEntity {
   }
 
   public get listOfAttachmentPoints() {
-    return Object.keys(this.attachmentPointsToBonds);
+    const maxAttachmentPointNumber = this.getMaxAttachmentPointNumber();
+    const attachmentPointList: string[] = [];
+    for (let i = 1; i <= maxAttachmentPointNumber; i++) {
+      if (this.attachmentPointsToBonds[`R${i}`] !== undefined) {
+        attachmentPointList.push(`R${i}`);
+      }
+    }
+    return attachmentPointList;
   }
 
   public turnOnAttachmentPointsVisibility() {

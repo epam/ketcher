@@ -21,7 +21,7 @@ import { MonomerConnectionProps } from '../modalContainer/types';
 
 const StyledModal = styled(Modal)({
   '& .MuiPaper-root': {
-    width: '520px',
+    width: 'auto',
     height: 'fit-content',
   },
 
@@ -31,18 +31,28 @@ const StyledModal = styled(Modal)({
 });
 
 export const StyledStructRender = styled(StructRender)(({ theme }) => ({
-  height: '200px',
-  width: '200px',
-  border: `${theme.ketcher.outline.medium}`,
-  borderRadius: theme.ketcher.border.radius.regular,
+  height: '150px',
+  width: '150px',
+  border: `1.5px solid ${theme.ketcher.outline.color}`,
+  borderRadius: '6px',
   padding: 5,
 }));
 export const ActionButtonLeft = styled(ActionButton)(() => ({
   marginRight: 'auto',
+  width: '97px',
 }));
-export const ActionButtonAttachmentPoint = styled(ActionButton)(() => ({
-  borderRadius: 5,
+
+export const ActionButtonRight = styled(ActionButton)(() => ({
+  width: '97px',
 }));
+export const ActionButtonAttachmentPoint = styled(ActionButton)(
+  ({ theme }) => ({
+    borderRadius: 5,
+    width: '45px',
+    padding: '4px',
+    border: `1px solid ${theme.ketcher.color.border.secondary}`,
+  }),
+);
 
 const MonomerConnection = ({
   onClose,
@@ -88,6 +98,7 @@ const MonomerConnection = ({
     <StyledModal
       title=""
       isOpen={isModalOpen}
+      showCloseButton={false}
       onClose={cancelBondCreationAndClose}
     >
       <Modal.Content>
@@ -120,7 +131,7 @@ const MonomerConnection = ({
           styleType="secondary"
           clickHandler={cancelBondCreationAndClose}
         />
-        <ActionButton
+        <ActionButtonRight
           label="Connect"
           disabled={
             !firstSelectedAttachmentPoint || !secondSelectedAttachmentPoint
@@ -170,7 +181,7 @@ function AttachmentPointSelectionPanel({
         }}
       />
       <AttachmentPointList>
-        {Object.entries(bonds).map(([attachmentPoint, bond]) => (
+        {monomer.listOfAttachmentPoints.map((attachmentPoint) => (
           <AttachmentPoint key={attachmentPoint}>
             <ActionButtonAttachmentPoint
               label={attachmentPoint}
@@ -180,7 +191,12 @@ function AttachmentPointSelectionPanel({
                   : 'secondary'
               }
               clickHandler={() => onSelectAttachmentPoint(attachmentPoint)}
-              disabled={Boolean(bond)}
+              disabled={Boolean(
+                connectedAttachmentPoints.find(
+                  (connectedAttachmentPointName) =>
+                    connectedAttachmentPointName === attachmentPoint,
+                ),
+              )}
             />
             <AttachmentPointName>
               {monomerLeavingGroups

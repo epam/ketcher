@@ -3,17 +3,17 @@ import styled from '@emotion/styled';
 export const AttachmentPointList = styled.div({
   display: 'flex',
   flexWrap: 'wrap',
-  justifyContent: 'start',
-  gap: '10px',
+  justifyContent: 'space-between',
   alignSelf: 'flex-start',
-  maxWidth: 197,
+  width: '100%',
 });
 
 export const AttachmentPoint = styled.div({
-  width: 'calc(192px / 3 - 10px * 2 / 3)', // 2 - gaps, 3 - buttons
   display: 'flex',
   flexDirection: 'column',
   rowGap: '5px',
+  alignItems: 'center',
+  marginBottom: '5px',
 });
 
 export const AttachmentPointName = styled.span(({ theme }) => ({
@@ -21,8 +21,9 @@ export const AttachmentPointName = styled.span(({ theme }) => ({
   padding: 0,
   textAlign: 'center',
   display: 'block',
-  fontSize: theme.ketcher.font.size.regular,
+  fontSize: theme.ketcher.font.size.small,
   fontWeight: theme.ketcher.font.weight.regular,
+  color: theme.ketcher.color.text.light,
 }));
 
 export const MonomerName = styled.h3(({ theme }) => ({
@@ -37,20 +38,21 @@ export const MonomerName = styled.h3(({ theme }) => ({
 }));
 
 export const ConnectionSymbol = styled.div(({ theme }) => ({
-  width: 20,
-  height: 3,
+  width: 10,
+  height: 2,
   display: 'block',
   color: theme.ketcher.color.button.secondary.hover,
   backgroundColor: theme.ketcher.color.button.secondary.hover,
   borderRadius: 20,
-  margin: '100px 20px 0',
+  margin: '76px 12px 0',
 }));
 
 export const AttachmentPointSelectionContainer = styled.div(() => ({
   display: 'flex',
   flexDirection: 'column',
-  gap: '10px',
+  gap: '8px',
   justifyContent: 'space-around',
+  maxWidth: '150px',
 }));
 
 export const AttachmentPointsRow = styled.div(() => ({
@@ -64,9 +66,7 @@ export const MonomerNamesRow = styled.div(() => ({
   gap: '34px',
   justifyContent: 'space-between',
   alignItems: 'flex-end',
-  paddingBottom: '10px',
+  paddingBottom: '6px',
 }));
 
-export const ModalContent = styled.div(() => ({
-  padding: '0 10px',
-}));
+export const ModalContent = styled.div(() => ({}));

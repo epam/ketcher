@@ -753,12 +753,14 @@ function buildLabel(
   const isMonomerAttachmentPointUsed =
     options.connectedMonomerAttachmentPoints?.includes(label.text);
 
-  if (isMonomerAttachmentPoint && isMonomerAttachmentPointSelected) {
-    atom.color = '#FFF';
+  if (isMonomerAttachmentPoint) {
+    atom.color = isMonomerAttachmentPointSelected
+      ? '#FFF'
+      : isMonomerAttachmentPointUsed
+      ? '#B4B9D6'
+      : '#585858';
   }
-  if (isMonomerAttachmentPoint && isMonomerAttachmentPointUsed) {
-    atom.color = '#666';
-  }
+
   if (label.text?.length > 8) {
     tooltip = label.text;
     label.text = `${label.text?.substring(0, 8)}...`;
@@ -774,11 +776,7 @@ function buildLabel(
   });
 
   if (isMonomerAttachmentPoint) {
-    const fill = isMonomerAttachmentPointSelected
-      ? '#167782'
-      : isMonomerAttachmentPointUsed
-      ? '#E1E5EA'
-      : '#FFF';
+    const fill = isMonomerAttachmentPointSelected ? '#167782' : '#FFF';
     const backgroundSize = options.fontsz * 2;
 
     label.background = paper
@@ -789,7 +787,8 @@ function buildLabel(
         backgroundSize,
         10,
       )
-      .attr({ fill });
+      .attr({ fill })
+      .attr({ stroke: isMonomerAttachmentPointUsed ? '#B4B9D6' : '#7C7C7F' });
   }
   if (tooltip) {
     addTooltip(label, tooltip);

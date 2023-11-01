@@ -181,8 +181,14 @@ export class Struct {
     return atomSet;
   }
 
-  getFragment(fid: number): Struct {
-    return this.clone(this.getFragmentIds(fid), null, true);
+  getFragment(fid: number, copySimpleObjects = true): Struct {
+    return this.clone(
+      this.getFragmentIds(fid),
+      null,
+      true,
+      undefined,
+      copySimpleObjects ? undefined : new Pile(),
+    );
   }
 
   mergeInto(

@@ -347,7 +347,10 @@ export class KetSerializer implements Serializer<Struct> {
 
     let fragmentNumber = 1;
     deserializedMicromolecules.frags.forEach((_fragment, fragmentId) => {
-      const fragmentStruct = deserializedMicromolecules.getFragment(fragmentId);
+      const fragmentStruct = deserializedMicromolecules.getFragment(
+        fragmentId,
+        false,
+      );
       const fragmentBbox = fragmentStruct.getCoordBoundingBox();
       const monomerAdditionCommand = drawingEntitiesManager.addMonomer(
         {
@@ -492,7 +495,7 @@ export class KetSerializer implements Serializer<Struct> {
     const serializedMicromoleculesStruct = JSON.parse(
       this.serializeMicromolecules(micromoleculesStruct),
     );
-
+    console.log(serializedMicromoleculesStruct, serializedMacromolecules);
     const fileContent = {
       ...serializedMicromoleculesStruct,
       ...serializedMacromolecules,

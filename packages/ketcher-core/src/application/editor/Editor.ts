@@ -329,6 +329,7 @@ export class CoreEditor {
     const monomerToSgroup = new Map<BaseMonomer, SGroup>();
 
     drawingEntitiesManager.micromoleculesHiddenEntities.mergeInto(struct);
+
     drawingEntitiesManager.clearMicromoleculesHiddenEntities();
     drawingEntitiesManager.monomers.forEach((monomer) => {
       if (monomer.monomerItem.props.isMicromoleculeFragment) {

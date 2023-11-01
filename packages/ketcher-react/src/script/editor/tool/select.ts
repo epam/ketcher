@@ -29,13 +29,10 @@ import {
   Vec2,
   Atom,
   Bond,
-  isCloseToEdgeOfCanvas,
-  isCloseToEdgeOfScreen,
-  scrollCanvasByVector,
-  extendCanvasByVector,
   getItemsToFuse,
   vectorUtils,
   KetcherLogger,
+  CoordinateTransformation,
 } from 'ketcher-core';
 
 import LassoHelper from './helper/lasso';
@@ -47,7 +44,6 @@ import { dropAndMerge } from './helper/dropAndMerge';
 import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems';
 import { updateSelectedAtoms } from 'src/script/ui/state/modal/atoms';
 import { updateSelectedBonds } from 'src/script/ui/state/modal/bonds';
-import { hasAtomsOutsideCanvas } from './helper/isAtomOutSideCanvas';
 import { filterNotInContractedSGroup } from './helper/filterNotInCollapsedSGroup';
 import { Tool } from './Tool';
 import { handleMovingPosibilityCursor } from '../utils';
@@ -60,16 +56,6 @@ enum Direction {
   RIGHT,
   DOWN,
 }
-
-let lastTimestamp = 0;
-const canvasOffsetPerSecond = 100;
-
-const directionOffsetMap: Record<Direction, Vec2> = {
-  [Direction.LEFT]: new Vec2(-canvasOffsetPerSecond, 0),
-  [Direction.TOP]: new Vec2(0, -canvasOffsetPerSecond),
-  [Direction.RIGHT]: new Vec2(canvasOffsetPerSecond, 0),
-  [Direction.DOWN]: new Vec2(0, canvasOffsetPerSecond),
-};
 
 class SelectTool implements Tool {
   readonly #mode: SelectMode;
@@ -169,7 +155,7 @@ class SelectTool implements Tool {
       this.editor.selection(isSelected(selection, ci) ? selection : sel);
     }
 
-    this.moveCanvas();
+    this.handleMoveCloseToEdgeOfCanvas();
 
     return true;
   }
@@ -246,7 +232,7 @@ class SelectTool implements Tool {
       dragCtx.mergeItems = getItemsToFuse(editor, visibleSelectedItems);
       editor.hover(getHoverToFuse(dragCtx.mergeItems));
 
-      editor.update(dragCtx.action, true, { resizeCanvas: false });
+      editor.update(dragCtx.action, true);
       return true;
     }
 
@@ -314,22 +300,11 @@ class SelectTool implements Tool {
     /* end */
 
     if (this.dragCtx?.item) {
-      const atoms = Array.from(editor.struct().atoms.values());
-      const shouldResizeCanvas = hasAtomsOutsideCanvas(
-        atoms,
-        editor.render,
-        editor.options().scale,
-      );
       if (this.dragCtx.item.map === 'rxnArrows') {
         this.updateArrowResizingState(this.dragCtx.item.id, false);
         this.editor.update(true);
       }
-      dropAndMerge(
-        editor,
-        this.dragCtx.mergeItems,
-        this.dragCtx.action,
-        shouldResizeCanvas,
-      );
+      dropAndMerge(editor, this.dragCtx.mergeItems, this.dragCtx.action);
       delete this.dragCtx;
     } else if (this.#lassoHelper.running()) {
       // TODO it catches more events than needed, to be re-factored
@@ -532,70 +507,82 @@ class SelectTool implements Tool {
     }
   }
 
-  private moveCanvas() {
+  private isCloseToEdgeOfCanvas(event: MouseEvent) {
+    const EDGE_OFFSET = 50;
+    const mousePositionInCanvas = CoordinateTransformation.pageToCanvas(
+      event,
+      this.editor.render,
+    );
+    const viewBox = this.editor.render.viewBox;
+
+    const closeEdges: Direction[] = [];
+    let isClose = false;
+
+    if (mousePositionInCanvas.x < viewBox.minX + EDGE_OFFSET) {
+      isClose = true;
+      closeEdges.push(Direction.LEFT);
+    }
+    if (mousePositionInCanvas.x > viewBox.minX + viewBox.width - EDGE_OFFSET) {
+      isClose = true;
+      closeEdges.push(Direction.RIGHT);
+    }
+    if (mousePositionInCanvas.y < viewBox.minY + EDGE_OFFSET) {
+      isClose = true;
+      closeEdges.push(Direction.TOP);
+    }
+    if (mousePositionInCanvas.y > viewBox.minY + viewBox.height - EDGE_OFFSET) {
+      isClose = true;
+      closeEdges.push(Direction.DOWN);
+    }
+
+    return [isClose, closeEdges] as const;
+  }
+
+  private handleMoveCloseToEdgeOfCanvas() {
     const event = this.previousMouseMoveEvent;
-    const render = this.editor.render;
-
-    const oneSecondInMilliseconds = 1000;
-    const now = Date.now();
-    const deltaTime =
-      (lastTimestamp === 0 ? 0 : now - lastTimestamp) / oneSecondInMilliseconds;
-    lastTimestamp = Date.now();
-
     if (!event) {
       return;
     }
 
-    const { isCloseToSomeEdgeOfScreen } = isCloseToEdgeOfScreen(event);
+    const [isCloseToSomeEdgeOfScreen, closeEdges] =
+      this.isCloseToEdgeOfCanvas(event);
 
     if (isCloseToSomeEdgeOfScreen) {
       this.mousemove(event);
-      resizeCanvas(render, event, deltaTime);
+      this.moveViewBox(closeEdges);
     }
 
     if (this.isMouseDown) {
-      requestAnimationFrame(() => this.moveCanvas());
+      requestAnimationFrame(() => this.handleMoveCloseToEdgeOfCanvas());
     }
   }
-}
 
-function resizeCanvas(render, event, deltaTime: number) {
-  const {
-    isCloseToLeftEdgeOfCanvas,
-    isCloseToTopEdgeOfCanvas,
-    isCloseToRightEdgeOfCanvas,
-    isCloseToBottomEdgeOfCanvas,
-  } = isCloseToEdgeOfCanvas(render.clientArea);
-
-  const {
-    isCloseToLeftEdgeOfScreen,
-    isCloseToTopEdgeOfScreen,
-    isCloseToRightEdgeOfScreen,
-    isCloseToBottomEdgeOfScreen,
-  } = isCloseToEdgeOfScreen(event);
-
-  const directionChecksMap: Record<Direction, [boolean, boolean]> = {
-    [Direction.LEFT]: [isCloseToLeftEdgeOfScreen, isCloseToLeftEdgeOfCanvas],
-    [Direction.TOP]: [isCloseToTopEdgeOfScreen, isCloseToTopEdgeOfCanvas],
-    [Direction.RIGHT]: [isCloseToRightEdgeOfScreen, isCloseToRightEdgeOfCanvas],
-    [Direction.DOWN]: [
-      isCloseToBottomEdgeOfScreen,
-      isCloseToBottomEdgeOfCanvas,
-    ],
-  };
-
-  for (const [direction, offset] of Object.entries(directionOffsetMap)) {
-    const [isCloseToScreenEdge, isCloseToCanvasEdge] =
-      directionChecksMap[direction];
-
-    const scaledOffset = offset.scaled(deltaTime);
-
-    if (isCloseToScreenEdge) {
-      if (isCloseToCanvasEdge) {
-        extendCanvasByVector(scaledOffset, render);
-      }
-
-      scrollCanvasByVector(scaledOffset, render);
+  private moveViewBox(closeEdges: Direction[]) {
+    const MOVE_STEP = 5;
+    const render = this.editor.render;
+    if (closeEdges.includes(Direction.RIGHT)) {
+      render.setViewBox((prev) => ({
+        ...prev,
+        minX: prev.minX + MOVE_STEP,
+      }));
+    }
+    if (closeEdges.includes(Direction.LEFT)) {
+      render.setViewBox((prev) => ({
+        ...prev,
+        minX: prev.minX - MOVE_STEP,
+      }));
+    }
+    if (closeEdges.includes(Direction.DOWN)) {
+      render.setViewBox((prev) => ({
+        ...prev,
+        minY: prev.minY + MOVE_STEP,
+      }));
+    }
+    if (closeEdges.includes(Direction.TOP)) {
+      render.setViewBox((prev) => ({
+        ...prev,
+        minY: prev.minY - MOVE_STEP,
+      }));
     }
   }
 }

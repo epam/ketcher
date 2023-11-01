@@ -4,7 +4,6 @@ import {
   dragMouseTo,
   selectRectangleSelectionTool,
   selectSingleBondTool,
-  takePageScreenshot,
   waitForPageInit,
   takeEditorScreenshot,
 } from '@utils';
@@ -17,6 +16,7 @@ test.describe('Check attachment point rotation', () => {
     await waitForPageInit(page);
     await turnOnMacromoleculesEditor(page);
   });
+
   test('Select monomer and bonds and then hover monomer', async ({ page }) => {
     /* 
     Test case: # - Rotate attachment point to bond
@@ -72,10 +72,16 @@ test.describe('Check attachment point rotation', () => {
     // Hover 1th peptide
     await peptide1.hover();
 
-    await takePageScreenshot(page);
+    // Get rid of flakiness because of preview
+    await page.waitForSelector('.polymer-library-preview');
+
+    await takeEditorScreenshot(page);
 
     // Hover 2nd peptide
     await peptide2.hover();
+
+    // Get rid of flakiness because of preview
+    await page.waitForSelector('.polymer-library-preview');
 
     await takeEditorScreenshot(page);
   });
@@ -128,7 +134,7 @@ test.describe('Check attachment point rotation', () => {
     await selectSingleBondTool(page);
     // Hover 1th peptide
     await peptide1.hover();
-
+    await page.getByTestId('polymer-library-preview');
     await takeEditorScreenshot(page);
   });
 });

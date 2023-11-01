@@ -1,7 +1,7 @@
 import { test } from '@playwright/test';
 import {
   clickInTheMiddleOfTheScreen,
-  takePageScreenshot,
+  takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
 import {
@@ -21,5 +21,5 @@ test('Add molecule to favorites, switch to Favorites tab and drag it to the canv
   await page.click(ALANINE);
   await clickInTheMiddleOfTheScreen(page);
 
-  await takePageScreenshot(page);
+  await takeEditorScreenshot(page);
 });

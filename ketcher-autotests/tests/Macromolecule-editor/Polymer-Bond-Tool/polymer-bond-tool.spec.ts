@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import {
   selectSingleBondTool,
   waitForPageInit,
-  takePageScreenshot,
+  takeEditorScreenshot,
   addMonomerToCanvas,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
@@ -16,7 +16,7 @@ test.describe('Polymer Bond Tool', () => {
   });
 
   test.afterEach(async ({ page }) => {
-    await takePageScreenshot(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Create bond between two peptides', async ({ page }) => {
@@ -43,15 +43,21 @@ test.describe('Polymer Bond Tool', () => {
     // Select bond tool
     await selectSingleBondTool(page);
 
+    await takeEditorScreenshot(page);
+
     // Create bonds between peptides, taking screenshots in middle states
     await peptide1.hover();
     await page.mouse.down();
-
-    await takePageScreenshot(page);
     await peptide2.hover();
     await page.mouse.up();
-    await takePageScreenshot(page);
 
+    // Get rid of preview
+    const coords = [100, 100];
+    await page.mouse.move(coords[0], coords[1]);
+
+    await takeEditorScreenshot(page);
+
+    await peptide2.hover();
     await page.mouse.down();
     await peptide3.hover();
     await page.mouse.up();
@@ -60,6 +66,9 @@ test.describe('Polymer Bond Tool', () => {
     await page.mouse.down();
     await peptide3.hover();
     await page.mouse.up();
+
+    // Get rid of preview
+    await page.mouse.move(coords[0], coords[1]);
   });
 
   test('Create bond between two chems', async ({ page }) => {
@@ -86,7 +95,7 @@ test.describe('Polymer Bond Tool', () => {
     // Create bonds between chems, taking screenshots in middle states
     await chem1.hover();
     await page.mouse.down();
-    await takePageScreenshot(page);
+    await takeEditorScreenshot(page);
     await chem2.hover();
     await page.mouse.up();
   });

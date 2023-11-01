@@ -23,19 +23,24 @@ import { selectShowPreview } from 'state/common';
 
 const MonomerPreview = ({ className }: IPreviewProps) => {
   const preview = useAppSelector(selectShowPreview);
-  const ContainerDinamic = useMemo(
+  const ContainerDynamic = useMemo(
     () => styled(Container)`
-      top: ${preview?.style || ''};
+      top: ${preview?.style?.top || ''};
+      left: ${preview?.style?.left || ''};
+      right: ${preview?.style?.right || ''};
     `,
     [preview],
   );
 
   return (
     preview?.monomer && (
-      <ContainerDinamic className={className}>
+      <ContainerDynamic
+        className={className}
+        data-testid="polymer-library-preview"
+      >
         <MonomerName>{preview.monomer.struct.name}</MonomerName>
         <StyledStructRender struct={preview.monomer.struct} />
-      </ContainerDinamic>
+      </ContainerDynamic>
     )
   );
 };
@@ -45,7 +50,6 @@ const StyledPreview = styled(MonomerPreview)`
   position: absolute;
   width: ${preview.width}px;
   height: ${preview.height}px;
-  left: 50%;
   transform: translate(-50%, 0);
 `;
 

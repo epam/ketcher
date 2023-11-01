@@ -57,6 +57,11 @@ export async function selectEraseTool(page: Page) {
   await bondToolButton.click();
 }
 
+export async function selectClearCanvasTool(page: Page) {
+  const bondToolButton = page.locator(`button[title*="Clear Canvas"]`);
+  await bondToolButton.click();
+}
+
 export async function selectRectangleSelectionTool(page: Page) {
   const bondToolButton = page.locator(`button[title*="Select Rectangle"]`);
   await bondToolButton.click();

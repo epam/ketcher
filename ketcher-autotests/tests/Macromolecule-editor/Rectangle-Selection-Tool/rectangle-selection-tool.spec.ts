@@ -7,7 +7,6 @@ import {
   selectRectangleSelectionTool,
   selectSingleBondTool,
   takeEditorScreenshot,
-  takePageScreenshot,
   waitForPageInit,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
@@ -70,7 +69,10 @@ test.describe('Rectangle Selection Tool', () => {
     await bondTwoMonomers(page, peptide3, peptide2);
     await bondTwoMonomers(page, peptide3, peptide4);
 
-    await takePageScreenshot(page);
+    // Get rid of flakiness because of preview
+    const coords = [100, 100];
+    await page.mouse.move(coords[0], coords[1]);
+    await takeEditorScreenshot(page);
 
     await selectRectangleSelectionTool(page);
 
@@ -82,12 +84,17 @@ test.describe('Rectangle Selection Tool', () => {
 
     await selectRectangleArea(page, startX, startY, endX, endY);
 
-    await takePageScreenshot(page);
+    // Get rid of flakiness because of preview
+    await page.mouse.move(coords[0], coords[1]);
+    await takeEditorScreenshot(page);
 
     // Erase selected elements
     await selectEraseTool(page);
 
-    await takePageScreenshot(page);
+    // Get rid of flakiness because of preview
+    await page.mouse.move(coords[0], coords[1]);
+
+    await takeEditorScreenshot(page);
   });
 
   test('Move monomer bonded with another monomers', async ({ page }) => {
@@ -124,9 +131,7 @@ test.describe('Rectangle Selection Tool', () => {
 
     // Move selected monomer
     await selectRectangleSelectionTool(page);
-    await page.mouse.move(400, 400);
-    await dragMouseTo(500, 500, page);
-    await page.mouse.move(400, 400);
+    await page.mouse.click(400, 400);
     await dragMouseTo(200, 400, page);
 
     await takeEditorScreenshot(page);

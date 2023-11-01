@@ -14,10 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 import { Provider } from 'react-redux';
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { Global, ThemeProvider } from '@emotion/react';
 import { createTheme } from '@mui/material/styles';
-import { merge } from 'lodash';
+import { debounce, merge } from 'lodash';
 import { SdfSerializer } from 'ketcher-core';
 import monomersData from './data/monomers.sdf';
 
@@ -39,6 +39,7 @@ import {
   selectEditorActiveTool,
   selectEditorBondMode,
   selectTool,
+  showPreview,
   selectMode,
 } from 'state/common';
 import { loadMonomerLibrary } from 'state/library';
@@ -69,6 +70,8 @@ import {
   PhosphateAvatar,
   RNABaseAvatar,
 } from 'components/shared/monomerOnCanvas';
+import { calculatePreviewPosition } from 'helpers';
+import StyledPreview from 'components/shared/MonomerPreview';
 
 const muiTheme = createTheme(muiOverrides);
 
@@ -112,6 +115,7 @@ function Editor({ theme }: EditorProps) {
   const canvasRef = useRef<SVGSVGElement>(null);
   const errorTooltipText = useAppSelector(selectErrorTooltipText);
   const editor = useAppSelector(selectEditor);
+  const activeTool = useAppSelector(selectEditorActiveTool);
   useEffect(() => {
     dispatch(createEditor({ theme, canvas: canvasRef.current }));
     const serializer = new SdfSerializer();
@@ -123,6 +127,45 @@ function Editor({ theme }: EditorProps) {
     };
   }, [dispatch]);
 
+  const dispatchShowPreview = useCallback(
+    (payload) => dispatch(showPreview(payload)),
+    [dispatch],
+  );
+
+  const debouncedShowPreview = useMemo(
+    () => debounce((p) => dispatchShowPreview(p), 500),
+    [dispatchShowPreview],
+  );
+
+  const handleClosePreview = () => {
+    debouncedShowPreview.cancel();
+    dispatch(showPreview(undefined));
+  };
+
+  const handleOpenPreview = useCallback(
+    (e) => {
+      const tools = ['erase', 'select-rectangle', 'bond-single'];
+      if (!tools.includes(activeTool)) {
+        handleClosePreview();
+        return;
+      }
+      const monomer = e.target.__data__.monomer.monomerItem;
+
+      const cardCoordinates = e.target.getBoundingClientRect();
+      const top = calculatePreviewPosition(monomer, cardCoordinates);
+      const previewStyle = {
+        top,
+        left: `${cardCoordinates.left + cardCoordinates.width / 2}px`,
+      };
+      debouncedShowPreview({ monomer, style: previewStyle });
+    },
+    [activeTool],
+  );
+
+  const handleCloseErrorTooltip = () => {
+    dispatch(closeErrorTooltip());
+  };
+
   useEffect(() => {
     if (editor) {
       editor.events.error.add((errorText) =>
@@ -133,9 +176,18 @@ function Editor({ theme }: EditorProps) {
     }
   }, [editor]);
 
-  const handleCloseErrorTooltip = () => {
-    dispatch(closeErrorTooltip());
-  };
+  useEffect(() => {
+    editor?.events.mouseOverMonomer.add((e) => {
+      handleOpenPreview(e);
+    });
+    editor?.events.mouseLeaveMonomer.add(() => {
+      handleClosePreview();
+    });
+    editor?.events.mouseOnMoveMonomer.add((e) => {
+      handleClosePreview();
+      handleOpenPreview(e);
+    });
+  }, [editor, activeTool]);
 
   return (
     <>
@@ -192,11 +244,9 @@ function Editor({ theme }: EditorProps) {
           <MonomerLibrary />
         </Layout.Right>
       </Layout>
-
       <FullscreenButton />
-
+      <StyledPreview className="polymer-library-preview" />
       <ModalContainer />
-
       <Snackbar
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
         open={Boolean(errorTooltipText)}
@@ -231,13 +281,21 @@ function MenuComponent() {
       dispatch(selectMode(!isSnakeMode));
       editor.events.selectMode.dispatch(!isSnakeMode);
     } else {
-      dispatch(selectTool(name));
       editor.events.selectTool.dispatch(name);
+      if (name === 'clear') {
+        dispatch(selectTool('select-rectangle'));
+        editor.events.selectTool.dispatch('select-rectangle');
+      } else {
+        dispatch(selectTool(name));
+      }
     }
   };
 
   return (
     <Menu onItemClick={menuItemChanged} activeMenuItems={activeMenuItems}>
+      <Menu.Group>
+        <Menu.Item itemId="clear" title="Clear Canvas" />
+      </Menu.Group>
       <Menu.Group>
         <Menu.Submenu>
           <Menu.Item itemId="open" title="Open..." />

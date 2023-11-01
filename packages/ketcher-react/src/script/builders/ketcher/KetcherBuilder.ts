@@ -21,6 +21,7 @@ import {
   ServiceMode,
   StructService,
   StructServiceProvider,
+  ketcherProvider,
 } from 'ketcher-core';
 
 import { ButtonsConfig } from './ButtonsConfig';
@@ -118,7 +119,7 @@ class KetcherBuilder {
     }
 
     IndigoProvider.setIndigo(this.structService);
-
+    ketcherProvider.setKetcherInstance(ketcher);
     return ketcher;
   }
 }

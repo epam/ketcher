@@ -1,7 +1,7 @@
 import { test } from '@playwright/test';
 import {
   clickInTheMiddleOfTheScreen,
-  takePageScreenshot,
+  takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
 import { POLYMER_TOGGLER } from '../../../constants/testIdConstants';
@@ -24,5 +24,5 @@ test('Select chem and drag it to canvas', async ({ page }) => {
   // Click on <svg> #polymer-editor-canvas
   await clickInTheMiddleOfTheScreen(page);
 
-  await takePageScreenshot(page);
+  await takeEditorScreenshot(page);
 });

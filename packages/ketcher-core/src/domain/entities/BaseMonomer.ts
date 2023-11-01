@@ -247,13 +247,14 @@ export class BaseMonomer extends DrawingEntity {
       (attachmentPoint, attachmentPointIndex) => {
         const attachmentPointNumber = attachmentPointIndex + 1;
         attachmentPointDictionnary[
-          `R${
-            attachmentPoint.type
-              ? attachmentPointTypeToNumber[attachmentPoint.type](
-                  attachmentPointNumber,
-                )
-              : attachmentPointNumber
-          }`
+          attachmentPoint.label ||
+            `R${
+              attachmentPoint.type
+                ? attachmentPointTypeToNumber[attachmentPoint.type](
+                    attachmentPointNumber,
+                  )
+                : attachmentPointNumber
+            }`
         ] = null;
       },
     );

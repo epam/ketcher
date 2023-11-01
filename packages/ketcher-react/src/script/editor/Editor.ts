@@ -164,7 +164,7 @@ class Editor implements KetcherEditor {
         },
         options,
       ),
-      true,
+      options.reuseRestructIfExist !== false,
     );
 
     this._selection = null; // eslint-disable-line

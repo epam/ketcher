@@ -28,14 +28,14 @@ test.describe('Query features', () => {
     await setAromaticity(page, 'aromatic');
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
-    await checkSmartsValue(page, '[#6]1-[#6]=[#6]-[#6]=[#6]-[#6]=1');
+    await checkSmartsValue(page, '[c]1-[#6]=[#6]-[#6]=[#6]-[#6]=1');
   });
 
   test('Setting chirality', async ({ page }) => {
     await setChirality(page, 'clockwise');
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
-    await checkSmartsValue(page, '[#6]1-[#6]=[#6]-[#6]=[#6]-[#6]=1');
+    await checkSmartsValue(page, '[#6;@@]1-[#6]=[#6]-[#6]=[#6]-[#6]=1');
   });
 });
 
@@ -52,6 +52,6 @@ test.describe('Custom query', () => {
     await setCustomQuery(page, '@@');
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
-    await checkSmartsValue(page, '[!#1]1-[#6]=[#6]-[#6]=[#6]-[#6]=1');
+    await checkSmartsValue(page, '[@@]1-[#6]=[#6]-[#6]=[#6]-[#6]=1');
   });
 });

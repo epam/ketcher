@@ -1638,6 +1638,7 @@ test.describe('Atom Properties', () => {
     /*
       Test case: EPMLSOPKET-18067
       Description: All Implicit H count options added to Benzene structure.
+      Autotest working incorrect because we have bug: https://github.com/epam/ketcher/issues/3529
     */
     // eslint-disable-next-line no-magic-numbers
     const atomIndices = [2, 4, 5];
@@ -1675,6 +1676,7 @@ test.describe('Atom Properties', () => {
     /*
       Test case: EPMLSOPKET-18069
       Description: All Ring membership options added to Benzene structure.
+      Autotest working incorrect because we have bug: https://github.com/epam/ketcher/issues/3529
     */
     // eslint-disable-next-line no-magic-numbers
     const atomIndices = [2, 4, 5];
@@ -1694,6 +1696,7 @@ test.describe('Atom Properties', () => {
     /*
       Test case: EPMLSOPKET-18071
       Description: All Ring size options added to Benzene structure.
+      Autotest working incorrect because we have bug: https://github.com/epam/ketcher/issues/3529
     */
     // eslint-disable-next-line no-magic-numbers
     const atomIndices = [2, 4, 5];
@@ -1713,6 +1716,7 @@ test.describe('Atom Properties', () => {
     /*
       Test case: EPMLSOPKET-18075
       Description: All Connectivity options added to Benzene structure.
+      Autotest working incorrect because we have bug: https://github.com/epam/ketcher/issues/3529
     */
     // eslint-disable-next-line no-magic-numbers
     const atomIndices = [2, 4, 5];

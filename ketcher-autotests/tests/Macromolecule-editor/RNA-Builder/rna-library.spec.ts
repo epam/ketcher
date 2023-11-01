@@ -7,6 +7,7 @@ import {
   Sugars,
   addMonomerToCenterOfCanvas,
   clickInTheMiddleOfTheScreen,
+  dragMouseTo,
   moveMouseToTheMiddleOfTheScreen,
   openFileAndAddToCanvas,
   selectEraseTool,
@@ -627,4 +628,52 @@ test.describe('RNA Library', () => {
     await page.getByText('P').locator('..').first().click();
     await takeEditorScreenshot(page);
   });
+
+  const molecules = [
+    { type: 'Sugars', description: '25R___2,5-Ribose' },
+    { type: 'Bases', description: 'baA___N-benzyl-adenine' },
+    { type: 'Phosphates', description: 'bP___Boranophosphate' },
+  ];
+
+  for (const molecule of molecules) {
+    test(`Move ${molecule.type} on canvas to new position`, async ({
+      page,
+    }) => {
+      /* 
+    Test case: #2507 - Add RNA monomers to canvas
+    Description: Sugar/Base/Phosphate moved to new position.
+    */
+      const anyPointX = 300;
+      const anyPointY = 300;
+      await page.getByTestId('RNA-TAB').click();
+      await page.getByTestId(`summary-${molecule.type}`).click();
+      await page.getByTestId(molecule.description).click();
+      await clickInTheMiddleOfTheScreen(page);
+      await selectRectangleSelectionTool(page);
+      await clickInTheMiddleOfTheScreen(page);
+      await dragMouseTo(anyPointX, anyPointY, page);
+      await takeEditorScreenshot(page);
+    });
+  }
+
+  const monomersToMove = ['3A6', 'baA', 'P'];
+
+  for (const monomer of monomersToMove) {
+    test(`Draw Sugar-Base-Phosphate and Move ${monomer} monomer`, async ({
+      page,
+    }) => {
+      /* 
+    Test case: #2507 - Add RNA monomers to canvas
+    Description: Sugar/Base/Phosphate monomer moved to new position. 
+    Bonds are connected to monomers. 
+    */
+      const anyPointX = 300;
+      const anyPointY = 300;
+      await drawThreeMonomers(page);
+      await selectRectangleSelectionTool(page);
+      await page.getByText(monomer).locator('..').first().click();
+      await dragMouseTo(anyPointX, anyPointY, page);
+      await takeEditorScreenshot(page);
+    });
+  }
 });

@@ -323,7 +323,10 @@ export class KetSerializer implements Serializer<Struct> {
               assert(attachmentAtom);
               attachmentAtom.rglabel = (
                 0 |
-                (1 << attachmentPointIndex)
+                (1 <<
+                  (attachmentPoint.label
+                    ? Number(attachmentPoint.label.replace('R', '')) - 1
+                    : attachmentPointIndex))
               ).toString();
             },
           );
@@ -499,6 +502,6 @@ export class KetSerializer implements Serializer<Struct> {
       ...serializedMicromoleculesStruct.root.nodes,
     ];
 
-    return JSON.stringify(fileContent) as unknown as string;
+    return JSON.stringify(fileContent, null, 4) as unknown as string;
   }
 }

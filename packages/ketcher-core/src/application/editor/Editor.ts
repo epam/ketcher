@@ -295,6 +295,20 @@ export class CoreEditor {
     monomer: BaseMonomer,
     struct: Struct,
   ) {
+    if (
+      !sgroup.atoms.find(
+        (atomId) =>
+          Number(struct.atoms.get(atomId)?.rglabel) ===
+          (0 |
+            (1 <<
+              (Number(
+                monomer.getAttachmentPointByBond(polymerBond)?.replace('R', ''),
+              ) -
+                1))),
+      )
+    ) {
+      console.log(sgroup, polymerBond, monomer);
+    }
     return sgroup.atoms.find(
       (atomId) =>
         Number(struct.atoms.get(atomId)?.rglabel) ===

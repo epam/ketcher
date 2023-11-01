@@ -84,4 +84,5 @@ export interface IKetAttachmentPoint {
     atoms: number[];
   };
   type?: 'left' | 'right' | 'side';
+  label?: string;
 }

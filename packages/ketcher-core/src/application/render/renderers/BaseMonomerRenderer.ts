@@ -244,6 +244,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       this.monomer.position,
       this.editorSettings,
     );
+    console.log(this.monomer.position, monomerPositionInPixels);
 
     return new Vec2(
       monomerPositionInPixels.x - monomerSymbolBoundingClientRect.width / 2,

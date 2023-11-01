@@ -775,8 +775,12 @@ function buildLabel(
     'fill-opacity': atom.a.isPreview ? previewOpacity : 1,
   });
 
-  if (isMonomerAttachmentPoint) {
-    const fill = isMonomerAttachmentPointSelected ? '#167782' : '#FFF';
+  if (isMonomerAttachmentPoint && options.labelInMonomerConnectionsModal) {
+    const fill = isMonomerAttachmentPointSelected
+      ? '#167782'
+      : isMonomerAttachmentPointUsed
+      ? '#E1E5EA'
+      : '#FFF';
     const backgroundSize = options.fontsz * 2;
 
     label.background = paper

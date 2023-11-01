@@ -70,6 +70,7 @@ export type RenderOptions = {
 
   connectedMonomerAttachmentPoints?: string[];
   currentlySelectedMonomerAttachmentPoint?: string;
+  labelInMonomerConnectionsModal?: boolean;
 };
 
 export interface RelativeBox {

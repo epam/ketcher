@@ -178,6 +178,7 @@ function AttachmentPointSelectionPanel({
           connectedMonomerAttachmentPoints: connectedAttachmentPoints,
           currentlySelectedMonomerAttachmentPoint:
             selectedAttachmentPoint ?? undefined,
+          labelInMonomerConnectionsModal: true,
         }}
       />
       <AttachmentPointList>

@@ -15,11 +15,10 @@ async function openFileViaClipboard(filename: string, page: Page) {
   await page.getByRole('dialog').getByRole('textbox').fill(fileContent);
 }
 
-async function returnText(page: Page) {
+async function editText(page: Page, text: string) {
   await page.getByTestId('openStructureModal').getByRole('textbox').click();
   await page.keyboard.press('Home');
-  await page.keyboard.press('Enter');
-  await page.keyboard.press('Enter');
+  await page.keyboard.insertText(text);
 }
 
 test.describe('Floating windows', () => {
@@ -36,7 +35,7 @@ test.describe('Floating windows', () => {
     // Verify adding text file and ability of editing it
     await selectTopPanelButton(TopPanelButton.Open, page);
     await openFileViaClipboard('tests/test-data/Txt/kecther-text.txt', page);
-    await returnText(page);
+    await editText(page, '  NEW TEXT   ');
   });
 
   test('Open structure: Errors of input (text file)', async ({ page }) => {

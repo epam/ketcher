@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { Page, expect, test } from '@playwright/test';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
@@ -12,6 +12,12 @@ import {
   TopPanelButton,
 } from '@utils';
 import { getCml } from '@utils/formats';
+
+async function saveFileAsCmlFormat(page: Page) {
+  await selectTopPanelButton(TopPanelButton.Save, page);
+  await page.getByRole('button', { name: 'MDL Molfile V2000' }).click();
+  await page.getByRole('option', { name: 'CML' }).click();
+}
 
 test.describe('Reagents CML format', () => {
   test.beforeEach(async ({ page }) => {
@@ -71,9 +77,7 @@ test.describe('Reagents CML format', () => {
       'CML/reagents-below-and-above-arrow.cml',
       page,
     );
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await page.getByRole('button', { name: 'MDL Molfile V2000' }).click();
-    await page.getByRole('option', { name: 'CML' }).click();
+    await saveFileAsCmlFormat(page);
   });
 
   test('Paste from clipboard in "CML" format', async ({ page }) => {

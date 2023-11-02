@@ -1,4 +1,4 @@
-import { test } from '@playwright/test';
+import { Page, test } from '@playwright/test';
 import {
   selectTopPanelButton,
   TopPanelButton,
@@ -6,6 +6,17 @@ import {
   openFileAndAddToCanvas,
   waitForPageInit,
 } from '@utils';
+
+enum FileFormat {
+  SVGDocument = 'SVG Document',
+  PNGImage = 'PNG Image',
+}
+
+async function saveFileAsPngOrSvgFormat(page: Page, FileFormat: string) {
+  await selectTopPanelButton(TopPanelButton.Save, page);
+  await page.getByRole('button', { name: 'MDL Rxnfile V2000' }).click();
+  await page.getByRole('option', { name: FileFormat }).click();
+}
 
 test.describe('Reagents molecule above arrow', () => {
   test.beforeEach(async ({ page }) => {
@@ -48,9 +59,7 @@ test.describe('Reagents molecule above arrow', () => {
       page,
     );
 
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await page.getByRole('button', { name: 'MDL Rxnfile V2000' }).click();
-    await page.getByRole('option', { name: 'SVG Document' }).click();
+    await saveFileAsPngOrSvgFormat(page, FileFormat.SVGDocument);
   });
 
   test('Save PNG with reagent NH3 above arrow', async ({ page }) => {
@@ -62,9 +71,7 @@ test.describe('Reagents molecule above arrow', () => {
       'KET/benzene-arrow-benzene-reagent-nh3.ket',
       page,
     );
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await page.getByRole('button', { name: 'MDL Rxnfile V2000' }).click();
-    await page.getByRole('option', { name: 'PNG Image' }).click();
+    await saveFileAsPngOrSvgFormat(page, FileFormat.PNGImage);
   });
 
   test('Detection text as reagent and render reagent information in PNG format in "Preview" tab', async ({
@@ -78,9 +85,7 @@ test.describe('Reagents molecule above arrow', () => {
       'KET/text-reagents-below-and-above-arrow.ket',
       page,
     );
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await page.getByRole('button', { name: 'MDL Rxnfile V2000' }).click();
-    await page.getByRole('option', { name: 'PNG Image' }).click();
+    await saveFileAsPngOrSvgFormat(page, FileFormat.PNGImage);
   });
 
   test('Detection text as reagent and render reagent information in SVG format in "Preview" tab', async ({
@@ -94,9 +99,7 @@ test.describe('Reagents molecule above arrow', () => {
       'KET/text-reagents-below-and-above-arrow.ket',
       page,
     );
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await page.getByRole('button', { name: 'MDL Rxnfile V2000' }).click();
-    await page.getByRole('option', { name: 'SVG Document' }).click();
+    await saveFileAsPngOrSvgFormat(page, FileFormat.SVGDocument);
   });
 
   test('Check that text nodes do not loses after save to SVG', async ({
@@ -107,8 +110,6 @@ test.describe('Reagents molecule above arrow', () => {
       Description: File is shown in the preview with correct text nodes.
     */
     await openFileAndAddToCanvas('KET/text-nodes-on-reaction.ket', page);
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await page.getByRole('button', { name: 'MDL Rxnfile V2000' }).click();
-    await page.getByRole('option', { name: 'SVG Document' }).click();
+    await saveFileAsPngOrSvgFormat(page, FileFormat.SVGDocument);
   });
 });

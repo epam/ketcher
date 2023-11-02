@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { Page, expect, test } from '@playwright/test';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
@@ -12,6 +12,12 @@ import {
   TopPanelButton,
 } from '@utils';
 import { getCdx } from '@utils/formats';
+
+async function saveFileAsCdxFormat(page: Page) {
+  await selectTopPanelButton(TopPanelButton.Save, page);
+  await page.getByRole('button', { name: 'MDL Rxnfile V2000' }).click();
+  await page.getByRole('option', { name: 'CDX', exact: true }).click();
+}
 
 test.describe('Reagents CDX format', () => {
   test.beforeEach(async ({ page }) => {
@@ -73,8 +79,6 @@ test.describe('Reagents CDX format', () => {
     Description: 'Can not display binary content' in Preview window.
     */
     await openFileAndAddToCanvas('CDX/two-reagents.cdx', page);
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await page.getByRole('button', { name: 'MDL Rxnfile V2000' }).click();
-    await page.getByRole('option', { name: 'CDX', exact: true }).click();
+    await saveFileAsCdxFormat(page);
   });
 });

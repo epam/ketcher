@@ -27,12 +27,11 @@ describe('Zoom Tool', () => {
         .mockImplementation(() => {
           select(`.${name}`).on('click', zoomed);
         });
-      // eslint-disable-next-line no-new
-      new CoreEditor({
+      const editor: CoreEditor = new CoreEditor({
         theme: polymerEditorTheme,
         canvas,
       });
-
+      editor.zoomTool.subscribeMenuZoom();
       const zoomInBtn = document.getElementsByClassName(`${name}`)[0];
       zoomInBtn?.dispatchEvent(new MouseEvent('click'));
       expect(zoomed).toHaveBeenCalled();
@@ -42,12 +41,13 @@ describe('Zoom Tool', () => {
   it('should zoom in when scrool mouse wheel up', () => {
     jest.spyOn(ZoomTool.prototype, 'zoomAction').mockImplementation(zoomed);
 
-    // eslint-disable-next-line no-new
-    new CoreEditor({
+    const editor: CoreEditor = new CoreEditor({
       theme: polymerEditorTheme,
       canvas,
     });
+    editor.zoomTool.subscribeMenuZoom();
     window.dispatchEvent(new WheelEvent('wheel'));
+    window.dispatchEvent(new KeyboardEvent('keydown', { keyCode: 27 }));
     expect(zoomed).toHaveBeenCalled();
   });
 });

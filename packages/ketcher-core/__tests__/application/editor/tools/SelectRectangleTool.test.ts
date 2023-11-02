@@ -38,13 +38,13 @@ jest.mock('d3', () => {
       };
     },
     ZoomTransform: jest.fn().mockImplementation(() => {
-      return {};
+      return { invertX() {}, invertY() {} };
     }),
     zoom() {
       return {
         scaleExtent() {
           return {
-            on() {
+            wheelDelta() {
               return {
                 filter() {
                   return {

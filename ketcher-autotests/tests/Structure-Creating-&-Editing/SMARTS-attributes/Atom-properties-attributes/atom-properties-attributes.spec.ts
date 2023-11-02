@@ -17,6 +17,8 @@ import {
   setValence,
 } from '../utils';
 
+const defaultFileFormat = 'MDL Molfile V2000';
+
 async function drawStructure(page: Page, numberOfClicks: number) {
   await selectBond(BondTypeName.Single, page);
   for (let i = 0; i < numberOfClicks; i++) {
@@ -24,9 +26,19 @@ async function drawStructure(page: Page, numberOfClicks: number) {
   }
 }
 
-test.describe('Checking atom properties attributes in SMARTS format', () => {
-  const defaultFileFormat = 'MDL Molfile V2000';
+async function setAndCheckAtomProperties(
+  page: Page,
+  setProperty: (arg0: Page, arg1: string) => Promise<void>,
+  value: string,
+  expectedSmarts: string,
+) {
+  await setProperty(page, value);
+  await pressButton(page, 'Apply');
+  await takeEditorScreenshot(page);
+  await checkSmartsValue(page, defaultFileFormat, expectedSmarts);
+}
 
+test.describe('Checking atom properties attributes in SMARTS format', () => {
   test.beforeEach(async ({ page }) => {
     const numberOfAtom = 0;
     const numberOfBondsAtStructure = 3;
@@ -38,41 +50,37 @@ test.describe('Checking atom properties attributes in SMARTS format', () => {
   });
 
   test('Setting atom label and checking the atom number', async ({ page }) => {
-    await setLabel(page, 'Cr');
-    await pressButton(page, 'Apply');
-    await takeEditorScreenshot(page);
-    await checkSmartsValue(page, defaultFileFormat, '[#6](-[#6])(-[#24])-[#6]');
+    await setAndCheckAtomProperties(
+      page,
+      setLabel,
+      'Cr',
+      '[#6](-[#6])(-[#24])-[#6]',
+    );
   });
 
   test('Setting positive charge', async ({ page }) => {
-    await setCharge(page, '10');
-    await pressButton(page, 'Apply');
-    await takeEditorScreenshot(page);
-    await checkSmartsValue(
+    await setAndCheckAtomProperties(
       page,
-      defaultFileFormat,
+      setCharge,
+      '10',
       '[#6](-[#6])(-[#6;+10])-[#6]',
     );
   });
 
   test('Setting negative charge', async ({ page }) => {
-    await setCharge(page, '-15');
-    await pressButton(page, 'Apply');
-    await takeEditorScreenshot(page);
-    await checkSmartsValue(
+    await setAndCheckAtomProperties(
       page,
-      defaultFileFormat,
+      setCharge,
+      '-15',
       '[#6](-[#6])(-[#6;-15])-[#6]',
     );
   });
 
   test('Setting atomic mass', async ({ page }) => {
-    await setAtomicMass(page, '30');
-    await pressButton(page, 'Apply');
-    await takeEditorScreenshot(page);
-    await checkSmartsValue(
+    await setAndCheckAtomProperties(
       page,
-      defaultFileFormat,
+      setAtomicMass,
+      '30',
       '[#6](-[#6])(-[#6;30])-[#6]',
     );
   });
@@ -82,12 +90,10 @@ test.describe('Checking atom properties attributes in SMARTS format', () => {
     /**
      * This test will fail until https://github.com/epam/Indigo/issues/1362 is fixed
      */
-    await setValence(page, 'IV');
-    await pressButton(page, 'Apply');
-    await takeEditorScreenshot(page);
-    await checkSmartsValue(
+    await setAndCheckAtomProperties(
       page,
-      defaultFileFormat,
+      setValence,
+      'IV',
       '[#6](-[#6])(-[#6;v4])-[#6]',
     );
   });

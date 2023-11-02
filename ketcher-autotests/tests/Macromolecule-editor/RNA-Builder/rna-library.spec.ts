@@ -216,6 +216,54 @@ test.describe('RNA Library', () => {
     await takeEditorScreenshot(page);
   });
 
+  test('Sugar preview window when hovered on canvas', async ({ page }) => {
+    /* 
+    Test case: #2507 - Add RNA monomers to canvas
+    Description: The selected sugar monomer should be added to the canvas 
+    in the form of a square with rounded edges and in the corresponding color.
+    When hover over monomer window with preview appears.
+    */
+    await addMonomerToCenterOfCanvas(
+      DropDown.SugarsDropDown,
+      Sugars.TwelveddR,
+      page,
+    );
+    await page.getByText('12ddR').locator('..').first().hover();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Base preview window when hovered on canvas', async ({ page }) => {
+    /* 
+    Test case: #2507 - Add RNA monomers to canvas
+    Description: The selected base monomer should be added to the canvas 
+    in the form of a rhombus and in the corresponding color.
+    When hover over monomer window with preview appears.
+    */
+    await addMonomerToCenterOfCanvas(
+      DropDown.BasesDropDown,
+      Bases.Adenine,
+      page,
+    );
+    await page.getByText('A').locator('..').first().hover();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Phosphate preview window when hovered on canvas', async ({ page }) => {
+    /* 
+    Test case: #2507 - Add RNA monomers to canvas
+    Description: The selected phosphate monomer should be added to the canvas 
+    in the form of a circle and in the corresponding color.
+    When hover over monomer window with preview appears.
+    */
+    await addMonomerToCenterOfCanvas(
+      DropDown.PhosphatesDropDown,
+      Phosphates.Test6Ph,
+      page,
+    );
+    await page.getByText('Test-6-Ph').locator('..').first().hover();
+    await takeEditorScreenshot(page);
+  });
+
   test('Add Custom preset to Presets section', async ({ page }) => {
     /* 
     Test case: #2759 - Edit RNA mode

@@ -38,6 +38,7 @@ export class CoreEditor {
   public canvas: SVGSVGElement;
   public canvasOffset: DOMRect;
   public theme;
+  public zoomTool: ZoomTool;
   // private lastEvent: Event | undefined;
   private tool?: Tool | BaseTool;
 
@@ -49,7 +50,7 @@ export class CoreEditor {
     this.drawingEntitiesManager = new DrawingEntitiesManager();
     this.domEventSetup();
     this.canvasOffset = this.canvas.getBoundingClientRect();
-    ZoomTool.getInstance(this.drawingEntitiesManager).subscribeMenuZoom();
+    this.zoomTool = ZoomTool.getInstance(this.drawingEntitiesManager);
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     editor = this;
   }

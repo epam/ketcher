@@ -75,6 +75,15 @@ export class DrawingEntitiesManager {
     return mergedCommand;
   }
 
+  public deleteAllEntities() {
+    const mergedCommand = new Command();
+    this.allEntities.forEach(([, drawingEntity]) => {
+      const command = this.deleteDrawingEntity(drawingEntity);
+      mergedCommand.merge(command);
+    });
+    return mergedCommand;
+  }
+
   public addMonomer(monomerItem: MonomerItemType, position: Vec2, id?: number) {
     const [Monomer] = monomerFactory(monomerItem);
     const monomer = new Monomer(monomerItem, position);
@@ -346,6 +355,7 @@ export class DrawingEntitiesManager {
 
     if (
       availableAttachmentPointForBondEnd === 'R2' &&
+      monomer.hasAttachmentPoint('R1') &&
       !bond.firstMonomer.isAttachmentPointUsed('R1')
     ) {
       bond.firstMonomer.removePotentialBonds();
@@ -355,6 +365,7 @@ export class DrawingEntitiesManager {
     }
 
     if (
+      monomer.hasAttachmentPoint('R2') &&
       !monomer.isAttachmentPointUsed('R2') &&
       bond.firstMonomer.getPotentialAttachmentPointByBond(bond) === 'R1'
     ) {
@@ -381,6 +392,7 @@ export class DrawingEntitiesManager {
       polymerBond.firstMonomer.getPotentialAttachmentPointByBond(
         polymerBond,
       ) === 'R1' &&
+      polymerBond.firstMonomer.hasAttachmentPoint('R2') &&
       !polymerBond.firstMonomer.isAttachmentPointUsed('R2')
     ) {
       polymerBond.firstMonomer.removePotentialBonds();

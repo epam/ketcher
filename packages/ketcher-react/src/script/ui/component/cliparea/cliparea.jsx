@@ -17,7 +17,9 @@
 import { Component, createRef } from 'react';
 import clsx from 'clsx';
 import classes from './cliparea.module.less';
-import { KetcherLogger } from 'ketcher-core';
+import { KetcherLogger, notifyRequestCompleted } from 'ketcher-core';
+import { isControlKey } from '../../data/convert/keynorm';
+import { isClipboardAPIAvailable, notifyCopyCut } from './clipboardUtils';
 
 const ieCb = window.clipboardData;
 
@@ -47,30 +49,88 @@ class ClipArea extends Component {
           event.preventDefault();
       },
       copy: (event) => {
-        if (this.props.focused() && this.props.onCopy) {
-          const data = this.props.onCopy();
-
-          if (data) copy(event.clipboardData, data);
-
+        if (!this.props.focused()) {
+          return;
+        }
+        if (isClipboardAPIAvailable()) {
+          this.props.onCopy().then((data) => {
+            if (!data) {
+              return;
+            }
+            copy(data).then(() => {
+              event.preventDefault();
+              notifyCopyCut();
+            });
+          });
+        } else {
+          const data = this.props.onLegacyCopy();
+          if (data) {
+            legacyCopy(event.clipboardData, data);
+          }
           event.preventDefault();
         }
       },
-      cut: (event) => {
-        if (this.props.focused() && this.props.onCut) {
-          const data = this.props.onCut();
-
-          if (data) copy(event.clipboardData, data);
-
+      cut: async (event) => {
+        if (!this.props.focused()) {
+          return;
+        }
+        if (isClipboardAPIAvailable()) {
+          this.props.onCut().then((data) => {
+            if (!data) {
+              return;
+            }
+            copy(data).then(() => {
+              event.preventDefault();
+              notifyCopyCut();
+            });
+          });
+        } else {
+          const data = this.props.onLegacyCut();
+          if (data) {
+            legacyCopy(event.clipboardData, data);
+          }
           event.preventDefault();
         }
       },
       paste: (event) => {
-        if (this.props.focused() && this.props.onPaste) {
-          const data = paste(event.clipboardData, this.props.formats);
-
-          if (data) this.props.onPaste(data);
-
+        if (!this.props.focused()) {
+          return;
+        }
+        if (isClipboardAPIAvailable()) {
+          navigator.clipboard.read().then((data) => {
+            if (!data) {
+              return;
+            }
+            this.props.onPaste(data).then(() => {
+              event.preventDefault();
+              notifyRequestCompleted();
+            });
+          });
+        } else {
+          const data = legacyPaste(event.clipboardData, this.props.formats);
+          if (data) {
+            this.props.onLegacyPaste(data);
+          }
           event.preventDefault();
+        }
+      },
+      keydown: async (event) => {
+        if (!this.props.focused() || !this.props.onPaste) {
+          return;
+        }
+
+        if (isControlKey(event) && event.altKey && event.code === 'KeyV') {
+          if (navigator.clipboard?.read) {
+            const clipboardData = await navigator.clipboard.read();
+            const data = await pasteByKeydown(clipboardData);
+            if (data) {
+              this.props.onPaste(data, true);
+            }
+          } else {
+            window.ketcher.editor.errorHandler?.(
+              "Your browser doesn't support pasting clipboard content via Ctrl-Alt-V. Please use Google Chrome browser or load SMARTS structure from .smarts file instead.",
+            );
+          }
         }
       },
     };
@@ -115,25 +175,45 @@ function autoselect(cliparea) {
   cliparea.select();
 }
 
-function copy(cb, data) {
-  if (!cb && ieCb) {
+async function copy(data) {
+  try {
+    const clipboardItemData = {};
+    Object.keys(data).forEach((mimeType) => {
+      // https://developer.chrome.com/blog/web-custom-formats-for-the-async-clipboard-api/#writing-web-custom-formats-to-the-clipboard
+      const mimeTypeToSet =
+        mimeType === 'text/plain' ? mimeType : `web ${mimeType}`;
+      clipboardItemData[mimeTypeToSet] = Promise.resolve(
+        new Blob([data[mimeType]], {
+          type: mimeTypeToSet,
+        }),
+      );
+    });
+    await navigator.clipboard.write([new ClipboardItem(clipboardItemData)]);
+  } catch (e) {
+    KetcherLogger.error('cliparea.jsx::copy', e);
+    console.info(`Could not write exact type ${data && data.toString()}`);
+  }
+}
+
+function legacyCopy(clipboardData, data) {
+  if (!clipboardData && ieCb) {
     ieCb.setData('text', data['text/plain']);
   } else {
     let curFmt = null;
-    cb.setData('text/plain', data['text/plain']);
+    clipboardData.setData('text/plain', data['text/plain']);
     try {
       Object.keys(data).forEach((fmt) => {
         curFmt = fmt;
-        cb.setData(fmt, data[fmt]);
+        clipboardData.setData(fmt, data[fmt]);
       });
     } catch (e) {
-      KetcherLogger.error('cliparea.jsx::copy', e);
+      console.error('cliparea.jsx::legacyCopy', e);
       console.info(`Could not write exact type ${curFmt}`);
     }
   }
 }
 
-function paste(cb, formats) {
+function legacyPaste(cb, formats) {
   let data = {};
   if (!cb && ieCb) {
     data['text/plain'] = ieCb.getData('text');
@@ -144,6 +224,19 @@ function paste(cb, formats) {
       if (d) res[fmt] = d;
       return res;
     }, data);
+  }
+  return data;
+}
+
+async function pasteByKeydown(clipboardData) {
+  const data = {};
+  if (!clipboardData && ieCb) {
+    data['text/plain'] = ieCb.getData('text');
+  } else {
+    for (const item of clipboardData) {
+      const textPlain = await item.getType('text/plain');
+      data['text/plain'] = await textPlain.text();
+    }
   }
   return data;
 }

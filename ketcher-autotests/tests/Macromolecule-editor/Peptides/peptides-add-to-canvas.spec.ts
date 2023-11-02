@@ -3,7 +3,7 @@ import {
   clickInTheMiddleOfTheScreen,
   moveMouseToTheMiddleOfTheScreen,
   selectSingleBondTool,
-  takePageScreenshot,
+  takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
 import { ALANINE } from '@utils/selectors/macromoleculeEditor';
@@ -20,7 +20,7 @@ test.describe('Peptide', () => {
   });
 
   test.afterEach(async ({ page }) => {
-    await takePageScreenshot(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Select peptide and drag it to canvas', async ({ page }) => {

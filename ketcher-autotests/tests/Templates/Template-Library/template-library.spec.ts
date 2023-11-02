@@ -13,7 +13,6 @@ import {
   waitForRender,
 } from '@utils';
 import { STRUCTURE_LIBRARY_BUTTON_TEST_ID } from '../templates.costants';
-import { editStructureTemplate, openFunctionalGroup } from '@utils/templates';
 
 async function setDisplayStereoFlagsSettingToOn(page: Page) {
   await selectTopPanelButton(TopPanelButton.Settings, page);
@@ -33,7 +32,6 @@ async function setIgnoreChiralFlagSetting(page: Page, newSetting: boolean) {
   if (isChecked !== newSetting) {
     await checkLocator.click();
   }
-
   await pressButton(page, 'Apply');
 }
 
@@ -53,28 +51,21 @@ async function openStructureLibrary(page: Page) {
   await page.getByTestId(STRUCTURE_LIBRARY_BUTTON_TEST_ID).click();
 }
 
-// async function openFunctionalGroup(page: Page) {
-//   await openStructureLibrary(page);
-//   await page.getByText('Functional Group').click();
-// }
+async function openFunctionalGroup(page: Page) {
+  await openStructureLibrary(page);
+  await page.getByText('Functional Group').click();
+}
 
-// async function editStructureTemplate(page: Page, group: string, text: string) {
-//   const editStructureButton = page.getByTitle(text).getByRole('button');
-//   await openStructureLibrary(page);
-//   await page.getByText(group).click();
-//   await editStructureButton.click();
-// }
-
-// async function editStructureTemplate(
-//   page: Page,
-//   templateCategory: string,
-//   templateName: string,
-// ) {
-//   const editStructureButton = page.getByTitle(templateName).getByRole('button');
-//   await openStructureLibrary(page);
-//   await page.getByText(templateCategory).click();
-//   await editStructureButton.click();
-// }
+async function editStructureTemplate(
+  page: Page,
+  templateCategory: string,
+  templateName: string,
+) {
+  const editStructureButton = page.getByTitle(templateName).getByRole('button');
+  await openStructureLibrary(page);
+  await page.getByText(templateCategory).click();
+  await editStructureButton.click();
+}
 
 async function editAndClearTemplateName(
   page: Page,
@@ -138,8 +129,10 @@ test.describe('Templates - Template Library', () => {
     const anyY = 524;
     await openStructureLibrary(page);
     await takeEditorScreenshot(page);
-    await page.mouse.move(anyX, anyY);
-    await page.mouse.wheel(deltaX, deltaY);
+    await waitForRender(page, async () => {
+      await page.mouse.move(anyX, anyY);
+      await page.mouse.wheel(deltaX, deltaY);
+    });
   });
 
   test('Functional groups tab', async ({ page }) => {

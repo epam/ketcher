@@ -9,6 +9,7 @@ import {
   takeEditorScreenshot,
   TopPanelButton,
   waitForPageInit,
+  waitForRender,
 } from '@utils';
 
 async function openStructureLibrary(page: Page) {
@@ -63,7 +64,9 @@ test.describe('Ignore Chiral Flag', () => {
     await applyIgnoreChiralFlag(page);
     await templateFromLAminoAcidsCategory(page);
     await copyAndPaste(page);
-    await page.mouse.click(pointx, pointy);
+    await waitForRender(page, async () => {
+      await page.mouse.click(pointx, pointy);
+    });
   });
 
   test('Verify absence "Enhanced Stereochemistry" group Label Behavior with Cut/Paste', async ({
@@ -75,7 +78,9 @@ test.describe('Ignore Chiral Flag', () => {
     await applyIgnoreChiralFlag(page);
     await templateFromLAminoAcidsCategory(page);
     await cutAndPaste(page);
-    await page.mouse.click(pointy, pointz);
+    await waitForRender(page, async () => {
+      await page.mouse.click(pointy, pointz);
+    });
   });
 
   test('Verify absence "Enhanced Stereochemistry" group Label Behavior with Undo', async ({

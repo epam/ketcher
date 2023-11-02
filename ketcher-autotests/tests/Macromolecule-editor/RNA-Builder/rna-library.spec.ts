@@ -19,6 +19,7 @@ import {
   takePresetsScreenshot,
   takeRNABuilderScreenshot,
   waitForPageInit,
+  waitForRender,
 } from '@utils';
 
 async function drawThreeMonomers(page: Page) {
@@ -101,6 +102,17 @@ async function drawSugarBase(page: Page) {
   await page.mouse.down();
   await base1.hover();
   await page.mouse.up();
+}
+
+async function pressEscapeWhenPullBond(page: Page) {
+  const anyPointX = 300;
+  const anyPointY = 300;
+  await page.mouse.down();
+  await page.mouse.move(anyPointX, anyPointY);
+  await page.keyboard.press('Escape');
+  await waitForRender(page, async () => {
+    await page.mouse.up();
+  });
 }
 
 test.describe('RNA Library', () => {
@@ -724,4 +736,22 @@ test.describe('RNA Library', () => {
       await takeEditorScreenshot(page);
     });
   }
+
+  test('Press "Escape" button while pull the bond from monomer', async ({
+    page,
+  }) => {
+    /* 
+    Test case: #2507 - Add RNA monomers to canvas
+    Description: Bond does not remain on the canvas and returns to original position.
+    */
+    await addMonomerToCenterOfCanvas(
+      DropDown.SugarsDropDown,
+      Sugars.TwentyFiveR,
+      page,
+    );
+    await selectSingleBondTool(page);
+    await page.getByText('25R').locator('..').first().click();
+    await pressEscapeWhenPullBond(page);
+    await takeEditorScreenshot(page);
+  });
 });

@@ -137,6 +137,35 @@ function Editor({ theme }: EditorProps) {
     [dispatchShowPreview],
   );
 
+  const handleClosePreview = () => {
+    debouncedShowPreview.cancel();
+    dispatch(showPreview(undefined));
+  };
+
+  const handleOpenPreview = useCallback(
+    (e) => {
+      const tools = ['erase', 'select-rectangle', 'bond-single'];
+      if (!tools.includes(activeTool)) {
+        handleClosePreview();
+        return;
+      }
+      const monomer = e.target.__data__.monomer.monomerItem;
+
+      const cardCoordinates = e.target.getBoundingClientRect();
+      const top = calculatePreviewPosition(monomer, cardCoordinates);
+      const previewStyle = {
+        top,
+        left: `${cardCoordinates.left + cardCoordinates.width / 2}px`,
+      };
+      debouncedShowPreview({ monomer, style: previewStyle });
+    },
+    [activeTool],
+  );
+
+  const handleCloseErrorTooltip = () => {
+    dispatch(closeErrorTooltip());
+  };
+
   useEffect(() => {
     if (editor) {
       editor.events.error.add((errorText) =>
@@ -159,35 +188,6 @@ function Editor({ theme }: EditorProps) {
       handleOpenPreview(e);
     });
   }, [editor, activeTool]);
-
-  const handleOpenPreview = useCallback(
-    (e) => {
-      const tools = ['erase', 'select-rectangle', 'bond-single'];
-      if (!tools.includes(activeTool)) {
-        handleClosePreview();
-        return;
-      }
-      const monomer = e.target.__data__.monomer.monomerItem;
-
-      const cardCoordinates = e.target.getBoundingClientRect();
-      const top = calculatePreviewPosition(monomer, cardCoordinates);
-      const previewStyle = {
-        top,
-        left: `${cardCoordinates.left + cardCoordinates.width / 2}px`,
-      };
-      debouncedShowPreview({ monomer, style: previewStyle });
-    },
-    [activeTool],
-  );
-
-  const handleClosePreview = () => {
-    debouncedShowPreview.cancel();
-    dispatch(showPreview(undefined));
-  };
-
-  const handleCloseErrorTooltip = () => {
-    dispatch(closeErrorTooltip());
-  };
 
   return (
     <>
@@ -281,13 +281,21 @@ function MenuComponent() {
       dispatch(selectMode(!isSnakeMode));
       editor.events.selectMode.dispatch(!isSnakeMode);
     } else {
-      dispatch(selectTool(name));
       editor.events.selectTool.dispatch(name);
+      if (name === 'clear') {
+        dispatch(selectTool('select-rectangle'));
+        editor.events.selectTool.dispatch('select-rectangle');
+      } else {
+        dispatch(selectTool(name));
+      }
     }
   };
 
   return (
     <Menu onItemClick={menuItemChanged} activeMenuItems={activeMenuItems}>
+      <Menu.Group>
+        <Menu.Item itemId="clear" title="Clear Canvas" />
+      </Menu.Group>
       <Menu.Group>
         <Menu.Submenu>
           <Menu.Item itemId="open" title="Open..." />

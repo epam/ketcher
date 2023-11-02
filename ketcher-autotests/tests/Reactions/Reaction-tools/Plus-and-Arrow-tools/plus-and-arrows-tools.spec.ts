@@ -369,6 +369,7 @@ test.describe('Plus and Arrows tools ', () => {
       await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
       await clickOnTheCanvas(page, 0, -100);
     });
+
     test('Select a part of the reaction with the equilibrium arrow, cut and paste it onto canvas.', async ({
       page,
     }) => {

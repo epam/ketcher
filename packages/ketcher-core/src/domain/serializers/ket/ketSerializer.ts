@@ -495,7 +495,7 @@ export class KetSerializer implements Serializer<Struct> {
     const serializedMicromoleculesStruct = JSON.parse(
       this.serializeMicromolecules(micromoleculesStruct),
     );
-    console.log(serializedMicromoleculesStruct, serializedMacromolecules);
+
     const fileContent = {
       ...serializedMicromoleculesStruct,
       ...serializedMacromolecules,

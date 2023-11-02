@@ -457,7 +457,7 @@ export class CoreEditor {
     });
     let fragmentNumber = 1;
     struct.frags.forEach((_fragment, fragmentId) => {
-      const fragmentStruct = struct.getFragment(fragmentId);
+      const fragmentStruct = struct.getFragment(fragmentId, false);
       command.merge(
         this.convertFragmentToChem(
           fragmentNumber,

@@ -16,11 +16,10 @@
 import { Icon, IconName } from 'ketcher-react';
 import styled from '@emotion/styled';
 import { FileDrop } from './FileDrop';
-import { ActionButton } from 'components/shared/actionButton';
 
 const ICON_NAMES: Record<string, IconName> = {
-  PASTE: 'capital-t',
-  FILE: 'arrow-upward',
+  PASTE: 'open-window-paste-icon',
+  FILE: 'open-window-upload-icon',
 };
 
 export type OpenOptionsProps = {
@@ -28,6 +27,15 @@ export type OpenOptionsProps = {
   errorHandler: (err: string) => void;
   fileLoadHandler: (files: File[]) => void;
 };
+
+export const OpenOptionText = styled.p`
+  font-size: 10px;
+  text-transform: uppercase;
+  color: ${({ theme }) => theme.ketcher.color.text.light};
+  margin: 0;
+  text-align: center;
+  line-height: 12px;
+`;
 
 const RootContainer = styled.div`
   display: flex;
@@ -45,17 +53,19 @@ const RootContainer = styled.div`
 `;
 
 const DropContainer = styled.div`
-  width: 152px;
-  height: 112px;
-  border: 1px solid #aeaeae;
-  border-radius: 4px;
+  width: 128px;
+  height: 134px;
+  box-shadow: 0 4px 12px rgba(103, 104, 132, 0.18);
+  padding: 16px;
+  border-radius: 12px;
   flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: space-around;
+  justify-content: space-between;
   align-items: center;
   box-sizing: border-box;
   position: relative;
+  cursor: pointer;
 
   & > p {
     margin-top: 6px;
@@ -74,12 +84,9 @@ const OpenOptions = ({
 }: OpenOptionsProps) => {
   return (
     <RootContainer>
-      <DropContainer>
-        <ActionButton
-          clickHandler={selectClipboard}
-          label="Paste from Clipboard"
-        />
+      <DropContainer onClick={selectClipboard}>
         <Icon name={ICON_NAMES.PASTE} />
+        <OpenOptionText>Paste from clipboard</OpenOptionText>
       </DropContainer>
       <DropContainer>
         <FileDrop

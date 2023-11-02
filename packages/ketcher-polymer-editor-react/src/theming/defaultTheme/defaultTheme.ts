@@ -41,7 +41,7 @@ export const defaultTheme: EditorTheme = {
       canvas: '#F5F5F5',
       primary: '#FFFFFF',
       secondary: '#F8FEFF',
-      overlay: '#005662',
+      overlay: 'rgba(94,94,94,.8)',
     },
     border: {
       primary: '#CAD3DD',
@@ -111,14 +111,15 @@ export const defaultTheme: EditorTheme = {
         error: '#FF4A4A',
       },
       background: {
+        primary: '#FFFFFF',
         default: '#EFF2F5',
         hover: '#DDDDDD',
-        disabled: '#DDDDDD',
+        disabled: '#eff2f5',
       },
       border: {
-        regular: 'transparent',
+        regular: '#cad3dd',
         active: '#FFFFFF',
-        hover: '#DDDDDD',
+        hover: '#43b5c0',
         focus: '#EFF2F5',
         error: '#FF4A4A',
       },

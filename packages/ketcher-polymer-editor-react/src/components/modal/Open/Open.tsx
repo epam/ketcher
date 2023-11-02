@@ -18,7 +18,15 @@ import { useCallback, useEffect, useState } from 'react';
 import { ViewSwitcher } from './ViewSwitcher';
 import { ActionButton } from 'components/shared/actionButton';
 import { FileOpener, fileOpener } from './fileOpener';
-import { KetSerializer } from 'ketcher-core';
+import {
+  ChemicalMimeType,
+  KetSerializer,
+  StructService,
+  SupportedFormat,
+  identifyStructFormat,
+} from 'ketcher-core';
+import { OpenFileWrapper } from './Open.styles';
+import { IndigoProvider } from 'ketcher-react';
 
 export interface Props {
   onClose: () => void;
@@ -31,12 +39,28 @@ const MODAL_STATES = {
 };
 
 // TODO: replace after the implementation of the function for processing the structure from the file
-const onOk = ({ struct, fragment }) => {
+const onOk = async ({
+  struct,
+  fragment,
+}: {
+  struct: string;
+  fragment: boolean;
+}) => {
   if (fragment) {
     console.log('add fragment');
   }
+  const isKet = identifyStructFormat(struct) === SupportedFormat.ket;
   const ketSerializer = new KetSerializer();
-  ketSerializer.deserializeMacromolecule(struct);
+  if (isKet) {
+    ketSerializer.deserializeMacromolecule(struct);
+    return;
+  }
+  const indigo = IndigoProvider.getIndigo() as StructService;
+  const ketStruct = await indigo.convert({
+    struct,
+    output_format: ChemicalMimeType.KET,
+  });
+  ketSerializer.deserializeMacromolecule(ketStruct.struct);
 };
 const isAnalyzingFile = false;
 const errorHandler = (error) => console.log(error);
@@ -112,17 +136,19 @@ const Open = ({ isModalOpen, onClose }: Props) => {
       onClose={onCloseCallback}
     >
       <Modal.Content>
-        <ViewSwitcher
-          isAnalyzingFile={isAnalyzingFile}
-          fileName={fileName}
-          currentState={currentState}
-          states={MODAL_STATES}
-          selectClipboard={() => setCurrentState(MODAL_STATES.textEditor)}
-          fileLoadHandler={onFileLoad}
-          errorHandler={errorHandler}
-          struct={structStr}
-          inputHandler={setStructStr}
-        />
+        <OpenFileWrapper>
+          <ViewSwitcher
+            isAnalyzingFile={isAnalyzingFile}
+            fileName={fileName}
+            currentState={currentState}
+            states={MODAL_STATES}
+            selectClipboard={() => setCurrentState(MODAL_STATES.textEditor)}
+            fileLoadHandler={onFileLoad}
+            errorHandler={errorHandler}
+            value={structStr}
+            inputHandler={setStructStr}
+          />
+        </OpenFileWrapper>
       </Modal.Content>
       <Modal.Footer>{getButtons()}</Modal.Footer>
     </Modal>

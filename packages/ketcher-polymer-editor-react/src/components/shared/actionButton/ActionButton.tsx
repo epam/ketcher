@@ -25,6 +25,11 @@ const baseButtonStyle = css({
   lineHeight: '14px',
   fontSize: '12px',
   textAlign: 'center',
+
+  '&.MuiButtonBase-root': {
+    width: 'unset',
+    minWidth: '70px',
+  },
 });
 
 const PrimaryButton = styled(MuiButton)(

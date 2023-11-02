@@ -19,13 +19,24 @@ import { Select, FormControl, MenuItem, ListItemText } from '@mui/material';
 import styled from '@emotion/styled';
 import { css } from '@emotion/react';
 
-import { ChevronIcon, CheckMarkIcon } from './styledIcons';
+import { ChevronIcon } from './styledIcons';
+
+const StyledFormControl = styled(FormControl)`
+  width: 100%;
+  padding: 0 8px;
+
+  & label {
+    font-size: 12px;
+    line-height: unset;
+  }
+`;
 
 const DropDownSelect = styled(Select)`
-  width: 150px;
   height: 24px;
   border: 1px solid #5b6077;
-  border-radius: 2px;
+  border-radius: 4px;
+  font-size: 14px;
+
   ${({ open }) =>
     open &&
     css`
@@ -40,7 +51,7 @@ const DropDownSelect = styled(Select)`
   }
 
   & span {
-    ${({ theme }) => `font-size: ${theme.ketcher.font.size.regular}`}
+    ${({ theme }) => `font-size: ${theme.ketcher.font.size.medium}`}
   }
 
   & .MuiOutlinedInput-notchedOutline {
@@ -54,17 +65,23 @@ const stylesForExpanded: CSSProperties = {
   border: '1px solid #5B6077',
   borderTopWidth: '0',
   borderRadius: '0px 0px 2px 2px',
-  boxShadow: 'none',
+  boxShadow: '0 6px 10px rgba(103, 104, 132, 0.15)',
 };
 
 const DropDownItem = styled(MenuItem)`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  padding: 0 8px 0 8px;
-  height: 24px;
+  padding: 0 8px;
+  height: 28px;
+  font-size: 14px;
+
+  &.MuiButtonBase-root:hover {
+    ${({ theme }) => `border-left: 2px solid #167782`}
+  }
+
   & .MuiTypography-root {
-    ${({ theme }) => `font-size: ${theme.ketcher.font.size.regular}`}
+    ${({ theme }) => `font-size: ${theme.ketcher.font.size.medium}`}
   }
 `;
 
@@ -79,6 +96,7 @@ export type DropDownProps = {
   selectionHandler: (value: Option['id']) => void;
   className?: string;
   customStylesForExpanded?: CSSProperties;
+  label?: string;
 };
 
 export const DropDown = ({
@@ -86,6 +104,7 @@ export const DropDown = ({
   currentSelection,
   selectionHandler,
   className,
+  label,
   customStylesForExpanded = {},
 }: DropDownProps) => {
   const [expanded, setExpanded] = useState(false);
@@ -111,7 +130,8 @@ export const DropDown = ({
   };
 
   return (
-    <FormControl className={className}>
+    <StyledFormControl className={className}>
+      {label && <label htmlFor="fileformat">File format:</label>}
       <DropDownSelect
         value={currentSelection}
         onChange={handleSelection}
@@ -134,10 +154,9 @@ export const DropDown = ({
         {options.map((item: Option) => (
           <DropDownItem key={item.id} value={item.id}>
             <ListItemText primary={item.label} />
-            <CheckMarkIcon isSelected={item.id === currentSelection} />
           </DropDownItem>
         ))}
       </DropDownSelect>
-    </FormControl>
+    </StyledFormControl>
   );
 };

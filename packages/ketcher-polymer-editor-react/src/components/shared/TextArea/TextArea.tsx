@@ -19,7 +19,7 @@ import { scrollbarThin } from 'theming/mixins';
 import { useEffect, useRef } from 'react';
 
 export type TextEditorProps = {
-  struct: string;
+  value: string;
   inputHandler?: (str: string) => void;
   readonly?: boolean;
   selectOnInit?: boolean;
@@ -27,6 +27,7 @@ export type TextEditorProps = {
 };
 
 const StyledTextarea = styled.textarea`
+  min-width: 430px;
   width: 100%;
   height: 100%;
   overflow: auto;
@@ -38,6 +39,8 @@ const StyledTextarea = styled.textarea`
   padding: 8px;
   color: ${({ theme }) => theme.ketcher.color.input.text.default};
   font-size: ${({ theme }) => theme.ketcher.font.size.regular};
+  background-color: ${({ theme }) =>
+    theme.ketcher.color.input.background.disabled};
 
   ${({ theme }) => scrollbarThin(theme)};
 
@@ -46,8 +49,8 @@ const StyledTextarea = styled.textarea`
   }
 `;
 
-export const TextField = ({
-  struct,
+export const TextArea = ({
+  value,
   inputHandler,
   readonly = false,
   selectOnInit = false,
@@ -59,11 +62,11 @@ export const TextField = ({
     if (selectOnInit) {
       textArea.current?.select();
     }
-  }, [textArea, struct, selectOnInit]);
+  }, [textArea, value, selectOnInit]);
 
   return (
     <StyledTextarea
-      value={struct}
+      value={value}
       readOnly={readonly}
       onChange={inputHandler && ((event) => inputHandler(event.target.value))}
       ref={textArea}

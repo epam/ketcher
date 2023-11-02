@@ -4,7 +4,6 @@ import {
   dragMouseTo,
   selectRectangleSelectionTool,
   selectSingleBondTool,
-  takePageScreenshot,
   waitForPageInit,
   takeEditorScreenshot,
 } from '@utils';
@@ -76,7 +75,7 @@ test.describe('Check attachment point rotation', () => {
     // Get rid of flakiness because of preview
     await page.waitForSelector('.polymer-library-preview');
 
-    await takePageScreenshot(page);
+    await takeEditorScreenshot(page);
 
     // Hover 2nd peptide
     await peptide2.hover();
@@ -135,7 +134,7 @@ test.describe('Check attachment point rotation', () => {
     await selectSingleBondTool(page);
     // Hover 1th peptide
     await peptide1.hover();
-
+    await page.getByTestId('polymer-library-preview');
     await takeEditorScreenshot(page);
   });
 });

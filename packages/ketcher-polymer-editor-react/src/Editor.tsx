@@ -295,13 +295,21 @@ function MenuComponent() {
       dispatch(selectMode(!isSnakeMode));
       editor.events.selectMode.dispatch(!isSnakeMode);
     } else if (!['zoom-in', 'zoom-out', 'zoom-reset'].includes(name)) {
-      dispatch(selectTool(name));
       editor.events.selectTool.dispatch(name);
+      if (name === 'clear') {
+        dispatch(selectTool('select-rectangle'));
+        editor.events.selectTool.dispatch('select-rectangle');
+      } else {
+        dispatch(selectTool(name));
+      }
     }
   };
 
   return (
     <Menu onItemClick={menuItemChanged} activeMenuItems={activeMenuItems}>
+      <Menu.Group>
+        <Menu.Item itemId="clear" title="Clear Canvas" />
+      </Menu.Group>
       <Menu.Group>
         <Menu.Submenu>
           <Menu.Item itemId="open" title="Open..." />

@@ -19,6 +19,7 @@ export class AttachmentPoint {
   );
 
   static labelOffset = 7;
+  static labelSize = { x: 7, y: 5 };
   static colors = {
     fillUsed: '#FF7A00',
     fill: 'white',
@@ -226,6 +227,8 @@ export class AttachmentPoint {
       this.initialAngle - 180,
       AttachmentPoint.attachmentPointLength,
       AttachmentPoint.labelOffset,
+      AttachmentPoint.labelSize,
+      this.isUsed,
     );
     return [pointOnBorder, pointOfAttachment, labelPoint];
   }

@@ -28,6 +28,8 @@ export function findLabelPoint(
   angle: number,
   lineLength: number,
   lineOffset: number,
+  labelSize: { x: number; y: number },
+  isUsed: boolean,
 ) {
   // based on https://ru.stackoverflow.com/a/1442905
 
@@ -47,12 +49,7 @@ export function findLabelPoint(
   };
 
   // rotate this vector at 90 degrees - change x and y, then make one negative
-  let rotatedVector;
-  if (angle >= -200 && angle < -60) {
-    rotatedVector = { x: -attachmentVector.y, y: attachmentVector.x }; // for angle -200 to -60
-  } else {
-    rotatedVector = { x: attachmentVector.y, y: -attachmentVector.x }; // for angle -0 to -270
-  }
+  const rotatedVector = { x: -attachmentVector.y, y: attachmentVector.x };
 
   // normalize vector
   const normalizedVector = {
@@ -60,25 +57,38 @@ export function findLabelPoint(
     y: rotatedVector.y / lineLength,
   };
 
+  const normalizedAttachmentVector = {
+    x: attachmentVector.x / lineLength,
+    y: attachmentVector.y / lineLength,
+  };
+
   // find vector for Label, using normalized vector and length
 
-  let addedLabelOffset = 0;
-  if (angle >= -225 && angle < -180) {
-    addedLabelOffset = 5;
-  } else if (angle >= -60 && angle <= 0) {
-    addedLabelOffset = 5;
+  let addedOrtogonalOffset = 0;
+  const addedParallelOffset =
+    lineOffset + Math.max(labelSize.x, labelSize.y) + 2;
+  if (isUsed) {
+    if (angle >= -270 && angle <= 0) {
+      addedOrtogonalOffset = 10;
+    } else if (angle >= -360 && angle < -270) {
+      addedOrtogonalOffset = -10;
+    }
   }
 
-  const labelVector = {
-    x: normalizedVector.x * (lineOffset + addedLabelOffset),
-    y: normalizedVector.y * (lineOffset + addedLabelOffset),
+  const ortogonalOffset = {
+    x: normalizedVector.x * addedOrtogonalOffset,
+    y: normalizedVector.y * addedOrtogonalOffset,
+  };
+
+  const parallelOffset = {
+    x: normalizedAttachmentVector.x * addedParallelOffset,
+    y: normalizedAttachmentVector.y * addedParallelOffset,
   };
 
   // add this vector to point of attachment
-
   const labelCoordinates = {
-    x: pointOfAttachment.x + labelVector.x,
-    y: pointOfAttachment.y + labelVector.y,
+    x: pointOfAttachment.x + ortogonalOffset.x + parallelOffset.x - labelSize.x,
+    y: pointOfAttachment.y + ortogonalOffset.y + parallelOffset.y + labelSize.y,
   };
 
   return [labelCoordinates, pointOfAttachment];
@@ -204,4 +214,16 @@ export function checkFor0and360(sectorsList: number[]) {
     return sectorsList.filter((item) => item !== 0);
   }
   return sectorsList;
+}
+
+export function convertAttachmentPointNumberToLabel(
+  attachmentPointNumber: number,
+) {
+  let attachmentPointLabel = '';
+  for (let rgi = 0; rgi < 32; rgi++) {
+    if (attachmentPointNumber & (1 << rgi)) {
+      attachmentPointLabel = 'R' + (rgi + 1).toString();
+    }
+  }
+  return attachmentPointLabel;
 }

@@ -266,7 +266,9 @@ class IndigoService implements StructService {
           reject(msg.error);
         }
       };
-
+      if (options?.['input-format']) {
+        delete options['input-format'];
+      }
       const commandOptions: CommandOptions = {
         ...this.defaultOptions,
         ...options,
@@ -283,7 +285,7 @@ class IndigoService implements StructService {
         data: commandData,
       };
 
-      this.EE.removeListener(WorkerEvent.Convert, action);
+      this.EE.removeAllListeners(WorkerEvent.Convert);
       this.EE.addListener(WorkerEvent.Convert, action);
 
       this.worker.postMessage(inputMessage);
@@ -298,12 +300,23 @@ class IndigoService implements StructService {
     const format = convertMimeTypeToOutputFormat(outputFormat);
 
     return new Promise((resolve, reject) => {
-      const action = ({ data }: OutputMessageWrapper) => {
+      const action = ({
+        data,
+      }: OutputMessageWrapper<{
+        struct: string;
+        format: string;
+        original_format: ChemicalMimeType;
+      }>) => {
         console.log('layout action', data);
-        const msg: OutputMessage<string> = data;
+        const msg: OutputMessage<{
+          struct: string;
+          format: string;
+          original_format: ChemicalMimeType;
+        }> = data;
         if (!msg.hasError) {
+          const { struct } = msg.payload;
           const result: LayoutResult = {
-            struct: msg.payload,
+            struct,
             format: ChemicalMimeType.Mol,
           };
           resolve(result);
@@ -315,6 +328,7 @@ class IndigoService implements StructService {
       const commandOptions: CommandOptions = {
         ...this.defaultOptions,
         ...options,
+        'output-content-type': 'application/json',
       };
 
       const commandData: LayoutCommandData = {

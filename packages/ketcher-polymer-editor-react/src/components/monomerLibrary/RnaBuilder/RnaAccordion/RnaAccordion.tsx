@@ -31,7 +31,6 @@ import {
 } from 'state/library';
 import {
   DetailsContainer,
-  DisabledArea,
   RnaAccordionContainer,
   StyledAccordion,
   StyledAccordionWrapper,
@@ -216,7 +215,6 @@ export const RnaAccordion = ({
                 </ItemsContainer>
                 <RNAContextMenu />
               </GroupContainer>
-              {isEditMode && <DisabledArea />}
             </DetailsContainer>
           ) : (
             <DetailsContainer>

@@ -47,6 +47,7 @@ import SettingsIcon from 'assets/icons/files/settings.svg';
 import StarIcon from 'assets/icons/files/star.svg';
 import SingleBondIcon from 'assets/icons/files/single-bond.svg';
 import VerticalFlipIcon from 'assets/icons/files/vertical-flip.svg';
+import ClearIcon from 'assets/icons/files/clear.svg';
 import UndoIcon from 'assets/icons/files/undo.svg';
 import SaveIcon from 'assets/icons/files/save.svg';
 import ErrorIcon from 'assets/icons/files/error.svg';
@@ -85,6 +86,7 @@ const iconMap = {
   star: StarIcon,
   'single-bond': SingleBondIcon,
   'vertical-flip': VerticalFlipIcon,
+  clear: ClearIcon,
   undo: UndoIcon,
   save: SaveIcon,
   error: ErrorIcon,

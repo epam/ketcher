@@ -13,10 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+import { CoreEditor } from 'application/editor';
+import { BaseTool } from 'application/editor/tools/Tool';
 
-export * from './ifDef';
-export * from './tfx';
-export * from './runAsyncAction';
-export * from './b64toBlob';
-export * from './notifyRequestCompleted';
-export * from './KetcherLogger';
+class ClearTool implements BaseTool {
+  constructor(private editor: CoreEditor) {
+    this.editor = editor;
+    const modelChanges = this.editor.drawingEntitiesManager.deleteAllEntities();
+    this.editor.renderersContainer.update(modelChanges);
+  }
+
+  destroy() {}
+}
+
+export { ClearTool };

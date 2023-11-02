@@ -285,7 +285,7 @@ class IndigoService implements StructService {
         data: commandData,
       };
 
-      this.EE.removeListener(WorkerEvent.Convert, action);
+      this.EE.removeAllListeners(WorkerEvent.Convert);
       this.EE.addListener(WorkerEvent.Convert, action);
 
       this.worker.postMessage(inputMessage);

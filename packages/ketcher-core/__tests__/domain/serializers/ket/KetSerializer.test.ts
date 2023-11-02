@@ -195,7 +195,7 @@ describe('serialize (ToKet)', () => {
     expect(structSimpleObject).toEqual(simpleObjectKet);
   });
   it('correct work with text', () => {
-    const structText = parsedNewPrepareStruct.root.nodes[5];
+    const structText = parsedNewPrepareStruct.root.nodes[4];
     const textKet = parsedPrepareContent.root.nodes[4];
     expect(structText).toEqual(textKet);
   });

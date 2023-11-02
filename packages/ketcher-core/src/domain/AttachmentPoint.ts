@@ -8,6 +8,7 @@ import {
   canvasToMonomerCoordinates,
   findLabelPoint,
   Coordinates,
+  getSearchFunction,
 } from './helpers/attachmentPointCalculations';
 
 export class AttachmentPoint {
@@ -209,47 +210,16 @@ export class AttachmentPoint {
 
     this.initialAngle = rotationAngle;
 
-    // const findPointOnMonomerBorder = getSearchFunction(
-    //   this.initialAngle - 180,
-    //   this.canvasOffset,
-    //   this.monomer,
-    // );
-
-    // const pointOnBorder = findPointOnMonomerBorder(
-    //   currentMonomerCenter,
-    //   (this.bodyWidth + this.bodyHeight) / 2,
-    // );
-
-    // const startMonomerPoint = {
-    //   x: currentMonomerCenter.x - this.bodyWidth / 2,
-    //   y: currentMonomerCenter.y,
-    // };
-
-    // the idea is to calculate the length of the pointOnBorderToMonomerCenter with monomer radius(namely the half of bodyHeight),
-    // then get the projection coordinates of this line in center horizontal line of the monomer
-    // finally could calculate the final coordinates of the point with currentMonomerCenter coordinates
-    const rotationAngleAbs = Math.abs(rotationAngle);
-    const pointVectorToRadiusAngle =
-      (rotationAngleAbs >= 60 && rotationAngleAbs <= 120) ||
-      (rotationAngleAbs >= 240 && rotationAngleAbs <= 300)
-        ? 90
-        : 30;
-    const rotationRadians = Vec2.degrees_to_radians(rotationAngle);
-    const monomerRadius = this.bodyHeight / 2;
-    const pointOnBorderToCenterLength = Math.abs(
-      monomerRadius /
-        Math.cos(
-          Vec2.degrees_to_radians(pointVectorToRadiusAngle - rotationAngle),
-        ),
+    const findPointOnMonomerBorder = getSearchFunction(
+      this.initialAngle - 180,
+      this.canvasOffset,
+      this.monomer,
     );
-    const pointOnBorder = {
-      x:
-        currentMonomerCenter.x -
-        pointOnBorderToCenterLength * Math.cos(rotationRadians),
-      y:
-        currentMonomerCenter.y -
-        pointOnBorderToCenterLength * Math.sin(rotationRadians),
-    };
+
+    const pointOnBorder = findPointOnMonomerBorder(
+      currentMonomerCenter,
+      (this.bodyWidth + this.bodyHeight) / 2,
+    );
 
     const [labelPoint, pointOfAttachment] = findLabelPoint(
       pointOnBorder,

@@ -1,3 +1,4 @@
+import CoordinatesTool from 'application/editor/shared/coordinates';
 import { Vec2 } from 'domain/entities/vec2';
 
 export type Coordinates = { x: number; y: number };
@@ -110,9 +111,13 @@ export function getSearchFunction(
     const newLength = Math.round(diff.length() / 2);
     const newCoordStart = { x: secondPoint.x, y: secondPoint.y };
 
+    const zoomedCoordinateOfSecondPoint = CoordinatesTool.canvasToView(
+      new Vec2(secondPoint),
+    );
+
     const newPointCoord = {
-      x: Math.round(secondPoint.x) + canvasOffset.x,
-      y: Math.round(secondPoint.y) + canvasOffset.y,
+      x: Math.round(zoomedCoordinateOfSecondPoint.x) + canvasOffset.x,
+      y: Math.round(zoomedCoordinateOfSecondPoint.y) + canvasOffset.y,
     };
     const newPoint = document.elementFromPoint(
       newPointCoord.x,

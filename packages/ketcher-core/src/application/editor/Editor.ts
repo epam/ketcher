@@ -15,6 +15,7 @@ import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import { editorEvents, renderersEvents } from 'application/editor/editorEvents';
 import ZoomTool from './tools/Zoom';
 import { PolymerBondRenderer } from 'application/render/renderers';
+import Coordinates from './shared/coordinates';
 
 interface ICoreEditorConstructorParams {
   theme;
@@ -33,6 +34,7 @@ export class CoreEditor {
   public renderersContainer: RenderersManager;
   public drawingEntitiesManager: DrawingEntitiesManager;
   public lastCursorPosition: Vec2 = new Vec2(0, 0);
+  public lastCursorPositionOfCanvas: Vec2 = new Vec2(0, 0);
   public canvas: SVGSVGElement;
   public canvasOffset: DOMRect;
   public theme;
@@ -194,6 +196,9 @@ export class CoreEditor {
         x: event.pageX - clientAreaBoundingBox.x,
         y: event.pageY - clientAreaBoundingBox.y,
       });
+      this.lastCursorPositionOfCanvas = Coordinates.viewToCanvas(
+        this.lastCursorPosition,
+      );
     }
   }
 

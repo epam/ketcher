@@ -10,7 +10,7 @@ describe('Coordinates', () => {
   ZoomTool.instance.setZoomTransform(new ZoomTransform(1.2, 40, 40));
 
   it('should convert page coordinates to model coordinates', () => {
-    const converted = Coordinates.pageToModel(position);
+    const converted = Coordinates.canvasToModel(position);
     const coordinates = new Vec2(2.5, 2.5, 0);
     expect(converted).toEqual(coordinates);
   });
@@ -28,19 +28,19 @@ describe('Coordinates', () => {
   });
 
   it('should convert modal coordinates to page coordinates', () => {
-    const coordinates = Coordinates.modelToPage(position);
+    const coordinates = Coordinates.modelToCanvas(position);
     const converted = new Vec2(4000, 4000, 0);
     expect(coordinates).toEqual(converted);
   });
 
   it('should convert page coordinates to view coordinates', () => {
-    const coordinates = Coordinates.pageToView(position);
+    const coordinates = Coordinates.canvasToView(position);
     const converted = new Vec2(160, 160, 0);
     expect(coordinates).toEqual(converted);
   });
 
   it('should convert view coordinates to page coordinates', () => {
-    const coordinates = Coordinates.viewToPage(position);
+    const coordinates = Coordinates.viewToCanvas(position);
     const converted = new Vec2(50, 50, 0);
     expect(coordinates).toEqual(converted);
   });

@@ -2,12 +2,12 @@ import { Vec2 } from 'domain/entities';
 import { provideEditorSettings } from '../editorSettings';
 import ZoomTool from '../tools/Zoom';
 /**
- * page coordinates refers to the origional Coordinates
- * view coordinates refers to the zoomed Coordinates
- * modal refers to the angstroms
+ * `model` -- The original coordinates of entities, namely angstroms
+ * `canvas` -- The real coordinates used to draw entities
+ * `view` -- The zoomed canvas coordinates
  */
 class Coordinates {
-  static pageToModel(position: Vec2) {
+  static canvasToModel(position: Vec2) {
     const settings = provideEditorSettings();
     return position.scaled(1 / settings.scale);
   }
@@ -23,18 +23,18 @@ class Coordinates {
     return ZoomTool.instance.scaleCoordinates(position.scaled(settings.scale));
   }
 
-  static modelToPage(position: Vec2) {
+  static modelToCanvas(position: Vec2) {
     const settings = provideEditorSettings();
     return position.scaled(settings.scale);
   }
 
   // convert the original coordinates to transformed coordinates after the d3 transformation
-  static pageToView(position: Vec2) {
+  static canvasToView(position: Vec2) {
     return ZoomTool.instance.scaleCoordinates(position);
   }
 
   // convert the transformed coordinates to coordinates before the d3 transformation
-  static viewToPage(position: Vec2) {
+  static viewToCanvas(position: Vec2) {
     return ZoomTool.instance.invertZoom(position);
   }
 }

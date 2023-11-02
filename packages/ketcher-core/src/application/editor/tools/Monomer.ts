@@ -26,7 +26,6 @@ import { MonomerItemType } from 'domain/types';
 import { monomerFactory } from '../operations/monomer/monomerFactory';
 import assert from 'assert';
 import Coordinates from '../shared/coordinates';
-import ZoomTool from './Zoom';
 
 class MonomerTool implements Tool {
   private monomerPreview:
@@ -48,13 +47,12 @@ class MonomerTool implements Tool {
 
   mousedown() {
     assert(this.monomerPreviewRenderer);
-    const zoomLevel = ZoomTool.instance.getZoomLevel();
-    const position = Coordinates.viewToModel(
+    const position = Coordinates.canvasToModel(
       new Vec2(
-        this.editor.lastCursorPosition.x -
-          (this.monomerPreviewRenderer.width * zoomLevel) / 2,
-        this.editor.lastCursorPosition.y -
-          (this.monomerPreviewRenderer.height * zoomLevel) / 2,
+        this.editor.lastCursorPositionOfCanvas.x -
+          this.monomerPreviewRenderer.width / 2,
+        this.editor.lastCursorPositionOfCanvas.y -
+          this.monomerPreviewRenderer.height / 2,
       ),
     );
     const modelChanges = this.editor.drawingEntitiesManager.addMonomer(

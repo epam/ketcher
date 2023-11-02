@@ -36,7 +36,6 @@ async function setIgnoreChiralFlagSetting(page: Page, newSetting: boolean) {
   if (isChecked !== newSetting) {
     await checkLocator.click();
   }
-
   await pressButton(page, 'Apply');
 }
 
@@ -114,8 +113,10 @@ test.describe('Templates - Template Library', () => {
     const anyY = 524;
     await openStructureLibrary(page);
     await takeEditorScreenshot(page);
-    await page.mouse.move(anyX, anyY);
-    await page.mouse.wheel(deltaX, deltaY);
+    await waitForRender(page, async () => {
+      await page.mouse.move(anyX, anyY);
+      await page.mouse.wheel(deltaX, deltaY);
+    });
   });
 
   test('Functional groups tab', async ({ page }) => {

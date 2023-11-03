@@ -375,6 +375,18 @@ export class DrawingEntitiesManager {
       command.addOperation(operation);
     }
 
+    if (
+      availableAttachmentPointForBondEnd === 'R2' &&
+      !monomer.hasAttachmentPoint('R1') &&
+      bond.firstMonomer.hasAttachmentPoint('R1')
+    ) {
+      // Prevents forming invalid R2-R2 bonds when second monomer does not have R1 point
+      bond.firstMonomer.removePotentialBonds();
+      bond.firstMonomer.setPotentialBond('R1', bond);
+      const operation = new MonomerHoverOperation(bond.firstMonomer, true);
+      command.addOperation(operation);
+    }
+
     const operation = new MonomerHoverOperation(monomer, true);
 
     command.addOperation(operation);

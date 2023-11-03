@@ -1,14 +1,5 @@
 import { DOMSubscription } from 'subscription';
-import {
-  Atom,
-  Bond,
-  FunctionalGroup,
-  Pile,
-  SGroup,
-  SGroupAttachmentPoint,
-  Struct,
-  Vec2,
-} from 'domain/entities';
+import { Struct, Vec2 } from 'domain/entities';
 import {
   BaseTool,
   IRnaPreset,
@@ -28,13 +19,7 @@ import {
 } from 'application/editor/editorEvents';
 import { PolymerBondRenderer } from 'application/render/renderers';
 import { Editor } from 'application/editor/editor.types';
-import { ReAtom, ReBond, ReSGroup, ReStruct } from 'application/render';
-import { BaseMonomer } from 'domain/entities/BaseMonomer';
-import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
-import { Command } from 'domain/entities/Command';
-import { MONOMER_CONST } from 'application/editor/operations/monomer/monomerFactory';
-import { PolymerBond } from 'domain/entities/PolymerBond';
-import assert from 'assert';
+import { MacromoleculesConverter } from 'application/editor/MacromoleculesConverter';
 
 interface ICoreEditorConstructorParams {
   theme;
@@ -250,268 +235,11 @@ export class CoreEditor {
     return false;
   }
 
-  private static convertMonomerToMonomerMicromolecule(
-    monomer: BaseMonomer,
-    struct: Struct,
-  ) {
-    const monomerMicromolecule = new MonomerMicromolecule(
-      SGroup.TYPES.SUP,
-      monomer,
-    );
-    const sgroupId = struct.sgroups.add(monomerMicromolecule);
-
-    monomerMicromolecule.data.name = monomer.monomerItem.label;
-    monomerMicromolecule.data.expanded = false;
-    monomerMicromolecule.id = sgroupId;
-    monomerMicromolecule.pp = monomer.position;
-
-    return monomerMicromolecule;
-  }
-
-  private static addMonomerAtomToStruct(
-    atom: Atom,
-    monomer: BaseMonomer,
-    monomerMicromolecule: MonomerMicromolecule,
-    struct: Struct,
-  ) {
-    const atomClone = atom.clone();
-    atomClone.pp = monomer.position.add(atom.pp);
-    atomClone.sgs = new Pile<number>([monomerMicromolecule.id]);
-    atomClone.fragment = -1;
-    const atomId = struct.atoms.add(atomClone);
-    monomerMicromolecule.atoms.push(atomId);
-    if (atom.rglabel) {
-      monomerMicromolecule.addAttachmentPoint(
-        new SGroupAttachmentPoint(atomId, undefined, undefined),
-      );
-    }
-
-    return { atomId, atom: atomClone };
-  }
-
-  private static findAttachmentPointAtom(
-    sgroup: SGroup,
-    polymerBond: PolymerBond,
-    monomer: BaseMonomer,
-    struct: Struct,
-  ) {
-    return sgroup.atoms.find(
-      (atomId) =>
-        Number(struct.atoms.get(atomId)?.rglabel) ===
-        (0 |
-          (1 <<
-            (Number(
-              monomer.getAttachmentPointByBond(polymerBond)?.replace('R', ''),
-            ) -
-              1))),
-    );
-  }
-
-  public static convertDrawingEntitiesToStruct(
-    drawingEntitiesManager: DrawingEntitiesManager,
-    struct: Struct,
-    reStruct?: ReStruct,
-  ) {
-    const monomerToSgroup = new Map<BaseMonomer, SGroup>();
-
-    drawingEntitiesManager.micromoleculesHiddenEntities.mergeInto(struct);
-
-    drawingEntitiesManager.clearMicromoleculesHiddenEntities();
-    drawingEntitiesManager.monomers.forEach((monomer) => {
-      if (monomer.monomerItem.props.isMicromoleculeFragment) {
-        monomer.monomerItem.struct.mergeInto(struct);
-      } else {
-        const atomIdsMap = {};
-        const monomerMicromolecule = this.convertMonomerToMonomerMicromolecule(
-          monomer,
-          struct,
-        );
-        monomerToSgroup.set(monomer, monomerMicromolecule);
-        reStruct?.sgroups.set(
-          monomerMicromolecule.id,
-          new ReSGroup(monomerMicromolecule),
-        );
-
-        monomer.monomerItem.struct.atoms.forEach((oldAtom, oldAtomId) => {
-          const { atom, atomId } = this.addMonomerAtomToStruct(
-            oldAtom,
-            monomer,
-            monomerMicromolecule,
-            struct,
-          );
-          atomIdsMap[oldAtomId] = atomId;
-          reStruct?.atoms.set(atomId, new ReAtom(atom));
-        });
-
-        struct.sGroupForest.insert(monomerMicromolecule);
-        monomer.monomerItem.struct.bonds.forEach((bond) => {
-          const bondClone = bond.clone();
-          bondClone.begin = atomIdsMap[bondClone.begin];
-          bondClone.end = atomIdsMap[bondClone.end];
-          const bondId = struct.bonds.add(bondClone);
-          reStruct?.bonds.set(bondId, new ReBond(bondClone));
-        });
-
-        struct.functionalGroups.add(new FunctionalGroup(monomerMicromolecule));
-      }
-    });
-
-    drawingEntitiesManager.polymerBonds.forEach((polymerBond) => {
-      assert(polymerBond.secondMonomer);
-      const bond = new Bond({
-        type: Bond.PATTERN.TYPE.SINGLE,
-        begin: this.findAttachmentPointAtom(
-          monomerToSgroup.get(polymerBond.firstMonomer) as SGroup,
-          polymerBond,
-          polymerBond.firstMonomer,
-          struct,
-        ),
-        end: this.findAttachmentPointAtom(
-          monomerToSgroup.get(polymerBond.secondMonomer) as SGroup,
-          polymerBond,
-          polymerBond.secondMonomer,
-          struct,
-        ),
-      });
-      const bondId = struct.bonds.add(bond);
-      reStruct?.bonds.set(bondId, new ReBond(bond));
-    });
-
-    return { struct, reStruct };
-  }
-
-  private static convertMonomerMicromoleculeToMonomer(
-    monomerMicromolecule: MonomerMicromolecule,
-    drawingEntitiesManager: DrawingEntitiesManager,
-    sgroupToMonomer: Map<SGroup, BaseMonomer>,
-  ) {
-    const command = new Command();
-    const monomerAdditionCommand = drawingEntitiesManager.addMonomer(
-      monomerMicromolecule.monomer.monomerItem,
-      monomerMicromolecule.pp as Vec2,
-    );
-    command.merge(monomerAdditionCommand);
-    sgroupToMonomer.set(
-      monomerMicromolecule,
-      monomerAdditionCommand.operations[0].monomer as BaseMonomer,
-    );
-
-    return command;
-  }
-
-  private static convertFragmentToChem(
-    fragmentNumber: number,
-    fragmentStruct: Struct,
-    drawingEntitiesManager: DrawingEntitiesManager,
-  ) {
-    const fragmentBbox = fragmentStruct.getCoordBoundingBox();
-    return drawingEntitiesManager.addMonomer(
-      {
-        struct: fragmentStruct,
-        label: 'F' + fragmentNumber,
-        colorScheme: undefined,
-        favorite: false,
-        props: {
-          Name: 'F' + fragmentNumber,
-          MonomerNaturalAnalogCode: '',
-          MonomerName: 'F' + fragmentNumber,
-          MonomerType: MONOMER_CONST.CHEM,
-          isMicromoleculeFragment: true,
-        },
-      },
-      new Vec2(
-        fragmentBbox.max.x - (fragmentBbox.max.x - fragmentBbox.min.x) / 2,
-        fragmentBbox.max.y - (fragmentBbox.max.y - fragmentBbox.min.y) / 2,
-      ),
-    );
-  }
-
-  public static getAttachmentPointLabel(atomId: number, struct: Struct) {
-    let attachmentPointLabel = '';
-    const atomRglabel = Number(struct.atoms.get(atomId)?.rglabel);
-    assert(Number.isInteger(atomRglabel));
-    for (let rgi = 0; rgi < 32; rgi++) {
-      if (atomRglabel & (1 << rgi)) {
-        attachmentPointLabel = 'R' + (rgi + 1).toString();
-      }
-    }
-    return attachmentPointLabel;
-  }
-
-  public static convertStructToDrawingEntities(
-    struct: Struct,
-    drawingEntitiesManager: DrawingEntitiesManager,
-  ) {
-    const sgroupToMonomer = new Map<SGroup, BaseMonomer>();
-    const command = new Command();
-    struct.sgroups.forEach((sgroup) => {
-      if (sgroup instanceof MonomerMicromolecule) {
-        command.merge(
-          this.convertMonomerMicromoleculeToMonomer(
-            sgroup,
-            drawingEntitiesManager,
-            sgroupToMonomer,
-          ),
-        );
-      }
-    });
-    let fragmentNumber = 1;
-    struct.frags.forEach((_fragment, fragmentId) => {
-      const fragmentStruct = struct.getFragment(fragmentId, false);
-      command.merge(
-        this.convertFragmentToChem(
-          fragmentNumber,
-          fragmentStruct,
-          drawingEntitiesManager,
-        ),
-      );
-      fragmentNumber++;
-    });
-    struct.bonds.forEach((bond) => {
-      const beginAtomSgroup = struct.getGroupFromAtomId(bond.begin);
-      const endAtomSgroup = struct.getGroupFromAtomId(bond.end);
-      const beginAtomAttachmentPointNumber = CoreEditor.getAttachmentPointLabel(
-        bond.begin,
-        struct,
-      );
-      const endAtomAttachmentPointNumber = CoreEditor.getAttachmentPointLabel(
-        bond.end,
-        struct,
-      );
-      if (
-        beginAtomAttachmentPointNumber &&
-        endAtomAttachmentPointNumber &&
-        beginAtomSgroup instanceof MonomerMicromolecule &&
-        endAtomSgroup instanceof MonomerMicromolecule
-      ) {
-        const { command: polymerBondAdditionCommand, polymerBond } =
-          drawingEntitiesManager.addPolymerBond(
-            sgroupToMonomer.get(beginAtomSgroup),
-            sgroupToMonomer.get(beginAtomSgroup)?.position,
-            sgroupToMonomer.get(endAtomSgroup)?.position,
-          );
-        command.merge(polymerBondAdditionCommand);
-
-        command.merge(
-          drawingEntitiesManager.finishPolymerBondCreation(
-            polymerBond,
-            sgroupToMonomer.get(endAtomSgroup),
-            beginAtomAttachmentPointNumber,
-            endAtomAttachmentPointNumber,
-          ),
-        );
-      }
-    });
-    drawingEntitiesManager.setMicromoleculesHiddenEntities(struct);
-
-    return { drawingEntitiesManager, modelChanges: command };
-  }
-
   public switchToMicromolecules() {
     this.unsubscribeEvents();
     const struct = this.micromoleculesEditor.struct();
     const reStruct = this.micromoleculesEditor.render.ctab;
-    CoreEditor.convertDrawingEntitiesToStruct(
+    MacromoleculesConverter.convertDrawingEntitiesToStruct(
       this.drawingEntitiesManager,
       struct,
       reStruct,
@@ -521,10 +249,11 @@ export class CoreEditor {
 
   private switchToMacromolecules() {
     const struct = this.micromoleculesEditor?.struct() || new Struct();
-    const { modelChanges } = CoreEditor.convertStructToDrawingEntities(
-      struct,
-      this.drawingEntitiesManager,
-    );
+    const { modelChanges } =
+      MacromoleculesConverter.convertStructToDrawingEntities(
+        struct,
+        this.drawingEntitiesManager,
+      );
     this.renderersContainer.update(modelChanges);
     global.ketcher.editor?.clear();
   }

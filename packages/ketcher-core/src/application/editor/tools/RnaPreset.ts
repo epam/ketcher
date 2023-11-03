@@ -40,6 +40,9 @@ class RnaPresetTool implements Tool {
   readonly MONOMER_PREVIEW_SCALE_FACTOR = 0.25;
   readonly MONOMER_PREVIEW_OFFSET_X = 45;
   readonly MONOMER_PREVIEW_OFFSET_Y = 45;
+  readonly RNA_BASE_PREVIEW_OFFSET_X = 2;
+  readonly RNA_BASE_PREVIEW_OFFSET_Y = 20;
+  readonly PHOSPHATE_PREVIEW_OFFSET_X = 18;
   constructor(private editor: CoreEditor, preset: IRnaPreset) {
     this.editor = editor;
     if (preset?.base) {
@@ -115,8 +118,12 @@ class RnaPresetTool implements Tool {
     this.rnaBasePreview?.moveAbsolute(
       Scale.canvasToModel(
         new Vec2(
-          this.editor.lastCursorPosition.x + this.MONOMER_PREVIEW_OFFSET_X + 2,
-          this.editor.lastCursorPosition.y + this.MONOMER_PREVIEW_OFFSET_Y + 20,
+          this.editor.lastCursorPosition.x +
+            this.MONOMER_PREVIEW_OFFSET_X +
+            this.RNA_BASE_PREVIEW_OFFSET_X,
+          this.editor.lastCursorPosition.y +
+            this.MONOMER_PREVIEW_OFFSET_Y +
+            this.RNA_BASE_PREVIEW_OFFSET_Y,
         ),
         editorSettings,
       ),
@@ -125,7 +132,9 @@ class RnaPresetTool implements Tool {
     this.phosphatePreview?.moveAbsolute(
       Scale.canvasToModel(
         new Vec2(
-          this.editor.lastCursorPosition.x + this.MONOMER_PREVIEW_OFFSET_X + 18,
+          this.editor.lastCursorPosition.x +
+            this.MONOMER_PREVIEW_OFFSET_X +
+            this.PHOSPHATE_PREVIEW_OFFSET_X,
           this.editor.lastCursorPosition.y + this.MONOMER_PREVIEW_OFFSET_Y,
         ),
         editorSettings,

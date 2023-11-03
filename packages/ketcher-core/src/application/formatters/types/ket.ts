@@ -78,11 +78,13 @@ export interface IKetMacromoleculesContentOtherProperties {
 export type IKetMacromoleculesContent = IKetMacromoleculesContentRootProperty &
   IKetMacromoleculesContentOtherProperties;
 
+export type IKetAttachmentPointType = 'left' | 'right' | 'side';
+
 export interface IKetAttachmentPoint {
   attachmentAtom: number;
   leavingGroup: {
     atoms: number[];
   };
-  type?: 'left' | 'right' | 'side';
+  type?: IKetAttachmentPointType;
   label?: string;
 }

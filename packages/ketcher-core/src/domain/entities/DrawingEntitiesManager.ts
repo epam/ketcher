@@ -758,4 +758,19 @@ export class DrawingEntitiesManager {
   public clearMicromoleculesHiddenEntities() {
     this.micromoleculesHiddenEntities = new Struct();
   }
+
+  public mergeInto(targetDrawingEntitiesManager: DrawingEntitiesManager) {
+    this.monomers.forEach((monomer) => {
+      targetDrawingEntitiesManager.monomers.set(monomer.id, monomer);
+    });
+    this.polymerBonds.forEach((polymerBond) => {
+      targetDrawingEntitiesManager.polymerBonds.set(
+        polymerBond.id,
+        polymerBond,
+      );
+    });
+    this.micromoleculesHiddenEntities.mergeInto(
+      targetDrawingEntitiesManager.micromoleculesHiddenEntities,
+    );
+  }
 }

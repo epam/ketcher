@@ -114,7 +114,8 @@ export const Save = ({ onClose, isModalOpen }: Props): JSX.Element => {
     const blob = new Blob([serializedKet], {
       type: getPropertiesByFormat(currentFileFormat).mime,
     });
-    saveAs(blob, getPropertiesByFormat(currentFileFormat).name);
+    const formatProperties = getPropertiesByFormat(currentFileFormat);
+    saveAs(blob, `${formatProperties.name}${formatProperties.extensions[0]}`);
   };
 
   const handleErrorsClick = () => {

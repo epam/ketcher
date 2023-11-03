@@ -6,7 +6,10 @@ import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRen
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { convertAttachmentPointNumberToLabel } from 'domain/helpers/attachmentPointCalculations';
 import assert from 'assert';
-import { IKetAttachmentPoint } from 'application/formatters/types/ket';
+import {
+  IKetAttachmentPoint,
+  IKetAttachmentPointType,
+} from 'application/formatters/types/ket';
 
 export class BaseMonomer extends DrawingEntity {
   public renderer?: BaseMonomerRenderer = undefined;
@@ -58,10 +61,12 @@ export class BaseMonomer extends DrawingEntity {
     this.potentialAttachmentPointsToBonds[attachmentPoint] = potentialBond;
   }
 
-  public getAttachmentPointByBond(bond: PolymerBond) {
+  public getAttachmentPointByBond(
+    bond: PolymerBond,
+  ): AttachmentPointName | undefined {
     for (const attachmentPointName in this.attachmentPointsToBonds) {
       if (this.attachmentPointsToBonds[attachmentPointName] === bond) {
-        return attachmentPointName;
+        return attachmentPointName as AttachmentPointName;
       }
     }
 
@@ -235,27 +240,34 @@ export class BaseMonomer extends DrawingEntity {
   > {
     assert(this.monomerItem.attachmentPoints);
     const attachmentPointDictionnary = {};
-    const attachmentPointTypeToNumber = {
+    const attachmentPointTypeToNumber: {
+      [key in IKetAttachmentPointType]: (
+        attachmentPointNumber?: number,
+      ) => number;
+    } = {
       left: () => 1,
       right: () => 2,
-      side: (attachmentPointNumber) =>
-        attachmentPointNumber +
-        Number(!('R1' in attachmentPointDictionnary)) -
-        Number(!('R2' in attachmentPointDictionnary)),
+      side: (attachmentPointNumber) => {
+        assert(attachmentPointNumber);
+        return (
+          attachmentPointNumber +
+          Number(!('R1' in attachmentPointDictionnary)) -
+          Number(!('R2' in attachmentPointDictionnary))
+        );
+      },
     };
     this.monomerItem.attachmentPoints.forEach(
       (attachmentPoint, attachmentPointIndex) => {
         const attachmentPointNumber = attachmentPointIndex + 1;
-        attachmentPointDictionnary[
-          attachmentPoint.label ||
-            `R${
-              attachmentPoint.type
-                ? attachmentPointTypeToNumber[attachmentPoint.type](
-                    attachmentPointNumber,
-                  )
-                : attachmentPointNumber
-            }`
-        ] = null;
+        const calculatedLabel = `R${
+          attachmentPoint.type
+            ? attachmentPointTypeToNumber[attachmentPoint.type](
+                attachmentPointNumber,
+              )
+            : attachmentPointNumber
+        }`;
+        attachmentPointDictionnary[attachmentPoint.label || calculatedLabel] =
+          null;
       },
     );
     return attachmentPointDictionnary;

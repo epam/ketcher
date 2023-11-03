@@ -62,20 +62,20 @@ class ReBond extends ReObject {
     const render = restruct.render;
     const sgroup1 = restruct.molecule.getGroupFromAtomId(bond.b.begin);
     const sgroup2 = restruct.molecule.getGroupFromAtomId(bond.b.end);
-    const atom1 = restruct.atoms.get(
+    const beginAtom = restruct.atoms.get(
       sgroup1 instanceof MonomerMicromolecule
         ? (sgroup1.getAttachmentAtomId() as number)
         : bond.b.begin,
     );
-    const atom2 = restruct.atoms.get(
+    const endAtom = restruct.atoms.get(
       sgroup2 instanceof MonomerMicromolecule
         ? (sgroup2.getAttachmentAtomId() as number)
         : bond.b.end,
     );
 
     if (
-      !atom1 ||
-      !atom2 ||
+      !beginAtom ||
+      !endAtom ||
       bond.b.hb1 === undefined ||
       bond.b.hb2 === undefined
     ) {
@@ -84,19 +84,19 @@ class ReBond extends ReObject {
     const p1 =
       sgroup1 instanceof MonomerMicromolecule
         ? (sgroup1.pp as Vec2)
-        : atom1.a.pp;
+        : beginAtom.a.pp;
 
     const p2 =
       sgroup2 instanceof MonomerMicromolecule
         ? (sgroup2.pp as Vec2)
-        : atom2.a.pp;
+        : endAtom.a.pp;
     const hb1 = restruct.molecule.halfBonds.get(bond.b.hb1);
     const hb2 = restruct.molecule.halfBonds.get(bond.b.hb2);
 
     if (!hb1?.dir || !hb2?.dir) return;
 
-    hb1.p = atom1.getShiftedSegmentPosition(options, hb1.dir, p1);
-    hb2.p = atom2.getShiftedSegmentPosition(options, hb2.dir, p2);
+    hb1.p = beginAtom.getShiftedSegmentPosition(options, hb1.dir, p1);
+    hb2.p = endAtom.getShiftedSegmentPosition(options, hb2.dir, p2);
     bond.b.center = Vec2.lc2(p1, 0.5, p2, 0.5);
     bond.b.len = Vec2.dist(
       Scale.modelToCanvas(p1, render.options),

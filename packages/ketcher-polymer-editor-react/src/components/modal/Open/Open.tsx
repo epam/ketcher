@@ -40,7 +40,9 @@ const onOk = ({ struct, fragment }) => {
   const editor = CoreEditor.provideEditorInstance();
   const deserialisedKet = ketSerializer.deserializeToDrawingEntities(struct);
   assert(deserialisedKet);
-  editor.drawingEntitiesManager = deserialisedKet.drawingEntitiesManager;
+  deserialisedKet.drawingEntitiesManager.mergeInto(
+    editor.drawingEntitiesManager,
+  );
   editor.renderersContainer.update(deserialisedKet.modelChanges);
 };
 const isAnalyzingFile = false;

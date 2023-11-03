@@ -53,6 +53,7 @@ import {
 } from 'domain/serializers/ket/helpers';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { validate } from 'domain/serializers/ket/validate';
+import { MacromoleculesConverter } from 'application/editor/MacromoleculesConverter';
 
 function parseNode(node: any, struct: any) {
   const type = node.type;
@@ -240,7 +241,7 @@ export class KetSerializer implements Serializer<Struct> {
 
     assert(deserializedContent);
 
-    CoreEditor.convertDrawingEntitiesToStruct(
+    MacromoleculesConverter.convertDrawingEntitiesToStruct(
       deserializedContent?.drawingEntitiesManager,
       struct,
     );
@@ -487,7 +488,10 @@ export class KetSerializer implements Serializer<Struct> {
     struct: Struct,
     drawingEntitiesManager = new DrawingEntitiesManager(),
   ) {
-    CoreEditor.convertStructToDrawingEntities(struct, drawingEntitiesManager);
+    MacromoleculesConverter.convertStructToDrawingEntities(
+      struct,
+      drawingEntitiesManager,
+    );
 
     const { serializedMacromolecules, micromoleculesStruct } =
       this.serializeMacromolecules(new Struct(), drawingEntitiesManager);

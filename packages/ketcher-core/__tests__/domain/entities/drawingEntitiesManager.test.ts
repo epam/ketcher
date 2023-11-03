@@ -46,6 +46,42 @@ describe('Drawing Entities Manager', () => {
     );
   });
 
+  it('should create correct polymer bond when second monomer has only R2 point', () => {
+    const drawingEntitiesManager = new DrawingEntitiesManager();
+    const firstPeptide = new Peptide(peptideMonomerItem);
+    firstPeptide.attachmentPointsToBonds = { R1: null, R2: null };
+    firstPeptide.potentialAttachmentPointsToBonds = { R1: null, R2: null };
+    const secondPeptide = new Peptide(peptideMonomerItem);
+    secondPeptide.attachmentPointsToBonds = { R2: null };
+    secondPeptide.potentialAttachmentPointsToBonds = { R2: null };
+
+    const { polymerBond } = drawingEntitiesManager.addPolymerBond(
+      firstPeptide,
+      new Vec2(0, 0),
+      new Vec2(10, 10),
+    );
+
+    const resultingOperations =
+      drawingEntitiesManager.intendToFinishBondCreation(
+        secondPeptide,
+        polymerBond,
+      ).operations;
+
+    expect(resultingOperations).toHaveLength(2);
+    expect(resultingOperations[0]).toMatchObject({
+      peptide: {
+        potentialAttachmentPointsToBonds: {
+          R1: polymerBond,
+          R2: null,
+        },
+        attachmentPointsToBonds: {
+          R1: null,
+          R2: null,
+        },
+      },
+    });
+  });
+
   it('should delete peptide', () => {
     const drawingEntitiesManager = new DrawingEntitiesManager();
     drawingEntitiesManager.addMonomer(peptideMonomerItem, new Vec2(0, 0));

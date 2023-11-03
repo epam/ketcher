@@ -15,6 +15,20 @@ describe('Zoom Tool', () => {
       height: 30,
     });
     canvas = createPolymerEditorCanvas();
+    Object.defineProperty(canvas, 'width', {
+      value: {
+        baseVal: {
+          value: 100,
+        },
+      },
+    });
+    Object.defineProperty(canvas, 'height', {
+      value: {
+        baseVal: {
+          value: 100,
+        },
+      },
+    });
     button = document.createElement('button');
     button.setAttribute('class', 'zoom-in');
     document.body.appendChild(button);
@@ -22,32 +36,31 @@ describe('Zoom Tool', () => {
 
   ['zoom-in', 'zoom-out', 'zoom-reset'].forEach((name) => {
     it(`should zoom in when press element with class name ${name}`, () => {
-      jest
-        .spyOn(ZoomTool.prototype, 'subscribeMenuZoom')
-        .mockImplementation(() => {
-          select(`.${name}`).on('click', zoomed);
-        });
-      const editor: CoreEditor = new CoreEditor({
+      jest.spyOn(ZoomTool.prototype, 'initMenuZoom').mockImplementation(() => {
+        select(`.${name}`).on('click', zoomed);
+      });
+      // eslint-disable-next-line no-new
+      new CoreEditor({
         theme: polymerEditorTheme,
         canvas,
       });
-      editor.zoomTool.subscribeMenuZoom();
       const zoomInBtn = document.getElementsByClassName(`${name}`)[0];
       zoomInBtn?.dispatchEvent(new MouseEvent('click'));
       expect(zoomed).toHaveBeenCalled();
     });
   });
 
-  it('should zoom in when scrool mouse wheel up', () => {
+  it('should zoom in when scroll mouse wheel up and press CTRL', () => {
     jest.spyOn(ZoomTool.prototype, 'zoomAction').mockImplementation(zoomed);
 
-    const editor: CoreEditor = new CoreEditor({
+    // eslint-disable-next-line no-new
+    new CoreEditor({
       theme: polymerEditorTheme,
       canvas,
     });
-    editor.zoomTool.subscribeMenuZoom();
-    window.dispatchEvent(new WheelEvent('wheel'));
-    window.dispatchEvent(new KeyboardEvent('keydown', { keyCode: 27 }));
+    canvas.dispatchEvent(
+      new WheelEvent('wheel', { deltaY: 60, ctrlKey: true }),
+    );
     expect(zoomed).toHaveBeenCalled();
   });
 });

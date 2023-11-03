@@ -6,7 +6,7 @@ import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 
 describe('Coordinates', () => {
   const position = new Vec2(100, 100, 0);
-  ZoomTool.getInstance(new DrawingEntitiesManager());
+  ZoomTool.initInstance(new DrawingEntitiesManager());
   ZoomTool.instance.setZoomTransform(new ZoomTransform(1.2, 40, 40));
 
   it('should convert page coordinates to model coordinates', () => {

@@ -49,7 +49,7 @@ const saltsAndSolventsReducer = (
   }
 };
 
-const initSaltsAndSolvents = (lib: SdfItem[]) => ({
+export const initSaltsAndSolvents = (lib: SdfItem[]) => ({
   type: 'SALTS_AND_SOLVENTS_INIT',
   payload: { lib },
 });

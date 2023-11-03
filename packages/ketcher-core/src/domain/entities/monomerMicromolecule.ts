@@ -13,27 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+import { SGroup } from 'domain/entities/sgroup';
+import { Struct } from 'domain/entities/struct';
+import assert from 'assert';
 
-export const ChemAvatar = () => (
-  <>
-    <symbol id="chem" viewBox="0 0 59 59" width="59" height="59">
-      <rect
-        className="monomer-body"
-        width="59"
-        height="59"
-        rx="1.5"
-        fill="#F5F6F7"
-      />
-    </symbol>
-    <symbol id="chem-selection" viewBox="0 0 59 59" width="59" height="59">
-      <rect
-        width="59"
-        height="59"
-        rx="1.5"
-        stroke="#0097A8"
-        fill="none"
-        strokeWidth="3"
-      />
-    </symbol>
-  </>
-);
+export class MonomerMicromolecule extends SGroup {
+  constructor(type: string, public monomer) {
+    super(type);
+  }
+
+  public override getContractedPosition(struct: Struct) {
+    assert(this.pp);
+    const sgroupContractedPosition = super.getContractedPosition(struct);
+    return { position: this.pp, atomId: sgroupContractedPosition.atomId };
+  }
+}

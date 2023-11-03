@@ -16,6 +16,7 @@ import {
   selectSingleBondTool,
   takeEditorScreenshot,
   takeMonomerLibraryScreenshot,
+  takePageScreenshot,
   takePresetsScreenshot,
   takeRNABuilderScreenshot,
   waitForPageInit,
@@ -119,6 +120,21 @@ test.describe('RNA Library', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
     await turnOnMacromoleculesEditor(page);
+  });
+
+  test('Check that switch between Macro and Micro mode does not crash application', async ({
+    page,
+  }) => {
+    /* 
+    Test case: #3498
+    Description: Application does not crash. 
+    Test working incorrect because we have bug: https://github.com/epam/ketcher/issues/3498
+    */
+    const numberOfSwitch = 2;
+    for (let i = 0; i < numberOfSwitch; i++) {
+      await turnOnMacromoleculesEditor(page);
+    }
+    await takePageScreenshot(page);
   });
 
   test('Check the RNA components panel', async ({ page }) => {

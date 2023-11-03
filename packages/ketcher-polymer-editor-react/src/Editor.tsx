@@ -161,7 +161,6 @@ function Editor({ theme }: EditorProps) {
   }, [editor, activeTool]);
 
   useEffect(() => {
-    editor?.zoomTool.subscribeMenuZoom();
     editor?.zoomTool.observeCanvasResize();
     return () => {
       editor?.zoomTool.destroy();

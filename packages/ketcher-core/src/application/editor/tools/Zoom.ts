@@ -33,7 +33,7 @@ interface ScrollBar {
 class ZoomTool implements BaseTool {
   private canvas: D3SvgElementSelection<SVGSVGElement, void>;
   private canvasWrapper: D3SvgElementSelection<SVGSVGElement, void>;
-  private zoom: ZoomBehavior<SVGSVGElement, void> | null;
+  private zoom!: ZoomBehavior<SVGSVGElement, void> | null;
   private zoomLevel: number;
   private zoomTransform: ZoomTransform;
   private resizeObserver: ResizeObserver | null = null;
@@ -51,6 +51,8 @@ class ZoomTool implements BaseTool {
   HORIZONTAL_DIST_TO_EDGE = 16;
   VERTICAL_DIST_TO_EDGE = 4;
   WIDTH = 4;
+  MINZOOMSCALE = 0.2;
+  MAXZOOMSCALE = 4;
 
   // eslint-disable-next-line no-use-before-define
   private static _instance: ZoomTool;
@@ -58,9 +60,14 @@ class ZoomTool implements BaseTool {
     return ZoomTool._instance;
   }
 
+  static initInstance(drawingEntitiesManager: DrawingEntitiesManager) {
+    if (!ZoomTool._instance) {
+      ZoomTool._instance = new ZoomTool(drawingEntitiesManager);
+    }
+    return ZoomTool._instance;
+  }
+
   private constructor(drawingEntitiesManager: DrawingEntitiesManager) {
-    const minZoomscale = 0.2;
-    const maxZoomscale = 4;
     this.canvasWrapper = select(canvasSelector);
     this.canvas = select(drawnStructuresSelector);
 
@@ -68,8 +75,12 @@ class ZoomTool implements BaseTool {
     this.zoomTransform = new ZoomTransform(1, 0, 0);
     this.drawingEntitiesManager = drawingEntitiesManager;
 
+    this.initActions();
+  }
+
+  initActions() {
     this.zoom = zoom<SVGSVGElement, void>()
-      .scaleExtent([minZoomscale, maxZoomscale])
+      .scaleExtent([this.MINZOOMSCALE, this.MAXZOOMSCALE])
       .wheelDelta(this.defaultWheelDelta)
       .filter((e) => {
         if (e.ctrlKey && e.type === 'wheel') {
@@ -88,13 +99,7 @@ class ZoomTool implements BaseTool {
         this.mouseWheeled(event);
       }
     });
-  }
-
-  static getInstance(drawingEntitiesManager: DrawingEntitiesManager) {
-    if (!ZoomTool._instance) {
-      ZoomTool._instance = new ZoomTool(drawingEntitiesManager);
-    }
-    return ZoomTool._instance;
+    this.initMenuZoom();
   }
 
   setZoom(zoomLevel: number) {
@@ -170,7 +175,8 @@ class ZoomTool implements BaseTool {
       .attr('draggable', true)
       .attr('cursor', 'pointer')
       .attr('stroke', this.COLOR)
-      .attr('fill', this.COLOR);
+      .attr('fill', this.COLOR)
+      .attr('data-testid', scrollBar.name + '-bar');
   }
 
   calculateDynamicAttr(scrollBar: ScrollBar) {
@@ -195,11 +201,16 @@ class ZoomTool implements BaseTool {
   };
 
   mouseWheeled(event) {
+    const isShiftKeydown = event.shiftKey;
     const boxNode = this.canvasWrapper.node();
     if (boxNode && (event.deltaX || event.deltaY)) {
       const x = -event.deltaX / this.zoomLevel;
       const y = -event.deltaY / this.zoomLevel;
-      this.zoom?.translateBy(this.canvasWrapper, x, y);
+      if (isShiftKeydown) {
+        this.zoom?.translateBy(this.canvasWrapper, x - y, 0);
+      } else {
+        this.zoom?.translateBy(this.canvasWrapper, x, y);
+      }
     }
   }
 
@@ -233,7 +244,7 @@ class ZoomTool implements BaseTool {
     };
   }
 
-  subscribeMenuZoom() {
+  initMenuZoom() {
     const zoomStep = 0.1;
     select('.zoom-in').on('click', () => {
       this.zoom?.scaleTo(this.canvasWrapper, this.zoomLevel + zoomStep);

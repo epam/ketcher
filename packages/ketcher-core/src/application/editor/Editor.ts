@@ -50,7 +50,7 @@ export class CoreEditor {
     this.drawingEntitiesManager = new DrawingEntitiesManager();
     this.domEventSetup();
     this.canvasOffset = this.canvas.getBoundingClientRect();
-    this.zoomTool = ZoomTool.getInstance(this.drawingEntitiesManager);
+    this.zoomTool = ZoomTool.initInstance(this.drawingEntitiesManager);
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     editor = this;
   }

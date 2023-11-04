@@ -352,33 +352,22 @@ export class DrawingEntitiesManager {
     if (availableAttachmentPointForBondEnd) {
       monomer.setPotentialBond(availableAttachmentPointForBondEnd, bond);
     }
-
-    if (
-      availableAttachmentPointForBondEnd === 'R2' &&
-      monomer.hasAttachmentPoint('R1') &&
-      !bond.firstMonomer.isAttachmentPointUsed('R1')
-    ) {
-      bond.firstMonomer.removePotentialBonds();
-      bond.firstMonomer.setPotentialBond('R1', bond);
-      const operation = new MonomerHoverOperation(bond.firstMonomer, true);
-      command.addOperation(operation);
-    }
-
-    if (
-      monomer.hasAttachmentPoint('R2') &&
-      !monomer.isAttachmentPointUsed('R2') &&
-      bond.firstMonomer.getPotentialAttachmentPointByBond(bond) === 'R1'
-    ) {
-      monomer.removePotentialBonds();
-      monomer.setPotentialBond('R2', bond);
-      const operation = new MonomerHoverOperation(bond.firstMonomer, true);
-      command.addOperation(operation);
-    }
-
-    const operation = new MonomerHoverOperation(monomer, true);
-
-    command.addOperation(operation);
-
+    bond.firstMonomer.removePotentialBonds();
+    monomer.removePotentialBonds();
+    const firstValidAttPoint = monomer.getValidSourcePoint(bond.firstMonomer);
+    const secondValidAttPonint = monomer.getValidTargetPoint(bond.firstMonomer);
+    bond.firstMonomer.setPotentialBond(secondValidAttPonint, bond);
+    monomer.setPotentialBond(firstValidAttPoint, bond);
+    const connectFirstMonomerOperation = new MonomerHoverOperation(
+      bond.firstMonomer,
+      true,
+    );
+    const connecSecondMonomerOperation = new MonomerHoverOperation(
+      monomer,
+      true,
+    );
+    command.addOperation(connectFirstMonomerOperation);
+    command.addOperation(connecSecondMonomerOperation);
     return command;
   }
 

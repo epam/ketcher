@@ -66,6 +66,14 @@ export class BaseMonomer extends DrawingEntity {
     return undefined;
   }
 
+  public getValidSourcePoint(monomer: BaseMonomer): string {
+    throw new Error('Method is not implemented');
+  }
+
+  public getValidTargetPoint(monomer: BaseMonomer): string {
+    throw new Error('Method is not implemented');
+  }
+
   public getPotentialAttachmentPointByBond(bond: PolymerBond) {
     for (const attachmentPointName in this.potentialAttachmentPointsToBonds) {
       if (this.potentialAttachmentPointsToBonds[attachmentPointName] === bond) {

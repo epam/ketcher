@@ -8,6 +8,7 @@ import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { Sugar } from 'domain/entities/Sugar';
 import { Phosphate } from 'domain/entities/Phosphate';
 import {
+  APHoverOperation,
   MonomerAddOperation,
   MonomerDeleteOperation,
   MonomerHoverOperation,
@@ -334,8 +335,24 @@ export class DrawingEntitiesManager {
     return command;
   }
 
+  public intendToStartBondAPCreation(
+    monomer: BaseMonomer,
+    attachmentPointName: string,
+  ) {
+    const command = new Command();
+    monomer.turnOnHover();
+    monomer.turnOnAttachmentPointsVisibility();
+
+    const operation = new APHoverOperation(monomer, attachmentPointName);
+
+    command.addOperation(operation);
+
+    return command;
+  }
+
   public intendToFinishBondCreation(monomer: BaseMonomer, bond: PolymerBond) {
     const command = new Command();
+    if (monomer.chosenFirstAttachmentPointForBond) return command;
     monomer.turnOnHover();
     monomer.turnOnAttachmentPointsVisibility();
     const availableAttachmentPointForBondEnd =
@@ -371,6 +388,27 @@ export class DrawingEntitiesManager {
     return command;
   }
 
+  public intendToFinishBondAPCreation(
+    monomer: BaseMonomer,
+    bond: PolymerBond,
+    attachmentPointName: string,
+  ) {
+    const command = new Command();
+    if (monomer.chosenFirstAttachmentPointForBond) return command;
+
+    monomer.turnOnHover();
+    monomer.turnOnAttachmentPointsVisibility();
+    if (attachmentPointName) {
+      monomer.setPotentialBond(attachmentPointName, bond);
+    }
+
+    const operation = new APHoverOperation(monomer, attachmentPointName);
+
+    command.addOperation(operation);
+
+    return command;
+  }
+
   public cancelIntentionToFinishBondCreation(
     monomer: BaseMonomer,
     polymerBond?: PolymerBond,
@@ -391,6 +429,20 @@ export class DrawingEntitiesManager {
       );
       command.addOperation(operation);
     }
+
+    monomer.turnOffHover();
+    monomer.turnOffAttachmentPointsVisibility();
+    monomer.removePotentialBonds();
+
+    const operation = new MonomerHoverOperation(monomer, true);
+
+    command.addOperation(operation);
+
+    return command;
+  }
+
+  public cancelIntentionToFinishBondAPCreation(monomer: BaseMonomer) {
+    const command = new Command();
 
     monomer.turnOffHover();
     monomer.turnOffAttachmentPointsVisibility();

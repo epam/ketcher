@@ -23,6 +23,12 @@ interface ToolEventHandler {
 
   mouseOverMonomer?(event: Event): void;
 
+  mouseOverAP?(event: Event): void;
+
+  mouseLeaveAP?(event: Event): void;
+
+  mouseUpAP?(event: Event): void;
+
   mouseOnMoveMonomer?(event: Event): void;
 
   mouseLeaveMonomer?(event: Event): void;

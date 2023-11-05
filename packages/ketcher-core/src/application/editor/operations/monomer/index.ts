@@ -48,6 +48,19 @@ export class MonomerHoverOperation implements Operation {
     );
   }
 }
+export class APHoverOperation implements Operation {
+  constructor(
+    private peptide: BaseMonomer,
+    private attachmentPointName: string,
+  ) {}
+
+  public execute(renderersManager: RenderersManager) {
+    renderersManager.hoverAttachmentPoint(
+      this.peptide,
+      this.attachmentPointName,
+    );
+  }
+}
 
 export class MonomerDeleteOperation implements Operation {
   constructor(private peptide: BaseMonomer) {}

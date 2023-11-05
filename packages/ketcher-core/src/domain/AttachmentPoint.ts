@@ -10,6 +10,7 @@ import {
   getSearchFunction,
   Coordinates,
 } from './helpers/attachmentPointCalculations';
+import { editorEvents } from 'application/editor/editorEvents';
 
 export class AttachmentPoint {
   static attachmentPointVector = 12;
@@ -46,6 +47,9 @@ export class AttachmentPoint {
   private fill: string;
   private stroke: string;
   private isSnake;
+  private editorEvents: typeof editorEvents;
+  private selectFirstAP;
+  private selectSecondAP;
 
   constructor(
     rootElement: D3SvgElementSelection<SVGGElement, void>,
@@ -58,6 +62,8 @@ export class AttachmentPoint {
     isPotentiallyUsed,
     angle = 0,
     isSnake,
+    selectFirstAP,
+    selectSecondAP,
   ) {
     this.rootElement = rootElement;
     this.monomer = monomer;
@@ -69,6 +75,9 @@ export class AttachmentPoint {
     this.isSnake = isSnake;
     this.isUsed = isUsed;
     this.initialAngle = angle;
+    this.editorEvents = editorEvents;
+    this.selectFirstAP = selectFirstAP;
+    this.selectSecondAP = selectSecondAP;
 
     if (isUsed) {
       this.fill = AttachmentPoint.colors.fillUsed;
@@ -82,6 +91,13 @@ export class AttachmentPoint {
     }
 
     this.appendAttachmentPoint();
+  }
+
+  public removeAttachmentPoint() {
+    const remove = () => {
+      this.element?.remove();
+    };
+    setTimeout(remove, 1);
   }
 
   private renderAttachmentPointByCoordinates(
@@ -146,17 +162,17 @@ export class AttachmentPoint {
     );
 
     const points: Coordinates[] = [
-      { x: -AttachmentPoint.radius, y: 0 },
-      { x: AttachmentPoint.radius, y: 0 },
+      { x: -AttachmentPoint.radius, y: AttachmentPoint.radius },
+      { x: AttachmentPoint.radius, y: AttachmentPoint.radius },
       {
         x: halfWidth,
-        y: -areaHeight,
+        y: -areaHeight + 10,
       },
       {
         x: -halfWidth,
-        y: -areaHeight,
+        y: -areaHeight + 10,
       },
-      { x: -AttachmentPoint.radius, y: 0 },
+      { x: -AttachmentPoint.radius, y: AttachmentPoint.radius },
     ];
 
     const lineFunction = line<Coordinates>()
@@ -175,10 +191,29 @@ export class AttachmentPoint {
       .attr('stroke', 'black')
       .attr('stroke-width', '1px')
       .attr('fill', '#0097A8')
+      .style('opacity', '0')
       .attr(
         'transform',
         `translate(${attachmentPointCenter.x},${attachmentPointCenter.y})rotate(${rotation})`,
       );
+
+    hoverableAreaElement
+      .on('mouseover', (event) => {
+        event.attachmentPointName = this.attachmentPointName;
+        this.editorEvents.mouseOverAP.dispatch(event);
+      })
+      .on('mouseleave', (event) => {
+        this.editorEvents.mouseLeaveAP.dispatch(event);
+      })
+      .on('mousedown', (_) => {
+        this.selectFirstAP(this.attachmentPointName);
+      })
+      .on('mouseup', (event) => {
+        this.selectSecondAP(this.attachmentPointName);
+
+        event.attachmentPointName = this.attachmentPointName;
+        this.editorEvents.mouseUpAP.dispatch(event);
+      });
 
     return hoverableAreaElement;
   }
@@ -309,6 +344,10 @@ export class AttachmentPoint {
 
   public getElement() {
     return this.element;
+  }
+
+  public getAttachmentPointName() {
+    return this.attachmentPointName;
   }
 
   public getHoverableArea() {

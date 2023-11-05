@@ -110,6 +110,12 @@ export class RenderersManager {
     }
   }
 
+  public hoverAttachmentPoint(monomer, attachmentPointName) {
+    this.hoverDrawingEntity(monomer as DrawingEntity);
+    monomer.renderer?.hoverAP(attachmentPointName);
+    monomer.renderer?.drawAttachmentPoints();
+  }
+
   public update(modelChanges: Command) {
     modelChanges.operations.forEach((modelChange) => {
       modelChange.execute(this);

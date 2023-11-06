@@ -1,13 +1,14 @@
 import { Page, test } from '@playwright/test';
-import { POLYMER_TOGGLER, RNA_TAB } from '../../../constants/testIdConstants';
+import { RNA_TAB } from '@constants/testIdConstants';
 import { waitForPageInit } from '@utils/common';
 import { takePageScreenshot } from '@utils';
+import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 
 /* 
 Test case: #3063 - Add e2e tests for Macromolecule editor
 */
 async function createRNA(page: Page) {
-  await page.getByTestId(POLYMER_TOGGLER).click();
+  await turnOnMacromoleculesEditor(page);
   await page.getByTestId(RNA_TAB).click();
   await page.fill('[placeholder="Name your structure"]', 'MyRNA');
   await page.press('[placeholder="Name your structure"]', 'Enter');

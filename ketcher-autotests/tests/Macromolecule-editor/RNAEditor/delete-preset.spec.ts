@@ -1,10 +1,11 @@
 import { Page, test } from '@playwright/test';
-import { POLYMER_TOGGLER, RNA_TAB } from '../../../constants/testIdConstants';
+import { RNA_TAB } from '@constants/testIdConstants';
 import { waitForPageInit } from '@utils/common';
 import { takePageScreenshot } from '@utils';
+import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 
 async function gotoRNA(page: Page) {
-  await page.getByTestId(POLYMER_TOGGLER).click();
+  await turnOnMacromoleculesEditor(page);
   await page.getByTestId(RNA_TAB).click();
 }
 

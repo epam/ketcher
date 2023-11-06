@@ -47,7 +47,14 @@ export class SdfSerializer implements Serializer<Array<SdfItem>> {
             const m = pc.match(/^> [ \d]*<(\S+)>/);
             if (m) {
               const field = m[1];
-              const value = pc.split('\n')[1].trim();
+              const valueArr = pc.split('\n').slice(1, -1);
+              let value = '';
+              if (valueArr.length > 1) {
+                value = valueArr.join(',');
+              } else {
+                value = pc.split('\n')[1].trim();
+              }
+
               acc[field] = Number.isFinite(value) ? +value : value.toString(); // eslint-disable-line
             }
             return acc;

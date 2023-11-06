@@ -58,7 +58,7 @@ const Delete = ({ isModalOpen, onClose }: Props) => {
       onClose={onCloseCallback}
     >
       <Modal.Content>
-        <div>
+        <div data-testid="delete-preset-popup-content">
           <div>You are about to delete</div>
           <div>"{activePreset.name}" RNA preset.</div>
           <div>This operation cannot be undone.</div>

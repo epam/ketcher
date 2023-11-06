@@ -18,7 +18,7 @@ export class Sugar extends BaseMonomer {
     ) {
       return 'R1';
     }
-    return this.firstFreeAttachmentPoint || '';
+    return this.firstFreeAttachmentPoint;
   }
 
   public getValidTargetPoint(monomer: BaseMonomer) {
@@ -36,6 +36,6 @@ export class Sugar extends BaseMonomer {
     ) {
       return 'R2';
     }
-    return this.firstFreeAttachmentPoint || '';
+    return this.firstFreeAttachmentPoint;
   }
 }

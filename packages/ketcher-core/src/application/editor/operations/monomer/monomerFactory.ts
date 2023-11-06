@@ -12,7 +12,6 @@ import { Chem } from 'domain/entities/Chem';
 import { Sugar } from 'domain/entities/Sugar';
 import { Phosphate } from 'domain/entities/Phosphate';
 import { RNABase } from 'domain/entities/RNABase';
-import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { monomerClass } from 'application/formatters/types/ket';
 
 type DerivedClass<T> = new (...args: unknown[]) => T;
@@ -27,10 +26,17 @@ const MONOMER_CONST = {
   PHOSPHATE: 'PHOSPHATE',
 };
 
+type Monomer =
+  | typeof Chem
+  | typeof Sugar
+  | typeof Peptide
+  | typeof RNABase
+  | typeof Phosphate;
+
 export const monomerFactory = (
   monomer: MonomerItemType,
 ): [
-  Monomer: typeof BaseMonomer,
+  Monomer: Monomer,
   MonomerRenderer: DerivedClass<BaseMonomerRenderer>,
   monomerClass: monomerClass,
 ] => {

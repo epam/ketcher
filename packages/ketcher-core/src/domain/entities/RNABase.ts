@@ -3,13 +3,13 @@ import { Sugar } from './Sugar';
 
 export class RNABase extends BaseMonomer {
   public getValidSourcePoint(monomer: BaseMonomer) {
-    return this.firstFreeAttachmentPoint || '';
+    return monomer.firstFreeAttachmentPoint;
   }
 
   public getValidTargetPoint(monomer: BaseMonomer) {
     if (monomer instanceof Sugar) {
       return 'R3';
     }
-    return this.firstFreeAttachmentPoint || '';
+    return this.firstFreeAttachmentPoint;
   }
 }

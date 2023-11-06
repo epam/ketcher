@@ -50,10 +50,12 @@ export abstract class BaseMonomer extends DrawingEntity {
   }
 
   public setPotentialBond(
-    attachmentPoint: string,
+    attachmentPoint: string | undefined,
     potentialBond?: PolymerBond | null,
   ) {
-    this.potentialAttachmentPointsToBonds[attachmentPoint] = potentialBond;
+    if (attachmentPoint !== undefined) {
+      this.potentialAttachmentPointsToBonds[attachmentPoint] = potentialBond;
+    }
   }
 
   public getAttachmentPointByBond(bond: PolymerBond) {
@@ -66,9 +68,9 @@ export abstract class BaseMonomer extends DrawingEntity {
     return undefined;
   }
 
-  public abstract getValidSourcePoint(monomer: BaseMonomer): string;
+  public abstract getValidSourcePoint(monomer: BaseMonomer): string | undefined;
 
-  public abstract getValidTargetPoint(monomer: BaseMonomer): string;
+  public abstract getValidTargetPoint(monomer: BaseMonomer): string | undefined;
 
   public getPotentialAttachmentPointByBond(bond: PolymerBond) {
     for (const attachmentPointName in this.potentialAttachmentPointsToBonds) {

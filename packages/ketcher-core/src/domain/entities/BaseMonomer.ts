@@ -144,6 +144,12 @@ export class BaseMonomer extends DrawingEntity {
     return this.potentialAttachmentPointsToBonds[attachmentPointName];
   }
 
+  public removeBond(polymerBond: PolymerBond) {
+    const attachmentPointName = this.getAttachmentPointByBond(polymerBond);
+    if (!attachmentPointName) return;
+    this.unsetBond(attachmentPointName);
+  }
+
   public removePotentialBonds() {
     this.chosenFirstAttachmentPointForBond = null;
     this.chosenSecondAttachmentPointForBond = null;

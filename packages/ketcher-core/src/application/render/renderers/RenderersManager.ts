@@ -67,6 +67,7 @@ export class RenderersManager {
     polymerBond.renderer?.moveStart();
     polymerBond.renderer?.moveEnd();
     polymerBond.renderer?.drawSelection();
+    polymerBond.firstMonomer.renderer?.redrawAttachmentPoints();
   }
 
   public showPolymerBondInformation(polymerBond) {

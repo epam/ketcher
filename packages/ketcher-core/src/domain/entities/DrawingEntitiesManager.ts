@@ -223,6 +223,7 @@ export class DrawingEntitiesManager {
   public addPolymerBond(firstMonomer, startPosition, endPosition) {
     const polymerBond = new PolymerBond(firstMonomer);
     this.polymerBonds.set(polymerBond.id, polymerBond);
+    firstMonomer.setBond(firstMonomer.startBondAttachmentPoint, polymerBond);
     firstMonomer.setPotentialBond(
       firstMonomer.startBondAttachmentPoint,
       polymerBond,
@@ -264,6 +265,7 @@ export class DrawingEntitiesManager {
   public cancelPolymerBondCreation(polymerBond: PolymerBond) {
     this.polymerBonds.delete(polymerBond.id);
     const command = new Command();
+    polymerBond.firstMonomer.removeBond(polymerBond);
     polymerBond.firstMonomer.removePotentialBonds();
     polymerBond.firstMonomer.turnOffSelection();
     polymerBond.firstMonomer.turnOffHover();

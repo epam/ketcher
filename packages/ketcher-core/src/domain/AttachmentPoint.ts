@@ -237,7 +237,7 @@ export class AttachmentPoint {
       angleRadians = flip ? Math.PI : 0;
       angleDegrees = Vec2.radiansToDegrees(angleRadians);
     } else {
-      const angleRadians = this.rotateToAngle(
+      angleRadians = this.rotateToAngle(
         this.monomer.attachmentPointsToBonds[this.attachmentPointName],
         flip,
       );

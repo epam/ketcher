@@ -11,6 +11,8 @@ import {
 } from '@utils';
 import { checkSmartsValue, setCustomQueryForAtom } from '../utils';
 
+const defaultFileFormat = 'MDL Molfile V2000';
+
 async function drawStructure(page: Page) {
   await selectBond(BondTypeName.Single, page);
   await clickInTheMiddleOfTheScreen(page);
@@ -18,9 +20,19 @@ async function drawStructure(page: Page) {
   await clickInTheMiddleOfTheScreen(page);
 }
 
-test.describe('Checking custom query in SMARTS format', () => {
-  const defaultFileFormat = 'MDL Molfile V2000';
+async function setAndCheckCustomQuery(
+  page: Page,
+  setProperty: (arg0: Page, arg1: string) => Promise<void>,
+  value: string,
+  expectedSmarts: string,
+) {
+  await setProperty(page, value);
+  await pressButton(page, 'Apply');
+  await takeEditorScreenshot(page);
+  await checkSmartsValue(page, defaultFileFormat, expectedSmarts);
+}
 
+test.describe('Checking custom query in SMARTS format', () => {
   test.beforeEach(async ({ page }) => {
     const numberOfAtom = 0;
     await waitForPageInit(page);
@@ -32,12 +44,10 @@ test.describe('Checking custom query in SMARTS format', () => {
 
   test('Setting custom query - one attribute', async ({ page }) => {
     const customQuery = '#6;x9';
-    await setCustomQueryForAtom(page, customQuery);
-    await pressButton(page, 'Apply');
-    await takeEditorScreenshot(page);
-    await checkSmartsValue(
+    await setAndCheckCustomQuery(
       page,
-      defaultFileFormat,
+      setCustomQueryForAtom,
+      customQuery,
       '[#6](-[#6])(-[#6;x9])-[#6]',
     );
   });
@@ -46,12 +56,10 @@ test.describe('Checking custom query in SMARTS format', () => {
     page,
   }) => {
     const customQuery = 'x5;D0;h9;r3';
-    await setCustomQueryForAtom(page, customQuery);
-    await pressButton(page, 'Apply');
-    await takeEditorScreenshot(page);
-    await checkSmartsValue(
+    await setAndCheckCustomQuery(
       page,
-      defaultFileFormat,
+      setCustomQueryForAtom,
+      customQuery,
       '[#6](-[#6])(-[x5;D0;h9;r3])-[#6]',
     );
   });
@@ -60,24 +68,20 @@ test.describe('Checking custom query in SMARTS format', () => {
     page,
   }) => {
     const customQuery = '!C;R3';
-    await setCustomQueryForAtom(page, customQuery);
-    await pressButton(page, 'Apply');
-    await takeEditorScreenshot(page);
-    await checkSmartsValue(
+    await setAndCheckCustomQuery(
       page,
-      defaultFileFormat,
+      setCustomQueryForAtom,
+      customQuery,
       '[#6](-[#6])(-[!C;R3])-[#6]',
     );
   });
 
   test('Setting custom query - logical AND and OR', async ({ page }) => {
     const customQuery = 'x2&D3,D2';
-    await setCustomQueryForAtom(page, customQuery);
-    await pressButton(page, 'Apply');
-    await takeEditorScreenshot(page);
-    await checkSmartsValue(
+    await setAndCheckCustomQuery(
       page,
-      defaultFileFormat,
+      setCustomQueryForAtom,
+      customQuery,
       '[#6](-[#6])(-[x2&D3,D2])-[#6]',
     );
   });
@@ -90,12 +94,10 @@ test.describe('Checking custom query in SMARTS format', () => {
      * This test will fail until https://github.com/epam/Indigo/issues/1337 is fixed
      */
     const customQuery = 'F,Cl,Br,I';
-    await setCustomQueryForAtom(page, customQuery);
-    await pressButton(page, 'Apply');
-    await takeEditorScreenshot(page);
-    await checkSmartsValue(
+    await setAndCheckCustomQuery(
       page,
-      defaultFileFormat,
+      setCustomQueryForAtom,
+      customQuery,
       '[#6](-[#6])(-[#9,#17,#35,#53;A])-[#6]',
     );
   });

@@ -297,10 +297,10 @@ export class DrawingEntitiesManager {
   }
 
   public finishPolymerBondCreation(
-    polymerBond,
-    secondMonomer,
-    firstMonomerAttachmentPoint,
-    secondMonomerAttachmentPoint,
+    polymerBond: PolymerBond,
+    secondMonomer: BaseMonomer,
+    firstMonomerAttachmentPoint: string,
+    secondMonomerAttachmentPoint: string,
   ) {
     const command = new Command();
 

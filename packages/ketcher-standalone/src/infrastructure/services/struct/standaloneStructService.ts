@@ -181,6 +181,8 @@ const messageTypeToEventMapping: {
   [Command.GetInChIKey]: WorkerEvent.GetInChIKey,
 };
 
+let worker: IndigoWorker;
+
 class IndigoService implements StructService {
   private readonly defaultOptions: StructServiceOptions;
   private readonly worker: IndigoWorker;
@@ -188,7 +190,8 @@ class IndigoService implements StructService {
 
   constructor(defaultOptions: StructServiceOptions) {
     this.defaultOptions = defaultOptions;
-    this.worker = new IndigoWorker();
+    this.worker = worker || new IndigoWorker();
+    worker = this.worker;
     this.worker.onmessage = (e: MessageEvent<OutputMessage<string>>) => {
       const message: OutputMessage<string> = e.data;
       if (message.type !== undefined) {

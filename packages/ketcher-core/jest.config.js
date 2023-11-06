@@ -18,5 +18,6 @@ module.exports = {
         warnOnly: true,
       },
     },
+    ketcher: {},
   },
 };

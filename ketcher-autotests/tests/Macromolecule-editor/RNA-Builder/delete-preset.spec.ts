@@ -34,10 +34,16 @@ test.describe('Macromolecules delete RNA presets', () => {
     await page.getByTestId('A_Copy_A_R_P').click();
     await page.getByTestId('A_Copy_A_R_P').click({ button: 'right' });
 
-    await page.getByTestId('deletepreset').click();
+    const deletePresetButton = await page.getByTestId('deletepreset');
+    await deletePresetButton.waitFor({ state: 'visible' });
+    await deletePresetButton.click();
+
+    await page.waitForSelector('[role=dialog]', { state: 'visible' });
 
     await takePageScreenshot(page);
 
     await page.getByTitle('Delete').click();
+
+    await page.waitForSelector('[role=dialog]', { state: 'hidden' });
   });
 });

@@ -6,7 +6,7 @@ import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRen
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { convertAttachmentPointNumberToLabel } from 'domain/helpers/attachmentPointCalculations';
 
-export class BaseMonomer extends DrawingEntity {
+export abstract class BaseMonomer extends DrawingEntity {
   public renderer?: BaseMonomerRenderer = undefined;
   public attachmentPointsToBonds: Partial<
     Record<AttachmentPointName, PolymerBond | null>
@@ -66,13 +66,9 @@ export class BaseMonomer extends DrawingEntity {
     return undefined;
   }
 
-  public getValidSourcePoint(monomer: BaseMonomer): string {
-    throw new Error('Method is not implemented');
-  }
+  public abstract getValidSourcePoint(monomer: BaseMonomer): string;
 
-  public getValidTargetPoint(monomer: BaseMonomer): string {
-    throw new Error('Method is not implemented');
-  }
+  public abstract getValidTargetPoint(monomer: BaseMonomer): string;
 
   public getPotentialAttachmentPointByBond(bond: PolymerBond) {
     for (const attachmentPointName in this.potentialAttachmentPointsToBonds) {

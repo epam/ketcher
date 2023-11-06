@@ -774,7 +774,7 @@ function buildLabel(
   const isMonomerAttachmentPointUsed =
     options.connectedMonomerAttachmentPoints?.includes(label.text);
 
-  if (isMonomerAttachmentPoint) {
+  if (isMonomerAttachmentPoint && options.labelInMonomerConnectionsModal) {
     atom.color = isMonomerAttachmentPointSelected
       ? '#FFF'
       : isMonomerAttachmentPointUsed
@@ -788,6 +788,7 @@ function buildLabel(
   }
 
   const { previewOpacity } = options;
+
   label.path = paper.text(ps.x, ps.y, label.text).attr({
     font: options.font,
     'font-size': options.fontsz,

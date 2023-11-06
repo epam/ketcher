@@ -23,6 +23,7 @@ const StyledModal = styled(Modal)({
   '& .MuiPaper-root': {
     width: 'auto',
     height: 'fit-content',
+    background: '#fff !important',
   },
 
   '& .MuiDialogContent-root': {

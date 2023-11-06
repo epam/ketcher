@@ -19,6 +19,7 @@ export function polymerBondToDrawingEntity(
     Number(monomerIdsMap[connection.endpoint2.monomerId]),
   );
 
+  assert(secondMonomer);
   assert(connection.endpoint1.attachmentPointId);
   assert(connection.endpoint2.attachmentPointId);
   const { command: bondAdditionCommand, polymerBond } =

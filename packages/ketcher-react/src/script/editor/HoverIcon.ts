@@ -16,7 +16,7 @@ export class HoverIcon {
   /**
    Is required for the case, when mouse moved outside the canvas, then loading of structure
    happens and icon needs to be shown above loader.
-  */
+   */
   shouldBeShownWhenMouseBack: boolean;
   editor: Editor;
 
@@ -83,13 +83,13 @@ export class HoverIcon {
   updatePosition() {
     const { x, y } = this.editor.lastCursorPosition;
     const currentPosition = new Vec2(x, y);
-    const newPosition = CoordinateTransformation.viewToCanvas(
+    const newPosition = CoordinateTransformation?.viewToCanvas(
       currentPosition,
       this.editor.render,
     );
     this.element.attr({
-      x: newPosition.x,
-      y: newPosition.y,
+      x: newPosition?.x,
+      y: newPosition?.y,
     });
   }
 

@@ -20,6 +20,8 @@ import { Vec2 } from 'domain/entities';
 import assert from 'assert';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { BaseTool } from 'application/editor/tools/Tool';
+import { Scale } from 'domain/helpers';
+import { provideEditorSettings } from 'application/editor/editorSettings';
 
 class PolymerBond implements BaseTool {
   private bondRenderer?: PolymerBondRenderer;
@@ -40,12 +42,16 @@ class PolymerBond implements BaseTool {
         return;
       }
       const { top: offsetTop, left: offsetLeft } = this.editor.canvasOffset;
-
+      const editorSettings = provideEditorSettings();
+      const endPosition = Scale.canvasToModel(
+        new Vec2(event.clientX - offsetLeft, event.clientY - offsetTop),
+        editorSettings,
+      );
       const { polymerBond, command: modelChanges } =
         this.editor.drawingEntitiesManager.addPolymerBond(
           selectedRenderer.monomer,
-          selectedRenderer.center,
-          new Vec2(event.clientX - offsetLeft, event.clientY - offsetTop),
+          selectedRenderer.monomer.position,
+          endPosition,
         );
 
       this.editor.renderersContainer.update(modelChanges);
@@ -56,9 +62,14 @@ class PolymerBond implements BaseTool {
   public mousemove(event) {
     if (this.bondRenderer) {
       const { top: offsetTop, left: offsetLeft } = this.editor.canvasOffset;
+      const editorSettings = provideEditorSettings();
+      const newEndPosition = Scale.canvasToModel(
+        new Vec2(event.clientX - offsetLeft, event.clientY - offsetTop),
+        editorSettings,
+      );
       const modelChanges = this.editor.drawingEntitiesManager.movePolymerBond(
         this.bondRenderer.polymerBond,
-        new Vec2(event.clientX - offsetLeft, event.clientY - offsetTop),
+        newEndPosition,
       );
       this.editor.renderersContainer.update(modelChanges);
     }

@@ -1,21 +1,27 @@
 import { DOMSubscription } from 'subscription';
-import { Vec2 } from 'domain/entities';
+import { Struct, Vec2 } from 'domain/entities';
 import {
   BaseTool,
+  IRnaPreset,
   isBaseTool,
   Tool,
   ToolConstructorInterface,
   ToolEventHandlerName,
-  IRnaPreset,
 } from 'application/editor/tools/Tool';
 import { toolsMap } from 'application/editor/tools';
 import { MonomerItemType } from 'domain/types';
 import { RenderersManager } from 'application/render/renderers/RenderersManager';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
-import { editorEvents, renderersEvents } from 'application/editor/editorEvents';
 import ZoomTool from './tools/Zoom';
-import { PolymerBondRenderer } from 'application/render/renderers';
 import Coordinates from './shared/coordinates';
+import {
+  editorEvents,
+  renderersEvents,
+  resetEditorEvents,
+} from 'application/editor/editorEvents';
+import { PolymerBondRenderer } from 'application/render/renderers';
+import { Editor } from 'application/editor/editor.types';
+import { MacromoleculesConverter } from 'application/editor/MacromoleculesConverter';
 
 interface ICoreEditorConstructorParams {
   theme;
@@ -27,9 +33,8 @@ function isMouseMainButtonPressed(event: MouseEvent) {
 }
 
 let editor;
-
 export class CoreEditor {
-  public events = editorEvents;
+  public events;
 
   public renderersContainer: RenderersManager;
   public drawingEntitiesManager: DrawingEntitiesManager;
@@ -41,10 +46,13 @@ export class CoreEditor {
   public zoomTool: ZoomTool;
   // private lastEvent: Event | undefined;
   private tool?: Tool | BaseTool;
+  private micromoleculesEditor: Editor;
 
   constructor({ theme, canvas }: ICoreEditorConstructorParams) {
     this.theme = theme;
     this.canvas = canvas;
+    resetEditorEvents();
+    this.events = editorEvents;
     this.subscribeEvents();
     this.renderersContainer = new RenderersManager({ theme });
     this.drawingEntitiesManager = new DrawingEntitiesManager();
@@ -53,6 +61,8 @@ export class CoreEditor {
     this.zoomTool = ZoomTool.initInstance(this.drawingEntitiesManager);
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     editor = this;
+    this.micromoleculesEditor = global.ketcher.editor;
+    this.switchToMacromolecules();
   }
 
   static provideEditorInstance(): CoreEditor {
@@ -105,9 +115,15 @@ export class CoreEditor {
     }
   }
 
-  private domEventSetup() {
+  public unsubscribeEvents() {
+    for (const eventName in this.events) {
+      this.events[eventName].handlers = [];
+    }
+  }
+
+  get trackedDomEvents() {
     const trackedDomEvents: {
-      target: Node;
+      target: Element | Document;
       eventName: string;
       toolEventHandler: ToolEventHandlerName;
     }[] = [
@@ -153,7 +169,11 @@ export class CoreEditor {
       },
     ];
 
-    trackedDomEvents.forEach(({ target, eventName, toolEventHandler }) => {
+    return trackedDomEvents;
+  }
+
+  private domEventSetup() {
+    this.trackedDomEvents.forEach(({ target, eventName, toolEventHandler }) => {
       this.events[eventName] = new DOMSubscription();
       const subs = this.events[eventName];
 
@@ -221,5 +241,28 @@ export class CoreEditor {
     }
 
     return false;
+  }
+
+  public switchToMicromolecules() {
+    this.unsubscribeEvents();
+    const struct = this.micromoleculesEditor.struct();
+    const reStruct = this.micromoleculesEditor.render.ctab;
+    MacromoleculesConverter.convertDrawingEntitiesToStruct(
+      this.drawingEntitiesManager,
+      struct,
+      reStruct,
+    );
+    reStruct.render.setMolecule(struct);
+  }
+
+  private switchToMacromolecules() {
+    const struct = this.micromoleculesEditor?.struct() || new Struct();
+    const { modelChanges } =
+      MacromoleculesConverter.convertStructToDrawingEntities(
+        struct,
+        this.drawingEntitiesManager,
+      );
+    this.renderersContainer.update(modelChanges);
+    global.ketcher.editor?.clear();
   }
 }

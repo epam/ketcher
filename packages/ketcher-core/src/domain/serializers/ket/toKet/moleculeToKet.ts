@@ -110,6 +110,7 @@ function atomToKet(source) {
   ifDef(result, 'invRet', source.invRet, 0);
   ifDef(result, 'exactChangeFlag', !!source.exactChangeFlag, false);
   ifDef(result, 'implicitHCount', source.implicitHCount);
+
   return result;
 }
 

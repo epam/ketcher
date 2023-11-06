@@ -38,8 +38,8 @@ class MonomerTool implements Tool {
 
   private monomerPreviewRenderer: BaseMonomerRenderer | undefined;
   readonly MONOMER_PREVIEW_SCALE_FACTOR = 0.4;
-  readonly MONOMER_PREVIEW_OFFSET_X = 8;
-  readonly MONOMER_PREVIEW_OFFSET_Y = 12;
+  readonly MONOMER_PREVIEW_OFFSET_X = 45;
+  readonly MONOMER_PREVIEW_OFFSET_Y = 45;
   constructor(private editor: CoreEditor, private monomer: MonomerItemType) {
     this.editor = editor;
     this.monomer = monomer;

@@ -1,4 +1,5 @@
 import { Struct } from 'domain/entities';
+import { IKetAttachmentPoint } from 'application/formatters/types/ket';
 
 export type MonomerColorScheme = {
   regular: string;
@@ -11,15 +12,21 @@ export type MonomerItemType = {
   favorite?: boolean;
   struct: Struct;
   props: {
+    id?: string;
     MonomerNaturalAnalogCode: string;
     MonomerName: string;
+    MonomerFullName?: string;
     Name: string;
     // TODO determine whenever these props are optional or not
     BranchMonomer?: string;
     MonomerCaps?: string;
     MonomerCode?: string;
     MonomerType?: string;
+    MonomerClass?: string;
+    isMicromoleculeFragment?: boolean;
   };
+  attachmentPoints?: IKetAttachmentPoint[];
+  seqId?: number;
 };
 
 export type AttachmentPointName =

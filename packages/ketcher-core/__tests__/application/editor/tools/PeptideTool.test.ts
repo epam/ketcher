@@ -5,7 +5,7 @@ import { createPolymerEditorCanvas } from '../../../helpers/dom';
 
 describe('PeptideTool', () => {
   it('should initiate the render of peptide preview on mouseover event', () => {
-    const canvas: SVGSVGElement = createPolymerEditorCanvas();
+    const canvas = createPolymerEditorCanvas();
     const editor: CoreEditor = new CoreEditor({
       canvas,
       theme: polymerEditorTheme,
@@ -18,7 +18,7 @@ describe('PeptideTool', () => {
   });
 
   it('should initiate the render of peptide mousedown', () => {
-    const canvas: SVGSVGElement = createPolymerEditorCanvas();
+    const canvas = createPolymerEditorCanvas();
     const editor: CoreEditor = new CoreEditor({
       canvas,
       theme: polymerEditorTheme,

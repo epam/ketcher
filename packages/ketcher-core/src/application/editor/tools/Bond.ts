@@ -41,7 +41,7 @@ class PolymerBond implements BaseTool {
       const { polymerBond, command: modelChanges } =
         this.editor.drawingEntitiesManager.addPolymerBond(
           selectedRenderer.monomer,
-          selectedRenderer.center,
+          selectedRenderer.monomer.position,
           this.editor.lastCursorPositionOfCanvas,
         );
 

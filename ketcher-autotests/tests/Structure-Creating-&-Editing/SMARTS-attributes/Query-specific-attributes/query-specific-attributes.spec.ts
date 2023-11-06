@@ -24,6 +24,8 @@ import {
   setUnsaturated,
 } from '../utils';
 
+const defaultFileFormat = 'MDL Molfile V2000';
+
 async function drawStructure(page: Page) {
   await selectBond(BondTypeName.Single, page);
   await clickInTheMiddleOfTheScreen(page);
@@ -31,9 +33,19 @@ async function drawStructure(page: Page) {
   await clickInTheMiddleOfTheScreen(page);
 }
 
-test.describe('Checking query specific attributes in SMARTS format', () => {
-  const defaultFileFormat = 'MDL Molfile V2000';
+async function setAndCheckQuerySpecificProperties(
+  page: Page,
+  setProperty: (arg0: Page, arg1: any) => Promise<void>,
+  value: string,
+  expectedSmarts: string,
+) {
+  await setProperty(page, value);
+  await pressButton(page, 'Apply');
+  await takeEditorScreenshot(page);
+  await checkSmartsValue(page, defaultFileFormat, expectedSmarts);
+}
 
+test.describe('Checking query specific attributes in SMARTS format', () => {
   test.beforeEach(async ({ page }) => {
     const numberOfAtom = 0;
     await waitForPageInit(page);
@@ -45,45 +57,37 @@ test.describe('Checking query specific attributes in SMARTS format', () => {
   });
 
   test('Setting ring bond count', async ({ page }) => {
-    await setRingBondCount(page, '2');
-    await pressButton(page, 'Apply');
-    await takeEditorScreenshot(page);
-    await checkSmartsValue(
+    await setAndCheckQuerySpecificProperties(
       page,
-      defaultFileFormat,
+      setRingBondCount,
+      '2',
       '[#6](-[#6])(-[#6;x2])-[#6]',
     );
   });
 
   test('Setting ring bond count - As drawn', async ({ page }) => {
-    await setRingBondCount(page, 'As drawn');
-    await pressButton(page, 'Apply');
-    await takeEditorScreenshot(page);
-    await checkSmartsValue(
+    await setAndCheckQuerySpecificProperties(
       page,
-      defaultFileFormat,
+      setRingBondCount,
+      'As drawn',
       '[#6](-[#6])(-[#6;x0])-[#6]',
     );
   });
 
   test('Setting H count', async ({ page }) => {
-    await setHCount(page, '3');
-    await pressButton(page, 'Apply');
-    await takeEditorScreenshot(page);
-    await checkSmartsValue(
+    await setAndCheckQuerySpecificProperties(
       page,
-      defaultFileFormat,
+      setHCount,
+      '3',
       '[#6](-[#6])(-[#6;H3])-[#6]',
     );
   });
 
   test('Setting substitution count', async ({ page }) => {
-    await setSubstitutionCount(page, '4');
-    await pressButton(page, 'Apply');
-    await takeEditorScreenshot(page);
-    await checkSmartsValue(
+    await setAndCheckQuerySpecificProperties(
       page,
-      defaultFileFormat,
+      setSubstitutionCount,
+      '4',
       '[#6](-[#6])(-[#6;D4])-[#6]',
     );
   });
@@ -101,81 +105,73 @@ test.describe('Checking query specific attributes in SMARTS format', () => {
   });
 
   test('Setting aromacity - aromatic', async ({ page }) => {
-    await setAromaticity(page, 'aromatic');
-    await pressButton(page, 'Apply');
-    await takeEditorScreenshot(page);
-    await checkSmartsValue(page, defaultFileFormat, '[#6](-[#6])(-[c])-[#6]');
+    await setAndCheckQuerySpecificProperties(
+      page,
+      setAromaticity,
+      'aromatic',
+      '[#6](-[#6])(-[c])-[#6]',
+    );
   });
 
   test('Setting aromacity - aliphatic', async ({ page }) => {
-    await setAromaticity(page, 'aliphatic');
-    await pressButton(page, 'Apply');
-    await takeEditorScreenshot(page);
-    await checkSmartsValue(page, defaultFileFormat, '[#6](-[#6])(-[C])-[#6]');
+    await setAndCheckQuerySpecificProperties(
+      page,
+      setAromaticity,
+      'aliphatic',
+      '[#6](-[#6])(-[C])-[#6]',
+    );
   });
 
   test('Setting implicit H count', async ({ page }) => {
-    await setImplicitHCount(page, '5');
-    await pressButton(page, 'Apply');
-    await takeEditorScreenshot(page);
-    await checkSmartsValue(
+    await setAndCheckQuerySpecificProperties(
       page,
-      defaultFileFormat,
+      setImplicitHCount,
+      '5',
       '[#6](-[#6])(-[#6;h5])-[#6]',
     );
   });
 
   test('Setting ring membership', async ({ page }) => {
-    await setRingMembership(page, '6');
-    await pressButton(page, 'Apply');
-    await takeEditorScreenshot(page);
-    await checkSmartsValue(
+    await setAndCheckQuerySpecificProperties(
       page,
-      defaultFileFormat,
+      setRingMembership,
+      '6',
       '[#6](-[#6])(-[#6;R6])-[#6]',
     );
   });
 
   test('Setting ring size', async ({ page }) => {
-    await setRingSize(page, '7');
-    await pressButton(page, 'Apply');
-    await takeEditorScreenshot(page);
-    await checkSmartsValue(
+    await setAndCheckQuerySpecificProperties(
       page,
-      defaultFileFormat,
+      setRingSize,
+      '7',
       '[#6](-[#6])(-[#6;r7])-[#6]',
     );
   });
 
   test('Setting connectivity', async ({ page }) => {
-    await setConnectivity(page, '8');
-    await pressButton(page, 'Apply');
-    await takeEditorScreenshot(page);
-    await checkSmartsValue(
+    await setAndCheckQuerySpecificProperties(
       page,
-      defaultFileFormat,
+      setConnectivity,
+      '8',
       '[#6](-[#6])(-[#6;X8])-[#6]',
     );
   });
 
   test('Setting chirality - anticlockwise', async ({ page }) => {
-    await setChirality(page, 'anticlockwise');
-    await pressButton(page, 'Apply');
-    await takeEditorScreenshot(page);
-    await checkSmartsValue(
+    await setAndCheckQuerySpecificProperties(
       page,
-      defaultFileFormat,
+      setChirality,
+      'anticlockwise',
       '[#6](-[#6])(-[#6;@])-[#6]',
     );
   });
 
   test('Setting chirality - clockwise', async ({ page }) => {
-    await setChirality(page, 'clockwise');
-    await pressButton(page, 'Apply');
-    await takeEditorScreenshot(page);
-    await checkSmartsValue(
+    await setAndCheckQuerySpecificProperties(
       page,
-      defaultFileFormat,
+      setChirality,
+      'clockwise',
       '[#6](-[#6])(-[#6;@@])-[#6]',
     );
   });

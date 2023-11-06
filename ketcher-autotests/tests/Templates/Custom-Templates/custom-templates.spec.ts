@@ -17,6 +17,11 @@ import {
   selectBond,
   BondTypeName,
   clickOnAtom,
+  SaltsAndSolvents,
+  selectSaltsAndSolvents,
+  LeftPanelButton,
+  dragMouseTo,
+  selectLeftPanelButton,
 } from '@utils';
 
 test.describe('Open Ketcher', () => {
@@ -101,6 +106,23 @@ test.describe('Open Ketcher', () => {
     await takeEditorScreenshot(page);
     await page.getByTestId('close-icon').click();
     await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+  });
+
+  test('When drag an abbreviation preview is hide', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-8941 
+    Description:
+    Open 'Custom Templates'
+    Select some 'Functional Groups' or 'Salts and Solvents'
+    Click on abbreviation and drag to another place on canvas
+    */
+    const x = 700;
+    const y = 200;
+    await selectSaltsAndSolvents(SaltsAndSolvents.Isobutanol, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await selectLeftPanelButton(LeftPanelButton.HandTool, page);
+    await page.getByText('isobutanol').click();
+    await dragMouseTo(x, y, page);
   });
 
   test('Adding template to canvas', async ({ page }) => {

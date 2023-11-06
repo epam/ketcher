@@ -22,6 +22,11 @@ import {
   takeLeftToolbarScreenshot,
   waitForPageInit,
   waitForRender,
+  selectFunctionalGroups,
+  FunctionalGroups,
+  drawFGAndDrag,
+  selectDropdownTool,
+  takePageScreenshot,
 } from '@utils';
 
 test.describe('Selection tools', () => {
@@ -449,5 +454,22 @@ test.describe('Selection tools', () => {
     */
     await page.getByTestId('select-rectangle').click();
     await expect(page).toHaveScreenshot();
+  });
+
+  test('Tooltip appears after dragging abbreviation and stay on canvas until release click', async ({
+    page,
+  }) => {
+    /*
+    Test case: EPMLSOPKET-12968
+    Description:
+    Add 'Functional Groups' and 'Salts and Solvents' on canvas
+    Choose 'Selection tool' (ESC) click on abbreviation and immediately drag before tooltip appears
+    */
+    const SHIFT = 50;
+    await selectFunctionalGroups(FunctionalGroups.Cbz, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await drawFGAndDrag(FunctionalGroups.Boc, SHIFT, page);
+    await selectDropdownTool(page, 'select-rectangle', 'select-lasso');
+    await takePageScreenshot(page);
   });
 });

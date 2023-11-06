@@ -24,6 +24,7 @@ import {
   screenshotBetweenUndoRedo,
   saveToFile,
   waitForPageInit,
+  doubleClickOnBond,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getCml, getMolfile } from '@utils/formats';
@@ -432,5 +433,22 @@ test.describe('Data S-Group tool', () => {
     */
     await openFileAndAddToCanvas('KET/benzene-with-data-s-group.ket', page);
     await clickInTheMiddleOfTheScreen(page);
+  });
+
+  test('Tooltip appears on the structure with delay', async ({ page }) => {
+    /*
+      Test case: EPMLSOPKET-10070
+      Description: 
+      Create structure and make Data S-Group with 'Field name' and 'Field value'
+      With 'Selection tool' hover over created S-Group
+    */
+    await openFileAndAddToCanvas('KET/benzene-with-data-s-group.ket', page);
+    await clickInTheMiddleOfTheScreen(page);
+    await doubleClickOnBond(page, BondType.SINGLE, 0);
+    await page.getByPlaceholder('Enter name').click();
+    await page.getByPlaceholder('Enter name').fill('Ar');
+    await page.getByPlaceholder('Enter value').click();
+    await page.getByPlaceholder('Enter value').fill('Testing');
+    await page.getByTestId('OK').click();
   });
 });

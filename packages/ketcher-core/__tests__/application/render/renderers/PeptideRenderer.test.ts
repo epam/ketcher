@@ -5,7 +5,7 @@ import { peptideMonomerItem, polymerEditorTheme } from '../../../mock-data';
 
 describe('PeptideRenderer', () => {
   it('should render peptide', () => {
-    const canvas: SVGSVGElement = createPolymerEditorCanvas();
+    const canvas = createPolymerEditorCanvas();
     const peptide = new Peptide(peptideMonomerItem);
     const peptideRenderer = new PeptideRenderer(peptide);
     global.SVGElement.prototype.getBBox = jest.fn();

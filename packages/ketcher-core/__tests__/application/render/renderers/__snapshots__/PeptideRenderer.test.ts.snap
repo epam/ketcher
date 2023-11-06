@@ -6,7 +6,15 @@ exports[`PeptideRenderer should render peptide 1`] = `
   id="polymer-editor-canvas"
   width="500"
 >
-  <defs />
+  <defs>
+    <symbol
+      id="peptide"
+    >
+      <path
+        class="monomer-body"
+      />
+    </symbol>
+  </defs>
   <g
     transform="translate(0, 0) scale(1)"
     transition="transform 0.2s"

@@ -375,19 +375,19 @@ test.describe('Data S-Group tool', () => {
       Description: .mol file opened and saved as .cml file
     */
     await openFileAndAddToCanvas(
-      'chain-with-data-s-group-partstructure.mol',
+      'Molfiles-V3000/chain-with-data-s-group-partstructure.mol',
       page,
     );
     const expectedFile = await getCml(page);
     await saveToFile(
-      'chain-with-data-s-group-partstructure-expected.cml',
+      'CML/chain-with-data-s-group-partstructure-expected.cml',
       expectedFile,
     );
     const { fileExpected: cmlFileExpected, file: cmlFile } =
       await receiveFileComparisonData({
         page,
         expectedFileName:
-          'tests/test-data/chain-with-data-s-group-partstructure-expected.cml',
+          'tests/test-data/CML/chain-with-data-s-group-partstructure-expected.cml',
       });
     expect(cmlFile).toEqual(cmlFileExpected);
   });

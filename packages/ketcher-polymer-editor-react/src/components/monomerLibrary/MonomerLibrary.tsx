@@ -20,7 +20,6 @@ import { tabsContent } from 'components/monomerLibrary/tabsContent';
 import { useAppDispatch } from 'hooks';
 import { setSearchFilter } from 'state/library';
 import { Icon } from 'ketcher-react';
-import StyledPreview from 'components/shared/MonomerPreview';
 
 const MonomerLibraryContainer = styled.div(({ theme }) => ({
   width: '254px',
@@ -162,7 +161,6 @@ const MonomerLibrary = () => {
         </MonomerLibrarySearch>
       </MonomerLibraryHeader>
       <Tabs tabs={tabsContent} />
-      <StyledPreview className="polymer-library-preview" />
     </MonomerLibraryContainer>
   );
 };

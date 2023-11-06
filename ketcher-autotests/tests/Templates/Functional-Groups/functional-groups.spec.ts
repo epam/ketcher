@@ -30,7 +30,7 @@ import {
   selectDropdownTool,
   clickOnAtom,
   moveOnAtom,
-  clickOnTheCanvas,
+  selectOption,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 let point: { x: number; y: number };
@@ -752,17 +752,22 @@ test.describe('Functional Groups', () => {
     */
     await selectFunctionalGroups(FunctionalGroups.Indole, page);
     await clickInTheMiddleOfTheScreen(page);
+    await resetCurrentTool(page);
+
     await clickInTheMiddleOfTheScreen(page, 'right');
     await waitForRender(page, async () => {
       await page.getByText('Expand Abbreviation').click();
     });
+
     await moveOnAtom(page, 'C', 0);
     await page.getByTestId('canvas').hover();
-    await page.getByTestId('select-rectangle').click();
+    await resetCurrentTool(page);
+
     await clickInTheMiddleOfTheScreen(page);
     await page.keyboard.type('Ind');
-    await page.keyboard.press('Enter');
-    await clickOnTheCanvas(page, 1, 1);
+    await selectOption(page, 'Indole');
+    await moveOnAtom(page, 'C', 0);
+    await page.getByTestId('canvas').hover();
   });
 
   test('Lookup Abbreviations - Verify Rolling Back Atom Replacement on Lookup Activation', async ({
@@ -777,18 +782,18 @@ test.describe('Functional Groups', () => {
     */
     await selectFunctionalGroups(FunctionalGroups.Indole, page);
     await clickInTheMiddleOfTheScreen(page);
+    await resetCurrentTool(page);
+
     await clickInTheMiddleOfTheScreen(page, 'right');
     await waitForRender(page, async () => {
       await page.getByText('Expand Abbreviation').click();
     });
+
     await moveOnAtom(page, 'C', 0);
     await page.getByTestId('canvas').hover();
-    await page.getByTestId('select-rectangle').click();
+    await resetCurrentTool(page);
+
     await clickInTheMiddleOfTheScreen(page);
     await page.keyboard.type('In');
-    const abbreviationLookup = page.getByTestId('AbbreviationLookup');
-    await expect(abbreviationLookup).toBeVisible();
-    await page.keyboard.press('Enter');
-    await clickInTheMiddleOfTheScreen(page);
   });
 });

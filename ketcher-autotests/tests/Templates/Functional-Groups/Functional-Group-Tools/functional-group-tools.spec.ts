@@ -26,6 +26,7 @@ import {
   selectFunctionalGroups,
   moveOnAtom,
   waitForRender,
+  clickOnTheCanvas,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
@@ -861,6 +862,31 @@ test.describe('Templates - Functional Group Tools3', () => {
     await selectFunctionalGroups(FunctionalGroups.Boc, page);
     await clickInTheMiddleOfTheScreen(page);
     await selectTopPanelButton(TopPanelButton.ThreeD, page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Functional Groups - No console error when adding sGroups to canvas', async ({
+    page,
+  }) => {
+    /*
+    Test case: EPMLSOPKET-8934
+    Description:
+    Open template dialog, select any functional group or salt-and-solvent
+    Add the template to the canvas and expand it
+    Click on the canvas again to insert another template
+    */
+    const xOffsetFromCenter = -235;
+
+    await selectFunctionalGroups(FunctionalGroups.Bz, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await resetCurrentTool(page);
+
+    await page.getByText('Bz').click({ button: 'right' });
+    await page.getByText('Expand Abbreviation').click();
+    await resetCurrentTool(page);
+
+    await selectFunctionalGroups(FunctionalGroups.CO2Et, page);
+    await clickOnTheCanvas(page, xOffsetFromCenter, 0);
     await takeEditorScreenshot(page);
   });
 });

@@ -49,7 +49,6 @@ function Editor(props: EditorProps) {
   const { height, width } = useResizeObserver<HTMLDivElement>({
     ref: rootElRef,
   });
-
   const ketcherInitEvent = new Event(KETCHER_INIT_EVENT_NAME);
 
   useEffect(() => {

@@ -2724,6 +2724,80 @@ const utfFile = `{
     }
 }
 `;
+
+const reagentsBelowAndAboveArrowCml = `<?xml version="1.0" ?>
+<cml>
+<reaction>
+<reactantList>
+<molecule>
+    <atomArray>
+        <atom id="a0" elementType="C" x2="14.0098" y2="-9.12507"/>
+        <atom id="a1" elementType="C" x2="15.7402" y2="-9.12459"/>
+        <atom id="a2" elementType="C" x2="14.8766" y2="-8.62497"/>
+        <atom id="a3" elementType="C" x2="15.7402" y2="-10.1255"/>
+        <atom id="a4" elementType="C" x2="14.0098" y2="-10.13"/>
+        <atom id="a5" elementType="C" x2="14.8788" y2="-10.625"/>
+    </atomArray>
+    <bondArray>
+        <bond atomRefs2="a2 a0" order="2">
+            <bondStereo atomRefs4="a1 a2 a0 a4">C</bondStereo>
+        </bond>
+        <bond atomRefs2="a3 a1" order="2">
+            <bondStereo atomRefs4="a5 a3 a1 a2">C</bondStereo>
+        </bond>
+        <bond atomRefs2="a0 a4" order="1"/>
+        <bond atomRefs2="a1 a2" order="1"/>
+        <bond atomRefs2="a4 a5" order="2">
+            <bondStereo atomRefs4="a0 a4 a5 a3">C</bondStereo>
+        </bond>
+        <bond atomRefs2="a5 a3" order="1"/>
+    </bondArray>
+</molecule>
+</reactantList>
+<productList>
+<molecule>
+    <atomArray>
+        <atom id="a0" elementType="C" x2="22.3848" y2="-9.12507"/>
+        <atom id="a1" elementType="C" x2="24.1152" y2="-9.12459"/>
+        <atom id="a2" elementType="C" x2="23.2516" y2="-8.62497"/>
+        <atom id="a3" elementType="C" x2="24.1152" y2="-10.1255"/>
+        <atom id="a4" elementType="C" x2="22.3848" y2="-10.13"/>
+        <atom id="a5" elementType="C" x2="23.2538" y2="-10.625"/>
+    </atomArray>
+    <bondArray>
+        <bond atomRefs2="a2 a0" order="2">
+            <bondStereo atomRefs4="a1 a2 a0 a4">C</bondStereo>
+        </bond>
+        <bond atomRefs2="a3 a1" order="2">
+            <bondStereo atomRefs4="a5 a3 a1 a2">C</bondStereo>
+        </bond>
+        <bond atomRefs2="a0 a4" order="1"/>
+        <bond atomRefs2="a1 a2" order="1"/>
+        <bond atomRefs2="a4 a5" order="2">
+            <bondStereo atomRefs4="a0 a4 a5 a3">C</bondStereo>
+        </bond>
+        <bond atomRefs2="a5 a3" order="1"/>
+    </bondArray>
+</molecule>
+</productList>
+<spectatorList>
+<molecule>
+    <atomArray>
+        <atom id="a0" elementType="N" x2="19.075" y2="-8.925"/>
+    </atomArray>
+</molecule>
+<molecule>
+    <atomArray>
+        <atom id="a0" elementType="F" x2="19.15" y2="-9.975"/>
+    </atomArray>
+</molecule>
+</spectatorList>
+</reaction>
+</cml>
+`;
+
+const reagentsBelowAndAboveArrowCdx = `VmpDRDAxMDAEAwIBAAAAAAAAAAAAAAAAAAAAAAUIBAAAAB4AGggCAAMAGwgCAAQAAAEkAAAAAgACAOn9BQBBcmlhbAMA6f0PAFRpbWVzIE5ldyBSb21hbgADMgAIAP///////wAAAAAAAP//AAAAAP////8AAAAA//8AAAAA/////wAAAAD/////AAD//wGAAAAAABAIAgABAA8IAgABAAOABAAAAASABQAAAAACCACTwO0ApEvDAAAABIAGAAAAAAIIANi87QBbNPcAAAAEgAcAAAAAAggAv7/eAJNM3QAAAASACAAAAAACCAAWxAsBWzT3AAAABIAJAAAAAAIIAI7mCwGkS8MAAAAEgAoAAAAAAggAQsAaAVhd3QAAAAWAGQAAAAQGBAAHAAAABQYEAAUAAAAABgIAAgAAAAWAGgAAAAQGBAAFAAAABQYEAAkAAAAAAAWAGwAAAAQGBAAJAAAABQYEAAoAAAAABgIAAgAAAAWAHAAAAAQGBAAKAAAABQYEAAgAAAAAAAWAHQAAAAQGBAAIAAAABQYEAAYAAAAABgIAAgAAAAWAHgAAAAQGBAAGAAAABQYEAAcAAAAAAAAAA4ALAAAABIAMAAAAAAIIAJKA7gCki7sBAAAEgA0AAAAAAggA2HzuAFp07wEAAASADgAAAAACCAC/f98AkozVAQAABIAPAAAAAAIIABaEDAFadO8BAAAEgBAAAAAAAggAjqYMAaSLuwEAAASAEQAAAAACCABCgBsBWJ3VAQAABYAfAAAABAYEAA4AAAAFBgQADAAAAAAGAgACAAAABYAgAAAABAYEAAwAAAAFBgQAEAAAAAAABYAhAAAABAYEABAAAAAFBgQAEQAAAAAGAgACAAAABYAiAAAABAYEABEAAAAFBgQADwAAAAAABYAjAAAABAYEAA8AAAAFBgQADQAAAAAGAgACAAAABYAkAAAABAYEAA0AAAAFBgQADgAAAAAAAAADgBIAAAAEgBMAAAACBAIABwArBAIAAwAAAggAAADwAACAVwEGgAAAAAAAAggAAADwAACAVwEjCAEAAAAHGQACAAAAAwBgAMgAAAACAAMAIADIAAAATkgzAAAAAAAAA4AUAAAABIAVAAAAAgQCABEAKwQCAAEAAAIIAADACwEAAFwBBoAAAAAAAAIIAADACwEAAFwBIwgBAAAABw8AAQAAAAMAYADIAAAAQ2xIAAAAAAAAIYAWAAAABAIQAAFA/gB0wKoBAUD+AAAADgE3CgIAAAAvCgIAAAAgCgIAyggxCgIAMwI1CgIAAQAwCgIAGQAHAgwAdMCqAQFA/gAAAAAACAIMAAAADgEBQP4AAAAAAAAADYAAAAAADoAAAAAAAQwEAAQAAAACDAQACwAAAAUMCAASAAAAFAAAAAQMBAAWAAAAAAAAAAAAAAAAAA==`;
+
 export const FILE_TEST_DATA = {
   utfFile,
   benzeneArrowBenzeneReagentNh3,
@@ -2752,4 +2826,6 @@ export const FILE_TEST_DATA = {
   unknownSuperatomExpandedContractedCml,
   oneUnknownSuperatomContractedCml,
   expandedAndContractedFg,
+  reagentsBelowAndAboveArrowCml,
+  reagentsBelowAndAboveArrowCdx,
 };

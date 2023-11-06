@@ -23,7 +23,6 @@ import { MonomerItemType } from 'domain/types';
 import { monomerFactory } from '../operations/monomer/monomerFactory';
 import { RNABase } from 'domain/entities/RNABase';
 import { Phosphate } from 'domain/entities/Phosphate';
-import assert from 'assert';
 import { provideEditorSettings } from 'application/editor/editorSettings';
 import { Scale } from 'domain/helpers';
 
@@ -39,8 +38,11 @@ class RnaPresetTool implements Tool {
   private phosphatePreviewRenderer: BaseMonomerRenderer | undefined;
   private sugarPreviewRenderer: BaseMonomerRenderer | undefined;
   readonly MONOMER_PREVIEW_SCALE_FACTOR = 0.25;
-  readonly MONOMER_PREVIEW_OFFSET_X = 8;
-  readonly MONOMER_PREVIEW_OFFSET_Y = 12;
+  readonly MONOMER_PREVIEW_OFFSET_X = 45;
+  readonly MONOMER_PREVIEW_OFFSET_Y = 45;
+  readonly RNA_BASE_PREVIEW_OFFSET_X = 2;
+  readonly RNA_BASE_PREVIEW_OFFSET_Y = 20;
+  readonly PHOSPHATE_PREVIEW_OFFSET_X = 18;
   constructor(private editor: CoreEditor, preset: IRnaPreset) {
     this.editor = editor;
     if (preset?.base) {
@@ -57,44 +59,38 @@ class RnaPresetTool implements Tool {
   mousedown() {
     const editorSettings = provideEditorSettings();
 
-    assert(
-      this.sugarPreviewRenderer,
-      'monomerPreviewRenderer is not initialized',
-    );
-    assert(this.sugar, 'no sugar in preset');
+    if (!this.sugar || !this.sugarPreviewRenderer) {
+      this.editor.events.error.dispatch('No sugar in RNA preset found');
+      return;
+    }
+
     const modelChanges = this.editor.drawingEntitiesManager.addRnaPreset({
       sugar: this.sugar,
-      sugarPosition: Scale.scaled2obj(
+      sugarPosition: Scale.canvasToModel(
         new Vec2(
-          this.editor.lastCursorPosition.x -
-            this.sugarPreviewRenderer.width / 2,
-          this.editor.lastCursorPosition.y -
-            this.sugarPreviewRenderer.height / 2,
+          this.editor.lastCursorPosition.x,
+          this.editor.lastCursorPosition.y,
         ),
         editorSettings,
       ),
       phosphate: this.phosphate,
       phosphatePosition: this.phosphatePreviewRenderer
-        ? Scale.scaled2obj(
+        ? Scale.canvasToModel(
             new Vec2(
-              this.editor.lastCursorPosition.x -
-                this.phosphatePreviewRenderer.width / 2 +
+              this.editor.lastCursorPosition.x +
                 this.sugarPreviewRenderer?.width +
                 45,
-              this.editor.lastCursorPosition.y -
-                this.phosphatePreviewRenderer.height / 2,
+              this.editor.lastCursorPosition.y,
             ),
             editorSettings,
           )
         : undefined,
       rnaBase: this.rnaBase,
       rnaBasePosition: this.rnaBasePreviewRenderer
-        ? Scale.scaled2obj(
+        ? Scale.canvasToModel(
             new Vec2(
-              this.editor.lastCursorPosition.x -
-                this.rnaBasePreviewRenderer.width / 2,
-              this.editor.lastCursorPosition.y -
-                this.rnaBasePreviewRenderer.height / 2 +
+              this.editor.lastCursorPosition.x,
+              this.editor.lastCursorPosition.y +
                 this.sugarPreviewRenderer.height +
                 45,
             ),
@@ -110,7 +106,7 @@ class RnaPresetTool implements Tool {
     const editorSettings = provideEditorSettings();
 
     this.sugarPreview?.moveAbsolute(
-      Scale.scaled2obj(
+      Scale.canvasToModel(
         new Vec2(
           this.editor.lastCursorPosition.x + this.MONOMER_PREVIEW_OFFSET_X,
           this.editor.lastCursorPosition.y + this.MONOMER_PREVIEW_OFFSET_Y,
@@ -120,19 +116,25 @@ class RnaPresetTool implements Tool {
     );
 
     this.rnaBasePreview?.moveAbsolute(
-      Scale.scaled2obj(
+      Scale.canvasToModel(
         new Vec2(
-          this.editor.lastCursorPosition.x + this.MONOMER_PREVIEW_OFFSET_X,
-          this.editor.lastCursorPosition.y + this.MONOMER_PREVIEW_OFFSET_Y + 18,
+          this.editor.lastCursorPosition.x +
+            this.MONOMER_PREVIEW_OFFSET_X +
+            this.RNA_BASE_PREVIEW_OFFSET_X,
+          this.editor.lastCursorPosition.y +
+            this.MONOMER_PREVIEW_OFFSET_Y +
+            this.RNA_BASE_PREVIEW_OFFSET_Y,
         ),
         editorSettings,
       ),
     );
 
     this.phosphatePreview?.moveAbsolute(
-      Scale.scaled2obj(
+      Scale.canvasToModel(
         new Vec2(
-          this.editor.lastCursorPosition.x + this.MONOMER_PREVIEW_OFFSET_X + 18,
+          this.editor.lastCursorPosition.x +
+            this.MONOMER_PREVIEW_OFFSET_X +
+            this.PHOSPHATE_PREVIEW_OFFSET_X,
           this.editor.lastCursorPosition.y + this.MONOMER_PREVIEW_OFFSET_Y,
         ),
         editorSettings,
@@ -158,7 +160,8 @@ class RnaPresetTool implements Tool {
 
   public mouseover() {
     if (!this.sugar) {
-      throw new Error('no sugar in preset');
+      this.editor.events.error.dispatch('No sugar in RNA preset found');
+      return;
     }
 
     if (this.sugarPreview) {

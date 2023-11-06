@@ -1,6 +1,11 @@
 import { test } from '@playwright/test';
-import { clickInTheMiddleOfTheScreen, waitForPageInit } from '@utils';
+import {
+  clickInTheMiddleOfTheScreen,
+  takeEditorScreenshot,
+  waitForPageInit,
+} from '@utils';
 import { POLYMER_TOGGLER } from '../../../constants/testIdConstants';
+import { hideMonomerPreview } from '@utils/macromolecules';
 
 /* 
 Test case: #2497 - Add chem to canvas
@@ -19,10 +24,7 @@ test('Select chem and drag it to canvas', async ({ page }) => {
 
   // Click on <svg> #polymer-editor-canvas
   await clickInTheMiddleOfTheScreen(page);
+  await hideMonomerPreview(page);
 
-  // Take full page screenshot
-  await page.screenshot({
-    path: 'tests/Macromolecule-editor/screenshots/chem-add-to-canvas.png',
-    fullPage: true,
-  });
+  await takeEditorScreenshot(page);
 });

@@ -40,7 +40,6 @@ export function moleculeToKet(struct: Struct): any {
   const body: any = {
     atoms: Array.from(struct.atoms.values()).map((atom) => {
       if (atom.label === 'R#') return rglabelToKet(atom);
-      if (atom.label === 'L#') return atomListToKet(atom);
       return atomToKet(atom);
     }),
   };
@@ -69,13 +68,24 @@ export function moleculeToKet(struct: Struct): any {
 }
 
 function atomToKet(source) {
-  const result: { queryProperties?: AtomQueryProperties } = {};
-  ifDef(result, 'label', source.label);
+  const result: { queryProperties?: AtomQueryProperties; type?: 'atom-list' } =
+    {};
+
+  if (source.label !== 'L#') {
+    ifDef(result, 'label', source.label);
+    // reaction
+    ifDef(result, 'mapping', parseInt(source.aam), 0);
+  } else if (source.atomList) {
+    result.type = 'atom-list';
+    ifDef(result, 'elements', source.atomList.labelList());
+    ifDef(result, 'notList', source.atomList.notList, false);
+  }
+
   ifDef(result, 'alias', source.alias);
   ifDef(result, 'location', [source.pp.x, -source.pp.y, source.pp.z]);
-  ifDef(result, 'charge', source.charge, 0);
+  ifDef(result, 'charge', source.charge);
   ifDef(result, 'explicitValence', source.explicitValence, -1);
-  ifDef(result, 'isotope', source.isotope, 0);
+  ifDef(result, 'isotope', source.isotope);
   ifDef(result, 'radical', source.radical, 0);
   ifDef(result, 'attachmentPoints', source.attachmentPoints, 0);
   ifDef(result, 'cip', source.cip, '');
@@ -97,11 +107,10 @@ function atomToKet(source) {
       ifDef(result.queryProperties, name, source.queryProperties[name]);
     });
   }
-  // reaction
-  ifDef(result, 'mapping', parseInt(source.aam), 0);
   ifDef(result, 'invRet', source.invRet, 0);
   ifDef(result, 'exactChangeFlag', !!source.exactChangeFlag, false);
   ifDef(result, 'implicitHCount', source.implicitHCount);
+
   return result;
 }
 
@@ -117,17 +126,6 @@ function rglabelToKet(source) {
   );
   ifDef(result, '$refs', refsToRGroups);
 
-  return result;
-}
-
-function atomListToKet(source) {
-  const result = {
-    type: 'atom-list',
-  };
-  ifDef(result, 'location', [source.pp.x, -source.pp.y, source.pp.z]);
-  ifDef(result, 'attachmentPoints', source.attachmentPoints, 0);
-  ifDef(result, 'elements', source.atomList.labelList());
-  ifDef(result, 'notList', source.atomList.notList, false);
   return result;
 }
 

@@ -1,27 +1,45 @@
 import { test } from '@playwright/test';
-import { clickInTheMiddleOfTheScreen, waitForPageInit } from '@utils';
+import {
+  clickInTheMiddleOfTheScreen,
+  moveMouseToTheMiddleOfTheScreen,
+  selectSingleBondTool,
+  takeEditorScreenshot,
+  waitForPageInit,
+} from '@utils';
 import { ALANINE } from '@utils/selectors/macromoleculeEditor';
-import { POLYMER_TOGGLER } from '../../../constants/testIdConstants';
+import {
+  hideMonomerPreview,
+  turnOnMacromoleculesEditor,
+} from '@utils/macromolecules';
 
 /* 
 Test case: #3063 - Add e2e tests for Macromolecule editor
 */
 
-test('Select peptide and drag it to canvas', async ({ page }) => {
-  await waitForPageInit(page);
+test.describe('Peptide', () => {
+  test.beforeEach(async ({ page }) => {
+    await waitForPageInit(page);
+    await turnOnMacromoleculesEditor(page);
+  });
 
-  // Click on POLYMER_TOGGLER
-  await page.getByTestId(POLYMER_TOGGLER).click();
+  test.afterEach(async ({ page }) => {
+    await takeEditorScreenshot(page);
+  });
 
-  // Click on <div> "A ★"
-  await page.click(ALANINE);
+  test('Select peptide and drag it to canvas', async ({ page }) => {
+    await page.click(ALANINE);
+    await clickInTheMiddleOfTheScreen(page);
+    await hideMonomerPreview(page);
+  });
 
-  // Click on <svg> #polymer-editor-canvas
-  await clickInTheMiddleOfTheScreen(page);
-
-  // Take full page screenshot
-  await page.screenshot({
-    path: 'tests/Macromolecule-editor/screenshots/peptides-add-to-canvas.png',
-    fullPage: true,
+  test('Add monomer preview on canvas', async ({ page }) => {
+    /* 
+    Test case: #2869 - Preview of monomer structures on canvas
+    Description: Add monomer preview on canvas
+    */
+    await page.click(ALANINE);
+    await clickInTheMiddleOfTheScreen(page);
+    await selectSingleBondTool(page);
+    await moveMouseToTheMiddleOfTheScreen(page);
   });
 });

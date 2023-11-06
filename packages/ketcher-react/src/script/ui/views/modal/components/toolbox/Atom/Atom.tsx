@@ -138,8 +138,8 @@ const Atom: FC<Props> = (props: Props) => {
         <div>
           <AtomElement formState={formState} className=""></AtomElement>
           <Field name="alias" />
-          <Field name="charge" maxLength="5" />
-          <Field name="isotope" />
+          <Field name="charge" maxLength={atomProps.charge.maxLength} />
+          <Field name="isotope" maxLength={atomProps.isotope.maxLength} />
           <Field
             name="explicitValence"
             component={Select}
@@ -165,6 +165,7 @@ const Atom: FC<Props> = (props: Props) => {
                   name={field.name}
                   component={Select}
                   options={getSelectOptionsFromSchema(atomProps[field.name])}
+                  data-testId={field.name}
                 />
               );
             } else {
@@ -214,7 +215,7 @@ const Atom: FC<Props> = (props: Props) => {
           {itemGroups.map(({ groupName, component }) => {
             const shouldGroupBeRended = expandedAccordions.includes(groupName);
             return (
-              <div key={groupName}>
+              <div key={groupName} data-testid={`${groupName}-section`}>
                 <div
                   onClick={handleAccordionChange(groupName)}
                   className={classes.accordionSummaryWrapper}

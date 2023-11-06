@@ -22,7 +22,7 @@ import {
   identifyStructFormat,
   Struct,
   SupportedFormat,
-  emitEventRequestIsFinished,
+  notifyRequestCompleted,
   Editor,
   KetcherLogger,
 } from 'ketcher-core';
@@ -132,10 +132,7 @@ export function load(struct: Struct, options?) {
         const oldStruct = editor.struct().clone();
         parsedStruct.sgroups.forEach((sg, sgId) => {
           const sgroup = oldStruct.sgroups.get(sgId);
-          if (!sgroup) {
-            throw Error('Incorrect sgroupId provided');
-          }
-          const offset = SGroup.getOffset(sgroup);
+          const offset = sgroup ? SGroup.getOffset(sgroup) : null;
           const atomSet = new Pile(sg.atoms);
           const crossBonds = SGroup.getCrossBonds(parsedStruct, atomSet);
           SGroup.bracketPos(sg, parsedStruct, crossBonds);
@@ -188,7 +185,7 @@ export function load(struct: Struct, options?) {
       dispatch(setAnalyzingFile(false));
       e && errorHandler && errorHandler(e.message);
     } finally {
-      emitEventRequestIsFinished();
+      notifyRequestCompleted();
     }
   };
 }

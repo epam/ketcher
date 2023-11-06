@@ -15,11 +15,6 @@ import { clickOnPlus } from '@utils/canvas/plus-signes/getPluses';
 
 const xMark = 300;
 const yMark = 200;
-const modifier = getControlModifier();
-
-async function clickCanvas(page: Page) {
-  await page.mouse.click(xMark, yMark);
-}
 
 test.describe('Fragment selection tool', () => {
   test.beforeEach(async ({ page }) => {

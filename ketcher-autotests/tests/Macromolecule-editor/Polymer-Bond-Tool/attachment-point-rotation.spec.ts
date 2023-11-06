@@ -4,6 +4,8 @@ import {
   dragMouseTo,
   selectRectangleSelectionTool,
   selectSingleBondTool,
+  waitForPageInit,
+  takeEditorScreenshot,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
@@ -11,9 +13,10 @@ import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 
 test.describe('Check attachment point rotation', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
     await turnOnMacromoleculesEditor(page);
   });
+
   test('Select monomer and bonds and then hover monomer', async ({ page }) => {
     /* 
     Test case: # - Rotate attachment point to bond
@@ -23,17 +26,40 @@ test.describe('Check attachment point rotation', () => {
     // Create 4 peptides on canvas
     const MONOMER_NAME = 'Tza___3-thiazolylalanine';
     const MONOMER_ALIAS = 'Tza';
-    await addMonomerToCanvas(page, MONOMER_NAME, 300, 300);
-    await addMonomerToCanvas(page, MONOMER_NAME, 400, 400);
-    await addMonomerToCanvas(page, MONOMER_NAME, 500, 500);
-    await addMonomerToCanvas(page, MONOMER_NAME, 500, 200);
 
     // Get 4 peptides locators
-    const peptides = await page.getByText(MONOMER_ALIAS).locator('..');
-    const peptide1 = peptides.nth(0);
-    const peptide2 = peptides.nth(1);
-    const peptide3 = peptides.nth(2);
-    const peptide4 = peptides.nth(3);
+    const peptide1 = await addMonomerToCanvas(
+      page,
+      MONOMER_NAME,
+      MONOMER_ALIAS,
+      300,
+      300,
+      0,
+    );
+    const peptide2 = await addMonomerToCanvas(
+      page,
+      MONOMER_NAME,
+      MONOMER_ALIAS,
+      400,
+      400,
+      1,
+    );
+    const peptide3 = await addMonomerToCanvas(
+      page,
+      MONOMER_NAME,
+      MONOMER_ALIAS,
+      500,
+      500,
+      2,
+    );
+    const peptide4 = await addMonomerToCanvas(
+      page,
+      MONOMER_NAME,
+      MONOMER_ALIAS,
+      500,
+      200,
+      3,
+    );
 
     // Select bond tool
     await selectSingleBondTool(page);
@@ -46,16 +72,18 @@ test.describe('Check attachment point rotation', () => {
     // Hover 1th peptide
     await peptide1.hover();
 
-    await page.screenshot({
-      path: 'tests/Macromolecule-editor/screenshots/attachment-point-rotation-1.png',
-    });
+    // Get rid of flakiness because of preview
+    await page.waitForSelector('.polymer-library-preview');
+
+    await takeEditorScreenshot(page);
 
     // Hover 2nd peptide
     await peptide2.hover();
 
-    await page.screenshot({
-      path: 'tests/Macromolecule-editor/screenshots/attachment-point-rotation-2.png',
-    });
+    // Get rid of flakiness because of preview
+    await page.waitForSelector('.polymer-library-preview');
+
+    await takeEditorScreenshot(page);
   });
 
   test('Move monomer bonded with another monomers and check attachment points', async ({
@@ -66,17 +94,26 @@ test.describe('Check attachment point rotation', () => {
     Description: when monomers are moved, attachment points move also
     */
 
-    // Choose peptide
-    await page.getByText('Tza').click();
-
-    // Create 4 peptides on canvas
-    await page.mouse.click(300, 300);
-    await page.mouse.click(400, 400);
+    const MONOMER_NAME = 'Tza___3-thiazolylalanine';
+    const MONOMER_ALIAS = 'Tza';
 
     // Get 4 peptides locators
-    const peptides = await page.getByText('Tza').locator('..');
-    const peptide1 = peptides.nth(0);
-    const peptide2 = peptides.nth(1);
+    const peptide1 = await addMonomerToCanvas(
+      page,
+      MONOMER_NAME,
+      MONOMER_ALIAS,
+      300,
+      300,
+      0,
+    );
+    const peptide2 = await addMonomerToCanvas(
+      page,
+      MONOMER_NAME,
+      MONOMER_ALIAS,
+      400,
+      400,
+      1,
+    );
 
     // Select bond tool
     await selectSingleBondTool(page);
@@ -87,23 +124,17 @@ test.describe('Check attachment point rotation', () => {
     // Hover 1th peptide
     await peptide1.hover();
 
-    await page.screenshot({
-      path: 'tests/Macromolecule-editor/screenshots/attachment-point-rotation-3.png',
-    });
+    await takeEditorScreenshot(page);
 
     // Move selected monomer
     await selectRectangleSelectionTool(page);
-    await page.mouse.move(400, 400);
-    await dragMouseTo(500, 500, page);
     await page.mouse.move(400, 400);
     await dragMouseTo(200, 400, page);
 
     await selectSingleBondTool(page);
     // Hover 1th peptide
     await peptide1.hover();
-
-    await page.screenshot({
-      path: 'tests/Macromolecule-editor/screenshots/attachment-point-rotation-4.png',
-    });
+    await page.getByTestId('polymer-library-preview');
+    await takeEditorScreenshot(page);
   });
 });

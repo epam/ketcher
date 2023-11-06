@@ -508,7 +508,7 @@ Smiles.prototype.writeAtom = function (
     needBrackets = false;
   } else if (
     chirality ||
-    atom.charge !== 0 ||
+    (atom.charge !== 0 && atom.charge !== null) ||
     atom.isotope > 0 ||
     hydro >= 0 ||
     aam > 0

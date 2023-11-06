@@ -28,7 +28,7 @@ describe('Drawing Entities Manager', () => {
     );
     expect(command.operations.length).toEqual(1);
     expect(command.operations[0]).toBeInstanceOf(MonomerAddOperation);
-    expect(drawingEntitiesManager.monomers.get(1)).toBeInstanceOf(Peptide);
+    expect(drawingEntitiesManager.monomers.get(0)).toBeInstanceOf(Peptide);
   });
 
   it('should create polymer bond', () => {

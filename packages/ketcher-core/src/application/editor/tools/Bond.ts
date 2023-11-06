@@ -20,6 +20,8 @@ import { Vec2 } from 'domain/entities';
 import assert from 'assert';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { BaseTool } from 'application/editor/tools/Tool';
+import { Scale } from 'domain/helpers';
+import { provideEditorSettings } from 'application/editor/editorSettings';
 
 class PolymerBond implements BaseTool {
   private bondRenderer?: PolymerBondRenderer;
@@ -30,22 +32,26 @@ class PolymerBond implements BaseTool {
   public mousedown(event) {
     const selectedRenderer = event.target.__data__;
     if (selectedRenderer instanceof BaseMonomerRenderer) {
-      const freeAttachmentPoint =
-        selectedRenderer.monomer.firstFreeAttachmentPoint;
+      const startAttachmentPoint =
+        selectedRenderer.monomer.startBondAttachmentPoint;
 
-      if (!freeAttachmentPoint) {
+      if (!startAttachmentPoint) {
         this.editor.events.error.dispatch(
           "Selected monomer doesn't have any free attachment points",
         );
         return;
       }
       const { top: offsetTop, left: offsetLeft } = this.editor.canvasOffset;
-
+      const editorSettings = provideEditorSettings();
+      const endPosition = Scale.canvasToModel(
+        new Vec2(event.clientX - offsetLeft, event.clientY - offsetTop),
+        editorSettings,
+      );
       const { polymerBond, command: modelChanges } =
         this.editor.drawingEntitiesManager.addPolymerBond(
           selectedRenderer.monomer,
-          selectedRenderer.center,
-          new Vec2(event.clientX - offsetLeft, event.clientY - offsetTop),
+          selectedRenderer.monomer.position,
+          endPosition,
         );
 
       this.editor.renderersContainer.update(modelChanges);
@@ -56,18 +62,23 @@ class PolymerBond implements BaseTool {
   public mousemove(event) {
     if (this.bondRenderer) {
       const { top: offsetTop, left: offsetLeft } = this.editor.canvasOffset;
+      const editorSettings = provideEditorSettings();
+      const newEndPosition = Scale.canvasToModel(
+        new Vec2(event.clientX - offsetLeft, event.clientY - offsetTop),
+        editorSettings,
+      );
       const modelChanges = this.editor.drawingEntitiesManager.movePolymerBond(
         this.bondRenderer.polymerBond,
-        new Vec2(event.clientX - offsetLeft, event.clientY - offsetTop),
+        newEndPosition,
       );
       this.editor.renderersContainer.update(modelChanges);
     }
   }
 
   public mouseLeavePolymerBond(event) {
-    if (this.bondRenderer) return;
-
     const renderer: PolymerBondRenderer = event.target.__data__;
+    if (this.bondRenderer || !renderer.polymerBond) return;
+
     const modelChanges =
       this.editor.drawingEntitiesManager.hidePolymerBondInformation(
         renderer.polymerBond,
@@ -112,6 +123,7 @@ class PolymerBond implements BaseTool {
       const modelChanges =
         this.editor.drawingEntitiesManager.cancelIntentionToFinishBondCreation(
           renderer.monomer,
+          this.bondRenderer?.polymerBond,
         );
       this.editor.renderersContainer.update(modelChanges);
     }
@@ -132,7 +144,9 @@ class PolymerBond implements BaseTool {
         this.bondRenderer.polymerBond,
       );
     const secondMonomerAttachmentPoint =
-      secondMonomer.availableAttachmentPointForBondEnd;
+      secondMonomer.getPotentialAttachmentPointByBond(
+        this.bondRenderer.polymerBond,
+      );
     assert(firstMonomerAttachmentPoint);
     assert(secondMonomerAttachmentPoint);
     if (firstMonomerAttachmentPoint === secondMonomerAttachmentPoint) {
@@ -165,6 +179,27 @@ class PolymerBond implements BaseTool {
       renderer === this.bondRenderer?.polymerBond?.firstMonomer?.renderer;
 
     if (this.bondRenderer && !isFirstMonomerHovered) {
+      const firstMonomer = this.bondRenderer?.polymerBond?.firstMonomer;
+      const secondMonomer = renderer.monomer;
+
+      for (const attachmentPoint in secondMonomer.attachmentPointsToBonds) {
+        const bond = secondMonomer.attachmentPointsToBonds[attachmentPoint];
+        if (!bond) {
+          continue;
+        }
+        const alreadyHasBond =
+          (bond.firstMonomer === firstMonomer &&
+            bond.secondMonomer === secondMonomer) ||
+          (bond.firstMonomer === secondMonomer &&
+            bond.secondMonomer === firstMonomer);
+        if (alreadyHasBond) {
+          this.editor.events.error.dispatch(
+            "There can't be more than 1 bond between the first and the second monomer",
+          );
+          return;
+        }
+      }
+
       const modelChanges = this.finishBondCreation(renderer.monomer);
       this.editor.renderersContainer.update(modelChanges);
       this.bondRenderer = undefined;

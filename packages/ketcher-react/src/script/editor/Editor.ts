@@ -20,6 +20,7 @@ import {
   Editor as KetcherEditor,
   Pile,
   Render,
+  Scale,
   Struct,
   Vec2,
   fromDescriptorsAlign,
@@ -46,11 +47,7 @@ import {
   ToolConstructorInterface,
   ToolEventHandlerName,
 } from './tool/Tool';
-import {
-  getSelectionMap,
-  getStructCenter,
-  recoordinate,
-} from './utils/structLayout';
+import { getSelectionMap, getStructCenter } from './utils/structLayout';
 
 const SCALE = 40;
 const HISTORY_SIZE = 32; // put me to options
@@ -167,6 +164,7 @@ class Editor implements KetcherEditor {
         },
         options,
       ),
+      options.reuseRestructIfExist !== false,
     );
 
     this._selection = null; // eslint-disable-line
@@ -271,9 +269,7 @@ class Editor implements KetcherEditor {
   renderAndRecoordinateStruct(struct: Struct) {
     const action = fromNewCanvas(this.render.ctab, struct);
     this.update(action);
-
-    const structCenter = getStructCenter(this.render.ctab);
-    recoordinate(this, structCenter);
+    this.centerStruct();
     return this.render.ctab.molecule;
   }
 
@@ -323,16 +319,12 @@ class Editor implements KetcherEditor {
     return this.render.options;
   }
 
-  zoom(value?: any) {
-    if (arguments.length === 0) {
+  zoom(value?: any, event?: WheelEvent) {
+    if (arguments.length === 0 || this.render.options.zoom === value) {
       return this.render.options.zoom;
     }
 
-    this.render.setZoom(value);
-
-    const selection = this.selection();
-    const structCenter = getStructCenter(this.render.ctab, selection);
-    recoordinate(this, structCenter);
+    this.render.setZoom(value, event);
 
     this.render.update();
     this.rotateController.rerender();
@@ -341,22 +333,21 @@ class Editor implements KetcherEditor {
 
   centerStruct() {
     const structure = this.render.ctab;
-    const { scale, offset } = this.render.options;
     const structCenter = getStructCenter(structure);
-    const { width, height } = this.render.clientArea.getBoundingClientRect();
-    const canvasCenterVector = new Vec2(width, height);
-    const canvasCenter = this.render.view2obj(canvasCenterVector).scaled(0.5);
-    const shiftFactor = 0.4;
-    const shiftVector = canvasCenter
-      .sub(structCenter)
-      .sub(offset.scaled(shiftFactor / scale));
+    const viewBoxCenter = new Vec2(
+      this.render.viewBox.minX + this.render.viewBox.width / 2,
+      this.render.viewBox.minY + this.render.viewBox.height / 2,
+    );
+    const viewBoxCenterInProto = Scale.canvasToModel(
+      viewBoxCenter,
+      this.render.options,
+    );
+    const shiftVector = viewBoxCenterInProto.sub(structCenter);
 
     const structureToMove = getSelectionMap(structure);
 
     const action = fromMultipleMove(structure, structureToMove, shiftVector);
     this.update(action, true);
-
-    recoordinate(this, canvasCenter);
   }
 
   zoomAccordingContent(struct: Struct) {
@@ -467,7 +458,7 @@ class Editor implements KetcherEditor {
       this.rotateController.clean();
     }
 
-    this.render.update(false, null, { resizeCanvas: false });
+    this.render.update(false, null);
     return this._selection; // eslint-disable-line
   }
 
@@ -493,18 +484,14 @@ class Editor implements KetcherEditor {
     });
   }
 
-  update(
-    action: Action | true,
-    ignoreHistory?: boolean,
-    options = { resizeCanvas: true },
-  ) {
+  update(action: Action | true, ignoreHistory?: boolean) {
     setFunctionalGroupsTooltip({
       editor: this,
       isShow: false,
     });
 
     if (action === true) {
-      this.render.update(true, null, options); // force
+      this.render.update(true, null); // force
     } else {
       if (!ignoreHistory && !action.isDummy()) {
         this.historyStack.splice(this.historyPtr, HISTORY_SIZE + 1, action);
@@ -514,7 +501,7 @@ class Editor implements KetcherEditor {
         this.historyPtr = this.historyStack.length;
         this.event.change.dispatch(action); // TODO: stoppable here
       }
-      this.render.update(false, null, options);
+      this.render.update(false, null);
     }
   }
 

@@ -20,18 +20,12 @@ import {
   selectRingButton,
   selectTopPanelButton,
   takeEditorScreenshot,
+  waitForIndigoToLoad,
   waitForPageInit,
   waitForSpinnerFinishedWork,
 } from '@utils';
 import { drawReactionWithTwoBenzeneRings } from '@utils/canvas/drawStructures';
-import {
-  getInChIKey,
-  getKet,
-  getMolfile,
-  getRxn,
-  getSdf,
-  getSmiles,
-} from '@utils/formats';
+import { getKet, getMolfile, getRxn, getSdf, getSmiles } from '@utils/formats';
 
 const RING_OFFSET = 150;
 const ARROW_OFFSET = 20;
@@ -49,7 +43,7 @@ async function getPreviewForSmiles(
 
 test.describe('Save files', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('');
+    await waitForPageInit(page);
   });
 
   test('Save file - Save *.rxn file', async ({ page }) => {
@@ -246,44 +240,22 @@ test.describe('Save files', () => {
     expect(molFile).toEqual(molFileExpected);
   });
 
-  test.fixme(
-    'Support for exporting to "InChiKey" file format',
-    async ({ page }) => {
-      /**
-       * Test case: EPMLSOPKET-18030
-       * Description: Save file - InChiKey for Benzene ring on canvas
-       */
-      // Can't select TestId because after press drop-down menu there is no InchIKey.
-      await selectRingButton(RingButton.Benzene, page);
-      await clickInTheMiddleOfTheScreen(page);
-      await selectTopPanelButton(TopPanelButton.Save, page);
-      await pressButton(page, 'MDL Molfile V2000');
-      await selectOptionByText(page, 'InChIKey');
-      const inChistring = await page
-        .getByTestId('preview-area-text')
-        .inputValue();
-      expect(inChistring).toEqual('UHOVQNZJYSORNB-UHFFFAOYSA-N');
-    },
-  );
-
-  test.fixme('Save "InChiKey" file format', async ({ page }) => {
+  test('Support for exporting to "InChiKey" file format', async ({ page }) => {
     /**
-     * Test case: EPMLSOPKET-18031
+     * Test case: EPMLSOPKET-18030
      * Description: Save file - InChiKey for Benzene ring on canvas
      */
-    // After 'getInChIKey' return JSON instead InChIKey
+    // Can't select TestId because after press drop-down menu there is no InchIKey.
+    await waitForIndigoToLoad(page);
     await selectRingButton(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
-    const expectedFile = await getInChIKey(page);
-    await saveToFile('benzene-ring-expected.inchikey', expectedFile);
-
-    const { fileExpected: inchikeyFileExpected, file: inchikeyFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName: 'tests/test-data/benzene-ring-expected.inchikey',
-      });
-
-    expect(inchikeyFile).toEqual(inchikeyFileExpected);
+    await selectTopPanelButton(TopPanelButton.Save, page);
+    await pressButton(page, 'MDL Molfile V2000');
+    await selectOptionByText(page, 'InChIKey');
+    const inChistring = await page
+      .getByTestId('inChIKey-preview-area-text')
+      .inputValue();
+    expect(inChistring).toEqual('UHOVQNZJYSORNB-UHFFFAOYSA-N');
   });
 
   test('Support for exporting to "SDF V2000" file format', async ({ page }) => {

@@ -1,9 +1,11 @@
 import { Vec2 } from 'domain/entities/vec2';
 
+export type Coordinates = { x: number; y: number };
+
 // eslint-disable-next-line camelcase
 export function canvasToMonomerCoordinates(
-  coordinatesOnCanvas,
-  centerOFMonomer: { x: number; y: number },
+  coordinatesOnCanvas: Coordinates,
+  centerOFMonomer: Coordinates,
   monomerWidth: number,
   monomerHeight: number,
 ) {
@@ -20,7 +22,14 @@ export function canvasToMonomerCoordinates(
   return monomerCoord;
 }
 
-export function findLabelPoint(pointOnBorder, angle, lineLength, lineOffset) {
+export function findLabelPoint(
+  pointOnBorder: Coordinates,
+  angle: number,
+  lineLength: number,
+  lineOffset: number,
+  labelSize: { x: number; y: number },
+  isUsed: boolean,
+) {
   // based on https://ru.stackoverflow.com/a/1442905
 
   const angleRadians = Vec2.degrees_to_radians(angle);
@@ -39,12 +48,7 @@ export function findLabelPoint(pointOnBorder, angle, lineLength, lineOffset) {
   };
 
   // rotate this vector at 90 degrees - change x and y, then make one negative
-  let rotatedVector;
-  if (angle >= -200 && angle < -60) {
-    rotatedVector = { x: -attachmentVector.y, y: attachmentVector.x }; // for angle -200 to -60
-  } else {
-    rotatedVector = { x: attachmentVector.y, y: -attachmentVector.x }; // for angle -0 to -270
-  }
+  const rotatedVector = { x: -attachmentVector.y, y: attachmentVector.x };
 
   // normalize vector
   const normalizedVector = {
@@ -52,31 +56,48 @@ export function findLabelPoint(pointOnBorder, angle, lineLength, lineOffset) {
     y: rotatedVector.y / lineLength,
   };
 
+  const normalizedAttachmentVector = {
+    x: attachmentVector.x / lineLength,
+    y: attachmentVector.y / lineLength,
+  };
+
   // find vector for Label, using normalized vector and length
 
-  let addedLabelOffset = 0;
-  if (angle >= -225 && angle < -180) {
-    addedLabelOffset = 5;
-  } else if (angle >= -60 && angle <= 0) {
-    addedLabelOffset = 5;
+  let addedOrtogonalOffset = 0;
+  const addedParallelOffset =
+    lineOffset + Math.max(labelSize.x, labelSize.y) + 2;
+  if (isUsed) {
+    if (angle >= -270 && angle <= 0) {
+      addedOrtogonalOffset = 10;
+    } else if (angle >= -360 && angle < -270) {
+      addedOrtogonalOffset = -10;
+    }
   }
 
-  const labelVector = {
-    x: normalizedVector.x * (lineOffset + addedLabelOffset),
-    y: normalizedVector.y * (lineOffset + addedLabelOffset),
+  const ortogonalOffset = {
+    x: normalizedVector.x * addedOrtogonalOffset,
+    y: normalizedVector.y * addedOrtogonalOffset,
+  };
+
+  const parallelOffset = {
+    x: normalizedAttachmentVector.x * addedParallelOffset,
+    y: normalizedAttachmentVector.y * addedParallelOffset,
   };
 
   // add this vector to point of attachment
-
   const labelCoordinates = {
-    x: pointOfAttachment.x + labelVector.x,
-    y: pointOfAttachment.y + labelVector.y,
+    x: pointOfAttachment.x + ortogonalOffset.x + parallelOffset.x - labelSize.x,
+    y: pointOfAttachment.y + ortogonalOffset.y + parallelOffset.y + labelSize.y,
   };
 
   return [labelCoordinates, pointOfAttachment];
 }
 
-export function getSearchFunction(initialAngle, canvasOffset, monomer) {
+export function getSearchFunction(
+  initialAngle: number,
+  canvasOffset: Coordinates,
+  monomer,
+) {
   return function findPointOnMonomerBorder(
     coordStart,
     length,
@@ -106,11 +127,10 @@ export function getSearchFunction(initialAngle, canvasOffset, monomer) {
     const newPoint = document.elementFromPoint(
       newPointCoord.x,
       newPointCoord.y,
-    );
+    ) as Element;
 
     let newAngle;
-
-    if ((newPoint as Element).__data__ === monomer.renderer) {
+    if (newPoint === monomer.renderer.bodyElement.node()) {
       newAngle = initialAngle;
     } else {
       newAngle = initialAngle - 180;
@@ -118,4 +138,87 @@ export function getSearchFunction(initialAngle, canvasOffset, monomer) {
 
     return findPointOnMonomerBorder(newCoordStart, newLength, newAngle);
   };
+}
+
+export const anglesToSector = {
+  '45': {
+    min: 23,
+    max: 68,
+    center: 45,
+  },
+  '90': {
+    min: 68,
+    max: 113,
+    center: 90,
+  },
+  '135': {
+    min: 113,
+    max: 148,
+    center: 135,
+  },
+  '180': {
+    min: 148,
+    max: 203,
+    center: 180,
+  },
+  '225': {
+    min: 203,
+    max: 248,
+    center: 225,
+  },
+  '270': {
+    min: 248,
+    max: 293,
+    center: 270,
+  },
+  '315': {
+    min: 293,
+    max: 228,
+    center: 315,
+  },
+  '360': {
+    min: 338,
+    max: 360,
+    center: 360,
+  },
+  '0': {
+    min: 0,
+    max: 23,
+    center: 0,
+  },
+};
+
+export enum attachmentPointNumberToAngle {
+  'R1' = 0,
+  'R2' = 180,
+  'R3' = 90,
+  'R4' = 270,
+  'R5' = 45,
+  'R6' = 135,
+  'R7' = 315,
+  'R8' = 225,
+}
+
+export const sectorsList = [45, 90, 135, 180, 225, 270, 315, 0, 360];
+
+export function checkFor0and360(sectorsList: number[]) {
+  if (!sectorsList.includes(0) && sectorsList.includes(360)) {
+    return sectorsList.filter((item) => item !== 360);
+  }
+  if (!sectorsList.includes(360) && sectorsList.includes(0)) {
+    return sectorsList.filter((item) => item !== 0);
+  }
+  return sectorsList;
+}
+
+export function convertAttachmentPointNumberToLabel(
+  attachmentPointNumber: number,
+) {
+  let attachmentPointLabel = '';
+  for (let rgi = 0; rgi < 32; rgi++) {
+    if (attachmentPointNumber & (1 << rgi)) {
+      attachmentPointLabel = 'R' + (rgi + 1).toString();
+    }
+  }
+  return attachmentPointLabel;
 }

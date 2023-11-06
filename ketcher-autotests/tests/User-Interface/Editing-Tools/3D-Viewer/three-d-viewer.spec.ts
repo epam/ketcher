@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { expect, test } from '@playwright/test';
+import { Page, expect, test } from '@playwright/test';
 import {
   pressButton,
   takeEditorScreenshot,
@@ -18,6 +18,15 @@ import {
 } from '@utils';
 import { miewApplyButtonIsEnabled } from '@utils/common/loaders/waitForMiewApplyButtonIsEnabled';
 import { getKet } from '@utils/formats';
+
+async function open3DViewer(page: Page, waitForButtonIsEnabled = true) {
+  await waitForRender(page, async () => {
+    await selectTopPanelButton(TopPanelButton.ThreeD, page);
+  });
+  if (waitForButtonIsEnabled) {
+    await miewApplyButtonIsEnabled(page);
+  }
+}
 
 test.describe('3D Viewer', () => {
   test.beforeEach(async ({ page }) => {
@@ -39,8 +48,7 @@ test.describe('3D Viewer', () => {
     */
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectTopPanelButton(TopPanelButton.ThreeD, page);
-    await miewApplyButtonIsEnabled(page);
+    await open3DViewer(page);
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(x + 20, y, page);
@@ -57,8 +65,7 @@ test.describe('3D Viewer', () => {
     Position of the structure on the canvas isn't changed. 
     */
     await openFileAndAddToCanvas('Molfiles-V2000/benzene-br.mol', page);
-    await selectTopPanelButton(TopPanelButton.ThreeD, page);
-    await miewApplyButtonIsEnabled(page);
+    await open3DViewer(page);
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(x - 20, y, page);
@@ -76,8 +83,7 @@ test.describe('3D Viewer', () => {
     The structure isn't changed.
     */
     await openFileAndAddToCanvas('Molfiles-V2000/benzene-stereo.mol', page);
-    await selectTopPanelButton(TopPanelButton.ThreeD, page);
-    await miewApplyButtonIsEnabled(page);
+    await open3DViewer(page);
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(x - 20, y, page);
@@ -98,8 +104,7 @@ test.describe('3D Viewer', () => {
       'Molfiles-V2000/benzene-with-aromatic-bonds.mol',
       page,
     );
-    await selectTopPanelButton(TopPanelButton.ThreeD, page);
-    await miewApplyButtonIsEnabled(page);
+    await open3DViewer(page);
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(x - 20, y, page);
@@ -127,7 +132,7 @@ test.describe('3D Viewer', () => {
     Test case: EPMLSOPKET-1932
     Description: 3D Viewer window is opened. There is no structure in the opened  window.
     */
-    await selectTopPanelButton(TopPanelButton.ThreeD, page);
+    await open3DViewer(page, false);
     await expect(page).toHaveScreenshot({
       animations: 'disabled',
       maxDiffPixelRatio: 0.05,
@@ -143,8 +148,7 @@ test.describe('3D Viewer', () => {
     // we need remove or block the variable number of frames per second in the lower right corner
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectTopPanelButton(TopPanelButton.ThreeD, page);
-    await miewApplyButtonIsEnabled(page);
+    await open3DViewer(page);
     await expect(page).toHaveScreenshot({
       animations: 'disabled',
       maxDiffPixelRatio: 0.05,
@@ -163,8 +167,7 @@ test.describe('3D Viewer', () => {
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
     const initialStructureData = await getKet(page);
-    await selectTopPanelButton(TopPanelButton.ThreeD, page);
-    await miewApplyButtonIsEnabled(page);
+    await open3DViewer(page);
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(x, y + 75, page);
@@ -188,8 +191,7 @@ test.describe('3D Viewer', () => {
     */
     await openFileAndAddToCanvas('Molfiles-V2000/benzene-br.mol', page);
     const initialStructureData = await getKet(page);
-    await selectTopPanelButton(TopPanelButton.ThreeD, page);
-    await miewApplyButtonIsEnabled(page);
+    await open3DViewer(page);
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(x + 80, y, page);
@@ -212,8 +214,7 @@ test.describe('3D Viewer', () => {
     */
     await openFileAndAddToCanvas('Molfiles-V2000/benzene-stereo.mol', page);
     const initialStructureData = await getKet(page);
-    await selectTopPanelButton(TopPanelButton.ThreeD, page);
-    await miewApplyButtonIsEnabled(page);
+    await open3DViewer(page);
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(x + 75, y, page);
@@ -239,8 +240,7 @@ test.describe('3D Viewer', () => {
       page,
     );
     const initialStructureData = await getKet(page);
-    await selectTopPanelButton(TopPanelButton.ThreeD, page);
-    await miewApplyButtonIsEnabled(page);
+    await open3DViewer(page);
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(x - 90, y, page);

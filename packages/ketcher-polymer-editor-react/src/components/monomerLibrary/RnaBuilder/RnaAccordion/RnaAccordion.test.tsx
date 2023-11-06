@@ -2,10 +2,21 @@ import { render, screen } from '@testing-library/react';
 import { RnaAccordion } from 'components/monomerLibrary/RnaBuilder/RnaAccordion/RnaAccordion';
 import { getMonomerUniqueKey } from 'state/library';
 import { MonomerItemType } from 'ketcher-core';
+import { MONOMER_TYPES } from '../../../../constants';
 
+const duplicatePreset = jest.fn();
+const activateEditMode = jest.fn();
 describe('Test Rna Accordion component', () => {
   it('should render', () => {
-    render(withThemeAndStoreProvider(<RnaAccordion />));
+    render(
+      withThemeAndStoreProvider(
+        <RnaAccordion
+          libraryName={MONOMER_TYPES.RNA}
+          duplicatePreset={duplicatePreset}
+          activateEditMode={activateEditMode}
+        />,
+      ),
+    );
 
     const rnaAccordion = screen.getByTestId('rna-accordion');
 
@@ -26,13 +37,20 @@ describe('Test Rna Accordion component', () => {
       },
     };
     render(
-      withThemeAndStoreProvider(<RnaAccordion />, {
-        library: {
-          searchFilter: '',
-          favorites: {},
-          monomers: [monomerData],
+      withThemeAndStoreProvider(
+        <RnaAccordion
+          libraryName={MONOMER_TYPES.RNA}
+          duplicatePreset={duplicatePreset}
+          activateEditMode={activateEditMode}
+        />,
+        {
+          library: {
+            searchFilter: '',
+            favorites: {},
+            monomers: [monomerData],
+          },
         },
-      }),
+      ),
     );
     const peptidesSummary = screen.getByTestId('summary-Phosphates');
 

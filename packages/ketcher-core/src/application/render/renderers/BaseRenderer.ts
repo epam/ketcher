@@ -12,7 +12,9 @@ export interface IBaseRenderer {
 export abstract class BaseRenderer implements IBaseRenderer {
   protected rootElement?: D3SvgElementSelection<SVGGElement, void>;
 
-  protected bodyElement?: D3SvgElementSelection<SVGElement, this>;
+  public bodyElement?: D3SvgElementSelection<SVGElement, this>;
+
+  public static isSnakeMode = false;
 
   protected hoverElement?: D3SvgElementSelection<
     SVGUseElement & SVGGElement,
@@ -23,6 +25,10 @@ export abstract class BaseRenderer implements IBaseRenderer {
     SVGGElement | SVGLineElement,
     void
   >;
+
+  static setSnakeMode(isSnakeMode) {
+    BaseRenderer.isSnakeMode = isSnakeMode;
+  }
 
   protected canvas: D3SvgElementSelection<SVGSVGElement, void>;
   protected constructor(public drawingEntity: DrawingEntity) {

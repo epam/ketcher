@@ -47,8 +47,18 @@ export async function selectSingleBondTool(page: Page) {
   await bondToolButton.click();
 }
 
+export async function selectSnakeBondTool(page: Page) {
+  const bondToolButton = page.locator(`button[title*="Snake mode"]`);
+  await bondToolButton.click();
+}
+
 export async function selectEraseTool(page: Page) {
   const bondToolButton = page.locator(`button[title*="Erase"]`);
+  await bondToolButton.click();
+}
+
+export async function selectClearCanvasTool(page: Page) {
+  const bondToolButton = page.locator(`button[title*="Clear Canvas"]`);
   await bondToolButton.click();
 }
 

@@ -72,7 +72,10 @@ test.describe('Calculated Values Tools', () => {
     The number of decimal places in the 'Molecular Weight' and 'Exact Mass'
     changes according to the selected values in the fields for the decimal places count.
     */
-    await openFileAndAddToCanvas('calculated-values-rings.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/calculated-values-rings.mol',
+      page,
+    );
     await selectTopPanelButton(TopPanelButton.Calculated, page);
 
     await takeEditorScreenshot(page);
@@ -101,7 +104,7 @@ test.describe('Calculated Values Tools', () => {
     The number of decimal places in the 'Molecular Weight' and 'Exact Mass'
     changes according to the selected values in the fields for the decimal places count.
     */
-    await openFileAndAddToCanvas('calcvalues-reaction.rxn', page);
+    await openFileAndAddToCanvas('Rxn-V2000/calcvalues-reaction.rxn', page);
     await selectTopPanelButton(TopPanelButton.Calculated, page);
 
     await takeEditorScreenshot(page);
@@ -569,7 +572,7 @@ test.describe('Calculated Values Tools', () => {
     Elemental Analysis:
     C 60.1 H 4.1 Br 35.8
     */
-    await openFileAndAddToCanvas('c14napthylbromide.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/c14napthylbromide.mol', page);
     await selectTopPanelButton(TopPanelButton.Calculated, page);
   });
 

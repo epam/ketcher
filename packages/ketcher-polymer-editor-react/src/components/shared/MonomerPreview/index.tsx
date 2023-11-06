@@ -34,9 +34,15 @@ const MonomerPreview = ({ className }: IPreviewProps) => {
 
   return (
     preview?.monomer && (
-      <ContainerDynamic className={className}>
+      <ContainerDynamic
+        className={className}
+        data-testid="polymer-library-preview"
+      >
         <MonomerName>{preview.monomer.struct.name}</MonomerName>
-        <StyledStructRender struct={preview.monomer.struct} />
+        <StyledStructRender
+          struct={preview.monomer.struct}
+          options={{ needCache: false }}
+        />
       </ContainerDynamic>
     )
   );

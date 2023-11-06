@@ -242,4 +242,18 @@ test.describe('Reagents RXN format', () => {
     );
     await clickInTheMiddleOfTheScreen(page);
   });
+
+  test('Open from file in "RXN V3000" format with reagents above and below arrow', async ({
+    page,
+  }) => {
+    /*
+      Test case: EPMLSOPKET-8912
+      Description: Reagent 'NH3' above the reaction arrow and reagent HBr below.
+      */
+    await openFileAndAddToCanvas(
+      'Rxn-V3000/reagents-below-and-above.rxn',
+      page,
+    );
+    await clickInTheMiddleOfTheScreen(page);
+  });
 });

@@ -13,6 +13,7 @@ import {
 } from 'domain/helpers/attachmentPointCalculations';
 import { AttachmentPoint } from 'domain/AttachmentPoint';
 import { AttachmentPointName } from 'domain/types';
+import { Vec2 } from 'domain/entities';
 
 export abstract class BaseMonomerRenderer extends BaseRenderer {
   private editorEvents: typeof editorEvents;
@@ -25,6 +26,8 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     | D3SvgElementSelection<SVGGElement, void>[]
     | [] = [];
 
+  private monomerSymbolElement?: SVGUseElement | SVGRectElement;
+
   static isSelectable() {
     return true;
   }
@@ -33,11 +36,20 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     public monomer: BaseMonomer,
     private monomerSelectedElementId: string,
     private monomerHoveredElementId: string,
+    monomerSymbolElementId: string,
     private scale?: number,
   ) {
     super(monomer as DrawingEntity);
     this.monomer.setRenderer(this);
     this.editorEvents = editorEvents;
+    this.monomerSymbolElement = document.querySelector(
+      `${monomerSymbolElementId} .monomer-body`,
+    ) as SVGUseElement | SVGRectElement;
+  }
+
+  public get monomerSymbolBoundingClientRect() {
+    assert(this.monomerSymbolElement);
+    return this.monomerSymbolElement.getBoundingClientRect();
   }
 
   private isSnakeBondForAttachmentPoint(
@@ -224,9 +236,19 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   }
 
   private get scaledMonomerPosition() {
+    const monomerSymbolBoundingClientRect =
+      this.monomerSymbolBoundingClientRect;
     // we need to convert monomer coordinates(stored in angstroms) to pixels.
     // it needs to be done in view layer of application (like renderers)
-    return Scale.modelToCanvas(this.monomer.position, this.editorSettings);
+    const monomerPositionInPixels = Scale.modelToCanvas(
+      this.monomer.position,
+      this.editorSettings,
+    );
+
+    return new Vec2(
+      monomerPositionInPixels.x - monomerSymbolBoundingClientRect.width / 2,
+      monomerPositionInPixels.y - monomerSymbolBoundingClientRect.height / 2,
+    );
   }
 
   public appendSelection() {

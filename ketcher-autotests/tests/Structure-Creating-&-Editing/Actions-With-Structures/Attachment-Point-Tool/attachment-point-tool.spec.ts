@@ -377,14 +377,17 @@ test.describe('Attachment Point Tool', () => {
     */
     await openFileAndAddToCanvas('KET/chain-with-attachment-points.ket', page);
     const expectedFile = await getMolfile(page);
-    await saveToFile('chain-with-attachment-points-expected.mol', expectedFile);
+    await saveToFile(
+      'Molfiles-V2000/chain-with-attachment-points-expected.mol',
+      expectedFile,
+    );
     const METADATA_STRING_INDEX = [1];
     const { fileExpected: molFileExpected, file: molFile } =
       await receiveFileComparisonData({
         page,
         metaDataIndexes: METADATA_STRING_INDEX,
         expectedFileName:
-          'tests/test-data/chain-with-attachment-points-expected.mol',
+          'tests/test-data/Molfiles-V2000/chain-with-attachment-points-expected.mol',
       });
     expect(molFile).toEqual(molFileExpected);
   });
@@ -397,14 +400,17 @@ test.describe('Attachment Point Tool', () => {
     */
     await openFileAndAddToCanvas('KET/chain-with-attachment-points.ket', page);
     const expectedFile = await getMolfile(page);
-    await saveToFile('chain-with-attachment-points-expected.mol', expectedFile);
+    await saveToFile(
+      'Molfiles-V2000/chain-with-attachment-points-expected.mol',
+      expectedFile,
+    );
     const METADATA_STRING_INDEX = [1];
     const { fileExpected: molFileExpected, file: molFile } =
       await receiveFileComparisonData({
         page,
         metaDataIndexes: METADATA_STRING_INDEX,
         expectedFileName:
-          'tests/test-data/chain-with-attachment-points-expected.mol',
+          'tests/test-data/Molfiles-V2000/chain-with-attachment-points-expected.mol',
       });
     expect(molFile).toEqual(molFileExpected);
   });
@@ -417,7 +423,7 @@ test.describe('Attachment Point Tool', () => {
     await openFileAndAddToCanvas('KET/chain-with-attachment-points.ket', page);
     const expectedFile = await getMolfile(page, 'v3000');
     await saveToFile(
-      'chain-with-attachment-points-expectedV3000.mol',
+      'Molfiles-V3000/chain-with-attachment-points-expectedV3000.mol',
       expectedFile,
     );
     const METADATA_STRING_INDEX = [1];
@@ -426,7 +432,7 @@ test.describe('Attachment Point Tool', () => {
         page,
         metaDataIndexes: METADATA_STRING_INDEX,
         expectedFileName:
-          'tests/test-data/chain-with-attachment-points-expectedV3000.mol',
+          'tests/test-data/Molfiles-V3000/chain-with-attachment-points-expectedV3000.mol',
         fileFormat: 'v3000',
       });
     expect(molFile).toEqual(molFileExpected);
@@ -502,12 +508,15 @@ test.describe('Attachment Point Tool', () => {
     */
     await openFileAndAddToCanvas('KET/chain-with-attachment-points.ket', page);
     const expectedFile = await getSmiles(page);
-    await saveToFile('chain-with-attachment-points-expected.smi', expectedFile);
+    await saveToFile(
+      'SMILES/chain-with-attachment-points-expected.smi',
+      expectedFile,
+    );
     const { fileExpected: smiFileExpected, file: smiFile } =
       await receiveFileComparisonData({
         page,
         expectedFileName:
-          'tests/test-data/chain-with-attachment-points-expected.smi',
+          'tests/test-data/SMILES/chain-with-attachment-points-expected.smi',
       });
     expect(smiFile).toEqual(smiFileExpected);
   });
@@ -524,12 +533,15 @@ test.describe('Attachment Point Tool', () => {
     */
     await openFileAndAddToCanvas('KET/chain-with-attachment-points.ket', page);
     const expectedFile = await getSmiles(page);
-    await saveToFile('chain-with-attachment-points-expected.smi', expectedFile);
+    await saveToFile(
+      'SMILES/chain-with-attachment-points-expected.smi',
+      expectedFile,
+    );
     const { fileExpected: smiFileExpected, file: smiFile } =
       await receiveFileComparisonData({
         page,
         expectedFileName:
-          'tests/test-data/chain-with-attachment-points-expected.smi',
+          'tests/test-data/SMILES/chain-with-attachment-points-expected.smi',
       });
     expect(smiFile).toEqual(smiFileExpected);
   });
@@ -564,7 +576,10 @@ test.describe('Attachment Point Tool', () => {
       Description: With selection tool click the atom with attachment point(s) and drag selected atom.
     */
     const yDelta = 100;
-    await openFileAndAddToCanvas('chain-attachment-list.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/chain-attachment-list.mol',
+      page,
+    );
 
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
     const point = await getAtomByIndex(page, { label: 'N' }, 0);
@@ -591,7 +606,10 @@ test.describe('Attachment Point Tool', () => {
       Test case: EPMLSOPKET-1645
       Description: With erase tool click the atom with attachment point(s) and delete selected atom.
     */
-    await openFileAndAddToCanvas('chain-attachment-list.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/chain-attachment-list.mol',
+      page,
+    );
 
     await selectLeftPanelButton(LeftPanelButton.Erase, page);
     await clickOnAtom(page, 'N', 0);
@@ -613,7 +631,10 @@ test.describe('Attachment Point Tool', () => {
       Description: Hotkey click the atom with attachment point(s) delete selected atom.
     */
     let point: { x: number; y: number };
-    await openFileAndAddToCanvas('chain-attachment-list.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/chain-attachment-list.mol',
+      page,
+    );
 
     await selectLeftPanelButton(LeftPanelButton.Erase, page);
     point = await getAtomByIndex(page, { label: 'N' }, 0);
@@ -639,7 +660,10 @@ test.describe('Attachment Point Tool', () => {
       Description: New bond is created, the attachment point isn't removed.
     */
     const yDelta = 100;
-    await openFileAndAddToCanvas('chain-attachment-list.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/chain-attachment-list.mol',
+      page,
+    );
 
     await selectAtomInToolbar(AtomButton.Oxygen, page);
     const point = await getAtomByIndex(page, { label: 'N' }, 0);
@@ -666,7 +690,10 @@ test.describe('Attachment Point Tool', () => {
       Test case: EPMLSOPKET-1645
       Description: New bond is created, the attachment point isn't removed.
     */
-    await openFileAndAddToCanvas('chain-attachment-list.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/chain-attachment-list.mol',
+      page,
+    );
 
     await selectLeftPanelButton(LeftPanelButton.SingleBond, page);
     await clickOnAtom(page, 'N', 0);
@@ -688,7 +715,10 @@ test.describe('Attachment Point Tool', () => {
       Description: The template is sprouted from the selected atom, the attachment point(s) isn't changed or removed.
     */
     const yDelta = 100;
-    await openFileAndAddToCanvas('chain-attachment-list.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/chain-attachment-list.mol',
+      page,
+    );
 
     await selectRing(RingButton.Benzene, page);
     const point = await getAtomByIndex(page, { label: 'N' }, 0);

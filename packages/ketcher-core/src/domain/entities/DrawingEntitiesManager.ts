@@ -223,11 +223,9 @@ export class DrawingEntitiesManager {
   public addPolymerBond(firstMonomer, startPosition, endPosition) {
     const polymerBond = new PolymerBond(firstMonomer);
     this.polymerBonds.set(polymerBond.id, polymerBond);
-    firstMonomer.setBond(firstMonomer.startBondAttachmentPoint, polymerBond);
-    firstMonomer.setPotentialBond(
-      firstMonomer.startBondAttachmentPoint,
-      polymerBond,
-    );
+    const startBondAttachmentPoint = firstMonomer.startBondAttachmentPoint;
+    firstMonomer.setBond(startBondAttachmentPoint, polymerBond);
+    firstMonomer.setPotentialBond(startBondAttachmentPoint, polymerBond);
     polymerBond.moveBondStartAbsolute(startPosition.x, startPosition.y);
     polymerBond.moveBondEndAbsolute(endPosition.x, endPosition.y);
 

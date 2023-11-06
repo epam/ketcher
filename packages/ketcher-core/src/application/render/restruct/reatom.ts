@@ -41,6 +41,7 @@ import { tfx } from 'utilities';
 import { RenderOptions } from 'application/render/render.types';
 import { capitalize } from 'lodash';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
+import { attachmentPointNames } from 'domain/types';
 
 interface ElemAttr {
   text: string;
@@ -294,6 +295,16 @@ class ReAtom extends ReObject {
       leftMargin = data.leftMargin;
       implh = Math.floor(this.a.implicitH);
       isHydrogen = label.text === 'H';
+
+      if (label.background) {
+        restruct.addReObjectPath(
+          LayerMap.data,
+          this.visel,
+          label.background,
+          ps,
+          true,
+        );
+      }
       restruct.addReObjectPath(LayerMap.data, this.visel, label.path, ps, true);
     }
     if (options.showAtomIds) {
@@ -757,12 +768,27 @@ function buildLabel(
     }
   }
 
+  const isMonomerAttachmentPoint = attachmentPointNames.includes(label.text);
+  const isMonomerAttachmentPointSelected =
+    options.currentlySelectedMonomerAttachmentPoint === label.text;
+  const isMonomerAttachmentPointUsed =
+    options.connectedMonomerAttachmentPoints?.includes(label.text);
+
+  if (isMonomerAttachmentPoint && options.labelInMonomerConnectionsModal) {
+    atom.color = isMonomerAttachmentPointSelected
+      ? '#FFF'
+      : isMonomerAttachmentPointUsed
+      ? '#B4B9D6'
+      : '#585858';
+  }
+
   if (label.text?.length > 8) {
     tooltip = label.text;
     label.text = `${label.text?.substring(0, 8)}...`;
   }
 
   const { previewOpacity } = options;
+
   label.path = paper.text(ps.x, ps.y, label.text).attr({
     font: options.font,
     'font-size': options.fontsz,
@@ -771,6 +797,25 @@ function buildLabel(
     'fill-opacity': atom.a.isPreview ? previewOpacity : 1,
   });
 
+  if (isMonomerAttachmentPoint && options.labelInMonomerConnectionsModal) {
+    const fill = isMonomerAttachmentPointSelected
+      ? '#167782'
+      : isMonomerAttachmentPointUsed
+      ? '#E1E5EA'
+      : '#FFF';
+    const backgroundSize = options.fontsz * 2;
+
+    label.background = paper
+      .rect(
+        ps.x - backgroundSize / 2,
+        ps.y - backgroundSize / 2,
+        backgroundSize,
+        backgroundSize,
+        10,
+      )
+      .attr({ fill })
+      .attr({ stroke: isMonomerAttachmentPointUsed ? '#B4B9D6' : '#7C7C7F' });
+  }
   if (tooltip) {
     addTooltip(label, tooltip);
   }

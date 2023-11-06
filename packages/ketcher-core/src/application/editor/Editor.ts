@@ -8,6 +8,7 @@ import {
   ToolConstructorInterface,
   ToolEventHandlerName,
 } from 'application/editor/tools/Tool';
+import { PolymerBond } from 'application/editor/tools/Bond';
 import { toolsMap } from 'application/editor/tools';
 import { MonomerItemType } from 'domain/types';
 import { RenderersManager } from 'application/render/renderers/RenderersManager';
@@ -22,6 +23,7 @@ import {
 import { PolymerBondRenderer } from 'application/render/renderers';
 import { Editor } from 'application/editor/editor.types';
 import { MacromoleculesConverter } from 'application/editor/MacromoleculesConverter';
+import { BaseMonomer } from 'domain/entities/BaseMonomer';
 
 interface ICoreEditorConstructorParams {
   theme;
@@ -73,6 +75,10 @@ export class CoreEditor {
     this.events.selectMonomer.add((monomer) => this.onSelectMonomer(monomer));
     this.events.selectPreset.add((preset) => this.onSelectRNAPreset(preset));
     this.events.selectTool.add((tool) => this.onSelectTool(tool));
+    this.events.createBondViaModal.add((payload) => this.onCreateBond(payload));
+    this.events.cancelBondCreationViaModal.add(() =>
+      this.onCancelBondCreation(),
+    );
     this.events.selectMode.add((isSnakeMode) => this.onSelectMode(isSnakeMode));
 
     renderersEvents.forEach((eventName) => {
@@ -92,6 +98,23 @@ export class CoreEditor {
 
   private onSelectTool(tool: string) {
     this.selectTool(tool);
+  }
+
+  private onCreateBond(payload: {
+    firstMonomer: BaseMonomer;
+    secondMonomer: BaseMonomer;
+    firstSelectedAttachmentPoint: string;
+    secondSelectedAttachmentPoint: string;
+  }) {
+    if (this.tool instanceof PolymerBond) {
+      this.tool.handleBondCreation(payload);
+    }
+  }
+
+  private onCancelBondCreation() {
+    if (this.tool instanceof PolymerBond) {
+      this.tool.handleBondCreationCancellation();
+    }
   }
 
   // todo we need to create abstraction layer for modes in future similar to the tools layer

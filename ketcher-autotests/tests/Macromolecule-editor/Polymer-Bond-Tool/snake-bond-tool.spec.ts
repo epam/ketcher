@@ -3,6 +3,7 @@ import {
   addMonomerToCanvas,
   selectSingleBondTool,
   selectSnakeBondTool,
+  takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
@@ -65,10 +66,7 @@ test.describe('Snake Bond Tool', () => {
     await bondTwoMonomers(page, peptide2, peptide3);
     await bondTwoMonomers(page, peptide3, peptide4);
 
-    await page.screenshot({
-      path: 'tests/Macromolecule-editor/screenshots/create-snake-bond-between-peptides.png',
-      fullPage: true,
-    });
+    await takeEditorScreenshot(page);
   });
 
   test('Check snake mode arrange', async ({ page }) => {
@@ -191,10 +189,7 @@ test.describe('Snake Bond Tool', () => {
 
     await selectSnakeBondTool(page);
 
-    await page.screenshot({
-      path: 'tests/Macromolecule-editor/screenshots/check-snake-mode-arrange.png',
-      fullPage: true,
-    });
+    await takeEditorScreenshot(page);
   });
 
   test('Check finding right chain sequence using snake mode', async ({
@@ -251,16 +246,10 @@ test.describe('Snake Bond Tool', () => {
     await bondTwoMonomers(page, peptide2, peptide3);
     await bondTwoMonomers(page, peptide3, peptide4);
 
-    await page.screenshot({
-      path: 'tests/Macromolecule-editor/screenshots/check-finding-right-chain-sequence-1.png',
-      fullPage: true,
-    });
+    await takeEditorScreenshot(page);
 
     await selectSnakeBondTool(page);
 
-    await page.screenshot({
-      path: 'tests/Macromolecule-editor/screenshots/check-finding-right-chain-sequence-2.png',
-      fullPage: true,
-    });
+    await takeEditorScreenshot(page);
   });
 });

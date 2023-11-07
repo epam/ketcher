@@ -3,6 +3,8 @@ const RNA_TAB = 'RNA_TAB';
 const CHEM_TAB = 'CHEM_TAB';
 const FAVORITES_TAB = 'FAVORITES_TAB';
 const POLYMER_TOGGLER = 'polymer-toggler';
+const MACROMOLECULES_MODE = 'macromolecules_mode';
+const MOLECULES_MODE = 'molecules_mode';
 const SUGAR = 'rna-builder-slot--sugar';
 const BASE = 'rna-builder-slot--base';
 const PHOSPHATE = 'rna-builder-slot--phosphate';
@@ -14,6 +16,8 @@ export {
   CHEM_TAB,
   FAVORITES_TAB,
   POLYMER_TOGGLER,
+  MACROMOLECULES_MODE,
+  MOLECULES_MODE,
   SUGAR,
   BASE,
   PHOSPHATE,

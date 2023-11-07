@@ -25,6 +25,11 @@ export class MonomerAddOperation implements Operation {
   public execute(renderersManager: RenderersManager) {
     renderersManager.addMonomer(this.monomer, this.callback);
   }
+
+  public invert(renderersManager: RenderersManager) {
+    console.log('invert MonomerAddOperation');
+    renderersManager.deleteMonomer(this.monomer);
+  }
 }
 
 export class MonomerMoveOperation implements Operation {
@@ -32,6 +37,10 @@ export class MonomerMoveOperation implements Operation {
 
   public execute(renderersManager: RenderersManager) {
     renderersManager.moveMonomer(this.peptide);
+  }
+
+  public invert(renderersManager: RenderersManager) {
+    console.log('invert MonomerMoveOperation');
   }
 }
 
@@ -47,6 +56,10 @@ export class MonomerHoverOperation implements Operation {
       this.needRedrawAttachmentPoints,
     );
   }
+
+  public invert(renderersManager: RenderersManager) {
+    console.log('invert MonomerHoverOperation');
+  }
 }
 
 export class MonomerDeleteOperation implements Operation {
@@ -54,5 +67,9 @@ export class MonomerDeleteOperation implements Operation {
 
   public execute(renderersManager: RenderersManager) {
     renderersManager.deleteMonomer(this.peptide);
+  }
+
+  public invert(renderersManager: RenderersManager) {
+    console.log('invert MonomerDeleteOperation');
   }
 }

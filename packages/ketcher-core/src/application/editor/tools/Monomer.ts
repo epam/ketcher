@@ -20,7 +20,7 @@ import { Sugar } from 'domain/entities/Sugar';
 import { Phosphate } from 'domain/entities/Phosphate';
 import { RNABase } from 'domain/entities/RNABase';
 import { Vec2 } from 'domain/entities';
-import { CoreEditor } from 'application/editor';
+import { CoreEditor, EditorHistory } from 'application/editor';
 import { BaseMonomerRenderer } from 'application/render/renderers';
 import { MonomerItemType } from 'domain/types';
 import { monomerFactory } from '../operations/monomer/monomerFactory';
@@ -64,6 +64,8 @@ class MonomerTool implements Tool {
       ),
     );
 
+    const history = new EditorHistory(this.editor); // здесь история пишется
+    history.update(modelChanges);
     this.editor.renderersContainer.update(modelChanges);
   }
 

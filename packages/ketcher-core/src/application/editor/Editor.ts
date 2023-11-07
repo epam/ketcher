@@ -14,6 +14,7 @@ import { RenderersManager } from 'application/render/renderers/RenderersManager'
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import { editorEvents, renderersEvents } from 'application/editor/editorEvents';
 import { PolymerBondRenderer } from 'application/render/renderers';
+import { EditorHistory } from './EditorHistory';
 
 interface ICoreEditorConstructorParams {
   theme;
@@ -59,6 +60,7 @@ export class CoreEditor {
     this.events.selectPreset.add((preset) => this.onSelectRNAPreset(preset));
     this.events.selectTool.add((tool) => this.onSelectTool(tool));
     this.events.selectMode.add((isSnakeMode) => this.onSelectMode(isSnakeMode));
+    this.events.selectHistory.add((name) => this.onSelectHistory(name));
 
     renderersEvents.forEach((eventName) => {
       this.events[eventName].add((event) =>
@@ -87,6 +89,16 @@ export class CoreEditor {
       isSnakeMode,
     );
     this.renderersContainer.update(modelChanges);
+  }
+
+  private onSelectHistory(name: string) {
+    console.log(name);
+    const history = new EditorHistory(this);
+    if (name === 'undo') {
+      history.undo();
+    } else if (name === 'redo') {
+      history.redo();
+    }
   }
 
   public selectTool(name: string, options?) {

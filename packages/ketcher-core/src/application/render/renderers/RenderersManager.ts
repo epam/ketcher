@@ -111,8 +111,6 @@ export class RenderersManager {
   }
 
   public update(modelChanges: Command) {
-    modelChanges.operations.forEach((modelChange) => {
-      modelChange.execute(this);
-    });
+    modelChanges.execute(this);
   }
 }

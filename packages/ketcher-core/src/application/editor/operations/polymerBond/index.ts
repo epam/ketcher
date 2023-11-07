@@ -25,6 +25,10 @@ export class PolymerBondAddOperation implements Operation {
   public execute(renderersManager: RenderersManager) {
     renderersManager.addPolymerBond(this.polymerBond);
   }
+
+  public invert(renderersManager: RenderersManager) {
+    renderersManager.deletePolymerBond(this.polymerBond);
+  }
 }
 
 export class PolymerBondDeleteOperation implements Operation {
@@ -32,6 +36,10 @@ export class PolymerBondDeleteOperation implements Operation {
 
   public execute(renderersManager: RenderersManager) {
     renderersManager.deletePolymerBond(this.polymerBond);
+  }
+
+  public invert(renderersManager: RenderersManager) {
+    renderersManager.addPolymerBond(this.polymerBond);
   }
 }
 
@@ -41,6 +49,10 @@ export class PolymerBondMoveOperation implements Operation {
   public execute(renderersManager: RenderersManager) {
     renderersManager.movePolymerBond(this.polymerBond);
   }
+
+  public invert(renderersManager: RenderersManager) {
+    console.log('invert PolymerBondMoveOperation');
+  }
 }
 
 export class PolymerBondShowInfoOperation implements Operation {
@@ -48,6 +60,10 @@ export class PolymerBondShowInfoOperation implements Operation {
 
   public execute(renderersManager: RenderersManager) {
     renderersManager.showPolymerBondInformation(this.polymerBond);
+  }
+
+  public invert(renderersManager: RenderersManager) {
+    console.log('invert PolymerBondShowInfoOperation');
   }
 }
 
@@ -57,6 +73,10 @@ export class PolymerBondCancelCreationOperation implements Operation {
   public execute(renderersManager: RenderersManager) {
     renderersManager.cancelPolymerBondCreation(this.polymerBond);
   }
+
+  public invert(renderersManager: RenderersManager) {
+    console.log('invert PolymerBondCancelCreationOperation');
+  }
 }
 
 export class PolymerBondFinishCreationOperation implements Operation {
@@ -64,5 +84,9 @@ export class PolymerBondFinishCreationOperation implements Operation {
 
   public execute(renderersManager: RenderersManager) {
     renderersManager.finishPolymerBondCreation(this.polymerBond);
+  }
+
+  public invert(renderersManager: RenderersManager) {
+    console.log('invert PolymerBondFinishCreationOperation');
   }
 }

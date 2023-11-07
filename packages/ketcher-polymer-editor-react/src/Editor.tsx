@@ -280,6 +280,8 @@ function MenuComponent() {
     } else if (name === 'snake-mode') {
       dispatch(selectMode(!isSnakeMode));
       editor.events.selectMode.dispatch(!isSnakeMode);
+    } else if (name === 'undo' || name === 'redo') {
+      editor.events.selectHistory.dispatch(name);
     } else {
       editor.events.selectTool.dispatch(name);
       if (name === 'clear') {
@@ -304,6 +306,7 @@ function MenuComponent() {
       </Menu.Group>
       <Menu.Group>
         <Menu.Item itemId="undo" />
+        <Menu.Item itemId="redo" />
       </Menu.Group>
       <Menu.Group>
         <Menu.Item itemId="erase" title="Erase" />

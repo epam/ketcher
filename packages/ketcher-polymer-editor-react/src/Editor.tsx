@@ -79,12 +79,12 @@ const muiTheme = createTheme(muiOverrides);
 interface EditorContainerProps {
   onInit?: () => void;
   theme?: DeepPartial<EditorTheme>;
-  togglerComponent: JSX.Element;
+  togglerComponent?: JSX.Element;
 }
 
 interface EditorProps {
   theme?: DeepPartial<EditorTheme>;
-  togglerComponent: JSX.Element;
+  togglerComponent?: JSX.Element;
 }
 
 function EditorContainer({

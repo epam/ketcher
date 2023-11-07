@@ -23,42 +23,47 @@ interface IStyledIconProps {
   expanded?: boolean;
   hidden?: boolean;
 }
-interface IStyledButtonProps {
-  maxWidth?: boolean;
-}
+const ElementAndDropdown = styled('div')`
+  position: relative;
+  width: 28px;
+  padding: 2px;
+  flexgrow: 1;
+  display: flex;
+  justifycontent: flex-end;
+  @media (min-width: 900px) {
+    width: 162px;
+    padding: 6px 3px;
+  }
+`;
 
-const ElementAndDropdown = styled('div')<IStyledButtonProps>(
-  ({ maxWidth }) => ({
-    position: 'relative',
-    width: maxWidth ? '162px' : '28px',
-    padding: maxWidth ? '6px 3px' : '2px',
-    flexGrow: '1',
-    display: 'flex',
-    justifyContent: 'flex-end',
-  }),
-);
-
-const DropDownButton = styled(Button)<IStyledButtonProps>(({ maxWidth }) => ({
+const DropDownButton = styled(Button)(() => ({
   display: 'flex',
   justifyContent: 'space-between',
   color: '#000000',
   padding: '0px',
-  width: maxWidth ? '162px' : '28px',
+  width: '100%',
   minWidth: '0px',
 
   '& svg:first-of-type': {
     margin: '2px',
-    width: '24px',
-    height: '24px',
+    width: '20px',
+    height: '20px',
   },
 }));
 
-const StyledIcon = styled(Icon)<IStyledIconProps>(({ expanded, hidden }) => ({
-  width: '16px',
-  height: '16px',
-  transform: expanded ? 'rotate(180deg)' : 'none',
-  opacity: hidden ? '0' : '100',
-}));
+const StyledIcon = styled(Icon)<IStyledIconProps>`
+  width: 16px;
+  height: 16px;
+  transform: ${({ expanded }) => (expanded ? 'rotate(180deg)' : 'none')};
+  opacity: ${({ hidden }) => (hidden ? '0' : '100')};
+`;
+
+const StyledIconForMacromoleculesToggler = styled(StyledIcon)`
+  display: none;
+  @media (min-width: 900px) {
+    display: flex;
+  }
+`;
 
 const CornerIcon = styled(Icon)`
   display: block;
@@ -68,13 +73,20 @@ const CornerIcon = styled(Icon)`
   right: 0;
   bottom: 0;
   fill: @main-color;
+  @media (min-width: 900px) {
+    display: none;
+  }
 `;
 
 const ModeLabel = styled('span')`
+  display: none;
   text-transform: none;
   font-size: 12px;
   text-align: left;
   flex-grow: 1;
+  @media (min-width: 900px) {
+    display: inline;
+  }
 `;
 
 const ModeControlButton = styled('div')`
@@ -139,27 +151,25 @@ export const ModeControl = ({ toggle, isPolymerEditor }: ModeProps) => {
   const title = isPolymerEditor
     ? 'Switch to Ketcher mode'
     : 'Switch to Macromolecule mode';
-  const isScreenWidthSmall = window.innerWidth < 800 ? true : false;
 
   return (
-    <ElementAndDropdown title={title} maxWidth={!isScreenWidthSmall}>
+    <ElementAndDropdown title={title}>
       <DropDownButton
         data-testid="polymer-toggler"
         onClick={onExpand}
         ref={btnRef}
-        maxWidth={!isScreenWidthSmall}
       >
         <Icon name={modeIcon} />
-        {!isScreenWidthSmall ? (
-          <>
-            <ModeLabel>{modeLabel}</ModeLabel>
-            <StyledIcon name="chevron" expanded={isExpanded} />
-          </>
-        ) : (
-          <>
-            <CornerIcon name="dropdown" />
-          </>
-        )}
+        <>
+          <ModeLabel>{modeLabel}</ModeLabel>
+          <StyledIconForMacromoleculesToggler
+            name="chevron"
+            expanded={isExpanded}
+          />
+        </>
+        <>
+          <CornerIcon name="dropdown" />
+        </>
       </DropDownButton>
       <Dropdown
         title=""

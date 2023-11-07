@@ -65,6 +65,14 @@ export class BaseMonomer extends DrawingEntity {
     this.attachmentPointsVisible = false;
   }
 
+  public setChosenFirstAttachmentPoint(attachmentPoint: string) {
+    this.chosenFirstAttachmentPointForBond = attachmentPoint;
+  }
+
+  public setChosenSecondAttachmentPoint(attachmentPoint: string) {
+    this.chosenSecondAttachmentPointForBond = attachmentPoint;
+  }
+
   public setPotentialBond(
     attachmentPoint: string,
     potentialBond?: PolymerBond | null,

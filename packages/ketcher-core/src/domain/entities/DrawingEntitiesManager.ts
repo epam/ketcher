@@ -236,6 +236,7 @@ export class DrawingEntitiesManager {
     const polymerBond = new PolymerBond(firstMonomer);
     this.polymerBonds.set(polymerBond.id, polymerBond);
     const startBondAttachmentPoint = firstMonomer.startBondAttachmentPoint;
+    firstMonomer.chosenFirstAttachmentPointForBond = startBondAttachmentPoint;
     firstMonomer.setBond(startBondAttachmentPoint, polymerBond);
     firstMonomer.setPotentialBond(startBondAttachmentPoint, polymerBond);
     polymerBond.moveBondStartAbsolute(startPosition.x, startPosition.y);
@@ -361,37 +362,46 @@ export class DrawingEntitiesManager {
     return command;
   }
 
-  public intendToFinishBondCreation(monomer: BaseMonomer, bond: PolymerBond) {
+  public intendToFinishBondCreation(
+    monomer: BaseMonomer,
+    bond: PolymerBond,
+    bothPeptides: boolean,
+  ) {
     const command = new Command();
     if (monomer.chosenFirstAttachmentPointForBond) return command;
     monomer.turnOnHover();
     monomer.turnOnAttachmentPointsVisibility();
     const availableAttachmentPointForBondEnd =
       monomer.availableAttachmentPointForBondEnd;
-    if (availableAttachmentPointForBondEnd) {
-      monomer.setPotentialBond(availableAttachmentPointForBondEnd, bond);
-    }
+    if (bothPeptides) {
+      if (availableAttachmentPointForBondEnd) {
+        monomer.setPotentialBond(availableAttachmentPointForBondEnd, bond);
+      }
 
-    if (
-      availableAttachmentPointForBondEnd === 'R2' &&
-      monomer.hasAttachmentPoint('R1') &&
-      !bond.firstMonomer.isAttachmentPointUsed('R1')
-    ) {
-      bond.firstMonomer.removePotentialBonds();
-      bond.firstMonomer.setPotentialBond('R1', bond);
-      const operation = new MonomerHoverOperation(bond.firstMonomer, true);
-      command.addOperation(operation);
-    }
+      if (
+        availableAttachmentPointForBondEnd === 'R2' &&
+        monomer.hasAttachmentPoint('R1') &&
+        !bond.firstMonomer.isAttachmentPointUsed('R1')
+      ) {
+        bond.firstMonomer.removeBond(bond);
+        bond.firstMonomer.removePotentialBonds();
+        bond.firstMonomer.chosenFirstAttachmentPointForBond = 'R1';
+        bond.firstMonomer.setBond('R1', bond);
+        bond.firstMonomer.setPotentialBond('R1', bond);
+        const operation = new MonomerHoverOperation(bond.firstMonomer, true);
+        command.addOperation(operation);
+      }
 
-    if (
-      monomer.hasAttachmentPoint('R2') &&
-      !monomer.isAttachmentPointUsed('R2') &&
-      bond.firstMonomer.getPotentialAttachmentPointByBond(bond) === 'R1'
-    ) {
-      monomer.removePotentialBonds();
-      monomer.setPotentialBond('R2', bond);
-      const operation = new MonomerHoverOperation(bond.firstMonomer, true);
-      command.addOperation(operation);
+      if (
+        monomer.hasAttachmentPoint('R2') &&
+        !monomer.isAttachmentPointUsed('R2') &&
+        bond.firstMonomer.getPotentialAttachmentPointByBond(bond) === 'R1'
+      ) {
+        monomer.removePotentialBonds();
+        monomer.setPotentialBond('R2', bond);
+        const operation = new MonomerHoverOperation(bond.firstMonomer, true);
+        command.addOperation(operation);
+      }
     }
 
     const operation = new MonomerHoverOperation(monomer, true);
@@ -427,22 +437,22 @@ export class DrawingEntitiesManager {
     polymerBond?: PolymerBond,
   ) {
     const command = new Command();
-    if (
-      polymerBond &&
-      polymerBond.firstMonomer.getPotentialAttachmentPointByBond(
-        polymerBond,
-      ) === 'R1' &&
-      polymerBond.firstMonomer.hasAttachmentPoint('R2') &&
-      !polymerBond.firstMonomer.isAttachmentPointUsed('R2')
-    ) {
-      polymerBond.firstMonomer.removePotentialBonds();
-      polymerBond.firstMonomer.setPotentialBond('R2', polymerBond);
-      const operation = new MonomerHoverOperation(
-        polymerBond.firstMonomer,
-        true,
-      );
-      command.addOperation(operation);
-    }
+    // if (
+    //   polymerBond &&
+    //   polymerBond.firstMonomer.getPotentialAttachmentPointByBond(
+    //     polymerBond,
+    //   ) === 'R1' &&
+    //   polymerBond.firstMonomer.hasAttachmentPoint('R2') &&
+    //   !polymerBond.firstMonomer.isAttachmentPointUsed('R2')
+    // ) {
+    //   polymerBond.firstMonomer.removePotentialBonds();
+    //   polymerBond.firstMonomer.setPotentialBond('R2', polymerBond);
+    //   const operation = new MonomerHoverOperation(
+    //     polymerBond.firstMonomer,
+    //     true,
+    //   );
+    //   command.addOperation(operation);
+    // }
 
     monomer.turnOffHover();
     monomer.turnOffAttachmentPointsVisibility();

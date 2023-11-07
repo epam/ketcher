@@ -29,6 +29,8 @@ interface ToolEventHandler {
 
   mouseUpAP?(event: Event): void;
 
+  mouseDownAP?(event: Event): void;
+
   mouseOnMoveMonomer?(event: Event): void;
 
   mouseLeaveMonomer?(event: Event): void;

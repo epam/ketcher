@@ -63,14 +63,6 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     );
   }
 
-  private selectFirstAP(attachmentPointName: AttachmentPointName) {
-    this.monomer.chosenFirstAttachmentPointForBond = attachmentPointName;
-  }
-
-  private selectSecondAP(attachmentPointName: AttachmentPointName) {
-    this.monomer.chosenSecondAttachmentPointForBond = attachmentPointName;
-  }
-
   public get center() {
     return {
       x: this.scaledMonomerPosition.x + this.bodyWidth / 2,
@@ -180,8 +172,6 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
         this.hoveredAP === AttachmentPointName,
       customAngle || rotation,
       this.isSnakeBondForAttachmentPoint(AttachmentPointName),
-      this.selectFirstAP,
-      this.selectSecondAP,
     );
     return attPointInstance;
   }

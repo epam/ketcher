@@ -49,8 +49,6 @@ export class AttachmentPoint {
   private stroke: string;
   private isSnake;
   private editorEvents: typeof editorEvents;
-  private selectFirstAP;
-  private selectSecondAP;
 
   constructor(
     rootElement: D3SvgElementSelection<SVGGElement, void>,
@@ -63,8 +61,6 @@ export class AttachmentPoint {
     isPotentiallyUsed,
     angle = 0,
     isSnake,
-    selectFirstAP,
-    selectSecondAP,
   ) {
     this.rootElement = rootElement;
     this.monomer = monomer;
@@ -77,8 +73,6 @@ export class AttachmentPoint {
     this.isUsed = isUsed;
     this.initialAngle = angle;
     this.editorEvents = editorEvents;
-    this.selectFirstAP = selectFirstAP;
-    this.selectSecondAP = selectSecondAP;
 
     if (isUsed) {
       this.fill = AttachmentPoint.colors.fillUsed;
@@ -206,12 +200,11 @@ export class AttachmentPoint {
       .on('mouseleave', (event) => {
         this.editorEvents.mouseLeaveAP.dispatch(event);
       })
-      .on('mousedown', (_) => {
-        this.selectFirstAP(this.attachmentPointName);
+      .on('mousedown', (event) => {
+        event.attachmentPointName = this.attachmentPointName;
+        this.editorEvents.mouseDownAP.dispatch(event);
       })
       .on('mouseup', (event) => {
-        this.selectSecondAP(this.attachmentPointName);
-
         event.attachmentPointName = this.attachmentPointName;
         this.editorEvents.mouseUpAP.dispatch(event);
       });

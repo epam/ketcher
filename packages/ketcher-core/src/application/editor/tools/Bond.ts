@@ -36,6 +36,15 @@ class PolymerBond implements BaseTool {
     this.editor = editor;
   }
 
+  public mouseDownAP(event) {
+    const selectedRenderer = event.target.__data__;
+    if (selectedRenderer instanceof BaseMonomerRenderer) {
+      selectedRenderer.monomer.setChosenFirstAttachmentPoint(
+        event.attachmentPointName,
+      );
+    }
+  }
+
   public mousedown(event) {
     const selectedRenderer = event.target.__data__;
     if (selectedRenderer instanceof BaseMonomerRenderer) {
@@ -109,10 +118,14 @@ class PolymerBond implements BaseTool {
     let modelChanges;
 
     if (this.bondRenderer) {
+      const bothPeptides =
+        this.bondRenderer?.polymerBond.firstMonomer instanceof Peptide &&
+        renderer.monomer instanceof Peptide;
       modelChanges =
         this.editor.drawingEntitiesManager.intendToFinishBondCreation(
           renderer.monomer,
           this.bondRenderer?.polymerBond,
+          bothPeptides,
         );
     } else {
       modelChanges =
@@ -194,6 +207,17 @@ class PolymerBond implements BaseTool {
           );
           return;
         }
+      }
+      secondMonomer.setChosenSecondAttachmentPoint(event.attachmentPointName);
+      const showModal = this.shouldInvokeModal(firstMonomer, secondMonomer);
+      if (showModal) {
+        this.isBondConnectionModalOpen = true;
+
+        this.editor.events.openMonomerConnectionModal.dispatch({
+          firstMonomer,
+          secondMonomer,
+        });
+        return;
       }
 
       const modelChanges = this.finishBondCreation(renderer.monomer);
@@ -349,6 +373,14 @@ class PolymerBond implements BaseTool {
     if (
       firstMonomer.unUsedAttachmentPointsNamesList.length === 1 &&
       secondMonomer.unUsedAttachmentPointsNamesList.length === 1
+    ) {
+      return false;
+    }
+
+    // No Modal: Both monomers have selected attachment points
+    if (
+      firstMonomer.chosenFirstAttachmentPointForBond !== null &&
+      secondMonomer.chosenSecondAttachmentPointForBond !== null
     ) {
       return false;
     }

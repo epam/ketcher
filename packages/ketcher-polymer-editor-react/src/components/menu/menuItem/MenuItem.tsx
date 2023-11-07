@@ -33,6 +33,7 @@ const MenuItem = ({ itemId, title = '' }: MenuItemProp) => {
   return (
     <StyledIconButton
       title={title}
+      className={itemId}
       isActive={isActive(itemId)}
       onClick={onClickCallback}
       iconName={itemId}

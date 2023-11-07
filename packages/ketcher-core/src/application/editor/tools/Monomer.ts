@@ -25,8 +25,7 @@ import { BaseMonomerRenderer } from 'application/render/renderers';
 import { MonomerItemType } from 'domain/types';
 import { monomerFactory } from '../operations/monomer/monomerFactory';
 import assert from 'assert';
-import { provideEditorSettings } from 'application/editor/editorSettings';
-import { Scale } from 'domain/helpers';
+import Coordinates from '../shared/coordinates';
 
 class MonomerTool implements Tool {
   private monomerPreview:
@@ -48,34 +47,30 @@ class MonomerTool implements Tool {
 
   mousedown() {
     assert(this.monomerPreviewRenderer);
-    const editorSettings = provideEditorSettings();
+    const position = Coordinates.canvasToModel(
+      new Vec2(
+        this.editor.lastCursorPositionOfCanvas.x,
+        this.editor.lastCursorPositionOfCanvas.y,
+      ),
+    );
     const modelChanges = this.editor.drawingEntitiesManager.addMonomer(
       this.monomer,
       // We convert monomer coordinates from pixels to angstroms
       // because the model layer (like BaseMonomer) should not work with pixels
-      Scale.canvasToModel(
-        new Vec2(
-          this.editor.lastCursorPosition.x,
-          this.editor.lastCursorPosition.y,
-        ),
-        editorSettings,
-      ),
+      position,
     );
 
     this.editor.renderersContainer.update(modelChanges);
   }
 
   mousemove() {
-    const editorSettings = provideEditorSettings();
-    this.monomerPreview?.moveAbsolute(
-      Scale.canvasToModel(
-        new Vec2(
-          this.editor.lastCursorPosition.x + this.MONOMER_PREVIEW_OFFSET_X,
-          this.editor.lastCursorPosition.y + this.MONOMER_PREVIEW_OFFSET_Y,
-        ),
-        editorSettings,
+    const position = Coordinates.canvasToModel(
+      new Vec2(
+        this.editor.lastCursorPosition.x + this.MONOMER_PREVIEW_OFFSET_X,
+        this.editor.lastCursorPosition.y + this.MONOMER_PREVIEW_OFFSET_Y,
       ),
     );
+    this.monomerPreview?.moveAbsolute(position);
     this.monomerPreviewRenderer?.move();
   }
 
@@ -93,6 +88,7 @@ class MonomerTool implements Tool {
       this.monomerPreviewRenderer = new MonomerRenderer(
         this.monomerPreview,
         this.MONOMER_PREVIEW_SCALE_FACTOR,
+        false,
       );
       this.monomerPreviewRenderer?.show(this.editor.theme);
     }

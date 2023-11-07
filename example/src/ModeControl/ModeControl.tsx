@@ -23,28 +23,35 @@ interface IStyledIconProps {
   expanded?: boolean;
   hidden?: boolean;
 }
+interface IStyledButtonProps {
+  maxWidth?: boolean;
+}
 
-const ElementAndDropdown = styled('div')`
-  position: relative;
-  width: 162px;
-  flex-grow: 1;
-  display: flex;
-  justify-content: flex-end;
-`;
+const ElementAndDropdown = styled('div')<IStyledButtonProps>(
+  ({ maxWidth }) => ({
+    position: 'relative',
+    width: maxWidth ? '162px' : '28px',
+    padding: maxWidth ? '6px 3px' : '2px',
+    flexGrow: '1',
+    display: 'flex',
+    justifyContent: 'flex-end',
+  }),
+);
 
-const DropDownButton = styled(Button)`
-  display: flex;
-  justify-content: space-between;
-  color: #000000;
-  padding: 6px 3px;
-  width: 162px;
+const DropDownButton = styled(Button)<IStyledButtonProps>(({ maxWidth }) => ({
+  display: 'flex',
+  justifyContent: 'space-between',
+  color: '#000000',
+  padding: '0px',
+  width: maxWidth ? '162px' : '28px',
+  minWidth: '0px',
 
-  & svg:first-of-type {
-    margin: 2px;
-    width: 24px;
-    height: 24px;
-  }
-`;
+  '& svg:first-of-type': {
+    margin: '2px',
+    width: '24px',
+    height: '24px',
+  },
+}));
 
 const StyledIcon = styled(Icon)<IStyledIconProps>(({ expanded, hidden }) => ({
   width: '16px',
@@ -52,6 +59,16 @@ const StyledIcon = styled(Icon)<IStyledIconProps>(({ expanded, hidden }) => ({
   transform: expanded ? 'rotate(180deg)' : 'none',
   opacity: hidden ? '0' : '100',
 }));
+
+const CornerIcon = styled(Icon)`
+  display: block;
+  width: 7px;
+  height: 7px;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  fill: @main-color;
+`;
 
 const ModeLabel = styled('span')`
   text-transform: none;
@@ -119,19 +136,31 @@ export const ModeControl = ({ toggle, isPolymerEditor }: ModeProps) => {
 
   const modeLabel = isPolymerEditor ? 'Macromolecules' : 'Molecules';
   const modeIcon = isPolymerEditor ? 'macromolecules-mode' : 'molecules-mode';
+  const title = isPolymerEditor
+    ? 'Switch to Ketcher mode'
+    : 'Switch to Macromolecule mode';
+  const isScreenWidthSmall = window.innerWidth < 800 ? true : false;
 
   return (
-    <ElementAndDropdown title={`Molecules vs Macromolecules mode\ndescription`}>
+    <ElementAndDropdown title={title} maxWidth={!isScreenWidthSmall}>
       <DropDownButton
         data-testid="polymer-toggler"
         onClick={onExpand}
         ref={btnRef}
+        maxWidth={!isScreenWidthSmall}
       >
         <Icon name={modeIcon} />
-        <ModeLabel>{modeLabel}</ModeLabel>
-        <StyledIcon name="chevron" expanded={isExpanded} />
+        {!isScreenWidthSmall ? (
+          <>
+            <ModeLabel>{modeLabel}</ModeLabel>
+            <StyledIcon name="chevron" expanded={isExpanded} />
+          </>
+        ) : (
+          <>
+            <CornerIcon name="dropdown" />
+          </>
+        )}
       </DropDownButton>
-
       <Dropdown
         title=""
         open={isExpanded}

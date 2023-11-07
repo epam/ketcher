@@ -11,7 +11,7 @@ export async function hideMonomerPreview(page: Page) {
   await page.mouse.move(9999, 9999);
   await page
     .getByTestId('polymer-library-preview')
-    .waitFor({ state: 'detached' });
+    .waitFor({ state: 'detached', timeout: 2000 });
 }
 
 export async function scrollWithMouseWheel(page: Page, zoomLevelDelta: number) {

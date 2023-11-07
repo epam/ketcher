@@ -212,7 +212,7 @@ test.describe('Zoom Tool', () => {
     await page.mouse.wheel(deltaX, deltaY);
   });
 
-  test('Scroll canvas horizontally with `Shift` pressed', async ({ page }) => {
+  test('Scroll canvas horizontally with Shift pressed', async ({ page }) => {
     const wheelDelta = 100;
 
     await page.keyboard.down('Shift');

@@ -1,5 +1,5 @@
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
-import { Page, test } from '@playwright/test';
+import { Page, test, expect } from '@playwright/test';
 import {
   Bases,
   DropDown,
@@ -10,11 +10,14 @@ import {
   dragMouseTo,
   moveMouseToTheMiddleOfTheScreen,
   openFileAndAddToCanvas,
+  receiveFileComparisonData,
+  saveToFile,
   selectEraseTool,
   selectMonomer,
   selectRectangleSelectionTool,
   selectSingleBondTool,
   takeEditorScreenshot,
+  takeLeftToolbarMacromoleculeScreenshot,
   takeMonomerLibraryScreenshot,
   takePageScreenshot,
   takePresetsScreenshot,
@@ -22,6 +25,7 @@ import {
   waitForPageInit,
   waitForRender,
 } from '@utils';
+import { getKet } from '@utils/formats';
 
 async function drawThreeMonomers(page: Page) {
   const x = 800;
@@ -638,7 +642,7 @@ test.describe('RNA Library', () => {
     Test case: #2507 - Add RNA monomers to canvas
     Description: Sugar monomer deleted.
     */
-    await openFileAndAddToCanvas('KET/monomers-connected-with-bonds', page);
+    await openFileAndAddToCanvas('KET/monomers-connected-with-bonds.ket', page);
     await selectEraseTool(page);
     await page.getByText('12ddR').locator('..').click();
     await takeEditorScreenshot(page);
@@ -649,7 +653,7 @@ test.describe('RNA Library', () => {
     Test case: #2507 - Add RNA monomers to canvas
     Description: Base monomer deleted.
     */
-    await openFileAndAddToCanvas('KET/monomers-connected-with-bonds', page);
+    await openFileAndAddToCanvas('KET/monomers-connected-with-bonds.ket', page);
     await selectEraseTool(page);
     await page.getByText('baA').locator('..').click();
     await takeEditorScreenshot(page);
@@ -660,7 +664,7 @@ test.describe('RNA Library', () => {
     Test case: #2507 - Add RNA monomers to canvas
     Description: Phosphate monomer deleted.
     */
-    await openFileAndAddToCanvas('KET/monomers-connected-with-bonds', page);
+    await openFileAndAddToCanvas('KET/monomers-connected-with-bonds.ket', page);
     await selectEraseTool(page);
     await page.getByText('P').locator('..').first().click();
     await takeEditorScreenshot(page);
@@ -769,5 +773,72 @@ test.describe('RNA Library', () => {
     await page.getByText('25R').locator('..').first().click();
     await pressEscapeWhenPullBond(page);
     await takeEditorScreenshot(page);
+  });
+
+  test('Check presence of Clear canvas button in left menu', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Clear Canvas tool
+    Description: Clear canvas button presence in left menu
+    */
+    await takeLeftToolbarMacromoleculeScreenshot(page);
+  });
+
+  test('Draw Sugar-Base-Phosphate and press Clear canvas', async ({ page }) => {
+    /* 
+    Test case: Clear Canvas tool
+    Description: Canvas is cleared
+    */
+    await drawThreeMonomers(page);
+    await page.getByTestId('clear-canvas').click();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Open Sugar-Base-Phosphate from .ket file and press Clear canvas', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Clear Canvas tool
+    Description: Canvas is cleared
+    */
+    await openFileAndAddToCanvas('KET/monomers-connected-with-bonds.ket', page);
+    await page.getByTestId('clear-canvas').click();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Save file with three Monomers as .ket file', async ({ page }) => {
+    /* 
+    Test case: Open&save files
+    Description: File saved with three Monomers as .ket file
+    Test working as not expected. API getKet returns an incorrect ket.
+    */
+    await openFileAndAddToCanvas('KET/monomers-connected-with-bonds.ket', page);
+    const expectedFile = await getKet(page);
+    await saveToFile(
+      'KET/monomers-connected-with-bonds-expected.ket',
+      expectedFile,
+    );
+
+    const { fileExpected: ketFileExpected, file: ketFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/KET/monomers-connected-with-bonds-expected.ket',
+      });
+    expect(ketFile).toEqual(ketFileExpected);
+  });
+
+  test('Open Sugar-Base-Phosphate from .ket file and switch to Micromolecule mode', async ({
+    page,
+  }) => {
+    /* 
+    Test case: https://github.com/epam/ketcher/issues/3498
+    Description: Ketcher switch to Micromolecule mode
+    Test is not working properly because we have bug.
+    */
+    await openFileAndAddToCanvas('KET/monomers-connected-with-bonds.ket', page);
+    await turnOnMacromoleculesEditor(page);
+    await takePageScreenshot(page);
   });
 });

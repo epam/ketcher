@@ -272,23 +272,39 @@ function MenuComponent() {
   };
 
   return (
-    <Menu onItemClick={menuItemChanged} activeMenuItems={activeMenuItems}>
+    <Menu
+      testId="left-toolbar"
+      onItemClick={menuItemChanged}
+      activeMenuItems={activeMenuItems}
+    >
       <Menu.Group>
-        <Menu.Item itemId="clear" title="Clear Canvas" />
+        <Menu.Item itemId="clear" title="Clear Canvas" testId="clear-canvas" />
       </Menu.Group>
       <Menu.Group>
-        <Menu.Item itemId="open" title="Open..." />
-        <Menu.Item itemId="save" />
+        <Menu.Item itemId="open" title="Open..." testId="open-button" />
+        <Menu.Item
+          itemId="save"
+          data-testId="save-button"
+          testId="save-button"
+        />
       </Menu.Group>
       <Menu.Group>
-        <Menu.Item itemId="erase" title="Erase" />
-        <Menu.Item itemId="select-rectangle" title="Select Rectangle" />
+        <Menu.Item itemId="erase" title="Erase" testId="erase-button" />
+        <Menu.Item
+          itemId="select-rectangle"
+          title="Select Rectangle"
+          testId="select-rectangle"
+        />
       </Menu.Group>
       <Menu.Group>
-        <Menu.Item itemId="bond-single" title="Single Bond (1)" />
+        <Menu.Item
+          itemId="bond-single"
+          title="Single Bond (1)"
+          testId="single-bond"
+        />
       </Menu.Group>
       <Menu.Group>
-        <Menu.Item itemId="snake-mode" title="Snake mode" />
+        <Menu.Item itemId="snake-mode" title="Snake mode" testId="snake-mode" />
       </Menu.Group>
     </Menu>
   );

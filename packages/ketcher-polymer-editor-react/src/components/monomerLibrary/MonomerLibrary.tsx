@@ -28,6 +28,7 @@ const MonomerLibraryContainer = styled.div(({ theme }) => ({
   boxShadow: '0px 2px 5px rgba(103, 104, 132, 0.15)',
   display: 'flex',
   flexDirection: 'column',
+  borderRadius: '4px',
 
   '&.hidden': {
     visibility: 'hidden',

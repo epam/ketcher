@@ -19,14 +19,13 @@ import { brush as d3Brush, select } from 'd3';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { Command } from 'domain/entities/Command';
 import { BaseTool } from 'application/editor/tools/Tool';
-import { Scale } from 'domain/helpers';
-import { provideEditorSettings } from 'application/editor/editorSettings';
+import Coordinates from '../shared/coordinates';
 
 class SelectRectangle implements BaseTool {
   private brush;
   private brushArea;
   private moveStarted;
-  private mousePositionAfterMove;
+  private mousePositionAfterMove = new Vec2(0, 0, 0);
 
   constructor(private editor: CoreEditor) {
     this.editor = editor;
@@ -36,12 +35,17 @@ class SelectRectangle implements BaseTool {
     this.brush.on('brush', (brushEvent) => {
       const selection = brushEvent.selection;
       if (!selection) return;
-
       requestAnimationFrame(() => {
+        const topLeftPoint = Coordinates.viewToCanvas(
+          new Vec2(selection[0][0], selection[0][1]),
+        );
+        const bottomRightPoint = Coordinates.viewToCanvas(
+          new Vec2(selection[1][0], selection[1][1]),
+        );
         const modelChanges =
           this.editor.drawingEntitiesManager.selectIfLocatedInRectangle(
-            new Vec2(selection[0][0], selection[0][1]),
-            new Vec2(selection[1][0], selection[1][1]),
+            topLeftPoint,
+            bottomRightPoint,
           );
         this.editor.renderersContainer.update(modelChanges);
       });
@@ -74,10 +78,7 @@ class SelectRectangle implements BaseTool {
     let modelChanges: Command;
     if (renderer instanceof BaseRenderer) {
       this.moveStarted = true;
-      this.mousePositionAfterMove = [
-        this.editor.lastCursorPosition.x,
-        this.editor.lastCursorPosition.y,
-      ];
+      this.mousePositionAfterMove = this.editor.lastCursorPositionOfCanvas;
       if (renderer.drawingEntity.selected) {
         return;
       } else {
@@ -94,21 +95,18 @@ class SelectRectangle implements BaseTool {
 
   mousemove() {
     if (this.moveStarted) {
-      const editorSettings = provideEditorSettings();
       const modelChanges =
         this.editor.drawingEntitiesManager.moveSelectedDrawingEntities(
-          Scale.canvasToModel(
+          Coordinates.canvasToModel(
             new Vec2(
-              this.editor.lastCursorPosition.x - this.mousePositionAfterMove[0],
-              this.editor.lastCursorPosition.y - this.mousePositionAfterMove[1],
+              this.editor.lastCursorPositionOfCanvas.x -
+                this.mousePositionAfterMove.x,
+              this.editor.lastCursorPositionOfCanvas.y -
+                this.mousePositionAfterMove.y,
             ),
-            editorSettings,
           ),
         );
-      this.mousePositionAfterMove = [
-        this.editor.lastCursorPosition.x,
-        this.editor.lastCursorPosition.y,
-      ];
+      this.mousePositionAfterMove = this.editor.lastCursorPositionOfCanvas;
       this.editor.renderersContainer.update(modelChanges);
     }
   }

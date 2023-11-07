@@ -39,7 +39,6 @@ const normalizeStruct = (molV2000StringOrStruct: string | Struct) => {
 
 const StructRender = ({ struct, options, className }: IStructRenderProps) => {
   const renderRef = useRef<HTMLDivElement>(null);
-
   useEffect(() => {
     const container = renderRef.current;
 

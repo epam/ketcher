@@ -124,14 +124,18 @@ export const Modal = ({
       disableEscapeKeyDown={!showCloseButton}
       className={className}
     >
-      <Header>
-        <Title>{title}</Title>
-        {showCloseButton && (
-          <IconButton title={'Close window'} onClick={onClose}>
-            <StyledIcon name={'close'} />
-          </IconButton>
-        )}
-      </Header>
+      {title || showCloseButton ? (
+        <Header>
+          <Title>{title}</Title>
+          {showCloseButton && (
+            <IconButton title={'Close window'} onClick={onClose}>
+              <StyledIcon name={'close'} />
+            </IconButton>
+          )}
+        </Header>
+      ) : (
+        ''
+      )}
 
       {subcomponents.Content}
 

@@ -24,9 +24,12 @@ import {
   StructService,
   SupportedFormat,
   identifyStructFormat,
+  CoreEditor,
 } from 'ketcher-core';
 import { OpenFileWrapper } from './Open.styles';
 import { IndigoProvider } from 'ketcher-react';
+import assert from 'assert';
+import { RequiredModalProps } from '../modalContainer';
 
 export interface Props {
   onClose: () => void;
@@ -51,8 +54,14 @@ const onOk = async ({
   }
   const isKet = identifyStructFormat(struct) === SupportedFormat.ket;
   const ketSerializer = new KetSerializer();
+  const editor = CoreEditor.provideEditorInstance();
   if (isKet) {
-    ketSerializer.deserializeMacromolecule(struct);
+    const deserialisedKet = ketSerializer.deserializeToDrawingEntities(struct);
+    assert(deserialisedKet);
+    deserialisedKet.drawingEntitiesManager.mergeInto(
+      editor.drawingEntitiesManager,
+    );
+    editor.renderersContainer.update(deserialisedKet.modelChanges);
     return;
   }
   const indigo = IndigoProvider.getIndigo() as StructService;
@@ -65,7 +74,7 @@ const onOk = async ({
 const isAnalyzingFile = false;
 const errorHandler = (error) => console.log(error);
 
-const Open = ({ isModalOpen, onClose }: Props) => {
+const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
   const [structStr, setStructStr] = useState<string>('');
   const [fileName, setFileName] = useState<string>('');
   const [opener, setOpener] = useState<

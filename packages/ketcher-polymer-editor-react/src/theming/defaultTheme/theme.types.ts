@@ -29,6 +29,7 @@ export type EditorTheme = {
     };
     border: {
       primary: string;
+      secondary: string;
     };
     text: {
       primary: string;

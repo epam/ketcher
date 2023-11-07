@@ -37,7 +37,9 @@
                 ],
                 "prop": {}
             }
-        ]
+        ],
+        "connections": [],
+        "templates": []
     },
     "mol0": {
         "type": "molecule",

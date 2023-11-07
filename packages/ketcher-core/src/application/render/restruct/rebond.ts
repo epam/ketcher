@@ -31,6 +31,7 @@ import { Render } from '../raphaelRender';
 import { Scale } from 'domain/helpers';
 import draw from '../draw';
 import util from '../util';
+import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 
 class ReBond extends ReObject {
   b: Bond;
@@ -59,29 +60,48 @@ class ReBond extends ReObject {
 
   static bondRecalc(bond: ReBond, restruct: ReStruct, options: any): void {
     const render = restruct.render;
-    const atom1 = restruct.atoms.get(bond.b.begin);
-    const atom2 = restruct.atoms.get(bond.b.end);
+    const sgroup1 = restruct.molecule.getGroupFromAtomId(bond.b.begin);
+    const sgroup2 = restruct.molecule.getGroupFromAtomId(bond.b.end);
+    const beginAtom = restruct.atoms.get(
+      sgroup1 instanceof MonomerMicromolecule
+        ? (sgroup1.getAttachmentAtomId() as number)
+        : bond.b.begin,
+    );
+    const endAtom = restruct.atoms.get(
+      sgroup2 instanceof MonomerMicromolecule
+        ? (sgroup2.getAttachmentAtomId() as number)
+        : bond.b.end,
+    );
 
     if (
-      !atom1 ||
-      !atom2 ||
+      !beginAtom ||
+      !endAtom ||
       bond.b.hb1 === undefined ||
       bond.b.hb2 === undefined
     ) {
       return;
     }
+    const p1 =
+      sgroup1 instanceof MonomerMicromolecule
+        ? (sgroup1.pp as Vec2)
+        : beginAtom.a.pp;
 
-    const p1 = Scale.modelToCanvas(atom1.a.pp, render.options);
-    const p2 = Scale.modelToCanvas(atom2.a.pp, render.options);
+    const p2 =
+      sgroup2 instanceof MonomerMicromolecule
+        ? (sgroup2.pp as Vec2)
+        : endAtom.a.pp;
     const hb1 = restruct.molecule.halfBonds.get(bond.b.hb1);
     const hb2 = restruct.molecule.halfBonds.get(bond.b.hb2);
 
     if (!hb1?.dir || !hb2?.dir) return;
 
-    hb1.p = atom1.getShiftedSegmentPosition(options, hb1.dir);
-    hb2.p = atom2.getShiftedSegmentPosition(options, hb2.dir);
-    bond.b.center = Vec2.lc2(atom1.a.pp, 0.5, atom2.a.pp, 0.5);
-    bond.b.len = Vec2.dist(p1, p2);
+    hb1.p = beginAtom.getShiftedSegmentPosition(options, hb1.dir, p1);
+    hb2.p = endAtom.getShiftedSegmentPosition(options, hb2.dir, p2);
+    bond.b.center = Vec2.lc2(p1, 0.5, p2, 0.5);
+    bond.b.len = Vec2.dist(
+      Scale.modelToCanvas(p1, render.options),
+      Scale.modelToCanvas(p2, render.options),
+    );
     bond.b.sb = options.lineWidth * 5;
     /* eslint-disable no-mixed-operators */
     bond.b.sa = Math.max(bond.b.sb, bond.b.len / 2 - options.lineWidth * 2);

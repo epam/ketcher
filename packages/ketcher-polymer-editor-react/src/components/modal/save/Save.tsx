@@ -24,14 +24,15 @@ import { TextArea } from 'components/shared/TextArea';
 import { TextInputField } from 'components/shared/textInputField';
 import { getPropertiesByFormat, SupportedFormats } from 'helpers/formats';
 import { ActionButton } from 'components/shared/actionButton';
-import { Icon, IndigoProvider, Dialog } from 'ketcher-react';
-import { ChemicalMimeType, KetSerializer, StructService } from 'ketcher-core';
+import { IndigoProvider } from 'ketcher-react';
+import {
+  ChemicalMimeType,
+  KetSerializer,
+  StructService,
+  CoreEditor,
+} from 'ketcher-core';
 import { saveAs } from 'file-saver';
-
-interface Props {
-  onClose: () => void;
-  isModalOpen: boolean;
-}
+import { RequiredModalProps } from '../modalContainer';
 
 const options: Array<Option> = [
   { id: 'ket', label: 'Ket' },
@@ -83,7 +84,19 @@ const StyledModal = styled(Modal)({
   },
 });
 
-export const Save = ({ onClose, isModalOpen }: Props): JSX.Element => {
+const ErrorsButton = styled(ActionButton)(({ theme }) => ({
+  backgroundColor: theme.ketcher.color.background.canvas,
+  color: theme.ketcher.color.text.error,
+
+  '&:hover': {
+    backgroundColor: 'initial',
+  },
+}));
+
+export const Save = ({
+  onClose,
+  isModalOpen,
+}: RequiredModalProps): JSX.Element => {
   const [currentFileFormat, setCurrentFileFormat] =
     useState<SupportedFormats>('ket');
   const [currentFileName, setCurrentFileName] = useState('ketcher');
@@ -114,16 +127,16 @@ export const Save = ({ onClose, isModalOpen }: Props): JSX.Element => {
 
   const handleSave = () => {
     const ketSerializer = new KetSerializer();
-    const serializedKet = ketSerializer.serializeMacromolecules();
-    const blob = new Blob([JSON.stringify(serializedKet)], {
+    const editor = CoreEditor.provideEditorInstance();
+    const serializedKet = ketSerializer.serialize(
+      editor.drawingEntitiesManager.micromoleculesHiddenEntities.clone(),
+      editor.drawingEntitiesManager,
+    );
+    const blob = new Blob([serializedKet], {
       type: getPropertiesByFormat(currentFileFormat).mime,
     });
-    saveAs(
-      blob,
-      `${currentFileName}${
-        getPropertiesByFormat(currentFileFormat).extensions[0]
-      }`,
-    );
+    const formatProperties = getPropertiesByFormat(currentFileFormat);
+    saveAs(blob, `${formatProperties.name}${formatProperties.extensions[0]}`);
   };
 
   const handleErrorsClick = () => {

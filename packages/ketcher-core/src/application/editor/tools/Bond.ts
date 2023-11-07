@@ -118,6 +118,9 @@ class PolymerBond implements BaseTool {
     let modelChanges;
 
     if (this.bondRenderer) {
+      // Don't need to do anything if we hover over the first monomer of the bond
+      if (this.bondRenderer?.polymerBond.firstMonomer === renderer.monomer)
+        return;
       const bothPeptides =
         this.bondRenderer?.polymerBond.firstMonomer instanceof Peptide &&
         renderer.monomer instanceof Peptide;
@@ -142,11 +145,18 @@ class PolymerBond implements BaseTool {
     let modelChanges;
 
     if (this.bondRenderer) {
+      // Don't need to do anything if we hover over the first monomer of the bond
+      if (this.bondRenderer?.polymerBond.firstMonomer === renderer.monomer)
+        return;
+      const bothPeptides =
+        this.bondRenderer?.polymerBond.firstMonomer instanceof Peptide &&
+        renderer.monomer instanceof Peptide;
       modelChanges =
         this.editor.drawingEntitiesManager.intendToFinishBondAPCreation(
           renderer.monomer,
           this.bondRenderer?.polymerBond,
           event.attachmentPointName,
+          bothPeptides,
         );
     } else {
       modelChanges =
@@ -369,6 +379,16 @@ class PolymerBond implements BaseTool {
     firstMonomer: BaseMonomer,
     secondMonomer: BaseMonomer,
   ) {
+    // Modal: bond for Peptides couldn't be created automatically
+    if (
+      secondMonomer instanceof Peptide &&
+      firstMonomer instanceof Peptide &&
+      secondMonomer.hasFreeAttachmentPoint &&
+      (!secondMonomer.hasPotentialBonds() || !firstMonomer.hasPotentialBonds())
+    ) {
+      return true;
+    }
+
     // No Modal: Both monomers have only 1 attachment point
     if (
       firstMonomer.unUsedAttachmentPointsNamesList.length === 1 &&

@@ -182,6 +182,12 @@ export class BaseMonomer extends DrawingEntity {
     return hasBonds;
   }
 
+  public hasPotentialBonds() {
+    return Object.values(this.potentialAttachmentPointsToBonds).some(
+      (bond) => !!bond,
+    );
+  }
+
   public getPotentialBond(attachmentPointName: string) {
     return this.potentialAttachmentPointsToBonds[attachmentPointName];
   }

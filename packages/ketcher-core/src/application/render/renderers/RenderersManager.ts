@@ -67,7 +67,10 @@ export class RenderersManager {
     polymerBond.renderer?.moveStart();
     polymerBond.renderer?.moveEnd();
     polymerBond.renderer?.drawSelection();
-    polymerBond.firstMonomer.renderer?.redrawAttachmentPoints();
+    // If we started bond from the specific AP, it needs to be redrawn to face the bond direction
+    if (polymerBond.firstMonomer.chosenFirstAttachmentPointForBond) {
+      polymerBond.firstMonomer.renderer?.redrawAttachmentPoints();
+    }
   }
 
   public showPolymerBondInformation(polymerBond) {

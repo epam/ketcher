@@ -201,6 +201,13 @@ function Editor({ theme }: EditorProps) {
     });
   }, [editor, activeTool]);
 
+  useEffect(() => {
+    editor?.zoomTool.observeCanvasResize();
+    return () => {
+      editor?.zoomTool.destroy();
+    };
+  }, [editor]);
+
   const handleCloseErrorTooltip = () => {
     dispatch(closeErrorTooltip());
   };
@@ -216,9 +223,14 @@ function Editor({ theme }: EditorProps) {
           <svg
             id="polymer-editor-canvas"
             data-testid="ketcher-canvas"
+            preserveAspectRatio="xMidYMid meet"
             ref={canvasRef}
             width="100%"
             height="100%"
+            style={{
+              overflow: 'hidden',
+              overflowClipMargin: 'content-box',
+            }}
           >
             <defs>
               <PeptideAvatar />
@@ -227,6 +239,7 @@ function Editor({ theme }: EditorProps) {
               <PhosphateAvatar />
               <RNABaseAvatar />
             </defs>
+            <g className="drawn-structures"></g>
           </svg>
         </Layout.Main>
 
@@ -270,7 +283,7 @@ function MenuComponent() {
     } else if (name === 'snake-mode') {
       dispatch(selectMode(!isSnakeMode));
       editor.events.selectMode.dispatch(!isSnakeMode);
-    } else {
+    } else if (!['zoom-in', 'zoom-out', 'zoom-reset'].includes(name)) {
       editor.events.selectTool.dispatch(name);
       if (name === 'clear') {
         dispatch(selectTool('select-rectangle'));
@@ -297,8 +310,13 @@ function MenuComponent() {
       <Menu.Group>
         <Menu.Item itemId="bond-single" title="Single Bond (1)" />
       </Menu.Group>
-      <Menu.Group>
+      <Menu.Group divider>
         <Menu.Item itemId="snake-mode" title="Snake mode" />
+      </Menu.Group>
+      <Menu.Group>
+        <Menu.Item itemId="zoom-in" title="Zoom In" />
+        <Menu.Item itemId="zoom-out" title="Zoom Out" />
+        <Menu.Item itemId="zoom-reset" title="Reset Zoom" />
       </Menu.Group>
     </Menu>
   );

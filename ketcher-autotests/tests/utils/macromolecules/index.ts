@@ -1,5 +1,6 @@
 import { expect, Page } from '@playwright/test';
 import { POLYMER_TOGGLER } from '@constants/testIdConstants';
+import { moveMouseToTheMiddleOfTheScreen } from '@utils';
 
 export async function turnOnMacromoleculesEditor(page: Page) {
   await expect(page.getByTestId(POLYMER_TOGGLER)).toBeVisible();
@@ -11,4 +12,11 @@ export async function hideMonomerPreview(page: Page) {
   await page
     .getByTestId('polymer-library-preview')
     .waitFor({ state: 'detached' });
+}
+
+export async function scrollWithMouseWheel(page: Page, zoomLevelDelta: number) {
+  await moveMouseToTheMiddleOfTheScreen(page);
+  await page.keyboard.down('Control');
+  await page.mouse.wheel(0, zoomLevelDelta);
+  await page.keyboard.up('Control');
 }

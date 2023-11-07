@@ -8,12 +8,16 @@ import {
   selectTool,
   takeEditorScreenshot,
   waitForPageInit,
+  moveMouseToTheMiddleOfTheScreen,
 } from '@utils';
-import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
+import {
+  scrollWithMouseWheel,
+  turnOnMacromoleculesEditor,
+} from '@utils/macromolecules';
 
 const MONOMER_NAME_TZA = 'C___Cysteine';
 const MONOMER_ALIAS_TZA = 'C';
-
+const ZOOM_STEP = 200;
 test.describe('Zoom Tool', () => {
   const deltas = { x: 0, y: 200 };
   const peptideCoordinates = { x: 300, y: 300 };
@@ -29,6 +33,7 @@ test.describe('Zoom Tool', () => {
       peptideCoordinates.y,
       0,
     );
+    await moveMouseToTheMiddleOfTheScreen(page);
   });
 
   test.afterEach(async ({ page }) => {
@@ -180,10 +185,9 @@ test.describe('Zoom Tool', () => {
   test('Zoom In & Out selection rectangle with mouse wheel and CTRL', async ({
     page,
   }) => {
-    await page.keyboard.down('Control');
     const selectionStart = { x: 200, y: 200 };
-    const selectionEnd = { x: 400, y: 400 };
-    await page.mouse.wheel(deltas.x, deltas.y);
+    const selectionEnd = { x: 800, y: 800 };
+    await scrollWithMouseWheel(page, ZOOM_STEP);
     await selectRectangleSelectionTool(page);
     await selectRectangleArea(
       page,
@@ -194,24 +198,10 @@ test.describe('Zoom Tool', () => {
     );
     await takeEditorScreenshot(page);
 
-    await page.mouse.wheel(deltas.x, -deltas.y);
-    await selectRectangleArea(
-      page,
-      selectionStart.x,
-      selectionStart.y,
-      selectionEnd.x,
-      selectionEnd.y,
-    );
+    await scrollWithMouseWheel(page, -ZOOM_STEP);
     await takeEditorScreenshot(page);
 
-    await page.mouse.wheel(deltas.x, -deltas.y);
-    await selectRectangleArea(
-      page,
-      selectionStart.x,
-      selectionStart.y,
-      selectionEnd.x,
-      selectionEnd.y,
-    );
+    await scrollWithMouseWheel(page, -ZOOM_STEP);
   });
 
   test('Scroll canvas by mouse wheel', async ({ page }) => {

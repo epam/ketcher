@@ -310,18 +310,13 @@ function MenuComponent() {
       <Menu.Group>
         <Menu.Item itemId="bond-single" title="Single Bond (1)" />
       </Menu.Group>
-      <Menu.Group>
-        <Menu.Item itemId="snake-mode" title="Snake mode" />
-      </Menu.Group>
       <Menu.Group divider>
-        <Menu.Item itemId="bracket" />
+        <Menu.Item itemId="snake-mode" title="Snake mode" />
       </Menu.Group>
       <Menu.Group>
         <Menu.Item itemId="zoom-in" title="Zoom In" />
         <Menu.Item itemId="zoom-out" title="Zoom Out" />
         <Menu.Item itemId="zoom-reset" title="Reset Zoom" />
-        <Menu.Item itemId="settings" />
-        <Menu.Item itemId="help" />
       </Menu.Group>
     </Menu>
   );

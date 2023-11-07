@@ -49,10 +49,8 @@ class MonomerTool implements Tool {
     assert(this.monomerPreviewRenderer);
     const position = Coordinates.canvasToModel(
       new Vec2(
-        this.editor.lastCursorPositionOfCanvas.x -
-          this.monomerPreviewRenderer.width / 2,
-        this.editor.lastCursorPositionOfCanvas.y -
-          this.monomerPreviewRenderer.height / 2,
+        this.editor.lastCursorPositionOfCanvas.x,
+        this.editor.lastCursorPositionOfCanvas.y,
       ),
     );
     const modelChanges = this.editor.drawingEntitiesManager.addMonomer(
@@ -66,7 +64,7 @@ class MonomerTool implements Tool {
   }
 
   mousemove() {
-    const position = Coordinates.viewToModel(
+    const position = Coordinates.canvasToModel(
       new Vec2(
         this.editor.lastCursorPosition.x + this.MONOMER_PREVIEW_OFFSET_X,
         this.editor.lastCursorPosition.y + this.MONOMER_PREVIEW_OFFSET_Y,
@@ -90,6 +88,7 @@ class MonomerTool implements Tool {
       this.monomerPreviewRenderer = new MonomerRenderer(
         this.monomerPreview,
         this.MONOMER_PREVIEW_SCALE_FACTOR,
+        false,
       );
       this.monomerPreviewRenderer?.show(this.editor.theme);
     }

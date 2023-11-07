@@ -24,6 +24,7 @@ import { Peptide } from 'domain/entities/Peptide';
 import { Sugar } from 'domain/entities/Sugar';
 import { RNABase } from 'domain/entities/RNABase';
 import { Phosphate } from 'domain/entities/Phosphate';
+import Coordinates from 'application/editor/shared/coordinates';
 
 class PolymerBond implements BaseTool {
   private bondRenderer?: PolymerBondRenderer;
@@ -49,7 +50,7 @@ class PolymerBond implements BaseTool {
         this.editor.drawingEntitiesManager.addPolymerBond(
           selectedRenderer.monomer,
           selectedRenderer.monomer.position,
-          this.editor.lastCursorPositionOfCanvas,
+          Coordinates.canvasToModel(this.editor.lastCursorPositionOfCanvas),
         );
 
       this.editor.renderersContainer.update(modelChanges);
@@ -61,7 +62,7 @@ class PolymerBond implements BaseTool {
     if (this.bondRenderer) {
       const modelChanges = this.editor.drawingEntitiesManager.movePolymerBond(
         this.bondRenderer.polymerBond,
-        this.editor.lastCursorPositionOfCanvas,
+        Coordinates.canvasToModel(this.editor.lastCursorPositionOfCanvas),
       );
       this.editor.renderersContainer.update(modelChanges);
     }

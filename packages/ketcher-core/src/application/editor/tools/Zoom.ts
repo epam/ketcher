@@ -61,9 +61,7 @@ class ZoomTool implements BaseTool {
   }
 
   static initInstance(drawingEntitiesManager: DrawingEntitiesManager) {
-    if (!ZoomTool._instance) {
-      ZoomTool._instance = new ZoomTool(drawingEntitiesManager);
-    }
+    ZoomTool._instance = new ZoomTool(drawingEntitiesManager);
     return ZoomTool._instance;
   }
 

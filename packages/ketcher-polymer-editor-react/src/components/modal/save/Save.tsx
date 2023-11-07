@@ -15,10 +15,8 @@
  ***************************************************************************/
 
 import { useEffect, useState } from 'react';
-import styled from '@emotion/styled';
 
 import { Modal } from 'components/shared/modal';
-import { DropDown } from 'components/shared/dropDown';
 import { Option } from 'components/shared/dropDown/dropDown';
 import { TextArea } from 'components/shared/TextArea';
 import { TextInputField } from 'components/shared/textInputField';
@@ -30,46 +28,24 @@ import {
   KetSerializer,
   StructService,
   CoreEditor,
+  KetcherLogger,
 } from 'ketcher-core';
 import { saveAs } from 'file-saver';
 import { RequiredModalProps } from '../modalContainer';
+import { LoadingCircles } from '../Open/AnalyzingFile/LoadingCircles';
+import {
+  Form,
+  Loader,
+  Row,
+  StyledDropdown,
+  stylesForExpanded,
+} from './save.styles';
+import styled from '@emotion/styled';
 
 const options: Array<Option> = [
   { id: 'ket', label: 'Ket' },
   { id: 'mol', label: 'MDL Molfile V3000' },
 ];
-
-const Form = styled.form({
-  display: 'flex',
-  flexDirection: 'column',
-  height: '300px',
-});
-
-const Row = styled.div({
-  display: 'flex',
-  justifyContent: 'space-between',
-  marginBottom: '16px',
-});
-
-const StyledDropdown = styled(DropDown)(({ theme }) => ({
-  width: 'calc(50% - 6px)',
-  height: '28px',
-
-  '& .MuiOutlinedInput-root:hover': {
-    border: `1px solid ${theme.ketcher.color.input.border.hover}`,
-  },
-
-  '& .MuiOutlinedInput-root': {
-    border: `1px solid ${theme.ketcher.color.input.border.regular}`,
-    backgroundColor: theme.ketcher.color.background.primary,
-    color: theme.ketcher.color.text.primary,
-    fontFamily: theme.ketcher.font.family.inter,
-  },
-}));
-
-const stylesForExpanded = {
-  border: 'none',
-};
 
 const StyledModal = styled(Modal)({
   '& div.MuiPaper-root': {
@@ -84,15 +60,6 @@ const StyledModal = styled(Modal)({
   },
 });
 
-const ErrorsButton = styled(ActionButton)(({ theme }) => ({
-  backgroundColor: theme.ketcher.color.background.canvas,
-  color: theme.ketcher.color.text.error,
-
-  '&:hover': {
-    backgroundColor: 'initial',
-  },
-}));
-
 export const Save = ({
   onClose,
   isModalOpen,
@@ -101,23 +68,35 @@ export const Save = ({
     useState<SupportedFormats>('ket');
   const [currentFileName, setCurrentFileName] = useState('ketcher');
   const [struct, setStruct] = useState('');
-  const [errors, setErrors] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const indigo = IndigoProvider.getIndigo() as StructService;
+  const editor = CoreEditor.provideEditorInstance();
 
-  const handleSelectChange = async (value) => {
-    setCurrentFileFormat(value);
+  const handleSelectChange = async (fileFormat) => {
+    setCurrentFileFormat(fileFormat);
     const ketSerializer = new KetSerializer();
-    const serializedKet = ketSerializer.serializeMacromolecules();
+    const serializedKet = ketSerializer.serialize(
+      editor.drawingEntitiesManager.micromoleculesHiddenEntities.clone(),
+      editor.drawingEntitiesManager,
+    );
+    if (fileFormat === 'ket') {
+      setStruct(serializedKet);
+      return;
+    }
+
     try {
-      console.log('sending', JSON.stringify(serializedKet));
+      setIsLoading(true);
       const result = await indigo.convert({
-        struct: JSON.stringify(serializedKet),
+        struct: serializedKet,
         output_format: ChemicalMimeType.Mol,
       });
       setStruct(result.struct);
-      console.log(result);
     } catch (error) {
-      console.log(error);
+      editor.events.error.dispatch(error);
+      KetcherLogger.error(error);
+      setCurrentFileFormat('ket');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -127,7 +106,6 @@ export const Save = ({
 
   const handleSave = () => {
     const ketSerializer = new KetSerializer();
-    const editor = CoreEditor.provideEditorInstance();
     const serializedKet = ketSerializer.serialize(
       editor.drawingEntitiesManager.micromoleculesHiddenEntities.clone(),
       editor.drawingEntitiesManager,
@@ -136,22 +114,17 @@ export const Save = ({
       type: getPropertiesByFormat(currentFileFormat).mime,
     });
     const formatProperties = getPropertiesByFormat(currentFileFormat);
-    saveAs(blob, `${formatProperties.name}${formatProperties.extensions[0]}`);
-  };
-
-  const handleErrorsClick = () => {
-    console.log('errors...');
+    saveAs(blob, `${currentFileName}${formatProperties.extensions[0]}`);
   };
 
   useEffect(() => {
     if (currentFileFormat === 'ket') {
       const ketSerializer = new KetSerializer();
-      const serializedKet = ketSerializer.serializeMacromolecules();
-      setStruct(JSON.stringify(serializedKet, null, '\t'));
-      // just an example
-      setErrors('some error');
-    } else {
-      setErrors('');
+      const serializedKet = ketSerializer.serialize(
+        editor.drawingEntitiesManager.micromoleculesHiddenEntities.clone(),
+        editor.drawingEntitiesManager,
+      );
+      setStruct(serializedKet);
     }
   }, [currentFileFormat]);
 
@@ -176,8 +149,13 @@ export const Save = ({
               customStylesForExpanded={stylesForExpanded}
             />
           </Row>
-          <div style={{ display: 'flex', flexGrow: 1 }}>
+          <div style={{ display: 'flex', flexGrow: 1, position: 'relative' }}>
             <TextArea value={struct} readonly selectOnInit />
+            {isLoading && (
+              <Loader>
+                <LoadingCircles />
+              </Loader>
+            )}
           </div>
         </Form>
       </Modal.Content>

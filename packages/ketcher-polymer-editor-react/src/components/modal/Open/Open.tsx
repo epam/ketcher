@@ -25,29 +25,56 @@ import {
   SupportedFormat,
   identifyStructFormat,
   CoreEditor,
+  KetcherLogger,
 } from 'ketcher-core';
-import { OpenFileWrapper } from './Open.styles';
 import { IndigoProvider } from 'ketcher-react';
 import assert from 'assert';
 import { RequiredModalProps } from '../modalContainer';
+import { OpenFileWrapper } from './Open.styles';
+import { Loader } from '../save/save.styles';
+import { LoadingCircles } from './AnalyzingFile/LoadingCircles';
 
 export interface Props {
   onClose: () => void;
   isModalOpen: boolean;
 }
 
-const MODAL_STATES = {
+export const MODAL_STATES = {
   openOptions: 'openOptions',
   textEditor: 'textEditor',
+} as const;
+
+export type MODAL_STATES_VALUES =
+  typeof MODAL_STATES[keyof typeof MODAL_STATES];
+
+const addToCanvas = ({
+  ketSerializer,
+  editor,
+  struct,
+}: {
+  ketSerializer: KetSerializer;
+  editor: CoreEditor;
+  struct: string;
+}) => {
+  const deserialisedKet = ketSerializer.deserializeToDrawingEntities(struct);
+  assert(deserialisedKet);
+  deserialisedKet.drawingEntitiesManager.mergeInto(
+    editor.drawingEntitiesManager,
+  );
+  editor.renderersContainer.update(deserialisedKet.modelChanges);
 };
 
 // TODO: replace after the implementation of the function for processing the structure from the file
 const onOk = async ({
   struct,
   fragment,
+  onCloseCallback,
+  setIsLoading,
 }: {
   struct: string;
   fragment: boolean;
+  onCloseCallback: () => void;
+  setIsLoading: (isLoading: boolean) => void;
 }) => {
   if (fragment) {
     console.log('add fragment');
@@ -56,20 +83,25 @@ const onOk = async ({
   const ketSerializer = new KetSerializer();
   const editor = CoreEditor.provideEditorInstance();
   if (isKet) {
-    const deserialisedKet = ketSerializer.deserializeToDrawingEntities(struct);
-    assert(deserialisedKet);
-    deserialisedKet.drawingEntitiesManager.mergeInto(
-      editor.drawingEntitiesManager,
-    );
-    editor.renderersContainer.update(deserialisedKet.modelChanges);
+    addToCanvas({ struct, ketSerializer, editor });
+    onCloseCallback();
     return;
   }
   const indigo = IndigoProvider.getIndigo() as StructService;
-  const ketStruct = await indigo.convert({
-    struct,
-    output_format: ChemicalMimeType.KET,
-  });
-  ketSerializer.deserializeMacromolecule(ketStruct.struct);
+  try {
+    setIsLoading(true);
+    const ketStruct = await indigo.convert({
+      struct,
+      output_format: ChemicalMimeType.KET,
+    });
+    addToCanvas({ struct: ketStruct.struct, ketSerializer, editor });
+    onCloseCallback();
+  } catch (error) {
+    editor.events.error.dispatch(error);
+    KetcherLogger.error(error);
+  } finally {
+    setIsLoading(false);
+  }
 };
 const isAnalyzingFile = false;
 const errorHandler = (error) => console.log(error);
@@ -77,10 +109,13 @@ const errorHandler = (error) => console.log(error);
 const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
   const [structStr, setStructStr] = useState<string>('');
   const [fileName, setFileName] = useState<string>('');
+  const [isLoading, setIsLoading] = useState(false);
   const [opener, setOpener] = useState<
     { chosenOpener: FileOpener } | undefined
   >();
-  const [currentState, setCurrentState] = useState(MODAL_STATES.openOptions);
+  const [currentState, setCurrentState] = useState<MODAL_STATES_VALUES>(
+    MODAL_STATES.openOptions,
+  );
 
   useEffect(() => {
     fileOpener().then((chosenOpener) => {
@@ -106,13 +141,11 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
   };
 
   const copyHandler = () => {
-    onOk({ struct: structStr, fragment: true });
-    onCloseCallback();
+    onOk({ struct: structStr, fragment: true, onCloseCallback, setIsLoading });
   };
 
   const openHandler = () => {
-    onOk({ struct: structStr, fragment: false });
-    onCloseCallback();
+    onOk({ struct: structStr, fragment: false, onCloseCallback, setIsLoading });
   };
 
   const getButtons = () => {
@@ -145,7 +178,7 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
       onClose={onCloseCallback}
     >
       <Modal.Content>
-        <OpenFileWrapper>
+        <OpenFileWrapper currentState={currentState}>
           <ViewSwitcher
             isAnalyzingFile={isAnalyzingFile}
             fileName={fileName}
@@ -157,6 +190,11 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
             value={structStr}
             inputHandler={setStructStr}
           />
+          {isLoading && (
+            <Loader>
+              <LoadingCircles />
+            </Loader>
+          )}
         </OpenFileWrapper>
       </Modal.Content>
       <Modal.Footer>{getButtons()}</Modal.Footer>

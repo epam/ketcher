@@ -1,5 +1,12 @@
 import styled from '@emotion/styled';
+import { MODAL_STATES, MODAL_STATES_VALUES } from './Open';
 
-export const OpenFileWrapper = styled.div`
-  padding: 10px 12px;
+interface OpenFileWrapperProps {
+  currentState: MODAL_STATES_VALUES;
+}
+
+export const OpenFileWrapper = styled.div<OpenFileWrapperProps>`
+  position: relative;
+  padding: ${({ currentState }) =>
+    currentState === MODAL_STATES.openOptions ? '10px 12px' : '0'};
 `;

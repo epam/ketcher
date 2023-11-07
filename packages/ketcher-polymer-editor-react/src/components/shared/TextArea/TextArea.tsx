@@ -28,6 +28,7 @@ export type TextEditorProps = {
 
 const StyledTextarea = styled.textarea`
   min-width: 430px;
+  padding: 12px;
   width: 100%;
   height: 100%;
   overflow: auto;
@@ -36,17 +37,14 @@ const StyledTextarea = styled.textarea`
   box-sizing: border-box;
   outline: transparent;
   border: none;
-  padding: 8px;
   color: ${({ theme }) => theme.ketcher.color.input.text.default};
   font-size: ${({ theme }) => theme.ketcher.font.size.regular};
-  background-color: ${({ theme }) =>
-    theme.ketcher.color.input.background.disabled};
+  background-color: ${({ theme, readOnly }) =>
+    readOnly
+      ? theme.ketcher.color.input.background.disabled
+      : theme.ketcher.color.input.background.primary};
 
   ${({ theme }) => scrollbarThin(theme)};
-
-  &:hover {
-    cursor: ${(props) => props.readOnly && 'not-allowed'};
-  }
 `;
 
 export const TextArea = ({

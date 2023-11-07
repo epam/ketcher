@@ -51,7 +51,6 @@ const StyledIcon = styled(Icon)({
 
 const Content = styled(DialogContent)`
   padding: 0;
-  padding-top: 10px !important;
   font-size: ${({ theme }) => theme.ketcher.font.size.medium};
   letter-spacing: 1.25px;
   line-height: 17px;

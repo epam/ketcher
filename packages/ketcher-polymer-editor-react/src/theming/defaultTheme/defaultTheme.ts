@@ -46,6 +46,7 @@ export const defaultTheme: EditorTheme = {
     },
     border: {
       primary: '#CAD3DD',
+      secondary: '#7C7C7F',
     },
     text: {
       primary: '#333333',
@@ -70,7 +71,7 @@ export const defaultTheme: EditorTheme = {
         active: '#167782',
         hover: '#00838F',
         clicked: '#4FB3BF',
-        disabled: 'rgba(0, 131, 143, 0.4)',
+        disabled: 'rgba(113, 113, 113, 0.4)',
       },
       secondary: {
         active: '#585858',

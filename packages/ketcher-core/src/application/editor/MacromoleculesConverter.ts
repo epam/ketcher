@@ -273,10 +273,13 @@ export class MacromoleculesConverter {
           );
         command.merge(polymerBondAdditionCommand);
 
+        const secondMonomer = sgroupToMonomer.get(endAtomSgroup);
+        assert(secondMonomer);
+
         command.merge(
           drawingEntitiesManager.finishPolymerBondCreation(
             polymerBond,
-            sgroupToMonomer.get(endAtomSgroup),
+            secondMonomer,
             beginAtomAttachmentPointNumber,
             endAtomAttachmentPointNumber,
           ),

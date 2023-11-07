@@ -88,7 +88,7 @@ export const Modal = ({
       style: {
         minWidth: '20vw',
         background: theme.ketcher.color.background.canvas,
-        borderRadius: '8px',
+        borderRadius: '4px',
         color: theme.ketcher.color.text.primary,
       },
     }),
@@ -128,14 +128,18 @@ export const Modal = ({
       disableEscapeKeyDown={!showCloseButton}
       className={className}
     >
-      <Header>
-        <Title>{title}</Title>
-        {showCloseButton && (
-          <IconButton title={'Close window'} onClick={onClose}>
-            <StyledIcon name={'close'} />
-          </IconButton>
-        )}
-      </Header>
+      {title || showCloseButton ? (
+        <Header>
+          <Title>{title}</Title>
+          {showCloseButton && (
+            <IconButton title={'Close window'} onClick={onClose}>
+              <StyledIcon name={'close'} />
+            </IconButton>
+          )}
+        </Header>
+      ) : (
+        ''
+      )}
 
       {subcomponents.Content}
 

@@ -89,7 +89,7 @@ export const RnaAccordion = ({
   const editor = useAppSelector(selectEditor);
 
   const [expandedAccordion, setExpandedAccordion] =
-    useState<RnaBuilderItem | null>(RnaBuilderPresetsItem.Presets);
+    useState<RnaBuilderItem | null>(activeRnaBuilderItem);
 
   const { show } = useContextMenu({ id: CONTEXT_MENU_ID.FOR_RNA });
 
@@ -149,8 +149,8 @@ export const RnaAccordion = ({
   useEffect(() => {
     dispatch(
       setActiveRnaBuilderItem(
-        isEditMode && activePreset.presetInList
-          ? expandedAccordion
+        isEditMode && activePreset
+          ? activeRnaBuilderItem
           : RnaBuilderPresetsItem.Presets,
       ),
     );

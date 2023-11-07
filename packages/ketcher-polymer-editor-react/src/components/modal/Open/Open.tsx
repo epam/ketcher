@@ -20,11 +20,7 @@ import { ActionButton } from 'components/shared/actionButton';
 import { FileOpener, fileOpener } from './fileOpener';
 import { CoreEditor, KetSerializer } from 'ketcher-core';
 import assert from 'assert';
-
-export interface Props {
-  onClose: () => void;
-  isModalOpen: boolean;
-}
+import { RequiredModalProps } from '../modalContainer';
 
 const MODAL_STATES = {
   openOptions: 'openOptions',
@@ -48,7 +44,7 @@ const onOk = ({ struct, fragment }) => {
 const isAnalyzingFile = false;
 const errorHandler = (error) => console.log(error);
 
-const Open = ({ isModalOpen, onClose }: Props) => {
+const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
   const [structStr, setStructStr] = useState<string>('');
   const [fileName, setFileName] = useState<string>('');
   const [opener, setOpener] = useState<

@@ -28,11 +28,7 @@ import { ActionButton } from 'components/shared/actionButton';
 import { Icon } from 'ketcher-react';
 import { CoreEditor, KetSerializer } from 'ketcher-core';
 import { saveAs } from 'file-saver';
-
-interface Props {
-  onClose: () => void;
-  isModalOpen: boolean;
-}
+import { RequiredModalProps } from '../modalContainer';
 
 const options: Array<Option> = [
   { id: 'ket', label: 'Ket' },
@@ -89,7 +85,10 @@ const ErrorsButton = styled(ActionButton)(({ theme }) => ({
   },
 }));
 
-export const Save = ({ onClose, isModalOpen }: Props): JSX.Element => {
+export const Save = ({
+  onClose,
+  isModalOpen,
+}: RequiredModalProps): JSX.Element => {
   const [currentFileFormat, setCurrentFileFormat] =
     useState<SupportedFormats>('ket');
   const [currentFileName, setCurrentFileName] = useState('ketcher');

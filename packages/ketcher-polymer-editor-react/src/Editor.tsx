@@ -70,6 +70,7 @@ import {
   PhosphateAvatar,
   RNABaseAvatar,
 } from 'components/shared/monomerOnCanvas';
+import { MonomerConnectionOnlyProps } from 'components/modal/modalContainer/types';
 import { calculatePreviewPosition } from 'helpers';
 import StyledPreview from 'components/shared/MonomerPreview';
 
@@ -148,6 +149,15 @@ function Editor({ theme }: EditorProps) {
       });
       dispatch(selectTool('select-rectangle'));
       editor.events.selectTool.dispatch('select-rectangle');
+      editor.events.openMonomerConnectionModal.add(
+        (additionalProps: MonomerConnectionOnlyProps) =>
+          dispatch(
+            openModal({
+              name: 'monomerConnection',
+              additionalProps,
+            }),
+          ),
+      );
 
       if (!keyboardEventListener) {
         keyboardEventListener = (e: KeyboardEvent) => {

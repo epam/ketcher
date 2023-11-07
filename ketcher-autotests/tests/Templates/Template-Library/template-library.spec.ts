@@ -57,7 +57,7 @@ async function editAndClearTemplateName(
   templateName: string,
 ) {
   await editStructureTemplate(page, templateCategory, templateName);
-  await page.getByTestId('file-name-input').click();
+  await page.getByTestId('name-input').click();
   await page.keyboard.press('Control+a');
   await page.keyboard.press('Delete');
 }
@@ -148,14 +148,14 @@ test.describe('Templates - Template Library', () => {
     // Test case: EPMLSOPKET-1699
     // Verify if structure name won't change if field will contain just spaces
     await editAndClearTemplateName(page, 'β-D-Sugars', 'β-D-Allopyranose');
-    await page.getByTestId('file-name-input').fill('   ');
+    await page.getByTestId('name-input').fill('   ');
     await page.getByRole('button', { name: 'Edit', exact: true }).click();
     await page.getByText('β-D-Sugars').click();
   });
 
   test('Text field 128 characters limit test ', async ({ page }) => {
     // Verify maximum character validation on the name field
-    const textField = page.getByTestId('file-name-input');
+    const textField = page.getByTestId('name-input');
     const number = 129;
     const inputText = 'A'.repeat(number);
     await editAndClearTemplateName(page, 'β-D-Sugars', 'β-D-Allopyranose');

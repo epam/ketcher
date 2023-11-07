@@ -14,7 +14,7 @@ import {
   checkSmartsWarnings,
   setBondTopology,
   setBondType,
-  setCustomQueryForBond,
+  setCustomQuery,
 } from '../utils';
 
 const defaultFileFormat = 'MDL Molfile V2000';
@@ -219,7 +219,7 @@ test.describe('Checking bond attributes in SMARTS format', () => {
      */
     await setAndCheckBondProperties(
       page,
-      setCustomQueryForBond,
+      setCustomQuery,
       '~,=',
       '[#6](-[#6])(-[#6])~,=[#6]',
     );

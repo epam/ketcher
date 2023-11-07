@@ -79,18 +79,11 @@ export async function setChirality(page: Page, chirality: chirality) {
   await page.getByRole('option', { name: chirality, exact: true }).click();
 }
 
-// Custom query - atom properties:
+// Custom query:
 
-export async function setCustomQueryForAtom(page: Page, customQuery: string) {
+export async function setCustomQuery(page: Page, customQuery: string) {
   await page.getByTestId('custom-query-checkbox').check();
-  await page.getByTestId('atom-custom-query').fill(customQuery);
-}
-
-// Custom query - bond properties:
-
-export async function setCustomQueryForBond(page: Page, customQuery: string) {
-  await page.getByTestId('custom-query-checkbox').check();
-  await page.getByTestId('bond-custom-query').fill(customQuery);
+  await page.getByTestId('custom-query-value').fill(customQuery);
 }
 
 // Bond attributes:

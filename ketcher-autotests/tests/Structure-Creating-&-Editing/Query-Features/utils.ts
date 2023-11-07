@@ -17,7 +17,7 @@ type aromaticity = 'aromatic' | 'aliphatic' | '';
 type chirality = 'clockwise' | 'anticlockwise' | '';
 
 export async function setAromaticity(page: Page, aromaticity: aromaticity) {
-  await page.getByTestId('aromaticity-input').click();
+  await page.getByTestId('aromaticity-input-span').click();
   await page.getByRole('option', { name: aromaticity }).click();
 }
 
@@ -35,7 +35,7 @@ export async function setImplicitHCount(
 }
 
 export async function setChirality(page: Page, chirality: chirality) {
-  await page.getByTestId('chirality-input').click();
+  await page.getByTestId('chirality-input-span').click();
   await page.getByRole('option', { name: chirality, exact: true }).click();
 }
 

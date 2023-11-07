@@ -5,7 +5,10 @@ import {
   takeEditorScreenshot,
   addMonomerToCanvas,
 } from '@utils';
-import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
+import {
+  hideMonomerPreview,
+  turnOnMacromoleculesEditor,
+} from '@utils/macromolecules';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 /* eslint-disable no-magic-numbers */
 
@@ -25,20 +28,41 @@ test.describe('Polymer Bond Tool', () => {
     Description: Polymer bond tool
     */
     // Choose peptide
-    await page.getByText('Tza').click();
+    const MONOMER_NAME = 'Tza___3-thiazolylalanine';
+    const MONOMER_ALIAS = 'Tza';
 
-    // Create 4 peptides on canvas
-    await page.mouse.click(300, 300);
-    await page.mouse.click(400, 400);
-    await page.mouse.click(500, 500);
-    await page.mouse.click(500, 200);
-
-    // Get 4 peptides locators
-    const peptides = await page.getByText('Tza').locator('..');
-    const peptide1 = peptides.nth(0);
-    const peptide2 = peptides.nth(1);
-    const peptide3 = peptides.nth(2);
-    const peptide4 = peptides.nth(3);
+    const peptide1 = await addMonomerToCanvas(
+      page,
+      MONOMER_NAME,
+      MONOMER_ALIAS,
+      300,
+      300,
+      0,
+    );
+    const peptide2 = await addMonomerToCanvas(
+      page,
+      MONOMER_NAME,
+      MONOMER_ALIAS,
+      400,
+      400,
+      1,
+    );
+    const peptide3 = await addMonomerToCanvas(
+      page,
+      MONOMER_NAME,
+      MONOMER_ALIAS,
+      500,
+      500,
+      2,
+    );
+    const peptide4 = await addMonomerToCanvas(
+      page,
+      MONOMER_NAME,
+      MONOMER_ALIAS,
+      500,
+      200,
+      3,
+    );
 
     // Select bond tool
     await selectSingleBondTool(page);
@@ -46,29 +70,13 @@ test.describe('Polymer Bond Tool', () => {
     await takeEditorScreenshot(page);
 
     // Create bonds between peptides, taking screenshots in middle states
-    await peptide1.hover();
-    await page.mouse.down();
-    await peptide2.hover();
-    await page.mouse.up();
-
-    // Get rid of preview
-    const coords = [100, 100];
-    await page.mouse.move(coords[0], coords[1]);
+    await bondTwoMonomers(page, peptide1, peptide2);
 
     await takeEditorScreenshot(page);
 
-    await peptide2.hover();
-    await page.mouse.down();
-    await peptide3.hover();
-    await page.mouse.up();
+    await bondTwoMonomers(page, peptide2, peptide3);
 
-    await peptide4.hover();
-    await page.mouse.down();
-    await peptide3.hover();
-    await page.mouse.up();
-
-    // Get rid of preview
-    await page.mouse.move(coords[0], coords[1]);
+    await bondTwoMonomers(page, peptide4, peptide3);
   });
 
   test('Create bond between two chems', async ({ page }) => {
@@ -95,9 +103,12 @@ test.describe('Polymer Bond Tool', () => {
     // Create bonds between chems, taking screenshots in middle states
     await chem1.hover();
     await page.mouse.down();
+    await hideMonomerPreview(page);
+
     await takeEditorScreenshot(page);
     await chem2.hover();
     await page.mouse.up();
+    await hideMonomerPreview(page);
   });
 });
 

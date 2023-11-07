@@ -39,6 +39,7 @@ import { initLib } from '../state/templates/init-lib';
 
 interface AppCallProps {
   checkServer: () => void;
+  togglerComponent?: JSX.Element;
 }
 
 const muiTheme = createTheme({
@@ -80,7 +81,10 @@ const App = (props: Props) => {
         <AppHiddenContainer />
         <Editor className={classes.canvas} />
 
-        <TopToolbarContainer className={classes.top} />
+        <TopToolbarContainer
+          className={classes.top}
+          togglerComponent={props.togglerComponent}
+        />
         <LeftToolbarContainer className={classes.left} />
         <BottomToolbarContainer className={classes.bottom} />
         <RightToolbarContainer className={classes.right} />

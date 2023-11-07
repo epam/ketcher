@@ -18,6 +18,7 @@ import {
 import { selectRectangleSelectionTool, selectTopPanelButton } from './tools';
 import { getLeftTopBarSize } from './common/getLeftTopBarSize';
 import { emptyFunction } from '@utils/common/helpers';
+import { hideMonomerPreview } from '@utils/macromolecules';
 
 export async function drawBenzeneRing(page: Page) {
   await page.getByRole('button', { name: 'Benzene (T)' }).click();
@@ -230,6 +231,7 @@ export async function addMonomerToCanvas(
 ) {
   await page.getByTestId(monomerFullName).click();
   await page.mouse.click(positionX, positionY);
+  await hideMonomerPreview(page);
   return await page
     .locator(`//\*[name() = 'g' and ./\*[name()='text' and .='${alias}']]`)
     .nth(index);

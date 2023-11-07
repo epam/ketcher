@@ -28,6 +28,14 @@ exports[`Polymer Bond Renderer should render bond 1`] = `
       y2="4000"
     />
   </g>
-  <defs />
+  <defs>
+    <symbol
+      id="peptide"
+    >
+      <path
+        class="monomer-body"
+      />
+    </symbol>
+  </defs>
 </svg>
 `;

@@ -15,7 +15,6 @@
  ***************************************************************************/
 import { Modal } from 'components/shared/modal';
 import { useCallback } from 'react';
-import { ActionButton } from 'components/shared/actionButton';
 import { useAppDispatch, useAppSelector } from 'hooks';
 import {
   deletePreset,
@@ -24,6 +23,7 @@ import {
   setActivePreset,
   setIsEditMode,
 } from 'state/rna-builder';
+import { StyledActionButton } from 'components/modal/Delete/styledComponents';
 
 export interface Props {
   onClose: () => void;
@@ -65,13 +65,13 @@ const Delete = ({ isModalOpen, onClose }: Props) => {
         </div>
       </Modal.Content>
       <Modal.Footer>
-        <ActionButton
+        <StyledActionButton
           key="cancel"
           clickHandler={cancelHandler}
           label="Cancel"
           styleType="secondary"
         />
-        <ActionButton
+        <StyledActionButton
           key="delete"
           clickHandler={deleteHandler}
           label="Delete"

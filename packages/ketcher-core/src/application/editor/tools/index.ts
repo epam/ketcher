@@ -19,6 +19,7 @@ import { RnaPresetTool } from 'application/editor/tools/RnaPreset';
 import { SelectRectangle } from 'application/editor/tools/SelectRectangle';
 import { PolymerBond } from 'application/editor/tools/Bond';
 import { EraserTool } from 'application/editor/tools/Erase';
+import { ClearTool } from 'application/editor/tools/Clear';
 
 export const toolsMap: Record<string, ToolConstructorInterface> = {
   monomer: MonomerTool,
@@ -26,4 +27,5 @@ export const toolsMap: Record<string, ToolConstructorInterface> = {
   'select-rectangle': SelectRectangle,
   'bond-single': PolymerBond,
   erase: EraserTool,
+  clear: ClearTool,
 };

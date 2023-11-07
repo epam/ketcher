@@ -3,29 +3,32 @@ import {
   IKetMonomerTemplate,
 } from 'application/formatters/types/ket';
 import { Struct, Vec2 } from 'domain/entities';
-import { CoreEditor } from 'application/editor';
+import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 
 export function monomerToDrawingEntity(
   node: IKetMonomerNode,
   template: IKetMonomerTemplate,
   struct: Struct,
+  drawingEntitiesManager: DrawingEntitiesManager,
 ) {
-  const editor = CoreEditor.provideEditorInstance();
-
-  return editor.drawingEntitiesManager.addMonomer(
+  return drawingEntitiesManager.addMonomer(
     {
       struct,
       label: template.alias || template.id,
       colorScheme: undefined,
       favorite: false,
       props: {
+        id: template.id,
         Name: template.fullName || template.alias || template.id,
         MonomerNaturalAnalogCode: template.naturalAnalogShort,
         MonomerName: template.fullName || template.alias || template.id,
-        MonomerType: template.monomerClass,
+        MonomerFullName: template.fullName,
+        MonomerType: template.classHELM,
+        MonomerClass: template.class,
       },
+      attachmentPoints: template.attachmentPoints,
+      seqId: node.seqid,
     },
     new Vec2(node.position.x, node.position.y),
-    Number(node.id),
   );
 }

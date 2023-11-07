@@ -33,13 +33,16 @@ import { provideEditorSettings } from 'application/editor/editorSettings';
 import { Scale } from 'domain/helpers';
 import { Peptide } from 'domain/entities/Peptide';
 import { Chem } from 'domain/entities/Chem';
+import { Struct } from 'domain/entities/struct';
+import { Pool } from 'domain/entities/pool';
+import { SGroupForest } from 'domain/entities/sgroupForest';
 
 const HORIZONTAL_DISTANCE_FROM_MONOMER = 50;
 const VERTICAL_DISTANCE_FROM_MONOMER = 60;
 const DISTANCE_FROM_RIGHT = 70;
 const DISTANCE_BETWEEN_MONOMERS = 30;
-const MONOMER_START_X_POSITION = 40;
-const MONOMER_START_Y_POSITION = 40;
+const MONOMER_START_X_POSITION = 70;
+const MONOMER_START_Y_POSITION = 70;
 
 type RnaPresetAdditionParams = {
   sugar: MonomerItemType;
@@ -53,7 +56,7 @@ type RnaPresetAdditionParams = {
 export class DrawingEntitiesManager {
   public monomers: Map<number, BaseMonomer> = new Map();
   public polymerBonds: Map<number, PolymerBond> = new Map();
-
+  public micromoleculesHiddenEntities: Struct = new Struct();
   get selectedEntities() {
     return this.allEntities.filter(
       ([, drawingEntity]) => drawingEntity.selected,
@@ -76,11 +79,20 @@ export class DrawingEntitiesManager {
     return mergedCommand;
   }
 
-  public addMonomer(monomerItem: MonomerItemType, position: Vec2, id?: number) {
+  public deleteAllEntities() {
+    const mergedCommand = new Command();
+    this.allEntities.forEach(([, drawingEntity]) => {
+      const command = this.deleteDrawingEntity(drawingEntity);
+      mergedCommand.merge(command);
+    });
+    return mergedCommand;
+  }
+
+  public addMonomer(monomerItem: MonomerItemType, position: Vec2) {
     const [Monomer] = monomerFactory(monomerItem);
     const monomer = new Monomer(monomerItem, position);
     monomer.moveAbsolute(position);
-    this.monomers.set(id || monomer.id, monomer);
+    this.monomers.set(monomer.id, monomer);
 
     const command = new Command();
     const operation = new MonomerAddOperation(monomer);
@@ -286,17 +298,16 @@ export class DrawingEntitiesManager {
   }
 
   public finishPolymerBondCreation(
-    polymerBond,
-    secondMonomer,
-    firstMonomerAttachmentPoint,
-    secondMonomerAttachmentPoint,
+    polymerBond: PolymerBond,
+    secondMonomer: BaseMonomer,
+    firstMonomerAttachmentPoint: string,
+    secondMonomerAttachmentPoint: string,
   ) {
     const command = new Command();
 
     polymerBond.setSecondMonomer(secondMonomer);
     polymerBond.firstMonomer.setBond(firstMonomerAttachmentPoint, polymerBond);
     assert(polymerBond.secondMonomer);
-    assert(secondMonomer.renderer);
     polymerBond.secondMonomer.setBond(
       secondMonomerAttachmentPoint,
       polymerBond,
@@ -363,6 +374,7 @@ export class DrawingEntitiesManager {
 
     if (
       availableAttachmentPointForBondEnd === 'R2' &&
+      monomer.hasAttachmentPoint('R1') &&
       !bond.firstMonomer.isAttachmentPointUsed('R1')
     ) {
       bond.firstMonomer.removePotentialBonds();
@@ -372,6 +384,7 @@ export class DrawingEntitiesManager {
     }
 
     if (
+      monomer.hasAttachmentPoint('R2') &&
       !monomer.isAttachmentPointUsed('R2') &&
       bond.firstMonomer.getPotentialAttachmentPointByBond(bond) === 'R1'
     ) {
@@ -419,6 +432,7 @@ export class DrawingEntitiesManager {
       polymerBond.firstMonomer.getPotentialAttachmentPointByBond(
         polymerBond,
       ) === 'R1' &&
+      polymerBond.firstMonomer.hasAttachmentPoint('R2') &&
       !polymerBond.firstMonomer.isAttachmentPointUsed('R2')
     ) {
       polymerBond.firstMonomer.removePotentialBonds();
@@ -780,5 +794,35 @@ export class DrawingEntitiesManager {
     });
 
     return command;
+  }
+
+  public setMicromoleculesHiddenEntities(struct: Struct) {
+    struct.mergeInto(this.micromoleculesHiddenEntities);
+    this.micromoleculesHiddenEntities.atoms = new Pool();
+    this.micromoleculesHiddenEntities.bonds = new Pool();
+    this.micromoleculesHiddenEntities.halfBonds = new Pool();
+    this.micromoleculesHiddenEntities.sgroups = new Pool();
+    this.micromoleculesHiddenEntities.functionalGroups = new Pool();
+    this.micromoleculesHiddenEntities.sGroupForest = new SGroupForest();
+    this.micromoleculesHiddenEntities.frags = new Pool();
+  }
+
+  public clearMicromoleculesHiddenEntities() {
+    this.micromoleculesHiddenEntities = new Struct();
+  }
+
+  public mergeInto(targetDrawingEntitiesManager: DrawingEntitiesManager) {
+    this.monomers.forEach((monomer) => {
+      targetDrawingEntitiesManager.monomers.set(monomer.id, monomer);
+    });
+    this.polymerBonds.forEach((polymerBond) => {
+      targetDrawingEntitiesManager.polymerBonds.set(
+        polymerBond.id,
+        polymerBond,
+      );
+    });
+    this.micromoleculesHiddenEntities.mergeInto(
+      targetDrawingEntitiesManager.micromoleculesHiddenEntities,
+    );
   }
 }

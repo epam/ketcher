@@ -131,7 +131,7 @@ export class AttachmentPoint {
       this.monomer.id ===
       this.monomer.attachmentPointsToBonds[this.attachmentPointName]
         ?.firstMonomer?.id;
-
+    const isAttachmentpointR1 = this.attachmentPointName === 'R1';
     if (!this.isUsed) {
       angleDegrees = this.initialAngle;
     } else if (
@@ -140,7 +140,7 @@ export class AttachmentPoint {
         this.attachmentPointName
       ]?.renderer.isMonomersOnSameHorizontalLine()
     ) {
-      angleRadians = flip ? Math.PI : 0;
+      angleRadians = isAttachmentpointR1 ? 0 : Math.PI;
       angleDegrees = Vec2.radiansToDegrees(angleRadians);
     } else {
       const angleRadians = this.rotateToAngle(

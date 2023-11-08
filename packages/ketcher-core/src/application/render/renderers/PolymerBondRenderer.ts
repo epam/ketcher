@@ -165,8 +165,26 @@ export class PolymerBondRenderer extends BaseRenderer {
     );
   }
 
-  private updateSnakeBondPath(startPosition, endPosition) {
+  private updateSnakeBondPath(
+    startPosition: Vec2,
+    endPosition: Vec2,
+    reCheckAttachmentpoint = true,
+  ) {
+    const isR1TheCurrentAttachmentpointOfFirstMonomer =
+      this.polymerBond.firstMonomer.getAttachmentPointByBond(
+        this.polymerBond,
+      ) === 'R1' ||
+      this.polymerBond.firstMonomer.getPotentialAttachmentPointByBond(
+        this.polymerBond,
+      ) === 'R1';
     if (this.isSecondMonomerBottomRight(startPosition, endPosition)) {
+      if (
+        isR1TheCurrentAttachmentpointOfFirstMonomer &&
+        reCheckAttachmentpoint
+      ) {
+        this.updateSnakeBondPath(endPosition, startPosition, false);
+        return;
+      }
       this.addLine(
         LINE_DIRECTION.Horizontal,
         LINE_FROM_MONOMER_LENGTH + this.getMonomerWidth() / 2,
@@ -210,6 +228,13 @@ export class PolymerBondRenderer extends BaseRenderer {
           this.getMonomerWidth() / 2,
       );
     } else if (this.isSecondMonomerBottomLeft(startPosition, endPosition)) {
+      if (
+        isR1TheCurrentAttachmentpointOfFirstMonomer &&
+        reCheckAttachmentpoint
+      ) {
+        this.updateSnakeBondPath(endPosition, startPosition, false);
+        return;
+      }
       this.addLine(
         LINE_DIRECTION.Horizontal,
         LINE_FROM_MONOMER_LENGTH + this.getMonomerWidth() / 2,
@@ -241,6 +266,13 @@ export class PolymerBondRenderer extends BaseRenderer {
         LINE_FROM_MONOMER_LENGTH + this.getMonomerWidth() / 2,
       );
     } else if (this.isSecondMonomerTopLeft(startPosition, endPosition)) {
+      if (
+        isR1TheCurrentAttachmentpointOfFirstMonomer &&
+        reCheckAttachmentpoint
+      ) {
+        this.updateSnakeBondPath(endPosition, startPosition, false);
+        return;
+      }
       this.addLine(
         LINE_DIRECTION.Horizontal,
         LINE_FROM_MONOMER_LENGTH + this.getMonomerWidth() / 2,

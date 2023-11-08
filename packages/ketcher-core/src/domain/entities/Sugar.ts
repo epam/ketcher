@@ -27,14 +27,14 @@ export class Sugar extends BaseMonomer {
       this.hasAttachmentPoint('R3') &&
       !this.isAttachmentPointUsed('R3')
     ) {
-      return 'R1';
+      return 'R3';
     }
     if (
       monomer instanceof Phosphate &&
       this.hasAttachmentPoint('R1') &&
       !this.isAttachmentPointUsed('R1')
     ) {
-      return 'R2';
+      return 'R1';
     }
     return this.firstFreeAttachmentPoint;
   }

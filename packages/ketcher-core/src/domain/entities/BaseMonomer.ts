@@ -138,6 +138,10 @@ export abstract class BaseMonomer extends DrawingEntity {
     return Boolean(this.firstFreeAttachmentPoint);
   }
 
+  public isAttachmentPointExistAndFree(attachmentPoint: AttachmentPointName){
+        return this.hasAttachmentPoint(attachmentPoint) && !this.isAttachmentPointUsed(attachmentPoint)
+  }
+
   public setRenderer(renderer: BaseMonomerRenderer) {
     super.setBaseRenderer(renderer as BaseRenderer);
     this.renderer = renderer;

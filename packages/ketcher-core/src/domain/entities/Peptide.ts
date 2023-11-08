@@ -1,23 +1,30 @@
 import { BaseMonomer } from './BaseMonomer';
 
 export class Peptide extends BaseMonomer {
+
   public getValidSourcePoint(monomer: BaseMonomer) {
-    if (
-      monomer.hasAttachmentPoint('R1') &&
-      !monomer.isAttachmentPointUsed('R1')
-    ) {
-      return this.R1AttachmentPoint;
-    }
-    return this.R2AttachmentPoint;
+    
+        if (monomer.isAttachmentPointExistAndFree('R1') && this.isAttachmentPointExistAndFree('R2')) {
+          
+          return 'R2';
+
+        }
+        if (this.isAttachmentPointExistAndFree('R1') && monomer.isAttachmentPointExistAndFree('R2') ) {
+          return 'R1';
+        }
+    
+    return this.firstFreeAttachmentPoint;
   }
 
   public getValidTargetPoint(monomer: BaseMonomer) {
-    if (
-      monomer.hasAttachmentPoint('R2') &&
-      !monomer.isAttachmentPointUsed('R2')
-    ) {
-      return this.R2AttachmentPoint;
-    }
-    return this.R1AttachmentPoint;
+
+      if (this.isAttachmentPointExistAndFree('R1') && monomer.isAttachmentPointExistAndFree('R2') ) {
+        return 'R1';
+      }
+        if (monomer.isAttachmentPointExistAndFree('R1') && this.isAttachmentPointExistAndFree('R2')) {
+          return 'R2';
+        }
+
+    return this.firstFreeAttachmentPoint;
   }
 }

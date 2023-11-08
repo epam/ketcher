@@ -349,17 +349,12 @@ export class DrawingEntitiesManager {
     const command = new Command();
     monomer.turnOnHover();
     monomer.turnOnAttachmentPointsVisibility();
-    const availableAttachmentPointForBondEnd =
-      monomer.availableAttachmentPointForBondEnd;
-    if (availableAttachmentPointForBondEnd) {
-      monomer.setPotentialBond(availableAttachmentPointForBondEnd, bond);
-    }
     bond.firstMonomer.removePotentialBonds();
     monomer.removePotentialBonds();
-    const firstValidAttPoint = monomer.getValidSourcePoint(bond.firstMonomer);
-    const secondValidAttPonint = monomer.getValidTargetPoint(bond.firstMonomer);
-    bond.firstMonomer.setPotentialBond(secondValidAttPonint, bond);
-    monomer.setPotentialBond(firstValidAttPoint, bond);
+    const firstMonomerValidSourcePoint = bond.firstMonomer.getValidSourcePoint(monomer);
+    const secondMonomerValidTargetPoint = monomer.getValidTargetPoint(bond.firstMonomer);
+    bond.firstMonomer.setPotentialBond(firstMonomerValidSourcePoint, bond);
+    monomer.setPotentialBond(secondMonomerValidTargetPoint, bond);
     const connectFirstMonomerOperation = new MonomerHoverOperation(
       bond.firstMonomer,
       true,

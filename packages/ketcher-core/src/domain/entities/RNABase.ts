@@ -1,5 +1,4 @@
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
-import { Sugar } from './Sugar';
 
 export class RNABase extends BaseMonomer {
   public getValidSourcePoint(monomer: BaseMonomer) {
@@ -7,9 +6,6 @@ export class RNABase extends BaseMonomer {
   }
 
   public getValidTargetPoint(monomer: BaseMonomer) {
-    if (monomer instanceof Sugar) {
-      return 'R3';
-    }
-    return this.firstFreeAttachmentPoint;
+    return monomer.firstFreeAttachmentPoint;
   }
 }

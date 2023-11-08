@@ -25,7 +25,7 @@ export class Phosphate extends BaseMonomer {
       this.hasAttachmentPoint('R2') &&
       !this.isAttachmentPointUsed('R2')
     ) {
-      return 'R1';
+      return 'R2';
     }
     return this.firstFreeAttachmentPoint;
   }

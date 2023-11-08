@@ -1,6 +1,7 @@
 import { expect, Page } from '@playwright/test';
 import {
   MACROMOLECULES_MODE,
+  MOLECULES_MODE,
   POLYMER_TOGGLER,
 } from '@constants/testIdConstants';
 import { moveMouseToTheMiddleOfTheScreen } from '@utils';
@@ -10,6 +11,13 @@ export async function turnOnMacromoleculesEditor(page: Page) {
   await page.getByTestId(POLYMER_TOGGLER).click();
   await expect(page.getByTestId(MACROMOLECULES_MODE)).toBeVisible();
   await page.getByTestId(MACROMOLECULES_MODE).click();
+}
+
+export async function turnOnMicromoleculesEditor(page: Page) {
+  await expect(page.getByTestId(POLYMER_TOGGLER)).toBeVisible();
+  await page.getByTestId(POLYMER_TOGGLER).click();
+  await expect(page.getByTestId(MOLECULES_MODE)).toBeVisible();
+  await page.getByTestId(MOLECULES_MODE).click();
 }
 
 export async function hideMonomerPreview(page: Page) {

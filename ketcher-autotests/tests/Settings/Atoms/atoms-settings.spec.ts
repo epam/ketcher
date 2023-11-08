@@ -53,7 +53,7 @@ async function substitutionCountQuery(page: Page, menuItem: string) {
   await page.getByRole('button', { name: 'As drawn' }).nth(1).click();
 }
 
-async function aromacitilityQuery(page: Page, menuItem: string) {
+async function aromaticityQuery(page: Page, menuItem: string) {
   await page.getByText(menuItem).click();
   await page.getByRole('button', { name: 'aromatic' }).click();
 }
@@ -129,7 +129,7 @@ test.describe('Atom Settings', () => {
     await page.getByText('Query properties').click();
     await ringBondCountQuery(page, 'Ring bond count');
     await substitutionCountQuery(page, 'Substitution count');
-    await aromacitilityQuery(page, 'Aromaticity');
+    await aromaticityQuery(page, 'Aromaticity');
     await ringSizeQuery(page, 'Ring size');
     await page.mouse.click(pointX, pointY);
   });

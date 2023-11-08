@@ -33,7 +33,6 @@ const Header = styled(DialogTitle)(({ theme }) => ({
   fontFamily: `${theme.ketcher.font.family.inter}`,
   fontSize: `${theme.ketcher.font.size.medium}`,
   fontWeight: 500,
-  letterSpacing: '1.1px',
   textTransform: 'capitalize',
   borderBottom: '1px solid rgba(202, 211, 221, 1)',
 }));
@@ -52,7 +51,6 @@ const StyledIcon = styled(Icon)({
 const Content = styled(DialogContent)`
   padding: 0;
   font-size: ${({ theme }) => theme.ketcher.font.size.medium};
-  letter-spacing: 1.25px;
   line-height: 17px;
   ${({ theme }) => scrollbarThin(theme)};
 `;

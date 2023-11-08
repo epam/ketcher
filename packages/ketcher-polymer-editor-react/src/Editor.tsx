@@ -73,6 +73,7 @@ import {
 import { MonomerConnectionOnlyProps } from 'components/modal/modalContainer/types';
 import { calculatePreviewPosition } from 'helpers';
 import StyledPreview from 'components/shared/MonomerPreview';
+import { ErrorModal } from 'components/modal/Error/Error';
 
 const muiTheme = createTheme(muiOverrides);
 
@@ -258,6 +259,7 @@ function Editor({ theme, togglerComponent }: EditorProps) {
       <FullscreenButton />
       <StyledPreview className="polymer-library-preview" />
       <ModalContainer />
+      <ErrorModal />
       <Snackbar
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
         open={Boolean(errorTooltipText)}

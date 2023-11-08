@@ -37,7 +37,7 @@ const StyledTextarea = styled.textarea`
   box-sizing: border-box;
   outline: transparent;
   border: none;
-  color: ${({ theme }) => theme.ketcher.color.input.text.default};
+  color: ${({ theme }) => theme.ketcher.color.input.text.active};
   font-size: ${({ theme }) => theme.ketcher.font.size.regular};
   background-color: ${({ theme, readOnly }) =>
     readOnly

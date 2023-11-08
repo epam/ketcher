@@ -33,6 +33,9 @@ import { RequiredModalProps } from '../modalContainer';
 import { OpenFileWrapper } from './Open.styles';
 import { Loader } from '../save/Save.styles';
 import { LoadingCircles } from './AnalyzingFile/LoadingCircles';
+import { useAppDispatch } from 'hooks';
+import { openErrorModal } from 'state/modal';
+import { AnyAction, Dispatch } from 'redux';
 
 export interface Props {
   onClose: () => void;
@@ -70,11 +73,13 @@ const onOk = async ({
   fragment,
   onCloseCallback,
   setIsLoading,
+  dispatch,
 }: {
   struct: string;
   fragment: boolean;
   onCloseCallback: () => void;
   setIsLoading: (isLoading: boolean) => void;
+  dispatch: Dispatch<AnyAction>;
 }) => {
   if (fragment) {
     console.log('add fragment');
@@ -97,7 +102,10 @@ const onOk = async ({
     addToCanvas({ struct: ketStruct.struct, ketSerializer, editor });
     onCloseCallback();
   } catch (error) {
-    editor.events.error.dispatch(error);
+    const stringError =
+      typeof error === 'string' ? error : JSON.stringify(error);
+    const errorMessage = 'Convert error! ' + stringError;
+    dispatch(openErrorModal(errorMessage));
     KetcherLogger.error(error);
   } finally {
     setIsLoading(false);
@@ -107,6 +115,7 @@ const isAnalyzingFile = false;
 const errorHandler = (error) => console.log(error);
 
 const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
+  const dispatch = useAppDispatch();
   const [structStr, setStructStr] = useState<string>('');
   const [fileName, setFileName] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
@@ -141,11 +150,23 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
   };
 
   const copyHandler = () => {
-    onOk({ struct: structStr, fragment: true, onCloseCallback, setIsLoading });
+    onOk({
+      struct: structStr,
+      fragment: true,
+      onCloseCallback,
+      setIsLoading,
+      dispatch,
+    });
   };
 
   const openHandler = () => {
-    onOk({ struct: structStr, fragment: false, onCloseCallback, setIsLoading });
+    onOk({
+      struct: structStr,
+      fragment: false,
+      onCloseCallback,
+      setIsLoading,
+      dispatch,
+    });
   };
 
   const getButtons = () => {

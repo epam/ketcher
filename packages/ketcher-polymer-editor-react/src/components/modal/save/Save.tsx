@@ -41,6 +41,8 @@ import {
   stylesForExpanded,
 } from './Save.styles';
 import styled from '@emotion/styled';
+import { useAppDispatch } from 'hooks';
+import { openErrorModal } from 'state/modal';
 
 const options: Array<Option> = [
   { id: 'ket', label: 'Ket' },
@@ -64,6 +66,7 @@ export const Save = ({
   onClose,
   isModalOpen,
 }: RequiredModalProps): JSX.Element => {
+  const dispatch = useAppDispatch();
   const [currentFileFormat, setCurrentFileFormat] =
     useState<SupportedFormats>('ket');
   const [currentFileName, setCurrentFileName] = useState('ketcher');
@@ -92,8 +95,11 @@ export const Save = ({
       });
       setStruct(result.struct);
     } catch (error) {
-      editor.events.error.dispatch(error);
-      KetcherLogger.error(error);
+      const stringError =
+        typeof error === 'string' ? error : JSON.stringify(error);
+      const errorMessage = 'Convert error! ' + stringError;
+      dispatch(openErrorModal(errorMessage));
+      KetcherLogger.error(errorMessage);
       setCurrentFileFormat('ket');
     } finally {
       setIsLoading(false);

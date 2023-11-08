@@ -18,6 +18,7 @@ import styled from '@emotion/styled';
 
 export const MenuLayout = styled.div`
   background-color: ${({ theme }) => theme.ketcher.color.background.primary};
+  border-radius: 4px;
 `;
 
 export const Divider = styled.span`

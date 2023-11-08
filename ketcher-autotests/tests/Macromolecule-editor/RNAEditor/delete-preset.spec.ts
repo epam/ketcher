@@ -1,10 +1,11 @@
 import { Page, test } from '@playwright/test';
-import { POLYMER_TOGGLER, RNA_TAB } from '../../../constants/testIdConstants';
+import { RNA_TAB } from '@constants/testIdConstants';
 import { waitForPageInit } from '@utils/common';
 import { takePageScreenshot } from '@utils';
+import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 
 async function gotoRNA(page: Page) {
-  await page.getByTestId(POLYMER_TOGGLER).click();
+  await turnOnMacromoleculesEditor(page);
   await page.getByTestId(RNA_TAB).click();
 }
 
@@ -29,21 +30,17 @@ test.describe('Macromolecules delete RNA presets', () => {
 
     await page.getByTestId('A_A_R_P').click({ button: 'right' });
 
-    await page.getByTestId('duplicateandedit').click();
+    const duplicateAndEditButton = await page.getByTestId('duplicateandedit');
+    await duplicateAndEditButton.click();
+    await duplicateAndEditButton.waitFor({ state: 'hidden' });
 
     await page.getByTestId('A_Copy_A_R_P').click();
     await page.getByTestId('A_Copy_A_R_P').click({ button: 'right' });
 
-    const deletePresetButton = await page.getByTestId('deletepreset');
-    await deletePresetButton.waitFor({ state: 'visible' });
-    await deletePresetButton.click();
-
-    await page.waitForSelector('[role=dialog]', { state: 'visible' });
+    await page.getByTestId('deletepreset').click();
 
     await takePageScreenshot(page);
 
     await page.getByTitle('Delete').click();
-
-    await page.waitForSelector('[role=dialog]', { state: 'hidden' });
   });
 });

@@ -4,8 +4,10 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
-import { POLYMER_TOGGLER } from '../../../constants/testIdConstants';
-import { hideMonomerPreview } from '@utils/macromolecules';
+import {
+  hideMonomerPreview,
+  turnOnMacromoleculesEditor,
+} from '@utils/macromolecules';
 
 /* 
 Test case: #2497 - Add chem to canvas
@@ -15,8 +17,7 @@ test('Select chem and drag it to canvas', async ({ page }) => {
   await waitForPageInit(page);
 
   // Click on POLYMER_TOGGLER
-  await page.getByTestId(POLYMER_TOGGLER).click();
-
+  await turnOnMacromoleculesEditor(page);
   await page.getByText('CHEM').click();
 
   // Click on <div> "sDBL___Symmetric Doubler"

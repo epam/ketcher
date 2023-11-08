@@ -31,7 +31,7 @@ import { IndigoProvider } from 'ketcher-react';
 import assert from 'assert';
 import { RequiredModalProps } from '../modalContainer';
 import { OpenFileWrapper } from './Open.styles';
-import { Loader } from '../save/save.styles';
+import { Loader } from '../save/Save.styles';
 import { LoadingCircles } from './AnalyzingFile/LoadingCircles';
 
 export interface Props {

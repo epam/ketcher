@@ -13,6 +13,8 @@ import { toolsMap } from 'application/editor/tools';
 import { MonomerItemType } from 'domain/types';
 import { RenderersManager } from 'application/render/renderers/RenderersManager';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
+import ZoomTool from './tools/Zoom';
+import Coordinates from './shared/coordinates';
 import {
   editorEvents,
   renderersEvents,
@@ -39,9 +41,11 @@ export class CoreEditor {
   public renderersContainer: RenderersManager;
   public drawingEntitiesManager: DrawingEntitiesManager;
   public lastCursorPosition: Vec2 = new Vec2(0, 0);
+  public lastCursorPositionOfCanvas: Vec2 = new Vec2(0, 0);
   public canvas: SVGSVGElement;
   public canvasOffset: DOMRect;
   public theme;
+  public zoomTool: ZoomTool;
   // private lastEvent: Event | undefined;
   private tool?: Tool | BaseTool;
   private micromoleculesEditor: Editor;
@@ -56,6 +60,7 @@ export class CoreEditor {
     this.drawingEntitiesManager = new DrawingEntitiesManager();
     this.domEventSetup();
     this.canvasOffset = this.canvas.getBoundingClientRect();
+    this.zoomTool = ZoomTool.initInstance(this.drawingEntitiesManager);
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     editor = this;
     this.micromoleculesEditor = global.ketcher.editor;
@@ -235,6 +240,9 @@ export class CoreEditor {
         x: event.pageX - clientAreaBoundingBox.x,
         y: event.pageY - clientAreaBoundingBox.y,
       });
+      this.lastCursorPositionOfCanvas = Coordinates.viewToCanvas(
+        this.lastCursorPosition,
+      );
     }
   }
 

@@ -309,6 +309,7 @@ export class DrawingEntitiesManager {
     const command = new Command();
 
     polymerBond.setSecondMonomer(secondMonomer);
+    polymerBond.firstMonomer.removeBond(polymerBond);
     polymerBond.firstMonomer.setBond(firstMonomerAttachmentPoint, polymerBond);
     assert(polymerBond.secondMonomer);
     polymerBond.secondMonomer.setBond(

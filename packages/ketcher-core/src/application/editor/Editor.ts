@@ -24,6 +24,7 @@ import { PolymerBondRenderer } from 'application/render/renderers';
 import { Editor } from 'application/editor/editor.types';
 import { MacromoleculesConverter } from 'application/editor/MacromoleculesConverter';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
+import { ketcherProvider } from 'application/utils';
 
 interface ICoreEditorConstructorParams {
   theme;
@@ -63,7 +64,8 @@ export class CoreEditor {
     this.zoomTool = ZoomTool.initInstance(this.drawingEntitiesManager);
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     editor = this;
-    this.micromoleculesEditor = global.ketcher.editor;
+    const ketcher = ketcherProvider.getKetcher();
+    this.micromoleculesEditor = ketcher?.editor;
     this.switchToMacromolecules();
   }
 
@@ -278,20 +280,21 @@ export class CoreEditor {
       );
     reStruct.render.setMolecule(struct);
     if (conversionErrorMessage) {
-      global.ketcher.editor.setMacromoleculeConvertionError(
-        conversionErrorMessage,
-      );
+      const ketcher = ketcherProvider.getKetcher();
+
+      ketcher.editor.setMacromoleculeConvertionError(conversionErrorMessage);
     }
   }
 
   private switchToMacromolecules() {
     const struct = this.micromoleculesEditor?.struct() || new Struct();
+    const ketcher = ketcherProvider.getKetcher();
     const { modelChanges } =
       MacromoleculesConverter.convertStructToDrawingEntities(
         struct,
         this.drawingEntitiesManager,
       );
     this.renderersContainer.update(modelChanges);
-    global.ketcher.editor?.clear();
+    ketcher?.editor.clear();
   }
 }

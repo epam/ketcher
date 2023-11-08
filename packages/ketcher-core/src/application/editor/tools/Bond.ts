@@ -16,17 +16,15 @@
 import { BaseMonomerRenderer } from 'application/render/renderers';
 import { CoreEditor } from 'application/editor';
 import { PolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer';
-import { Vec2 } from 'domain/entities';
 import assert from 'assert';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { BaseTool } from 'application/editor/tools/Tool';
-import { Scale } from 'domain/helpers';
-import { provideEditorSettings } from 'application/editor/editorSettings';
 import { Chem } from 'domain/entities/Chem';
 import { Peptide } from 'domain/entities/Peptide';
 import { Sugar } from 'domain/entities/Sugar';
 import { RNABase } from 'domain/entities/RNABase';
 import { Phosphate } from 'domain/entities/Phosphate';
+import Coordinates from 'application/editor/shared/coordinates';
 
 class PolymerBond implements BaseTool {
   private bondRenderer?: PolymerBondRenderer;
@@ -48,17 +46,11 @@ class PolymerBond implements BaseTool {
         );
         return;
       }
-      const { top: offsetTop, left: offsetLeft } = this.editor.canvasOffset;
-      const editorSettings = provideEditorSettings();
-      const endPosition = Scale.canvasToModel(
-        new Vec2(event.clientX - offsetLeft, event.clientY - offsetTop),
-        editorSettings,
-      );
       const { polymerBond, command: modelChanges } =
         this.editor.drawingEntitiesManager.addPolymerBond(
           selectedRenderer.monomer,
           selectedRenderer.monomer.position,
-          endPosition,
+          Coordinates.canvasToModel(this.editor.lastCursorPositionOfCanvas),
         );
 
       this.editor.renderersContainer.update(modelChanges);
@@ -66,17 +58,11 @@ class PolymerBond implements BaseTool {
     }
   }
 
-  public mousemove(event) {
+  public mousemove() {
     if (this.bondRenderer) {
-      const { top: offsetTop, left: offsetLeft } = this.editor.canvasOffset;
-      const editorSettings = provideEditorSettings();
-      const newEndPosition = Scale.canvasToModel(
-        new Vec2(event.clientX - offsetLeft, event.clientY - offsetTop),
-        editorSettings,
-      );
       const modelChanges = this.editor.drawingEntitiesManager.movePolymerBond(
         this.bondRenderer.polymerBond,
-        newEndPosition,
+        Coordinates.canvasToModel(this.editor.lastCursorPositionOfCanvas),
       );
       this.editor.renderersContainer.update(modelChanges);
     }

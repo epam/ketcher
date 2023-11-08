@@ -14,6 +14,11 @@ export const createPolymerEditorCanvas = (): SVGSVGElement => {
 
   canvas.appendChild(defs);
 
+  const drawnStructuresWrapper = createSvgElement('g');
+  drawnStructuresWrapper.classList.add('drawn-structures');
+
+  canvas.appendChild(drawnStructuresWrapper);
+
   const peptideSymbol = createSvgElement('symbol');
 
   peptideSymbol.setAttribute('id', 'peptide');

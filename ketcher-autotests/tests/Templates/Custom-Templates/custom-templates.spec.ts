@@ -193,11 +193,7 @@ test.describe('Open Ketcher', () => {
     await page.getByRole('button', { name: 'Edit' }).click();
     await page.getByRole('tab', { name: 'Template Library' }).click();
     await page.getByRole('button', { name: 'Aromatics (18)' }).click();
-    await page
-      .getByTitle('Azulene')
-      .locator('svg')
-      .filter({ hasText: 'Created with Raphaël 2.3.0' })
-      .click();
+    await page.getByTitle('Azulene').click();
     await clickOnTheCanvas(page, 0, 1);
     const point = { x: -50, y: 0 };
     await selectAtomInToolbar(AtomButton.Nitrogen, page);

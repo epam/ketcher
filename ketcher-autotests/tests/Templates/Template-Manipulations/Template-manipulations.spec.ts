@@ -353,9 +353,10 @@ test.describe('Template Manupulations', () => {
     Click the Zoom Out button several times.
     */
     await page.getByTestId('zoom-input').click();
-    await page.getByRole('button', { name: 'Zoom in Ctrl+=' }).click();
-    await page.getByRole('button', { name: 'Zoom in Ctrl+=' }).click();
-    await page.getByRole('button', { name: 'Zoom out Ctrl+_' }).click({
+    await page.getByTestId('zoom-in').click({
+      clickCount: 2,
+    });
+    await page.getByTestId('zoom-out').click({
       clickCount: 3,
     });
     await clickInTheMiddleOfTheScreen(page);
@@ -370,10 +371,12 @@ test.describe('Template Manupulations', () => {
     await clickOnTheCanvas(page, 1, 0);
     await takePageScreenshot(page);
     await page.getByTestId('zoom-input').click();
-    await page.getByRole('button', { name: 'Zoom in Ctrl+=' }).click();
-    await page.getByRole('button', { name: 'Zoom in Ctrl+=' }).click();
-    await page.getByRole('button', { name: 'Zoom out Ctrl+_' }).click();
-    await page.getByRole('button', { name: 'Zoom out Ctrl+_' }).click();
+    await page.getByTestId('zoom-in').click({
+      clickCount: 2,
+    });
+    await page.getByTestId('zoom-out').click({
+      clickCount: 2,
+    });
   });
 
   test('Save as *.mol file', async ({ page }) => {

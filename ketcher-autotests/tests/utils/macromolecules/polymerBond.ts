@@ -1,4 +1,5 @@
 import { Locator, Page } from '@playwright/test';
+import { hideMonomerPreview } from '@utils/macromolecules/index';
 
 export async function bondTwoMonomers(
   page: Page,
@@ -9,4 +10,5 @@ export async function bondTwoMonomers(
   await page.mouse.down();
   await secondMonomerElement.hover();
   await page.mouse.up();
+  await hideMonomerPreview(page);
 }

@@ -16,10 +16,12 @@ import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { monomerClass } from 'application/formatters/types/ket';
 
 type DerivedClass<T> = new (...args: unknown[]) => T;
-const MONOMER_CONST = {
+export const MONOMER_CONST = {
+  AMINO_ACID: 'AminoAcid',
   PEPTIDE: 'PEPTIDE',
   CHEM: 'CHEM',
   RNA: 'RNA',
+  DNA: 'DNA',
   R: 'R', // states for Ribose
   P: 'P', // states for Phosphate
   SUGAR: 'SUGAR',
@@ -38,7 +40,11 @@ export const monomerFactory = (
   let MonomerRenderer;
   let monomerClass: monomerClass;
 
-  if (monomer.props.MonomerType === MONOMER_CONST.CHEM) {
+  if (
+    monomer.props.MonomerType === MONOMER_CONST.CHEM ||
+    (monomer.props.MonomerType === MONOMER_CONST.RNA &&
+      monomer.props.MonomerClass === MONOMER_CONST.DNA)
+  ) {
     Monomer = Chem;
     MonomerRenderer = ChemRenderer;
     monomerClass = 'CHEM';

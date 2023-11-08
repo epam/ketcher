@@ -33,18 +33,24 @@ const RowMain = styled.div(({ theme }) => ({
   height: '100vh',
   width: '100%',
   position: 'relative',
-  padding: '16px',
+  padding: '12px',
   paddingBottom: 0,
   backgroundColor: theme.ketcher.color.background.canvas,
   display: 'flex',
   justifyContent: 'space-between',
-  columnGap: '6px',
+  columnGap: '12px',
 }));
 
-const Row = styled.div({
+const Row = styled.div(({ theme }) => ({
+  height: '100%',
+  width: '100%',
+  position: 'relative',
+  paddingBottom: 0,
+  backgroundColor: theme.ketcher.color.background.canvas,
   display: 'flex',
-  height: 'fit-content',
-});
+  justifyContent: 'space-between',
+  columnGap: '3px',
+}));
 
 const baseLeftRightStyle = css({
   height: '100%',
@@ -63,6 +69,9 @@ const Top = styled.div({
   marginBottom: '6px',
   display: 'flex',
   justifyContent: 'flex-end',
+  backgroundColor: '#FFFFFF',
+  boxShadow: '0px 2px 5px rgba(103, 104, 132, 0.15)',
+  borderRadius: '4px',
 });
 
 const Main = styled.div({
@@ -72,12 +81,6 @@ const Main = styled.div({
 
 const DummyDiv = styled.div({
   height: '40px',
-});
-
-const DummyDivInRow = styled.div({
-  flexBasis: '40px',
-  height: '100%',
-  flexShrink: '1',
 });
 
 type LayoutSection = 'Left' | 'Right' | 'Main' | 'Top';
@@ -103,17 +106,13 @@ export const Layout = ({ children }: LayoutProps) => {
 
   return (
     <RowMain>
-      <Column>
-        {subcomponents.Left}
-        <DummyDiv />
-      </Column>
       <Column fullWidth>
+        {subcomponents.Top}
         <Row>
-          <DummyDivInRow />
-          {subcomponents.Top}
-          <DummyDivInRow />
+          {subcomponents.Left}
+          <DummyDiv />
+          {subcomponents.Main}
         </Row>
-        {subcomponents.Main}
       </Column>
       <Column>{subcomponents.Right}</Column>
     </RowMain>

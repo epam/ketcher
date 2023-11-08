@@ -70,6 +70,7 @@ export const editorSlice: Slice = createSlice({
       });
     },
     destroyEditor: (state) => {
+      state.editor.switchToMicromolecules();
       state.editor = undefined;
     },
     showPreview: (

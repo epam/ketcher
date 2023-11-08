@@ -57,7 +57,10 @@ test.describe('Special nodes', () => {
   for (const atom of atoms) {
     test(`${atom} adding to multiple atoms of structure`, async ({ page }) => {
       // Test case: EPMLSOPKET-1469, 1741, 1473, 1481, 1483
-      await openFileAndAddToCanvas('Heteroatoms.mol', page);
+      await openFileAndAddToCanvas(
+        'Molfiles-V2000/heteroatoms-structure.mol',
+        page,
+      );
       await selectAtomInToolbar(AtomButton.Extended, page);
       await page.getByRole('button', { name: atom, exact: true }).click();
       await page.getByTestId('OK').click();

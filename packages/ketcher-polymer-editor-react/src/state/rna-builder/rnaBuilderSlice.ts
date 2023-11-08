@@ -32,6 +32,7 @@ interface IRnaBuilderState {
   activeRnaBuilderItem?: RnaBuilderItem | null;
   isEditMode: boolean;
   hasUniqueNameError: boolean;
+  activePresetForContextMenu: IRnaPreset | null;
 }
 
 const initialState: IRnaBuilderState = {
@@ -40,6 +41,7 @@ const initialState: IRnaBuilderState = {
   activeRnaBuilderItem: null,
   isEditMode: false,
   hasUniqueNameError: false,
+  activePresetForContextMenu: null,
 };
 export const monomerGroupToPresetGroup = {
   [MonomerGroups.BASES]: 'base',
@@ -64,6 +66,12 @@ export const rnaBuilderSlice = createSlice({
         ...action.payload,
         presetInList: action.payload,
       };
+    },
+    setActivePresetForContextMenu: (
+      state,
+      action: PayloadAction<IRnaPreset>,
+    ) => {
+      state.activePresetForContextMenu = action.payload;
     },
     setActivePresetName: (state, action: PayloadAction<string>) => {
       state.activePreset!.name = action.payload;
@@ -198,6 +206,10 @@ export const selectIsActivePresetNewAndEmpty = (state: RootState): boolean => {
   );
 };
 
+export const selectActivePresetForContextMenu = (state: RootState) => {
+  return state.rnaBuilder.activePresetForContextMenu;
+};
+
 export const {
   setActivePreset,
   setActivePresetName,
@@ -209,6 +221,7 @@ export const {
   setIsEditMode,
   setHasUniqueNameError,
   setDefaultPresets,
+  setActivePresetForContextMenu,
 } = rnaBuilderSlice.actions;
 
 export const rnaBuilderReducer = rnaBuilderSlice.reducer;

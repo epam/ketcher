@@ -13,13 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { CoreEditor } from 'application/editor';
+import { CoreEditor, EditorHistory } from 'application/editor';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { BaseTool } from 'application/editor/tools/Tool';
 
 class EraserTool implements BaseTool {
+  private history: EditorHistory;
   constructor(private editor: CoreEditor) {
     this.editor = editor;
+    this.history = new EditorHistory(editor);
     if (this.editor.drawingEntitiesManager.selectedEntities.length) {
       const modelChanges =
         this.editor.drawingEntitiesManager.deleteSelectedEntities();
@@ -35,6 +37,7 @@ class EraserTool implements BaseTool {
           selectedItemRenderer.drawingEntity,
         );
       this.editor.renderersContainer.update(modelChanges);
+      this.history.update(modelChanges);
     }
   }
 

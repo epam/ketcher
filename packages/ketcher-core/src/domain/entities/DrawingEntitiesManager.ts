@@ -26,6 +26,8 @@ import {
   PolymerBondFinishCreationOperation,
   PolymerBondMoveOperation,
   PolymerBondShowInfoOperation,
+  PolymerBondCleanAttachmentPointsOperation,
+  PolymerBondAddAttachmentPointsOperation,
 } from 'application/editor/operations/polymerBond';
 import { monomerFactory } from 'application/editor/operations/monomer/monomerFactory';
 import { provideEditorSettings } from 'application/editor/editorSettings';
@@ -249,20 +251,11 @@ export class DrawingEntitiesManager {
   public deletePolymerBond(polymerBond: PolymerBond) {
     this.polymerBonds.delete(polymerBond.id);
     const command = new Command();
-    const firstMonomerAttachmentPoint =
-      polymerBond.firstMonomer.getAttachmentPointByBond(polymerBond);
-    const secondMonomerAttachmentPoint =
-      polymerBond.secondMonomer?.getAttachmentPointByBond(polymerBond);
-    polymerBond.firstMonomer.removePotentialBonds();
-    polymerBond.secondMonomer?.removePotentialBonds();
-    polymerBond.firstMonomer.turnOffSelection();
-    polymerBond.secondMonomer?.turnOffSelection();
-    if (firstMonomerAttachmentPoint) {
-      polymerBond.firstMonomer.unsetBond(firstMonomerAttachmentPoint);
-    }
-    if (secondMonomerAttachmentPoint) {
-      polymerBond.secondMonomer?.unsetBond(secondMonomerAttachmentPoint);
-    }
+
+    const operationCleanAttachmentPoints =
+      new PolymerBondCleanAttachmentPointsOperation(polymerBond);
+    command.addOperation(operationCleanAttachmentPoints);
+
     const operation = new PolymerBondDeleteOperation(polymerBond);
     command.addOperation(operation);
 
@@ -301,29 +294,15 @@ export class DrawingEntitiesManager {
   ) {
     const command = new Command();
 
-    polymerBond.setSecondMonomer(secondMonomer);
-    polymerBond.firstMonomer.setBond(firstMonomerAttachmentPoint, polymerBond);
-    assert(polymerBond.secondMonomer);
-    assert(secondMonomer.renderer);
-    polymerBond.secondMonomer.setBond(
-      secondMonomerAttachmentPoint,
-      polymerBond,
-    );
-    polymerBond.firstMonomer.removePotentialBonds();
-    polymerBond.secondMonomer.removePotentialBonds();
+    const operationAddAttachmentPoints =
+      new PolymerBondAddAttachmentPointsOperation(
+        polymerBond,
+        secondMonomer,
+        firstMonomerAttachmentPoint,
+        secondMonomerAttachmentPoint,
+      );
 
-    polymerBond.moveToLinkedMonomers();
-
-    polymerBond.firstMonomer.turnOffSelection();
-    polymerBond.firstMonomer.turnOffHover();
-    polymerBond.firstMonomer.turnOffAttachmentPointsVisibility();
-
-    polymerBond.secondMonomer.turnOffSelection();
-    polymerBond.secondMonomer.turnOffHover();
-    polymerBond.secondMonomer.turnOffAttachmentPointsVisibility();
-
-    polymerBond.turnOffHover();
-
+    command.addOperation(operationAddAttachmentPoints);
     const operation = new PolymerBondFinishCreationOperation(polymerBond);
 
     command.addOperation(operation);

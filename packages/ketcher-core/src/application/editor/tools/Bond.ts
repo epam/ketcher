@@ -14,17 +14,22 @@
  * limitations under the License.
  ***************************************************************************/
 import { BaseMonomerRenderer } from 'application/render/renderers';
-import { CoreEditor } from 'application/editor';
+import { CoreEditor, EditorHistory } from 'application/editor';
 import { PolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer';
 import { Vec2 } from 'domain/entities';
 import assert from 'assert';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { BaseTool } from 'application/editor/tools/Tool';
+import { Command } from 'domain/entities/Command';
 
 class PolymerBond implements BaseTool {
   private bondRenderer?: PolymerBondRenderer;
+  history: EditorHistory;
+  historyMouseDown: Command | undefined;
+
   constructor(private editor: CoreEditor) {
     this.editor = editor;
+    this.history = new EditorHistory(this.editor); // здесь история пишется
   }
 
   public mousedown(event) {
@@ -50,6 +55,7 @@ class PolymerBond implements BaseTool {
 
       this.editor.renderersContainer.update(modelChanges);
       this.bondRenderer = polymerBond.renderer;
+      this.historyMouseDown = modelChanges;
     }
   }
 
@@ -192,6 +198,9 @@ class PolymerBond implements BaseTool {
       const modelChanges = this.finishBondCreation(renderer.monomer);
       this.editor.renderersContainer.update(modelChanges);
       this.bondRenderer = undefined;
+      assert(this.historyMouseDown);
+      this.historyMouseDown.merge(modelChanges);
+      this.history.update(this.historyMouseDown);
       event.stopPropagation();
     }
   }

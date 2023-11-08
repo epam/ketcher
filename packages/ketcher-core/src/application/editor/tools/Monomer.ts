@@ -41,9 +41,11 @@ class MonomerTool implements Tool {
   readonly MONOMER_PREVIEW_SCALE_FACTOR = 0.4;
   readonly MONOMER_PREVIEW_OFFSET_X = 8;
   readonly MONOMER_PREVIEW_OFFSET_Y = 12;
+  history: EditorHistory;
   constructor(private editor: CoreEditor, private monomer: MonomerItemType) {
     this.editor = editor;
     this.monomer = monomer;
+    this.history = new EditorHistory(this.editor); // здесь история пишется
   }
 
   mousedown() {
@@ -64,8 +66,7 @@ class MonomerTool implements Tool {
       ),
     );
 
-    const history = new EditorHistory(this.editor); // здесь история пишется
-    history.update(modelChanges);
+    this.history.update(modelChanges);
     this.editor.renderersContainer.update(modelChanges);
   }
 

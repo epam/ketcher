@@ -18,6 +18,7 @@
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { RenderersManager } from 'application/render/renderers/RenderersManager';
 import { Operation } from 'domain/entities/Operation';
+import assert from 'assert';
 
 export class PolymerBondAddOperation implements Operation {
   constructor(private polymerBond: PolymerBond) {}
@@ -27,7 +28,7 @@ export class PolymerBondAddOperation implements Operation {
   }
 
   public invert(renderersManager: RenderersManager) {
-    renderersManager.deletePolymerBond(this.polymerBond);
+    console.log('invert PolymerBondAddOperation');
   }
 }
 
@@ -36,9 +37,11 @@ export class PolymerBondDeleteOperation implements Operation {
 
   public execute(renderersManager: RenderersManager) {
     renderersManager.deletePolymerBond(this.polymerBond);
+    console.log('execute PolymerBondDeleteOperation');
   }
 
   public invert(renderersManager: RenderersManager) {
+    console.log('invert PolymerBondDeleteOperation');
     renderersManager.addPolymerBond(this.polymerBond);
   }
 }
@@ -84,9 +87,101 @@ export class PolymerBondFinishCreationOperation implements Operation {
 
   public execute(renderersManager: RenderersManager) {
     renderersManager.finishPolymerBondCreation(this.polymerBond);
+    console.log('execute PolymerBondFinishCreationOperation');
   }
 
   public invert(renderersManager: RenderersManager) {
     console.log('invert PolymerBondFinishCreationOperation');
+    renderersManager.deletePolymerBond(this.polymerBond);
+  }
+}
+
+export class PolymerBondAddAttachmentPointsOperation implements Operation {
+  constructor(
+    private polymerBond: PolymerBond,
+    private secondMonomer,
+    private firstMonomerAttachmentPoint,
+    private secondMonomerAttachmentPoint,
+  ) {
+    this.polymerBond = polymerBond;
+  }
+
+  public execute() {
+    this.polymerBond.setSecondMonomer(this.secondMonomer);
+    this.polymerBond.firstMonomer.setBond(
+      this.firstMonomerAttachmentPoint,
+      this.polymerBond,
+    );
+    assert(this.polymerBond.secondMonomer);
+    assert(this.secondMonomer.renderer);
+    this.polymerBond.secondMonomer.setBond(
+      this.secondMonomerAttachmentPoint,
+      this.polymerBond,
+    );
+    this.polymerBond.firstMonomer.removePotentialBonds();
+    this.polymerBond.secondMonomer.removePotentialBonds();
+
+    this.polymerBond.moveToLinkedMonomers();
+    this.polymerBond.firstMonomer.turnOffSelection();
+    this.polymerBond.firstMonomer.turnOffHover();
+    this.polymerBond.firstMonomer.turnOffAttachmentPointsVisibility();
+    this.polymerBond.secondMonomer.turnOffSelection();
+    this.polymerBond.secondMonomer.turnOffHover();
+    this.polymerBond.secondMonomer.turnOffAttachmentPointsVisibility();
+    this.polymerBond.turnOffHover();
+
+    console.log('execute PolymerBondAddAttachmentPointsOperation');
+  }
+
+  public invert() {
+    const cleanAttachmentPoints = new PolymerBondCleanAttachmentPointsOperation(
+      this.polymerBond,
+    );
+    cleanAttachmentPoints.execute();
+    console.log('invert PolymerBondAddAttachmentPointsOperation');
+  }
+}
+
+export class PolymerBondCleanAttachmentPointsOperation implements Operation {
+  private secondMonomer;
+  private firstMonomerAttachmentPoint;
+  private secondMonomerAttachmentPoint;
+
+  constructor(private polymerBond: PolymerBond) {
+    this.polymerBond = polymerBond;
+  }
+
+  public execute() {
+    this.firstMonomerAttachmentPoint =
+      this.polymerBond.firstMonomer.getAttachmentPointByBond(this.polymerBond);
+    this.secondMonomerAttachmentPoint =
+      this.polymerBond.secondMonomer?.getAttachmentPointByBond(
+        this.polymerBond,
+      );
+    this.secondMonomer = this.polymerBond.secondMonomer;
+    this.polymerBond.firstMonomer.removePotentialBonds();
+    this.polymerBond.secondMonomer?.removePotentialBonds();
+    this.polymerBond.firstMonomer.turnOffSelection();
+    this.polymerBond.secondMonomer?.turnOffSelection();
+    if (this.firstMonomerAttachmentPoint) {
+      this.polymerBond.firstMonomer.unsetBond(this.firstMonomerAttachmentPoint);
+    }
+    if (this.secondMonomerAttachmentPoint) {
+      this.polymerBond.secondMonomer?.unsetBond(
+        this.secondMonomerAttachmentPoint,
+      );
+    }
+    console.log('execute PolymerBondCleanAttachmentPointsOperation');
+  }
+
+  public invert() {
+    const addAttachmentPoints = new PolymerBondAddAttachmentPointsOperation(
+      this.polymerBond,
+      this.secondMonomer,
+      this.firstMonomerAttachmentPoint,
+      this.secondMonomerAttachmentPoint,
+    );
+    addAttachmentPoints.execute();
+    console.log('invert PolymerBondCleanAttachmentPointsOperation');
   }
 }

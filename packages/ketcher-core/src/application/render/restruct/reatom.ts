@@ -40,6 +40,8 @@ import util from '../util';
 import { tfx } from 'utilities';
 import { RenderOptions } from 'application/render/render.types';
 import { capitalize } from 'lodash';
+import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
+import { attachmentPointNames } from 'domain/types';
 
 interface ElemAttr {
   text: string;
@@ -189,12 +191,17 @@ class ReAtom extends ReObject {
   getShiftedSegmentPosition(
     renderOptions: RenderOptions,
     direction: Vec2,
+    _atomPosition?: Vec2,
   ): Vec2 {
-    const atomPosition = Scale.modelToCanvas(this.a.pp, renderOptions);
+    const atomPosition = Scale.modelToCanvas(
+      _atomPosition || this.a.pp,
+      renderOptions,
+    );
     let atomSymbolShift = 0;
     const exts = this.visel.exts;
     for (let k = 0; k < exts.length; ++k) {
       const box = exts[k].translate(atomPosition);
+
       atomSymbolShift = Math.max(
         atomSymbolShift,
         util.shiftRayBox(atomPosition, direction, box),
@@ -231,14 +238,29 @@ class ReAtom extends ReObject {
       )
     ) {
       const sgroup = restruct.molecule.getGroupFromAtomId(aid);
+
       const isPositionAtom =
         sgroup?.getContractedPosition(restruct.molecule).atomId === aid;
       if (isPositionAtom) {
-        const path = render.paper.text(ps.x, ps.y, sgroup.data.name).attr({
-          'font-weight': 700,
-          'font-size': 14,
-        });
-        restruct.addReObjectPath(LayerMap.data, this.visel, path, ps, true);
+        const position = Scale.modelToCanvas(
+          sgroup instanceof MonomerMicromolecule
+            ? (sgroup.pp as Vec2)
+            : this.a.pp,
+          render.options,
+        );
+        const path = render.paper
+          .text(position.x, position.y, sgroup.data.name)
+          .attr({
+            'font-weight': 700,
+            'font-size': 14,
+          });
+        restruct.addReObjectPath(
+          LayerMap.data,
+          this.visel,
+          path,
+          position,
+          true,
+        );
       }
       return;
     }
@@ -273,6 +295,16 @@ class ReAtom extends ReObject {
       leftMargin = data.leftMargin;
       implh = Math.floor(this.a.implicitH);
       isHydrogen = label.text === 'H';
+
+      if (label.background) {
+        restruct.addReObjectPath(
+          LayerMap.data,
+          this.visel,
+          label.background,
+          ps,
+          true,
+        );
+      }
       restruct.addReObjectPath(LayerMap.data, this.visel, label.path, ps, true);
     }
     if (options.showAtomIds) {
@@ -736,12 +768,27 @@ function buildLabel(
     }
   }
 
+  const isMonomerAttachmentPoint = attachmentPointNames.includes(label.text);
+  const isMonomerAttachmentPointSelected =
+    options.currentlySelectedMonomerAttachmentPoint === label.text;
+  const isMonomerAttachmentPointUsed =
+    options.connectedMonomerAttachmentPoints?.includes(label.text);
+
+  if (isMonomerAttachmentPoint && options.labelInMonomerConnectionsModal) {
+    atom.color = isMonomerAttachmentPointSelected
+      ? '#FFF'
+      : isMonomerAttachmentPointUsed
+      ? '#B4B9D6'
+      : '#585858';
+  }
+
   if (label.text?.length > 8) {
     tooltip = label.text;
     label.text = `${label.text?.substring(0, 8)}...`;
   }
 
   const { previewOpacity } = options;
+
   label.path = paper.text(ps.x, ps.y, label.text).attr({
     font: options.font,
     'font-size': options.fontsz,
@@ -750,6 +797,25 @@ function buildLabel(
     'fill-opacity': atom.a.isPreview ? previewOpacity : 1,
   });
 
+  if (isMonomerAttachmentPoint && options.labelInMonomerConnectionsModal) {
+    const fill = isMonomerAttachmentPointSelected
+      ? '#167782'
+      : isMonomerAttachmentPointUsed
+      ? '#E1E5EA'
+      : '#FFF';
+    const backgroundSize = options.fontsz * 2;
+
+    label.background = paper
+      .rect(
+        ps.x - backgroundSize / 2,
+        ps.y - backgroundSize / 2,
+        backgroundSize,
+        backgroundSize,
+        10,
+      )
+      .attr({ fill })
+      .attr({ stroke: isMonomerAttachmentPointUsed ? '#B4B9D6' : '#7C7C7F' });
+  }
   if (tooltip) {
     addTooltip(label, tooltip);
   }

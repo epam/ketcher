@@ -7,7 +7,7 @@ import {
   RemoteStructServiceProvider,
   StructServiceProvider,
 } from 'ketcher-core';
-import { PolymerToggler } from './PolymerToggler';
+import { ModeControl } from './ModeControl';
 
 const getHiddenButtonsConfig = (): ButtonsConfig => {
   const searchParams = new URLSearchParams(window.location.search);
@@ -35,7 +35,11 @@ if (process.env.MODE === 'standalone') {
 
 const enablePolymerEditor = process.env.ENABLE_POLYMER_EDITOR === 'true';
 
-type PolymerType = () => JSX.Element | null;
+type PolymerType = ({
+  togglerComponent,
+}: {
+  togglerComponent?: JSX.Element;
+}) => JSX.Element | null;
 
 let PolymerEditor: PolymerType = () => null;
 if (enablePolymerEditor) {
@@ -54,10 +58,17 @@ const App = () => {
     setShowPolymerEditor(toggleValue);
     window.isPolymerEditorTurnedOn = toggleValue;
   };
+
+  const togglerComponent = enablePolymerEditor ? (
+    <ModeControl
+      toggle={togglePolymerEditor}
+      isPolymerEditor={showPolymerEditor}
+    />
+  ) : undefined;
+
   return showPolymerEditor ? (
     <>
-      <PolymerEditor />
-      <PolymerToggler toggle={togglePolymerEditor} />
+      <PolymerEditor togglerComponent={togglerComponent} />
     </>
   ) : (
     <>
@@ -79,8 +90,8 @@ const App = () => {
             '*',
           );
         }}
+        togglerComponent={togglerComponent}
       />
-      {enablePolymerEditor && <PolymerToggler toggle={togglePolymerEditor} />}
       {hasError && (
         <InfoModal
           message={errorMessage}

@@ -41,7 +41,7 @@ const getIfFullScreen = () => {
 const ControlsPanel = styled('div')`
   display: flex;
   align-items: center;
-  flex-grow: 1;
+  flex-grow: 0;
   justify-content: flex-end;
 `;
 

@@ -79,4 +79,7 @@ export interface Editor {
   render: Render;
   // supposed to be RotateController from 'ketcher-react' package
   rotateController: any;
+  macromoleculeConvertionError: string | null | undefined;
+  setMacromoleculeConvertionError: (errorMessage: string) => void;
+  clearMacromoleculeConvertionError: () => void;
 }

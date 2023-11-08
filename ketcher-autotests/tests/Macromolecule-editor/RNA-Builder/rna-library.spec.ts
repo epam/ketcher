@@ -796,6 +796,7 @@ test.describe('RNA Library', () => {
     /* 
     Test case: #2507 - Add RNA monomers to canvas
     Description: Bond does not remain on the canvas and returns to original position.
+    Test working incorrect now because we have bug https://github.com/epam/ketcher/issues/3539
     */
     await addMonomerToCenterOfCanvas(
       DropDown.SugarsDropDown,

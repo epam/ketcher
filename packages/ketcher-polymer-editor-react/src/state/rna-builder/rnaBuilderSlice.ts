@@ -186,6 +186,18 @@ export const selectHasUniqueNameError = (state: RootState) => {
   return state.rnaBuilder.hasUniqueNameError;
 };
 
+export const selectIsActivePresetNewAndEmpty = (state: RootState): boolean => {
+  const activePreset = state.rnaBuilder.activePreset;
+  return (
+    activePreset &&
+    !activePreset.presetInList &&
+    !activePreset.name &&
+    !activePreset.sugar &&
+    !activePreset.base &&
+    !activePreset.phosphate
+  );
+};
+
 export const {
   setActivePreset,
   setActivePresetName,

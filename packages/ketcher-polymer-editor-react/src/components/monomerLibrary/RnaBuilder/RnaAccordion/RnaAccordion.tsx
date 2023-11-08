@@ -31,6 +31,7 @@ import {
 } from 'state/library';
 import {
   DetailsContainer,
+  DisabledArea,
   RnaAccordionContainer,
   StyledAccordion,
   StyledAccordionWrapper,
@@ -44,6 +45,7 @@ import {
   selectActivePreset,
   selectActivePresetMonomerGroup,
   selectActiveRnaBuilderItem,
+  selectIsActivePresetNewAndEmpty,
   selectIsEditMode,
   selectPresets,
   setActivePreset,
@@ -86,6 +88,9 @@ export const RnaAccordion = ({
   const presets = useAppSelector(selectPresets);
   const isEditMode = useAppSelector(selectIsEditMode);
   const editor = useAppSelector(selectEditor);
+  const isActivePresetNewAndEmpty = useAppSelector(
+    selectIsActivePresetNewAndEmpty,
+  );
 
   const [expandedAccordion, setExpandedAccordion] =
     useState<RnaBuilderItem | null>(activeRnaBuilderItem);
@@ -169,6 +174,8 @@ export const RnaAccordion = ({
   const selectPreset = (preset: IRnaPreset) => {
     dispatch(setActivePreset(preset));
     editor.events.selectPreset.dispatch(preset);
+    if (preset === activePreset.presetInList) return;
+    dispatch(setIsEditMode(false));
   };
 
   const onClickNewPreset = () => {
@@ -215,6 +222,7 @@ export const RnaAccordion = ({
                 </ItemsContainer>
                 <RNAContextMenu />
               </GroupContainer>
+              {isEditMode && !isActivePresetNewAndEmpty && <DisabledArea />}
             </DetailsContainer>
           ) : (
             <DetailsContainer>

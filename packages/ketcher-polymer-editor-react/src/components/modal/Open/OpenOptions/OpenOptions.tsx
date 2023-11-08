@@ -20,7 +20,8 @@ import { FileDrop } from './FileDrop';
 const ICON_NAMES: Record<string, IconName> = {
   PASTE: 'open-window-paste-icon',
   FILE: 'open-window-upload-icon',
-};
+  IMAGE: 'image-frame',
+} as const;
 
 export type OpenOptionsProps = {
   selectClipboard: () => void;
@@ -34,6 +35,15 @@ export const OpenOptionText = styled.p`
   color: ${({ theme }) => theme.ketcher.color.text.light};
   margin: 0;
   text-align: center;
+  line-height: 12px;
+`;
+
+export const DisabledText = styled.p`
+  font-size: 10px;
+  margin: 0;
+  text-align: center;
+  color: ${({ theme }) => theme.ketcher.color.text.primary};
+  opacity: 50%;
   line-height: 12px;
 `;
 
@@ -95,6 +105,18 @@ const OpenOptions = ({
           buttonLabel="Open from file"
           textLabel="or drag file here"
           iconName={ICON_NAMES.FILE}
+        />
+      </DropContainer>
+      <DropContainer>
+        <FileDrop
+          accept="image/*"
+          onDropAccepted={fileLoadHandler}
+          onDropRejected={(e) => errorHandler(`Unable to accept file(s). ${e}`)}
+          buttonLabel="Open from image"
+          textLabel="or drag file here"
+          iconName={ICON_NAMES.IMAGE}
+          disabled
+          disabledText="Image Recognition service is not available"
         />
       </DropContainer>
     </RootContainer>

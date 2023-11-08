@@ -218,7 +218,11 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
           )}
         </OpenFileWrapper>
       </Modal.Content>
-      <Modal.Footer>{getButtons()}</Modal.Footer>
+      {getButtons().length === 0 ? (
+        <></>
+      ) : (
+        <Modal.Footer>{getButtons()}</Modal.Footer>
+      )}
     </Modal>
   );
 };

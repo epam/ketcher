@@ -17,7 +17,7 @@ import { useDropzone, DropzoneOptions } from 'react-dropzone';
 import { Icon, IconName } from 'ketcher-react';
 import React, { useMemo } from 'react';
 import styled from '@emotion/styled';
-import { OpenOptionText } from '../OpenOptions';
+import { OpenOptionText, DisabledText } from '../OpenOptions';
 
 export type FileDropProps = {
   buttonLabel: string;
@@ -35,6 +35,11 @@ const baseStyle = {
   flexDirection: 'column',
   justifyContent: 'space-between',
 };
+
+const StyledIcon = styled(Icon)`
+  filter: ${({ disabled }) => (disabled ? 'grayscale(1)' : '')};
+  opacity: ${({ disabled }) => (disabled ? '0.6' : '1')};
+`;
 
 const activeStyle = {
   backgroundColor: '#F8FEFFFF',
@@ -80,9 +85,17 @@ const FileDrop = ({
   return (
     <div {...getRootProps({ style })} onClick={open}>
       <input {...getInputProps()} />
-      {disabled ? <p>{disabledText}</p> : <Icon name={iconName} />}
-      <ButtonContainer>{textLabel && <span>{textLabel}</span>}</ButtonContainer>
-      <OpenOptionText>Open from file</OpenOptionText>
+      <StyledIcon name={iconName} disabled={disabled} />
+      {disabled ? (
+        <DisabledText>{disabledText}</DisabledText>
+      ) : (
+        <>
+          <ButtonContainer>
+            {textLabel && <span>{textLabel}</span>}
+          </ButtonContainer>
+          <OpenOptionText>Open from file</OpenOptionText>
+        </>
+      )}
     </div>
   );
 };

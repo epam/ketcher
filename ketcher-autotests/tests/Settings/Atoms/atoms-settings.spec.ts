@@ -19,9 +19,9 @@ async function setHydrogenLabelsOn(page: Page) {
   await page.getByText('Atoms', { exact: true }).click();
   const deltaX = 0;
   const deltaY = 60;
-  const anyX = 638;
-  const anyY = 524;
-  await page.mouse.move(anyX, anyY);
+  const scrollBarCoordinatesX = 638;
+  const scrollBarCoordinatesY = 524;
+  await page.mouse.move(scrollBarCoordinatesX, scrollBarCoordinatesY);
   await page.mouse.wheel(deltaX, deltaY);
   await page.getByRole('button', { name: 'Terminal and Hetero' }).click();
   await page.getByTestId('On-option').click();
@@ -37,9 +37,9 @@ async function atomDefaultSettings(page: Page) {
   await page.getByText('Atoms', { exact: true }).click();
   const deltaX = 0;
   const deltaY = 150;
-  const anyX = 638;
-  const anyY = 524;
-  await page.mouse.move(anyX, anyY);
+  const scrollBarCoordinatesX = 638;
+  const scrollBarCoordinatesY = 524;
+  await page.mouse.move(scrollBarCoordinatesX, scrollBarCoordinatesY);
   await page.mouse.wheel(deltaX, deltaY);
 }
 

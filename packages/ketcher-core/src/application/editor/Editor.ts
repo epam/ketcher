@@ -270,12 +270,18 @@ export class CoreEditor {
     this.unsubscribeEvents();
     const struct = this.micromoleculesEditor.struct();
     const reStruct = this.micromoleculesEditor.render.ctab;
-    MacromoleculesConverter.convertDrawingEntitiesToStruct(
-      this.drawingEntitiesManager,
-      struct,
-      reStruct,
-    );
+    const { conversionErrorMessage } =
+      MacromoleculesConverter.convertDrawingEntitiesToStruct(
+        this.drawingEntitiesManager,
+        struct,
+        reStruct,
+      );
     reStruct.render.setMolecule(struct);
+    if (conversionErrorMessage) {
+      global.ketcher.editor.setMacromoleculeConvertionError(
+        conversionErrorMessage,
+      );
+    }
   }
 
   private switchToMacromolecules() {

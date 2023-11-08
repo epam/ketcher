@@ -70,6 +70,7 @@ import {
   PhosphateAvatar,
   RNABaseAvatar,
 } from 'components/shared/monomerOnCanvas';
+import { MonomerConnectionOnlyProps } from 'components/modal/modalContainer/types';
 import { calculatePreviewPosition } from 'helpers';
 import StyledPreview from 'components/shared/MonomerPreview';
 
@@ -78,13 +79,19 @@ const muiTheme = createTheme(muiOverrides);
 interface EditorContainerProps {
   onInit?: () => void;
   theme?: DeepPartial<EditorTheme>;
+  togglerComponent?: JSX.Element;
 }
 
 interface EditorProps {
   theme?: DeepPartial<EditorTheme>;
+  togglerComponent?: JSX.Element;
 }
 
-function EditorContainer({ onInit, theme }: EditorContainerProps) {
+function EditorContainer({
+  onInit,
+  theme,
+  togglerComponent,
+}: EditorContainerProps) {
   const rootElRef = useRef<HTMLDivElement>(null);
   const editorTheme: EditorTheme = theme
     ? merge(defaultTheme, theme)
@@ -103,14 +110,14 @@ function EditorContainer({ onInit, theme }: EditorContainerProps) {
       <ThemeProvider theme={mergedTheme}>
         <Global styles={getGlobalStyles} />
         <div ref={rootElRef} className={EditorClassName}>
-          <Editor theme={editorTheme} />
+          <Editor theme={editorTheme} togglerComponent={togglerComponent} />
         </div>
       </ThemeProvider>
     </Provider>
   );
 }
 
-function Editor({ theme }: EditorProps) {
+function Editor({ theme, togglerComponent }: EditorProps) {
   const dispatch = useAppDispatch();
   const canvasRef = useRef<SVGSVGElement>(null);
   const errorTooltipText = useAppSelector(selectErrorTooltipText);
@@ -148,6 +155,15 @@ function Editor({ theme }: EditorProps) {
       });
       dispatch(selectTool('select-rectangle'));
       editor.events.selectTool.dispatch('select-rectangle');
+      editor.events.openMonomerConnectionModal.add(
+        (additionalProps: MonomerConnectionOnlyProps) =>
+          dispatch(
+            openModal({
+              name: 'monomerConnection',
+              additionalProps,
+            }),
+          ),
+      );
 
       if (!keyboardEventListener) {
         keyboardEventListener = (e: KeyboardEvent) => {
@@ -191,6 +207,13 @@ function Editor({ theme }: EditorProps) {
     });
   }, [editor, activeTool]);
 
+  useEffect(() => {
+    editor?.zoomTool.observeCanvasResize();
+    return () => {
+      editor?.zoomTool.destroy();
+    };
+  }, [editor]);
+
   const handleCloseErrorTooltip = () => {
     dispatch(closeErrorTooltip());
   };
@@ -198,6 +221,8 @@ function Editor({ theme }: EditorProps) {
   return (
     <>
       <Layout>
+        <Layout.Top>{togglerComponent}</Layout.Top>
+
         <Layout.Left>
           <MenuComponent />
         </Layout.Left>
@@ -206,9 +231,14 @@ function Editor({ theme }: EditorProps) {
           <svg
             id="polymer-editor-canvas"
             data-testid="ketcher-canvas"
+            preserveAspectRatio="xMidYMid meet"
             ref={canvasRef}
             width="100%"
             height="100%"
+            style={{
+              overflow: 'hidden',
+              overflowClipMargin: 'content-box',
+            }}
           >
             <defs>
               <PeptideAvatar />
@@ -217,6 +247,7 @@ function Editor({ theme }: EditorProps) {
               <PhosphateAvatar />
               <RNABaseAvatar />
             </defs>
+            <g className="drawn-structures"></g>
           </svg>
         </Layout.Main>
 
@@ -260,7 +291,7 @@ function MenuComponent() {
     } else if (name === 'snake-mode') {
       dispatch(selectMode(!isSnakeMode));
       editor.events.selectMode.dispatch(!isSnakeMode);
-    } else {
+    } else if (!['zoom-in', 'zoom-out', 'zoom-reset'].includes(name)) {
       editor.events.selectTool.dispatch(name);
       if (name === 'clear') {
         dispatch(selectTool('select-rectangle'));
@@ -287,8 +318,13 @@ function MenuComponent() {
       <Menu.Group>
         <Menu.Item itemId="bond-single" title="Single Bond (1)" />
       </Menu.Group>
-      <Menu.Group>
+      <Menu.Group divider>
         <Menu.Item itemId="snake-mode" title="Snake mode" />
+      </Menu.Group>
+      <Menu.Group>
+        <Menu.Item itemId="zoom-in" title="Zoom In" />
+        <Menu.Item itemId="zoom-out" title="Zoom Out" />
+        <Menu.Item itemId="zoom-reset" title="Reset Zoom" />
       </Menu.Group>
     </Menu>
   );

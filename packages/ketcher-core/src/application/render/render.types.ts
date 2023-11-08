@@ -67,6 +67,10 @@ export type RenderOptions = {
   stereoLabelStyle?: StereLabelStyleType;
 
   previewOpacity: number;
+
+  connectedMonomerAttachmentPoints?: string[];
+  currentlySelectedMonomerAttachmentPoint?: string;
+  labelInMonomerConnectionsModal?: boolean;
 };
 
 export interface RelativeBox {

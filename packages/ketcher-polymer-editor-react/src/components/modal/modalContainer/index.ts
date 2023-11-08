@@ -15,3 +15,4 @@
  ***************************************************************************/
 export * from './ModalContainer';
 export * from './modalComponentList';
+export * from './types';

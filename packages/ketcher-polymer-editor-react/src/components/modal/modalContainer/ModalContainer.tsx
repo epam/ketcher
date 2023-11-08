@@ -13,7 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { closeModal, selectModalIsOpen, selectModalName } from 'state/modal';
+import {
+  closeModal,
+  selectAdditionalProps,
+  selectModalIsOpen,
+  selectModalName,
+} from 'state/modal';
 import { useAppDispatch, useAppSelector } from 'hooks';
 import { useCallback } from 'react';
 import { modalComponentList } from './modalComponentList';
@@ -21,6 +26,7 @@ import { modalComponentList } from './modalComponentList';
 export const ModalContainer = () => {
   const isOpen = useAppSelector(selectModalIsOpen);
   const modalName = useAppSelector(selectModalName);
+  const additionalProps = useAppSelector(selectAdditionalProps);
   const dispatch = useAppDispatch();
 
   const handleClose = useCallback(() => {
@@ -34,5 +40,13 @@ export const ModalContainer = () => {
   if (!Component)
     throw new Error(`There is no modal window named ${modalName}`);
 
-  return <Component onClose={handleClose} isModalOpen={isOpen} />;
+  return additionalProps ? (
+    <Component
+      onClose={handleClose}
+      isModalOpen={isOpen}
+      {...additionalProps}
+    />
+  ) : (
+    <Component onClose={handleClose} isModalOpen={isOpen} />
+  );
 };

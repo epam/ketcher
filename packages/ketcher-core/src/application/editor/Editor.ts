@@ -8,10 +8,13 @@ import {
   ToolConstructorInterface,
   ToolEventHandlerName,
 } from 'application/editor/tools/Tool';
+import { PolymerBond } from 'application/editor/tools/Bond';
 import { toolsMap } from 'application/editor/tools';
 import { MonomerItemType } from 'domain/types';
 import { RenderersManager } from 'application/render/renderers/RenderersManager';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
+import ZoomTool from './tools/Zoom';
+import Coordinates from './shared/coordinates';
 import {
   editorEvents,
   renderersEvents,
@@ -20,6 +23,7 @@ import {
 import { PolymerBondRenderer } from 'application/render/renderers';
 import { Editor } from 'application/editor/editor.types';
 import { MacromoleculesConverter } from 'application/editor/MacromoleculesConverter';
+import { BaseMonomer } from 'domain/entities/BaseMonomer';
 
 interface ICoreEditorConstructorParams {
   theme;
@@ -37,9 +41,11 @@ export class CoreEditor {
   public renderersContainer: RenderersManager;
   public drawingEntitiesManager: DrawingEntitiesManager;
   public lastCursorPosition: Vec2 = new Vec2(0, 0);
+  public lastCursorPositionOfCanvas: Vec2 = new Vec2(0, 0);
   public canvas: SVGSVGElement;
   public canvasOffset: DOMRect;
   public theme;
+  public zoomTool: ZoomTool;
   // private lastEvent: Event | undefined;
   private tool?: Tool | BaseTool;
   private micromoleculesEditor: Editor;
@@ -54,6 +60,7 @@ export class CoreEditor {
     this.drawingEntitiesManager = new DrawingEntitiesManager();
     this.domEventSetup();
     this.canvasOffset = this.canvas.getBoundingClientRect();
+    this.zoomTool = ZoomTool.initInstance(this.drawingEntitiesManager);
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     editor = this;
     this.micromoleculesEditor = global.ketcher.editor;
@@ -68,6 +75,10 @@ export class CoreEditor {
     this.events.selectMonomer.add((monomer) => this.onSelectMonomer(monomer));
     this.events.selectPreset.add((preset) => this.onSelectRNAPreset(preset));
     this.events.selectTool.add((tool) => this.onSelectTool(tool));
+    this.events.createBondViaModal.add((payload) => this.onCreateBond(payload));
+    this.events.cancelBondCreationViaModal.add(() =>
+      this.onCancelBondCreation(),
+    );
     this.events.selectMode.add((isSnakeMode) => this.onSelectMode(isSnakeMode));
 
     renderersEvents.forEach((eventName) => {
@@ -87,6 +98,23 @@ export class CoreEditor {
 
   private onSelectTool(tool: string) {
     this.selectTool(tool);
+  }
+
+  private onCreateBond(payload: {
+    firstMonomer: BaseMonomer;
+    secondMonomer: BaseMonomer;
+    firstSelectedAttachmentPoint: string;
+    secondSelectedAttachmentPoint: string;
+  }) {
+    if (this.tool instanceof PolymerBond) {
+      this.tool.handleBondCreation(payload);
+    }
+  }
+
+  private onCancelBondCreation() {
+    if (this.tool instanceof PolymerBond) {
+      this.tool.handleBondCreationCancellation();
+    }
   }
 
   // todo we need to create abstraction layer for modes in future similar to the tools layer
@@ -212,6 +240,9 @@ export class CoreEditor {
         x: event.pageX - clientAreaBoundingBox.x,
         y: event.pageY - clientAreaBoundingBox.y,
       });
+      this.lastCursorPositionOfCanvas = Coordinates.viewToCanvas(
+        this.lastCursorPosition,
+      );
     }
   }
 

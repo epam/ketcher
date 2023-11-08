@@ -1,6 +1,7 @@
 import { BaseMonomer } from './BaseMonomer';
 
 export class Peptide extends BaseMonomer {
+
   public getValidSourcePoint(monomer: BaseMonomer) {
     if (
       monomer.isAttachmentPointExistAndFree('R1') &&

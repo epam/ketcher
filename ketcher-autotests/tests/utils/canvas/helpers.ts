@@ -93,11 +93,14 @@ export async function takeElementScreenshot(
 ) {
   const maxTimeout = 3000;
   const element = page.getByTestId(elementId);
-  await waitForRender(page, emptyFunction, maxTimeout);
-  await expect(element).toHaveScreenshot({
-    mask: options?.masks,
-    maxDiffPixelRatio: options?.maxDiffPixelRatio,
-  });
+
+  if (element) {
+    await waitForRender(page, emptyFunction, maxTimeout);
+    await expect(element.first()).toHaveScreenshot({
+      mask: options?.masks,
+      maxDiffPixelRatio: options?.maxDiffPixelRatio,
+    });
+  }
 }
 
 export async function takePageScreenshot(

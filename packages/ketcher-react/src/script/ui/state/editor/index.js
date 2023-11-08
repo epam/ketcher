@@ -37,6 +37,7 @@ import { generateCommonProperties } from './utils';
 import { saveSettings } from '../options';
 import { memoizedDebounce } from '../../utils';
 import { updateFloatingTools } from '../floatingTools';
+import { openInfoModalWithCustomMessage } from '../shared';
 
 export default function initEditor(dispatch, getState) {
   const updateAction = debounce(100, () => dispatch({ type: 'UPDATE' }));
@@ -238,5 +239,8 @@ export default function initEditor(dispatch, getState) {
 
     onZoomIn: updateAction,
     onZoomOut: updateAction,
+
+    onShowMacromoleculesErrorMessage: (payload) =>
+      dispatch(openInfoModalWithCustomMessage(payload)),
   };
 }

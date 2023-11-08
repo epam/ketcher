@@ -12,11 +12,10 @@ import { Chem } from 'domain/entities/Chem';
 import { Sugar } from 'domain/entities/Sugar';
 import { Phosphate } from 'domain/entities/Phosphate';
 import { RNABase } from 'domain/entities/RNABase';
-import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { monomerClass } from 'application/formatters/types/ket';
 
 type DerivedClass<T> = new (...args: unknown[]) => T;
-export const MONOMER_CONST = {
+const MONOMER_CONST = {
   AMINO_ACID: 'AminoAcid',
   PEPTIDE: 'PEPTIDE',
   CHEM: 'CHEM',
@@ -29,10 +28,17 @@ export const MONOMER_CONST = {
   PHOSPHATE: 'PHOSPHATE',
 };
 
+type Monomer =
+  | typeof Chem
+  | typeof Sugar
+  | typeof Peptide
+  | typeof RNABase
+  | typeof Phosphate;
+
 export const monomerFactory = (
   monomer: MonomerItemType,
 ): [
-  Monomer: typeof BaseMonomer,
+  Monomer: Monomer,
   MonomerRenderer: DerivedClass<BaseMonomerRenderer>,
   monomerClass: monomerClass,
 ] => {
@@ -40,11 +46,7 @@ export const monomerFactory = (
   let MonomerRenderer;
   let monomerClass: monomerClass;
 
-  if (
-    monomer.props.MonomerType === MONOMER_CONST.CHEM ||
-    (monomer.props.MonomerType === MONOMER_CONST.RNA &&
-      monomer.props.MonomerClass === MONOMER_CONST.DNA)
-  ) {
+  if (monomer.props.MonomerType === MONOMER_CONST.CHEM) {
     Monomer = Chem;
     MonomerRenderer = ChemRenderer;
     monomerClass = 'CHEM';

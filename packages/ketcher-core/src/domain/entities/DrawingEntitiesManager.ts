@@ -378,7 +378,8 @@ export class DrawingEntitiesManager {
     if (
       availableAttachmentPointForBondEnd === 'R2' &&
       !monomer.hasAttachmentPoint('R1') &&
-      bond.firstMonomer.hasAttachmentPoint('R1')
+      bond.firstMonomer.hasAttachmentPoint('R1') &&
+      !bond.firstMonomer.isAttachmentPointUsed('R1')
     ) {
       // Prevents forming invalid R2-R2 bonds when second monomer does not have R1 point
       bond.firstMonomer.removePotentialBonds();

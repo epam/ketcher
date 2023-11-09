@@ -347,6 +347,7 @@ test.describe('RNA Library', () => {
     await selectMonomer(DropDown.BasesDropDown, Bases.Adenine, page);
     await page.getByTestId('add-to-presets-btn').click();
     await page.getByTestId('12ddR(A)_A_12ddR_.').click();
+    await clickInTheMiddleOfTheScreen(page);
     await takePresetsScreenshot(page);
   });
 
@@ -403,6 +404,7 @@ test.describe('RNA Library', () => {
     await page.getByTestId('baA___N-benzyl-adenine').click();
     await page.getByTestId('save-btn').click();
     await page.getByTestId('12ddR(baA)Test-6-Ph_baA_12ddR_Test-6-Ph').click();
+    await clickInTheMiddleOfTheScreen(page);
     await takePresetsScreenshot(page);
   });
 
@@ -429,6 +431,7 @@ test.describe('RNA Library', () => {
     await page.getByTestId('P___Phosphate').click();
     await page.getByTestId('save-btn').click();
     await page.getByTestId('12ddR(A)P_A_12ddR_P').click();
+    await clickInTheMiddleOfTheScreen(page);
     await takePresetsScreenshot(page);
   });
 
@@ -484,7 +487,7 @@ test.describe('RNA Library', () => {
     await page.getByTestId('baA___N-benzyl-adenine').click();
     await page.getByTestId('rna-builder-slot--phosphate').click();
     await page.getByTestId('bP___Boranophosphate').click();
-    await selectRectangleSelectionTool(page);
+    await clickInTheMiddleOfTheScreen(page);
     await takeRNABuilderScreenshot(page);
   });
 
@@ -503,6 +506,7 @@ test.describe('RNA Library', () => {
     await page.getByPlaceholder('Name your structure').click();
     await page.getByPlaceholder('Name your structure').fill('cTest');
     await page.getByTestId('add-to-presets-btn').click();
+    await clickInTheMiddleOfTheScreen(page);
     await takeRNABuilderScreenshot(page);
   });
 
@@ -524,6 +528,7 @@ test.describe('RNA Library', () => {
       await page.getByTestId('RNA-TAB').click();
       await page.getByTestId(`rna-builder-slot--${monomer.type}`).click();
       await page.getByTestId(monomer.name).click();
+      await clickInTheMiddleOfTheScreen(page);
       await takeMonomerLibraryScreenshot(page);
     }
   });
@@ -825,7 +830,7 @@ test.describe('RNA Library', () => {
     Description: Canvas is cleared
     */
     await drawThreeMonomersConnectedWithBonds(page);
-    await page.getByTestId('clear-canvas').click();
+    await page.getByTestId('clear-canvas-button').click();
     await takeEditorScreenshot(page);
   });
 
@@ -837,7 +842,7 @@ test.describe('RNA Library', () => {
     Description: Canvas is cleared
     */
     await openFileAndAddToCanvas('KET/monomers-connected-with-bonds.ket', page);
-    await page.getByTestId('clear-canvas').click();
+    await page.getByTestId('clear-canvas-button').click();
     await takeEditorScreenshot(page);
   });
 

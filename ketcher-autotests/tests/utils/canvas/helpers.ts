@@ -86,6 +86,11 @@ export async function getCoordinatesTopAtomOfBenzeneRing(page: Page) {
   };
 }
 
+export async function screenshotDialog(page: Page, dialogId: string) {
+  const dialog = page.getByTestId(dialogId).getByRole('dialog');
+  await expect(dialog).toHaveScreenshot();
+}
+
 export async function takeElementScreenshot(
   page: Page,
   elementId: string,
@@ -93,14 +98,11 @@ export async function takeElementScreenshot(
 ) {
   const maxTimeout = 3000;
   const element = page.getByTestId(elementId);
-
-  if (element) {
-    await waitForRender(page, emptyFunction, maxTimeout);
-    await expect(element.first()).toHaveScreenshot({
-      mask: options?.masks,
-      maxDiffPixelRatio: options?.maxDiffPixelRatio,
-    });
-  }
+  await waitForRender(page, emptyFunction, maxTimeout);
+  await expect(element).toHaveScreenshot({
+    mask: options?.masks,
+    maxDiffPixelRatio: options?.maxDiffPixelRatio,
+  });
 }
 
 export async function takePageScreenshot(

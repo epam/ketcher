@@ -309,7 +309,11 @@ function MenuComponent() {
       activeMenuItems={activeMenuItems}
     >
       <Menu.Group>
-        <Menu.Item itemId="clear" title="Clear Canvas" testId="clear-canvas" />
+        <Menu.Item
+          itemId="clear"
+          title="Clear Canvas"
+          testId="clear-canvas-button"
+        />
       </Menu.Group>
       <Menu.Group>
         <Menu.Item itemId="open" title="Open..." testId="open-button" />
@@ -324,23 +328,35 @@ function MenuComponent() {
         <Menu.Item
           itemId="select-rectangle"
           title="Select Rectangle"
-          testId="select-rectangle"
+          testId="select-rectangle-button"
         />
       </Menu.Group>
       <Menu.Group>
         <Menu.Item
           itemId="bond-single"
           title="Single Bond (1)"
-          testId="single-bond"
+          testId="single-bond-button"
         />
       </Menu.Group>
       <Menu.Group divider>
-        <Menu.Item itemId="snake-mode" title="Snake mode" testId="snake-mode" />
+        <Menu.Item
+          itemId="snake-mode"
+          title="Snake mode"
+          testId="snake-mode-button"
+        />
       </Menu.Group>
       <Menu.Group>
-        <Menu.Item itemId="zoom-in" title="Zoom In" />
-        <Menu.Item itemId="zoom-out" title="Zoom Out" />
-        <Menu.Item itemId="zoom-reset" title="Reset Zoom" />
+        <Menu.Item itemId="zoom-in" title="Zoom In" testId="zoom-in-button" />
+        <Menu.Item
+          itemId="zoom-out"
+          title="Zoom Out"
+          testId="zoom-out-button"
+        />
+        <Menu.Item
+          itemId="zoom-reset"
+          title="Reset Zoom"
+          testId="reset-zoom-button"
+        />
       </Menu.Group>
     </Menu>
   );

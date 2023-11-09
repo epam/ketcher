@@ -156,7 +156,7 @@ export async function takeElementScreenshot(
   options?: { masks?: Locator[]; maxDiffPixelRatio?: number },
 ) {
   const maxTimeout = 3000;
-  const element = page.getByTestId(elementId);
+  const element = page.getByTestId(elementId).first();
   await waitForRender(page, emptyFunction, maxTimeout);
   await expect(element).toHaveScreenshot({
     mask: options?.masks,

@@ -17,12 +17,7 @@ import {
 async function setHydrogenLabelsOn(page: Page) {
   await selectTopPanelButton(TopPanelButton.Settings, page);
   await page.getByText('Atoms', { exact: true }).click();
-  const deltaX = 0;
-  const deltaY = 60;
-  const scrollBarCoordinatesX = 638;
-  const scrollBarCoordinatesY = 524;
-  await page.mouse.move(scrollBarCoordinatesX, scrollBarCoordinatesY);
-  await page.mouse.wheel(deltaX, deltaY);
+  await scrollSettingBar(page);
   await page.getByRole('button', { name: 'Terminal and Hetero' }).click();
   await page.getByTestId('On-option').click();
   await pressButton(page, 'Apply');
@@ -35,6 +30,10 @@ async function selectExtendedTableElements(page: Page, element: string) {
 async function atomDefaultSettings(page: Page) {
   await selectTopPanelButton(TopPanelButton.Settings, page);
   await page.getByText('Atoms', { exact: true }).click();
+  await scrollSettingBar(page);
+}
+
+async function scrollSettingBar (page: Page){ 
   const deltaX = 0;
   const deltaY = 150;
   const scrollBarCoordinatesX = 638;

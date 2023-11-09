@@ -52,22 +52,13 @@ async function drawThreeMonomers(page: Page) {
 }
 
 async function drawThreeMonomersConnectedWithBonds(page: Page) {
-  const x = 800;
-  const y = 350;
-  const x1 = 650;
-  const y1 = 150;
   const sugars = await page.getByText('3A6').locator('..');
   const sugar1 = sugars.nth(0);
   const bases = await page.getByText('baA').locator('..');
   const base1 = bases.nth(0);
   const phosphates = await page.getByText('P').locator('..');
   const phosphate1 = phosphates.nth(0);
-  await selectMonomer(DropDown.SugarsDropDown, Sugars.ThreeA6, page);
-  await clickInTheMiddleOfTheScreen(page);
-  await selectMonomer(DropDown.BasesDropDown, Bases.NBebnzylAdenine, page);
-  await page.mouse.click(x, y);
-  await selectMonomer(DropDown.PhosphatesDropDown, Phosphates.Phosphate, page);
-  await page.mouse.click(x1, y1);
+  await drawThreeMonomers(page);
   await selectSingleBondTool(page);
   await sugar1.hover();
   await page.mouse.down();
@@ -447,6 +438,7 @@ test.describe('RNA Library', () => {
     /* 
     Test case: #2759 - Edit RNA mode
     Description: Custom presets added to Presets section and can be deleted.
+    Test working incorrect because we have bug: https://github.com/epam/ketcher/issues/3561
     */
     await expandRnaBuilder(page);
     await selectMonomer(DropDown.SugarsDropDown, Sugars.TwelveddR, page);
@@ -534,8 +526,9 @@ test.describe('RNA Library', () => {
       { type: 'phosphate', name: 'bP___Boranophosphate' },
     ];
 
+    await expandRnaBuilder(page);
+
     for (const monomer of monomers) {
-      await expandRnaBuilder(page);
       await page.getByTestId(`rna-builder-slot--${monomer.type}`).click();
       await page.getByTestId(monomer.name).click();
       await clickInTheMiddleOfTheScreen(page);

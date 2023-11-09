@@ -24,7 +24,12 @@ import {
   TemplateLibrary,
   selectRing,
 } from '..';
-import {selectAtomInToolbar, selectRectangleSelectionTool, selectTopPanelButton } from './tools';
+import {
+  selectAtomInToolbar,
+  selectRectangleSelectionTool,
+  selectTopPanelButton,
+} from './tools';
+
 import { getLeftTopBarSize } from './common/getLeftTopBarSize';
 import { emptyFunction } from '@utils/common/helpers';
 import { hideMonomerPreview } from '@utils/macromolecules';
@@ -157,6 +162,8 @@ export async function takeElementScreenshot(
     mask: options?.masks,
     maxDiffPixelRatio: options?.maxDiffPixelRatio,
   });
+}
+
 export async function getCoordinatesOfTopMostCarbon(page: Page) {
   const { carbonAtoms, scale, offset } = await page.evaluate(() => {
     const allAtoms = [...window.ketcher.editor.struct().atoms.values()];

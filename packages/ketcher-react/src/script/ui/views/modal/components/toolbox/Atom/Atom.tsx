@@ -137,18 +137,28 @@ const Atom: FC<Props> = (props: Props) => {
       component: (
         <div>
           <AtomElement formState={formState} className=""></AtomElement>
-          <Field name="alias" />
-          <Field name="charge" maxLength={atomProps.charge.maxLength} />
-          <Field name="isotope" maxLength={atomProps.isotope.maxLength} />
+          <Field name="alias" data-testid="alias" />
+          <Field
+            name="charge"
+            maxLength={atomProps.charge.maxLength}
+            data-testid="charge"
+          />
+          <Field
+            name="isotope"
+            maxLength={atomProps.isotope.maxLength}
+            data-testid="isotope"
+          />
           <Field
             name="explicitValence"
             component={Select}
             options={getSelectOptionsFromSchema(atomProps.explicitValence)}
+            data-testid="explicitValence"
           />
           <Field
             name="radical"
             component={Select}
             options={getSelectOptionsFromSchema(atomProps.radical)}
+            data-testid="radical"
           />
         </div>
       ),
@@ -165,7 +175,7 @@ const Atom: FC<Props> = (props: Props) => {
                   name={field.name}
                   component={Select}
                   options={getSelectOptionsFromSchema(atomProps[field.name])}
-                  data-testId={field.name}
+                  data-testid={field.name}
                 />
               );
             } else {

@@ -455,7 +455,7 @@ test.describe('Open and Save InChI file', () => {
      */
     await openFileAndAddToCanvas('KET/chain-with-alias.ket', page);
     await selectTopPanelButton(TopPanelButton.Save, page);
-    await page.getByTestId('file-name-input').fill('Alias');
+    await page.getByTestId('filename-input').fill('Alias');
     await pressButton(page, 'MDL Molfile V2000');
     await selectInChiOption(page);
     await page.getByRole('button', { name: 'Save', exact: true }).click();

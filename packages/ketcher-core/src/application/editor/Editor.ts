@@ -13,6 +13,8 @@ import { toolsMap } from 'application/editor/tools';
 import { MonomerItemType } from 'domain/types';
 import { RenderersManager } from 'application/render/renderers/RenderersManager';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
+import ZoomTool from './tools/Zoom';
+import Coordinates from './shared/coordinates';
 import {
   editorEvents,
   renderersEvents,
@@ -22,6 +24,7 @@ import { PolymerBondRenderer } from 'application/render/renderers';
 import { Editor } from 'application/editor/editor.types';
 import { MacromoleculesConverter } from 'application/editor/MacromoleculesConverter';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
+import { ketcherProvider } from 'application/utils';
 
 interface ICoreEditorConstructorParams {
   theme;
@@ -39,9 +42,11 @@ export class CoreEditor {
   public renderersContainer: RenderersManager;
   public drawingEntitiesManager: DrawingEntitiesManager;
   public lastCursorPosition: Vec2 = new Vec2(0, 0);
+  public lastCursorPositionOfCanvas: Vec2 = new Vec2(0, 0);
   public canvas: SVGSVGElement;
   public canvasOffset: DOMRect;
   public theme;
+  public zoomTool: ZoomTool;
   // private lastEvent: Event | undefined;
   private tool?: Tool | BaseTool;
   private micromoleculesEditor: Editor;
@@ -56,9 +61,11 @@ export class CoreEditor {
     this.drawingEntitiesManager = new DrawingEntitiesManager();
     this.domEventSetup();
     this.canvasOffset = this.canvas.getBoundingClientRect();
+    this.zoomTool = ZoomTool.initInstance(this.drawingEntitiesManager);
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     editor = this;
-    this.micromoleculesEditor = global.ketcher.editor;
+    const ketcher = ketcherProvider.getKetcher();
+    this.micromoleculesEditor = ketcher?.editor;
     this.switchToMacromolecules();
   }
 
@@ -235,6 +242,9 @@ export class CoreEditor {
         x: event.pageX - clientAreaBoundingBox.x,
         y: event.pageY - clientAreaBoundingBox.y,
       });
+      this.lastCursorPositionOfCanvas = Coordinates.viewToCanvas(
+        this.lastCursorPosition,
+      );
     }
   }
 
@@ -262,22 +272,29 @@ export class CoreEditor {
     this.unsubscribeEvents();
     const struct = this.micromoleculesEditor.struct();
     const reStruct = this.micromoleculesEditor.render.ctab;
-    MacromoleculesConverter.convertDrawingEntitiesToStruct(
-      this.drawingEntitiesManager,
-      struct,
-      reStruct,
-    );
+    const { conversionErrorMessage } =
+      MacromoleculesConverter.convertDrawingEntitiesToStruct(
+        this.drawingEntitiesManager,
+        struct,
+        reStruct,
+      );
     reStruct.render.setMolecule(struct);
+    if (conversionErrorMessage) {
+      const ketcher = ketcherProvider.getKetcher();
+
+      ketcher.editor.setMacromoleculeConvertionError(conversionErrorMessage);
+    }
   }
 
   private switchToMacromolecules() {
     const struct = this.micromoleculesEditor?.struct() || new Struct();
+    const ketcher = ketcherProvider.getKetcher();
     const { modelChanges } =
       MacromoleculesConverter.convertStructToDrawingEntities(
         struct,
         this.drawingEntitiesManager,
       );
     this.renderersContainer.update(modelChanges);
-    global.ketcher.editor?.clear();
+    ketcher?.editor.clear();
   }
 }

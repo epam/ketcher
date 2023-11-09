@@ -104,7 +104,7 @@ export enum Sugars {
 export async function selectSugar(sugarName: Sugars, page: Page) {
   await page.getByTestId('RNA-TAB').click();
   await page.getByTestId('summary-Sugars').click();
-  await page.getByTestId(sugarName.toString()).click();
+  await page.getByTestId(sugarName).click();
 }
 
 export enum Bases {
@@ -116,7 +116,7 @@ export enum Bases {
 export async function selectBase(baseName: Bases, page: Page) {
   await page.getByTestId('RNA-TAB').click();
   await page.getByTestId('summary-Bases').click();
-  await page.getByTestId(baseName.toString()).click();
+  await page.getByTestId(baseName).click();
 }
 
 export enum Phosphates {
@@ -128,7 +128,7 @@ export enum Phosphates {
 export async function selectPhosphate(phosphateName: Phosphates, page: Page) {
   await page.getByTestId('RNA-TAB').click();
   await page.getByTestId('summary-Phosphates').click();
-  await page.getByTestId(phosphateName.toString()).click();
+  await page.getByTestId(phosphateName).click();
 }
 
 export enum DropDown {
@@ -142,7 +142,7 @@ export async function selectMonomer(
   page: Page,
 ) {
   await page.getByTestId(monomersDropDown).click();
-  await page.getByTestId(monomerType.toString()).click();
+  await page.getByTestId(monomerType).click();
 }
 
 export async function selectSaltsAndSolvents(

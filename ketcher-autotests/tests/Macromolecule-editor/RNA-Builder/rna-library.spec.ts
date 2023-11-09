@@ -640,77 +640,42 @@ test.describe('RNA Library', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Open file from .ket and Delete Sugar monomer', async ({ page }) => {
-    /* 
-    Test case: #2507 - Add RNA monomers to canvas
-    Description: Sugar monomer deleted.
-    */
-    await openFileAndAddToCanvas('KET/monomers-connected-with-bonds.ket', page);
-    await selectEraseTool(page);
-    await page.getByText('12ddR').locator('..').first().click();
-    await takeEditorScreenshot(page);
-  });
+  const monomersToDelete = [
+    { text: '12ddR', description: 'Sugar monomer deleted.' },
+    { text: 'baA', description: 'Base monomer deleted.' },
+    { text: 'P', description: 'Phosphate monomer deleted.' },
+  ];
 
-  test('Open file from .ket and Delete Base monomer', async ({ page }) => {
-    /* 
-    Test case: #2507 - Add RNA monomers to canvas
-    Description: Base monomer deleted.
-    */
-    await openFileAndAddToCanvas('KET/monomers-connected-with-bonds.ket', page);
-    await selectEraseTool(page);
-    await page.getByText('baA').locator('..').first().click();
-    await takeEditorScreenshot(page);
-  });
+  for (const monomer of monomersToDelete) {
+    test(`Open file from .ket and Delete ${monomer.text} monomer`, async ({
+      page,
+    }) => {
+      await openFileAndAddToCanvas(
+        'KET/monomers-connected-with-bonds.ket',
+        page,
+      );
+      await selectEraseTool(page);
+      await page.getByText(monomer.text).locator('..').first().click();
+      await takeEditorScreenshot(page);
+    });
+  }
 
-  test('Open file from .ket and Delete Phosphate monomer', async ({ page }) => {
-    /* 
-    Test case: #2507 - Add RNA monomers to canvas
-    Description: Phosphate monomer deleted.
-    */
-    await openFileAndAddToCanvas('KET/monomers-connected-with-bonds.ket', page);
-    await selectEraseTool(page);
-    await page.getByText('P').locator('..').first().click();
-    await takeEditorScreenshot(page);
-  });
+  const monomerToDelete = [
+    { text: '3A6', description: 'Sugar monomer deleted.' },
+    { text: 'baA', description: 'Base monomer deleted.' },
+    { text: 'P', description: 'Phosphate monomer deleted.' },
+  ];
 
-  test('Draw Sugar-Base-Phosphate and Delete Sugar monomer', async ({
-    page,
-  }) => {
-    /* 
-    Test case: #2507 - Add RNA monomers to canvas
-    Description: Sugar monomer deleted.
-    */
-    await drawThreeMonomersConnectedWithBonds(page);
-    await selectEraseTool(page);
-    await page.getByText('3A6').locator('..').first().click();
-    await takeEditorScreenshot(page);
-  });
-
-  test('Draw Sugar-Base-Phosphate and Delete Base monomer', async ({
-    page,
-  }) => {
-    /* 
-    Test case: #2507 - Add RNA monomers to canvas
-    Description: Base monomer deleted.
-    */
-    await drawThreeMonomersConnectedWithBonds(page);
-    await selectEraseTool(page);
-    await page.getByText('baA').locator('..').first().click();
-    await takeEditorScreenshot(page);
-  });
-
-  test('Draw Sugar-Base-Phosphate and Delete Phosphate monomer', async ({
-    page,
-  }) => {
-    /* 
-    Test case: #2507 - Add RNA monomers to canvas
-    Description: Phosphate monomer deleted.
-    */
-    await drawThreeMonomersConnectedWithBonds(page);
-    await selectEraseTool(page);
-    await page.getByText('P').locator('..').first().click();
-    await takeEditorScreenshot(page);
-  });
+  for (const monomer of monomerToDelete) {
+    test(`Draw Sugar-Base-Phosphate and Delete ${monomer.text} monomer`, async ({
+      page,
+    }) => {
+      await drawThreeMonomersConnectedWithBonds(page);
+      await selectEraseTool(page);
+      await page.getByText(monomer.text).locator('..').first().click();
+      await takeEditorScreenshot(page);
+    });
+  }
 
   test('Draw Sugar-Base-Phosphate and Delete connecting bond', async ({
     page,

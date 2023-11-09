@@ -39,6 +39,12 @@ async function saveToTemplates(page: Page, shouldSave = true) {
   }
 }
 
+async function saveUserTemplate(page: Page) {
+  await selectUserTemplatesAndPlaceInTheMiddle(TemplateLibrary.Azulene, page);
+  await selectTopPanelButton(TopPanelButton.Save, page);
+  await clickInTheMiddleOfTheScreen(page);
+}
+
 test.describe('Click User Templates on canvas', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
@@ -174,7 +180,7 @@ test.describe('Click User Templates on canvas', () => {
 });
 
 // These two tests affect other tests or by other tests, so they were moved to a separate describe group
-test.describe('Click User Templates on canvas', () => {
+test.describe('Create and Save Templates', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
   });
@@ -247,7 +253,7 @@ test.describe('Click User Templates on canvas', () => {
   });
 });
 
-test.describe('Click User Templates on canvas', () => {
+test.describe('Templates field lenght validations', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
   });
@@ -263,9 +269,7 @@ test.describe('Click User Templates on canvas', () => {
       Test case: EPMLSOPKET-11852
       Description: warning message validation
     */
-    await selectUserTemplatesAndPlaceInTheMiddle(TemplateLibrary.Azulene, page);
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickInTheMiddleOfTheScreen(page);
+    await saveUserTemplate(page);
     await page.getByRole('button', { name: 'Save to Templates' }).click();
   });
 
@@ -274,9 +278,7 @@ test.describe('Click User Templates on canvas', () => {
       Test case: EPMLSOPKET-10073(1)
       Description: no mote than 128 symbols error validation
     */
-    await selectUserTemplatesAndPlaceInTheMiddle(TemplateLibrary.Azulene, page);
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickInTheMiddleOfTheScreen(page);
+    await saveUserTemplate(page);
     await pressButton(page, 'Save to Templates');
     await page.getByPlaceholder('template').click();
 
@@ -291,9 +293,7 @@ test.describe('Click User Templates on canvas', () => {
       Test case: EPMLSOPKET-10073(2)
       Description: empty field validation
     */
-    await selectUserTemplatesAndPlaceInTheMiddle(TemplateLibrary.Azulene, page);
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickInTheMiddleOfTheScreen(page);
+    await saveUserTemplate(page);
     await pressButton(page, 'Save to Templates');
     await page.getByPlaceholder('template').click();
     await page.getByPlaceholder('template').fill('name');

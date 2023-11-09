@@ -36,7 +36,11 @@ const baseStyle = {
   justifyContent: 'space-between',
 };
 
-const StyledIcon = styled(Icon)`
+interface StyledIconProps {
+  disabled?: boolean;
+}
+
+const StyledIcon = styled(Icon)<StyledIconProps>`
   filter: ${({ disabled }) => (disabled ? 'grayscale(1)' : '')};
   opacity: ${({ disabled }) => (disabled ? '0.6' : '1')};
 `;

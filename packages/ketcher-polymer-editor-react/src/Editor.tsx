@@ -73,7 +73,7 @@ import {
 import { MonomerConnectionOnlyProps } from 'components/modal/modalContainer/types';
 import { calculatePreviewPosition } from 'helpers';
 import StyledPreview from 'components/shared/MonomerPreview';
-import { ErrorModal } from 'components/modal/Error/Error';
+import { ErrorModal } from 'components/modal/Error';
 
 const muiTheme = createTheme(muiOverrides);
 

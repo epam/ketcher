@@ -77,7 +77,7 @@ const DropDownItem = styled(MenuItem)`
   font-size: 14px;
 
   &.MuiButtonBase-root:hover {
-    ${({ theme }) => `border-left: 2px solid #167782`}
+    border-left: 2px solid #167782;
   }
 
   & .MuiTypography-root {

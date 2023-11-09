@@ -317,11 +317,7 @@ function MenuComponent() {
       </Menu.Group>
       <Menu.Group>
         <Menu.Item itemId="open" title="Open..." testId="open-button" />
-        <Menu.Item
-          itemId="save"
-          data-testId="save-button"
-          testId="save-button"
-        />
+        <Menu.Item itemId="save" testId="save-button" />
       </Menu.Group>
       <Menu.Group>
         <Menu.Item itemId="erase" title="Erase" testId="erase-button" />

@@ -5,8 +5,6 @@ import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import assert from 'assert';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
-import { Sugar } from 'domain/entities/Sugar';
-import { Phosphate } from 'domain/entities/Phosphate';
 import {
   MonomerAddOperation,
   MonomerDeleteOperation,
@@ -234,10 +232,8 @@ export class DrawingEntitiesManager {
   public addPolymerBond(firstMonomer, startPosition, endPosition) {
     const polymerBond = new PolymerBond(firstMonomer);
     this.polymerBonds.set(polymerBond.id, polymerBond);
-    firstMonomer.setPotentialBond(
-      firstMonomer.startBondAttachmentPoint,
-      polymerBond,
-    );
+    const attachmentPoint = firstMonomer.getValidSourcePoint();
+    firstMonomer.setPotentialBond(attachmentPoint, polymerBond);
     polymerBond.moveBondStartAbsolute(startPosition.x, startPosition.y);
     polymerBond.moveBondEndAbsolute(endPosition.x, endPosition.y);
 
@@ -349,51 +345,25 @@ export class DrawingEntitiesManager {
     const command = new Command();
     monomer.turnOnHover();
     monomer.turnOnAttachmentPointsVisibility();
-    const availableAttachmentPointForBondEnd =
-      monomer.availableAttachmentPointForBondEnd;
-    if (availableAttachmentPointForBondEnd) {
-      monomer.setPotentialBond(availableAttachmentPointForBondEnd, bond);
-    }
-
-    if (
-      availableAttachmentPointForBondEnd === 'R2' &&
-      monomer.hasAttachmentPoint('R1') &&
-      !bond.firstMonomer.isAttachmentPointUsed('R1')
-    ) {
-      bond.firstMonomer.removePotentialBonds();
-      bond.firstMonomer.setPotentialBond('R1', bond);
-      const operation = new MonomerHoverOperation(bond.firstMonomer, true);
-      command.addOperation(operation);
-    }
-
-    if (
-      monomer.hasAttachmentPoint('R2') &&
-      !monomer.isAttachmentPointUsed('R2') &&
-      bond.firstMonomer.getPotentialAttachmentPointByBond(bond) === 'R1'
-    ) {
-      monomer.removePotentialBonds();
-      monomer.setPotentialBond('R2', bond);
-      const operation = new MonomerHoverOperation(bond.firstMonomer, true);
-      command.addOperation(operation);
-    }
-
-    if (
-      availableAttachmentPointForBondEnd === 'R2' &&
-      !monomer.hasAttachmentPoint('R1') &&
-      bond.firstMonomer.hasAttachmentPoint('R1') &&
-      !bond.firstMonomer.isAttachmentPointUsed('R1')
-    ) {
-      // Prevents forming invalid R2-R2 bonds when second monomer does not have R1 point
-      bond.firstMonomer.removePotentialBonds();
-      bond.firstMonomer.setPotentialBond('R1', bond);
-      const operation = new MonomerHoverOperation(bond.firstMonomer, true);
-      command.addOperation(operation);
-    }
-
-    const operation = new MonomerHoverOperation(monomer, true);
-
-    command.addOperation(operation);
-
+    bond.firstMonomer.removePotentialBonds();
+    monomer.removePotentialBonds();
+    const firstMonomerValidSourcePoint =
+      bond.firstMonomer.getValidSourcePoint(monomer);
+    const secondMonomerValidTargetPoint = monomer.getValidTargetPoint(
+      bond.firstMonomer,
+    );
+    bond.firstMonomer.setPotentialBond(firstMonomerValidSourcePoint, bond);
+    monomer.setPotentialBond(secondMonomerValidTargetPoint, bond);
+    const connectFirstMonomerOperation = new MonomerHoverOperation(
+      bond.firstMonomer,
+      true,
+    );
+    const connectSecondMonomerOperation = new MonomerHoverOperation(
+      monomer,
+      true,
+    );
+    command.addOperation(connectFirstMonomerOperation);
+    command.addOperation(connectSecondMonomerOperation);
     return command;
   }
 
@@ -402,16 +372,10 @@ export class DrawingEntitiesManager {
     polymerBond?: PolymerBond,
   ) {
     const command = new Command();
-    if (
-      polymerBond &&
-      polymerBond.firstMonomer.getPotentialAttachmentPointByBond(
-        polymerBond,
-      ) === 'R1' &&
-      polymerBond.firstMonomer.hasAttachmentPoint('R2') &&
-      !polymerBond.firstMonomer.isAttachmentPointUsed('R2')
-    ) {
+    const attachmentPoint = polymerBond?.firstMonomer.getValidSourcePoint();
+    if (polymerBond) {
       polymerBond.firstMonomer.removePotentialBonds();
-      polymerBond.firstMonomer.setPotentialBond('R2', polymerBond);
+      polymerBond.firstMonomer.setPotentialBond(attachmentPoint, polymerBond);
       const operation = new MonomerHoverOperation(
         polymerBond.firstMonomer,
         true,
@@ -525,15 +489,9 @@ export class DrawingEntitiesManager {
         command.addOperation(monomerAddOperation);
         polymerBond.setSecondMonomer(monomer);
 
-        // requirements are: Base(R1)-(R3)Sugar(R1)-(R2)Phosphate
-        const attPointStart = previousMonomer.R1AttachmentPoint;
-        let attPointEnd;
-
-        if (monomer instanceof Sugar) {
-          attPointEnd = monomer.isAttachmentPointUsed('R3') ? undefined : 'R3';
-        } else if (monomer instanceof Phosphate) {
-          attPointEnd = monomer.R2AttachmentPoint;
-        }
+        // requirements are: Base(R1)-(R3)Sugar(R2)-(R1)Phosphate
+        const attPointStart = previousMonomer.getValidSourcePoint(monomer);
+        const attPointEnd = monomer.getValidSourcePoint(previousMonomer);
 
         assert(attPointStart);
         assert(attPointEnd);

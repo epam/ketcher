@@ -28,7 +28,7 @@ import Cursor from '../Cursor';
 import { ContextMenu, ContextMenuTrigger } from '../ContextMenu';
 
 import InfoPanel from './InfoPanel';
-import { KetcherLogger } from 'ketcher-core';
+import { KetcherLogger, ketcherProvider } from 'ketcher-core';
 import { getSmoothScrollDelta } from './helpers';
 import InfoTooltip from './InfoTooltip';
 
@@ -151,6 +151,13 @@ class StructEditor extends Component {
     this.editor = new Editor(this.editorRef.current, {
       ...this.props.options,
     });
+    const ketcher = ketcherProvider.getKetcher();
+    if (ketcher?.editor.macromoleculeConvertionError) {
+      this.props.onShowMacromoleculesErrorMessage(
+        ketcher.editor.macromoleculeConvertionError,
+      );
+      ketcher.editor.clearMacromoleculeConvertionError();
+    }
     setupEditor(this.editor, this.props);
     if (this.props.onInit) this.props.onInit(this.editor);
 
@@ -282,6 +289,7 @@ class StructEditor extends Component {
       onApiSettings,
       showAttachmentPoints = true,
       onUpdateFloatingTools,
+      onShowMacromoleculesErrorMessage,
       /* eslint-enable @typescript-eslint/no-unused-vars */
       ...props
     } = this.props;

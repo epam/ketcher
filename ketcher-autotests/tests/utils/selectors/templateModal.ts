@@ -93,6 +93,8 @@ export enum TemplateLibrary {
   Naphtalene = 'Naphtalene',
   Anthracene = 'Anthracene',
   Arabinofuranose = 'Arabinofuranose',
+  ALADAlanine = 'ALA-D-Alanine',
+  ARGDArginine = 'ARG-D-Arginine',
 }
 
 export async function selectSaltsAndSolvents(

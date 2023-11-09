@@ -555,4 +555,20 @@ test.describe('Rotation snapping', () => {
     await page.getByTestId('floating-tools').isVisible();
     await takeEditorScreenshot(page);
   });
+
+  test('Rotate tool -  Verify that the rotation tool works correctly when used with different objects and shapes', async ({
+    page,
+  }) => {
+    /*
+      Test case: EPMLSOPKET-13002
+      Description: TODO
+      Select different objects and shapes
+      (e.g., Templates, Expanded Functional Groups, Contracted Functional Groups, Salts and Solvents, Chains, Combinations of these structures etc.).
+      Activate the rotation mode.
+      Rotate the selected object.
+    */
+    await addStructureAndSelect(page);
+    await page.keyboard.press('Escape');
+    await takeEditorScreenshot(page);
+  });
 });

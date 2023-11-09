@@ -38,7 +38,6 @@ export type Group = {
 const MonomerList = ({ onItemClick, libraryName }: IMonomerListProps) => {
   const monomers = useAppSelector(selectFilteredMonomers);
   const activeTool = useAppSelector(selectEditorActiveTool);
-
   const items =
     libraryName !== MONOMER_LIBRARY_FAVORITES
       ? selectMonomersInCategory(monomers, libraryName)

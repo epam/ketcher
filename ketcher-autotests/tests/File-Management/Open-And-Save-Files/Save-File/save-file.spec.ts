@@ -403,4 +403,28 @@ test.describe('Open/Save/Paste files', () => {
     await getPreviewForSmiles(page, 'MDL Molfile V2000', 'Daylight SMILES');
     await page.getByText('Warnings').click();
   });
+
+  test('Ketcher should be able to open mol200 file with sgroup attachment point and then save the struct to .ket format', async ({
+    page,
+  }) => {
+    /*
+      Test case: EPMLSOPKET-16889
+      Description:  TODO
+      Open file ketcher (5).mol
+      Save file in .ket format
+     */
+    await selectTopPanelButton(TopPanelButton.Save, page);
+  });
+
+  test('able to open .ket file with the "attachmentPoints" instruction and display attachment point correctly i', async ({
+    page,
+  }) => {
+    /*
+      Test case: EPMLSOPKET-16890
+      Description:  TODO
+      Load file ketcher (5).ket
+      Check all elements
+     */
+    await selectTopPanelButton(TopPanelButton.Save, page);
+  });
 });

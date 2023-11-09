@@ -10,6 +10,7 @@ import {
   pasteFromClipboardAndAddToCanvas,
   takePageScreenshot,
   copyAndPaste,
+  pressButton,
 } from '@utils';
 import { getMolfile, getRxn } from '@utils/formats';
 
@@ -114,7 +115,7 @@ test.describe('Browser', () => {
   }) => {
     /*
     Test case: EPMLSOPKET-1864
-    Description:
+    Description: TODO
     Click the 'Maximize' button of the browser.
     Open the reaction from file [^reaction_all.rxn]
     Click the 'Restore Down' button of the browser.
@@ -132,7 +133,7 @@ test.describe('Browser', () => {
   test('Resize browser - R-Group', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1865
-    Description:
+    Description: TODO
     Click the Maximize button of the browser.
     Open [^Rgroup.mol]file in Notepad select all and copy the molstring.
     Click the "Open" button, paste the copied data in the Data field and click OK.
@@ -154,12 +155,21 @@ test.describe('Browser', () => {
   test('Zoom browser - S-Group', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-4737
-    Description:
+    Description: TODO
     1. Launch Ketcher using safari browser
     2. Open any window with drop down (e.x: Add structure on canvas -> Open the S-Group Properties using the "Data S-Group" tool on the left menu
     3. Zoom in the page using browser tool
     4. Extend the "Field name" drop down
     */
     await openFileAndAddToCanvas('KET/chain.ket', page);
+  });
+
+  test('Text tool - Restore Down the window', async ({ page }) => {
+    /* Test case: EPMLSOPKET-2237
+    Description: TODO
+    Click on the 'Restore Down' browser button.
+    Hover the mouse over the 'Add text' button.
+    */
+    await pressButton(page, 'Apply');
   });
 });

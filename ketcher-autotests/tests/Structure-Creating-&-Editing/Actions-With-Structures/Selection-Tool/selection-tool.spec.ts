@@ -32,6 +32,14 @@ import {
   drawBenzeneRing,
   clickOnTheCanvas,
   getCoordinatesOfTheMiddleOfTheScreen,
+  clickOnBond,
+  STRUCTURE_LIBRARY_BUTTON_NAME,
+  selectUserTemplate,
+  TemplateLibrary,
+  selectTopPanelButton,
+  TopPanelButton,
+  AtomButton,
+  selectAtomInToolbar,
 } from '@utils';
 
 async function moveElement(
@@ -669,6 +677,96 @@ test.describe('Selection tools', () => {
 
     await selectLeftPanelButton(LeftPanelButton.HandTool, page);
     await dragMouseTo(150, 600, page);
+    await takePageScreenshot(page);
+  });
+
+  test('Fragment Selection tool - Drawing selection contours correctly for hovered structures', async ({
+    page,
+  }) => {
+    /*
+    Test case: EPMLSOPKET-17664
+    Description:
+    Click on the ""Fragment selection"" 
+    Click on the structure on the canvas
+    Hover over the mouse to the structure
+    Verify atoms are drawn above the bonds
+    */
+    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+    await page.getByRole('tab', { name: 'Template Library' }).click();
+    await page.getByRole('button', { name: 'D-Amino Acids' }).click();
+    await selectUserTemplate(TemplateLibrary.ALADAlanine, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await page.getByTestId('ketcher-canvas').hover();
+    await selectDropdownTool(page, 'select-rectangle', 'select-fragment');
+    await clickInTheMiddleOfTheScreen(page);
+    await clickOnBond(page, BondType.SINGLE, 0);
+    await clickOnAtom(page, 'C', 0);
+    await takePageScreenshot(page);
+  });
+
+  test('Fragment Selection tool - Undo/Redo moving of structures', async ({
+    page,
+  }) => {
+    /*
+    Test case: EPMLSOPKET-1360
+    Description: 
+    Drag any structure to any other place on the canvas.
+    Click the 'Undo/Redo' button on the toolbar.
+    Drag the 'plus sign'/'reaction arrow' to any place on the canvas.
+    Click the 'Undo/Redo' button on the toolbar multiple times.
+    */
+    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+    await page.getByRole('tab', { name: 'Template Library' }).click();
+    await page.getByRole('button', { name: 'D-Amino Acids' }).click();
+    await selectUserTemplate(TemplateLibrary.ALADAlanine, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await selectTopPanelButton(TopPanelButton.Redo, page);
+    await selectLeftPanelButton(LeftPanelButton.ReactionPlusTool, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await selectLeftPanelButton(LeftPanelButton.ArrowOpenAngleTool, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await selectTopPanelButton(TopPanelButton.Redo, page);
+    await takePageScreenshot(page);
+  });
+
+  test('Rectangle Selection tool - Undo/Redo moving of structures', async ({
+    page,
+  }) => {
+    /* Test case: EPMLSOPKET-1353
+    Description: TODO
+    Drag any atom of the structure to any other place on the canvas.
+    Click the 'Undo' button on the toolbar.
+    Click the 'Redo' button on the toolbar.
+    Drag the plus sign to any place on the canvas.
+    Drag the reaction arrow to any place on the canvas.
+    Select a part or the whole reaction and drag it to any place on the canvas.
+    Click the 'Undo' button on the toolbar multiple times.
+    Click the 'Redo' button on the toolbar multiple times.
+    */
+    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+    await page.getByRole('tab', { name: 'Template Library' }).click();
+    await page.getByRole('button', { name: 'D-Amino Acids' }).click();
+    await selectUserTemplate(TemplateLibrary.ARGDArginine, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await selectAtomInToolbar(AtomButton.Hydrogen, page);
+    await clickInTheMiddleOfTheScreen(page);
+
+    const shift = 50;
+    const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
+    const coordinatesWithShift = x + shift;
+    await dragMouseTo(coordinatesWithShift, y, page);
+    await resetCurrentTool(page);
+
+    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await selectTopPanelButton(TopPanelButton.Redo, page);
+    await selectLeftPanelButton(LeftPanelButton.ReactionPlusTool, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await selectLeftPanelButton(LeftPanelButton.ArrowOpenAngleTool, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await selectTopPanelButton(TopPanelButton.Redo, page);
     await takePageScreenshot(page);
   });
 });

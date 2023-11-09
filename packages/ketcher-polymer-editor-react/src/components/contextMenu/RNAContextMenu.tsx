@@ -3,12 +3,14 @@ import { openModal } from 'state/modal';
 import { useAppDispatch, useAppSelector } from 'hooks';
 import { ReactElement } from 'react';
 import { CONTEXT_MENU_ID } from './types';
-import { selectActivePreset } from 'state/rna-builder';
+import { selectActivePresetForContextMenu } from 'state/rna-builder';
 import { StyledMenu } from './styles';
 
 export const RNAContextMenu = () => {
   const dispatch = useAppDispatch();
-  const activePreset = useAppSelector(selectActivePreset);
+  const activePresetForContextMenu = useAppSelector(
+    selectActivePresetForContextMenu,
+  );
   const RNAMenus = [
     { name: 'duplicateandedit', title: 'Duplicate and Edit...' },
     { name: 'edit', title: 'Edit...', seperator: true },
@@ -16,7 +18,7 @@ export const RNAContextMenu = () => {
   ];
 
   const isItemDisabled = (name: string) => {
-    if (name === 'deletepreset' && activePreset?.default) {
+    if (name === 'deletepreset' && activePresetForContextMenu?.default) {
       return true;
     }
     return false;
@@ -25,10 +27,10 @@ export const RNAContextMenu = () => {
   const handleMenuChange = ({ id, props }: ItemParams) => {
     switch (id) {
       case 'duplicateandedit':
-        props.duplicatePreset();
+        props.duplicatePreset(activePresetForContextMenu);
         break;
       case 'edit':
-        props.activateEditMode();
+        props.editPreset(activePresetForContextMenu);
         break;
       case 'deletepreset':
         dispatch(openModal('delete'));

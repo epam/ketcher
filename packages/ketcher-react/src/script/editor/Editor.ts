@@ -154,6 +154,7 @@ class Editor implements KetcherEditor {
   };
 
   lastEvent: any;
+  macromoleculeConvertionError: string | null | undefined;
 
   constructor(clientArea, options) {
     this.render = new Render(
@@ -668,6 +669,14 @@ class Editor implements KetcherEditor {
     const action = fromDescriptorsAlign(this.render.ctab);
     this.update(action);
     this.render.update(true);
+  }
+
+  setMacromoleculeConvertionError(errorMessage: string) {
+    this.macromoleculeConvertionError = errorMessage;
+  }
+
+  clearMacromoleculeConvertionError() {
+    this.macromoleculeConvertionError = null;
   }
 }
 

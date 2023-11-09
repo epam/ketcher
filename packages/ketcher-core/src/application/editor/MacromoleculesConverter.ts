@@ -141,28 +141,40 @@ export class MacromoleculesConverter {
       }
     });
 
+    let conversionErrorMessage = '';
+
     drawingEntitiesManager.polymerBonds.forEach((polymerBond) => {
       assert(polymerBond.secondMonomer);
+      const beginAtom = this.findAttachmentPointAtom(
+        monomerToSgroup.get(polymerBond.firstMonomer) as SGroup,
+        polymerBond,
+        polymerBond.firstMonomer,
+        struct,
+      );
+      const endAtom = this.findAttachmentPointAtom(
+        monomerToSgroup.get(polymerBond.secondMonomer) as SGroup,
+        polymerBond,
+        polymerBond.secondMonomer,
+        struct,
+      );
+
+      if (!beginAtom || !endAtom) {
+        conversionErrorMessage =
+          'There is no atom for provided attachment point. Bond between monomers was not created.';
+
+        return;
+      }
+
       const bond = new Bond({
         type: Bond.PATTERN.TYPE.SINGLE,
-        begin: this.findAttachmentPointAtom(
-          monomerToSgroup.get(polymerBond.firstMonomer) as SGroup,
-          polymerBond,
-          polymerBond.firstMonomer,
-          struct,
-        ),
-        end: this.findAttachmentPointAtom(
-          monomerToSgroup.get(polymerBond.secondMonomer) as SGroup,
-          polymerBond,
-          polymerBond.secondMonomer,
-          struct,
-        ),
+        begin: beginAtom,
+        end: endAtom,
       });
       const bondId = struct.bonds.add(bond);
       reStruct?.bonds.set(bondId, new ReBond(bond));
     });
 
-    return { struct, reStruct };
+    return { struct, reStruct, conversionErrorMessage };
   }
 
   private static convertMonomerMicromoleculeToMonomer(

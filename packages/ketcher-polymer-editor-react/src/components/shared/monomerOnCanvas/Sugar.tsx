@@ -17,7 +17,7 @@
 export const SugarAvatar = () => (
   <>
     <symbol id="sugar" viewBox="0 0 70 70" width="70" height="70">
-      <rect width="57" height="57" rx="10" />
+      <rect className="monomer-body" width="57" height="57" rx="10" />
     </symbol>
     <symbol id="sugar-selection" viewBox="-2 -2 100 100" width="70" height="70">
       <rect

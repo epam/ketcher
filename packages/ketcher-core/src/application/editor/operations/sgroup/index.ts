@@ -20,6 +20,7 @@ import { ReSGroup, ReStruct } from '../../../render';
 
 import { BaseOperation } from '../base';
 import { OperationPriority, OperationType } from '../OperationType';
+import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 
 // todo: separate classes: now here is circular dependency in `invert` method
 
@@ -29,6 +30,7 @@ type Data = {
   pp?: any;
   expanded?: boolean;
   name?: string;
+  oldSgroup?: SGroup;
 };
 
 class SGroupCreate extends BaseOperation {
@@ -40,6 +42,7 @@ class SGroupCreate extends BaseOperation {
     pp?: any,
     expanded?: boolean,
     name?: string,
+    oldSgroup?: SGroup,
   ) {
     super(OperationType.S_GROUP_CREATE);
     this.data = {
@@ -48,19 +51,23 @@ class SGroupCreate extends BaseOperation {
       pp,
       expanded,
       name,
+      oldSgroup,
     };
   }
 
   execute(restruct: ReStruct) {
     const struct = restruct.molecule;
-    const sgroup = new SGroup(this.data.type);
-    const { sgid, pp, expanded, name } = this.data;
+    const { sgid, pp, expanded, name, oldSgroup } = this.data;
+    const sgroup =
+      oldSgroup instanceof MonomerMicromolecule
+        ? new MonomerMicromolecule(SGroup.TYPES.SUP, oldSgroup.monomer)
+        : new SGroup(this.data.type);
 
     sgroup.id = sgid;
     struct.sgroups.set(sgid, sgroup);
 
     if (pp) {
-      struct.sgroups.get(sgid)!.pp = new Vec2(pp);
+      sgroup!.pp = new Vec2(pp);
     }
 
     if (expanded) {

@@ -1,7 +1,7 @@
 import { Vec2 } from 'domain/entities/vec2';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import assert from 'assert';
-let id = 1;
+let id = 0;
 
 export abstract class DrawingEntity {
   public selected = false;

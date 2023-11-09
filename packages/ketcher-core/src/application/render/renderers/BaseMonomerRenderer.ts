@@ -3,7 +3,6 @@ import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { D3SvgElementSelection } from 'application/render/types';
 import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { editorEvents } from 'application/editor/editorEvents';
-import { Scale } from 'domain/helpers';
 import assert from 'assert';
 import {
   attachmentPointNumberToAngle,
@@ -12,6 +11,8 @@ import {
   checkFor0and360,
 } from 'domain/helpers/attachmentPointCalculations';
 import { AttachmentPoint } from 'domain/AttachmentPoint';
+import Coordinates from 'application/editor/shared/coordinates';
+import { Vec2 } from 'domain/entities';
 import { AttachmentPointName } from 'domain/types';
 
 export abstract class BaseMonomerRenderer extends BaseRenderer {
@@ -25,6 +26,8 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     | D3SvgElementSelection<SVGGElement, void>[]
     | [] = [];
 
+  private monomerSymbolElement?: SVGUseElement | SVGRectElement;
+
   static isSelectable() {
     return true;
   }
@@ -33,11 +36,20 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     public monomer: BaseMonomer,
     private monomerSelectedElementId: string,
     private monomerHoveredElementId: string,
+    monomerSymbolElementId: string,
     private scale?: number,
   ) {
     super(monomer as DrawingEntity);
     this.monomer.setRenderer(this);
     this.editorEvents = editorEvents;
+    this.monomerSymbolElement = document.querySelector(
+      `${monomerSymbolElementId} .monomer-body`,
+    ) as SVGUseElement | SVGRectElement;
+  }
+
+  public get monomerSymbolBoundingClientRect() {
+    assert(this.monomerSymbolElement);
+    return this.monomerSymbolElement.getBoundingClientRect();
   }
 
   private isSnakeBondForAttachmentPoint(
@@ -53,10 +65,10 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   }
 
   public get center() {
-    return {
-      x: this.scaledMonomerPosition.x + this.bodyWidth / 2,
-      y: this.scaledMonomerPosition.y + this.bodyHeight / 2,
-    };
+    return new Vec2(
+      this.scaledMonomerPosition.x + this.bodyWidth / 2,
+      this.scaledMonomerPosition.y + this.bodyHeight / 2,
+    );
   }
 
   public get textColor() {
@@ -153,7 +165,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       this.monomer,
       this.bodyWidth,
       this.bodyHeight,
-      this.canvas,
+      this.canvasWrapper,
       AttachmentPointName,
       this.monomer.isAttachmentPointUsed(AttachmentPointName),
       this.monomer.isAttachmentPointPotentiallyUsed(AttachmentPointName),
@@ -224,9 +236,18 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   }
 
   private get scaledMonomerPosition() {
+    const monomerSymbolBoundingClientRect =
+      this.monomerSymbolBoundingClientRect;
     // we need to convert monomer coordinates(stored in angstroms) to pixels.
     // it needs to be done in view layer of application (like renderers)
-    return Scale.modelToCanvas(this.monomer.position, this.editorSettings);
+    const monomerPositionInPixels = Coordinates.modelToCanvas(
+      this.monomer.position,
+    );
+
+    return new Vec2(
+      monomerPositionInPixels.x - monomerSymbolBoundingClientRect.width / 2,
+      monomerPositionInPixels.y - monomerSymbolBoundingClientRect.height / 2,
+    );
   }
 
   public appendSelection() {
@@ -241,8 +262,8 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     this.selectionCircle = this.canvas
       ?.insert('circle', ':first-child')
       .attr('r', '42px')
-      .attr('cx', this.scaledMonomerPosition.x + this.bodyWidth / 2)
-      .attr('cy', this.scaledMonomerPosition.y + this.bodyHeight / 2)
+      .attr('cx', this.center.x)
+      .attr('cy', this.center.y)
       .attr('fill', '#57FF8F');
   }
 
@@ -282,6 +303,9 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   }
 
   public show(theme) {
+    this.rootElement =
+      this.rootElement ||
+      this.appendRootElement(this.scale ? this.canvasWrapper : this.canvas);
     this.rootElement = this.rootElement || this.appendRootElement(this.canvas);
     this.bodyElement = this.appendBody(this.rootElement, theme);
     this.appendEvents();

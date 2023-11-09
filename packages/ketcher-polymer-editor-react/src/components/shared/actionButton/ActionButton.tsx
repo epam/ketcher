@@ -40,6 +40,7 @@ const PrimaryButton = styled(MuiButton)(
 
     '&:disabled': {
       background: theme.ketcher.color.button.primary.disabled,
+      border: `1px solid transparent`,
       opacity: 0.4,
     },
   }),

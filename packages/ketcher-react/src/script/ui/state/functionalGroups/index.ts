@@ -55,7 +55,10 @@ const functionalGroupsReducer = (
   }
 };
 
-const initFGroups = (lib: SdfItem[]) => ({ type: 'FG_INIT', payload: { lib } });
+export const initFGroups = (lib: SdfItem[]) => ({
+  type: 'FG_INIT',
+  payload: { lib },
+});
 const highlightFGroup = (group: any) => ({
   type: 'FG_HIGHLIGHT',
   payload: group,

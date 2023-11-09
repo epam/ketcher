@@ -23,7 +23,10 @@ async function selectExtendedAtom(
 test.describe('Generic nodes', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await openFileAndAddToCanvas('Heteroatoms.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/heteroatoms-structure.mol',
+      page,
+    );
   });
 
   test.afterEach(async ({ page }) => {

@@ -247,6 +247,7 @@ class Attach extends Component {
         : this.tmpl.props;
     const options = Object.assign(editorStyles, this.props.globalSettings, {
       scale: getScale(struct),
+      reuseRestructIfExist: false,
     });
     const dialogTitle =
       this.mode === this.MODES.SAVE ? 'Save to Templates' : 'Template Edit';

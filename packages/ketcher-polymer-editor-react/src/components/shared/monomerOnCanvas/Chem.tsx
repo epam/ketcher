@@ -17,7 +17,13 @@
 export const ChemAvatar = () => (
   <>
     <symbol id="chem" viewBox="0 0 59 59" width="59" height="59">
-      <rect width="59" height="59" rx="1.5" fill="#F5F6F7" />
+      <rect
+        className="monomer-body"
+        width="59"
+        height="59"
+        rx="1.5"
+        fill="#F5F6F7"
+      />
     </symbol>
     <symbol id="chem-selection" viewBox="0 0 59 59" width="59" height="59">
       <rect

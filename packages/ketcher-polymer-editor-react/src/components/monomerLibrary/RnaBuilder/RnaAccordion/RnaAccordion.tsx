@@ -45,9 +45,11 @@ import {
   selectActivePreset,
   selectActivePresetMonomerGroup,
   selectActiveRnaBuilderItem,
+  selectIsActivePresetNewAndEmpty,
   selectIsEditMode,
   selectPresets,
   setActivePreset,
+  setActivePresetForContextMenu,
   setActivePresetMonomerGroup,
   setActiveRnaBuilderItem,
   setIsEditMode,
@@ -74,11 +76,7 @@ interface IGroupsDataItem {
   }[];
 }
 
-export const RnaAccordion = ({
-  libraryName,
-  duplicatePreset,
-  activateEditMode,
-}) => {
+export const RnaAccordion = ({ libraryName, duplicatePreset, editPreset }) => {
   const monomers = useAppSelector(selectFilteredMonomers);
   const items = selectMonomersInCategory(monomers, libraryName);
   const activeRnaBuilderItem = useAppSelector(selectActiveRnaBuilderItem);
@@ -87,9 +85,12 @@ export const RnaAccordion = ({
   const presets = useAppSelector(selectPresets);
   const isEditMode = useAppSelector(selectIsEditMode);
   const editor = useAppSelector(selectEditor);
+  const isActivePresetNewAndEmpty = useAppSelector(
+    selectIsActivePresetNewAndEmpty,
+  );
 
   const [expandedAccordion, setExpandedAccordion] =
-    useState<RnaBuilderItem | null>(RnaBuilderPresetsItem.Presets);
+    useState<RnaBuilderItem | null>(activeRnaBuilderItem);
 
   const { show } = useContextMenu({ id: CONTEXT_MENU_ID.FOR_RNA });
 
@@ -143,12 +144,12 @@ export const RnaAccordion = ({
   };
 
   const handleContextMenu = (preset: IRnaPreset) => (event: MouseEvent) => {
-    dispatch(setActivePreset(preset));
+    dispatch(setActivePresetForContextMenu(preset));
     show({
       event,
       props: {
         duplicatePreset,
-        activateEditMode,
+        editPreset,
       },
     });
   };
@@ -160,8 +161,8 @@ export const RnaAccordion = ({
   useEffect(() => {
     dispatch(
       setActiveRnaBuilderItem(
-        isEditMode && activePreset.presetInList
-          ? expandedAccordion
+        isEditMode && activePreset
+          ? activeRnaBuilderItem
           : RnaBuilderPresetsItem.Presets,
       ),
     );
@@ -170,6 +171,8 @@ export const RnaAccordion = ({
   const selectPreset = (preset: IRnaPreset) => {
     dispatch(setActivePreset(preset));
     editor.events.selectPreset.dispatch(preset);
+    if (preset === activePreset.presetInList) return;
+    dispatch(setIsEditMode(false));
   };
 
   const onClickNewPreset = () => {
@@ -216,7 +219,7 @@ export const RnaAccordion = ({
                 </ItemsContainer>
                 <RNAContextMenu />
               </GroupContainer>
-              {isEditMode && <DisabledArea />}
+              {isEditMode && !isActivePresetNewAndEmpty && <DisabledArea />}
             </DetailsContainer>
           ) : (
             <DetailsContainer>

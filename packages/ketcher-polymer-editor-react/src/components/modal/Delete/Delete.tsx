@@ -15,15 +15,15 @@
  ***************************************************************************/
 import { Modal } from 'components/shared/modal';
 import { useCallback } from 'react';
-import { ActionButton } from 'components/shared/actionButton';
 import { useAppDispatch, useAppSelector } from 'hooks';
 import {
   deletePreset,
-  selectActivePreset,
+  selectActivePresetForContextMenu,
   selectPresets,
   setActivePreset,
   setIsEditMode,
 } from 'state/rna-builder';
+import { StyledActionButton } from 'components/modal/Delete/styledComponents';
 
 export interface Props {
   onClose: () => void;
@@ -33,7 +33,9 @@ export interface Props {
 const Delete = ({ isModalOpen, onClose }: Props) => {
   const dispatch = useAppDispatch();
   const presets = useAppSelector(selectPresets);
-  const activePreset = useAppSelector(selectActivePreset);
+  const activePresetForContextMenu = useAppSelector(
+    selectActivePresetForContextMenu,
+  );
   const onCloseCallback = useCallback(() => {
     onClose();
   }, [onClose]);
@@ -44,7 +46,7 @@ const Delete = ({ isModalOpen, onClose }: Props) => {
 
   const deleteHandler = () => {
     onCloseCallback();
-    dispatch(deletePreset(activePreset));
+    dispatch(deletePreset(activePresetForContextMenu));
     dispatch(setIsEditMode(false));
     if (presets.length !== 0) {
       dispatch(setActivePreset(presets[0]));
@@ -58,20 +60,20 @@ const Delete = ({ isModalOpen, onClose }: Props) => {
       onClose={onCloseCallback}
     >
       <Modal.Content>
-        <div>
+        <div data-testid="delete-preset-popup-content">
           <div>You are about to delete</div>
-          <div>"{activePreset.name}" RNA preset.</div>
+          <div>"{activePresetForContextMenu.name}" RNA preset.</div>
           <div>This operation cannot be undone.</div>
         </div>
       </Modal.Content>
       <Modal.Footer>
-        <ActionButton
+        <StyledActionButton
           key="cancel"
           clickHandler={cancelHandler}
           label="Cancel"
           styleType="secondary"
         />
-        <ActionButton
+        <StyledActionButton
           key="delete"
           clickHandler={deleteHandler}
           label="Delete"

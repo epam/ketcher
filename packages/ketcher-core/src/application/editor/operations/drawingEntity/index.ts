@@ -1,3 +1,6 @@
+// eslint-disable no-unused-vars
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import { RenderersManager } from 'application/render/renderers/RenderersManager';
 import { Operation } from 'domain/entities/Operation';
 import { DrawingEntity } from 'domain/entities/DrawingEntity';
@@ -9,7 +12,7 @@ export class DrawingEntityHoverOperation implements Operation {
     renderersManager.hoverDrawingEntity(this.drawingEntity);
   }
 
-  public invert(renderersManager: RenderersManager) {
+  public invert(_renderersManager: RenderersManager) {
     console.log('invert DrawingEntityHoverOperation');
   }
 }
@@ -21,7 +24,7 @@ export class DrawingEntitySelectOperation implements Operation {
     renderersManager.selectDrawingEntity(this.drawingEntity);
   }
 
-  public invert(renderersManager: RenderersManager) {
+  public invert(_renderersManager: RenderersManager) {
     console.log('invert DrawingEntitySelectOperation');
   }
 }
@@ -32,7 +35,7 @@ export class DrawingEntityMoveOperation implements Operation {
     renderersManager.moveDrawingEntity(this.drawingEntity);
   }
 
-  public invert(renderersManager: RenderersManager) {
+  public invert(_renderersManager: RenderersManager) {
     console.log('invert DrawingEntityMoveOperation');
   }
 }
@@ -43,7 +46,7 @@ export class DrawingEntityRedrawOperation implements Operation {
     renderersManager.redrawDrawingEntity(this.drawingEntity);
   }
 
-  public invert(renderersManager: RenderersManager) {
+  public invert(_renderersManager: RenderersManager) {
     console.log('invert DrawingEntityRedrawOperation');
   }
 }

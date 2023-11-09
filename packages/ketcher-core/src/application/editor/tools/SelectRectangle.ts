@@ -84,9 +84,9 @@ class SelectRectangle implements BaseTool {
       this.brushArea.call(this.brush);
     };
 
-    const canvasElement = select(this.editor.canvas).node();
+    const canvasElement = this.editor.canvas;
 
-    if (canvasElement) {
+    if (canvasElement && typeof ResizeObserver !== 'undefined') {
       this.canvasResizeObserver = new ResizeObserver(handleResizeCanvas);
       this.canvasResizeObserver.observe(canvasElement);
     }

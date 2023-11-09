@@ -53,7 +53,7 @@ test.describe('Fragment selection tool', () => {
 
   test('Reaction component selection', async ({ page }) => {
     //  Test case: EPMLSOPKET-1356
-    await openFileAndAddToCanvas('RXN-V2000/reaction_4.rxn', page);
+    await openFileAndAddToCanvas('Rxn-V2000/reaction_4.rxn', page);
     await selectDropdownTool(page, 'select-rectangle', 'select-fragment');
     await clickOnPlus(page, 1);
     await takeEditorScreenshot(page);
@@ -62,7 +62,7 @@ test.describe('Fragment selection tool', () => {
 
   test('Select and drag reaction components', async ({ page }) => {
     //  Test case: EPMLSOPKET-1357
-    await openFileAndAddToCanvas('RXN-V2000/reaction_4.rxn', page);
+    await openFileAndAddToCanvas('Rxn-V2000/reaction_4.rxn', page);
     await selectDropdownTool(page, 'select-rectangle', 'select-fragment');
     await selectObjects(page);
     await dragMouseTo(xMark, yMark, page);

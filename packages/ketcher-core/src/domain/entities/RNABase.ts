@@ -6,6 +6,6 @@ export class RNABase extends BaseMonomer {
   }
 
   public getValidTargetPoint(_monomer: BaseMonomer) {
-    return this.firstFreeAttachmentPoint ;
+    return this.firstFreeAttachmentPoint;
   }
 }

@@ -1,5 +1,4 @@
-import { Page } from '@playwright/test/types/test';
-
+import { Page } from '@playwright/test';
 import { getLeftTopBarSize } from '../common/getLeftTopBarSize';
 import { sortItems } from '../common/sortItems';
 import { NO_STRUCTURE_AT_THE_CANVAS_ERROR } from '../constants';

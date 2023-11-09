@@ -30,6 +30,14 @@ import {
 } from '@utils';
 import { getKet } from '@utils/formats';
 
+async function expandRnaBuilder(page: Page) {
+  await page
+    .locator('div')
+    .filter({ hasText: /^RNA Builder$/ })
+    .getByRole('button')
+    .click();
+}
+
 async function drawThreeMonomers(page: Page) {
   const x = 800;
   const y = 350;
@@ -140,6 +148,7 @@ test.describe('RNA Library', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
     await turnOnMacromoleculesEditor(page);
+    await page.getByTestId('RNA-TAB').click();
   });
 
   test('Check that switch between Macro and Micro mode does not crash application', async ({
@@ -160,24 +169,18 @@ test.describe('RNA Library', () => {
     Test case: #2748, #2751 - RNA Builder. Accordion component
     Description: Check the RNA components panel. 
     RNA panel consist of:
-    RNA Builder(expanded), Presets(5)(expanded), Sugars(199)(collapsed), 
+    RNA Builder(collapsed), Presets(5)(expanded), Sugars(199)(collapsed), 
     Bases(160)(collapsed), Phosphates(32)(collapsed)
     */
-    await page.getByTestId('RNA-TAB').click();
     await takeMonomerLibraryScreenshot(page);
   });
 
-  test('Collapse RNA Builder', async ({ page }) => {
+  test('Expand RNA Builder', async ({ page }) => {
     /* 
     Test case: #2748, #2751 - RNA Builder. Accordion component
-    Description: After click on arrow RNA Builder collapsed.
+    Description: After click on arrow RNA Builder expanded.
     */
-    await page.getByTestId('RNA-TAB').click();
-    await page
-      .locator('div')
-      .filter({ hasText: /^RNA Builder$/ })
-      .getByRole('button')
-      .click();
+    await expandRnaBuilder(page);
     await takeMonomerLibraryScreenshot(page);
   });
 
@@ -208,7 +211,6 @@ test.describe('RNA Library', () => {
       /* 
       Test case: #2748, #2751 - RNA Builder. Accordion component
       */
-      await page.getByTestId('RNA-TAB').click();
       await page.getByTestId(`summary-${data.component}`).click();
       await takeMonomerLibraryScreenshot(page);
     });
@@ -309,6 +311,7 @@ test.describe('RNA Library', () => {
     Test case: #2759 - Edit RNA mode
     Description: Custom presets added to Presets section.
     */
+    await expandRnaBuilder(page);
     await selectMonomer(DropDown.SugarsDropDown, Sugars.TwelveddR, page);
     await selectMonomer(DropDown.BasesDropDown, Bases.Adenine, page);
     await selectMonomer(DropDown.PhosphatesDropDown, Phosphates.Test6Ph, page);
@@ -322,6 +325,7 @@ test.describe('RNA Library', () => {
     Test case: #2507 - Add RNA monomers to canvas
     Description: Custom presets added to Canvas.
     */
+    await expandRnaBuilder(page);
     await selectMonomer(DropDown.SugarsDropDown, Sugars.ThreeA6, page);
     await selectMonomer(DropDown.BasesDropDown, Bases.NBebnzylAdenine, page);
     await selectMonomer(
@@ -343,6 +347,7 @@ test.describe('RNA Library', () => {
     Test case: #2759 - Edit RNA mode
     Description: Custom presets added to Presets section.
     */
+    await expandRnaBuilder(page);
     await selectMonomer(DropDown.SugarsDropDown, Sugars.TwelveddR, page);
     await selectMonomer(DropDown.BasesDropDown, Bases.Adenine, page);
     await page.getByTestId('add-to-presets-btn').click();
@@ -358,6 +363,7 @@ test.describe('RNA Library', () => {
     Test case: #2759 - Edit RNA mode
     Description: Custom presets added to Presets section.
     */
+    await expandRnaBuilder(page);
     await selectMonomer(DropDown.SugarsDropDown, Sugars.TwelveddR, page);
     await selectMonomer(
       DropDown.PhosphatesDropDown,
@@ -376,6 +382,7 @@ test.describe('RNA Library', () => {
     Test case: #2759 - Edit RNA mode
     Description: Custom presets added to Presets section.
     */
+    await expandRnaBuilder(page);
     await selectMonomer(DropDown.BasesDropDown, Bases.Adenine, page);
     await selectMonomer(
       DropDown.PhosphatesDropDown,
@@ -392,6 +399,7 @@ test.describe('RNA Library', () => {
     Test case: #2759 - Edit RNA mode
     Description: Custom presets added to Presets section and can be edited.
     */
+    await expandRnaBuilder(page);
     await selectMonomer(DropDown.SugarsDropDown, Sugars.TwelveddR, page);
     await selectMonomer(DropDown.BasesDropDown, Bases.Adenine, page);
     await selectMonomer(DropDown.PhosphatesDropDown, Phosphates.Test6Ph, page);
@@ -415,6 +423,7 @@ test.describe('RNA Library', () => {
     Test case: #2759 - Edit RNA mode
     Description: Custom presets added to Presets section then can be duplicated and edited.
     */
+    await expandRnaBuilder(page);
     await selectMonomer(DropDown.SugarsDropDown, Sugars.TwelveddR, page);
     await selectMonomer(DropDown.BasesDropDown, Bases.Adenine, page);
     await selectMonomer(DropDown.PhosphatesDropDown, Phosphates.Test6Ph, page);
@@ -431,7 +440,6 @@ test.describe('RNA Library', () => {
     await page.getByTestId('P___Phosphate').click();
     await page.getByTestId('save-btn').click();
     await page.getByTestId('12ddR(A)P_A_12ddR_P').click();
-    await clickInTheMiddleOfTheScreen(page);
     await takePresetsScreenshot(page);
   });
 
@@ -440,6 +448,7 @@ test.describe('RNA Library', () => {
     Test case: #2759 - Edit RNA mode
     Description: Custom presets added to Presets section and can be deleted.
     */
+    await expandRnaBuilder(page);
     await selectMonomer(DropDown.SugarsDropDown, Sugars.TwelveddR, page);
     await selectMonomer(DropDown.BasesDropDown, Bases.Adenine, page);
     await selectMonomer(DropDown.PhosphatesDropDown, Phosphates.Test6Ph, page);
@@ -457,6 +466,7 @@ test.describe('RNA Library', () => {
     Test case: #2759 - Edit RNA mode
     Description: Custom presets added to Presets section and can be renamed.
     */
+    await expandRnaBuilder(page);
     await selectMonomer(DropDown.SugarsDropDown, Sugars.TwentyFiveR, page);
     await selectMonomer(DropDown.BasesDropDown, Bases.NBebnzylAdenine, page);
     await selectMonomer(
@@ -480,7 +490,7 @@ test.describe('RNA Library', () => {
     Test case: #2759 - Edit RNA mode
     Description: RNA name autofilling when selects RNA parts.
     */
-    await page.getByTestId('RNA-TAB').click();
+    await expandRnaBuilder(page);
     await page.getByTestId('rna-builder-slot--sugar').click();
     await page.getByTestId("3A6___6-amino-hexanol (3' end)").click();
     await page.getByTestId('rna-builder-slot--base').click();
@@ -496,7 +506,7 @@ test.describe('RNA Library', () => {
     Test case: #2759 - Edit RNA mode
     Description: RNA name added.
     */
-    await page.getByTestId('RNA-TAB').click();
+    await expandRnaBuilder(page);
     await page.getByTestId('rna-builder-slot--sugar').click();
     await page.getByTestId('25R___2,5-Ribose').click();
     await page.getByTestId('rna-builder-slot--base').click();
@@ -525,7 +535,7 @@ test.describe('RNA Library', () => {
     ];
 
     for (const monomer of monomers) {
-      await page.getByTestId('RNA-TAB').click();
+      await expandRnaBuilder(page);
       await page.getByTestId(`rna-builder-slot--${monomer.type}`).click();
       await page.getByTestId(monomer.name).click();
       await clickInTheMiddleOfTheScreen(page);
@@ -538,6 +548,7 @@ test.describe('RNA Library', () => {
     Test case: #2507 - Add RNA monomers to canvas
     Description: Sugar-Base Combination added to Canvas.
     */
+    await expandRnaBuilder(page);
     await selectMonomer(DropDown.SugarsDropDown, Sugars.ThreeA6, page);
     await selectMonomer(DropDown.BasesDropDown, Bases.NBebnzylAdenine, page);
     await page.getByTestId('add-to-presets-btn').click();
@@ -552,6 +563,7 @@ test.describe('RNA Library', () => {
     Test case: #2507 - Add RNA monomers to canvas
     Description: Sugar-Phosphate Combination added to Canvas.
     */
+    await expandRnaBuilder(page);
     await selectMonomer(DropDown.SugarsDropDown, Sugars.ThreeA6, page);
     await selectMonomer(
       DropDown.PhosphatesDropDown,
@@ -570,6 +582,7 @@ test.describe('RNA Library', () => {
     Test case: #2507 - Add RNA monomers to canvas
     Description: Base-Phosphate Combination not added to Canvas.
     */
+    await expandRnaBuilder(page);
     await selectMonomer(DropDown.BasesDropDown, Bases.NBebnzylAdenine, page);
     await selectMonomer(
       DropDown.PhosphatesDropDown,
@@ -641,7 +654,7 @@ test.describe('RNA Library', () => {
     */
     await openFileAndAddToCanvas('KET/monomers-connected-with-bonds.ket', page);
     await selectEraseTool(page);
-    await page.getByText('12ddR').locator('..').click();
+    await page.getByText('12ddR').locator('..').first().click();
     await takeEditorScreenshot(page);
   });
 
@@ -652,7 +665,7 @@ test.describe('RNA Library', () => {
     */
     await openFileAndAddToCanvas('KET/monomers-connected-with-bonds.ket', page);
     await selectEraseTool(page);
-    await page.getByText('baA').locator('..').click();
+    await page.getByText('baA').locator('..').first().click();
     await takeEditorScreenshot(page);
   });
 
@@ -763,7 +776,6 @@ test.describe('RNA Library', () => {
     */
       const anyPointX = 300;
       const anyPointY = 500;
-      await page.getByTestId('RNA-TAB').click();
       await page.getByTestId(`summary-${molecule.type}`).click();
       await page.getByTestId(molecule.description).click();
       await clickInTheMiddleOfTheScreen(page);

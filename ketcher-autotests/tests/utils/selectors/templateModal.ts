@@ -140,7 +140,6 @@ export async function selectMonomer(
   monomerType: Sugars | Bases | Phosphates,
   page: Page,
 ) {
-  await page.getByTestId('RNA-TAB').click();
   await page.getByTestId(monomersDropDown).click();
   await page.getByTestId(monomerType.toString()).click();
 }

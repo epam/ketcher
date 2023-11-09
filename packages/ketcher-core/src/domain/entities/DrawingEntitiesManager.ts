@@ -5,8 +5,6 @@ import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import assert from 'assert';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
-import { Sugar } from 'domain/entities/Sugar';
-import { Phosphate } from 'domain/entities/Phosphate';
 import {
   MonomerAddOperation,
   MonomerDeleteOperation,
@@ -234,10 +232,8 @@ export class DrawingEntitiesManager {
   public addPolymerBond(firstMonomer, startPosition, endPosition) {
     const polymerBond = new PolymerBond(firstMonomer);
     this.polymerBonds.set(polymerBond.id, polymerBond);
-    firstMonomer.setPotentialBond(
-      firstMonomer.startBondAttachmentPoint,
-      polymerBond,
-    );
+    const attachmentPoint = firstMonomer.getValidSourcePoint();
+    firstMonomer.setPotentialBond(attachmentPoint, polymerBond);
     polymerBond.moveBondStartAbsolute(startPosition.x, startPosition.y);
     polymerBond.moveBondEndAbsolute(endPosition.x, endPosition.y);
 
@@ -376,16 +372,10 @@ export class DrawingEntitiesManager {
     polymerBond?: PolymerBond,
   ) {
     const command = new Command();
-    if (
-      polymerBond &&
-      polymerBond.firstMonomer.getPotentialAttachmentPointByBond(
-        polymerBond,
-      ) === 'R1' &&
-      polymerBond.firstMonomer.hasAttachmentPoint('R2') &&
-      !polymerBond.firstMonomer.isAttachmentPointUsed('R2')
-    ) {
+    const attachmentPoint = polymerBond?.firstMonomer.getValidSourcePoint();
+    if (polymerBond) {
       polymerBond.firstMonomer.removePotentialBonds();
-      polymerBond.firstMonomer.setPotentialBond('R2', polymerBond);
+      polymerBond.firstMonomer.setPotentialBond(attachmentPoint, polymerBond);
       const operation = new MonomerHoverOperation(
         polymerBond.firstMonomer,
         true,
@@ -499,15 +489,9 @@ export class DrawingEntitiesManager {
         command.addOperation(monomerAddOperation);
         polymerBond.setSecondMonomer(monomer);
 
-        // requirements are: Base(R1)-(R3)Sugar(R1)-(R2)Phosphate
-        const attPointStart = previousMonomer.R1AttachmentPoint;
-        let attPointEnd;
-
-        if (monomer instanceof Sugar) {
-          attPointEnd = monomer.isAttachmentPointUsed('R3') ? undefined : 'R3';
-        } else if (monomer instanceof Phosphate) {
-          attPointEnd = monomer.R2AttachmentPoint;
-        }
+        // requirements are: Base(R1)-(R3)Sugar(R2)-(R1)Phosphate
+        const attPointStart = previousMonomer.getValidSourcePoint(monomer);
+        const attPointEnd = monomer.getValidSourcePoint(previousMonomer);
 
         assert(attPointStart);
         assert(attPointEnd);

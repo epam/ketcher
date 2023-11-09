@@ -1,23 +1,12 @@
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
+import { Peptide } from 'domain/entities/Peptide';
 
 export class Chem extends BaseMonomer {
-  public getValidSourcePoint(monomer: BaseMonomer) {
-    if (
-      monomer.hasAttachmentPoint('R1') &&
-      !monomer.isAttachmentPointUsed('R1')
-    ) {
-      return 'R1';
-    }
-    return this.firstFreeAttachmentPoint;
+  public getValidSourcePoint(monomer?: BaseMonomer) {
+    return Peptide.prototype.getValidSourcePoint.call(this, monomer);
   }
 
   public getValidTargetPoint(monomer: BaseMonomer) {
-    if (
-      monomer.hasAttachmentPoint('R1') &&
-      !monomer.isAttachmentPointUsed('R1')
-    ) {
-      return 'R1';
-    }
-    return this.firstFreeAttachmentPoint;
+    return Peptide.prototype.getValidTargetPoint.call(this, monomer);
   }
 }

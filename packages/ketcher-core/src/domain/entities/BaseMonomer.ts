@@ -82,7 +82,9 @@ export abstract class BaseMonomer extends DrawingEntity {
     return undefined;
   }
 
-  public abstract getValidSourcePoint(monomer: BaseMonomer): string | undefined;
+  public abstract getValidSourcePoint(
+    monomer?: BaseMonomer,
+  ): string | undefined;
 
   public abstract getValidTargetPoint(monomer: BaseMonomer): string | undefined;
 

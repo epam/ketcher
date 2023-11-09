@@ -8,25 +8,28 @@ export class Phosphate extends BaseMonomer {
     super(monomerItem, _position);
   }
 
-  public getValidSourcePoint(monomer: BaseMonomer) {
+  public getValidSourcePoint(secondMonomer: BaseMonomer) {
     if (
-      monomer instanceof Sugar &&
-      this.hasAttachmentPoint('R2') &&
-      !this.isAttachmentPointUsed('R2')
+      secondMonomer instanceof Sugar &&
+      secondMonomer.isAttachmentPointExistAndFree('R2') &&
+      this.isAttachmentPointExistAndFree('R1')
+    ) {
+      return 'R1';
+    }
+
+    if (
+      secondMonomer instanceof Sugar &&
+      !secondMonomer.isAttachmentPointExistAndFree('R2') &&
+      this.isAttachmentPointExistAndFree('R2')
     ) {
       return 'R2';
     }
+
     return this.firstFreeAttachmentPoint;
   }
 
-  public getValidTargetPoint(monomer: BaseMonomer) {
-    if (
-      monomer instanceof Sugar &&
-      this.hasAttachmentPoint('R2') &&
-      !this.isAttachmentPointUsed('R2')
-    ) {
-      return 'R2';
-    }
-    return this.firstFreeAttachmentPoint;
+  public getValidTargetPoint(firstMonomer: BaseMonomer) {
+    // same implementation for both source and target attachment points
+    return this.getValidSourcePoint(firstMonomer);
   }
 }

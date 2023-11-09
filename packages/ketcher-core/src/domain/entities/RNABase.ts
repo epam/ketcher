@@ -1,11 +1,11 @@
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 
 export class RNABase extends BaseMonomer {
-  public getValidSourcePoint(_monomer: BaseMonomer) {
+  public getValidSourcePoint() {
     return this.firstFreeAttachmentPoint;
   }
 
-  public getValidTargetPoint(_monomer: BaseMonomer) {
+  public getValidTargetPoint() {
     return this.firstFreeAttachmentPoint;
   }
 }

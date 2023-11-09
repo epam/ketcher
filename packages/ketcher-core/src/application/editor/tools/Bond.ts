@@ -112,7 +112,10 @@ class PolymerBond implements BaseTool {
 
   public mouseLeaveMonomer(event) {
     const renderer: BaseMonomerRenderer = event.target.__data__;
-    if (renderer !== this.bondRenderer?.polymerBond?.firstMonomer?.renderer) {
+    if (
+      renderer !== this.bondRenderer?.polymerBond?.firstMonomer?.renderer &&
+      !this.isBondConnectionModalOpen
+    ) {
       const modelChanges =
         this.editor.drawingEntitiesManager.cancelIntentionToFinishBondCreation(
           renderer.monomer,

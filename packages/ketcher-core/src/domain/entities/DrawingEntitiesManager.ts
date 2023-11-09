@@ -362,12 +362,12 @@ export class DrawingEntitiesManager {
       bond.firstMonomer,
       true,
     );
-    const connecSecondMonomerOperation = new MonomerHoverOperation(
+    const connectSecondMonomerOperation = new MonomerHoverOperation(
       monomer,
       true,
     );
     command.addOperation(connectFirstMonomerOperation);
-    command.addOperation(connecSecondMonomerOperation);
+    command.addOperation(connectSecondMonomerOperation);
     return command;
   }
 

@@ -156,7 +156,12 @@ export const Save = ({
             />
           </Row>
           <div style={{ display: 'flex', flexGrow: 1, position: 'relative' }}>
-            <TextArea value={struct} readonly selectOnInit />
+            <TextArea
+              testId="preview-area-text"
+              value={struct}
+              readonly
+              selectOnInit
+            />
             {isLoading && (
               <Loader>
                 <LoadingCircles />

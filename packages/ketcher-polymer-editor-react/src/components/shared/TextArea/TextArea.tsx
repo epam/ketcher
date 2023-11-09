@@ -24,6 +24,7 @@ export type TextEditorProps = {
   readonly?: boolean;
   selectOnInit?: boolean;
   className?: string;
+  testId?: string;
 };
 
 const StyledTextarea = styled.textarea`
@@ -53,6 +54,7 @@ export const TextArea = ({
   readonly = false,
   selectOnInit = false,
   className,
+  testId
 }: TextEditorProps) => {
   const textArea = useRef<HTMLTextAreaElement>(null);
 
@@ -69,6 +71,7 @@ export const TextArea = ({
       onChange={inputHandler && ((event) => inputHandler(event.target.value))}
       ref={textArea}
       className={className}
+      data-testId={testId}
     />
   );
 };

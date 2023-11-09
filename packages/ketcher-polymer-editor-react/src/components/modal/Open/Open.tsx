@@ -173,18 +173,18 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
     if (currentState === MODAL_STATES.textEditor && !isAnalyzingFile) {
       return [
         <ActionButton
+          key="openButton"
+          disabled={!structStr}
+          clickHandler={openHandler}
+          label="Open as New Project"
+          styleType="secondary"
+        />,
+        <ActionButton
           key="copyButton"
           disabled={!structStr}
           clickHandler={copyHandler}
           label="Add to Canvas"
           title="Structure will be loaded as fragment and added to Clipboard"
-          styleType="secondary"
-        />,
-        <ActionButton
-          key="openButton"
-          disabled={!structStr}
-          clickHandler={openHandler}
-          label="Open as New Project"
         />,
       ];
     } else {

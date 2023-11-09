@@ -94,7 +94,10 @@ const OpenOptions = ({
 }: OpenOptionsProps) => {
   return (
     <RootContainer>
-      <DropContainer onClick={selectClipboard}>
+      <DropContainer
+        data-testId="paste-from-clipboard-button"
+        onClick={selectClipboard}
+      >
         <Icon name={ICON_NAMES.PASTE} />
         <OpenOptionText>Paste from clipboard</OpenOptionText>
       </DropContainer>

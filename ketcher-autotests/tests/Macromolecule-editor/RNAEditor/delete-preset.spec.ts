@@ -41,6 +41,6 @@ test.describe('Macromolecules delete RNA presets', () => {
 
     await takePageScreenshot(page);
 
-    await page.getByTitle('Delete').click();
+    await page.getByRole('button', { name: 'Delete' }).click();
   });
 });

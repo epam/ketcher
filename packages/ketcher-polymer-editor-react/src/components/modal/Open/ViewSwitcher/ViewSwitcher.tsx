@@ -44,7 +44,7 @@ export const ViewSwitcher = (props: SwitchProps) => {
       case props.states.openOptions:
         return <OpenOptions {...props} />;
       case props.states.textEditor:
-        return <StyledTextField {...props} />;
+        return <StyledTextField testId="open-structure-textarea" {...props} />;
       default:
         return null;
     }

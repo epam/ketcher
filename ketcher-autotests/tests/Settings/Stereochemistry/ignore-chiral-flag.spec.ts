@@ -16,15 +16,19 @@ async function openStructureLibrary(page: Page) {
   await page.getByTestId(STRUCTURE_LIBRARY_BUTTON_TEST_ID).click();
 }
 
-async function templateFromLAminoAcidsCategory(page: Page) {
+async function scrollBar(page: Page) {
   const deltaX = 0;
   const deltaY = 80;
   const anyX = 638;
   const anyY = 524;
-  await openStructureLibrary(page);
-  await page.getByRole('button', { name: 'L-Amino Acids (20)' }).click();
   await page.mouse.move(anyX, anyY);
   await page.mouse.wheel(deltaX, deltaY);
+}
+
+async function templateFromLAminoAcidsCategory(page: Page) {
+  await openStructureLibrary(page);
+  await page.getByRole('button', { name: 'L-Amino Acids (20)' }).click();
+  await scrollBar(page);
   await page.getByText('ARG-L-Arginine').click();
   await clickInTheMiddleOfTheScreen(page);
 }
@@ -32,12 +36,7 @@ async function templateFromLAminoAcidsCategory(page: Page) {
 async function applyIgnoreChiralFlag(page: Page) {
   await selectTopPanelButton(TopPanelButton.Settings, page);
   await page.getByText('Stereochemistry', { exact: true }).click();
-  const deltaX = 0;
-  const deltaY = 60;
-  const anyX = 638;
-  const anyY = 524;
-  await page.mouse.move(anyX, anyY);
-  await page.mouse.wheel(deltaX, deltaY);
+  await scrollBar(page);
   await page
     .locator('label')
     .filter({ hasText: 'Ignore the chiral flag' })
@@ -59,13 +58,13 @@ test.describe('Ignore Chiral Flag', () => {
     page,
   }) => {
     // Test case: EPMLSOPKET-16920
-    const pointx = 204;
-    const pointy = 211;
+    const pointX = 204;
+    const pointY = 211;
     await applyIgnoreChiralFlag(page);
     await templateFromLAminoAcidsCategory(page);
     await copyAndPaste(page);
     await waitForRender(page, async () => {
-      await page.mouse.click(pointx, pointy);
+      await page.mouse.click(pointX, pointY);
     });
   });
 
@@ -73,13 +72,13 @@ test.describe('Ignore Chiral Flag', () => {
     page,
   }) => {
     // Test case: EPMLSOPKET-16921
-    const pointy = 204;
-    const pointz = 211;
+    const pointY = 204;
+    const pointZ = 211;
     await applyIgnoreChiralFlag(page);
     await templateFromLAminoAcidsCategory(page);
     await cutAndPaste(page);
     await waitForRender(page, async () => {
-      await page.mouse.click(pointy, pointz);
+      await page.mouse.click(pointY, pointZ);
     });
   });
 

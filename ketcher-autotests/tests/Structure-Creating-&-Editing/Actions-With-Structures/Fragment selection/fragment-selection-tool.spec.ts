@@ -1,13 +1,12 @@
 import { Page, test } from '@playwright/test';
 import {
-  clickInTheMiddleOfTheScreen,
-    clickOnAtom,
+  clickOnAtom,
   doubleClickOnAtom,
   dragMouseTo,
   openFileAndAddToCanvas,
   screenshotBetweenUndoRedo,
   selectDropdownTool,
-    takeEditorScreenshot,
+  takeEditorScreenshot,
   waitForPageInit,
   waitForRender,
 } from '@utils';
@@ -15,11 +14,10 @@ import { clickOnArrow } from '@utils/canvas/arrow-signes/getArrow';
 import { getAtomByIndex, getRightAtomByAttributes } from '@utils/canvas/atoms';
 import { clickOnPlus } from '@utils/canvas/plus-signes/getPluses';
 
-
 const xMark = 300;
 const yMark = 200;
 
-async function selectObjects (page: Page) {
+async function selectObjects(page: Page) {
   await page.keyboard.down('Shift');
   await clickOnPlus(page, 1);
   await clickOnArrow(page, 0);
@@ -27,16 +25,15 @@ async function selectObjects (page: Page) {
   await doubleClickOnAtom(page, 'C', atomToClick);
 }
 
-async function selectSomeObjects (page: Page) {
+async function selectSomeObjects(page: Page) {
   await waitForRender(page, async () => {
     await page.keyboard.down('Shift');
     await clickOnPlus(page, 1);
     await clickOnArrow(page, 0);
-    await clickOnPlus(page,0);
+    await clickOnPlus(page, 0);
     await page.mouse.down();
   });
 }
-
 
 test.describe('Fragment selection tool', () => {
   test.beforeEach(async ({ page }) => {
@@ -100,7 +97,9 @@ test.describe('Fragment selection tool', () => {
     await screenshotBetweenUndoRedo(page);
   });
 
-  test('Drawing selection contours correctly for hovered structures', async ({ page }) => {
+  test('Drawing selection contours correctly for hovered structures', async ({
+    page,
+  }) => {
     // Test case: EPMLSOPKET-17664
     // Verify the bond contours are not intersected with atom contours
     await openFileAndAddToCanvas('glutamine.mol', page);

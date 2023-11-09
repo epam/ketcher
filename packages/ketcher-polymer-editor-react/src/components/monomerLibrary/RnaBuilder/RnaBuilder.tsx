@@ -49,11 +49,11 @@ export const RnaBuilder = ({ libraryName }) => {
     dispatch(setDefaultPresets(defaultPresets));
   }, [dispatch]);
 
-  const duplicatePreset = () => {
+  const duplicatePreset = (preset?: IRnaPreset) => {
     const duplicatedPreset = {
-      ...activePreset,
+      ...(preset || activePreset),
       presetInList: undefined,
-      name: `${activePreset.name}_Copy`,
+      name: `${preset?.name || activePreset.name}_Copy`,
       default: false,
     };
     dispatch(setActivePreset(duplicatedPreset));
@@ -66,6 +66,11 @@ export const RnaBuilder = ({ libraryName }) => {
     dispatch(setIsEditMode(true));
   };
 
+  const editPreset = (preset: IRnaPreset) => {
+    dispatch(setActivePreset(preset));
+    activateEditMode();
+  };
+
   return (
     <RnaBuilderContainer>
       <RnaEditor
@@ -75,7 +80,7 @@ export const RnaBuilder = ({ libraryName }) => {
       <RnaAccordion
         libraryName={libraryName}
         duplicatePreset={duplicatePreset}
-        activateEditMode={activateEditMode}
+        editPreset={editPreset}
       />
       <Modal isOpen={hasError} title="Error Message" onClose={closeErrorModal}>
         <Modal.Content>

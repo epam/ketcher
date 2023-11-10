@@ -86,7 +86,7 @@ class SelectRectangle implements BaseTool {
 
     const canvasElement = this.editor.canvas;
 
-    if (canvasElement && typeof ResizeObserver !== 'undefined') {
+    if (canvasElement) {
       this.canvasResizeObserver = new ResizeObserver(handleResizeCanvas);
       this.canvasResizeObserver.observe(canvasElement);
     }

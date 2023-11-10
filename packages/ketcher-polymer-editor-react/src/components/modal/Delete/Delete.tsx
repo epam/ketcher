@@ -18,7 +18,7 @@ import { useCallback } from 'react';
 import { useAppDispatch, useAppSelector } from 'hooks';
 import {
   deletePreset,
-  selectActivePreset,
+  selectActivePresetForContextMenu,
   selectPresets,
   setActivePreset,
   setIsEditMode,
@@ -38,7 +38,9 @@ const DeleteTextWrapper = styled.div`
 const Delete = ({ isModalOpen, onClose }: Props) => {
   const dispatch = useAppDispatch();
   const presets = useAppSelector(selectPresets);
-  const activePreset = useAppSelector(selectActivePreset);
+  const activePresetForContextMenu = useAppSelector(
+    selectActivePresetForContextMenu,
+  );
   const onCloseCallback = useCallback(() => {
     onClose();
   }, [onClose]);
@@ -49,7 +51,7 @@ const Delete = ({ isModalOpen, onClose }: Props) => {
 
   const deleteHandler = () => {
     onCloseCallback();
-    dispatch(deletePreset(activePreset));
+    dispatch(deletePreset(activePresetForContextMenu));
     dispatch(setIsEditMode(false));
     if (presets.length !== 0) {
       dispatch(setActivePreset(presets[0]));
@@ -65,7 +67,7 @@ const Delete = ({ isModalOpen, onClose }: Props) => {
       <Modal.Content>
         <DeleteTextWrapper data-testid="delete-preset-popup-content">
           <div>You are about to delete</div>
-          <div>"{activePreset.name}" RNA preset.</div>
+          <div>"{activePresetForContextMenu.name}" RNA preset.</div>
           <div>This operation cannot be undone.</div>
         </DeleteTextWrapper>
       </Modal.Content>

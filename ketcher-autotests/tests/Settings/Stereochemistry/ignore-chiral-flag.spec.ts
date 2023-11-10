@@ -11,7 +11,7 @@ import {
   waitForPageInit,
   waitForRender,
 } from '@utils';
-import { scrollBar } from '@utils/scrollBar';
+import { scrollSettingBar } from '@utils/scrollSettingBar';
 
 async function openStructureLibrary(page: Page) {
   await page.getByTestId(STRUCTURE_LIBRARY_BUTTON_TEST_ID).click();
@@ -20,7 +20,7 @@ async function openStructureLibrary(page: Page) {
 async function templateFromLAminoAcidsCategory(page: Page) {
   await openStructureLibrary(page);
   await page.getByRole('button', { name: 'L-Amino Acids (20)' }).click();
-  await scrollBar(page);
+  await scrollSettingBar(page,80);
   await page.getByText('ARG-L-Arginine').click();
   await clickInTheMiddleOfTheScreen(page);
 }
@@ -28,7 +28,7 @@ async function templateFromLAminoAcidsCategory(page: Page) {
 async function applyIgnoreChiralFlag(page: Page) {
   await selectTopPanelButton(TopPanelButton.Settings, page);
   await page.getByText('Stereochemistry', { exact: true }).click();
-  await scrollBar(page);
+  await scrollSettingBar(page,80);
   await page
     .locator('label')
     .filter({ hasText: 'Ignore the chiral flag' })

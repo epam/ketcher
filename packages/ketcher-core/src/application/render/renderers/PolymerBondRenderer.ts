@@ -205,6 +205,13 @@ export class PolymerBondRenderer extends BaseRenderer {
           this.getMonomerWidth() / 2,
       );
     } else if (this.isSecondMonomerTopRight(startPosition, endPosition)) {
+      if (
+        isR1TheCurrentAttachmentpointOfFirstMonomer &&
+        reCheckAttachmentpoint
+      ) {
+        this.updateSnakeBondPath(endPosition, startPosition, false);
+        return;
+      }
       this.addLine(
         LINE_DIRECTION.Horizontal,
         LINE_FROM_MONOMER_LENGTH + this.getMonomerWidth() / 2,

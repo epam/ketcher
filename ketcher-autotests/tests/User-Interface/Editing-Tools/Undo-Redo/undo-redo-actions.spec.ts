@@ -686,4 +686,45 @@ test.describe('Undo/Redo Actions', () => {
     await selectTopPanelButton(TopPanelButton.Redo, page);
     await expect(page).toHaveScreenshot();
   });
+
+  test('When mouse hovering - hotkey CTRL+Z is working', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-11847
+    Description:
+    Draw 'Benzene'
+    Draw any bonds on Benzene atoms
+    Hover mouse cursor over of 'Benzene' and press CTRL+Z (Undo)
+    */
+    await selectRing(RingButton.Benzene, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await selectBond(BondTypeName.Single, page);
+    await clickOnAtom(page, 'C', 2);
+    await page.getByTestId('canvas').hover();
+    await takeEditorScreenshot(page);
+    await page.keyboard.press('Control+z');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Undo deletes previously placed template', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-16939
+    Description:
+    Open Ketcher settings.In the dropdown list for "reset to Select tool" choose "Off"
+    Place a Benzene ring on the canvas.
+    Use select tool to choose and CTRL+C placed ring.
+    Press CTRL+V and place the ring. Press CTRL+Z.
+    */
+    await selectTopPanelButton(TopPanelButton.Settings, page);
+    await page.getByRole('button', { name: 'After Paste' }).click();
+    await page.getByRole('option', { name: 'off' }).click();
+    await takeEditorScreenshot(page);
+    await page.getByTestId('OK').click();
+    await selectRing(RingButton.Benzene, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await page.keyboard.press('Control+a');
+    await page.keyboard.press('Control+c');
+    await page.keyboard.press('Control+v');
+    await page.keyboard.press('Control+z');
+    await page.keyboard.press('Control+z');
+  });
 });

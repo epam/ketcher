@@ -7,8 +7,8 @@ import assert from 'assert';
 import {
   canvasToMonomerCoordinates,
   findLabelPoint,
-  getSearchFunction,
   Coordinates,
+  getSearchFunction,
 } from './helpers/attachmentPointCalculations';
 import { editorEvents } from 'application/editor/editorEvents';
 

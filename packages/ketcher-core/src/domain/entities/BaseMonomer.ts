@@ -11,7 +11,7 @@ import {
   IKetAttachmentPointType,
 } from 'application/formatters/types/ket';
 
-export class BaseMonomer extends DrawingEntity {
+export abstract class BaseMonomer extends DrawingEntity {
   public renderer?: BaseMonomerRenderer = undefined;
   public attachmentPointsToBonds: Partial<
     Record<AttachmentPointName, PolymerBond | null>
@@ -74,10 +74,12 @@ export class BaseMonomer extends DrawingEntity {
   }
 
   public setPotentialBond(
-    attachmentPoint: string,
+    attachmentPoint: string | undefined,
     potentialBond?: PolymerBond | null,
   ) {
-    this.potentialAttachmentPointsToBonds[attachmentPoint] = potentialBond;
+    if (attachmentPoint !== undefined) {
+      this.potentialAttachmentPointsToBonds[attachmentPoint] = potentialBond;
+    }
   }
 
   public getAttachmentPointByBond(
@@ -91,6 +93,12 @@ export class BaseMonomer extends DrawingEntity {
 
     return undefined;
   }
+
+  public abstract getValidSourcePoint(
+    monomer?: BaseMonomer,
+  ): string | undefined;
+
+  public abstract getValidTargetPoint(monomer: BaseMonomer): string | undefined;
 
   public getPotentialAttachmentPointByBond(bond: PolymerBond) {
     for (const attachmentPointName in this.potentialAttachmentPointsToBonds) {
@@ -151,6 +159,13 @@ export class BaseMonomer extends DrawingEntity {
     return Boolean(this.firstFreeAttachmentPoint);
   }
 
+  public isAttachmentPointExistAndFree(attachmentPoint: AttachmentPointName) {
+    return (
+      this.hasAttachmentPoint(attachmentPoint) &&
+      !this.isAttachmentPointUsed(attachmentPoint)
+    );
+  }
+
   public setRenderer(renderer: BaseMonomerRenderer) {
     super.setBaseRenderer(renderer as BaseRenderer);
     this.renderer = renderer;
@@ -198,9 +213,11 @@ export class BaseMonomer extends DrawingEntity {
     this.unsetBond(attachmentPointName);
   }
 
-  public removePotentialBonds() {
-    this.chosenFirstAttachmentPointForBond = null;
-    this.chosenSecondAttachmentPointForBond = null;
+  public removePotentialBonds(clearSelectedPoints: boolean = false) {
+    if (clearSelectedPoints) {
+      this.chosenFirstAttachmentPointForBond = null;
+      this.chosenSecondAttachmentPointForBond = null;
+    }
 
     for (const attachmentPointName in this.potentialAttachmentPointsToBonds) {
       this.potentialAttachmentPointsToBonds[attachmentPointName] = null;
@@ -238,6 +255,9 @@ export class BaseMonomer extends DrawingEntity {
       ) {
         list.push(attachmentPointName);
       }
+    }
+    if (this.chosenFirstAttachmentPointForBond !== null) {
+      list.push(this.chosenFirstAttachmentPointForBond);
     }
     return list;
   }

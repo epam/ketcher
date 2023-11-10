@@ -4,16 +4,74 @@ import {
   expect,
   Locator,
 } from '@playwright/test';
-import { clickInTheMiddleOfTheScreen, pressButton } from '@utils/clicks';
+import {
+  clickInTheMiddleOfTheScreen,
+  clickOnAtom,
+  pressButton,
+} from '@utils/clicks';
 import { ELEMENT_TITLE } from './types';
-import { TopPanelButton, waitForRender } from '..';
-import { selectTopPanelButton } from './tools';
+import {
+  AtomButton,
+  RingButton,
+  STRUCTURE_LIBRARY_BUTTON_NAME,
+  TemplateLibrary,
+  TopPanelButton,
+  selectRing,
+  waitForRender,
+} from '..';
+import { selectAtomInToolbar, selectTopPanelButton } from './tools';
 import { getLeftTopBarSize } from './common/getLeftTopBarSize';
 import { emptyFunction } from '@utils/common/helpers';
+import { hideMonomerPreview } from '@utils/macromolecules';
 
 export async function drawBenzeneRing(page: Page) {
-  await page.getByRole('button', { name: 'Benzene (T)' }).click();
+  await selectRing(RingButton.Benzene, page);
   await clickInTheMiddleOfTheScreen(page);
+}
+
+export async function drawCyclohexaneRing(page: Page) {
+  await selectRing(RingButton.Cyclohexane, page);
+  await clickInTheMiddleOfTheScreen(page);
+}
+
+export async function drawCyclopentadieneRing(page: Page) {
+  await selectRing(RingButton.Cyclopentadiene, page);
+  await clickInTheMiddleOfTheScreen(page);
+}
+
+export async function openEditDialogForTemplate(
+  page: Page,
+  itemToChoose: TemplateLibrary,
+  _newName?: string,
+) {
+  await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+  await page.getByRole('tab', { name: 'Template Library' }).click();
+  await page.getByRole('button', { name: 'Aromatics (18)' }).click();
+  await page.getByTitle(itemToChoose).getByRole('button').click();
+  await page.getByPlaceholder('template').click();
+}
+
+export async function selectAzuleneOnTemplateLibrary(page: Page) {
+  await page.getByRole('tab', { name: 'Template Library' }).click();
+  await page.getByRole('button', { name: 'Aromatics (18)' }).click();
+  await page.getByTitle('Azulene').getByRole('button').click();
+}
+
+export async function selectAnyStructuresFromAromaticsTable(
+  page: Page,
+  itemToChoose: TemplateLibrary,
+) {
+  await page.getByRole('tab', { name: 'Template Library' }).click();
+  await page.getByRole('button', { name: 'Aromatics (18)' }).click();
+  await page.getByTitle(itemToChoose).getByRole('button').click();
+  await clickInTheMiddleOfTheScreen(page);
+}
+
+export async function addCyclopentadieneRingWithTwoAtoms(page: Page) {
+  await selectAtomInToolbar(AtomButton.Nitrogen, page);
+  await clickOnAtom(page, 'C', 0);
+  const anyAtom = 3;
+  await clickOnAtom(page, 'C', anyAtom);
 }
 
 export async function drawElementByTitle(
@@ -52,6 +110,32 @@ export async function getTopToolBarHeight(page: Page): Promise<number> {
 }
 
 export async function getCoordinatesTopAtomOfBenzeneRing(page: Page) {
+  const { carbonAtoms, scale, offset } = await page.evaluate(() => {
+    const allAtoms = [...window.ketcher.editor.struct().atoms.values()];
+    const onlyCarbons = allAtoms.filter((a) => a.label === 'C');
+    return {
+      carbonAtoms: onlyCarbons,
+      scale: window.ketcher.editor.options().scale,
+      offset: window.ketcher?.editor?.options()?.offset,
+    };
+  });
+  let min = {
+    x: Infinity,
+    y: Infinity,
+  };
+  for (const carbonAtom of carbonAtoms) {
+    if (carbonAtom.pp.y < min.y) {
+      min = carbonAtom.pp;
+    }
+  }
+  const { leftBarWidth, topBarHeight } = await getLeftTopBarSize(page);
+  return {
+    x: min.x * scale + offset.x + leftBarWidth,
+    y: min.y * scale + offset.y + topBarHeight,
+  };
+}
+
+export async function getCoordinatesOfTopMostCarbon(page: Page) {
   const { carbonAtoms, scale, offset } = await page.evaluate(() => {
     const allAtoms = [...window.ketcher.editor.struct().atoms.values()];
     const onlyCarbons = allAtoms.filter((a) => a.label === 'C');
@@ -123,6 +207,13 @@ export async function takeTopToolbarScreenshot(page: Page) {
   await expect(editor).toHaveScreenshot();
 }
 
+export async function takePolymerEditorScreenshot(page: Page) {
+  const maxTimeout = 3000;
+  const editor = page.locator('.Ketcher-polymer-editor-root');
+  await waitForRender(page, emptyFunction, maxTimeout);
+  await expect(editor).toHaveScreenshot();
+}
+
 export async function takeMultitoolDropdownScreenshot(page: Page) {
   const dropdown = page.locator('.default-multitool-dropdown');
   await expect(dropdown).toHaveScreenshot();
@@ -176,6 +267,7 @@ export async function addMonomerToCanvas(
 ) {
   await page.getByTestId(monomerFullName).click();
   await page.mouse.click(positionX, positionY);
+  await hideMonomerPreview(page);
   return await page
     .locator(`//\*[name() = 'g' and ./\*[name()='text' and .='${alias}']]`)
     .nth(index);

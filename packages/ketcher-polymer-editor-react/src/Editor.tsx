@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 import { Provider } from 'react-redux';
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Global, ThemeProvider } from '@emotion/react';
 import { createTheme } from '@mui/material/styles';
 import { debounce, merge } from 'lodash';
@@ -30,7 +30,10 @@ import {
 } from 'theming/defaultTheme';
 import { getGlobalStyles } from 'theming/globalStyles';
 import { Layout } from 'components/Layout';
-import { MonomerLibrary } from 'components/monomerLibrary';
+import {
+  MonomerLibrary,
+  MonomerLibraryToggle,
+} from 'components/monomerLibrary';
 import { Menu } from 'components/menu';
 import {
   createEditor,
@@ -79,13 +82,19 @@ const muiTheme = createTheme(muiOverrides);
 interface EditorContainerProps {
   onInit?: () => void;
   theme?: DeepPartial<EditorTheme>;
+  togglerComponent?: JSX.Element;
 }
 
 interface EditorProps {
   theme?: DeepPartial<EditorTheme>;
+  togglerComponent?: JSX.Element;
 }
 
-function EditorContainer({ onInit, theme }: EditorContainerProps) {
+function EditorContainer({
+  onInit,
+  theme,
+  togglerComponent,
+}: EditorContainerProps) {
   const rootElRef = useRef<HTMLDivElement>(null);
   const editorTheme: EditorTheme = theme
     ? merge(defaultTheme, theme)
@@ -104,20 +113,21 @@ function EditorContainer({ onInit, theme }: EditorContainerProps) {
       <ThemeProvider theme={mergedTheme}>
         <Global styles={getGlobalStyles} />
         <div ref={rootElRef} className={EditorClassName}>
-          <Editor theme={editorTheme} />
+          <Editor theme={editorTheme} togglerComponent={togglerComponent} />
         </div>
       </ThemeProvider>
     </Provider>
   );
 }
 
-function Editor({ theme }: EditorProps) {
+function Editor({ theme, togglerComponent }: EditorProps) {
   const dispatch = useAppDispatch();
   const canvasRef = useRef<SVGSVGElement>(null);
   const errorTooltipText = useAppSelector(selectErrorTooltipText);
   const editor = useAppSelector(selectEditor);
   const activeTool = useAppSelector(selectEditorActiveTool);
   let keyboardEventListener;
+  const [isMonomerLibraryHidden, setIsMonomerLibraryHidden] = useState(false);
 
   useEffect(() => {
     dispatch(createEditor({ theme, canvas: canvasRef.current }));
@@ -201,6 +211,13 @@ function Editor({ theme }: EditorProps) {
     });
   }, [editor, activeTool]);
 
+  useEffect(() => {
+    editor?.zoomTool.observeCanvasResize();
+    return () => {
+      editor?.zoomTool.destroy();
+    };
+  }, [editor]);
+
   const handleCloseErrorTooltip = () => {
     dispatch(closeErrorTooltip());
   };
@@ -208,6 +225,10 @@ function Editor({ theme }: EditorProps) {
   return (
     <>
       <Layout>
+        <Layout.Top shortened={isMonomerLibraryHidden}>
+          {togglerComponent}
+        </Layout.Top>
+
         <Layout.Left>
           <MenuComponent />
         </Layout.Left>
@@ -216,9 +237,14 @@ function Editor({ theme }: EditorProps) {
           <svg
             id="polymer-editor-canvas"
             data-testid="ketcher-canvas"
+            preserveAspectRatio="xMidYMid meet"
             ref={canvasRef}
             width="100%"
             height="100%"
+            style={{
+              overflow: 'hidden',
+              overflowClipMargin: 'content-box',
+            }}
           >
             <defs>
               <PeptideAvatar />
@@ -227,13 +253,18 @@ function Editor({ theme }: EditorProps) {
               <PhosphateAvatar />
               <RNABaseAvatar />
             </defs>
+            <g className="drawn-structures"></g>
           </svg>
         </Layout.Main>
 
-        <Layout.Right>
+        <Layout.Right hide={isMonomerLibraryHidden}>
           <MonomerLibrary />
         </Layout.Right>
       </Layout>
+      <MonomerLibraryToggle
+        isHidden={isMonomerLibraryHidden}
+        onClick={() => setIsMonomerLibraryHidden((prev) => !prev)}
+      />
       <FullscreenButton />
       <StyledPreview className="polymer-library-preview" />
       <ModalContainer />
@@ -270,7 +301,7 @@ function MenuComponent() {
     } else if (name === 'snake-mode') {
       dispatch(selectMode(!isSnakeMode));
       editor.events.selectMode.dispatch(!isSnakeMode);
-    } else {
+    } else if (!['zoom-in', 'zoom-out', 'zoom-reset'].includes(name)) {
       editor.events.selectTool.dispatch(name);
       if (name === 'clear') {
         dispatch(selectTool('select-rectangle'));
@@ -297,8 +328,13 @@ function MenuComponent() {
       <Menu.Group>
         <Menu.Item itemId="bond-single" title="Single Bond (1)" />
       </Menu.Group>
-      <Menu.Group>
+      <Menu.Group divider>
         <Menu.Item itemId="snake-mode" title="Snake mode" />
+      </Menu.Group>
+      <Menu.Group>
+        <Menu.Item itemId="zoom-in" title="Zoom In" />
+        <Menu.Item itemId="zoom-out" title="Zoom Out" />
+        <Menu.Item itemId="zoom-reset" title="Reset Zoom" />
       </Menu.Group>
     </Menu>
   );

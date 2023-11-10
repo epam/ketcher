@@ -16,17 +16,15 @@
 import { BaseMonomerRenderer } from 'application/render/renderers';
 import { CoreEditor } from 'application/editor';
 import { PolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer';
-import { Vec2 } from 'domain/entities';
 import assert from 'assert';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { BaseTool } from 'application/editor/tools/Tool';
-import { Scale } from 'domain/helpers';
-import { provideEditorSettings } from 'application/editor/editorSettings';
 import { Chem } from 'domain/entities/Chem';
 import { Peptide } from 'domain/entities/Peptide';
 import { Sugar } from 'domain/entities/Sugar';
 import { RNABase } from 'domain/entities/RNABase';
 import { Phosphate } from 'domain/entities/Phosphate';
+import Coordinates from 'application/editor/shared/coordinates';
 
 class PolymerBond implements BaseTool {
   private bondRenderer?: PolymerBondRenderer;
@@ -45,6 +43,17 @@ class PolymerBond implements BaseTool {
     }
   }
 
+  private removeBond(): void {
+    if (this.bondRenderer) {
+      const modelChanges =
+        this.editor.drawingEntitiesManager.cancelPolymerBondCreation(
+          this.bondRenderer.polymerBond,
+        );
+      this.editor.renderersContainer.update(modelChanges);
+      this.bondRenderer = undefined;
+    }
+  }
+
   public mousedown(event) {
     const selectedRenderer = event.target.__data__;
     if (selectedRenderer instanceof BaseMonomerRenderer) {
@@ -57,17 +66,11 @@ class PolymerBond implements BaseTool {
         );
         return;
       }
-      const { top: offsetTop, left: offsetLeft } = this.editor.canvasOffset;
-      const editorSettings = provideEditorSettings();
-      const endPosition = Scale.canvasToModel(
-        new Vec2(event.clientX - offsetLeft, event.clientY - offsetTop),
-        editorSettings,
-      );
       const { polymerBond, command: modelChanges } =
         this.editor.drawingEntitiesManager.addPolymerBond(
           selectedRenderer.monomer,
           selectedRenderer.monomer.position,
-          endPosition,
+          Coordinates.canvasToModel(this.editor.lastCursorPositionOfCanvas),
         );
 
       this.editor.renderersContainer.update(modelChanges);
@@ -75,17 +78,11 @@ class PolymerBond implements BaseTool {
     }
   }
 
-  public mousemove(event) {
+  public mousemove() {
     if (this.bondRenderer) {
-      const { top: offsetTop, left: offsetLeft } = this.editor.canvasOffset;
-      const editorSettings = provideEditorSettings();
-      const newEndPosition = Scale.canvasToModel(
-        new Vec2(event.clientX - offsetLeft, event.clientY - offsetTop),
-        editorSettings,
-      );
       const modelChanges = this.editor.drawingEntitiesManager.movePolymerBond(
         this.bondRenderer.polymerBond,
-        newEndPosition,
+        Coordinates.canvasToModel(this.editor.lastCursorPositionOfCanvas),
       );
       this.editor.renderersContainer.update(modelChanges);
     }
@@ -128,7 +125,7 @@ class PolymerBond implements BaseTool {
         this.editor.drawingEntitiesManager.intendToFinishBondCreation(
           renderer.monomer,
           this.bondRenderer?.polymerBond,
-          bothPeptides,
+          true,
         );
     } else {
       modelChanges =
@@ -156,7 +153,7 @@ class PolymerBond implements BaseTool {
           renderer.monomer,
           this.bondRenderer?.polymerBond,
           event.attachmentPointName,
-          bothPeptides,
+          true,
         );
     } else {
       modelChanges =
@@ -171,7 +168,10 @@ class PolymerBond implements BaseTool {
 
   public mouseLeaveMonomer(event) {
     const renderer: BaseMonomerRenderer = event.target.__data__;
-    if (renderer !== this.bondRenderer?.polymerBond?.firstMonomer?.renderer) {
+    if (
+      renderer !== this.bondRenderer?.polymerBond?.firstMonomer?.renderer &&
+      !this.isBondConnectionModalOpen
+    ) {
       const modelChanges =
         this.editor.drawingEntitiesManager.cancelIntentionToFinishBondCreation(
           renderer.monomer,
@@ -185,8 +185,9 @@ class PolymerBond implements BaseTool {
     const renderer: BaseMonomerRenderer = event.target.__data__;
     if (renderer !== this.bondRenderer?.polymerBond?.firstMonomer?.renderer) {
       const modelChanges =
-        this.editor.drawingEntitiesManager.cancelIntentionToFinishBondAPCreation(
+        this.editor.drawingEntitiesManager.cancelIntentionToFinishBondCreation(
           renderer.monomer,
+          this.bondRenderer?.polymerBond,
         );
       this.editor.renderersContainer.update(modelChanges);
     }
@@ -274,14 +275,7 @@ class PolymerBond implements BaseTool {
     if (this.isBondConnectionModalOpen) {
       return;
     }
-    if (this.bondRenderer) {
-      const modelChanges =
-        this.editor.drawingEntitiesManager.cancelPolymerBondCreation(
-          this.bondRenderer.polymerBond,
-        );
-      this.editor.renderersContainer.update(modelChanges);
-      this.bondRenderer = undefined;
-    }
+    this.removeBond();
   }
 
   public mouseUpMonomer(event) {
@@ -370,23 +364,26 @@ class PolymerBond implements BaseTool {
         this.bondRenderer.polymerBond,
       );
     this.editor.renderersContainer.update(modelChanges);
+    this.isBondConnectionModalOpen = false;
     this.bondRenderer = undefined;
   };
 
-  public destroy() {}
+  public destroy() {
+    this.removeBond();
+  }
 
   private shouldInvokeModal(
     firstMonomer: BaseMonomer,
     secondMonomer: BaseMonomer,
   ) {
-    // Modal: bond for Peptides couldn't be created automatically
+    // Modal: bond for Peptides was created automatically
     if (
       secondMonomer instanceof Peptide &&
       firstMonomer instanceof Peptide &&
-      secondMonomer.hasFreeAttachmentPoint &&
-      (!secondMonomer.hasPotentialBonds() || !firstMonomer.hasPotentialBonds())
+      secondMonomer.hasPotentialBonds() &&
+      firstMonomer.hasPotentialBonds()
     ) {
-      return true;
+      return false;
     }
 
     // No Modal: Both monomers have only 1 attachment point
@@ -467,7 +464,7 @@ class PolymerBond implements BaseTool {
         return true;
       }
     }
-    return false;
+    return true;
   }
 }
 

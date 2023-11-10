@@ -5,8 +5,6 @@ import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import assert from 'assert';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
-import { Sugar } from 'domain/entities/Sugar';
-import { Phosphate } from 'domain/entities/Phosphate';
 import {
   APHoverOperation,
   MonomerAddOperation,
@@ -259,8 +257,8 @@ export class DrawingEntitiesManager {
       polymerBond.firstMonomer.getAttachmentPointByBond(polymerBond);
     const secondMonomerAttachmentPoint =
       polymerBond.secondMonomer?.getAttachmentPointByBond(polymerBond);
-    polymerBond.firstMonomer.removePotentialBonds();
-    polymerBond.secondMonomer?.removePotentialBonds();
+    polymerBond.firstMonomer.removePotentialBonds(true);
+    polymerBond.secondMonomer?.removePotentialBonds(true);
     polymerBond.firstMonomer.turnOffSelection();
     polymerBond.secondMonomer?.turnOffSelection();
     if (firstMonomerAttachmentPoint) {
@@ -279,7 +277,7 @@ export class DrawingEntitiesManager {
     this.polymerBonds.delete(polymerBond.id);
     const command = new Command();
     polymerBond.firstMonomer.removeBond(polymerBond);
-    polymerBond.firstMonomer.removePotentialBonds();
+    polymerBond.firstMonomer.removePotentialBonds(true);
     polymerBond.firstMonomer.turnOffSelection();
     polymerBond.firstMonomer.turnOffHover();
     polymerBond.firstMonomer.turnOffAttachmentPointsVisibility();
@@ -316,8 +314,8 @@ export class DrawingEntitiesManager {
       secondMonomerAttachmentPoint,
       polymerBond,
     );
-    polymerBond.firstMonomer.removePotentialBonds();
-    polymerBond.secondMonomer.removePotentialBonds();
+    polymerBond.firstMonomer.removePotentialBonds(true);
+    polymerBond.secondMonomer.removePotentialBonds(true);
 
     polymerBond.moveToLinkedMonomers();
 
@@ -407,12 +405,17 @@ export class DrawingEntitiesManager {
         monomer.removePotentialBonds();
         monomer.setPotentialBond('R2', bond);
       }
-      const operation = new MonomerHoverOperation(bond.firstMonomer, true);
-      command.addOperation(operation);
     }
-
-    const operation = new MonomerHoverOperation(monomer, true);
-    command.addOperation(operation);
+    const connectFirstMonomerOperation = new MonomerHoverOperation(
+      bond.firstMonomer,
+      true,
+    );
+    const connectSecondMonomerOperation = new MonomerHoverOperation(
+      monomer,
+      true,
+    );
+    command.addOperation(connectFirstMonomerOperation);
+    command.addOperation(connectSecondMonomerOperation);
     return command;
   }
 
@@ -474,20 +477,6 @@ export class DrawingEntitiesManager {
       let operation = new MonomerHoverOperation(polymerBond.firstMonomer, true);
       command.addOperation(operation);
     }
-
-    return command;
-  }
-
-  public cancelIntentionToFinishBondAPCreation(monomer: BaseMonomer) {
-    const command = new Command();
-
-    monomer.turnOffHover();
-    monomer.turnOffAttachmentPointsVisibility();
-    monomer.removePotentialBonds();
-
-    const operation = new MonomerHoverOperation(monomer, true);
-
-    command.addOperation(operation);
 
     return command;
   }
@@ -587,15 +576,9 @@ export class DrawingEntitiesManager {
         command.addOperation(monomerAddOperation);
         polymerBond.setSecondMonomer(monomer);
 
-        // requirements are: Base(R1)-(R3)Sugar(R1)-(R2)Phosphate
-        const attPointStart = previousMonomer.R1AttachmentPoint;
-        let attPointEnd;
-
-        if (monomer instanceof Sugar) {
-          attPointEnd = monomer.isAttachmentPointUsed('R3') ? undefined : 'R3';
-        } else if (monomer instanceof Phosphate) {
-          attPointEnd = monomer.R2AttachmentPoint;
-        }
+        // requirements are: Base(R1)-(R3)Sugar(R2)-(R1)Phosphate
+        const attPointStart = previousMonomer.getValidSourcePoint(monomer);
+        const attPointEnd = monomer.getValidSourcePoint(previousMonomer);
 
         assert(attPointStart);
         assert(attPointEnd);

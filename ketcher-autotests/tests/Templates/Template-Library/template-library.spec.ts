@@ -12,11 +12,7 @@ import {
   waitForPageInit,
   waitForRender,
 } from '@utils';
-import {
-  editStructureTemplate,
-  openFunctionalGroup,
-  openStructureLibrary,
-} from '@utils/templates';
+import { STRUCTURE_LIBRARY_BUTTON_TEST_ID } from '../templates.costants';
 
 async function setDisplayStereoFlagsSettingToOn(page: Page) {
   await selectTopPanelButton(TopPanelButton.Settings, page);
@@ -51,13 +47,33 @@ async function placePhenylalanineMustard(page: Page, x: number, y: number) {
   await page.mouse.click(x, y);
 }
 
+async function openStructureLibrary(page: Page) {
+  await page.getByTestId(STRUCTURE_LIBRARY_BUTTON_TEST_ID).click();
+}
+
+async function openFunctionalGroup(page: Page) {
+  await openStructureLibrary(page);
+  await page.getByText('Functional Group').click();
+}
+
+async function editStructureTemplate(
+  page: Page,
+  templateCategory: string,
+  templateName: string,
+) {
+  const editStructureButton = page.getByTitle(templateName).getByRole('button');
+  await openStructureLibrary(page);
+  await page.getByText(templateCategory).click();
+  await editStructureButton.click();
+}
+
 async function editAndClearTemplateName(
   page: Page,
   templateCategory: string,
   templateName: string,
 ) {
   await editStructureTemplate(page, templateCategory, templateName);
-  await page.getByTestId('file-name-input').click();
+  await page.getByTestId('name-input').click();
   await page.keyboard.press('Control+a');
   await page.keyboard.press('Delete');
 }
@@ -148,14 +164,14 @@ test.describe('Templates - Template Library', () => {
     // Test case: EPMLSOPKET-1699
     // Verify if structure name won't change if field will contain just spaces
     await editAndClearTemplateName(page, 'β-D-Sugars', 'β-D-Allopyranose');
-    await page.getByTestId('file-name-input').fill('   ');
+    await page.getByTestId('name-input').fill('   ');
     await page.getByRole('button', { name: 'Edit', exact: true }).click();
     await page.getByText('β-D-Sugars').click();
   });
 
   test('Text field 128 characters limit test ', async ({ page }) => {
     // Verify maximum character validation on the name field
-    const textField = page.getByTestId('file-name-input');
+    const textField = page.getByTestId('name-input');
     const number = 129;
     const inputText = 'A'.repeat(number);
     await editAndClearTemplateName(page, 'β-D-Sugars', 'β-D-Allopyranose');

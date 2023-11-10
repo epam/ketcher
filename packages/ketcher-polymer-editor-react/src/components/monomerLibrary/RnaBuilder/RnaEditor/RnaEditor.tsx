@@ -65,22 +65,27 @@ export const RnaEditor = ({ duplicatePreset, activateEditMode }) => {
     dispatch(setIsEditModeAction(value));
   };
 
+  const [expanded, setExpanded] = useState(false);
+
   useEffect(() => {
-    if (activePreset) return;
+    if (activePreset) {
+      if (activePreset.name || isEditMode) setExpanded(true);
+      return;
+    }
 
     if (hasPresets) {
       dispatch(setActivePreset(presets[0]));
     } else {
       dispatch(createNewPreset());
       dispatch(setActiveRnaBuilderItem(RnaBuilderPresetsItem.Presets));
-      setIsEditMode(true);
     }
-  }, []);
-
-  const [expanded, setExpanded] = useState(true);
+  }, [activePreset]);
 
   const expandEditor = () => {
     setExpanded(!expanded);
+    if (!activePreset.presetInList) {
+      setIsEditMode(true);
+    }
   };
 
   useEffect(() => {

@@ -18,7 +18,7 @@ import { scrollSettingBar } from '@utils/scrollSettingBar';
 async function setHydrogenLabelsOn(page: Page) {
   await selectTopPanelButton(TopPanelButton.Settings, page);
   await page.getByText('Atoms', { exact: true }).click();
-  await scrollSettingBar(page);
+  await scrollSettingBar(page, 150);
   await page.getByRole('button', { name: 'Terminal and Hetero' }).click();
   await page.getByTestId('On-option').click();
   await pressButton(page, 'Apply');
@@ -31,7 +31,7 @@ async function selectExtendedTableElements(page: Page, element: string) {
 async function atomDefaultSettings(page: Page) {
   await selectTopPanelButton(TopPanelButton.Settings, page);
   await page.getByText('Atoms', { exact: true }).click();
-  await scrollSettingBar(page);
+  await scrollSettingBar(page,150);
 }
 
 async function ringBondCountQuery(page: Page, menuItem: string) {

@@ -108,13 +108,13 @@ test.describe('Zoom Tool', () => {
     await page.mouse.down();
     await page.mouse.move(bondCoordinates.x, bondCoordinates.y);
     await takeEditorScreenshot(page);
-
+    await page.mouse.up();
     await selectTool(LeftPanelButton.ZoomReset, page);
     await peptide.hover();
     await page.mouse.down();
     await page.mouse.move(bondCoordinates.x, bondCoordinates.y);
     await takeEditorScreenshot(page);
-
+    await page.mouse.up();
     await selectTool(LeftPanelButton.ZoomOut, page);
     await selectTool(LeftPanelButton.ZoomOut, page);
     await peptide.hover();
@@ -131,13 +131,13 @@ test.describe('Zoom Tool', () => {
     await page.mouse.down();
     await page.mouse.move(bondCoordinates.x, bondCoordinates.y);
     await takeEditorScreenshot(page);
-
+    await page.mouse.up();
     await page.mouse.wheel(deltas.x, -deltas.y);
     await peptide.hover();
     await page.mouse.down();
     await page.mouse.move(bondCoordinates.x, bondCoordinates.y);
     await takeEditorScreenshot(page);
-
+    await page.mouse.up();
     await page.mouse.wheel(deltas.x, -deltas.y);
     await peptide.hover();
     await page.mouse.down();

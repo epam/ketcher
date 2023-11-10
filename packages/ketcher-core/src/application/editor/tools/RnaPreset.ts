@@ -169,7 +169,7 @@ class RnaPresetTool implements Tool {
 
     if (this.rnaBase) {
       const [RNABase, RNABaseRenderer] = monomerFactory(this.rnaBase);
-      this.rnaBasePreview = new RNABase(this.rnaBase);
+      this.rnaBasePreview = new RNABase(this.rnaBase) as RNABase;
       this.rnaBasePreviewRenderer = new RNABaseRenderer(
         this.rnaBasePreview,
         this.MONOMER_PREVIEW_SCALE_FACTOR,

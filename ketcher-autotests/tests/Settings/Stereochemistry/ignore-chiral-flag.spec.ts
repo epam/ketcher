@@ -11,18 +11,10 @@ import {
   waitForPageInit,
   waitForRender,
 } from '@utils';
+import { scrollBar } from '@utils/scrollBar';
 
 async function openStructureLibrary(page: Page) {
   await page.getByTestId(STRUCTURE_LIBRARY_BUTTON_TEST_ID).click();
-}
-
-async function scrollBar(page: Page) {
-  const deltaX = 0;
-  const deltaY = 80;
-  const anyX = 638;
-  const anyY = 524;
-  await page.mouse.move(anyX, anyY);
-  await page.mouse.wheel(deltaX, deltaY);
 }
 
 async function templateFromLAminoAcidsCategory(page: Page) {

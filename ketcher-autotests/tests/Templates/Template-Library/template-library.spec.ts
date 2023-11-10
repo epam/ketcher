@@ -78,22 +78,6 @@ async function editAndClearTemplateName(
   await page.keyboard.press('Delete');
 }
 
-async function openStructureLibrary(page: Page) {
-  await page.getByTestId(STRUCTURE_LIBRARY_BUTTON_TEST_ID).click();
-}
-
-async function openFunctionalGroup(page: Page) {
-  await openStructureLibrary(page);
-  await page.getByText('Functional Group').click();
-}
-
-async function editStructureTemplate(page: Page, group: string, text: string) {
-  const editStructureButton = page.getByTitle(text).getByRole('button');
-  await openStructureLibrary(page);
-  await page.getByText(group).click();
-  await editStructureButton.click();
-}
-
 test.describe('Templates - Template Library', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);

@@ -13,6 +13,7 @@ import {
   RingButton,
   getAtomByIndex,
 } from '@utils';
+import { scrollSettingBar } from '@utils/scrollSettingBar';
 
 async function setHydrogenLabelsOn(page: Page) {
   await selectTopPanelButton(TopPanelButton.Settings, page);
@@ -31,15 +32,6 @@ async function atomDefaultSettings(page: Page) {
   await selectTopPanelButton(TopPanelButton.Settings, page);
   await page.getByText('Atoms', { exact: true }).click();
   await scrollSettingBar(page);
-}
-
-async function scrollSettingBar (page: Page){ 
-  const deltaX = 0;
-  const deltaY = 150;
-  const scrollBarCoordinatesX = 638;
-  const scrollBarCoordinatesY = 524;
-  await page.mouse.move(scrollBarCoordinatesX, scrollBarCoordinatesY);
-  await page.mouse.wheel(deltaX, deltaY);
 }
 
 async function ringBondCountQuery(page: Page, menuItem: string) {

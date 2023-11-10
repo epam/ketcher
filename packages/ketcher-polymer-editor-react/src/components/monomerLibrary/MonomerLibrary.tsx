@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent } from 'react';
 import { Tabs } from 'components/shared/Tabs';
 import styled from '@emotion/styled';
 import { tabsContent } from 'components/monomerLibrary/tabsContent';
@@ -21,18 +21,16 @@ import { useAppDispatch } from 'hooks';
 import { setSearchFilter } from 'state/library';
 import { Icon } from 'ketcher-react';
 
+export const MONOMER_LIBRARY_WIDTH = '254px';
+
 const MonomerLibraryContainer = styled.div(({ theme }) => ({
-  width: '254px',
+  width: MONOMER_LIBRARY_WIDTH,
   height: 'calc(100% - 16px)',
   backgroundColor: theme.ketcher.color.background.primary,
   boxShadow: '0px 2px 5px rgba(103, 104, 132, 0.15)',
   display: 'flex',
   flexDirection: 'column',
   borderRadius: '4px',
-
-  '&.hidden': {
-    visibility: 'hidden',
-  },
 }));
 
 const MonomerLibraryTitle = styled.h3(({ theme }) => ({
@@ -83,71 +81,17 @@ const MonomerLibrarySearch = styled.div(({ theme }) => ({
   },
 }));
 
-const MonomerLibraryToggle = styled.div(({ theme }) => {
-  return {
-    margin: 0,
-    fontSize: theme.ketcher.font.size.regular,
-    color: theme.ketcher.color.text.secondary,
-    position: 'absolute',
-    cursor: 'pointer',
-    top: '12px',
-    right: '4px',
-    visibility: 'visible',
-    opacity: 1,
-    whiteSpace: 'nowrap',
-    display: 'flex',
-    lineHeight: 1,
-    padding: '5px 8px',
-    borderRadius: '4px',
-    userSelect: 'none',
-
-    '& > span': {
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-
-      '&.icon': {
-        marginRight: '2px',
-      },
-    },
-
-    '.hidden &': {
-      backgroundColor: theme.ketcher.color.button.primary.active,
-      color: theme.ketcher.color.button.text.primary,
-    },
-  };
-});
-
 const MonomerLibrary = () => {
-  const [isHidden, setIsHidden] = useState(false);
   const dispatch = useAppDispatch();
-
-  const toggleSidebar = () => {
-    setIsHidden(!isHidden);
-  };
 
   const filterResults = (event: ChangeEvent<HTMLInputElement>) => {
     dispatch(setSearchFilter(event.target.value));
   };
 
   return (
-    <MonomerLibraryContainer
-      className={isHidden ? 'hidden monomer-library' : 'shown monomer-library'}
-    >
+    <MonomerLibraryContainer>
       <MonomerLibraryHeader>
         <MonomerLibraryTitle>Library</MonomerLibraryTitle>
-        <MonomerLibraryToggle>
-          <span className="icon">
-            {isHidden ? (
-              <Icon name="arrows-left" />
-            ) : (
-              <Icon name="arrows-right" />
-            )}
-          </span>
-          <span onClick={toggleSidebar}>
-            {isHidden ? 'Show Library' : 'Hide'}
-          </span>
-        </MonomerLibraryToggle>
         <MonomerLibrarySearch>
           <div>
             <span>

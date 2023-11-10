@@ -60,6 +60,12 @@ jest.mock('d3', () => {
   };
 });
 
+global.ResizeObserver = jest.fn().mockImplementation(() => ({
+  observe: jest.fn(),
+  unobserve: jest.fn(),
+  disconnect: jest.fn(),
+}));
+
 describe('Select Rectangle Tool', () => {
   it('should select drawing entity on mousedown', () => {
     const polymerBond = getFinishedPolymerBond(0, 0, 10, 10);

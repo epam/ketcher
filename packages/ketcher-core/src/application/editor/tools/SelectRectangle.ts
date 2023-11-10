@@ -26,6 +26,7 @@ class SelectRectangle implements BaseTool {
   private brushArea;
   private moveStarted;
   private mousePositionAfterMove = new Vec2(0, 0, 0);
+  private canvasResizeObserver?: ResizeObserver;
 
   constructor(private editor: CoreEditor) {
     this.editor = editor;
@@ -71,6 +72,24 @@ class SelectRectangle implements BaseTool {
       .select('rect.selection')
       .style('fill', 'transparent')
       .style('stroke', 'darkgrey');
+
+    const handleResizeCanvas = () => {
+      const { canvas } = this.editor;
+
+      this.brush.extent([
+        [0, 0],
+        [canvas.width.baseVal.value, canvas.height.baseVal.value],
+      ]);
+
+      this.brushArea.call(this.brush);
+    };
+
+    const canvasElement = this.editor.canvas;
+
+    if (canvasElement) {
+      this.canvasResizeObserver = new ResizeObserver(handleResizeCanvas);
+      this.canvasResizeObserver.observe(canvasElement);
+    }
   }
 
   mousedown(event) {
@@ -143,6 +162,9 @@ class SelectRectangle implements BaseTool {
       this.brush = null;
       this.brushArea = null;
     }
+
+    this.canvasResizeObserver?.disconnect();
+
     const modelChanges =
       this.editor.drawingEntitiesManager.unselectAllDrawingEntities();
 

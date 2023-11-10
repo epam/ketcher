@@ -110,11 +110,13 @@ export const rnaBuilderSlice = createSlice({
     deletePreset: (state, action: PayloadAction<IRnaPreset>) => {
       const preset = action.payload;
 
+      const presetIndexInList = state.presets.findIndex(
+        (presetInList) => presetInList.name === preset.name,
+      );
+      state.presets.splice(presetIndexInList, 1);
+
       if (preset.presetInList) {
-        const presetIndexInList = state.presets.findIndex(
-          (presetInList) => presetInList.name === preset.presetInList?.name,
-        );
-        state.presets.splice(presetIndexInList, 1);
+        state.activePreset = null;
       }
     },
     setIsEditMode: (state, action: PayloadAction<boolean>) => {

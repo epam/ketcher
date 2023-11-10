@@ -185,6 +185,7 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
           clickHandler={copyHandler}
           label="Add to Canvas"
           title="Structure will be loaded as fragment and added to Clipboard"
+          data-testId="add-to-canvas-button"
         />,
       ];
     } else {

@@ -111,12 +111,7 @@ export const Save = ({
   };
 
   const handleSave = () => {
-    const ketSerializer = new KetSerializer();
-    const serializedKet = ketSerializer.serialize(
-      editor.drawingEntitiesManager.micromoleculesHiddenEntities.clone(),
-      editor.drawingEntitiesManager,
-    );
-    const blob = new Blob([serializedKet], {
+    const blob = new Blob([struct], {
       type: getPropertiesByFormat(currentFileFormat).mime,
     });
     const formatProperties = getPropertiesByFormat(currentFileFormat);

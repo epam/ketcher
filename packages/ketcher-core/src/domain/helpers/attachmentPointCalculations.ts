@@ -113,11 +113,11 @@ export function getSearchFunction(
     );
 
     // exit recursion
-    if (diff.length() < 1.2) {
+    if (diff.length() < 1.01) {
       return secondPoint;
     }
 
-    const newLength = Math.round(diff.length() / 2);
+    const newLength = Math.round(diff.length() / 1.4);
     const newCoordStart = { x: secondPoint.x, y: secondPoint.y };
 
     const newPointCoord = {

@@ -74,12 +74,12 @@ export class AttachmentPoint {
     this.initialAngle = angle;
     this.editorEvents = editorEvents;
 
-    if (isUsed) {
-      this.fill = AttachmentPoint.colors.fillUsed;
-      this.stroke = AttachmentPoint.colors.strokeUsed;
-    } else if (isPotentiallyUsed) {
+    if (isPotentiallyUsed) {
       this.fill = AttachmentPoint.colors.fillPotentially;
       this.stroke = AttachmentPoint.colors.strokePotentially;
+    } else if (isUsed) {
+      this.fill = AttachmentPoint.colors.fillUsed;
+      this.stroke = AttachmentPoint.colors.strokeUsed;
     } else {
       this.fill = AttachmentPoint.colors.fill;
       this.stroke = AttachmentPoint.colors.stroke;

@@ -94,6 +94,10 @@ export class RenderersManager {
     polymerBond.secondMonomer.renderer?.redrawAttachmentPoints();
     polymerBond.secondMonomer.renderer?.drawSelection();
     polymerBond.secondMonomer.renderer?.redrawHover();
+    this.polymerBonds.get(polymerBond.id)?.remove();
+    const polymerBondRenderer = new PolymerBondRenderer(polymerBond);
+    this.polymerBonds.set(polymerBond.id, polymerBondRenderer);
+    polymerBond.renderer?.show();
   }
 
   public cancelPolymerBondCreation(polymerBond) {

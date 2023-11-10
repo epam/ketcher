@@ -74,7 +74,7 @@ export const RnaBuilder = ({ libraryName }) => {
   return (
     <RnaBuilderContainer>
       <RnaEditor
-        duplicatePreset={duplicatePreset}
+        duplicatePreset={() => duplicatePreset()}
         activateEditMode={activateEditMode}
       />
       <RnaAccordion

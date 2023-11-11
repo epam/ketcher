@@ -220,13 +220,7 @@ export async function takeMonomerLibraryScreenshot(
   page: Page,
   options?: { masks?: Locator[]; maxDiffPixelRatio?: number },
 ) {
-  const maxTimeout = 3000;
-  const editor = page.locator('[class*="shown monomer-library"]');
-  await waitForRender(page, emptyFunction, maxTimeout);
-  await expect(editor).toHaveScreenshot({
-    mask: options?.masks,
-    maxDiffPixelRatio: options?.maxDiffPixelRatio,
-  });
+  await takeElementScreenshot(page, 'monomer-library', options);
 }
 
 export async function takeEditorScreenshot(

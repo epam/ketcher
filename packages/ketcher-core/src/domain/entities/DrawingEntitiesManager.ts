@@ -87,20 +87,14 @@ export class DrawingEntitiesManager {
     return mergedCommand;
   }
 
-  public addMonomerChangeModel(monomerItem: MonomerItemType, position: Vec2) {
+  public addMonomer(monomerItem: MonomerItemType, position: Vec2) {
     const [Monomer] = monomerFactory(monomerItem);
     const monomer = new Monomer(monomerItem, position);
     monomer.moveAbsolute(position);
     this.monomers.set(monomer.id, monomer);
-    return monomer;
-  }
 
-  public addMonomer(monomerItem: MonomerItemType, position: Vec2) {
     const command = new Command();
-    const operation = new MonomerAddOperation(
-      this.addMonomerChangeModel.bind(this, monomerItem, position),
-      this.deleteMonomerChangeModel.bind(this),
-    );
+    const operation = new MonomerAddOperation(monomer);
 
     command.addOperation(operation);
 
@@ -190,21 +184,10 @@ export class DrawingEntitiesManager {
     return command;
   }
 
-  private deleteMonomerChangeModel(monomer: BaseMonomer) {
-    this.monomers.delete(monomer.id);
-  }
-
   public deleteMonomer(monomer: BaseMonomer) {
+    this.monomers.delete(monomer.id);
     const command = new Command();
-    const operation = new MonomerDeleteOperation(
-      monomer,
-      this.addMonomerChangeModel.bind(
-        this,
-        monomer.monomerItem,
-        monomer.position,
-      ),
-      this.deleteMonomerChangeModel.bind(this),
-    );
+    const operation = new MonomerDeleteOperation(monomer);
     command.addOperation(operation);
 
     if (monomer.hasBonds) {
@@ -248,74 +231,31 @@ export class DrawingEntitiesManager {
     return command;
   }
 
-  public addPolymerBondChangeModel(
-    firstMonomer,
-    startPosition,
-    endPosition,
-    polymerBondExists?: PolymerBond,
-  ) {
-    let polymerBond = new PolymerBond(firstMonomer);
-    if (polymerBondExists) {
-      polymerBond = polymerBondExists;
-    }
+  public addPolymerBond(firstMonomer, startPosition, endPosition) {
+    const polymerBond = new PolymerBond(firstMonomer);
     this.polymerBonds.set(polymerBond.id, polymerBond);
     const attachmentPoint = firstMonomer.getValidSourcePoint();
     firstMonomer.setPotentialBond(attachmentPoint, polymerBond);
     polymerBond.moveBondStartAbsolute(startPosition.x, startPosition.y);
     polymerBond.moveBondEndAbsolute(endPosition.x, endPosition.y);
-    return polymerBond;
-  }
 
-  public addPolymerBond(firstMonomer, startPosition, endPosition) {
     const command = new Command();
-
-    const operation = new PolymerBondAddOperation(
-      this.addPolymerBondChangeModel.bind(
-        this,
-        firstMonomer,
-        startPosition,
-        endPosition,
-      ),
-      this.deletePolymerBondChangeModel.bind(this),
-    );
+    const operation = new PolymerBondAddOperation(polymerBond);
 
     command.addOperation(operation);
 
-    return { command, polymerBond: operation.polymerBond };
-  }
-
-  public deletePolymerBondChangeModel(polymerBond: PolymerBond) {
-    this.polymerBonds.delete(polymerBond.id);
+    return { command, polymerBond };
   }
 
   public deletePolymerBond(polymerBond: PolymerBond) {
+    this.polymerBonds.delete(polymerBond.id);
     const command = new Command();
 
     const operationCleanAttachmentPoints =
       new PolymerBondCleanAttachmentPointsOperation(polymerBond);
     command.addOperation(operationCleanAttachmentPoints);
 
-    const operation = new PolymerBondDeleteOperation(
-      polymerBond,
-      this.deletePolymerBondChangeModel.bind(this, polymerBond),
-      this.addPolymerBondChangeModel.bind(
-        this,
-        polymerBond.firstMonomer,
-        polymerBond.startPosition,
-        polymerBond.endPosition,
-      ),
-      this.finishPolymerBondCreationModelChange.bind(
-        this,
-        polymerBond.firstMonomer,
-        polymerBond.secondMonomer as BaseMonomer,
-        polymerBond.firstMonomer.getAttachmentPointByBond(
-          polymerBond,
-        ) as string,
-        polymerBond.secondMonomer?.getAttachmentPointByBond(
-          polymerBond,
-        ) as string,
-      ),
-    );
+    const operation = new PolymerBondDeleteOperation(polymerBond);
     command.addOperation(operation);
 
     return command;
@@ -345,34 +285,6 @@ export class DrawingEntitiesManager {
     return command;
   }
 
-  public finishPolymerBondCreationModelChange(
-    firstMonomer: BaseMonomer,
-    secondMonomer: BaseMonomer,
-    firstMonomerAttachmentPoint: string,
-    secondMonomerAttachmentPoint: string,
-  ) {
-    const polymerBond = new PolymerBond(firstMonomer);
-    polymerBond.setSecondMonomer(secondMonomer);
-    polymerBond.firstMonomer.setBond(firstMonomerAttachmentPoint, polymerBond);
-    assert(polymerBond.secondMonomer);
-    assert(secondMonomer.renderer);
-    polymerBond.secondMonomer.setBond(
-      secondMonomerAttachmentPoint,
-      polymerBond,
-    );
-    polymerBond.firstMonomer.removePotentialBonds();
-    polymerBond.secondMonomer.removePotentialBonds();
-    polymerBond.moveToLinkedMonomers();
-    polymerBond.firstMonomer.turnOffSelection();
-    polymerBond.firstMonomer.turnOffHover();
-    polymerBond.firstMonomer.turnOffAttachmentPointsVisibility();
-    polymerBond.secondMonomer.turnOffSelection();
-    polymerBond.secondMonomer.turnOffHover();
-    polymerBond.secondMonomer.turnOffAttachmentPointsVisibility();
-    polymerBond.turnOffHover();
-    return polymerBond;
-  }
-
   public finishPolymerBondCreation(
     polymerBond: PolymerBond,
     secondMonomer: BaseMonomer,
@@ -381,26 +293,16 @@ export class DrawingEntitiesManager {
   ) {
     const command = new Command();
 
-    const firstMonomer = polymerBond.firstMonomer;
-    this.polymerBonds.delete(polymerBond.id);
-    // const operationAddAttachmentPoints =
-    //   new PolymerBondAddAttachmentPointsOperation(
-    //     polymerBond,
-    //     secondMonomer,
-    //     firstMonomerAttachmentPoint,
-    //     secondMonomerAttachmentPoint,
-    //   );
-
-    // command.addOperation(operationAddAttachmentPoints);
-    const operation = new PolymerBondFinishCreationOperation(
-      this.finishPolymerBondCreationModelChange.bind(
-        this,
-        firstMonomer,
+    const operationAddAttachmentPoints =
+      new PolymerBondAddAttachmentPointsOperation(
+        polymerBond,
         secondMonomer,
         firstMonomerAttachmentPoint,
         secondMonomerAttachmentPoint,
-      ),
-    );
+      );
+
+    command.addOperation(operationAddAttachmentPoints);
+    const operation = new PolymerBondFinishCreationOperation(polymerBond);
 
     command.addOperation(operation);
 

@@ -52,6 +52,7 @@ const Content = styled(DialogContent)`
   padding: 0;
   font-size: ${({ theme }) => theme.ketcher.font.size.medium};
   line-height: 17px;
+  color: #000000;
   ${({ theme }) => scrollbarThin(theme)};
 `;
 
@@ -62,7 +63,7 @@ const Footer = styled(DialogActions)`
 
   .MuiButtonBase-root {
     border-radius: 4px;
-    font-size: ${({ theme }) => theme.ketcher.font.size.medium};
+    font-size: ${({ theme }) => theme.ketcher.font.size.regular};
   }
 `;
 

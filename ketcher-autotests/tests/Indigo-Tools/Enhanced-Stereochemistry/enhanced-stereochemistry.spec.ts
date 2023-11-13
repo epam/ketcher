@@ -31,7 +31,7 @@ async function selectLabelDisplayAtStereogenicCenters(
 ) {
   await selectTopPanelButton(TopPanelButton.Settings, page);
   await page.getByText('Stereochemistry', { exact: true }).click();
-  await pressButton(page, 'IUPAC style');
+  await page.getByTestId('stereo-label-style-input-span').click();
   await page.getByRole('option', { name: label }).click();
   await pressButton(page, 'Apply');
 }
@@ -39,7 +39,7 @@ async function selectLabelDisplayAtStereogenicCenters(
 async function selectColorOfStereogenicCenters(page: Page, color: string) {
   await selectTopPanelButton(TopPanelButton.Settings, page);
   await page.getByText('Stereochemistry', { exact: true }).click();
-  await pressButton(page, 'Labels Only');
+  await page.getByTestId('color-stereogenic-centers-input-span').click();
   await page.getByRole('option', { name: color }).click();
   await pressButton(page, 'Apply');
 }

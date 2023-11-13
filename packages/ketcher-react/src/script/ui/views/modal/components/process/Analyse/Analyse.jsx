@@ -89,7 +89,11 @@ class AnalyseDialog extends Component {
               withSelector: false,
             },
           ].map((item) => (
-            <li key={item.key} className={classes.contentWrapper}>
+            <li
+              key={item.key}
+              className={classes.contentWrapper}
+              data-testid={item.name + '-wrapper'}
+            >
               <div className={classes.inputWrapper}>
                 <label>{item.name}:</label>
                 {item.key === 'gross' ? (
@@ -124,6 +128,7 @@ class AnalyseDialog extends Component {
                     value={round[item.round]}
                     onChange={(val) => onChangeRound(item.round, val)}
                     className={classes.select}
+                    data-testid={item.name + '-select'}
                   />
                 </div>
               ) : null}

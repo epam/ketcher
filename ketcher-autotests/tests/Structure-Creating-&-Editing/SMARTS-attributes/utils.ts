@@ -1,5 +1,6 @@
 import { Page, expect } from '@playwright/test';
 import { TopPanelButton, selectTopPanelButton } from '@utils';
+import { clickOnFileDropdown } from '@utils/formats';
 
 type queryNumberValues =
   | '0'
@@ -119,13 +120,9 @@ export async function setValence(page: Page, valenceOption: string) {
 
 // Other
 
-export async function checkSmartsValue(
-  page: Page,
-  defaultFileFormat: string,
-  value: string,
-) {
+export async function checkSmartsValue(page: Page, value: string) {
   await selectTopPanelButton(TopPanelButton.Save, page);
-  await page.getByRole('button', { name: defaultFileFormat }).click();
+  await clickOnFileDropdown(page);
   await page.getByRole('option', { name: 'Daylight SMARTS' }).click();
   const smartsInput = page.getByTestId('smarts-preview-area-text');
   await expect(smartsInput).toHaveValue(value);

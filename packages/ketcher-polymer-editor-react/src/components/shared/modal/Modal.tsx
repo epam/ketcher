@@ -56,10 +56,16 @@ const Content = styled(DialogContent)`
   ${({ theme }) => scrollbarThin(theme)};
 `;
 
-const Footer = styled(DialogActions)`
+interface FooterProps {
+  withBorder?: boolean;
+}
+
+const Footer = styled(DialogActions)<FooterProps>`
   height: 52px;
-  margin: 0 12px;
-  padding: 0;
+  margin: 0;
+  padding: 0 12px;
+  border-top: ${({ theme, withBorder }) =>
+    withBorder ? theme.ketcher.border.small : 'none'};
 
   .MuiButtonBase-root {
     border-radius: 4px;

@@ -11,18 +11,18 @@ import {
   waitForLoad,
   waitForPageInit,
 } from '@utils';
-import { getSmarts } from '@utils/formats';
+import { clickOnFileDropdown, getSmarts } from '@utils/formats';
 
 async function saveSmarts(page: Page) {
   await selectTopPanelButton(TopPanelButton.Save, page);
-  await page.getByRole('button', { name: 'MDL Rxnfile V2000' }).click();
+  await clickOnFileDropdown(page);
   await page.getByRole('option', { name: 'Daylight SMARTS' }).click();
   await page.getByRole('button', { name: 'Save', exact: true }).click();
 }
 
 async function previewSmarts(page: Page) {
   await selectTopPanelButton(TopPanelButton.Save, page);
-  await page.getByRole('button', { name: 'MDL Rxnfile V2000' }).click();
+  await clickOnFileDropdown(page);
   await page.getByRole('option', { name: 'Daylight SMARTS' }).click();
 }
 
@@ -92,7 +92,7 @@ test.describe('Reagents SMARTS format', () => {
     await page.getByText('Paste from clipboard').click();
     await pasteFromClipboard(
       page,
-      '[#6]-[#6]-1=[#6]-[#6](-[#7])=[#6](-[#16])-[#6]=[#6]-1-[#8]>Cl>[#6]-[#6]-1=[#6]-[#6](I)=[#6](-[#8])-[#6]=[#6]-1Br',
+      '[#6]-[#6]1-[#6](-[#8])=[#6]-[#6](-[#16])=[#6](-[#7])-[#6]=1>[#17]>[#6]-[#6]1-[#6](-,:[#35])=[#6]-[#6](-[#8])=[#6](-,:[#53])-[#6]=1',
     );
     await waitForLoad(page, async () => {
       await pressButton(page, 'Add to Canvas');

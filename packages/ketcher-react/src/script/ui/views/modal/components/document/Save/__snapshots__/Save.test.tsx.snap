@@ -61,16 +61,18 @@ Object {
               </label>
               <label
                 class="file-format-list"
+                data-testid="file-format-list"
               >
                 <span>
                   File format:
                 </span>
                 <span
                   class="inputWrapper"
-                  data-testid="undefined-input-span"
+                  data-testid="file-format-list-input-span"
                 >
                   <div
                     class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary Mui-focused selectContainer file-format-list css-1yk1gt9-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root"
+                    data-testid="file-format-list"
                   >
                     <div
                       aria-controls=":r0:"
@@ -433,16 +435,18 @@ Object {
             </label>
             <label
               class="file-format-list"
+              data-testid="file-format-list"
             >
               <span>
                 File format:
               </span>
               <span
                 class="inputWrapper"
-                data-testid="undefined-input-span"
+                data-testid="file-format-list-input-span"
               >
                 <div
                   class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary Mui-focused selectContainer file-format-list css-1yk1gt9-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root"
+                  data-testid="file-format-list"
                 >
                   <div
                     aria-controls=":r0:"

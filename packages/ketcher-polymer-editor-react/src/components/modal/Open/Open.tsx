@@ -30,7 +30,7 @@ import {
 import { IndigoProvider } from 'ketcher-react';
 import assert from 'assert';
 import { RequiredModalProps } from '../modalContainer';
-import { OpenFileWrapper } from './Open.styles';
+import { CancelButton, OpenFileWrapper } from './Open.styles';
 import { Loader } from '../save/Save.styles';
 import { LoadingCircles } from './AnalyzingFile/LoadingCircles';
 import { useAppDispatch } from 'hooks';
@@ -172,6 +172,12 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
   const getButtons = () => {
     if (currentState === MODAL_STATES.textEditor && !isAnalyzingFile) {
       return [
+        <CancelButton
+          key="cancelButton"
+          clickHandler={onCloseCallback}
+          label="Cancel"
+          styleType="secondary"
+        />,
         <ActionButton
           key="openButton"
           disabled={!structStr}
@@ -222,7 +228,7 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
       {getButtons().length === 0 ? (
         <></>
       ) : (
-        <Modal.Footer>{getButtons()}</Modal.Footer>
+        <Modal.Footer withBorder>{getButtons()}</Modal.Footer>
       )}
     </Modal>
   );

@@ -11,11 +11,11 @@ import {
   selectTopPanelButton,
   TopPanelButton,
 } from '@utils';
-import { getCdx } from '@utils/formats';
+import { clickOnFileDropdown, getCdx } from '@utils/formats';
 
 async function saveFileAsCdxFormat(page: Page) {
   await selectTopPanelButton(TopPanelButton.Save, page);
-  await page.getByRole('button', { name: 'MDL Rxnfile V2000' }).click();
+  await clickOnFileDropdown(page);
   await page.getByRole('option', { name: 'CDX', exact: true }).click();
 }
 

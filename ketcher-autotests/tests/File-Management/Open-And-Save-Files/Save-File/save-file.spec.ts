@@ -25,19 +25,22 @@ import {
   waitForSpinnerFinishedWork,
 } from '@utils';
 import { drawReactionWithTwoBenzeneRings } from '@utils/canvas/drawStructures';
-import { getKet, getMolfile, getRxn, getSdf, getSmiles } from '@utils/formats';
+import {
+  clickOnFileDropdown,
+  getKet,
+  getMolfile,
+  getRxn,
+  getSdf,
+  getSmiles,
+} from '@utils/formats';
 
 const RING_OFFSET = 150;
 const ARROW_OFFSET = 20;
 const ARROW_LENGTH = 100;
 
-async function getPreviewForSmiles(
-  page: Page,
-  formatName: string,
-  smileType: string,
-) {
+async function getPreviewForSmiles(page: Page, smileType: string) {
   await selectTopPanelButton(TopPanelButton.Save, page);
-  await page.getByRole('button', { name: formatName }).click();
+  await clickOnFileDropdown(page);
   await page.getByRole('option', { name: smileType }).click();
 }
 
@@ -250,7 +253,7 @@ test.describe('Save files', () => {
     await selectRingButton(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
     await selectTopPanelButton(TopPanelButton.Save, page);
-    await pressButton(page, 'MDL Molfile V2000');
+    await clickOnFileDropdown(page);
     await selectOptionByText(page, 'InChIKey');
     const inChistring = await page
       .getByTestId('inChIKey-preview-area-text')
@@ -376,7 +379,7 @@ test.describe('Open/Save/Paste files', () => {
     */
     await openFileAndAddToCanvas('KET/two-benzene-connected.ket', page);
     await selectTopPanelButton(TopPanelButton.Save, page);
-    await page.getByRole('button', { name: 'MDL Molfile V2000' }).click();
+    await clickOnFileDropdown(page);
     await page.getByRole('option', { name: 'SVG Document' }).click();
   });
 
@@ -387,7 +390,7 @@ test.describe('Open/Save/Paste files', () => {
     */
     await openFileAndAddToCanvas('KET/two-benzene-connected.ket', page);
     await selectTopPanelButton(TopPanelButton.Save, page);
-    await page.getByRole('button', { name: 'MDL Molfile V2000' }).click();
+    await clickOnFileDropdown(page);
     await page.getByRole('option', { name: 'PNG Image' }).click();
   });
 
@@ -400,7 +403,7 @@ test.describe('Open/Save/Paste files', () => {
     */
     await openFileAndAddToCanvas('Molfiles-V2000/attached-data.mol', page);
 
-    await getPreviewForSmiles(page, 'MDL Molfile V2000', 'Daylight SMILES');
+    await getPreviewForSmiles(page, 'Daylight SMILES');
     await page.getByText('Warnings').click();
   });
 });

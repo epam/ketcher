@@ -13,19 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { CoreEditor, EditorHistory } from 'application/editor';
+import { CoreEditor } from 'application/editor';
 import { BaseTool } from 'application/editor/tools/Tool';
 
 class ClearTool implements BaseTool {
-  private history: EditorHistory;
-
   constructor(private editor: CoreEditor) {
     this.editor = editor;
-    this.history = new EditorHistory(editor);
-
     const modelChanges = this.editor.drawingEntitiesManager.deleteAllEntities();
     this.editor.renderersContainer.update(modelChanges);
-    this.history.update(modelChanges);
   }
 
   destroy() {}

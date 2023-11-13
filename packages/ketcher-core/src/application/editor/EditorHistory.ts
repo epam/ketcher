@@ -16,13 +16,13 @@
 
 import { Command } from 'domain/entities/Command';
 import { CoreEditor } from './Editor';
-import assert from 'assert';
+
 const HISTORY_SIZE = 32; // put me to options
 
 export class EditorHistory {
   historyStack: Command[] | [] = [];
   historyPointer = 0;
-  editor: CoreEditor | undefined;
+  editor: CoreEditor;
 
   private static _instance;
   constructor(editor: CoreEditor) {
@@ -57,8 +57,6 @@ export class EditorHistory {
       throw new Error('Undo stack is empty');
     }
 
-    assert(this.editor);
-
     this.historyPointer--;
     const lastCommand = this.historyStack[this.historyPointer];
     lastCommand.invert(this.editor.renderersContainer);
@@ -68,9 +66,6 @@ export class EditorHistory {
     if (this.historyPointer === this.historyStack.length) {
       throw new Error('Redo stack is empty');
     }
-
-    assert(this.editor);
-
     const lastCommand = this.historyStack[this.historyPointer];
     lastCommand.execute(this.editor.renderersContainer);
     this.historyPointer++;

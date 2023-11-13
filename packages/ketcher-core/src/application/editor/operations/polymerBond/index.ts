@@ -47,6 +47,7 @@ export class PolymerBondDeleteOperation implements Operation {
   constructor(
     public polymerBond: PolymerBond,
     private deletePolymerBondChangeModel: () => void,
+    private addPolymerBondChangeModel: (polymerBondExists) => PolymerBond,
     private finishPolymerBondCreationModelChange: () => PolymerBond,
   ) {}
 
@@ -59,6 +60,7 @@ export class PolymerBondDeleteOperation implements Operation {
   public invert(renderersManager: RenderersManager) {
     console.log('invert PolymerBondDeleteOperation');
     this.polymerBond = this.finishPolymerBondCreationModelChange();
+    this.addPolymerBondChangeModel(this.polymerBond);
     renderersManager.addPolymerBond(this.polymerBond);
 
     console.log('this.polymerBond: ', this.polymerBond);
@@ -105,7 +107,6 @@ export class PolymerBondFinishCreationOperation implements Operation {
   public polymerBond;
   constructor(
     private finishPolymerBondCreationModelChange: () => PolymerBond,
-    private deletePolymerBondCreationModelChange: (polymerBond) => void,
   ) {}
 
   public execute(renderersManager: RenderersManager) {
@@ -116,7 +117,6 @@ export class PolymerBondFinishCreationOperation implements Operation {
 
   public invert(renderersManager: RenderersManager) {
     console.log('invert PolymerBondFinishCreationOperation');
-    this.deletePolymerBondCreationModelChange(this.polymerBond);
     renderersManager.deletePolymerBond(this.polymerBond);
   }
 }

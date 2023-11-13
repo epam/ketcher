@@ -17,7 +17,7 @@ import { Tool, IRnaPreset } from 'application/editor/tools/Tool';
 import { Sugar } from 'domain/entities/Sugar';
 import { Vec2 } from 'domain/entities';
 
-import { CoreEditor, EditorHistory } from 'application/editor';
+import { CoreEditor } from 'application/editor';
 import { BaseMonomerRenderer } from 'application/render/renderers';
 import { MonomerItemType } from 'domain/types';
 import { monomerFactory } from '../operations/monomer/monomerFactory';
@@ -42,8 +42,6 @@ class RnaPresetTool implements Tool {
   readonly RNA_BASE_PREVIEW_OFFSET_X = 2;
   readonly RNA_BASE_PREVIEW_OFFSET_Y = 20;
   readonly PHOSPHATE_PREVIEW_OFFSET_X = 18;
-  history: EditorHistory;
-
   constructor(private editor: CoreEditor, preset: IRnaPreset) {
     this.editor = editor;
     if (preset?.base) {
@@ -55,7 +53,6 @@ class RnaPresetTool implements Tool {
     if (preset?.sugar) {
       this.sugar = preset?.sugar;
     }
-    this.history = new EditorHistory(this.editor); // здесь история пишется
   }
 
   mousedown() {
@@ -96,7 +93,6 @@ class RnaPresetTool implements Tool {
         : undefined,
     });
 
-    this.history.update(modelChanges);
     this.editor.renderersContainer.update(modelChanges);
   }
 

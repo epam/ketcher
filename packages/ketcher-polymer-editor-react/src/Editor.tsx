@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 import { Provider } from 'react-redux';
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Global, ThemeProvider } from '@emotion/react';
 import { createTheme } from '@mui/material/styles';
 import { debounce, merge } from 'lodash';
@@ -30,7 +30,10 @@ import {
 } from 'theming/defaultTheme';
 import { getGlobalStyles } from 'theming/globalStyles';
 import { Layout } from 'components/Layout';
-import { MonomerLibrary } from 'components/monomerLibrary';
+import {
+  MonomerLibrary,
+  MonomerLibraryToggle,
+} from 'components/monomerLibrary';
 import { Menu } from 'components/menu';
 import {
   createEditor,
@@ -124,6 +127,7 @@ function Editor({ theme, togglerComponent }: EditorProps) {
   const editor = useAppSelector(selectEditor);
   const activeTool = useAppSelector(selectEditorActiveTool);
   let keyboardEventListener;
+  const [isMonomerLibraryHidden, setIsMonomerLibraryHidden] = useState(false);
 
   useEffect(() => {
     dispatch(createEditor({ theme, canvas: canvasRef.current }));
@@ -221,7 +225,9 @@ function Editor({ theme, togglerComponent }: EditorProps) {
   return (
     <>
       <Layout>
-        <Layout.Top>{togglerComponent}</Layout.Top>
+        <Layout.Top shortened={isMonomerLibraryHidden}>
+          {togglerComponent}
+        </Layout.Top>
 
         <Layout.Left>
           <MenuComponent />
@@ -251,10 +257,14 @@ function Editor({ theme, togglerComponent }: EditorProps) {
           </svg>
         </Layout.Main>
 
-        <Layout.Right>
+        <Layout.Right hide={isMonomerLibraryHidden}>
           <MonomerLibrary />
         </Layout.Right>
       </Layout>
+      <MonomerLibraryToggle
+        isHidden={isMonomerLibraryHidden}
+        onClick={() => setIsMonomerLibraryHidden((prev) => !prev)}
+      />
       <FullscreenButton />
       <StyledPreview className="polymer-library-preview" />
       <ModalContainer />

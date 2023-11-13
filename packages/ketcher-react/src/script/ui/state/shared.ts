@@ -199,3 +199,13 @@ export function openInfoModal(command: 'Paste' | 'Copy' | 'Cut'): {
     data: { name: 'info-modal', prop: { message: command } },
   };
 }
+
+export function openInfoModalWithCustomMessage(message: string): {
+  type: 'MODAL_OPEN';
+  data: { name: 'info-modal'; prop: { customText: string } };
+} {
+  return {
+    type: 'MODAL_OPEN',
+    data: { name: 'info-modal', prop: { customText: message } },
+  };
+}

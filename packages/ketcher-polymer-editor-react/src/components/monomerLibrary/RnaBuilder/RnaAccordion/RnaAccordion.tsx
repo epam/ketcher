@@ -45,9 +45,11 @@ import {
   selectActivePreset,
   selectActivePresetMonomerGroup,
   selectActiveRnaBuilderItem,
+  selectIsActivePresetNewAndEmpty,
   selectIsEditMode,
   selectPresets,
   setActivePreset,
+  setActivePresetForContextMenu,
   setActivePresetMonomerGroup,
   setActiveRnaBuilderItem,
   setIsEditMode,
@@ -74,11 +76,7 @@ interface IGroupsDataItem {
   }[];
 }
 
-export const RnaAccordion = ({
-  libraryName,
-  duplicatePreset,
-  activateEditMode,
-}) => {
+export const RnaAccordion = ({ libraryName, duplicatePreset, editPreset }) => {
   const monomers = useAppSelector(selectFilteredMonomers);
   const items = selectMonomersInCategory(monomers, libraryName);
   const activeRnaBuilderItem = useAppSelector(selectActiveRnaBuilderItem);
@@ -87,6 +85,9 @@ export const RnaAccordion = ({
   const presets = useAppSelector(selectPresets);
   const isEditMode = useAppSelector(selectIsEditMode);
   const editor = useAppSelector(selectEditor);
+  const isActivePresetNewAndEmpty = useAppSelector(
+    selectIsActivePresetNewAndEmpty,
+  );
 
   const [expandedAccordion, setExpandedAccordion] =
     useState<RnaBuilderItem | null>(activeRnaBuilderItem);
@@ -142,17 +143,6 @@ export const RnaAccordion = ({
     dispatch(setActiveRnaBuilderItem(groupName));
   };
 
-  const handleContextMenu = (preset: IRnaPreset) => (event: MouseEvent) => {
-    dispatch(setActivePreset(preset));
-    show({
-      event,
-      props: {
-        duplicatePreset,
-        activateEditMode,
-      },
-    });
-  };
-
   useEffect(() => {
     setExpandedAccordion(activeRnaBuilderItem);
   }, [activeRnaBuilderItem]);
@@ -167,15 +157,48 @@ export const RnaAccordion = ({
     );
   }, [isEditMode]);
 
-  const selectPreset = (preset: IRnaPreset) => {
+  const selectPreset = (preset: IRnaPreset) => () => {
     dispatch(setActivePreset(preset));
     editor.events.selectPreset.dispatch(preset);
+    if (preset === activePreset.presetInList) return;
+    dispatch(setIsEditMode(false));
   };
 
   const onClickNewPreset = () => {
     dispatch(createNewPreset());
     dispatch(setActiveRnaBuilderItem(RnaBuilderPresetsItem.Presets));
     dispatch(setIsEditMode(true));
+  };
+
+  const getMenuPosition = (currentPresetCard: HTMLElement) => {
+    const isDivCard = currentPresetCard instanceof HTMLDivElement;
+    if (!isDivCard && currentPresetCard.parentElement) {
+      currentPresetCard = currentPresetCard.parentElement;
+    }
+    const boundingBox = currentPresetCard.getBoundingClientRect();
+    const parentBox = currentPresetCard.offsetParent?.getBoundingClientRect();
+    const contextMenuWidth = 140;
+    let x = boundingBox.right - contextMenuWidth;
+    const y = boundingBox.y + boundingBox.height / 2;
+    if (parentBox?.x && parentBox?.x > x) {
+      x = boundingBox.x;
+    }
+    return {
+      x,
+      y,
+    };
+  };
+
+  const handleContextMenu = (preset: IRnaPreset) => (event: MouseEvent) => {
+    dispatch(setActivePresetForContextMenu(preset));
+    show({
+      event,
+      props: {
+        duplicatePreset,
+        editPreset,
+      },
+      position: getMenuPosition(event.currentTarget as HTMLElement),
+    });
   };
 
   return (
@@ -207,7 +230,7 @@ export const RnaAccordion = ({
                       <RnaPresetItem
                         key={`${preset.name}${index}`}
                         preset={preset}
-                        onClick={() => selectPreset(preset)}
+                        onClick={selectPreset(preset)}
                         onContextMenu={handleContextMenu(preset)}
                         isSelected={activePreset?.presetInList === preset}
                       />
@@ -216,7 +239,7 @@ export const RnaAccordion = ({
                 </ItemsContainer>
                 <RNAContextMenu />
               </GroupContainer>
-              {isEditMode && <DisabledArea />}
+              {isEditMode && !isActivePresetNewAndEmpty && <DisabledArea />}
             </DetailsContainer>
           ) : (
             <DetailsContainer>
@@ -228,7 +251,6 @@ export const RnaAccordion = ({
                 return (
                   <MonomerGroup
                     key={groupTitle}
-                    disabled={!isEditMode}
                     title={groupData.groups.length > 1 ? groupTitle : undefined}
                     items={groupItems as MonomerItemType[]}
                     selectedMonomerUniqueKey={

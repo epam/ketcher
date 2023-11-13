@@ -38,6 +38,17 @@ class PolymerBond implements BaseTool {
     this.history = new EditorHistory(this.editor); // здесь история пишется
   }
 
+  private removeBond(): void {
+    if (this.bondRenderer) {
+      const modelChanges =
+        this.editor.drawingEntitiesManager.cancelPolymerBondCreation(
+          this.bondRenderer.polymerBond,
+        );
+      this.editor.renderersContainer.update(modelChanges);
+      this.bondRenderer = undefined;
+    }
+  }
+
   public mousedown(event) {
     const selectedRenderer = event.target.__data__;
     if (selectedRenderer instanceof BaseMonomerRenderer) {
@@ -117,7 +128,10 @@ class PolymerBond implements BaseTool {
 
   public mouseLeaveMonomer(event) {
     const renderer: BaseMonomerRenderer = event.target.__data__;
-    if (renderer !== this.bondRenderer?.polymerBond?.firstMonomer?.renderer) {
+    if (
+      renderer !== this.bondRenderer?.polymerBond?.firstMonomer?.renderer &&
+      !this.isBondConnectionModalOpen
+    ) {
       const modelChanges =
         this.editor.drawingEntitiesManager.cancelIntentionToFinishBondCreation(
           renderer.monomer,
@@ -164,14 +178,7 @@ class PolymerBond implements BaseTool {
     if (this.isBondConnectionModalOpen) {
       return;
     }
-    if (this.bondRenderer) {
-      const modelChanges =
-        this.editor.drawingEntitiesManager.cancelPolymerBondCreation(
-          this.bondRenderer.polymerBond,
-        );
-      this.editor.renderersContainer.update(modelChanges);
-      this.bondRenderer = undefined;
-    }
+    this.removeBond();
   }
 
   public mouseUpMonomer(event) {
@@ -266,7 +273,9 @@ class PolymerBond implements BaseTool {
     this.bondRenderer = undefined;
   };
 
-  public destroy() {}
+  public destroy() {
+    this.removeBond();
+  }
 
   private shouldInvokeModal(
     firstMonomer: BaseMonomer,

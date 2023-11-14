@@ -212,7 +212,7 @@ function AttachmentPointSelectionPanel({
                 ),
               )}
             />
-            <AttachmentPointName>
+            <AttachmentPointName data-testid="leaving-group-value">
               {getLeavingGroupValue(attachmentPoint)}
             </AttachmentPointName>
           </AttachmentPoint>

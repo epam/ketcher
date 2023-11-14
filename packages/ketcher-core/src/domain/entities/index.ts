@@ -36,3 +36,4 @@ export * from './box2Abs';
 export * from './pool';
 export * from './highlight';
 export * from './sGroupAttachmentPoint';
+export * from './Peptide';

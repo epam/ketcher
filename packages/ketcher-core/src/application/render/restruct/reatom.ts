@@ -365,7 +365,7 @@ class ReAtom extends ReObject {
         !isHydrogen &&
         !this.a.alias &&
         implh > 0 &&
-        displayHydrogen(options.showHydrogenLabels, this)
+        displayHydrogen(restruct, this, options.showHydrogenLabels)
       ) {
         const data = showHydrogen(this, render, implh, {
           hydrogen: {},
@@ -706,7 +706,31 @@ function isLabelVisible(restruct, options, atom: ReAtom) {
   return false;
 }
 
-function displayHydrogen(hydrogenLabels: ShowHydrogenLabels, atom: ReAtom) {
+// It is a special case => for Sulfur inside aromatic ring implicit Hydrogen is not shown
+function isSulfurInsideAromatizedRing(
+  reStruct: ReStruct,
+  atom: ReAtom,
+): boolean {
+  const isSulfur = atom.a.label === 'S';
+  const isInsideAromatizedRing = atom.a.neighbors.some((halfBondId) => {
+    const halfBond = reStruct.molecule.halfBonds.get(halfBondId);
+    if (!halfBond) {
+      return false;
+    }
+    const loop = reStruct.molecule.loops.get(halfBond.loop);
+    return loop?.aromatic;
+  });
+  return isSulfur && isInsideAromatizedRing;
+}
+
+function displayHydrogen(
+  restruct: ReStruct,
+  atom: ReAtom,
+  hydrogenLabels: ShowHydrogenLabels,
+) {
+  if (isSulfurInsideAromatizedRing(restruct, atom)) {
+    return false;
+  }
   return (
     hydrogenLabels === ShowHydrogenLabels.On ||
     (hydrogenLabels === ShowHydrogenLabels.Terminal &&

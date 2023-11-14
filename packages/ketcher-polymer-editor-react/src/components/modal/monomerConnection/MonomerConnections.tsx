@@ -162,15 +162,6 @@ function AttachmentPointSelectionPanel({
     [bonds],
   );
 
-  const monomerLeavingGroupsArray =
-    monomer.monomerItem.props.MonomerCaps?.split(',');
-  const monomerLeavingGroups: { [key: string]: string } | undefined =
-    monomerLeavingGroupsArray?.reduce((acc, item) => {
-      const [attachmentPoint, leavingGroup] = item.slice(1).split(']');
-      acc[attachmentPoint] = leavingGroup;
-      return acc;
-    }, {});
-
   return (
     <AttachmentPointSelectionContainer>
       <StyledStructRender
@@ -201,8 +192,8 @@ function AttachmentPointSelectionPanel({
               )}
             />
             <AttachmentPointName>
-              {monomerLeavingGroups
-                ? monomerLeavingGroups[attachmentPoint]
+              {monomer.monomerItem.props.MonomerCaps
+                ? monomer.monomerItem.props.MonomerCaps[attachmentPoint]
                 : 'H'}
             </AttachmentPointName>
           </AttachmentPoint>

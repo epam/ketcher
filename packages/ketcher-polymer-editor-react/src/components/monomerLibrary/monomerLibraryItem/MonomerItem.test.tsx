@@ -9,7 +9,7 @@ describe('Test Monomer Item component', () => {
       label: 'for test',
       props: {
         BranchMonomer: 'false',
-        MonomerCaps: '[R1]H',
+        MonomerCaps: { R1: 'H' },
         MonomerCode: '',
         MonomerName: 'Cya',
         MonomerNaturalAnalogCode: 'A',

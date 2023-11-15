@@ -23,7 +23,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   private freeSectorsList: number[] = sectorsList;
 
   private attachmentPoints: AttachmentPoint[] | [] = [];
-  private hoveredAP: string | null = null;
+  private hoveredAttachmenPoint: string | null = null;
 
   private monomerSymbolElement?: SVGUseElement | SVGRectElement;
 
@@ -88,7 +88,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   }
 
   public redrawAttachmentPoints() {
-    this.hoveredAP = null;
+    this.hoveredAttachmenPoint = null;
     if (!this.rootElement) return;
     if (this.monomer.attachmentPointsVisible) {
       this.removeAttachmentPoints();
@@ -169,7 +169,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       AttachmentPointName,
       this.monomer.isAttachmentPointUsed(AttachmentPointName),
       this.monomer.isAttachmentPointPotentiallyUsed(AttachmentPointName) ||
-        this.hoveredAP === AttachmentPointName,
+        this.hoveredAttachmenPoint === AttachmentPointName,
       customAngle || rotation,
       this.isSnakeBondForAttachmentPoint(AttachmentPointName),
     );
@@ -184,8 +184,8 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     this.freeSectorsList = sectorsList;
   }
 
-  public hoverAP(attachmentPointName: string) {
-    this.hoveredAP = attachmentPointName;
+  public hoverAttachmenPoint(attachmentPointName: string) {
+    this.hoveredAttachmenPoint = attachmentPointName;
   }
 
   private appendRootElement(

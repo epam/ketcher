@@ -34,7 +34,7 @@ class PolymerBond implements BaseTool {
     this.editor = editor;
   }
 
-  public mouseDownAP(event) {
+  public mouseDownAttachmentPoint(event) {
     const selectedRenderer = event.target.__data__;
     if (
       selectedRenderer instanceof BaseMonomerRenderer &&
@@ -143,7 +143,7 @@ class PolymerBond implements BaseTool {
     this.editor.renderersContainer.update(modelChanges);
   }
 
-  public mouseOverAP(event) {
+  public mouseOverAttachmentPoint(event) {
     const renderer: BaseMonomerRenderer = event.target.__data__;
     let modelChanges;
 
@@ -158,7 +158,7 @@ class PolymerBond implements BaseTool {
         false,
       );
       modelChanges =
-        this.editor.drawingEntitiesManager.intendToFinishBondAPCreation(
+        this.editor.drawingEntitiesManager.intendToFinishAttachmenPointBondCreation(
           renderer.monomer,
           this.bondRenderer?.polymerBond,
           event.attachmentPointName,
@@ -166,7 +166,7 @@ class PolymerBond implements BaseTool {
         );
     } else {
       modelChanges =
-        this.editor.drawingEntitiesManager.intendToStartBondAPCreation(
+        this.editor.drawingEntitiesManager.intendToStartAttachmenPointBondCreation(
           renderer.monomer,
           event.attachmentPointName,
         );
@@ -190,7 +190,7 @@ class PolymerBond implements BaseTool {
     }
   }
 
-  public mouseLeaveAP(event) {
+  public mouseLeaveAttachmentPoint(event) {
     const renderer: BaseMonomerRenderer = event.target.__data__;
     if (renderer !== this.bondRenderer?.polymerBond?.firstMonomer?.renderer) {
       const modelChanges =
@@ -202,7 +202,7 @@ class PolymerBond implements BaseTool {
     }
   }
 
-  public mouseUpAP(event) {
+  public mouseUpAttachmentPoint(event) {
     const renderer = event.toElement.__data__;
     const isFirstMonomerHovered =
       renderer === this.bondRenderer?.polymerBond?.firstMonomer?.renderer;
@@ -479,101 +479,6 @@ class PolymerBond implements BaseTool {
     }
     return false;
   }
-
-  // private shouldInvokeModal(
-  //   firstMonomer: BaseMonomer,
-  //   secondMonomer: BaseMonomer,
-  // ) {
-  //   // Modal: bond for Peptides was created automatically
-  //   if (
-  //     secondMonomer instanceof Peptide &&
-  //     firstMonomer instanceof Peptide &&
-  //     secondMonomer.hasPotentialBonds() &&
-  //     firstMonomer.hasPotentialBonds()
-  //   ) {
-  //     return false;
-  //   }
-
-  //   // No Modal: Both monomers have only 1 attachment point
-  //   if (
-  //     firstMonomer.unUsedAttachmentPointsNamesList.length === 1 &&
-  //     secondMonomer.unUsedAttachmentPointsNamesList.length === 1
-  //   ) {
-  //     return false;
-  //   }
-
-  //   // No Modal: Both monomers have selected attachment points
-  //   if (
-  //     firstMonomer.chosenFirstAttachmentPointForBond !== null &&
-  //     secondMonomer.chosenSecondAttachmentPointForBond !== null
-  //   ) {
-  //     return false;
-  //   }
-
-  //   // No Modal: no free attachment point on second monomer
-  //   if (!secondMonomer.hasFreeAttachmentPoint) {
-  //     return false;
-  //   }
-
-  //   // Modal: Any or both monomers are Chems
-  //   if (firstMonomer instanceof Chem || secondMonomer instanceof Chem) {
-  //     return true;
-  //   }
-
-  //   // Modal: One monomer is Peptide and another is RNA monomer
-  //   const rnaMonomerClasses = [Sugar, RNABase, Phosphate];
-  //   const firstMonomerIsRNA = rnaMonomerClasses.find(
-  //     (RNAClass) => firstMonomer instanceof RNAClass,
-  //   );
-  //   const secondMonomerIsRNA = rnaMonomerClasses.find(
-  //     (RNAClass) => secondMonomer instanceof RNAClass,
-  //   );
-  //   if (
-  //     (firstMonomerIsRNA && secondMonomer instanceof Peptide) ||
-  //     (secondMonomerIsRNA && firstMonomer instanceof Peptide)
-  //   ) {
-  //     return true;
-  //   }
-
-  //   // Modal: special case for Peptide chain
-  //   if (secondMonomer instanceof Peptide && firstMonomer instanceof Peptide) {
-  //     // one of monomers has more than 2 AP
-  //     const hasPlentyAttachmentPoints =
-  //       firstMonomer.listOfAttachmentPoints.length > 2 ||
-  //       secondMonomer.listOfAttachmentPoints.length > 2;
-
-  //     // at least one of monomers has more than 1 free AP
-  //     const hasPlentyFreeAttachmentPoints =
-  //       firstMonomer.unUsedAttachmentPointsNamesList.length > 1 ||
-  //       secondMonomer.unUsedAttachmentPointsNamesList.length > 1;
-
-  //     // there is no possibility to connect R1-R2
-  //     const BothR1AttachmentPointUsed =
-  //       firstMonomer.isAttachmentPointUsed('R1') &&
-  //       secondMonomer.isAttachmentPointUsed('R1');
-
-  //     const BothR2AttachmentPointUsed =
-  //       firstMonomer.isAttachmentPointUsed('R2') &&
-  //       secondMonomer.isAttachmentPointUsed('R2');
-
-  //     const R1AndR2AttachmentPointUsed =
-  //       (firstMonomer.isAttachmentPointUsed('R2') &&
-  //         firstMonomer.isAttachmentPointUsed('R1')) ||
-  //       (secondMonomer.isAttachmentPointUsed('R2') &&
-  //         secondMonomer.isAttachmentPointUsed('R1'));
-
-  //     if (
-  //       hasPlentyAttachmentPoints &&
-  //       hasPlentyFreeAttachmentPoints &&
-  //       (BothR1AttachmentPointUsed ||
-  //         BothR2AttachmentPointUsed ||
-  //         R1AndR2AttachmentPointUsed)
-  //     ) {
-  //       return true;
-  //     }
-  //   }
-  //   return true;
-  // }
 }
 
 export { PolymerBond };

@@ -48,7 +48,8 @@ export class MonomerHoverOperation implements Operation {
     );
   }
 }
-export class APHoverOperation implements Operation {
+
+export class AttachmentPointHoverOperation implements Operation {
   constructor(
     private peptide: BaseMonomer,
     private attachmentPointName: string,

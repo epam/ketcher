@@ -171,12 +171,8 @@ export class AttachmentPoint {
     ];
 
     const lineFunction = line<Coordinates>()
-      .x(function (point) {
-        return point.x;
-      })
-      .y(function (point) {
-        return point.y;
-      });
+      .x(({ x }) => x)
+      .y(({ y }) => y);
 
     const hoverableAreaElement = this.element.append('g');
 
@@ -195,18 +191,18 @@ export class AttachmentPoint {
     hoverableAreaElement
       .on('mouseover', (event) => {
         event.attachmentPointName = this.attachmentPointName;
-        this.editorEvents.mouseOverAP.dispatch(event);
+        this.editorEvents.mouseOverAttachmentPoint.dispatch(event);
       })
       .on('mouseleave', (event) => {
-        this.editorEvents.mouseLeaveAP.dispatch(event);
+        this.editorEvents.mouseLeaveAttachmentPoint.dispatch(event);
       })
       .on('mousedown', (event) => {
         event.attachmentPointName = this.attachmentPointName;
-        this.editorEvents.mouseDownAP.dispatch(event);
+        this.editorEvents.mouseDownAttachmentPoint.dispatch(event);
       })
       .on('mouseup', (event) => {
         event.attachmentPointName = this.attachmentPointName;
-        this.editorEvents.mouseUpAP.dispatch(event);
+        this.editorEvents.mouseUpAttachmentPoint.dispatch(event);
       });
 
     return hoverableAreaElement;

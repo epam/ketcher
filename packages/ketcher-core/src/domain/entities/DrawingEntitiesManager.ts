@@ -6,7 +6,7 @@ import { PolymerBond } from 'domain/entities/PolymerBond';
 import assert from 'assert';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import {
-  APHoverOperation,
+  AttachmentPointHoverOperation,
   MonomerAddOperation,
   MonomerDeleteOperation,
   MonomerHoverOperation,
@@ -348,7 +348,7 @@ export class DrawingEntitiesManager {
     return command;
   }
 
-  public intendToStartBondAPCreation(
+  public intendToStartAttachmenPointBondCreation(
     monomer: BaseMonomer,
     attachmentPointName: string,
   ) {
@@ -360,7 +360,7 @@ export class DrawingEntitiesManager {
       attachmentPointName as AttachmentPointName,
     )
       ? new MonomerHoverOperation(monomer, true)
-      : new APHoverOperation(monomer, attachmentPointName);
+      : new AttachmentPointHoverOperation(monomer, attachmentPointName);
 
     command.addOperation(operation);
 
@@ -399,7 +399,7 @@ export class DrawingEntitiesManager {
     return command;
   }
 
-  public intendToFinishBondAPCreation(
+  public intendToFinishAttachmenPointBondCreation(
     monomer: BaseMonomer,
     bond: PolymerBond,
     attachmentPointName: string,
@@ -437,7 +437,7 @@ export class DrawingEntitiesManager {
       bond.firstMonomer,
       true,
     );
-    const connectSecondMonomerOperation = new APHoverOperation(
+    const connectSecondMonomerOperation = new AttachmentPointHoverOperation(
       monomer,
       attachmentPointName,
     );

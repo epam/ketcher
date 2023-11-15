@@ -19,6 +19,7 @@ export abstract class BaseMonomer extends DrawingEntity {
     R1: null,
   };
   public chosenFirstAttachmentPointForBond: string | null;
+  public potentialSecondAttachmentPointForBond: string | null;
   public chosenSecondAttachmentPointForBond: string | null;
 
   public potentialAttachmentPointsToBonds: {
@@ -36,6 +37,7 @@ export abstract class BaseMonomer extends DrawingEntity {
     this.attachmentPointsToBonds = this.getAttachmentPointDict();
     this.potentialAttachmentPointsToBonds = this.getAttachmentPointDict();
     this.chosenFirstAttachmentPointForBond = null;
+    this.potentialSecondAttachmentPointForBond = null;
     this.chosenSecondAttachmentPointForBond = null;
     this.monomerItem.attachmentPoints =
       this.monomerItem.attachmentPoints ||
@@ -71,6 +73,10 @@ export abstract class BaseMonomer extends DrawingEntity {
 
   public setChosenSecondAttachmentPoint(attachmentPoint: string) {
     this.chosenSecondAttachmentPointForBond = attachmentPoint;
+  }
+
+  public setPotentialSecondAttachmentPoint(attachmentPoint: string | null) {
+    this.potentialSecondAttachmentPointForBond = attachmentPoint;
   }
 
   public setPotentialBond(
@@ -217,6 +223,7 @@ export abstract class BaseMonomer extends DrawingEntity {
     if (clearSelectedPoints) {
       this.chosenFirstAttachmentPointForBond = null;
       this.chosenSecondAttachmentPointForBond = null;
+      this.potentialSecondAttachmentPointForBond = null;
     }
 
     for (const attachmentPointName in this.potentialAttachmentPointsToBonds) {

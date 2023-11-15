@@ -143,17 +143,6 @@ export const RnaAccordion = ({ libraryName, duplicatePreset, editPreset }) => {
     dispatch(setActiveRnaBuilderItem(groupName));
   };
 
-  const handleContextMenu = (preset: IRnaPreset) => (event: MouseEvent) => {
-    dispatch(setActivePresetForContextMenu(preset));
-    show({
-      event,
-      props: {
-        duplicatePreset,
-        editPreset,
-      },
-    });
-  };
-
   useEffect(() => {
     setExpandedAccordion(activeRnaBuilderItem);
   }, [activeRnaBuilderItem]);
@@ -168,7 +157,7 @@ export const RnaAccordion = ({ libraryName, duplicatePreset, editPreset }) => {
     );
   }, [isEditMode]);
 
-  const selectPreset = (preset: IRnaPreset) => {
+  const selectPreset = (preset: IRnaPreset) => () => {
     dispatch(setActivePreset(preset));
     editor.events.selectPreset.dispatch(preset);
     if (preset === activePreset.presetInList) return;
@@ -179,6 +168,37 @@ export const RnaAccordion = ({ libraryName, duplicatePreset, editPreset }) => {
     dispatch(createNewPreset());
     dispatch(setActiveRnaBuilderItem(RnaBuilderPresetsItem.Presets));
     dispatch(setIsEditMode(true));
+  };
+
+  const getMenuPosition = (currentPresetCard: HTMLElement) => {
+    const isDivCard = currentPresetCard instanceof HTMLDivElement;
+    if (!isDivCard && currentPresetCard.parentElement) {
+      currentPresetCard = currentPresetCard.parentElement;
+    }
+    const boundingBox = currentPresetCard.getBoundingClientRect();
+    const parentBox = currentPresetCard.offsetParent?.getBoundingClientRect();
+    const contextMenuWidth = 140;
+    let x = boundingBox.right - contextMenuWidth;
+    const y = boundingBox.y + boundingBox.height / 2;
+    if (parentBox?.x && parentBox?.x > x) {
+      x = boundingBox.x;
+    }
+    return {
+      x,
+      y,
+    };
+  };
+
+  const handleContextMenu = (preset: IRnaPreset) => (event: MouseEvent) => {
+    dispatch(setActivePresetForContextMenu(preset));
+    show({
+      event,
+      props: {
+        duplicatePreset,
+        editPreset,
+      },
+      position: getMenuPosition(event.currentTarget as HTMLElement),
+    });
   };
 
   return (
@@ -210,7 +230,7 @@ export const RnaAccordion = ({ libraryName, duplicatePreset, editPreset }) => {
                       <RnaPresetItem
                         key={`${preset.name}${index}`}
                         preset={preset}
-                        onClick={() => selectPreset(preset)}
+                        onClick={selectPreset(preset)}
                         onContextMenu={handleContextMenu(preset)}
                         isSelected={activePreset?.presetInList === preset}
                       />

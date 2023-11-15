@@ -29,6 +29,7 @@ import {
   RnaBuilderPresetsItem,
   savePreset,
   selectActivePreset,
+  selectActiveRnaBuilderItem,
   selectIsEditMode,
   selectPresetFullName,
   selectPresets,
@@ -48,11 +49,14 @@ export const scrollToSelectedMonomer = (monomerId) => {
   scrollToElement(`[data-monomer-item-id="${monomerId}"]`);
 };
 
-export const RnaEditor = () => {
+export const RnaEditor = ({ duplicatePreset, activateEditMode }) => {
   const activePreset = useAppSelector(selectActivePreset);
   const presets = useAppSelector(selectPresets);
   const isEditMode = useAppSelector(selectIsEditMode);
   const activePresetFullName = selectPresetFullName(activePreset);
+  const activeMonomerGroup = useAppSelector(selectActiveRnaBuilderItem);
+  const [, setPresetName] = useState('');
+  const [editedPresetName, setEditedPresetName] = useState(false);
 
   const dispatch = useAppDispatch();
   const hasPresets = presets.length !== 0;
@@ -61,26 +65,46 @@ export const RnaEditor = () => {
     dispatch(setIsEditModeAction(value));
   };
 
+  const [expanded, setExpanded] = useState(false);
+
   useEffect(() => {
-    if (activePreset) return;
+    if (activePreset) {
+      if (activePreset.name || isEditMode) setExpanded(true);
+      return;
+    }
 
     if (hasPresets) {
       dispatch(setActivePreset(presets[0]));
     } else {
       dispatch(createNewPreset());
       dispatch(setActiveRnaBuilderItem(RnaBuilderPresetsItem.Presets));
-      setIsEditMode(true);
     }
-  }, []);
-
-  const [expanded, setExpanded] = useState(true);
+  }, [activePreset]);
 
   const expandEditor = () => {
     setExpanded(!expanded);
+    if (!activePreset.presetInList) {
+      setIsEditMode(true);
+    }
   };
 
-  const changeName = (event: ChangeEvent<HTMLInputElement>) => {
-    dispatch(setActivePresetName(event.target.value));
+  useEffect(() => {
+    if (
+      activeMonomerGroup !== RnaBuilderPresetsItem.Presets &&
+      !editedPresetName
+    ) {
+      setPresetName(activePresetFullName);
+      dispatch(setActivePresetName(activePresetFullName));
+    }
+  }, [activeMonomerGroup, activePresetFullName, editedPresetName]);
+
+  const onChangeName = (event: ChangeEvent<HTMLInputElement>) => {
+    if (isEditMode) {
+      const newPresetName = event.target.value;
+      dispatch(setActivePresetName(newPresetName));
+      setPresetName(newPresetName);
+      setEditedPresetName(newPresetName.trim() !== '');
+    }
   };
 
   const saveActivePreset = () => {
@@ -101,32 +125,18 @@ export const RnaEditor = () => {
     }, 0);
   };
 
-  const activateEditMode = () => {
-    setIsEditMode(true);
-  };
-
   const cancelEdit = () => {
-    if (presets.length === 0) {
+    if (presets.length === 0 || !activePreset.presetInList) {
       dispatch(createNewPreset());
-      return;
+    } else {
+      dispatch(setActivePreset(activePreset.presetInList));
     }
 
     if (!activePreset.presetInList) {
       dispatch(setActivePreset(presets[0]));
     }
-    setIsEditMode(false);
-  };
 
-  const duplicatePreset = () => {
-    const duplicatedPreset = {
-      ...activePreset,
-      presetInList: undefined,
-      name: `${activePreset.name}_Copy`,
-    };
-    dispatch(setActivePreset(duplicatedPreset));
-    dispatch(savePreset(duplicatedPreset));
-    setIsEditMode(true);
-    scrollToSelectedPreset(activePreset.name);
+    setIsEditMode(false);
   };
 
   return (
@@ -142,7 +152,7 @@ export const RnaEditor = () => {
           <RnaEditorExpanded
             name={activePreset.name}
             isEditMode={isEditMode}
-            onChangeName={changeName}
+            onChangeName={onChangeName}
             onSave={saveActivePreset}
             onCancel={cancelEdit}
             onEdit={activateEditMode}

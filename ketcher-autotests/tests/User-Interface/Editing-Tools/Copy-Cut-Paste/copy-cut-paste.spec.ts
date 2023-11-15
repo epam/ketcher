@@ -28,7 +28,7 @@ import {
   resetCurrentTool,
 } from '@utils';
 
-const CANVAS_CLICK_X = 300;
+const CANVAS_CLICK_X = 500;
 const CANVAS_CLICK_Y = 300;
 
 test.describe('Copy/Cut/Paste Actions', () => {
@@ -127,7 +127,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Test case: EPMLSOPKET-1714
     Description: After the clicking the Cut button, the selected object disappears.
     */
-    const x = 300;
+    const x = 600;
     const y = 300;
     await openFileAndAddToCanvas('Rxn-V2000/reaction-dif-prop.rxn', page);
     await cutAndPaste(page);
@@ -238,7 +238,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     User is able to edit the pasted structure.
     */
     // Nitrogen atom can't attach to atom on structure.
-    const x = 300;
+    const x = 400;
     const y = 300;
     const anyAtom = 12;
     await openFileAndAddToCanvas(
@@ -322,9 +322,9 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Description: After the clicking the Copy button, the selected object not disappears.
     After pasting two same structures located on canvas.
     */
-    const x = 300;
+    const x = 400;
     const y = 200;
-    const x2 = 200;
+    const x2 = 400;
     const y2 = 300;
     await openFileAndAddToCanvas(
       'Molfiles-V2000/clean-diff-properties.mol',
@@ -358,7 +358,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     All Generic S-Group are correctly rendered.
     User is able to edit the pasted structure.
     */
-    const x = 300;
+    const x = 500;
     const y = 200;
     const anyAtom = 12;
     await openFileAndAddToCanvas('generic-groups.mol', page);
@@ -422,7 +422,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     User is able to edit the pasted structure.
     */
     // Nitrogen atom can't attach to structure
-    const x = 300;
+    const x = 500;
     const y = 300;
     const anyAtom = 5;
     await openFileAndAddToCanvas('R-Group-structure.mol', page);
@@ -457,8 +457,8 @@ test.describe('Copy/Cut/Paste Actions', () => {
     User is able to edit the pasted structure.
     */
     // Can't add atom to structure
-    const x = 300;
-    const y = 200;
+    const x = 500;
+    const y = 300;
     const anyAtom = 12;
     await openFileAndAddToCanvas('s-group-features.mol', page);
     await cutAndPaste(page);
@@ -549,6 +549,25 @@ test.describe('Copy/Cut/Paste Actions', () => {
     // Nitrogen atom can't attach to structure.
     const anyAtom = 12;
     await openFileAndAddToCanvas('reaction.rxn', page);
+    await cutAndPaste(page);
+    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await selectAtomInToolbar(AtomButton.Nitrogen, page);
+    await clickOnAtom(page, 'C', anyAtom);
+  });
+
+  test('Copy/Cut/Paste reaction at the same canvas', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-1739
+    Description: The whole reaction is copied and pasted correctly.
+    Select any reaction component. Copy/Paste the structure into the canvas.
+    Select the other reaction component. Cut/Paste it into the canvas.
+    Select the whole reaction. Cut/Paste it into the canvas.
+    */
+    const anyAtom = 8;
+    await openFileAndAddToCanvas('Rxn-V2000/rxn-reaction.rxn', page);
+    await cutAndPaste(page);
+    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await openFileAndAddToCanvas('Rxn-V2000/allenes.rxn', page);
     await cutAndPaste(page);
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
@@ -680,7 +699,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Test case: EPMLSOPKET-2945
     Description: Copied bonds are pasted as one object and correctly displayed without data loss.
     */
-    const x = 285;
+    const x = 300;
     const y = 400;
     await openFileAndAddToCanvas(
       'Molfiles-V2000/all-kinds-of-bonds-test-file.mol',
@@ -695,7 +714,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Test case: EPMLSOPKET-2946
     Description: Copied objects are pasted as one object and correctly displayed without data loss.
     */
-    const x = 270;
+    const x = 300;
     const y = 200;
     await openFileAndAddToCanvas('KET/stereo-test-structures.ket', page);
     await copyAndPaste(page);
@@ -726,7 +745,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     // Error message when run under docker. But manual test is working.
     const x = 500;
-    const y = 200;
+    const y = 300;
     await openFileAndAddToCanvas('complex-r-group-structure.mol', page);
     await copyAndPaste(page);
     await page.mouse.click(x, y);
@@ -832,7 +851,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     After pasting expanded and contracted Functional Froups same structures located on canvas.
     */
     const x = 500;
-    const y = 100;
+    const y = 150;
     await openFileAndAddToCanvas('KET/expanded-and-contracted-fg.ket', page);
     await copyAndPaste(page);
     await page.mouse.click(x, y);
@@ -864,7 +883,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     After pasting expanded and contracted Salts and Solvents same structures located on canvas.
     */
     const x = 500;
-    const y = 100;
+    const y = 150;
     await openFileAndAddToCanvas('expanded-and-contracted-salts.mol', page);
     await copyAndPaste(page);
     await page.mouse.click(x, y);

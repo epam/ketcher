@@ -25,15 +25,15 @@ export interface IKetConnectionEndPoint {
 export interface IKetConnection {
   connectionType: 'single' | 'hydrogen';
   label?: string;
-  endPoint1: IKetConnectionEndPoint;
-  endPoint2: IKetConnectionEndPoint;
+  endpoint1: IKetConnectionEndPoint;
+  endpoint2: IKetConnectionEndPoint;
 }
 
-export type monomerClass = 'RNA' | 'PEPTIDE' | 'CHEM' | 'UNKNOWN';
+export type monomerClass = 'RNA' | 'PEPTIDE' | 'CHEM' | 'UNKNOWN' | 'DNA';
 
 export interface IKetMonomerTemplate {
   type: 'monomerTemplate';
-  monomerClass?: monomerClass;
+  class?: monomerClass;
   monomerSubClass?:
     | 'AminoAcid'
     | 'Sugar'
@@ -52,12 +52,39 @@ export interface IKetMonomerTemplate {
   root: {
     nodes;
   };
+  classHELM?: string;
 }
 
-export interface IKetMacromoleculesContent {
+export interface IKetNodeRef {
+  $ref: string;
+}
+
+export interface IKetMonomerTemplateRef {
+  $ref: string;
+}
+
+export interface IKetMacromoleculesContentRootProperty {
   root: {
-    nodes: KetNode[];
+    nodes: IKetNodeRef[];
     connections: IKetConnection[];
-    templates: IKetMonomerTemplate[];
+    templates: IKetMonomerTemplateRef[];
   };
+}
+
+export interface IKetMacromoleculesContentOtherProperties {
+  [key: string]: KetNode | IKetMonomerTemplate;
+}
+
+export type IKetMacromoleculesContent = IKetMacromoleculesContentRootProperty &
+  IKetMacromoleculesContentOtherProperties;
+
+export type IKetAttachmentPointType = 'left' | 'right' | 'side';
+
+export interface IKetAttachmentPoint {
+  attachmentAtom: number;
+  leavingGroup: {
+    atoms: number[];
+  };
+  type?: IKetAttachmentPointType;
+  label?: string;
 }

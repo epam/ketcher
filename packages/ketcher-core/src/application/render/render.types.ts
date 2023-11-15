@@ -67,6 +67,10 @@ export type RenderOptions = {
   stereoLabelStyle?: StereLabelStyleType;
 
   previewOpacity: number;
+
+  connectedMonomerAttachmentPoints?: string[];
+  currentlySelectedMonomerAttachmentPoint?: string;
+  labelInMonomerConnectionsModal?: boolean;
 };
 
 export interface RelativeBox {
@@ -81,3 +85,10 @@ export interface ArrowItem {
   pos: Vec2[];
   height: number;
 }
+
+export type ViewBox = {
+  minX: number;
+  minY: number;
+  width: number;
+  height: number;
+};

@@ -31,6 +31,7 @@ import { Render } from '../raphaelRender';
 import { Scale } from 'domain/helpers';
 import draw from '../draw';
 import util from '../util';
+import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 
 class ReBond extends ReObject {
   b: Bond;
@@ -59,29 +60,48 @@ class ReBond extends ReObject {
 
   static bondRecalc(bond: ReBond, restruct: ReStruct, options: any): void {
     const render = restruct.render;
-    const atom1 = restruct.atoms.get(bond.b.begin);
-    const atom2 = restruct.atoms.get(bond.b.end);
+    const sgroup1 = restruct.molecule.getGroupFromAtomId(bond.b.begin);
+    const sgroup2 = restruct.molecule.getGroupFromAtomId(bond.b.end);
+    const beginAtom = restruct.atoms.get(
+      sgroup1 instanceof MonomerMicromolecule
+        ? (sgroup1.getAttachmentAtomId() as number)
+        : bond.b.begin,
+    );
+    const endAtom = restruct.atoms.get(
+      sgroup2 instanceof MonomerMicromolecule
+        ? (sgroup2.getAttachmentAtomId() as number)
+        : bond.b.end,
+    );
 
     if (
-      !atom1 ||
-      !atom2 ||
+      !beginAtom ||
+      !endAtom ||
       bond.b.hb1 === undefined ||
       bond.b.hb2 === undefined
     ) {
       return;
     }
+    const p1 =
+      sgroup1 instanceof MonomerMicromolecule
+        ? (sgroup1.pp as Vec2)
+        : beginAtom.a.pp;
 
-    const p1 = Scale.obj2scaled(atom1.a.pp, render.options);
-    const p2 = Scale.obj2scaled(atom2.a.pp, render.options);
+    const p2 =
+      sgroup2 instanceof MonomerMicromolecule
+        ? (sgroup2.pp as Vec2)
+        : endAtom.a.pp;
     const hb1 = restruct.molecule.halfBonds.get(bond.b.hb1);
     const hb2 = restruct.molecule.halfBonds.get(bond.b.hb2);
 
     if (!hb1?.dir || !hb2?.dir) return;
 
-    hb1.p = atom1.getShiftedSegmentPosition(options, hb1.dir);
-    hb2.p = atom2.getShiftedSegmentPosition(options, hb2.dir);
-    bond.b.center = Vec2.lc2(atom1.a.pp, 0.5, atom2.a.pp, 0.5);
-    bond.b.len = Vec2.dist(p1, p2);
+    hb1.p = beginAtom.getShiftedSegmentPosition(options, hb1.dir, p1);
+    hb2.p = endAtom.getShiftedSegmentPosition(options, hb2.dir, p2);
+    bond.b.center = Vec2.lc2(p1, 0.5, p2, 0.5);
+    bond.b.len = Vec2.dist(
+      Scale.modelToCanvas(p1, render.options),
+      Scale.modelToCanvas(p2, render.options),
+    );
     bond.b.sb = options.lineWidth * 5;
     /* eslint-disable no-mixed-operators */
     bond.b.sa = Math.max(bond.b.sb, bond.b.len / 2 - options.lineWidth * 2);
@@ -413,7 +433,7 @@ class ReBond extends ReObject {
         'stroke-linecap': 'round',
       };
 
-      const c = Scale.obj2scaled(this.b.center, restruct.render.options);
+      const c = Scale.modelToCanvas(this.b.center, restruct.render.options);
 
       const highlightPath = getHighlightPath(restruct, hb1, hb2);
       highlightPath.attr(style);
@@ -1250,8 +1270,13 @@ function getBondMark(
   // eslint-disable-line max-statements
   const options = render.options;
   let mark: string | null = null;
+  let tooltip: string | null = null;
   if (bond.b.customQuery) {
     mark = bond.b.customQuery;
+    if (bond.b.customQuery.length > 8) {
+      tooltip = bond.b.customQuery;
+      mark = `${bond.b.customQuery.substring(0, 8)}...`;
+    }
   } else if (bond.b.topology === Bond.PATTERN.TOPOLOGY.RING) {
     mark = 'rng';
   } else if (bond.b.topology === Bond.PATTERN.TOPOLOGY.CHAIN) {
@@ -1272,8 +1297,10 @@ function getBondMark(
   const s = new Vec2(2, 1).scaled(options.bondSpace);
   if (bond.b.type === Bond.PATTERN.TYPE.TRIPLE) fixed += options.bondSpace;
   const p = c.add(new Vec2(n.x * (s.x + fixed), n.y * (s.y + fixed)));
+  const path = draw.bondMark(render.paper, p, mark, options);
+  tooltip && path.node.childNodes[0].setAttribute('data-tooltip', tooltip);
 
-  return draw.bondMark(render.paper, p, mark, options);
+  return path;
 }
 
 function getIdsPath(

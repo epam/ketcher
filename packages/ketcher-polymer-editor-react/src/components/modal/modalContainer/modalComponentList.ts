@@ -15,8 +15,15 @@
  ***************************************************************************/
 import { Open } from 'components/modal/Open';
 import { Save } from 'components/modal/save';
+import { Delete } from 'components/modal/Delete';
+import { MonomerConnection } from 'components/modal/monomerConnection';
 
-export const modalComponentList: Record<string, typeof Open | typeof Save> = {
+export const modalComponentList: Record<
+  string,
+  typeof Open | typeof Save | typeof Delete | typeof MonomerConnection
+> = {
   open: Open,
   save: Save,
+  delete: Delete,
+  monomerConnection: MonomerConnection,
 };

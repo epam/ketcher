@@ -34,10 +34,37 @@ jest.mock('d3', () => {
         style() {
           return this;
         },
+        on() {},
+      };
+    },
+    ZoomTransform: jest.fn().mockImplementation(() => {
+      return { invertX() {}, invertY() {} };
+    }),
+    zoom() {
+      return {
+        scaleExtent() {
+          return {
+            wheelDelta() {
+              return {
+                filter() {
+                  return {
+                    on() {},
+                  };
+                },
+              };
+            },
+          };
+        },
       };
     },
   };
 });
+
+global.ResizeObserver = jest.fn().mockImplementation(() => ({
+  observe: jest.fn(),
+  unobserve: jest.fn(),
+  disconnect: jest.fn(),
+}));
 
 describe('Select Rectangle Tool', () => {
   it('should select drawing entity on mousedown', () => {

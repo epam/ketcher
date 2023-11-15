@@ -15,3 +15,4 @@
  ***************************************************************************/
 
 export * from './MonomerLibrary';
+export * from './MonomerLibraryToggle';

@@ -127,7 +127,7 @@ class TemplatePreview {
       if (!this.floatingPreview) {
         this.showFloatingPreview(this.position);
         this.previousPosition = this.position;
-        this.editor.render.update(false, null, { resizeCanvas: false });
+        this.editor.render.update(false, null);
       } else {
         this.moveFloatingPreview(previewTarget, event);
       }
@@ -141,7 +141,7 @@ class TemplatePreview {
     const dist = this.position.sub(this.previousPosition);
     this.previousPosition = this.position;
     fromMultipleMove(this.restruct, this.floatingPreview, dist);
-    this.editor.render.update(false, null, { resizeCanvas: false });
+    this.editor.render.update(false, null);
     this.hoverFusedItems(previewTarget, event);
   }
 
@@ -164,7 +164,7 @@ class TemplatePreview {
       position,
     );
 
-    this.editor.render.update(true, null, { resizeCanvas: false });
+    this.editor.render.update(true, null);
   }
 
   private hideFloatingPreview() {

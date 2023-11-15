@@ -276,7 +276,7 @@ export class Vec2 {
     return Math.atan2(this.y, this.x);
   }
 
-  static radians_to_degrees(radians) {
+  static radiansToDegrees(radians) {
     return radians * (180 / Math.PI);
   }
 

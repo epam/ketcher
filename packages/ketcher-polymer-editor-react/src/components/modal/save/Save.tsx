@@ -26,13 +26,9 @@ import { SaveButton } from 'components/modal/save/saveButton';
 import { getPropertiesByFormat, SupportedFormats } from 'helpers/formats';
 import { ActionButton } from 'components/shared/actionButton';
 import { Icon } from 'ketcher-react';
-import { KetSerializer } from 'ketcher-core';
+import { CoreEditor, KetSerializer } from 'ketcher-core';
 import { saveAs } from 'file-saver';
-
-interface Props {
-  onClose: () => void;
-  isModalOpen: boolean;
-}
+import { RequiredModalProps } from '../modalContainer';
 
 const options: Array<Option> = [
   { id: 'ket', label: 'Ket' },
@@ -89,7 +85,10 @@ const ErrorsButton = styled(ActionButton)(({ theme }) => ({
   },
 }));
 
-export const Save = ({ onClose, isModalOpen }: Props): JSX.Element => {
+export const Save = ({
+  onClose,
+  isModalOpen,
+}: RequiredModalProps): JSX.Element => {
   const [currentFileFormat, setCurrentFileFormat] =
     useState<SupportedFormats>('ket');
   const [currentFileName, setCurrentFileName] = useState('ketcher');
@@ -106,11 +105,16 @@ export const Save = ({ onClose, isModalOpen }: Props): JSX.Element => {
 
   const handleSave = () => {
     const ketSerializer = new KetSerializer();
-    const serializedKet = ketSerializer.serializeMacromolecules();
-    const blob = new Blob([JSON.stringify(serializedKet)], {
+    const editor = CoreEditor.provideEditorInstance();
+    const serializedKet = ketSerializer.serialize(
+      editor.drawingEntitiesManager.micromoleculesHiddenEntities.clone(),
+      editor.drawingEntitiesManager,
+    );
+    const blob = new Blob([serializedKet], {
       type: getPropertiesByFormat(currentFileFormat).mime,
     });
-    saveAs(blob, getPropertiesByFormat(currentFileFormat).name);
+    const formatProperties = getPropertiesByFormat(currentFileFormat);
+    saveAs(blob, `${formatProperties.name}${formatProperties.extensions[0]}`);
   };
 
   const handleErrorsClick = () => {

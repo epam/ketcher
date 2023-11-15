@@ -28,7 +28,9 @@ import Cursor from '../Cursor';
 import { ContextMenu, ContextMenuTrigger } from '../ContextMenu';
 
 import InfoPanel from './InfoPanel';
-import { KetcherLogger } from 'ketcher-core';
+import { KetcherLogger, ketcherProvider } from 'ketcher-core';
+import { getSmoothScrollDelta } from './helpers';
+import InfoTooltip from './InfoTooltip';
 
 // TODO: need to update component after making refactoring of store
 function setupEditor(editor, props, oldProps = {}) {
@@ -78,8 +80,6 @@ class StructEditor extends Component {
     };
     this.editorRef = createRef();
     this.logRef = createRef();
-    this.updateFloatingToolsPositionOnScroll =
-      this.updateFloatingToolsPositionOnScroll.bind(this);
   }
 
   handleWheel = (event) => {
@@ -89,12 +89,52 @@ class StructEditor extends Component {
       const zoomDelta = event.deltaY > 0 ? -1 : 1;
 
       if (zoomDelta === 1) {
-        this.props.onZoomIn();
+        this.props.onZoomIn(event);
       } else {
-        this.props.onZoomOut();
+        this.props.onZoomOut(event);
       }
+    } else {
+      this.scrollCanvas(event);
+      this.editor.rotateController.updateFloatingToolsPosition();
+      this.editor.hoverIcon.updatePosition();
+      this.editor.tool()?.mousemove(this.editor.lastEvent);
     }
   };
+
+  // TODO https://github.com/epam/ketcher/issues/3472
+  /**
+   * @param {WheelEvent} event
+   */
+  scrollCanvas(event) {
+    if (event.shiftKey) {
+      this.handleHorizontalScroll(event);
+    } else {
+      this.handleScroll(event);
+    }
+  }
+
+  /**
+   * @param {WheelEvent} event
+   */
+  handleHorizontalScroll(event) {
+    this.editor.render.setViewBox((prev) => ({
+      ...prev,
+      minX:
+        prev.minX - getSmoothScrollDelta(event.wheelDelta, this.editor.zoom()),
+    }));
+  }
+
+  /**
+   * For mouse wheel and touchpad
+   * @param {WheelEvent} event
+   */
+  handleScroll(event) {
+    this.editor.render.setViewBox((prev) => ({
+      ...prev,
+      minX: prev.minX + getSmoothScrollDelta(event.deltaX, this.editor.zoom()),
+      minY: prev.minY + getSmoothScrollDelta(event.deltaY, this.editor.zoom()),
+    }));
+  }
 
   shouldComponentUpdate(nextProps, nextState) {
     return (
@@ -111,6 +151,13 @@ class StructEditor extends Component {
     this.editor = new Editor(this.editorRef.current, {
       ...this.props.options,
     });
+    const ketcher = ketcherProvider.getKetcher();
+    if (ketcher?.editor.macromoleculeConvertionError) {
+      this.props.onShowMacromoleculesErrorMessage(
+        ketcher.editor.macromoleculeConvertionError,
+      );
+      ketcher.editor.clearMacromoleculeConvertionError();
+    }
     setupEditor(this.editor, this.props);
     if (this.props.onInit) this.props.onInit(this.editor);
 
@@ -202,15 +249,13 @@ class StructEditor extends Component {
     });
 
     this.editorRef.current.addEventListener('wheel', this.handleWheel);
+    this.editor.render.observeCanvasResize();
   }
 
   componentWillUnmount() {
     removeEditorHandlers(this.editor, this.props);
     this.editorRef.current.removeEventListener('wheel', this.handleWheel);
-  }
-
-  updateFloatingToolsPositionOnScroll() {
-    this.editor.rotateController.updateFloatingToolsPosition();
+    this.editor.render.unobserveCanvasResize();
   }
 
   render() {
@@ -244,6 +289,7 @@ class StructEditor extends Component {
       onApiSettings,
       showAttachmentPoints = true,
       onUpdateFloatingTools,
+      onShowMacromoleculesErrorMessage,
       /* eslint-enable @typescript-eslint/no-unused-vars */
       ...props
     } = this.props;
@@ -260,7 +306,6 @@ class StructEditor extends Component {
           <div
             ref={this.editorRef}
             className={clsx(classes.intermediateCanvas)}
-            onScroll={this.updateFloatingToolsPositionOnScroll}
           >
             {/* svg here */}
           </div>
@@ -287,6 +332,7 @@ class StructEditor extends Component {
           groupStruct={this.props.groupStruct}
           sGroup={this.props.sGroup}
         />
+        <InfoTooltip render={this.props.render} />
 
         <FloatingToolContainer />
 

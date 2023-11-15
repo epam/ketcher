@@ -16,7 +16,9 @@ import {
   clickOnAtom,
   selectPartOfChain,
   selectPartOfMolecules,
+  saveToFile,
 } from '@utils';
+import { getMolfile } from '@utils/formats/formats';
 
 test.describe('Indigo Tools - Clean Tools', () => {
   test.beforeEach(async ({ page }) => {
@@ -501,6 +503,31 @@ test.describe('Indigo Tools - Clean Tools', () => {
     );
   });
 
+  test('Clean action', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-1738
+    Description: The structure are cleaned correctly.
+    Edit the structures in any way.
+    Distort the created structures.
+    Click the Clean Up button.
+    Distort the structures.
+    Click the Layout button.
+    */
+    await openFileAndAddToCanvas('Molfiles-V2000/benzene-br.mol', page);
+    await takeEditorScreenshot(page);
+    const expectedFile = await getMolfile(page);
+    await saveToFile('Molfiles-V2000/ring-with-attachment.mol', expectedFile);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/ring-with-attachment.mol',
+      page,
+    );
+    await selectPartOfMolecules(page);
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await selectTopPanelButton(TopPanelButton.Clean, page),
+    );
+  });
+
   test('Clean Up action on part of structure with S-Group', async ({
     page,
   }) => {
@@ -509,6 +536,26 @@ test.describe('Indigo Tools - Clean Tools', () => {
     Description: The Clean Up action is implemented for the part of selected structures.
     */
     await openFileAndAddToCanvas('Molfiles-V2000/distorted-Sgroups.mol', page);
+    await selectPartOfMolecules(page);
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await selectTopPanelButton(TopPanelButton.Clean, page),
+    );
+  });
+
+  test('Clean Up action on part of structure with different properties', async ({
+    page,
+  }) => {
+    /*
+    Test case: EPMLSOPKET-1826
+    Description: Clean action is correct for the selected part.
+    Non-selected part is invariable.
+    Test working incorrect because we have a bug https://github.com/epam/Indigo/issues/388
+    */
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/clean-different-properties.mol',
+      page,
+    );
     await selectPartOfMolecules(page);
     await waitForSpinnerFinishedWork(
       page,

@@ -28,6 +28,7 @@ import { KetSerializer } from 'domain/serializers';
 import { Struct } from 'domain/entities';
 import { getPropertiesByFormat } from './formatProperties';
 import { KetcherLogger } from 'utilities';
+import { SmilesFormatter } from './smilesFormatter';
 
 type ConvertPromise = (
   data: ConvertData,
@@ -83,29 +84,52 @@ export class ServerFormatter implements StructFormatter {
     }
   }
 
+  getCallingMethod(
+    stringifiedStruct: string,
+    format: SupportedFormat,
+  ): {
+    method: LayoutPromise | ConvertPromise;
+    struct: string;
+  } {
+    if (this.#format === SupportedFormat.smiles) {
+      return {
+        method: SmilesFormatter.isContainsCoordinates(stringifiedStruct)
+          ? this.#structService.convert
+          : this.#structService.layout,
+        struct: stringifiedStruct,
+      };
+    }
+    const withCoords = getPropertiesByFormat(format).supportsCoords;
+    if (withCoords) {
+      return {
+        method: this.#structService.convert,
+        struct: stringifiedStruct,
+      };
+    }
+    return {
+      method: this.#structService.layout,
+      struct: stringifiedStruct.trim(),
+    };
+  }
+
   async getStructureFromStringAsync(
     stringifiedStruct: string,
   ): Promise<Struct> {
-    let promise: LayoutPromise | ConvertPromise;
-
     const data: ConvertData | LayoutData = {
       struct: undefined as any,
       output_format: getPropertiesByFormat(SupportedFormat.ket).mime,
     };
 
-    const withCoords = getPropertiesByFormat(this.#format).supportsCoords;
-    if (withCoords) {
-      promise = this.#structService.convert;
-      data.struct = stringifiedStruct;
-    } else {
-      promise = this.#structService.layout;
-      data.struct = stringifiedStruct.trim();
-    }
+    const { method, struct } = this.getCallingMethod(
+      stringifiedStruct,
+      this.#format,
+    );
+    data.struct = struct;
 
     try {
-      const result = await promise(data, this.#options);
+      const result = await method(data, this.#options);
       const parsedStruct = this.#ketSerializer.deserialize(result.struct);
-      if (!withCoords) {
+      if (method === this.#structService.layout) {
         parsedStruct.rescale();
       }
       return parsedStruct;

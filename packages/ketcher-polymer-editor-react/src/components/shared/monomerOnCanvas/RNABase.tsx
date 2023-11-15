@@ -23,6 +23,7 @@ export const RNABaseAvatar = () => (
         rx="2"
         transform-origin="center"
         transform="rotate(45)"
+        className="monomer-body"
       />
     </symbol>
     <symbol id="rna-base-selection" viewBox="0 0 65 65" width="65" height="95">

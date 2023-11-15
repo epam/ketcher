@@ -6,7 +6,10 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
-import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
+import {
+  hideMonomerPreview,
+  turnOnMacromoleculesEditor,
+} from '@utils/macromolecules';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 /* eslint-disable no-magic-numbers */
 
@@ -25,17 +28,39 @@ test.describe('Erase Tool', () => {
     // Create 4 peptides on canvas
     const MONOMER_NAME = 'Tza___3-thiazolylalanine';
     const MONOMER_ALIAS = 'Tza';
-    await addMonomerToCanvas(page, MONOMER_NAME, 300, 300);
-    await addMonomerToCanvas(page, MONOMER_NAME, 400, 400);
-    await addMonomerToCanvas(page, MONOMER_NAME, 500, 500);
-    await addMonomerToCanvas(page, MONOMER_NAME, 500, 200);
 
-    // Get 4 peptides locators
-    const peptides = await page.getByText(MONOMER_ALIAS).locator('..');
-    const peptide1 = peptides.nth(0);
-    const peptide2 = peptides.nth(1);
-    const peptide3 = peptides.nth(2);
-    const peptide4 = peptides.nth(3);
+    const peptide1 = await addMonomerToCanvas(
+      page,
+      MONOMER_NAME,
+      MONOMER_ALIAS,
+      300,
+      300,
+      0,
+    );
+    const peptide2 = await addMonomerToCanvas(
+      page,
+      MONOMER_NAME,
+      MONOMER_ALIAS,
+      400,
+      400,
+      1,
+    );
+    const peptide3 = await addMonomerToCanvas(
+      page,
+      MONOMER_NAME,
+      MONOMER_ALIAS,
+      500,
+      500,
+      2,
+    );
+    const peptide4 = await addMonomerToCanvas(
+      page,
+      MONOMER_NAME,
+      MONOMER_ALIAS,
+      500,
+      200,
+      3,
+    );
 
     // Select bond tool
     await selectSingleBondTool(page);
@@ -51,6 +76,9 @@ test.describe('Erase Tool', () => {
 
     // Delete peptide linked with two other peptides by bonds
     await peptide3.click();
+
+    // Get rid of flakiness because of preview
+    await hideMonomerPreview(page);
 
     await takeEditorScreenshot(page);
   });

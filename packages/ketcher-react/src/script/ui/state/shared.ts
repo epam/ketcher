@@ -22,7 +22,7 @@ import {
   identifyStructFormat,
   Struct,
   SupportedFormat,
-  emitEventRequestIsFinished,
+  notifyRequestCompleted,
   Editor,
   KetcherLogger,
 } from 'ketcher-core';
@@ -185,7 +185,7 @@ export function load(struct: Struct, options?) {
       dispatch(setAnalyzingFile(false));
       e && errorHandler && errorHandler(e.message);
     } finally {
-      emitEventRequestIsFinished();
+      notifyRequestCompleted();
     }
   };
 }
@@ -197,5 +197,15 @@ export function openInfoModal(command: 'Paste' | 'Copy' | 'Cut'): {
   return {
     type: 'MODAL_OPEN',
     data: { name: 'info-modal', prop: { message: command } },
+  };
+}
+
+export function openInfoModalWithCustomMessage(message: string): {
+  type: 'MODAL_OPEN';
+  data: { name: 'info-modal'; prop: { customText: string } };
+} {
+  return {
+    type: 'MODAL_OPEN',
+    data: { name: 'info-modal', prop: { customText: message } },
   };
 }

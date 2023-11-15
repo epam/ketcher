@@ -37,6 +37,7 @@ import ChainIcon from '../../../assets/icons/files/chain.svg';
 import ChargeMinusIcon from '../../../assets/icons/files/charge-minus.svg';
 import ChargePlusIcon from '../../../assets/icons/files/charge-plus.svg';
 import CheckIcon from '../../../assets/icons/files/check.svg';
+import CheckMarkIcon from '../../../assets/icons/files/checkmark.svg';
 import ChiralFlagIcon from '../../../assets/icons/files/chiral-flag.svg';
 import CipIcon from '../../../assets/icons/files/cip.svg';
 import CleanIcon from '../../../assets/icons/files/clean.svg';
@@ -63,6 +64,8 @@ import ImageFrameIcon from '../../../assets/icons/files/image-frame.svg';
 import LayoutIcon from '../../../assets/icons/files/layout.svg';
 import LogoIcon from '../../../assets/icons/files/logo.svg';
 import MiewIcon from '../../../assets/icons/files/miew.svg';
+import MacromoleculesMode from '../../../assets/icons/files/macromolecules-mode.svg';
+import MoleculesMode from '../../../assets/icons/files/molecules-mode.svg';
 import ClearIcon from '../../../assets/icons/files/clear.svg';
 import NotFoundIcon from '../../../assets/icons/files/not-found.svg';
 import OpenIcon from '../../../assets/icons/files/open.svg';
@@ -124,9 +127,11 @@ import TextSubscript from '../../../assets/icons/files/text-subscript.svg';
 import TextSuperscript from '../../../assets/icons/files/text-superscript.svg';
 import TransformFlipHIcon from '../../../assets/icons/files/transform-flip-h.svg';
 import TransformFlipVIcon from '../../../assets/icons/files/transform-flip-v.svg';
+import SnakeModeIcon from '../../../assets/icons/files/snake-mode.svg';
 import UndoIcon from '../../../assets/icons/files/undo.svg';
 import ZoomInIcon from '../../../assets/icons/files/zoom-in.svg';
 import ZoomOutIcon from '../../../assets/icons/files/zoom-out.svg';
+import ZoomResetIcon from '../../../assets/icons/files/zoom-reset.svg';
 import TextSpecialSymbolsIcon from '../../../assets/icons/files/text-special-symbols.svg';
 import Save1Icon from '../../../assets/icons/files/save-1.svg';
 import Open1Icon from '../../../assets/icons/files/open-1.svg';
@@ -210,6 +215,7 @@ import Base from '../../../assets/icons/files/base.svg';
 import Phosphate from '../../../assets/icons/files/phosphate.svg';
 import Preset from '../../../assets/icons/files/preset.svg';
 import EditFilled from '../../../assets/icons/files/edit-filled.svg';
+import VerticalDots from '../../../assets/icons/files/vertical-dots.svg';
 
 export const iconNameToIcon = {
   α,
@@ -283,6 +289,7 @@ export const iconNameToIcon = {
   'charge-minus': ChargeMinusIcon,
   'charge-plus': ChargePlusIcon,
   check: CheckIcon,
+  'check-mark': CheckMarkIcon,
   'chiral-flag': ChiralFlagIcon,
   cip: CipIcon,
   clean: CleanIcon,
@@ -312,6 +319,8 @@ export const iconNameToIcon = {
   layout: LayoutIcon,
   logo: LogoIcon,
   miew: MiewIcon,
+  'macromolecules-mode': MacromoleculesMode,
+  'molecules-mode': MoleculesMode,
   clear: ClearIcon,
   open: OpenIcon,
   paste: PasteIcon,
@@ -370,6 +379,7 @@ export const iconNameToIcon = {
   'template-7': Template7Icon,
   'template-dialog': TemplateDialogIcon,
   'template-lib': TemplateLibIcon,
+  'snake-mode': SnakeModeIcon,
   text: TextIcon,
   'text-bold': TextBold,
   'text-italic': TextItalic,
@@ -380,6 +390,7 @@ export const iconNameToIcon = {
   undo: UndoIcon,
   'zoom-in': ZoomInIcon,
   'zoom-out': ZoomOutIcon,
+  'zoom-reset': ZoomResetIcon,
   'shape-ellipse': ShapeEllipseIcon,
   'shape-rectangle': ShapeRectangleIcon,
   'shape-polyline': ShapePolylineIcon,
@@ -420,4 +431,5 @@ export const iconNameToIcon = {
   phosphate: Phosphate,
   preset: Preset,
   'edit-filled': EditFilled,
+  'vertical-dots': VerticalDots,
 } as const;

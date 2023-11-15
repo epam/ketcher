@@ -42,16 +42,17 @@ const Group = ({
 const Menu = ({
   children,
   onItemClick,
-  activeMenuItem,
+  activeMenuItems,
 }: React.PropsWithChildren<MenuProps>) => {
   const context = React.useMemo<IMenuContext>(
     () => ({
-      isActive: (itemKey) => activeMenuItem === itemKey,
+      isActive: (itemKey) =>
+        activeMenuItems ? activeMenuItems.includes(itemKey) : false,
       activate: (itemKey) => {
         onItemClick(itemKey);
       },
     }),
-    [activeMenuItem, onItemClick],
+    [activeMenuItems, onItemClick],
   );
 
   const subComponents = React.Children.map(

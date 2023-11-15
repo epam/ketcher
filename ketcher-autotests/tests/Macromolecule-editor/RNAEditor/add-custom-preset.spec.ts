@@ -1,20 +1,19 @@
 import { Page, test } from '@playwright/test';
 import {
-  POLYMER_TOGGLER,
   RNA_TAB,
   SUGAR,
   BASE,
   PHOSPHATE,
   BUTTON__ADD_TO_PRESETS,
-} from '../../../constants/testIdConstants';
+} from '@constants/testIdConstants';
 import { waitForPageInit } from '@utils/common';
-import { takePageScreenshot } from '@utils';
+import { moveMouseToTheMiddleOfTheScreen, takePageScreenshot } from '@utils';
+import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 
 /* 
 Test case: #3063 - Add e2e tests for Macromolecule editor
 */
 async function createRNA(page: Page) {
-  await page.getByTestId(POLYMER_TOGGLER).click();
   await page.getByTestId(RNA_TAB).click();
   await page.fill('[placeholder="Name your structure"]', 'MyRNA');
   await page.press('[placeholder="Name your structure"]', 'Enter');
@@ -45,6 +44,7 @@ async function selectRNAComponents(
 test.describe('Macromolecules custom presets', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
+    await turnOnMacromoleculesEditor(page);
     await createRNA(page);
   });
 
@@ -54,7 +54,7 @@ test.describe('Macromolecules custom presets', () => {
       base: 'baA___N-benzyl-adenine',
       phosphate: 'bP___Boranophosphate',
     });
-
+    await moveMouseToTheMiddleOfTheScreen(page);
     await page.getByTestId(BUTTON__ADD_TO_PRESETS).click();
 
     await takePageScreenshot(page);
@@ -78,7 +78,7 @@ test.describe('Macromolecules custom presets', () => {
     await waitForPageInit(page);
 
     // Click on POLYMER_TOGGLER
-    await page.getByTestId(POLYMER_TOGGLER).click();
+    await turnOnMacromoleculesEditor(page);
 
     // Click on <button> "RNA"
     await page.getByTestId(RNA_TAB).click();

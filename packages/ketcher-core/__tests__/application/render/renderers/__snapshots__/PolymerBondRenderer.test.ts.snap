@@ -6,28 +6,40 @@ exports[`Polymer Bond Renderer should render bond 1`] = `
   id="polymer-editor-canvas"
   width="500"
 >
+  <defs>
+    <symbol
+      id="peptide"
+    >
+      <path
+        class="monomer-body"
+      />
+    </symbol>
+  </defs>
   <g
-    pointer-events="stroke"
+    class="drawn-structures"
   >
-    <line
-      stroke="transparent"
-      stroke-width="10"
-      x1="10"
-      x2="90"
-      y1="10"
-      y2="100"
-    />
-    <line
-      class="selection-area"
+    <g
       pointer-events="stroke"
-      stroke="#333333"
-      stroke-width="2"
-      x1="10"
-      x2="90"
-      y1="10"
-      y2="100"
-    />
+    >
+      <line
+        class="selection-area"
+        pointer-events="stroke"
+        stroke="#333333"
+        stroke-width="2"
+        x1="400"
+        x2="3600"
+        y1="400"
+        y2="4000"
+      />
+      <line
+        stroke="transparent"
+        stroke-width="10"
+        x1="400"
+        x2="3600"
+        y1="400"
+        y2="4000"
+      />
+    </g>
   </g>
-  <defs />
 </svg>
 `;

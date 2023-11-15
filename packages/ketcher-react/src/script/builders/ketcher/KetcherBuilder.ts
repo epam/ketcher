@@ -21,6 +21,7 @@ import {
   ServiceMode,
   StructService,
   StructServiceProvider,
+  ketcherProvider,
 } from 'ketcher-core';
 
 import { ButtonsConfig } from './ButtonsConfig';
@@ -59,6 +60,7 @@ class KetcherBuilder {
     staticResourcesUrl: string,
     errorHandler: (message: string) => void,
     buttons?: ButtonsConfig,
+    togglerComponent?: JSX.Element,
   ): Promise<void> {
     const { structService } = this;
 
@@ -76,6 +78,7 @@ class KetcherBuilder {
         },
         structService!,
         resolve,
+        togglerComponent,
       );
     });
 
@@ -116,6 +119,7 @@ class KetcherBuilder {
       ketcher.setMolecule(initialMol);
     }
 
+    ketcherProvider.setKetcherInstance(ketcher);
     return ketcher;
   }
 }

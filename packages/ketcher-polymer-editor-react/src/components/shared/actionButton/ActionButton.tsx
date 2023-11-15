@@ -30,9 +30,11 @@ const baseButtonStyle = css({
 const PrimaryButton = styled(MuiButton)(
   ({ theme }) => ({
     backgroundColor: theme.ketcher.color.button.primary.active,
-    color: theme.ketcher.color.text.light,
-    border: 'none',
+    border: `1px solid ${theme.ketcher.color.button.primary.active}`,
+    color: 'rgb(245, 245, 245)',
     fontWeight: theme.ketcher.font.weight.regular,
+    width: '62px',
+    height: '24px',
 
     '&:hover': {
       backgroundColor: theme.ketcher.color.button.primary.hover,
@@ -40,6 +42,7 @@ const PrimaryButton = styled(MuiButton)(
 
     '&:disabled': {
       background: theme.ketcher.color.button.primary.disabled,
+      border: `1px solid transparent`,
       opacity: 0.4,
     },
   }),
@@ -52,6 +55,8 @@ const SecondaryButton = styled(MuiButton)(
     border: `1px solid ${theme.ketcher.color.button.secondary.active}`,
     color: theme.ketcher.color.button.secondary.active,
     fontWeight: theme.ketcher.font.weight.regular,
+    width: '72px',
+    height: '24px',
 
     '&:hover': {
       border: `1px solid ${theme.ketcher.color.button.secondary.hover}`,

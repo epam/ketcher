@@ -56,13 +56,15 @@ class HandTool implements Tool {
 
     const rnd = this.editor.render;
     const diff = Vec2.diff(this.endPos, this.begPos).scaled(
-      1 / this.editor.zoom(),
+      1 / rnd.options.zoom,
     );
     this.begPos = this.endPos;
 
-    rnd.ctab.translate(diff);
-    rnd.options.offset = rnd.options.offset.add(diff);
-    rnd.update(false);
+    rnd.setViewBox((prev) => ({
+      ...prev,
+      minX: prev.minX - diff.x,
+      minY: prev.minY - diff.y,
+    }));
   }
 
   mouseup(event) {

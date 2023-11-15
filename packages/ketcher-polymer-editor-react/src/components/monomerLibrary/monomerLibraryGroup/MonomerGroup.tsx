@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { EmptyFunction } from 'helpers';
 import { debounce } from 'lodash';
 import { MonomerItem } from '../monomerLibraryItem';
@@ -29,6 +29,7 @@ import {
   selectEditor,
   selectTool,
 } from 'state/common';
+import { selectIsEditMode } from 'state/rna-builder';
 
 const MonomerGroup = ({
   items,
@@ -41,6 +42,9 @@ const MonomerGroup = ({
   const dispatch = useAppDispatch();
   const preview = useAppSelector(selectShowPreview);
   const editor = useAppSelector(selectEditor);
+  const isEditMode = useAppSelector(selectIsEditMode);
+  const [selectedItemInGroup, setSelectedItemInGroup] =
+    useState<MonomerItemType>();
 
   const dispatchShowPreview = useCallback(
     (payload) => dispatch(showPreview(payload)),
@@ -61,16 +65,19 @@ const MonomerGroup = ({
     monomer: MonomerItemType,
     e: React.MouseEvent<HTMLDivElement, MouseEvent>,
   ) => {
+    handleItemMouseLeave();
     if (preview.monomer || !e.currentTarget) {
       return;
     }
     const cardCoordinates = e.currentTarget.getBoundingClientRect();
     const previewStyle = calculatePreviewPosition(monomer, cardCoordinates);
-    debouncedShowPreview({ monomer, style: previewStyle });
+    const style = { top: previewStyle, right: '-88px' };
+    debouncedShowPreview({ monomer, style });
   };
 
   const selectMonomer = (monomer: MonomerItemType) => {
     dispatch(selectTool('monomer'));
+    setSelectedItemInGroup(monomer);
 
     if (['FAVORITES', 'PEPTIDE', 'CHEM'].includes(libraryName ?? '')) {
       editor.events.selectMonomer.dispatch(monomer);
@@ -97,7 +104,11 @@ const MonomerGroup = ({
               disabled={disabled}
               item={monomer}
               isSelected={
-                selectedMonomerUniqueKey === getMonomerUniqueKey(monomer)
+                isEditMode
+                  ? selectedMonomerUniqueKey === getMonomerUniqueKey(monomer)
+                  : selectedItemInGroup &&
+                    getMonomerUniqueKey(selectedItemInGroup) ===
+                      getMonomerUniqueKey(monomer)
               }
               onMouseLeave={handleItemMouseLeave}
               onMouseMove={(e) => handleItemMouseMove(monomer, e)}

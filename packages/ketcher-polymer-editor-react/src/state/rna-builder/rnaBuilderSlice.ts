@@ -32,6 +32,7 @@ interface IRnaBuilderState {
   activeRnaBuilderItem?: RnaBuilderItem | null;
   isEditMode: boolean;
   hasUniqueNameError: boolean;
+  activePresetForContextMenu: IRnaPreset | null;
 }
 
 const initialState: IRnaBuilderState = {
@@ -40,6 +41,7 @@ const initialState: IRnaBuilderState = {
   activeRnaBuilderItem: null,
   isEditMode: false,
   hasUniqueNameError: false,
+  activePresetForContextMenu: null,
 };
 export const monomerGroupToPresetGroup = {
   [MonomerGroups.BASES]: 'base',
@@ -64,6 +66,12 @@ export const rnaBuilderSlice = createSlice({
         ...action.payload,
         presetInList: action.payload,
       };
+    },
+    setActivePresetForContextMenu: (
+      state,
+      action: PayloadAction<IRnaPreset>,
+    ) => {
+      state.activePresetForContextMenu = action.payload;
     },
     setActivePresetName: (state, action: PayloadAction<string>) => {
       state.activePreset!.name = action.payload;
@@ -98,6 +106,18 @@ export const rnaBuilderSlice = createSlice({
       }
       if (!state.activePreset) return;
       state.activePreset.presetInList = newPreset;
+    },
+    deletePreset: (state, action: PayloadAction<IRnaPreset>) => {
+      const preset = action.payload;
+
+      const presetIndexInList = state.presets.findIndex(
+        (presetInList) => presetInList.name === preset.name,
+      );
+      state.presets.splice(presetIndexInList, 1);
+
+      if (preset.presetInList) {
+        state.activePreset = null;
+      }
     },
     setIsEditMode: (state, action: PayloadAction<boolean>) => {
       state.isEditMode = action.payload;
@@ -176,16 +196,34 @@ export const selectHasUniqueNameError = (state: RootState) => {
   return state.rnaBuilder.hasUniqueNameError;
 };
 
+export const selectIsActivePresetNewAndEmpty = (state: RootState): boolean => {
+  const activePreset = state.rnaBuilder.activePreset;
+  return (
+    activePreset &&
+    !activePreset.presetInList &&
+    !activePreset.name &&
+    !activePreset.sugar &&
+    !activePreset.base &&
+    !activePreset.phosphate
+  );
+};
+
+export const selectActivePresetForContextMenu = (state: RootState) => {
+  return state.rnaBuilder.activePresetForContextMenu;
+};
+
 export const {
   setActivePreset,
   setActivePresetName,
   setActiveRnaBuilderItem,
   setActivePresetMonomerGroup,
   savePreset,
+  deletePreset,
   createNewPreset,
   setIsEditMode,
   setHasUniqueNameError,
   setDefaultPresets,
+  setActivePresetForContextMenu,
 } = rnaBuilderSlice.actions;
 
 export const rnaBuilderReducer = rnaBuilderSlice.reducer;

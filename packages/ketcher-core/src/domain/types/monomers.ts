@@ -19,7 +19,7 @@ export type MonomerItemType = {
     Name: string;
     // TODO determine whenever these props are optional or not
     BranchMonomer?: string;
-    MonomerCaps?: string;
+    MonomerCaps?: { [key: string]: string };
     MonomerCode?: string;
     MonomerType?: string;
     MonomerClass?: string;

@@ -35,7 +35,7 @@ const monomerData = [
       MonomerCode: 'R',
       MonomerNaturalAnalogCode: 'R',
       BranchMonomer: 'false',
-      MonomerCaps: '[R1]H',
+      MonomerCaps: { R1: 'H' },
     },
   },
   {
@@ -47,7 +47,7 @@ const monomerData = [
       MonomerCode: 'P',
       MonomerNaturalAnalogCode: 'P',
       BranchMonomer: 'false',
-      MonomerCaps: '[R1]O',
+      MonomerCaps: { R1: 'O' },
     },
   },
   {
@@ -58,7 +58,7 @@ const monomerData = [
       MonomerCode: 'A',
       MonomerNaturalAnalogCode: 'A',
       BranchMonomer: 'true',
-      MonomerCaps: '[R1]H',
+      MonomerCaps: { R1: 'H' },
     },
   },
 ];

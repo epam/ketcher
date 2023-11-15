@@ -455,7 +455,7 @@ export class DrawingEntitiesManager {
     monomer.turnOffAttachmentPointsVisibility();
     monomer.setPotentialSecondAttachmentPoint(null);
     monomer.removePotentialBonds();
-    let operation = new MonomerHoverOperation(monomer, true);
+    const operation = new MonomerHoverOperation(monomer, true);
     command.addOperation(operation);
 
     // If the initial AP has been chosen automatically, it needs to be removed
@@ -464,7 +464,10 @@ export class DrawingEntitiesManager {
       !polymerBond.firstMonomer.chosenFirstAttachmentPointForBond
     ) {
       polymerBond.firstMonomer.removePotentialBonds();
-      let operation = new MonomerHoverOperation(polymerBond.firstMonomer, true);
+      const operation = new MonomerHoverOperation(
+        polymerBond.firstMonomer,
+        true,
+      );
       command.addOperation(operation);
     }
 

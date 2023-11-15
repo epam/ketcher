@@ -18,6 +18,7 @@ export abstract class BaseMonomer extends DrawingEntity {
   > = {
     R1: null,
   };
+
   public chosenFirstAttachmentPointForBond: string | null;
   public potentialSecondAttachmentPointForBond: string | null;
   public chosenSecondAttachmentPointForBond: string | null;
@@ -219,7 +220,7 @@ export abstract class BaseMonomer extends DrawingEntity {
     this.unsetBond(attachmentPointName);
   }
 
-  public removePotentialBonds(clearSelectedPoints: boolean = false) {
+  public removePotentialBonds(clearSelectedPoints = false) {
     if (clearSelectedPoints) {
       this.chosenFirstAttachmentPointForBond = null;
       this.chosenSecondAttachmentPointForBond = null;

@@ -389,7 +389,7 @@ class PolymerBond implements BaseTool {
   private shouldInvokeModal(
     firstMonomer: BaseMonomer,
     secondMonomer: BaseMonomer,
-    checkForPotentialBonds: boolean = true,
+    checkForPotentialBonds: true,
   ) {
     // No Modal: no free attachment point on second monomer
     if (!secondMonomer.hasFreeAttachmentPoint) {

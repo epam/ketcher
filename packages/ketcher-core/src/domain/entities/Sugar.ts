@@ -80,5 +80,7 @@ export class Sugar extends BaseMonomer {
     ) {
       return 'R1';
     }
+
+    return undefined;
   }
 }

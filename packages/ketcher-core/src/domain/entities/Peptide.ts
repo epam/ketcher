@@ -35,8 +35,6 @@ export class Peptide extends BaseMonomer {
     ) {
       return 'R1';
     }
-
-    return;
   }
 
   public getValidTargetPoint(firstMonomer: BaseMonomer) {
@@ -73,7 +71,5 @@ export class Peptide extends BaseMonomer {
     ) {
       return 'R2';
     }
-
-    return;
   }
 }

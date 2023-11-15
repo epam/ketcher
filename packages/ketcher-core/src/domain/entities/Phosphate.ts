@@ -72,7 +72,5 @@ export class Phosphate extends BaseMonomer {
     ) {
       return 'R2';
     }
-
-    return;
   }
 }

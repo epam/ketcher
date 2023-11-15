@@ -2,11 +2,13 @@
 import { test, expect, Page } from '@playwright/test';
 import {
   AtomButton,
+  BondType,
   DELAY_IN_SECONDS,
   FILE_TEST_DATA,
   RingButton,
   TopPanelButton,
   clickInTheMiddleOfTheScreen,
+  clickOnBond,
   delay,
   drawBenzeneRing,
   openFileAndAddToCanvas,
@@ -409,22 +411,36 @@ test.describe('Open/Save/Paste files', () => {
   }) => {
     /*
       Test case: EPMLSOPKET-16889
-      Description:  TODO
-      Open file ketcher (5).mol
-      Save file in .ket format
+      Description: 
+      Open file ketcher mol
+      Save file in ket format
      */
-    await selectTopPanelButton(TopPanelButton.Save, page);
+      await pasteFromClipboardAndAddToCanvas(
+        page,
+        FILE_TEST_DATA.rGroupV3000Mol,
+      );
+      await clickInTheMiddleOfTheScreen(page);
+      await selectTopPanelButton(TopPanelButton.Save, page);
+      await page.getByRole('button', { name: 'MDL Molfile V2000' }).click();
+      await page.getByRole('option', { name: 'Ket Format' }).click();
+      await page.getByRole('button', { name: 'Save', exact: true }).click();
+      await takeEditorScreenshot(page);
   });
 
-  test('able to open .ket file with the "attachmentPoints" instruction and display attachment point correctly i', async ({
+  test('able to open .ket file with the "attachmentPoints" and display attachment point correctly', async ({
     page,
   }) => {
     /*
       Test case: EPMLSOPKET-16890
-      Description:  TODO
-      Load file ketcher (5).ket
+      Description:
+      Load file ketcher ket
       Check all elements
      */
-    await selectTopPanelButton(TopPanelButton.Save, page);
+      await pasteFromClipboardAndAddToCanvas(
+        page,
+        FILE_TEST_DATA.ketWithProperties,
+      );
+      await clickInTheMiddleOfTheScreen(page);
+      await clickOnBond(page, BondType.SINGLE, 0);
   });
 });

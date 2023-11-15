@@ -16,7 +16,7 @@
 
 import React from 'react';
 import styled from '@emotion/styled';
-import { css } from '@emotion/react';
+import { MONOMER_LIBRARY_WIDTH } from 'components/monomerLibrary';
 
 interface LayoutProps {
   children: JSX.Element | Array<JSX.Element>;
@@ -52,27 +52,29 @@ const Row = styled.div(({ theme }) => ({
   columnGap: '3px',
 }));
 
-const baseLeftRightStyle = css({
-  height: '100%',
-  width: 'fit-content',
-  display: 'flex',
-  flexDirection: 'column',
-});
+const BaseLeftRightStyle = styled.div<{ hide?: boolean }>(
+  ({ hide = false }) => ({
+    height: '100%',
+    width: 'fit-content',
+    display: hide ? 'none' : 'flex',
+    flexDirection: 'column',
+  }),
+);
 
-const Left = styled.div(baseLeftRightStyle);
+const Left = styled(BaseLeftRightStyle)``;
 
-const Right = styled.div(baseLeftRightStyle);
+const Right = styled(BaseLeftRightStyle)``;
 
-const Top = styled.div({
+const Top = styled.div<{ shortened?: boolean }>(({ shortened = false }) => ({
   height: 'fit-content',
-  width: '100%',
+  width: shortened ? `calc(100% - ${MONOMER_LIBRARY_WIDTH})` : '100%',
   marginBottom: '6px',
   display: 'flex',
   justifyContent: 'flex-end',
   backgroundColor: '#FFFFFF',
   boxShadow: '0px 2px 5px rgba(103, 104, 132, 0.15)',
   borderRadius: '4px',
-});
+}));
 
 const Main = styled.div({
   height: '100%',

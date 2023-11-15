@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import { test, expect } from '@playwright/test';
 import {
   takeEditorScreenshot,
@@ -462,6 +461,7 @@ test.describe('Template Manupulations', () => {
     await clickOnAtom(page, 'C', anyAtom);
     await selectRing(RingButton.Cyclopentadiene, page);
   });
+
   test('Double cyclopentadiene ring - if all bonds are single', async ({
     page,
   }) => {

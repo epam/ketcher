@@ -1,8 +1,14 @@
 import { expect, test } from '@playwright/test';
 import {
+  STRUCTURE_LIBRARY_BUTTON_NAME,
+  TemplateLibrary,
+  clickInTheMiddleOfTheScreen,
   getCoordinatesOfTheMiddleOfTheScreen,
   openFileAndAddToCanvas,
+  pressButton,
+  selectUserTemplate,
   takeEditorScreenshot,
+  takePageScreenshot,
   waitForPageInit,
   waitForRender,
 } from '@utils';
@@ -561,14 +567,22 @@ test.describe('Rotation snapping', () => {
   }) => {
     /*
       Test case: EPMLSOPKET-13002
-      Description: TODO
+      Description:
       Select different objects and shapes
-      (e.g., Templates, Expanded Functional Groups, Contracted Functional Groups, Salts and Solvents, Chains, Combinations of these structures etc.).
       Activate the rotation mode.
       Rotate the selected object.
     */
-    await addStructureAndSelect(page);
-    await page.keyboard.press('Escape');
-    await takeEditorScreenshot(page);
+    const coordinatesForRotation = {
+      x: 800,
+      y: 800,
+    };
+    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+    await page.getByRole('tab', { name: 'Template Library' }).click();
+    await page.getByRole('button', { name: 'D-Amino Acids' }).click();
+    await selectUserTemplate(TemplateLibrary.ALADAlanine, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await page.keyboard.press('Control+a');
+    await rotateToCoordinates(page, coordinatesForRotation);
+    await takePageScreenshot(page);
   });
 });

@@ -735,7 +735,7 @@ test.describe('Selection tools', () => {
     page,
   }) => {
     /* Test case: EPMLSOPKET-1353
-    Description: TODO
+    Description:
     Drag any atom of the structure to any other place on the canvas.
     Click the 'Undo' button on the toolbar.
     Click the 'Redo' button on the toolbar.

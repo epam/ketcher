@@ -2797,6 +2797,184 @@ const reagentsBelowAndAboveArrowCml = `<?xml version="1.0" ?>
 `;
 
 const reagentsBelowAndAboveArrowCdx = `VmpDRDAxMDAEAwIBAAAAAAAAAAAAAAAAAAAAAAUIBAAAAB4AGggCAAMAGwgCAAQAAAEkAAAAAgACAOn9BQBBcmlhbAMA6f0PAFRpbWVzIE5ldyBSb21hbgADMgAIAP///////wAAAAAAAP//AAAAAP////8AAAAA//8AAAAA/////wAAAAD/////AAD//wGAAAAAABAIAgABAA8IAgABAAOABAAAAASABQAAAAACCACTwO0ApEvDAAAABIAGAAAAAAIIANi87QBbNPcAAAAEgAcAAAAAAggAv7/eAJNM3QAAAASACAAAAAACCAAWxAsBWzT3AAAABIAJAAAAAAIIAI7mCwGkS8MAAAAEgAoAAAAAAggAQsAaAVhd3QAAAAWAGQAAAAQGBAAHAAAABQYEAAUAAAAABgIAAgAAAAWAGgAAAAQGBAAFAAAABQYEAAkAAAAAAAWAGwAAAAQGBAAJAAAABQYEAAoAAAAABgIAAgAAAAWAHAAAAAQGBAAKAAAABQYEAAgAAAAAAAWAHQAAAAQGBAAIAAAABQYEAAYAAAAABgIAAgAAAAWAHgAAAAQGBAAGAAAABQYEAAcAAAAAAAAAA4ALAAAABIAMAAAAAAIIAJKA7gCki7sBAAAEgA0AAAAAAggA2HzuAFp07wEAAASADgAAAAACCAC/f98AkozVAQAABIAPAAAAAAIIABaEDAFadO8BAAAEgBAAAAAAAggAjqYMAaSLuwEAAASAEQAAAAACCABCgBsBWJ3VAQAABYAfAAAABAYEAA4AAAAFBgQADAAAAAAGAgACAAAABYAgAAAABAYEAAwAAAAFBgQAEAAAAAAABYAhAAAABAYEABAAAAAFBgQAEQAAAAAGAgACAAAABYAiAAAABAYEABEAAAAFBgQADwAAAAAABYAjAAAABAYEAA8AAAAFBgQADQAAAAAGAgACAAAABYAkAAAABAYEAA0AAAAFBgQADgAAAAAAAAADgBIAAAAEgBMAAAACBAIABwArBAIAAwAAAggAAADwAACAVwEGgAAAAAAAAggAAADwAACAVwEjCAEAAAAHGQACAAAAAwBgAMgAAAACAAMAIADIAAAATkgzAAAAAAAAA4AUAAAABIAVAAAAAgQCABEAKwQCAAEAAAIIAADACwEAAFwBBoAAAAAAAAIIAADACwEAAFwBIwgBAAAABw8AAQAAAAMAYADIAAAAQ2xIAAAAAAAAIYAWAAAABAIQAAFA/gB0wKoBAUD+AAAADgE3CgIAAAAvCgIAAAAgCgIAyggxCgIAMwI1CgIAAQAwCgIAGQAHAgwAdMCqAQFA/gAAAAAACAIMAAAADgEBQP4AAAAAAAAADYAAAAAADoAAAAAAAQwEAAQAAAACDAQACwAAAAUMCAASAAAAFAAAAAQMBAAWAAAAAAAAAAAAAAAAAA==`;
+const rGroupV3000Mol = `
+Marvin  02211216212D          
+
+0  0  0     0  0            999 V3000
+M  V30 BEGIN CTAB
+M  V30 COUNTS 8 7 0 0 0
+M  V30 BEGIN ATOM
+M  V30 1 C 7.6835 -7.3342 0 0
+M  V30 2 C 9.0171 -6.5642 0 0
+M  V30 3 C 10.3508 -7.3342 0 0
+M  V30 4 C 11.6845 -6.5642 0 0
+M  V30 5 C 13.0181 -7.3342 0 0
+M  V30 6 C 14.3518 -6.5642 0 0
+M  V30 7 C 15.6855 -7.3342 0 0
+M  V30 8 R# 17.0191 -6.5642 0 0 RGROUPS=(1 1)
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 1 1 2
+M  V30 2 1 2 3
+M  V30 3 1 3 4
+M  V30 4 1 4 5
+M  V30 5 1 5 6
+M  V30 6 1 6 7
+M  V30 7 1 7 8
+M  V30 END BOND
+M  V30 END CTAB
+M  V30 BEGIN RGROUP 1
+M  V30 RLOGIC 0 0 >0
+M  V30 BEGIN CTAB
+M  V30 COUNTS 3 2 0 0 0
+M  V30 BEGIN ATOM
+M  V30 1 C 9.0283 -18.013 0 0 ATTCHPT=1
+M  V30 2 Br 10.362 -18.7831 0 0
+M  V30 3 O 9.0283 -16.473 0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 1 1 2
+M  V30 2 2 1 3
+M  V30 END BOND
+M  V30 END CTAB
+M  V30 BEGIN CTAB
+M  V30 COUNTS 6 5 0 0 0
+M  V30 BEGIN ATOM
+M  V30 1 C 13.7114 -17.3173 0 0 ATTCHPT=1
+M  V30 2 C 15.0451 -18.0874 0 0
+M  V30 3 F 16.1608 -16.9865 0 0
+M  V30 4 F 14.6601 -19.6326 0 0
+M  V30 5 F 16.3029 -18.8293 0 0
+M  V30 6 O 13.7114 -15.7773 0 0
+M  V30 END ATOM
+M  V30 BEGIN BOND
+M  V30 1 1 1 2
+M  V30 2 1 2 3
+M  V30 3 1 2 4
+M  V30 4 1 2 5
+M  V30 5 2 1 6
+M  V30 END BOND
+M  V30 END CTAB
+M  V30 END RGROUP
+M  END
+`;
+
+const ketWithProperties = `{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "mol0"
+            },
+            {
+                "$ref": "mol1"
+            }
+        ]
+    },
+    "mol0": {
+        "type": "molecule",
+        "properties": [
+            { "mol0_key": "mol0_value" }
+        ],
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    15.632207454738978,
+                    -5.647548743464719,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    15.62850411466491,
+                    -4.652451256535281,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    14.620294802067825,
+                    -5.634637098341615,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    14.617792545261022,
+                    -4.652451256535281,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [0, 1]
+            },
+            {
+                "type": 1,
+                "atoms": [0, 2]
+            },
+            {
+                "type": 1,
+                "atoms": [1, 3]
+            },
+            {
+                "type": 1,
+                "atoms": [2, 3]
+            }
+        ]
+    },
+    "mol1": {
+        "type": "molecule",
+        "properties": [
+            { "mol1_key": "mol1_value" }
+        ],
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    17.17437421436393,
+                    -5.507470415521405,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    18.175625785636072,
+                    -5.507470415521405,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    17.675050188048687,
+                    -4.642529584478595,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [0, 1]
+            },
+            {
+                "type": 1,
+                "atoms": [0, 2]
+            },
+            {
+                "type": 1,
+                "atoms": [1, 2]
+            }
+        ]
+    }
+}`;
 
 export const FILE_TEST_DATA = {
   utfFile,
@@ -2828,4 +3006,6 @@ export const FILE_TEST_DATA = {
   expandedAndContractedFg,
   reagentsBelowAndAboveArrowCml,
   reagentsBelowAndAboveArrowCdx,
+  rGroupV3000Mol,
+  ketWithProperties,
 };

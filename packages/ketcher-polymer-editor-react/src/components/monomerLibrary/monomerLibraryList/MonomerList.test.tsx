@@ -29,7 +29,7 @@ describe('Monomer List', () => {
         {
           props: {
             BranchMonomer: 'false',
-            MonomerCaps: '[R1]H',
+            MonomerCaps: { R1: 'H' },
             MonomerCode: '',
             MonomerName: 'Phe4SD',
             MonomerNaturalAnalogCode: 'F',
@@ -41,7 +41,7 @@ describe('Monomer List', () => {
         {
           props: {
             BranchMonomer: 'false',
-            MonomerCaps: '[R1]H',
+            MonomerCaps: { R1: 'H' },
             MonomerCode: '',
             MonomerName: 'PEG2',
             MonomerNaturalAnalogCode: '.',

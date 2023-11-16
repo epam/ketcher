@@ -11,18 +11,18 @@ import {
   waitForLoad,
   waitForPageInit,
 } from '@utils';
-import { clickOnFileDropdown, getSmarts } from '@utils/formats';
+import { clickOnFileFormatDropdown, getSmarts } from '@utils/formats';
 
 async function saveSmarts(page: Page) {
   await selectTopPanelButton(TopPanelButton.Save, page);
-  await clickOnFileDropdown(page);
+  await clickOnFileFormatDropdown(page);
   await page.getByRole('option', { name: 'Daylight SMARTS' }).click();
   await page.getByRole('button', { name: 'Save', exact: true }).click();
 }
 
 async function previewSmarts(page: Page) {
   await selectTopPanelButton(TopPanelButton.Save, page);
-  await clickOnFileDropdown(page);
+  await clickOnFileFormatDropdown(page);
   await page.getByRole('option', { name: 'Daylight SMARTS' }).click();
 }
 

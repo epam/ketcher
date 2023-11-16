@@ -10,11 +10,11 @@ import {
   waitForLoad,
   waitForPageInit,
 } from '@utils';
-import { clickOnFileDropdown } from '@utils/formats';
+import { clickOnFileFormatDropdown } from '@utils/formats';
 
 async function previewCDXML(page: Page) {
   await selectTopPanelButton(TopPanelButton.Save, page);
-  await clickOnFileDropdown(page);
+  await clickOnFileFormatDropdown(page);
   await page.getByRole('option', { name: 'CDXML' }).click();
 }
 
@@ -100,7 +100,7 @@ test.describe('Reagents CDXML format', () => {
     );
 
     await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileDropdown(page);
+    await clickOnFileFormatDropdown(page);
     await page.getByRole('option', { name: 'CDXML' }).click();
     await page.getByRole('button', { name: 'Save', exact: true }).click();
   });

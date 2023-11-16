@@ -1,6 +1,6 @@
 import { Page, expect } from '@playwright/test';
 import { TopPanelButton, selectTopPanelButton } from '@utils';
-import { clickOnFileDropdown } from '@utils/formats';
+import { clickOnFileFormatDropdown } from '@utils/formats';
 
 type queryNumberValues =
   | '0'
@@ -42,7 +42,7 @@ export async function setChirality(page: Page, chirality: chirality) {
 
 export async function checkSmartsValue(page: Page, value: string) {
   await selectTopPanelButton(TopPanelButton.Save, page);
-  await clickOnFileDropdown(page);
+  await clickOnFileFormatDropdown(page);
   await page.getByRole('option', { name: 'Daylight SMARTS' }).click();
   const smartsInput = page.getByTestId('smarts-preview-area-text');
   await expect(smartsInput).toHaveValue(value);

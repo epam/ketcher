@@ -6,7 +6,7 @@ import {
   openFileAndAddToCanvas,
   waitForPageInit,
 } from '@utils';
-import { clickOnFileDropdown } from '@utils/formats';
+import { clickOnFileFormatDropdown } from '@utils/formats';
 
 enum FileFormat {
   SVGDocument = 'SVG Document',
@@ -15,7 +15,7 @@ enum FileFormat {
 
 async function saveFileAsPngOrSvgFormat(page: Page, FileFormat: string) {
   await selectTopPanelButton(TopPanelButton.Save, page);
-  await clickOnFileDropdown(page);
+  await clickOnFileFormatDropdown(page);
   await page.getByRole('option', { name: FileFormat }).click();
 }
 

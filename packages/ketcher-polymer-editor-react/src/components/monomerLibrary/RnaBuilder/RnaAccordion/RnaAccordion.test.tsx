@@ -33,7 +33,7 @@ describe('Test Rna Accordion component', () => {
         MonomerCode: '',
         MonomerNaturalAnalogCode: 'P',
         BranchMonomer: 'false',
-        MonomerCaps: '[R1]H',
+        MonomerCaps: { R1: 'H' },
       },
     };
     render(

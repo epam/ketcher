@@ -15,11 +15,11 @@ import {
   nonEmptyString,
   pasteFromClipboardAndAddToCanvas,
 } from '@utils';
-import { clickOnFileDropdown, getSmiles } from '@utils/formats';
+import { clickOnFileFormatDropdown, getSmiles } from '@utils/formats';
 
 async function getPreviewForSmiles(page: Page, smileType: string) {
   await selectTopPanelButton(TopPanelButton.Save, page);
-  await clickOnFileDropdown(page);
+  await clickOnFileFormatDropdown(page);
   await page.getByRole('option', { name: smileType }).click();
   const previewInput = page.getByTestId('smiles-preview-area-text');
   await previewInput.waitFor({ state: 'visible' });

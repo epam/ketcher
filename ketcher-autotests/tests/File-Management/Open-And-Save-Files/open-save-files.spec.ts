@@ -5,7 +5,7 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
-import { clickOnFileDropdown } from '@utils/formats';
+import { clickOnFileFormatDropdown } from '@utils/formats';
 
 test.describe('Open Ketcher', () => {
   test.beforeEach(async ({ page }) => {
@@ -59,7 +59,7 @@ test.describe('Open Ketcher', () => {
   for (const fileFormat of fileFormats) {
     test(`dropdown options check_${fileFormat}`, async ({ page }) => {
       await selectTopPanelButton(TopPanelButton.Save, page);
-      await clickOnFileDropdown(page);
+      await clickOnFileFormatDropdown(page);
       const option = page.getByTestId(fileFormat);
       await expect(option).toBeVisible();
     });

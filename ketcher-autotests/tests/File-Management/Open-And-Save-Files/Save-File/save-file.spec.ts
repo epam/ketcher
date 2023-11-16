@@ -26,7 +26,7 @@ import {
 } from '@utils';
 import { drawReactionWithTwoBenzeneRings } from '@utils/canvas/drawStructures';
 import {
-  clickOnFileDropdown,
+  clickOnFileFormatDropdown,
   getKet,
   getMolfile,
   getRxn,
@@ -40,7 +40,7 @@ const ARROW_LENGTH = 100;
 
 async function getPreviewForSmiles(page: Page, smileType: string) {
   await selectTopPanelButton(TopPanelButton.Save, page);
-  await clickOnFileDropdown(page);
+  await clickOnFileFormatDropdown(page);
   await page.getByRole('option', { name: smileType }).click();
 }
 
@@ -253,7 +253,7 @@ test.describe('Save files', () => {
     await selectRingButton(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
     await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileDropdown(page);
+    await clickOnFileFormatDropdown(page);
     await selectOptionByText(page, 'InChIKey');
     const inChistring = await page
       .getByTestId('inChIKey-preview-area-text')
@@ -379,7 +379,7 @@ test.describe('Open/Save/Paste files', () => {
     */
     await openFileAndAddToCanvas('KET/two-benzene-connected.ket', page);
     await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileDropdown(page);
+    await clickOnFileFormatDropdown(page);
     await page.getByRole('option', { name: 'SVG Document' }).click();
   });
 
@@ -390,7 +390,7 @@ test.describe('Open/Save/Paste files', () => {
     */
     await openFileAndAddToCanvas('KET/two-benzene-connected.ket', page);
     await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileDropdown(page);
+    await clickOnFileFormatDropdown(page);
     await page.getByRole('option', { name: 'PNG Image' }).click();
   });
 

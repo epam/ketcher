@@ -14,7 +14,7 @@ import {
   waitForPageInit,
   nonEmptyString,
 } from '@utils';
-import { clickOnFileDropdown } from '@utils/formats';
+import { clickOnFileFormatDropdown } from '@utils/formats';
 
 async function selectInChiOption(page: Page) {
   await selectOptionByText(page, 'InChI');
@@ -206,7 +206,7 @@ test.describe('Open and Save InChI file', () => {
      * Description: Open and Save file - InChi for emty canvas
      */
     await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileDropdown(page);
+    await clickOnFileFormatDropdown(page);
     await selectInChiOption(page);
     const inChistring = await page
       .getByTestId('inChI-preview-area-text')
@@ -223,7 +223,7 @@ test.describe('Open and Save InChI file', () => {
      */
     await openFileAndAddToCanvas('KET/InChI-fused-structure.ket', page);
     await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileDropdown(page);
+    await clickOnFileFormatDropdown(page);
     await selectInChiOption(page);
     const inChistring = await page
       .getByTestId('inChI-preview-area-text')
@@ -242,7 +242,7 @@ test.describe('Open and Save InChI file', () => {
      */
     await openFileAndAddToCanvas('KET/nonone-chain-structure.ket', page);
     await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileDropdown(page);
+    await clickOnFileFormatDropdown(page);
     await selectInChiOption(page);
     const inChistring = await page
       .getByTestId('inChI-preview-area-text')
@@ -264,7 +264,7 @@ test.describe('Open and Save InChI file', () => {
       page,
     );
     await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileDropdown(page);
+    await clickOnFileFormatDropdown(page);
     await selectInChiOption(page);
     const inChistring = await page
       .getByTestId('inChI-preview-area-text')
@@ -283,7 +283,7 @@ test.describe('Open and Save InChI file', () => {
      */
     await openFileAndAddToCanvas('Molfiles-V2000/nona-2,4,6-triyne.mol', page);
     await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileDropdown(page);
+    await clickOnFileFormatDropdown(page);
     await selectInChiOption(page);
     const inChistring = await page
       .getByTestId('inChI-preview-area-text')
@@ -301,7 +301,7 @@ test.describe('Open and Save InChI file', () => {
      */
     await openFileAndAddToCanvas('KET/cyclic-cyclohexane-structure.ket', page);
     await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileDropdown(page);
+    await clickOnFileFormatDropdown(page);
     await selectInChiOption(page);
     const inChistring = await page
       .getByTestId('inChI-preview-area-text')
@@ -322,7 +322,7 @@ test.describe('Open and Save InChI file', () => {
       page,
     );
     await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileDropdown(page);
+    await clickOnFileFormatDropdown(page);
     await selectInChiOption(page);
     const inChistring = await page
       .getByTestId('inChI-preview-area-text')
@@ -341,7 +341,7 @@ test.describe('Open and Save InChI file', () => {
      */
     await openFileAndAddToCanvas('Molfiles-V2000/Chiral.mol', page);
     await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileDropdown(page);
+    await clickOnFileFormatDropdown(page);
     await selectInChiOption(page);
     const inChistring = await page
       .getByTestId('inChI-preview-area-text')
@@ -360,7 +360,7 @@ test.describe('Open and Save InChI file', () => {
      */
     await openFileAndAddToCanvas('Molfiles-V2000/spiro.mol', page);
     await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileDropdown(page);
+    await clickOnFileFormatDropdown(page);
     await selectInChiOption(page);
     const inChistring = await page
       .getByTestId('inChI-preview-area-text')
@@ -379,7 +379,7 @@ test.describe('Open and Save InChI file', () => {
      */
     await openFileAndAddToCanvas('KET/nonone-chain-structure.ket', page);
     await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileDropdown(page);
+    await clickOnFileFormatDropdown(page);
     await selectInChiOption(page);
     const inChistring = await page
       .getByTestId('inChI-preview-area-text')
@@ -400,7 +400,7 @@ test.describe('Open and Save InChI file', () => {
      */
     await openFileAndAddToCanvas('KET/propane-hexane-benzene.ket', page);
     await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileDropdown(page);
+    await clickOnFileFormatDropdown(page);
     await selectInChiOption(page);
     const inChistring = await page
       .getByTestId('inChI-preview-area-text')
@@ -420,7 +420,7 @@ test.describe('Open and Save InChI file', () => {
       page,
     );
     await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileDropdown(page);
+    await clickOnFileFormatDropdown(page);
     await page.getByRole('option', { name: 'InChI', exact: true }).click();
     const convertErrorMessage = await page
       .getByTestId('info-modal-body')
@@ -437,7 +437,7 @@ test.describe('Open and Save InChI file', () => {
      */
     await openFileAndAddToCanvas('KET/chain-with-s-group.ket', page);
     await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileDropdown(page);
+    await clickOnFileFormatDropdown(page);
     await selectInChiOption(page);
     await page.getByTestId('warnings-tab').click();
     const warningTextArea = await page.getByTestId('WarningTextArea');
@@ -457,7 +457,7 @@ test.describe('Open and Save InChI file', () => {
     await openFileAndAddToCanvas('KET/chain-with-alias.ket', page);
     await selectTopPanelButton(TopPanelButton.Save, page);
     await page.getByTestId('filename-input').fill('Alias');
-    await clickOnFileDropdown(page);
+    await clickOnFileFormatDropdown(page);
     await selectInChiOption(page);
     await page.getByRole('button', { name: 'Save', exact: true }).click();
     await openFileAndAddToCanvas('inchi/Alias.inchi', page);
@@ -494,7 +494,7 @@ test.describe('Open and Save InChI file', () => {
      */
     await openFileAndAddToCanvas('KET/chain-with-generic-group.ket', page);
     await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileDropdown(page);
+    await clickOnFileFormatDropdown(page);
     await page.getByRole('option', { name: 'InChI', exact: true }).click();
     const convertErrorMessage = await page
       .getByTestId('info-modal-body')
@@ -513,7 +513,7 @@ test.describe('Open and Save InChI file', () => {
      */
     await openFileAndAddToCanvas('KET/chain-with-generic-group.ket', page);
     await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileDropdown(page);
+    await clickOnFileFormatDropdown(page);
     await page.getByRole('option', { name: 'InChI', exact: true }).click();
     const convertErrorMessage = await page
       .getByTestId('info-modal-body')
@@ -545,7 +545,7 @@ test.describe('Open and Save InChI file', () => {
      */
     await openFileAndAddToCanvas('KET/structure-with-R-Group.ket', page);
     await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileDropdown(page);
+    await clickOnFileFormatDropdown(page);
     await page.getByRole('option', { name: 'InChI', exact: true }).click();
     const convertErrorMessage = await page
       .getByTestId('info-modal-body')

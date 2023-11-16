@@ -19,7 +19,7 @@ import {
 } from './styledComponents';
 import { MonomerConnectionProps } from '../modalContainer/types';
 
-// type LeavingGroupValue = 'O' | 'OH' | 'H';
+type MonomerCap = 'O' | 'OH' | 'H';
 
 const StyledModal = styled(Modal)({
   '& .MuiPaper-root': {
@@ -161,17 +161,15 @@ function AttachmentPointSelectionPanel({
     [bonds],
   );
 
-/*
-  const getLeavingGroupValue = (attachmentPoint): LeavingGroupValue => {
-    if (!monomerLeavingGroups) {
+  const getMonomerCap = (attachmentPoint): MonomerCap => {
+    const { MonomerCaps } = monomer.monomerItem.props;
+    if (!MonomerCaps) {
       return 'H';
     }
-    const leavingGroupValue = monomerLeavingGroups[attachmentPoint];
-    return leavingGroupValue === 'O'
-      ? 'OH'
-      : (leavingGroupValue as LeavingGroupValue);
+    const monomerCap = MonomerCaps[attachmentPoint];
+    return monomerCap === 'O' ? 'OH' : (monomerCap as MonomerCap);
   };
-*/
+
   return (
     <AttachmentPointSelectionContainer>
       <StyledStructRender
@@ -204,9 +202,7 @@ function AttachmentPointSelectionPanel({
               )}
             />
             <AttachmentPointName data-testid="leaving-group-value">
-              {monomer.monomerItem.props.MonomerCaps
-                ? monomer.monomerItem.props.MonomerCaps[attachmentPoint]
-                : 'H'}
+              {getMonomerCap(attachmentPoint)}
             </AttachmentPointName>
           </AttachmentPoint>
         ))}

@@ -80,6 +80,7 @@ export const RnaEditorExpanded = ({
   const scrollToActiveItemInLibrary = (selectedGroup) => {
     if (selectedGroup === RnaBuilderPresetsItem.Presets) {
       scrollToSelectedPreset(activePreset.name);
+      editor.events.selectPreset.dispatch(activePreset);
       return;
     }
 

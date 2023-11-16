@@ -1082,7 +1082,7 @@ test.describe('Atom Properties', () => {
     await page
       .locator('label')
       .filter({ hasText: 'H count', hasNotText: 'Implicit H count' })
-      .getByRole('button', { name: '​' })
+      .getByRole('combobox', { name: '​' })
       .click();
     await page.locator('.MuiMenuItem-root').first().click();
     await pressButton(page, 'Apply');
@@ -1182,7 +1182,7 @@ test.describe('Atom Properties', () => {
     await page
       .locator('label')
       .filter({ hasText: 'Substitution count' })
-      .getByRole('button', { name: '​' })
+      .getByRole('combobox', { name: '​' })
       .click();
     await page.locator('.MuiMenuItem-root').first().click();
     await pressButton(page, 'Apply');
@@ -1350,6 +1350,8 @@ test.describe('Atom Properties', () => {
   test('All atom properties information saved as *.rxn file', async ({
     page,
   }) => {
+    // fails while Indigo loses valence in RxnFiles
+    test.fail();
     /*
       Test case: EPMLSOPKET-1656
       Description: The structure is saved as *.rxn file.
@@ -1623,12 +1625,7 @@ test.describe('Atom Properties', () => {
     await openFileAndAddToCanvas('KET/benzene-unsaturated.ket', page);
 
     for (let i = 0; i < atomIndices.length; i++) {
-      await selectUnsaturatedOption(
-        page,
-        atomIndices[i],
-        selectedOption[i],
-        i === 0,
-      );
+      await selectUnsaturatedOption(page, atomIndices[i], selectedOption[i]);
     }
   });
 
@@ -1765,12 +1762,7 @@ test.describe('Atom Properties', () => {
           break;
         // eslint-disable-next-line no-magic-numbers
         case 3:
-          await selectUnsaturatedOption(
-            page,
-            atomIndex,
-            option as string,
-            true,
-          );
+          await selectUnsaturatedOption(page, atomIndex, option as string);
           break;
         // eslint-disable-next-line no-magic-numbers
         case 4:

@@ -19,14 +19,17 @@ import { scrollbarThin } from 'theming/mixins';
 import { useEffect, useRef } from 'react';
 
 export type TextEditorProps = {
-  struct: string;
+  value: string;
   inputHandler?: (str: string) => void;
   readonly?: boolean;
   selectOnInit?: boolean;
   className?: string;
+  testId?: string;
 };
 
 const StyledTextarea = styled.textarea`
+  min-width: 430px;
+  padding: 12px;
   width: 100%;
   height: 100%;
   overflow: auto;
@@ -35,23 +38,23 @@ const StyledTextarea = styled.textarea`
   box-sizing: border-box;
   outline: transparent;
   border: none;
-  padding: 8px;
-  color: ${({ theme }) => theme.ketcher.color.input.text.default};
+  color: ${({ theme }) => theme.ketcher.color.input.text.active};
   font-size: ${({ theme }) => theme.ketcher.font.size.regular};
+  background-color: ${({ theme, readOnly }) =>
+    readOnly
+      ? theme.ketcher.color.input.background.disabled
+      : theme.ketcher.color.input.background.primary};
 
   ${({ theme }) => scrollbarThin(theme)};
-
-  &:hover {
-    cursor: ${(props) => props.readOnly && 'not-allowed'};
-  }
 `;
 
-export const TextField = ({
-  struct,
+export const TextArea = ({
+  value,
   inputHandler,
   readonly = false,
   selectOnInit = false,
   className,
+  testId
 }: TextEditorProps) => {
   const textArea = useRef<HTMLTextAreaElement>(null);
 
@@ -59,15 +62,16 @@ export const TextField = ({
     if (selectOnInit) {
       textArea.current?.select();
     }
-  }, [textArea, struct, selectOnInit]);
+  }, [textArea, value, selectOnInit]);
 
   return (
     <StyledTextarea
-      value={struct}
+      value={value}
       readOnly={readonly}
       onChange={inputHandler && ((event) => inputHandler(event.target.value))}
       ref={textArea}
       className={className}
+      data-testId={testId}
     />
   );
 };

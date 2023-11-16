@@ -12,7 +12,7 @@ import {
   waitForLoad,
   waitForPageInit,
 } from '@utils';
-import { getRxn } from '@utils/formats';
+import { clickOnFileFormatDropdown, getRxn } from '@utils/formats';
 
 function getComparableDataFromRxn(
   rxnData: string,
@@ -34,7 +34,7 @@ function getRxnFileFilteredBySymbols(
 
 async function saveAsMdlRxnV3000(page: Page) {
   await selectTopPanelButton(TopPanelButton.Save, page);
-  await page.getByRole('button', { name: 'MDL Rxnfile V2000' }).click();
+  await clickOnFileFormatDropdown(page);
   await page.getByRole('option', { name: 'MDL Rxnfile V3000' }).click();
   await page.getByRole('button', { name: 'Save', exact: true }).click();
 }

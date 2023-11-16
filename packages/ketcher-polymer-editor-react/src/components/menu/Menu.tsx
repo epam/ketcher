@@ -43,6 +43,7 @@ const Menu = ({
   children,
   onItemClick,
   activeMenuItems,
+  testId,
 }: React.PropsWithChildren<MenuProps>) => {
   const context = React.useMemo<IMenuContext>(
     () => ({
@@ -64,7 +65,9 @@ const Menu = ({
 
   return (
     <MenuContext.Provider value={context}>
-      <MenuLayout>{subComponents.map((component) => component)}</MenuLayout>
+      <MenuLayout data-testId={testId}>
+        {subComponents.map((component) => component)}
+      </MenuLayout>
     </MenuContext.Provider>
   );
 };

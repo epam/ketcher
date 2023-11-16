@@ -290,6 +290,7 @@ class SaveDialog extends Component {
             )}
             component={Select}
             className="file-format-list"
+            data-testid="file-format-list"
           />
         </Form>
         <Tabs

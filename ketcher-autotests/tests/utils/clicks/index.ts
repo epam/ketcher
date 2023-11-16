@@ -199,7 +199,7 @@ export async function applyAutoMapMode(
 ) {
   await resetCurrentTool(page);
   await selectNestedTool(page, ReactionMappingTool.AUTOMAP);
-  await pressButton(page, 'Discard');
+  await page.getByTestId('automap-mode-input-span').click();
   await selectOption(page, mode);
   await selectButtonById('OK', page);
   if (withScreenshot) {

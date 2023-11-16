@@ -35,7 +35,7 @@ import React, {
 } from 'react';
 
 import { Dialog } from '../../../components';
-import { DialogParams } from '../../../components/Dialog/Dialog';
+import { DialogParams } from '../../../../../../components/Dialog/Dialog';
 import { FontControl } from './FontControl';
 import { SpecialSymbolsButton } from './SpecialSymbols/SpecialSymbolsButton';
 import { TextButton } from './TextButton';

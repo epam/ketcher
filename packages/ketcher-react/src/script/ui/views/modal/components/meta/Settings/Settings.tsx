@@ -147,11 +147,12 @@ const SettingsDialog = (props: Props) => {
           name="resetToSelect"
           component={Select}
           options={getSelectOptionsFromSchema(settingsProps?.resetToSelect)}
+          data-testid="reset-to-select"
         />
         <Field name="rotationStep" />
         <Field name="showValenceWarnings" />
         <Field name="atomColoring" />
-        <Field name="font" component={SystemFonts} />
+        <Field name="font" component={SystemFonts} data-testid="font" />
         <Field name="fontsz" component={MeasureInput} labelPos={false} />
         <Field name="fontszsub" component={MeasureInput} labelPos={false} />
       </fieldset>
@@ -167,6 +168,7 @@ const SettingsDialog = (props: Props) => {
           name="stereoLabelStyle"
           component={Select}
           options={getSelectOptionsFromSchema(settingsProps?.stereoLabelStyle)}
+          data-testid="stereo-label-style"
         />
         <Field name="colorOfAbsoluteCenters" component={ColorPicker} />
         <Field name="colorOfAndCenters" component={ColorPicker} />
@@ -177,6 +179,7 @@ const SettingsDialog = (props: Props) => {
           options={getSelectOptionsFromSchema(
             settingsProps?.colorStereogenicCenters,
           )}
+          data-testid="color-stereogenic-centers"
         />
         <Field name="autoFadeOfStereoLabels" />
         <Field name="absFlagLabel" />
@@ -204,6 +207,7 @@ const SettingsDialog = (props: Props) => {
           options={getSelectOptionsFromSchema(
             settingsProps?.showHydrogenLabels,
           )}
+          data-testid="show-hydrogen-labels"
         />
       </fieldset>
     ),

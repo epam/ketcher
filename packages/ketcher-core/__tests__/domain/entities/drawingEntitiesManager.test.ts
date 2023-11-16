@@ -65,6 +65,7 @@ describe('Drawing Entities Manager', () => {
       drawingEntitiesManager.intendToFinishBondCreation(
         secondPeptide,
         polymerBond,
+        true,
       ).operations;
 
     expect(resultingOperations).toHaveLength(2);

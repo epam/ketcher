@@ -22,9 +22,8 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
 
   private freeSectorsList: number[] = sectorsList;
 
-  private attachmentPointElements:
-    | D3SvgElementSelection<SVGGElement, void>[]
-    | [] = [];
+  private attachmentPoints: AttachmentPoint[] | [] = [];
+  private hoveredAttachmenPoint: string | null = null;
 
   private monomerSymbolElement?: SVGUseElement | SVGRectElement;
 
@@ -89,6 +88,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   }
 
   public redrawAttachmentPoints() {
+    this.hoveredAttachmenPoint = null;
     if (!this.rootElement) return;
     if (this.monomer.attachmentPointsVisible) {
       this.removeAttachmentPoints();
@@ -99,11 +99,14 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   }
 
   public drawAttachmentPoints() {
-    // draw used attachment points
+    if (this.attachmentPoints.length) return;
 
+    // draw used attachment points
     this.monomer.usedAttachmentPointsNamesList.forEach((item) => {
-      const [attachmentPointElement, angle] = this.appendAttachmentPoint(item);
-      this.attachmentPointElements.push(attachmentPointElement as never);
+      const attachmentPoint = this.appendAttachmentPoint(item);
+      const angle = attachmentPoint.getAngle();
+
+      this.attachmentPoints.push(attachmentPoint as never);
 
       if (typeof angle === 'number') {
         // remove this sector from list of free sectors
@@ -126,11 +129,11 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
 
       // if this angle is free for unused att point, draw it
       if (this.freeSectorsList.includes(properAngleForFreeAttachmentPoint)) {
-        const [attachmentPointElement, _] = this.appendAttachmentPoint(
+        const attachmentPoint = this.appendAttachmentPoint(
           item,
           properAngleForFreeAttachmentPoint,
         );
-        this.attachmentPointElements.push(attachmentPointElement as never);
+        this.attachmentPoints.push(attachmentPoint as never);
 
         // remove this sector from list
         const newList = this.freeSectorsList.filter((item) => {
@@ -145,11 +148,8 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
 
     unrenderedAtPoints.forEach((item) => {
       const customAngle = this.freeSectorsList.shift();
-      const [attachmentPointElement, _] = this.appendAttachmentPoint(
-        item,
-        customAngle,
-      );
-      this.attachmentPointElements.push(attachmentPointElement as never);
+      const attachmentPoint = this.appendAttachmentPoint(item, customAngle);
+      this.attachmentPoints.push(attachmentPoint as never);
     });
   }
 
@@ -168,22 +168,24 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       this.canvasWrapper,
       AttachmentPointName,
       this.monomer.isAttachmentPointUsed(AttachmentPointName),
-      this.monomer.isAttachmentPointPotentiallyUsed(AttachmentPointName),
+      this.monomer.isAttachmentPointPotentiallyUsed(AttachmentPointName) ||
+        this.hoveredAttachmenPoint === AttachmentPointName,
       customAngle || rotation,
       this.isSnakeBondForAttachmentPoint(AttachmentPointName),
     );
-    const attachmentPointElement = attPointInstance.getElement();
-    const angle = attPointInstance.getAngle();
-
-    return [attachmentPointElement, angle];
+    return attPointInstance;
   }
 
   public removeAttachmentPoints() {
-    this.attachmentPointElements.forEach((item) => {
-      item.remove();
+    this.attachmentPoints.forEach((item) => {
+      item.removeAttachmentPoint();
     });
-    this.attachmentPointElements = [];
+    this.attachmentPoints = [];
     this.freeSectorsList = sectorsList;
+  }
+
+  public hoverAttachmenPoint(attachmentPointName: string) {
+    this.hoveredAttachmenPoint = attachmentPointName;
   }
 
   private appendRootElement(

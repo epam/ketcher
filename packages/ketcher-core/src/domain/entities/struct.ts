@@ -984,7 +984,8 @@ export class Struct {
         (atom.label === 'O' && charge === 0) ||
         (atom.label === 'N' && charge === 0 && conn === 3) ||
         (atom.label === 'N' && charge === 1 && conn === 3) ||
-        (atom.label === 'S' && charge === 0 && conn === 3)
+        (atom.label === 'S' && charge === 0 && conn === 3) ||
+        !atom.implicitH
       ) {
         atom.implicitH = 0;
         return;

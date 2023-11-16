@@ -31,6 +31,11 @@ test.describe('Macromolecules default presets', () => {
     await page.click('[data-testid="G_G_R_P"]');
 
     await page.click('#polymer-editor-canvas');
+
+    // Get rid of flakiness because of preview
+    const coords = { x: 100, y: 100 };
+    await page.mouse.move(coords.x, coords.y);
+
     await takeEditorScreenshot(page);
   });
 });

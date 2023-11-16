@@ -158,7 +158,7 @@ class RnaPresetTool implements Tool {
     }
 
     const [Sugar, SugarRenderer] = monomerFactory(this.sugar);
-    this.sugarPreview = new Sugar(this.sugar);
+    this.sugarPreview = new Sugar(this.sugar) as Sugar;
 
     this.sugarPreviewRenderer = new SugarRenderer(
       this.sugarPreview,
@@ -181,7 +181,7 @@ class RnaPresetTool implements Tool {
     if (this.phosphate) {
       const [Phosphate, PhosphateRenderer] = monomerFactory(this.phosphate);
 
-      this.phosphatePreview = new Phosphate(this.phosphate);
+      this.phosphatePreview = new Phosphate(this.phosphate) as Phosphate;
 
       this.phosphatePreviewRenderer = new PhosphateRenderer(
         this.phosphatePreview,

@@ -23,6 +23,14 @@ interface ToolEventHandler {
 
   mouseOverMonomer?(event: Event): void;
 
+  mouseOverAttachmentPoint?(event: Event): void;
+
+  mouseLeaveAttachmentPoint?(event: Event): void;
+
+  mouseUpAttachmentPoint?(event: Event): void;
+
+  mouseDownAttachmentPoint?(event: Event): void;
+
   mouseOnMoveMonomer?(event: Event): void;
 
   mouseLeaveMonomer?(event: Event): void;

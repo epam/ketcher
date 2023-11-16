@@ -19,6 +19,10 @@ export abstract class BaseMonomer extends DrawingEntity {
     R1: null,
   };
 
+  public chosenFirstAttachmentPointForBond: string | null;
+  public potentialSecondAttachmentPointForBond: string | null;
+  public chosenSecondAttachmentPointForBond: string | null;
+
   public potentialAttachmentPointsToBonds: {
     [key: string]: PolymerBond | null | undefined;
   } = {
@@ -33,6 +37,9 @@ export abstract class BaseMonomer extends DrawingEntity {
     this.monomerItem = { ...monomerItem };
     this.attachmentPointsToBonds = this.getAttachmentPointDict();
     this.potentialAttachmentPointsToBonds = this.getAttachmentPointDict();
+    this.chosenFirstAttachmentPointForBond = null;
+    this.potentialSecondAttachmentPointForBond = null;
+    this.chosenSecondAttachmentPointForBond = null;
     this.monomerItem.attachmentPoints =
       this.monomerItem.attachmentPoints ||
       this.getMonomerDefinitionAttachmentPoints();
@@ -59,6 +66,18 @@ export abstract class BaseMonomer extends DrawingEntity {
 
   public turnOffAttachmentPointsVisibility() {
     this.attachmentPointsVisible = false;
+  }
+
+  public setChosenFirstAttachmentPoint(attachmentPoint: string) {
+    this.chosenFirstAttachmentPointForBond = attachmentPoint;
+  }
+
+  public setChosenSecondAttachmentPoint(attachmentPoint: string) {
+    this.chosenSecondAttachmentPointForBond = attachmentPoint;
+  }
+
+  public setPotentialSecondAttachmentPoint(attachmentPoint: string | null) {
+    this.potentialSecondAttachmentPointForBond = attachmentPoint;
   }
 
   public setPotentialBond(
@@ -185,17 +204,38 @@ export abstract class BaseMonomer extends DrawingEntity {
     return hasBonds;
   }
 
+  public hasPotentialBonds() {
+    return Object.values(this.potentialAttachmentPointsToBonds).some(
+      (bond) => !!bond,
+    );
+  }
+
   public getPotentialBond(attachmentPointName: string) {
     return this.potentialAttachmentPointsToBonds[attachmentPointName];
   }
 
-  public removePotentialBonds() {
+  public removeBond(polymerBond: PolymerBond) {
+    const attachmentPointName = this.getAttachmentPointByBond(polymerBond);
+    if (!attachmentPointName) return;
+    this.unsetBond(attachmentPointName);
+  }
+
+  public removePotentialBonds(clearSelectedPoints = false) {
+    if (clearSelectedPoints) {
+      this.chosenFirstAttachmentPointForBond = null;
+      this.chosenSecondAttachmentPointForBond = null;
+      this.potentialSecondAttachmentPointForBond = null;
+    }
+
     for (const attachmentPointName in this.potentialAttachmentPointsToBonds) {
       this.potentialAttachmentPointsToBonds[attachmentPointName] = null;
     }
   }
 
   public get availableAttachmentPointForBondEnd() {
+    if (this.chosenSecondAttachmentPointForBond) {
+      return this.chosenSecondAttachmentPointForBond;
+    }
     return this.firstFreeAttachmentPoint;
   }
 
@@ -223,6 +263,9 @@ export abstract class BaseMonomer extends DrawingEntity {
       ) {
         list.push(attachmentPointName);
       }
+    }
+    if (this.chosenFirstAttachmentPointForBond !== null) {
+      list.push(this.chosenFirstAttachmentPointForBond);
     }
     return list;
   }
@@ -352,6 +395,9 @@ export abstract class BaseMonomer extends DrawingEntity {
   }
 
   public get startBondAttachmentPoint() {
+    if (this.chosenFirstAttachmentPointForBond) {
+      return this.chosenFirstAttachmentPointForBond;
+    }
     if (this.attachmentPointsToBonds.R2 === null) {
       return 'R2';
     }

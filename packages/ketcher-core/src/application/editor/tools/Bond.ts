@@ -38,6 +38,18 @@ class PolymerBond implements BaseTool {
     this.history = new EditorHistory(this.editor); // здесь история пишется
   }
 
+  public mouseDownAttachmentPoint(event) {
+    const selectedRenderer = event.target.__data__;
+    if (
+      selectedRenderer instanceof BaseMonomerRenderer &&
+      !selectedRenderer.monomer.isAttachmentPointUsed(event.attachmentPointName)
+    ) {
+      selectedRenderer.monomer.setChosenFirstAttachmentPoint(
+        event.attachmentPointName,
+      );
+    }
+  }
+
   private removeBond(): void {
     if (this.bondRenderer) {
       const modelChanges =
@@ -111,15 +123,57 @@ class PolymerBond implements BaseTool {
     let modelChanges;
 
     if (this.bondRenderer) {
+      // Don't need to do anything if we hover over the first monomer of the bond
+      if (this.bondRenderer?.polymerBond.firstMonomer === renderer.monomer) {
+        return;
+      }
+      const shouldCalculateBonds = !this.shouldInvokeModal(
+        this.bondRenderer?.polymerBond.firstMonomer,
+        renderer.monomer,
+        false,
+      );
       modelChanges =
         this.editor.drawingEntitiesManager.intendToFinishBondCreation(
           renderer.monomer,
           this.bondRenderer?.polymerBond,
+          shouldCalculateBonds,
         );
     } else {
       modelChanges =
         this.editor.drawingEntitiesManager.intendToStartBondCreation(
           renderer.monomer,
+        );
+    }
+
+    this.editor.renderersContainer.update(modelChanges);
+  }
+
+  public mouseOverAttachmentPoint(event) {
+    const renderer: BaseMonomerRenderer = event.target.__data__;
+    let modelChanges;
+
+    if (this.bondRenderer) {
+      // Don't need to do anything if we hover over the first monomer of the bond
+      if (this.bondRenderer?.polymerBond.firstMonomer === renderer.monomer) {
+        return;
+      }
+      const shouldCalculateBonds = !this.shouldInvokeModal(
+        this.bondRenderer?.polymerBond.firstMonomer,
+        renderer.monomer,
+        false,
+      );
+      modelChanges =
+        this.editor.drawingEntitiesManager.intendToFinishAttachmenPointBondCreation(
+          renderer.monomer,
+          this.bondRenderer?.polymerBond,
+          event.attachmentPointName,
+          shouldCalculateBonds,
+        );
+    } else {
+      modelChanges =
+        this.editor.drawingEntitiesManager.intendToStartAttachmenPointBondCreation(
+          renderer.monomer,
+          event.attachmentPointName,
         );
     }
 
@@ -138,6 +192,68 @@ class PolymerBond implements BaseTool {
           this.bondRenderer?.polymerBond,
         );
       this.editor.renderersContainer.update(modelChanges);
+    }
+  }
+
+  public mouseLeaveAttachmentPoint(event) {
+    const renderer: BaseMonomerRenderer = event.target.__data__;
+    if (renderer !== this.bondRenderer?.polymerBond?.firstMonomer?.renderer) {
+      const modelChanges =
+        this.editor.drawingEntitiesManager.cancelIntentionToFinishBondCreation(
+          renderer.monomer,
+          this.bondRenderer?.polymerBond,
+        );
+      this.editor.renderersContainer.update(modelChanges);
+    }
+  }
+
+  public mouseUpAttachmentPoint(event) {
+    const renderer = event.toElement.__data__;
+    const isFirstMonomerHovered =
+      renderer === this.bondRenderer?.polymerBond?.firstMonomer?.renderer;
+
+    if (this.bondRenderer && !isFirstMonomerHovered) {
+      const firstMonomer = this.bondRenderer?.polymerBond?.firstMonomer;
+      const secondMonomer = renderer.monomer;
+
+      if (secondMonomer.isAttachmentPointUsed(event.attachmentPointName)) {
+        this.mouseup();
+        return;
+      }
+
+      for (const attachmentPoint in secondMonomer.attachmentPointsToBonds) {
+        const bond = secondMonomer.attachmentPointsToBonds[attachmentPoint];
+        if (!bond) {
+          continue;
+        }
+        const alreadyHasBond =
+          (bond.firstMonomer === firstMonomer &&
+            bond.secondMonomer === secondMonomer) ||
+          (bond.firstMonomer === secondMonomer &&
+            bond.secondMonomer === firstMonomer);
+        if (alreadyHasBond) {
+          this.editor.events.error.dispatch(
+            "There can't be more than 1 bond between the first and the second monomer",
+          );
+          return;
+        }
+      }
+      secondMonomer.setChosenSecondAttachmentPoint(event.attachmentPointName);
+      const showModal = this.shouldInvokeModal(firstMonomer, secondMonomer);
+      if (showModal) {
+        this.isBondConnectionModalOpen = true;
+
+        this.editor.events.openMonomerConnectionModal.dispatch({
+          firstMonomer,
+          secondMonomer,
+        });
+        return;
+      }
+
+      const modelChanges = this.finishBondCreation(renderer.monomer);
+      this.editor.renderersContainer.update(modelChanges);
+      this.bondRenderer = undefined;
+      event.stopPropagation();
     }
   }
 
@@ -270,6 +386,7 @@ class PolymerBond implements BaseTool {
         this.bondRenderer.polymerBond,
       );
     this.editor.renderersContainer.update(modelChanges);
+    this.isBondConnectionModalOpen = false;
     this.bondRenderer = undefined;
   };
 
@@ -280,17 +397,34 @@ class PolymerBond implements BaseTool {
   private shouldInvokeModal(
     firstMonomer: BaseMonomer,
     secondMonomer: BaseMonomer,
+    checkForPotentialBonds = true,
   ) {
+    // No Modal: no free attachment point on second monomer
+    if (!secondMonomer.hasFreeAttachmentPoint) {
+      return false;
+    }
+
+    // No Modal: Both monomers have APs selected
+    if (
+      firstMonomer.chosenFirstAttachmentPointForBond !== null &&
+      secondMonomer.chosenSecondAttachmentPointForBond !== null
+    ) {
+      return false;
+    }
+
+    // Modal: either of the monomers doesn't have any potential APs
+    if (
+      checkForPotentialBonds &&
+      (!firstMonomer.hasPotentialBonds() || !secondMonomer.hasPotentialBonds())
+    ) {
+      return true;
+    }
+
     // No Modal: Both monomers have only 1 attachment point
     if (
       firstMonomer.unUsedAttachmentPointsNamesList.length === 1 &&
       secondMonomer.unUsedAttachmentPointsNamesList.length === 1
     ) {
-      return false;
-    }
-
-    // No Modal: no free attachment point on second monomer
-    if (!secondMonomer.hasFreeAttachmentPoint) {
       return false;
     }
 

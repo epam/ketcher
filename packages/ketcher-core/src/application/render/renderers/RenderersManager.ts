@@ -67,6 +67,10 @@ export class RenderersManager {
     polymerBond.renderer?.moveStart();
     polymerBond.renderer?.moveEnd();
     polymerBond.renderer?.drawSelection();
+    // If we started bond from the specific AP, it needs to be redrawn to face the bond direction
+    if (polymerBond.firstMonomer.chosenFirstAttachmentPointForBond) {
+      polymerBond.firstMonomer.renderer?.redrawAttachmentPoints();
+    }
   }
 
   public showPolymerBondInformation(polymerBond) {
@@ -108,6 +112,12 @@ export class RenderersManager {
     if (needRedrawAttachmentPoints) {
       monomer.renderer?.redrawAttachmentPoints();
     }
+  }
+
+  public hoverAttachmentPoint(monomer, attachmentPointName) {
+    this.hoverDrawingEntity(monomer as DrawingEntity);
+    monomer.renderer?.hoverAttachmenPoint(attachmentPointName);
+    monomer.renderer?.drawAttachmentPoints();
   }
 
   public update(modelChanges: Command) {

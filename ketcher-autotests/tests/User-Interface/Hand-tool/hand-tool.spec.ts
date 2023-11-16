@@ -61,11 +61,11 @@ test.describe('Hand tool', () => {
     await selectLeftPanelButton(LeftPanelButton.HandTool, page);
     await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
     await page.mouse.move(point.x, point.y);
-    // await moveMouseToTheMiddleOfTheScreen(page);
-    // await clickInTheMiddleOfTheScreen(page);
   });
 
   test('Able to scroll canvas down and to the right', async ({ page }) => {
+    //Test case: EPMLSOPKET-8937
+    // Verify posibility to move cnvas down and to the right 
     await openFileAndAddToCanvas('KET/chain-with-atoms.ket', page);  
     await selectLeftPanelButton(LeftPanelButton.HandTool, page);
     await mouseMovement(page, {x:300, y:50});

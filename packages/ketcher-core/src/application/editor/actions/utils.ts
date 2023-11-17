@@ -50,7 +50,7 @@ export function findStereoAtoms(struct, aids: number[] | undefined): number[] {
     return [] as number[]
   }
 
-  return aids.filter((aid) => struct.atoms.get(aid).stereoLabel !== null)
+  return aids.filter((aid) => struct.atoms.get(aid)?.stereoLabel != null)
 }
 
 export function structSelection(struct) {

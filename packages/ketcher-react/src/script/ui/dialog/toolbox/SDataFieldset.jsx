@@ -64,6 +64,7 @@ function SDataFieldset({ formState }) {
         name="context"
         options={getSelectOptionsFromSchema(formSchema.properties.context)}
         component={Select}
+        data-testid="context"
       />
       <Field name="fieldName" placeholder="Enter name" />
       {content(

@@ -145,7 +145,7 @@ test.describe('R-Group Label Tool', () => {
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
     await page.mouse.click(x, y);
 
-    await pressButton(page, 'Data');
+    await page.getByTestId('s-group-type-input-span').click();
     await page.getByRole('option', { name: 'Multiple group' }).click();
     await page.getByLabel('Repeat count').click();
     await page.getByLabel('Repeat count').fill('1');

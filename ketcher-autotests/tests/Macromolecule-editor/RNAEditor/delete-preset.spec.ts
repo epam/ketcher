@@ -1,4 +1,4 @@
-import { Page, test } from '@playwright/test';
+import { Page, test, expect } from '@playwright/test';
 import { RNA_TAB } from '@constants/testIdConstants';
 import { waitForPageInit } from '@utils/common';
 import { takePageScreenshot } from '@utils';
@@ -17,12 +17,9 @@ test.describe('Macromolecules delete RNA presets', () => {
     await gotoRNA(page);
   });
 
-  test.afterEach(async ({ page }) => {
-    await takePageScreenshot(page);
-  });
-
   test('Should not delete default RNA preset', async ({ page }) => {
     await page.getByTestId('A_A_R_P').click({ button: 'right' });
+    await takePageScreenshot(page);
   });
 
   test('Delete copy RNA preset', async ({ page }) => {
@@ -31,12 +28,13 @@ test.describe('Macromolecules delete RNA presets', () => {
     await page.getByTestId('duplicateandedit').click();
     await page.getByTestId('save-btn').click();
 
-    await page.getByTestId('A_Copy_A_R_P').click({ button: 'right' });
+    const createdPreset = page.getByTestId('A_Copy_A_R_P');
+    await expect(createdPreset).toBeVisible();
 
+    await createdPreset.click({ button: 'right' });
     await page.getByTestId('deletepreset').click();
+    await page.getByRole('button', { name: 'Delete' }).click();
 
-    await takePageScreenshot(page);
-
-    await page.getByTitle('Delete').click();
+    await expect(createdPreset).not.toBeVisible();
   });
 });

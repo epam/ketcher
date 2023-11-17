@@ -72,7 +72,7 @@ export async function selectRingBondCount(
   await page
     .locator('label')
     .filter({ hasText: 'Ring bond count' })
-    .getByRole('button', { name: '​' })
+    .getByRole('combobox', { name: '​' })
     .click();
   await page.getByRole('option', { name: ringbondcount }).click();
   await pressButton(page, button);
@@ -83,7 +83,7 @@ export async function selectHCount(page: Page, hcount: string, button: string) {
   await page
     .locator('label')
     .filter({ hasText: 'H count', hasNotText: 'Implicit H count' })
-    .getByRole('button', { name: '​' })
+    .getByRole('combobox', { name: '​' })
     .click();
   await page.getByRole('option', { name: hcount }).click();
   await pressButton(page, button);
@@ -98,7 +98,7 @@ export async function selectSubstitutionCount(
   await page
     .locator('label')
     .filter({ hasText: 'Substitution count' })
-    .getByRole('button', { name: '​' })
+    .getByRole('combobox', { name: '​' })
     .click();
   await page.getByRole('option', { name: substitutioncount }).click();
   await pressButton(page, button);
@@ -119,7 +119,7 @@ export async function selectReactionFlagsInversion(
   await page
     .locator('label')
     .filter({ hasText: 'Inversion' })
-    .getByRole('button', { name: '​' })
+    .getByRole('combobox', { name: '​' })
     .click();
   await page.getByRole('option', { name: inversion }).click();
   if (finalizationButtonName) {
@@ -212,7 +212,6 @@ export async function selectUnsaturatedOption(
   page: Page,
   atomIndex: number,
   selectedOption: string,
-  useExact: boolean,
 ) {
   await clickOnAtom(page, 'C', atomIndex, 'right');
   await page.getByText('Query properties').click();
@@ -221,19 +220,7 @@ export async function selectUnsaturatedOption(
     .filter({ hasText: /^Unsaturated$/ })
     .click();
 
-  if (selectedOption === 'Saturated') {
-    await page
-      .getByRole('button', {
-        name: 'Saturated',
-        exact: true,
-      })
-      .click();
-  } else {
-    await page
-      .getByRole('button', { name: selectedOption, exact: useExact })
-      .click();
-  }
-
+  await page.getByTestId(`${selectedOption}-option`).click();
   await resetCurrentTool(page);
 }
 
@@ -256,12 +243,12 @@ export async function selectImplicitHCountOption(
 export async function selectAromaticityOption(
   page: Page,
   atomIndex: number,
-  optionIndex: string,
+  optionName: string,
 ) {
   await clickOnAtom(page, 'C', atomIndex, 'right');
   await page.getByText('Query properties').click();
   await page.getByText('Aromaticity', { exact: true }).click();
-  await page.getByRole('button', { name: optionIndex }).click();
+  await page.getByText(optionName, { exact: true }).click();
   await resetCurrentTool(page);
 }
 

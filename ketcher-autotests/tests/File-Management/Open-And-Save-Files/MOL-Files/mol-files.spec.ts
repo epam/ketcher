@@ -66,6 +66,8 @@ test('Open and Save file - Open/Save V3000 file with atom and bond properties 1/
 test('Open and Save file - Open/Save V3000 file with atom and bond properties 2/2 - save', async ({
   page,
 }) => {
+  // fails while Indigo loses valence in MolFiles
+  test.fail();
   /**
    * Test case: EPMLSOPKET-1857(2)
    * Description: Strucrute with atom and bond properties is opened and saved correctly

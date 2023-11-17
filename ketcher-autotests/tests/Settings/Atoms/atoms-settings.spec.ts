@@ -21,7 +21,7 @@ async function setHydrogenLabelsOn(page: Page) {
   await selectTopPanelButton(TopPanelButton.Settings, page);
   await page.getByText('Atoms', { exact: true }).click();
   await scrollSettingBar(page, DEFAULT_SCROLLBAR_DELAY);
-  await page.getByRole('button', { name: 'Terminal and Hetero' }).click();
+  await page.getByTestId('show-hydrogen-labels-input-span').click();
   await page.getByTestId('On-option').click();
   await pressButton(page, 'Apply');
 }

@@ -328,6 +328,7 @@ const SelectOneOf = (props) => {
       title={title}
       {...prop}
       component={Select}
+      data-testid={props['data-testid']}
     />
   );
 };

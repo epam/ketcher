@@ -14,14 +14,20 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { KetcherLogger } from 'ketcher-core';
-import { KETCHER_SAVED_SETTINGS_KEY } from 'src/constants';
+import { KetcherLogger } from './KetcherLogger';
+
+const KETCHER_SAVED_SETTINGS_KEY = 'ketcher_editor_saved_settings';
 
 interface SavedSettings {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   selectionTool?: any;
+  ignoreChiralFlag?: boolean;
+  disableCustomQuery?: boolean;
 }
 
 export class SettingsManager {
+  static _disableCustomQuery?: boolean;
+
   static getSettings(): SavedSettings {
     try {
       return JSON.parse(
@@ -45,7 +51,6 @@ export class SettingsManager {
 
   static get selectionTool() {
     const { selectionTool } = this.getSettings();
-
     return selectionTool;
   }
 
@@ -55,6 +60,28 @@ export class SettingsManager {
     this.saveSettings({
       ...settings,
       selectionTool,
+    });
+  }
+
+  static get disableCustomQuery() {
+    return this._disableCustomQuery;
+  }
+
+  static set disableCustomQuery(disableCustomQuery: boolean | undefined) {
+    this._disableCustomQuery = disableCustomQuery;
+  }
+
+  static get ignoreChiralFlag() {
+    const { ignoreChiralFlag } = this.getSettings();
+    return ignoreChiralFlag;
+  }
+
+  static set ignoreChiralFlag(ignoreChiralFlag: boolean | undefined) {
+    const settings = this.getSettings();
+
+    this.saveSettings({
+      ...settings,
+      ignoreChiralFlag,
     });
   }
 }

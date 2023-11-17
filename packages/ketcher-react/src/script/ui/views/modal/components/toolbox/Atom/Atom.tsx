@@ -23,7 +23,11 @@ import Form, {
 import { FC, useMemo, useState } from 'react';
 
 import { Dialog } from '../../../../components';
-import { AtomAllAttributeName, getAtomCustomQuery } from 'ketcher-core';
+import {
+  AtomAllAttributeName,
+  SettingsManager,
+  getAtomCustomQuery,
+} from 'ketcher-core';
 import { atom as atomSchema } from '../../../../../data/schema/struct-schema';
 import classes from './Atom.module.less';
 import Select from '../../../../../component/form/Select';
@@ -204,6 +208,8 @@ const Atom: FC<Props> = (props: Props) => {
     },
   ];
 
+  console.log(SettingsManager.disableCustomQuery);
+
   return (
     <Dialog
       title="Atom Properties"
@@ -253,17 +259,19 @@ const Atom: FC<Props> = (props: Props) => {
               </div>
             );
           })}
-          <div className={classes.customQueryWrapper}>
-            <CustomQueryField
-              name="customQuery"
-              labelPos="after"
-              className={classes.checkbox}
-              disabled={!isCustomQuery}
-              checkboxValue={isCustomQuery}
-              onCheckboxChange={handleCustomQueryCheckBoxChange}
-              data-testid="atom-custom-query"
-            />
-          </div>
+          {!SettingsManager.disableCustomQuery && (
+            <div className={classes.customQueryWrapper}>
+              <CustomQueryField
+                name="customQuery"
+                labelPos="after"
+                className={classes.checkbox}
+                disabled={!isCustomQuery}
+                checkboxValue={isCustomQuery}
+                onCheckboxChange={handleCustomQueryCheckBoxChange}
+                data-testid="atom-custom-query"
+              />
+            </div>
+          )}
         </div>
       </Form>
     </Dialog>

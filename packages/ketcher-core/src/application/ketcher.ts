@@ -27,7 +27,12 @@ import { KetSerializer, MolfileFormat } from 'domain/serializers';
 import { Struct } from 'domain/entities';
 import assert from 'assert';
 import { EventEmitter } from 'events';
-import { LogSettings, LogLevel, runAsyncAction } from 'utilities';
+import {
+  LogSettings,
+  LogLevel,
+  runAsyncAction,
+  SettingsManager,
+} from 'utilities';
 import { getStructure } from './utils';
 
 const allowedApiSettings = {
@@ -136,7 +141,7 @@ export class Ketcher {
     return result;
   }
 
-  // TODO: create optoions type
+  // TODO: create options type
   setSettings(settings: Record<string, string>) {
     // TODO: need to expand this and refactor this method
     if (!settings) {
@@ -147,6 +152,10 @@ export class Ketcher {
       allowedApiSettings,
     )) {
       options[clientSetting] = settings[apiSetting];
+    }
+
+    if (Object.hasOwn(settings, 'disableCustomQuery')) {
+      SettingsManager.disableCustomQuery = !!settings.disableCustomQuery;
     }
 
     return this.#editor.setOptions(JSON.stringify(options));

@@ -65,7 +65,7 @@ export const RnaEditor = ({ duplicatePreset, activateEditMode }) => {
     dispatch(setIsEditModeAction(value));
   };
 
-  const [expanded, setExpanded] = useState(activePreset?.name || isEditMode);
+  const [expanded, setExpanded] = useState(!!activePreset?.name || isEditMode);
 
   useEffect(() => {
     if (!hasPresets) {

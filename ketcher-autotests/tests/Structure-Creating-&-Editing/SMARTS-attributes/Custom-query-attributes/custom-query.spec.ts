@@ -11,8 +11,6 @@ import {
 } from '@utils';
 import { checkSmartsValue, setCustomQuery } from '../utils';
 
-const defaultFileFormat = 'MDL Molfile V2000';
-
 async function drawStructure(page: Page) {
   await selectBond(BondTypeName.Single, page);
   await clickInTheMiddleOfTheScreen(page);

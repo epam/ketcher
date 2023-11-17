@@ -72,13 +72,9 @@ test.describe('Floating windows', () => {
     */
     await openFileAndAddToCanvas('Molfiles-V2000/bicycle.mol', page);
     await selectTopPanelButton(TopPanelButton.Calculated, page);
-    await page
-      .getByRole('listitem')
-      .filter({ hasText: 'Molecular Weight:Decimal places3' })
-      .getByRole('button', { name: '3' })
-      .click();
+    await page.getByTestId('Molecular Weight-select').click();
     await page.getByRole('option', { name: '0' }).click();
-    await page.getByRole('button', { name: '3', exact: true }).click();
+    await page.getByTestId('Exact Mass-select').click();
     await page.getByRole('option', { name: '0' }).click();
   });
 
@@ -89,13 +85,9 @@ test.describe('Floating windows', () => {
     */
     await openFileAndAddToCanvas('Molfiles-V2000/bicycle.mol', page);
     await selectTopPanelButton(TopPanelButton.Calculated, page);
-    await page
-      .getByRole('listitem')
-      .filter({ hasText: 'Molecular Weight:Decimal places3' })
-      .getByRole('button', { name: '3' })
-      .click();
+    await page.getByTestId('Molecular Weight-select').click();
     await page.getByRole('option', { name: '7' }).click();
-    await page.getByRole('button', { name: '3', exact: true }).click();
+    await page.getByTestId('Exact Mass-select').click();
     await page.getByRole('option', { name: '7' }).click();
   });
 

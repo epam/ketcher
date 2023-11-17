@@ -21,4 +21,5 @@ export interface GroupProps {
 export type MenuProps = {
   onItemClick: (itemKey: string) => void;
   activeMenuItems?: string[];
+  testId?: string;
 };

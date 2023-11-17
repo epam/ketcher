@@ -24,7 +24,6 @@ import {
   screenshotBetweenUndoRedo,
   saveToFile,
   waitForPageInit,
-  doubleClickOnBond,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getCml, getMolfile } from '@utils/formats';
@@ -35,12 +34,11 @@ const CANVAS_CLICK_Y = 600;
 async function editSGroupProperties(
   page: Page,
   text: string,
-  type: string,
   context: string,
   testValue: string,
 ) {
   await page.getByText(text).dblclick();
-  await pressButton(page, type);
+  await page.getByTestId('s-group-type-input-span').click();
   await page.getByRole('option', { name: context }).click();
   await page.getByLabel('Repeat count').click();
   await page.getByLabel('Repeat count').fill(testValue);
@@ -49,7 +47,6 @@ async function editSGroupProperties(
 
 async function selectSGroupProperties(
   page: Page,
-  contextName: string,
   optionName: string,
   fieldName: string,
   fieldValue: string,
@@ -57,7 +54,8 @@ async function selectSGroupProperties(
 ) {
   await page.keyboard.press('Control+a');
   await selectLeftPanelButton(LeftPanelButton.S_Group, page);
-  await pressButton(page, contextName);
+  await page.getByTestId('context-input-span').click();
+  // await pressButton(page, contextName);
   await page.getByRole('option', { name: optionName }).click();
   await page.getByPlaceholder('Enter name').fill(fieldName);
   await page.getByPlaceholder('Enter value').fill(fieldValue);
@@ -132,7 +130,7 @@ test.describe('Data S-Group tool', () => {
       Description: User is able to edit the Data S-group.
     */
     await openFileAndAddToCanvas('KET/chain-with-name-and-value.ket', page);
-    await editSGroupProperties(page, '33', 'Data', 'Multiple group', '1');
+    await editSGroupProperties(page, '33', 'Multiple group', '1');
   });
 
   test('Copy/Paste structure with S-Group', async ({ page }) => {
@@ -173,7 +171,7 @@ test.describe('Data S-Group tool', () => {
       });
     expect(molFile).toEqual(molFileExpected);
 
-    await editSGroupProperties(page, '33', 'Data', 'Multiple group', '8');
+    await editSGroupProperties(page, '33', 'Multiple group', '8');
   });
 
   test('Add Data S-Group to atoms of Chain', async ({ page }) => {
@@ -182,14 +180,7 @@ test.describe('Data S-Group tool', () => {
       Description: Data S-Group added to all atoms of Chain
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
-    await selectSGroupProperties(
-      page,
-      'Fragment',
-      'Atom',
-      'Test',
-      '8',
-      'Absolute',
-    );
+    await selectSGroupProperties(page, 'Atom', 'Test', '8', 'Absolute');
   });
 
   test('Add Data S-Group to bonds of Chain', async ({ page }) => {
@@ -198,14 +189,7 @@ test.describe('Data S-Group tool', () => {
       Description: Data S-Group added to all bonds of Chain
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
-    await selectSGroupProperties(
-      page,
-      'Fragment',
-      'Atom',
-      'Test',
-      '8',
-      'Absolute',
-    );
+    await selectSGroupProperties(page, 'Atom', 'Test', '8', 'Absolute');
   });
 
   test('Add Data S-Group Group context to Chain', async ({ page }) => {
@@ -216,7 +200,6 @@ test.describe('Data S-Group tool', () => {
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectSGroupProperties(
       page,
-      'Fragment',
       'Group',
       'T@#qwer123',
       'Qw@!23#$%',
@@ -232,7 +215,6 @@ test.describe('Data S-Group tool', () => {
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectSGroupProperties(
       page,
-      'Fragment',
       'Multifragment',
       'T@#qwer123',
       'Qw@!23#$%',
@@ -248,7 +230,6 @@ test.describe('Data S-Group tool', () => {
     await openFileAndAddToCanvas('KET/reaction-with-arrow-and-plus.ket', page);
     await selectSGroupProperties(
       page,
-      'Fragment',
       'Multifragment',
       'T@#qwer123',
       'Qw@!23#$%',
@@ -267,7 +248,6 @@ test.describe('Data S-Group tool', () => {
     await openFileAndAddToCanvas('KET/reaction-with-arrow-and-plus.ket', page);
     await selectSGroupProperties(
       page,
-      'Fragment',
       'Multifragment',
       'T@#qwer123',
       '8',
@@ -284,7 +264,6 @@ test.describe('Data S-Group tool', () => {
     await openFileAndAddToCanvas('KET/chain-with-name-and-value.ket', page);
     await selectSGroupProperties(
       page,
-      'Fragment',
       'Multifragment',
       'T@#qwer123',
       '8',
@@ -443,12 +422,11 @@ test.describe('Data S-Group tool', () => {
       With 'Selection tool' hover over created S-Group
     */
     await openFileAndAddToCanvas('KET/benzene-with-data-s-group.ket', page);
-    await clickInTheMiddleOfTheScreen(page);
-    await doubleClickOnBond(page, BondType.SINGLE, 0);
-    await page.getByPlaceholder('Enter name').click();
-    await page.getByPlaceholder('Enter name').fill('Ar');
-    await page.getByPlaceholder('Enter value').click();
-    await page.getByPlaceholder('Enter value').fill('Testing');
-    await page.getByTestId('OK').click();
+    await page.keyboard.press('Control+a');
+    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await fillFieldByPlaceholder(page, 'Enter name', 'TrustName');
+    await fillFieldByPlaceholder(page, 'Enter value', '88');
+    await pressButton(page, 'Apply');
+    await page.getByTestId('canvas').hover();
   });
 });

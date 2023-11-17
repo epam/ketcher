@@ -3,7 +3,10 @@ import {
   MACROMOLECULES_MODE,
   POLYMER_TOGGLER,
 } from '@constants/testIdConstants';
-import { moveMouseToTheMiddleOfTheScreen } from '@utils';
+import {
+  moveMouseToTheMiddleOfTheScreen,
+  waitForSpinnerFinishedWork,
+} from '@utils';
 
 export async function turnOnMacromoleculesEditor(page: Page) {
   await expect(page.getByTestId(POLYMER_TOGGLER)).toBeVisible();
@@ -24,4 +27,14 @@ export async function scrollWithMouseWheel(page: Page, zoomLevelDelta: number) {
   await page.keyboard.down('Control');
   await page.mouse.wheel(0, zoomLevelDelta);
   await page.keyboard.up('Control');
+}
+
+export async function chooseFileFormat(
+  page: Page,
+  fileFomat: 'Ket' | 'MDL Molfile V3000',
+) {
+  await page.getByTestId('dropdown-select').click();
+  await waitForSpinnerFinishedWork(page, async () => {
+    await page.getByRole('option', { name: fileFomat }).click();
+  });
 }

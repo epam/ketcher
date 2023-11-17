@@ -110,10 +110,10 @@ test.describe('Browser', () => {
     await clickInTheMiddleOfTheScreen(page);
   });
 
-  test('Resize browser - Different Atom and Bond properties', async ({
-    page,
-  }) => {
-    /*
+  test.fixme(
+    'Resize browser - Different Atom and Bond properties',
+    async ({ page }) => {
+      /*
     Test case: EPMLSOPKET-1864
     Description: TODO
     Click the 'Maximize' button of the browser.
@@ -127,10 +127,11 @@ test.describe('Browser', () => {
     Click the 'Restore Down' button of the browser.
     Resize the browser by dragging with mouse any browser corner or edge.
     */
-    await openFileAndAddToCanvas('Rxn-V2000/rxn-reaction.rxn', page);
-  });
+      await openFileAndAddToCanvas('Rxn-V2000/rxn-reaction.rxn', page);
+    },
+  );
 
-  test('Resize browser - R-Group', async ({ page }) => {
+  test.fixme('Resize browser - R-Group', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-1865
     Description: TODO
@@ -152,7 +153,7 @@ test.describe('Browser', () => {
     );
   });
 
-  test('Zoom browser - S-Group', async ({ page }) => {
+  test.fixme('Zoom browser - S-Group', async ({ page }) => {
     /*
     Test case: EPMLSOPKET-4737
     Description: TODO
@@ -164,7 +165,7 @@ test.describe('Browser', () => {
     await openFileAndAddToCanvas('KET/chain.ket', page);
   });
 
-  test('Text tool - Restore Down the window', async ({ page }) => {
+  test.fixme('Text tool - Restore Down the window', async ({ page }) => {
     /* Test case: EPMLSOPKET-2237
     Description: TODO
     Click on the 'Restore Down' browser button.

@@ -53,9 +53,7 @@ async function selectRepeatPattern(
   page: Page,
   repeatPattern: SGroupRepeatPattern,
 ) {
-  await page
-    .getByRole('button', { name: SGroupRepeatPattern.HeadToTail })
-    .click();
+  await page.getByTestId('connectivity-input-span').click();
   await page.getByRole('option', { name: repeatPattern }).click();
   await pressButton(page, 'Apply');
 }

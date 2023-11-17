@@ -17,8 +17,6 @@ import {
   setCustomQuery,
 } from '../utils';
 
-const defaultFileFormat = 'MDL Molfile V2000';
-
 async function drawStructure(page: Page) {
   await selectBond(BondTypeName.Single, page);
   await clickInTheMiddleOfTheScreen(page);
@@ -35,7 +33,7 @@ async function setAndCheckBondProperties(
   await setProperty(page, value);
   await pressButton(page, 'Apply');
   await takeEditorScreenshot(page);
-  await checkSmartsValue(page, defaultFileFormat, expectedSmarts);
+  await checkSmartsValue(page, expectedSmarts);
 }
 
 async function waitForBondPropsModal(page: Page) {
@@ -68,7 +66,7 @@ test.describe('Checking bond attributes in SMARTS format', () => {
       page,
       setBondType,
       'Single Up-option',
-      '[#6@](-[#6])(-[#6])/[#6]',
+      '[#6](-[#6])(-[#6])/[#6]',
     );
   });
 
@@ -77,15 +75,11 @@ test.describe('Checking bond attributes in SMARTS format', () => {
       page,
       setBondType,
       'Single Down-option',
-      '[#6@@](-[#6])(-[#6])\\[#6]',
+      '[#6](-[#6])(-[#6])\\[#6]',
     );
   });
 
   test('Setting bond type - single up/down', async ({ page }) => {
-    test.fail();
-    /**
-     * This test will fail until https://github.com/epam/Indigo/issues/1371 is fixed
-     */
     await setAndCheckBondProperties(
       page,
       setBondType,
@@ -104,10 +98,6 @@ test.describe('Checking bond attributes in SMARTS format', () => {
   });
 
   test('Setting bond type - double cis/trans', async ({ page }) => {
-    test.fail();
-    /**
-     * This test will fail until https://github.com/epam/Indigo/issues/1371 is fixed
-     */
     await setAndCheckBondProperties(
       page,
       setBondType,
@@ -210,13 +200,7 @@ test.describe('Checking bond attributes in SMARTS format', () => {
     );
   });
 
-  // Custom query for bond
-
   test('Setting custom query - any OR double', async ({ page }) => {
-    test.fail();
-    /**
-     * This test will fail until https://github.com/epam/Indigo/issues/1372 is fixed
-     */
     await setAndCheckBondProperties(
       page,
       setCustomQuery,

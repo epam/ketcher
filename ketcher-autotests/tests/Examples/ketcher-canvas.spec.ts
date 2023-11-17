@@ -18,6 +18,8 @@ import {
   waitForPageInit,
   clickOnBond,
   BondType,
+  LeftPanelButton,
+  selectLeftPanelButton,
 } from '@utils';
 
 test.describe('Drawing atom, Benzene ring, Single and Double and Triple Bond', () => {
@@ -69,7 +71,7 @@ test.describe('Drawing atom, Benzene ring, Single and Double and Triple Bond', (
     await clickInTheMiddleOfTheScreen(page);
   });
 
-  test('Triple Bond tool - Triple Bond is drawn at the one angles when click on Template and Chain atoms', async ({
+  test('Triple Bond is drawn at the one angles when click on Template and Chain atoms', async ({
     page,
   }) => {
     /* Test case: EPMLSOPKET-11846
@@ -79,8 +81,8 @@ test.describe('Drawing atom, Benzene ring, Single and Double and Triple Bond', (
     */
     await selectNestedTool(page, BondTool.TRIPPLE);
     await clickInTheMiddleOfTheScreen(page);
-    await clickOnAtom(page, 'C', 0);
-    await clickOnAtom(page, 'H', 0);
-    await clickOnBond(page, BondType.TRIPLE, 0);
+    await clickOnAtom(page, 'C', 1);
+    await selectLeftPanelButton(LeftPanelButton.Chain, page);
+    await clickOnBond(page, BondType.TRIPLE, 1);
   });
 });

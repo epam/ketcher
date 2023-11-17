@@ -98,7 +98,7 @@ export const RnaPresetGroup = ({ presets, duplicatePreset, editPreset }) => {
   };
 
   return (
-    <GroupContainer>
+    <GroupContainer data-testid="rna-preset-group">
       <ItemsContainer>
         {presets.map((preset, index) => {
           return (

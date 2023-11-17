@@ -83,7 +83,7 @@ const MonomerList = ({
 
   return (
     <MonomerListContainer>
-      {monomerGroups.length > 0 && <div>Monomers</div>}
+      {isFavoriteTab && monomerGroups.length > 0 && <div>Monomers</div>}
       {monomerGroups.map(({ groupItems, groupTitle }, _index, groups) => {
         return (
           <MonomerGroup

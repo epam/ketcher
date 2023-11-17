@@ -8,22 +8,19 @@ Object {
       <div
         class="css-3whre8"
       >
+        <div>
+          Monomers
+        </div>
         <div
           class="css-1jn33hb"
         >
           <div
-            class="css-a0lsh8"
-          >
-            <span>
-              F
-            </span>
-          </div>
-          <div
-            class="css-u8jo8f"
+            class="css-14bnc38"
           >
             <div
-              class="css-w9donl"
-              data-testid="F"
+              class="css-1iq6651"
+              data-monomer-item-id="Phe4SD___(2S)-2-amino-3-{4-[(4S)-2,6-dioxo-1,3-diazinane-4-amido]phenyl}propanoic acid"
+              data-testid="Phe4SD___(2S)-2-amino-3-{4-[(4S)-2,6-dioxo-1,3-diazinane-4-amido]phenyl}propanoic acid"
             >
               <span>
                 Phe4SD
@@ -43,22 +40,19 @@ Object {
     <div
       class="css-3whre8"
     >
+      <div>
+        Monomers
+      </div>
       <div
         class="css-1jn33hb"
       >
         <div
-          class="css-a0lsh8"
-        >
-          <span>
-            F
-          </span>
-        </div>
-        <div
-          class="css-u8jo8f"
+          class="css-14bnc38"
         >
           <div
-            class="css-w9donl"
-            data-testid="F"
+            class="css-1iq6651"
+            data-monomer-item-id="Phe4SD___(2S)-2-amino-3-{4-[(4S)-2,6-dioxo-1,3-diazinane-4-amido]phenyl}propanoic acid"
+            data-testid="Phe4SD___(2S)-2-amino-3-{4-[(4S)-2,6-dioxo-1,3-diazinane-4-amido]phenyl}propanoic acid"
           >
             <span>
               Phe4SD
@@ -135,15 +129,19 @@ Object {
       <div
         class="css-3whre8"
       >
+        <div>
+          Monomers
+        </div>
         <div
           class="css-1jn33hb"
         >
           <div
-            class="css-u8jo8f"
+            class="css-14bnc38"
           >
             <div
-              class="css-1gz3ldw"
-              data-testid="."
+              class="css-1aujmk4"
+              data-monomer-item-id="PEG2___Diethylene Glycol"
+              data-testid="PEG2___Diethylene Glycol"
             >
               <span>
                 PEG2
@@ -163,15 +161,19 @@ Object {
     <div
       class="css-3whre8"
     >
+      <div>
+        Monomers
+      </div>
       <div
         class="css-1jn33hb"
       >
         <div
-          class="css-u8jo8f"
+          class="css-14bnc38"
         >
           <div
-            class="css-1gz3ldw"
-            data-testid="."
+            class="css-1aujmk4"
+            data-monomer-item-id="PEG2___Diethylene Glycol"
+            data-testid="PEG2___Diethylene Glycol"
           >
             <span>
               PEG2

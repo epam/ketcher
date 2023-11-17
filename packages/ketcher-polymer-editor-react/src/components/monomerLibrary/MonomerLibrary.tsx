@@ -17,9 +17,17 @@ import { ChangeEvent } from 'react';
 import { Tabs } from 'components/shared/Tabs';
 import styled from '@emotion/styled';
 import { tabsContent } from 'components/monomerLibrary/tabsContent';
-import { useAppDispatch } from 'hooks';
+import { useAppDispatch, useAppSelector } from 'hooks';
 import { setSearchFilter } from 'state/library';
 import { Icon } from 'ketcher-react';
+import { IRnaPreset } from './RnaBuilder/types';
+import {
+  savePreset,
+  selectActivePreset,
+  setActivePreset,
+  setIsEditMode,
+} from 'state/rna-builder';
+import { scrollToSelectedPreset } from './RnaBuilder/RnaEditor/RnaEditor';
 
 export const MONOMER_LIBRARY_WIDTH = '254px';
 
@@ -83,9 +91,28 @@ const MonomerLibrarySearch = styled.div(({ theme }) => ({
 
 const MonomerLibrary = () => {
   const dispatch = useAppDispatch();
-
+  const activePreset = useAppSelector(selectActivePreset);
   const filterResults = (event: ChangeEvent<HTMLInputElement>) => {
     dispatch(setSearchFilter(event.target.value));
+  };
+
+  const duplicatePreset = (preset?: IRnaPreset) => {
+    const duplicatedPreset = {
+      ...(preset || activePreset),
+      presetInList: undefined,
+      name: `${preset?.name || activePreset.name}_Copy`,
+      default: false,
+      favorite: false,
+    };
+    dispatch(setActivePreset(duplicatedPreset));
+    dispatch(savePreset(duplicatedPreset));
+    dispatch(setIsEditMode(true));
+    scrollToSelectedPreset(activePreset.name);
+  };
+
+  const editPreset = (preset: IRnaPreset) => {
+    dispatch(setActivePreset(preset));
+    dispatch(setIsEditMode(true));
   };
 
   return (
@@ -105,7 +132,7 @@ const MonomerLibrary = () => {
           </div>
         </MonomerLibrarySearch>
       </MonomerLibraryHeader>
-      <Tabs tabs={tabsContent} />
+      <Tabs tabs={tabsContent(duplicatePreset, editPreset)} />
     </MonomerLibraryContainer>
   );
 };

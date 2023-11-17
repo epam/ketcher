@@ -17,14 +17,14 @@ import { Modal } from 'components/shared/modal';
 import { useCallback } from 'react';
 import { useAppDispatch, useAppSelector } from 'hooks';
 import {
+  createNewPreset,
   deletePreset,
   selectActivePresetForContextMenu,
-  selectPresets,
-  setActivePreset,
   setIsEditMode,
 } from 'state/rna-builder';
 import { StyledActionButton } from 'components/modal/Delete/styledComponents';
 import styled from '@emotion/styled';
+import { selectEditor } from 'state/common';
 
 export interface Props {
   onClose: () => void;
@@ -37,10 +37,10 @@ const DeleteTextWrapper = styled.div`
 
 const Delete = ({ isModalOpen, onClose }: Props) => {
   const dispatch = useAppDispatch();
-  const presets = useAppSelector(selectPresets);
   const activePresetForContextMenu = useAppSelector(
     selectActivePresetForContextMenu,
   );
+  const editor = useAppSelector(selectEditor);
   const onCloseCallback = useCallback(() => {
     onClose();
   }, [onClose]);
@@ -53,9 +53,8 @@ const Delete = ({ isModalOpen, onClose }: Props) => {
     onCloseCallback();
     dispatch(deletePreset(activePresetForContextMenu));
     dispatch(setIsEditMode(false));
-    if (presets.length !== 0) {
-      dispatch(setActivePreset(presets[0]));
-    }
+    dispatch(createNewPreset());
+    editor.events.selectPreset.dispatch(null);
   };
 
   return (

@@ -29,25 +29,49 @@ import {
 import { MONOMER_LIBRARY_FAVORITES } from '../../../constants';
 import { MonomerItemType } from 'ketcher-core';
 import { selectEditorActiveTool } from 'state/common';
+import {
+  selectFilteredPresets,
+  selectPresetsInFavorites,
+} from 'state/rna-builder';
+import { RnaPresetGroup } from '../RnaPresetGroup/RnaPresetGroup';
+import { IRnaPreset } from '../RnaBuilder/types';
 
 export type Group = {
   groupItems: Array<MonomerItemType>;
   groupTitle?: string;
 };
 
-const MonomerList = ({ onItemClick, libraryName }: IMonomerListProps) => {
-  const monomers = useAppSelector(selectFilteredMonomers);
-  const activeTool = useAppSelector(selectEditorActiveTool);
-  const items =
-    libraryName !== MONOMER_LIBRARY_FAVORITES
-      ? selectMonomersInCategory(monomers, libraryName)
-      : selectMonomersInFavorites(monomers);
+export type Favorites = {
+  monomers: MonomerItemType[];
+  presets: IRnaPreset[];
+};
 
-  const groups = selectMonomerGroups(items);
+const MonomerList = ({
+  onItemClick,
+  libraryName,
+  duplicatePreset,
+  editPreset,
+}: IMonomerListProps) => {
+  const monomers = useAppSelector(selectFilteredMonomers);
+  const presets = useAppSelector(selectFilteredPresets);
+  const activeTool = useAppSelector(selectEditorActiveTool);
+  const isFavoriteTab = libraryName === MONOMER_LIBRARY_FAVORITES;
+  const items = !isFavoriteTab
+    ? selectMonomersInCategory(monomers, libraryName)
+    : ({
+        monomers: selectMonomersInFavorites(monomers),
+        presets: selectPresetsInFavorites(presets),
+      } as Favorites);
+
+  const monomerGroups = selectMonomerGroups(
+    isFavoriteTab
+      ? (items as Favorites).monomers
+      : (items as MonomerItemType[]),
+  );
 
   const [selectedMonomers, setSelectedMonomers] = useState('');
 
-  const selectItem = (monomer: MonomerItemType) => {
+  const selectMonomer = (monomer: MonomerItemType) => {
     setSelectedMonomers(getMonomerUniqueKey(monomer));
   };
 
@@ -59,18 +83,29 @@ const MonomerList = ({ onItemClick, libraryName }: IMonomerListProps) => {
 
   return (
     <MonomerListContainer>
-      {groups.map(({ groupItems, groupTitle }, _index, groups) => {
+      {monomerGroups.length > 0 && <div>Monomers</div>}
+      {monomerGroups.map(({ groupItems, groupTitle }, _index, groups) => {
         return (
           <MonomerGroup
             key={groupTitle}
             title={groups.length === 1 ? undefined : groupTitle}
             items={groupItems}
             libraryName={libraryName}
-            onItemClick={onItemClick || selectItem}
+            onItemClick={onItemClick || selectMonomer}
             selectedMonomerUniqueKey={selectedMonomers}
           />
         );
       })}
+      {isFavoriteTab && (items as Favorites).presets.length > 0 && (
+        <>
+          <div>Presets</div>
+          <RnaPresetGroup
+            duplicatePreset={duplicatePreset}
+            editPreset={editPreset}
+            presets={(items as Favorites).presets}
+          />
+        </>
+      )}
     </MonomerListContainer>
   );
 };

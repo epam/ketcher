@@ -141,6 +141,15 @@ export const rnaBuilderSlice = createSlice({
       }
       state.presets = action.payload;
     },
+    togglePresetFavorites: (state, action: PayloadAction<IRnaPreset>) => {
+      const presetIndex = state.presets.findIndex(
+        (presetInList) => presetInList.name === action.payload.name,
+      );
+      if (presetIndex >= 0) {
+        const favorite = state.presets[presetIndex].favorite;
+        state.presets[presetIndex].favorite = !favorite;
+      }
+    },
   },
 });
 
@@ -212,6 +221,29 @@ export const selectActivePresetForContextMenu = (state: RootState) => {
   return state.rnaBuilder.activePresetForContextMenu;
 };
 
+export const selectPresetsInFavorites = (items: IRnaPreset[]) =>
+  items.filter((item) => item.favorite);
+
+export const selectFilteredPresets = (
+  state,
+): Array<IRnaPreset & { favorite: boolean }> => {
+  const { searchFilter } = state.library;
+  const { presets } = state.rnaBuilder;
+  return presets.filter((item: IRnaPreset) => {
+    const name = item.name?.toLowerCase();
+    const sugarName = item.sugar?.label?.toLowerCase();
+    const phosphateName = item.phosphate?.label?.toLowerCase();
+    const baseName = item.base?.label?.toLowerCase();
+    const searchText = searchFilter.toLowerCase();
+    const cond =
+      name?.includes(searchText) ||
+      sugarName?.includes(searchText) ||
+      phosphateName?.includes(searchText) ||
+      baseName?.includes(searchText);
+    return cond;
+  });
+};
+
 export const {
   setActivePreset,
   setActivePresetName,
@@ -224,6 +256,7 @@ export const {
   setHasUniqueNameError,
   setDefaultPresets,
   setActivePresetForContextMenu,
+  togglePresetFavorites,
 } = rnaBuilderSlice.actions;
 
 export const rnaBuilderReducer = rnaBuilderSlice.reducer;

@@ -3,6 +3,7 @@ import { openModal } from 'state/modal';
 import { useAppDispatch, useAppSelector } from 'hooks';
 import { ReactElement } from 'react';
 import { CONTEXT_MENU_ID } from './types';
+import { selectCurrentTabIndex, setSelectedTabIndex } from 'state/library';
 import { selectActivePresetForContextMenu } from 'state/rna-builder';
 import { StyledMenu } from './styles';
 
@@ -11,6 +12,7 @@ export const RNAContextMenu = () => {
   const activePresetForContextMenu = useAppSelector(
     selectActivePresetForContextMenu,
   );
+  const selectedTabIndex = useAppSelector(selectCurrentTabIndex);
   const RNAMenus = [
     { name: 'duplicateandedit', title: 'Duplicate and Edit...' },
     { name: 'edit', title: 'Edit...', seperator: true },
@@ -31,9 +33,15 @@ export const RNAContextMenu = () => {
     switch (id) {
       case 'duplicateandedit':
         props.duplicatePreset(activePresetForContextMenu);
+        if (selectedTabIndex !== 2) {
+          dispatch(setSelectedTabIndex(2));
+        }
         break;
       case 'edit':
         props.editPreset(activePresetForContextMenu);
+        if (selectedTabIndex !== 2) {
+          dispatch(setSelectedTabIndex(2));
+        }
         break;
       case 'deletepreset':
         dispatch(openModal('delete'));

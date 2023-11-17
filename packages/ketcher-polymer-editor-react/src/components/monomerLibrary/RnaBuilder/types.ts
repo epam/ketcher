@@ -26,4 +26,5 @@ export interface IRnaPreset {
   phosphate?: MonomerItemType;
   presetInList?: IRnaPreset;
   default?: boolean;
+  favorite?: boolean;
 }

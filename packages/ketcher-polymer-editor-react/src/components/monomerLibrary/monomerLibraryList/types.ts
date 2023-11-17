@@ -24,5 +24,7 @@ export type Group = {
 
 export interface IMonomerListProps {
   libraryName: LibraryNameType;
+  duplicatePreset: () => void;
+  editPreset: () => void;
   onItemClick?: (item) => void;
 }

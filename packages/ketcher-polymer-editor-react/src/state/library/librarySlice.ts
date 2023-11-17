@@ -25,12 +25,14 @@ interface LibraryState {
   monomers: Group[];
   favorites: { [key: string]: Group };
   searchFilter: string;
+  selectedTabIndex: number;
 }
 
 const initialState: LibraryState = {
   monomers: [],
   favorites: {},
   searchFilter: '',
+  selectedTabIndex: 1,
 };
 
 export function getMonomerUniqueKey(monomer: MonomerItemType) {
@@ -71,12 +73,6 @@ export const librarySlice: Slice = createSlice({
       });
       state.monomers = newData;
     },
-    addMonomerFavorites: (state, action: PayloadAction<MonomerItemType>) => {
-      state.favorites[getMonomerUniqueKey(action.payload)] = action.payload;
-    },
-    removeMonomerFavorites: (state, action: PayloadAction<MonomerItemType>) => {
-      delete state.favorites[getMonomerUniqueKey(action.payload)];
-    },
     toggleMonomerFavorites: (state, action: PayloadAction<MonomerItemType>) => {
       const key = getMonomerUniqueKey(action.payload);
       if (state.favorites[key]) {
@@ -87,6 +83,9 @@ export const librarySlice: Slice = createSlice({
     },
     setSearchFilter: (state, action: PayloadAction<string>) => {
       state.searchFilter = action.payload;
+    },
+    setSelectedTabIndex: (state, action: PayloadAction<number>) => {
+      state.selectedTabIndex = action.payload;
     },
   },
 });
@@ -157,7 +156,13 @@ export const selectMonomerGroups = (monomers: MonomerItemType[]) => {
     }, preparedGroups);
 };
 
-export const { loadMonomerLibrary, toggleMonomerFavorites, setSearchFilter } =
-  librarySlice.actions;
+export const selectCurrentTabIndex = (state) => state.library.selectedTabIndex;
+
+export const {
+  loadMonomerLibrary,
+  toggleMonomerFavorites,
+  setSearchFilter,
+  setSelectedTabIndex,
+} = librarySlice.actions;
 
 export const libraryReducer = librarySlice.reducer;

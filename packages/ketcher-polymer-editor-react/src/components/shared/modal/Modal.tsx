@@ -21,9 +21,7 @@ interface ModalProps {
 }
 const StyledDialog = styled(Dialog)`
   .MuiPaper-root {
-    width: 304px;
-    background: #ffffff !important;
-    border-radius: 4px !important;
+    min-width: 304px;
   }
 `;
 
@@ -35,7 +33,6 @@ const Header = styled(DialogTitle)(({ theme }) => ({
   fontFamily: `${theme.ketcher.font.family.inter}`,
   fontSize: `${theme.ketcher.font.size.medium}`,
   fontWeight: 500,
-  letterSpacing: '1.1px',
   textTransform: 'capitalize',
   borderBottom: '1px solid rgba(202, 211, 221, 1)',
 }));
@@ -52,19 +49,24 @@ const StyledIcon = styled(Icon)({
 });
 
 const Content = styled(DialogContent)`
-  padding: 10px 12px;
-  padding-top: 10px !important;
+  padding: 0;
   font-size: ${({ theme }) => theme.ketcher.font.size.medium};
-  letter-spacing: 1.25px;
   line-height: 17px;
   color: #000000;
   ${({ theme }) => scrollbarThin(theme)};
 `;
 
-const Footer = styled(DialogActions)`
+interface FooterProps {
+  withBorder?: boolean;
+}
+
+const Footer = styled(DialogActions)<FooterProps>`
   height: 52px;
-  margin: 0 12px;
-  padding: 0;
+  margin: 0;
+  padding: 0 12px;
+  border-top: ${({ theme, withBorder }) =>
+    withBorder ? theme.ketcher.border.small : 'none'};
+
   .MuiButtonBase-root {
     border-radius: 4px;
     font-size: ${({ theme }) => theme.ketcher.font.size.regular};
@@ -86,9 +88,8 @@ export const Modal = ({
   const paperProps = useMemo(
     () => ({
       style: {
-        minWidth: '20vw',
-        background: theme.ketcher.color.background.canvas,
-        borderRadius: '4px',
+        background: theme.ketcher.color.background.primary,
+        borderRadius: '8px',
         color: theme.ketcher.color.text.primary,
       },
     }),
@@ -123,7 +124,6 @@ export const Modal = ({
       BackdropProps={backdropProps}
       PaperProps={paperProps}
       open={isOpen}
-      maxWidth="md"
       onClose={onClose}
       disableEscapeKeyDown={!showCloseButton}
       className={className}

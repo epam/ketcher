@@ -66,7 +66,7 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
     await openFileAndAddToCanvas('Rxn-V2000/reaction-2.rxn', page);
     await selectNestedTool(page, ReactionMappingTool.AUTOMAP);
     await takeEditorScreenshot(page);
-    await pressButton(page, 'Discard');
+    await page.getByTestId('automap-mode-input-span').click();
   });
 
   test.describe('full reaction on canvas', () => {

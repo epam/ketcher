@@ -22,6 +22,7 @@ interface ModalState {
   isOpen: boolean;
   additionalProps: AdditionalModalProps | null;
   errorTooltipText: string;
+  errorModalText: string;
 }
 
 const initialState: ModalState = {
@@ -29,6 +30,7 @@ const initialState: ModalState = {
   isOpen: false,
   additionalProps: null,
   errorTooltipText: '',
+  errorModalText: '',
 };
 
 export const modalSlice = createSlice({
@@ -61,11 +63,23 @@ export const modalSlice = createSlice({
     closeErrorTooltip: (state) => {
       state.errorTooltipText = '';
     },
+    openErrorModal: (state, action: PayloadAction<string>) => {
+      state.errorModalText = action.payload;
+    },
+    closeErrorModal: (state) => {
+      state.errorModalText = '';
+    },
   },
 });
 
-export const { openModal, closeModal, openErrorTooltip, closeErrorTooltip } =
-  modalSlice.actions;
+export const {
+  openModal,
+  closeModal,
+  openErrorTooltip,
+  closeErrorTooltip,
+  openErrorModal,
+  closeErrorModal,
+} = modalSlice.actions;
 
 export const selectModalName = (state: RootState): string | null =>
   state.modal.name;
@@ -76,5 +90,7 @@ export const selectAdditionalProps = (
 ): AdditionalModalProps | null => state.modal.additionalProps;
 export const selectErrorTooltipText = (state: RootState): boolean =>
   state.modal.errorTooltipText;
+export const selectErrorModalText = (state: RootState): string =>
+  state.modal.errorModalText;
 
 export const modalReducer = modalSlice.reducer;

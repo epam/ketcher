@@ -43,6 +43,7 @@ import {
   scrollToSelectedPreset,
 } from 'components/monomerLibrary/RnaBuilder/RnaEditor/RnaEditor';
 import { getMonomerUniqueKey } from 'state/library';
+import { selectEditor } from 'state/common';
 
 export const RnaEditorExpanded = ({
   name,
@@ -74,10 +75,14 @@ export const RnaEditorExpanded = ({
   ] as const;
 
   const activeMonomerGroup = useAppSelector(selectActiveRnaBuilderItem);
+  const editor = useAppSelector(selectEditor);
 
   const scrollToActiveItemInLibrary = (selectedGroup) => {
     if (selectedGroup === RnaBuilderPresetsItem.Presets) {
       scrollToSelectedPreset(activePreset.name);
+      if (activePreset.name) {
+        editor.events.selectPreset.dispatch(activePreset);
+      }
       return;
     }
 
@@ -88,6 +93,13 @@ export const RnaEditorExpanded = ({
     scrollToSelectedMonomer(getMonomerUniqueKey(activeMonomerInSelectedGroup));
   };
   const selectGroup = (selectedGroup) => {
+    const selectedRNAPartMonomer = selectActivePresetMonomerGroup(
+      activePreset,
+      selectedGroup,
+    );
+    if (selectedRNAPartMonomer) {
+      editor.events.selectMonomer.dispatch(selectedRNAPartMonomer);
+    }
     scrollToActiveItemInLibrary(selectedGroup);
     dispatch(setActiveRnaBuilderItem(selectedGroup));
   };

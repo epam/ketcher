@@ -16,13 +16,17 @@
 
 import { KetcherLogger } from './KetcherLogger';
 
-const KETCHER_SAVED_SETTINGS_KEY = 'ketcher_editor_saved_settings';
+export const KETCHER_SAVED_SETTINGS_KEY = 'ketcher_editor_saved_settings';
+export const KETCHER_SAVED_OPTIONS_KEY = 'ketcher-opts';
 
 interface SavedSettings {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   selectionTool?: any;
-  ignoreChiralFlag?: boolean;
   disableCustomQuery?: boolean;
+}
+
+interface SavedOptions {
+  ignoreChiralFlag?: boolean;
 }
 
 export class SettingsManager {
@@ -49,6 +53,24 @@ export class SettingsManager {
     localStorage.setItem(KETCHER_SAVED_SETTINGS_KEY, JSON.stringify(settings));
   }
 
+  static getOptions(): SavedOptions {
+    try {
+      return JSON.parse(
+        localStorage.getItem(KETCHER_SAVED_OPTIONS_KEY) || '{}',
+      );
+    } catch (e) {
+      KetcherLogger.error('SettingsManager.ts::SettingsManager::getOptions', e);
+      return {} as SavedOptions;
+    }
+  }
+
+  static saveOptions(options: SavedOptions) {
+    if (!options) {
+      return;
+    }
+    localStorage.setItem(KETCHER_SAVED_OPTIONS_KEY, JSON.stringify(options));
+  }
+
   static get selectionTool() {
     const { selectionTool } = this.getSettings();
     return selectionTool;
@@ -72,15 +94,15 @@ export class SettingsManager {
   }
 
   static get ignoreChiralFlag() {
-    const { ignoreChiralFlag } = this.getSettings();
+    const { ignoreChiralFlag } = this.getOptions();
     return ignoreChiralFlag;
   }
 
   static set ignoreChiralFlag(ignoreChiralFlag: boolean | undefined) {
-    const settings = this.getSettings();
+    const options = this.getOptions();
 
-    this.saveSettings({
-      ...settings,
+    this.saveOptions({
+      ...options,
       ignoreChiralFlag,
     });
   }

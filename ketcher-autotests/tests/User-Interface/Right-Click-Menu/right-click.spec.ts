@@ -56,7 +56,7 @@ test.describe('Right-click menu', () => {
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
     await page.mouse.click(point.x, point.y, { button: 'right' });
     await page.getByText('Edit...').click();
-    await page.getByRole('button', { name: 'Single', exact: true }).click();
+    await page.getByTestId('type-input-span').click();
     await page.getByRole('option', { name: 'Double', exact: true }).click();
     await pressButton(page, 'Apply');
   });

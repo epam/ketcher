@@ -29,7 +29,7 @@ async function setAndCheckCustomQuery(
   await setProperty(page, value);
   await pressButton(page, 'Apply');
   await takeEditorScreenshot(page);
-  await checkSmartsValue(page, defaultFileFormat, expectedSmarts);
+  await checkSmartsValue(page, expectedSmarts);
 }
 
 test.describe('Checking custom query in SMARTS format', () => {

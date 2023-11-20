@@ -42,7 +42,7 @@ async function setAndCheckQuerySpecificProperties(
   await setProperty(page, value);
   await pressButton(page, 'Apply');
   await takeEditorScreenshot(page);
-  await checkSmartsValue(page, defaultFileFormat, expectedSmarts);
+  await checkSmartsValue(page, expectedSmarts);
 }
 
 test.describe('Checking query specific attributes in SMARTS format', () => {
@@ -98,7 +98,6 @@ test.describe('Checking query specific attributes in SMARTS format', () => {
     await takeEditorScreenshot(page);
     await checkSmartsValue(
       page,
-      defaultFileFormat,
       '[#6](-[#6])(-[#6;$([*,#1]=,#,:[*,#1])])-[#6]',
     );
     await checkSmartsWarnings(page);

@@ -51,14 +51,12 @@ test.describe('Checking reaction queries attributes in SMARTS format', () => {
   });
 
   test('Checking SMARTS with Arrow Open Angle', async ({ page }) => {
-    const defaultFileFormat = 'DL Rxnfile V2000';
     await drawStructureWithArrowOpenAngle(page);
     await takeEditorScreenshot(page);
-    await checkSmartsValue(page, defaultFileFormat, '[#1]>>[#8]');
+    await checkSmartsValue(page, '[#1]>>[#8]');
   });
 
   test('Checking SMARTS with reaction mapping tool', async ({ page }) => {
-    const defaultFileFormat = 'MDL Molfile V2000';
     await selectBond(BondTypeName.Single, page);
     await clickInTheMiddleOfTheScreen(page);
     await page.keyboard.press('Escape');
@@ -68,6 +66,6 @@ test.describe('Checking reaction queries attributes in SMARTS format', () => {
     await clickOnAtom(page, 'C', 1);
 
     await takeEditorScreenshot(page);
-    await checkSmartsValue(page, defaultFileFormat, '[#6:1]-[#6:2]');
+    await checkSmartsValue(page, '[#6:1]-[#6:2]');
   });
 });

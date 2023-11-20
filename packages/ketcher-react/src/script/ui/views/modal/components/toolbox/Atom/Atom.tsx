@@ -208,8 +208,6 @@ const Atom: FC<Props> = (props: Props) => {
     },
   ];
 
-  console.log(SettingsManager.disableCustomQuery);
-
   return (
     <Dialog
       title="Atom Properties"

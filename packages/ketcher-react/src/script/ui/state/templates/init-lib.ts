@@ -19,12 +19,12 @@ import {
   KetSerializer,
   SdfItem,
   SdfSerializer,
+  SettingsManager,
 } from 'ketcher-core';
 
 import { appUpdate } from '../options';
 import { storage } from '../../storage-ext';
 import templatesRawData from '../../../../templates/library.sdf';
-import { OptionsManager } from '../../utils/optionsManager';
 import { AnyAction, Dispatch } from 'redux';
 
 let cachedInitData: [Dispatch<AnyAction>, string, Element];
@@ -47,7 +47,7 @@ const deserializeSdfTemplates = (
   _fileName: string,
 ): Promise<SdfItem[]> => {
   const options = {
-    ignoreChiralFlag: OptionsManager.ignoreChiralFlag,
+    ignoreChiralFlag: SettingsManager.ignoreChiralFlag,
   };
 
   const sdfSerializer = new SdfSerializer(options);

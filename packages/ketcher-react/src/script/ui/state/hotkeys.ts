@@ -27,6 +27,7 @@ import {
   getStructure,
   MolSerializer,
   runAsyncAction,
+  SettingsManager,
 } from 'ketcher-core';
 import { debounce, isEqual } from 'lodash/fp';
 import { load, onAction, removeStructAction } from './shared';
@@ -34,7 +35,6 @@ import { load, onAction, removeStructAction } from './shared';
 import actions from '../action';
 import keyNorm from '../data/convert/keynorm';
 import { isIE } from 'react-device-detect';
-import { SettingsManager } from '../utils/settingsManager';
 import {
   selectAbbreviationLookupValue,
   selectIsAbbreviationLookupOpen,

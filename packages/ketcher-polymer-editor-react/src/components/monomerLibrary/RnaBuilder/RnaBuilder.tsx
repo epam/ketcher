@@ -28,7 +28,7 @@ import {
   setIsEditMode,
   savePreset,
 } from 'state/rna-builder';
-import { getSearchTermValue, selectFilteredMonomers } from 'state/library';
+import { getSearchTermValue, selectMonomers } from 'state/library';
 import { Modal } from 'components/shared/modal';
 import { getDefaultPresets } from 'src/helpers/getDefaultPreset';
 import { StyledButton } from 'components/monomerLibrary/RnaBuilder/RnaAccordion/styles';
@@ -39,7 +39,7 @@ import { useSelector } from 'react-redux';
 export const RnaBuilder = ({ libraryName }) => {
   const dispatch = useAppDispatch();
   const hasError = useAppSelector(selectHasUniqueNameError);
-  const monomers = useAppSelector(selectFilteredMonomers);
+  const monomers = useAppSelector(selectMonomers);
   const serachValue = useSelector(getSearchTermValue);
   const activePreset = useAppSelector(selectActivePreset);
   const closeErrorModal = () => {

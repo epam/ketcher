@@ -91,6 +91,8 @@ interface EditorProps {
   togglerComponent?: JSX.Element;
 }
 
+const noPreviewTools = ['bond-single'];
+
 function EditorContainer({
   onInit,
   theme,
@@ -223,6 +225,8 @@ function Editor({ theme, togglerComponent }: EditorProps) {
     dispatch(closeErrorTooltip());
   };
 
+  const shouldRenderPreview = !noPreviewTools.includes(activeTool);
+
   return (
     <>
       <Layout>
@@ -267,7 +271,9 @@ function Editor({ theme, togglerComponent }: EditorProps) {
         onClick={() => setIsMonomerLibraryHidden((prev) => !prev)}
       />
       <FullscreenButton />
-      <StyledPreview className="polymer-library-preview" />
+      {shouldRenderPreview && (
+        <StyledPreview className="polymer-library-preview" />
+      )}
       <ModalContainer />
       <ErrorModal />
       <Snackbar

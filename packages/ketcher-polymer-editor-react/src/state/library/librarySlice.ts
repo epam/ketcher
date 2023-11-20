@@ -91,6 +91,10 @@ export const librarySlice: Slice = createSlice({
   },
 });
 
+export const getSearchTermValue = (state): string => {
+  return state.library.searchFilter;
+};
+
 export const selectMonomersInCategory = (
   items: MonomerItemType[],
   category: LibraryNameType,

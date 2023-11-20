@@ -28,17 +28,19 @@ import {
   setIsEditMode,
   savePreset,
 } from 'state/rna-builder';
-import { selectFilteredMonomers } from 'state/library';
+import { getSearchTermValue, selectFilteredMonomers } from 'state/library';
 import { Modal } from 'components/shared/modal';
 import { getDefaultPresets } from 'src/helpers/getDefaultPreset';
 import { StyledButton } from 'components/monomerLibrary/RnaBuilder/RnaAccordion/styles';
 import { IRnaPreset } from 'components/monomerLibrary/RnaBuilder/types';
 import { scrollToSelectedPreset } from './RnaEditor/RnaEditor';
+import { useSelector } from 'react-redux';
 
 export const RnaBuilder = ({ libraryName }) => {
   const dispatch = useAppDispatch();
   const hasError = useAppSelector(selectHasUniqueNameError);
   const monomers = useAppSelector(selectFilteredMonomers);
+  const serachValue = useSelector(getSearchTermValue);
   const activePreset = useAppSelector(selectActivePreset);
   const closeErrorModal = () => {
     dispatch(setHasUniqueNameError(false));
@@ -47,7 +49,7 @@ export const RnaBuilder = ({ libraryName }) => {
   useEffect(() => {
     const defaultPresets: IRnaPreset[] = getDefaultPresets(monomers);
     dispatch(setDefaultPresets(defaultPresets));
-  }, [dispatch]);
+  }, [dispatch, serachValue]);
 
   const duplicatePreset = (preset?: IRnaPreset) => {
     const duplicatedPreset = {

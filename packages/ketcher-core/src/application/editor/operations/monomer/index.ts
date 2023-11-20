@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -20,15 +21,24 @@ import { Operation } from 'domain/entities/Operation';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 
 export class MonomerAddOperation implements Operation {
-  constructor(public monomer: BaseMonomer, private callback?: () => void) {}
+  monomer: BaseMonomer | undefined;
+  constructor(
+    public addMonomerChangeModel: () => BaseMonomer,
+    public deleteMonomerChangeModel: (monomer: BaseMonomer) => void,
+    private callback?: () => void,
+  ) {}
 
   public execute(renderersManager: RenderersManager) {
+    this.monomer = this.addMonomerChangeModel();
     renderersManager.addMonomer(this.monomer, this.callback);
   }
 
   public invert(renderersManager: RenderersManager) {
-    console.log('invert MonomerAddOperation');
-    renderersManager.deleteMonomer(this.monomer);
+    if (this.monomer) {
+      this.deleteMonomerChangeModel(this.monomer);
+      renderersManager.deleteMonomer(this.monomer);
+      console.log('invert MonomerAddOperation');
+    }
   }
 }
 
@@ -39,7 +49,7 @@ export class MonomerMoveOperation implements Operation {
     renderersManager.moveMonomer(this.peptide);
   }
 
-  public invert(renderersManager: RenderersManager) {
+  public invert() {
     console.log('invert MonomerMoveOperation');
   }
 }
@@ -57,7 +67,7 @@ export class MonomerHoverOperation implements Operation {
     );
   }
 
-  public invert(renderersManager: RenderersManager) {
+  public invert() {
     console.log('invert MonomerHoverOperation');
   }
 }
@@ -77,13 +87,25 @@ export class AttachmentPointHoverOperation implements Operation {
 }
 
 export class MonomerDeleteOperation implements Operation {
-  constructor(private peptide: BaseMonomer) {}
+  monomer: BaseMonomer;
+  constructor(
+    monomer: BaseMonomer,
+    public addMonomerChangeModel: () => BaseMonomer,
+    public deleteMonomerChangeModel: (monomer: BaseMonomer) => void,
+    private callback?: () => void,
+  ) {
+    this.monomer = monomer;
+  }
 
   public execute(renderersManager: RenderersManager) {
-    renderersManager.deleteMonomer(this.peptide);
+    this.deleteMonomerChangeModel(this.monomer);
+    renderersManager.deleteMonomer(this.monomer);
   }
 
   public invert(renderersManager: RenderersManager) {
+    console.log(this.monomer);
+    this.monomer = this.addMonomerChangeModel();
+    renderersManager.addMonomer(this.monomer, this.callback);
     console.log('invert MonomerDeleteOperation');
   }
 }

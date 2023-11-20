@@ -40,7 +40,7 @@ export const RnaBuilder = ({ libraryName }) => {
   const dispatch = useAppDispatch();
   const hasError = useAppSelector(selectHasUniqueNameError);
   const monomers = useAppSelector(selectMonomers);
-  const serachValue = useSelector(getSearchTermValue);
+  const searchValue = useSelector(getSearchTermValue);
   const activePreset = useAppSelector(selectActivePreset);
   const closeErrorModal = () => {
     dispatch(setHasUniqueNameError(false));
@@ -49,7 +49,7 @@ export const RnaBuilder = ({ libraryName }) => {
   useEffect(() => {
     const defaultPresets: IRnaPreset[] = getDefaultPresets(monomers);
     dispatch(setDefaultPresets(defaultPresets));
-  }, [dispatch, serachValue]);
+  }, [dispatch, searchValue]);
 
   const duplicatePreset = (preset?: IRnaPreset) => {
     const duplicatedPreset = {

@@ -54,7 +54,7 @@ export const TextArea = ({
   readonly = false,
   selectOnInit = false,
   className,
-  testId
+  testId,
 }: TextEditorProps) => {
   const textArea = useRef<HTMLTextAreaElement>(null);
 

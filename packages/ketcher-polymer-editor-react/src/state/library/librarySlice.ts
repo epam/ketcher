@@ -20,6 +20,7 @@ import { Group } from 'components/monomerLibrary/monomerLibraryList/types';
 import { IRnaPreset } from 'components/monomerLibrary/RnaBuilder/types';
 import { MonomerItemType, SdfItem } from 'ketcher-core';
 import { LibraryNameType } from 'src/constants';
+import { RootState } from 'state';
 
 interface LibraryState {
   monomers: Group[];
@@ -91,6 +92,10 @@ export const librarySlice: Slice = createSlice({
   },
 });
 
+export const getSearchTermValue = (state): string => {
+  return state.library.searchFilter;
+};
+
 export const selectMonomersInCategory = (
   items: MonomerItemType[],
   category: LibraryNameType,
@@ -120,6 +125,10 @@ export const selectFilteredMonomers = (
         favorite: !!state.library.favorites[getMonomerUniqueKey(item)],
       };
     });
+};
+
+export const selectMonomers = (state: RootState) => {
+  return state.library.monomers;
 };
 
 export const selectMonomerGroups = (monomers: MonomerItemType[]) => {

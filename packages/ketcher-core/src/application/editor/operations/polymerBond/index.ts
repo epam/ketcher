@@ -14,78 +14,103 @@
  * limitations under the License.
  ***************************************************************************/
 /* eslint-disable @typescript-eslint/no-use-before-define */
+// eslint-disable no-unused-vars
+/* eslint-disable @typescript-eslint/no-unused-vars */
 
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { RenderersManager } from 'application/render/renderers/RenderersManager';
 import { Operation } from 'domain/entities/Operation';
 import assert from 'assert';
+import { Command } from 'domain/entities/Command';
 
 export class PolymerBondAddOperation implements Operation {
-  constructor(private polymerBond: PolymerBond) {}
+  public polymerBond;
+  constructor(
+    private addPolymerBondChangeModel: () => PolymerBond,
+    private deletePolymerBondChangeModel: (polymerBond) => void,
+  ) {
+    this.polymerBond = this.addPolymerBondChangeModel();
+  }
 
   public execute(renderersManager: RenderersManager) {
     renderersManager.addPolymerBond(this.polymerBond);
   }
 
   public invert(renderersManager: RenderersManager) {
+    this.deletePolymerBondChangeModel(this.polymerBond);
+    renderersManager.deletePolymerBond(this.polymerBond);
     console.log('invert PolymerBondAddOperation');
   }
 }
 
 export class PolymerBondDeleteOperation implements Operation {
-  constructor(private polymerBond: PolymerBond) {}
+  constructor(
+    public polymerBond: PolymerBond,
+    private deletePolymerBondChangeModel: () => void,
+    private addPolymerBondChangeModel: (polymerBondExists) => PolymerBond,
+    private finishPolymerBondCreationModelChange: () => PolymerBond,
+  ) {}
 
   public execute(renderersManager: RenderersManager) {
+    this.deletePolymerBondChangeModel();
     renderersManager.deletePolymerBond(this.polymerBond);
     console.log('execute PolymerBondDeleteOperation');
   }
 
   public invert(renderersManager: RenderersManager) {
     console.log('invert PolymerBondDeleteOperation');
+    this.polymerBond = this.finishPolymerBondCreationModelChange();
+    this.addPolymerBondChangeModel(this.polymerBond);
     renderersManager.addPolymerBond(this.polymerBond);
+
+    console.log('this.polymerBond: ', this.polymerBond);
   }
 }
 
 export class PolymerBondMoveOperation implements Operation {
-  constructor(private polymerBond: PolymerBond) {}
+  constructor(public polymerBond: PolymerBond) {}
 
   public execute(renderersManager: RenderersManager) {
     renderersManager.movePolymerBond(this.polymerBond);
   }
 
-  public invert(renderersManager: RenderersManager) {
+  public invert(_renderersManager: RenderersManager) {
     console.log('invert PolymerBondMoveOperation');
   }
 }
 
 export class PolymerBondShowInfoOperation implements Operation {
-  constructor(private polymerBond: PolymerBond) {}
+  constructor(public polymerBond: PolymerBond) {}
 
   public execute(renderersManager: RenderersManager) {
     renderersManager.showPolymerBondInformation(this.polymerBond);
   }
 
-  public invert(renderersManager: RenderersManager) {
+  public invert(_renderersManager: RenderersManager) {
     console.log('invert PolymerBondShowInfoOperation');
   }
 }
 
 export class PolymerBondCancelCreationOperation implements Operation {
-  constructor(private polymerBond: PolymerBond) {}
+  constructor(public polymerBond: PolymerBond) {}
 
   public execute(renderersManager: RenderersManager) {
     renderersManager.cancelPolymerBondCreation(this.polymerBond);
   }
 
-  public invert(renderersManager: RenderersManager) {
+  public invert(_renderersManager: RenderersManager) {
     console.log('invert PolymerBondCancelCreationOperation');
   }
 }
 
 export class PolymerBondFinishCreationOperation implements Operation {
-  constructor(private polymerBond: PolymerBond) {}
+  public polymerBond;
+  constructor(
+    private finishPolymerBondCreationModelChange: () => PolymerBond,
+  ) {}
 
   public execute(renderersManager: RenderersManager) {
+    this.polymerBond = this.finishPolymerBondCreationModelChange();
     renderersManager.finishPolymerBondCreation(this.polymerBond);
     console.log('execute PolymerBondFinishCreationOperation');
   }
@@ -98,7 +123,7 @@ export class PolymerBondFinishCreationOperation implements Operation {
 
 export class PolymerBondAddAttachmentPointsOperation implements Operation {
   constructor(
-    private polymerBond: PolymerBond,
+    public polymerBond: PolymerBond,
     private secondMonomer,
     private firstMonomerAttachmentPoint,
     private secondMonomerAttachmentPoint,
@@ -147,7 +172,7 @@ export class PolymerBondCleanAttachmentPointsOperation implements Operation {
   private firstMonomerAttachmentPoint;
   private secondMonomerAttachmentPoint;
 
-  constructor(private polymerBond: PolymerBond) {
+  constructor(public polymerBond: PolymerBond) {
     this.polymerBond = polymerBond;
   }
 

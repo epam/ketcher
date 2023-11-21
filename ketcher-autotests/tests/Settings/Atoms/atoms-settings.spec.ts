@@ -15,10 +15,12 @@ import {
 } from '@utils';
 import { scrollSettingBar } from '@utils/scrollSettingBar';
 
+const DEFAULT_SCROLLBAR_DELAY = 150;
+
 async function setHydrogenLabelsOn(page: Page) {
   await selectTopPanelButton(TopPanelButton.Settings, page);
   await page.getByText('Atoms', { exact: true }).click();
-  await scrollSettingBar(page, 150);
+  await scrollSettingBar(page, DEFAULT_SCROLLBAR_DELAY);
   await page.getByTestId('show-hydrogen-labels-input-span').click();
   await page.getByTestId('On-option').click();
   await pressButton(page, 'Apply');
@@ -31,7 +33,7 @@ async function selectExtendedTableElements(page: Page, element: string) {
 async function atomDefaultSettings(page: Page) {
   await selectTopPanelButton(TopPanelButton.Settings, page);
   await page.getByText('Atoms', { exact: true }).click();
-  await scrollSettingBar(page,150);
+  await scrollSettingBar(page, DEFAULT_SCROLLBAR_DELAY);
 }
 
 async function ringBondCountQuery(page: Page, menuItem: string) {

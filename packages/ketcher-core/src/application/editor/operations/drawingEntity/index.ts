@@ -29,24 +29,40 @@ export class DrawingEntitySelectOperation implements Operation {
   }
 }
 export class DrawingEntityMoveOperation implements Operation {
-  constructor(private drawingEntity: DrawingEntity) {}
+  private wasInverted = false;
+  constructor(
+    private moveDrawingEntityChangeModel: () => void,
+    private invertMoveDrawingEntityChangeModel: () => void,
+    private redoDrawingEntityChangeModel: () => void,
+    private drawingEntity: DrawingEntity,
+  ) {}
 
   public execute(renderersManager: RenderersManager) {
+    this.wasInverted
+      ? this.redoDrawingEntityChangeModel()
+      : this.moveDrawingEntityChangeModel();
     renderersManager.moveDrawingEntity(this.drawingEntity);
   }
 
-  public invert(_renderersManager: RenderersManager) {
-    console.log('invert DrawingEntityMoveOperation');
+  public invert(renderersManager: RenderersManager) {
+    this.invertMoveDrawingEntityChangeModel();
+    renderersManager.moveDrawingEntity(this.drawingEntity);
+    this.wasInverted = true;
   }
 }
 export class DrawingEntityRedrawOperation implements Operation {
-  constructor(private drawingEntity: DrawingEntity) {}
+  constructor(
+    private drawingEntityRedrawModelChange: () => DrawingEntity,
+    private invertDrawingEntityRedrawModelChange: () => DrawingEntity,
+  ) {}
 
   public execute(renderersManager: RenderersManager) {
-    renderersManager.redrawDrawingEntity(this.drawingEntity);
+    const drawingEntity = this.drawingEntityRedrawModelChange();
+    renderersManager.redrawDrawingEntity(drawingEntity);
   }
 
-  public invert(_renderersManager: RenderersManager) {
-    console.log('invert DrawingEntityRedrawOperation');
+  public invert(renderersManager: RenderersManager) {
+    const drawingEntity = this.invertDrawingEntityRedrawModelChange();
+    renderersManager.redrawDrawingEntity(drawingEntity);
   }
 }

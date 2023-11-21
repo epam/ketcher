@@ -33,7 +33,7 @@ describe('Drawing Entities Manager', () => {
 
   it('should create polymer bond', () => {
     const drawingEntitiesManager = new DrawingEntitiesManager();
-    const { command, polymerBond } = drawingEntitiesManager.addPolymerBond(
+    const { command, polymerBond } = drawingEntitiesManager.startPolymerBondCreation(
       new Peptide(peptideMonomerItem),
       new Vec2(0, 0),
       new Vec2(10, 10),
@@ -55,7 +55,7 @@ describe('Drawing Entities Manager', () => {
     secondPeptide.attachmentPointsToBonds = { R2: null };
     secondPeptide.potentialAttachmentPointsToBonds = { R2: null };
 
-    const { polymerBond } = drawingEntitiesManager.addPolymerBond(
+    const { polymerBond } = drawingEntitiesManager.startPolymerBondCreation(
       firstPeptide,
       new Vec2(0, 0),
       new Vec2(10, 10),
@@ -96,7 +96,7 @@ describe('Drawing Entities Manager', () => {
 
   it('should delete polymer bond', () => {
     const drawingEntitiesManager = new DrawingEntitiesManager();
-    const { polymerBond } = drawingEntitiesManager.addPolymerBond(
+    const { polymerBond } = drawingEntitiesManager.startPolymerBondCreation(
       new Peptide(peptideMonomerItem),
       new Vec2(0, 0),
       new Vec2(10, 10),

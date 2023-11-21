@@ -31,11 +31,10 @@ class PolymerBond implements BaseTool {
   private bondRenderer?: PolymerBondRenderer;
   private isBondConnectionModalOpen = false;
   history: EditorHistory;
-  historyMouseDown: Command | undefined;
 
   constructor(private editor: CoreEditor) {
     this.editor = editor;
-    this.history = new EditorHistory(this.editor); // здесь история пишется
+    this.history = new EditorHistory(this.editor);
   }
 
   public mouseDownAttachmentPoint(event) {
@@ -74,7 +73,7 @@ class PolymerBond implements BaseTool {
         return;
       }
       const { polymerBond, command: modelChanges } =
-        this.editor.drawingEntitiesManager.addPolymerBond(
+        this.editor.drawingEntitiesManager.startPolymerBondCreation(
           selectedRenderer.monomer,
           selectedRenderer.monomer.position,
           Coordinates.canvasToModel(this.editor.lastCursorPositionOfCanvas),
@@ -82,7 +81,6 @@ class PolymerBond implements BaseTool {
 
       this.editor.renderersContainer.update(modelChanges);
       this.bondRenderer = polymerBond.renderer;
-      this.historyMouseDown = modelChanges;
     }
   }
 
@@ -249,9 +247,11 @@ class PolymerBond implements BaseTool {
         });
         return;
       }
-
       const modelChanges = this.finishBondCreation(renderer.monomer);
       this.editor.renderersContainer.update(modelChanges);
+      this.editor.renderersContainer.deletePolymerBond(
+        this.bondRenderer.polymerBond,
+      );
       this.bondRenderer = undefined;
       event.stopPropagation();
     }
@@ -337,10 +337,11 @@ class PolymerBond implements BaseTool {
       // This logic so far is only for no-modal connections. Maybe then we can chain it after modal invoke
       const modelChanges = this.finishBondCreation(renderer.monomer);
       this.editor.renderersContainer.update(modelChanges);
+      this.editor.renderersContainer.deletePolymerBond(
+        this.bondRenderer.polymerBond,
+      );
       this.bondRenderer = undefined;
-      assert(this.historyMouseDown);
-      this.historyMouseDown.merge(modelChanges);
-      this.history.update(this.historyMouseDown);
+      this.history.update(modelChanges);
       event.stopPropagation();
     }
   }

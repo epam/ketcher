@@ -128,11 +128,12 @@ export class CoreEditor {
       this.canvas.width.baseVal.value,
       isSnakeMode,
     );
+    const history = new EditorHistory(this);
+    history.update(modelChanges);
     this.renderersContainer.update(modelChanges);
   }
 
   private onSelectHistory(name: string) {
-    console.log(name);
     const history = new EditorHistory(this);
     if (name === 'undo') {
       history.undo();

@@ -20,19 +20,20 @@
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { RenderersManager } from 'application/render/renderers/RenderersManager';
 import { Operation } from 'domain/entities/Operation';
-import assert from 'assert';
-import { Command } from 'domain/entities/Command';
 
 export class PolymerBondAddOperation implements Operation {
   public polymerBond;
   constructor(
-    private addPolymerBondChangeModel: () => PolymerBond,
+    private addPolymerBondChangeModel: (
+      polymerBond?: PolymerBond,
+    ) => PolymerBond,
     private deletePolymerBondChangeModel: (polymerBond) => void,
   ) {
     this.polymerBond = this.addPolymerBondChangeModel();
   }
 
   public execute(renderersManager: RenderersManager) {
+    this.polymerBond = this.addPolymerBondChangeModel(this.polymerBond);
     renderersManager.addPolymerBond(this.polymerBond);
   }
 
@@ -47,7 +48,9 @@ export class PolymerBondDeleteOperation implements Operation {
   constructor(
     public polymerBond: PolymerBond,
     private deletePolymerBondChangeModel: () => void,
-    private finishPolymerBondCreationModelChange: () => PolymerBond,
+    private finishPolymerBondCreationModelChange: (
+      polymerBond?: PolymerBond,
+    ) => PolymerBond,
   ) {}
 
   public execute(renderersManager: RenderersManager) {
@@ -58,10 +61,10 @@ export class PolymerBondDeleteOperation implements Operation {
 
   public invert(renderersManager: RenderersManager) {
     console.log('invert PolymerBondDeleteOperation');
-    this.polymerBond = this.finishPolymerBondCreationModelChange();
+    this.polymerBond = this.finishPolymerBondCreationModelChange(
+      this.polymerBond,
+    );
     renderersManager.addPolymerBond(this.polymerBond);
-
-    console.log('this.polymerBond: ', this.polymerBond);
   }
 }
 
@@ -104,12 +107,18 @@ export class PolymerBondCancelCreationOperation implements Operation {
 export class PolymerBondFinishCreationOperation implements Operation {
   public polymerBond;
   constructor(
-    private finishPolymerBondCreationModelChange: () => PolymerBond,
+    private finishPolymerBondCreationModelChange: (
+      polymerBond?: PolymerBond,
+    ) => PolymerBond,
     private deletePolymerBondCreationModelChange: (polymerBond) => void,
-  ) {}
+  ) {
+    this.polymerBond = this.finishPolymerBondCreationModelChange();
+  }
 
   public execute(renderersManager: RenderersManager) {
-    this.polymerBond = this.finishPolymerBondCreationModelChange();
+    this.polymerBond = this.finishPolymerBondCreationModelChange(
+      this.polymerBond,
+    );
     renderersManager.finishPolymerBondCreation(this.polymerBond);
     console.log('execute PolymerBondFinishCreationOperation');
   }
@@ -118,95 +127,5 @@ export class PolymerBondFinishCreationOperation implements Operation {
     console.log('invert PolymerBondFinishCreationOperation');
     this.deletePolymerBondCreationModelChange(this.polymerBond);
     renderersManager.deletePolymerBond(this.polymerBond);
-  }
-}
-
-export class PolymerBondAddAttachmentPointsOperation implements Operation {
-  constructor(
-    public polymerBond: PolymerBond,
-    private secondMonomer,
-    private firstMonomerAttachmentPoint,
-    private secondMonomerAttachmentPoint,
-  ) {
-    this.polymerBond = polymerBond;
-  }
-
-  public execute() {
-    this.polymerBond.setSecondMonomer(this.secondMonomer);
-    this.polymerBond.firstMonomer.setBond(
-      this.firstMonomerAttachmentPoint,
-      this.polymerBond,
-    );
-    assert(this.polymerBond.secondMonomer);
-    assert(this.secondMonomer.renderer);
-    this.polymerBond.secondMonomer.setBond(
-      this.secondMonomerAttachmentPoint,
-      this.polymerBond,
-    );
-    this.polymerBond.firstMonomer.removePotentialBonds();
-    this.polymerBond.secondMonomer.removePotentialBonds();
-
-    this.polymerBond.moveToLinkedMonomers();
-    this.polymerBond.firstMonomer.turnOffSelection();
-    this.polymerBond.firstMonomer.turnOffHover();
-    this.polymerBond.firstMonomer.turnOffAttachmentPointsVisibility();
-    this.polymerBond.secondMonomer.turnOffSelection();
-    this.polymerBond.secondMonomer.turnOffHover();
-    this.polymerBond.secondMonomer.turnOffAttachmentPointsVisibility();
-    this.polymerBond.turnOffHover();
-
-    console.log('execute PolymerBondAddAttachmentPointsOperation');
-  }
-
-  public invert() {
-    const cleanAttachmentPoints = new PolymerBondCleanAttachmentPointsOperation(
-      this.polymerBond,
-    );
-    cleanAttachmentPoints.execute();
-    console.log('invert PolymerBondAddAttachmentPointsOperation');
-  }
-}
-
-export class PolymerBondCleanAttachmentPointsOperation implements Operation {
-  private secondMonomer;
-  private firstMonomerAttachmentPoint;
-  private secondMonomerAttachmentPoint;
-
-  constructor(public polymerBond: PolymerBond) {
-    this.polymerBond = polymerBond;
-  }
-
-  public execute() {
-    this.firstMonomerAttachmentPoint =
-      this.polymerBond.firstMonomer.getAttachmentPointByBond(this.polymerBond);
-    this.secondMonomerAttachmentPoint =
-      this.polymerBond.secondMonomer?.getAttachmentPointByBond(
-        this.polymerBond,
-      );
-    this.secondMonomer = this.polymerBond.secondMonomer;
-    this.polymerBond.firstMonomer.removePotentialBonds();
-    this.polymerBond.secondMonomer?.removePotentialBonds();
-    this.polymerBond.firstMonomer.turnOffSelection();
-    this.polymerBond.secondMonomer?.turnOffSelection();
-    if (this.firstMonomerAttachmentPoint) {
-      this.polymerBond.firstMonomer.unsetBond(this.firstMonomerAttachmentPoint);
-    }
-    if (this.secondMonomerAttachmentPoint) {
-      this.polymerBond.secondMonomer?.unsetBond(
-        this.secondMonomerAttachmentPoint,
-      );
-    }
-    console.log('execute PolymerBondCleanAttachmentPointsOperation');
-  }
-
-  public invert() {
-    const addAttachmentPoints = new PolymerBondAddAttachmentPointsOperation(
-      this.polymerBond,
-      this.secondMonomer,
-      this.firstMonomerAttachmentPoint,
-      this.secondMonomerAttachmentPoint,
-    );
-    addAttachmentPoints.execute();
-    console.log('invert PolymerBondCleanAttachmentPointsOperation');
   }
 }

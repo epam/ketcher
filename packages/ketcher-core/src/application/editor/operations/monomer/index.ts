@@ -21,15 +21,17 @@ import { Operation } from 'domain/entities/Operation';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 
 export class MonomerAddOperation implements Operation {
-  monomer: BaseMonomer | undefined;
+  public monomer: BaseMonomer;
   constructor(
-    public addMonomerChangeModel: () => BaseMonomer,
+    public addMonomerChangeModel: (monomer?: BaseMonomer) => BaseMonomer,
     public deleteMonomerChangeModel: (monomer: BaseMonomer) => void,
     private callback?: () => void,
-  ) {}
+  ) {
+    this.monomer = this.addMonomerChangeModel();
+  }
 
   public execute(renderersManager: RenderersManager) {
-    this.monomer = this.addMonomerChangeModel();
+    this.monomer = this.addMonomerChangeModel(this.monomer);
     renderersManager.addMonomer(this.monomer, this.callback);
   }
 
@@ -43,14 +45,22 @@ export class MonomerAddOperation implements Operation {
 }
 
 export class MonomerMoveOperation implements Operation {
-  constructor(private peptide: BaseMonomer) {}
-
-  public execute(renderersManager: RenderersManager) {
-    renderersManager.moveMonomer(this.peptide);
+  public monomer: BaseMonomer;
+  constructor(
+    private rearrangeChainModelChange: () => BaseMonomer,
+    private invertRearrangeChainModelChange: () => BaseMonomer,
+  ) {
+    this.monomer = this.rearrangeChainModelChange();
   }
 
-  public invert() {
-    console.log('invert MonomerMoveOperation');
+  public execute(renderersManager: RenderersManager) {
+    this.monomer = this.rearrangeChainModelChange();
+    renderersManager.moveMonomer(this.monomer);
+  }
+
+  public invert(renderersManager: RenderersManager) {
+    this.monomer = this.invertRearrangeChainModelChange();
+    renderersManager.moveMonomer(this.monomer);
   }
 }
 
@@ -90,7 +100,7 @@ export class MonomerDeleteOperation implements Operation {
   monomer: BaseMonomer;
   constructor(
     monomer: BaseMonomer,
-    public addMonomerChangeModel: () => BaseMonomer,
+    public addMonomerChangeModel: (monomer: BaseMonomer) => BaseMonomer,
     public deleteMonomerChangeModel: (monomer: BaseMonomer) => void,
     private callback?: () => void,
   ) {
@@ -103,8 +113,7 @@ export class MonomerDeleteOperation implements Operation {
   }
 
   public invert(renderersManager: RenderersManager) {
-    console.log(this.monomer);
-    this.monomer = this.addMonomerChangeModel();
+    this.monomer = this.addMonomerChangeModel(this.monomer);
     renderersManager.addMonomer(this.monomer, this.callback);
     console.log('invert MonomerDeleteOperation');
   }

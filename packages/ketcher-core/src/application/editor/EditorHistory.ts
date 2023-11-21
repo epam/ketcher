@@ -61,6 +61,9 @@ export class EditorHistory {
 
     this.historyPointer--;
     const lastCommand = this.historyStack[this.historyPointer];
+    const turnOffSelectionCommand =
+      this.editor?.drawingEntitiesManager.unselectAllDrawingEntities();
+    this.editor?.renderersContainer.update(turnOffSelectionCommand);
     lastCommand.invert(this.editor.renderersContainer);
   }
 

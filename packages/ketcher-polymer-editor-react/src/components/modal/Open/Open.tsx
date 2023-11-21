@@ -18,7 +18,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { ViewSwitcher } from './ViewSwitcher';
 import { ActionButton } from 'components/shared/actionButton';
 import { FileOpener, fileOpener } from './fileOpener';
-import { CoreEditor, KetSerializer } from 'ketcher-core';
+import { CoreEditor, KetSerializer, EditorHistory } from 'ketcher-core';
 import assert from 'assert';
 import { RequiredModalProps } from '../modalContainer';
 
@@ -39,6 +39,8 @@ const onOk = ({ struct, fragment }) => {
   deserialisedKet.drawingEntitiesManager.mergeInto(
     editor.drawingEntitiesManager,
   );
+  const editorHistory = new EditorHistory(editor);
+  editorHistory.update(deserialisedKet.modelChanges);
   editor.renderersContainer.update(deserialisedKet.modelChanges);
 };
 const isAnalyzingFile = false;

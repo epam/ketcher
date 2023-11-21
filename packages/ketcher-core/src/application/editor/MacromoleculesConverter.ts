@@ -278,7 +278,7 @@ export class MacromoleculesConverter {
         endAtomSgroup instanceof MonomerMicromolecule
       ) {
         const { command: polymerBondAdditionCommand, polymerBond } =
-          drawingEntitiesManager.addPolymerBond(
+          drawingEntitiesManager.startPolymerBondCreation(
             sgroupToMonomer.get(beginAtomSgroup),
             sgroupToMonomer.get(beginAtomSgroup)?.position,
             sgroupToMonomer.get(endAtomSgroup)?.position,

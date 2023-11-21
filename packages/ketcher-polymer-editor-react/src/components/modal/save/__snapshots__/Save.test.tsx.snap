@@ -10,13 +10,13 @@ Object {
       aria-hidden="true"
     />
     <div
-      class="MuiDialog-root MuiModal-root css-1hqci05-MuiModal-root-MuiDialog-root"
+      class="MuiDialog-root MuiModal-root css-pfbugh-MuiModal-root-MuiDialog-root"
       role="presentation"
     >
       <div
         aria-hidden="true"
         class="MuiBackdrop-root MuiModal-backdrop css-yiavyu-MuiBackdrop-root-MuiDialog-backdrop"
-        style="opacity: 0.4; background: rgb(0, 86, 98); webkit-transition: opacity 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms; transition: opacity 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;"
+        style="opacity: 0.4; background: rgba(94, 94, 94, 0.8); webkit-transition: opacity 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms; transition: opacity 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;"
       />
       <div
         data-testid="sentinelStart"
@@ -30,16 +30,16 @@ Object {
       >
         <div
           aria-labelledby=":r0:"
-          class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation24 MuiDialog-paper MuiDialog-paperScrollPaper MuiDialog-paperWidthMd css-12rl710-MuiPaper-root-MuiDialog-paper"
+          class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation24 MuiDialog-paper MuiDialog-paperScrollPaper MuiDialog-paperWidthSm css-1t1j96h-MuiPaper-root-MuiDialog-paper"
           role="dialog"
-          style="min-width: 20vw; background: rgb(245, 245, 245); border-radius: 8px; color: rgb(51, 51, 51);"
+          style="background: rgb(255, 255, 255); border-radius: 8px; color: rgb(51, 51, 51);"
         >
           <h2
-            class="MuiTypography-root MuiTypography-h6 MuiDialogTitle-root css-1x5ms5d-MuiTypography-root-MuiDialogTitle-root"
+            class="MuiTypography-root MuiTypography-h6 MuiDialogTitle-root css-o07hi-MuiTypography-root-MuiDialogTitle-root"
             id=":r0:"
           >
             <div
-              class="css-lvyu5j"
+              class="css-1uarmuk"
             >
               save structure
             </div>
@@ -50,6 +50,7 @@ Object {
               type="button"
             >
               <svg
+                class="css-1td8dcm"
                 fill="none"
                 height="24"
                 viewBox="0 0 24 24"
@@ -58,7 +59,7 @@ Object {
               >
                 <path
                   d="M13.462 12.046l6.37 6.37-1.413 1.415-6.371-6.371-6.327 6.326-1.414-1.414 6.327-6.326-6.372-6.372L5.676 4.26l6.372 6.372 6.417-6.418 1.414 1.414-6.417 6.418z"
-                  fill="#333"
+                  fill="currentColor"
                 />
               </svg>
               <span
@@ -67,170 +68,135 @@ Object {
             </button>
           </h2>
           <div
-            class="MuiDialogContent-root css-1n1tez8-MuiDialogContent-root"
+            class="MuiDialogContent-root css-1wbmh3t-MuiDialogContent-root"
           >
             <form
-              class="css-1g4yje1"
+              class="css-1o4x0h8"
               id="save"
             >
               <div
                 class="css-1abudc7"
+                style="padding: 12px 12px 10px;"
               >
                 <div>
                   <label
-                    class="css-1surj6c"
+                    class="css-zv32v0"
                     for="filename"
                   >
-                    File name:
+                    <span>
+                      File name:
+                    </span>
+                    <input
+                      class="css-1w4st8l"
+                      id="filename"
+                      type="text"
+                      value="ketcher"
+                    />
                   </label>
-                  <input
-                    class="css-18vwwx9"
-                    id="filename"
-                    type="text"
-                    value="ketcher"
-                  />
                 </div>
                 <div
-                  style="line-height: 24px;"
+                  class="MuiFormControl-root css-1x3s1gv-MuiFormControl-root"
                 >
                   <label
-                    class="css-1surj6c"
                     for="fileformat"
                   >
                     File format:
                   </label>
                   <div
-                    class="MuiFormControl-root css-dk6fk8-MuiFormControl-root"
+                    class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-fullWidth MuiInputBase-formControl css-1h8rp84-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root"
+                    data-testid="dropdown-select"
                   >
                     <div
-                      class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-fullWidth MuiInputBase-formControl css-objd0-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root"
-                      data-testid="dropdown-select"
+                      aria-controls=":r1:"
+                      aria-expanded="false"
+                      aria-haspopup="listbox"
+                      class="MuiSelect-select MuiSelect-outlined MuiInputBase-input MuiOutlinedInput-input css-11u53oe-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input"
+                      role="combobox"
+                      tabindex="0"
                     >
-                      <div
-                        aria-expanded="false"
-                        aria-haspopup="listbox"
-                        class="MuiSelect-select MuiSelect-outlined MuiInputBase-input MuiOutlinedInput-input css-11u53oe-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input"
-                        role="button"
-                        tabindex="0"
-                      >
-                        <span>
-                          MDL Molfile V3000
-                        </span>
-                      </div>
-                      <input
-                        aria-hidden="true"
-                        aria-invalid="false"
-                        class="MuiSelect-nativeInput css-yf8vq0-MuiSelect-nativeInput"
-                        tabindex="-1"
-                        value="mol"
-                      />
-                      <svg
-                        class="MuiSelect-icon MuiSelect-iconOutlined css-1bn8sss-MuiSelect-icon"
-                        fill="none"
-                        height="48"
-                        viewBox="0 0 48 48"
-                        width="48"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M24 33.23L9.782 19.012l2.828-2.828L24 27.574l11.388-11.39 2.83 2.828L24 33.23z"
-                          fill="#231F20"
-                        />
-                      </svg>
-                      <fieldset
-                        aria-hidden="true"
-                        class="MuiOutlinedInput-notchedOutline css-1d3z3hw-MuiOutlinedInput-notchedOutline"
-                      >
-                        <legend
-                          class="css-ihdtdm"
-                        >
-                          <span
-                            class="notranslate"
-                          >
-                            ​
-                          </span>
-                        </legend>
-                      </fieldset>
+                      <span>
+                        Ket
+                      </span>
                     </div>
+                    <input
+                      aria-hidden="true"
+                      aria-invalid="false"
+                      class="MuiSelect-nativeInput css-yf8vq0-MuiSelect-nativeInput"
+                      tabindex="-1"
+                      value="ket"
+                    />
+                    <svg
+                      class="MuiSelect-icon MuiSelect-iconOutlined css-1bn8sss-MuiSelect-icon"
+                      fill="none"
+                      height="48"
+                      viewBox="0 0 48 48"
+                      width="48"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M24 33.23L9.782 19.012l2.828-2.828L24 27.574l11.388-11.39 2.83 2.828L24 33.23z"
+                        fill="#231F20"
+                      />
+                    </svg>
+                    <fieldset
+                      aria-hidden="true"
+                      class="MuiOutlinedInput-notchedOutline css-1d3z3hw-MuiOutlinedInput-notchedOutline"
+                    >
+                      <legend
+                        class="css-ihdtdm"
+                      >
+                        <span
+                          class="notranslate"
+                        >
+                          ​
+                        </span>
+                      </legend>
+                    </fieldset>
                   </div>
                 </div>
               </div>
-              <textarea
-                class="css-17sxpbp"
-                readonly=""
+              <div
+                style="display: flex; flex-grow: 1; position: relative;"
               >
-                
-    -INDIGO-02102212382D
-  
-    0  0  0  0  0  0  0  0  0  0  0 V3000
-  M  V30 BEGIN CTAB
-  M  V30 COUNTS 11 10 0 0 0
-  M  V30 BEGIN ATOM
-  M  V30 1 C 2.75 -5.225 0.0 0
-  M  V30 2 C 3.61603 -5.725 0.0 0
-  M  V30 3 C 4.48205 -5.225 0.0 0
-  M  V30 4 C 5.34808 -5.725 0.0 0
-  M  V30 5 C 6.2141 -5.225 0.0 0
-  M  V30 6 C 7.08013 -5.725 0.0 0
-  M  V30 7 C 7.94615 -5.225 0.0 0
-  M  V30 8 C 8.81218 -5.725 0.0 0
-  M  V30 9 C 9.6782 -5.225 0.0 0
-  M  V30 10 C 10.5442 -5.725 0.0 0
-  M  V30 11 C 11.4103 -5.225 0.0 0
-  M  V30 END ATOM
-  M  V30 BEGIN BOND
-  M  V30 1 1 1 2
-  M  V30 2 1 2 3
-  M  V30 3 1 3 4
-  M  V30 4 1 4 5
-  M  V30 5 1 5 6
-  M  V30 6 1 6 7
-  M  V30 7 1 7 8
-  M  V30 8 1 8 9
-  M  V30 9 1 9 10
-  M  V30 10 1 10 11
-  M  V30 END BOND
-  M  V30 END CTAB
-  M  END
-  
-              </textarea>
+                <textarea
+                  class="css-jgwrv8"
+                  data-testid="preview-area-text"
+                  readonly=""
+                >
+                  {
+    "root": {
+        "nodes": [],
+        "connections": [],
+        "templates": []
+    }
+}
+                </textarea>
+              </div>
             </form>
           </div>
           <div
-            class="MuiDialogActions-root MuiDialogActions-spacing css-1codpvf-MuiDialogActions-root"
+            class="MuiDialogActions-root MuiDialogActions-spacing css-1a9359k-MuiDialogActions-root"
           >
             <button
-              class="MuiButtonBase-root css-1nveueb-MuiButtonBase-root"
+              class="MuiButtonBase-root css-fevlc0-MuiButtonBase-root"
               role="button"
               tabindex="0"
-              title="Errors"
+              title="Cancel"
               type="button"
             >
-              <svg
-                fill="none"
-                height="16"
-                viewBox="0 0 16 16"
-                width="16"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M8.001 14a1.333 1.333 0 100-2.667 1.333 1.333 0 000 2.667zM6.668 2h2.667v8H6.668V2z"
-                  fill="#FF4A4A"
-                />
-              </svg>
-              Errors
+              Cancel
               <span
                 class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
               />
             </button>
             <button
-              class="MuiButtonBase-root css-19hmuzh-MuiButtonBase-root"
+              class="MuiButtonBase-root css-1gvl3mi-MuiButtonBase-root"
               role="button"
               tabindex="0"
-              title="Save as file"
-              type="submit"
+              title="Save"
+              type="button"
             >
-              Save as file
+              Save
               <span
                 class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
               />

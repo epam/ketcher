@@ -7,7 +7,7 @@ Object {
     <div>
       <div
         role="button"
-        style="width: 100%; height: 100%; display: flex; align-items: center; flex-direction: column; justify-content: space-around;"
+        style="width: 100%; height: 100%; display: flex; align-items: center; flex-direction: column; justify-content: space-between;"
         tabindex="0"
       >
         <input
@@ -16,26 +16,8 @@ Object {
           tabindex="-1"
           type="file"
         />
-        <div
-          class="css-1gnig72"
-        >
-          <button
-            class="MuiButtonBase-root css-19hmuzh-MuiButtonBase-root"
-            role="button"
-            tabindex="0"
-            title="Open from file"
-            type="button"
-          >
-            Open from file
-            <span
-              class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-            />
-          </button>
-          <span>
-            or drag file here
-          </span>
-        </div>
         <svg
+          class="css-1opl6cd"
           height="27"
           viewBox="0 0 21 27"
           width="21"
@@ -47,13 +29,25 @@ Object {
             fill-rule="evenodd"
           />
         </svg>
+        <div
+          class="css-1b8y5ux"
+        >
+          <span>
+            or drag file here
+          </span>
+        </div>
+        <p
+          class="css-9x63nq"
+        >
+          Open from file
+        </p>
       </div>
     </div>
   </body>,
   "container": <div>
     <div
       role="button"
-      style="width: 100%; height: 100%; display: flex; align-items: center; flex-direction: column; justify-content: space-around;"
+      style="width: 100%; height: 100%; display: flex; align-items: center; flex-direction: column; justify-content: space-between;"
       tabindex="0"
     >
       <input
@@ -62,26 +56,8 @@ Object {
         tabindex="-1"
         type="file"
       />
-      <div
-        class="css-1gnig72"
-      >
-        <button
-          class="MuiButtonBase-root css-19hmuzh-MuiButtonBase-root"
-          role="button"
-          tabindex="0"
-          title="Open from file"
-          type="button"
-        >
-          Open from file
-          <span
-            class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-          />
-        </button>
-        <span>
-          or drag file here
-        </span>
-      </div>
       <svg
+        class="css-1opl6cd"
         height="27"
         viewBox="0 0 21 27"
         width="21"
@@ -93,6 +69,18 @@ Object {
           fill-rule="evenodd"
         />
       </svg>
+      <div
+        class="css-1b8y5ux"
+      >
+        <span>
+          or drag file here
+        </span>
+      </div>
+      <p
+        class="css-9x63nq"
+      >
+        Open from file
+      </p>
     </div>
   </div>,
   "debug": [Function],

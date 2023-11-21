@@ -99,6 +99,27 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   }
 
   public redrawAttachmentPointsCoordinates() {
+    const chosenAttachmentPointName =
+      this.monomer.chosenFirstAttachmentPointForBond;
+    const chosenAttachmentPoint = this.attachmentPoints.find(
+      (item) => item.getAttachmentPointName() === chosenAttachmentPointName,
+    );
+    const angle = chosenAttachmentPoint?.getAngle();
+    const allAngles = this.attachmentPoints.map((item) => {
+      return item.getAngle();
+    });
+    const isSectorOccupied = allAngles.some((item) => {
+      if (angle !== item && typeof angle === 'number') {
+        return Math.abs(angle - item) < 20 || Math.abs(angle - item) > 340;
+      }
+      return false;
+    });
+
+    if (isSectorOccupied) {
+      this.redrawAttachmentPoints();
+      return;
+    }
+
     const attachmentPointName = this.monomer.chosenFirstAttachmentPointForBond;
     const attachmentPoint = this.attachmentPoints.find(
       (item) => item.getAttachmentPointName() === attachmentPointName,

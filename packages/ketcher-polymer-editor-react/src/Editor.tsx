@@ -110,6 +110,7 @@ function EditorContainer({
   useEffect(() => {
     onInit?.();
   }, [onInit]);
+  console.log('rootElRefЖ', rootElRef);
 
   return (
     <Provider store={store}>
@@ -155,6 +156,7 @@ function Editor({ theme, togglerComponent }: EditorProps) {
     [dispatchShowPreview],
   );
 
+  console.log('editor:', editor);
   useEffect(() => {
     if (editor) {
       editor.events.error.add((errorText) => {
@@ -210,7 +212,9 @@ function Editor({ theme, togglerComponent }: EditorProps) {
     });
     editor?.events.mouseOnMoveMonomer.add((e) => {
       handleClosePreview();
-      handleOpenPreview(e);
+      if (e.buttons !== 1 || !noPreviewTools.includes(activeTool)) {
+        handleOpenPreview(e);
+      }
     });
   }, [editor, activeTool]);
 
@@ -224,8 +228,6 @@ function Editor({ theme, togglerComponent }: EditorProps) {
   const handleCloseErrorTooltip = () => {
     dispatch(closeErrorTooltip());
   };
-
-  const shouldRenderPreview = !noPreviewTools.includes(activeTool);
 
   return (
     <>
@@ -271,9 +273,7 @@ function Editor({ theme, togglerComponent }: EditorProps) {
         onClick={() => setIsMonomerLibraryHidden((prev) => !prev)}
       />
       <FullscreenButton />
-      {shouldRenderPreview && (
-        <StyledPreview className="polymer-library-preview" />
-      )}
+      <StyledPreview className="polymer-library-preview" />
       <ModalContainer />
       <ErrorModal />
       <Snackbar

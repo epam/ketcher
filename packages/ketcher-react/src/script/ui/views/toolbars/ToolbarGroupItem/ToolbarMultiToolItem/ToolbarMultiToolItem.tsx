@@ -30,8 +30,8 @@ import { chooseMultiTool } from './variants/chooseMultiTool';
 import classes from './ToolbarMultiToolItem.module.less';
 import { usePortalOpening } from './usePortalOpening';
 import { usePortalStyle } from './usePortalStyle';
-import { SettingsManager } from '../../../../utils/settingsManager';
 import { getIconName, Icon } from 'components';
+import { SettingsManager } from 'ketcher-core';
 
 interface ToolbarMultiToolItemProps {
   id: ToolbarItemVariant;

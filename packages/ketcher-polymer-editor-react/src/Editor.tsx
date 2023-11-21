@@ -110,7 +110,6 @@ function EditorContainer({
   useEffect(() => {
     onInit?.();
   }, [onInit]);
-  console.log('rootElRefЖ', rootElRef);
 
   return (
     <Provider store={store}>
@@ -156,7 +155,6 @@ function Editor({ theme, togglerComponent }: EditorProps) {
     [dispatchShowPreview],
   );
 
-  console.log('editor:', editor);
   useEffect(() => {
     if (editor) {
       editor.events.error.add((errorText) => {

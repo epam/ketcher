@@ -368,7 +368,9 @@ class PolymerBond implements BaseTool {
     this.bondRenderer = undefined;
   };
 
-  public handleBondCreationCancellation = (): void => {
+  public handleBondCreationCancellation = (
+    secondMonomer: BaseMonomer,
+  ): void => {
     if (!this.bondRenderer) {
       return;
     }
@@ -376,6 +378,7 @@ class PolymerBond implements BaseTool {
     const modelChanges =
       this.editor.drawingEntitiesManager.cancelPolymerBondCreation(
         this.bondRenderer.polymerBond,
+        secondMonomer,
       );
     this.editor.renderersContainer.update(modelChanges);
     this.isBondConnectionModalOpen = false;

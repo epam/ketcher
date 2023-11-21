@@ -18,6 +18,7 @@
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { RenderersManager } from 'application/render/renderers/RenderersManager';
 import { Operation } from 'domain/entities/Operation';
+import { BaseMonomer } from 'domain/entities/BaseMonomer';
 
 export class PolymerBondAddOperation implements Operation {
   constructor(private polymerBond: PolymerBond) {}
@@ -52,10 +53,16 @@ export class PolymerBondShowInfoOperation implements Operation {
 }
 
 export class PolymerBondCancelCreationOperation implements Operation {
-  constructor(private polymerBond: PolymerBond) {}
+  constructor(
+    private polymerBond: PolymerBond,
+    private secondMonomer?: BaseMonomer,
+  ) {}
 
   public execute(renderersManager: RenderersManager) {
-    renderersManager.cancelPolymerBondCreation(this.polymerBond);
+    renderersManager.cancelPolymerBondCreation(
+      this.polymerBond,
+      this.secondMonomer,
+    );
   }
 }
 

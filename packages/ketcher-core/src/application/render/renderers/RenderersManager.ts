@@ -100,11 +100,14 @@ export class RenderersManager {
     polymerBond.secondMonomer.renderer?.redrawHover();
   }
 
-  public cancelPolymerBondCreation(polymerBond) {
+  public cancelPolymerBondCreation(polymerBond, secondMonomer) {
     this.deletePolymerBond(polymerBond);
     polymerBond.firstMonomer.renderer?.redrawAttachmentPoints();
     polymerBond.firstMonomer.renderer?.drawSelection();
     polymerBond.firstMonomer.renderer?.redrawHover();
+    secondMonomer?.renderer?.redrawAttachmentPoints();
+    secondMonomer?.renderer?.drawSelection();
+    secondMonomer?.renderer?.redrawHover();
   }
 
   public hoverMonomer(monomer, needRedrawAttachmentPoints) {

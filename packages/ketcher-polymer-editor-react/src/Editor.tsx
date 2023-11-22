@@ -210,7 +210,8 @@ function Editor({ theme, togglerComponent }: EditorProps) {
     });
     editor?.events.mouseOnMoveMonomer.add((e) => {
       handleClosePreview();
-      if (e.buttons !== 1 || !noPreviewTools.includes(activeTool)) {
+      const isLeftClick = e.buttons === 1;
+      if (!isLeftClick || !noPreviewTools.includes(activeTool)) {
         handleOpenPreview(e);
       }
     });

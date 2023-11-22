@@ -78,8 +78,8 @@ export class CoreEditor {
     this.events.selectPreset.add((preset) => this.onSelectRNAPreset(preset));
     this.events.selectTool.add((tool) => this.onSelectTool(tool));
     this.events.createBondViaModal.add((payload) => this.onCreateBond(payload));
-    this.events.cancelBondCreationViaModal.add(() =>
-      this.onCancelBondCreation(),
+    this.events.cancelBondCreationViaModal.add((secondMonomer: BaseMonomer) =>
+      this.onCancelBondCreation(secondMonomer),
     );
     this.events.selectMode.add((isSnakeMode) => this.onSelectMode(isSnakeMode));
 
@@ -113,9 +113,9 @@ export class CoreEditor {
     }
   }
 
-  private onCancelBondCreation() {
+  private onCancelBondCreation(secondMonomer: BaseMonomer) {
     if (this.tool instanceof PolymerBond) {
-      this.tool.handleBondCreationCancellation();
+      this.tool.handleBondCreationCancellation(secondMonomer);
     }
   }
 

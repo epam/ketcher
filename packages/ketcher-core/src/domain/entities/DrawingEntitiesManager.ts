@@ -273,7 +273,10 @@ export class DrawingEntitiesManager {
     return command;
   }
 
-  public cancelPolymerBondCreation(polymerBond: PolymerBond) {
+  public cancelPolymerBondCreation(
+    polymerBond: PolymerBond,
+    secondMonomer?: BaseMonomer,
+  ) {
     this.polymerBonds.delete(polymerBond.id);
     const command = new Command();
     polymerBond.firstMonomer.removeBond(polymerBond);
@@ -281,7 +284,14 @@ export class DrawingEntitiesManager {
     polymerBond.firstMonomer.turnOffSelection();
     polymerBond.firstMonomer.turnOffHover();
     polymerBond.firstMonomer.turnOffAttachmentPointsVisibility();
-    const operation = new PolymerBondCancelCreationOperation(polymerBond);
+
+    secondMonomer?.turnOffSelection();
+    secondMonomer?.turnOffHover();
+    secondMonomer?.turnOffAttachmentPointsVisibility();
+    const operation = new PolymerBondCancelCreationOperation(
+      polymerBond,
+      secondMonomer,
+    );
     command.addOperation(operation);
 
     return command;

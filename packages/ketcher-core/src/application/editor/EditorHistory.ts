@@ -45,16 +45,9 @@ export class EditorHistory {
     this.historyPointer = this.historyStack.length;
   }
 
-  // historySize() {
-  //   return {
-  //     undo: this.historyPointer,
-  //     redo: this.historyStack.length - this.historyPointer,
-  //   };
-  // }
-
   undo() {
     if (this.historyPointer === 0) {
-      throw new Error('Undo stack is empty');
+      return;
     }
 
     assert(this.editor);
@@ -69,7 +62,7 @@ export class EditorHistory {
 
   redo() {
     if (this.historyPointer === this.historyStack.length) {
-      throw new Error('Redo stack is empty');
+      return;
     }
 
     assert(this.editor);

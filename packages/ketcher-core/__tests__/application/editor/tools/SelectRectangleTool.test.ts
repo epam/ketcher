@@ -34,7 +34,28 @@ jest.mock('d3', () => {
         style() {
           return this;
         },
-        on() {},
+        on() {
+          return this;
+        },
+        append() {
+          return this;
+        },
+        data() {
+          return this;
+        },
+        text() {
+          return this;
+        },
+        node() {
+          return {
+            getBBox() {
+              return {};
+            },
+            getBoundingClientRect() {
+              return {};
+            },
+          };
+        },
       };
     },
     ZoomTransform: jest.fn().mockImplementation(() => {
@@ -67,6 +88,10 @@ global.ResizeObserver = jest.fn().mockImplementation(() => ({
 }));
 
 describe('Select Rectangle Tool', () => {
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
   it('should select drawing entity on mousedown', () => {
     const polymerBond = getFinishedPolymerBond(0, 0, 10, 10);
     const event = {
@@ -99,7 +124,7 @@ describe('Select Rectangle Tool', () => {
     expect(onShow).toHaveBeenCalled();
   });
 
-  it.only('should move selected entity', () => {
+  it('should move selected entity', () => {
     const canvas: SVGSVGElement = createPolymerEditorCanvas();
     const editor = new CoreEditor({
       theme: polymerEditorTheme,
@@ -117,6 +142,9 @@ describe('Select Rectangle Tool', () => {
     jest
       .spyOn(BaseMonomerRenderer.prototype, 'moveSelection')
       .mockImplementation(onMove);
+    jest
+      .spyOn(PeptideRenderer.prototype, 'drawSelection')
+      .mockImplementation(() => {});
 
     const selectRectangleTool = new SelectRectangle(editor);
 

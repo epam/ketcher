@@ -326,8 +326,8 @@ function MenuComponent() {
         />
       </Menu.Group>
       <Menu.Group>
-        <Menu.Item itemId="undo" />
-        <Menu.Item itemId="redo" />
+        <Menu.Item itemId="undo" testId="undo-button" />
+        <Menu.Item itemId="redo" testId="redo-button" />
       </Menu.Group>
       <Menu.Group>
         <Menu.Item itemId="open" title="Open..." testId="open-button" />

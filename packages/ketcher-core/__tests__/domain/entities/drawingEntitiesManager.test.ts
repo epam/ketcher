@@ -10,14 +10,15 @@ import { PolymerBond } from 'domain/entities/PolymerBond';
 import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import {
   DrawingEntityHoverOperation,
+  DrawingEntityMoveOperation,
   DrawingEntitySelectOperation,
 } from 'application/editor/operations/drawingEntity';
 import {
   MonomerAddOperation,
   MonomerDeleteOperation,
   MonomerHoverOperation,
-  MonomerMoveOperation,
 } from 'application/editor/operations/monomer';
+import { RenderersManager } from 'application/render/renderers/RenderersManager';
 
 describe('Drawing Entities Manager', () => {
   it('should create monomer', () => {
@@ -86,10 +87,12 @@ describe('Drawing Entities Manager', () => {
 
   it('should delete peptide', () => {
     const drawingEntitiesManager = new DrawingEntitiesManager();
+    const renderersManager = new RenderersManager({ theme: {} });
     drawingEntitiesManager.addMonomer(peptideMonomerItem, new Vec2(0, 0));
     const peptide = Array.from(drawingEntitiesManager.monomers)[0][1];
     expect(peptide).toBeInstanceOf(Peptide);
     const command = drawingEntitiesManager.deleteMonomer(peptide);
+    renderersManager.update(command);
     expect(command.operations.length).toEqual(1);
     expect(command.operations[0]).toBeInstanceOf(MonomerDeleteOperation);
     expect(drawingEntitiesManager.monomers.size).toEqual(0);
@@ -97,6 +100,7 @@ describe('Drawing Entities Manager', () => {
 
   it('should delete polymer bond', () => {
     const drawingEntitiesManager = new DrawingEntitiesManager();
+    const renderersManager = new RenderersManager({ theme: {} });
     const { polymerBond } = drawingEntitiesManager.startPolymerBondCreation(
       new Peptide(peptideMonomerItem),
       new Vec2(0, 0),
@@ -106,6 +110,7 @@ describe('Drawing Entities Manager', () => {
       Array.from(drawingEntitiesManager.polymerBonds)[0][1],
     ).toBeInstanceOf(PolymerBond);
     const command = drawingEntitiesManager.deletePolymerBond(polymerBond);
+    renderersManager.update(command);
     expect(command.operations.length).toEqual(1);
     expect(command.operations[0]).toBeInstanceOf(PolymerBondDeleteOperation);
     expect(drawingEntitiesManager.polymerBonds.size).toEqual(0);
@@ -122,15 +127,19 @@ describe('Drawing Entities Manager', () => {
 
   it('should move peptide', () => {
     const drawingEntitiesManager = new DrawingEntitiesManager();
-    const peptide = new Peptide(peptideMonomerItem);
+    const renderersManager = new RenderersManager({ theme: {} });
+    jest.spyOn(renderersManager, 'moveDrawingEntity').mockImplementation();
+    drawingEntitiesManager.addMonomer(peptideMonomerItem, new Vec2(0, 0));
+    const peptide = Array.from(drawingEntitiesManager.monomers)[0][1];
     peptide.turnOnSelection();
     const command = drawingEntitiesManager.moveSelectedDrawingEntities(
       new Vec2(100, 200),
     );
+    renderersManager.update(command);
     expect(peptide.position.x).toEqual(100);
     expect(peptide.position.y).toEqual(200);
     expect(command.operations.length).toEqual(1);
-    expect(command.operations[0]).toBeInstanceOf(MonomerMoveOperation);
+    expect(command.operations[0]).toBeInstanceOf(DrawingEntityMoveOperation);
   });
 
   it('should hover drawing entity', () => {

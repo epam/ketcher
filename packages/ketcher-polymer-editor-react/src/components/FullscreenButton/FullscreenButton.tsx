@@ -43,8 +43,10 @@ const isFullScreen = () => {
 };
 
 const ButtonContainer = styled.div`
+  display: flex;
+  padding: 4px;
+
   & svg:first-of-type {
-    margin: 2px;
     width: 20px;
     height: 20px;
   }

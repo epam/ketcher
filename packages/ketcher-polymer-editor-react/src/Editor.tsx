@@ -76,6 +76,7 @@ import { MonomerConnectionOnlyProps } from 'components/modal/modalContainer/type
 import { calculatePreviewPosition } from 'helpers';
 import StyledPreview from 'components/shared/MonomerPreview';
 import { ErrorModal } from 'components/modal/Error';
+import { FullscreenButton } from 'components/FullscreenButton';
 
 const muiTheme = createTheme(muiOverrides);
 
@@ -227,6 +228,7 @@ function Editor({ theme, togglerComponent }: EditorProps) {
       <Layout>
         <Layout.Top shortened={isMonomerLibraryHidden}>
           {togglerComponent}
+          <FullscreenButton />
         </Layout.Top>
 
         <Layout.Left>

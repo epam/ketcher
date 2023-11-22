@@ -18,7 +18,6 @@ import { useState, useRef } from 'react';
 import styled from '@emotion/styled';
 import { Button, Popover } from '@mui/material';
 import { Icon } from 'ketcher-react';
-import { FullscreenButton } from '../../../packages/ketcher-polymer-editor-react/src/components/FullscreenButton';
 
 interface IStyledIconProps {
   expanded?: boolean;
@@ -172,7 +171,6 @@ export const ModeControl = ({ toggle, isPolymerEditor }: ModeProps) => {
           <CornerIcon name="dropdown" />
         </>
       </DropDownButton>
-      {isPolymerEditor && <FullscreenButton />}
       <Dropdown
         title=""
         open={isExpanded}

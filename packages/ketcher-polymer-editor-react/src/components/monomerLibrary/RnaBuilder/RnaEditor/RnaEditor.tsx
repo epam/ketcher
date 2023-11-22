@@ -40,6 +40,7 @@ import {
   setIsEditMode as setIsEditModeAction,
 } from 'state/rna-builder';
 import { scrollToElement } from 'helpers/dom';
+import { selectEditor } from 'state/common';
 
 export const scrollToSelectedPreset = (presetName) => {
   scrollToElement(`[data-rna-preset-item-name="${presetName}"]`);
@@ -53,6 +54,7 @@ export const RnaEditor = ({ duplicatePreset, activateEditMode }) => {
   const activePreset = useAppSelector(selectActivePreset);
   const presets = useAppSelector(selectPresets);
   const isEditMode = useAppSelector(selectIsEditMode);
+  const editor = useAppSelector(selectEditor);
   const activePresetFullName = selectPresetFullName(activePreset);
   const activeMonomerGroup = useAppSelector(selectActiveRnaBuilderItem);
   const [, setPresetName] = useState('');
@@ -112,6 +114,7 @@ export const RnaEditor = ({ duplicatePreset, activateEditMode }) => {
       return;
     }
     dispatch(savePreset(activePreset));
+    editor.events.selectPreset.dispatch(activePreset);
     setIsEditMode(false);
     setTimeout(() => {
       scrollToSelectedPreset(activePreset.name);

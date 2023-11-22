@@ -57,7 +57,6 @@ import {
   modalComponentList,
   ModalContainer,
 } from 'components/modal/modalContainer';
-import { FullscreenButton } from 'components/FullscreenButton';
 import { DeepPartial } from './types';
 import { EditorClassName } from './constants';
 import { Snackbar } from '@mui/material';
@@ -266,7 +265,6 @@ function Editor({ theme, togglerComponent }: EditorProps) {
         isHidden={isMonomerLibraryHidden}
         onClick={() => setIsMonomerLibraryHidden((prev) => !prev)}
       />
-      <FullscreenButton />
       <StyledPreview className="polymer-library-preview" />
       <ModalContainer />
       <ErrorModal />

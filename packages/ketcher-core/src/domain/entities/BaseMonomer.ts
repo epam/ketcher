@@ -264,9 +264,6 @@ export abstract class BaseMonomer extends DrawingEntity {
         list.push(attachmentPointName);
       }
     }
-    if (this.chosenFirstAttachmentPointForBond !== null) {
-      list.push(this.chosenFirstAttachmentPointForBond);
-    }
     return list;
   }
 

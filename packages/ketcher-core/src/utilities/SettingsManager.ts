@@ -14,14 +14,24 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { KetcherLogger } from 'ketcher-core';
-import { KETCHER_SAVED_SETTINGS_KEY } from 'src/constants';
+import { KetcherLogger } from './KetcherLogger';
+
+export const KETCHER_SAVED_SETTINGS_KEY = 'ketcher_editor_saved_settings';
+export const KETCHER_SAVED_OPTIONS_KEY = 'ketcher-opts';
 
 interface SavedSettings {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   selectionTool?: any;
+  disableCustomQuery?: boolean;
+}
+
+interface SavedOptions {
+  ignoreChiralFlag?: boolean;
 }
 
 export class SettingsManager {
+  static _disableCustomQuery?: boolean;
+
   static getSettings(): SavedSettings {
     try {
       return JSON.parse(
@@ -43,9 +53,26 @@ export class SettingsManager {
     localStorage.setItem(KETCHER_SAVED_SETTINGS_KEY, JSON.stringify(settings));
   }
 
+  static getOptions(): SavedOptions {
+    try {
+      return JSON.parse(
+        localStorage.getItem(KETCHER_SAVED_OPTIONS_KEY) || '{}',
+      );
+    } catch (e) {
+      KetcherLogger.error('SettingsManager.ts::SettingsManager::getOptions', e);
+      return {} as SavedOptions;
+    }
+  }
+
+  static saveOptions(options: SavedOptions) {
+    if (!options) {
+      return;
+    }
+    localStorage.setItem(KETCHER_SAVED_OPTIONS_KEY, JSON.stringify(options));
+  }
+
   static get selectionTool() {
     const { selectionTool } = this.getSettings();
-
     return selectionTool;
   }
 
@@ -55,6 +82,28 @@ export class SettingsManager {
     this.saveSettings({
       ...settings,
       selectionTool,
+    });
+  }
+
+  static get disableCustomQuery() {
+    return this._disableCustomQuery;
+  }
+
+  static set disableCustomQuery(disableCustomQuery: boolean | undefined) {
+    this._disableCustomQuery = disableCustomQuery;
+  }
+
+  static get ignoreChiralFlag() {
+    const { ignoreChiralFlag } = this.getOptions();
+    return ignoreChiralFlag;
+  }
+
+  static set ignoreChiralFlag(ignoreChiralFlag: boolean | undefined) {
+    const options = this.getOptions();
+
+    this.saveOptions({
+      ...options,
+      ignoreChiralFlag,
     });
   }
 }

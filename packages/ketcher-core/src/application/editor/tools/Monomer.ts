@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { Tool } from 'application/editor/tools/Tool';
+import { BaseTool } from 'application/editor/tools/Tool';
 import { Peptide } from 'domain/entities/Peptide';
 import { Chem } from 'domain/entities/Chem';
 import { Sugar } from 'domain/entities/Sugar';
@@ -27,7 +27,7 @@ import { monomerFactory } from '../operations/monomer/monomerFactory';
 import assert from 'assert';
 import Coordinates from '../shared/coordinates';
 
-class MonomerTool implements Tool {
+class MonomerTool implements BaseTool {
   private monomerPreview:
     | Peptide
     | Chem
@@ -78,9 +78,7 @@ class MonomerTool implements Tool {
   }
 
   public mouseLeaveClientArea() {
-    this.monomerPreviewRenderer?.remove();
-    this.monomerPreviewRenderer = undefined;
-    this.monomerPreview = undefined;
+    this.hidePreview();
   }
 
   public mouseover() {
@@ -95,6 +93,16 @@ class MonomerTool implements Tool {
       );
       this.monomerPreviewRenderer?.show(this.editor.theme);
     }
+  }
+
+  hidePreview() {
+    this.monomerPreviewRenderer?.remove();
+    this.monomerPreviewRenderer = undefined;
+    this.monomerPreview = undefined;
+  }
+
+  destroy(): void {
+    this.hidePreview();
   }
 }
 

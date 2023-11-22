@@ -59,6 +59,7 @@ export const AttachmentPointsRow = styled.div(() => ({
   display: 'flex',
   justifyContent: 'space-around',
   alignItems: 'flex-start',
+  padding: '12px',
 }));
 
 export const MonomerNamesRow = styled.div(() => ({
@@ -66,6 +67,7 @@ export const MonomerNamesRow = styled.div(() => ({
   gap: '34px',
   justifyContent: 'space-between',
   alignItems: 'flex-end',
+  marginTop: '12px',
   paddingBottom: '6px',
 }));
 

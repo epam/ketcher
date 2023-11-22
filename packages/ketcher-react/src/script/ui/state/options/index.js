@@ -19,11 +19,11 @@ import {
   getDefaultOptions,
   validation,
 } from '../../data/schema/options-schema';
+import { KETCHER_SAVED_OPTIONS_KEY } from 'ketcher-core';
 
 import { pick } from 'lodash/fp';
 import { storage } from '../../storage-ext';
 import { reinitializeTemplateLibrary } from '../templates/init-lib';
-import { KETCHER_SAVED_OPTIONS_KEY } from 'src/constants';
 
 export const initOptionsState = {
   app: {

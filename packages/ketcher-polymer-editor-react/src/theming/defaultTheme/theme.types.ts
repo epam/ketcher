@@ -96,6 +96,7 @@ export type EditorTheme = {
         error: string;
       };
       background: {
+        primary: string;
         default: string;
         hover: string;
         disabled: string;

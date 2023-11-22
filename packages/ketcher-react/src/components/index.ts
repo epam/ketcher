@@ -20,3 +20,4 @@ export * from './StructRender';
 export * from './Input';
 export * from './Accordion';
 export * from './InfoModal';
+export * from './Dialog';

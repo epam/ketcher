@@ -24,11 +24,16 @@ import {
   setIsEditMode,
 } from 'state/rna-builder';
 import { StyledActionButton } from 'components/modal/Delete/styledComponents';
+import styled from '@emotion/styled';
 
 export interface Props {
   onClose: () => void;
   isModalOpen: boolean;
 }
+
+const DeleteTextWrapper = styled.div`
+  padding: 12px;
+`;
 
 const Delete = ({ isModalOpen, onClose }: Props) => {
   const dispatch = useAppDispatch();
@@ -60,11 +65,11 @@ const Delete = ({ isModalOpen, onClose }: Props) => {
       onClose={onCloseCallback}
     >
       <Modal.Content>
-        <div data-testid="delete-preset-popup-content">
+        <DeleteTextWrapper data-testid="delete-preset-popup-content">
           <div>You are about to delete</div>
           <div>"{activePresetForContextMenu.name}" RNA preset.</div>
           <div>This operation cannot be undone.</div>
-        </div>
+        </DeleteTextWrapper>
       </Modal.Content>
       <Modal.Footer>
         <StyledActionButton

@@ -194,6 +194,9 @@ class PolymerBond implements BaseTool {
   }
 
   public mouseLeaveAttachmentPoint(event) {
+    if (this.isBondConnectionModalOpen) {
+      return;
+    }
     const renderer: BaseMonomerRenderer = event.target.__data__;
     if (renderer !== this.bondRenderer?.polymerBond?.firstMonomer?.renderer) {
       const modelChanges =
@@ -377,7 +380,9 @@ class PolymerBond implements BaseTool {
     this.bondRenderer = undefined;
   };
 
-  public handleBondCreationCancellation = (): void => {
+  public handleBondCreationCancellation = (
+    secondMonomer: BaseMonomer,
+  ): void => {
     if (!this.bondRenderer) {
       return;
     }
@@ -385,6 +390,7 @@ class PolymerBond implements BaseTool {
     const modelChanges =
       this.editor.drawingEntitiesManager.cancelPolymerBondCreation(
         this.bondRenderer.polymerBond,
+        secondMonomer,
       );
     this.editor.renderersContainer.update(modelChanges);
     this.isBondConnectionModalOpen = false;

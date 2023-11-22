@@ -20,6 +20,7 @@
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { RenderersManager } from 'application/render/renderers/RenderersManager';
 import { Operation } from 'domain/entities/Operation';
+import { BaseMonomer } from 'domain/entities/BaseMonomer';
 
 export class PolymerBondAddOperation implements Operation {
   public polymerBond;
@@ -93,10 +94,16 @@ export class PolymerBondShowInfoOperation implements Operation {
 }
 
 export class PolymerBondCancelCreationOperation implements Operation {
-  constructor(public polymerBond: PolymerBond) {}
+  constructor(
+    public polymerBond: PolymerBond,
+    private secondMonomer?: BaseMonomer,
+  ) {}
 
   public execute(renderersManager: RenderersManager) {
-    renderersManager.cancelPolymerBondCreation(this.polymerBond);
+    renderersManager.cancelPolymerBondCreation(
+      this.polymerBond,
+      this.secondMonomer,
+    );
   }
 
   public invert(_renderersManager: RenderersManager) {

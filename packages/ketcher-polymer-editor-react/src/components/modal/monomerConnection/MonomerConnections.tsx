@@ -73,7 +73,7 @@ const MonomerConnection = ({
     useState<string | null>(getDefaultAttachmentPoint(secondMonomer));
 
   const cancelBondCreationAndClose = () => {
-    editor.events.cancelBondCreationViaModal.dispatch();
+    editor.events.cancelBondCreationViaModal.dispatch(secondMonomer);
     onClose();
   };
 

@@ -36,6 +36,7 @@ interface Props {
   disabled?: boolean;
   formName?: string;
   name?: string;
+  'data-testid'?: string;
 }
 
 const ChevronIcon = ({ className }) => (
@@ -51,6 +52,7 @@ const Select = ({
   options,
   formName,
   name,
+  'data-testid': testId,
 }: Props) => {
   const [currentValue, setCurrentValue] = useState<Option>();
 
@@ -75,6 +77,7 @@ const Select = ({
       disabled={disabled}
       MenuProps={{ className: styles.dropdownList }}
       IconComponent={ChevronIcon}
+      data-testid={testId}
     >
       {options &&
         options.map((option) => {

@@ -28,11 +28,11 @@ import clsx from 'clsx';
 import { Icon } from 'components';
 import styles from './Dialog.module.less';
 import { KETCHER_ROOT_NODE_CSS_SELECTOR } from 'src/constants';
-import { CLIP_AREA_BASE_CLASS } from '../../../component/cliparea/cliparea';
+import { CLIP_AREA_BASE_CLASS } from '../../script/ui/component/cliparea/cliparea';
 
 interface DialogParamsCallProps {
   onCancel: () => void;
-  onOk: (result: any) => void;
+  onOk: (result: unknown) => void;
 }
 
 export interface DialogParams extends DialogParamsCallProps {
@@ -56,13 +56,13 @@ interface DialogProps {
 }
 
 interface DialogCallProps {
-  result?: () => any;
+  result?: () => unknown;
   valid?: () => boolean;
 }
 
 type Props = DialogProps & DialogCallProps;
 
-const Dialog: FC<PropsWithChildren & Props> = (props) => {
+export const Dialog: FC<PropsWithChildren & Props> = (props) => {
   const {
     children,
     title,
@@ -176,5 +176,3 @@ const Dialog: FC<PropsWithChildren & Props> = (props) => {
     </div>
   );
 };
-
-export default Dialog;

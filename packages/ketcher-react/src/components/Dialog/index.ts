@@ -14,25 +14,4 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { ActionButton } from 'components/shared/actionButton';
-
-type Props = {
-  label: string;
-  onSave: () => void;
-  disabled?: boolean;
-};
-
-export const SaveButton = ({ label, onSave, disabled = false }: Props) => {
-  const handleSave = () => {
-    onSave();
-  };
-
-  return (
-    <ActionButton
-      label={label}
-      clickHandler={handleSave}
-      type="submit"
-      disabled={disabled}
-    />
-  );
-};
+export { Dialog } from './Dialog';

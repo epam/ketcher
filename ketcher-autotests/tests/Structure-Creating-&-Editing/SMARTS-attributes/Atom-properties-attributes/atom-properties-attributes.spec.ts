@@ -1,10 +1,9 @@
 import { Page, test } from '@playwright/test';
 import {
-  BondTypeName,
   clickInTheMiddleOfTheScreen,
   doubleClickOnAtom,
   pressButton,
-  selectBond,
+  selectDropdownTool,
   takeEditorScreenshot,
   waitForAtomPropsModal,
   waitForPageInit,
@@ -17,10 +16,8 @@ import {
   setValence,
 } from '../utils';
 
-const defaultFileFormat = 'MDL Molfile V2000';
-
 async function drawStructure(page: Page, numberOfClicks: number) {
-  await selectBond(BondTypeName.Single, page);
+  await selectDropdownTool(page, 'bonds', 'bond-single');
   for (let i = 0; i < numberOfClicks; i++) {
     await clickInTheMiddleOfTheScreen(page);
   }
@@ -35,7 +32,7 @@ async function setAndCheckAtomProperties(
   await setProperty(page, value);
   await pressButton(page, 'Apply');
   await takeEditorScreenshot(page);
-  await checkSmartsValue(page, defaultFileFormat, expectedSmarts);
+  await checkSmartsValue(page, expectedSmarts);
 }
 
 test.describe('Checking atom properties attributes in SMARTS format', () => {
@@ -86,10 +83,6 @@ test.describe('Checking atom properties attributes in SMARTS format', () => {
   });
 
   test('Setting valence', async ({ page }) => {
-    test.fail();
-    /**
-     * This test will fail until https://github.com/epam/Indigo/issues/1362 is fixed
-     */
     await setAndCheckAtomProperties(
       page,
       setValence,

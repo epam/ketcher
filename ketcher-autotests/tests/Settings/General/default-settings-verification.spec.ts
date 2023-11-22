@@ -21,7 +21,7 @@ async function generalDefaultSettings(page: Page) {
 
 async function resetSelectToolOff(page: Page) {
   await selectTopPanelButton(TopPanelButton.Settings, page);
-  await page.getByRole('button', { name: 'After Paste' }).click();
+  await page.getByTestId('reset-to-select-input-span').click();
   await page.getByTestId('off-option').click();
   await pressButton(page, 'Apply');
 }

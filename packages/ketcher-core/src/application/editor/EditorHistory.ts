@@ -61,10 +61,10 @@ export class EditorHistory {
 
     this.historyPointer--;
     const lastCommand = this.historyStack[this.historyPointer];
+    lastCommand.invert(this.editor.renderersContainer);
     const turnOffSelectionCommand =
       this.editor?.drawingEntitiesManager.unselectAllDrawingEntities();
     this.editor?.renderersContainer.update(turnOffSelectionCommand);
-    lastCommand.invert(this.editor.renderersContainer);
   }
 
   redo() {
@@ -77,5 +77,9 @@ export class EditorHistory {
     const lastCommand = this.historyStack[this.historyPointer];
     lastCommand.execute(this.editor.renderersContainer);
     this.historyPointer++;
+  }
+
+  destroy() {
+    EditorHistory._instance = null;
   }
 }

@@ -283,6 +283,8 @@ export class CoreEditor {
 
   public switchToMicromolecules() {
     this.unsubscribeEvents();
+    const history = new EditorHistory(this);
+    history.destroy();
     const struct = this.micromoleculesEditor.struct();
     const reStruct = this.micromoleculesEditor.render.ctab;
     const { conversionErrorMessage } =

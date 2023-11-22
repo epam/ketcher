@@ -33,11 +33,12 @@ describe('Drawing Entities Manager', () => {
 
   it('should create polymer bond', () => {
     const drawingEntitiesManager = new DrawingEntitiesManager();
-    const { command, polymerBond } = drawingEntitiesManager.startPolymerBondCreation(
-      new Peptide(peptideMonomerItem),
-      new Vec2(0, 0),
-      new Vec2(10, 10),
-    );
+    const { command, polymerBond } =
+      drawingEntitiesManager.startPolymerBondCreation(
+        new Peptide(peptideMonomerItem),
+        new Vec2(0, 0),
+        new Vec2(10, 10),
+      );
     expect(command.operations.length).toEqual(1);
     expect(command.operations[0]).toBeInstanceOf(PolymerBondAddOperation);
     expect(polymerBond).toBeInstanceOf(PolymerBond);
@@ -122,8 +123,8 @@ describe('Drawing Entities Manager', () => {
   it('should move peptide', () => {
     const drawingEntitiesManager = new DrawingEntitiesManager();
     const peptide = new Peptide(peptideMonomerItem);
-    const command = drawingEntitiesManager.moveMonomer(
-      peptide,
+    peptide.turnOnSelection();
+    const command = drawingEntitiesManager.moveSelectedDrawingEntities(
       new Vec2(100, 200),
     );
     expect(peptide.position.x).toEqual(100);

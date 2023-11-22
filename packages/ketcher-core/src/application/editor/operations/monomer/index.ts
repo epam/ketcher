@@ -39,7 +39,6 @@ export class MonomerAddOperation implements Operation {
     if (this.monomer) {
       this.deleteMonomerChangeModel(this.monomer);
       renderersManager.deleteMonomer(this.monomer);
-      console.log('invert MonomerAddOperation');
     }
   }
 }
@@ -47,19 +46,19 @@ export class MonomerAddOperation implements Operation {
 export class MonomerMoveOperation implements Operation {
   public monomer: BaseMonomer;
   constructor(
-    private rearrangeChainModelChange: () => BaseMonomer,
-    private invertRearrangeChainModelChange: () => BaseMonomer,
+    private monomerMoveModelChange: () => BaseMonomer,
+    private invertMonomerMoveModelChange: () => BaseMonomer,
   ) {
-    this.monomer = this.rearrangeChainModelChange();
+    this.monomer = this.monomerMoveModelChange();
   }
 
   public execute(renderersManager: RenderersManager) {
-    this.monomer = this.rearrangeChainModelChange();
+    this.monomer = this.monomerMoveModelChange();
     renderersManager.moveMonomer(this.monomer);
   }
 
   public invert(renderersManager: RenderersManager) {
-    this.monomer = this.invertRearrangeChainModelChange();
+    this.monomer = this.invertMonomerMoveModelChange();
     renderersManager.moveMonomer(this.monomer);
   }
 }
@@ -77,9 +76,7 @@ export class MonomerHoverOperation implements Operation {
     );
   }
 
-  public invert() {
-    console.log('invert MonomerHoverOperation');
-  }
+  public invert() {}
 }
 
 export class AttachmentPointHoverOperation implements Operation {
@@ -94,6 +91,8 @@ export class AttachmentPointHoverOperation implements Operation {
       this.attachmentPointName,
     );
   }
+
+  public invert() {}
 }
 
 export class MonomerDeleteOperation implements Operation {
@@ -115,6 +114,5 @@ export class MonomerDeleteOperation implements Operation {
   public invert(renderersManager: RenderersManager) {
     this.monomer = this.addMonomerChangeModel(this.monomer);
     renderersManager.addMonomer(this.monomer, this.callback);
-    console.log('invert MonomerDeleteOperation');
   }
 }

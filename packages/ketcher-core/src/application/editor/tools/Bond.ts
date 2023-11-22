@@ -25,7 +25,6 @@ import { Sugar } from 'domain/entities/Sugar';
 import { RNABase } from 'domain/entities/RNABase';
 import { Phosphate } from 'domain/entities/Phosphate';
 import Coordinates from 'application/editor/shared/coordinates';
-import { Command } from 'domain/entities/Command';
 
 class PolymerBond implements BaseTool {
   private bondRenderer?: PolymerBondRenderer;

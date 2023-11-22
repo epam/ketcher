@@ -169,6 +169,8 @@ export class DrawingEntitiesManager {
       assert(offset);
       drawingEntity.moveRelative(offset);
     }
+
+    return drawingEntity;
   }
 
   public moveSelectedDrawingEntities(
@@ -283,17 +285,6 @@ export class DrawingEntitiesManager {
     return command;
   }
 
-  public moveMonomer(monomer: BaseMonomer, position: Vec2) {
-    const command = new Command();
-    monomer.moveAbsolute(position);
-
-    const operation = new MonomerMoveOperation(monomer);
-
-    command.addOperation(operation);
-
-    return command;
-  }
-
   public selectIfLocatedInRectangle(
     rectangleTopLeftPoint: Vec2,
     rectangleBottomRightPoint: Vec2,
@@ -395,7 +386,7 @@ export class DrawingEntitiesManager {
       ),
     );
     command.addOperation(operation);
-    console.log(this);
+
     return command;
   }
 

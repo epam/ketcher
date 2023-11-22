@@ -25,6 +25,7 @@ class EraserTool implements BaseTool {
     if (this.editor.drawingEntitiesManager.selectedEntities.length) {
       const modelChanges =
         this.editor.drawingEntitiesManager.deleteSelectedEntities();
+      this.history.update(modelChanges);
       this.editor.renderersContainer.update(modelChanges);
     }
   }

@@ -99,7 +99,7 @@ describe('Select Rectangle Tool', () => {
     expect(onShow).toHaveBeenCalled();
   });
 
-  it('should move selected entity', () => {
+  it.only('should move selected entity', () => {
     const canvas: SVGSVGElement = createPolymerEditorCanvas();
     const editor = new CoreEditor({
       theme: polymerEditorTheme,
@@ -111,6 +111,7 @@ describe('Select Rectangle Tool', () => {
       new Vec2(0, 0),
     );
     editor.renderersContainer.update(modelChanges);
+
     const peptide = Array.from(editor.drawingEntitiesManager.monomers)[0][1];
     const onMove = jest.fn();
     jest

@@ -52,6 +52,8 @@ import UndoIcon from 'assets/icons/files/undo.svg';
 import SaveIcon from 'assets/icons/files/save.svg';
 import ErrorIcon from 'assets/icons/files/error.svg';
 import FullscreenIcon from 'assets/icons/files/fullscreen.svg';
+import ExpandIcon from 'assets/icons/files/expand.svg';
+import MinimizeExpansionIcon from 'assets/icons/files/minimize-expansion.svg';
 
 const iconMap = {
   'arrow-down': ArrowDownIcon,
@@ -90,6 +92,8 @@ const iconMap = {
   undo: UndoIcon,
   save: SaveIcon,
   error: ErrorIcon,
+  expand: ExpandIcon,
+  'minimize-expansion': MinimizeExpansionIcon,
 };
 
 type IconNameType = keyof typeof iconMap;

@@ -16,12 +16,15 @@ interface ModalProps {
   title: string;
   isOpen: boolean;
   showCloseButton?: boolean;
+  showExpandButton?: boolean;
   onClose: VoidFunction;
   className?: string;
 }
 const StyledDialog = styled(Dialog)`
   .MuiPaper-root {
     min-width: 304px;
+    max-width: calc(min(1280px, 100%));
+    max-height: calc(min(980px, 100%));
   }
 `;
 
@@ -80,10 +83,12 @@ export const Modal = ({
   title,
   isOpen,
   showCloseButton = true,
+  showExpandButton = false,
   onClose,
   className,
 }: ModalProps) => {
   const theme = useTheme();
+  const [expanded, setExpanded] = React.useState(false);
 
   const paperProps = useMemo(
     () => ({
@@ -91,9 +96,15 @@ export const Modal = ({
         background: theme.ketcher.color.background.primary,
         borderRadius: '8px',
         color: theme.ketcher.color.text.primary,
+        width: expanded ? '100%' : '350px',
+        height: expanded ? '100%' : undefined,
       },
     }),
-    [theme.ketcher.color.text.primary, theme.ketcher.color.background.canvas],
+    [
+      theme.ketcher.color.text.primary,
+      theme.ketcher.color.background.canvas,
+      expanded,
+    ],
   );
 
   const backdropProps = useMemo(
@@ -127,15 +138,28 @@ export const Modal = ({
       onClose={onClose}
       disableEscapeKeyDown={!showCloseButton}
       className={className}
+      sx={{ padding: '24px' }}
     >
-      {title || showCloseButton ? (
+      {title || showCloseButton || showExpandButton ? (
         <Header>
           <Title>{title}</Title>
-          {showCloseButton && (
-            <IconButton title={'Close window'} onClick={onClose}>
-              <StyledIcon name={'close'} />
-            </IconButton>
-          )}
+          <span>
+            {showExpandButton && (
+              <IconButton
+                title={'expand window'}
+                onClick={() => {
+                  setExpanded(!expanded);
+                }}
+              >
+                <StyledIcon name={expanded ? 'minimize-expansion' : 'expand'} />
+              </IconButton>
+            )}
+            {showCloseButton && (
+              <IconButton title={'Close window'} onClick={onClose}>
+                <StyledIcon name={'close'} />
+              </IconButton>
+            )}
+          </span>
         </Header>
       ) : (
         ''

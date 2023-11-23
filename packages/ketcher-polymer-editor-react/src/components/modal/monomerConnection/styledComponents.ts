@@ -6,6 +6,7 @@ export const AttachmentPointList = styled.div({
   justifyContent: 'start',
   alignSelf: 'flex-start',
   width: '100%',
+  gap: '8px',
 });
 
 interface IStyledAttachmentPointProps {
@@ -60,31 +61,19 @@ export const ConnectionSymbol = styled.div(({ theme }) => ({
   color: theme.ketcher.color.button.secondary.hover,
   backgroundColor: theme.ketcher.color.button.secondary.hover,
   borderRadius: 20,
-  margin: '76px 12px 0',
-}));
-
-export const AttachmentPointSelectionContainer = styled.div(() => ({
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '8px',
-  justifyContent: 'space-around',
-  maxWidth: '150px',
+  margin: 'auto',
 }));
 
 export const AttachmentPointsRow = styled.div(() => ({
-  display: 'flex',
-  justifyContent: 'space-around',
+  display: 'grid',
+  gridAutoFlow: 'column',
+  gridTemplateRows: '1em auto auto',
+  gridTemplateColumns: '1fr 10px 1fr',
+  justifyContent: 'center',
   alignItems: 'flex-start',
-  padding: '0 12px',
+  padding: '12px',
+  height: '100%',
+  gap: '8px',
 }));
 
-export const MonomerNamesRow = styled.div(() => ({
-  display: 'flex',
-  gap: '34px',
-  justifyContent: 'space-between',
-  alignItems: 'flex-end',
-  margin: '12px 12px 0px',
-  paddingBottom: '6px',
-}));
-
-export const ModalContent = styled.div(() => ({}));
+export const ModalContent = styled.div(() => ({ height: '100%' }));

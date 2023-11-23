@@ -12,9 +12,7 @@ import {
   AttachmentPointName,
   MonomerName,
   ConnectionSymbol,
-  AttachmentPointSelectionContainer,
   AttachmentPointsRow,
-  MonomerNamesRow,
   ModalContent,
 } from './styledComponents';
 import { MonomerConnectionProps } from '../modalContainer/types';
@@ -26,8 +24,6 @@ interface IStyledButtonProps {
 
 const StyledModal = styled(Modal)({
   '& .MuiPaper-root': {
-    width: 'auto',
-    height: 'fit-content',
     background: '#fff !important',
   },
 
@@ -37,11 +33,17 @@ const StyledModal = styled(Modal)({
 });
 
 export const StyledStructRender = styled(StructRender)(({ theme }) => ({
-  height: '150px',
-  width: '150px',
+  display: 'flex',
   border: `1.5px solid ${theme.ketcher.outline.color}`,
   borderRadius: '6px',
   padding: 5,
+  maxHeight: '100%',
+  minHeight: '150px',
+  alignSelf: 'stretch',
+  '& svg': {
+    maxWidth: 'fit-content',
+    margin: 'auto',
+  },
 }));
 
 export const ActionButtonLeft = styled(ActionButton)(() => ({
@@ -55,6 +57,7 @@ export const ActionButtonRight = styled(ActionButton)<IStyledButtonProps>(
     color: props.disabled ? 'rgba(51, 51, 51, 0.6)' : '',
     background: props.disabled ? 'rgba(225, 229, 234, 1) !important' : '',
     opacity: '1 !important',
+    minHeight: '0',
   }),
 );
 
@@ -107,25 +110,24 @@ const MonomerConnection = ({
 
   return (
     <StyledModal
-      title=""
+      title="Select Attachment Points"
       isOpen={isModalOpen}
-      showCloseButton={false}
       onClose={cancelBondCreationAndClose}
+      showExpandButton
     >
       <Modal.Content>
         <ModalContent>
-          <MonomerNamesRow>
-            <MonomerName>{firstMonomer.monomerItem.props.Name}</MonomerName>
-            <MonomerName>{secondMonomer.monomerItem.props.Name}</MonomerName>
-          </MonomerNamesRow>
           <AttachmentPointsRow>
+            <MonomerName>{firstMonomer.monomerItem.props.Name}</MonomerName>
             <AttachmentPointSelectionPanel
               monomer={firstMonomer}
               selectedAttachmentPoint={firstSelectedAttachmentPoint}
               onSelectAttachmentPoint={setFirstSelectedAttachmentPoint}
             />
-
+            <span />
             <ConnectionSymbol />
+            <span />
+            <MonomerName>{secondMonomer.monomerItem.props.Name}</MonomerName>
 
             <AttachmentPointSelectionPanel
               monomer={secondMonomer}
@@ -182,7 +184,7 @@ function AttachmentPointSelectionPanel({
   };
 
   return (
-    <AttachmentPointSelectionContainer>
+    <>
       <StyledStructRender
         struct={monomer.monomerItem.struct}
         options={{
@@ -226,7 +228,7 @@ function AttachmentPointSelectionPanel({
           );
         })}
       </AttachmentPointList>
-    </AttachmentPointSelectionContainer>
+    </>
   );
 }
 

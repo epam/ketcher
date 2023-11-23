@@ -74,8 +74,7 @@ const MonomerGroup = ({
   };
 
   const selectMonomer = (monomer: MonomerItemType) => {
-    // why would this re-render rnabuilder?
-    // dispatch(selectTool('monomer'));
+    dispatch(selectTool('monomer'));
     setSelectedItemInGroup(monomer);
 
     if (['FAVORITES', 'PEPTIDE', 'CHEM'].includes(libraryName ?? '')) {

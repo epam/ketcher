@@ -126,7 +126,6 @@ function Editor({ theme, togglerComponent }: EditorProps) {
   const canvasRef = useRef<SVGSVGElement>(null);
   const errorTooltipText = useAppSelector(selectErrorTooltipText);
   const editor = useAppSelector(selectEditor);
-  const activeTool = useAppSelector(selectEditorActiveTool);
   let keyboardEventListener;
   const [isMonomerLibraryHidden, setIsMonomerLibraryHidden] = useState(false);
 
@@ -194,10 +193,10 @@ function Editor({ theme, togglerComponent }: EditorProps) {
     debouncedShowPreview({ monomer, style: previewStyle });
   }, []);
 
-  const handleClosePreview = () => {
+  const handleClosePreview = useCallback(() => {
     debouncedShowPreview.cancel();
     dispatch(showPreview(undefined));
-  };
+  }, []);
 
   useEffect(() => {
     editor?.events.mouseOverMonomer.add((e) => {
@@ -210,7 +209,7 @@ function Editor({ theme, togglerComponent }: EditorProps) {
       handleClosePreview();
       handleOpenPreview(e);
     });
-  }, [editor, activeTool]);
+  }, [editor, handleOpenPreview, handleClosePreview]);
 
   useEffect(() => {
     editor?.zoomTool.observeCanvasResize();

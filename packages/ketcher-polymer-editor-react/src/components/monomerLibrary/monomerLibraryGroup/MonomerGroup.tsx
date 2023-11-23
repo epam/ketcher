@@ -29,7 +29,6 @@ import {
   selectEditor,
   selectTool,
 } from 'state/common';
-import { selectIsEditMode } from 'state/rna-builder';
 
 const MonomerGroup = ({
   items,
@@ -42,7 +41,6 @@ const MonomerGroup = ({
   const dispatch = useAppDispatch();
   const preview = useAppSelector(selectShowPreview);
   const editor = useAppSelector(selectEditor);
-  const isEditMode = useAppSelector(selectIsEditMode);
   const [selectedItemInGroup, setSelectedItemInGroup] =
     useState<MonomerItemType>();
 
@@ -76,7 +74,8 @@ const MonomerGroup = ({
   };
 
   const selectMonomer = (monomer: MonomerItemType) => {
-    dispatch(selectTool('monomer'));
+    // why would this re-render rnabuilder?
+    // dispatch(selectTool('monomer'));
     setSelectedItemInGroup(monomer);
 
     if (['FAVORITES', 'PEPTIDE', 'CHEM'].includes(libraryName ?? '')) {
@@ -84,6 +83,13 @@ const MonomerGroup = ({
     }
 
     onItemClick(monomer);
+  };
+
+  const isMonomerSelected = (monomer: MonomerItemType) => {
+    return selectedItemInGroup
+      ? getMonomerUniqueKey(selectedItemInGroup) ===
+          getMonomerUniqueKey(monomer)
+      : selectedMonomerUniqueKey === getMonomerUniqueKey(monomer);
   };
 
   return (
@@ -103,13 +109,7 @@ const MonomerGroup = ({
               key={key}
               disabled={disabled}
               item={monomer}
-              isSelected={
-                isEditMode
-                  ? selectedMonomerUniqueKey === getMonomerUniqueKey(monomer)
-                  : selectedItemInGroup &&
-                    getMonomerUniqueKey(selectedItemInGroup) ===
-                      getMonomerUniqueKey(monomer)
-              }
+              isSelected={isMonomerSelected(monomer)}
               onMouseLeave={handleItemMouseLeave}
               onMouseMove={(e) => handleItemMouseMove(monomer, e)}
               onClick={() => selectMonomer(monomer)}

@@ -1,15 +1,7 @@
-import { Page, test, expect } from '@playwright/test';
-import { RNA_TAB } from '@constants/testIdConstants';
+import { test, expect } from '@playwright/test';
 import { waitForPageInit } from '@utils/common';
 import { takePageScreenshot } from '@utils';
-import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
-import { toggleRnaBuilderAccordion } from '@utils/macromolecules/rnaBuilder';
-
-async function gotoRNA(page: Page) {
-  await turnOnMacromoleculesEditor(page);
-  await page.getByTestId(RNA_TAB).click();
-  await toggleRnaBuilderAccordion(page);
-}
+import { gotoRNA } from '@utils/macromolecules/rnaBuilder';
 
 test.describe('Macromolecules delete RNA presets', () => {
   test.beforeEach(async ({ page }) => {

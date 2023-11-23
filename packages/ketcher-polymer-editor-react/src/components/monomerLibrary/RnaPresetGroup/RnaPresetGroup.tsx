@@ -15,15 +15,11 @@
  ***************************************************************************/
 
 import { useAppSelector } from 'hooks';
-import { useEffect, MouseEvent } from 'react';
+import { MouseEvent } from 'react';
 import {
-  RnaBuilderPresetsItem,
   selectActivePreset,
-  selectActiveRnaBuilderItem,
-  selectIsEditMode,
   setActivePreset,
   setActivePresetForContextMenu,
-  setActiveRnaBuilderItem,
   setIsEditMode,
 } from 'state/rna-builder';
 import { useDispatch } from 'react-redux';
@@ -39,24 +35,12 @@ import { useContextMenu } from 'react-contexify';
 import { IRnaPreset } from '../RnaBuilder/types';
 
 export const RnaPresetGroup = ({ presets, duplicatePreset, editPreset }) => {
-  const activeRnaBuilderItem = useAppSelector(selectActiveRnaBuilderItem);
   const activePreset = useAppSelector(selectActivePreset);
-  const isEditMode = useAppSelector(selectIsEditMode);
   const editor = useAppSelector(selectEditor);
 
   const { show } = useContextMenu({ id: CONTEXT_MENU_ID.FOR_RNA });
 
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    dispatch(
-      setActiveRnaBuilderItem(
-        isEditMode && activePreset
-          ? activeRnaBuilderItem
-          : RnaBuilderPresetsItem.Presets,
-      ),
-    );
-  }, [isEditMode]);
 
   const selectPreset = (preset: IRnaPreset) => () => {
     dispatch(setActivePreset(preset));
@@ -107,7 +91,7 @@ export const RnaPresetGroup = ({ presets, duplicatePreset, editPreset }) => {
               preset={preset}
               onClick={selectPreset(preset)}
               onContextMenu={handleContextMenu(preset)}
-              isSelected={activePreset?.presetInList === preset}
+              isSelected={activePreset?.name === preset.name}
             />
           );
         })}

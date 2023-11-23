@@ -15,7 +15,6 @@
  ***************************************************************************/
 import { ChangeEvent } from 'react';
 import { Tabs } from 'components/shared/Tabs';
-import styled from '@emotion/styled';
 import { tabsContent } from 'components/monomerLibrary/tabsContent';
 import { useAppDispatch, useAppSelector } from 'hooks';
 import { setSearchFilter } from 'state/library';
@@ -28,66 +27,12 @@ import {
   setIsEditMode,
 } from 'state/rna-builder';
 import { scrollToSelectedPreset } from './RnaBuilder/RnaEditor/RnaEditor';
-
-export const MONOMER_LIBRARY_WIDTH = '254px';
-
-const MonomerLibraryContainer = styled.div(({ theme }) => ({
-  width: MONOMER_LIBRARY_WIDTH,
-  height: 'calc(100% - 16px)',
-  backgroundColor: theme.ketcher.color.background.primary,
-  boxShadow: '0px 2px 5px rgba(103, 104, 132, 0.15)',
-  display: 'flex',
-  flexDirection: 'column',
-  borderRadius: '4px',
-}));
-
-const MonomerLibraryTitle = styled.h3(({ theme }) => ({
-  margin: 0,
-  padding: 0,
-  fontSize: theme.ketcher.font.size.regular,
-  fontWeight: theme.ketcher.font.weight.regular,
-}));
-
-const MonomerLibraryHeader = styled.div(() => ({
-  padding: '12px',
-  position: 'relative',
-}));
-
-const MonomerLibrarySearch = styled.div(({ theme }) => ({
-  padding: '12px 0',
-
-  '& > div': {
-    background: theme.ketcher.color.input.background.default,
-    display: 'flex',
-    height: '24px',
-    flexDirection: 'row',
-    border: '1px solid transparent',
-    borderRadius: '4px',
-    padding: '0 4px',
-
-    '& > span': {
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-
-    '&:has(input:focus)': {
-      outline: `1px solid ${theme.ketcher.color.input.border.focus}`,
-    },
-
-    '& > input': {
-      background: 'transparent',
-      border: 'none',
-      padding: '0 0 0 8px',
-      margin: 0,
-      flex: 1,
-
-      '&:focus': {
-        outline: 'none',
-      },
-    },
-  },
-}));
+import {
+  MonomerLibraryContainer,
+  MonomerLibraryHeader,
+  MonomerLibrarySearch,
+  MonomerLibraryTitle,
+} from './styles';
 
 const MonomerLibrary = () => {
   const dispatch = useAppDispatch();

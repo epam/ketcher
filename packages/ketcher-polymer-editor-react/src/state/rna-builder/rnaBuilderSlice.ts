@@ -28,6 +28,7 @@ export type RnaBuilderItem = RnaBuilderPresetsItem | MonomerGroups;
 
 interface IRnaBuilderState {
   activePreset: IRnaPreset | null;
+  activePresetMonomerGroup: MonomerItemType;
   presets: IRnaPreset[];
   activeRnaBuilderItem?: RnaBuilderItem | null;
   isEditMode: boolean;
@@ -37,6 +38,7 @@ interface IRnaBuilderState {
 
 const initialState: IRnaBuilderState = {
   activePreset: null,
+  activePresetMonomerGroup: null,
   presets: [],
   activeRnaBuilderItem: null,
   isEditMode: false,
@@ -87,10 +89,11 @@ export const rnaBuilderSlice = createSlice({
       action: PayloadAction<{
         groupName: MonomerGroups;
         groupItem: MonomerItemType;
-      }>,
+      } | null>,
     ) => {
-      state.activePreset![monomerGroupToPresetGroup[action.payload.groupName]] =
-        action.payload.groupItem;
+      // state.activePreset![monomerGroupToPresetGroup[action.payload.groupName]] =
+      //   action.payload.groupItem;
+      state.activePresetMonomerGroup = action.payload;
     },
     savePreset: (state, action: PayloadAction<IRnaPreset>) => {
       const preset = action.payload;
@@ -163,7 +166,7 @@ export const selectPresets = (state: RootState): IRnaPreset[] => {
   return state.rnaBuilder.presets;
 };
 
-export const selectActivePresetMonomerGroup = (
+export const selectCurrentMonomerGroup = (
   preset: IRnaPreset,
   groupName: MonomerGroups | string,
 ) => {
@@ -171,6 +174,9 @@ export const selectActivePresetMonomerGroup = (
 
   return preset[monomerGroupToPresetGroup[groupName]];
 };
+
+export const selectActivePresetMonomerGroup = (state: RootState) =>
+  state.rnaBuilder.activePresetMonomerGroup;
 
 export const selectIsPresetReadyToSave = (preset: IRnaPreset): boolean => {
   return Boolean(
@@ -199,13 +205,6 @@ export const selectPresetFullName = (preset: IRnaPreset): string => {
   fullName += phosphate;
 
   return fullName;
-};
-
-export const selectFilteredPresets = (state: RootState) => {
-  const { searchFilter } = state.library;
-  return [...state.rnaBuilder.presets].filter(({ name }) => {
-    return name.toLowerCase().includes(searchFilter.toLowerCase());
-  });
 };
 
 export const selectHasUniqueNameError = (state: RootState) => {

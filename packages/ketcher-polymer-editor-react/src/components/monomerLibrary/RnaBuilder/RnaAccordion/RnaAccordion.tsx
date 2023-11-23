@@ -43,8 +43,8 @@ import {
   RnaBuilderItem,
   RnaBuilderPresetsItem,
   selectActivePreset,
-  selectActivePresetMonomerGroup,
   selectActiveRnaBuilderItem,
+  selectCurrentMonomerGroup,
   selectFilteredPresets,
   selectIsActivePresetNewAndEmpty,
   selectIsEditMode,
@@ -184,7 +184,7 @@ export const RnaAccordion = ({ libraryName, duplicatePreset, editPreset }) => {
           ) : (
             <DetailsContainer>
               {groupData.groups.map(({ groupItems, groupTitle }) => {
-                const monomer = selectActivePresetMonomerGroup(
+                const monomer = selectCurrentMonomerGroup(
                   activePreset,
                   groupData.groupName,
                 );

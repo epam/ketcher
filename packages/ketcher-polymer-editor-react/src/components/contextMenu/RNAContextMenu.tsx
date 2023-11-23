@@ -8,6 +8,7 @@ import { selectActivePresetForContextMenu } from 'state/rna-builder';
 import { StyledMenu } from './styles';
 
 export const RNAContextMenu = () => {
+  const RNA_TAB_INDEX = 2;
   const dispatch = useAppDispatch();
   const activePresetForContextMenu = useAppSelector(
     selectActivePresetForContextMenu,
@@ -33,14 +34,14 @@ export const RNAContextMenu = () => {
     switch (id) {
       case 'duplicateandedit':
         props.duplicatePreset(activePresetForContextMenu);
-        if (selectedTabIndex !== 2) {
-          dispatch(setSelectedTabIndex(2));
+        if (selectedTabIndex !== RNA_TAB_INDEX) {
+          dispatch(setSelectedTabIndex(RNA_TAB_INDEX));
         }
         break;
       case 'edit':
         props.editPreset(activePresetForContextMenu);
-        if (selectedTabIndex !== 2) {
-          dispatch(setSelectedTabIndex(2));
+        if (selectedTabIndex !== RNA_TAB_INDEX) {
+          dispatch(setSelectedTabIndex(RNA_TAB_INDEX));
         }
         break;
       case 'deletepreset':

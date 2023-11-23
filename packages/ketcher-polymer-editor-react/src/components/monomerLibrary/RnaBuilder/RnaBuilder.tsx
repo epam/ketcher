@@ -24,7 +24,6 @@ import {
   selectHasUniqueNameError,
   setHasUniqueNameError,
   setDefaultPresets,
-  setIsEditMode,
 } from 'state/rna-builder';
 import { getSearchTermValue, selectMonomers } from 'state/library';
 import { Modal } from 'components/shared/modal';
@@ -48,16 +47,9 @@ export const RnaBuilder = ({ libraryName, duplicatePreset, editPreset }) => {
     dispatch(setDefaultPresets(defaultPresets));
   }, [dispatch, searchValue]);
 
-  const activateEditMode = () => {
-    dispatch(setIsEditMode(true));
-  };
-
   return (
     <RnaBuilderContainer>
-      <RnaEditor
-        duplicatePreset={() => duplicatePreset()}
-        activateEditMode={activateEditMode}
-      />
+      <RnaEditor duplicatePreset={() => duplicatePreset()} />
       <RnaAccordion
         libraryName={libraryName}
         duplicatePreset={duplicatePreset}

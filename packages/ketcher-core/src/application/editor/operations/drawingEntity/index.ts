@@ -1,6 +1,3 @@
-// eslint-disable no-unused-vars
-/* eslint-disable @typescript-eslint/no-unused-vars */
-
 import { RenderersManager } from 'application/render/renderers/RenderersManager';
 import { Operation } from 'domain/entities/Operation';
 import { DrawingEntity } from 'domain/entities/DrawingEntity';
@@ -12,9 +9,7 @@ export class DrawingEntityHoverOperation implements Operation {
     renderersManager.hoverDrawingEntity(this.drawingEntity);
   }
 
-  public invert(_renderersManager: RenderersManager) {
-    console.log('invert DrawingEntityHoverOperation');
-  }
+  public invert() {}
 }
 
 export class DrawingEntitySelectOperation implements Operation {
@@ -24,9 +19,7 @@ export class DrawingEntitySelectOperation implements Operation {
     renderersManager.selectDrawingEntity(this.drawingEntity);
   }
 
-  public invert(_renderersManager: RenderersManager) {
-    console.log('invert DrawingEntitySelectOperation');
-  }
+  public invert() {}
 }
 export class DrawingEntityMoveOperation implements Operation {
   private wasInverted = false;

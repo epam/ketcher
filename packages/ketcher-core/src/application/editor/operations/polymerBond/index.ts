@@ -13,9 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-/* eslint-disable @typescript-eslint/no-use-before-define */
-// eslint-disable no-unused-vars
-/* eslint-disable @typescript-eslint/no-unused-vars */
 
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { RenderersManager } from 'application/render/renderers/RenderersManager';
@@ -41,7 +38,6 @@ export class PolymerBondAddOperation implements Operation {
   public invert(renderersManager: RenderersManager) {
     this.deletePolymerBondChangeModel(this.polymerBond);
     renderersManager.deletePolymerBond(this.polymerBond);
-    console.log('invert PolymerBondAddOperation');
   }
 }
 
@@ -57,11 +53,9 @@ export class PolymerBondDeleteOperation implements Operation {
   public execute(renderersManager: RenderersManager) {
     this.deletePolymerBondChangeModel();
     renderersManager.deletePolymerBond(this.polymerBond);
-    console.log('execute PolymerBondDeleteOperation');
   }
 
   public invert(renderersManager: RenderersManager) {
-    console.log('invert PolymerBondDeleteOperation');
     this.polymerBond = this.finishPolymerBondCreationModelChange(
       this.polymerBond,
     );
@@ -76,9 +70,7 @@ export class PolymerBondMoveOperation implements Operation {
     renderersManager.movePolymerBond(this.polymerBond);
   }
 
-  public invert(_renderersManager: RenderersManager) {
-    console.log('invert PolymerBondMoveOperation');
-  }
+  public invert() {}
 }
 
 export class PolymerBondShowInfoOperation implements Operation {
@@ -88,9 +80,7 @@ export class PolymerBondShowInfoOperation implements Operation {
     renderersManager.showPolymerBondInformation(this.polymerBond);
   }
 
-  public invert(_renderersManager: RenderersManager) {
-    console.log('invert PolymerBondShowInfoOperation');
-  }
+  public invert() {}
 }
 
 export class PolymerBondCancelCreationOperation implements Operation {
@@ -106,9 +96,7 @@ export class PolymerBondCancelCreationOperation implements Operation {
     );
   }
 
-  public invert(_renderersManager: RenderersManager) {
-    console.log('invert PolymerBondCancelCreationOperation');
-  }
+  public invert() {}
 }
 
 export class PolymerBondFinishCreationOperation implements Operation {
@@ -127,11 +115,9 @@ export class PolymerBondFinishCreationOperation implements Operation {
       this.polymerBond,
     );
     renderersManager.finishPolymerBondCreation(this.polymerBond);
-    console.log('execute PolymerBondFinishCreationOperation');
   }
 
   public invert(renderersManager: RenderersManager) {
-    console.log('invert PolymerBondFinishCreationOperation');
     this.deletePolymerBondCreationModelChange(this.polymerBond);
     renderersManager.deletePolymerBond(this.polymerBond);
   }

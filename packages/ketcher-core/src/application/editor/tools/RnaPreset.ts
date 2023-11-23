@@ -55,7 +55,7 @@ class RnaPresetTool implements Tool {
     if (preset?.sugar) {
       this.sugar = preset?.sugar;
     }
-    this.history = new EditorHistory(this.editor); // здесь история пишется
+    this.history = new EditorHistory(this.editor);
   }
 
   mousedown() {

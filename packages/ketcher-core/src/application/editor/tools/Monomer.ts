@@ -44,7 +44,7 @@ class MonomerTool implements BaseTool {
   constructor(private editor: CoreEditor, private monomer: MonomerItemType) {
     this.editor = editor;
     this.monomer = monomer;
-    this.history = new EditorHistory(this.editor); // здесь история пишется
+    this.history = new EditorHistory(this.editor);
   }
 
   mousedown() {

@@ -43,6 +43,7 @@ import {
   setHasUniqueNameError,
   setIsEditMode,
   setActivePresetMonomerGroup,
+  selectPresetFullName,
 } from 'state/rna-builder';
 import { useAppSelector } from 'hooks';
 import {
@@ -51,7 +52,7 @@ import {
 } from 'components/monomerLibrary/RnaBuilder/RnaEditor/RnaEditor';
 import { getMonomerUniqueKey } from 'state/library';
 import { selectEditor } from 'state/common';
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 
 export const RnaEditorExpanded = ({
   isEditMode,
@@ -84,6 +85,33 @@ export const RnaEditorExpanded = ({
     selectActivePresetMonomerGroup,
   );
   const [newPreset, setNewPrest] = useState(activePreset);
+  const [editedPresetName, setEditedPresetName] = useState(false);
+
+  const updatePresetMonomerGroup = () => {
+    if (activePresetMonomerGroup) {
+      const groupName =
+        monomerGroupToPresetGroup[activePresetMonomerGroup.groupName];
+      const currentPreset = {
+        ...newPreset,
+        [groupName]: activePresetMonomerGroup.groupItem,
+      };
+      setNewPrest(currentPreset);
+      return currentPreset;
+    }
+    return newPreset;
+  };
+
+  useEffect(() => {
+    if (
+      activeMonomerGroup !== RnaBuilderPresetsItem.Presets &&
+      !editedPresetName &&
+      isEditMode
+    ) {
+      const currentPreset = updatePresetMonomerGroup();
+      const presetFullName = selectPresetFullName(currentPreset);
+      setNewPrest({ ...currentPreset, name: presetFullName.trim() });
+    }
+  }, [activePresetMonomerGroup?.groupItem]);
 
   const scrollToActiveItemInLibrary = (selectedGroup) => {
     if (selectedGroup === RnaBuilderPresetsItem.Presets) {
@@ -101,30 +129,7 @@ export const RnaEditorExpanded = ({
     scrollToSelectedMonomer(getMonomerUniqueKey(activeMonomerInSelectedGroup));
   };
 
-  const updatePresetMonomerGroup = () => {
-    if (activePresetMonomerGroup) {
-      const groupName =
-        monomerGroupToPresetGroup[activePresetMonomerGroup.groupName];
-      const currentPreset = {
-        ...newPreset,
-        [groupName]: activePresetMonomerGroup.groupItem,
-      };
-      setNewPrest(currentPreset);
-      return currentPreset;
-    }
-    return newPreset;
-  };
-
   const selectGroup = (selectedGroup) => () => {
-    updatePresetMonomerGroup();
-
-    // const selectedRNAPartMonomer = selectActivePresetMonomerGroup(
-    //   newPreset,
-    //   selectedGroup,
-    // );
-    // if (selectedRNAPartMonomer) {
-    //   editor.events.selectMonomer.dispatch(selectedRNAPartMonomer);
-    // }
     scrollToActiveItemInLibrary(selectedGroup);
     dispatch(
       setActiveRnaBuilderItem(
@@ -138,17 +143,17 @@ export const RnaEditorExpanded = ({
   const onChangeName = (event: ChangeEvent<HTMLInputElement>) => {
     if (isEditMode) {
       const newPresetName = event.target.value;
-      setNewPrest({ ...newPreset, name: newPresetName });
+      setNewPrest({ ...newPreset, name: newPresetName.trim() });
+      setEditedPresetName(newPresetName.trim() !== '');
     }
   };
 
   const onSave = () => {
-    const currentPreset = updatePresetMonomerGroup();
-    if (!currentPreset.name) {
+    if (!newPreset.name) {
       return;
     }
     const presetWithSameName = presets.find(
-      (preset) => preset.name === currentPreset.name,
+      (preset) => preset.name === newPreset.name,
     );
     if (
       presetWithSameName &&
@@ -157,11 +162,11 @@ export const RnaEditorExpanded = ({
       dispatch(setHasUniqueNameError(true));
       return;
     }
-    dispatch(savePreset(currentPreset));
-    dispatch(setActivePreset(currentPreset));
-    editor.events.selectPreset.dispatch(currentPreset);
+    dispatch(savePreset(newPreset));
+    dispatch(setActivePreset(newPreset));
+    editor.events.selectPreset.dispatch(newPreset);
     setTimeout(() => {
-      scrollToSelectedPreset(currentPreset.name);
+      scrollToSelectedPreset(newPreset.name);
     }, 0);
     dispatch(setIsEditMode(false));
     dispatch(setActivePresetMonomerGroup(null));

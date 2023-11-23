@@ -43,12 +43,14 @@ const isFullScreen = () => {
 };
 
 const ButtonContainer = styled.div`
-  display: flex;
-  padding: 4px;
-
   & svg:first-of-type {
-    width: 20px;
-    height: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 28px;
+    height: 28px;
+    padding: 2px;
+    border-radius: 4px;
   }
 `;
 

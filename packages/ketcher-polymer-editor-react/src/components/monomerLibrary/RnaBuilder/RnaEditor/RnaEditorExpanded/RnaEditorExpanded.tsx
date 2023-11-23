@@ -261,7 +261,11 @@ export const RnaEditorExpanded = ({
             Cancel
           </StyledButton>
         ) : (
-          <StyledButton data-testid="duplicate-btn" onClick={onDuplicate}>
+          <StyledButton
+            data-testid="duplicate-btn"
+            disabled={!selectIsPresetReadyToSave(activePreset)}
+            onClick={onDuplicate}
+          >
             Duplicate and Edit
           </StyledButton>
         )}

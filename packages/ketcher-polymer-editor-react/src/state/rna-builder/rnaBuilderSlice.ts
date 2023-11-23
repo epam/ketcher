@@ -28,7 +28,10 @@ export type RnaBuilderItem = RnaBuilderPresetsItem | MonomerGroups;
 
 interface IRnaBuilderState {
   activePreset: IRnaPreset | null;
-  activePresetMonomerGroup: MonomerItemType;
+  activePresetMonomerGroup: {
+    groupName: MonomerGroups;
+    groupItem: MonomerItemType;
+  } | null;
   presets: IRnaPreset[];
   activeRnaBuilderItem?: RnaBuilderItem | null;
   isEditMode: boolean;

@@ -18,8 +18,7 @@ import {
   ModalContent,
 } from './styledComponents';
 import { MonomerConnectionProps } from '../modalContainer/types';
-
-type MonomerCap = 'O' | 'OH' | 'H';
+import { LeavingGroup } from 'ketcher-core';
 
 const StyledModal = styled(Modal)({
   '& .MuiPaper-root': {
@@ -161,13 +160,13 @@ function AttachmentPointSelectionPanel({
     [bonds],
   );
 
-  const getMonomerCap = (attachmentPoint): MonomerCap => {
+  const getLeavingGroup = (attachmentPoint): LeavingGroup => {
     const { MonomerCaps } = monomer.monomerItem.props;
     if (!MonomerCaps) {
       return 'H';
     }
-    const monomerCap = MonomerCaps[attachmentPoint];
-    return monomerCap === 'O' ? 'OH' : (monomerCap as MonomerCap);
+    const leavingGroup = MonomerCaps[attachmentPoint];
+    return leavingGroup === 'O' ? 'OH' : (leavingGroup as LeavingGroup);
   };
 
   return (
@@ -202,7 +201,7 @@ function AttachmentPointSelectionPanel({
               )}
             />
             <AttachmentPointName data-testid="leaving-group-value">
-              {getMonomerCap(attachmentPoint)}
+              {getLeavingGroup(attachmentPoint)}
             </AttachmentPointName>
           </AttachmentPoint>
         ))}

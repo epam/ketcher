@@ -418,11 +418,13 @@ test.describe('Open/Save/Paste files', () => {
       Open file ketcher mol
       Save file in ket format
      */
-    // eslint-disable-next-line prettier/prettier
-    await pasteFromClipboardAndAddToCanvas(page, FILE_TEST_DATA.V2000ABS);
+    await pasteFromClipboardAndAddToCanvas(
+      page,
+      FILE_TEST_DATA.functionalGroupsExpandedContractedV3000,
+    );
     await clickInTheMiddleOfTheScreen(page);
     await selectTopPanelButton(TopPanelButton.Save, page);
-    await page.getByRole('button', { name: 'MDL Molfile V2000' }).click();
+    await clickOnFileFormatDropdown(page);
     await page.getByRole('option', { name: 'Ket Format' }).click();
     await page.getByRole('button', { name: 'Save', exact: true }).click();
   });

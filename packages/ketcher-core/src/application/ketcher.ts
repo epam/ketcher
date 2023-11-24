@@ -14,14 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import {
-  FormatterFactory,
-  SupportedFormat,
-  identifyStructFormat,
-} from './formatters';
+import { FormatterFactory, SupportedFormat } from './formatters';
 import { GenerateImageOptions, StructService } from 'domain/services';
 
-import { Editor, defaultBondThickness } from './editor';
+import { CoreEditor, Editor, defaultBondThickness } from './editor';
 import { Indigo } from 'application/indigo';
 import { KetSerializer, MolfileFormat } from 'domain/serializers';
 import { Struct } from 'domain/entities';
@@ -33,7 +29,11 @@ import {
   runAsyncAction,
   SettingsManager,
 } from 'utilities';
-import { getStructure } from './utils';
+import {
+  getStructure,
+  parseAndAddMacromoleculesOnCanvas,
+  prepareStructToRender,
+} from './utils';
 
 const allowedApiSettings = {
   'general.dearomatize-on-load': 'dearomatize-on-load',
@@ -41,40 +41,6 @@ const allowedApiSettings = {
   disableQueryElements: 'disableQueryElements',
   bondThickness: 'bondThickness',
 };
-
-async function prepareStructToRender(
-  structStr: string,
-  structService: StructService,
-  ketcherInstance: Ketcher,
-): Promise<Struct> {
-  const struct: Struct = await parseStruct(
-    structStr,
-    structService,
-    ketcherInstance,
-  );
-  struct.initHalfBonds();
-  struct.initNeighbors();
-  struct.setImplicitHydrogen();
-  struct.markFragments();
-
-  return struct;
-}
-
-function parseStruct(
-  structStr: string,
-  structService: StructService,
-  ketcherInstance: Ketcher,
-) {
-  const format = identifyStructFormat(structStr);
-  const factory = new FormatterFactory(structService);
-  const options = ketcherInstance.editor.options();
-
-  const service = factory.create(format, {
-    'dearomatize-on-load': options['dearomatize-on-load'],
-    'ignore-no-chiral-flag': options.ignoreChiralFlag,
-  });
-  return service.getStructureFromStringAsync(structStr);
-}
 
 export class Ketcher {
   logging: LogSettings;
@@ -185,6 +151,7 @@ export class Ketcher {
       format,
       this.#formatterFactory,
       this.#editor.struct(),
+      CoreEditor.provideEditorInstance().drawingEntitiesManager,
     );
 
     return molfile;
@@ -214,6 +181,7 @@ export class Ketcher {
       SupportedFormat.ket,
       this.#formatterFactory,
       this.#editor.struct(),
+      CoreEditor.provideEditorInstance().drawingEntitiesManager,
     );
   }
 
@@ -283,15 +251,19 @@ export class Ketcher {
     runAsyncAction<void>(async () => {
       assert(typeof structStr === 'string');
 
-      const struct: Struct = await prepareStructToRender(
-        structStr,
-        this.#structService,
-        this,
-      );
+      if (window.isPolymerEditorTurnedOn) {
+        await parseAndAddMacromoleculesOnCanvas(structStr, this.#structService);
+      } else {
+        const struct: Struct = await prepareStructToRender(
+          structStr,
+          this.#structService,
+          this,
+        );
 
-      this.#editor.struct(struct);
-      this.#editor.zoomAccordingContent(struct);
-      this.#editor.centerStruct();
+        this.#editor.struct(struct);
+        this.#editor.zoomAccordingContent(struct);
+        this.#editor.centerStruct();
+      }
     }, this.eventBus);
   }
 

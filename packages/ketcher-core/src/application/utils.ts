@@ -1,6 +1,14 @@
-import { Struct } from 'domain/entities';
-import { FormatterFactory, SupportedFormat } from './formatters';
+import { Struct, DrawingEntitiesManager } from 'domain/entities';
+import {
+  FormatterFactory,
+  SupportedFormat,
+  identifyStructFormat,
+} from './formatters';
 import { Ketcher } from './ketcher';
+import { ChemicalMimeType, StructService } from 'domain/services';
+import { CoreEditor } from './editor';
+import { KetSerializer } from 'domain/serializers';
+import assert from 'assert';
 
 class KetcherProvider {
   private ketcherInstance: Ketcher | undefined;
@@ -23,7 +31,67 @@ export function getStructure(
   structureFormat = SupportedFormat.rxn,
   formatterFactory: FormatterFactory,
   struct: Struct,
+  drawingEntitiesManager?: DrawingEntitiesManager,
 ): Promise<string> {
   const formatter = formatterFactory.create(structureFormat);
-  return formatter.getStructureFromStructAsync(struct);
+  return formatter.getStructureFromStructAsync(struct, drawingEntitiesManager);
+}
+
+export async function prepareStructToRender(
+  structStr: string,
+  structService: StructService,
+  ketcherInstance: Ketcher,
+): Promise<Struct> {
+  const struct: Struct = await parseStruct(
+    structStr,
+    structService,
+    ketcherInstance,
+  );
+  struct.initHalfBonds();
+  struct.initNeighbors();
+  struct.setImplicitHydrogen();
+  struct.markFragments();
+
+  return struct;
+}
+
+export function parseStruct(
+  structStr: string,
+  structService: StructService,
+  ketcherInstance: Ketcher,
+) {
+  const format = identifyStructFormat(structStr);
+  const factory = new FormatterFactory(structService);
+  const options = ketcherInstance.editor.options();
+
+  const service = factory.create(format, {
+    'dearomatize-on-load': options['dearomatize-on-load'],
+    'ignore-no-chiral-flag': options.ignoreChiralFlag,
+  });
+  return service.getStructureFromStringAsync(structStr);
+}
+
+export async function parseAndAddMacromoleculesOnCanvas(
+  struct: string,
+  structService: StructService,
+) {
+  const editor = CoreEditor.provideEditorInstance();
+  const ketSerializer = new KetSerializer();
+  const format = identifyStructFormat(struct);
+  let ketStruct = struct;
+  if (format !== SupportedFormat.ket) {
+    ketStruct = (
+      await structService.convert({
+        struct,
+        output_format: ChemicalMimeType.KET,
+      })
+    ).struct;
+  }
+
+  const deserialisedKet = ketSerializer.deserializeToDrawingEntities(ketStruct);
+  assert(deserialisedKet);
+  deserialisedKet.drawingEntitiesManager.mergeInto(
+    editor.drawingEntitiesManager,
+  );
+  editor.renderersContainer.update(deserialisedKet.modelChanges);
 }

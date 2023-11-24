@@ -19,12 +19,11 @@ interface ModalProps {
   showExpandButton?: boolean;
   onClose: VoidFunction;
   className?: string;
+  modalWidth?: string;
 }
 const StyledDialog = styled(Dialog)`
   .MuiPaper-root {
     min-width: 304px;
-    max-width: calc(min(1280px, 100%));
-    max-height: calc(min(980px, 100%));
   }
 `;
 
@@ -86,6 +85,7 @@ export const Modal = ({
   showExpandButton = false,
   onClose,
   className,
+  modalWidth,
 }: ModalProps) => {
   const theme = useTheme();
   const [expanded, setExpanded] = React.useState(false);
@@ -96,8 +96,12 @@ export const Modal = ({
         background: theme.ketcher.color.background.primary,
         borderRadius: '8px',
         color: theme.ketcher.color.text.primary,
-        width: expanded ? '100%' : '350px',
-        height: expanded ? '100%' : undefined,
+        ...(showExpandButton && {
+          width: expanded ? '100%' : modalWidth,
+          height: expanded ? '100%' : undefined,
+          maxWidth: 'calc(min(1280px, 100%))',
+          maxHeight: 'calc(min(980px, 100%))',
+        }),
       },
     }),
     [

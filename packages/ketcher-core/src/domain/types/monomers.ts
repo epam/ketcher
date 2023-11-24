@@ -49,3 +49,5 @@ export const attachmentPointNames = [
   'R7',
   'R8',
 ];
+
+export type LeavingGroup = 'O' | 'OH' | 'H';

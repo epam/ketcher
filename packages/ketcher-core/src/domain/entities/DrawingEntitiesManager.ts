@@ -4,7 +4,14 @@ import { Command } from 'domain/entities/Command';
 import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import assert from 'assert';
-import { BaseMonomer } from 'domain/entities/BaseMonomer';
+import {
+  Peptide,
+  BaseMonomer,
+  Struct,
+  Pool,
+  Chem,
+  SGroupForest,
+} from 'domain/entities';
 import {
   AttachmentPointHoverOperation,
   MonomerAddOperation,
@@ -29,11 +36,6 @@ import {
 import { monomerFactory } from 'application/editor/operations/monomer/monomerFactory';
 import { provideEditorSettings } from 'application/editor/editorSettings';
 import { Scale } from 'domain/helpers';
-import { Peptide } from 'domain/entities/Peptide';
-import { Chem } from 'domain/entities/Chem';
-import { Struct } from 'domain/entities/struct';
-import { Pool } from 'domain/entities/pool';
-import { SGroupForest } from 'domain/entities/sgroupForest';
 
 const HORIZONTAL_DISTANCE_FROM_MONOMER = 50;
 const VERTICAL_DISTANCE_FROM_MONOMER = 60;
@@ -273,7 +275,10 @@ export class DrawingEntitiesManager {
     return command;
   }
 
-  public cancelPolymerBondCreation(polymerBond: PolymerBond) {
+  public cancelPolymerBondCreation(
+    polymerBond: PolymerBond,
+    secondMonomer?: BaseMonomer,
+  ) {
     this.polymerBonds.delete(polymerBond.id);
     const command = new Command();
     polymerBond.firstMonomer.removeBond(polymerBond);
@@ -281,7 +286,14 @@ export class DrawingEntitiesManager {
     polymerBond.firstMonomer.turnOffSelection();
     polymerBond.firstMonomer.turnOffHover();
     polymerBond.firstMonomer.turnOffAttachmentPointsVisibility();
-    const operation = new PolymerBondCancelCreationOperation(polymerBond);
+
+    secondMonomer?.turnOffSelection();
+    secondMonomer?.turnOffHover();
+    secondMonomer?.turnOffAttachmentPointsVisibility();
+    const operation = new PolymerBondCancelCreationOperation(
+      polymerBond,
+      secondMonomer,
+    );
     command.addOperation(operation);
 
     return command;

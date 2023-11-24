@@ -65,7 +65,7 @@ const Menu = ({
 
   return (
     <MenuContext.Provider value={context}>
-      <MenuLayout data-testId={testId}>
+      <MenuLayout data-testid={testId}>
         {subComponents.map((component) => component)}
       </MenuLayout>
     </MenuContext.Provider>

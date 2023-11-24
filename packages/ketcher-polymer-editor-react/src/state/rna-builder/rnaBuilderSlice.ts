@@ -192,6 +192,13 @@ export const selectPresetFullName = (preset: IRnaPreset): string => {
   return fullName;
 };
 
+export const selectFilteredPresets = (state: RootState) => {
+  const { searchFilter } = state.library;
+  return [...state.rnaBuilder.presets].filter(({ name }) => {
+    return name.toLowerCase().includes(searchFilter.toLowerCase());
+  });
+};
+
 export const selectHasUniqueNameError = (state: RootState) => {
   return state.rnaBuilder.hasUniqueNameError;
 };

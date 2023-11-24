@@ -25,12 +25,12 @@ import {
   notifyRequestCompleted,
   Editor,
   KetcherLogger,
+  SettingsManager,
 } from 'ketcher-core';
 
 import { supportedSGroupTypes } from './constants';
 import { setAnalyzingFile } from './request';
 import tools from '../action/tools';
-import { SettingsManager } from '../utils/settingsManager';
 
 export function onAction(action) {
   if (action && action.dialog) {

@@ -21,7 +21,7 @@ import {
   resetEditorEvents,
 } from 'application/editor/editorEvents';
 import { PolymerBondRenderer } from 'application/render/renderers';
-import { EditorHistory } from './EditorHistory';
+import { EditorHistory, HistoryOperationType } from './EditorHistory';
 import { Editor } from 'application/editor/editor.types';
 import { MacromoleculesConverter } from 'application/editor/MacromoleculesConverter';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
@@ -133,7 +133,7 @@ export class CoreEditor {
     this.renderersContainer.update(modelChanges);
   }
 
-  private onSelectHistory(name: string) {
+  private onSelectHistory(name: HistoryOperationType) {
     const history = new EditorHistory(this);
     if (name === 'undo') {
       history.undo();

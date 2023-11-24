@@ -19,6 +19,8 @@ import { CoreEditor } from './Editor';
 import assert from 'assert';
 const HISTORY_SIZE = 32; // put me to options
 
+export type HistoryOperationType = 'undo' | 'redo';
+
 export class EditorHistory {
   historyStack: Command[] | [] = [];
   historyPointer = 0;

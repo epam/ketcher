@@ -33,6 +33,8 @@ import { AmbiguousMonomerRenderer } from 'application/render/renderers/Ambiguous
 type FlexModeOrSnakeModePolymerBondRenderer =
   | FlexModePolymerBondRenderer
   | SnakeModePolymerBondRenderer;
+import { Atom } from 'domain/entities/CoreAtom';
+import { AtomRenderer } from 'application/render/renderers/AtomRenderer';
 
 export class RenderersManager {
   // FIXME: Specify the types.
@@ -429,6 +431,11 @@ export class RenderersManager {
     modelChanges?.execute(this);
     this.runPostRenderMethods();
     notifyRenderComplete();
+  }
+
+  public addAtom(atom: Atom) {
+    const atomRenderer = new AtomRenderer(atom);
+    atomRenderer.show();
   }
 
   public runPostRenderMethods() {

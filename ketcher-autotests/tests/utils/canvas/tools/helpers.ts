@@ -68,6 +68,17 @@ export async function selectRectangleSelectionTool(page: Page) {
   await bondToolButton.click();
 }
 
+// undo/redo heplers currently used for macromolecules editor because buttons are in different panel
+export async function clickUndo(page: Page) {
+  const undoButton = page.getByTestId('undo-button');
+  await undoButton.click();
+}
+
+export async function clickRedo(page: Page) {
+  const redoButton = page.getByTestId('redo-button');
+  await redoButton.click();
+}
+
 export async function selectRectangleArea(
   page: Page,
   startX: number,

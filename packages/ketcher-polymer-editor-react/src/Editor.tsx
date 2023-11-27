@@ -303,6 +303,8 @@ function MenuComponent() {
     } else if (name === 'snake-mode') {
       dispatch(selectMode(!isSnakeMode));
       editor.events.selectMode.dispatch(!isSnakeMode);
+    } else if (name === 'undo' || name === 'redo') {
+      editor.events.selectHistory.dispatch(name);
     } else if (!['zoom-in', 'zoom-out', 'zoom-reset'].includes(name)) {
       editor.events.selectTool.dispatch(name);
       if (name === 'clear') {
@@ -322,6 +324,10 @@ function MenuComponent() {
           title="Clear Canvas"
           testId="clear-canvas-button"
         />
+      </Menu.Group>
+      <Menu.Group>
+        <Menu.Item itemId="undo" testId="undo-button" />
+        <Menu.Item itemId="redo" testId="redo-button" />
       </Menu.Group>
       <Menu.Group>
         <Menu.Item itemId="open" title="Open..." testId="open-button" />

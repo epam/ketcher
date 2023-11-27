@@ -20,7 +20,7 @@ import { Sugar } from 'domain/entities/Sugar';
 import { Phosphate } from 'domain/entities/Phosphate';
 import { RNABase } from 'domain/entities/RNABase';
 import { Vec2 } from 'domain/entities';
-import { CoreEditor } from 'application/editor';
+import { CoreEditor, EditorHistory } from 'application/editor';
 import { BaseMonomerRenderer } from 'application/render/renderers';
 import { MonomerItemType } from 'domain/types';
 import { monomerFactory } from '../operations/monomer/monomerFactory';
@@ -40,9 +40,11 @@ class MonomerTool implements BaseTool {
   readonly MONOMER_PREVIEW_SCALE_FACTOR = 0.4;
   readonly MONOMER_PREVIEW_OFFSET_X = 45;
   readonly MONOMER_PREVIEW_OFFSET_Y = 45;
+  history: EditorHistory;
   constructor(private editor: CoreEditor, private monomer: MonomerItemType) {
     this.editor = editor;
     this.monomer = monomer;
+    this.history = new EditorHistory(this.editor);
   }
 
   mousedown() {
@@ -60,6 +62,7 @@ class MonomerTool implements BaseTool {
       position,
     );
 
+    this.history.update(modelChanges);
     this.editor.renderersContainer.update(modelChanges);
   }
 

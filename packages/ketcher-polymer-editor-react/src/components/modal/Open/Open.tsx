@@ -26,6 +26,7 @@ import {
   identifyStructFormat,
   CoreEditor,
   KetcherLogger,
+  EditorHistory,
 } from 'ketcher-core';
 import { IndigoProvider } from 'ketcher-react';
 import assert from 'assert';
@@ -64,6 +65,8 @@ const addToCanvas = ({
   deserialisedKet.drawingEntitiesManager.mergeInto(
     editor.drawingEntitiesManager,
   );
+  const editorHistory = new EditorHistory(editor);
+  editorHistory.update(deserialisedKet.modelChanges);
   editor.renderersContainer.update(deserialisedKet.modelChanges);
 };
 

@@ -82,29 +82,46 @@ export class DrawingEntitiesManager {
   public deleteAllEntities() {
     const mergedCommand = new Command();
     this.allEntities.forEach(([, drawingEntity]) => {
-      const command = this.deleteDrawingEntity(drawingEntity);
+      const command = this.deleteDrawingEntity(drawingEntity, false);
       mergedCommand.merge(command);
     });
     return mergedCommand;
   }
 
-  public addMonomer(monomerItem: MonomerItemType, position: Vec2) {
+  public addMonomerChangeModel(
+    monomerItem: MonomerItemType,
+    position: Vec2,
+    _monomer?: BaseMonomer,
+  ) {
+    if (_monomer) {
+      this.monomers.set(_monomer.id, _monomer);
+      return _monomer;
+    }
     const [Monomer] = monomerFactory(monomerItem);
     const monomer = new Monomer(monomerItem, position);
     monomer.moveAbsolute(position);
     this.monomers.set(monomer.id, monomer);
+    return monomer;
+  }
 
+  public addMonomer(monomerItem: MonomerItemType, position: Vec2) {
     const command = new Command();
-    const operation = new MonomerAddOperation(monomer);
+    const operation = new MonomerAddOperation(
+      this.addMonomerChangeModel.bind(this, monomerItem, position),
+      this.deleteMonomerChangeModel.bind(this),
+    );
 
     command.addOperation(operation);
 
     return command;
   }
 
-  public deleteDrawingEntity(drawingEntity: DrawingEntity) {
+  public deleteDrawingEntity(
+    drawingEntity: DrawingEntity,
+    needToDeleteConnectedEntities = true,
+  ) {
     if (drawingEntity instanceof BaseMonomer) {
-      return this.deleteMonomer(drawingEntity);
+      return this.deleteMonomer(drawingEntity, needToDeleteConnectedEntities);
     } else if (drawingEntity instanceof PolymerBond) {
       return this.deletePolymerBond(drawingEntity);
     } else {
@@ -144,13 +161,35 @@ export class DrawingEntitiesManager {
     return command;
   }
 
-  public moveSelectedDrawingEntities(offset: Vec2) {
+  public moveDrawingEntityModelChange(
+    drawingEntity: DrawingEntity,
+    offset?: Vec2,
+  ) {
+    if (drawingEntity instanceof PolymerBond) {
+      drawingEntity.moveToLinkedMonomers();
+    } else {
+      assert(offset);
+      drawingEntity.moveRelative(offset);
+    }
+
+    return drawingEntity;
+  }
+
+  public moveSelectedDrawingEntities(
+    partOfMovementOffset: Vec2,
+    fullMovementOffset?: Vec2,
+  ) {
     const command = new Command();
 
     this.monomers.forEach((drawingEntity) => {
       if (drawingEntity.selected) {
-        drawingEntity.moveRelative(offset);
-        command.merge(this.createDrawingEntityMovingCommand(drawingEntity));
+        command.merge(
+          this.createDrawingEntityMovingCommand(
+            drawingEntity,
+            partOfMovementOffset,
+            fullMovementOffset,
+          ),
+        );
       }
     });
 
@@ -160,53 +199,90 @@ export class DrawingEntitiesManager {
         drawingEntity.firstMonomer.selected ||
         drawingEntity.secondMonomer?.selected
       ) {
-        drawingEntity.moveToLinkedMonomers();
-        command.merge(this.createDrawingEntityMovingCommand(drawingEntity));
+        command.merge(
+          this.createDrawingEntityMovingCommand(
+            drawingEntity,
+            partOfMovementOffset,
+            fullMovementOffset,
+          ),
+        );
       }
     });
     return command;
   }
 
-  public createDrawingEntityMovingCommand(drawingEntity: DrawingEntity) {
+  public createDrawingEntityMovingCommand(
+    drawingEntity: DrawingEntity,
+    partOfMovementOffset: Vec2,
+    fullMovementOffset?: Vec2,
+  ) {
     const command = new Command();
 
-    const movingCommand = new DrawingEntityMoveOperation(drawingEntity);
+    const movingCommand = new DrawingEntityMoveOperation(
+      this.moveDrawingEntityModelChange.bind(
+        this,
+        drawingEntity,
+        partOfMovementOffset,
+      ),
+      this.moveDrawingEntityModelChange.bind(
+        this,
+        drawingEntity,
+        fullMovementOffset
+          ? fullMovementOffset.negated()
+          : partOfMovementOffset.negated(),
+      ),
+      this.moveDrawingEntityModelChange.bind(
+        this,
+        drawingEntity,
+        fullMovementOffset || partOfMovementOffset,
+      ),
+      drawingEntity,
+    );
     command.addOperation(movingCommand);
 
     return command;
   }
 
-  public createDrawingEntityRedrawCommand(drawingEntity: DrawingEntity) {
+  public createDrawingEntityRedrawCommand(
+    drawingEntityRedrawModelChange: () => DrawingEntity,
+    invertDrawingEntityRedrawModelChange: () => DrawingEntity,
+  ) {
     const command = new Command();
 
-    const redrawCommand = new DrawingEntityRedrawOperation(drawingEntity);
+    const redrawCommand = new DrawingEntityRedrawOperation(
+      drawingEntityRedrawModelChange,
+      invertDrawingEntityRedrawModelChange,
+    );
     command.addOperation(redrawCommand);
 
     return command;
   }
 
-  public deleteMonomer(monomer: BaseMonomer) {
+  private deleteMonomerChangeModel(monomer: BaseMonomer) {
     this.monomers.delete(monomer.id);
+  }
+
+  public deleteMonomer(
+    monomer: BaseMonomer,
+    needToDeleteConnectedBonds = true,
+  ) {
     const command = new Command();
-    const operation = new MonomerDeleteOperation(monomer);
+    const operation = new MonomerDeleteOperation(
+      monomer,
+      this.addMonomerChangeModel.bind(
+        this,
+        monomer.monomerItem,
+        monomer.position,
+      ),
+      this.deleteMonomerChangeModel.bind(this),
+    );
     command.addOperation(operation);
 
-    if (monomer.hasBonds) {
+    if (needToDeleteConnectedBonds && monomer.hasBonds) {
       monomer.forEachBond((bond) => {
         command.merge(this.deletePolymerBond(bond));
       });
     }
-
-    return command;
-  }
-
-  public moveMonomer(monomer: BaseMonomer, position: Vec2) {
-    const command = new Command();
-    monomer.moveAbsolute(position);
-
-    const operation = new MonomerMoveOperation(monomer);
-
-    command.addOperation(operation);
 
     return command;
   }
@@ -232,7 +308,17 @@ export class DrawingEntitiesManager {
     return command;
   }
 
-  public addPolymerBond(firstMonomer, startPosition, endPosition) {
+  public startPolymerBondCreationChangeModel(
+    firstMonomer,
+    startPosition,
+    endPosition,
+    _polymerBond?: PolymerBond,
+  ) {
+    if (_polymerBond) {
+      this.polymerBonds.set(_polymerBond.id, _polymerBond);
+      return _polymerBond;
+    }
+
     const polymerBond = new PolymerBond(firstMonomer);
     this.polymerBonds.set(polymerBond.id, polymerBond);
     // If we started from a specific AP, we need to 'attach' the bond to the first monomer
@@ -243,24 +329,36 @@ export class DrawingEntitiesManager {
     }
     polymerBond.moveBondStartAbsolute(startPosition.x, startPosition.y);
     polymerBond.moveBondEndAbsolute(endPosition.x, endPosition.y);
+    return polymerBond;
+  }
 
+  public startPolymerBondCreation(firstMonomer, startPosition, endPosition) {
     const command = new Command();
-    const operation = new PolymerBondAddOperation(polymerBond);
+
+    const operation = new PolymerBondAddOperation(
+      this.startPolymerBondCreationChangeModel.bind(
+        this,
+        firstMonomer,
+        startPosition,
+        endPosition,
+      ),
+      this.deletePolymerBondChangeModel.bind(this),
+    );
 
     command.addOperation(operation);
 
-    return { command, polymerBond };
+    return { command, polymerBond: operation.polymerBond };
   }
 
-  public deletePolymerBond(polymerBond: PolymerBond) {
+  public deletePolymerBondChangeModel(polymerBond: PolymerBond) {
     this.polymerBonds.delete(polymerBond.id);
-    const command = new Command();
+
     const firstMonomerAttachmentPoint =
       polymerBond.firstMonomer.getAttachmentPointByBond(polymerBond);
     const secondMonomerAttachmentPoint =
       polymerBond.secondMonomer?.getAttachmentPointByBond(polymerBond);
-    polymerBond.firstMonomer.removePotentialBonds(true);
-    polymerBond.secondMonomer?.removePotentialBonds(true);
+    polymerBond.firstMonomer.removePotentialBonds();
+    polymerBond.secondMonomer?.removePotentialBonds();
     polymerBond.firstMonomer.turnOffSelection();
     polymerBond.secondMonomer?.turnOffSelection();
     if (firstMonomerAttachmentPoint) {
@@ -269,7 +367,26 @@ export class DrawingEntitiesManager {
     if (secondMonomerAttachmentPoint) {
       polymerBond.secondMonomer?.unsetBond(secondMonomerAttachmentPoint);
     }
-    const operation = new PolymerBondDeleteOperation(polymerBond);
+  }
+
+  public deletePolymerBond(polymerBond: PolymerBond) {
+    const command = new Command();
+
+    const operation = new PolymerBondDeleteOperation(
+      polymerBond,
+      this.deletePolymerBondChangeModel.bind(this, polymerBond),
+      this.finishPolymerBondCreationModelChange.bind(
+        this,
+        polymerBond.firstMonomer,
+        polymerBond.secondMonomer as BaseMonomer,
+        polymerBond.firstMonomer.getAttachmentPointByBond(
+          polymerBond,
+        ) as string,
+        polymerBond.secondMonomer?.getAttachmentPointByBond(
+          polymerBond,
+        ) as string,
+      ),
+    );
     command.addOperation(operation);
 
     return command;
@@ -310,6 +427,44 @@ export class DrawingEntitiesManager {
     return command;
   }
 
+  public finishPolymerBondCreationModelChange(
+    firstMonomer: BaseMonomer,
+    secondMonomer: BaseMonomer,
+    firstMonomerAttachmentPoint: string,
+    secondMonomerAttachmentPoint: string,
+    _polymerBond?: PolymerBond,
+  ) {
+    if (_polymerBond) {
+      this.polymerBonds.set(_polymerBond.id, _polymerBond);
+      firstMonomer.setBond(firstMonomerAttachmentPoint, _polymerBond);
+      secondMonomer.setBond(secondMonomerAttachmentPoint, _polymerBond);
+      return _polymerBond;
+    }
+
+    const polymerBond = new PolymerBond(firstMonomer);
+    this.polymerBonds.set(polymerBond.id, polymerBond);
+    polymerBond.setSecondMonomer(secondMonomer);
+    polymerBond.firstMonomer.setBond(firstMonomerAttachmentPoint, polymerBond);
+    assert(polymerBond.secondMonomer);
+    polymerBond.secondMonomer.setBond(
+      secondMonomerAttachmentPoint,
+      polymerBond,
+    );
+
+    polymerBond.firstMonomer.removePotentialBonds();
+    polymerBond.secondMonomer.removePotentialBonds();
+    polymerBond.moveToLinkedMonomers();
+    polymerBond.firstMonomer.turnOffSelection();
+    polymerBond.firstMonomer.turnOffHover();
+    polymerBond.firstMonomer.turnOffAttachmentPointsVisibility();
+    polymerBond.secondMonomer.turnOffSelection();
+    polymerBond.secondMonomer.turnOffHover();
+    polymerBond.secondMonomer.turnOffAttachmentPointsVisibility();
+    polymerBond.turnOffHover();
+
+    return polymerBond;
+  }
+
   public finishPolymerBondCreation(
     polymerBond: PolymerBond,
     secondMonomer: BaseMonomer,
@@ -318,30 +473,42 @@ export class DrawingEntitiesManager {
   ) {
     const command = new Command();
 
-    polymerBond.setSecondMonomer(secondMonomer);
-    polymerBond.firstMonomer.removeBond(polymerBond);
-    polymerBond.firstMonomer.setBond(firstMonomerAttachmentPoint, polymerBond);
-    assert(polymerBond.secondMonomer);
-    polymerBond.secondMonomer.setBond(
-      secondMonomerAttachmentPoint,
-      polymerBond,
+    const firstMonomer = polymerBond.firstMonomer;
+    this.polymerBonds.delete(polymerBond.id);
+    const operation = new PolymerBondFinishCreationOperation(
+      this.finishPolymerBondCreationModelChange.bind(
+        this,
+        firstMonomer,
+        secondMonomer,
+        firstMonomerAttachmentPoint,
+        secondMonomerAttachmentPoint,
+      ),
+      this.deletePolymerBondChangeModel.bind(this),
     );
-    polymerBond.firstMonomer.removePotentialBonds(true);
-    polymerBond.secondMonomer.removePotentialBonds(true);
 
-    polymerBond.moveToLinkedMonomers();
+    command.addOperation(operation);
 
-    polymerBond.firstMonomer.turnOffSelection();
-    polymerBond.firstMonomer.turnOffHover();
-    polymerBond.firstMonomer.turnOffAttachmentPointsVisibility();
+    return command;
+  }
 
-    polymerBond.secondMonomer.turnOffSelection();
-    polymerBond.secondMonomer.turnOffHover();
-    polymerBond.secondMonomer.turnOffAttachmentPointsVisibility();
+  public createPolymerBond(
+    firstMonomer: BaseMonomer,
+    secondMonomer: BaseMonomer,
+    firstMonomerAttachmentPoint: string,
+    secondMonomerAttachmentPoint: string,
+  ) {
+    const command = new Command();
 
-    polymerBond.turnOffHover();
-
-    const operation = new PolymerBondFinishCreationOperation(polymerBond);
+    const operation = new PolymerBondFinishCreationOperation(
+      this.finishPolymerBondCreationModelChange.bind(
+        this,
+        firstMonomer,
+        secondMonomer,
+        firstMonomerAttachmentPoint,
+        secondMonomerAttachmentPoint,
+      ),
+      this.deletePolymerBondChangeModel.bind(this),
+    );
 
     command.addOperation(operation);
 
@@ -568,19 +735,13 @@ export class DrawingEntitiesManager {
 
     let previousMonomer: BaseMonomer | undefined;
     monomersToAdd.forEach(([monomerItem, monomerPosition]) => {
-      const [Monomer] = monomerFactory(monomerItem);
-      const monomer = new Monomer(monomerItem, monomerPosition);
-      this.monomers.set(monomer.id, monomer);
-      let monomerAddOperation;
+      const monomerAddOperation = new MonomerAddOperation(
+        this.addMonomerChangeModel.bind(this, monomerItem, monomerPosition),
+        this.deleteMonomerChangeModel.bind(this),
+      );
+      const monomer = monomerAddOperation.monomer;
+      command.addOperation(monomerAddOperation);
       if (previousMonomer) {
-        const polymerBond = new PolymerBond(previousMonomer);
-        this.polymerBonds.set(polymerBond.id, polymerBond);
-        monomerAddOperation = new MonomerAddOperation(monomer, () => {
-          polymerBond.moveToLinkedMonomers();
-        });
-        command.addOperation(monomerAddOperation);
-        polymerBond.setSecondMonomer(monomer);
-
         // requirements are: Base(R1)-(R3)Sugar(R2)-(R1)Phosphate
         const attPointStart = previousMonomer.getValidSourcePoint(monomer);
         const attPointEnd = monomer.getValidSourcePoint(previousMonomer);
@@ -588,15 +749,18 @@ export class DrawingEntitiesManager {
         assert(attPointStart);
         assert(attPointEnd);
 
-        previousMonomer.setBond(attPointStart, polymerBond);
-        monomer.setBond(attPointEnd, polymerBond);
-        const operation = new PolymerBondAddOperation(polymerBond);
+        const operation = new PolymerBondFinishCreationOperation(
+          this.finishPolymerBondCreationModelChange.bind(
+            this,
+            previousMonomer,
+            monomer,
+            attPointStart,
+            attPointEnd,
+          ),
+          this.deletePolymerBondChangeModel.bind(this),
+        );
         command.addOperation(operation);
-      } else {
-        monomerAddOperation = new MonomerAddOperation(monomer);
-        command.addOperation(monomerAddOperation);
       }
-
       previousMonomer = monomer;
     });
 
@@ -624,6 +788,12 @@ export class DrawingEntitiesManager {
     return monomerChain;
   }
 
+  private rearrangeChainModelChange(monomer: BaseMonomer, newPosition: Vec2) {
+    monomer.moveAbsolute(newPosition);
+
+    return monomer;
+  }
+
   private rearrangeChain(
     monomer: BaseMonomer,
     initialPosition: Vec2,
@@ -644,8 +814,15 @@ export class DrawingEntitiesManager {
           initialPosition.y + heightMonomerWithBond,
         )
       : initialPosition;
-    monomer.moveAbsolute(Scale.canvasToModel(newPosition, editorSettings));
-    const operation = new MonomerMoveOperation(monomer);
+
+    const operation = new MonomerMoveOperation(
+      this.rearrangeChainModelChange.bind(
+        this,
+        monomer,
+        Scale.canvasToModel(newPosition, editorSettings),
+      ),
+      this.rearrangeChainModelChange.bind(this, monomer, oldMonomerPosition),
+    );
     command.addOperation(operation);
     let lastPosition = newPosition;
 
@@ -725,12 +902,22 @@ export class DrawingEntitiesManager {
     return command;
   }
 
+  private redrawBondsModelChange(polymerBond: PolymerBond) {
+    polymerBond.moveToLinkedMonomers();
+
+    return polymerBond;
+  }
+
   public redrawBonds() {
     const command = new Command();
 
-    this.polymerBonds.forEach((drawingEntity) => {
-      drawingEntity.moveToLinkedMonomers();
-      command.merge(this.createDrawingEntityRedrawCommand(drawingEntity));
+    this.polymerBonds.forEach((polymerBond) => {
+      command.merge(
+        this.createDrawingEntityRedrawCommand(
+          this.redrawBondsModelChange.bind(this, polymerBond),
+          this.redrawBondsModelChange.bind(this, polymerBond),
+        ),
+      );
     });
     return command;
   }

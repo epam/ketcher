@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-/* eslint-disable @typescript-eslint/no-use-before-define */
 
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { RenderersManager } from 'application/render/renderers/RenderersManager';
@@ -21,40 +20,72 @@ import { Operation } from 'domain/entities/Operation';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 
 export class PolymerBondAddOperation implements Operation {
-  constructor(private polymerBond: PolymerBond) {}
+  public polymerBond;
+  constructor(
+    private addPolymerBondChangeModel: (
+      polymerBond?: PolymerBond,
+    ) => PolymerBond,
+    private deletePolymerBondChangeModel: (polymerBond) => void,
+  ) {
+    this.polymerBond = this.addPolymerBondChangeModel();
+  }
 
   public execute(renderersManager: RenderersManager) {
+    this.polymerBond = this.addPolymerBondChangeModel(this.polymerBond);
     renderersManager.addPolymerBond(this.polymerBond);
   }
-}
 
-export class PolymerBondDeleteOperation implements Operation {
-  constructor(private polymerBond: PolymerBond) {}
-
-  public execute(renderersManager: RenderersManager) {
+  public invert(renderersManager: RenderersManager) {
+    this.deletePolymerBondChangeModel(this.polymerBond);
     renderersManager.deletePolymerBond(this.polymerBond);
   }
 }
 
+export class PolymerBondDeleteOperation implements Operation {
+  constructor(
+    public polymerBond: PolymerBond,
+    private deletePolymerBondChangeModel: () => void,
+    private finishPolymerBondCreationModelChange: (
+      polymerBond?: PolymerBond,
+    ) => PolymerBond,
+  ) {}
+
+  public execute(renderersManager: RenderersManager) {
+    this.deletePolymerBondChangeModel();
+    renderersManager.deletePolymerBond(this.polymerBond);
+  }
+
+  public invert(renderersManager: RenderersManager) {
+    this.polymerBond = this.finishPolymerBondCreationModelChange(
+      this.polymerBond,
+    );
+    renderersManager.addPolymerBond(this.polymerBond);
+  }
+}
+
 export class PolymerBondMoveOperation implements Operation {
-  constructor(private polymerBond: PolymerBond) {}
+  constructor(public polymerBond: PolymerBond) {}
 
   public execute(renderersManager: RenderersManager) {
     renderersManager.movePolymerBond(this.polymerBond);
   }
+
+  public invert() {}
 }
 
 export class PolymerBondShowInfoOperation implements Operation {
-  constructor(private polymerBond: PolymerBond) {}
+  constructor(public polymerBond: PolymerBond) {}
 
   public execute(renderersManager: RenderersManager) {
     renderersManager.showPolymerBondInformation(this.polymerBond);
   }
+
+  public invert() {}
 }
 
 export class PolymerBondCancelCreationOperation implements Operation {
   constructor(
-    private polymerBond: PolymerBond,
+    public polymerBond: PolymerBond,
     private secondMonomer?: BaseMonomer,
   ) {}
 
@@ -64,12 +95,30 @@ export class PolymerBondCancelCreationOperation implements Operation {
       this.secondMonomer,
     );
   }
+
+  public invert() {}
 }
 
 export class PolymerBondFinishCreationOperation implements Operation {
-  constructor(private polymerBond: PolymerBond) {}
+  public polymerBond;
+  constructor(
+    private finishPolymerBondCreationModelChange: (
+      polymerBond?: PolymerBond,
+    ) => PolymerBond,
+    private deletePolymerBondCreationModelChange: (polymerBond) => void,
+  ) {
+    this.polymerBond = this.finishPolymerBondCreationModelChange();
+  }
 
   public execute(renderersManager: RenderersManager) {
+    this.polymerBond = this.finishPolymerBondCreationModelChange(
+      this.polymerBond,
+    );
     renderersManager.finishPolymerBondCreation(this.polymerBond);
+  }
+
+  public invert(renderersManager: RenderersManager) {
+    this.deletePolymerBondCreationModelChange(this.polymerBond);
+    renderersManager.deletePolymerBond(this.polymerBond);
   }
 }

@@ -66,6 +66,9 @@ import { RecalculateCanvasMatrixOperation } from 'application/editor/operations/
 import { Matrix } from 'domain/entities/canvas-matrix/Matrix';
 import { Cell } from 'domain/entities/canvas-matrix/Cell';
 import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
+import { Atom } from 'domain/entities/CoreAtom';
+import { Bond } from 'domain/entities/CoreBond';
+import { AtomAddOperation } from 'application/editor/operations/coreAtom/atom';
 
 const VERTICAL_DISTANCE_FROM_MONOMER = 30;
 const DISTANCE_FROM_RIGHT = 55;
@@ -93,6 +96,9 @@ type NucleotideOrNucleoside = {
 export class DrawingEntitiesManager {
   public monomers: Map<number, BaseMonomer> = new Map();
   public polymerBonds: Map<number, PolymerBond> = new Map();
+  public atoms: Map<number, Atom> = new Map();
+  public bonds: Map<number, Bond> = new Map();
+
   public micromoleculesHiddenEntities: Struct = new Struct();
   public canvasMatrix?: CanvasMatrix;
   public snakeLayoutMatrix?: Matrix<Cell>;
@@ -131,6 +137,8 @@ export class DrawingEntitiesManager {
     return [
       ...(this.monomers as Map<number, DrawingEntity>),
       ...(this.polymerBonds as Map<number, DrawingEntity>),
+      ...(this.bonds as Map<number, DrawingEntity>),
+      ...(this.atoms as Map<number, DrawingEntity>),
     ];
   }
 
@@ -1894,6 +1902,22 @@ export class DrawingEntitiesManager {
 
     command.addOperation(operation);
 
+    return command;
+  }
+
+  private addAtomChangeModel(position: Vec2) {
+    const atom = new Atom(position);
+    this.atoms.set(atom.id, atom);
+    return atom;
+  }
+
+  public addAtom(position: Vec2) {
+    const command = new Command();
+    const atomAddOperation = new AtomAddOperation(
+      this.addAtomChangeModel.bind(this, position),
+      this.addAtomChangeModel.bind(this, position),
+    );
+    command.addOperation(atomAddOperation);
     return command;
   }
 }

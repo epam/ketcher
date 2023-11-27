@@ -91,6 +91,8 @@ interface EditorProps {
   togglerComponent?: JSX.Element;
 }
 
+const noPreviewTools = ['bond-single'];
+
 function EditorContainer({
   onInit,
   theme,
@@ -208,7 +210,10 @@ function Editor({ theme, togglerComponent }: EditorProps) {
     });
     editor?.events.mouseOnMoveMonomer.add((e) => {
       handleClosePreview();
-      handleOpenPreview(e);
+      const isLeftClick = e.buttons === 1;
+      if (!isLeftClick || !noPreviewTools.includes(activeTool)) {
+        handleOpenPreview(e);
+      }
     });
   }, [editor, activeTool]);
 

@@ -43,9 +43,17 @@ const isFullScreen = () => {
 };
 
 const ButtonContainer = styled.div`
-  position: absolute;
-  right: 47px;
-  bottom: 12px;
+  display: flex;
+
+  & svg:first-of-type {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 24px;
+    height: 24px;
+    padding: 2px;
+    border-radius: 4px;
+  }
 `;
 
 export const FullscreenButton = (props) => {

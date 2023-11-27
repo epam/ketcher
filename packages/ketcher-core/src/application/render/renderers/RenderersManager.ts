@@ -29,6 +29,7 @@ export class RenderersManager {
   public moveDrawingEntity(drawingEntity: DrawingEntity) {
     assert(drawingEntity.baseRenderer);
     drawingEntity.baseRenderer.moveSelection();
+    drawingEntity.baseRenderer.drawSelection();
   }
 
   public addMonomer(monomer: BaseMonomer, callback?: () => void) {
@@ -85,19 +86,22 @@ export class RenderersManager {
     polymerBond.renderer?.remove();
     polymerBond?.firstMonomer?.renderer?.redrawAttachmentPoints();
     polymerBond?.secondMonomer?.renderer?.redrawAttachmentPoints();
-    this.monomers.delete(polymerBond.id);
+    this.polymerBonds.delete(polymerBond.id);
   }
 
   public finishPolymerBondCreation(polymerBond) {
     assert(polymerBond.secondMonomer);
-    polymerBond.renderer?.moveSelection();
-    polymerBond.renderer?.redrawHover();
+
+    const polymerBondRenderer = new PolymerBondRenderer(polymerBond);
+    this.polymerBonds.set(polymerBond.id, polymerBondRenderer);
     polymerBond.firstMonomer.renderer?.redrawAttachmentPoints();
     polymerBond.firstMonomer.renderer?.drawSelection();
     polymerBond.firstMonomer.renderer?.redrawHover();
     polymerBond.secondMonomer.renderer?.redrawAttachmentPoints();
     polymerBond.secondMonomer.renderer?.drawSelection();
     polymerBond.secondMonomer.renderer?.redrawHover();
+
+    polymerBond.renderer?.show();
   }
 
   public cancelPolymerBondCreation(polymerBond, secondMonomer) {
@@ -124,8 +128,6 @@ export class RenderersManager {
   }
 
   public update(modelChanges: Command) {
-    modelChanges.operations.forEach((modelChange) => {
-      modelChange.execute(this);
-    });
+    modelChanges.execute(this);
   }
 }

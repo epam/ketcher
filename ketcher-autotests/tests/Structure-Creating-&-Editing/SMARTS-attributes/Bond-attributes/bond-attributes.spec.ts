@@ -1,4 +1,4 @@
-import { Page, test, expect } from '@playwright/test';
+import { Page, test } from '@playwright/test';
 import {
   BondType,
   BondTypeName,
@@ -7,15 +7,14 @@ import {
   pressButton,
   selectBond,
   takeEditorScreenshot,
+  waitForBondPropsModal,
   waitForPageInit,
-} from '@utils';
-import {
   checkSmartsValue,
   checkSmartsWarnings,
   setBondTopology,
   setBondType,
   setCustomQuery,
-} from '../utils';
+} from '@utils';
 
 async function drawStructure(page: Page) {
   await selectBond(BondTypeName.Single, page);
@@ -24,9 +23,20 @@ async function drawStructure(page: Page) {
   await clickInTheMiddleOfTheScreen(page);
 }
 
+async function setAndCheckBondType(
+  page: Page,
+  bondType: BondTypeName,
+  expectedSmarts: string,
+) {
+  await setBondType(page, bondType);
+  await pressButton(page, 'Apply');
+  await takeEditorScreenshot(page);
+  await checkSmartsValue(page, expectedSmarts);
+}
+
 async function setAndCheckBondProperties(
   page: Page,
-  setProperty: (arg0: Page, arg1: string) => Promise<void>,
+  setProperty: (page: Page, value: string) => Promise<void>,
   value: string,
   expectedSmarts: string,
 ) {
@@ -34,10 +44,6 @@ async function setAndCheckBondProperties(
   await pressButton(page, 'Apply');
   await takeEditorScreenshot(page);
   await checkSmartsValue(page, expectedSmarts);
-}
-
-async function waitForBondPropsModal(page: Page) {
-  await expect(page.getByTestId('bondProps-dialog')).toBeVisible();
 }
 
 test.describe('Checking bond attributes in SMARTS format', () => {
@@ -53,128 +59,114 @@ test.describe('Checking bond attributes in SMARTS format', () => {
   // Tests for bond type:
 
   test('Setting bond type - single (aliphatic))', async ({ page }) => {
-    await setAndCheckBondProperties(
+    await setAndCheckBondType(
       page,
-      setBondType,
-      'Single-option',
+      BondTypeName.Single,
       '[#6](-[#6])(-[#6])-[#6]',
     );
   });
 
   test('Setting bond type - single up', async ({ page }) => {
-    await setAndCheckBondProperties(
+    await setAndCheckBondType(
       page,
-      setBondType,
-      'Single Up-option',
+      BondTypeName.SingleUp,
       '[#6](-[#6])(-[#6])/[#6]',
     );
   });
 
   test('Setting bond type - single down', async ({ page }) => {
-    await setAndCheckBondProperties(
+    await setAndCheckBondType(
       page,
-      setBondType,
-      'Single Down-option',
+      BondTypeName.SingleDown,
       '[#6](-[#6])(-[#6])\\[#6]',
     );
   });
 
   test('Setting bond type - single up/down', async ({ page }) => {
-    await setAndCheckBondProperties(
+    await setAndCheckBondType(
       page,
-      setBondType,
-      'Single Up/Down-option',
+      BondTypeName.SingleUpDown,
       '[#6](-[#6])(-[#6])-[#6]',
     );
   });
 
   test('Setting bond type - double', async ({ page }) => {
-    await setAndCheckBondProperties(
+    await setAndCheckBondType(
       page,
-      setBondType,
-      'Double-option',
+      BondTypeName.Double,
       '[#6](-[#6])(-[#6])=[#6]',
     );
   });
 
   test('Setting bond type - double cis/trans', async ({ page }) => {
-    await setAndCheckBondProperties(
+    await setAndCheckBondType(
       page,
-      setBondType,
-      'Double Cis/Trans-option',
+      BondTypeName.DoubleCisTrans,
       '[#6](-[#6])(-[#6])=[#6]',
     );
   });
 
   test('Setting bond type - triple', async ({ page }) => {
-    await setAndCheckBondProperties(
+    await setAndCheckBondType(
       page,
-      setBondType,
-      'Triple-option',
+      BondTypeName.Triple,
       '[#6](-[#6])(-[#6])#[#6]',
     );
   });
 
   test('Setting bond type - aromatic', async ({ page }) => {
-    await setAndCheckBondProperties(
+    await setAndCheckBondType(
       page,
-      setBondType,
-      'Aromatic-option',
+      BondTypeName.Aromatic,
       '[#6](-[#6])(-[#6]):[#6]',
     );
   });
 
   test('Setting bond type - any', async ({ page }) => {
-    await setAndCheckBondProperties(
+    await setAndCheckBondType(
       page,
-      setBondType,
-      'Any-option',
+      BondTypeName.Any,
       '[#6](-[#6])(-[#6])~[#6]',
     );
   });
 
   test('Setting bond type - hydrogen', async ({ page }) => {
-    await setAndCheckBondProperties(
+    await setAndCheckBondType(
       page,
-      setBondType,
-      'Hydrogen-option',
+      BondTypeName.Hydrogen,
       '[#6](-[#6])(-[#6])[#6]',
     );
     await checkSmartsWarnings(page);
   });
 
   test('Setting bond type - single/double', async ({ page }) => {
-    await setAndCheckBondProperties(
+    await setAndCheckBondType(
       page,
-      setBondType,
-      'Single/Double-option',
+      BondTypeName.SingleDouble,
       '[#6](-[#6])(-[#6])!:;-,=[#6]',
     );
   });
 
   test('Setting bond type - single/aromatic', async ({ page }) => {
-    await setAndCheckBondProperties(
+    await setAndCheckBondType(
       page,
-      setBondType,
-      'Single/Aromatic-option',
+      BondTypeName.SingleAromatic,
       '[#6](-[#6])(-[#6])-,:[#6]',
     );
   });
 
   test('Setting bond type - double/aromatic', async ({ page }) => {
-    await setAndCheckBondProperties(
+    await setAndCheckBondType(
       page,
-      setBondType,
-      'Double/Aromatic-option',
+      BondTypeName.DoubleAromatic,
       '[#6](-[#6])(-[#6])=,:[#6]',
     );
   });
 
   test('Setting bond type - dative', async ({ page }) => {
-    await setAndCheckBondProperties(
+    await setAndCheckBondType(
       page,
-      setBondType,
-      'Dative-option',
+      BondTypeName.Dative,
       '[#6](-[#6])(-[#6])[#6]',
     );
     await checkSmartsWarnings(page);

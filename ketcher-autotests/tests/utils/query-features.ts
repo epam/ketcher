@@ -1,5 +1,5 @@
 import { Page, expect } from '@playwright/test';
-import { TopPanelButton, selectTopPanelButton } from '@utils';
+import { BondTypeName, TopPanelButton, selectTopPanelButton } from '@utils';
 import { clickOnFileFormatDropdown } from '@utils/formats';
 
 type queryNumberValues =
@@ -14,8 +14,8 @@ type queryNumberValues =
   | '8'
   | '9';
 
-type aromaticity = 'aromatic' | 'aliphatic' | '';
-type chirality = 'clockwise' | 'anticlockwise' | '';
+type Aromaticity = 'aromatic' | 'aliphatic' | '';
+type Chirality = 'clockwise' | 'anticlockwise' | '';
 
 // Query specific attributes:
 
@@ -70,12 +70,12 @@ export async function setConnectivity(
   await page.getByRole('option', { name: connectivity }).click();
 }
 
-export async function setAromaticity(page: Page, aromaticity: aromaticity) {
+export async function setAromaticity(page: Page, aromaticity: Aromaticity) {
   await page.getByTestId('aromaticity-input-span').click();
   await page.getByRole('option', { name: aromaticity }).click();
 }
 
-export async function setChirality(page: Page, chirality: chirality) {
+export async function setChirality(page: Page, chirality: Chirality) {
   await page.getByTestId('chirality-input-span').click();
   await page.getByRole('option', { name: chirality, exact: true }).click();
 }
@@ -89,9 +89,9 @@ export async function setCustomQuery(page: Page, customQuery: string) {
 
 // Bond attributes:
 
-export async function setBondType(page: Page, bondTypeTestId: string) {
+export async function setBondType(page: Page, bondType: BondTypeName) {
   await page.getByTestId('type-input-span').click();
-  await page.getByTestId(bondTypeTestId).click();
+  await page.getByTestId(`${bondType}-option`).click();
 }
 
 export async function setBondTopology(page: Page, bondTopologyTestId: string) {

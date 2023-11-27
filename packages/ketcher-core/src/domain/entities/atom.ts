@@ -368,11 +368,26 @@ export class Atom {
   }
 
   isQuery(): boolean {
+    const { queryProperties } = this;
+    const isAnyAtom = this.label === 'A';
+    const isAnyMetal = this.label === 'M' || this.label === 'MH';
+    const isAnyHalogen = this.label === 'X' || this.label === 'XH';
+    const isAnyGroup =
+      this.label === 'G' ||
+      this.label === 'G*' ||
+      this.label === 'GH' ||
+      this.label === 'GH*';
     return Boolean(
-      this.atomList !== null ||
-        this.label === 'A' ||
-        this.attachmentPoints ||
-        this.hCount,
+      this.substitutionCount !== 0 ||
+        this.unsaturatedAtom !== 0 ||
+        this.ringBondCount !== 0 ||
+        isAnyAtom ||
+        isAnyMetal ||
+        isAnyHalogen ||
+        isAnyGroup ||
+        this.hCount !== 0 ||
+        this.atomList !== null ||
+        Object.values(queryProperties).some((value) => value),
     );
   }
 

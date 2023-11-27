@@ -235,22 +235,36 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   }
 
   private appendLabel(rootElement: D3SvgElementSelection<SVGGElement, void>) {
+    const lineHeight = 12;
+    const maxCharPerLine = 9;
+    const paddingForHexagon = 5;
     const textElement = rootElement
-      .append('text')
-      .text(this.monomer.label)
-      .attr('fill', this.textColor)
+      .append('foreignObject')
+      .attr('width', this.width - paddingForHexagon * 2)
+      .attr('height', this.height)
+      .attr('x', paddingForHexagon)
       .attr('font-size', '12px')
-      .attr('line-height', '12px')
+      .attr('line-height', lineHeight)
       .attr('font-weight', '700')
+      .style('color', this.textColor)
+      .style('text-wrap', 'balance')
+      .style('text-align', 'center')
       .style('cursor', 'pointer')
       .style('user-select', 'none')
       .attr('pointer-events', 'none');
 
-    const textBBox = (textElement.node() as SVGTextElement).getBBox();
+    let label = this.monomer.label;
+    if (label.length > maxCharPerLine) {
+      const sliced = label.slice(0, 12).trim();
+      label =
+        (sliced.includes(' ') || sliced.includes('-')
+          ? sliced
+          : sliced.slice(0, maxCharPerLine - 3)) + '...';
+    }
 
-    textElement
-      .attr('x', this.width / 2 - textBBox.width / 2)
-      .attr('y', this.height / 2);
+    const lines = label.length > maxCharPerLine ? 2 : 1;
+
+    textElement.text(label).attr('y', (this.height - lines * lineHeight) / 2);
   }
 
   public appendHover(

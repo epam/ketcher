@@ -25,7 +25,7 @@ async function drawStructure(page: Page) {
 
 async function setAndCheckBondType(
   page: Page,
-  bondType: BondTypeName,
+  bondType: BondTypeName | string,
   expectedSmarts: string,
 ) {
   await setBondType(page, bondType);
@@ -59,11 +59,7 @@ test.describe('Checking bond attributes in SMARTS format', () => {
   // Tests for bond type:
 
   test('Setting bond type - single (aliphatic))', async ({ page }) => {
-    await setAndCheckBondType(
-      page,
-      BondTypeName.Single,
-      '[#6](-[#6])(-[#6])-[#6]',
-    );
+    await setAndCheckBondType(page, 'Single', '[#6](-[#6])(-[#6])-[#6]');
   });
 
   test('Setting bond type - single up', async ({ page }) => {
@@ -91,11 +87,7 @@ test.describe('Checking bond attributes in SMARTS format', () => {
   });
 
   test('Setting bond type - double', async ({ page }) => {
-    await setAndCheckBondType(
-      page,
-      BondTypeName.Double,
-      '[#6](-[#6])(-[#6])=[#6]',
-    );
+    await setAndCheckBondType(page, 'Double', '[#6](-[#6])(-[#6])=[#6]');
   });
 
   test('Setting bond type - double cis/trans', async ({ page }) => {

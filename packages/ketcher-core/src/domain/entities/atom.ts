@@ -427,7 +427,7 @@ export class Atom {
   calcValence(connectionCount: number): boolean {
     const label = this.label;
     const charge = this.charge || 0;
-    if (this.isQuery()) {
+    if (this.isQuery() || this.attachmentPoints) {
       this.implicitH = 0;
       return true;
     }

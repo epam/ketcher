@@ -88,8 +88,8 @@ export async function setCustomQuery(page: Page, customQuery: string) {
 }
 
 // Bond attributes:
-
-export async function setBondType(page: Page, bondType: BondTypeName) {
+// TO DO: bondType must be specific type, not a string
+export async function setBondType(page: Page, bondType: BondTypeName | string) {
   await page.getByTestId('type-input-span').click();
   await page.getByTestId(`${bondType}-option`).click();
 }

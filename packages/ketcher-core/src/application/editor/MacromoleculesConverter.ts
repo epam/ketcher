@@ -290,8 +290,15 @@ export class MacromoleculesConverter {
             endAtomAttachmentPointNumber,
           ),
         );
+      } else {
+        // command.merge(drawingEntitiesManager.addBond(bond.))
       }
     });
+
+    struct.atoms.forEach((atom) => {
+      command.merge(drawingEntitiesManager.addAtom(atom.pp))
+    })
+
     drawingEntitiesManager.setMicromoleculesHiddenEntities(struct);
 
     return { drawingEntitiesManager, modelChanges: command };

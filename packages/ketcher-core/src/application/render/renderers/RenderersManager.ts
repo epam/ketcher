@@ -6,6 +6,8 @@ import { monomerFactory } from 'application/editor/operations/monomer/monomerFac
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
 import { PolymerBond } from 'domain/entities/PolymerBond';
+import { Atom } from 'domain/entities/CoreAtom';
+import { AtomRenderer } from 'application/render/renderers/AtomRenderer';
 
 export class RenderersManager {
   private theme;
@@ -125,6 +127,11 @@ export class RenderersManager {
     this.hoverDrawingEntity(monomer as DrawingEntity);
     monomer.renderer?.hoverAttachmenPoint(attachmentPointName);
     monomer.renderer?.drawAttachmentPoints();
+  }
+
+  public addAtom(atom: Atom) {
+    const atomRenderer = new AtomRenderer(atom);
+    atomRenderer.show();
   }
 
   public update(modelChanges: Command) {

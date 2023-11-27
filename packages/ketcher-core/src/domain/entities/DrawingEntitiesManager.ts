@@ -36,6 +36,9 @@ import {
 import { monomerFactory } from 'application/editor/operations/monomer/monomerFactory';
 import { provideEditorSettings } from 'application/editor/editorSettings';
 import { Scale } from 'domain/helpers';
+import { Atom } from 'domain/entities/CoreAtom';
+import { Bond } from 'domain/entities/CoreBond';
+import { AtomAddOperation } from 'application/editor/operations/coreAtom/atom';
 
 const HORIZONTAL_DISTANCE_FROM_MONOMER = 50;
 const VERTICAL_DISTANCE_FROM_MONOMER = 60;
@@ -56,6 +59,9 @@ type RnaPresetAdditionParams = {
 export class DrawingEntitiesManager {
   public monomers: Map<number, BaseMonomer> = new Map();
   public polymerBonds: Map<number, PolymerBond> = new Map();
+  public atoms: Map<number, Atom> = new Map();
+  public bonds: Map<number, Bond> = new Map();
+
   public micromoleculesHiddenEntities: Struct = new Struct();
   get selectedEntities() {
     return this.allEntities.filter(
@@ -67,6 +73,8 @@ export class DrawingEntitiesManager {
     return [
       ...(this.monomers as Map<number, DrawingEntity>),
       ...(this.polymerBonds as Map<number, DrawingEntity>),
+      ...(this.bonds as Map<number, DrawingEntity>),
+      ...(this.atoms as Map<number, DrawingEntity>),
     ];
   }
 
@@ -1022,5 +1030,21 @@ export class DrawingEntitiesManager {
     this.micromoleculesHiddenEntities.mergeInto(
       targetDrawingEntitiesManager.micromoleculesHiddenEntities,
     );
+  }
+
+  private addAtomChangeModel(position: Vec2) {
+    const atom = new Atom(position);
+    this.atoms.set(atom.id, atom);
+    return atom;
+  }
+
+  public addAtom(position: Vec2) {
+    const command = new Command();
+    const atomAddOperation = new AtomAddOperation(
+      this.addAtomChangeModel.bind(this, position),
+      this.addAtomChangeModel.bind(this, position),
+    );
+    command.addOperation(atomAddOperation);
+    return command;
   }
 }

@@ -127,6 +127,7 @@ class BondTool implements Tool {
               id: attachmentAtomId,
             },
     };
+
     if (!this.dragCtx.item)
       // ci.type == 'Canvas'
       delete this.dragCtx.item;

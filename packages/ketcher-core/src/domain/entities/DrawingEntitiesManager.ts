@@ -631,8 +631,8 @@ export class DrawingEntitiesManager {
   ) {
     const command = new Command();
     const editorSettings = provideEditorSettings();
-    const monomerWidth = monomer.renderer?.bodyWidth ?? 0;
-    const monomerHeight = monomer.renderer?.bodyHeight ?? 0;
+    const monomerWidth = monomer.renderer?.monomerSize.width ?? 0;
+    const monomerHeight = monomer.renderer?.monomerSize.height ?? 0;
     const heightMonomerWithBond =
       monomerHeight + VERTICAL_DISTANCE_FROM_MONOMER;
     const oldMonomerPosition = monomer.position;

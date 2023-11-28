@@ -1,7 +1,6 @@
 import { test } from '@playwright/test';
 import {
   addMonomerToCanvas,
-  dragMouseTo,
   selectEraseTool,
   selectRectangleArea,
   selectRectangleSelectionTool,
@@ -11,6 +10,7 @@ import {
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
+import { moveMonomer } from '@utils/macromolecules/monomer';
 /* eslint-disable no-magic-numbers */
 
 test.describe('Rectangle Selection Tool', () => {
@@ -129,10 +129,7 @@ test.describe('Rectangle Selection Tool', () => {
 
     await takeEditorScreenshot(page);
 
-    // Move selected monomer
-    await selectRectangleSelectionTool(page);
-    await page.mouse.click(400, 400);
-    await dragMouseTo(200, 400, page);
+    await moveMonomer(page, peptide2, 200, 400);
 
     await takeEditorScreenshot(page);
   });

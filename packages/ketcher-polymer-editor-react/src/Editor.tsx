@@ -57,7 +57,6 @@ import {
   modalComponentList,
   ModalContainer,
 } from 'components/modal/modalContainer';
-import { FullscreenButton } from 'components/FullscreenButton';
 import { DeepPartial } from './types';
 import { EditorClassName } from './constants';
 import { Snackbar } from '@mui/material';
@@ -77,6 +76,7 @@ import { MonomerConnectionOnlyProps } from 'components/modal/modalContainer/type
 import { calculatePreviewPosition } from 'helpers';
 import StyledPreview from 'components/shared/MonomerPreview';
 import { ErrorModal } from 'components/modal/Error';
+import { FullscreenButton } from 'components/FullscreenButton';
 
 const muiTheme = createTheme(muiOverrides);
 
@@ -90,6 +90,8 @@ interface EditorProps {
   theme?: DeepPartial<EditorTheme>;
   togglerComponent?: JSX.Element;
 }
+
+const noPreviewTools = ['bond-single'];
 
 function EditorContainer({
   onInit,
@@ -208,7 +210,10 @@ function Editor({ theme, togglerComponent }: EditorProps) {
     });
     editor?.events.mouseOnMoveMonomer.add((e) => {
       handleClosePreview();
-      handleOpenPreview(e);
+      const isLeftClick = e.buttons === 1;
+      if (!isLeftClick || !noPreviewTools.includes(activeTool)) {
+        handleOpenPreview(e);
+      }
     });
   }, [editor, activeTool]);
 
@@ -228,6 +233,7 @@ function Editor({ theme, togglerComponent }: EditorProps) {
       <Layout>
         <Layout.Top shortened={isMonomerLibraryHidden}>
           {togglerComponent}
+          <FullscreenButton />
         </Layout.Top>
 
         <Layout.Left>
@@ -266,7 +272,6 @@ function Editor({ theme, togglerComponent }: EditorProps) {
         isHidden={isMonomerLibraryHidden}
         onClick={() => setIsMonomerLibraryHidden((prev) => !prev)}
       />
-      <FullscreenButton />
       <StyledPreview className="polymer-library-preview" />
       <ModalContainer />
       <ErrorModal />
@@ -303,6 +308,8 @@ function MenuComponent() {
     } else if (name === 'snake-mode') {
       dispatch(selectMode(!isSnakeMode));
       editor.events.selectMode.dispatch(!isSnakeMode);
+    } else if (name === 'undo' || name === 'redo') {
+      editor.events.selectHistory.dispatch(name);
     } else if (!['zoom-in', 'zoom-out', 'zoom-reset'].includes(name)) {
       editor.events.selectTool.dispatch(name);
       if (name === 'clear') {
@@ -322,6 +329,10 @@ function MenuComponent() {
           title="Clear Canvas"
           testId="clear-canvas-button"
         />
+      </Menu.Group>
+      <Menu.Group>
+        <Menu.Item itemId="undo" testId="undo-button" />
+        <Menu.Item itemId="redo" testId="redo-button" />
       </Menu.Group>
       <Menu.Group>
         <Menu.Item itemId="open" title="Open..." testId="open-button" />

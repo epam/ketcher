@@ -4,7 +4,6 @@ import {
   selectNestedTool,
   openFileAndAddToCanvas,
   takeEditorScreenshot,
-  pressButton,
   selectTopPanelButton,
   TopPanelButton,
   clickOnTheCanvas,

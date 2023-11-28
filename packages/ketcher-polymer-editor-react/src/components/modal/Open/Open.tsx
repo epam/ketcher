@@ -26,6 +26,7 @@ import {
   identifyStructFormat,
   CoreEditor,
   KetcherLogger,
+  EditorHistory,
 } from 'ketcher-core';
 import { IndigoProvider } from 'ketcher-react';
 import assert from 'assert';
@@ -64,6 +65,8 @@ const addToCanvas = ({
   deserialisedKet.drawingEntitiesManager.mergeInto(
     editor.drawingEntitiesManager,
   );
+  const editorHistory = new EditorHistory(editor);
+  editorHistory.update(deserialisedKet.modelChanges);
   editor.renderersContainer.update(deserialisedKet.modelChanges);
 };
 
@@ -191,7 +194,7 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
           clickHandler={copyHandler}
           label="Add to Canvas"
           title="Structure will be loaded as fragment and added to Clipboard"
-          data-testId="add-to-canvas-button"
+          data-testid="add-to-canvas-button"
         />,
       ];
     } else {

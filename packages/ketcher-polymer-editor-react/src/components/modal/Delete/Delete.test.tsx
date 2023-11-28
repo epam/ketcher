@@ -70,6 +70,13 @@ describe('Delete component', () => {
           activePresetForContextMenu: { presetInList: preset, name: 'name' },
           presets: [preset],
         },
+        editor: {
+          editor: {
+            events: {
+              selectPreset: { dispatch: () => true },
+            },
+          },
+        },
       }),
     );
     const deleteButton = screen.getByTitle('Delete');

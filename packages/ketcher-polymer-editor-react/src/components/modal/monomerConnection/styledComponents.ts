@@ -11,6 +11,9 @@ export const AttachmentPointList = styled.div({
 interface IStyledAttachmentPointProps {
   lastElementInRow?: boolean;
 }
+interface IStyledAttachmentPointNameProps {
+  disabled?: boolean;
+}
 
 export const AttachmentPoint = styled('div')<IStyledAttachmentPointProps>(
   (props) => ({
@@ -23,18 +26,22 @@ export const AttachmentPoint = styled('div')<IStyledAttachmentPointProps>(
   }),
 );
 
-export const AttachmentPointName = styled.span(({ theme }) => ({
-  margin: 0,
-  padding: 0,
-  textAlign: 'center',
-  display: 'block',
-  font: theme.ketcher.font.family.inter,
-  fontSize: theme.ketcher.font.size.small,
-  fontWeight: theme.ketcher.font.weight.regular,
-  color: theme.ketcher.color.text.light,
-}));
+export const AttachmentPointName = styled.span<IStyledAttachmentPointNameProps>(
+  (props) => ({
+    margin: 0,
+    padding: 0,
+    textAlign: 'center',
+    display: 'block',
+    font: props.theme.ketcher.font.family.inter,
+    fontSize: props.theme.ketcher.font.size.small,
+    fontWeight: props.theme.ketcher.font.weight.regular,
+    color: props.disabled
+      ? 'rgba(180, 185, 214, 1)'
+      : props.theme.ketcher.color.text.light,
+  }),
+);
 
-export const MonomerName = styled.h3(({ theme }) => ({
+export const MonomerName = styled.div(({ theme }) => ({
   margin: 0,
   padding: 0,
   textAlign: 'center',
@@ -42,7 +49,7 @@ export const MonomerName = styled.h3(({ theme }) => ({
   font: theme.ketcher.font.family.inter,
   fontSize: theme.ketcher.font.size.regular,
   fontWeight: theme.ketcher.font.weight.regular,
-  maxWidth: '200px',
+  width: '150px',
   flexBasis: '200px',
 }));
 
@@ -76,7 +83,7 @@ export const MonomerNamesRow = styled.div(() => ({
   gap: '34px',
   justifyContent: 'space-between',
   alignItems: 'flex-end',
-  marginTop: '12px',
+  margin: '12px 12px 0px',
   paddingBottom: '6px',
 }));
 

@@ -58,14 +58,15 @@ export const ActionButtonRight = styled(ActionButton)<IStyledButtonProps>(
   }),
 );
 
-export const ActionButtonAttachmentPoint = styled(ActionButton)(
-  ({ theme }) => ({
-    borderRadius: 5,
-    minWidth: '45px !important',
-    padding: '4px',
-    border: `1px solid ${theme.ketcher.color.border.secondary}`,
-  }),
-);
+export const ActionButtonAttachmentPoint = styled(ActionButton)((props) => ({
+  borderRadius: 5,
+  minWidth: '45px !important',
+  padding: '4px',
+  border: `1px solid ${props.theme.ketcher.color.border.secondary}`,
+  color: props.disabled ? 'rgba(51, 51, 51, 0.6) !important' : '',
+  background: props.disabled ? 'rgba(225, 229, 234)' : '',
+  borderColor: props.disabled ? 'rgba(225, 229, 234) !important' : '',
+}));
 
 const MonomerConnection = ({
   onClose,
@@ -192,33 +193,38 @@ function AttachmentPointSelectionPanel({
         }}
       />
       <AttachmentPointList>
-        {monomer.listOfAttachmentPoints.map((attachmentPoint, i) => (
-          <AttachmentPoint
-            key={attachmentPoint}
-            lastElementInRow={(i + 1) % 3 === 0}
-          >
-            <ActionButtonAttachmentPoint
-              label={attachmentPoint}
-              styleType={
-                attachmentPoint === selectedAttachmentPoint
-                  ? 'primary'
-                  : 'secondary'
-              }
-              clickHandler={() => onSelectAttachmentPoint(attachmentPoint)}
-              disabled={Boolean(
-                connectedAttachmentPoints.find(
-                  (connectedAttachmentPointName) =>
-                    connectedAttachmentPointName === attachmentPoint &&
-                    attachmentPoint !==
-                      monomer.chosenFirstAttachmentPointForBond,
-                ),
-              )}
-            />
-            <AttachmentPointName data-testid="leaving-group-value">
-              {getLeavingGroup(attachmentPoint)}
-            </AttachmentPointName>
-          </AttachmentPoint>
-        ))}
+        {monomer.listOfAttachmentPoints.map((attachmentPoint, i) => {
+          const disabled = Boolean(
+            connectedAttachmentPoints.find(
+              (connectedAttachmentPointName) =>
+                connectedAttachmentPointName === attachmentPoint &&
+                attachmentPoint !== monomer.chosenFirstAttachmentPointForBond,
+            ),
+          );
+          return (
+            <AttachmentPoint
+              key={attachmentPoint}
+              lastElementInRow={(i + 1) % 3 === 0}
+            >
+              <ActionButtonAttachmentPoint
+                label={attachmentPoint}
+                styleType={
+                  attachmentPoint === selectedAttachmentPoint
+                    ? 'primary'
+                    : 'secondary'
+                }
+                clickHandler={() => onSelectAttachmentPoint(attachmentPoint)}
+                disabled={disabled}
+              />
+              <AttachmentPointName
+                data-testid="leaving-group-value"
+                disabled={disabled}
+              >
+                {getLeavingGroup(attachmentPoint)}
+              </AttachmentPointName>
+            </AttachmentPoint>
+          );
+        })}
       </AttachmentPointList>
     </AttachmentPointSelectionContainer>
   );

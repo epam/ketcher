@@ -1,6 +1,7 @@
 import { Struct } from 'domain/entities';
 import { isEqual } from 'lodash';
 import { Render } from './raphaelRender';
+import ReAtom from './restruct/reatom';
 
 /**
  * Is used to improve search and opening tab performance in Template Dialog
@@ -24,6 +25,24 @@ export class RenderStruct {
     return struct;
   }
 
+  static removeSmallAttachemntPointLabelsInModal(render: Render, options) {
+    if (!options.labelInMonomerConnectionsModal) {
+      return;
+    }
+
+    const attachmentPointRegExp = /^R[1-8]$/;
+
+    render.ctab.atoms.forEach((atom: ReAtom) => {
+      if (!atom.label) {
+        return;
+      }
+      const isSmall = atom.label.path.node.getBoundingClientRect().width < 8;
+      const isAttachmentPointAtom = attachmentPointRegExp.test(atom.label.text);
+      if (isSmall && isAttachmentPointAtom) {
+        atom.label.path.node.remove();
+      }
+    });
+  }
   static render(
     el: HTMLElement | null,
     struct: Struct | null,
@@ -56,6 +75,7 @@ export class RenderStruct {
 
       preparedStruct.rescale();
       rnd.setMolecule(preparedStruct);
+      this.removeSmallAttachemntPointLabelsInModal(rnd, options);
 
       if (needCache) {
         renderCache.set(cacheKey, rnd.clientArea.innerHTML);

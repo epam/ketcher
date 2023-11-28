@@ -16,7 +16,7 @@ const monomerData = {
     MonomerNaturalAnalogCode: 'A',
     MonomerType: 'MONOMER',
     BranchMonomer: '',
-    MonomerCaps: '',
+    MonomerCaps: { R1: 'H', R2: 'H' },
     MonomerCode: '',
     MonomerName: '',
     Name: 'First peptide',
@@ -29,10 +29,18 @@ const secondPeptide = new Peptide({
   props: { ...monomerData.props, Name: 'Second peptide' },
 });
 
-firstPeptide.attachmentPointsToBonds = { R1: null, R2: null };
-firstPeptide.monomerItem.props.MonomerCaps = '[R1]H,[R2]H';
-secondPeptide.attachmentPointsToBonds = { R1: null, R2: null };
-secondPeptide.monomerItem.props.MonomerCaps = '[R1]O,[R2]O';
+function parseMonomerCaps(caps) {
+  return caps.split(',').reduce((res, cap) => {
+    const parts = cap.match(/\[(.*?)\](.*)/);
+    if (parts) {
+      res[parts[1]] = parts[2];
+    }
+    return res;
+  }, {});
+}
+
+firstPeptide.monomerItem.props.MonomerCaps = parseMonomerCaps('[R1]H,[R2]H');
+secondPeptide.monomerItem.props.MonomerCaps = parseMonomerCaps('[R1]O,[R2]O');
 
 const mockProps = {
   onClose: jest.fn(),

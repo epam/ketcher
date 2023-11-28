@@ -17,7 +17,7 @@ import { zoom, select, ZoomTransform, ZoomBehavior, drag } from 'd3';
 import { BaseTool } from 'application/editor/tools/Tool';
 import { canvasSelector, drawnStructuresSelector } from '../constants';
 import { D3SvgElementSelection } from 'application/render/types';
-import { Vec2 } from 'domain/entities';
+import { Vec2 } from 'domain/entities/vec2';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import { clamp } from 'lodash';
 
@@ -38,7 +38,7 @@ class ZoomTool implements BaseTool {
   private zoomTransform: ZoomTransform;
   private resizeObserver: ResizeObserver | null = null;
   drawingEntitiesManager: DrawingEntitiesManager;
-
+  private zoomEventHandlers: Array<(transform?) => void> = [];
   private scrollBars!: {
     horizontal: ScrollBar;
     vertical: ScrollBar;
@@ -117,6 +117,19 @@ class ZoomTool implements BaseTool {
     this.zoomLevel = transform.k;
     this.zoomTransform = transform;
     this.drawScrollBars();
+    requestAnimationFrame(() => {
+      this.dispatchZoomEventHandlers(transform);
+    });
+  }
+
+  subscribeOnZoomEvent(zoomEventHandler: (transform?) => void) {
+    this.zoomEventHandlers.push(zoomEventHandler);
+  }
+
+  dispatchZoomEventHandlers(transform) {
+    this.zoomEventHandlers.forEach((zoomEventHandler) => {
+      zoomEventHandler(transform);
+    });
   }
 
   drawScrollBars() {
@@ -290,6 +303,7 @@ class ZoomTool implements BaseTool {
     this.scrollBars.vertical?.bar?.remove();
     this.resizeObserver?.unobserve(this.canvasWrapper.node() as SVGSVGElement);
     this.zoom = null;
+    this.zoomEventHandlers = [];
   }
 }
 

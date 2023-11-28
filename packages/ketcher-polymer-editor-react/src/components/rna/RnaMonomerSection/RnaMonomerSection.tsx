@@ -82,6 +82,12 @@ const RnaMonomerSection = ({ selectItem, items }: MonomerSectionProps) => {
       <MonomerList
         libraryName={MONOMER_TYPES.RNA}
         onItemClick={selectMonomer}
+        duplicatePreset={function (): void {
+          throw new Error('Function not implemented.');
+        }}
+        editPreset={function (): void {
+          throw new Error('Function not implemented.');
+        }}
       />
     </>
   );

@@ -9,14 +9,7 @@ describe('Test Rna Editor Expanded component', () => {
 
     render(
       withThemeAndStoreProvider(
-        <RnaEditorExpanded
-          isEditMode
-          onCancel={onCancelHandler}
-          onChangeName={EmptyFunction}
-          onDuplicate={EmptyFunction}
-          onEdit={EmptyFunction}
-          onSave={onSaveHandler}
-        />,
+        <RnaEditorExpanded isEditMode onDuplicate={EmptyFunction} />,
         {
           rnaBuilder: {
             activePreset: {
@@ -62,11 +55,7 @@ describe('Test Rna Editor Expanded component', () => {
       withThemeAndStoreProvider(
         <RnaEditorExpanded
           isEditMode={false}
-          onCancel={EmptyFunction}
-          onChangeName={EmptyFunction}
           onDuplicate={onDuplicateHandler}
-          onEdit={onEditHandler}
-          onSave={EmptyFunction}
         />,
         {
           rnaBuilder: {

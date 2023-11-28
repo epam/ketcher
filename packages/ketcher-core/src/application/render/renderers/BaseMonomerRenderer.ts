@@ -27,6 +27,9 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
 
   private monomerSymbolElement?: SVGUseElement | SVGRectElement;
   public monomerSize: { width: number; height: number };
+  private enumerationElement?: D3SvgElementSelection<SVGTextElement, void>;
+
+  public enumeration: number | null = null;
 
   static isSelectable() {
     return true;
@@ -330,6 +333,25 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       .on('mouseup', (event) => {
         this.editorEvents.mouseUpMonomer.dispatch(event);
       });
+  }
+
+  protected abstract get enumerationElementPositionX(): number;
+
+  public setEnumeration(enumeration: number | null) {
+    this.enumeration = enumeration;
+  }
+
+  protected appendEnumeration() {
+    assert(this.rootElement);
+    this.enumerationElement = this.rootElement
+      .append('text')
+      .attr('x', this.enumerationElementPositionX)
+      .text(this.enumeration);
+  }
+
+  public redrawEnumeration() {
+    assert(this.enumerationElement);
+    this.enumerationElement.text(this.enumeration);
   }
 
   public show(theme) {

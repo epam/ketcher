@@ -32,4 +32,13 @@ export class RNABaseRenderer extends BaseMonomerRenderer {
         ].regular,
       );
   }
+
+  show(theme) {
+    super.show(theme);
+    this.appendEnumeration();
+  }
+
+  protected get enumerationElementPositionX(): number {
+    return 10;
+  }
 }

@@ -182,7 +182,7 @@ export abstract class BaseMonomer extends DrawingEntity {
     this.renderer = renderer;
   }
 
-  public forEachBond(callback) {
+  public forEachBond(callback: (polymerBond: PolymerBond) => void) {
     for (const attachmentPointName in this.attachmentPointsToBonds) {
       if (this.attachmentPointsToBonds[attachmentPointName]) {
         callback(this.attachmentPointsToBonds[attachmentPointName]);

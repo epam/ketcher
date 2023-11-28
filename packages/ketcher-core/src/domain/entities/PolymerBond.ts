@@ -55,4 +55,10 @@ export class PolymerBond extends DrawingEntity {
   public get startPosition() {
     return this.position;
   }
+
+  public getAnotherMonomer(monomer: BaseMonomer) {
+    return this.firstMonomer === monomer
+      ? this.secondMonomer
+      : this.firstMonomer;
+  }
 }

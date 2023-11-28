@@ -43,6 +43,7 @@ export class RenderStruct {
       }
     });
   }
+
   static render(
     el: HTMLElement | null,
     struct: Struct | null,

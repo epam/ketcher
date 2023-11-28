@@ -70,6 +70,9 @@ class BondTool implements Tool {
 
   mousedown(event) {
     if (this.dragCtx) return;
+    if (this.isObjectMacroMolecule(event)) {
+      return;
+    }
     const struct = this.editor.render.ctab;
     const molecule = struct.molecule;
     const functionalGroups = molecule.functionalGroups;
@@ -78,9 +81,6 @@ class BondTool implements Tool {
       'bonds',
       'functionalGroups',
     ]);
-    if (this.isObjectMacroMolecule(event)) {
-      return;
-    }
     const atomResult: Array<number> = [];
     const bondResult: Array<number> = [];
     const result: Array<number> = [];

@@ -13,6 +13,7 @@ import {
   dragMouseTo,
   moveMouseToTheMiddleOfTheScreen,
   openFileAndAddToCanvas,
+  pressButton,
   receiveFileComparisonData,
   saveToFile,
   selectEraseTool,
@@ -86,8 +87,8 @@ async function drawBasePhosphate(page: Page) {
   await page.mouse.down();
   await phosphate1.hover();
   await page.mouse.up();
-  await page.getByRole('button', { name: 'R2' }).click();
-  await page.getByRole('button', { name: 'Connect' }).click();
+  await pressButton(page, 'R2');
+  await pressButton(page, 'Connect');
 }
 
 async function drawSugarPhosphate(page: Page) {

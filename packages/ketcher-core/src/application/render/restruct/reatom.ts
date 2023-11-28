@@ -365,7 +365,7 @@ class ReAtom extends ReObject {
         !isHydrogen &&
         !this.a.alias &&
         implh > 0 &&
-        displayHydrogen(options.showHydrogenLabels, this)
+        displayHydrogen(this, options.showHydrogenLabels)
       ) {
         const data = showHydrogen(this, render, implh, {
           hydrogen: {},
@@ -706,7 +706,7 @@ function isLabelVisible(restruct, options, atom: ReAtom) {
   return false;
 }
 
-function displayHydrogen(hydrogenLabels: ShowHydrogenLabels, atom: ReAtom) {
+function displayHydrogen(atom: ReAtom, hydrogenLabels: ShowHydrogenLabels) {
   return (
     hydrogenLabels === ShowHydrogenLabels.On ||
     (hydrogenLabels === ShowHydrogenLabels.Terminal &&

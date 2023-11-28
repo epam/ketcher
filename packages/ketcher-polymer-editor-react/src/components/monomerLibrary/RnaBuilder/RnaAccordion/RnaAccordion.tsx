@@ -45,9 +45,9 @@ import {
   selectActivePreset,
   selectActivePresetMonomerGroup,
   selectActiveRnaBuilderItem,
+  selectFilteredPresets,
   selectIsActivePresetNewAndEmpty,
   selectIsEditMode,
-  selectPresets,
   setActivePreset,
   setActivePresetForContextMenu,
   setActivePresetMonomerGroup,
@@ -82,7 +82,7 @@ export const RnaAccordion = ({ libraryName, duplicatePreset, editPreset }) => {
   const activeRnaBuilderItem = useAppSelector(selectActiveRnaBuilderItem);
   const activePreset = useAppSelector(selectActivePreset);
   const groups = selectMonomerGroups(items);
-  const presets = useAppSelector(selectPresets);
+  const presets = useAppSelector(selectFilteredPresets);
   const isEditMode = useAppSelector(selectIsEditMode);
   const editor = useAppSelector(selectEditor);
   const isActivePresetNewAndEmpty = useAppSelector(

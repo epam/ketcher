@@ -38,6 +38,7 @@ const content = (type) =>
             key={`${type}-${prop}`}
             component={Select}
             options={getSelectOptionsFromSchema(schemes[type].properties[prop])}
+            data-testid="connectivity"
           />
         );
       }

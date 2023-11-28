@@ -24,16 +24,20 @@ interface Props {
 }
 
 const Label = styled.label(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'column',
   marginRight: '8px',
-  color: theme.ketcher.color.text.secondary,
+  color: theme.ketcher.color.text.primary,
+  fontSize: '12px',
 }));
 
 const Input = styled.input(({ theme }) => ({
   height: '24px',
-  padding: '4px 8px',
-  border: 'none',
-  borderRadius: '2px',
-  backgroundColor: theme.ketcher.color.input.background.default,
+  padding: '3px 7px',
+  border: `1px solid ${theme.ketcher.color.input.border.regular}`,
+  fontSize: '14px',
+  borderRadius: '4px',
+  backgroundColor: theme.ketcher.color.input.background.primary,
   color: theme.ketcher.color.text.primary,
   outline: 'transparent',
   width: '164px',
@@ -44,7 +48,7 @@ const Input = styled.input(({ theme }) => ({
   },
 
   '&:hover': {
-    backgroundColor: theme.ketcher.color.input.background.hover,
+    border: `1px solid ${theme.ketcher.color.input.border.hover}`,
   },
 }));
 
@@ -61,14 +65,16 @@ export const TextInputField = ({
 
   return (
     <>
-      {label && <Label htmlFor={id}>{label}</Label>}
-      <Input
-        type="text"
-        id={id}
-        value={value}
-        onChange={handleChange}
-        {...rest}
-      />
+      <Label htmlFor={id}>
+        {label && <span>{label}</span>}
+        <Input
+          type="text"
+          id={id}
+          value={value}
+          onChange={handleChange}
+          {...rest}
+        />
+      </Label>
     </>
   );
 };

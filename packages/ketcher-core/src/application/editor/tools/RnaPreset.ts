@@ -17,7 +17,7 @@ import { Tool, IRnaPreset } from 'application/editor/tools/Tool';
 import { Sugar } from 'domain/entities/Sugar';
 import { Vec2 } from 'domain/entities';
 
-import { CoreEditor } from 'application/editor';
+import { CoreEditor, EditorHistory } from 'application/editor';
 import { BaseMonomerRenderer } from 'application/render/renderers';
 import { MonomerItemType } from 'domain/types';
 import { monomerFactory } from '../operations/monomer/monomerFactory';
@@ -42,6 +42,8 @@ class RnaPresetTool implements Tool {
   readonly RNA_BASE_PREVIEW_OFFSET_X = 2;
   readonly RNA_BASE_PREVIEW_OFFSET_Y = 20;
   readonly PHOSPHATE_PREVIEW_OFFSET_X = 18;
+  history: EditorHistory;
+
   constructor(private editor: CoreEditor, preset: IRnaPreset) {
     this.editor = editor;
     if (preset?.base) {
@@ -53,6 +55,7 @@ class RnaPresetTool implements Tool {
     if (preset?.sugar) {
       this.sugar = preset?.sugar;
     }
+    this.history = new EditorHistory(this.editor);
   }
 
   mousedown() {
@@ -93,6 +96,7 @@ class RnaPresetTool implements Tool {
         : undefined,
     });
 
+    this.history.update(modelChanges);
     this.editor.renderersContainer.update(modelChanges);
   }
 
@@ -158,7 +162,7 @@ class RnaPresetTool implements Tool {
     }
 
     const [Sugar, SugarRenderer] = monomerFactory(this.sugar);
-    this.sugarPreview = new Sugar(this.sugar);
+    this.sugarPreview = new Sugar(this.sugar) as Sugar;
 
     this.sugarPreviewRenderer = new SugarRenderer(
       this.sugarPreview,
@@ -181,7 +185,7 @@ class RnaPresetTool implements Tool {
     if (this.phosphate) {
       const [Phosphate, PhosphateRenderer] = monomerFactory(this.phosphate);
 
-      this.phosphatePreview = new Phosphate(this.phosphate);
+      this.phosphatePreview = new Phosphate(this.phosphate) as Phosphate;
 
       this.phosphatePreviewRenderer = new PhosphateRenderer(
         this.phosphatePreview,

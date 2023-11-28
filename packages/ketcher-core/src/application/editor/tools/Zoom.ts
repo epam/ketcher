@@ -81,8 +81,8 @@ class ZoomTool implements BaseTool {
       .scaleExtent([this.MINZOOMSCALE, this.MAXZOOMSCALE])
       .wheelDelta(this.defaultWheelDelta)
       .filter((e) => {
+        e.preventDefault();
         if (e.ctrlKey && e.type === 'wheel') {
-          e.preventDefault();
           return true;
         }
         return false;

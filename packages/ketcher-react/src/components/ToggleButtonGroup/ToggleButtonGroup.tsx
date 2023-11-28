@@ -27,6 +27,7 @@ export default function ButtonGroup<T>({
     <ToggleButtonGroup exclusive>
       {buttons.map(({ label, value: buttonValue }) => (
         <ToggleButton
+          data-testid={label + '-option'}
           key={label}
           value={Number(buttonValue) || ''}
           onClick={(event) => handleChange(event, buttonValue)}

@@ -13,8 +13,6 @@ export interface IBaseRenderer {
 }
 
 export abstract class BaseRenderer implements IBaseRenderer {
-  protected drawingEntityType: string;
-
   protected rootElement?: D3SvgElementSelection<SVGGElement, void>;
 
   public bodyElement?: D3SvgElementSelection<SVGElement, this>;
@@ -40,7 +38,6 @@ export abstract class BaseRenderer implements IBaseRenderer {
   protected constructor(public drawingEntity: DrawingEntity) {
     this.canvasWrapper = select(canvasSelector);
     this.canvas = select(drawnStructuresSelector);
-    this.drawingEntityType = drawingEntity.constructor.name;
   }
 
   protected get editorSettings() {

@@ -6,13 +6,14 @@ Object {
   "baseElement": <body>
     <div>
       <div
-        class="css-1t7fvih"
+        class="css-198rm13"
       >
         <div
           class="css-10qeqvw"
         >
           <button
-            class="css-1nruub0"
+            class="open css-1odf3mo"
+            title=""
           >
             <svg
               class="css-uwwqev"
@@ -33,7 +34,8 @@ Object {
           class="css-10qeqvw"
         >
           <button
-            class="css-1nruub0"
+            class="erase css-1odf3mo"
+            title=""
           >
             <svg
               class="css-uwwqev"
@@ -56,7 +58,8 @@ Object {
               class="css-5su45f"
             >
               <button
-                class="css-1nruub0"
+                class="select-lasso css-1odf3mo"
+                title=""
               >
                 <svg
                   class="css-uwwqev"
@@ -96,7 +99,8 @@ Object {
               class="css-5su45f"
             >
               <button
-                class="css-1nruub0"
+                class="shape-rectangle css-1odf3mo"
+                title=""
               >
                 <svg
                   class="css-uwwqev"
@@ -132,7 +136,8 @@ Object {
               class="css-5su45f"
             >
               <button
-                class="css-1nruub0"
+                class="transform-flip-h css-1odf3mo"
+                title=""
               >
                 <svg
                   class="css-uwwqev"
@@ -167,13 +172,14 @@ Object {
   </body>,
   "container": <div>
     <div
-      class="css-1t7fvih"
+      class="css-198rm13"
     >
       <div
         class="css-10qeqvw"
       >
         <button
-          class="css-1nruub0"
+          class="open css-1odf3mo"
+          title=""
         >
           <svg
             class="css-uwwqev"
@@ -194,7 +200,8 @@ Object {
         class="css-10qeqvw"
       >
         <button
-          class="css-1nruub0"
+          class="erase css-1odf3mo"
+          title=""
         >
           <svg
             class="css-uwwqev"
@@ -217,7 +224,8 @@ Object {
             class="css-5su45f"
           >
             <button
-              class="css-1nruub0"
+              class="select-lasso css-1odf3mo"
+              title=""
             >
               <svg
                 class="css-uwwqev"
@@ -257,7 +265,8 @@ Object {
             class="css-5su45f"
           >
             <button
-              class="css-1nruub0"
+              class="shape-rectangle css-1odf3mo"
+              title=""
             >
               <svg
                 class="css-uwwqev"
@@ -293,7 +302,8 @@ Object {
             class="css-5su45f"
           >
             <button
-              class="css-1nruub0"
+              class="transform-flip-h css-1odf3mo"
+              title=""
             >
               <svg
                 class="css-uwwqev"

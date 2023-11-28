@@ -250,6 +250,7 @@ class PolymerBond implements BaseTool {
         return;
       }
       const modelChanges = this.finishBondCreation(renderer.monomer);
+      this.history.update(modelChanges);
       this.editor.renderersContainer.update(modelChanges);
       this.editor.renderersContainer.deletePolymerBond(
         this.bondRenderer.polymerBond,
@@ -368,7 +369,7 @@ class PolymerBond implements BaseTool {
         firstSelectedAttachmentPoint,
         secondSelectedAttachmentPoint,
       );
-
+    this.history.update(modelChanges);
     this.editor.renderersContainer.update(modelChanges);
     if (firstSelectedAttachmentPoint === secondSelectedAttachmentPoint) {
       this.editor.events.error.dispatch(
@@ -376,6 +377,9 @@ class PolymerBond implements BaseTool {
       );
     }
     this.isBondConnectionModalOpen = false;
+    this.editor.renderersContainer.deletePolymerBond(
+      this.bondRenderer.polymerBond,
+    );
     this.bondRenderer = undefined;
   };
 

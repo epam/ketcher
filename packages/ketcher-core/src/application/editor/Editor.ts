@@ -253,7 +253,7 @@ export class CoreEditor {
   private updateLastCursorPosition(event) {
     const events = ['mousemove', 'click', 'mousedown', 'mouseup', 'mouseover'];
     if (events.includes(event.type)) {
-      const clientAreaBoundingBox = this.canvas.getBoundingClientRect();
+      const clientAreaBoundingBox = this.canvasOffset;
 
       this.lastCursorPosition = new Vec2({
         x: event.pageX - clientAreaBoundingBox.x,

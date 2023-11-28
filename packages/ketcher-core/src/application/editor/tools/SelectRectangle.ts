@@ -130,14 +130,15 @@ class SelectRectangle implements BaseTool {
           ),
         );
       this.mousePositionAfterMove = this.editor.lastCursorPositionOfCanvas;
-      this.editor.renderersContainer.update(modelChanges);
+      requestAnimationFrame(() => {
+        this.editor.renderersContainer.update(modelChanges);
+      });
     }
   }
 
   mouseup(event) {
     const renderer = event.target.__data__;
-
-    if (this.moveStarted && renderer.drawingEntity.selected) {
+    if (this.moveStarted && renderer.drawingEntity?.selected) {
       this.moveStarted = false;
 
       if (

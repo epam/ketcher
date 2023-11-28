@@ -146,11 +146,11 @@ export class PolymerBondRenderer extends BaseRenderer {
   }
 
   private getMonomerWidth() {
-    return this.polymerBond.firstMonomer.renderer?.bodyWidth ?? 0;
+    return this.polymerBond.firstMonomer.renderer?.monomerSize.width ?? 0;
   }
 
   private getMonomerHeight() {
-    return this.polymerBond.firstMonomer.renderer?.bodyHeight ?? 0;
+    return this.polymerBond.firstMonomer.renderer?.monomerSize.width ?? 0;
   }
 
   public isMonomersOnSameHorizontalLine() {

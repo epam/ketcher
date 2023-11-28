@@ -25,11 +25,11 @@ import {
   fromOneBondDeletion,
   Struct,
   vectorUtils,
-  MonomerMicromolecule,
 } from 'ketcher-core';
 
 import Editor from '../Editor';
 import { Tool } from './Tool';
+import isObjectMacroMolecule from './helper/isMacroMolecule';
 
 class BondTool implements Tool {
   private readonly editor: Editor;
@@ -54,23 +54,9 @@ class BondTool implements Tool {
     }
   }
 
-  private isObjectMacroMolecule(event) {
-    const functionalGroups = this.editor.render.ctab.molecule.functionalGroups;
-    const ci = this.editor.findItem(event, [
-      'atoms',
-      'bonds',
-      'functionalGroups',
-    ]);
-    const matchingGroup = functionalGroups?.get(ci?.id);
-    return (
-      ci?.map === 'functionalGroups' &&
-      matchingGroup?.relatedSGroup instanceof MonomerMicromolecule
-    );
-  }
-
   mousedown(event) {
     if (this.dragCtx) return;
-    if (this.isObjectMacroMolecule(event)) {
+    if (isObjectMacroMolecule(this.editor, event)) {
       return;
     }
     const struct = this.editor.render.ctab;
@@ -157,7 +143,7 @@ class BondTool implements Tool {
     const functionalGroups = molecule.functionalGroups;
     const editor = this.editor;
     const rnd = editor.render;
-    if (this.isObjectMacroMolecule(event)) {
+    if (isObjectMacroMolecule(this.editor, event)) {
       return true;
     }
     if ('dragCtx' in this) {

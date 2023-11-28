@@ -25,12 +25,12 @@ import {
   FunctionalGroup,
   SGroup,
   vectorUtils,
-  MonomerMicromolecule,
 } from 'ketcher-core';
 
 import { atomLongtapEvent } from './atom';
 import Editor from '../Editor';
 import { Tool } from './Tool';
+import isObjectMacroMolecule from './helper/isMacroMolecule';
 
 class ChainTool implements Tool {
   private readonly editor: Editor;
@@ -41,23 +41,9 @@ class ChainTool implements Tool {
     this.editor.selection(null);
   }
 
-  private isObjectMacroMolecule(event) {
-    const functionalGroups = this.editor.render.ctab.molecule.functionalGroups;
-    const ci = this.editor.findItem(event, [
-      'atoms',
-      'bonds',
-      'functionalGroups',
-    ]);
-    const matchingGroup = functionalGroups?.get(ci?.id);
-    return (
-      ci?.map === 'functionalGroups' &&
-      matchingGroup?.relatedSGroup instanceof MonomerMicromolecule
-    );
-  }
-
   mousedown(event) {
     if (this.dragCtx) return;
-    if (this.isObjectMacroMolecule(event)) {
+    if (isObjectMacroMolecule(this.editor, event)) {
       return;
     }
     const struct = this.editor.render.ctab;

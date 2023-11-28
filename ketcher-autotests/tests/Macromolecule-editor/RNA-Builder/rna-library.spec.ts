@@ -86,6 +86,8 @@ async function drawBasePhosphate(page: Page) {
   await page.mouse.down();
   await phosphate1.hover();
   await page.mouse.up();
+  await page.getByRole('button', { name: 'R2' }).click();
+  await page.getByRole('button', { name: 'Connect' }).click();
 }
 
 async function drawSugarPhosphate(page: Page) {

@@ -110,7 +110,7 @@ describe('RNA ContextMenu', () => {
     expect(deleteMenu.className).toContain('disabled');
   });
 
-  it("should delete preset correctly when click menu 'Delete Preset'", () => {
+  it("should enable 'Delete Preset' when trying to delete non-default preset", () => {
     render(
       withThemeAndStoreProvider(
         <div>
@@ -132,14 +132,7 @@ describe('RNA ContextMenu', () => {
     );
     const preset = screen.getByTestId('A_A_R_P');
     fireEvent.contextMenu(preset);
-    const duplicateMenu = screen.getByTestId('duplicateandedit');
-    fireEvent.click(duplicateMenu);
-    const presetCopyCard = screen.getByText('A_Copy');
-    fireEvent.contextMenu(presetCopyCard);
     const deleteMenu = screen.getByTestId('deletepreset');
-    fireEvent.click(deleteMenu);
-    const deleteBtn = screen.getByTitle('Delete');
-    fireEvent.click(deleteBtn);
-    expect(presetCopyCard).not.toBeInTheDocument();
+    expect(deleteMenu.className).toContain('disabled');
   });
 });

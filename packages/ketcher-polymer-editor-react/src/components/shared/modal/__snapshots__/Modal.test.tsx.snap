@@ -10,13 +10,13 @@ Object {
       aria-hidden="true"
     />
     <div
-      class="MuiDialog-root MuiModal-root css-zw3mfo-MuiModal-root-MuiDialog-root"
+      class="MuiDialog-root MuiModal-root css-kxv5da-MuiModal-root-MuiDialog-root"
       role="presentation"
     >
       <div
         aria-hidden="true"
         class="MuiBackdrop-root MuiModal-backdrop css-yiavyu-MuiBackdrop-root-MuiDialog-backdrop"
-        style="opacity: 0.4; background: rgb(0, 86, 98); webkit-transition: opacity 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms; transition: opacity 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;"
+        style="opacity: 0.4; background: rgba(94, 94, 94, 0.8); webkit-transition: opacity 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms; transition: opacity 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;"
       />
       <div
         data-testid="sentinelStart"
@@ -30,16 +30,16 @@ Object {
       >
         <div
           aria-labelledby=":r0:"
-          class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation24 MuiDialog-paper MuiDialog-paperScrollPaper MuiDialog-paperWidthMd css-12rl710-MuiPaper-root-MuiDialog-paper"
+          class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation24 MuiDialog-paper MuiDialog-paperScrollPaper MuiDialog-paperWidthSm css-1t1j96h-MuiPaper-root-MuiDialog-paper"
           role="dialog"
-          style="min-width: 20vw; background: rgb(245, 245, 245); border-radius: 8px; color: rgb(51, 51, 51);"
+          style="background: rgb(255, 255, 255); border-radius: 8px; color: rgb(51, 51, 51);"
         >
           <h2
-            class="MuiTypography-root MuiTypography-h6 MuiDialogTitle-root css-1pbuetl-MuiTypography-root-MuiDialogTitle-root"
+            class="MuiTypography-root MuiTypography-h6 MuiDialogTitle-root css-o07hi-MuiTypography-root-MuiDialogTitle-root"
             id=":r0:"
           >
             <div
-              class="css-lvyu5j"
+              class="css-1uarmuk"
             >
               title
             </div>
@@ -50,6 +50,7 @@ Object {
               type="button"
             >
               <svg
+                class="css-1td8dcm"
                 fill="none"
                 height="24"
                 viewBox="0 0 24 24"
@@ -67,10 +68,7 @@ Object {
             </button>
           </h2>
           <div
-            class="contexify_separator"
-          />
-          <div
-            class="MuiDialogContent-root css-1n1tez8-MuiDialogContent-root"
+            class="MuiDialogContent-root css-1wbmh3t-MuiDialogContent-root"
           >
             Content
           </div>

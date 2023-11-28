@@ -275,7 +275,7 @@ const phosphate = {
     MonomerCaps: {},
     MonomerCode: '',
   },
-  label: '',
+  label: 'P',
   struct: new Struct(),
 };
 const ribose = {
@@ -288,7 +288,7 @@ const ribose = {
     MonomerCaps: {},
     MonomerCode: '',
   },
-  label: '',
+  label: 'R',
   struct: new Struct(),
 };
 const thymine = {
@@ -301,7 +301,7 @@ const thymine = {
     MonomerCaps: {},
     MonomerCode: '',
   },
-  label: '',
+  label: 'T',
   struct: new Struct(),
 };
 const cytosine = {
@@ -353,7 +353,7 @@ const guanine = {
     MonomerCaps: {},
     MonomerCode: '',
   },
-  label: '',
+  label: 'G',
   struct: new Struct(),
 };
 

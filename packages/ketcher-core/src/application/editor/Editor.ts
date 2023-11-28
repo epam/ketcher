@@ -21,6 +21,7 @@ import {
   resetEditorEvents,
 } from 'application/editor/editorEvents';
 import { PolymerBondRenderer } from 'application/render/renderers';
+import { EditorHistory, HistoryOperationType } from './EditorHistory';
 import { Editor } from 'application/editor/editor.types';
 import { MacromoleculesConverter } from 'application/editor/MacromoleculesConverter';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
@@ -82,6 +83,7 @@ export class CoreEditor {
       this.onCancelBondCreation(secondMonomer),
     );
     this.events.selectMode.add((isSnakeMode) => this.onSelectMode(isSnakeMode));
+    this.events.selectHistory.add((name) => this.onSelectHistory(name));
 
     renderersEvents.forEach((eventName) => {
       this.events[eventName].add((event) =>
@@ -130,7 +132,18 @@ export class CoreEditor {
       this.canvas.width.baseVal.value,
       isSnakeMode,
     );
+    const history = new EditorHistory(this);
+    history.update(modelChanges);
     this.renderersContainer.update(modelChanges);
+  }
+
+  private onSelectHistory(name: HistoryOperationType) {
+    const history = new EditorHistory(this);
+    if (name === 'undo') {
+      history.undo();
+    } else if (name === 'redo') {
+      history.redo();
+    }
   }
 
   public selectTool(name: string, options?) {
@@ -274,6 +287,8 @@ export class CoreEditor {
 
   public switchToMicromolecules() {
     this.unsubscribeEvents();
+    const history = new EditorHistory(this);
+    history.destroy();
     const struct = this.micromoleculesEditor.struct();
     const reStruct = this.micromoleculesEditor.render.ctab;
     const { conversionErrorMessage } =

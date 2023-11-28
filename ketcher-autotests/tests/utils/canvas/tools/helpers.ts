@@ -1,5 +1,5 @@
 import { Page } from '@playwright/test';
-import { pressButton, selectOption } from '@utils';
+import { selectOption } from '@utils';
 import { selectButtonByTitle } from '@utils/clicks/selectButtonByTitle';
 import { clickOnFileFormatDropdown } from '@utils/formats';
 import {
@@ -66,6 +66,17 @@ export async function selectClearCanvasTool(page: Page) {
 export async function selectRectangleSelectionTool(page: Page) {
   const bondToolButton = page.locator(`button[title*="Select Rectangle"]`);
   await bondToolButton.click();
+}
+
+// undo/redo heplers currently used for macromolecules editor because buttons are in different panel
+export async function clickUndo(page: Page) {
+  const undoButton = page.getByTestId('undo-button');
+  await undoButton.click();
+}
+
+export async function clickRedo(page: Page) {
+  const redoButton = page.getByTestId('redo-button');
+  await redoButton.click();
 }
 
 export async function selectRectangleArea(

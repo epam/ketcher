@@ -86,7 +86,6 @@ exports[`Test Rna Accordion component should render 1`] = `
           </button>
           <div
             class="css-1jn33hb"
-            data-testid="rna-preset-group"
           >
             <div
               class="css-14bnc38"

@@ -17,6 +17,7 @@
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import { Save } from 'components/modal/save';
 import userEvent from '@testing-library/user-event';
+import { CoreEditor, Struct } from 'ketcher-core';
 
 const mockOnClose = jest.fn();
 
@@ -27,14 +28,28 @@ const mockProps = {
 
 describe('Save modal', () => {
   it('renders correctly', () => {
-    const view = render(withThemeProvider(<Save {...mockProps} />));
+    jest.spyOn(CoreEditor, 'provideEditorInstance').mockImplementation(() => {
+      return {
+        drawingEntitiesManager: {
+          micromoleculesHiddenEntities: {
+            clone: () => {
+              return new Struct();
+            },
+            mergeInto: jest.fn(),
+          },
+          setMicromoleculesHiddenEntities: jest.fn(),
+          monomers: [],
+          polymerBonds: [],
+        },
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } as any;
+    });
+    const view = render(withThemeAndStoreProvider(<Save {...mockProps} />));
 
     const filenameInput = screen.getByRole('textbox', {
       name: 'File name:',
     });
-    const fileFormatInput = screen.getByRole('button', {
-      name: 'MDL Molfile V3000',
-    });
+    const fileFormatInput = screen.getByText('Ket');
 
     expect(view).toMatchSnapshot();
     expect(filenameInput).toBeVisible();
@@ -43,7 +58,7 @@ describe('Save modal', () => {
   });
 
   it.skip('renders dropdown options correctly', () => {
-    render(withThemeProvider(<Save {...mockProps} />));
+    render(withThemeAndStoreProvider(<Save {...mockProps} />));
 
     const fileFormat = screen.getByRole('button', {
       name: 'MDL Molfile V3000',

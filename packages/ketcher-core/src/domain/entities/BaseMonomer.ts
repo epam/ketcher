@@ -45,8 +45,12 @@ export abstract class BaseMonomer extends DrawingEntity {
       this.getMonomerDefinitionAttachmentPoints();
   }
 
-  get label() {
+  public get label() {
     return this.monomerItem.label;
+  }
+
+  public get center() {
+    return this.position;
   }
 
   public get listOfAttachmentPoints() {

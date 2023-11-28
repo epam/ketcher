@@ -24,7 +24,7 @@
     "build:packages": "npm run build:core && run-p build:standalone build:react && npm run build:polymer-editor",
     "build:example": "npm run build -w example",
     "build:demo": "npm run build:packages && npm run build -w demo",
-    "test": "npm run test --workspace=packages/ketcher-core --workspace=packages/ketcher-react --workspace=packages/ketcher-standalone --workspace=packages/ketcher-standalone",
+    "test": "npm run test --workspace=packages/ketcher-core --workspace=packages/ketcher-react --workspace=packages/ketcher-standalone --workspace=packages/ketcher-polymer-editor-react",
     "check:autotests": "cd ketcher-autotests && npm run check:code",
     "serve:remote": "cd example && npm run serve:remote",
     "serve:standalone": "cd example && npm run serve:standalone",

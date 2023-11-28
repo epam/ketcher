@@ -79,7 +79,7 @@ export const RnaEditorExpanded = ({
   const dispatch = useDispatch();
   const activePreset = useAppSelector(selectActivePreset);
   const activeMonomerGroup = useAppSelector(selectActiveRnaBuilderItem);
-  const editor = useAppSelector(selectEditor);
+  const editor = useAppSelector(selectEditor, () => true);
   const presets = useAppSelector(selectPresets);
   const activePresetMonomerGroup = useAppSelector(
     selectActivePresetMonomerGroup,
@@ -200,7 +200,7 @@ export const RnaEditorExpanded = ({
   if (!activePreset.presetInList) {
     mainButton = (
       <StyledButton
-        disabled={!selectIsPresetReadyToSave(activePreset)}
+        disabled={!selectIsPresetReadyToSave(newPreset)}
         primary
         data-testid="add-to-presets-btn"
         onClick={onSave}
@@ -268,7 +268,7 @@ export const RnaEditorExpanded = ({
         ) : (
           <StyledButton
             data-testid="duplicate-btn"
-            disabled={!selectIsPresetReadyToSave(activePreset)}
+            disabled={!selectIsPresetReadyToSave(newPreset)}
             onClick={onDuplicate}
           >
             Duplicate and Edit

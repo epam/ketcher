@@ -20,6 +20,10 @@ import {
 import { MonomerConnectionProps } from '../modalContainer/types';
 import { LeavingGroup } from 'ketcher-core';
 
+interface IStyledButtonProps {
+  disabled: boolean;
+}
+
 const StyledModal = styled(Modal)({
   '& .MuiPaper-root': {
     width: 'auto',
@@ -39,18 +43,25 @@ export const StyledStructRender = styled(StructRender)(({ theme }) => ({
   borderRadius: '6px',
   padding: 5,
 }));
+
 export const ActionButtonLeft = styled(ActionButton)(() => ({
   marginRight: 'auto',
-  width: '97px',
+  width: '97px !important',
 }));
 
-export const ActionButtonRight = styled(ActionButton)(() => ({
-  width: '97px',
-}));
+export const ActionButtonRight = styled(ActionButton)<IStyledButtonProps>(
+  (props) => ({
+    width: '97px !important',
+    color: props.disabled ? 'rgba(51, 51, 51, 0.6)' : '',
+    background: props.disabled ? 'rgba(225, 229, 234, 1) !important' : '',
+    opacity: '1 !important',
+  }),
+);
+
 export const ActionButtonAttachmentPoint = styled(ActionButton)(
   ({ theme }) => ({
     borderRadius: 5,
-    width: '45px',
+    minWidth: '45px !important',
     padding: '4px',
     border: `1px solid ${theme.ketcher.color.border.secondary}`,
   }),
@@ -181,8 +192,11 @@ function AttachmentPointSelectionPanel({
         }}
       />
       <AttachmentPointList>
-        {monomer.listOfAttachmentPoints.map((attachmentPoint) => (
-          <AttachmentPoint key={attachmentPoint}>
+        {monomer.listOfAttachmentPoints.map((attachmentPoint, i) => (
+          <AttachmentPoint
+            key={attachmentPoint}
+            lastElementInRow={(i + 1) % 3 === 0}
+          >
             <ActionButtonAttachmentPoint
               label={attachmentPoint}
               styleType={

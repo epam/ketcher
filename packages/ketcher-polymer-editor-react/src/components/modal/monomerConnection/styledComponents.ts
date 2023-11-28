@@ -3,24 +3,32 @@ import styled from '@emotion/styled';
 export const AttachmentPointList = styled.div({
   display: 'flex',
   flexWrap: 'wrap',
-  justifyContent: 'space-between',
+  justifyContent: 'start',
   alignSelf: 'flex-start',
   width: '100%',
 });
 
-export const AttachmentPoint = styled.div({
-  display: 'flex',
-  flexDirection: 'column',
-  rowGap: '5px',
-  alignItems: 'center',
-  marginBottom: '5px',
-});
+interface IStyledAttachmentPointProps {
+  lastElementInRow?: boolean;
+}
+
+export const AttachmentPoint = styled('div')<IStyledAttachmentPointProps>(
+  (props) => ({
+    display: 'flex',
+    flexDirection: 'column',
+    rowGap: '2px',
+    alignItems: 'center',
+    marginBottom: '5px',
+    marginRight: !props.lastElementInRow ? '7px' : '',
+  }),
+);
 
 export const AttachmentPointName = styled.span(({ theme }) => ({
   margin: 0,
   padding: 0,
   textAlign: 'center',
   display: 'block',
+  font: theme.ketcher.font.family.inter,
   fontSize: theme.ketcher.font.size.small,
   fontWeight: theme.ketcher.font.weight.regular,
   color: theme.ketcher.color.text.light,
@@ -31,6 +39,7 @@ export const MonomerName = styled.h3(({ theme }) => ({
   padding: 0,
   textAlign: 'center',
   display: 'block',
+  font: theme.ketcher.font.family.inter,
   fontSize: theme.ketcher.font.size.regular,
   fontWeight: theme.ketcher.font.weight.regular,
   maxWidth: '200px',
@@ -59,7 +68,7 @@ export const AttachmentPointsRow = styled.div(() => ({
   display: 'flex',
   justifyContent: 'space-around',
   alignItems: 'flex-start',
-  padding: '12px',
+  padding: '0 12px',
 }));
 
 export const MonomerNamesRow = styled.div(() => ({

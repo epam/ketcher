@@ -128,6 +128,7 @@ function Editor({ theme, togglerComponent }: EditorProps) {
   const canvasRef = useRef<SVGSVGElement>(null);
   const errorTooltipText = useAppSelector(selectErrorTooltipText);
   const editor = useAppSelector(selectEditor);
+  const activeTool = useAppSelector(selectEditorActiveTool);
   let keyboardEventListener;
   const [isMonomerLibraryHidden, setIsMonomerLibraryHidden] = useState(false);
 
@@ -214,7 +215,7 @@ function Editor({ theme, togglerComponent }: EditorProps) {
         handleOpenPreview(e);
       }
     });
-  }, [editor, handleOpenPreview, handleClosePreview]);
+  }, [editor, activeTool]);
 
   useEffect(() => {
     editor?.zoomTool.observeCanvasResize();

@@ -41,22 +41,24 @@ const mockProps = {
   secondMonomer: secondPeptide,
 };
 
-describe('MonomerConnections modal', () => {
-  beforeEach(() => {
-    render(
-      <Provider store={mockStore}>
-        {withThemeProvider(<MonomerConnection {...mockProps} />)}
-      </Provider>,
-    );
-  });
+const renderComponent = () => {
+  render(
+    <Provider store={mockStore}>
+      {withThemeProvider(<MonomerConnection {...mockProps} />)}
+    </Provider>,
+  );
+};
 
+describe('MonomerConnections modal', () => {
   describe('Leaving group', () => {
     it('should be displayed as is by default', () => {
+      renderComponent();
       expect(screen.getAllByTestId('leaving-group-value')[0]).toHaveTextContent(
         'H',
       );
     });
     it('should be displayed as OH when O is provided', () => {
+      renderComponent();
       expect(screen.getAllByTestId('leaving-group-value')[2]).toHaveTextContent(
         'OH',
       );

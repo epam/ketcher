@@ -50,21 +50,23 @@ const mockProps = {
 };
 
 describe('MonomerConnections modal', () => {
-  beforeEach(() => {
-    render(
+  const renderMonomerConnection = () => {
+    return render(
       <Provider store={mockStore}>
         {withThemeProvider(<MonomerConnection {...mockProps} />)}
       </Provider>,
     );
-  });
+  };
 
   describe('Leaving group', () => {
     it('should be displayed as is by default', () => {
+      renderMonomerConnection();
       expect(screen.getAllByTestId('leaving-group-value')[0]).toHaveTextContent(
         'H',
       );
     });
     it('should be displayed as OH when O is provided', () => {
+      renderMonomerConnection();
       expect(screen.getAllByTestId('leaving-group-value')[2]).toHaveTextContent(
         'OH',
       );

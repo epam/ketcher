@@ -9,6 +9,8 @@ import ReAtom from './restruct/reatom';
  */
 const renderCache = new Map();
 let previousOptions: any;
+const MIN_ATTACHMENT_POINT_SIZE = 10;
+const attachmentPointRegExp = /^R[1-8]$/;
 
 export class RenderStruct {
   /**
@@ -25,25 +27,30 @@ export class RenderStruct {
     return struct;
   }
 
-  static removeSmallAttachemntPointLabelsInModal(render: Render, options) {
+  static removeSmallAttachemntPointLabelsInModal(
+    render: Render,
+    options: any = {},
+  ) {
     if (!options.labelInMonomerConnectionsModal) {
       return;
     }
-
-    const attachmentPointRegExp = /^R[1-8]$/;
 
     render.ctab.atoms.forEach((atom: ReAtom) => {
       if (!atom.label) {
         return;
       }
-      const isSmall = atom.label.path.node.getBoundingClientRect().width < 8;
       const isAttachmentPointAtom = attachmentPointRegExp.test(atom.label.text);
-      if (isSmall && isAttachmentPointAtom) {
-        atom.label.path.node.remove();
+
+      if (isAttachmentPointAtom) {
+        const isSmall =
+          atom.label.path.node.getBoundingClientRect().width <
+          MIN_ATTACHMENT_POINT_SIZE;
+        if (isSmall) {
+          atom.label.path.node.remove();
+        }
       }
     });
   }
-
   static render(
     el: HTMLElement | null,
     struct: Struct | null,

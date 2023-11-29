@@ -45,9 +45,7 @@ describe('FileDrop component', () => {
   it('should render correctly with required props', () => {
     render(withThemeProvider(<FileDrop {...mockProps} />));
 
-    expect(
-      screen.getByRole('button', { name: mockProps.buttonLabel }),
-    ).toBeInTheDocument();
+    expect(screen.getByText(mockProps.buttonLabel)).toBeInTheDocument();
     expect(screen.getByText(mockProps.textLabel)).toBeInTheDocument();
   });
 
@@ -56,10 +54,8 @@ describe('FileDrop component', () => {
       withThemeProvider(<FileDrop {...mockProps} {...mockOptionalProps} />),
     );
 
-    expect(
-      screen.getByRole('button', { name: mockProps.buttonLabel }),
-    ).toBeInTheDocument();
-    expect(screen.getByText(mockProps.textLabel)).toBeInTheDocument();
+    expect(screen.queryByText(mockProps.buttonLabel)).not.toBeInTheDocument();
+    expect(screen.queryByText(mockProps.textLabel)).not.toBeInTheDocument();
     expect(
       screen.getByText(mockOptionalProps.disabledText),
     ).toBeInTheDocument();

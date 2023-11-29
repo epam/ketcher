@@ -57,7 +57,6 @@ import {
   modalComponentList,
   ModalContainer,
 } from 'components/modal/modalContainer';
-import { FullscreenButton } from 'components/FullscreenButton';
 import { DeepPartial } from './types';
 import { EditorClassName } from './constants';
 import { Snackbar } from '@mui/material';
@@ -76,6 +75,8 @@ import {
 import { MonomerConnectionOnlyProps } from 'components/modal/modalContainer/types';
 import { calculatePreviewPosition } from 'helpers';
 import StyledPreview from 'components/shared/MonomerPreview';
+import { ErrorModal } from 'components/modal/Error';
+import { FullscreenButton } from 'components/FullscreenButton';
 
 const muiTheme = createTheme(muiOverrides);
 
@@ -89,6 +90,8 @@ interface EditorProps {
   theme?: DeepPartial<EditorTheme>;
   togglerComponent?: JSX.Element;
 }
+
+const noPreviewTools = ['bond-single'];
 
 function EditorContainer({
   onInit,
@@ -207,7 +210,10 @@ function Editor({ theme, togglerComponent }: EditorProps) {
     });
     editor?.events.mouseOnMoveMonomer.add((e) => {
       handleClosePreview();
-      handleOpenPreview(e);
+      const isLeftClick = e.buttons === 1;
+      if (!isLeftClick || !noPreviewTools.includes(activeTool)) {
+        handleOpenPreview(e);
+      }
     });
   }, [editor, activeTool]);
 
@@ -227,6 +233,7 @@ function Editor({ theme, togglerComponent }: EditorProps) {
       <Layout>
         <Layout.Top shortened={isMonomerLibraryHidden}>
           {togglerComponent}
+          <FullscreenButton />
         </Layout.Top>
 
         <Layout.Left>
@@ -265,9 +272,9 @@ function Editor({ theme, togglerComponent }: EditorProps) {
         isHidden={isMonomerLibraryHidden}
         onClick={() => setIsMonomerLibraryHidden((prev) => !prev)}
       />
-      <FullscreenButton />
       <StyledPreview className="polymer-library-preview" />
       <ModalContainer />
+      <ErrorModal />
       <Snackbar
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
         open={Boolean(errorTooltipText)}
@@ -301,6 +308,8 @@ function MenuComponent() {
     } else if (name === 'snake-mode') {
       dispatch(selectMode(!isSnakeMode));
       editor.events.selectMode.dispatch(!isSnakeMode);
+    } else if (name === 'undo' || name === 'redo') {
+      editor.events.selectHistory.dispatch(name);
     } else if (!['zoom-in', 'zoom-out', 'zoom-reset'].includes(name)) {
       editor.events.selectTool.dispatch(name);
       if (name === 'clear') {
@@ -315,21 +324,41 @@ function MenuComponent() {
   return (
     <Menu onItemClick={menuItemChanged} activeMenuItems={activeMenuItems}>
       <Menu.Group>
-        <Menu.Item itemId="clear" title="Clear Canvas" />
+        <Menu.Item
+          itemId="clear"
+          title="Clear Canvas"
+          testId="clear-canvas-button"
+        />
       </Menu.Group>
       <Menu.Group>
-        <Menu.Item itemId="open" title="Open..." />
-        <Menu.Item itemId="save" />
+        <Menu.Item itemId="undo" testId="undo-button" />
+        <Menu.Item itemId="redo" testId="redo-button" />
       </Menu.Group>
       <Menu.Group>
-        <Menu.Item itemId="erase" title="Erase" />
-        <Menu.Item itemId="select-rectangle" title="Select Rectangle" />
+        <Menu.Item itemId="open" title="Open..." testId="open-button" />
+        <Menu.Item itemId="save" title="Save as..." testId="save-button" />
       </Menu.Group>
       <Menu.Group>
-        <Menu.Item itemId="bond-single" title="Single Bond (1)" />
+        <Menu.Item itemId="erase" title="Erase" testId="erase-button" />
+        <Menu.Item
+          itemId="select-rectangle"
+          title="Select Rectangle"
+          testId="select-rectangle-button"
+        />
+      </Menu.Group>
+      <Menu.Group>
+        <Menu.Item
+          itemId="bond-single"
+          title="Single Bond (1)"
+          testId="single-bond-button"
+        />
       </Menu.Group>
       <Menu.Group divider>
-        <Menu.Item itemId="snake-mode" title="Snake mode" />
+        <Menu.Item
+          itemId="snake-mode"
+          title="Snake mode"
+          testId="snake-mode-button"
+        />
       </Menu.Group>
       <Menu.Group>
         <Menu.Item itemId="zoom-in" title="Zoom In" />

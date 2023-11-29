@@ -23,7 +23,7 @@ export class PolymerBondRenderer extends BaseRenderer {
   private editorEvents: typeof editorEvents;
   private selectionElement;
   private path = '';
-  private previousStateOfIsMonomersOnSameHorisontalLine: boolean | undefined;
+  private previousStateOfIsMonomersOnSameHorisontalLine = false;
   constructor(public polymerBond: PolymerBond) {
     super(polymerBond as DrawingEntity);
     this.polymerBond.setRenderer(this);
@@ -146,22 +146,22 @@ export class PolymerBondRenderer extends BaseRenderer {
   }
 
   private getMonomerWidth() {
-    return this.polymerBond.firstMonomer.renderer?.bodyWidth ?? 0;
+    return this.polymerBond.firstMonomer.renderer?.monomerSize.width ?? 0;
   }
 
   private getMonomerHeight() {
-    return this.polymerBond.firstMonomer.renderer?.bodyHeight ?? 0;
+    return this.polymerBond.firstMonomer.renderer?.monomerSize.width ?? 0;
   }
 
   public isMonomersOnSameHorizontalLine() {
-    return (
+    return Boolean(
       this.polymerBond.secondMonomer &&
-      this.polymerBond.firstMonomer.position.y -
-        this.polymerBond.secondMonomer.position.y <
-        0.5 &&
-      this.polymerBond.firstMonomer.position.y -
-        this.polymerBond.secondMonomer.position.y >
-        -0.5
+        this.polymerBond.firstMonomer.position.y -
+          this.polymerBond.secondMonomer.position.y <
+          0.5 &&
+        this.polymerBond.firstMonomer.position.y -
+          this.polymerBond.secondMonomer.position.y >
+          -0.5,
     );
   }
 

@@ -11,11 +11,11 @@ import {
   selectTopPanelButton,
   TopPanelButton,
 } from '@utils';
-import { getCml } from '@utils/formats';
+import { clickOnFileFormatDropdown, getCml } from '@utils/formats';
 
 async function saveFileAsCmlFormat(page: Page) {
   await selectTopPanelButton(TopPanelButton.Save, page);
-  await page.getByRole('button', { name: 'MDL Molfile V2000' }).click();
+  await clickOnFileFormatDropdown(page);
   await page.getByRole('option', { name: 'CML' }).click();
 }
 

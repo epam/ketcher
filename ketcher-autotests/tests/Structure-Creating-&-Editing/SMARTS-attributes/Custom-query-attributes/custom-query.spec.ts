@@ -11,8 +11,6 @@ import {
 } from '@utils';
 import { checkSmartsValue, setCustomQuery } from '../utils';
 
-const defaultFileFormat = 'MDL Molfile V2000';
-
 async function drawStructure(page: Page) {
   await selectBond(BondTypeName.Single, page);
   await clickInTheMiddleOfTheScreen(page);
@@ -29,7 +27,7 @@ async function setAndCheckCustomQuery(
   await setProperty(page, value);
   await pressButton(page, 'Apply');
   await takeEditorScreenshot(page);
-  await checkSmartsValue(page, defaultFileFormat, expectedSmarts);
+  await checkSmartsValue(page, expectedSmarts);
 }
 
 test.describe('Checking custom query in SMARTS format', () => {

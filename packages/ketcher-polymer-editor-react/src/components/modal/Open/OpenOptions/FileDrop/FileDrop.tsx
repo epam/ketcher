@@ -16,8 +16,8 @@
 import { useDropzone, DropzoneOptions } from 'react-dropzone';
 import { Icon, IconName } from 'ketcher-react';
 import React, { useMemo } from 'react';
-import { ActionButton } from 'components/shared/actionButton';
 import styled from '@emotion/styled';
+import { OpenOptionText, DisabledText } from '../OpenOptions';
 
 export type FileDropProps = {
   buttonLabel: string;
@@ -33,8 +33,17 @@ const baseStyle = {
   display: 'flex',
   alignItems: 'center',
   flexDirection: 'column',
-  justifyContent: 'space-around',
+  justifyContent: 'space-between',
 };
+
+interface StyledIconProps {
+  disabled?: boolean;
+}
+
+const StyledIcon = styled(Icon)<StyledIconProps>`
+  filter: ${({ disabled }) => (disabled ? 'grayscale(1)' : '')};
+  opacity: ${({ disabled }) => (disabled ? '0.6' : '1')};
+`;
 
 const activeStyle = {
   backgroundColor: '#F8FEFFFF',
@@ -44,11 +53,11 @@ const ButtonContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 8px;
 
   & > span {
-    padding-top: 5px;
     font-size: ${({ theme }) => theme.ketcher.font.size.small};
+    color: ${({ theme }) => theme.ketcher.color.text.primary};
+    opacity: 50%;
   }
   & > svg {
     margin-bottom: 8px;
@@ -56,7 +65,6 @@ const ButtonContainer = styled.div`
 `;
 
 const FileDrop = ({
-  buttonLabel,
   textLabel,
   iconName,
   disabled,
@@ -79,17 +87,19 @@ const FileDrop = ({
   ) as React.CSSProperties;
 
   return (
-    <div {...getRootProps({ style })}>
+    <div {...getRootProps({ style })} onClick={open}>
       <input {...getInputProps()} />
-      <ButtonContainer>
-        {textLabel && <span>{textLabel}</span>}
-        <ActionButton
-          label={buttonLabel}
-          clickHandler={open}
-          disabled={disabled}
-        />
-      </ButtonContainer>
-      {disabled ? <p>{disabledText}</p> : <Icon name={iconName} />}
+      <StyledIcon name={iconName} disabled={disabled} />
+      {disabled ? (
+        <DisabledText>{disabledText}</DisabledText>
+      ) : (
+        <>
+          <ButtonContainer>
+            {textLabel && <span>{textLabel}</span>}
+          </ButtonContainer>
+          <OpenOptionText>Open from file</OpenOptionText>
+        </>
+      )}
     </div>
   );
 };

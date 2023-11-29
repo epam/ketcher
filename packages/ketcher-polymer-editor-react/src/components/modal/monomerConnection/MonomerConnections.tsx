@@ -18,6 +18,11 @@ import {
   ModalContent,
 } from './styledComponents';
 import { MonomerConnectionProps } from '../modalContainer/types';
+import { LeavingGroup } from 'ketcher-core';
+
+interface IStyledButtonProps {
+  disabled: boolean;
+}
 
 const StyledModal = styled(Modal)({
   '& .MuiPaper-root': {
@@ -38,22 +43,30 @@ export const StyledStructRender = styled(StructRender)(({ theme }) => ({
   borderRadius: '6px',
   padding: 5,
 }));
+
 export const ActionButtonLeft = styled(ActionButton)(() => ({
   marginRight: 'auto',
-  width: '97px',
+  width: '97px !important',
 }));
 
-export const ActionButtonRight = styled(ActionButton)(() => ({
-  width: '97px',
-}));
-export const ActionButtonAttachmentPoint = styled(ActionButton)(
-  ({ theme }) => ({
-    borderRadius: 5,
-    width: '45px',
-    padding: '4px',
-    border: `1px solid ${theme.ketcher.color.border.secondary}`,
+export const ActionButtonRight = styled(ActionButton)<IStyledButtonProps>(
+  (props) => ({
+    width: '97px !important',
+    color: props.disabled ? 'rgba(51, 51, 51, 0.6)' : '',
+    background: props.disabled ? 'rgba(225, 229, 234, 1) !important' : '',
+    opacity: '1 !important',
   }),
 );
+
+export const ActionButtonAttachmentPoint = styled(ActionButton)((props) => ({
+  borderRadius: 5,
+  minWidth: '45px !important',
+  padding: '4px',
+  border: `1px solid ${props.theme.ketcher.color.border.secondary}`,
+  color: props.disabled ? 'rgba(51, 51, 51, 0.6) !important' : '',
+  background: props.disabled ? 'rgba(225, 229, 234)' : '',
+  borderColor: props.disabled ? 'rgba(225, 229, 234) !important' : '',
+}));
 
 const MonomerConnection = ({
   onClose,
@@ -67,16 +80,13 @@ const MonomerConnection = ({
     throw new Error('Monomers must exist!');
   }
 
-  const firstBonds = firstMonomer.attachmentPointsToBonds;
-  const secondBonds = secondMonomer.attachmentPointsToBonds;
-
   const [firstSelectedAttachmentPoint, setFirstSelectedAttachmentPoint] =
-    useState<string | null>(getDefaultAttachmentPoint(firstBonds));
+    useState<string | null>(getDefaultAttachmentPoint(firstMonomer));
   const [secondSelectedAttachmentPoint, setSecondSelectedAttachmentPoint] =
-    useState<string | null>(getDefaultAttachmentPoint(secondBonds));
+    useState<string | null>(getDefaultAttachmentPoint(secondMonomer));
 
   const cancelBondCreationAndClose = () => {
-    editor.events.cancelBondCreationViaModal.dispatch();
+    editor.events.cancelBondCreationViaModal.dispatch(secondMonomer);
     onClose();
   };
 
@@ -162,14 +172,14 @@ function AttachmentPointSelectionPanel({
     [bonds],
   );
 
-  const monomerLeavingGroupsArray =
-    monomer.monomerItem.props.MonomerCaps?.split(',');
-  const monomerLeavingGroups: { [key: string]: string } | undefined =
-    monomerLeavingGroupsArray?.reduce((acc, item) => {
-      const [attachmentPoint, leavingGroup] = item.slice(1).split(']');
-      acc[attachmentPoint] = leavingGroup;
-      return acc;
-    }, {});
+  const getLeavingGroup = (attachmentPoint): LeavingGroup => {
+    const { MonomerCaps } = monomer.monomerItem.props;
+    if (!MonomerCaps) {
+      return 'H';
+    }
+    const leavingGroup = MonomerCaps[attachmentPoint];
+    return leavingGroup === 'O' ? 'OH' : (leavingGroup as LeavingGroup);
+  };
 
   return (
     <AttachmentPointSelectionContainer>
@@ -183,30 +193,38 @@ function AttachmentPointSelectionPanel({
         }}
       />
       <AttachmentPointList>
-        {monomer.listOfAttachmentPoints.map((attachmentPoint) => (
-          <AttachmentPoint key={attachmentPoint}>
-            <ActionButtonAttachmentPoint
-              label={attachmentPoint}
-              styleType={
-                attachmentPoint === selectedAttachmentPoint
-                  ? 'primary'
-                  : 'secondary'
-              }
-              clickHandler={() => onSelectAttachmentPoint(attachmentPoint)}
-              disabled={Boolean(
-                connectedAttachmentPoints.find(
-                  (connectedAttachmentPointName) =>
-                    connectedAttachmentPointName === attachmentPoint,
-                ),
-              )}
-            />
-            <AttachmentPointName>
-              {monomerLeavingGroups
-                ? monomerLeavingGroups[attachmentPoint]
-                : 'H'}
-            </AttachmentPointName>
-          </AttachmentPoint>
-        ))}
+        {monomer.listOfAttachmentPoints.map((attachmentPoint, i) => {
+          const disabled = Boolean(
+            connectedAttachmentPoints.find(
+              (connectedAttachmentPointName) =>
+                connectedAttachmentPointName === attachmentPoint &&
+                attachmentPoint !== monomer.chosenFirstAttachmentPointForBond,
+            ),
+          );
+          return (
+            <AttachmentPoint
+              key={attachmentPoint}
+              lastElementInRow={(i + 1) % 3 === 0}
+            >
+              <ActionButtonAttachmentPoint
+                label={attachmentPoint}
+                styleType={
+                  attachmentPoint === selectedAttachmentPoint
+                    ? 'primary'
+                    : 'secondary'
+                }
+                clickHandler={() => onSelectAttachmentPoint(attachmentPoint)}
+                disabled={disabled}
+              />
+              <AttachmentPointName
+                data-testid="leaving-group-value"
+                disabled={disabled}
+              >
+                {getLeavingGroup(attachmentPoint)}
+              </AttachmentPointName>
+            </AttachmentPoint>
+          );
+        })}
       </AttachmentPointList>
     </AttachmentPointSelectionContainer>
   );
@@ -220,12 +238,14 @@ function getConnectedAttachmentPoints(
     .map(([attachmentPoint]) => attachmentPoint);
 }
 
-function getDefaultAttachmentPoint(
-  bonds: Record<string, unknown>,
-): string | null {
-  const possibleAttachmentPoints = Object.entries(bonds).filter(
-    ([_, bond]) => bond == null,
-  );
+function getDefaultAttachmentPoint(monomer: BaseMonomer): string | null {
+  if (monomer.chosenFirstAttachmentPointForBond)
+    return monomer.chosenFirstAttachmentPointForBond;
+  if (monomer.chosenSecondAttachmentPointForBond)
+    return monomer.chosenSecondAttachmentPointForBond;
+  const possibleAttachmentPoints = Object.entries(
+    monomer.attachmentPointsToBonds,
+  ).filter(([_, bond]) => bond == null);
 
   if (possibleAttachmentPoints.length === 1) {
     const [attachmentPointName] = possibleAttachmentPoints[0];

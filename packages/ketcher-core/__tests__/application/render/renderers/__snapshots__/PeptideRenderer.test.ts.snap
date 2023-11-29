@@ -39,6 +39,12 @@ exports[`PeptideRenderer should render peptide 1`] = `
       >
         Abc
       </text>
+      <text
+        direction="rtl"
+        fill="#7C7C7F"
+        x="20"
+        y="-1"
+      />
     </g>
   </g>
 </svg>

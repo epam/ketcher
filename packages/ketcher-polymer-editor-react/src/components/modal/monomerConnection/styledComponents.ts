@@ -50,7 +50,6 @@ export const MonomerName = styled.div(({ theme }) => ({
   font: theme.ketcher.font.family.inter,
   fontSize: theme.ketcher.font.size.regular,
   fontWeight: theme.ketcher.font.weight.regular,
-  width: '150px',
   flexBasis: '200px',
 }));
 

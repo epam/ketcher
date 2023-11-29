@@ -10,6 +10,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Icon } from 'ketcher-react';
 import { scrollbarThin } from 'theming/mixins';
+import { EmptyFunction } from 'helpers/emptyFunction';
 
 interface ModalProps {
   children: JSX.Element | Array<JSX.Element>;
@@ -20,6 +21,8 @@ interface ModalProps {
   onClose: VoidFunction;
   className?: string;
   modalWidth?: string;
+  expanded?: boolean;
+  setExpanded?: (boolean) => void;
 }
 const StyledDialog = styled(Dialog)`
   .MuiPaper-root {
@@ -86,9 +89,10 @@ export const Modal = ({
   onClose,
   className,
   modalWidth,
+  expanded = false,
+  setExpanded = EmptyFunction,
 }: ModalProps) => {
   const theme = useTheme();
-  const [expanded, setExpanded] = React.useState(false);
 
   const paperProps = useMemo(
     () => ({
@@ -97,6 +101,7 @@ export const Modal = ({
         borderRadius: '8px',
         color: theme.ketcher.color.text.primary,
         ...(showExpandButton && {
+          margin: 'auto',
           width: expanded ? '100%' : modalWidth,
           height: expanded ? '100%' : undefined,
           maxWidth: 'calc(min(1280px, 100%))',

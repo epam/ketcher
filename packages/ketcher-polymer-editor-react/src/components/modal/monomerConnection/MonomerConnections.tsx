@@ -43,6 +43,7 @@ export const StyledStructRender = styled(StructRender)(({ theme }) => ({
   '& svg': {
     maxWidth: 'fit-content',
     margin: 'auto',
+    padding: '4px',
   },
 }));
 
@@ -87,6 +88,7 @@ const MonomerConnection = ({
     useState<string | null>(getDefaultAttachmentPoint(firstMonomer));
   const [secondSelectedAttachmentPoint, setSecondSelectedAttachmentPoint] =
     useState<string | null>(getDefaultAttachmentPoint(secondMonomer));
+  const [modalExpanded, setModalExpanded] = useState(false);
 
   const cancelBondCreationAndClose = () => {
     editor.events.cancelBondCreationViaModal.dispatch(secondMonomer);
@@ -114,6 +116,9 @@ const MonomerConnection = ({
       isOpen={isModalOpen}
       onClose={cancelBondCreationAndClose}
       showExpandButton
+      modalWidth="350px"
+      expanded={modalExpanded}
+      setExpanded={setModalExpanded}
     >
       <Modal.Content>
         <ModalContent>
@@ -123,6 +128,7 @@ const MonomerConnection = ({
               monomer={firstMonomer}
               selectedAttachmentPoint={firstSelectedAttachmentPoint}
               onSelectAttachmentPoint={setFirstSelectedAttachmentPoint}
+              expanded={modalExpanded}
             />
             <span />
             <ConnectionSymbol />
@@ -133,6 +139,7 @@ const MonomerConnection = ({
               monomer={secondMonomer}
               selectedAttachmentPoint={secondSelectedAttachmentPoint}
               onSelectAttachmentPoint={setSecondSelectedAttachmentPoint}
+              expanded={modalExpanded}
             />
           </AttachmentPointsRow>
         </ModalContent>
@@ -160,12 +167,14 @@ interface AttachmentPointSelectionPanelProps {
   monomer: BaseMonomer;
   selectedAttachmentPoint: string | null;
   onSelectAttachmentPoint: (attachmentPoint: string) => void;
+  expanded?: boolean;
 }
 
 function AttachmentPointSelectionPanel({
   monomer,
   selectedAttachmentPoint,
   onSelectAttachmentPoint,
+  expanded = false,
 }: AttachmentPointSelectionPanelProps): React.ReactElement {
   const bonds = monomer.attachmentPointsToBonds;
 
@@ -192,7 +201,9 @@ function AttachmentPointSelectionPanel({
           currentlySelectedMonomerAttachmentPoint:
             selectedAttachmentPoint ?? undefined,
           labelInMonomerConnectionsModal: true,
+          needCache: false,
         }}
+        update={expanded}
       />
       <AttachmentPointList>
         {monomer.listOfAttachmentPoints.map((attachmentPoint, i) => {

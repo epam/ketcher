@@ -21,4 +21,5 @@ export interface IStructRenderProps {
   struct: Struct;
   options?: RenderOptions & { cachePrefix?: string; needCache?: boolean };
   className?: string;
+  update?: boolean;
 }

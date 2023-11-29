@@ -537,11 +537,10 @@ export class DrawingEntitiesManager {
     monomer.turnOnHover();
     monomer.turnOnAttachmentPointsVisibility();
 
-    const operation = monomer.isAttachmentPointUsed(
-      attachmentPointName as AttachmentPointName,
-    )
-      ? new MonomerHoverOperation(monomer, true)
-      : new AttachmentPointHoverOperation(monomer, attachmentPointName);
+    const operation = new AttachmentPointHoverOperation(
+      monomer,
+      attachmentPointName,
+    );
 
     command.addOperation(operation);
 

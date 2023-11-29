@@ -11,6 +11,7 @@ import {
   getSearchFunction,
 } from './helpers/attachmentPointCalculations';
 import { editorEvents } from 'application/editor/editorEvents';
+import { AttachmentPointName } from './types';
 
 export class AttachmentPoint {
   static attachmentPointVector = 12;
@@ -208,6 +209,21 @@ export class AttachmentPoint {
       });
 
     return hoverableAreaElement;
+  }
+
+  public updateAttachmentPointStyleForHover() {
+    const isAttachmentPointUsed = this.monomer.isAttachmentPointUsed(
+      this.attachmentPointName as AttachmentPointName,
+    );
+    if (isAttachmentPointUsed) {
+      this.attachmentPoint
+        ?.select('line')
+        .style('stroke', AttachmentPoint.colors.fillUsed);
+      this.attachmentPoint
+        ?.select('circle')
+        .style('fill', AttachmentPoint.colors.fillUsed)
+        .attr('stroke', 'white');
+    }
   }
 
   public appendAttachmentPoint() {

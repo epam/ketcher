@@ -126,12 +126,23 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     attachmentPoint.updateCoords();
   }
 
-  public drawAttachmentPoints() {
-    if (this.attachmentPoints.length) return;
+  public drawAttachmentPoints(updateAttachmentPoints = false) {
+    if (this.attachmentPoints.length) {
+      if (updateAttachmentPoints) {
+        this.attachmentPoints.forEach((point) => {
+          point.updateAttachmentPointStyleForHover();
+        });
+      }
+      return;
+    }
 
     // draw used attachment points
     this.monomer.usedAttachmentPointsNamesList.forEach((item) => {
-      const attachmentPoint = this.appendAttachmentPoint(item);
+      const attachmentPoint = this.appendAttachmentPoint(
+        item,
+        undefined,
+        updateAttachmentPoints,
+      );
       const angle = attachmentPoint.getAngle();
 
       this.attachmentPoints.push(attachmentPoint as never);
@@ -160,6 +171,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
         const attachmentPoint = this.appendAttachmentPoint(
           item,
           properAngleForFreeAttachmentPoint,
+          updateAttachmentPoints,
         );
         this.attachmentPoints.push(attachmentPoint as never);
 
@@ -176,12 +188,20 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
 
     unrenderedAtPoints.forEach((item) => {
       const customAngle = this.freeSectorsList.shift();
-      const attachmentPoint = this.appendAttachmentPoint(item, customAngle);
+      const attachmentPoint = this.appendAttachmentPoint(
+        item,
+        customAngle,
+        updateAttachmentPoints,
+      );
       this.attachmentPoints.push(attachmentPoint as never);
     });
   }
 
-  public appendAttachmentPoint(AttachmentPointName, customAngle?: number) {
+  public appendAttachmentPoint(
+    AttachmentPointName,
+    customAngle?: number,
+    updateAttachmentPoints?: boolean,
+  ) {
     let rotation;
 
     if (!this.monomer.isAttachmentPointUsed(AttachmentPointName)) {
@@ -197,7 +217,8 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       AttachmentPointName,
       this.monomer.isAttachmentPointUsed(AttachmentPointName),
       this.monomer.isAttachmentPointPotentiallyUsed(AttachmentPointName) ||
-        this.hoveredAttachmenPoint === AttachmentPointName,
+        (this.hoveredAttachmenPoint === AttachmentPointName &&
+          !updateAttachmentPoints),
       customAngle || rotation,
       this.isSnakeBondForAttachmentPoint(AttachmentPointName),
     );

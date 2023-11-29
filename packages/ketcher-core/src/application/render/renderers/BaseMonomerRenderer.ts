@@ -335,7 +335,10 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       });
   }
 
-  protected abstract get enumerationElementPositionX(): number;
+  protected abstract get enumerationElementPosition(): {
+    x: number;
+    y: number;
+  } | void;
 
   public setEnumeration(enumeration: number | null) {
     this.enumeration = enumeration;
@@ -343,9 +346,13 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
 
   protected appendEnumeration() {
     assert(this.rootElement);
+    assert(this.enumerationElementPosition);
     this.enumerationElement = this.rootElement
       .append('text')
-      .attr('x', this.enumerationElementPositionX)
+      .attr('direction', 'rtl')
+      .attr('fill', '#7C7C7F')
+      .attr('x', this.enumerationElementPosition.x)
+      .attr('y', this.enumerationElementPosition.y)
       .text(this.enumeration);
   }
 

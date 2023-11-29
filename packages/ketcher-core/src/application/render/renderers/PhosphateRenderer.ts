@@ -33,7 +33,7 @@ export class PhosphateRenderer extends BaseMonomerRenderer {
       );
   }
 
-  protected get enumerationElementPositionX(): number {
-    return 0;
+  protected get enumerationElementPosition() {
+    return undefined;
   }
 }

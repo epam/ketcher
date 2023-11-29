@@ -39,7 +39,7 @@ export class PeptideRenderer extends BaseMonomerRenderer {
     this.appendEnumeration();
   }
 
-  protected get enumerationElementPositionX(): number {
-    return 10;
+  protected get enumerationElementPosition() {
+    return { x: 20, y: -1 };
   }
 }

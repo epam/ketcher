@@ -28,7 +28,7 @@ export class ChemRenderer extends BaseMonomerRenderer {
       .attr('stroke', theme.monomer.color.CHEM.regular);
   }
 
-  protected get enumerationElementPositionX(): number {
-    return 0;
+  protected get enumerationElementPosition() {
+    return undefined;
   }
 }

@@ -322,7 +322,11 @@ function MenuComponent() {
   };
 
   return (
-    <Menu onItemClick={menuItemChanged} activeMenuItems={activeMenuItems}>
+    <Menu
+      testId="left-toolbar"
+      onItemClick={menuItemChanged}
+      activeMenuItems={activeMenuItems}
+    >
       <Menu.Group>
         <Menu.Item
           itemId="clear"
@@ -361,9 +365,17 @@ function MenuComponent() {
         />
       </Menu.Group>
       <Menu.Group>
-        <Menu.Item itemId="zoom-in" title="Zoom In" />
-        <Menu.Item itemId="zoom-out" title="Zoom Out" />
-        <Menu.Item itemId="zoom-reset" title="Reset Zoom" />
+        <Menu.Item itemId="zoom-in" title="Zoom In" testId="zoom-in-button" />
+        <Menu.Item
+          itemId="zoom-out"
+          title="Zoom Out"
+          testId="zoom-out-button"
+        />
+        <Menu.Item
+          itemId="zoom-reset"
+          title="Reset Zoom"
+          testId="reset-zoom-button"
+        />
       </Menu.Group>
     </Menu>
   );

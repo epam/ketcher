@@ -20,6 +20,10 @@ import {
 import { MonomerConnectionProps } from '../modalContainer/types';
 import { LeavingGroup } from 'ketcher-core';
 
+interface IStyledButtonProps {
+  disabled: boolean;
+}
+
 const StyledModal = styled(Modal)({
   '& .MuiPaper-root': {
     width: 'auto',
@@ -39,22 +43,30 @@ export const StyledStructRender = styled(StructRender)(({ theme }) => ({
   borderRadius: '6px',
   padding: 5,
 }));
+
 export const ActionButtonLeft = styled(ActionButton)(() => ({
   marginRight: 'auto',
-  width: '97px',
+  width: '97px !important',
 }));
 
-export const ActionButtonRight = styled(ActionButton)(() => ({
-  width: '97px',
-}));
-export const ActionButtonAttachmentPoint = styled(ActionButton)(
-  ({ theme }) => ({
-    borderRadius: 5,
-    width: '45px',
-    padding: '4px',
-    border: `1px solid ${theme.ketcher.color.border.secondary}`,
+export const ActionButtonRight = styled(ActionButton)<IStyledButtonProps>(
+  (props) => ({
+    width: '97px !important',
+    color: props.disabled ? 'rgba(51, 51, 51, 0.6)' : '',
+    background: props.disabled ? 'rgba(225, 229, 234, 1) !important' : '',
+    opacity: '1 !important',
   }),
 );
+
+export const ActionButtonAttachmentPoint = styled(ActionButton)((props) => ({
+  borderRadius: 5,
+  minWidth: '45px !important',
+  padding: '4px',
+  border: `1px solid ${props.theme.ketcher.color.border.secondary}`,
+  color: props.disabled ? 'rgba(51, 51, 51, 0.6) !important' : '',
+  background: props.disabled ? 'rgba(225, 229, 234)' : '',
+  borderColor: props.disabled ? 'rgba(225, 229, 234) !important' : '',
+}));
 
 const MonomerConnection = ({
   onClose,
@@ -181,30 +193,38 @@ function AttachmentPointSelectionPanel({
         }}
       />
       <AttachmentPointList>
-        {monomer.listOfAttachmentPoints.map((attachmentPoint) => (
-          <AttachmentPoint key={attachmentPoint}>
-            <ActionButtonAttachmentPoint
-              label={attachmentPoint}
-              styleType={
-                attachmentPoint === selectedAttachmentPoint
-                  ? 'primary'
-                  : 'secondary'
-              }
-              clickHandler={() => onSelectAttachmentPoint(attachmentPoint)}
-              disabled={Boolean(
-                connectedAttachmentPoints.find(
-                  (connectedAttachmentPointName) =>
-                    connectedAttachmentPointName === attachmentPoint &&
-                    attachmentPoint !==
-                      monomer.chosenFirstAttachmentPointForBond,
-                ),
-              )}
-            />
-            <AttachmentPointName data-testid="leaving-group-value">
-              {getLeavingGroup(attachmentPoint)}
-            </AttachmentPointName>
-          </AttachmentPoint>
-        ))}
+        {monomer.listOfAttachmentPoints.map((attachmentPoint, i) => {
+          const disabled = Boolean(
+            connectedAttachmentPoints.find(
+              (connectedAttachmentPointName) =>
+                connectedAttachmentPointName === attachmentPoint &&
+                attachmentPoint !== monomer.chosenFirstAttachmentPointForBond,
+            ),
+          );
+          return (
+            <AttachmentPoint
+              key={attachmentPoint}
+              lastElementInRow={(i + 1) % 3 === 0}
+            >
+              <ActionButtonAttachmentPoint
+                label={attachmentPoint}
+                styleType={
+                  attachmentPoint === selectedAttachmentPoint
+                    ? 'primary'
+                    : 'secondary'
+                }
+                clickHandler={() => onSelectAttachmentPoint(attachmentPoint)}
+                disabled={disabled}
+              />
+              <AttachmentPointName
+                data-testid="leaving-group-value"
+                disabled={disabled}
+              >
+                {getLeavingGroup(attachmentPoint)}
+              </AttachmentPointName>
+            </AttachmentPoint>
+          );
+        })}
       </AttachmentPointList>
     </AttachmentPointSelectionContainer>
   );

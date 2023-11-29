@@ -19,6 +19,7 @@ import {
   waitForRender,
   drawBenzeneRing,
   clickOnAtom,
+  getEditorScreenshot,
 } from '@utils';
 
 const CANVAS_CLICK_X = 300;
@@ -36,6 +37,12 @@ async function saveToTemplates(page: Page, shouldSave = true) {
   if (shouldSave) {
     await page.getByRole('button', { name: 'Save', exact: true }).click();
   }
+}
+
+async function saveUserTemplate(page: Page) {
+  await selectUserTemplatesAndPlaceInTheMiddle(TemplateLibrary.Azulene, page);
+  await selectTopPanelButton(TopPanelButton.Save, page);
+  await clickInTheMiddleOfTheScreen(page);
 }
 
 test.describe('Click User Templates on canvas', () => {
@@ -57,50 +64,6 @@ test.describe('Click User Templates on canvas', () => {
     await resetCurrentTool(page);
   });
 
-  test('Check a warning message about localStorage to template window', async ({
-    page,
-  }) => {
-    /*
-      Test case: EPMLSOPKET-11852
-      Description: warning message validation
-    */
-    await selectUserTemplatesAndPlaceInTheMiddle(TemplateLibrary.Azulene, page);
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickInTheMiddleOfTheScreen(page);
-    await page.getByRole('button', { name: 'Save to Templates' }).click();
-  });
-
-  test('Molecule Name field length validation', async ({ page }) => {
-    /*
-      Test case: EPMLSOPKET-10073(1)
-      Description: no mote than 128 symbols error validation
-    */
-    await selectUserTemplatesAndPlaceInTheMiddle(TemplateLibrary.Azulene, page);
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickInTheMiddleOfTheScreen(page);
-    await pressButton(page, 'Save to Templates');
-    await page.getByPlaceholder('template').click();
-
-    const tooLongValueLength = 130;
-    await page
-      .getByPlaceholder('template')
-      .fill('a'.repeat(tooLongValueLength));
-  });
-
-  test('Empty Molecule name field validation', async ({ page }) => {
-    /*
-      Test case: EPMLSOPKET-10073(2)
-      Description: empty field validation
-    */
-    await selectUserTemplatesAndPlaceInTheMiddle(TemplateLibrary.Azulene, page);
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickInTheMiddleOfTheScreen(page);
-    await pressButton(page, 'Save to Templates');
-    await page.getByPlaceholder('template').click();
-    await page.getByPlaceholder('template').fill('name');
-    await page.getByPlaceholder('template').fill('');
-  });
-
   test('Spaces at the beginning and end of the entered line are truncated', async ({
     page,
   }) => {
@@ -120,26 +83,6 @@ test.describe('Click User Templates on canvas', () => {
     await pressButton(page, 'User Templates (1)');
     await page.getByPlaceholder('Search by elements...').fill('name');
     await page.getByPlaceholder('Search by elements...').press('Enter');
-  });
-
-  test('Check a warning message about unique name', async ({ page }) => {
-    /*
-      Test case: EPMLSOPKET-39948
-      Description: warning message validation
-    */
-    await selectUserTemplatesAndPlaceInTheMiddle(
-      TemplateLibrary.Naphtalene,
-      page,
-    );
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await pressButton(page, 'Save to Templates');
-    await page.getByPlaceholder('template').click();
-    await page.getByPlaceholder('template').fill('user_template_1');
-    await page.getByRole('button', { name: 'Save', exact: true }).click();
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await pressButton(page, 'Save to Templates');
-    await page.getByPlaceholder('template').click();
-    await page.getByPlaceholder('template').fill('user_template_1');
   });
 
   test('Delete user template', async ({ page }) => {
@@ -237,7 +180,7 @@ test.describe('Click User Templates on canvas', () => {
 });
 
 // These two tests affect other tests or by other tests, so they were moved to a separate describe group
-test.describe('Click User Templates on canvas', () => {
+test.describe('Create and Save Templates', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
   });
@@ -264,17 +207,6 @@ test.describe('Click User Templates on canvas', () => {
     await page.getByText('0NNNNHNHNNHNNHNH').click();
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
-  });
-
-  test('Check scrollbar in the structure field is present for long structures', async ({
-    page,
-  }) => {
-    /*
-      Test case: EPMLSOPKET-1721
-      Description: The scrollbar in the structure field is present.
-    */
-    await openFileAndAddToCanvas('Molfiles-V2000/long-structure.mol', page);
-    await saveToTemplates(page, false);
   });
 
   test('Create Template - saving', async ({ page }) => {
@@ -318,5 +250,84 @@ test.describe('Click User Templates on canvas', () => {
     await page.getByRole('button', { name: 'User Templates (1)' }).click();
     await page.getByText('My Template').click();
     await clickOnAtom(page, 'C', anyAtom);
+  });
+});
+
+test.describe('Templates field lenght validations', () => {
+  test.beforeEach(async ({ page }) => {
+    await waitForPageInit(page);
+  });
+
+  test.afterEach(async ({ page }) => {
+    await getEditorScreenshot(page);
+  });
+
+  test('Check a warning message about localStorage to template window', async ({
+    page,
+  }) => {
+    /*
+      Test case: EPMLSOPKET-11852
+      Description: warning message validation
+    */
+    await saveUserTemplate(page);
+    await page.getByRole('button', { name: 'Save to Templates' }).click();
+  });
+
+  test('Molecule Name field length validation', async ({ page }) => {
+    /*
+      Test case: EPMLSOPKET-10073(1)
+      Description: no mote than 128 symbols error validation
+    */
+    await saveUserTemplate(page);
+    await pressButton(page, 'Save to Templates');
+    await page.getByPlaceholder('template').click();
+
+    const tooLongValueLength = 130;
+    await page
+      .getByPlaceholder('template')
+      .fill('a'.repeat(tooLongValueLength));
+  });
+
+  test('Empty Molecule name field validation', async ({ page }) => {
+    /*
+      Test case: EPMLSOPKET-10073(2)
+      Description: empty field validation
+    */
+    await saveUserTemplate(page);
+    await pressButton(page, 'Save to Templates');
+    await page.getByPlaceholder('template').click();
+    await page.getByPlaceholder('template').fill('name');
+    await page.getByPlaceholder('template').fill('');
+  });
+
+  test('Check a warning message about unique name', async ({ page }) => {
+    /*
+      Test case: EPMLSOPKET-39948
+      Description: warning message validation
+    */
+    await selectUserTemplatesAndPlaceInTheMiddle(
+      TemplateLibrary.Naphtalene,
+      page,
+    );
+    await selectTopPanelButton(TopPanelButton.Save, page);
+    await pressButton(page, 'Save to Templates');
+    await page.getByPlaceholder('template').click();
+    await page.getByPlaceholder('template').fill('user_template_1');
+    await page.getByRole('button', { name: 'Save', exact: true }).click();
+    await selectTopPanelButton(TopPanelButton.Save, page);
+    await pressButton(page, 'Save to Templates');
+    await page.getByPlaceholder('template').click();
+    await page.getByPlaceholder('template').fill('user_template_1');
+  });
+
+  test('Check scrollbar in the structure field is present for long structures', async ({
+    page,
+  }) => {
+    /*
+      Test case: EPMLSOPKET-1721
+      Description: The scrollbar in the structure field is present.
+    */
+    await openFileAndAddToCanvas('Molfiles-V2000/long-structure.mol', page);
+    await saveToTemplates(page, false);
   });
 });

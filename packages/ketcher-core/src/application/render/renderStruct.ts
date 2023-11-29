@@ -27,7 +27,7 @@ export class RenderStruct {
     return struct;
   }
 
-  static removeSmallAttachemntPointLabelsInModal(
+  static removeSmallAttachmentPointLabelsInModal(
     render: Render,
     options: any = {},
   ) {
@@ -41,13 +41,16 @@ export class RenderStruct {
       }
       const isAttachmentPointAtom = attachmentPointRegExp.test(atom.label.text);
 
-      if (isAttachmentPointAtom) {
-        const isSmall =
-          atom.label.path.node.getBoundingClientRect().width <
-          MIN_ATTACHMENT_POINT_SIZE;
-        if (isSmall) {
-          atom.label.path.node.remove();
-        }
+      if (!isAttachmentPointAtom) {
+        return;
+      }
+
+      const isSmall =
+        atom.label.path.node.getBoundingClientRect().width <
+        MIN_ATTACHMENT_POINT_SIZE;
+
+      if (isSmall) {
+        atom.label.path.node.remove();
       }
     });
   }
@@ -84,7 +87,7 @@ export class RenderStruct {
 
       preparedStruct.rescale();
       rnd.setMolecule(preparedStruct);
-      this.removeSmallAttachemntPointLabelsInModal(rnd, options);
+      this.removeSmallAttachmentPointLabelsInModal(rnd, options);
 
       if (needCache) {
         renderCache.set(cacheKey, rnd.clientArea.innerHTML);

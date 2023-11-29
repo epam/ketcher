@@ -61,7 +61,7 @@ const MonomerLibrary = () => {
   };
 
   return (
-    <MonomerLibraryContainer>
+    <MonomerLibraryContainer data-testid="monomer-library">
       <MonomerLibraryHeader>
         <MonomerLibraryTitle>Library</MonomerLibraryTitle>
         <MonomerLibrarySearch>

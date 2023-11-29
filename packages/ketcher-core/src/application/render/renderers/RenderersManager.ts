@@ -290,6 +290,10 @@ export class RenderersManager {
 
   public update(modelChanges: Command) {
     modelChanges.execute(this);
+    this.runPostRenderMethods();
+  }
+
+  public runPostRenderMethods() {
     if (this.needRecalculateMonomersEnumeration) {
       this.recalculateMonomersEnumeration();
     }

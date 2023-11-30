@@ -11,6 +11,7 @@ import styled from '@emotion/styled';
 import { Icon } from 'ketcher-react';
 import { scrollbarThin } from 'theming/mixins';
 import { EmptyFunction } from 'helpers/emptyFunction';
+import styles from './Modal.module.less';
 
 interface ModalProps {
   children: JSX.Element | Array<JSX.Element>;
@@ -71,6 +72,7 @@ const Footer = styled(DialogActions)<FooterProps>`
   padding: 0 12px;
   border-top: ${({ theme, withBorder }) =>
     withBorder ? theme.ketcher.border.small : 'none'};
+  justify-content: flex-end;
 
   .MuiButtonBase-root {
     border-radius: 4px;
@@ -156,6 +158,7 @@ export const Modal = ({
             {showExpandButton && (
               <IconButton
                 title={'expand window'}
+                className={styles.expandButton}
                 onClick={() => {
                   setExpanded(!expanded);
                 }}

@@ -994,7 +994,7 @@ export class Struct {
       }
     }
 
-    if (correctConn < 0 || atom.isQuery()) {
+    if (correctConn < 0 || atom.isQuery() || atom.attachmentPoints) {
       atom.implicitH = 0;
       return;
     }

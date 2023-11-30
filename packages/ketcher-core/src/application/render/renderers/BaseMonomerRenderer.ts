@@ -26,6 +26,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   private hoveredAttachmenPoint: string | null = null;
 
   private monomerSymbolElement?: SVGUseElement | SVGRectElement;
+  public monomerSize: { width: number; height: number };
 
   static isSelectable() {
     return true;
@@ -44,11 +45,8 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     this.monomerSymbolElement = document.querySelector(
       `${monomerSymbolElementId} .monomer-body`,
     ) as SVGUseElement | SVGRectElement;
-  }
-
-  public get monomerSymbolBoundingClientRect() {
-    assert(this.monomerSymbolElement);
-    return this.monomerSymbolElement.getBoundingClientRect();
+    const rect = this.monomerSymbolElement.getBoundingClientRect();
+    this.monomerSize = { width: rect.width, height: rect.height };
   }
 
   private isSnakeBondForAttachmentPoint(
@@ -65,8 +63,8 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
 
   public get center() {
     return new Vec2(
-      this.scaledMonomerPosition.x + this.bodyWidth / 2,
-      this.scaledMonomerPosition.y + this.bodyHeight / 2,
+      this.scaledMonomerPosition.x + this.monomerSize.width / 2,
+      this.scaledMonomerPosition.y + this.monomerSize.height / 2,
     );
   }
 
@@ -96,6 +94,36 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     } else {
       this.removeAttachmentPoints();
     }
+  }
+
+  public redrawAttachmentPointsCoordinates() {
+    const chosenAttachmentPointName =
+      this.monomer.chosenFirstAttachmentPointForBond;
+    const chosenAttachmentPoint = this.attachmentPoints.find(
+      (item) => item.getAttachmentPointName() === chosenAttachmentPointName,
+    );
+    const angle = chosenAttachmentPoint?.getAngle();
+    const allAngles = this.attachmentPoints.map((item) => {
+      return item.getAngle();
+    });
+    const isSectorOccupied = allAngles.some((item) => {
+      if (angle !== item && typeof angle === 'number') {
+        return Math.abs(angle - item) < 20 || Math.abs(angle - item) > 340;
+      }
+      return false;
+    });
+
+    if (isSectorOccupied) {
+      this.redrawAttachmentPoints();
+      return;
+    }
+
+    const attachmentPoint = this.attachmentPoints.find(
+      (item) => item.getAttachmentPointName() === chosenAttachmentPointName,
+    );
+
+    assert(attachmentPoint);
+    attachmentPoint.updateCoords();
   }
 
   public drawAttachmentPoints() {
@@ -163,8 +191,8 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     const attPointInstance = new AttachmentPoint(
       this.rootElement as D3SvgElementSelection<SVGGElement, void>,
       this.monomer,
-      this.bodyWidth,
-      this.bodyHeight,
+      this.monomerSize.width,
+      this.monomerSize.height,
       this.canvasWrapper,
       AttachmentPointName,
       this.monomer.isAttachmentPointUsed(AttachmentPointName),
@@ -238,8 +266,6 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   }
 
   private get scaledMonomerPosition() {
-    const monomerSymbolBoundingClientRect =
-      this.monomerSymbolBoundingClientRect;
     // we need to convert monomer coordinates(stored in angstroms) to pixels.
     // it needs to be done in view layer of application (like renderers)
     const monomerPositionInPixels = Coordinates.modelToCanvas(
@@ -247,26 +273,28 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     );
 
     return new Vec2(
-      monomerPositionInPixels.x - monomerSymbolBoundingClientRect.width / 2,
-      monomerPositionInPixels.y - monomerSymbolBoundingClientRect.height / 2,
+      monomerPositionInPixels.x - this.monomerSize.width / 2,
+      monomerPositionInPixels.y - this.monomerSize.height / 2,
     );
   }
 
   public appendSelection() {
-    this.removeSelection();
+    if (this.selectionCircle) {
+      this.selectionCircle.attr('cx', this.center.x).attr('cy', this.center.y);
+    } else {
+      this.selectionBorder = this.rootElement
+        ?.append('use')
+        .attr('href', this.monomerSelectedElementId)
+        .attr('stroke', '#57FF8F')
+        .attr('pointer-events', 'none');
 
-    this.selectionBorder = this.rootElement
-      ?.append('use')
-      .attr('href', this.monomerSelectedElementId)
-      .attr('stroke', '#57FF8F')
-      .attr('pointer-events', 'none');
-
-    this.selectionCircle = this.canvas
-      ?.insert('circle', ':first-child')
-      .attr('r', '42px')
-      .attr('cx', this.center.x)
-      .attr('cy', this.center.y)
-      .attr('fill', '#57FF8F');
+      this.selectionCircle = this.canvas
+        ?.insert('circle', ':first-child')
+        .attr('r', '42px')
+        .attr('cx', this.center.x)
+        .attr('cy', this.center.y)
+        .attr('fill', '#57FF8F');
+    }
   }
 
   public removeSelection() {
@@ -308,7 +336,6 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     this.rootElement =
       this.rootElement ||
       this.appendRootElement(this.scale ? this.canvasWrapper : this.canvas);
-    this.rootElement = this.rootElement || this.appendRootElement(this.canvas);
     this.bodyElement = this.appendBody(this.rootElement, theme);
     this.appendEvents();
 

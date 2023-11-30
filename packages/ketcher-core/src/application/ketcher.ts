@@ -20,7 +20,7 @@ import { GenerateImageOptions, StructService } from 'domain/services';
 import { CoreEditor, Editor, defaultBondThickness } from './editor';
 import { Indigo } from 'application/indigo';
 import { KetSerializer, MolfileFormat } from 'domain/serializers';
-import { Struct } from 'domain/entities';
+import { SGroup, Struct } from 'domain/entities';
 import assert from 'assert';
 import { EventEmitter } from 'events';
 import {
@@ -271,6 +271,40 @@ export class Ketcher {
       this.editor.struct().hasRxnArrow() ||
       editor.drawingEntitiesManager.micromoleculesHiddenEntities.hasRxnArrow()
     );
+  }
+
+  isQueryStructureSelected(): boolean {
+    const structure = this.editor.struct();
+    const selection = this.editor.selection();
+
+    if (!selection) {
+      return false;
+    }
+
+    let hasQueryAtoms = false;
+    if (selection.atoms) {
+      hasQueryAtoms = selection.atoms.some((atomId) => {
+        const atom = structure.atoms.get(atomId);
+        assert(atom);
+        const sGroupIds = Array.from(atom.sgs.values());
+        const isQueryComponentSGroup = sGroupIds.some((sGroupId) => {
+          const sGroup = structure.sgroups.get(sGroupId);
+          assert(sGroup);
+          return SGroup.isQuerySGroup(sGroup);
+        });
+        return atom.isQuery() || isQueryComponentSGroup;
+      });
+    }
+
+    let hasQueryBonds = false;
+    if (selection.bonds) {
+      hasQueryBonds = selection.bonds.some((bondId) => {
+        const bond = structure.bonds.get(bondId);
+        assert(bond);
+        return bond.isQuery();
+      });
+    }
+    return hasQueryAtoms || hasQueryBonds;
   }
 
   async setMolecule(structStr: string): Promise<void> {

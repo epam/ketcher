@@ -28,3 +28,4 @@ export * from './actions';
 export * from './shared/constants';
 export * from './editor.types';
 export * from './Editor';
+export * from './EditorHistory';

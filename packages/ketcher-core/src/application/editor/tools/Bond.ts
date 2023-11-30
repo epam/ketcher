@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 import { BaseMonomerRenderer } from 'application/render/renderers';
-import { CoreEditor } from 'application/editor';
+import { CoreEditor, EditorHistory } from 'application/editor';
 import { PolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer';
 import assert from 'assert';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
@@ -29,9 +29,11 @@ import Coordinates from 'application/editor/shared/coordinates';
 class PolymerBond implements BaseTool {
   private bondRenderer?: PolymerBondRenderer;
   private isBondConnectionModalOpen = false;
+  history: EditorHistory;
 
   constructor(private editor: CoreEditor) {
     this.editor = editor;
+    this.history = new EditorHistory(this.editor);
   }
 
   public mouseDownAttachmentPoint(event) {
@@ -70,7 +72,7 @@ class PolymerBond implements BaseTool {
         return;
       }
       const { polymerBond, command: modelChanges } =
-        this.editor.drawingEntitiesManager.addPolymerBond(
+        this.editor.drawingEntitiesManager.startPolymerBondCreation(
           selectedRenderer.monomer,
           selectedRenderer.monomer.position,
           Coordinates.canvasToModel(this.editor.lastCursorPositionOfCanvas),
@@ -191,6 +193,9 @@ class PolymerBond implements BaseTool {
   }
 
   public mouseLeaveAttachmentPoint(event) {
+    if (this.isBondConnectionModalOpen) {
+      return;
+    }
     const renderer: BaseMonomerRenderer = event.target.__data__;
     if (renderer !== this.bondRenderer?.polymerBond?.firstMonomer?.renderer) {
       const modelChanges =
@@ -244,9 +249,12 @@ class PolymerBond implements BaseTool {
         });
         return;
       }
-
       const modelChanges = this.finishBondCreation(renderer.monomer);
+      this.history.update(modelChanges);
       this.editor.renderersContainer.update(modelChanges);
+      this.editor.renderersContainer.deletePolymerBond(
+        this.bondRenderer.polymerBond,
+      );
       this.bondRenderer = undefined;
       event.stopPropagation();
     }
@@ -332,7 +340,11 @@ class PolymerBond implements BaseTool {
       // This logic so far is only for no-modal connections. Maybe then we can chain it after modal invoke
       const modelChanges = this.finishBondCreation(renderer.monomer);
       this.editor.renderersContainer.update(modelChanges);
+      this.editor.renderersContainer.deletePolymerBond(
+        this.bondRenderer.polymerBond,
+      );
       this.bondRenderer = undefined;
+      this.history.update(modelChanges);
       event.stopPropagation();
     }
   }
@@ -357,7 +369,7 @@ class PolymerBond implements BaseTool {
         firstSelectedAttachmentPoint,
         secondSelectedAttachmentPoint,
       );
-
+    this.history.update(modelChanges);
     this.editor.renderersContainer.update(modelChanges);
     if (firstSelectedAttachmentPoint === secondSelectedAttachmentPoint) {
       this.editor.events.error.dispatch(
@@ -365,10 +377,15 @@ class PolymerBond implements BaseTool {
       );
     }
     this.isBondConnectionModalOpen = false;
+    this.editor.renderersContainer.deletePolymerBond(
+      this.bondRenderer.polymerBond,
+    );
     this.bondRenderer = undefined;
   };
 
-  public handleBondCreationCancellation = (): void => {
+  public handleBondCreationCancellation = (
+    secondMonomer: BaseMonomer,
+  ): void => {
     if (!this.bondRenderer) {
       return;
     }
@@ -376,6 +393,7 @@ class PolymerBond implements BaseTool {
     const modelChanges =
       this.editor.drawingEntitiesManager.cancelPolymerBondCreation(
         this.bondRenderer.polymerBond,
+        secondMonomer,
       );
     this.editor.renderersContainer.update(modelChanges);
     this.isBondConnectionModalOpen = false;

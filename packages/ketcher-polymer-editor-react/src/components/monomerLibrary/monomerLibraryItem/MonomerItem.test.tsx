@@ -24,7 +24,7 @@ describe('Test Monomer Item component', () => {
       ),
     );
 
-    const div = screen.getByTestId(monomer.props.MonomerNaturalAnalogCode);
+    const div = screen.getByText(monomer.label);
     fireEvent.click(div);
 
     expect(monomerItemHandleClick.mock.calls.length).toEqual(1);

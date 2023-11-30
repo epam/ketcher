@@ -1,17 +1,16 @@
 import { Page, test } from '@playwright/test';
 import {
   BondTypeName,
+  checkSmartsValue,
   clickInTheMiddleOfTheScreen,
   doubleClickOnAtom,
   pressButton,
   selectBond,
+  setCustomQuery,
   takeEditorScreenshot,
   waitForAtomPropsModal,
   waitForPageInit,
 } from '@utils';
-import { checkSmartsValue, setCustomQuery } from '../utils';
-
-const defaultFileFormat = 'MDL Molfile V2000';
 
 async function drawStructure(page: Page) {
   await selectBond(BondTypeName.Single, page);

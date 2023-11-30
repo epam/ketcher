@@ -71,7 +71,7 @@ export const TextArea = ({
       onChange={inputHandler && ((event) => inputHandler(event.target.value))}
       ref={textArea}
       className={className}
-      data-testId={testId}
+      data-testid={testId}
     />
   );
 };

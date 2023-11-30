@@ -11,6 +11,7 @@ export function resetEditorEvents() {
     createBondViaModal: new Subscription(),
     cancelBondCreationViaModal: new Subscription(),
     selectMode: new Subscription(),
+    selectHistory: new Subscription(),
     error: new Subscription(),
     openMonomerConnectionModal: new Subscription(),
     mouseOverPolymerBond: new Subscription(),

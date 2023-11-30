@@ -37,3 +37,7 @@ export * from './pool';
 export * from './highlight';
 export * from './sGroupAttachmentPoint';
 export * from './DrawingEntitiesManager';
+export * from './monomerMicromolecule';
+export * from './Peptide';
+export * from './BaseMonomer';
+export * from './Chem';

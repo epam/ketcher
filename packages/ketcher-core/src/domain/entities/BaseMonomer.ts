@@ -45,8 +45,12 @@ export abstract class BaseMonomer extends DrawingEntity {
       this.getMonomerDefinitionAttachmentPoints();
   }
 
-  get label() {
+  public get label() {
     return this.monomerItem.label;
+  }
+
+  public get center() {
+    return this.position;
   }
 
   public get listOfAttachmentPoints() {
@@ -68,11 +72,11 @@ export abstract class BaseMonomer extends DrawingEntity {
     this.attachmentPointsVisible = false;
   }
 
-  public setChosenFirstAttachmentPoint(attachmentPoint: string) {
+  public setChosenFirstAttachmentPoint(attachmentPoint: string | null) {
     this.chosenFirstAttachmentPointForBond = attachmentPoint;
   }
 
-  public setChosenSecondAttachmentPoint(attachmentPoint: string) {
+  public setChosenSecondAttachmentPoint(attachmentPoint: string | null) {
     this.chosenSecondAttachmentPointForBond = attachmentPoint;
   }
 
@@ -263,9 +267,6 @@ export abstract class BaseMonomer extends DrawingEntity {
       ) {
         list.push(attachmentPointName);
       }
-    }
-    if (this.chosenFirstAttachmentPointForBond !== null) {
-      list.push(this.chosenFirstAttachmentPointForBond);
     }
     return list;
   }

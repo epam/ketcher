@@ -71,6 +71,12 @@ export function parseStruct(
   return service.getStructureFromStringAsync(structStr);
 }
 
+export function deleteAllEntitiesOnCanvas() {
+  const editor = CoreEditor.provideEditorInstance();
+  const modelChanges = editor.drawingEntitiesManager.deleteAllEntities();
+  editor.renderersContainer.update(modelChanges);
+}
+
 export async function parseAndAddMacromoleculesOnCanvas(
   struct: string,
   structService: StructService,

@@ -79,6 +79,7 @@ export class RenderersManager {
     this.polymerBonds.set(polymerBond.id, polymerBondRenderer);
     polymerBondRenderer.show();
     polymerBondRenderer.polymerBond.firstMonomer.renderer?.redrawAttachmentPoints();
+    this.markForReEnumeration();
   }
 
   public movePolymerBond(polymerBond: PolymerBond) {
@@ -109,6 +110,19 @@ export class RenderersManager {
     }
   }
 
+  private getNextMonomerInChain(monomer: BaseMonomer) {
+    const r2PolymerBond = monomer.attachmentPointsToBonds.R2;
+
+    return r2PolymerBond?.getAnotherMonomer(monomer);
+  }
+
+  private isR2R1Connection(monomer, nextMonomer) {
+    return (
+      nextMonomer.attachmentPointsToBonds.R1?.getAnotherMonomer(nextMonomer) ===
+      monomer
+    );
+  }
+
   private recalculatePeptideChainEnumeration(
     peptideRenderer: PeptideRenderer,
     currentEnumeration = 1,
@@ -116,18 +130,18 @@ export class RenderersManager {
     peptideRenderer.setEnumeration(currentEnumeration);
     peptideRenderer.redrawEnumeration();
 
-    const r2PolymerBond = peptideRenderer.monomer.attachmentPointsToBonds.R2;
-    if (!r2PolymerBond) return;
+    const nextMonomer = this.getNextMonomerInChain(peptideRenderer.monomer);
 
-    const nextMonomer = r2PolymerBond?.getAnotherMonomer(
+    if (!(nextMonomer instanceof Peptide)) {
+      return;
+    }
+
+    const isR2R1Connection = this.isR2R1Connection(
       peptideRenderer.monomer,
+      nextMonomer,
     );
 
-    if (
-      !(nextMonomer instanceof Peptide) ||
-      nextMonomer.attachmentPointsToBonds.R1?.getAnotherMonomer(nextMonomer) !==
-        peptideRenderer.monomer
-    ) {
+    if (!isR2R1Connection) {
       return;
     }
 
@@ -137,28 +151,6 @@ export class RenderersManager {
       nextMonomer.renderer as PeptideRenderer,
       currentEnumeration + 1,
     );
-  }
-
-  private recalculatePeptideEnumeration(peptideRenderer: PeptideRenderer) {
-    if (!peptideRenderer.monomer.hasBonds) {
-      peptideRenderer.setEnumeration(null);
-      peptideRenderer.redrawEnumeration();
-    }
-    const r1PolymerBond = peptideRenderer.monomer.attachmentPointsToBonds.R1;
-    const previousMonomer = r1PolymerBond?.getAnotherMonomer(
-      peptideRenderer.monomer,
-    );
-    const isBeginningOfChain =
-      ((peptideRenderer.monomer.isAttachmentPointExistAndFree('R1') ||
-        !peptideRenderer.monomer.hasAttachmentPoint('R1')) &&
-        peptideRenderer.monomer.hasBonds) ||
-      (r1PolymerBond &&
-        previousMonomer?.getAttachmentPointByBond(r1PolymerBond) !== 'R2') ||
-      (previousMonomer && !(previousMonomer instanceof Peptide));
-
-    if (!isBeginningOfChain) return;
-
-    this.recalculatePeptideChainEnumeration(peptideRenderer);
   }
 
   private recalculateRnaChainEnumeration(
@@ -181,49 +173,78 @@ export class RenderersManager {
       }
     }
 
-    const r2PolymerBond =
-      rnaComponentRenderer.monomer.attachmentPointsToBonds.R2;
-
-    if (!r2PolymerBond) return;
-
-    const nextMonomer = r2PolymerBond?.getAnotherMonomer(
+    const nextMonomer = this.getNextMonomerInChain(
       rnaComponentRenderer.monomer,
     );
 
     if (
-      (!(nextMonomer instanceof Sugar) &&
-        !(nextMonomer instanceof Phosphate)) ||
-      nextMonomer.attachmentPointsToBonds.R1?.getAnotherMonomer(nextMonomer) !==
-        rnaComponentRenderer.monomer ||
-      !nextMonomer.renderer
+      !(nextMonomer instanceof Sugar) &&
+      !(nextMonomer instanceof Phosphate)
     ) {
       return;
     }
+
+    const isR2R1Connection = this.isR2R1Connection(
+      rnaComponentRenderer.monomer,
+      nextMonomer,
+    );
+
+    if (!isR2R1Connection) {
+      return;
+    }
+
+    assert(nextMonomer.renderer);
+
     this.recalculateRnaChainEnumeration(
       nextMonomer.renderer,
       currentEnumeration,
     );
   }
 
-  private recalculateRnaEnumeration(rnaComponentRenderer: BaseMonomerRenderer) {
-    const r1PolymerBond =
-      rnaComponentRenderer.monomer.attachmentPointsToBonds.R1;
-    const previousMonomer = r1PolymerBond?.getAnotherMonomer(
-      rnaComponentRenderer.monomer,
-    );
-    const isBeginningOfChain =
-      ((rnaComponentRenderer.monomer.isAttachmentPointExistAndFree('R1') ||
-        !rnaComponentRenderer.monomer.hasAttachmentPoint('R1')) &&
-        rnaComponentRenderer.monomer.hasBonds) ||
-      (r1PolymerBond &&
-        previousMonomer?.getAttachmentPointByBond(r1PolymerBond) !== 'R2') ||
-      (previousMonomer &&
-        !(
-          previousMonomer instanceof Phosphate ||
-          previousMonomer instanceof Sugar
-        ));
+  private isMonomerBeginningOfChain(
+    monomer: BaseMonomer,
+    MonomerTypes: Array<typeof Peptide | typeof Phosphate | typeof Sugar>,
+  ) {
+    const r1PolymerBond = monomer.attachmentPointsToBonds.R1;
+    const previousMonomer = r1PolymerBond?.getAnotherMonomer(monomer);
+    const isPreviousMonomerPartOfChain =
+      previousMonomer &&
+      !MonomerTypes.some(
+        (MonomerType) => previousMonomer instanceof MonomerType,
+      );
+    const previousConnectionNotR2 =
+      r1PolymerBond &&
+      previousMonomer?.getAttachmentPointByBond(r1PolymerBond) !== 'R2';
 
-    if (!isBeginningOfChain) return;
+    return (
+      ((monomer.isAttachmentPointExistAndFree('R1') ||
+        !monomer.hasAttachmentPoint('R1')) &&
+        monomer.hasBonds) ||
+      previousConnectionNotR2 ||
+      isPreviousMonomerPartOfChain
+    );
+  }
+
+  private recalculatePeptideEnumeration(peptideRenderer: PeptideRenderer) {
+    if (!peptideRenderer.monomer.hasBonds) {
+      peptideRenderer.setEnumeration(null);
+      peptideRenderer.redrawEnumeration();
+    }
+
+    if (!this.isMonomerBeginningOfChain(peptideRenderer.monomer, [Peptide]))
+      return;
+
+    this.recalculatePeptideChainEnumeration(peptideRenderer);
+  }
+
+  private recalculateRnaEnumeration(rnaComponentRenderer: BaseMonomerRenderer) {
+    if (
+      !this.isMonomerBeginningOfChain(rnaComponentRenderer.monomer, [
+        Phosphate,
+        Sugar,
+      ])
+    )
+      return;
     this.recalculateRnaChainEnumeration(rnaComponentRenderer);
   }
 

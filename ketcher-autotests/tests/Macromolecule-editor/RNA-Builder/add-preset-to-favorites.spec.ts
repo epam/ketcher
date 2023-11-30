@@ -15,12 +15,12 @@ test.describe('Macromolecules add RNA presets to Favorites', () => {
   });
 
   test('Should add RNA presets to Favorites', async ({ page }) => {
-    await page.getByTestId('FAVORITES_TAB').click();
+    await page.getByTestId('FAVORITES-TAB').click();
     await expect(page.getByTestId('A_A_R_P')).not.toBeVisible();
 
-    await page.getByTestId('RNA_TAB').click();
+    await page.getByTestId('RNA-TAB').click();
     await page.locator('div[class="star "]').first().click();
-    await page.getByTestId('FAVORITES_TAB').click();
+    await page.getByTestId('FAVORITES-TAB').click();
     await expect(page.getByTestId('A_A_R_P')).toBeVisible();
   });
 });

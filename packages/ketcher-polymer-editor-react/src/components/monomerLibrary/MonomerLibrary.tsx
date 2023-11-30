@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import React, { ChangeEvent } from 'react';
+import React, { ChangeEvent, useRef } from 'react';
 import { Tabs } from 'components/shared/Tabs';
 import { tabsContent } from 'components/monomerLibrary/tabsContent';
 import { useAppDispatch, useAppSelector } from 'hooks';
@@ -25,6 +25,7 @@ import {
   selectPresets,
   setActivePreset,
   setIsEditMode,
+  setUniqueNameError,
 } from 'state/rna-builder';
 import { scrollToSelectedPreset } from './RnaBuilder/RnaEditor/RnaEditor';
 import {
@@ -35,15 +36,26 @@ import {
 } from './styles';
 
 const MonomerLibrary = React.memo(() => {
+  const presetsRef = useRef<IRnaPreset[]>([]);
   const dispatch = useAppDispatch();
-  const presets = useAppSelector(selectPresets);
+  useAppSelector(selectPresets, (presets) => {
+    presetsRef.current = presets;
+    return true;
+  });
   const filterResults = (event: ChangeEvent<HTMLInputElement>) => {
     dispatch(setSearchFilter(event.target.value));
   };
 
   const duplicatePreset = (preset?: IRnaPreset) => {
     const name = `${preset?.name}_Copy`;
-    const presetWithSameName = presets.find((preset) => preset.name === name);
+    const presetWithSameName = presetsRef.current.find(
+      (preset) => preset.name === name,
+    );
+    if (presetWithSameName) {
+      dispatch(setUniqueNameError(name));
+      return;
+    }
+
     const duplicatedPreset = {
       ...preset,
       presetInList: undefined,

@@ -35,7 +35,7 @@ interface IRnaBuilderState {
   presets: IRnaPreset[];
   activeRnaBuilderItem?: RnaBuilderItem | null;
   isEditMode: boolean;
-  hasUniqueNameError: boolean;
+  uniqueNameError: string;
   activePresetForContextMenu: IRnaPreset | null;
 }
 
@@ -45,7 +45,7 @@ const initialState: IRnaBuilderState = {
   presets: [],
   activeRnaBuilderItem: null,
   isEditMode: false,
-  hasUniqueNameError: false,
+  uniqueNameError: '',
   activePresetForContextMenu: null,
 };
 export const monomerGroupToPresetGroup = {
@@ -128,8 +128,8 @@ export const rnaBuilderSlice = createSlice({
     setIsEditMode: (state, action: PayloadAction<boolean>) => {
       state.isEditMode = action.payload;
     },
-    setHasUniqueNameError: (state, action: PayloadAction<boolean>) => {
-      state.hasUniqueNameError = action.payload;
+    setUniqueNameError: (state, action: PayloadAction<string>) => {
+      state.uniqueNameError = action.payload;
     },
     setDefaultPresets: (
       state: RootState,
@@ -210,8 +210,8 @@ export const selectPresetFullName = (preset: IRnaPreset): string => {
   return fullName;
 };
 
-export const selectHasUniqueNameError = (state: RootState) => {
-  return state.rnaBuilder.hasUniqueNameError;
+export const selectUniqueNameError = (state: RootState) => {
+  return state.rnaBuilder.uniqueNameError;
 };
 
 export const selectIsActivePresetNewAndEmpty = (state: RootState): boolean => {
@@ -262,7 +262,7 @@ export const {
   deletePreset,
   createNewPreset,
   setIsEditMode,
-  setHasUniqueNameError,
+  setUniqueNameError,
   setDefaultPresets,
   setActivePresetForContextMenu,
   togglePresetFavorites,

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { ChangeEvent } from 'react';
+import React, { ChangeEvent } from 'react';
 import { Tabs } from 'components/shared/Tabs';
 import { tabsContent } from 'components/monomerLibrary/tabsContent';
 import { useAppDispatch, useAppSelector } from 'hooks';
@@ -22,7 +22,7 @@ import { Icon } from 'ketcher-react';
 import { IRnaPreset } from './RnaBuilder/types';
 import {
   savePreset,
-  selectActivePreset,
+  selectPresets,
   setActivePreset,
   setIsEditMode,
 } from 'state/rna-builder';
@@ -34,25 +34,27 @@ import {
   MonomerLibraryTitle,
 } from './styles';
 
-const MonomerLibrary = () => {
+const MonomerLibrary = React.memo(() => {
   const dispatch = useAppDispatch();
-  const activePreset = useAppSelector(selectActivePreset);
+  const presets = useAppSelector(selectPresets);
   const filterResults = (event: ChangeEvent<HTMLInputElement>) => {
     dispatch(setSearchFilter(event.target.value));
   };
 
   const duplicatePreset = (preset?: IRnaPreset) => {
+    const name = `${preset?.name}_Copy`;
+    const presetWithSameName = presets.find((preset) => preset.name === name);
     const duplicatedPreset = {
-      ...(preset || activePreset),
+      ...preset,
       presetInList: undefined,
-      name: `${preset?.name || activePreset.name}_Copy`,
+      name: presetWithSameName ? `${name}_Copy` : name,
       default: false,
       favorite: false,
     };
     dispatch(setActivePreset(duplicatedPreset));
     dispatch(savePreset(duplicatedPreset));
     dispatch(setIsEditMode(true));
-    scrollToSelectedPreset(activePreset.name);
+    scrollToSelectedPreset(preset?.name);
   };
 
   const editPreset = (preset: IRnaPreset) => {
@@ -80,6 +82,6 @@ const MonomerLibrary = () => {
       <Tabs tabs={tabsContent(duplicatePreset, editPreset)} />
     </MonomerLibraryContainer>
   );
-};
+});
 
 export { MonomerLibrary };

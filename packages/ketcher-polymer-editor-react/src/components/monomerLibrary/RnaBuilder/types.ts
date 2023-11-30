@@ -27,4 +27,5 @@ export interface IRnaPreset {
   presetInList?: IRnaPreset;
   default?: boolean;
   favorite?: boolean;
+  editedName?: boolean;
 }

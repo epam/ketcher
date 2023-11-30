@@ -40,10 +40,10 @@ import {
   selectPresets,
   setActivePreset,
   setActiveRnaBuilderItem,
-  setHasUniqueNameError,
   setIsEditMode,
   setActivePresetMonomerGroup,
   selectPresetFullName,
+  setUniqueNameError,
 } from 'state/rna-builder';
 import { useAppSelector } from 'hooks';
 import {
@@ -79,13 +79,12 @@ export const RnaEditorExpanded = ({
   const dispatch = useDispatch();
   const activePreset = useAppSelector(selectActivePreset);
   const activeMonomerGroup = useAppSelector(selectActiveRnaBuilderItem);
-  const editor = useAppSelector(selectEditor, () => true);
+  const editor = useAppSelector(selectEditor);
   const presets = useAppSelector(selectPresets);
   const activePresetMonomerGroup = useAppSelector(
     selectActivePresetMonomerGroup,
   );
   const [newPreset, setNewPrest] = useState(activePreset);
-  const [editedPresetName, setEditedPresetName] = useState(false);
 
   const updatePresetMonomerGroup = () => {
     if (activePresetMonomerGroup) {
@@ -102,20 +101,23 @@ export const RnaEditorExpanded = ({
   };
 
   useEffect(() => {
-    if (
-      activeMonomerGroup !== RnaBuilderPresetsItem.Presets &&
-      !editedPresetName &&
-      isEditMode
-    ) {
+    setNewPrest(activePreset);
+  }, [activePreset]);
+
+  useEffect(() => {
+    if (activeMonomerGroup !== RnaBuilderPresetsItem.Presets && isEditMode) {
       const currentPreset = updatePresetMonomerGroup();
-      const presetFullName = selectPresetFullName(currentPreset);
-      setNewPrest({ ...currentPreset, name: presetFullName.trim() });
+      let presetFullName = newPreset?.name;
+      if (!currentPreset.editedName) {
+        presetFullName = selectPresetFullName(currentPreset);
+      }
+      setNewPrest({ ...currentPreset, name: presetFullName });
     }
   }, [activePresetMonomerGroup?.groupItem]);
 
   const scrollToActiveItemInLibrary = (selectedGroup) => {
     if (selectedGroup === RnaBuilderPresetsItem.Presets) {
-      scrollToSelectedPreset(newPreset.name);
+      scrollToSelectedPreset(newPreset?.name);
       if (newPreset) {
         editor.events.selectPreset.dispatch(newPreset);
       }
@@ -143,13 +145,18 @@ export const RnaEditorExpanded = ({
   const onChangeName = (event: ChangeEvent<HTMLInputElement>) => {
     if (isEditMode) {
       const newPresetName = event.target.value;
-      setNewPrest({ ...newPreset, name: newPresetName.trim() });
-      setEditedPresetName(newPresetName.trim() !== '');
+      if (newPresetName.trim() !== '') {
+        setNewPrest({
+          ...newPreset,
+          name: newPresetName.trim(),
+          editedName: true,
+        });
+      }
     }
   };
 
   const onSave = () => {
-    if (!newPreset.name) {
+    if (!newPreset?.name) {
       return;
     }
     const presetWithSameName = presets.find(
@@ -159,11 +166,11 @@ export const RnaEditorExpanded = ({
       presetWithSameName &&
       activePreset.presetInList !== presetWithSameName
     ) {
-      dispatch(setHasUniqueNameError(true));
+      dispatch(setUniqueNameError(newPreset.name));
       return;
     }
-    dispatch(savePreset(newPreset));
     dispatch(setActivePreset(newPreset));
+    dispatch(savePreset(newPreset));
     editor.events.selectPreset.dispatch(newPreset);
     setTimeout(() => {
       scrollToSelectedPreset(newPreset.name);
@@ -178,7 +185,7 @@ export const RnaEditorExpanded = ({
     dispatch(setActivePresetMonomerGroup(null));
   };
 
-  const onEdit = () => {
+  const turnOnEditMode = () => {
     dispatch(setIsEditMode(true));
   };
 
@@ -218,7 +225,7 @@ export const RnaEditorExpanded = ({
     mainButton = (
       <StyledButton
         data-testid="edit-btn"
-        onClick={onEdit}
+        onClick={turnOnEditMode}
         disabled={activePreset.default}
       >
         Edit
@@ -234,12 +241,12 @@ export const RnaEditorExpanded = ({
       >
         {isEditMode ? (
           <NameInput
-            value={newPreset.name}
+            value={newPreset?.name}
             placeholder="Name your structure"
             onChange={onChangeName}
           />
         ) : (
-          <PresetName>{newPreset.name}</PresetName>
+          <PresetName>{newPreset?.name}</PresetName>
         )}
         <NameLine
           selected={activeMonomerGroup === RnaBuilderPresetsItem.Presets}
@@ -269,7 +276,7 @@ export const RnaEditorExpanded = ({
           <StyledButton
             data-testid="duplicate-btn"
             disabled={!selectIsPresetReadyToSave(newPreset)}
-            onClick={onDuplicate}
+            onClick={() => onDuplicate(newPreset)}
           >
             Duplicate and Edit
           </StyledButton>

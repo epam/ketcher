@@ -1,4 +1,6 @@
+import { IRnaPreset } from '../../types';
+
 export interface IRnaEditorExpandedProps {
   isEditMode: boolean;
-  onDuplicate: () => void;
+  onDuplicate: (preset: IRnaPreset) => void;
 }

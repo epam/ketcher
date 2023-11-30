@@ -9,7 +9,7 @@ import ReAtom from './restruct/reatom';
  */
 const renderCache = new Map();
 let previousOptions: any;
-const MIN_ATTACHMENT_POINT_SIZE = 10;
+const MIN_ATTACHMENT_POINT_SIZE = 8;
 const attachmentPointRegExp = /^R[1-8]$/;
 
 export class RenderStruct {

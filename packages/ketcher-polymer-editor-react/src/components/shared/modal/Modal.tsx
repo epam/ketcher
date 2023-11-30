@@ -10,14 +10,20 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Icon } from 'ketcher-react';
 import { scrollbarThin } from 'theming/mixins';
+import { EmptyFunction } from 'helpers/emptyFunction';
+import styles from './Modal.module.less';
 
 interface ModalProps {
   children: JSX.Element | Array<JSX.Element>;
   title: string;
   isOpen: boolean;
   showCloseButton?: boolean;
+  showExpandButton?: boolean;
   onClose: VoidFunction;
   className?: string;
+  modalWidth?: string;
+  expanded?: boolean;
+  setExpanded?: (boolean) => void;
 }
 const StyledDialog = styled(Dialog)`
   .MuiPaper-root {
@@ -66,6 +72,7 @@ const Footer = styled(DialogActions)<FooterProps>`
   padding: 0 12px;
   border-top: ${({ theme, withBorder }) =>
     withBorder ? theme.ketcher.border.small : 'none'};
+  justify-content: flex-end;
 
   .MuiButtonBase-root {
     border-radius: 4px;
@@ -80,8 +87,12 @@ export const Modal = ({
   title,
   isOpen,
   showCloseButton = true,
+  showExpandButton = false,
   onClose,
   className,
+  modalWidth,
+  expanded = false,
+  setExpanded = EmptyFunction,
 }: ModalProps) => {
   const theme = useTheme();
 
@@ -91,9 +102,20 @@ export const Modal = ({
         background: theme.ketcher.color.background.primary,
         borderRadius: '8px',
         color: theme.ketcher.color.text.primary,
+        ...(showExpandButton && {
+          margin: 'auto',
+          width: expanded ? '100%' : modalWidth,
+          height: expanded ? '100%' : undefined,
+          maxWidth: 'calc(min(1280px, 100%))',
+          maxHeight: 'calc(min(980px, 100%))',
+        }),
       },
     }),
-    [theme.ketcher.color.text.primary, theme.ketcher.color.background.canvas],
+    [
+      theme.ketcher.color.text.primary,
+      theme.ketcher.color.background.canvas,
+      expanded,
+    ],
   );
 
   const backdropProps = useMemo(
@@ -127,15 +149,29 @@ export const Modal = ({
       onClose={onClose}
       disableEscapeKeyDown={!showCloseButton}
       className={className}
+      sx={{ padding: '24px' }}
     >
-      {title || showCloseButton ? (
+      {title || showCloseButton || showExpandButton ? (
         <Header>
           <Title>{title}</Title>
-          {showCloseButton && (
-            <IconButton title={'Close window'} onClick={onClose}>
-              <StyledIcon name={'close'} />
-            </IconButton>
-          )}
+          <span>
+            {showExpandButton && (
+              <IconButton
+                title={'expand window'}
+                className={styles.expandButton}
+                onClick={() => {
+                  setExpanded(!expanded);
+                }}
+              >
+                <StyledIcon name={expanded ? 'minimize-expansion' : 'expand'} />
+              </IconButton>
+            )}
+            {showCloseButton && (
+              <IconButton title={'Close window'} onClick={onClose}>
+                <StyledIcon name={'close'} />
+              </IconButton>
+            )}
+          </span>
         </Header>
       ) : (
         ''

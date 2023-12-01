@@ -280,6 +280,9 @@ export class DrawingEntitiesManager {
 
     if (needToDeleteConnectedBonds && monomer.hasBonds) {
       monomer.forEachBond((bond) => {
+        // Do not delete connected bond if it is selected because it is done deleteDrawingEntity method
+        // This check helps to avoid operations duplication
+        if (bond.selected) return;
         command.merge(this.deletePolymerBond(bond));
       });
     }

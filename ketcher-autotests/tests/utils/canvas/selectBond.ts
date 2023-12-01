@@ -11,7 +11,7 @@ export enum BondTypeName {
   DoubleAromatic = 'Double/Aromatic',
   Dative = 'Dative',
   Hydrogen = 'Hydrogen',
-  SingleUp = 'Single Up Bond',
+  SingleUp = 'Single Up',
   SingleDown = 'Single Down',
   SingleUpDown = 'Single Up/Down',
   DoubleCisTrans = 'Double Cis/Trans',

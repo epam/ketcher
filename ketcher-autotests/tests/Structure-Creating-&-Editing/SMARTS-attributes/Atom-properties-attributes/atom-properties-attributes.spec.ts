@@ -7,14 +7,12 @@ import {
   takeEditorScreenshot,
   waitForAtomPropsModal,
   waitForPageInit,
-} from '@utils';
-import {
   checkSmartsValue,
   setAtomicMass,
   setCharge,
   setLabel,
   setValence,
-} from '../utils';
+} from '@utils';
 
 async function drawStructure(page: Page, numberOfClicks: number) {
   await selectDropdownTool(page, 'bonds', 'bond-single');

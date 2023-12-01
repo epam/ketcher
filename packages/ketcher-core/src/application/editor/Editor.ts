@@ -97,7 +97,11 @@ export class CoreEditor {
   }
 
   private onSelectRNAPreset(preset: IRnaPreset) {
-    this.selectTool('preset', preset);
+    if (preset) {
+      this.selectTool('preset', preset);
+    } else {
+      this.tool = undefined;
+    }
   }
 
   private onSelectTool(tool: string) {

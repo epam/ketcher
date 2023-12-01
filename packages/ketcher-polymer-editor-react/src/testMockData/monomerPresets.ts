@@ -56,6 +56,215 @@ export const monomers: MonomerItemType[] = [
   },
 ];
 
+export const preset = {
+  base: {
+    struct: {
+      atoms: {
+        nextId: 9,
+      },
+      bonds: {
+        nextId: 9,
+      },
+      sgroups: {
+        nextId: 0,
+      },
+      halfBonds: {
+        nextId: 0,
+      },
+      loops: {
+        nextId: 0,
+      },
+      isReaction: false,
+      rxnArrows: {
+        nextId: 0,
+      },
+      rxnPluses: {
+        nextId: 0,
+      },
+      frags: {
+        nextId: 1,
+      },
+      rgroups: {
+        nextId: 0,
+      },
+      rgroupAttachmentPoints: {
+        nextId: 0,
+      },
+      name: 'Uracil',
+      abbreviation: '',
+      sGroupForest: {
+        parent: {},
+        children: {},
+        atomSets: {},
+      },
+      simpleObjects: {
+        nextId: 0,
+      },
+      texts: {
+        nextId: 0,
+      },
+      functionalGroups: {
+        nextId: 0,
+      },
+      highlights: {
+        nextId: 0,
+      },
+    },
+    props: {
+      Name: 'Uracil',
+      MonomerType: 'RNA',
+      MonomerName: 'U',
+      MonomerCode: 'U',
+      MonomerNaturalAnalogCode: 'U',
+      BranchMonomer: 'true',
+      MonomerCaps: {
+        R1: 'H',
+      },
+    },
+    favorite: false,
+    label: 'U',
+  },
+  sugar: {
+    struct: {
+      atoms: {
+        nextId: 12,
+      },
+      bonds: {
+        nextId: 12,
+      },
+      sgroups: {
+        nextId: 0,
+      },
+      halfBonds: {
+        nextId: 0,
+      },
+      loops: {
+        nextId: 0,
+      },
+      isReaction: false,
+      rxnArrows: {
+        nextId: 0,
+      },
+      rxnPluses: {
+        nextId: 0,
+      },
+      frags: {
+        nextId: 1,
+      },
+      rgroups: {
+        nextId: 0,
+      },
+      rgroupAttachmentPoints: {
+        nextId: 0,
+      },
+      name: 'Ribose',
+      abbreviation: '',
+      sGroupForest: {
+        parent: {},
+        children: {},
+        atomSets: {},
+      },
+      simpleObjects: {
+        nextId: 0,
+      },
+      texts: {
+        nextId: 0,
+      },
+      functionalGroups: {
+        nextId: 0,
+      },
+      highlights: {
+        nextId: 0,
+      },
+    },
+    props: {
+      Name: 'Ribose',
+      MonomerType: 'RNA',
+      MonomerName: 'R',
+      MonomerCode: 'R',
+      MonomerNaturalAnalogCode: 'R',
+      BranchMonomer: 'false',
+      MonomerCaps: {
+        R1: 'H',
+        R2: 'H',
+        R3: 'O',
+      },
+    },
+    favorite: false,
+    label: 'R',
+  },
+  phosphate: {
+    struct: {
+      atoms: {
+        nextId: 5,
+      },
+      bonds: {
+        nextId: 4,
+      },
+      sgroups: {
+        nextId: 0,
+      },
+      halfBonds: {
+        nextId: 0,
+      },
+      loops: {
+        nextId: 0,
+      },
+      isReaction: false,
+      rxnArrows: {
+        nextId: 0,
+      },
+      rxnPluses: {
+        nextId: 0,
+      },
+      frags: {
+        nextId: 1,
+      },
+      rgroups: {
+        nextId: 0,
+      },
+      rgroupAttachmentPoints: {
+        nextId: 0,
+      },
+      name: 'Phosphate',
+      abbreviation: '',
+      sGroupForest: {
+        parent: {},
+        children: {},
+        atomSets: {},
+      },
+      simpleObjects: {
+        nextId: 0,
+      },
+      texts: {
+        nextId: 0,
+      },
+      functionalGroups: {
+        nextId: 0,
+      },
+      highlights: {
+        nextId: 0,
+      },
+    },
+    props: {
+      Name: 'Phosphate',
+      MonomerType: 'RNA',
+      MonomerName: 'P',
+      MonomerCode: 'P',
+      MonomerNaturalAnalogCode: 'P',
+      BranchMonomer: 'false',
+      MonomerCaps: {
+        R1: 'O',
+        R2: 'O',
+      },
+    },
+    favorite: false,
+    label: 'P',
+  },
+  name: 'U',
+  default: true,
+};
+
 const phosphate = {
   props: {
     MonomerName: 'P',

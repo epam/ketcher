@@ -15,9 +15,14 @@
  ***************************************************************************/
 
 import { Tabs, Tab } from '@mui/material';
-import { ReactElement, useState } from 'react';
+import { ReactElement } from 'react';
 import Box from '@mui/material/Box';
 import styled from '@emotion/styled';
+import { useAppDispatch, useAppSelector } from 'hooks';
+import {
+  selectCurrentTabIndex,
+  setSelectedTabIndex,
+} from 'state/library/librarySlice';
 
 interface TabPanelProps {
   index: number;
@@ -53,14 +58,15 @@ function a11yProps(index: number) {
 }
 
 function CustomTabs(props): ReactElement {
-  const [tabIndex, setTabIndex] = useState(1);
+  const dispatch = useAppDispatch();
+  const selectedTabIndex = useAppSelector(selectCurrentTabIndex);
   const { tabs } = props;
-  const tabPanel = tabs[tabIndex];
+  const tabPanel = tabs[selectedTabIndex];
   const Component = tabPanel?.component;
   const componentProps = tabPanel?.props;
 
   const handleChange = (_event, newTabIndex) => {
-    setTabIndex(newTabIndex);
+    dispatch(setSelectedTabIndex(newTabIndex));
   };
 
   const StyledTabs = styled(Tabs)({
@@ -128,7 +134,7 @@ function CustomTabs(props): ReactElement {
 
   return (
     <>
-      <StyledTabs value={tabIndex} onChange={handleChange}>
+      <StyledTabs value={selectedTabIndex} onChange={handleChange}>
         {tabs.map((tabPanel, index) => (
           <StyledTab
             label={tabPanel.caption}
@@ -139,7 +145,7 @@ function CustomTabs(props): ReactElement {
         ))}
       </StyledTabs>
       {tabPanel && (
-        <TabPanel value={tabIndex} index={tabIndex}>
+        <TabPanel value={selectedTabIndex} index={selectedTabIndex}>
           <TabPanelContent>
             <Component {...componentProps} />
           </TabPanelContent>

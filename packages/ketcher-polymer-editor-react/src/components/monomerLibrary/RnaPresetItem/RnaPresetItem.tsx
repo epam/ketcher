@@ -16,9 +16,11 @@
 import { EmptyFunction } from 'helpers';
 import { Card } from './styles';
 import { IRnaPresetItemrops } from './types';
-import { getPresetUniqueKey } from 'state/library';
 import { useState } from 'react';
 import { StyledIcon } from '../RnaBuilder/RnaAccordion/Summary/styles';
+import { useAppDispatch } from 'hooks';
+import { togglePresetFavorites } from 'state/rna-builder';
+import { getPresetUniqueKey } from 'state/library';
 
 const RnaPresetItem = ({
   preset,
@@ -27,11 +29,18 @@ const RnaPresetItem = ({
   onContextMenu = EmptyFunction,
 }: IRnaPresetItemrops) => {
   const [showDots, setShowDots] = useState(false);
+  const [favorite, setFavorite] = useState(preset.favorite);
+  const dispatch = useAppDispatch();
   const onMouseOver = () => {
     setShowDots(true);
   };
   const onMouseOut = () => {
     setShowDots(false);
+  };
+  const addFavorite = (event) => {
+    event.stopPropagation();
+    setFavorite(!favorite);
+    dispatch(togglePresetFavorites(preset));
   };
 
   return (
@@ -51,6 +60,13 @@ const RnaPresetItem = ({
         className={showDots ? 'dots' : 'dots hidden'}
         onClick={onContextMenu}
       ></StyledIcon>
+      <div
+        aria-hidden
+        onClick={addFavorite}
+        className={`star ${favorite ? 'visible' : ''}`}
+      >
+        ★
+      </div>
     </Card>
   );
 };

@@ -6,7 +6,7 @@ import {
 } from './formatters';
 import { Ketcher } from './ketcher';
 import { ChemicalMimeType, StructService } from 'domain/services';
-import { CoreEditor } from './editor';
+import { CoreEditor, EditorHistory } from './editor';
 import { KetSerializer } from 'domain/serializers';
 import assert from 'assert';
 
@@ -99,5 +99,7 @@ export async function parseAndAddMacromoleculesOnCanvas(
   deserialisedKet.drawingEntitiesManager.mergeInto(
     editor.drawingEntitiesManager,
   );
+
+  new EditorHistory(editor).update(deserialisedKet.modelChanges);
   editor.renderersContainer.update(deserialisedKet.modelChanges);
 }

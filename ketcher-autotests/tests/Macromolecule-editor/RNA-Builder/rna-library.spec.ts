@@ -823,7 +823,6 @@ test.describe('RNA Library', () => {
     /* 
     Test case: Open&save files
     Description: File saved with three Monomers as .ket file
-    Test working as not expected. API getKet returns an incorrect ket.
     */
     await openFileAndAddToCanvas('KET/monomers-connected-with-bonds.ket', page);
     const expectedFile = await getKet(page);

@@ -166,6 +166,38 @@ test.describe('Macro-Micro-Switcher', () => {
     await page.getByTestId('reset-zoom-button').click();
     await takeEditorScreenshot(page);
   });
+
+  test('Check that the zoomed in/out structure from Macro mode become standart 100% when switch to Micro mode and again to Macro mode', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Macro-Micro-Switcher
+    Description: Zoomed In/Out structure from Macro mode become standart 100% when switch to Micro mode and again to Macro mode
+    */
+    const numberOfPressZoomIn = 5;
+    const randomPositiveNumber = 50;
+    const numberOfMouseWheelScroll = 5;
+    await openFileAndAddToCanvas(
+      'KET/three-monomers-connected-with-bonds.ket',
+      page,
+    );
+    for (let i = 0; i < numberOfPressZoomIn; i++) {
+      await waitForRender(page, async () => {
+        await page.getByTestId('zoom-in-button').click();
+      });
+    }
+    await turnOnMicromoleculesEditor(page);
+    await takeEditorScreenshot(page);
+
+    await page.keyboard.down('Control');
+    for (let i = 0; i < numberOfMouseWheelScroll; i++) {
+      await page.mouse.wheel(0, randomPositiveNumber);
+    }
+    await page.keyboard.up('Control');
+
+    await turnOnMacromoleculesEditor(page);
+    await takeEditorScreenshot(page);
+  });
 });
 
 test.describe('Macro-Micro-Switcher', () => {
@@ -196,6 +228,44 @@ test.describe('Macro-Micro-Switcher', () => {
     await openFileAndAddToCanvas('KET/stereo-and-structure.ket', page);
     await turnOnMacromoleculesEditor(page);
     await page.getByText('F1').locator('..').hover();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Create two Benzene rings structure with Charge Plus (+) and Charge Plus (-) Tool added in Micro mode and switch to Macro mode', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Macro-Micro-Switcher
+    Description: Structure exists on the canvas with changes by Charge Plus (+) Tool and Charge Plus (-).
+    */
+    await openFileAndAddToCanvas('KET/two-benzene-charged.ket', page);
+    await turnOnMacromoleculesEditor(page);
+    await page.getByText('F2').locator('..').hover();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Create two Benzene rings structure with some text added in Micro mode and switch to Macro mode.', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Macro-Micro-Switcher
+    Description: Structure exists on the canvas without text.
+    */
+    await openFileAndAddToCanvas('KET/benzene-rings-with-text.ket', page);
+    await turnOnMacromoleculesEditor(page);
+    await page.getByText('F1').locator('..').hover();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Create two Benzene rings structure with Shape Ellipse Tool added in Micro mode and switch to Macro mode.', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Macro-Micro-Switcher
+    Description: Structure exists on the canvas without Shape Ellipse.
+    */
+    await openFileAndAddToCanvas('KET/two-benzene-and-ellipse.ket', page);
+    await turnOnMacromoleculesEditor(page);
     await takeEditorScreenshot(page);
   });
 });

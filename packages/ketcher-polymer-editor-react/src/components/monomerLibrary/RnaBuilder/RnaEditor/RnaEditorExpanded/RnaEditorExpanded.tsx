@@ -133,6 +133,13 @@ export const RnaEditorExpanded = ({
 
   const selectGroup = (selectedGroup) => () => {
     scrollToActiveItemInLibrary(selectedGroup);
+    const selectedRNAPartMonomer = selectCurrentMonomerGroup(
+      newPreset,
+      selectedGroup,
+    );
+    if (selectedRNAPartMonomer) {
+      editor.events.selectMonomer.dispatch(selectedRNAPartMonomer);
+    }
     dispatch(
       setActiveRnaBuilderItem(
         isEditMode && activePreset

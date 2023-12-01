@@ -2,14 +2,33 @@ import {
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
 } from '@utils/macromolecules';
-import { test } from '@playwright/test';
+import { Page, test } from '@playwright/test';
 import {
   openFileAndAddToCanvas,
   takeEditorScreenshot,
+  takeMonomerLibraryScreenshot,
   takePageScreenshot,
   waitForPageInit,
   waitForRender,
 } from '@utils';
+
+async function addToFavoritesMonomers(page: Page) {
+  await page.getByTestId('Bal___beta-Alanine').getByText('★').click();
+  await page
+    .getByTestId('Phe4Me___p-Methylphenylalanine')
+    .getByText('★')
+    .click();
+  await page.getByTestId('meM___N-Methyl-Methionine').getByText('★').click();
+  await page.getByTestId('RNA-TAB').click();
+  await page.getByTestId('summary-Sugars').click();
+  await page.getByTestId('25R___2,5-Ribose').getByText('★').click();
+  await page.getByTestId('summary-Bases').click();
+  await page.getByTestId('baA___N-benzyl-adenine').getByText('★').click();
+  await page.getByTestId('summary-Phosphates').click();
+  await page.getByTestId('bP___Boranophosphate').getByText('★').click();
+  await page.getByTestId('CHEM-TAB').click();
+  await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').getByText('★').click();
+}
 
 test.describe('Macro-Micro-Switcher', () => {
   test.beforeEach(async ({ page }) => {
@@ -198,6 +217,21 @@ test.describe('Macro-Micro-Switcher', () => {
     await turnOnMacromoleculesEditor(page);
     await takeEditorScreenshot(page);
   });
+
+  test('Add to Favorites section Peptides, Sugars, Bases, Phosphates and CHEMs then switch to Micro mode and back', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Macro-Micro-Switcher
+    Description: Added to Favorites section Peptides, Sugars, Bases, Phosphates and CHEMs 
+    when switching from Macro mode to Micro mode and back to Macro is saved
+    */
+    await addToFavoritesMonomers(page);
+    await page.getByTestId('FAVORITES-TAB').click();
+    await turnOnMicromoleculesEditor(page);
+    await turnOnMacromoleculesEditor(page);
+    await takeMonomerLibraryScreenshot(page);
+  });
 });
 
 test.describe('Macro-Micro-Switcher', () => {
@@ -266,6 +300,31 @@ test.describe('Macro-Micro-Switcher', () => {
     */
     await openFileAndAddToCanvas('KET/two-benzene-and-ellipse.ket', page);
     await turnOnMacromoleculesEditor(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Create two Benzene rings structure with Arrow Open Angle Tool added in Micro mode and switch to Macro mode.', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Macro-Micro-Switcher
+    Description: Structures exists on the canvas without  arrow ( Arrow Open Angle Tool )
+    */
+    await openFileAndAddToCanvas('KET/two-benzene-and-arrow.ket', page);
+    await turnOnMacromoleculesEditor(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Create ABS, new OR Group, new AND Group. Switch to Macro mode and check that ABS, AND and OR isn not appear.', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Macro-Micro-Switcher
+    Description: In Macro mode ABS, AND and OR isn not appear
+    */
+    await openFileAndAddToCanvas('KET/three-alpha-d-allopyranose.ket', page);
+    await turnOnMacromoleculesEditor(page);
+    await page.getByText('F1').locator('..').hover();
     await takeEditorScreenshot(page);
   });
 });

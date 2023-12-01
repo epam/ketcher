@@ -22,9 +22,18 @@ const isBondingWithMacroMolecule = (
   editor: Editor,
   event: MouseEvent,
 ): boolean => {
-  // const functionalGroups = editor.render.ctab.molecule.functionalGroups;
   const ci = editor.findItem(event, ['atoms', 'bonds', 'functionalGroups']);
-  return ci?.map === 'functionalGroups' && isMacroMolecule(editor, ci?.id);
+  if (ci?.map === 'functionalGroups') {
+    return isMacroMolecule(editor, ci?.id);
+  } else if (ci?.map === 'bonds') {
+    const struct = editor.struct();
+    const bond = struct.bonds.get(ci.id);
+    const sGroup = struct.getGroupFromAtomId(bond?.begin);
+
+    return sGroup instanceof MonomerMicromolecule;
+  }
+
+  return false;
 };
 
 export {

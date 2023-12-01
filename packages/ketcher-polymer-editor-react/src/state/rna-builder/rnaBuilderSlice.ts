@@ -94,8 +94,6 @@ export const rnaBuilderSlice = createSlice({
         groupItem: MonomerItemType;
       } | null>,
     ) => {
-      // state.activePreset![monomerGroupToPresetGroup[action.payload.groupName]] =
-      //   action.payload.groupItem;
       state.activePresetMonomerGroup = action.payload;
     },
     savePreset: (state, action: PayloadAction<IRnaPreset>) => {

@@ -278,7 +278,16 @@ class ReAtom extends ReObject {
     let index: any = null;
     const isSmartPropertiesExist = checkIsSmartPropertiesExist(this.a);
 
-    if (this.showLabel) {
+    if (isSmartPropertiesExist) {
+      const customQueryText =
+        this.a.queryProperties.customQuery ||
+        getAtomCustomQuery({
+          ...this.a,
+          ...this.a.queryProperties,
+        });
+      const label = showSmartsLabel(this, render, customQueryText);
+      restruct.addReObjectPath(LayerMap.data, this.visel, label.path, ps, true);
+    } else if (this.showLabel) {
       const data = buildLabel(this, render.paper, ps, options);
       delta = 0.5 * options.lineWidth;
       label = data.label;
@@ -317,7 +326,7 @@ class ReAtom extends ReObject {
       restruct.addReObjectPath(LayerMap.indices, this.visel, index.path, ps);
     }
 
-    if (this.showLabel) {
+    if (this.showLabel && !isSmartPropertiesExist) {
       let hydroIndex: any = null;
       if (isHydrogen && implh > 0) {
         hydroIndex = showHydroIndex(this, render, implh, rightMargin);
@@ -1124,6 +1133,38 @@ function showHydrogen(
     data.leftMargin -= hydrogen.rbb.width + delta;
   }
   return Object.assign(data, { hydrogen, hydroIndex });
+}
+
+function showSmartsLabel(atom: ReAtom, render: Render, text: string): ElemAttr {
+  // eslint-disable-line max-statements
+  const ps = Scale.modelToCanvas(atom.a.pp, render.options);
+  const options = render.options;
+  const label = {} as ElemAttr;
+  let tooltip: string | null = null;
+
+  if (text.length > 8) {
+    tooltip = text;
+    label.text = `${text.substring(0, 8)}...`;
+  } else {
+    label.text = text;
+  }
+
+  label.path = render.paper.text(ps.x, ps.y, label.text).attr({
+    font: options.font,
+    'font-size': options.fontsz,
+    fill: atom.color,
+  });
+  label.rbb = util.relBox(label.path.getBBox());
+  draw.recenterText(label.path, label.rbb);
+  const xShift =
+    ((atom.hydrogenOnTheLeft ? -1 : 1) * (label.rbb.width - label.rbb.height)) /
+    2;
+  pathAndRBoxTranslate(label.path, label.rbb, xShift, 0);
+  if (tooltip) {
+    addTooltip(label, tooltip);
+  }
+
+  return label;
 }
 
 function showWarning(

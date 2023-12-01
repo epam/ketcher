@@ -13,7 +13,10 @@ import {
 import { AttachmentPoint } from 'domain/AttachmentPoint';
 import Coordinates from 'application/editor/shared/coordinates';
 import { Vec2 } from 'domain/entities';
-import { AttachmentPointName } from 'domain/types';
+import {
+  AttachmentPointConstructorParams,
+  AttachmentPointName,
+} from 'domain/types';
 
 export abstract class BaseMonomerRenderer extends BaseRenderer {
   private editorEvents: typeof editorEvents;
@@ -207,21 +210,24 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     if (!this.monomer.isAttachmentPointUsed(AttachmentPointName)) {
       rotation = attachmentPointNumberToAngle[AttachmentPointName];
     }
-
-    const attPointInstance = new AttachmentPoint(
-      this.rootElement as D3SvgElementSelection<SVGGElement, void>,
-      this.monomer,
-      this.monomerSize.width,
-      this.monomerSize.height,
-      this.canvasWrapper,
-      AttachmentPointName,
-      this.monomer.isAttachmentPointUsed(AttachmentPointName),
-      this.monomer.isAttachmentPointPotentiallyUsed(AttachmentPointName) ||
+    const attachmentPointParams: AttachmentPointConstructorParams = {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      rootElement: this.rootElement!,
+      monomer: this.monomer,
+      bodyWidth: this.monomerSize.width,
+      bodyHeight: this.monomerSize.height,
+      canvas: this.canvasWrapper,
+      attachmentPointName: AttachmentPointName,
+      isUsed: this.monomer.isAttachmentPointUsed(AttachmentPointName),
+      isPotentiallyUsed:
+        this.monomer.isAttachmentPointPotentiallyUsed(AttachmentPointName) ||
         (this.hoveredAttachmenPoint === AttachmentPointName &&
           !updateAttachmentPoints),
-      customAngle || rotation,
-      this.isSnakeBondForAttachmentPoint(AttachmentPointName),
-    );
+      angle: customAngle || rotation,
+      isSnake: !!this.isSnakeBondForAttachmentPoint(AttachmentPointName),
+    };
+
+    const attPointInstance = new AttachmentPoint(attachmentPointParams);
     return attPointInstance;
   }
 

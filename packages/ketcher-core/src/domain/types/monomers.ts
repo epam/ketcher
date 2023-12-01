@@ -1,5 +1,6 @@
-import { Struct } from 'domain/entities';
+import { BaseMonomer, Struct } from 'domain/entities';
 import { IKetAttachmentPoint } from 'application/formatters/types/ket';
+import { D3SvgElementSelection } from 'application/render/types';
 
 export type MonomerColorScheme = {
   regular: string;
@@ -51,3 +52,16 @@ export const attachmentPointNames = [
 ];
 
 export type LeavingGroup = 'O' | 'OH' | 'H';
+
+export type AttachmentPointConstructorParams = {
+  rootElement: D3SvgElementSelection<SVGGElement, void>;
+  monomer: BaseMonomer;
+  bodyWidth: number;
+  bodyHeight: number;
+  canvas: D3SvgElementSelection<SVGSVGElement, void>;
+  attachmentPointName: AttachmentPointName;
+  isUsed: boolean;
+  isPotentiallyUsed: boolean;
+  angle: number;
+  isSnake: boolean;
+};

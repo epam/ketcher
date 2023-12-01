@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { EmptyFunction } from 'helpers';
 import { debounce } from 'lodash';
 import { MonomerItem } from '../monomerLibraryItem';
@@ -29,7 +29,7 @@ import {
   selectEditor,
   selectTool,
 } from 'state/common';
-import { selectIsEditMode } from 'state/rna-builder';
+import { selectActiveRnaBuilderItem } from 'state/rna-builder';
 
 const MonomerGroup = ({
   items,
@@ -42,9 +42,14 @@ const MonomerGroup = ({
   const dispatch = useAppDispatch();
   const preview = useAppSelector(selectShowPreview);
   const editor = useAppSelector(selectEditor);
-  const isEditMode = useAppSelector(selectIsEditMode);
+  const activeMonomerGroup = useAppSelector(selectActiveRnaBuilderItem);
+
   const [selectedItemInGroup, setSelectedItemInGroup] =
-    useState<MonomerItemType>();
+    useState<MonomerItemType | null>(null);
+
+  useEffect(() => {
+    setSelectedItemInGroup(null);
+  }, [activeMonomerGroup]);
 
   const dispatchShowPreview = useCallback(
     (payload) => dispatch(showPreview(payload)),
@@ -86,6 +91,13 @@ const MonomerGroup = ({
     onItemClick(monomer);
   };
 
+  const isMonomerSelected = (monomer: MonomerItemType) => {
+    return selectedItemInGroup
+      ? getMonomerUniqueKey(selectedItemInGroup) ===
+          getMonomerUniqueKey(monomer)
+      : selectedMonomerUniqueKey === getMonomerUniqueKey(monomer);
+  };
+
   return (
     <GroupContainer>
       {title && (
@@ -103,13 +115,7 @@ const MonomerGroup = ({
               key={key}
               disabled={disabled}
               item={monomer}
-              isSelected={
-                isEditMode
-                  ? selectedMonomerUniqueKey === getMonomerUniqueKey(monomer)
-                  : selectedItemInGroup &&
-                    getMonomerUniqueKey(selectedItemInGroup) ===
-                      getMonomerUniqueKey(monomer)
-              }
+              isSelected={isMonomerSelected(monomer)}
               onMouseLeave={handleItemMouseLeave}
               onMouseMove={(e) => handleItemMouseMove(monomer, e)}
               onClick={() => selectMonomer(monomer)}

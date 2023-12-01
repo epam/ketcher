@@ -196,10 +196,10 @@ function Editor({ theme, togglerComponent }: EditorProps) {
     debouncedShowPreview({ monomer, style: previewStyle });
   }, []);
 
-  const handleClosePreview = () => {
+  const handleClosePreview = useCallback(() => {
     debouncedShowPreview.cancel();
     dispatch(showPreview(undefined));
-  };
+  }, []);
 
   useEffect(() => {
     editor?.events.mouseOverMonomer.add((e) => {

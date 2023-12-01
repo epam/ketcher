@@ -16,7 +16,7 @@
 
 import React from 'react';
 import styled from '@emotion/styled';
-import { MONOMER_LIBRARY_WIDTH } from 'components/monomerLibrary';
+import { MONOMER_LIBRARY_WIDTH } from 'components/monomerLibrary/styles';
 
 interface LayoutProps {
   children: JSX.Element | Array<JSX.Element>;

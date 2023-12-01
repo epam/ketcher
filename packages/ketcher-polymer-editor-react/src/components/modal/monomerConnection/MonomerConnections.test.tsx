@@ -16,6 +16,7 @@ const monomerData = {
     MonomerNaturalAnalogCode: 'A',
     MonomerType: 'MONOMER',
     BranchMonomer: '',
+    MonomerCaps: { R1: 'H' },
     MonomerCode: '',
     MonomerName: '',
     Name: 'First peptide',

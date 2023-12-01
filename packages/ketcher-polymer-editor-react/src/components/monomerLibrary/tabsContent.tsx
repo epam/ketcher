@@ -2,13 +2,15 @@ import { MONOMER_TYPES, MONOMER_LIBRARY_FAVORITES } from '../../constants';
 import { MonomerList } from './monomerLibraryList';
 import { RnaBuilder } from './RnaBuilder';
 
-export const tabsContent = [
+export const tabsContent = (duplicatePreset, editPreset) => [
   {
     caption: 'Favorites',
     component: MonomerList,
     testId: 'FAVORITES-TAB',
     props: {
       libraryName: MONOMER_LIBRARY_FAVORITES,
+      duplicatePreset,
+      editPreset,
     },
   },
   {
@@ -25,6 +27,8 @@ export const tabsContent = [
     component: RnaBuilder,
     props: {
       libraryName: MONOMER_TYPES.RNA,
+      duplicatePreset,
+      editPreset,
     },
   },
   {

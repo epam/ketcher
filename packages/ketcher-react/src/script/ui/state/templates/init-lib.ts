@@ -28,6 +28,7 @@ import templatesRawData from '../../../../templates/library.sdf';
 import { AnyAction, Dispatch } from 'redux';
 
 let cachedInitData: [Dispatch<AnyAction>, string, Element];
+let needReinitializeTemplateLibrary = false;
 
 interface TemplateLibrary {
   type: string;
@@ -79,14 +80,17 @@ export default async function initTmplLib(
     const lib = res.concat(userTmpls());
     dispatch(initLib(lib));
     dispatch(appUpdate({ templates: true }) as unknown as AnyAction);
+    if (needReinitializeTemplateLibrary) {
+      reinitializeTemplateLibrary();
+      needReinitializeTemplateLibrary = false;
+    }
   });
 }
 
 export function reinitializeTemplateLibrary(): void {
   if (!cachedInitData) {
-    throw new Error(
-      'The template library must be initialized before it can be reinitialized',
-    );
+    needReinitializeTemplateLibrary = true;
+    return;
   }
 
   initTmplLib(...cachedInitData);

@@ -63,10 +63,16 @@ const monomerData = [
   },
 ];
 describe('RNA ContextMenu', () => {
+  const editPreset = jest.fn();
+  const duplicatePreset = jest.fn();
   it('should render contextMenu correctly', () => {
     render(
       withThemeAndStoreProvider(
-        <RnaBuilder libraryName={MONOMER_TYPES.RNA} />,
+        <RnaBuilder
+          libraryName={MONOMER_TYPES.RNA}
+          duplicatePreset={duplicatePreset}
+          editPreset={editPreset}
+        />,
         {
           library: {
             searchFilter: '',
@@ -84,7 +90,11 @@ describe('RNA ContextMenu', () => {
   it("should disable 'Delete Preset' menu when trying to delete default preset", () => {
     render(
       withThemeAndStoreProvider(
-        <RnaBuilder libraryName={MONOMER_TYPES.RNA} />,
+        <RnaBuilder
+          libraryName={MONOMER_TYPES.RNA}
+          duplicatePreset={duplicatePreset}
+          editPreset={editPreset}
+        />,
         {
           library: {
             searchFilter: '',
@@ -104,7 +114,11 @@ describe('RNA ContextMenu', () => {
     render(
       withThemeAndStoreProvider(
         <div>
-          <RnaBuilder libraryName={MONOMER_TYPES.RNA} />
+          <RnaBuilder
+            libraryName={MONOMER_TYPES.RNA}
+            duplicatePreset={duplicatePreset}
+            editPreset={editPreset}
+          />
           <ModalContainer />
         </div>,
         {

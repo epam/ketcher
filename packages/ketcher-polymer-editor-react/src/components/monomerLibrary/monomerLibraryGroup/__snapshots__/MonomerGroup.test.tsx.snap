@@ -2,7 +2,7 @@
 
 exports[`Monomer Group should apply correct style if selected 1`] = `
 <div
-  class="css-44n4lr"
+  class="css-1ppl736"
   data-monomer-item-id="RRMonomerName___RRName"
   data-testid="RRMonomerName___RRName"
 >

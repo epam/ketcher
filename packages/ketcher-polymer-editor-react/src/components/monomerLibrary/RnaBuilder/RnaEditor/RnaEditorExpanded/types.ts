@@ -1,11 +1,6 @@
-import { ChangeEvent } from 'react';
+import { IRnaPreset } from '../../types';
 
 export interface IRnaEditorExpandedProps {
-  name?: string;
   isEditMode: boolean;
-  onEdit: () => void;
-  onCancel: () => void;
-  onSave: () => void;
-  onChangeName: (event: ChangeEvent<HTMLInputElement>) => void;
-  onDuplicate: () => void;
+  onDuplicate: (preset: IRnaPreset) => void;
 }

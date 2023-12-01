@@ -22,7 +22,7 @@ const isBondingWithMacroMolecule = (
   editor: Editor,
   event: MouseEvent,
 ): boolean => {
-  const ci = editor.findItem(event, ['atoms', 'bonds', 'functionalGroups']);
+  const ci = editor.findItem(event, ['bonds', 'functionalGroups']);
   if (ci?.map === 'functionalGroups') {
     return isMacroMolecule(editor, ci?.id);
   } else if (ci?.map === 'bonds') {

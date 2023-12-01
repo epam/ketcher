@@ -305,7 +305,6 @@ class SelectTool implements Tool {
         this.updateArrowResizingState(this.dragCtx.item.id, false);
         this.editor.update(true);
       }
-      // Works weirdly
       if (!isMergingToMacroMolecule(this.editor, this.dragCtx)) {
         dropAndMerge(editor, this.dragCtx.mergeItems, this.dragCtx.action);
       }

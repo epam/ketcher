@@ -29,7 +29,7 @@ import {
 
 import Editor from '../Editor';
 import { Tool } from './Tool';
-import isObjectMacroMolecule from './helper/isMacroMolecule';
+import { isBondingWithMacroMolecule } from './helper/isMacroMolecule';
 
 class BondTool implements Tool {
   private readonly editor: Editor;
@@ -56,7 +56,7 @@ class BondTool implements Tool {
 
   mousedown(event) {
     if (this.dragCtx) return;
-    if (isObjectMacroMolecule(this.editor, event)) {
+    if (isBondingWithMacroMolecule(this.editor, event)) {
       return;
     }
     const struct = this.editor.render.ctab;
@@ -143,7 +143,7 @@ class BondTool implements Tool {
     const functionalGroups = molecule.functionalGroups;
     const editor = this.editor;
     const rnd = editor.render;
-    if (isObjectMacroMolecule(this.editor, event)) {
+    if (isBondingWithMacroMolecule(this.editor, event)) {
       return true;
     }
     if ('dragCtx' in this) {

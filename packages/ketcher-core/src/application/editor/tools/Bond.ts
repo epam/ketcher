@@ -254,6 +254,7 @@ class PolymerBond implements BaseTool {
       this.editor.renderersContainer.update(modelChanges);
       this.editor.renderersContainer.deletePolymerBond(
         this.bondRenderer.polymerBond,
+        false,
       );
       this.bondRenderer = undefined;
       event.stopPropagation();
@@ -342,6 +343,7 @@ class PolymerBond implements BaseTool {
       this.editor.renderersContainer.update(modelChanges);
       this.editor.renderersContainer.deletePolymerBond(
         this.bondRenderer.polymerBond,
+        false,
       );
       this.bondRenderer = undefined;
       this.history.update(modelChanges);
@@ -379,6 +381,7 @@ class PolymerBond implements BaseTool {
     this.isBondConnectionModalOpen = false;
     this.editor.renderersContainer.deletePolymerBond(
       this.bondRenderer.polymerBond,
+      false,
     );
     this.bondRenderer = undefined;
   };

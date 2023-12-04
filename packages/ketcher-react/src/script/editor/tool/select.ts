@@ -36,6 +36,7 @@ import {
 } from 'ketcher-core';
 
 import LassoHelper from './helper/lasso';
+import { isMergingToMacroMolecule } from './helper/isMacroMolecule';
 import { atomLongtapEvent } from './atom';
 import SGroupTool from './sgroup';
 import { xor } from 'lodash/fp';
@@ -304,7 +305,9 @@ class SelectTool implements Tool {
         this.updateArrowResizingState(this.dragCtx.item.id, false);
         this.editor.update(true);
       }
-      dropAndMerge(editor, this.dragCtx.mergeItems, this.dragCtx.action);
+      if (!isMergingToMacroMolecule(this.editor, this.dragCtx)) {
+        dropAndMerge(editor, this.dragCtx.mergeItems, this.dragCtx.action);
+      }
       delete this.dragCtx;
     } else if (this.#lassoHelper.running()) {
       // TODO it catches more events than needed, to be re-factored

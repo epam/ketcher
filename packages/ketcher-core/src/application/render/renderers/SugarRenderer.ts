@@ -32,4 +32,8 @@ export class SugarRenderer extends BaseMonomerRenderer {
         ].regular,
       );
   }
+
+  protected get enumerationElementPosition() {
+    return undefined;
+  }
 }

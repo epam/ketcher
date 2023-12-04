@@ -15,7 +15,8 @@
  ***************************************************************************/
 
 import { MolSerializerOptions } from 'domain/serializers';
-import { Struct, DrawingEntitiesManager } from 'domain/entities';
+import { Struct } from 'domain/entities';
+import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import { StructServiceOptions } from 'domain/services';
 
 export interface StructFormatter {

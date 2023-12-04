@@ -1,4 +1,5 @@
-import { Struct, DrawingEntitiesManager } from 'domain/entities';
+import { Struct } from 'domain/entities';
+import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import {
   FormatterFactory,
   SupportedFormat,

@@ -76,7 +76,7 @@ Parameters: `molfileFormat: 'v2000' | 'v3000'`. Optional, by default, 'auto'. In
 `getRxn(molfileFormat): Promise<string>` – returns `string` representation of drawn structure in RXN-format.  
 Parameters: `molfileFormat: 'v2000' | 'v3000'`. Optional, by default, 'v2000'. Indicates, in which format result will be returned.
 
-`getKet(): Promise<string>` – returns `string` representation of drawn structure is internal Ket-format.
+`getKet(): Promise<string>` – returns `string` representation of drawn structure in internal Ket-format.
 
 `getSmarts(): Promise<string>` – returns `string` representation of drawn structure in Smarts-format.
 
@@ -101,7 +101,7 @@ Parameters: `withAuxInfo: boolean`. Optional, by default, `false`.
 `setMolecule(structure: string): Promise<void>` – draws passed structure on the canvas. Before drawing passed structure, current structure is removed.  
 Parameters: `structure: string`. Structure is a string in any supported format.
 
-`setMolecule(structure: string): Promise<void>` – adds passed structure on the canvas. Current structure is not changed.  
+`addFragment(structure: string): Promise<void>` – adds passed structure on the canvas. Current structure is not changed.  
 Parameters: `structure: string`. Structure is a string in any supported format.
 
 `layout(): Promise<void>` – performs layout algorithm for drawn structure.

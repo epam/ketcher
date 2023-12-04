@@ -269,7 +269,7 @@ export class Ketcher {
     const editor = CoreEditor.provideEditorInstance();
     return (
       this.editor.struct().hasRxnArrow() ||
-      editor.drawingEntitiesManager.micromoleculesHiddenEntities.hasRxnArrow()
+      editor?.drawingEntitiesManager?.micromoleculesHiddenEntities.hasRxnArrow()
     );
   }
 

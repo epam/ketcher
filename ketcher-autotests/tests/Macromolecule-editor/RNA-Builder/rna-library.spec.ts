@@ -5,7 +5,6 @@ import {
 import { Page, test, expect } from '@playwright/test';
 import {
   Bases,
-  DropDown,
   Phosphates,
   Sugars,
   addMonomerToCenterOfCanvas,
@@ -44,11 +43,11 @@ async function drawThreeMonomers(page: Page) {
   const y = 350;
   const x1 = 650;
   const y1 = 150;
-  await selectMonomer(DropDown.SugarsDropDown, Sugars.ThreeA6, page);
+  await selectMonomer(page, Sugars.ThreeA6);
   await clickInTheMiddleOfTheScreen(page);
-  await selectMonomer(DropDown.BasesDropDown, Bases.NBebnzylAdenine, page);
+  await selectMonomer(page, Bases.NBebnzylAdenine);
   await page.mouse.click(x, y);
-  await selectMonomer(DropDown.PhosphatesDropDown, Phosphates.Phosphate, page);
+  await selectMonomer(page, Phosphates.Phosphate);
   await page.mouse.click(x1, y1);
 }
 
@@ -78,9 +77,9 @@ async function drawBasePhosphate(page: Page) {
   const base1 = bases.nth(0);
   const phosphates = await page.getByText('P').locator('..');
   const phosphate1 = phosphates.nth(0);
-  await selectMonomer(DropDown.BasesDropDown, Bases.NBebnzylAdenine, page);
+  await selectMonomer(page, Bases.NBebnzylAdenine);
   await clickInTheMiddleOfTheScreen(page);
-  await selectMonomer(DropDown.PhosphatesDropDown, Phosphates.Phosphate, page);
+  await selectMonomer(page, Phosphates.Phosphate);
   await page.mouse.click(x, y);
   await selectSingleBondTool(page);
   await base1.hover();
@@ -98,9 +97,9 @@ async function drawSugarPhosphate(page: Page) {
   const sugar1 = sugars.nth(0);
   const phosphates = await page.getByText('P').locator('..');
   const phosphate1 = phosphates.nth(0);
-  await selectMonomer(DropDown.SugarsDropDown, Sugars.ThreeA6, page);
+  await selectMonomer(page, Sugars.ThreeA6);
   await clickInTheMiddleOfTheScreen(page);
-  await selectMonomer(DropDown.PhosphatesDropDown, Phosphates.Phosphate, page);
+  await selectMonomer(page, Phosphates.Phosphate);
   await page.mouse.click(x, y);
   await selectSingleBondTool(page);
   await sugar1.hover();
@@ -116,9 +115,9 @@ async function drawSugarBase(page: Page) {
   const sugar1 = sugars.nth(0);
   const bases = await page.getByText('baA').locator('..');
   const base1 = bases.nth(0);
-  await selectMonomer(DropDown.SugarsDropDown, Sugars.ThreeA6, page);
+  await selectMonomer(page, Sugars.ThreeA6);
   await clickInTheMiddleOfTheScreen(page);
-  await selectMonomer(DropDown.BasesDropDown, Bases.NBebnzylAdenine, page);
+  await selectMonomer(page, Bases.NBebnzylAdenine);
   await page.mouse.click(x, y);
   await selectSingleBondTool(page);
   await sugar1.hover();
@@ -216,11 +215,7 @@ test.describe('RNA Library', () => {
     Description: The selected sugar monomer should be added to the canvas 
     in the form of a square with rounded edges and in the corresponding color.
     */
-    await addMonomerToCenterOfCanvas(
-      DropDown.SugarsDropDown,
-      Sugars.TwelveddR,
-      page,
-    );
+    await addMonomerToCenterOfCanvas(page, Sugars.TwelveddR);
     await takeEditorScreenshot(page);
   });
 
@@ -230,11 +225,7 @@ test.describe('RNA Library', () => {
     Description: The selected base monomer should be added to the canvas 
     in the form of a rhombus and in the corresponding color.
     */
-    await addMonomerToCenterOfCanvas(
-      DropDown.BasesDropDown,
-      Bases.Adenine,
-      page,
-    );
+    await addMonomerToCenterOfCanvas(page, Bases.Adenine);
     await takeEditorScreenshot(page);
   });
 
@@ -244,11 +235,7 @@ test.describe('RNA Library', () => {
     Description: The selected phosphate monomer should be added to the canvas 
     in the form of a circle and in the corresponding color.
     */
-    await addMonomerToCenterOfCanvas(
-      DropDown.PhosphatesDropDown,
-      Phosphates.Test6Ph,
-      page,
-    );
+    await addMonomerToCenterOfCanvas(page, Phosphates.Test6Ph);
     await takeEditorScreenshot(page);
   });
 
@@ -259,11 +246,7 @@ test.describe('RNA Library', () => {
     in the form of a square with rounded edges and in the corresponding color.
     When hover over monomer window with preview appears.
     */
-    await addMonomerToCenterOfCanvas(
-      DropDown.SugarsDropDown,
-      Sugars.TwelveddR,
-      page,
-    );
+    await addMonomerToCenterOfCanvas(page, Sugars.TwelveddR);
     await page.getByText('12ddR').locator('..').first().hover();
     await takeEditorScreenshot(page);
   });
@@ -275,11 +258,7 @@ test.describe('RNA Library', () => {
     in the form of a rhombus and in the corresponding color.
     When hover over monomer window with preview appears.
     */
-    await addMonomerToCenterOfCanvas(
-      DropDown.BasesDropDown,
-      Bases.TClampOMe,
-      page,
-    );
+    await addMonomerToCenterOfCanvas(page, Bases.TClampOMe);
     await page.getByText('clA').locator('..').first().hover();
     await takeEditorScreenshot(page);
   });
@@ -291,11 +270,7 @@ test.describe('RNA Library', () => {
     in the form of a circle and in the corresponding color.
     When hover over monomer window with preview appears.
     */
-    await addMonomerToCenterOfCanvas(
-      DropDown.PhosphatesDropDown,
-      Phosphates.Test6Ph,
-      page,
-    );
+    await addMonomerToCenterOfCanvas(page, Phosphates.Test6Ph);
     await page.getByText('Test-6-Ph').locator('..').first().hover();
     await takeEditorScreenshot(page);
   });
@@ -306,9 +281,9 @@ test.describe('RNA Library', () => {
     Description: Custom presets added to Presets section.
     */
     await expandRnaBuilder(page);
-    await selectMonomer(DropDown.SugarsDropDown, Sugars.TwelveddR, page);
-    await selectMonomer(DropDown.BasesDropDown, Bases.Adenine, page);
-    await selectMonomer(DropDown.PhosphatesDropDown, Phosphates.Test6Ph, page);
+    await selectMonomer(page, Sugars.TwelveddR);
+    await selectMonomer(page, Bases.Adenine);
+    await selectMonomer(page, Phosphates.Test6Ph);
     await page.getByTestId('add-to-presets-btn').click();
     await page.getByTestId('12ddR(A)Test-6-Ph_A_12ddR_Test-6-Ph').click();
     await takePresetsScreenshot(page);
@@ -320,13 +295,9 @@ test.describe('RNA Library', () => {
     Description: Custom presets added to Canvas.
     */
     await expandRnaBuilder(page);
-    await selectMonomer(DropDown.SugarsDropDown, Sugars.ThreeA6, page);
-    await selectMonomer(DropDown.BasesDropDown, Bases.NBebnzylAdenine, page);
-    await selectMonomer(
-      DropDown.PhosphatesDropDown,
-      Phosphates.Boranophosphate,
-      page,
-    );
+    await selectMonomer(page, Sugars.ThreeA6);
+    await selectMonomer(page, Bases.NBebnzylAdenine);
+    await selectMonomer(page, Phosphates.Boranophosphate);
     await page.getByTestId('add-to-presets-btn').click();
     await page.getByTestId('3A6(baA)bP_baA_3A6_bP').click();
     await clickInTheMiddleOfTheScreen(page);
@@ -342,8 +313,8 @@ test.describe('RNA Library', () => {
     Description: Custom presets added to Presets section.
     */
     await expandRnaBuilder(page);
-    await selectMonomer(DropDown.SugarsDropDown, Sugars.TwelveddR, page);
-    await selectMonomer(DropDown.BasesDropDown, Bases.Adenine, page);
+    await selectMonomer(page, Sugars.TwelveddR);
+    await selectMonomer(page, Bases.Adenine);
     await page.getByTestId('add-to-presets-btn').click();
     await page.getByTestId('12ddR(A)_A_12ddR_.').click();
     await clickInTheMiddleOfTheScreen(page);
@@ -358,12 +329,8 @@ test.describe('RNA Library', () => {
     Description: Custom presets added to Presets section.
     */
     await expandRnaBuilder(page);
-    await selectMonomer(DropDown.SugarsDropDown, Sugars.TwelveddR, page);
-    await selectMonomer(
-      DropDown.PhosphatesDropDown,
-      Phosphates.Boranophosphate,
-      page,
-    );
+    await selectMonomer(page, Sugars.TwelveddR);
+    await selectMonomer(page, Phosphates.Boranophosphate);
     await page.getByTestId('add-to-presets-btn').click();
     await page.getByTestId('12ddR()bP_._12ddR_bP').click();
     await takePresetsScreenshot(page);
@@ -377,12 +344,8 @@ test.describe('RNA Library', () => {
     Description: Custom presets added to Presets section.
     */
     await expandRnaBuilder(page);
-    await selectMonomer(DropDown.BasesDropDown, Bases.Adenine, page);
-    await selectMonomer(
-      DropDown.PhosphatesDropDown,
-      Phosphates.Boranophosphate,
-      page,
-    );
+    await selectMonomer(page, Bases.Adenine);
+    await selectMonomer(page, Phosphates.Boranophosphate);
     await page.getByTestId('add-to-presets-btn').click();
     await page.getByTestId('(A)bP_A_._bP').click();
     await takePresetsScreenshot(page);
@@ -394,9 +357,9 @@ test.describe('RNA Library', () => {
     Description: Custom presets added to Presets section and can be edited.
     */
     await expandRnaBuilder(page);
-    await selectMonomer(DropDown.SugarsDropDown, Sugars.TwelveddR, page);
-    await selectMonomer(DropDown.BasesDropDown, Bases.Adenine, page);
-    await selectMonomer(DropDown.PhosphatesDropDown, Phosphates.Test6Ph, page);
+    await selectMonomer(page, Sugars.TwelveddR);
+    await selectMonomer(page, Bases.Adenine);
+    await selectMonomer(page, Phosphates.Test6Ph);
     await page.getByTestId('add-to-presets-btn').click();
     await page.getByTestId('12ddR(A)Test-6-Ph_A_12ddR_Test-6-Ph').click({
       button: 'right',
@@ -418,9 +381,9 @@ test.describe('RNA Library', () => {
     Description: Custom presets added to Presets section then can be duplicated and edited.
     */
     await expandRnaBuilder(page);
-    await selectMonomer(DropDown.SugarsDropDown, Sugars.TwelveddR, page);
-    await selectMonomer(DropDown.BasesDropDown, Bases.Adenine, page);
-    await selectMonomer(DropDown.PhosphatesDropDown, Phosphates.Test6Ph, page);
+    await selectMonomer(page, Sugars.TwelveddR);
+    await selectMonomer(page, Bases.Adenine);
+    await selectMonomer(page, Phosphates.Test6Ph);
     await page.getByTestId('add-to-presets-btn').click();
     await page.getByTestId('12ddR(A)Test-6-Ph_A_12ddR_Test-6-Ph').click({
       button: 'right',
@@ -444,14 +407,14 @@ test.describe('RNA Library', () => {
     Test working incorrect because we have bug: https://github.com/epam/ketcher/issues/3561
     */
     await expandRnaBuilder(page);
-    await selectMonomer(DropDown.SugarsDropDown, Sugars.TwelveddR, page);
-    await selectMonomer(DropDown.BasesDropDown, Bases.Adenine, page);
-    await selectMonomer(DropDown.PhosphatesDropDown, Phosphates.Test6Ph, page);
+    await selectMonomer(page, Sugars.TwelveddR);
+    await selectMonomer(page, Bases.Adenine);
+    await selectMonomer(page, Phosphates.Test6Ph);
     await page.getByTestId('add-to-presets-btn').click();
     await page.getByTestId('12ddR(A)Test-6-Ph_A_12ddR_Test-6-Ph').click({
       button: 'right',
     });
-    await page.getByTestId('deletepreset').locator('div').click();
+    await page.getByTestId('deletepreset').click();
     await page.getByRole('button', { name: 'Delete' }).click();
     await takePresetsScreenshot(page);
   });
@@ -462,13 +425,9 @@ test.describe('RNA Library', () => {
     Description: Custom presets added to Presets section and can be renamed.
     */
     await expandRnaBuilder(page);
-    await selectMonomer(DropDown.SugarsDropDown, Sugars.TwentyFiveR, page);
-    await selectMonomer(DropDown.BasesDropDown, Bases.NBebnzylAdenine, page);
-    await selectMonomer(
-      DropDown.PhosphatesDropDown,
-      Phosphates.Boranophosphate,
-      page,
-    );
+    await selectMonomer(page, Sugars.TwentyFiveR);
+    await selectMonomer(page, Bases.NBebnzylAdenine);
+    await selectMonomer(page, Phosphates.Boranophosphate);
     await page.getByTestId('add-to-presets-btn').click();
     await page.getByTestId('25R(baA)bP_baA_25R_bP').click({
       button: 'right',
@@ -545,8 +504,8 @@ test.describe('RNA Library', () => {
     Description: Sugar-Base Combination added to Canvas.
     */
     await expandRnaBuilder(page);
-    await selectMonomer(DropDown.SugarsDropDown, Sugars.ThreeA6, page);
-    await selectMonomer(DropDown.BasesDropDown, Bases.NBebnzylAdenine, page);
+    await selectMonomer(page, Sugars.ThreeA6);
+    await selectMonomer(page, Bases.NBebnzylAdenine);
     await page.getByTestId('add-to-presets-btn').click();
     await page.getByTestId('3A6(baA)_baA_3A6_.').click();
     await clickInTheMiddleOfTheScreen(page);
@@ -560,12 +519,8 @@ test.describe('RNA Library', () => {
     Description: Sugar-Phosphate Combination added to Canvas.
     */
     await expandRnaBuilder(page);
-    await selectMonomer(DropDown.SugarsDropDown, Sugars.ThreeA6, page);
-    await selectMonomer(
-      DropDown.PhosphatesDropDown,
-      Phosphates.Boranophosphate,
-      page,
-    );
+    await selectMonomer(page, Sugars.ThreeA6);
+    await selectMonomer(page, Phosphates.Boranophosphate);
     await page.getByTestId('add-to-presets-btn').click();
     await page.getByTestId('3A6()bP_._3A6_bP').click();
     await clickInTheMiddleOfTheScreen(page);
@@ -579,12 +534,8 @@ test.describe('RNA Library', () => {
     Description: Base-Phosphate Combination not added to Canvas.
     */
     await expandRnaBuilder(page);
-    await selectMonomer(DropDown.BasesDropDown, Bases.NBebnzylAdenine, page);
-    await selectMonomer(
-      DropDown.PhosphatesDropDown,
-      Phosphates.Boranophosphate,
-      page,
-    );
+    await selectMonomer(page, Bases.NBebnzylAdenine);
+    await selectMonomer(page, Phosphates.Boranophosphate);
     await page.getByTestId('add-to-presets-btn').click();
     await page.getByTestId('(baA)bP_baA_._bP').click();
     await moveMouseToTheMiddleOfTheScreen(page);
@@ -776,11 +727,7 @@ test.describe('RNA Library', () => {
     Description: Bond does not remain on the canvas and returns to original position.
     Test working incorrect now because we have bug https://github.com/epam/ketcher/issues/3539
     */
-    await addMonomerToCenterOfCanvas(
-      DropDown.SugarsDropDown,
-      Sugars.TwentyFiveR,
-      page,
-    );
+    await addMonomerToCenterOfCanvas(page, Sugars.TwentyFiveR);
     await selectSingleBondTool(page);
     await page.getByText('25R').locator('..').first().click();
     await pressEscapeWhenPullBond(page);
@@ -823,7 +770,6 @@ test.describe('RNA Library', () => {
     /* 
     Test case: Open&save files
     Description: File saved with three Monomers as .ket file
-    Test working as not expected. API getKet returns an incorrect ket.
     */
     await openFileAndAddToCanvas('KET/monomers-connected-with-bonds.ket', page);
     const expectedFile = await getKet(page);

@@ -131,17 +131,31 @@ export async function selectPhosphate(phosphateName: Phosphates, page: Page) {
   await page.getByTestId(phosphateName).click();
 }
 
-export enum DropDown {
-  SugarsDropDown = 'summary-Sugars',
-  BasesDropDown = 'summary-Bases',
-  PhosphatesDropDown = 'summary-Phosphates',
+export enum RnaPartDropDown {
+  Sugars = 'summary-Sugars',
+  Bases = 'summary-Bases',
+  Phosphates = 'summary-Phosphates',
 }
+
 export async function selectMonomer(
-  monomersDropDown: DropDown,
-  monomerType: Sugars | Bases | Phosphates,
   page: Page,
+  monomerType: Sugars | Bases | Phosphates,
 ) {
-  await page.getByTestId(monomersDropDown).click();
+  const isSugar = Object.values(Sugars).includes(monomerType as Sugars);
+  const isBase = Object.values(Bases).includes(monomerType as Bases);
+  const isPhosphate = Object.values(Phosphates).includes(
+    monomerType as Phosphates,
+  );
+
+  if (isSugar) {
+    await page.getByTestId(RnaPartDropDown.Sugars).click();
+  }
+  if (isBase) {
+    await page.getByTestId(RnaPartDropDown.Bases).click();
+  }
+  if (isPhosphate) {
+    await page.getByTestId(RnaPartDropDown.Phosphates).click();
+  }
   await page.getByTestId(monomerType).click();
 }
 

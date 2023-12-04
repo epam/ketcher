@@ -4,13 +4,28 @@ import {
 } from '@utils/macromolecules';
 import { Page, test } from '@playwright/test';
 import {
+  FILE_TEST_DATA,
+  TopPanelButton,
+  clickInTheMiddleOfTheScreen,
   openFileAndAddToCanvas,
+  pressButton,
+  selectTopPanelButton,
   takeEditorScreenshot,
   takeMonomerLibraryScreenshot,
   takePageScreenshot,
+  waitForLoad,
   waitForPageInit,
   waitForRender,
 } from '@utils';
+
+async function pasteFromClipboard(page: Page, fileFormats: string) {
+  await selectTopPanelButton(TopPanelButton.Open, page);
+  await page.getByText('Paste from clipboard').click();
+  await page.getByRole('dialog').getByRole('textbox').fill(fileFormats);
+  await waitForLoad(page, async () => {
+    await pressButton(page, 'Add to Canvas');
+  });
+}
 
 async function addToFavoritesMonomers(page: Page) {
   await page.getByTestId('Bal___beta-Alanine').getByText('★').click();
@@ -232,6 +247,54 @@ test.describe('Macro-Micro-Switcher', () => {
     await turnOnMacromoleculesEditor(page);
     await takeMonomerLibraryScreenshot(page);
   });
+
+  test('Add to Favorites section Peptides, Sugars, Bases, Phosphates and CHEMs then Hide Library and switch to Micro mode and back', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Macro-Micro-Switcher
+    Description: Added to Favorites section Peptides, Sugars, Bases, Phosphates and CHEMs 
+    when Hide Library and switching from Macro mode to Micro mode and back to Macro is saved
+    */
+    await addToFavoritesMonomers(page);
+    await page.getByText('Hide').click();
+    await turnOnMicromoleculesEditor(page);
+    await turnOnMacromoleculesEditor(page);
+    await page.getByTestId('FAVORITES-TAB').click();
+    await takeMonomerLibraryScreenshot(page);
+  });
+
+  test('Check that the Ket-structure pasted from the clipboard in Macro mode  is visible in Micro mode.', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Macro-Micro-Switcher
+    Description: Ket-structure pasted from the clipboard in Macro mode is visible in Micro mode
+    */
+    await pasteFromClipboard(
+      page,
+      FILE_TEST_DATA.oneFunctionalGroupExpandedKet,
+    );
+    await clickInTheMiddleOfTheScreen(page);
+    await turnOnMicromoleculesEditor(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check that the Mol-structure pasted from the clipboard in Macro mode is visible in Micro mode.', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Macro-Micro-Switcher
+    Description: Mol-structure pasted from the clipboard in Macro mode  is visible in Micro mode
+    */
+    await pasteFromClipboard(
+      page,
+      FILE_TEST_DATA.functionalGroupsExpandedContractedV3000,
+    );
+    await clickInTheMiddleOfTheScreen(page);
+    await turnOnMicromoleculesEditor(page);
+    await takeEditorScreenshot(page);
+  });
 });
 
 test.describe('Macro-Micro-Switcher', () => {
@@ -320,9 +383,55 @@ test.describe('Macro-Micro-Switcher', () => {
   }) => {
     /* 
     Test case: Macro-Micro-Switcher
-    Description: In Macro mode ABS, AND and OR isn not appear
+    Description: In Macro mode ABS, AND and OR is not appear
     */
     await openFileAndAddToCanvas('KET/three-alpha-d-allopyranose.ket', page);
+    await turnOnMacromoleculesEditor(page);
+    await page.getByText('F1').locator('..').hover();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Create two Benzene rings structure with Reaction Plus Tool in Micro mode and switch to Macro mode.', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Macro-Micro-Switcher
+    Description: In Macro mode plus sign is not appear
+    */
+    await openFileAndAddToCanvas('KET/two-benzene-and-plus.ket', page);
+    await turnOnMacromoleculesEditor(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check that the Ket-structure pasted from the clipboard in Micro mode  is visible in Macro mode when hover on it.', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Macro-Micro-Switcher
+    Description: Ket-structure pasted from the clipboard in Micro mode  is visible in Macro mode when hover on it
+    */
+    await pasteFromClipboard(
+      page,
+      FILE_TEST_DATA.oneFunctionalGroupExpandedKet,
+    );
+    await clickInTheMiddleOfTheScreen(page);
+    await turnOnMacromoleculesEditor(page);
+    await page.getByText('F1').locator('..').hover();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check that the Mol-structure pasted from the clipboard in Micro mode is visible in Macro mode when hover on it.', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Macro-Micro-Switcher
+    Description: Mol-structure pasted from the clipboard in Micro mode  is visible in Macro mode when hover on it
+    */
+    await pasteFromClipboard(
+      page,
+      FILE_TEST_DATA.functionalGroupsExpandedContractedV3000,
+    );
+    await clickInTheMiddleOfTheScreen(page);
     await turnOnMacromoleculesEditor(page);
     await page.getByText('F1').locator('..').hover();
     await takeEditorScreenshot(page);

@@ -488,7 +488,7 @@ class ReAtom extends ReObject {
       text += `.${aamText}.`;
     }
 
-    if (text.length > 0 && !isSmartPropertiesExist) {
+    if (text.length > 0) {
       const elem = Elements.get(this.a.label);
       const aamPath = render.paper.text(ps.x, ps.y, text).attr({
         font: options.font,

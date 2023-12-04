@@ -39,7 +39,7 @@ export class AttachmentPoint {
   private bodyHeight: number;
   private attachmentPointName: string;
   private canvasOffset: Coordinates;
-  private centerOFMonomer: Coordinates;
+  private centerOfMonomer: Coordinates;
   private element: Selection<SVGGElement, void, HTMLElement, never> | undefined;
   private hoverableArea:
     | Selection<SVGGElement, void, HTMLElement, never>
@@ -57,13 +57,12 @@ export class AttachmentPoint {
     this.monomer = constructorParams.monomer;
     this.bodyWidth = constructorParams.bodyWidth;
     this.bodyHeight = constructorParams.bodyHeight;
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    this.canvasOffset = constructorParams.canvas
-      .node()!
-      .getBoundingClientRect();
+    this.canvasOffset =
+      constructorParams.canvas.node()?.getBoundingClientRect() ||
+      new DOMRect(0, 0, 0, 0);
     this.attachmentPointName = constructorParams.attachmentPointName;
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    this.centerOFMonomer = constructorParams.monomer.renderer!.center;
+    this.centerOfMonomer =
+      constructorParams.monomer.renderer?.center || new Vec2(0, 0, 0);
     this.isSnake = constructorParams.isSnake;
     this.isUsed = constructorParams.isUsed;
     this.initialAngle = constructorParams.angle;
@@ -253,8 +252,8 @@ export class AttachmentPoint {
     ] = this.getCoordinates(angleDegrees);
 
     const attachmentToCenterCoordinates = canvasToMonomerCoordinates(
-      this.centerOFMonomer,
-      this.centerOFMonomer,
+      this.centerOfMonomer,
+      this.centerOfMonomer,
       this.bodyWidth,
       this.bodyHeight,
     );
@@ -301,21 +300,21 @@ export class AttachmentPoint {
 
     const attachmentToBorderCoordinates = canvasToMonomerCoordinates(
       pointOnBorder,
-      this.centerOFMonomer,
+      this.centerOfMonomer,
       this.bodyWidth,
       this.bodyHeight,
     );
 
     const attachmentPointCoordinates = canvasToMonomerCoordinates(
       pointOfAttachment,
-      this.centerOFMonomer,
+      this.centerOfMonomer,
       this.bodyWidth,
       this.bodyHeight,
     );
 
     const labelCoordinates = canvasToMonomerCoordinates(
       labelPoint,
-      this.centerOFMonomer,
+      this.centerOfMonomer,
       this.bodyWidth,
       this.bodyHeight,
     );

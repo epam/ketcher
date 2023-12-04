@@ -26,6 +26,7 @@ import { StructFormatter, SupportedFormat } from './structFormatter.types';
 
 import { KetSerializer } from 'domain/serializers';
 import { Struct } from 'domain/entities';
+import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import { getPropertiesByFormat } from './formatProperties';
 import { KetcherLogger } from 'utilities';
 import { SmilesFormatter } from './smilesFormatter';
@@ -58,11 +59,17 @@ export class ServerFormatter implements StructFormatter {
     this.#options = options;
   }
 
-  async getStructureFromStructAsync(struct: Struct): Promise<string> {
+  async getStructureFromStructAsync(
+    struct: Struct,
+    drawingEntitiesManager?: DrawingEntitiesManager,
+  ): Promise<string> {
     const formatProperties = getPropertiesByFormat(this.#format);
 
     try {
-      const stringifiedStruct = this.#ketSerializer.serialize(struct);
+      const stringifiedStruct = this.#ketSerializer.serialize(
+        struct,
+        drawingEntitiesManager,
+      );
       const convertResult = await this.#structService.convert(
         {
           struct: stringifiedStruct,

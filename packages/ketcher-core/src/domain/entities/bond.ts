@@ -263,7 +263,7 @@ export class Bond {
 
   isQuery(): boolean {
     const TYPES = Bond.PATTERN.TYPE;
-    const isQueryBondType = [
+    const QUERY_BOND_TYPES = [
       TYPES.ANY,
       TYPES.SINGLE_OR_DOUBLE,
       TYPES.SINGLE_OR_AROMATIC,
@@ -272,7 +272,7 @@ export class Bond {
     ];
     return (
       this.customQuery !== null ||
-      isQueryBondType.includes(this.type) ||
+      QUERY_BOND_TYPES.includes(this.type) ||
       (TYPES.SINGLE === this.type && this.stereo === Bond.PATTERN.STEREO.EITHER)
     );
   }

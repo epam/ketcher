@@ -449,8 +449,16 @@ class ReAtom extends ReObject {
         ...this.a,
         ...this.a.queryProperties,
       });
+    let shortenCustomQueryText = customQueryText;
+    let customQueryTooltipText: string | undefined;
+
+    if (shortenCustomQueryText.length > 8) {
+      customQueryTooltipText = shortenCustomQueryText;
+      shortenCustomQueryText = `${shortenCustomQueryText.substring(0, 8)}...`;
+    }
+
     const queryAttrsText = isSmartPropertiesExist
-      ? customQueryText
+      ? shortenCustomQueryText
       : getQueryAttrsText(this);
 
     // we render them together to avoid possible collisions
@@ -480,7 +488,7 @@ class ReAtom extends ReObject {
       text += `.${aamText}.`;
     }
 
-    if (text.length > 0) {
+    if (text.length > 0 && !isSmartPropertiesExist) {
       const elem = Elements.get(this.a.label);
       const aamPath = render.paper.text(ps.x, ps.y, text).attr({
         font: options.font,
@@ -511,6 +519,10 @@ class ReAtom extends ReObject {
       dir = dir.scaled(8 + t);
       pathAndRBoxTranslate(aamPath, aamBox, dir.x, dir.y);
       restruct.addReObjectPath(LayerMap.data, this.visel, aamPath, ps, true);
+
+      if (customQueryTooltipText) {
+        addTooltip(aamPath.node, customQueryTooltipText);
+      }
     }
 
     // Checking whether atom is highlighted and what's the last color
@@ -743,9 +755,9 @@ function shouldHydrogenBeOnLeft(struct, atom) {
 
   return false;
 }
-function addTooltip(label: ElemAttr, text: string) {
+function addTooltip(node, text: string) {
   const tooltip = `<p>${text.split(/(?<=[;,])/).join(' ')}</p>`;
-  label?.path.node.childNodes[0].setAttribute('data-tooltip', tooltip);
+  node.childNodes[0].setAttribute('data-tooltip', tooltip);
 }
 
 function buildLabel(
@@ -823,7 +835,7 @@ function buildLabel(
       .attr({ stroke: isMonomerAttachmentPointUsed ? '#B4B9D6' : '#7C7C7F' });
   }
   if (tooltip) {
-    addTooltip(label, tooltip);
+    addTooltip(label.path.node, tooltip);
   }
 
   label.rbb = util.relBox(label.path.getBBox());

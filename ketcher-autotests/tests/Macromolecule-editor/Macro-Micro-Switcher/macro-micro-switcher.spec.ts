@@ -414,7 +414,7 @@ test.describe('Macro-Micro-Switcher', () => {
     );
     await clickInTheMiddleOfTheScreen(page);
     await turnOnMacromoleculesEditor(page);
-    await page.getByText('F1').locator('..').hover();
+    await page.getByText('F1').locator('..').click();
     await takeEditorScreenshot(page);
   });
 

@@ -18,6 +18,18 @@ import {
   waitForRender,
 } from '@utils';
 
+async function zoomWithMouseWheel(
+  page: Page,
+  numberOfMouseWheelScroll: number,
+  randomMouseWheelScroll: number,
+) {
+  await page.keyboard.down('Control');
+  for (let i = 0; i < numberOfMouseWheelScroll; i++) {
+    await page.mouse.wheel(0, randomMouseWheelScroll);
+  }
+  await page.keyboard.up('Control');
+}
+
 async function pasteFromClipboard(page: Page, fileFormats: string) {
   await selectTopPanelButton(TopPanelButton.Open, page);
   await page.getByText('Paste from clipboard').click();
@@ -51,7 +63,7 @@ test.describe('Macro-Micro-Switcher', () => {
     await turnOnMacromoleculesEditor(page);
   });
 
-  test('Check that preview window of macro structure doesn not change in micro mode ', async ({
+  test('Check that preview window of macro structure does not change in micro mode ', async ({
     page,
   }) => {
     /* 
@@ -173,28 +185,19 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher
     Description: Zoom In/Zoom Out/ Reset Zoom Tools work after switching to Macro mode
     */
-    const randomNegativeNumber = -80;
-    const randomPositiveNumber = 50;
-    const numberOfMouseWheelScroll = 5;
     await openFileAndAddToCanvas(
       'KET/three-monomers-connected-with-bonds.ket',
       page,
     );
     await turnOnMicromoleculesEditor(page);
     await turnOnMacromoleculesEditor(page);
-    await page.keyboard.down('Control');
-    for (let i = 0; i < numberOfMouseWheelScroll; i++) {
-      await page.mouse.wheel(0, randomNegativeNumber);
-    }
-    await page.keyboard.up('Control');
+    // eslint-disable-next-line no-magic-numbers
+    await zoomWithMouseWheel(page, 5, -80);
 
     await takeEditorScreenshot(page);
 
-    await page.keyboard.down('Control');
-    for (let i = 0; i < numberOfMouseWheelScroll; i++) {
-      await page.mouse.wheel(0, randomPositiveNumber);
-    }
-    await page.keyboard.up('Control');
+    // eslint-disable-next-line no-magic-numbers
+    await zoomWithMouseWheel(page, 5, 50);
 
     await takeEditorScreenshot(page);
     await page.getByTestId('reset-zoom-button').click();
@@ -209,8 +212,6 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: Zoomed In/Out structure from Macro mode become standart 100% when switch to Micro mode and again to Macro mode
     */
     const numberOfPressZoomIn = 5;
-    const randomPositiveNumber = 50;
-    const numberOfMouseWheelScroll = 5;
     await openFileAndAddToCanvas(
       'KET/three-monomers-connected-with-bonds.ket',
       page,
@@ -223,11 +224,8 @@ test.describe('Macro-Micro-Switcher', () => {
     await turnOnMicromoleculesEditor(page);
     await takeEditorScreenshot(page);
 
-    await page.keyboard.down('Control');
-    for (let i = 0; i < numberOfMouseWheelScroll; i++) {
-      await page.mouse.wheel(0, randomPositiveNumber);
-    }
-    await page.keyboard.up('Control');
+    // eslint-disable-next-line no-magic-numbers
+    await zoomWithMouseWheel(page, 5, 50);
 
     await turnOnMacromoleculesEditor(page);
     await takeEditorScreenshot(page);

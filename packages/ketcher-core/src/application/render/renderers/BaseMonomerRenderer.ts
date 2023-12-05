@@ -236,43 +236,38 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
 
   private appendLabel(rootElement: D3SvgElementSelection<SVGGElement, void>) {
     const lineHeight = 12;
-    const maxCharPerLine = 8;
     const paddingForHexagon = 5;
-    const textElement = rootElement
+    const shadowTextElement = rootElement
+      .append('text')
+      .attr('id', 'textId')
+      .text(this.monomer.label);
+
+    const textBBox = (shadowTextElement.node() as SVGTextElement).getBBox();
+    const lines = textBBox.width >= this.width ? 2 : 1;
+
+    rootElement.select('#textId').remove();
+
+    rootElement
       .append('foreignObject')
+      .text(this.monomer.label)
       .attr('width', this.width - paddingForHexagon * 2)
       .attr('height', this.height)
       .attr('x', paddingForHexagon)
+      .attr('y', (this.height - lineHeight * lines) / 2)
       .attr('font-size', '12px')
       .attr('line-height', lineHeight)
       .attr('font-weight', '700')
       .style('color', this.textColor)
       .style('text-overflow', 'ellipsis')
-        .style('overflow', 'hidden')
-        .style('display', '-webkit-box')
-        .style(' -webkit-line-clamp', 2)
-        .style('line-clamp', 2)
-        .style('-webkit-box-orient', 'vertical')
-        //.style('white-space', 'nowrap')
+      .style('overflow', 'hidden')
+      .style('display', '-webkit-box')
+      .style(' -webkit-line-clamp', lines)
+      .style('line-clamp', lines)
+      .style('-webkit-box-orient', 'vertical')
       .style('text-align', 'center')
       .style('cursor', 'pointer')
       .style('user-select', 'none')
       .attr('pointer-events', 'none');
-
-    let label = this.monomer.label;
-    /*if (label.length > maxCharPerLine) {
-      const sliced = label.slice(0, 12).trim();
-      label =
-        (sliced.includes(' ') || sliced.includes('-')
-          ? sliced
-          : sliced.slice(0, maxCharPerLine - 3)) + '...';
-    }*/
-
-    const lines = label.length > maxCharPerLine ? 2 : 1;
-
-    textElement
-        .text(label)
-        .attr('y', (this.height - lines * lineHeight) / 2);
   }
 
   public appendHover(

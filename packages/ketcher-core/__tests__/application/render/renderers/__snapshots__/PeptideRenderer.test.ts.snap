@@ -27,18 +27,19 @@ exports[`PeptideRenderer should render peptide 1`] = `
         href="#peptide"
         style="cursor: pointer;"
       />
-      <text
-        fill="black"
+      <foreignobject
         font-size="12px"
         font-weight="700"
-        line-height="12px"
+        height="20"
+        line-height="12"
         pointer-events="none"
-        style="cursor: pointer; user-select: none;"
-        x="0"
-        y="10"
+        style="color: black; text-overflow: ellipsis; overflow: hidden; display: -webkit-box; line-clamp: 2; text-align: center; cursor: pointer; user-select: none;"
+        width="20"
+        x="5"
+        y="-2"
       >
         Abc
-      </text>
+      </foreignobject>
       <text
         direction="rtl"
         fill="#7C7C7F"

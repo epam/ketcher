@@ -127,14 +127,17 @@ export class CoreEditor {
 
   // todo we need to create abstraction layer for modes in future similar to the tools layer
   private onSelectMode(isSnakeMode: boolean) {
-    PolymerBondRenderer.setSnakeMode(isSnakeMode);
+    const command = PolymerBondRenderer.setSnakeMode(isSnakeMode);
     const modelChanges = this.drawingEntitiesManager.reArrangeChains(
       this.canvas.width.baseVal.value,
       isSnakeMode,
     );
+
+    command.merge(modelChanges);
+
     const history = new EditorHistory(this);
-    history.update(modelChanges);
-    this.renderersContainer.update(modelChanges);
+    history.update(command);
+    this.renderersContainer.update(command);
   }
 
   private onSelectHistory(name: HistoryOperationType) {

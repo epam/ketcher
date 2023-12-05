@@ -321,6 +321,21 @@ function MenuComponent() {
     }
   };
 
+  const onSnakeModeChange = useCallback(
+    (snakeMode: boolean) => {
+      dispatch(selectMode(snakeMode));
+    },
+    [dispatch],
+  );
+
+  useEffect(() => {
+    editor?.events.snakeModeChange.add(onSnakeModeChange);
+
+    return () => {
+      editor?.events.snakeModeChange.remove(onSnakeModeChange);
+    };
+  }, [onSnakeModeChange, editor?.events.snakeModeChange]);
+
   return (
     <Menu
       testId="left-toolbar"

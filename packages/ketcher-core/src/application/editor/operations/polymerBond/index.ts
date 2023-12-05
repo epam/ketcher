@@ -18,6 +18,7 @@ import { PolymerBond } from 'domain/entities/PolymerBond';
 import { RenderersManager } from 'application/render/renderers/RenderersManager';
 import { Operation } from 'domain/entities/Operation';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
+import { PolymerBondRenderer } from 'application/render';
 
 export class PolymerBondAddOperation implements Operation {
   public polymerBond;
@@ -120,5 +121,21 @@ export class PolymerBondFinishCreationOperation implements Operation {
   public invert(renderersManager: RenderersManager) {
     this.deletePolymerBondCreationModelChange(this.polymerBond);
     renderersManager.deletePolymerBond(this.polymerBond);
+  }
+}
+
+export class SelectSnakeModeOperation implements Operation {
+  public snakeMode;
+
+  constructor(snakeMode: boolean) {
+    this.snakeMode = snakeMode;
+  }
+
+  public execute(): void {
+    PolymerBondRenderer.setSnakeMode(this.snakeMode);
+  }
+
+  public invert(): void {
+    PolymerBondRenderer.setSnakeMode(!this.snakeMode);
   }
 }

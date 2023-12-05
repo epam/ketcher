@@ -6,6 +6,9 @@ import {
   canvasSelector,
   drawnStructuresSelector,
 } from 'application/editor/constants';
+import { Command } from 'domain/entities/Command';
+import { CoreEditor } from 'application/editor';
+import { SelectSnakeModeOperation } from 'application/editor/operations/polymerBond';
 
 export interface IBaseRenderer {
   show(theme): void;
@@ -30,8 +33,16 @@ export abstract class BaseRenderer implements IBaseRenderer {
   >;
 
   protected canvasWrapper: D3SvgElementSelection<SVGSVGElement, void>;
-  static setSnakeMode(isSnakeMode) {
+
+  static setSnakeMode(isSnakeMode: boolean) {
+    const command = new Command();
+    command.addOperation(new SelectSnakeModeOperation(isSnakeMode));
+
+    const editor = CoreEditor.provideEditorInstance();
+    editor.events.snakeModeChange.dispatch(isSnakeMode);
+
     BaseRenderer.isSnakeMode = isSnakeMode;
+    return command;
   }
 
   protected canvas: D3SvgElementSelection<SVGSVGElement, void>;

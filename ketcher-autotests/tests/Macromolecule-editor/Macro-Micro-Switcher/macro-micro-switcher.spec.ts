@@ -7,6 +7,7 @@ import {
   FILE_TEST_DATA,
   TopPanelButton,
   clickInTheMiddleOfTheScreen,
+  dragMouseTo,
   openFileAndAddToCanvas,
   pressButton,
   selectTopPanelButton,
@@ -17,6 +18,12 @@ import {
   waitForPageInit,
   waitForRender,
 } from '@utils';
+import { rotateToCoordinates } from '@tests/Structure-Creating-&-Editing/Actions-With-Structures/Rotation/utils';
+
+export const COORDINATES_TO_PERFORM_ROTATION = {
+  x: 20,
+  y: 100,
+};
 
 async function zoomWithMouseWheel(
   page: Page,
@@ -142,6 +149,106 @@ test.describe('Macro-Micro-Switcher', () => {
     */
     await openFileAndAddToCanvas('KET/stereo-and-structure.ket', page);
     await turnOnMicromoleculesEditor(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Create a sequence of monomers in macro mode then switch to micro mode select the entire structure and move it to a new position', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Macro-Micro-Switcher
+    Description: Sequence of monomers moved to a new position in Micro mode
+    Now test working not properly because we have bug https://github.com/epam/ketcher/issues/3654
+    */
+    const x = 400;
+    const y = 400;
+    await openFileAndAddToCanvas(
+      'KET/three-monomers-connected-with-bonds.ket',
+      page,
+    );
+    await turnOnMicromoleculesEditor(page);
+    await page.keyboard.press('Control+a');
+    await page.getByText('Edc').hover();
+    await dragMouseTo(x, y, page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Create a sequence of monomers in macro mode then switch to micro mode select the entire structure and rotate it', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Macro-Micro-Switcher
+    Description: Sequence of monomers rotate in Micro mode
+    Now test working not properly because we have bug https://github.com/epam/ketcher/issues/3655
+    */
+    await openFileAndAddToCanvas(
+      'KET/three-monomers-connected-with-bonds.ket',
+      page,
+    );
+    await turnOnMicromoleculesEditor(page);
+    await page.keyboard.press('Control+a');
+    await rotateToCoordinates(page, COORDINATES_TO_PERFORM_ROTATION);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Add monomers in macro mode then switch to micro mode and expand them', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Macro-Micro-Switcher
+    Description: Abbreviation of monomer expanded without errors.
+    Now test working not properly because we have bug https://github.com/epam/ketcher/issues/3659
+    */
+    await openFileAndAddToCanvas(
+      'KET/three-monomers-connected-with-bonds.ket',
+      page,
+    );
+    await turnOnMicromoleculesEditor(page);
+    await page.getByText('A6OH').click({ button: 'right' });
+    await page.getByText('Expand Abbreviation').click();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Add monomers in macro mode then switch to micro mode remove abbreviation and switch to macro mode', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Macro-Micro-Switcher
+    Description: After switch to Macro mode monomer exist on canvas.
+    Now test working not properly because we have bug https://github.com/epam/ketcher/issues/3660
+    */
+    await openFileAndAddToCanvas(
+      'KET/three-monomers-connected-with-bonds.ket',
+      page,
+    );
+    await turnOnMicromoleculesEditor(page);
+    await page.getByText('A6OH').click({ button: 'right' });
+    await page.getByText('Remove Abbreviation').click();
+    await turnOnMacromoleculesEditor(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Add monomers in macro mode then switch to micro mode and move them to a new position several times', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Macro-Micro-Switcher
+    Description: Sequence of monomers moved to a new position in Micro mode
+    Now test working not properly because we have bug https://github.com/epam/ketcher/issues/3658
+    */
+    const x1 = 400;
+    const y1 = 400;
+    const x2 = 500;
+    const y2 = 500;
+    await openFileAndAddToCanvas(
+      'KET/three-monomers-not-connected-with-bonds.ket',
+      page,
+    );
+    await turnOnMicromoleculesEditor(page);
+    await page.getByText('Edc').hover();
+    await dragMouseTo(x1, y1, page);
+    await page.getByText('Edc').hover();
+    await dragMouseTo(x2, y2, page);
     await takeEditorScreenshot(page);
   });
 
@@ -433,5 +540,19 @@ test.describe('Macro-Micro-Switcher', () => {
     await turnOnMacromoleculesEditor(page);
     await page.getByText('F1').locator('..').hover();
     await takeEditorScreenshot(page);
+  });
+
+  test('Make full screen mode in micro mode and switch to macro mode.', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Macro-Micro-Switcher
+    Description:  Full screen mode is not reset
+    Test working not properly now because we have bug https://github.com/epam/ketcher/issues/3656
+    */
+    await openFileAndAddToCanvas('KET/two-benzene-and-plus.ket', page);
+    await page.getByTestId('fullscreen-mode-button').click();
+    await turnOnMacromoleculesEditor(page);
+    await takePageScreenshot(page);
   });
 });

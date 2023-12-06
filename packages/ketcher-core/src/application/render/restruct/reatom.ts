@@ -49,6 +49,7 @@ interface ElemAttr {
 }
 
 const StereoLabelMinOpacity = 0.3;
+const MAX_LABEL_LENGTH = 8;
 
 export enum ShowHydrogenLabels {
   Off = 'off',
@@ -275,7 +276,6 @@ class ReAtom extends ReObject {
     let isHydrogen;
     let label;
     let index: any = null;
-    const isSmartPropertiesExist = checkIsSmartPropertiesExist(this.a);
 
     if (this.showLabel) {
       const data = buildLabel(this, render.paper, ps, options);
@@ -340,7 +340,7 @@ class ReAtom extends ReObject {
           true,
         );
       }
-      if (this.a.isotope !== null && !isSmartPropertiesExist) {
+      if (this.a.isotope !== null) {
         const isotope = showIsotope(this, render, leftMargin);
         leftMargin -= isotope.rbb.width + delta;
         restruct.addReObjectPath(
@@ -385,11 +385,7 @@ class ReAtom extends ReObject {
         }
       }
 
-      if (
-        this.a.charge !== null &&
-        options.showCharge &&
-        !isSmartPropertiesExist
-      ) {
+      if (this.a.charge !== null && options.showCharge) {
         const charge = showCharge(this, render, rightMargin);
         rightMargin += charge.rbb.width + delta;
         restruct.addReObjectPath(
@@ -400,11 +396,7 @@ class ReAtom extends ReObject {
           true,
         );
       }
-      if (
-        this.a.explicitValence >= 0 &&
-        options.showValence &&
-        !isSmartPropertiesExist
-      ) {
+      if (this.a.explicitValence >= 0 && options.showValence) {
         const valence = showExplicitValence(this, render, rightMargin);
         rightMargin += valence.rbb.width + delta;
         restruct.addReObjectPath(
@@ -443,23 +435,17 @@ class ReAtom extends ReObject {
 
     const stereoLabel = this.a.stereoLabel; // Enhanced Stereo
     const aamText = getAamText(this);
-    const customQueryText =
-      this.a.queryProperties.customQuery ||
-      getAtomCustomQuery({
-        ...this.a,
-        ...this.a.queryProperties,
-      });
+    const customQueryText = getOnlyQueryAttributesCustomQuery(this.a);
     let shortenCustomQueryText = customQueryText;
     let customQueryTooltipText: string | undefined;
 
-    if (shortenCustomQueryText.length > 8) {
+    if (shortenCustomQueryText.length > MAX_LABEL_LENGTH) {
       customQueryTooltipText = shortenCustomQueryText;
-      shortenCustomQueryText = `${shortenCustomQueryText.substring(0, 8)}...`;
+      shortenCustomQueryText = `${shortenCustomQueryText.substring(
+        0,
+        MAX_LABEL_LENGTH,
+      )}...`;
     }
-
-    const queryAttrsText = isSmartPropertiesExist
-      ? shortenCustomQueryText
-      : getQueryAttrsText(this);
 
     // we render them together to avoid possible collisions
 
@@ -480,8 +466,8 @@ class ReAtom extends ReObject {
       text = `${stereoLabel}\n`;
     }
 
-    if (queryAttrsText.length > 0) {
-      text += `${queryAttrsText}\n`;
+    if (shortenCustomQueryText.length > 0) {
+      text += `${shortenCustomQueryText}\n`;
     }
 
     if (aamText.length > 0) {
@@ -755,6 +741,20 @@ function shouldHydrogenBeOnLeft(struct, atom) {
 
   return false;
 }
+
+function getOnlyQueryAttributesCustomQuery(atom: Atom) {
+  const queryText =
+    atom.queryProperties.customQuery ||
+    getAtomCustomQuery(
+      {
+        ...atom,
+        ...atom.queryProperties,
+      },
+      true,
+    );
+  return queryText;
+}
+
 function addTooltip(node, text: string) {
   const tooltip = `<p>${text.split(/(?<=[;,])/).join(' ')}</p>`;
   node.childNodes[0].setAttribute('data-tooltip', tooltip);
@@ -800,7 +800,7 @@ function buildLabel(
       : '#585858';
   }
 
-  if (label.text?.length > 8) {
+  if (label.text?.length > MAX_LABEL_LENGTH) {
     tooltip = label.text;
     label.text = `${label.text?.substring(0, 8)}...`;
   }
@@ -1262,8 +1262,9 @@ export function checkIsSmartPropertiesExist(atom) {
   return smartsSpecificProperties.some((name) => atom.queryProperties?.[name]);
 }
 
-export function getAtomCustomQuery(atom) {
+export function getAtomCustomQuery(atom, includeOnlyQueryAttributes?: boolean) {
   let queryAttrsText = '';
+  const nonQueryAttributes = ['charge', 'explicitValence', 'isotope'];
 
   const addSemicolon = () => {
     if (queryAttrsText.length > 0) queryAttrsText += ';';
@@ -1283,6 +1284,7 @@ export function getAtomCustomQuery(atom) {
         : value;
       return charge[0] !== '-' ? `+${charge}` : charge;
     },
+    unsaturatedAtom: (value) => (Number(value) === 1 ? 'u' : ''),
     explicitValence: (value) => (Number(value) !== -1 ? `v${value}` : ''),
     ringBondCount: (value) => getRingConnectivity(Number(value)),
     substitutionCount: (value) => getDegree(Number(value)),
@@ -1296,6 +1298,13 @@ export function getAtomCustomQuery(atom) {
   };
 
   for (const propertyName in patterns) {
+    if (
+      includeOnlyQueryAttributes &&
+      nonQueryAttributes.includes(propertyName)
+    ) {
+      continue;
+    }
+
     const value = atom[propertyName];
     if (propertyName in atom && value !== null) {
       const attrText = patterns[propertyName](value, atom);

@@ -435,7 +435,9 @@ class ReAtom extends ReObject {
 
     const stereoLabel = this.a.stereoLabel; // Enhanced Stereo
     const aamText = getAamText(this);
-    const customQueryText = getOnlyQueryAttributesCustomQuery(this.a);
+    const customQueryText = checkIsSmartPropertiesExist(this.a)
+      ? getOnlyQueryAttributesCustomQuery(this.a)
+      : getQueryAttrsText(this);
     let shortenCustomQueryText = customQueryText;
     let customQueryTooltipText: string | undefined;
 

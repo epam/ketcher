@@ -374,7 +374,7 @@ export class AttachmentPoint {
 
     const pointOnBorder = findPointOnMonomerBorder(
       currentMonomerCenter,
-      (this.bodyWidth + this.bodyHeight) / 2,
+      (this.bodyWidth + this.bodyHeight) / 12,
     );
 
     const [labelPoint, pointOfAttachment] = findLabelPoint(

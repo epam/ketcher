@@ -105,7 +105,6 @@ export function getSearchFunction(
     angle = initialAngle,
   ) {
     const angleRadians = Vec2.degrees_to_radians(angle);
-
     const secondPoint = Vec2.findSecondPoint(coordStart, length, angleRadians);
 
     const diff = Vec2.diff(
@@ -134,14 +133,20 @@ export function getSearchFunction(
       newPointCoord.y,
     ) as Element;
 
-    let newAngle;
+    let newAngle, flipMultiplier;
     if (newPoint === monomer.renderer.bodyElement.node()) {
       newAngle = initialAngle;
+      flipMultiplier = 1;
     } else {
-      newAngle = initialAngle - 180;
+      newAngle = initialAngle;
+      flipMultiplier = -1;
     }
 
-    return findPointOnMonomerBorder(newCoordStart, newLength, newAngle);
+    return findPointOnMonomerBorder(
+      newCoordStart,
+      newLength,
+      newAngle * flipMultiplier,
+    );
   };
 }
 

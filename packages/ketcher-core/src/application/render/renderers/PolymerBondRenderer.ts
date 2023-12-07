@@ -9,6 +9,7 @@ import { Vec2 } from 'domain/entities';
 import { Peptide } from 'domain/entities/Peptide';
 import { Chem } from 'domain/entities/Chem';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
+import { SnakeMode } from 'application/editor/modes';
 
 const LINE_FROM_MONOMER_LENGTH = 15;
 const VERTICAL_LINE_LENGTH = 42;
@@ -57,7 +58,7 @@ export class PolymerBondRenderer extends BaseRenderer {
         this.polymerBond,
       );
     return (
-      BaseRenderer.isSnakeMode &&
+      SnakeMode.isEnabled &&
       ((this.attachmentPointsForSnakeBond.includes(
         firstMonomerAttachmentPoint as string,
       ) &&

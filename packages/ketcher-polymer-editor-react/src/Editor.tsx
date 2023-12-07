@@ -18,7 +18,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Global, ThemeProvider } from '@emotion/react';
 import { createTheme } from '@mui/material/styles';
 import { debounce, merge } from 'lodash';
-import { SdfSerializer } from 'ketcher-core';
+import { SdfSerializer, SnakeMode } from 'ketcher-core';
 import monomersData from './data/monomers.sdf';
 
 import { store } from 'state';
@@ -40,13 +40,11 @@ import {
   destroyEditor,
   selectEditor,
   selectEditorActiveTool,
-  selectEditorBondMode,
   selectTool,
   showPreview,
-  selectMode,
 } from 'state/common';
 import { loadMonomerLibrary } from 'state/library';
-import { useAppDispatch, useAppSelector } from 'hooks';
+import { useAppDispatch, useAppSelector, useSnakeMode } from 'hooks';
 import {
   closeErrorTooltip,
   openErrorTooltip,
@@ -298,15 +296,14 @@ function Editor({ theme, togglerComponent }: EditorProps) {
 function MenuComponent() {
   const dispatch = useAppDispatch();
   const activeTool = useAppSelector(selectEditorActiveTool);
-  const isSnakeMode = useAppSelector(selectEditorBondMode);
   const editor = useAppSelector(selectEditor);
   const activeMenuItems = [activeTool];
+  const isSnakeMode = useSnakeMode();
   if (isSnakeMode) activeMenuItems.push('snake-mode');
   const menuItemChanged = (name) => {
     if (modalComponentList[name]) {
       dispatch(openModal(name));
     } else if (name === 'snake-mode') {
-      dispatch(selectMode(!isSnakeMode));
       editor.events.selectMode.dispatch(!isSnakeMode);
     } else if (name === 'undo' || name === 'redo') {
       editor.events.selectHistory.dispatch(name);
@@ -320,21 +317,6 @@ function MenuComponent() {
       }
     }
   };
-
-  const onSnakeModeChange = useCallback(
-    (snakeMode: boolean) => {
-      dispatch(selectMode(snakeMode));
-    },
-    [dispatch],
-  );
-
-  useEffect(() => {
-    editor?.events.snakeModeChange.add(onSnakeModeChange);
-
-    return () => {
-      editor?.events.snakeModeChange.remove(onSnakeModeChange);
-    };
-  }, [onSnakeModeChange, editor?.events.snakeModeChange]);
 
   return (
     <Menu

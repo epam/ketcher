@@ -20,12 +20,12 @@ import {
   renderersEvents,
   resetEditorEvents,
 } from 'application/editor/editorEvents';
-import { PolymerBondRenderer } from 'application/render/renderers';
 import { EditorHistory, HistoryOperationType } from './EditorHistory';
 import { Editor } from 'application/editor/editor.types';
 import { MacromoleculesConverter } from 'application/editor/MacromoleculesConverter';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { ketcherProvider } from 'application/utils';
+import { SnakeMode } from './modes';
 
 interface ICoreEditorConstructorParams {
   theme;
@@ -127,7 +127,7 @@ export class CoreEditor {
 
   // todo we need to create abstraction layer for modes in future similar to the tools layer
   private onSelectMode(isSnakeMode: boolean) {
-    const command = PolymerBondRenderer.setSnakeMode(isSnakeMode);
+    const command = SnakeMode.setSnakeMode(isSnakeMode);
     const modelChanges = this.drawingEntitiesManager.reArrangeChains(
       this.canvas.width.baseVal.value,
       isSnakeMode,

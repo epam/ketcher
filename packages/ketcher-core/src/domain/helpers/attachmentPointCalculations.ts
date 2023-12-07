@@ -94,6 +94,24 @@ export function findLabelPoint(
   return [labelCoordinates, pointOfAttachment];
 }
 
+function findClosestElementFromPoint(point): Element {
+  const elements = document.elementsFromPoint(point.x, point.y);
+  let closest = elements[0];
+  let smallestDistance = Infinity;
+  for (const element of elements) {
+    const coords = element.getBoundingClientRect();
+    const distance = Vec2.dist(new Vec2(coords.x, coords.y), new Vec2(point));
+    if (element.id === 'polymer-editor-canvas') {
+      continue;
+    }
+    if (distance < smallestDistance) {
+      closest = element;
+      smallestDistance = distance;
+      break;
+    }
+  }
+  return closest;
+}
 export function getSearchFunction(
   initialAngle: number,
   canvasOffset: Coordinates,
@@ -105,11 +123,12 @@ export function getSearchFunction(
     angle = initialAngle,
   ) {
     const angleRadians = Vec2.degrees_to_radians(angle);
+
     const secondPoint = Vec2.findSecondPoint(coordStart, length, angleRadians);
 
     const diff = Vec2.diff(
+      new Vec2(secondPoint.x, coordStart.y),
       new Vec2(coordStart.x, coordStart.y),
-      new Vec2(secondPoint.x, secondPoint.y),
     );
 
     // exit recursion
@@ -128,25 +147,16 @@ export function getSearchFunction(
       x: Math.round(zoomedCoordinateOfSecondPoint.x) + canvasOffset.x,
       y: Math.round(zoomedCoordinateOfSecondPoint.y) + canvasOffset.y,
     };
-    const newPoint = document.elementFromPoint(
-      newPointCoord.x,
-      newPointCoord.y,
-    ) as Element;
+    const newPoint = findClosestElementFromPoint(newPointCoord) as Element;
 
-    let newAngle, flipMultiplier;
+    let newAngle;
     if (newPoint === monomer.renderer.bodyElement.node()) {
       newAngle = initialAngle;
-      flipMultiplier = 1;
     } else {
-      newAngle = initialAngle;
-      flipMultiplier = -1;
+      newAngle = initialAngle - 180;
     }
 
-    return findPointOnMonomerBorder(
-      newCoordStart,
-      newLength,
-      newAngle * flipMultiplier,
-    );
+    return findPointOnMonomerBorder(newCoordStart, newLength, newAngle);
   };
 }
 

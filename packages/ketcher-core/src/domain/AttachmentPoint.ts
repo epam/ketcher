@@ -203,21 +203,6 @@ export class AttachmentPoint {
     return hoverableAreaElement;
   }
 
-  public updateAttachmentPointStyleForHover() {
-    const isAttachmentPointUsed = this.monomer.isAttachmentPointUsed(
-      this.attachmentPointName as AttachmentPointName,
-    );
-    if (isAttachmentPointUsed) {
-      this.attachmentPoint
-        ?.select('line')
-        .style('stroke', AttachmentPoint.colors.fillUsed);
-      this.attachmentPoint
-        ?.select('circle')
-        .style('fill', AttachmentPoint.colors.fillUsed)
-        .attr('stroke', 'white');
-    }
-  }
-
   public appendAttachmentPoint() {
     let angleDegrees;
     let angleRadians: number;

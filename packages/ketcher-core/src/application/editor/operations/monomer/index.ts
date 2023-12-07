@@ -19,6 +19,7 @@
 import { RenderersManager } from 'application/render/renderers/RenderersManager';
 import { Operation } from 'domain/entities/Operation';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
+import { AttachmentPointName } from 'domain/types';
 
 export class MonomerAddOperation implements Operation {
   public monomer: BaseMonomer;
@@ -82,7 +83,7 @@ export class MonomerHoverOperation implements Operation {
 export class AttachmentPointHoverOperation implements Operation {
   constructor(
     private peptide: BaseMonomer,
-    private attachmentPointName: string,
+    private attachmentPointName: AttachmentPointName,
   ) {}
 
   public execute(renderersManager: RenderersManager) {

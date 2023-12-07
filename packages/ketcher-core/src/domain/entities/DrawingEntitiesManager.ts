@@ -534,7 +534,7 @@ export class DrawingEntitiesManager {
 
   public intendToStartAttachmenPointBondCreation(
     monomer: BaseMonomer,
-    attachmentPointName: string,
+    attachmentPointName: AttachmentPointName,
   ) {
     const command = new Command();
     monomer.turnOnHover();
@@ -585,7 +585,7 @@ export class DrawingEntitiesManager {
   public intendToFinishAttachmenPointBondCreation(
     monomer: BaseMonomer,
     bond: PolymerBond,
-    attachmentPointName: string,
+    attachmentPointName: AttachmentPointName,
     shouldCalculateBonds: boolean,
   ) {
     const command = new Command();

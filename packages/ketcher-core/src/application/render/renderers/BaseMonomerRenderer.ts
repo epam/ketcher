@@ -26,7 +26,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   private freeSectorsList: number[] = sectorsList;
 
   private attachmentPoints: AttachmentPoint[] | [] = [];
-  private hoveredAttachmenPoint: string | null = null;
+  private hoveredAttachmenPoint: AttachmentPointName | null = null;
 
   private monomerSymbolElement?: SVGUseElement | SVGRectElement;
   public monomerSize: { width: number; height: number };
@@ -129,23 +129,14 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     attachmentPoint.updateCoords();
   }
 
-  public drawAttachmentPoints(updateAttachmentPoints = false) {
+  public drawAttachmentPoints() {
     if (this.attachmentPoints.length) {
-      if (updateAttachmentPoints) {
-        this.attachmentPoints.forEach((point) => {
-          point.updateAttachmentPointStyleForHover();
-        });
-      }
       return;
     }
 
     // draw used attachment points
     this.monomer.usedAttachmentPointsNamesList.forEach((item) => {
-      const attachmentPoint = this.appendAttachmentPoint(
-        item,
-        undefined,
-        updateAttachmentPoints,
-      );
+      const attachmentPoint = this.appendAttachmentPoint(item);
       const angle = attachmentPoint.getAngle();
 
       this.attachmentPoints.push(attachmentPoint as never);
@@ -174,7 +165,6 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
         const attachmentPoint = this.appendAttachmentPoint(
           item,
           properAngleForFreeAttachmentPoint,
-          updateAttachmentPoints,
         );
         this.attachmentPoints.push(attachmentPoint as never);
 
@@ -191,24 +181,19 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
 
     unrenderedAtPoints.forEach((item) => {
       const customAngle = this.freeSectorsList.shift();
-      const attachmentPoint = this.appendAttachmentPoint(
-        item,
-        customAngle,
-        updateAttachmentPoints,
-      );
+      const attachmentPoint = this.appendAttachmentPoint(item, customAngle);
       this.attachmentPoints.push(attachmentPoint as never);
     });
   }
 
   public appendAttachmentPoint(
-    AttachmentPointName,
+    attachmentPointName: AttachmentPointName,
     customAngle?: number,
-    updateAttachmentPoints?: boolean,
   ) {
     let rotation;
 
-    if (!this.monomer.isAttachmentPointUsed(AttachmentPointName)) {
-      rotation = attachmentPointNumberToAngle[AttachmentPointName];
+    if (!this.monomer.isAttachmentPointUsed(attachmentPointName)) {
+      rotation = attachmentPointNumberToAngle[attachmentPointName];
     }
     const attachmentPointParams: AttachmentPointConstructorParams = {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -217,14 +202,13 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       bodyWidth: this.monomerSize.width,
       bodyHeight: this.monomerSize.height,
       canvas: this.canvasWrapper,
-      attachmentPointName: AttachmentPointName,
-      isUsed: this.monomer.isAttachmentPointUsed(AttachmentPointName),
+      attachmentPointName,
+      isUsed: this.monomer.isAttachmentPointUsed(attachmentPointName),
       isPotentiallyUsed:
-        this.monomer.isAttachmentPointPotentiallyUsed(AttachmentPointName) ||
-        (this.hoveredAttachmenPoint === AttachmentPointName &&
-          !updateAttachmentPoints),
+        this.monomer.isAttachmentPointPotentiallyUsed(attachmentPointName) ||
+        this.hoveredAttachmenPoint === attachmentPointName,
       angle: customAngle || rotation,
-      isSnake: !!this.isSnakeBondForAttachmentPoint(AttachmentPointName),
+      isSnake: !!this.isSnakeBondForAttachmentPoint(attachmentPointName),
     };
 
     const attPointInstance = new AttachmentPoint(attachmentPointParams);
@@ -239,7 +223,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     this.freeSectorsList = sectorsList;
   }
 
-  public hoverAttachmenPoint(attachmentPointName: string) {
+  public hoverAttachmenPoint(attachmentPointName: AttachmentPointName) {
     this.hoveredAttachmenPoint = attachmentPointName;
   }
 

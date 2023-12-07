@@ -15,6 +15,7 @@ import {
   setBondTopology,
   setBondType,
   setCustomQueryForBond,
+  setReactingCenter,
 } from '../utils';
 
 const defaultFileFormat = 'MDL Molfile V2000';
@@ -208,6 +209,20 @@ test.describe('Checking bond attributes in SMARTS format', () => {
       'Chain-option',
       '[#6](-[#6])(-[#6])-;!@[#6]',
     );
+  });
+
+  test('Setting reacting center', async ({ page }) => {
+    /**
+     * Test case: https://github.com/epam/ketcher/issues/3431
+     * Description: setting reacting center option should have no impact on SMARTS output but warning should be displayed
+     */
+    await setAndCheckBondProperties(
+      page,
+      setReactingCenter,
+      'Center-option',
+      '[#6](-[#6])(-[#6])-[#6]',
+    );
+    await checkSmartsWarnings(page);
   });
 
   // Custom query for bond

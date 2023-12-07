@@ -11,9 +11,11 @@ import {
 } from '@utils';
 import {
   checkSmartsValue,
+  checkSmartsWarnings,
   setAtomicMass,
   setCharge,
   setLabel,
+  setRadical,
   setValence,
 } from '../utils';
 
@@ -96,5 +98,19 @@ test.describe('Checking atom properties attributes in SMARTS format', () => {
       'IV',
       '[#6](-[#6])(-[#6;v4])-[#6]',
     );
+  });
+
+  test('Setting radical', async ({ page }) => {
+    /**
+     * Test case: https://github.com/epam/ketcher/issues/3431
+     * Description: setting redical option should have no impact on SMARTS output but warning should be displayed
+     */
+    await setAndCheckAtomProperties(
+      page,
+      setRadical,
+      'Monoradical',
+      '[#6](-[#6])(-[#6])-[#6]',
+    );
+    await checkSmartsWarnings(page);
   });
 });

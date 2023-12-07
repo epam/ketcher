@@ -126,6 +126,7 @@ test.describe('Macro-Micro-Switcher', () => {
     await page.getByText('Hide').click();
     await takePageScreenshot(page);
     await page.getByText('Show Library').click();
+    await page.getByText('Show Library').isVisible();
   });
 
   test('Check that the Mol-structure opened from the file in Macro mode is visible on Micro mode', async ({

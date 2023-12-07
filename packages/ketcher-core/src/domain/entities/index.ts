@@ -40,3 +40,6 @@ export * from './monomerMicromolecule';
 export * from './Peptide';
 export * from './BaseMonomer';
 export * from './Chem';
+export * from './Sugar';
+export * from './RNABase';
+export * from './Phosphate';

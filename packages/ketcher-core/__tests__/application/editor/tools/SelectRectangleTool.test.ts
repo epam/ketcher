@@ -132,20 +132,16 @@ describe('Select Rectangle Tool', () => {
       theme: polymerEditorTheme,
       canvas,
     });
-
-    const modelChanges = editor.drawingEntitiesManager.addMonomer(
-      peptideMonomerItem,
-      new Vec2(0, 0),
-    );
-    editor.renderersContainer.update(modelChanges);
-
-    const peptide = Array.from(editor.drawingEntitiesManager.monomers)[0][1];
     const onMove = jest.fn();
+
     jest
       .spyOn(BaseMonomerRenderer.prototype, 'moveSelection')
       .mockImplementation(onMove);
     jest
       .spyOn(PeptideRenderer.prototype, 'drawSelection')
+      .mockImplementation(() => {});
+    jest
+      .spyOn(BaseMonomerRenderer.prototype, 'redrawEnumeration')
       .mockImplementation(() => {});
     const fn = jest
       .spyOn(window, 'requestAnimationFrame')
@@ -154,6 +150,13 @@ describe('Select Rectangle Tool', () => {
         return 0;
       });
 
+    const modelChanges = editor.drawingEntitiesManager.addMonomer(
+      peptideMonomerItem,
+      new Vec2(0, 0),
+    );
+    editor.renderersContainer.update(modelChanges);
+
+    const peptide = Array.from(editor.drawingEntitiesManager.monomers)[0][1];
     const selectRectangleTool = new SelectRectangle(editor);
 
     const initialPosition = peptide.position;

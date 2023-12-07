@@ -30,6 +30,9 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
 
   private monomerSymbolElement?: SVGUseElement | SVGRectElement;
   public monomerSize: { width: number; height: number };
+  private enumerationElement?: D3SvgElementSelection<SVGTextElement, void>;
+
+  public enumeration: number | null = null;
 
   static isSelectable() {
     return true;
@@ -153,7 +156,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       }
     });
 
-    const unrenderedAtPoints: string[] = [];
+    const unrenderedAtPoints: AttachmentPointName[] = [];
 
     // draw free attachment points
     this.monomer.unUsedAttachmentPointsNamesList.forEach((item) => {
@@ -341,6 +344,32 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       .on('mouseup', (event) => {
         this.editorEvents.mouseUpMonomer.dispatch(event);
       });
+  }
+
+  protected abstract get enumerationElementPosition(): {
+    x: number;
+    y: number;
+  } | void;
+
+  public setEnumeration(enumeration: number | null) {
+    this.enumeration = enumeration;
+  }
+
+  protected appendEnumeration() {
+    assert(this.rootElement);
+    assert(this.enumerationElementPosition);
+    this.enumerationElement = this.rootElement
+      .append('text')
+      .attr('direction', 'rtl')
+      .attr('fill', '#7C7C7F')
+      .attr('x', this.enumerationElementPosition.x)
+      .attr('y', this.enumerationElementPosition.y)
+      .text(this.enumeration);
+  }
+
+  public redrawEnumeration() {
+    assert(this.enumerationElement);
+    this.enumerationElement.text(this.enumeration);
   }
 
   public show(theme) {

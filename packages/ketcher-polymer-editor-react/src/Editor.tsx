@@ -76,6 +76,8 @@ import { MonomerConnectionOnlyProps } from 'components/modal/modalContainer/type
 import { calculatePreviewPosition } from 'helpers';
 import StyledPreview from 'components/shared/MonomerPreview';
 import { ErrorModal } from 'components/modal/Error';
+import { useLoading } from './hooks/useLoading';
+import { Loader } from 'components/Loader';
 import { FullscreenButton } from 'components/FullscreenButton';
 
 const muiTheme = createTheme(muiOverrides);
@@ -129,6 +131,7 @@ function Editor({ theme, togglerComponent }: EditorProps) {
   const errorTooltipText = useAppSelector(selectErrorTooltipText);
   const editor = useAppSelector(selectEditor);
   const activeTool = useAppSelector(selectEditorActiveTool);
+  const isLoading = useLoading();
   let keyboardEventListener;
   const [isMonomerLibraryHidden, setIsMonomerLibraryHidden] = useState(false);
 
@@ -262,6 +265,7 @@ function Editor({ theme, togglerComponent }: EditorProps) {
             </defs>
             <g className="drawn-structures"></g>
           </svg>
+          {isLoading && <Loader />}
         </Layout.Main>
 
         <Layout.Right hide={isMonomerLibraryHidden}>

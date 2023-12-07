@@ -124,7 +124,7 @@ export abstract class BaseMonomer extends DrawingEntity {
   public get firstFreeAttachmentPoint() {
     const maxAttachmentPointNumber = this.getMaxAttachmentPointNumber();
     for (let i = 1; i <= maxAttachmentPointNumber; i++) {
-      const attachmentPoint = `R${i}`;
+      const attachmentPoint = `R${i}` as AttachmentPointName;
       if (
         this.hasAttachmentPoint(attachmentPoint) &&
         this.attachmentPointsToBonds[attachmentPoint] === null
@@ -182,7 +182,7 @@ export abstract class BaseMonomer extends DrawingEntity {
     this.renderer = renderer;
   }
 
-  public forEachBond(callback) {
+  public forEachBond(callback: (polymerBond: PolymerBond) => void) {
     for (const attachmentPointName in this.attachmentPointsToBonds) {
       if (this.attachmentPointsToBonds[attachmentPointName]) {
         callback(this.attachmentPointsToBonds[attachmentPointName]);
@@ -243,7 +243,7 @@ export abstract class BaseMonomer extends DrawingEntity {
     return this.firstFreeAttachmentPoint;
   }
 
-  public hasAttachmentPoint(attachmentPointName: string) {
+  public hasAttachmentPoint(attachmentPointName: AttachmentPointName) {
     return this.attachmentPointsToBonds[attachmentPointName] !== undefined;
   }
 
@@ -260,12 +260,12 @@ export abstract class BaseMonomer extends DrawingEntity {
   }
 
   public get unUsedAttachmentPointsNamesList() {
-    const list: string[] = [];
+    const list: AttachmentPointName[] = [];
     for (const attachmentPointName in this.attachmentPointsToBonds) {
       if (
         !this.isAttachmentPointUsed(attachmentPointName as AttachmentPointName)
       ) {
-        list.push(attachmentPointName);
+        list.push(attachmentPointName as AttachmentPointName);
       }
     }
     return list;

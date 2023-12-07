@@ -12,7 +12,6 @@ import {
 import { ELEMENT_TITLE } from './types';
 import {
   Bases,
-  DropDown,
   Phosphates,
   Sugars,
   TopPanelButton,
@@ -313,11 +312,10 @@ export async function addMonomerToCanvas(
 }
 
 export async function addMonomerToCenterOfCanvas(
-  monomersDropDown: DropDown,
-  monomerType: Sugars | Bases | Phosphates,
   page: Page,
+  monomerType: Sugars | Bases | Phosphates,
 ) {
-  await selectMonomer(monomersDropDown, monomerType, page);
+  await selectMonomer(page, monomerType);
   await clickInTheMiddleOfTheScreen(page);
   await selectRectangleSelectionTool(page);
 }

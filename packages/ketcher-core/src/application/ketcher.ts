@@ -14,14 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import {
-  FormatterFactory,
-  SupportedFormat,
-  identifyStructFormat,
-} from './formatters';
+import { FormatterFactory, SupportedFormat } from './formatters';
 import { GenerateImageOptions, StructService } from 'domain/services';
 
-import { Editor, defaultBondThickness } from './editor';
+import { CoreEditor, Editor, defaultBondThickness } from './editor';
 import { Indigo } from 'application/indigo';
 import { KetSerializer, MolfileFormat } from 'domain/serializers';
 import { SGroup, Struct } from 'domain/entities';
@@ -33,7 +29,12 @@ import {
   runAsyncAction,
   SettingsManager,
 } from 'utilities';
-import { getStructure } from './utils';
+import {
+  deleteAllEntitiesOnCanvas,
+  getStructure,
+  parseAndAddMacromoleculesOnCanvas,
+  prepareStructToRender,
+} from './utils';
 
 const allowedApiSettings = {
   'general.dearomatize-on-load': 'dearomatize-on-load',
@@ -41,40 +42,6 @@ const allowedApiSettings = {
   disableQueryElements: 'disableQueryElements',
   bondThickness: 'bondThickness',
 };
-
-async function prepareStructToRender(
-  structStr: string,
-  structService: StructService,
-  ketcherInstance: Ketcher,
-): Promise<Struct> {
-  const struct: Struct = await parseStruct(
-    structStr,
-    structService,
-    ketcherInstance,
-  );
-  struct.initHalfBonds();
-  struct.initNeighbors();
-  struct.setImplicitHydrogen();
-  struct.markFragments();
-
-  return struct;
-}
-
-function parseStruct(
-  structStr: string,
-  structService: StructService,
-  ketcherInstance: Ketcher,
-) {
-  const format = identifyStructFormat(structStr);
-  const factory = new FormatterFactory(structService);
-  const options = ketcherInstance.editor.options();
-
-  const service = factory.create(format, {
-    'dearomatize-on-load': options['dearomatize-on-load'],
-    'ignore-no-chiral-flag': options.ignoreChiralFlag,
-  });
-  return service.getStructureFromStringAsync(structStr);
-}
 
 export class Ketcher {
   logging: LogSettings;
@@ -162,6 +129,9 @@ export class Ketcher {
   }
 
   getSmiles(isExtended = false): Promise<string> {
+    if (window.isPolymerEditorTurnedOn) {
+      throw new Error('SMILES format is not available in macro mode');
+    }
     const format = isExtended
       ? SupportedFormat.smilesExt
       : SupportedFormat.smiles;
@@ -185,12 +155,16 @@ export class Ketcher {
       format,
       this.#formatterFactory,
       this.#editor.struct(),
+      CoreEditor.provideEditorInstance()?.drawingEntitiesManager,
     );
 
     return molfile;
   }
 
   async getRxn(molfileFormat: MolfileFormat = 'v2000'): Promise<string> {
+    if (window.isPolymerEditorTurnedOn) {
+      throw new Error('RXN format is not available in macro mode');
+    }
     if (!this.containsReaction()) {
       throw Error(
         'The structure cannot be saved as *.RXN: there is no reaction arrows.',
@@ -214,10 +188,14 @@ export class Ketcher {
       SupportedFormat.ket,
       this.#formatterFactory,
       this.#editor.struct(),
+      CoreEditor.provideEditorInstance()?.drawingEntitiesManager,
     );
   }
 
   getSmarts(): Promise<string> {
+    if (window.isPolymerEditorTurnedOn) {
+      throw new Error('SMARTS format is not available in macro mode');
+    }
     return getStructure(
       SupportedFormat.smarts,
       this.#formatterFactory,
@@ -226,6 +204,9 @@ export class Ketcher {
   }
 
   getCml(): Promise<string> {
+    if (window.isPolymerEditorTurnedOn) {
+      throw new Error('CML format is not available in macro mode');
+    }
     return getStructure(
       SupportedFormat.cml,
       this.#formatterFactory,
@@ -234,6 +215,9 @@ export class Ketcher {
   }
 
   getSdf(molfileFormat: MolfileFormat = 'v2000'): Promise<string> {
+    if (window.isPolymerEditorTurnedOn) {
+      throw new Error('SDF format is not available in macro mode');
+    }
     const format =
       molfileFormat === 'v2000'
         ? SupportedFormat.sdf
@@ -242,6 +226,9 @@ export class Ketcher {
   }
 
   getCDXml(): Promise<string> {
+    if (window.isPolymerEditorTurnedOn) {
+      throw new Error('CDXML format is not available in macro mode');
+    }
     return getStructure(
       SupportedFormat.cdxml,
       this.#formatterFactory,
@@ -250,6 +237,9 @@ export class Ketcher {
   }
 
   getCDX(): Promise<string> {
+    if (window.isPolymerEditorTurnedOn) {
+      throw new Error('CDX format is not available in macro mode');
+    }
     return getStructure(
       SupportedFormat.cdx,
       this.#formatterFactory,
@@ -276,7 +266,11 @@ export class Ketcher {
   }
 
   containsReaction(): boolean {
-    return this.editor.struct().hasRxnArrow();
+    const editor = CoreEditor.provideEditorInstance();
+    return (
+      this.editor.struct().hasRxnArrow() ||
+      editor?.drawingEntitiesManager?.micromoleculesHiddenEntities.hasRxnArrow()
+    );
   }
 
   isQueryStructureSelected(): boolean {
@@ -317,15 +311,20 @@ export class Ketcher {
     runAsyncAction<void>(async () => {
       assert(typeof structStr === 'string');
 
-      const struct: Struct = await prepareStructToRender(
-        structStr,
-        this.#structService,
-        this,
-      );
+      if (window.isPolymerEditorTurnedOn) {
+        deleteAllEntitiesOnCanvas();
+        await parseAndAddMacromoleculesOnCanvas(structStr, this.#structService);
+      } else {
+        const struct: Struct = await prepareStructToRender(
+          structStr,
+          this.#structService,
+          this,
+        );
 
-      this.#editor.struct(struct);
-      this.#editor.zoomAccordingContent(struct);
-      this.#editor.centerStruct();
+        this.#editor.struct(struct);
+        this.#editor.zoomAccordingContent(struct);
+        this.#editor.centerStruct();
+      }
     }, this.eventBus);
   }
 
@@ -333,17 +332,25 @@ export class Ketcher {
     runAsyncAction<void>(async () => {
       assert(typeof structStr === 'string');
 
-      const struct: Struct = await prepareStructToRender(
-        structStr,
-        this.#structService,
-        this,
-      );
+      if (window.isPolymerEditorTurnedOn) {
+        await parseAndAddMacromoleculesOnCanvas(structStr, this.#structService);
+      } else {
+        const struct: Struct = await prepareStructToRender(
+          structStr,
+          this.#structService,
+          this,
+        );
 
-      this.#editor.structToAddFragment(struct);
+        this.#editor.structToAddFragment(struct);
+      }
     }, this.eventBus);
   }
 
   async layout(): Promise<void> {
+    if (window.isPolymerEditorTurnedOn) {
+      throw new Error('Layout is not available in macro mode');
+    }
+
     runAsyncAction<void>(async () => {
       const struct = await this.#indigo.layout(this.#editor.struct());
       const ketSerializer = new KetSerializer();
@@ -352,6 +359,9 @@ export class Ketcher {
   }
 
   recognize(image: Blob, version?: string): Promise<Struct> {
+    if (window.isPolymerEditorTurnedOn) {
+      throw new Error('Recognize is not available in macro mode');
+    }
     return this.#indigo.recognize(image, { version });
   }
 

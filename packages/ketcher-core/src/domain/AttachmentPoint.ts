@@ -11,7 +11,7 @@ import {
   getSearchFunction,
 } from './helpers/attachmentPointCalculations';
 import { editorEvents } from 'application/editor/editorEvents';
-import { AttachmentPointConstructorParams, AttachmentPointName } from './types';
+import { AttachmentPointConstructorParams } from './types';
 
 export class AttachmentPoint {
   static attachmentPointVector = 12;

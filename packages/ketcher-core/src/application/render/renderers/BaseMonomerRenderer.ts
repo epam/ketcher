@@ -13,7 +13,10 @@ import {
 import { AttachmentPoint } from 'domain/AttachmentPoint';
 import Coordinates from 'application/editor/shared/coordinates';
 import { Vec2 } from 'domain/entities';
-import { AttachmentPointName } from 'domain/types';
+import {
+  AttachmentPointConstructorParams,
+  AttachmentPointName,
+} from 'domain/types';
 
 export abstract class BaseMonomerRenderer extends BaseRenderer {
   private editorEvents: typeof editorEvents;
@@ -23,7 +26,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   private freeSectorsList: number[] = sectorsList;
 
   private attachmentPoints: AttachmentPoint[] | [] = [];
-  private hoveredAttachmenPoint: string | null = null;
+  private hoveredAttachmenPoint: AttachmentPointName | null = null;
 
   private monomerSymbolElement?: SVGUseElement | SVGRectElement;
   public monomerSize: { width: number; height: number };
@@ -130,7 +133,9 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   }
 
   public drawAttachmentPoints() {
-    if (this.attachmentPoints.length) return;
+    if (this.attachmentPoints.length) {
+      return;
+    }
 
     // draw used attachment points
     this.monomer.usedAttachmentPointsNamesList.forEach((item) => {
@@ -151,7 +156,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       }
     });
 
-    const unrenderedAtPoints: string[] = [];
+    const unrenderedAtPoints: AttachmentPointName[] = [];
 
     // draw free attachment points
     this.monomer.unUsedAttachmentPointsNamesList.forEach((item) => {
@@ -184,26 +189,32 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     });
   }
 
-  public appendAttachmentPoint(AttachmentPointName, customAngle?: number) {
+  public appendAttachmentPoint(
+    attachmentPointName: AttachmentPointName,
+    customAngle?: number,
+  ) {
     let rotation;
 
-    if (!this.monomer.isAttachmentPointUsed(AttachmentPointName)) {
-      rotation = attachmentPointNumberToAngle[AttachmentPointName];
+    if (!this.monomer.isAttachmentPointUsed(attachmentPointName)) {
+      rotation = attachmentPointNumberToAngle[attachmentPointName];
     }
+    const attachmentPointParams: AttachmentPointConstructorParams = {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      rootElement: this.rootElement!,
+      monomer: this.monomer,
+      bodyWidth: this.monomerSize.width,
+      bodyHeight: this.monomerSize.height,
+      canvas: this.canvasWrapper,
+      attachmentPointName,
+      isUsed: this.monomer.isAttachmentPointUsed(attachmentPointName),
+      isPotentiallyUsed:
+        this.monomer.isAttachmentPointPotentiallyUsed(attachmentPointName) ||
+        this.hoveredAttachmenPoint === attachmentPointName,
+      angle: customAngle || rotation,
+      isSnake: !!this.isSnakeBondForAttachmentPoint(attachmentPointName),
+    };
 
-    const attPointInstance = new AttachmentPoint(
-      this.rootElement as D3SvgElementSelection<SVGGElement, void>,
-      this.monomer,
-      this.monomerSize.width,
-      this.monomerSize.height,
-      this.canvasWrapper,
-      AttachmentPointName,
-      this.monomer.isAttachmentPointUsed(AttachmentPointName),
-      this.monomer.isAttachmentPointPotentiallyUsed(AttachmentPointName) ||
-        this.hoveredAttachmenPoint === AttachmentPointName,
-      customAngle || rotation,
-      this.isSnakeBondForAttachmentPoint(AttachmentPointName),
-    );
+    const attPointInstance = new AttachmentPoint(attachmentPointParams);
     return attPointInstance;
   }
 
@@ -215,7 +226,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     this.freeSectorsList = sectorsList;
   }
 
-  public hoverAttachmenPoint(attachmentPointName: string) {
+  public hoverAttachmenPoint(attachmentPointName: AttachmentPointName) {
     this.hoveredAttachmenPoint = attachmentPointName;
   }
 

@@ -534,17 +534,16 @@ export class DrawingEntitiesManager {
 
   public intendToStartAttachmenPointBondCreation(
     monomer: BaseMonomer,
-    attachmentPointName: string,
+    attachmentPointName: AttachmentPointName,
   ) {
     const command = new Command();
     monomer.turnOnHover();
     monomer.turnOnAttachmentPointsVisibility();
 
-    const operation = monomer.isAttachmentPointUsed(
-      attachmentPointName as AttachmentPointName,
-    )
-      ? new MonomerHoverOperation(monomer, true)
-      : new AttachmentPointHoverOperation(monomer, attachmentPointName);
+    const operation = new AttachmentPointHoverOperation(
+      monomer,
+      attachmentPointName,
+    );
 
     command.addOperation(operation);
 
@@ -586,7 +585,7 @@ export class DrawingEntitiesManager {
   public intendToFinishAttachmenPointBondCreation(
     monomer: BaseMonomer,
     bond: PolymerBond,
-    attachmentPointName: string,
+    attachmentPointName: AttachmentPointName,
     shouldCalculateBonds: boolean,
   ) {
     const command = new Command();

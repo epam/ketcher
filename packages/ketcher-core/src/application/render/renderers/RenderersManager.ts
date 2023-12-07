@@ -6,16 +6,14 @@ import { monomerFactory } from 'application/editor/operations/monomer/monomerFac
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
 import { PolymerBond } from 'domain/entities/PolymerBond';
+import { AttachmentPointName } from 'domain/types';
 import {
   PeptideRenderer,
   PhosphateRenderer,
   RNABaseRenderer,
   SugarRenderer,
 } from 'application/render';
-import { Peptide } from 'domain/entities';
-import { RNABase } from 'domain/entities/RNABase';
-import { Sugar } from 'domain/entities/Sugar';
-import { Phosphate } from 'domain/entities/Phosphate';
+import { Peptide, Sugar, RNABase, Phosphate } from 'domain/entities';
 
 export class RenderersManager {
   private theme;
@@ -74,7 +72,7 @@ export class RenderersManager {
     this.markForReEnumeration();
   }
 
-  public addPolymerBond(polymerBond) {
+  public addPolymerBond(polymerBond: PolymerBond) {
     const polymerBondRenderer = new PolymerBondRenderer(polymerBond);
     this.polymerBonds.set(polymerBond.id, polymerBondRenderer);
     polymerBondRenderer.show();
@@ -92,7 +90,7 @@ export class RenderersManager {
     }
   }
 
-  public showPolymerBondInformation(polymerBond) {
+  public showPolymerBondInformation(polymerBond: PolymerBond) {
     polymerBond.renderer?.redrawHover();
     polymerBond.firstMonomer.renderer?.redrawAttachmentPoints();
     polymerBond.firstMonomer.renderer?.redrawHover();
@@ -100,7 +98,10 @@ export class RenderersManager {
     polymerBond.secondMonomer?.renderer?.redrawHover();
   }
 
-  public deletePolymerBond(polymerBond, recalculateEnumeration = true) {
+  public deletePolymerBond(
+    polymerBond: PolymerBond,
+    recalculateEnumeration = true,
+  ) {
     polymerBond.renderer?.remove();
     polymerBond?.firstMonomer?.renderer?.redrawAttachmentPoints();
     polymerBond?.secondMonomer?.renderer?.redrawAttachmentPoints();
@@ -286,7 +287,10 @@ export class RenderersManager {
     polymerBond.renderer?.show();
   }
 
-  public cancelPolymerBondCreation(polymerBond, secondMonomer) {
+  public cancelPolymerBondCreation(
+    polymerBond: PolymerBond,
+    secondMonomer?: BaseMonomer,
+  ) {
     this.deletePolymerBond(polymerBond);
     polymerBond.firstMonomer.renderer?.redrawAttachmentPoints();
     polymerBond.firstMonomer.renderer?.drawSelection();
@@ -296,17 +300,20 @@ export class RenderersManager {
     secondMonomer?.renderer?.redrawHover();
   }
 
-  public hoverMonomer(monomer, needRedrawAttachmentPoints) {
+  public hoverMonomer(monomer: BaseMonomer, needRedrawAttachmentPoints) {
     this.hoverDrawingEntity(monomer as DrawingEntity);
     if (needRedrawAttachmentPoints) {
       monomer.renderer?.redrawAttachmentPoints();
     }
   }
 
-  public hoverAttachmentPoint(monomer, attachmentPointName) {
+  public hoverAttachmentPoint(
+    monomer: BaseMonomer,
+    attachmentPointName: AttachmentPointName,
+  ) {
     this.hoverDrawingEntity(monomer as DrawingEntity);
     monomer.renderer?.hoverAttachmenPoint(attachmentPointName);
-    monomer.renderer?.drawAttachmentPoints();
+    monomer.renderer?.redrawAttachmentPoints();
   }
 
   public update(modelChanges: Command) {

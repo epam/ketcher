@@ -30,9 +30,12 @@ const ElementAndDropdown = styled('div')`
   flexgrow: 1;
   display: flex;
   justifycontent: flex-end;
-  @media (min-width: 900px) {
-    width: 162px;
-    padding: 6px 3px;
+
+  @media only screen {
+    @container (min-width: 900px) {
+      width: 162px;
+      padding: 6px 3px;
+    }
   }
 `;
 
@@ -60,8 +63,10 @@ const StyledIcon = styled(Icon)<IStyledIconProps>`
 
 const StyledIconForMacromoleculesToggler = styled(StyledIcon)`
   display: none;
-  @media (min-width: 900px) {
-    display: flex;
+  @media only screen {
+    @container (min-width: 900px) {
+      display: flex;
+    }
   }
 `;
 
@@ -73,8 +78,10 @@ const CornerIcon = styled(Icon)`
   right: 0;
   bottom: 0;
   fill: @main-color;
-  @media (min-width: 900px) {
-    display: none;
+  @media only screen {
+    @container (min-width: 900px) {
+      display: none;
+    }
   }
 `;
 
@@ -84,8 +91,10 @@ const ModeLabel = styled('span')`
   font-size: 12px;
   text-align: left;
   flex-grow: 1;
-  @media (min-width: 900px) {
-    display: inline;
+  @media only screen {
+    @container (min-width: 900px) {
+      display: inline;
+    }
   }
 `;
 

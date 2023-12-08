@@ -95,22 +95,7 @@ export function findLabelPoint(
 }
 
 function findClosestElementFromPoint(point): Element {
-  const elements = document.elementsFromPoint(point.x, point.y);
-  let closest = elements[0];
-  let smallestDistance = Infinity;
-  for (const element of elements) {
-    const coords = element.getBoundingClientRect();
-    const distance = Vec2.dist(new Vec2(coords.x, coords.y), new Vec2(point));
-    if (element.id === 'polymer-editor-canvas') {
-      continue;
-    }
-    if (distance < smallestDistance) {
-      closest = element;
-      smallestDistance = distance;
-      break;
-    }
-  }
-  return closest;
+  return document.elementsFromPoint(point.x, point.y)[0];
 }
 export function getSearchFunction(
   initialAngle: number,

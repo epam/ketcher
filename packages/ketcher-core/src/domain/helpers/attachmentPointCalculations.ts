@@ -127,7 +127,7 @@ export function getSearchFunction(
     const secondPoint = Vec2.findSecondPoint(coordStart, length, angleRadians);
 
     const diff = Vec2.diff(
-      new Vec2(secondPoint.x, coordStart.y),
+      new Vec2(secondPoint.x, secondPoint.y),
       new Vec2(coordStart.x, coordStart.y),
     );
 

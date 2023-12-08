@@ -21,7 +21,6 @@ import { setSearchFilter } from 'state/library';
 import { Icon } from 'ketcher-react';
 import { IRnaPreset } from './RnaBuilder/types';
 import {
-  savePreset,
   selectPresets,
   setActivePreset,
   setIsEditMode,
@@ -64,7 +63,6 @@ const MonomerLibrary = React.memo(() => {
       favorite: false,
     };
     dispatch(setActivePreset(duplicatedPreset));
-    dispatch(savePreset(duplicatedPreset));
     dispatch(setIsEditMode(true));
     scrollToSelectedPreset(preset?.name);
   };

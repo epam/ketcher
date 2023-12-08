@@ -15,7 +15,7 @@ test('Open and Save files - Open/Save structure with atom properties 1/2 - open'
 }) => {
   /**
    * Test case: EPMLSOPKET-1855(1)
-   * Description: Sctucrute with atom properties is opened and saved correctly
+   * Description: Structure with atom properties is opened and saved correctly
    */
   await waitForPageInit(page);
 
@@ -29,7 +29,7 @@ test('Open and Save files - Open/Save structure with atom properties 2/2 - save'
 }) => {
   /**
    * Test case: EPMLSOPKET-1855(2)
-   * Description: Sctucrute with atom properties is opened and saved correctly
+   * Description: Structure with atom properties is opened and saved correctly
    */
   await waitForPageInit(page);
 
@@ -54,7 +54,7 @@ test('Open and Save file - Open/Save V3000 file with atom and bond properties 1/
 }) => {
   /**
    * Test case: EPMLSOPKET-1857(1)
-   * Description: Strucrute with atom and bond properties is opened and saved correctly
+   * Description: Structure with atom and bond properties is opened and saved correctly
    */
   await waitForPageInit(page);
 
@@ -70,7 +70,7 @@ test('Open and Save file - Open/Save V3000 file with atom and bond properties 2/
   test.fail();
   /**
    * Test case: EPMLSOPKET-1857(2)
-   * Description: Strucrute with atom and bond properties is opened and saved correctly
+   * Description: Structure with atom and bond properties is opened and saved correctly
    */
   await waitForPageInit(page);
 

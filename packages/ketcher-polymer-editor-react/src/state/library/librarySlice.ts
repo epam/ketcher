@@ -19,7 +19,7 @@ import { Group } from 'components/monomerLibrary/monomerLibraryList/types';
 
 import { IRnaPreset } from 'components/monomerLibrary/RnaBuilder/types';
 import { MonomerItemType, SdfItem } from 'ketcher-core';
-import { LibraryNameType } from 'src/constants';
+import { LibraryNameType, FAVORITE_ITEMS_UNIQUE_KEYS } from 'src/constants';
 import { RootState } from 'state';
 
 interface LibraryState {
@@ -75,10 +75,35 @@ export const librarySlice: Slice = createSlice({
       state.monomers = newData;
     },
     toggleMonomerFavorites: (state, action: PayloadAction<MonomerItemType>) => {
-      const key = getMonomerUniqueKey(action.payload);
-      if (state.favorites[key]) {
+      const key: string = getMonomerUniqueKey(action.payload);
+
+      const favoriteItemsUniqueKeys =
+        JSON.parse(
+          localStorage.getItem(FAVORITE_ITEMS_UNIQUE_KEYS) as string,
+        ) || [];
+
+      const isKeyAlreadyExisted: boolean = favoriteItemsUniqueKeys.some(
+        (targetKey) => targetKey === key,
+      );
+
+      // we should initialize the store with preserved items from store somehow
+      if (isKeyAlreadyExisted) {
+        console.log('delete');
+        localStorage.setItem(
+          FAVORITE_ITEMS_UNIQUE_KEYS,
+          JSON.stringify(
+            favoriteItemsUniqueKeys.filter((targetKey) => targetKey !== key),
+          ),
+        );
         delete state.favorites[key];
       } else {
+        console.log('add');
+        favoriteItemsUniqueKeys.push(key);
+        localStorage.setItem(
+          FAVORITE_ITEMS_UNIQUE_KEYS,
+          JSON.stringify(favoriteItemsUniqueKeys),
+        );
+
         state.favorites[key] = action.payload;
       }
     },
@@ -90,6 +115,10 @@ export const librarySlice: Slice = createSlice({
     },
   },
 });
+
+export const favorites = (state): string[] => {
+  return state.library.favorites;
+};
 
 export const getSearchTermValue = (state): string => {
   return state.library.searchFilter;
@@ -119,9 +148,21 @@ export const selectFilteredMonomers = (
       return cond;
     })
     .map((item: MonomerItemType) => {
+      const localStorageFavorites = JSON.parse(
+        localStorage.getItem(FAVORITE_ITEMS_UNIQUE_KEYS),
+      );
+
+      const uniqueKey = getMonomerUniqueKey(item);
+
+      const hasItemInLocalStorage = localStorageFavorites?.some(
+        (targetKey) => targetKey === uniqueKey,
+      );
+
       return {
         ...item,
-        favorite: !!state.library.favorites[getMonomerUniqueKey(item)],
+        favorite:
+          !!state.library.favorites[getMonomerUniqueKey(item)] ||
+          hasItemInLocalStorage,
       };
     });
 };

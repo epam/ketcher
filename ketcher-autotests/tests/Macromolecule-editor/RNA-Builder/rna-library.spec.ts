@@ -392,7 +392,7 @@ test.describe('RNA Library', () => {
     await page.getByTestId('12ddR(A)Test-6-Ph_Copy_A_12ddR_Test-6-Ph').click({
       button: 'right',
     });
-    await page.getByTestId('edit').locator('div').click();
+    await page.getByTestId('edit').click();
     await page.getByTestId('rna-builder-slot--phosphate').click();
     await page.getByTestId('P___Phosphate').click();
     await page.getByTestId('save-btn').click();

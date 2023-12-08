@@ -12,7 +12,6 @@ import {
 import { ELEMENT_TITLE } from './types';
 import {
   Bases,
-  DropDown,
   Phosphates,
   Sugars,
   TopPanelButton,

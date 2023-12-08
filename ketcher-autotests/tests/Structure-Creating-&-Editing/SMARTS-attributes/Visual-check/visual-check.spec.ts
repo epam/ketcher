@@ -1,4 +1,4 @@
-import { Page, test } from '@playwright/test';
+import { Page, test, expect } from '@playwright/test';
 import {
   BondTypeName,
   clickInTheMiddleOfTheScreen,
@@ -176,6 +176,31 @@ test.describe('Checking if preview of attributes is displayed correctly after ho
     await waitForRender(page, async () => {
       await page.mouse.move(point.x, point.y);
     });
+    await takeEditorScreenshot(page);
+  });
+
+  test('Setting not SMARTS specific and SMARTS specific attribute', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/ketcher/issues/3459
+     * Description: setting not SMARTS specific attribute and taking screenshot to see if it is displayed as before (e.g. rb<n> for ring bond count),
+     * adding SMARTS specific attribute (connectivity) and taking screenshot to check if all properties in the list are displayed in SMARTS notation
+     * (now ring bond count should be displayed as x<n>)
+     */
+    let correctLabelIsDisplayed = false;
+    await page.getByTestId('Query specific-section').click();
+    await setRingBondCount(page, '3');
+    await pressButton(page, 'Apply');
+    correctLabelIsDisplayed = await page.getByText('rb3').isVisible();
+    expect(correctLabelIsDisplayed).toBe(true);
+    await takeEditorScreenshot(page);
+
+    await doubleClickOnAtom(page, 'C', 0);
+    await waitForAtomPropsModal(page);
+    await page.getByTestId('Query specific-section').click();
+    await setConnectivity(page, '7');
+    await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
   });
 });

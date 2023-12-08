@@ -1,4 +1,4 @@
-import { Page, test } from '@playwright/test';
+import { Page, test, expect } from '@playwright/test';
 import {
   BondTypeName,
   clickInTheMiddleOfTheScreen,
@@ -174,5 +174,52 @@ test.describe('Checking query specific attributes in SMARTS format', () => {
       'clockwise',
       '[#6](-[#6])(-[#6;@@])-[#6]',
     );
+  });
+
+  test.describe('Checking converting attributes to custom query', () => {
+    test.beforeEach(async ({ page }) => {
+      const numberOfAtom = 0;
+      await waitForPageInit(page);
+      await drawStructure(page);
+      await page.keyboard.press('Escape');
+      await doubleClickOnAtom(page, 'C', numberOfAtom);
+      await waitForAtomPropsModal(page);
+      await page.getByTestId('Query specific-section').click();
+    });
+
+    test('Converting substitution count and ring bond count to custom query', async ({
+      page,
+    }) => {
+      /**
+       * Test case: https://github.com/epam/ketcher/issues/3445
+       * Description: attributes should be converted to custom query in correct SMARTS annotation
+       * (D<n> for substitution count and x<n> for ring bond count)
+       */
+      await setRingBondCount(page, '5');
+      await setSubstitutionCount(page, '7');
+      await page.getByTestId('custom-query-checkbox').check();
+      await takeEditorScreenshot(page);
+    });
+
+    test('Converting all query specific attributes to custom query', async ({
+      page,
+    }) => {
+      /**
+       * Test case: https://github.com/epam/ketcher/issues/3445
+       * Description: all attributes should be converted to custom query correctly (according to table at https://github.com/epam/ketcher/issues/3459)
+       */
+      await setRingBondCount(page, 'As drawn');
+      await setHCount(page, '0');
+      await setSubstitutionCount(page, '1');
+      await setUnsaturated(page);
+      await setAromaticity(page, 'aliphatic');
+      await setImplicitHCount(page, '2');
+      await setRingMembership(page, '3');
+      await setRingSize(page, '4');
+      await setConnectivity(page, '5');
+      await setChirality(page, 'clockwise');
+      await page.getByTestId('custom-query-checkbox').check();
+      await takeEditorScreenshot(page);
+    });
   });
 });

@@ -77,6 +77,7 @@ import { MonomerConnectionOnlyProps } from 'components/modal/modalContainer/type
 import { calculatePreviewPosition } from 'helpers';
 import StyledPreview from 'components/shared/MonomerPreview';
 import { ErrorModal } from 'components/modal/Error';
+import { EditorWrapper } from './styledComponents';
 
 const muiTheme = createTheme(muiOverrides);
 
@@ -113,9 +114,9 @@ function EditorContainer({
     <Provider store={store}>
       <ThemeProvider theme={mergedTheme}>
         <Global styles={getGlobalStyles} />
-        <div ref={rootElRef} className={EditorClassName}>
+        <EditorWrapper ref={rootElRef} className={EditorClassName}>
           <Editor theme={editorTheme} togglerComponent={togglerComponent} />
-        </div>
+        </EditorWrapper>
       </ThemeProvider>
     </Provider>
   );

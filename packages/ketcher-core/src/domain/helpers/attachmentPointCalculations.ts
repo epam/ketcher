@@ -94,9 +94,6 @@ export function findLabelPoint(
   return [labelCoordinates, pointOfAttachment];
 }
 
-function findClosestElementFromPoint(point): Element {
-  return document.elementsFromPoint(point.x, point.y)[0];
-}
 export function getSearchFunction(
   initialAngle: number,
   canvasOffset: Coordinates,
@@ -112,8 +109,8 @@ export function getSearchFunction(
     const secondPoint = Vec2.findSecondPoint(coordStart, length, angleRadians);
 
     const diff = Vec2.diff(
-      new Vec2(secondPoint.x, secondPoint.y),
       new Vec2(coordStart.x, coordStart.y),
+      new Vec2(secondPoint.x, secondPoint.y),
     );
 
     // exit recursion
@@ -132,7 +129,10 @@ export function getSearchFunction(
       x: Math.round(zoomedCoordinateOfSecondPoint.x) + canvasOffset.x,
       y: Math.round(zoomedCoordinateOfSecondPoint.y) + canvasOffset.y,
     };
-    const newPoint = findClosestElementFromPoint(newPointCoord) as Element;
+    const newPoint = document.elementFromPoint(
+      newPointCoord.x,
+      newPointCoord.y,
+    ) as Element;
 
     let newAngle;
     if (newPoint === monomer.renderer.bodyElement.node()) {

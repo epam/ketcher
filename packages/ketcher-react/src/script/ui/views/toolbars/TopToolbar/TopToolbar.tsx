@@ -86,18 +86,22 @@ const ControlsPanel = styled('div')`
     box-sizing: border-box;
   }
 
-  @media only screen and (min-width: 1024px) {
-    height: 40px;
-    gap: 0px;
-    padding-bottom: 0;
-    .group {
-      gap: 4px;
+  @media only screen {
+    @container (min-width: 1024px) {
+      height: 40px;
+      gap: 0px;
+      padding-bottom: 0;
+      .group {
+        gap: 4px;
+      }
     }
   }
 
-  @media only screen and (min-width: 1920px) {
-    height: 64px;
-    gap: 12px;
+  @media only screen {
+    @container (min-width: 1920px) {
+      height: 64px;
+      gap: 12px;
+    }
   }
 `;
 

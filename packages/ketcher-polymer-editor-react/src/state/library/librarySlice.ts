@@ -21,6 +21,7 @@ import { IRnaPreset } from 'components/monomerLibrary/RnaBuilder/types';
 import { MonomerItemType, SdfItem } from 'ketcher-core';
 import { LibraryNameType, FAVORITE_ITEMS_UNIQUE_KEYS } from 'src/constants';
 import { RootState } from 'state';
+import { localStorageCopy } from 'helpers/localStorage';
 
 interface LibraryState {
   monomers: Group[];
@@ -74,37 +75,59 @@ export const librarySlice: Slice = createSlice({
       });
       state.monomers = newData;
     },
+
+    setFavoriteMonomersFromLocalStorage: (state) => {
+      const localFavorites = {};
+
+      const favoritesInLocalStorage: null | any = localStorageCopy.getItem(
+        FAVORITE_ITEMS_UNIQUE_KEYS,
+      );
+
+      if (!favoritesInLocalStorage) {
+        return;
+      }
+
+      state.monomers.forEach((monomer: MonomerItemType) => {
+        const uniqueKey: string = getMonomerUniqueKey(monomer);
+        const favoriteItem = favoritesInLocalStorage.find(
+          (key) => key === uniqueKey,
+        );
+
+        if (favoriteItem) {
+          localFavorites[uniqueKey] = {
+            ...monomer,
+            favorite: true,
+          };
+        }
+      });
+
+      state.favorites = localFavorites;
+    },
+
+    unsetFavoriteMonomersFromLocalStorage: (state) => {
+      state.favorites = {};
+    },
+
     toggleMonomerFavorites: (state, action: PayloadAction<MonomerItemType>) => {
       const key: string = getMonomerUniqueKey(action.payload);
 
-      const favoriteItemsUniqueKeys =
-        JSON.parse(
-          localStorage.getItem(FAVORITE_ITEMS_UNIQUE_KEYS) as string,
-        ) || [];
+      const favoriteItemsUniqueKeys = (localStorageCopy.getItem(
+        FAVORITE_ITEMS_UNIQUE_KEYS,
+      ) || []) as string[];
 
-      const isKeyAlreadyExisted: boolean = favoriteItemsUniqueKeys.some(
-        (targetKey) => targetKey === key,
-      );
-
-      // we should initialize the store with preserved items from store somehow
-      if (isKeyAlreadyExisted) {
-        console.log('delete');
-        localStorage.setItem(
-          FAVORITE_ITEMS_UNIQUE_KEYS,
-          JSON.stringify(
-            favoriteItemsUniqueKeys.filter((targetKey) => targetKey !== key),
-          ),
-        );
+      if (state.favorites[key]) {
         delete state.favorites[key];
-      } else {
-        console.log('add');
-        favoriteItemsUniqueKeys.push(key);
-        localStorage.setItem(
+        localStorageCopy.setItem(
           FAVORITE_ITEMS_UNIQUE_KEYS,
-          JSON.stringify(favoriteItemsUniqueKeys),
+          favoriteItemsUniqueKeys.filter((targetKey) => targetKey !== key),
         );
-
-        state.favorites[key] = action.payload;
+      } else {
+        state.favorites[key] = { ...action.payload, favorite: true };
+        favoriteItemsUniqueKeys.push(key);
+        localStorageCopy.setItem(
+          FAVORITE_ITEMS_UNIQUE_KEYS,
+          favoriteItemsUniqueKeys,
+        );
       }
     },
     setSearchFilter: (state, action: PayloadAction<string>) => {
@@ -115,10 +138,6 @@ export const librarySlice: Slice = createSlice({
     },
   },
 });
-
-export const favorites = (state): string[] => {
-  return state.library.favorites;
-};
 
 export const getSearchTermValue = (state): string => {
   return state.library.searchFilter;
@@ -148,21 +167,9 @@ export const selectFilteredMonomers = (
       return cond;
     })
     .map((item: MonomerItemType) => {
-      const localStorageFavorites = JSON.parse(
-        localStorage.getItem(FAVORITE_ITEMS_UNIQUE_KEYS),
-      );
-
-      const uniqueKey = getMonomerUniqueKey(item);
-
-      const hasItemInLocalStorage = localStorageFavorites?.some(
-        (targetKey) => targetKey === uniqueKey,
-      );
-
       return {
         ...item,
-        favorite:
-          !!state.library.favorites[getMonomerUniqueKey(item)] ||
-          hasItemInLocalStorage,
+        favorite: !!state.library.favorites[getMonomerUniqueKey(item)],
       };
     });
 };
@@ -210,6 +217,8 @@ export const selectCurrentTabIndex = (state) => state.library.selectedTabIndex;
 
 export const {
   loadMonomerLibrary,
+  setFavoriteMonomersFromLocalStorage,
+  unsetFavoriteMonomersFromLocalStorage,
   toggleMonomerFavorites,
   setSearchFilter,
   setSelectedTabIndex,

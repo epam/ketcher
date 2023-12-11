@@ -18,7 +18,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Global, ThemeProvider } from '@emotion/react';
 import { createTheme } from '@mui/material/styles';
 import { debounce, merge } from 'lodash';
-import { SdfSerializer, SnakeMode } from 'ketcher-core';
+import { SdfSerializer } from 'ketcher-core';
 import monomersData from './data/monomers.sdf';
 
 import { store } from 'state';

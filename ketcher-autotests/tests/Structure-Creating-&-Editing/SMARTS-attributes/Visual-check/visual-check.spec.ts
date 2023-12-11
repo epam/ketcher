@@ -204,3 +204,29 @@ test.describe('Checking if preview of attributes is displayed correctly after ho
     await takeEditorScreenshot(page);
   });
 });
+
+test.describe('Checking if atoms are displayed correctly', () => {
+  test.beforeEach(async ({ page }) => {
+    await waitForPageInit(page);
+    await selectBond(BondTypeName.Single, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await page.keyboard.press('Escape');
+  });
+
+  test('Atom replaced with other from periodic table', async ({ page }) => {
+    /*
+    Test case: https://github.com/epam/ketcher/issues/3362
+    Description: when you replace an atom with the selected one, no additional symbols should appear next to it.
+    */
+    const point = await getAtomByIndex(page, { label: 'C' }, 0);
+    const pixelsToMoveMouse = 100;
+    await page.getByTestId('period-table').click();
+    await page.getByTestId('Ti-button').click();
+    await page.getByRole('button', { name: 'Add', exact: true }).click();
+    await waitForRender(page, async () => {
+      await page.mouse.click(point.x, point.y);
+    });
+    await page.mouse.move(pixelsToMoveMouse, pixelsToMoveMouse);
+    await takeEditorScreenshot(page);
+  });
+});

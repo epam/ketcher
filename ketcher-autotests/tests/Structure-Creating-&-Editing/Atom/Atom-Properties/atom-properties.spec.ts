@@ -496,6 +496,33 @@ test.describe('Atom Properties', () => {
     await doubleClickOnAtom(page, 'O', 0);
   });
 
+  test('Dialog - Atom type - List', async ({ page }) => {
+    /*
+      Test case: https://github.com/epam/ketcher/issues/3340
+      Description: if 'Atom type' is set to 'List' then dialog should change:
+      - Label and Number should be hided
+      - new items "List" (input field) and "edit" icon should be added
+      - "Not list (checkbox)" should be added
+    */
+    await openFileAndAddToCanvas('KET/benzene-ring-with-two-atoms.ket', page);
+    await doubleClickOnAtom(page, 'C', 0);
+    await page.locator('label').filter({ hasText: 'Atom Type' }).click();
+    await page.getByRole('option', { name: 'List', exact: true }).click();
+  });
+
+  test('Dialog - Atom type - Special', async ({ page }) => {
+    /*
+      Test case: https://github.com/epam/ketcher/issues/3340
+      Description: if 'Atom type' is set to 'Special' then dialog should change:
+      - Label and Number should be hidden
+      - new item "Special" (input field) and "edit" icon should be added
+    */
+    await openFileAndAddToCanvas('KET/benzene-ring-with-two-atoms.ket', page);
+    await doubleClickOnAtom(page, 'C', 0);
+    await page.locator('label').filter({ hasText: 'Atom Type' }).click();
+    await page.getByRole('option', { name: 'Special', exact: true }).click();
+  });
+
   test('Charge of the Atoms', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-1606

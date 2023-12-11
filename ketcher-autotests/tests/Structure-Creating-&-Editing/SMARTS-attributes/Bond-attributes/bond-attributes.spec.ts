@@ -240,3 +240,62 @@ test.describe('Checking bond attributes in SMARTS format', () => {
     );
   });
 });
+
+test.describe('Checking converting bond attributes to custom query', () => {
+  test.beforeEach(async ({ page }) => {
+    const numberOfBond = 2;
+    await waitForPageInit(page);
+    await drawStructure(page);
+    await page.keyboard.press('Escape');
+    await doubleClickOnBond(page, BondType.SINGLE, numberOfBond);
+    await waitForBondPropsModal(page);
+  });
+
+  test('Converting Topology = "Either" and Type = "Single" to custom query', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/ketcher/issues/3372
+     * Description: If topology = "Either" then customQuery should be empty e.g. Type=Single, Topology=Either => customQuery=-
+     */
+    const expectedValue = '-';
+    await setBondType(page, 'Single-option');
+    await setBondTopology(page, 'Either-option');
+    await page.getByTestId('custom-query-checkbox').check();
+    const customQueryInput = page.getByTestId('bond-custom-query');
+    await expect(customQueryInput).toHaveValue(expectedValue);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Converting Topology = "Ring" and Type = "Double" to custom query', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/ketcher/issues/3372
+     * Description: If topology = "Ring" then customQuery should be @, e.g. Type=Double, Topology=Ring=>customQuery==;@
+     */
+    const expectedValue = '=;@';
+    await setBondType(page, 'Double-option');
+    await setBondTopology(page, 'Ring-option');
+    await page.getByTestId('custom-query-checkbox').check();
+    const customQueryInput = page.getByTestId('bond-custom-query');
+    await expect(customQueryInput).toHaveValue(expectedValue);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Converting Topology = "Chain" and Type = "Triple" to custom query', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/ketcher/issues/3372
+     * Description: If topology = "Chain" then customQuery should be !@, e.g. Type=Triple, Topology=Chain=>customQuery=#;!@
+     */
+    const expectedValue = '#;!@';
+    await setBondType(page, 'Triple-option');
+    await setBondTopology(page, 'Chain-option');
+    await page.getByTestId('custom-query-checkbox').check();
+    const customQueryInput = page.getByTestId('bond-custom-query');
+    await expect(customQueryInput).toHaveValue(expectedValue);
+    await takeEditorScreenshot(page);
+  });
+});

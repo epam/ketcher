@@ -11,6 +11,7 @@ import {
   getSearchFunction,
 } from './helpers/attachmentPointCalculations';
 import { editorEvents } from 'application/editor/editorEvents';
+import { AttachmentPointConstructorParams } from './types';
 
 export class AttachmentPoint {
   static attachmentPointVector = 12;
@@ -38,7 +39,7 @@ export class AttachmentPoint {
   private bodyHeight: number;
   private attachmentPointName: string;
   private canvasOffset: Coordinates;
-  private centerOFMonomer: Coordinates;
+  private centerOfMonomer: Coordinates;
   private element: Selection<SVGGElement, void, HTMLElement, never> | undefined;
   private hoverableArea:
     | Selection<SVGGElement, void, HTMLElement, never>
@@ -51,35 +52,27 @@ export class AttachmentPoint {
   private isSnake;
   private editorEvents: typeof editorEvents;
 
-  constructor(
-    rootElement: D3SvgElementSelection<SVGGElement, void>,
-    monomer,
-    bodyWidth,
-    bodyHeight,
-    canvas,
-    attachmentPointName,
-    isUsed,
-    isPotentiallyUsed,
-    angle = 0,
-    isSnake,
-  ) {
-    this.rootElement = rootElement;
-    this.monomer = monomer;
-    this.bodyWidth = bodyWidth;
-    this.bodyHeight = bodyHeight;
-    this.canvasOffset = canvas.node().getBoundingClientRect();
-    this.attachmentPointName = attachmentPointName;
-    this.centerOFMonomer = monomer.renderer.center;
-    this.isSnake = isSnake;
-    this.isUsed = isUsed;
-    this.initialAngle = angle;
+  constructor(constructorParams: AttachmentPointConstructorParams) {
+    this.rootElement = constructorParams.rootElement;
+    this.monomer = constructorParams.monomer;
+    this.bodyWidth = constructorParams.bodyWidth;
+    this.bodyHeight = constructorParams.bodyHeight;
+    this.canvasOffset =
+      constructorParams.canvas.node()?.getBoundingClientRect() ||
+      new DOMRect(0, 0, 0, 0);
+    this.attachmentPointName = constructorParams.attachmentPointName;
+    this.centerOfMonomer =
+      constructorParams.monomer.renderer?.center || new Vec2(0, 0, 0);
+    this.isSnake = constructorParams.isSnake;
+    this.isUsed = constructorParams.isUsed;
+    this.initialAngle = constructorParams.angle;
     this.editorEvents = editorEvents;
     this.attachmentPoint = null;
 
-    if (isPotentiallyUsed) {
+    if (constructorParams.isPotentiallyUsed) {
       this.fill = AttachmentPoint.colors.fillPotentially;
       this.stroke = AttachmentPoint.colors.strokePotentially;
-    } else if (isUsed) {
+    } else if (constructorParams.isUsed) {
       this.fill = AttachmentPoint.colors.fillUsed;
       this.stroke = AttachmentPoint.colors.strokeUsed;
     } else {
@@ -244,8 +237,8 @@ export class AttachmentPoint {
     ] = this.getCoordinates(angleDegrees);
 
     const attachmentToCenterCoordinates = canvasToMonomerCoordinates(
-      this.centerOFMonomer,
-      this.centerOFMonomer,
+      this.centerOfMonomer,
+      this.centerOfMonomer,
       this.bodyWidth,
       this.bodyHeight,
     );
@@ -292,21 +285,21 @@ export class AttachmentPoint {
 
     const attachmentToBorderCoordinates = canvasToMonomerCoordinates(
       pointOnBorder,
-      this.centerOFMonomer,
+      this.centerOfMonomer,
       this.bodyWidth,
       this.bodyHeight,
     );
 
     const attachmentPointCoordinates = canvasToMonomerCoordinates(
       pointOfAttachment,
-      this.centerOFMonomer,
+      this.centerOfMonomer,
       this.bodyWidth,
       this.bodyHeight,
     );
 
     const labelCoordinates = canvasToMonomerCoordinates(
       labelPoint,
-      this.centerOFMonomer,
+      this.centerOfMonomer,
       this.bodyWidth,
       this.bodyHeight,
     );

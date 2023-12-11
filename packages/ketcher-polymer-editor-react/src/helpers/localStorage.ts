@@ -1,6 +1,6 @@
 interface LocalStorageCopy {
   getItem: (key: string) => string | null;
-  setItem: (key: string, item: any) => void;
+  setItem: (key: string, item: unknown) => void;
 }
 
 class LocalStorage implements LocalStorageCopy {
@@ -20,7 +20,7 @@ class LocalStorage implements LocalStorageCopy {
     return JSON.parse(item);
   }
 
-  setItem(key: string, item: any) {
+  setItem(key: string, item: unknown) {
     this.localStorage.setItem(key, JSON.stringify(item));
   }
 }

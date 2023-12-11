@@ -9,7 +9,7 @@ import { Vec2 } from 'domain/entities';
 import { Peptide } from 'domain/entities/Peptide';
 import { Chem } from 'domain/entities/Chem';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
-import { SnakeMode } from 'application/editor/modes';
+import { SnakeMode } from 'application/editor/modes/internal';
 
 const LINE_FROM_MONOMER_LENGTH = 15;
 const VERTICAL_LINE_LENGTH = 42;

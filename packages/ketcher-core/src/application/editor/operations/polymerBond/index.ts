@@ -18,7 +18,6 @@ import { PolymerBond } from 'domain/entities/PolymerBond';
 import { RenderersManager } from 'application/render/renderers/RenderersManager';
 import { Operation } from 'domain/entities/Operation';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
-import { SnakeMode } from 'application/editor/modes';
 
 export class PolymerBondAddOperation implements Operation {
   public polymerBond;
@@ -125,17 +124,19 @@ export class PolymerBondFinishCreationOperation implements Operation {
 }
 
 export class SelectSnakeModeOperation implements Operation {
-  public snakeMode;
+  private onExecute;
+  private onInvert;
 
-  constructor(snakeMode: boolean) {
-    this.snakeMode = snakeMode;
+  constructor(onExecute: () => void, onInvert: () => void) {
+    this.onExecute = onExecute;
+    this.onInvert = onInvert;
   }
 
   public execute(): void {
-    SnakeMode.setSnakeMode(this.snakeMode);
+    this.onExecute();
   }
 
   public invert(): void {
-    SnakeMode.setSnakeMode(!this.snakeMode);
+    this.onInvert();
   }
 }

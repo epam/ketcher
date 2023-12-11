@@ -60,7 +60,7 @@ const App = () => {
       <PolymerToggler toggle={togglePolymerEditor} />
     </>
   ) : (
-    <div style={{ width: '800px', height: '800px' }}>
+    <>
       <Editor
         errorHandler={(message: string) => {
           setHasError(true);
@@ -93,7 +93,7 @@ const App = () => {
           }}
         />
       )}
-    </div>
+    </>
   );
 };
 

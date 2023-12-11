@@ -62,3 +62,5 @@ export const MonomerCodeToGroup: Record<MonomerGroupCodes, MonomerGroups> = {
   X: MonomerGroups.BASES,
   P: MonomerGroups.PHOSPHATES,
 } as const;
+
+export const FAVORITE_ITEMS_UNIQUE_KEYS = 'favoriteItemsUniqueKeys';

@@ -18,7 +18,9 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { IRnaPreset } from 'components/monomerLibrary/RnaBuilder/types';
 import { RootState } from 'state';
 import { MonomerGroups } from '../../constants';
-import { MonomerItemType } from 'ketcher-core';
+import { MonomerItemType, MONOMER_CONST } from 'ketcher-core';
+import { localStorageCopy } from 'helpers/localStorage';
+import { FAVORITE_ITEMS_UNIQUE_KEYS } from 'src/constants';
 
 export enum RnaBuilderPresetsItem {
   Presets = 'Presets',
@@ -145,13 +147,67 @@ export const rnaBuilderSlice = createSlice({
       }
       state.presets = action.payload;
     },
+
+    setFavoritePresetsFromLocalStorage: (state) => {
+      const favoritesInLocalStorage: null | any = localStorageCopy.getItem(
+        FAVORITE_ITEMS_UNIQUE_KEYS,
+      );
+
+      if (!favoritesInLocalStorage) {
+        return;
+      }
+
+      state.presets = state.presets.map((preset) => {
+        const uniqueKey = `${preset.name}_${MONOMER_CONST.RNA}`;
+
+        const favoriteItem = favoritesInLocalStorage.find(
+          (key) => key === uniqueKey,
+        );
+
+        if (favoriteItem) {
+          return {
+            ...preset,
+            favorite: true,
+          };
+        }
+
+        return preset;
+      });
+    },
+
     togglePresetFavorites: (state, action: PayloadAction<IRnaPreset>) => {
       const presetIndex = state.presets.findIndex(
         (presetInList) => presetInList.name === action.payload.name,
       );
+
+      const uniquePresetKey = `${action.payload.name}_${MONOMER_CONST.RNA}`;
+
       if (presetIndex >= 0) {
         const favorite = state.presets[presetIndex].favorite;
         state.presets[presetIndex].favorite = !favorite;
+      }
+
+      const favoriteItemsUniqueKeys = (localStorageCopy.getItem(
+        FAVORITE_ITEMS_UNIQUE_KEYS,
+      ) || []) as string[];
+
+      const isKeyAlreadyExisted: boolean = favoriteItemsUniqueKeys.some(
+        (targetKey) => targetKey === uniquePresetKey,
+      );
+
+      if (isKeyAlreadyExisted) {
+        localStorageCopy.setItem(
+          FAVORITE_ITEMS_UNIQUE_KEYS,
+          favoriteItemsUniqueKeys.filter(
+            (targetKey) => targetKey !== uniquePresetKey,
+          ),
+        );
+      } else {
+        favoriteItemsUniqueKeys.push(uniquePresetKey);
+        localStorageCopy.setItem(
+          FAVORITE_ITEMS_UNIQUE_KEYS,
+          favoriteItemsUniqueKeys,
+        );
       }
     },
   },
@@ -264,6 +320,7 @@ export const {
   setDefaultPresets,
   setActivePresetForContextMenu,
   togglePresetFavorites,
+  setFavoritePresetsFromLocalStorage,
 } = rnaBuilderSlice.actions;
 
 export const rnaBuilderReducer = rnaBuilderSlice.reducer;

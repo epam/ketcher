@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { Slice } from '@reduxjs/toolkit';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { IRnaPreset } from 'components/monomerLibrary/RnaBuilder/types';
 import { RootState } from 'state';
@@ -56,7 +57,7 @@ export const monomerGroupToPresetGroup = {
   [MonomerGroups.PHOSPHATES]: 'phosphate',
 };
 
-export const rnaBuilderSlice = createSlice({
+export const rnaBuilderSlice: Slice = createSlice({
   name: 'rna-builder',
   initialState,
   reducers: {

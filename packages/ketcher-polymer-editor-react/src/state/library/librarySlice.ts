@@ -106,7 +106,7 @@ export const librarySlice: Slice = createSlice({
       state.favorites = localFavorites;
     },
 
-    unsetFavoriteMonomersFromLocalStorage: (state) => {
+    unsetFavoriteMonomersFromLocalStorage: (state: RootState) => {
       state.favorites = {};
     },
 

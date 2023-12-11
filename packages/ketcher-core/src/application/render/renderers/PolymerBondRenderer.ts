@@ -259,7 +259,7 @@ export class PolymerBondRenderer extends BaseRenderer {
           this.getMonomerWidth()
         ),
       );
-      this.addLineFromRightToLeft();
+      this.addLineFromRightToBottom();
       this.addLine(
         LINE_DIRECTION.Vertical,
         endPosition.y -
@@ -416,7 +416,7 @@ export class PolymerBondRenderer extends BaseRenderer {
     this.path = `${this.path} c -4.418,0 -8,-3.582 -8,-8`;
   }
 
-  private addLineFromRightToLeft() {
+  private addLineFromRightToBottom() {
     this.path = `${this.path} c -4.418,0 -8,3.582 -8,8`;
   }
 

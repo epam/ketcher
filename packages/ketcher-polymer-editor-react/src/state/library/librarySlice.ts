@@ -79,11 +79,11 @@ export const librarySlice: Slice = createSlice({
     setFavoriteMonomersFromLocalStorage: (state: RootState) => {
       const localFavorites = {};
 
-      const favoritesInLocalStorage: null | any = localStorageCopy.getItem(
+      const favoritesInLocalStorage: null | string = localStorageCopy.getItem(
         FAVORITE_ITEMS_UNIQUE_KEYS,
       );
 
-      if (!favoritesInLocalStorage) {
+      if (!favoritesInLocalStorage || !Array.isArray(favoritesInLocalStorage)) {
         return;
       }
 

@@ -76,7 +76,7 @@ export const librarySlice: Slice = createSlice({
       state.monomers = newData;
     },
 
-    setFavoriteMonomersFromLocalStorage: (state) => {
+    setFavoriteMonomersFromLocalStorage: (state: RootState) => {
       const localFavorites = {};
 
       const favoritesInLocalStorage: null | any = localStorageCopy.getItem(
@@ -93,12 +93,14 @@ export const librarySlice: Slice = createSlice({
           (key) => key === uniqueKey,
         );
 
-        if (favoriteItem) {
-          localFavorites[uniqueKey] = {
-            ...monomer,
-            favorite: true,
-          };
+        if (!favoriteItem) {
+          return;
         }
+
+        localFavorites[uniqueKey] = {
+          ...monomer,
+          favorite: true,
+        };
       });
 
       state.favorites = localFavorites;

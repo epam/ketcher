@@ -86,6 +86,7 @@ import { getDefaultPresets } from 'src/helpers/getDefaultPreset';
 import {
   setDefaultPresets,
   setFavoritePresetsFromLocalStorage,
+  unsetFavoritePresetsFromLocalStorage,
 } from 'state/rna-builder';
 import { IRnaPreset } from 'components/monomerLibrary/RnaBuilder/types';
 
@@ -164,6 +165,10 @@ function Editor({ theme, togglerComponent }: EditorProps) {
     const defaultPresets: IRnaPreset[] = getDefaultPresets(monomers);
     dispatch(setDefaultPresets(defaultPresets));
     dispatch(setFavoritePresetsFromLocalStorage(null));
+
+    return () => {
+      dispatch(unsetFavoritePresetsFromLocalStorage(null));
+    };
   }, [dispatch, monomers]);
 
   const dispatchShowPreview = useCallback(

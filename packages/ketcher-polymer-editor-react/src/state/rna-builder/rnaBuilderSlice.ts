@@ -148,7 +148,7 @@ export const rnaBuilderSlice = createSlice({
       state.presets = action.payload;
     },
 
-    setFavoritePresetsFromLocalStorage: (state) => {
+    setFavoritePresetsFromLocalStorage: (state: RootState) => {
       const favoritesInLocalStorage: null | any = localStorageCopy.getItem(
         FAVORITE_ITEMS_UNIQUE_KEYS,
       );
@@ -173,6 +173,10 @@ export const rnaBuilderSlice = createSlice({
 
         return preset;
       });
+    },
+
+    unsetFavoritePresetsFromLocalStorage: (state: RootState) => {
+      state.presets = [];
     },
 
     togglePresetFavorites: (state, action: PayloadAction<IRnaPreset>) => {
@@ -321,6 +325,7 @@ export const {
   setActivePresetForContextMenu,
   togglePresetFavorites,
   setFavoritePresetsFromLocalStorage,
+  unsetFavoritePresetsFromLocalStorage,
 } = rnaBuilderSlice.actions;
 
 export const rnaBuilderReducer = rnaBuilderSlice.reducer;

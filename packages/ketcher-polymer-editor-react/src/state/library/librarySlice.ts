@@ -51,7 +51,10 @@ export const librarySlice: Slice = createSlice({
   name: 'library',
   initialState,
   reducers: {
-    loadMonomerLibrary: (state, action: PayloadAction<SdfItem[]>) => {
+    loadMonomerLibrary: (
+      state: RootState,
+      action: PayloadAction<SdfItem[]>,
+    ) => {
       const newData = action.payload.map((monomer) => {
         let monomerLeavingGroups: { [key: string]: string };
         if (typeof monomer.props.MonomerCaps === 'string') {
@@ -110,7 +113,10 @@ export const librarySlice: Slice = createSlice({
       state.favorites = {};
     },
 
-    toggleMonomerFavorites: (state, action: PayloadAction<MonomerItemType>) => {
+    toggleMonomerFavorites: (
+      state: RootState,
+      action: PayloadAction<MonomerItemType>,
+    ) => {
       const key: string = getMonomerUniqueKey(action.payload);
 
       const favoriteItemsUniqueKeys = (localStorageCopy.getItem(

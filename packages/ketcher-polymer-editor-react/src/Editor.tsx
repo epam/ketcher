@@ -166,10 +166,10 @@ function Editor({ theme, togglerComponent }: EditorProps) {
   useEffect(() => {
     const defaultPresets: IRnaPreset[] = getDefaultPresets(monomers);
     dispatch(setDefaultPresets(defaultPresets));
-    dispatch(setFavoritePresetsFromLocalStorage(null));
+    dispatch(setFavoritePresetsFromLocalStorage());
 
     return () => {
-      dispatch(unsetFavoritePresetsFromLocalStorage(null));
+      dispatch(unsetFavoritePresetsFromLocalStorage());
     };
   }, [dispatch, monomers]);
 

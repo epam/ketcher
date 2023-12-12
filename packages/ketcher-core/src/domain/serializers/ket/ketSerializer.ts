@@ -448,13 +448,16 @@ export class KetSerializer implements Serializer<Struct> {
             type: 'monomerTemplate',
             class: monomer.monomerItem.props.MonomerClass,
             classHELM: monomer.monomerItem.props.MonomerType,
-            naturalAnalogShort:
-              monomer.monomerItem.props.MonomerNaturalAnalogCode,
             id: templateId,
             fullName: monomer.monomerItem.props.MonomerFullName,
             alias: monomer.monomerItem.label,
             attachmentPoints: monomer.monomerItem.attachmentPoints,
           };
+          // CHEMs do not have natural analog
+          if (monomer.monomerItem.props.MonomerType !== 'CHEM') {
+            fileContent[templateNameWithPrefix].naturalAnalogShort =
+              monomer.monomerItem.props.MonomerNaturalAnalogCode;
+          }
           fileContent.root.templates.push(getKetRef(templateNameWithPrefix));
         }
       }

@@ -1,13 +1,16 @@
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import { test, expect } from '@playwright/test';
 import {
+  TopPanelButton,
   getKet,
   getMolfile,
+  openFile,
   openFileAndAddToCanvas,
   pressButton,
   receiveFileComparisonData,
   saveToFile,
   selectEraseTool,
+  selectTopPanelButton,
   takeEditorScreenshot,
   waitForPageInit,
   waitForRender,
@@ -217,4 +220,95 @@ test.describe('Import-Saving-Files', () => {
       await takeEditorScreenshot(page);
     });
   }
+
+  test('Check that empty file can be saved in .ket format', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Import/Saving files
+    Description: Empty file can be saved in .ket format
+    */
+    const expectedFile = await getKet(page);
+    await saveToFile('KET/empty-canvas-expected.ket', expectedFile);
+    const { file: ketFile, fileExpected: ketFileExpected } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName: 'tests/test-data/KET/empty-canvas-expected.ket',
+      });
+
+    expect(ketFile).toEqual(ketFileExpected);
+  });
+
+  test('Check that empty file can be saved in .mol format', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Import/Saving files
+    Description: Empty file can be saved in .mol format
+    */
+    const expectedFile = await getMolfile(page);
+    await saveToFile('Molfiles-V2000/empty-canvas-expected.mol', expectedFile);
+
+    const METADATA_STRING_INDEX = [1];
+
+    const { fileExpected: molFileExpected, file: molFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/Molfiles-V2000/empty-canvas-expected.mol',
+        metaDataIndexes: METADATA_STRING_INDEX,
+      });
+
+    expect(molFile).toEqual(molFileExpected);
+  });
+
+  test('Check that system does not let importing empty .ket file', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Import/Saving files
+    Description: System does not let importing empty .ket file
+    */
+    await selectTopPanelButton(TopPanelButton.Open, page);
+    await openFile('KET/empty-file.ket', page);
+    await page.getByText('Add to Canvas').isDisabled();
+  });
+
+  test('Check that system does not let importing empty .mol file', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Import/Saving files
+    Description: System does not let importing empty .mol file
+    */
+    await selectTopPanelButton(TopPanelButton.Open, page);
+    await openFile('Molfiles-V2000/empty-file.mol', page);
+    await page.getByText('Add to Canvas').isDisabled();
+  });
+
+  test('Check that system does not let uploading corrupted .ket file', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Import/Saving files
+    Description: System does not let uploading corrupted .ket file
+    */
+    await selectTopPanelButton(TopPanelButton.Open, page);
+    await openFile('KET/corrupted-file.ket', page);
+    await pressButton(page, 'Add to Canvas');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check that system does not let uploading corrupted .mol file', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Import/Saving files
+    Description: System does not let uploading corrupted .mol file
+    */
+    await selectTopPanelButton(TopPanelButton.Open, page);
+    await openFile('Molfiles-V3000/corrupted-file.mol', page);
+    await pressButton(page, 'Add to Canvas');
+    await takeEditorScreenshot(page);
+  });
 });

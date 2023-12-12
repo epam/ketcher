@@ -2,6 +2,7 @@ import { test } from '@playwright/test';
 import {
   addPeptideOnCanvas,
   takeLibrariesScreenshot,
+  takeMonomerLibraryScreenshot,
   takePageScreenshot,
   takePeptideLibraryScreenshot,
   waitForPageInit,
@@ -15,7 +16,7 @@ test.describe('Peptide library testing', () => {
   });
 
   test('Monomer library', async ({ page }) => {
-    await takeLibrariesScreenshot(page);
+    await takeMonomerLibraryScreenshot(page);
   });
 
   test('Structure displaying in library', async ({ page }) => {
@@ -34,7 +35,8 @@ test.describe('Peptide library testing', () => {
   test('add molecule in favourites', async ({ page }) => {
     // favourites check. there is a bug - favourite sign (star) is golden when hovered(should be dark grey)
     // https://github.com/epam/ketcher/issues/3477
-    (await page.waitForSelector('.star')).click();
+    // await page.waitForSelector('.star');
+    await page.getByTestId('A___Alanine').getByText('★').click();
     await takePeptideLibraryScreenshot(page);
   });
 });

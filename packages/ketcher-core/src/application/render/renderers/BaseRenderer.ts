@@ -17,8 +17,6 @@ export abstract class BaseRenderer implements IBaseRenderer {
 
   public bodyElement?: D3SvgElementSelection<SVGElement, this>;
 
-  public static isSnakeMode = false;
-
   protected hoverElement?: D3SvgElementSelection<
     SVGUseElement & SVGGElement,
     void
@@ -30,9 +28,6 @@ export abstract class BaseRenderer implements IBaseRenderer {
   >;
 
   protected canvasWrapper: D3SvgElementSelection<SVGSVGElement, void>;
-  static setSnakeMode(isSnakeMode) {
-    BaseRenderer.isSnakeMode = isSnakeMode;
-  }
 
   protected canvas: D3SvgElementSelection<SVGSVGElement, void>;
   protected constructor(public drawingEntity: DrawingEntity) {

@@ -40,13 +40,11 @@ import {
   destroyEditor,
   selectEditor,
   selectEditorActiveTool,
-  selectEditorBondMode,
   selectTool,
   showPreview,
-  selectMode,
 } from 'state/common';
 import { loadMonomerLibrary } from 'state/library';
-import { useAppDispatch, useAppSelector } from 'hooks';
+import { useAppDispatch, useAppSelector, useSnakeMode } from 'hooks';
 import {
   closeErrorTooltip,
   openErrorTooltip,
@@ -302,15 +300,14 @@ function Editor({ theme, togglerComponent }: EditorProps) {
 function MenuComponent() {
   const dispatch = useAppDispatch();
   const activeTool = useAppSelector(selectEditorActiveTool);
-  const isSnakeMode = useAppSelector(selectEditorBondMode);
   const editor = useAppSelector(selectEditor);
   const activeMenuItems = [activeTool];
+  const isSnakeMode = useSnakeMode();
   if (isSnakeMode) activeMenuItems.push('snake-mode');
   const menuItemChanged = (name) => {
     if (modalComponentList[name]) {
       dispatch(openModal(name));
     } else if (name === 'snake-mode') {
-      dispatch(selectMode(!isSnakeMode));
       editor.events.selectMode.dispatch(!isSnakeMode);
     } else if (name === 'undo' || name === 'redo') {
       editor.events.selectHistory.dispatch(name);

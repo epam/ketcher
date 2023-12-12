@@ -122,3 +122,21 @@ export class PolymerBondFinishCreationOperation implements Operation {
     renderersManager.deletePolymerBond(this.polymerBond);
   }
 }
+
+export class SelectSnakeModeOperation implements Operation {
+  private onExecute;
+  private onInvert;
+
+  constructor(onExecute: () => void, onInvert: () => void) {
+    this.onExecute = onExecute;
+    this.onInvert = onInvert;
+  }
+
+  public execute(): void {
+    this.onExecute();
+  }
+
+  public invert(): void {
+    this.onInvert();
+  }
+}

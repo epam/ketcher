@@ -1,4 +1,5 @@
 import CoordinatesTool from 'application/editor/shared/coordinates';
+import { BaseMonomer } from 'domain/entities';
 import { Vec2 } from 'domain/entities/vec2';
 
 export type Coordinates = { x: number; y: number };
@@ -97,11 +98,11 @@ export function findLabelPoint(
 export function getSearchFunction(
   initialAngle: number,
   canvasOffset: Coordinates,
-  monomer,
+  monomer: BaseMonomer,
 ) {
   return function findPointOnMonomerBorder(
-    coordStart,
-    length,
+    coordStart: Coordinates,
+    length: number,
     angle = initialAngle,
   ) {
     const angleRadians = Vec2.degrees_to_radians(angle);
@@ -129,26 +130,27 @@ export function getSearchFunction(
       x: Math.round(zoomedCoordinateOfSecondPoint.x) + canvasOffset.x,
       y: Math.round(zoomedCoordinateOfSecondPoint.y) + canvasOffset.y,
     };
-    const elementsAtPoint = document.elementsFromPoint(
-      newPointCoord.x,
-      newPointCoord.y,
-    );
-
+    let newAngle: number = initialAngle;
     let newPoint: Element | null = null;
 
-    for (const element of elementsAtPoint) {
-      if (element === monomer.renderer.bodyElement.node()) {
-        newPoint = element;
-        break;
+    if (monomer.renderer?.bodyElement) {
+      const elementsAtPoint = document.elementsFromPoint(
+        newPointCoord.x,
+        newPointCoord.y,
+      );
+
+      for (const element of elementsAtPoint) {
+        if (element === monomer.renderer.bodyElement.node()) {
+          newPoint = element;
+          break;
+        }
       }
-    }
 
-    let newAngle;
-
-    if (newPoint) {
-      newAngle = initialAngle;
-    } else {
-      newAngle = initialAngle - 180;
+      if (newPoint === monomer.renderer?.bodyElement?.node()) {
+        newAngle = initialAngle;
+      } else {
+        newAngle = initialAngle - 180;
+      }
     }
 
     return findPointOnMonomerBorder(newCoordStart, newLength, newAngle);

@@ -129,13 +129,23 @@ export function getSearchFunction(
       x: Math.round(zoomedCoordinateOfSecondPoint.x) + canvasOffset.x,
       y: Math.round(zoomedCoordinateOfSecondPoint.y) + canvasOffset.y,
     };
-    const newPoint = document.elementFromPoint(
+    const elementsAtPoint = document.elementsFromPoint(
       newPointCoord.x,
       newPointCoord.y,
-    ) as Element;
+    );
+
+    let newPoint: Element | null = null;
+
+    for (const element of elementsAtPoint) {
+      if (element === monomer.renderer.bodyElement.node()) {
+        newPoint = element;
+        break;
+      }
+    }
 
     let newAngle;
-    if (newPoint === monomer.renderer.bodyElement.node()) {
+
+    if (newPoint) {
       newAngle = initialAngle;
     } else {
       newAngle = initialAngle - 180;

@@ -10,13 +10,13 @@ Object {
       aria-hidden="true"
     />
     <div
-      class="MuiDialog-root MuiModal-root css-zw3mfo-MuiModal-root-MuiDialog-root"
+      class="MuiDialog-root MuiModal-root css-6x6udt-MuiModal-root-MuiDialog-root"
       role="presentation"
     >
       <div
         aria-hidden="true"
         class="MuiBackdrop-root MuiModal-backdrop css-yiavyu-MuiBackdrop-root-MuiDialog-backdrop"
-        style="opacity: 0.4; background: rgb(0, 86, 98); webkit-transition: opacity 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms; transition: opacity 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;"
+        style="opacity: 0.4; background: rgba(94, 94, 94, 0.8); webkit-transition: opacity 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms; transition: opacity 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;"
       />
       <div
         data-testid="sentinelStart"
@@ -30,126 +30,184 @@ Object {
       >
         <div
           aria-labelledby=":r0:"
-          class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation24 MuiDialog-paper MuiDialog-paperScrollPaper MuiDialog-paperWidthMd css-12rl710-MuiPaper-root-MuiDialog-paper"
+          class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation24 MuiDialog-paper MuiDialog-paperScrollPaper MuiDialog-paperWidthSm css-1t1j96h-MuiPaper-root-MuiDialog-paper"
           role="dialog"
-          style="min-width: 20vw; background: rgb(245, 245, 245); border-radius: 8px; color: rgb(51, 51, 51);"
+          style="background: rgb(255, 255, 255); border-radius: 8px; color: rgb(51, 51, 51);"
         >
           <h2
-            class="MuiTypography-root MuiTypography-h6 MuiDialogTitle-root css-1x5ms5d-MuiTypography-root-MuiDialogTitle-root"
+            class="MuiTypography-root MuiTypography-h6 MuiDialogTitle-root css-o07hi-MuiTypography-root-MuiDialogTitle-root"
             id=":r0:"
           >
             <div
-              class="css-lvyu5j"
+              class="css-1uarmuk"
             >
               Open Structure
             </div>
-            <button
-              class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-78trlr-MuiButtonBase-root-MuiIconButton-root"
-              tabindex="0"
-              title="Close window"
-              type="button"
-            >
-              <svg
-                fill="none"
-                height="24"
-                viewBox="0 0 24 24"
-                width="24"
-                xmlns="http://www.w3.org/2000/svg"
+            <span>
+              <button
+                class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-78trlr-MuiButtonBase-root-MuiIconButton-root"
+                tabindex="0"
+                title="Close window"
+                type="button"
               >
-                <path
-                  d="M13.462 12.046l6.37 6.37-1.413 1.415-6.371-6.371-6.327 6.326-1.414-1.414 6.327-6.326-6.372-6.372L5.676 4.26l6.372 6.372 6.417-6.418 1.414 1.414-6.417 6.418z"
-                  fill="#333"
-                />
-              </svg>
-              <span
-                class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-              />
-            </button>
-          </h2>
-          <div
-            class="MuiDialogContent-root css-1n1tez8-MuiDialogContent-root"
-          >
-            <div
-              class="css-9brf46"
-            >
-              <div
-                class="css-d0xj19"
-              >
-                <button
-                  class="MuiButtonBase-root css-19hmuzh-MuiButtonBase-root"
-                  role="button"
-                  tabindex="0"
-                  title="Paste from Clipboard"
-                  type="button"
-                >
-                  Paste from Clipboard
-                  <span
-                    class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                  />
-                </button>
                 <svg
-                  height="23"
-                  viewBox="0 0 22 23"
-                  width="22"
+                  class="css-1td8dcm"
+                  fill="none"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  width="24"
                   xmlns="http://www.w3.org/2000/svg"
                 >
                   <path
-                    d="M.5 0v4.5h8.25v18h4.5v-18h8.25V0H.5z"
+                    d="M13.462 12.046l6.37 6.37-1.413 1.415-6.371-6.371-6.327 6.326-1.414-1.414 6.327-6.326-6.372-6.372L5.676 4.26l6.372 6.372 6.417-6.418 1.414 1.414-6.417 6.418z"
+                    fill="currentColor"
                   />
                 </svg>
-              </div>
+                <span
+                  class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+                />
+              </button>
+            </span>
+          </h2>
+          <div
+            class="MuiDialogContent-root css-1wbmh3t-MuiDialogContent-root"
+          >
+            <div
+              class="css-1xilxz1"
+            >
               <div
-                class="css-d0xj19"
+                class="css-9brf46"
               >
                 <div
-                  role="button"
-                  style="width: 100%; height: 100%; display: flex; align-items: center; flex-direction: column; justify-content: space-around;"
-                  tabindex="0"
+                  class="css-uve29d"
+                  data-testid="paste-from-clipboard-button"
                 >
-                  <input
-                    autocomplete="off"
-                    style="display: none;"
-                    tabindex="-1"
-                    type="file"
-                  />
-                  <div
-                    class="css-1gnig72"
-                  >
-                    <button
-                      class="MuiButtonBase-root css-19hmuzh-MuiButtonBase-root"
-                      role="button"
-                      tabindex="0"
-                      title="Open from file"
-                      type="button"
-                    >
-                      Open from file
-                      <span
-                        class="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-                      />
-                    </button>
-                    <span>
-                      or drag file here
-                    </span>
-                  </div>
                   <svg
-                    height="27"
-                    viewBox="0 0 21 27"
-                    width="21"
+                    fill="none"
+                    height="40"
+                    viewBox="0 0 40 40"
+                    width="40"
                     xmlns="http://www.w3.org/2000/svg"
                   >
                     <path
+                      d="M33.973 40H6.027A6.027 6.027 0 010 33.973V6.027A6.027 6.027 0 016.027 0h27.946A6.027 6.027 0 0140 6.027v27.946A6.027 6.027 0 0133.973 40z"
+                      fill="#EFF2F5"
+                    />
+                    <path
+                      d="M28.556 30.636H11.444V11.727h2.445v3.546H26.11v-3.546h2.445v18.91zM20 9.364c.324 0 .635.124.864.346.23.221.358.522.358.835 0 .314-.129.614-.358.836-.229.222-.54.346-.864.346-.324 0-.635-.124-.864-.346a1.162 1.162 0 01-.358-.835c0-.314.129-.615.358-.836.229-.222.54-.346.864-.346zm8.556 0h-5.11A3.673 3.673 0 0020 7a3.673 3.673 0 00-3.447 2.364h-5.109c-.648 0-1.27.249-1.728.692A2.325 2.325 0 009 11.727v18.91c0 .626.258 1.227.716 1.67.458.444 1.08.693 1.728.693h17.112c.648 0 1.27-.249 1.728-.692A2.325 2.325 0 0031 30.636V11.727c0-.627-.258-1.228-.716-1.671a2.487 2.487 0 00-1.728-.692z"
+                      fill="#167782"
+                    />
+                    <path
                       clip-rule="evenodd"
-                      d="M.898 8.972L9.54.395a1.365 1.365 0 011.92 0l8.642 8.577c.53.527.53 1.38 0 1.906-.53.527-1.39.527-1.92 0l-6.324-6.276V26.5H9.142V4.602l-6.324 6.276c-.53.527-1.39.527-1.92 0a1.34 1.34 0 010-1.906z"
+                      d="M15 20h10c.55 0 1-.45 1-1s-.45-1-1-1H15c-.55 0-1 .45-1 1s.45 1 1 1zm10 4H15c-.55 0-1-.45-1-1s.45-1 1-1h10c.55 0 1 .45 1 1s-.45 1-1 1zm0 4H15c-.55 0-1-.45-1-1s.45-1 1-1h10c.55 0 1 .45 1 1s-.45 1-1 1z"
+                      fill="#167782"
                       fill-rule="evenodd"
                     />
                   </svg>
+                  <p
+                    class="css-9x63nq"
+                  >
+                    Paste from clipboard
+                  </p>
+                </div>
+                <div
+                  class="css-uve29d"
+                >
+                  <div
+                    role="button"
+                    style="width: 100%; height: 100%; display: flex; align-items: center; flex-direction: column; justify-content: space-between;"
+                    tabindex="0"
+                  >
+                    <input
+                      autocomplete="off"
+                      style="display: none;"
+                      tabindex="-1"
+                      type="file"
+                    />
+                    <svg
+                      class="css-1opl6cd"
+                      fill="none"
+                      height="40"
+                      viewBox="0 0 40 40"
+                      width="40"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M33.973 40H6.027A6.027 6.027 0 010 33.973V6.027A6.027 6.027 0 016.027 0h27.946A6.027 6.027 0 0140 6.027v27.946A6.027 6.027 0 0133.973 40z"
+                        fill="#EFF2F5"
+                      />
+                      <path
+                        d="M12.835 18.125l-2.477 9.5V15.75h20.048c0-.63-.249-1.234-.691-1.68a2.35 2.35 0 00-1.668-.695h-8.255L17.434 11h-7.076a2.35 2.35 0 00-1.667.696A2.383 2.383 0 008 13.375v14.25c0 .63.248 1.234.69 1.68a2.35 2.35 0 001.668.695h17.69a2.276 2.276 0 002.24-1.781L33 18.125H12.835zm15.212 9.5h-15.33l1.887-7.125h15.33l-1.887 7.125z"
+                        fill="#167782"
+                      />
+                    </svg>
+                    <div
+                      class="css-1b8y5ux"
+                    >
+                      <span>
+                        or drag file here
+                      </span>
+                    </div>
+                    <p
+                      class="css-9x63nq"
+                    >
+                      Open from file
+                    </p>
+                  </div>
+                </div>
+                <div
+                  class="css-uve29d"
+                >
+                  <div
+                    role="button"
+                    style="width: 100%; height: 100%; display: flex; align-items: center; flex-direction: column; justify-content: space-between;"
+                  >
+                    <input
+                      accept="image/*"
+                      autocomplete="off"
+                      style="display: none;"
+                      tabindex="-1"
+                      type="file"
+                    />
+                    <svg
+                      class="css-1iqv54s"
+                      fill="none"
+                      height="38"
+                      viewBox="0 0 47 38"
+                      width="47"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M0 33.778A4.228 4.228 0 004.222 38h38c2.333 0 4.222-1.9 4.222-4.222V4.222A4.228 4.228 0 0042.222 0h-38A4.228 4.228 0 000 4.222v29.555z"
+                        fill="#EFF2F5"
+                      />
+                      <path
+                        d="M42.227 4.222h-38v29.556h38V4.222z"
+                        fill="#AFDADF"
+                      />
+                      <path
+                        d="M32.986 11.875L11.148 33.778h31.074V21.11l-9.236-9.236z"
+                        fill="#3498A4"
+                      />
+                      <path
+                        d="M21.114 14.778a7.389 7.389 0 11-14.778 0 7.389 7.389 0 0114.778 0z"
+                        fill="#39BBCA"
+                      />
+                      <path
+                        d="M14.98 17.087L4.227 27.841v5.937H31.67l-16.69-16.69z"
+                        fill="#167782"
+                      />
+                    </svg>
+                    <p
+                      class="css-1uh9od2"
+                    >
+                      Image Recognition service is not available
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-          <div
-            class="MuiDialogActions-root MuiDialogActions-spacing css-1codpvf-MuiDialogActions-root"
-          />
         </div>
       </div>
       <div

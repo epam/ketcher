@@ -12,7 +12,7 @@ import {
   waitForLoad,
   waitForPageInit,
 } from '@utils';
-import { getRxn } from '@utils/formats';
+import { clickOnFileFormatDropdown, getRxn } from '@utils/formats';
 
 function getComparableDataFromRxn(
   rxnData: string,
@@ -34,7 +34,7 @@ function getRxnFileFilteredBySymbols(
 
 async function saveAsMdlRxnV3000(page: Page) {
   await selectTopPanelButton(TopPanelButton.Save, page);
-  await page.getByRole('button', { name: 'MDL Rxnfile V2000' }).click();
+  await clickOnFileFormatDropdown(page);
   await page.getByRole('option', { name: 'MDL Rxnfile V3000' }).click();
   await page.getByRole('button', { name: 'Save', exact: true }).click();
 }
@@ -239,6 +239,20 @@ test.describe('Reagents RXN format', () => {
     await pasteFromClipboard(
       page,
       FILE_TEST_DATA.benzeneArrowBenzeneReagentHclV3000,
+    );
+    await clickInTheMiddleOfTheScreen(page);
+  });
+
+  test('Open from file in "RXN V3000" format with reagents above and below arrow', async ({
+    page,
+  }) => {
+    /*
+      Test case: EPMLSOPKET-8912
+      Description: Reagent 'NH3' above the reaction arrow and reagent HBr below.
+      */
+    await openFileAndAddToCanvas(
+      'Rxn-V3000/reagents-below-and-above.rxn',
+      page,
     );
     await clickInTheMiddleOfTheScreen(page);
   });

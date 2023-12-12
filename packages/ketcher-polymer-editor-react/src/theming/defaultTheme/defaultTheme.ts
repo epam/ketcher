@@ -33,6 +33,7 @@ const monomerColors: Record<string, MonomerColorScheme> = {
   colorW: { regular: '#99458B', hover: '#7F006B' },
   colorU: { regular: '#99458B', hover: '#7F006B' },
   chem: { regular: '#333333', hover: '#555555' },
+  unknown: { regular: '#CCCBD6', hover: '#B8BBCC' },
 };
 
 export const defaultTheme: EditorTheme = {
@@ -41,10 +42,11 @@ export const defaultTheme: EditorTheme = {
       canvas: '#F5F5F5',
       primary: '#FFFFFF',
       secondary: '#F8FEFF',
-      overlay: '#005662',
+      overlay: 'rgba(94,94,94,.8)',
     },
     border: {
       primary: '#CAD3DD',
+      secondary: '#7C7C7F',
     },
     text: {
       primary: '#333333',
@@ -69,10 +71,10 @@ export const defaultTheme: EditorTheme = {
         active: '#167782',
         hover: '#00838F',
         clicked: '#4FB3BF',
-        disabled: 'rgba(0, 131, 143, 0.4)',
+        disabled: 'rgba(113, 113, 113, 0.4)',
       },
       secondary: {
-        active: '#717171',
+        active: '#585858',
         hover: '#333333',
         clicked: '#AEAEAE',
         disabled: 'rgba(113, 113, 113, 0.4)',
@@ -111,14 +113,15 @@ export const defaultTheme: EditorTheme = {
         error: '#FF4A4A',
       },
       background: {
+        primary: '#FFFFFF',
         default: '#EFF2F5',
         hover: '#DDDDDD',
-        disabled: '#DDDDDD',
+        disabled: '#eff2f5',
       },
       border: {
-        regular: 'transparent',
+        regular: '#cad3dd',
         active: '#FFFFFF',
-        hover: '#DDDDDD',
+        hover: '#43b5c0',
         focus: '#EFF2F5',
         error: '#FF4A4A',
       },
@@ -181,6 +184,7 @@ export const defaultTheme: EditorTheme = {
       W: monomerColors.colorW,
       U: monomerColors.colorU,
       CHEM: monomerColors.chem,
+      undefined: monomerColors.unknown,
     },
   },
   border: {

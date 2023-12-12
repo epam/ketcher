@@ -31,4 +31,10 @@ export const Card = styled(MonomerCard)<{ code?: string; selected?: boolean }>`
   .hidden {
     visibility: hidden !important;
   }
+  > .star {
+    right: 0;
+    left: 4px;
+    top: 10px;
+    width: min-content;
+  }
 `;

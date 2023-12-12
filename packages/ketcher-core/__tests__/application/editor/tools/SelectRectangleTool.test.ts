@@ -34,13 +34,67 @@ jest.mock('d3', () => {
         style() {
           return this;
         },
+        on() {
+          return this;
+        },
+        append() {
+          return this;
+        },
+        data() {
+          return this;
+        },
+        text() {
+          return this;
+        },
+        node() {
+          return {
+            getBBox() {
+              return {};
+            },
+            getBoundingClientRect() {
+              return {};
+            },
+          };
+        },
+      };
+    },
+    ZoomTransform: jest.fn().mockImplementation(() => {
+      return { invertX() {}, invertY() {} };
+    }),
+    zoom() {
+      return {
+        scaleExtent() {
+          return {
+            wheelDelta() {
+              return {
+                filter() {
+                  return {
+                    on() {},
+                  };
+                },
+              };
+            },
+          };
+        },
       };
     },
   };
 });
 
+global.ResizeObserver = jest.fn().mockImplementation(() => ({
+  observe: jest.fn(),
+  unobserve: jest.fn(),
+  disconnect: jest.fn(),
+}));
+
 describe('Select Rectangle Tool', () => {
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
   it('should select drawing entity on mousedown', () => {
+    createPolymerEditorCanvas();
+
     const polymerBond = getFinishedPolymerBond(0, 0, 10, 10);
     const event = {
       target: {
@@ -78,18 +132,31 @@ describe('Select Rectangle Tool', () => {
       theme: polymerEditorTheme,
       canvas,
     });
+    const onMove = jest.fn();
+
+    jest
+      .spyOn(BaseMonomerRenderer.prototype, 'moveSelection')
+      .mockImplementation(onMove);
+    jest
+      .spyOn(PeptideRenderer.prototype, 'drawSelection')
+      .mockImplementation(() => {});
+    jest
+      .spyOn(BaseMonomerRenderer.prototype, 'redrawEnumeration')
+      .mockImplementation(() => {});
+    const fn = jest
+      .spyOn(window, 'requestAnimationFrame')
+      .mockImplementation((func) => {
+        func(0);
+        return 0;
+      });
 
     const modelChanges = editor.drawingEntitiesManager.addMonomer(
       peptideMonomerItem,
       new Vec2(0, 0),
     );
     editor.renderersContainer.update(modelChanges);
-    const peptide = Array.from(editor.drawingEntitiesManager.monomers)[0][1];
-    const onMove = jest.fn();
-    jest
-      .spyOn(BaseMonomerRenderer.prototype, 'moveSelection')
-      .mockImplementation(onMove);
 
+    const peptide = Array.from(editor.drawingEntitiesManager.monomers)[0][1];
     const selectRectangleTool = new SelectRectangle(editor);
 
     const initialPosition = peptide.position;
@@ -103,12 +170,13 @@ describe('Select Rectangle Tool', () => {
 
     editor.drawingEntitiesManager.selectDrawingEntity(peptide);
     selectRectangleTool.mousedown(event);
-    editor.lastCursorPosition.x = initialPosition.x + 100;
-    editor.lastCursorPosition.y = initialPosition.y + 100;
+    editor.lastCursorPositionOfCanvas.x = initialPosition.x + 100;
+    editor.lastCursorPositionOfCanvas.y = initialPosition.y + 100;
 
     selectRectangleTool.mousemove();
     selectRectangleTool.mouseup(event);
 
     expect(onMove).toHaveBeenCalled();
+    fn.mockRestore();
   });
 });

@@ -50,9 +50,9 @@ async function selectMultipleGroup(
 async function changeRepeatCountValue(page: Page, value: string) {
   await page.keyboard.press('Control+a');
   await selectLeftPanelButton(LeftPanelButton.S_Group, page);
-  await page.getByRole('button', { name: 'Data' }).click();
+  await page.getByTestId('s-group-type-input-span').click();
   await page.getByTestId('Multiple group-option').click();
-  await page.getByTestId('file-name-input').fill(value);
+  await page.getByTestId('mul-input').fill(value);
 }
 
 test.describe('Multiple S-Group tool', () => {

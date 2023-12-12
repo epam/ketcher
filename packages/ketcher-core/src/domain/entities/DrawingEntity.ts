@@ -1,7 +1,8 @@
 import { Vec2 } from 'domain/entities/vec2';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import assert from 'assert';
-let id = 1;
+import Coordinates from 'application/editor/shared/coordinates';
+let id = 0;
 
 export abstract class DrawingEntity {
   public selected = false;
@@ -44,19 +45,20 @@ export abstract class DrawingEntity {
     this.selected = false;
   }
 
+  public abstract get center(): Vec2;
+
   public selectIfLocatedInRectangle(
     rectangleTopLeftPoint: Vec2,
     rectangleBottomRightPoint: Vec2,
   ) {
     assert(this.baseRenderer);
     const prevSelectedValue = this.selected;
-    const centerX = this.baseRenderer.bodyX + this.baseRenderer.bodyWidth / 2;
-    const centerY = this.baseRenderer.bodyY + this.baseRenderer.bodyHeight / 2;
+    const center = Coordinates.modelToCanvas(this.center);
     if (
-      rectangleBottomRightPoint.x > centerX &&
-      rectangleBottomRightPoint.y > centerY &&
-      rectangleTopLeftPoint.x < centerX &&
-      rectangleTopLeftPoint.y < centerY
+      rectangleBottomRightPoint.x > center.x &&
+      rectangleBottomRightPoint.y > center.y &&
+      rectangleTopLeftPoint.x < center.x &&
+      rectangleTopLeftPoint.y < center.y
     ) {
       this.turnOnSelection();
     } else {

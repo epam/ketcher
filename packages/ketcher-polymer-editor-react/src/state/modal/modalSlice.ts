@@ -14,31 +14,48 @@
  * limitations under the License.
  ***************************************************************************/
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { AdditionalModalProps } from 'components/modal/modalContainer/types';
 import { RootState } from 'state';
 
 interface ModalState {
   name: string | null;
   isOpen: boolean;
+  additionalProps: AdditionalModalProps | null;
   errorTooltipText: string;
+  errorModalText: string;
 }
 
 const initialState: ModalState = {
   name: null,
   isOpen: false,
+  additionalProps: null,
   errorTooltipText: '',
+  errorModalText: '',
 };
 
 export const modalSlice = createSlice({
   name: 'modal',
   initialState,
   reducers: {
-    openModal: (state, action: PayloadAction<string>) => {
-      state.name = action.payload;
+    openModal: (
+      state,
+      action: PayloadAction<
+        string | { name: string; additionalProps: AdditionalModalProps }
+      >,
+    ) => {
+      if (typeof action.payload === 'string') {
+        state.name = action.payload;
+      } else {
+        state.name = action.payload.name;
+        state.additionalProps = action.payload.additionalProps;
+      }
+
       state.isOpen = true;
     },
     closeModal: (state) => {
       state.name = null;
       state.isOpen = false;
+      state.additionalProps = null;
     },
     openErrorTooltip: (state, action: PayloadAction<string>) => {
       state.errorTooltipText = action.payload;
@@ -46,17 +63,34 @@ export const modalSlice = createSlice({
     closeErrorTooltip: (state) => {
       state.errorTooltipText = '';
     },
+    openErrorModal: (state, action: PayloadAction<string>) => {
+      state.errorModalText = action.payload;
+    },
+    closeErrorModal: (state) => {
+      state.errorModalText = '';
+    },
   },
 });
 
-export const { openModal, closeModal, openErrorTooltip, closeErrorTooltip } =
-  modalSlice.actions;
+export const {
+  openModal,
+  closeModal,
+  openErrorTooltip,
+  closeErrorTooltip,
+  openErrorModal,
+  closeErrorModal,
+} = modalSlice.actions;
 
 export const selectModalName = (state: RootState): string | null =>
   state.modal.name;
 export const selectModalIsOpen = (state: RootState): boolean =>
   state.modal.isOpen;
+export const selectAdditionalProps = (
+  state: RootState,
+): AdditionalModalProps | null => state.modal.additionalProps;
 export const selectErrorTooltipText = (state: RootState): boolean =>
   state.modal.errorTooltipText;
+export const selectErrorModalText = (state: RootState): string =>
+  state.modal.errorModalText;
 
 export const modalReducer = modalSlice.reducer;

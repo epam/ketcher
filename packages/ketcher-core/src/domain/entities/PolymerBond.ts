@@ -2,7 +2,6 @@ import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { PolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer';
 import { Vec2 } from 'domain/entities/vec2';
 import { BaseMonomer } from './BaseMonomer';
-import assert from 'assert';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 
 export class PolymerBond extends DrawingEntity {
@@ -32,10 +31,13 @@ export class PolymerBond extends DrawingEntity {
     return Boolean(this.firstMonomer && this.secondMonomer);
   }
 
+  public get center() {
+    return Vec2.centre(this.startPosition, this.endPosition);
+  }
+
   public moveToLinkedMonomers() {
-    assert(this.firstMonomer.renderer);
-    const firstMonomerCenter = this.firstMonomer.renderer.center;
-    const secondMonomerCenter = this.secondMonomer?.renderer?.center;
+    const firstMonomerCenter = this.firstMonomer.position;
+    const secondMonomerCenter = this.secondMonomer?.position;
     this.moveBondStartAbsolute(firstMonomerCenter.x, firstMonomerCenter.y);
     if (secondMonomerCenter) {
       this.moveBondEndAbsolute(secondMonomerCenter.x, secondMonomerCenter.y);
@@ -52,5 +54,11 @@ export class PolymerBond extends DrawingEntity {
 
   public get startPosition() {
     return this.position;
+  }
+
+  public getAnotherMonomer(monomer: BaseMonomer) {
+    return this.firstMonomer === monomer
+      ? this.secondMonomer
+      : this.firstMonomer;
   }
 }

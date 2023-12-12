@@ -15,25 +15,32 @@
  ***************************************************************************/
 import { Modal } from 'components/shared/modal';
 import { useCallback } from 'react';
-import { ActionButton } from 'components/shared/actionButton';
 import { useAppDispatch, useAppSelector } from 'hooks';
 import {
+  createNewPreset,
   deletePreset,
-  selectActivePreset,
-  selectPresets,
-  setActivePreset,
+  selectActivePresetForContextMenu,
   setIsEditMode,
 } from 'state/rna-builder';
+import { StyledActionButton } from 'components/modal/Delete/styledComponents';
+import styled from '@emotion/styled';
+import { selectEditor } from 'state/common';
 
 export interface Props {
   onClose: () => void;
   isModalOpen: boolean;
 }
 
+const DeleteTextWrapper = styled.div`
+  padding: 12px;
+`;
+
 const Delete = ({ isModalOpen, onClose }: Props) => {
   const dispatch = useAppDispatch();
-  const presets = useAppSelector(selectPresets);
-  const activePreset = useAppSelector(selectActivePreset);
+  const activePresetForContextMenu = useAppSelector(
+    selectActivePresetForContextMenu,
+  );
+  const editor = useAppSelector(selectEditor);
   const onCloseCallback = useCallback(() => {
     onClose();
   }, [onClose]);
@@ -44,11 +51,10 @@ const Delete = ({ isModalOpen, onClose }: Props) => {
 
   const deleteHandler = () => {
     onCloseCallback();
-    dispatch(deletePreset(activePreset));
+    dispatch(deletePreset(activePresetForContextMenu));
     dispatch(setIsEditMode(false));
-    if (presets.length !== 0) {
-      dispatch(setActivePreset(presets[0]));
-    }
+    dispatch(createNewPreset());
+    editor.events.selectPreset.dispatch(null);
   };
 
   return (
@@ -58,20 +64,20 @@ const Delete = ({ isModalOpen, onClose }: Props) => {
       onClose={onCloseCallback}
     >
       <Modal.Content>
-        <div>
+        <DeleteTextWrapper data-testid="delete-preset-popup-content">
           <div>You are about to delete</div>
-          <div>"{activePreset.name}" RNA preset.</div>
+          <div>"{activePresetForContextMenu.name}" RNA preset.</div>
           <div>This operation cannot be undone.</div>
-        </div>
+        </DeleteTextWrapper>
       </Modal.Content>
       <Modal.Footer>
-        <ActionButton
+        <StyledActionButton
           key="cancel"
           clickHandler={cancelHandler}
           label="Cancel"
           styleType="secondary"
         />
-        <ActionButton
+        <StyledActionButton
           key="delete"
           clickHandler={deleteHandler}
           label="Delete"

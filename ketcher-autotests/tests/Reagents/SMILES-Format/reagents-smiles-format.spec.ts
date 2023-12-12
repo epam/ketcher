@@ -14,28 +14,25 @@ import {
   getSmiles,
   setMolecule,
   enableDearomatizeOnLoad,
+  clickOnFileFormatDropdown,
 } from '@utils/formats';
 
-async function getPreviewForSmiles(
-  page: Page,
-  formatName: string,
-  smileType: string,
-) {
+async function getPreviewForSmiles(page: Page, smileType: string) {
   await selectTopPanelButton(TopPanelButton.Save, page);
-  await page.getByRole('button', { name: formatName }).click();
+  await clickOnFileFormatDropdown(page);
   await page.getByRole('option', { name: smileType }).click();
 }
 
 async function saveDaylightSmiles(page: Page) {
   await selectTopPanelButton(TopPanelButton.Save, page);
-  await page.getByRole('button', { name: 'MDL Rxnfile V2000' }).click();
+  await clickOnFileFormatDropdown(page);
   await page.getByRole('option', { name: 'Daylight SMILES' }).click();
   await page.getByRole('button', { name: 'Save', exact: true }).click();
 }
 
 async function saveExtendedSmiles(page: Page) {
   await selectTopPanelButton(TopPanelButton.Save, page);
-  await page.getByRole('button', { name: 'MDL Rxnfile V2000' }).click();
+  await clickOnFileFormatDropdown(page);
   await page.getByRole('option', { name: 'Extended SMILES' }).click();
   await page.getByRole('button', { name: 'Save', exact: true }).click();
 }
@@ -70,7 +67,7 @@ test.describe('Reagents SMILES format', () => {
     const smiFile = await getSmiles(page);
     expect(smiFile).toEqual(smiFileExpected);
 
-    await getPreviewForSmiles(page, 'MDL Rxnfile V2000', 'Daylight SMILES');
+    await getPreviewForSmiles(page, 'Daylight SMILES');
   });
 
   test(`Detection molecule as reagent below arrow
@@ -94,7 +91,7 @@ test.describe('Reagents SMILES format', () => {
     const smiFile = await getSmiles(page);
     expect(smiFile).toEqual(smiFileExpected);
 
-    await getPreviewForSmiles(page, 'MDL Rxnfile V2000', 'Daylight SMILES');
+    await getPreviewForSmiles(page, 'Daylight SMILES');
   });
 
   test(`Detection molecule as reagent
@@ -112,7 +109,7 @@ test.describe('Reagents SMILES format', () => {
       page,
     );
 
-    await getPreviewForSmiles(page, 'MDL Rxnfile V2000', 'Extended SMILES');
+    await getPreviewForSmiles(page, 'Extended SMILES');
   });
 
   test(`Detection molecule as reagent below arrow
@@ -130,7 +127,7 @@ test.describe('Reagents SMILES format', () => {
       page,
     );
 
-    await getPreviewForSmiles(page, 'MDL Rxnfile V2000', 'Extended SMILES');
+    await getPreviewForSmiles(page, 'Extended SMILES');
   });
 
   test('Open from file in "Daylight SMILES" format', async ({ page }) => {

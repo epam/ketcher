@@ -18,36 +18,116 @@ import { useCallback, useEffect, useState } from 'react';
 import { ViewSwitcher } from './ViewSwitcher';
 import { ActionButton } from 'components/shared/actionButton';
 import { FileOpener, fileOpener } from './fileOpener';
-import { KetSerializer } from 'ketcher-core';
+import {
+  ChemicalMimeType,
+  KetSerializer,
+  StructService,
+  SupportedFormat,
+  identifyStructFormat,
+  CoreEditor,
+  KetcherLogger,
+  EditorHistory,
+} from 'ketcher-core';
+import { IndigoProvider } from 'ketcher-react';
+import assert from 'assert';
+import { RequiredModalProps } from '../modalContainer';
+import { CancelButton, OpenFileWrapper } from './Open.styles';
+import { Loader } from '../save/Save.styles';
+import { LoadingCircles } from './AnalyzingFile/LoadingCircles';
+import { useAppDispatch } from 'hooks';
+import { openErrorModal } from 'state/modal';
+import { AnyAction, Dispatch } from 'redux';
 
 export interface Props {
   onClose: () => void;
   isModalOpen: boolean;
 }
 
-const MODAL_STATES = {
+export const MODAL_STATES = {
   openOptions: 'openOptions',
   textEditor: 'textEditor',
+} as const;
+
+export type MODAL_STATES_VALUES =
+  typeof MODAL_STATES[keyof typeof MODAL_STATES];
+
+const addToCanvas = ({
+  ketSerializer,
+  editor,
+  struct,
+}: {
+  ketSerializer: KetSerializer;
+  editor: CoreEditor;
+  struct: string;
+}) => {
+  const deserialisedKet = ketSerializer.deserializeToDrawingEntities(struct);
+  assert(deserialisedKet);
+  deserialisedKet.drawingEntitiesManager.mergeInto(
+    editor.drawingEntitiesManager,
+  );
+  const editorHistory = new EditorHistory(editor);
+  editorHistory.update(deserialisedKet.modelChanges);
+  editor.renderersContainer.update(deserialisedKet.modelChanges);
 };
 
 // TODO: replace after the implementation of the function for processing the structure from the file
-const onOk = ({ struct, fragment }) => {
+const onOk = async ({
+  struct,
+  fragment,
+  onCloseCallback,
+  setIsLoading,
+  dispatch,
+}: {
+  struct: string;
+  fragment: boolean;
+  onCloseCallback: () => void;
+  setIsLoading: (isLoading: boolean) => void;
+  dispatch: Dispatch<AnyAction>;
+}) => {
   if (fragment) {
     console.log('add fragment');
   }
+  const isKet = identifyStructFormat(struct) === SupportedFormat.ket;
   const ketSerializer = new KetSerializer();
-  ketSerializer.deserializeMacromolecule(struct);
+  const editor = CoreEditor.provideEditorInstance();
+  if (isKet) {
+    addToCanvas({ struct, ketSerializer, editor });
+    onCloseCallback();
+    return;
+  }
+  const indigo = IndigoProvider.getIndigo() as StructService;
+  try {
+    setIsLoading(true);
+    const ketStruct = await indigo.convert({
+      struct,
+      output_format: ChemicalMimeType.KET,
+    });
+    addToCanvas({ struct: ketStruct.struct, ketSerializer, editor });
+    onCloseCallback();
+  } catch (error) {
+    const stringError =
+      typeof error === 'string' ? error : JSON.stringify(error);
+    const errorMessage = 'Convert error! ' + stringError;
+    dispatch(openErrorModal(errorMessage));
+    KetcherLogger.error(error);
+  } finally {
+    setIsLoading(false);
+  }
 };
 const isAnalyzingFile = false;
 const errorHandler = (error) => console.log(error);
 
-const Open = ({ isModalOpen, onClose }: Props) => {
+const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
+  const dispatch = useAppDispatch();
   const [structStr, setStructStr] = useState<string>('');
   const [fileName, setFileName] = useState<string>('');
+  const [isLoading, setIsLoading] = useState(false);
   const [opener, setOpener] = useState<
     { chosenOpener: FileOpener } | undefined
   >();
-  const [currentState, setCurrentState] = useState(MODAL_STATES.openOptions);
+  const [currentState, setCurrentState] = useState<MODAL_STATES_VALUES>(
+    MODAL_STATES.openOptions,
+  );
 
   useEffect(() => {
     fileOpener().then((chosenOpener) => {
@@ -73,24 +153,32 @@ const Open = ({ isModalOpen, onClose }: Props) => {
   };
 
   const copyHandler = () => {
-    onOk({ struct: structStr, fragment: true });
-    onCloseCallback();
+    onOk({
+      struct: structStr,
+      fragment: true,
+      onCloseCallback,
+      setIsLoading,
+      dispatch,
+    });
   };
 
   const openHandler = () => {
-    onOk({ struct: structStr, fragment: false });
-    onCloseCallback();
+    onOk({
+      struct: structStr,
+      fragment: false,
+      onCloseCallback,
+      setIsLoading,
+      dispatch,
+    });
   };
 
   const getButtons = () => {
     if (currentState === MODAL_STATES.textEditor && !isAnalyzingFile) {
       return [
-        <ActionButton
-          key="copyButton"
-          disabled={!structStr}
-          clickHandler={copyHandler}
-          label="Add to Canvas"
-          title="Structure will be loaded as fragment and added to Clipboard"
+        <CancelButton
+          key="cancelButton"
+          clickHandler={onCloseCallback}
+          label="Cancel"
           styleType="secondary"
         />,
         <ActionButton
@@ -98,6 +186,15 @@ const Open = ({ isModalOpen, onClose }: Props) => {
           disabled={!structStr}
           clickHandler={openHandler}
           label="Open as New Project"
+          styleType="secondary"
+        />,
+        <ActionButton
+          key="copyButton"
+          disabled={!structStr}
+          clickHandler={copyHandler}
+          label="Add to Canvas"
+          title="Structure will be loaded as fragment and added to Clipboard"
+          data-testid="add-to-canvas-button"
         />,
       ];
     } else {
@@ -112,19 +209,30 @@ const Open = ({ isModalOpen, onClose }: Props) => {
       onClose={onCloseCallback}
     >
       <Modal.Content>
-        <ViewSwitcher
-          isAnalyzingFile={isAnalyzingFile}
-          fileName={fileName}
-          currentState={currentState}
-          states={MODAL_STATES}
-          selectClipboard={() => setCurrentState(MODAL_STATES.textEditor)}
-          fileLoadHandler={onFileLoad}
-          errorHandler={errorHandler}
-          struct={structStr}
-          inputHandler={setStructStr}
-        />
+        <OpenFileWrapper currentState={currentState}>
+          <ViewSwitcher
+            isAnalyzingFile={isAnalyzingFile}
+            fileName={fileName}
+            currentState={currentState}
+            states={MODAL_STATES}
+            selectClipboard={() => setCurrentState(MODAL_STATES.textEditor)}
+            fileLoadHandler={onFileLoad}
+            errorHandler={errorHandler}
+            value={structStr}
+            inputHandler={setStructStr}
+          />
+          {isLoading && (
+            <Loader>
+              <LoadingCircles />
+            </Loader>
+          )}
+        </OpenFileWrapper>
       </Modal.Content>
-      <Modal.Footer>{getButtons()}</Modal.Footer>
+      {getButtons().length === 0 ? (
+        <></>
+      ) : (
+        <Modal.Footer withBorder>{getButtons()}</Modal.Footer>
+      )}
     </Modal>
   );
 };

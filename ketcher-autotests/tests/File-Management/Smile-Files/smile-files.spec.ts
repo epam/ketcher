@@ -13,16 +13,13 @@ import {
   waitForLoad,
   waitForPageInit,
   nonEmptyString,
+  pasteFromClipboardAndAddToCanvas,
 } from '@utils';
-import { getSmiles } from '@utils/formats';
+import { clickOnFileFormatDropdown, getSmiles } from '@utils/formats';
 
-async function getPreviewForSmiles(
-  page: Page,
-  formatName: string,
-  smileType: string,
-) {
+async function getPreviewForSmiles(page: Page, smileType: string) {
   await selectTopPanelButton(TopPanelButton.Save, page);
-  await page.getByRole('button', { name: formatName }).click();
+  await clickOnFileFormatDropdown(page);
   await page.getByRole('option', { name: smileType }).click();
   const previewInput = page.getByTestId('smiles-preview-area-text');
   await previewInput.waitFor({ state: 'visible' });
@@ -68,7 +65,7 @@ test.describe('SMILES files', () => {
       'tests/test-data/smiles-all-bonds-expected.json',
     );
 
-    await getPreviewForSmiles(page, 'MDL Molfile V2000', 'Daylight SMILES');
+    await getPreviewForSmiles(page, 'Daylight SMILES');
     await takeEditorScreenshot(page);
 
     await clearCanvasAndPasteSmiles(page, 'CCCCC/CC/C:CC.C(C)CCCCCCCCCC');
@@ -86,7 +83,7 @@ test.describe('SMILES files', () => {
       'tests/test-data/smiles-all-atoms-properties-expected.json',
     );
 
-    await getPreviewForSmiles(page, 'MDL Molfile V2000', 'Daylight SMILES');
+    await getPreviewForSmiles(page, 'Daylight SMILES');
     await takeEditorScreenshot(page);
 
     await clearCanvasAndPasteSmiles(
@@ -104,7 +101,7 @@ test.describe('SMILES files', () => {
     warning appears for all types of Sgroup except the multiple Sgroup type.
     */
     await openFileAndAddToCanvas('sec_butyl_abr.mol', page);
-    await getPreviewForSmiles(page, 'MDL Molfile V2000', 'Daylight SMILES');
+    await getPreviewForSmiles(page, 'Daylight SMILES');
     await delay(DELAY_IN_SECONDS.TWO);
     await page.getByText('Warnings').click();
   });
@@ -120,7 +117,7 @@ test.describe('SMILES files', () => {
       'tests/test-data/sgroups-diff-symyx-expected.json',
     );
 
-    await getPreviewForSmiles(page, 'MDL Molfile V2000', 'Daylight SMILES');
+    await getPreviewForSmiles(page, 'Daylight SMILES');
     await takeEditorScreenshot(page);
 
     await clearCanvasAndPasteSmiles(
@@ -137,13 +134,16 @@ test.describe('SMILES files', () => {
     Description: SmileString is correctly generated from structure and
     vise versa structure is correctly generated from SmileString.
     */
-    await openFileAndAddToCanvas('Heteroatoms.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/heteroatoms-structure.mol',
+      page,
+    );
     await getAndCompareSmiles(
       page,
       'tests/test-data/smiles-heteroatoms-expected.json',
     );
 
-    await getPreviewForSmiles(page, 'MDL Molfile V2000', 'Daylight SMILES');
+    await getPreviewForSmiles(page, 'Daylight SMILES');
     await takeEditorScreenshot(page);
 
     await clearCanvasAndPasteSmiles(page, 'NOSPFClBrI[H]');
@@ -164,7 +164,7 @@ test.describe('SMILES files', () => {
       'tests/test-data/JSON/attached-data-expected.json',
     );
 
-    await getPreviewForSmiles(page, 'MDL Molfile V2000', 'Daylight SMILES');
+    await getPreviewForSmiles(page, 'Daylight SMILES');
     await page.getByText('Warnings').click();
     await takeEditorScreenshot(page);
 
@@ -189,7 +189,7 @@ test.describe('SMILES files', () => {
       'tests/test-data/smiles-v2000-abs-expected.json',
     );
 
-    await getPreviewForSmiles(page, 'MDL Molfile V2000', 'Daylight SMILES');
+    await getPreviewForSmiles(page, 'Daylight SMILES');
     await takeEditorScreenshot(page);
 
     await clearCanvasAndPasteSmiles(
@@ -216,7 +216,7 @@ test.describe('SMILES files', () => {
       'tests/test-data/smiles-different-features-expected.json',
     );
 
-    await getPreviewForSmiles(page, 'MDL Molfile V2000', 'Daylight SMILES');
+    await getPreviewForSmiles(page, 'Daylight SMILES');
     await takeEditorScreenshot(page);
 
     await clearCanvasAndPasteSmiles(
@@ -241,7 +241,7 @@ test.describe('SMILES files', () => {
       'tests/test-data/smiles-cis-trans-cycle-expected.json',
     );
 
-    await getPreviewForSmiles(page, 'MDL Molfile V2000', 'Daylight SMILES');
+    await getPreviewForSmiles(page, 'Daylight SMILES');
     await takeEditorScreenshot(page);
 
     await clearCanvasAndPasteSmiles(
@@ -264,7 +264,7 @@ test.describe('SMILES files', () => {
       'tests/test-data/smiles-alias-pseudoatom-expected.json',
     );
 
-    await getPreviewForSmiles(page, 'MDL Molfile V2000', 'Daylight SMILES');
+    await getPreviewForSmiles(page, 'Daylight SMILES');
     await takeEditorScreenshot(page);
 
     await clearCanvasAndPasteSmiles(page, 'CCCC*CC |$;;alias123;;GH*;;$|');
@@ -284,7 +284,7 @@ test.describe('SMILES files', () => {
       'tests/test-data/smiles-two-arrows-and-plus-expected.json',
     );
 
-    await getPreviewForSmiles(page, 'MDL Rxnfile V2000', 'Daylight SMILES');
+    await getPreviewForSmiles(page, 'Daylight SMILES');
     await takeEditorScreenshot(page);
 
     await clearCanvasAndPasteSmiles(
@@ -309,9 +309,63 @@ test.describe('SMILES files', () => {
       'tests/test-data/smiles-benzene-arrow-benzene-reagent-nh3-expected.json',
     );
 
-    await getPreviewForSmiles(page, 'MDL Rxnfile V2000', 'Daylight SMILES');
+    await getPreviewForSmiles(page, 'Daylight SMILES');
     await takeEditorScreenshot(page);
 
     await clearCanvasAndPasteSmiles(page, 'C1C=CC=CC=1>N>C1C=CC=CC=1');
+  });
+
+  test('Open SMILE file with S-Group Properties', async ({ page }) => {
+    /*
+    Test case: https://github.com/epam/Indigo/issues/1040
+    Description: SMILE file opens and have S-Group Properties
+    */
+    await openFileAndAddToCanvas(
+      'SMILES/structure-with-s-group-properties.smi',
+      page,
+    );
+    await getAndCompareSmiles(
+      page,
+      'tests/test-data/SMILES/structure-with-s-group-properties.smi',
+    );
+    await page.getByText('info2').dblclick();
+    await takeEditorScreenshot(page);
+
+    await clearCanvasAndPasteSmiles(page, 'CCC |SgD:1:atropisomer:info2::::|');
+  });
+
+  test('Stereobond is preserved after pasting a SMILES structure', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/Indigo/issues/1300
+    Description: The Single Down stereo bond is on the structure
+    */
+    await pasteFromClipboardAndAddToCanvas(page, 'C1=C(C)C(=O)C[S@]1=O');
+  });
+
+  test('Single Up, Single Down and Single Up/Down stereobonds is preserved after pasting a SMILES structure', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/Indigo/issues/1300
+    Description: The Single Up, Single Down and Single Up/Down  stereo bonds is on the structure
+    The test result is not what it should be. The behavior requires further clarification.
+    Single Down bond changes to Single Up and two other stereobonds dissapear.
+    */
+    await pasteFromClipboardAndAddToCanvas(page, 'C1[S@](=O)CC(=O)[C@@]=1C');
+  });
+
+  test('Enhanced stereo labels on atropisomers are not lost when opening saved Extended SMILES', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/Indigo/issues/1257
+    Description: Stereo information for bond and atom is kept
+    */
+    await openFileAndAddToCanvas(
+      'Extended-SMILES/atropoisomer-enhanced-stereo.cxsmi',
+      page,
+    );
   });
 });

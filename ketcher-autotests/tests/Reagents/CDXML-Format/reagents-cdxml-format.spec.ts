@@ -10,10 +10,11 @@ import {
   waitForLoad,
   waitForPageInit,
 } from '@utils';
+import { clickOnFileFormatDropdown } from '@utils/formats';
 
 async function previewCDXML(page: Page) {
   await selectTopPanelButton(TopPanelButton.Save, page);
-  await page.getByRole('button', { name: 'MDL Rxnfile V2000' }).click();
+  await clickOnFileFormatDropdown(page);
   await page.getByRole('option', { name: 'CDXML' }).click();
 }
 
@@ -99,7 +100,7 @@ test.describe('Reagents CDXML format', () => {
     );
 
     await selectTopPanelButton(TopPanelButton.Save, page);
-    await page.getByRole('button', { name: 'MDL Rxnfile V2000' }).click();
+    await clickOnFileFormatDropdown(page);
     await page.getByRole('option', { name: 'CDXML' }).click();
     await page.getByRole('button', { name: 'Save', exact: true }).click();
   });
@@ -152,6 +153,6 @@ test.describe('Reagents CDXML format', () => {
       Description: The structure opens as it was saved with all structural elements: 
       plus and two reaction arrows NH3 molecule above first arrow and HCl below second arrow
     */
-    await openFileAndAddToCanvas('cdxml-multistep.cdxml', page);
+    await openFileAndAddToCanvas('CDXML/cdxml-multistep.cdxml', page);
   });
 });

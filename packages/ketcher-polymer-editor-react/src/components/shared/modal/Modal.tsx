@@ -10,18 +10,24 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Icon } from 'ketcher-react';
 import { scrollbarThin } from 'theming/mixins';
+import { EmptyFunction } from 'helpers/emptyFunction';
+import styles from './Modal.module.less';
 
 interface ModalProps {
   children: JSX.Element | Array<JSX.Element>;
   title: string;
   isOpen: boolean;
   showCloseButton?: boolean;
+  showExpandButton?: boolean;
   onClose: VoidFunction;
   className?: string;
+  modalWidth?: string;
+  expanded?: boolean;
+  setExpanded?: (boolean) => void;
 }
 const StyledDialog = styled(Dialog)`
   .MuiPaper-root {
-    width: 304px;
+    min-width: 304px;
   }
 `;
 
@@ -33,7 +39,6 @@ const Header = styled(DialogTitle)(({ theme }) => ({
   fontFamily: `${theme.ketcher.font.family.inter}`,
   fontSize: `${theme.ketcher.font.size.medium}`,
   fontWeight: 500,
-  letterSpacing: '1.1px',
   textTransform: 'capitalize',
   borderBottom: '1px solid rgba(202, 211, 221, 1)',
 }));
@@ -50,22 +55,28 @@ const StyledIcon = styled(Icon)({
 });
 
 const Content = styled(DialogContent)`
-  padding: 10px 12px;
-  padding-top: 10px !important;
+  padding: 0;
   font-size: ${({ theme }) => theme.ketcher.font.size.medium};
-  letter-spacing: 1.25px;
   line-height: 17px;
+  color: #000000;
   ${({ theme }) => scrollbarThin(theme)};
 `;
 
-const Footer = styled(DialogActions)`
+interface FooterProps {
+  withBorder?: boolean;
+}
+
+const Footer = styled(DialogActions)<FooterProps>`
   height: 52px;
-  margin: 0 12px;
-  padding: 0;
+  margin: 0;
+  padding: 0 12px;
+  border-top: ${({ theme, withBorder }) =>
+    withBorder ? theme.ketcher.border.small : 'none'};
+  justify-content: flex-end;
+
   .MuiButtonBase-root {
     border-radius: 4px;
-    width: 72px;
-    font-size: ${({ theme }) => theme.ketcher.font.size.medium};
+    font-size: ${({ theme }) => theme.ketcher.font.size.regular};
   }
 `;
 
@@ -76,21 +87,35 @@ export const Modal = ({
   title,
   isOpen,
   showCloseButton = true,
+  showExpandButton = false,
   onClose,
   className,
+  modalWidth,
+  expanded = false,
+  setExpanded = EmptyFunction,
 }: ModalProps) => {
   const theme = useTheme();
 
   const paperProps = useMemo(
     () => ({
       style: {
-        minWidth: '20vw',
-        background: theme.ketcher.color.background.canvas,
+        background: theme.ketcher.color.background.primary,
         borderRadius: '8px',
         color: theme.ketcher.color.text.primary,
+        ...(showExpandButton && {
+          margin: 'auto',
+          width: expanded ? '100%' : modalWidth,
+          height: expanded ? '100%' : undefined,
+          maxWidth: 'calc(min(1280px, 100%))',
+          maxHeight: 'calc(min(980px, 100%))',
+        }),
       },
     }),
-    [theme.ketcher.color.text.primary, theme.ketcher.color.background.canvas],
+    [
+      theme.ketcher.color.text.primary,
+      theme.ketcher.color.background.canvas,
+      expanded,
+    ],
   );
 
   const backdropProps = useMemo(
@@ -121,19 +146,36 @@ export const Modal = ({
       BackdropProps={backdropProps}
       PaperProps={paperProps}
       open={isOpen}
-      maxWidth="md"
       onClose={onClose}
       disableEscapeKeyDown={!showCloseButton}
       className={className}
+      sx={{ padding: '24px' }}
     >
-      <Header>
-        <Title>{title}</Title>
-        {showCloseButton && (
-          <IconButton title={'Close window'} onClick={onClose}>
-            <StyledIcon name={'close'} />
-          </IconButton>
-        )}
-      </Header>
+      {title || showCloseButton || showExpandButton ? (
+        <Header>
+          <Title>{title}</Title>
+          <span>
+            {showExpandButton && (
+              <IconButton
+                title={'expand window'}
+                className={styles.expandButton}
+                onClick={() => {
+                  setExpanded(!expanded);
+                }}
+              >
+                <StyledIcon name={expanded ? 'minimize-expansion' : 'expand'} />
+              </IconButton>
+            )}
+            {showCloseButton && (
+              <IconButton title={'Close window'} onClick={onClose}>
+                <StyledIcon name={'close'} />
+              </IconButton>
+            )}
+          </span>
+        </Header>
+      ) : (
+        ''
+      )}
 
       {subcomponents.Content}
 

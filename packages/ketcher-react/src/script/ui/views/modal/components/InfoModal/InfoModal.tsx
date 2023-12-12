@@ -42,7 +42,8 @@ function ErrorInfoModal(props) {
       headerContent={headerContent}
     >
       <div>
-        {isPasteError ? <PasteErrorModalBody /> : defaultCutCopyMessage}
+        {props.customText ||
+          (isPasteError ? <PasteErrorModalBody /> : defaultCutCopyMessage)}
       </div>
     </Dialog>
   );

@@ -1,8 +1,11 @@
 import { select } from 'd3';
 import { DrawingEntity } from 'domain/entities/DrawingEntity';
-import assert from 'assert';
 import { D3SvgElementSelection } from 'application/render/types';
 import { provideEditorSettings } from 'application/editor/editorSettings';
+import {
+  canvasSelector,
+  drawnStructuresSelector,
+} from 'application/editor/constants';
 
 export interface IBaseRenderer {
   show(theme): void;
@@ -26,13 +29,15 @@ export abstract class BaseRenderer implements IBaseRenderer {
     void
   >;
 
+  protected canvasWrapper: D3SvgElementSelection<SVGSVGElement, void>;
   static setSnakeMode(isSnakeMode) {
     BaseRenderer.isSnakeMode = isSnakeMode;
   }
 
   protected canvas: D3SvgElementSelection<SVGSVGElement, void>;
   protected constructor(public drawingEntity: DrawingEntity) {
-    this.canvas = select('#polymer-editor-canvas');
+    this.canvasWrapper = select(canvasSelector);
+    this.canvas = select(drawnStructuresSelector);
   }
 
   protected get editorSettings() {
@@ -60,38 +65,6 @@ export abstract class BaseRenderer implements IBaseRenderer {
 
   public get y() {
     return this.rootBBox?.y || 0;
-  }
-
-  public get bodyBBox() {
-    const rootNode = this.bodyElement?.node();
-    const canvasNode = this.canvas.node();
-    assert(canvasNode);
-    if (!rootNode) return;
-    const canvasBbox = canvasNode.getBoundingClientRect();
-    const rootBbox = rootNode.getBoundingClientRect();
-
-    return {
-      x: rootBbox.x - canvasBbox.x,
-      y: rootBbox.y - canvasBbox.y,
-      width: rootBbox.width,
-      height: rootBbox.height,
-    };
-  }
-
-  public get bodyWidth() {
-    return this.bodyBBox?.width || 0;
-  }
-
-  public get bodyHeight() {
-    return this.bodyBBox?.height || 0;
-  }
-
-  public get bodyX() {
-    return this.bodyBBox?.x || 0;
-  }
-
-  public get bodyY() {
-    return this.bodyBBox?.y || 0;
   }
 
   public abstract show(theme): void;

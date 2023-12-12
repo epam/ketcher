@@ -25,13 +25,13 @@ export const RnaEditorCollapsed = ({
   name,
   fullName,
 }: IRnaEditorCollapsedProps) => {
-  return (
+  return name || fullName ? (
     <RnaEditorCollapsedContainer>
       <TextContainer>
-        <MonomerName grey={!name && !fullName}>
-          {name || fullName || 'Untitled'}
-        </MonomerName>
+        <MonomerName grey={!name && !fullName}>{name || fullName}</MonomerName>
       </TextContainer>
     </RnaEditorCollapsedContainer>
+  ) : (
+    <></>
   );
 };

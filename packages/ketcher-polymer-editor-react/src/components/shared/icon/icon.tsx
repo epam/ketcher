@@ -47,10 +47,13 @@ import SettingsIcon from 'assets/icons/files/settings.svg';
 import StarIcon from 'assets/icons/files/star.svg';
 import SingleBondIcon from 'assets/icons/files/single-bond.svg';
 import VerticalFlipIcon from 'assets/icons/files/vertical-flip.svg';
+import ClearIcon from 'assets/icons/files/clear.svg';
 import UndoIcon from 'assets/icons/files/undo.svg';
 import SaveIcon from 'assets/icons/files/save.svg';
 import ErrorIcon from 'assets/icons/files/error.svg';
 import FullscreenIcon from 'assets/icons/files/fullscreen.svg';
+import ExpandIcon from 'assets/icons/files/expand.svg';
+import MinimizeExpansionIcon from 'assets/icons/files/minimize-expansion.svg';
 
 const iconMap = {
   'arrow-down': ArrowDownIcon,
@@ -85,9 +88,12 @@ const iconMap = {
   star: StarIcon,
   'single-bond': SingleBondIcon,
   'vertical-flip': VerticalFlipIcon,
+  clear: ClearIcon,
   undo: UndoIcon,
   save: SaveIcon,
   error: ErrorIcon,
+  expand: ExpandIcon,
+  'minimize-expansion': MinimizeExpansionIcon,
 };
 
 type IconNameType = keyof typeof iconMap;

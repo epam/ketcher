@@ -20,4 +20,5 @@ import { IconButton } from 'ketcher-react';
 
 export const StyledIconButton = styled(IconButton)`
   margin: 2px;
+  outline: none;
 `;

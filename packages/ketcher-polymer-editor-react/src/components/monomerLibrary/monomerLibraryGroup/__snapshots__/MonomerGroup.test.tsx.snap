@@ -2,10 +2,9 @@
 
 exports[`Monomer Group should apply correct style if selected 1`] = `
 <div
-  class="css-1vdxjys"
+  class="css-1ppl736"
   data-monomer-item-id="RRMonomerName___RRName"
   data-testid="RRMonomerName___RRName"
-  disabled=""
 >
   <span>
     R
@@ -37,10 +36,9 @@ Object {
           class="css-14bnc38"
         >
           <div
-            class="css-yx9nww"
+            class="css-44n4lr"
             data-monomer-item-id="RRMonomerName___RRName"
             data-testid="RRMonomerName___RRName"
-            disabled=""
           >
             <span>
               R
@@ -52,10 +50,9 @@ Object {
             </div>
           </div>
           <div
-            class="css-1yskl7c"
+            class="css-1aujmk4"
             data-monomer-item-id="mAMonomerName___mAName"
             data-testid="mAMonomerName___mAName"
-            disabled=""
           >
             <span>
               m
@@ -67,10 +64,9 @@ Object {
             </div>
           </div>
           <div
-            class="css-1489m9i"
+            class="css-7q75xk"
             data-monomer-item-id="dDMonomerName___dDName"
             data-testid="dDMonomerName___dDName"
-            disabled=""
           >
             <span>
               d
@@ -82,10 +78,9 @@ Object {
             </div>
           </div>
           <div
-            class="css-yx9nww"
+            class="css-44n4lr"
             data-monomer-item-id="arRMonomerName___arRName"
             data-testid="arRMonomerName___arRName"
-            disabled=""
           >
             <span>
               ar
@@ -97,10 +92,9 @@ Object {
             </div>
           </div>
           <div
-            class="css-14ne5i5"
+            class="css-1aujmk4"
             data-monomer-item-id="LdLMonomerName___LdLRName"
             data-testid="LdLMonomerName___LdLRName"
-            disabled=""
           >
             <span>
               Ld
@@ -130,10 +124,9 @@ Object {
         class="css-14bnc38"
       >
         <div
-          class="css-yx9nww"
+          class="css-44n4lr"
           data-monomer-item-id="RRMonomerName___RRName"
           data-testid="RRMonomerName___RRName"
-          disabled=""
         >
           <span>
             R
@@ -145,10 +138,9 @@ Object {
           </div>
         </div>
         <div
-          class="css-1yskl7c"
+          class="css-1aujmk4"
           data-monomer-item-id="mAMonomerName___mAName"
           data-testid="mAMonomerName___mAName"
-          disabled=""
         >
           <span>
             m
@@ -160,10 +152,9 @@ Object {
           </div>
         </div>
         <div
-          class="css-1489m9i"
+          class="css-7q75xk"
           data-monomer-item-id="dDMonomerName___dDName"
           data-testid="dDMonomerName___dDName"
-          disabled=""
         >
           <span>
             d
@@ -175,10 +166,9 @@ Object {
           </div>
         </div>
         <div
-          class="css-yx9nww"
+          class="css-44n4lr"
           data-monomer-item-id="arRMonomerName___arRName"
           data-testid="arRMonomerName___arRName"
-          disabled=""
         >
           <span>
             ar
@@ -190,10 +180,9 @@ Object {
           </div>
         </div>
         <div
-          class="css-14ne5i5"
+          class="css-1aujmk4"
           data-monomer-item-id="LdLMonomerName___LdLRName"
           data-testid="LdLMonomerName___LdLRName"
-          disabled=""
         >
           <span>
             Ld
@@ -273,10 +262,9 @@ Object {
           class="css-14bnc38"
         >
           <div
-            class="css-yx9nww"
+            class="css-44n4lr"
             data-monomer-item-id="RRMonomerName___RRName"
             data-testid="RRMonomerName___RRName"
-            disabled=""
           >
             <span>
               R
@@ -288,10 +276,9 @@ Object {
             </div>
           </div>
           <div
-            class="css-1yskl7c"
+            class="css-1aujmk4"
             data-monomer-item-id="mAMonomerName___mAName"
             data-testid="mAMonomerName___mAName"
-            disabled=""
           >
             <span>
               m
@@ -303,10 +290,9 @@ Object {
             </div>
           </div>
           <div
-            class="css-1489m9i"
+            class="css-7q75xk"
             data-monomer-item-id="dDMonomerName___dDName"
             data-testid="dDMonomerName___dDName"
-            disabled=""
           >
             <span>
               d
@@ -318,10 +304,9 @@ Object {
             </div>
           </div>
           <div
-            class="css-yx9nww"
+            class="css-44n4lr"
             data-monomer-item-id="arRMonomerName___arRName"
             data-testid="arRMonomerName___arRName"
-            disabled=""
           >
             <span>
               ar
@@ -333,10 +318,9 @@ Object {
             </div>
           </div>
           <div
-            class="css-14ne5i5"
+            class="css-1aujmk4"
             data-monomer-item-id="LdLMonomerName___LdLRName"
             data-testid="LdLMonomerName___LdLRName"
-            disabled=""
           >
             <span>
               Ld
@@ -359,10 +343,9 @@ Object {
         class="css-14bnc38"
       >
         <div
-          class="css-yx9nww"
+          class="css-44n4lr"
           data-monomer-item-id="RRMonomerName___RRName"
           data-testid="RRMonomerName___RRName"
-          disabled=""
         >
           <span>
             R
@@ -374,10 +357,9 @@ Object {
           </div>
         </div>
         <div
-          class="css-1yskl7c"
+          class="css-1aujmk4"
           data-monomer-item-id="mAMonomerName___mAName"
           data-testid="mAMonomerName___mAName"
-          disabled=""
         >
           <span>
             m
@@ -389,10 +371,9 @@ Object {
           </div>
         </div>
         <div
-          class="css-1489m9i"
+          class="css-7q75xk"
           data-monomer-item-id="dDMonomerName___dDName"
           data-testid="dDMonomerName___dDName"
-          disabled=""
         >
           <span>
             d
@@ -404,10 +385,9 @@ Object {
           </div>
         </div>
         <div
-          class="css-yx9nww"
+          class="css-44n4lr"
           data-monomer-item-id="arRMonomerName___arRName"
           data-testid="arRMonomerName___arRName"
-          disabled=""
         >
           <span>
             ar
@@ -419,10 +399,9 @@ Object {
           </div>
         </div>
         <div
-          class="css-14ne5i5"
+          class="css-1aujmk4"
           data-monomer-item-id="LdLMonomerName___LdLRName"
           data-testid="LdLMonomerName___LdLRName"
-          disabled=""
         >
           <span>
             Ld

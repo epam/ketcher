@@ -15,7 +15,7 @@
  ***************************************************************************/
 import { AnalyzingFile, AnalyzingFileProps } from '../AnalyzingFile';
 import { OpenOptions, OpenOptionsProps } from '../OpenOptions';
-import { TextEditorProps, TextField } from '../../../shared/textEditor';
+import { TextEditorProps, TextArea } from '../../../shared/TextArea';
 import styled from '@emotion/styled';
 
 type ViewStates = {
@@ -31,7 +31,7 @@ type SwitchProps = {
   TextEditorProps &
   AnalyzingFileProps;
 
-const StyledTextField = styled(TextField)`
+const StyledTextField = styled(TextArea)`
   width: 405px;
   height: 320px;
 `;
@@ -44,7 +44,7 @@ export const ViewSwitcher = (props: SwitchProps) => {
       case props.states.openOptions:
         return <OpenOptions {...props} />;
       case props.states.textEditor:
-        return <StyledTextField {...props} />;
+        return <StyledTextField testId="open-structure-textarea" {...props} />;
       default:
         return null;
     }

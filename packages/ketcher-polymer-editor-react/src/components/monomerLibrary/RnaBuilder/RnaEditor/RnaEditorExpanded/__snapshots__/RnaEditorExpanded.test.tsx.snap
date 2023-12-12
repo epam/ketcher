@@ -11,7 +11,7 @@ exports[`Test Rna Editor Expanded component should render correctly in edit mode
     <input
       class="css-9fgya1"
       placeholder="Name your structure"
-      value=""
+      value="MyRna"
     />
     <span
       class="css-1o94icx"
@@ -22,22 +22,24 @@ exports[`Test Rna Editor Expanded component should render correctly in edit mode
   >
     <div
       class="css-1b10s7n"
+      data-testid="rna-builder-slot--sugar"
     >
       <svg
-        class="css-dsqlr9"
+        class="css-1418ssm"
         fill="none"
-        height="16"
-        viewBox="0 0 16 16"
-        width="16"
+        height="20"
+        stroke-width="2"
+        viewBox="0 0 20 20"
+        width="20"
         xmlns="http://www.w3.org/2000/svg"
       >
         <rect
           fill="currentColor"
-          height="13.333"
+          height="18"
           rx="1"
-          width="13.333"
-          x="1.332"
-          y="1.333"
+          width="18"
+          x="1"
+          y="1"
         />
       </svg>
       <div
@@ -57,22 +59,35 @@ exports[`Test Rna Editor Expanded component should render correctly in edit mode
     </div>
     <div
       class="css-1b10s7n"
+      data-testid="rna-builder-slot--base"
     >
       <svg
-        class="css-dsqlr9"
+        class="css-1s5dbvi"
         fill="none"
-        height="17"
-        viewBox="0 0 18 17"
-        width="18"
+        height="25"
+        stroke-width="2"
+        transform="translate(-3)"
+        viewBox="0 0 26 25"
+        width="26"
         xmlns="http://www.w3.org/2000/svg"
       >
         <rect
           fill="currentColor"
-          height="12"
+          height="15.013"
           rx="1"
-          transform="rotate(45 9 0)"
-          width="12"
-          x="9"
+          transform="rotate(45 13 1.414)"
+          width="15.013"
+          x="13"
+          y="1.414"
+        />
+        <rect
+          height="15.013"
+          rx="1"
+          stroke="currentColor"
+          transform="rotate(45 13 1.414)"
+          width="15.013"
+          x="13"
+          y="1.414"
         />
       </svg>
       <div
@@ -92,22 +107,33 @@ exports[`Test Rna Editor Expanded component should render correctly in edit mode
     </div>
     <div
       class="css-1b10s7n"
+      data-testid="rna-builder-slot--phosphate"
     >
       <svg
-        class="css-dsqlr9"
+        class="css-b18d6u"
         fill="none"
         height="24"
+        stroke-width="2"
+        transform="translate(-2)"
         viewBox="0 0 24 24"
         width="24"
         xmlns="http://www.w3.org/2000/svg"
       >
         <rect
           fill="currentColor"
-          height="20"
-          rx="10"
-          width="20"
-          x="2"
-          y="2"
+          height="18"
+          rx="9"
+          width="18"
+          x="3"
+          y="3"
+        />
+        <rect
+          height="18"
+          rx="9"
+          stroke="currentColor"
+          width="18"
+          x="3"
+          y="3"
         />
       </svg>
       <div
@@ -155,7 +181,9 @@ exports[`Test Rna Editor Expanded component should render correctly in view mode
   >
     <div
       class="css-1o4wo1x"
-    />
+    >
+      MyRna
+    </div>
     <span
       class="css-1o94icx"
     />
@@ -164,23 +192,25 @@ exports[`Test Rna Editor Expanded component should render correctly in view mode
     class="css-s3o4ys"
   >
     <div
-      class="css-1b10s7n"
+      class="css-1u2se0o"
+      data-testid="rna-builder-slot--sugar"
     >
       <svg
-        class="css-dsqlr9"
+        class="css-1418ssm"
         fill="none"
-        height="16"
-        viewBox="0 0 16 16"
-        width="16"
+        height="20"
+        stroke-width="2"
+        viewBox="0 0 20 20"
+        width="20"
         xmlns="http://www.w3.org/2000/svg"
       >
         <rect
           fill="currentColor"
-          height="13.333"
+          height="18"
           rx="1"
-          width="13.333"
-          x="1.332"
-          y="1.333"
+          width="18"
+          x="1"
+          y="1"
         />
       </svg>
       <div
@@ -199,23 +229,36 @@ exports[`Test Rna Editor Expanded component should render correctly in view mode
       </div>
     </div>
     <div
-      class="css-1b10s7n"
+      class="css-1u2se0o"
+      data-testid="rna-builder-slot--base"
     >
       <svg
-        class="css-dsqlr9"
+        class="css-1s5dbvi"
         fill="none"
-        height="17"
-        viewBox="0 0 18 17"
-        width="18"
+        height="25"
+        stroke-width="2"
+        transform="translate(-3)"
+        viewBox="0 0 26 25"
+        width="26"
         xmlns="http://www.w3.org/2000/svg"
       >
         <rect
           fill="currentColor"
-          height="12"
+          height="15.013"
           rx="1"
-          transform="rotate(45 9 0)"
-          width="12"
-          x="9"
+          transform="rotate(45 13 1.414)"
+          width="15.013"
+          x="13"
+          y="1.414"
+        />
+        <rect
+          height="15.013"
+          rx="1"
+          stroke="currentColor"
+          transform="rotate(45 13 1.414)"
+          width="15.013"
+          x="13"
+          y="1.414"
         />
       </svg>
       <div
@@ -234,23 +277,34 @@ exports[`Test Rna Editor Expanded component should render correctly in view mode
       </div>
     </div>
     <div
-      class="css-1b10s7n"
+      class="css-1u2se0o"
+      data-testid="rna-builder-slot--phosphate"
     >
       <svg
-        class="css-dsqlr9"
+        class="css-b18d6u"
         fill="none"
         height="24"
+        stroke-width="2"
+        transform="translate(-2)"
         viewBox="0 0 24 24"
         width="24"
         xmlns="http://www.w3.org/2000/svg"
       >
         <rect
           fill="currentColor"
-          height="20"
-          rx="10"
-          width="20"
-          x="2"
-          y="2"
+          height="18"
+          rx="9"
+          width="18"
+          x="3"
+          y="3"
+        />
+        <rect
+          height="18"
+          rx="9"
+          stroke="currentColor"
+          width="18"
+          x="3"
+          y="3"
         />
       </svg>
       <div

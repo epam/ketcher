@@ -17,6 +17,7 @@
 import { KetSerializer } from 'domain/serializers';
 import { Struct } from 'domain/entities';
 import { StructFormatter } from './structFormatter.types';
+import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 
 export class KetFormatter implements StructFormatter {
   #ketSerializer: KetSerializer;
@@ -25,8 +26,11 @@ export class KetFormatter implements StructFormatter {
     this.#ketSerializer = serializer;
   }
 
-  async getStructureFromStructAsync(struct: Struct): Promise<string> {
-    const ket = this.#ketSerializer.serialize(struct);
+  async getStructureFromStructAsync(
+    struct: Struct,
+    drawingEntitiesManager?: DrawingEntitiesManager,
+  ): Promise<string> {
+    const ket = this.#ketSerializer.serialize(struct, drawingEntitiesManager);
     return ket;
   }
 
@@ -35,6 +39,6 @@ export class KetFormatter implements StructFormatter {
   }
 
   parseMacromoleculeString(content: string): void {
-    this.#ketSerializer.deserializeMacromolecule(content);
+    this.#ketSerializer.deserializeMicromolecules(content);
   }
 }

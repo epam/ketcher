@@ -16,7 +16,7 @@
 
 import React from 'react';
 import styled from '@emotion/styled';
-import { css } from '@emotion/react';
+import { MONOMER_LIBRARY_WIDTH } from 'components/monomerLibrary/styles';
 
 interface LayoutProps {
   children: JSX.Element | Array<JSX.Element>;
@@ -33,51 +33,57 @@ const RowMain = styled.div(({ theme }) => ({
   height: '100vh',
   width: '100%',
   position: 'relative',
-  padding: '16px',
+  padding: '12px',
   paddingBottom: 0,
   backgroundColor: theme.ketcher.color.background.canvas,
   display: 'flex',
   justifyContent: 'space-between',
-  columnGap: '6px',
+  columnGap: '12px',
 }));
 
-const Row = styled.div({
-  display: 'flex',
-  height: 'fit-content',
-});
-
-const baseLeftRightStyle = css({
+const Row = styled.div(({ theme }) => ({
   height: '100%',
-  width: 'fit-content',
-  display: 'flex',
-  flexDirection: 'column',
-});
-
-const Left = styled.div(baseLeftRightStyle);
-
-const Right = styled.div(baseLeftRightStyle);
-
-const Top = styled.div({
-  height: 'fit-content',
   width: '100%',
+  position: 'relative',
+  paddingBottom: 0,
+  backgroundColor: theme.ketcher.color.background.canvas,
+  display: 'flex',
+  justifyContent: 'space-between',
+  columnGap: '3px',
+}));
+
+const BaseLeftRightStyle = styled.div<{ hide?: boolean }>(
+  ({ hide = false }) => ({
+    height: '100%',
+    width: 'fit-content',
+    display: hide ? 'none' : 'flex',
+    flexDirection: 'column',
+  }),
+);
+
+const Left = styled(BaseLeftRightStyle)``;
+
+const Right = styled(BaseLeftRightStyle)``;
+
+const Top = styled.div<{ shortened?: boolean }>(({ shortened = false }) => ({
+  height: 'fit-content',
+  width: shortened ? `calc(100% - ${MONOMER_LIBRARY_WIDTH})` : '100%',
   marginBottom: '6px',
   display: 'flex',
   justifyContent: 'flex-end',
-});
+  backgroundColor: '#FFFFFF',
+  boxShadow: '0px 2px 5px rgba(103, 104, 132, 0.15)',
+  borderRadius: '4px',
+}));
 
 const Main = styled.div({
   height: '100%',
   width: '100%',
+  position: 'relative',
 });
 
 const DummyDiv = styled.div({
   height: '40px',
-});
-
-const DummyDivInRow = styled.div({
-  flexBasis: '40px',
-  height: '100%',
-  flexShrink: '1',
 });
 
 type LayoutSection = 'Left' | 'Right' | 'Main' | 'Top';
@@ -103,17 +109,13 @@ export const Layout = ({ children }: LayoutProps) => {
 
   return (
     <RowMain>
-      <Column>
-        {subcomponents.Left}
-        <DummyDiv />
-      </Column>
       <Column fullWidth>
+        {subcomponents.Top}
         <Row>
-          <DummyDivInRow />
-          {subcomponents.Top}
-          <DummyDivInRow />
+          {subcomponents.Left}
+          <DummyDiv />
+          {subcomponents.Main}
         </Row>
-        {subcomponents.Main}
       </Column>
       <Column>{subcomponents.Right}</Column>
     </RowMain>

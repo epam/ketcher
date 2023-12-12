@@ -19,7 +19,7 @@ describe('Test Rna Preset Item component', () => {
       ),
     );
 
-    const div = screen.getByTestId(preset.name as string);
+    const div = screen.getByTestId('MyRna_._._.');
     fireEvent.click(div);
 
     expect(rnaPresetItemHandleClick.mock.calls.length).toEqual(1);

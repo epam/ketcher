@@ -66,6 +66,8 @@ test('Open and Save file - Open/Save V3000 file with atom and bond properties 1/
 test('Open and Save file - Open/Save V3000 file with atom and bond properties 2/2 - save', async ({
   page,
 }) => {
+  // fails while Indigo loses valence in MolFiles
+  test.fail();
   /**
    * Test case: EPMLSOPKET-1857(2)
    * Description: Strucrute with atom and bond properties is opened and saved correctly
@@ -261,7 +263,10 @@ test('Open and Save file - Open/Save file contains Heteroatoms 1/2 - open', asyn
    */
   await waitForPageInit(page);
 
-  await openFileAndAddToCanvas('Heteroatoms.mol', page);
+  await openFileAndAddToCanvas(
+    'Molfiles-V2000/heteroatoms-structure.mol',
+    page,
+  );
   // check that structure opened from file is displayed correctly
   await takeEditorScreenshot(page);
 });
@@ -275,7 +280,10 @@ test('Open and Save file - Open/Save file contains Heteroatoms 2/2 - save', asyn
    */
   await waitForPageInit(page);
 
-  await openFileAndAddToCanvas('Heteroatoms.mol', page);
+  await openFileAndAddToCanvas(
+    'Molfiles-V2000/heteroatoms-structure.mol',
+    page,
+  );
   const expectedFile = await getMolfile(page, 'v2000');
   await saveToFile('heteroatoms-expected.mol', expectedFile);
   const METADATA_STRING_INDEX = [1];

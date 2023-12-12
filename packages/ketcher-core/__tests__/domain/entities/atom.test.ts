@@ -141,13 +141,13 @@ describe('Atom', () => {
       expect(atom.isQuery()).toBe(true);
     });
 
-    it('should return truthy value if params have attachmentPoints prop', () => {
+    it('should return falsy value if params have attachmentPoints prop', () => {
       const paramsWithAttachmentPoints = {
         ...hydrogenParams,
         attachmentPoints: AttachmentPoints.FirstSideOnly,
       };
       const atom = new Atom(paramsWithAttachmentPoints);
-      expect(atom.isQuery()).toBeTruthy();
+      expect(atom.isQuery()).toBeFalsy();
     });
 
     it('should return truthy value if params have hCount prop', () => {

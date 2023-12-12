@@ -118,11 +118,11 @@ test.describe('Plus and Arrows tools ', () => {
     await selectLeftPanelButton(LeftPanelButton.ArrowOpenAngleTool, page);
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
-    dragMouseTo(x + 100, y + 100, page);
+    await dragMouseTo(x + 100, y + 100, page);
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
     await takeEditorScreenshot(page);
     await page.mouse.move(x + 98, y + 98);
-    dragMouseTo(x + 150, y + 150, page);
+    await dragMouseTo(x + 150, y + 150, page);
   });
 
   test('Copy/paste, cut/paste arrow', async ({ page }) => {
@@ -369,6 +369,7 @@ test.describe('Plus and Arrows tools ', () => {
       await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
       await clickOnTheCanvas(page, 0, -100);
     });
+
     test('Select a part of the reaction with the equilibrium arrow, cut and paste it onto canvas.', async ({
       page,
     }) => {

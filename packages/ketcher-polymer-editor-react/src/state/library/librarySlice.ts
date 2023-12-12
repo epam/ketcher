@@ -20,17 +20,20 @@ import { Group } from 'components/monomerLibrary/monomerLibraryList/types';
 import { IRnaPreset } from 'components/monomerLibrary/RnaBuilder/types';
 import { MonomerItemType, SdfItem } from 'ketcher-core';
 import { LibraryNameType } from 'src/constants';
+import { RootState } from 'state';
 
 interface LibraryState {
   monomers: Group[];
   favorites: { [key: string]: Group };
   searchFilter: string;
+  selectedTabIndex: number;
 }
 
 const initialState: LibraryState = {
   monomers: [],
   favorites: {},
   searchFilter: '',
+  selectedTabIndex: 1,
 };
 
 export function getMonomerUniqueKey(monomer: MonomerItemType) {
@@ -48,13 +51,28 @@ export const librarySlice: Slice = createSlice({
   initialState,
   reducers: {
     loadMonomerLibrary: (state, action: PayloadAction<SdfItem[]>) => {
-      state.monomers = action.payload;
-    },
-    addMonomerFavorites: (state, action: PayloadAction<MonomerItemType>) => {
-      state.favorites[getMonomerUniqueKey(action.payload)] = action.payload;
-    },
-    removeMonomerFavorites: (state, action: PayloadAction<MonomerItemType>) => {
-      delete state.favorites[getMonomerUniqueKey(action.payload)];
+      const newData = action.payload.map((monomer) => {
+        let monomerLeavingGroups: { [key: string]: string };
+        if (typeof monomer.props.MonomerCaps === 'string') {
+          const monomerLeavingGroupsArray =
+            monomer.props.MonomerCaps?.split(',');
+
+          monomerLeavingGroups = monomerLeavingGroupsArray?.reduce(
+            (acc, item) => {
+              const [attachmentPoint, leavingGroup] = item.slice(1).split(']');
+              acc[attachmentPoint] = leavingGroup;
+              return acc;
+            },
+            {},
+          );
+          return {
+            ...monomer,
+            props: { ...monomer.props, MonomerCaps: monomerLeavingGroups },
+          };
+        }
+        return monomer;
+      });
+      state.monomers = newData;
     },
     toggleMonomerFavorites: (state, action: PayloadAction<MonomerItemType>) => {
       const key = getMonomerUniqueKey(action.payload);
@@ -67,8 +85,15 @@ export const librarySlice: Slice = createSlice({
     setSearchFilter: (state, action: PayloadAction<string>) => {
       state.searchFilter = action.payload;
     },
+    setSelectedTabIndex: (state, action: PayloadAction<number>) => {
+      state.selectedTabIndex = action.payload;
+    },
   },
 });
+
+export const getSearchTermValue = (state): string => {
+  return state.library.searchFilter;
+};
 
 export const selectMonomersInCategory = (
   items: MonomerItemType[],
@@ -99,6 +124,10 @@ export const selectFilteredMonomers = (
         favorite: !!state.library.favorites[getMonomerUniqueKey(item)],
       };
     });
+};
+
+export const selectMonomers = (state: RootState) => {
+  return state.library.monomers;
 };
 
 export const selectMonomerGroups = (monomers: MonomerItemType[]) => {
@@ -136,7 +165,13 @@ export const selectMonomerGroups = (monomers: MonomerItemType[]) => {
     }, preparedGroups);
 };
 
-export const { loadMonomerLibrary, toggleMonomerFavorites, setSearchFilter } =
-  librarySlice.actions;
+export const selectCurrentTabIndex = (state) => state.library.selectedTabIndex;
+
+export const {
+  loadMonomerLibrary,
+  toggleMonomerFavorites,
+  setSearchFilter,
+  setSelectedTabIndex,
+} = librarySlice.actions;
 
 export const libraryReducer = librarySlice.reducer;

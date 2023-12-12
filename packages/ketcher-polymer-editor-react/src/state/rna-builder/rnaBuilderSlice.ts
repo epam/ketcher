@@ -28,18 +28,25 @@ export type RnaBuilderItem = RnaBuilderPresetsItem | MonomerGroups;
 
 interface IRnaBuilderState {
   activePreset: IRnaPreset | null;
+  activePresetMonomerGroup: {
+    groupName: MonomerGroups;
+    groupItem: MonomerItemType;
+  } | null;
   presets: IRnaPreset[];
   activeRnaBuilderItem?: RnaBuilderItem | null;
   isEditMode: boolean;
-  hasUniqueNameError: boolean;
+  uniqueNameError: string;
+  activePresetForContextMenu: IRnaPreset | null;
 }
 
 const initialState: IRnaBuilderState = {
   activePreset: null,
+  activePresetMonomerGroup: null,
   presets: [],
   activeRnaBuilderItem: null,
   isEditMode: false,
-  hasUniqueNameError: false,
+  uniqueNameError: '',
+  activePresetForContextMenu: null,
 };
 export const monomerGroupToPresetGroup = {
   [MonomerGroups.BASES]: 'base',
@@ -65,6 +72,12 @@ export const rnaBuilderSlice = createSlice({
         presetInList: action.payload,
       };
     },
+    setActivePresetForContextMenu: (
+      state,
+      action: PayloadAction<IRnaPreset>,
+    ) => {
+      state.activePresetForContextMenu = action.payload;
+    },
     setActivePresetName: (state, action: PayloadAction<string>) => {
       state.activePreset!.name = action.payload;
     },
@@ -79,10 +92,9 @@ export const rnaBuilderSlice = createSlice({
       action: PayloadAction<{
         groupName: MonomerGroups;
         groupItem: MonomerItemType;
-      }>,
+      } | null>,
     ) => {
-      state.activePreset![monomerGroupToPresetGroup[action.payload.groupName]] =
-        action.payload.groupItem;
+      state.activePresetMonomerGroup = action.payload;
     },
     savePreset: (state, action: PayloadAction<IRnaPreset>) => {
       const preset = action.payload;
@@ -102,18 +114,20 @@ export const rnaBuilderSlice = createSlice({
     deletePreset: (state, action: PayloadAction<IRnaPreset>) => {
       const preset = action.payload;
 
+      const presetIndexInList = state.presets.findIndex(
+        (presetInList) => presetInList.name === preset.name,
+      );
+      state.presets.splice(presetIndexInList, 1);
+
       if (preset.presetInList) {
-        const presetIndexInList = state.presets.findIndex(
-          (presetInList) => presetInList.name === preset.presetInList?.name,
-        );
-        state.presets.splice(presetIndexInList, 1);
+        state.activePreset = null;
       }
     },
     setIsEditMode: (state, action: PayloadAction<boolean>) => {
       state.isEditMode = action.payload;
     },
-    setHasUniqueNameError: (state, action: PayloadAction<boolean>) => {
-      state.hasUniqueNameError = action.payload;
+    setUniqueNameError: (state, action: PayloadAction<string>) => {
+      state.uniqueNameError = action.payload;
     },
     setDefaultPresets: (
       state: RootState,
@@ -131,6 +145,15 @@ export const rnaBuilderSlice = createSlice({
       }
       state.presets = action.payload;
     },
+    togglePresetFavorites: (state, action: PayloadAction<IRnaPreset>) => {
+      const presetIndex = state.presets.findIndex(
+        (presetInList) => presetInList.name === action.payload.name,
+      );
+      if (presetIndex >= 0) {
+        const favorite = state.presets[presetIndex].favorite;
+        state.presets[presetIndex].favorite = !favorite;
+      }
+    },
   },
 });
 
@@ -144,7 +167,7 @@ export const selectPresets = (state: RootState): IRnaPreset[] => {
   return state.rnaBuilder.presets;
 };
 
-export const selectActivePresetMonomerGroup = (
+export const selectCurrentMonomerGroup = (
   preset: IRnaPreset,
   groupName: MonomerGroups | string,
 ) => {
@@ -152,6 +175,9 @@ export const selectActivePresetMonomerGroup = (
 
   return preset[monomerGroupToPresetGroup[groupName]];
 };
+
+export const selectActivePresetMonomerGroup = (state: RootState) =>
+  state.rnaBuilder.activePresetMonomerGroup;
 
 export const selectIsPresetReadyToSave = (preset: IRnaPreset): boolean => {
   return Boolean(
@@ -182,8 +208,47 @@ export const selectPresetFullName = (preset: IRnaPreset): string => {
   return fullName;
 };
 
-export const selectHasUniqueNameError = (state: RootState) => {
-  return state.rnaBuilder.hasUniqueNameError;
+export const selectUniqueNameError = (state: RootState) => {
+  return state.rnaBuilder.uniqueNameError;
+};
+
+export const selectIsActivePresetNewAndEmpty = (state: RootState): boolean => {
+  const activePreset = state.rnaBuilder.activePreset;
+  return (
+    activePreset &&
+    !activePreset.presetInList &&
+    !activePreset.name &&
+    !activePreset.sugar &&
+    !activePreset.base &&
+    !activePreset.phosphate
+  );
+};
+
+export const selectActivePresetForContextMenu = (state: RootState) => {
+  return state.rnaBuilder.activePresetForContextMenu;
+};
+
+export const selectPresetsInFavorites = (items: IRnaPreset[]) =>
+  items.filter((item) => item.favorite);
+
+export const selectFilteredPresets = (
+  state,
+): Array<IRnaPreset & { favorite: boolean }> => {
+  const { searchFilter } = state.library;
+  const { presets } = state.rnaBuilder;
+  return presets.filter((item: IRnaPreset) => {
+    const name = item.name?.toLowerCase();
+    const sugarName = item.sugar?.label?.toLowerCase();
+    const phosphateName = item.phosphate?.label?.toLowerCase();
+    const baseName = item.base?.label?.toLowerCase();
+    const searchText = searchFilter.toLowerCase();
+    const cond =
+      name?.includes(searchText) ||
+      sugarName?.includes(searchText) ||
+      phosphateName?.includes(searchText) ||
+      baseName?.includes(searchText);
+    return cond;
+  });
 };
 
 export const {
@@ -195,8 +260,10 @@ export const {
   deletePreset,
   createNewPreset,
   setIsEditMode,
-  setHasUniqueNameError,
+  setUniqueNameError,
   setDefaultPresets,
+  setActivePresetForContextMenu,
+  togglePresetFavorites,
 } = rnaBuilderSlice.actions;
 
 export const rnaBuilderReducer = rnaBuilderSlice.reducer;

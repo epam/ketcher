@@ -15,89 +15,95 @@
  ***************************************************************************/
 
 import { useEffect, useState } from 'react';
-import styled from '@emotion/styled';
 
 import { Modal } from 'components/shared/modal';
-import { DropDown } from 'components/shared/dropDown';
 import { Option } from 'components/shared/dropDown/dropDown';
-import { TextField } from 'components/shared/textEditor';
+import { TextArea } from 'components/shared/TextArea';
 import { TextInputField } from 'components/shared/textInputField';
-import { SaveButton } from 'components/modal/save/saveButton';
 import { getPropertiesByFormat, SupportedFormats } from 'helpers/formats';
 import { ActionButton } from 'components/shared/actionButton';
-import { Icon } from 'ketcher-react';
-import { KetSerializer } from 'ketcher-core';
+import { IndigoProvider } from 'ketcher-react';
+import {
+  ChemicalMimeType,
+  KetSerializer,
+  StructService,
+  CoreEditor,
+  KetcherLogger,
+} from 'ketcher-core';
 import { saveAs } from 'file-saver';
-
-interface Props {
-  onClose: () => void;
-  isModalOpen: boolean;
-}
+import { RequiredModalProps } from '../modalContainer';
+import { LoadingCircles } from '../Open/AnalyzingFile/LoadingCircles';
+import {
+  Form,
+  Loader,
+  Row,
+  StyledDropdown,
+  stylesForExpanded,
+} from './Save.styles';
+import styled from '@emotion/styled';
+import { useAppDispatch } from 'hooks';
+import { openErrorModal } from 'state/modal';
 
 const options: Array<Option> = [
   { id: 'ket', label: 'Ket' },
   { id: 'mol', label: 'MDL Molfile V3000' },
 ];
 
-const Form = styled.form({
-  display: 'flex',
-  flexDirection: 'column',
-  height: '100%',
-});
-
-const Row = styled.div({
-  display: 'flex',
-  justifyContent: 'space-between',
-  marginBottom: '16px',
-});
-
-const Label = styled.label(({ theme }) => ({
-  marginRight: '8px',
-  color: theme.ketcher.color.text.secondary,
-}));
-
-const StyledDropdown = styled(DropDown)(({ theme }) => ({
-  '& .MuiOutlinedInput-root': {
-    border: 'none',
-    backgroundColor: theme.ketcher.color.background.primary,
-    color: theme.ketcher.color.text.primary,
-    fontFamily: theme.ketcher.font.family.inter,
-  },
-}));
-
-const stylesForExpanded = {
-  border: 'none',
-};
-
 const StyledModal = styled(Modal)({
-  '& .MuiPaper-root': {
-    width: '520px',
-    height: '358px',
+  '& div.MuiPaper-root': {
+    background: 'white',
+    minHeight: '400px',
+    minWidth: '430px',
   },
 
   '& .MuiDialogContent-root': {
     overflow: 'hidden',
+    height: '100%',
   },
 });
 
-const ErrorsButton = styled(ActionButton)(({ theme }) => ({
-  backgroundColor: theme.ketcher.color.background.canvas,
-  color: theme.ketcher.color.text.error,
-
-  '&:hover': {
-    backgroundColor: 'initial',
-  },
-}));
-
-export const Save = ({ onClose, isModalOpen }: Props): JSX.Element => {
+export const Save = ({
+  onClose,
+  isModalOpen,
+}: RequiredModalProps): JSX.Element => {
+  const dispatch = useAppDispatch();
   const [currentFileFormat, setCurrentFileFormat] =
     useState<SupportedFormats>('ket');
   const [currentFileName, setCurrentFileName] = useState('ketcher');
-  const [struct] = useState('');
-  const [errors, setErrors] = useState('');
+  const [struct, setStruct] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const indigo = IndigoProvider.getIndigo() as StructService;
+  const editor = CoreEditor.provideEditorInstance();
 
-  const handleSelectChange = (value) => {
-    setCurrentFileFormat(value);
+  const handleSelectChange = async (fileFormat) => {
+    setCurrentFileFormat(fileFormat);
+    const ketSerializer = new KetSerializer();
+    const serializedKet = ketSerializer.serialize(
+      editor.drawingEntitiesManager.micromoleculesHiddenEntities.clone(),
+      editor.drawingEntitiesManager,
+    );
+    if (fileFormat === 'ket') {
+      setStruct(serializedKet);
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      const result = await indigo.convert({
+        struct: serializedKet,
+        output_format: ChemicalMimeType.Mol,
+      });
+      setStruct(result.struct);
+    } catch (error) {
+      const stringError =
+        typeof error === 'string' ? error : JSON.stringify(error);
+      const errorMessage = 'Convert error! ' + stringError;
+      dispatch(openErrorModal(errorMessage));
+      KetcherLogger.error(errorMessage);
+      setCurrentFileFormat('ket');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleInputChange = (value) => {
@@ -105,24 +111,21 @@ export const Save = ({ onClose, isModalOpen }: Props): JSX.Element => {
   };
 
   const handleSave = () => {
-    const ketSerializer = new KetSerializer();
-    const serializedKet = ketSerializer.serializeMacromolecules();
-    const blob = new Blob([JSON.stringify(serializedKet)], {
+    const blob = new Blob([struct], {
       type: getPropertiesByFormat(currentFileFormat).mime,
     });
-    saveAs(blob, getPropertiesByFormat(currentFileFormat).name);
-  };
-
-  const handleErrorsClick = () => {
-    console.log('errors...');
+    const formatProperties = getPropertiesByFormat(currentFileFormat);
+    saveAs(blob, `${currentFileName}${formatProperties.extensions[0]}`);
   };
 
   useEffect(() => {
     if (currentFileFormat === 'ket') {
-      // just an example
-      setErrors('some error');
-    } else {
-      setErrors('');
+      const ketSerializer = new KetSerializer();
+      const serializedKet = ketSerializer.serialize(
+        editor.drawingEntitiesManager.micromoleculesHiddenEntities.clone(),
+        editor.drawingEntitiesManager,
+      );
+      setStruct(serializedKet);
     }
   }, [currentFileFormat]);
 
@@ -130,7 +133,7 @@ export const Save = ({ onClose, isModalOpen }: Props): JSX.Element => {
     <StyledModal title="save structure" isOpen={isModalOpen} onClose={onClose}>
       <Modal.Content>
         <Form onSubmit={handleSave} id="save">
-          <Row>
+          <Row style={{ padding: '12px 12px 10px' }}>
             <div>
               <TextInputField
                 value={currentFileName}
@@ -139,31 +142,40 @@ export const Save = ({ onClose, isModalOpen }: Props): JSX.Element => {
                 label="File name:"
               />
             </div>
-            <div style={{ lineHeight: '24px' }}>
-              <Label htmlFor="fileformat">File format:</Label>
-              <StyledDropdown
-                options={options}
-                currentSelection={currentFileFormat}
-                selectionHandler={handleSelectChange}
-                customStylesForExpanded={stylesForExpanded}
-              />
-            </div>
+            <StyledDropdown
+              label="File format:"
+              options={options}
+              currentSelection={currentFileFormat}
+              selectionHandler={handleSelectChange}
+              customStylesForExpanded={stylesForExpanded}
+            />
           </Row>
-          <TextField struct={struct} readonly selectOnInit />
+          <div style={{ display: 'flex', flexGrow: 1, position: 'relative' }}>
+            <TextArea
+              testId="preview-area-text"
+              value={struct}
+              readonly
+              selectOnInit
+            />
+            {isLoading && (
+              <Loader>
+                <LoadingCircles />
+              </Loader>
+            )}
+          </div>
         </Form>
       </Modal.Content>
 
       <Modal.Footer>
-        {errors && (
-          <ErrorsButton label="Errors" clickHandler={handleErrorsClick}>
-            <Icon name="error" />
-            Errors
-          </ErrorsButton>
-        )}
+        <ActionButton
+          label="Cancel"
+          styleType="secondary"
+          clickHandler={onClose}
+        />
 
-        <SaveButton
-          label="Save as file"
-          onSave={handleSave}
+        <ActionButton
+          label="Save"
+          clickHandler={handleSave}
           disabled={!currentFileName}
         />
       </Modal.Footer>

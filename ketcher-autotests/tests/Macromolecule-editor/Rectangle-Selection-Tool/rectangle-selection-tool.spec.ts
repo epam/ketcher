@@ -1,17 +1,16 @@
 import { test } from '@playwright/test';
 import {
   addMonomerToCanvas,
-  dragMouseTo,
   selectEraseTool,
   selectRectangleArea,
   selectRectangleSelectionTool,
   selectSingleBondTool,
   takeEditorScreenshot,
-  takePageScreenshot,
   waitForPageInit,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
+import { moveMonomer } from '@utils/macromolecules/monomer';
 /* eslint-disable no-magic-numbers */
 
 test.describe('Rectangle Selection Tool', () => {
@@ -73,7 +72,7 @@ test.describe('Rectangle Selection Tool', () => {
     // Get rid of flakiness because of preview
     const coords = [100, 100];
     await page.mouse.move(coords[0], coords[1]);
-    await takePageScreenshot(page);
+    await takeEditorScreenshot(page);
 
     await selectRectangleSelectionTool(page);
 
@@ -87,7 +86,7 @@ test.describe('Rectangle Selection Tool', () => {
 
     // Get rid of flakiness because of preview
     await page.mouse.move(coords[0], coords[1]);
-    await takePageScreenshot(page);
+    await takeEditorScreenshot(page);
 
     // Erase selected elements
     await selectEraseTool(page);
@@ -95,7 +94,7 @@ test.describe('Rectangle Selection Tool', () => {
     // Get rid of flakiness because of preview
     await page.mouse.move(coords[0], coords[1]);
 
-    await takePageScreenshot(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Move monomer bonded with another monomers', async ({ page }) => {
@@ -130,10 +129,7 @@ test.describe('Rectangle Selection Tool', () => {
 
     await takeEditorScreenshot(page);
 
-    // Move selected monomer
-    await selectRectangleSelectionTool(page);
-    await page.mouse.click(400, 400);
-    await dragMouseTo(200, 400, page);
+    await moveMonomer(page, peptide2, 200, 400);
 
     await takeEditorScreenshot(page);
   });

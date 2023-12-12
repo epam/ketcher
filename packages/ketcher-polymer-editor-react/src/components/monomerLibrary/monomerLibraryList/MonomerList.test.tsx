@@ -18,8 +18,11 @@ import { render, screen } from '@testing-library/react';
 import { MONOMER_TYPES } from '../../../constants';
 
 import { MonomerList } from './MonomerList';
+import { preset } from 'src/testMockData/monomerPresets';
 
 describe('Monomer List', () => {
+  const duplicatePreset = jest.fn();
+  const editPreset = jest.fn();
   const onItemClick = jest.fn();
   const initialState = {
     library: {
@@ -29,7 +32,7 @@ describe('Monomer List', () => {
         {
           props: {
             BranchMonomer: 'false',
-            MonomerCaps: '[R1]H',
+            MonomerCaps: { R1: 'H' },
             MonomerCode: '',
             MonomerName: 'Phe4SD',
             MonomerNaturalAnalogCode: 'F',
@@ -41,7 +44,7 @@ describe('Monomer List', () => {
         {
           props: {
             BranchMonomer: 'false',
-            MonomerCaps: '[R1]H',
+            MonomerCaps: { R1: 'H' },
             MonomerCode: '',
             MonomerName: 'PEG2',
             MonomerNaturalAnalogCode: '.',
@@ -52,6 +55,9 @@ describe('Monomer List', () => {
         },
       ],
     },
+    rnaBuilder: {
+      presets: [preset],
+    },
   };
 
   it('should render correct with groups', () => {
@@ -60,6 +66,8 @@ describe('Monomer List', () => {
         <MonomerList
           libraryName={MONOMER_TYPES.PEPTIDE}
           onItemClick={onItemClick}
+          duplicatePreset={duplicatePreset}
+          editPreset={editPreset}
         />,
         initialState,
       ),
@@ -77,6 +85,8 @@ describe('Monomer List', () => {
         <MonomerList
           libraryName={MONOMER_TYPES.CHEM}
           onItemClick={onItemClick}
+          duplicatePreset={duplicatePreset}
+          editPreset={editPreset}
         />,
         initialState,
       ),

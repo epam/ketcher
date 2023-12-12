@@ -4,26 +4,28 @@ import { EmptyFunction } from 'helpers';
 
 describe('Test Rna Editor Expanded component', () => {
   it('should render correctly in edit mode', async () => {
-    const onCancelHandler = jest.fn();
-    const onSaveHandler = jest.fn();
-
     render(
       withThemeAndStoreProvider(
-        <RnaEditorExpanded
-          isEditMode
-          onCancel={onCancelHandler}
-          onChangeName={EmptyFunction}
-          onDuplicate={EmptyFunction}
-          onEdit={EmptyFunction}
-          onSave={onSaveHandler}
-        />,
+        <RnaEditorExpanded isEditMode onDuplicate={EmptyFunction} />,
         {
           rnaBuilder: {
             activePreset: {
               name: 'MyRna',
-              sugar: {},
-              phosphate: {},
-              base: {},
+              sugar: {
+                props: {
+                  MonomerName: '',
+                },
+              },
+              phosphate: {
+                props: {
+                  MonomerName: '',
+                },
+              },
+              base: {
+                props: {
+                  MonomerName: '',
+                },
+              },
             },
           },
         },
@@ -37,32 +39,37 @@ describe('Test Rna Editor Expanded component', () => {
     fireEvent.click(addToPresetsBtn);
     fireEvent.click(cancelBtn);
 
-    expect(onSaveHandler).toBeCalled();
-    expect(onCancelHandler).toBeCalled();
     expect(rnaEditorExpanded).toMatchSnapshot();
   });
 
   it('should render correctly in view mode', async () => {
     const onDuplicateHandler = jest.fn();
-    const onEditHandler = jest.fn();
 
     render(
       withThemeAndStoreProvider(
         <RnaEditorExpanded
           isEditMode={false}
-          onCancel={EmptyFunction}
-          onChangeName={EmptyFunction}
           onDuplicate={onDuplicateHandler}
-          onEdit={onEditHandler}
-          onSave={EmptyFunction}
         />,
         {
           rnaBuilder: {
             activePreset: {
               name: 'MyRna',
-              sugar: {},
-              phosphate: {},
-              base: {},
+              sugar: {
+                props: {
+                  MonomerName: '',
+                },
+              },
+              phosphate: {
+                props: {
+                  MonomerName: '',
+                },
+              },
+              base: {
+                props: {
+                  MonomerName: '',
+                },
+              },
               presetInList: {},
             },
           },
@@ -77,7 +84,6 @@ describe('Test Rna Editor Expanded component', () => {
     fireEvent.click(editBtn);
     fireEvent.click(duplicateBtn);
 
-    expect(onEditHandler).toBeCalled();
     expect(onDuplicateHandler).toBeCalled();
     expect(rnaEditorExpanded).toMatchSnapshot();
   });

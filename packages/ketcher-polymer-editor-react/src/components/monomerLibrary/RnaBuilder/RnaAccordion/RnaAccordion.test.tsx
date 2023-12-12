@@ -1,11 +1,11 @@
 import { render, screen } from '@testing-library/react';
 import { RnaAccordion } from 'components/monomerLibrary/RnaBuilder/RnaAccordion/RnaAccordion';
 import { getMonomerUniqueKey } from 'state/library';
-import { MonomerItemType } from 'ketcher-core';
+import { MonomerItemType, Struct } from 'ketcher-core';
 import { MONOMER_TYPES } from '../../../../constants';
 
 const duplicatePreset = jest.fn();
-const activateEditMode = jest.fn();
+const editPreset = jest.fn();
 describe('Test Rna Accordion component', () => {
   it('should render', () => {
     render(
@@ -13,7 +13,7 @@ describe('Test Rna Accordion component', () => {
         <RnaAccordion
           libraryName={MONOMER_TYPES.RNA}
           duplicatePreset={duplicatePreset}
-          activateEditMode={activateEditMode}
+          editPreset={editPreset}
         />,
       ),
     );
@@ -25,7 +25,8 @@ describe('Test Rna Accordion component', () => {
 
   it('should show number of items in section', () => {
     const monomerData = {
-      struct: {},
+      label: '',
+      struct: new Struct(),
       props: {
         Name: "1',2'-Di-Deoxy-Ribose",
         MonomerType: 'RNA',
@@ -33,7 +34,7 @@ describe('Test Rna Accordion component', () => {
         MonomerCode: '',
         MonomerNaturalAnalogCode: 'P',
         BranchMonomer: 'false',
-        MonomerCaps: '[R1]H',
+        MonomerCaps: { R1: 'H' },
       },
     };
     render(
@@ -41,7 +42,7 @@ describe('Test Rna Accordion component', () => {
         <RnaAccordion
           libraryName={MONOMER_TYPES.RNA}
           duplicatePreset={duplicatePreset}
-          activateEditMode={activateEditMode}
+          editPreset={editPreset}
         />,
         {
           library: {

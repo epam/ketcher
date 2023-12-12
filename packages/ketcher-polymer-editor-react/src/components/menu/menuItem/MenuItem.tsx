@@ -21,9 +21,10 @@ import { StyledIconButton } from './styles';
 type MenuItemProp = {
   itemId: IconName;
   title?: string;
+  testId?: string;
 };
 
-const MenuItem = ({ itemId, title = '' }: MenuItemProp) => {
+const MenuItem = ({ itemId, title = '', testId }: MenuItemProp) => {
   const { isActive, activate } = useMenuContext();
 
   const onClickCallback = useCallback(() => {
@@ -33,9 +34,11 @@ const MenuItem = ({ itemId, title = '' }: MenuItemProp) => {
   return (
     <StyledIconButton
       title={title}
+      className={itemId}
       isActive={isActive(itemId)}
       onClick={onClickCallback}
       iconName={itemId}
+      testId={testId}
     />
   );
 };

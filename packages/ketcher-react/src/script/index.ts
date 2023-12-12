@@ -26,6 +26,7 @@ interface Config {
   structServiceProvider: StructServiceProvider;
   buttons?: ButtonsConfig;
   errorHandler: (message: string) => void;
+  togglerComponent?: JSX.Element;
 }
 
 async function buildKetcherAsync({
@@ -35,6 +36,7 @@ async function buildKetcherAsync({
   structServiceProvider,
   buttons,
   errorHandler,
+  togglerComponent,
 }: Config) {
   const builder = new KetcherBuilder();
 
@@ -46,10 +48,12 @@ async function buildKetcherAsync({
     staticResourcesUrl,
     errorHandler,
     buttons,
+    togglerComponent,
   );
 
   return builder.build();
 }
 
 export type { Config, ButtonsConfig };
+export * from './providers';
 export default buildKetcherAsync;

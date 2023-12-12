@@ -17,7 +17,7 @@
 import { MonomerGroup } from 'components/monomerLibrary/monomerLibraryGroup';
 import { useAppSelector } from 'hooks';
 import { IconName } from 'ketcher-react';
-import { useEffect, useState, MouseEvent } from 'react';
+import { useEffect, useState } from 'react';
 import {
   MonomerCodeToGroup,
   MonomerGroupCodes,
@@ -43,27 +43,20 @@ import {
   RnaBuilderItem,
   RnaBuilderPresetsItem,
   selectActivePreset,
-  selectActivePresetMonomerGroup,
   selectActiveRnaBuilderItem,
+  selectCurrentMonomerGroup,
+  selectFilteredPresets,
+  selectIsActivePresetNewAndEmpty,
   selectIsEditMode,
-  selectPresets,
-  setActivePreset,
   setActivePresetMonomerGroup,
   setActiveRnaBuilderItem,
   setIsEditMode,
 } from 'state/rna-builder';
 import { useDispatch } from 'react-redux';
-import { RnaPresetItem } from 'components/monomerLibrary/RnaPresetItem';
 import { IRnaPreset } from '../types';
-import {
-  GroupContainer,
-  ItemsContainer,
-} from 'components/monomerLibrary/monomerLibraryGroup/styles';
 import { MonomerItemType } from 'ketcher-core';
 import { selectEditor } from 'state/common';
-import { RNAContextMenu } from 'components/contextMenu/RNAContextMenu';
-import { CONTEXT_MENU_ID } from 'components/contextMenu/types';
-import { useContextMenu } from 'react-contexify';
+import { RnaPresetGroup } from 'components/monomerLibrary/RnaPresetGroup/RnaPresetGroup';
 
 interface IGroupsDataItem {
   groupName: RnaBuilderItem;
@@ -74,24 +67,21 @@ interface IGroupsDataItem {
   }[];
 }
 
-export const RnaAccordion = ({
-  libraryName,
-  duplicatePreset,
-  activateEditMode,
-}) => {
+export const RnaAccordion = ({ libraryName, duplicatePreset, editPreset }) => {
   const monomers = useAppSelector(selectFilteredMonomers);
   const items = selectMonomersInCategory(monomers, libraryName);
   const activeRnaBuilderItem = useAppSelector(selectActiveRnaBuilderItem);
   const activePreset = useAppSelector(selectActivePreset);
   const groups = selectMonomerGroups(items);
-  const presets = useAppSelector(selectPresets);
+  const presets = useAppSelector(selectFilteredPresets);
   const isEditMode = useAppSelector(selectIsEditMode);
   const editor = useAppSelector(selectEditor);
+  const isActivePresetNewAndEmpty = useAppSelector(
+    selectIsActivePresetNewAndEmpty,
+  );
 
   const [expandedAccordion, setExpandedAccordion] =
-    useState<RnaBuilderItem | null>(RnaBuilderPresetsItem.Presets);
-
-  const { show } = useContextMenu({ id: CONTEXT_MENU_ID.FOR_RNA });
+    useState<RnaBuilderItem | null>(activeRnaBuilderItem);
 
   const handleAccordionSummaryClick = (rnaBuilderItem: RnaBuilderItem) => {
     if (expandedAccordion === rnaBuilderItem) {
@@ -142,17 +132,6 @@ export const RnaAccordion = ({
     dispatch(setActiveRnaBuilderItem(groupName));
   };
 
-  const handleContextMenu = (preset: IRnaPreset) => (event: MouseEvent) => {
-    dispatch(setActivePreset(preset));
-    show({
-      event,
-      props: {
-        duplicatePreset,
-        activateEditMode,
-      },
-    });
-  };
-
   useEffect(() => {
     setExpandedAccordion(activeRnaBuilderItem);
   }, [activeRnaBuilderItem]);
@@ -160,17 +139,12 @@ export const RnaAccordion = ({
   useEffect(() => {
     dispatch(
       setActiveRnaBuilderItem(
-        isEditMode && activePreset.presetInList
-          ? expandedAccordion
+        isEditMode && activePreset
+          ? activeRnaBuilderItem
           : RnaBuilderPresetsItem.Presets,
       ),
     );
   }, [isEditMode]);
-
-  const selectPreset = (preset: IRnaPreset) => {
-    dispatch(setActivePreset(preset));
-    editor.events.selectPreset.dispatch(preset);
-  };
 
   const onClickNewPreset = () => {
     dispatch(createNewPreset());
@@ -200,35 +174,23 @@ export const RnaAccordion = ({
               <StyledButton onClick={() => onClickNewPreset()}>
                 New Preset
               </StyledButton>
-              <GroupContainer>
-                <ItemsContainer>
-                  {presets.map((preset, index) => {
-                    return (
-                      <RnaPresetItem
-                        key={`${preset.name}${index}`}
-                        preset={preset}
-                        onClick={() => selectPreset(preset)}
-                        onContextMenu={handleContextMenu(preset)}
-                        isSelected={activePreset?.presetInList === preset}
-                      />
-                    );
-                  })}
-                </ItemsContainer>
-                <RNAContextMenu />
-              </GroupContainer>
-              {isEditMode && <DisabledArea />}
+              <RnaPresetGroup
+                duplicatePreset={duplicatePreset}
+                editPreset={editPreset}
+                presets={presets}
+              />
+              {isEditMode && !isActivePresetNewAndEmpty && <DisabledArea />}
             </DetailsContainer>
           ) : (
             <DetailsContainer>
               {groupData.groups.map(({ groupItems, groupTitle }) => {
-                const monomer = selectActivePresetMonomerGroup(
+                const monomer = selectCurrentMonomerGroup(
                   activePreset,
                   groupData.groupName,
                 );
                 return (
                   <MonomerGroup
                     key={groupTitle}
-                    disabled={!isEditMode}
                     title={groupData.groups.length > 1 ? groupTitle : undefined}
                     items={groupItems as MonomerItemType[]}
                     selectedMonomerUniqueKey={

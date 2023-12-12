@@ -7,6 +7,7 @@ import {
   pressButton,
   receiveFileComparisonData,
   saveToFile,
+  selectEraseTool,
   takeEditorScreenshot,
   waitForPageInit,
   waitForRender,
@@ -194,4 +195,26 @@ test.describe('Import-Saving-Files', () => {
     await pressButton(page, 'Save');
     await takeEditorScreenshot(page);
   });
+
+  const monomersToDelete = [
+    { text: '12ddR', description: 'Sugar monomer deleted.' },
+    { text: 'baA', description: 'Base monomer deleted.' },
+    { text: 'P', description: 'Phosphate monomer deleted.' },
+  ];
+  /*
+   Test working not a proper way because we have bug https://github.com/epam/ketcher/issues/3609
+  */
+  for (const monomer of monomersToDelete) {
+    test(`Open file from .mol V3000 and Delete ${monomer.text} monomer`, async ({
+      page,
+    }) => {
+      await openFileAndAddToCanvas(
+        'Molfiles-V3000/monomers-connected-with-bonds.mol',
+        page,
+      );
+      await selectEraseTool(page);
+      await page.getByText(monomer.text).locator('..').first().click();
+      await takeEditorScreenshot(page);
+    });
+  }
 });

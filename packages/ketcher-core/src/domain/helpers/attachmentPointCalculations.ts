@@ -1,4 +1,5 @@
 import CoordinatesTool from 'application/editor/shared/coordinates';
+import { BaseMonomer } from 'domain/entities';
 import { Vec2 } from 'domain/entities/vec2';
 
 export type Coordinates = { x: number; y: number };
@@ -97,11 +98,11 @@ export function findLabelPoint(
 export function getSearchFunction(
   initialAngle: number,
   canvasOffset: Coordinates,
-  monomer,
+  monomer: BaseMonomer,
 ) {
   return function findPointOnMonomerBorder(
-    coordStart,
-    length,
+    coordStart: Coordinates,
+    length: number,
     angle = initialAngle,
   ) {
     const angleRadians = Vec2.degrees_to_radians(angle);
@@ -135,7 +136,7 @@ export function getSearchFunction(
     ) as Element;
 
     let newAngle;
-    if (newPoint === monomer.renderer.bodyElement.node()) {
+    if (newPoint === monomer.renderer?.bodyElement?.node()) {
       newAngle = initialAngle;
     } else {
       newAngle = initialAngle - 180;

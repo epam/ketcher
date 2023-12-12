@@ -1,7 +1,6 @@
 import { test } from '@playwright/test';
 import {
   addPeptideOnCanvas,
-  takeLibrariesScreenshot,
   takeMonomerLibraryScreenshot,
   takePageScreenshot,
   takePeptideLibraryScreenshot,

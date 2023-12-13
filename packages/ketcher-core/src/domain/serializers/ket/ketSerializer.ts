@@ -115,7 +115,7 @@ export class KetSerializer implements Serializer<Struct> {
     return resultingStruct;
   }
 
-  serializeMicromolecules(struct: Struct): string {
+  serializeMicromolecules(struct: Struct, monomer?: BaseMonomer): string {
     const result: any = {
       root: {
         nodes: [],
@@ -132,7 +132,7 @@ export class KetSerializer implements Serializer<Struct> {
       switch (item.type) {
         case 'molecule': {
           result.root.nodes.push({ $ref: `mol${moleculeId}` });
-          result[`mol${moleculeId++}`] = moleculeToKet(item.fragment!);
+          result[`mol${moleculeId++}`] = moleculeToKet(item.fragment!, monomer);
           break;
         }
         case 'rgroup': {
@@ -318,17 +318,18 @@ export class KetSerializer implements Serializer<Struct> {
 
           template.attachmentPoints?.forEach(
             (attachmentPoint, attachmentPointIndex) => {
-              const attachmentAtom = monomer.monomerItem.struct.atoms.get(
-                attachmentPoint.attachmentAtom,
+              const leavingGroupAtom = monomer.monomerItem.struct.atoms.get(
+                attachmentPoint.leavingGroup.atoms[0],
               );
-              assert(attachmentAtom);
-              attachmentAtom.rglabel = (
+              assert(leavingGroupAtom);
+              leavingGroupAtom.rglabel = (
                 0 |
                 (1 <<
                   (attachmentPoint.label
                     ? Number(attachmentPoint.label.replace('R', '')) - 1
                     : attachmentPointIndex))
               ).toString();
+              leavingGroupAtom.label = 'R#';
             },
           );
 
@@ -443,7 +444,7 @@ export class KetSerializer implements Serializer<Struct> {
         if (!fileContent[templateNameWithPrefix]) {
           fileContent[templateNameWithPrefix] = {
             ...JSON.parse(
-              this.serializeMicromolecules(monomer.monomerItem.struct),
+              this.serializeMicromolecules(monomer.monomerItem.struct, monomer),
             ).mol0,
             type: 'monomerTemplate',
             class: monomer.monomerItem.props.MonomerClass,

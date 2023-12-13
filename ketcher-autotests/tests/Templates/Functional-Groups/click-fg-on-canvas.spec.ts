@@ -98,3 +98,4 @@ test.describe('Click Functional Group on canvas', () => {
     await page.mouse.click(coordinatesWithShift, y);
   });
 });
+/* test commit */

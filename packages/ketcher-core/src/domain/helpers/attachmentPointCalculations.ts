@@ -132,20 +132,18 @@ export function getSearchFunction(
     };
     let newAngle: number = initialAngle;
 
-    if (monomer.renderer?.bodyElement) {
-      const elementsAtPoint = document.elementsFromPoint(
-        newPointCoord.x,
-        newPointCoord.y,
-      );
+    const elementsAtPoint = document.elementsFromPoint(
+      newPointCoord.x,
+      newPointCoord.y,
+    );
 
-      const isCurrentMonomerAtNewPoint = elementsAtPoint.some(
-        (element) => element === monomer.renderer?.bodyElement?.node(),
-      );
-      if (isCurrentMonomerAtNewPoint) {
-        newAngle = initialAngle;
-      } else {
-        newAngle = initialAngle - 180;
-      }
+    const isCurrentMonomerAtNewPoint = elementsAtPoint.some(
+      (element) => element === monomer.renderer?.bodyElement?.node(),
+    );
+    if (isCurrentMonomerAtNewPoint) {
+      newAngle = initialAngle;
+    } else {
+      newAngle = initialAngle - 180;
     }
 
     return findPointOnMonomerBorder(newCoordStart, newLength, newAngle);

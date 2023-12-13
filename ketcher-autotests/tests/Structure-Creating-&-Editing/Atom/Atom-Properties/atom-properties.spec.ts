@@ -560,6 +560,23 @@ test.describe('Atom Properties', () => {
     await page.getByLabel('Charge').fill('A');
   });
 
+  test('Type in the Charge field number bigger than maximum', async ({
+    page,
+  }) => {
+    /*
+      Test case: https://github.com/epam/ketcher/issues/3339
+      Description: The range for charge is from -999 to 999
+      The 'Charge' field is framed with the red frame.
+      The 'Error: Invalid charge value' tooltip appears when the cursor over the field.
+      The 'Apply' button becomes disabled.
+    */
+    await openFileAndAddToCanvas('KET/benzene-ring-with-two-atoms.ket', page);
+
+    await doubleClickOnAtom(page, 'C', 0);
+    await page.getByTestId('charge-input').fill('9999');
+    await page.getByTestId('charge-input').hover();
+  });
+
   test('Save structure with two Charge as *.mol file', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-1606
@@ -661,6 +678,19 @@ test.describe('Atom Properties', () => {
 
     await doubleClickOnAtom(page, 'C', 1);
     await page.getByLabel('Isotope').fill('b');
+  });
+
+  test('Add incorrect negative Isotope in modal', async ({ page }) => {
+    /*
+      Test case: https://github.com/epam/ketcher/issues/3339
+      Description: The range for 'Isotope' field is from 0 to 999
+      Field highlight with red and tooltip appears: Invalid isotope value!
+    */
+    await openFileAndAddToCanvas('KET/chain.ket', page);
+
+    await doubleClickOnAtom(page, 'C', 1);
+    await page.getByTestId('isotope-input').fill('-88');
+    await page.getByTestId('isotope-input').hover();
   });
 
   test('Save structure with Isotope information as *.mol file', async ({

@@ -60,6 +60,20 @@ test.describe('Checking atom properties attributes in SMARTS format', () => {
     );
   });
 
+  test('Setting charge to zero', async ({ page }) => {
+    /**
+     * Test case: https://github.com/epam/ketcher/issues/3339
+     * Test is failing due to bug https://github.com/epam/Indigo/issues/1438
+     */
+    test.fail();
+    await setAndCheckAtomProperties(
+      page,
+      setCharge,
+      '0',
+      '[#6](-[#6])(-[#6;+0])-[#6]',
+    );
+  });
+
   test('Setting positive charge', async ({ page }) => {
     await setAndCheckAtomProperties(
       page,
@@ -84,6 +98,20 @@ test.describe('Checking atom properties attributes in SMARTS format', () => {
       setAtomicMass,
       '30',
       '[#6](-[#6])(-[#6;30])-[#6]',
+    );
+  });
+
+  test('Setting isotope (atomic mass) to zero', async ({ page }) => {
+    /**
+     * Test case: https://github.com/epam/ketcher/issues/3339
+     * Test is failing due to bug https://github.com/epam/Indigo/issues/1438
+     */
+    test.fail();
+    await setAndCheckAtomProperties(
+      page,
+      setAtomicMass,
+      '0',
+      '[#6](-[#6])(-[#6;0])-[#6]',
     );
   });
 

@@ -1,4 +1,7 @@
-import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
+import {
+  turnOnMacromoleculesEditor,
+  turnOnMicromoleculesEditor,
+} from '@utils/macromolecules';
 import { test, expect } from '@playwright/test';
 import {
   TopPanelButton,
@@ -309,6 +312,85 @@ test.describe('Import-Saving-Files', () => {
     await selectTopPanelButton(TopPanelButton.Open, page);
     await openFile('Molfiles-V3000/corrupted-file.mol', page);
     await pressButton(page, 'Add to Canvas');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Validate correct displaying of snake viewed peptide chain loaded from .ket file format', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Import/Saving files
+    Description: Sequence of Peptides displaying according to snake view mockup.
+    */
+    await openFileAndAddToCanvas('KET/snake-mode-peptides.ket', page);
+    await page.getByTestId('snake-mode-button').click();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Validate correct displaying of snake viewed peptide chain loaded from .mol file format', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Import/Saving files
+    Description: Sequence of Peptides displaying according to snake view mockup.
+    */
+    await openFileAndAddToCanvas(
+      'Molfiles-V3000/snake-mode-peptides.mol',
+      page,
+    );
+    await page.getByTestId('snake-mode-button').click();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check that .ket file with macro structures is imported correctly in macro mode when saving it in mirco mode', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Import/Saving files
+    Description: .ket file with macro structures is imported correctly in macro mode when saving it in mirco mode
+    */
+    await openFileAndAddToCanvas('KET/monomers-saved-in-micro-mode.ket', page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check that .mol file with macro structures is imported correctly in macro mode when saving it in mirco mode', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Import/Saving files
+    Description: .mol file with macro structures is imported correctly in macro mode when saving it in mirco mode
+    */
+    await openFileAndAddToCanvas(
+      'Molfiles-V3000/monomers-saved-in-micro-mode.mol',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check that macro .ket file can be imported in micro mode', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Import/Saving files
+    Description: .ket file imported in micro mode
+    */
+    await turnOnMicromoleculesEditor(page);
+    await openFileAndAddToCanvas('KET/monomers-saved-in-macro-mode.ket', page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check that macro .mol file can be imported in micro mode', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Import/Saving files
+    Description: .mol file imported in micro mode
+    */
+    await turnOnMicromoleculesEditor(page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V3000/monomers-saved-in-macro-mode.mol',
+      page,
+    );
     await takeEditorScreenshot(page);
   });
 });

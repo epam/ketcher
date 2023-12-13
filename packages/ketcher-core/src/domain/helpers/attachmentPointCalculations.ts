@@ -131,7 +131,6 @@ export function getSearchFunction(
       y: Math.round(zoomedCoordinateOfSecondPoint.y) + canvasOffset.y,
     };
     let newAngle: number = initialAngle;
-    let newPoint: Element | null = null;
 
     if (monomer.renderer?.bodyElement) {
       const elementsAtPoint = document.elementsFromPoint(
@@ -139,14 +138,10 @@ export function getSearchFunction(
         newPointCoord.y,
       );
 
-      for (const element of elementsAtPoint) {
-        if (element === monomer.renderer.bodyElement.node()) {
-          newPoint = element;
-          break;
-        }
-      }
-
-      if (newPoint === monomer.renderer?.bodyElement?.node()) {
+      const isCurrentMonomerAtNewPoint = elementsAtPoint.some(
+        (element) => element === monomer.renderer?.bodyElement?.node(),
+      );
+      if (isCurrentMonomerAtNewPoint) {
         newAngle = initialAngle;
       } else {
         newAngle = initialAngle - 180;

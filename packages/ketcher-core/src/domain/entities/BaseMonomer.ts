@@ -10,6 +10,7 @@ import {
   IKetAttachmentPoint,
   IKetAttachmentPointType,
 } from 'application/formatters/types/ket';
+import { Bond } from 'domain/entities/bond';
 
 export abstract class BaseMonomer extends DrawingEntity {
   public renderer?: BaseMonomerRenderer = undefined;
@@ -349,37 +350,47 @@ export abstract class BaseMonomer extends DrawingEntity {
 
   private getMonomerDefinitionAttachmentPoints() {
     const monomerDefinitionAttachmentPoints: IKetAttachmentPoint[] = [];
-    this.attachmentAtoms.forEach((attachmentAtom) => {
+    this.leavingGroupsAtoms.forEach((leavingGroupsAtom) => {
+      const bondId = this.monomerItem.struct.bonds.find((_, bond) => {
+        return (
+          bond.begin === leavingGroupsAtom.id ||
+          bond.end === leavingGroupsAtom.id
+        );
+      });
+      // Bond between attachment atom and leaving group should exist in monomer structure
+      assert(bondId);
+      const bond = this.monomerItem.struct.bonds.get(bondId) as Bond;
       monomerDefinitionAttachmentPoints.push({
-        attachmentAtom: attachmentAtom.id,
+        attachmentAtom:
+          bond.begin === leavingGroupsAtom.id ? bond.end : bond.begin,
         leavingGroup: {
-          // TODO fill leaving group after the fix of sdf library parsing.
-          //  Currently it loses information about leaving groups.
-          atoms: [],
+          atoms: [leavingGroupsAtom.id],
         },
         type:
-          this.attachmentPointNumberToType[attachmentAtom.rglabel] ||
+          this.attachmentPointNumberToType[leavingGroupsAtom.rglabel] ||
           this.attachmentPointNumberToType.moreThanTwo,
       });
     });
     return monomerDefinitionAttachmentPoints;
   }
 
-  get attachmentAtoms() {
-    const attachmentAtoms = this.monomerItem.struct.atoms.filter((_, value) => {
-      return Boolean(value.rglabel);
-    });
-    const attachmentAtomsArray: { id: number; rglabel: number }[] = [];
-    attachmentAtoms.forEach((attachmentAtom, attachmentAtomId) => {
-      attachmentAtomsArray.push({
+  get leavingGroupsAtoms() {
+    const leavingGroupsAtoms = this.monomerItem.struct.atoms.filter(
+      (_, value) => {
+        return Boolean(value.rglabel);
+      },
+    );
+    const leavingGroupsAtomsArray: { id: number; rglabel: number }[] = [];
+    leavingGroupsAtoms.forEach((attachmentAtom, attachmentAtomId) => {
+      leavingGroupsAtomsArray.push({
         id: attachmentAtomId,
         rglabel: Number(attachmentAtom.rglabel),
       });
     });
-    attachmentAtomsArray.sort((atom1, atom2) =>
+    leavingGroupsAtomsArray.sort((atom1, atom2) =>
       Number(atom1.rglabel) > Number(atom2.rglabel) ? 1 : -1,
     );
-    return attachmentAtomsArray;
+    return leavingGroupsAtomsArray;
   }
 
   public getAttachmentPointDictFromAtoms(): Partial<
@@ -387,7 +398,7 @@ export abstract class BaseMonomer extends DrawingEntity {
   > {
     const attachmentPointNameToBond = {};
 
-    this.attachmentAtoms.forEach(({ rglabel }, _) => {
+    this.leavingGroupsAtoms.forEach(({ rglabel }, _) => {
       const label = convertAttachmentPointNumberToLabel(Number(rglabel));
       attachmentPointNameToBond[label] = null;
     });

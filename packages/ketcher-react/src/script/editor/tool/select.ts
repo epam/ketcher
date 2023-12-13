@@ -48,6 +48,7 @@ import { updateSelectedBonds } from 'src/script/ui/state/modal/bonds';
 import { filterNotInContractedSGroup } from './helper/filterNotInCollapsedSGroup';
 import { Tool } from './Tool';
 import { handleMovingPosibilityCursor } from '../utils';
+import { throttle } from 'lodash';
 
 type SelectMode = 'lasso' | 'fragment' | 'rectangle';
 
@@ -161,7 +162,7 @@ class SelectTool implements Tool {
     return true;
   }
 
-  mousemove(event) {
+  mousemove = throttle((event) => {
     this.previousMouseMoveEvent = event;
     const editor = this.editor;
     const rnd = editor.render;
@@ -248,17 +249,20 @@ class SelectTool implements Tool {
     const maps = getMapsForClosestItem(
       this.#lassoHelper.fragment || event.ctrlKey,
     );
+    const start = new Date().getTime();
+    console.log('FindItem start ------------', start);
     const item = editor.findItem(event, maps, null);
+    const end = new Date().getTime();
+    console.log('FindItem cost ------------', end - start);
     editor.hover(item, null, event);
-
+    console.log('hover cost ------------', new Date().getTime() - end);
     handleMovingPosibilityCursor(
       item,
       this.editor.render.paper.canvas,
       this.editor.render.options.movingStyle.cursor as string,
     );
-
     return true;
-  }
+  }, 40);
 
   mouseup(event) {
     if (!this.isMouseDown) {

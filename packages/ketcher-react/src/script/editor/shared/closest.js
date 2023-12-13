@@ -183,7 +183,7 @@ function findClosestBond(restruct, pos, skip, minDist, options) {
   minDist = Math.min(minDist, maxMinDist);
 
   let minCDist = minDist;
-
+  const start1 = new Date().getTime();
   restruct.bonds.forEach((bond, bid) => {
     const isSkippedBond = bid === skipId || bond.b.isPreview;
     if (isSkippedBond) {
@@ -207,12 +207,12 @@ function findClosestBond(restruct, pos, skip, minDist, options) {
     const mid = Vec2.lc2(p1, 0.5, p2, 0.5);
     const cdist = Vec2.dist(pos, mid);
 
-    const { render } = restruct;
-    const hitboxPoints = bond.getSelectionPoints(render);
     const position = Scale.modelToCanvas(pos, options);
-    const isPosInsidePolygon = position.isInsidePolygon(hitboxPoints);
 
-    if (isPosInsidePolygon) {
+    const bondBoxPoints = bond.bondBoxPoints;
+    const isPosInsideBondBox = position.isInsidePolygon(bondBoxPoints);
+
+    if (isPosInsideBondBox) {
       minCDist = cdist;
       closestBondCenter = bid;
     }
@@ -233,7 +233,7 @@ function findClosestBond(restruct, pos, skip, minDist, options) {
       }
     }
   });
-
+  console.log('bond cost ------------', new Date().getTime() - start1);
   if (closestBondCenter !== null) {
     return {
       id: closestBondCenter,
@@ -502,6 +502,28 @@ function findClosestItem(restruct, pos, maps, skip, options) {
 
   let priorityItem = null;
 
+  // const itemPromises = maps.map((key) => {
+  //   const minDistItem = findMaps[key](restruct, pos, skip, null, options);
+  //   return new Promise((resolve) => {
+  //     resolve(
+  //       minDistItem
+  //         ? {
+  //             map: key,
+  //             ...minDistItem,
+  //           }
+  //         : minDistItem,
+  //     );
+  //   });
+  // });
+  // const minDistItems = await Promise.all(itemPromises);
+  // const closestItem = minDistItems.reduce((minDistItem, distItem) => {
+  //   if (!!distItem && distItem.map === 'sgroupData') {
+  //     priorityItem = distItem;
+  //   }
+  //   return distItem?.dist < minDistItem?.dist || !minDistItem
+  //     ? distItem
+  //     : minDistItem;
+  // }, null);
   const closestItem = maps.reduce((res, mp) => {
     const minDist = res ? res.dist : null;
     const item = findMaps[mp](restruct, pos, skip, minDist, options);

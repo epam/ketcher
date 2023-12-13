@@ -48,10 +48,13 @@ class ReBond extends ReObject {
     rectangle: any;
   };
 
+  bondBoxPoints: Vec2[];
+
   constructor(bond: Bond) {
     super('bond');
     this.b = bond; // TODO rename b to item
     this.doubleBondShift = 0;
+    this.bondBoxPoints = [];
   }
 
   static isSelectable() {
@@ -322,6 +325,7 @@ class ReBond extends ReObject {
     if (!hb1 || !hb2) return;
     const isSnapping = restruct.isSnappingBond(bid);
     this.path = getBondPath(restruct, this, hb1, hb2, isSnapping);
+    this.bondBoxPoints = this.getSelectionPoints(render);
     this.rbb = util.relBox(this.path.getBBox());
     // add layer for bond's skeleton:
     restruct.addReObjectPath(

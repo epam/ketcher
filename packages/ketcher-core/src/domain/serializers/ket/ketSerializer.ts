@@ -320,7 +320,8 @@ export class KetSerializer implements Serializer<Struct> {
           template.attachmentPoints?.forEach(
             (attachmentPoint, attachmentPointIndex) => {
               const leavingGroupAtom = monomer.monomerItem.struct.atoms.get(
-                attachmentPoint.leavingGroup.atoms[0],
+                attachmentPoint.leavingGroup.atoms[0] ||
+                  attachmentPoint.attachmentAtom,
               );
               assert(leavingGroupAtom);
               leavingGroupAtom.rglabel = (

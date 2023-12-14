@@ -54,6 +54,7 @@ import {
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { validate } from 'domain/serializers/ket/validate';
 import { MacromoleculesConverter } from 'application/editor/MacromoleculesConverter';
+import { convertAttachmentPointNumberToLabel } from 'domain/helpers/attachmentPointCalculations';
 
 function parseNode(node: any, struct: any) {
   const type = node.type;
@@ -329,6 +330,13 @@ export class KetSerializer implements Serializer<Struct> {
                     ? Number(attachmentPoint.label.replace('R', '')) - 1
                     : attachmentPointIndex))
               ).toString();
+
+              assert(monomer.monomerItem.props.MonomerCaps);
+              monomer.monomerItem.props.MonomerCaps[
+                convertAttachmentPointNumberToLabel(
+                  Number(leavingGroupAtom.rglabel),
+                )
+              ] = leavingGroupAtom.label;
               leavingGroupAtom.label = 'R#';
             },
           );

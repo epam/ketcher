@@ -357,7 +357,6 @@ export abstract class BaseMonomer extends DrawingEntity {
           bond.end === leavingGroupsAtom.id
         );
       });
-      // Bond between attachment atom and leaving group should exist in monomer structure
       let attachmentAtomId: number;
       let leavingGroupsAtomId: number | undefined;
 

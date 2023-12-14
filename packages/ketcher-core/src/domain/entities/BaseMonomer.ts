@@ -358,13 +358,22 @@ export abstract class BaseMonomer extends DrawingEntity {
         );
       });
       // Bond between attachment atom and leaving group should exist in monomer structure
-      assert(bondId);
-      const bond = this.monomerItem.struct.bonds.get(bondId) as Bond;
+      let attachmentAtomId: number;
+      let leavingGroupsAtomId: number | undefined;
+
+      if (bondId) {
+        const bond = this.monomerItem.struct.bonds.get(bondId) as Bond;
+        attachmentAtomId =
+          bond.begin === leavingGroupsAtom.id ? bond.end : bond.begin;
+        leavingGroupsAtomId = leavingGroupsAtom.id;
+      } else {
+        attachmentAtomId = leavingGroupsAtom.id;
+      }
+
       monomerDefinitionAttachmentPoints.push({
-        attachmentAtom:
-          bond.begin === leavingGroupsAtom.id ? bond.end : bond.begin,
+        attachmentAtom: attachmentAtomId,
         leavingGroup: {
-          atoms: [leavingGroupsAtom.id],
+          atoms: leavingGroupsAtomId ? [leavingGroupsAtomId] : [],
         },
         type:
           this.attachmentPointNumberToType[leavingGroupsAtom.rglabel] ||

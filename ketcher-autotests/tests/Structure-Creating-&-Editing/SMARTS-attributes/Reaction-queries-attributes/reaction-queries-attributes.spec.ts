@@ -3,11 +3,13 @@ import {
   AtomButton,
   BondTypeName,
   LeftPanelButton,
+  RingButton,
   TopPanelButton,
   clickInTheMiddleOfTheScreen,
   clickOnAtom,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
+  getCoordinatesTopAtomOfBenzeneRing,
   moveMouseToTheMiddleOfTheScreen,
   pasteFromClipboard,
   pressButton,
@@ -16,6 +18,7 @@ import {
   selectBond,
   selectDropdownTool,
   selectLeftPanelButton,
+  selectRingButton,
   selectTopPanelButton,
   takeEditorScreenshot,
   waitForLoad,
@@ -74,6 +77,31 @@ test.describe('Checking reaction queries attributes in SMARTS format', () => {
 
     await takeEditorScreenshot(page);
     await checkSmartsValue(page, defaultFileFormat, '[#6:1]-[#6:2]');
+  });
+
+  test('Checking SMARTS with S-Group', async ({ page }) => {
+    /**
+     * Test case: https://github.com/epam/ketcher/issues/3338
+     * Description: pasting SMARTS with query groups should not trigger any error
+     */
+    const defaultFileFormat = 'MDL Molfile V2000';
+
+    await selectRingButton(RingButton.Benzene, page);
+    await clickInTheMiddleOfTheScreen(page);
+
+    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
+    await page.mouse.click(x, y);
+    await page.getByRole('button', { name: 'Data' }).click();
+    await page.getByRole('option', { name: 'Query component' }).click();
+    await page.getByRole('button', { name: 'Apply' }).click();
+
+    await takeEditorScreenshot(page);
+    await checkSmartsValue(
+      page,
+      defaultFileFormat,
+      '([#6]1-[#6]=[#6]-[#6]=[#6]-[#6]=1)',
+    );
   });
 });
 

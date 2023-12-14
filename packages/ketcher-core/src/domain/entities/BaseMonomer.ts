@@ -11,6 +11,7 @@ import {
   IKetAttachmentPointType,
 } from 'application/formatters/types/ket';
 import { Bond } from 'domain/entities/bond';
+import { isNumber } from 'lodash';
 
 export abstract class BaseMonomer extends DrawingEntity {
   public renderer?: BaseMonomerRenderer = undefined;
@@ -360,7 +361,7 @@ export abstract class BaseMonomer extends DrawingEntity {
       let attachmentAtomId: number;
       let leavingGroupsAtomId: number | undefined;
 
-      if (bondId) {
+      if (isNumber(bondId)) {
         const bond = this.monomerItem.struct.bonds.get(bondId) as Bond;
         attachmentAtomId =
           bond.begin === leavingGroupsAtom.id ? bond.end : bond.begin;

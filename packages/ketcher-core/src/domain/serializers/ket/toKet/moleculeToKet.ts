@@ -23,6 +23,7 @@ import {
 } from 'domain/entities';
 
 import { ifDef } from 'utilities';
+import { convertAttachmentPointNumberToLabel } from 'domain/helpers/attachmentPointCalculations';
 
 function fromRlabel(rg) {
   const res: Array<any> = [];
@@ -78,7 +79,9 @@ function atomToKet(source, monomer?: BaseMonomer) {
       result,
       'label',
       source.label === 'R#' && monomer
-        ? monomer.monomerItem.props.MonomerCaps?.[`R${source.rglabel}`]
+        ? monomer.monomerItem.props.MonomerCaps?.[
+            convertAttachmentPointNumberToLabel(source.rglabel)
+          ]
         : source.label,
     );
     // reaction

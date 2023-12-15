@@ -212,4 +212,13 @@ export class Indigo {
       },
     );
   }
+
+  toggleExplicitHydrogens(struct: StructOrString): Promise<Struct> {
+    return this.#structService
+      .toggleExplicitHydrogens({
+        struct: convertStructToString(struct, this.#ketSerializer),
+        output_format: ChemicalMimeType.KET,
+      })
+      .then((data) => this.#ketSerializer.deserialize(data.struct));
+  }
 }

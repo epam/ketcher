@@ -393,4 +393,52 @@ test.describe('Import-Saving-Files', () => {
     );
     await takeEditorScreenshot(page);
   });
+
+  test('Check that RNA preset in not changing after saving and importing it as .ket file', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Import/Saving files
+    Description: .ket file with macro structures is imported correctly in macro mode
+    */
+    await openFileAndAddToCanvas('KET/three-presets.ket', page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check that RNA preset in not changing after saving and importing it as .mol file', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Import/Saving files
+    Description: .mol file with macro structures is imported correctly in macro mode
+    Test now working in not a proper way because we have bug https://github.com/epam/ketcher/issues/3609
+    */
+    await openFileAndAddToCanvas('Molfiles-V3000/three-presets.mol', page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check that CHEMs in not changing after saving and importing it as .ket file', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Import/Saving files
+    Description: .ket file with macro structures is imported correctly in macro mode.
+    */
+    await openFileAndAddToCanvas('KET/three-chems-connected.ket', page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check that CHEMs in not changing after saving and importing it as .mol file', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Import/Saving files
+    Description: .mol file with macro structures is imported correctly in macro mode.
+    */
+    await openFileAndAddToCanvas(
+      'Molfiles-V3000/three-chems-connected.mol',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
 });

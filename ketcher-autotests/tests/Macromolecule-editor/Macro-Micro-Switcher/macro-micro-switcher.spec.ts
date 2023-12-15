@@ -25,6 +25,11 @@ export const COORDINATES_TO_PERFORM_ROTATION = {
   y: 100,
 };
 
+const topLeftCorner = {
+  x: -425,
+  y: -235,
+};
+
 async function zoomWithMouseWheel(
   page: Page,
   numberOfMouseWheelScroll: number,
@@ -111,7 +116,12 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: Micromolecules in macromode represented as CHEMs with generated name(F1, F2, ...Fn)
     */
     await turnOnMicromoleculesEditor(page);
-    await openFileAndAddToCanvas('KET/eight-micromolecules.ket', page);
+    await openFileAndAddToCanvas(
+      'KET/eight-micromolecules.ket',
+      page,
+      topLeftCorner.x,
+      topLeftCorner.y,
+    );
     await turnOnMacromoleculesEditor(page);
     await takeEditorScreenshot(page);
   });
@@ -141,14 +151,19 @@ test.describe('Macro-Micro-Switcher', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Check that the Ket-structure opened from the file in Macro mode  is visible in Micro mode', async ({
+  test('Check that the Ket-structure opened from the file in Macro mode is visible in Micro mode', async ({
     page,
   }) => {
     /* 
     Test case: Macro-Micro-Switcher
     Description: Mol-structure opened from the file in Macro mode is visible on Micro mode when
     */
-    await openFileAndAddToCanvas('KET/stereo-and-structure.ket', page);
+    await openFileAndAddToCanvas(
+      'KET/stereo-and-structure.ket',
+      page,
+      topLeftCorner.x,
+      topLeftCorner.y,
+    );
     await turnOnMicromoleculesEditor(page);
     await takeEditorScreenshot(page);
   });
@@ -298,7 +313,6 @@ test.describe('Macro-Micro-Switcher', () => {
       page,
     );
     await turnOnMicromoleculesEditor(page);
-    await turnOnMacromoleculesEditor(page);
     // eslint-disable-next-line no-magic-numbers
     await zoomWithMouseWheel(page, 5, -80);
 
@@ -428,7 +442,12 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher
     Description: Mol-structure opened from the file in Micro mode is visible on Macro mode when hover on it
     */
-    await openFileAndAddToCanvas('KET/stereo-and-structure.ket', page);
+    await openFileAndAddToCanvas(
+      'KET/stereo-and-structure.ket',
+      page,
+      topLeftCorner.x,
+      topLeftCorner.y,
+    );
     await turnOnMacromoleculesEditor(page);
     await page.getByText('F1').locator('..').hover();
     await takeEditorScreenshot(page);
@@ -441,7 +460,12 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher
     Description: Structure exists on the canvas with changes by Charge Plus (+) Tool and Charge Plus (-).
     */
-    await openFileAndAddToCanvas('KET/two-benzene-charged.ket', page);
+    await openFileAndAddToCanvas(
+      'KET/two-benzene-charged.ket',
+      page,
+      topLeftCorner.x,
+      topLeftCorner.y,
+    );
     await turnOnMacromoleculesEditor(page);
     await page.getByText('F2').locator('..').hover();
     await takeEditorScreenshot(page);
@@ -454,7 +478,12 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher
     Description: Structure exists on the canvas without text.
     */
-    await openFileAndAddToCanvas('KET/benzene-rings-with-text.ket', page);
+    await openFileAndAddToCanvas(
+      'KET/benzene-rings-with-text.ket',
+      page,
+      topLeftCorner.x,
+      topLeftCorner.y,
+    );
     await turnOnMacromoleculesEditor(page);
     await page.getByText('F1').locator('..').hover();
     await takeEditorScreenshot(page);
@@ -467,7 +496,12 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher
     Description: Structure exists on the canvas without Shape Ellipse.
     */
-    await openFileAndAddToCanvas('KET/two-benzene-and-ellipse.ket', page);
+    await openFileAndAddToCanvas(
+      'KET/two-benzene-and-ellipse.ket',
+      page,
+      topLeftCorner.x,
+      topLeftCorner.y,
+    );
     await turnOnMacromoleculesEditor(page);
     await takeEditorScreenshot(page);
   });
@@ -479,7 +513,12 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher
     Description: Structures exists on the canvas without  arrow ( Arrow Open Angle Tool )
     */
-    await openFileAndAddToCanvas('KET/two-benzene-and-arrow.ket', page);
+    await openFileAndAddToCanvas(
+      'KET/two-benzene-and-arrow.ket',
+      page,
+      topLeftCorner.x,
+      topLeftCorner.y,
+    );
     await turnOnMacromoleculesEditor(page);
     await takeEditorScreenshot(page);
   });
@@ -504,7 +543,12 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher
     Description: In Macro mode plus sign is not appear
     */
-    await openFileAndAddToCanvas('KET/two-benzene-and-plus.ket', page);
+    await openFileAndAddToCanvas(
+      'KET/two-benzene-and-plus.ket',
+      page,
+      topLeftCorner.x,
+      topLeftCorner.y,
+    );
     await turnOnMacromoleculesEditor(page);
     await takeEditorScreenshot(page);
   });
@@ -551,7 +595,12 @@ test.describe('Macro-Micro-Switcher', () => {
     Description:  Full screen mode is not reset
     Test working not properly now because we have bug https://github.com/epam/ketcher/issues/3656
     */
-    await openFileAndAddToCanvas('KET/two-benzene-and-plus.ket', page);
+    await openFileAndAddToCanvas(
+      'KET/two-benzene-and-plus.ket',
+      page,
+      topLeftCorner.x,
+      topLeftCorner.y,
+    );
     await page.getByTestId('fullscreen-mode-button').click();
     await turnOnMacromoleculesEditor(page);
     await takePageScreenshot(page);

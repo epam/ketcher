@@ -246,7 +246,7 @@ class Attach extends Component {
         ? this.props
         : this.tmpl.props;
     const options = Object.assign(editorStyles, this.props.globalSettings, {
-      scale: getScale(struct),
+      microModeScale: getScale(struct),
       reuseRestructIfExist: false,
     });
     const dialogTitle =

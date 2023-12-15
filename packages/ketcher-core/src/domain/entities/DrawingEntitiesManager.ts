@@ -34,8 +34,7 @@ import {
   PolymerBondShowInfoOperation,
 } from 'application/editor/operations/polymerBond';
 import { monomerFactory } from 'application/editor/operations/monomer/monomerFactory';
-import { provideEditorSettings } from 'application/editor/editorSettings';
-import { Scale } from 'domain/helpers';
+import Coordinates from 'application/editor/shared/coordinates';
 
 const HORIZONTAL_DISTANCE_FROM_MONOMER = 50;
 const VERTICAL_DISTANCE_FROM_MONOMER = 60;
@@ -806,7 +805,6 @@ export class DrawingEntitiesManager {
     isNextChain = false,
   ) {
     const command = new Command();
-    const editorSettings = provideEditorSettings();
     const monomerWidth = monomer.renderer?.monomerSize.width ?? 0;
     const monomerHeight = monomer.renderer?.monomerSize.height ?? 0;
     const heightMonomerWithBond =
@@ -823,7 +821,7 @@ export class DrawingEntitiesManager {
       this.rearrangeChainModelChange.bind(
         this,
         monomer,
-        Scale.canvasToModel(newPosition, editorSettings),
+        Coordinates.canvasToModel(newPosition),
       ),
       this.rearrangeChainModelChange.bind(this, monomer, oldMonomerPosition),
     );
@@ -885,7 +883,7 @@ export class DrawingEntitiesManager {
         const pos = Vec2.diff(nextMonomer.position, diff);
         const rearrangeResult = this.rearrangeChain(
           nextMonomer,
-          Scale.modelToCanvas(pos, editorSettings),
+          Coordinates.modelToCanvas(pos),
           canvasWidth,
           monomer,
         );

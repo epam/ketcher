@@ -231,7 +231,7 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
       {getButtons().length === 0 ? (
         <></>
       ) : (
-        <Modal.Footer withBorder>{getButtons()}</Modal.Footer>
+        <Modal.Footer $withBorder>{getButtons()}</Modal.Footer>
       )}
     </Modal>
   );

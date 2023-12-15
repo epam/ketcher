@@ -20,7 +20,11 @@ describe('show selection', () => {
   };
   const reSimpleObject = new ReSimpleObject(ellipse);
   reSimpleObject.togglePoints = jest.fn();
-  const option = { microModeScale: 20, width: 100, height: 100 } as RenderOptions;
+  const option = {
+    microModeScale: 20,
+    width: 100,
+    height: 100,
+  } as RenderOptions;
   const render = new Render(document as unknown as HTMLElement, option);
   const restruct = new ReStruct(new Struct(), render);
   it('should show selection simple objects correctly when selected', () => {

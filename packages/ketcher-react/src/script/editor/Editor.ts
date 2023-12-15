@@ -161,7 +161,7 @@ class Editor implements KetcherEditor {
       clientArea,
       Object.assign(
         {
-          scale: SCALE,
+          microModeScale: SCALE,
         },
         options,
       ),
@@ -312,7 +312,7 @@ class Editor implements KetcherEditor {
 
     this.render = new Render(
       this.render.clientArea,
-      Object.assign({ scale: SCALE }, value),
+      Object.assign({ microModeScale: SCALE }, value),
     );
     this.struct(struct);
     this.render.setZoom(zoom);
@@ -363,11 +363,11 @@ class Editor implements KetcherEditor {
     const parsedStructSizeInPixels = {
       width:
         parsedStructSize.x *
-        this.render.options.scale *
+        this.render.options.microModeScale *
         this.render.options.zoom,
       height:
         parsedStructSize.y *
-        this.render.options.scale *
+        this.render.options.microModeScale *
         this.render.options.zoom,
     };
     const clientAreaBoundingBox =

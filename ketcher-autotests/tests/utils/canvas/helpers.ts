@@ -124,7 +124,7 @@ export async function getCoordinatesTopAtomOfBenzeneRing(page: Page) {
     const onlyCarbons = allAtoms.filter((a) => a.label === 'C');
     return {
       carbonAtoms: onlyCarbons,
-      scale: window.ketcher.editor.options().scale,
+      scale: window.ketcher.editor.options().microModeScale,
       offset: window.ketcher?.editor?.options()?.offset,
     };
   });
@@ -169,7 +169,7 @@ export async function getCoordinatesOfTopMostCarbon(page: Page) {
     const onlyCarbons = allAtoms.filter((a) => a.label === 'C');
     return {
       carbonAtoms: onlyCarbons,
-      scale: window.ketcher.editor.options().scale,
+      scale: window.ketcher.editor.options().microModeScale,
       offset: window.ketcher?.editor?.options()?.offset,
     };
   });

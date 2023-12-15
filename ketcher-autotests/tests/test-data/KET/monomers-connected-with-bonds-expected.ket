@@ -141,14 +141,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "H",
                 "location": [
                     -2.415469202302518,
                     -1.0123543806254651,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             },
             {
@@ -356,9 +353,11 @@
         "alias": "baA",
         "attachmentPoints": [
             {
-                "attachmentAtom": 10,
+                "attachmentAtom": 6,
                 "leavingGroup": {
-                    "atoms": []
+                    "atoms": [
+                        10
+                    ]
                 },
                 "type": "left"
             }
@@ -444,25 +443,19 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "H",
                 "location": [
                     -2.328569251455221,
                     -1.3847780810220056,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "H",
                 "location": [
                     2.2689050907691644,
                     -0.5819165753524784,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             }
         ],
@@ -546,16 +539,20 @@
         "alias": "12ddR",
         "attachmentPoints": [
             {
-                "attachmentAtom": 8,
+                "attachmentAtom": 7,
                 "leavingGroup": {
-                    "atoms": []
+                    "atoms": [
+                        8
+                    ]
                 },
                 "type": "left"
             },
             {
-                "attachmentAtom": 9,
+                "attachmentAtom": 5,
                 "leavingGroup": {
-                    "atoms": []
+                    "atoms": [
+                        9
+                    ]
                 },
                 "type": "right"
             }
@@ -583,14 +580,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "O",
                 "location": [
                     -1.4399,
                     0,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             },
             {
@@ -602,14 +596,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "O",
                 "location": [
                     0.9601,
                     0,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
@@ -657,16 +648,20 @@
         "alias": "P",
         "attachmentPoints": [
             {
-                "attachmentAtom": 1,
+                "attachmentAtom": 0,
                 "leavingGroup": {
-                    "atoms": []
+                    "atoms": [
+                        1
+                    ]
                 },
                 "type": "left"
             },
             {
-                "attachmentAtom": 3,
+                "attachmentAtom": 0,
                 "leavingGroup": {
-                    "atoms": []
+                    "atoms": [
+                        3
+                    ]
                 },
                 "type": "right"
             }

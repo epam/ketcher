@@ -122,6 +122,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
     onFullscreen: () => dispatchAction('fullscreen'),
     onHelp: () => dispatchAction('help'),
     onAbout: () => dispatchAction('about'),
+    onHideShowExplicitHydrogens: () => dispatchAction('explicit-hydrogens'),
   };
 };
 

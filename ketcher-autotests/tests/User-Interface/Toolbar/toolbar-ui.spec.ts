@@ -188,4 +188,21 @@ test.describe('Open Ketcher', () => {
     });
     await takeEditorScreenshot(page);
   });
+
+  test('Verify Add/Remove explicit hidrogens icon', async ({ page }) => {
+    /*
+    Description:
+    show/hide explicit hidrogens icon are on top toolbar and can make actions
+    */
+    await takeTopToolbarScreenshot(page);
+    await drawBenzeneRing(page);
+    await waitForLoadAndRender(page, async () => {
+      await selectTopPanelButton(TopPanelButton.toggleExplicitHydrogens, page);
+    });
+    await takeEditorScreenshot(page);
+    await waitForLoadAndRender(page, async () => {
+      await selectTopPanelButton(TopPanelButton.toggleExplicitHydrogens, page);
+    });
+    await takeEditorScreenshot(page);
+  });
 });

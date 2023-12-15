@@ -242,6 +242,21 @@ test.describe('Checking bond attributes in SMARTS format', () => {
       '[#6](-[#6])(-[#6])~,=[#6]',
     );
   });
+
+  test('Setting custom query - directional bond "up or unspecified"', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/1281
+     * Description: "or unspecified"("?") quantifier should be supported
+     */
+    await setAndCheckBondProperties(
+      page,
+      setCustomQueryForBond,
+      '/?',
+      '[#6](-[#6])(-[#6])/?[#6]',
+    );
+  });
 });
 
 test.describe('Checking converting bond attributes to custom query', () => {

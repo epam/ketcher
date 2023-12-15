@@ -176,6 +176,23 @@ test.describe('Checking query specific attributes in SMARTS format', () => {
     );
   });
 
+  test('Setting implicit H count, aromacity and connectivity', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/1321
+     * Description: saving SMARTS with implicit H count and any other attribute should not cause any error
+     */
+    const expectedSmarts = '[#6](-[#6])(-[c;h5;X2])-[#6]';
+    await setImplicitHCount(page, '5');
+    await setAromaticity(page, 'aromatic');
+    await setConnectivity(page, '2');
+    await pressButton(page, 'Apply');
+    await takeEditorScreenshot(page);
+    await checkSmartsValue(page, defaultFileFormat, expectedSmarts);
+    await takeEditorScreenshot(page);
+  });
+
   test.describe('Checking converting attributes to custom query', () => {
     test.beforeEach(async ({ page }) => {
       const numberOfAtom = 0;

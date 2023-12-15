@@ -27,6 +27,7 @@ interface ExternalFuncProps {
   onCheck: () => void;
   onAnalyse: () => void;
   onMiew: () => void;
+  onHideShowExplicitHydrogens: () => void;
   disabledButtons: string[];
   hiddenButtons: string[];
   indigoVerification: boolean;
@@ -43,6 +44,7 @@ export const ExternalFuncControls = ({
   onCheck,
   onAnalyse,
   onMiew,
+  onHideShowExplicitHydrogens,
   disabledButtons,
   indigoVerification,
   hiddenButtons,
@@ -83,6 +85,11 @@ export const ExternalFuncControls = ({
       name: 'analyse',
       title: 'Calculated Values',
       handler: onAnalyse,
+    },
+    {
+      name: 'explicit-hydrogens',
+      title: 'Add/Remove explicit hydrogens',
+      handler: onHideShowExplicitHydrogens,
     },
     {
       name: 'miew',

@@ -34,6 +34,7 @@ import {
   OutputMessage,
   SupportedFormat,
   OutputMessageWrapper,
+  ExplicitHydrogensCommandData,
 } from './indigoWorker.types';
 import {
   AromatizeData,
@@ -53,6 +54,8 @@ import {
   ConvertResult,
   DearomatizeData,
   DearomatizeResult,
+  ExplicitHydrogensData,
+  ExplicitHydrogensResult,
   GenerateImageOptions,
   InfoResult,
   LayoutData,
@@ -179,6 +182,7 @@ const messageTypeToEventMapping: {
   [Command.Calculate]: WorkerEvent.Calculate,
   [Command.GenerateImageAsBase64]: WorkerEvent.GenerateImageAsBase64,
   [Command.GetInChIKey]: WorkerEvent.GetInChIKey,
+  [Command.ExplicitHydrogens]: WorkerEvent.ExplicitHydrogens,
 };
 
 let worker: IndigoWorker;
@@ -716,6 +720,51 @@ class IndigoService implements StructService {
 
       this.EE.removeListener(WorkerEvent.GenerateImageAsBase64, action);
       this.EE.addListener(WorkerEvent.GenerateImageAsBase64, action);
+
+      this.worker.postMessage(inputMessage);
+    });
+  }
+
+  hideShowExplicitHydrogens(
+    data: ExplicitHydrogensData,
+    options?: StructServiceOptions,
+  ): Promise<ExplicitHydrogensResult> {
+    const { struct, output_format: outputFormat } = data;
+    const format = convertMimeTypeToOutputFormat(outputFormat);
+
+    return new Promise((resolve, reject) => {
+      const action = ({ data }: OutputMessageWrapper) => {
+        console.log(data);
+        const msg: OutputMessage<string> = data;
+        if (!msg.hasError) {
+          const result: AromatizeResult = {
+            struct: msg.payload,
+            format: ChemicalMimeType.Mol,
+          };
+          resolve(result);
+        } else {
+          reject(msg.error);
+        }
+      };
+
+      const commandOptions: CommandOptions = {
+        ...this.defaultOptions,
+        ...options,
+      };
+
+      const commandData: ExplicitHydrogensCommandData = {
+        struct,
+        format,
+        options: commandOptions,
+      };
+
+      const inputMessage: InputMessage<ExplicitHydrogensCommandData> = {
+        type: Command.ExplicitHydrogens,
+        data: commandData,
+      };
+
+      this.EE.removeListener(WorkerEvent.ExplicitHydrogens, action);
+      this.EE.addListener(WorkerEvent.ExplicitHydrogens, action);
 
       this.worker.postMessage(inputMessage);
     });

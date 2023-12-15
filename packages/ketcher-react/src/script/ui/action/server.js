@@ -90,6 +90,14 @@ const config = {
     action: { dialog: 'miew' },
     hidden: (options) => isHidden(options, 'miew'),
   },
+  'explicit-hydrogens': {
+    title: 'Add/Remove explicit hydrogens',
+    action: {
+      thunk: serverTransform('hideShowExplicitHydrogens'),
+    },
+    disabled: (editor, server, options) => !options.app.server,
+    hidden: (options) => isHidden(options, 'explicit-hydrogens'),
+  },
 };
 
 export default config;

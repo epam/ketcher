@@ -95,6 +95,12 @@ export interface CalculateCipData extends WithStruct, WithOutputFormat {}
 
 export interface CalculateCipResult extends WithStruct, WithFormat {}
 
+export interface ExplicitHydrogensData extends WithStruct, WithOutputFormat {
+  mode?: 'auto' | 'fold' | 'unfold';
+}
+
+export interface ExplicitHydrogensResult extends WithStruct, WithFormat {}
+
 export type CalculateProps =
   | 'molecular-weight'
   | 'most-abundant-mass'
@@ -181,4 +187,8 @@ export interface StructService {
     data: string,
     options?: GenerateImageOptions,
   ) => Promise<string>;
+  hideShowExplicitHydrogens: (
+    data: ExplicitHydrogensData,
+    options?: StructServiceOptions,
+  ) => Promise<ExplicitHydrogensResult>;
 }

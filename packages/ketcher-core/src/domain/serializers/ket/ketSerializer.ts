@@ -50,6 +50,7 @@ import {
   getKetRef,
   setMonomerPrefix,
   setMonomerTemplatePrefix,
+  switchIntoChemistryCoordSystem,
 } from 'domain/serializers/ket/helpers';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { validate } from 'domain/serializers/ket/validate';
@@ -439,10 +440,9 @@ export class KetSerializer implements Serializer<Struct> {
         fileContent[monomerName] = {
           type: 'monomer',
           id: monomer.id.toString(),
-          position: {
-            x: monomer.position.x,
-            y: monomer.position.y,
-          },
+          position: switchIntoChemistryCoordSystem(
+            new Vec2(monomer.position.x, monomer.position.y),
+          ),
           alias: monomer.label,
           templateId,
           seqid: monomer.monomerItem.seqId,

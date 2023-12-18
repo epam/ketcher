@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { Vec2, Axis, Axises } from 'domain/entities';
 import { cloneDeepWith, cloneDeep } from 'lodash';
 
 const customizer = (value: any) => {
@@ -33,4 +34,20 @@ export const setMonomerPrefix = (monomerId: number) => `monomer${monomerId}`;
 
 export const getKetRef = (entityId: string) => {
   return { $ref: entityId };
+};
+
+const rotateCoordAxisBy180Degrees = (position: Vec2, axis: Axises): Vec2 => {
+  const rotatedPosition = {
+    x: position.x,
+    y: position.y,
+    z: position.z,
+  };
+
+  rotatedPosition[axis] = -rotatedPosition[axis];
+
+  return new Vec2({ ...position, ...rotatedPosition });
+};
+
+export const switchIntoChemistryCoordSystem = (position: Vec2) => {
+  return rotateCoordAxisBy180Degrees(position, Axis.y);
 };

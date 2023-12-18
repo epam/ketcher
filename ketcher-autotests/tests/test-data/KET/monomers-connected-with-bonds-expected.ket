@@ -348,7 +348,6 @@
             }
         ],
         "classHELM": "RNA",
-        "naturalAnalogShort": "A",
         "id": "baA___N-benzyl-adenine",
         "alias": "baA",
         "attachmentPoints": [
@@ -361,7 +360,8 @@
                 },
                 "type": "left"
             }
-        ]
+        ],
+        "naturalAnalogShort": "A"
     },
     "monomer1": {
         "type": "monomer",
@@ -534,7 +534,6 @@
             }
         ],
         "classHELM": "RNA",
-        "naturalAnalogShort": "R",
         "id": "12ddR___1',2'-Di-Deoxy-Ribose",
         "alias": "12ddR",
         "attachmentPoints": [
@@ -556,7 +555,8 @@
                 },
                 "type": "right"
             }
-        ]
+        ],
+        "naturalAnalogShort": "R"
     },
     "monomer2": {
         "type": "monomer",
@@ -643,7 +643,6 @@
             }
         ],
         "classHELM": "RNA",
-        "naturalAnalogShort": "P",
         "id": "P___Phosphate",
         "alias": "P",
         "attachmentPoints": [
@@ -665,6 +664,7 @@
                 },
                 "type": "right"
             }
-        ]
+        ],
+        "naturalAnalogShort": "P"
     }
 }

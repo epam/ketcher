@@ -319,3 +319,8 @@ export async function addMonomerToCenterOfCanvas(
   await clickInTheMiddleOfTheScreen(page);
   await selectRectangleSelectionTool(page);
 }
+
+export async function addPeptideOnCanvas(page: Page, peptideId: string) {
+  await page.getByTestId(peptideId).click();
+  await clickInTheMiddleOfTheScreen(page);
+}

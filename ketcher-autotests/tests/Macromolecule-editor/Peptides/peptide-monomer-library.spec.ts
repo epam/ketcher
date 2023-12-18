@@ -1,6 +1,8 @@
 import { test } from '@playwright/test';
 import {
   addPeptideOnCanvas,
+  clickInTheMiddleOfTheScreen,
+  selectRectangleSelectionTool,
   takeMonomerLibraryScreenshot,
   takePageScreenshot,
   waitForPageInit,
@@ -35,6 +37,8 @@ test.describe('Peptide library testing', () => {
     // https://github.com/epam/ketcher/issues/3477
     await page.waitForSelector('.star');
     await page.getByTestId('A___Alanine').getByText('★').click();
+    await clickInTheMiddleOfTheScreen(page);
+    await page.getByTestId('A___Alanine').getByText('★').hover();
     await takeMonomerLibraryScreenshot(page);
   });
 });

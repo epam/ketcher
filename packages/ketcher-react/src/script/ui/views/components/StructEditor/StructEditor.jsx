@@ -74,6 +74,8 @@ class StructEditor extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      hasError: false,
+      errorMessage: '',
       enableCursor: false,
       clientX: 0,
       clientY: 0,
@@ -148,117 +150,149 @@ class StructEditor extends Component {
   }
 
   componentDidMount() {
-    this.editor = new Editor(this.editorRef.current, {
-      ...this.props.options,
-    });
-    const ketcher = ketcherProvider.getKetcher();
-    if (ketcher?.editor.macromoleculeConvertionError) {
-      this.props.onShowMacromoleculesErrorMessage(
-        ketcher.editor.macromoleculeConvertionError,
-      );
-      ketcher.editor.clearMacromoleculeConvertionError();
-    }
-    setupEditor(this.editor, this.props);
-    if (this.props.onInit) this.props.onInit(this.editor);
-
-    this.editor.event.message.add((msg) => {
-      const el = this.logRef.current;
-      if (msg.info && this.props.showAttachmentPoints) {
-        try {
-          const parsedInfo = JSON.parse(msg.info);
-          el.innerHTML = `Atom Id: ${parsedInfo.atomid}, Bond Id: ${parsedInfo.bondid}`;
-        } catch (e) {
-          KetcherLogger.error(
-            'StructEditor.jsx::StructEditor::componentDidMount',
-            e,
-          );
-          el.innerHTML = msg.info;
-        }
-        el.classList.add(classes.visible);
-      } else {
-        el.classList.remove(classes.visible);
+    try {
+      this.editor = new Editor(this.editorRef.current, {
+        ...this.props.options,
+      });
+      const ketcher = ketcherProvider.getKetcher();
+      if (ketcher?.editor.macromoleculeConvertionError) {
+        this.props.onShowMacromoleculesErrorMessage(
+          ketcher.editor.macromoleculeConvertionError,
+        );
+        ketcher.editor.clearMacromoleculeConvertionError();
       }
-    });
+      setupEditor(this.editor, this.props);
+      if (this.props.onInit) this.props.onInit(this.editor);
 
-    this.editor.event.cursor.add((csr) => {
-      let clientX, clientY;
+      this.editor.event.message.add((msg) => {
+        const el = this.logRef.current;
+        if (msg.info && this.props.showAttachmentPoints) {
+          try {
+            const parsedInfo = JSON.parse(msg.info);
+            el.innerHTML = `Atom Id: ${parsedInfo.atomid}, Bond Id: ${parsedInfo.bondid}`;
+          } catch (e) {
+            KetcherLogger.error(
+              'StructEditor.jsx::StructEditor::componentDidMount',
+              e,
+            );
+            el.innerHTML = msg.info;
+          }
+          el.classList.add(classes.visible);
+        } else {
+          el.classList.remove(classes.visible);
+        }
+      });
 
-      switch (csr.status) {
-        case 'enable': {
-          this.editorRef.current.classList.add(classes.enableCursor);
-          const { left, top, right, bottom } =
-            this.editorRef.current.getBoundingClientRect();
+      this.editor.event.cursor.add((csr) => {
+        let clientX, clientY;
 
-          clientX = csr.cursorPosition.clientX;
-          clientY = csr.cursorPosition.clientY;
+        switch (csr.status) {
+          case 'enable': {
+            this.editorRef.current.classList.add(classes.enableCursor);
+            const { left, top, right, bottom } =
+              this.editorRef.current.getBoundingClientRect();
 
-          const handShouldBeShown =
-            clientX >= left &&
-            clientX <= right &&
-            clientY >= top &&
-            clientX <= bottom;
-          if (!this.state.enableCursor && handShouldBeShown) {
+            clientX = csr.cursorPosition.clientX;
+            clientY = csr.cursorPosition.clientY;
+
+            const handShouldBeShown =
+              clientX >= left &&
+              clientX <= right &&
+              clientY >= top &&
+              clientX <= bottom;
+            if (!this.state.enableCursor && handShouldBeShown) {
+              this.setState({
+                enableCursor: true,
+              });
+            }
+            break;
+          }
+
+          case 'move': {
+            this.editorRef.current.classList.add(classes.enableCursor);
+            this.setState({
+              enableCursor: true,
+              clientX,
+              clientY,
+            });
+            break;
+          }
+
+          case 'disable': {
+            this.editorRef.current.classList.remove(classes.enableCursor);
+            this.setState({
+              enableCursor: false,
+            });
+            break;
+          }
+
+          case 'leave': {
+            this.editorRef.current.classList.remove(classes.enableCursor);
+            this.setState({
+              enableCursor: false,
+            });
+            break;
+          }
+
+          case 'mouseover': {
+            this.editorRef.current.classList.add(classes.enableCursor);
             this.setState({
               enableCursor: true,
             });
+            break;
           }
-          break;
+
+          default:
+            break;
         }
+      });
 
-        case 'move': {
-          this.editorRef.current.classList.add(classes.enableCursor);
-          this.setState({
-            enableCursor: true,
-            clientX,
-            clientY,
-          });
-          break;
-        }
+      this.editor.event.message.dispatch({
+        info: JSON.stringify(this.props.toolOpts),
+      });
 
-        case 'disable': {
-          this.editorRef.current.classList.remove(classes.enableCursor);
-          this.setState({
-            enableCursor: false,
-          });
-          break;
-        }
-
-        case 'leave': {
-          this.editorRef.current.classList.remove(classes.enableCursor);
-          this.setState({
-            enableCursor: false,
-          });
-          break;
-        }
-
-        case 'mouseover': {
-          this.editorRef.current.classList.add(classes.enableCursor);
-          this.setState({
-            enableCursor: true,
-          });
-          break;
-        }
-
-        default:
-          break;
-      }
-    });
-
-    this.editor.event.message.dispatch({
-      info: JSON.stringify(this.props.toolOpts),
-    });
-
-    this.editorRef.current.addEventListener('wheel', this.handleWheel);
-    this.editor.render.observeCanvasResize();
+      this.editorRef.current.addEventListener('wheel', this.handleWheel);
+      this.editor.render.observeCanvasResize();
+      window.addEventListener('error', this.globalErrorHandler);
+    } catch (error) {
+      this.setState({ hasError: true, errorMessage: error.message });
+    }
   }
 
   componentWillUnmount() {
     removeEditorHandlers(this.editor, this.props);
     this.editorRef.current.removeEventListener('wheel', this.handleWheel);
     this.editor.render.unobserveCanvasResize();
+    window.removeEventListener('error', this.globalErrorHandler);
   }
 
+  globalErrorHandler = (errorEvent) => {
+    const error = errorEvent.error;
+    const message =
+      error && error.message
+        ? 'An error occurred: ' + error.message
+        : 'Something went wrong. The error is on our side. Please try again later.';
+    this.setState({ hasError: true, errorMessage: message });
+  };
+
+  handleDismiss = () => {
+    this.setState({ hasError: false, errorMessage: '' });
+    const cliparea = document.querySelector('.cliparea');
+    if (cliparea) {
+      cliparea.focus();
+    }
+  };
+
   render() {
+    if (this.state.hasError) {
+      return (
+        <InfoModal
+          message={this.state.errorMessage}
+          close={this.handleDismiss}
+        />
+      );
+    }
+
     const {
       Tag = 'div',
       className,

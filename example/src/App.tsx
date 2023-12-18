@@ -50,8 +50,7 @@ if (enablePolymerEditor) {
 
 const App = () => {
   const hiddenButtonsConfig = getHiddenButtonsConfig();
-  const [hasError, setHasError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [, setErrorMessage] = useState('');
   const [showPolymerEditor, setShowPolymerEditor] = useState(false);
 
   const togglePolymerEditor = (toggleValue: boolean) => {
@@ -74,7 +73,6 @@ const App = () => {
     <>
       <Editor
         errorHandler={(message: string) => {
-          setHasError(true);
           setErrorMessage(message.toString());
         }}
         buttons={hiddenButtonsConfig}
@@ -92,19 +90,6 @@ const App = () => {
         }}
         togglerComponent={togglerComponent}
       />
-      {hasError && (
-        <InfoModal
-          message={errorMessage}
-          close={() => {
-            setHasError(false);
-
-            // Focus on editor after modal is closed
-            const cliparea: HTMLElement | null =
-              document.querySelector('.cliparea');
-            cliparea?.focus();
-          }}
-        />
-      )}
     </>
   );
 };

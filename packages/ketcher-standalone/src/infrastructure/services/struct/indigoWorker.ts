@@ -257,6 +257,7 @@ self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
         (indigo, indigoOptions) =>
           indigo.convert_explicit_hydrogens(
             data.struct,
+            data.mode,
             data.format,
             indigoOptions,
           ),

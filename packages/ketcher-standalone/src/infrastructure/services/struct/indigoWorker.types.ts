@@ -153,7 +153,9 @@ export interface AutomapCommandData
 export interface ExplicitHydrogensCommandData
   extends CommandData,
     WithStruct,
-    WithFormat {}
+    WithFormat {
+  mode: 'auto' | 'fold' | 'unfold';
+}
 
 interface OutputMessageBase {
   type?: Command;

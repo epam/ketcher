@@ -25,6 +25,7 @@ export function monomerToDrawingEntity(
         MonomerFullName: template.fullName,
         MonomerType: template.classHELM,
         MonomerClass: template.class,
+        MonomerCaps: {},
       },
       attachmentPoints: template.attachmentPoints,
       seqId: node.seqid,

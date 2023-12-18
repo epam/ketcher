@@ -29,3 +29,4 @@ export * from './shared/constants';
 export * from './editor.types';
 export * from './Editor';
 export * from './EditorHistory';
+export * from './modes';

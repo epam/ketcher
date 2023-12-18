@@ -2,7 +2,6 @@ import { test } from '@playwright/test';
 import {
   addPeptideOnCanvas,
   clickInTheMiddleOfTheScreen,
-  selectRectangleSelectionTool,
   takeMonomerLibraryScreenshot,
   takePageScreenshot,
   waitForPageInit,

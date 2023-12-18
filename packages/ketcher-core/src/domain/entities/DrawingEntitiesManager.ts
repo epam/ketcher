@@ -774,9 +774,10 @@ export class DrawingEntitiesManager {
   private findChainByMonomer(
     monomer: BaseMonomer,
     monomerChain: BaseMonomer[] = [],
-    previousMonomer?: BaseMonomer,
+    monomersInChainMap: { [id: number]: boolean | undefined } = {},
   ) {
     monomerChain.push(monomer);
+    monomersInChainMap[monomer.id] = true;
     for (const attachmentPointName in monomer.attachmentPointsToBonds) {
       const polymerBond = monomer.attachmentPointsToBonds[attachmentPointName];
       if (polymerBond) {
@@ -784,8 +785,12 @@ export class DrawingEntitiesManager {
           monomer === polymerBond.firstMonomer
             ? polymerBond.secondMonomer
             : polymerBond.firstMonomer;
-        if (previousMonomer !== nextMonomer) {
-          this.findChainByMonomer(nextMonomer, monomerChain, monomer);
+        if (!monomersInChainMap[nextMonomer.id]) {
+          this.findChainByMonomer(
+            nextMonomer,
+            monomerChain,
+            monomersInChainMap,
+          );
         }
       }
     }
@@ -802,7 +807,7 @@ export class DrawingEntitiesManager {
     monomer: BaseMonomer,
     initialPosition: Vec2,
     canvasWidth: number,
-    lastMonomer?: BaseMonomer,
+    rearrangedMonomersMap: { [id: number]: true } = {},
     isNextChain = false,
   ) {
     const command = new Command();
@@ -830,6 +835,7 @@ export class DrawingEntitiesManager {
     command.addOperation(operation);
     let lastPosition = newPosition;
 
+    rearrangedMonomersMap[monomer.id] = true;
     for (const attachmentPointName in monomer.attachmentPointsToBonds) {
       const polymerBond = monomer.attachmentPointsToBonds[attachmentPointName];
       if (!polymerBond) {
@@ -839,7 +845,7 @@ export class DrawingEntitiesManager {
         polymerBond.secondMonomer === monomer
           ? polymerBond.firstMonomer
           : polymerBond.secondMonomer;
-      if (nextMonomer === lastMonomer) {
+      if (rearrangedMonomersMap[nextMonomer.id]) {
         continue;
       }
       if (
@@ -865,7 +871,7 @@ export class DrawingEntitiesManager {
               y: newPosition.y,
             }),
             canvasWidth,
-            monomer,
+            rearrangedMonomersMap,
           );
         } else {
           rearrangeResult = this.rearrangeChain(
@@ -875,7 +881,7 @@ export class DrawingEntitiesManager {
               y: newPosition.y + heightMonomerWithBond,
             }),
             canvasWidth,
-            monomer,
+            rearrangedMonomersMap,
           );
         }
         lastPosition = rearrangeResult.lastPosition;
@@ -887,7 +893,7 @@ export class DrawingEntitiesManager {
           nextMonomer,
           Scale.modelToCanvas(pos, editorSettings),
           canvasWidth,
-          monomer,
+          rearrangedMonomersMap,
         );
         command.merge(rearrangeResult.command);
       }

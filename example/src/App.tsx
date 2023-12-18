@@ -1,7 +1,7 @@
 import 'ketcher-react/dist/index.css';
 
 import { useState } from 'react';
-import { ButtonsConfig, Editor, InfoModal } from 'ketcher-react';
+import { ButtonsConfig, Editor } from 'ketcher-react';
 import {
   Ketcher,
   RemoteStructServiceProvider,

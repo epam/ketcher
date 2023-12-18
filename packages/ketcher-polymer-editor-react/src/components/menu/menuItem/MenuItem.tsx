@@ -31,11 +31,14 @@ const MenuItem = ({ itemId, title = '', testId }: MenuItemProp) => {
     activate(itemId);
   }, [activate, itemId]);
 
+  const isActiveItem = isActive(itemId);
+  const activeClass = isActiveItem ? ' active' : '';
+
   return (
     <StyledIconButton
       title={title}
-      className={itemId}
-      isActive={isActive(itemId)}
+      className={itemId + activeClass}
+      isActive={isActiveItem}
       onClick={onClickCallback}
       iconName={itemId}
       testId={testId}

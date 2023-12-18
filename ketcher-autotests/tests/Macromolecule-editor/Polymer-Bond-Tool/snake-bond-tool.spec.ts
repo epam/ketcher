@@ -1,6 +1,8 @@
-import { test } from '@playwright/test';
+import { Page, test, expect } from '@playwright/test';
 import {
   addMonomerToCanvas,
+  clickRedo,
+  clickUndo,
   selectSingleBondTool,
   selectSnakeBondTool,
   takeEditorScreenshot,
@@ -12,6 +14,54 @@ import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 
 const MONOMER_NAME_TZA = 'Tza___3-thiazolylalanine';
 const MONOMER_ALIAS_TZA = 'Tza';
+
+async function createBondedMonomers(page: Page) {
+  const MONOMER_NAME_DSEC = 'dSec___D-SelenoCysteine';
+  const MONOMER_ALIAS_DSEC = 'dSec';
+  const MONOMER_NAME_MEC = 'meC___N-Methyl-Cysteine';
+  const MONOMER_ALIAS_MEC = 'meC';
+
+  const peptide1 = await addMonomerToCanvas(
+    page,
+    MONOMER_NAME_DSEC,
+    MONOMER_ALIAS_DSEC,
+    200,
+    200,
+    0,
+  );
+
+  const peptide2 = await addMonomerToCanvas(
+    page,
+    MONOMER_NAME_TZA,
+    MONOMER_ALIAS_TZA,
+    100,
+    100,
+    0,
+  );
+  const peptide3 = await addMonomerToCanvas(
+    page,
+    MONOMER_NAME_TZA,
+    MONOMER_ALIAS_TZA,
+    150,
+    150,
+    1,
+  );
+
+  const peptide4 = await addMonomerToCanvas(
+    page,
+    MONOMER_NAME_MEC,
+    MONOMER_ALIAS_MEC,
+    400,
+    400,
+    0,
+  );
+
+  await selectSingleBondTool(page);
+
+  await bondTwoMonomers(page, peptide1, peptide2);
+  await bondTwoMonomers(page, peptide2, peptide3);
+  await bondTwoMonomers(page, peptide3, peptide4);
+}
 
 test.describe('Snake Bond Tool', () => {
   test.beforeEach(async ({ page }) => {
@@ -195,61 +245,28 @@ test.describe('Snake Bond Tool', () => {
   test('Check finding right chain sequence using snake mode', async ({
     page,
   }) => {
-    /* 
+    /*
     Test case: #3280 - Check finding right chain sequence using snake mode
     Description: Snake bond tool
     */
-
-    const MONOMER_NAME_DSEC = 'dSec___D-SelenoCysteine';
-    const MONOMER_ALIAS_DSEC = 'dSec';
-    const MONOMER_NAME_MEC = 'meC___N-Methyl-Cysteine';
-    const MONOMER_ALIAS_MEC = 'meC';
-
-    const peptide1 = await addMonomerToCanvas(
-      page,
-      MONOMER_NAME_DSEC,
-      MONOMER_ALIAS_DSEC,
-      200,
-      200,
-      0,
-    );
-
-    const peptide2 = await addMonomerToCanvas(
-      page,
-      MONOMER_NAME_TZA,
-      MONOMER_ALIAS_TZA,
-      100,
-      100,
-      0,
-    );
-    const peptide3 = await addMonomerToCanvas(
-      page,
-      MONOMER_NAME_TZA,
-      MONOMER_ALIAS_TZA,
-      150,
-      150,
-      1,
-    );
-
-    const peptide4 = await addMonomerToCanvas(
-      page,
-      MONOMER_NAME_MEC,
-      MONOMER_ALIAS_MEC,
-      400,
-      400,
-      0,
-    );
-
-    await selectSingleBondTool(page);
-
-    await bondTwoMonomers(page, peptide1, peptide2);
-    await bondTwoMonomers(page, peptide2, peptide3);
-    await bondTwoMonomers(page, peptide3, peptide4);
-
+    await createBondedMonomers(page);
     await takeEditorScreenshot(page);
+    await selectSnakeBondTool(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Button is not active after undo', async ({ page }) => {
+    const snakeModeButton = page.getByTestId('snake-mode-button');
+    await createBondedMonomers(page);
+    await expect(snakeModeButton).not.toHaveClass(/active/);
 
     await selectSnakeBondTool(page);
+    await expect(snakeModeButton).toHaveClass(/active/);
 
-    await takeEditorScreenshot(page);
+    await clickUndo(page);
+    await expect(snakeModeButton).not.toHaveClass(/active/);
+
+    await clickRedo(page);
+    await expect(snakeModeButton).toHaveClass(/active/);
   });
 });

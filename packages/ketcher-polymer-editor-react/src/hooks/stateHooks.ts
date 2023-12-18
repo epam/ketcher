@@ -14,8 +14,31 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { useCallback, useEffect, useState } from 'react';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from 'state';
+import { selectEditor } from 'state/common';
 
 export const useAppDispatch = () => useDispatch<AppDispatch>();
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
+
+export function useSnakeMode() {
+  const editor = useAppSelector(selectEditor);
+  const [snakeMode, setSnakeMode] = useState(false);
+
+  const onSnakeModeChange = useCallback(
+    (newSnakeMode: boolean) => {
+      setSnakeMode(newSnakeMode);
+    },
+    [setSnakeMode],
+  );
+  useEffect(() => {
+    editor?.events.snakeModeChange.add(onSnakeModeChange);
+
+    return () => {
+      editor?.events.snakeModeChange.remove(onSnakeModeChange);
+    };
+  }, [onSnakeModeChange, editor?.events.snakeModeChange]);
+
+  return snakeMode;
+}

@@ -188,9 +188,6 @@ export class AttachmentPoint {
         event.attachmentPointName = this.attachmentPointName;
         this.editorEvents.mouseOverAttachmentPoint.dispatch(event);
       })
-      .on('mouseleave', (event) => {
-        this.editorEvents.mouseLeaveAttachmentPoint.dispatch(event);
-      })
       .on('mousedown', (event) => {
         event.attachmentPointName = this.attachmentPointName;
         this.editorEvents.mouseDownAttachmentPoint.dispatch(event);
@@ -199,6 +196,10 @@ export class AttachmentPoint {
         event.attachmentPointName = this.attachmentPointName;
         this.editorEvents.mouseUpAttachmentPoint.dispatch(event);
       });
+
+    this.element.on('mouseleave', (event) => {
+      this.editorEvents.mouseLeaveAttachmentPoint.dispatch(event);
+    });
 
     return hoverableAreaElement;
   }

@@ -324,29 +324,3 @@ export async function addPeptideOnCanvas(page: Page, peptideId: string) {
   await page.getByTestId(peptideId).click();
   await clickInTheMiddleOfTheScreen(page);
 }
-
-export async function takePeptideLibraryScreenshot(
-  page: Page,
-  options?: { masks?: Locator[]; maxDiffPixelRatio?: number },
-) {
-  const maxTimeout = 3000;
-  const editor = page.locator('[class*="MuiBox-root"]');
-  await waitForRender(page, emptyFunction, maxTimeout);
-  await expect(editor).toHaveScreenshot({
-    mask: options?.masks,
-    maxDiffPixelRatio: options?.maxDiffPixelRatio,
-  });
-}
-
-export async function takeLibrariesScreenshot(
-  page: Page,
-  options?: { masks?: Locator[]; maxDiffPixelRatio?: number },
-) {
-  const maxTimeout = 3000;
-  const editor = page.locator('[class*="shown monomer-library"]');
-  await waitForRender(page, emptyFunction, maxTimeout);
-  await expect(editor).toHaveScreenshot({
-    mask: options?.masks,
-    maxDiffPixelRatio: options?.maxDiffPixelRatio,
-  });
-}

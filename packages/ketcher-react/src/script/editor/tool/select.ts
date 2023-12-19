@@ -246,7 +246,7 @@ class SelectTool implements Tool {
 
     if (this.#lassoHelper.running()) {
       const sel = this.#lassoHelper.addPoint(event);
-      console.log(sel);
+
       editor.selection(
         !event.shiftKey ? sel : selMerge(sel, editor.selection(), false),
       );

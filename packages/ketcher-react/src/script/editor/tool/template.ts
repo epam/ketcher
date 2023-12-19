@@ -231,7 +231,6 @@ class TemplateTool implements Tool {
   }
 
   async mousedown(event: MouseEvent) {
-    console.log('ji');
     const target = this.editor.findItem(event, this.findItems);
     const struct = this.editor.struct();
 

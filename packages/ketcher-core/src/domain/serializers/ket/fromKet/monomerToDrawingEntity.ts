@@ -12,6 +12,9 @@ export function monomerToDrawingEntity(
   struct: Struct,
   drawingEntitiesManager: DrawingEntitiesManager,
 ) {
+  const position: Vec2 = switchIntoChemistryCoordSystem(
+    new Vec2(node.position.x, node.position.y),
+  );
   return drawingEntitiesManager.addMonomer(
     {
       struct,
@@ -31,6 +34,6 @@ export function monomerToDrawingEntity(
       attachmentPoints: template.attachmentPoints,
       seqId: node.seqid,
     },
-    switchIntoChemistryCoordSystem(new Vec2(node.position.x, node.position.y)),
+    position,
   );
 }

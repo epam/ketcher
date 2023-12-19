@@ -45,7 +45,7 @@ const rotateCoordAxisBy180Degrees = (position: Vec2, axis: Axises): Vec2 => {
 
   rotatedPosition[axis] = -rotatedPosition[axis];
 
-  return new Vec2({ ...position, ...rotatedPosition });
+  return new Vec2(rotatedPosition.x, rotatedPosition.y, rotatedPosition.z);
 };
 
 export const switchIntoChemistryCoordSystem = (position: Vec2) => {

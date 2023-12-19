@@ -429,7 +429,12 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher
     Description: Mol-structure opened from the file in Micro mode is visible on Macro mode when hover on it
     */
-    await openFileAndAddToCanvas('Molfiles-V2000/glutamine.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/glutamine.mol',
+      page,
+      topLeftCorner.x,
+      topLeftCorner.y,
+    );
     await turnOnMacromoleculesEditor(page);
     await page.getByText('F1').locator('..').click();
     await takeEditorScreenshot(page);
@@ -553,7 +558,7 @@ test.describe('Macro-Micro-Switcher', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Check that the Ket-structure pasted from the clipboard in Micro mode  is visible in Macro mode when hover on it.', async ({
+  test('Check that the Ket-structure pasted from the clipboard in Micro mode is visible in Macro mode when hover on it.', async ({
     page,
   }) => {
     /* 
@@ -564,7 +569,7 @@ test.describe('Macro-Micro-Switcher', () => {
       page,
       FILE_TEST_DATA.oneFunctionalGroupExpandedKet,
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await page.mouse.click(topLeftCorner.x, topLeftCorner.y);
     await turnOnMacromoleculesEditor(page);
     await page.getByText('F1').locator('..').click();
     await takeEditorScreenshot(page);

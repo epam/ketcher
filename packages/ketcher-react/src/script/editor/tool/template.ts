@@ -491,12 +491,7 @@ class TemplateTool implements Tool {
         this.isSaltOrSolvent &&
         functionalGroupToReplace.isGroupAttached(this.struct)
       ) {
-        addSaltsAndSolventsOnCanvasWithoutMerge(
-          restruct,
-          this.template,
-          dragCtx,
-          this.editor,
-        );
+        addOnCanvasWithoutMerge(restruct, this.template, dragCtx, this.editor);
         return true;
       }
 
@@ -520,20 +515,13 @@ class TemplateTool implements Tool {
 
     if (!dragCtx.action) {
       if (!ci) {
-        //  ci.type == 'Canvas'
-        [action, pasteItems] = fromTemplateOnCanvas(
-          restruct,
-          this.template,
-          dragCtx.xy0,
-          0,
-        );
-        dragCtx.action = action;
-        this.editor.update(action, true);
+        addOnCanvasWithoutMerge(restruct, this.template, dragCtx, this.editor);
+        return true;
       } else if (ci.map === 'atoms') {
         const degree = restruct.atoms.get(ci.id)?.a.neighbors.length;
 
         if (degree && degree >= 1 && this.isSaltOrSolvent) {
-          addSaltsAndSolventsOnCanvasWithoutMerge(
+          addOnCanvasWithoutMerge(
             restruct,
             this.template,
             dragCtx,
@@ -618,13 +606,19 @@ class TemplateTool implements Tool {
   }
 }
 
-function addSaltsAndSolventsOnCanvasWithoutMerge(
+function addOnCanvasWithoutMerge(
   restruct: ReStruct,
   template: Struct,
   dragCtx,
   editor: Editor,
 ) {
-  const [action] = fromTemplateOnCanvas(restruct, template, dragCtx.xy0, 0);
+  const [action] = fromTemplateOnCanvas(
+    restruct,
+    template,
+    dragCtx.xy0,
+    0,
+    false,
+  );
   editor.update(action);
   editor.selection(null);
   editor.hover(null);

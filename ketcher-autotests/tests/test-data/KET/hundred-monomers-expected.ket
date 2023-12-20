@@ -1616,25 +1616,19 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     1.590309977531433,
                     0.20573300123214722,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -1.8232300281524658,
                     0.07071340084075928,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             }
         ],
@@ -1685,7 +1679,6 @@
         ],
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "A",
         "id": "Ala_0",
         "alias": "A",
         "attachmentPoints": [
@@ -1705,7 +1698,8 @@
                     ]
                 }
             }
-        ]
+        ],
+        "naturalAnalogShort": "A"
     },
     "monomer1": {
         "type": "monomer",
@@ -1745,14 +1739,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     2.200200080871582,
                     0.9388999938964844,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
@@ -1772,14 +1763,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -2.710400104522705,
                     -0.6075000166893005,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             }
         ],
@@ -1829,7 +1817,6 @@
         ],
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "A",
         "id": "Bal_1",
         "alias": "Bal",
         "attachmentPoints": [
@@ -1849,7 +1836,8 @@
                     ]
                 }
             }
-        ]
+        ],
+        "naturalAnalogShort": "A"
     },
     "monomer2": {
         "type": "monomer",
@@ -1914,25 +1902,19 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     2.9316999912261963,
                     -1.4168000221252441,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -1.7467000484466553,
                     -1.4178999662399292,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             },
             {
@@ -2035,7 +2017,6 @@
         ],
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "C",
         "id": "Edc_2",
         "alias": "Edc",
         "attachmentPoints": [
@@ -2055,7 +2036,8 @@
                     ]
                 }
             }
-        ]
+        ],
+        "naturalAnalogShort": "C"
     },
     "monomer3": {
         "type": "monomer",
@@ -2071,14 +2053,11 @@
         "type": "monomerTemplate",
         "atoms": [
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -1.9326000213623047,
                     -0.32820001244544983,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             },
             {
@@ -2107,14 +2086,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     2.1600000858306885,
                     -0.32820001244544983,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
@@ -2142,14 +2118,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -0.909500002861023,
                     2.6254000663757324,
                     0
-                ],
-                "$refs": [
-                    "rg-3"
                 ]
             }
         ],
@@ -2214,7 +2187,6 @@
         ],
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "C",
         "id": "dSec_3",
         "alias": "dSec",
         "attachmentPoints": [
@@ -2242,7 +2214,8 @@
                     ]
                 }
             }
-        ]
+        ],
+        "naturalAnalogShort": "C"
     },
     "monomer4": {
         "type": "monomer",
@@ -2291,14 +2264,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -1.9524999856948853,
                     -0.9668999910354614,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             },
             {
@@ -2334,25 +2304,19 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     2.65339994430542,
                     -0.9657999873161316,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     0.08510000258684158,
                     3.175100088119507,
                     0
-                ],
-                "$refs": [
-                    "rg-3"
                 ]
             }
         ],
@@ -2431,7 +2395,6 @@
         ],
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "D",
         "id": "Asp_4",
         "alias": "D",
         "attachmentPoints": [
@@ -2459,7 +2422,8 @@
                     ]
                 }
             }
-        ]
+        ],
+        "naturalAnalogShort": "D"
     },
     "monomer5": {
         "type": "monomer",
@@ -2475,14 +2439,11 @@
         "type": "monomerTemplate",
         "atoms": [
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     3.1626999378204346,
                     -0.10740000009536743,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
@@ -2518,14 +2479,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -2.9765000343322754,
                     -0.10740000009536743,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             },
             {
@@ -2537,14 +2495,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     0.09290000051259995,
                     1.6648999452590942,
                     0
-                ],
-                "$refs": [
-                    "rg-3"
                 ]
             },
             {
@@ -2648,7 +2603,6 @@
         ],
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "E",
         "id": "Ggu_5",
         "alias": "Ggu",
         "attachmentPoints": [
@@ -2676,7 +2630,8 @@
                     ]
                 }
             }
-        ]
+        ],
+        "naturalAnalogShort": "E"
     },
     "monomer6": {
         "type": "monomer",
@@ -2781,25 +2736,19 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     3.440700054168701,
                     -1.358299970626831,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -1.2375999689102173,
                     -1.3593000173568726,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             }
         ],
@@ -2899,7 +2848,6 @@
         ],
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "F",
         "id": "dF_6",
         "alias": "dF",
         "attachmentPoints": [
@@ -2919,7 +2867,8 @@
                     ]
                 }
             }
-        ]
+        ],
+        "naturalAnalogShort": "F"
     },
     "monomer7": {
         "type": "monomer",
@@ -2959,14 +2908,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     1.5885800123214722,
                     0.4449230134487152,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
@@ -2978,14 +2924,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -1.9180799722671509,
                     0.3415910005569458,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             }
         ],
@@ -3028,7 +2971,6 @@
         ],
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "G",
         "id": "Gly_7",
         "alias": "G",
         "attachmentPoints": [
@@ -3048,7 +2990,8 @@
                     ]
                 }
             }
-        ]
+        ],
+        "naturalAnalogShort": "G"
     },
     "monomer8": {
         "type": "monomer",
@@ -3097,14 +3040,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -0.9682999849319458,
                     -1.1782000064849854,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             },
             {
@@ -3156,25 +3096,19 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     2.7155001163482666,
                     -1.17739999294281,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -2.0316998958587646,
                     3.14490008354187,
                     0
-                ],
-                "$refs": [
-                    "rg-3"
                 ]
             }
         ],
@@ -3274,7 +3208,6 @@
         ],
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "H",
         "id": "His_8",
         "alias": "H",
         "attachmentPoints": [
@@ -3302,7 +3235,8 @@
                     ]
                 }
             }
-        ]
+        ],
+        "naturalAnalogShort": "H"
     },
     "monomer9": {
         "type": "monomer",
@@ -3352,14 +3286,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -2.276599884033203,
                     -0.6940000057220459,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             },
             {
@@ -3379,14 +3310,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     2.329400062561035,
                     -0.6930000185966492,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
@@ -3475,7 +3403,6 @@
         ],
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "I",
         "id": "dI_9",
         "alias": "dI",
         "attachmentPoints": [
@@ -3495,7 +3422,8 @@
                     ]
                 }
             }
-        ]
+        ],
+        "naturalAnalogShort": "I"
     },
     "monomer10": {
         "type": "monomer",
@@ -3584,36 +3512,27 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     2.284029960632324,
                     -1.5175199508666992,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -1.1172900199890137,
                     -1.5183199644088745,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -2.0681700706481934,
                     3.3885200023651123,
                     0
-                ],
-                "$refs": [
-                    "rg-3"
                 ]
             },
             {
@@ -3714,7 +3633,6 @@
         ],
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "K",
         "id": "Hyl_10",
         "alias": "Hyl",
         "attachmentPoints": [
@@ -3742,7 +3660,8 @@
                     ]
                 }
             }
-        ]
+        ],
+        "naturalAnalogShort": "K"
     },
     "monomer11": {
         "type": "monomer",
@@ -3815,25 +3734,19 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     2.704200029373169,
                     -0.9587000012397766,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -1.9742000102996826,
                     -0.9598000049591064,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             },
             {
@@ -3913,7 +3826,6 @@
         ],
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "L",
         "id": "Nle_11",
         "alias": "Nle",
         "attachmentPoints": [
@@ -3933,7 +3845,8 @@
                     ]
                 }
             }
-        ]
+        ],
+        "naturalAnalogShort": "L"
     },
     "monomer12": {
         "type": "monomer",
@@ -4014,25 +3927,19 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     2.704200029373169,
                     -0.9587000012397766,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -1.9742000102996826,
                     -0.9598000049591064,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             }
         ],
@@ -4104,7 +4011,6 @@
         ],
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "M",
         "id": "dM_12",
         "alias": "dM",
         "attachmentPoints": [
@@ -4124,7 +4030,8 @@
                     ]
                 }
             }
-        ]
+        ],
+        "naturalAnalogShort": "M"
     },
     "monomer13": {
         "type": "monomer",
@@ -4173,14 +4080,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -1.673799991607666,
                     -0.8041999936103821,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             },
             {
@@ -4216,25 +4120,19 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     2.9321999549865723,
                     -0.8032000064849854,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -2.703000068664551,
                     1.548699975013733,
                     0
-                ],
-                "$refs": [
-                    "rg-3"
                 ]
             }
         ],
@@ -4313,7 +4211,6 @@
         ],
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "N",
         "id": "dN_13",
         "alias": "dN",
         "attachmentPoints": [
@@ -4341,7 +4238,8 @@
                     ]
                 }
             }
-        ]
+        ],
+        "naturalAnalogShort": "N"
     },
     "monomer14": {
         "type": "monomer",
@@ -4390,14 +4288,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     2.292099952697754,
                     -0.1509999930858612,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
@@ -4417,14 +4312,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -0.9879000186920166,
                     -1.960800051689148,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             },
             {
@@ -4534,7 +4426,6 @@
         ],
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "P",
         "id": "Mhp_14",
         "alias": "Mhp",
         "attachmentPoints": [
@@ -4554,7 +4445,8 @@
                     ]
                 }
             }
-        ]
+        ],
+        "naturalAnalogShort": "P"
     },
     "monomer15": {
         "type": "monomer",
@@ -4603,14 +4495,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -1.9592000246047974,
                     -1.624500036239624,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             },
             {
@@ -4654,25 +4543,19 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     2.6468000411987305,
                     -1.6234999895095825,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     0.0729999989271164,
                     3.9885001182556152,
                     0
-                ],
-                "$refs": [
-                    "rg-3"
                 ]
             }
         ],
@@ -4758,7 +4641,6 @@
         ],
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "Q",
         "id": "dQ_15",
         "alias": "dQ",
         "attachmentPoints": [
@@ -4786,7 +4668,8 @@
                     ]
                 }
             }
-        ]
+        ],
+        "naturalAnalogShort": "Q"
     },
     "monomer16": {
         "type": "monomer",
@@ -4835,14 +4718,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -1.0931999683380127,
                     -2.11680006980896,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             },
             {
@@ -4902,25 +4782,19 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     2.589200019836426,
                     -2.1159000396728516,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -0.48829999566078186,
                     4.378600120544434,
                     0
-                ],
-                "$refs": [
-                    "rg-3"
                 ]
             }
         ],
@@ -5020,7 +4894,6 @@
         ],
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "R",
         "id": "Arg_16",
         "alias": "R",
         "attachmentPoints": [
@@ -5048,7 +4921,8 @@
                     ]
                 }
             }
-        ]
+        ],
+        "naturalAnalogShort": "R"
     },
     "monomer17": {
         "type": "monomer",
@@ -5129,14 +5003,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -2.163800001144409,
                     -1.499899983406067,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             },
             {
@@ -5148,14 +5019,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     3.03410005569458,
                     -1.4986000061035156,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
@@ -5249,7 +5117,6 @@
         ],
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "S",
         "id": "SertBu_17",
         "alias": "SertBu",
         "attachmentPoints": [
@@ -5269,7 +5136,8 @@
                     ]
                 }
             }
-        ]
+        ],
+        "naturalAnalogShort": "S"
     },
     "monomer18": {
         "type": "monomer",
@@ -5327,14 +5195,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -2.743000030517578,
                     -0.2498999983072281,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             },
             {
@@ -5346,14 +5211,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     2.4547998905181885,
                     -0.24869999289512634,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
@@ -5427,7 +5289,6 @@
         ],
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "T",
         "id": "D-aThr_18",
         "alias": "D-aThr",
         "attachmentPoints": [
@@ -5447,7 +5308,8 @@
                     ]
                 }
             }
-        ]
+        ],
+        "naturalAnalogShort": "T"
     },
     "monomer19": {
         "type": "monomer",
@@ -5512,25 +5374,19 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     2.4842000007629395,
                     -0.5320000052452087,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -2.194200038909912,
                     -0.5331000089645386,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             },
             {
@@ -5603,7 +5459,6 @@
         ],
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "V",
         "id": "Nva_19",
         "alias": "Nva",
         "attachmentPoints": [
@@ -5623,7 +5478,8 @@
                     ]
                 }
             }
-        ]
+        ],
+        "naturalAnalogShort": "V"
     },
     "monomer20": {
         "type": "monomer",
@@ -5672,14 +5528,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -0.7723000049591064,
                     -1.882599949836731,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             },
             {
@@ -5763,25 +5616,19 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     2.911400079727173,
                     -1.8818000555038452,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -3.0060999393463135,
                     0.388700008392334,
                     0
-                ],
-                "$refs": [
-                    "rg-3"
                 ]
             }
         ],
@@ -5916,7 +5763,6 @@
         ],
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "W",
         "id": "Trp_20",
         "alias": "W",
         "attachmentPoints": [
@@ -5944,7 +5790,8 @@
                     ]
                 }
             }
-        ]
+        ],
+        "naturalAnalogShort": "W"
     },
     "monomer21": {
         "type": "monomer",
@@ -5993,14 +5840,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     3.182300090789795,
                     -1.6413999795913696,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
@@ -6036,14 +5880,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -2.792099952697754,
                     2.4179000854492188,
                     0
-                ],
-                "$refs": [
-                    "rg-3"
                 ]
             },
             {
@@ -6055,14 +5896,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -1.4955999851226807,
                     -1.6424000263214111,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             }
         ],
@@ -6224,14 +6062,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     2.701900005340576,
                     -0.9628000259399414,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
@@ -6243,14 +6078,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -1.9759999513626099,
                     -0.9638000130653381,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             },
             {
@@ -6270,14 +6102,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -1.972499966621399,
                     3.5448999404907227,
                     0
-                ],
-                "$refs": [
-                    "rg-3"
                 ]
             }
         ],
@@ -6425,14 +6254,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -0.5702999830245972,
                     -1.4775999784469604,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             },
             {
@@ -6500,25 +6326,19 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     3.1133999824523926,
                     -1.4767999649047852,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -2.6319000720977783,
                     3.238100051879883,
                     0
-                ],
-                "$refs": [
-                    "rg-3"
                 ]
             }
         ],
@@ -6632,7 +6452,6 @@
         ],
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "Y",
         "id": "Tyr_23",
         "alias": "Y",
         "attachmentPoints": [
@@ -6660,7 +6479,8 @@
                     ]
                 }
             }
-        ]
+        ],
+        "naturalAnalogShort": "Y"
     },
     "monomer24": {
         "type": "monomer",
@@ -6748,14 +6568,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -0.5755630135536194,
                     1.0636099576950073,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             },
             {
@@ -6767,14 +6584,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     2.889009952545166,
                     1.062809944152832,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
@@ -6911,7 +6725,6 @@
         ],
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "Y",
         "id": "TyrabD_24",
         "alias": "TyrabD",
         "attachmentPoints": [
@@ -6931,7 +6744,8 @@
                     ]
                 }
             }
-        ]
+        ],
+        "naturalAnalogShort": "Y"
     },
     "monomer25": {
         "type": "monomer",
@@ -6972,14 +6786,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     1.8812099695205688,
                     0,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             },
             {
@@ -6991,14 +6802,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -1.1658999919891357,
                     1.763219952583313,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
@@ -7148,14 +6956,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -1.6355400085449219,
                     0.2775219976902008,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             },
             {
@@ -7167,14 +6972,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     1.8287500143051147,
                     0.276654988527298,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
@@ -7247,7 +7049,6 @@
         ],
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "V",
         "id": "D-Nva_26",
         "alias": "D-Nva",
         "attachmentPoints": [
@@ -7267,7 +7068,8 @@
                     ]
                 }
             }
-        ]
+        ],
+        "naturalAnalogShort": "V"
     },
     "monomer27": {
         "type": "monomer",
@@ -7357,14 +7159,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -2.296999931335449,
                     -1.5577000379562378,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             },
             {
@@ -7376,14 +7175,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     2.900899887084961,
                     -1.556399941444397,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
@@ -7485,7 +7281,6 @@
         ],
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "T",
         "id": "ThrPO3_27",
         "alias": "ThrPO3",
         "attachmentPoints": [
@@ -7505,7 +7300,8 @@
                     ]
                 }
             }
-        ]
+        ],
+        "naturalAnalogShort": "T"
     },
     "monomer28": {
         "type": "monomer",
@@ -7554,14 +7350,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -2.216399908065796,
                     -0.492000013589859,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             },
             {
@@ -7581,25 +7374,19 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     2.3894999027252197,
                     -0.49079999327659607,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -0.948199987411499,
                     2.903599977493286,
                     0
-                ],
-                "$refs": [
-                    "rg-3"
                 ]
             }
         ],
@@ -7664,7 +7451,6 @@
         ],
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "S",
         "id": "dS_28",
         "alias": "dS",
         "attachmentPoints": [
@@ -7692,7 +7478,8 @@
                     ]
                 }
             }
-        ]
+        ],
+        "naturalAnalogShort": "S"
     },
     "monomer29": {
         "type": "monomer",
@@ -7797,14 +7584,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -0.28439998626708984,
                     3.498500108718872,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             },
             {
@@ -7816,14 +7600,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     4.913400173187256,
                     3.4972000122070312,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
@@ -7983,7 +7764,6 @@
         ],
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "R",
         "id": "DhArgE_29",
         "alias": "DhArgE",
         "attachmentPoints": [
@@ -8003,7 +7783,8 @@
                     ]
                 }
             }
-        ]
+        ],
+        "naturalAnalogShort": "R"
     },
     "monomer30": {
         "type": "monomer",
@@ -8108,25 +7889,19 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     3.27020001411438,
                     -1.9701999425888062,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -0.36970001459121704,
                     -3.7715001106262207,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             },
             {
@@ -8234,7 +8009,6 @@
         ],
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "R",
         "id": "meR_30",
         "alias": "meR",
         "attachmentPoints": [
@@ -8254,7 +8028,8 @@
                     ]
                 }
             }
-        ]
+        ],
+        "naturalAnalogShort": "R"
     },
     "monomer31": {
         "type": "monomer",
@@ -8303,14 +8078,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -1.9598000049591064,
                     -1.624500036239624,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             },
             {
@@ -8354,25 +8126,19 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     2.646199941635132,
                     -1.6234999895095825,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     0.07989999651908875,
                     3.9885001182556152,
                     0
-                ],
-                "$refs": [
-                    "rg-3"
                 ]
             }
         ],
@@ -8458,7 +8224,6 @@
         ],
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "Q",
         "id": "Gln_31",
         "alias": "Q",
         "attachmentPoints": [
@@ -8486,7 +8251,8 @@
                     ]
                 }
             }
-        ]
+        ],
+        "naturalAnalogShort": "Q"
     },
     "monomer32": {
         "type": "monomer",
@@ -8575,25 +8341,19 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     2.773900032043457,
                     -1.023800015449524,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -0.8659999966621399,
                     -2.8250999450683594,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             },
             {
@@ -8687,7 +8447,6 @@
         ],
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "Q",
         "id": "meQ_32",
         "alias": "meQ",
         "attachmentPoints": [
@@ -8707,7 +8466,8 @@
                     ]
                 }
             }
-        ]
+        ],
+        "naturalAnalogShort": "Q"
     },
     "monomer33": {
         "type": "monomer",
@@ -8765,14 +8525,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -1.1377999782562256,
                     2.2688000202178955,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             },
             {
@@ -8792,14 +8549,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     3.024600028991699,
                     -0.028599999845027924,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
@@ -8887,7 +8641,6 @@
         ],
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "P",
         "id": "D-Hyp_33",
         "alias": "D-Hyp",
         "attachmentPoints": [
@@ -8907,7 +8660,8 @@
                     ]
                 }
             }
-        ]
+        ],
+        "naturalAnalogShort": "P"
     },
     "monomer34": {
         "type": "monomer",
@@ -8965,14 +8719,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -1.1377999782562256,
                     2.2688000202178955,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             },
             {
@@ -8992,14 +8743,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     3.024600028991699,
                     -0.028599999845027924,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
@@ -9087,7 +8835,6 @@
         ],
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "P",
         "id": "D-aHyp_34",
         "alias": "D-aHyp",
         "attachmentPoints": [
@@ -9107,7 +8854,8 @@
                     ]
                 }
             }
-        ]
+        ],
+        "naturalAnalogShort": "P"
     },
     "monomer35": {
         "type": "monomer",
@@ -9188,25 +8936,19 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     2.7888998985290527,
                     -0.4348999857902527,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -0.8510000109672546,
                     -2.2362000942230225,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             },
             {
@@ -9293,7 +9035,6 @@
         ],
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "N",
         "id": "meN_35",
         "alias": "meN",
         "attachmentPoints": [
@@ -9313,7 +9054,8 @@
                     ]
                 }
             }
-        ]
+        ],
+        "naturalAnalogShort": "N"
     },
     "monomer36": {
         "type": "monomer",
@@ -9395,25 +9137,19 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -2.243000030517578,
                     -1.159000039100647,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     2.954900026321411,
                     -1.1576999425888062,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
@@ -9501,7 +9237,6 @@
         ],
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "M",
         "id": "DMetSO_36",
         "alias": "DMetSO",
         "attachmentPoints": [
@@ -9521,7 +9256,8 @@
                     ]
                 }
             }
-        ]
+        ],
+        "naturalAnalogShort": "M"
     },
     "monomer37": {
         "type": "monomer",
@@ -9594,14 +9330,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     3.4659500122070312,
                     -0.9997940063476562,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             },
             {
@@ -9674,7 +9407,6 @@
         ],
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "L",
         "id": "OLeu_37",
         "alias": "OLeu",
         "attachmentPoints": [
@@ -9686,7 +9418,8 @@
                     ]
                 }
             }
-        ]
+        ],
+        "naturalAnalogShort": "L"
     },
     "monomer38": {
         "type": "monomer",
@@ -9767,25 +9500,19 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     2.0272894515820847,
                     -0.4937384991630528,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -1.4805406167798312,
                     -0.4945632739124489,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             }
         ],
@@ -9857,7 +9584,6 @@
         ],
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "L",
         "id": "Leu_38",
         "alias": "L",
         "attachmentPoints": [
@@ -9877,7 +9603,8 @@
                     ]
                 }
             }
-        ]
+        ],
+        "naturalAnalogShort": "L"
     },
     "monomer39": {
         "type": "monomer",
@@ -10006,14 +9733,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -0.14062300324440002,
                     2.693160057067871,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             },
             {
@@ -10025,14 +9749,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     3.3234899044036865,
                     2.6922900676727295,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
@@ -10168,7 +9889,6 @@
         ],
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "K",
         "id": "LysBoc_39",
         "alias": "LysBoc",
         "attachmentPoints": [
@@ -10188,7 +9908,8 @@
                     ]
                 }
             }
-        ]
+        ],
+        "naturalAnalogShort": "K"
     },
     "monomer40": {
         "type": "monomer",
@@ -10253,14 +9974,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -2.598099946975708,
                     0.5999000072479248,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             },
             {
@@ -10272,14 +9990,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     2.5998001098632812,
                     0.5985999703407288,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
@@ -10359,7 +10074,6 @@
         ],
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "I",
         "id": "DxiIle_40",
         "alias": "DxiIle",
         "attachmentPoints": [
@@ -10379,7 +10093,8 @@
                     ]
                 }
             }
-        ]
+        ],
+        "naturalAnalogShort": "I"
     },
     "monomer41": {
         "type": "monomer",
@@ -10395,14 +10110,11 @@
         "type": "monomerTemplate",
         "atoms": [
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     0.211899995803833,
                     -2.720599889755249,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             },
             {
@@ -10535,14 +10247,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     5.4096999168396,
                     -2.7191998958587646,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
@@ -10699,7 +10408,6 @@
         ],
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "H",
         "id": "DHis1B_41",
         "alias": "DHis1B",
         "attachmentPoints": [
@@ -10719,7 +10427,8 @@
                     ]
                 }
             }
-        ]
+        ],
+        "naturalAnalogShort": "H"
     },
     "monomer42": {
         "type": "monomer",
@@ -10816,25 +10525,19 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     2.3192656762253145,
                     -0.6639056973689369,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -0.2664573287854542,
                     -1.9433412723570398,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             },
             {
@@ -10942,7 +10645,6 @@
         ],
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "H",
         "id": "meH_42",
         "alias": "meH",
         "attachmentPoints": [
@@ -10962,7 +10664,8 @@
                     ]
                 }
             }
-        ]
+        ],
+        "naturalAnalogShort": "H"
     },
     "monomer43": {
         "type": "monomer",
@@ -11026,14 +10729,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     3.9000000953674316,
                     2.25,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             },
             {
@@ -11098,7 +10798,6 @@
         ],
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "G",
         "id": "DAGlyB_43",
         "alias": "DAGlyB",
         "attachmentPoints": [
@@ -11110,7 +10809,8 @@
                     ]
                 }
             }
-        ]
+        ],
+        "naturalAnalogShort": "G"
     },
     "monomer44": {
         "type": "monomer",
@@ -11150,14 +10850,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     3.8993000984191895,
                     0.7495999932289124,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             }
         ],
@@ -11186,7 +10883,6 @@
         ],
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "G",
         "id": "Gly-ol_44",
         "alias": "Gly-ol",
         "attachmentPoints": [
@@ -11198,7 +10894,8 @@
                     ]
                 }
             }
-        ]
+        ],
+        "naturalAnalogShort": "G"
     },
     "monomer45": {
         "type": "monomer",
@@ -11247,25 +10944,19 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     2.228100061416626,
                     -1.3398000001907349,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -2.4498000144958496,
                     -1.3407000303268433,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             },
             {
@@ -11406,7 +11097,6 @@
         ],
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "G",
         "id": "Phg_45",
         "alias": "Phg",
         "attachmentPoints": [
@@ -11426,7 +11116,8 @@
                     ]
                 }
             }
-        ]
+        ],
+        "naturalAnalogShort": "G"
     },
     "monomer46": {
         "type": "monomer",
@@ -11531,14 +11222,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -0.0027328499127179384,
                     -1.9965100288391113,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             }
         ],
@@ -11631,7 +11319,6 @@
         ],
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "F",
         "id": "Phe-ol_46",
         "alias": "Phe-ol",
         "attachmentPoints": [
@@ -11643,7 +11330,8 @@
                     ]
                 }
             }
-        ]
+        ],
+        "naturalAnalogShort": "F"
     },
     "monomer47": {
         "type": "monomer",
@@ -11766,14 +11454,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -1.1355299949645996,
                     1.5308599472045898,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             },
             {
@@ -11785,14 +11470,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     2.329119920730591,
                     1.5299999713897705,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
@@ -11921,7 +11603,6 @@
         ],
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "D",
         "id": "AspPh2_47",
         "alias": "AspPh2",
         "attachmentPoints": [
@@ -11941,7 +11622,8 @@
                     ]
                 }
             }
-        ]
+        ],
+        "naturalAnalogShort": "D"
     },
     "monomer49": {
         "type": "monomer",
@@ -12006,25 +11688,19 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     1.7358252859997958,
                     -0.09782265033782571,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -1.7846614850410043,
                     -0.09865038328515839,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             }
         ],
@@ -12082,7 +11758,6 @@
         ],
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "C",
         "id": "seC_48",
         "alias": "seC",
         "attachmentPoints": [
@@ -12102,7 +11777,8 @@
                     ]
                 }
             }
-        ]
+        ],
+        "naturalAnalogShort": "C"
     },
     "monomer50": {
         "type": "monomer",
@@ -12151,14 +11827,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     2.182377821190223,
                     -0.6632338219733745,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
@@ -12170,14 +11843,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -1.3605495464119788,
                     -0.6639911975837129,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             },
             {
@@ -12287,7 +11957,6 @@
             }
         ],
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "A",
         "id": "Cya___3-sulfoalanine",
         "alias": "Cya",
         "attachmentPoints": [
@@ -12305,7 +11974,8 @@
                 },
                 "type": "right"
             }
-        ]
+        ],
+        "naturalAnalogShort": "A"
     },
     "monomer51": {
         "type": "monomer",
@@ -12370,36 +12040,27 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     2.4842,
                     -0.532,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -2.1942,
                     -0.5331,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -1.1591,
                     3.0661,
                     0
-                ],
-                "$refs": [
-                    "rg-3"
                 ]
             }
         ],
@@ -12463,7 +12124,6 @@
             }
         ],
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "C",
         "id": "dC___D-Cysteine",
         "alias": "dC",
         "attachmentPoints": [
@@ -12488,7 +12148,8 @@
                 },
                 "type": "side"
             }
-        ]
+        ],
+        "naturalAnalogShort": "C"
     },
     "monomer52": {
         "type": "monomer",
@@ -12537,14 +12198,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -1.9525,
                     -0.9669,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             },
             {
@@ -12580,25 +12238,19 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     2.6534,
                     -0.9658,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     0.0851,
                     3.1751,
                     0
-                ],
-                "$refs": [
-                    "rg-3"
                 ]
             }
         ],
@@ -12676,7 +12328,6 @@
             }
         ],
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "D",
         "id": "D___Aspartic acid",
         "alias": "D",
         "attachmentPoints": [
@@ -12701,7 +12352,8 @@
                 },
                 "type": "side"
             }
-        ]
+        ],
+        "naturalAnalogShort": "D"
     },
     "monomer53": {
         "type": "monomer",
@@ -12717,14 +12369,11 @@
         "type": "monomerTemplate",
         "atoms": [
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     3.1627,
                     -0.1074,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
@@ -12760,14 +12409,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -2.9765,
                     -0.1074,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             },
             {
@@ -12779,14 +12425,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     0.0929,
                     1.6649,
                     0
-                ],
-                "$refs": [
-                    "rg-3"
                 ]
             },
             {
@@ -12889,7 +12532,6 @@
             }
         ],
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "E",
         "id": "Ggu___gamma-glutamic acid",
         "alias": "Ggu",
         "attachmentPoints": [
@@ -12914,7 +12556,8 @@
                 },
                 "type": "side"
             }
-        ]
+        ],
+        "naturalAnalogShort": "E"
     },
     "monomer54": {
         "type": "monomer",
@@ -12971,14 +12614,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     0.1686,
                     3.4764,
                     0
-                ],
-                "$refs": [
-                    "rg-3"
                 ]
             },
             {
@@ -13006,25 +12646,19 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     2.7739,
                     -1.0238,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -0.866,
                     -2.8251,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             },
             {
@@ -13117,7 +12751,6 @@
             }
         ],
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "E",
         "id": "meE___N-Methyl-Glutamic acid",
         "alias": "meE",
         "attachmentPoints": [
@@ -13142,7 +12775,8 @@
                 },
                 "type": "side"
             }
-        ]
+        ],
+        "naturalAnalogShort": "E"
     },
     "monomer55": {
         "type": "monomer",
@@ -13158,14 +12792,11 @@
         "type": "monomerTemplate",
         "atoms": [
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -1.3598641512183123,
                     1.4995698301200662,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             },
             {
@@ -13258,14 +12889,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     2.1047167092942187,
                     1.4987699884469645,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
@@ -13379,7 +13007,6 @@
             }
         ],
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "F",
         "id": "D-hPhe___D-Homophenylalanine",
         "alias": "D-hPhe",
         "attachmentPoints": [
@@ -13397,7 +13024,8 @@
                 },
                 "type": "right"
             }
-        ]
+        ],
+        "naturalAnalogShort": "F"
     },
     "monomer56": {
         "type": "monomer",
@@ -13478,14 +13106,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -1.2043,
                     1.4435,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             },
             {
@@ -13497,14 +13122,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     3.9936,
                     1.4422,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
@@ -13634,7 +13256,6 @@
             }
         ],
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "F",
         "id": "Phe_4I___(2S)-2-amino-3-(4-iodophenyl)propanoic acid",
         "alias": "Phe_4I",
         "attachmentPoints": [
@@ -13652,7 +13273,8 @@
                 },
                 "type": "right"
             }
-        ]
+        ],
+        "naturalAnalogShort": "F"
     },
     "monomer57": {
         "type": "monomer",
@@ -13749,14 +13371,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -2.6481,
                     -0.4636,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             },
             {
@@ -13768,14 +13387,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     1.8805,
                     -0.463,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
@@ -13889,7 +13505,6 @@
             }
         ],
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "F",
         "id": "aMePhe___(2S)-2-amino-2-methyl-3-phenylpropanoic acid",
         "alias": "aMePhe",
         "attachmentPoints": [
@@ -13907,7 +13522,8 @@
                 },
                 "type": "right"
             }
-        ]
+        ],
+        "naturalAnalogShort": "F"
     },
     "monomer58": {
         "type": "monomer",
@@ -13923,14 +13539,11 @@
         "type": "monomerTemplate",
         "atoms": [
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -2.7098,
                     1.1911,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             },
             {
@@ -13959,14 +13572,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     2.4881,
                     1.1899,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
@@ -14114,7 +13724,6 @@
             }
         ],
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "G",
         "id": "D-Phg___D-2-phenylglycine",
         "alias": "D-Phg",
         "attachmentPoints": [
@@ -14132,7 +13741,8 @@
                 },
                 "type": "right"
             }
-        ]
+        ],
+        "naturalAnalogShort": "G"
     },
     "monomer59": {
         "type": "monomer",
@@ -14204,14 +13814,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -2.399,
                     0.7455,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             },
             {
@@ -14319,7 +13926,6 @@
             }
         ],
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "G",
         "id": "DAPhg4___2-(4-chlorophenyl)acetic acid",
         "alias": "DAPhg4",
         "attachmentPoints": [
@@ -14330,7 +13936,8 @@
                 },
                 "type": "right"
             }
-        ]
+        ],
+        "naturalAnalogShort": "G"
     },
     "monomer60": {
         "type": "monomer",
@@ -14427,25 +14034,19 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     3.2649,
                     -0.9346,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -0.3751,
                     -2.7357,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             },
             {
@@ -14552,7 +14153,6 @@
             }
         ],
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "H",
         "id": "meH___N-Methyl-Histidine",
         "alias": "meH",
         "attachmentPoints": [
@@ -14570,7 +14170,8 @@
                 },
                 "type": "right"
             }
-        ]
+        ],
+        "naturalAnalogShort": "H"
     },
     "monomer61": {
         "type": "monomer",
@@ -14646,14 +14247,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -2.5981,
                     0.5999,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             },
             {
@@ -14665,14 +14263,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     2.5998,
                     0.5986,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
@@ -14752,7 +14347,6 @@
             }
         ],
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "I",
         "id": "D-aIle___D-allo-Isoleucine",
         "alias": "D-aIle",
         "attachmentPoints": [
@@ -14770,7 +14364,8 @@
                 },
                 "type": "right"
             }
-        ]
+        ],
+        "naturalAnalogShort": "I"
     },
     "monomer63": {
         "type": "monomer",
@@ -14796,14 +14391,11 @@
         "type": "monomerTemplate",
         "atoms": [
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -2.0487,
                     -3.86,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             },
             {
@@ -14832,14 +14424,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     2.0439,
                     -3.86,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
@@ -15094,7 +14683,6 @@
             }
         ],
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "K",
         "id": "Pyl___Pyl",
         "alias": "Pyl",
         "attachmentPoints": [
@@ -15112,7 +14700,8 @@
                 },
                 "type": "right"
             }
-        ]
+        ],
+        "naturalAnalogShort": "K"
     },
     "monomer65": {
         "type": "monomer",
@@ -15239,14 +14828,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -1.2032,
                     2.5174,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             },
             {
@@ -15258,14 +14844,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     3.9947,
                     2.5161,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
@@ -15372,7 +14955,6 @@
             }
         ],
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "K",
         "id": "LysiPr___(2S)-2-amino-6-[(propan-2-yl)amino]hexanoic acid",
         "alias": "LysiPr",
         "attachmentPoints": [
@@ -15390,7 +14972,8 @@
                 },
                 "type": "right"
             }
-        ]
+        ],
+        "naturalAnalogShort": "K"
     },
     "monomer69": {
         "type": "monomer",
@@ -15465,14 +15048,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -2.208,
                     -0.8247,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             },
             {
@@ -15484,14 +15064,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     2.9898,
                     -0.8234,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
@@ -15570,7 +15147,6 @@
             }
         ],
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "L",
         "id": "D-Nle___D-Norleucine",
         "alias": "D-Nle",
         "attachmentPoints": [
@@ -15588,7 +15164,8 @@
                 },
                 "type": "right"
             }
-        ]
+        ],
+        "naturalAnalogShort": "L"
     },
     "monomer71": {
         "type": "monomer",
@@ -15653,14 +15230,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     5.2032,
                     2.999,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             },
             {
@@ -15740,7 +15314,6 @@
             }
         ],
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "L",
         "id": "Leu-al___(2S)-2-amino-4-methylpentanal",
         "alias": "Leu-al",
         "attachmentPoints": [
@@ -15751,7 +15324,8 @@
                 },
                 "type": "left"
             }
-        ]
+        ],
+        "naturalAnalogShort": "L"
     },
     "monomer72": {
         "type": "monomer",
@@ -15832,25 +15406,19 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     2.7042,
                     -0.9587,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -1.9742,
                     -0.9598,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             }
         ],
@@ -15921,7 +15489,6 @@
             }
         ],
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "M",
         "id": "M___Methionine",
         "alias": "M",
         "attachmentPoints": [
@@ -15939,7 +15506,8 @@
                 },
                 "type": "right"
             }
-        ]
+        ],
+        "naturalAnalogShort": "M"
     },
     "monomer73": {
         "type": "monomer",
@@ -16007,14 +15575,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -1.1378,
                     2.2688,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             },
             {
@@ -16034,14 +15599,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     3.0246,
                     -0.0286,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
@@ -16128,7 +15690,6 @@
             }
         ],
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "P",
         "id": "D-Hyp___D-4-Hydroxyproline",
         "alias": "D-Hyp",
         "attachmentPoints": [
@@ -16146,7 +15707,8 @@
                 },
                 "type": "right"
             }
-        ]
+        ],
+        "naturalAnalogShort": "P"
     },
     "monomer75": {
         "type": "monomer",
@@ -16215,14 +15777,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -1.9592,
                     -1.6245,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             },
             {
@@ -16266,25 +15825,19 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     2.6468,
                     -1.6235,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     0.073,
                     3.9885,
                     0
-                ],
-                "$refs": [
-                    "rg-3"
                 ]
             }
         ],
@@ -16369,7 +15922,6 @@
             }
         ],
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "Q",
         "id": "dQ___D-Glutamine",
         "alias": "dQ",
         "attachmentPoints": [
@@ -16394,7 +15946,8 @@
                 },
                 "type": "side"
             }
-        ]
+        ],
+        "naturalAnalogShort": "Q"
     },
     "monomer78": {
         "type": "monomer",
@@ -16479,25 +16032,19 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     2.4842,
                     -0.532,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -2.1942,
                     -0.5331,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             },
             {
@@ -16569,7 +16116,6 @@
             }
         ],
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "S",
         "id": "Hse___homoserine",
         "alias": "Hse",
         "attachmentPoints": [
@@ -16587,7 +16133,8 @@
                 },
                 "type": "right"
             }
-        ]
+        ],
+        "naturalAnalogShort": "S"
     },
     "monomer81": {
         "type": "monomer",
@@ -16665,14 +16212,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -2.743,
                     -0.2499,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             },
             {
@@ -16684,14 +16228,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     2.4548,
                     -0.2487,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
@@ -16764,7 +16305,6 @@
             }
         ],
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "T",
         "id": "D-aThr___D-allo-Threonine",
         "alias": "D-aThr",
         "attachmentPoints": [
@@ -16782,7 +16322,8 @@
                 },
                 "type": "right"
             }
-        ]
+        ],
+        "naturalAnalogShort": "T"
     },
     "monomer84": {
         "type": "monomer",
@@ -16833,14 +16374,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -1.5423,
                     -1.7399,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             },
             {
@@ -16860,14 +16398,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     2.0402,
                     0.0326,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
@@ -16947,7 +16482,6 @@
             }
         ],
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "V",
         "id": "Iva___isovaline",
         "alias": "Iva",
         "attachmentPoints": [
@@ -16965,7 +16499,8 @@
                 },
                 "type": "right"
             }
-        ]
+        ],
+        "naturalAnalogShort": "V"
     },
     "monomer86": {
         "type": "monomer",
@@ -17001,14 +16536,11 @@
         "type": "monomerTemplate",
         "atoms": [
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -0.9963,
                     2.175,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             },
             {
@@ -17133,14 +16665,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     4.2016,
                     2.1738,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
@@ -17289,7 +16818,6 @@
             }
         ],
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "W",
         "id": "DTrpFo___(2R)-2-amino-3-(1-formyl-1H-indol-3-yl)propanoic acid",
         "alias": "DTrpFo",
         "attachmentPoints": [
@@ -17307,7 +16835,8 @@
                 },
                 "type": "right"
             }
-        ]
+        ],
+        "naturalAnalogShort": "W"
     },
     "monomer89": {
         "type": "monomer",
@@ -17366,14 +16895,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     14.4899,
                     -9.1629,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
@@ -17409,14 +16935,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     10.1101,
                     -6.1871,
                     0
-                ],
-                "$refs": [
-                    "rg-3"
                 ]
             },
             {
@@ -17428,14 +16951,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     11.0606,
                     -9.1637,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             },
             {
@@ -17463,25 +16983,19 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     15.2564,
                     -5.4331,
                     0
-                ],
-                "$refs": [
-                    "rg-5"
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     12.7904,
                     -4.7903,
                     0
-                ],
-                "$refs": [
-                    "rg-4"
                 ]
             },
             {
@@ -17525,14 +17039,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     17.3544,
                     -9.7991,
                     0
-                ],
-                "$refs": [
-                    "rg-6"
                 ]
             }
         ],
@@ -17694,7 +17205,6 @@
             }
         ],
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "X",
         "id": "Test-6-P___Test-6-AP-Peptide",
         "alias": "Test-6-P",
         "attachmentPoints": [
@@ -17740,7 +17250,8 @@
                 },
                 "type": "side"
             }
-        ]
+        ],
+        "naturalAnalogShort": "X"
     },
     "monomer91": {
         "type": "monomer",
@@ -17789,14 +17300,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     3.7107,
                     -2.6624,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
@@ -17840,14 +17348,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -0.9672,
                     -2.6634,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             },
             {
@@ -17859,14 +17364,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -3.5617,
                     3.6498,
                     0
-                ],
-                "$refs": [
-                    "rg-3"
                 ]
             },
             {
@@ -17973,7 +17475,6 @@
             }
         ],
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "X",
         "id": "Asu___2-aminosuberic acid",
         "alias": "Asu",
         "attachmentPoints": [
@@ -17998,7 +17499,8 @@
                 },
                 "type": "side"
             }
-        ]
+        ],
+        "naturalAnalogShort": "X"
     },
     "monomer92": {
         "type": "monomer",
@@ -18032,14 +17534,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     1.3835,
                     -0.8682,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
@@ -18148,14 +17647,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -1.6841,
                     -2.6394,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             },
             {
@@ -18290,7 +17786,6 @@
             }
         ],
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "Y",
         "id": "Nty___nitrotyrosine",
         "alias": "Nty",
         "attachmentPoints": [
@@ -18308,7 +17803,8 @@
                 },
                 "type": "right"
             }
-        ]
+        ],
+        "naturalAnalogShort": "Y"
     },
     "monomer94": {
         "type": "monomer",
@@ -18377,14 +17873,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -1.300646388348818,
                     -0.6358989203342598,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             },
             {
@@ -18420,25 +17913,19 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     2.2427245613966456,
                     -0.635052696268971,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -1.9494694580438514,
                     1.3634977575616283,
                     0
-                ],
-                "$refs": [
-                    "rg-3"
                 ]
             }
         ],
@@ -18516,7 +18003,6 @@
             }
         ],
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "N",
         "id": "N___Asparagine",
         "alias": "N",
         "attachmentPoints": [
@@ -18541,7 +18027,8 @@
                 },
                 "type": "side"
             }
-        ]
+        ],
+        "naturalAnalogShort": "N"
     },
     "monomer97": {
         "type": "monomer",
@@ -18633,25 +18120,19 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -1.4949197323690284,
                     -0.7724529513222043,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     1.9693884606229346,
                     -0.7715865243707642,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
@@ -18738,7 +18219,6 @@
             }
         ],
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "M",
         "id": "DMetSO___(2R)-2-amino-4-[(S)-methanesulfinyl]butanoic acid",
         "alias": "DMetSO",
         "attachmentPoints": [
@@ -18756,7 +18236,8 @@
                 },
                 "type": "right"
             }
-        ]
+        ],
+        "naturalAnalogShort": "M"
     },
     "monomer99": {
         "type": "monomer",

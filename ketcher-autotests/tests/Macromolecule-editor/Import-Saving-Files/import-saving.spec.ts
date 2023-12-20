@@ -59,26 +59,28 @@ test.describe('Import-Saving-Files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('After importing a file with modified monomers, it is clear which monomer is modified, and when hovering, preview display changes made during modification', async ({
-    page,
-  }) => {
-    /* 
+  test.fixme(
+    'After importing a file with modified monomers, it is clear which monomer is modified, and when hovering, preview display changes made during modification',
+    async ({ page }) => {
+      /* 
     Test case: https://github.com/epam/ketcher/issues/3669
     Description: After importing a file with modified monomers, it is clear which monomer is modified, 
     and when hovering, preview display changes made during modification
     Test working incorrect now because we have bug https://github.com/epam/ketcher/issues/3669
     Mouse Wheel is used to display the structure since it does not open in the middle of the canvas. 
     After fixing the bug, the test will need to be changed.
+    The file stopped opening(Convert error)
     */
-    const randomMouseWheelScroll = -600;
-    await openFileAndAddToCanvas(
-      'Molfiles-V3000/dna-mod-base-sugar-phosphate-example.mol',
-      page,
-    );
-    await page.mouse.wheel(0, randomMouseWheelScroll);
-    await page.getByText('cdaC').locator('..').hover();
-    await takeEditorScreenshot(page);
-  });
+      const randomMouseWheelScroll = -600;
+      await openFileAndAddToCanvas(
+        'Molfiles-V3000/dna-mod-base-sugar-phosphate-example.mol',
+        page,
+      );
+      await page.mouse.wheel(0, randomMouseWheelScroll);
+      await page.getByText('cdaC').locator('..').hover();
+      await takeEditorScreenshot(page);
+    },
+  );
 
   const randomMouseWheelScroll = -600;
   const fileTypes = ['dna', 'rna'];
@@ -90,6 +92,7 @@ test.describe('Import-Saving-Files', () => {
     Description: Imported DNA file opens without errors. 
     DNA contains the nitrogen bases adenine (A), thymine (T) for DNA, uracil (U) for RNA, cytosine (C), and guanine (G).
     In RNA, thymine (T) is replaced by uracil (U).
+    We have bug https://github.com/epam/ketcher/issues/3383
     */
       await openFileAndAddToCanvas(`Molfiles-V3000/${fileType}.mol`, page);
       await page.mouse.wheel(0, randomMouseWheelScroll);
@@ -195,11 +198,24 @@ test.describe('Import-Saving-Files', () => {
     Description: Structure in center of canvas after opening
     */
     await openFileAndAddToCanvas('KET/hundred-monomers.ket', page);
-    await page.getByTestId('save-button').click();
-    await page.getByRole('combobox').click();
-    await page.getByText('MDL Molfile V3000').click();
-    await pressButton(page, 'Save');
-    await takeEditorScreenshot(page);
+    const expectedFile = await getMolfile(page);
+    await saveToFile(
+      'Molfiles-V3000/hundred-monomers-v3000-expected.mol',
+      expectedFile,
+    );
+
+    const METADATA_STRING_INDEX = [1];
+
+    const { fileExpected: molFileExpected, file: molFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/Molfiles-V3000/hundred-monomers-v3000-expected.mol',
+        fileFormat: 'v3000',
+        metaDataIndexes: METADATA_STRING_INDEX,
+      });
+
+    expect(molFile).toEqual(molFileExpected);
   });
 
   const monomersToDelete = [

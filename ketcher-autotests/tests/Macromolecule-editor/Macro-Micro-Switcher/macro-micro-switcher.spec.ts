@@ -192,7 +192,7 @@ test.describe('Macro-Micro-Switcher', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Add monomers in macro mode then switch to micro mode and expand them', async ({
+  test('Add monomers in macro mode then switch to micro mode and check that it can not be expanded and abreviation can not be removed', async ({
     page,
   }) => {
     /* 
@@ -206,30 +206,10 @@ test.describe('Macro-Micro-Switcher', () => {
     );
     await turnOnMicromoleculesEditor(page);
     await page.getByText('A6OH').click({ button: 'right' });
-    await page.getByText('Expand Abbreviation').click();
     await takeEditorScreenshot(page);
   });
 
-  test('Add monomers in macro mode then switch to micro mode remove abbreviation and switch to macro mode', async ({
-    page,
-  }) => {
-    /* 
-    Test case: Macro-Micro-Switcher
-    Description: After switch to Macro mode monomer exist on canvas.
-    Now test working not properly because we have bug https://github.com/epam/ketcher/issues/3660
-    */
-    await openFileAndAddToCanvas(
-      'KET/three-monomers-connected-with-bonds.ket',
-      page,
-    );
-    await turnOnMicromoleculesEditor(page);
-    await page.getByText('A6OH').click({ button: 'right' });
-    await page.getByText('Remove Abbreviation').click();
-    await turnOnMacromoleculesEditor(page);
-    await takeEditorScreenshot(page);
-  });
-
-  test('Add monomers in macro mode then switch to micro mode and move them to a new position several times', async ({
+  test('Add monomers in macro mode then switch to micro mode and check that it can not be moved', async ({
     page,
   }) => {
     /* 

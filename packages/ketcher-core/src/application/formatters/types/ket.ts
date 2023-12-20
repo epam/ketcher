@@ -29,7 +29,13 @@ export interface IKetConnection {
   endpoint2: IKetConnectionEndPoint;
 }
 
-export type monomerClass = 'RNA' | 'PEPTIDE' | 'CHEM' | 'UNKNOWN' | 'DNA';
+export type monomerClass =
+  | 'RNA'
+  | 'PEPTIDE'
+  | 'CHEM'
+  | 'UNKNOWN'
+  | 'DNA'
+  | 'MODDNA';
 
 export type IKetAttachmentPointType = 'left' | 'right' | 'side';
 

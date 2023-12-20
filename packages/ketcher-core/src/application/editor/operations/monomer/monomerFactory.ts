@@ -21,6 +21,7 @@ export const MONOMER_CONST = {
   CHEM: 'CHEM',
   RNA: 'RNA',
   DNA: 'DNA',
+  MODDNA: 'MODDNA',
   R: 'R', // states for Ribose
   P: 'P', // states for Phosphate
   SUGAR: 'SUGAR',
@@ -49,7 +50,8 @@ export const monomerFactory = (
   if (
     monomer.props.MonomerType === MONOMER_CONST.CHEM ||
     (monomer.props.MonomerType === MONOMER_CONST.RNA &&
-      monomer.props.MonomerClass === MONOMER_CONST.DNA)
+      (monomer.props.MonomerClass === MONOMER_CONST.MODDNA ||
+        monomer.props.MonomerClass === MONOMER_CONST.DNA))
   ) {
     Monomer = Chem;
     MonomerRenderer = ChemRenderer;

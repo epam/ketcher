@@ -91,6 +91,14 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     );
   }
 
+  protected getMonomerColor(theme) {
+    return (
+      theme.monomer.color[
+        this.monomer.monomerItem.props.MonomerNaturalAnalogCode
+      ]?.regular || theme.monomer.color.undefined
+    );
+  }
+
   public redrawAttachmentPoints() {
     this.hoveredAttachmenPoint = null;
     if (!this.rootElement) return;

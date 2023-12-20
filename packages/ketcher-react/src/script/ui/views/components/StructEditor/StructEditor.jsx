@@ -31,6 +31,7 @@ import InfoPanel from './InfoPanel';
 import { KetcherLogger, ketcherProvider } from 'ketcher-core';
 import { getSmoothScrollDelta } from './helpers';
 import InfoTooltip from './InfoTooltip';
+import InfoModal from '../../../../../components/InfoModal/InfoModal';
 
 // TODO: need to update component after making refactoring of store
 function setupEditor(editor, props, oldProps = {}) {
@@ -141,7 +142,9 @@ class StructEditor extends Component {
   shouldComponentUpdate(nextProps, nextState) {
     return (
       this.props.indigoVerification !== nextProps.indigoVerification ||
-      nextState.enableCursor !== this.state.enableCursor
+      nextState.enableCursor !== this.state.enableCursor ||
+      nextState.hasError !== this.state.hasError ||
+      nextState.errorMessage !== this.state.errorMessage
     );
   }
 
@@ -153,6 +156,10 @@ class StructEditor extends Component {
     try {
       this.editor = new Editor(this.editorRef.current, {
         ...this.props.options,
+        errorHandler: () => {
+          this.setState({ hasError: true, errorMessage: error.message });
+          // console.log('Error occurred in Editor')
+        },
       });
       const ketcher = ketcherProvider.getKetcher();
       if (ketcher?.editor.macromoleculeConvertionError) {

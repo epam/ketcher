@@ -172,7 +172,7 @@ class Editor implements KetcherEditor {
     this._tool = null; // eslint-disable-line
     this.historyStack = [];
     this.historyPtr = 0;
-    this.errorHandler = null;
+    this.errorHandler = options.errorHandler;
     this.highlights = new Highlighter(this);
     this.renderAndRecoordinateStruct =
       this.renderAndRecoordinateStruct.bind(this);

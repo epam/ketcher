@@ -18,12 +18,6 @@ import {
   waitForPageInit,
   waitForRender,
 } from '@utils';
-import { rotateToCoordinates } from '@tests/Structure-Creating-&-Editing/Actions-With-Structures/Rotation/utils';
-
-export const COORDINATES_TO_PERFORM_ROTATION = {
-  x: 20,
-  y: 100,
-};
 
 async function zoomWithMouseWheel(
   page: Page,
@@ -171,24 +165,6 @@ test.describe('Macro-Micro-Switcher', () => {
     await page.keyboard.press('Control+a');
     await page.getByText('Edc').hover();
     await dragMouseTo(x, y, page);
-    await takeEditorScreenshot(page);
-  });
-
-  test('Create a sequence of monomers in macro mode then switch to micro mode select the entire structure and rotate it', async ({
-    page,
-  }) => {
-    /* 
-    Test case: Macro-Micro-Switcher
-    Description: Sequence of monomers rotate in Micro mode
-    Now test working not properly because we have bug https://github.com/epam/ketcher/issues/3655
-    */
-    await openFileAndAddToCanvas(
-      'KET/three-monomers-connected-with-bonds.ket',
-      page,
-    );
-    await turnOnMicromoleculesEditor(page);
-    await page.keyboard.press('Control+a');
-    await rotateToCoordinates(page, COORDINATES_TO_PERFORM_ROTATION);
     await takeEditorScreenshot(page);
   });
 

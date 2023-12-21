@@ -41,7 +41,7 @@
         "id": "45",
         "position": {
             "x": 7.325,
-            "y": 6.925000000000001
+            "y": -6.925000000000001
         },
         "alias": "A",
         "templateId": "A___Alanine"
@@ -184,7 +184,7 @@
         "id": "46",
         "position": {
             "x": 12.4,
-            "y": 6.775
+            "y": -6.775
         },
         "alias": "25R",
         "templateId": "25R___2,5-Ribose"
@@ -425,7 +425,7 @@
         "id": "47",
         "position": {
             "x": 15.8,
-            "y": 6.675000000000001
+            "y": -6.675000000000001
         },
         "alias": "baA",
         "templateId": "baA___N-benzyl-adenine"
@@ -742,7 +742,7 @@
         "id": "49",
         "position": {
             "x": 22.6,
-            "y": 6.8500000000000005
+            "y": -6.8500000000000005
         },
         "alias": "Test-6-Ch",
         "templateId": "Test-6-Ch___Test-6-AP-Chem"
@@ -1148,7 +1148,7 @@
         "id": "51",
         "position": {
             "x": 19.35,
-            "y": 6.7250000000000005
+            "y": -6.7250000000000005
         },
         "alias": "Test-6-Ph",
         "templateId": "Test-6-Ph___Test-6-AP-Phosphate"

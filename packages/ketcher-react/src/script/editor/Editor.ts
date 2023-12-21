@@ -408,6 +408,7 @@ class Editor implements KetcherEditor {
       return this._selection; // eslint-disable-line
     }
 
+    const struct = this.struct();
     let ReStruct = this.render.ctab;
     let selectAll = false;
     this._selection = null; // eslint-disable-line
@@ -415,7 +416,12 @@ class Editor implements KetcherEditor {
       selectAll = true;
       // TODO: better way will be this.struct()
       ci = structObjects.reduce((res, key) => {
-        res[key] = Array.from(ReStruct[key].keys());
+        let restructItemsIds: number[] = Array.from(ReStruct[key].keys());
+        restructItemsIds = restructItemsIds.filter(
+          (restructItemId) =>
+            !struct.isTargetFromMacromolecule({ map: key, id: restructItemId }),
+        );
+        res[key] = restructItemsIds;
         return res;
       }, {});
     }

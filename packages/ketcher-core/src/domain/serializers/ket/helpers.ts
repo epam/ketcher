@@ -48,6 +48,14 @@ const rotateCoordAxisBy180Degrees = (position: Vec2, axis: Axises): Vec2 => {
   return new Vec2(rotatedPosition.x, rotatedPosition.y, rotatedPosition.z);
 };
 
+/**
+ *
+ * System coordinates for browser and for chemistry area are different.
+ * To make them compatible with browser we rotate them by 180 degrees.
+ *
+ * @param position - coordinates of the structure
+ *
+ */
 export const switchIntoChemistryCoordSystem = (position: Vec2) => {
   return rotateCoordAxisBy180Degrees(position, Axis.y);
 };

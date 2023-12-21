@@ -491,7 +491,13 @@ class TemplateTool implements Tool {
         this.isSaltOrSolvent &&
         functionalGroupToReplace.isGroupAttached(this.struct)
       ) {
-        addOnCanvasWithoutMerge(restruct, this.template, dragCtx, this.editor);
+        addOnCanvasWithoutMerge({
+          restruct,
+          template: this.template,
+          dragCtx,
+          editor: this.editor,
+          event,
+        });
         return true;
       }
 
@@ -515,18 +521,25 @@ class TemplateTool implements Tool {
 
     if (!dragCtx.action) {
       if (!ci) {
-        addOnCanvasWithoutMerge(restruct, this.template, dragCtx, this.editor);
+        addOnCanvasWithoutMerge({
+          restruct,
+          template: this.template,
+          dragCtx,
+          editor: this.editor,
+          event,
+        });
         return true;
       } else if (ci.map === 'atoms') {
         const degree = restruct.atoms.get(ci.id)?.a.neighbors.length;
 
         if (degree && degree >= 1 && this.isSaltOrSolvent) {
-          addOnCanvasWithoutMerge(
+          addOnCanvasWithoutMerge({
             restruct,
-            this.template,
+            template: this.template,
             dragCtx,
-            this.editor,
-          );
+            editor: this.editor,
+            event,
+          });
           return true;
         }
 
@@ -606,12 +619,19 @@ class TemplateTool implements Tool {
   }
 }
 
-function addOnCanvasWithoutMerge(
-  restruct: ReStruct,
-  template: Struct,
+function addOnCanvasWithoutMerge({
+  restruct,
+  template,
   dragCtx,
-  editor: Editor,
-) {
+  editor,
+  event,
+}: {
+  restruct: ReStruct;
+  template: Struct;
+  dragCtx;
+  editor: Editor;
+  event: PointerEvent;
+}) {
   const [action] = fromTemplateOnCanvas(
     restruct,
     template,
@@ -621,7 +641,7 @@ function addOnCanvasWithoutMerge(
   );
   editor.update(action);
   editor.selection(null);
-  editor.hover(null);
+  editor.hover(editor.findItem(event, null), null, event);
   editor.event.message.dispatch({
     info: false,
   });

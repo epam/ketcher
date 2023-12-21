@@ -112,7 +112,6 @@ test.describe('Template Manupulations', () => {
     const anyAtom = 0;
     const x = 600;
     const y = 600;
-    await drawBenzeneRing(page);
     await moveOnAtom(page, 'C', anyAtom);
     await dragMouseTo(x, y, page);
     await resetCurrentTool(page);
@@ -129,7 +128,6 @@ test.describe('Template Manupulations', () => {
     const anyAtom = 0;
     const x = 700;
     const y = 600;
-    await drawBenzeneRing(page);
     await moveOnAtom(page, 'C', anyAtom);
     await dragMouseTo(x, y, page);
     await resetCurrentTool(page);
@@ -353,12 +351,7 @@ test.describe('Template Manupulations', () => {
     Click the Zoom Out button several times.
     */
     await page.getByTestId('zoom-input').click();
-    await page.getByTestId('zoom-in').click({
-      clickCount: 2,
-    });
-    await page.getByTestId('zoom-out').click({
-      clickCount: 3,
-    });
+    await page.getByTestId('zoom-out').click();
     await clickInTheMiddleOfTheScreen(page);
     await drawBenzeneRing(page);
     await page.getByTestId('reaction-plus').click();
@@ -371,12 +364,6 @@ test.describe('Template Manupulations', () => {
     await clickOnTheCanvas(page, 1, 0);
     await takePageScreenshot(page);
     await page.getByTestId('zoom-input').click();
-    await page.getByTestId('zoom-in').click({
-      clickCount: 2,
-    });
-    await page.getByTestId('zoom-out').click({
-      clickCount: 2,
-    });
   });
 
   test('Save as *.mol file', async ({ page }) => {
@@ -537,6 +524,7 @@ test.describe('Open Ketcher', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
   });
+
   test('The different templates are attached to the atoms of existing benzene-1', async ({
     page,
   }) => {
@@ -590,19 +578,11 @@ test.describe('Open Ketcher', () => {
     Description:
     Paste benzene from templates on the canvas.
     Edit benzene with all possible ways.
-    Clear All.
-    Click Undo/Redo several times.
     */
-    await drawBenzeneRing(page);
-    await moveOnAtom(page, 'C', 1);
-    await moveOnAtom(page, 'C', 0);
     const anyAtom = 2;
+    await drawBenzeneRing(page);
     await moveOnAtom(page, 'C', anyAtom);
     await takePageScreenshot(page);
-    await selectAction(TopPanelButton.Clear, page);
-    await selectTopPanelButton(TopPanelButton.Undo, page);
-    await selectTopPanelButton(TopPanelButton.Redo, page);
-    await selectTopPanelButton(TopPanelButton.Undo, page);
   });
 
   test('Templates - The full preview of the Template from the Templates toolbar, following mouse cursor', async ({

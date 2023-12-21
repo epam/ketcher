@@ -308,7 +308,7 @@
         "id": "3",
         "position": {
             "x": 8.200000000000001,
-            "y": 2.475
+            "y": -2.475
         },
         "alias": "Test-6-P",
         "templateId": "Test-6-P___Test-6-AP-Peptide"
@@ -731,7 +731,7 @@
         "id": "4",
         "position": {
             "x": 10.9,
-            "y": 2.375
+            "y": -2.375
         },
         "alias": "Test-6-P",
         "templateId": "Test-6-P___Test-6-AP-Peptide"
@@ -741,7 +741,7 @@
         "id": "5",
         "position": {
             "x": 13.725000000000001,
-            "y": 2.275
+            "y": -2.275
         },
         "alias": "Test-6-P",
         "templateId": "Test-6-P___Test-6-AP-Peptide"
@@ -751,7 +751,7 @@
         "id": "6",
         "position": {
             "x": 7.8500000000000005,
-            "y": 7.300000000000001
+            "y": -7.300000000000001
         },
         "alias": "Test-6-P",
         "templateId": "Test-6-P___Test-6-AP-Peptide"
@@ -761,7 +761,7 @@
         "id": "7",
         "position": {
             "x": 10.65,
-            "y": 7.1000000000000005
+            "y": -7.1000000000000005
         },
         "alias": "Test-6-P",
         "templateId": "Test-6-P___Test-6-AP-Peptide"
@@ -771,7 +771,7 @@
         "id": "8",
         "position": {
             "x": 13.725000000000001,
-            "y": 7.1000000000000005
+            "y": -7.1000000000000005
         },
         "alias": "Test-6-P",
         "templateId": "Test-6-P___Test-6-AP-Peptide"
@@ -781,7 +781,7 @@
         "id": "9",
         "position": {
             "x": 10.825000000000001,
-            "y": 4.7250000000000005
+            "y": -4.7250000000000005
         },
         "alias": "Test-6-P",
         "templateId": "Test-6-P___Test-6-AP-Peptide"
@@ -791,7 +791,7 @@
         "id": "19",
         "position": {
             "x": 2.2,
-            "y": 8.9
+            "y": -8.9
         },
         "alias": "A",
         "templateId": "A___Adenine"
@@ -996,7 +996,7 @@
         "id": "20",
         "position": {
             "x": 2.2,
-            "y": 6.3500000000000005
+            "y": -6.3500000000000005
         },
         "alias": "R",
         "templateId": "R___Ribose"
@@ -1237,7 +1237,7 @@
         "id": "22",
         "position": {
             "x": 4.75,
-            "y": 6.3500000000000005
+            "y": -6.3500000000000005
         },
         "alias": "P",
         "templateId": "P___Phosphate"

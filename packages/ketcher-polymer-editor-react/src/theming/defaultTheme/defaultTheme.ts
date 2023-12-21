@@ -33,7 +33,7 @@ const monomerColors: Record<string, MonomerColorScheme> = {
   colorW: { regular: '#99458B', hover: '#7F006B' },
   colorU: { regular: '#99458B', hover: '#7F006B' },
   chem: { regular: '#333333', hover: '#555555' },
-  unknown: { regular: '#CCCBD6', hover: '#B8BBCC' },
+  default: { regular: '#CCCBD6', hover: '#B8BBCC' },
 };
 
 export const defaultTheme: EditorTheme = {
@@ -184,7 +184,7 @@ export const defaultTheme: EditorTheme = {
       W: monomerColors.colorW,
       U: monomerColors.colorU,
       CHEM: monomerColors.chem,
-      undefined: monomerColors.unknown,
+      default: monomerColors.default,
     },
   },
   border: {

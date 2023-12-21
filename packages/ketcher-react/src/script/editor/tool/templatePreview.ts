@@ -99,6 +99,7 @@ class TemplatePreview {
   movePreview(event: PointerEvent) {
     this.position = this.editor.render.page2obj(event);
 
+    const struct = this.editor.struct();
     const previewTarget = this.getPreviewTarget();
     const isMouseAwayFromAtomsAndBonds = !previewTarget;
     const isPreviewTargetChanged =
@@ -109,13 +110,13 @@ class TemplatePreview {
 
     const shouldShowPreview =
       previewTarget &&
+      !struct.isTargetFromMacromolecule(previewTarget) &&
       !this.connectedPreviewAction &&
       !this.connectedPreviewTimeout;
 
     if (shouldHidePreview) {
       this.hideConnectedPreview();
     }
-
     if (shouldShowPreview) {
       this.lastPreviewId = getUniqueCiId(previewTarget);
       this.connectedPreviewTimeout = setTimeout(() => {

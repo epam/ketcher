@@ -98,6 +98,11 @@ class AtomTool implements Tool {
 
     const eventMaps = ['atoms', 'functionalGroups'];
     const ci = editor.findItem(event, eventMaps);
+    const struct = editor.struct();
+
+    if (struct.isTargetFromMacromolecule(ci)) {
+      return;
+    }
 
     if (ci?.map === 'atoms') {
       const atomId = ci.id;
@@ -143,6 +148,11 @@ class AtomTool implements Tool {
 
     const eventMaps = ['atoms', 'functionalGroups'];
     const ci = editor.findItem(event, eventMaps);
+    const struct = editor.struct();
+
+    if (struct.isTargetFromMacromolecule(ci)) {
+      return;
+    }
 
     if (
       !dragCtx?.item ||
@@ -222,7 +232,12 @@ class AtomTool implements Tool {
     } = this;
 
     const ci = editor.findItem(event, ['atoms', 'bonds', 'functionalGroups']);
+    const struct = editor.struct();
     const action = new Action();
+
+    if (struct.isTargetFromMacromolecule(ci) || !dragCtx) {
+      return;
+    }
 
     if ((!dragCtx.item || dragCtx?.isSaltOrSolvent) && !ci) {
       action.mergeWith(

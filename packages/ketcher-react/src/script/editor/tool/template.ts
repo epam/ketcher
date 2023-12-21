@@ -33,6 +33,7 @@ import {
   Bond,
   BondAttr,
   AtomAttr,
+  MonomerMicromolecule,
 } from 'ketcher-core';
 import Editor from '../Editor';
 import { getGroupIdsFromItemArrays } from './helper/getGroupIdsFromItems';
@@ -189,7 +190,13 @@ class TemplateTool implements Tool {
 
   private get isNeedToShowRemoveAbbreviationPopup(): boolean {
     const targetId = this.findKeyOfRelatedGroupId(this.closestItem?.id);
-    const isTargetExpanded = this.functionalGroups.get(targetId!)?.isExpanded;
+    const functionalGroup = this.functionalGroups.get(targetId!);
+
+    if (functionalGroup?.relatedSGroup instanceof MonomerMicromolecule) {
+      return false;
+    }
+
+    const isTargetExpanded = functionalGroup?.isExpanded;
     const isTargetAtomOrBond =
       this.targetGroupsIds.length && !this.isModeFunctionalGroup;
 
@@ -224,6 +231,9 @@ class TemplateTool implements Tool {
   }
 
   async mousedown(event: MouseEvent) {
+    const target = this.editor.findItem(event, this.findItems);
+    const struct = this.editor.struct();
+
     this.event = event;
 
     this.templatePreview?.hidePreview();
@@ -248,6 +258,10 @@ class TemplateTool implements Tool {
       ) {
         this.targetGroupsIds.push(this.closestItem.id);
       }
+    }
+
+    if (struct.isTargetFromMacromolecule(target)) {
+      return;
     }
 
     if (this.isNeedToShowRemoveAbbreviationPopup) {
@@ -304,7 +318,6 @@ class TemplateTool implements Tool {
     const dragCtx = this.dragCtx;
     const ci = dragCtx.item;
     let targetPos: Vec2 | null | undefined = null;
-
     /* moving when attached to bond */
     if (ci && ci.map === 'bonds' && !this.isModeFunctionalGroup) {
       const bond = this.struct.bonds.get(ci.id);

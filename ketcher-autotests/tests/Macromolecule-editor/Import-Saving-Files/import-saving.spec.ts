@@ -45,16 +45,8 @@ test.describe('Import-Saving-Files', () => {
     https://github.com/epam/ketcher/issues/3668
     Description: Monomers are not stacked, easy to read, colors and preview match with Ketcher library after importing a file
     Test working incorrect now because we have 2 bugs https://github.com/epam/ketcher/issues/3667 https://github.com/epam/ketcher/issues/3668
-    Zoom out is used to display the structure since it does not open in the middle of the canvas. 
-    After fixing the bug, the test will need to be changed.
     */
-    const numberOfPressZoomOut = 5;
     await openFileAndAddToCanvas('Molfiles-V3000/peptide-bzl.mol', page);
-    for (let i = 0; i < numberOfPressZoomOut; i++) {
-      await waitForRender(page, async () => {
-        await page.getByTestId('zoom-out-button').click();
-      });
-    }
     await page.getByText('K').locator('..').first().hover();
     await takeEditorScreenshot(page);
   });
@@ -67,22 +59,17 @@ test.describe('Import-Saving-Files', () => {
     Description: After importing a file with modified monomers, it is clear which monomer is modified, 
     and when hovering, preview display changes made during modification
     Test working incorrect now because we have bug https://github.com/epam/ketcher/issues/3669
-    Mouse Wheel is used to display the structure since it does not open in the middle of the canvas. 
-    After fixing the bug, the test will need to be changed.
     The file stopped opening(Convert error)
     */
-      const randomMouseWheelScroll = -600;
       await openFileAndAddToCanvas(
         'Molfiles-V3000/dna-mod-base-sugar-phosphate-example.mol',
         page,
       );
-      await page.mouse.wheel(0, randomMouseWheelScroll);
       await page.getByText('cdaC').locator('..').hover();
       await takeEditorScreenshot(page);
     },
   );
 
-  const randomMouseWheelScroll = -600;
   const fileTypes = ['dna', 'rna'];
 
   for (const fileType of fileTypes) {
@@ -95,7 +82,6 @@ test.describe('Import-Saving-Files', () => {
     We have bug https://github.com/epam/ketcher/issues/3383
     */
       await openFileAndAddToCanvas(`Molfiles-V3000/${fileType}.mol`, page);
-      await page.mouse.wheel(0, randomMouseWheelScroll);
       await takeEditorScreenshot(page);
     });
   }
@@ -154,7 +140,7 @@ test.describe('Import-Saving-Files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Check import of file with 50 monomers saved in MOL V3000 format', async ({
+  test('Check import of file with 50 monomers and save in MOL V3000 format', async ({
     page,
   }) => {
     /* 
@@ -180,13 +166,6 @@ test.describe('Import-Saving-Files', () => {
       });
 
     expect(molFile).toEqual(molFileExpected);
-
-    const numberOfPressZoomOut = 5;
-    for (let i = 0; i < numberOfPressZoomOut; i++) {
-      await waitForRender(page, async () => {
-        await page.getByTestId('zoom-out-button').click();
-      });
-    }
     await takeEditorScreenshot(page);
   });
 

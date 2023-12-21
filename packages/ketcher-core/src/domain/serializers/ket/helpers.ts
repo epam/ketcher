@@ -40,18 +40,17 @@ const rotateCoordAxisBy180Degrees = (position: Vec2, axis: Axises): Vec2 => {
   const rotatedPosition = {
     x: position.x,
     y: position.y,
-    z: position.z,
   };
 
   rotatedPosition[axis] = -rotatedPosition[axis];
 
-  return new Vec2(rotatedPosition.x, rotatedPosition.y, rotatedPosition.z);
+  return new Vec2(rotatedPosition.x, rotatedPosition.y);
 };
 
 /**
  *
- * System coordinates for browser and for chemistry area are different.
- * To make them compatible with browser we rotate them by 180 degrees.
+ * System coordinates for browser and for chemistry files format (mol, ket, etc.) area are different.
+ * It needs to rotate them by 180 degrees in y-axis.
  *
  * @param position - coordinates of the structure
  *

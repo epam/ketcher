@@ -318,6 +318,12 @@ export class KetSerializer implements Serializer<Struct> {
             .monomer as BaseMonomer;
           monomerIdsMap[node.$ref] = monomer?.id;
 
+          const { attachmentPointsList } =
+            BaseMonomer.getAttachmentPointDictFromMonomerDefinition(
+              template.attachmentPoints || [],
+            );
+          const parsedAttachmentPointsNumbers = [];
+
           template.attachmentPoints?.forEach(
             (attachmentPoint, attachmentPointIndex) => {
               const leavingGroupAtom = monomer.monomerItem.struct.atoms.get(
@@ -325,14 +331,18 @@ export class KetSerializer implements Serializer<Struct> {
                   attachmentPoint.attachmentAtom,
               );
               assert(leavingGroupAtom);
+              parsedAttachmentPointsNumbers.push();
               leavingGroupAtom.rglabel = (
                 0 |
                 (1 <<
-                  (attachmentPoint.label
-                    ? Number(attachmentPoint.label.replace('R', '')) - 1
-                    : attachmentPointIndex))
+                  (Number(
+                    (attachmentPoint.label
+                      ? attachmentPoint.label
+                      : attachmentPointsList[attachmentPointIndex]
+                    ).replace('R', ''),
+                  ) -
+                    1))
               ).toString();
-
               assert(monomer.monomerItem.props.MonomerCaps);
               monomer.monomerItem.props.MonomerCaps[
                 convertAttachmentPointNumberToLabel(

@@ -297,11 +297,11 @@ export abstract class BaseMonomer extends DrawingEntity {
     Record<AttachmentPointName, PolymerBond | null>
   > {
     if (this.monomerItem.attachmentPoints) {
-      const { attachmentPointDictionnary } =
+      const { attachmentPointDictionary } =
         BaseMonomer.getAttachmentPointDictFromMonomerDefinition(
           this.monomerItem.attachmentPoints,
         );
-      return attachmentPointDictionnary;
+      return attachmentPointDictionary;
     } else {
       return this.getAttachmentPointDictFromAtoms();
     }
@@ -310,12 +310,12 @@ export abstract class BaseMonomer extends DrawingEntity {
   public static getAttachmentPointDictFromMonomerDefinition(
     attachmentPoints: IKetAttachmentPoint[],
   ): {
-    attachmentPointDictionnary: Partial<
+    attachmentPointDictionary: Partial<
       Record<AttachmentPointName, PolymerBond | null>
     >;
     attachmentPointsList: AttachmentPointName[];
   } {
-    const attachmentPointDictionnary = {};
+    const attachmentPointDictionary = {};
     const attachmentPointsList: AttachmentPointName[] = [];
     const attachmentPointTypeToNumber: {
       [key in IKetAttachmentPointType]: (
@@ -328,8 +328,8 @@ export abstract class BaseMonomer extends DrawingEntity {
         assert(attachmentPointNumber);
         return (
           attachmentPointNumber +
-          Number(!('R1' in attachmentPointDictionnary)) +
-          Number(!('R2' in attachmentPointDictionnary))
+          Number(!('R1' in attachmentPointDictionary)) +
+          Number(!('R2' in attachmentPointDictionary))
         );
       },
     };
@@ -350,10 +350,10 @@ export abstract class BaseMonomer extends DrawingEntity {
       }
       const calculatedLabel =
         attachmentPoint.label || `R${calculatedAttachmentPointNumber}`;
-      attachmentPointDictionnary[calculatedLabel] = null;
+      attachmentPointDictionary[calculatedLabel] = null;
       attachmentPointsList.push(calculatedLabel as AttachmentPointName);
     });
-    return { attachmentPointDictionnary, attachmentPointsList };
+    return { attachmentPointDictionary, attachmentPointsList };
   }
 
   public get attachmentPointNumberToType() {

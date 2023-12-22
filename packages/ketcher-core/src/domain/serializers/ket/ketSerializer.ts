@@ -322,7 +322,6 @@ export class KetSerializer implements Serializer<Struct> {
             BaseMonomer.getAttachmentPointDictFromMonomerDefinition(
               template.attachmentPoints || [],
             );
-          const parsedAttachmentPointsNumbers = [];
 
           template.attachmentPoints?.forEach(
             (attachmentPoint, attachmentPointIndex) => {
@@ -331,7 +330,6 @@ export class KetSerializer implements Serializer<Struct> {
                   attachmentPoint.attachmentAtom,
               );
               assert(leavingGroupAtom);
-              parsedAttachmentPointsNumbers.push();
               leavingGroupAtom.rglabel = (
                 0 |
                 (1 <<

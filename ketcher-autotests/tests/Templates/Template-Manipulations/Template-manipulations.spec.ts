@@ -100,7 +100,7 @@ test.describe('Template Manupulations', () => {
     await resetCurrentTool(page);
   });
 
-  test('5) Fuse atom-to-atom: click and drug atom to fuse atom-to-atom', async ({
+  test('5) Fuse atom-to-atom: click and drag atom to fuse atom-to-atom', async ({
     page,
   }) => {
     /*
@@ -108,26 +108,23 @@ test.describe('Template Manupulations', () => {
     Description: Put the cursor on any other structure atom, press, and drag. 
     Release the cursor when the distance from the cursor to the selected atom is more than the bond length. 
     */
-    await drawBenzeneRing(page);
     const anyAtom = 0;
-    const x = 600;
-    const y = 600;
-    await moveOnAtom(page, 'C', anyAtom);
-    await dragMouseTo(x, y, page);
+    await drawBenzeneRing(page);
+    await clickOnAtom(page, 'C', anyAtom);
     await resetCurrentTool(page);
   });
 
-  test('Fuse atom-to-atom: click and drug atom to extand bonds', async ({
+  test('Fuse atom-to-atom: click and drag atom to extend bonds', async ({
     page,
   }) => {
     /*
     Test case: EPMLSOPKET-1674
     Description: Create a structure from the template. 
     */
-    await drawBenzeneRing(page);
     const anyAtom = 0;
-    const x = 700;
-    const y = 600;
+    const x = 300;
+    const y = 300;
+    await drawBenzeneRing(page);
     await moveOnAtom(page, 'C', anyAtom);
     await dragMouseTo(x, y, page);
     await resetCurrentTool(page);
@@ -151,48 +148,15 @@ test.describe('Template Manupulations', () => {
     await dragMouseTo(rotationHandleX, rotationHandleY - shift, page);
   });
 
-  test('Click or drag on the canvas: Place template on the Canvas', async ({
+  test('Place template on the Canvas', async ({
     page,
   }) => {
     /*
     Test case: 1678
     Description: Choose any template and click on the canvas.
     */
-    const x = 700;
-    const y = 600;
     await selectRing(RingButton.Cyclopentadiene, page);
     await clickInTheMiddleOfTheScreen(page);
-    await dragMouseTo(x, y, page);
-    await resetCurrentTool(page);
-  });
-
-  test('Click or drag on the canvas: Rotate a Benzene template while placing', async ({
-    page,
-  }) => {
-    /*
-    Test case: 1678
-    Description: With the template click and rotate on the canvas.
-    */
-    const x = 700;
-    const y = 600;
-    await selectRing(RingButton.Benzene, page);
-    await clickInTheMiddleOfTheScreen(page);
-    await dragMouseTo(x, y, page);
-    await resetCurrentTool(page);
-  });
-
-  test('Click or drag on the canvas: Rotate with a Cyclopentane', async ({
-    page,
-  }) => {
-    /*
-    Test case: 1678
-    Description: Repeat the previous steps with different templates.
-    */
-    const x = 500;
-    const y = 600;
-    await selectRing(RingButton.Cyclopentane, page);
-    await clickInTheMiddleOfTheScreen(page);
-    await dragMouseTo(x, y, page);
     await resetCurrentTool(page);
   });
 

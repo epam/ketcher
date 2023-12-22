@@ -336,7 +336,8 @@ export abstract class BaseMonomer extends DrawingEntity {
     attachmentPoints.forEach((attachmentPoint, attachmentPointIndex) => {
       const attachmentPointNumber = attachmentPointIndex + 1;
       const calculatedLabel = `R${
-        attachmentPoint.type
+        attachmentPoint.type &&
+        attachmentPointTypeToNumber[attachmentPoint.type]
           ? attachmentPointTypeToNumber[attachmentPoint.type](
               attachmentPointNumber,
             )

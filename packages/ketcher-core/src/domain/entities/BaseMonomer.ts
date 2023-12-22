@@ -335,17 +335,23 @@ export abstract class BaseMonomer extends DrawingEntity {
     };
     attachmentPoints.forEach((attachmentPoint, attachmentPointIndex) => {
       const attachmentPointNumber = attachmentPointIndex + 1;
-      const calculatedLabel = `R${
-        attachmentPoint.type &&
-        typeof attachmentPointTypeToNumber[attachmentPoint.type] === 'function'
-          ? attachmentPointTypeToNumber[attachmentPoint.type](
-              attachmentPointNumber,
-            )
-          : attachmentPointNumber
-      }`;
-      const label = attachmentPoint.label || calculatedLabel;
-      attachmentPointDictionnary[label] = null;
-      attachmentPointsList.push(label as AttachmentPointName);
+      let calculatedAttachmentPointNumber;
+      if (attachmentPoint.type) {
+        const getLabelByTypeAction =
+          attachmentPointTypeToNumber[attachmentPoint.type];
+        calculatedAttachmentPointNumber =
+          typeof getLabelByTypeAction === 'function'
+            ? attachmentPointTypeToNumber[attachmentPoint.type](
+                attachmentPointNumber,
+              )
+            : attachmentPointNumber;
+      } else {
+        calculatedAttachmentPointNumber = attachmentPointNumber;
+      }
+      const calculatedLabel =
+        attachmentPoint.label || `R${calculatedAttachmentPointNumber}`;
+      attachmentPointDictionnary[calculatedLabel] = null;
+      attachmentPointsList.push(calculatedLabel as AttachmentPointName);
     });
     return { attachmentPointDictionnary, attachmentPointsList };
   }

@@ -78,7 +78,7 @@ class SelectRectangle implements BaseTool {
 
     const handleResizeCanvas = () => {
       const { canvas } = this.editor;
-      if (canvas.clientWidth === 0) {
+      if (canvas.clientWidth === 0 || canvas.clientHeight === 0) {
         return;
       }
 

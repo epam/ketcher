@@ -437,12 +437,16 @@ export class KetSerializer implements Serializer<Struct> {
           monomer.monomerItem.props.id ||
           getMonomerUniqueKey(monomer.monomerItem);
         const monomerName = setMonomerPrefix(monomer.id);
+        const position: Vec2 = switchIntoChemistryCoordSystem(
+          new Vec2(monomer.position.x, monomer.position.y),
+        );
         fileContent[monomerName] = {
           type: 'monomer',
           id: monomer.id.toString(),
-          position: switchIntoChemistryCoordSystem(
-            new Vec2(monomer.position.x, monomer.position.y),
-          ),
+          position: {
+            x: position.x,
+            y: position.y,
+          },
           alias: monomer.label,
           templateId,
           seqid: monomer.monomerItem.seqId,

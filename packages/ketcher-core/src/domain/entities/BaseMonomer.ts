@@ -297,17 +297,26 @@ export abstract class BaseMonomer extends DrawingEntity {
     Record<AttachmentPointName, PolymerBond | null>
   > {
     if (this.monomerItem.attachmentPoints) {
-      return this.getAttachmentPointDictFromMonomerDefinition();
+      const { attachmentPointDictionary } =
+        BaseMonomer.getAttachmentPointDictFromMonomerDefinition(
+          this.monomerItem.attachmentPoints,
+        );
+      return attachmentPointDictionary;
     } else {
       return this.getAttachmentPointDictFromAtoms();
     }
   }
 
-  public getAttachmentPointDictFromMonomerDefinition(): Partial<
-    Record<AttachmentPointName, PolymerBond | null>
-  > {
-    assert(this.monomerItem.attachmentPoints);
-    const attachmentPointDictionnary = {};
+  public static getAttachmentPointDictFromMonomerDefinition(
+    attachmentPoints: IKetAttachmentPoint[],
+  ): {
+    attachmentPointDictionary: Partial<
+      Record<AttachmentPointName, PolymerBond | null>
+    >;
+    attachmentPointsList: AttachmentPointName[];
+  } {
+    const attachmentPointDictionary = {};
+    const attachmentPointsList: AttachmentPointName[] = [];
     const attachmentPointTypeToNumber: {
       [key in IKetAttachmentPointType]: (
         attachmentPointNumber?: number,
@@ -319,26 +328,32 @@ export abstract class BaseMonomer extends DrawingEntity {
         assert(attachmentPointNumber);
         return (
           attachmentPointNumber +
-          Number(!('R1' in attachmentPointDictionnary)) -
-          Number(!('R2' in attachmentPointDictionnary))
+          Number(!('R1' in attachmentPointDictionary)) +
+          Number(!('R2' in attachmentPointDictionary))
         );
       },
     };
-    this.monomerItem.attachmentPoints.forEach(
-      (attachmentPoint, attachmentPointIndex) => {
-        const attachmentPointNumber = attachmentPointIndex + 1;
-        const calculatedLabel = `R${
-          attachmentPoint.type
+    attachmentPoints.forEach((attachmentPoint, attachmentPointIndex) => {
+      const attachmentPointNumber = attachmentPointIndex + 1;
+      let calculatedAttachmentPointNumber;
+      if (attachmentPoint.type) {
+        const getLabelByTypeAction =
+          attachmentPointTypeToNumber[attachmentPoint.type];
+        calculatedAttachmentPointNumber =
+          typeof getLabelByTypeAction === 'function'
             ? attachmentPointTypeToNumber[attachmentPoint.type](
                 attachmentPointNumber,
               )
-            : attachmentPointNumber
-        }`;
-        attachmentPointDictionnary[attachmentPoint.label || calculatedLabel] =
-          null;
-      },
-    );
-    return attachmentPointDictionnary;
+            : attachmentPointNumber;
+      } else {
+        calculatedAttachmentPointNumber = attachmentPointNumber;
+      }
+      const calculatedLabel =
+        attachmentPoint.label || `R${calculatedAttachmentPointNumber}`;
+      attachmentPointDictionary[calculatedLabel] = null;
+      attachmentPointsList.push(calculatedLabel as AttachmentPointName);
+    });
+    return { attachmentPointDictionary, attachmentPointsList };
   }
 
   public get attachmentPointNumberToType() {

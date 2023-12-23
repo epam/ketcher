@@ -31,7 +31,6 @@ test.describe('Import-Saving-Files', () => {
     /* 
     Test case: https://github.com/epam/ketcher/issues/3666
     Description: Structure in center of canvas after opening
-    Test working incorrect now because we have bug https://github.com/epam/ketcher/issues/3666
     */
     await openFileAndAddToCanvas('Molfiles-V3000/peptide-bzl.mol', page);
     await takeEditorScreenshot(page);

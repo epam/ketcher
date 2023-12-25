@@ -11,12 +11,12 @@ import {
   checkFor0and360,
 } from 'domain/helpers/attachmentPointCalculations';
 import { AttachmentPoint } from 'domain/AttachmentPoint';
-import Coordinates from 'application/editor/shared/coordinates';
 import { Vec2 } from 'domain/entities';
 import {
   AttachmentPointConstructorParams,
   AttachmentPointName,
 } from 'domain/types';
+import { Coordinates } from 'application/editor/shared/coordinates';
 
 export abstract class BaseMonomerRenderer extends BaseRenderer {
   private editorEvents: typeof editorEvents;

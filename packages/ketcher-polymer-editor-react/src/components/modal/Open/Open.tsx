@@ -27,6 +27,8 @@ import {
   CoreEditor,
   KetcherLogger,
   EditorHistory,
+  Vec2,
+  Coordinates,
 } from 'ketcher-core';
 import { IndigoProvider } from 'ketcher-react';
 import assert from 'assert';
@@ -60,7 +62,13 @@ const addToCanvas = ({
   editor: CoreEditor;
   struct: string;
 }) => {
-  const deserialisedKet = ketSerializer.deserializeToDrawingEntities(struct);
+  const centerPointOfCanvas = Coordinates.canvasToModel(
+    new Vec2(editor.canvasOffset.width / 2, editor.canvasOffset.height / 2),
+  );
+  const deserialisedKet = ketSerializer.deserializeToDrawingEntities(
+    struct,
+    centerPointOfCanvas,
+  );
   assert(deserialisedKet);
   deserialisedKet.drawingEntitiesManager.mergeInto(
     editor.drawingEntitiesManager,

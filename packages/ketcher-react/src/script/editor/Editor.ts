@@ -155,6 +155,7 @@ class Editor implements KetcherEditor {
 
   lastEvent: any;
   macromoleculeConvertionError: string | null | undefined;
+  infoModalError: string | null | undefined;
 
   constructor(clientArea, options) {
     this.render = new Render(
@@ -172,7 +173,7 @@ class Editor implements KetcherEditor {
     this._tool = null; // eslint-disable-line
     this.historyStack = [];
     this.historyPtr = 0;
-    this.errorHandler = options.errorHandler;
+    this.errorHandler = null;
     this.highlights = new Highlighter(this);
     this.renderAndRecoordinateStruct =
       this.renderAndRecoordinateStruct.bind(this);
@@ -677,6 +678,18 @@ class Editor implements KetcherEditor {
 
   clearMacromoleculeConvertionError() {
     this.macromoleculeConvertionError = null;
+  }
+
+  setInfoModalError(errorMessage: string) {
+    this.infoModalError = errorMessage;
+  }
+
+  clearInfoModalError() {
+    this.infoModalError = null;
+  }
+
+  onError(callback: (message: string) => void) {
+    this.errorHandler = callback;
   }
 }
 

@@ -20,7 +20,7 @@ import {
   RightToolbarContainer,
   TopToolbarContainer,
 } from '../views/toolbars';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { createTheme, ThemeProvider } from '@mui/material';
 import AppClipArea from '../views/AppClipArea';
@@ -57,6 +57,13 @@ type Props = AppCallProps;
 const App = (props: Props) => {
   const dispatch = useDispatch();
   const { checkServer } = props;
+  const [, setHasError] = useState(false);
+  const [, setErrorMessage] = useState('');
+
+  const handleError = (message: string) => {
+    setHasError(true);
+    setErrorMessage(message.toString());
+  };
 
   useSubscriptionOnEvents();
 
@@ -73,13 +80,16 @@ const App = (props: Props) => {
   }, []);
 
   // Temporary workaround: add proper types for Editor
-  const Editor = ConnectedEditor as React.ComponentType<{ className: string }>;
+  const Editor = ConnectedEditor as React.ComponentType<{
+    className: string;
+    onError: (message: string) => void;
+  }>;
 
   return (
     <ThemeProvider theme={muiTheme}>
       <div className={classes.app}>
         <AppHiddenContainer />
-        <Editor className={classes.canvas} />
+        <Editor className={classes.canvas} onError={handleError} />
 
         <TopToolbarContainer
           className={classes.top}

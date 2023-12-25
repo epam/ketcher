@@ -2,35 +2,35 @@
     "root": {
         "nodes": [
             {
-                "$ref": "monomer159"
+                "$ref": "monomer1"
             },
             {
-                "$ref": "monomer161"
+                "$ref": "monomer5"
             },
             {
-                "$ref": "monomer163"
+                "$ref": "monomer7"
             }
         ],
         "connections": [
             {
                 "connectionType": "single",
                 "endpoint1": {
-                    "monomerId": "monomer159",
-                    "attachmentPointId": "R2"
+                    "monomerId": "monomer1",
+                    "attachmentPointId": "R1"
                 },
                 "endpoint2": {
-                    "monomerId": "monomer161",
+                    "monomerId": "monomer5",
                     "attachmentPointId": "R1"
                 }
             },
             {
                 "connectionType": "single",
                 "endpoint1": {
-                    "monomerId": "monomer161",
+                    "monomerId": "monomer5",
                     "attachmentPointId": "R2"
                 },
                 "endpoint2": {
-                    "monomerId": "monomer163",
+                    "monomerId": "monomer7",
                     "attachmentPointId": "R1"
                 }
             }
@@ -47,12 +47,12 @@
             }
         ]
     },
-    "monomer159": {
+    "monomer1": {
         "type": "monomer",
-        "id": "159",
+        "id": "1",
         "position": {
-            "x": 4.9750000000000005,
-            "y": 5.525
+            "x": 4.95,
+            "y": -7.800000000000001
         },
         "alias": "Test-6-Ch",
         "templateId": "Test-6-Ch___Test-6-AP-Chem"
@@ -125,25 +125,19 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "I",
                 "location": [
                     12.771843848116424,
                     -6.07362085187052,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "H",
                 "location": [
                     5.0282172628054775,
                     -7.026424123021441,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             },
             {
@@ -195,36 +189,27 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "Br",
                 "location": [
                     4.8679167124638605,
                     -1.6373056211748553,
                     0
-                ],
-                "$refs": [
-                    "rg-3"
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "O",
                 "location": [
                     10.276735281944443,
                     -7.698926431847001,
                     0
-                ],
-                "$refs": [
-                    "rg-5"
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "Cl",
                 "location": [
                     7.575026006473786,
                     -2.8621098261555935,
                     0
-                ],
-                "$refs": [
-                    "rg-4"
                 ]
             },
             {
@@ -244,14 +229,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "H",
                 "location": [
                     7.969727361556981,
                     -9.713933349740689,
                     0
-                ],
-                "$refs": [
-                    "rg-6"
                 ]
             }
         ],
@@ -405,60 +387,71 @@
             }
         ],
         "classHELM": "CHEM",
-        "naturalAnalogShort": ".",
         "id": "Test-6-Ch___Test-6-AP-Chem",
         "alias": "Test-6-Ch",
         "attachmentPoints": [
             {
-                "attachmentAtom": 9,
+                "attachmentAtom": 7,
                 "leavingGroup": {
-                    "atoms": []
+                    "atoms": [
+                        9
+                    ]
                 },
                 "type": "left"
             },
             {
-                "attachmentAtom": 8,
+                "attachmentAtom": 0,
                 "leavingGroup": {
-                    "atoms": []
+                    "atoms": [
+                        8
+                    ]
                 },
                 "type": "right"
             },
             {
-                "attachmentAtom": 16,
+                "attachmentAtom": 15,
                 "leavingGroup": {
-                    "atoms": []
+                    "atoms": [
+                        16
+                    ]
                 },
                 "type": "side"
             },
             {
-                "attachmentAtom": 18,
+                "attachmentAtom": 13,
                 "leavingGroup": {
-                    "atoms": []
+                    "atoms": [
+                        18
+                    ]
                 },
                 "type": "side"
             },
             {
-                "attachmentAtom": 17,
+                "attachmentAtom": 2,
                 "leavingGroup": {
-                    "atoms": []
+                    "atoms": [
+                        17
+                    ]
                 },
                 "type": "side"
             },
             {
-                "attachmentAtom": 21,
+                "attachmentAtom": 20,
                 "leavingGroup": {
-                    "atoms": []
+                    "atoms": [
+                        21
+                    ]
                 },
                 "type": "side"
             }
         ]
     },
-    "monomer161": {
+    "monomer5": {
         "type": "monomer",
-        "id": "161",
+        "id": "5",
         "position": {
-            "x": 9.15,
-            "y": 5.575
+            "x": 9.35,
+            "y": -7.9
         },
         "alias": "A6OH",
         "templateId": "A6OH___6-amino-hexanol"
@@ -531,25 +524,19 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "H",
                 "location": [
                     3.871795414366361,
                     0.47637309934323874,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "H",
                 "location": [
                     -3.871795414366361,
                     -0.47637309934323874,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             }
         ],
@@ -619,32 +606,35 @@
             }
         ],
         "classHELM": "CHEM",
-        "naturalAnalogShort": ".",
         "id": "A6OH___6-amino-hexanol",
         "alias": "A6OH",
         "attachmentPoints": [
             {
-                "attachmentAtom": 9,
+                "attachmentAtom": 7,
                 "leavingGroup": {
-                    "atoms": []
+                    "atoms": [
+                        9
+                    ]
                 },
                 "type": "left"
             },
             {
-                "attachmentAtom": 8,
+                "attachmentAtom": 0,
                 "leavingGroup": {
-                    "atoms": []
+                    "atoms": [
+                        8
+                    ]
                 },
                 "type": "right"
             }
         ]
     },
-    "monomer163": {
+    "monomer7": {
         "type": "monomer",
-        "id": "163",
+        "id": "7",
         "position": {
-            "x": 14.15,
-            "y": 5.6000000000000005
+            "x": 14.225000000000001,
+            "y": -7.875
         },
         "alias": "SMPEG2",
         "templateId": "SMPEG2___SM(PEG)2 linker from Pierce"
@@ -741,14 +731,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "H",
                 "location": [
                     6.053495095100416,
                     1.2997583548535674,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
@@ -832,14 +819,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "O",
                 "location": [
                     -7.619926315483426,
                     -0.2501154342574202,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             },
             {
@@ -1022,21 +1006,24 @@
             }
         ],
         "classHELM": "CHEM",
-        "naturalAnalogShort": ".",
         "id": "SMPEG2___SM(PEG)2 linker from Pierce",
         "alias": "SMPEG2",
         "attachmentPoints": [
             {
-                "attachmentAtom": 22,
+                "attachmentAtom": 21,
                 "leavingGroup": {
-                    "atoms": []
+                    "atoms": [
+                        22
+                    ]
                 },
                 "type": "left"
             },
             {
-                "attachmentAtom": 11,
+                "attachmentAtom": 8,
                 "leavingGroup": {
-                    "atoms": []
+                    "atoms": [
+                        11
+                    ]
                 },
                 "type": "right"
             }

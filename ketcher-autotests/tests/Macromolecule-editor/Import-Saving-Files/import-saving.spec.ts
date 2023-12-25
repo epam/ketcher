@@ -103,7 +103,7 @@ test.describe('Import-Saving-Files', () => {
 
     expect(ketFile).toEqual(ketFileExpected);
 
-    const numberOfPressZoomOut = 5;
+    const numberOfPressZoomOut = 6;
     for (let i = 0; i < numberOfPressZoomOut; i++) {
       await waitForRender(page, async () => {
         await page.getByTestId('zoom-out-button').click();
@@ -130,7 +130,7 @@ test.describe('Import-Saving-Files', () => {
 
     expect(ketFile).toEqual(ketFileExpected);
 
-    const numberOfPressZoomOut = 6;
+    const numberOfPressZoomOut = 7;
     for (let i = 0; i < numberOfPressZoomOut; i++) {
       await waitForRender(page, async () => {
         await page.getByTestId('zoom-out-button').click();
@@ -165,6 +165,13 @@ test.describe('Import-Saving-Files', () => {
       });
 
     expect(molFile).toEqual(molFileExpected);
+
+    const numberOfPressZoomOut = 6;
+    for (let i = 0; i < numberOfPressZoomOut; i++) {
+      await waitForRender(page, async () => {
+        await page.getByTestId('zoom-out-button').click();
+      });
+    }
     await takeEditorScreenshot(page);
   });
 
@@ -197,7 +204,7 @@ test.describe('Import-Saving-Files', () => {
   });
 
   const monomersToDelete = [
-    { text: '12ddR', description: 'Sugar monomer deleted.' },
+    { text: '25R', description: 'Sugar monomer deleted.' },
     { text: 'baA', description: 'Base monomer deleted.' },
     { text: 'P', description: 'Phosphate monomer deleted.' },
   ];

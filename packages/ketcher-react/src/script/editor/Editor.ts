@@ -463,7 +463,11 @@ class Editor implements KetcherEditor {
     return this._selection; // eslint-disable-line
   }
 
-  hover(ci: any, newTool?: any, event?: PointerEvent) {
+  hover(
+    ci: { id: number; map: string } | null,
+    newTool?: any,
+    event?: PointerEvent,
+  ) {
     const tool = newTool || this._tool; // eslint-disable-line
 
     if (

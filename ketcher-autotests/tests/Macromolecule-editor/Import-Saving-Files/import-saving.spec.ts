@@ -58,7 +58,7 @@ test.describe('Import-Saving-Files', () => {
     Description: After importing a file with modified monomers, it is clear which monomer is modified, 
     and when hovering, preview display changes made during modification
     Test working incorrect now because we have bug https://github.com/epam/ketcher/issues/3669
-    The file stopped opening(Convert error)
+    The file opening but modified monomer located under another stack monomers and playwright can't hover over it.
     */
       await openFileAndAddToCanvas(
         'Molfiles-V3000/dna-mod-base-sugar-phosphate-example.mol',
@@ -442,4 +442,42 @@ test.describe('Import-Saving-Files', () => {
     );
     await takeEditorScreenshot(page);
   });
+});
+
+test.describe('Import modified .mol files from external editor', () => {
+  test.beforeEach(async ({ page }) => {
+    await waitForPageInit(page);
+    await turnOnMacromoleculesEditor(page);
+  });
+
+  test.afterEach(async ({ page }) => {
+    await takeEditorScreenshot(page);
+  });
+
+  const fileNames = [
+    'peptide-Bom.mol',
+    'peptide-Fmoc.mol',
+    'dna-mod-Ph.mol',
+    'dna-mod-Ph-granular.mol',
+    'dna-peptide-conj-example.mol',
+    'dna-peptideSS-conj-example.mol',
+    'insulin-2-peptides-connected-with-SS.mol',
+    'peptide-modified-2aa-example.mol',
+    'peptide-modified-aa-example.mol',
+    'rna-mod-phosphate-example.mol',
+    'rna-mod-phosphate-mod-base-example.mol',
+    'rna-modified.mol',
+  ];
+
+  for (const fileName of fileNames) {
+    test(`for ${fileName}`, async ({ page }) => {
+      await openFileAndAddToCanvas(`Molfiles-V3000/${fileName}`, page);
+      const numberOfPressZoomOut = 4;
+      for (let i = 0; i < numberOfPressZoomOut; i++) {
+        await waitForRender(page, async () => {
+          await page.getByTestId('zoom-out-button').click();
+        });
+      }
+    });
+  }
 });

@@ -95,7 +95,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     return (
       theme.monomer.color[
         this.monomer.monomerItem.props.MonomerNaturalAnalogCode
-      ]?.regular || theme.monomer.color.default
+      ]?.regular || theme.monomer.color.default.regular
     );
   }
 

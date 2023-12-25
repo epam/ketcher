@@ -52,7 +52,7 @@
         "id": "1",
         "position": {
             "x": 7.9750000000000005,
-            "y": 5.9
+            "y": -5.9
         },
         "alias": "A",
         "templateId": "A___Alanine"
@@ -189,7 +189,7 @@
         "id": "3",
         "position": {
             "x": 13.325000000000001,
-            "y": 5.825000000000005
+            "y": -5.825000000000005
         },
         "alias": "Bal",
         "templateId": "Bal___beta-Alanine"
@@ -324,7 +324,7 @@
         "id": "6",
         "position": {
             "x": 8.075000000000003,
-            "y": 10.05
+            "y": -10.05
         },
         "alias": "Az",
         "templateId": "Az___Azide"

@@ -46,17 +46,17 @@ async function waitForBondPropsModal(page: Page) {
   await expect(page.getByTestId('bondProps-dialog')).toBeVisible();
 }
 
-const drawStructureAndDoubleClickOnBond = async (
+async function drawStructureAndDoubleClickOnBond(
   page: Page,
   bondType: BondType,
   numberOfBond: number,
-) => {
+) {
   await waitForPageInit(page);
   await drawStructure(page);
   await page.keyboard.press('Escape');
   await doubleClickOnBond(page, bondType, numberOfBond);
   await waitForBondPropsModal(page);
-};
+}
 
 test.describe('Checking bond attributes in SMARTS format', () => {
   test.beforeEach(async ({ page }) => {

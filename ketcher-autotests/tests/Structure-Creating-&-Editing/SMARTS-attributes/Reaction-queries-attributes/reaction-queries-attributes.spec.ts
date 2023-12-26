@@ -174,27 +174,28 @@ test.describe('Checking pasting S-Group as SMARTS', () => {
     await waitForPageInit(page);
   });
 
-  test('Checking SMARTS with two query groups', async ({ page }) => {
-    /**
-     * Test case: https://github.com/epam/ketcher/issues/3408
-     * Description: pasting SMARTS with query groups should not trigger any error
-     */
-    const smartsWithOneQueryGroup = '([#6].[#7])';
-    const smartsWithTwoQueryGroups = '([#6].[#7]).([#8])';
-    await selectTopPanelButton(TopPanelButton.Open, page);
-    await page.getByText('Paste from clipboard').click();
-    await pasteFromClipboard(page, smartsWithOneQueryGroup);
-    await waitForLoad(page, async () => {
-      await pressButton(page, 'Add to Canvas');
-    });
-    await takeEditorScreenshot(page);
+  const testCases = [
+    {
+      smarts: '([#6].[#7])',
+      description:
+        'Pasting SMARTS with one query group should not trigger any error',
+    },
+    {
+      smarts: '([#6].[#7]).([#8])',
+      description:
+        'Pasting SMARTS with two query groups should not trigger any error',
+    },
+  ];
 
-    await selectTopPanelButton(TopPanelButton.Open, page);
-    await page.getByText('Paste from clipboard').click();
-    await pasteFromClipboard(page, smartsWithTwoQueryGroups);
-    await waitForLoad(page, async () => {
-      await pressButton(page, 'Add to Canvas');
+  testCases.forEach(({ smarts, description }) => {
+    test(description, async ({ page }) => {
+      await selectTopPanelButton(TopPanelButton.Open, page);
+      await page.getByText('Paste from clipboard').click();
+      await pasteFromClipboard(page, smarts);
+      await waitForLoad(page, async () => {
+        await pressButton(page, 'Add to Canvas');
+      });
+      await takeEditorScreenshot(page);
     });
-    await takeEditorScreenshot(page);
   });
 });

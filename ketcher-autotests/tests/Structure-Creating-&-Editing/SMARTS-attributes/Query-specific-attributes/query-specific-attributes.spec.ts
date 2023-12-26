@@ -45,14 +45,22 @@ async function setAndCheckQuerySpecificProperties(
   await checkSmartsValue(page, defaultFileFormat, expectedSmarts);
 }
 
+async function drawStructureAndDoubleClickOnAtom(
+  page: Page,
+  atomType: string,
+  numberOfAtom: number,
+) {
+  await waitForPageInit(page);
+  await drawStructure(page);
+  await page.keyboard.press('Escape');
+  await doubleClickOnAtom(page, atomType, numberOfAtom);
+  await waitForAtomPropsModal(page);
+}
+
 test.describe('Checking query specific attributes in SMARTS format', () => {
   test.beforeEach(async ({ page }) => {
     const numberOfAtom = 0;
-    await waitForPageInit(page);
-    await drawStructure(page);
-    await page.keyboard.press('Escape');
-    await doubleClickOnAtom(page, 'C', numberOfAtom);
-    await waitForAtomPropsModal(page);
+    await drawStructureAndDoubleClickOnAtom(page, 'C', numberOfAtom);
     await page.getByTestId('Query specific-section').click();
   });
 
@@ -196,11 +204,7 @@ test.describe('Checking query specific attributes in SMARTS format', () => {
   test.describe('Checking converting attributes to custom query', () => {
     test.beforeEach(async ({ page }) => {
       const numberOfAtom = 0;
-      await waitForPageInit(page);
-      await drawStructure(page);
-      await page.keyboard.press('Escape');
-      await doubleClickOnAtom(page, 'C', numberOfAtom);
-      await waitForAtomPropsModal(page);
+      await drawStructureAndDoubleClickOnAtom(page, 'C', numberOfAtom);
       await page.getByTestId('Query specific-section').click();
     });
 

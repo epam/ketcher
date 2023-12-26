@@ -26,15 +26,29 @@ async function drawStructure(page: Page, numberOfClicks: number) {
   }
 }
 
+async function drawStructureWithCustomBondNumberAndDoubleClickOnAtom(
+  page: Page,
+  numberOfBondsAtStructure: number,
+  atomType: string,
+  numberOfAtom: number,
+) {
+  await waitForPageInit(page);
+  await drawStructure(page, numberOfBondsAtStructure);
+  await page.keyboard.press('Escape');
+  await doubleClickOnAtom(page, atomType, numberOfAtom);
+  await waitForAtomPropsModal(page);
+}
+
 test.describe('Checking atom properties attributes in SMARTS format', () => {
   test.beforeEach(async ({ page }) => {
     const numberOfAtom = 0;
     const numberOfBondsAtStructure = 3;
-    await waitForPageInit(page);
-    await drawStructure(page, numberOfBondsAtStructure);
-    await page.keyboard.press('Escape');
-    await doubleClickOnAtom(page, 'C', numberOfAtom);
-    await waitForAtomPropsModal(page);
+    await drawStructureWithCustomBondNumberAndDoubleClickOnAtom(
+      page,
+      numberOfBondsAtStructure,
+      'C',
+      numberOfAtom,
+    );
     await page.getByTestId('Reaction flags-section').click();
   });
 

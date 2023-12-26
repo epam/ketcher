@@ -58,6 +58,12 @@ async function drawStructureAndDoubleClickOnBond(
   await waitForBondPropsModal(page);
 }
 
+async function setCustomQueryAndCheckValue(page: Page, expectedValue: string) {
+  await page.getByTestId('custom-query-checkbox').check();
+  const customQueryInput = page.getByTestId('bond-custom-query');
+  await expect(customQueryInput).toHaveValue(expectedValue);
+}
+
 test.describe('Checking bond attributes in SMARTS format', () => {
   test.beforeEach(async ({ page }) => {
     const numberOfBond = 2;
@@ -291,9 +297,7 @@ test.describe('Checking converting bond attributes to custom query', () => {
     const expectedValue = '-';
     await setBondType(page, 'Single-option');
     await setBondTopology(page, 'Either-option');
-    await page.getByTestId('custom-query-checkbox').check();
-    const customQueryInput = page.getByTestId('bond-custom-query');
-    await expect(customQueryInput).toHaveValue(expectedValue);
+    await setCustomQueryAndCheckValue(page, expectedValue);
     await takeEditorScreenshot(page);
   });
 
@@ -307,10 +311,7 @@ test.describe('Checking converting bond attributes to custom query', () => {
     const expectedValue = '=;@';
     await setBondType(page, 'Double-option');
     await setBondTopology(page, 'Ring-option');
-    await page.getByTestId('custom-query-checkbox').check();
-    const customQueryInput = page.getByTestId('bond-custom-query');
-    await expect(customQueryInput).toHaveValue(expectedValue);
-    await takeEditorScreenshot(page);
+    await setCustomQueryAndCheckValue(page, expectedValue);
   });
 
   test('Converting Topology = "Chain" and Type = "Triple" to custom query', async ({
@@ -323,10 +324,7 @@ test.describe('Checking converting bond attributes to custom query', () => {
     const expectedValue = '#;!@';
     await setBondType(page, 'Triple-option');
     await setBondTopology(page, 'Chain-option');
-    await page.getByTestId('custom-query-checkbox').check();
-    const customQueryInput = page.getByTestId('bond-custom-query');
-    await expect(customQueryInput).toHaveValue(expectedValue);
-    await takeEditorScreenshot(page);
+    await setCustomQueryAndCheckValue(page, expectedValue);
   });
 
   test('Converting Type = "Aromatic" and Reacting Center = "Center" to custom query', async ({
@@ -340,10 +338,7 @@ test.describe('Checking converting bond attributes to custom query', () => {
     const expectedValue = ':';
     await setBondType(page, 'Aromatic-option');
     await setReactingCenter(page, 'Center-option');
-    await page.getByTestId('custom-query-checkbox').check();
-    const customQueryInput = page.getByTestId('bond-custom-query');
-    await expect(customQueryInput).toHaveValue(expectedValue);
-    await takeEditorScreenshot(page);
+    await setCustomQueryAndCheckValue(page, expectedValue);
   });
 
   test('Converting Type = "Any" and Reacting Center = "Made/broken" to custom query', async ({
@@ -357,10 +352,7 @@ test.describe('Checking converting bond attributes to custom query', () => {
     const expectedValue = '~';
     await setBondType(page, 'Any-option');
     await setReactingCenter(page, 'Made/broken-option');
-    await page.getByTestId('custom-query-checkbox').check();
-    const customQueryInput = page.getByTestId('bond-custom-query');
-    await expect(customQueryInput).toHaveValue(expectedValue);
-    await takeEditorScreenshot(page);
+    await setCustomQueryAndCheckValue(page, expectedValue);
   });
 
   test('Converting Type = "Single up" and Reacting Center = "Order changes" to custom query', async ({
@@ -374,10 +366,7 @@ test.describe('Checking converting bond attributes to custom query', () => {
     const expectedValue = '/';
     await setBondType(page, 'Single Up-option');
     await setReactingCenter(page, 'Order changes-option');
-    await page.getByTestId('custom-query-checkbox').check();
-    const customQueryInput = page.getByTestId('bond-custom-query');
-    await expect(customQueryInput).toHaveValue(expectedValue);
-    await takeEditorScreenshot(page);
+    await setCustomQueryAndCheckValue(page, expectedValue);
   });
 
   test('Converting Type = "Single down" to custom query', async ({ page }) => {
@@ -387,10 +376,7 @@ test.describe('Checking converting bond attributes to custom query', () => {
      */
     const expectedValue = '\\';
     await setBondType(page, 'Single Down-option');
-    await page.getByTestId('custom-query-checkbox').check();
-    const customQueryInput = page.getByTestId('bond-custom-query');
-    await expect(customQueryInput).toHaveValue(expectedValue);
-    await takeEditorScreenshot(page);
+    await setCustomQueryAndCheckValue(page, expectedValue);
   });
 });
 

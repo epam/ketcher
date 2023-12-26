@@ -46,14 +46,26 @@ async function waitForBondPropsModal(page: Page) {
   await expect(page.getByTestId('bondProps-dialog')).toBeVisible();
 }
 
+const drawStructureAndDoubleClickOnBond = async (
+  page: Page,
+  bondType: BondType,
+  numberOfBond: number,
+) => {
+  await waitForPageInit(page);
+  await drawStructure(page);
+  await page.keyboard.press('Escape');
+  await doubleClickOnBond(page, bondType, numberOfBond);
+  await waitForBondPropsModal(page);
+};
+
 test.describe('Checking bond attributes in SMARTS format', () => {
   test.beforeEach(async ({ page }) => {
     const numberOfBond = 2;
-    await waitForPageInit(page);
-    await drawStructure(page);
-    await page.keyboard.press('Escape');
-    await doubleClickOnBond(page, BondType.SINGLE, numberOfBond);
-    await waitForBondPropsModal(page);
+    await drawStructureAndDoubleClickOnBond(
+      page,
+      BondType.SINGLE,
+      numberOfBond,
+    );
   });
 
   // Tests for bond type:
@@ -262,11 +274,11 @@ test.describe('Checking bond attributes in SMARTS format', () => {
 test.describe('Checking converting bond attributes to custom query', () => {
   test.beforeEach(async ({ page }) => {
     const numberOfBond = 2;
-    await waitForPageInit(page);
-    await drawStructure(page);
-    await page.keyboard.press('Escape');
-    await doubleClickOnBond(page, BondType.SINGLE, numberOfBond);
-    await waitForBondPropsModal(page);
+    await drawStructureAndDoubleClickOnBond(
+      page,
+      BondType.SINGLE,
+      numberOfBond,
+    );
   });
 
   test('Converting Topology = "Either" and Type = "Single" to custom query', async ({
@@ -385,11 +397,11 @@ test.describe('Checking converting bond attributes to custom query', () => {
 test.describe('Checking saving attributes to .ket file', () => {
   test.beforeEach(async ({ page }) => {
     const numberOfBond = 2;
-    await waitForPageInit(page);
-    await drawStructure(page);
-    await page.keyboard.press('Escape');
-    await doubleClickOnBond(page, BondType.SINGLE, numberOfBond);
-    await waitForBondPropsModal(page);
+    await drawStructureAndDoubleClickOnBond(
+      page,
+      BondType.SINGLE,
+      numberOfBond,
+    );
   });
 
   test('Save *.ket file with custom query for bond attribute', async ({

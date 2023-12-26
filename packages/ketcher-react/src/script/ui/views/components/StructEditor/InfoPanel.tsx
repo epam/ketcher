@@ -140,13 +140,11 @@ const InfoPanel: FC<InfoPanelProps> = (props) => {
         struct={molecule}
         options={{
           ...render.options,
-          autoScale: true,
-          autoScaleMargin: 0,
-          rescaleAmount: 1,
+          downScale: true,
           cachePrefix: 'infoPanel',
           needCache: false,
-          width,
-          height,
+          width: Math.min(width, 200),
+          height: Math.min(height, 200),
         }}
       />
     </div>

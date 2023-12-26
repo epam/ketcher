@@ -155,7 +155,6 @@ class Editor implements KetcherEditor {
 
   lastEvent: any;
   macromoleculeConvertionError: string | null | undefined;
-  infoModalError: string | null | undefined;
 
   constructor(clientArea, options) {
     this.render = new Render(
@@ -688,18 +687,6 @@ class Editor implements KetcherEditor {
 
   clearMacromoleculeConvertionError() {
     this.macromoleculeConvertionError = null;
-  }
-
-  setInfoModalError(errorMessage: string) {
-    this.infoModalError = errorMessage;
-  }
-
-  clearInfoModalError() {
-    this.infoModalError = null;
-  }
-
-  onError(callback: (message: string) => void) {
-    this.errorHandler = callback;
   }
 }
 

@@ -50,7 +50,6 @@ if (enablePolymerEditor) {
 
 const App = () => {
   const hiddenButtonsConfig = getHiddenButtonsConfig();
-  const [, setErrorMessage] = useState('');
   const [showPolymerEditor, setShowPolymerEditor] = useState(false);
 
   const togglePolymerEditor = (toggleValue: boolean) => {
@@ -72,9 +71,7 @@ const App = () => {
   ) : (
     <>
       <Editor
-        errorHandler={(message: string) => {
-          setErrorMessage(message.toString());
-        }}
+        errorHandler={() => {}}
         buttons={hiddenButtonsConfig}
         staticResourcesUrl={process.env.PUBLIC_URL}
         structServiceProvider={structServiceProvider}

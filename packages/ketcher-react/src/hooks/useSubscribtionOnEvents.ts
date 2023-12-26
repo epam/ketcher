@@ -21,7 +21,7 @@ import { useEffect } from 'react';
 import { useAppContext } from './useAppContext';
 import { KETCHER_INIT_EVENT_NAME } from '../constants';
 
-export const useSubscriptionOnEvents = () => {
+export const useSubscriptionOnEvents = (events) => {
   const dispatch = useDispatch();
 
   const { getKetcherInstance } = useAppContext();
@@ -43,6 +43,9 @@ export const useSubscriptionOnEvents = () => {
       KetcherAsyncEvents.FAILURE,
       actionResultHandler,
     );
+    events.forEach(({ type, handler }) => {
+      ketcher.eventBus.addListener(type, handler);
+    });
   };
 
   const unsubscribe = (ketcher: Ketcher) => {
@@ -55,6 +58,9 @@ export const useSubscriptionOnEvents = () => {
       KetcherAsyncEvents.FAILURE,
       actionResultHandler,
     );
+    events.forEach(({ type, handler }) => {
+      ketcher.eventBus.removeListener(type, handler);
+    });
   };
 
   useEffect(() => {
@@ -71,5 +77,5 @@ export const useSubscriptionOnEvents = () => {
       unsubscribeOnUnMount();
       window.removeEventListener(KETCHER_INIT_EVENT_NAME, subscribeOnInit);
     };
-  }, []);
+  }, [events]);
 };

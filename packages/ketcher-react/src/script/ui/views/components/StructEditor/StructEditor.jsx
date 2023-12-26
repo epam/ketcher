@@ -31,7 +31,6 @@ import InfoPanel from './InfoPanel';
 import { KetcherLogger, ketcherProvider } from 'ketcher-core';
 import { getSmoothScrollDelta } from './helpers';
 import InfoTooltip from './InfoTooltip';
-import InfoModal from '../../../../../components/InfoModal/InfoModal';
 
 // TODO: need to update component after making refactoring of store
 function setupEditor(editor, props, oldProps = {}) {
@@ -75,8 +74,6 @@ class StructEditor extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      hasError: false,
-      errorMessage: '',
       enableCursor: false,
       clientX: 0,
       clientY: 0,
@@ -142,9 +139,7 @@ class StructEditor extends Component {
   shouldComponentUpdate(nextProps, nextState) {
     return (
       this.props.indigoVerification !== nextProps.indigoVerification ||
-      nextState.enableCursor !== this.state.enableCursor ||
-      nextState.hasError !== this.state.hasError ||
-      nextState.errorMessage !== this.state.errorMessage
+      nextState.enableCursor !== this.state.enableCursor
     );
   }
 
@@ -163,12 +158,6 @@ class StructEditor extends Component {
       );
       ketcher.editor.clearMacromoleculeConvertionError();
     }
-    if (ketcher?.editor.infoModalError) {
-      this.props.onShowInfoModal(ketcher.editor.infoModalError);
-      ketcher.editor.clearInfoModalError();
-    }
-
-    // this.props.onShowInfoModal('This is a test message for InfoModal');
     setupEditor(this.editor, this.props);
     if (this.props.onInit) this.props.onInit(this.editor);
 
@@ -261,40 +250,13 @@ class StructEditor extends Component {
 
     this.editorRef.current.addEventListener('wheel', this.handleWheel);
     this.editor.render.observeCanvasResize();
-    window.addEventListener('error', this.globalErrorHandler);
-    this.editor.onError((message) => {
-      this.showError(message);
-    });
   }
 
   componentWillUnmount() {
     removeEditorHandlers(this.editor, this.props);
     this.editorRef.current.removeEventListener('wheel', this.handleWheel);
     this.editor.render.unobserveCanvasResize();
-    window.removeEventListener('error', this.globalErrorHandler);
   }
-
-  globalErrorHandler = (errorEvent) => {
-    const error = errorEvent.error;
-    const message =
-      error && error.message
-        ? 'An error occurred: ' + error.message
-        : 'Something went wrong. The error is on our side. Please try again later.';
-    this.setState({ hasError: true, errorMessage: message });
-  };
-
-  showError = (errorMessage) => {
-    this.setState({ hasError: true, errorMessage });
-    this.props.onShowInfoModal(errorMessage);
-  };
-
-  handleDismiss = () => {
-    this.setState({ hasError: false, errorMessage: '' });
-    const cliparea = document.querySelector('.cliparea');
-    if (cliparea) {
-      cliparea.focus();
-    }
-  };
 
   render() {
     const {
@@ -328,24 +290,18 @@ class StructEditor extends Component {
       showAttachmentPoints = true,
       onUpdateFloatingTools,
       onShowMacromoleculesErrorMessage,
-      onShowInfoModal,
       /* eslint-enable @typescript-eslint/no-unused-vars */
       ...props
     } = this.props;
 
-    const { clientX = 0, clientY = 0, hasError, errorMessage } = this.state;
+    const { clientX = 0, clientY = 0 } = this.state;
+
     return (
       <Tag
         className={clsx(classes.canvas, className)}
         {...props}
         data-testid="ketcher-canvas"
       >
-        {this.state.hasError && (
-          <InfoModal
-            message={this.state.errorMessage}
-            close={this.handleDismiss}
-          />
-        )}
         <ContextMenuTrigger>
           <div
             ref={this.editorRef}

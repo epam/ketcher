@@ -36,6 +36,8 @@ import {
 import { useSubscriptionOnEvents } from '../../../hooks';
 import { AbbreviationLookupContainer } from '../dialog/AbbreviationLookup';
 import { initLib } from '../state/templates/init-lib';
+import { GLOBAL_ERROR_HANDLER } from '../../../constants';
+import { InfoModal } from 'src/components/InfoModal';
 
 interface AppCallProps {
   checkServer: () => void;
@@ -57,15 +59,6 @@ type Props = AppCallProps;
 const App = (props: Props) => {
   const dispatch = useDispatch();
   const { checkServer } = props;
-  const [, setHasError] = useState(false);
-  const [, setErrorMessage] = useState('');
-
-  const handleError = (message: string) => {
-    setHasError(true);
-    setErrorMessage(message.toString());
-  };
-
-  useSubscriptionOnEvents();
 
   useEffect(() => {
     checkServer();
@@ -79,30 +72,49 @@ const App = (props: Props) => {
     };
   }, []);
 
+  const [hasError, setHasError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const handleError = (message: string) => {
+    setHasError(true);
+    setErrorMessage(message);
+  };
+
+  const handleClose = () => {
+    setHasError(false);
+    setErrorMessage('');
+    const cliparea = document.querySelector('.cliparea') as HTMLElement;
+    cliparea?.focus();
+  };
+
+  useSubscriptionOnEvents([
+    { type: GLOBAL_ERROR_HANDLER, handler: handleError },
+  ]);
+
   // Temporary workaround: add proper types for Editor
-  const Editor = ConnectedEditor as React.ComponentType<{
-    className: string;
-    onError: (message: string) => void;
-  }>;
+  const Editor = ConnectedEditor as React.ComponentType<{ className: string }>;
 
   return (
     <ThemeProvider theme={muiTheme}>
-      <div className={classes.app}>
-        <AppHiddenContainer />
-        <Editor className={classes.canvas} onError={handleError} />
+      <>
+        <div className={classes.app}>
+          <AppHiddenContainer />
+          <Editor className={classes.canvas} />
 
-        <TopToolbarContainer
-          className={classes.top}
-          togglerComponent={props.togglerComponent}
-        />
-        <LeftToolbarContainer className={classes.left} />
-        <BottomToolbarContainer className={classes.bottom} />
-        <RightToolbarContainer className={classes.right} />
+          <TopToolbarContainer
+            className={classes.top}
+            togglerComponent={props.togglerComponent}
+          />
+          <LeftToolbarContainer className={classes.left} />
+          <BottomToolbarContainer className={classes.bottom} />
+          <RightToolbarContainer className={classes.right} />
 
-        <AppClipArea />
-        <AppModalContainer />
-        <AbbreviationLookupContainer />
-      </div>
+          <AppClipArea />
+          <AppModalContainer />
+          <AbbreviationLookupContainer />
+        </div>
+        {hasError && <InfoModal message={errorMessage} close={handleClose} />}
+      </>
     </ThemeProvider>
   );
 };

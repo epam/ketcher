@@ -1,4 +1,4 @@
-import { FunctionalGroup } from 'ketcher-core';
+import { FunctionalGroup, MonomerMicromolecule } from 'ketcher-core';
 import Editor from 'src/script/editor';
 import {
   ClosestItem,
@@ -82,6 +82,7 @@ export function getMenuPropsForClosestItem(
     case 'sgroups':
     case 'functionalGroups': {
       const sGroup = struct.sgroups.get(closestItem.id);
+      if (sGroup instanceof MonomerMicromolecule) return null;
       const functionalGroup = FunctionalGroup.findFunctionalGroupBySGroup(
         struct.functionalGroups,
         sGroup,

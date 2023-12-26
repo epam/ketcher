@@ -29,7 +29,7 @@
         "id": "36",
         "position": {
             "x": 12.625,
-            "y": 9.575000000000001
+            "y": -9.575000000000001
         },
         "alias": "Bal",
         "templateId": "Bal___beta-Alanine"
@@ -170,7 +170,7 @@
         "id": "37",
         "position": {
             "x": 17.025000000000002,
-            "y": 9.675
+            "y": -9.675
         },
         "alias": "Edc",
         "templateId": "Edc___S-ethylthiocysteine"
@@ -373,7 +373,7 @@
         "id": "38",
         "position": {
             "x": 20.775000000000002,
-            "y": 9.725000000000001
+            "y": -9.725000000000001
         },
         "alias": "Test-6-Ch",
         "templateId": "Test-6-Ch___Test-6-AP-Chem"

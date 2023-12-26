@@ -36,7 +36,10 @@ import {
 } from 'ketcher-core';
 
 import LassoHelper from './helper/lasso';
-import { isMergingToMacroMolecule } from './helper/isMacroMolecule';
+import {
+  isBondingWithMacroMolecule,
+  isMergingToMacroMolecule,
+} from './helper/isMacroMolecule';
 import { atomLongtapEvent } from './atom';
 import SGroupTool from './sgroup';
 import { xor } from 'lodash/fp';
@@ -91,6 +94,10 @@ class SelectTool implements Tool {
       this.#lassoHelper.fragment || event.ctrlKey,
     );
     const ci = this.editor.findItem(event, map, null);
+
+    if (isBondingWithMacroMolecule(this.editor, event)) {
+      return;
+    }
 
     const selected = {
       ...(ci?.map === 'atoms' && { atoms: [ci.id] }),
@@ -239,6 +246,7 @@ class SelectTool implements Tool {
 
     if (this.#lassoHelper.running()) {
       const sel = this.#lassoHelper.addPoint(event);
+
       editor.selection(
         !event.shiftKey ? sel : selMerge(sel, editor.selection(), false),
       );

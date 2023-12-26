@@ -29,7 +29,24 @@ export interface IKetConnection {
   endpoint2: IKetConnectionEndPoint;
 }
 
-export type monomerClass = 'RNA' | 'PEPTIDE' | 'CHEM' | 'UNKNOWN' | 'DNA';
+export type monomerClass =
+  | 'RNA'
+  | 'PEPTIDE'
+  | 'CHEM'
+  | 'UNKNOWN'
+  | 'DNA'
+  | 'MODDNA';
+
+export type IKetAttachmentPointType = 'left' | 'right' | 'side';
+
+export interface IKetAttachmentPoint {
+  attachmentAtom: number;
+  leavingGroup: {
+    atoms: number[];
+  };
+  type?: IKetAttachmentPointType;
+  label?: string;
+}
 
 export interface IKetMonomerTemplate {
   type: 'monomerTemplate';
@@ -48,7 +65,7 @@ export interface IKetMonomerTemplate {
   fullName?: string;
   alias?: string;
   naturalAnalog?: string;
-  attachmentPoints?;
+  attachmentPoints?: IKetAttachmentPoint[];
   root: {
     nodes;
   };
@@ -77,14 +94,3 @@ export interface IKetMacromoleculesContentOtherProperties {
 
 export type IKetMacromoleculesContent = IKetMacromoleculesContentRootProperty &
   IKetMacromoleculesContentOtherProperties;
-
-export type IKetAttachmentPointType = 'left' | 'right' | 'side';
-
-export interface IKetAttachmentPoint {
-  attachmentAtom: number;
-  leavingGroup: {
-    atoms: number[];
-  };
-  type?: IKetAttachmentPointType;
-  label?: string;
-}

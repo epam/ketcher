@@ -26,12 +26,7 @@ export class PeptideRenderer extends BaseMonomerRenderer {
       .data([this])
       .attr('href', PEPTIDE_SYMBOL_ELEMENT_ID)
       .style('cursor', 'pointer')
-      .attr(
-        'fill',
-        theme.monomer.color[
-          this.monomer.monomerItem.props.MonomerNaturalAnalogCode
-        ]?.regular,
-      );
+      .attr('fill', this.getMonomerColor(theme));
   }
 
   show(theme) {

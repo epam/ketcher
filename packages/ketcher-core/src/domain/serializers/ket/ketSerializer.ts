@@ -240,30 +240,6 @@ export class KetSerializer implements Serializer<Struct> {
     };
   }
 
-  convertCoordinatesAndGetMinMax(parsedFileContent: IKetMacromoleculesContent) {
-    let xmin = 1e50;
-    let ymin = xmin;
-    let xmax = -xmin;
-    let ymax = -ymin;
-
-    parsedFileContent.root.nodes.forEach((node) => {
-      const nodeDefinition = parsedFileContent[node.$ref];
-
-      if (nodeDefinition?.type === 'monomer') {
-        nodeDefinition.chemistryPosition = switchIntoChemistryCoordSystem(
-          new Vec2(nodeDefinition.position.x, nodeDefinition.position.y),
-        );
-        xmin = Math.min(xmin, nodeDefinition.chemistryPosition.x);
-        ymin = Math.min(ymin, nodeDefinition.chemistryPosition.y);
-        xmax = Math.max(xmax, nodeDefinition.chemistryPosition.x);
-        ymax = Math.max(ymax, nodeDefinition.chemistryPosition.y);
-      }
-    });
-    return {
-      structCenter: new Vec2((xmin + xmax) / 2, (ymin + ymax) / 2),
-    };
-  }
-
   deserializeToStruct(fileContent: string) {
     const struct = new Struct();
     const deserializedContent = this.deserializeToDrawingEntities(fileContent);
@@ -311,19 +287,10 @@ export class KetSerializer implements Serializer<Struct> {
     return fileContentForMicromolecules;
   }
 
-  deserializeToDrawingEntities(
-    fileContent: string,
-    centerPointOfCanvas?: Vec2,
-  ) {
+  deserializeToDrawingEntities(fileContent: string) {
     const { error: hasValidationErrors, parsedFileContent } =
       this.parseAndValidateMacromolecules(fileContent);
     if (hasValidationErrors || !parsedFileContent) return;
-    const { structCenter } =
-      this.convertCoordinatesAndGetMinMax(parsedFileContent);
-    const offset = Vec2.diff(
-      centerPointOfCanvas || new Vec2(0, 0),
-      structCenter,
-    );
     const command = new Command();
     const drawingEntitiesManager = new DrawingEntitiesManager();
     const monomerIdsMap = {};
@@ -349,7 +316,6 @@ export class KetSerializer implements Serializer<Struct> {
             template,
             struct,
             drawingEntitiesManager,
-            offset,
           );
           const monomer = monomerAdditionCommand.operations[0]
             .monomer as BaseMonomer;

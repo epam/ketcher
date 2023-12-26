@@ -1216,4 +1216,31 @@ export class Struct {
     const sgroup = this.getGroupFromAtomId(atomId);
     return sgroup instanceof MonomerMicromolecule;
   }
+
+  isBondFromMacromolecule(bondId: number) {
+    const bond = this.bonds.get(bondId);
+
+    assert(bond);
+
+    return (
+      this.isAtomFromMacromolecule(bond.begin) ||
+      this.isAtomFromMacromolecule(bond.end)
+    );
+  }
+
+  isFunctionalGroupFromMacromolecule(functionalGroupId: number) {
+    const functionalGroup = this.functionalGroups.get(functionalGroupId);
+
+    return functionalGroup?.relatedSGroup instanceof MonomerMicromolecule;
+  }
+
+  isTargetFromMacromolecule(target?: { id: number; map: string }) {
+    return (
+      target &&
+      ((target.map === 'functionalGroups' &&
+        this.isFunctionalGroupFromMacromolecule(target.id)) ||
+        (target.map === 'atoms' && this.isAtomFromMacromolecule(target.id)) ||
+        (target.map === 'bonds' && this.isBondFromMacromolecule(target.id)))
+    );
+  }
 }

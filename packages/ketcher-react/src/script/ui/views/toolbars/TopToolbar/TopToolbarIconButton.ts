@@ -21,14 +21,18 @@ export const TopToolbarIconButton = styled(IconButton)`
   border-radius: 4px;
   padding: 2px;
 
-  @media only screen and (min-width: 1024px) {
-    height: 32px;
-    width: 32px;
-    padding: 4px;
+  @media only screen {
+    @container (min-width: 1024px) {
+      height: 32px;
+      width: 32px;
+      padding: 4px;
+    }
   }
-  @media only screen and (min-width: 1920px) {
-    height: 40px;
-    width: 40px;
-    padding: 5px;
+  @media only screen {
+    @container (min-width: 1920px) {
+      height: 40px;
+      width: 40px;
+      padding: 5px;
+    }
   }
 `;

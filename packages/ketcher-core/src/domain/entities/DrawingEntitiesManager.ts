@@ -453,8 +453,8 @@ export class DrawingEntitiesManager {
       polymerBond,
     );
 
-    polymerBond.firstMonomer.removePotentialBonds();
-    polymerBond.secondMonomer.removePotentialBonds();
+    polymerBond.firstMonomer.removePotentialBonds(true);
+    polymerBond.secondMonomer.removePotentialBonds(true);
     polymerBond.firstMonomer.setChosenFirstAttachmentPoint(null);
     polymerBond.secondMonomer?.setChosenSecondAttachmentPoint(null);
     polymerBond.moveToLinkedMonomers();
@@ -773,9 +773,10 @@ export class DrawingEntitiesManager {
   private findChainByMonomer(
     monomer: BaseMonomer,
     monomerChain: BaseMonomer[] = [],
-    previousMonomer?: BaseMonomer,
+    monomersInChainSet: Set<number> = new Set(),
   ) {
     monomerChain.push(monomer);
+    monomersInChainSet.add(monomer.id);
     for (const attachmentPointName in monomer.attachmentPointsToBonds) {
       const polymerBond = monomer.attachmentPointsToBonds[attachmentPointName];
       if (polymerBond) {
@@ -783,8 +784,12 @@ export class DrawingEntitiesManager {
           monomer === polymerBond.firstMonomer
             ? polymerBond.secondMonomer
             : polymerBond.firstMonomer;
-        if (previousMonomer !== nextMonomer) {
-          this.findChainByMonomer(nextMonomer, monomerChain, monomer);
+        if (!monomersInChainSet.has(nextMonomer.id)) {
+          this.findChainByMonomer(
+            nextMonomer,
+            monomerChain,
+            monomersInChainSet,
+          );
         }
       }
     }
@@ -801,7 +806,7 @@ export class DrawingEntitiesManager {
     monomer: BaseMonomer,
     initialPosition: Vec2,
     canvasWidth: number,
-    lastMonomer?: BaseMonomer,
+    rearrangedMonomersSet: Set<number> = new Set(),
     isNextChain = false,
   ) {
     const command = new Command();
@@ -828,6 +833,7 @@ export class DrawingEntitiesManager {
     command.addOperation(operation);
     let lastPosition = newPosition;
 
+    rearrangedMonomersSet.add(monomer.id);
     for (const attachmentPointName in monomer.attachmentPointsToBonds) {
       const polymerBond = monomer.attachmentPointsToBonds[attachmentPointName];
       if (!polymerBond) {
@@ -837,7 +843,7 @@ export class DrawingEntitiesManager {
         polymerBond.secondMonomer === monomer
           ? polymerBond.firstMonomer
           : polymerBond.secondMonomer;
-      if (nextMonomer === lastMonomer) {
+      if (rearrangedMonomersSet.has(nextMonomer.id)) {
         continue;
       }
       if (
@@ -863,7 +869,7 @@ export class DrawingEntitiesManager {
               y: newPosition.y,
             }),
             canvasWidth,
-            monomer,
+            rearrangedMonomersSet,
           );
         } else {
           rearrangeResult = this.rearrangeChain(
@@ -873,7 +879,7 @@ export class DrawingEntitiesManager {
               y: newPosition.y + heightMonomerWithBond,
             }),
             canvasWidth,
-            monomer,
+            rearrangedMonomersSet,
           );
         }
         lastPosition = rearrangeResult.lastPosition;
@@ -885,7 +891,7 @@ export class DrawingEntitiesManager {
           nextMonomer,
           Coordinates.modelToCanvas(pos),
           canvasWidth,
-          monomer,
+          rearrangedMonomersSet,
         );
         command.merge(rearrangeResult.command);
       }

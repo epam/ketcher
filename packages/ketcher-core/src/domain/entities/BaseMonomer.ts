@@ -10,6 +10,8 @@ import {
   IKetAttachmentPoint,
   IKetAttachmentPointType,
 } from 'application/formatters/types/ket';
+import { Bond } from 'domain/entities/bond';
+import { isNumber } from 'lodash';
 
 export abstract class BaseMonomer extends DrawingEntity {
   public renderer?: BaseMonomerRenderer = undefined;
@@ -295,17 +297,26 @@ export abstract class BaseMonomer extends DrawingEntity {
     Record<AttachmentPointName, PolymerBond | null>
   > {
     if (this.monomerItem.attachmentPoints) {
-      return this.getAttachmentPointDictFromMonomerDefinition();
+      const { attachmentPointDictionary } =
+        BaseMonomer.getAttachmentPointDictFromMonomerDefinition(
+          this.monomerItem.attachmentPoints,
+        );
+      return attachmentPointDictionary;
     } else {
       return this.getAttachmentPointDictFromAtoms();
     }
   }
 
-  public getAttachmentPointDictFromMonomerDefinition(): Partial<
-    Record<AttachmentPointName, PolymerBond | null>
-  > {
-    assert(this.monomerItem.attachmentPoints);
-    const attachmentPointDictionnary = {};
+  public static getAttachmentPointDictFromMonomerDefinition(
+    attachmentPoints: IKetAttachmentPoint[],
+  ): {
+    attachmentPointDictionary: Partial<
+      Record<AttachmentPointName, PolymerBond | null>
+    >;
+    attachmentPointsList: AttachmentPointName[];
+  } {
+    const attachmentPointDictionary = {};
+    const attachmentPointsList: AttachmentPointName[] = [];
     const attachmentPointTypeToNumber: {
       [key in IKetAttachmentPointType]: (
         attachmentPointNumber?: number,
@@ -317,26 +328,32 @@ export abstract class BaseMonomer extends DrawingEntity {
         assert(attachmentPointNumber);
         return (
           attachmentPointNumber +
-          Number(!('R1' in attachmentPointDictionnary)) -
-          Number(!('R2' in attachmentPointDictionnary))
+          Number(!('R1' in attachmentPointDictionary)) +
+          Number(!('R2' in attachmentPointDictionary))
         );
       },
     };
-    this.monomerItem.attachmentPoints.forEach(
-      (attachmentPoint, attachmentPointIndex) => {
-        const attachmentPointNumber = attachmentPointIndex + 1;
-        const calculatedLabel = `R${
-          attachmentPoint.type
+    attachmentPoints.forEach((attachmentPoint, attachmentPointIndex) => {
+      const attachmentPointNumber = attachmentPointIndex + 1;
+      let calculatedAttachmentPointNumber;
+      if (attachmentPoint.type) {
+        const getLabelByTypeAction =
+          attachmentPointTypeToNumber[attachmentPoint.type];
+        calculatedAttachmentPointNumber =
+          typeof getLabelByTypeAction === 'function'
             ? attachmentPointTypeToNumber[attachmentPoint.type](
                 attachmentPointNumber,
               )
-            : attachmentPointNumber
-        }`;
-        attachmentPointDictionnary[attachmentPoint.label || calculatedLabel] =
-          null;
-      },
-    );
-    return attachmentPointDictionnary;
+            : attachmentPointNumber;
+      } else {
+        calculatedAttachmentPointNumber = attachmentPointNumber;
+      }
+      const calculatedLabel =
+        attachmentPoint.label || `R${calculatedAttachmentPointNumber}`;
+      attachmentPointDictionary[calculatedLabel] = null;
+      attachmentPointsList.push(calculatedLabel as AttachmentPointName);
+    });
+    return { attachmentPointDictionary, attachmentPointsList };
   }
 
   public get attachmentPointNumberToType() {
@@ -349,37 +366,55 @@ export abstract class BaseMonomer extends DrawingEntity {
 
   private getMonomerDefinitionAttachmentPoints() {
     const monomerDefinitionAttachmentPoints: IKetAttachmentPoint[] = [];
-    this.attachmentAtoms.forEach((attachmentAtom) => {
+    this.leavingGroupsAtoms.forEach((leavingGroupsAtom) => {
+      const bondId = this.monomerItem.struct.bonds.find((_, bond) => {
+        return (
+          bond.begin === leavingGroupsAtom.id ||
+          bond.end === leavingGroupsAtom.id
+        );
+      });
+      let attachmentAtomId: number;
+      let leavingGroupsAtomId: number | undefined;
+
+      if (isNumber(bondId)) {
+        const bond = this.monomerItem.struct.bonds.get(bondId) as Bond;
+        attachmentAtomId =
+          bond.begin === leavingGroupsAtom.id ? bond.end : bond.begin;
+        leavingGroupsAtomId = leavingGroupsAtom.id;
+      } else {
+        attachmentAtomId = leavingGroupsAtom.id;
+      }
+
       monomerDefinitionAttachmentPoints.push({
-        attachmentAtom: attachmentAtom.id,
+        attachmentAtom: attachmentAtomId,
         leavingGroup: {
-          // TODO fill leaving group after the fix of sdf library parsing.
-          //  Currently it loses information about leaving groups.
-          atoms: [],
+          atoms: leavingGroupsAtomId ? [leavingGroupsAtomId] : [],
         },
         type:
-          this.attachmentPointNumberToType[attachmentAtom.rglabel] ||
+          this.attachmentPointNumberToType[leavingGroupsAtom.rglabel] ||
           this.attachmentPointNumberToType.moreThanTwo,
       });
     });
     return monomerDefinitionAttachmentPoints;
   }
 
-  get attachmentAtoms() {
-    const attachmentAtoms = this.monomerItem.struct.atoms.filter((_, value) => {
-      return Boolean(value.rglabel);
-    });
-    const attachmentAtomsArray: { id: number; rglabel: number }[] = [];
-    attachmentAtoms.forEach((attachmentAtom, attachmentAtomId) => {
-      attachmentAtomsArray.push({
+  get leavingGroupsAtoms() {
+    const leavingGroupsAtoms = this.monomerItem.struct.atoms.filter(
+      (_, value) => {
+        return Boolean(value.rglabel);
+      },
+    );
+    const leavingGroupsAtomsArray: { id: number; rglabel: number }[] = [];
+    leavingGroupsAtoms.forEach((attachmentAtom, attachmentAtomId) => {
+      leavingGroupsAtomsArray.push({
         id: attachmentAtomId,
         rglabel: Number(attachmentAtom.rglabel),
       });
     });
-    attachmentAtomsArray.sort((atom1, atom2) =>
+    leavingGroupsAtomsArray.sort((atom1, atom2) =>
       Number(atom1.rglabel) > Number(atom2.rglabel) ? 1 : -1,
     );
-    return attachmentAtomsArray;
+    return leavingGroupsAtomsArray;
   }
 
   public getAttachmentPointDictFromAtoms(): Partial<
@@ -387,7 +422,7 @@ export abstract class BaseMonomer extends DrawingEntity {
   > {
     const attachmentPointNameToBond = {};
 
-    this.attachmentAtoms.forEach(({ rglabel }, _) => {
+    this.leavingGroupsAtoms.forEach(({ rglabel }, _) => {
       const label = convertAttachmentPointNumberToLabel(Number(rglabel));
       attachmentPointNameToBond[label] = null;
     });

@@ -36,13 +36,14 @@ export function fromTemplateOnCanvas(
   template,
   pos,
   angle = 0,
+  isPreview = true,
 ): [Action, { atoms: number[]; bonds: number[] }] {
   const [action, pasteItems] = fromPaste(
     restruct,
     template.molecule,
     pos,
     angle,
-    true,
+    isPreview,
   );
 
   action.addOp(new CalcImplicitH(pasteItems.atoms).perform(restruct));

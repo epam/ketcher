@@ -91,6 +91,8 @@ test.describe('Import-Saving-Files', () => {
     /* 
     Test case: Import/Saving files
     Description: Structure in center of canvas after opening
+    The structure does not fit on the canvas when opened, and to 
+    see the whole picture in this test and in future ones, zoom is used
     */
     await openFileAndAddToCanvas('KET/fifty-monomers.ket', page);
     const expectedFile = await getKet(page);
@@ -209,7 +211,7 @@ test.describe('Import-Saving-Files', () => {
     { text: 'P', description: 'Phosphate monomer deleted.' },
   ];
   /*
-   Test working not a proper way because we have bug https://github.com/epam/ketcher/issues/3609
+   Test for deleting part of monomers structure
   */
   for (const monomer of monomersToDelete) {
     test(`Open file from .mol V3000 and Delete ${monomer.text} monomer`, async ({
@@ -412,7 +414,6 @@ test.describe('Import-Saving-Files', () => {
     /* 
     Test case: Import/Saving files
     Description: .mol file with macro structures is imported correctly in macro mode
-    Test now working in not a proper way because we have bug https://github.com/epam/ketcher/issues/3609
     */
     await openFileAndAddToCanvas('Molfiles-V3000/three-presets.mol', page);
     await takeEditorScreenshot(page);

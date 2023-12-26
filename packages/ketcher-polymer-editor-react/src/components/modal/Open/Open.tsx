@@ -90,8 +90,10 @@ const centerStructure = (
     monomer.moveAbsolute(new Vec2(monomer.position).add(offset));
   });
   drawingEntitiesManager.polymerBonds.forEach((bond: PolymerBond) => {
-    bond.moveAbsolute(new Vec2(bond.position).add(offset));
-    bond.endPosition = new Vec2(bond.endPosition).add(offset);
+    const { x: startX, y: startY } = new Vec2(bond.position).add(offset);
+    bond.moveBondStartAbsolute(startX, startY);
+    const { x: endX, y: endY } = new Vec2(bond.endPosition).add(offset);
+    bond.moveBondEndAbsolute(endX, endY);
   });
 };
 

@@ -5,6 +5,7 @@ import {
   delay,
   drawBenzeneRing,
   moveOnAtom,
+  resetCurrentTool,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
@@ -194,8 +195,8 @@ test.describe('Lookup Abbreviations tests', () => {
     // EPMLSOPKET-16928
     // will be added with https://github.com/epam/ketcher/issues/2789
     await drawBenzeneRing(page);
-    await clickInTheMiddleOfTheScreen(page);
     const atomC = 0;
+    await resetCurrentTool(page);
     await moveOnAtom(page, 'C', atomC);
     await page.keyboard.type('n');
     // 'N' should be placed on hovered atom

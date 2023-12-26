@@ -177,7 +177,9 @@ class SaveDialog extends Component {
         })
         .catch((e) => {
           KetcherLogger.error('Save.jsx::SaveDialog::changeType', e);
-          ketcher.eventBus.emit(GLOBAL_ERROR_HANDLER, e);
+          if (ketcher && ketcher.eventBus) {
+            ketcher.eventBus.emit(GLOBAL_ERROR_HANDLER, e);
+          }
           this.props.onResetForm(formState);
           return e;
         });
@@ -196,7 +198,9 @@ class SaveDialog extends Component {
             });
           },
           (e) => {
-            ketcher.eventBus.emit(GLOBAL_ERROR_HANDLER, e.message);
+            if (ketcher && ketcher.eventBus) {
+              ketcher.eventBus.emit(GLOBAL_ERROR_HANDLER, e.message);
+            }
             this.props.onResetForm(formState);
             return e;
           },

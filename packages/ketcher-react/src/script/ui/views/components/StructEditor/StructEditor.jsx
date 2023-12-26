@@ -26,6 +26,8 @@ import compressedHandIcon from '../../../../../assets/icons/files/compressed-han
 import { FloatingToolContainer } from '../../toolbars';
 import Cursor from '../Cursor';
 import { ContextMenu, ContextMenuTrigger } from '../ContextMenu';
+// import ErrorsContext from '../../../../../contexts/errorsContext';
+// import { InfoModal } from 'ketcher-react';
 
 import InfoPanel from './InfoPanel';
 import { KetcherLogger, ketcherProvider } from 'ketcher-core';
@@ -71,6 +73,7 @@ function removeEditorHandlers(editor, props) {
 }
 
 class StructEditor extends Component {
+  // static contextType = ErrorsContext;
   constructor(props) {
     super(props);
     this.state = {
@@ -295,6 +298,8 @@ class StructEditor extends Component {
     } = this.props;
 
     const { clientX = 0, clientY = 0 } = this.state;
+
+    // const errorHandler = this.context.errorHandler;
 
     return (
       <Tag

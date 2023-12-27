@@ -64,7 +64,7 @@ import {
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import IndigoWorker from 'web-worker:./indigoWorker';
+import IndigoWorker from './indigoWorker?worker&inline';
 import EventEmitter from 'events';
 
 interface KeyValuePair {

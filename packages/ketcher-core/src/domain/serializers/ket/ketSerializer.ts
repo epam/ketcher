@@ -486,6 +486,12 @@ export class KetSerializer implements Serializer<Struct> {
     });
     drawingEntitiesManager.polymerBonds.forEach((polymerBond) => {
       assert(polymerBond.secondMonomer);
+      if (
+        polymerBond.firstMonomer.monomerItem.props.isMicromoleculeFragment ||
+        polymerBond.secondMonomer.monomerItem.props.isMicromoleculeFragment
+      ) {
+        return;
+      }
       fileContent.root.connections.push({
         connectionType: 'single',
         endpoint1: {

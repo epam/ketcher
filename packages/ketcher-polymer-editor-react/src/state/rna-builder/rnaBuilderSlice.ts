@@ -19,7 +19,7 @@ import { IRnaPreset } from 'components/monomerLibrary/RnaBuilder/types';
 import { RootState } from 'state';
 import { MonomerGroups } from '../../constants';
 import { MonomerItemType, MONOMER_CONST } from 'ketcher-core';
-import { localStorageCopy } from 'helpers/localStorage';
+import { localStorageWrapper } from 'helpers/localStorage';
 import { FAVORITE_ITEMS_UNIQUE_KEYS } from 'src/constants';
 
 export enum RnaBuilderPresetsItem {
@@ -149,9 +149,8 @@ export const rnaBuilderSlice = createSlice({
     },
 
     setFavoritePresetsFromLocalStorage: (state: RootState) => {
-      const favoritesInLocalStorage: null | unknown = localStorageCopy.getItem(
-        FAVORITE_ITEMS_UNIQUE_KEYS,
-      );
+      const favoritesInLocalStorage: null | unknown =
+        localStorageWrapper.getItem(FAVORITE_ITEMS_UNIQUE_KEYS);
 
       if (!favoritesInLocalStorage || !Array.isArray(favoritesInLocalStorage)) {
         return;
@@ -175,7 +174,7 @@ export const rnaBuilderSlice = createSlice({
       });
     },
 
-    unsetFavoritePresetsFromLocalStorage: (state: RootState) => {
+    clearFavorites: (state: RootState) => {
       state.presets = [];
     },
 
@@ -191,7 +190,7 @@ export const rnaBuilderSlice = createSlice({
         state.presets[presetIndex].favorite = !favorite;
       }
 
-      const favoriteItemsUniqueKeys = (localStorageCopy.getItem(
+      const favoriteItemsUniqueKeys = (localStorageWrapper.getItem(
         FAVORITE_ITEMS_UNIQUE_KEYS,
       ) || []) as string[];
 
@@ -200,7 +199,7 @@ export const rnaBuilderSlice = createSlice({
       );
 
       if (isKeyAlreadyExisted) {
-        localStorageCopy.setItem(
+        localStorageWrapper.setItem(
           FAVORITE_ITEMS_UNIQUE_KEYS,
           favoriteItemsUniqueKeys.filter(
             (targetKey) => targetKey !== uniquePresetKey,
@@ -208,7 +207,7 @@ export const rnaBuilderSlice = createSlice({
         );
       } else {
         favoriteItemsUniqueKeys.push(uniquePresetKey);
-        localStorageCopy.setItem(
+        localStorageWrapper.setItem(
           FAVORITE_ITEMS_UNIQUE_KEYS,
           favoriteItemsUniqueKeys,
         );
@@ -325,7 +324,7 @@ export const {
   setActivePresetForContextMenu,
   togglePresetFavorites,
   setFavoritePresetsFromLocalStorage,
-  unsetFavoritePresetsFromLocalStorage,
+  clearFavorites,
 } = rnaBuilderSlice.actions;
 
 export const rnaBuilderReducer = rnaBuilderSlice.reducer;

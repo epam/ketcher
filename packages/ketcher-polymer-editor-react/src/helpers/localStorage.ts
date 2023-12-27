@@ -1,9 +1,4 @@
-interface LocalStorageCopy {
-  getItem: (key: string) => string | null;
-  setItem: (key: string, item: unknown) => void;
-}
-
-class LocalStorage implements LocalStorageCopy {
+class LocalStorageWrapper {
   localStorage: Storage;
 
   constructor() {
@@ -25,4 +20,4 @@ class LocalStorage implements LocalStorageCopy {
   }
 }
 
-export const localStorageCopy: LocalStorageCopy = new LocalStorage();
+export const localStorageWrapper = new LocalStorageWrapper();

@@ -47,7 +47,6 @@ import {
   loadMonomerLibrary,
   selectMonomers,
   setFavoriteMonomersFromLocalStorage,
-  unsetFavoriteMonomersFromLocalStorage,
 } from 'state/library';
 import { useAppDispatch, useAppSelector, useSnakeMode } from 'hooks';
 import {
@@ -86,7 +85,7 @@ import { getDefaultPresets } from 'src/helpers/getDefaultPreset';
 import {
   setDefaultPresets,
   setFavoritePresetsFromLocalStorage,
-  unsetFavoritePresetsFromLocalStorage,
+  clearFavorites,
 } from 'state/rna-builder';
 import { IRnaPreset } from 'components/monomerLibrary/RnaBuilder/types';
 
@@ -156,7 +155,7 @@ function Editor({ theme, togglerComponent }: EditorProps) {
     return () => {
       dispatch(destroyEditor(null));
       dispatch(loadMonomerLibrary([]));
-      dispatch(unsetFavoriteMonomersFromLocalStorage(null));
+      dispatch(clearFavorites());
       document.removeEventListener('keydown', keyboardEventListener);
     };
   }, [dispatch]);
@@ -167,7 +166,7 @@ function Editor({ theme, togglerComponent }: EditorProps) {
     dispatch(setFavoritePresetsFromLocalStorage());
 
     return () => {
-      dispatch(unsetFavoritePresetsFromLocalStorage());
+      dispatch(clearFavorites());
     };
   }, [dispatch, monomers]);
 

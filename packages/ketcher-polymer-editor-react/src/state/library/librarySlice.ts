@@ -21,7 +21,7 @@ import { IRnaPreset } from 'components/monomerLibrary/RnaBuilder/types';
 import { MonomerItemType, SdfItem } from 'ketcher-core';
 import { LibraryNameType, FAVORITE_ITEMS_UNIQUE_KEYS } from 'src/constants';
 import { RootState } from 'state';
-import { localStorageCopy } from 'helpers/localStorage';
+import { localStorageWrapper } from 'helpers/localStorage';
 
 interface LibraryState {
   monomers: Group[];
@@ -82,9 +82,8 @@ export const librarySlice: Slice = createSlice({
     setFavoriteMonomersFromLocalStorage: (state: RootState) => {
       const localFavorites = {};
 
-      const favoritesInLocalStorage: null | string = localStorageCopy.getItem(
-        FAVORITE_ITEMS_UNIQUE_KEYS,
-      );
+      const favoritesInLocalStorage: null | string =
+        localStorageWrapper.getItem(FAVORITE_ITEMS_UNIQUE_KEYS);
 
       if (!favoritesInLocalStorage || !Array.isArray(favoritesInLocalStorage)) {
         return;
@@ -109,7 +108,7 @@ export const librarySlice: Slice = createSlice({
       state.favorites = localFavorites;
     },
 
-    unsetFavoriteMonomersFromLocalStorage: (state: RootState) => {
+    clearFavorites: (state: RootState) => {
       state.favorites = {};
     },
 
@@ -119,20 +118,20 @@ export const librarySlice: Slice = createSlice({
     ) => {
       const key: string = getMonomerUniqueKey(action.payload);
 
-      const favoriteItemsUniqueKeys = (localStorageCopy.getItem(
+      const favoriteItemsUniqueKeys = (localStorageWrapper.getItem(
         FAVORITE_ITEMS_UNIQUE_KEYS,
       ) || []) as string[];
 
       if (state.favorites[key]) {
         delete state.favorites[key];
-        localStorageCopy.setItem(
+        localStorageWrapper.setItem(
           FAVORITE_ITEMS_UNIQUE_KEYS,
           favoriteItemsUniqueKeys.filter((targetKey) => targetKey !== key),
         );
       } else {
         state.favorites[key] = { ...action.payload, favorite: true };
         favoriteItemsUniqueKeys.push(key);
-        localStorageCopy.setItem(
+        localStorageWrapper.setItem(
           FAVORITE_ITEMS_UNIQUE_KEYS,
           favoriteItemsUniqueKeys,
         );
@@ -226,7 +225,7 @@ export const selectCurrentTabIndex = (state) => state.library.selectedTabIndex;
 export const {
   loadMonomerLibrary,
   setFavoriteMonomersFromLocalStorage,
-  unsetFavoriteMonomersFromLocalStorage,
+  clearFavorites,
   toggleMonomerFavorites,
   setSearchFilter,
   setSelectedTabIndex,

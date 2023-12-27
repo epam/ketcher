@@ -132,6 +132,7 @@ export function analyse() {
       .catch((e) => {
         KetcherLogger.error('index.js::analyse', e);
         editor.errorHandler(e);
+        throw e;
       });
   };
 }

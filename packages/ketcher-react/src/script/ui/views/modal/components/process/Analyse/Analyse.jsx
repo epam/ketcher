@@ -26,6 +26,8 @@ import { connect } from 'react-redux';
 import { range } from 'lodash/fp';
 import Select from '../../../../../component/form/Select';
 import { getSelectOptionsFromSchema } from '../../../../../utils';
+import { ketcherProvider } from 'ketcher-core';
+import { GLOBAL_ERROR_HANDLER } from 'src/constants';
 
 function roundOff(value, round) {
   if (typeof value === 'number') return value.toFixed(round);
@@ -151,7 +153,14 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  onAnalyse: () => dispatch(analyse()),
+  onAnalyse: () => {
+    return dispatch(analyse()).catch((error) => {
+      const ketcher = ketcherProvider.getKetcher();
+      if (ketcher && ketcher.eventBus) {
+        ketcher.eventBus.emit(GLOBAL_ERROR_HANDLER, error);
+      }
+    });
+  },
   onChangeRound: (roundName, val) => dispatch(changeRound(roundName, val)),
 });
 

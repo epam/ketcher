@@ -22,7 +22,10 @@ import Recognize from '../../process/Recognize/Recognize';
 import { fileOpener } from '../../../../../utils/';
 import { DialogActionButton } from './components/DialogActionButton';
 import { ViewSwitcher } from './components/ViewSwitcher';
-import { getFormatMimeTypeByFileName } from 'ketcher-core';
+import { getFormatMimeTypeByFileName, ketcherProvider } from 'ketcher-core';
+import { GLOBAL_ERROR_HANDLER } from 'src/constants';
+import { useDispatch } from 'react-redux';
+import { load } from 'src/script/ui/state/shared';
 
 interface OpenProps {
   server: any;
@@ -86,7 +89,7 @@ const Open: FC<Props> = (props) => {
   const [fileName, setFileName] = useState<string>('');
   const [opener, setOpener] = useState<any>();
   const [currentState, setCurrentState] = useState(MODAL_STATES.idle);
-
+  const dispatch = useDispatch();
   useEffect(() => {
     if (server) {
       fileOpener(server).then((chosenOpener) => {
@@ -113,7 +116,19 @@ const Open: FC<Props> = (props) => {
 
   // @TODO after Recognize is refactored this will not be necessary
   // currently not destructuring onOk with other props so we can pass it with ...rest to Recognize below
-  const { onOk } = rest;
+
+  const ketcher = ketcherProvider.getKetcher();
+  const onOk = (res) => {
+    (
+      dispatch(
+        load(res.structStr, { rescale: true, fragment: res.fragment }),
+      ) as unknown as Promise<any>
+    ).catch((error) => {
+      if (ketcher && ketcher.eventBus) {
+        ketcher.eventBus.emit(GLOBAL_ERROR_HANDLER, error.message);
+      }
+    });
+  };
 
   const copyHandler = () => {
     const format = getFormatMimeTypeByFileName(fileName);

@@ -184,6 +184,7 @@ export function load(struct: Struct, options?) {
       KetcherLogger.error('shared.ts::load', e);
       dispatch(setAnalyzingFile(false));
       e && errorHandler && errorHandler(e.message);
+      throw e;
     } finally {
       notifyRequestCompleted();
     }

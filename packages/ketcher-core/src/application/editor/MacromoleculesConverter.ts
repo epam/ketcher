@@ -292,7 +292,11 @@ export class MacromoleculesConverter {
         MacromoleculesConverter.getAttachmentPointLabel(beginAtom);
       const endAtomAttachmentPointNumber =
         MacromoleculesConverter.getAttachmentPointLabel(endAtom);
-      if (beginAtomAttachmentPointNumber && endAtomAttachmentPointNumber) {
+      if (
+        beginAtomAttachmentPointNumber &&
+        endAtomAttachmentPointNumber &&
+        (beginAtomSgroup || endAtomSgroup)
+      ) {
         // Here we take monomers from sgroupToMonomer in case of macromolecules structure and
         // from fragmentIdToMonomer in case of micromolecules structure.
         const firstMonomer =

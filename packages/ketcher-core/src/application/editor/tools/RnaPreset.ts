@@ -23,7 +23,7 @@ import { MonomerItemType } from 'domain/types';
 import { monomerFactory } from '../operations/monomer/monomerFactory';
 import { RNABase } from 'domain/entities/RNABase';
 import { Phosphate } from 'domain/entities/Phosphate';
-import Coordinates from 'application/editor/shared/coordinates';
+import { Coordinates } from '../shared/coordinates';
 
 class RnaPresetTool implements Tool {
   rnaBase: MonomerItemType | undefined;

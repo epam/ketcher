@@ -14,7 +14,7 @@ import { MonomerItemType } from 'domain/types';
 import { RenderersManager } from 'application/render/renderers/RenderersManager';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import ZoomTool from './tools/Zoom';
-import Coordinates from './shared/coordinates';
+import { Coordinates } from './shared/coordinates';
 import {
   editorEvents,
   renderersEvents,

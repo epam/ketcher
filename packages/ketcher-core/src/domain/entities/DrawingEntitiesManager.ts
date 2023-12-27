@@ -36,6 +36,8 @@ import {
 import { monomerFactory } from 'application/editor/operations/monomer/monomerFactory';
 import { provideEditorSettings } from 'application/editor/editorSettings';
 import { Scale } from 'domain/helpers';
+import { Coordinates } from 'application/editor';
+import { getCurrentCenterPointOfCanvas } from 'application/utils';
 
 const HORIZONTAL_DISTANCE_FROM_MONOMER = 50;
 const VERTICAL_DISTANCE_FROM_MONOMER = 60;
@@ -1032,5 +1034,43 @@ export class DrawingEntitiesManager {
     this.micromoleculesHiddenEntities.mergeInto(
       targetDrawingEntitiesManager.micromoleculesHiddenEntities,
     );
+  }
+
+  public centerMacroStructure() {
+    const centerPointOfModel = Coordinates.canvasToModel(
+      getCurrentCenterPointOfCanvas(),
+    );
+    const structCenter = this.getMacroStructureCenter();
+    const offset = Vec2.diff(centerPointOfModel, structCenter);
+    this.monomers.forEach((monomer: BaseMonomer) => {
+      monomer.moveAbsolute(new Vec2(monomer.position).add(offset));
+    });
+    this.polymerBonds.forEach((bond: PolymerBond) => {
+      const { x: startX, y: startY } = new Vec2(bond.position).add(offset);
+      bond.moveBondStartAbsolute(startX, startY);
+      const { x: endX, y: endY } = new Vec2(bond.endPosition).add(offset);
+      bond.moveBondEndAbsolute(endX, endY);
+    });
+  }
+
+  public getMacroStructureCenter() {
+    let xmin = 1e50;
+    let ymin = xmin;
+    let xmax = -xmin;
+    let ymax = -ymin;
+
+    this.monomers.forEach((monomer: BaseMonomer) => {
+      xmin = Math.min(xmin, monomer.position.x);
+      ymin = Math.min(ymin, monomer.position.y);
+      xmax = Math.max(xmax, monomer.position.x);
+      ymax = Math.max(ymax, monomer.position.y);
+    });
+    this.polymerBonds.forEach((bond: PolymerBond) => {
+      xmin = Math.min(xmin, bond.position.x);
+      ymin = Math.min(ymin, bond.position.y);
+      xmax = Math.max(xmax, bond.position.x);
+      ymax = Math.max(ymax, bond.position.y);
+    });
+    return new Vec2((xmin + xmax) / 2, (ymin + ymax) / 2);
   }
 }

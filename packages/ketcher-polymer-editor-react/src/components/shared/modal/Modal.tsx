@@ -63,15 +63,15 @@ const Content = styled(DialogContent)`
 `;
 
 interface FooterProps {
-  $withBorder?: boolean;
+  withborder?: string;
 }
 
 const Footer = styled(DialogActions)<FooterProps>`
   height: 52px;
   margin: 0;
   padding: 0 12px;
-  border-top: ${({ theme, $withBorder }) =>
-    $withBorder ? theme.ketcher.border.small : 'none'};
+  border-top: ${({ theme, withborder }) =>
+    withborder === 'true' ? theme.ketcher.border.small : 'none'};
   justify-content: flex-end;
 
   .MuiButtonBase-root {

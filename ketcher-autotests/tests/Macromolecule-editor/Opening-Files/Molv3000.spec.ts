@@ -62,6 +62,10 @@ test.describe('MolV300 Files', () => {
     await openFileAndAddToCanvas('KET/monomers-and-chem.ket', page);
     await selectTopPanelButton(TopPanelButton.Save, page);
     await chooseFileFormat(page, 'MDL Molfile V3000');
+    await page
+      .getByTestId('dropdown-select')
+      .getByRole('combobox')
+      .allInnerTexts();
 
     const textArea = page.getByTestId('preview-area-text');
     const file = await readFileContents(

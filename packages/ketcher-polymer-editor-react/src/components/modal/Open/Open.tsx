@@ -62,6 +62,7 @@ const addToCanvas = ({
 }) => {
   const deserialisedKet = ketSerializer.deserializeToDrawingEntities(struct);
   assert(deserialisedKet);
+  deserialisedKet.drawingEntitiesManager.centerMacroStructure();
   deserialisedKet.drawingEntitiesManager.mergeInto(
     editor.drawingEntitiesManager,
   );
@@ -231,7 +232,7 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
       {getButtons().length === 0 ? (
         <></>
       ) : (
-        <Modal.Footer $withBorder>{getButtons()}</Modal.Footer>
+        <Modal.Footer withborder="true">{getButtons()}</Modal.Footer>
       )}
     </Modal>
   );

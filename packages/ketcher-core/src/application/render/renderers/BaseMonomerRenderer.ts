@@ -244,6 +244,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     return canvas
       .append('g')
       .data([this])
+      .attr('class', 'rootElement')
       .attr('transition', 'transform 0.2s')
       .attr(
         'transform',
@@ -251,6 +252,58 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
           this.scaledMonomerPosition.y
         }) scale(${this.scale || 1})`,
       ) as never as D3SvgElementSelection<SVGGElement, void>;
+  }
+
+  private appendToTheEnd() {
+    console.log(
+      'drawn-structures',
+      this.canvasWrapper.select('.drawn-structures'),
+    );
+
+    console.log(
+      'g',
+      this.canvasWrapper.select('.drawn-structures').selectAll('g'),
+    );
+
+    console.log(
+      'g first',
+      this.canvasWrapper.select('.drawn-structures').select('g'),
+    );
+
+    const gNodes = this.canvasWrapper
+      .select('.drawn-structures')
+      .selectAll('g')
+      .nodes();
+
+    const lastGNode = gNodes[gNodes.length - 1];
+    console.log('g last', lastGNode);
+
+    const copy = lastGNode.cloneNode(true);
+
+    console.log('copy', copy);
+
+    console.log(
+      'node()',
+      this.canvasWrapper.select('.drawn-structures').node(),
+    );
+
+    // inserts node to the bottom of the parent
+    // this.canvasWrapper.select('.drawn-structures').node().appendChild(copy);
+
+    // removes node
+    // this.canvasWrapper.select('.drawn-structures').select('g').remove();
+
+    // this method can help but we need to trigger it on click
+    this.canvasWrapper.select('.rootElement').raise();
+
+    // do not work
+    // const parentDiv = document.querySelector('.drawn-structures'); // Select the parent
+    // console.log('parentDiv', parentDiv);
+    // const paragraphs = document.querySelectorAll('g'); // Get all 'p' elements
+    // console.log('paragraphs', paragraphs);
+    // const lastParagraph = paragraphs[paragraphs.length - 1]; // Get the last 'p' element
+    // console.log('lastParagraph', lastParagraph);
+    // parentDiv.appendChild(lastParagraph);
   }
 
   private appendLabel(rootElement: D3SvgElementSelection<SVGGElement, void>) {
@@ -399,6 +452,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     assert(this.rootElement);
     if (this.monomer.selected) {
       this.appendSelection();
+      this.appendToTheEnd();
     } else {
       this.removeSelection();
     }

@@ -62,7 +62,7 @@ const addToCanvas = ({
 }) => {
   const deserialisedKet = ketSerializer.deserializeToDrawingEntities(struct);
   assert(deserialisedKet);
-  deserialisedKet.drawingEntitiesManager.centerMacroStructure(editor);
+  deserialisedKet.drawingEntitiesManager.centerMacroStructure();
   deserialisedKet.drawingEntitiesManager.mergeInto(
     editor.drawingEntitiesManager,
   );

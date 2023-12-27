@@ -36,7 +36,8 @@ import {
 import { monomerFactory } from 'application/editor/operations/monomer/monomerFactory';
 import { provideEditorSettings } from 'application/editor/editorSettings';
 import { Scale } from 'domain/helpers';
-import { Coordinates, CoreEditor } from 'application/editor';
+import { Coordinates } from 'application/editor';
+import { getCurrentCenterPointOfCanvas } from 'application/utils';
 
 const HORIZONTAL_DISTANCE_FROM_MONOMER = 50;
 const VERTICAL_DISTANCE_FROM_MONOMER = 60;
@@ -1035,9 +1036,9 @@ export class DrawingEntitiesManager {
     );
   }
 
-  public centerMacroStructure(editor: CoreEditor) {
+  public centerMacroStructure() {
     const centerPointOfModel = Coordinates.canvasToModel(
-      this.getCurrentCenterPointOfCanvas(editor),
+      getCurrentCenterPointOfCanvas(),
     );
     const structCenter = this.getMacroStructureCenter();
     const offset = Vec2.diff(centerPointOfModel, structCenter);
@@ -1050,14 +1051,6 @@ export class DrawingEntitiesManager {
       const { x: endX, y: endY } = new Vec2(bond.endPosition).add(offset);
       bond.moveBondEndAbsolute(endX, endY);
     });
-  }
-
-  public getCurrentCenterPointOfCanvas(editor: CoreEditor) {
-    const originalCenterPointOfCanvas = new Vec2(
-      editor.canvasOffset.width / 2,
-      editor.canvasOffset.height / 2,
-    );
-    return Coordinates.viewToCanvas(originalCenterPointOfCanvas);
   }
 
   public getMacroStructureCenter() {

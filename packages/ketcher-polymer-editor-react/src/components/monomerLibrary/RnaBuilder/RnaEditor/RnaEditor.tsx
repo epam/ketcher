@@ -30,7 +30,6 @@ import {
   selectActivePreset,
   selectIsEditMode,
   selectPresetFullName,
-  selectPresets,
   setActiveRnaBuilderItem,
   setIsEditMode,
 } from 'state/rna-builder';
@@ -46,12 +45,10 @@ export const scrollToSelectedMonomer = (monomerId) => {
 
 export const RnaEditor = ({ duplicatePreset }) => {
   const activePreset = useAppSelector(selectActivePreset);
-  const presets = useAppSelector(selectPresets);
   const isEditMode = useAppSelector(selectIsEditMode);
   const activePresetFullName = selectPresetFullName(activePreset);
 
   const dispatch = useAppDispatch();
-  const hasPresets = presets.length !== 0;
 
   const [expanded, setExpanded] = useState(false);
 
@@ -61,10 +58,8 @@ export const RnaEditor = ({ duplicatePreset }) => {
       return;
     }
 
-    if (!hasPresets) {
-      dispatch(createNewPreset());
-      dispatch(setActiveRnaBuilderItem(RnaBuilderPresetsItem.Presets));
-    }
+    dispatch(createNewPreset());
+    dispatch(setActiveRnaBuilderItem(RnaBuilderPresetsItem.Presets));
   }, [activePreset]);
 
   const expandEditor = () => {

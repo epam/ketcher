@@ -345,6 +345,37 @@ test.describe('Import-Saving-Files', () => {
     await takeEditorScreenshot(page);
   });
 
+  test('Check that you can save snake viewed chain of peptides in a Mol v3000 file', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Import/Saving files
+    Description: Snake viewed chain of peptides saved in a Mol v3000 file
+    */
+    await openFileAndAddToCanvas(
+      'Molfiles-V3000/snake-mode-peptides.mol',
+      page,
+    );
+    await page.getByTestId('snake-mode-button').click();
+    const expectedFile = await getMolfile(page);
+    await saveToFile(
+      'Molfiles-V3000/snake-mode-peptides-expected.mol',
+      expectedFile,
+    );
+
+    const METADATA_STRING_INDEX = [1];
+
+    const { fileExpected: molFileExpected, file: molFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/Molfiles-V3000/snake-mode-peptides-expected.mol',
+        metaDataIndexes: METADATA_STRING_INDEX,
+      });
+
+    expect(molFile).toEqual(molFileExpected);
+  });
+
   test('Check that .ket file with macro structures is imported correctly in macro mode when saving it in mirco mode', async ({
     page,
   }) => {
@@ -479,6 +510,52 @@ test.describe('Import modified .mol files from external editor', () => {
           await page.getByTestId('zoom-out-button').click();
         });
       }
+    });
+  }
+});
+
+test.describe('Base monomers on the canvas, their connection points and preview tooltips', () => {
+  /* 
+    Test case: https://github.com/epam/ketcher/issues/3780
+    Description: These bunch of tests validates that system correctly load every type of monomer 
+    (Peptide, Sugar, Base, Phosphates) from ket file, correctly show them on canvas (name, shape, color), 
+    shows correct number or connections and shows correct preview tooltip
+  */
+  test.beforeEach(async ({ page }) => {
+    await waitForPageInit(page);
+    await turnOnMacromoleculesEditor(page);
+  });
+
+  const fileNames = [
+    '01 - (R1) - Left only',
+    '04 - (R1,R2) - R3 gap',
+    '05 - (R1,R3) - R2 gap',
+    '08 - (R1,R2,R3)',
+    '09 - (R1,R3,R4)',
+    '12 - (R1,R2,R3,R4)',
+    '13 - (R1,R3,R4,R5)',
+    '15 - (R1,R2,R3,R4,R5)',
+  ];
+
+  for (const fileName of fileNames) {
+    test(`for ${fileName}`, async ({ page }) => {
+      await openFileAndAddToCanvas(`KET/Base-Templates/${fileName}.ket`, page);
+      await page.getByTestId('single-bond-button').click();
+      await page.getByText('R1').locator('..').hover();
+      await takeEditorScreenshot(page);
+
+      const expectedFile = await getKet(page);
+      await saveToFile(
+        `KET/Base-Templates/${fileName}-expected.ket`,
+        expectedFile,
+      );
+      const { file: ketFile, fileExpected: ketFileExpected } =
+        await receiveFileComparisonData({
+          page,
+          expectedFileName: `tests/test-data/KET/Base-Templates/${fileName}-expected.ket`,
+        });
+
+      expect(ketFile).toEqual(ketFileExpected);
     });
   }
 });

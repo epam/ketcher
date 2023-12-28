@@ -97,10 +97,11 @@ export async function parseAndAddMacromoleculesOnCanvas(
 
   const deserialisedKet = ketSerializer.deserializeToDrawingEntities(ketStruct);
   assert(deserialisedKet);
-  deserialisedKet.drawingEntitiesManager.mergeInto(
-    editor.drawingEntitiesManager,
-  );
-
+  const mergeCommand =
+    deserialisedKet.drawingEntitiesManager.mergeDrawingEntities(
+      editor.drawingEntitiesManager,
+    );
+  deserialisedKet.modelChanges.merge(mergeCommand);
   new EditorHistory(editor).update(deserialisedKet.modelChanges);
   editor.renderersContainer.update(deserialisedKet.modelChanges);
 }

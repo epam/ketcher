@@ -38,6 +38,7 @@ import { provideEditorSettings } from 'application/editor/editorSettings';
 import { Scale } from 'domain/helpers';
 import { Coordinates } from 'application/editor';
 import { getCurrentCenterPointOfCanvas } from 'application/utils';
+import { DrawingEntitiesMergeOperation } from 'application/editor/operations/drawingEntities';
 
 const HORIZONTAL_DISTANCE_FROM_MONOMER = 50;
 const VERTICAL_DISTANCE_FROM_MONOMER = 60;
@@ -59,6 +60,10 @@ export class DrawingEntitiesManager {
   public monomers: Map<number, BaseMonomer> = new Map();
   public polymerBonds: Map<number, PolymerBond> = new Map();
   public micromoleculesHiddenEntities: Struct = new Struct();
+  public previousTargetMicromoleculesHiddenEntities: Struct = new Struct();
+  public previousTargetMonomers: Map<number, BaseMonomer> = new Map();
+  public previousTargetPolymerBonds: Map<number, PolymerBond> = new Map();
+
   get selectedEntities() {
     return this.allEntities.filter(
       ([, drawingEntity]) => drawingEntity.selected,
@@ -1021,7 +1026,24 @@ export class DrawingEntitiesManager {
     this.micromoleculesHiddenEntities = new Struct();
   }
 
-  public mergeInto(targetDrawingEntitiesManager: DrawingEntitiesManager) {
+  public mergeDrawingEntities(
+    targetDrawingEntitiesManager: DrawingEntitiesManager,
+  ) {
+    const command = new Command();
+    const operation = new DrawingEntitiesMergeOperation(
+      this.drawingEntitiesMergeChange.bind(this, targetDrawingEntitiesManager),
+      this.invertDrawingEntitiesMergeChange.bind(
+        this,
+        targetDrawingEntitiesManager,
+      ),
+    );
+    command.addOperation(operation);
+    return command;
+  }
+
+  public drawingEntitiesMergeChange(
+    targetDrawingEntitiesManager: DrawingEntitiesManager,
+  ) {
     this.monomers.forEach((monomer) => {
       targetDrawingEntitiesManager.monomers.set(monomer.id, monomer);
     });
@@ -1031,9 +1053,26 @@ export class DrawingEntitiesManager {
         polymerBond,
       );
     });
+    this.previousTargetMicromoleculesHiddenEntities =
+      targetDrawingEntitiesManager.micromoleculesHiddenEntities.clone();
     this.micromoleculesHiddenEntities.mergeInto(
       targetDrawingEntitiesManager.micromoleculesHiddenEntities,
     );
+  }
+
+  public invertDrawingEntitiesMergeChange(
+    targetDrawingEntitiesManager: DrawingEntitiesManager,
+  ) {
+    this.monomers.forEach((monomer) => {
+      targetDrawingEntitiesManager.monomers.delete(monomer.id);
+    });
+    this.polymerBonds.forEach((polymerBond) => {
+      targetDrawingEntitiesManager.polymerBonds.delete(polymerBond.id);
+    });
+
+    // TODO: check if this works with soem test files
+    targetDrawingEntitiesManager.micromoleculesHiddenEntities =
+      this.previousTargetMicromoleculesHiddenEntities;
   }
 
   public centerMacroStructure() {

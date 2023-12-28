@@ -3,6 +3,9 @@ import {
   addMonomerToCanvas,
   clickRedo,
   clickUndo,
+  dragMouseTo,
+  openFileAndAddToCanvas,
+  selectRectangleArea,
   selectSingleBondTool,
   selectSnakeBondTool,
   takeEditorScreenshot,
@@ -108,6 +111,31 @@ test.describe('Undo Redo', () => {
     await clickUndo(page);
     await takeEditorScreenshot(page);
     await clickRedo(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Undo redo for imported structure', async ({ page }) => {
+    await openFileAndAddToCanvas(
+      'KET/peptide-enumeration-one-two-three.ket',
+      page,
+    );
+    await openFileAndAddToCanvas(
+      'KET/peptide-enumeration-one-two-three.ket',
+      page,
+    );
+    await clickUndo(page);
+    await takeEditorScreenshot(page);
+
+    const startX = 100;
+    const startY = 100;
+    const endX = 900;
+    const endY = 900;
+    await selectRectangleArea(page, startX, startY, endX, endY);
+
+    const coords = { x: 840, y: 470 };
+    await page.mouse.move(coords.x, coords.y);
+
+    await dragMouseTo(coords.x + 100, coords.y + 100, page);
     await takeEditorScreenshot(page);
   });
 });

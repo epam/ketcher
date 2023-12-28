@@ -51,8 +51,8 @@
         "type": "monomer",
         "id": "0",
         "position": {
-            "x": 10.625000000000002,
-            "y": -9.600000000000001
+            "x": 2.7466666666666666,
+            "y": -1.849999999999996
         },
         "alias": "baA",
         "templateId": "baA___N-benzyl-adenine"
@@ -141,7 +141,7 @@
                 ]
             },
             {
-                "label": "H",
+                "label": "R#",
                 "location": [
                     -2.4154692023025173,
                     -1.0123543806254647,
@@ -352,11 +352,9 @@
         "alias": "baA",
         "attachmentPoints": [
             {
-                "attachmentAtom": 6,
+                "attachmentAtom": 10,
                 "leavingGroup": {
-                    "atoms": [
-                        10
-                    ]
+                    "atoms": []
                 },
                 "type": "left"
             }
@@ -367,8 +365,8 @@
         "type": "monomer",
         "id": "1",
         "position": {
-            "x": 10.625000000000002,
-            "y": -7.050000000000001
+            "x": 2.7533333333333316,
+            "y": -2.574999999999998
         },
         "alias": "12ddR",
         "templateId": "12ddR___1',2'-Di-Deoxy-Ribose"
@@ -443,7 +441,7 @@
                 ]
             },
             {
-                "label": "H",
+                "label": "R#",
                 "location": [
                     -2.328569251455222,
                     -1.3847780810220063,
@@ -451,7 +449,7 @@
                 ]
             },
             {
-                "label": "H",
+                "label": "R#",
                 "location": [
                     2.2689050907691652,
                     -0.5819165753524786,
@@ -538,20 +536,16 @@
         "alias": "12ddR",
         "attachmentPoints": [
             {
-                "attachmentAtom": 7,
+                "attachmentAtom": 8,
                 "leavingGroup": {
-                    "atoms": [
-                        8
-                    ]
+                    "atoms": []
                 },
                 "type": "left"
             },
             {
-                "attachmentAtom": 5,
+                "attachmentAtom": 9,
                 "leavingGroup": {
-                    "atoms": [
-                        9
-                    ]
+                    "atoms": []
                 },
                 "type": "right"
             }
@@ -562,8 +556,8 @@
         "type": "monomer",
         "id": "2",
         "position": {
-            "x": 13.175,
-            "y": -7.050000000000001
+            "x": 3.6000000000000005,
+            "y": -2.5900000000000043
         },
         "alias": "P",
         "templateId": "P___Phosphate"
@@ -580,7 +574,7 @@
                 ]
             },
             {
-                "label": "O",
+                "label": "R#",
                 "location": [
                     -1.4399,
                     0,
@@ -596,7 +590,7 @@
                 ]
             },
             {
-                "label": "O",
+                "label": "R#",
                 "location": [
                     0.9601,
                     0,
@@ -647,20 +641,16 @@
         "alias": "P",
         "attachmentPoints": [
             {
-                "attachmentAtom": 0,
+                "attachmentAtom": 1,
                 "leavingGroup": {
-                    "atoms": [
-                        1
-                    ]
+                    "atoms": []
                 },
                 "type": "left"
             },
             {
-                "attachmentAtom": 0,
+                "attachmentAtom": 3,
                 "leavingGroup": {
-                    "atoms": [
-                        3
-                    ]
+                    "atoms": []
                 },
                 "type": "right"
             }

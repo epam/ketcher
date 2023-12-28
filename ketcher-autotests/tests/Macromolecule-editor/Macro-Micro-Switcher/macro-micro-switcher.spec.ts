@@ -24,16 +24,16 @@ const topLeftCorner = {
   y: -235,
 };
 
-async function zoomWithMouseWheel(
-  page: Page,
-  numberOfMouseWheelScroll: number,
-  randomMouseWheelScroll: number,
-) {
+async function zoomWithMouseWheel(page: Page, scrollValue: number) {
   await page.keyboard.down('Control');
-  for (let i = 0; i < numberOfMouseWheelScroll; i++) {
-    await page.mouse.wheel(0, randomMouseWheelScroll);
-  }
+  await page.mouse.wheel(0, scrollValue);
   await page.keyboard.up('Control');
+}
+
+async function scrollHorizontally(page: Page, scrollValue: number) {
+  await page.keyboard.down('Shift');
+  await page.mouse.wheel(0, scrollValue);
+  await page.keyboard.up('Shift');
 }
 
 async function pasteFromClipboard(page: Page, fileFormats: string) {
@@ -269,13 +269,14 @@ test.describe('Macro-Micro-Switcher', () => {
       page,
     );
     await turnOnMicromoleculesEditor(page);
+    await turnOnMacromoleculesEditor(page);
     // eslint-disable-next-line no-magic-numbers
-    await zoomWithMouseWheel(page, 5, -80);
+    await zoomWithMouseWheel(page, -400);
 
     await takeEditorScreenshot(page);
 
     // eslint-disable-next-line no-magic-numbers
-    await zoomWithMouseWheel(page, 5, 50);
+    await zoomWithMouseWheel(page, 250);
 
     await takeEditorScreenshot(page);
     await page.getByTestId('reset-zoom-button').click();
@@ -303,7 +304,7 @@ test.describe('Macro-Micro-Switcher', () => {
     await takeEditorScreenshot(page);
 
     // eslint-disable-next-line no-magic-numbers
-    await zoomWithMouseWheel(page, 5, 50);
+    await zoomWithMouseWheel(page, 250);
 
     await turnOnMacromoleculesEditor(page);
     await takeEditorScreenshot(page);
@@ -491,8 +492,12 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher
     Description: In Macro mode ABS, AND and OR is not appear
     */
+    const zoomOutValue = 500;
+    const scrollRightValue = -500;
     await openFileAndAddToCanvas('KET/three-alpha-d-allopyranose.ket', page);
     await turnOnMacromoleculesEditor(page);
+    await zoomWithMouseWheel(page, zoomOutValue);
+    await scrollHorizontally(page, scrollRightValue);
     await page.getByText('F1').locator('..').hover();
     await takeEditorScreenshot(page);
   });
@@ -521,11 +526,15 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher
     Description: Ket-structure pasted from the clipboard in Micro mode  is visible in Macro mode when hover on it
     */
+    const topLeftCornerCoords = {
+      x: 100,
+      y: 100,
+    };
     await pasteFromClipboard(
       page,
       FILE_TEST_DATA.oneFunctionalGroupExpandedKet,
     );
-    await page.mouse.click(topLeftCorner.x, topLeftCorner.y);
+    await page.mouse.click(topLeftCornerCoords.x, topLeftCornerCoords.y);
     await turnOnMacromoleculesEditor(page);
     await page.getByText('F1').locator('..').click();
     await takeEditorScreenshot(page);
@@ -538,11 +547,17 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher
     Description: Mol-structure pasted from the clipboard in Micro mode  is visible in Macro mode when hover on it
     */
+    const coordsToClick = {
+      x: 200,
+      y: 100,
+    };
     await pasteFromClipboard(
       page,
       FILE_TEST_DATA.functionalGroupsExpandedContractedV3000,
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await waitForRender(page, async () => {
+      await page.mouse.click(coordsToClick.x, coordsToClick.y);
+    });
     await turnOnMacromoleculesEditor(page);
     await page.getByText('F1').locator('..').hover();
     await takeEditorScreenshot(page);

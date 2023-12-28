@@ -17,9 +17,7 @@ export abstract class BaseMonomer extends DrawingEntity {
   public renderer?: BaseMonomerRenderer = undefined;
   public attachmentPointsToBonds: Partial<
     Record<AttachmentPointName, PolymerBond | null>
-  > = {
-    R1: null,
-  };
+  > = {};
 
   public chosenFirstAttachmentPointForBond: string | null;
   public potentialSecondAttachmentPointForBond: string | null;
@@ -27,9 +25,7 @@ export abstract class BaseMonomer extends DrawingEntity {
 
   public potentialAttachmentPointsToBonds: {
     [key: string]: PolymerBond | null | undefined;
-  } = {
-    R1: null,
-  };
+  } = {};
 
   public attachmentPointsVisible = false;
   public monomerItem: MonomerItemType;
@@ -37,14 +33,16 @@ export abstract class BaseMonomer extends DrawingEntity {
     super(_position);
 
     this.monomerItem = { ...monomerItem };
-    this.attachmentPointsToBonds = this.getAttachmentPointDict();
-    this.potentialAttachmentPointsToBonds = this.getAttachmentPointDict();
+    if (!this.monomerItem.props.isMicromoleculeFragment) {
+      this.attachmentPointsToBonds = this.getAttachmentPointDict();
+      this.potentialAttachmentPointsToBonds = this.getAttachmentPointDict();
+      this.monomerItem.attachmentPoints =
+        this.monomerItem.attachmentPoints ||
+        this.getMonomerDefinitionAttachmentPoints();
+    }
     this.chosenFirstAttachmentPointForBond = null;
     this.potentialSecondAttachmentPointForBond = null;
     this.chosenSecondAttachmentPointForBond = null;
-    this.monomerItem.attachmentPoints =
-      this.monomerItem.attachmentPoints ||
-      this.getMonomerDefinitionAttachmentPoints();
   }
 
   public get label() {

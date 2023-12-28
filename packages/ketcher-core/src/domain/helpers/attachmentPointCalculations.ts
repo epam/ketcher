@@ -1,4 +1,4 @@
-import CoordinatesTool from 'application/editor/shared/coordinates';
+import { Coordinates as CoordinatesTool } from 'application/editor/shared/coordinates';
 import { BaseMonomer } from 'domain/entities';
 import { Vec2 } from 'domain/entities/vec2';
 

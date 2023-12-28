@@ -234,7 +234,10 @@ export class KetSerializer implements Serializer<Struct> {
         this.validateConnectionTypeAndEndpoints(connection, editor);
       },
     );
-    return { error, parsedFileContent };
+    return {
+      error,
+      parsedFileContent,
+    };
   }
 
   deserializeToStruct(fileContent: string) {

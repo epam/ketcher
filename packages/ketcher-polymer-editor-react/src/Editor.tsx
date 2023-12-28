@@ -43,7 +43,11 @@ import {
   selectTool,
   showPreview,
 } from 'state/common';
-import { loadMonomerLibrary } from 'state/library';
+import {
+  loadMonomerLibrary,
+  selectMonomers,
+  setFavoriteMonomersFromLocalStorage,
+} from 'state/library';
 import { useAppDispatch, useAppSelector, useSnakeMode } from 'hooks';
 import {
   closeErrorTooltip,
@@ -78,6 +82,13 @@ import { EditorWrapper } from './styledComponents';
 import { useLoading } from './hooks/useLoading';
 import { Loader } from 'components/Loader';
 import { FullscreenButton } from 'components/FullscreenButton';
+import { getDefaultPresets } from 'src/helpers/getDefaultPreset';
+import {
+  setDefaultPresets,
+  setFavoritePresetsFromLocalStorage,
+  clearFavorites,
+} from 'state/rna-builder';
+import { IRnaPreset } from 'components/monomerLibrary/RnaBuilder/types';
 
 const muiTheme = createTheme(muiOverrides);
 
@@ -133,19 +144,32 @@ function Editor({ theme, togglerComponent }: EditorProps) {
   const isLoading = useLoading();
   let keyboardEventListener;
   const [isMonomerLibraryHidden, setIsMonomerLibraryHidden] = useState(false);
+  const monomers = useAppSelector(selectMonomers);
 
   useEffect(() => {
     dispatch(createEditor({ theme, canvas: canvasRef.current }));
     const serializer = new SdfSerializer();
     const library = serializer.deserialize(monomersData);
     dispatch(loadMonomerLibrary(library));
+    dispatch(setFavoriteMonomersFromLocalStorage(null));
 
     return () => {
       dispatch(destroyEditor(null));
       dispatch(loadMonomerLibrary([]));
+      dispatch(clearFavorites());
       document.removeEventListener('keydown', keyboardEventListener);
     };
   }, [dispatch]);
+
+  useEffect(() => {
+    const defaultPresets: IRnaPreset[] = getDefaultPresets(monomers);
+    dispatch(setDefaultPresets(defaultPresets));
+    dispatch(setFavoritePresetsFromLocalStorage());
+
+    return () => {
+      dispatch(clearFavorites());
+    };
+  }, [dispatch, monomers]);
 
   const dispatchShowPreview = useCallback(
     (payload) => dispatch(showPreview(payload)),

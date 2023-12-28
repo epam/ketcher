@@ -18,6 +18,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { ModalContainer } from 'components/modal/modalContainer';
 import { RnaBuilder } from 'components/monomerLibrary/RnaBuilder';
 import { MONOMER_TYPES } from 'src/constants';
+import mockedPresets from './mockedPresets.json';
 
 jest.mock('../../../src/helpers/dom.ts', () => {
   return {
@@ -65,6 +66,7 @@ const monomerData = [
 describe('RNA ContextMenu', () => {
   const editPreset = jest.fn();
   const duplicatePreset = jest.fn();
+
   it('should render contextMenu correctly', () => {
     render(
       withThemeAndStoreProvider(
@@ -78,6 +80,9 @@ describe('RNA ContextMenu', () => {
             searchFilter: '',
             favorites: {},
             monomers: monomerData,
+          },
+          rnaBuilder: {
+            presets: mockedPresets,
           },
         },
       ),
@@ -100,6 +105,9 @@ describe('RNA ContextMenu', () => {
             searchFilter: '',
             favorites: {},
             monomers: monomerData,
+          },
+          rnaBuilder: {
+            presets: mockedPresets,
           },
         },
       ),
@@ -126,6 +134,9 @@ describe('RNA ContextMenu', () => {
             searchFilter: '',
             favorites: {},
             monomers: monomerData,
+          },
+          rnaBuilder: {
+            presets: mockedPresets,
           },
         },
       ),

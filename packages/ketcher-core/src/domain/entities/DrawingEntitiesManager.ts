@@ -297,7 +297,7 @@ export class DrawingEntitiesManager {
     rectangleBottomRightPoint: Vec2,
   ) {
     const command = new Command();
-    console.log(this.polymerBonds);
+
     this.allEntities.forEach(([, drawingEntity]) => {
       const isValueChanged = drawingEntity.selectIfLocatedInRectangle(
         rectangleTopLeftPoint,

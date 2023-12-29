@@ -297,6 +297,7 @@ export class DrawingEntitiesManager {
     rectangleBottomRightPoint: Vec2,
   ) {
     const command = new Command();
+
     this.allEntities.forEach(([, drawingEntity]) => {
       const isValueChanged = drawingEntity.selectIfLocatedInRectangle(
         rectangleTopLeftPoint,
@@ -1022,18 +1023,39 @@ export class DrawingEntitiesManager {
   }
 
   public mergeInto(targetDrawingEntitiesManager: DrawingEntitiesManager) {
+    const command = new Command();
+    const monomerToNewMonomer = new Map<BaseMonomer, BaseMonomer>();
     this.monomers.forEach((monomer) => {
-      targetDrawingEntitiesManager.monomers.set(monomer.id, monomer);
+      const monomerAddCommand = targetDrawingEntitiesManager.addMonomer(
+        monomer.monomerItem,
+        monomer.position,
+      );
+      monomerToNewMonomer.set(
+        monomer,
+        monomerAddCommand.operations[0].monomer as BaseMonomer,
+      );
+      command.merge(monomerAddCommand);
     });
     this.polymerBonds.forEach((polymerBond) => {
-      targetDrawingEntitiesManager.polymerBonds.set(
-        polymerBond.id,
-        polymerBond,
-      );
+      assert(polymerBond.secondMonomer);
+      const polymerBondCreateCommand =
+        targetDrawingEntitiesManager.createPolymerBond(
+          monomerToNewMonomer.get(polymerBond.firstMonomer) as BaseMonomer,
+          monomerToNewMonomer.get(polymerBond.secondMonomer) as BaseMonomer,
+          polymerBond.firstMonomer.getAttachmentPointByBond(
+            polymerBond,
+          ) as AttachmentPointName,
+          polymerBond.secondMonomer.getAttachmentPointByBond(
+            polymerBond,
+          ) as AttachmentPointName,
+        );
+      command.merge(polymerBondCreateCommand);
     });
     this.micromoleculesHiddenEntities.mergeInto(
       targetDrawingEntitiesManager.micromoleculesHiddenEntities,
     );
+
+    return command;
   }
 
   public centerMacroStructure() {

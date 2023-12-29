@@ -777,3 +777,286 @@ test.describe('Sugar monomers on the canvas, their connection points and preview
     });
   }
 });
+
+test.describe('Base monomers on the canvas, their connection points and preview tooltips(from .mol file)', () => {
+  /* 
+    Test case: https://github.com/epam/ketcher/issues/3780
+    Description: These bunch of tests validates that system correctly load every type of monomer 
+    (Base) from .mol file, correctly show them on canvas (name, shape, color), 
+    shows correct number or connections and shows correct preview tooltip
+  */
+  test.beforeEach(async ({ page }) => {
+    await waitForPageInit(page);
+    await turnOnMacromoleculesEditor(page);
+  });
+
+  const fileNames = [
+    '01 - (R1) - Left only',
+    '04 - (R1,R2) - R3 gap',
+    '05 - (R1,R3) - R2 gap',
+    '08 - (R1,R2,R3)',
+    '09 - (R1,R3,R4)',
+    '12 - (R1,R2,R3,R4)',
+    '13 - (R1,R3,R4,R5)',
+    '15 - (R1,R2,R3,R4,R5)',
+  ];
+
+  for (const fileName of fileNames) {
+    test(`for ${fileName}`, async ({ page }) => {
+      await openFileAndAddToCanvas(
+        `Molfiles-V3000/Base-Templates/${fileName}.mol`,
+        page,
+      );
+      await page.getByTestId('single-bond-button').click();
+      await page.getByText('R1').locator('..').hover();
+      await takeEditorScreenshot(page);
+
+      const expectedFile = await getMolfile(page);
+      await saveToFile(
+        `Molfiles-V3000/Base-Templates/${fileName}-expected.mol`,
+        expectedFile,
+      );
+      const METADATA_STRING_INDEX = [1];
+      const { file: molFile, fileExpected: molFileExpected } =
+        await receiveFileComparisonData({
+          page,
+          expectedFileName: `tests/test-data/Molfiles-V3000/Base-Templates/${fileName}-expected.mol`,
+          metaDataIndexes: METADATA_STRING_INDEX,
+        });
+
+      expect(molFile).toEqual(molFileExpected);
+    });
+  }
+});
+
+test.describe('CHEM monomers on the canvas, their connection points and preview tooltips(from .mol file)', () => {
+  /* 
+    Test case: https://github.com/epam/ketcher/issues/3780
+    Description: These bunch of tests validates that system correctly load every type of monomer 
+    (CHEM) from .mol file, correctly show them on canvas (name, shape, color), 
+    shows correct number or connections and shows correct preview tooltip
+  */
+  test.beforeEach(async ({ page }) => {
+    await waitForPageInit(page);
+    await turnOnMacromoleculesEditor(page);
+  });
+
+  const fileNames = [
+    '01 - (R1) - Left only',
+    '02 - (R2) - Right only',
+    '03 - (R3) - Side only',
+    '04 - (R1,R2) - R3 gap',
+    '05 - (R1,R3) - R2 gap',
+    '06 - (R2,R3) - R1 gap',
+    '07 - (R3,R4)',
+    '08 - (R1,R2,R3)',
+    '09 - (R1,R3,R4)',
+    '10 - (R2,R3,R4)',
+    '11 - (R3,R4,R5)',
+    '12 - (R1,R2,R3,R4)',
+    '13 - (R1,R3,R4,R5)',
+    '14 - (R2,R3,R4,R5)',
+    '15 - (R1,R2,R3,R4,R5)',
+  ];
+
+  for (const fileName of fileNames) {
+    test(`for ${fileName}`, async ({ page }) => {
+      await openFileAndAddToCanvas(
+        `Molfiles-V3000/CHEM-Templates/${fileName}.mol`,
+        page,
+      );
+      await page.getByTestId('single-bond-button').click();
+      await page.getByText('(R').locator('..').first().hover();
+      await takeEditorScreenshot(page);
+
+      const expectedFile = await getMolfile(page);
+      await saveToFile(
+        `Molfiles-V3000/CHEM-Templates/${fileName}-expected.mol`,
+        expectedFile,
+      );
+      const METADATA_STRING_INDEX = [1];
+      const { file: molFile, fileExpected: molFileExpected } =
+        await receiveFileComparisonData({
+          page,
+          expectedFileName: `tests/test-data/Molfiles-V3000/CHEM-Templates/${fileName}-expected.mol`,
+          metaDataIndexes: METADATA_STRING_INDEX,
+        });
+
+      expect(molFile).toEqual(molFileExpected);
+    });
+  }
+});
+
+test.describe('Peptide monomers on the canvas, their connection points and preview tooltips(from .mol file)', () => {
+  /* 
+    Test case: https://github.com/epam/ketcher/issues/3780
+    Description: These bunch of tests validates that system correctly load every type of monomer 
+    (Peptide) from .mol file, correctly show them on canvas (name, shape, color), 
+    shows correct number or connections and shows correct preview tooltip
+  */
+  test.beforeEach(async ({ page }) => {
+    await waitForPageInit(page);
+    await turnOnMacromoleculesEditor(page);
+  });
+
+  const fileNames = [
+    '01 - (R1) - Left only',
+    '02 - (R2) - Right only',
+    '03 - (R3) - Side only',
+    '04 - (R1,R2) - R3 gap',
+    '05 - (R1,R3) - R2 gap',
+    '06 - (R2,R3) - R1 gap',
+    '07 - (R3,R4)',
+    '08 - (R1,R2,R3)',
+    '09 - (R1,R3,R4)',
+    '10 - (R2,R3,R4)',
+    '11 - (R3,R4,R5)',
+    '12 - (R1,R2,R3,R4)',
+    '13 - (R1,R3,R4,R5)',
+    '14 - (R2,R3,R4,R5)',
+    '15 - (R1,R2,R3,R4,R5)',
+  ];
+
+  for (const fileName of fileNames) {
+    test(`for ${fileName}`, async ({ page }) => {
+      await openFileAndAddToCanvas(
+        `Molfiles-V3000/Peptide-Templates/${fileName}.mol`,
+        page,
+      );
+      await page.getByTestId('single-bond-button').click();
+      await page.getByText('(R').locator('..').first().hover();
+      await takeEditorScreenshot(page);
+
+      const expectedFile = await getMolfile(page);
+      await saveToFile(
+        `Molfiles-V3000/Peptide-Templates/${fileName}-expected.mol`,
+        expectedFile,
+      );
+      const METADATA_STRING_INDEX = [1];
+      const { file: molFile, fileExpected: molFileExpected } =
+        await receiveFileComparisonData({
+          page,
+          expectedFileName: `tests/test-data/Molfiles-V3000/Peptide-Templates/${fileName}-expected.mol`,
+          metaDataIndexes: METADATA_STRING_INDEX,
+        });
+
+      expect(molFile).toEqual(molFileExpected);
+    });
+  }
+});
+
+test.describe('Phosphate monomers on the canvas, their connection points and preview tooltips(from .mol file)', () => {
+  /* 
+    Test case: https://github.com/epam/ketcher/issues/3780
+    Description: These bunch of tests validates that system correctly load every type of monomer 
+    (Phosphate) from .mol file, correctly show them on canvas (name, shape, color), 
+    shows correct number or connections and shows correct preview tooltip
+  */
+  test.beforeEach(async ({ page }) => {
+    await waitForPageInit(page);
+    await turnOnMacromoleculesEditor(page);
+  });
+
+  const fileNames = [
+    '01 - (R1) - Left only',
+    '02 - (R2) - Right only',
+    '03 - (R3) - Side only',
+    '04 - (R1,R2) - R3 gap',
+    '05 - (R1,R3) - R2 gap',
+    '06 - (R2,R3) - R1 gap',
+    '07 - (R3,R4)',
+    '08 - (R1,R2,R3)',
+    '09 - (R1,R3,R4)',
+    '10 - (R2,R3,R4)',
+    '11 - (R3,R4,R5)',
+    '12 - (R1,R2,R3,R4)',
+    '13 - (R1,R3,R4,R5)',
+    '14 - (R2,R3,R4,R5)',
+    '15 - (R1,R2,R3,R4,R5)',
+  ];
+
+  for (const fileName of fileNames) {
+    test(`for ${fileName}`, async ({ page }) => {
+      await openFileAndAddToCanvas(
+        `Molfiles-V3000/Phosphate-Templates/${fileName}.mol`,
+        page,
+      );
+      await page.getByTestId('single-bond-button').click();
+      await page.getByText('(R').locator('..').first().hover();
+      await takeEditorScreenshot(page);
+
+      const expectedFile = await getMolfile(page);
+      await saveToFile(
+        `Molfiles-V3000/Phosphate-Templates/${fileName}-expected.mol`,
+        expectedFile,
+      );
+      const METADATA_STRING_INDEX = [1];
+      const { file: molFile, fileExpected: molFileExpected } =
+        await receiveFileComparisonData({
+          page,
+          expectedFileName: `tests/test-data/Molfiles-V3000/Phosphate-Templates/${fileName}-expected.mol`,
+          metaDataIndexes: METADATA_STRING_INDEX,
+        });
+
+      expect(molFile).toEqual(molFileExpected);
+    });
+  }
+});
+
+test.describe('Sugar monomers on the canvas, their connection points and preview tooltips(from .mol file)', () => {
+  /* 
+    Test case: https://github.com/epam/ketcher/issues/3780
+    Description: These bunch of tests validates that system correctly load every type of monomer 
+    (Sugar) from .mol file, correctly show them on canvas (name, shape, color), 
+    shows correct number or connections and shows correct preview tooltip
+  */
+  test.beforeEach(async ({ page }) => {
+    await waitForPageInit(page);
+    await turnOnMacromoleculesEditor(page);
+  });
+
+  const fileNames = [
+    '01 - (R1) - Left only',
+    '02 - (R2) - Right only',
+    '03 - (R3) - Side only',
+    '04 - (R1,R2) - R3 gap',
+    '05 - (R1,R3) - R2 gap',
+    '06 - (R2,R3) - R1 gap',
+    '07 - (R3,R4)',
+    '08 - (R1,R2,R3)',
+    '09 - (R1,R3,R4)',
+    '10 - (R2,R3,R4)',
+    '11 - (R3,R4,R5)',
+    '12 - (R1,R2,R3,R4)',
+    '13 - (R1,R3,R4,R5)',
+    '14 - (R2,R3,R4,R5)',
+    '15 - (R1,R2,R3,R4,R5)',
+  ];
+
+  for (const fileName of fileNames) {
+    test(`for ${fileName}`, async ({ page }) => {
+      await openFileAndAddToCanvas(
+        `Molfiles-V3000/Sugar-Templates/${fileName}.mol`,
+        page,
+      );
+      await page.getByTestId('single-bond-button').click();
+      await page.getByText('(R').locator('..').first().hover();
+      await takeEditorScreenshot(page);
+
+      const expectedFile = await getMolfile(page);
+      await saveToFile(
+        `Molfiles-V3000/Sugar-Templates/${fileName}-expected.mol`,
+        expectedFile,
+      );
+      const METADATA_STRING_INDEX = [1];
+      const { file: molFile, fileExpected: molFileExpected } =
+        await receiveFileComparisonData({
+          page,
+          expectedFileName: `tests/test-data/Molfiles-V3000/Sugar-Templates/${fileName}-expected.mol`,
+          metaDataIndexes: METADATA_STRING_INDEX,
+        });
+
+      expect(molFile).toEqual(molFileExpected);
+    });
+  }
+});

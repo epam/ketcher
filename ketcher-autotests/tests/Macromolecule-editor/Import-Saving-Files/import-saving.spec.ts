@@ -594,7 +594,7 @@ test.describe('CHEM monomers on the canvas, their connection points and preview 
     test(`for ${fileName}`, async ({ page }) => {
       await openFileAndAddToCanvas(`KET/CHEM-Templates/${fileName}.ket`, page);
       await page.getByTestId('single-bond-button').click();
-      await page.getByText(`${fileName}`).hover();
+      await page.getByText('(R').locator('..').first().hover();
       await takeEditorScreenshot(page);
 
       const expectedFile = await getKet(page);

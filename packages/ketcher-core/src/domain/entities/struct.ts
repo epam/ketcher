@@ -280,8 +280,13 @@ export class Struct {
 
     this.sgroups.forEach((sg) => {
       if (sg.atoms.some((aid) => !atomSet!.has(aid))) return;
+      const oldSgroup = sg;
 
-      sg = SGroup.clone(sg, aidMap!);
+      sg =
+        oldSgroup instanceof MonomerMicromolecule
+          ? MonomerMicromolecule.clone(oldSgroup)
+          : SGroup.clone(sg, aidMap!);
+
       const id = cp.sgroups.add(sg);
       sg.id = id;
 

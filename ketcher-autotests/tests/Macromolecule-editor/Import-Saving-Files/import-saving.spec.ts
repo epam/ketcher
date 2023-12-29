@@ -518,7 +518,7 @@ test.describe('Base monomers on the canvas, their connection points and preview 
   /* 
     Test case: https://github.com/epam/ketcher/issues/3780
     Description: These bunch of tests validates that system correctly load every type of monomer 
-    (Peptide, Sugar, Base, Phosphates) from ket file, correctly show them on canvas (name, shape, color), 
+    (Base) from ket file, correctly show them on canvas (name, shape, color), 
     shows correct number or connections and shows correct preview tooltip
   */
   test.beforeEach(async ({ page }) => {
@@ -553,6 +553,59 @@ test.describe('Base monomers on the canvas, their connection points and preview 
         await receiveFileComparisonData({
           page,
           expectedFileName: `tests/test-data/KET/Base-Templates/${fileName}-expected.ket`,
+        });
+
+      expect(ketFile).toEqual(ketFileExpected);
+    });
+  }
+});
+
+test.describe('CHEM monomers on the canvas, their connection points and preview tooltips', () => {
+  /* 
+    Test case: https://github.com/epam/ketcher/issues/3780
+    Description: These bunch of tests validates that system correctly load every type of monomer 
+    (CHEM) from ket file, correctly show them on canvas (name, shape, color), 
+    shows correct number or connections and shows correct preview tooltip
+  */
+  test.beforeEach(async ({ page }) => {
+    await waitForPageInit(page);
+    await turnOnMacromoleculesEditor(page);
+  });
+
+  const fileNames = [
+    '01 - (R1) - Left only',
+    '02 - (R2) - Right only',
+    '03 - (R3) - Side only',
+    '04 - (R1,R2) - R3 gap',
+    '05 - (R1,R3) - R2 gap',
+    '06 - (R2,R3) - R1 gap',
+    '07 - (R3,R4)',
+    '08 - (R1,R2,R3)',
+    '09 - (R1,R3,R4)',
+    '10 - (R2,R3,R4)',
+    '11 - (R3,R4,R5)',
+    '12 - (R1,R2,R3,R4)',
+    '13 - (R1,R3,R4,R5)',
+    '14 - (R2,R3,R4,R5)',
+    '15 - (R1,R2,R3,R4,R5)',
+  ];
+
+  for (const fileName of fileNames) {
+    test(`for ${fileName}`, async ({ page }) => {
+      await openFileAndAddToCanvas(`KET/CHEM-Templates/${fileName}.ket`, page);
+      await page.getByTestId('single-bond-button').click();
+      await page.getByText(`${fileName}`).hover();
+      await takeEditorScreenshot(page);
+
+      const expectedFile = await getKet(page);
+      await saveToFile(
+        `KET/CHEM-Templates/${fileName}-expected.ket`,
+        expectedFile,
+      );
+      const { file: ketFile, fileExpected: ketFileExpected } =
+        await receiveFileComparisonData({
+          page,
+          expectedFileName: `tests/test-data/KET/CHEM-Templates/${fileName}-expected.ket`,
         });
 
       expect(ketFile).toEqual(ketFileExpected);

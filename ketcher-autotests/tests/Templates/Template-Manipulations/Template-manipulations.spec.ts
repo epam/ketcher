@@ -148,9 +148,7 @@ test.describe('Template Manupulations', () => {
     await dragMouseTo(rotationHandleX, rotationHandleY - shift, page);
   });
 
-  test('Place template on the Canvas', async ({
-    page,
-  }) => {
+  test('Place template on the Canvas', async ({ page }) => {
     /*
     Test case: 1678
     Description: Choose any template and click on the canvas.

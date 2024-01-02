@@ -273,7 +273,7 @@ function showAttachmentPointShape(
   );
   const attachmentPointEnd = atomPositionVector.addScaled(
     directionVector,
-    options.scale * 0.85,
+    options.microModeScale * 0.85,
   );
 
   const resultShape = draw.rgroupAttachmentPoint(
@@ -350,7 +350,7 @@ function showAttachmentPointLabel(
   const labelPosition = getLabelPositionForAttachmentPoint(
     atomPositionVector,
     directionVector,
-    options.scale,
+    options.microModeScale,
   );
   const labelPath = draw.rgroupAttachmentPointLabel(
     paper,

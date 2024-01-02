@@ -21,6 +21,8 @@ function removeNotComparableData(file: string) {
     .join('\n');
 }
 
+const topLeftCorner = -300;
+
 test.describe('MolV300 Files', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
@@ -28,7 +30,12 @@ test.describe('MolV300 Files', () => {
   });
 
   test('Import', async ({ page }) => {
-    await openFileAndAddToCanvas('Molfiles-V3000/monomers-and-chem.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V3000/monomers-and-chem.mol',
+      page,
+      topLeftCorner,
+      topLeftCorner,
+    );
     await takeEditorScreenshot(page);
   });
 

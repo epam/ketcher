@@ -36,13 +36,15 @@ const MonomerItem = ({
       ? item.props.MonomerType
       : item.props.MonomerNaturalAnalogCode;
 
+  const monomerKey: string = getMonomerUniqueKey(item);
+
   return (
     <Card
       onClick={onClick}
       selected={isSelected}
       disabled={disabled}
-      data-testid={getMonomerUniqueKey(item)}
-      data-monomer-item-id={getMonomerUniqueKey(item)}
+      data-testid={monomerKey}
+      data-monomer-item-id={monomerKey}
       code={colorCode}
       onMouseLeave={onMouseLeave}
       onMouseMove={onMouseMove}

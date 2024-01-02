@@ -63,12 +63,12 @@ const addToCanvas = ({
   const deserialisedKet = ketSerializer.deserializeToDrawingEntities(struct);
   assert(deserialisedKet);
   deserialisedKet.drawingEntitiesManager.centerMacroStructure();
-  deserialisedKet.drawingEntitiesManager.mergeInto(
+  const modelChanges = deserialisedKet.drawingEntitiesManager.mergeInto(
     editor.drawingEntitiesManager,
   );
   const editorHistory = new EditorHistory(editor);
-  editorHistory.update(deserialisedKet.modelChanges);
-  editor.renderersContainer.update(deserialisedKet.modelChanges);
+  editorHistory.update(modelChanges);
+  editor.renderersContainer.update(modelChanges);
 };
 
 // TODO: replace after the implementation of the function for processing the structure from the file

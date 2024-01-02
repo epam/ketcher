@@ -97,12 +97,12 @@ export async function parseAndAddMacromoleculesOnCanvas(
 
   const deserialisedKet = ketSerializer.deserializeToDrawingEntities(ketStruct);
   assert(deserialisedKet);
-  deserialisedKet.drawingEntitiesManager.mergeInto(
+  const modelChanges = deserialisedKet.drawingEntitiesManager.mergeInto(
     editor.drawingEntitiesManager,
   );
 
-  new EditorHistory(editor).update(deserialisedKet.modelChanges);
-  editor.renderersContainer.update(deserialisedKet.modelChanges);
+  new EditorHistory(editor).update(modelChanges);
+  editor.renderersContainer.update(modelChanges);
 }
 
 export function getCurrentCenterPointOfCanvas() {

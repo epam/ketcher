@@ -77,9 +77,11 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: Preview window of macro structure doesn't change in micro mode
     Test working incorrect now because we have bug https://github.com/epam/ketcher/issues/3603
     */
+    const scrollValue = -400;
     const moleculeLabels = ['A', '25R', 'baA', 'Test-6-Ph', 'Test-6-Ch'];
     await openFileAndAddToCanvas('KET/five-monomers.ket', page);
     await turnOnMicromoleculesEditor(page);
+    await scrollHorizontally(page, scrollValue);
     for (const label of moleculeLabels) {
       await page.getByText(label, { exact: true }).hover();
       await takeEditorScreenshot(page);

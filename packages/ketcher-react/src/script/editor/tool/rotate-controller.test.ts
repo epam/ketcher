@@ -126,7 +126,7 @@ describe('Rotate controller', () => {
     // @ts-ignore
     controller.editor.render = {
       options: {
-        scale: 2,
+        microModeScale: 2,
         offset: new Vec2(1, 1),
       },
     } as any;

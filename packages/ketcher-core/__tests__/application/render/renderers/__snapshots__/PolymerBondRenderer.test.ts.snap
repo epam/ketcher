@@ -26,18 +26,18 @@ exports[`Polymer Bond Renderer should render bond 1`] = `
         pointer-events="stroke"
         stroke="#333333"
         stroke-width="2"
-        x1="400"
-        x2="3600"
-        y1="400"
-        y2="4000"
+        x1="1500"
+        x2="13500"
+        y1="1500"
+        y2="15000"
       />
       <line
         stroke="transparent"
         stroke-width="10"
-        x1="400"
-        x2="3600"
-        y1="400"
-        y2="4000"
+        x1="1500"
+        x2="13500"
+        y1="1500"
+        y2="15000"
       />
     </g>
   </g>

@@ -11,25 +11,25 @@ describe('Coordinates', () => {
 
   it('should convert page coordinates to model coordinates', () => {
     const converted = Coordinates.canvasToModel(position);
-    const coordinates = new Vec2(2.5, 2.5, 0);
+    const coordinates = new Vec2(0.6666666666666667, 0.6666666666666667, 0);
     expect(converted).toEqual(coordinates);
   });
 
   it('should convert view coordinates to model coordinates', () => {
     const converted = Coordinates.viewToModel(position);
-    const coordinates = new Vec2(1.25, 1.25, 0);
+    const coordinates = new Vec2(0.33333333333333337, 0.33333333333333337, 0);
     expect(converted).toEqual(coordinates);
   });
 
   it('should convert modal coordinates to view coordinates', () => {
     const coordinates = Coordinates.modelToView(position);
-    const converted = new Vec2(4840, 4840, 0);
+    const converted = new Vec2(18040, 18040, 0);
     expect(coordinates).toEqual(converted);
   });
 
   it('should convert modal coordinates to page coordinates', () => {
     const coordinates = Coordinates.modelToCanvas(position);
-    const converted = new Vec2(4000, 4000, 0);
+    const converted = new Vec2(15000, 15000, 0);
     expect(coordinates).toEqual(converted);
   });
 

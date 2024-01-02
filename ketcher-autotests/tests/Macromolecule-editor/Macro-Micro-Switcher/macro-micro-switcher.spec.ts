@@ -19,16 +19,21 @@ import {
   waitForRender,
 } from '@utils';
 
-async function zoomWithMouseWheel(
-  page: Page,
-  numberOfMouseWheelScroll: number,
-  randomMouseWheelScroll: number,
-) {
+const topLeftCorner = {
+  x: -425,
+  y: -235,
+};
+
+async function zoomWithMouseWheel(page: Page, scrollValue: number) {
   await page.keyboard.down('Control');
-  for (let i = 0; i < numberOfMouseWheelScroll; i++) {
-    await page.mouse.wheel(0, randomMouseWheelScroll);
-  }
+  await page.mouse.wheel(0, scrollValue);
   await page.keyboard.up('Control');
+}
+
+async function scrollHorizontally(page: Page, scrollValue: number) {
+  await page.keyboard.down('Shift');
+  await page.mouse.wheel(0, scrollValue);
+  await page.keyboard.up('Shift');
 }
 
 async function pasteFromClipboard(page: Page, fileFormats: string) {
@@ -72,9 +77,11 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: Preview window of macro structure doesn't change in micro mode
     Test working incorrect now because we have bug https://github.com/epam/ketcher/issues/3603
     */
+    const scrollValue = -400;
     const moleculeLabels = ['A', '25R', 'baA', 'Test-6-Ph', 'Test-6-Ch'];
     await openFileAndAddToCanvas('KET/five-monomers.ket', page);
     await turnOnMicromoleculesEditor(page);
+    await scrollHorizontally(page, scrollValue);
     for (const label of moleculeLabels) {
       await page.getByText(label, { exact: true }).hover();
       await takeEditorScreenshot(page);
@@ -105,7 +112,12 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: Micromolecules in macromode represented as CHEMs with generated name(F1, F2, ...Fn)
     */
     await turnOnMicromoleculesEditor(page);
-    await openFileAndAddToCanvas('KET/eight-micromolecules.ket', page);
+    await openFileAndAddToCanvas(
+      'KET/eight-micromolecules.ket',
+      page,
+      topLeftCorner.x,
+      topLeftCorner.y,
+    );
     await turnOnMacromoleculesEditor(page);
     await takeEditorScreenshot(page);
   });
@@ -135,14 +147,19 @@ test.describe('Macro-Micro-Switcher', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Check that the Ket-structure opened from the file in Macro mode  is visible in Micro mode', async ({
+  test('Check that the Ket-structure opened from the file in Macro mode is visible in Micro mode', async ({
     page,
   }) => {
     /* 
     Test case: Macro-Micro-Switcher
     Description: Mol-structure opened from the file in Macro mode is visible on Micro mode when
     */
-    await openFileAndAddToCanvas('KET/stereo-and-structure.ket', page);
+    await openFileAndAddToCanvas(
+      'KET/stereo-and-structure.ket',
+      page,
+      topLeftCorner.x,
+      topLeftCorner.y,
+    );
     await turnOnMicromoleculesEditor(page);
     await takeEditorScreenshot(page);
   });
@@ -256,12 +273,12 @@ test.describe('Macro-Micro-Switcher', () => {
     await turnOnMicromoleculesEditor(page);
     await turnOnMacromoleculesEditor(page);
     // eslint-disable-next-line no-magic-numbers
-    await zoomWithMouseWheel(page, 5, -80);
+    await zoomWithMouseWheel(page, -400);
 
     await takeEditorScreenshot(page);
 
     // eslint-disable-next-line no-magic-numbers
-    await zoomWithMouseWheel(page, 5, 50);
+    await zoomWithMouseWheel(page, 250);
 
     await takeEditorScreenshot(page);
     await page.getByTestId('reset-zoom-button').click();
@@ -289,7 +306,7 @@ test.describe('Macro-Micro-Switcher', () => {
     await takeEditorScreenshot(page);
 
     // eslint-disable-next-line no-magic-numbers
-    await zoomWithMouseWheel(page, 5, 50);
+    await zoomWithMouseWheel(page, 250);
 
     await turnOnMacromoleculesEditor(page);
     await takeEditorScreenshot(page);
@@ -371,7 +388,12 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher
     Description: Mol-structure opened from the file in Micro mode is visible on Macro mode when hover on it
     */
-    await openFileAndAddToCanvas('Molfiles-V2000/glutamine.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/glutamine.mol',
+      page,
+      topLeftCorner.x,
+      topLeftCorner.y,
+    );
     await turnOnMacromoleculesEditor(page);
     await page.getByText('F1').locator('..').click();
     await takeEditorScreenshot(page);
@@ -384,7 +406,12 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher
     Description: Mol-structure opened from the file in Micro mode is visible on Macro mode when hover on it
     */
-    await openFileAndAddToCanvas('KET/stereo-and-structure.ket', page);
+    await openFileAndAddToCanvas(
+      'KET/stereo-and-structure.ket',
+      page,
+      topLeftCorner.x,
+      topLeftCorner.y,
+    );
     await turnOnMacromoleculesEditor(page);
     await page.getByText('F1').locator('..').hover();
     await takeEditorScreenshot(page);
@@ -397,7 +424,12 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher
     Description: Structure exists on the canvas with changes by Charge Plus (+) Tool and Charge Plus (-).
     */
-    await openFileAndAddToCanvas('KET/two-benzene-charged.ket', page);
+    await openFileAndAddToCanvas(
+      'KET/two-benzene-charged.ket',
+      page,
+      topLeftCorner.x,
+      topLeftCorner.y,
+    );
     await turnOnMacromoleculesEditor(page);
     await page.getByText('F2').locator('..').hover();
     await takeEditorScreenshot(page);
@@ -410,7 +442,12 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher
     Description: Structure exists on the canvas without text.
     */
-    await openFileAndAddToCanvas('KET/benzene-rings-with-text.ket', page);
+    await openFileAndAddToCanvas(
+      'KET/benzene-rings-with-text.ket',
+      page,
+      topLeftCorner.x,
+      topLeftCorner.y,
+    );
     await turnOnMacromoleculesEditor(page);
     await page.getByText('F1').locator('..').hover();
     await takeEditorScreenshot(page);
@@ -423,7 +460,12 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher
     Description: Structure exists on the canvas without Shape Ellipse.
     */
-    await openFileAndAddToCanvas('KET/two-benzene-and-ellipse.ket', page);
+    await openFileAndAddToCanvas(
+      'KET/two-benzene-and-ellipse.ket',
+      page,
+      topLeftCorner.x,
+      topLeftCorner.y,
+    );
     await turnOnMacromoleculesEditor(page);
     await takeEditorScreenshot(page);
   });
@@ -435,7 +477,12 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher
     Description: Structures exists on the canvas without  arrow ( Arrow Open Angle Tool )
     */
-    await openFileAndAddToCanvas('KET/two-benzene-and-arrow.ket', page);
+    await openFileAndAddToCanvas(
+      'KET/two-benzene-and-arrow.ket',
+      page,
+      topLeftCorner.x,
+      topLeftCorner.y,
+    );
     await turnOnMacromoleculesEditor(page);
     await takeEditorScreenshot(page);
   });
@@ -447,8 +494,12 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher
     Description: In Macro mode ABS, AND and OR is not appear
     */
+    const zoomOutValue = 500;
+    const scrollRightValue = -500;
     await openFileAndAddToCanvas('KET/three-alpha-d-allopyranose.ket', page);
     await turnOnMacromoleculesEditor(page);
+    await zoomWithMouseWheel(page, zoomOutValue);
+    await scrollHorizontally(page, scrollRightValue);
     await page.getByText('F1').locator('..').hover();
     await takeEditorScreenshot(page);
   });
@@ -460,23 +511,32 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher
     Description: In Macro mode plus sign is not appear
     */
-    await openFileAndAddToCanvas('KET/two-benzene-and-plus.ket', page);
+    await openFileAndAddToCanvas(
+      'KET/two-benzene-and-plus.ket',
+      page,
+      topLeftCorner.x,
+      topLeftCorner.y,
+    );
     await turnOnMacromoleculesEditor(page);
     await takeEditorScreenshot(page);
   });
 
-  test('Check that the Ket-structure pasted from the clipboard in Micro mode  is visible in Macro mode when hover on it.', async ({
+  test('Check that the Ket-structure pasted from the clipboard in Micro mode is visible in Macro mode when hover on it.', async ({
     page,
   }) => {
     /* 
     Test case: Macro-Micro-Switcher
     Description: Ket-structure pasted from the clipboard in Micro mode  is visible in Macro mode when hover on it
     */
+    const topLeftCornerCoords = {
+      x: 100,
+      y: 100,
+    };
     await pasteFromClipboard(
       page,
       FILE_TEST_DATA.oneFunctionalGroupExpandedKet,
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await page.mouse.click(topLeftCornerCoords.x, topLeftCornerCoords.y);
     await turnOnMacromoleculesEditor(page);
     await page.getByText('F1').locator('..').click();
     await takeEditorScreenshot(page);
@@ -489,11 +549,17 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher
     Description: Mol-structure pasted from the clipboard in Micro mode  is visible in Macro mode when hover on it
     */
+    const coordsToClick = {
+      x: 200,
+      y: 100,
+    };
     await pasteFromClipboard(
       page,
       FILE_TEST_DATA.functionalGroupsExpandedContractedV3000,
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await waitForRender(page, async () => {
+      await page.mouse.click(coordsToClick.x, coordsToClick.y);
+    });
     await turnOnMacromoleculesEditor(page);
     await page.getByText('F1').locator('..').hover();
     await takeEditorScreenshot(page);
@@ -507,7 +573,12 @@ test.describe('Macro-Micro-Switcher', () => {
     Description:  Full screen mode is not reset
     Test working not properly now because we have bug https://github.com/epam/ketcher/issues/3656
     */
-    await openFileAndAddToCanvas('KET/two-benzene-and-plus.ket', page);
+    await openFileAndAddToCanvas(
+      'KET/two-benzene-and-plus.ket',
+      page,
+      topLeftCorner.x,
+      topLeftCorner.y,
+    );
     await page.getByTestId('fullscreen-mode-button').click();
     await turnOnMacromoleculesEditor(page);
     await takePageScreenshot(page);

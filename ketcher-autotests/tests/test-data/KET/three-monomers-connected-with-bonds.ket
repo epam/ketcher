@@ -2,35 +2,35 @@
     "root": {
         "nodes": [
             {
-                "$ref": "monomer76"
+                "$ref": "monomer0"
             },
             {
-                "$ref": "monomer77"
+                "$ref": "monomer1"
             },
             {
-                "$ref": "monomer78"
+                "$ref": "monomer2"
             }
         ],
         "connections": [
             {
                 "connectionType": "single",
                 "endpoint1": {
-                    "monomerId": "monomer76",
+                    "monomerId": "monomer0",
                     "attachmentPointId": "R2"
                 },
                 "endpoint2": {
-                    "monomerId": "monomer77",
+                    "monomerId": "monomer1",
                     "attachmentPointId": "R1"
                 }
             },
             {
                 "connectionType": "single",
                 "endpoint1": {
-                    "monomerId": "monomer77",
+                    "monomerId": "monomer1",
                     "attachmentPointId": "R2"
                 },
                 "endpoint2": {
-                    "monomerId": "monomer78",
+                    "monomerId": "monomer2",
                     "attachmentPointId": "R1"
                 }
             }
@@ -47,12 +47,12 @@
             }
         ]
     },
-    "monomer76": {
+    "monomer0": {
         "type": "monomer",
-        "id": "76",
+        "id": "0",
         "position": {
-            "x": 10.325000000000001,
-            "y": -5.2250000000000005
+            "x": 4.55333333333334,
+            "y": 3.6133333333333364
         },
         "alias": "A",
         "templateId": "A___Alanine"
@@ -63,16 +63,16 @@
             {
                 "label": "N",
                 "location": [
-                    -0.9805331061317907,
-                    -0.3062945076130863,
+                    -1.2549,
+                    -0.392,
                     0
                 ]
             },
             {
                 "label": "C",
                 "location": [
-                    -0.21253088283357008,
-                    0.20573302003705513,
+                    -0.272,
+                    0.2633,
                     0
                 ],
                 "stereoLabel": "abs"
@@ -80,32 +80,32 @@
             {
                 "label": "C",
                 "location": [
-                    -0.24245710640903237,
-                    1.3590256048251048,
+                    -0.3103,
+                    1.7393,
                     0
                 ]
             },
             {
                 "label": "C",
                 "location": [
-                    0.8222288529623742,
-                    -0.3062945076130863,
+                    1.0523,
+                    -0.392,
                     0
                 ]
             },
             {
                 "label": "O",
                 "location": [
-                    0.8461385772811508,
-                    -1.2284597573196283,
+                    1.0829,
+                    -1.5722,
                     0
                 ]
             },
             {
                 "type": "rg-label",
                 "location": [
-                    1.5903092126145777,
-                    0.20573302003705513,
+                    2.0353,
+                    0.2633,
                     0
                 ],
                 "$refs": [
@@ -115,8 +115,8 @@
             {
                 "type": "rg-label",
                 "location": [
-                    -1.8232336838376928,
-                    0.07071340035455181,
+                    -2.3334,
+                    0.0905,
                     0
                 ],
                 "$refs": [
@@ -190,12 +190,12 @@
             }
         ]
     },
-    "monomer77": {
+    "monomer1": {
         "type": "monomer",
-        "id": "77",
+        "id": "1",
         "position": {
-            "x": 14.525,
-            "y": -5.125
+            "x": 5.780000000000007,
+            "y": 3.553333333333336
         },
         "alias": "Edc",
         "templateId": "Edc___S-ethylthiocysteine"
@@ -393,12 +393,12 @@
             }
         ]
     },
-    "monomer78": {
+    "monomer2": {
         "type": "monomer",
-        "id": "78",
+        "id": "2",
         "position": {
-            "x": 19.175,
-            "y": -5.300000000000001
+            "x": 7.266666666666668,
+            "y": 3.7733333333333356
         },
         "alias": "A6OH",
         "templateId": "A6OH___6-amino-hexanol"

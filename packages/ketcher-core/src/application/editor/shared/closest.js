@@ -98,7 +98,10 @@ function findClosestSimpleObject(restruct, pos) {
   let ret = null;
 
   restruct.simpleObjects.forEach((simpleObject, id) => {
-    const dist = simpleObject.calcDistance(pos, restruct.render.options.scale);
+    const dist = simpleObject.calcDistance(
+      pos,
+      restruct.render.options.microModeScale,
+    );
 
     if (dist.minDist < 0.3 && (!ret || dist.minDist < minDist)) {
       minDist = dist.minDist;
@@ -323,7 +326,10 @@ function findClosestRxnArrow(restruct, pos) {
   let ret = null;
 
   restruct.rxnArrows.forEach((rxnArrow, id) => {
-    const dist = rxnArrow.calcDistance(pos, restruct.render.options.scale);
+    const dist = rxnArrow.calcDistance(
+      pos,
+      restruct.render.options.microModeScale,
+    );
 
     if (dist.minDist < 0.3 && (!ret || dist.minDist < minDist)) {
       minDist = dist.minDist;

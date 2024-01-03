@@ -85,7 +85,9 @@ test.describe('Macro-Micro-Switcher', () => {
     await turnOnMicromoleculesEditor(page);
     await scrollHorizontally(page, scrollValue);
     for (const label of moleculeLabels) {
-      await page.getByText(label, { exact: true }).hover();
+      await waitForRender(page, async () => {
+        await page.getByText(label, { exact: true }).hover();
+      });
       await takeEditorScreenshot(page);
     }
   });
@@ -496,13 +498,11 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher
     Description: In Macro mode ABS, AND and OR is not appear
     */
-    const zoomOutValue = 500;
-    const scrollRightValue = 750;
     await openFileAndAddToCanvas('KET/three-alpha-d-allopyranose.ket', page);
     await turnOnMacromoleculesEditor(page);
-    await zoomWithMouseWheel(page, zoomOutValue);
-    await scrollHorizontally(page, scrollRightValue);
-    await page.getByText('F1').locator('..').hover();
+    await waitForRender(page, async () => {
+      await page.getByText('F1').locator('..').hover();
+    });
     await takeEditorScreenshot(page);
   });
 

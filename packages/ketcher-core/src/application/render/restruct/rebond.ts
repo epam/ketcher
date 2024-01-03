@@ -1105,11 +1105,11 @@ function getBondAromaticPath(
 
   if (bond.b.type === Bond.PATTERN.TYPE.SINGLE_OR_AROMATIC) {
     mask = bondShift > 0 ? 1 : 2;
-    dash = dashdotPattern.map((v) => v * options.scale);
+    dash = dashdotPattern.map((v) => v * options.microModeScale);
   }
   if (bond.b.type === Bond.PATTERN.TYPE.DOUBLE_OR_AROMATIC) {
     mask = 3;
-    dash = dashdotPattern.map((v) => v * options.scale);
+    dash = dashdotPattern.map((v) => v * options.microModeScale);
   }
   const paths = getAromaticBondPaths(
     hb1,

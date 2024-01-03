@@ -4,12 +4,12 @@ import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import assert from 'assert';
 import { D3SvgElementSelection } from 'application/render/types';
 import { editorEvents } from 'application/editor/editorEvents';
-import { Scale } from 'domain/helpers';
 import { Vec2 } from 'domain/entities';
 import { Peptide } from 'domain/entities/Peptide';
 import { Chem } from 'domain/entities/Chem';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { SnakeMode } from 'application/editor/modes/internal';
+import { Coordinates } from 'application/editor/shared/coordinates';
 
 const LINE_FROM_MONOMER_LENGTH = 15;
 const VERTICAL_LINE_LENGTH = 42;
@@ -89,14 +89,12 @@ export class PolymerBondRenderer extends BaseRenderer {
   private get scaledPosition() {
     // we need to convert monomer coordinates(stored in angstroms) to pixels.
     // it needs to be done in view layer of application (like renderers)
-    const startPositionInPixels = Scale.modelToCanvas(
+    const startPositionInPixels = Coordinates.modelToCanvas(
       this.polymerBond.startPosition,
-      this.editorSettings,
     );
 
-    const endPositionInPixels = Scale.modelToCanvas(
+    const endPositionInPixels = Coordinates.modelToCanvas(
       this.polymerBond.endPosition,
-      this.editorSettings,
     );
 
     return {

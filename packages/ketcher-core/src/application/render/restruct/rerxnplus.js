@@ -33,7 +33,7 @@ class ReRxnPlus extends ReObject {
 
   hoverPath(render) {
     const p = Scale.modelToCanvas(this.item.pp, render.options);
-    const s = render.options.scale;
+    const s = render.options.microModeScale;
     /* eslint-disable no-mixed-operators */
     return render.paper.rect(p.x - s / 4, p.y - s / 4, s / 2, s / 2, s / 8);
     /* eslint-enable no-mixed-operators */

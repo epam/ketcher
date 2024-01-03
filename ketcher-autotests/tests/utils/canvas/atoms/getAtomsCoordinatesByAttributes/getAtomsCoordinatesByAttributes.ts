@@ -29,7 +29,7 @@ export async function getAtomsCoordinatesByAttributes(
     return {
       // eslint-disable-next-line no-unsafe-optional-chaining
       atoms: [...window.ketcher?.editor?.struct()?.atoms?.values()],
-      scale: window.ketcher?.editor?.options()?.scale,
+      scale: window.ketcher?.editor?.options()?.microModeScale,
       offset: window.ketcher?.editor?.options()?.offset,
     };
   });

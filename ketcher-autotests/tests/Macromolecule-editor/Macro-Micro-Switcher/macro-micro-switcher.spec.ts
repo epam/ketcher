@@ -494,12 +494,8 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher
     Description: In Macro mode ABS, AND and OR is not appear
     */
-    const zoomOutValue = 500;
-    const scrollRightValue = -500;
     await openFileAndAddToCanvas('KET/three-alpha-d-allopyranose.ket', page);
     await turnOnMacromoleculesEditor(page);
-    await zoomWithMouseWheel(page, zoomOutValue);
-    await scrollHorizontally(page, scrollRightValue);
     await page.getByText('F1').locator('..').hover();
     await takeEditorScreenshot(page);
   });

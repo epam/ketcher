@@ -26,6 +26,7 @@ import { MacromoleculesConverter } from 'application/editor/MacromoleculesConver
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { ketcherProvider } from 'application/utils';
 import { SnakeMode } from './modes/internal';
+import { keyNorm } from '../../utilities/keynorm';
 
 interface ICoreEditorConstructorParams {
   theme;
@@ -61,6 +62,7 @@ export class CoreEditor {
     this.renderersContainer = new RenderersManager({ theme });
     this.drawingEntitiesManager = new DrawingEntitiesManager();
     this.domEventSetup();
+    this.setupHotKeysEvents();
     this.canvasOffset = this.canvas.getBoundingClientRect();
     this.zoomTool = ZoomTool.initInstance(this.drawingEntitiesManager);
     // eslint-disable-next-line @typescript-eslint/no-this-alias
@@ -72,6 +74,75 @@ export class CoreEditor {
 
   static provideEditorInstance(): CoreEditor {
     return editor;
+  }
+
+  setupHotKeysEvents() {
+    document.addEventListener('keydown', (event) => {
+      const keySettings = {
+        exit: {
+          shortcut: ['Shift+Tab', 'Escape'],
+          action: () => {
+            this.onSelectTool('select-rectangle');
+            //TODO: add switching to default button
+          },
+        },
+        undo: {
+          shortcut: ['Ctrl+z', 'Meta+z'],
+          action: () => {
+            this.onSelectHistory('undo');
+          },
+        },
+        redo: {
+          shortcut: ['Shift+Ctrl+Z', 'Ctrl+Y', 'Shift+Meta+Z', 'Meta+y'],
+          action: () => {
+            this.onSelectHistory('redo');
+          },
+        },
+        erase: {
+          shortcut: ['Del'], // cannot test on Mac
+          action: () => {
+            this.onSelectTool('erase');
+          },
+        },
+        clear: {
+          shortcut: ['Ctrl+Del'], // cannot test on Mac
+          action: () => {
+            this.onSelectTool('clear');
+            this.onSelectTool('select-rectangle');
+          },
+        },
+        'zoom-plus': {
+          shortcut: ['Ctrl+=', 'Meta+='],
+          action: () => {
+            //TODO
+          },
+        },
+        'zoom-minus': {
+          shortcut: ['Ctrl+-', 'Meta+-'],
+          action: () => {
+            //TODO
+          },
+        },
+        'zoom-reset': {
+          shortcut: ['Ctrl+0', 'Meta+0'],
+          action: () => {
+            //TODO
+          },
+        },
+      };
+      const shortcut = keyNorm(event);
+      const key = Object.entries(keySettings).reduce((acc, cur) => {
+        const [key, value] = cur;
+        const shortcutExists = value.shortcut.find((el) => el === shortcut);
+        if (shortcutExists) acc += key;
+        return acc;
+      }, '');
+
+      if (keySettings[key] && keySettings[key].action) {
+        keySettings[key].action();
+        event.preventDefault();
+      }
+    });
   }
 
   private subscribeEvents() {

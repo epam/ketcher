@@ -62,7 +62,8 @@ function modifiers(name, event, shift) {
   if (event.altKey) name = 'Alt+' + name;
   if (event.ctrlKey) name = 'Ctrl+' + name;
   if (event.metaKey) name = 'Meta+' + name;
-  if (shift !== false && event.shiftKey) name = 'Shift+' + name;
+  if (event.shiftKey && (shift !== false || event.key !== 'Shift'))
+    name = 'Shift+' + name;
 
   return name;
 }
@@ -89,7 +90,7 @@ export function isControlKey(event) {
 function keyNorm(obj) {
   if (obj instanceof KeyboardEvent)
     // eslint-disable-line no-undef
-    return normalizeKeyEvent(...arguments); // eslint-disable-line prefer-rest-params
+    return normalizeKeyEvent(obj); // eslint-disable-line prefer-rest-params
 
   return typeof obj === 'object' ? normalizeKeyMap(obj) : normalizeKeyName(obj);
 }
@@ -111,4 +112,4 @@ function lookup(map, event) {
 
 keyNorm.lookup = lookup;
 
-export default keyNorm;
+export { keyNorm };

@@ -2,35 +2,35 @@
     "root": {
         "nodes": [
             {
-                "$ref": "monomer1"
+                "$ref": "monomer75"
             },
             {
-                "$ref": "monomer5"
+                "$ref": "monomer76"
             },
             {
-                "$ref": "monomer7"
+                "$ref": "monomer77"
             }
         ],
         "connections": [
             {
                 "connectionType": "single",
                 "endpoint1": {
-                    "monomerId": "monomer1",
+                    "monomerId": "monomer75",
                     "attachmentPointId": "R1"
                 },
                 "endpoint2": {
-                    "monomerId": "monomer5",
+                    "monomerId": "monomer76",
                     "attachmentPointId": "R1"
                 }
             },
             {
                 "connectionType": "single",
                 "endpoint1": {
-                    "monomerId": "monomer5",
+                    "monomerId": "monomer76",
                     "attachmentPointId": "R2"
                 },
                 "endpoint2": {
-                    "monomerId": "monomer7",
+                    "monomerId": "monomer77",
                     "attachmentPointId": "R1"
                 }
             }
@@ -47,12 +47,12 @@
             }
         ]
     },
-    "monomer1": {
+    "monomer75": {
         "type": "monomer",
-        "id": "1",
+        "id": "75",
         "position": {
-            "x": 4.95,
-            "y": -7.800000000000001
+            "x": 2.5691666666666704,
+            "y": -2.3606667073567724
         },
         "alias": "Test-6-Ch",
         "templateId": "Test-6-Ch___Test-6-AP-Chem"
@@ -446,12 +446,12 @@
             }
         ]
     },
-    "monomer5": {
+    "monomer76": {
         "type": "monomer",
-        "id": "5",
+        "id": "76",
         "position": {
-            "x": 9.35,
-            "y": -7.9
+            "x": 3.7891666666666666,
+            "y": -2.3606667073567706
         },
         "alias": "A6OH",
         "templateId": "A6OH___6-amino-hexanol"
@@ -629,12 +629,12 @@
             }
         ]
     },
-    "monomer7": {
+    "monomer77": {
         "type": "monomer",
-        "id": "7",
+        "id": "77",
         "position": {
-            "x": 14.225000000000001,
-            "y": -7.875
+            "x": 4.990833333333333,
+            "y": -2.3490000406901044
         },
         "alias": "SMPEG2",
         "templateId": "SMPEG2___SM(PEG)2 linker from Pierce"

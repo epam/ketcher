@@ -16,8 +16,8 @@
         "type": "monomer",
         "id": "1",
         "position": {
-            "x": 11.9,
-            "y": -8.325000000000001
+            "x": 3.1733333333333333,
+            "y": -2.22
         },
         "alias": "(R2)_-_Right_only",
         "templateId": "_R2_-_Right_only_"

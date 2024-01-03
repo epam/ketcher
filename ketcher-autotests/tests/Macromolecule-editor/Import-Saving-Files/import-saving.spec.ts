@@ -43,31 +43,28 @@ test.describe('Import-Saving-Files', () => {
     Test case: https://github.com/epam/ketcher/issues/3667
     https://github.com/epam/ketcher/issues/3668
     Description: Monomers are not stacked, easy to read, colors and preview match with Ketcher library after importing a file
-    Test working incorrect now because we have 2 bugs https://github.com/epam/ketcher/issues/3667 https://github.com/epam/ketcher/issues/3668
     */
     await openFileAndAddToCanvas('Molfiles-V3000/peptide-bzl.mol', page);
     await page.getByText('K').locator('..').first().hover();
     await takeEditorScreenshot(page);
   });
 
-  test.fixme(
-    'After importing a file with modified monomers, it is clear which monomer is modified, and when hovering, preview display changes made during modification',
-    async ({ page }) => {
-      /* 
+  test('After importing a file with modified monomers, it is clear which monomer is modified, and when hovering, preview display changes made during modification', async ({
+    page,
+  }) => {
+    /* 
     Test case: https://github.com/epam/ketcher/issues/3669
     Description: After importing a file with modified monomers, it is clear which monomer is modified, 
     and when hovering, preview display changes made during modification
-    Test working incorrect now because we have bug https://github.com/epam/ketcher/issues/3669
-    The file opening but modified monomer located under another stack monomers and playwright can't hover over it.
     */
-      await openFileAndAddToCanvas(
-        'Molfiles-V3000/dna-mod-base-sugar-phosphate-example.mol',
-        page,
-      );
-      await page.getByText('cdaC').locator('..').hover();
-      await takeEditorScreenshot(page);
-    },
-  );
+    await openFileAndAddToCanvas(
+      'Molfiles-V3000/dna-mod-base-sugar-phosphate-example.mol',
+      page,
+    );
+    await page.getByTestId('select-rectangle-button').click();
+    await page.getByText('cdaC').locator('..').hover();
+    await takeEditorScreenshot(page);
+  });
 
   const fileTypes = ['dna', 'rna'];
 
@@ -376,23 +373,23 @@ test.describe('Import-Saving-Files', () => {
     expect(molFile).toEqual(molFileExpected);
   });
 
-  test('Check that .ket file with macro structures is imported correctly in macro mode when saving it in mirco mode', async ({
+  test('Check that .ket file with macro structures is imported correctly in macro mode when saving it in micro mode', async ({
     page,
   }) => {
     /* 
     Test case: Import/Saving files
-    Description: .ket file with macro structures is imported correctly in macro mode when saving it in mirco mode
+    Description: .ket file with macro structures is imported correctly in macro mode when saving it in micro mode
     */
     await openFileAndAddToCanvas('KET/monomers-saved-in-micro-mode.ket', page);
     await takeEditorScreenshot(page);
   });
 
-  test('Check that .mol file with macro structures is imported correctly in macro mode when saving it in mirco mode', async ({
+  test('Check that .mol file with macro structures is imported correctly in macro mode when saving it in micro mode', async ({
     page,
   }) => {
     /* 
     Test case: Import/Saving files
-    Description: .mol file with macro structures is imported correctly in macro mode when saving it in mirco mode
+    Description: .mol file with macro structures is imported correctly in macro mode when saving it in micro mode
     */
     await openFileAndAddToCanvas(
       'Molfiles-V3000/monomers-saved-in-micro-mode.mol',

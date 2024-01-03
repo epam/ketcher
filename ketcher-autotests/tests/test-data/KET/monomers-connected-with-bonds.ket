@@ -353,6 +353,7 @@
         "classHELM": "RNA",
         "naturalAnalogShort": "A",
         "id": "baA___N-benzyl-adenine",
+        "fullName": "N-benzyl-adenine",
         "alias": "baA",
         "attachmentPoints": [
             {
@@ -543,6 +544,7 @@
         "classHELM": "RNA",
         "naturalAnalogShort": "R",
         "id": "12ddR___1',2'-Di-Deoxy-Ribose",
+        "fullName": "2'-Di-Deoxy-Ribose",
         "alias": "12ddR",
         "attachmentPoints": [
             {
@@ -654,6 +656,7 @@
         "classHELM": "RNA",
         "naturalAnalogShort": "P",
         "id": "P___Phosphate",
+        "fullName": "Phosphate",
         "alias": "P",
         "attachmentPoints": [
             {

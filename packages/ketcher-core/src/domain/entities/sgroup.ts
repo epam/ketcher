@@ -84,7 +84,6 @@ export class SGroup {
   pp: Vec2 | null;
   data: any;
   dataArea: any;
-  convertedFromMacro: boolean;
   private readonly attachmentPoints: SGroupAttachmentPoint[];
 
   constructor(type: string) {
@@ -107,7 +106,6 @@ export class SGroup {
     this.neiAtoms = [];
     this.attachmentPoints = [];
     this.pp = null;
-    this.convertedFromMacro = false;
     this.data = {
       mul: 1, // multiplication count for MUL group
       connectivity: 'ht', // head-to-head, head-to-tail or either-unknown

@@ -1,5 +1,5 @@
 import assert from 'assert';
-import { Bond, SGroup, Struct } from 'ketcher-core';
+import { Bond, MonomerMicromolecule, SGroup, Struct } from 'ketcher-core';
 import Editor from '../Editor';
 
 let showTooltipTimer: ReturnType<typeof setTimeout> | null = null;
@@ -43,7 +43,7 @@ function makeStruct(editor: Editor, sGroup: SGroup) {
   makeRGroupAttachmentPoints(sGroup, existingStruct, struct, atomsIdMapping);
   makeBonds(sGroup, existingStruct, struct, atomsIdMapping);
 
-  if (!sGroup.convertedFromMacro) {
+  if (!(sGroup instanceof MonomerMicromolecule)) {
     convertSGroupAttachmentPointsToRGroupAttachmentPoints(
       struct,
       sGroup,

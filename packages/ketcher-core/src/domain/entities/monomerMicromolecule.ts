@@ -22,6 +22,7 @@ export class MonomerMicromolecule extends SGroup {
     super(type);
     this.data.absolute = false;
     this.data.attached = false;
+    this.convertedFromMacro = true;
   }
 
   public override getContractedPosition(struct: Struct) {

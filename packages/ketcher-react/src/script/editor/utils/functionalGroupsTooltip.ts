@@ -43,11 +43,13 @@ function makeStruct(editor: Editor, sGroup: SGroup) {
   makeRGroupAttachmentPoints(sGroup, existingStruct, struct, atomsIdMapping);
   makeBonds(sGroup, existingStruct, struct, atomsIdMapping);
 
-  convertSGroupAttachmentPointsToRGroupAttachmentPoints(
-    struct,
-    sGroup,
-    atomsIdMapping,
-  );
+  if (!sGroup.convertedFromMacro) {
+    convertSGroupAttachmentPointsToRGroupAttachmentPoints(
+      struct,
+      sGroup,
+      atomsIdMapping,
+    );
+  }
 
   return struct;
 }

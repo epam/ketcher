@@ -25,15 +25,17 @@ const topLeftCorner = {
 };
 
 async function zoomWithMouseWheel(page: Page, scrollValue: number) {
-  await page.keyboard.down('Control');
-  await page.mouse.wheel(0, scrollValue);
-  await page.keyboard.up('Control');
+  await waitForRender(page, async () => {
+    await page.keyboard.down('Control');
+    await page.mouse.wheel(0, scrollValue);
+    await page.keyboard.up('Control');
+  });
 }
 
 async function scrollHorizontally(page: Page, scrollValue: number) {
-  await page.keyboard.down('Shift');
-  await page.mouse.wheel(0, scrollValue);
-  await page.keyboard.up('Shift');
+  await waitForRender(page, async () => {
+    await page.mouse.wheel(scrollValue, 0);
+  });
 }
 
 async function pasteFromClipboard(page: Page, fileFormats: string) {
@@ -495,7 +497,7 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: In Macro mode ABS, AND and OR is not appear
     */
     const zoomOutValue = 500;
-    const scrollRightValue = -500;
+    const scrollRightValue = 750;
     await openFileAndAddToCanvas('KET/three-alpha-d-allopyranose.ket', page);
     await turnOnMacromoleculesEditor(page);
     await zoomWithMouseWheel(page, zoomOutValue);

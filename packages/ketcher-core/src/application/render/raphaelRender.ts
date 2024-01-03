@@ -23,15 +23,10 @@ import { Scale } from 'domain/helpers';
 import defaultOptions from './options';
 import draw from './draw';
 import { RenderOptions, ViewBox } from './render.types';
-import _ from 'lodash';
 import { KetcherLogger } from 'utilities';
 import { CoordinateTransformation } from './coordinateTransformation';
 import { ScrollbarContainer } from './scrollbar';
-
-const notifyRenderComplete = _.debounce(() => {
-  const event = new Event('renderComplete');
-  window.dispatchEvent(event);
-}, 500);
+import { notifyRenderComplete } from './notifyRenderComplete';
 
 export class Render {
   public skipRaphaelInitialization = false;

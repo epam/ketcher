@@ -64,17 +64,16 @@ jest.mock('d3', () => {
     zoom() {
       return {
         scaleExtent() {
-          return {
-            wheelDelta() {
-              return {
-                filter() {
-                  return {
-                    on() {},
-                  };
-                },
-              };
-            },
-          };
+          return this;
+        },
+        wheelDelta() {
+          return this;
+        },
+        filter() {
+          return this;
+        },
+        on() {
+          return this;
         },
       };
     },

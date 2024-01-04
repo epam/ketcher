@@ -1,10 +1,8 @@
-import { MonomerMicromolecule } from 'ketcher-core';
 import { Editor } from '../../Editor';
 
 const isMacroMolecule = (editor: Editor, id: number): boolean => {
-  const functionalGroups = editor.render.ctab.molecule.functionalGroups;
-  const matchingGroup = functionalGroups?.get(id);
-  return matchingGroup?.relatedSGroup instanceof MonomerMicromolecule;
+  const struct = editor.struct();
+  return struct.isFunctionalGroupFromMacromolecule(id);
 };
 
 // dragCtx is actually "any" in the code
@@ -18,22 +16,11 @@ const isMergingToMacroMolecule = (editor: Editor, dragCtx: any): boolean => {
   return isMacroMolecule(editor, targetObjectId);
 };
 
-const isBondingWithMacroMolecule = (
-  editor: Editor,
-  event: MouseEvent,
-): boolean => {
+const isBondingWithMacroMolecule = (editor: Editor, event: MouseEvent) => {
   const ci = editor.findItem(event, ['bonds', 'functionalGroups']);
-  if (ci?.map === 'functionalGroups') {
-    return isMacroMolecule(editor, ci?.id);
-  } else if (ci?.map === 'bonds') {
-    const struct = editor.struct();
-    const bond = struct.bonds.get(ci.id);
-    const sGroup = struct.getGroupFromAtomId(bond?.begin);
+  const struct = editor.struct();
 
-    return sGroup instanceof MonomerMicromolecule;
-  }
-
-  return false;
+  return struct.isTargetFromMacromolecule(ci);
 };
 
 export {

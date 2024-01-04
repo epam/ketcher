@@ -20,7 +20,9 @@ import {
   SGroupAttachmentPoint,
   AtomQueryProperties,
   BaseMonomer,
+  Vec2,
 } from 'domain/entities';
+import { switchIntoChemistryCoordSystem } from 'domain/serializers/ket/helpers';
 
 import { ifDef } from 'utilities';
 import { convertAttachmentPointNumberToLabel } from 'domain/helpers/attachmentPointCalculations';
@@ -93,7 +95,10 @@ function atomToKet(source, monomer?: BaseMonomer) {
   }
 
   ifDef(result, 'alias', source.alias);
-  ifDef(result, 'location', [source.pp.x, -source.pp.y, source.pp.z]);
+  const position: Vec2 = switchIntoChemistryCoordSystem(
+    new Vec2(source.pp.x, source.pp.y, source.pp.z),
+  );
+  ifDef(result, 'location', [position.x, position.y, position.z]);
   ifDef(result, 'charge', source.charge);
   ifDef(result, 'explicitValence', source.explicitValence, -1);
   ifDef(result, 'isotope', source.isotope);
@@ -129,7 +134,10 @@ function rglabelToKet(source) {
   const result = {
     type: 'rg-label',
   };
-  ifDef(result, 'location', [source.pp.x, -source.pp.y, source.pp.z]);
+  const position: Vec2 = switchIntoChemistryCoordSystem(
+    new Vec2(source.pp.x, source.pp.y, source.pp.z),
+  );
+  ifDef(result, 'location', [position.x, position.y, position.z]);
   ifDef(result, 'attachmentPoints', source.attachmentPoints, 0);
 
   const refsToRGroups = fromRlabel(source.rglabel).map(

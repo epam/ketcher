@@ -65,7 +65,7 @@ the first one disappears. Couldn't reproduct manually.
 
     // add second structure from file to canvas
     await selectTopPanelButton(TopPanelButton.Open, page);
-    await openFile('glutamine.mol', page);
+    await openFile('Molfiles-V2000/glutamine.mol', page);
     await waitForLoad(page, async () => {
       await pressButton(page, 'Add to Canvas');
     });

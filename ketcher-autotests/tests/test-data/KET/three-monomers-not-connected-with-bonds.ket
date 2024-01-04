@@ -2,13 +2,13 @@
     "root": {
         "nodes": [
             {
-                "$ref": "monomer36"
+                "$ref": "monomer0"
             },
             {
-                "$ref": "monomer37"
+                "$ref": "monomer1"
             },
             {
-                "$ref": "monomer38"
+                "$ref": "monomer2"
             }
         ],
         "connections": [],
@@ -24,12 +24,12 @@
             }
         ]
     },
-    "monomer36": {
+    "monomer0": {
         "type": "monomer",
-        "id": "36",
+        "id": "0",
         "position": {
-            "x": 12.625,
-            "y": 9.575000000000001
+            "x": 3.418333333333331,
+            "y": -3.248333333333332
         },
         "alias": "Bal",
         "templateId": "Bal___beta-Alanine"
@@ -62,14 +62,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     2.2002,
                     0.9389,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
@@ -89,14 +86,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -2.7104,
                     -0.6075,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             }
         ],
@@ -145,7 +139,6 @@
             }
         ],
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "A",
         "id": "Bal___beta-Alanine",
         "alias": "Bal",
         "attachmentPoints": [
@@ -163,14 +156,15 @@
                 },
                 "type": "right"
             }
-        ]
+        ],
+        "naturalAnalogShort": "A"
     },
-    "monomer37": {
+    "monomer1": {
         "type": "monomer",
-        "id": "37",
+        "id": "1",
         "position": {
-            "x": 17.025000000000002,
-            "y": 9.675
+            "x": 4.838333333333333,
+            "y": -3.2683333333333326
         },
         "alias": "Edc",
         "templateId": "Edc___S-ethylthiocysteine"
@@ -228,25 +222,19 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     2.9317,
                     -1.4168,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     -1.7467,
                     -1.4179,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             },
             {
@@ -348,7 +336,6 @@
             }
         ],
         "classHELM": "PEPTIDE",
-        "naturalAnalogShort": "C",
         "id": "Edc___S-ethylthiocysteine",
         "alias": "Edc",
         "attachmentPoints": [
@@ -366,14 +353,15 @@
                 },
                 "type": "right"
             }
-        ]
+        ],
+        "naturalAnalogShort": "C"
     },
-    "monomer38": {
+    "monomer2": {
         "type": "monomer",
-        "id": "38",
+        "id": "2",
         "position": {
-            "x": 20.775000000000002,
-            "y": 9.725000000000001
+            "x": 6.195000000000003,
+            "y": -3.2983333333333307
         },
         "alias": "Test-6-Ch",
         "templateId": "Test-6-Ch___Test-6-AP-Chem"
@@ -446,25 +434,19 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     12.771843848116424,
                     -6.07362085187052,
                     0
-                ],
-                "$refs": [
-                    "rg-2"
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     5.0282172628054775,
                     -7.026424123021441,
                     0
-                ],
-                "$refs": [
-                    "rg-1"
                 ]
             },
             {
@@ -516,36 +498,27 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     4.8679167124638605,
                     -1.6373056211748553,
                     0
-                ],
-                "$refs": [
-                    "rg-3"
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     10.276735281944443,
                     -7.698926431847001,
                     0
-                ],
-                "$refs": [
-                    "rg-5"
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     7.575026006473786,
                     -2.8621098261555935,
                     0
-                ],
-                "$refs": [
-                    "rg-4"
                 ]
             },
             {
@@ -565,14 +538,11 @@
                 ]
             },
             {
-                "type": "rg-label",
+                "label": "R#",
                 "location": [
                     7.969727361556981,
                     -9.713933349740689,
                     0
-                ],
-                "$refs": [
-                    "rg-6"
                 ]
             }
         ],
@@ -726,7 +696,6 @@
             }
         ],
         "classHELM": "CHEM",
-        "naturalAnalogShort": ".",
         "id": "Test-6-Ch___Test-6-AP-Chem",
         "alias": "Test-6-Ch",
         "attachmentPoints": [

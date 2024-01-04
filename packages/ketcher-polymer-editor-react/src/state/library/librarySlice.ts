@@ -19,8 +19,9 @@ import { Group } from 'components/monomerLibrary/monomerLibraryList/types';
 
 import { IRnaPreset } from 'components/monomerLibrary/RnaBuilder/types';
 import { MonomerItemType, SdfItem } from 'ketcher-core';
-import { LibraryNameType } from 'src/constants';
+import { LibraryNameType, FAVORITE_ITEMS_UNIQUE_KEYS } from 'src/constants';
 import { RootState } from 'state';
+import { localStorageWrapper } from 'helpers/localStorage';
 
 interface LibraryState {
   monomers: Group[];
@@ -50,7 +51,10 @@ export const librarySlice: Slice = createSlice({
   name: 'library',
   initialState,
   reducers: {
-    loadMonomerLibrary: (state, action: PayloadAction<SdfItem[]>) => {
+    loadMonomerLibrary: (
+      state: RootState,
+      action: PayloadAction<SdfItem[]>,
+    ) => {
       const newData = action.payload.map((monomer) => {
         let monomerLeavingGroups: { [key: string]: string };
         if (typeof monomer.props.MonomerCaps === 'string') {
@@ -74,12 +78,63 @@ export const librarySlice: Slice = createSlice({
       });
       state.monomers = newData;
     },
-    toggleMonomerFavorites: (state, action: PayloadAction<MonomerItemType>) => {
-      const key = getMonomerUniqueKey(action.payload);
+
+    setFavoriteMonomersFromLocalStorage: (state: RootState) => {
+      const localFavorites = {};
+
+      const favoritesInLocalStorage: null | string =
+        localStorageWrapper.getItem(FAVORITE_ITEMS_UNIQUE_KEYS);
+
+      if (!favoritesInLocalStorage || !Array.isArray(favoritesInLocalStorage)) {
+        return;
+      }
+
+      state.monomers.forEach((monomer: MonomerItemType) => {
+        const uniqueKey: string = getMonomerUniqueKey(monomer);
+        const favoriteItem = favoritesInLocalStorage.find(
+          (key) => key === uniqueKey,
+        );
+
+        if (!favoriteItem) {
+          return;
+        }
+
+        localFavorites[uniqueKey] = {
+          ...monomer,
+          favorite: true,
+        };
+      });
+
+      state.favorites = localFavorites;
+    },
+
+    clearFavorites: (state: RootState) => {
+      state.favorites = {};
+    },
+
+    toggleMonomerFavorites: (
+      state: RootState,
+      action: PayloadAction<MonomerItemType>,
+    ) => {
+      const key: string = getMonomerUniqueKey(action.payload);
+
+      const favoriteItemsUniqueKeys = (localStorageWrapper.getItem(
+        FAVORITE_ITEMS_UNIQUE_KEYS,
+      ) || []) as string[];
+
       if (state.favorites[key]) {
         delete state.favorites[key];
+        localStorageWrapper.setItem(
+          FAVORITE_ITEMS_UNIQUE_KEYS,
+          favoriteItemsUniqueKeys.filter((targetKey) => targetKey !== key),
+        );
       } else {
-        state.favorites[key] = action.payload;
+        state.favorites[key] = { ...action.payload, favorite: true };
+        favoriteItemsUniqueKeys.push(key);
+        localStorageWrapper.setItem(
+          FAVORITE_ITEMS_UNIQUE_KEYS,
+          favoriteItemsUniqueKeys,
+        );
       }
     },
     setSearchFilter: (state, action: PayloadAction<string>) => {
@@ -169,6 +224,8 @@ export const selectCurrentTabIndex = (state) => state.library.selectedTabIndex;
 
 export const {
   loadMonomerLibrary,
+  setFavoriteMonomersFromLocalStorage,
+  clearFavorites,
   toggleMonomerFavorites,
   setSearchFilter,
   setSelectedTabIndex,

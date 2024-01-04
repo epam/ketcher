@@ -75,10 +75,5 @@ describe('Open component', () => {
     fireEvent.change(clipboardTextarea, { target: { value: mockTypedText } });
     expect(clipboardTextarea).toBeInTheDocument();
     expect(clipboardTextarea).toHaveValue(mockTypedText);
-
-    const newProjectButton = screen.getByRole('button', {
-      name: 'Open as New Project',
-    });
-    fireEvent.click(newProjectButton);
   });
 });

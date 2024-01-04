@@ -77,7 +77,7 @@ class RotateController {
 
   private get center() {
     return this.originalCenter
-      .scaled(this.render.options.scale)
+      .scaled(this.render.options.microModeScale)
       .add(this.render.options.offset);
   }
 
@@ -676,7 +676,7 @@ class RotateController {
 
     const originalHandleCenter = this.handleCenter
       .sub(this.render.options.offset)
-      .scaled(1 / this.render.options.scale);
+      .scaled(1 / this.render.options.microModeScale);
     this.rotateTool.mousedownHandle(originalHandleCenter, this.originalCenter);
   };
 
@@ -696,7 +696,7 @@ class RotateController {
 
         this.handleCenter = this.render
           .page2obj(event)
-          .scaled(this.render.options.scale)
+          .scaled(this.render.options.microModeScale)
           .add(this.render.options.offset);
 
         this.drawLink('moveHandle');

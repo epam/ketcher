@@ -13,6 +13,7 @@ import {
   RNABaseRenderer,
   SugarRenderer,
 } from 'application/render';
+import { notifyRenderComplete } from 'application/render/internal';
 import { Peptide, Sugar, RNABase, Phosphate } from 'domain/entities';
 
 export class RenderersManager {
@@ -319,6 +320,7 @@ export class RenderersManager {
   public update(modelChanges: Command) {
     modelChanges.execute(this);
     this.runPostRenderMethods();
+    notifyRenderComplete();
   }
 
   public runPostRenderMethods() {

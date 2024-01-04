@@ -50,6 +50,7 @@ import {
   getKetRef,
   setMonomerPrefix,
   setMonomerTemplatePrefix,
+  switchIntoChemistryCoordSystem,
 } from 'domain/serializers/ket/helpers';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { validate } from 'domain/serializers/ket/validate';
@@ -233,7 +234,10 @@ export class KetSerializer implements Serializer<Struct> {
         this.validateConnectionTypeAndEndpoints(connection, editor);
       },
     );
-    return { error, parsedFileContent };
+    return {
+      error,
+      parsedFileContent,
+    };
   }
 
   deserializeToStruct(fileContent: string) {
@@ -306,6 +310,9 @@ export class KetSerializer implements Serializer<Struct> {
               ...template,
               type: 'molecule',
             },
+            header: {
+              moleculeName: template.fullName,
+            },
           });
           const monomerAdditionCommand = monomerToDrawingEntity(
             nodeDefinition,
@@ -317,6 +324,11 @@ export class KetSerializer implements Serializer<Struct> {
             .monomer as BaseMonomer;
           monomerIdsMap[node.$ref] = monomer?.id;
 
+          const { attachmentPointsList } =
+            BaseMonomer.getAttachmentPointDictFromMonomerDefinition(
+              template.attachmentPoints || [],
+            );
+
           template.attachmentPoints?.forEach(
             (attachmentPoint, attachmentPointIndex) => {
               const leavingGroupAtom = monomer.monomerItem.struct.atoms.get(
@@ -327,11 +339,14 @@ export class KetSerializer implements Serializer<Struct> {
               leavingGroupAtom.rglabel = (
                 0 |
                 (1 <<
-                  (attachmentPoint.label
-                    ? Number(attachmentPoint.label.replace('R', '')) - 1
-                    : attachmentPointIndex))
+                  (Number(
+                    (attachmentPoint.label
+                      ? attachmentPoint.label
+                      : attachmentPointsList[attachmentPointIndex]
+                    ).replace('R', ''),
+                  ) -
+                    1))
               ).toString();
-
               assert(monomer.monomerItem.props.MonomerCaps);
               monomer.monomerItem.props.MonomerCaps[
                 convertAttachmentPointNumberToLabel(
@@ -436,12 +451,15 @@ export class KetSerializer implements Serializer<Struct> {
           monomer.monomerItem.props.id ||
           getMonomerUniqueKey(monomer.monomerItem);
         const monomerName = setMonomerPrefix(monomer.id);
+        const position: Vec2 = switchIntoChemistryCoordSystem(
+          new Vec2(monomer.position.x, monomer.position.y),
+        );
         fileContent[monomerName] = {
           type: 'monomer',
           id: monomer.id.toString(),
           position: {
-            x: monomer.position.x,
-            y: monomer.position.y,
+            x: position.x,
+            y: position.y,
           },
           alias: monomer.label,
           templateId,
@@ -459,7 +477,7 @@ export class KetSerializer implements Serializer<Struct> {
             class: monomer.monomerItem.props.MonomerClass,
             classHELM: monomer.monomerItem.props.MonomerType,
             id: templateId,
-            fullName: monomer.monomerItem.props.MonomerFullName,
+            fullName: monomer.monomerItem.props.Name,
             alias: monomer.monomerItem.label,
             attachmentPoints: monomer.monomerItem.attachmentPoints,
           };
@@ -474,6 +492,12 @@ export class KetSerializer implements Serializer<Struct> {
     });
     drawingEntitiesManager.polymerBonds.forEach((polymerBond) => {
       assert(polymerBond.secondMonomer);
+      if (
+        polymerBond.firstMonomer.monomerItem.props.isMicromoleculeFragment ||
+        polymerBond.secondMonomer.monomerItem.props.isMicromoleculeFragment
+      ) {
+        return;
+      }
       fileContent.root.connections.push({
         connectionType: 'single',
         endpoint1: {

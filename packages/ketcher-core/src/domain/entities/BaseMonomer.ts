@@ -17,9 +17,7 @@ export abstract class BaseMonomer extends DrawingEntity {
   public renderer?: BaseMonomerRenderer = undefined;
   public attachmentPointsToBonds: Partial<
     Record<AttachmentPointName, PolymerBond | null>
-  > = {
-    R1: null,
-  };
+  > = {};
 
   public chosenFirstAttachmentPointForBond: string | null;
   public potentialSecondAttachmentPointForBond: string | null;
@@ -27,9 +25,7 @@ export abstract class BaseMonomer extends DrawingEntity {
 
   public potentialAttachmentPointsToBonds: {
     [key: string]: PolymerBond | null | undefined;
-  } = {
-    R1: null,
-  };
+  } = {};
 
   public attachmentPointsVisible = false;
   public monomerItem: MonomerItemType;
@@ -37,14 +33,16 @@ export abstract class BaseMonomer extends DrawingEntity {
     super(_position);
 
     this.monomerItem = { ...monomerItem };
-    this.attachmentPointsToBonds = this.getAttachmentPointDict();
-    this.potentialAttachmentPointsToBonds = this.getAttachmentPointDict();
+    if (!this.monomerItem.props.isMicromoleculeFragment) {
+      this.attachmentPointsToBonds = this.getAttachmentPointDict();
+      this.potentialAttachmentPointsToBonds = this.getAttachmentPointDict();
+      this.monomerItem.attachmentPoints =
+        this.monomerItem.attachmentPoints ||
+        this.getMonomerDefinitionAttachmentPoints();
+    }
     this.chosenFirstAttachmentPointForBond = null;
     this.potentialSecondAttachmentPointForBond = null;
     this.chosenSecondAttachmentPointForBond = null;
-    this.monomerItem.attachmentPoints =
-      this.monomerItem.attachmentPoints ||
-      this.getMonomerDefinitionAttachmentPoints();
   }
 
   public get label() {
@@ -297,17 +295,26 @@ export abstract class BaseMonomer extends DrawingEntity {
     Record<AttachmentPointName, PolymerBond | null>
   > {
     if (this.monomerItem.attachmentPoints) {
-      return this.getAttachmentPointDictFromMonomerDefinition();
+      const { attachmentPointDictionary } =
+        BaseMonomer.getAttachmentPointDictFromMonomerDefinition(
+          this.monomerItem.attachmentPoints,
+        );
+      return attachmentPointDictionary;
     } else {
       return this.getAttachmentPointDictFromAtoms();
     }
   }
 
-  public getAttachmentPointDictFromMonomerDefinition(): Partial<
-    Record<AttachmentPointName, PolymerBond | null>
-  > {
-    assert(this.monomerItem.attachmentPoints);
-    const attachmentPointDictionnary = {};
+  public static getAttachmentPointDictFromMonomerDefinition(
+    attachmentPoints: IKetAttachmentPoint[],
+  ): {
+    attachmentPointDictionary: Partial<
+      Record<AttachmentPointName, PolymerBond | null>
+    >;
+    attachmentPointsList: AttachmentPointName[];
+  } {
+    const attachmentPointDictionary = {};
+    const attachmentPointsList: AttachmentPointName[] = [];
     const attachmentPointTypeToNumber: {
       [key in IKetAttachmentPointType]: (
         attachmentPointNumber?: number,
@@ -319,26 +326,32 @@ export abstract class BaseMonomer extends DrawingEntity {
         assert(attachmentPointNumber);
         return (
           attachmentPointNumber +
-          Number(!('R1' in attachmentPointDictionnary)) -
-          Number(!('R2' in attachmentPointDictionnary))
+          Number(!('R1' in attachmentPointDictionary)) +
+          Number(!('R2' in attachmentPointDictionary))
         );
       },
     };
-    this.monomerItem.attachmentPoints.forEach(
-      (attachmentPoint, attachmentPointIndex) => {
-        const attachmentPointNumber = attachmentPointIndex + 1;
-        const calculatedLabel = `R${
-          attachmentPoint.type
+    attachmentPoints.forEach((attachmentPoint, attachmentPointIndex) => {
+      const attachmentPointNumber = attachmentPointIndex + 1;
+      let calculatedAttachmentPointNumber;
+      if (attachmentPoint.type) {
+        const getLabelByTypeAction =
+          attachmentPointTypeToNumber[attachmentPoint.type];
+        calculatedAttachmentPointNumber =
+          typeof getLabelByTypeAction === 'function'
             ? attachmentPointTypeToNumber[attachmentPoint.type](
                 attachmentPointNumber,
               )
-            : attachmentPointNumber
-        }`;
-        attachmentPointDictionnary[attachmentPoint.label || calculatedLabel] =
-          null;
-      },
-    );
-    return attachmentPointDictionnary;
+            : attachmentPointNumber;
+      } else {
+        calculatedAttachmentPointNumber = attachmentPointNumber;
+      }
+      const calculatedLabel =
+        attachmentPoint.label || `R${calculatedAttachmentPointNumber}`;
+      attachmentPointDictionary[calculatedLabel] = null;
+      attachmentPointsList.push(calculatedLabel as AttachmentPointName);
+    });
+    return { attachmentPointDictionary, attachmentPointsList };
   }
 
   public get attachmentPointNumberToType() {

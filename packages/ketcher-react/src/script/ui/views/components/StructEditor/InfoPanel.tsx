@@ -33,6 +33,7 @@ import { StructRender } from 'components';
 import classes from './InfoPanel.module.less';
 
 const HOVER_PANEL_PADDING = 20;
+const MAX_INFO_PANEL_SIZE = 200;
 
 function getPanelPosition(
   clientX: number,
@@ -50,8 +51,8 @@ function getPanelPosition(
     const groupBoundingBox = sGroup.areas[0];
     const start = Scale.modelToCanvas(groupBoundingBox.p0, render.options);
     const end = Scale.modelToCanvas(groupBoundingBox.p1, render.options);
-    width = end.x - start.x;
-    height = end.y - start.y;
+    width = Math.min(end.x - start.x, MAX_INFO_PANEL_SIZE);
+    height = Math.min(end.y - start.y, MAX_INFO_PANEL_SIZE);
     // calculate initial position
     const { position } = sGroup.getContractedPosition(render.ctab.molecule);
     const panelPosition = CoordinateTransformation.modelToView(
@@ -140,9 +141,7 @@ const InfoPanel: FC<InfoPanelProps> = (props) => {
         struct={molecule}
         options={{
           ...render.options,
-          autoScale: true,
-          autoScaleMargin: 0,
-          rescaleAmount: 1,
+          downScale: true,
           cachePrefix: 'infoPanel',
           needCache: false,
           width,

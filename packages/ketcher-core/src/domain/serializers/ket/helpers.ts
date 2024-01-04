@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
+import { Vec2, Axis, Axises } from 'domain/entities';
 import { cloneDeepWith, cloneDeep } from 'lodash';
 
 const customizer = (value: any) => {
@@ -33,4 +34,27 @@ export const setMonomerPrefix = (monomerId: number) => `monomer${monomerId}`;
 
 export const getKetRef = (entityId: string) => {
   return { $ref: entityId };
+};
+
+const rotateCoordAxisBy180Degrees = (position: Vec2, axis: Axises): Vec2 => {
+  const rotatedPosition = {
+    x: position.x,
+    y: position.y,
+  };
+
+  rotatedPosition[axis] = -rotatedPosition[axis];
+
+  return new Vec2(rotatedPosition.x, rotatedPosition.y);
+};
+
+/**
+ *
+ * System coordinates for browser and for chemistry files format (mol, ket, etc.) area are different.
+ * It needs to rotate them by 180 degrees in y-axis.
+ *
+ * @param position - coordinates of the structure
+ *
+ */
+export const switchIntoChemistryCoordSystem = (position: Vec2) => {
+  return rotateCoordAxisBy180Degrees(position, Axis.y);
 };

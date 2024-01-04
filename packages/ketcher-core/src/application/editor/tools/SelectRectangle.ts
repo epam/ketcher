@@ -19,7 +19,7 @@ import { brush as d3Brush, select } from 'd3';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { Command } from 'domain/entities/Command';
 import { BaseTool } from 'application/editor/tools/Tool';
-import Coordinates from '../shared/coordinates';
+import { Coordinates } from '../shared/coordinates';
 
 class SelectRectangle implements BaseTool {
   private brush;
@@ -78,6 +78,9 @@ class SelectRectangle implements BaseTool {
 
     const handleResizeCanvas = () => {
       const { canvas } = this.editor;
+      if (canvas.clientWidth === 0 || canvas.clientHeight === 0) {
+        return;
+      }
 
       this.brush.extent([
         [0, 0],

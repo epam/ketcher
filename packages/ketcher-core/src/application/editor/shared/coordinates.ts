@@ -6,26 +6,28 @@ import ZoomTool from '../tools/Zoom';
  * `canvas` -- The real coordinates used to draw entities
  * `view` -- The zoomed canvas coordinates
  */
-class Coordinates {
+export class Coordinates {
   static canvasToModel(position: Vec2) {
     const settings = provideEditorSettings();
-    return position.scaled(1 / settings.scale);
+    return position.scaled(1 / settings.macroModeScale);
   }
 
   static viewToModel(position: Vec2) {
     const settings = provideEditorSettings();
     const pos = ZoomTool.instance.invertZoom(position);
-    return pos.scaled(1 / settings.scale);
+    return pos.scaled(1 / settings.macroModeScale);
   }
 
   static modelToView(position: Vec2) {
     const settings = provideEditorSettings();
-    return ZoomTool.instance.scaleCoordinates(position.scaled(settings.scale));
+    return ZoomTool.instance.scaleCoordinates(
+      position.scaled(settings.macroModeScale),
+    );
   }
 
   static modelToCanvas(position: Vec2) {
     const settings = provideEditorSettings();
-    return position.scaled(settings.scale);
+    return position.scaled(settings.macroModeScale);
   }
 
   // convert the original coordinates to transformed coordinates after the d3 transformation
@@ -38,5 +40,3 @@ class Coordinates {
     return ZoomTool.instance.invertZoom(position);
   }
 }
-
-export default Coordinates;

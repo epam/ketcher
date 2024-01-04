@@ -116,6 +116,7 @@ export const Save = ({
     });
     const formatProperties = getPropertiesByFormat(currentFileFormat);
     saveAs(blob, `${currentFileName}${formatProperties.extensions[0]}`);
+    onClose();
   };
 
   useEffect(() => {

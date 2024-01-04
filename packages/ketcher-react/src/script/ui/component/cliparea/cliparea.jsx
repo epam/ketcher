@@ -17,8 +17,11 @@
 import { Component, createRef } from 'react';
 import clsx from 'clsx';
 import classes from './cliparea.module.less';
-import { KetcherLogger, notifyRequestCompleted } from 'ketcher-core';
-import { isControlKey } from 'ketcher-core';
+import {
+  KetcherLogger,
+  notifyRequestCompleted,
+  isControlKey,
+} from 'ketcher-core';
 import { isClipboardAPIAvailable, notifyCopyCut } from './clipboardUtils';
 
 const ieCb = window.clipboardData;

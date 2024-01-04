@@ -28,12 +28,12 @@ import {
   MolSerializer,
   runAsyncAction,
   SettingsManager,
+  keyNorm,
 } from 'ketcher-core';
 import { debounce, isEqual } from 'lodash/fp';
 import { load, onAction, removeStructAction } from './shared';
 
 import actions from '../action';
-import { keyNorm } from 'ketcher-core';
 import { isIE } from 'react-device-detect';
 import {
   selectAbbreviationLookupValue,

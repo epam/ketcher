@@ -15,6 +15,7 @@ type queryNumberValues =
 
 type aromaticity = 'aromatic' | 'aliphatic' | '';
 type chirality = 'clockwise' | 'anticlockwise' | '';
+type inversionType = 'Inverts' | 'Retains' | '';
 
 // Query specific attributes:
 
@@ -79,13 +80,6 @@ export async function setChirality(page: Page, chirality: chirality) {
   await page.getByRole('option', { name: chirality, exact: true }).click();
 }
 
-// Custom query:
-
-export async function setCustomQuery(page: Page, customQuery: string) {
-  await page.getByTestId('custom-query-checkbox').check();
-  await page.getByTestId('custom-query-value').fill(customQuery);
-}
-
 // Custom query - atom properties:
 
 export async function setCustomQueryForAtom(page: Page, customQuery: string) {
@@ -112,6 +106,14 @@ export async function setBondTopology(page: Page, bondTopologyTestId: string) {
   await page.getByTestId(bondTopologyTestId).click();
 }
 
+export async function setReactingCenter(
+  page: Page,
+  reactingCenterOptionTestId: string,
+) {
+  await page.getByTestId('reacting-center-input-span').click();
+  await page.getByTestId(reactingCenterOptionTestId).click();
+}
+
 // General atom properties attributes:
 
 export async function setLabel(page: Page, value: string) {
@@ -129,6 +131,25 @@ export async function setAtomicMass(page: Page, value: string) {
 export async function setValence(page: Page, valenceOption: string) {
   await page.getByTestId('explicitValence-input-span').click();
   await page.getByRole('option', { name: valenceOption }).click();
+}
+
+export async function setRadical(page: Page, radicalOption: string) {
+  await page.getByTestId('radical-input-span').click();
+  await page.getByRole('option', { name: radicalOption }).click();
+}
+
+// Reaction flags attributes:
+
+export async function setReactionFlagInversion(
+  page: Page,
+  inversionType: inversionType,
+) {
+  await page.getByTestId('Reaction flags-section').getByRole('button').click();
+  await page.getByTestId(`${inversionType}-option`).click();
+}
+
+export async function setReactionFlagExactChange(page: Page) {
+  await page.getByText('Exact change').check();
 }
 
 // Other

@@ -121,7 +121,7 @@ const Open: FC<Props> = (props) => {
   const onOk = (res) => {
     (
       dispatch(
-        load(res.structStr, { rescale: true, fragment: res.fragment }),
+        load(res.structStr, { badHeaderRecover: true, fragment: res.fragment }),
       ) as unknown as Promise<any>
     ).catch((error) => {
       if (ketcher && ketcher.eventBus) {

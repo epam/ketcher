@@ -25,15 +25,17 @@ const topLeftCorner = {
 };
 
 async function zoomWithMouseWheel(page: Page, scrollValue: number) {
-  await page.keyboard.down('Control');
-  await page.mouse.wheel(0, scrollValue);
-  await page.keyboard.up('Control');
+  await waitForRender(page, async () => {
+    await page.keyboard.down('Control');
+    await page.mouse.wheel(0, scrollValue);
+    await page.keyboard.up('Control');
+  });
 }
 
 async function scrollHorizontally(page: Page, scrollValue: number) {
-  await page.keyboard.down('Shift');
-  await page.mouse.wheel(0, scrollValue);
-  await page.keyboard.up('Shift');
+  await waitForRender(page, async () => {
+    await page.mouse.wheel(scrollValue, 0);
+  });
 }
 
 async function pasteFromClipboard(page: Page, fileFormats: string) {
@@ -83,7 +85,9 @@ test.describe('Macro-Micro-Switcher', () => {
     await turnOnMicromoleculesEditor(page);
     await scrollHorizontally(page, scrollValue);
     for (const label of moleculeLabels) {
-      await page.getByText(label, { exact: true }).hover();
+      await waitForRender(page, async () => {
+        await page.getByText(label, { exact: true }).hover();
+      });
       await takeEditorScreenshot(page);
     }
   });
@@ -496,7 +500,9 @@ test.describe('Macro-Micro-Switcher', () => {
     */
     await openFileAndAddToCanvas('KET/three-alpha-d-allopyranose.ket', page);
     await turnOnMacromoleculesEditor(page);
-    await page.getByText('F1').locator('..').hover();
+    await waitForRender(page, async () => {
+      await page.getByText('F1').locator('..').hover();
+    });
     await takeEditorScreenshot(page);
   });
 

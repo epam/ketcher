@@ -20,6 +20,7 @@ import { D3SvgElementSelection } from 'application/render/types';
 import { Vec2 } from 'domain/entities/vec2';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import { clamp } from 'lodash';
+import { notifyRenderComplete } from 'application/render/internal';
 
 interface ScrollBar {
   name: string;
@@ -87,7 +88,10 @@ class ZoomTool implements BaseTool {
         }
         return false;
       })
-      .on('zoom', this.zoomAction.bind(this));
+      .on('zoom', this.zoomAction.bind(this))
+      .on('end', () => {
+        notifyRenderComplete();
+      });
     this.canvasWrapper.call(this.zoom);
 
     this.canvasWrapper.on('wheel', (event) => {

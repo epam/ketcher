@@ -11,9 +11,11 @@ import {
 } from '@utils';
 import {
   checkSmartsValue,
+  checkSmartsWarnings,
   setAtomicMass,
   setCharge,
   setLabel,
+  setRadical,
   setValence,
 } from '../utils';
 
@@ -58,6 +60,20 @@ test.describe('Checking atom properties attributes in SMARTS format', () => {
     );
   });
 
+  test('Setting charge to zero', async ({ page }) => {
+    /**
+     * Test case: https://github.com/epam/ketcher/issues/3339
+     * Test is failing due to bug https://github.com/epam/Indigo/issues/1438
+     */
+    test.fail();
+    await setAndCheckAtomProperties(
+      page,
+      setCharge,
+      '0',
+      '[#6](-[#6])(-[#6;+0])-[#6]',
+    );
+  });
+
   test('Setting positive charge', async ({ page }) => {
     await setAndCheckAtomProperties(
       page,
@@ -85,6 +101,20 @@ test.describe('Checking atom properties attributes in SMARTS format', () => {
     );
   });
 
+  test('Setting isotope (atomic mass) to zero', async ({ page }) => {
+    /**
+     * Test case: https://github.com/epam/ketcher/issues/3339
+     * Test is failing due to bug https://github.com/epam/Indigo/issues/1438
+     */
+    test.fail();
+    await setAndCheckAtomProperties(
+      page,
+      setAtomicMass,
+      '0',
+      '[#6](-[#6])(-[#6;0])-[#6]',
+    );
+  });
+
   test('Setting valence', async ({ page }) => {
     test.fail();
     /**
@@ -96,5 +126,19 @@ test.describe('Checking atom properties attributes in SMARTS format', () => {
       'IV',
       '[#6](-[#6])(-[#6;v4])-[#6]',
     );
+  });
+
+  test('Setting radical', async ({ page }) => {
+    /**
+     * Test case: https://github.com/epam/ketcher/issues/3431
+     * Description: setting redical option should have no impact on SMARTS output but warning should be displayed
+     */
+    await setAndCheckAtomProperties(
+      page,
+      setRadical,
+      'Monoradical',
+      '[#6](-[#6])(-[#6])-[#6]',
+    );
+    await checkSmartsWarnings(page);
   });
 });

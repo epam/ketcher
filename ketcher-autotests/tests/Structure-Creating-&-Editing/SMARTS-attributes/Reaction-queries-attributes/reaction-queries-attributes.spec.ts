@@ -66,7 +66,7 @@ test.describe('Checking reaction queries attributes in SMARTS format', () => {
   });
 
   test('Checking SMARTS with Arrow Open Angle', async ({ page }) => {
-    const defaultFileFormat = 'DL Rxnfile V2000';
+    const defaultFileFormat = 'MDL Rxnfile V2000';
     await drawStructureWithArrowOpenAngle(page);
     await takeEditorScreenshot(page);
     await checkSmartsValue(page, defaultFileFormat, '[#1]>>[#8]');

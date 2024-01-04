@@ -161,6 +161,20 @@ export class DrawingEntitiesManager {
     return command;
   }
 
+  public selectAllDrawingEntities() {
+    const command = new Command();
+
+    this.allEntities.forEach(([, drawingEntity]) => {
+      if (!drawingEntity.selected) {
+        drawingEntity.turnOnSelection();
+        const operation = new DrawingEntitySelectOperation(drawingEntity);
+        command.addOperation(operation);
+      }
+    });
+
+    return command;
+  }
+
   public moveDrawingEntityModelChange(
     drawingEntity: DrawingEntity,
     offset?: Vec2,

@@ -131,7 +131,6 @@ function Editor({ theme, togglerComponent }: EditorProps) {
   const editor = useAppSelector(selectEditor);
   const activeTool = useAppSelector(selectEditorActiveTool);
   const isLoading = useLoading();
-  let keyboardEventListener;
   const [isMonomerLibraryHidden, setIsMonomerLibraryHidden] = useState(false);
 
   useEffect(() => {
@@ -143,7 +142,6 @@ function Editor({ theme, togglerComponent }: EditorProps) {
     return () => {
       dispatch(destroyEditor(null));
       dispatch(loadMonomerLibrary([]));
-      document.removeEventListener('keydown', keyboardEventListener);
     };
   }, [dispatch]);
 
@@ -174,15 +172,11 @@ function Editor({ theme, togglerComponent }: EditorProps) {
           ),
       );
 
-      if (!keyboardEventListener) {
-        keyboardEventListener = (e: KeyboardEvent) => {
-          if (e.key === 'Escape') {
-            dispatch(selectTool('select-rectangle'));
-            editor.events.selectTool.dispatch('select-rectangle');
-          }
-        };
-        document.addEventListener('keydown', keyboardEventListener);
-      }
+      editor.events.selectTool.add((toolName: string) => {
+        if (toolName !== activeTool) {
+          dispatch(selectTool(toolName));
+        }
+      });
     }
   }, [editor]);
 

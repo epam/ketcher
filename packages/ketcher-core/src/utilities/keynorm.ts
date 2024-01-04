@@ -87,10 +87,12 @@ export function isControlKey(event) {
   return mac ? event.metaKey : event.ctrlKey;
 }
 
+// TODO rename and unify after moving all hotkeys to core editor
+//  to handle all events in same way and to have same structure for all hotkey configs
 function keyNorm(obj) {
-  if (obj instanceof KeyboardEvent)
-    // eslint-disable-line no-undef
-    return normalizeKeyEvent(obj); // eslint-disable-line prefer-rest-params
+  if (obj instanceof KeyboardEvent) {
+    return normalizeKeyEvent(obj);
+  }
 
   return typeof obj === 'object' ? normalizeKeyMap(obj) : normalizeKeyName(obj);
 }

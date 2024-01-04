@@ -1,5 +1,7 @@
 import { Subscription } from 'subscription';
 import { ToolEventHandlerName } from 'application/editor/tools/Tool';
+import { CoreEditor } from 'application/editor/Editor';
+import ZoomTool from 'application/editor/tools/Zoom';
 
 export let editorEvents;
 
@@ -44,3 +46,63 @@ export const renderersEvents: ToolEventHandlerName[] = [
   'mouseLeaveDrawingEntity',
   'mouseUpMonomer',
 ];
+
+export const hotkeysConfiguration = {
+  exit: {
+    shortcut: ['Shift+Tab', 'Escape'],
+    handler: (editor: CoreEditor) => {
+      editor.events.selectTool.dispatch('select-rectangle');
+    },
+  },
+  undo: {
+    shortcut: ['Ctrl+z', 'Meta+z'],
+    handler: (editor: CoreEditor) => {
+      editor.onSelectHistory('undo');
+    },
+  },
+  redo: {
+    shortcut: ['Shift+Ctrl+Z', 'Ctrl+Y', 'Shift+Meta+Z', 'Meta+y'],
+    handler: (editor: CoreEditor) => {
+      editor.onSelectHistory('redo');
+    },
+  },
+  erase: {
+    shortcut: ['Delete', 'Backspace'],
+    handler: (editor: CoreEditor) => {
+      editor.events.selectTool.dispatch('erase');
+    },
+  },
+  clear: {
+    shortcut: ['Ctrl+Del', 'Ctrl+Backspace', 'Meta+Del', 'Meta+Backspace'],
+    handler: (editor: CoreEditor) => {
+      editor.events.selectTool.dispatch('clear');
+      editor.events.selectTool.dispatch('select-rectangle');
+    },
+  },
+  'zoom-plus': {
+    shortcut: ['Ctrl+=', 'Meta+='],
+    handler: () => {
+      ZoomTool.instance.zoomIn();
+    },
+  },
+  'zoom-minus': {
+    shortcut: ['Ctrl+-', 'Meta+-'],
+    handler: () => {
+      ZoomTool.instance.zoomOut();
+    },
+  },
+  'zoom-reset': {
+    shortcut: ['Ctrl+0', 'Meta+0'],
+    handler: () => {
+      ZoomTool.instance.resetZoom();
+    },
+  },
+  'select-all': {
+    shortcut: ['Ctrl+a', 'Meta+a'],
+    handler: (editor: CoreEditor) => {
+      const modelChanges =
+        editor.drawingEntitiesManager.selectAllDrawingEntities();
+      editor.renderersContainer.update(modelChanges);
+    },
+  },
+};

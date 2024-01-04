@@ -17,6 +17,7 @@ import ZoomTool from './tools/Zoom';
 import Coordinates from './shared/coordinates';
 import {
   editorEvents,
+  hotkeysConfiguration,
   renderersEvents,
   resetEditorEvents,
 } from 'application/editor/editorEvents';
@@ -78,58 +79,7 @@ export class CoreEditor {
 
   setupHotKeysEvents() {
     document.addEventListener('keydown', (event) => {
-      const keySettings = {
-        exit: {
-          shortcut: ['Shift+Tab', 'Escape'],
-          action: () => {
-            this.onSelectTool('select-rectangle');
-            //TODO: add switching to default button
-          },
-        },
-        undo: {
-          shortcut: ['Ctrl+z', 'Meta+z'],
-          action: () => {
-            this.onSelectHistory('undo');
-          },
-        },
-        redo: {
-          shortcut: ['Shift+Ctrl+Z', 'Ctrl+Y', 'Shift+Meta+Z', 'Meta+y'],
-          action: () => {
-            this.onSelectHistory('redo');
-          },
-        },
-        erase: {
-          shortcut: ['Del'], // cannot test on Mac
-          action: () => {
-            this.onSelectTool('erase');
-          },
-        },
-        clear: {
-          shortcut: ['Ctrl+Del'], // cannot test on Mac
-          action: () => {
-            this.onSelectTool('clear');
-            this.onSelectTool('select-rectangle');
-          },
-        },
-        'zoom-plus': {
-          shortcut: ['Ctrl+=', 'Meta+='],
-          action: () => {
-            //TODO
-          },
-        },
-        'zoom-minus': {
-          shortcut: ['Ctrl+-', 'Meta+-'],
-          action: () => {
-            //TODO
-          },
-        },
-        'zoom-reset': {
-          shortcut: ['Ctrl+0', 'Meta+0'],
-          action: () => {
-            //TODO
-          },
-        },
-      };
+      const keySettings = hotkeysConfiguration;
       const shortcut = keyNorm(event);
       const key = Object.entries(keySettings).reduce((acc, cur) => {
         const [key, value] = cur;
@@ -138,8 +88,8 @@ export class CoreEditor {
         return acc;
       }, '');
 
-      if (keySettings[key] && keySettings[key].action) {
-        keySettings[key].action();
+      if (keySettings[key] && keySettings[key].handler) {
+        keySettings[key].handler(this);
         event.preventDefault();
       }
     });
@@ -175,7 +125,7 @@ export class CoreEditor {
     }
   }
 
-  private onSelectTool(tool: string) {
+  public onSelectTool(tool: string) {
     this.selectTool(tool);
   }
 
@@ -211,7 +161,7 @@ export class CoreEditor {
     this.renderersContainer.update(command);
   }
 
-  private onSelectHistory(name: HistoryOperationType) {
+  public onSelectHistory(name: HistoryOperationType) {
     const history = new EditorHistory(this);
     if (name === 'undo') {
       history.undo();

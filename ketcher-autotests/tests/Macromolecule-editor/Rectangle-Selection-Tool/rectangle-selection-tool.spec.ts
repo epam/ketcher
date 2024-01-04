@@ -1,6 +1,7 @@
 import { test } from '@playwright/test';
 import {
   addMonomerToCanvas,
+  getCoordinatesOfTheMiddleOfTheScreen,
   selectEraseTool,
   selectRectangleArea,
   selectRectangleSelectionTool,
@@ -11,6 +12,7 @@ import {
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import { moveMonomer } from '@utils/macromolecules/monomer';
+import { Peptides } from '@utils/selectors/macromoleculeEditor';
 /* eslint-disable no-magic-numbers */
 
 test.describe('Rectangle Selection Tool', () => {
@@ -131,6 +133,28 @@ test.describe('Rectangle Selection Tool', () => {
 
     await moveMonomer(page, peptide2, 200, 400);
 
+    await takeEditorScreenshot(page);
+  });
+
+  test('Monomer appears above other monomers, when selected', async ({
+    page,
+  }) => {
+    const center = await getCoordinatesOfTheMiddleOfTheScreen(page);
+    const shift = 25;
+    const betaAlaninePosition = {
+      x: center.x - shift,
+      y: center.y,
+    };
+    await page.getByTestId(Peptides.BetaAlanine).click();
+    await page.mouse.click(betaAlaninePosition.x, betaAlaninePosition.y);
+
+    await page.getByTestId(Peptides.Ethylthiocysteine).click();
+    // Ethylthiocysteine was added later, so it is located above Beta Alanine
+    await page.mouse.click(center.x + shift, center.y);
+    await page.keyboard.press('Escape');
+
+    // Now Beta Alanine must be above Ethylthiocysteine
+    await page.mouse.click(betaAlaninePosition.x, betaAlaninePosition.y);
     await takeEditorScreenshot(page);
   });
 });

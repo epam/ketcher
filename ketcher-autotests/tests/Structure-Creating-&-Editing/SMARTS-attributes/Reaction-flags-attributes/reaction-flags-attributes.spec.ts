@@ -26,7 +26,7 @@ async function drawStructure(page: Page, numberOfClicks: number) {
   }
 }
 
-async function drawStructureWithCustomBondNumberAndDoubleClickOnAtom(
+async function drawStructureAndDoubleClickOnAtom(
   page: Page,
   numberOfBondsAtStructure: number,
   atomType: string,
@@ -43,7 +43,7 @@ test.describe('Checking atom properties attributes in SMARTS format', () => {
   test.beforeEach(async ({ page }) => {
     const numberOfAtom = 0;
     const numberOfBondsAtStructure = 3;
-    await drawStructureWithCustomBondNumberAndDoubleClickOnAtom(
+    await drawStructureAndDoubleClickOnAtom(
       page,
       numberOfBondsAtStructure,
       'C',

@@ -1,13 +1,10 @@
 import { Page, test, expect } from '@playwright/test';
 import {
   BondType,
-  BondTypeName,
-  clickInTheMiddleOfTheScreen,
   doubleClickOnBond,
   pressButton,
   receiveFileComparisonData,
   saveToFile,
-  selectBond,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
@@ -20,15 +17,9 @@ import {
   setReactingCenter,
 } from '../utils';
 import { getKet } from '@utils/formats';
+import { drawStructure } from '@utils/canvas/drawStructures';
 
 const defaultFileFormat = 'MDL Molfile V2000';
-
-async function drawStructure(page: Page) {
-  await selectBond(BondTypeName.Single, page);
-  await clickInTheMiddleOfTheScreen(page);
-  await clickInTheMiddleOfTheScreen(page);
-  await clickInTheMiddleOfTheScreen(page);
-}
 
 async function setAndCheckBondProperties(
   page: Page,

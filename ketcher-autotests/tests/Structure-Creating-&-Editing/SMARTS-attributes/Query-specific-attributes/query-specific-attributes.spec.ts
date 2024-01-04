@@ -1,10 +1,7 @@
 import { Page, test } from '@playwright/test';
 import {
-  BondTypeName,
-  clickInTheMiddleOfTheScreen,
   doubleClickOnAtom,
   pressButton,
-  selectBond,
   takeEditorScreenshot,
   waitForAtomPropsModal,
   waitForPageInit,
@@ -23,15 +20,9 @@ import {
   setSubstitutionCount,
   setUnsaturated,
 } from '../utils';
+import { drawStructure } from '@utils/canvas/drawStructures';
 
 const defaultFileFormat = 'MDL Molfile V2000';
-
-async function drawStructure(page: Page) {
-  await selectBond(BondTypeName.Single, page);
-  await clickInTheMiddleOfTheScreen(page);
-  await clickInTheMiddleOfTheScreen(page);
-  await clickInTheMiddleOfTheScreen(page);
-}
 
 async function setAndCheckQuerySpecificProperties(
   page: Page,

@@ -267,14 +267,16 @@ class Editor implements KetcherEditor {
     this.struct(undefined);
   }
 
-  renderAndRecoordinateStruct(struct: Struct) {
+  renderAndRecoordinateStruct(struct: Struct, needToCenterStruct = true) {
     const action = fromNewCanvas(this.render.ctab, struct);
     this.update(action);
-    this.centerStruct();
+    if (needToCenterStruct) {
+      this.centerStruct();
+    }
     return this.render.ctab.molecule;
   }
 
-  struct(value?: Struct): Struct {
+  struct(value?: Struct, needToCenterStruct = true): Struct {
     if (arguments.length === 0) {
       return this.render.ctab.molecule;
     }
@@ -282,7 +284,10 @@ class Editor implements KetcherEditor {
     this.selection(null);
     const struct = value || new Struct();
 
-    const molecule = this.renderAndRecoordinateStruct(struct);
+    const molecule = this.renderAndRecoordinateStruct(
+      struct,
+      needToCenterStruct,
+    );
 
     this.hoverIcon.create();
     return molecule;

@@ -34,7 +34,7 @@ export class RxnArrowRotate extends Base {
 
     const options = reStruct.render.options;
     const drawingCenter = this.data.center
-      .scaled(options.scale)
+      .scaled(options.microModeScale)
       .add(options.offset);
 
     reStruct.rxnArrows.get(arrowId)?.visel.rotate(degree, drawingCenter);

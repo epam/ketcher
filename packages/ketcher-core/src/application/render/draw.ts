@@ -957,7 +957,7 @@ function arrowUnbalancedEquilibriumFilledHalfTriangle(
 }
 
 function plus(paper: RaphaelPaper, point: Vec2, options: RenderOptions) {
-  const s = options.scale / 5;
+  const s = options.microModeScale / 5;
   return paper
     .path(
       'M{0},{4}L{0},{5}M{2},{1}L{3},{1}',
@@ -1543,7 +1543,7 @@ function rgroupAttachmentPoint(
     getSvgCurveShapeAttachmentPoint(
       attachmentPointEnd,
       directionVector,
-      options.scale,
+      options.microModeScale,
     ),
   );
 

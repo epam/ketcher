@@ -20,13 +20,14 @@ import { ShowHydrogenLabels } from './restruct/reatom';
 import { RenderOptions } from './render.types';
 
 function defaultOptions(options: RenderOptions): RenderOptions {
-  const scaleFactor = options.scale || 100;
+  const scaleFactorMicro = options.microModeScale || 100;
+  const scaleFactorMacro = options.macroModeScale || 200;
 
   if (options.rotationStep) {
     utils.setFracAngle(options.rotationStep);
   }
 
-  const labelFontSize = Math.ceil(1.9 * (scaleFactor / 6));
+  const labelFontSize = Math.ceil(1.9 * (scaleFactorMicro / 6));
   const subFontSize = Math.ceil(0.5 * labelFontSize);
 
   const defaultOptions: Partial<RenderOptions> = {
@@ -55,13 +56,14 @@ function defaultOptions(options: RenderOptions): RenderOptions {
     // bonds
     aromaticCircle: true,
 
-    scale: scaleFactor,
+    microModeScale: scaleFactorMicro,
+    macroModeScale: scaleFactorMacro,
     zoom: 1.0,
     offset: new Vec2(),
 
-    lineWidth: scaleFactor / 20,
-    bondSpace: options.doubleBondWidth || scaleFactor / 7,
-    stereoBond: options.stereoBondWidth || scaleFactor / 7,
+    lineWidth: scaleFactorMicro / 20,
+    bondSpace: options.doubleBondWidth || scaleFactorMicro / 7,
+    stereoBond: options.stereoBondWidth || scaleFactorMicro / 7,
     subFontSize,
     font: '30px Arial',
     fontsz: labelFontSize,
@@ -74,7 +76,7 @@ function defaultOptions(options: RenderOptions): RenderOptions {
     /* styles */
     lineattr: {
       stroke: '#000',
-      'stroke-width': options.bondThickness || scaleFactor / 20,
+      'stroke-width': options.bondThickness || scaleFactorMicro / 20,
       'stroke-linecap': 'round',
       'stroke-linejoin': 'round',
     },
@@ -95,11 +97,11 @@ function defaultOptions(options: RenderOptions): RenderOptions {
     hoverStyle: {
       stroke: '#0097A8',
       fill: '#CCFFDD',
-      'stroke-width': (0.6 * scaleFactor) / 20,
+      'stroke-width': (0.6 * scaleFactorMicro) / 20,
     },
     sgroupBracketStyle: {
       stroke: 'darkgray',
-      'stroke-width': (0.5 * scaleFactor) / 20,
+      'stroke-width': (0.5 * scaleFactorMicro) / 20,
     },
     lassoStyle: {
       stroke: 'gray',
@@ -107,7 +109,7 @@ function defaultOptions(options: RenderOptions): RenderOptions {
     },
     selectionStyleSimpleObject: {
       stroke: '#57FF8F',
-      'stroke-width': scaleFactor / 4,
+      'stroke-width': scaleFactorMicro / 4,
       'stroke-linecap': 'round',
     },
     movingStyle: {

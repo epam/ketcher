@@ -6,6 +6,7 @@ export interface IKetMonomerNode {
     x: number;
     y: number;
   };
+  chemistryPosition?: { x: number; y: number };
   alias?: string;
   templateId: string;
 }

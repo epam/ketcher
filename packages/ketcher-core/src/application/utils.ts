@@ -1,4 +1,4 @@
-import { Struct } from 'domain/entities';
+import { Struct, Vec2 } from 'domain/entities';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import {
   FormatterFactory,
@@ -7,7 +7,7 @@ import {
 } from './formatters';
 import { Ketcher } from './ketcher';
 import { ChemicalMimeType, StructService } from 'domain/services';
-import { CoreEditor, EditorHistory } from './editor';
+import { Coordinates, CoreEditor, EditorHistory } from './editor';
 import { KetSerializer } from 'domain/serializers';
 import assert from 'assert';
 
@@ -97,10 +97,19 @@ export async function parseAndAddMacromoleculesOnCanvas(
 
   const deserialisedKet = ketSerializer.deserializeToDrawingEntities(ketStruct);
   assert(deserialisedKet);
-  deserialisedKet.drawingEntitiesManager.mergeInto(
+  const modelChanges = deserialisedKet.drawingEntitiesManager.mergeInto(
     editor.drawingEntitiesManager,
   );
 
-  new EditorHistory(editor).update(deserialisedKet.modelChanges);
-  editor.renderersContainer.update(deserialisedKet.modelChanges);
+  new EditorHistory(editor).update(modelChanges);
+  editor.renderersContainer.update(modelChanges);
+}
+
+export function getCurrentCenterPointOfCanvas() {
+  const editor = CoreEditor.provideEditorInstance();
+  const originalCenterPointOfCanvas = new Vec2(
+    editor.canvasOffset.width / 2,
+    editor.canvasOffset.height / 2,
+  );
+  return Coordinates.viewToCanvas(originalCenterPointOfCanvas);
 }

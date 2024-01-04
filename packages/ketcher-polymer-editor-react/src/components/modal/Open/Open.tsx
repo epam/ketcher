@@ -62,12 +62,13 @@ const addToCanvas = ({
 }) => {
   const deserialisedKet = ketSerializer.deserializeToDrawingEntities(struct);
   assert(deserialisedKet);
-  deserialisedKet.drawingEntitiesManager.mergeInto(
+  deserialisedKet.drawingEntitiesManager.centerMacroStructure();
+  const modelChanges = deserialisedKet.drawingEntitiesManager.mergeInto(
     editor.drawingEntitiesManager,
   );
   const editorHistory = new EditorHistory(editor);
-  editorHistory.update(deserialisedKet.modelChanges);
-  editor.renderersContainer.update(deserialisedKet.modelChanges);
+  editorHistory.update(modelChanges);
+  editor.renderersContainer.update(modelChanges);
 };
 
 // TODO: replace after the implementation of the function for processing the structure from the file
@@ -231,7 +232,7 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
       {getButtons().length === 0 ? (
         <></>
       ) : (
-        <Modal.Footer withBorder>{getButtons()}</Modal.Footer>
+        <Modal.Footer withborder="true">{getButtons()}</Modal.Footer>
       )}
     </Modal>
   );

@@ -11,12 +11,12 @@ import {
   checkFor0and360,
 } from 'domain/helpers/attachmentPointCalculations';
 import { AttachmentPoint } from 'domain/AttachmentPoint';
-import Coordinates from 'application/editor/shared/coordinates';
 import { Vec2 } from 'domain/entities';
 import {
   AttachmentPointConstructorParams,
   AttachmentPointName,
 } from 'domain/types';
+import { Coordinates } from 'application/editor/shared/coordinates';
 
 export abstract class BaseMonomerRenderer extends BaseRenderer {
   private editorEvents: typeof editorEvents;
@@ -313,6 +313,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       this.selectionCircle = this.canvas
         ?.insert('circle', ':first-child')
         .attr('r', '42px')
+        .attr('opacity', '0.7')
         .attr('cx', this.center.x)
         .attr('cy', this.center.y)
         .attr('fill', '#57FF8F');
@@ -399,9 +400,15 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     assert(this.rootElement);
     if (this.monomer.selected) {
       this.appendSelection();
+      this.raiseElement();
     } else {
       this.removeSelection();
     }
+  }
+
+  private raiseElement() {
+    this.selectionCircle?.raise();
+    this.rootElement?.raise();
   }
 
   public moveSelection() {

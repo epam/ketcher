@@ -209,7 +209,7 @@ class ReSimpleObject extends ReObject {
     this.item.pos.forEach((p, index) => {
       point[index] = Scale.modelToCanvas(p, render.options);
     });
-    const scaleFactor = render.options.scale;
+    const scaleFactor = render.options.microModeScale;
 
     const paths: Array<StyledPath> = [];
 
@@ -373,7 +373,7 @@ class ReSimpleObject extends ReObject {
     });
 
     const refPoints = this.getReferencePoints();
-    const scaleFactor = restruct.render.options.scale;
+    const scaleFactor = restruct.render.options.microModeScale;
     this.selectionSet = restruct.render.paper.set();
     this.selectionPointsSet = restruct.render.paper.set();
     this.selectionSet.push(

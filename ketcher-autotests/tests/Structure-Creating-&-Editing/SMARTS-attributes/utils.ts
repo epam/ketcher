@@ -1,6 +1,5 @@
 import { Page, expect } from '@playwright/test';
 import { TopPanelButton, selectTopPanelButton } from '@utils';
-import { clickOnFileFormatDropdown } from '@utils/formats';
 
 type queryNumberValues =
   | '0'
@@ -87,6 +86,20 @@ export async function setCustomQuery(page: Page, customQuery: string) {
   await page.getByTestId('custom-query-value').fill(customQuery);
 }
 
+// Custom query - atom properties:
+
+export async function setCustomQueryForAtom(page: Page, customQuery: string) {
+  await page.getByTestId('custom-query-checkbox').check();
+  await page.getByTestId('atom-custom-query').fill(customQuery);
+}
+
+// Custom query - bond properties:
+
+export async function setCustomQueryForBond(page: Page, customQuery: string) {
+  await page.getByTestId('custom-query-checkbox').check();
+  await page.getByTestId('bond-custom-query').fill(customQuery);
+}
+
 // Bond attributes:
 
 export async function setBondType(page: Page, bondTypeTestId: string) {
@@ -120,9 +133,13 @@ export async function setValence(page: Page, valenceOption: string) {
 
 // Other
 
-export async function checkSmartsValue(page: Page, value: string) {
+export async function checkSmartsValue(
+  page: Page,
+  defaultFileFormat: string,
+  value: string,
+) {
   await selectTopPanelButton(TopPanelButton.Save, page);
-  await clickOnFileFormatDropdown(page);
+  await page.getByRole('button', { name: defaultFileFormat }).click();
   await page.getByRole('option', { name: 'Daylight SMARTS' }).click();
   const smartsInput = page.getByTestId('smarts-preview-area-text');
   await expect(smartsInput).toHaveValue(value);

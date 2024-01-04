@@ -15,6 +15,7 @@ import {
   setBondTopology,
   setBondType,
   setCustomQuery,
+  setCustomQueryForBond,
 } from '../utils';
 
 async function drawStructure(page: Page) {
@@ -23,6 +24,8 @@ async function drawStructure(page: Page) {
   await clickInTheMiddleOfTheScreen(page);
   await clickInTheMiddleOfTheScreen(page);
 }
+
+const defaultFileFormat = 'MDL Molfile V2000';
 
 async function setAndCheckBondProperties(
   page: Page,
@@ -33,7 +36,7 @@ async function setAndCheckBondProperties(
   await setProperty(page, value);
   await pressButton(page, 'Apply');
   await takeEditorScreenshot(page);
-  await checkSmartsValue(page, expectedSmarts);
+  await checkSmartsValue(page, defaultFileFormat, expectedSmarts);
 }
 
 async function waitForBondPropsModal(page: Page) {

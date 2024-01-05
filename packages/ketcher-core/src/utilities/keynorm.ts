@@ -62,8 +62,7 @@ function modifiers(name, event, shift) {
   if (event.altKey) name = 'Alt+' + name;
   if (event.ctrlKey) name = 'Ctrl+' + name;
   if (event.metaKey) name = 'Meta+' + name;
-  if (event.shiftKey && (shift !== false || event.key !== 'Shift'))
-    name = 'Shift+' + name;
+  if (shift !== false && event.shiftKey) name = 'Shift+' + name;
 
   return name;
 }
@@ -97,11 +96,35 @@ function keyNorm(obj) {
   return typeof obj === 'object' ? normalizeKeyMap(obj) : normalizeKeyName(obj);
 }
 
+function setHotKey(key, actName, hotKeys) {
+  if (Array.isArray(hotKeys[key])) hotKeys[key].push(actName);
+  else hotKeys[key] = [actName];
+}
+
+export function initHotKeys(actions) {
+  const hotKeys = {};
+  let act;
+
+  Object.keys(actions).forEach((actName) => {
+    act = actions[actName];
+    if (!act.shortcut) return;
+
+    if (Array.isArray(act.shortcut)) {
+      act.shortcut.forEach((key) => {
+        setHotKey(key, actName, hotKeys);
+      });
+    } else {
+      setHotKey(act.shortcut, actName, hotKeys);
+    }
+  });
+
+  return keyNorm(hotKeys);
+}
+
 function lookup(map, event) {
   let name = rusToEng(KN.keyName(event), event);
   if (name === 'Add') name = '+'; // numpad '+' and '-'
   if (name === 'Subtract') name = '-';
-
   const isChar = name.length === 1 && name !== ' ';
   let res = map[modifiers(name, event, !isChar)];
   let baseName;

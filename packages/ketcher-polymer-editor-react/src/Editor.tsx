@@ -180,6 +180,12 @@ function Editor({ theme, togglerComponent }: EditorProps) {
   );
 
   useEffect(() => {
+    const handler = (toolName: string) => {
+      if (toolName !== activeTool) {
+        dispatch(selectTool(toolName));
+      }
+    };
+
     if (editor) {
       editor.events.error.add((errorText) => {
         dispatch(openErrorTooltip(errorText));
@@ -195,13 +201,13 @@ function Editor({ theme, togglerComponent }: EditorProps) {
             }),
           ),
       );
-
-      editor.events.selectTool.add((toolName: string) => {
-        if (toolName !== activeTool) {
-          dispatch(selectTool(toolName));
-        }
-      });
+      editor.events.selectTool.add(handler);
     }
+
+    return () => {
+      dispatch(selectTool(null));
+      editor?.events.selectTool.remove(handler);
+    };
   }, [editor]);
 
   const handleOpenPreview = useCallback((e) => {

@@ -27,7 +27,7 @@ import { MacromoleculesConverter } from 'application/editor/MacromoleculesConver
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { ketcherProvider } from 'application/utils';
 import { SnakeMode } from './modes/internal';
-import { keyNorm } from '../../utilities/keynorm';
+import { initHotKeys, keyNorm } from '../../utilities/keynorm';
 
 interface ICoreEditorConstructorParams {
   theme;
@@ -53,6 +53,7 @@ export class CoreEditor {
   // private lastEvent: Event | undefined;
   private tool?: Tool | BaseTool;
   private micromoleculesEditor: Editor;
+  private hotKeyEventHandler: (event: unknown) => void = () => {};
 
   constructor({ theme, canvas }: ICoreEditorConstructorParams) {
     this.theme = theme;
@@ -77,22 +78,20 @@ export class CoreEditor {
     return editor;
   }
 
-  setupHotKeysEvents() {
-    document.addEventListener('keydown', (event) => {
-      const keySettings = hotkeysConfiguration;
-      const shortcut = keyNorm(event);
-      const key = Object.entries(keySettings).reduce((acc, cur) => {
-        const [key, value] = cur;
-        const shortcutExists = value.shortcut.find((el) => el === shortcut);
-        if (shortcutExists) acc += key;
-        return acc;
-      }, '');
+  private handleHotKeyEvents(event) {
+    const keySettings = hotkeysConfiguration;
+    const hotKeys = initHotKeys(keySettings);
+    const shortcutKey = keyNorm.lookup(hotKeys, event);
 
-      if (keySettings[key] && keySettings[key].handler) {
-        keySettings[key].handler(this);
-        event.preventDefault();
-      }
-    });
+    if (keySettings[shortcutKey] && keySettings[shortcutKey].handler) {
+      keySettings[shortcutKey].handler(this);
+      event.preventDefault();
+    }
+  }
+
+  setupHotKeysEvents() {
+    this.hotKeyEventHandler = (event) => this.handleHotKeyEvents(event);
+    document.addEventListener('keydown', this.hotKeyEventHandler);
   }
 
   private subscribeEvents() {
@@ -185,6 +184,7 @@ export class CoreEditor {
     for (const eventName in this.events) {
       this.events[eventName].handlers = [];
     }
+    document.removeEventListener('keydown', this.hotKeyEventHandler);
   }
 
   get trackedDomEvents() {

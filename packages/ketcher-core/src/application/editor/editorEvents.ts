@@ -61,7 +61,7 @@ export const hotkeysConfiguration = {
     },
   },
   redo: {
-    shortcut: ['Shift+Ctrl+Z', 'Ctrl+Y', 'Shift+Meta+Z', 'Meta+y'],
+    shortcut: ['Mod+Ctrl+Z', 'Ctrl+Y', 'Mod+Meta+Z', 'Meta+y'],
     handler: (editor: CoreEditor) => {
       editor.onSelectHistory('redo');
     },

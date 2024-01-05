@@ -14,7 +14,8 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useCallback } from 'react'
+import React, { useCallback } from 'react'
+import ReactDOM from 'react-dom'
 import { Menu, MenuProps } from 'react-contexify'
 import 'react-contexify/ReactContexify.css'
 import { useAppContext } from 'src/hooks'
@@ -29,6 +30,10 @@ import SelectionMenuItems from './menuItems/SelectionMenuItems'
 const props: Partial<MenuProps> = {
   animation: false,
   className: styles.contextMenu
+}
+
+function BodyPortal(props: React.PropsWithChildren<{ refKey: string }>) {
+  return ReactDOM.createPortal(props.children, document.body, props.refKey)
 }
 
 const ContextMenu: React.FC = () => {
@@ -47,45 +52,53 @@ const ContextMenu: React.FC = () => {
 
   return (
     <>
-      <Menu
-        {...props}
-        id={CONTEXT_MENU_ID.FOR_BONDS}
-        onVisibilityChange={(visible) =>
-          trackVisibility(CONTEXT_MENU_ID.FOR_BONDS, visible)
-        }
-      >
-        <BondMenuItems />
-      </Menu>
+      <BodyPortal refKey={CONTEXT_MENU_ID.FOR_BONDS}>
+        <Menu
+          {...props}
+          id={CONTEXT_MENU_ID.FOR_BONDS}
+          onVisibilityChange={(visible) =>
+            trackVisibility(CONTEXT_MENU_ID.FOR_BONDS, visible)
+          }
+        >
+          <BondMenuItems />
+        </Menu>
+      </BodyPortal>
 
-      <Menu
-        {...props}
-        id={CONTEXT_MENU_ID.FOR_ATOMS}
-        onVisibilityChange={(visible) =>
-          trackVisibility(CONTEXT_MENU_ID.FOR_ATOMS, visible)
-        }
-      >
-        <AtomMenuItems />
-      </Menu>
+      <BodyPortal refKey={CONTEXT_MENU_ID.FOR_ATOMS}>
+        <Menu
+          {...props}
+          id={CONTEXT_MENU_ID.FOR_ATOMS}
+          onVisibilityChange={(visible) =>
+            trackVisibility(CONTEXT_MENU_ID.FOR_ATOMS, visible)
+          }
+        >
+          <AtomMenuItems />
+        </Menu>
+      </BodyPortal>
 
-      <Menu
-        {...props}
-        id={CONTEXT_MENU_ID.FOR_SELECTION}
-        onVisibilityChange={(visible) =>
-          trackVisibility(CONTEXT_MENU_ID.FOR_SELECTION, visible)
-        }
-      >
-        <SelectionMenuItems />
-      </Menu>
+      <BodyPortal refKey={CONTEXT_MENU_ID.FOR_SELECTION}>
+        <Menu
+          {...props}
+          id={CONTEXT_MENU_ID.FOR_SELECTION}
+          onVisibilityChange={(visible) =>
+            trackVisibility(CONTEXT_MENU_ID.FOR_SELECTION, visible)
+          }
+        >
+          <SelectionMenuItems />
+        </Menu>
+      </BodyPortal>
 
-      <Menu
-        {...props}
-        id={CONTEXT_MENU_ID.FOR_FUNCTIONAL_GROUPS}
-        onVisibilityChange={(visible) =>
-          trackVisibility(CONTEXT_MENU_ID.FOR_FUNCTIONAL_GROUPS, visible)
-        }
-      >
-        <FunctionalGroupMenuItems />
-      </Menu>
+      <BodyPortal refKey={CONTEXT_MENU_ID.FOR_FUNCTIONAL_GROUPS}>
+        <Menu
+          {...props}
+          id={CONTEXT_MENU_ID.FOR_FUNCTIONAL_GROUPS}
+          onVisibilityChange={(visible) =>
+            trackVisibility(CONTEXT_MENU_ID.FOR_FUNCTIONAL_GROUPS, visible)
+          }
+        >
+          <FunctionalGroupMenuItems />
+        </Menu>
+      </BodyPortal>
     </>
   )
 }

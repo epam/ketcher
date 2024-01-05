@@ -78,6 +78,7 @@ export class Render {
     let scroll = this.scrollPos()
 
     point = point.scaled(1 / this.options.zoom)
+    point = point.scaled(1 / (this.options.externalZoomScale ?? 1.0))
     scroll = scroll.scaled(1 / this.options.zoom)
 
     point = isRelative ? point : point.add(scroll).sub(this.options.offset)
@@ -93,6 +94,7 @@ export class Render {
           .add(this.options.offset)
           .sub(this.scrollPos().scaled(1 / this.options.zoom))
     p = p.scaled(this.options.zoom)
+    p = p.scaled(this.options.externalZoomScale ?? 1.0)
 
     return p
   }

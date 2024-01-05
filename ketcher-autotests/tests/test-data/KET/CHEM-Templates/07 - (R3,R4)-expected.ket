@@ -353,6 +353,7 @@
         ],
         "classHELM": "CHEM",
         "id": "_R3_R4_",
+        "fullName": "(R3,R4)",
         "alias": "(R3,R4)",
         "attachmentPoints": [
             {

@@ -370,6 +370,7 @@
         ],
         "classHELM": "PEPTIDE",
         "id": "_R1_R2_R3_R4_",
+        "fullName": "(R1,R2,R3,R4)",
         "alias": "(R1,R2,R3,R4)",
         "attachmentPoints": [
             {

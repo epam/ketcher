@@ -1680,6 +1680,7 @@
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "Ala_0",
+        "fullName": "A",
         "alias": "A",
         "attachmentPoints": [
             {
@@ -1818,6 +1819,7 @@
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "Bal_1",
+        "fullName": "Bal",
         "alias": "Bal",
         "attachmentPoints": [
             {
@@ -2018,6 +2020,7 @@
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "Edc_2",
+        "fullName": "Edc",
         "alias": "Edc",
         "attachmentPoints": [
             {
@@ -2188,6 +2191,7 @@
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "dSec_3",
+        "fullName": "dSec",
         "alias": "dSec",
         "attachmentPoints": [
             {
@@ -2396,6 +2400,7 @@
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "Asp_4",
+        "fullName": "D",
         "alias": "D",
         "attachmentPoints": [
             {
@@ -2604,6 +2609,7 @@
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "Ggu_5",
+        "fullName": "Ggu",
         "alias": "Ggu",
         "attachmentPoints": [
             {
@@ -2849,6 +2855,7 @@
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "dF_6",
+        "fullName": "dF",
         "alias": "dF",
         "attachmentPoints": [
             {
@@ -2972,6 +2979,7 @@
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "Gly_7",
+        "fullName": "G",
         "alias": "G",
         "attachmentPoints": [
             {
@@ -3209,6 +3217,7 @@
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "His_8",
+        "fullName": "H",
         "alias": "H",
         "attachmentPoints": [
             {
@@ -3404,6 +3413,7 @@
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "dI_9",
+        "fullName": "dI",
         "alias": "dI",
         "attachmentPoints": [
             {
@@ -3634,6 +3644,7 @@
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "Hyl_10",
+        "fullName": "Hyl",
         "alias": "Hyl",
         "attachmentPoints": [
             {
@@ -3827,6 +3838,7 @@
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "Nle_11",
+        "fullName": "Nle",
         "alias": "Nle",
         "attachmentPoints": [
             {
@@ -4012,6 +4024,7 @@
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "dM_12",
+        "fullName": "dM",
         "alias": "dM",
         "attachmentPoints": [
             {
@@ -4212,6 +4225,7 @@
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "dN_13",
+        "fullName": "dN",
         "alias": "dN",
         "attachmentPoints": [
             {
@@ -4427,6 +4441,7 @@
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "Mhp_14",
+        "fullName": "Mhp",
         "alias": "Mhp",
         "attachmentPoints": [
             {
@@ -4642,6 +4657,7 @@
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "dQ_15",
+        "fullName": "dQ",
         "alias": "dQ",
         "attachmentPoints": [
             {
@@ -4895,6 +4911,7 @@
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "Arg_16",
+        "fullName": "R",
         "alias": "R",
         "attachmentPoints": [
             {
@@ -5118,6 +5135,7 @@
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "SertBu_17",
+        "fullName": "SertBu",
         "alias": "SertBu",
         "attachmentPoints": [
             {
@@ -5290,6 +5308,7 @@
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "D-aThr_18",
+        "fullName": "D-aThr",
         "alias": "D-aThr",
         "attachmentPoints": [
             {
@@ -5460,6 +5479,7 @@
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "Nva_19",
+        "fullName": "Nva",
         "alias": "Nva",
         "attachmentPoints": [
             {
@@ -5764,6 +5784,7 @@
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "Trp_20",
+        "fullName": "W",
         "alias": "W",
         "attachmentPoints": [
             {
@@ -5987,6 +6008,7 @@
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "Aad_21",
+        "fullName": "Aad",
         "alias": "Aad",
         "attachmentPoints": [
             {
@@ -6179,6 +6201,7 @@
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "Dab_22",
+        "fullName": "Dab",
         "alias": "Dab",
         "attachmentPoints": [
             {
@@ -6453,6 +6476,7 @@
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "Tyr_23",
+        "fullName": "Y",
         "alias": "Y",
         "attachmentPoints": [
             {
@@ -6726,6 +6750,7 @@
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "TyrabD_24",
+        "fullName": "TyrabD",
         "alias": "TyrabD",
         "attachmentPoints": [
             {
@@ -6881,6 +6906,7 @@
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "Mba_25",
+        "fullName": "Mba",
         "alias": "Mba",
         "attachmentPoints": [
             {
@@ -7050,6 +7076,7 @@
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "D-Nva_26",
+        "fullName": "D-Nva",
         "alias": "D-Nva",
         "attachmentPoints": [
             {
@@ -7282,6 +7309,7 @@
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "ThrPO3_27",
+        "fullName": "ThrPO3",
         "alias": "ThrPO3",
         "attachmentPoints": [
             {
@@ -7452,6 +7480,7 @@
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "dS_28",
+        "fullName": "dS",
         "alias": "dS",
         "attachmentPoints": [
             {
@@ -7765,6 +7794,7 @@
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "DhArgE_29",
+        "fullName": "DhArgE",
         "alias": "DhArgE",
         "attachmentPoints": [
             {
@@ -8010,6 +8040,7 @@
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "meR_30",
+        "fullName": "meR",
         "alias": "meR",
         "attachmentPoints": [
             {
@@ -8225,6 +8256,7 @@
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "Gln_31",
+        "fullName": "Q",
         "alias": "Q",
         "attachmentPoints": [
             {
@@ -8448,6 +8480,7 @@
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "meQ_32",
+        "fullName": "meQ",
         "alias": "meQ",
         "attachmentPoints": [
             {
@@ -8642,6 +8675,7 @@
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "D-Hyp_33",
+        "fullName": "D-Hyp",
         "alias": "D-Hyp",
         "attachmentPoints": [
             {
@@ -8836,6 +8870,7 @@
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "D-aHyp_34",
+        "fullName": "D-aHyp",
         "alias": "D-aHyp",
         "attachmentPoints": [
             {
@@ -9036,6 +9071,7 @@
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "meN_35",
+        "fullName": "meN",
         "alias": "meN",
         "attachmentPoints": [
             {
@@ -9238,6 +9274,7 @@
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "DMetSO_36",
+        "fullName": "DMetSO",
         "alias": "DMetSO",
         "attachmentPoints": [
             {
@@ -9408,6 +9445,7 @@
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "OLeu_37",
+        "fullName": "OLeu",
         "alias": "OLeu",
         "attachmentPoints": [
             {
@@ -9585,6 +9623,7 @@
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "Leu_38",
+        "fullName": "L",
         "alias": "L",
         "attachmentPoints": [
             {
@@ -9890,6 +9929,7 @@
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "LysBoc_39",
+        "fullName": "LysBoc",
         "alias": "LysBoc",
         "attachmentPoints": [
             {
@@ -10075,6 +10115,7 @@
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "DxiIle_40",
+        "fullName": "DxiIle",
         "alias": "DxiIle",
         "attachmentPoints": [
             {
@@ -10409,6 +10450,7 @@
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "DHis1B_41",
+        "fullName": "DHis1B",
         "alias": "DHis1B",
         "attachmentPoints": [
             {
@@ -10646,6 +10688,7 @@
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "meH_42",
+        "fullName": "meH",
         "alias": "meH",
         "attachmentPoints": [
             {
@@ -10799,6 +10842,7 @@
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "DAGlyB_43",
+        "fullName": "DAGlyB",
         "alias": "DAGlyB",
         "attachmentPoints": [
             {
@@ -10884,6 +10928,7 @@
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "Gly-ol_44",
+        "fullName": "Gly-ol",
         "alias": "Gly-ol",
         "attachmentPoints": [
             {
@@ -11098,6 +11143,7 @@
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "Phg_45",
+        "fullName": "Phg",
         "alias": "Phg",
         "attachmentPoints": [
             {
@@ -11320,6 +11366,7 @@
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "Phe-ol_46",
+        "fullName": "Phe-ol",
         "alias": "Phe-ol",
         "attachmentPoints": [
             {
@@ -11604,6 +11651,7 @@
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "AspPh2_47",
+        "fullName": "AspPh2",
         "alias": "AspPh2",
         "attachmentPoints": [
             {
@@ -11759,6 +11807,7 @@
         "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "seC_48",
+        "fullName": "seC",
         "alias": "seC",
         "attachmentPoints": [
             {
@@ -11958,6 +12007,7 @@
         ],
         "classHELM": "PEPTIDE",
         "id": "Cya___3-sulfoalanine",
+        "fullName": "Cya",
         "alias": "Cya",
         "attachmentPoints": [
             {
@@ -12125,6 +12175,7 @@
         ],
         "classHELM": "PEPTIDE",
         "id": "dC___D-Cysteine",
+        "fullName": "dC",
         "alias": "dC",
         "attachmentPoints": [
             {
@@ -12329,6 +12380,7 @@
         ],
         "classHELM": "PEPTIDE",
         "id": "D___Aspartic acid",
+        "fullName": "D",
         "alias": "D",
         "attachmentPoints": [
             {
@@ -12533,6 +12585,7 @@
         ],
         "classHELM": "PEPTIDE",
         "id": "Ggu___gamma-glutamic acid",
+        "fullName": "Ggu",
         "alias": "Ggu",
         "attachmentPoints": [
             {
@@ -12752,6 +12805,7 @@
         ],
         "classHELM": "PEPTIDE",
         "id": "meE___N-Methyl-Glutamic acid",
+        "fullName": "meE",
         "alias": "meE",
         "attachmentPoints": [
             {
@@ -13008,6 +13062,7 @@
         ],
         "classHELM": "PEPTIDE",
         "id": "D-hPhe___D-Homophenylalanine",
+        "fullName": "D-hPhe",
         "alias": "D-hPhe",
         "attachmentPoints": [
             {
@@ -13257,6 +13312,7 @@
         ],
         "classHELM": "PEPTIDE",
         "id": "Phe_4I___(2S)-2-amino-3-(4-iodophenyl)propanoic acid",
+        "fullName": "Phe_4I",
         "alias": "Phe_4I",
         "attachmentPoints": [
             {
@@ -13506,6 +13562,7 @@
         ],
         "classHELM": "PEPTIDE",
         "id": "aMePhe___(2S)-2-amino-2-methyl-3-phenylpropanoic acid",
+        "fullName": "aMePhe",
         "alias": "aMePhe",
         "attachmentPoints": [
             {
@@ -13725,6 +13782,7 @@
         ],
         "classHELM": "PEPTIDE",
         "id": "D-Phg___D-2-phenylglycine",
+        "fullName": "D-Phg",
         "alias": "D-Phg",
         "attachmentPoints": [
             {
@@ -13927,6 +13985,7 @@
         ],
         "classHELM": "PEPTIDE",
         "id": "DAPhg4___2-(4-chlorophenyl)acetic acid",
+        "fullName": "DAPhg4",
         "alias": "DAPhg4",
         "attachmentPoints": [
             {
@@ -14154,6 +14213,7 @@
         ],
         "classHELM": "PEPTIDE",
         "id": "meH___N-Methyl-Histidine",
+        "fullName": "meH",
         "alias": "meH",
         "attachmentPoints": [
             {
@@ -14348,6 +14408,7 @@
         ],
         "classHELM": "PEPTIDE",
         "id": "D-aIle___D-allo-Isoleucine",
+        "fullName": "D-aIle",
         "alias": "D-aIle",
         "attachmentPoints": [
             {
@@ -14684,6 +14745,7 @@
         ],
         "classHELM": "PEPTIDE",
         "id": "Pyl___Pyl",
+        "fullName": "Pyl",
         "alias": "Pyl",
         "attachmentPoints": [
             {
@@ -14956,6 +15018,7 @@
         ],
         "classHELM": "PEPTIDE",
         "id": "LysiPr___(2S)-2-amino-6-[(propan-2-yl)amino]hexanoic acid",
+        "fullName": "LysiPr",
         "alias": "LysiPr",
         "attachmentPoints": [
             {
@@ -15148,6 +15211,7 @@
         ],
         "classHELM": "PEPTIDE",
         "id": "D-Nle___D-Norleucine",
+        "fullName": "D-Nle",
         "alias": "D-Nle",
         "attachmentPoints": [
             {
@@ -15315,6 +15379,7 @@
         ],
         "classHELM": "PEPTIDE",
         "id": "Leu-al___(2S)-2-amino-4-methylpentanal",
+        "fullName": "Leu-al",
         "alias": "Leu-al",
         "attachmentPoints": [
             {
@@ -15490,6 +15555,7 @@
         ],
         "classHELM": "PEPTIDE",
         "id": "M___Methionine",
+        "fullName": "M",
         "alias": "M",
         "attachmentPoints": [
             {
@@ -15691,6 +15757,7 @@
         ],
         "classHELM": "PEPTIDE",
         "id": "D-Hyp___D-4-Hydroxyproline",
+        "fullName": "D-Hyp",
         "alias": "D-Hyp",
         "attachmentPoints": [
             {
@@ -15923,6 +15990,7 @@
         ],
         "classHELM": "PEPTIDE",
         "id": "dQ___D-Glutamine",
+        "fullName": "dQ",
         "alias": "dQ",
         "attachmentPoints": [
             {
@@ -16117,6 +16185,7 @@
         ],
         "classHELM": "PEPTIDE",
         "id": "Hse___homoserine",
+        "fullName": "Hse",
         "alias": "Hse",
         "attachmentPoints": [
             {
@@ -16306,6 +16375,7 @@
         ],
         "classHELM": "PEPTIDE",
         "id": "D-aThr___D-allo-Threonine",
+        "fullName": "D-aThr",
         "alias": "D-aThr",
         "attachmentPoints": [
             {
@@ -16483,6 +16553,7 @@
         ],
         "classHELM": "PEPTIDE",
         "id": "Iva___isovaline",
+        "fullName": "Iva",
         "alias": "Iva",
         "attachmentPoints": [
             {
@@ -16819,6 +16890,7 @@
         ],
         "classHELM": "PEPTIDE",
         "id": "DTrpFo___(2R)-2-amino-3-(1-formyl-1H-indol-3-yl)propanoic acid",
+        "fullName": "DTrpFo",
         "alias": "DTrpFo",
         "attachmentPoints": [
             {
@@ -17206,6 +17278,7 @@
         ],
         "classHELM": "PEPTIDE",
         "id": "Test-6-P___Test-6-AP-Peptide",
+        "fullName": "Test-6-P",
         "alias": "Test-6-P",
         "attachmentPoints": [
             {
@@ -17476,6 +17549,7 @@
         ],
         "classHELM": "PEPTIDE",
         "id": "Asu___2-aminosuberic acid",
+        "fullName": "Asu",
         "alias": "Asu",
         "attachmentPoints": [
             {
@@ -17787,6 +17861,7 @@
         ],
         "classHELM": "PEPTIDE",
         "id": "Nty___nitrotyrosine",
+        "fullName": "Nty",
         "alias": "Nty",
         "attachmentPoints": [
             {
@@ -18004,6 +18079,7 @@
         ],
         "classHELM": "PEPTIDE",
         "id": "N___Asparagine",
+        "fullName": "N",
         "alias": "N",
         "attachmentPoints": [
             {
@@ -18220,6 +18296,7 @@
         ],
         "classHELM": "PEPTIDE",
         "id": "DMetSO___(2R)-2-amino-4-[(S)-methanesulfinyl]butanoic acid",
+        "fullName": "DMetSO",
         "alias": "DMetSO",
         "attachmentPoints": [
             {

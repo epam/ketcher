@@ -370,6 +370,7 @@
         ],
         "classHELM": "PEPTIDE",
         "id": "_R1_R2_-_R3_gap_",
+        "fullName": "(R1,R2)_-_R3_gap",
         "alias": "(R1,R2)_-_R3_gap",
         "attachmentPoints": [
             {

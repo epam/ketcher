@@ -375,6 +375,7 @@
         ],
         "classHELM": "RNA",
         "id": "_R1_R2_R3_R4_R5_",
+        "fullName": "(R1,R2,R3,R4,R5)",
         "alias": "(R1,R2,R3,R4,R5)",
         "attachmentPoints": [
             {

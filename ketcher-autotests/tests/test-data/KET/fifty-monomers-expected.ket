@@ -890,6 +890,7 @@
         ],
         "classHELM": "PEPTIDE",
         "id": "Bal___beta-Alanine",
+        "fullName": "Bal",
         "alias": "Bal",
         "attachmentPoints": [
             {
@@ -1091,6 +1092,7 @@
         ],
         "classHELM": "PEPTIDE",
         "id": "Edc___S-ethylthiocysteine",
+        "fullName": "Edc",
         "alias": "Edc",
         "attachmentPoints": [
             {
@@ -1292,6 +1294,7 @@
         ],
         "classHELM": "PEPTIDE",
         "id": "dD___D-Aspartic acid",
+        "fullName": "dD",
         "alias": "dD",
         "attachmentPoints": [
             {
@@ -1502,6 +1505,7 @@
         ],
         "classHELM": "PEPTIDE",
         "id": "Ggu___gamma-glutamic acid",
+        "fullName": "Ggu",
         "alias": "Ggu",
         "attachmentPoints": [
             {
@@ -1762,6 +1766,7 @@
         ],
         "classHELM": "PEPTIDE",
         "id": "Phe3Cl___3-Chloro-L-phenylalanine",
+        "fullName": "Phe3Cl",
         "alias": "Phe3Cl",
         "attachmentPoints": [
             {
@@ -2015,6 +2020,7 @@
         ],
         "classHELM": "PEPTIDE",
         "id": "Phe2Me___(2S)-2-amino-3-(2-methylphenyl)propanoic acid",
+        "fullName": "Phe2Me",
         "alias": "Phe2Me",
         "attachmentPoints": [
             {
@@ -2268,6 +2274,7 @@
         ],
         "classHELM": "PEPTIDE",
         "id": "Phe_3F___(2S)-2-amino-3-(3-fluorophenyl)propanoic acid",
+        "fullName": "Phe_3F",
         "alias": "Phe_3F",
         "attachmentPoints": [
             {
@@ -2506,6 +2513,7 @@
         ],
         "classHELM": "PEPTIDE",
         "id": "Hhs___homohistidine",
+        "fullName": "Hhs",
         "alias": "Hhs",
         "attachmentPoints": [
             {
@@ -2694,6 +2702,7 @@
         ],
         "classHELM": "PEPTIDE",
         "id": "D-aIle___D-allo-Isoleucine",
+        "fullName": "D-aIle",
         "alias": "D-aIle",
         "attachmentPoints": [
             {
@@ -2925,6 +2934,7 @@
         ],
         "classHELM": "PEPTIDE",
         "id": "Hyl___5-hydroxylysine",
+        "fullName": "Hyl",
         "alias": "Hyl",
         "attachmentPoints": [
             {
@@ -3150,6 +3160,7 @@
         ],
         "classHELM": "PEPTIDE",
         "id": "dK___D-Lysine",
+        "fullName": "dK",
         "alias": "dK",
         "attachmentPoints": [
             {
@@ -3405,6 +3416,7 @@
         ],
         "classHELM": "PEPTIDE",
         "id": "LysiPr___(2S)-2-amino-6-[(propan-2-yl)amino]hexanoic acid",
+        "fullName": "LysiPr",
         "alias": "LysiPr",
         "attachmentPoints": [
             {
@@ -3591,6 +3603,7 @@
         ],
         "classHELM": "PEPTIDE",
         "id": "D-Nle___D-Norleucine",
+        "fullName": "D-Nle",
         "alias": "D-Nle",
         "attachmentPoints": [
             {
@@ -3762,6 +3775,7 @@
         ],
         "classHELM": "PEPTIDE",
         "id": "Leu-al___(2S)-2-amino-4-methylpentanal",
+        "fullName": "Leu-al",
         "alias": "Leu-al",
         "attachmentPoints": [
             {
@@ -3954,6 +3968,7 @@
         ],
         "classHELM": "PEPTIDE",
         "id": "Met_O___(2S)-2-amino-4-methanesulfinylbutanoic acid",
+        "fullName": "Met_O",
         "alias": "Met_O",
         "attachmentPoints": [
             {
@@ -4155,6 +4170,7 @@
         ],
         "classHELM": "PEPTIDE",
         "id": "dN___D-Asparagine",
+        "fullName": "dN",
         "alias": "dN",
         "attachmentPoints": [
             {
@@ -4359,6 +4375,7 @@
         ],
         "classHELM": "PEPTIDE",
         "id": "Hyp___4-hydroxyproline",
+        "fullName": "Hyp",
         "alias": "Hyp",
         "attachmentPoints": [
             {
@@ -4522,6 +4539,7 @@
         ],
         "classHELM": "PEPTIDE",
         "id": "DProol___[(2R)-pyrrolidin-2-yl]methanol",
+        "fullName": "DProol",
         "alias": "DProol",
         "attachmentPoints": [
             {
@@ -4729,6 +4747,7 @@
         ],
         "classHELM": "PEPTIDE",
         "id": "dQ___D-Glutamine",
+        "fullName": "dQ",
         "alias": "dQ",
         "attachmentPoints": [
             {
@@ -4954,6 +4973,7 @@
         ],
         "classHELM": "PEPTIDE",
         "id": "Arg-al___N''-[(4S)-4-amino-5-oxopentyl]guanidine",
+        "fullName": "Arg-al",
         "alias": "Arg-al",
         "attachmentPoints": [
             {
@@ -5161,6 +5181,7 @@
         ],
         "classHELM": "PEPTIDE",
         "id": "SertBu___O-tert-Butyl-L-serine",
+        "fullName": "SertBu",
         "alias": "SertBu",
         "attachmentPoints": [
             {
@@ -5377,6 +5398,7 @@
         ],
         "classHELM": "PEPTIDE",
         "id": "SerPO3___(2S)-2-amino-3-(phosphonooxy)propanoic acid",
+        "fullName": "SerPO3",
         "alias": "SerPO3",
         "attachmentPoints": [
             {
@@ -5550,6 +5572,7 @@
         ],
         "classHELM": "PEPTIDE",
         "id": "D-aThr___D-allo-Threonine",
+        "fullName": "D-aThr",
         "alias": "D-aThr",
         "attachmentPoints": [
             {
@@ -5721,6 +5744,7 @@
         ],
         "classHELM": "PEPTIDE",
         "id": "Nva___norvaline",
+        "fullName": "Nva",
         "alias": "Nva",
         "attachmentPoints": [
             {
@@ -5877,6 +5901,7 @@
         ],
         "classHELM": "PEPTIDE",
         "id": "L-OVal___(2S)-2-hydroxy-3-methylbutanoic acid",
+        "fullName": "L-OVal",
         "alias": "L-OVal",
         "attachmentPoints": [
             {
@@ -6173,6 +6198,7 @@
         ],
         "classHELM": "PEPTIDE",
         "id": "Trp_Me___(2S)-2-amino-3-(1-methyl-1H-indol-3-yl)propanoic acid",
+        "fullName": "Trp_Me",
         "alias": "Trp_Me",
         "attachmentPoints": [
             {
@@ -6327,6 +6353,7 @@
         ],
         "classHELM": "PEPTIDE",
         "id": "Aib___alpha-aminoisobutyric acid (2-aminoalanine)",
+        "fullName": "Aib",
         "alias": "Aib",
         "attachmentPoints": [
             {
@@ -6668,6 +6695,7 @@
         ],
         "classHELM": "PEPTIDE",
         "id": "pnC___PNA Cytosine",
+        "fullName": "pnC",
         "alias": "pnC",
         "attachmentPoints": [
             {
@@ -6964,6 +6992,7 @@
         ],
         "classHELM": "PEPTIDE",
         "id": "Nty___nitrotyrosine",
+        "fullName": "Nty",
         "alias": "Nty",
         "attachmentPoints": [
             {
@@ -7185,6 +7214,7 @@
         ],
         "classHELM": "PEPTIDE",
         "id": "DAnTyr___2-(4-methoxyphenyl)acetic acid",
+        "fullName": "DAnTyr",
         "alias": "DAnTyr",
         "attachmentPoints": [
             {
@@ -7454,6 +7484,7 @@
         ],
         "classHELM": "PEPTIDE",
         "id": "Tyr3OH___(2S)-2-amino-3-(3,4-dihydroxyphenyl)propanoic acid",
+        "fullName": "Tyr3OH",
         "alias": "Tyr3OH",
         "attachmentPoints": [
             {
@@ -7625,6 +7656,7 @@
         ],
         "classHELM": "PEPTIDE",
         "id": "dV___D-Valine",
+        "fullName": "dV",
         "alias": "dV",
         "attachmentPoints": [
             {
@@ -7796,6 +7828,7 @@
         ],
         "classHELM": "PEPTIDE",
         "id": "meS___N-Methyl-Serine",
+        "fullName": "meS",
         "alias": "meS",
         "attachmentPoints": [
             {
@@ -8012,6 +8045,7 @@
         ],
         "classHELM": "PEPTIDE",
         "id": "meQ___N-Methyl-Glutamine",
+        "fullName": "meQ",
         "alias": "meQ",
         "attachmentPoints": [
             {
@@ -8207,6 +8241,7 @@
         ],
         "classHELM": "PEPTIDE",
         "id": "D-Hyp___D-4-Hydroxyproline",
+        "fullName": "D-Hyp",
         "alias": "D-Hyp",
         "attachmentPoints": [
             {
@@ -8408,6 +8443,7 @@
         ],
         "classHELM": "PEPTIDE",
         "id": "meN___N-Methyl-Asparagine",
+        "fullName": "meN",
         "alias": "meN",
         "attachmentPoints": [
             {
@@ -8609,6 +8645,7 @@
         ],
         "classHELM": "PEPTIDE",
         "id": "meL___N-Methyl-Leucine",
+        "fullName": "meL",
         "alias": "meL",
         "attachmentPoints": [
             {
@@ -8795,6 +8832,7 @@
         ],
         "classHELM": "PEPTIDE",
         "id": "Lys-al___(2S)-2,6-diaminohexanal",
+        "fullName": "Lys-al",
         "alias": "Lys-al",
         "attachmentPoints": [
             {
@@ -9033,6 +9071,7 @@
         ],
         "classHELM": "PEPTIDE",
         "id": "Tml___epsilon-N-trimethyllysine",
+        "fullName": "Tml",
         "alias": "Tml",
         "attachmentPoints": [
             {
@@ -9221,6 +9260,7 @@
         ],
         "classHELM": "PEPTIDE",
         "id": "aIle___L-allo-Isoleucine",
+        "fullName": "aIle",
         "alias": "aIle",
         "attachmentPoints": [
             {
@@ -9407,6 +9447,7 @@
         ],
         "classHELM": "PEPTIDE",
         "id": "xiIle___(2S)-2-amino-3-methylpentanoic acid",
+        "fullName": "xiIle",
         "alias": "xiIle",
         "attachmentPoints": [
             {
@@ -9645,6 +9686,7 @@
         ],
         "classHELM": "PEPTIDE",
         "id": "meH___N-Methyl-Histidine",
+        "fullName": "meH",
         "alias": "meH",
         "attachmentPoints": [
             {
@@ -9823,6 +9865,7 @@
         ],
         "classHELM": "PEPTIDE",
         "id": "GlycPr___(2S)-2-amino-2-cyclopropylacetic acid",
+        "fullName": "GlycPr",
         "alias": "GlycPr",
         "attachmentPoints": [
             {
@@ -10106,6 +10149,7 @@
         ],
         "classHELM": "PEPTIDE",
         "id": "Phe4NO___(2S)-2-amino-3-(4-nitrophenyl)propanoic acid",
+        "fullName": "Phe4NO",
         "alias": "Phe4NO",
         "attachmentPoints": [
             {
@@ -10389,6 +10433,7 @@
         ],
         "classHELM": "PEPTIDE",
         "id": "PheNO2___2-amino-3-(3-nitrophenyl)prop-2-enoic acid",
+        "fullName": "PheNO2",
         "alias": "PheNO2",
         "attachmentPoints": [
             {
@@ -10590,6 +10635,7 @@
         ],
         "classHELM": "PEPTIDE",
         "id": "AspOMe___(2S)-2-amino-4-methoxy-4-oxobutanoic acid",
+        "fullName": "AspOMe",
         "alias": "AspOMe",
         "attachmentPoints": [
             {
@@ -10776,6 +10822,7 @@
         ],
         "classHELM": "PEPTIDE",
         "id": "meC___N-Methyl-Cysteine",
+        "fullName": "meC",
         "alias": "meC",
         "attachmentPoints": [
             {
@@ -10956,6 +11003,7 @@
         ],
         "classHELM": "PEPTIDE",
         "id": "dC___D-Cysteine",
+        "fullName": "dC",
         "alias": "dC",
         "attachmentPoints": [
             {

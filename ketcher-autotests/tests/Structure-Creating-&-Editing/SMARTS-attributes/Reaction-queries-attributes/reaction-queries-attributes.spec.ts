@@ -24,8 +24,8 @@ import {
   takeEditorScreenshot,
   waitForLoad,
   waitForPageInit,
-  checkSmartsValue,
 } from '@utils';
+import { checkSmartsValue } from '../utils';
 
 async function drawStructureWithArrowOpenAngle(page: Page) {
   const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);

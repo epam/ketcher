@@ -1,5 +1,5 @@
 import { Page, expect } from '@playwright/test';
-import { BondTypeName, TopPanelButton, selectTopPanelButton } from '@utils';
+import { TopPanelButton, selectTopPanelButton } from '@utils';
 
 type queryNumberValues =
   | '0'
@@ -80,13 +80,6 @@ export async function setChirality(page: Page, chirality: chirality) {
   await page.getByRole('option', { name: chirality, exact: true }).click();
 }
 
-// Custom query:
-
-export async function setCustomQuery(page: Page, customQuery: string) {
-  await page.getByTestId('custom-query-checkbox').check();
-  await page.getByTestId('custom-query-value').fill(customQuery);
-}
-
 // Custom query - atom properties:
 
 export async function setCustomQueryForAtom(page: Page, customQuery: string) {
@@ -102,10 +95,10 @@ export async function setCustomQueryForBond(page: Page, customQuery: string) {
 }
 
 // Bond attributes:
-// TO DO: bondType must be specific type, not a string
-export async function setBondType(page: Page, bondType: BondTypeName | string) {
+
+export async function setBondType(page: Page, bondTypeTestId: string) {
   await page.getByTestId('type-input-span').click();
-  await page.getByTestId(`${bondType}-option`).click();
+  await page.getByTestId(bondTypeTestId).click();
 }
 
 export async function setBondTopology(page: Page, bondTopologyTestId: string) {

@@ -5,6 +5,8 @@ import {
   takeEditorScreenshot,
   waitForAtomPropsModal,
   waitForPageInit,
+} from '@utils';
+import {
   checkSmartsValue,
   checkSmartsWarnings,
   setAromaticity,
@@ -228,45 +230,5 @@ test.describe('Checking query specific attributes in SMARTS format', () => {
       await page.getByTestId('custom-query-checkbox').check();
       await takeEditorScreenshot(page);
     });
-  });
-});
-
-test.describe('Checking query specific attributes in SMARTS format', () => {
-  test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
-  });
-
-  test('Create Benzene ring with atom properties and query properties then copy/paste ', async ({
-    page,
-  }) => {
-    /* 
-    Test case: Query specific properties
-    Description: Structure with query specific copy/paste without errors.
-    Now test working incorrect because we have bug https://github.com/epam/ketcher/issues/3636
-    */
-    const x = 300;
-    const y = 300;
-    await openFileAndAddToCanvas('KET/two-benzene-with-query.ket', page);
-    await copyAndPaste(page);
-    await page.mouse.click(x, y);
-    await page.getByText('...').first().hover();
-    await takeEditorScreenshot(page);
-  });
-
-  test('Create Benzene ring with atom properties and query properties then cut/paste ', async ({
-    page,
-  }) => {
-    /* 
-    Test case: Query specific properties
-    Description: Structure with query specific cut/paste without errors.
-    Now test working incorrect because we have bug https://github.com/epam/ketcher/issues/3636
-    */
-    const x = 300;
-    const y = 300;
-    await openFileAndAddToCanvas('KET/two-benzene-with-query.ket', page);
-    await cutAndPaste(page);
-    await page.mouse.click(x, y);
-    await page.getByText('...').first().hover();
-    await takeEditorScreenshot(page);
   });
 });

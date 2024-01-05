@@ -166,7 +166,7 @@ export const ZoomControls = ({
         open={isExpanded}
         onClose={onClose}
         anchorEl={containerRef.current}
-        container={containerRef.current}
+        container={document.body}
         anchorOrigin={{
           vertical: 'bottom',
           horizontal: 'left'

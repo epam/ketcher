@@ -622,8 +622,8 @@ function updateLastCursorPosition(editor: Editor, event) {
   const events = ['mousemove', 'click', 'mousedown', 'mouseup', 'mouseover']
   if (events.includes(event.type)) {
     editor.lastCursorPosition = {
-      x: event.layerX,
-      y: event.layerY
+      x: event.layerX / (editor.options()['zoom'] ?? 1.0),
+      y: event.layerY / (editor.options()['zoom'] ?? 1.0)
     }
   }
 }

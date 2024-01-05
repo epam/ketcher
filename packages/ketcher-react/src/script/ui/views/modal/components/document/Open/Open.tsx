@@ -118,16 +118,16 @@ const Open: FC<Props> = (props) => {
   // currently not destructuring onOk with other props so we can pass it with ...rest to Recognize below
 
   const ketcher = ketcherProvider.getKetcher();
-  const onOk = (res) => {
-    (
-      dispatch(
+  const onOk = async (res) => {
+    try {
+      await dispatch(
         load(res.structStr, { badHeaderRecover: true, fragment: res.fragment }),
-      ) as unknown as Promise<any>
-    ).catch((error) => {
+      );
+    } catch (error: any) {
       if (ketcher && ketcher.eventBus) {
         ketcher.eventBus.emit(GLOBAL_ERROR_HANDLER, error.message);
       }
-    });
+    }
   };
 
   const copyHandler = () => {

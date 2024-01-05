@@ -59,6 +59,7 @@ class KetcherBuilder {
     element: HTMLDivElement | null,
     appRoot: Root,
     staticResourcesUrl: string,
+    errorHandler: (message: string) => void,
     buttons?: ButtonsConfig,
     togglerComponent?: JSX.Element,
   ): Promise<void> {
@@ -71,6 +72,7 @@ class KetcherBuilder {
         staticResourcesUrl,
         {
           buttons: buttons || {},
+          errorHandler: errorHandler || null,
           version: process.env.VERSION || '',
           buildDate: process.env.BUILD_DATE || '',
           buildNumber: process.env.BUILD_NUMBER || '',
@@ -82,6 +84,11 @@ class KetcherBuilder {
     });
 
     this.editor = editor;
+    this.editor.errorHandler =
+      errorHandler && typeof errorHandler === 'function'
+        ? errorHandler
+        : // eslint-disable-next-line @typescript-eslint/no-empty-function
+          () => {};
     this.formatterFactory = new FormatterFactory(structService!);
   }
 

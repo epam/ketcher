@@ -123,6 +123,7 @@ class Editor implements KetcherEditor {
   _tool: Tool | null;
   historyStack: any;
   historyPtr: any;
+  errorHandler: ((message: string) => void) | null;
   highlights: Highlighter;
   hoverIcon: HoverIcon;
   lastCursorPosition: { x: number; y: number };
@@ -171,6 +172,7 @@ class Editor implements KetcherEditor {
     this._tool = null; // eslint-disable-line
     this.historyStack = [];
     this.historyPtr = 0;
+    this.errorHandler = null;
     this.highlights = new Highlighter(this);
     this.renderAndRecoordinateStruct =
       this.renderAndRecoordinateStruct.bind(this);

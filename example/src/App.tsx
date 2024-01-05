@@ -71,6 +71,8 @@ const App = () => {
   ) : (
     <>
       <Editor
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        errorHandler={() => {}}
         buttons={hiddenButtonsConfig}
         staticResourcesUrl={process.env.PUBLIC_URL}
         structServiceProvider={structServiceProvider}

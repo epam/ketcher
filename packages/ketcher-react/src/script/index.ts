@@ -25,6 +25,7 @@ interface Config {
   staticResourcesUrl: string;
   structServiceProvider: StructServiceProvider;
   buttons?: ButtonsConfig;
+  errorHandler: (message: string) => void;
   togglerComponent?: JSX.Element;
 }
 
@@ -34,6 +35,7 @@ async function buildKetcherAsync({
   staticResourcesUrl,
   structServiceProvider,
   buttons,
+  errorHandler,
   togglerComponent,
 }: Config) {
   const builder = new KetcherBuilder();
@@ -44,6 +46,7 @@ async function buildKetcherAsync({
     element,
     appRoot,
     staticResourcesUrl,
+    errorHandler,
     buttons,
     togglerComponent,
   );

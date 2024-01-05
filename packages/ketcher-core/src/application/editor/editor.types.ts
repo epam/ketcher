@@ -47,6 +47,7 @@ export interface Editor {
   explicitSelected: () => EditorSelection;
   centerStruct: () => void;
   zoomAccordingContent: (struct: Struct) => void;
+  errorHandler: ((message: string) => void) | null;
   event: {
     message: Subscription;
     elementEdit: PipelineSubscription;

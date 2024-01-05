@@ -22,8 +22,7 @@ import Recognize from '../../process/Recognize/Recognize';
 import { fileOpener } from '../../../../../utils/';
 import { DialogActionButton } from './components/DialogActionButton';
 import { ViewSwitcher } from './components/ViewSwitcher';
-import { getFormatMimeTypeByFileName, ketcherProvider } from 'ketcher-core';
-import { GLOBAL_ERROR_HANDLER } from 'src/constants';
+import { getFormatMimeTypeByFileName } from 'ketcher-core';
 import { useDispatch } from 'react-redux';
 import { load } from 'src/script/ui/state/shared';
 
@@ -117,17 +116,10 @@ const Open: FC<Props> = (props) => {
   // @TODO after Recognize is refactored this will not be necessary
   // currently not destructuring onOk with other props so we can pass it with ...rest to Recognize below
 
-  const ketcher = ketcherProvider.getKetcher();
   const onOk = async (res) => {
-    try {
-      await dispatch(
-        load(res.structStr, { badHeaderRecover: true, fragment: res.fragment }),
-      );
-    } catch (error: any) {
-      if (ketcher && ketcher.eventBus) {
-        ketcher.eventBus.emit(GLOBAL_ERROR_HANDLER, error.message);
-      }
-    }
+    await dispatch(
+      load(res.structStr, { badHeaderRecover: true, fragment: res.fragment }),
+    );
   };
 
   const copyHandler = () => {

@@ -14,13 +14,19 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { ChemicalMimeType, KetcherLogger, KetSerializer } from 'ketcher-core';
+import {
+  ChemicalMimeType,
+  KetcherLogger,
+  KetSerializer,
+  ketcherProvider,
+} from 'ketcher-core';
 import { appUpdate, setStruct } from '../options';
 import { omit, without } from 'lodash/fp';
 
 import { checkErrors } from '../modal/form';
 import { indigoVerification } from '../request';
 import { load } from '../shared';
+import { GLOBAL_ERROR_HANDLER } from 'src/constants';
 
 export function checkServer() {
   return (dispatch, getState) => {
@@ -112,6 +118,7 @@ export function analyse() {
     });
     const { editor, server, options } = getState();
     const serverSettings = options.getServerSettings();
+    const ketcher = ketcherProvider.getKetcher();
     serverSettings.data = {
       properties: [
         'molecular-weight',
@@ -132,7 +139,9 @@ export function analyse() {
       .catch((e) => {
         KetcherLogger.error('index.js::analyse', e);
         editor.errorHandler(e);
-        throw e;
+        if (ketcher && ketcher.eventBus) {
+          ketcher.eventBus.emit(GLOBAL_ERROR_HANDLER, e);
+        }
       });
   };
 }

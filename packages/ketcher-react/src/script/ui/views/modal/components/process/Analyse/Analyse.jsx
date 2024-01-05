@@ -153,14 +153,7 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  onAnalyse: () => {
-    return dispatch(analyse()).catch((error) => {
-      const ketcher = ketcherProvider.getKetcher();
-      if (ketcher && ketcher.eventBus) {
-        ketcher.eventBus.emit(GLOBAL_ERROR_HANDLER, error);
-      }
-    });
-  },
+  onAnalyse: () => dispatch(analyse()),
   onChangeRound: (roundName, val) => dispatch(changeRound(roundName, val)),
 });
 

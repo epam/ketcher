@@ -26,11 +26,13 @@ import {
   Editor,
   KetcherLogger,
   SettingsManager,
+  ketcherProvider,
 } from 'ketcher-core';
 
 import { supportedSGroupTypes } from './constants';
 import { setAnalyzingFile } from './request';
 import tools from '../action/tools';
+import { GLOBAL_ERROR_HANDLER } from 'src/constants';
 
 export function onAction(action) {
   if (action && action.dialog) {
@@ -101,6 +103,7 @@ export function load(struct: Struct, options?) {
     const editor = state.editor as Editor;
     const server = state.server;
     const errorHandler = editor.errorHandler;
+    const ketcher = ketcherProvider.getKetcher();
     options = options || {};
     let { isPaste, ...otherOptions } = options;
     otherOptions = {
@@ -184,7 +187,9 @@ export function load(struct: Struct, options?) {
       KetcherLogger.error('shared.ts::load', e);
       dispatch(setAnalyzingFile(false));
       e && errorHandler && errorHandler(e.message);
-      throw e;
+      if (ketcher && ketcher.eventBus) {
+        ketcher.eventBus.emit(GLOBAL_ERROR_HANDLER, e.message);
+      }
     } finally {
       notifyRequestCompleted();
     }

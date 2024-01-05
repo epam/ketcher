@@ -142,7 +142,6 @@ function Editor({ theme, togglerComponent }: EditorProps) {
   const editor = useAppSelector(selectEditor);
   const activeTool = useAppSelector(selectEditorActiveTool);
   const isLoading = useLoading();
-  let keyboardEventListener;
   const [isMonomerLibraryHidden, setIsMonomerLibraryHidden] = useState(false);
   const monomers = useAppSelector(selectMonomers);
 
@@ -157,7 +156,6 @@ function Editor({ theme, togglerComponent }: EditorProps) {
       dispatch(destroyEditor(null));
       dispatch(loadMonomerLibrary([]));
       dispatch(clearFavorites());
-      document.removeEventListener('keydown', keyboardEventListener);
     };
   }, [dispatch]);
 
@@ -182,6 +180,12 @@ function Editor({ theme, togglerComponent }: EditorProps) {
   );
 
   useEffect(() => {
+    const handler = (toolName: string) => {
+      if (toolName !== activeTool) {
+        dispatch(selectTool(toolName));
+      }
+    };
+
     if (editor) {
       editor.events.error.add((errorText) => {
         dispatch(openErrorTooltip(errorText));
@@ -197,17 +201,13 @@ function Editor({ theme, togglerComponent }: EditorProps) {
             }),
           ),
       );
-
-      if (!keyboardEventListener) {
-        keyboardEventListener = (e: KeyboardEvent) => {
-          if (e.key === 'Escape') {
-            dispatch(selectTool('select-rectangle'));
-            editor.events.selectTool.dispatch('select-rectangle');
-          }
-        };
-        document.addEventListener('keydown', keyboardEventListener);
-      }
+      editor.events.selectTool.add(handler);
     }
+
+    return () => {
+      dispatch(selectTool(null));
+      editor?.events.selectTool.remove(handler);
+    };
   }, [editor]);
 
   const handleOpenPreview = useCallback((e) => {

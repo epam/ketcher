@@ -1,23 +1,26 @@
 import { Page, test } from '@playwright/test';
 import {
+  BondTypeName,
   clickInTheMiddleOfTheScreen,
   doubleClickOnAtom,
   pressButton,
-  selectDropdownTool,
+  selectBond,
   takeEditorScreenshot,
   waitForAtomPropsModal,
   waitForPageInit,
 } from '@utils';
 import {
   checkSmartsValue,
+  checkSmartsWarnings,
   setAtomicMass,
   setCharge,
   setLabel,
+  setRadical,
   setValence,
 } from '../utils';
 
 async function drawStructure(page: Page, numberOfClicks: number) {
-  await selectDropdownTool(page, 'bonds', 'bond-single');
+  await selectBond(BondTypeName.Single, page);
   for (let i = 0; i < numberOfClicks; i++) {
     await clickInTheMiddleOfTheScreen(page);
   }
@@ -55,6 +58,20 @@ test.describe('Checking atom properties attributes in SMARTS format', () => {
     );
   });
 
+  test('Setting charge to zero', async ({ page }) => {
+    /**
+     * Test case: https://github.com/epam/ketcher/issues/3339
+     * Test is failing due to bug https://github.com/epam/Indigo/issues/1438
+     */
+    test.fail();
+    await setAndCheckAtomProperties(
+      page,
+      setCharge,
+      '0',
+      '[#6](-[#6])(-[#6;+0])-[#6]',
+    );
+  });
+
   test('Setting positive charge', async ({ page }) => {
     await setAndCheckAtomProperties(
       page,
@@ -82,12 +99,43 @@ test.describe('Checking atom properties attributes in SMARTS format', () => {
     );
   });
 
+  test('Setting isotope (atomic mass) to zero', async ({ page }) => {
+    /**
+     * Test case: https://github.com/epam/ketcher/issues/3339
+     * Test is failing due to bug https://github.com/epam/Indigo/issues/1438
+     */
+    test.fail();
+    await setAndCheckAtomProperties(
+      page,
+      setAtomicMass,
+      '0',
+      '[#6](-[#6])(-[#6;0])-[#6]',
+    );
+  });
+
   test('Setting valence', async ({ page }) => {
+    /**
+     * This test will fail until https://github.com/epam/Indigo/issues/1362 is fixed
+     */
     await setAndCheckAtomProperties(
       page,
       setValence,
       'IV',
       '[#6](-[#6])(-[#6;v4])-[#6]',
     );
+  });
+
+  test('Setting radical', async ({ page }) => {
+    /**
+     * Test case: https://github.com/epam/ketcher/issues/3431
+     * Description: setting redical option should have no impact on SMARTS output but warning should be displayed
+     */
+    await setAndCheckAtomProperties(
+      page,
+      setRadical,
+      'Monoradical',
+      '[#6](-[#6])(-[#6])-[#6]',
+    );
+    await checkSmartsWarnings(page);
   });
 });

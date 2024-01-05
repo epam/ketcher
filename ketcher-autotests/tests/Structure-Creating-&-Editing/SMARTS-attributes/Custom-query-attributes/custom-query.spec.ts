@@ -9,8 +9,6 @@ import {
 import { checkSmartsValue, setCustomQueryForAtom } from '../utils';
 import { drawStructure } from '@utils/canvas/drawStructures';
 
-const defaultFileFormat = 'MDL Molfile V2000';
-
 async function setAndCheckCustomQuery(
   page: Page,
   setProperty: (arg0: Page, arg1: string) => Promise<void>,
@@ -20,7 +18,7 @@ async function setAndCheckCustomQuery(
   await setProperty(page, value);
   await pressButton(page, 'Apply');
   await takeEditorScreenshot(page);
-  await checkSmartsValue(page, defaultFileFormat, expectedSmarts);
+  await checkSmartsValue(page, expectedSmarts);
 }
 
 test.describe('Checking custom query in SMARTS format', () => {

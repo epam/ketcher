@@ -22,8 +22,6 @@ import {
 } from '../utils';
 import { drawStructure } from '@utils/canvas/drawStructures';
 
-const defaultFileFormat = 'MDL Molfile V2000';
-
 async function setAndCheckQuerySpecificProperties(
   page: Page,
   setProperty: (arg0: Page, arg1: any) => Promise<void>,
@@ -33,7 +31,7 @@ async function setAndCheckQuerySpecificProperties(
   await setProperty(page, value);
   await pressButton(page, 'Apply');
   await takeEditorScreenshot(page);
-  await checkSmartsValue(page, defaultFileFormat, expectedSmarts);
+  await checkSmartsValue(page, expectedSmarts);
 }
 
 async function drawStructureAndDoubleClickOnAtom(
@@ -97,7 +95,6 @@ test.describe('Checking query specific attributes in SMARTS format', () => {
     await takeEditorScreenshot(page);
     await checkSmartsValue(
       page,
-      defaultFileFormat,
       '[#6](-[#6])(-[#6;$([*,#1]=,#,:[*,#1])])-[#6]',
     );
     await checkSmartsWarnings(page);
@@ -188,7 +185,7 @@ test.describe('Checking query specific attributes in SMARTS format', () => {
     await setConnectivity(page, '2');
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
-    await checkSmartsValue(page, defaultFileFormat, expectedSmarts);
+    await checkSmartsValue(page, expectedSmarts);
     await takeEditorScreenshot(page);
   });
 

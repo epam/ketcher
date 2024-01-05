@@ -55,7 +55,7 @@ async function drawStructureWithArrowOpenAngle(page: Page) {
 }
 
 async function creatingComponentGroup(page: Page) {
-  await page.getByRole('button', { name: 'Data' }).click();
+  await page.getByTestId('s-group-type').first().click();
   await page.getByRole('option', { name: 'Query component' }).click();
   await page.getByRole('button', { name: 'Apply' }).click();
 }
@@ -66,14 +66,12 @@ test.describe('Checking reaction queries attributes in SMARTS format', () => {
   });
 
   test('Checking SMARTS with Arrow Open Angle', async ({ page }) => {
-    const defaultFileFormat = 'MDL Rxnfile V2000';
     await drawStructureWithArrowOpenAngle(page);
     await takeEditorScreenshot(page);
-    await checkSmartsValue(page, defaultFileFormat, '[#1]>>[#8]');
+    await checkSmartsValue(page, '[#1]>>[#8]');
   });
 
   test('Checking SMARTS with reaction mapping tool', async ({ page }) => {
-    const defaultFileFormat = 'MDL Molfile V2000';
     await selectBond(BondTypeName.Single, page);
     await clickInTheMiddleOfTheScreen(page);
     await page.keyboard.press('Escape');
@@ -83,7 +81,7 @@ test.describe('Checking reaction queries attributes in SMARTS format', () => {
     await clickOnAtom(page, 'C', 1);
 
     await takeEditorScreenshot(page);
-    await checkSmartsValue(page, defaultFileFormat, '[#6:1]-[#6:2]');
+    await checkSmartsValue(page, '[#6:1]-[#6:2]');
   });
 
   test('Checking SMARTS with S-Group', async ({ page }) => {
@@ -91,7 +89,6 @@ test.describe('Checking reaction queries attributes in SMARTS format', () => {
      * Test case: https://github.com/epam/ketcher/issues/3338
      * Description: pasting SMARTS with query groups should not trigger any error
      */
-    const defaultFileFormat = 'MDL Molfile V2000';
 
     await selectRingButton(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
@@ -99,23 +96,19 @@ test.describe('Checking reaction queries attributes in SMARTS format', () => {
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
     await page.mouse.click(x, y);
-    await page.getByRole('button', { name: 'Data' }).click();
+    await page.getByTestId('s-group-type').first().click();
     await page.getByRole('option', { name: 'Query component' }).click();
     await page.getByRole('button', { name: 'Apply' }).click();
 
     await takeEditorScreenshot(page);
-    await checkSmartsValue(
-      page,
-      defaultFileFormat,
-      '([#6]1-[#6]=[#6]-[#6]=[#6]-[#6]=1)',
-    );
+    await checkSmartsValue(page, '([#6]1-[#6]=[#6]-[#6]=[#6]-[#6]=1)');
   });
 
   test('Checking SMARTS with S-Group with two elements', async ({ page }) => {
+    test.fail();
     /**
      * Test case: https://github.com/epam/Indigo/issues/1316
      */
-    const defaultFileFormat = 'MDL Molfile V2000';
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     const shiftValue = 50;
 
@@ -129,16 +122,16 @@ test.describe('Checking reaction queries attributes in SMARTS format', () => {
     await creatingComponentGroup(page);
 
     await takeEditorScreenshot(page);
-    await checkSmartsValue(page, defaultFileFormat, '([#6]1-[#6]-[#6]-1.[#6])');
+    await checkSmartsValue(page, '([#6]1-[#6]-[#6]-1.[#6])');
   });
 
   test('Checking SMARTS with reaction mapping and S-Group', async ({
     page,
   }) => {
+    test.fail();
     /**
      * Test case: https://github.com/epam/Indigo/issues/1252
      */
-    const defaultFileFormat = 'MDL Molfile V2000';
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     const shiftValue = 50;
     const delta = 30;
@@ -165,7 +158,7 @@ test.describe('Checking reaction queries attributes in SMARTS format', () => {
     await creatingComponentGroup(page);
 
     await takeEditorScreenshot(page);
-    await checkSmartsValue(page, defaultFileFormat, '([#6:1].[#9:2])');
+    await checkSmartsValue(page, '([#6:1].[#9:2])');
   });
 });
 

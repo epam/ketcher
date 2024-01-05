@@ -84,14 +84,14 @@ export async function setChirality(page: Page, chirality: chirality) {
 
 export async function setCustomQueryForAtom(page: Page, customQuery: string) {
   await page.getByTestId('custom-query-checkbox').check();
-  await page.getByTestId('atom-custom-query').fill(customQuery);
+  await page.getByTestId('custom-query-value').fill(customQuery);
 }
 
 // Custom query - bond properties:
 
 export async function setCustomQueryForBond(page: Page, customQuery: string) {
   await page.getByTestId('custom-query-checkbox').check();
-  await page.getByTestId('bond-custom-query').fill(customQuery);
+  await page.getByTestId('custom-query-value').fill(customQuery);
 }
 
 // Bond attributes:
@@ -154,13 +154,9 @@ export async function setReactionFlagExactChange(page: Page) {
 
 // Other
 
-export async function checkSmartsValue(
-  page: Page,
-  defaultFileFormat: string,
-  value: string,
-) {
+export async function checkSmartsValue(page: Page, value: string) {
   await selectTopPanelButton(TopPanelButton.Save, page);
-  await page.getByRole('button', { name: defaultFileFormat }).click();
+  await page.getByTestId('file-format-list').first().click();
   await page.getByRole('option', { name: 'Daylight SMARTS' }).click();
   const smartsInput = page.getByTestId('smarts-preview-area-text');
   await expect(smartsInput).toHaveValue(value);

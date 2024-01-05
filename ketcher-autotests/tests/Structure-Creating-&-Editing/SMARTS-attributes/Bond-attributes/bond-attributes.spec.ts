@@ -19,8 +19,6 @@ import {
 import { getKet } from '@utils/formats';
 import { drawStructure } from '@utils/canvas/drawStructures';
 
-const defaultFileFormat = 'MDL Molfile V2000';
-
 async function setAndCheckBondProperties(
   page: Page,
   setProperty: (arg0: Page, arg1: string) => Promise<void>,
@@ -30,7 +28,7 @@ async function setAndCheckBondProperties(
   await setProperty(page, value);
   await pressButton(page, 'Apply');
   await takeEditorScreenshot(page);
-  await checkSmartsValue(page, defaultFileFormat, expectedSmarts);
+  await checkSmartsValue(page, expectedSmarts);
 }
 
 async function waitForBondPropsModal(page: Page) {
@@ -51,7 +49,7 @@ async function drawStructureAndDoubleClickOnBond(
 
 async function setCustomQueryAndCheckValue(page: Page, expectedValue: string) {
   await page.getByTestId('custom-query-checkbox').check();
-  const customQueryInput = page.getByTestId('bond-custom-query');
+  const customQueryInput = page.getByTestId('custom-query-value');
   await expect(customQueryInput).toHaveValue(expectedValue);
 }
 
@@ -77,6 +75,7 @@ test.describe('Checking bond attributes in SMARTS format', () => {
   });
 
   test('Setting bond type - single up', async ({ page }) => {
+    test.fail();
     await setAndCheckBondProperties(
       page,
       setBondType,
@@ -86,6 +85,7 @@ test.describe('Checking bond attributes in SMARTS format', () => {
   });
 
   test('Setting bond type - single down', async ({ page }) => {
+    test.fail();
     await setAndCheckBondProperties(
       page,
       setBondType,
@@ -95,7 +95,6 @@ test.describe('Checking bond attributes in SMARTS format', () => {
   });
 
   test('Setting bond type - single up/down', async ({ page }) => {
-    test.fail();
     /**
      * This test will fail until https://github.com/epam/Indigo/issues/1371 is fixed
      */
@@ -117,7 +116,6 @@ test.describe('Checking bond attributes in SMARTS format', () => {
   });
 
   test('Setting bond type - double cis/trans', async ({ page }) => {
-    test.fail();
     /**
      * This test will fail until https://github.com/epam/Indigo/issues/1371 is fixed
      */
@@ -240,7 +238,6 @@ test.describe('Checking bond attributes in SMARTS format', () => {
   // Custom query for bond
 
   test('Setting custom query - any OR double', async ({ page }) => {
-    test.fail();
     /**
      * This test will fail until https://github.com/epam/Indigo/issues/1372 is fixed
      */

@@ -8,6 +8,8 @@ import {
   takeEditorScreenshot,
   waitForAtomPropsModal,
   waitForPageInit,
+} from '@utils';
+import {
   checkSmartsValue,
   checkSmartsWarnings,
   setAtomicMass,
@@ -15,7 +17,7 @@ import {
   setLabel,
   setRadical,
   setValence,
-} from '@utils';
+} from '../utils';
 
 async function drawStructure(page: Page, numberOfClicks: number) {
   await selectBond(BondTypeName.Single, page);

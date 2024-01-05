@@ -80,6 +80,13 @@ export async function setChirality(page: Page, chirality: chirality) {
   await page.getByRole('option', { name: chirality, exact: true }).click();
 }
 
+// Custom query:
+
+export async function setCustomQuery(page: Page, customQuery: string) {
+  await page.getByTestId('custom-query-checkbox').check();
+  await page.getByTestId('custom-query-value').fill(customQuery);
+}
+
 // Custom query - atom properties:
 
 export async function setCustomQueryForAtom(page: Page, customQuery: string) {

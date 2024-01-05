@@ -26,8 +26,6 @@ import { connect } from 'react-redux';
 import { range } from 'lodash/fp';
 import Select from '../../../../../component/form/Select';
 import { getSelectOptionsFromSchema } from '../../../../../utils';
-import { ketcherProvider } from 'ketcher-core';
-import { GLOBAL_ERROR_HANDLER } from 'src/constants';
 
 function roundOff(value, round) {
   if (typeof value === 'number') return value.toFixed(round);

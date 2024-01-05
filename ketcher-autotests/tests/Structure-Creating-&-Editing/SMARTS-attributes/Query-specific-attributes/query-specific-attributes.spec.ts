@@ -1,13 +1,12 @@
 import { Page, test } from '@playwright/test';
 import {
-  BondTypeName,
-  clickInTheMiddleOfTheScreen,
   doubleClickOnAtom,
   pressButton,
-  selectBond,
   takeEditorScreenshot,
   waitForAtomPropsModal,
   waitForPageInit,
+} from '@utils';
+import {
   checkSmartsValue,
   checkSmartsWarnings,
   setAromaticity,
@@ -20,17 +19,8 @@ import {
   setRingSize,
   setSubstitutionCount,
   setUnsaturated,
-  openFileAndAddToCanvas,
-  copyAndPaste,
-  cutAndPaste,
-} from '@utils';
-
-async function drawStructure(page: Page) {
-  await selectBond(BondTypeName.Single, page);
-  await clickInTheMiddleOfTheScreen(page);
-  await clickInTheMiddleOfTheScreen(page);
-  await clickInTheMiddleOfTheScreen(page);
-}
+} from '../utils';
+import { drawStructure } from '@utils/canvas/drawStructures';
 
 async function setAndCheckQuerySpecificProperties(
   page: Page,
@@ -44,14 +34,22 @@ async function setAndCheckQuerySpecificProperties(
   await checkSmartsValue(page, expectedSmarts);
 }
 
+async function drawStructureAndDoubleClickOnAtom(
+  page: Page,
+  atomType: string,
+  numberOfAtom: number,
+) {
+  await waitForPageInit(page);
+  await drawStructure(page);
+  await page.keyboard.press('Escape');
+  await doubleClickOnAtom(page, atomType, numberOfAtom);
+  await waitForAtomPropsModal(page);
+}
+
 test.describe('Checking query specific attributes in SMARTS format', () => {
   test.beforeEach(async ({ page }) => {
     const numberOfAtom = 0;
-    await waitForPageInit(page);
-    await drawStructure(page);
-    await page.keyboard.press('Escape');
-    await doubleClickOnAtom(page, 'C', numberOfAtom);
-    await waitForAtomPropsModal(page);
+    await drawStructureAndDoubleClickOnAtom(page, 'C', numberOfAtom);
     await page.getByTestId('Query specific-section').click();
   });
 
@@ -173,44 +171,64 @@ test.describe('Checking query specific attributes in SMARTS format', () => {
       '[#6](-[#6])(-[#6;@@])-[#6]',
     );
   });
-});
 
-test.describe('Checking query specific attributes in SMARTS format', () => {
-  test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
-  });
-
-  test('Create Benzene ring with atom properties and query properties then copy/paste ', async ({
+  test('Setting implicit H count, aromacity and connectivity', async ({
     page,
   }) => {
-    /* 
-    Test case: Query specific properties
-    Description: Structure with query specific copy/paste without errors.
-    Now test working incorrect because we have bug https://github.com/epam/ketcher/issues/3636
-    */
-    const x = 300;
-    const y = 300;
-    await openFileAndAddToCanvas('KET/two-benzene-with-query.ket', page);
-    await copyAndPaste(page);
-    await page.mouse.click(x, y);
-    await page.getByText('...').first().hover();
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/1321
+     * Description: saving SMARTS with implicit H count and any other attribute should not cause any error
+     */
+    const expectedSmarts = '[#6](-[#6])(-[c;h5;X2])-[#6]';
+    await setImplicitHCount(page, '5');
+    await setAromaticity(page, 'aromatic');
+    await setConnectivity(page, '2');
+    await pressButton(page, 'Apply');
+    await takeEditorScreenshot(page);
+    await checkSmartsValue(page, expectedSmarts);
     await takeEditorScreenshot(page);
   });
 
-  test('Create Benzene ring with atom properties and query properties then cut/paste ', async ({
-    page,
-  }) => {
-    /* 
-    Test case: Query specific properties
-    Description: Structure with query specific cut/paste without errors.
-    Now test working incorrect because we have bug https://github.com/epam/ketcher/issues/3636
-    */
-    const x = 300;
-    const y = 300;
-    await openFileAndAddToCanvas('KET/two-benzene-with-query.ket', page);
-    await cutAndPaste(page);
-    await page.mouse.click(x, y);
-    await page.getByText('...').first().hover();
-    await takeEditorScreenshot(page);
+  test.describe('Checking converting attributes to custom query', () => {
+    test.beforeEach(async ({ page }) => {
+      const numberOfAtom = 0;
+      await drawStructureAndDoubleClickOnAtom(page, 'C', numberOfAtom);
+      await page.getByTestId('Query specific-section').click();
+    });
+
+    test('Converting substitution count and ring bond count to custom query', async ({
+      page,
+    }) => {
+      /**
+       * Test case: https://github.com/epam/ketcher/issues/3445
+       * Description: attributes should be converted to custom query in correct SMARTS annotation
+       * (D<n> for substitution count and x<n> for ring bond count)
+       */
+      await setRingBondCount(page, '5');
+      await setSubstitutionCount(page, '7');
+      await page.getByTestId('custom-query-checkbox').check();
+      await takeEditorScreenshot(page);
+    });
+
+    test('Converting all query specific attributes to custom query', async ({
+      page,
+    }) => {
+      /**
+       * Test case: https://github.com/epam/ketcher/issues/3445
+       * Description: all attributes should be converted to custom query correctly (according to table at https://github.com/epam/ketcher/issues/3459)
+       */
+      await setRingBondCount(page, 'As drawn');
+      await setHCount(page, '0');
+      await setSubstitutionCount(page, '1');
+      await setUnsaturated(page);
+      await setAromaticity(page, 'aliphatic');
+      await setImplicitHCount(page, '2');
+      await setRingMembership(page, '3');
+      await setRingSize(page, '4');
+      await setConnectivity(page, '5');
+      await setChirality(page, 'clockwise');
+      await page.getByTestId('custom-query-checkbox').check();
+      await takeEditorScreenshot(page);
+    });
   });
 });

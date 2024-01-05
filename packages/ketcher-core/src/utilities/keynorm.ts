@@ -86,19 +86,45 @@ export function isControlKey(event) {
   return mac ? event.metaKey : event.ctrlKey;
 }
 
+// TODO rename and unify after moving all hotkeys to core editor
+//  to handle all events in same way and to have same structure for all hotkey configs
 function keyNorm(obj) {
-  if (obj instanceof KeyboardEvent)
-    // eslint-disable-line no-undef
-    return normalizeKeyEvent(...arguments); // eslint-disable-line prefer-rest-params
+  if (obj instanceof KeyboardEvent) {
+    return normalizeKeyEvent(obj);
+  }
 
   return typeof obj === 'object' ? normalizeKeyMap(obj) : normalizeKeyName(obj);
+}
+
+function setHotKey(key, actName, hotKeys) {
+  if (Array.isArray(hotKeys[key])) hotKeys[key].push(actName);
+  else hotKeys[key] = [actName];
+}
+
+export function initHotKeys(actions) {
+  const hotKeys = {};
+  let act;
+
+  Object.keys(actions).forEach((actName) => {
+    act = actions[actName];
+    if (!act.shortcut) return;
+
+    if (Array.isArray(act.shortcut)) {
+      act.shortcut.forEach((key) => {
+        setHotKey(key, actName, hotKeys);
+      });
+    } else {
+      setHotKey(act.shortcut, actName, hotKeys);
+    }
+  });
+
+  return keyNorm(hotKeys);
 }
 
 function lookup(map, event) {
   let name = rusToEng(KN.keyName(event), event);
   if (name === 'Add') name = '+'; // numpad '+' and '-'
   if (name === 'Subtract') name = '-';
-
   const isChar = name.length === 1 && name !== ' ';
   let res = map[modifiers(name, event, !isChar)];
   let baseName;
@@ -111,4 +137,4 @@ function lookup(map, event) {
 
 keyNorm.lookup = lookup;
 
-export default keyNorm;
+export { keyNorm };

@@ -310,6 +310,9 @@ export class KetSerializer implements Serializer<Struct> {
               ...template,
               type: 'molecule',
             },
+            header: {
+              moleculeName: template.fullName,
+            },
           });
           const monomerAdditionCommand = monomerToDrawingEntity(
             nodeDefinition,
@@ -474,7 +477,7 @@ export class KetSerializer implements Serializer<Struct> {
             class: monomer.monomerItem.props.MonomerClass,
             classHELM: monomer.monomerItem.props.MonomerType,
             id: templateId,
-            fullName: monomer.monomerItem.props.MonomerFullName,
+            fullName: monomer.monomerItem.props.Name,
             alias: monomer.monomerItem.label,
             attachmentPoints: monomer.monomerItem.attachmentPoints,
           };

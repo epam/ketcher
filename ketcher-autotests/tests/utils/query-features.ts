@@ -1,5 +1,5 @@
 import { Page, expect } from '@playwright/test';
-import { TopPanelButton, selectTopPanelButton } from '@utils';
+import { BondTypeName, TopPanelButton, selectTopPanelButton } from '@utils';
 
 type queryNumberValues =
   | '0'
@@ -70,12 +70,12 @@ export async function setConnectivity(
   await page.getByRole('option', { name: connectivity }).click();
 }
 
-export async function setAromaticity(page: Page, aromaticity: Aromaticity) {
+export async function setAromaticity(page: Page, aromaticity: aromaticity) {
   await page.getByTestId('aromaticity-input-span').click();
   await page.getByRole('option', { name: aromaticity }).click();
 }
 
-export async function setChirality(page: Page, chirality: Chirality) {
+export async function setChirality(page: Page, chirality: chirality) {
   await page.getByTestId('chirality-input-span').click();
   await page.getByRole('option', { name: chirality, exact: true }).click();
 }

@@ -1,3 +1,10 @@
-<svg height="24px" width="24px" version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
-    <path fill="currentcolor" fill-rule="evenodd" clip-rule="evenodd" d="M235.5 871.691v-740h98v304h385v-304h98v740h-98v-349h-385v349h-98z"/>
+<svg height="24px" width="24px" version="1.1" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentcolor" fill-rule="evenodd" clip-rule="evenodd"  d="M1.9794 5.99999V1.63635H2.63778V3.53266H4.81321V1.63635H5.47372V5.99999H4.81321V4.09729H2.63778V5.99999H1.9794Z"/>
+    <path d="M9.9794 5.99999V1.63635H10.6378V3.53266H12.8132V1.63635H13.4737V5.99999H12.8132V4.09729H10.6378V5.99999H9.9794Z" fill="currentcolor" fill-rule="evenodd" clip-rule="evenodd" />
+    <path d="M1.9794 14V9.63635H2.63778V11.5327H4.81321V9.63635H5.47372V14H4.81321V12.0973H2.63778V14H1.9794Z" fill="currentcolor" fill-rule="evenodd" clip-rule="evenodd" />
+    <path d="M9.9794 14V9.63635H10.6378V11.5327H12.8132V9.63635H13.4737V14H12.8132V12.0973H10.6378V14H9.9794Z" fill="currentcolor" fill-rule="evenodd" clip-rule="evenodd" />
+    <path fill="currentcolor" fill-rule="evenodd" clip-rule="evenodd" d="M17.1716 6.84308V11.7928L19.1161 9.84828L19.8232 10.5554C21.0924 11.8246 21.0924 13.8824 19.8232 15.1516L18.9874 15.9874L17.0502 14.0502V19H22L20.0481 17.0481L20.8839 16.2122C22.7389 14.3572 22.7389 11.3497 20.8839 9.49473L20.1768 8.78762L22.1213 6.84308H17.1716Z" />
+    <circle cx="7.5" cy="20" r="2" fill="currentcolor" fill-rule="evenodd" clip-rule="evenodd" />
+    <circle cx="8" cy="8" r="2" fill="currentcolor" fill-rule="evenodd" clip-rule="evenodd" />
 </svg>
+

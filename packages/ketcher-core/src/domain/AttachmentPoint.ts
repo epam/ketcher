@@ -24,10 +24,10 @@ export class AttachmentPoint {
   static radius = 6;
   static labelSize = { x: 7, y: 5 };
   static colors = {
-    fillUsed: '#FF7A00',
+    fillUsed: '#0097A8',
     fill: 'white',
     fillPotentially: '#167782',
-    strokeUsed: '#FF7A00',
+    strokeUsed: '#0097A8',
     stroke: '#167782',
     strokePotentially: '#167782',
   };

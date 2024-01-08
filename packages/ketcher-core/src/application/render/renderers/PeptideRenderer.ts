@@ -7,6 +7,8 @@ const PEPTIDE_HOVERED_ELEMENT_ID = '#peptide-hover';
 const PEPTIDE_SYMBOL_ELEMENT_ID = '#peptide';
 
 export class PeptideRenderer extends BaseMonomerRenderer {
+  public CHAIN_BEGINNING = 'N';
+
   constructor(public monomer: Peptide, scale?: number) {
     super(
       monomer,
@@ -32,9 +34,14 @@ export class PeptideRenderer extends BaseMonomerRenderer {
   show(theme) {
     super.show(theme);
     this.appendEnumeration();
+    this.appendChainBeginning();
   }
 
   protected get enumerationElementPosition() {
     return { x: 20, y: -1 };
+  }
+
+  protected get beginningElementPosition() {
+    return { x: 0, y: -2 };
   }
 }

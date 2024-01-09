@@ -41,8 +41,8 @@ export class SugarRenderer extends BaseMonomerRenderer {
 
   protected get beginningElementPosition() {
     if (this.monomer.hovered) {
-      return { x: 0, y: -29 };
+      return { x: -6, y: -30 };
     }
-    return { x: -4, y: -2 };
+    return { x: -2, y: -1 };
   }
 }

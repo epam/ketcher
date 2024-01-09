@@ -368,13 +368,6 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     y: number;
   } | void;
 
-  protected get beginningElementColor() {
-    if (this.monomer.hovered) {
-      return '#0097A8';
-    }
-    return '#7C7C7F';
-  }
-
   public setEnumeration(enumeration: number | null) {
     this.enumeration = enumeration;
   }
@@ -410,11 +403,11 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     this.beginningElement = this.rootElement
       .append('text')
       .attr('direction', 'rtl')
+      .attr('fill', '#0097A8')
       .attr('font-size', '12px')
       .attr('line-height', '14px')
       .attr('font-weight', '500')
       .attr('text-align', 'right')
-      .attr('fill', this.beginningElementColor)
       .attr('x', this.beginningElementPosition.x)
       .attr('y', this.beginningElementPosition.y)
       .text(this.beginning);
@@ -424,7 +417,6 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     assert(this.beginningElement);
     assert(this.beginningElementPosition);
     this.beginningElement
-      .attr('fill', this.beginningElementColor)
       .attr('x', this.beginningElementPosition.x)
       .attr('y', this.beginningElementPosition.y)
       .text(this.beginning);

@@ -101,6 +101,7 @@ class PolymerBond implements BaseTool {
       this.editor.drawingEntitiesManager.hidePolymerBondInformation(
         renderer.polymerBond,
       );
+    this.editor.renderersContainer.markForRecalculateBegin();
     this.editor.renderersContainer.update(modelChanges);
   }
 
@@ -112,6 +113,7 @@ class PolymerBond implements BaseTool {
       this.editor.drawingEntitiesManager.showPolymerBondInformation(
         renderer.polymerBond,
       );
+    this.editor.renderersContainer.markForRecalculateBegin();
     this.editor.renderersContainer.update(modelChanges);
   }
 

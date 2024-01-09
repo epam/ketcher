@@ -142,6 +142,7 @@ class PolymerBond implements BaseTool {
         );
     }
 
+    this.editor.renderersContainer.markForRecalculateBegin();
     this.editor.renderersContainer.update(modelChanges);
   }
 
@@ -174,6 +175,7 @@ class PolymerBond implements BaseTool {
         );
     }
 
+    this.editor.renderersContainer.markForRecalculateBegin();
     this.editor.renderersContainer.update(modelChanges);
   }
 
@@ -188,6 +190,7 @@ class PolymerBond implements BaseTool {
           renderer.monomer,
           this.bondRenderer?.polymerBond,
         );
+      this.editor.renderersContainer.markForRecalculateBegin();
       this.editor.renderersContainer.update(modelChanges);
     }
   }
@@ -203,6 +206,7 @@ class PolymerBond implements BaseTool {
           renderer.monomer,
           this.bondRenderer?.polymerBond,
         );
+      this.editor.renderersContainer.markForRecalculateBegin();
       this.editor.renderersContainer.update(modelChanges);
     }
   }

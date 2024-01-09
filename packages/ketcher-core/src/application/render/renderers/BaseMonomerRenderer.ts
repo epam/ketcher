@@ -369,6 +369,9 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   } | void;
 
   protected get beginningElementColor() {
+    if (this.monomer.hovered) {
+      return '#0097A8';
+    }
     return '#7C7C7F';
   }
 
@@ -419,7 +422,12 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
 
   public reDrawChainBeginning() {
     assert(this.beginningElement);
-    this.beginningElement.text(this.beginning);
+    assert(this.beginningElementPosition);
+    this.beginningElement
+      .attr('fill', this.beginningElementColor)
+      .attr('x', this.beginningElementPosition.x)
+      .attr('y', this.beginningElementPosition.y)
+      .text(this.beginning);
   }
 
   public show(theme) {

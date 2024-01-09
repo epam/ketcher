@@ -47,7 +47,7 @@ export class RenderersManager {
     this.needRecalculateMonomersEnumeration = true;
   }
 
-  private markForRecalculateBegin() {
+  public markForRecalculateBegin() {
     this.needRecalculateMonomersBeginning = true;
   }
 

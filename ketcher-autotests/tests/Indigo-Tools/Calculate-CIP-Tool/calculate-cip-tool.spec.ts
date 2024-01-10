@@ -352,8 +352,9 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     Description: New stereobond is added to the Chain structure.
     */
     await openFileAndAddToCanvas('chain-with-stereo-bonds.mol', page);
-    await selectTopPanelButton(TopPanelButton.Calculate, page);
-    await delay(DELAY_IN_SECONDS.TWO);
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Calculate, page);
+    });
     await selectNestedTool(page, BondTool.UP);
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 5);
     await page.mouse.click(point.x, point.y);

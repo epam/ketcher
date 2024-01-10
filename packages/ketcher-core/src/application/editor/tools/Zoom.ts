@@ -259,16 +259,31 @@ class ZoomTool implements BaseTool {
     };
   }
 
+  private get zoomStep() {
+    return 0.1;
+  }
+
+  public zoomIn(zoomStep = this.zoomStep) {
+    this.zoom?.scaleTo(this.canvasWrapper, this.zoomLevel + zoomStep);
+  }
+
+  public zoomOut(zoomStep = this.zoomStep) {
+    this.zoom?.scaleTo(this.canvasWrapper, this.zoomLevel - zoomStep);
+  }
+
+  public resetZoom() {
+    this.zoom?.transform(this.canvasWrapper, new ZoomTransform(1, 0, 0));
+  }
+
   initMenuZoom() {
-    const zoomStep = 0.1;
     select('.zoom-in').on('click', () => {
-      this.zoom?.scaleTo(this.canvasWrapper, this.zoomLevel + zoomStep);
+      this.zoomIn();
     });
     select('.zoom-out').on('click', () => {
-      this.zoom?.scaleTo(this.canvasWrapper, this.zoomLevel - zoomStep);
+      this.zoomOut();
     });
     select('.zoom-reset').on('click', () => {
-      this.zoom?.transform(this.canvasWrapper, new ZoomTransform(1, 0, 0));
+      this.resetZoom();
     });
   }
 

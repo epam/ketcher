@@ -75,6 +75,13 @@ export class Sugar extends BaseMonomer {
     }
 
     if (
+      otherMonomer.isAttachmentPointExistAndFree('R2') &&
+      this.isAttachmentPointExistAndFree('R1')
+    ) {
+      return 'R1';
+    }
+
+    if (
       !otherMonomer.isAttachmentPointExistAndFree('R1') &&
       this.isAttachmentPointExistAndFree('R1')
     ) {

@@ -17,6 +17,7 @@ import ZoomTool from './tools/Zoom';
 import { Coordinates } from './shared/coordinates';
 import {
   editorEvents,
+  hotkeysConfiguration,
   renderersEvents,
   resetEditorEvents,
 } from 'application/editor/editorEvents';
@@ -26,6 +27,7 @@ import { MacromoleculesConverter } from 'application/editor/MacromoleculesConver
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { ketcherProvider } from 'application/utils';
 import { SnakeMode } from './modes/internal';
+import { initHotKeys, keyNorm } from '../../utilities/keynorm';
 
 interface ICoreEditorConstructorParams {
   theme;
@@ -51,6 +53,7 @@ export class CoreEditor {
   // private lastEvent: Event | undefined;
   private tool?: Tool | BaseTool;
   private micromoleculesEditor: Editor;
+  private hotKeyEventHandler: (event: unknown) => void = () => {};
 
   constructor({ theme, canvas }: ICoreEditorConstructorParams) {
     this.theme = theme;
@@ -61,6 +64,7 @@ export class CoreEditor {
     this.renderersContainer = new RenderersManager({ theme });
     this.drawingEntitiesManager = new DrawingEntitiesManager();
     this.domEventSetup();
+    this.setupHotKeysEvents();
     this.canvasOffset = this.canvas.getBoundingClientRect();
     this.zoomTool = ZoomTool.initInstance(this.drawingEntitiesManager);
     // eslint-disable-next-line @typescript-eslint/no-this-alias
@@ -72,6 +76,22 @@ export class CoreEditor {
 
   static provideEditorInstance(): CoreEditor {
     return editor;
+  }
+
+  private handleHotKeyEvents(event) {
+    const keySettings = hotkeysConfiguration;
+    const hotKeys = initHotKeys(keySettings);
+    const shortcutKey = keyNorm.lookup(hotKeys, event);
+
+    if (keySettings[shortcutKey] && keySettings[shortcutKey].handler) {
+      keySettings[shortcutKey].handler(this);
+      event.preventDefault();
+    }
+  }
+
+  setupHotKeysEvents() {
+    this.hotKeyEventHandler = (event) => this.handleHotKeyEvents(event);
+    document.addEventListener('keydown', this.hotKeyEventHandler);
   }
 
   private subscribeEvents() {
@@ -104,7 +124,7 @@ export class CoreEditor {
     }
   }
 
-  private onSelectTool(tool: string) {
+  public onSelectTool(tool: string) {
     this.selectTool(tool);
   }
 
@@ -140,7 +160,7 @@ export class CoreEditor {
     this.renderersContainer.update(command);
   }
 
-  private onSelectHistory(name: HistoryOperationType) {
+  public onSelectHistory(name: HistoryOperationType) {
     const history = new EditorHistory(this);
     if (name === 'undo') {
       history.undo();
@@ -164,6 +184,7 @@ export class CoreEditor {
     for (const eventName in this.events) {
       this.events[eventName].handlers = [];
     }
+    document.removeEventListener('keydown', this.hotKeyEventHandler);
   }
 
   get trackedDomEvents() {

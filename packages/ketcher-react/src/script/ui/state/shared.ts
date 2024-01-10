@@ -105,7 +105,7 @@ export function load(struct: Struct, options?) {
     const errorHandler = editor.errorHandler;
     const ketcher = ketcherProvider.getKetcher();
     options = options || {};
-    let { isPaste, ...otherOptions } = options;
+    let { isPaste, method, ...otherOptions } = options;
     otherOptions = {
       ...otherOptions,
       'dearomatize-on-load': editor.options()['dearomatize-on-load'],
@@ -173,11 +173,13 @@ export function load(struct: Struct, options?) {
           dispatch(onAction({ tool: 'paste', opts: parsedStruct }));
         }
       } else {
-        editor.struct(parsedStruct);
+        editor.struct(parsedStruct, method === 'layout');
       }
 
       editor.zoomAccordingContent(parsedStruct);
-      if (!isPaste) {
+
+      const isIndigoFunctionCalled = !!method;
+      if (!isPaste && !isIndigoFunctionCalled) {
         editor.centerStruct();
       }
 

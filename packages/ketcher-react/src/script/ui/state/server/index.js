@@ -162,6 +162,7 @@ export function serverTransform(method, data, struct) {
           load(loadedStruct, {
             rescale: method === 'layout',
             reactionRelayout: method === 'clean',
+            method,
           }),
         );
       })

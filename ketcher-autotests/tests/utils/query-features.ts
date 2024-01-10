@@ -1,6 +1,5 @@
 import { Page, expect } from '@playwright/test';
 import { BondTypeName, TopPanelButton, selectTopPanelButton } from '@utils';
-import { clickOnFileFormatDropdown } from '@utils/formats';
 
 type queryNumberValues =
   | '0'
@@ -14,8 +13,9 @@ type queryNumberValues =
   | '8'
   | '9';
 
-type Aromaticity = 'aromatic' | 'aliphatic' | '';
-type Chirality = 'clockwise' | 'anticlockwise' | '';
+type aromaticity = 'aromatic' | 'aliphatic' | '';
+type chirality = 'clockwise' | 'anticlockwise' | '';
+type inversionType = 'Inverts' | 'Retains' | '';
 
 // Query specific attributes:
 
@@ -70,12 +70,12 @@ export async function setConnectivity(
   await page.getByRole('option', { name: connectivity }).click();
 }
 
-export async function setAromaticity(page: Page, aromaticity: Aromaticity) {
+export async function setAromaticity(page: Page, aromaticity: aromaticity) {
   await page.getByTestId('aromaticity-input-span').click();
   await page.getByRole('option', { name: aromaticity }).click();
 }
 
-export async function setChirality(page: Page, chirality: Chirality) {
+export async function setChirality(page: Page, chirality: chirality) {
   await page.getByTestId('chirality-input-span').click();
   await page.getByRole('option', { name: chirality, exact: true }).click();
 }
@@ -83,6 +83,20 @@ export async function setChirality(page: Page, chirality: Chirality) {
 // Custom query:
 
 export async function setCustomQuery(page: Page, customQuery: string) {
+  await page.getByTestId('custom-query-checkbox').check();
+  await page.getByTestId('custom-query-value').fill(customQuery);
+}
+
+// Custom query - atom properties:
+
+export async function setCustomQueryForAtom(page: Page, customQuery: string) {
+  await page.getByTestId('custom-query-checkbox').check();
+  await page.getByTestId('custom-query-value').fill(customQuery);
+}
+
+// Custom query - bond properties:
+
+export async function setCustomQueryForBond(page: Page, customQuery: string) {
   await page.getByTestId('custom-query-checkbox').check();
   await page.getByTestId('custom-query-value').fill(customQuery);
 }
@@ -97,6 +111,14 @@ export async function setBondType(page: Page, bondType: BondTypeName | string) {
 export async function setBondTopology(page: Page, bondTopologyTestId: string) {
   await page.getByTestId('topology-input-span').click();
   await page.getByTestId(bondTopologyTestId).click();
+}
+
+export async function setReactingCenter(
+  page: Page,
+  reactingCenterOptionTestId: string,
+) {
+  await page.getByTestId('reacting-center-input-span').click();
+  await page.getByTestId(reactingCenterOptionTestId).click();
 }
 
 // General atom properties attributes:
@@ -118,11 +140,30 @@ export async function setValence(page: Page, valenceOption: string) {
   await page.getByRole('option', { name: valenceOption }).click();
 }
 
+export async function setRadical(page: Page, radicalOption: string) {
+  await page.getByTestId('radical-input-span').click();
+  await page.getByRole('option', { name: radicalOption }).click();
+}
+
+// Reaction flags attributes:
+
+export async function setReactionFlagInversion(
+  page: Page,
+  inversionType: inversionType,
+) {
+  await page.getByTestId('Reaction flags-section').getByRole('button').click();
+  await page.getByTestId(`${inversionType}-option`).click();
+}
+
+export async function setReactionFlagExactChange(page: Page) {
+  await page.getByText('Exact change').check();
+}
+
 // Other
 
 export async function checkSmartsValue(page: Page, value: string) {
   await selectTopPanelButton(TopPanelButton.Save, page);
-  await clickOnFileFormatDropdown(page);
+  await page.getByTestId('file-format-list').first().click();
   await page.getByRole('option', { name: 'Daylight SMARTS' }).click();
   const smartsInput = page.getByTestId('smarts-preview-area-text');
   await expect(smartsInput).toHaveValue(value);

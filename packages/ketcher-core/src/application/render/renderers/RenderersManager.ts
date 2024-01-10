@@ -55,11 +55,6 @@ export class RenderersManager {
     const [, MonomerRenderer] = monomerFactory(monomer.monomerItem);
     const monomerRenderer = new MonomerRenderer(monomer);
 
-    monomer.monomerItem.props = {
-      ...monomer.monomerItem.props,
-      MonomerClass: monomer.constructor.name,
-    };
-
     this.monomers.set(monomer.id, monomerRenderer);
     monomerRenderer.show(this.theme);
     this.markForReEnumeration();

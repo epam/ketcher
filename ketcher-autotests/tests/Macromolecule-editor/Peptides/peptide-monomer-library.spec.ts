@@ -1,4 +1,4 @@
-import { test } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 import {
   addPeptideOnCanvas,
   clickInTheMiddleOfTheScreen,
@@ -39,5 +39,15 @@ test.describe('Peptide library testing', () => {
     await clickInTheMiddleOfTheScreen(page);
     await page.getByTestId('A___Alanine').getByText('★').hover();
     await takeMonomerLibraryScreenshot(page);
+  });
+
+  test('Backspace deletes characters in input', async ({ page }) => {
+    const input = page.getByTestId('monomer-library-input');
+    const anyText = 'AspO';
+    await input.fill(anyText);
+    await expect(await input.inputValue()).toBe('AspO');
+    await input.press('Backspace');
+    await input.press('Backspace');
+    await expect(await input.inputValue()).toBe('As');
   });
 });

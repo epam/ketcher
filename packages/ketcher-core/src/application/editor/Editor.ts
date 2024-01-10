@@ -82,8 +82,9 @@ export class CoreEditor {
     const keySettings = hotkeysConfiguration;
     const hotKeys = initHotKeys(keySettings);
     const shortcutKey = keyNorm.lookup(hotKeys, event);
+    const isInput = event.target.nodeName === 'INPUT';
 
-    if (keySettings[shortcutKey] && keySettings[shortcutKey].handler) {
+    if (keySettings[shortcutKey]?.handler && !isInput) {
       keySettings[shortcutKey].handler(this);
       event.preventDefault();
     }

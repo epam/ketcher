@@ -54,7 +54,6 @@ export class RenderersManager {
   public addMonomer(monomer: BaseMonomer, callback?: () => void) {
     const [, MonomerRenderer] = monomerFactory(monomer.monomerItem);
     const monomerRenderer = new MonomerRenderer(monomer);
-
     this.monomers.set(monomer.id, monomerRenderer);
     monomerRenderer.show(this.theme);
     this.markForReEnumeration();

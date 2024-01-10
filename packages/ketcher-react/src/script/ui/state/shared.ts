@@ -170,7 +170,10 @@ export function load(struct: Struct, options?) {
           dispatch(onAction({ tool: 'paste', opts: parsedStruct }));
         }
       } else {
-        editor.struct(parsedStruct, method === 'layout');
+        editor.struct(
+          parsedStruct,
+          method === 'layout' || method === 'hideShowExplicitHydrogens',
+        );
       }
 
       editor.zoomAccordingContent(parsedStruct);

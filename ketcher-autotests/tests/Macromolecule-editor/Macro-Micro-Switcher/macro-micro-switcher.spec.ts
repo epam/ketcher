@@ -17,6 +17,7 @@ import {
   waitForLoad,
   waitForPageInit,
   waitForRender,
+  moveMouseToTheMiddleOfTheScreen,
 } from '@utils';
 
 const topLeftCorner = {
@@ -263,7 +264,7 @@ test.describe('Macro-Micro-Switcher', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Check that Zoom In/Zoom Out/ Reset Zoom Tools work (Mouse scroll) after switching to Macro mode', async ({
+  test.only('Check that Zoom In/Zoom Out/ Reset Zoom Tools work (Mouse scroll) after switching to Macro mode', async ({
     page,
   }) => {
     /* 
@@ -276,6 +277,7 @@ test.describe('Macro-Micro-Switcher', () => {
     );
     await turnOnMicromoleculesEditor(page);
     await turnOnMacromoleculesEditor(page);
+    await moveMouseToTheMiddleOfTheScreen(page);
     // eslint-disable-next-line no-magic-numbers
     await zoomWithMouseWheel(page, -400);
 

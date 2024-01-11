@@ -406,7 +406,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       .attr('fill', '#0097A8')
       .attr('font-size', '12px')
       .attr('line-height', '14px')
-      .attr('font-weight', '500')
+      .attr('font-weight', '700')
       .attr('text-align', 'right')
       .attr('x', this.beginningElementPosition.x)
       .attr('y', this.beginningElementPosition.y)

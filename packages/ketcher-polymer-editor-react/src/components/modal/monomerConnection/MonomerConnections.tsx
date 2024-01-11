@@ -12,17 +12,21 @@ import {
   AttachmentPointName,
   MonomerName,
   ConnectionSymbol,
-  AttachmentPointSelectionContainer,
   AttachmentPointsRow,
-  MonomerNamesRow,
   ModalContent,
 } from './styledComponents';
 import { MonomerConnectionProps } from '../modalContainer/types';
+import { LeavingGroup } from 'ketcher-core';
+
+interface IStyledButtonProps {
+  disabled: boolean;
+}
+interface IStyledStyledStructRender {
+  isExpanded?: boolean;
+}
 
 const StyledModal = styled(Modal)({
   '& .MuiPaper-root': {
-    width: 'auto',
-    height: 'fit-content',
     background: '#fff !important',
   },
 
@@ -31,29 +35,47 @@ const StyledModal = styled(Modal)({
   },
 });
 
-export const StyledStructRender = styled(StructRender)(({ theme }) => ({
-  height: '150px',
-  width: '150px',
+export const StyledStructRender = styled(
+  StructRender,
+)<IStyledStyledStructRender>(({ theme, isExpanded }) => ({
+  display: 'flex',
   border: `1.5px solid ${theme.ketcher.outline.color}`,
   borderRadius: '6px',
   padding: 5,
-}));
-export const ActionButtonLeft = styled(ActionButton)(() => ({
-  marginRight: 'auto',
-  width: '97px',
+  maxHeight: '100%',
+  minHeight: '150px',
+  height: isExpanded ? 'auto' : '150px',
+  width: isExpanded ? 'auto' : '150px',
+  alignSelf: 'stretch',
+  '& svg': {
+    maxWidth: 'fit-content',
+    margin: 'auto',
+  },
 }));
 
-export const ActionButtonRight = styled(ActionButton)(() => ({
-  width: '97px',
+export const ActionButtonLeft = styled(ActionButton)(() => ({
+  width: '97px !important',
 }));
-export const ActionButtonAttachmentPoint = styled(ActionButton)(
-  ({ theme }) => ({
-    borderRadius: 5,
-    width: '45px',
-    padding: '4px',
-    border: `1px solid ${theme.ketcher.color.border.secondary}`,
+
+export const ActionButtonRight = styled(ActionButton)<IStyledButtonProps>(
+  (props) => ({
+    width: '97px !important',
+    color: props.disabled ? 'rgba(51, 51, 51, 0.6)' : '',
+    background: props.disabled ? 'rgba(225, 229, 234, 1) !important' : '',
+    opacity: '1 !important',
+    minHeight: '0',
   }),
 );
+
+export const ActionButtonAttachmentPoint = styled(ActionButton)((props) => ({
+  borderRadius: 5,
+  minWidth: '45px !important',
+  padding: '4px',
+  border: `1px solid ${props.theme.ketcher.color.border.secondary}`,
+  color: props.disabled ? 'rgba(51, 51, 51, 0.6) !important' : '',
+  background: props.disabled ? 'rgba(225, 229, 234)' : '',
+  borderColor: props.disabled ? 'rgba(225, 229, 234) !important' : '',
+}));
 
 const MonomerConnection = ({
   onClose,
@@ -67,16 +89,14 @@ const MonomerConnection = ({
     throw new Error('Monomers must exist!');
   }
 
-  const firstBonds = firstMonomer.attachmentPointsToBonds;
-  const secondBonds = secondMonomer.attachmentPointsToBonds;
-
   const [firstSelectedAttachmentPoint, setFirstSelectedAttachmentPoint] =
-    useState<string | null>(getDefaultAttachmentPoint(firstBonds));
+    useState<string | null>(getDefaultAttachmentPoint(firstMonomer));
   const [secondSelectedAttachmentPoint, setSecondSelectedAttachmentPoint] =
-    useState<string | null>(getDefaultAttachmentPoint(secondBonds));
+    useState<string | null>(getDefaultAttachmentPoint(secondMonomer));
+  const [modalExpanded, setModalExpanded] = useState(false);
 
   const cancelBondCreationAndClose = () => {
-    editor.events.cancelBondCreationViaModal.dispatch();
+    editor.events.cancelBondCreationViaModal.dispatch(secondMonomer);
     onClose();
   };
 
@@ -97,30 +117,38 @@ const MonomerConnection = ({
 
   return (
     <StyledModal
-      title=""
+      title="Select connection points"
       isOpen={isModalOpen}
-      showCloseButton={false}
       onClose={cancelBondCreationAndClose}
+      showExpandButton
+      modalWidth="358px"
+      expanded={modalExpanded}
+      setExpanded={setModalExpanded}
     >
       <Modal.Content>
         <ModalContent>
-          <MonomerNamesRow>
-            <MonomerName>{firstMonomer.monomerItem.props.Name}</MonomerName>
-            <MonomerName>{secondMonomer.monomerItem.props.Name}</MonomerName>
-          </MonomerNamesRow>
           <AttachmentPointsRow>
+            <MonomerName isExpanded={modalExpanded}>
+              {firstMonomer.monomerItem.props.Name}
+            </MonomerName>
             <AttachmentPointSelectionPanel
               monomer={firstMonomer}
               selectedAttachmentPoint={firstSelectedAttachmentPoint}
               onSelectAttachmentPoint={setFirstSelectedAttachmentPoint}
+              expanded={modalExpanded}
             />
-
+            <span />
             <ConnectionSymbol />
+            <span />
+            <MonomerName isExpanded={modalExpanded}>
+              {secondMonomer.monomerItem.props.Name}
+            </MonomerName>
 
             <AttachmentPointSelectionPanel
               monomer={secondMonomer}
               selectedAttachmentPoint={secondSelectedAttachmentPoint}
               onSelectAttachmentPoint={setSecondSelectedAttachmentPoint}
+              expanded={modalExpanded}
             />
           </AttachmentPointsRow>
         </ModalContent>
@@ -148,12 +176,14 @@ interface AttachmentPointSelectionPanelProps {
   monomer: BaseMonomer;
   selectedAttachmentPoint: string | null;
   onSelectAttachmentPoint: (attachmentPoint: string) => void;
+  expanded?: boolean;
 }
 
 function AttachmentPointSelectionPanel({
   monomer,
   selectedAttachmentPoint,
   onSelectAttachmentPoint,
+  expanded = false,
 }: AttachmentPointSelectionPanelProps): React.ReactElement {
   const bonds = monomer.attachmentPointsToBonds;
 
@@ -162,17 +192,17 @@ function AttachmentPointSelectionPanel({
     [bonds],
   );
 
-  const monomerLeavingGroupsArray =
-    monomer.monomerItem.props.MonomerCaps?.split(',');
-  const monomerLeavingGroups: { [key: string]: string } | undefined =
-    monomerLeavingGroupsArray?.reduce((acc, item) => {
-      const [attachmentPoint, leavingGroup] = item.slice(1).split(']');
-      acc[attachmentPoint] = leavingGroup;
-      return acc;
-    }, {});
+  const getLeavingGroup = (attachmentPoint): LeavingGroup => {
+    const { MonomerCaps } = monomer.monomerItem.props;
+    if (!MonomerCaps) {
+      return 'H';
+    }
+    const leavingGroup = MonomerCaps[attachmentPoint];
+    return leavingGroup === 'O' ? 'OH' : (leavingGroup as LeavingGroup);
+  };
 
   return (
-    <AttachmentPointSelectionContainer>
+    <>
       <StyledStructRender
         struct={monomer.monomerItem.struct}
         options={{
@@ -180,35 +210,43 @@ function AttachmentPointSelectionPanel({
           currentlySelectedMonomerAttachmentPoint:
             selectedAttachmentPoint ?? undefined,
           labelInMonomerConnectionsModal: true,
+          needCache: false,
         }}
+        update={expanded}
+        isExpanded={expanded}
       />
       <AttachmentPointList>
-        {monomer.listOfAttachmentPoints.map((attachmentPoint) => (
-          <AttachmentPoint key={attachmentPoint}>
-            <ActionButtonAttachmentPoint
-              label={attachmentPoint}
-              styleType={
-                attachmentPoint === selectedAttachmentPoint
-                  ? 'primary'
-                  : 'secondary'
-              }
-              clickHandler={() => onSelectAttachmentPoint(attachmentPoint)}
-              disabled={Boolean(
-                connectedAttachmentPoints.find(
-                  (connectedAttachmentPointName) =>
-                    connectedAttachmentPointName === attachmentPoint,
-                ),
-              )}
-            />
-            <AttachmentPointName>
-              {monomerLeavingGroups
-                ? monomerLeavingGroups[attachmentPoint]
-                : 'H'}
-            </AttachmentPointName>
-          </AttachmentPoint>
-        ))}
+        {monomer.listOfAttachmentPoints.map((attachmentPoint) => {
+          const disabled = Boolean(
+            connectedAttachmentPoints.find(
+              (connectedAttachmentPointName) =>
+                connectedAttachmentPointName === attachmentPoint &&
+                attachmentPoint !== monomer.chosenFirstAttachmentPointForBond,
+            ),
+          );
+          return (
+            <AttachmentPoint key={attachmentPoint}>
+              <ActionButtonAttachmentPoint
+                label={attachmentPoint}
+                styleType={
+                  attachmentPoint === selectedAttachmentPoint
+                    ? 'primary'
+                    : 'secondary'
+                }
+                clickHandler={() => onSelectAttachmentPoint(attachmentPoint)}
+                disabled={disabled}
+              />
+              <AttachmentPointName
+                data-testid="leaving-group-value"
+                disabled={disabled}
+              >
+                {getLeavingGroup(attachmentPoint)}
+              </AttachmentPointName>
+            </AttachmentPoint>
+          );
+        })}
       </AttachmentPointList>
-    </AttachmentPointSelectionContainer>
+    </>
   );
 }
 
@@ -220,12 +258,14 @@ function getConnectedAttachmentPoints(
     .map(([attachmentPoint]) => attachmentPoint);
 }
 
-function getDefaultAttachmentPoint(
-  bonds: Record<string, unknown>,
-): string | null {
-  const possibleAttachmentPoints = Object.entries(bonds).filter(
-    ([_, bond]) => bond == null,
-  );
+function getDefaultAttachmentPoint(monomer: BaseMonomer): string | null {
+  if (monomer.chosenFirstAttachmentPointForBond)
+    return monomer.chosenFirstAttachmentPointForBond;
+  if (monomer.chosenSecondAttachmentPointForBond)
+    return monomer.chosenSecondAttachmentPointForBond;
+  const possibleAttachmentPoints = Object.entries(
+    monomer.attachmentPointsToBonds,
+  ).filter(([_, bond]) => bond == null);
 
   if (possibleAttachmentPoints.length === 1) {
     const [attachmentPointName] = possibleAttachmentPoints[0];

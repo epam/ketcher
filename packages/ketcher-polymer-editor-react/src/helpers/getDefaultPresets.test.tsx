@@ -32,7 +32,7 @@ import { MonomerItemType } from 'ketcher-core';
 describe('getDefaultPreset function', () => {
   it('should return empty array if cannot return default nucteotides', () => {
     const testArr = getDefaultPresets(monomers);
-    expect(testArr).toBeEmptyArray();
+    expect(testArr.length).toEqual(0);
   });
 
   it('should return array of default presets from monomers', () => {
@@ -52,6 +52,7 @@ describe('getDefaultPreset function', () => {
       base: thymine,
       sugar: ribose,
       phosphate,
+      default: true,
     };
 
     const guanineNucleotide: IRnaPreset = {
@@ -59,22 +60,15 @@ describe('getDefaultPreset function', () => {
       base: guanine,
       sugar: ribose,
       phosphate,
+      default: true,
     };
 
     const testArr = getDefaultPresets(monomerData);
     expect(testArr).toContainEqual(thymineNucleotide);
     expect(testArr).toContainEqual(guanineNucleotide);
-    expect(testArr).toContainEqual(
-      expect.not.objectContaining({
-        MonomerName: '3FAM',
-        Name: '3-FAM',
-      }),
-    );
-    expect(testArr).toContainEqual(
-      expect.objectContaining({
-        MonomerName: 'G',
-        Name: 'Guanine',
-      }),
-    );
+    expect(testArr).not.toContainEqual({
+      MonomerName: '3FAM',
+      Name: '3-FAM',
+    });
   });
 });

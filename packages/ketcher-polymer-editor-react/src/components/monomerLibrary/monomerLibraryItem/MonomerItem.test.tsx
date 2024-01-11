@@ -9,7 +9,7 @@ describe('Test Monomer Item component', () => {
       label: 'for test',
       props: {
         BranchMonomer: 'false',
-        MonomerCaps: '[R1]H',
+        MonomerCaps: { R1: 'H' },
         MonomerCode: '',
         MonomerName: 'Cya',
         MonomerNaturalAnalogCode: 'A',
@@ -24,7 +24,7 @@ describe('Test Monomer Item component', () => {
       ),
     );
 
-    const div = screen.getByTestId(monomer.props.MonomerNaturalAnalogCode);
+    const div = screen.getByText(monomer.label);
     fireEvent.click(div);
 
     expect(monomerItemHandleClick.mock.calls.length).toEqual(1);

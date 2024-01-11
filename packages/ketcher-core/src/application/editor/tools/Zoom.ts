@@ -17,9 +17,10 @@ import { zoom, select, ZoomTransform, ZoomBehavior, drag } from 'd3';
 import { BaseTool } from 'application/editor/tools/Tool';
 import { canvasSelector, drawnStructuresSelector } from '../constants';
 import { D3SvgElementSelection } from 'application/render/types';
-import { Vec2 } from 'domain/entities';
+import { Vec2 } from 'domain/entities/vec2';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import { clamp } from 'lodash';
+import { notifyRenderComplete } from 'application/render/internal';
 
 interface ScrollBar {
   name: string;
@@ -38,7 +39,7 @@ class ZoomTool implements BaseTool {
   private zoomTransform: ZoomTransform;
   private resizeObserver: ResizeObserver | null = null;
   drawingEntitiesManager: DrawingEntitiesManager;
-
+  private zoomEventHandlers: Array<(transform?) => void> = [];
   private scrollBars!: {
     horizontal: ScrollBar;
     vertical: ScrollBar;
@@ -81,13 +82,16 @@ class ZoomTool implements BaseTool {
       .scaleExtent([this.MINZOOMSCALE, this.MAXZOOMSCALE])
       .wheelDelta(this.defaultWheelDelta)
       .filter((e) => {
+        e.preventDefault();
         if (e.ctrlKey && e.type === 'wheel') {
-          e.preventDefault();
           return true;
         }
         return false;
       })
-      .on('zoom', this.zoomAction.bind(this));
+      .on('zoom', this.zoomAction.bind(this))
+      .on('end', () => {
+        notifyRenderComplete();
+      });
     this.canvasWrapper.call(this.zoom);
 
     this.canvasWrapper.on('wheel', (event) => {
@@ -117,6 +121,19 @@ class ZoomTool implements BaseTool {
     this.zoomLevel = transform.k;
     this.zoomTransform = transform;
     this.drawScrollBars();
+    requestAnimationFrame(() => {
+      this.dispatchZoomEventHandlers(transform);
+    });
+  }
+
+  subscribeOnZoomEvent(zoomEventHandler: (transform?) => void) {
+    this.zoomEventHandlers.push(zoomEventHandler);
+  }
+
+  dispatchZoomEventHandlers(transform) {
+    this.zoomEventHandlers.forEach((zoomEventHandler) => {
+      zoomEventHandler(transform);
+    });
   }
 
   drawScrollBars() {
@@ -242,16 +259,31 @@ class ZoomTool implements BaseTool {
     };
   }
 
+  private get zoomStep() {
+    return 0.1;
+  }
+
+  public zoomIn(zoomStep = this.zoomStep) {
+    this.zoom?.scaleTo(this.canvasWrapper, this.zoomLevel + zoomStep);
+  }
+
+  public zoomOut(zoomStep = this.zoomStep) {
+    this.zoom?.scaleTo(this.canvasWrapper, this.zoomLevel - zoomStep);
+  }
+
+  public resetZoom() {
+    this.zoom?.transform(this.canvasWrapper, new ZoomTransform(1, 0, 0));
+  }
+
   initMenuZoom() {
-    const zoomStep = 0.1;
     select('.zoom-in').on('click', () => {
-      this.zoom?.scaleTo(this.canvasWrapper, this.zoomLevel + zoomStep);
+      this.zoomIn();
     });
     select('.zoom-out').on('click', () => {
-      this.zoom?.scaleTo(this.canvasWrapper, this.zoomLevel - zoomStep);
+      this.zoomOut();
     });
     select('.zoom-reset').on('click', () => {
-      this.zoom?.transform(this.canvasWrapper, new ZoomTransform(1, 0, 0));
+      this.resetZoom();
     });
   }
 
@@ -290,6 +322,7 @@ class ZoomTool implements BaseTool {
     this.scrollBars.vertical?.bar?.remove();
     this.resizeObserver?.unobserve(this.canvasWrapper.node() as SVGSVGElement);
     this.zoom = null;
+    this.zoomEventHandlers = [];
   }
 }
 

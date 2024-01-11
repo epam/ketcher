@@ -95,6 +95,70 @@ export enum TemplateLibrary {
   Arabinofuranose = 'Arabinofuranose',
 }
 
+export enum Sugars {
+  TwelveddR = "12ddR___1',2'-Di-Deoxy-Ribose",
+  TwentyFiveR = '25R___2,5-Ribose',
+  ThreeA6 = "3A6___6-amino-hexanol (3' end)",
+}
+
+export async function selectSugar(sugarName: Sugars, page: Page) {
+  await page.getByTestId('RNA-TAB').click();
+  await page.getByTestId('summary-Sugars').click();
+  await page.getByTestId(sugarName).click();
+}
+
+export enum Bases {
+  Adenine = 'A___Adenine',
+  NBebnzylAdenine = 'baA___N-benzyl-adenine',
+  TClampOMe = 'clA___T-clamp OMe',
+}
+
+export async function selectBase(baseName: Bases, page: Page) {
+  await page.getByTestId('RNA-TAB').click();
+  await page.getByTestId('summary-Bases').click();
+  await page.getByTestId(baseName).click();
+}
+
+export enum Phosphates {
+  Test6Ph = 'Test-6-Ph___Test-6-AP-Phosphate',
+  Phosphate = 'P___Phosphate',
+  Boranophosphate = 'bP___Boranophosphate',
+}
+
+export async function selectPhosphate(phosphateName: Phosphates, page: Page) {
+  await page.getByTestId('RNA-TAB').click();
+  await page.getByTestId('summary-Phosphates').click();
+  await page.getByTestId(phosphateName).click();
+}
+
+export enum RnaPartDropDown {
+  Sugars = 'summary-Sugars',
+  Bases = 'summary-Bases',
+  Phosphates = 'summary-Phosphates',
+}
+
+export async function selectMonomer(
+  page: Page,
+  monomerType: Sugars | Bases | Phosphates,
+) {
+  const isSugar = Object.values(Sugars).includes(monomerType as Sugars);
+  const isBase = Object.values(Bases).includes(monomerType as Bases);
+  const isPhosphate = Object.values(Phosphates).includes(
+    monomerType as Phosphates,
+  );
+
+  if (isSugar) {
+    await page.getByTestId(RnaPartDropDown.Sugars).click();
+  }
+  if (isBase) {
+    await page.getByTestId(RnaPartDropDown.Bases).click();
+  }
+  if (isPhosphate) {
+    await page.getByTestId(RnaPartDropDown.Phosphates).click();
+  }
+  await page.getByTestId(monomerType).click();
+}
+
 export async function selectSaltsAndSolvents(
   saltsAndSolventsGroupName: SaltsAndSolvents,
   page: Page,

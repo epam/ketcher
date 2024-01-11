@@ -30,6 +30,7 @@ import {
 import { atomLongtapEvent } from './atom';
 import Editor from '../Editor';
 import { Tool } from './Tool';
+import { isBondingWithMacroMolecule } from './helper/isMacroMolecule';
 
 class ChainTool implements Tool {
   private readonly editor: Editor;
@@ -42,6 +43,9 @@ class ChainTool implements Tool {
 
   mousedown(event) {
     if (this.dragCtx) return;
+    if (isBondingWithMacroMolecule(this.editor, event)) {
+      return;
+    }
     const struct = this.editor.render.ctab;
     const molecule = struct.molecule;
     const functionalGroups = molecule.functionalGroups;

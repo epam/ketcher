@@ -20,3 +20,5 @@ export * from './runAsyncAction';
 export * from './b64toBlob';
 export * from './notifyRequestCompleted';
 export * from './KetcherLogger';
+export * from './SettingsManager';
+export * from './keynorm';

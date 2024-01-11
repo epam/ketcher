@@ -4,3 +4,4 @@ export * from './restruct';
 export * from './renderers';
 export * from './coordinateTransformation';
 export * from './scrollbar';
+export * from './notifyRenderComplete';

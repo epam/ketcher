@@ -14,77 +14,35 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useEffect } from 'react';
 import { RnaAccordion } from './RnaAccordion';
 import { RnaEditor } from './RnaEditor';
 import { RnaBuilderContainer } from './styles';
 import { useAppDispatch, useAppSelector } from 'hooks';
-import {
-  selectActivePreset,
-  selectHasUniqueNameError,
-  setHasUniqueNameError,
-  setDefaultPresets,
-  setActivePreset,
-  setIsEditMode,
-  savePreset,
-} from 'state/rna-builder';
-import { selectFilteredMonomers } from 'state/library';
+import { selectUniqueNameError, setUniqueNameError } from 'state/rna-builder';
 import { Modal } from 'components/shared/modal';
-import { getDefaultPresets } from 'src/helpers/getDefaultPreset';
 import { StyledButton } from 'components/monomerLibrary/RnaBuilder/RnaAccordion/styles';
-import { IRnaPreset } from 'components/monomerLibrary/RnaBuilder/types';
-import { scrollToSelectedPreset } from './RnaEditor/RnaEditor';
 
-export const RnaBuilder = ({ libraryName }) => {
+export const RnaBuilder = ({ libraryName, duplicatePreset, editPreset }) => {
   const dispatch = useAppDispatch();
-  const hasError = useAppSelector(selectHasUniqueNameError);
-  const monomers = useAppSelector(selectFilteredMonomers);
-  const activePreset = useAppSelector(selectActivePreset);
+  const uniqueNameError = useAppSelector(selectUniqueNameError);
   const closeErrorModal = () => {
-    dispatch(setHasUniqueNameError(false));
+    dispatch(setUniqueNameError(''));
   };
-
-  useEffect(() => {
-    const defaultPresets: IRnaPreset[] = getDefaultPresets(monomers);
-    dispatch(setDefaultPresets(defaultPresets));
-  }, [dispatch]);
-
-  const duplicatePreset = (preset?: IRnaPreset) => {
-    const duplicatedPreset = {
-      ...(preset || activePreset),
-      presetInList: undefined,
-      name: `${preset?.name || activePreset.name}_Copy`,
-      default: false,
-    };
-    dispatch(setActivePreset(duplicatedPreset));
-    dispatch(savePreset(duplicatedPreset));
-    dispatch(setIsEditMode(true));
-    scrollToSelectedPreset(activePreset.name);
-  };
-
-  const activateEditMode = () => {
-    dispatch(setIsEditMode(true));
-  };
-
-  const editPreset = (preset: IRnaPreset) => {
-    dispatch(setActivePreset(preset));
-    activateEditMode();
-  };
-
   return (
     <RnaBuilderContainer>
-      <RnaEditor
-        duplicatePreset={() => duplicatePreset()}
-        activateEditMode={activateEditMode}
-      />
+      <RnaEditor duplicatePreset={duplicatePreset} />
       <RnaAccordion
         libraryName={libraryName}
         duplicatePreset={duplicatePreset}
         editPreset={editPreset}
       />
-      <Modal isOpen={hasError} title="Error Message" onClose={closeErrorModal}>
+      <Modal
+        isOpen={!!uniqueNameError}
+        title="Error Message"
+        onClose={closeErrorModal}
+      >
         <Modal.Content>
-          Preset with name "{activePreset?.name}" already exists. Please choose
+          Preset with name "{uniqueNameError}" already exists. Please choose
           another name.
         </Modal.Content>
         <Modal.Footer>

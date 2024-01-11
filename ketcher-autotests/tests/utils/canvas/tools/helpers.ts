@@ -1,6 +1,7 @@
 import { Page } from '@playwright/test';
-import { pressButton, selectOption } from '@utils';
+import { selectOption } from '@utils';
 import { selectButtonByTitle } from '@utils/clicks/selectButtonByTitle';
+import { clickOnFileFormatDropdown } from '@utils/formats';
 import {
   AtomButton,
   BondIds,
@@ -67,6 +68,17 @@ export async function selectRectangleSelectionTool(page: Page) {
   await bondToolButton.click();
 }
 
+// undo/redo heplers currently used for macromolecules editor because buttons are in different panel
+export async function clickUndo(page: Page) {
+  const undoButton = page.getByTestId('undo-button');
+  await undoButton.click();
+}
+
+export async function clickRedo(page: Page) {
+  const redoButton = page.getByTestId('redo-button');
+  await redoButton.click();
+}
+
 export async function selectRectangleArea(
   page: Page,
   startX: number,
@@ -110,7 +122,7 @@ export async function selectButtonById(buttonId: BondIds | 'OK', page: Page) {
 export async function saveStructureWithReaction(page: Page, format?: string) {
   await selectTopPanelButton(TopPanelButton.Save, page);
   if (format) {
-    await pressButton(page, 'MDL Rxnfile V2000');
+    await clickOnFileFormatDropdown(page);
     await selectOption(page, format);
   }
   await page.getByRole('button', { name: 'Save', exact: true }).click();

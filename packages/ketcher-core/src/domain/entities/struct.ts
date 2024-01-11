@@ -280,8 +280,13 @@ export class Struct {
 
     this.sgroups.forEach((sg) => {
       if (sg.atoms.some((aid) => !atomSet!.has(aid))) return;
+      const oldSgroup = sg;
 
-      sg = SGroup.clone(sg, aidMap!);
+      sg =
+        oldSgroup instanceof MonomerMicromolecule
+          ? MonomerMicromolecule.clone(oldSgroup)
+          : SGroup.clone(sg, aidMap!);
+
       const id = cp.sgroups.add(sg);
       sg.id = id;
 
@@ -984,7 +989,8 @@ export class Struct {
         (atom.label === 'O' && charge === 0) ||
         (atom.label === 'N' && charge === 0 && conn === 3) ||
         (atom.label === 'N' && charge === 1 && conn === 3) ||
-        (atom.label === 'S' && charge === 0 && conn === 3)
+        (atom.label === 'S' && charge === 0 && conn === 3) ||
+        !atom.implicitH
       ) {
         atom.implicitH = 0;
         return;
@@ -993,7 +999,7 @@ export class Struct {
       }
     }
 
-    if (correctConn < 0 || atom.isQuery()) {
+    if (correctConn < 0 || atom.isQuery() || atom.attachmentPoints) {
       atom.implicitH = 0;
       return;
     }
@@ -1214,5 +1220,32 @@ export class Struct {
   isAtomFromMacromolecule(atomId: number) {
     const sgroup = this.getGroupFromAtomId(atomId);
     return sgroup instanceof MonomerMicromolecule;
+  }
+
+  isBondFromMacromolecule(bondId: number) {
+    const bond = this.bonds.get(bondId);
+
+    assert(bond);
+
+    return (
+      this.isAtomFromMacromolecule(bond.begin) ||
+      this.isAtomFromMacromolecule(bond.end)
+    );
+  }
+
+  isFunctionalGroupFromMacromolecule(functionalGroupId: number) {
+    const functionalGroup = this.functionalGroups.get(functionalGroupId);
+
+    return functionalGroup?.relatedSGroup instanceof MonomerMicromolecule;
+  }
+
+  isTargetFromMacromolecule(target?: { id: number; map: string }) {
+    return (
+      target &&
+      ((target.map === 'functionalGroups' &&
+        this.isFunctionalGroupFromMacromolecule(target.id)) ||
+        (target.map === 'atoms' && this.isAtomFromMacromolecule(target.id)) ||
+        (target.map === 'bonds' && this.isBondFromMacromolecule(target.id)))
+    );
   }
 }

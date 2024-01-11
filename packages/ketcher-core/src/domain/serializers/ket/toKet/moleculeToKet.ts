@@ -19,9 +19,13 @@ import {
   Struct,
   SGroupAttachmentPoint,
   AtomQueryProperties,
+  BaseMonomer,
+  Vec2,
 } from 'domain/entities';
+import { switchIntoChemistryCoordSystem } from 'domain/serializers/ket/helpers';
 
 import { ifDef } from 'utilities';
+import { convertAttachmentPointNumberToLabel } from 'domain/helpers/attachmentPointCalculations';
 
 function fromRlabel(rg) {
   const res: Array<any> = [];
@@ -36,11 +40,12 @@ function fromRlabel(rg) {
   return res;
 }
 
-export function moleculeToKet(struct: Struct): any {
+export function moleculeToKet(struct: Struct, monomer?: BaseMonomer): any {
   const body: any = {
     atoms: Array.from(struct.atoms.values()).map((atom) => {
-      if (atom.label === 'R#') return rglabelToKet(atom);
-      return atomToKet(atom);
+      // For the monomers we need to serialize leaving groups as usual atom label like H, O, etc
+      if (atom.label === 'R#' && !monomer) return rglabelToKet(atom);
+      return atomToKet(atom, monomer);
     }),
   };
 
@@ -67,12 +72,20 @@ export function moleculeToKet(struct: Struct): any {
   };
 }
 
-function atomToKet(source) {
+function atomToKet(source, monomer?: BaseMonomer) {
   const result: { queryProperties?: AtomQueryProperties; type?: 'atom-list' } =
     {};
 
   if (source.label !== 'L#') {
-    ifDef(result, 'label', source.label);
+    ifDef(
+      result,
+      'label',
+      source.label === 'R#' && monomer
+        ? monomer.monomerItem.props.MonomerCaps?.[
+            convertAttachmentPointNumberToLabel(source.rglabel)
+          ]
+        : source.label,
+    );
     // reaction
     ifDef(result, 'mapping', parseInt(source.aam), 0);
   } else if (source.atomList) {
@@ -82,7 +95,10 @@ function atomToKet(source) {
   }
 
   ifDef(result, 'alias', source.alias);
-  ifDef(result, 'location', [source.pp.x, -source.pp.y, source.pp.z]);
+  const position: Vec2 = switchIntoChemistryCoordSystem(
+    new Vec2(source.pp.x, source.pp.y, source.pp.z),
+  );
+  ifDef(result, 'location', [position.x, position.y, position.z]);
   ifDef(result, 'charge', source.charge);
   ifDef(result, 'explicitValence', source.explicitValence, -1);
   ifDef(result, 'isotope', source.isotope);
@@ -118,7 +134,10 @@ function rglabelToKet(source) {
   const result = {
     type: 'rg-label',
   };
-  ifDef(result, 'location', [source.pp.x, -source.pp.y, source.pp.z]);
+  const position: Vec2 = switchIntoChemistryCoordSystem(
+    new Vec2(source.pp.x, source.pp.y, source.pp.z),
+  );
+  ifDef(result, 'location', [position.x, position.y, position.z]);
   ifDef(result, 'attachmentPoints', source.attachmentPoints, 0);
 
   const refsToRGroups = fromRlabel(source.rglabel).map(

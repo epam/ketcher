@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Dialog from './Dialog';
+import { Dialog } from '../../../../components/Dialog';
 import { LoadingCircles } from './Spinner';
 import StructEditor from './StructEditor';
 

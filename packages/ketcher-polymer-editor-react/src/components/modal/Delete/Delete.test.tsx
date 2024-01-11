@@ -42,7 +42,7 @@ describe('Delete component', () => {
       render(
         withThemeAndStoreProvider(<Delete {...mockProps} />, {
           rnaBuilder: {
-            activePreset: { presetInList: preset, name: 'name' },
+            activePresetForContextMenu: { presetInList: preset, name: 'name' },
             presets: [preset],
           },
         }),
@@ -53,7 +53,7 @@ describe('Delete component', () => {
     render(
       withThemeAndStoreProvider(<Delete {...mockProps} />, {
         rnaBuilder: {
-          activePreset: { presetInList: preset, name: 'name' },
+          activePresetForContextMenu: { presetInList: preset, name: 'name' },
           presets: [preset],
         },
       }),
@@ -67,8 +67,15 @@ describe('Delete component', () => {
     render(
       withThemeAndStoreProvider(<Delete {...mockProps} />, {
         rnaBuilder: {
-          activePreset: { presetInList: preset, name: 'name' },
+          activePresetForContextMenu: { presetInList: preset, name: 'name' },
           presets: [preset],
+        },
+        editor: {
+          editor: {
+            events: {
+              selectPreset: { dispatch: () => true },
+            },
+          },
         },
       }),
     );

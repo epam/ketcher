@@ -3,6 +3,7 @@ import {
   clickInTheMiddleOfTheScreen,
   FunctionalGroups,
   getCoordinatesOfTheMiddleOfTheScreen,
+  getEditorScreenshot,
   pressButton,
   selectFunctionalGroups,
   selectTopPanelButton,
@@ -17,7 +18,7 @@ import { STRUCTURE_LIBRARY_BUTTON_TEST_ID } from '../templates.costants';
 async function setDisplayStereoFlagsSettingToOn(page: Page) {
   await selectTopPanelButton(TopPanelButton.Settings, page);
   await page.getByText('Stereochemistry', { exact: true }).click();
-  await pressButton(page, 'IUPAC style');
+  await page.getByTestId('stereo-label-style-input-span').click();
   // Using "On" label style, to always show the stereo labels, so we can see the difference
   await page.getByRole('option', { name: 'On' }).click();
   await pressButton(page, 'Apply');
@@ -148,6 +149,25 @@ test.describe('Templates - Template Library', () => {
     await clickInTheMiddleOfTheScreen(page);
   });
 
+  test('Edit templates - name with just spaces', async ({ page }) => {
+    // Test case: EPMLSOPKET-1699
+    // Verify if structure name won't change if field will contain just spaces
+    await editAndClearTemplateName(page, 'β-D-Sugars', 'β-D-Allopyranose');
+    await page.getByTestId('name-input').fill('   ');
+    await page.getByRole('button', { name: 'Edit', exact: true }).click();
+    await page.getByText('β-D-Sugars').click();
+  });
+});
+
+test.describe('Templates - Template Library', () => {
+  test.beforeEach(async ({ page }) => {
+    await waitForPageInit(page);
+  });
+
+  test.afterEach(async ({ page }) => {
+    await getEditorScreenshot(page);
+  });
+
   test('Edit templates', async ({ page }) => {
     // Test case: EPMLSOPKET-1699
     // Verify correct display of Template Edit window
@@ -158,15 +178,6 @@ test.describe('Templates - Template Library', () => {
     // Test case: EPMLSOPKET-1699
     // Verify validation if name field not contain any characters
     await editAndClearTemplateName(page, 'β-D-Sugars', 'β-D-Allopyranose');
-  });
-
-  test('Edit templates - name with just spaces', async ({ page }) => {
-    // Test case: EPMLSOPKET-1699
-    // Verify if structure name won't change if field will contain just spaces
-    await editAndClearTemplateName(page, 'β-D-Sugars', 'β-D-Allopyranose');
-    await page.getByTestId('name-input').fill('   ');
-    await page.getByRole('button', { name: 'Edit', exact: true }).click();
-    await page.getByText('β-D-Sugars').click();
   });
 
   test('Text field 128 characters limit test ', async ({ page }) => {

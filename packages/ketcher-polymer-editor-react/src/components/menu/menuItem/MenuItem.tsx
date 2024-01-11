@@ -21,22 +21,27 @@ import { StyledIconButton } from './styles';
 type MenuItemProp = {
   itemId: IconName;
   title?: string;
+  testId?: string;
 };
 
-const MenuItem = ({ itemId, title = '' }: MenuItemProp) => {
+const MenuItem = ({ itemId, title = '', testId }: MenuItemProp) => {
   const { isActive, activate } = useMenuContext();
 
   const onClickCallback = useCallback(() => {
     activate(itemId);
   }, [activate, itemId]);
 
+  const isActiveItem = isActive(itemId);
+  const activeClass = isActiveItem ? ' active' : '';
+
   return (
     <StyledIconButton
       title={title}
-      className={itemId}
-      isActive={isActive(itemId)}
+      className={itemId + activeClass}
+      isActive={isActiveItem}
       onClick={onClickCallback}
       iconName={itemId}
+      testId={testId}
     />
   );
 };

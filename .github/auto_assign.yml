@@ -6,18 +6,9 @@ reviewGroups:
   core:
     - nitvex
     - rrodionov91
-    - SashaGraves
-    - AKZhuk
-    - yuleicul
   developers:
-    - nanoblit
     - StarlaStarla
     - chgayane
-    - OlgaMazurina
   QA:
     - Zhirnoff
-    - MartaWilliams
-    - y-holik
-    - AnastasiyaPiatrovaKlu
-    - ViktoriaTkacheva
-    - urszula-gawlowska
+    - AlexeyGirin

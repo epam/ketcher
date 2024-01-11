@@ -14,22 +14,25 @@
  * limitations under the License.
  ***************************************************************************/
 import { Vec2 } from 'domain/entities';
-import { CoreEditor } from 'application/editor';
+import { CoreEditor, EditorHistory } from 'application/editor';
 import { brush as d3Brush, select } from 'd3';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { Command } from 'domain/entities/Command';
 import { BaseTool } from 'application/editor/tools/Tool';
-import Coordinates from '../shared/coordinates';
+import { Coordinates } from '../shared/coordinates';
 
 class SelectRectangle implements BaseTool {
   private brush;
   private brushArea;
   private moveStarted;
   private mousePositionAfterMove = new Vec2(0, 0, 0);
+  private mousePositionBeforeMove = new Vec2(0, 0, 0);
   private canvasResizeObserver?: ResizeObserver;
+  private history: EditorHistory;
 
   constructor(private editor: CoreEditor) {
     this.editor = editor;
+    this.history = new EditorHistory(this.editor);
     this.destroy();
     this.createBrush();
 
@@ -75,6 +78,9 @@ class SelectRectangle implements BaseTool {
 
     const handleResizeCanvas = () => {
       const { canvas } = this.editor;
+      if (canvas.clientWidth === 0 || canvas.clientHeight === 0) {
+        return;
+      }
 
       this.brush.extent([
         [0, 0],
@@ -98,6 +104,7 @@ class SelectRectangle implements BaseTool {
     if (renderer instanceof BaseRenderer) {
       this.moveStarted = true;
       this.mousePositionAfterMove = this.editor.lastCursorPositionOfCanvas;
+      this.mousePositionBeforeMove = this.editor.lastCursorPositionOfCanvas;
       if (renderer.drawingEntity.selected) {
         return;
       } else {
@@ -126,14 +133,36 @@ class SelectRectangle implements BaseTool {
           ),
         );
       this.mousePositionAfterMove = this.editor.lastCursorPositionOfCanvas;
-      this.editor.renderersContainer.update(modelChanges);
+      requestAnimationFrame(() => {
+        this.editor.renderersContainer.update(modelChanges);
+      });
     }
   }
 
   mouseup(event) {
     const renderer = event.target.__data__;
-    if (this.moveStarted && renderer.drawingEntity.selected) {
+    if (this.moveStarted && renderer.drawingEntity?.selected) {
       this.moveStarted = false;
+
+      if (
+        Vec2.diff(
+          this.mousePositionAfterMove,
+          this.mousePositionBeforeMove,
+        ).length() === 0
+      ) {
+        return;
+      }
+      const modelChanges =
+        this.editor.drawingEntitiesManager.moveSelectedDrawingEntities(
+          new Vec2(0, 0),
+          Coordinates.canvasToModel(
+            new Vec2(
+              this.mousePositionAfterMove.x - this.mousePositionBeforeMove.x,
+              this.mousePositionAfterMove.y - this.mousePositionBeforeMove.y,
+            ),
+          ),
+        );
+      this.history.update(modelChanges);
     }
   }
 

@@ -17,25 +17,30 @@ import { Modal } from 'components/shared/modal';
 import { useCallback } from 'react';
 import { useAppDispatch, useAppSelector } from 'hooks';
 import {
+  createNewPreset,
   deletePreset,
   selectActivePresetForContextMenu,
-  selectPresets,
-  setActivePreset,
   setIsEditMode,
 } from 'state/rna-builder';
 import { StyledActionButton } from 'components/modal/Delete/styledComponents';
+import styled from '@emotion/styled';
+import { selectEditor } from 'state/common';
 
 export interface Props {
   onClose: () => void;
   isModalOpen: boolean;
 }
 
+const DeleteTextWrapper = styled.div`
+  padding: 12px;
+`;
+
 const Delete = ({ isModalOpen, onClose }: Props) => {
   const dispatch = useAppDispatch();
-  const presets = useAppSelector(selectPresets);
   const activePresetForContextMenu = useAppSelector(
     selectActivePresetForContextMenu,
   );
+  const editor = useAppSelector(selectEditor);
   const onCloseCallback = useCallback(() => {
     onClose();
   }, [onClose]);
@@ -48,9 +53,8 @@ const Delete = ({ isModalOpen, onClose }: Props) => {
     onCloseCallback();
     dispatch(deletePreset(activePresetForContextMenu));
     dispatch(setIsEditMode(false));
-    if (presets.length !== 0) {
-      dispatch(setActivePreset(presets[0]));
-    }
+    dispatch(createNewPreset());
+    editor.events.selectPreset.dispatch(null);
   };
 
   return (
@@ -60,11 +64,11 @@ const Delete = ({ isModalOpen, onClose }: Props) => {
       onClose={onCloseCallback}
     >
       <Modal.Content>
-        <div data-testid="delete-preset-popup-content">
+        <DeleteTextWrapper data-testid="delete-preset-popup-content">
           <div>You are about to delete</div>
           <div>"{activePresetForContextMenu.name}" RNA preset.</div>
           <div>This operation cannot be undone.</div>
-        </div>
+        </DeleteTextWrapper>
       </Modal.Content>
       <Modal.Footer>
         <StyledActionButton

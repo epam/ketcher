@@ -4,11 +4,12 @@ import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import assert from 'assert';
 import { D3SvgElementSelection } from 'application/render/types';
 import { editorEvents } from 'application/editor/editorEvents';
-import { Scale } from 'domain/helpers';
 import { Vec2 } from 'domain/entities';
 import { Peptide } from 'domain/entities/Peptide';
 import { Chem } from 'domain/entities/Chem';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
+import { SnakeMode } from 'application/editor/modes/internal';
+import { Coordinates } from 'application/editor/shared/coordinates';
 
 const LINE_FROM_MONOMER_LENGTH = 15;
 const VERTICAL_LINE_LENGTH = 42;
@@ -23,7 +24,7 @@ export class PolymerBondRenderer extends BaseRenderer {
   private editorEvents: typeof editorEvents;
   private selectionElement;
   private path = '';
-  private previousStateOfIsMonomersOnSameHorisontalLine: boolean | undefined;
+  private previousStateOfIsMonomersOnSameHorisontalLine = false;
   constructor(public polymerBond: PolymerBond) {
     super(polymerBond as DrawingEntity);
     this.polymerBond.setRenderer(this);
@@ -57,7 +58,7 @@ export class PolymerBondRenderer extends BaseRenderer {
         this.polymerBond,
       );
     return (
-      BaseRenderer.isSnakeMode &&
+      SnakeMode.isEnabled &&
       ((this.attachmentPointsForSnakeBond.includes(
         firstMonomerAttachmentPoint as string,
       ) &&
@@ -88,14 +89,12 @@ export class PolymerBondRenderer extends BaseRenderer {
   private get scaledPosition() {
     // we need to convert monomer coordinates(stored in angstroms) to pixels.
     // it needs to be done in view layer of application (like renderers)
-    const startPositionInPixels = Scale.modelToCanvas(
+    const startPositionInPixels = Coordinates.modelToCanvas(
       this.polymerBond.startPosition,
-      this.editorSettings,
     );
 
-    const endPositionInPixels = Scale.modelToCanvas(
+    const endPositionInPixels = Coordinates.modelToCanvas(
       this.polymerBond.endPosition,
-      this.editorSettings,
     );
 
     return {
@@ -146,22 +145,22 @@ export class PolymerBondRenderer extends BaseRenderer {
   }
 
   private getMonomerWidth() {
-    return this.polymerBond.firstMonomer.renderer?.bodyWidth ?? 0;
+    return this.polymerBond.firstMonomer.renderer?.monomerSize.width ?? 0;
   }
 
   private getMonomerHeight() {
-    return this.polymerBond.firstMonomer.renderer?.bodyHeight ?? 0;
+    return this.polymerBond.firstMonomer.renderer?.monomerSize.width ?? 0;
   }
 
   public isMonomersOnSameHorizontalLine() {
-    return (
+    return Boolean(
       this.polymerBond.secondMonomer &&
-      this.polymerBond.firstMonomer.position.y -
-        this.polymerBond.secondMonomer.position.y <
-        0.5 &&
-      this.polymerBond.firstMonomer.position.y -
-        this.polymerBond.secondMonomer.position.y >
-        -0.5
+        this.polymerBond.firstMonomer.position.y -
+          this.polymerBond.secondMonomer.position.y <
+          0.5 &&
+        this.polymerBond.firstMonomer.position.y -
+          this.polymerBond.secondMonomer.position.y >
+          -0.5,
     );
   }
 
@@ -259,7 +258,7 @@ export class PolymerBondRenderer extends BaseRenderer {
           this.getMonomerWidth()
         ),
       );
-      this.addLineFromRightToLeft();
+      this.addLineFromRightToBottom();
       this.addLine(
         LINE_DIRECTION.Vertical,
         endPosition.y -
@@ -416,7 +415,7 @@ export class PolymerBondRenderer extends BaseRenderer {
     this.path = `${this.path} c -4.418,0 -8,-3.582 -8,-8`;
   }
 
-  private addLineFromRightToLeft() {
+  private addLineFromRightToBottom() {
     this.path = `${this.path} c -4.418,0 -8,3.582 -8,8`;
   }
 

@@ -48,11 +48,11 @@ async function selectBondProperties(
   bondReactingCenter: string,
   finalizationButton: string,
 ) {
-  await page.getByRole('button', { name: 'Single', exact: true }).click();
+  await page.getByTestId('type-input-span').click();
   await page.getByRole('option', { name: bondType, exact: true }).click();
-  await page.getByRole('button', { name: 'Either' }).click();
+  await page.getByTestId('topology-input-span').click();
   await page.getByRole('option', { name: bondTopology }).click();
-  await page.getByRole('button', { name: 'Unmarked' }).click();
+  await page.getByTestId('reacting-center-input-span').click();
   await page
     .getByRole('option', { name: bondReactingCenter, exact: true })
     .click();
@@ -715,7 +715,7 @@ test.describe('Undo/Redo Actions', () => {
     Press CTRL+V and place the ring. Press CTRL+Z.
     */
     await selectTopPanelButton(TopPanelButton.Settings, page);
-    await page.getByRole('button', { name: 'After Paste' }).click();
+    await page.getByTestId('reset-to-select-input-span').click();
     await page.getByRole('option', { name: 'off' }).click();
     await takeEditorScreenshot(page);
     await page.getByTestId('OK').click();

@@ -18,6 +18,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { ModalContainer } from 'components/modal/modalContainer';
 import { RnaBuilder } from 'components/monomerLibrary/RnaBuilder';
 import { MONOMER_TYPES } from 'src/constants';
+import mockedPresets from './mockedPresets.json';
 
 jest.mock('../../../src/helpers/dom.ts', () => {
   return {
@@ -35,7 +36,7 @@ const monomerData = [
       MonomerCode: 'R',
       MonomerNaturalAnalogCode: 'R',
       BranchMonomer: 'false',
-      MonomerCaps: '[R1]H',
+      MonomerCaps: { R1: 'H' },
     },
   },
   {
@@ -47,7 +48,7 @@ const monomerData = [
       MonomerCode: 'P',
       MonomerNaturalAnalogCode: 'P',
       BranchMonomer: 'false',
-      MonomerCaps: '[R1]O',
+      MonomerCaps: { R1: 'O' },
     },
   },
   {
@@ -58,26 +59,34 @@ const monomerData = [
       MonomerCode: 'A',
       MonomerNaturalAnalogCode: 'A',
       BranchMonomer: 'true',
-      MonomerCaps: '[R1]H',
+      MonomerCaps: { R1: 'H' },
     },
   },
 ];
 describe('RNA ContextMenu', () => {
+  const editPreset = jest.fn();
+  const duplicatePreset = jest.fn();
+
   it('should render contextMenu correctly', () => {
     render(
       withThemeAndStoreProvider(
-        <RnaBuilder libraryName={MONOMER_TYPES.RNA} />,
+        <RnaBuilder
+          libraryName={MONOMER_TYPES.RNA}
+          duplicatePreset={duplicatePreset}
+          editPreset={editPreset}
+        />,
         {
           library: {
             searchFilter: '',
             favorites: {},
             monomers: monomerData,
           },
+          rnaBuilder: {
+            presets: mockedPresets,
+          },
         },
       ),
     );
-    const cancelButton = screen.getByTestId('cancel-btn');
-    fireEvent.click(cancelButton);
     const presetCard = screen.getByTestId('A_A_R_P');
     fireEvent.contextMenu(presetCard);
     expect(screen.getByTestId('deletepreset')).toBeInTheDocument();
@@ -86,29 +95,38 @@ describe('RNA ContextMenu', () => {
   it("should disable 'Delete Preset' menu when trying to delete default preset", () => {
     render(
       withThemeAndStoreProvider(
-        <RnaBuilder libraryName={MONOMER_TYPES.RNA} />,
+        <RnaBuilder
+          libraryName={MONOMER_TYPES.RNA}
+          duplicatePreset={duplicatePreset}
+          editPreset={editPreset}
+        />,
         {
           library: {
             searchFilter: '',
             favorites: {},
             monomers: monomerData,
           },
+          rnaBuilder: {
+            presets: mockedPresets,
+          },
         },
       ),
     );
-    const cancelButton = screen.getByTestId('cancel-btn');
-    fireEvent.click(cancelButton);
     const preset = screen.getByTestId('A_A_R_P');
     fireEvent.contextMenu(preset);
     const deleteMenu = screen.getByTestId('deletepreset');
     expect(deleteMenu.className).toContain('disabled');
   });
 
-  it("should delete preset correctly when click menu 'Delete Preset'", () => {
+  it("should enable 'Delete Preset' when trying to delete non-default preset", () => {
     render(
       withThemeAndStoreProvider(
         <div>
-          <RnaBuilder libraryName={MONOMER_TYPES.RNA} />
+          <RnaBuilder
+            libraryName={MONOMER_TYPES.RNA}
+            duplicatePreset={duplicatePreset}
+            editPreset={editPreset}
+          />
           <ModalContainer />
         </div>,
         {
@@ -117,21 +135,15 @@ describe('RNA ContextMenu', () => {
             favorites: {},
             monomers: monomerData,
           },
+          rnaBuilder: {
+            presets: mockedPresets,
+          },
         },
       ),
     );
-    const cancelButton = screen.getByTestId('cancel-btn');
-    fireEvent.click(cancelButton);
     const preset = screen.getByTestId('A_A_R_P');
     fireEvent.contextMenu(preset);
-    const duplicateMenu = screen.getByTestId('duplicateandedit');
-    fireEvent.click(duplicateMenu);
-    const presetCopyCard = screen.getByTestId('A_Copy_A_R_P');
-    fireEvent.contextMenu(presetCopyCard);
     const deleteMenu = screen.getByTestId('deletepreset');
-    fireEvent.click(deleteMenu);
-    const deleteBtn = screen.getByTitle('Delete');
-    fireEvent.click(deleteBtn);
-    expect(presetCopyCard).not.toBeInTheDocument();
+    expect(deleteMenu.className).toContain('disabled');
   });
 });

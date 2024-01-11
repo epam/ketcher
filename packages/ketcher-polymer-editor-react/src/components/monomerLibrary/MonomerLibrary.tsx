@@ -13,83 +13,69 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { ChangeEvent } from 'react';
+import React, { ChangeEvent, useRef } from 'react';
 import { Tabs } from 'components/shared/Tabs';
-import styled from '@emotion/styled';
 import { tabsContent } from 'components/monomerLibrary/tabsContent';
-import { useAppDispatch } from 'hooks';
+import { useAppDispatch, useAppSelector } from 'hooks';
 import { setSearchFilter } from 'state/library';
 import { Icon } from 'ketcher-react';
+import { IRnaPreset } from './RnaBuilder/types';
+import {
+  savePreset,
+  selectPresets,
+  setActivePreset,
+  setIsEditMode,
+  setUniqueNameError,
+} from 'state/rna-builder';
+import { scrollToSelectedPreset } from './RnaBuilder/RnaEditor/RnaEditor';
+import {
+  MonomerLibraryContainer,
+  MonomerLibraryHeader,
+  MonomerLibrarySearch,
+  MonomerLibraryTitle,
+} from './styles';
 
-export const MONOMER_LIBRARY_WIDTH = '254px';
-
-const MonomerLibraryContainer = styled.div(({ theme }) => ({
-  width: MONOMER_LIBRARY_WIDTH,
-  height: 'calc(100% - 16px)',
-  backgroundColor: theme.ketcher.color.background.primary,
-  boxShadow: '0px 2px 5px rgba(103, 104, 132, 0.15)',
-  display: 'flex',
-  flexDirection: 'column',
-  borderRadius: '4px',
-}));
-
-const MonomerLibraryTitle = styled.h3(({ theme }) => ({
-  margin: 0,
-  padding: 0,
-  fontSize: theme.ketcher.font.size.regular,
-  fontWeight: theme.ketcher.font.weight.regular,
-}));
-
-const MonomerLibraryHeader = styled.div(() => ({
-  padding: '12px',
-  position: 'relative',
-}));
-
-const MonomerLibrarySearch = styled.div(({ theme }) => ({
-  padding: '12px 0',
-
-  '& > div': {
-    background: theme.ketcher.color.input.background.default,
-    display: 'flex',
-    height: '24px',
-    flexDirection: 'row',
-    border: '1px solid transparent',
-    borderRadius: '4px',
-    padding: '0 4px',
-
-    '& > span': {
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-
-    '&:has(input:focus)': {
-      outline: `1px solid ${theme.ketcher.color.input.border.focus}`,
-    },
-
-    '& > input': {
-      background: 'transparent',
-      border: 'none',
-      padding: '0 0 0 8px',
-      margin: 0,
-      flex: 1,
-
-      '&:focus': {
-        outline: 'none',
-      },
-    },
-  },
-}));
-
-const MonomerLibrary = () => {
+const MonomerLibrary = React.memo(() => {
+  const presetsRef = useRef<IRnaPreset[]>([]);
   const dispatch = useAppDispatch();
-
+  useAppSelector(selectPresets, (presets) => {
+    presetsRef.current = presets;
+    return true;
+  });
   const filterResults = (event: ChangeEvent<HTMLInputElement>) => {
     dispatch(setSearchFilter(event.target.value));
   };
 
+  const duplicatePreset = (preset?: IRnaPreset) => {
+    const name = `${preset?.name}_Copy`;
+    const presetWithSameName = presetsRef.current.find(
+      (preset) => preset.name === name,
+    );
+    if (presetWithSameName) {
+      dispatch(setUniqueNameError(name));
+      return;
+    }
+
+    const duplicatedPreset = {
+      ...preset,
+      presetInList: undefined,
+      name: presetWithSameName ? `${name}_Copy` : name,
+      default: false,
+      favorite: false,
+    };
+    dispatch(setActivePreset(duplicatedPreset));
+    dispatch(savePreset(duplicatedPreset));
+    dispatch(setIsEditMode(true));
+    scrollToSelectedPreset(preset?.name);
+  };
+
+  const editPreset = (preset: IRnaPreset) => {
+    dispatch(setActivePreset(preset));
+    dispatch(setIsEditMode(true));
+  };
+
   return (
-    <MonomerLibraryContainer>
+    <MonomerLibraryContainer data-testid="monomer-library">
       <MonomerLibraryHeader>
         <MonomerLibraryTitle>Library</MonomerLibraryTitle>
         <MonomerLibrarySearch>
@@ -98,6 +84,7 @@ const MonomerLibrary = () => {
               <Icon name="search" />
             </span>
             <input
+              data-testid="monomer-library-input"
               onInput={filterResults}
               placeholder="Search by name..."
               type="text"
@@ -105,9 +92,9 @@ const MonomerLibrary = () => {
           </div>
         </MonomerLibrarySearch>
       </MonomerLibraryHeader>
-      <Tabs tabs={tabsContent} />
+      <Tabs tabs={tabsContent(duplicatePreset, editPreset)} />
     </MonomerLibraryContainer>
   );
-};
+});
 
 export { MonomerLibrary };

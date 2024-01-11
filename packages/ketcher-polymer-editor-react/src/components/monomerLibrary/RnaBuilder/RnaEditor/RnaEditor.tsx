@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { ChangeEvent, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { RnaEditorCollapsed } from './RnaEditorCollapsed';
 import { RnaEditorExpanded } from './RnaEditorExpanded';
 import {
@@ -27,17 +27,11 @@ import { useAppDispatch, useAppSelector } from 'hooks';
 import {
   createNewPreset,
   RnaBuilderPresetsItem,
-  savePreset,
   selectActivePreset,
-  selectActiveRnaBuilderItem,
   selectIsEditMode,
   selectPresetFullName,
-  selectPresets,
-  setActivePreset,
-  setActivePresetName,
   setActiveRnaBuilderItem,
-  setHasUniqueNameError,
-  setIsEditMode as setIsEditModeAction,
+  setIsEditMode,
 } from 'state/rna-builder';
 import { scrollToElement } from 'helpers/dom';
 
@@ -49,21 +43,12 @@ export const scrollToSelectedMonomer = (monomerId) => {
   scrollToElement(`[data-monomer-item-id="${monomerId}"]`);
 };
 
-export const RnaEditor = ({ duplicatePreset, activateEditMode }) => {
+export const RnaEditor = ({ duplicatePreset }) => {
   const activePreset = useAppSelector(selectActivePreset);
-  const presets = useAppSelector(selectPresets);
   const isEditMode = useAppSelector(selectIsEditMode);
   const activePresetFullName = selectPresetFullName(activePreset);
-  const activeMonomerGroup = useAppSelector(selectActiveRnaBuilderItem);
-  const [, setPresetName] = useState('');
-  const [editedPresetName, setEditedPresetName] = useState(false);
 
   const dispatch = useAppDispatch();
-  const hasPresets = presets.length !== 0;
-
-  const setIsEditMode = (value: boolean) => {
-    dispatch(setIsEditModeAction(value));
-  };
 
   const [expanded, setExpanded] = useState(false);
 
@@ -73,70 +58,15 @@ export const RnaEditor = ({ duplicatePreset, activateEditMode }) => {
       return;
     }
 
-    if (hasPresets) {
-      dispatch(setActivePreset(presets[0]));
-    } else {
-      dispatch(createNewPreset());
-      dispatch(setActiveRnaBuilderItem(RnaBuilderPresetsItem.Presets));
-    }
+    dispatch(createNewPreset());
+    dispatch(setActiveRnaBuilderItem(RnaBuilderPresetsItem.Presets));
   }, [activePreset]);
 
   const expandEditor = () => {
     setExpanded(!expanded);
-    if (!activePreset.presetInList) {
-      setIsEditMode(true);
+    if (!activePreset?.presetInList) {
+      dispatch(setIsEditMode(true));
     }
-  };
-
-  useEffect(() => {
-    if (
-      activeMonomerGroup !== RnaBuilderPresetsItem.Presets &&
-      !editedPresetName
-    ) {
-      setPresetName(activePresetFullName);
-      dispatch(setActivePresetName(activePresetFullName));
-    }
-  }, [activeMonomerGroup, activePresetFullName, editedPresetName]);
-
-  const onChangeName = (event: ChangeEvent<HTMLInputElement>) => {
-    if (isEditMode) {
-      const newPresetName = event.target.value;
-      dispatch(setActivePresetName(newPresetName));
-      setPresetName(newPresetName);
-      setEditedPresetName(newPresetName.trim() !== '');
-    }
-  };
-
-  const saveActivePreset = () => {
-    const presetWithSameName = presets.find(
-      (preset) => preset.name === activePreset.name,
-    );
-    if (
-      presetWithSameName &&
-      activePreset.presetInList !== presetWithSameName
-    ) {
-      dispatch(setHasUniqueNameError(true));
-      return;
-    }
-    dispatch(savePreset(activePreset));
-    setIsEditMode(false);
-    setTimeout(() => {
-      scrollToSelectedPreset(activePreset.name);
-    }, 0);
-  };
-
-  const cancelEdit = () => {
-    if (presets.length === 0 || !activePreset.presetInList) {
-      dispatch(createNewPreset());
-    } else {
-      dispatch(setActivePreset(activePreset.presetInList));
-    }
-
-    if (!activePreset.presetInList) {
-      dispatch(setActivePreset(presets[0]));
-    }
-
-    setIsEditMode(false);
   };
 
   return (
@@ -150,12 +80,7 @@ export const RnaEditor = ({ duplicatePreset, activateEditMode }) => {
       {activePreset ? (
         expanded ? (
           <RnaEditorExpanded
-            name={activePreset.name}
             isEditMode={isEditMode}
-            onChangeName={onChangeName}
-            onSave={saveActivePreset}
-            onCancel={cancelEdit}
-            onEdit={activateEditMode}
             onDuplicate={duplicatePreset}
           />
         ) : (

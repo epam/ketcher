@@ -40,13 +40,15 @@ import {
   destroyEditor,
   selectEditor,
   selectEditorActiveTool,
-  selectEditorBondMode,
   selectTool,
   showPreview,
-  selectMode,
 } from 'state/common';
-import { loadMonomerLibrary } from 'state/library';
-import { useAppDispatch, useAppSelector } from 'hooks';
+import {
+  loadMonomerLibrary,
+  selectMonomers,
+  setFavoriteMonomersFromLocalStorage,
+} from 'state/library';
+import { useAppDispatch, useAppSelector, useSnakeMode } from 'hooks';
 import {
   closeErrorTooltip,
   openErrorTooltip,
@@ -57,7 +59,6 @@ import {
   modalComponentList,
   ModalContainer,
 } from 'components/modal/modalContainer';
-import { FullscreenButton } from 'components/FullscreenButton';
 import { DeepPartial } from './types';
 import { EditorClassName } from './constants';
 import { Snackbar } from '@mui/material';
@@ -76,6 +77,18 @@ import {
 import { MonomerConnectionOnlyProps } from 'components/modal/modalContainer/types';
 import { calculatePreviewPosition } from 'helpers';
 import StyledPreview from 'components/shared/MonomerPreview';
+import { ErrorModal } from 'components/modal/Error';
+import { EditorWrapper } from './styledComponents';
+import { useLoading } from './hooks/useLoading';
+import { Loader } from 'components/Loader';
+import { FullscreenButton } from 'components/FullscreenButton';
+import { getDefaultPresets } from 'src/helpers/getDefaultPreset';
+import {
+  setDefaultPresets,
+  setFavoritePresetsFromLocalStorage,
+  clearFavorites,
+} from 'state/rna-builder';
+import { IRnaPreset } from 'components/monomerLibrary/RnaBuilder/types';
 
 const muiTheme = createTheme(muiOverrides);
 
@@ -89,6 +102,8 @@ interface EditorProps {
   theme?: DeepPartial<EditorTheme>;
   togglerComponent?: JSX.Element;
 }
+
+const noPreviewTools = ['bond-single'];
 
 function EditorContainer({
   onInit,
@@ -112,9 +127,9 @@ function EditorContainer({
     <Provider store={store}>
       <ThemeProvider theme={mergedTheme}>
         <Global styles={getGlobalStyles} />
-        <div ref={rootElRef} className={EditorClassName}>
+        <EditorWrapper ref={rootElRef} className={EditorClassName}>
           <Editor theme={editorTheme} togglerComponent={togglerComponent} />
-        </div>
+        </EditorWrapper>
       </ThemeProvider>
     </Provider>
   );
@@ -126,21 +141,33 @@ function Editor({ theme, togglerComponent }: EditorProps) {
   const errorTooltipText = useAppSelector(selectErrorTooltipText);
   const editor = useAppSelector(selectEditor);
   const activeTool = useAppSelector(selectEditorActiveTool);
-  let keyboardEventListener;
+  const isLoading = useLoading();
   const [isMonomerLibraryHidden, setIsMonomerLibraryHidden] = useState(false);
+  const monomers = useAppSelector(selectMonomers);
 
   useEffect(() => {
     dispatch(createEditor({ theme, canvas: canvasRef.current }));
     const serializer = new SdfSerializer();
     const library = serializer.deserialize(monomersData);
     dispatch(loadMonomerLibrary(library));
+    dispatch(setFavoriteMonomersFromLocalStorage(null));
 
     return () => {
       dispatch(destroyEditor(null));
       dispatch(loadMonomerLibrary([]));
-      document.removeEventListener('keydown', keyboardEventListener);
+      dispatch(clearFavorites());
     };
   }, [dispatch]);
+
+  useEffect(() => {
+    const defaultPresets: IRnaPreset[] = getDefaultPresets(monomers);
+    dispatch(setDefaultPresets(defaultPresets));
+    dispatch(setFavoritePresetsFromLocalStorage());
+
+    return () => {
+      dispatch(clearFavorites());
+    };
+  }, [dispatch, monomers]);
 
   const dispatchShowPreview = useCallback(
     (payload) => dispatch(showPreview(payload)),
@@ -153,6 +180,12 @@ function Editor({ theme, togglerComponent }: EditorProps) {
   );
 
   useEffect(() => {
+    const handler = (toolName: string) => {
+      if (toolName !== activeTool) {
+        dispatch(selectTool(toolName));
+      }
+    };
+
     if (editor) {
       editor.events.error.add((errorText) => {
         dispatch(openErrorTooltip(errorText));
@@ -168,17 +201,13 @@ function Editor({ theme, togglerComponent }: EditorProps) {
             }),
           ),
       );
-
-      if (!keyboardEventListener) {
-        keyboardEventListener = (e: KeyboardEvent) => {
-          if (e.key === 'Escape') {
-            dispatch(selectTool('select-rectangle'));
-            editor.events.selectTool.dispatch('select-rectangle');
-          }
-        };
-        document.addEventListener('keydown', keyboardEventListener);
-      }
+      editor.events.selectTool.add(handler);
     }
+
+    return () => {
+      dispatch(selectTool(null));
+      editor?.events.selectTool.remove(handler);
+    };
   }, [editor]);
 
   const handleOpenPreview = useCallback((e) => {
@@ -193,10 +222,10 @@ function Editor({ theme, togglerComponent }: EditorProps) {
     debouncedShowPreview({ monomer, style: previewStyle });
   }, []);
 
-  const handleClosePreview = () => {
+  const handleClosePreview = useCallback(() => {
     debouncedShowPreview.cancel();
     dispatch(showPreview(undefined));
-  };
+  }, []);
 
   useEffect(() => {
     editor?.events.mouseOverMonomer.add((e) => {
@@ -207,7 +236,10 @@ function Editor({ theme, togglerComponent }: EditorProps) {
     });
     editor?.events.mouseOnMoveMonomer.add((e) => {
       handleClosePreview();
-      handleOpenPreview(e);
+      const isLeftClick = e.buttons === 1;
+      if (!isLeftClick || !noPreviewTools.includes(activeTool)) {
+        handleOpenPreview(e);
+      }
     });
   }, [editor, activeTool]);
 
@@ -227,6 +259,7 @@ function Editor({ theme, togglerComponent }: EditorProps) {
       <Layout>
         <Layout.Top shortened={isMonomerLibraryHidden}>
           {togglerComponent}
+          <FullscreenButton />
         </Layout.Top>
 
         <Layout.Left>
@@ -255,6 +288,7 @@ function Editor({ theme, togglerComponent }: EditorProps) {
             </defs>
             <g className="drawn-structures"></g>
           </svg>
+          {isLoading && <Loader />}
         </Layout.Main>
 
         <Layout.Right hide={isMonomerLibraryHidden}>
@@ -265,9 +299,9 @@ function Editor({ theme, togglerComponent }: EditorProps) {
         isHidden={isMonomerLibraryHidden}
         onClick={() => setIsMonomerLibraryHidden((prev) => !prev)}
       />
-      <FullscreenButton />
       <StyledPreview className="polymer-library-preview" />
       <ModalContainer />
+      <ErrorModal />
       <Snackbar
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
         open={Boolean(errorTooltipText)}
@@ -291,16 +325,17 @@ function Editor({ theme, togglerComponent }: EditorProps) {
 function MenuComponent() {
   const dispatch = useAppDispatch();
   const activeTool = useAppSelector(selectEditorActiveTool);
-  const isSnakeMode = useAppSelector(selectEditorBondMode);
   const editor = useAppSelector(selectEditor);
   const activeMenuItems = [activeTool];
+  const isSnakeMode = useSnakeMode();
   if (isSnakeMode) activeMenuItems.push('snake-mode');
   const menuItemChanged = (name) => {
     if (modalComponentList[name]) {
       dispatch(openModal(name));
     } else if (name === 'snake-mode') {
-      dispatch(selectMode(!isSnakeMode));
       editor.events.selectMode.dispatch(!isSnakeMode);
+    } else if (name === 'undo' || name === 'redo') {
+      editor.events.selectHistory.dispatch(name);
     } else if (!['zoom-in', 'zoom-out', 'zoom-reset'].includes(name)) {
       editor.events.selectTool.dispatch(name);
       if (name === 'clear') {
@@ -313,28 +348,60 @@ function MenuComponent() {
   };
 
   return (
-    <Menu onItemClick={menuItemChanged} activeMenuItems={activeMenuItems}>
+    <Menu
+      testId="left-toolbar"
+      onItemClick={menuItemChanged}
+      activeMenuItems={activeMenuItems}
+    >
       <Menu.Group>
-        <Menu.Item itemId="clear" title="Clear Canvas" />
+        <Menu.Item
+          itemId="clear"
+          title="Clear Canvas"
+          testId="clear-canvas-button"
+        />
       </Menu.Group>
       <Menu.Group>
-        <Menu.Item itemId="open" title="Open..." />
-        <Menu.Item itemId="save" />
+        <Menu.Item itemId="undo" testId="undo-button" />
+        <Menu.Item itemId="redo" testId="redo-button" />
       </Menu.Group>
       <Menu.Group>
-        <Menu.Item itemId="erase" title="Erase" />
-        <Menu.Item itemId="select-rectangle" title="Select Rectangle" />
+        <Menu.Item itemId="open" title="Open..." testId="open-button" />
+        <Menu.Item itemId="save" title="Save as..." testId="save-button" />
       </Menu.Group>
       <Menu.Group>
-        <Menu.Item itemId="bond-single" title="Single Bond (1)" />
+        <Menu.Item itemId="erase" title="Erase" testId="erase-button" />
+        <Menu.Item
+          itemId="select-rectangle"
+          title="Select Rectangle"
+          testId="select-rectangle-button"
+        />
+      </Menu.Group>
+      <Menu.Group>
+        <Menu.Item
+          itemId="bond-single"
+          title="Single Bond (1)"
+          testId="single-bond-button"
+        />
       </Menu.Group>
       <Menu.Group divider>
-        <Menu.Item itemId="snake-mode" title="Snake mode" />
+        <Menu.Item
+          itemId="snake-mode"
+          title="Snake mode"
+          testId="snake-mode-button"
+        />
       </Menu.Group>
       <Menu.Group>
-        <Menu.Item itemId="zoom-in" title="Zoom In" />
-        <Menu.Item itemId="zoom-out" title="Zoom Out" />
-        <Menu.Item itemId="zoom-reset" title="Reset Zoom" />
+        <Menu.Item itemId="zoom-in" title="Zoom In" testId="zoom-in-button" />
+        <Menu.Item
+          itemId="zoom-out"
+          title="Zoom Out"
+          testId="zoom-out-button"
+        />
+        <Menu.Item
+          itemId="zoom-reset"
+          title="Reset Zoom"
+          testId="reset-zoom-button"
+        />
       </Menu.Group>
     </Menu>
   );

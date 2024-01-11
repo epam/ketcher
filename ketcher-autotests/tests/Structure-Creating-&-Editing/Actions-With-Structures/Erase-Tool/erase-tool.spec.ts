@@ -79,7 +79,7 @@ test.describe('Erase Tool', () => {
       const [plusElement] = window.ketcher.editor.struct().rxnPluses.values();
       return {
         plusElement: plusElement || null,
-        scale: window.ketcher.editor.options().scale,
+        scale: window.ketcher.editor.options().microModeScale,
       };
     });
 
@@ -110,7 +110,7 @@ test.describe('Erase Tool', () => {
       const [element] = window.ketcher.editor.struct().rxnArrows.values();
       return {
         arrowElement: element || null,
-        scale: window.ketcher.editor.options().scale,
+        scale: window.ketcher.editor.options().microModeScale,
       };
     });
 

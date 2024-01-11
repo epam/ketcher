@@ -8,7 +8,7 @@ const StyledMonomerLibraryToggle = styled.div(({ theme }) => {
     color: theme.ketcher.color.text.secondary,
     position: 'absolute',
     cursor: 'pointer',
-    top: 'calc(12px + 12px)',
+    top: 'calc(8px + 12px)',
     right: 'calc(4px + 12px)',
     visibility: 'visible',
     opacity: 1,

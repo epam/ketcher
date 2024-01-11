@@ -17,15 +17,16 @@
 import { Vec2 } from 'domain/entities';
 
 export interface ScaleOptions {
-  scale: number;
+  microModeScale: number;
+  macroModeScale: number;
 }
 
 function canvasToModel(point: Vec2, options: ScaleOptions): Vec2 {
-  return point.scaled(1 / options.scale);
+  return point.scaled(1 / options.microModeScale);
 }
 
 function modelToCanvas(vector: Vec2, options: ScaleOptions): Vec2 {
-  return vector.scaled(options.scale);
+  return vector.scaled(options.microModeScale);
 }
 
 export const Scale = {

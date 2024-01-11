@@ -1,14 +1,11 @@
 import { select } from 'd3';
 import { DrawingEntity } from 'domain/entities/DrawingEntity';
-import assert from 'assert';
 import { D3SvgElementSelection } from 'application/render/types';
 import { provideEditorSettings } from 'application/editor/editorSettings';
 import {
   canvasSelector,
   drawnStructuresSelector,
 } from 'application/editor/constants';
-import { Vec2 } from 'domain/entities';
-import ZoomTool from 'application/editor/tools/Zoom';
 
 export interface IBaseRenderer {
   show(theme): void;
@@ -19,8 +16,6 @@ export abstract class BaseRenderer implements IBaseRenderer {
   protected rootElement?: D3SvgElementSelection<SVGGElement, void>;
 
   public bodyElement?: D3SvgElementSelection<SVGElement, this>;
-
-  public static isSnakeMode = false;
 
   protected hoverElement?: D3SvgElementSelection<
     SVGUseElement & SVGGElement,
@@ -33,9 +28,6 @@ export abstract class BaseRenderer implements IBaseRenderer {
   >;
 
   protected canvasWrapper: D3SvgElementSelection<SVGSVGElement, void>;
-  static setSnakeMode(isSnakeMode) {
-    BaseRenderer.isSnakeMode = isSnakeMode;
-  }
 
   protected canvas: D3SvgElementSelection<SVGSVGElement, void>;
   protected constructor(public drawingEntity: DrawingEntity) {
@@ -68,42 +60,6 @@ export abstract class BaseRenderer implements IBaseRenderer {
 
   public get y() {
     return this.rootBBox?.y || 0;
-  }
-
-  public get bodyBBox() {
-    const rootNode = this.bodyElement?.node();
-    const canvasWrapperNode = this.canvasWrapper.node();
-    assert(canvasWrapperNode);
-    if (!rootNode) return;
-    const canvasBbox = canvasWrapperNode.getBoundingClientRect();
-    const rootBbox = rootNode.getBoundingClientRect();
-    const position = ZoomTool.instance.invertZoom(
-      new Vec2(rootBbox.x - canvasBbox.x, rootBbox.y - canvasBbox.y),
-    );
-    const zoomLevel = ZoomTool.instance.getZoomLevel();
-
-    return {
-      x: position.x,
-      y: position.y,
-      width: rootBbox.width / zoomLevel,
-      height: rootBbox.height / zoomLevel,
-    };
-  }
-
-  public get bodyWidth() {
-    return this.bodyBBox?.width || 0;
-  }
-
-  public get bodyHeight() {
-    return this.bodyBBox?.height || 0;
-  }
-
-  public get bodyX() {
-    return this.bodyBBox?.x || 0;
-  }
-
-  public get bodyY() {
-    return this.bodyBBox?.y || 0;
   }
 
   public abstract show(theme): void;

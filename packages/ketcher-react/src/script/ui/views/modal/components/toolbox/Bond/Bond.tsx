@@ -26,7 +26,7 @@ import { getSelectOptionsFromSchema } from '../../../../../utils';
 import { bond as bondSchema } from '../../../../../data/schema/struct-schema';
 import classes from './Bond.module.less';
 import { useMemo, useRef, useState } from 'react';
-import { Bond as CoreBond } from 'ketcher-core';
+import { Bond as CoreBond, SettingsManager } from 'ketcher-core';
 
 interface BondSettings {
   type: string;
@@ -124,17 +124,19 @@ const Bond = (props: Props) => {
           formName="bond-properties"
           data-testid="reacting-center"
         />
-        <div className={classes.customQueryWrapper}>
-          <CustomQueryField
-            name="customQuery"
-            labelPos="after"
-            className={classes.checkbox}
-            disabled={!isCustomQuery}
-            checkboxValue={isCustomQuery}
-            onCheckboxChange={handleCustomQueryCheckBoxChange}
-            data-testid="bond-custom-query"
-          />
-        </div>
+        {!SettingsManager.disableCustomQuery && (
+          <div className={classes.customQueryWrapper}>
+            <CustomQueryField
+              name="customQuery"
+              labelPos="after"
+              className={classes.checkbox}
+              disabled={!isCustomQuery}
+              checkboxValue={isCustomQuery}
+              onCheckboxChange={handleCustomQueryCheckBoxChange}
+              data-testid="bond-custom-query"
+            />
+          </div>
+        )}
       </Form>
     </Dialog>
   );

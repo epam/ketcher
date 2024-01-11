@@ -14,7 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Struct, Vec2 } from 'domain/entities';
+import {
+  Peptide,
+  Phosphate,
+  RNABase,
+  Struct,
+  Sugar,
+  Vec2,
+} from 'domain/entities';
 import { arrowToKet, plusToKet } from './toKet/rxnToKet';
 
 import { Serializer } from '../serializers.types';
@@ -425,18 +432,15 @@ export class KetSerializer implements Serializer<Struct> {
   }
 
   private mapMonomerClassToKetClass(constructor) {
-    // This is done according to spec
-    // https://kb.epam.com/pages/viewpage.action?spaceKey=EPMLSOP&title=KET+specification+for+macromolecules#
-    switch (constructor.name) {
-      case 'Peptide':
-        return 'AminoAcid';
-      case 'RNABase':
-        return 'Base';
-      case 'Chem':
-        return 'CHEM';
-      default:
-        return constructor.name;
-    }
+    const mapping = {
+      [Peptide.name]: 'AminoAcid',
+      [RNABase.name]: 'Base',
+      [Chem.name]: 'CHEM',
+      [Sugar.name]: 'Sugar',
+      [Phosphate.name]: 'Phosphate',
+    };
+
+    return mapping[constructor.name];
   }
 
   deserialize(fileContent: string) {

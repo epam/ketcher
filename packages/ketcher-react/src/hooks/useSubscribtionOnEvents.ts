@@ -72,22 +72,10 @@ export const useSubscriptionOnEvents = (events) => {
       unsubscribe(getKetcherInstance());
     };
 
-    const globalErrorHandler = (errorEvent) => {
-      const error = errorEvent.error;
-      const message =
-        error && error.message
-          ? 'An error occurred: ' + error.message
-          : 'Something went wrong. The error is on our side. Please try again later.';
-      return message;
-    };
-
     window.addEventListener(KETCHER_INIT_EVENT_NAME, subscribeOnInit);
-    window.addEventListener('error', globalErrorHandler);
-
     return () => {
       unsubscribeOnUnMount();
       window.removeEventListener(KETCHER_INIT_EVENT_NAME, subscribeOnInit);
-      window.removeEventListener('error', globalErrorHandler);
     };
   }, [events]);
 };

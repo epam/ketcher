@@ -36,8 +36,10 @@ import {
 import { useSubscriptionOnEvents } from '../../../hooks';
 import { AbbreviationLookupContainer } from '../dialog/AbbreviationLookup';
 import { initLib } from '../state/templates/init-lib';
-import { GLOBAL_ERROR_HANDLER } from '../../../constants';
+import { GLOBAL_ERROR } from '../../../constants';
 import { InfoModal } from 'src/components/InfoModal';
+import { useWindowErrorSubscription } from 'src/hooks/useWindowErrorSubscription';
+import { ketcherProvider } from 'ketcher-core';
 
 interface AppCallProps {
   checkServer: () => void;
@@ -59,6 +61,7 @@ type Props = AppCallProps;
 const App = (props: Props) => {
   const dispatch = useDispatch();
   const { checkServer } = props;
+  const ketcher = ketcherProvider.getKetcher();
 
   useEffect(() => {
     checkServer();
@@ -74,6 +77,7 @@ const App = (props: Props) => {
 
   const [hasError, setHasError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [enableLogging, setEnableLogging] = useState(ketcher?.logging.enabled);
 
   const handleError = (message: string) => {
     setHasError(true);
@@ -87,9 +91,8 @@ const App = (props: Props) => {
     cliparea?.focus();
   };
 
-  useSubscriptionOnEvents([
-    { type: GLOBAL_ERROR_HANDLER, handler: handleError },
-  ]);
+  useWindowErrorSubscription(handleError, enableLogging, setEnableLogging);
+  useSubscriptionOnEvents([{ type: GLOBAL_ERROR, handler: handleError }]);
 
   // Temporary workaround: add proper types for Editor
   const Editor = ConnectedEditor as React.ComponentType<{ className: string }>;

@@ -42,7 +42,7 @@ import { updateFormState } from '../../../../../state/modal/form';
 import Select from '../../../../../component/form/Select';
 import { getSelectOptionsFromSchema } from '../../../../../utils';
 import { LoadingCircles } from 'src/script/ui/views/components/Spinner';
-import { GLOBAL_ERROR_HANDLER } from '../../../../../../../constants';
+import { GLOBAL_ERROR } from '../../../../../../../constants';
 
 const saveSchema = {
   title: 'Save',
@@ -178,7 +178,7 @@ class SaveDialog extends Component {
         .catch((e) => {
           KetcherLogger.error('Save.jsx::SaveDialog::changeType', e);
           if (ketcher && ketcher.eventBus) {
-            ketcher.eventBus.emit(GLOBAL_ERROR_HANDLER, e);
+            ketcher.eventBus.emit(GLOBAL_ERROR, e);
           }
           this.props.onResetForm(formState);
           return e;
@@ -199,7 +199,7 @@ class SaveDialog extends Component {
           },
           (e) => {
             if (ketcher && ketcher.eventBus) {
-              ketcher.eventBus.emit(GLOBAL_ERROR_HANDLER, e.message);
+              ketcher.eventBus.emit(GLOBAL_ERROR, e.message);
             }
             this.props.onResetForm(formState);
             return e;

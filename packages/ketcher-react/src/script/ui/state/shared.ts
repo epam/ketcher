@@ -32,7 +32,7 @@ import {
 import { supportedSGroupTypes } from './constants';
 import { setAnalyzingFile } from './request';
 import tools from '../action/tools';
-import { GLOBAL_ERROR_HANDLER } from 'src/constants';
+import { GLOBAL_ERROR } from 'src/constants';
 
 export function onAction(action) {
   if (action && action.dialog) {
@@ -190,7 +190,7 @@ export function load(struct: Struct, options?) {
       dispatch(setAnalyzingFile(false));
       e && errorHandler && errorHandler(e.message);
       if (ketcher && ketcher.eventBus) {
-        ketcher.eventBus.emit(GLOBAL_ERROR_HANDLER, e.message);
+        ketcher.eventBus.emit(GLOBAL_ERROR, e.message);
       }
     } finally {
       notifyRequestCompleted();

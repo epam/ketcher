@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 export const KETCHER_INIT_EVENT_NAME = 'ketcher-init';
-export const GLOBAL_ERROR_HANDLER = 'GLOBAL_ERROR_HANDLER';
+export const GLOBAL_ERROR = 'GLOBAL_ERROR';
 
 export const MODES = {
   FG: 'fg',

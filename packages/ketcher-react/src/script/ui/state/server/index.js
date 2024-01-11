@@ -26,7 +26,7 @@ import { omit, without } from 'lodash/fp';
 import { checkErrors } from '../modal/form';
 import { indigoVerification } from '../request';
 import { load } from '../shared';
-import { GLOBAL_ERROR_HANDLER } from 'src/constants';
+import { GLOBAL_ERROR } from 'src/constants';
 
 export function checkServer() {
   return (dispatch, getState) => {
@@ -140,7 +140,7 @@ export function analyse() {
         KetcherLogger.error('index.js::analyse', e);
         editor.errorHandler(e);
         if (ketcher && ketcher.eventBus) {
-          ketcher.eventBus.emit(GLOBAL_ERROR_HANDLER, e);
+          ketcher.eventBus.emit(GLOBAL_ERROR, e);
         }
       });
   };

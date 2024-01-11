@@ -441,11 +441,6 @@ export class KetSerializer implements Serializer<Struct> {
     };
 
     drawingEntitiesManager.monomers.forEach((monomer) => {
-      monomer.monomerItem.props = {
-        ...monomer.monomerItem.props,
-        MonomerClass: monomer.constructor.name,
-      };
-
       if (
         monomer instanceof Chem &&
         monomer.monomerItem.props.isMicromoleculeFragment
@@ -479,7 +474,7 @@ export class KetSerializer implements Serializer<Struct> {
               this.serializeMicromolecules(monomer.monomerItem.struct, monomer),
             ).mol0,
             type: 'monomerTemplate',
-            class: monomer.monomerItem.props.MonomerClass,
+            class: monomer.constructor.name,
             classHELM: monomer.monomerItem.props.MonomerType,
             id: templateId,
             fullName: monomer.monomerItem.props.Name,

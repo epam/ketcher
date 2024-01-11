@@ -347,6 +347,7 @@
                 ]
             }
         ],
+        "class": "Q",
         "classHELM": "RNA",
         "id": "baA___N-benzyl-adenine",
         "fullName": "N-benzyl-adenine",
@@ -532,6 +533,7 @@
                 ]
             }
         ],
+        "class": "Q",
         "classHELM": "RNA",
         "id": "12ddR___1',2'-Di-Deoxy-Ribose",
         "fullName": "2'-Di-Deoxy-Ribose",
@@ -638,6 +640,7 @@
                 ]
             }
         ],
+        "class": "Q",
         "classHELM": "RNA",
         "id": "P___Phosphate",
         "fullName": "Phosphate",

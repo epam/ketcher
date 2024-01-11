@@ -424,7 +424,7 @@ export class KetSerializer implements Serializer<Struct> {
     return { modelChanges: command, drawingEntitiesManager };
   }
 
-  private monomerClassToKetClass(constructor) {
+  private mapMonomerClassToKetClass(constructor) {
     // This is done according to spec
     // https://kb.epam.com/pages/viewpage.action?spaceKey=EPMLSOP&title=KET+specification+for+macromolecules#
     switch (constructor.name) {
@@ -489,7 +489,7 @@ export class KetSerializer implements Serializer<Struct> {
               this.serializeMicromolecules(monomer.monomerItem.struct, monomer),
             ).mol0,
             type: 'monomerTemplate',
-            class: this.monomerClassToKetClass(monomer.constructor),
+            class: this.mapMonomerClassToKetClass(monomer.constructor),
             classHELM: monomer.monomerItem.props.MonomerType,
             id: templateId,
             fullName: monomer.monomerItem.props.Name,

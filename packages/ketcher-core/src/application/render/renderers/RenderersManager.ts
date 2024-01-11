@@ -124,7 +124,9 @@ export class RenderersManager {
     }
   }
 
-  private getNextMonomerInChain(monomer: BaseMonomer) {
+  private getNextMonomerInChain(monomer?: BaseMonomer) {
+    if (!monomer) return undefined;
+
     const r2PolymerBond = monomer.attachmentPointsToBonds.R2;
 
     return r2PolymerBond?.getAnotherMonomer(monomer);
@@ -280,13 +282,16 @@ export class RenderersManager {
     this.needRecalculateMonomersEnumeration = false;
   }
 
+  private isOnlyPartOfRnaChain(sugar: Sugar) {
+    const phosphate = this.getNextMonomerInChain(sugar);
+    const nextMonomerAfterPhospate = this.getNextMonomerInChain(phosphate);
+    return !sugar.attachmentPointsToBonds.R1 && !nextMonomerAfterPhospate;
+  }
+
   private recalculateMonomersBeginning() {
     this.monomers.forEach((monomerRenderer) => {
       if (monomerRenderer instanceof PeptideRenderer) {
-        if (
-          monomerRenderer.enumeration === 1 ||
-          !monomerRenderer.monomer.hasBonds
-        ) {
+        if (monomerRenderer.enumeration === 1) {
           monomerRenderer.setBeginning(monomerRenderer.CHAIN_BEGINNING);
         } else {
           monomerRenderer.setBeginning(null);
@@ -299,7 +304,8 @@ export class RenderersManager {
         );
         if (
           rnaBaseMonomer instanceof RNABase &&
-          rnaBaseMonomer.renderer?.enumeration === 1
+          rnaBaseMonomer.renderer?.enumeration === 1 &&
+          !this.isOnlyPartOfRnaChain(monomerRenderer.monomer)
         ) {
           monomerRenderer.setBeginning(monomerRenderer.CHAIN_BEGINNING);
         } else {

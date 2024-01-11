@@ -42,9 +42,6 @@ export class PeptideRenderer extends BaseMonomerRenderer {
   }
 
   protected get beginningElementPosition() {
-    if (this.monomer.hovered) {
-      return { x: 2, y: -30 };
-    }
-    return { x: 2, y: -1 };
+    return { x: -13, y: 20 };
   }
 }

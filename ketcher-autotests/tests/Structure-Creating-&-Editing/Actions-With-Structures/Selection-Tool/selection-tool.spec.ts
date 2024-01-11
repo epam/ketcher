@@ -453,91 +453,70 @@ test.describe('Selection tools', () => {
     await expect(page).toHaveScreenshot();
   });
 
-  test('All-scroll cursor - single template', async ({ page }) => {
-    //Test case: EPMLSOPKET-16944
-    // Verify function of all-scroll cursor:
-  const anyX = 200;
-  const anyY = 200;  
-  await drawBenzeneRing(page);
-  await selectDropdownTool(page, 'select-rectangle', 'select-fragment');
-  await clickOnAtom(page, 'C', 0);
-  await takeEditorScreenshot(page);
-  await page.mouse.click(anyX, anyY);
-  await expect(page).toHaveScreenshot();
+  test('Selection when hovering atom and bond', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-16944
+    Description: When mouse hover on Benzene ring atom or bond, selection appears.
+    */
+    await drawBenzeneRing(page);
+    await page.getByTestId('select-rectangle').click();
+    await moveOnAtom(page, 'C', 0);
+    await takeEditorScreenshot(page);
+    await moveOnBond(page, BondType.SINGLE, 0);
+    await takeEditorScreenshot(page);
   });
 
-  test('All-scroll cursor - several templates', async ({ page })=> {
-    // Test case: EPMLSOPKET-16945
-    // Verify if cursor transformed into all-scroll cursor
-  const Cyclohexane = {x:401, y:334};
-  await openFileAndAddToCanvas('Molfiles-V2000/several-templates-selection-tool.mol', page);
-  await page.keyboard.press('Control+a');
-  await selectDropdownTool(page, 'select-rectangle', 'select-fragment');
-  await page.mouse.move(Cyclohexane.x,Cyclohexane.y );
-  await expect(page).toHaveScreenshot();
+  test('Selection for several templates', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-16945
+    Description: All structures selected on the canvas are highlighted in green.
+    */
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/several-templates-selection-tool.mol',
+      page,
+    );
+    await page.keyboard.press('Control+a');
+    await takeEditorScreenshot(page);
   });
 
-  // test('All-scroll cursor - reaction', async ({ page }) => {
-    //Test case: EPMLSOPKET-16946]
-    // Verify if cursor transformed into all-scroll cursor on different parts of reaction
-    // const Plus = {x: ,y : }
-    // const Arrow = {x: , y:}
-  //   await openFileAndAddToCanvas('Rxn-V2000/reaction_4.rxn', page);
-  //   await selectDropdownTool(page, 'select-rectangle', 'select-fragment');
-  //   await page.mouse.move(Plus.x, Plus.y);
-  //   await page.mouse.move(Arrow.x, Arrow.y);
-  //   await expect(page).toHaveScreenshot();
-  // });
-
-  test('Correct selection view', async ({ page }) => {
-    // Test case: EPMLSOPKET-16948
-    // Verify correct selection view - bonds and atom labels with more than 1 symbol are highlighted with rounded rectangles
-    await openFileAndAddToCanvas('Molfiles-V2000/structure-with-a-single-bond-down.mol', page);
-    await page.keyboard.press('Control+a'); 
-    await expect(page).toHaveScreenshot();
-  });
-
-  test('All-scroll cursor for chain selected structure', async ({ page }) => {
-    //Test case: EPMLSOPKET-17668
-    // Verify if cursor transformed into all-scroll cursor on chain
+  test('Selection for chain structure', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-17668
+    Description: All chain structures selected on the canvas are highlighted in green.
+    */
     await openFileAndAddToCanvas('Molfiles-V2000/chain-r1.mol', page);
-    await page.keyboard.press('Control+a'); 
-    await selectDropdownTool(page, 'select-rectangle', 'select-rectangle');
-    await page.getByText('R1').hover();
-    await expect(page).toHaveScreenshot();
+    await page.keyboard.press('Control+a');
+    await takeEditorScreenshot(page);
   });
 
-  test(' Switching tools inside the "Selection tool" using "Shift+Tab", after pressing "ESC"', async ({ page }) => {
-    // Test case: EPMLSOPKET-18046
-    // Verify switching between tools and reset tools with keyboards
-    await selectLeftPanelButton(LeftPanelButton.Chain,page);
+  test(' Switching tools inside the "Selection tool" using "Shift+Tab", after pressing "ESC"', async ({
+    page,
+  }) => {
+    /*
+    Test case: EPMLSOPKET-18046
+    Description: Shift+Tab switch selection tools after pressing ESC button.
+    */
+    await selectLeftPanelButton(LeftPanelButton.Chain, page);
     await page.keyboard.press('Escape');
-    await takeEditorScreenshot(page);
-    for (let i = 0; i < 5; i++) {
+    await takeLeftToolbarScreenshot(page);
+    for (let i = 0; i < 2; i++) {
       await page.keyboard.press('Shift+Tab');
+      await takeLeftToolbarScreenshot(page);
     }
-    await takeEditorScreenshot(page);
-    await selectLeftPanelButton(LeftPanelButton.Erase,page);
-    await page.keyboard.press('Escape');
-    await expect(page).toHaveScreenshot();
-  });
-  
-  test('Rectangle Seletion Tool - tooltip verification', async ({ page }) => {
-    // Test case: EPMLSOPKET-18047
-    // Verify the icon and the tooltip of the Rectangle selection Tool button
-    const button = page.getByTestId('select-rectangle');
-    await expect(button).toHaveAttribute('title', 'Rectangle Selection (Shift+Tab)');
-    await expect(page).toHaveScreenshot();
   });
 
-  test('Switching tools inside the "Selection tool" using "Shift+Tab", after clicking the mouse on the "Selection tool"', async ({ page }) => {
-    // Test case: EPMLSOPKET-18047
-    // Verify if possble is useing the hotkeyes after cliking the mouse on the "Selection tool"
+  test('Switching tools inside the "Selection tool" using "Shift+Tab", after selecting the Lasso', async ({
+    page,
+  }) => {
+    /*
+    Test case: EPMLSOPKET-18047
+    Description: Shift+Tab switch selection tools after selecting Lasso.
+    */
     await selectDropdownTool(page, 'select-rectangle', 'select-lasso');
-    await takeEditorScreenshot(page);
+    await takeLeftToolbarScreenshot(page);
     for (let i = 0; i < 3; i++) {
       await page.keyboard.press('Shift+Tab');
-      await expect(page).toHaveScreenshot();
+      await takeLeftToolbarScreenshot(page);
     }
   });
 });

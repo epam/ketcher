@@ -276,11 +276,8 @@ test.describe('Macro-Micro-Switcher', () => {
     );
     await turnOnMicromoleculesEditor(page);
     await turnOnMacromoleculesEditor(page);
-
-    await waitForRender(page, async () => {
-      // eslint-disable-next-line no-magic-numbers
-      await zoomWithMouseWheel(page, -400);
-    });
+    // eslint-disable-next-line no-magic-numbers
+    await zoomWithMouseWheel(page, -400);
 
     await takeEditorScreenshot(page);
 

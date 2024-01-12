@@ -56,6 +56,7 @@ import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { validate } from 'domain/serializers/ket/validate';
 import { MacromoleculesConverter } from 'application/editor/MacromoleculesConverter';
 import { convertAttachmentPointNumberToLabel } from 'domain/helpers/attachmentPointCalculations';
+import { isNumber } from 'lodash';
 
 function parseNode(node: any, struct: any) {
   const type = node.type;
@@ -331,9 +332,12 @@ export class KetSerializer implements Serializer<Struct> {
 
           template.attachmentPoints?.forEach(
             (attachmentPoint, attachmentPointIndex) => {
+              const firstAtomInLeavingGroup =
+                attachmentPoint.leavingGroup?.atoms[0];
               const leavingGroupAtom = monomer.monomerItem.struct.atoms.get(
-                attachmentPoint.leavingGroup?.atoms[0] ||
-                  attachmentPoint.attachmentAtom,
+                isNumber(firstAtomInLeavingGroup)
+                  ? firstAtomInLeavingGroup
+                  : attachmentPoint.attachmentAtom,
               );
               assert(leavingGroupAtom);
               leavingGroupAtom.rglabel = (

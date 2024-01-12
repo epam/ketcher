@@ -434,18 +434,6 @@ export class KetSerializer implements Serializer<Struct> {
     return { modelChanges: command, drawingEntitiesManager };
   }
 
-  private mapMonomerClassToKetClass(constructor) {
-    const mapping = {
-      [Peptide.name]: 'AminoAcid',
-      [RNABase.name]: 'Base',
-      [Chem.name]: 'CHEM',
-      [Sugar.name]: 'Sugar',
-      [Phosphate.name]: 'Phosphate',
-    };
-
-    return mapping[constructor.name];
-  }
-
   deserialize(fileContent: string) {
     return this.deserializeToStruct(fileContent);
   }

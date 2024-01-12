@@ -175,6 +175,29 @@ export class DrawingEntitiesManager {
     return command;
   }
 
+  public selectCurrentDrawingEntities(drawingEntity: DrawingEntity) {
+    const command = new Command();
+
+    this.allEntities.forEach(([, drawingEntity]) => {
+      if (drawingEntity.selected) {
+        const operation = new DrawingEntitySelectOperation(drawingEntity);
+        command.addOperation(operation);
+      }
+    });
+
+    if (drawingEntity.selected) {
+      drawingEntity.turnOffSelection();
+      const operation = new DrawingEntitySelectOperation(drawingEntity);
+      command.addOperation(operation);
+    } else {
+      drawingEntity.turnOnSelection();
+      const operation = new DrawingEntitySelectOperation(drawingEntity);
+      command.addOperation(operation);
+    }
+
+    return command;
+  }
+
   public moveDrawingEntityModelChange(
     drawingEntity: DrawingEntity,
     offset?: Vec2,

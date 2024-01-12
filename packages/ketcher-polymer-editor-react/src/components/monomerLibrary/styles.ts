@@ -18,7 +18,7 @@ import { Input } from 'ketcher-react';
 
 export const MONOMER_LIBRARY_WIDTH = '254px';
 
-export const StyledInput = styled(Input)({
+export const MonomerLibraryInput = styled(Input)({
   outline: 0,
   ':hover': {
     outline: 'none',

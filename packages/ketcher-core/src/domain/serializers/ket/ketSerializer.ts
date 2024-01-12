@@ -14,14 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import {
-  Peptide,
-  Phosphate,
-  RNABase,
-  Struct,
-  Sugar,
-  Vec2,
-} from 'domain/entities';
+import { Struct, Vec2 } from 'domain/entities';
 import { arrowToKet, plusToKet } from './toKet/rxnToKet';
 
 import { Serializer } from '../serializers.types';

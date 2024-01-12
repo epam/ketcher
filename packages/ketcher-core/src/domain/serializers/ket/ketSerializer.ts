@@ -49,7 +49,10 @@ import { monomerToDrawingEntity } from 'domain/serializers/ket/fromKet/monomerTo
 import assert from 'assert';
 import { polymerBondToDrawingEntity } from 'domain/serializers/ket/fromKet/polymerBondToDrawingEntity';
 import { getMonomerUniqueKey } from 'domain/helpers/monomers';
-import { MONOMER_CONST } from 'application/editor/operations/monomer/monomerFactory';
+import {
+  MONOMER_CONST,
+  monomerFactory,
+} from 'application/editor/operations/monomer/monomerFactory';
 import { KetcherLogger } from 'utilities';
 import { Chem } from 'domain/entities/Chem';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
@@ -485,15 +488,15 @@ export class KetSerializer implements Serializer<Struct> {
           seqid: monomer.monomerItem.seqId,
         };
         fileContent.root.nodes.push(getKetRef(monomerName));
+        const [, , monomerClass] = monomerFactory(monomer.monomerItem);
         const templateNameWithPrefix = setMonomerTemplatePrefix(templateId);
-
         if (!fileContent[templateNameWithPrefix]) {
           fileContent[templateNameWithPrefix] = {
             ...JSON.parse(
               this.serializeMicromolecules(monomer.monomerItem.struct, monomer),
             ).mol0,
             type: 'monomerTemplate',
-            class: this.mapMonomerClassToKetClass(monomer.constructor),
+            class: monomer.monomerItem.props.MonomerClass || monomerClass,
             classHELM: monomer.monomerItem.props.MonomerType,
             id: templateId,
             fullName: monomer.monomerItem.props.Name,

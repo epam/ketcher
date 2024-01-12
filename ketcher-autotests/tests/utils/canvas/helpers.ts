@@ -324,3 +324,9 @@ export async function addPeptideOnCanvas(page: Page, peptideId: string) {
   await page.getByTestId(peptideId).click();
   await clickInTheMiddleOfTheScreen(page);
 }
+
+export async function addChemOnCanvas(page: Page, chemId: string) {
+  await page.getByTestId('CHEM-TAB').click();
+  await page.getByTestId(chemId).click();
+  await clickInTheMiddleOfTheScreen(page);
+}

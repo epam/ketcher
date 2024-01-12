@@ -1,7 +1,11 @@
-import { test } from '@playwright/test';
+import { Page, test } from '@playwright/test';
 import {
+  addChemOnCanvas,
   addMonomerToCanvas,
+  addPeptideOnCanvas,
+  dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
+  openFileAndAddToCanvas,
   selectEraseTool,
   selectRectangleArea,
   selectRectangleSelectionTool,
@@ -14,6 +18,21 @@ import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import { moveMonomer } from '@utils/macromolecules/monomer';
 import { Peptides } from '@utils/selectors/macromoleculeEditor';
 /* eslint-disable no-magic-numbers */
+
+async function moveMonomersToNewPosition(
+  page: Page,
+  filePath: string,
+  monomerName: string,
+  x: number,
+  y: number,
+) {
+  await openFileAndAddToCanvas(filePath, page);
+  await selectRectangleSelectionTool(page);
+  await page.keyboard.press('Control+a');
+  await page.getByText(monomerName).locator('..').first().click();
+  await dragMouseTo(x, y, page);
+  await takeEditorScreenshot(page);
+}
 
 test.describe('Rectangle Selection Tool', () => {
   test.beforeEach(async ({ page }) => {
@@ -157,4 +176,113 @@ test.describe('Rectangle Selection Tool', () => {
     await page.mouse.click(betaAlaninePosition.x, betaAlaninePosition.y);
     await takeEditorScreenshot(page);
   });
+
+  test('Move selected by selection tool peptide to new position on canvas', async ({
+    page,
+  }) => {
+    /* 
+    Test case: #2507 - Add Peptides monomers to canvas
+    Description: Selected by selection tool peptide moved to new position on canvas
+    */
+    const x = 200;
+    const y = 200;
+    await addPeptideOnCanvas(page, 'meD___N-Methyl-Aspartic acid');
+    await selectRectangleSelectionTool(page);
+    await page.getByText('meD').locator('..').first().click();
+    await dragMouseTo(x, y, page);
+    await takeEditorScreenshot(page);
+  });
+
+  const testCases = [
+    {
+      description:
+        'Move multiple selected Peptides not connected by bonds to new position on canvas',
+      filePath: 'KET/three-peptides-not-connected.ket',
+    },
+    {
+      description:
+        'Move multiple selected Peptides connected by bonds to new position on canvas',
+      filePath: 'KET/three-peptides-connected.ket',
+    },
+  ];
+
+  for (const testCase of testCases) {
+    test(testCase.description, async ({ page }) => {
+      const x = 400;
+      const y = 500;
+      await moveMonomersToNewPosition(page, testCase.filePath, 'meD', x, y);
+    });
+  }
+
+  test('Move selected by selection tool CHEM to new position on canvas', async ({
+    page,
+  }) => {
+    /* 
+    Test case: #2507 - Add CHEM monomers to canvas
+    Description: Selected by selection tool CHEM moved to new position on canvas
+    */
+    const x = 200;
+    const y = 200;
+    await addChemOnCanvas(page, 'A6OH___6-amino-hexanol');
+    await selectRectangleSelectionTool(page);
+    await page.getByText('A6OH').locator('..').first().click();
+    await dragMouseTo(x, y, page);
+    await takeEditorScreenshot(page);
+  });
+
+  const testCasesForChems = [
+    {
+      description:
+        'Move multiple selected CHEMs not connected by bonds to new position on canvas',
+      filePath: 'KET/chems-not-connected.ket',
+    },
+    {
+      description:
+        'Move multiple selected CHEMs connected by bonds to new position on canvas',
+      filePath: 'KET/chems-connected.ket',
+    },
+  ];
+
+  for (const testCase of testCasesForChems) {
+    test(testCase.description, async ({ page }) => {
+      const x = 400;
+      const y = 500;
+      await moveMonomersToNewPosition(page, testCase.filePath, 'A6OH', x, y);
+    });
+  }
+
+  const testCasesForMolfiles = [
+    {
+      description:
+        'Check that you can open .mol file with connected peptide structure, select and move it on canvas',
+      filePath: 'Molfiles-V3000/peptides-connected.mol',
+      monomerName: 'meD',
+    },
+    {
+      description:
+        'Check that you can open .mol file with connected CHEMs structure, select and move it on canvas',
+      filePath: 'Molfiles-V3000/chems-connected.mol',
+      monomerName: 'A6OH',
+    },
+    {
+      description:
+        'Check that you can open .mol file with connected RNA structure, select and move it on canvas',
+      filePath: 'Molfiles-V3000/rna-connected.mol',
+      monomerName: '25R',
+    },
+  ];
+
+  for (const testCase of testCasesForMolfiles) {
+    test(testCase.description, async ({ page }) => {
+      const x = 400;
+      const y = 500;
+      await moveMonomersToNewPosition(
+        page,
+        testCase.filePath,
+        testCase.monomerName,
+        x,
+        y,
+      );
+    });
+  }
 });

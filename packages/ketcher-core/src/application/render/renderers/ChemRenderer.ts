@@ -31,4 +31,8 @@ export class ChemRenderer extends BaseMonomerRenderer {
   protected get enumerationElementPosition() {
     return undefined;
   }
+
+  protected get beginningElementPosition() {
+    return undefined;
+  }
 }

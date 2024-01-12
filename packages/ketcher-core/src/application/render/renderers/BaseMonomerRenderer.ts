@@ -30,9 +30,12 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
 
   private monomerSymbolElement?: SVGUseElement | SVGRectElement;
   public monomerSize: { width: number; height: number };
-  private enumerationElement?: D3SvgElementSelection<SVGTextElement, void>;
 
+  private enumerationElement?: D3SvgElementSelection<SVGTextElement, void>;
   public enumeration: number | null = null;
+
+  private beginningElement?: D3SvgElementSelection<SVGTextElement, void>;
+  public beginning: string | null = null;
 
   static isSelectable() {
     return true;
@@ -360,6 +363,11 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     y: number;
   } | void;
 
+  protected abstract get beginningElementPosition(): {
+    x: number;
+    y: number;
+  } | void;
+
   public setEnumeration(enumeration: number | null) {
     this.enumeration = enumeration;
   }
@@ -371,6 +379,10 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       .append('text')
       .attr('direction', 'rtl')
       .attr('fill', '#7C7C7F')
+      .attr('font-size', '12px')
+      .attr('line-height', '14px')
+      .attr('font-weight', '500')
+      .attr('text-align', 'right')
       .attr('x', this.enumerationElementPosition.x)
       .attr('y', this.enumerationElementPosition.y)
       .text(this.enumeration);
@@ -379,6 +391,35 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   public redrawEnumeration() {
     assert(this.enumerationElement);
     this.enumerationElement.text(this.enumeration);
+  }
+
+  public setBeginning(beginning: string | null) {
+    this.beginning = beginning;
+  }
+
+  protected appendChainBeginning() {
+    assert(this.rootElement);
+    assert(this.beginningElementPosition);
+    this.beginningElement = this.rootElement
+      .append('text')
+      .attr('direction', 'rtl')
+      .attr('fill', '#0097A8')
+      .attr('font-size', '12px')
+      .attr('line-height', '14px')
+      .attr('font-weight', '700')
+      .attr('text-align', 'right')
+      .attr('x', this.beginningElementPosition.x)
+      .attr('y', this.beginningElementPosition.y)
+      .text(this.beginning);
+  }
+
+  public reDrawChainBeginning() {
+    assert(this.beginningElement);
+    assert(this.beginningElementPosition);
+    this.beginningElement
+      .attr('x', this.beginningElementPosition.x)
+      .attr('y', this.beginningElementPosition.y)
+      .text(this.beginning);
   }
 
   public show(theme) {

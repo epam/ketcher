@@ -42,8 +42,22 @@ exports[`PeptideRenderer should render peptide 1`] = `
       <text
         direction="rtl"
         fill="#7C7C7F"
+        font-size="12px"
+        font-weight="500"
+        line-height="14px"
+        text-align="right"
         x="20"
         y="-1"
+      />
+      <text
+        direction="rtl"
+        fill="#0097A8"
+        font-size="12px"
+        font-weight="700"
+        line-height="14px"
+        text-align="right"
+        x="-13"
+        y="20"
       />
     </g>
   </g>

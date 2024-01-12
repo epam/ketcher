@@ -29,8 +29,8 @@
     "node": ">=14"
   },
   "scripts": {
-    "build": "cross-env NODE_ENV=production rollup -c -m true",
-    "start": "cross-env NODE_ENV=development rollup -c -m true -w",
+    "build": "cross-env NODE_ENV=production vite build",
+    "start": "cross-env NODE_ENV=development vite",
     "test": "run-s test:prettier test:eslint:quiet test:types test:unit",
     "test:eslint": "eslint . --ext .ts,.js",
     "test:eslint:quiet": "npm run test:eslint -- --quiet",
@@ -51,8 +51,6 @@
     "@babel/preset-env": "^7.16.11",
     "@babel/preset-typescript": "^7.16.7",
     "@rollup/plugin-babel": "^5.2.1",
-    "@rollup/plugin-commonjs": "^16.0.0",
-    "@rollup/plugin-node-resolve": "^10.0.0",
     "@rollup/plugin-strip": "^2.0.0",
     "@types/jest": "^27.0.3",
     "@types/node": "^16.11.12",
@@ -66,11 +64,14 @@
     "rollup-plugin-cleanup": "^3.2.1",
     "rollup-plugin-copy": "^3.4.0",
     "rollup-plugin-delete": "^2.0.0",
-    "rollup-plugin-node-polyfills": "^0.2.1",
+    "rollup-plugin-polyfill-node": "^0.13.0",
     "rollup-plugin-typescript2": "^0.31.1",
     "rollup-plugin-visualizer": "^5.5.2",
     "rollup-plugin-web-worker-loader": "^1.6.1",
-    "typescript": "^4.5.2"
+    "typescript": "^4.5.2",
+    "vite": "^4.5.1",
+    "vite-plugin-banner": "^0.7.1",
+    "vite-plugin-dts": "^3.6.4"
   },
   "files": [
     "dist"

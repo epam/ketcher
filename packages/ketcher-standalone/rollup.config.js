@@ -2,7 +2,7 @@ import babel from '@rollup/plugin-babel';
 import cleanup from 'rollup-plugin-cleanup';
 import commonjs from '@rollup/plugin-commonjs';
 import del from 'rollup-plugin-delete';
-import nodePolyfills from 'rollup-plugin-node-polyfills';
+import nodePolyfills from 'rollup-plugin-polyfill-node';
 import pkg from './package.json';
 import resolve from '@rollup/plugin-node-resolve';
 import strip from '@rollup/plugin-strip';
@@ -41,9 +41,9 @@ const config = {
       targets: 'dist/*',
       runOnce: true,
     }),
-    nodePolyfills(),
-    resolve({ extensions }),
+    resolve({ extensions, preferBuiltins: true }),
     commonjs(),
+    nodePolyfills(),
     webWorkerLoader({
       extensions,
       sourcemap: false,

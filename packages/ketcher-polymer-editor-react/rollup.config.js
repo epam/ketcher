@@ -64,7 +64,7 @@ const config = {
     }),
     svgr({ include: includePattern }),
     peerDepsExternal({ includeDependencies: true }),
-    nodeResolve({ extensions }),
+    nodeResolve({ extensions, preferBuiltins: true }),
     commonjs(),
     replace({
       include: includePattern,

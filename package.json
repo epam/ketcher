@@ -32,6 +32,7 @@
     "serve:demo": "cd demo && npm run serve"
   },
   "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@typescript-eslint/eslint-plugin": "^5.61.0",
     "@typescript-eslint/parser": "^5.61.0",
     "color-alpha": "^1.1.3",

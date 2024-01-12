@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "ketcher-polymer-editor-react",
-  "version": "1.0.0",
+  "version": "2.18.0-rc.1",
   "description": "Web-based molecule sketcher",
   "license": "Apache-2.0",
   "homepage": "http://lifescience.opensource.epam.com/ketcher",

@@ -17,6 +17,7 @@ import {
   waitForLoad,
   waitForPageInit,
   waitForRender,
+  moveMouseToTheMiddleOfTheScreen,
 } from '@utils';
 
 const topLeftCorner = {
@@ -276,6 +277,7 @@ test.describe('Macro-Micro-Switcher', () => {
     );
     await turnOnMicromoleculesEditor(page);
     await turnOnMacromoleculesEditor(page);
+    await moveMouseToTheMiddleOfTheScreen(page);
     // eslint-disable-next-line no-magic-numbers
     await zoomWithMouseWheel(page, -400);
 

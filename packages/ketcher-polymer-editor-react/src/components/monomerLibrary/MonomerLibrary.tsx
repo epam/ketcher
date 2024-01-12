@@ -84,6 +84,7 @@ const MonomerLibrary = React.memo(() => {
               <Icon name="search" />
             </span>
             <input
+              data-testid="monomer-library-input"
               onInput={filterResults}
               placeholder="Search by name..."
               type="text"

@@ -21,6 +21,7 @@ export class RenderersManager {
   public monomers: Map<number, BaseMonomerRenderer> = new Map();
   public polymerBonds: Map<number, PolymerBondRenderer> = new Map();
   private needRecalculateMonomersEnumeration = false;
+  private needRecalculateMonomersBeginning = false;
 
   constructor({ theme }) {
     this.theme = theme;
@@ -46,12 +47,17 @@ export class RenderersManager {
     this.needRecalculateMonomersEnumeration = true;
   }
 
+  public markForRecalculateBegin() {
+    this.needRecalculateMonomersBeginning = true;
+  }
+
   public addMonomer(monomer: BaseMonomer, callback?: () => void) {
     const [, MonomerRenderer] = monomerFactory(monomer.monomerItem);
     const monomerRenderer = new MonomerRenderer(monomer);
     this.monomers.set(monomer.id, monomerRenderer);
     monomerRenderer.show(this.theme);
     this.markForReEnumeration();
+    this.markForRecalculateBegin();
     if (callback) {
       callback();
     }
@@ -71,6 +77,7 @@ export class RenderersManager {
     monomer.renderer?.remove();
     this.monomers.delete(monomer.id);
     this.markForReEnumeration();
+    this.markForRecalculateBegin();
   }
 
   public addPolymerBond(polymerBond: PolymerBond) {
@@ -79,6 +86,7 @@ export class RenderersManager {
     polymerBondRenderer.show();
     polymerBondRenderer.polymerBond.firstMonomer.renderer?.redrawAttachmentPoints();
     this.markForReEnumeration();
+    this.markForRecalculateBegin();
   }
 
   public movePolymerBond(polymerBond: PolymerBond) {
@@ -102,6 +110,7 @@ export class RenderersManager {
   public deletePolymerBond(
     polymerBond: PolymerBond,
     recalculateEnumeration = true,
+    recalculateBeginning = true,
   ) {
     polymerBond.renderer?.remove();
     polymerBond?.firstMonomer?.renderer?.redrawAttachmentPoints();
@@ -110,9 +119,14 @@ export class RenderersManager {
     if (recalculateEnumeration) {
       this.markForReEnumeration();
     }
+    if (recalculateBeginning) {
+      this.markForRecalculateBegin();
+    }
   }
 
-  private getNextMonomerInChain(monomer: BaseMonomer) {
+  private getNextMonomerInChain(monomer?: BaseMonomer) {
+    if (!monomer) return undefined;
+
     const r2PolymerBond = monomer.attachmentPointsToBonds.R2;
 
     return r2PolymerBond?.getAnotherMonomer(monomer);
@@ -161,13 +175,9 @@ export class RenderersManager {
   ) {
     let currentEnumeration = _currentEnumeration;
     if (rnaComponentRenderer instanceof SugarRenderer) {
-      const r3PolymerBond =
-        rnaComponentRenderer.monomer.attachmentPointsToBonds.R3;
-
-      const rnaBaseMonomer = r3PolymerBond?.getAnotherMonomer(
-        rnaComponentRenderer.monomer,
+      const rnaBaseMonomer = this.getRnaBaseMonomerFromSugar(
+        rnaComponentRenderer as SugarRenderer,
       );
-
       if (rnaBaseMonomer instanceof RNABase) {
         rnaBaseMonomer.renderer?.setEnumeration(currentEnumeration);
         rnaBaseMonomer.renderer?.redrawEnumeration();
@@ -272,12 +282,56 @@ export class RenderersManager {
     this.needRecalculateMonomersEnumeration = false;
   }
 
+  private isOnlyPartOfRnaChain(sugar: Sugar) {
+    const phosphate = this.getNextMonomerInChain(sugar);
+    const nextMonomerAfterPhospate = this.getNextMonomerInChain(phosphate);
+    return !sugar.attachmentPointsToBonds.R1 && !nextMonomerAfterPhospate;
+  }
+
+  private recalculateMonomersBeginning() {
+    this.monomers.forEach((monomerRenderer) => {
+      if (monomerRenderer instanceof PeptideRenderer) {
+        if (monomerRenderer.enumeration === 1) {
+          monomerRenderer.setBeginning(monomerRenderer.CHAIN_BEGINNING);
+        } else {
+          monomerRenderer.setBeginning(null);
+        }
+        monomerRenderer.reDrawChainBeginning();
+      }
+      if (monomerRenderer instanceof SugarRenderer) {
+        const rnaBaseMonomer = this.getRnaBaseMonomerFromSugar(
+          monomerRenderer as SugarRenderer,
+        );
+        if (
+          rnaBaseMonomer instanceof RNABase &&
+          rnaBaseMonomer.renderer?.enumeration === 1 &&
+          !this.isOnlyPartOfRnaChain(monomerRenderer.monomer)
+        ) {
+          monomerRenderer.setBeginning(monomerRenderer.CHAIN_BEGINNING);
+        } else {
+          monomerRenderer.setBeginning(null);
+        }
+        monomerRenderer.reDrawChainBeginning();
+      }
+    });
+    this.needRecalculateMonomersBeginning = false;
+  }
+
+  private getRnaBaseMonomerFromSugar(sugarRenderer: SugarRenderer) {
+    const r3PolymerBond = sugarRenderer.monomer.attachmentPointsToBonds.R3;
+    const rnaBaseMonomer = r3PolymerBond?.getAnotherMonomer(
+      sugarRenderer.monomer,
+    );
+    return rnaBaseMonomer;
+  }
+
   public finishPolymerBondCreation(polymerBond: PolymerBond) {
     assert(polymerBond.secondMonomer);
 
     const polymerBondRenderer = new PolymerBondRenderer(polymerBond);
     this.polymerBonds.set(polymerBond.id, polymerBondRenderer);
     this.markForReEnumeration();
+    this.markForRecalculateBegin();
     polymerBond.firstMonomer.renderer?.redrawAttachmentPoints();
     polymerBond.firstMonomer.renderer?.drawSelection();
     polymerBond.firstMonomer.renderer?.redrawHover();
@@ -326,6 +380,9 @@ export class RenderersManager {
   public runPostRenderMethods() {
     if (this.needRecalculateMonomersEnumeration) {
       this.recalculateMonomersEnumeration();
+    }
+    if (this.needRecalculateMonomersBeginning) {
+      this.recalculateMonomersBeginning();
     }
   }
 }

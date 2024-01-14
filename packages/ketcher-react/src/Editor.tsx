@@ -50,7 +50,7 @@ function Editor(props: EditorProps) {
     ref: rootElRef,
   });
   const ketcherInitEvent = new Event(KETCHER_INIT_EVENT_NAME);
-
+  const isUnmounted = useRef(false);
   useEffect(() => {
     const appRoot = createRoot(rootElRef.current as HTMLDivElement);
     init({
@@ -64,10 +64,14 @@ function Editor(props: EditorProps) {
       }
     });
     return () => {
-      // setTimeout is used to disable the warn msg from react "Attempted to synchronously unmount a root while React was already rendering"
-      setTimeout(() => {
-        appRoot.unmount();
-      });
+      isUnmounted.current = true;
+      // In StrictMode, React double invokes and the component could be unmounted again due to the timeout.
+      if (!isUnmounted.current) {
+        // setTimeout is used to disable the warn msg from react "Attempted to synchronously unmount a root while React was already rendering"
+        setTimeout(() => {
+          appRoot.unmount();
+        });
+      }
     };
     // TODO: provide the list of dependencies after implementing unsubscribe function
   }, []);

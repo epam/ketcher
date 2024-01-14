@@ -263,10 +263,21 @@ class ReAtom extends ReObject {
           ...this.a,
           ...this.a.queryProperties,
         });
-      const label = showSmartsLabel(this, render, customQueryText);
+      const label = showSmartsLabel(
+        this,
+        render,
+        customQueryText,
+        restruct.molecule,
+      );
       restruct.addReObjectPath(LayerMap.data, this.visel, label.path, ps, true);
     } else if (this.showLabel) {
-      const data = buildLabel(this, render.paper, ps, options);
+      const data = buildLabel(
+        this,
+        render.paper,
+        ps,
+        options,
+        restruct.molecule,
+      );
       delta = 0.5 * options.lineWidth;
       label = data.label;
       rightMargin = data.rightMargin;
@@ -705,6 +716,28 @@ function shouldHydrogenBeOnLeft(struct, atom) {
 
   return false;
 }
+
+function shouldLabelShiftToLeft(struct: Struct, atom: ReAtom) {
+  let yl = 1;
+  let yr = 1;
+  let nl = 0;
+  let nr = 0;
+
+  atom.a.neighbors.forEach((nei: number) => {
+    const d = struct.halfBonds.get(nei)?.dir;
+    if (!d) return;
+    if (d.x <= 0) {
+      yl = Math.min(yl, Math.abs(d.y));
+      nl++;
+    } else {
+      yr = Math.min(yr, Math.abs(d.y));
+      nr++;
+    }
+  });
+
+  return yl < 0.51 || yr < 0.51 ? yr < yl : nr > nl;
+}
+
 function addTooltip(label: ElemAttr, text: string) {
   const tooltip = `<p>${text.split(/(?<=[;,])/).join(' ')}</p>`;
   label?.path.node.childNodes[0].setAttribute('data-tooltip', tooltip);
@@ -715,6 +748,7 @@ function buildLabel(
   paper: any,
   ps: Vec2,
   options: any,
+  struct: Struct,
 ): {
   rightMargin: number;
   leftMargin: number;
@@ -762,10 +796,9 @@ function buildLabel(
     (-label.rbb.width / 2) * (options.zoom > 1 ? 1 : options.zoom);
 
   if (atom.a.atomList !== null) {
+    const shouldShiftToLeft = shouldLabelShiftToLeft(struct, atom);
     const xShift =
-      ((atom.hydrogenOnTheLeft ? -1 : 1) *
-        (label.rbb.width - label.rbb.height)) /
-      2;
+      ((shouldShiftToLeft ? -1 : 1) * (label.rbb.width - label.rbb.height)) / 2;
     pathAndRBoxTranslate(
       label.path,
       label.rbb,
@@ -1069,7 +1102,12 @@ function showHydrogen(
   return Object.assign(data, { hydrogen, hydroIndex });
 }
 
-function showSmartsLabel(atom: ReAtom, render: Render, text: string): ElemAttr {
+function showSmartsLabel(
+  atom: ReAtom,
+  render: Render,
+  text: string,
+  struct: Struct,
+): ElemAttr {
   // eslint-disable-line max-statements
   const ps = Scale.obj2scaled(atom.a.pp, render.options);
   const options = render.options;
@@ -1090,9 +1128,9 @@ function showSmartsLabel(atom: ReAtom, render: Render, text: string): ElemAttr {
   });
   label.rbb = util.relBox(label.path.getBBox());
   draw.recenterText(label.path, label.rbb);
+  const shouldShiftToLeft = shouldLabelShiftToLeft(struct, atom);
   const xShift =
-    ((atom.hydrogenOnTheLeft ? -1 : 1) * (label.rbb.width - label.rbb.height)) /
-    2;
+    ((shouldShiftToLeft ? -1 : 1) * (label.rbb.width - label.rbb.height)) / 2;
   pathAndRBoxTranslate(label.path, label.rbb, xShift, 0);
   if (tooltip) {
     addTooltip(label, tooltip);

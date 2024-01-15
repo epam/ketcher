@@ -7,7 +7,12 @@ import {
   BUTTON__ADD_TO_PRESETS,
 } from '@constants/testIdConstants';
 import { waitForPageInit } from '@utils/common';
-import { moveMouseToTheMiddleOfTheScreen, takePageScreenshot } from '@utils';
+import {
+  moveMouseToTheMiddleOfTheScreen,
+  takeEditorScreenshot,
+  takeMonomerLibraryScreenshot,
+  takePageScreenshot,
+} from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 
 /* 
@@ -15,6 +20,7 @@ Test case: #3063 - Add e2e tests for Macromolecule editor
 */
 async function createRNA(page: Page) {
   await page.getByTestId(RNA_TAB).click();
+  await expandRnaBuilder(page);
   await page.fill('[placeholder="Name your structure"]', 'MyRNA');
   await page.press('[placeholder="Name your structure"]', 'Enter');
 }
@@ -41,6 +47,14 @@ async function selectRNAComponents(
   await page.getByTestId(phosphate).click();
 }
 
+async function expandRnaBuilder(page: Page) {
+  await page
+    .locator('div')
+    .filter({ hasText: /^RNA Builder$/ })
+    .getByRole('button')
+    .click();
+}
+
 test.describe('Macromolecules custom presets', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
@@ -48,7 +62,7 @@ test.describe('Macromolecules custom presets', () => {
     await createRNA(page);
   });
 
-  test.skip('Add new preset and duplicate it', async ({ page }) => {
+  test('Add new preset and duplicate it', async ({ page }) => {
     await selectRNAComponents(page, {
       sugar: '25R___2,5-Ribose',
       base: 'baA___N-benzyl-adenine',
@@ -57,7 +71,7 @@ test.describe('Macromolecules custom presets', () => {
     await moveMouseToTheMiddleOfTheScreen(page);
     await page.getByTestId(BUTTON__ADD_TO_PRESETS).click();
 
-    await takePageScreenshot(page);
+    await takeMonomerLibraryScreenshot(page);
 
     await page.getByTestId('duplicate-btn').click();
 
@@ -69,10 +83,10 @@ test.describe('Macromolecules custom presets', () => {
 
     await page.getByTestId('save-btn').click();
 
-    await takePageScreenshot(page);
+    await takeMonomerLibraryScreenshot(page);
   });
 
-  test.skip('Add new preset with two monomers and add it to canvas', async ({
+  test('Add new preset with two monomers and add it to canvas', async ({
     page,
   }) => {
     await waitForPageInit(page);
@@ -82,6 +96,8 @@ test.describe('Macromolecules custom presets', () => {
 
     // Click on <button> "RNA"
     await page.getByTestId(RNA_TAB).click();
+
+    await expandRnaBuilder(page);
 
     // Click on <input> [placeholder="Name your structure"]
     await page.click('[placeholder="Name your structure"]');
@@ -107,9 +123,11 @@ test.describe('Macromolecules custom presets', () => {
     // Click on <button> "Add to Presets"
     await page.getByTestId(BUTTON__ADD_TO_PRESETS).click();
 
+    await takeMonomerLibraryScreenshot(page);
+
     await page.click('[data-testid="MyRNA_baA_25R_."]');
 
     await page.click('#polymer-editor-canvas');
-    await takePageScreenshot(page);
+    await takeEditorScreenshot(page);
   });
 });

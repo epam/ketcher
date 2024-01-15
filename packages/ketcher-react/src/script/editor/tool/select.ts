@@ -254,7 +254,7 @@ class SelectTool implements Tool {
     }
 
     const maps = getMapsForClosestItem(
-      this.#lassoHelper.fragment || event.ctrlKey,
+      this.#lassoHelper.fragment || event?.ctrlKey,
     );
     const item = editor.findItem(event, maps, null);
     editor.hover(item, null, event);

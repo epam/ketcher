@@ -70,6 +70,7 @@ export class FormatterFactory {
   create(
     format: SupportedFormat,
     options?: FormatterFactoryOptions,
+    queryPropertiesAreUsed?: boolean,
   ): StructFormatter {
     const [molSerializerOptions, structServiceOptions] =
       this.separateOptions(options);
@@ -81,9 +82,18 @@ export class FormatterFactory {
         break;
 
       case SupportedFormat.mol:
-        formatter = new MolfileV2000Formatter(
-          new MolSerializer(molSerializerOptions),
-        );
+        if (queryPropertiesAreUsed) {
+          formatter = new ServerFormatter(
+            this.#structService,
+            new KetSerializer(),
+            format,
+            structServiceOptions,
+          );
+        } else {
+          formatter = new MolfileV2000Formatter(
+            new MolSerializer(molSerializerOptions),
+          );
+        }
         break;
 
       case SupportedFormat.cml:

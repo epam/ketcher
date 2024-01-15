@@ -38,6 +38,16 @@ export type monomerClass =
   | 'DNA'
   | 'MODDNA';
 
+export type ketMonomerClass =
+  | 'AminoAcid'
+  | 'Sugar'
+  | 'Phosphate'
+  | 'Base'
+  | 'Terminator'
+  | 'Linker'
+  | 'Unknown'
+  | 'CHEM';
+
 export type IKetAttachmentPointType = 'left' | 'right' | 'side';
 
 export interface IKetAttachmentPoint {

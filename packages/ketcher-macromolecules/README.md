@@ -1,7 +1,7 @@
-# ketcher-polymer-editor-react
+# ketcher-macromolecules
 
-[![npm version](https://img.shields.io/npm/v/ketcher-react)](https://www.npmjs.com/package/ketcher-polymer-editor-react)
-[![Downloads](https://img.shields.io/npm/dm/ketcher-react)](https://www.npmjs.com/package/ketcher-polymer-editor-react)
+[![npm version](https://img.shields.io/npm/v/ketcher-react)](https://www.npmjs.com/package/ketcher-macromolecules)
+[![Downloads](https://img.shields.io/npm/dm/ketcher-react)](https://www.npmjs.com/package/ketcher-macromolecules)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 Copyright (c) 2021 [EPAM Systems, Inc.](https://www.epam.com/)
@@ -12,14 +12,14 @@ For more details please look at the following [link](https://github.com/epam/ket
 
 ## Installation
 
-The ketcher-polymer-editor-react library is available as an [NPM](https://www.npmjs.com/) package. Install it either with NPM:
+The ketcher-macromolecules library is available as an [NPM](https://www.npmjs.com/) package. Install it either with NPM:
 
 ```sh
-npm install --save ketcher-polymer-editor-react
+npm install --save ketcher-macromolecules
 ```
 
 or [Yarn](https://yarnpkg.com/):
 
 ```sh
-yarn add ketcher-polymer-editor-react
+yarn add ketcher-macromolecules
 ```

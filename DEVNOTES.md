@@ -15,7 +15,7 @@ rm -rf node_modules
 rm -rf ./packages/ketcher-core/node_modules
 rm -rf ./packages/ketcher-react/node_modules
 rm -rf ./packages/ketcher-standalone/node_modules
-rm -rf ./packages/ketcher-polymer-editor-react/node_modules
+rm -rf ./packages/ketcher-macromolecules/node_modules
 rm -rf ./example/node_modules
 rm -rf ./demo/node_modules
 ```

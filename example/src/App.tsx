@@ -44,7 +44,7 @@ type PolymerType = ({
 let PolymerEditor: PolymerType = () => null;
 if (enablePolymerEditor) {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const { Editor } = require('ketcher-polymer-editor-react');
+  const { Editor } = require('ketcher-macromolecules');
   PolymerEditor = Editor as PolymerType;
 }
 

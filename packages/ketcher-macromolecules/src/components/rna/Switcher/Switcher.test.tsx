@@ -16,7 +16,7 @@
 
 import { fireEvent, screen, render } from '@testing-library/react';
 
-import { Switcher } from './';
+import { Switcher } from '.';
 
 describe('RNA Switcher component', () => {
   const mockSetActiveMonomerType = jest.fn();

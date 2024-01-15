@@ -76,8 +76,12 @@ function parseStruct(
       struct = `base64::${struct.replace(/\s/g, '')}`;
     }
     const factory = new FormatterFactory(server);
-
-    const service = factory.create(format, formatterOptions);
+    const queryPropertiesAreUsed = format === 'mol' && struct.includes('MRV'); // temporary check if query properties are used
+    const service = factory.create(
+      format,
+      formatterOptions,
+      queryPropertiesAreUsed,
+    );
     return service.getStructureFromStringAsync(struct);
   } else {
     return Promise.resolve(struct);

@@ -142,6 +142,9 @@ describe('Select Rectangle Tool', () => {
     jest
       .spyOn(BaseMonomerRenderer.prototype, 'redrawEnumeration')
       .mockImplementation(() => {});
+    jest
+      .spyOn(BaseMonomerRenderer.prototype, 'reDrawChainBeginning')
+      .mockImplementation(() => {});
     const fn = jest
       .spyOn(window, 'requestAnimationFrame')
       .mockImplementation((func) => {

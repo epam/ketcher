@@ -42,7 +42,10 @@ import { monomerToDrawingEntity } from 'domain/serializers/ket/fromKet/monomerTo
 import assert from 'assert';
 import { polymerBondToDrawingEntity } from 'domain/serializers/ket/fromKet/polymerBondToDrawingEntity';
 import { getMonomerUniqueKey } from 'domain/helpers/monomers';
-import { MONOMER_CONST } from 'application/editor/operations/monomer/monomerFactory';
+import {
+  MONOMER_CONST,
+  monomerFactory,
+} from 'application/editor/operations/monomer/monomerFactory';
 import { KetcherLogger } from 'utilities';
 import { Chem } from 'domain/entities/Chem';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
@@ -56,6 +59,7 @@ import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { validate } from 'domain/serializers/ket/validate';
 import { MacromoleculesConverter } from 'application/editor/MacromoleculesConverter';
 import { convertAttachmentPointNumberToLabel } from 'domain/helpers/attachmentPointCalculations';
+import { isNumber } from 'lodash';
 
 function parseNode(node: any, struct: any) {
   const type = node.type;
@@ -331,9 +335,12 @@ export class KetSerializer implements Serializer<Struct> {
 
           template.attachmentPoints?.forEach(
             (attachmentPoint, attachmentPointIndex) => {
+              const firstAtomInLeavingGroup =
+                attachmentPoint.leavingGroup?.atoms[0];
               const leavingGroupAtom = monomer.monomerItem.struct.atoms.get(
-                attachmentPoint.leavingGroup?.atoms[0] ||
-                  attachmentPoint.attachmentAtom,
+                isNumber(firstAtomInLeavingGroup)
+                  ? firstAtomInLeavingGroup
+                  : attachmentPoint.attachmentAtom,
               );
               assert(leavingGroupAtom);
               leavingGroupAtom.rglabel = (
@@ -466,15 +473,15 @@ export class KetSerializer implements Serializer<Struct> {
           seqid: monomer.monomerItem.seqId,
         };
         fileContent.root.nodes.push(getKetRef(monomerName));
+        const [, , monomerClass] = monomerFactory(monomer.monomerItem);
         const templateNameWithPrefix = setMonomerTemplatePrefix(templateId);
-
         if (!fileContent[templateNameWithPrefix]) {
           fileContent[templateNameWithPrefix] = {
             ...JSON.parse(
               this.serializeMicromolecules(monomer.monomerItem.struct, monomer),
             ).mol0,
             type: 'monomerTemplate',
-            class: monomer.monomerItem.props.MonomerClass,
+            class: monomer.monomerItem.props.MonomerClass || monomerClass,
             classHELM: monomer.monomerItem.props.MonomerType,
             id: templateId,
             fullName: monomer.monomerItem.props.Name,

@@ -54,7 +54,7 @@ test.describe('Checking atom properties attributes in SMARTS format', () => {
       page,
       setLabel,
       'Cr',
-      '[#6](-[#6])(-[#24])-[#6]',
+      '[#6](-[#6])(-[Cr])-[#6]',
     );
   });
 

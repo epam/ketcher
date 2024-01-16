@@ -54,6 +54,7 @@ import ErrorIcon from 'assets/icons/files/error.svg';
 import FullscreenIcon from 'assets/icons/files/fullscreen.svg';
 import ExpandIcon from 'assets/icons/files/expand.svg';
 import MinimizeExpansionIcon from 'assets/icons/files/minimize-expansion.svg';
+import ExplicitHydrogensIcon from 'assets/icons/files/explicit-hydrogens.svg';
 
 const iconMap = {
   'arrow-down': ArrowDownIcon,
@@ -94,6 +95,7 @@ const iconMap = {
   error: ErrorIcon,
   expand: ExpandIcon,
   'minimize-expansion': MinimizeExpansionIcon,
+  'explicit-hydrogens': ExplicitHydrogensIcon,
 };
 
 type IconNameType = keyof typeof iconMap;

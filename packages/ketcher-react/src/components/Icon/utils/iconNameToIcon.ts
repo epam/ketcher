@@ -218,6 +218,7 @@ import EditFilled from '../../../assets/icons/files/edit-filled.svg';
 import VerticalDots from '../../../assets/icons/files/vertical-dots.svg';
 import ExpandIcon from '../../../assets/icons/files/expand.svg';
 import MinimizeExpansionIcon from '../../../assets/icons/files/minimize-expantion.svg';
+import ExplicitHydrogensIcon from '../../../assets/icons/files/explicit-hydrogens.svg';
 
 export const iconNameToIcon = {
   α,
@@ -436,4 +437,5 @@ export const iconNameToIcon = {
   'vertical-dots': VerticalDots,
   expand: ExpandIcon,
   'minimize-expansion': MinimizeExpansionIcon,
+  'explicit-hydrogens': ExplicitHydrogensIcon,
 } as const;

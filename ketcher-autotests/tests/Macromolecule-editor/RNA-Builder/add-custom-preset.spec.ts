@@ -11,7 +11,6 @@ import {
   moveMouseToTheMiddleOfTheScreen,
   takeEditorScreenshot,
   takeMonomerLibraryScreenshot,
-  takePageScreenshot,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 

@@ -291,6 +291,7 @@
                 ]
             }
         ],
+        "class": "Sugar",
         "classHELM": "RNA",
         "id": "_R3__-_Side_only",
         "fullName": "(R3)_-_Side_only",

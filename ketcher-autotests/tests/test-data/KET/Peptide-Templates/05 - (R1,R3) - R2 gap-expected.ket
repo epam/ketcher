@@ -368,6 +368,7 @@
                 ]
             }
         ],
+        "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "_R1_R3_-_R2_gap_",
         "fullName": "(R1,R3)_-_R2_gap",

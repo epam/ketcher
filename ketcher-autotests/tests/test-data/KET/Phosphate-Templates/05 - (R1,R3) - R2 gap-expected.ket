@@ -216,6 +216,7 @@
                 ]
             }
         ],
+        "class": "Phosphate",
         "classHELM": "RNA",
         "id": "_R1_R3__-_R2_gap",
         "fullName": "(R1,R3)_-_R2_gap",

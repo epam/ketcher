@@ -373,6 +373,7 @@
                 ]
             }
         ],
+        "class": "Base",
         "classHELM": "RNA",
         "id": "_R1_R3_R4_R5_",
         "fullName": "(R1,R3,R4,R5)",

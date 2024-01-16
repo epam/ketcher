@@ -351,6 +351,7 @@
                 ]
             }
         ],
+        "class": "CHEM",
         "classHELM": "CHEM",
         "id": "_R1_R3__-_R2_gap_",
         "fullName": "(R1,R3)_-_R2_gap",

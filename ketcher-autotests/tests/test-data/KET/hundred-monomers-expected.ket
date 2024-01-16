@@ -1598,6 +1598,7 @@
                 ]
             }
         ],
+        "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "Bal___beta-Alanine",
         "fullName": "beta-Alanine",
@@ -1785,6 +1786,7 @@
                 ]
             }
         ],
+        "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "meC___N-Methyl-Cysteine",
         "fullName": "N-Methyl-Cysteine",
@@ -2100,6 +2102,7 @@
                 ]
             }
         ],
+        "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "D-2Nal___D-3-naphthylalanine",
         "fullName": "D-3-naphthylalanine",
@@ -2300,6 +2303,7 @@
                 ]
             }
         ],
+        "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "dD___D-Aspartic acid",
         "fullName": "D-Aspartic acid",
@@ -2511,6 +2515,7 @@
                 "stereo": 6
             }
         ],
+        "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "Ggu___gamma-glutamic acid",
         "fullName": "gamma-glutamic acid",
@@ -2757,6 +2762,7 @@
                 ]
             }
         ],
+        "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "dF___D-Phenylalanine",
         "fullName": "D-Phenylalanine",
@@ -2981,6 +2987,7 @@
                 ]
             }
         ],
+        "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "Phe-ol___(2S)-2-amino-3-phenylpropan-1-ol",
         "fullName": "(2S)-2-amino-3-phenylpropan-1-ol",
@@ -3181,6 +3188,7 @@
                 ]
             }
         ],
+        "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "Phg-ol___(2S)-2-amino-2-phenylethan-1-ol",
         "fullName": "(2S)-2-amino-2-phenylethan-1-ol",
@@ -3508,6 +3516,7 @@
                 ]
             }
         ],
+        "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "DHis1B___(2R)-2-amino-3-(1-benzyl-1H-imidazol-4-yl)propanoic acid",
         "fullName": "(2R)-2-amino-3-(1-benzyl-1H-imidazol-4-yl)propanoic acid",
@@ -3695,6 +3704,7 @@
                 ]
             }
         ],
+        "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "dI___D-Isoleucine",
         "fullName": "D-Isoleucine",
@@ -3884,6 +3894,7 @@
                 ]
             }
         ],
+        "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "aIle___L-allo-Isoleucine",
         "fullName": "L-allo-Isoleucine",
@@ -4215,6 +4226,7 @@
                 ]
             }
         ],
+        "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "Pyl___Pyl",
         "fullName": "Pyl",
@@ -4425,6 +4437,7 @@
                 ]
             }
         ],
+        "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "Leu-ol___(2S)-2-amino-4-methylpentan-1-ol",
         "fullName": "(2S)-2-amino-4-methylpentan-1-ol",
@@ -4608,6 +4621,7 @@
                 ]
             }
         ],
+        "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "Asp-al___(3S)-3-amino-4-oxobutanoic acid",
         "fullName": "(3S)-3-amino-4-oxobutanoic acid",
@@ -4763,6 +4777,7 @@
                 ]
             }
         ],
+        "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "Pro-ol___[(2S)-pyrrolidin-2-yl]methanol",
         "fullName": "[(2S)-pyrrolidin-2-yl]methanol",
@@ -4981,6 +4996,7 @@
                 ]
             }
         ],
+        "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "dQ___D-Glutamine",
         "fullName": "D-Glutamine",
@@ -5227,6 +5243,7 @@
                 ]
             }
         ],
+        "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "Arg-al___N''-[(4S)-4-amino-5-oxopentyl]guanidine",
         "fullName": "N''-[(4S)-4-amino-5-oxopentyl]guanidine",
@@ -5390,6 +5407,7 @@
                 ]
             }
         ],
+        "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "meS___N-Methyl-Serine",
         "fullName": "N-Methyl-Serine",
@@ -5659,6 +5677,7 @@
                 ]
             }
         ],
+        "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "DSerBn___O-Benzyl-D-serine",
         "fullName": "O-Benzyl-D-serine",
@@ -5849,6 +5868,7 @@
                 ]
             }
         ],
+        "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "Nva___norvaline",
         "fullName": "norvaline",
@@ -6056,6 +6076,7 @@
                 ]
             }
         ],
+        "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "Val3OH___(2S)-2-amino-3-hydroxy-3-methylbutanoic acid",
         "fullName": "(2S)-2-amino-3-hydroxy-3-methylbutanoic acid",
@@ -6382,6 +6403,7 @@
                 ]
             }
         ],
+        "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "Trp5OH___(2S)-2-amino-3-(5-hydroxy-1H-indol-3-yl)propanoic acid",
         "fullName": "(2S)-2-amino-3-(5-hydroxy-1H-indol-3-yl)propanoic acid",
@@ -6557,6 +6579,7 @@
                 ]
             }
         ],
+        "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "Aib___alpha-aminoisobutyric acid (2-aminoalanine)",
         "fullName": "alpha-aminoisobutyric acid (2-aminoalanine)",
@@ -6858,6 +6881,7 @@
                 ]
             }
         ],
+        "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "Tyr3NO___(2S)-2-amino-3-(4-hydroxy-3-nitrophenyl)propanoic acid",
         "fullName": "(2S)-2-amino-3-(4-hydroxy-3-nitrophenyl)propanoic acid",
@@ -7075,6 +7099,7 @@
                 ]
             }
         ],
+        "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "SertBu___O-tert-Butyl-L-serine",
         "fullName": "O-tert-Butyl-L-serine",
@@ -7322,6 +7347,7 @@
                 ]
             }
         ],
+        "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "meR___N-Methyl-Arginine",
         "fullName": "N-Methyl-Arginine",
@@ -7518,6 +7544,7 @@
                 ]
             }
         ],
+        "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "D-Hyp___D-4-Hydroxyproline",
         "fullName": "D-4-Hydroxyproline",
@@ -7720,6 +7747,7 @@
                 ]
             }
         ],
+        "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "Met_O___(2S)-2-amino-4-methanesulfinylbutanoic acid",
         "fullName": "(2S)-2-amino-4-methanesulfinylbutanoic acid",
@@ -7922,6 +7950,7 @@
                 ]
             }
         ],
+        "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "meL___N-Methyl-Leucine",
         "fullName": "N-Methyl-Leucine",
@@ -8139,6 +8168,7 @@
                 ]
             }
         ],
+        "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "Hyl5xi___(2S)-2,6-diamino-5-hydroxyhexanoic acid",
         "fullName": "(2S)-2,6-diamino-5-hydroxyhexanoic acid",
@@ -8388,6 +8418,7 @@
                 ]
             }
         ],
+        "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "meH___N-Methyl-Histidine",
         "fullName": "N-Methyl-Histidine",
@@ -8637,6 +8668,7 @@
                 ]
             }
         ],
+        "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "Cha___3-cyclohexylalanine",
         "fullName": "3-cyclohexylalanine",
@@ -8936,6 +8968,7 @@
                 ]
             }
         ],
+        "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "Cys_Bn___(2R)-2-amino-3-(benzylsulfanyl)propanoic acid",
         "fullName": "(2R)-2-amino-3-(benzylsulfanyl)propanoic acid",
@@ -9166,6 +9199,7 @@
                 ]
             }
         ],
+        "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "AspOMe___(2S)-2-amino-4-methoxy-4-oxobutanoic acid",
         "fullName": "(2S)-2-amino-4-methoxy-4-oxobutanoic acid",
@@ -9443,6 +9477,7 @@
                 ]
             }
         ],
+        "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "dE___D-Glutamic acid",
         "fullName": "D-Glutamic acid",
@@ -9746,6 +9781,7 @@
                 ]
             }
         ],
+        "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "Phe4Me___p-Methylphenylalanine",
         "fullName": "p-Methylphenylalanine",
@@ -10010,6 +10046,7 @@
                 "stereo": 1
             }
         ],
+        "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "Phg___2-phenylglycine",
         "fullName": "2-phenylglycine",
@@ -10234,6 +10271,7 @@
                 ]
             }
         ],
+        "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "meI___N-Methyl-Isoleucine",
         "fullName": "N-Methyl-Isoleucine",
@@ -10491,6 +10529,7 @@
                 ]
             }
         ],
+        "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "Lys_Ac___(2S)-2-amino-6-acetamidohexanoic acid",
         "fullName": "(2S)-2-amino-6-acetamidohexanoic acid",
@@ -10777,6 +10816,7 @@
                 ]
             }
         ],
+        "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "D-aHyp___D-allo-4-hydroxyproline",
         "fullName": "D-allo-4-hydroxyproline",
@@ -11054,6 +11094,7 @@
                 ]
             }
         ],
+        "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "R___Arginine",
         "fullName": "Arginine",
@@ -11255,6 +11296,7 @@
                 ]
             }
         ],
+        "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "S___Serine",
         "fullName": "Serine",
@@ -11620,6 +11662,7 @@
                 ]
             }
         ],
+        "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "dW___D-Tryptophan",
         "fullName": "D-Tryptophan",
@@ -11759,6 +11802,7 @@
                 ]
             }
         ],
+        "class": "AminoAcid",
         "classHELM": "PEPTIDE",
         "id": "MsO___Mesylate",
         "fullName": "Mesylate",

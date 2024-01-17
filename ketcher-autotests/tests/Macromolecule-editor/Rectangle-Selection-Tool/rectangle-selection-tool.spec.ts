@@ -157,4 +157,72 @@ test.describe('Rectangle Selection Tool', () => {
     await page.mouse.click(betaAlaninePosition.x, betaAlaninePosition.y);
     await takeEditorScreenshot(page);
   });
+
+  test('Group selection using `Shift+LClick`', async ({ page }) => {
+    /* 
+    Test case: #3728 - Group selection using Shift+LClick for Macromolecules editor
+    Description: Selection elements pointly
+    */
+
+    // Create 4 peptides on canvas
+    const MONOMER_NAME = 'Tza___3-thiazolylalanine';
+    const MONOMER_ALIAS = 'Tza';
+
+    const peptide1 = await addMonomerToCanvas(
+      page,
+      MONOMER_NAME,
+      MONOMER_ALIAS,
+      300,
+      300,
+      0,
+    );
+    const peptide2 = await addMonomerToCanvas(
+      page,
+      MONOMER_NAME,
+      MONOMER_ALIAS,
+      400,
+      400,
+      1,
+    );
+    const peptide3 = await addMonomerToCanvas(
+      page,
+      MONOMER_NAME,
+      MONOMER_ALIAS,
+      500,
+      500,
+      2,
+    );
+    const peptide4 = await addMonomerToCanvas(
+      page,
+      MONOMER_NAME,
+      MONOMER_ALIAS,
+      500,
+      200,
+      3,
+    );
+
+    // Select bond tool
+    await selectSingleBondTool(page);
+
+    // Create bonds between peptides
+    await bondTwoMonomers(page, peptide1, peptide2);
+    await bondTwoMonomers(page, peptide3, peptide2);
+    await bondTwoMonomers(page, peptide3, peptide4);
+
+    await takeEditorScreenshot(page);
+
+    // Select rectangle selection tool
+    await selectRectangleSelectionTool(page);
+
+    // Select monomers pointly by clicking Shift+LClick
+    await page.keyboard.down('Shift');
+
+    await page.mouse.click(300, 300);
+    await page.mouse.click(400, 400);
+    await page.mouse.click(500, 350);
+
+    await page.keyboard.up('Shift');
+
+    await takeEditorScreenshot(page);
+  });
 });

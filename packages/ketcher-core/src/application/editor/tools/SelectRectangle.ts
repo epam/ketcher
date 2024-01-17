@@ -101,7 +101,7 @@ class SelectRectangle implements BaseTool {
   mousedown(event) {
     const renderer = event.target.__data__;
     let modelChanges: Command;
-    if (renderer instanceof BaseRenderer) {
+    if (renderer instanceof BaseRenderer && !event.shiftKey) {
       this.moveStarted = true;
       this.mousePositionAfterMove = this.editor.lastCursorPositionOfCanvas;
       this.mousePositionBeforeMove = this.editor.lastCursorPositionOfCanvas;
@@ -112,6 +112,12 @@ class SelectRectangle implements BaseTool {
           renderer.drawingEntity,
         );
       }
+    } else if (renderer instanceof BaseRenderer && event.shiftKey) {
+      const drawingEntity = renderer.drawingEntity;
+      modelChanges =
+        this.editor.drawingEntitiesManager.selectCurrentDrawingEntities(
+          drawingEntity,
+        );
     } else {
       modelChanges =
         this.editor.drawingEntitiesManager.unselectAllDrawingEntities();

@@ -175,29 +175,15 @@ export class DrawingEntitiesManager {
     return command;
   }
 
-  private addOperationToCommand(
-    command: Command,
-    drawingEntity: DrawingEntity,
-  ) {
-    const operation = new DrawingEntitySelectOperation(drawingEntity);
-    command.addOperation(operation);
-  }
-
-  public selectCurrentDrawingEntities(drawingEntity: DrawingEntity) {
+  public addDrawingEntityToSelection(drawingEntity: DrawingEntity) {
     const command = new Command();
-
-    this.allEntities.forEach(([, drawingEntity]) => {
-      if (drawingEntity.selected) {
-        this.addOperationToCommand(command, drawingEntity);
-      }
-    });
 
     if (drawingEntity.selected) {
       drawingEntity.turnOffSelection();
     } else {
       drawingEntity.turnOnSelection();
     }
-    this.addOperationToCommand(command, drawingEntity);
+    command.addOperation(new DrawingEntitySelectOperation(drawingEntity));
 
     return command;
   }

@@ -115,7 +115,7 @@ class SelectRectangle implements BaseTool {
     } else if (renderer instanceof BaseRenderer && event.shiftKey) {
       const drawingEntity = renderer.drawingEntity;
       modelChanges =
-        this.editor.drawingEntitiesManager.selectCurrentDrawingEntities(
+        this.editor.drawingEntitiesManager.addDrawingEntityToSelection(
           drawingEntity,
         );
     } else {

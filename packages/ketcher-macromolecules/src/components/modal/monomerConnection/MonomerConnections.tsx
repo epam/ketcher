@@ -1,11 +1,10 @@
 import styled from '@emotion/styled';
 import { ActionButton } from 'components/shared/actionButton';
 import { Modal } from 'components/shared/modal';
-import { BaseMonomer } from 'ketcher-core/dist/domain/entities/BaseMonomer';
 import { StructRender } from 'ketcher-react';
 import { useAppSelector } from 'hooks';
 import { selectEditor } from 'state/common';
-import { useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   AttachmentPointList,
   AttachmentPoint,
@@ -16,7 +15,7 @@ import {
   ModalContent,
 } from './styledComponents';
 import { MonomerConnectionProps } from '../modalContainer/types';
-import { LeavingGroup } from 'ketcher-core';
+import { BaseMonomer, LeavingGroup } from 'ketcher-core';
 
 interface IStyledButtonProps {
   disabled: boolean;
@@ -185,12 +184,14 @@ function AttachmentPointSelectionPanel({
   onSelectAttachmentPoint,
   expanded = false,
 }: AttachmentPointSelectionPanelProps): React.ReactElement {
-  const bonds = monomer.attachmentPointsToBonds;
-
-  const connectedAttachmentPoints = useMemo(
+  const [bonds, setBonds] = useState(monomer.attachmentPointsToBonds);
+  const [connectedAttachmentPoints, setConnectedAttachmentPoints] = useState(
     () => getConnectedAttachmentPoints(bonds),
-    [bonds],
   );
+
+  useEffect(() => {
+    setBonds(monomer.attachmentPointsToBonds);
+  }, [selectedAttachmentPoint, monomer]);
 
   const getLeavingGroup = (attachmentPoint): LeavingGroup => {
     const { MonomerCaps } = monomer.monomerItem.props;
@@ -199,6 +200,26 @@ function AttachmentPointSelectionPanel({
     }
     const leavingGroup = MonomerCaps[attachmentPoint];
     return leavingGroup === 'O' ? 'OH' : (leavingGroup as LeavingGroup);
+  };
+  let bond;
+  if (selectedAttachmentPoint) {
+    bond = monomer.getPotentialBond(selectedAttachmentPoint);
+  }
+
+  const handleSelectAttachmentPoint = (attachmentPoint: string) => {
+    const newBonds = { ...monomer.attachmentPointsToBonds };
+
+    if (selectedAttachmentPoint) {
+      newBonds[selectedAttachmentPoint] = null;
+    }
+
+    newBonds[attachmentPoint] = bond;
+    setBonds(newBonds);
+
+    onSelectAttachmentPoint(attachmentPoint);
+
+    const newConnectedAttachmentPoints = getConnectedAttachmentPoints(newBonds);
+    setConnectedAttachmentPoints(newConnectedAttachmentPoints);
   };
 
   return (
@@ -218,11 +239,8 @@ function AttachmentPointSelectionPanel({
       <AttachmentPointList>
         {monomer.listOfAttachmentPoints.map((attachmentPoint) => {
           const disabled = Boolean(
-            connectedAttachmentPoints.find(
-              (connectedAttachmentPointName) =>
-                connectedAttachmentPointName === attachmentPoint &&
-                attachmentPoint !== monomer.chosenFirstAttachmentPointForBond,
-            ),
+            connectedAttachmentPoints.includes(attachmentPoint) &&
+              attachmentPoint !== selectedAttachmentPoint,
           );
           return (
             <AttachmentPoint key={attachmentPoint}>
@@ -233,7 +251,9 @@ function AttachmentPointSelectionPanel({
                     ? 'primary'
                     : 'secondary'
                 }
-                clickHandler={() => onSelectAttachmentPoint(attachmentPoint)}
+                clickHandler={() =>
+                  handleSelectAttachmentPoint(attachmentPoint)
+                }
                 disabled={disabled}
               />
               <AttachmentPointName

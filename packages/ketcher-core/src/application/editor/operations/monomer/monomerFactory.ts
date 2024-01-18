@@ -12,7 +12,7 @@ import { Chem } from 'domain/entities/Chem';
 import { Sugar } from 'domain/entities/Sugar';
 import { Phosphate } from 'domain/entities/Phosphate';
 import { RNABase } from 'domain/entities/RNABase';
-import { monomerClass } from 'application/formatters/types/ket';
+import { ketMonomerClass } from 'application/formatters/types/ket';
 
 type DerivedClass<T> = new (...args: unknown[]) => T;
 export const MONOMER_CONST = {
@@ -41,11 +41,11 @@ export const monomerFactory = (
 ): [
   Monomer: Monomer,
   MonomerRenderer: DerivedClass<BaseMonomerRenderer>,
-  monomerClass: monomerClass,
+  ketMonomerClass: ketMonomerClass,
 ] => {
   let Monomer;
   let MonomerRenderer;
-  let monomerClass: monomerClass;
+  let ketMonomerClass: ketMonomerClass;
 
   if (
     monomer.props.MonomerType === MONOMER_CONST.CHEM ||
@@ -55,26 +55,26 @@ export const monomerFactory = (
   ) {
     Monomer = Chem;
     MonomerRenderer = ChemRenderer;
-    monomerClass = 'CHEM';
+    ketMonomerClass = 'CHEM';
   } else if (monomer.props.MonomerType === MONOMER_CONST.PEPTIDE) {
     Monomer = Peptide;
     MonomerRenderer = PeptideRenderer;
-    monomerClass = 'PEPTIDE';
+    ketMonomerClass = 'AminoAcid';
   } else {
     if (monomer.props.MonomerNaturalAnalogCode === MONOMER_CONST.R) {
       Monomer = Sugar;
       MonomerRenderer = SugarRenderer;
-      monomerClass = 'RNA';
+      ketMonomerClass = 'Sugar';
     } else if (monomer.props.MonomerNaturalAnalogCode === MONOMER_CONST.P) {
       Monomer = Phosphate;
       MonomerRenderer = PhosphateRenderer;
-      monomerClass = 'RNA';
+      ketMonomerClass = 'Phosphate';
     } else {
       Monomer = RNABase;
       MonomerRenderer = RNABaseRenderer;
-      monomerClass = 'RNA';
+      ketMonomerClass = 'Base';
     }
   }
 
-  return [Monomer, MonomerRenderer, monomerClass];
+  return [Monomer, MonomerRenderer, ketMonomerClass];
 };

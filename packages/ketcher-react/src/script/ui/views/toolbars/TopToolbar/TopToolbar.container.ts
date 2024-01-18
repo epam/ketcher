@@ -20,7 +20,7 @@ import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import { onAction } from '../../../state';
 import action from 'src/script/ui/action/index.js';
-import { shortcutStr } from '../shortcutStr';
+import { generateMenuShortcuts } from 'ketcher-core';
 import { removeStructAction } from 'src/script/ui/state/shared';
 import { createSelector } from 'reselect';
 
@@ -54,14 +54,7 @@ const disableableButtons = [
   'enhanced-stereo',
 ];
 
-const shortcuts = Object.keys(action).reduce((acc, key) => {
-  if (action[key]?.shortcut) {
-    const shortcut = action[key].shortcut;
-    const processedShortcut = shortcutStr(shortcut);
-    acc[key] = processedShortcut;
-  }
-  return acc;
-}, {});
+const shortcuts = generateMenuShortcuts<typeof action>(action);
 
 const mapStateToProps = (state: any) => {
   return {

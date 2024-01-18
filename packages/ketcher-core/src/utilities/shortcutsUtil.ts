@@ -32,3 +32,13 @@ export function shortcutStr(shortcut?: string | string[]) {
     (key) => shortcutAliasMap[key] || key.toUpperCase(),
   );
 }
+
+export const generateMenuShortcuts = <T>(obj) =>
+  Object.keys(obj).reduce((acc, key) => {
+    if (obj[key]?.shortcut) {
+      const shortcut = obj[key].shortcut;
+      const processedShortcut = shortcutStr(shortcut);
+      acc[key] = processedShortcut;
+    }
+    return acc;
+  }, {}) as { [key in keyof T]: string };

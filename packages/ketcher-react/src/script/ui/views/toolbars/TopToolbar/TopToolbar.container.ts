@@ -20,7 +20,7 @@ import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import { onAction } from '../../../state';
 import action from 'src/script/ui/action/index.js';
-import { shortcutStr } from '../shortcutStr';
+import { shortcutStr } from 'ketcher-core';
 import { removeStructAction } from 'src/script/ui/state/shared';
 import { createSelector } from 'reselect';
 

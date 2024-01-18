@@ -55,13 +55,13 @@ export const hotkeysConfiguration = {
     },
   },
   undo: {
-    shortcut: ['Ctrl+z', 'Meta+z'],
+    shortcut: 'Mod+z',
     handler: (editor: CoreEditor) => {
       editor.onSelectHistory('undo');
     },
   },
   redo: {
-    shortcut: ['Mod+Ctrl+Z', 'Ctrl+Y', 'Mod+Meta+Z', 'Meta+y'],
+    shortcut: ['Mod+Shift+z', 'Mod+y'],
     handler: (editor: CoreEditor) => {
       editor.onSelectHistory('redo');
     },
@@ -73,32 +73,32 @@ export const hotkeysConfiguration = {
     },
   },
   clear: {
-    shortcut: ['Ctrl+Del', 'Ctrl+Backspace', 'Meta+Del', 'Meta+Backspace'],
+    shortcut: ['Mod+Del', 'Mod+Backspace'],
     handler: (editor: CoreEditor) => {
       editor.events.selectTool.dispatch('clear');
       editor.events.selectTool.dispatch('select-rectangle');
     },
   },
   'zoom-plus': {
-    shortcut: ['Ctrl+=', 'Meta+='],
+    shortcut: 'Mod+=',
     handler: () => {
       ZoomTool.instance.zoomIn();
     },
   },
   'zoom-minus': {
-    shortcut: ['Ctrl+-', 'Meta+-'],
+    shortcut: 'Mod+-',
     handler: () => {
       ZoomTool.instance.zoomOut();
     },
   },
   'zoom-reset': {
-    shortcut: ['Ctrl+0', 'Meta+0'],
+    shortcut: 'Mod+0',
     handler: () => {
       ZoomTool.instance.resetZoom();
     },
   },
   'select-all': {
-    shortcut: ['Ctrl+a', 'Meta+a'],
+    shortcut: 'Mod+a',
     handler: (editor: CoreEditor) => {
       const modelChanges =
         editor.drawingEntitiesManager.selectAllDrawingEntities();

@@ -11,6 +11,9 @@ import {
   Pool,
   Chem,
   SGroupForest,
+  RNABase,
+  Sugar,
+  Phosphate,
 } from 'domain/entities';
 import {
   AttachmentPointHoverOperation,
@@ -36,6 +39,10 @@ import {
 import { monomerFactory } from 'application/editor/operations/monomer/monomerFactory';
 import { Coordinates } from 'application/editor';
 import { getCurrentCenterPointOfCanvas } from 'application/utils';
+import {
+  checkIsR2R1Connection,
+  getNextMonomerInChain,
+} from 'domain/helpers/monomers';
 
 const HORIZONTAL_DISTANCE_FROM_MONOMER = 50;
 const VERTICAL_DISTANCE_FROM_MONOMER = 60;
@@ -171,6 +178,19 @@ export class DrawingEntitiesManager {
         command.addOperation(operation);
       }
     });
+
+    return command;
+  }
+
+  public addDrawingEntityToSelection(drawingEntity: DrawingEntity) {
+    const command = new Command();
+
+    if (drawingEntity.selected) {
+      drawingEntity.turnOffSelection();
+    } else {
+      drawingEntity.turnOnSelection();
+    }
+    command.addOperation(new DrawingEntitySelectOperation(drawingEntity));
 
     return command;
   }
@@ -926,6 +946,16 @@ export class DrawingEntitiesManager {
     return command;
   }
 
+  public reArrangeRnaChains(canvasWidth: number, isSequenceMode: boolean) {
+    // const command = new Command();
+    if (isSequenceMode) {
+      this.reArrangeRnaBase(canvasWidth);
+    }
+    // command.merge(this.redrawBonds());
+
+    // return command;
+  }
+
   private redrawBondsModelChange(polymerBond: PolymerBond) {
     polymerBond.moveToLinkedMonomers();
 
@@ -1016,6 +1046,70 @@ export class DrawingEntitiesManager {
     });
 
     return command;
+  }
+
+  public reArrangeRnaBase(canvasWidth: number) {
+    /**
+     * Only valid for unmodified RNA
+     * 0. where to display the sequence mode icon? the UX picture seems the
+     * toggle button is in Micro mode top-toolbar?
+     * 1. check if the base monomer belongs to Rnachain and if two nucleotides are
+     * connected through R2-R1 bonds(what if there is only one nucleotide? should we display it as a word)
+     * 2. delete Rnachain monomers and polymerbonds meets the requirements in last step
+     * 3. collect RnaBase labels for showing
+     *
+     *  ? "All other bonds except R2-R1 should be displayed as straight line connecting two
+     * monomers."
+     * what does this mean? how can we display bonds as straight line between words?
+     *
+     * 4. divide labels into tens
+     * 5. display enumeration only for every ten nucleotide and for the last nucleotide.
+     * 6. preview of presets
+     * 7. realign each lines to no more than 30 nucleotides otherwise symbols should be
+     * transferred to the next line in tens(if the sequence contains 35 nucleotides,
+     * how many symbols should be transferred to the next line? ten or five?)
+     *
+     * ? if sequence is longer than 30 nucleotides, then the lengths of the line should be
+     * adjusted according to canvas size at 100% zoom rate??
+     * since symbols will be transferred to the next line in tens why do we need
+     * to adjust the length?
+     *
+     * ? if the chain contains Peptide or CHEM monomers, do we need to show sequence
+     * mode of Rna chains and leave the peptide and CHEM monomers displayed as pictograms?
+     */
+    const command = new Command();
+    this.monomers.forEach((monomer) => {
+      if (monomer instanceof RNABase) {
+        const phosphate = this.getPhosphateFromRnaBase(monomer);
+        if (phosphate) {
+          const nextMonomer = getNextMonomerInChain(phosphate);
+          if (nextMonomer instanceof Sugar) {
+            const isR2R1Connection = checkIsR2R1Connection(
+              phosphate,
+              nextMonomer,
+            );
+            if (isR2R1Connection) {
+              const r1PolymerBond = monomer.attachmentPointsToBonds.R1;
+              const sugarMonomer = r1PolymerBond?.getAnotherMonomer(monomer);
+              command.merge(this.deleteDrawingEntity(monomer));
+              command.merge(this.deleteDrawingEntity(sugarMonomer));
+            }
+          }
+        }
+      }
+    });
+  }
+
+  public getPhosphateFromRnaBase(baseMonomer: RNABase) {
+    const r1PolymerBond = baseMonomer.attachmentPointsToBonds.R1;
+    const sugarMonomer = r1PolymerBond?.getAnotherMonomer(baseMonomer);
+    if (sugarMonomer && sugarMonomer instanceof Sugar) {
+      const phosphate = getNextMonomerInChain(sugarMonomer);
+      if (phosphate && phosphate instanceof Phosphate) {
+        return phosphate;
+      }
+    }
+    return undefined;
   }
 
   public setMicromoleculesHiddenEntities(struct: Struct) {

@@ -15,6 +15,11 @@ import {
 } from 'application/render';
 import { notifyRenderComplete } from 'application/render/internal';
 import { Peptide, Sugar, RNABase, Phosphate } from 'domain/entities';
+import {
+  checkIsR2R1Connection,
+  getNextMonomerInChain,
+  isMonomerBeginningOfChain,
+} from 'domain/helpers/monomers';
 
 export class RenderersManager {
   private theme;
@@ -124,21 +129,6 @@ export class RenderersManager {
     }
   }
 
-  private getNextMonomerInChain(monomer?: BaseMonomer) {
-    if (!monomer) return undefined;
-
-    const r2PolymerBond = monomer.attachmentPointsToBonds.R2;
-
-    return r2PolymerBond?.getAnotherMonomer(monomer);
-  }
-
-  private isR2R1Connection(monomer, nextMonomer) {
-    return (
-      nextMonomer.attachmentPointsToBonds.R1?.getAnotherMonomer(nextMonomer) ===
-      monomer
-    );
-  }
-
   private recalculatePeptideChainEnumeration(
     peptideRenderer: PeptideRenderer,
     currentEnumeration = 1,
@@ -146,13 +136,13 @@ export class RenderersManager {
     peptideRenderer.setEnumeration(currentEnumeration);
     peptideRenderer.redrawEnumeration();
 
-    const nextMonomer = this.getNextMonomerInChain(peptideRenderer.monomer);
+    const nextMonomer = getNextMonomerInChain(peptideRenderer.monomer);
 
     if (!(nextMonomer instanceof Peptide)) {
       return;
     }
 
-    const isR2R1Connection = this.isR2R1Connection(
+    const isR2R1Connection = checkIsR2R1Connection(
       peptideRenderer.monomer,
       nextMonomer,
     );
@@ -185,9 +175,7 @@ export class RenderersManager {
       }
     }
 
-    const nextMonomer = this.getNextMonomerInChain(
-      rnaComponentRenderer.monomer,
-    );
+    const nextMonomer = getNextMonomerInChain(rnaComponentRenderer.monomer);
 
     if (
       !(nextMonomer instanceof Sugar) &&
@@ -196,7 +184,7 @@ export class RenderersManager {
       return;
     }
 
-    const isR2R1Connection = this.isR2R1Connection(
+    const isR2R1Connection = checkIsR2R1Connection(
       rnaComponentRenderer.monomer,
       nextMonomer,
     );
@@ -213,45 +201,20 @@ export class RenderersManager {
     );
   }
 
-  private isMonomerBeginningOfChain(
-    monomer: BaseMonomer,
-    MonomerTypes: Array<typeof Peptide | typeof Phosphate | typeof Sugar>,
-  ) {
-    const r1PolymerBond = monomer.attachmentPointsToBonds.R1;
-    const previousMonomer = r1PolymerBond?.getAnotherMonomer(monomer);
-    const isPreviousMonomerPartOfChain =
-      previousMonomer &&
-      !MonomerTypes.some(
-        (MonomerType) => previousMonomer instanceof MonomerType,
-      );
-    const previousConnectionNotR2 =
-      r1PolymerBond &&
-      previousMonomer?.getAttachmentPointByBond(r1PolymerBond) !== 'R2';
-
-    return (
-      ((monomer.isAttachmentPointExistAndFree('R1') ||
-        !monomer.hasAttachmentPoint('R1')) &&
-        monomer.hasBonds) ||
-      previousConnectionNotR2 ||
-      isPreviousMonomerPartOfChain
-    );
-  }
-
   private recalculatePeptideEnumeration(peptideRenderer: PeptideRenderer) {
     if (!peptideRenderer.monomer.hasBonds) {
       peptideRenderer.setEnumeration(null);
       peptideRenderer.redrawEnumeration();
     }
 
-    if (!this.isMonomerBeginningOfChain(peptideRenderer.monomer, [Peptide]))
-      return;
+    if (!isMonomerBeginningOfChain(peptideRenderer.monomer, [Peptide])) return;
 
     this.recalculatePeptideChainEnumeration(peptideRenderer);
   }
 
   private recalculateRnaEnumeration(rnaComponentRenderer: BaseMonomerRenderer) {
     if (
-      !this.isMonomerBeginningOfChain(rnaComponentRenderer.monomer, [
+      !isMonomerBeginningOfChain(rnaComponentRenderer.monomer, [
         Phosphate,
         Sugar,
       ])
@@ -283,8 +246,8 @@ export class RenderersManager {
   }
 
   private isOnlyPartOfRnaChain(sugar: Sugar) {
-    const phosphate = this.getNextMonomerInChain(sugar);
-    const nextMonomerAfterPhospate = this.getNextMonomerInChain(phosphate);
+    const phosphate = getNextMonomerInChain(sugar);
+    const nextMonomerAfterPhospate = getNextMonomerInChain(phosphate);
     return !sugar.attachmentPointsToBonds.R1 && !nextMonomerAfterPhospate;
   }
 

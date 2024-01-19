@@ -33,6 +33,7 @@ import {
   LayoutCommandData,
   OutputMessage,
   IndigoStandalone,
+  ExplicitHydrogensCommandData,
 } from './indigoWorker.types';
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -245,6 +246,23 @@ self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
           indigo.convert(data.struct, 'inchi-key', indigoOptions),
         undefined,
         Command.GetInChIKey,
+      );
+      break;
+    }
+
+    case Command.ExplicitHydrogens: {
+      const data: ExplicitHydrogensCommandData =
+        message.data as ExplicitHydrogensCommandData;
+      handle(
+        (indigo, indigoOptions) =>
+          indigo.convert_explicit_hydrogens(
+            data.struct,
+            data.mode,
+            data.format,
+            indigoOptions,
+          ),
+        undefined,
+        Command.ExplicitHydrogens,
       );
       break;
     }

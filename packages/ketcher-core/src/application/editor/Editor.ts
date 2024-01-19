@@ -153,7 +153,10 @@ export class CoreEditor {
       this.canvas.width.baseVal.value,
       isSnakeMode,
     );
-
+    this.drawingEntitiesManager.reArrangeRnaChains(
+      this.canvas.width.baseVal.value,
+      isSnakeMode,
+    );
     command.merge(modelChanges);
 
     const history = new EditorHistory(this);

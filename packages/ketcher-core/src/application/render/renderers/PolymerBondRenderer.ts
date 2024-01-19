@@ -10,10 +10,6 @@ import { Chem } from 'domain/entities/Chem';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { SnakeMode } from 'application/editor/modes/internal';
 import { Coordinates } from 'application/editor/shared/coordinates';
-import {
-  getNextMonomerInChain,
-  getRnaBaseMonomerFromSugar,
-} from 'domain/helpers/monomers';
 
 const LINE_FROM_MONOMER_LENGTH = 15;
 const VERTICAL_LINE_LENGTH = 42;
@@ -178,17 +174,6 @@ export class PolymerBondRenderer extends BaseRenderer {
   }
 
   private getMonomerHeight() {
-    const isRnaChain =
-      this.polymerBond.firstMonomer instanceof Sugar ||
-      this.polymerBond.firstMonomer instanceof Phosphate;
-
-    if (isRnaChain) {
-      const sugar = getNextMonomerInChain(this.polymerBond.firstMonomer);
-      return (
-        (sugar?.renderer?.monomerSize?.height ?? 0) +
-        (getRnaBaseMonomerFromSugar(sugar)?.renderer?.monomerSize?.height ?? 0)
-      );
-    }
     return this.polymerBond.firstMonomer.renderer?.monomerSize.height ?? 0;
   }
 

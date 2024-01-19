@@ -70,7 +70,6 @@ type Nucleotide = {
 export class DrawingEntitiesManager {
   public monomers: Map<number, BaseMonomer> = new Map();
   public polymerBonds: Map<number, PolymerBond> = new Map();
-  public nucleotides: RnaPresetAdditionParams[] = [];
   public micromoleculesHiddenEntities: Struct = new Struct();
   get selectedEntities() {
     return this.allEntities.filter(

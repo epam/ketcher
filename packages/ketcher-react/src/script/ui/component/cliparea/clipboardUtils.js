@@ -4,7 +4,10 @@
  * to call indigo, when copy/cut/paste
  */
 export function isClipboardAPIAvailable() {
-  return typeof navigator?.clipboard?.writeText === 'function';
+  return (
+    typeof navigator?.clipboard?.writeText === 'function' &&
+    typeof navigator?.clipboard?.read === 'function'
+  );
 }
 
 export function notifyCopyCut() {

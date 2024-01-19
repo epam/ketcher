@@ -55,7 +55,7 @@ class ClipArea extends Component {
         if (!this.props.focused()) {
           return;
         }
-        if (isClipboardAPIAvailable() && navigator.appCodeName !== 'Mozilla') {
+        if (isClipboardAPIAvailable()) {
           this.props.onCopy().then((data) => {
             if (!data) {
               return;
@@ -77,7 +77,7 @@ class ClipArea extends Component {
         if (!this.props.focused()) {
           return;
         }
-        if (isClipboardAPIAvailable() && navigator.appCodeName !== 'Mozilla') {
+        if (isClipboardAPIAvailable()) {
           this.props.onCut().then((data) => {
             if (!data) {
               return;
@@ -99,7 +99,7 @@ class ClipArea extends Component {
         if (!this.props.focused()) {
           return;
         }
-        if (isClipboardAPIAvailable() && navigator.appCodeName !== 'Mozilla') {
+        if (isClipboardAPIAvailable()) {
           navigator.clipboard.read().then((data) => {
             if (!data) {
               return;

@@ -49,11 +49,30 @@ export class PolymerBondRenderer extends BaseRenderer {
     );
   }
 
+  private isMonomersTypeDifferent() {
+    return (
+      (this.polymerBond.secondMonomer &&
+        [Peptide, Chem].some(
+          (type) => this.polymerBond.firstMonomer instanceof type,
+        ) &&
+        [Sugar, Phosphate].some(
+          (type) => this.polymerBond.secondMonomer instanceof type,
+        )) ||
+      ([Peptide, Chem].some(
+        (type) => this.polymerBond.secondMonomer instanceof type,
+      ) &&
+        [Sugar, Phosphate].some(
+          (type) => this.polymerBond.firstMonomer instanceof type,
+        ))
+    );
+  }
+
   get isSnake() {
     if (
       !this.isSnakeBondAvailableForMonomer(this.polymerBond.firstMonomer) ||
       (this.polymerBond.secondMonomer &&
-        !this.isSnakeBondAvailableForMonomer(this.polymerBond.secondMonomer))
+        !this.isSnakeBondAvailableForMonomer(this.polymerBond.secondMonomer)) ||
+      this.isMonomersTypeDifferent()
     ) {
       return false;
     }
@@ -197,11 +216,14 @@ export class PolymerBondRenderer extends BaseRenderer {
       this.polymerBond.firstMonomer.getPotentialAttachmentPointByBond(
         this.polymerBond,
       ) === 'R1';
-    const verticalLineLength =
-      this.polymerBond.firstMonomer instanceof Sugar ||
-      this.polymerBond.firstMonomer instanceof Phosphate
-        ? RNA_CHAIN_VERTICAL_LINE_LENGTH
-        : VERTICAL_LINE_LENGTH;
+
+    // check if there is nucleotide in current row
+    const isBondConnectedWithNucleotide =
+      this.polymerBond.firstMonomer.isMonomerInRnaChainRow;
+
+    const verticalLineLength = isBondConnectedWithNucleotide
+      ? RNA_CHAIN_VERTICAL_LINE_LENGTH
+      : VERTICAL_LINE_LENGTH;
 
     if (this.isSecondMonomerBottomRight(startPosition, endPosition)) {
       if (
@@ -400,13 +422,13 @@ export class PolymerBondRenderer extends BaseRenderer {
   }
 
   private isSecondMonomerBottomLeft(
-    startPosition,
-    endPosition,
-    VerticalLineLength,
+    startPosition: Vec2,
+    endPosition: Vec2,
+    verticalLineLength: number,
   ): boolean {
     return (
       endPosition.y - startPosition.y >=
-        2 * (VerticalLineLength + DOUBLE_CORNER_LENGTH) &&
+        2 * (verticalLineLength + DOUBLE_CORNER_LENGTH) &&
       endPosition.x - startPosition.x <=
         DOUBLE_CORNER_LENGTH + LINE_FROM_MONOMER_LENGTH + this.getMonomerWidth()
     );
@@ -421,14 +443,14 @@ export class PolymerBondRenderer extends BaseRenderer {
   }
 
   private isSecondMonomerLeft(
-    startPosition,
-    endPosition,
-    VerticalLineLength,
+    startPosition: Vec2,
+    endPosition: Vec2,
+    verticalLineLength: number,
   ): boolean {
     return (
       startPosition.y - endPosition.y < 0 &&
       startPosition.y - endPosition.y >
-        -2 * (VerticalLineLength + DOUBLE_CORNER_LENGTH) &&
+        -2 * (verticalLineLength + DOUBLE_CORNER_LENGTH) &&
       endPosition.x - startPosition.x <=
         DOUBLE_CORNER_LENGTH + LINE_FROM_MONOMER_LENGTH + this.getMonomerWidth()
     );

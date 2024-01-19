@@ -42,7 +42,6 @@ import { getCurrentCenterPointOfCanvas } from 'application/utils';
 import {
   getNextMonomerInChain,
   getRnaBaseMonomerFromSugar,
-  isMonomerBeginningOfChain,
 } from 'domain/helpers/monomers';
 
 const HORIZONTAL_DISTANCE_FROM_MONOMER = 50;
@@ -64,8 +63,8 @@ type RnaPresetAdditionParams = {
 
 type Nucleotide = {
   sugar: Sugar;
-  rnaBase: RNABase | undefined;
-  phosphate: Phosphate | undefined;
+  rnaBase: RNABase;
+  phosphate: Phosphate;
 };
 
 export class DrawingEntitiesManager {
@@ -872,7 +871,8 @@ export class DrawingEntitiesManager {
     const heightMonomerWithBond =
       monomerHeight + VERTICAL_DISTANCE_FROM_MONOMER;
     maxVerticalDistance = Math.max(maxVerticalDistance, heightMonomerWithBond);
-
+    monomer.isMonomerInRnaChainRow =
+      maxVerticalDistance > heightMonomerWithBond;
     const oldMonomerPosition = monomer.position;
     const operation = new MonomerMoveOperation(
       this.rearrangeChainModelChange.bind(
@@ -897,12 +897,14 @@ export class DrawingEntitiesManager {
       if (rearrangedMonomersSet.has(nextMonomer.id)) {
         continue;
       }
-      lastPosition = this.getNextPosition(
+      const positionAndDistance = this.getNextPositionAndDistance(
         lastPosition,
         monomerWidth,
-        heightMonomerWithBond,
+        maxVerticalDistance,
         canvasWidth,
       );
+      lastPosition = positionAndDistance.lastPosition;
+      maxVerticalDistance = positionAndDistance.maxVerticalDistance;
       if (
         (attachmentPointName === 'R2' &&
           nextMonomer.getAttachmentPointByBond(polymerBond) === 'R1') ||
@@ -950,20 +952,21 @@ export class DrawingEntitiesManager {
     const width = nucleotideSize.width;
     const heightWithBond = height + RNA_CHAIN_VERTICAL_DISTANCE_FROM_MONOMER;
     maxVerticalDistance = Math.max(maxVerticalDistance, heightWithBond);
-
+    nucleotide.sugar.isMonomerInRnaChainRow =
+      maxVerticalDistance > heightWithBond;
+    nucleotide.phosphate.isMonomerInRnaChainRow =
+      maxVerticalDistance > heightWithBond;
     const oldSugarPosition = nucleotide.sugar.position;
     const newPositionOfModel = Coordinates.canvasToModel(lastPosition);
-    const phosphatePosition = Coordinates.canvasToModel(
+    const phosphatePositionOfModel = Coordinates.canvasToModel(
       new Vec2(
         lastPosition.x + (nucleotide.sugar.renderer?.width ?? 0) + 45,
         lastPosition.y,
       ),
     );
-    const rnaBasePosition = Coordinates.canvasToModel(
-      new Vec2(
-        lastPosition.x,
-        lastPosition.y + (nucleotide.sugar.renderer?.height ?? 0) + 45,
-      ),
+    const rnaBasePosition = new Vec2(
+      lastPosition.x,
+      lastPosition.y + (nucleotide.sugar.renderer?.height ?? 0) + 45,
     );
 
     this.addRnaOperations(
@@ -975,18 +978,21 @@ export class DrawingEntitiesManager {
     this.addRnaOperations(
       command,
       nucleotide.phosphate?.position,
-      phosphatePosition,
+      phosphatePositionOfModel,
       nucleotide.phosphate,
     );
-    this.addRnaOperations(
-      command,
-      nucleotide.rnaBase?.position,
-      rnaBasePosition,
+    rearrangedMonomersSet.add(nucleotide.sugar.id);
+    rearrangedMonomersSet.add(nucleotide.phosphate?.id);
+    // need to track the chain from rna base monomer
+    // TODO: would rna base chain contains other nucleotides? how to calculate the maxVerticalDistance?
+    const rearrangeBaseResult = this.reArrangeChainInRecursive(
       nucleotide.rnaBase,
+      rnaBasePosition,
+      canvasWidth,
+      rearrangedMonomersSet,
+      maxVerticalDistance,
     );
-    Object.keys(nucleotide).forEach((key) => {
-      rearrangedMonomersSet.add(nucleotide[key].id);
-    });
+    command.merge(rearrangeBaseResult.command);
     const polymerBond = nucleotide.phosphate?.attachmentPointsToBonds.R2;
     if (!polymerBond) {
       return {
@@ -999,22 +1005,21 @@ export class DrawingEntitiesManager {
       polymerBond.secondMonomer === nucleotide.phosphate
         ? polymerBond.firstMonomer
         : polymerBond.secondMonomer;
-    if (!nextMonomer) {
+    if (!nextMonomer || rearrangedMonomersSet.has(nextMonomer.id)) {
       return {
         command,
         lastPosition,
         maxVerticalDistance,
       };
     }
-    if (rearrangedMonomersSet.has(nextMonomer.id)) {
-      return command;
-    }
-    lastPosition = this.getNextPosition(
+    const positionAndDistance = this.getNextPositionAndDistance(
       lastPosition,
       width,
-      heightWithBond,
+      maxVerticalDistance,
       canvasWidth,
     );
+    lastPosition = positionAndDistance.lastPosition;
+    maxVerticalDistance = positionAndDistance.maxVerticalDistance;
     const rearrangeResult = this.reArrangeChainInRecursive(
       nextMonomer,
       lastPosition,
@@ -1124,8 +1129,6 @@ export class DrawingEntitiesManager {
         (potentialFirstMonomer, potentialFirstMonomerIndex) => {
           if (
             potentialFirstMonomerIndex > monomerIndex &&
-            // TODO: which case could cause this scenario? (current chain contains other first monomers)
-            // Do i need to inplement this for rna chains?
             currentMonomerChain.includes(potentialFirstMonomer)
           ) {
             isFirstMonomerInChain = false;
@@ -1137,16 +1140,6 @@ export class DrawingEntitiesManager {
       }
     });
     return filteredFirstMonomersInChains;
-  }
-
-  public getFirstRnaMonomersInChains() {
-    // TODO: is this alright for get the rna backbone monomer?
-    const firstMonomersInChains = Array.from(this.monomers.values()).filter(
-      (monomer) =>
-        (monomer instanceof Sugar || monomer instanceof Phosphate) &&
-        isMonomerBeginningOfChain(monomer, [Sugar, Phosphate]),
-    );
-    return firstMonomersInChains;
   }
 
   public reArrangeChainInRecursive(
@@ -1175,7 +1168,7 @@ export class DrawingEntitiesManager {
         return { command, lastPosition, maxVerticalDistance };
       }
     }
-    // TODO: if the first monomer is single sugar OR phosphate, snake-mode should still be applied to it
+    // if the first monomer is single sugar OR phosphate, snake-mode should still be applied to it
     rearrangeResult = this.reArrangeChain(
       monomer,
       lastPosition,
@@ -1189,7 +1182,7 @@ export class DrawingEntitiesManager {
     return { command, lastPosition, maxVerticalDistance };
   }
 
-  public getNextPosition(
+  public getNextPositionAndDistance(
     lastPosition: Vec2,
     width: number,
     height: number,
@@ -1204,13 +1197,19 @@ export class DrawingEntitiesManager {
       canvasWidth;
 
     if (!isMonomerFitCanvas) {
-      return getFirstPosition(height, lastPosition);
+      return {
+        maxVerticalDistance: 0,
+        lastPosition: getFirstPosition(height, lastPosition),
+      };
     }
 
-    return new Vec2({
-      x: lastPosition.x + width + HORIZONTAL_DISTANCE_FROM_MONOMER,
-      y: lastPosition.y,
-    });
+    return {
+      maxVerticalDistance: height,
+      lastPosition: new Vec2({
+        x: lastPosition.x + width + HORIZONTAL_DISTANCE_FROM_MONOMER,
+        y: lastPosition.y,
+      }),
+    };
   }
 
   public reArrangeMonomers(canvasWidth: number, firstMonomers: BaseMonomer[]) {
@@ -1219,8 +1218,7 @@ export class DrawingEntitiesManager {
       y: MONOMER_START_Y_POSITION,
     });
     const command = new Command();
-    // TODO: bonds connecting RNA monomers to the monomers of peptides or CHEMs should remain straight--no snake mode
-    // peptide monomers, CHEMs could also be in the front
+    // bonds connecting RNA monomers to the monomers of peptides or CHEMs should remain straight--no snake mode
     firstMonomers.forEach((monomer) => {
       const rearrangeResult = this.reArrangeChainInRecursive(
         monomer,

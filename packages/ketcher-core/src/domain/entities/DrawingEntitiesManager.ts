@@ -951,10 +951,9 @@ export class DrawingEntitiesManager {
     const width = nucleotideSize.width;
     const heightWithBond = height + RNA_CHAIN_VERTICAL_DISTANCE_FROM_MONOMER;
     maxVerticalDistance = Math.max(maxVerticalDistance, heightWithBond);
-    nucleotide.sugar.isMonomerInRnaChainRow =
-      maxVerticalDistance > heightWithBond;
-    nucleotide.phosphate.isMonomerInRnaChainRow =
-      maxVerticalDistance > heightWithBond;
+    nucleotide.sugar.isMonomerInRnaChainRow = true;
+    nucleotide.phosphate.isMonomerInRnaChainRow = true;
+    nucleotide.phosphate.isMonomerInRnaChainRow = true;
     const oldSugarPosition = nucleotide.sugar.position;
     const newPositionOfModel = Coordinates.canvasToModel(lastPosition);
     const phosphatePositionOfModel = Coordinates.canvasToModel(

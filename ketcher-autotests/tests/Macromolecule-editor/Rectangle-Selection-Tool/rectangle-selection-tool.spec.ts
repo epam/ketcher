@@ -418,4 +418,19 @@ test.describe('Rectangle Selection Tool', () => {
     await dragMouseTo(x, y, page);
     await takeEditorScreenshot(page);
   });
+
+  test('Check that you can select all kind of monomers and delete by pressing Delete button and then can Undo it', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Selection tool
+    Description: Monomers are deleted from canvas and then appears after pressing Undo.
+    */
+    await openFileAndAddToCanvas('KET/all-kind-of-monomers.ket', page);
+    await page.keyboard.press('Control+a');
+    await page.getByTestId('erase-button').click();
+    await takeEditorScreenshot(page);
+    await page.getByTestId('undo-button').click();
+    await takeEditorScreenshot(page);
+  });
 });

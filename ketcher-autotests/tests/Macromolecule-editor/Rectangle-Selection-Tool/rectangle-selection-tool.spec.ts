@@ -353,4 +353,69 @@ test.describe('Rectangle Selection Tool', () => {
       );
     });
   }
+
+  test('Check selection/deselection for all kind monomers (Peptides, RNA, CHEM)', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Selection tool
+    Description: Selection of monomers looks in accordance with the design.
+    */
+    const x = 100;
+    const y = 100;
+    await openFileAndAddToCanvas('KET/all-kind-of-monomers.ket', page);
+    await page.keyboard.press('Control+a');
+    await takeEditorScreenshot(page);
+    await page.mouse.click(x, y);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Move a monomer, then use the Undo/Redo function', async ({ page }) => {
+    /* 
+    Test case: Selection tool
+    Description: Undo/Redo functions works after selection and moving monomer.
+    */
+    const x = 200;
+    const y = 200;
+    await addPeptideOnCanvas(page, 'Nal___3-naphthylalanine');
+    await selectRectangleSelectionTool(page);
+    await page.getByText('Nal').locator('..').first().hover();
+    await dragMouseTo(x, y, page);
+    await page.getByTestId('undo-button').click();
+    await takeEditorScreenshot(page);
+    await page.getByTestId('redo-button').click();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check that you can move monomers on canvas in snake-view', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Selection tool
+    Description: Monomers moved to new position in Snake mode view.
+    */
+    const x = 900;
+    const y = 500;
+    await openFileAndAddToCanvas('KET/snake-mode-peptides.ket', page);
+    await page.getByTestId('snake-mode-button').click();
+    await page.keyboard.press('Control+a');
+    await page.getByText('Hhs').locator('..').first().hover();
+    await dragMouseTo(x, y, page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Create multiple rows of monomers and move monomer between different rows', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Selection tool
+    Description: Monomer moved to new position through rows of monomers.
+    */
+    const x = 900;
+    const y = 500;
+    await openFileAndAddToCanvas('KET/two-rows-of-monomers.ket', page);
+    await page.getByText('Hhs').locator('..').first().hover();
+    await dragMouseTo(x, y, page);
+    await takeEditorScreenshot(page);
+  });
 });

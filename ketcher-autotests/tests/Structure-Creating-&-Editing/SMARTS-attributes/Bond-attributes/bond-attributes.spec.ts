@@ -178,7 +178,7 @@ test.describe('Checking bond attributes in SMARTS format', () => {
       page,
       setBondType,
       'Single/Aromatic-option',
-      '[#6](-[#6])(-[#6])-,:[#6]',
+      '[#6](-[#6])(-[#6])[#6]',
     );
   });
 

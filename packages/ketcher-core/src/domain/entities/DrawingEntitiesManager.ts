@@ -175,6 +175,19 @@ export class DrawingEntitiesManager {
     return command;
   }
 
+  public addDrawingEntityToSelection(drawingEntity: DrawingEntity) {
+    const command = new Command();
+
+    if (drawingEntity.selected) {
+      drawingEntity.turnOffSelection();
+    } else {
+      drawingEntity.turnOnSelection();
+    }
+    command.addOperation(new DrawingEntitySelectOperation(drawingEntity));
+
+    return command;
+  }
+
   public moveDrawingEntityModelChange(
     drawingEntity: DrawingEntity,
     offset?: Vec2,
@@ -297,6 +310,10 @@ export class DrawingEntitiesManager {
         // Do not delete connected bond if it is selected because it is done deleteDrawingEntity method
         // This check helps to avoid operations duplication
         if (bond.selected) return;
+
+        // We need to remove connected bond when doing a group selection even if it is not selected
+        // and mark it as selected to avoid operations duplication
+        bond.turnOnSelection();
         command.merge(this.deletePolymerBond(bond));
       });
     }

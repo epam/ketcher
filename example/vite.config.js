@@ -6,8 +6,8 @@ import { createHtmlPlugin } from 'vite-plugin-html';
 import vitePluginRaw from 'vite-plugin-raw';
 import svgr from 'vite-plugin-svgr';
 import ketcherCoreTSConfig from '../packages/ketcher-core/tsconfig.json';
-import { valuesToReplace as polymerEditorValues } from '../packages/ketcher-polymer-editor-react/rollup.config';
-import polymerEditorTSConfig from '../packages/ketcher-polymer-editor-react/tsconfig.json';
+import { valuesToReplace as polymerEditorValues } from '../packages/ketcher-macromolecules/rollup.config';
+import polymerEditorTSConfig from '../packages/ketcher-macromolecules/tsconfig.json';
 import { valuesToReplace as ketcherReactValues } from '../packages/ketcher-react/rollup.config';
 import ketcherReactTSConfig from '../packages/ketcher-react/tsconfig.json';
 import ketcherStandaloneTSConfig from '../packages/ketcher-standalone/tsconfig.json';
@@ -35,7 +35,7 @@ function resolver(source, importer, options) {
 const getTSConfigByPackage = (packageName) => {
   return {
     'ketcher-core': ketcherCoreTSConfig,
-    'ketcher-polymer-editor-react': polymerEditorTSConfig,
+    'ketcher-macromolecules': polymerEditorTSConfig,
     'ketcher-react': ketcherReactTSConfig,
     'ketcher-standalone': ketcherStandaloneTSConfig,
   }[packageName];
@@ -110,7 +110,7 @@ export default defineConfig({
       values: ketcherReactValues,
     }),
     replace({
-      include: '**/ketcher-polymer-editor-react/src/**',
+      include: '**/ketcher-macromolecules/src/**',
       preventAssignment: true,
       values: polymerEditorValues,
     }),
@@ -175,17 +175,17 @@ export default defineConfig({
         ),
       },
       {
-        find: 'ketcher-polymer-editor-react',
+        find: 'ketcher-macromolecules',
         replacement: resolve(
           __dirname,
-          '../packages/ketcher-polymer-editor-react/src/index.tsx',
+          '../packages/ketcher-macromolecules/src/index.tsx',
         ),
       },
 
       /** Get aliases from packages' tsconfig.json */
       ...getAliasesByPackage('ketcher-core'),
       ...getAliasesByPackage('ketcher-react'),
-      ...getAliasesByPackage('ketcher-polymer-editor-react'),
+      ...getAliasesByPackage('ketcher-macromolecules'),
       ...getAliasesByPackage('ketcher-standalone'),
       {
         find: 'src', // every package has this implicit alias

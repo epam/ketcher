@@ -578,6 +578,8 @@ export class DrawingEntitiesManager {
     );
 
     command.addOperation(operation);
+    monomer.turnOffHover();
+    monomer.turnOffAttachmentPointsVisibility();
 
     return command;
   }

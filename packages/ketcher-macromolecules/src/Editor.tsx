@@ -18,7 +18,11 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Global, ThemeProvider } from '@emotion/react';
 import { createTheme } from '@mui/material/styles';
 import { debounce, merge } from 'lodash';
-import { SdfSerializer } from 'ketcher-core';
+import {
+  SdfSerializer,
+  hotkeysConfiguration,
+  generateMenuShortcuts,
+} from 'ketcher-core';
 import monomersData from './data/monomers.sdf';
 
 import { store } from 'state';
@@ -104,6 +108,9 @@ interface EditorProps {
 }
 
 const noPreviewTools = ['bond-single'];
+
+const shortcuts =
+  generateMenuShortcuts<typeof hotkeysConfiguration>(hotkeysConfiguration);
 
 function EditorContainer({
   onInit,
@@ -356,20 +363,32 @@ function MenuComponent() {
       <Menu.Group>
         <Menu.Item
           itemId="clear"
-          title="Clear Canvas"
+          title={`Clear Canvas (${shortcuts.clear})`}
           testId="clear-canvas-button"
         />
       </Menu.Group>
       <Menu.Group>
-        <Menu.Item itemId="undo" testId="undo-button" />
-        <Menu.Item itemId="redo" testId="redo-button" />
+        <Menu.Item
+          itemId="undo"
+          title={`Undo (${shortcuts.undo})`}
+          testId="undo-button"
+        />
+        <Menu.Item
+          itemId="redo"
+          title={`Redo (${shortcuts.redo})`}
+          testId="redo-button"
+        />
       </Menu.Group>
       <Menu.Group>
         <Menu.Item itemId="open" title="Open..." testId="open-button" />
         <Menu.Item itemId="save" title="Save as..." testId="save-button" />
       </Menu.Group>
       <Menu.Group>
-        <Menu.Item itemId="erase" title="Erase" testId="erase-button" />
+        <Menu.Item
+          itemId="erase"
+          title={`Erase (${shortcuts.erase})`}
+          testId="erase-button"
+        />
         <Menu.Item
           itemId="select-rectangle"
           title="Select Rectangle"
@@ -391,15 +410,19 @@ function MenuComponent() {
         />
       </Menu.Group>
       <Menu.Group>
-        <Menu.Item itemId="zoom-in" title="Zoom In" testId="zoom-in-button" />
+        <Menu.Item
+          itemId="zoom-in"
+          title={`Zoom In (${shortcuts['zoom-plus']})`}
+          testId="zoom-in-button"
+        />
         <Menu.Item
           itemId="zoom-out"
-          title="Zoom Out"
+          title={`Zoom Out (${shortcuts['zoom-minus']})`}
           testId="zoom-out-button"
         />
         <Menu.Item
           itemId="zoom-reset"
-          title="Reset Zoom"
+          title={`Reset Zoom (${shortcuts['zoom-reset']})`}
           testId="reset-zoom-button"
         />
       </Menu.Group>

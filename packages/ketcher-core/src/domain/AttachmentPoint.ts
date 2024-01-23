@@ -14,15 +14,15 @@ import { editorEvents } from 'application/editor/editorEvents';
 import { AttachmentPointConstructorParams, AttachmentPointName } from './types';
 
 export class AttachmentPoint {
-  static attachmentPointVector = 12;
+  static attachmentPointVector = 6;
   static attachmentPointLength = Math.hypot(
     AttachmentPoint.attachmentPointVector,
     AttachmentPoint.attachmentPointVector,
   );
 
-  static labelOffset = 7;
-  static radius = 6;
-  static labelSize = { x: 7, y: 5 };
+  static labelOffset = 3.5;
+  static radius = 3;
+  static labelSize = { x: 3.5, y: 2.5 };
   static colors = {
     fillUsed: '#0097A8',
     fill: 'white',
@@ -110,7 +110,7 @@ export class AttachmentPoint {
       .attr('y2', attachmentPointCoordinates.y)
       .attr('stroke', stroke)
       .attr('stroke-linecap', 'round')
-      .attr('stroke-width', '2px');
+      .attr('stroke-width', '1px');
 
     attachmentPointElement
       .append('circle')
@@ -127,7 +127,7 @@ export class AttachmentPoint {
       .text(this.attachmentPointName)
       .attr('x', labelCoordinatesOnMonomer.x)
       .attr('y', labelCoordinatesOnMonomer.y)
-      .style('font-size', '12px')
+      .style('font-size', '6px')
       .style('fill', '#585858')
       .style('user-select', 'none');
 

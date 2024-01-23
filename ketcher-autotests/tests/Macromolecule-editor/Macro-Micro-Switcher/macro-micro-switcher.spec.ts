@@ -22,7 +22,7 @@ import {
 } from '@utils';
 
 const topLeftCorner = {
-  x: -425,
+  x: -325,
   y: -235,
 };
 
@@ -508,7 +508,14 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher
     Description: In Macro mode ABS, AND and OR is not appear
     */
-    await openFileAndAddToCanvas('KET/three-alpha-d-allopyranose.ket', page);
+    const xOffsetFromCenter = 200;
+    const yOffsetFromCenter = 0;
+    await openFileAndAddToCanvas(
+      'KET/three-alpha-d-allopyranose.ket',
+      page,
+      xOffsetFromCenter,
+      yOffsetFromCenter,
+    );
     await turnOnMacromoleculesEditor(page);
     await waitForRender(page, async () => {
       await page.getByText('F1').locator('..').hover();
@@ -541,7 +548,7 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: Ket-structure pasted from the clipboard in Micro mode  is visible in Macro mode when hover on it
     */
     const topLeftCornerCoords = {
-      x: 100,
+      x: 500,
       y: 100,
     };
     await pasteFromClipboard(
@@ -562,7 +569,7 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: Mol-structure pasted from the clipboard in Micro mode  is visible in Macro mode when hover on it
     */
     const coordsToClick = {
-      x: 200,
+      x: 400,
       y: 100,
     };
     await pasteFromClipboard(

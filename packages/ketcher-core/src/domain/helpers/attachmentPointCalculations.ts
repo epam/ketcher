@@ -67,12 +67,12 @@ export function findLabelPoint(
 
   let addedOrtogonalOffset = 0;
   const addedParallelOffset =
-    lineOffset + Math.max(labelSize.x, labelSize.y) + 2;
+    lineOffset + Math.max(labelSize.x, labelSize.y) + 1;
   if (isUsed) {
     if (angle >= -270 && angle <= 0) {
-      addedOrtogonalOffset = 10;
+      addedOrtogonalOffset = 5;
     } else if (angle >= -360 && angle < -270) {
-      addedOrtogonalOffset = -10;
+      addedOrtogonalOffset = -5;
     }
   }
 

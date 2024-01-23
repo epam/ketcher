@@ -29,9 +29,9 @@ exports[`PeptideRenderer should render peptide 1`] = `
       />
       <text
         fill="black"
-        font-size="12px"
+        font-size="6px"
         font-weight="700"
-        line-height="12px"
+        line-height="6px"
         pointer-events="none"
         style="cursor: pointer; user-select: none;"
         x="0"
@@ -42,22 +42,22 @@ exports[`PeptideRenderer should render peptide 1`] = `
       <text
         direction="rtl"
         fill="#7C7C7F"
-        font-size="12px"
+        font-size="6px"
         font-weight="500"
-        line-height="14px"
+        line-height="7px"
         text-align="right"
-        x="20"
+        x="10"
         y="-1"
       />
       <text
         direction="rtl"
         fill="#0097A8"
-        font-size="12px"
+        font-size="6px"
         font-weight="700"
-        line-height="14px"
+        line-height="7px"
         text-align="right"
-        x="-13"
-        y="20"
+        x="-6"
+        y="10"
       />
     </g>
   </g>

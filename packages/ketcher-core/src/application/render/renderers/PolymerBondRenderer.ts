@@ -12,8 +12,8 @@ import { SnakeMode } from 'application/editor/modes/internal';
 import { Coordinates } from 'application/editor/shared/coordinates';
 
 const LINE_FROM_MONOMER_LENGTH = 15;
-const VERTICAL_LINE_LENGTH = 42;
-const CORNER_LENGTH = 8;
+const VERTICAL_LINE_LENGTH = 21;
+const CORNER_LENGTH = 4;
 const DOUBLE_CORNER_LENGTH = CORNER_LENGTH * 2;
 enum LINE_DIRECTION {
   Horizontal = 'Horizontal',
@@ -136,7 +136,7 @@ export class PolymerBondRenderer extends BaseRenderer {
     this.bodyElement = rootElement
       .append('path')
       .attr('stroke', this.polymerBond.finished ? '#333333' : '#0097A8')
-      .attr('stroke-width', 2)
+      .attr('stroke-width', 1)
       .attr('class', 'selection-area')
       .attr('d', this.path)
       .attr('fill-opacity', 0)
@@ -392,31 +392,31 @@ export class PolymerBondRenderer extends BaseRenderer {
   }
 
   private addLineFromTopToRight() {
-    this.path = `${this.path} c 0,4.418 3.582,8 8,8`;
+    this.path = `${this.path} c 0,4.418 3.582,${CORNER_LENGTH} ${CORNER_LENGTH},${CORNER_LENGTH}`;
   }
 
   private addLineFromLeftToTop() {
-    this.path = `${this.path} c 4.418,0 8,-3.582 8,-8`;
+    this.path = `${this.path} c 4.418,0 ${CORNER_LENGTH},-3.582 ${CORNER_LENGTH},-${CORNER_LENGTH}`;
   }
 
   private addLineFromBottomToRight() {
-    this.path = `${this.path} c 0,-4.418 3.582,-8 8,-8`;
+    this.path = `${this.path} c 0,-4.418 3.582,-${CORNER_LENGTH} ${CORNER_LENGTH},-${CORNER_LENGTH}`;
   }
 
   private addLineFromLeftToBottom() {
-    this.path = `${this.path} c 4.418,0 8,3.582 8,8`;
+    this.path = `${this.path} c 4.418,0 ${CORNER_LENGTH},3.582 ${CORNER_LENGTH},${CORNER_LENGTH}`;
   }
 
   private addLineFromTopToLeft() {
-    this.path = `${this.path} c 0,4.418 -3.582,8 -8,8`;
+    this.path = `${this.path} c 0,4.418 -3.582,${CORNER_LENGTH} -${CORNER_LENGTH},${CORNER_LENGTH}`;
   }
 
   private addLineFromRightToUp() {
-    this.path = `${this.path} c -4.418,0 -8,-3.582 -8,-8`;
+    this.path = `${this.path} c -4.418,0 -${CORNER_LENGTH},-3.582 -${CORNER_LENGTH},-${CORNER_LENGTH}`;
   }
 
   private addLineFromRightToBottom() {
-    this.path = `${this.path} c -4.418,0 -8,3.582 -8,8`;
+    this.path = `${this.path} c -4.418,0 -${CORNER_LENGTH},3.582 -${CORNER_LENGTH},${CORNER_LENGTH}`;
   }
 
   private addLine(
@@ -446,7 +446,7 @@ export class PolymerBondRenderer extends BaseRenderer {
     this.bodyElement = rootElement
       .append('line')
       .attr('stroke', this.polymerBond.finished ? '#333333' : '#0097A8')
-      .attr('stroke-width', 2)
+      .attr('stroke-width', 1)
       .attr('class', 'selection-area')
       .attr('x1', this.scaledPosition.startPosition.x)
       .attr('y1', this.scaledPosition.startPosition.y)
@@ -500,7 +500,7 @@ export class PolymerBondRenderer extends BaseRenderer {
           .attr('y1', this.scaledPosition.startPosition.y)
           .attr('x2', this.scaledPosition.endPosition.x)
           .attr('y2', this.scaledPosition.endPosition.y)
-          .attr('stroke-width', '10');
+          .attr('stroke-width', '5');
       }
     } else {
       this.selectionElement?.remove();

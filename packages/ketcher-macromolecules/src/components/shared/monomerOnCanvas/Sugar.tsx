@@ -17,16 +17,16 @@
 export const SugarAvatar = () => (
   <>
     <symbol id="sugar" viewBox="0 0 70 70" width="70" height="70">
-      <rect className="monomer-body" width="57" height="57" rx="10" />
+      <rect className="monomer-body" width="28.5" height="28.5" rx="5" />
     </symbol>
-    <symbol id="sugar-selection" viewBox="-2 -2 100 100" width="70" height="70">
+    <symbol id="sugar-selection" viewBox="-1 -1 100 100" width="70" height="70">
       <rect
-        width="78"
-        height="78"
-        rx="10"
+        width="39"
+        height="39"
+        rx="5"
         fill="none"
         stroke="#0097A8"
-        strokeWidth="5"
+        strokeWidth="2"
       />
     </symbol>
   </>

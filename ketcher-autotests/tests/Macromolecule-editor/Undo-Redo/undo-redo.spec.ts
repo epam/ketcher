@@ -126,16 +126,16 @@ test.describe('Undo Redo', () => {
     await clickUndo(page);
     await takeEditorScreenshot(page);
 
-    const startX = 100;
-    const startY = 100;
-    const endX = 900;
-    const endY = 900;
+    const startX = 10;
+    const startY = 10;
+    const endX = 1900;
+    const endY = 1900;
     await selectRectangleArea(page, startX, startY, endX, endY);
 
-    const coords = { x: 840, y: 470 };
+    const coords = { x: 100, y: 100 };
     await page.mouse.move(coords.x, coords.y);
 
-    await dragMouseTo(coords.x + 100, coords.y + 100, page);
+    await dragMouseTo(coords.x + 500, coords.y + 500, page);
     await takeEditorScreenshot(page);
   });
 });

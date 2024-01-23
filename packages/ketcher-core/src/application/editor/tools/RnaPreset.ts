@@ -36,12 +36,12 @@ class RnaPresetTool implements Tool {
   private rnaBasePreviewRenderer: BaseMonomerRenderer | undefined;
   private phosphatePreviewRenderer: BaseMonomerRenderer | undefined;
   private sugarPreviewRenderer: BaseMonomerRenderer | undefined;
-  readonly MONOMER_PREVIEW_SCALE_FACTOR = 0.25;
-  readonly MONOMER_PREVIEW_OFFSET_X = 45;
-  readonly MONOMER_PREVIEW_OFFSET_Y = 45;
-  readonly RNA_BASE_PREVIEW_OFFSET_X = 2;
-  readonly RNA_BASE_PREVIEW_OFFSET_Y = 20;
-  readonly PHOSPHATE_PREVIEW_OFFSET_X = 18;
+  readonly MONOMER_PREVIEW_SCALE_FACTOR = 1;
+  readonly MONOMER_PREVIEW_OFFSET_X = 30;
+  readonly MONOMER_PREVIEW_OFFSET_Y = 30;
+  readonly RNA_BASE_PREVIEW_OFFSET_X = 0;
+  readonly RNA_BASE_PREVIEW_OFFSET_Y = 74;
+  readonly PHOSPHATE_PREVIEW_OFFSET_X = 73;
   history: EditorHistory;
 
   constructor(private editor: CoreEditor, preset: IRnaPreset) {

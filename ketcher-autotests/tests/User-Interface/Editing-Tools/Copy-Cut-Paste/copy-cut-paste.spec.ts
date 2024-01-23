@@ -506,7 +506,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     const x = 500;
     const y = 300;
-    await openFileAndAddToCanvas('chiral-structure.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/chiral-structure.mol', page);
     await copyAndPaste(page);
     await page.mouse.click(x, y);
   });
@@ -520,7 +520,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     The structure is cut (and then is pasted) with the Chiral flag.
     */
     const anyAtom = 12;
-    await openFileAndAddToCanvas('chiral-structure.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/chiral-structure.mol', page);
     await cutAndPaste(page);
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
@@ -746,7 +746,10 @@ test.describe('Copy/Cut/Paste Actions', () => {
     // Error message when run under docker. But manual test is working.
     const x = 500;
     const y = 300;
-    await openFileAndAddToCanvas('complex-r-group-structure.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/complex-r-group-structure.mol',
+      page,
+    );
     await copyAndPaste(page);
     await page.mouse.click(x, y);
   });
@@ -760,7 +763,10 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     // Error message when run under docker. But manual test is working.
     const anyAtom = 5;
-    await openFileAndAddToCanvas('complex-r-group-structure.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/complex-r-group-structure.mol',
+      page,
+    );
     await cutAndPaste(page);
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);

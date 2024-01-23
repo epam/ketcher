@@ -158,15 +158,21 @@ test.describe('Data S-Group tool', () => {
       Test case: EPMLSOPKET-1517
       Description: User is able to save and open structure with Data S-group.
     */
-    await openFileAndAddToCanvas('chain-with-name-and-value.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/chain-with-name-and-value.mol',
+      page,
+    );
     const expectedFile = await getMolfile(page);
-    await saveToFile('chain-with-name-and-value-expected.mol', expectedFile);
+    await saveToFile(
+      'Molfiles-V2000/chain-with-name-and-value-expected.mol',
+      expectedFile,
+    );
     const METADATA_STRING_INDEX = [1];
     const { fileExpected: molFileExpected, file: molFile } =
       await receiveFileComparisonData({
         page,
         expectedFileName:
-          'tests/test-data/chain-with-name-and-value-expected.mol',
+          'tests/test-data/Molfiles-V2000/chain-with-name-and-value-expected.mol',
         metaDataIndexes: METADATA_STRING_INDEX,
       });
     expect(molFile).toEqual(molFileExpected);

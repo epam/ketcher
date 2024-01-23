@@ -84,7 +84,10 @@ export class AttachmentPoint {
   }
 
   public removeAttachmentPoint() {
-    this.element?.remove();
+    const remove = () => {
+      this.element?.remove();
+    };
+    setTimeout(remove, 1);
   }
 
   private renderAttachmentPointByCoordinates(

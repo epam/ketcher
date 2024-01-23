@@ -175,29 +175,15 @@ export class DrawingEntitiesManager {
     return command;
   }
 
-  private addOperationToCommand(
-    command: Command,
-    drawingEntity: DrawingEntity,
-  ) {
-    const operation = new DrawingEntitySelectOperation(drawingEntity);
-    command.addOperation(operation);
-  }
-
-  public selectCurrentDrawingEntities(drawingEntity: DrawingEntity) {
+  public addDrawingEntityToSelection(drawingEntity: DrawingEntity) {
     const command = new Command();
-
-    this.allEntities.forEach(([, drawingEntity]) => {
-      if (drawingEntity.selected) {
-        this.addOperationToCommand(command, drawingEntity);
-      }
-    });
 
     if (drawingEntity.selected) {
       drawingEntity.turnOffSelection();
     } else {
       drawingEntity.turnOnSelection();
     }
-    this.addOperationToCommand(command, drawingEntity);
+    command.addOperation(new DrawingEntitySelectOperation(drawingEntity));
 
     return command;
   }
@@ -324,6 +310,10 @@ export class DrawingEntitiesManager {
         // Do not delete connected bond if it is selected because it is done deleteDrawingEntity method
         // This check helps to avoid operations duplication
         if (bond.selected) return;
+
+        // We need to remove connected bond when doing a group selection even if it is not selected
+        // and mark it as selected to avoid operations duplication
+        bond.turnOnSelection();
         command.merge(this.deletePolymerBond(bond));
       });
     }

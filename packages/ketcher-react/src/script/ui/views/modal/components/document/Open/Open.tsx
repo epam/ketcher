@@ -40,6 +40,7 @@ const MODAL_STATES = {
   idle: 'idle',
   textEditor: 'textEditor',
   imageRec: 'imageRec',
+  presentationViewer: 'presentationViewer',
 };
 
 const FooterContent = ({ structStr, openHandler, copyHandler, onCancel }) => {
@@ -83,6 +84,7 @@ const Open: FC<Props> = (props) => {
   } = props;
 
   const [structStr, setStructStr] = useState<string>('');
+  const [structList, setStructList] = useState<string[]>([]);
   const [fileName, setFileName] = useState<string>('');
   const [opener, setOpener] = useState<any>();
   const [currentState, setCurrentState] = useState(MODAL_STATES.idle);
@@ -97,8 +99,14 @@ const Open: FC<Props> = (props) => {
 
   const onFileLoad = (files) => {
     const onLoad = (fileContent) => {
-      setStructStr(fileContent);
-      setCurrentState(MODAL_STATES.textEditor);
+      if (fileContent.isPPTX) {
+        setStructStr('');
+        setStructList(fileContent.structures);
+        setCurrentState(MODAL_STATES.presentationViewer);
+      } else {
+        setStructStr(fileContent);
+        setCurrentState(MODAL_STATES.textEditor);
+      }
     };
     const onError = () => errorHandler('Error processing file');
 
@@ -125,7 +133,9 @@ const Open: FC<Props> = (props) => {
   };
 
   const withFooterContent =
-    currentState === MODAL_STATES.textEditor && !isAnalyzingFile;
+    (currentState === MODAL_STATES.textEditor ||
+      currentState === MODAL_STATES.presentationViewer) &&
+    !isAnalyzingFile;
 
   // @TODO after refactoring of Recognize modal
   // add Recognize rendering logic into ViewSwitcher component here
@@ -166,6 +176,7 @@ const Open: FC<Props> = (props) => {
         structStr={structStr}
         inputHandler={setStructStr}
         autoFocus
+        structList={structList}
       />
     </Dialog>
   );

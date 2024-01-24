@@ -59,7 +59,7 @@ export const CDXStructuresViewer = ({
     } else {
       inputHandler(itemsMap[selectedIndex].struct);
     }
-  }, [itemsMap, selectedIndex]);
+  }, [inputHandler, itemsMap, selectedIndex]);
 
   const getImages = useCallback(() => {
     const options = { outputFormat: 'png', bondThickness: 1 };
@@ -84,7 +84,7 @@ export const CDXStructuresViewer = ({
         .catch((error) => {
           return {
             struct: str,
-            error: error.message,
+            error: error.message || error,
           };
         });
     });
@@ -137,7 +137,7 @@ export const CDXStructuresViewer = ({
             <div className={styles.image}>
               <img
                 src={`data:image/png+xml;base64,${itemsMap[selectedIndex]?.imageUrl}`}
-                alt={`preview of a structure #${selectedIndex}`}
+                alt={`preview of a structure #${selectedIndex + 1}`}
               />
             </div>
           )}

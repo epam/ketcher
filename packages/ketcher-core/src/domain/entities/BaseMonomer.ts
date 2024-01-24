@@ -442,4 +442,8 @@ export abstract class BaseMonomer extends DrawingEntity {
 
     return this.firstFreeAttachmentPoint;
   }
+
+  public get isPartOfRna() {
+    return false;
+  }
 }

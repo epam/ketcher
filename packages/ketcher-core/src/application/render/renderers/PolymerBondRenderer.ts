@@ -8,7 +8,7 @@ import { Vec2 } from 'domain/entities';
 import { Peptide } from 'domain/entities/Peptide';
 import { Chem } from 'domain/entities/Chem';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
-import { SnakeMode } from 'application/editor/modes/internal';
+import { SnakeMode } from 'application/editor/modes/';
 import { Coordinates } from 'application/editor/shared/coordinates';
 
 const LINE_FROM_MONOMER_LENGTH = 15;

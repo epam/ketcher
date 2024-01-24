@@ -124,7 +124,7 @@ export class RenderersManager {
     }
   }
 
-  private getNextMonomerInChain(monomer?: BaseMonomer) {
+  public getNextMonomerInChain(monomer?: BaseMonomer) {
     if (!monomer) return undefined;
 
     const r2PolymerBond = monomer.attachmentPointsToBonds.R2;

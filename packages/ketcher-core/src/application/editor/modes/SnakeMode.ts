@@ -1,28 +1,21 @@
-import { Command } from 'domain/entities/Command';
-import { SelectSnakeModeOperation } from '../operations/polymerBond';
-import { CoreEditor } from '../Editor';
+import { BaseMode } from 'application/editor/modes/BaseMode';
+import { CoreEditor, LayoutMode } from 'application/editor';
 
-export class SnakeMode {
-  static #enabled = false;
-
-  static get isEnabled() {
-    return this.#enabled;
+export class SnakeMode extends BaseMode {
+  constructor(previousMode?: LayoutMode) {
+    super('snake-layout-mode', previousMode);
   }
 
-  private static changeSnakeMode(editor: CoreEditor, isSnakeModeEnabled) {
-    editor.events.snakeModeChange.dispatch(isSnakeModeEnabled);
-    this.#enabled = isSnakeModeEnabled;
-  }
-
-  static setSnakeMode(editor: CoreEditor, isSnakeModeEnabled: boolean) {
-    const command = new Command();
-
-    command.addOperation(
-      new SelectSnakeModeOperation(
-        this.changeSnakeMode.bind(this, editor, isSnakeModeEnabled),
-        this.changeSnakeMode.bind(this, editor, !isSnakeModeEnabled),
-      ),
+  public initialize() {
+    const command = super.initialize();
+    const editor = CoreEditor.provideEditorInstance();
+    editor.drawingEntitiesManager.applyFlexLayoutMode();
+    const modelChanges = editor.drawingEntitiesManager.reArrangeChains(
+      editor.canvas.width.baseVal.value,
+      true,
     );
+
+    command.merge(modelChanges);
 
     return command;
   }

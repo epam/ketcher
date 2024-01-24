@@ -123,7 +123,7 @@ export class PolymerBondFinishCreationOperation implements Operation {
   }
 }
 
-export class SelectSnakeModeOperation implements Operation {
+export class SelectLayoutModeOperation implements Operation {
   private onExecute;
   private onInvert;
 

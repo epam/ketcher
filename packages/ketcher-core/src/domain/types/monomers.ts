@@ -1,4 +1,12 @@
-import { BaseMonomer, Struct } from 'domain/entities';
+import {
+  BaseMonomer,
+  Chem,
+  Peptide,
+  Phosphate,
+  RNABase,
+  Struct,
+  Sugar,
+} from 'domain/entities';
 import { IKetAttachmentPoint } from 'application/formatters/types/ket';
 import { D3SvgElementSelection } from 'application/render/types';
 
@@ -65,3 +73,5 @@ export type AttachmentPointConstructorParams = {
   angle: number;
   isSnake: boolean;
 };
+
+export type ConcreteMonomer = Peptide | Sugar | RNABase | Phosphate | Chem;

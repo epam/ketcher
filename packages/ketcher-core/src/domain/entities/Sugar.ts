@@ -90,4 +90,11 @@ export class Sugar extends BaseMonomer {
 
     return undefined;
   }
+
+  public get isPartOfRna(): boolean {
+    return (
+      this.attachmentPointsToBonds.R3?.getAnotherMonomer(this) instanceof
+      RNABase
+    );
+  }
 }

@@ -1,6 +1,7 @@
 import { Page, test, expect } from '@playwright/test';
 import {
   addMonomerToCanvas,
+  addRnaPresetOnCanvas,
   clickRedo,
   clickUndo,
   selectSingleBondTool,
@@ -119,7 +120,7 @@ test.describe('Snake Bond Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Check snake mode arrange', async ({ page }) => {
+  test('Check snake mode arrange for peptides chain', async ({ page }) => {
     /* 
     Test case: #3280 - Check snake mode
     Description: Snake bond tool
@@ -268,5 +269,188 @@ test.describe('Snake Bond Tool', () => {
 
     await clickRedo(page);
     await expect(snakeModeButton).toHaveClass(/active/);
+  });
+
+  test('Create snake bond between RNA nucleotides', async ({ page }) => {
+    await page.getByText('RNA').click();
+    await selectSnakeBondTool(page);
+
+    await addRnaPresetOnCanvas(page, 'A_A_R_P', 300, 300);
+    await addRnaPresetOnCanvas(page, 'C_C_R_P', 400, 600);
+    await addRnaPresetOnCanvas(page, 'G_G_R_P', 600, 400);
+
+    await selectSingleBondTool(page);
+
+    const phosphate1 = await page
+      .locator(`//\*[name() = 'g' and ./\*[name()='text' and .='P']]`)
+      .nth(0);
+
+    const phosphate2 = await page
+      .locator(`//\*[name() = 'g' and ./\*[name()='text' and .='P']]`)
+      .nth(1);
+
+    const sugar1 = await page
+      .locator(`//\*[name() = 'g' and ./\*[name()='text' and .='R']]`)
+      .nth(1);
+    const sugar2 = await page
+      .locator(`//\*[name() = 'g' and ./\*[name()='text' and .='R']]`)
+      .nth(2);
+
+    await bondTwoMonomers(page, phosphate1, sugar1);
+    await bondTwoMonomers(page, phosphate2, sugar2);
+
+    await takeEditorScreenshot(page);
+  });
+
+  test('Create snake bond for different chains', async ({ page }) => {
+    const peptide1 = await addMonomerToCanvas(
+      page,
+      MONOMER_NAME_TZA,
+      MONOMER_ALIAS_TZA,
+      500,
+      500,
+      0,
+    );
+    const peptide2 = await addMonomerToCanvas(
+      page,
+      MONOMER_NAME_TZA,
+      MONOMER_ALIAS_TZA,
+      600,
+      600,
+      1,
+    );
+
+    const peptide3 = await addMonomerToCanvas(
+      page,
+      MONOMER_NAME_TZA,
+      MONOMER_ALIAS_TZA,
+      650,
+      650,
+      2,
+    );
+
+    const peptide4 = await addMonomerToCanvas(
+      page,
+      MONOMER_NAME_TZA,
+      MONOMER_ALIAS_TZA,
+      700,
+      500,
+      3,
+    );
+    const peptide5 = await addMonomerToCanvas(
+      page,
+      MONOMER_NAME_TZA,
+      MONOMER_ALIAS_TZA,
+      750,
+      550,
+      4,
+    );
+    const peptide6 = await addMonomerToCanvas(
+      page,
+      MONOMER_NAME_TZA,
+      MONOMER_ALIAS_TZA,
+      800,
+      600,
+      5,
+    );
+    const peptide7 = await addMonomerToCanvas(
+      page,
+      MONOMER_NAME_TZA,
+      MONOMER_ALIAS_TZA,
+      850,
+      650,
+      6,
+    );
+    await page.getByText('RNA').click();
+    await selectSnakeBondTool(page);
+
+    await addRnaPresetOnCanvas(page, 'A_A_R_P', 200, 200);
+    await addRnaPresetOnCanvas(page, 'C_C_R_P', 300, 500);
+    await addRnaPresetOnCanvas(page, 'G_G_R_P', 400, 300);
+
+    await selectSingleBondTool(page);
+
+    const phosphate1 = await page
+      .locator(`//\*[name() = 'g' and ./\*[name()='text' and .='P']]`)
+      .nth(0);
+    const phosphate2 = await page
+      .locator(`//\*[name() = 'g' and ./\*[name()='text' and .='P']]`)
+      .nth(1);
+    const phosphate3 = await page
+      .locator(`//\*[name() = 'g' and ./\*[name()='text' and .='P']]`)
+      .nth(2);
+
+    const sugar1 = await page
+      .locator(`//\*[name() = 'g' and ./\*[name()='text' and .='R']]`)
+      .nth(1);
+    const sugar2 = await page
+      .locator(`//\*[name() = 'g' and ./\*[name()='text' and .='R']]`)
+      .nth(2);
+
+    await bondTwoMonomers(page, phosphate1, sugar1);
+    await bondTwoMonomers(page, phosphate2, sugar2);
+    await bondTwoMonomers(page, phosphate3, peptide1);
+
+    await page.locator('button[title=R1]').nth(1).click();
+    await page.locator('button[title=Connect]').click();
+    await bondTwoMonomers(page, peptide1, peptide2);
+    await bondTwoMonomers(page, peptide2, peptide3);
+
+    await bondTwoMonomers(page, peptide4, peptide5);
+    await bondTwoMonomers(page, peptide5, peptide6);
+    await bondTwoMonomers(page, peptide6, peptide7);
+
+    await takeEditorScreenshot(page);
+
+    await selectSnakeBondTool(page);
+    await takeEditorScreenshot(page);
+
+    await selectSnakeBondTool(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check snake mode arrange for RNA chain', async ({ page }) => {
+    await page.getByText('RNA').click();
+
+    await addRnaPresetOnCanvas(page, 'A_A_R_P', 300, 300);
+    await addRnaPresetOnCanvas(page, 'C_C_R_P', 400, 600);
+    await addRnaPresetOnCanvas(page, 'G_G_R_P', 600, 400);
+    await addRnaPresetOnCanvas(page, 'T_T_R_P', 800, 200);
+    await addRnaPresetOnCanvas(page, 'T_T_R_P', 100, 100);
+
+    await selectSingleBondTool(page);
+
+    const phosphate1 = await page
+      .locator(`//\*[name() = 'g' and ./\*[name()='text' and .='P']]`)
+      .nth(0);
+    const phosphate2 = await page
+      .locator(`//\*[name() = 'g' and ./\*[name()='text' and .='P']]`)
+      .nth(1);
+    const phosphate3 = await page
+      .locator(`//\*[name() = 'g' and ./\*[name()='text' and .='P']]`)
+      .nth(2);
+    const phosphate4 = await page
+      .locator(`//\*[name() = 'g' and ./\*[name()='text' and .='P']]`)
+      .nth(3);
+    const sugar1 = await page
+      .locator(`//\*[name() = 'g' and ./\*[name()='text' and .='R']]`)
+      .nth(1);
+    const sugar2 = await page
+      .locator(`//\*[name() = 'g' and ./\*[name()='text' and .='R']]`)
+      .nth(2);
+    const sugar3 = await page
+      .locator(`//\*[name() = 'g' and ./\*[name()='text' and .='R']]`)
+      .nth(3);
+    const sugar4 = await page
+      .locator(`//\*[name() = 'g' and ./\*[name()='text' and .='R']]`)
+      .nth(4);
+
+    await bondTwoMonomers(page, phosphate1, sugar1);
+    await bondTwoMonomers(page, phosphate2, sugar2);
+    await bondTwoMonomers(page, phosphate3, sugar3);
+    await bondTwoMonomers(page, phosphate4, sugar4);
+
+    await selectSnakeBondTool(page);
+    await takeEditorScreenshot(page);
   });
 });

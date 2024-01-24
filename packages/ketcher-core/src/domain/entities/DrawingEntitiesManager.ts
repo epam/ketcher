@@ -46,7 +46,7 @@ import {
 
 const HORIZONTAL_DISTANCE_FROM_MONOMER = 50;
 const VERTICAL_DISTANCE_FROM_MONOMER = 60;
-const RNA_CHAIN_VERTICAL_DISTANCE_FROM_MONOMER = 160;
+const RNA_CHAIN_VERTICAL_DISTANCE_FROM_MONOMER = 60;
 const DISTANCE_FROM_RIGHT = 70;
 const DISTANCE_BETWEEN_MONOMERS = 30;
 const MONOMER_START_X_POSITION = 70;
@@ -851,12 +851,12 @@ export class DrawingEntitiesManager {
 
   public getNucleotideSize(nucleotide: Nucleotide) {
     const width =
-      (nucleotide.sugar.renderer?.width || 0) +
-      (nucleotide.phosphate?.renderer?.width || 0) +
+      (nucleotide.sugar.renderer?.monomerSize.width || 0) +
+      (nucleotide.phosphate?.renderer?.monomerSize.width || 0) +
       45;
     const height =
-      (nucleotide.sugar.renderer?.height || 0) +
-      (nucleotide.rnaBase?.renderer?.height || 0) +
+      (nucleotide.sugar.renderer?.monomerSize.height || 0) +
+      (nucleotide.rnaBase?.renderer?.monomerSize.height || 0) +
       45;
     return { width, height };
   }
@@ -962,13 +962,19 @@ export class DrawingEntitiesManager {
     const newPositionOfModel = Coordinates.canvasToModel(lastPosition);
     const phosphatePositionOfModel = Coordinates.canvasToModel(
       new Vec2(
-        lastPosition.x + (nucleotide.sugar.renderer?.width ?? 0) + 45,
+        lastPosition.x +
+          (nucleotide.sugar.renderer?.monomerSize?.width ?? 0) / 2 +
+          (nucleotide.phosphate.renderer?.monomerSize?.width ?? 0) / 2 +
+          45,
         lastPosition.y,
       ),
     );
     const rnaBasePosition = new Vec2(
       lastPosition.x,
-      lastPosition.y + (nucleotide.sugar.renderer?.height ?? 0) + 45,
+      lastPosition.y +
+        (nucleotide.sugar.renderer?.monomerSize?.height ?? 0) / 2 +
+        (nucleotide.rnaBase.renderer?.monomerSize?.height ?? 0) / 2 +
+        45,
     );
 
     this.addRnaOperations(
@@ -985,8 +991,7 @@ export class DrawingEntitiesManager {
     );
     rearrangedMonomersSet.add(nucleotide.sugar.id);
     rearrangedMonomersSet.add(nucleotide.phosphate?.id);
-    // need to track the chain from rna base monomer
-    // TODO: would rna base chain contains other nucleotides? how to calculate the maxVerticalDistance?
+    // need to track the chain from rna base monomer, when rna base connected with other nucleotides or peptides
     const rearrangeBaseResult = this.reArrangeChainInRecursive(
       nucleotide.rnaBase,
       rnaBasePosition,

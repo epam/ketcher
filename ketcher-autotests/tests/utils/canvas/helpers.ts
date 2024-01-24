@@ -324,3 +324,14 @@ export async function addPeptideOnCanvas(page: Page, peptideId: string) {
   await page.getByTestId(peptideId).click();
   await clickInTheMiddleOfTheScreen(page);
 }
+
+export async function addRnaPresetOnCanvas(
+  page: Page,
+  presetId: string,
+  positionX: number,
+  positionY: number,
+) {
+  await page.getByTestId(presetId).click();
+  await page.mouse.click(positionX, positionY);
+  await hideMonomerPreview(page);
+}

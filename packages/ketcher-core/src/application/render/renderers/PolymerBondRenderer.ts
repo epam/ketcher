@@ -13,7 +13,7 @@ import { Coordinates } from 'application/editor/shared/coordinates';
 
 const LINE_FROM_MONOMER_LENGTH = 15;
 const VERTICAL_LINE_LENGTH = 42;
-const RNA_CHAIN_VERTICAL_LINE_LENGTH = 144;
+const RNA_CHAIN_VERTICAL_LINE_LENGTH = 148;
 const CORNER_LENGTH = 8;
 const DOUBLE_CORNER_LENGTH = CORNER_LENGTH * 2;
 enum LINE_DIRECTION {
@@ -267,13 +267,7 @@ export class PolymerBondRenderer extends BaseRenderer {
           LINE_FROM_MONOMER_LENGTH -
           this.getMonomerWidth() / 2,
       );
-    } else if (
-      this.isSecondMonomerBottomLeft(
-        startPosition,
-        endPosition,
-        verticalLineLength,
-      )
-    ) {
+    } else if (this.isSecondMonomerBottomLeft(startPosition, endPosition)) {
       if (
         isR1TheCurrentAttachmentpointOfFirstMonomer &&
         reCheckAttachmentpoint
@@ -347,9 +341,7 @@ export class PolymerBondRenderer extends BaseRenderer {
         LINE_DIRECTION.Horizontal,
         LINE_FROM_MONOMER_LENGTH + this.getMonomerWidth() / 2,
       );
-    } else if (
-      this.isSecondMonomerLeft(startPosition, endPosition, verticalLineLength)
-    ) {
+    } else if (this.isSecondMonomerLeft(startPosition, endPosition)) {
       if (
         isR1TheCurrentAttachmentpointOfFirstMonomer &&
         reCheckAttachmentpoint
@@ -409,11 +401,10 @@ export class PolymerBondRenderer extends BaseRenderer {
   private isSecondMonomerBottomLeft(
     startPosition: Vec2,
     endPosition: Vec2,
-    verticalLineLength: number,
   ): boolean {
     return (
       endPosition.y - startPosition.y >=
-        2 * (verticalLineLength + DOUBLE_CORNER_LENGTH) &&
+        2 * (VERTICAL_LINE_LENGTH + DOUBLE_CORNER_LENGTH) &&
       endPosition.x - startPosition.x <=
         DOUBLE_CORNER_LENGTH + LINE_FROM_MONOMER_LENGTH + this.getMonomerWidth()
     );
@@ -427,15 +418,11 @@ export class PolymerBondRenderer extends BaseRenderer {
     );
   }
 
-  private isSecondMonomerLeft(
-    startPosition: Vec2,
-    endPosition: Vec2,
-    verticalLineLength: number,
-  ): boolean {
+  private isSecondMonomerLeft(startPosition: Vec2, endPosition: Vec2): boolean {
     return (
       startPosition.y - endPosition.y < 0 &&
       startPosition.y - endPosition.y >
-        -2 * (verticalLineLength + DOUBLE_CORNER_LENGTH) &&
+        -2 * (VERTICAL_LINE_LENGTH + DOUBLE_CORNER_LENGTH) &&
       endPosition.x - startPosition.x <=
         DOUBLE_CORNER_LENGTH + LINE_FROM_MONOMER_LENGTH + this.getMonomerWidth()
     );

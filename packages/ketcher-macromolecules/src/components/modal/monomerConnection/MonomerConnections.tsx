@@ -191,7 +191,12 @@ function AttachmentPointSelectionPanel({
 
   useEffect(() => {
     setBonds(monomer.attachmentPointsToBonds);
-  }, [selectedAttachmentPoint, monomer]);
+  }, [selectedAttachmentPoint]);
+
+  useEffect(() => {
+    const newConnectedAttachmentPoints = getConnectedAttachmentPoints(bonds);
+    setConnectedAttachmentPoints(newConnectedAttachmentPoints);
+  }, [bonds]);
 
   const getLeavingGroup = (attachmentPoint): LeavingGroup => {
     const { MonomerCaps } = monomer.monomerItem.props;
@@ -201,21 +206,20 @@ function AttachmentPointSelectionPanel({
     const leavingGroup = MonomerCaps[attachmentPoint];
     return leavingGroup === 'O' ? 'OH' : (leavingGroup as LeavingGroup);
   };
-  let bond;
-  if (selectedAttachmentPoint) {
-    bond = monomer.getPotentialBond(selectedAttachmentPoint);
-  }
 
   const handleSelectAttachmentPoint = (attachmentPoint: string) => {
     const newBonds = { ...monomer.attachmentPointsToBonds };
-
-    if (selectedAttachmentPoint) {
-      newBonds[selectedAttachmentPoint] = null;
+    const selectedBond = selectedAttachmentPoint
+      ? newBonds[selectedAttachmentPoint]
+      : null;
+    if (selectedAttachmentPoint && selectedBond) {
+      monomer.removeBond(selectedBond);
     }
 
-    newBonds[attachmentPoint] = bond;
-    setBonds(newBonds);
+    const potentialBond = monomer.getPotentialBond(attachmentPoint);
+    newBonds[attachmentPoint] = potentialBond;
 
+    setBonds(newBonds);
     onSelectAttachmentPoint(attachmentPoint);
 
     const newConnectedAttachmentPoints = getConnectedAttachmentPoints(newBonds);

@@ -35,16 +35,27 @@
 }
 
 .menuListWrapper {
-  background: @color-background-canvas;
-  padding: 2em 1em;
+  background: @gray-background-color;
+  padding: 16px 8px;
   border-radius: 8px;
   flex: 1;
+  overflow-y: auto;
 
   > ul {
     background: @color-background-primary;
 
     > li {
       padding: 0.5em;
+
+      &:hover {
+        background: @color-spec-button-primary-hover !important;
+        color: white;
+      }
+    }
+
+    :global(.Mui-selected) {
+      background: @color-button-primary-clicked !important;
+      color: white;
     }
   }
 

@@ -46,7 +46,6 @@ import {
 
 const HORIZONTAL_DISTANCE_FROM_MONOMER = 50;
 const VERTICAL_DISTANCE_FROM_MONOMER = 60;
-const RNA_CHAIN_VERTICAL_DISTANCE_FROM_MONOMER = 60;
 const DISTANCE_FROM_RIGHT = 70;
 const DISTANCE_BETWEEN_MONOMERS = 30;
 const MONOMER_START_X_POSITION = 70;
@@ -888,6 +887,16 @@ export class DrawingEntitiesManager {
     command.addOperation(operation);
 
     rearrangedMonomersSet.add(monomer.id);
+    // for nucleoSide, when base is connected to sugar (R3-R1), it should be aligned.
+    const rearrangeNucleoSideResult = this.reArrangeNucleoside(
+      monomer,
+      rearrangedMonomersSet,
+      lastPosition,
+      canvasWidth,
+      maxVerticalDistance,
+      command,
+    );
+    command.merge(rearrangeNucleoSideResult.command);
     for (const attachmentPointName in monomer.attachmentPointsToBonds) {
       const polymerBond = monomer.attachmentPointsToBonds[attachmentPointName];
       if (!polymerBond) {
@@ -942,6 +951,50 @@ export class DrawingEntitiesManager {
     return { command, lastPosition, maxVerticalDistance };
   }
 
+  private reArrangeNucleoside(
+    monomer: BaseMonomer,
+    rearrangedMonomersSet: Set<number>,
+    lastPosition: Vec2,
+    canvasWidth: number,
+    maxVerticalDistance: number,
+    command: Command,
+  ) {
+    const r3PolymerBond = monomer.attachmentPointsToBonds.R3;
+    if (monomer instanceof Sugar && r3PolymerBond) {
+      const nextMonomer =
+        r3PolymerBond.secondMonomer === monomer
+          ? r3PolymerBond.firstMonomer
+          : r3PolymerBond.secondMonomer;
+      if (
+        r3PolymerBond &&
+        nextMonomer &&
+        !rearrangedMonomersSet.has(nextMonomer.id) &&
+        nextMonomer instanceof RNABase &&
+        nextMonomer.getAttachmentPointByBond(r3PolymerBond) === 'R1'
+      ) {
+        const rnaBasePosition = new Vec2({
+          x: lastPosition.x,
+          y:
+            lastPosition.y +
+            (monomer.renderer?.monomerSize?.height ?? 0) / 2 +
+            (nextMonomer.renderer?.monomerSize?.height ?? 0) / 2 +
+            45,
+        });
+        const rearrangeResult = this.reArrangeChainInRecursive(
+          nextMonomer,
+          rnaBasePosition,
+          canvasWidth,
+          rearrangedMonomersSet,
+          maxVerticalDistance,
+        );
+        lastPosition = rearrangeResult.lastPosition;
+        maxVerticalDistance = rearrangeResult.maxVerticalDistance;
+        command.merge(rearrangeResult.command);
+      }
+    }
+    return { lastPosition, maxVerticalDistance, command };
+  }
+
   private reArrangeRnaChain(
     nucleotide: Nucleotide,
     lastPosition: Vec2,
@@ -953,7 +1006,7 @@ export class DrawingEntitiesManager {
     const nucleotideSize = this.getNucleotideSize(nucleotide);
     const height = nucleotideSize.height;
     const width = nucleotideSize.width;
-    const heightWithBond = height + RNA_CHAIN_VERTICAL_DISTANCE_FROM_MONOMER;
+    const heightWithBond = height + VERTICAL_DISTANCE_FROM_MONOMER;
     maxVerticalDistance = Math.max(maxVerticalDistance, heightWithBond);
     nucleotide.sugar.isMonomerInRnaChainRow = true;
     nucleotide.phosphate.isMonomerInRnaChainRow = true;

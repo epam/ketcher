@@ -40,6 +40,16 @@ export function fileOpener(server) {
   });
 }
 
+function arrayBufferToBase64(buffer) {
+  let binary = '';
+  const bytes = new Uint8Array(buffer);
+  const len = bytes.byteLength;
+  for (let i = 0; i < len; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return btoa(binary);
+}
+
 function throughFileReader(file) {
   const CDX = 'cdx';
   const PPTX = 'pptx';
@@ -67,9 +77,7 @@ function throughFileReader(file) {
             if (path.endsWith('.bin')) {
               const ole = CFB.find(cfb, path);
               const sdf = CFB.find(CFB.parse(ole.content), 'CONTENTS');
-              const base64String = btoa(
-                String.fromCharCode(...new Uint8Array(sdf.content)),
-              );
+              const base64String = arrayBufferToBase64(sdf.content);
               structures.push(base64String);
             }
           });

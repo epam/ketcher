@@ -6,4 +6,4 @@ WORKDIR /app
 
 COPY . .
 
-RUN npm i && npx playwright install chromium
+RUN npm i && npx playwright install firefox

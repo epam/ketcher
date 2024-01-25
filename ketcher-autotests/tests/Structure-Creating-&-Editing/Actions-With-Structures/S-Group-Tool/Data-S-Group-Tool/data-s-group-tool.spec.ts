@@ -26,7 +26,7 @@ import {
   waitForPageInit,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
-import { getCml, getMolfile } from '@utils/formats';
+import { getCml, getKet, getMolfile } from '@utils/formats';
 
 const CANVAS_CLICK_X = 600;
 const CANVAS_CLICK_Y = 600;
@@ -418,5 +418,31 @@ test.describe('Data S-Group tool', () => {
     */
     await openFileAndAddToCanvas('KET/benzene-with-data-s-group.ket', page);
     await clickInTheMiddleOfTheScreen(page);
+  });
+
+  test('Add S-Group properties to structure and atom', async ({ page }) => {
+    /*
+      Test case: https://github.com/epam/ketcher/issues/3949
+      Description: S-Group added to the structure and represent in .ket file.
+      The test is currently not functioning correctly as the bug has not been fixed.
+    */
+    await openFileAndAddToCanvas('KET/cyclopropane-and-h2o.ket', page);
+    await selectSGroupProperties(
+      page,
+      'Multifragment',
+      'T@#qwer123',
+      '8',
+      'Absolute',
+    );
+    const expectedFile = await getKet(page);
+    await saveToFile('KET/cyclopropane-and-h2o-expected.ket', expectedFile);
+    const { file: ketFile, fileExpected: ketFileExpected } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/KET/cyclopropane-and-h2o-expected.ket',
+      });
+
+    expect(ketFile).toEqual(ketFileExpected);
   });
 });

@@ -460,7 +460,7 @@ test.describe('Open and Save InChI file', () => {
     await clickOnFileFormatDropdown(page);
     await selectInChiOption(page);
     await page.getByRole('button', { name: 'Save', exact: true }).click();
-    await openFileAndAddToCanvas('inchi/Alias.inchi', page);
+    await openFileAndAddToCanvas('InChI/alias.inchi', page);
   });
 
   test('Open and Save file - Generate structure from InChI String - inserting incorrect name', async ({

@@ -235,7 +235,7 @@ test.describe('SMILES files', () => {
     Description: SmileString is correctly generated from structure and vise versa
     structure is correctly generated from SmileString.
     */
-    await openFileAndAddToCanvas('cis-trans-cycle.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/cis-trans-cycle.mol', page);
     await getAndCompareSmiles(
       page,
       'tests/test-data/smiles-cis-trans-cycle-expected.json',

@@ -26,7 +26,7 @@ import {
   waitForPageInit,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
-import { getCml, getMolfile } from '@utils/formats';
+import { getCml, getKet, getMolfile } from '@utils/formats';
 
 const CANVAS_CLICK_X = 600;
 const CANVAS_CLICK_Y = 600;
@@ -158,15 +158,21 @@ test.describe('Data S-Group tool', () => {
       Test case: EPMLSOPKET-1517
       Description: User is able to save and open structure with Data S-group.
     */
-    await openFileAndAddToCanvas('chain-with-name-and-value.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/chain-with-name-and-value.mol',
+      page,
+    );
     const expectedFile = await getMolfile(page);
-    await saveToFile('chain-with-name-and-value-expected.mol', expectedFile);
+    await saveToFile(
+      'Molfiles-V2000/chain-with-name-and-value-expected.mol',
+      expectedFile,
+    );
     const METADATA_STRING_INDEX = [1];
     const { fileExpected: molFileExpected, file: molFile } =
       await receiveFileComparisonData({
         page,
         expectedFileName:
-          'tests/test-data/chain-with-name-and-value-expected.mol',
+          'tests/test-data/Molfiles-V2000/chain-with-name-and-value-expected.mol',
         metaDataIndexes: METADATA_STRING_INDEX,
       });
     expect(molFile).toEqual(molFileExpected);
@@ -412,5 +418,31 @@ test.describe('Data S-Group tool', () => {
     */
     await openFileAndAddToCanvas('KET/benzene-with-data-s-group.ket', page);
     await clickInTheMiddleOfTheScreen(page);
+  });
+
+  test('Add S-Group properties to structure and atom', async ({ page }) => {
+    /*
+      Test case: https://github.com/epam/ketcher/issues/3949
+      Description: S-Group added to the structure and represent in .ket file.
+      The test is currently not functioning correctly as the bug has not been fixed.
+    */
+    await openFileAndAddToCanvas('KET/cyclopropane-and-h2o.ket', page);
+    await selectSGroupProperties(
+      page,
+      'Multifragment',
+      'T@#qwer123',
+      '8',
+      'Absolute',
+    );
+    const expectedFile = await getKet(page);
+    await saveToFile('KET/cyclopropane-and-h2o-expected.ket', expectedFile);
+    const { file: ketFile, fileExpected: ketFileExpected } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/KET/cyclopropane-and-h2o-expected.ket',
+      });
+
+    expect(ketFile).toEqual(ketFileExpected);
   });
 });

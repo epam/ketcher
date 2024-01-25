@@ -14,13 +14,12 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { ElementColor, Elements } from 'ketcher-core';
+import { ElementColor, Elements, shortcutStr } from 'ketcher-core';
 import { atomCuts } from '../../../../action/atoms';
 
 import Atom from '../../../../component/view/Atom';
 import { UiActionAction } from '../../../../action';
 import { forwardRef } from 'react';
-import { shortcutStr } from '../../shortcutStr';
 import style from '../../../../../../components/styles/consts';
 import styled from '@emotion/styled';
 

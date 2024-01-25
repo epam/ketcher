@@ -25,6 +25,11 @@ export abstract class BaseSequenceItemRenderer extends BaseRenderer {
   protected removeHover(): void {}
 
   private appendRootElement() {
+    const rowNumber = Math.floor(
+      (this.monomerIndexInChain - 1) / this.symbolsInRow,
+    );
+    const indexInRow = (this.monomerIndexInChain - 1) % this.symbolsInRow;
+
     return this.canvas
       .append('g')
       .data([this])
@@ -33,10 +38,9 @@ export abstract class BaseSequenceItemRenderer extends BaseRenderer {
         'transform',
         `translate(${
           this.firstMonomerInChainPosition.x +
-          this.monomerIndexInChain * 18 +
-          Math.floor((this.monomerIndexInChain - 1) / this.nthSeparationInRow) *
-            10
-        }, ${this.firstMonomerInChainPosition.y})`,
+          indexInRow * 18 +
+          Math.floor(indexInRow / this.nthSeparationInRow) * 10
+        }, ${this.firstMonomerInChainPosition.y + 50 * rowNumber})`,
       ) as never as D3SvgElementSelection<SVGGElement, void>;
   }
 

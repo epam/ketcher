@@ -894,7 +894,6 @@ export class DrawingEntitiesManager {
       lastPosition,
       canvasWidth,
       maxVerticalDistance,
-      command,
     );
     command.merge(rearrangeNucleoSideResult.command);
     for (const attachmentPointName in monomer.attachmentPointsToBonds) {
@@ -957,8 +956,8 @@ export class DrawingEntitiesManager {
     lastPosition: Vec2,
     canvasWidth: number,
     maxVerticalDistance: number,
-    command: Command,
   ) {
+    const command = new Command();
     const r3PolymerBond = monomer.attachmentPointsToBonds.R3;
     if (monomer instanceof Sugar && r3PolymerBond) {
       const nextMonomer =

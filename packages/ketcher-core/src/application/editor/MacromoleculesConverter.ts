@@ -250,6 +250,42 @@ export class MacromoleculesConverter {
     return attachmentPointLabel;
   }
 
+  public static getFragments(struct: Struct) {
+    const fragments: number[][] = [];
+    struct.frags.forEach((_fragment, fragmentId) => {
+      const fragmentSgroups = new Set<SGroup>();
+      struct.atoms.forEach((atom, atomId) => {
+        if (atom.fragment !== fragmentId) return;
+        const sgroup = struct.getGroupFromAtomId(atomId);
+        if (sgroup) {
+          fragmentSgroups.add(sgroup);
+        }
+      });
+      const index = fragments.push([fragmentId]) - 1;
+      fragmentSgroups.forEach((sgroup) => {
+        sgroup.atoms.forEach((aid) => {
+          const atomFragmentId = struct.atoms.get(aid)?.fragment;
+          if (atomFragmentId && !fragments[index].includes(atomFragmentId)) {
+            fragments[index].push(atomFragmentId);
+          }
+        });
+      });
+    });
+
+    const uniqueFragments = fragments.filter((arr, index, self) => {
+      // Sort the arrays before comparing
+      const sortedArr = arr.slice().sort();
+      return (
+        index ===
+        self.findIndex((a) => {
+          const sortedA = a.slice().sort();
+          return JSON.stringify(sortedA) === JSON.stringify(sortedArr);
+        })
+      );
+    });
+    return uniqueFragments;
+  }
+
   public static convertStructToDrawingEntities(
     struct: Struct,
     drawingEntitiesManager: DrawingEntitiesManager,
@@ -268,9 +304,11 @@ export class MacromoleculesConverter {
         );
       }
     });
+    const fragments = this.getFragments(struct);
+
     let fragmentNumber = 1;
-    struct.frags.forEach((_fragment, fragmentId) => {
-      const fragmentStruct = struct.getFragment(fragmentId, false);
+    fragments.forEach((_fragment, fragmentId) => {
+      const fragmentStruct = struct.getFragment(_fragment, false);
       const monomerAddCommand = this.convertFragmentToChem(
         fragmentNumber,
         fragmentStruct,

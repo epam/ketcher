@@ -681,7 +681,7 @@ class IndigoService implements StructService {
   }
 
   generateImageAsBase64(
-    data: string,
+    inputData: string,
     options: GenerateImageOptions = {
       outputFormat: 'png',
       backgroundColor: '',
@@ -693,10 +693,12 @@ class IndigoService implements StructService {
     return new Promise((resolve, reject) => {
       const action = ({ data }: OutputMessageWrapper) => {
         const msg: OutputMessage<string> = data;
-        if (!msg.hasError) {
-          resolve(msg.payload);
-        } else {
-          reject(msg.error);
+        if (msg.inputData === inputData) {
+          if (!msg.hasError) {
+            resolve(msg.payload);
+          } else {
+            reject(msg.error);
+          }
         }
       };
 
@@ -706,7 +708,7 @@ class IndigoService implements StructService {
       };
 
       const commandData: GenerateImageCommandData = {
-        struct: data,
+        struct: inputData,
         outputFormat: outputFormat || 'png',
         backgroundColor,
         bondThickness,

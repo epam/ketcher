@@ -165,11 +165,13 @@ interface OutputMessageBase {
 interface OutputMessageWithError extends OutputMessageBase {
   hasError: true;
   error: string;
+  inputData?: string;
 }
 
 interface OutputMessageWithoutError<T> extends OutputMessageBase {
   hasError?: false;
   payload: T;
+  inputData?: string;
 }
 
 export type OutputMessage<T> =

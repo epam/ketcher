@@ -25,7 +25,7 @@ import {
   setAttachmentPoints,
   waitForPageInit,
 } from '@utils';
-import { getMolfile } from '@utils/formats';
+import { getKet, getMolfile } from '@utils/formats';
 
 const CANVAS_CLICK_X = 500;
 const CANVAS_CLICK_Y = 500;
@@ -334,5 +334,30 @@ test.describe('Multiple S-Group tool', () => {
     await openFileAndAddToCanvas('Molfiles-V2000/templates.mol', page);
     await changeRepeatCountValue(page, '50');
     await pressButton(page, 'Apply');
+  });
+
+  test('Add S-Group properties to structure and atom', async ({ page }) => {
+    /*
+      Test case: https://github.com/epam/ketcher/issues/3949
+      Description: S-Group added to the structure and represent in .ket file.
+      The test is currently not functioning correctly as the bug has not been fixed.
+    */
+    await openFileAndAddToCanvas('KET/cyclopropane-and-h2o.ket', page);
+    await page.keyboard.press('Control+a');
+    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await selectMultipleGroup(page, 'Data', 'Multiple group', '8', 'Apply');
+    const expectedFile = await getKet(page);
+    await saveToFile(
+      'KET/cyclopropane-and-h2o-multiple-expected.ket',
+      expectedFile,
+    );
+    const { file: ketFile, fileExpected: ketFileExpected } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/KET/cyclopropane-and-h2o-multiple-expected.ket',
+      });
+
+    expect(ketFile).toEqual(ketFileExpected);
   });
 });

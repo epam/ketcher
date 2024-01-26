@@ -1,0 +1,603 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "monomer16"
+            },
+            {
+                "$ref": "monomer18"
+            },
+            {
+                "$ref": "monomer20"
+            }
+        ],
+        "connections": [
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer16",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer18",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer18",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer20",
+                    "attachmentPointId": "R1"
+                }
+            }
+        ],
+        "templates": [
+            {
+                "$ref": "monomerTemplate-Bal___beta-Alanine"
+            },
+            {
+                "$ref": "monomerTemplate-Edc___S-ethylthiocysteine"
+            },
+            {
+                "$ref": "monomerTemplate-meD___N-Methyl-Aspartic acid"
+            }
+        ]
+    },
+    "monomer16": {
+        "type": "monomer",
+        "id": "16",
+        "position": {
+            "x": 1.3666666666666667,
+            "y": -1.7266666666666668
+        },
+        "alias": "Bal",
+        "templateId": "Bal___beta-Alanine"
+    },
+    "monomerTemplate-Bal___beta-Alanine": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    0.16205056722094371,
+                    0.46760986560150064,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    1.1069222130860072,
+                    0.140291426272259,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    1.2958118763409319,
+                    -0.841748557633554,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    1.8628195297780585,
+                    0.7949283049307422,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -0.5939314153891955,
+                    -0.1870270130569826,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    -1.5388877271723476,
+                    0.140291426272259,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    -2.2947850438643984,
+                    -0.5143454523862242,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    4
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    6
+                ]
+            }
+        ],
+        "classHELM": "PEPTIDE",
+        "id": "Bal___beta-Alanine",
+        "fullName": "beta-Alanine",
+        "alias": "Bal",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 5,
+                "leavingGroup": {
+                    "atoms": [
+                        6
+                    ]
+                },
+                "type": "left"
+            },
+            {
+                "attachmentAtom": 1,
+                "leavingGroup": {
+                    "atoms": [
+                        3
+                    ]
+                },
+                "type": "right"
+            }
+        ],
+        "naturalAnalogShort": "A"
+    },
+    "monomer18": {
+        "type": "monomer",
+        "id": "18",
+        "position": {
+            "x": 2.2933333333333334,
+            "y": -1.7333333333333334
+        },
+        "alias": "Edc",
+        "templateId": "Edc___S-ethylthiocysteine"
+    },
+    "monomerTemplate-Edc___S-ethylthiocysteine": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    1.3713976005667017,
+                    -1.4618727539106595,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    0.42941289753641493,
+                    -0.9190942719200459,
+                    0
+                ],
+                "stereoLabel": "abs"
+            },
+            {
+                "label": "C",
+                "location": [
+                    0.42774682185434043,
+                    0.1680563296701219,
+                    0
+                ]
+            },
+            {
+                "label": "S",
+                "location": [
+                    -0.5141654431028125,
+                    0.7108348116607354,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    -0.5125718054938718,
+                    -1.4618727539106595,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    1.3727014858831077,
+                    -2.3311296315147385,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    2.123666990059898,
+                    -1.0263026201578824,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    -1.2652758234258703,
+                    -1.0270994389623527,
+                    0
+                ]
+            },
+            {
+                "label": "S",
+                "location": [
+                    -0.5158315187848871,
+                    1.7979854132509032,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -1.457816221815174,
+                    2.3406914571683832,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -1.4591925452047136,
+                    3.2100207728455956,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 2,
+                "atoms": [
+                    5,
+                    0
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    6
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    4
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ],
+                "stereo": 1
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    7
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    8
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    8,
+                    9
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    9,
+                    10
+                ]
+            }
+        ],
+        "classHELM": "PEPTIDE",
+        "id": "Edc___S-ethylthiocysteine",
+        "fullName": "S-ethylthiocysteine",
+        "alias": "Edc",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 4,
+                "leavingGroup": {
+                    "atoms": [
+                        7
+                    ]
+                },
+                "type": "left"
+            },
+            {
+                "attachmentAtom": 0,
+                "leavingGroup": {
+                    "atoms": [
+                        6
+                    ]
+                },
+                "type": "right"
+            }
+        ],
+        "naturalAnalogShort": "C"
+    },
+    "monomer20": {
+        "type": "monomer",
+        "id": "20",
+        "position": {
+            "x": 3.2933333333333343,
+            "y": -1.7466666666666661
+        },
+        "alias": "meD",
+        "templateId": "meD___N-Methyl-Aspartic acid"
+    },
+    "monomerTemplate-meD___N-Methyl-Aspartic acid": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "C",
+                "location": [
+                    1.3257273548235053,
+                    -0.7847269837366511,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    0.34082341731637195,
+                    -0.21729386317348245,
+                    0
+                ],
+                "stereoLabel": "abs"
+            },
+            {
+                "label": "C",
+                "location": [
+                    0.33908143096119936,
+                    0.9194658413823901,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -0.6457467680087527,
+                    1.4868989619455588,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -0.6471100616780182,
+                    2.3957614081225502,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -1.4323672151749391,
+                    1.0315588764108858,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    1.327090648492771,
+                    -1.6936651684508244,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    -0.6440805201907616,
+                    -0.7847269837366511,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    2.1122720634525103,
+                    -0.32938689820197814,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    -0.6445349514138501,
+                    -1.6936651684508244,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -1.431079660042855,
+                    -0.33022002211097373,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 2,
+                "atoms": [
+                    6,
+                    0
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    8
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    7
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ],
+                "stereo": 1
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    5
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    3,
+                    4
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    7,
+                    9
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    7,
+                    10
+                ]
+            }
+        ],
+        "classHELM": "PEPTIDE",
+        "id": "meD___N-Methyl-Aspartic acid",
+        "fullName": "N-Methyl-Aspartic acid",
+        "alias": "meD",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 7,
+                "leavingGroup": {
+                    "atoms": [
+                        9
+                    ]
+                },
+                "type": "left"
+            },
+            {
+                "attachmentAtom": 0,
+                "leavingGroup": {
+                    "atoms": [
+                        8
+                    ]
+                },
+                "type": "right"
+            },
+            {
+                "attachmentAtom": 3,
+                "leavingGroup": {
+                    "atoms": [
+                        5
+                    ]
+                },
+                "type": "side"
+            }
+        ],
+        "naturalAnalogShort": "D"
+    }
+}

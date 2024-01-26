@@ -55,6 +55,7 @@ function handle(
   handler: HandlerType,
   options?: CommandOptions,
   messageType?: Command,
+  inputData?: string,
 ) {
   module.then((indigo: IndigoStandalone) => {
     const indigoOptions = new indigo.MapStringString();
@@ -66,12 +67,14 @@ function handle(
         type: messageType,
         payload,
         hasError: false,
+        inputData,
       };
     } catch (error) {
       msg = {
         type: messageType,
         hasError: true,
         error: error as string,
+        inputData,
       };
     }
 
@@ -103,6 +106,7 @@ self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
           'render-bond-line-width': data.bondThickness,
         },
         Command.GenerateImageAsBase64,
+        data.struct,
       );
       break;
     }

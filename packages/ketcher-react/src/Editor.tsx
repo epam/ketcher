@@ -64,9 +64,9 @@ function Editor(props: EditorProps) {
       }
     });
     return () => {
-      isUnmounted.current = true;
-      // In StrictMode, React double invokes and the component could be unmounted again due to the timeout.
       if (!isUnmounted.current) {
+        // In StrictMode, React double invokes and the component could be unmounted again due to the timeout.
+        isUnmounted.current = true;
         // setTimeout is used to disable the warn msg from react "Attempted to synchronously unmount a root while React was already rendering"
         setTimeout(() => {
           appRoot.unmount();

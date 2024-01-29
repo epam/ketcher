@@ -263,14 +263,16 @@ class IndigoService implements StructService {
       const action = ({ data }: OutputMessageWrapper) => {
         console.log('convert action', data);
         const msg: OutputMessage<string> = data;
-        if (!msg.hasError) {
-          const result: ConvertResult = {
-            struct: msg.payload,
-            format: outputFormat,
-          };
-          resolve(result);
-        } else {
-          reject(msg.error);
+        if (msg.inputData === struct) {
+          if (!msg.hasError) {
+            const result: ConvertResult = {
+              struct: msg.payload,
+              format: outputFormat,
+            };
+            resolve(result);
+          } else {
+            reject(msg.error);
+          }
         }
       };
       if (options?.['input-format']) {
@@ -292,7 +294,7 @@ class IndigoService implements StructService {
         data: commandData,
       };
 
-      this.EE.removeAllListeners(WorkerEvent.Convert);
+      this.EE.removeListener(WorkerEvent.Convert, action);
       this.EE.addListener(WorkerEvent.Convert, action);
 
       this.worker.postMessage(inputMessage);

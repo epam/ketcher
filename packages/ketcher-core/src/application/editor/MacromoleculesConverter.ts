@@ -250,6 +250,46 @@ export class MacromoleculesConverter {
     return attachmentPointLabel;
   }
 
+  // This method returns array of arrays of fragmentIds grouped by sgroup
+  // It needs to serialize/deserialize several molecules grouped by sgroup as a single molecule
+  public static getFragmentsGroupedBySgroup(struct: Struct) {
+    const groupedFragments: number[][] = [];
+    struct.frags.forEach((_fragment, fragmentId) => {
+      const isAlreadyGrouped = groupedFragments.find((fragmentsGroup) =>
+        fragmentsGroup.includes(fragmentId),
+      );
+      if (isAlreadyGrouped) {
+        return;
+      }
+
+      // Find all sgroups related to fragment
+      const fragmentSgroups = new Set<SGroup>();
+      struct.atoms.forEach((atom, atomId) => {
+        if (atom.fragment !== fragmentId) return;
+        const sgroup = struct.getGroupFromAtomId(atomId);
+        if (sgroup) {
+          fragmentSgroups.add(sgroup);
+        }
+      });
+
+      // Add new group of fragments with fragments related to one sgroup
+      const lastFragmentGroupIndex = groupedFragments.push([fragmentId]) - 1;
+      fragmentSgroups.forEach((sgroup) => {
+        sgroup.atoms.forEach((aid) => {
+          const atomFragmentId = struct.atoms.get(aid)?.fragment;
+          if (
+            atomFragmentId &&
+            !groupedFragments[lastFragmentGroupIndex].includes(atomFragmentId)
+          ) {
+            groupedFragments[lastFragmentGroupIndex].push(atomFragmentId);
+          }
+        });
+      });
+    });
+
+    return groupedFragments;
+  }
+
   public static convertStructToDrawingEntities(
     struct: Struct,
     drawingEntitiesManager: DrawingEntitiesManager,
@@ -268,9 +308,11 @@ export class MacromoleculesConverter {
         );
       }
     });
+    const fragments = this.getFragmentsGroupedBySgroup(struct);
+
     let fragmentNumber = 1;
-    struct.frags.forEach((_fragment, fragmentId) => {
-      const fragmentStruct = struct.getFragment(fragmentId, false);
+    fragments.forEach((_fragment, fragmentId) => {
+      const fragmentStruct = struct.getFragment(_fragment, false);
       const monomerAddCommand = this.convertFragmentToChem(
         fragmentNumber,
         fragmentStruct,

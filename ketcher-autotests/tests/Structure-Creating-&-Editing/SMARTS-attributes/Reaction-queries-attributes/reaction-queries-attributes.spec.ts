@@ -105,7 +105,6 @@ test.describe('Checking reaction queries attributes in SMARTS format', () => {
   });
 
   test('Checking SMARTS with S-Group with two elements', async ({ page }) => {
-    test.fail();
     /**
      * Test case: https://github.com/epam/Indigo/issues/1316
      */

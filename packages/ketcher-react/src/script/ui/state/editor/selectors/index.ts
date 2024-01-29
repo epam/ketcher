@@ -14,16 +14,4 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { RenderOptions } from 'application/render/render.types';
-import { Struct } from 'ketcher-core';
-
-interface CasheOptions {
-  cachePrefix?: string;
-  needCache?: boolean;
-}
-export interface IStructRenderProps {
-  struct: Struct;
-  options?: (RenderOptions & CasheOptions) | CasheOptions;
-  className?: string;
-  update?: boolean;
-}
+export const editorOptionsSelector = (state) => state.editor?.render?.options;

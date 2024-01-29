@@ -56,7 +56,7 @@ export function loadStruct(struct) {
   };
 }
 
-function parseStruct(
+export function parseStruct(
   struct: string | Struct,
   server,
   options?,

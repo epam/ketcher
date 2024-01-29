@@ -379,7 +379,7 @@ export class KetSerializer implements Serializer<Struct> {
     );
 
     let fragmentNumber = 1;
-    const fragments = MacromoleculesConverter.getFragments(
+    const fragments = MacromoleculesConverter.getFragmentsGroupedBySgroup(
       deserializedMicromolecules,
     );
     fragments.forEach((_fragment) => {

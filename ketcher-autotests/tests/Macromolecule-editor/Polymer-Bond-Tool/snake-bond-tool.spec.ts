@@ -504,4 +504,143 @@ test.describe('Snake Bond Tool', () => {
     await selectSnakeBondTool(page);
     await takeEditorScreenshot(page);
   });
+
+  test('Create snake bond for chain with side chains', async ({ page }) => {
+    await page.getByText('RNA').click();
+
+    await addRnaPresetOnCanvas(page, 'A_A_R_P', 200, 200);
+    await addRnaPresetOnCanvas(page, 'G_G_R_P', 500, 300);
+    await addRnaPresetOnCanvas(page, 'T_T_R_P', 700, 300);
+    await addRnaPresetOnCanvas(page, 'U_U_R_P', 900, 300);
+
+    await page.getByTestId('summary-Sugars').click();
+    const sugarOfNucleoside = await addMonomerToCanvas(
+      page,
+      'R___Ribose',
+      'R',
+      350,
+      350,
+      4,
+    );
+    await page.getByTestId('summary-Bases').click();
+    const baseOfNucleoside = await addMonomerToCanvas(
+      page,
+      'nC6n8A___6-Aminohexyl-8-aminoadenine',
+      'nC6n8A',
+      350,
+      500,
+      0,
+    );
+
+    await page.getByTestId('PEPTIDES-TAB').click();
+
+    const monomer1 = await addMonomerToCanvas(
+      page,
+      'A___Alanine',
+      'A',
+      500,
+      500,
+      1,
+    );
+    const monomer2 = await addMonomerToCanvas(
+      page,
+      'Hcy___homocysteine',
+      'Hcy',
+      550,
+      550,
+      0,
+    );
+    const monomer3 = await addMonomerToCanvas(
+      page,
+      'A___Alanine',
+      'A',
+      600,
+      600,
+      2,
+    );
+    const monomer4 = await addMonomerToCanvas(
+      page,
+      'A___Alanine',
+      'A',
+      650,
+      650,
+      3,
+    );
+    const monomer5 = await addMonomerToCanvas(
+      page,
+      'A___Alanine',
+      'A',
+      700,
+      700,
+      4,
+    );
+    const monomer6 = await addMonomerToCanvas(
+      page,
+      'Bal___beta-Alanine',
+      'Bal',
+      600,
+      500,
+      0,
+    );
+    const monomer7 = await addMonomerToCanvas(
+      page,
+      'Bal___beta-Alanine',
+      'Bal',
+      650,
+      500,
+      1,
+    );
+    const monomer8 = await addMonomerToCanvas(
+      page,
+      'Bal___beta-Alanine',
+      'Bal',
+      750,
+      500,
+      2,
+    );
+
+    await selectSingleBondTool(page);
+    await bondTwoMonomers(page, sugarOfNucleoside, baseOfNucleoside);
+    await bondTwoMonomers(page, baseOfNucleoside, monomer1);
+    await page.locator('button[title=R2]').nth(0).click();
+    await page.locator('button[title=R1]').nth(1).click();
+    await page.locator('button[title=Connect]').click();
+
+    await bondTwoMonomers(page, monomer1, monomer2);
+    await bondTwoMonomers(page, monomer2, monomer3);
+    await bondTwoMonomers(page, monomer3, monomer4);
+    await bondTwoMonomers(page, monomer2, monomer5);
+    await page.locator('button[title=R1]').nth(1).click();
+    await page.locator('button[title=Connect]').click();
+
+    const phosphate = await page
+      .locator(`//\*[name() = 'g' and ./\*[name()='text' and .='P']]`)
+      .nth(0);
+
+    const sugar = await page
+      .locator(`//\*[name() = 'g' and ./\*[name()='text' and .='R']]`)
+      .nth(1);
+    const sugar1 = await page
+      .locator(`//\*[name() = 'g' and ./\*[name()='text' and .='R']]`)
+      .nth(2);
+    const phosphate1 = await page
+      .locator(`//\*[name() = 'g' and ./\*[name()='text' and .='P']]`)
+      .nth(1);
+    const phosphate2 = await page
+      .locator(`//\*[name() = 'g' and ./\*[name()='text' and .='P']]`)
+      .nth(2);
+    await bondTwoMonomers(page, phosphate, sugarOfNucleoside);
+    await bondTwoMonomers(page, sugarOfNucleoside, sugar);
+    await bondTwoMonomers(page, phosphate1, sugar1);
+    await bondTwoMonomers(page, phosphate2, monomer6);
+    await page.locator('button[title=R1]').nth(1).click();
+    await page.locator('button[title=Connect]').click();
+    await bondTwoMonomers(page, monomer6, monomer7);
+    await bondTwoMonomers(page, monomer7, monomer8);
+
+    await takeEditorScreenshot(page);
+
+    await selectSnakeBondTool(page);
+    await takeEditorScreenshot(page);
+  });
 });

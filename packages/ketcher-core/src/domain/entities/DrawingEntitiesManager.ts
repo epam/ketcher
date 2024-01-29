@@ -853,7 +853,7 @@ export class DrawingEntitiesManager {
     const width =
       (nucleotide.sugar.renderer?.monomerSize.width || 0) +
       (nucleotide.phosphate?.renderer?.monomerSize.width || 0) +
-      45;
+      (nucleotide.phosphate ? 45 : 0);
     const height =
       (nucleotide.sugar.renderer?.monomerSize.height || 0) +
       (nucleotide.rnaBase.renderer?.monomerSize.height || 0) +

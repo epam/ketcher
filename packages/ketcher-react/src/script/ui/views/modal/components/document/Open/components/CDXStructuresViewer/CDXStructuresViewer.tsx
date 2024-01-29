@@ -19,9 +19,13 @@ import { useSelector } from 'react-redux';
 import { MenuList } from '@mui/material';
 import MenuItem from '@mui/material/MenuItem';
 import { Icon } from 'components';
+import { Struct } from 'ketcher-core';
 import { LoadingCircles } from '../../../../../../components';
-import styles from './CDXStructuresViewer.module.less';
 import { serverSelector } from '../../../../../../../state/server/selectors';
+import StructRender from '../../../../../../../../../components/StructRender/StructRender';
+import { parseStruct } from '../../../../../../../state/shared';
+import styles from './CDXStructuresViewer.module.less';
+import { editorOptionsSelector } from '../../../../../../../state/editor/selectors';
 
 export type CDXStructuresViewerProps = {
   structList?: string[];
@@ -30,17 +34,10 @@ export type CDXStructuresViewerProps = {
   fileName: string;
 };
 
-type itemsMapInterface = {
-  [x: number]: { struct: string; error?: string; imageUrl?: string };
-};
+type item = { base64struct: string; error?: string; struct?: Struct };
 
-const isError = (string: string) => {
-  try {
-    JSON.parse(string);
-  } catch (e) {
-    return false;
-  }
-  return JSON.parse(string).error;
+type itemsMapInterface = {
+  [x: number]: item;
 };
 
 export const CDXStructuresViewer = ({
@@ -49,6 +46,7 @@ export const CDXStructuresViewer = ({
   fileName,
 }: CDXStructuresViewerProps) => {
   const server = useSelector(serverSelector);
+  const editorOptions = useSelector(editorOptionsSelector);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [itemsMap, setItemsMap] = useState<itemsMapInterface>({});
   const [loading, setLoading] = useState(false);
@@ -57,33 +55,24 @@ export const CDXStructuresViewer = ({
     if (!itemsMap[selectedIndex] || itemsMap[selectedIndex].error) {
       inputHandler('');
     } else {
-      inputHandler(itemsMap[selectedIndex].struct);
+      inputHandler(itemsMap[selectedIndex].base64struct);
     }
   }, [inputHandler, itemsMap, selectedIndex]);
 
   const getImages = useCallback(() => {
-    const options = { outputFormat: 'png', bondThickness: 1 };
     const itemsList = {};
     setLoading(true);
     const promises = structList.map((str) => {
-      return server
-        .generateImageAsBase64(str, options)
-        .then((base64) => {
-          const error = isError(base64);
-          if (error) {
-            return {
-              struct: str,
-              error,
-            };
-          }
+      return parseStruct(str, server)
+        .then((struct) => {
           return {
-            struct: str,
-            imageUrl: base64,
+            base64struct: str,
+            struct,
           };
         })
         .catch((error) => {
           return {
-            struct: str,
+            base64struct: str,
             error: error.message || error,
           };
         });
@@ -104,6 +93,21 @@ export const CDXStructuresViewer = ({
     getImages();
   }, [getImages]);
 
+  const renderStructure = (structure: item) => {
+    if (structure?.error) {
+      return <div>Error: {itemsMap[selectedIndex]?.error}</div>;
+    }
+    if (structure?.struct) {
+      return (
+        <StructRender
+          className={styles.image}
+          struct={structure.struct}
+          options={{ ...editorOptions, autoScale: true, needCache: false }}
+        />
+      );
+    }
+    return null;
+  };
   const renderStructures = () => {
     if (!structList?.length) {
       return (
@@ -120,7 +124,7 @@ export const CDXStructuresViewer = ({
           <MenuList>
             {menuList.map((value, index) => (
               <MenuItem
-                key={value.struct + index}
+                key={value.base64struct + index}
                 selected={index === selectedIndex}
                 onClick={() => setSelectedIndex(index)}
               >
@@ -131,16 +135,7 @@ export const CDXStructuresViewer = ({
           </MenuList>
         </div>
         <div className={styles.imageWrapper}>
-          {itemsMap[selectedIndex]?.error ? (
-            <div>Error: {itemsMap[selectedIndex]?.error}</div>
-          ) : (
-            <div className={styles.image}>
-              <img
-                src={`data:image/png+xml;base64,${itemsMap[selectedIndex]?.imageUrl}`}
-                alt={`preview of a structure #${selectedIndex + 1}`}
-              />
-            </div>
-          )}
+          {renderStructure(itemsMap[selectedIndex])}
         </div>
       </div>
     );

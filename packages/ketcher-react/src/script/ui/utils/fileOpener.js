@@ -81,7 +81,7 @@ function throughFileReader(file) {
               structures.push(base64String);
             }
           });
-          content = { structures: structures.reverse(), isPPTX: true };
+          content = { structures, isPPTX: true };
           break;
         default:
           content = rd.result;

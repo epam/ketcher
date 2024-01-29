@@ -250,9 +250,19 @@ export class MacromoleculesConverter {
     return attachmentPointLabel;
   }
 
-  public static getFragments(struct: Struct) {
-    const fragments: number[][] = [];
+  // This method returns array of arrays of fragmentIds grouped by sgroup
+  // It needs to serialize/deserialize several molecules grouped by sgroup as a single molecule
+  public static getFragmentsGroupedBySgroup(struct: Struct) {
+    const groupedFragments: number[][] = [];
     struct.frags.forEach((_fragment, fragmentId) => {
+      const isAlreadyGrouped = groupedFragments.find((fragmentsGroup) =>
+        fragmentsGroup.includes(fragmentId),
+      );
+      if (isAlreadyGrouped) {
+        return;
+      }
+
+      // Find all sgroups related to fragment
       const fragmentSgroups = new Set<SGroup>();
       struct.atoms.forEach((atom, atomId) => {
         if (atom.fragment !== fragmentId) return;
@@ -261,29 +271,23 @@ export class MacromoleculesConverter {
           fragmentSgroups.add(sgroup);
         }
       });
-      const index = fragments.push([fragmentId]) - 1;
+
+      // Add new group of fragments with fragments related to one sgroup
+      const lastFragmentGroupIndex = groupedFragments.push([fragmentId]) - 1;
       fragmentSgroups.forEach((sgroup) => {
         sgroup.atoms.forEach((aid) => {
           const atomFragmentId = struct.atoms.get(aid)?.fragment;
-          if (atomFragmentId && !fragments[index].includes(atomFragmentId)) {
-            fragments[index].push(atomFragmentId);
+          if (
+            atomFragmentId &&
+            !groupedFragments[lastFragmentGroupIndex].includes(atomFragmentId)
+          ) {
+            groupedFragments[lastFragmentGroupIndex].push(atomFragmentId);
           }
         });
       });
     });
 
-    const uniqueFragments = fragments.filter((arr, index, self) => {
-      // Sort the arrays before comparing
-      const sortedArr = arr.slice().sort();
-      return (
-        index ===
-        self.findIndex((a) => {
-          const sortedA = a.slice().sort();
-          return JSON.stringify(sortedA) === JSON.stringify(sortedArr);
-        })
-      );
-    });
-    return uniqueFragments;
+    return groupedFragments;
   }
 
   public static convertStructToDrawingEntities(
@@ -304,7 +308,7 @@ export class MacromoleculesConverter {
         );
       }
     });
-    const fragments = this.getFragments(struct);
+    const fragments = this.getFragmentsGroupedBySgroup(struct);
 
     let fragmentNumber = 1;
     fragments.forEach((_fragment, fragmentId) => {

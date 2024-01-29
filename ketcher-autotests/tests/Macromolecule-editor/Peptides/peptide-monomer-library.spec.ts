@@ -151,4 +151,82 @@ test.describe('Peptide library testing', () => {
     await page.getByText('Edc').locator('..').first().hover();
     await takeEditorScreenshot(page);
   });
+
+  test('Selected CHEM discards when mouse hovered on canvas and ESC button is clicked', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Actions with structures
+    Description: Selected CHEM discards when mouse hovered on canvas and ESC button is clicked.
+    */
+    await page.getByTestId('CHEM-TAB').click();
+    await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').click();
+    await moveMouseToTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
+    await page.keyboard.press('Escape');
+    await takeEditorScreenshot(page);
+  });
+
+  test('A tooltip appears when hovering over a CHEM on canvas while Erase tool is selected', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Actions with structures
+    Description: A tooltip appears when hovering over a CHEM on canvas while Erase tool is selected.
+    */
+    await page.getByTestId('CHEM-TAB').click();
+    await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').click();
+    await clickInTheMiddleOfTheScreen(page);
+    await selectEraseTool(page);
+    await page.getByText('Test-6-Ch').locator('..').first().hover();
+    await takeEditorScreenshot(page);
+  });
+
+  test('A tooltip appears when hovering over a CHEM on canvas while Bond tool is selected', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Actions with structures
+    Description: A tooltip appears when hovering over a CHEM on canvas while Bond tool is selected.
+    */
+    await page.getByTestId('CHEM-TAB').click();
+    await page
+      .getByTestId('MCC___4-(N-maleimidomethyl)cyclohexane-1-carboxylate')
+      .click();
+    await clickInTheMiddleOfTheScreen(page);
+    await selectSingleBondTool(page);
+    await page.getByText('MCC').locator('..').first().hover();
+    await takeEditorScreenshot(page);
+  });
+
+  test('A tooltip appears when hovering over a CHEM on canvas while Selection tool is selected', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Actions with structures
+    Description: A tooltip appears when hovering over a CHEM on canvas while Selection tool is selected.
+    */
+    await page.getByTestId('CHEM-TAB').click();
+    await page.getByTestId('SMPEG2___SM(PEG)2 linker from Pierce').click();
+    await clickInTheMiddleOfTheScreen(page);
+    await selectRectangleSelectionTool(page);
+    await page.getByText('SMPEG2').locator('..').first().hover();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Selected RNA discards when mouse hovered on canvas and ESC button is clicked', async ({
+    page,
+  }) => {
+    /* 
+    Test case: Actions with structures https://github.com/epam/ketcher/issues/3986
+    Description: Selected RNA discards when mouse hovered on canvas and ESC button is clicked.
+    The test is currently not functioning correctly as the bug has not been fixed
+    */
+    await page.getByTestId('RNA-TAB').click();
+    await page.getByTestId('C_C_R_P').click();
+    await moveMouseToTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
+    await page.keyboard.press('Escape');
+    await takeEditorScreenshot(page);
+  });
 });

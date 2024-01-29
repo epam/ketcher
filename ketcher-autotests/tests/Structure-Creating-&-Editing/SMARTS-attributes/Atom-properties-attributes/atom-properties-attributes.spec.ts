@@ -1,4 +1,4 @@
-import { Page, test } from '@playwright/test';
+import { Page, test, expect } from '@playwright/test';
 import {
   BondTypeName,
   clickInTheMiddleOfTheScreen,
@@ -137,5 +137,31 @@ test.describe('Checking atom properties attributes in SMARTS format', () => {
       '[#6](-[#6])(-[#6])-[#6]',
     );
     await checkSmartsWarnings(page);
+  });
+
+  test('Check that cannot add Charge more than -15', async ({ page }) => {
+    test.fail();
+    /**
+     * Test case: https://github.com/epam/ketcher/issues/3943
+     * Description: Validation should be added +-15 range allowed only
+     * This test will fail until https://github.com/epam/ketcher/issues/3943 is fixed
+     */
+    await setCharge(page, '-16');
+    const applyButton = await page.getByText('Apply');
+    const isDisabled = await applyButton.isDisabled();
+    expect(isDisabled).toBe(true);
+  });
+
+  test('Check that cannot add Charge more than 15', async ({ page }) => {
+    test.fail();
+    /**
+     * Test case: https://github.com/epam/ketcher/issues/3943
+     * Description: Validation should be added +-15 range allowed only
+     * This test will fail until https://github.com/epam/ketcher/issues/3943 is fixed
+     */
+    await setCharge(page, '16');
+    const applyButton = await page.getByText('Apply');
+    const isDisabled = await applyButton.isDisabled();
+    expect(isDisabled).toBe(true);
   });
 });

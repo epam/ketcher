@@ -75,22 +75,20 @@ test.describe('Checking bond attributes in SMARTS format', () => {
   });
 
   test('Setting bond type - single up', async ({ page }) => {
-    test.fail();
     await setAndCheckBondProperties(
       page,
       setBondType,
       'Single Up-option',
-      '[#6@](-[#6])(-[#6])/[#6]',
+      '[#6](-[#6])(-[#6])/[#6]',
     );
   });
 
   test('Setting bond type - single down', async ({ page }) => {
-    test.fail();
     await setAndCheckBondProperties(
       page,
       setBondType,
       'Single Down-option',
-      '[#6@@](-[#6])(-[#6])\\[#6]',
+      '[#6](-[#6])(-[#6])\\[#6]',
     );
   });
 

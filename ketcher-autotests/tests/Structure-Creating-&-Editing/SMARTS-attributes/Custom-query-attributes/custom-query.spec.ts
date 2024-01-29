@@ -78,16 +78,15 @@ test.describe('Checking custom query in SMARTS format', () => {
   test('Setting custom query - logical OR for aliphatic atoms', async ({
     page,
   }) => {
-    test.fail();
     /**
-     * This test will fail until https://github.com/epam/Indigo/issues/1337 is fixed
+     * https://github.com/epam/Indigo/issues/1337
      */
-    const customQuery = 'F,Cl,Br,I';
+    const customQuery = 'F,Cl,Br,I;A';
     await setAndCheckCustomQuery(
       page,
       setCustomQueryForAtom,
       customQuery,
-      '[#6](-[#6])(-[#9,#17,#35,#53;A])-[#6]',
+      '[#6](-[#6])(-[F,Cl,Br,I;A])-[#6]',
     );
   });
 });

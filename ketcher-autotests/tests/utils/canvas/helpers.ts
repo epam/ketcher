@@ -335,3 +335,9 @@ export async function addRnaPresetOnCanvas(
   await page.mouse.click(positionX, positionY);
   await hideMonomerPreview(page);
 }
+
+export async function addChemOnCanvas(page: Page, chemId: string) {
+  await page.getByTestId('CHEM-TAB').click();
+  await page.getByTestId(chemId).click();
+  await clickInTheMiddleOfTheScreen(page);
+}

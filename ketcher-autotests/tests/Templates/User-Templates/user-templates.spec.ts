@@ -115,7 +115,7 @@ test.describe('Click User Templates on canvas', () => {
     Description: Creating Template with Simple Objects validation
     */
     await openFileAndAddToCanvas(
-      'Create Template with Simple Objects.mol',
+      'Molfiles-V2000/create-template-with-simple-objects.mol',
       page,
     );
     await selectTopPanelButton(TopPanelButton.Save, page);
@@ -138,7 +138,7 @@ test.describe('Click User Templates on canvas', () => {
     Description: Creating Template with Reaction arrow validation.
     */
     await openFileAndAddToCanvas(
-      'Create Template with Reaction arrow.rxn',
+      'Rxn-V2000/create-template-with-reaction-arrow.rxn',
       page,
     );
     await selectTopPanelButton(TopPanelButton.Save, page);

@@ -33,7 +33,7 @@ export * from './action.types';
 
 const config = {
   clear: {
-    shortcut: 'Mod+Delete',
+    shortcut: ['Mod+Delete', 'Mod+Backspace'],
     title: 'Clear Canvas',
     action: {
       thunk: (dispatch, getState) => {

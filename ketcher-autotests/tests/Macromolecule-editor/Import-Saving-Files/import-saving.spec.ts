@@ -61,7 +61,7 @@ test.describe('Import-Saving-Files', () => {
       'Molfiles-V3000/dna-mod-base-sugar-phosphate-example.mol',
       page,
     );
-    await page.getByTestId('select-rectangle-button').click();
+    await page.getByTestId('select-rectangle').click();
     await page.getByText('cdaC').locator('..').hover();
     await takeEditorScreenshot(page);
   });

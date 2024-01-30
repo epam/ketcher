@@ -64,7 +64,7 @@ export async function selectClearCanvasTool(page: Page) {
 }
 
 export async function selectRectangleSelectionTool(page: Page) {
-  const bondToolButton = page.getByTestId('select-rectangle-button');
+  const bondToolButton = page.getByTestId('select-rectangle');
   await bondToolButton.click();
 }
 

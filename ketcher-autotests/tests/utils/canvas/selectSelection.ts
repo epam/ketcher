@@ -75,7 +75,7 @@ export async function selectFragmentSelection(page: Page) {
 
 export async function cutAndPaste(page: Page) {
   const modifier = getControlModifier();
-  await page.getByTestId('select-rectangle').click();
+  await page.getByTestId('select-rectangle').first().click();
   // to focus in Editor
   await clickInTheMiddleOfTheScreen(page);
   await waitForRender(page, async () => {

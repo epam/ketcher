@@ -392,7 +392,7 @@ function MenuComponent() {
         <Menu.Item
           itemId="select-rectangle"
           title="Select Rectangle"
-          testId="select-rectangle-button"
+          testId="select-rectangle"
         />
       </Menu.Group>
       <Menu.Group>

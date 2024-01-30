@@ -44,27 +44,27 @@ export async function selectAtomInToolbar(atomName: AtomButton, page: Page) {
 }
 
 export async function selectSingleBondTool(page: Page) {
-  const bondToolButton = page.locator(`button[title*="Single Bond"]`);
+  const bondToolButton = page.getByTestId('single-bond-button');
   await bondToolButton.click();
 }
 
 export async function selectSnakeBondTool(page: Page) {
-  const bondToolButton = page.locator(`button[title*="Snake mode"]`);
+  const bondToolButton = page.getByTestId('snake-mode-button');
   await bondToolButton.click();
 }
 
 export async function selectEraseTool(page: Page) {
-  const bondToolButton = page.locator(`button[title*="Erase"]`);
+  const bondToolButton = page.getByTestId('erase-button');
   await bondToolButton.click();
 }
 
 export async function selectClearCanvasTool(page: Page) {
-  const bondToolButton = page.locator(`button[title*="Clear Canvas"]`);
+  const bondToolButton = page.getByTestId('clear-canvas-button');
   await bondToolButton.click();
 }
 
 export async function selectRectangleSelectionTool(page: Page) {
-  const bondToolButton = page.locator(`button[title*="Select Rectangle"]`);
+  const bondToolButton = page.getByTestId('select-rectangle-button');
   await bondToolButton.click();
 }
 

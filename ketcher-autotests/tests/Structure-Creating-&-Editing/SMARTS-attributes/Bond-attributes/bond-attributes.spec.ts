@@ -5,6 +5,8 @@ import {
   pressButton,
   receiveFileComparisonData,
   saveToFile,
+  receiveFileComparisonData,
+  saveToFile,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
@@ -13,6 +15,8 @@ import {
   checkSmartsWarnings,
   setBondTopology,
   setBondType,
+  setCustomQueryForBond,
+  setReactingCenter,
   setCustomQueryForBond,
   setReactingCenter,
 } from '../utils';

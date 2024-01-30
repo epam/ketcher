@@ -305,6 +305,25 @@ test.describe('RNA Library', () => {
     await takeEditorScreenshot(page);
   });
 
+  test('Add RNA to canvas when Sugar does not contain R3 attachment point(for example 3SS6(nC65C)oxy/ am6(daA)Rsp )', async ({
+    page,
+  }) => {
+    /* 
+    Test case: #2507 - Add RNA monomers to canvas https://github.com/epam/ketcher/issues/3615
+    Description: RNA added to canvas when Sugar does not contain R3 attachment point.
+    The test is currently not functioning correctly as the bug has not been fixed
+    */
+    await expandRnaBuilder(page);
+    await selectMonomer(page, Sugars.ThreeSS6);
+    await selectMonomer(page, Bases.NBebnzylAdenine);
+    await selectMonomer(page, Phosphates.Boranophosphate);
+    await page.getByTestId('add-to-presets-btn').click();
+    await page.getByTestId('3SS6(baA)bP_baA_3SS6_bP').click();
+    await clickInTheMiddleOfTheScreen(page);
+    await selectRectangleSelectionTool(page);
+    await takeEditorScreenshot(page);
+  });
+
   test('Add to presets (different combinations: Sugar+Base', async ({
     page,
   }) => {

@@ -99,6 +99,7 @@ export enum Sugars {
   TwelveddR = "12ddR___1',2'-Di-Deoxy-Ribose",
   TwentyFiveR = '25R___2,5-Ribose',
   ThreeA6 = "3A6___6-amino-hexanol (3' end)",
+  ThreeSS6 = "3SS6___3'-Thiol-Modifier 6 S-S from Glen Research",
 }
 
 export async function selectSugar(sugarName: Sugars, page: Page) {

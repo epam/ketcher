@@ -971,7 +971,6 @@ export class DrawingEntitiesManager {
       maxVerticalDistance,
       command,
     );
-    command.merge(nextMonomerResult.command);
     ({ lastPosition, maxVerticalDistance } = nextMonomerResult);
 
     this.getRnaBaseSideChainMonomers(

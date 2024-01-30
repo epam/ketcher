@@ -171,17 +171,17 @@ export class Struct {
     return this.clone(atomSet);
   }
 
-  getFragmentIds(fid: number): Pile<number> {
+  getFragmentIds(_fid: number | number[]): Pile<number> {
     const atomSet = new Pile<number>();
-
+    const fid = Array.isArray(_fid) ? _fid : [_fid];
     this.atoms.forEach((atom, aid) => {
-      if (atom.fragment === fid) atomSet.add(aid);
+      if (fid.includes(atom.fragment)) atomSet.add(aid);
     });
 
     return atomSet;
   }
 
-  getFragment(fid: number, copyNonFragmentObjects = true): Struct {
+  getFragment(fid: number | number[], copyNonFragmentObjects = true): Struct {
     return this.clone(
       this.getFragmentIds(fid),
       null,

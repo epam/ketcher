@@ -444,4 +444,8 @@ export abstract class BaseMonomer extends DrawingEntity {
 
     return this.firstFreeAttachmentPoint;
   }
+
+  public isMonomerTypeDifferentForSnakeMode(_monomerToChain: BaseMonomer) {
+    return true;
+  }
 }

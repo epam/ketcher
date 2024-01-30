@@ -2,6 +2,8 @@ import { BaseMonomer } from './BaseMonomer';
 import { MonomerItemType } from 'domain/types';
 import { Vec2 } from './vec2';
 import { Sugar } from './Sugar';
+import { Peptide } from './Peptide';
+import { Chem } from './Chem';
 
 export class Phosphate extends BaseMonomer {
   constructor(monomerItem: MonomerItemType, _position?: Vec2) {
@@ -78,5 +80,9 @@ export class Phosphate extends BaseMonomer {
     }
 
     return undefined;
+  }
+
+  public isMonomerTypeDifferentForSnakeMode(monomerToChain: BaseMonomer) {
+    return monomerToChain instanceof Peptide || monomerToChain instanceof Chem;
   }
 }

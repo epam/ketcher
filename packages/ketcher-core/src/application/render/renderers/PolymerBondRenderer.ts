@@ -45,30 +45,15 @@ export class PolymerBondRenderer extends BaseRenderer {
     );
   }
 
-  private isMonomersTypeDifferent() {
-    return (
-      (this.polymerBond.secondMonomer &&
-        [Peptide, Chem].some(
-          (type) => this.polymerBond.firstMonomer instanceof type,
-        ) &&
-        [Sugar, Phosphate].some(
-          (type) => this.polymerBond.secondMonomer instanceof type,
-        )) ||
-      ([Peptide, Chem].some(
-        (type) => this.polymerBond.secondMonomer instanceof type,
-      ) &&
-        [Sugar, Phosphate].some(
-          (type) => this.polymerBond.firstMonomer instanceof type,
-        ))
-    );
-  }
-
   get isSnake() {
     if (
       !this.isSnakeBondAvailableForMonomer(this.polymerBond.firstMonomer) ||
       (this.polymerBond.secondMonomer &&
         !this.isSnakeBondAvailableForMonomer(this.polymerBond.secondMonomer)) ||
-      this.isMonomersTypeDifferent()
+      (this.polymerBond.secondMonomer &&
+        this.polymerBond.firstMonomer.isMonomerTypeDifferentForSnakeMode(
+          this.polymerBond.secondMonomer,
+        ))
     ) {
       return false;
     }

@@ -330,10 +330,20 @@ export async function addRnaPresetOnCanvas(
   presetId: string,
   positionX: number,
   positionY: number,
+  sugarIndex: number,
+  phosphateIndex: number,
 ) {
   await page.getByTestId(presetId).click();
   await page.mouse.click(positionX, positionY);
   await hideMonomerPreview(page);
+  const sugar = await page
+    .locator(`//\*[name() = 'g' and ./\*[name()='text' and .='R']]`)
+    .nth(sugarIndex);
+  const phosphate = await page
+    .locator(`//\*[name() = 'g' and ./\*[name()='text' and .='P']]`)
+    .nth(phosphateIndex);
+
+  return { sugar, phosphate };
 }
 
 export async function addChemOnCanvas(page: Page, chemId: string) {

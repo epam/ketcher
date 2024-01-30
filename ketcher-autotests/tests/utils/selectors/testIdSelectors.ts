@@ -1,4 +1,4 @@
 export enum TestIdSelectors {
-  RectangleSelection = 'select-rectangle-in-toolbar',
+  RectangleSelection = 'select-rectangle',
   ZoomInput = 'zoom-input',
 }

@@ -53,10 +53,6 @@ async function selectRGroup(page: Page, rgroup: string) {
   await page.locator('button', { hasText: rgroup }).click();
 }
 
-async function clickModalButton(page: Page, button: 'Apply' | 'Cancel') {
-  await page.locator(`input[type="button"][value="${button}"]`).click();
-}
-
 test.describe('Open Ketcher', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
@@ -87,7 +83,7 @@ test.describe('Open Ketcher', () => {
     */
     await openRGroupModalForTopAtom(page);
     await selectRGroup(page, 'R5');
-    await clickModalButton(page, 'Cancel');
+    await page.getByTestId('Cancel').click();
   });
 
   test('Create Single R-Fragment-Group member', async ({ page }) => {
@@ -96,7 +92,7 @@ test.describe('Open Ketcher', () => {
     */
     await openRGroupModalForTopAtom(page);
     await page.getByText('R5').click();
-    await clickModalButton(page, 'Apply');
+    await page.getByTestId('OK').click();
   });
 
   test('Change R-Group definition for single R-Group member', async ({
@@ -107,11 +103,11 @@ test.describe('Open Ketcher', () => {
     */
     const { x, y } = await openRGroupModalForTopAtom(page);
     await page.getByText('R5').click();
-    await clickModalButton(page, 'Apply');
+    await page.getByTestId('OK').click();
 
     await page.mouse.click(x, y);
     await selectRGroup(page, rGroupFromFile);
-    await clickModalButton(page, 'Apply');
+    await page.getByTestId('OK').click();
   });
 
   test('Add attachment point to the R-Group member', async ({ page }) => {
@@ -120,13 +116,13 @@ test.describe('Open Ketcher', () => {
     */
     const { x, y } = await openRGroupModalForTopAtom(page);
     await page.getByText('R5').click();
-    await clickModalButton(page, 'Apply');
+    await page.getByTestId('OK').click();
 
     await delay(DELAY_IN_SECONDS.THREE);
     await page.keyboard.press('Control+r');
     await page.mouse.click(x, y);
     await page.getByLabel(AttachmentPoint.PRIMARY).check();
-    await clickModalButton(page, 'Apply');
+    await page.getByTestId('OK').click();
   });
 
   test('Brackets rendering for whole r-group structure', async ({ page }) => {
@@ -134,7 +130,7 @@ test.describe('Open Ketcher', () => {
     await selectNestedTool(page, RgroupTool.R_GROUP_FRAGMENT);
     await clickOnAtom(page, 'C', atomIndex);
     await page.getByText(rGroupFromFile).click();
-    await clickModalButton(page, 'Apply');
+    await page.getByTestId('OK').click();
   });
 
   test('Brackets rendering for whole r-group structure even with attachment points', async ({
@@ -144,7 +140,7 @@ test.describe('Open Ketcher', () => {
     await selectDropdownTool(page, 'rgroup-label', 'rgroup-attpoints');
     await clickOnAtom(page, 'C', atomIndex);
     await page.getByLabel(AttachmentPoint.PRIMARY).check();
-    await clickModalButton(page, 'Apply');
+    await page.getByTestId('OK').click();
     await selectNestedTool(
       page,
       RgroupTool.R_GROUP_FRAGMENT,
@@ -152,7 +148,7 @@ test.describe('Open Ketcher', () => {
     );
     await clickOnAtom(page, 'C', atomIndex);
     await page.getByText(rGroupFromFile).click();
-    await clickModalButton(page, 'Apply');
+    await page.getByTestId('OK').click();
   });
 
   test('Remove R-Group member from R-Group', async ({ page }) => {
@@ -185,11 +181,11 @@ test.describe('Open Ketcher', () => {
 
     await page.getByText('R16').click();
     await selectRGroup(page, 'R8');
-    await clickModalButton(page, 'Apply');
+    await page.getByTestId('OK').click();
 
     await page.getByText('R14').click();
     await selectRGroup(page, 'R15');
-    await clickModalButton(page, 'Apply');
+    await page.getByTestId('OK').click();
   });
 
   test('Define a structure with attachment points as R-Group member', async ({
@@ -207,13 +203,13 @@ test.describe('Open Ketcher', () => {
     await page.mouse.click(x, y);
     await page.getByLabel(AttachmentPoint.PRIMARY).check();
     await page.getByLabel(AttachmentPoint.SECONDARY).check();
-    await clickModalButton(page, 'Apply');
+    await page.getByTestId('OK').click();
 
     await page.keyboard.press('Control+r');
     await page.keyboard.press('Control+r');
     await page.mouse.click(x, y);
     await selectRGroup(page, 'R5');
-    await clickModalButton(page, 'Apply');
+    await page.getByTestId('OK').click();
   });
 
   test('R-Group definition is not deleted when root structure was deleted', async ({

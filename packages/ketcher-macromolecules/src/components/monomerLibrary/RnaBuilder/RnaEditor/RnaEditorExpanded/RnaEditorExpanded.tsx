@@ -146,13 +146,11 @@ export const RnaEditorExpanded = ({
   const onChangeName = (event: ChangeEvent<HTMLInputElement>) => {
     if (isEditMode) {
       const newPresetName = event.target.value;
-      if (newPresetName.trim() !== '') {
-        setNewPrest({
-          ...newPreset,
-          name: newPresetName.trim(),
-          editedName: true,
-        });
-      }
+      setNewPrest({
+        ...newPreset,
+        name: newPresetName.trim(),
+        editedName: true,
+      });
     }
   };
 

@@ -568,7 +568,7 @@ test.describe('Plus and Arrows tools ', () => {
 
       test(`open ${fileExtension} file`, async ({ page }) => {
         await openFileAndAddToCanvas(
-          `non-default-reaction-arrow-tool-saving.${fileExtension}`,
+          `Rxn-V2000/non-default-reaction-arrow-tool-saving.${fileExtension}`,
           page,
         );
       });

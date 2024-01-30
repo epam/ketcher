@@ -4,9 +4,13 @@
             {
                 "$ref": "mol0"
             }
+<<<<<<< HEAD
         ],
         "connections": [],
         "templates": []
+=======
+        ]
+>>>>>>> 086745686266dc748e943ce74e2304dd3bedabb9
     },
     "mol0": {
         "type": "molecule",

@@ -49,9 +49,11 @@ Object {
                 <span
                   class="inputWrapper"
                   data-testid="undefined-input-span"
+                  data-testid="undefined-input-span"
                 >
                   <input
                     class="input genericInput"
+                    data-testid="filename-input"
                     data-testid="filename-input"
                     name="filename"
                     type="text"

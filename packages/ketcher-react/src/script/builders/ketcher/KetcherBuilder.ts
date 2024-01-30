@@ -22,6 +22,7 @@ import {
   StructService,
   StructServiceProvider,
   ketcherProvider,
+  ketcherProvider,
 } from 'ketcher-core';
 
 import { ButtonsConfig } from './ButtonsConfig';

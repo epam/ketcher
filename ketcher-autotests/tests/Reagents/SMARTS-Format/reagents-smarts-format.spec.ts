@@ -87,6 +87,7 @@ test.describe('Reagents SMARTS format', () => {
     /*
     Test case: EPMLSOPKET-4687
     Description: Reagent 'Cl' displays above reaction arrow
+    Test is working not correct. Bug: https://github.com/epam/Indigo/issues/1369
     */
     await selectTopPanelButton(TopPanelButton.Open, page);
     await page.getByText('Paste from clipboard').click();

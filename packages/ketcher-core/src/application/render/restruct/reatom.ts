@@ -138,6 +138,7 @@ class ReAtom extends ReObject {
   getSelectionContour(render: Render) {
     const hasLabel =
       (this.a.pseudo && this.a.pseudo.length > 1 && !getQueryAttrsText(this)) ||
+      (this.a.pseudo && this.a.pseudo.length > 1 && !getQueryAttrsText(this)) ||
       (this.showLabel && this.a.implicitH !== 0);
     return hasLabel
       ? this.getLabeledSelectionContour(render)
@@ -476,7 +477,7 @@ class ReAtom extends ReObject {
       text += `.${aamText}.`;
     }
 
-    if (text.length > 0) {
+    if (text.length > 0 && !isSmartPropertiesExist) {
       const elem = Elements.get(this.a.label);
       const aamPath = render.paper.text(ps.x, ps.y, text).attr({
         font: options.font,
@@ -1155,6 +1156,38 @@ function showHydrogen(
   return Object.assign(data, { hydrogen, hydroIndex });
 }
 
+function showSmartsLabel(atom: ReAtom, render: Render, text: string): ElemAttr {
+  // eslint-disable-line max-statements
+  const ps = Scale.obj2scaled(atom.a.pp, render.options);
+  const options = render.options;
+  const label = {} as ElemAttr;
+  let tooltip: string | null = null;
+
+  if (text.length > 8) {
+    tooltip = text;
+    label.text = `${text.substring(0, 8)}...`;
+  } else {
+    label.text = text;
+  }
+
+  label.path = render.paper.text(ps.x, ps.y, label.text).attr({
+    font: options.font,
+    'font-size': options.fontsz,
+    fill: atom.color,
+  });
+  label.rbb = util.relBox(label.path.getBBox());
+  draw.recenterText(label.path, label.rbb);
+  const xShift =
+    ((atom.hydrogenOnTheLeft ? -1 : 1) * (label.rbb.width - label.rbb.height)) /
+    2;
+  pathAndRBoxTranslate(label.path, label.rbb, xShift, 0);
+  if (tooltip) {
+    addTooltip(label, tooltip);
+  }
+
+  return label;
+}
+
 function showWarning(
   atom,
   render,
@@ -1242,6 +1275,14 @@ function getSubstitutionCountAttrText(value: number) {
     throw new Error('Substitution count invalid');
   }
   return attrText;
+}
+
+export function getAtomType(atom: Atom) {
+  return atom.atomList
+    ? 'list'
+    : atom.pseudo === atom.label
+    ? 'pseudo'
+    : 'single';
 }
 
 export function getAtomType(atom: Atom) {

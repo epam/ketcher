@@ -48,7 +48,10 @@ test.describe('Indigo Tools - Clean Tools', () => {
     Test case: EPMLSOPKET-1778
     Description: The length of the bonds becomes the same
     */
-    await openFileAndAddToCanvas('different-bond-length.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/different-bond-length.mol',
+      page,
+    );
 
     await waitForSpinnerFinishedWork(
       page,
@@ -70,7 +73,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
     Description: The angles should be 60, 90 or 120°
     (all angles in each structure are equal after the clean action)
    */
-    await openFileAndAddToCanvas('different-angle-fr.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V3000/different-angle-fr.mol', page);
     await clickInTheMiddleOfTheScreen(page);
 
     await waitForSpinnerFinishedWork(
@@ -118,7 +121,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
     left corner of the canvas.
     The structure group of structures appears undistorted.
    */
-    await openFileAndAddToCanvas('layout-distorted.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/layout-distorted.mol', page);
 
     await waitForSpinnerFinishedWork(
       page,
@@ -132,7 +135,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
     Description: After the 'Clean Up' action the structures don't change its position on the canvas.
     The group of structures is cleaned up and appear undistorted.
    */
-    await openFileAndAddToCanvas('layout-distorted.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/layout-distorted.mol', page);
 
     await waitForSpinnerFinishedWork(
       page,
@@ -295,7 +298,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
     Test case: EPMLSOPKET-1797
     Description: The reaction mapping is kept after the Layout and Clean Up action.
    */
-    await openFileAndAddToCanvas('mapping-reaction.rxn', page);
+    await openFileAndAddToCanvas('Rxn-V2000/mapping-reaction.rxn', page);
 
     await waitForSpinnerFinishedWork(
       page,

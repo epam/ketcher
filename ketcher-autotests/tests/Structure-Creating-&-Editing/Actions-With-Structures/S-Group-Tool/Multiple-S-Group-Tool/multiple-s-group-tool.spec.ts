@@ -211,12 +211,16 @@ test.describe('Multiple S-Group tool', () => {
     */
     await openFileAndAddToCanvas('KET/multiple-group-data.ket', page);
     const expectedFile = await getMolfile(page);
-    await saveToFile('multiple-group-data-expected.mol', expectedFile);
+    await saveToFile(
+      'Molfiles-V2000/multiple-group-data-expected.mol',
+      expectedFile,
+    );
     const METADATA_STRING_INDEX = [1];
     const { fileExpected: molFileExpected, file: molFile } =
       await receiveFileComparisonData({
         page,
-        expectedFileName: 'tests/test-data/multiple-group-data-expected.mol',
+        expectedFileName:
+          'tests/test-data/Molfiles-V2000/multiple-group-data-expected.mol',
         metaDataIndexes: METADATA_STRING_INDEX,
       });
     expect(molFile).toEqual(molFileExpected);

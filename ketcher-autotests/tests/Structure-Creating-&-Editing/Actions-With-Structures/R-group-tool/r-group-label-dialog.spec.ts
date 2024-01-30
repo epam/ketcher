@@ -451,7 +451,10 @@ test.describe('R-Group Label Tool', () => {
       Test case: EPMLSOPKET-1576
       Description: The structure is layout correctly without R-group label loss.
     */
-    await openFileAndAddToCanvas('distorted-structure-with-r-group.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/distorted-structure-with-r-group.mol',
+      page,
+    );
     await selectTopPanelButton(TopPanelButton.Layout, page);
   });
 });

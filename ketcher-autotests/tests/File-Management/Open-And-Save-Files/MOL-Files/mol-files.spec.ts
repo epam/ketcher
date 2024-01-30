@@ -19,7 +19,7 @@ test('Open and Save files - Open/Save structure with atom properties 1/2 - open'
    */
   await waitForPageInit(page);
 
-  await openFileAndAddToCanvas('mol_1855_to_open.mol', page);
+  await openFileAndAddToCanvas('Molfiles-V2000/mol-1855-to-open.mol', page);
   // check that structure opened from file is displayed correctly
   await takeEditorScreenshot(page);
 });
@@ -33,15 +33,19 @@ test('Open and Save files - Open/Save structure with atom properties 2/2 - save'
    */
   await waitForPageInit(page);
 
-  await openFileAndAddToCanvas('mol_1855_to_open.mol', page);
+  await openFileAndAddToCanvas('Molfiles-V2000/mol-1855-to-open.mol', page);
   const expectedFile = await getMolfile(page, 'v2000');
-  await saveToFile('mol_1855_to_open-expected.mol', expectedFile);
+  await saveToFile(
+    'Molfiles-V2000/mol-1855-to-open-expected.mol',
+    expectedFile,
+  );
 
   const METADATA_STRING_INDEX = [1];
   const { fileExpected: molFileExpected, file: molFile } =
     await receiveFileComparisonData({
       page,
-      expectedFileName: 'tests/test-data/mol_1855_to_open-expected.mol',
+      expectedFileName:
+        'tests/test-data/Molfiles-V2000/mol-1855-to-open-expected.mol',
       fileFormat: 'v2000',
       metaDataIndexes: METADATA_STRING_INDEX,
     });
@@ -58,7 +62,10 @@ test('Open and Save file - Open/Save V3000 file with atom and bond properties 1/
    */
   await waitForPageInit(page);
 
-  await openFileAndAddToCanvas('Marvin_Atom_properties_V3000.mol', page);
+  await openFileAndAddToCanvas(
+    'Molfiles-V3000/marvin-atom-properties-V3000.mol',
+    page,
+  );
   // check that structure opened from file is displayed correctly
   await takeEditorScreenshot(page);
 });
@@ -72,7 +79,10 @@ test('Open and Save file - Open/Save V3000 file with atom and bond properties 2/
    */
   await waitForPageInit(page);
 
-  await openFileAndAddToCanvas('Marvin_Atom_properties_V3000.mol', page);
+  await openFileAndAddToCanvas(
+    'Molfiles-V3000/marvin-atom-properties-V3000.mol',
+    page,
+  );
   const expectedFile = await getMolfile(page, 'v3000');
   await saveToFile(
     'Molfiles-V3000/atom-properties-V3000-expected.mol',
@@ -102,7 +112,7 @@ test('Open and Save file - Open/Save Markush files 1/2 - open', async ({
    */
   await waitForPageInit(page);
 
-  await openFileAndAddToCanvas('Markush.mol', page);
+  await openFileAndAddToCanvas('Molfiles-V2000/markush.mol', page);
   // check that structure opened from file is displayed correctly
   await takeEditorScreenshot(page);
 });
@@ -116,16 +126,16 @@ test('Open and Save file - Open/Save Markush files 2/2 - save', async ({
    */
   await waitForPageInit(page);
 
-  await openFileAndAddToCanvas('Markush.mol', page);
+  await openFileAndAddToCanvas('Molfiles-V2000/markush.mol', page);
   const expectedFile = await getMolfile(page, 'v2000');
-  await saveToFile('markush-expected.mol', expectedFile);
+  await saveToFile('Molfiles-V2000/markush-expected.mol', expectedFile);
 
   const METADATA_STRINGS_INDEXES = [0, 4];
 
   const { fileExpected: molFileExpected, file: molFile } =
     await receiveFileComparisonData({
       page,
-      expectedFileName: 'tests/test-data/markush-expected.mol',
+      expectedFileName: 'tests/test-data/Molfiles-V2000/markush-expected.mol',
       fileFormat: 'v2000',
       metaDataIndexes: METADATA_STRINGS_INDEXES,
     });
@@ -283,13 +293,14 @@ test('Open and Save file - Open/Save file contains Heteroatoms 2/2 - save', asyn
     page,
   );
   const expectedFile = await getMolfile(page, 'v2000');
-  await saveToFile('heteroatoms-expected.mol', expectedFile);
+  await saveToFile('Molfiles-V2000/heteroatoms-expected.mol', expectedFile);
   const METADATA_STRING_INDEX = [1];
 
   const { fileExpected: molFileExpected, file: molFile } =
     await receiveFileComparisonData({
       page,
-      expectedFileName: 'tests/test-data/heteroatoms-expected.mol',
+      expectedFileName:
+        'tests/test-data/Molfiles-V2000/heteroatoms-expected.mol',
       metaDataIndexes: METADATA_STRING_INDEX,
     });
 
@@ -348,7 +359,7 @@ test('Open and Save file - V3000 *.mol file contains Heteroatoms 1/2 - open', as
    */
   await waitForPageInit(page);
 
-  await openFileAndAddToCanvas('Heteroatoms_V3000.mol', page);
+  await openFileAndAddToCanvas('Molfiles-V3000/heteroatoms-V3000.mol', page);
   // check that structure opened from file is displayed correctly
   await takeEditorScreenshot(page);
 });
@@ -362,15 +373,19 @@ test('Open and Save file - V3000 *.mol file contains Heteroatoms 2/2 - save', as
    */
   await waitForPageInit(page);
 
-  await openFileAndAddToCanvas('Heteroatoms_V3000.mol', page);
+  await openFileAndAddToCanvas('Molfiles-V3000/heteroatoms-V3000.mol', page);
   const expectedFile = await getMolfile(page, 'v3000');
-  await saveToFile('heteroatoms-V3000-expected.mol', expectedFile);
+  await saveToFile(
+    'Molfiles-V3000/heteroatoms-V3000-expected.mol',
+    expectedFile,
+  );
   const METADATA_STRING_INDEX = [1];
 
   const { fileExpected: molFileExpected, file: molFile } =
     await receiveFileComparisonData({
       page,
-      expectedFileName: 'tests/test-data/heteroatoms-V3000-expected.mol',
+      expectedFileName:
+        'tests/test-data/Molfiles-V3000/heteroatoms-V3000-expected.mol',
       fileFormat: 'v3000',
       metaDataIndexes: METADATA_STRING_INDEX,
     });
@@ -531,15 +546,19 @@ test('Open and Save file - Save V3000 molfile as V2000 molfile', async ({
    */
   await waitForPageInit(page);
 
-  await openFileAndAddToCanvas('ketcher (4).mol', page);
+  await openFileAndAddToCanvas(
+    'Molfiles-V3000/two-connected-chains-v3000.mol',
+    page,
+  );
   const expectedFile = await getMolfile(page, 'v2000');
-  await saveToFile('ketcher (4)-expected.mol', expectedFile);
+  await saveToFile('Molfiles-V2000/two-connected-chains.mol', expectedFile);
   const METADATA_STRINGS_INDEXES = [1];
 
   const { fileExpected: molFileExpected, file: molFile } =
     await receiveFileComparisonData({
       page,
-      expectedFileName: 'tests/test-data/ketcher (4)-expected.mol',
+      expectedFileName:
+        'tests/test-data/Molfiles-V2000/two-connected-chains.mol',
       metaDataIndexes: METADATA_STRINGS_INDEXES,
       fileFormat: 'v2000',
     });

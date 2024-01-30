@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import data from '@tests/test-data/request-data.json';
-import molV3000TestData from '@tests/test-data/molV3000-result.json';
+import molV3000TestData from '@tests/test-data/JSON/molV3000-result.json';
 
 test('getting molV3000 from Indigo', async ({ request }) => {
   const molV3000Result = await request.post(

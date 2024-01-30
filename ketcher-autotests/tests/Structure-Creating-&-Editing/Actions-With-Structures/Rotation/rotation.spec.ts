@@ -34,7 +34,7 @@ test.describe('Rotation', () => {
       Test case: EPMLSOPKET-16894
       Description: Rotation is cancelled via "right click"
     */
-    await openFileAndAddToCanvas('mol_1855_to_open.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/mol-1855-to-open.mol', page);
     await page.keyboard.press('Control+a');
     const screenBeforeRotation = await takeEditorScreenshot(page);
     const coordinates = await getRotationHandleCoordinates(page);

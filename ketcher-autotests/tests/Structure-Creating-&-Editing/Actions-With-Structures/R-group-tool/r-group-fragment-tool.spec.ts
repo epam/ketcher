@@ -38,6 +38,12 @@ async function openRGroupModalForTopAtom(page: Page) {
   return { x, y };
 }
 
+async function selectRGroupFragmentTool(page: Page) {
+  await page.getByTestId('rgroup-attpoints-in-toolbar').first().click();
+  await page.getByTestId('rgroup-attpoints').first().click();
+  await page.getByTestId('rgroup-fragment').click();
+}
+
 const rGroupFromFile = 'R8';
 const atomIndex = 3;
 async function selectRGroups(page: Page, rGroups: string[]) {
@@ -141,11 +147,7 @@ test.describe('Open Ketcher', () => {
     await clickOnAtom(page, 'C', atomIndex);
     await page.getByLabel(AttachmentPoint.PRIMARY).check();
     await page.getByTestId('OK').click();
-    await selectNestedTool(
-      page,
-      RgroupTool.R_GROUP_FRAGMENT,
-      RgroupTool.ATTACHMENT_POINTS,
-    );
+    await selectRGroupFragmentTool(page);
     await clickOnAtom(page, 'C', atomIndex);
     await page.getByText(rGroupFromFile).click();
     await page.getByTestId('OK').click();

@@ -107,32 +107,29 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await expect(saveButtonThree).not.toHaveAttribute('disabled', 'disabled');
   });
 
-  // EPMLSOPKET-1903 - TO DO
-  // TO DO: while saving file showed ERROR: array: invalid index -2 (size=0)
-  // Need to create new bug looks like it connected to #2389 issue
-  test.fixme(
-    'Open and Save file - Reaction from file that contains Sgroup',
-    async ({ page }) => {
-      /**
-       * Test case: EPMLSOPKET-1903
-       * Description: Reaction from file that contains Sgroup
-       */
-      await openFileAndAddToCanvas(
-        'Rxn-V2000/structure-with-s-groups-with-unsupported-s-group-type.rxn',
-        page,
-      );
-      const expectedFile = await getRxn(page);
-      await saveToFile(
-        'Rxn-V2000/structure-with-s-groups-with-unsupported-s-group-type-saved.rxn',
-        expectedFile,
-      );
-      await openFileAndAddToCanvas(
-        'Rxn-V2000/structure-with-s-groups-with-unsupported-s-group-type-saved.rxn',
-        page,
-      );
-      await takeEditorScreenshot(page);
-    },
-  );
+  test('Open and Save file - Reaction from file that contains Sgroup', async ({
+    page,
+  }) => {
+    /**
+     * Test case: EPMLSOPKET-1903
+     * Description: Reaction from file that contains Sgroup
+     */
+    await openFileAndAddToCanvas(
+      'Rxn-V2000/structure-with-s-groups-with-unsupported-s-group-type.rxn',
+      page,
+    );
+    const expectedFile = await getRxn(page);
+    await saveToFile(
+      'Rxn-V2000/structure-with-s-groups-with-unsupported-s-group-type-saved.rxn',
+      expectedFile,
+    );
+    await selectTopPanelButton(TopPanelButton.Clear, page);
+    await openFileAndAddToCanvas(
+      'Rxn-V2000/structure-with-s-groups-with-unsupported-s-group-type-saved.rxn',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
 
   test('Open and Save file - File without arrow or(and) plus-symbol', async ({
     page,

@@ -233,6 +233,7 @@ self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
           indigo.convert(data.struct, data.format, indigoOptions),
         data.options,
         Command.Convert,
+        data.struct,
       );
       break;
     }

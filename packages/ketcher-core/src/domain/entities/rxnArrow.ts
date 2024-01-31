@@ -40,12 +40,14 @@ export interface RxnArrowAttributes {
   mode: RxnArrowMode;
   pos?: Array<Point>;
   height?: number;
+  initiallySelected?: boolean;
 }
 
 export class RxnArrow {
   mode: RxnArrowMode;
   pos: Array<Vec2>;
   height?: number;
+  initiallySelected?: boolean;
 
   static isElliptical(arrow) {
     return [
@@ -71,6 +73,7 @@ export class RxnArrow {
     if (RxnArrow.isElliptical(this)) {
       this.height = attributes.height ?? defaultHeight;
     }
+    this.initiallySelected = attributes.initiallySelected;
   }
 
   clone() {

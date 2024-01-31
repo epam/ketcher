@@ -30,6 +30,7 @@ export interface TextAttributes {
   content: string;
   position: Point;
   pos: Array<Point>;
+  initiallySelected?: boolean;
 }
 
 function preparePositions(positions?: Array<Point>) {
@@ -44,6 +45,7 @@ export class Text {
   content: string;
   position: Vec2;
   pos: Array<Vec2>;
+  initiallySelected?: boolean;
 
   constructor(attributes?: TextAttributes) {
     this.pos = preparePositions(attributes?.pos);
@@ -51,6 +53,7 @@ export class Text {
     this.position = attributes?.position
       ? new Vec2(attributes.position)
       : new Vec2();
+    this.initiallySelected = attributes?.initiallySelected;
   }
 
   setPos(coords: Array<Vec2>): void {

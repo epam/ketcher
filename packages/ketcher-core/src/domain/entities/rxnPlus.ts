@@ -18,13 +18,16 @@ import { Point, Vec2 } from './vec2';
 
 export interface RxnPlusAttributes {
   pp?: Point;
+  initiallySelected?: boolean;
 }
 
 export class RxnPlus {
   pp: Vec2;
+  initiallySelected?: boolean;
 
   constructor(attributes?: RxnPlusAttributes) {
     this.pp = attributes?.pp ? new Vec2(attributes.pp) : new Vec2();
+    this.initiallySelected = attributes?.initiallySelected;
   }
 
   clone() {

@@ -614,6 +614,9 @@
           "items": {
             "type": "number"
           }
+        },
+        "selected": {
+          "type": "boolean"
         }
       }
     },
@@ -653,6 +656,9 @@
               "type": "number"
             }
           }
+        },
+        "selected": {
+          "type": "boolean"
         }
       }
     },
@@ -763,6 +769,9 @@
               }
             }
           }
+        },
+        "selected": {
+          "type": "boolean"
         }
       }
     }

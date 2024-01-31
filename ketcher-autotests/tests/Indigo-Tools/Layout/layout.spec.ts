@@ -45,6 +45,7 @@ test.describe('Indigo Tools - Layout', () => {
   });
 });
 
+// Note: indigo sends wrong selection in response todo: update after indigo 18.rc.6
 test.describe('Indigo Tools - Layout', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);

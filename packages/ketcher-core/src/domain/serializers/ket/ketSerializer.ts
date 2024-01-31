@@ -534,7 +534,7 @@ export class KetSerializer implements Serializer<Struct> {
   serialize(
     struct: Struct,
     drawingEntitiesManager = new DrawingEntitiesManager(),
-    selection?: EditorSelection,
+    selection?: { items: EditorSelection; mappingNeeded: boolean },
   ) {
     MacromoleculesConverter.convertStructToDrawingEntities(
       struct,
@@ -546,6 +546,7 @@ export class KetSerializer implements Serializer<Struct> {
 
     const populatedStruct = populateStructWithSelection(
       micromoleculesStruct,
+      struct,
       selection,
     );
 

@@ -207,9 +207,11 @@ export function serverCall(editor, server, method, options, struct) {
 
   const ketSerializer = new KetSerializer();
   const serializedStruct = ketSerializer.serialize(currentStruct, undefined, {
-    ...selection,
-    atoms: selectedAtoms,
-    bonds: selectedBonds,
+    items: {
+      ...selection,
+      atoms: selectedAtoms,
+      bonds: selectedBonds,
+    },
   });
 
   return server.then(() =>

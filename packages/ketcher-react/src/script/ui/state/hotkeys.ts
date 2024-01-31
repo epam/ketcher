@@ -354,13 +354,23 @@ async function safelyGetMimeType(
 async function getStructStringFromClipboardData(
   data: ClipboardItem[],
 ): Promise<string> {
-  const clipboardItem = data[0] as ClipboardItem;
-  const structStr =
-    (await safelyGetMimeType(clipboardItem, `web ${ChemicalMimeType.KET}`)) ||
-    (await safelyGetMimeType(clipboardItem, `web ${ChemicalMimeType.Mol}`)) ||
-    (await safelyGetMimeType(clipboardItem, `web ${ChemicalMimeType.Rxn}`)) ||
-    (await safelyGetMimeType(clipboardItem, 'text/plain'));
-  return structStr === '' ? '' : structStr.text();
+  const clipboardItem = data[0];
+
+  if (clipboardItem instanceof ClipboardItem) {
+    const structStr =
+      (await safelyGetMimeType(clipboardItem, `web ${ChemicalMimeType.KET}`)) ||
+      (await safelyGetMimeType(clipboardItem, `web ${ChemicalMimeType.Mol}`)) ||
+      (await safelyGetMimeType(clipboardItem, `web ${ChemicalMimeType.Rxn}`)) ||
+      (await safelyGetMimeType(clipboardItem, 'text/plain'));
+    return structStr === '' ? '' : structStr.text();
+  } else {
+    return (
+      data[ChemicalMimeType.KET] ||
+      data[ChemicalMimeType.Mol] ||
+      data[ChemicalMimeType.Rxn] ||
+      data['text/plain']
+    );
+  }
 }
 
 function isAbleToCopy(editor: Editor): boolean {

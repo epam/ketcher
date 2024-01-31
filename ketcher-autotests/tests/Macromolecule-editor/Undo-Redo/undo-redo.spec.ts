@@ -1,6 +1,6 @@
 import { Locator, test } from '@playwright/test';
 import {
-  addMonomerToCanvas,
+  addSingleMonomerToCanvas,
   clickRedo,
   clickUndo,
   dragMouseTo,
@@ -28,7 +28,7 @@ test.describe('Undo Redo', () => {
     const MONOMER_NAME = 'Tza___3-thiazolylalanine';
     const MONOMER_ALIAS = 'Tza';
 
-    peptide1 = await addMonomerToCanvas(
+    peptide1 = await addSingleMonomerToCanvas(
       page,
       MONOMER_NAME,
       MONOMER_ALIAS,
@@ -36,7 +36,7 @@ test.describe('Undo Redo', () => {
       300,
       0,
     );
-    peptide2 = await addMonomerToCanvas(
+    peptide2 = await addSingleMonomerToCanvas(
       page,
       MONOMER_NAME,
       MONOMER_ALIAS,
@@ -44,7 +44,7 @@ test.describe('Undo Redo', () => {
       300,
       1,
     );
-    const peptide3 = await addMonomerToCanvas(
+    const peptide3 = await addSingleMonomerToCanvas(
       page,
       MONOMER_NAME,
       MONOMER_ALIAS,

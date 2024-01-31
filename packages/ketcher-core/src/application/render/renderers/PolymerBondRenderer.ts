@@ -67,17 +67,22 @@ export class PolymerBondRenderer extends BaseRenderer {
       this.polymerBond.firstMonomer.getPotentialAttachmentPointByBond(
         this.polymerBond,
       );
-    return (
-      SnakeMode.isEnabled &&
-      ((this.attachmentPointsForSnakeBond.includes(
+    const isAttachmentPointsEnabledForSnakeBond =
+      (this.attachmentPointsForSnakeBond.includes(
         firstMonomerAttachmentPoint as string,
       ) &&
         this.attachmentPointsForSnakeBond.includes(
           secondMonomerAttachmentPoint as string,
         )) ||
-        this.attachmentPointsForSnakeBond.includes(
-          firstMonomerPotentialAttachmentPoint as string,
-        ))
+      this.attachmentPointsForSnakeBond.includes(
+        firstMonomerPotentialAttachmentPoint as string,
+      );
+    const isSameAttachmentPoints =
+      firstMonomerAttachmentPoint === secondMonomerAttachmentPoint;
+    return (
+      SnakeMode.isEnabled &&
+      isAttachmentPointsEnabledForSnakeBond &&
+      !isSameAttachmentPoints
     );
   }
 

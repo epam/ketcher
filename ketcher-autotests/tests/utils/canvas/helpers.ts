@@ -32,6 +32,7 @@ import {
 import { getLeftTopBarSize } from './common/getLeftTopBarSize';
 import { emptyFunction } from '@utils/common/helpers';
 import { hideMonomerPreview } from '@utils/macromolecules';
+import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 
 export async function drawBenzeneRing(page: Page) {
   await selectRing(RingButton.Benzene, page);
@@ -295,7 +296,7 @@ export async function resetAllSettingsToDefault(page: Page) {
   await pressButton(page, 'Apply');
 }
 
-export async function addMonomerToCanvas(
+export async function addSingleMonomerToCanvas(
   page: Page,
   monomerFullName: string,
   alias: string,
@@ -309,6 +310,42 @@ export async function addMonomerToCanvas(
   return await page
     .locator(`//\*[name() = 'g' and ./\*[name()='text' and .='${alias}']]`)
     .nth(index);
+}
+
+export async function addBondedMonomersToCanvas(
+  page: Page,
+  monomerFullName: string,
+  alias: string,
+  initialPositionX: number,
+  initialPositionY: number,
+  deltaX: number,
+  deltaY: number,
+  amount: number,
+  connectTitle1?: string,
+  connectTitle2?: string,
+) {
+  const monomers = [];
+  for (let index = 0; index < amount; index++) {
+    const monomer = await addSingleMonomerToCanvas(
+      page,
+      monomerFullName,
+      alias,
+      initialPositionX + deltaX * index,
+      initialPositionY + deltaY * index,
+      index,
+    );
+    monomers.push(monomer);
+    if (index > 0) {
+      await bondTwoMonomers(
+        page,
+        monomers[index - 1],
+        monomer,
+        connectTitle1,
+        connectTitle2,
+      );
+    }
+  }
+  return monomers;
 }
 
 export async function addMonomerToCenterOfCanvas(

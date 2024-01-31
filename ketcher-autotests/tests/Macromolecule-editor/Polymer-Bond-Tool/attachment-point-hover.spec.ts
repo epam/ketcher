@@ -1,6 +1,6 @@
 import { test } from '@playwright/test';
 import {
-  addMonomerToCanvas,
+  addSingleMonomerToCanvas,
   selectSingleBondTool,
   waitForPageInit,
   takeEditorScreenshot,
@@ -20,7 +20,7 @@ test.describe('Check attachment point hover', () => {
     const MONOMER_NAME = 'Tza___3-thiazolylalanine';
     const MONOMER_ALIAS = 'Tza';
     const coordinatesStart = { x: 300, y: 300 };
-    const peptide1 = await addMonomerToCanvas(
+    const peptide1 = await addSingleMonomerToCanvas(
       page,
       MONOMER_NAME,
       MONOMER_ALIAS,
@@ -29,7 +29,7 @@ test.describe('Check attachment point hover', () => {
       0,
     );
     const coordinatesEnd = { x: 400, y: 400 };
-    const peptide2 = await addMonomerToCanvas(
+    const peptide2 = await addSingleMonomerToCanvas(
       page,
       MONOMER_NAME,
       MONOMER_ALIAS,

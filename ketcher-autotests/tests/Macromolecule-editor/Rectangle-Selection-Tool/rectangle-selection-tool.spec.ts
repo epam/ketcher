@@ -1,7 +1,7 @@
 import { Page, test } from '@playwright/test';
 import {
   addChemOnCanvas,
-  addMonomerToCanvas,
+  addSingleMonomerToCanvas,
   addPeptideOnCanvas,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
@@ -49,7 +49,7 @@ test.describe('Rectangle Selection Tool', () => {
     const MONOMER_NAME = 'Tza___3-thiazolylalanine';
     const MONOMER_ALIAS = 'Tza';
 
-    const peptide1 = await addMonomerToCanvas(
+    const peptide1 = await addSingleMonomerToCanvas(
       page,
       MONOMER_NAME,
       MONOMER_ALIAS,
@@ -57,7 +57,7 @@ test.describe('Rectangle Selection Tool', () => {
       300,
       0,
     );
-    const peptide2 = await addMonomerToCanvas(
+    const peptide2 = await addSingleMonomerToCanvas(
       page,
       MONOMER_NAME,
       MONOMER_ALIAS,
@@ -65,7 +65,7 @@ test.describe('Rectangle Selection Tool', () => {
       400,
       1,
     );
-    const peptide3 = await addMonomerToCanvas(
+    const peptide3 = await addSingleMonomerToCanvas(
       page,
       MONOMER_NAME,
       MONOMER_ALIAS,
@@ -73,7 +73,7 @@ test.describe('Rectangle Selection Tool', () => {
       500,
       2,
     );
-    const peptide4 = await addMonomerToCanvas(
+    const peptide4 = await addSingleMonomerToCanvas(
       page,
       MONOMER_NAME,
       MONOMER_ALIAS,
@@ -187,7 +187,7 @@ test.describe('Rectangle Selection Tool', () => {
     const MONOMER_NAME = 'Tza___3-thiazolylalanine';
     const MONOMER_ALIAS = 'Tza';
 
-    const peptide1 = await addMonomerToCanvas(
+    const peptide1 = await addSingleMonomerToCanvas(
       page,
       MONOMER_NAME,
       MONOMER_ALIAS,
@@ -195,7 +195,7 @@ test.describe('Rectangle Selection Tool', () => {
       300,
       0,
     );
-    const peptide2 = await addMonomerToCanvas(
+    const peptide2 = await addSingleMonomerToCanvas(
       page,
       MONOMER_NAME,
       MONOMER_ALIAS,
@@ -203,7 +203,7 @@ test.describe('Rectangle Selection Tool', () => {
       400,
       1,
     );
-    const peptide3 = await addMonomerToCanvas(
+    const peptide3 = await addSingleMonomerToCanvas(
       page,
       MONOMER_NAME,
       MONOMER_ALIAS,
@@ -211,7 +211,7 @@ test.describe('Rectangle Selection Tool', () => {
       500,
       2,
     );
-    const peptide4 = await addMonomerToCanvas(
+    const peptide4 = await addSingleMonomerToCanvas(
       page,
       MONOMER_NAME,
       MONOMER_ALIAS,

@@ -1,7 +1,7 @@
 import { Locator, test } from '@playwright/test';
 import {
   LeftPanelButton,
-  addMonomerToCanvas,
+  addSingleMonomerToCanvas,
   selectRectangleArea,
   selectRectangleSelectionTool,
   selectSingleBondTool,
@@ -25,7 +25,7 @@ test.describe('Zoom Tool', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
     await turnOnMacromoleculesEditor(page);
-    peptide = await addMonomerToCanvas(
+    peptide = await addSingleMonomerToCanvas(
       page,
       MONOMER_NAME_TZA,
       MONOMER_ALIAS_TZA,

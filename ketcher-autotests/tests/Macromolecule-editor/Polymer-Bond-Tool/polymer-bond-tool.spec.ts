@@ -3,7 +3,7 @@ import {
   selectSingleBondTool,
   waitForPageInit,
   takeEditorScreenshot,
-  addMonomerToCanvas,
+  addSingleMonomerToCanvas,
 } from '@utils';
 import {
   hideMonomerPreview,
@@ -31,7 +31,7 @@ test.describe('Polymer Bond Tool', () => {
     const MONOMER_NAME = 'Tza___3-thiazolylalanine';
     const MONOMER_ALIAS = 'Tza';
 
-    const peptide1 = await addMonomerToCanvas(
+    const peptide1 = await addSingleMonomerToCanvas(
       page,
       MONOMER_NAME,
       MONOMER_ALIAS,
@@ -39,7 +39,7 @@ test.describe('Polymer Bond Tool', () => {
       300,
       0,
     );
-    const peptide2 = await addMonomerToCanvas(
+    const peptide2 = await addSingleMonomerToCanvas(
       page,
       MONOMER_NAME,
       MONOMER_ALIAS,
@@ -47,7 +47,7 @@ test.describe('Polymer Bond Tool', () => {
       400,
       1,
     );
-    const peptide3 = await addMonomerToCanvas(
+    const peptide3 = await addSingleMonomerToCanvas(
       page,
       MONOMER_NAME,
       MONOMER_ALIAS,
@@ -55,7 +55,7 @@ test.describe('Polymer Bond Tool', () => {
       500,
       2,
     );
-    const peptide4 = await addMonomerToCanvas(
+    const peptide4 = await addSingleMonomerToCanvas(
       page,
       MONOMER_NAME,
       MONOMER_ALIAS,
@@ -126,7 +126,7 @@ test.describe('Signle Bond Tool', () => {
       */
     const MONOMER_NAME = 'Tza___3-thiazolylalanine';
     const MONOMER_ALIAS = 'Tza';
-    const peptide1 = await addMonomerToCanvas(
+    const peptide1 = await addSingleMonomerToCanvas(
       page,
       MONOMER_NAME,
       MONOMER_ALIAS,
@@ -134,7 +134,7 @@ test.describe('Signle Bond Tool', () => {
       300,
       0,
     );
-    const peptide2 = await addMonomerToCanvas(
+    const peptide2 = await addSingleMonomerToCanvas(
       page,
       MONOMER_NAME,
       MONOMER_ALIAS,

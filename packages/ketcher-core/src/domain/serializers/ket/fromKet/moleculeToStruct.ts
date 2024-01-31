@@ -115,6 +115,7 @@ export function atomToStruct(source) {
   ifDef(params, 'radical', source.radical);
   ifDef(params, 'cip', source.cip);
   ifDef(params, 'attachmentPoints', source.attachmentPoints);
+  ifDef(params, 'initiallySelected', source.selected);
   // stereo
   ifDef(params, 'stereoLabel', source.stereoLabel);
   ifDef(params, 'stereoParity', source.stereoParity);
@@ -216,6 +217,7 @@ export function bondToStruct(source, atomOffset = 0) {
   // params.xxx = 0;
   ifDef(params, 'begin', source.atoms[0] + atomOffset);
   ifDef(params, 'end', source.atoms[1] + atomOffset);
+  ifDef(params, 'initiallySelected', source.selected);
 
   return new Bond(params);
 }

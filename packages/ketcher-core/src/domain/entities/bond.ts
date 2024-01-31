@@ -37,6 +37,7 @@ export interface BondAttributes {
   begin: number;
   cip?: CIP | null;
   isPreview?: boolean;
+  initiallySelected?: boolean;
 }
 
 export class Bond {
@@ -105,6 +106,7 @@ export class Bond {
   angle: number;
   center: Vec2;
   isPreview: boolean;
+  initiallySelected?: boolean;
 
   constructor(attributes: BondAttributes) {
     this.begin = attributes.begin;
@@ -121,6 +123,7 @@ export class Bond {
     this.sa = 0;
     this.angle = 0;
     this.isPreview = false;
+    this.initiallySelected = attributes.initiallySelected;
 
     if (attributes.stereo) this.stereo = attributes.stereo;
     if (attributes.topology) this.topology = attributes.topology;

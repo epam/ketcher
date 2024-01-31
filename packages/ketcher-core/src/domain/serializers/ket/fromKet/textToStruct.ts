@@ -18,7 +18,10 @@ import { Struct, Text } from 'domain/entities';
 import { getNodeWithInvertedYCoord } from '../helpers';
 
 export function textToStruct(ketItem: any, struct: Struct) {
-  const object = getNodeWithInvertedYCoord(ketItem.data);
+  const object = {
+    ...getNodeWithInvertedYCoord(ketItem.data),
+    initiallySelected: ketItem.selected,
+  };
   struct.texts.add(new Text(object));
 
   return struct;

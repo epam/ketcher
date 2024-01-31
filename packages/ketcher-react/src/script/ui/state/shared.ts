@@ -99,6 +99,37 @@ export function removeStructAction(): {
   return onAction(savedSelectedTool || tools['select-rectangle'].action);
 }
 
+export const getSelectionFromStruct = (struct) => {
+  const selection = {};
+  [
+    'atoms',
+    'bonds',
+    'enhancedFlags',
+    'rxnPluses',
+    'rxnArrows',
+    'texts',
+    'rgroupAttachmentPoints',
+  ].forEach((selectionEntity) => {
+    if (struct && struct[selectionEntity]) {
+      const selected: number[] = [];
+      struct[selectionEntity].forEach((value, key) => {
+        if (value.initiallySelected) {
+          selected.push(key);
+        }
+      });
+      if (selection[selectionEntity]) {
+        selection[selectionEntity] = [
+          ...selection[selectionEntity],
+          ...selected,
+        ];
+      } else {
+        selection[selectionEntity] = selected;
+      }
+    }
+  });
+  return selection;
+};
+
 export function load(struct: Struct, options?) {
   return async (dispatch, getState) => {
     const state = getState();
@@ -186,7 +217,7 @@ export function load(struct: Struct, options?) {
       if (!isPaste && !isIndigoFunctionCalled) {
         editor.centerStruct();
       }
-
+      editor.selection(getSelectionFromStruct(parsedStruct));
       dispatch(setAnalyzingFile(false));
       dispatch({ type: 'MODAL_CLOSE' });
     } catch (e: any) {

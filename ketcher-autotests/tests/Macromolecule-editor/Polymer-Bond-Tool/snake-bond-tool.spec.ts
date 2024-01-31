@@ -412,9 +412,7 @@ test.describe('Snake Bond Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test.only('Create snake bond for chain with side chains', async ({
-    page,
-  }) => {
+  test('Create snake bond for chain with side chains', async ({ page }) => {
     await page.getByText('RNA').click();
     const { phosphate } = await addRnaPresetOnCanvas(
       page,

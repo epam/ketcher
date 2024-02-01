@@ -46,7 +46,7 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     Test case: EPMLSOPKET-1868
     Description: Nothing is changed on the canvas because only non-aromatic structures are present on the canvas.
     */
-    await openFileAndAddToCanvas('non-aromatic.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/non-aromatic.mol', page);
     await waitForSpinnerFinishedWork(page, async () => {
       await selectTopPanelButton(TopPanelButton.Aromatize, page);
     });
@@ -63,7 +63,10 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     Test case: EPMLSOPKET-1869
     Description: Nothing is changed on the canvas because only non-aromatic structures are present on the canvas.
     */
-    await openFileAndAddToCanvas('non-aromatic-structures.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/non-aromatic-structures.mol',
+      page,
+    );
     await waitForSpinnerFinishedWork(page, async () => {
       await selectTopPanelButton(TopPanelButton.Aromatize, page);
     });

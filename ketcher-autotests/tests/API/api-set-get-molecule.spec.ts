@@ -146,7 +146,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     */
     const ignoredLineIndigo = 1;
     const orEnantiomer = await readFileContents(
-      'tests/test-data/or-enantiomer.mol',
+      'tests/test-data/Molfiles-V3000/or-enantiomer.mol',
     );
     await waitForSpinnerFinishedWork(
       page,

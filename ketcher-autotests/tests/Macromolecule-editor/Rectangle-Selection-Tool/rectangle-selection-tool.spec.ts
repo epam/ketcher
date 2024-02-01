@@ -381,9 +381,9 @@ test.describe('Rectangle Selection Tool', () => {
     await selectRectangleSelectionTool(page);
     await page.getByText('Nal').locator('..').first().hover();
     await dragMouseTo(x, y, page);
-    await page.getByTestId('undo-button').click();
+    await page.getByTestId('undo').click();
     await takeEditorScreenshot(page);
-    await page.getByTestId('redo-button').click();
+    await page.getByTestId('redo').click();
     await takeEditorScreenshot(page);
   });
 
@@ -397,7 +397,7 @@ test.describe('Rectangle Selection Tool', () => {
     const x = 900;
     const y = 500;
     await openFileAndAddToCanvas('KET/snake-mode-peptides.ket', page);
-    await page.getByTestId('snake-mode-button').click();
+    await page.getByTestId('snake-mode').click();
     await page.keyboard.press('Control+a');
     await page.getByText('Hhs').locator('..').first().hover();
     await dragMouseTo(x, y, page);
@@ -428,9 +428,9 @@ test.describe('Rectangle Selection Tool', () => {
     */
     await openFileAndAddToCanvas('KET/all-kind-of-monomers.ket', page);
     await page.keyboard.press('Control+a');
-    await page.getByTestId('erase-button').click();
+    await page.getByTestId('erase').click();
     await takeEditorScreenshot(page);
-    await page.getByTestId('undo-button').click();
+    await page.getByTestId('undo').click();
     await takeEditorScreenshot(page);
   });
 });

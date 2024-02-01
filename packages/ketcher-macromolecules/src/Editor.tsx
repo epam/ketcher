@@ -364,19 +364,19 @@ function MenuComponent() {
         <Menu.Item
           itemId="clear"
           title={`Clear Canvas (${shortcuts.clear})`}
-          testId="clear-canvas-button"
+          testId="clear-canvas"
         />
       </Menu.Group>
       <Menu.Group>
         <Menu.Item
           itemId="undo"
           title={`Undo (${shortcuts.undo})`}
-          testId="undo-button"
+          testId="undo"
         />
         <Menu.Item
           itemId="redo"
           title={`Redo (${shortcuts.redo})`}
-          testId="redo-button"
+          testId="redo"
         />
       </Menu.Group>
       <Menu.Group>
@@ -387,27 +387,23 @@ function MenuComponent() {
         <Menu.Item
           itemId="erase"
           title={`Erase (${shortcuts.erase})`}
-          testId="erase-button"
+          testId="erase"
         />
         <Menu.Item
           itemId="select-rectangle"
           title="Select Rectangle"
-          testId="select-rectangle-button"
+          testId="select-rectangle"
         />
       </Menu.Group>
       <Menu.Group>
         <Menu.Item
           itemId="bond-single"
           title="Single Bond (1)"
-          testId="single-bond-button"
+          testId="single-bond"
         />
       </Menu.Group>
       <Menu.Group divider>
-        <Menu.Item
-          itemId="snake-mode"
-          title="Snake mode"
-          testId="snake-mode-button"
-        />
+        <Menu.Item itemId="snake-mode" title="Snake mode" testId="snake-mode" />
       </Menu.Group>
       <Menu.Group>
         <Menu.Item

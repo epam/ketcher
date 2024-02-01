@@ -210,7 +210,7 @@ test.describe('SMILES files', () => {
     Structure appears without attached data and brackets, query features,
     Rgroup labels are rendered as R# symbols.
     */
-    await openFileAndAddToCanvas('different-features.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/different-features.mol', page);
     await getAndCompareSmiles(
       page,
       'tests/test-data/smiles-different-features-expected.json',

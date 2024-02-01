@@ -256,7 +256,7 @@ test.describe('Snake Bond Tool', () => {
   });
 
   test('Button is not active after undo', async ({ page }) => {
-    const snakeModeButton = page.getByTestId('snake-mode-button');
+    const snakeModeButton = page.getByTestId('snake-mode');
     await createBondedMonomers(page);
     await expect(snakeModeButton).not.toHaveClass(/active/);
 

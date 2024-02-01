@@ -344,7 +344,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     const x = 700;
     const y = 300;
-    await openFileAndAddToCanvas('generic-groups.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/generic-groups.mol', page);
     await copyAndPaste(page);
     await page.mouse.click(x, y);
   });
@@ -361,7 +361,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const x = 500;
     const y = 200;
     const anyAtom = 12;
-    await openFileAndAddToCanvas('generic-groups.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/generic-groups.mol', page);
     await cutAndPaste(page);
     await page.mouse.click(x, y);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
@@ -674,7 +674,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     const x = 300;
     const y = 200;
-    await openFileAndAddToCanvas('mapped-structure.rxn', page);
+    await openFileAndAddToCanvas('Rxn-V2000/mapped-structure.rxn', page);
     await copyAndPaste(page);
     await page.mouse.click(x, y);
   });
@@ -687,7 +687,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const x = 300;
     const y = 200;
     const anyAtom = 5;
-    await openFileAndAddToCanvas('mapped-structure.rxn', page);
+    await openFileAndAddToCanvas('Rxn-V2000/mapped-structure.rxn', page);
     await cutAndPaste(page);
     await page.mouse.click(x, y);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
@@ -890,7 +890,10 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     const x = 500;
     const y = 150;
-    await openFileAndAddToCanvas('expanded-and-contracted-salts.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/expanded-and-contracted-salts.mol',
+      page,
+    );
     await copyAndPaste(page);
     await page.mouse.click(x, y);
   });
@@ -905,7 +908,10 @@ test.describe('Copy/Cut/Paste Actions', () => {
     User is not able to edit the pasted Functional Groups.
     */
     const anyAtom = 0;
-    await openFileAndAddToCanvas('expanded-and-contracted-salts.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/expanded-and-contracted-salts.mol',
+      page,
+    );
     await cutAndPaste(page);
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);

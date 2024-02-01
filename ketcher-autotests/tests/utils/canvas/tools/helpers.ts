@@ -44,38 +44,38 @@ export async function selectAtomInToolbar(atomName: AtomButton, page: Page) {
 }
 
 export async function selectSingleBondTool(page: Page) {
-  const bondToolButton = page.locator(`button[title*="Single Bond"]`);
+  const bondToolButton = page.getByTestId('single-bond');
   await bondToolButton.click();
 }
 
 export async function selectSnakeBondTool(page: Page) {
-  const bondToolButton = page.locator(`button[title*="Snake mode"]`);
+  const bondToolButton = page.getByTestId('snake-mode');
   await bondToolButton.click();
 }
 
 export async function selectEraseTool(page: Page) {
-  const bondToolButton = page.locator(`button[title*="Erase"]`);
+  const bondToolButton = page.getByTestId('erase');
   await bondToolButton.click();
 }
 
 export async function selectClearCanvasTool(page: Page) {
-  const bondToolButton = page.locator(`button[title*="Clear Canvas"]`);
+  const bondToolButton = page.getByTestId('clear-canvas');
   await bondToolButton.click();
 }
 
 export async function selectRectangleSelectionTool(page: Page) {
-  const bondToolButton = page.locator(`button[title*="Select Rectangle"]`);
+  const bondToolButton = page.getByTestId('select-rectangle');
   await bondToolButton.click();
 }
 
 // undo/redo heplers currently used for macromolecules editor because buttons are in different panel
 export async function clickUndo(page: Page) {
-  const undoButton = page.getByTestId('undo-button');
+  const undoButton = page.getByTestId('undo');
   await undoButton.click();
 }
 
 export async function clickRedo(page: Page) {
-  const redoButton = page.getByTestId('redo-button');
+  const redoButton = page.getByTestId('redo');
   await redoButton.click();
 }
 

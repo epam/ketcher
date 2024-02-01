@@ -65,10 +65,10 @@ test.describe('Reagents RXN format', () => {
       page,
     );
     const expectedFile = await getRxn(page, 'v2000');
-    await saveToFile('mdl-rxnfile-v2000-expected.rxn', expectedFile);
+    await saveToFile('Rxn-V2000/mdl-rxnfile-v2000-expected.rxn', expectedFile);
 
     const rxnFileExpected = await readFileContents(
-      'tests/test-data/mdl-rxnfile-v2000-expected.rxn',
+      'tests/test-data/Rxn-V2000/mdl-rxnfile-v2000-expected.rxn',
     );
     const COMPARABLE_DATA_START = 46;
     const COMPARABLE_DATA_END = 48;
@@ -99,10 +99,10 @@ test.describe('Reagents RXN format', () => {
       page,
     );
     const expectedFile = await getRxn(page, 'v3000');
-    await saveToFile('mdl-rxnfile-v3000-expected.rxn', expectedFile);
+    await saveToFile('Rxn-V3000/mdl-rxnfile-v3000-expected.rxn', expectedFile);
 
     const rxnFileExpected = await readFileContents(
-      'tests/test-data/mdl-rxnfile-v3000-expected.rxn',
+      'tests/test-data/Rxn-V3000/mdl-rxnfile-v3000-expected.rxn',
     );
     const COMPARABLE_DATA_START = 5;
     const COMPARABLE_DATA_END = 58;
@@ -131,10 +131,10 @@ test.describe('Reagents RXN format', () => {
       page,
     );
     const expectedFile = await getRxn(page, 'v2000');
-    await saveToFile('mdl-rxnfile-v2000-expected.rxn', expectedFile);
+    await saveToFile('Rxn-V2000/mdl-rxnfile-v2000-expected.rxn', expectedFile);
 
     const rxnFileExpected = await readFileContents(
-      'tests/test-data/mdl-rxnfile-v2000-expected.rxn',
+      'tests/test-data/Rxn-V2000/mdl-rxnfile-v2000-expected.rxn',
     );
     const rxnFile = await getRxn(page, 'v2000');
     // eslint-disable-next-line no-magic-numbers
@@ -206,7 +206,10 @@ test.describe('Reagents RXN format', () => {
       Test case: EPMLSOPKET-4679
       Description: Reagent 'NH3' above the reaction arrow
       */
-    await openFileAndAddToCanvas('mdl-rxnfile-v2000-expected.rxn', page);
+    await openFileAndAddToCanvas(
+      'Rxn-V2000/mdl-rxnfile-v2000-expected.rxn',
+      page,
+    );
     await clickInTheMiddleOfTheScreen(page);
   });
 
@@ -215,7 +218,10 @@ test.describe('Reagents RXN format', () => {
       Test case: EPMLSOPKET-4680
       Description: Reagent 'NH3' above the reaction arrow
       */
-    await openFileAndAddToCanvas('mdl-rxnfile-v3000-expected.rxn', page);
+    await openFileAndAddToCanvas(
+      'Rxn-V3000/mdl-rxnfile-v3000-expected.rxn',
+      page,
+    );
     await clickInTheMiddleOfTheScreen(page);
   });
 

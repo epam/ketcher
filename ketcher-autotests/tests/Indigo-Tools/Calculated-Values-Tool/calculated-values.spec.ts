@@ -124,7 +124,7 @@ test.describe('Calculated Values Tools', () => {
     */
     test.fail();
     let point: { x: number; y: number };
-    await openFileAndAddToCanvas('query-structure.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/query-structure.mol', page);
 
     point = await getBondByIndex(page, { type: BondType.SINGLE }, 3);
     await page.keyboard.down('Shift');
@@ -335,7 +335,10 @@ test.describe('Calculated Values Tools', () => {
     Elemental Analysis:
     C 84.7 H 15.3
     */
-    await openFileAndAddToCanvas('multiple-group-structure.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/multiple-group-structure.mol',
+      page,
+    );
     await selectTopPanelButton(TopPanelButton.Calculated, page);
   });
 
@@ -373,7 +376,10 @@ test.describe('Calculated Values Tools', () => {
     Elemental Analysis:
     C 84.9 H 15.1
     */
-    await openFileAndAddToCanvas('data-s-group-structure.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/data-s-group-structure.mol',
+      page,
+    );
     await selectTopPanelButton(TopPanelButton.Calculated, page);
   });
 
@@ -560,7 +566,7 @@ test.describe('Calculated Values Tools', () => {
     Elemental Analysis:
     C 78.3 H 4.4 O 17.4
     */
-    await openFileAndAddToCanvas('hetero-adduct.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/hetero-adduct.mol', page);
     await selectTopPanelButton(TopPanelButton.Calculated, page);
   });
 
@@ -591,7 +597,7 @@ test.describe('Calculated Values Tools', () => {
     Description: If the selected object contains the Query Feature all fields contain the 'Cannot
     calculate properties for structures with query features' message.
     */
-    await openFileAndAddToCanvas('dgln-atomlist.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V3000/dgln-atomlist.mol', page);
     await selectTopPanelButton(TopPanelButton.Calculated, page);
   });
 
@@ -651,7 +657,7 @@ test.describe('Calculated Values Tools', () => {
     C 77.3 H 22.7
     */
     await openFileAndAddToCanvas(
-      'ethane-with-valence-and-stereobond.mol',
+      'Molfiles-V2000/ethane-with-valence-and-stereobond.mol',
       page,
     );
     await selectTopPanelButton(TopPanelButton.Calculated, page);

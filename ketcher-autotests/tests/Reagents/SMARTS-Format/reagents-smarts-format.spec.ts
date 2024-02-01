@@ -50,7 +50,7 @@ test.describe('Reagents SMARTS format', () => {
     );
 
     const smartsFileExpected = await readFileContents(
-      'tests/test-data/expected-smarts-file.smarts',
+      'tests/test-data/SMARTS/expected-smarts-file.smarts',
     );
     const smartsFile = await getSmarts(page);
     expect(smartsFile).toEqual(smartsFileExpected);
@@ -75,7 +75,7 @@ test.describe('Reagents SMARTS format', () => {
     );
 
     const smartsFileExpected = await readFileContents(
-      'tests/test-data/expected-smarts-below.smarts',
+      'tests/test-data/SMARTS/expected-smarts-below.smarts',
     );
     const smartsFile = await getSmarts(page);
     expect(smartsFile).toEqual(smartsFileExpected);
@@ -105,7 +105,7 @@ test.describe('Reagents SMARTS format', () => {
     Test case: EPMLSOPKET-4689
     Description: Reagent 'Cl' below the reaction arrow
     */
-    await openFileAndAddToCanvas('expected-smarts-below.smarts', page);
+    await openFileAndAddToCanvas('SMARTS/expected-smarts-below.smarts', page);
   });
 
   test('Structure is opened with Not List atoms saved in "Daylight SMARTS" format', async ({
@@ -115,7 +115,7 @@ test.describe('Reagents SMARTS format', () => {
     Test case: EPMLSOPKET-4706
     Description: Chain is opened with Not List atoms ![Zr,Au,Zn]
     */
-    await openFileAndAddToCanvas('not-list-atoms-smarts.smarts', page);
+    await openFileAndAddToCanvas('SMARTS/not-list-atoms-smarts.smarts', page);
   });
 });
 
@@ -135,7 +135,7 @@ test.describe('Reagents SMARTS format', () => {
     );
 
     const smartsFileExpected = await readFileContents(
-      'tests/test-data/expected-smarts-file.smarts',
+      'tests/test-data/SMARTS/expected-smarts-file.smarts',
     );
     const smartsFile = await getSmarts(page);
     expect(smartsFile).toEqual(smartsFileExpected);

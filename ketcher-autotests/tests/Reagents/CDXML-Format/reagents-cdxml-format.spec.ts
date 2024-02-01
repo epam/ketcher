@@ -144,7 +144,10 @@ test.describe('Reagents CDXML format', () => {
       Description: The structure opens as it was saved with all structural elements: 
       plus and two reaction arrows NH3 molecule above first arrow and HCl below second arrow
     */
-    await openFileAndAddToCanvas('molecules-above-and-below-arrow.cdxml', page);
+    await openFileAndAddToCanvas(
+      'CDXML/molecules-above-and-below-arrow.cdxml',
+      page,
+    );
   });
 
   test('Open File CDXML with multistep reactions', async ({ page }) => {

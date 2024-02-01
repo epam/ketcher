@@ -117,14 +117,7 @@ export const getSelectionFromStruct = (struct) => {
           selected.push(key);
         }
       });
-      if (selection[selectionEntity]) {
-        selection[selectionEntity] = [
-          ...selection[selectionEntity],
-          ...selected,
-        ];
-      } else {
-        selection[selectionEntity] = selected;
-      }
+      selection[selectionEntity] = selected;
     }
   });
   return selection;
@@ -217,7 +210,7 @@ export function load(struct: Struct, options?) {
       if (!isPaste && !isIndigoFunctionCalled) {
         editor.centerStruct();
       }
-      editor.selection(getSelectionFromStruct(parsedStruct));
+      editor.selection(getSelectionFromStruct(editor.struct()));
       dispatch(setAnalyzingFile(false));
       dispatch({ type: 'MODAL_CLOSE' });
     } catch (e: any) {

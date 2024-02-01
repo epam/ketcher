@@ -201,7 +201,7 @@ class SaveDialog extends Component {
       );
       const getStructFromStringByType = () => {
         if (type === 'ket') {
-          const selection = this.props.selection;
+          const selection = this.props.editor.selection();
           return service.getStructureFromStructAsync(struct, undefined, {
             items: selection,
             mappingNeeded: true,
@@ -515,7 +515,7 @@ const mapStateToProps = (state) => ({
   checkState: state.options.check,
   bondThickness: state.options.settings.bondThickness,
   ignoreChiralFlag: state.editor.render.options.ignoreChiralFlag,
-  selection: state.editor.selection(),
+  editor: state.editor,
 });
 
 const mapDispatchToProps = (dispatch) => ({

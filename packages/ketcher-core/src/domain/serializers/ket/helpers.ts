@@ -78,7 +78,7 @@ export const populateStructWithSelection = (
     }
     if (mappedSelection?.bonds) {
       const bidMap = Array.from(initialStruct.atoms.keys());
-      mappedSelection.atoms = mappedSelection.bonds.map((id) =>
+      mappedSelection.bonds = mappedSelection.bonds.map((id) =>
         bidMap.indexOf(id),
       );
     }

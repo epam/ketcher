@@ -1239,6 +1239,28 @@ export class DrawingEntitiesManager {
     };
   }
 
+  private isPartOfR2R1Chain(monomer: BaseMonomer) {
+    const R1Bond = monomer.attachmentPointsToBonds.R1;
+    const R2Bond = monomer.attachmentPointsToBonds.R2;
+    return (
+      R1Bond?.getAnotherMonomer(monomer)?.getAttachmentPointByBond(R1Bond) ===
+        'R2' ||
+      R2Bond?.getAnotherMonomer(monomer)?.getAttachmentPointByBond(R2Bond) ===
+        'R1'
+    );
+  }
+
+  private getFirstMonomerInR2R1Chain(monomer: BaseMonomer) {
+    const R1Bond = monomer.attachmentPointsToBonds.R1;
+    return R1Bond &&
+      R1Bond.getAnotherMonomer(monomer)?.getAttachmentPointByBond(R1Bond) ===
+        'R2'
+      ? this.getFirstMonomerInR2R1Chain(
+          R1Bond.getAnotherMonomer(monomer) as BaseMonomer,
+        )
+      : monomer;
+  }
+
   public reArrangeMonomers(
     canvasWidth: number,
     firstMonomers: BaseMonomer[],
@@ -1275,12 +1297,35 @@ export class DrawingEntitiesManager {
             [Peptide, Chem, Sugar, Phosphate],
             currentMonomerChain,
           );
-          if (
-            !firstMonomers.length &&
-            !rearrangedMonomersSet.has(monomerWithSideChain.id)
-          ) {
-            firstMonomers = [monomerWithSideChain];
+          if (rearrangedMonomersSet.has(monomerWithSideChain.id)) {
+            return;
           }
+          if (!firstMonomers.length) {
+            firstMonomers = [monomerWithSideChain];
+          } else if (this.isPartOfR2R1Chain(monomerWithSideChain)) {
+            const firstMonomerInR2R1Chain =
+              this.getFirstMonomerInR2R1Chain(monomerWithSideChain);
+            firstMonomers = [firstMonomerInR2R1Chain];
+          } else {
+            const oldMonomerPosition = monomerWithSideChain.position;
+            const newMonomerPosition = getFirstPosition(90, lastPosition);
+            const operation = new MonomerMoveOperation(
+              this.rearrangeChainModelChange.bind(
+                this,
+                monomerWithSideChain,
+                Coordinates.canvasToModel(newMonomerPosition),
+              ),
+              this.rearrangeChainModelChange.bind(
+                this,
+                monomerWithSideChain,
+                oldMonomerPosition,
+              ),
+            );
+            rearrangedMonomersSet.add(monomerWithSideChain.id);
+            command.addOperation(operation);
+            lastPosition = getFirstPosition(90, newMonomerPosition);
+          }
+
           const rearrangeResult = this.reArrangeMonomers(
             canvasWidth,
             firstMonomers,
@@ -1288,6 +1333,7 @@ export class DrawingEntitiesManager {
             lastPosition,
           );
           command.merge(rearrangeResult.command);
+
           lastPosition = rearrangeResult.lastPosition;
         });
       }

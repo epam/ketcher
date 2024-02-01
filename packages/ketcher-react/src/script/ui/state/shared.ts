@@ -210,7 +210,10 @@ export function load(struct: Struct, options?) {
       if (!isPaste && !isIndigoFunctionCalled) {
         editor.centerStruct();
       }
-      editor.selection(getSelectionFromStruct(editor.struct()));
+      if (!fragment) {
+        // do not update selection if fragment is added
+        editor.selection(getSelectionFromStruct(editor.struct()));
+      }
       dispatch(setAnalyzingFile(false));
       dispatch({ type: 'MODAL_CLOSE' });
     } catch (e: any) {

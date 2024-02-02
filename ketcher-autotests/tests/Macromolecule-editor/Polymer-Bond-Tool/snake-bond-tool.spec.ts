@@ -103,7 +103,7 @@ test.describe('Snake Bond Tool', () => {
     await bondTwoMonomers(page, peptide2, peptide3);
     await bondTwoMonomers(page, peptide3, peptide4);
 
-    // await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page);
   });
 
   test('Check snake mode arrange for peptides chain', async ({ page }) => {

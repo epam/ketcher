@@ -973,7 +973,7 @@ export class DrawingEntitiesManager {
     );
     ({ lastPosition, maxVerticalDistance } = nextMonomerResult);
 
-    this.getRnaBaseSideChainMonomers(
+    this.setRnaBaseSideChainMonomers(
       nucleotide.rnaBase,
       rearrangedMonomersSet,
       monomersWithSideChain,
@@ -1027,7 +1027,7 @@ export class DrawingEntitiesManager {
     return { command, lastPosition, maxVerticalDistance };
   }
 
-  private getRnaBaseSideChainMonomers(
+  private setRnaBaseSideChainMonomers(
     rnaBase: RNABase,
     rearrangedMonomersSet: Set<number>,
     monomersWithSideChain: Array<BaseMonomer>,
@@ -1311,12 +1311,11 @@ export class DrawingEntitiesManager {
             firstMonomers = [firstMonomerInR2R1Chain];
           } else {
             const oldMonomerPosition = monomerWithSideChain.position;
-            const newMonomerPosition = getFirstPosition(90, lastPosition);
             const operation = new MonomerMoveOperation(
               this.rearrangeChainModelChange.bind(
                 this,
                 monomerWithSideChain,
-                Coordinates.canvasToModel(newMonomerPosition),
+                Coordinates.canvasToModel(lastPosition),
               ),
               this.rearrangeChainModelChange.bind(
                 this,
@@ -1326,7 +1325,10 @@ export class DrawingEntitiesManager {
             );
             rearrangedMonomersSet.add(monomerWithSideChain.id);
             command.addOperation(operation);
-            lastPosition = getFirstPosition(90, newMonomerPosition);
+            const height =
+              (monomerWithSideChain.renderer?.monomerSize.height ?? 0) +
+              VERTICAL_DISTANCE_FROM_MONOMER;
+            lastPosition = getFirstPosition(height, lastPosition);
           }
 
           const rearrangeResult = this.reArrangeMonomers(
@@ -1342,18 +1344,6 @@ export class DrawingEntitiesManager {
       }
     });
     return { command, lastPosition };
-  }
-
-  public getPhosphateFromRnaBase(baseMonomer: RNABase) {
-    const r1PolymerBond = baseMonomer.attachmentPointsToBonds.R1;
-    const sugarMonomer = r1PolymerBond?.getAnotherMonomer(baseMonomer);
-    if (sugarMonomer && sugarMonomer instanceof Sugar) {
-      const phosphate = getNextMonomerInChain(sugarMonomer);
-      if (phosphate && phosphate instanceof Phosphate) {
-        return phosphate;
-      }
-    }
-    return undefined;
   }
 
   public setMicromoleculesHiddenEntities(struct: Struct) {

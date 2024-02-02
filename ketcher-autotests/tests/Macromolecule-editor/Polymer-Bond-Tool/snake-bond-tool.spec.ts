@@ -251,66 +251,28 @@ test.describe('Snake Bond Tool', () => {
   test('Create snake bond for mix chains with nucleotides and peptides', async ({
     page,
   }) => {
-    const peptide1 = await addSingleMonomerToCanvas(
+    const [peptide1] = await addBondedMonomersToCanvas(
       page,
       MONOMER_NAME_TZA,
       MONOMER_ALIAS_TZA,
       500,
       500,
-      0,
-    );
-    const peptide2 = await addSingleMonomerToCanvas(
-      page,
-      MONOMER_NAME_TZA,
-      MONOMER_ALIAS_TZA,
-      600,
-      600,
-      1,
-    );
-
-    const peptide3 = await addSingleMonomerToCanvas(
-      page,
-      MONOMER_NAME_TZA,
-      MONOMER_ALIAS_TZA,
-      650,
-      650,
-      2,
-    );
-
-    const peptide4 = await addSingleMonomerToCanvas(
-      page,
-      MONOMER_NAME_TZA,
-      MONOMER_ALIAS_TZA,
-      700,
-      500,
+      100,
+      100,
       3,
     );
-    const peptide5 = await addSingleMonomerToCanvas(
+
+    await addBondedMonomersToCanvas(
       page,
-      MONOMER_NAME_TZA,
-      MONOMER_ALIAS_TZA,
-      750,
-      550,
+      'Bal___beta-Alanine',
+      'Bal',
+      700,
+      500,
+      50,
+      50,
       4,
     );
-    const peptide6 = await addSingleMonomerToCanvas(
-      page,
-      MONOMER_NAME_TZA,
-      MONOMER_ALIAS_TZA,
-      800,
-      600,
-      5,
-    );
-    const peptide7 = await addSingleMonomerToCanvas(
-      page,
-      MONOMER_NAME_TZA,
-      MONOMER_ALIAS_TZA,
-      850,
-      650,
-      6,
-    );
     await page.getByText('RNA').click();
-    await selectSnakeBondTool(page);
 
     const { phosphate } = await addRnaPresetOnCanvas(
       page,
@@ -342,12 +304,6 @@ test.describe('Snake Bond Tool', () => {
     await bondTwoMonomers(page, phosphate, sugar1);
     await bondTwoMonomers(page, phosphate1, sugar2);
     await bondTwoMonomers(page, phosphate2, peptide1, undefined, 'R1');
-    await bondTwoMonomers(page, peptide1, peptide2);
-    await bondTwoMonomers(page, peptide2, peptide3);
-
-    await bondTwoMonomers(page, peptide4, peptide5);
-    await bondTwoMonomers(page, peptide5, peptide6);
-    await bondTwoMonomers(page, peptide6, peptide7);
 
     await takeEditorScreenshot(page);
 
@@ -510,6 +466,46 @@ test.describe('Snake Bond Tool', () => {
     await bondTwoMonomers(page, phosphate2, hcyPeptide, undefined, 'R1');
     await bondTwoMonomers(page, hcyPeptide1, balPeptide);
     await bondTwoMonomers(page, hcyPeptide1, balPeptide1, undefined, 'R1');
+    await takeEditorScreenshot(page);
+
+    await selectSnakeBondTool(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Create snake mode for single monomer and nucleoside', async ({
+    page,
+  }) => {
+    await addSingleMonomerToCanvas(
+      page,
+      'Bal___beta-Alanine',
+      'Bal',
+      300,
+      300,
+      0,
+    );
+    await page.getByText('RNA').click();
+    await page.getByTestId('summary-Sugars').click();
+    const sugarOfNucleoside = await addSingleMonomerToCanvas(
+      page,
+      'R___Ribose',
+      'R',
+      500,
+      500,
+      0,
+    );
+    await page.getByTestId('summary-Bases').click();
+    const baseOfNucleoside = await addSingleMonomerToCanvas(
+      page,
+      'A___Adenine',
+      'A',
+      600,
+      600,
+      0,
+    );
+
+    await selectSingleBondTool(page);
+    await bondTwoMonomers(page, sugarOfNucleoside, baseOfNucleoside);
+
     await takeEditorScreenshot(page);
 
     await selectSnakeBondTool(page);

@@ -1,4 +1,6 @@
 import { BaseMonomer } from './BaseMonomer';
+import { Phosphate } from './Phosphate';
+import { Sugar } from './Sugar';
 
 export class Peptide extends BaseMonomer {
   public getValidSourcePoint(secondMonomer?: BaseMonomer) {
@@ -75,5 +77,11 @@ export class Peptide extends BaseMonomer {
     }
 
     return undefined;
+  }
+
+  public isMonomerTypeDifferentForSnakeMode(monomerToChain: BaseMonomer) {
+    return (
+      monomerToChain instanceof Sugar || monomerToChain instanceof Phosphate
+    );
   }
 }

@@ -29,6 +29,8 @@ export abstract class BaseMonomer extends DrawingEntity {
 
   public attachmentPointsVisible = false;
   public monomerItem: MonomerItemType;
+  public isMonomerInRnaChainRow = false;
+
   constructor(monomerItem: MonomerItemType, _position?: Vec2) {
     super(_position);
 
@@ -441,5 +443,9 @@ export abstract class BaseMonomer extends DrawingEntity {
     }
 
     return this.firstFreeAttachmentPoint;
+  }
+
+  public isMonomerTypeDifferentForSnakeMode(_monomerToChain: BaseMonomer) {
+    return true;
   }
 }

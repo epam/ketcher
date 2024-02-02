@@ -1,6 +1,6 @@
 import { test } from '@playwright/test';
 import {
-  addMonomerToCanvas,
+  addSingleMonomerToCanvas,
   dragMouseTo,
   selectRectangleSelectionTool,
   selectSingleBondTool,
@@ -28,7 +28,7 @@ test.describe('Check attachment point rotation', () => {
     const MONOMER_ALIAS = 'Tza';
 
     // Get 4 peptides locators
-    const peptide1 = await addMonomerToCanvas(
+    const peptide1 = await addSingleMonomerToCanvas(
       page,
       MONOMER_NAME,
       MONOMER_ALIAS,
@@ -36,7 +36,7 @@ test.describe('Check attachment point rotation', () => {
       300,
       0,
     );
-    const peptide2 = await addMonomerToCanvas(
+    const peptide2 = await addSingleMonomerToCanvas(
       page,
       MONOMER_NAME,
       MONOMER_ALIAS,
@@ -44,7 +44,7 @@ test.describe('Check attachment point rotation', () => {
       400,
       1,
     );
-    const peptide3 = await addMonomerToCanvas(
+    const peptide3 = await addSingleMonomerToCanvas(
       page,
       MONOMER_NAME,
       MONOMER_ALIAS,
@@ -52,7 +52,7 @@ test.describe('Check attachment point rotation', () => {
       500,
       2,
     );
-    const peptide4 = await addMonomerToCanvas(
+    const peptide4 = await addSingleMonomerToCanvas(
       page,
       MONOMER_NAME,
       MONOMER_ALIAS,
@@ -98,7 +98,7 @@ test.describe('Check attachment point rotation', () => {
     const MONOMER_ALIAS = 'Tza';
 
     // Get 4 peptides locators
-    const peptide1 = await addMonomerToCanvas(
+    const peptide1 = await addSingleMonomerToCanvas(
       page,
       MONOMER_NAME,
       MONOMER_ALIAS,
@@ -106,7 +106,7 @@ test.describe('Check attachment point rotation', () => {
       300,
       0,
     );
-    const peptide2 = await addMonomerToCanvas(
+    const peptide2 = await addSingleMonomerToCanvas(
       page,
       MONOMER_NAME,
       MONOMER_ALIAS,

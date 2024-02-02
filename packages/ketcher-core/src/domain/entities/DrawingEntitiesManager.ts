@@ -1118,16 +1118,22 @@ export class DrawingEntitiesManager {
 
   public applyMonomersSequenceLayout() {
     const firstMonomersInChains = this.firstMonomersInChains;
+    const handledMonomers = new Set();
 
     firstMonomersInChains.forEach((firstMonomerInChain) => {
-      this.applyMonomerSequenceLayout(firstMonomerInChain);
+      this.applyMonomerSequenceLayout(firstMonomerInChain, handledMonomers);
     });
   }
 
-  applyMonomerSequenceLayout(monomer: BaseMonomer) {
+  applyMonomerSequenceLayout(
+    monomer: BaseMonomer,
+    handledMonomers: Set<BaseMonomer>,
+  ) {
     if (monomer.renderer instanceof BaseSequenceItemRenderer) {
       return;
     }
+    if (handledMonomers.has(monomer)) return;
+    handledMonomers.add(monomer);
     const firstMonomerInChainPosition = monomer.renderer.scaledMonomerPosition;
     const renderer = SequenceItemRendererFactory.fromMonomer(
       monomer,
@@ -1141,13 +1147,16 @@ export class DrawingEntitiesManager {
     if (monomer.attachmentPointsToBonds.R2) {
       monomer.attachmentPointsToBonds.R2.renderer.remove();
     }
-    this.handleR3PlusConnectionForSequence(monomer);
+    this.handleR3PlusConnectionForSequence(monomer, handledMonomers);
     const editor = CoreEditor.provideEditorInstance();
     let nextMonomer = editor.renderersContainer.getNextMonomerInChain(monomer);
     let monomerNumberInChain = 2;
     let monomerNumberInSubChain = 2;
 
     while (nextMonomer) {
+      if (handledMonomers.has(nextMonomer)) return;
+      handledMonomers.add(nextMonomer);
+
       nextMonomer.renderer.remove();
 
       if (!nextMonomer.isPartOfRna || nextMonomer instanceof Sugar) {
@@ -1166,13 +1175,16 @@ export class DrawingEntitiesManager {
       if (nextMonomer.attachmentPointsToBonds.R2) {
         nextMonomer.attachmentPointsToBonds.R2.renderer.remove();
       }
-      this.handleR3PlusConnectionForSequence(nextMonomer);
+      this.handleR3PlusConnectionForSequence(nextMonomer, handledMonomers);
       nextMonomer =
         editor.renderersContainer.getNextMonomerInChain(nextMonomer);
     }
   }
 
-  handleR3PlusConnectionForSequence(monomer: BaseMonomer) {
+  handleR3PlusConnectionForSequence(
+    monomer: BaseMonomer,
+    handledMonomers: Set<BaseMonomer>,
+  ) {
     for (const attachmentPointName in monomer.attachmentPointsToBonds) {
       if (['R1', 'R2'].includes(attachmentPointName)) {
         continue;
@@ -1187,7 +1199,7 @@ export class DrawingEntitiesManager {
       polymerBond.renderer.remove();
 
       if (!monomer.isPartOfRna) {
-        this.applyMonomerSequenceLayout(anotherMonomer);
+        this.applyMonomerSequenceLayout(anotherMonomer, handledMonomers);
       } else {
         anotherMonomer.renderer.remove();
       }

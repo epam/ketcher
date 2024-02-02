@@ -1128,13 +1128,16 @@ export class DrawingEntitiesManager {
         polymerBond?.firstMonomer === monomer
           ? polymerBond.secondMonomer
           : polymerBond?.firstMonomer;
-      return (
+      const isFirstMonomerWithR2R1connection =
         !monomer.attachmentPointsToBonds.R1 &&
         monomer.attachmentPointsToBonds.R2 &&
         nextMonomer?.getAttachmentPointByBond(
           monomer.attachmentPointsToBonds.R2,
-        ) === 'R1'
-      );
+        ) === 'R1';
+      const isSingleMonomerOrNucleoside =
+        !monomer.attachmentPointsToBonds.R1 &&
+        !monomer.attachmentPointsToBonds.R2;
+      return isFirstMonomerWithR2R1connection || isSingleMonomerOrNucleoside;
     });
 
     const filteredFirstMonomersInChains: BaseMonomer[] = [];

@@ -151,7 +151,10 @@ export async function setReactionFlagInversion(
   page: Page,
   inversionType: inversionType,
 ) {
-  await page.getByTestId('Reaction flags-section').getByRole('button').click();
+  await page
+    .getByTestId('Reaction flags-section')
+    .getByRole('combobox')
+    .click();
   await page.getByTestId(`${inversionType}-option`).click();
 }
 

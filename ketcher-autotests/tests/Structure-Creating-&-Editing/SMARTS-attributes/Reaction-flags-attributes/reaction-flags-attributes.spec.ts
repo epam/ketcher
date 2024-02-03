@@ -16,7 +16,6 @@ import {
   setReactionFlagInversion,
 } from '../utils';
 
-const defaultFileFormat = 'MDL Molfile V2000';
 const expectedSmarts = '[#6](-[#6])(-[#6])-[#6]';
 
 async function drawStructure(page: Page, numberOfClicks: number) {
@@ -60,7 +59,7 @@ test.describe('Checking atom properties attributes in SMARTS format', () => {
     await setReactionFlagInversion(page, 'Inverts');
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
-    await checkSmartsValue(page, defaultFileFormat, expectedSmarts);
+    await checkSmartsValue(page, expectedSmarts);
     await checkSmartsWarnings(page);
   });
 
@@ -72,7 +71,7 @@ test.describe('Checking atom properties attributes in SMARTS format', () => {
     await setReactionFlagInversion(page, 'Retains');
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
-    await checkSmartsValue(page, defaultFileFormat, expectedSmarts);
+    await checkSmartsValue(page, expectedSmarts);
     await checkSmartsWarnings(page);
   });
 
@@ -84,7 +83,7 @@ test.describe('Checking atom properties attributes in SMARTS format', () => {
     await setReactionFlagExactChange(page);
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
-    await checkSmartsValue(page, defaultFileFormat, expectedSmarts);
+    await checkSmartsValue(page, expectedSmarts);
     await checkSmartsWarnings(page);
   });
 });

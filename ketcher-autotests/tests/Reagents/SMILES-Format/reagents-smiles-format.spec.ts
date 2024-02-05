@@ -62,7 +62,7 @@ test.describe('Reagents SMILES format', () => {
     );
 
     const smiFileExpected = await readFileContents(
-      'tests/test-data/daylight-smiles-expected.smi',
+      'tests/test-data/SMILES/daylight-smiles-expected.smi',
     );
     const smiFile = await getSmiles(page);
     expect(smiFile).toEqual(smiFileExpected);
@@ -86,7 +86,7 @@ test.describe('Reagents SMILES format', () => {
     );
 
     const smiFileExpected = await readFileContents(
-      'tests/test-data/daylight-smiles-below-expected.smi',
+      'tests/test-data/SMILES/daylight-smiles-below-expected.smi',
     );
     const smiFile = await getSmiles(page);
     expect(smiFile).toEqual(smiFileExpected);
@@ -135,7 +135,7 @@ test.describe('Reagents SMILES format', () => {
     Test case: EPMLSOPKET-4669
     Description: Reagent 'Cl' above the reaction arrow
     */
-    await openFileAndAddToCanvas('daylight-smiles-expect.smi', page);
+    await openFileAndAddToCanvas('SMILES/daylight-smiles-expect.smi', page);
   });
 
   test('Open from file in "Extended SMILES" format', async ({ page }) => {
@@ -143,7 +143,10 @@ test.describe('Reagents SMILES format', () => {
     Test case: EPMLSOPKET-4670
     Description: Reagent 'Cl' above the reaction arrow
     */
-    await openFileAndAddToCanvas('extended-smiles-expect.cxsmi', page);
+    await openFileAndAddToCanvas(
+      'Extended-SMILES/extended-smiles-expect.cxsmi',
+      page,
+    );
   });
 
   test('Paste from clipboard in "Daylight SMILES" format', async ({ page }) => {
@@ -196,7 +199,7 @@ test.describe('Reagents SMILES format', () => {
     );
 
     const smiFileExpected = await readFileContents(
-      'tests/test-data/daylight-smiles-expected.smi',
+      'tests/test-data/SMILES/daylight-smiles-expected.smi',
     );
     const smiFile = await getSmiles(page);
     expect(smiFile).toEqual(smiFileExpected);
@@ -215,7 +218,7 @@ test.describe('Reagents SMILES format', () => {
     );
 
     const smiFileExpected = await readFileContents(
-      'tests/test-data/extended-smiles.cxsmi',
+      'tests/test-data/Extended-SMILES/extended-smiles.cxsmi',
     );
     const smiFile = await getExtendedSmiles(page);
     expect(smiFile).toEqual(smiFileExpected);

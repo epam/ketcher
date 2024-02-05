@@ -68,7 +68,7 @@ test.describe('Checking reaction queries attributes in SMARTS format', () => {
   test('Checking SMARTS with Arrow Open Angle', async ({ page }) => {
     await drawStructureWithArrowOpenAngle(page);
     await takeEditorScreenshot(page);
-    await checkSmartsValue(page, '[#1]>>[#8]');
+    await checkSmartsValue(page, '[H]>>[#8]');
   });
 
   test('Checking SMARTS with reaction mapping tool', async ({ page }) => {
@@ -105,7 +105,6 @@ test.describe('Checking reaction queries attributes in SMARTS format', () => {
   });
 
   test('Checking SMARTS with S-Group with two elements', async ({ page }) => {
-    test.fail();
     /**
      * Test case: https://github.com/epam/Indigo/issues/1316
      */

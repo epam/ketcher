@@ -1,6 +1,8 @@
 import { BaseMonomer } from './BaseMonomer';
 import { RNABase } from './RNABase';
 import { Phosphate } from './Phosphate';
+import { Peptide } from './Peptide';
+import { Chem } from './Chem';
 
 export class Sugar extends BaseMonomer {
   public getValidSourcePoint(secondMonomer: BaseMonomer) {
@@ -89,6 +91,10 @@ export class Sugar extends BaseMonomer {
     }
 
     return undefined;
+  }
+
+  public isMonomerTypeDifferentForSnakeMode(monomerToChain: BaseMonomer) {
+    return monomerToChain instanceof Peptide || monomerToChain instanceof Chem;
   }
 
   public get isPartOfRna(): boolean {

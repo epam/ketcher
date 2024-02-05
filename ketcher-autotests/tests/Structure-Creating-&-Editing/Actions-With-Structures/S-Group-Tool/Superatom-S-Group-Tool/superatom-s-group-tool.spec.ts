@@ -22,7 +22,7 @@ import {
   waitForPageInit,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
-import { getMolfile } from '@utils/formats';
+import { getKet, getMolfile } from '@utils/formats';
 let point: { x: number; y: number };
 
 async function addNameToSuperatom(
@@ -33,6 +33,12 @@ async function addNameToSuperatom(
   await page.locator('span').filter({ hasText: 'Data' }).click();
   await page.getByRole('option', { name: 'Superatom' }).click();
   await page.getByLabel(fieldLabel).fill(superatomName);
+  await pressButton(page, 'Apply');
+}
+
+async function addQueryComponent(page: Page) {
+  await page.locator('span').filter({ hasText: 'Data' }).click();
+  await page.getByRole('option', { name: 'Query component' }).click();
   await pressButton(page, 'Apply');
 }
 
@@ -252,5 +258,57 @@ test.describe('Superatom S-Group tool', () => {
     */
     await openFileAndAddToCanvas('KET/superatom-one-atom-on-chain.ket', page);
     await contractExpandRemoveAbbreviation(page, 'Test@!#$%12345');
+  });
+
+  test('Add S-Group properties to structure and atom', async ({ page }) => {
+    /*
+      Test case: https://github.com/epam/ketcher/issues/3949
+      Description: S-Group added to the structure and represent in .ket file.
+      The test is currently not functioning correctly as the bug has not been fixed.
+    */
+    await openFileAndAddToCanvas('KET/cyclopropane-and-h2o.ket', page);
+    await page.keyboard.press('Control+a');
+    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await addNameToSuperatom(page, 'Name', 'Test@!#$%12345');
+    const expectedFile = await getKet(page);
+    await saveToFile(
+      'KET/cyclopropane-and-h2o-superatom-expected.ket',
+      expectedFile,
+    );
+    const { file: ketFile, fileExpected: ketFileExpected } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/KET/cyclopropane-and-h2o-superatom-expected.ket',
+      });
+
+    expect(ketFile).toEqual(ketFileExpected);
+  });
+
+  test('Add S-Group Query component properties to structure and atom', async ({
+    page,
+  }) => {
+    /*
+      Test case: https://github.com/epam/ketcher/issues/3949
+      Description: S-Group added to the structure and represent in .ket file.
+      The test is currently not functioning correctly as the bug has not been fixed.
+    */
+    await openFileAndAddToCanvas('KET/cyclopropane-and-h2o.ket', page);
+    await page.keyboard.press('Control+a');
+    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await addQueryComponent(page);
+    const expectedFile = await getKet(page);
+    await saveToFile(
+      'KET/cyclopropane-and-h2o-query-expected.ket',
+      expectedFile,
+    );
+    const { file: ketFile, fileExpected: ketFileExpected } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/KET/cyclopropane-and-h2o-query-expected.ket',
+      });
+
+    expect(ketFile).toEqual(ketFileExpected);
   });
 });

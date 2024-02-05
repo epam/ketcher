@@ -59,6 +59,7 @@ export interface PanelProps {
   onCheck: VoidFunction;
   onAnalyse: VoidFunction;
   onMiew: VoidFunction;
+  onToggleExplicitHydrogens: VoidFunction;
   onFullscreen: VoidFunction;
   onAbout: VoidFunction;
   onHelp: VoidFunction;
@@ -143,6 +144,7 @@ export const TopToolbar = ({
   onCheck,
   onAnalyse,
   onMiew,
+  onToggleExplicitHydrogens,
   onFullscreen,
   onAbout,
   onHelp,
@@ -163,7 +165,7 @@ export const TopToolbar = ({
           iconName="clear"
           shortcut={shortcuts.clear}
           isHidden={hiddenButtons.includes('clear')}
-          testId="clear-canvas-button"
+          testId="clear-canvas"
         />
         <FileControls
           onFileOpen={onFileOpen}
@@ -198,6 +200,7 @@ export const TopToolbar = ({
           onCheck={onCheck}
           onAnalyse={onAnalyse}
           onMiew={onMiew}
+          onToggleExplicitHydrogens={onToggleExplicitHydrogens}
           disabledButtons={disabledButtons}
           hiddenButtons={hiddenButtons}
           shortcuts={shortcuts}

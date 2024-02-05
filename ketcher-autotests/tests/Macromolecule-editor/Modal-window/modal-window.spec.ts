@@ -1,6 +1,6 @@
 import { Locator, test } from '@playwright/test';
 import {
-  addMonomerToCanvas,
+  addSingleMonomerToCanvas,
   selectSingleBondTool,
   takeEditorScreenshot,
   waitForPageInit,
@@ -19,7 +19,7 @@ test.describe('Modal window', () => {
     const MONOMER_NAME = 'Test-6-Ch___Test-6-AP-Chem';
     const MONOMER_ALIAS = 'Test-6-Ch';
 
-    peptide1 = await addMonomerToCanvas(
+    peptide1 = await addSingleMonomerToCanvas(
       page,
       MONOMER_NAME,
       MONOMER_ALIAS,
@@ -27,7 +27,7 @@ test.describe('Modal window', () => {
       200,
       0,
     );
-    peptide2 = await addMonomerToCanvas(
+    peptide2 = await addSingleMonomerToCanvas(
       page,
       MONOMER_NAME,
       MONOMER_ALIAS,
@@ -51,7 +51,15 @@ test.describe('Modal window', () => {
       */
 
     // Create bonds between peptides
-    await bondTwoMonomers(page, peptide1, peptide2);
+    await bondTwoMonomers(
+      page,
+      peptide1,
+      peptide2,
+      undefined,
+      undefined,
+      false,
+      false,
+    );
   });
 
   test('"Connect" button is active', async ({ page }) => {
@@ -62,10 +70,6 @@ test.describe('Modal window', () => {
       */
 
     // Create bonds between peptides
-    await bondTwoMonomers(page, peptide1, peptide2);
-
-    // Chose attachment points
-    await page.locator('button[title=R1]').nth(0).click();
-    await page.locator('button[title=R2]').nth(1).click();
+    await bondTwoMonomers(page, peptide1, peptide2, 'R1', 'R2', true, false);
   });
 });

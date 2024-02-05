@@ -171,17 +171,17 @@ export class Struct {
     return this.clone(atomSet);
   }
 
-  getFragmentIds(fid: number): Pile<number> {
+  getFragmentIds(_fid: number | number[]): Pile<number> {
     const atomSet = new Pile<number>();
-
+    const fid = Array.isArray(_fid) ? _fid : [_fid];
     this.atoms.forEach((atom, aid) => {
-      if (atom.fragment === fid) atomSet.add(aid);
+      if (fid.includes(atom.fragment)) atomSet.add(aid);
     });
 
     return atomSet;
   }
 
-  getFragment(fid: number, copyNonFragmentObjects = true): Struct {
+  getFragment(fid: number | number[], copyNonFragmentObjects = true): Struct {
     return this.clone(
       this.getFragmentIds(fid),
       null,
@@ -800,12 +800,8 @@ export class Struct {
     });
 
     this.texts.forEach((item) => {
-      // Scale text only for reactions - i.e file contains reaction arrows
-      const isReactionStruct = this.rxnArrows.size;
-      if (isReactionStruct) {
-        item.pos = item.pos.map((p) => p.scaled(scale));
-        item.position = item.position.scaled(scale);
-      }
+      item.pos = item.pos.map((p) => p.scaled(scale));
+      item.position = item.position.scaled(scale);
     });
   }
 

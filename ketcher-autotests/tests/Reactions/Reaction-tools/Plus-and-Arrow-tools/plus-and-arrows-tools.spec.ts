@@ -242,11 +242,8 @@ test.describe('Plus and Arrows tools ', () => {
     test('Select the whole reaction and move it, Undo, Erase tool', async ({
       page,
     }) => {
-      await page.keyboard.press(`${modifier}+KeyA`);
-      await delay(DELAY_IN_SECONDS.ONE);
-      await page.keyboard.press(`${modifier}+KeyC`);
+      await copyAndPaste(page);
       await page.mouse.move(point.x - 100, point.y - 100);
-      await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
       await takeEditorScreenshot(page);
       await selectTopPanelButton(TopPanelButton.Undo, page);
       await takeEditorScreenshot(page);
@@ -310,11 +307,8 @@ test.describe('Plus and Arrows tools ', () => {
     test('Select the whole reaction and move it, Undo, Erase tool', async ({
       page,
     }) => {
-      await page.keyboard.press(`${modifier}+KeyA`);
-      await delay(DELAY_IN_SECONDS.ONE);
-      await page.keyboard.press(`${modifier}+KeyC`);
+      await copyAndPaste(page);
       await page.mouse.move(point.x - 100, point.y - 100);
-      await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
       await takeEditorScreenshot(page);
       await selectTopPanelButton(TopPanelButton.Undo, page);
       await takeEditorScreenshot(page);

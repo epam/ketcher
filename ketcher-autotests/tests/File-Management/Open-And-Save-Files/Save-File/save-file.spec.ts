@@ -88,7 +88,10 @@ test.describe('Save files', () => {
     await drawBenzeneRing(page);
 
     const expectedFile = await getMolfile(page, 'v2000');
-    await saveToFile('mol-1848-to-compare-expectedV2000.mol', expectedFile);
+    await saveToFile(
+      'Molfiles-V2000/mol-1848-to-compare-expectedV2000.mol',
+      expectedFile,
+    );
 
     const METADATA_STRING_INDEX = [1];
 
@@ -96,7 +99,7 @@ test.describe('Save files', () => {
       await receiveFileComparisonData({
         page,
         expectedFileName:
-          'tests/test-data/mol-1848-to-compare-expectedV2000.mol',
+          'tests/test-data/Molfiles-V2000/mol-1848-to-compare-expectedV2000.mol',
         fileFormat: 'v2000',
         metaDataIndexes: METADATA_STRING_INDEX,
       });
@@ -227,7 +230,10 @@ test.describe('Save files', () => {
     await selectTopPanelButton(TopPanelButton.Save, page);
 
     const expectedFile = await getMolfile(page, 'v2000');
-    await saveToFile('nitrogen-atom-under-cursor-expected.mol', expectedFile);
+    await saveToFile(
+      'Molfiles-V2000/nitrogen-atom-under-cursor-expected.mol',
+      expectedFile,
+    );
 
     const METADATA_STRING_INDEX = [1];
 
@@ -235,7 +241,7 @@ test.describe('Save files', () => {
       await receiveFileComparisonData({
         page,
         expectedFileName:
-          'tests/test-data/nitrogen-atom-under-cursor-expected.mol',
+          'tests/test-data/Molfiles-V2000/nitrogen-atom-under-cursor-expected.mol',
         fileFormat: 'v2000',
         metaDataIndexes: METADATA_STRING_INDEX,
       });

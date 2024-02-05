@@ -33,6 +33,7 @@ import {
   LayoutCommandData,
   OutputMessage,
   IndigoStandalone,
+  ExplicitHydrogensCommandData,
 } from './indigoWorker.types';
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -54,6 +55,7 @@ function handle(
   handler: HandlerType,
   options?: CommandOptions,
   messageType?: Command,
+  inputData?: string,
 ) {
   module.then((indigo: IndigoStandalone) => {
     const indigoOptions = new indigo.MapStringString();
@@ -65,12 +67,14 @@ function handle(
         type: messageType,
         payload,
         hasError: false,
+        inputData,
       };
     } catch (error) {
       msg = {
         type: messageType,
         hasError: true,
         error: error as string,
+        inputData,
       };
     }
 
@@ -102,6 +106,7 @@ self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
           'render-bond-line-width': data.bondThickness,
         },
         Command.GenerateImageAsBase64,
+        data.struct,
       );
       break;
     }
@@ -228,6 +233,7 @@ self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
           indigo.convert(data.struct, data.format, indigoOptions),
         data.options,
         Command.Convert,
+        data.struct,
       );
       break;
     }
@@ -245,6 +251,23 @@ self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
           indigo.convert(data.struct, 'inchi-key', indigoOptions),
         undefined,
         Command.GetInChIKey,
+      );
+      break;
+    }
+
+    case Command.ExplicitHydrogens: {
+      const data: ExplicitHydrogensCommandData =
+        message.data as ExplicitHydrogensCommandData;
+      handle(
+        (indigo, indigoOptions) =>
+          indigo.convert_explicit_hydrogens(
+            data.struct,
+            data.mode,
+            data.format,
+            indigoOptions,
+          ),
+        undefined,
+        Command.ExplicitHydrogens,
       );
       break;
     }

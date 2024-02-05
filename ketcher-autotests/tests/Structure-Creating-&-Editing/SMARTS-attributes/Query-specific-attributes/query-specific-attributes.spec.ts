@@ -105,7 +105,7 @@ test.describe('Checking query specific attributes in SMARTS format', () => {
       page,
       setAromaticity,
       'aromatic',
-      '[#6](-[#6])(-[c])-[#6]',
+      '[#6](-[#6])(-c)-[#6]',
     );
   });
 
@@ -114,7 +114,7 @@ test.describe('Checking query specific attributes in SMARTS format', () => {
       page,
       setAromaticity,
       'aliphatic',
-      '[#6](-[#6])(-[C])-[#6]',
+      '[#6](-[#6])(-C)-[#6]',
     );
   });
 

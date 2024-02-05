@@ -539,15 +539,19 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-1615
       Description: The structure is saved as *.mol file.
     */
-    await openFileAndAddToCanvas('chain-with-isotope.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/chain-with-isotope.mol', page);
     const expectedFile = await getMolfile(page, 'v2000');
-    await saveToFile('chain-with-isotope-expected.mol', expectedFile);
+    await saveToFile(
+      'Molfiles-V2000/chain-with-isotope-expected.mol',
+      expectedFile,
+    );
 
     const METADATA_STRING_INDEX = [1];
     const { fileExpected: molFileExpected, file: molFile } =
       await receiveFileComparisonData({
         page,
-        expectedFileName: 'tests/test-data/chain-with-isotope-expected.mol',
+        expectedFileName:
+          'tests/test-data/Molfiles-V2000/chain-with-isotope-expected.mol',
         fileFormat: 'v2000',
         metaDataIndexes: METADATA_STRING_INDEX,
       });
@@ -655,15 +659,19 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-1619
       Description: The structure is saved as *.mol file.
     */
-    await openFileAndAddToCanvas('chain-with-valence.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/chain-with-valence.mol', page);
     const expectedFile = await getMolfile(page, 'v2000');
-    await saveToFile('chain-with-valence-expected.mol', expectedFile);
+    await saveToFile(
+      'Molfiles-V2000/chain-with-valence-expected.mol',
+      expectedFile,
+    );
 
     const METADATA_STRING_INDEX = [1];
     const { fileExpected: molFileExpected, file: molFile } =
       await receiveFileComparisonData({
         page,
-        expectedFileName: 'tests/test-data/chain-with-valence-expected.mol',
+        expectedFileName:
+          'tests/test-data/Molfiles-V2000/chain-with-valence-expected.mol',
         fileFormat: 'v2000',
         metaDataIndexes: METADATA_STRING_INDEX,
       });
@@ -732,15 +740,22 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-1633
       Description: The structure is saved as *.mol file.
     */
-    await openFileAndAddToCanvas('chain-with-radicals.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/chain-with-radicals.mol',
+      page,
+    );
     const expectedFile = await getMolfile(page, 'v2000');
-    await saveToFile('chain-with-radicals-expected.mol', expectedFile);
+    await saveToFile(
+      'Molfiles-V2000/chain-with-radicals-expected.mol',
+      expectedFile,
+    );
 
     const METADATA_STRING_INDEX = [1];
     const { fileExpected: molFileExpected, file: molFile } =
       await receiveFileComparisonData({
         page,
-        expectedFileName: 'tests/test-data/chain-with-radicals-expected.mol',
+        expectedFileName:
+          'tests/test-data/Molfiles-V2000/chain-with-radicals-expected.mol',
         fileFormat: 'v2000',
         metaDataIndexes: METADATA_STRING_INDEX,
       });
@@ -754,7 +769,10 @@ test.describe('Atom Properties', () => {
       Description: The saved *.mol file is opened correctly with applied atom properties and can be edited.
     */
     const anyAtom = 2;
-    await openFileAndAddToCanvas('chain-with-radicals.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/chain-with-radicals.mol',
+      page,
+    );
     await doubleClickOnAtom(page, 'C', anyAtom);
     await selectRadical(page, 'Diradical (triplet)', 'Apply');
   });

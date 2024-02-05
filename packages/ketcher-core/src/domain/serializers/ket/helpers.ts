@@ -86,9 +86,12 @@ export const populateStructWithSelection = (
   Object.keys(mappedSelection).forEach((entity) => {
     const selectedEntities = mappedSelection[entity];
     populatedStruct[entity]?.forEach((value, key) => {
-      value.setInitiallySelected(selectedEntities.includes(key) || undefined);
-      populatedStruct[entity].set(key, value);
+      if (typeof value.setInitiallySelected === 'function') {
+        value.setInitiallySelected(selectedEntities.includes(key) || undefined);
+        populatedStruct[entity].set(key, value);
+      }
     });
   });
+  console.log(mappedSelection, populatedStruct);
   return populatedStruct;
 };

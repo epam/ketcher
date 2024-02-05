@@ -28,6 +28,7 @@ import {
 import { Elements } from 'domain/constants';
 import { ifDef } from 'utilities';
 import { mergeFragmentsToStruct } from './mergeFragmentsToStruct';
+import { initiallySelectedType } from 'domain/entities/BaseMicromoleculeEntity';
 
 export function toRlabel(values) {
   let res = 0;
@@ -55,6 +56,7 @@ export function moleculeToStruct(ketItem: any): Struct {
           struct,
           atomId,
           atom.attachmentPoints,
+          atom.selected,
         );
       }
     });
@@ -167,22 +169,23 @@ function addRGroupAttachmentPointsToStruct(
   struct: Struct,
   attachedAtomId: number,
   attachmentPoints: AttachmentPoints | null,
+  initiallySelected?: initiallySelectedType,
 ) {
   const rgroupAttachmentPoints: RGroupAttachmentPoint[] = [];
   if (attachmentPoints === AttachmentPoints.FirstSideOnly) {
     rgroupAttachmentPoints.push(
-      new RGroupAttachmentPoint(attachedAtomId, 'primary'),
+      new RGroupAttachmentPoint(attachedAtomId, 'primary', initiallySelected),
     );
   } else if (attachmentPoints === AttachmentPoints.SecondSideOnly) {
     rgroupAttachmentPoints.push(
-      new RGroupAttachmentPoint(attachedAtomId, 'secondary'),
+      new RGroupAttachmentPoint(attachedAtomId, 'secondary', initiallySelected),
     );
   } else if (attachmentPoints === AttachmentPoints.BothSides) {
     rgroupAttachmentPoints.push(
-      new RGroupAttachmentPoint(attachedAtomId, 'primary'),
+      new RGroupAttachmentPoint(attachedAtomId, 'primary', initiallySelected),
     );
     rgroupAttachmentPoints.push(
-      new RGroupAttachmentPoint(attachedAtomId, 'secondary'),
+      new RGroupAttachmentPoint(attachedAtomId, 'secondary', initiallySelected),
     );
   }
   rgroupAttachmentPoints.forEach((rgroupAttachmentPoint) => {

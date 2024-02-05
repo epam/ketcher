@@ -15,6 +15,10 @@
  ***************************************************************************/
 
 import { Vec2, Point } from './vec2';
+import {
+  BaseMicromoleculeEntity,
+  initiallySelectedType,
+} from 'domain/entities/BaseMicromoleculeEntity';
 
 // TODO: move to infrastructure
 export enum TextCommand {
@@ -30,7 +34,7 @@ export interface TextAttributes {
   content: string;
   position: Point;
   pos: Array<Point>;
-  initiallySelected?: boolean;
+  initiallySelected?: initiallySelectedType;
 }
 
 function preparePositions(positions?: Array<Point>) {
@@ -41,19 +45,18 @@ function preparePositions(positions?: Array<Point>) {
   return positions.map((position) => new Vec2(position));
 }
 
-export class Text {
+export class Text extends BaseMicromoleculeEntity {
   content: string;
   position: Vec2;
   pos: Array<Vec2>;
-  initiallySelected?: boolean;
 
   constructor(attributes?: TextAttributes) {
+    super(attributes?.initiallySelected);
     this.pos = preparePositions(attributes?.pos);
     this.content = attributes?.content || '';
     this.position = attributes?.position
       ? new Vec2(attributes.position)
       : new Vec2();
-    this.initiallySelected = attributes?.initiallySelected;
   }
 
   setPos(coords: Array<Vec2>): void {

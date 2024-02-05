@@ -15,19 +15,22 @@
  ***************************************************************************/
 
 import { Point, Vec2 } from './vec2';
+import {
+  BaseMicromoleculeEntity,
+  initiallySelectedType,
+} from 'domain/entities/BaseMicromoleculeEntity';
 
 export interface RxnPlusAttributes {
   pp?: Point;
-  initiallySelected?: boolean;
+  initiallySelected?: initiallySelectedType;
 }
 
-export class RxnPlus {
+export class RxnPlus extends BaseMicromoleculeEntity {
   pp: Vec2;
-  initiallySelected?: boolean;
 
   constructor(attributes?: RxnPlusAttributes) {
+    super(attributes?.initiallySelected);
     this.pp = attributes?.pp ? new Vec2(attributes.pp) : new Vec2();
-    this.initiallySelected = attributes?.initiallySelected;
   }
 
   clone() {

@@ -544,6 +544,7 @@ export class KetSerializer implements Serializer<Struct> {
     const { serializedMacromolecules, micromoleculesStruct } =
       this.serializeMacromolecules(new Struct(), drawingEntitiesManager);
 
+    micromoleculesStruct.enableInitiallySelected();
     const populatedStruct = populateStructWithSelection(
       micromoleculesStruct,
       struct,
@@ -554,6 +555,7 @@ export class KetSerializer implements Serializer<Struct> {
       this.serializeMicromolecules(populatedStruct),
     );
 
+    micromoleculesStruct.disableInitiallySelected();
     const fileContent = {
       ...serializedMicromoleculesStruct,
       ...serializedMacromolecules,

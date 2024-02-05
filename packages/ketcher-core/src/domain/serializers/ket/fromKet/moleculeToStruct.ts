@@ -115,7 +115,6 @@ export function atomToStruct(source) {
   ifDef(params, 'radical', source.radical);
   ifDef(params, 'cip', source.cip);
   ifDef(params, 'attachmentPoints', source.attachmentPoints);
-  ifDef(params, 'initiallySelected', source.selected);
   // stereo
   ifDef(params, 'stereoLabel', source.stereoLabel);
   ifDef(params, 'stereoParity', source.stereoParity);
@@ -144,7 +143,10 @@ export function atomToStruct(source) {
   ifDef(params, 'exactChangeFlag', Number(Boolean(source.exactChangeFlag)));
   // implicit hydrogens
   ifDef(params, 'implicitHCount', source.implicitHCount);
-  return new Atom(params);
+
+  const newAtom = new Atom(params);
+  newAtom.setInitiallySelected(source.selected);
+  return newAtom;
 }
 
 export function rglabelToStruct(source) {
@@ -219,7 +221,9 @@ export function bondToStruct(source, atomOffset = 0) {
   ifDef(params, 'end', source.atoms[1] + atomOffset);
   ifDef(params, 'initiallySelected', source.selected);
 
-  return new Bond(params);
+  const newBond = new Bond(params);
+  newBond.setInitiallySelected(source.selected);
+  return newBond;
 }
 
 type KetAttachmentPoint = {

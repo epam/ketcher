@@ -19,23 +19,19 @@ import { getNodeWithInvertedYCoord } from '../helpers';
 
 export function rxnToStruct(ketItem: any, struct: Struct): Struct {
   if (ketItem.type === 'arrow') {
-    struct.rxnArrows.add(
-      new RxnArrow({
-        ...getNodeWithInvertedYCoord(ketItem.data),
-        initiallySelected: ketItem.selected,
-      }),
-    );
+    const arrow = new RxnArrow(getNodeWithInvertedYCoord(ketItem.data));
+    arrow.setInitiallySelected(ketItem.selected);
+    struct.rxnArrows.add(arrow);
   } else {
-    struct.rxnPluses.add(
-      new RxnPlus({
-        pp: {
-          x: ketItem.location[0],
-          y: -ketItem.location[1],
-          z: ketItem.location[2],
-        },
-        initiallySelected: ketItem.selected,
-      }),
-    );
+    const plus = new RxnPlus({
+      pp: {
+        x: ketItem.location[0],
+        y: -ketItem.location[1],
+        z: ketItem.location[2],
+      },
+    });
+    plus.setInitiallySelected(ketItem.selected);
+    struct.rxnPluses.add(plus);
   }
   return struct;
 }

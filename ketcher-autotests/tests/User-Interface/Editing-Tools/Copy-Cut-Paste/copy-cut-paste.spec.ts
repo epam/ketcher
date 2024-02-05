@@ -983,13 +983,13 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await selectTopPanelButton(TopPanelButton.Paste, page);
   });
 
-  test('Paste structure as SMARTS with ctrl+alt+V keyboard shortcut', async ({
+  test('Paste structure as SMARTS with ctrl+alt+V keyboard shortcut(if the test does not support the Clipboard API then an error appears)', async ({
     page,
   }) => {
     /*
     Description:
-    Open 'Paste from clipboard' window to copy SMARTS string.
-    Use ctrl+alt+V keyboard shortcut to paste string as SMARTS (backend should return "original_format": "SMARTS")
+    Open 'Paste from clipboard' window to copy SMARTS string. https://github.com/epam/ketcher/issues/3393
+    Use ctrl+alt+V keyboard shortcut to paste string as SMARTS
     */
     const smartsString =
       '[#6]-[#6]-[#6]-[#6]-[!#40!#79!#30]-[#6]-[#6]-[#6]-[#6]';

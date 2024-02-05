@@ -20,6 +20,10 @@ import { Point, Vec2 } from './vec2';
 import { Elements } from 'domain/constants';
 import { Pile } from './pile';
 import { Struct } from './struct';
+import {
+  BaseMicromoleculeEntity,
+  initiallySelectedType,
+} from 'domain/entities/BaseMicromoleculeEntity';
 
 /**
  * Return unions of Pick.
@@ -102,7 +106,7 @@ export interface AtomAttributes {
   pp?: Point;
   implicitH?: number;
   implicitHCount?: number | null;
-  initiallySelected?: boolean;
+  initiallySelected?: initiallySelectedType;
 }
 
 export type AtomPropertiesInContextMenu = SubsetOfFields<
@@ -114,7 +118,7 @@ export type AtomPropertiesInContextMenu = SubsetOfFields<
   | 'implicitHCount'
 >;
 
-export class Atom {
+export class Atom extends BaseMicromoleculeEntity {
   static PATTERN = {
     RADICAL: {
       NONE: 0,
@@ -196,7 +200,6 @@ export class Atom {
   stereoParity: number;
   hasImplicitH?: boolean;
   pseudo!: string;
-  initiallySelected?: boolean;
 
   /** @deprecated */
   get attpnt() {
@@ -204,6 +207,7 @@ export class Atom {
   }
 
   constructor(attributes: AtomAttributes) {
+    super(attributes?.initiallySelected);
     this.label = attributes.label;
     this.fragment = getValueOrDefault(attributes.fragment, -1);
     this.alias = getValueOrDefault(attributes.alias, Atom.attrlist.alias);
@@ -229,7 +233,6 @@ export class Atom {
     this.valence = 0;
     this.implicitH = attributes.implicitHCount || attributes.implicitH || 0; // implicitH is not an attribute
     this.pp = attributes.pp ? new Vec2(attributes.pp) : new Vec2();
-    this.initiallySelected = attributes.initiallySelected;
 
     // sgs should only be set when an atom is added to an s-group by an appropriate method,
     //   or else a copied atom might think it belongs to a group, but the group be unaware of the atom

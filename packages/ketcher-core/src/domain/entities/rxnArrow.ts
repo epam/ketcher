@@ -15,6 +15,10 @@
  ***************************************************************************/
 
 import { Point, Vec2 } from './vec2';
+import {
+  BaseMicromoleculeEntity,
+  initiallySelectedType,
+} from 'domain/entities/BaseMicromoleculeEntity';
 
 export enum RxnArrowMode {
   OpenAngle = 'open-angle',
@@ -40,14 +44,13 @@ export interface RxnArrowAttributes {
   mode: RxnArrowMode;
   pos?: Array<Point>;
   height?: number;
-  initiallySelected?: boolean;
+  initiallySelected?: initiallySelectedType;
 }
 
-export class RxnArrow {
+export class RxnArrow extends BaseMicromoleculeEntity {
   mode: RxnArrowMode;
   pos: Array<Vec2>;
   height?: number;
-  initiallySelected?: boolean;
 
   static isElliptical(arrow) {
     return [
@@ -59,6 +62,7 @@ export class RxnArrow {
   }
 
   constructor(attributes: RxnArrowAttributes) {
+    super(attributes?.initiallySelected);
     this.pos = [];
 
     if (attributes.pos) {
@@ -73,7 +77,6 @@ export class RxnArrow {
     if (RxnArrow.isElliptical(this)) {
       this.height = attributes.height ?? defaultHeight;
     }
-    this.initiallySelected = attributes.initiallySelected;
   }
 
   clone() {

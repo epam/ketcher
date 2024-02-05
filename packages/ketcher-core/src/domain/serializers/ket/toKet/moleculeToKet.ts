@@ -105,7 +105,7 @@ function atomToKet(source, monomer?: BaseMonomer) {
   ifDef(result, 'radical', source.radical, 0);
   ifDef(result, 'attachmentPoints', source.attachmentPoints, 0);
   ifDef(result, 'cip', source.cip, '');
-  ifDef(result, 'selected', source.initiallySelected);
+  ifDef(result, 'selected', source.getInitiallySelected());
   // stereo
   ifDef(result, 'stereoLabel', source.stereoLabel, null);
   ifDef(result, 'stereoParity', source.stereoCare, 0);
@@ -160,7 +160,7 @@ function bondToKet(source) {
     ifDef(result, 'topology', source.topology, 0);
     ifDef(result, 'center', source.reactingCenterStatus, 0);
     ifDef(result, 'cip', source.cip, '');
-    ifDef(result, 'selected', source.initiallySelected);
+    ifDef(result, 'selected', source.getInitiallySelected());
   }
   return result;
 }

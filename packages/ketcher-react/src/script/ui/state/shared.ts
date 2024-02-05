@@ -113,7 +113,10 @@ export const getSelectionFromStruct = (struct) => {
     if (struct && struct[selectionEntity]) {
       const selected: number[] = [];
       struct[selectionEntity].forEach((value, key) => {
-        if (value.initiallySelected) {
+        if (
+          typeof value.getInitiallySelected === 'function' &&
+          value.getInitiallySelected()
+        ) {
           selected.push(key);
         }
       });
@@ -214,6 +217,7 @@ export function load(struct: Struct, options?) {
         // do not update selection if fragment is added
         editor.selection(getSelectionFromStruct(editor.struct()));
       }
+      editor.struct().disableInitiallySelected();
       dispatch(setAnalyzingFile(false));
       dispatch({ type: 'MODAL_CLOSE' });
     } catch (e: any) {

@@ -1247,4 +1247,22 @@ export class Struct {
         (target.map === 'bonds' && this.isBondFromMacromolecule(target.id)))
     );
   }
+
+  disableInitiallySelected(): void {
+    // Those fields are used only in serialization/deserialization phase
+    // so we are disabling them to avoid confusion
+    this.atoms.changeInitiallySelectedPropertiesForPool(true);
+    this.bonds.changeInitiallySelectedPropertiesForPool(true);
+    this.rxnPluses.changeInitiallySelectedPropertiesForPool(true);
+    this.rxnArrows.changeInitiallySelectedPropertiesForPool(true);
+    this.texts.changeInitiallySelectedPropertiesForPool(true);
+  }
+
+  enableInitiallySelected(): void {
+    this.atoms.changeInitiallySelectedPropertiesForPool();
+    this.bonds.changeInitiallySelectedPropertiesForPool();
+    this.rxnPluses.changeInitiallySelectedPropertiesForPool();
+    this.rxnArrows.changeInitiallySelectedPropertiesForPool();
+    this.texts.changeInitiallySelectedPropertiesForPool();
+  }
 }

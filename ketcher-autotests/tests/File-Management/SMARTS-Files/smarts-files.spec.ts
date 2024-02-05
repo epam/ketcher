@@ -29,7 +29,6 @@ test.describe('Loading SMARTS files', () => {
     /*
     Test case: https://github.com/epam/Indigo/issues/1332
     Description: c1-[#6]=[#6]-[#6]=[#6]-[c,n]=1 should be loaded as benzene with aromatic atom list (carbon and nitrogen)
-    Screenshot for this test is incorrect since Indigo issue #1332 still occurs when test is running locally 
     */
     const smartsStringToPaste = 'c1-[#6]=[#6]-[#6]=[#6]-[c,n]=1';
     await pasteFromClipboardAndAddToCanvas(page, smartsStringToPaste, false);

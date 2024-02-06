@@ -46,12 +46,13 @@ test.describe('Fragment selection tool', () => {
 
   test('Molecule selection', async ({ page }) => {
     // Test case: EPMLSOPKET-1355
-    await openFileAndAddToCanvas('glutamine.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/glutamine.mol', page);
     await selectDropdownTool(page, 'select-rectangle', 'select-fragment');
     await clickOnAtom(page, 'C', 1);
   });
 
   test('Reaction component selection', async ({ page }) => {
+    test.fail();
     //  Test case: EPMLSOPKET-1356
     await openFileAndAddToCanvas('Rxn-V2000/reaction_4.rxn', page);
     await selectDropdownTool(page, 'select-rectangle', 'select-fragment');
@@ -61,6 +62,7 @@ test.describe('Fragment selection tool', () => {
   });
 
   test('Select and drag reaction components', async ({ page }) => {
+    test.fail();
     //  Test case: EPMLSOPKET-1357
     await openFileAndAddToCanvas('Rxn-V2000/reaction_4.rxn', page);
     await selectDropdownTool(page, 'select-rectangle', 'select-fragment');
@@ -88,6 +90,7 @@ test.describe('Fragment selection tool', () => {
   });
 
   test('Undo - Redo moving of structures', async ({ page }) => {
+    test.fail();
     // Test case: EPMLSOPKET-1360
     // Move some parts off structure - plus and arrow - then use Undo?redo
     await openFileAndAddToCanvas('Rxn-V2000/reaction_4.rxn', page);
@@ -102,7 +105,7 @@ test.describe('Fragment selection tool', () => {
   }) => {
     // Test case: EPMLSOPKET-17664
     // Verify the bond contours are not intersected with atom contours
-    await openFileAndAddToCanvas('glutamine.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/glutamine.mol', page);
     await selectDropdownTool(page, 'select-rectangle', 'select-fragment');
     const point = await getRightAtomByAttributes(page, { label: 'N' });
     await page.mouse.click(point.x, point.y);

@@ -18,6 +18,10 @@ import { Atom } from './atom';
 import { Pile } from './pile';
 import { Struct } from './struct';
 import { Vec2 } from './vec2';
+import {
+  BaseMicromoleculeEntity,
+  initiallySelectedType,
+} from 'domain/entities/BaseMicromoleculeEntity';
 
 enum CIP {
   E = 'E',
@@ -37,9 +41,10 @@ export interface BondAttributes {
   begin: number;
   cip?: CIP | null;
   isPreview?: boolean;
+  initiallySelected?: initiallySelectedType;
 }
 
-export class Bond {
+export class Bond extends BaseMicromoleculeEntity {
   static PATTERN = {
     TYPE: {
       SINGLE: 1,
@@ -107,6 +112,7 @@ export class Bond {
   isPreview: boolean;
 
   constructor(attributes: BondAttributes) {
+    super(attributes.initiallySelected);
     this.begin = attributes.begin;
     this.end = attributes.end;
     this.type = attributes.type;

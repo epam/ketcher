@@ -202,10 +202,11 @@ class SaveDialog extends Component {
       const getStructFromStringByType = () => {
         if (type === 'ket') {
           const selection = this.props.editor.selection();
-          return service.getStructureFromStructAsync(struct, undefined, {
-            items: selection,
-            mappingNeeded: true,
-          });
+          return service.getStructureFromStructAsync(
+            struct,
+            undefined,
+            selection,
+          );
         }
         return service.getStructureFromStructAsync(struct);
       };

@@ -30,7 +30,7 @@ export class KetFormatter implements StructFormatter {
   async getStructureFromStructAsync(
     struct: Struct,
     drawingEntitiesManager?: DrawingEntitiesManager,
-    selection?: { items: EditorSelection; mappingNeeded: boolean },
+    selection?: EditorSelection,
   ): Promise<string> {
     const ket = this.#ketSerializer.serialize(
       struct,

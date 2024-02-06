@@ -24,7 +24,7 @@ export interface StructFormatter {
   getStructureFromStructAsync: (
     struct: Struct,
     drawingEntitiesManager?: DrawingEntitiesManager,
-    selection?: { items: EditorSelection; mappingNeeded: boolean },
+    selection?: EditorSelection,
   ) => Promise<string>;
   getStructureFromStringAsync: (stringifiedStruct: string) => Promise<Struct>;
   parseMacromoleculeString?: (stringifiedStruct: string) => void;

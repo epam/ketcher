@@ -22,7 +22,7 @@ import 'whatwg-fetch';
 import './index.less';
 
 import init, { Config } from './script';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { Ketcher } from 'ketcher-core';
 import classes from './Editor.module.less';
@@ -32,7 +32,7 @@ import {
   KETCHER_INIT_EVENT_NAME,
   KETCHER_ROOT_NODE_CLASS_NAME,
 } from './constants';
-import { createRoot } from 'react-dom/client';
+import { createRoot, Root } from 'react-dom/client';
 
 const mediaSizes = {
   smallWidth: 1040,
@@ -50,7 +50,7 @@ function Editor(props: EditorProps) {
     ref: rootElRef,
   });
   const ketcherInitEvent = new Event(KETCHER_INIT_EVENT_NAME);
-
+  const [appRoot, setAppRoot] = useState<Root | null>(null);
   useEffect(() => {
     const appRoot = createRoot(rootElRef.current as HTMLDivElement);
     init({
@@ -63,12 +63,20 @@ function Editor(props: EditorProps) {
         window.dispatchEvent(ketcherInitEvent);
       }
     });
-    return () => {
-      appRoot.unmount();
-    };
+    // set root to a state so we can use it in the other useEffect
+    setAppRoot(appRoot);
     // TODO: provide the list of dependencies after implementing unsubscribe function
   }, []);
-
+  // separate useEffect for cleanup This prevents funkyness in strictmode.
+  useEffect(() => {
+    return () => {
+      // setTimeout is used to disable the warn msg from react "Attempted to synchronously unmount a root while React was already rendering"
+      setTimeout(() => {
+        appRoot?.unmount();
+        setAppRoot(appRoot);
+      });
+    };
+  }, [appRoot]); // if appRoot changes, cleanup
   return (
     <div
       ref={rootElRef}

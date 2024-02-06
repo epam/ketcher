@@ -77,4 +77,67 @@ test.describe('Hotkeys', () => {
     await page.keyboard.press('Shift+Tab');
     await takeLeftToolbarMacromoleculeScreenshot(page);
   });
+
+  test('Check Zoom In Functionality with Ctrl+=', async ({ page }) => {
+    /* 
+    Test case: Hotkeys https://github.com/epam/ketcher/issues/3713
+    Description: Monomers are Zoomed In on canvas
+    */
+    const numberOfPressZoomIn = 5;
+    await openFileAndAddToCanvas(
+      'KET/three-monomers-not-connected-with-bonds.ket',
+      page,
+    );
+    for (let i = 0; i < numberOfPressZoomIn; i++) {
+      await page.keyboard.press('Control+=');
+    }
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check Zoom Out Functionality with Ctrl+-', async ({ page }) => {
+    /* 
+    Test case: Hotkeys https://github.com/epam/ketcher/issues/3713
+    Description: Monomers are Zoomed Out on canvas
+    */
+    const numberOfPressZoomOut = 5;
+    await openFileAndAddToCanvas(
+      'KET/three-monomers-not-connected-with-bonds.ket',
+      page,
+    );
+    for (let i = 0; i < numberOfPressZoomOut; i++) {
+      await page.keyboard.press('Control+-');
+    }
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check Reset Zoom Functionality with Ctrl+0', async ({ page }) => {
+    /* 
+    Test case: Hotkeys https://github.com/epam/ketcher/issues/3713
+    Description: Monomers Zoome In are reset
+    */
+    const numberOfPressZoomIn = 5;
+    await openFileAndAddToCanvas(
+      'KET/three-monomers-not-connected-with-bonds.ket',
+      page,
+    );
+    for (let i = 0; i < numberOfPressZoomIn; i++) {
+      await page.keyboard.press('Control+=');
+    }
+    await takeEditorScreenshot(page);
+    await page.keyboard.press('Control+0');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check Select All Functionality with Ctrl+A', async ({ page }) => {
+    /* 
+    Test case: Hotkeys https://github.com/epam/ketcher/issues/3713
+    Description: All Monomers are selected.
+    */
+    await openFileAndAddToCanvas(
+      'KET/three-monomers-not-connected-with-bonds.ket',
+      page,
+    );
+    await page.keyboard.press('Control+a');
+    await takeEditorScreenshot(page);
+  });
 });

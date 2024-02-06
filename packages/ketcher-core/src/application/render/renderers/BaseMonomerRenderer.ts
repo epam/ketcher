@@ -113,6 +113,18 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     }
   }
 
+  public updateAttachmentPoints() {
+    this.hoveredAttachmenPoint = null;
+    if (!this.rootElement) return;
+    if (this.attachmentPoints.length > 0) {
+      this.attachmentPoints.forEach((point) => {
+        point.updateAttachmentPointStyleForHover();
+      });
+    } else {
+      this.drawAttachmentPoints();
+    }
+  }
+
   public redrawAttachmentPointsCoordinates() {
     const chosenAttachmentPointName =
       this.monomer.chosenFirstAttachmentPointForBond;

@@ -6,6 +6,8 @@ const SUGAR_SELECTED_ELEMENT_ID = '#sugar-selection';
 const SUGAR_SYMBOL_ELEMENT_ID = '#sugar';
 
 export class SugarRenderer extends BaseMonomerRenderer {
+  public CHAIN_BEGINNING = '’5';
+
   constructor(public monomer: Sugar, scale?: number) {
     super(
       monomer,
@@ -25,11 +27,19 @@ export class SugarRenderer extends BaseMonomerRenderer {
       .data([this])
       .attr('href', SUGAR_SYMBOL_ELEMENT_ID)
       .style('cursor', 'pointer')
-      .attr(
-        'fill',
-        theme.monomer.color[
-          this.monomer.monomerItem.props.MonomerNaturalAnalogCode
-        ].regular,
-      );
+      .attr('fill', this.getMonomerColor(theme));
+  }
+
+  show(theme) {
+    super.show(theme);
+    this.appendChainBeginning();
+  }
+
+  protected get enumerationElementPosition() {
+    return undefined;
+  }
+
+  protected get beginningElementPosition() {
+    return { x: -11, y: 15 };
   }
 }

@@ -16,10 +16,14 @@
 
 import { MolSerializerOptions } from 'domain/serializers';
 import { Struct } from 'domain/entities';
+import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import { StructServiceOptions } from 'domain/services';
 
 export interface StructFormatter {
-  getStructureFromStructAsync: (struct: Struct) => Promise<string>;
+  getStructureFromStructAsync: (
+    struct: Struct,
+    drawingEntitiesManager?: DrawingEntitiesManager,
+  ) => Promise<string>;
   getStructureFromStringAsync: (stringifiedStruct: string) => Promise<Struct>;
   parseMacromoleculeString?: (stringifiedStruct: string) => void;
 }

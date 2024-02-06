@@ -60,7 +60,12 @@ function Sgroup({ formState, ...props }) {
         init={props}
         {...formState}
       >
-        <SelectOneOf title="Type" name="type" schema={schemes} />
+        <SelectOneOf
+          title="Type"
+          name="type"
+          schema={schemes}
+          data-testid="s-group-type"
+        />
 
         {type === 'DAT' ? (
           <SDataFieldset formState={formState} />

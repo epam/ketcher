@@ -1,4 +1,4 @@
-import { Page, test } from '@playwright/test';
+import { Page, test, expect } from '@playwright/test';
 import {
   BondTypeName,
   clickInTheMiddleOfTheScreen,
@@ -11,13 +11,13 @@ import {
 } from '@utils';
 import {
   checkSmartsValue,
+  checkSmartsWarnings,
   setAtomicMass,
   setCharge,
   setLabel,
+  setRadical,
   setValence,
 } from '../utils';
-
-const defaultFileFormat = 'MDL Molfile V2000';
 
 async function drawStructure(page: Page, numberOfClicks: number) {
   await selectBond(BondTypeName.Single, page);
@@ -35,7 +35,7 @@ async function setAndCheckAtomProperties(
   await setProperty(page, value);
   await pressButton(page, 'Apply');
   await takeEditorScreenshot(page);
-  await checkSmartsValue(page, defaultFileFormat, expectedSmarts);
+  await checkSmartsValue(page, expectedSmarts);
 }
 
 test.describe('Checking atom properties attributes in SMARTS format', () => {
@@ -54,7 +54,21 @@ test.describe('Checking atom properties attributes in SMARTS format', () => {
       page,
       setLabel,
       'Cr',
-      '[#6](-[#6])(-[#24])-[#6]',
+      '[#6](-[#6])(-[Cr])-[#6]',
+    );
+  });
+
+  test('Setting charge to zero', async ({ page }) => {
+    /**
+     * Test case: https://github.com/epam/ketcher/issues/3339
+     * Test is failing due to bug https://github.com/epam/Indigo/issues/1438
+     */
+    test.fail();
+    await setAndCheckAtomProperties(
+      page,
+      setCharge,
+      '0',
+      '[#6](-[#6])(-[#6;+0])-[#6]',
     );
   });
 
@@ -85,8 +99,21 @@ test.describe('Checking atom properties attributes in SMARTS format', () => {
     );
   });
 
-  test('Setting valence', async ({ page }) => {
+  test('Setting isotope (atomic mass) to zero', async ({ page }) => {
+    /**
+     * Test case: https://github.com/epam/ketcher/issues/3339
+     * Test is failing due to bug https://github.com/epam/Indigo/issues/1438
+     */
     test.fail();
+    await setAndCheckAtomProperties(
+      page,
+      setAtomicMass,
+      '0',
+      '[#6](-[#6])(-[#6;0])-[#6]',
+    );
+  });
+
+  test('Setting valence', async ({ page }) => {
     /**
      * This test will fail until https://github.com/epam/Indigo/issues/1362 is fixed
      */
@@ -96,5 +123,45 @@ test.describe('Checking atom properties attributes in SMARTS format', () => {
       'IV',
       '[#6](-[#6])(-[#6;v4])-[#6]',
     );
+  });
+
+  test('Setting radical', async ({ page }) => {
+    /**
+     * Test case: https://github.com/epam/ketcher/issues/3431
+     * Description: setting redical option should have no impact on SMARTS output but warning should be displayed
+     */
+    await setAndCheckAtomProperties(
+      page,
+      setRadical,
+      'Monoradical',
+      '[#6](-[#6])(-[#6])-[#6]',
+    );
+    await checkSmartsWarnings(page);
+  });
+
+  test('Check that cannot add Charge more than -15', async ({ page }) => {
+    test.fail();
+    /**
+     * Test case: https://github.com/epam/ketcher/issues/3943
+     * Description: Validation should be added +-15 range allowed only
+     * This test will fail until https://github.com/epam/ketcher/issues/3943 is fixed
+     */
+    await setCharge(page, '-16');
+    const applyButton = await page.getByText('Apply');
+    const isDisabled = await applyButton.isDisabled();
+    expect(isDisabled).toBe(true);
+  });
+
+  test('Check that cannot add Charge more than 15', async ({ page }) => {
+    test.fail();
+    /**
+     * Test case: https://github.com/epam/ketcher/issues/3943
+     * Description: Validation should be added +-15 range allowed only
+     * This test will fail until https://github.com/epam/ketcher/issues/3943 is fixed
+     */
+    await setCharge(page, '16');
+    const applyButton = await page.getByText('Apply');
+    const isDisabled = await applyButton.isDisabled();
+    expect(isDisabled).toBe(true);
   });
 });

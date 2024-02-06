@@ -59,6 +59,7 @@ export interface PanelProps {
   onCheck: VoidFunction;
   onAnalyse: VoidFunction;
   onMiew: VoidFunction;
+  onToggleExplicitHydrogens: VoidFunction;
   onFullscreen: VoidFunction;
   onAbout: VoidFunction;
   onHelp: VoidFunction;
@@ -88,18 +89,22 @@ const ControlsPanel = styled('div')`
     box-sizing: border-box;
   }
 
-  @media only screen and (min-width: 1024px) {
-    height: 40px;
-    gap: 0px;
-    padding-bottom: 0;
-    .group {
-      gap: 4px;
+  @media only screen {
+    @container (min-width: 1024px) {
+      height: 40px;
+      gap: 0px;
+      padding-bottom: 0;
+      .group {
+        gap: 4px;
+      }
     }
   }
 
-  @media only screen and (min-width: 1920px) {
-    height: 64px;
-    gap: 12px;
+  @media only screen {
+    @container (min-width: 1920px) {
+      height: 64px;
+      gap: 12px;
+    }
   }
 `;
 
@@ -139,6 +144,7 @@ export const TopToolbar = ({
   onCheck,
   onAnalyse,
   onMiew,
+  onToggleExplicitHydrogens,
   onFullscreen,
   onAbout,
   onHelp,
@@ -159,7 +165,7 @@ export const TopToolbar = ({
           iconName="clear"
           shortcut={shortcuts.clear}
           isHidden={hiddenButtons.includes('clear')}
-          testId="clear-canvas-button"
+          testId="clear-canvas"
         />
         <FileControls
           onFileOpen={onFileOpen}
@@ -194,6 +200,7 @@ export const TopToolbar = ({
           onCheck={onCheck}
           onAnalyse={onAnalyse}
           onMiew={onMiew}
+          onToggleExplicitHydrogens={onToggleExplicitHydrogens}
           disabledButtons={disabledButtons}
           hiddenButtons={hiddenButtons}
           shortcuts={shortcuts}

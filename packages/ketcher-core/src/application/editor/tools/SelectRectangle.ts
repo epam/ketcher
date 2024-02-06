@@ -14,21 +14,25 @@
  * limitations under the License.
  ***************************************************************************/
 import { Vec2 } from 'domain/entities';
-import { CoreEditor } from 'application/editor';
+import { CoreEditor, EditorHistory } from 'application/editor';
 import { brush as d3Brush, select } from 'd3';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { Command } from 'domain/entities/Command';
 import { BaseTool } from 'application/editor/tools/Tool';
-import Coordinates from '../shared/coordinates';
+import { Coordinates } from '../shared/coordinates';
 
 class SelectRectangle implements BaseTool {
   private brush;
   private brushArea;
   private moveStarted;
   private mousePositionAfterMove = new Vec2(0, 0, 0);
+  private mousePositionBeforeMove = new Vec2(0, 0, 0);
+  private canvasResizeObserver?: ResizeObserver;
+  private history: EditorHistory;
 
   constructor(private editor: CoreEditor) {
     this.editor = editor;
+    this.history = new EditorHistory(this.editor);
     this.destroy();
     this.createBrush();
 
@@ -71,14 +75,36 @@ class SelectRectangle implements BaseTool {
       .select('rect.selection')
       .style('fill', 'transparent')
       .style('stroke', 'darkgrey');
+
+    const handleResizeCanvas = () => {
+      const { canvas } = this.editor;
+      if (canvas.clientWidth === 0 || canvas.clientHeight === 0) {
+        return;
+      }
+
+      this.brush.extent([
+        [0, 0],
+        [canvas.width.baseVal.value, canvas.height.baseVal.value],
+      ]);
+
+      this.brushArea.call(this.brush);
+    };
+
+    const canvasElement = this.editor.canvas;
+
+    if (canvasElement) {
+      this.canvasResizeObserver = new ResizeObserver(handleResizeCanvas);
+      this.canvasResizeObserver.observe(canvasElement);
+    }
   }
 
   mousedown(event) {
     const renderer = event.target.__data__;
     let modelChanges: Command;
-    if (renderer instanceof BaseRenderer) {
+    if (renderer instanceof BaseRenderer && !event.shiftKey) {
       this.moveStarted = true;
       this.mousePositionAfterMove = this.editor.lastCursorPositionOfCanvas;
+      this.mousePositionBeforeMove = this.editor.lastCursorPositionOfCanvas;
       if (renderer.drawingEntity.selected) {
         return;
       } else {
@@ -86,6 +112,12 @@ class SelectRectangle implements BaseTool {
           renderer.drawingEntity,
         );
       }
+    } else if (renderer instanceof BaseRenderer && event.shiftKey) {
+      const drawingEntity = renderer.drawingEntity;
+      modelChanges =
+        this.editor.drawingEntitiesManager.addDrawingEntityToSelection(
+          drawingEntity,
+        );
     } else {
       modelChanges =
         this.editor.drawingEntitiesManager.unselectAllDrawingEntities();
@@ -107,14 +139,36 @@ class SelectRectangle implements BaseTool {
           ),
         );
       this.mousePositionAfterMove = this.editor.lastCursorPositionOfCanvas;
-      this.editor.renderersContainer.update(modelChanges);
+      requestAnimationFrame(() => {
+        this.editor.renderersContainer.update(modelChanges);
+      });
     }
   }
 
   mouseup(event) {
     const renderer = event.target.__data__;
-    if (this.moveStarted && renderer.drawingEntity.selected) {
+    if (this.moveStarted && renderer.drawingEntity?.selected) {
       this.moveStarted = false;
+
+      if (
+        Vec2.diff(
+          this.mousePositionAfterMove,
+          this.mousePositionBeforeMove,
+        ).length() === 0
+      ) {
+        return;
+      }
+      const modelChanges =
+        this.editor.drawingEntitiesManager.moveSelectedDrawingEntities(
+          new Vec2(0, 0),
+          Coordinates.canvasToModel(
+            new Vec2(
+              this.mousePositionAfterMove.x - this.mousePositionBeforeMove.x,
+              this.mousePositionAfterMove.y - this.mousePositionBeforeMove.y,
+            ),
+          ),
+        );
+      this.history.update(modelChanges);
     }
   }
 
@@ -143,6 +197,9 @@ class SelectRectangle implements BaseTool {
       this.brush = null;
       this.brushArea = null;
     }
+
+    this.canvasResizeObserver?.disconnect();
+
     const modelChanges =
       this.editor.drawingEntitiesManager.unselectAllDrawingEntities();
 

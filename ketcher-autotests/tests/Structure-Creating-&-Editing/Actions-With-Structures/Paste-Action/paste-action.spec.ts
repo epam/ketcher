@@ -13,7 +13,7 @@ test.describe('Paste Tool', () => {
   });
 
   test('InfoModal with hotkey display for Paste action', async ({ page }) => {
-    const anyStructure = 'mol_1855_to_open.mol';
+    const anyStructure = 'Molfiles-V2000/mol-1855-to-open.mol';
     await openFileAndAddToCanvas(anyStructure, page);
     await page.keyboard.press('Control+a');
     await selectAction(TopPanelButton.Copy, page);

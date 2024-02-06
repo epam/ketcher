@@ -145,7 +145,7 @@ test.describe('R-Group Label Tool', () => {
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
     await page.mouse.click(x, y);
 
-    await pressButton(page, 'Data');
+    await page.getByTestId('s-group-type-input-span').click();
     await page.getByRole('option', { name: 'Multiple group' }).click();
     await page.getByLabel('Repeat count').click();
     await page.getByLabel('Repeat count').fill('1');
@@ -362,7 +362,7 @@ test.describe('R-Group Label Tool', () => {
     */
     const x = 500;
     const y = 200;
-    await openFileAndAddToCanvas('chain-with-r-group.rxn', page);
+    await openFileAndAddToCanvas('Rxn-V2000/chain-with-r-group.rxn', page);
     await copyAndPaste(page);
     await page.mouse.click(x, y);
   });
@@ -374,7 +374,7 @@ test.describe('R-Group Label Tool', () => {
     */
     const x = 500;
     const y = 200;
-    await openFileAndAddToCanvas('chain-with-r-group.rxn', page);
+    await openFileAndAddToCanvas('Rxn-V2000/chain-with-r-group.rxn', page);
     await cutAndPaste(page);
     await page.mouse.click(x, y);
   });
@@ -387,7 +387,7 @@ test.describe('R-Group Label Tool', () => {
       Description: The plus symbol does not appear near the R-group label.
       The minus symbol does not appear near the R-group label.
     */
-    await openFileAndAddToCanvas('chain-with-r-group.rxn', page);
+    await openFileAndAddToCanvas('Rxn-V2000/chain-with-r-group.rxn', page);
     await selectLeftPanelButton(LeftPanelButton.ChargePlus, page);
     await page.getByText('R8').click();
     await selectLeftPanelButton(LeftPanelButton.ChargeMinus, page);
@@ -451,7 +451,10 @@ test.describe('R-Group Label Tool', () => {
       Test case: EPMLSOPKET-1576
       Description: The structure is layout correctly without R-group label loss.
     */
-    await openFileAndAddToCanvas('distorted-structure-with-r-group.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/distorted-structure-with-r-group.mol',
+      page,
+    );
     await selectTopPanelButton(TopPanelButton.Layout, page);
   });
 });
@@ -466,9 +469,9 @@ test.describe('R-Group Label Tool', () => {
     Test case: EPMLSOPKET-1568
     Description: User is able to save the structure with R-group label as .rxn file
     */
-    await openFileAndAddToCanvas('chain-with-r-group.rxn', page);
+    await openFileAndAddToCanvas('Rxn-V2000/chain-with-r-group.rxn', page);
     const expectedFile = await getRxn(page);
-    await saveToFile('chain-with-r-group-expected.rxn', expectedFile);
+    await saveToFile('Rxn-V2000/chain-with-r-group-expected.rxn', expectedFile);
 
     // eslint-disable-next-line no-magic-numbers
     const METADATA_STRING_INDEX = [2, 7, 31, 38];
@@ -476,7 +479,8 @@ test.describe('R-Group Label Tool', () => {
       await receiveFileComparisonData({
         page,
         metaDataIndexes: METADATA_STRING_INDEX,
-        expectedFileName: 'tests/test-data/chain-with-r-group-expected.rxn',
+        expectedFileName:
+          'tests/test-data/Rxn-V2000/chain-with-r-group-expected.rxn',
       });
     expect(rxnFile).toEqual(rxnFileExpected);
   });
@@ -486,9 +490,15 @@ test.describe('R-Group Label Tool', () => {
     Test case: EPMLSOPKET-1567
     Description: User is able to save the structure with R-group label as .rxn V3000 file
     */
-    await openFileAndAddToCanvas('chain-with-r-group-V3000.rxn', page);
+    await openFileAndAddToCanvas(
+      'Rxn-V3000/chain-with-r-group-V3000.rxn',
+      page,
+    );
     const expectedFile = await getRxn(page, 'v3000');
-    await saveToFile('chain-with-r-group-V3000-expected.rxn', expectedFile);
+    await saveToFile(
+      'Rxn-V3000/chain-with-r-group-V3000-expected.rxn',
+      expectedFile,
+    );
 
     // eslint-disable-next-line no-magic-numbers
     const METADATA_STRING_INDEX = [2];
@@ -497,7 +507,7 @@ test.describe('R-Group Label Tool', () => {
         page,
         metaDataIndexes: METADATA_STRING_INDEX,
         expectedFileName:
-          'tests/test-data/chain-with-r-group-V3000-expected.rxn',
+          'tests/test-data/Rxn-V3000/chain-with-r-group-V3000-expected.rxn',
         fileFormat: 'v3000',
       });
     expect(rxnFile).toEqual(rxnFileExpected);
@@ -510,12 +520,13 @@ test.describe('R-Group Label Tool', () => {
     */
     await openFileAndAddToCanvas('SMILES/chain-with-r-group.smi', page);
     const expectedFile = await getSmiles(page);
-    await saveToFile('chain-with-r-group-expected.smi', expectedFile);
+    await saveToFile('SMILES/chain-with-r-group-expected.smi', expectedFile);
 
     const { fileExpected: smiFileExpected, file: smiFile } =
       await receiveFileComparisonData({
         page,
-        expectedFileName: 'tests/test-data/chain-with-r-group-expected.smi',
+        expectedFileName:
+          'tests/test-data/SMILES/chain-with-r-group-expected.smi',
       });
 
     expect(smiFile).toEqual(smiFileExpected);

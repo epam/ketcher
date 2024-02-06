@@ -858,7 +858,7 @@ test.describe('Attachment Point Tool', () => {
     Description: The structures are cleaned correctly without attachment point(s) loss.
     */
     await openFileAndAddToCanvas(
-      'distorted-chain-with-attachment-points.mol',
+      'Molfiles-V2000/distorted-chain-with-attachment-points.mol',
       page,
     );
 

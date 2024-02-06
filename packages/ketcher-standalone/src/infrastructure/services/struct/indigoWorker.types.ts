@@ -31,6 +31,7 @@ export const enum Command {
   Calculate,
   GenerateImageAsBase64,
   GetInChIKey,
+  ExplicitHydrogens,
 }
 
 export const enum WorkerEvent {
@@ -46,6 +47,7 @@ export const enum WorkerEvent {
   Calculate = 'calculate',
   GenerateImageAsBase64 = 'generateImageAsBase64',
   GetInChIKey = 'getInChIKey',
+  ExplicitHydrogens = 'convert_explicit_hydrogens',
 }
 
 export enum SupportedFormat {
@@ -148,6 +150,13 @@ export interface AutomapCommandData
   mode: string;
 }
 
+export interface ExplicitHydrogensCommandData
+  extends CommandData,
+    WithStruct,
+    WithFormat {
+  mode: 'auto' | 'fold' | 'unfold';
+}
+
 interface OutputMessageBase {
   type?: Command;
   hasError?: boolean;
@@ -156,11 +165,13 @@ interface OutputMessageBase {
 interface OutputMessageWithError extends OutputMessageBase {
   hasError: true;
   error: string;
+  inputData?: string;
 }
 
 interface OutputMessageWithoutError<T> extends OutputMessageBase {
   hasError?: false;
   payload: T;
+  inputData?: string;
 }
 
 export type OutputMessage<T> =

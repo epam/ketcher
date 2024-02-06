@@ -26,7 +26,7 @@ import {
   waitForPageInit,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
-import { getCml, getMolfile } from '@utils/formats';
+import { getCml, getKet, getMolfile } from '@utils/formats';
 
 const CANVAS_CLICK_X = 600;
 const CANVAS_CLICK_Y = 600;
@@ -34,12 +34,11 @@ const CANVAS_CLICK_Y = 600;
 async function editSGroupProperties(
   page: Page,
   text: string,
-  type: string,
   context: string,
   testValue: string,
 ) {
   await page.getByText(text).dblclick();
-  await pressButton(page, type);
+  await page.getByTestId('s-group-type-input-span').click();
   await page.getByRole('option', { name: context }).click();
   await page.getByLabel('Repeat count').click();
   await page.getByLabel('Repeat count').fill(testValue);
@@ -48,7 +47,6 @@ async function editSGroupProperties(
 
 async function selectSGroupProperties(
   page: Page,
-  contextName: string,
   optionName: string,
   fieldName: string,
   fieldValue: string,
@@ -56,7 +54,8 @@ async function selectSGroupProperties(
 ) {
   await page.keyboard.press('Control+a');
   await selectLeftPanelButton(LeftPanelButton.S_Group, page);
-  await pressButton(page, contextName);
+  await page.getByTestId('context-input-span').click();
+  // await pressButton(page, contextName);
   await page.getByRole('option', { name: optionName }).click();
   await page.getByPlaceholder('Enter name').fill(fieldName);
   await page.getByPlaceholder('Enter value').fill(fieldValue);
@@ -131,7 +130,7 @@ test.describe('Data S-Group tool', () => {
       Description: User is able to edit the Data S-group.
     */
     await openFileAndAddToCanvas('KET/chain-with-name-and-value.ket', page);
-    await editSGroupProperties(page, '33', 'Data', 'Multiple group', '1');
+    await editSGroupProperties(page, '33', 'Multiple group', '1');
   });
 
   test('Copy/Paste structure with S-Group', async ({ page }) => {
@@ -159,20 +158,26 @@ test.describe('Data S-Group tool', () => {
       Test case: EPMLSOPKET-1517
       Description: User is able to save and open structure with Data S-group.
     */
-    await openFileAndAddToCanvas('chain-with-name-and-value.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/chain-with-name-and-value.mol',
+      page,
+    );
     const expectedFile = await getMolfile(page);
-    await saveToFile('chain-with-name-and-value-expected.mol', expectedFile);
+    await saveToFile(
+      'Molfiles-V2000/chain-with-name-and-value-expected.mol',
+      expectedFile,
+    );
     const METADATA_STRING_INDEX = [1];
     const { fileExpected: molFileExpected, file: molFile } =
       await receiveFileComparisonData({
         page,
         expectedFileName:
-          'tests/test-data/chain-with-name-and-value-expected.mol',
+          'tests/test-data/Molfiles-V2000/chain-with-name-and-value-expected.mol',
         metaDataIndexes: METADATA_STRING_INDEX,
       });
     expect(molFile).toEqual(molFileExpected);
 
-    await editSGroupProperties(page, '33', 'Data', 'Multiple group', '8');
+    await editSGroupProperties(page, '33', 'Multiple group', '8');
   });
 
   test('Add Data S-Group to atoms of Chain', async ({ page }) => {
@@ -181,14 +186,7 @@ test.describe('Data S-Group tool', () => {
       Description: Data S-Group added to all atoms of Chain
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
-    await selectSGroupProperties(
-      page,
-      'Fragment',
-      'Atom',
-      'Test',
-      '8',
-      'Absolute',
-    );
+    await selectSGroupProperties(page, 'Atom', 'Test', '8', 'Absolute');
   });
 
   test('Add Data S-Group to bonds of Chain', async ({ page }) => {
@@ -197,14 +195,7 @@ test.describe('Data S-Group tool', () => {
       Description: Data S-Group added to all bonds of Chain
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
-    await selectSGroupProperties(
-      page,
-      'Fragment',
-      'Atom',
-      'Test',
-      '8',
-      'Absolute',
-    );
+    await selectSGroupProperties(page, 'Atom', 'Test', '8', 'Absolute');
   });
 
   test('Add Data S-Group Group context to Chain', async ({ page }) => {
@@ -215,7 +206,6 @@ test.describe('Data S-Group tool', () => {
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectSGroupProperties(
       page,
-      'Fragment',
       'Group',
       'T@#qwer123',
       'Qw@!23#$%',
@@ -231,7 +221,6 @@ test.describe('Data S-Group tool', () => {
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectSGroupProperties(
       page,
-      'Fragment',
       'Multifragment',
       'T@#qwer123',
       'Qw@!23#$%',
@@ -247,7 +236,6 @@ test.describe('Data S-Group tool', () => {
     await openFileAndAddToCanvas('KET/reaction-with-arrow-and-plus.ket', page);
     await selectSGroupProperties(
       page,
-      'Fragment',
       'Multifragment',
       'T@#qwer123',
       'Qw@!23#$%',
@@ -266,7 +254,6 @@ test.describe('Data S-Group tool', () => {
     await openFileAndAddToCanvas('KET/reaction-with-arrow-and-plus.ket', page);
     await selectSGroupProperties(
       page,
-      'Fragment',
       'Multifragment',
       'T@#qwer123',
       '8',
@@ -283,7 +270,6 @@ test.describe('Data S-Group tool', () => {
     await openFileAndAddToCanvas('KET/chain-with-name-and-value.ket', page);
     await selectSGroupProperties(
       page,
-      'Fragment',
       'Multifragment',
       'T@#qwer123',
       '8',
@@ -432,5 +418,31 @@ test.describe('Data S-Group tool', () => {
     */
     await openFileAndAddToCanvas('KET/benzene-with-data-s-group.ket', page);
     await clickInTheMiddleOfTheScreen(page);
+  });
+
+  test('Add S-Group properties to structure and atom', async ({ page }) => {
+    /*
+      Test case: https://github.com/epam/ketcher/issues/3949
+      Description: S-Group added to the structure and represent in .ket file.
+      The test is currently not functioning correctly as the bug has not been fixed.
+    */
+    await openFileAndAddToCanvas('KET/cyclopropane-and-h2o.ket', page);
+    await selectSGroupProperties(
+      page,
+      'Multifragment',
+      'T@#qwer123',
+      '8',
+      'Absolute',
+    );
+    const expectedFile = await getKet(page);
+    await saveToFile('KET/cyclopropane-and-h2o-expected.ket', expectedFile);
+    const { file: ketFile, fileExpected: ketFileExpected } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/KET/cyclopropane-and-h2o-expected.ket',
+      });
+
+    expect(ketFile).toEqual(ketFileExpected);
   });
 });

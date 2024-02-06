@@ -26,6 +26,7 @@ import {
   waitForIndigoToLoad,
   waitForRender,
   resetCurrentTool,
+  pressButton,
 } from '@utils';
 
 const CANVAS_CLICK_X = 500;
@@ -344,7 +345,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     const x = 700;
     const y = 300;
-    await openFileAndAddToCanvas('generic-groups.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/generic-groups.mol', page);
     await copyAndPaste(page);
     await page.mouse.click(x, y);
   });
@@ -361,7 +362,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const x = 500;
     const y = 200;
     const anyAtom = 12;
-    await openFileAndAddToCanvas('generic-groups.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/generic-groups.mol', page);
     await cutAndPaste(page);
     await page.mouse.click(x, y);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
@@ -506,7 +507,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     const x = 500;
     const y = 300;
-    await openFileAndAddToCanvas('chiral-structure.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/chiral-structure.mol', page);
     await copyAndPaste(page);
     await page.mouse.click(x, y);
   });
@@ -520,7 +521,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     The structure is cut (and then is pasted) with the Chiral flag.
     */
     const anyAtom = 12;
-    await openFileAndAddToCanvas('chiral-structure.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/chiral-structure.mol', page);
     await cutAndPaste(page);
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
@@ -674,7 +675,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     const x = 300;
     const y = 200;
-    await openFileAndAddToCanvas('mapped-structure.rxn', page);
+    await openFileAndAddToCanvas('Rxn-V2000/mapped-structure.rxn', page);
     await copyAndPaste(page);
     await page.mouse.click(x, y);
   });
@@ -687,7 +688,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const x = 300;
     const y = 200;
     const anyAtom = 5;
-    await openFileAndAddToCanvas('mapped-structure.rxn', page);
+    await openFileAndAddToCanvas('Rxn-V2000/mapped-structure.rxn', page);
     await cutAndPaste(page);
     await page.mouse.click(x, y);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
@@ -746,7 +747,10 @@ test.describe('Copy/Cut/Paste Actions', () => {
     // Error message when run under docker. But manual test is working.
     const x = 500;
     const y = 300;
-    await openFileAndAddToCanvas('complex-r-group-structure.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/complex-r-group-structure.mol',
+      page,
+    );
     await copyAndPaste(page);
     await page.mouse.click(x, y);
   });
@@ -760,7 +764,10 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     // Error message when run under docker. But manual test is working.
     const anyAtom = 5;
-    await openFileAndAddToCanvas('complex-r-group-structure.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/complex-r-group-structure.mol',
+      page,
+    );
     await cutAndPaste(page);
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
@@ -884,7 +891,10 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     const x = 500;
     const y = 150;
-    await openFileAndAddToCanvas('expanded-and-contracted-salts.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/expanded-and-contracted-salts.mol',
+      page,
+    );
     await copyAndPaste(page);
     await page.mouse.click(x, y);
   });
@@ -899,7 +909,10 @@ test.describe('Copy/Cut/Paste Actions', () => {
     User is not able to edit the pasted Functional Groups.
     */
     const anyAtom = 0;
-    await openFileAndAddToCanvas('expanded-and-contracted-salts.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/expanded-and-contracted-salts.mol',
+      page,
+    );
     await cutAndPaste(page);
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
@@ -968,5 +981,25 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await page.keyboard.press('Control+a');
     await selectTopPanelButton(TopPanelButton.Cut, page);
     await selectTopPanelButton(TopPanelButton.Paste, page);
+  });
+
+  test('Paste structure as SMARTS with ctrl+alt+V keyboard shortcut(if the test does not support the Clipboard API then an error appears)', async ({
+    page,
+  }) => {
+    /*
+    Description:
+    Open 'Paste from clipboard' window to copy SMARTS string. https://github.com/epam/ketcher/issues/3393
+    Use ctrl+alt+V keyboard shortcut to paste string as SMARTS
+    */
+    const smartsString =
+      '[#6]-[#6]-[#6]-[#6]-[!#40!#79!#30]-[#6]-[#6]-[#6]-[#6]';
+    await selectTopPanelButton(TopPanelButton.Open, page);
+    await page.getByText('Paste from clipboard').click();
+    await page.getByRole('dialog').getByRole('textbox').fill(smartsString);
+    await page.keyboard.press('Control+a');
+    await page.keyboard.press('Control+c');
+    await pressButton(page, 'Cancel');
+    await page.keyboard.press('Control+Alt+v');
+    await clickInTheMiddleOfTheScreen(page);
   });
 });

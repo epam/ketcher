@@ -1,6 +1,6 @@
 import { test } from '@playwright/test';
 import {
-  addMonomerToCanvas,
+  addSingleMonomerToCanvas,
   selectEraseTool,
   selectSingleBondTool,
   takeEditorScreenshot,
@@ -29,7 +29,7 @@ test.describe('Erase Tool', () => {
     const MONOMER_NAME = 'Tza___3-thiazolylalanine';
     const MONOMER_ALIAS = 'Tza';
 
-    const peptide1 = await addMonomerToCanvas(
+    const peptide1 = await addSingleMonomerToCanvas(
       page,
       MONOMER_NAME,
       MONOMER_ALIAS,
@@ -37,7 +37,7 @@ test.describe('Erase Tool', () => {
       300,
       0,
     );
-    const peptide2 = await addMonomerToCanvas(
+    const peptide2 = await addSingleMonomerToCanvas(
       page,
       MONOMER_NAME,
       MONOMER_ALIAS,
@@ -45,7 +45,7 @@ test.describe('Erase Tool', () => {
       400,
       1,
     );
-    const peptide3 = await addMonomerToCanvas(
+    const peptide3 = await addSingleMonomerToCanvas(
       page,
       MONOMER_NAME,
       MONOMER_ALIAS,
@@ -53,7 +53,7 @@ test.describe('Erase Tool', () => {
       500,
       2,
     );
-    const peptide4 = await addMonomerToCanvas(
+    const peptide4 = await addSingleMonomerToCanvas(
       page,
       MONOMER_NAME,
       MONOMER_ALIAS,

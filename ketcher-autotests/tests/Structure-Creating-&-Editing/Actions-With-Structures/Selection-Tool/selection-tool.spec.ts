@@ -22,6 +22,8 @@ import {
   takeLeftToolbarScreenshot,
   waitForPageInit,
   waitForRender,
+  drawBenzeneRing,
+  selectDropdownTool,
 } from '@utils';
 
 test.describe('Selection tools', () => {
@@ -449,5 +451,72 @@ test.describe('Selection tools', () => {
     */
     await page.getByTestId('select-rectangle').click();
     await expect(page).toHaveScreenshot();
+  });
+
+  test('Selection when hovering atom and bond', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-16944
+    Description: When mouse hover on Benzene ring atom or bond, selection appears.
+    */
+    await drawBenzeneRing(page);
+    await page.getByTestId('select-rectangle').click();
+    await moveOnAtom(page, 'C', 0);
+    await takeEditorScreenshot(page);
+    await moveOnBond(page, BondType.SINGLE, 0);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Selection for several templates', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-16945
+    Description: All structures selected on the canvas are highlighted in green.
+    */
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/several-templates-selection-tool.mol',
+      page,
+    );
+    await page.keyboard.press('Control+a');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Selection for chain structure', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-17668
+    Description: All chain structures selected on the canvas are highlighted in green.
+    */
+    await openFileAndAddToCanvas('Molfiles-V2000/chain-r1.mol', page);
+    await page.keyboard.press('Control+a');
+    await takeEditorScreenshot(page);
+  });
+
+  test(' Switching tools inside the "Selection tool" using "Shift+Tab", after pressing "ESC"', async ({
+    page,
+  }) => {
+    /*
+    Test case: EPMLSOPKET-18046
+    Description: Shift+Tab switch selection tools after pressing ESC button.
+    */
+    await selectLeftPanelButton(LeftPanelButton.Chain, page);
+    await page.keyboard.press('Escape');
+    await takeLeftToolbarScreenshot(page);
+    for (let i = 0; i < 2; i++) {
+      await page.keyboard.press('Shift+Tab');
+      await takeLeftToolbarScreenshot(page);
+    }
+  });
+
+  test('Switching tools inside the "Selection tool" using "Shift+Tab", after selecting the Lasso', async ({
+    page,
+  }) => {
+    /*
+    Test case: EPMLSOPKET-18047
+    Description: Shift+Tab switch selection tools after selecting Lasso.
+    */
+    await selectDropdownTool(page, 'select-rectangle', 'select-lasso');
+    await takeLeftToolbarScreenshot(page);
+    for (let i = 0; i < 3; i++) {
+      await page.keyboard.press('Shift+Tab');
+      await takeLeftToolbarScreenshot(page);
+    }
   });
 });

@@ -11,18 +11,28 @@ import {
 } from '@utils/clicks';
 import { ELEMENT_TITLE } from './types';
 import {
+  Bases,
+  Phosphates,
+  Sugars,
+  TopPanelButton,
+  selectMonomer,
+  waitForRender,
   AtomButton,
   RingButton,
   STRUCTURE_LIBRARY_BUTTON_NAME,
   TemplateLibrary,
-  TopPanelButton,
   selectRing,
-  waitForRender,
 } from '..';
-import { selectAtomInToolbar, selectTopPanelButton } from './tools';
+import {
+  selectAtomInToolbar,
+  selectRectangleSelectionTool,
+  selectTopPanelButton,
+} from './tools';
+
 import { getLeftTopBarSize } from './common/getLeftTopBarSize';
 import { emptyFunction } from '@utils/common/helpers';
 import { hideMonomerPreview } from '@utils/macromolecules';
+import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 
 export async function drawBenzeneRing(page: Page) {
   await selectRing(RingButton.Benzene, page);
@@ -115,7 +125,7 @@ export async function getCoordinatesTopAtomOfBenzeneRing(page: Page) {
     const onlyCarbons = allAtoms.filter((a) => a.label === 'C');
     return {
       carbonAtoms: onlyCarbons,
-      scale: window.ketcher.editor.options().scale,
+      scale: window.ketcher.editor.options().microModeScale,
       offset: window.ketcher?.editor?.options()?.offset,
     };
   });
@@ -135,13 +145,32 @@ export async function getCoordinatesTopAtomOfBenzeneRing(page: Page) {
   };
 }
 
+export async function screenshotDialog(page: Page, dialogId: string) {
+  const dialog = page.getByTestId(dialogId).getByRole('dialog');
+  await expect(dialog).toHaveScreenshot();
+}
+
+export async function takeElementScreenshot(
+  page: Page,
+  elementId: string,
+  options?: { masks?: Locator[]; maxDiffPixelRatio?: number },
+) {
+  const maxTimeout = 3000;
+  const element = page.getByTestId(elementId).first();
+  await waitForRender(page, emptyFunction, maxTimeout);
+  await expect(element).toHaveScreenshot({
+    mask: options?.masks,
+    maxDiffPixelRatio: options?.maxDiffPixelRatio,
+  });
+}
+
 export async function getCoordinatesOfTopMostCarbon(page: Page) {
   const { carbonAtoms, scale, offset } = await page.evaluate(() => {
     const allAtoms = [...window.ketcher.editor.struct().atoms.values()];
     const onlyCarbons = allAtoms.filter((a) => a.label === 'C');
     return {
       carbonAtoms: onlyCarbons,
-      scale: window.ketcher.editor.options().scale,
+      scale: window.ketcher.editor.options().microModeScale,
       offset: window.ketcher?.editor?.options()?.offset,
     };
   });
@@ -173,38 +202,48 @@ export async function takePageScreenshot(
   });
 }
 
+export async function takePresetsScreenshot(
+  page: Page,
+  options?: { masks?: Locator[]; maxDiffPixelRatio?: number },
+) {
+  await takeElementScreenshot(page, 'rna-accordion', options);
+}
+
+export async function takeRNABuilderScreenshot(
+  page: Page,
+  options?: { masks?: Locator[]; maxDiffPixelRatio?: number },
+) {
+  await takeElementScreenshot(page, 'rna-editor-expanded', options);
+}
+
+export async function takeMonomerLibraryScreenshot(
+  page: Page,
+  options?: { masks?: Locator[]; maxDiffPixelRatio?: number },
+) {
+  await takeElementScreenshot(page, 'monomer-library', options);
+}
+
 export async function takeEditorScreenshot(
   page: Page,
   options?: { masks?: Locator[]; maxDiffPixelRatio?: number },
 ) {
-  const maxTimeout = 3000;
-  const editor = page.getByTestId('ketcher-canvas').first();
-  await waitForRender(page, emptyFunction, maxTimeout);
-  await expect(editor).toHaveScreenshot({
-    mask: options?.masks,
-    maxDiffPixelRatio: options?.maxDiffPixelRatio,
-  });
+  await takeElementScreenshot(page, 'ketcher-canvas', options);
 }
 
 export async function takeLeftToolbarScreenshot(page: Page) {
-  const maxTimeout = 3000;
-  const editor = page.getByTestId('left-toolbar-buttons');
-  await waitForRender(page, emptyFunction, maxTimeout);
-  await expect(editor).toHaveScreenshot();
+  await takeElementScreenshot(page, 'left-toolbar-buttons');
+}
+
+export async function takeLeftToolbarMacromoleculeScreenshot(page: Page) {
+  await takeElementScreenshot(page, 'left-toolbar');
 }
 
 export async function takeRightToolbarScreenshot(page: Page) {
-  const maxTimeout = 3000;
-  const editor = page.getByTestId('right-toolbar');
-  await waitForRender(page, emptyFunction, maxTimeout);
-  await expect(editor).toHaveScreenshot();
+  await takeElementScreenshot(page, 'right-toolbar');
 }
 
 export async function takeTopToolbarScreenshot(page: Page) {
-  const maxTimeout = 3000;
-  const editor = page.getByTestId('top-toolbar');
-  await waitForRender(page, emptyFunction, maxTimeout);
-  await expect(editor).toHaveScreenshot();
+  await takeElementScreenshot(page, 'top-toolbar');
 }
 
 export async function takePolymerEditorScreenshot(page: Page) {
@@ -257,7 +296,7 @@ export async function resetAllSettingsToDefault(page: Page) {
   await pressButton(page, 'Apply');
 }
 
-export async function addMonomerToCanvas(
+export async function addSingleMonomerToCanvas(
   page: Page,
   monomerFullName: string,
   alias: string,
@@ -271,4 +310,81 @@ export async function addMonomerToCanvas(
   return await page
     .locator(`//\*[name() = 'g' and ./\*[name()='text' and .='${alias}']]`)
     .nth(index);
+}
+
+export async function addBondedMonomersToCanvas(
+  page: Page,
+  monomerFullName: string,
+  alias: string,
+  initialPositionX: number,
+  initialPositionY: number,
+  deltaX: number,
+  deltaY: number,
+  amount: number,
+  connectTitle1?: string,
+  connectTitle2?: string,
+) {
+  const monomers = [];
+  for (let index = 0; index < amount; index++) {
+    const monomer = await addSingleMonomerToCanvas(
+      page,
+      monomerFullName,
+      alias,
+      initialPositionX + deltaX * index,
+      initialPositionY + deltaY * index,
+      index,
+    );
+    monomers.push(monomer);
+    if (index > 0) {
+      await bondTwoMonomers(
+        page,
+        monomers[index - 1],
+        monomer,
+        connectTitle1,
+        connectTitle2,
+      );
+    }
+  }
+  return monomers;
+}
+
+export async function addMonomerToCenterOfCanvas(
+  page: Page,
+  monomerType: Sugars | Bases | Phosphates,
+) {
+  await selectMonomer(page, monomerType);
+  await clickInTheMiddleOfTheScreen(page);
+  await selectRectangleSelectionTool(page);
+}
+
+export async function addPeptideOnCanvas(page: Page, peptideId: string) {
+  await page.getByTestId(peptideId).click();
+  await clickInTheMiddleOfTheScreen(page);
+}
+
+export async function addRnaPresetOnCanvas(
+  page: Page,
+  presetId: string,
+  positionX: number,
+  positionY: number,
+  sugarIndex: number,
+  phosphateIndex: number,
+) {
+  await page.getByTestId(presetId).click();
+  await page.mouse.click(positionX, positionY);
+  await hideMonomerPreview(page);
+  const sugar = await page
+    .locator(`//\*[name() = 'g' and ./\*[name()='text' and .='R']]`)
+    .nth(sugarIndex);
+  const phosphate = await page
+    .locator(`//\*[name() = 'g' and ./\*[name()='text' and .='P']]`)
+    .nth(phosphateIndex);
+
+  return { sugar, phosphate };
+}
+
+export async function addChemOnCanvas(page: Page, chemId: string) {
+  await page.getByTestId('CHEM-TAB').click();
+  await page.getByTestId(chemId).click();
+  await clickInTheMiddleOfTheScreen(page);
 }

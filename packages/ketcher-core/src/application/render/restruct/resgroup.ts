@@ -412,7 +412,7 @@ function drawAbsoluteDat(restruct: ReStruct, sgroup: SGroup): any {
   const paper = render.paper;
   const set = paper.set();
 
-  const ps = sgroup?.pp?.scaled(options.scale);
+  const ps = sgroup?.pp?.scaled(options.microModeScale);
   const name = showValue(paper, ps, sgroup, options);
 
   if (sgroup.data.context !== SgContexts.Bond) {

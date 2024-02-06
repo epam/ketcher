@@ -15,8 +15,7 @@
  ***************************************************************************/
 
 import { isEmpty, isEqual, pickBy } from 'lodash/fp';
-
-import { SettingsManager } from '../../utils/settingsManager';
+import { SettingsManager } from 'ketcher-core';
 import actions from '../../action';
 
 function execute(activeTool, { action, editor, server, options }) {

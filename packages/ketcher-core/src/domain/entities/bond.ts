@@ -261,6 +261,22 @@ export class Bond {
     }
   }
 
+  isQuery(): boolean {
+    const TYPES = Bond.PATTERN.TYPE;
+    const QUERY_BOND_TYPES = [
+      TYPES.ANY,
+      TYPES.SINGLE_OR_DOUBLE,
+      TYPES.SINGLE_OR_AROMATIC,
+      TYPES.DOUBLE_OR_AROMATIC,
+      TYPES.AROMATIC,
+    ];
+    return (
+      this.customQuery !== null ||
+      QUERY_BOND_TYPES.includes(this.type) ||
+      (TYPES.SINGLE === this.type && this.stereo === Bond.PATTERN.STEREO.EITHER)
+    );
+  }
+
   hasRxnProps(): boolean {
     return !!this.reactingCenterStatus;
   }

@@ -34,6 +34,7 @@ import {
   OutputMessage,
   SupportedFormat,
   OutputMessageWrapper,
+  ExplicitHydrogensCommandData,
 } from './indigoWorker.types';
 import {
   AromatizeData,
@@ -53,6 +54,8 @@ import {
   ConvertResult,
   DearomatizeData,
   DearomatizeResult,
+  ExplicitHydrogensData,
+  ExplicitHydrogensResult,
   GenerateImageOptions,
   InfoResult,
   LayoutData,
@@ -179,6 +182,7 @@ const messageTypeToEventMapping: {
   [Command.Calculate]: WorkerEvent.Calculate,
   [Command.GenerateImageAsBase64]: WorkerEvent.GenerateImageAsBase64,
   [Command.GetInChIKey]: WorkerEvent.GetInChIKey,
+  [Command.ExplicitHydrogens]: WorkerEvent.ExplicitHydrogens,
 };
 
 let worker: IndigoWorker;
@@ -259,14 +263,16 @@ class IndigoService implements StructService {
       const action = ({ data }: OutputMessageWrapper) => {
         console.log('convert action', data);
         const msg: OutputMessage<string> = data;
-        if (!msg.hasError) {
-          const result: ConvertResult = {
-            struct: msg.payload,
-            format: outputFormat,
-          };
-          resolve(result);
-        } else {
-          reject(msg.error);
+        if (msg.inputData === struct) {
+          if (!msg.hasError) {
+            const result: ConvertResult = {
+              struct: msg.payload,
+              format: outputFormat,
+            };
+            resolve(result);
+          } else {
+            reject(msg.error);
+          }
         }
       };
       if (options?.['input-format']) {
@@ -288,7 +294,7 @@ class IndigoService implements StructService {
         data: commandData,
       };
 
-      this.EE.removeAllListeners(WorkerEvent.Convert);
+      this.EE.removeListener(WorkerEvent.Convert, action);
       this.EE.addListener(WorkerEvent.Convert, action);
 
       this.worker.postMessage(inputMessage);
@@ -677,7 +683,7 @@ class IndigoService implements StructService {
   }
 
   generateImageAsBase64(
-    data: string,
+    inputData: string,
     options: GenerateImageOptions = {
       outputFormat: 'png',
       backgroundColor: '',
@@ -689,10 +695,12 @@ class IndigoService implements StructService {
     return new Promise((resolve, reject) => {
       const action = ({ data }: OutputMessageWrapper) => {
         const msg: OutputMessage<string> = data;
-        if (!msg.hasError) {
-          resolve(msg.payload);
-        } else {
-          reject(msg.error);
+        if (msg.inputData === inputData) {
+          if (!msg.hasError) {
+            resolve(msg.payload);
+          } else {
+            reject(msg.error);
+          }
         }
       };
 
@@ -702,7 +710,7 @@ class IndigoService implements StructService {
       };
 
       const commandData: GenerateImageCommandData = {
-        struct: data,
+        struct: inputData,
         outputFormat: outputFormat || 'png',
         backgroundColor,
         bondThickness,
@@ -716,6 +724,52 @@ class IndigoService implements StructService {
 
       this.EE.removeListener(WorkerEvent.GenerateImageAsBase64, action);
       this.EE.addListener(WorkerEvent.GenerateImageAsBase64, action);
+
+      this.worker.postMessage(inputMessage);
+    });
+  }
+
+  toggleExplicitHydrogens(
+    data: ExplicitHydrogensData,
+    options?: StructServiceOptions,
+  ): Promise<ExplicitHydrogensResult> {
+    const { struct, output_format: outputFormat } = data;
+    const format = convertMimeTypeToOutputFormat(outputFormat);
+    const mode = 'auto';
+
+    return new Promise((resolve, reject) => {
+      const action = ({ data }: OutputMessageWrapper) => {
+        const msg: OutputMessage<string> = data;
+        if (!msg.hasError) {
+          const result: AromatizeResult = {
+            struct: msg.payload,
+            format: ChemicalMimeType.Mol,
+          };
+          resolve(result);
+        } else {
+          reject(msg.error);
+        }
+      };
+
+      const commandOptions: CommandOptions = {
+        ...this.defaultOptions,
+        ...options,
+      };
+
+      const commandData: ExplicitHydrogensCommandData = {
+        struct,
+        format,
+        mode,
+        options: commandOptions,
+      };
+
+      const inputMessage: InputMessage<ExplicitHydrogensCommandData> = {
+        type: Command.ExplicitHydrogens,
+        data: commandData,
+      };
+
+      this.EE.removeListener(WorkerEvent.ExplicitHydrogens, action);
+      this.EE.addListener(WorkerEvent.ExplicitHydrogens, action);
 
       this.worker.postMessage(inputMessage);
     });

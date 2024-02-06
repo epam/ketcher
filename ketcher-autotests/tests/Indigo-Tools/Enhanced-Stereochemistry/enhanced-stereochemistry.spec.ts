@@ -31,7 +31,7 @@ async function selectLabelDisplayAtStereogenicCenters(
 ) {
   await selectTopPanelButton(TopPanelButton.Settings, page);
   await page.getByText('Stereochemistry', { exact: true }).click();
-  await pressButton(page, 'IUPAC style');
+  await page.getByTestId('stereo-label-style-input-span').click();
   await page.getByRole('option', { name: label }).click();
   await pressButton(page, 'Apply');
 }
@@ -39,7 +39,7 @@ async function selectLabelDisplayAtStereogenicCenters(
 async function selectColorOfStereogenicCenters(page: Page, color: string) {
   await selectTopPanelButton(TopPanelButton.Settings, page);
   await page.getByText('Stereochemistry', { exact: true }).click();
-  await pressButton(page, 'Labels Only');
+  await page.getByTestId('color-stereogenic-centers-input-span').click();
   await page.getByRole('option', { name: color }).click();
   await pressButton(page, 'Apply');
 }
@@ -496,16 +496,22 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     Description: If one of the saved structures had the ABS (Chiral) Flag, then after
     opening the saved file, all structures will be displayed with the ABS (Chiral) Flags.
     */
-    await openFileAndAddToCanvas('one-structure-with-abs-flag.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/one-structure-with-abs-flag.mol',
+      page,
+    );
     const expectedFile = await getMolfile(page, 'v2000');
-    await saveToFile('one-structure-with-abs-flag-expected.mol', expectedFile);
+    await saveToFile(
+      'Molfiles-V2000/one-structure-with-abs-flag-expected.mol',
+      expectedFile,
+    );
 
     const METADATA_STRING_INDEX = [1];
     const { fileExpected: molFileExpected, file: molFile } =
       await receiveFileComparisonData({
         page,
         expectedFileName:
-          'tests/test-data/one-structure-with-abs-flag-expected.mol',
+          'tests/test-data/Molfiles-V2000/one-structure-with-abs-flag-expected.mol',
         fileFormat: 'v2000',
         metaDataIndexes: METADATA_STRING_INDEX,
       });

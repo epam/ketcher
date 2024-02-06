@@ -82,7 +82,7 @@ export async function addFragment(
   structStr: string,
 ): Promise<void> {
   return await page.evaluate(
-    (structStr) => window.ketcher.setMolecule(structStr),
+    (structStr) => window.ketcher.addFragment(structStr),
     structStr,
   );
 }

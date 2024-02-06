@@ -118,11 +118,11 @@ test.describe('Plus and Arrows tools ', () => {
     await selectLeftPanelButton(LeftPanelButton.ArrowOpenAngleTool, page);
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
-    dragMouseTo(x + 100, y + 100, page);
+    await dragMouseTo(x + 100, y + 100, page);
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
     await takeEditorScreenshot(page);
     await page.mouse.move(x + 98, y + 98);
-    dragMouseTo(x + 150, y + 150, page);
+    await dragMouseTo(x + 150, y + 150, page);
   });
 
   test('Copy/paste, cut/paste arrow', async ({ page }) => {
@@ -242,11 +242,8 @@ test.describe('Plus and Arrows tools ', () => {
     test('Select the whole reaction and move it, Undo, Erase tool', async ({
       page,
     }) => {
-      await page.keyboard.press(`${modifier}+KeyA`);
-      await delay(DELAY_IN_SECONDS.ONE);
-      await page.keyboard.press(`${modifier}+KeyC`);
+      await copyAndPaste(page);
       await page.mouse.move(point.x - 100, point.y - 100);
-      await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
       await takeEditorScreenshot(page);
       await selectTopPanelButton(TopPanelButton.Undo, page);
       await takeEditorScreenshot(page);
@@ -310,11 +307,8 @@ test.describe('Plus and Arrows tools ', () => {
     test('Select the whole reaction and move it, Undo, Erase tool', async ({
       page,
     }) => {
-      await page.keyboard.press(`${modifier}+KeyA`);
-      await delay(DELAY_IN_SECONDS.ONE);
-      await page.keyboard.press(`${modifier}+KeyC`);
+      await copyAndPaste(page);
       await page.mouse.move(point.x - 100, point.y - 100);
-      await page.keyboard.press(`${modifier}+KeyV`, { delay: INPUT_DELAY });
       await takeEditorScreenshot(page);
       await selectTopPanelButton(TopPanelButton.Undo, page);
       await takeEditorScreenshot(page);

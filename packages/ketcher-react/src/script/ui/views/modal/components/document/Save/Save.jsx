@@ -182,7 +182,23 @@ class SaveDialog extends Component {
     } else {
       this.setState({ disableControls: true, isLoading: true });
       const factory = new FormatterFactory(server);
-      const service = factory.create(type, { ...options, ignoreChiralFlag });
+      // temporary check if query properties are used
+      const queryPropertiesAreUsed =
+        type === 'mol' &&
+        Array.from(struct.atoms).find(
+          ([_, atom]) =>
+            atom.queryProperties.aromaticity ||
+            atom.queryProperties.connectivity ||
+            atom.queryProperties.ringMembership ||
+            atom.queryProperties.ringSize ||
+            atom.queryProperties.customQuery ||
+            atom.implicitHCount,
+        );
+      const service = factory.create(
+        type,
+        { ...options, ignoreChiralFlag },
+        queryPropertiesAreUsed,
+      );
 
       return service
         .getStructureFromStructAsync(struct)
@@ -290,6 +306,7 @@ class SaveDialog extends Component {
             )}
             component={Select}
             className="file-format-list"
+            data-testid="file-format-list"
           />
         </Form>
         <Tabs

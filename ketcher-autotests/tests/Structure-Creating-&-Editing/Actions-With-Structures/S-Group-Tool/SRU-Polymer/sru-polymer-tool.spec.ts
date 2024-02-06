@@ -23,7 +23,7 @@ import {
   waitForPageInit,
 } from '@utils';
 import { getBondByIndex } from '@utils/canvas/bonds';
-import { getMolfile } from '@utils/formats';
+import { getKet, getMolfile } from '@utils/formats';
 import { SGroupRepeatPattern } from '@utils/sgroup';
 
 const CANVAS_CLICK_X = 500;
@@ -53,9 +53,7 @@ async function selectRepeatPattern(
   page: Page,
   repeatPattern: SGroupRepeatPattern,
 ) {
-  await page
-    .getByRole('button', { name: SGroupRepeatPattern.HeadToTail })
-    .click();
+  await page.getByTestId('connectivity-input-span').click();
   await page.getByRole('option', { name: repeatPattern }).click();
   await pressButton(page, 'Apply');
 }
@@ -285,5 +283,33 @@ test.describe('SRU Polymer tool', () => {
         metaDataIndexes: METADATA_STRING_INDEX,
       });
     expect(molFile).toEqual(molFileExpected);
+  });
+
+  test('Add S-Group properties to structure and atom', async ({ page }) => {
+    /*
+      Test case: https://github.com/epam/ketcher/issues/3949
+      Description: S-Group added to the structure and represent in .ket file.
+      The test is currently not functioning correctly as the bug has not been fixed.
+    */
+    await openFileAndAddToCanvas('KET/cyclopropane-and-h2o.ket', page);
+    await page.keyboard.press('Control+a');
+    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await selectSruPolymer(
+      page,
+      'Data',
+      'SRU Polymer',
+      'A',
+      SGroupRepeatPattern.HeadToTail,
+    );
+    const expectedFile = await getKet(page);
+    await saveToFile('KET/cyclopropane-and-h2o-sru-expected.ket', expectedFile);
+    const { file: ketFile, fileExpected: ketFileExpected } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/KET/cyclopropane-and-h2o-sru-expected.ket',
+      });
+
+    expect(ketFile).toEqual(ketFileExpected);
   });
 });

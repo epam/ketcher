@@ -386,6 +386,33 @@ test.describe('Atom Properties', () => {
     await doubleClickOnAtom(page, 'O', 0);
   });
 
+  test('Dialog - Atom type - List', async ({ page }) => {
+    /*
+      Test case: https://github.com/epam/ketcher/issues/3340
+      Description: if 'Atom type' is set to 'List' then dialog should change:
+      - Label and Number should be hided
+      - new items "List" (input field) and "edit" icon should be added
+      - "Not list (checkbox)" should be added
+    */
+    await openFileAndAddToCanvas('KET/benzene-ring-with-two-atoms.ket', page);
+    await doubleClickOnAtom(page, 'C', 0);
+    await page.locator('label').filter({ hasText: 'Atom Type' }).click();
+    await page.getByRole('option', { name: 'List', exact: true }).click();
+  });
+
+  test('Dialog - Atom type - Special', async ({ page }) => {
+    /*
+      Test case: https://github.com/epam/ketcher/issues/3340
+      Description: if 'Atom type' is set to 'Special' then dialog should change:
+      - Label and Number should be hidden
+      - new item "Special" (input field) and "edit" icon should be added
+    */
+    await openFileAndAddToCanvas('KET/benzene-ring-with-two-atoms.ket', page);
+    await doubleClickOnAtom(page, 'C', 0);
+    await page.locator('label').filter({ hasText: 'Atom Type' }).click();
+    await page.getByRole('option', { name: 'Special', exact: true }).click();
+  });
+
   test('Charge of the Atoms', async ({ page }) => {
     /*
       Test case: EPMLSOPKET-1606
@@ -421,6 +448,23 @@ test.describe('Atom Properties', () => {
 
     await doubleClickOnAtom(page, 'C', 0);
     await page.getByLabel('Charge').fill('A');
+  });
+
+  test('Type in the Charge field number bigger than maximum', async ({
+    page,
+  }) => {
+    /*
+      Test case: https://github.com/epam/ketcher/issues/3339
+      Description: The range for charge is from -999 to 999
+      The 'Charge' field is framed with the red frame.
+      The 'Error: Invalid charge value' tooltip appears when the cursor over the field.
+      The 'Apply' button becomes disabled.
+    */
+    await openFileAndAddToCanvas('KET/benzene-ring-with-two-atoms.ket', page);
+
+    await doubleClickOnAtom(page, 'C', 0);
+    await page.getByTestId('charge-input').fill('9999');
+    await page.getByTestId('charge-input').hover();
   });
 
   test('Save structure with two Charge as *.mol file', async ({ page }) => {
@@ -532,6 +576,19 @@ test.describe('Atom Properties', () => {
     await page.getByLabel('Isotope').fill('b');
   });
 
+  test('Add incorrect negative Isotope in modal', async ({ page }) => {
+    /*
+      Test case: https://github.com/epam/ketcher/issues/3339
+      Description: The range for 'Isotope' field is from 0 to 999
+      Field highlight with red and tooltip appears: Invalid isotope value!
+    */
+    await openFileAndAddToCanvas('KET/chain.ket', page);
+
+    await doubleClickOnAtom(page, 'C', 1);
+    await page.getByTestId('isotope-input').fill('-88');
+    await page.getByTestId('isotope-input').hover();
+  });
+
   test('Save structure with Isotope information as *.mol file', async ({
     page,
   }) => {
@@ -539,15 +596,19 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-1615
       Description: The structure is saved as *.mol file.
     */
-    await openFileAndAddToCanvas('chain-with-isotope.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/chain-with-isotope.mol', page);
     const expectedFile = await getMolfile(page, 'v2000');
-    await saveToFile('chain-with-isotope-expected.mol', expectedFile);
+    await saveToFile(
+      'Molfiles-V2000/chain-with-isotope-expected.mol',
+      expectedFile,
+    );
 
     const METADATA_STRING_INDEX = [1];
     const { fileExpected: molFileExpected, file: molFile } =
       await receiveFileComparisonData({
         page,
-        expectedFileName: 'tests/test-data/chain-with-isotope-expected.mol',
+        expectedFileName:
+          'tests/test-data/Molfiles-V2000/chain-with-isotope-expected.mol',
         fileFormat: 'v2000',
         metaDataIndexes: METADATA_STRING_INDEX,
       });
@@ -655,15 +716,19 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-1619
       Description: The structure is saved as *.mol file.
     */
-    await openFileAndAddToCanvas('chain-with-valence.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/chain-with-valence.mol', page);
     const expectedFile = await getMolfile(page, 'v2000');
-    await saveToFile('chain-with-valence-expected.mol', expectedFile);
+    await saveToFile(
+      'Molfiles-V2000/chain-with-valence-expected.mol',
+      expectedFile,
+    );
 
     const METADATA_STRING_INDEX = [1];
     const { fileExpected: molFileExpected, file: molFile } =
       await receiveFileComparisonData({
         page,
-        expectedFileName: 'tests/test-data/chain-with-valence-expected.mol',
+        expectedFileName:
+          'tests/test-data/Molfiles-V2000/chain-with-valence-expected.mol',
         fileFormat: 'v2000',
         metaDataIndexes: METADATA_STRING_INDEX,
       });
@@ -732,15 +797,22 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-1633
       Description: The structure is saved as *.mol file.
     */
-    await openFileAndAddToCanvas('chain-with-radicals.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/chain-with-radicals.mol',
+      page,
+    );
     const expectedFile = await getMolfile(page, 'v2000');
-    await saveToFile('chain-with-radicals-expected.mol', expectedFile);
+    await saveToFile(
+      'Molfiles-V2000/chain-with-radicals-expected.mol',
+      expectedFile,
+    );
 
     const METADATA_STRING_INDEX = [1];
     const { fileExpected: molFileExpected, file: molFile } =
       await receiveFileComparisonData({
         page,
-        expectedFileName: 'tests/test-data/chain-with-radicals-expected.mol',
+        expectedFileName:
+          'tests/test-data/Molfiles-V2000/chain-with-radicals-expected.mol',
         fileFormat: 'v2000',
         metaDataIndexes: METADATA_STRING_INDEX,
       });
@@ -754,7 +826,10 @@ test.describe('Atom Properties', () => {
       Description: The saved *.mol file is opened correctly with applied atom properties and can be edited.
     */
     const anyAtom = 2;
-    await openFileAndAddToCanvas('chain-with-radicals.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/chain-with-radicals.mol',
+      page,
+    );
     await doubleClickOnAtom(page, 'C', anyAtom);
     await selectRadical(page, 'Diradical (triplet)', 'Apply');
   });
@@ -1082,7 +1157,7 @@ test.describe('Atom Properties', () => {
     await page
       .locator('label')
       .filter({ hasText: 'H count', hasNotText: 'Implicit H count' })
-      .getByRole('button', { name: '​' })
+      .getByRole('combobox', { name: '​' })
       .click();
     await page.locator('.MuiMenuItem-root').first().click();
     await pressButton(page, 'Apply');
@@ -1182,7 +1257,7 @@ test.describe('Atom Properties', () => {
     await page
       .locator('label')
       .filter({ hasText: 'Substitution count' })
-      .getByRole('button', { name: '​' })
+      .getByRole('combobox', { name: '​' })
       .click();
     await page.locator('.MuiMenuItem-root').first().click();
     await pressButton(page, 'Apply');
@@ -1350,6 +1425,8 @@ test.describe('Atom Properties', () => {
   test('All atom properties information saved as *.rxn file', async ({
     page,
   }) => {
+    // fails while Indigo loses valence in RxnFiles
+    test.fail();
     /*
       Test case: EPMLSOPKET-1656
       Description: The structure is saved as *.rxn file.
@@ -1623,12 +1700,7 @@ test.describe('Atom Properties', () => {
     await openFileAndAddToCanvas('KET/benzene-unsaturated.ket', page);
 
     for (let i = 0; i < atomIndices.length; i++) {
-      await selectUnsaturatedOption(
-        page,
-        atomIndices[i],
-        selectedOption[i],
-        i === 0,
-      );
+      await selectUnsaturatedOption(page, atomIndices[i], selectedOption[i]);
     }
   });
 
@@ -1765,12 +1837,7 @@ test.describe('Atom Properties', () => {
           break;
         // eslint-disable-next-line no-magic-numbers
         case 3:
-          await selectUnsaturatedOption(
-            page,
-            atomIndex,
-            option as string,
-            true,
-          );
+          await selectUnsaturatedOption(page, atomIndex, option as string);
           break;
         // eslint-disable-next-line no-magic-numbers
         case 4:

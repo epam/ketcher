@@ -76,20 +76,31 @@ export class MacromoleculesConverter {
   }
 
   private static findAttachmentPointAtom(
-    sgroup: SGroup,
     polymerBond: PolymerBond,
     monomer: BaseMonomer,
     struct: Struct,
+    sgroup?: SGroup,
+    fragmentId?: number,
   ) {
     const attachmentPointName = monomer.getAttachmentPointByBond(polymerBond);
     assert(attachmentPointName);
-    return sgroup.atoms.find(
-      (atomId) =>
-        Number(struct.atoms.get(atomId)?.rglabel) ===
-        MacromoleculesConverter.convertAttachmentPointNameToNumber(
-          attachmentPointName,
-        ),
-    );
+    const attachmentPointNumber =
+      MacromoleculesConverter.convertAttachmentPointNameToNumber(
+        attachmentPointName,
+      );
+
+    return sgroup
+      ? sgroup.atoms.find(
+          (atomId) =>
+            Number(struct.atoms.get(atomId)?.rglabel) === attachmentPointNumber,
+        )
+      : struct.atoms.find((atomId) => {
+          const atom = struct.atoms.get(atomId) as Atom;
+          return (
+            atom.fragment === fragmentId &&
+            Number(atom.rglabel) === attachmentPointNumber
+          );
+        });
   }
 
   public static convertDrawingEntitiesToStruct(
@@ -98,6 +109,7 @@ export class MacromoleculesConverter {
     reStruct?: ReStruct,
   ) {
     const monomerToSgroup = new Map<BaseMonomer, SGroup>();
+    const monomerToFragmentId = new Map<BaseMonomer, number>();
 
     drawingEntitiesManager.micromoleculesHiddenEntities.mergeInto(struct);
 
@@ -105,6 +117,7 @@ export class MacromoleculesConverter {
     drawingEntitiesManager.monomers.forEach((monomer) => {
       if (monomer.monomerItem.props.isMicromoleculeFragment) {
         monomer.monomerItem.struct.mergeInto(struct);
+        monomerToFragmentId.set(monomer, struct.frags.size - 1);
       } else {
         const atomIdsMap = {};
         const monomerMicromolecule = this.convertMonomerToMonomerMicromolecule(
@@ -146,16 +159,18 @@ export class MacromoleculesConverter {
     drawingEntitiesManager.polymerBonds.forEach((polymerBond) => {
       assert(polymerBond.secondMonomer);
       const beginAtom = this.findAttachmentPointAtom(
-        monomerToSgroup.get(polymerBond.firstMonomer) as SGroup,
         polymerBond,
         polymerBond.firstMonomer,
         struct,
+        monomerToSgroup.get(polymerBond.firstMonomer),
+        monomerToFragmentId.get(polymerBond.firstMonomer),
       );
       const endAtom = this.findAttachmentPointAtom(
-        monomerToSgroup.get(polymerBond.secondMonomer) as SGroup,
         polymerBond,
         polymerBond.secondMonomer,
         struct,
+        monomerToSgroup.get(polymerBond.secondMonomer),
+        monomerToFragmentId.get(polymerBond.secondMonomer),
       );
 
       if (!beginAtom || !endAtom) {
@@ -223,9 +238,9 @@ export class MacromoleculesConverter {
     );
   }
 
-  public static getAttachmentPointLabel(atomId: number, struct: Struct) {
+  public static getAttachmentPointLabel(atom: Atom) {
     let attachmentPointLabel = '';
-    const atomRglabel = Number(struct.atoms.get(atomId)?.rglabel);
+    const atomRglabel = Number(atom.rglabel);
     assert(Number.isInteger(atomRglabel));
     for (let rgi = 0; rgi < 32; rgi++) {
       if (atomRglabel & (1 << rgi)) {
@@ -235,11 +250,52 @@ export class MacromoleculesConverter {
     return attachmentPointLabel;
   }
 
+  // This method returns array of arrays of fragmentIds grouped by sgroup
+  // It needs to serialize/deserialize several molecules grouped by sgroup as a single molecule
+  public static getFragmentsGroupedBySgroup(struct: Struct) {
+    const groupedFragments: number[][] = [];
+    struct.frags.forEach((_fragment, fragmentId) => {
+      const isAlreadyGrouped = groupedFragments.find((fragmentsGroup) =>
+        fragmentsGroup.includes(fragmentId),
+      );
+      if (isAlreadyGrouped) {
+        return;
+      }
+
+      // Find all sgroups related to fragment
+      const fragmentSgroups = new Set<SGroup>();
+      struct.atoms.forEach((atom, atomId) => {
+        if (atom.fragment !== fragmentId) return;
+        const sgroup = struct.getGroupFromAtomId(atomId);
+        if (sgroup) {
+          fragmentSgroups.add(sgroup);
+        }
+      });
+
+      // Add new group of fragments with fragments related to one sgroup
+      const lastFragmentGroupIndex = groupedFragments.push([fragmentId]) - 1;
+      fragmentSgroups.forEach((sgroup) => {
+        sgroup.atoms.forEach((aid) => {
+          const atomFragmentId = struct.atoms.get(aid)?.fragment;
+          if (
+            atomFragmentId &&
+            !groupedFragments[lastFragmentGroupIndex].includes(atomFragmentId)
+          ) {
+            groupedFragments[lastFragmentGroupIndex].push(atomFragmentId);
+          }
+        });
+      });
+    });
+
+    return groupedFragments;
+  }
+
   public static convertStructToDrawingEntities(
     struct: Struct,
     drawingEntitiesManager: DrawingEntitiesManager,
   ) {
     const sgroupToMonomer = new Map<SGroup, BaseMonomer>();
+    const fragmentIdToMonomer = new Map<number, BaseMonomer>();
     const command = new Command();
     struct.sgroups.forEach((sgroup) => {
       if (sgroup instanceof MonomerMicromolecule) {
@@ -252,45 +308,53 @@ export class MacromoleculesConverter {
         );
       }
     });
+    const fragments = this.getFragmentsGroupedBySgroup(struct);
+
     let fragmentNumber = 1;
-    struct.frags.forEach((_fragment, fragmentId) => {
-      const fragmentStruct = struct.getFragment(fragmentId, false);
-      command.merge(
-        this.convertFragmentToChem(
-          fragmentNumber,
-          fragmentStruct,
-          drawingEntitiesManager,
-        ),
+    fragments.forEach((_fragment, fragmentId) => {
+      const fragmentStruct = struct.getFragment(_fragment, false);
+      const monomerAddCommand = this.convertFragmentToChem(
+        fragmentNumber,
+        fragmentStruct,
+        drawingEntitiesManager,
       );
+      fragmentIdToMonomer.set(
+        fragmentId,
+        monomerAddCommand.operations[0].monomer as BaseMonomer,
+      );
+      command.merge(monomerAddCommand);
       fragmentNumber++;
     });
     struct.bonds.forEach((bond) => {
+      const beginAtom = struct.atoms.get(bond.begin) as Atom;
+      const endAtom = struct.atoms.get(bond.end) as Atom;
       const beginAtomSgroup = struct.getGroupFromAtomId(bond.begin);
       const endAtomSgroup = struct.getGroupFromAtomId(bond.end);
       const beginAtomAttachmentPointNumber =
-        MacromoleculesConverter.getAttachmentPointLabel(bond.begin, struct);
+        MacromoleculesConverter.getAttachmentPointLabel(beginAtom);
       const endAtomAttachmentPointNumber =
-        MacromoleculesConverter.getAttachmentPointLabel(bond.end, struct);
+        MacromoleculesConverter.getAttachmentPointLabel(endAtom);
       if (
         beginAtomAttachmentPointNumber &&
         endAtomAttachmentPointNumber &&
-        beginAtomSgroup instanceof MonomerMicromolecule &&
-        endAtomSgroup instanceof MonomerMicromolecule
+        (beginAtomSgroup || endAtomSgroup)
       ) {
-        const { command: polymerBondAdditionCommand, polymerBond } =
-          drawingEntitiesManager.addPolymerBond(
-            sgroupToMonomer.get(beginAtomSgroup),
-            sgroupToMonomer.get(beginAtomSgroup)?.position,
-            sgroupToMonomer.get(endAtomSgroup)?.position,
-          );
-        command.merge(polymerBondAdditionCommand);
-
-        const secondMonomer = sgroupToMonomer.get(endAtomSgroup);
+        // Here we take monomers from sgroupToMonomer in case of macromolecules structure and
+        // from fragmentIdToMonomer in case of micromolecules structure.
+        const firstMonomer =
+          beginAtomSgroup instanceof MonomerMicromolecule
+            ? sgroupToMonomer.get(beginAtomSgroup)
+            : fragmentIdToMonomer.get(beginAtom.fragment);
+        const secondMonomer =
+          endAtomSgroup instanceof MonomerMicromolecule
+            ? sgroupToMonomer.get(endAtomSgroup)
+            : fragmentIdToMonomer.get(endAtom.fragment);
+        assert(firstMonomer);
         assert(secondMonomer);
 
         command.merge(
-          drawingEntitiesManager.finishPolymerBondCreation(
-            polymerBond,
+          drawingEntitiesManager.createPolymerBond(
+            firstMonomer,
             secondMonomer,
             beginAtomAttachmentPointNumber,
             endAtomAttachmentPointNumber,

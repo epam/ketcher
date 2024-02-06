@@ -13,6 +13,7 @@ import {
   receiveFileComparisonData,
   saveToFile,
   selectEraseTool,
+  selectOptionInDropdown,
   selectTopPanelButton,
   takeEditorScreenshot,
   waitForPageInit,
@@ -310,7 +311,10 @@ test.describe('Import-Saving-Files', () => {
     Description: System does not let uploading corrupted .mol file
     */
     await selectTopPanelButton(TopPanelButton.Open, page);
-    await openFile('Molfiles-V3000/corrupted-file.mol', page);
+
+    const filename = 'Molfiles-V3000/corrupted-file.mol';
+    await openFile(filename, page);
+    await selectOptionInDropdown(filename, page);
     await pressButton(page, 'Add to Canvas');
     await takeEditorScreenshot(page);
   });

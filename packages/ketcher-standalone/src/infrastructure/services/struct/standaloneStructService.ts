@@ -256,7 +256,11 @@ class IndigoService implements StructService {
     data: ConvertData,
     options?: StructServiceOptions,
   ): Promise<ConvertResult> {
-    const { output_format: outputFormat, struct } = data;
+    const {
+      output_format: outputFormat,
+      input_format: inputFormat,
+      struct,
+    } = data;
     const format = convertMimeTypeToOutputFormat(outputFormat);
 
     return new Promise((resolve, reject) => {
@@ -275,12 +279,10 @@ class IndigoService implements StructService {
           }
         }
       };
-      if (options?.['input-format']) {
-        delete options['input-format'];
-      }
       const commandOptions: CommandOptions = {
         ...this.defaultOptions,
         ...options,
+        'input-format': inputFormat,
       };
 
       const commandData: ConvertCommandData = {

@@ -26,7 +26,7 @@ import { getSelectOptionsFromSchema } from '../../../../../utils';
 import { bond as bondSchema } from '../../../../../data/schema/struct-schema';
 import classes from './Bond.module.less';
 import { useMemo, useRef, useState } from 'react';
-import { Bond as CoreBond } from 'ketcher-core';
+import { Bond as CoreBond, SettingsManager } from 'ketcher-core';
 
 interface BondSettings {
   type: string;
@@ -106,6 +106,7 @@ const Bond = (props: Props) => {
           options={getSelectOptionsFromSchema(bondProps.type)}
           disabled={isCustomQuery}
           formName="bond-properties"
+          data-testid="type"
         />
         <Field
           name="topology"
@@ -113,6 +114,7 @@ const Bond = (props: Props) => {
           options={getSelectOptionsFromSchema(bondProps.topology)}
           disabled={isCustomQuery}
           formName="bond-properties"
+          data-testid="topology"
         />
         <Field
           name="center"
@@ -120,18 +122,21 @@ const Bond = (props: Props) => {
           options={getSelectOptionsFromSchema(bondProps.center)}
           disabled={isCustomQuery}
           formName="bond-properties"
+          data-testid="reacting-center"
         />
-        <div className={classes.customQueryWrapper}>
-          <CustomQueryField
-            name="customQuery"
-            labelPos="after"
-            className={classes.checkbox}
-            disabled={!isCustomQuery}
-            checkboxValue={isCustomQuery}
-            onCheckboxChange={handleCustomQueryCheckBoxChange}
-            data-testid="bond-custom-query"
-          />
-        </div>
+        {!SettingsManager.disableCustomQuery && (
+          <div className={classes.customQueryWrapper}>
+            <CustomQueryField
+              name="customQuery"
+              labelPos="after"
+              className={classes.checkbox}
+              disabled={!isCustomQuery}
+              checkboxValue={isCustomQuery}
+              onCheckboxChange={handleCustomQueryCheckBoxChange}
+              data-testid="bond-custom-query"
+            />
+          </div>
+        )}
       </Form>
     </Dialog>
   );

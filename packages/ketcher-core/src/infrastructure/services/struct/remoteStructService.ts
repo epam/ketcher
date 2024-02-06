@@ -32,6 +32,8 @@ import {
   ConvertResult,
   DearomatizeData,
   DearomatizeResult,
+  ExplicitHydrogensData,
+  ExplicitHydrogensResult,
   GenerateImageOptions,
   InfoResult,
   LayoutData,
@@ -349,5 +351,18 @@ export class RemoteStructService implements StructService {
       },
       (response) => response.then((resp) => resp.text()),
     );
+  }
+
+  toggleExplicitHydrogens(
+    data: ExplicitHydrogensData,
+    options?: StructServiceOptions,
+  ): Promise<ExplicitHydrogensResult> {
+    return indigoCall(
+      'POST',
+      'indigo/convert_explicit_hydrogens',
+      this.apiPath,
+      this.defaultOptions,
+      this.customHeaders,
+    )(data, options);
   }
 }

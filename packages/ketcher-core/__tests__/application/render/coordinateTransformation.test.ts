@@ -13,7 +13,7 @@ describe('CoordinateTransformation', () => {
     },
     options: {
       zoom: 0.5,
-      scale: 40,
+      microModeScale: 40,
     },
     clientArea: {
       getBoundingClientRect: () => ({
@@ -24,7 +24,7 @@ describe('CoordinateTransformation', () => {
   } as Render;
 
   const protoPoint = new Vec2(10, 10);
-  const pointInCanvas = protoPoint.scaled(render.options.scale);
+  const pointInCanvas = protoPoint.scaled(render.options.microModeScale);
   const pointInViewBox = pointInCanvas
     .sub(new Vec2(render.viewBox.minX, render.viewBox.minY))
     .scaled(render.options.zoom);

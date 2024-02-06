@@ -19,16 +19,13 @@ export function polymerBondToDrawingEntity(
     Number(monomerIdsMap[connection.endpoint2.monomerId]),
   );
 
-  const { command: bondAdditionCommand, polymerBond } =
-    drawingEntitiesManager.addPolymerBond(
-      firstMonomer,
-      firstMonomer?.position,
-      secondMonomer?.position,
-    );
-  command.merge(bondAdditionCommand);
+  assert(firstMonomer);
+  assert(secondMonomer);
+  assert(connection.endpoint1.attachmentPointId);
+  assert(connection.endpoint2.attachmentPointId);
   command.merge(
-    drawingEntitiesManager.finishPolymerBondCreation(
-      polymerBond,
+    drawingEntitiesManager.createPolymerBond(
+      firstMonomer,
       secondMonomer,
       connection.endpoint1.attachmentPointId,
       connection.endpoint2.attachmentPointId,

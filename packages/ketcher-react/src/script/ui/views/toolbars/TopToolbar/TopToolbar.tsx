@@ -59,9 +59,11 @@ export interface PanelProps {
   onCheck: VoidFunction;
   onAnalyse: VoidFunction;
   onMiew: VoidFunction;
+  onToggleExplicitHydrogens: VoidFunction;
   onFullscreen: VoidFunction;
   onAbout: VoidFunction;
   onHelp: VoidFunction;
+  togglerComponent?: JSX.Element;
 }
 
 const collapseLimit = 650;
@@ -70,6 +72,7 @@ const ControlsPanel = styled('div')`
   display: flex;
   flex-direction: row;
   align-items: center;
+  justify-content: space-between;
   gap: 0px;
   height: 36px;
   padding: 0px 22px;
@@ -86,19 +89,29 @@ const ControlsPanel = styled('div')`
     box-sizing: border-box;
   }
 
-  @media only screen and (min-width: 1024px) {
-    height: 40px;
-    gap: 0px;
-    padding-bottom: 0;
-    .group {
-      gap: 4px;
+  @media only screen {
+    @container (min-width: 1024px) {
+      height: 40px;
+      gap: 0px;
+      padding-bottom: 0;
+      .group {
+        gap: 4px;
+      }
     }
   }
 
-  @media only screen and (min-width: 1920px) {
-    height: 64px;
-    gap: 12px;
+  @media only screen {
+    @container (min-width: 1920px) {
+      height: 64px;
+      gap: 12px;
+    }
   }
+`;
+
+const BtnsWpapper = styled.div`
+  display: flex;
+  align-items: center;
+  height: 100%;
 `;
 
 export const TopToolbar = ({
@@ -131,9 +144,11 @@ export const TopToolbar = ({
   onCheck,
   onAnalyse,
   onMiew,
+  onToggleExplicitHydrogens,
   onFullscreen,
   onAbout,
   onHelp,
+  togglerComponent,
 }: PanelProps) => {
   const { ref: resizeRef, width = 50 } = useResizeObserver<HTMLDivElement>();
 
@@ -143,76 +158,84 @@ export const TopToolbar = ({
       ref={resizeRef}
       data-testid="top-toolbar"
     >
-      <TopToolbarIconButton
-        title="Clear Canvas"
-        onClick={onClear}
-        iconName="clear"
-        shortcut={shortcuts.clear}
-        isHidden={hiddenButtons.includes('clear')}
-        testId="clear-canvas-button"
-      />
-      <FileControls
-        onFileOpen={onFileOpen}
-        onSave={onSave}
-        shortcuts={shortcuts}
-        hiddenButtons={hiddenButtons}
-      />
-      <ClipboardControls
-        onCopy={onCopy}
-        onCopyMol={onCopyMol}
-        onCopyKet={onCopyKet}
-        onCopyImage={onCopyImage}
-        onPaste={onPaste}
-        onCut={onCut}
-        shortcuts={shortcuts}
-        disabledButtons={disabledButtons}
-        hiddenButtons={hiddenButtons}
-      />
-      <UndoRedo
-        onUndo={onUndo}
-        onRedo={onRedo}
-        disabledButtons={disabledButtons}
-        hiddenButtons={hiddenButtons}
-        shortcuts={shortcuts}
-      />
-      <ExternalFuncControls
-        onLayout={onLayout}
-        onClean={onClean}
-        onAromatize={onAromatize}
-        onDearomatize={onDearomatize}
-        onCalculate={onCalculate}
-        onCheck={onCheck}
-        onAnalyse={onAnalyse}
-        onMiew={onMiew}
-        disabledButtons={disabledButtons}
-        hiddenButtons={hiddenButtons}
-        shortcuts={shortcuts}
-        indigoVerification={indigoVerification}
-        isCollapsed={width < collapseLimit}
-      />
-      <SystemControls
-        onHistoryClick={() => {
-          console.log('History button clicked'); // @TODO Implement handler when History log is ready
-        }}
-        onSettingsOpen={onSettingsOpen}
-        onFullscreen={onFullscreen}
-        onHelp={onHelp}
-        onAboutOpen={onAbout}
-        disabledButtons={disabledButtons}
-        hiddenButtons={hiddenButtons}
-      />
-      <Divider />
-      {!hiddenButtons.includes('zoom-list') && (
-        <ZoomControls
-          currentZoom={currentZoom || 1}
-          onZoomIn={onZoomIn}
-          onZoomOut={onZoomOut}
-          onZoom={onZoom}
+      <BtnsWpapper>
+        <TopToolbarIconButton
+          title="Clear Canvas"
+          onClick={onClear}
+          iconName="clear"
+          shortcut={shortcuts.clear}
+          isHidden={hiddenButtons.includes('clear')}
+          testId="clear-canvas"
+        />
+        <FileControls
+          onFileOpen={onFileOpen}
+          onSave={onSave}
+          shortcuts={shortcuts}
+          hiddenButtons={hiddenButtons}
+        />
+        <ClipboardControls
+          onCopy={onCopy}
+          onCopyMol={onCopyMol}
+          onCopyKet={onCopyKet}
+          onCopyImage={onCopyImage}
+          onPaste={onPaste}
+          onCut={onCut}
           shortcuts={shortcuts}
           disabledButtons={disabledButtons}
           hiddenButtons={hiddenButtons}
         />
-      )}
+        <UndoRedo
+          onUndo={onUndo}
+          onRedo={onRedo}
+          disabledButtons={disabledButtons}
+          hiddenButtons={hiddenButtons}
+          shortcuts={shortcuts}
+        />
+        <ExternalFuncControls
+          onLayout={onLayout}
+          onClean={onClean}
+          onAromatize={onAromatize}
+          onDearomatize={onDearomatize}
+          onCalculate={onCalculate}
+          onCheck={onCheck}
+          onAnalyse={onAnalyse}
+          onMiew={onMiew}
+          onToggleExplicitHydrogens={onToggleExplicitHydrogens}
+          disabledButtons={disabledButtons}
+          hiddenButtons={hiddenButtons}
+          shortcuts={shortcuts}
+          indigoVerification={indigoVerification}
+          isCollapsed={width < collapseLimit}
+        />
+      </BtnsWpapper>
+      <BtnsWpapper>
+        {togglerComponent}
+        {togglerComponent && <Divider />}
+
+        <SystemControls
+          onHistoryClick={() => {
+            console.log('History button clicked'); // @TODO Implement handler when History log is ready
+          }}
+          onSettingsOpen={onSettingsOpen}
+          onFullscreen={onFullscreen}
+          onHelp={onHelp}
+          onAboutOpen={onAbout}
+          disabledButtons={disabledButtons}
+          hiddenButtons={hiddenButtons}
+        />
+        <Divider />
+        {!hiddenButtons.includes('zoom-list') && (
+          <ZoomControls
+            currentZoom={currentZoom || 1}
+            onZoomIn={onZoomIn}
+            onZoomOut={onZoomOut}
+            onZoom={onZoom}
+            shortcuts={shortcuts}
+            disabledButtons={disabledButtons}
+            hiddenButtons={hiddenButtons}
+          />
+        )}
+      </BtnsWpapper>
     </ControlsPanel>
   );
 };

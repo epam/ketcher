@@ -13,22 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { Tool } from 'application/editor/tools/Tool';
+import { BaseTool } from 'application/editor/tools/Tool';
 import { Peptide } from 'domain/entities/Peptide';
 import { Chem } from 'domain/entities/Chem';
 import { Sugar } from 'domain/entities/Sugar';
 import { Phosphate } from 'domain/entities/Phosphate';
 import { RNABase } from 'domain/entities/RNABase';
 import { Vec2 } from 'domain/entities';
-import { CoreEditor } from 'application/editor';
+import { CoreEditor, EditorHistory } from 'application/editor';
 import { BaseMonomerRenderer } from 'application/render/renderers';
 import { MonomerItemType } from 'domain/types';
 import { monomerFactory } from '../operations/monomer/monomerFactory';
 import assert from 'assert';
-import { provideEditorSettings } from 'application/editor/editorSettings';
-import { Scale } from 'domain/helpers';
+import { Coordinates } from '../shared/coordinates';
 
-class MonomerTool implements Tool {
+class MonomerTool implements BaseTool {
   private monomerPreview:
     | Peptide
     | Chem
@@ -41,48 +40,45 @@ class MonomerTool implements Tool {
   readonly MONOMER_PREVIEW_SCALE_FACTOR = 0.4;
   readonly MONOMER_PREVIEW_OFFSET_X = 45;
   readonly MONOMER_PREVIEW_OFFSET_Y = 45;
+  history: EditorHistory;
   constructor(private editor: CoreEditor, private monomer: MonomerItemType) {
     this.editor = editor;
     this.monomer = monomer;
+    this.history = new EditorHistory(this.editor);
   }
 
   mousedown() {
     assert(this.monomerPreviewRenderer);
-    const editorSettings = provideEditorSettings();
+    const position = Coordinates.canvasToModel(
+      new Vec2(
+        this.editor.lastCursorPositionOfCanvas.x,
+        this.editor.lastCursorPositionOfCanvas.y,
+      ),
+    );
     const modelChanges = this.editor.drawingEntitiesManager.addMonomer(
       this.monomer,
       // We convert monomer coordinates from pixels to angstroms
       // because the model layer (like BaseMonomer) should not work with pixels
-      Scale.canvasToModel(
-        new Vec2(
-          this.editor.lastCursorPosition.x,
-          this.editor.lastCursorPosition.y,
-        ),
-        editorSettings,
-      ),
+      position,
     );
 
+    this.history.update(modelChanges);
     this.editor.renderersContainer.update(modelChanges);
   }
 
   mousemove() {
-    const editorSettings = provideEditorSettings();
-    this.monomerPreview?.moveAbsolute(
-      Scale.canvasToModel(
-        new Vec2(
-          this.editor.lastCursorPosition.x + this.MONOMER_PREVIEW_OFFSET_X,
-          this.editor.lastCursorPosition.y + this.MONOMER_PREVIEW_OFFSET_Y,
-        ),
-        editorSettings,
+    const position = Coordinates.canvasToModel(
+      new Vec2(
+        this.editor.lastCursorPosition.x + this.MONOMER_PREVIEW_OFFSET_X,
+        this.editor.lastCursorPosition.y + this.MONOMER_PREVIEW_OFFSET_Y,
       ),
     );
+    this.monomerPreview?.moveAbsolute(position);
     this.monomerPreviewRenderer?.move();
   }
 
   public mouseLeaveClientArea() {
-    this.monomerPreviewRenderer?.remove();
-    this.monomerPreviewRenderer = undefined;
-    this.monomerPreview = undefined;
+    this.hidePreview();
   }
 
   public mouseover() {
@@ -93,9 +89,20 @@ class MonomerTool implements Tool {
       this.monomerPreviewRenderer = new MonomerRenderer(
         this.monomerPreview,
         this.MONOMER_PREVIEW_SCALE_FACTOR,
+        false,
       );
       this.monomerPreviewRenderer?.show(this.editor.theme);
     }
+  }
+
+  hidePreview() {
+    this.monomerPreviewRenderer?.remove();
+    this.monomerPreviewRenderer = undefined;
+    this.monomerPreview = undefined;
+  }
+
+  destroy(): void {
+    this.hidePreview();
   }
 }
 

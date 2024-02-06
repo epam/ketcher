@@ -7,7 +7,10 @@ import {
 
 test('opening molfile', async ({ page }) => {
   await waitForPageInit(page);
-  await openFileAndAddToCanvas('display-abbrev-groups-example.mol', page);
+  await openFileAndAddToCanvas(
+    'Molfiles-V2000/display-abbreviation-groups-example.mol',
+    page,
+  );
   await takeEditorScreenshot(page);
 });
 

@@ -755,7 +755,7 @@ export const peptideMonomerItem: MonomerItemType = {
   label: 'Abc',
   props: {
     BranchMonomer: '',
-    MonomerCaps: '',
+    MonomerCaps: {},
     MonomerCode: '',
     MonomerName: '',
     MonomerType: 'PEPTIDE',

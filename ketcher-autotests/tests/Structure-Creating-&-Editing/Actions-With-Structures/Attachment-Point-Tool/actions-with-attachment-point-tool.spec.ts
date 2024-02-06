@@ -5,6 +5,7 @@ import {
   waitForPageInit,
   saveToFile,
   receiveFileComparisonData,
+  waitForRender,
 } from '@utils';
 import { getKet } from '@utils/formats';
 
@@ -66,7 +67,10 @@ test.describe('Attachment Point Tool', () => {
       page,
     );
     await page.keyboard.press('Control+a');
-    await page.keyboard.press('Control++');
+    await waitForRender(page, async () => {
+      await page.keyboard.press('Control++');
+      page.getByTestId('floating-tools');
+    });
     await takeEditorScreenshot(page);
   });
 });

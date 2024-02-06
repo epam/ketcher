@@ -1,12 +1,15 @@
 import { test } from '@playwright/test';
 import {
-  addMonomerToCanvas,
+  addSingleMonomerToCanvas,
   selectEraseTool,
   selectSingleBondTool,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
-import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
+import {
+  hideMonomerPreview,
+  turnOnMacromoleculesEditor,
+} from '@utils/macromolecules';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 /* eslint-disable no-magic-numbers */
 
@@ -26,7 +29,7 @@ test.describe('Erase Tool', () => {
     const MONOMER_NAME = 'Tza___3-thiazolylalanine';
     const MONOMER_ALIAS = 'Tza';
 
-    const peptide1 = await addMonomerToCanvas(
+    const peptide1 = await addSingleMonomerToCanvas(
       page,
       MONOMER_NAME,
       MONOMER_ALIAS,
@@ -34,7 +37,7 @@ test.describe('Erase Tool', () => {
       300,
       0,
     );
-    const peptide2 = await addMonomerToCanvas(
+    const peptide2 = await addSingleMonomerToCanvas(
       page,
       MONOMER_NAME,
       MONOMER_ALIAS,
@@ -42,7 +45,7 @@ test.describe('Erase Tool', () => {
       400,
       1,
     );
-    const peptide3 = await addMonomerToCanvas(
+    const peptide3 = await addSingleMonomerToCanvas(
       page,
       MONOMER_NAME,
       MONOMER_ALIAS,
@@ -50,7 +53,7 @@ test.describe('Erase Tool', () => {
       500,
       2,
     );
-    const peptide4 = await addMonomerToCanvas(
+    const peptide4 = await addSingleMonomerToCanvas(
       page,
       MONOMER_NAME,
       MONOMER_ALIAS,
@@ -67,10 +70,6 @@ test.describe('Erase Tool', () => {
     await bondTwoMonomers(page, peptide3, peptide2);
     await bondTwoMonomers(page, peptide3, peptide4);
 
-    // Get rid of flakiness because of preview
-    const coords = [100, 100];
-    await page.mouse.move(coords[0], coords[1]);
-
     await takeEditorScreenshot(page);
 
     await selectEraseTool(page);
@@ -79,7 +78,7 @@ test.describe('Erase Tool', () => {
     await peptide3.click();
 
     // Get rid of flakiness because of preview
-    await page.mouse.move(coords[0], coords[1]);
+    await hideMonomerPreview(page);
 
     await takeEditorScreenshot(page);
   });

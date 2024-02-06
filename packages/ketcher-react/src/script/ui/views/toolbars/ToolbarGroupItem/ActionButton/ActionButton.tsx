@@ -18,7 +18,7 @@ import { UiAction, UiActionAction } from '../../../../action';
 
 import classes from './ActionButton.module.less';
 import clsx from 'clsx';
-import { shortcutStr } from '../../shortcutStr';
+import { shortcutStr } from 'ketcher-core';
 import { Icon, IconName } from 'components';
 
 interface ActionButtonProps {

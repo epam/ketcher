@@ -25,7 +25,7 @@ import {
   setAttachmentPoints,
   waitForPageInit,
 } from '@utils';
-import { getMolfile } from '@utils/formats';
+import { getKet, getMolfile } from '@utils/formats';
 
 const CANVAS_CLICK_X = 500;
 const CANVAS_CLICK_Y = 500;
@@ -50,9 +50,9 @@ async function selectMultipleGroup(
 async function changeRepeatCountValue(page: Page, value: string) {
   await page.keyboard.press('Control+a');
   await selectLeftPanelButton(LeftPanelButton.S_Group, page);
-  await page.getByRole('button', { name: 'Data' }).click();
+  await page.getByTestId('s-group-type-input-span').click();
   await page.getByTestId('Multiple group-option').click();
-  await page.getByTestId('file-name-input').fill(value);
+  await page.getByTestId('mul-input').fill(value);
 }
 
 test.describe('Multiple S-Group tool', () => {
@@ -211,12 +211,16 @@ test.describe('Multiple S-Group tool', () => {
     */
     await openFileAndAddToCanvas('KET/multiple-group-data.ket', page);
     const expectedFile = await getMolfile(page);
-    await saveToFile('multiple-group-data-expected.mol', expectedFile);
+    await saveToFile(
+      'Molfiles-V2000/multiple-group-data-expected.mol',
+      expectedFile,
+    );
     const METADATA_STRING_INDEX = [1];
     const { fileExpected: molFileExpected, file: molFile } =
       await receiveFileComparisonData({
         page,
-        expectedFileName: 'tests/test-data/multiple-group-data-expected.mol',
+        expectedFileName:
+          'tests/test-data/Molfiles-V2000/multiple-group-data-expected.mol',
         metaDataIndexes: METADATA_STRING_INDEX,
       });
     expect(molFile).toEqual(molFileExpected);
@@ -334,5 +338,30 @@ test.describe('Multiple S-Group tool', () => {
     await openFileAndAddToCanvas('Molfiles-V2000/templates.mol', page);
     await changeRepeatCountValue(page, '50');
     await pressButton(page, 'Apply');
+  });
+
+  test('Add S-Group properties to structure and atom', async ({ page }) => {
+    /*
+      Test case: https://github.com/epam/ketcher/issues/3949
+      Description: S-Group added to the structure and represent in .ket file.
+      The test is currently not functioning correctly as the bug has not been fixed.
+    */
+    await openFileAndAddToCanvas('KET/cyclopropane-and-h2o.ket', page);
+    await page.keyboard.press('Control+a');
+    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await selectMultipleGroup(page, 'Data', 'Multiple group', '8', 'Apply');
+    const expectedFile = await getKet(page);
+    await saveToFile(
+      'KET/cyclopropane-and-h2o-multiple-expected.ket',
+      expectedFile,
+    );
+    const { file: ketFile, fileExpected: ketFileExpected } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/KET/cyclopropane-and-h2o-multiple-expected.ket',
+      });
+
+    expect(ketFile).toEqual(ketFileExpected);
   });
 });

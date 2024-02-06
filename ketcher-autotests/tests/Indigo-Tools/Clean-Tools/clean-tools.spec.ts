@@ -16,7 +16,9 @@ import {
   clickOnAtom,
   selectPartOfChain,
   selectPartOfMolecules,
+  saveToFile,
 } from '@utils';
+import { getMolfile } from '@utils/formats/formats';
 
 test.describe('Indigo Tools - Clean Tools', () => {
   test.beforeEach(async ({ page }) => {
@@ -46,7 +48,10 @@ test.describe('Indigo Tools - Clean Tools', () => {
     Test case: EPMLSOPKET-1778
     Description: The length of the bonds becomes the same
     */
-    await openFileAndAddToCanvas('different-bond-length.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/different-bond-length.mol',
+      page,
+    );
 
     await waitForSpinnerFinishedWork(
       page,
@@ -68,7 +73,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
     Description: The angles should be 60, 90 or 120°
     (all angles in each structure are equal after the clean action)
    */
-    await openFileAndAddToCanvas('different-angle-fr.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V3000/different-angle-fr.mol', page);
     await clickInTheMiddleOfTheScreen(page);
 
     await waitForSpinnerFinishedWork(
@@ -116,7 +121,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
     left corner of the canvas.
     The structure group of structures appears undistorted.
    */
-    await openFileAndAddToCanvas('layout-distorted.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/layout-distorted.mol', page);
 
     await waitForSpinnerFinishedWork(
       page,
@@ -130,7 +135,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
     Description: After the 'Clean Up' action the structures don't change its position on the canvas.
     The group of structures is cleaned up and appear undistorted.
    */
-    await openFileAndAddToCanvas('layout-distorted.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/layout-distorted.mol', page);
 
     await waitForSpinnerFinishedWork(
       page,
@@ -143,7 +148,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
     Test case: EPMLSOPKET-1786
     Description: After the Layout and Clean Up actions the structure features appear undistorted.
    */
-    await openFileAndAddToCanvas('clean-structure.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/clean-structure.mol', page);
 
     await waitForSpinnerFinishedWork(
       page,
@@ -166,7 +171,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
     Test case: EPMLSOPKET-1787
     Description: Clean action is correct for the all selected structures.
    */
-    await openFileAndAddToCanvas('clean-appoints.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/clean-appoints.mol', page);
 
     await waitForSpinnerFinishedWork(
       page,
@@ -207,7 +212,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
     Description: After the Clean Up and Layout actions the structure
     with stereochemistry is appear undistorted.
    */
-    await openFileAndAddToCanvas('clean-stereo.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/clean-stereo.mol', page);
 
     await waitForSpinnerFinishedWork(
       page,
@@ -231,7 +236,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
     R-group definition is correct.
     R-group member's properties aren't changed.
    */
-    await openFileAndAddToCanvas('clean-rgroups.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/clean-rgroups.mol', page);
 
     await waitForSpinnerFinishedWork(
       page,
@@ -254,7 +259,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
     Clean Up and Layout actions.
     S-group properties are correct after the Clean Up and Layout actions.
    */
-    await openFileAndAddToCanvas('clean-sgroups.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/clean-sgroups.mol', page);
 
     await waitForSpinnerFinishedWork(
       page,
@@ -293,7 +298,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
     Test case: EPMLSOPKET-1797
     Description: The reaction mapping is kept after the Layout and Clean Up action.
    */
-    await openFileAndAddToCanvas('mapping-reaction.rxn', page);
+    await openFileAndAddToCanvas('Rxn-V2000/mapping-reaction.rxn', page);
 
     await waitForSpinnerFinishedWork(
       page,
@@ -314,7 +319,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
     Test case: EPMLSOPKET-1803
     Description: The Layout action is implemented for the whole canvas.
    */
-    await openFileAndAddToCanvas('cyclic-structures.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/cyclic-structures.mol', page);
 
     await waitForSpinnerFinishedWork(
       page,
@@ -492,6 +497,31 @@ test.describe('Indigo Tools - Clean Tools', () => {
     */
     await openFileAndAddToCanvas(
       'Molfiles-V2000/several-distorted-structures.mol',
+      page,
+    );
+    await selectPartOfMolecules(page);
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await selectTopPanelButton(TopPanelButton.Clean, page),
+    );
+  });
+
+  test('Clean action', async ({ page }) => {
+    /*
+    Test case: EPMLSOPKET-1738
+    Description: The structure are cleaned correctly.
+    Edit the structures in any way.
+    Distort the created structures.
+    Click the Clean Up button.
+    Distort the structures.
+    Click the Layout button.
+    */
+    await openFileAndAddToCanvas('Molfiles-V2000/benzene-br.mol', page);
+    await takeEditorScreenshot(page);
+    const expectedFile = await getMolfile(page);
+    await saveToFile('Molfiles-V2000/ring-with-attachment.mol', expectedFile);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/ring-with-attachment.mol',
       page,
     );
     await selectPartOfMolecules(page);

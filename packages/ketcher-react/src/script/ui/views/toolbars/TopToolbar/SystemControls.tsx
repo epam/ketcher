@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import styled from '@emotion/styled';
-import { shortcutStr } from '../shortcutStr';
+import { shortcutStr } from 'ketcher-core';
 import { TopToolbarIconButton } from './TopToolbarIconButton';
 
 interface SystemControlsProps {
@@ -41,7 +41,7 @@ const getIfFullScreen = () => {
 const ControlsPanel = styled('div')`
   display: flex;
   align-items: center;
-  flex-grow: 1;
+  flex-grow: 0;
   justify-content: flex-end;
 `;
 

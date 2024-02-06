@@ -27,14 +27,15 @@ import {
   getStructure,
   MolSerializer,
   runAsyncAction,
+  SettingsManager,
+  keyNorm,
+  initHotKeys,
 } from 'ketcher-core';
 import { debounce, isEqual } from 'lodash/fp';
 import { load, onAction, removeStructAction } from './shared';
 
 import actions from '../action';
-import keyNorm from '../data/convert/keynorm';
 import { isIE } from 'react-device-detect';
-import { SettingsManager } from '../utils/settingsManager';
 import {
   selectAbbreviationLookupValue,
   selectIsAbbreviationLookupOpen,
@@ -49,7 +50,7 @@ import { handleHotkeyOverItem } from './handleHotkeysOverItem';
 
 export function initKeydownListener(element) {
   return function (dispatch, getState) {
-    const hotKeys = initHotKeys();
+    const hotKeys = initHotKeys(actions);
     element.addEventListener('keydown', (event) =>
       keyHandle(dispatch, getState, hotKeys, event),
     );
@@ -230,31 +231,6 @@ function getHoveredItem(
   return Object.keys(hoveredItem).length ? hoveredItem : null;
 }
 
-function setHotKey(key, actName, hotKeys) {
-  if (Array.isArray(hotKeys[key])) hotKeys[key].push(actName);
-  else hotKeys[key] = [actName];
-}
-
-function initHotKeys() {
-  const hotKeys = {};
-  let act;
-
-  Object.keys(actions).forEach((actName) => {
-    act = actions[actName];
-    if (!act.shortcut) return;
-
-    if (Array.isArray(act.shortcut)) {
-      act.shortcut.forEach((key) => {
-        setHotKey(key, actName, hotKeys);
-      });
-    } else {
-      setHotKey(act.shortcut, actName, hotKeys);
-    }
-  });
-
-  return keyNorm(hotKeys);
-}
-
 function checkGroupOnTool(group, actionTool) {
   let index = group.indexOf(actionTool.tool);
 
@@ -378,13 +354,23 @@ async function safelyGetMimeType(
 async function getStructStringFromClipboardData(
   data: ClipboardItem[],
 ): Promise<string> {
-  const clipboardItem = data[0] as ClipboardItem;
-  const structStr =
-    (await safelyGetMimeType(clipboardItem, `web ${ChemicalMimeType.KET}`)) ||
-    (await safelyGetMimeType(clipboardItem, `web ${ChemicalMimeType.Mol}`)) ||
-    (await safelyGetMimeType(clipboardItem, `web ${ChemicalMimeType.Rxn}`)) ||
-    (await safelyGetMimeType(clipboardItem, 'text/plain'));
-  return structStr === '' ? '' : structStr.text();
+  const clipboardItem = data[0];
+
+  if (clipboardItem instanceof ClipboardItem) {
+    const structStr =
+      (await safelyGetMimeType(clipboardItem, `web ${ChemicalMimeType.KET}`)) ||
+      (await safelyGetMimeType(clipboardItem, `web ${ChemicalMimeType.Mol}`)) ||
+      (await safelyGetMimeType(clipboardItem, `web ${ChemicalMimeType.Rxn}`)) ||
+      (await safelyGetMimeType(clipboardItem, 'text/plain'));
+    return structStr === '' ? '' : structStr.text();
+  } else {
+    return (
+      data[ChemicalMimeType.KET] ||
+      data[ChemicalMimeType.Mol] ||
+      data[ChemicalMimeType.Rxn] ||
+      data['text/plain']
+    );
+  }
 }
 
 function isAbleToCopy(editor: Editor): boolean {

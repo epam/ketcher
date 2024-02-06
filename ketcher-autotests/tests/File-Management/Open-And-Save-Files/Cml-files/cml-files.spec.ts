@@ -31,7 +31,7 @@ test.describe('CML files', () => {
     const { fileExpected: cmlFileExpected, file: cmlFile } =
       await receiveFileComparisonData({
         page,
-        expectedFileName: 'tests/test-data/cml-12492-compare.cml',
+        expectedFileName: 'tests/test-data/CML/cml-12492-compare.cml',
       });
     // comparing cml file with golden cml file
     expect(cmlFile).toEqual(cmlFileExpected);
@@ -42,15 +42,15 @@ test.describe('CML files', () => {
      * Test case: EPMLSOPKET-1945
      * Description: Saved cml file with structure is compering with paste cml structure golden file
      */
-    await openFileAddToCanvasTakeScreenshot(page, 'cml-1945.cml');
+    await openFileAddToCanvasTakeScreenshot(page, 'CML/cml-molecule.cml');
     // check that structure opened from file is displayed correctly
 
     const expectedFile = await getCml(page);
-    await saveToFile('cml-1945-expected.cml', expectedFile);
+    await saveToFile('CML/cml-molecule-expected.cml', expectedFile);
     const { file: cmlFile, fileExpected: cmlFileExpected } =
       await receiveFileComparisonData({
         page,
-        expectedFileName: 'tests/test-data/cml-1945-expected.cml',
+        expectedFileName: 'tests/test-data/CML/cml-molecule-expected.cml',
       });
     // comparing cml file with golden cml file
 
@@ -64,15 +64,15 @@ test.describe('CML files', () => {
      * Test case: EPMLSOPKET-1946
      * Description: Saved cml file with structure is compering with paste cml 3 structures
      */
-    await openFileAddToCanvasTakeScreenshot(page, 'cml-1946.cml');
+    await openFileAddToCanvasTakeScreenshot(page, 'CML/cml-1946.cml');
     // check that structure opened from file is displayed correctly
 
     const expectedFile = await getCml(page);
-    await saveToFile('cml-1946-expected.cml', expectedFile);
+    await saveToFile('CML/cml-1946-expected.cml', expectedFile);
     const { file: cmlFile, fileExpected: cmlFileExpected } =
       await receiveFileComparisonData({
         page,
-        expectedFileName: 'tests/test-data/cml-1946-expected.cml',
+        expectedFileName: 'tests/test-data/CML/cml-1946-expected.cml',
       });
     // comparing cml file with golden cml file
 
@@ -84,15 +84,18 @@ test.describe('CML files', () => {
    * Test case: EPMLSOPKET-1947
     Description: Saved cml file with structure is compering with paste reaction from rxn file
   */
-    await openFileAddToCanvasTakeScreenshot(page, 'cml-1947-reaction.rxn');
+    await openFileAddToCanvasTakeScreenshot(
+      page,
+      'Rxn-V2000/cml-1947-reaction.rxn',
+    );
     // check that structure opened from file is displayed correctly
 
     const expectedFile = await getCml(page);
-    await saveToFile('cml-1947-reaction-expected.cml', expectedFile);
+    await saveToFile('CML/cml-1947-reaction-expected.cml', expectedFile);
     const { file: cmlFile, fileExpected: cmlFileExpected } =
       await receiveFileComparisonData({
         page,
-        expectedFileName: 'tests/test-data/cml-1947-reaction-expected.cml',
+        expectedFileName: 'tests/test-data/CML/cml-1947-reaction-expected.cml',
       });
     // comparing cml file with golden cml file
 
@@ -107,15 +110,18 @@ test.describe('CML files', () => {
      * Description: Saved cml file with structure is compering with paste R-group from a mol file
      */
 
-    await openFileAddToCanvasTakeScreenshot(page, 'cml-1948-R-group.mol');
+    await openFileAddToCanvasTakeScreenshot(
+      page,
+      'Molfiles-V2000/cml-1948-R-group.mol',
+    );
     // check that structure opened from file is displayed correctly
 
     const expectedFile = await getCml(page);
-    await saveToFile('cml-1948-r-group-expected.cml', expectedFile);
+    await saveToFile('CML/cml-1948-r-group-expected.cml', expectedFile);
     const { file: cmlFile, fileExpected: cmlFileExpected } =
       await receiveFileComparisonData({
         page,
-        expectedFileName: 'tests/test-data/cml-1948-r-group-expected.cml',
+        expectedFileName: 'tests/test-data/CML/cml-1948-r-group-expected.cml',
       });
     // comparing cml file with golden cml file
 

@@ -25,12 +25,12 @@ import {
   notifyRequestCompleted,
   Editor,
   KetcherLogger,
+  SettingsManager,
 } from 'ketcher-core';
 
 import { supportedSGroupTypes } from './constants';
 import { setAnalyzingFile } from './request';
 import tools from '../action/tools';
-import { SettingsManager } from '../utils/settingsManager';
 
 export function onAction(action) {
   if (action && action.dialog) {
@@ -56,7 +56,7 @@ export function loadStruct(struct) {
   };
 }
 
-function parseStruct(
+export function parseStruct(
   struct: string | Struct,
   server,
   options?,
@@ -76,8 +76,12 @@ function parseStruct(
       struct = `base64::${struct.replace(/\s/g, '')}`;
     }
     const factory = new FormatterFactory(server);
-
-    const service = factory.create(format, formatterOptions);
+    const queryPropertiesAreUsed = format === 'mol' && struct.includes('MRV'); // temporary check if query properties are used
+    const service = factory.create(
+      format,
+      formatterOptions,
+      queryPropertiesAreUsed,
+    );
     return service.getStructureFromStringAsync(struct);
   } else {
     return Promise.resolve(struct);
@@ -102,7 +106,7 @@ export function load(struct: Struct, options?) {
     const server = state.server;
     const errorHandler = editor.errorHandler;
     options = options || {};
-    let { isPaste, ...otherOptions } = options;
+    let { isPaste, method, ...otherOptions } = options;
     otherOptions = {
       ...otherOptions,
       'dearomatize-on-load': editor.options()['dearomatize-on-load'],
@@ -170,11 +174,16 @@ export function load(struct: Struct, options?) {
           dispatch(onAction({ tool: 'paste', opts: parsedStruct }));
         }
       } else {
-        editor.struct(parsedStruct);
+        editor.struct(
+          parsedStruct,
+          method === 'layout' || method === 'toggleExplicitHydrogens',
+        );
       }
 
       editor.zoomAccordingContent(parsedStruct);
-      if (!isPaste) {
+
+      const isIndigoFunctionCalled = !!method;
+      if (!isPaste && !isIndigoFunctionCalled) {
         editor.centerStruct();
       }
 
@@ -197,5 +206,15 @@ export function openInfoModal(command: 'Paste' | 'Copy' | 'Cut'): {
   return {
     type: 'MODAL_OPEN',
     data: { name: 'info-modal', prop: { message: command } },
+  };
+}
+
+export function openInfoModalWithCustomMessage(message: string): {
+  type: 'MODAL_OPEN';
+  data: { name: 'info-modal'; prop: { customText: string } };
+} {
+  return {
+    type: 'MODAL_OPEN',
+    data: { name: 'info-modal', prop: { customText: message } },
   };
 }

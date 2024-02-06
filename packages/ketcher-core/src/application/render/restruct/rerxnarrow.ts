@@ -126,7 +126,7 @@ class ReRxnArrow extends ReObject {
   }
 
   makeAdditionalInfo(restruct: ReStruct) {
-    const scaleFactor = restruct.render.options.scale;
+    const scaleFactor = restruct.render.options.microModeScale;
     const refPoints = this.getReferencePoints();
     const selectionSet = restruct.render.paper.set();
 
@@ -160,7 +160,7 @@ class ReRxnArrow extends ReObject {
     const item = this.item;
     const height =
       RxnArrow.isElliptical(item) && item.height
-        ? item.height * options.scale
+        ? item.height * options.microModeScale
         : 0;
     const pos = item.pos.map((p) => {
       return Scale.modelToCanvas(p, options) || new Vec2();

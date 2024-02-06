@@ -306,7 +306,10 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     Description: An atom of a stereo bond is deleted after removing by the 'Erase' tool.
     'Undo' action leads to the previous structure with stereo labels.
     */
-    await openFileAndAddToCanvas('chain-with-stereo-bonds.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/chain-with-stereo-bonds.mol',
+      page,
+    );
     await selectTopPanelButton(TopPanelButton.Calculate, page);
     await selectLeftPanelButton(LeftPanelButton.Erase, page);
     const point = await getAtomByIndex(page, { label: 'N' }, 0);
@@ -351,9 +354,13 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     Test case: EPMLSOPKET-1925
     Description: New stereobond is added to the Chain structure.
     */
-    await openFileAndAddToCanvas('chain-with-stereo-bonds.mol', page);
-    await selectTopPanelButton(TopPanelButton.Calculate, page);
-    await delay(DELAY_IN_SECONDS.TWO);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/chain-with-stereo-bonds.mol',
+      page,
+    );
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Calculate, page);
+    });
     await selectNestedTool(page, BondTool.UP);
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 5);
     await page.mouse.click(point.x, point.y);
@@ -364,7 +371,10 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     Test case: EPMLSOPKET-11841
     Description: The labels are next to the stereo bonds. When you hover over the label, the tooltip does not appear.
     */
-    await openFileAndAddToCanvas('chain-with-stereo-bonds.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/chain-with-stereo-bonds.mol',
+      page,
+    );
     await selectTopPanelButton(TopPanelButton.Calculate, page);
     await delay(DELAY_IN_SECONDS.TWO);
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 3);

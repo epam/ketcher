@@ -47,9 +47,9 @@ test.describe('open files with different formats', () => {
   });
 
   /* two structures should be added on the canvas in the following test
-(same as in EPMLSOPKET-1835), however in this test when second structure is added
-the first one disappears. Couldn't reproduct manually.
-*/
+  (same as in EPMLSOPKET-1835), however in this test when second structure is added
+  the first one disappears. Couldn't reproduct manually.
+  */
   test('Open file - Input .mol, InChi', async ({ page }) => {
     /**
      * Test case: EPMLSOPKET-1835
@@ -65,7 +65,7 @@ the first one disappears. Couldn't reproduct manually.
 
     // add second structure from file to canvas
     await selectTopPanelButton(TopPanelButton.Open, page);
-    await openFile('glutamine.mol', page);
+    await openFile('Molfiles-V2000/glutamine.mol', page);
     await waitForLoad(page, async () => {
       await pressButton(page, 'Add to Canvas');
     });
@@ -158,5 +158,16 @@ the first one disappears. Couldn't reproduct manually.
     await waitForLoad(page, async () => {
       await pressButton(page, 'Open as New Project');
     });
+  });
+
+  test('Open ket file with SMARTS attributes', async ({ page }) => {
+    /*
+      Test case: https://github.com/epam/ketcher/issues/3397
+      Description: ket file with SMARTS attributes should be open without error
+      */
+    await openFileAndAddToCanvas(
+      'KET/benzene-with-smarts-attributes.ket',
+      page,
+    );
   });
 });

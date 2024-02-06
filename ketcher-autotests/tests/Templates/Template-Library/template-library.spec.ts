@@ -3,6 +3,7 @@ import {
   clickInTheMiddleOfTheScreen,
   FunctionalGroups,
   getCoordinatesOfTheMiddleOfTheScreen,
+  getEditorScreenshot,
   pressButton,
   selectFunctionalGroups,
   selectTopPanelButton,
@@ -12,16 +13,12 @@ import {
   waitForPageInit,
   waitForRender,
 } from '@utils';
-import {
-  editStructureTemplate,
-  openFunctionalGroup,
-  openStructureLibrary,
-} from '@utils/templates';
+import { STRUCTURE_LIBRARY_BUTTON_TEST_ID } from '../templates.costants';
 
 async function setDisplayStereoFlagsSettingToOn(page: Page) {
   await selectTopPanelButton(TopPanelButton.Settings, page);
   await page.getByText('Stereochemistry', { exact: true }).click();
-  await pressButton(page, 'IUPAC style');
+  await page.getByTestId('stereo-label-style-input-span').click();
   // Using "On" label style, to always show the stereo labels, so we can see the difference
   await page.getByRole('option', { name: 'On' }).click();
   await pressButton(page, 'Apply');
@@ -51,13 +48,33 @@ async function placePhenylalanineMustard(page: Page, x: number, y: number) {
   await page.mouse.click(x, y);
 }
 
+async function openStructureLibrary(page: Page) {
+  await page.getByTestId(STRUCTURE_LIBRARY_BUTTON_TEST_ID).click();
+}
+
+async function openFunctionalGroup(page: Page) {
+  await openStructureLibrary(page);
+  await page.getByText('Functional Group').click();
+}
+
+async function editStructureTemplate(
+  page: Page,
+  templateCategory: string,
+  templateName: string,
+) {
+  const editStructureButton = page.getByTitle(templateName).getByRole('button');
+  await openStructureLibrary(page);
+  await page.getByText(templateCategory).click();
+  await editStructureButton.click();
+}
+
 async function editAndClearTemplateName(
   page: Page,
   templateCategory: string,
   templateName: string,
 ) {
   await editStructureTemplate(page, templateCategory, templateName);
-  await page.getByTestId('file-name-input').click();
+  await page.getByTestId('name-input').click();
   await page.keyboard.press('Control+a');
   await page.keyboard.press('Delete');
 }
@@ -132,6 +149,25 @@ test.describe('Templates - Template Library', () => {
     await clickInTheMiddleOfTheScreen(page);
   });
 
+  test('Edit templates - name with just spaces', async ({ page }) => {
+    // Test case: EPMLSOPKET-1699
+    // Verify if structure name won't change if field will contain just spaces
+    await editAndClearTemplateName(page, 'β-D-Sugars', 'β-D-Allopyranose');
+    await page.getByTestId('name-input').fill('   ');
+    await page.getByRole('button', { name: 'Edit', exact: true }).click();
+    await page.getByText('β-D-Sugars').click();
+  });
+});
+
+test.describe('Templates - Template Library', () => {
+  test.beforeEach(async ({ page }) => {
+    await waitForPageInit(page);
+  });
+
+  test.afterEach(async ({ page }) => {
+    await getEditorScreenshot(page);
+  });
+
   test('Edit templates', async ({ page }) => {
     // Test case: EPMLSOPKET-1699
     // Verify correct display of Template Edit window
@@ -144,18 +180,9 @@ test.describe('Templates - Template Library', () => {
     await editAndClearTemplateName(page, 'β-D-Sugars', 'β-D-Allopyranose');
   });
 
-  test('Edit templates - name with just spaces', async ({ page }) => {
-    // Test case: EPMLSOPKET-1699
-    // Verify if structure name won't change if field will contain just spaces
-    await editAndClearTemplateName(page, 'β-D-Sugars', 'β-D-Allopyranose');
-    await page.getByTestId('file-name-input').fill('   ');
-    await page.getByRole('button', { name: 'Edit', exact: true }).click();
-    await page.getByText('β-D-Sugars').click();
-  });
-
   test('Text field 128 characters limit test ', async ({ page }) => {
     // Verify maximum character validation on the name field
-    const textField = page.getByTestId('file-name-input');
+    const textField = page.getByTestId('name-input');
     const number = 129;
     const inputText = 'A'.repeat(number);
     await editAndClearTemplateName(page, 'β-D-Sugars', 'β-D-Allopyranose');

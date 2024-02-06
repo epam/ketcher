@@ -17,13 +17,17 @@
 import { Component, createRef } from 'react';
 import clsx from 'clsx';
 import classes from './cliparea.module.less';
-import { KetcherLogger, notifyRequestCompleted } from 'ketcher-core';
-import { isControlKey } from '../../data/convert/keynorm';
+import {
+  KetcherLogger,
+  notifyRequestCompleted,
+  isControlKey,
+} from 'ketcher-core';
 import { isClipboardAPIAvailable, notifyCopyCut } from './clipboardUtils';
 
 const ieCb = window.clipboardData;
 
 export const CLIP_AREA_BASE_CLASS = 'cliparea';
+let needSkipCopyEvent = false;
 
 class ClipArea extends Component {
   constructor(props) {
@@ -63,10 +67,28 @@ class ClipArea extends Component {
             });
           });
         } else {
-          const data = this.props.onLegacyCopy();
-          if (data) {
-            legacyCopy(event.clipboardData, data);
+          if (needSkipCopyEvent) {
+            needSkipCopyEvent = false;
+            return;
           }
+          needSkipCopyEvent = true;
+
+          this.props.onCopy().then((data) => {
+            // It is possible to have access to clipboard data through evt.clipboardData
+            // only in synchronous code. That's why we dispatch 'copy' event here after server call.
+            // It will not work with long operations which time > 5 sec, because browser will close access
+            // to clipboard data if user did not interact with application.
+            addEventListener(
+              'copy',
+              (evt) => {
+                legacyCopy(evt.clipboardData, data);
+                evt.preventDefault();
+              },
+              { once: true },
+            );
+            document.execCommand('copy');
+          });
+
           event.preventDefault();
         }
       },

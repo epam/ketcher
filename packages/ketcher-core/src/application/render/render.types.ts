@@ -36,7 +36,8 @@ export type RenderOptions = {
   showHydrogenLabels: string;
   showValence: boolean;
   aromaticCircle: boolean;
-  scale: number;
+  microModeScale: number;
+  macroModeScale: number;
   zoom: number;
   offset: Vec2;
   lineWidth: number;
@@ -67,6 +68,10 @@ export type RenderOptions = {
   stereoLabelStyle?: StereLabelStyleType;
 
   previewOpacity: number;
+
+  connectedMonomerAttachmentPoints?: string[];
+  currentlySelectedMonomerAttachmentPoint?: string;
+  labelInMonomerConnectionsModal?: boolean;
 };
 
 export interface RelativeBox {

@@ -36,7 +36,7 @@
   },
   "dependencies": {
     "ketcher-core": "*",
-    "ketcher-polymer-editor-react": "*",
+    "ketcher-macromolecules": "*",
     "ketcher-react": "*",
     "ketcher-standalone": "*",
     "normalize.css": "^8.0.1",
@@ -69,7 +69,7 @@
     "source-map-loader": "^3.0.1",
     "stylelint": "13.13.1",
     "typescript": "^4.5.2",
-    "vite": "^4.3.9",
+    "vite": "^4.5.1",
     "vite-plugin-html": "^3.2.0",
     "vite-plugin-raw": "^1.0.3",
     "vite-plugin-svgr": "^2.4.0",

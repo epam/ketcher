@@ -31,6 +31,10 @@ export class PolymerBond extends DrawingEntity {
     return Boolean(this.firstMonomer && this.secondMonomer);
   }
 
+  public get center() {
+    return Vec2.centre(this.startPosition, this.endPosition);
+  }
+
   public moveToLinkedMonomers() {
     const firstMonomerCenter = this.firstMonomer.position;
     const secondMonomerCenter = this.secondMonomer?.position;
@@ -50,5 +54,11 @@ export class PolymerBond extends DrawingEntity {
 
   public get startPosition() {
     return this.position;
+  }
+
+  public getAnotherMonomer(monomer: BaseMonomer) {
+    return this.firstMonomer === monomer
+      ? this.secondMonomer
+      : this.firstMonomer;
   }
 }

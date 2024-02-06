@@ -16,26 +16,50 @@ exports[`PeptideRenderer should render peptide 1`] = `
     </symbol>
   </defs>
   <g
-    transform="translate(0, 0) scale(1)"
-    transition="transform 0.2s"
+    class="drawn-structures"
   >
-    <use
-      fill="yellow"
-      href="#peptide"
-      style="cursor: pointer;"
-    />
-    <text
-      fill="black"
-      font-size="12px"
-      font-weight="700"
-      line-height="12px"
-      pointer-events="none"
-      style="cursor: pointer; user-select: none;"
-      x="0"
-      y="10"
+    <g
+      transform="translate(0, 0) scale(1)"
+      transition="transform 0.2s"
     >
-      Abc
-    </text>
+      <use
+        fill="yellow"
+        href="#peptide"
+        style="cursor: pointer;"
+      />
+      <text
+        fill="black"
+        font-size="12px"
+        font-weight="700"
+        line-height="12px"
+        pointer-events="none"
+        style="cursor: pointer; user-select: none;"
+        x="0"
+        y="10"
+      >
+        Abc
+      </text>
+      <text
+        direction="rtl"
+        fill="#7C7C7F"
+        font-size="12px"
+        font-weight="500"
+        line-height="14px"
+        text-align="right"
+        x="20"
+        y="-1"
+      />
+      <text
+        direction="rtl"
+        fill="#0097A8"
+        font-size="12px"
+        font-weight="700"
+        line-height="14px"
+        text-align="right"
+        x="-13"
+        y="20"
+      />
+    </g>
   </g>
 </svg>
 `;

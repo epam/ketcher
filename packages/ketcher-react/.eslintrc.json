@@ -92,7 +92,6 @@
         "src/script/ui/state/hotkeys.ts",
         "src/script/ui/state/shared.ts",
         "src/script/ui/utils/index.ts",
-        "src/script/ui/utils/settingsManager.ts",
         "src/script/ui/views/AppClipArea.tsx",
         "src/script/ui/views/components/Dialog/Dialog.tsx",
         "src/script/ui/views/components/StructEditor/InfoPanel.tsx",

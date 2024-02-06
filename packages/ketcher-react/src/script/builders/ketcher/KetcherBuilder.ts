@@ -29,6 +29,7 @@ import { Editor } from '../../editor';
 import createApi from '../../api';
 import { initApp } from '../../ui';
 import { Root } from 'react-dom/client';
+import { IndigoProvider } from 'src/script/providers';
 
 class KetcherBuilder {
   private structService: StructService | null;
@@ -60,6 +61,7 @@ class KetcherBuilder {
     staticResourcesUrl: string,
     errorHandler: (message: string) => void,
     buttons?: ButtonsConfig,
+    togglerComponent?: JSX.Element,
   ): Promise<void> {
     const { structService } = this;
 
@@ -77,6 +79,7 @@ class KetcherBuilder {
         },
         structService!,
         resolve,
+        togglerComponent,
       );
     });
 
@@ -117,6 +120,7 @@ class KetcherBuilder {
       ketcher.setMolecule(initialMol);
     }
 
+    IndigoProvider.setIndigo(this.structService);
     ketcherProvider.setKetcherInstance(ketcher);
     return ketcher;
   }

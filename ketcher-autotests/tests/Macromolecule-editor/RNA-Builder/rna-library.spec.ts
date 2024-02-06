@@ -27,10 +27,11 @@ import {
   takeRNABuilderScreenshot,
   waitForPageInit,
   waitForRender,
+  moveMouseAway,
 } from '@utils';
 import { getKet } from '@utils/formats';
 
-async function expandRnaBuilder(page: Page) {
+async function expandCollapseRnaBuilder(page: Page) {
   await page
     .locator('div')
     .filter({ hasText: /^RNA Builder$/ })
@@ -173,7 +174,7 @@ test.describe('RNA Library', () => {
     Test case: #2748, #2751 - RNA Builder. Accordion component
     Description: After click on arrow RNA Builder expanded.
     */
-    await expandRnaBuilder(page);
+    await expandCollapseRnaBuilder(page);
     await takeMonomerLibraryScreenshot(page);
   });
 
@@ -280,12 +281,13 @@ test.describe('RNA Library', () => {
     Test case: #2759 - Edit RNA mode
     Description: Custom presets added to Presets section.
     */
-    await expandRnaBuilder(page);
+    await expandCollapseRnaBuilder(page);
     await selectMonomer(page, Sugars.TwelveddR);
     await selectMonomer(page, Bases.Adenine);
     await selectMonomer(page, Phosphates.Test6Ph);
     await page.getByTestId('add-to-presets-btn').click();
     await page.getByTestId('12ddR(A)Test-6-Ph_A_12ddR_Test-6-Ph').click();
+    await expandCollapseRnaBuilder(page);
     await takePresetsScreenshot(page);
   });
 
@@ -294,7 +296,7 @@ test.describe('RNA Library', () => {
     Test case: #2507 - Add RNA monomers to canvas
     Description: Custom presets added to Canvas.
     */
-    await expandRnaBuilder(page);
+    await expandCollapseRnaBuilder(page);
     await selectMonomer(page, Sugars.ThreeA6);
     await selectMonomer(page, Bases.NBebnzylAdenine);
     await selectMonomer(page, Phosphates.Boranophosphate);
@@ -313,7 +315,7 @@ test.describe('RNA Library', () => {
     Description: RNA added to canvas when Sugar does not contain R3 attachment point.
     The test is currently not functioning correctly as the bug has not been fixed
     */
-    await expandRnaBuilder(page);
+    await expandCollapseRnaBuilder(page);
     await selectMonomer(page, Sugars.ThreeSS6);
     await selectMonomer(page, Bases.NBebnzylAdenine);
     await selectMonomer(page, Phosphates.Boranophosphate);
@@ -331,12 +333,12 @@ test.describe('RNA Library', () => {
     Test case: #2759 - Edit RNA mode
     Description: Custom presets added to Presets section.
     */
-    await expandRnaBuilder(page);
+    await expandCollapseRnaBuilder(page);
     await selectMonomer(page, Sugars.TwelveddR);
     await selectMonomer(page, Bases.Adenine);
     await page.getByTestId('add-to-presets-btn').click();
     await page.getByTestId('12ddR(A)_A_12ddR_.').click();
-    await clickInTheMiddleOfTheScreen(page);
+    await expandCollapseRnaBuilder(page);
     await takePresetsScreenshot(page);
   });
 
@@ -347,11 +349,12 @@ test.describe('RNA Library', () => {
     Test case: #2759 - Edit RNA mode
     Description: Custom presets added to Presets section.
     */
-    await expandRnaBuilder(page);
+    await expandCollapseRnaBuilder(page);
     await selectMonomer(page, Sugars.TwelveddR);
     await selectMonomer(page, Phosphates.Boranophosphate);
     await page.getByTestId('add-to-presets-btn').click();
     await page.getByTestId('12ddR()bP_._12ddR_bP').click();
+    await expandCollapseRnaBuilder(page);
     await takePresetsScreenshot(page);
   });
 
@@ -362,7 +365,7 @@ test.describe('RNA Library', () => {
     Test case: #2759 - Edit RNA mode
     Description: Custom presets added to Presets section.
     */
-    await expandRnaBuilder(page);
+    await expandCollapseRnaBuilder(page);
     await selectMonomer(page, Bases.Adenine);
     await selectMonomer(page, Phosphates.Boranophosphate);
     await page.getByTestId('add-to-presets-btn').click();
@@ -375,7 +378,7 @@ test.describe('RNA Library', () => {
     Test case: #2759 - Edit RNA mode
     Description: Custom presets added to Presets section and can be edited.
     */
-    await expandRnaBuilder(page);
+    await expandCollapseRnaBuilder(page);
     await selectMonomer(page, Sugars.TwelveddR);
     await selectMonomer(page, Bases.Adenine);
     await selectMonomer(page, Phosphates.Test6Ph);
@@ -388,7 +391,9 @@ test.describe('RNA Library', () => {
     await page.getByTestId('baA___N-benzyl-adenine').click();
     await page.getByTestId('save-btn').click();
     await page.getByTestId('12ddR(baA)Test-6-Ph_baA_12ddR_Test-6-Ph').click();
-    await clickInTheMiddleOfTheScreen(page);
+    // To avoid unstable test execution
+    // Allows see a right preset in a viewport
+    await expandCollapseRnaBuilder(page);
     await takePresetsScreenshot(page);
   });
 
@@ -399,7 +404,7 @@ test.describe('RNA Library', () => {
     Test case: #2759 - Edit RNA mode
     Description: Custom presets added to Presets section then can be duplicated and edited.
     */
-    await expandRnaBuilder(page);
+    await expandCollapseRnaBuilder(page);
     await selectMonomer(page, Sugars.TwelveddR);
     await selectMonomer(page, Bases.Adenine);
     await selectMonomer(page, Phosphates.Test6Ph);
@@ -408,6 +413,9 @@ test.describe('RNA Library', () => {
       button: 'right',
     });
     await page.getByTestId('duplicateandedit').locator('div').click();
+    // To avoid unstable test execution
+    // Allows see a right preset in a veiwport
+    await expandCollapseRnaBuilder(page);
     await page.getByTestId('12ddR(A)Test-6-Ph_Copy_A_12ddR_Test-6-Ph').click({
       button: 'right',
     });
@@ -425,7 +433,7 @@ test.describe('RNA Library', () => {
     Description: Custom presets added to Presets section and can be deleted.
     Test working incorrect because we have bug: https://github.com/epam/ketcher/issues/3561
     */
-    await expandRnaBuilder(page);
+    await expandCollapseRnaBuilder(page);
     await selectMonomer(page, Sugars.TwelveddR);
     await selectMonomer(page, Bases.Adenine);
     await selectMonomer(page, Phosphates.Test6Ph);
@@ -443,7 +451,7 @@ test.describe('RNA Library', () => {
     Test case: #2759 - Edit RNA mode
     Description: Custom presets added to Presets section and can be renamed.
     */
-    await expandRnaBuilder(page);
+    await expandCollapseRnaBuilder(page);
     await selectMonomer(page, Sugars.TwentyFiveR);
     await selectMonomer(page, Bases.NBebnzylAdenine);
     await selectMonomer(page, Phosphates.Boranophosphate);
@@ -463,14 +471,16 @@ test.describe('RNA Library', () => {
     Test case: #2759 - Edit RNA mode
     Description: RNA name autofilling when selects RNA parts.
     */
-    await expandRnaBuilder(page);
+    await expandCollapseRnaBuilder(page);
     await page.getByTestId('rna-builder-slot--sugar').click();
     await page.getByTestId("3A6___6-amino-hexanol (3' end)").click();
+    await moveMouseAway(page);
     await page.getByTestId('rna-builder-slot--base').click();
     await page.getByTestId('baA___N-benzyl-adenine').click();
+    await moveMouseAway(page);
     await page.getByTestId('rna-builder-slot--phosphate').click();
     await page.getByTestId('bP___Boranophosphate').click();
-    await clickInTheMiddleOfTheScreen(page);
+    await moveMouseAway(page);
     await takeRNABuilderScreenshot(page);
   });
 
@@ -479,9 +489,12 @@ test.describe('RNA Library', () => {
     Test case: #2759 - Edit RNA mode
     Description: RNA name added.
     */
-    await expandRnaBuilder(page);
+    await expandCollapseRnaBuilder(page);
     await page.getByTestId('rna-builder-slot--sugar').click();
     await page.getByTestId('25R___2,5-Ribose').click();
+    // To avoid unstable test execution
+    // Hide tooltip which overlays 'rna-builder-slot--base' element
+    await moveMouseAway(page);
     await page.getByTestId('rna-builder-slot--base').click();
     await page.getByTestId('A___Adenine').click();
     await page.getByTestId('rna-builder-slot--phosphate').click();
@@ -507,7 +520,7 @@ test.describe('RNA Library', () => {
       { type: 'phosphate', name: 'bP___Boranophosphate' },
     ];
 
-    await expandRnaBuilder(page);
+    await expandCollapseRnaBuilder(page);
 
     for (const monomer of monomers) {
       await page.getByTestId(`rna-builder-slot--${monomer.type}`).click();
@@ -522,7 +535,7 @@ test.describe('RNA Library', () => {
     Test case: #2507 - Add RNA monomers to canvas
     Description: Sugar-Base Combination added to Canvas.
     */
-    await expandRnaBuilder(page);
+    await expandCollapseRnaBuilder(page);
     await selectMonomer(page, Sugars.ThreeA6);
     await selectMonomer(page, Bases.NBebnzylAdenine);
     await page.getByTestId('add-to-presets-btn').click();
@@ -537,9 +550,12 @@ test.describe('RNA Library', () => {
     Test case: #2507 - Add RNA monomers to canvas
     Description: Sugar-Phosphate Combination added to Canvas.
     */
-    await expandRnaBuilder(page);
+    await expandCollapseRnaBuilder(page);
     await selectMonomer(page, Sugars.ThreeA6);
     await selectMonomer(page, Phosphates.Boranophosphate);
+    // To avoid unstable test execution
+    // Hide tooltip which overlays 'add-to-presets-btn' element
+    await moveMouseAway(page);
     await page.getByTestId('add-to-presets-btn').click();
     await page.getByTestId('3A6()bP_._3A6_bP').click();
     await clickInTheMiddleOfTheScreen(page);
@@ -552,7 +568,7 @@ test.describe('RNA Library', () => {
     Test case: #2507 - Add RNA monomers to canvas
     Description: Base-Phosphate Combination not added to Canvas.
     */
-    await expandRnaBuilder(page);
+    await expandCollapseRnaBuilder(page);
     await selectMonomer(page, Bases.NBebnzylAdenine);
     await selectMonomer(page, Phosphates.Boranophosphate);
     await page.getByTestId('add-to-presets-btn').click();

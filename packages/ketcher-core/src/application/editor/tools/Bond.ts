@@ -214,7 +214,7 @@ class PolymerBond implements BaseTool {
   }
 
   public mouseUpAttachmentPoint(event) {
-    const renderer = event.toElement.__data__;
+    const renderer = event.target.__data__;
     const isFirstMonomerHovered =
       renderer === this.bondRenderer?.polymerBond?.firstMonomer?.renderer;
 
@@ -309,7 +309,7 @@ class PolymerBond implements BaseTool {
   }
 
   public mouseUpMonomer(event) {
-    const renderer = event.toElement.__data__;
+    const renderer = event.target.__data__;
     const isFirstMonomerHovered =
       renderer === this.bondRenderer?.polymerBond?.firstMonomer?.renderer;
 

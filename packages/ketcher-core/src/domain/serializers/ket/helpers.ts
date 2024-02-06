@@ -62,36 +62,18 @@ export const switchIntoChemistryCoordSystem = (position: Vec2) => {
 
 export const populateStructWithSelection = (
   populatedStruct: Struct,
-  initialStruct: Struct,
-  selection: { items?: EditorSelection; mappingNeeded?: boolean } = {},
+  selection?: EditorSelection,
 ) => {
-  if (!selection?.items) {
+  if (!selection) {
     return populatedStruct;
   }
-  const mappedSelection = { ...selection.items };
-  if (selection.mappingNeeded) {
-    if (mappedSelection?.atoms) {
-      const aidMap = Array.from(initialStruct.atoms.keys());
-      mappedSelection.atoms = mappedSelection.atoms.map((id) =>
-        aidMap.indexOf(id),
-      );
-    }
-    if (mappedSelection?.bonds) {
-      const bidMap = Array.from(initialStruct.atoms.keys());
-      mappedSelection.bonds = mappedSelection.bonds.map((id) =>
-        bidMap.indexOf(id),
-      );
-    }
-  }
-  Object.keys(mappedSelection).forEach((entity) => {
-    const selectedEntities = mappedSelection[entity];
+  Object.keys(selection).forEach((entity) => {
+    const selectedEntities = selection[entity];
     populatedStruct[entity]?.forEach((value, key) => {
       if (typeof value.setInitiallySelected === 'function') {
         value.setInitiallySelected(selectedEntities.includes(key) || undefined);
-        populatedStruct[entity].set(key, value);
       }
     });
   });
-  console.log(mappedSelection, populatedStruct);
   return populatedStruct;
 };

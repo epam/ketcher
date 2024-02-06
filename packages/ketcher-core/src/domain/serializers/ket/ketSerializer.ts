@@ -534,25 +534,20 @@ export class KetSerializer implements Serializer<Struct> {
   serialize(
     struct: Struct,
     drawingEntitiesManager = new DrawingEntitiesManager(),
-    selection?: { items: EditorSelection; mappingNeeded: boolean },
+    selection?: EditorSelection,
   ) {
+    struct.enableInitiallySelected();
+    const populatedStruct = populateStructWithSelection(struct, selection);
     MacromoleculesConverter.convertStructToDrawingEntities(
-      struct,
+      populatedStruct,
       drawingEntitiesManager,
     );
 
     const { serializedMacromolecules, micromoleculesStruct } =
       this.serializeMacromolecules(new Struct(), drawingEntitiesManager);
 
-    micromoleculesStruct.enableInitiallySelected();
-    const populatedStruct = populateStructWithSelection(
-      micromoleculesStruct,
-      struct,
-      selection,
-    );
-
     const serializedMicromoleculesStruct = JSON.parse(
-      this.serializeMicromolecules(populatedStruct),
+      this.serializeMicromolecules(micromoleculesStruct),
     );
 
     micromoleculesStruct.disableInitiallySelected();

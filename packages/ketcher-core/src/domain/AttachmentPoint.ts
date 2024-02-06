@@ -11,7 +11,7 @@ import {
   getSearchFunction,
 } from './helpers/attachmentPointCalculations';
 import { editorEvents } from 'application/editor/editorEvents';
-import { AttachmentPointConstructorParams } from './types';
+import { AttachmentPointConstructorParams, AttachmentPointName } from './types';
 
 export class AttachmentPoint {
   static attachmentPointVector = 12;
@@ -188,6 +188,9 @@ export class AttachmentPoint {
         event.attachmentPointName = this.attachmentPointName;
         this.editorEvents.mouseOverAttachmentPoint.dispatch(event);
       })
+      .on('mouseleave', (event) => {
+        this.editorEvents.mouseLeaveAttachmentPoint.dispatch(event);
+      })
       .on('mousedown', (event) => {
         event.attachmentPointName = this.attachmentPointName;
         this.editorEvents.mouseDownAttachmentPoint.dispatch(event);
@@ -196,10 +199,6 @@ export class AttachmentPoint {
         event.attachmentPointName = this.attachmentPointName;
         this.editorEvents.mouseUpAttachmentPoint.dispatch(event);
       });
-
-    this.element.on('mouseleave', (event) => {
-      this.editorEvents.mouseLeaveAttachmentPoint.dispatch(event);
-    });
 
     return hoverableAreaElement;
   }
@@ -261,6 +260,21 @@ export class AttachmentPoint {
     this.hoverableArea = hoverableArea;
 
     return attachmentPoint;
+  }
+
+  public updateAttachmentPointStyleForHover() {
+    const isAttachmentPointUsed = this.monomer.isAttachmentPointUsed(
+      this.attachmentPointName as AttachmentPointName,
+    );
+    if (isAttachmentPointUsed) {
+      this.attachmentPoint
+        ?.select('line')
+        .style('stroke', AttachmentPoint.colors.fillUsed);
+      this.attachmentPoint
+        ?.select('circle')
+        .style('fill', AttachmentPoint.colors.fillUsed)
+        .attr('stroke', 'white');
+    }
   }
 
   public rotateToAngle(polymerBond: PolymerBond, flip = false) {

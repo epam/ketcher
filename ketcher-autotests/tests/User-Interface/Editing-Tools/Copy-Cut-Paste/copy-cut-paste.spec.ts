@@ -26,6 +26,7 @@ import {
   waitForIndigoToLoad,
   waitForRender,
   resetCurrentTool,
+  pressButton,
 } from '@utils';
 
 const CANVAS_CLICK_X = 500;
@@ -980,5 +981,25 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await page.keyboard.press('Control+a');
     await selectTopPanelButton(TopPanelButton.Cut, page);
     await selectTopPanelButton(TopPanelButton.Paste, page);
+  });
+
+  test('Paste structure as SMARTS with ctrl+alt+V keyboard shortcut(if the test does not support the Clipboard API then an error appears)', async ({
+    page,
+  }) => {
+    /*
+    Description:
+    Open 'Paste from clipboard' window to copy SMARTS string. https://github.com/epam/ketcher/issues/3393
+    Use ctrl+alt+V keyboard shortcut to paste string as SMARTS
+    */
+    const smartsString =
+      '[#6]-[#6]-[#6]-[#6]-[!#40!#79!#30]-[#6]-[#6]-[#6]-[#6]';
+    await selectTopPanelButton(TopPanelButton.Open, page);
+    await page.getByText('Paste from clipboard').click();
+    await page.getByRole('dialog').getByRole('textbox').fill(smartsString);
+    await page.keyboard.press('Control+a');
+    await page.keyboard.press('Control+c');
+    await pressButton(page, 'Cancel');
+    await page.keyboard.press('Control+Alt+v');
+    await clickInTheMiddleOfTheScreen(page);
   });
 });

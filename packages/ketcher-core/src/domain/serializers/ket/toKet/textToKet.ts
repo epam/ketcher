@@ -19,5 +19,6 @@ export function textToKet(textNode) {
   return {
     type: 'text',
     data: getNodeWithInvertedYCoord(textNode.data),
+    selected: textNode.selected,
   };
 }

@@ -58,4 +58,17 @@ export class Pool<TValue = any> extends Map<number, TValue> {
 
     return false;
   }
+
+  changeInitiallySelectedPropertiesForPool(invalidate?: boolean): void {
+    this.forEach((value, key) => {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      if (typeof value.resetInitiallySelected === 'function') {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        value.resetInitiallySelected(invalidate);
+        this.set(key, value);
+      }
+    });
+  }
 }

@@ -17,7 +17,14 @@
 export const PhosphateAvatar = () => (
   <>
     <symbol id="phosphate" viewBox="0 0 70 70" width="70" height="70">
-      <rect className="monomer-body" width="56" height="56" rx="30" />
+      <rect
+        className="monomer-body"
+        width="56"
+        height="56"
+        data-actual-width="56"
+        data-actual-height="56"
+        rx="30"
+      />
     </symbol>
     <symbol
       id="phosphate-selection"

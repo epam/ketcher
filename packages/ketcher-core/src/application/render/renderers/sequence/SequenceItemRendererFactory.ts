@@ -19,6 +19,7 @@ export class SequenceItemRendererFactory {
     firstMonomerInChainPosition: Vec2,
     monomerIndexInChain: number,
     monomerNumberInSubChain: number,
+    isLastMonomerInChain: boolean,
   ) {
     let RendererClass;
 
@@ -47,6 +48,7 @@ export class SequenceItemRendererFactory {
       firstMonomerInChainPosition,
       monomerIndexInChain,
       monomerNumberInSubChain,
+      isLastMonomerInChain,
     );
   }
 }

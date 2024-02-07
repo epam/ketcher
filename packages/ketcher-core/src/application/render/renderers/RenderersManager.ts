@@ -237,7 +237,7 @@ export class RenderersManager {
       }
       if (
         monomerRenderer instanceof RNABaseRenderer &&
-        !monomerRenderer.monomer.isAttachmentPointUsed('R1')
+        !monomerRenderer.monomer.isAttachmentPointUsed(AttachmentPointName.R1)
       ) {
         monomerRenderer.setEnumeration(null);
         monomerRenderer.redrawEnumeration();

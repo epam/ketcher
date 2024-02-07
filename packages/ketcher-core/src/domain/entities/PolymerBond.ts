@@ -3,6 +3,7 @@ import { PolymerBondRenderer } from 'application/render/renderers/PolymerBondRen
 import { Vec2 } from 'domain/entities/vec2';
 import { BaseMonomer } from './BaseMonomer';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
+import { AttachmentPointName } from 'domain/types';
 
 export class PolymerBond extends DrawingEntity {
   public secondMonomer?: BaseMonomer;
@@ -60,5 +61,35 @@ export class PolymerBond extends DrawingEntity {
     return this.firstMonomer === monomer
       ? this.secondMonomer
       : this.firstMonomer;
+  }
+
+  public static get backBoneChainAttachmentPoints() {
+    return [AttachmentPointName.R1, AttachmentPointName.R2];
+  }
+
+  public get isBackBoneChainConnection() {
+    return !this.isSideChainConnection;
+  }
+
+  public get isSideChainConnection() {
+    const firstMonomerAttachmentPoint =
+      this.firstMonomer.getAttachmentPointByBond(this);
+    const secondMonomerAttachmentPoint =
+      this.secondMonomer?.getAttachmentPointByBond(this);
+
+    if (!firstMonomerAttachmentPoint || !secondMonomerAttachmentPoint) {
+      return false;
+    }
+
+    return (
+      !(
+        PolymerBond.backBoneChainAttachmentPoints.includes(
+          firstMonomerAttachmentPoint,
+        ) &&
+        PolymerBond.backBoneChainAttachmentPoints.includes(
+          secondMonomerAttachmentPoint,
+        )
+      ) || firstMonomerAttachmentPoint === secondMonomerAttachmentPoint
+    );
   }
 }

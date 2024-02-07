@@ -19,9 +19,9 @@ export abstract class BaseMonomer extends DrawingEntity {
     Record<AttachmentPointName, PolymerBond | null>
   > = {};
 
-  public chosenFirstAttachmentPointForBond: string | null;
-  public potentialSecondAttachmentPointForBond: string | null;
-  public chosenSecondAttachmentPointForBond: string | null;
+  public chosenFirstAttachmentPointForBond: AttachmentPointName | null;
+  public potentialSecondAttachmentPointForBond: AttachmentPointName | null;
+  public chosenSecondAttachmentPointForBond: AttachmentPointName | null;
 
   public potentialAttachmentPointsToBonds: {
     [key: string]: PolymerBond | null | undefined;
@@ -74,15 +74,21 @@ export abstract class BaseMonomer extends DrawingEntity {
     this.attachmentPointsVisible = false;
   }
 
-  public setChosenFirstAttachmentPoint(attachmentPoint: string | null) {
+  public setChosenFirstAttachmentPoint(
+    attachmentPoint: AttachmentPointName | null,
+  ) {
     this.chosenFirstAttachmentPointForBond = attachmentPoint;
   }
 
-  public setChosenSecondAttachmentPoint(attachmentPoint: string | null) {
+  public setChosenSecondAttachmentPoint(
+    attachmentPoint: AttachmentPointName | null,
+  ) {
     this.chosenSecondAttachmentPointForBond = attachmentPoint;
   }
 
-  public setPotentialSecondAttachmentPoint(attachmentPoint: string | null) {
+  public setPotentialSecondAttachmentPoint(
+    attachmentPoint: AttachmentPointName | null,
+  ) {
     this.potentialSecondAttachmentPointForBond = attachmentPoint;
   }
 
@@ -109,7 +115,7 @@ export abstract class BaseMonomer extends DrawingEntity {
 
   public abstract getValidSourcePoint(
     monomer?: BaseMonomer,
-  ): string | undefined;
+  ): AttachmentPointName | undefined;
 
   public abstract getValidTargetPoint(monomer: BaseMonomer): string | undefined;
 
@@ -154,7 +160,7 @@ export abstract class BaseMonomer extends DrawingEntity {
 
   public get R1AttachmentPoint(): AttachmentPointName | undefined {
     if (this.attachmentPointsToBonds.R1 === null) {
-      return 'R1';
+      return AttachmentPointName.R1;
     }
 
     return undefined;
@@ -162,7 +168,7 @@ export abstract class BaseMonomer extends DrawingEntity {
 
   public get R2AttachmentPoint(): AttachmentPointName | undefined {
     if (this.attachmentPointsToBonds.R2 === null) {
-      return 'R2';
+      return AttachmentPointName.R2;
     }
 
     return undefined;

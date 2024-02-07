@@ -8,6 +8,7 @@ export abstract class BaseSequenceItemRenderer extends BaseRenderer {
     private firstMonomerInChainPosition: Vec2,
     private monomerIndexInChain: number,
     private monomerNumberInSubChain: number,
+    private isLastMonomerInChain: boolean,
   ) {
     super(monomer);
   }
@@ -24,23 +25,28 @@ export abstract class BaseSequenceItemRenderer extends BaseRenderer {
 
   protected removeHover(): void {}
 
-  private appendRootElement() {
+  public get scaledMonomerPosition() {
+    const indexInRow = (this.monomerIndexInChain - 1) % this.symbolsInRow;
     const rowNumber = Math.floor(
       (this.monomerIndexInChain - 1) / this.symbolsInRow,
     );
-    const indexInRow = (this.monomerIndexInChain - 1) % this.symbolsInRow;
 
+    return new Vec2(
+      this.firstMonomerInChainPosition.x +
+        indexInRow * 18 +
+        Math.floor(indexInRow / this.nthSeparationInRow) * 10,
+      this.firstMonomerInChainPosition.y + 50 * rowNumber,
+    );
+  }
+
+  private appendRootElement() {
     return this.canvas
       .append('g')
       .data([this])
       .attr('transition', 'transform 0.2s')
       .attr(
         'transform',
-        `translate(${
-          this.firstMonomerInChainPosition.x +
-          indexInRow * 18 +
-          Math.floor(indexInRow / this.nthSeparationInRow) * 10
-        }, ${this.firstMonomerInChainPosition.y + 50 * rowNumber})`,
+        `translate(${this.scaledMonomerPosition.x}, ${this.scaledMonomerPosition.y})`,
       ) as never as D3SvgElementSelection<SVGGElement, void>;
   }
 
@@ -62,7 +68,10 @@ export abstract class BaseSequenceItemRenderer extends BaseRenderer {
       .attr('font-weight', '700')
       .attr('fill', '#333333');
 
-    if (this.monomerNumberInSubChain % this.nthSeparationInRow === 0) {
+    if (
+      this.monomerNumberInSubChain % this.nthSeparationInRow === 0 ||
+      this.isLastMonomerInChain
+    ) {
       this.rootElement
         .append('text')
         .attr('x', '-2')

@@ -1,5 +1,5 @@
 import { BaseMonomer } from './BaseMonomer';
-import { MonomerItemType } from 'domain/types';
+import { AttachmentPointName, MonomerItemType } from 'domain/types';
 import { Vec2 } from './vec2';
 import { Sugar } from './Sugar';
 import { Peptide } from './Peptide';
@@ -52,32 +52,32 @@ export class Phosphate extends BaseMonomer {
     // If we chose a specific AP on other monomer, we want to determine the correct AP on this one
     if (potentialPointOnOther) {
       if (
-        potentialPointOnOther === 'R2' &&
-        this.isAttachmentPointExistAndFree('R1')
+        potentialPointOnOther === AttachmentPointName.R2 &&
+        this.isAttachmentPointExistAndFree(AttachmentPointName.R1)
       ) {
-        return 'R1';
+        return AttachmentPointName.R1;
       } else if (
-        potentialPointOnOther !== 'R2' &&
-        this.isAttachmentPointExistAndFree('R2')
+        potentialPointOnOther !== AttachmentPointName.R2 &&
+        this.isAttachmentPointExistAndFree(AttachmentPointName.R2)
       ) {
-        return 'R2';
+        return AttachmentPointName.R2;
       } else {
         return;
       }
     }
 
     if (
-      otherMonomer.isAttachmentPointExistAndFree('R2') &&
-      this.isAttachmentPointExistAndFree('R1')
+      otherMonomer.isAttachmentPointExistAndFree(AttachmentPointName.R2) &&
+      this.isAttachmentPointExistAndFree(AttachmentPointName.R1)
     ) {
-      return 'R1';
+      return AttachmentPointName.R1;
     }
 
     if (
-      !otherMonomer.isAttachmentPointExistAndFree('R2') &&
-      this.isAttachmentPointExistAndFree('R2')
+      !otherMonomer.isAttachmentPointExistAndFree(AttachmentPointName.R2) &&
+      this.isAttachmentPointExistAndFree(AttachmentPointName.R2)
     ) {
-      return 'R2';
+      return AttachmentPointName.R2;
     }
 
     return undefined;

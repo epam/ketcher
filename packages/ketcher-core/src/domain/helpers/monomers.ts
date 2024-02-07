@@ -1,5 +1,5 @@
 import { BaseMonomer, Peptide, Phosphate, Sugar } from 'domain/entities';
-import { MonomerItemType } from 'domain/types';
+import { AttachmentPointName, MonomerItemType } from 'domain/types';
 
 export function getMonomerUniqueKey(monomer: MonomerItemType) {
   return `${monomer.props.MonomerName}___${monomer.props.Name}`;
@@ -44,8 +44,8 @@ export function isMonomerBeginningOfChain(
     previousMonomer?.getAttachmentPointByBond(r1PolymerBond) !== 'R2';
 
   return (
-    ((monomer.isAttachmentPointExistAndFree('R1') ||
-      !monomer.hasAttachmentPoint('R1')) &&
+    ((monomer.isAttachmentPointExistAndFree(AttachmentPointName.R1) ||
+      !monomer.hasAttachmentPoint(AttachmentPointName.R1)) &&
       monomer.hasBonds) ||
     previousConnectionNotR2 ||
     isPreviousMonomerPartOfChain

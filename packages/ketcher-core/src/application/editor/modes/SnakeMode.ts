@@ -16,6 +16,7 @@ export class SnakeMode extends BaseMode {
     );
 
     command.merge(modelChanges);
+    editor.renderersContainer.update(modelChanges);
 
     return command;
   }

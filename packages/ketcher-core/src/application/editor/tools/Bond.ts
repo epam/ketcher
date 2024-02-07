@@ -25,6 +25,7 @@ import { Sugar } from 'domain/entities/Sugar';
 import { RNABase } from 'domain/entities/RNABase';
 import { Phosphate } from 'domain/entities/Phosphate';
 import { Coordinates } from '../shared/coordinates';
+import { AttachmentPointName } from 'domain/types';
 
 class PolymerBond implements BaseTool {
   private bondRenderer?: PolymerBondRenderer;
@@ -484,18 +485,18 @@ class PolymerBond implements BaseTool {
 
       // there is no possibility to connect R1-R2
       const BothR1AttachmentPointUsed =
-        firstMonomer.isAttachmentPointUsed('R1') &&
-        secondMonomer.isAttachmentPointUsed('R1');
+        firstMonomer.isAttachmentPointUsed(AttachmentPointName.R1) &&
+        secondMonomer.isAttachmentPointUsed(AttachmentPointName.R1);
 
       const BothR2AttachmentPointUsed =
-        firstMonomer.isAttachmentPointUsed('R2') &&
-        secondMonomer.isAttachmentPointUsed('R2');
+        firstMonomer.isAttachmentPointUsed(AttachmentPointName.R2) &&
+        secondMonomer.isAttachmentPointUsed(AttachmentPointName.R2);
 
       const R1AndR2AttachmentPointUsed =
-        (firstMonomer.isAttachmentPointUsed('R2') &&
-          firstMonomer.isAttachmentPointUsed('R1')) ||
-        (secondMonomer.isAttachmentPointUsed('R2') &&
-          secondMonomer.isAttachmentPointUsed('R1'));
+        (firstMonomer.isAttachmentPointUsed(AttachmentPointName.R2) &&
+          firstMonomer.isAttachmentPointUsed(AttachmentPointName.R1)) ||
+        (secondMonomer.isAttachmentPointUsed(AttachmentPointName.R2) &&
+          secondMonomer.isAttachmentPointUsed(AttachmentPointName.R1));
 
       if (
         hasPlentyAttachmentPoints &&

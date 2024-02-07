@@ -21,6 +21,8 @@ export const ChemAvatar = () => (
         className="monomer-body"
         width="59"
         height="59"
+        data-actual-width="59"
+        data-actual-height="59"
         rx="1.5"
         fill="#F5F6F7"
       />

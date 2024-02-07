@@ -61,7 +61,10 @@ test.describe('Save files', () => {
     );
 
     const expectedFile = await getRxn(page, 'v2000');
-    await saveToFile('rxn-1849-to-compare-expectedV2000.rxn', expectedFile);
+    await saveToFile(
+      'Rxn-V2000/rxn-1849-to-compare-expectedV2000.rxn',
+      expectedFile,
+    );
 
     const METADATA_STRING_INDEX = [2, 7, 25];
 
@@ -69,7 +72,7 @@ test.describe('Save files', () => {
       await receiveFileComparisonData({
         page,
         expectedFileName:
-          'tests/test-data/rxn-1849-to-compare-expectedV2000.rxn',
+          'tests/test-data/Rxn-V2000/rxn-1849-to-compare-expectedV2000.rxn',
         metaDataIndexes: METADATA_STRING_INDEX,
         fileFormat: 'v2000',
       });

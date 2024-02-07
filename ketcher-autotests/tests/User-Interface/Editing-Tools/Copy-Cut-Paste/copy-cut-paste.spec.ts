@@ -408,7 +408,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     const x = 500;
     const y = 200;
-    await openFileAndAddToCanvas('R-Group-structure.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/R-Group-structure.mol', page);
     await copyAndPaste(page);
     await page.mouse.click(x, y);
   });
@@ -424,7 +424,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const x = 500;
     const y = 300;
     const anyAtom = 5;
-    await openFileAndAddToCanvas('R-Group-structure.mol', page);
+    await openFileAndAddToCanvas('Molfiles-V2000/R-Group-structure.mol', page);
     await cutAndPaste(page);
     await page.mouse.click(x, y);
     await waitForRender(page, async () => {
@@ -534,7 +534,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     const x = 500;
     const y = 200;
-    await openFileAndAddToCanvas('reaction.rxn', page);
+    await openFileAndAddToCanvas('Rxn-V2000/reaction.rxn', page);
     await copyAndPaste(page);
     await page.mouse.click(x, y);
   });
@@ -547,7 +547,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     // Nitrogen atom can't attach to structure.
     const anyAtom = 12;
-    await openFileAndAddToCanvas('reaction.rxn', page);
+    await openFileAndAddToCanvas('Rxn-V2000/reaction.rxn', page);
     await cutAndPaste(page);
     await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);

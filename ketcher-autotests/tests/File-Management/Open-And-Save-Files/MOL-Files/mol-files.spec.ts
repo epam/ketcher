@@ -231,7 +231,7 @@ test('Open and Save file - Open/Save file with R-Groups 1/2 - open', async ({
    */
   await waitForPageInit(page);
 
-  await openFileAndAddToCanvas('Rgroup.mol', page);
+  await openFileAndAddToCanvas('Molfiles-V2000/Rgroup.mol', page);
   // check that structure opened from file is displayed correctly
   await takeEditorScreenshot(page);
 });
@@ -245,16 +245,16 @@ test('Open and Save file - Open/Save file with R-Groups 2/2 - save', async ({
    */
   await waitForPageInit(page);
 
-  await openFileAndAddToCanvas('Rgroup.mol', page);
+  await openFileAndAddToCanvas('Molfiles-V2000/Rgroup.mol', page);
   const expectedFile = await getMolfile(page, 'v2000');
-  await saveToFile('r-group-expected.mol', expectedFile);
+  await saveToFile('Molfiles-V2000/r-group-expected.mol', expectedFile);
 
   const METADATA_STRINGS_INDEXES = [0, 4];
 
   const { fileExpected: molFileExpected, file: molFile } =
     await receiveFileComparisonData({
       page,
-      expectedFileName: 'tests/test-data/r-group-expected.mol',
+      expectedFileName: 'tests/test-data/Molfiles-V2000/r-group-expected.mol',
       fileFormat: 'v2000',
       metaDataIndexes: METADATA_STRINGS_INDEXES,
     });
@@ -569,7 +569,10 @@ test('Open and Save file - Save V3000 molfile as V2000 molfile', async ({
 test('Open V3000 file with R-Groups with Fragments', async ({ page }) => {
   // Related Github issue https://github.com/epam/ketcher/issues/2774
   await waitForPageInit(page);
-  await openFileAndAddToCanvas('RGroup-With-Fragments.mol', page);
+  await openFileAndAddToCanvas(
+    'Molfiles-V3000/RGroup-With-Fragments.mol',
+    page,
+  );
   await takeEditorScreenshot(page);
 });
 

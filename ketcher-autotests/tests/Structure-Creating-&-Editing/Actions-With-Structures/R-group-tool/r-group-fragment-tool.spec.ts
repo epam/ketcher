@@ -154,7 +154,10 @@ test.describe('Open Ketcher', () => {
     /* Test case: EPMLSOPKET-1589
       Description: Remove R-Group member from R-Group. File used for test - R-fragment-structure.mol
     */
-    await openFileAndAddToCanvas('R-fragment-structure.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/R-fragment-structure.mol',
+      page,
+    );
     await clickInTheMiddleOfTheScreen(page);
     await selectRGroups(page, ['R5']);
   });
@@ -165,7 +168,10 @@ test.describe('Open Ketcher', () => {
     /* Test case: EPMLSOPKET-1588
       Description: Change R-Group definition for multiple R-Group members. File used for test - R-fragment-structure.mol
     */
-    await openFileAndAddToCanvas('R-fragment-structure.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/R-fragment-structure.mol',
+      page,
+    );
     await clickInTheMiddleOfTheScreen(page);
     await selectRGroups(page, ['R7']);
   });
@@ -216,7 +222,10 @@ test.describe('Open Ketcher', () => {
     /* Test case: EPMLSOPKET-1591
       Description: R-Group definition is not deleted when root structure was deleted
     */
-    await openFileAndAddToCanvas('R-fragment-structure.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/R-fragment-structure.mol',
+      page,
+    );
     await page.getByText('R8').click();
     await page.keyboard.press('Delete');
   });
@@ -225,7 +234,10 @@ test.describe('Open Ketcher', () => {
     /* Test case: EPMLSOPKET-1590
   Description: Delete R-Group member
   */
-    await openFileAndAddToCanvas('R-fragment-structure.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/R-fragment-structure.mol',
+      page,
+    );
 
     await selectDropdownTool(page, 'select-rectangle', 'select-fragment');
     await page.getByText('R8').click();

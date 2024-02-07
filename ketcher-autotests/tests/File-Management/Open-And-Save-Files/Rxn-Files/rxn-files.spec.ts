@@ -346,7 +346,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
      * Test case: EPMLSOPKET-1902(1)
      * Description: Reaction can be opened correctly from rxn V3000 file
      */
-    await openFileAndAddToCanvas('Rgroup_V3000.rxn', page);
+    await openFileAndAddToCanvas('Rxn-V3000/r-group-V3000.rxn', page);
     // check that structure opened from file is displayed correctly
     await takeEditorScreenshot(page);
   });
@@ -358,9 +358,9 @@ test.describe('Tests for Open and Save RXN file operations', () => {
      * Test case: EPMLSOPKET-1902(2)
      * Description: Reaction can be saved correctly to rxn V3000 file
      */
-    await openFileAndAddToCanvas('Rgroup_V3000.rxn', page);
+    await openFileAndAddToCanvas('Rxn-V3000/r-group-V3000.rxn', page);
     const expectedFile = await getRxn(page, 'v3000');
-    await saveToFile('r-group-V3000-expectedV3000.rxn', expectedFile);
+    await saveToFile('Rxn-V3000/r-group-V3000-expectedV3000.rxn', expectedFile);
 
     // eslint-disable-next-line no-magic-numbers
     const METADATA_STRINGS_INDEXES = [2];
@@ -368,7 +368,8 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     const { fileExpected: rxnFileExpected, file: rxnFile } =
       await receiveFileComparisonData({
         page,
-        expectedFileName: 'tests/test-data/r-group-V3000-expectedV3000.rxn',
+        expectedFileName:
+          'tests/test-data/Rxn-V3000/r-group-V3000-expectedV3000.rxn',
         metaDataIndexes: METADATA_STRINGS_INDEXES,
         fileFormat: 'v3000',
       });

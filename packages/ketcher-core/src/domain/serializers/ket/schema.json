@@ -109,6 +109,9 @@
             "type": "number"
           }
         },
+        "selected": {
+          "type": "boolean"
+        },
         "charge": {
           "type": "integer",
           "minimum": -1000,
@@ -252,6 +255,9 @@
             "type": "integer",
             "minimum": 0
           }
+        },
+        "selected": {
+          "type": "boolean"
         },
         "stereobox": {
           "type": "integer",
@@ -608,6 +614,9 @@
           "items": {
             "type": "number"
           }
+        },
+        "selected": {
+          "type": "boolean"
         }
       }
     },
@@ -647,6 +656,9 @@
               "type": "number"
             }
           }
+        },
+        "selected": {
+          "type": "boolean"
         }
       }
     },
@@ -757,6 +769,9 @@
               }
             }
           }
+        },
+        "selected": {
+          "type": "boolean"
         }
       }
     }

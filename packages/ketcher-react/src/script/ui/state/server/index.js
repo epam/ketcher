@@ -179,27 +179,44 @@ function resetStereoFlagsPosition(struct) {
 export function serverCall(editor, server, method, options, struct) {
   const selection = editor.selection();
   let selectedAtoms = [];
+  let selectedBonds = [];
   const aidMap = new Map();
+  const bidMap = new Map();
   const currentStruct = (struct || editor.struct()).clone(
     null,
     null,
     false,
     aidMap,
+    null,
+    null,
+    null,
+    bidMap,
   );
+  const expSel = editor.explicitSelected();
   if (selection) {
-    selectedAtoms = (
-      selection.atoms ? selection.atoms : editor.explicitSelected().atoms
-    ).map((aid) => aidMap.get(aid));
+    selectedAtoms = (selection.atoms ? selection.atoms : expSel.atoms).map(
+      (aid) => aidMap.get(aid),
+    );
+    selectedBonds = (selection.bonds ? selection.bonds : expSel.bonds).map(
+      (bid) => bidMap.get(bid),
+    );
   }
   if (method === 'layout') {
     resetStereoFlagsPosition(currentStruct);
   }
+
   const ketSerializer = new KetSerializer();
+  const serializedStruct = ketSerializer.serialize(currentStruct, undefined, {
+    ...selection,
+    atoms: selectedAtoms,
+    bonds: selectedBonds,
+  });
+
   return server.then(() =>
     server[method](
       Object.assign(
         {
-          struct: ketSerializer.serialize(currentStruct),
+          struct: serializedStruct,
         },
         method !== 'calculate' && method !== 'check'
           ? {

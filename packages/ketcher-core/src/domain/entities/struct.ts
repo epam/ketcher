@@ -140,6 +140,7 @@ export class Struct {
     simpleObjectsSet?: Pile<number> | null,
     textsSet?: Pile<number> | null,
     rgroupAttachmentPointSet?: Pile<number> | null,
+    bidMap?: Map<number, number> | null,
   ): Struct {
     return this.mergeInto(
       new Struct(),
@@ -151,6 +152,7 @@ export class Struct {
       simpleObjectsSet,
       textsSet,
       rgroupAttachmentPointSet,
+      bidMap,
     );
   }
 
@@ -203,6 +205,7 @@ export class Struct {
     simpleObjectsSet?: Pile<number> | null,
     textsSet?: Pile<number> | null,
     rgroupAttachmentPointSet?: Pile<number> | null,
+    bidMapEntity?: Map<number, number> | null,
   ): Struct {
     atomSet = atomSet || new Pile<number>(this.atoms.keys());
     bondSet = bondSet || new Pile<number>(this.bonds.keys());
@@ -213,6 +216,7 @@ export class Struct {
       rgroupAttachmentPointSet ||
       new Pile<number>(this.rgroupAttachmentPoints.keys());
     aidMap = aidMap || new Map();
+    const bidMap = bidMapEntity || new Map();
 
     bondSet = bondSet.filter((bid) => {
       const bond = this.bonds.get(bid)!;
@@ -273,7 +277,6 @@ export class Struct {
       }
     });
 
-    const bidMap = new Map();
     this.bonds.forEach((bond, bid) => {
       if (bondSet!.has(bid)) bidMap.set(bid, cp.bonds.add(bond.clone(aidMap!)));
     });
@@ -1243,5 +1246,23 @@ export class Struct {
         (target.map === 'atoms' && this.isAtomFromMacromolecule(target.id)) ||
         (target.map === 'bonds' && this.isBondFromMacromolecule(target.id)))
     );
+  }
+
+  disableInitiallySelected(): void {
+    // Those fields are used only in serialization/deserialization phase
+    // so we are disabling them to avoid confusion
+    this.atoms.changeInitiallySelectedPropertiesForPool(true);
+    this.bonds.changeInitiallySelectedPropertiesForPool(true);
+    this.rxnPluses.changeInitiallySelectedPropertiesForPool(true);
+    this.rxnArrows.changeInitiallySelectedPropertiesForPool(true);
+    this.texts.changeInitiallySelectedPropertiesForPool(true);
+  }
+
+  enableInitiallySelected(): void {
+    this.atoms.changeInitiallySelectedPropertiesForPool();
+    this.bonds.changeInitiallySelectedPropertiesForPool();
+    this.rxnPluses.changeInitiallySelectedPropertiesForPool();
+    this.rxnArrows.changeInitiallySelectedPropertiesForPool();
+    this.texts.changeInitiallySelectedPropertiesForPool();
   }
 }

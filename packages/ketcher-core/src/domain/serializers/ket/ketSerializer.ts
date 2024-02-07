@@ -37,7 +37,7 @@ import {
   IKetMonomerTemplate,
 } from 'application/formatters/types/ket';
 import { Command } from 'domain/entities/Command';
-import { CoreEditor } from 'application/editor';
+import { CoreEditor, EditorSelection } from 'application/editor';
 import { monomerToDrawingEntity } from 'domain/serializers/ket/fromKet/monomerToDrawingEntity';
 import assert from 'assert';
 import { polymerBondToDrawingEntity } from 'domain/serializers/ket/fromKet/polymerBondToDrawingEntity';
@@ -51,6 +51,7 @@ import { Chem } from 'domain/entities/Chem';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import {
   getKetRef,
+  populateStructWithSelection,
   setMonomerPrefix,
   setMonomerTemplatePrefix,
   switchIntoChemistryCoordSystem,
@@ -127,7 +128,6 @@ export class KetSerializer implements Serializer<Struct> {
         nodes: [],
       },
     };
-
     const header = headerToKet(struct);
     if (header) result.header = header;
 
@@ -254,7 +254,6 @@ export class KetSerializer implements Serializer<Struct> {
       deserializedContent?.drawingEntitiesManager,
       struct,
     );
-
     return struct;
   }
 
@@ -300,6 +299,7 @@ export class KetSerializer implements Serializer<Struct> {
     const monomerIdsMap = {};
     parsedFileContent.root.nodes.forEach((node) => {
       const nodeDefinition = parsedFileContent[node.$ref];
+
       switch (nodeDefinition?.type) {
         case 'monomer': {
           const template = parsedFileContent[
@@ -534,9 +534,12 @@ export class KetSerializer implements Serializer<Struct> {
   serialize(
     struct: Struct,
     drawingEntitiesManager = new DrawingEntitiesManager(),
+    selection?: EditorSelection,
   ) {
+    struct.enableInitiallySelected();
+    const populatedStruct = populateStructWithSelection(struct, selection);
     MacromoleculesConverter.convertStructToDrawingEntities(
-      struct,
+      populatedStruct,
       drawingEntitiesManager,
     );
 
@@ -547,6 +550,7 @@ export class KetSerializer implements Serializer<Struct> {
       this.serializeMicromolecules(micromoleculesStruct),
     );
 
+    micromoleculesStruct.disableInitiallySelected();
     const fileContent = {
       ...serializedMicromoleculesStruct,
       ...serializedMacromolecules,

@@ -14,8 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Vec2, Axis, Axises } from 'domain/entities';
+import { Vec2, Axis, Axises, Struct } from 'domain/entities';
 import { cloneDeepWith, cloneDeep } from 'lodash';
+import { EditorSelection } from 'application/editor';
 
 const customizer = (value: any) => {
   if (typeof value === 'object' && value.y) {
@@ -57,4 +58,22 @@ const rotateCoordAxisBy180Degrees = (position: Vec2, axis: Axises): Vec2 => {
  */
 export const switchIntoChemistryCoordSystem = (position: Vec2) => {
   return rotateCoordAxisBy180Degrees(position, Axis.y);
+};
+
+export const populateStructWithSelection = (
+  populatedStruct: Struct,
+  selection?: EditorSelection,
+) => {
+  if (!selection) {
+    return populatedStruct;
+  }
+  Object.keys(selection).forEach((entity) => {
+    const selectedEntities = selection[entity];
+    populatedStruct[entity]?.forEach((value, key) => {
+      if (typeof value.setInitiallySelected === 'function') {
+        value.setInitiallySelected(selectedEntities.includes(key) || undefined);
+      }
+    });
+  });
+  return populatedStruct;
 };

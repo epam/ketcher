@@ -199,9 +199,18 @@ class SaveDialog extends Component {
         { ...options, ignoreChiralFlag },
         queryPropertiesAreUsed,
       );
-
-      return service
-        .getStructureFromStructAsync(struct)
+      const getStructFromStringByType = () => {
+        if (type === 'ket') {
+          const selection = this.props.editor.selection();
+          return service.getStructureFromStructAsync(
+            struct,
+            undefined,
+            selection,
+          );
+        }
+        return service.getStructureFromStructAsync(struct);
+      };
+      return getStructFromStringByType()
         .then(
           (structStr) => {
             this.setState({
@@ -507,6 +516,7 @@ const mapStateToProps = (state) => ({
   checkState: state.options.check,
   bondThickness: state.options.settings.bondThickness,
   ignoreChiralFlag: state.editor.render.options.ignoreChiralFlag,
+  editor: state.editor,
 });
 
 const mapDispatchToProps = (dispatch) => ({

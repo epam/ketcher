@@ -2,14 +2,12 @@ import { Page, expect, test } from '@playwright/test';
 import {
   selectTopPanelButton,
   TopPanelButton,
-  delay,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   readFileContents,
   pasteFromClipboard,
   pressButton,
   clickInTheMiddleOfTheScreen,
-  DELAY_IN_SECONDS,
   waitForLoad,
   waitForPageInit,
   nonEmptyString,
@@ -102,7 +100,6 @@ test.describe('SMILES files', () => {
     */
     await openFileAndAddToCanvas('sec_butyl_abr.mol', page);
     await getPreviewForSmiles(page, 'Daylight SMILES');
-    await delay(DELAY_IN_SECONDS.TWO);
     await page.getByText('Warnings').click();
   });
 
@@ -224,7 +221,6 @@ test.describe('SMILES files', () => {
       // eslint-disable-next-line max-len
       'S=CC(F)CCCCC[C@@](CCO)/C=C/[C@@](N)CCC[C]C([13C]CC([C+2]CC(CC%91)CC(C)CCC)CCC)CC%92.[*:2]%92.[*:1]%91 |$;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;_R2;_R1$,rb:32:*,u:3|',
     );
-    await delay(DELAY_IN_SECONDS.THREE);
   });
 
   test('SmileString from file that contains Cis/Trans configuration', async ({

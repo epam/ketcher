@@ -5,8 +5,6 @@ import {
   openFileAndAddToCanvas,
   TopPanelButton,
   takeEditorScreenshot,
-  DELAY_IN_SECONDS,
-  delay,
   getAndCompareInchi,
   getAndCompareSmiles,
   BondType,
@@ -332,8 +330,10 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       y: 160,
     };
     await openFileAndAddToCanvas('structure-with-stereo-bonds.mol', page);
-    await selectTopPanelButton(TopPanelButton.Calculate, page);
-    await delay(DELAY_IN_SECONDS.TWO);
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await selectTopPanelButton(TopPanelButton.Calculate, page),
+    );
     await page.keyboard.press('Control+a');
     const coordinates = await getRotationHandleCoordinates(page);
     const { x: rotationHandleX, y: rotationHandleY } = coordinates;
@@ -375,8 +375,9 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       'Molfiles-V2000/chain-with-stereo-bonds.mol',
       page,
     );
-    await selectTopPanelButton(TopPanelButton.Calculate, page);
-    await delay(DELAY_IN_SECONDS.TWO);
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Calculate, page);
+    });
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 3);
     await page.mouse.move(point.x, point.y);
   });

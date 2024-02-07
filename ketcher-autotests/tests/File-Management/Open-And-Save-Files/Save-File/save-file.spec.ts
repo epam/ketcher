@@ -2,12 +2,10 @@
 import { test, expect, Page } from '@playwright/test';
 import {
   AtomButton,
-  DELAY_IN_SECONDS,
   FILE_TEST_DATA,
   RingButton,
   TopPanelButton,
   clickInTheMiddleOfTheScreen,
-  delay,
   drawBenzeneRing,
   openFileAndAddToCanvas,
   openPasteFromClipboard,
@@ -187,8 +185,6 @@ test.describe('Save files', () => {
       'Molfiles-V3000/structure-where-atoms-exceeds999.mol',
       page,
     );
-    // Very large structure. After we change delay to waitingForRender.
-    await delay(DELAY_IN_SECONDS.EIGHT);
     const expectedFile = await getMolfile(page);
     await saveToFile(
       'Molfiles-V3000/structure-where-atoms-exceeds999-expected.mol',

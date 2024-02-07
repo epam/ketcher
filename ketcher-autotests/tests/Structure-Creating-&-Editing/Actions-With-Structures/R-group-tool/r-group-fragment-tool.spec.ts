@@ -1,6 +1,5 @@
 import { expect, Page, test } from '@playwright/test';
 import {
-  delay,
   takeEditorScreenshot,
   clickInTheMiddleOfTheScreen,
   getCoordinatesTopAtomOfBenzeneRing,
@@ -8,7 +7,6 @@ import {
   RingButton,
   selectNestedTool,
   RgroupTool,
-  DELAY_IN_SECONDS,
   AttachmentPoint,
   openFileAndAddToCanvas,
   pressButton,
@@ -124,7 +122,6 @@ test.describe('Open Ketcher', () => {
     await page.getByText('R5').click();
     await page.getByTestId('OK').click();
 
-    await delay(DELAY_IN_SECONDS.THREE);
     await page.keyboard.press('Control+r');
     await page.mouse.click(x, y);
     await page.getByLabel(AttachmentPoint.PRIMARY).check();
@@ -199,7 +196,6 @@ test.describe('Open Ketcher', () => {
     await selectRingButton(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
 
-    await delay(DELAY_IN_SECONDS.THREE);
     await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
     await page.mouse.click(x, y);

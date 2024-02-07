@@ -2,10 +2,8 @@
 import { test } from '@playwright/test';
 import {
   pressButton,
-  delay,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
-  DELAY_IN_SECONDS,
   BondType,
   selectAtomInToolbar,
   AtomButton,
@@ -13,6 +11,7 @@ import {
   selectLeftPanelButton,
   LeftPanelButton,
   waitForPageInit,
+  waitForRender,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
@@ -97,10 +96,10 @@ test.describe('Right-click menu', () => {
     await page.mouse.click(point.x, point.y, { button: 'right' });
     await page.getByText('Double', { exact: true }).click();
 
-    await delay(DELAY_IN_SECONDS.TWO);
-
     point = await getAtomByIndex(page, { label: 'C' }, 1);
-    await page.mouse.click(point.x, point.y);
+    await waitForRender(page, async () => {
+      await page.mouse.click(point.x, point.y);
+    });
     await resetCurrentTool(page);
   });
 

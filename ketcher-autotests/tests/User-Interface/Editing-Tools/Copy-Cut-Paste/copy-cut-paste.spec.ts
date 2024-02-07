@@ -20,8 +20,6 @@ import {
   copyAndPaste,
   getControlModifier,
   INPUT_DELAY,
-  delay,
-  DELAY_IN_SECONDS,
   waitForPageInit,
   waitForIndigoToLoad,
   waitForRender,
@@ -942,7 +940,6 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     await waitForIndigoToLoad(page);
     await page.getByTestId('copy-button-dropdown-triangle').click();
-    await delay(DELAY_IN_SECONDS.THREE);
     await expect(page).toHaveScreenshot();
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);

@@ -33,12 +33,12 @@ export class PolymerBondSequenceRenderer extends BaseRenderer {
     const mainLineY1 =
       firstMonomerY -
       (firstMonomerY > secondMonomerY ? 15 : -3) +
-      (this.areMonomersOnSameRow ? 5 : 0);
+      (this.areMonomersOnSameRow ? -25 : 0);
 
     const mainLineY2 =
       secondMonomerY -
       (secondMonomerY > firstMonomerY ? 15 : -3) +
-      (this.areMonomersOnSameRow ? 5 : 0);
+      (this.areMonomersOnSameRow ? -25 : 0);
 
     this.rootElement
       ?.append('line')
@@ -54,7 +54,7 @@ export class PolymerBondSequenceRenderer extends BaseRenderer {
         .attr('stroke', 'black')
         .attr('x1', firstMonomerX + 6)
         .attr('x2', firstMonomerX + 6)
-        .attr('y1', mainLineY1 - 5)
+        .attr('y1', mainLineY1 + 5)
         .attr('y2', mainLineY1);
 
       this.rootElement
@@ -62,7 +62,7 @@ export class PolymerBondSequenceRenderer extends BaseRenderer {
         .attr('stroke', 'black')
         .attr('x1', secondMonomerX + 6)
         .attr('x2', secondMonomerX + 6)
-        .attr('y1', mainLineY2 - 5)
+        .attr('y1', mainLineY2 + 5)
         .attr('y2', mainLineY2);
     }
   }

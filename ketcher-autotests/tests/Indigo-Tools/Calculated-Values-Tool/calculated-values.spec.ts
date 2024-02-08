@@ -315,7 +315,10 @@ test.describe('Calculated Values Tools', () => {
     Elemental Analysis:
     error: Cannot calculate mass for structure with repeating units
     */
-    await openFileAndAddToCanvas('sru-polymer-structure.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/sru-polymer-structure.mol',
+      page,
+    );
     await selectTopPanelButton(TopPanelButton.Calculated, page);
   });
 
@@ -357,7 +360,10 @@ test.describe('Calculated Values Tools', () => {
     Elemental Analysis:
     C 84.6 H 15.4
     */
-    await openFileAndAddToCanvas('superatom-structure.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/superatom-structure.mol',
+      page,
+    );
     await selectTopPanelButton(TopPanelButton.Calculated, page);
   });
 

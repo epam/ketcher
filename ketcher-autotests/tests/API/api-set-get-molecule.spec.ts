@@ -154,12 +154,16 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     );
 
     const expectedFile = await getMolfile(page, 'v3000');
-    await saveToFile('test-data-for-enatiomer.mol', expectedFile);
+    await saveToFile(
+      'Molfiles-V3000/test-data-for-enatiomer.mol',
+      expectedFile,
+    );
 
     const { fileExpected: molFileExpected, file: molFile } =
       await receiveFileComparisonData({
         page,
-        expectedFileName: 'tests/test-data/test-data-for-enatiomer.mol',
+        expectedFileName:
+          'tests/test-data/Molfiles-V3000/test-data-for-enatiomer.mol',
         metaDataIndexes: [ignoredLineIndigo],
         fileFormat: 'v3000',
       });

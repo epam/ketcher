@@ -152,7 +152,7 @@ test('Open and Save file - Open/Save V2000 *.mol file contains abbreviation 1/2 
    */
   await waitForPageInit(page);
 
-  await openFileAndAddToCanvas('sec_butyl_abr.mol', page);
+  await openFileAndAddToCanvas('Molfiles-V2000/sec-butyl-abr.mol', page);
   // check that structure opened from file is displayed correctly
   await takeEditorScreenshot(page);
 });
@@ -166,16 +166,17 @@ test('Open and Save file - Open/Save V2000 *.mol file contains abbreviation 2/2 
    */
   await waitForPageInit(page);
 
-  await openFileAndAddToCanvas('sec_butyl_abr.mol', page);
+  await openFileAndAddToCanvas('Molfiles-V2000/sec-butyl-abr.mol', page);
   const expectedFile = await getMolfile(page, 'v2000');
-  await saveToFile('sec_butyl_abr-expected.mol', expectedFile);
+  await saveToFile('Molfiles-V2000/sec-butyl-abr-expected.mol', expectedFile);
 
   const METADATA_STRING_INDEX = [1];
 
   const { fileExpected: molFileExpected, file: molFile } =
     await receiveFileComparisonData({
       page,
-      expectedFileName: 'tests/test-data/sec_butyl_abr-expected.mol',
+      expectedFileName:
+        'tests/test-data/Molfiles-V2000/sec-butyl-abr-expected.mol',
       fileFormat: 'v2000',
       metaDataIndexes: METADATA_STRING_INDEX,
     });
@@ -192,7 +193,7 @@ test('Open and Save file - Open/Save V3000 *.mol file contains abbreviation 1/2 
    */
   await waitForPageInit(page);
 
-  await openFileAndAddToCanvas('sec_butyl_abr_V3000.mol', page);
+  await openFileAndAddToCanvas('Molfiles-V3000/sec-butyl-abr-V3000.mol', page);
   // check that structure opened from file is displayed correctly
   await takeEditorScreenshot(page);
 });
@@ -206,15 +207,19 @@ test('Open and Save file - Open/Save V3000 *.mol file contains abbreviation 2/2 
    */
   await waitForPageInit(page);
 
-  await openFileAndAddToCanvas('sec_butyl_abr_V3000.mol', page);
+  await openFileAndAddToCanvas('Molfiles-V3000/sec-butyl-abr-V3000.mol', page);
   const expectedFile = await getMolfile(page, 'v3000');
-  await saveToFile('sec_butyl_abr_V3000-expected.mol', expectedFile);
+  await saveToFile(
+    'Molfiles-V3000/sec_butyl_abr_V3000-expected.mol',
+    expectedFile,
+  );
   const METADATA_STRING_INDEX = [1];
 
   const { fileExpected: molFileExpected, file: molFile } =
     await receiveFileComparisonData({
       page,
-      expectedFileName: 'tests/test-data/sec_butyl_abr_V3000-expected.mol',
+      expectedFileName:
+        'tests/test-data/Molfiles-V3000/sec_butyl_abr_V3000-expected.mol',
       fileFormat: 'v3000',
       metaDataIndexes: METADATA_STRING_INDEX,
     });
@@ -442,7 +447,7 @@ test('Open and Save file - Open/Save file contains abs stereochemistry 1/2 - ope
    */
   await waitForPageInit(page);
 
-  await openFileAndAddToCanvas('V2000_abs.mol', page);
+  await openFileAndAddToCanvas('Molfiles-V2000/V2000-abs.mol', page);
   // check that structure opened from file is displayed correctly
   await takeEditorScreenshot(page);
 });
@@ -456,15 +461,15 @@ test('Open and Save file - Open/Save file contains abs stereochemistry 2/2 - sav
    */
   await waitForPageInit(page);
 
-  await openFileAndAddToCanvas('V2000_abs.mol', page);
+  await openFileAndAddToCanvas('Molfiles-V2000/V2000-abs.mol', page);
   const expectedFile = await getMolfile(page, 'v2000');
-  await saveToFile('V2000-abs-expected.mol', expectedFile);
+  await saveToFile('Molfiles-V2000/V2000-abs-expected.mol', expectedFile);
   const METADATA_STRING_INDEX = [1];
 
   const { fileExpected: molFileExpected, file: molFile } =
     await receiveFileComparisonData({
       page,
-      expectedFileName: 'tests/test-data/V2000-abs-expected.mol',
+      expectedFileName: 'tests/test-data/Molfiles-V2000/V2000-abs-expected.mol',
       fileFormat: 'v2000',
       metaDataIndexes: METADATA_STRING_INDEX,
     });
@@ -481,7 +486,7 @@ test('Open and Save file - Open/Save V3000 mol file contains abs stereochemistry
    */
   await waitForPageInit(page);
 
-  await openFileAndAddToCanvas('V3000_abs.mol', page);
+  await openFileAndAddToCanvas('Molfiles-V3000/V3000-abs.mol', page);
   // check that structure opened from file is displayed correctly
   await takeEditorScreenshot(page);
 });
@@ -495,15 +500,15 @@ test('Open and Save file - Open/Save V3000 mol file contains abs stereochemistry
    */
   await waitForPageInit(page);
 
-  await openFileAndAddToCanvas('V3000_abs.mol', page);
+  await openFileAndAddToCanvas('Molfiles-V3000/V3000-abs.mol', page);
   const expectedFile = await getMolfile(page, 'v3000');
-  await saveToFile('V3000-abs-expected.mol', expectedFile);
+  await saveToFile('Molfiles-V3000/V3000-abs-expected.mol', expectedFile);
   const METADATA_STRING_INDEX = [1];
 
   const { fileExpected: molFileExpected, file: molFile } =
     await receiveFileComparisonData({
       page,
-      expectedFileName: 'tests/test-data/V3000-abs-expected.mol',
+      expectedFileName: 'tests/test-data/Molfiles-V3000/V3000-abs-expected.mol',
       fileFormat: 'v3000',
       metaDataIndexes: METADATA_STRING_INDEX,
     });
@@ -520,16 +525,16 @@ test('Open and Save file - Save V2000 molfile as V3000 molfile', async ({
    */
   await waitForPageInit(page);
 
-  await openFileAndAddToCanvas('spiro.mol', page);
+  await openFileAndAddToCanvas('Molfiles-V2000/spiro2.mol', page);
   const expectedFile = await getMolfile(page, 'v3000');
-  await saveToFile('spiro-expected.mol', expectedFile);
+  await saveToFile('Molfiles-V3000/spiro-expected.mol', expectedFile);
 
   const METADATA_STRINGS_INDEXES = [1, 3];
 
   const { fileExpected: molFileExpected, file: molFile } =
     await receiveFileComparisonData({
       page,
-      expectedFileName: 'tests/test-data/spiro-expected.mol',
+      expectedFileName: 'tests/test-data/Molfiles-V3000/spiro-expected.mol',
       metaDataIndexes: METADATA_STRINGS_INDEXES,
       fileFormat: 'v3000',
     });

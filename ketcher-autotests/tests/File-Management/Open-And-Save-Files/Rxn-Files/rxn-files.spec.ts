@@ -274,7 +274,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
      * Test case: EPMLSOPKET-1899(1)
      * Description: Reaction with abbreviations is opened and saved correctly
      */
-    await openFileAndAddToCanvas('sec_butyl_abr.rxn', page);
+    await openFileAndAddToCanvas('Rxn-V2000/sec-butyl-abr.rxn', page);
     await takeEditorScreenshot(page);
   });
 
@@ -285,9 +285,9 @@ test.describe('Tests for Open and Save RXN file operations', () => {
      * Test case: EPMLSOPKET-1899(2)
      * Description: Reaction with abbreviations is opened and saved correctly
      */
-    await openFileAndAddToCanvas('sec_butyl_abr.rxn', page);
+    await openFileAndAddToCanvas('Rxn-V2000/sec-butyl-abr.rxn', page);
     const expectedFile = await getRxn(page, 'v2000');
-    await saveToFile('sec-butyl-abr-expectedV2000.rxn', expectedFile);
+    await saveToFile('Rxn-V2000/sec-butyl-abr-expectedV2000.rxn', expectedFile);
 
     // eslint-disable-next-line no-magic-numbers
     const METADATA_STRINGS_INDEXES = [2, 7, 23, 54];
@@ -295,7 +295,8 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     const { fileExpected: rxnFileExpected, file: rxnFile } =
       await receiveFileComparisonData({
         page,
-        expectedFileName: 'tests/test-data/sec-butyl-abr-expectedV2000.rxn',
+        expectedFileName:
+          'tests/test-data/Rxn-V2000/sec-butyl-abr-expectedV2000.rxn',
         metaDataIndexes: METADATA_STRINGS_INDEXES,
       });
 

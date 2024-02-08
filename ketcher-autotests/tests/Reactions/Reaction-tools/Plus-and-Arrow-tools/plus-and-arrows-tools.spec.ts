@@ -511,7 +511,7 @@ test.describe('Plus and Arrows tools ', () => {
 
     test('open file', async ({ page }) => {
       await openFileAndAddToCanvas(
-        'non-default-reaction-arrow-tool-saving.rxn',
+        'Other-Files/non-default-reaction-arrow-tool-saving.rxn',
         page,
       );
     });
@@ -536,7 +536,7 @@ test.describe('Plus and Arrows tools ', () => {
 
       test(`open ${fileExtension} file`, async ({ page }) => {
         await openFileAndAddToCanvas(
-          `default-reaction-arrow-tool-saving.${fileExtension}`,
+          `Other-Files/default-reaction-arrow-tool-saving.${fileExtension}`,
           page,
         );
       });
@@ -561,7 +561,7 @@ test.describe('Plus and Arrows tools ', () => {
 
       test(`open ${fileExtension} file`, async ({ page }) => {
         await openFileAndAddToCanvas(
-          `non-default-reaction-arrow-tool-saving.${fileExtension}`,
+          `Other-Files/non-default-reaction-arrow-tool-saving.${fileExtension}`,
           page,
         );
       });

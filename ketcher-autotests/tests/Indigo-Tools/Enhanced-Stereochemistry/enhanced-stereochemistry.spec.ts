@@ -100,7 +100,10 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     Description: The 'Enhanced Stereochemistry' window is closed. The 'or1' stereo mark appears
     next to the selected stereocenter.
     */
-    await openFileAndAddToCanvas('stereo-structure-enchanced.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/stereo-structure-enchanced.mol',
+      page,
+    );
     await clickOnAtom(page, 'C', 1);
     await selectRadioButtonForNewGroup(page, 'Create new OR Group', true);
 
@@ -112,7 +115,10 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     Test case: EPMLSOPKET-2219
     Description: The 'or1' and 'or2' stereo marks appear next to the selected stereocenter.
     */
-    await openFileAndAddToCanvas('stereo-structure-enchanced.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/stereo-structure-enchanced.mol',
+      page,
+    );
     await clickOnAtom(page, 'C', 1);
     await selectRadioButtonForNewGroup(page, 'Create new OR Group');
 
@@ -125,7 +131,10 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     Test case: EPMLSOPKET-2219
     Description: The 'or1' and 'or2' stereo marks appear next to the selected stereocenter.
     */
-    await openFileAndAddToCanvas('stereo-structure-enchanced.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/stereo-structure-enchanced.mol',
+      page,
+    );
     await clickOnAtom(page, 'C', 1);
     await selectRadioButtonForNewGroup(page, 'Create new OR Group');
 
@@ -138,7 +147,10 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     Test case: EPMLSOPKET-2221
     Description: The '&1' and 'or1' stereo marks appear next to the selected stereocenter.
     */
-    await openFileAndAddToCanvas('stereo-structure-enchanced.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/stereo-structure-enchanced.mol',
+      page,
+    );
     await clickOnAtom(page, 'C', 1);
     await selectRadioButtonForNewGroup(page, 'Create new AND Group');
 
@@ -151,7 +163,10 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     Test case: EPMLSOPKET-2221
     Description: The 'Enhanced Stereochemistry' window is opened.
     */
-    await openFileAndAddToCanvas('stereo-structure-enchanced.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/stereo-structure-enchanced.mol',
+      page,
+    );
     await clickOnAtom(page, 'C', 1);
     await selectLeftPanelButton(LeftPanelButton.Stereochemistry, page);
   });
@@ -164,7 +179,10 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     Description: The ‘Enhanced Stereochemistry’ window appears when a
     structure(s) with the correct tetrahedral stereochemistry is present on the canvas.
     */
-    await openFileAndAddToCanvas('two-stereostructures.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/two-stereostructures.mol',
+      page,
+    );
     await selectRadioButtonForNewGroup(page, 'Create new OR Group');
   });
 
@@ -178,7 +196,10 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     */
     const xDelta = 300;
     const yDelta = 600;
-    await openFileAndAddToCanvas('two-stereostructures.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/two-stereostructures.mol',
+      page,
+    );
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(x + xDelta, y - yDelta, page);
     await selectRadioButtonForNewGroup(page, 'Create new OR Group');
@@ -191,7 +212,10 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     - all stereocenters in an unselected structure have the same stereo marks;
     - all selected stereocenters have the same stereo marks.
     */
-    await openFileAndAddToCanvas('same-marks-stereostructure.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/same-marks-stereostructure.mol',
+      page,
+    );
     await selectLeftPanelButton(LeftPanelButton.Stereochemistry, page);
   });
 
@@ -215,7 +239,10 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     Description: The 'Enhanced Stereochemistry' window is closed. The '&1' stereo mark appears
     next to the selected stereocenter.
     */
-    await openFileAndAddToCanvas('stereo-structure-enchanced.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/stereo-structure-enchanced.mol',
+      page,
+    );
     await clickOnAtom(page, 'C', 1);
     await selectRadioButtonForNewGroup(page, 'Create new AND Group', true);
 
@@ -227,7 +254,10 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     Test case: EPMLSOPKET-2224
     Description: The '&1' and '&2' stereo marks appear next to the selected stereocenter.
     */
-    await openFileAndAddToCanvas('stereo-structure-enchanced.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/stereo-structure-enchanced.mol',
+      page,
+    );
     await clickOnAtom(page, 'C', 1);
     await selectRadioButtonForNewGroup(page, 'Create new AND Group');
 
@@ -240,7 +270,10 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     Test case: EPMLSOPKET-2224
     Description: The '&1' and '&1' stereo marks appear next to the selected stereocenter.
     */
-    await openFileAndAddToCanvas('stereo-structure-enchanced.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/stereo-structure-enchanced.mol',
+      page,
+    );
     await clickOnAtom(page, 'C', 1);
     await selectRadioButtonForNewGroup(page, 'Create new AND Group');
 
@@ -466,7 +499,10 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     Description: It's possible to hide the stereo flag by selecting the "off"
     option in the "Show the Stereo flags" field.
     */
-    await openFileAndAddToCanvas('stereo-structure-enchanced.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/stereo-structure-enchanced.mol',
+      page,
+    );
     await uncheckShowStereoFlag(page);
 
     await takeEditorScreenshot(page);
@@ -527,16 +563,22 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     Description: If none of the structures had the ABS (Chiral) Flag, then after opening
     the saved file, all structures will be displayed with the AND Enantiomer Flags.
     */
-    await openFileAndAddToCanvas('three-structure-enantiomer.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/three-structure-enantiomer.mol',
+      page,
+    );
     const expectedFile = await getMolfile(page, 'v2000');
-    await saveToFile('three-structure-enantiomer-expected.mol', expectedFile);
+    await saveToFile(
+      'Molfiles-V2000/three-structure-enantiomer-expected.mol',
+      expectedFile,
+    );
 
     const METADATA_STRING_INDEX = [1];
     const { fileExpected: molFileExpected, file: molFile } =
       await receiveFileComparisonData({
         page,
         expectedFileName:
-          'tests/test-data/three-structure-enantiomer-expected.mol',
+          'tests/test-data/Molfiles-V2000/three-structure-enantiomer-expected.mol',
         fileFormat: 'v2000',
         metaDataIndexes: METADATA_STRING_INDEX,
       });
@@ -554,7 +596,10 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     • Create new AND Group
     • Create new OR Group
     */
-    await openFileAndAddToCanvas('stereo-structure-enchanced.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/stereo-structure-enchanced.mol',
+      page,
+    );
     await selectLeftPanelButton(LeftPanelButton.Stereochemistry, page);
   });
 
@@ -589,7 +634,10 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     Test case: EPMLSOPKET-2863
     Description: Stereo flag is presented as changed - ABS (Chiral)1
     */
-    await openFileAndAddToCanvas('stereo-structure-enchanced.mol', page);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/stereo-structure-enchanced.mol',
+      page,
+    );
     await editAbsoluteFlagText(page, 'ABS (Chiral)1');
   });
 

@@ -79,6 +79,7 @@ export function prepareStructForKet(struct: Struct) {
         mode: item.mode,
         pos: item.pos,
       },
+      selected: item.getInitiallySelected(),
     });
   });
 

@@ -17,7 +17,8 @@
 import { useState, useRef } from 'react';
 import styled from '@emotion/styled';
 import { Button, Popover } from '@mui/material';
-import { Icon } from 'ketcher-react';
+import { Icon, KETCHER_ROOT_NODE_CSS_SELECTOR } from 'ketcher-react';
+import { KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR } from 'ketcher-macromolecules';
 
 interface IStyledIconProps {
   expanded?: boolean;
@@ -99,7 +100,6 @@ const ModeLabel = styled('span')`
 `;
 
 const ModeControlButton = styled('div')`
-  width: 162px;
   height: 28px;
   display: flex;
   align-items: center;
@@ -185,7 +185,10 @@ export const ModeControl = ({ toggle, isPolymerEditor }: ModeProps) => {
         open={isExpanded}
         onClose={onClose}
         anchorEl={btnRef.current}
-        container={btnRef.current}
+        container={
+          document.querySelector(KETCHER_ROOT_NODE_CSS_SELECTOR) ||
+          document.querySelector(KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR)
+        }
         anchorOrigin={{
           vertical: 'bottom',
           horizontal: 'left',
